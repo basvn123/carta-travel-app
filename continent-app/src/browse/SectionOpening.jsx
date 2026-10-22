@@ -4,10 +4,16 @@ import { openShared } from '../lib/sharedElement.js';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
-import { ChevronRightIcon, CrosshairIcon } from '../components/Icons.jsx';
-import { Button, Card, IconButton, Segmented } from '../components/ui/index.js';
+import {
+  CalendarIcon, ChevronRightIcon, CrosshairIcon, MountainIcon, PiggyIcon, RouteIcon,
+} from '../components/Icons.jsx';
+import { Button, Card, IconButton, Money, Segmented } from '../components/ui/index.js';
 import { TilePhotos } from './PhotoGallery.jsx';
 import { BedFoodLine } from './DestCards.jsx';
+import { StoryRail, StoryCard, STORY_SIZES } from './StoryRail.jsx';
+import { tripGrade } from '../lib/trailCards.js';
+import { GRADE_KEY } from '../lib/cardFillings.js';
+import { useI18n } from '../i18n/index.jsx';
 
 /**
  * The opening of a Destinations section (T428; T183 built the first one).
@@ -35,6 +41,11 @@ import { BedFoodLine } from './DestCards.jsx';
  * The rails still follow carta-design "Rails": arrows on a fine pointer,
  * arrow keys between cards, scroll snap, one aspect, nothing over a
  * photograph.
+ *
+ * T587: the rails are StoryRails (StoryRail.jsx): a tilted lead card with
+ * the heading, facts from the rail's rows and "See all", then tall photo
+ * cards with the grade or the month in a pill. Strip stays for the
+ * countries track and the country and region pages.
  *
  * `describe(row)` returns { name, where, fact, rating } for one wire row.
  */
@@ -190,25 +201,146 @@ export function RailTile({ row, describe, photo, photos = null, onOpen, sharedKe
   );
 }
 
+// ── T587: the opening rails as StoryRails ───────────────────────────────
+//
+// The status pill on a card is the trail's grade, else "Good in <month>"
+// when this month is inside the row's measured season (a ride's best
+// months, a summit's months, a lake's swimming season); nothing when the
+// data has neither. The lead card's facts come from the rail's own rows.
+
+const MONTH_CODES = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+
+/** The months (1 to 12) a row is good in, from whatever its layer measures. */
+function seasonMonths(layer, row) {
+  if (layer === 'cycle') return row?.season?.best || [];
+  if (layer === 'mountain') return row?.season?.snowbound ? [] : (row?.season?.months || []);
+  if (layer === 'lake') {
+    const s = row?.swim?.season;
+    const from = s ? MONTH_CODES.indexOf(String(s.from).toLowerCase()) + 1 : 0;
+    const to = s ? MONTH_CODES.indexOf(String(s.to).toLowerCase()) + 1 : 0;
+    if (!from || !to) return [];
+    const out = [];
+    for (let m = from; ; m = (m % 12) + 1) {
+      out.push(m);
+      if (m === to || out.length >= 12) break;
+    }
+    return out;
+  }
+  return [];
+}
+
+const monthWord = (m, lang, style) => new Intl.DateTimeFormat(lang, { month: style }).format(new Date(2026, m - 1, 15));
+
+function statusOf(layer, row, t, lang) {
+  if (layer === 'trail') {
+    const g = tripGrade(row);
+    return g && GRADE_KEY[g] ? t(GRADE_KEY[g]) : null;
+  }
+  const now = new Date().getMonth() + 1;
+  return seasonMonths(layer, row).includes(now) ? t('rail.goodIn', { month: monthWord(now, lang, 'short') }) : null;
+}
+
+const SLOT = '\u0001';
+function withMoney(text, money) {
+  const at = text.indexOf(SLOT);
+  if (at < 0) return text;
+  return <>{text.slice(0, at)}{money}{text.slice(at + SLOT.length)}</>;
+}
+
+/** Up to three facts for a rail's lead card, read from its rows, one of
+ *  them marked as the card's large figure. */
+function sectionFacts(layer, rows, describe, t, lang) {
+  const facts = [];
+  const days = rows.map((r) => describe(r).base?.dayEur).filter(Number.isFinite);
+  if (days.length) {
+    facts.push({ key: 'from', icon: PiggyIcon, text: withMoney(t('rail.factFrom', { price: SLOT }), <Money value={Math.min(...days)} est />) });
+  }
+  const now = new Date().getMonth() + 1;
+  if (layer !== 'trail' && rows.length && rows.every((r) => seasonMonths(layer, r).includes(now))) {
+    facts.push({ key: 'month', icon: CalendarIcon, text: t('rail.goodIn', { month: monthWord(now, lang, 'long') }) });
+  }
+  const km = rows.map((r) => (layer === 'trail' ? (r.distance_m != null ? r.distance_m / 1000 : null)
+    : layer === 'cycle' ? r.km : null)).filter(Number.isFinite);
+  if (km.length > 1) {
+    const fmt = (v) => Math.round(v).toLocaleString(lang);
+    const lo = Math.min(...km);
+    const hi = Math.max(...km);
+    if (Math.round(lo) !== Math.round(hi)) {
+      facts.push({ key: 'km', icon: RouteIcon, text: t('rail.factKm', { from: fmt(Math.max(1, lo)), to: fmt(hi) }) });
+    }
+  }
+  if (layer === 'mountain') {
+    const ele = rows.map((r) => r.ele).filter(Number.isFinite);
+    if (ele.length) {
+      facts.push({ key: 'ele', icon: MountainIcon, text: t('rail.factUpTo', { v: `${Math.round(Math.max(...ele)).toLocaleString(lang)} m` }) });
+    }
+  }
+  // T599: one fact is the lead card's large figure: the cheapest day, else
+  // the highest summit, else the distance span.
+  const big = ['from', 'ele', 'km'].map((k) => facts.find((f) => f.key === k)).find(Boolean);
+  if (big) big.figure = true;
+  return facts;
+}
+
+/** One wire row as a StoryRail photo card: the photograph with the status
+ *  and the Score in pills, then the name, where it is, and the measured fact
+ *  or the "Bed and food" line, as RailTile says them. */
+function SectionStoryCard({ layer, row, describe, photo, photos, onOpen, sharedKey, t, lang }) {
+  const d = describe(row);
+  const key = sharedKey ? sharedKey(row) : null;
+  const url = photo(row) || (photos ? photos(row)[0] : null);
+  const status = statusOf(layer, row, t, lang);
+  const open = (e) => {
+    const card = e.currentTarget.closest('.card');
+    if (key == null) onOpen(row);
+    else openShared(card, key, () => onOpen(row));
+  };
+  // Within one country a trail's "where" is its grade, which the pill says.
+  const where = d.where && d.where !== status ? d.where : null;
+  return (
+    <StoryCard
+      photo={<HeroImage url={url} city={d.name} iso2={d.cc} maxWidth={640} sizes={STORY_SIZES} ratio={[4, 5]} />}
+      status={status}
+      score={d.rating && d.rating.score != null ? <ScoreChip rating={d.rating} size="sm" /> : null}
+      title={d.name}
+      onOpen={open}
+      meta={where ? (
+        <span className="dtab-tile-meta">
+          {d.cc && <CountryFlag country={d.cc} size={12} />}
+          <span className="dtab-where">{where}</span>
+        </span>
+      ) : null}
+      price={d.base && d.base.dayEur != null ? <BedFoodLine base={d.base} t={t} /> : d.fact ? (
+        <span className="dtab-fact">
+          {d.factLabel && <span className="dtab-fact-l">{d.factLabel} </span>}
+          {d.fact}
+        </span>
+      ) : null}
+    />
+  );
+}
+
 export function SectionOpening({
   layer, head = null, rails, starters = [], describe, photo, photos = null, onOpen, t,
   sharedKey = null, nearMe = null, view = null, children = null,
 }) {
+  const { lang } = useI18n();
   return (
     <div className="open-bands dtab-open" data-layer={layer}>
       {head && <SectionHead title={head.title} id={`dtab-head-${layer}`} nearMe={nearMe} view={view} />}
       {rails.length > 0 && (
         <div className="dtab-rails" data-rails={rails.length}>
           {rails.map((rail) => (
-            <Strip key={rail.key} id={`dtab-rail-${layer}-${rail.key}`} title={rail.title}
-              onSeeAll={rail.onSeeAll} t={t} className="open-rail">
+            <StoryRail key={rail.key} id={`dtab-rail-${layer}-${rail.key}`} title={rail.title}
+              facts={sectionFacts(layer, rail.rows, describe, t, lang)}
+              onSeeAll={rail.onSeeAll} t={t} headingLevel={3} className="open-rail"
+              stack={rail.rows.map((row) => ({ url: photo(row) || (photos ? photos(row)[0] : null), city: describe(row).name }))
+                .filter((ph) => ph.url).slice(0, 3)}>
               {rail.rows.map((row) => (
-                <li key={row.id} className="dtab-item">
-                  <RailTile row={row} describe={describe} photo={photo} photos={photos} onOpen={onOpen}
-                    sharedKey={sharedKey} t={t} />
-                </li>
+                <SectionStoryCard key={row.id} layer={layer} row={row} describe={describe} photo={photo}
+                  photos={photos} onOpen={onOpen} sharedKey={sharedKey} t={t} lang={lang} />
               ))}
-            </Strip>
+            </StoryRail>
           ))}
         </div>
       )}

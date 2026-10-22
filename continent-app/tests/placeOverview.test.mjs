@@ -78,3 +78,16 @@ test('the region page address reads #region=, alone or after a country', () => {
   assert.equal(regionFromHash('#region=bad<id>'), null);
   assert.equal(regionFromHash(''), null);
 });
+
+// T590: the dates line on a place card, only for dates the traveller set.
+test('tripDates: own dates, a month, or nothing', async () => {
+  const { tripDates } = await import('../src/lib/placeOverview.js');
+  const t = (k, v) => (k === 'settings.datesRange' ? `${v.start} to ${v.end}` : k);
+  const own = { departDate: '2026-11-21', returnDate: '2026-11-28', ownDates: true, dateFlex: 'exact' };
+  assert.equal(tripDates(own, t, 'en-GB'), '21 to 28 Nov');
+  assert.equal(tripDates({ ...own, returnDate: '2026-12-03' }, t, 'en-GB'), '21 Nov to 3 Dec');
+  assert.equal(tripDates({ ...own, dateFlex: 'month' }, t, 'en-GB'), 'November');
+  assert.equal(tripDates({ ...own, ownDates: false }, t, 'en-GB'), null);
+  assert.equal(tripDates({ ...own, dateFlex: 'any' }, t, 'en-GB'), null);
+  assert.equal(tripDates(null, t), null);
+});

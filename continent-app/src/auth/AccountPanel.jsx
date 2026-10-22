@@ -36,6 +36,7 @@ import { FeedbackView } from './account/FeedbackView.jsx';
 import { PlanSection } from './account/PlanSection.jsx';
 import { useSettledFigure } from '../lib/figureChange.js';
 import { Button } from '../components/ui/index.js';
+import { SiteFooter } from '../components/SiteFooter.jsx';
 
 /**
  * What the pass holds today, as figures and one thin bar (T400, brief V4-9).
@@ -1334,6 +1335,7 @@ export function AccountPanel({
       {privacyOpen && createPortal(<PrivacyPolicy onClose={() => setPrivacyOpen(false)} />, document.body)}
       {imprintOpen && createPortal(<Imprint onClose={() => setImprintOpen(false)} />, document.body)}
       {termsOpen && createPortal(<TermsOfService onClose={() => setTermsOpen(false)} />, document.body)}
+      <SiteFooter />
     </div>
     </div>
   );

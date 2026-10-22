@@ -4,7 +4,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { kindOf } from '../lib/taxonomy.js';
 import { thumbAt } from '../lib/heroImage.js';
 import { knownFor } from '../lib/knownFor.js';
-import { TOKEN_COLOURS as TC, MAP_ONLY_COLOURS as MC } from '../map/tokenColors.js';
+import { TOKEN_COLOURS as TC, MAP_ONLY_COLOURS as MC, tokenColour } from '../map/tokenColors.js';
 import { eurDay } from '../lib/costIndex.js';
 import { formatApprox, formatEst } from '../lib/money.js';
 import { isNational } from '../components/CostSummary.jsx';
@@ -122,10 +122,146 @@ const dayFig = (eur, est, estWord) => {
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => (
   { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
+// ── Route lines (T593) ───────────────────────────────────────────────────
+// The lines of the Trails and Cycling lists, with a length pill at each
+// start (the owner's AllTrails reference). Colours are read from the tokens
+// at paint time: casing --surface, line --trail-pin (the trail domain), the
+// hovered or ringed route --action. The pills are a stretchable image, so a
+// label never needs a DOM node and maplibre keeps them from colliding.
+const EMPTY_FC = { type: 'FeatureCollection', features: [] };
+const dotsOpacity = new WeakMap();
+// The basemap's glyph server has no Figtree; the stack CountryPickerMap
+// already draws its labels in.
+const PILL_FONT = ['Montserrat SemiBold', 'Open Sans Bold', 'Noto Sans Regular'];
+
+/** The first point of a (Multi)LineString, or null. */
+function lineStart(geometry) {
+  const c = geometry?.coordinates;
+  if (!Array.isArray(c) || !c.length) return null;
+  const p = geometry.type === 'MultiLineString' ? c[0]?.[0] : c[0];
+  return Array.isArray(p) && Number.isFinite(p[0]) && Number.isFinite(p[1]) ? p : null;
+}
+
+function routeStarts(fc) {
+  const features = [];
+  for (const f of fc.features || []) {
+    const p = lineStart(f.geometry);
+    if (p) features.push({ type: 'Feature', geometry: { type: 'Point', coordinates: p }, properties: f.properties });
+  }
+  return { type: 'FeatureCollection', features };
+}
+
+// A pill drawn once on a canvas: 40 x 20 at the device's pixel ratio, the
+// middle stretched to fit the text, the round ends kept.
+function pillImage(fill, edge) {
+  const pr = Math.min(3, Math.max(1, Math.round(window.devicePixelRatio || 1)));
+  const W = 40 * pr; const H = 20 * pr; const r = 10 * pr;
+  const cv = document.createElement('canvas');
+  cv.width = W; cv.height = H;
+  const ctx = cv.getContext('2d');
+  if (!ctx) return null;
+  const inset = pr / 2;
+  ctx.beginPath();
+  ctx.moveTo(r, inset);
+  ctx.lineTo(W - r, inset);
+  ctx.arc(W - r, H / 2, H / 2 - inset, -Math.PI / 2, Math.PI / 2);
+  ctx.lineTo(r, H - inset);
+  ctx.arc(r, H / 2, H / 2 - inset, Math.PI / 2, -Math.PI / 2);
+  ctx.closePath();
+  ctx.fillStyle = fill;
+  ctx.fill();
+  if (edge) { ctx.lineWidth = pr; ctx.strokeStyle = edge; ctx.stroke(); }
+  return {
+    data: ctx.getImageData(0, 0, W, H),
+    opts: {
+      pixelRatio: pr,
+      stretchX: [[r, W - r]],
+      stretchY: [[H / 2 - pr, H / 2 + pr]],
+      content: [8 * pr, 3 * pr, W - 8 * pr, H - 3 * pr],
+    },
+  };
+}
+
+function addRouteLayers(map, fc, { open, hot }) {
+  const surface = tokenColour('--surface');
+  const line = tokenColour('--trail-pin');
+  const action = tokenColour('--action');
+  const text = tokenColour('--text');
+  const onFill = tokenColour('--on-fill');
+  for (const [name, fill, edge] of [['route-pill', surface, tokenColour('--border')], ['route-pill-hot', action, null]]) {
+    const img = pillImage(fill, edge);
+    if (img && !map.hasImage(name)) map.addImage(name, img.data, img.opts);
+  }
+  map.addSource('routes', { type: 'geojson', data: fc });
+  map.addSource('route-starts', { type: 'geojson', data: routeStarts(fc) });
+  const lineLayout = { 'line-cap': 'round', 'line-join': 'round' };
+  map.addLayer({
+    id: 'route-casing', type: 'line', source: 'routes', layout: lineLayout,
+    paint: { 'line-color': surface, 'line-width': ['interpolate', ['linear'], ['zoom'], 5, 3, 10, 6, 14, 8], 'line-opacity': 0.9 },
+  }, 'dest-dots');
+  map.addLayer({
+    id: 'route-line', type: 'line', source: 'routes', layout: lineLayout,
+    paint: { 'line-color': line, 'line-width': ['interpolate', ['linear'], ['zoom'], 5, 1.5, 10, 3, 14, 4.5] },
+  }, 'dest-dots');
+  map.addLayer({
+    id: 'route-hot', type: 'line', source: 'routes', layout: lineLayout,
+    filter: ['==', ['get', 'id'], ''],
+    paint: { 'line-color': action, 'line-width': ['interpolate', ['linear'], ['zoom'], 5, 3, 10, 4.5, 14, 6] },
+  }, 'dest-dots');
+  // A wide, unseen line under the pointer, so a 3 px route is easy to hover.
+  map.addLayer({
+    id: 'route-hit', type: 'line', source: 'routes', layout: lineLayout,
+    paint: { 'line-color': line, 'line-width': 14, 'line-opacity': 0 },
+  }, 'dest-dots');
+  const pill = (id, image, colour, filter, overlap) => map.addLayer({
+    id, type: 'symbol', source: 'route-starts', ...(filter ? { filter } : {}),
+    layout: {
+      'icon-image': image,
+      'icon-text-fit': 'both',
+      'icon-text-fit-padding': [2, 3, 2, 3],
+      'text-field': ['get', 'label'],
+      'text-font': PILL_FONT,
+      'text-size': 12,
+      'symbol-sort-key': ['get', 'rank'],
+      'icon-allow-overlap': overlap,
+      'text-allow-overlap': overlap,
+    },
+    paint: { 'text-color': colour },
+  });
+  pill('route-pins', 'route-pill', text, null, false);
+  pill('route-pin-hot', 'route-pill-hot', onFill, ['==', ['get', 'id'], ''], true);
+
+  const hits = ['route-pin-hot', 'route-pins', 'route-hit'];
+  const at = (e) => map.queryRenderedFeatures(e.point, { layers: hits.filter((l) => map.getLayer(l)) })[0];
+  let pointing = false;
+  map.on('mousemove', (e) => {
+    const f = at(e);
+    hot(f ? f.properties.id : null);
+    if (f) { map.getCanvas().style.cursor = 'pointer'; pointing = true; }
+    else if (pointing) { map.getCanvas().style.cursor = ''; pointing = false; }
+  });
+  map.on('click', (e) => {
+    // A dot under the tap is the map's own business (its card, its open).
+    if (map.queryRenderedFeatures(e.point, { layers: ['dest-dots'] }).length) return;
+    const f = at(e);
+    if (f) open(f.properties.id);
+  });
+}
+
+function setRouteHot(map, id) {
+  for (const l of ['route-hot', 'route-pin-hot']) {
+    if (map.getLayer(l)) map.setFilter(l, ['==', ['get', 'id'], id || '']);
+  }
+}
+
 export function ExploreMap({
   rows, all, pins = null, onSelect, onViewport, onNeedDetail, t, ringId = null, onPinLink = null,
-  costs = null, onBack = null, visible = true, framed = false,
+  costs = null, onBack = null, visible = true, framed = false, lines = null,
   pickedId = null, onPick = null, drawerState = null,
+  // T600: 'score' labels a pin with its Score instead of the day figure
+  // (beaches, lakes and mountains on their own tabs), and no pin is the
+  // cheapest one.
+  pinFig = 'eur',
 }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
@@ -135,6 +271,14 @@ export function ExploreMap({
   onSelectRef.current = onSelect;
   const onPickRef = useRef(onPick);
   onPickRef.current = onPick;
+  // T592: on a desktop the place panel floats over the map's left side;
+  // the camera frames and keeps pins in the part of the map left showing.
+  const leftCover = () => {
+    const box = containerRef.current;
+    const panel = box?.closest('.xcontent-map')?.querySelector('.mpp--float');
+    if (!box || !panel || getComputedStyle(panel).position !== 'absolute') return 0;
+    return Math.max(0, Math.round(panel.getBoundingClientRect().right - box.getBoundingClientRect().left));
+  };
   const pickedRef = useRef(pickedId);
   pickedRef.current = pickedId;
   // A pin pick: a first tap picks, a tap on the picked pin opens (T504).
@@ -400,6 +544,8 @@ export function ExploreMap({
     map.on('styledata', () => { styleSeen = true; });
     const fail = () => { if (!styleSeen) setFailed(true); };
     map.on('error', fail);
+    // In development a map error is said, not swallowed (T593 end check).
+    if (import.meta.env?.DEV) map.on('error', (e) => console.warn('[map]', e?.error?.message || e));
     const styleTimer = setTimeout(fail, STYLE_WAIT_MS);
 
     // T441: our dots and labels go in as soon as the style has loaded, not
@@ -552,6 +698,57 @@ export function ExploreMap({
     // with no dependencies, so listing them never rebuilds it.
   }, [closePop, showTip, showCard, collectKpins]);
 
+  // T593: route lines (Trails and Cycling, the owner's AllTrails reference).
+  // `lines` is a GeoJSON FeatureCollection of (Multi)LineStrings, each with
+  // { id, label, rank }; the map draws them under the dots, a length pill at
+  // each start, and the hovered or ringed route in the action brown. The
+  // dots give way to the pills (their keyboard stops stay). Added after the
+  // map's own layers, so it never races them.
+  const linesRef = useRef(lines);
+  linesRef.current = lines;
+  const routeHotRef = useRef(null);
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return undefined;
+    const draw = () => {
+      if (!map.getLayer('dest-dots')) return false;
+      const data = linesRef.current;
+      if (!data && !map.getSource('routes')) return true;
+      const fc = data || EMPTY_FC;
+      if (map.getSource('routes')) {
+        map.getSource('routes').setData(fc);
+        map.getSource('route-starts').setData(routeStarts(fc));
+      } else {
+        addRouteLayers(map, fc, {
+          open: (id) => onSelectRef.current?.(id),
+          hot: (id) => {
+            const next = id || ringRef.current || '';
+            if (routeHotRef.current === next) return;
+            routeHotRef.current = next;
+            setRouteHot(map, next);
+          },
+        });
+      }
+      if (!dotsOpacity.has(map)) dotsOpacity.set(map, map.getPaintProperty('dest-dots', 'circle-opacity'));
+      map.setPaintProperty('dest-dots', 'circle-opacity', data ? 0 : dotsOpacity.get(map));
+      return true;
+    };
+    if (draw()) return undefined;
+    // The dots layer arrives after the style, on the map's own load: keep
+    // trying on every style or render event until it is there, then stop.
+    const retry = () => { if (draw()) { map.off('styledata', retry); map.off('idle', retry); } };
+    map.on('styledata', retry);
+    map.on('idle', retry);
+    return () => { map.off('styledata', retry); map.off('idle', retry); };
+  }, [lines]);
+  // The list's ringed card lights its route too.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map?.getLayer('route-hot')) return;
+    routeHotRef.current = ringId || '';
+    setRouteHot(map, ringId || '');
+  }, [ringId]);
+
   // A rebuild that dropped the focused pin hands focus to the canvas, so the
   // keyboard stays on the map instead of falling to the top of the page.
   useEffect(() => {
@@ -585,11 +782,12 @@ export function ExploreMap({
     const cover = drawerState ? Math.min(H - 80, drawerVisiblePx(drawerState, H)) : 0;
     const pt = map.project(f.geometry.coordinates);
     const margin = 48;
-    if (pt.x > margin && pt.x < W - margin && pt.y > margin && pt.y < H - cover - margin) return;
+    const left = leftCover();
+    if (pt.x > left + margin && pt.x < W - margin && pt.y > margin && pt.y < H - cover - margin) return;
     const reduce = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     map.easeTo({
       center: f.geometry.coordinates,
-      padding: { top: 0, left: 0, right: 0, bottom: cover },
+      padding: { top: 0, left, right: 0, bottom: cover },
       duration: reduce ? 0 : 480,
     });
   }, [pickedId, drawerState, collectKpins]);
@@ -603,10 +801,14 @@ export function ExploreMap({
   // At every zoom the place pins are price labels (T441), and the cheapest
   // of them is the one emphasised pin in view.
   let best = null;
-  for (const k of kpins) {
+  if (pinFig !== 'score') for (const k of kpins) {
     if (k.eur != null && (!best || k.eur < best.eur)) best = k;
   }
   const cheapestKey = best?.key ?? null;
+  // The figure a label leads with: the day figure, or the Score (T600).
+  const pinText = (k) => (pinFig === 'score'
+    ? (k.score != null ? Number(k.score).toFixed(1) : '')
+    : (k.eur != null ? dayFig(k.eur, k.est) : ''));
   // V4 (T393, row T383-c): labels never sit on each other. They are placed
   // in priority order, the cheapest first, then the better-rated; a label
   // that would overlap one already placed stays a dot (still a keyboard
@@ -626,8 +828,9 @@ export function ExploreMap({
       || (b.tier - a.tier) || ((b.score ?? -1) - (a.score ?? -1)));
     for (const k of order) {
       const name = String(k.city || '');
+      const fig = pinText(k);
       const w = LABEL_BOX_W + textWidth(name, false)
-        + (k.eur != null ? LABEL_GAP_W + textWidth(dayFig(k.eur, k.est), true) : 0);
+        + (fig ? LABEL_GAP_W + textWidth(fig, true) : 0);
       const box = { l: k.x - w / 2, r: k.x + w / 2, t: k.y - LABEL_H / 2, b: k.y + LABEL_H / 2 };
       const outside = box.l < 4 || box.t < 4 || box.r > W - 4 || box.b > H - 4;
       if (outside || placed.some((o) => box.l < o.r && o.l < box.r && box.t < o.b && o.t < box.b)) {
@@ -720,9 +923,14 @@ export function ExploreMap({
     const reduce = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     // A phone's map is narrow: the frame keeps a gutter, not a fixed 48 px.
     const pad = Math.round(Math.min(48, map.getCanvas().clientWidth * 0.06));
-    const opts = { padding: pad, maxZoom: 9, duration: animate && !reduce ? 480 : 0 };
-    if (!keep || !framed || count === 0) { map.fitBounds(EUROPE, { ...opts, padding: 16 }); return; }
-    if (count === 1) { map.easeTo({ center: [w, s], zoom: 9, duration: opts.duration }); return; }
+    const left = leftCover();
+    const opts = { padding: { top: pad, bottom: pad, right: pad, left: pad + left }, maxZoom: 9, duration: animate && !reduce ? 480 : 0 };
+    // A list with no ids to keep (the outdoor tabs) frames all its rows.
+    if (!framed || count === 0) {
+      map.fitBounds(EUROPE, { ...opts, padding: { top: 16, bottom: 16, right: 16, left: 16 + left } });
+      return;
+    }
+    if (count === 1) { map.easeTo({ center: [w, s], zoom: 9, padding: { top: 0, bottom: 0, right: 0, left }, duration: opts.duration }); return; }
     map.fitBounds([[w, s], [e, n]], opts);
   }, [keepIds, framed]);
   const fitRef = useRef(fit);
@@ -810,10 +1018,12 @@ export function ExploreMap({
               >
                 {/* The label is drawn for the eye; the button's name above
                     already says the same, so the label is hidden from it. */}
+                {/* T592: read the Kayak way, the figure first and bold,
+                    the name smaller after it. */}
                 {label && (
-                  <span className="xmap-kpin-label" aria-hidden="true">
+                  <span className={`xmap-kpin-label${pinText(k) ? ' has-fig' : ''}`} aria-hidden="true">
+                    {pinText(k) && <span className="xmap-kpin-eur">{pinText(k)}</span>}
                     <span className="xmap-kpin-name">{k.city}</span>
-                    {k.eur != null && <span className="xmap-kpin-eur">{dayFig(k.eur, k.est)}</span>}
                   </span>
                 )}
               </button>

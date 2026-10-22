@@ -53,7 +53,7 @@ export async function downloadPlanPdf({
 }) {
   if (!priced || !priced.stopDetails.length) return;
   const money = (v) => formatMoney(v, { precision: 'cents', locale: lang });
-  const est = (v) => `~${money(v)} ${t('money.est')}`;
+  const est = (v) => `~${money(v)}`;
   const stops = priced.stopDetails.filter((s) => s.dest);
   const first = stops[0];
   const last = stops[stops.length - 1];

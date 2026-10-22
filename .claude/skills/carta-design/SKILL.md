@@ -72,6 +72,118 @@ controls 10 px, chips are round pills, and soft shadow belongs to things that fl
 that familiar structure is one calm price line under every photo, marked as an estimate where it is one.
 The voice did not move: plain, specific and short. Only the look moved, from instrument to inviting.
 
+## Explore v6 (owner decisions 2026-10-22, T584 to T594)
+
+The owner reviewed Explore against Komoot, Kayak, AllTrails, Airbnb, Hostelworld and Rightmove on a
+reference board and decided the following. Where an older rule below disagrees, these win; the older
+rules are amended in place where they are restated.
+
+- **Explore opens as an overview** (T586): a headline with a verb, a What and Where bar (a select of
+  Places, the five categories and Trip styles, a search field, a secondary Search), a quiet "Tell Carta
+  what you want" door, the category pill row, then the story rails, ending with "Show all places" and the
+  map toggle. No side pane and no list on the overview. Any See all, chip, search or Show all opens the
+  focused view, one history step; its "Explore" link and the browser's Back return to the overview. The
+  settings line's countries do not end the overview. A Where search shows as a chip.
+- **The category choice is one row of pills** (kit Tiles with tab semantics, tint plus tick) at the top
+  of the content on Explore and every category tab, never in a side pane.
+- **The focused view's toolbar** (T588): the title with the live count under it, then pill buttons:
+  Share (copies the link, "Link copied"), Sort (a menu), Filters (opens and closes the desktop pane, the
+  sheet on a phone, with its count), Saved, Countries on a phone, and the view toggle last.
+- **One view toggle** (T592): a secondary pill naming where it goes, "Map" or "List", never a List |
+  Map Segmented. Desktop: in the toolbar, and on the outdoor tabs after Search in the What and Where bar.
+  Phone: floating above the bottom nav, and in the map drawer's strip.
+- **The map, the Kayak way** (T592): on a desktop a panel floats on the map's left (`--surface`,
+  `--radius-sheet`, `--elev-2`, at most 400 px), listing the places on the map or holding the picked one:
+  photo, name with the Score and band, region, a "Your trip" box (dates or month, nights, the way there,
+  bed and food and drink for the nights, one total a person, the one primary "Open {place}"), then a
+  short why-go. The camera keeps pins clear of the panel. Price pins read the figure first, then the
+  name. This replaces "a map never draws a second card of its own".
+- **Browse cards blend** (T590, T587): the photo with `--radius-card`, the text directly on the page
+  ground under it, no white box and no border. In a focused list from 769 px the places are photo cards
+  in an auto-fill grid; on a phone a horizontal card (a 112 px photo, then name, dates, prices).
+- **Prices with icons** (T590): `PriceParts` shows the way there (plane, train, bus or car), the bed and
+  the food and drink as 16 px icons with whole-euro figures, under one total a person a day. Dates show
+  only when the traveller set them.
+- **Story rails** (T587, the owner's Komoot reference, "for every tab"): a lead card on
+  `--surface-sunken`, tilted -2deg, holding the rail's heading, one line, at most three icon facts from
+  its rows (no catalogue counts) and See all; then 4:5 photo cards. On those photos only, a status pill
+  (top left: "Good in Nov", a difficulty) and the Score pill (top right) in solid `--surface` with
+  `--elev-1`; the title stays under the photo. A card's pill never repeats the rail's heading. The rails
+  name the month the settings line shows. Class prefix `.storyr` (`.srail` is the sticky section rail).
+- **Motion on browse surfaces** (owner: "I want more dynamics"): cards lift -4px on hover at `--dur-2`,
+  the lead card straightens on hover, rail cards arrive once with a stagger of at most 40 ms each (240 ms
+  cap) when a rail enters view, the overview and the focused view crossfade at `--dur-3`. Transform and
+  opacity only, motion tokens, no bounce, no loop, nothing tied to scroll, none under reduced motion.
+- **The filter pane** (T589, the owner's Hostelworld reference): a head with the live count and Clear
+  all; Kind of place as small chips with icons; Good for (A base for the week, A day trip, A stop on the
+  way) high and never folded, with one help line; Budget a day as a stepped two-thumb range (0 to 160 and
+  Any, a floor and a ceiling, filters only); the month as twelve letter chips plus Any; Size in plain
+  words (Big city, City, Town, Village, Countryside), no glyphs; Rating, Flight up to and Max travel time
+  as short Segmented controls (up to five options), Any first; Good to know as icon, word and Switch
+  rows. Country, Browse and the shortlist are not in the pane. The desktop pane is 320 px wide.
+- **The outdoor tabs** (T593): a What and Where bar on `--surface` with `--radius-card` and `--border`;
+  a quick filter row ("All filters" and at most four dropdown chips); Trails and Cycling maps draw each
+  route as its line (`--surface` casing, `--trail-pin` line, the hovered one `--action`) with a length
+  pill at its start. Those map-drawn pills use the basemap's fonts (Montserrat, Open Sans), the one
+  exception to Figtree-only, because the map's glyph server has no Figtree.
+- **The start dialog** (T585): from 1024 px, once per device on the first Explore visit, never over a
+  link that carries a view: "What matters most on this trip?", a labelled field that goes to Ask Carta,
+  From, Where to, When and Who rows that open the settings line's parts, one primary "Show places".
+- **The site footer** (T594) ends every page-like tab's scroll on `--surface-sunken`: the mark, the
+  positioning sentence, Explore, Plan, Carta and Legal link columns, the year. No controls, no store
+  badges, absent in map views.
+- **Ask Carta** (T584): the chat's head and foot stand on the panel's warm ground; a hairline shows only
+  where the conversation runs on under them. The field is the one white object at the foot.
+- **The preview** (T591): the card's hover preview holds the hook line, one month verdict chip, one plan
+  sentence ("2 days, about {price} a person") and "Open {place}". It opens on hover, and on a keyboard
+  focus only where there is hover.
+
+### Explore v7 (owner review 2026-10-22, T595 to T600)
+
+- **The overview's top is one compact block** (T595): "Where to next?"; Ask Carta as a field-like door
+  with an example question (the chat's one door: none in the header, none on Plan); one bar of What,
+  Where (it works for every kind: Places searches places, a category opens its tab with the text, a
+  country name on Trails or Cycling picks that country), Search and the Map toggle; then one row of the
+  category pills and the quick chips (the rails' doors, Countries on a phone, All filters, Show all
+  places). Nothing waits at the foot of the overview; rails draw no doors of their own.
+- **The focused head is one row** (T598): a round arrow back and the title (`--text-title`) on the left,
+  the pills on the right; under it the quick filter chips (Kind of place, Budget, Month, Good for,
+  Rating, Flight time), each a popover on the pane's own state, then the active chips. No count line.
+  The desktop map fills the screen under the chips. On a phone the arrow and the title share a row and
+  the pills scroll under it.
+- **Every outdoor tab has a map** (T600): Beaches, Lakes, Mountains and Cycling Europe-wide, Trails with
+  each country's best walks until a country is picked. The head is the pill row, one What and Where row
+  with the Map or List pill, the quick chips, then the content, `--space-3` apart; the quick chips show
+  on every width and the desktop pane keeps every group. Beach, lake and mountain pins carry the Score;
+  routes carry their length.
+- **Lead cards show what the rail holds** (T599): title, an optional short line, a fanned stack of the
+  rail's first three photographs (decorative, `--surface` edge), one large figure, at most two small icon
+  facts, See all. A rail line shows only where it says something the heading does not.
+- **Lifestyle holds Getting there** (T597): the five ways as tiles bound to the same setting as the
+  settings line; with Plane chosen only flights are priced, and a place with no flight shows no total.
+- **Fewer words** (T596): no place counts on screen (they stay for screen readers), no help line under
+  Good for, no positioning sentence in the footer.
+
+### Explore v8 (owner review 2026-10-22, T601 to T604)
+
+- **The overview hero** (T601): one licensed Commons photograph as a band across the content width
+  (the first place of the month's or the top-rated rail), a solid `--surface` panel over its lower edge
+  (`--radius-sheet`, `--elev-2`, at most 1040 px) holding "Where to next?", a small secondary Ask Carta
+  pill (no example caption) and one joined search field (What | Where | Search, Search the overview's
+  one primary; it rises 2 px on focus), the Map pill after it; the photo credit under the band. No text
+  on the photograph itself.
+- **Three levels under it:** the categories as kit Tabs (icon and word, the brown underline on the
+  current one, on a hairline) on every browse tab, then quiet 32 px quick chips.
+- **No permanent left panel on any browse tab** (T601, T602): filters live on top (quick chips, All
+  filters or Filters, Sort); on a desktop the 320 px filter pane slides in only when Filters is pressed,
+  closed by default, on a phone the sheet. Country is never a filter control: it comes from the settings
+  line's Countries (one country in Only these) or from a country typed in Where, and shows as the band
+  and a removable chip.
+- **Chips and pane are one control** (T604): each quick chip's popover draws the pane's own section;
+  a set chip shows its value in the selected tint with a tick. Action pills (icon first, 600) and filter
+  chips (chevron last, 500) share one 36 px height.
+- **No count on the map panel** (T603).
+
 ## Colour
 
 Single theme, light only: no `prefers-color-scheme` or `data-theme` blocks, `theme-color` is the page
@@ -182,9 +294,10 @@ in the kit. Two screens can never write the same figure two ways.
 - **No euro sign in an i18n string.** Templates take a formatted figure (`{price}`, `{eur}`); the formatter
   supplies the symbol. A `€` or `EUR` typed into JSX or a string is a bug (the `money-literal` lint rule
   (T425) catches it).
-- **One estimate notation.** `~€87 est.`: the tilde joined to the figure, the language's own short word
-  after (`money.est`: est., gesch., stim.). `formatEst()` for a string, `<Money est>` in JSX. Never
-  "~ €87", never "est. €87", never an estimate shown by colour alone. Measured figures never carry it:
+- **One estimate notation.** The tilde joined to the figure, and nothing after it (owner 2026-10-22,
+  T590: "the mention of estimate is not needed, keep it simple"). `formatEst()` for a string,
+  `<Money est>` in JSX; a screen reader hears "about {price}" (`money.estSpoken`). Never a space after
+  the tilde, never the word "est." on screen, never an estimate shown by colour alone. Measured figures never carry it:
   a figure is an estimate when it is a stand-in (`isNational()` in `CostSummary.jsx`), and only those
   take the mark.
 - **Ranges** go through `formatMoneyRange()`: "€40 to €60", with the language's own joiner.
@@ -314,7 +427,7 @@ reasoning in `docs/design-v6/DIRECTION.md` part 9), restated in Lagoon terms and
 
 **Workspace (T500, T501).** Desktop: list left, map right, a fixed total bar at the foot that reads only `priceTrip()`, opens the receipt and never holds the primary; inside a trip it shows the trip first, then the day. Phone: the map fills the screen under one MapDrawer with three states (a `--drawer-strip` strip, half, up to under the header); the amount is always in the strip; the handle is a `--tap-main` button, so dragging is never required; the bottom nav hides when the drawer is full. Picked countries on a map are `--select-bg` with a `--text` edge.
 
-**Explore: one overview per place (T504, roadmap 1.5).** A place says the same thing in the list and on the map, because both draw `browse/PlaceOverview.jsx` and read `lib/placeOverview.js`: a 72 px photo, the name with the Score, the flag with the region and country ("Tuscany, Italy", else the country), one reason (a guided answer, else the month's own sentence, else "Good in October", else "Best in May to Sep"; never two), the price a person a day in whole euros through `<Money est>`, and the save control outside the link. With a month the Score is the month's score once the wire carries it, else the base Score. A pin picks, it does not open: the picked pin is the one selected state on the map (`--select-bg` label with the `--select-border` edge, the dot ringed in the action brown), the picked row has the brown edge, and the overview opens the place. List | Map changes the view only; filters, sort and the pick stay (`xi=`). Desktop docks the picked overview at the foot of the map with a close; a phone's map lies under the MapDrawer, whose strip holds List | Map and the handle and whose body lists the places on the map as the same overview rows, the picked one first. A map never draws a second card of its own for a place.
+**Explore: one overview per place (T504, roadmap 1.5).** A place says the same thing in the list and on the map, because both draw `browse/PlaceOverview.jsx` and read `lib/placeOverview.js`: a 72 px photo, the name with the Score, the flag with the region and country ("Tuscany, Italy", else the country), one reason (a guided answer, else the month's own sentence, else "Good in October", else "Best in May to Sep"; never two), the price a person a day in whole euros through `<Money est>`, and the save control outside the link. With a month the Score is the month's score once the wire carries it, else the base Score. A pin picks, it does not open: the picked pin is the one selected state on the map (`--select-bg` label with the `--select-border` edge, the dot ringed in the action brown), the picked row has the brown edge, and the overview opens the place. List | Map changes the view only; filters, sort and the pick stay (`xi=`). Desktop docks the picked overview at the foot of the map with a close; a phone's map lies under the MapDrawer, whose strip holds List | Map and the handle and whose body lists the places on the map as the same overview rows, the picked one first. A map never draws a second card of its own for a place (superseded 2026-10-22 by the floating place panel, T592: see Explore v6 above).
 
 **Day detail (T501, owner T492-c).** The traveller picks how detailed a day is with one quiet Detail control: List (default), Parts of the day (Morning, Afternoon, Evening heads, 12 px 600 `--text-2`, not cards; Lunch and Dinner rows without amounts) or By the hour. Adding never reorders the day; "Best route" asks first. A ticket counts per person only where its price is known, else "Ticket, price not known" and no figure.
 
@@ -358,7 +471,7 @@ reasoning in `docs/design-v6/DIRECTION.md` part 9), restated in Lagoon terms and
 
 **Lifestyle control.** There is one: the Lifestyle panel. A surface that changes how the traveller travels opens or embeds it and never builds a second slider. Shown as a slider it is stepped, one labelled stop per level, and the figures update in place. The panel carries no sentences of its own (owner 2026-10-22, T580): a one-line title, the tiles, the fold and Done, and it fits a desktop screen without scrolling.
 
-**Filters.** Removable filter chips in one row above a filtered list, each named "Remove <filter>", ending in "Clear all", the same on every browse tab. At most one sticky refine row per list (`--surface`, `--border` bottom edge, `--tap` high, no shadow) holding Filters, sort, country and the active chips. Up to six categories on a phone are a 2 x 3 grid of equal buttons. The budget ceiling is a stepped select (Any, 40, 60, 80, 100, 130 a person a day, ground only, "Up to {price} a day"), never a free slider; it filters and does not re-price. A month select holds the twelve months plus "Any"; with a month, a card may carry one measured month fact ("Swim season includes July"), never a forecast.
+**Filters.** Removable filter chips in one row above a filtered list, each named "Remove <filter>", ending in "Clear all", the same on every browse tab. At most one sticky refine row per list (`--surface`, `--border` bottom edge, `--tap` high, no shadow) holding Filters, sort, country and the active chips. Up to six categories on a phone are a 2 x 3 grid of equal buttons. The budget is a stepped two-thumb range (owner 2026-10-22, T589: a floor and a ceiling on 0, 20, 40, 60, 80, 100, 130, 160 and Any a person a day, ground only), never a free slider; it filters and does not re-price. A month select holds the twelve months plus "Any"; with a month, a card may carry one measured month fact ("Swim season includes July"), never a forecast.
 
 **Rails and cuts.** A rail has a heading (a figure, a verb, or a plain section name such as "Hidden gems"), "See all" without a number, arrows on a fine pointer, arrow keys when focused, dots hidden from screen readers, scroll-snap, one aspect, no autoplay or loop; no subtitle and no position figure (T438). Desktop shows at most four rails and a phone three (a countries track counts as one); further cuts are one row of door buttons (secondary, small) right over the list they narrow (T457, Explore's doors). The first browse rail may be a cost cut ("Under {price} a day in <month>") sorted by day cost with countries interleaved.
 
@@ -426,8 +539,8 @@ stroke-dashoffset only, no overshoot or bounce, no parallax, no count-up, no mar
 scrim, one primary, 44 px targets. No other surface takes this exception.
 
 The Ask Carta exception (T569, owner 2026-10-22: "I like some animation"; T570 moved it into the
-chat). Ask Carta is a chat (`src/browse/ask/`): one "Ask Carta" button (the header on desktop,
-beside Filters on a phone) opens a panel docked right under the settings line on desktop, the list
+chat). Ask Carta is a chat (`src/browse/ask/`): one "Ask Carta" door (since T595, 2026-10-22: a field-like door in Explore's
+overview, and nowhere else) opens a panel docked right under the settings line on desktop, the list
 making room beside it, and a full-screen sheet on a phone. A chat may show that it is working and
 what to ask by moving:
 
@@ -515,7 +628,7 @@ The voice did not change with the look. Carta sounds like an instrument, not a b
 8. A hex, font name, px font size, radius or spacing in a component when a token exists; any colour not in
    DESIGN.md; black (`#000`) as ink. Hex lives only in `:root` and the token mirror `src/map/tokenColors.js`.
 9. A euro sign or "EUR" in an i18n string or JSX, `toFixed` on a price, a rounded receipt line, or an
-   estimate without its tilde and word.
+   estimate without its tilde (the word "est." left the screen on 2026-10-22, T590).
 10. Functional text under 11 px, a figure or rating under 12 px, or a touch target under 44 px on a coarse
     pointer.
 

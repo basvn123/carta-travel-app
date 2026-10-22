@@ -58,7 +58,7 @@ Density is a feature. The traveller wants to see forty prices on one phone scree
 
 ## The one rule the numbers follow
 
-Every ground cost follows one chain: a real harvested figure first, then a cached third-party figure, then a model estimate, and never a blank. Ground costs are the bed, the food, the local transport and the airport transfer. Each step is labelled for what it is. A harvested figure shows its source and age. A cached figure carries its expiry. An estimate is prefixed with a tilde, tagged "est." and never dressed up as a bookable price. Every external booking link warns that prices may have changed.
+Every ground cost follows one chain: a real harvested figure first, then a cached third-party figure, then a model estimate, and never a blank. Ground costs are the bed, the food, the local transport and the airport transfer. Each step is labelled for what it is. A harvested figure shows its source and age. A cached figure carries its expiry. An estimate is prefixed with a tilde and never dressed up as a bookable price (the "est." tag left the screen on 2026-10-22, T590, owner: "keep it simple"; a screen reader says "about"). Every external booking link warns that prices may have changed.
 
 Flights follow their own order (owner request 2026-10-21, batch T511-T519, reversing the 2026-10-02 decision). A fare the traveller typed in comes first, labelled as theirs. Then Google Flights' price: searched live in the trip planner for the exact day and chosen hours, or taken from the sweep for the same day (or the nearest day within 3 days, where the flight shows its own date). Then nothing. A price checked more than 3 days ago is never shown. A flight price is Google Flights' figure, not Carta's estimate, so it carries no tilde; it always shows the airline, the times, when it was checked and a link to Google Flights with "prices may have changed". Bag fees (10 kg cabin, 20 kg checked) are Carta's estimates and carry the tilde and "est." like every other estimate.
 
@@ -116,7 +116,7 @@ Touch. Every control is at least 44 by 44 px (`--tap`), including icon-only butt
 
 Contrast. Body text is `--ink` on `--paper`. Secondary text is `--ink-soft`; `--ink-mute` is for metadata at small sizes and never for body copy. Every token pair the product uses as text or fill clears WCAG AA 4.5:1, and the ratios are written next to the tokens in `continent-app/src/styles.css`. Ratings use ochre, not the action red, so a measure is never read as an alarm.
 
-Colour is never the only carrier. The place-kind hierarchy is an ink-density ramp so it survives greyscale and colour-blind viewing. Estimates carry a tilde and "est." in text, not only a colour. Good news in data (`--green`) and destructive actions (`--danger`) are each backed by words.
+Colour is never the only carrier. The place-kind hierarchy is an ink-density ramp so it survives greyscale and colour-blind viewing. Estimates carry a tilde in text, spoken as "about", not only a colour. Good news in data (`--green`) and destructive actions (`--danger`) are each backed by words.
 
 Focus and keyboard. Visible focus on every interactive element, `outline: 2px solid var(--accent)` with an offset. `outline: none` is never shipped without a replacement. Every `aria-modal` overlay traps focus through `useFocusTrap` and closes on Escape. Navigation is a real `<a>`, actions are a real `<button>`, headings stay in order with one `h1` per view.
 

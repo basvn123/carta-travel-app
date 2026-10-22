@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo, Suspense, lazy } from 'react';
 import { AppHeader } from './components/AppHeader.jsx';
 import { BottomNav } from './components/BottomNav.jsx';
+import { setFooterNavigate } from './components/SiteFooter.jsx';
 import { AnnouncementBar, PassExpiryBanner, BottomSlot } from './components/AnnouncementBar.jsx';
 import { SettingsLine, SettingsContext } from './components/SettingsLine.jsx';
 import { LoadingBlock } from './components/StateBlocks.jsx';
@@ -389,13 +390,13 @@ function TravelApp() {
     if (!opts.replace && from && (key !== from || overlayOpenRef.current)) {
       // The Explore category rides along (T498), so the address names the
       // layer on screen, not a default.
-      try { window.history.pushState({ cartaTab: key }, '', tabHref(key, undefined, opts.cat ? { cat: opts.cat } : {})); } catch { /* sandboxed */ }
+      try { window.history.pushState({ cartaTab: key }, '', tabHref(key, undefined, opts.cat ? { cat: opts.cat, q: opts.q } : {})); } catch { /* sandboxed */ }
     }
     else if (opts.cat && key === from) {
       // One layer to another inside Explore: the same step, a new name.
       try {
         window.history.replaceState(window.history.state, '',
-          `${tabHref(key, undefined, { cat: opts.cat })}${window.location.hash}`);
+          `${tabHref(key, undefined, { cat: opts.cat, q: opts.q })}${window.location.hash}`);
       } catch { /* sandboxed */ }
     }
     activeTabRef.current = key;
@@ -497,6 +498,15 @@ function TravelApp() {
     }
     goToTab(key);
   };
+  // The site footer's links (T594) go through this same door: a place or view
+  // key, an Explore category (opts.cat) or the FAQ in Account.
+  useEffect(() => {
+    setFooterNavigate((key, opts) => {
+      if (key === 'faq') { openAccountAt('faq'); return; }
+      if (key === 'places') { goToTab('places', { cat: opts?.cat }); return; }
+      goTo(key);
+    });
+  });
 
   const [selectedId, setSelectedId] = useState(init.selectedId ?? null);
 
@@ -696,7 +706,9 @@ function TravelApp() {
   // The six category tiles (T498, roadmap 1.3b A) and every door that names
   // a layer come through here. The country travels with the traveller
   // (rule 3): Italy on Places stays Italy on Beaches, and back again.
-  const openExploreSection = useCallback((key, cc = undefined) => {
+  // `query` (T600) is the text typed in the overview's Where field: it rides
+  // in the address as `dq` and the layer starts with it in its own Where.
+  const openExploreSection = useCallback((key, cc = undefined, query = '') => {
     if (key === 'places') {
       if (cc !== undefined) setCountryFilter(cc ? [cc] : []);
       goToTab('map');
@@ -705,7 +717,7 @@ function TravelApp() {
     setPendingCategory(key);
     // '' says "every country" (Places had none), null leaves it alone.
     if (cc !== undefined) setPendingCountry(cc ? String(cc).toUpperCase() : '');
-    goToTab('places', { cat: key });
+    goToTab('places', { cat: key, q: typeof query === 'string' ? query : '' });
   }, [goToTab, setCountryFilter]);
   // The trip library inside Explore (owner T484-e, T489-a): "See all" on the
   // Trip styles row, one style from it, or a country's weeks.

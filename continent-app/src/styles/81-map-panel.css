@@ -1,0 +1,223 @@
+/* ==========================================================================
+   T592 (owner decision 6, 2026-10-22): Explore's map the Kayak way.
+   Imported by src/browse/MapPlacePanel.jsx.
+
+   On a desktop the map takes the whole content width and the panel floats
+   on its left: the places on the map, or the picked place with its trip
+   box. From 769 to 1023 px the panel is a column beside the map instead of
+   over it, so the map keeps room. On a phone the panel is the map drawer's
+   body. The one view toggle and the price pins are styled here too.
+   Selectors carry .explore-shell twice over where they override
+   62-v6-explore.css, so the order the two files load in never matters.
+   ========================================================================== */
+
+/* --- The view toggle: one secondary pill ------------------------------- */
+.explore-shell .xview-toggle { border-radius: var(--radius-pill); }
+@media (max-width: 768px) {
+  /* Bottom centre above the bottom nav, floating: the pill takes the shadow. */
+  .explore-shell .xview-fab .xview-toggle {
+    min-height: var(--tap);
+    padding-inline: var(--space-4);
+    box-shadow: var(--elev-2);
+  }
+}
+
+/* --- Desktop: the map full width, the list column gone ----------------- */
+@media (min-width: 769px) {
+  .explore-shell .xcontent.xcontent--split { display: block; }
+  .explore-shell .xcontent.xcontent--split .xcontent-main { display: none; }
+  .explore-shell .xcontent.xcontent--split .xcontent-map { position: relative; }
+}
+@media (min-width: 769px) and (max-width: 1023px) {
+  .explore-shell .xcontent.xcontent--split .xcontent-map {
+    display: grid;
+    grid-template-columns: minmax(300px, 40%) minmax(0, 1fr);
+    gap: var(--space-4);
+    align-items: start;
+  }
+  .explore-shell .xcontent.xcontent--split .xcontent-map > .xmap { grid-column: 2; grid-row: 1; }
+  .explore-shell .mpp--float {
+    grid-column: 1;
+    grid-row: 1;
+    max-height: calc(100dvh - var(--filter-h) - 2 * var(--space-8));
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+  }
+}
+@media (min-width: 1024px) {
+  .explore-shell .mpp--float {
+    position: absolute;
+    top: var(--space-4);
+    left: var(--space-4);
+    bottom: var(--space-4);
+    z-index: calc(var(--z-float) + 2);
+    width: min(400px, 42%);
+    border-radius: var(--radius-sheet);
+    box-shadow: var(--elev-2);
+    animation: mpp-in var(--dur-3) var(--ease-out);
+  }
+}
+
+/* --- The panel ---------------------------------------------------------- */
+.explore-shell .mpp {
+  min-width: 0;
+  color: var(--text);
+}
+.explore-shell .mpp--float {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--surface);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+/* The list's heading (the count) is for screen readers only (T603), so the
+   list and the empty line carry the panel's top padding themselves. */
+.explore-shell .mpp-empty {
+  margin: 0;
+  padding: var(--space-4);
+  max-width: 34ch;
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--text-2);
+}
+.explore-shell .mpp-rows { display: block; padding: var(--space-3) var(--space-2) var(--space-4); }
+
+/* The picked place. */
+.explore-shell .mpp-place { padding: var(--space-3) var(--space-4) var(--space-5); }
+.explore-shell .mpp-top { margin: 0 0 var(--space-2) calc(-1 * var(--space-2)); }
+.explore-shell .mpp-media {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-card);
+  background: var(--surface-sunken);
+}
+.explore-shell .mpp-img,
+.explore-shell .mpp-media .hero-blank {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.explore-shell .mpp-save {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+}
+.explore-shell .mpp-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  margin-top: var(--space-4);
+}
+.explore-shell .mpp-name {
+  margin: 0;
+  font-size: var(--text-headline);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.explore-shell .mpp-name:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.explore-shell .mpp-where {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-body);
+  color: var(--text-2);
+}
+
+/* "Your trip": the one bordered object in the panel. */
+.explore-shell .mpp-trip {
+  margin-top: var(--space-5);
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+.explore-shell .mpp-sub {
+  margin: 0;
+  font-size: var(--text-lead);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+}
+.explore-shell .mpp-when {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+  margin: var(--space-2) 0 var(--space-3);
+  font-size: var(--text-body);
+}
+.explore-shell .mpp-when-icon { color: var(--text-2); flex: none; }
+.explore-shell .mpp-when-n { color: var(--text-2); }
+.explore-shell .mpp-parts { margin-bottom: var(--space-4); }
+.explore-shell .mpp-open { width: 100%; }
+
+.explore-shell .mpp-why { margin-top: var(--space-5); }
+.explore-shell .mpp-why-text {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--text);
+}
+.explore-shell .mpp-sights {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--text-2);
+}
+.explore-shell .mpp-sights-label { font-weight: 600; color: var(--text); }
+
+/* Phone: the drawer's body. Full width, the photo shorter so the trip box
+   shows at half height. */
+.explore-shell .mpp--compact .mpp-place { padding: 0 var(--space-4) var(--space-4); }
+.explore-shell .mpp--compact .mpp-rows,
+.explore-shell .mpp--compact .mpp-empty { padding-top: 0; }
+.explore-shell .mpp--compact .mpp-media { aspect-ratio: 16 / 9; }
+.explore-shell .mpp--compact .mpp-name { font-size: var(--text-title); }
+
+/* --- Price pins: the figure first and bold, the name smaller after ------ */
+.explore-shell .xmap-kpins .xmap-kpin-label { align-items: baseline; gap: var(--space-1); }
+.explore-shell .xmap-kpins .xmap-kpin-eur {
+  font-size: var(--text-caption);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.explore-shell .xmap-kpins .xmap-kpin-label.has-fig .xmap-kpin-name {
+  font-size: var(--text-micro);
+  font-weight: 500;
+  color: var(--text-2);
+}
+.explore-shell .xmap-kpins .xmap-kpin.is-label {
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
+}
+/* Hover and the pick: the light selected tint with the brown edge, never an
+   ink fill. The pick adds the brown ring as its mark. */
+@media (hover: hover) {
+  .explore-shell .xmap-kpins .xmap-kpin.is-label:hover {
+    z-index: 4;
+    border-color: var(--select-border);
+    background: var(--select-bg);
+    color: var(--select-ink);
+  }
+}
+.explore-shell .xmap-kpins .xmap-kpin.is-label.is-picked {
+  z-index: 5;
+  border-color: var(--select-border);
+  background: var(--select-bg);
+  color: var(--select-ink);
+  outline: 1px solid var(--select-border);
+}
+.explore-shell .xmap-kpins .xmap-kpin.is-label:hover .xmap-kpin-name,
+.explore-shell .xmap-kpins .xmap-kpin.is-label.is-picked .xmap-kpin-name { color: var(--select-ink); }
+
+@keyframes mpp-in {
+  from { opacity: 0; transform: translateX(calc(-1 * var(--space-3))); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .explore-shell .mpp--float { animation: none; }
+  .explore-shell .xmap-kpins .xmap-kpin.is-label { transition: none; }
+}

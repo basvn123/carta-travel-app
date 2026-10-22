@@ -3,7 +3,6 @@ import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
 import { useIsDesktop } from '../hooks/useIsDesktop.js';
 import { RatingBadge } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
-import { CountryPicker } from '../components/CountryPicker.jsx';
 import { stripDashes } from '../lib/format.js';
 import { countryName as localCountryName } from '../lib/countryName.js';
 import { needsCountry } from '../lib/favorites.js';
@@ -62,7 +61,7 @@ import {
 import { JourneysSection } from './JourneysSection.jsx';
 import { loadAllJourneyCards, dropJourneyHash } from '../lib/journeys.js';
 import CreditFold from './CreditFold.jsx';
-import { useTravelMonth } from '../components/SettingsLine.jsx';
+import { useSettings, useTravelMonth } from '../components/SettingsLine.jsx';
 import { CoverageEmpty } from './CoverageEmpty.jsx';
 import { MICROSTATES, countryGeo, pointGeo } from '../lib/coverageEmpty.js';
 import { loadStubs } from '../lib/stubs.js';
@@ -75,7 +74,6 @@ import { SectionOpening, SectionHead, Strip } from './SectionOpening.jsx';
 import { CountryGalleryCard } from './CountryGallery.jsx';
 import { countryKnownKey, countryPhotos } from '../lib/countryGallery.js';
 import { Button, Chip, Field, Segmented, Tile, TileGroup } from '../components/ui/index.js';
-import { CountryFold } from './RailFold.jsx';
 import { createPortal } from 'react-dom';
 import { pickIcons, buildRails, photoOf, photosOf } from '../lib/openingScreen.js';
 import { okPhoto, firstOkImage } from '../lib/photoVeto.js';
@@ -86,12 +84,15 @@ import {
 import { ExploreCategories } from './ExploreCategories.jsx';
 import { EmptyResult } from './EmptyResult.jsx';
 import { OutdoorMap } from './OutdoorMap.jsx';
+import { WhereBar, FilterChipBar, SortPill } from './WhereBar.jsx';
 import {
   baseOfOutdoor, pointOfOutdoor, mapRowOf, regionsForLayer,
 } from '../lib/exploreLayers.js';
 import { loadRegionIndex, nearestPriced } from '../lib/regions.js';
 import { usePlaceRows } from '../hooks/usePlaceRows.js';
 import { isNational } from '../components/CostSummary.jsx';
+import { SiteFooter } from '../components/SiteFooter.jsx';
+import { browseQueryFrom } from '../lib/urlState.js';
 
 /**
  * The Destinations tab: the whole catalogue and every published trip as a
@@ -151,6 +152,28 @@ const NEAR_MAX_ROWS = 80;
  * still wins, because those arrive through their own effects after this.
  */
 const MEMORY_KEY = 'carta.places.v1';
+// T593: the What and Where bar and the quick filter row, per outdoor tab.
+// What is one existing facet group (the tab's kinds); the quick row holds
+// the groups a reader reaches for first, in the reference's order.
+const WHAT_GROUP = {
+  trails: 'highlights', cycling: 'cycle-bike', beaches: 'beach-bestfor',
+  lakes: 'lake-doing', mountains: 'mtn-kind',
+};
+const QUICK_GROUPS = {
+  trails: ['grade', 'length', 'climb', 'shape'],
+  cycling: ['cycle-surface', 'cycle-length', 'cycle-climb'],
+  beaches: ['beach-water', 'beach-substrate', 'beach-facilities'],
+  lakes: ['lake-swim', 'lake-water', 'lake-setting'],
+  mountains: ['mtn-acc', 'mtn-diff', 'mtn-ele'],
+};
+/** The first point of a route's (Multi)LineString, [lon, lat], or null. */
+function lineStartOf(geometry) {
+  const c = geometry?.coordinates;
+  if (!Array.isArray(c) || !c.length) return null;
+  const p = geometry.type === 'MultiLineString' ? c[0]?.[0] : c[0];
+  return Array.isArray(p) && Number.isFinite(p[0]) && Number.isFinite(p[1]) ? p : null;
+}
+
 function readMemory() {
   try {
     const raw = window.localStorage.getItem(MEMORY_KEY);
@@ -177,15 +200,16 @@ function readMemory() {
     return null;
   }
 }
-/** The section (dc) and country (dn) a link names, or nothing (T428). */
+/** The section (dc), country (dn) and Where text (dq, T600) a link names,
+ *  or nothing (T428). */
 function readUrlBrowse() {
   try {
     const p = new URLSearchParams(window.location.search);
     const cat = p.get('dc');
     const cc = (p.get('dn') || '').toUpperCase();
-    return { cat: cat || null, country: /^[A-Z]{2}$/.test(cc) ? cc : '' };
+    return { cat: cat || null, country: /^[A-Z]{2}$/.test(cc) ? cc : '', q: browseQueryFrom(window.location.search) };
   } catch {
-    return { cat: null, country: '' };
+    return { cat: null, country: '', q: '' };
   }
 }
 function writeMemory(m) {
@@ -448,8 +472,13 @@ export function DestinationsTab({
     // with nothing named opens on the first outdoor layer.
     return CATS.some((c) => c.key === want) ? want : 'trails';   // CATS key
   });
-  const [query, setQuery] = useState('');
-  const [debouncedQuery, setDebouncedQuery] = useState('');
+  // T600: a link or Explore's overview can open the tab with Where text.
+  const [query, setQuery] = useState(() => fromUrl.current.q || '');
+  const [debouncedQuery, setDebouncedQuery] = useState(() => fromUrl.current.q || '');
+  // Where text still to be read as a country (Trails and Cycling publish one
+  // file per country, so a typed country is a country picked). Resolved
+  // once the layer's country index is in, below.
+  const [pendingWhere, setPendingWhere] = useState(() => fromUrl.current.q || '');
   const [country, setCountry] = useState(() => fromUrl.current.country
     || (fromUrl.current.cat ? '' : memory.current?.country) || '');   // ISO2 or '' for all
   // Written back while this tab is on screen, keeping the hash (#dest=, a
@@ -460,9 +489,12 @@ export function DestinationsTab({
       const url = new URL(window.location.href);
       url.searchParams.set('dc', cat);
       if (country) url.searchParams.set('dn', country); else url.searchParams.delete('dn');
+      // T600: the Where text too, so a reload or a copied link keeps it.
+      const dq = debouncedQuery.trim();
+      if (dq) url.searchParams.set('dq', dq.slice(0, 80)); else url.searchParams.delete('dq');
       if (url.href !== window.location.href) window.history.replaceState(window.history.state, '', url);
     } catch { /* sandboxed: the tab still works, the address just does not follow */ }
-  }, [cat, country, isActive]);
+  }, [cat, country, isActive, debouncedQuery]);
   // The point everything is measured from in near-mode. A catalogue city or
   // any geocoded location, so it carries a name and coordinates rather than a
   // destination id: { id|null, name, sub, iso2|null, lat, lon }.
@@ -636,6 +668,9 @@ export function DestinationsTab({
   // where a hanging panel would run off the screen, so it opens the sheet
   // centred, the way the shared filter sheet stands on a wide screen.
   const [sheetFrom, setSheetFrom] = useState('toolbar');
+  // T602: the desktop filter pane, closed by default and opened and closed
+  // by All filters, as Places' Filters pill opens its pane.
+  const [paneOpen, setPaneOpen] = useState(false);
 
   useEffect(() => {
     if (layerError.trails) return undefined;
@@ -673,7 +708,12 @@ export function DestinationsTab({
     if (!openCategory) return;
     if (CATS.some((c) => c.key === openCategory)) {
       setCat(openCategory);
-      setQuery('');
+      // T600: Explore's overview hands its Where text over in the address
+      // (dq, App openExploreSection); a plain category press carries none.
+      const handed = browseQueryFrom(typeof window !== 'undefined' ? window.location.search : '');
+      setQuery(handed);
+      setDebouncedQuery(handed);
+      setPendingWhere(handed);
       setJourneyView(null);
       scrollRef.current?.scrollTo?.(0, 0);
     }
@@ -1147,6 +1187,26 @@ export function DestinationsTab({
     }
   }, [wantedTrail, tripCards, countryTrips]);
 
+  // The walk-shape chips as one test on a trip (T600: the Europe-wide map
+  // uses it too). A band set is a union: tapping two chips asks for either
+  // length, which is how somebody with "an afternoon or a full day" thinks.
+  const trailPass = useCallback((tr) => {
+    if (bands.length && !bands.includes(tripBand(tr))) return false;
+    if (grades.length && !grades.includes(tripGrade(tr))) return false;
+    if (climbs.length && !climbs.includes(tripClimbBand(tr))) return false;
+    if (shapes.length && !shapes.includes(tripRouteType(tr))) return false;
+    if (hls.length) {
+      const on = tripHighlights(tr);
+      if (!hls.some((k) => on.includes(k))) return false;
+    }
+    if (suits.length) {
+      const on = tripSuitability(tr);
+      if (!suits.some((k) => on.includes(k))) return false;
+    }
+    if (loopsOnly && !tr.is_loop) return false;
+    return true;
+  }, [bands, grades, climbs, shapes, hls, suits, loopsOnly]);
+
   const tripRows = useMemo(() => {
     if (!tripCards) return null;
     let rows = tripCards.filter((c) => (
@@ -1156,28 +1216,8 @@ export function DestinationsTab({
             : c.themes.has('mountains')
     ));
     if (q) rows = rows.filter((c) => norm(c.tr.name).includes(q));
-    // Walk-shape filters, Trails only. A band set is a union: tapping two
-    // chips asks for either length, which is how somebody with "an afternoon
-    // or a full day" actually thinks.
-    if (cat === 'trails') {
-      if (bands.length) rows = rows.filter((c) => bands.includes(tripBand(c.tr)));
-      if (grades.length) rows = rows.filter((c) => grades.includes(tripGrade(c.tr)));
-      if (climbs.length) rows = rows.filter((c) => climbs.includes(tripClimbBand(c.tr)));
-      if (shapes.length) rows = rows.filter((c) => shapes.includes(tripRouteType(c.tr)));
-      if (hls.length) {
-        rows = rows.filter((c) => {
-          const on = tripHighlights(c.tr);
-          return hls.some((k) => on.includes(k));
-        });
-      }
-      if (suits.length) {
-        rows = rows.filter((c) => {
-          const on = tripSuitability(c.tr);
-          return suits.some((k) => on.includes(k));
-        });
-      }
-      if (loopsOnly) rows = rows.filter((c) => c.tr.is_loop);
-    }
+    // Walk-shape filters, Trails only (trailPass above).
+    if (cat === 'trails') rows = rows.filter((c) => trailPass(c.tr));
     if (nearPlace) {
       return rows
         .map((c) => {
@@ -1213,8 +1253,7 @@ export function DestinationsTab({
       out.sort((a, b) => dir * a.c.tr.name.localeCompare(b.c.tr.name));
     }
     return out;
-  }, [tripCards, cat, q, nearPlace, sort, trailSort, bands, loopsOnly,
-    grades, climbs, shapes, hls, suits]);
+  }, [tripCards, cat, q, nearPlace, sort, trailSort, trailPass]);
 
   // How many walks each length band holds in this country, and how many of
   // them loop, so a chip can carry its own count and grey itself out instead
@@ -1686,6 +1725,50 @@ export function DestinationsTab({
     [cycleIndex],
   );
 
+  // T600: Where text that names a country Trails or Cycling publishes, as
+  // that country's code: the exact name or code, else (3 letters on) the
+  // one country whose name starts with it. Null for any other text.
+  const countryOfText = useCallback((text) => {
+    const n = norm(text).trim();
+    if (n.length < 2) return null;
+    const codes = cat === 'trails' ? (trailsIndex?.countries || []).map((c) => c.country)
+      : cat === 'cycling' ? [...cycleCountries] : [];
+    const exact = codes.find((c) => norm(c) === n || norm(countryName(c)) === n);
+    if (exact || n.length < 3) return exact || null;
+    const starts = codes.filter((c) => norm(countryName(c)).startsWith(n));
+    return starts.length === 1 ? starts[0] : null;
+  }, [cat, trailsIndex, cycleCountries, countryName]);
+  // Handed-over Where text (a link, Explore's overview) read as a country
+  // once the index that says which countries exist is in.
+  useEffect(() => {
+    if (!pendingWhere) return;
+    if (cat !== 'trails' && cat !== 'cycling') { setPendingWhere(''); return; }
+    if (cat === 'trails' ? !trailsIndex : !cycleIndex) return;
+    const cc = countryOfText(pendingWhere);
+    if (cc) {
+      setCountry(cc);
+      setNearPlace(null);
+      setQuery('');
+      setDebouncedQuery('');
+    }
+    setPendingWhere('');
+  }, [pendingWhere, cat, trailsIndex, cycleIndex, countryOfText]);
+  // End check (T600): the hand-off from Explore raced the category change
+  // and left "Italy" filtering the walks by name. Whatever the path, a Where
+  // text that IS a country's name on Trails or Cycling picks that country.
+  useEffect(() => {
+    if ((cat !== 'trails' && cat !== 'cycling') || !debouncedQuery) return;
+    if (cat === 'trails' ? !trailsIndex : !cycleIndex) return;
+    const n = norm(debouncedQuery).trim();
+    const cc = countryOfText(debouncedQuery);
+    if (!cc || (norm(countryName(cc)) !== n && norm(cc) !== n)) return;
+    if (country && country !== cc) return;
+    setCountry(cc);
+    setNearPlace(null);
+    setQuery('');
+    setDebouncedQuery('');
+  }, [cat, country, debouncedQuery, trailsIndex, cycleIndex, countryOfText, countryName]);
+
   const queryCycleCountry = useMemo(() => {
     if (!isCycleCat || !q || q.length < 2) return null;
     for (const cc of cycleCountries) {
@@ -1993,6 +2076,36 @@ export function DestinationsTab({
   }, [isBeachCat, isLakeCat, isMountainCat, isCycleCat, beachIndex, lakeIndex,
     mountainIndex, cycleIndex, availableCountries, countryName, lang]);
 
+  // T602: the settings line's Countries. One country in "Only these" is
+  // the tab's country (Trails and Cycling then load all its routes), once
+  // the layer says it has that country. Applied when the choice changes,
+  // so removing the country's chip sticks; a country that came from the
+  // settings line leaves with it.
+  const settings = useSettings();
+  const settingsCc = settings && !settings.countryNot && (settings.countryFilter || []).length === 1
+    ? settings.countryFilter[0] : '';
+  const fromSettings = useRef({ key: '', cc: '' });
+  useEffect(() => {
+    if (!isActive) return;
+    const offered = cat === 'trails'
+      ? (trailsIndex ? (trailsIndex.countries || []).map((c) => c.country) : null)
+      : countryOptions.length > 0 ? countryOptions.map(([cc]) => cc) : null;
+    const key = `${cat}:${settingsCc}`;
+    if (fromSettings.current.key === key) return;
+    if (!settingsCc) {
+      if (fromSettings.current.cc && country === fromSettings.current.cc) setCountry('');
+      fromSettings.current = { key, cc: '' };
+      return;
+    }
+    // Wait for the layer's country list before deciding.
+    if (!offered) return;
+    fromSettings.current = { key, cc: '' };
+    if (!offered.includes(settingsCc) || country === settingsCc) return;
+    fromSettings.current.cc = settingsCc;
+    setCountry(settingsCc);
+    setNearPlace(null);
+  }, [isActive, cat, settingsCc, trailsIndex, countryOptions, country]);
+
   // A country the tab that just opened does not publish. Cleared rather than
   // left set, because the picker would show a country the list is not
   // filtered by: every layer has its own set, and Andorra has no beaches.
@@ -2222,8 +2335,8 @@ export function DestinationsTab({
     + Object.values(mtnFacets).reduce((n, list) => n + (list?.length || 0), 0)
     + (itinDays != null ? 1 : 0) + (itinPace ? 1 : 0) + (itinScale ? 1 : 0);
 
-  const resetAll = () => {
-    setCountry('');
+  // Every filter but the country (the pane's Clear all, T602).
+  const resetFacets = () => {
     setBands([]);
     setLoopsOnly(false);
     setGrades([]);
@@ -2239,6 +2352,10 @@ export function DestinationsTab({
     setItinDays(null);
     setItinPace(null);
     setItinScale(null);
+  };
+  const resetAll = () => {
+    setCountry('');
+    resetFacets();
   };
 
   // Every filter that is on, as one removable chip (T384, brief V3-2, rule
@@ -2516,19 +2633,55 @@ export function DestinationsTab({
     if (cat === 'beaches') for (const { b } of beachRows || []) push('beaches', b, displayName(b.name), b.cc, placeLine(b.region, countryName(b.cc)), b.score, firstOkImage(b.images)?.u);
     else if (cat === 'lakes') for (const { b } of lakeRows || []) push('lakes', b, displayName(b.name), b.cc, placeLine(b.region, countryName(b.cc)), b.score, firstOkImage(b.images)?.u);
     else if (cat === 'mountains') for (const { b } of mountainRows || []) push('mountains', b, displayName(b.name), b.cc, placeLine(b.range || b.region, countryName(b.cc)), b.score, firstOkImage(b.images)?.u);
-    else if (cat === 'trails') for (const { c } of tripRows || []) push('trails', c, displayName(c.tr.name), c.tr.cc || c.tr.country, countryName(c.tr.cc || c.tr.country), c.tr.rating?.score ?? c.tr.rating, okPhoto(c.assoc?.photoUrl));
+    else if (cat === 'trails' && tripRows) for (const { c } of tripRows) push('trails', c, displayName(c.tr.name), c.tr.cc || c.tr.country, countryName(c.tr.cc || c.tr.country), c.tr.rating?.score ?? c.tr.rating, okPhoto(c.assoc?.photoUrl));
+    // T600: with no country, the Europe-wide best walks (trails/top.json,
+    // already loaded for the rails), under the same chips and search text.
+    else if (cat === 'trails' && !trailsCountry && topTrails?.length) {
+      for (const tr of topTrails) {
+        if (q && !norm(tr.name).includes(q)) continue;
+        if (!trailPass(tr)) continue;
+        push('trails', { tr }, displayName(tr.name), tr.country, countryName(tr.country), tr.rating?.score ?? tr.rating, okPhoto(tr.img));
+      }
+    }
     else if (cat === 'cycling') for (const r of cycleRows?.routes || []) push('cycling', r, routeTitle(r, t), r.cc, countryName(r.cc), r.score, okPhoto(r.img));
     return out;
-  }, [outdoorCat, isActive, cat, beachRows, lakeRows, mountainRows, tripRows, cycleRows, bedFood, countryName, t]);
-  const mapRows = useMemo(() => mapItems.map((x) => x.m), [mapItems]);
+  }, [outdoorCat, isActive, cat, beachRows, lakeRows, mountainRows, tripRows, cycleRows, bedFood, countryName, t,
+    trailsCountry, topTrails, q, trailPass]);
+  // T593: a walk or a ride is drawn as its line (the list rows carry the
+  // simplified one), its pin moved to the start with the length on it.
+  const routeMap = useMemo(() => {
+    if (cat !== 'trails' && cat !== 'cycling') return null;
+    const features = [];
+    const starts = new Map();
+    mapItems.forEach(({ m, row }, i) => {
+      const geometry = cat === 'trails' ? row.tr?.geometry : row.geometry;
+      const at = lineStartOf(geometry);
+      if (!at) return;
+      const km = cat === 'trails' ? (row.tr?.distance_m ?? 0) / 1000 : row.km;
+      const label = Number.isFinite(km) && km > 0
+        ? t('where.km', { n: km.toLocaleString(lang, { maximumFractionDigits: km < 10 ? 1 : 0 }) })
+        : '';
+      starts.set(m.id, at);
+      features.push({ type: 'Feature', geometry, properties: { id: m.id, label, rank: i } });
+    });
+    return features.length ? { lines: { type: 'FeatureCollection', features }, starts } : null;
+  }, [cat, mapItems, t, lang]);
+  const mapRows = useMemo(() => mapItems.map(({ m }) => {
+    const at = routeMap?.starts.get(m.id);
+    return at ? { ...m, lon: at[0], lat: at[1] } : m;
+  }), [mapItems, routeMap]);
   const openMapItem = useCallback((id) => {
     const hit = mapItems.find((x) => x.m.id === id);
     if (!hit) return;
     if (hit.layer === 'beaches') setPageBeach(hit.row);
     else if (hit.layer === 'lakes') setPageLake(hit.row);
     else if (hit.layer === 'mountains') setPageMountain(hit.row);
-    else if (hit.layer === 'trails') setPageCard(hit.row);
+    // A Europe-wide walk has no country list behind it (T600): its card is
+    // built the way a neighbour's is.
+    else if (hit.layer === 'trails') { if (hit.row.assoc) setPageCard(hit.row); else openNeighbour('trail', hit.row.tr); }
     else if (hit.layer === 'cycling') openCycleRoute(hit.row);
+    // openNeighbour only calls setters and reads the catalogue.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mapItems, openCycleRoute]);
   const mapOn = dview === 'map' && outdoorCat && mapRows.length > 0;
   const viewSwitch = outdoorCat && (mapRows.length > 0 || dview === 'map') ? {
@@ -2592,7 +2745,7 @@ export function DestinationsTab({
   const catTiles = (
     <ExploreCategories
       current={cat === 'trips' ? 'places' : cat}
-      columns={isDesktop ? 2 : 3}
+      variant="row"
       panelId="dtab-panel"
       className="dtab-cats"
       onPick={(key) => {
@@ -2616,31 +2769,6 @@ export function DestinationsTab({
     setNearPlace(null);
     setSort({ key, dir: SORTS.find((x) => x.key === key).defaultDir });
   };
-  const renderSort = (cls, hideLabel) => (showSorts && sortDefs.length > 0 ? (
-    <Field
-      as="select"
-      className={cls}
-      label={t('places.sortLabel')}
-      hideLabel={hideLabel}
-      value={sortCur.key}
-      onChange={(e) => pickSort(e.target.value)}
-    >
-      {sortDefs.map(({ key, labelKey }) => (
-        <option key={key} value={key}>{t(labelKey)}</option>
-      ))}
-    </Field>
-  ) : null);
-
-  const renderCountry = (cls) => (
-    <CountryPicker
-      className={cls}
-      value={country}
-      options={countryOptions}
-      onChange={(cc) => { setCountry(cc); setNearPlace(null); }}
-      label={t('places.allCountries')}
-    />
-  );
-
   const renderFacetGroups = (only) => facetGroups
     // Inline only the short set flagged `toolbar`, or a group with a chip
     // on (an opening's "See all" can switch on a chip from any group);
@@ -2649,9 +2777,9 @@ export function DestinationsTab({
       ? g.toolbar === true || g.options.some((o) => o.on)
       : true))
     .map((g) => (
-      <div key={g.key} className="dtab-facet xrail-sec">
+      <div key={g.key} className="dtab-facet xpane-sec">
         <h3 className="dtab-facet-label xrail-h">{g.label}</h3>
-        <div className="dtab-chips xrail-chips" role="group" aria-label={g.label}>
+        <div className="dtab-chips xpane-chips" role="group" aria-label={g.label}>
           {g.options.map((o) => (
             <Chip
               key={o.key}
@@ -2667,6 +2795,80 @@ export function DestinationsTab({
         </div>
       </div>
     ));
+
+  // The locate door and the suggestion list, built once: they ride in the
+  // phone toolbar's field and in the What and Where bar alike (T593).
+  // On a desktop the head's labelled near-me door does this (T457: two
+  // doors to one action, and the header field lost a third of its width to
+  // the crosshair); a phone keeps it in the field.
+  const locateBtn = (canLocate && !(isDesktop && nearMeDoor) && (
+    <button
+      type="button"
+      className="places-locate"
+      onClick={useMyLocation}
+      disabled={locBusy}
+      aria-busy={locBusy || undefined}
+      title={t('places.useMyLocation')}
+      aria-label={t('places.useMyLocation')}
+    >
+      {locBusy
+        ? <span className="state-pulse"><CrosshairIcon size={16} /></span>
+        : <CrosshairIcon size={16} />}
+    </button>
+  ));
+  const suggList = (suggOpen && (suggestions.length > 0 || canGeo) && (
+    <div className="places-sugg" role="listbox">
+      {/* Two groups, headed only once the second one exists: the
+          places Carta prices, then anywhere else on the map. */}
+      {suggestions.length > 0 && geoHits && geoHits.length > 0 && (
+        <p className="places-sugg-head">{t('places.suggCatalogue')}</p>
+      )}
+      {suggestions.map((d) => (
+        <button key={d.id} className="places-sugg-item" onClick={() => pickDest(d)}>
+          <span className="places-sugg-city">{d.city}</span>
+          <span className="places-sugg-country">{d.country}</span>
+        </button>
+      ))}
+      {canGeo && !geoHits && (
+        <button
+          type="button"
+          className="places-sugg-item places-sugg-any"
+          onClick={runGeoSearch}
+          disabled={geoBusy}
+        >
+          <span className="places-sugg-city">
+            <MapPinIcon size={13} />
+            {geoBusy ? t('places.searchingAny') : t('places.searchAny', { q: term })}
+          </span>
+          {!geoBusy && <span className="places-sugg-country">{t('places.searchAnyHint')}</span>}
+        </button>
+      )}
+      {geoHits && geoHits.length > 0 && (
+        <>
+          <p className="places-sugg-head">{t('places.suggAnywhere')}</p>
+          {geoHits.map((r, i) => {
+            const { title, rest } = geoLines(r);
+            return (
+              <button
+                key={`${r.lat},${r.lon},${i}`}
+                className="places-sugg-item is-geo"
+                onClick={() => pickGeo(r)}
+              >
+                <span className="places-sugg-city">
+                  <MapPinIcon size={13} />
+                  {title}
+                </span>
+                <span className="places-sugg-country">{rest}</span>
+              </button>
+            );
+          })}
+        </>
+      )}
+      {geoHits && geoHits.length === 0 && (
+        <p className="places-sugg-note">{t('places.anywhereNone')}</p>
+      )}
+    </div>
+  ));
 
   // The search field, built once. It renders inline in the phone toolbar and
   // portals into the app header on desktop; the suggestion list rides with it.
@@ -2685,102 +2887,114 @@ export function DestinationsTab({
         placeholder={t('places.searchDest')}
         aria-label={t('places.searchDest')}
       />
-      {/* On a desktop the head's labelled near-me door does this (T457: two
-          doors to one action, and the header field lost a third of its
-          width to the crosshair); a phone keeps it in the field. */}
-      {canLocate && !(isDesktop && nearMeDoor) && (
-        <button
-          type="button"
-          className="places-locate"
-          onClick={useMyLocation}
-          disabled={locBusy}
-          aria-busy={locBusy || undefined}
-          title={t('places.useMyLocation')}
-          aria-label={t('places.useMyLocation')}
-        >
-          {locBusy
-            ? <span className="state-pulse"><CrosshairIcon size={16} /></span>
-            : <CrosshairIcon size={16} />}
-        </button>
-      )}
-      {suggOpen && (suggestions.length > 0 || canGeo) && (
-        <div className="places-sugg" role="listbox">
-          {/* Two groups, headed only once the second one exists: the
-              places Carta prices, then anywhere else on the map. */}
-          {suggestions.length > 0 && geoHits && geoHits.length > 0 && (
-            <p className="places-sugg-head">{t('places.suggCatalogue')}</p>
-          )}
-          {suggestions.map((d) => (
-            <button key={d.id} className="places-sugg-item" onClick={() => pickDest(d)}>
-              <span className="places-sugg-city">{d.city}</span>
-              <span className="places-sugg-country">{d.country}</span>
-            </button>
-          ))}
-          {canGeo && !geoHits && (
-            <button
-              type="button"
-              className="places-sugg-item places-sugg-any"
-              onClick={runGeoSearch}
-              disabled={geoBusy}
-            >
-              <span className="places-sugg-city">
-                <MapPinIcon size={13} />
-                {geoBusy ? t('places.searchingAny') : t('places.searchAny', { q: term })}
-              </span>
-              {!geoBusy && <span className="places-sugg-country">{t('places.searchAnyHint')}</span>}
-            </button>
-          )}
-          {geoHits && geoHits.length > 0 && (
-            <>
-              <p className="places-sugg-head">{t('places.suggAnywhere')}</p>
-              {geoHits.map((r, i) => {
-                const { title, rest } = geoLines(r);
-                return (
-                  <button
-                    key={`${r.lat},${r.lon},${i}`}
-                    className="places-sugg-item is-geo"
-                    onClick={() => pickGeo(r)}
-                  >
-                    <span className="places-sugg-city">
-                      <MapPinIcon size={13} />
-                      {title}
-                    </span>
-                    <span className="places-sugg-country">{rest}</span>
-                  </button>
-                );
-              })}
-            </>
-          )}
-          {geoHits && geoHits.length === 0 && (
-            <p className="places-sugg-note">{t('places.anywhereNone')}</p>
-          )}
-        </div>
-      )}
+      {locateBtn}
+      {suggList}
     </div>
   );
 
   // The header's search slot belongs to whichever browse tab is on screen
   // (both stay mounted), the way ExploreTab claims it.
   const [headerSlot, setHeaderSlot] = useState(null);
-  const [tlibSlot, setTlibSlot] = useState(null);
   useEffect(() => {
     if (isDesktop && isActive) setHeaderSlot(document.getElementById('header-search-slot'));
     else setHeaderSlot(null);
   }, [isDesktop, isActive]);
 
-  const filtersButton = facetGroups.length > 0 ? (
-    <Button
-      ref={filterBtnRef}
-      variant="secondary"
-      className="dtab-filters"
-      iconStart={<FilterIcon size={16} />}
-      onClick={() => { setSheetFrom('toolbar'); setSheetOpen(true); }}
-      aria-haspopup="dialog"
-      aria-expanded={sheetOpen}
+  // ── The What and Where bar and the quick filter row (T593) ──────────────
+  // What sets one facet group to a single choice (or none); Where is the
+  // tab's search text, live as before. Search applies What and, when the
+  // text is exactly a town Carta knows, measures the list from that town.
+  const whatGroup = outdoorCat ? facetGroups.find((g) => g.key === WHAT_GROUP[cat]) : null;
+  const whatOpts = whatGroup ? whatGroup.options.filter((o) => o.key !== 'loop') : [];
+  const whatOn = whatOpts.filter((o) => o.on);
+  const whatSpec = whatOpts.length > 0
+    ? { value: whatOn.length === 1 ? whatOn[0].key : '', options: whatOpts }
+    : null;
+  const applyWhat = (key) => {
+    if (!whatGroup) return;
+    for (const o of whatOpts) if (o.on && o.key !== key) whatGroup.onToggle(o.key);
+    if (key && !whatOpts.some((o) => o.key === key && o.on)) whatGroup.onToggle(key);
+  };
+  // T600: on Trails and Cycling a country named in Where is a country
+  // picked (their walks and rides are published one country at a time), so
+  // the chip says it and the map has that country's every route.
+  const pickTypedCountry = () => {
+    const cc = (cat === 'trails' || cat === 'cycling') ? countryOfText(term) : null;
+    if (!cc) return false;
+    setCountry(cc);
+    setNearPlace(null);
+    setQuery('');
+    setSuggOpen(false);
+    scrollRef.current?.scrollTo?.(0, 0);
+    return true;
+  };
+  const runWhere = (whatKey) => {
+    if (whatKey != null) applyWhat(whatKey);
+    setSuggOpen(false);
+    if (pickTypedCountry()) return;
+    const town = term && !typedCc ? suggestions.find((d) => norm(d.city) === norm(term)) : null;
+    if (town) pickDest(town);
+    scrollRef.current?.scrollTo?.(0, 0);
+  };
+  const whereBar = outdoorCat ? (
+    <WhereBar
+      t={t}
+      what={whatSpec}
+      onSearch={runWhere}
+      after={viewSwitch ? (
+        // End check (T593 with T592): the one Map or List pill, as on
+        // Places, in the bar every outdoor tab opens on, so the map is one
+        // press away at rest too.
+        <Button variant="secondary" className="xview-toggle wbar-view"
+          iconStart={viewSwitch.value === 'map' ? <ListDayIcon size={16} /> : <MapPinIcon size={16} />}
+          onClick={() => viewSwitch.onChange(viewSwitch.value === 'map' ? 'top' : 'map')}>
+          {t(viewSwitch.value === 'map' ? 'explore.viewList' : 'explore.viewMap')}
+        </Button>
+      ) : null}
+      where={{
+        value: query,
+        boxRef: searchRef,
+        onChange: (e) => { setQuery(e.target.value); setSuggOpen(true); },
+        onFocus: () => setSuggOpen(true),
+        onKeyDown: (e) => {
+          // Enter keeps the field's own answer (the best town or the map);
+          // the Search button is the bar's. A country on Trails and Cycling
+          // is picked first (T600).
+          if (e.key === 'Enter') { e.preventDefault(); if (!pickTypedCountry()) onSearchEnter(); }
+          else if (e.key === 'Escape') setSuggOpen(false);
+        },
+        onClear: () => { setQuery(''); setSuggOpen(false); },
+        extra: locateBtn || null,
+      }}
     >
-      {t('filter.filters')}
-      {activeFilters > 0 && <Chip kind="count" className="dtab-count">{fmt(activeFilters)}</Chip>}
-    </Button>
+      {suggList || null}
+    </WhereBar>
+  ) : null;
+  const quickGroups = (QUICK_GROUPS[cat] || [])
+    .map((k) => facetGroups.find((g) => g.key === k)).filter(Boolean);
+  // T602: the one quick row on every tab and width: All filters (the
+  // desktop pane or the phone sheet), Sort, then the tab's quick chips.
+  const sortPill = showSorts && sortDefs.length > 0 && !isJourneyBrowse ? (
+    <SortPill t={t} options={sortDefs} value={sortCur.key} onChange={pickSort} />
+  ) : null;
+  const filterCount = activeFilters - (country ? 1 : 0);
+  const quickBar = facetGroups.length > 0 || sortPill ? (
+    <FilterChipBar
+      t={t}
+      fmt={fmt}
+      groups={quickGroups}
+      allCount={filterCount}
+      allRef={filterBtnRef}
+      allOn={facetGroups.length > 0 && (isDesktop ? paneOpen : sheetOpen)}
+      allControls={isDesktop ? 'dtab-side' : undefined}
+      lead={sortPill}
+      onAll={facetGroups.length > 0
+        ? () => {
+          if (isDesktop) setPaneOpen((v) => !v);
+          else { setSheetFrom('toolbar'); setSheetOpen(true); }
+        }
+        : null}
+    />
   ) : null;
 
   // How long the composed trip is: a stepped select (T428, row T199-a: the
@@ -2804,13 +3018,11 @@ export function DestinationsTab({
     </Field>
   ) : null;
 
-  const countryControl = countryOptions.length > 0 ? renderCountry('places-country dtab-country-pick') : null;
-  const sortControl = renderSort('dtab-sort', true);
-  const refineRow = (sortControl || countryControl || tripLength) ? (
-    <div className="dtab-refine">
+  // The composed trips' length, over the list on every width (T602: the
+  // panel that held it on a desktop is gone; the sort is the quick row's).
+  const refineRow = tripLength ? (
+    <div className="dtab-refine is-length">
       {tripLength}
-      {sortControl}
-      {countryControl}
     </div>
   ) : null;
 
@@ -2836,10 +3048,6 @@ export function DestinationsTab({
       )}
       {/* A country's walks open on its rails too (T457): the band is their
           head, so the view switch stands in it. */}
-      {viewSwitch && !sectionHead && (
-        <Segmented size="sm" className="dtab-view" label={viewSwitch.label} value={viewSwitch.value}
-          onChange={viewSwitch.onChange} options={viewSwitch.options} />
-      )}
     </div>
   ) : null;
 
@@ -2867,68 +3075,57 @@ export function DestinationsTab({
           is for assistive technology. It steps aside while a dialog (a detail
           page, a sheet) is open, so that dialog's own h1 is the only one. */}
       <h1 className="sr-only tab-h1">{t('explore.title')}</h1>
-      {/* Desktop only (CSS hides it under 769px): Explore's panel, section
-          for section (T457): the six sections as tiles, then everything that
-          narrows the list, the country last in a fold with its flags. */}
-      <aside className="side-panel places-side" aria-label={t('places.sideAria')}>
-        <div className="side-block xrail">
-          <h2 className="sr-only">{t('places.sideAria')}</h2>
-          {isDesktop && (
-            <section className="xrail-sec" aria-labelledby="dtab-h-browse">
-              <h3 className="xrail-h" id="dtab-h-browse">{t('places.sideBrowse')}</h3>
-              {catTiles}
-            </section>
-          )}
-          {tripLength && <div className="side-group xrail-sec">{tripLength}</div>}
-          {/* The trip library's filters (T498): JourneysSection portals its
-              groups here on a desktop, so the library has no bar of its own. */}
-          {isJourneyBrowse && <div className="side-group tlib-slot" ref={setTlibSlot} />}
-          {showSorts && sortDefs.length > 0 && (
-            <div className="side-group xrail-sec">{renderSort('dtab-sort-side', false)}</div>
-          )}
-          {facetGroups.length > 0 && (
-            <div className="side-group side-facets">
-              {renderFacetGroups('toolbar')}
-              <Button
-                variant="secondary"
-                block
-                className="side-allfilters"
-                iconStart={<FilterIcon size={16} />}
-                onClick={() => { setSheetFrom('side'); setSheetOpen(true); }}
-                aria-haspopup="dialog"
-                aria-expanded={sheetOpen}
-              >
-                {t('places.allFilters')}
-                {activeFilters - (country ? 1 : 0) > 0 && (
-                  <Chip kind="count" className="dtab-count">{fmt(activeFilters - (country ? 1 : 0))}</Chip>
-                )}
-              </Button>
+      {/* T602: the filter pane, desktop only (CSS hides it under 769px)
+          and only while All filters has it open: every facet group of the
+          tab in Places' pane sections. No sort (the quick row's pill) and
+          no country (the settings line's Countries, or Where). */}
+      {facetGroups.length > 0 && paneOpen && isDesktop && (
+        <aside className="side-panel places-side" id="dtab-side" aria-label={t('filter.filters')}>
+          <div className="xrail xpane">
+            <div className="xpane-head">
+              <h2 className="xpane-count">{t('filter.filters')}</h2>
+              {filterCount > 0 && (
+                <Button variant="quiet" size="sm" className="xpane-clear" onClick={resetFacets}>
+                  {t('filter.clearAll')}
+                </Button>
+              )}
             </div>
-          )}
-          {countryOptions.length > 0 && (
-            <CountryFold t={t} single name="dtab-country" className="side-country"
-              countries={countryOptions} selected={country ? [country] : []}
-              onPick={(cc) => { setCountry(cc); setNearPlace(null); }} />
-          )}
-        </div>
-      </aside>
+            {renderFacetGroups('all')}
+          </div>
+        </aside>
+      )}
 
       <div className="places-tab" ref={scrollRef}>
       <div className="places-wrap">
-        {headerSlot
+        {/* The outdoor tabs search from their What and Where bar (T593);
+            Places' trip library keeps the field. */}
+        {!outdoorCat && (headerSlot
           ? createPortal(searchField, headerSlot)
           : (
             <div className="dtab-top">
               {searchField}
-              {!isDesktop && filtersButton}
             </div>
-          )}
+          ))}
         {/* Under the search row, as on Places (T498), so moving between the
             six never moves the grid. */}
-        {!isDesktop && <div className="dtab-bar">{catTiles}</div>}
+        {/* T586: the six as one row of pills on every width, as on Places. */}
+        <div className="dtab-bar xcats-bar">{catTiles}</div>
 
-        <div className="dtab-panel" id="dtab-panel" role="tabpanel"
+        <div className={`dtab-panel${outdoorCat ? ' is-outdoor' : ''}${mapOn ? ' is-map' : ''}`} id="dtab-panel" role="tabpanel"
           aria-label={t((CATS.find((c) => c.key === cat) || CATS[0]).labelKey)}>
+        {/* T600, the compact head: the pill row, then the What and Where
+            bar with the Map or List pill on one row, then the quick filter
+            row (All filters, Sort, the quick chips; T602 on every width
+            and tab, the trip library too) and the chips that are on, then
+            the map or the list. */}
+        {whereBar}
+
+        {quickBar}
+
+        {activeChips.length > 0 && (
+          <FilterChips t={t} chips={activeChips} onClearAll={clearAllChips} />
+        )}
+
         {/* A refused or failed location fix, said once, under the field that
             asked for it. Cleared as soon as anything is typed. */}
         {locErr && <p className="places-locate-err" role="status">{locErr}</p>}
@@ -2972,11 +3169,11 @@ export function DestinationsTab({
         })()}
 
 
-        {countryBand}
+        {!mapOn && countryBand}
 
         {/* The country's coasts, ranges and regions that hold this layer,
             as doors to their pages (T489-i). */}
-        {layerRegions.length > 0 && !nearPlace && (
+        {layerRegions.length > 0 && !nearPlace && !mapOn && (
           <nav className="dtab-regions" aria-label={t('cpage.regionsHead')}>
             <span className="dtab-regions-h" aria-hidden="true">{t('cpage.regionsHead')}</span>
             {layerRegions.map((r) => (
@@ -2993,32 +3190,29 @@ export function DestinationsTab({
         {/* A section narrowed by a filter keeps its head (T457: Explore keeps
             "Explore Europe" over a filtered list); the rails and the view
             switch step aside while the list is the answer. */}
-        {!opening && sectionHead && !(cat === 'trails' && showCountryIndex) && (
-          <SectionHead title={sectionHead.title} id={`dtab-head-${cat}`} nearMe={nearMeDoor} view={viewSwitch} />
+        {!opening && !mapOn && sectionHead && !(cat === 'trails' && showCountryIndex) && (
+          <SectionHead title={sectionHead.title} id={`dtab-head-${cat}`} nearMe={nearMeDoor} />
         )}
         {/* No head and no country band (a search, a place to measure from):
             the List | Map switch still has a row of its own (T498). */}
-        {viewSwitch && !sectionHead && !countryBand && (
-          <div className="dtab-head dtab-head-bare">
-            <Segmented size="sm" className="dtab-view" label={viewSwitch.label} value={viewSwitch.value}
-              onChange={viewSwitch.onChange} options={viewSwitch.options} />
-          </div>
-        )}
 
         {/* Trails at rest: the head, then the countries (a walk is ranked
             within its country, so the section opens on them). */}
-        {cat === 'trails' && sectionHead && !opening && topTrails !== undefined && !topTrails?.length && (
+        {cat === 'trails' && sectionHead && !opening && !mapOn && topTrails !== undefined && !topTrails?.length && (
           <SectionHead title={sectionHead.title} id="dtab-head-trails" nearMe={nearMeDoor} />
         )}
 
         {/* The section's opening while it is at rest (T183, rebuilt T428):
             the head, Try one, the rails, the countries; then the list. */}
-        {opening && (
+        {/* In the map view the map is the answer: no head, no rails. */}
+        {opening && !mapOn && (
           <>
             <SectionOpening
               layer={opening.layer}
               head={sectionHead}
-              view={viewSwitch}
+              // T600: the Map or List pill in the Where row is the one view
+              // control; the head no longer repeats it as a switch.
+              view={null}
               rails={listView || mapOn ? [] : openingRails.rails}
               starters={listView ? openingDoors : mapOn ? [] : openingRails.starters}
               describe={describeRow}
@@ -3037,16 +3231,21 @@ export function DestinationsTab({
           </>
         )}
 
-        {!isJourneyBrowse && !(cat === 'trails' && showCountryIndex) && refineRow}
+        {!isJourneyBrowse && !mapOn && refineRow}
 
-        {activeChips.length > 0 && (
-          <FilterChips t={t} chips={activeChips} onClearAll={clearAllChips} />
+        {/* Trails and Cycling with no country: the map holds each country's
+            best, and says once how to get all of one (T600). */}
+        {mapOn && !country && !nearPlace && (cat === 'trails' || cat === 'cycling') && (
+          <p className="dtab-mapnote">{t(cat === 'trails' ? 'where.mapTopTrails' : 'where.mapTopRides')}</p>
         )}
 
         {/* The map view (T498, owner T489-c): the Explore map over this
-            list, the lists kept mounted under it so List is instant. */}
+            list, the lists kept mounted under it so List is instant. It
+            fills what is left of the screen (T600). */}
         {mapOn && (
           <OutdoorMap rows={mapRows} onSelect={openMapItem} t={t}
+            lines={routeMap?.lines || null}
+            pinFig={cat === 'beaches' || cat === 'lakes' || cat === 'mountains' ? 'score' : 'eur'}
             onBack={() => setDview('top')} />
         )}
         <div className="dtab-lists" hidden={mapOn || undefined}>
@@ -3458,7 +3657,9 @@ export function DestinationsTab({
             onClearSearch={() => setQuery('')}
             onBack={onPickCategory ? () => onPickCategory('places', country || '') : null}
             backLabel={t('nav.explore')}
-            panelSlot={isDesktop ? tlibSlot : null}
+            // T602: no side panel holds the library's filters; it carries
+            // its own Filters door on every width.
+            panelSlot={null}
             isDesktop={isDesktop}
             t={t}
             lang={lang}
@@ -3824,6 +4025,7 @@ export function DestinationsTab({
           noun={cat}
         />
       )}
+      <SiteFooter />
       </div>
     </div>
   );

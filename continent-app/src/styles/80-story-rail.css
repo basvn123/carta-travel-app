@@ -1,0 +1,359 @@
+/* StoryRail (T587): every browse rail as one moving strip, a tilted lead
+   card then tall photo cards whose text sits on the page ground.
+   Owner decisions 1 to 3 (2026-10-22): lift and tilt on hover, one staggered
+   arrival, solid --surface pills on the photo, no box behind the text.
+   Every selector starts at .storyr so it wins over the older rail rules in
+   62-v6-explore.css and 30-section-opening.css without touching them. */
+
+.storyr {
+  container-type: inline-size;
+  min-width: 0;
+}
+
+/* The strip: about 70 percent of a phone per card so the next one shows,
+   then 2.4, 3.4, 4.4 and 5.4 across. The inline padding gives the tilted
+   lead's corners and the lifted cards room inside the scroller; the
+   negative margin keeps the first card on the column's edge. */
+.storyr .storyr-strip {
+  --storyr-gap: var(--space-4);
+  --storyr-w: 70%;
+  --storyr-lead-w: 58%;
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  gap: var(--storyr-gap);
+  margin: 0 calc(-1 * var(--space-2));
+  padding: var(--space-3) var(--space-2) var(--space-2);
+  list-style: none;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--space-2);
+  scrollbar-width: none;
+}
+.storyr .storyr-strip::-webkit-scrollbar { display: none; }
+@container (min-width: 560px) {
+  .storyr .storyr-strip {
+    --storyr-w: calc((100% - 2 * var(--storyr-gap)) / 2.4);
+    --storyr-lead-w: var(--storyr-w);
+  }
+}
+@container (min-width: 860px) {
+  .storyr .storyr-strip { --storyr-w: calc((100% - 3 * var(--storyr-gap)) / 3.4); }
+}
+@container (min-width: 1080px) {
+  .storyr .storyr-strip { --storyr-w: calc((100% - 4 * var(--storyr-gap)) / 4.4); }
+}
+@container (min-width: 1320px) {
+  .storyr .storyr-strip { --storyr-w: calc((100% - 5 * var(--storyr-gap)) / 5.4); }
+}
+
+.storyr .storyr-item {
+  display: flex;
+  flex: 0 0 var(--storyr-w);
+  min-width: 0;
+  scroll-snap-align: start;
+}
+.storyr .storyr-item--lead { flex-basis: var(--storyr-lead-w); }
+.storyr .storyr-item > .card { flex: 1 1 auto; min-width: 0; }
+
+/* ---- The lead card ------------------------------------------------------ */
+/* T599: filled top to bottom on purpose. The heading at the top, a fanned
+   stack of the rail's first three photographs in the middle (it takes the
+   height the photo cards give the row), the one strong figure, the small
+   facts and "See all" at the foot. */
+.storyr .storyr-lead.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5) var(--space-4) var(--space-4);
+  border: 0;
+  border-radius: var(--radius-card);
+  background: var(--surface-sunken);
+  color: var(--text);
+  transform: rotate(-2deg);
+  transition: transform var(--dur-2) var(--ease-out);
+}
+.storyr .storyr-lead-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+.storyr .storyr-lead-title {
+  margin: 0;
+  font-size: var(--text-title);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+@container (min-width: 560px) {
+  .storyr .storyr-lead-title { font-size: var(--text-headline); }
+}
+.storyr .storyr-lead-line {
+  margin: 0;
+  color: var(--text-2);
+  font-size: var(--text-label);
+  line-height: 1.4;
+}
+
+/* The stack: three prints fanned from one point, the first place's photo
+   in front. Each print is 4:5 like the cards it previews, sized by the
+   stack's height and capped by its width so the fan fits a 360 px phone;
+   a --surface edge and --elev-1 make them read as prints on the card. */
+.storyr .storyr-stack {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 112px;
+  margin: 0 calc(-1 * var(--space-1));
+  pointer-events: none;
+}
+.storyr .storyr-stack-photo {
+  --fan-x: 0%;
+  --fan-r: 0deg;
+  position: absolute;
+  top: 6%;
+  left: 50%;
+  z-index: 1;
+  height: 88%;
+  aspect-ratio: 4 / 5;
+  max-width: 50%;
+  overflow: hidden;
+  border: 3px solid var(--surface);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+  transform: translateX(calc(-50% + var(--fan-x))) rotate(var(--fan-r));
+  transition: transform var(--dur-2) var(--ease-out);
+}
+.storyr .storyr-stack-photo:nth-child(1) { z-index: 3; --fan-r: -1deg; }
+.storyr .storyr-stack-photo:nth-child(2) { z-index: 2; --fan-x: -38%; --fan-r: -9deg; }
+.storyr .storyr-stack-photo:nth-child(3) { z-index: 1; --fan-x: 38%; --fan-r: 8deg; }
+/* Two prints: side by side, a little apart. */
+.storyr .storyr-stack[data-n='2'] .storyr-stack-photo:nth-child(1) { --fan-x: 18%; --fan-r: 4deg; }
+.storyr .storyr-stack[data-n='2'] .storyr-stack-photo:nth-child(2) { --fan-x: -22%; --fan-r: -6deg; }
+.storyr .storyr-stack-photo img,
+.storyr .storyr-stack-photo .hero-blank {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.storyr .storyr-lead-foot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+/* The one strong figure: the words small, the figure large and tabular. */
+.storyr .storyr-figure {
+  margin: 0;
+  color: var(--text-2);
+  font-size: var(--text-label);
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+.storyr .storyr-figure .money,
+.storyr .storyr-figure .storyr-num,
+.storyr .storyr-figure.is-plain {
+  color: var(--text);
+  font-size: var(--text-headline);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.storyr .storyr-figure.is-plain { font-size: var(--text-title); }
+.storyr .storyr-facts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.storyr .storyr-fact {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  color: var(--text-2);
+  font-size: var(--text-label);
+  font-variant-numeric: tabular-nums;
+}
+.storyr .storyr-fact-icon { flex: none; color: var(--text-3); }
+/* The kit Button as the card's one action: static, so the stretched
+   ::after (04-ui.css .card-open) covers the whole lead card; no box of its
+   own, since the card is what lifts. */
+.storyr .storyr-lead-open.btn {
+  position: static;
+  align-self: flex-start;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--action);
+  font-size: var(--text-body);
+}
+.storyr .storyr-lead-open.btn:hover { background: none; }
+.storyr .storyr-lead-open.btn:focus-visible { outline: 2px solid transparent; }
+.storyr .storyr-lead-arrow,
+.storyr .storyr-go { transform: scaleX(-1); }
+.storyr .storyr-lead-arrow { transition: transform var(--dur-2) var(--ease-out); }
+
+/* ---- The photo cards ---------------------------------------------------- */
+/* Decision 3: the photograph with its corners, the words on the page ground
+   under it, no box and no border. The radius stays for the focus ring. */
+.storyr .storyr-card.card {
+  gap: 0;
+  border: 0;
+  border-radius: var(--radius-card);
+  background: transparent;
+  overflow: visible;
+  transition: transform var(--dur-2) var(--ease-out);
+}
+.storyr .storyr-card .card-media {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--radius-card);
+}
+.storyr .storyr-card .card-media img,
+.storyr .storyr-card .card-media .hero-blank {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.storyr .storyr-card .card-body {
+  gap: 2px;
+  padding: var(--space-3) 0 0;
+}
+.storyr .storyr-card .card-title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  font-size: var(--text-lead);
+  font-weight: 600;
+  white-space: normal;
+}
+.storyr .storyr-card .card-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+  min-width: 0;
+  color: var(--text-2);
+  font-size: var(--text-label);
+}
+.storyr .storyr-card .card-meta > * { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.storyr .storyr-card .card-figures { align-items: flex-end; }
+.storyr .storyr-card .card-price { min-width: 0; font-size: var(--text-body); }
+.storyr .storyr-card .card-rating { flex: none; margin-left: auto; line-height: 0; }
+
+/* Decision 2: on the photo only solid --surface pills with --elev-1. */
+.storyr .storyr-pill {
+  position: absolute;
+  top: var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  max-width: calc(60% - var(--space-3));
+  min-height: 28px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+  color: var(--text);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+.storyr .storyr-status { left: var(--space-3); }
+.storyr .storyr-score { right: var(--space-3); max-width: none; padding: 0 var(--space-2); }
+.storyr .storyr-save {
+  position: absolute;
+  right: var(--space-2);
+  bottom: var(--space-2);
+  z-index: 2;
+}
+
+/* The brown arrow: it says the card acts, on hover and focus. */
+.storyr .storyr-go {
+  color: var(--action);
+  opacity: 0;
+  transform: scaleX(-1) translateX(4px);
+  transition: opacity var(--dur-2) var(--ease-out), transform var(--dur-2) var(--ease-out);
+}
+.storyr .storyr-card:has(.card-open:focus-visible) .storyr-go { opacity: 1; transform: scaleX(-1); }
+.storyr .storyr-card:has(.card-open:focus-visible),
+.storyr .storyr-lead:has(.card-open:focus-visible) { transform: translateY(-4px); }
+
+@media (hover: hover) {
+  .storyr .storyr-card.is-interactive:hover { transform: translateY(-4px); }
+  .storyr .storyr-card.is-interactive:hover .storyr-go { opacity: 1; transform: scaleX(-1); }
+  .storyr .storyr-lead.is-interactive:hover { transform: translateY(-4px); }
+  .storyr .storyr-lead.is-interactive:hover .storyr-lead-arrow { transform: scaleX(-1) translateX(-4px); }
+  .storyr .storyr-lead.is-interactive:hover .storyr-stack-photo {
+    transform: translateX(calc(-50% + var(--fan-x) * 1.25)) rotate(calc(var(--fan-r) * 1.4));
+  }
+}
+.storyr .storyr-lead:has(.card-open:focus-visible) .storyr-lead-arrow { transform: scaleX(-1) translateX(-4px); }
+
+/* ---- Arrival: once, staggered 40 ms a card, at most 240 ms --------------- */
+.storyr[data-arrival='wait'] .storyr-item { opacity: 0; }
+.storyr[data-arrival='in'] .storyr-item {
+  animation: storyr-arrive var(--dur-3) var(--ease-out) both;
+  animation-delay: min(calc(var(--i, 0) * 40ms), 240ms);
+}
+@keyframes storyr-arrive {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---- Foot: position dots and, on a fine pointer, the two arrows ---------- */
+.storyr .storyr-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+.storyr .storyr-dots { display: inline-flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
+.storyr .storyr-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--border);
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+.storyr .storyr-dot.is-current { background: var(--select-border); }
+.storyr .storyr-nav { display: none; gap: var(--space-2); }
+@media (hover: hover) and (pointer: fine) {
+  .storyr .storyr-nav { display: inline-flex; }
+}
+.storyr .storyr-arrow--prev svg { transform: scaleX(-1); }
+
+/* ---- Reduced motion: no lift, no arrival, no nudge; the tilt stays still - */
+@media (prefers-reduced-motion: reduce) {
+  .storyr .storyr-lead.card,
+  .storyr .storyr-card.card,
+  .storyr .storyr-go,
+  .storyr .storyr-lead-arrow,
+  .storyr .storyr-stack-photo,
+  .storyr .storyr-dot { transition: none; }
+  .storyr .storyr-lead.is-interactive:hover .storyr-stack-photo {
+    transform: translateX(calc(-50% + var(--fan-x))) rotate(var(--fan-r));
+  }
+  .storyr .storyr-card.card,
+  .storyr .storyr-card.card:hover,
+  .storyr .storyr-card:has(.card-open:focus-visible) { transform: none; }
+  .storyr .storyr-lead.card,
+  .storyr .storyr-lead.card:hover,
+  .storyr .storyr-lead:has(.card-open:focus-visible) { transform: rotate(-2deg); }
+  .storyr[data-arrival] .storyr-item { opacity: 1; animation: none; }
+}

@@ -1,8 +1,15 @@
 import React from 'react';
-import { ChevronRightIcon } from '../components/Icons.jsx';
-import { Button, IconButton } from '../components/ui/index.js';
-import { scrollBehavior } from '../lib/motion.js';
-import { PlaceTile } from './ExploreCards.jsx';
+import { CalendarIcon, PiggyIcon, StarIcon } from '../components/Icons.jsx';
+import { Button, Money } from '../components/ui/index.js';
+import { HeroImage } from '../components/HeroImage.jsx';
+import { ScoreChip } from '../components/RatingBadge.jsx';
+import { CountryFlag } from '../components/CountryFlag.jsx';
+import { isNational } from '../components/CostSummary.jsx';
+import { openShared } from '../lib/sharedElement.js';
+import { countryName } from '../lib/countryName.js';
+import { useI18n } from '../i18n/index.jsx';
+import { DayPrice, SaveButton } from './ExploreCards.jsx';
+import { StoryRail, StoryCard, STORY_SIZES } from './StoryRail.jsx';
 
 /**
  * Explore's sections (T427, after the owner's review of 2026-10-13).
@@ -20,6 +27,14 @@ import { PlaceTile } from './ExploreCards.jsx';
  * opens its list. On a pointer screen each strip has a pair of arrows, since
  * a scroller with no scrollbar gives a mouse no way in; the arrow keys move
  * between the tiles.
+ *
+ * T587: each strip is a StoryRail (the owner's Komoot rail in Carta's
+ * colours): a tilted lead card holding the heading, a stack of its photos (T599), the "See all"
+ * and facts read from the rail's own rows (the cheapest day, the month when
+ * every place is good then, the best Score), then tall photo cards with the
+ * status and the Score in solid pills on the photo. `month` is the month the
+ * rails speak about (ExploreTab's); the rail logic, the lead count, the doors
+ * and every seeAll are unchanged.
  */
 
 const CAP = 12;
@@ -42,83 +57,138 @@ export function interleaveByCountry(rows) {
   return out;
 }
 
-function Rail({ r, onSelect, favorites, onToggleFav, t }) {
-  const stripRef = React.useRef(null);
-  const shown = r.rows.slice(0, CAP);
-  const [edge, setEdge] = React.useState({ start: true, end: shown.length <= 1 });
-  const measure = React.useCallback(() => {
-    const el = stripRef.current;
-    if (!el) return;
-    const start = el.scrollLeft <= 2;
-    const end = el.scrollLeft + el.clientWidth >= el.scrollWidth - 2;
-    setEdge((e) => (e.start === start && e.end === end ? e : { start, end }));
-  }, []);
-  React.useEffect(() => {
-    const el = stripRef.current;
-    if (!el) return undefined;
-    measure();
-    el.addEventListener('scroll', measure, { passive: true });
-    window.addEventListener('resize', measure);
-    return () => {
-      el.removeEventListener('scroll', measure);
-      window.removeEventListener('resize', measure);
-    };
-  }, [measure, shown.length]);
-  const page = (dir) => {
-    const el = stripRef.current;
-    if (el) el.scrollBy({ left: dir * el.clientWidth * 0.85, behavior: scrollBehavior() });
-  };
-  // Left and Right move the focus tile to tile inside the strip; the browser
-  // brings the focused tile into view.
-  const onKey = (e) => {
-    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
-    const hits = [...(stripRef.current?.querySelectorAll('.card-open') || [])];
-    const i = hits.indexOf(e.target);
-    if (i < 0) return;
-    const next = hits[i + (e.key === 'ArrowRight' ? 1 : -1)];
-    if (!next) return;
-    e.preventDefault();
-    next.focus({ preventScroll: true });
-    next.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: scrollBehavior() });
-  };
+const SLOT = '\u0001';
+/** A sentence with a node (the kit's Money) in its one slot. */
+function withNode(text, node) {
+  const at = text.indexOf(SLOT);
+  if (at < 0) return text;
+  return <>{text.slice(0, at)}{node}{text.slice(at + SLOT.length)}</>;
+}
+
+// The rails whose own question already says the month, or the gem: their
+// cards do not repeat it in the status pill.
+const MONTH_RAILS = new Set(['now', 'cost', 'beach']);
+// One short line under a rail's heading (rail.line.*), only where it says
+// something the heading does not (T599: what the day price covers, what a
+// hiking base or a car-free trip means). The other rails speak for themselves.
+const LINES = new Set(['cost', 'hiking', 'nocar']);
+
+const inMonth = (p, month) => !!month && (p.climate?.best || []).includes(month);
+
+/** The lead card's facts, read from the rail's own rows: the cheapest day,
+ *  the month when every place in it is good then, and the best Score. The
+ *  cheapest day is the card's one large figure (T599); a rail with no price
+ *  shows its best Score large instead. */
+function railFacts(rows, month, monthLong, t) {
+  const facts = [];
+  const priced = rows.filter((p) => p.cost?.dayEur != null);
+  if (priced.length) {
+    const low = priced.reduce((a, b) => (b.cost.dayEur < a.cost.dayEur ? b : a));
+    facts.push({
+      key: 'from',
+      icon: PiggyIcon,
+      figure: true,
+      text: withNode(t('rail.factFrom', { price: SLOT }), <Money value={low.cost.dayEur} est={isNational(low.cost)} />),
+    });
+  }
+  if (month && rows.length && rows.every((p) => inMonth(p, month))) {
+    facts.push({ key: 'month', icon: CalendarIcon, text: t('rail.goodIn', { month: monthLong }) });
+  }
+  const scores = rows.map((p) => p.rating?.score).filter((n) => Number.isFinite(n));
+  if (scores.length) {
+    const best = Math.max(...scores).toFixed(1);
+    facts.push({
+      key: 'score',
+      icon: StarIcon,
+      figure: !priced.length,
+      text: priced.length
+        ? t('rail.factScore', { n: best })
+        : withNode(t('rail.factScore', { n: SLOT }), <span className="storyr-num">{best}</span>),
+    });
+  }
+  return facts;
+}
+
+/** One place as a StoryRail photo card: the status pill says the month or
+ *  the gem (whichever the rail's own question does not already say), the
+ *  Score sits top right, the flag and country under the title, then the
+ *  day price. */
+function PlaceStoryCard({ p, railKey, month, monthShort, onSelect, fav, onToggleFav, t }) {
+  let status = null;
+  if (!MONTH_RAILS.has(railKey) && inMonth(p, month)) status = t('rail.goodIn', { month: monthShort });
+  else if (railKey !== 'gems' && p.rating?.hidden_gem) status = t('common.hiddenGem');
   return (
-    <section className="xrails-rail" aria-labelledby={`xrail-${r.key}`}>
-      <div className="xrails-head">
-        {/* h2: the rails sit straight under the page's h1 (T193). */}
-        <h2 className="xrails-title" id={`xrail-${r.key}`}>{r.title}</h2>
-        <Button variant="quiet" size="sm" className="xrails-all" onClick={r.seeAll}>
-          {t('rail.seeAllPlain')}
-        </Button>
-        <span className="xrails-nav">
-          <IconButton tone="surface" label={t('explore.railPrev')} onClick={() => page(-1)}
-            disabled={edge.start} className="xrails-arrow xrails-arrow--prev">
-            <ChevronRightIcon size={16} />
-          </IconButton>
-          <IconButton tone="surface" label={t('explore.railNext')} onClick={() => page(1)}
-            disabled={edge.end} className="xrails-arrow">
-            <ChevronRightIcon size={16} />
-          </IconButton>
+    <StoryCard
+      className="xstory"
+      photo={(
+        <HeroImage url={p.image} city={p.city} iso2={p.iso2} className="storyr-img" maxWidth={640}
+          sizes={STORY_SIZES} ratio={[4, 5]} />
+      )}
+      status={status}
+      score={p.rating?.score != null ? <ScoreChip rating={p.rating} size="sm" /> : null}
+      save={onToggleFav ? (
+        <SaveButton fav={fav} onToggle={() => onToggleFav(p.id)} t={t} tone="photo" name={p.city} />
+      ) : null}
+      title={p.city}
+      href={`#dest=${encodeURIComponent(p.id)}`}
+      onOpen={(e) => {
+        // A real link (T444): a plain click opens the place here, a
+        // modifier click lets the browser open it in a new tab.
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+        e.preventDefault();
+        openShared(e.currentTarget.closest('.card'), p.id, () => onSelect(p.id));
+      }}
+      meta={(
+        <span className="xstory-meta">
+          <CountryFlag country={p.iso2} size={12} />
+          <span>{countryName(p.iso2, p.country)}</span>
         </span>
-      </div>
-      <div className="xrails-strip" ref={stripRef} onKeyDown={onKey}>
-        {shown.map((p) => (
-          <PlaceTile key={p.id} p={p} onSelect={onSelect} t={t}
-            fav={favorites?.has(p.id)} onToggleFav={onToggleFav} />
-        ))}
-      </div>
-    </section>
+      )}
+      price={<DayPrice cost={p.cost} t={t} />}
+    />
   );
 }
 
-export function ExploreRails({ rails, onSelect, favorites, onToggleFav, t, lead = 4 }) {
+function Rail({ r, onSelect, favorites, onToggleFav, t, month, lang }) {
+  const shown = r.rows.slice(0, CAP);
+  const monthLong = month ? new Intl.DateTimeFormat(lang, { month: 'long' }).format(new Date(2026, month - 1, 15)) : '';
+  const monthShort = month ? new Intl.DateTimeFormat(lang, { month: 'short' }).format(new Date(2026, month - 1, 15)) : '';
+  // h2: the rails sit straight under the page's h1 (T193).
+  return (
+    <StoryRail
+      id={`xrail-${r.key}`}
+      title={r.title}
+      line={LINES.has(r.key) ? t(`rail.line.${r.key}`) : null}
+      facts={railFacts(shown, month, monthLong, t)}
+      onSeeAll={r.seeAll}
+      stack={shown.filter((p) => p.image).slice(0, 3).map((p) => ({ url: p.image, city: p.city }))}
+      headingLevel={2}
+      className="xrails-rail"
+      t={t}
+    >
+      {shown.map((p) => (
+        <PlaceStoryCard key={p.id} p={p} railKey={r.key} month={month} monthShort={monthShort}
+          onSelect={onSelect} fav={favorites?.has(p.id)} onToggleFav={onToggleFav} t={t} />
+      ))}
+    </StoryRail>
+  );
+}
+
+/** `hideDoors` (T599): leave out the row of further-rail buttons, for a
+ *  page that shows those doors elsewhere (the overview's top). */
+export function ExploreRails({
+  rails, onSelect, favorites, onToggleFav, t, lead = 4, month = null, hideDoors = false,
+}) {
+  const { lang } = useI18n();
   const visible = rails.filter((r) => r.rows.length >= 4);
   if (!visible.length) return null;
   const strips = visible.slice(0, lead);
-  const doors = visible.slice(lead);
+  const doors = hideDoors ? [] : visible.slice(lead);
   return (
     <div className="xrails">
       {strips.map((r) => (
-        <Rail key={r.key} r={r} onSelect={onSelect} favorites={favorites} onToggleFav={onToggleFav} t={t} />
+        <Rail key={r.key} r={r} onSelect={onSelect} favorites={favorites} onToggleFav={onToggleFav} t={t}
+          month={month} lang={lang} />
       ))}
       {doors.length > 0 && (
         <nav className="xrails-doors" aria-label={t('explore.moreRails')}>

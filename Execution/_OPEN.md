@@ -1981,9 +1981,41 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T583-d | T583 | AskSearchFull.jsx's default export is imported nowhere and still holds ask.showAll and ask.more (with T574-b) | next task | open |  |
 | T583-e | T583 | The written answer's off, cap and error lines still show on compare, when and about answers | next task | open |  |
 | T583-f | T583 | Warmer, Cheaper and Quieter after Not yet were tried in English only; check they parse in nl, de, fr, es and it | next task | open |  |
+<<<<<<< HEAD
 | T605-a | T605 | Rebuild the home page from scratch on app master as one batch from T606, to the plan artifact 2Jbd2LipGXYFMryXLzf6VW and the twelve decisions in the T605 report | next task | open | 1 |
 | T605-b | T605 | The hero film needs licensed video clips (Pexels first, D3); each download is approved by the owner, until then the hero runs on Commons photographs | user | open | 2 |
 | T605-c | T605 | Confirm the repository origin in the Claude app (Help, Troubleshooting, Review Pinned Git Origins) so session worktrees can merge main's protected carta-design skill | user | open |  |
 | T605-d | T605 | Lighthouse navigation on the home page hangs (PAGE_HUNG) at 390 px with 4x CPU; find the long main-thread work on first load | next task | open |  |
 | T605-e | T605 | The trip planner total in the Wise style the owner pinned (huge tabular total, receipt rows under it) | next task | open |  |
 | T605-f | T605 | Komoot-style photo rails on Explore (owner's board, D12); needs the owner's call on titles over photos outside the home page | next task | open |  |
+=======
+| T585-a | T585 | The start dialog's rows open a settings part by clicking the settings line's button on the page; SettingsLine needs an openPart() hook | next task | open |  |
+| T586-a | T586 | Browser Forward into an Explore lens does not restore the lens's filters | next task | open |  |
+| T586-b | T586 | The overview hides the place list with CSS instead of not rendering it; cost on slow phones not measured | next task | open |  |
+| T586-c | T586 | The rails' extra door row (Go without a car) sits alone at the foot of the overview; keep or drop it | user | closed by T595 |  |
+| T587-a | T587 | Country and region pages, the weeks rail and the countries track still use the old Strip; story cards show one photo, not the swipe | next task | open |  |
+| T588-a | T588 | No shared toast helper: Share's Link copied toast is local to ExploreTab | next task | open |  |
+| T589-a | T589 | The filter pane is about 1.5 desktop screens (1,191 px); Good to know as chips instead of switch rows would save about 140 px | user | open |  |
+| T589-b | T589 | Flight up to reads the flight's length from local clock times, 1 to 2 h off across time zones; the sweep carries no duration | next task | open |  |
+| T589-c | T589 | tests/explore.spec.mjs:96 and parts of scripts/verify_explore.mjs still look for the old tiles, selects and folds | next task | open |  |
+| T590-a | T590 | est. remains on time estimates (walk and ride minutes, itinerary legs, trip.estimate) and in unused keys; .money-est CSS is dead | next task | open |  |
+| T592-a | T592 | The map panel's trip total sums day price times nights plus the way there; take it from priceTrip() as budgetSearch.js does | next task | open |  |
+| T592-b | T592 | The map panel shows no flight times because the way rows carry none | next task | open |  |
+| T592-c | T592 | The map panel's Why go reads knownFor, which is English only | next task | open |  |
+| T592-d | T592 | .xmap-picked and .xdrawer-rows rules in 62-v6-explore.css are unused since the floating panel | next task | open |  |
+| T593-a | T593 | Outdoor tabs: the desktop side pane repeats the quick filter row and at rest can hold only the Country fold; decide which stays | user | closed by T600 |  |
+| T593-b | T593 | Germany hands 2.66 MB of route lines to the map on every list change; measure on a slow phone | next task | open |  |
+| T593-c | T593 | Europe-wide Trails has no map because routes load per country | next task | open |  |
+| T593-d | T593 | Trails' What select uses highlights; walks, day hikes and hut to hut have no facet behind them | next task | open |  |
+| T594-a | T594 | The trip and day planners have no site footer (fixed-height workspaces); should they | user | open |  |
+| T594-b | T594 | The footer has no Where the numbers come from or Data and photo credits link because neither has its own page | next task | open |  |
+| T594-c | T594 | On a phone the floating Map pill sits over the footer's copyright line at the bottom | next task | open |  |
+| T595-a | T595 | explore.heroDoor is unused and the ac-in-header and ac-in-plan rules in 76-ask-door.css are dead since Ask Carta has one door | next task | open |  |
+| T597-a | T597 | Under Plane a place without a flight shows no total and no reason; should it say there is no flight on these dates | user | open |  |
+| T598-a | T598 | The sticky desktop map in Explore's focused view does not grow taller once the list has scrolled | next task | open |  |
+| T600-a | T600 | When filters leave no map rows the outdoor map view falls back to the list while the pill still reads List | next task | open |  |
+| T600-b | T600 | Trails at Europe level maps only each country's best walks (339), not every walk | next task | open |  |
+| T601-a | T601 | On a phone the overview hero is about 490 px tall before the first rail; consider trimming | next task | open |  |
+| T602-a | T602 | .places-side .side-facets and .dtab-filters rules in 63-v6-destinations.css are unused since the left panel left the category tabs | next task | open |  |
+| T604-a | T604 | The outdoor tabs' quick chips still use FilterChipBar popovers, not the pane's own sections as Places does | next task | open |  |
+>>>>>>> main

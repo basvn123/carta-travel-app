@@ -11,6 +11,8 @@ import { PROFILES } from '../lib/lifestyleProfiles.js';
 import { useI18n } from '../i18n/index.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { Stepper as CountStepper } from '../components/FilterControls.jsx';
+import { WAY_ICONS } from '../components/SettingsLine.jsx';
+import { TRAVEL_MODES } from '../lib/travelWay.js';
 
 /**
  * Lifestyle settings panel.
@@ -143,6 +145,10 @@ export function LifestylePanel({ choices, setChoices, onClose, data, side = 'lef
   const setCadence = (c) => setChoices({ ...choices, lifestyle: toCadence(ls, c) });
   const setTier = (tier) => setChoices({ ...choices, stay_tier: tier });
   const active = matchProfile(ls);
+  // Getting there: the same choices.transport_mode the settings line steps
+  // through (T597), so there is one setting and two doors to it.
+  const wayNow = TRAVEL_MODES.includes(choices.transport_mode) ? choices.transport_mode : 'any';
+  const setWayMode = (m) => setChoices({ ...choices, transport_mode: m });
 
   // Only the tiers this dataset measured (apply_stay_tiers.py writes
   // meta.stays.tiers); 'home' is always there. With nothing measured
@@ -285,6 +291,27 @@ export function LifestylePanel({ choices, setChoices, onClose, data, side = 'lef
           })}
         </div>
         {!active && <p className="ls-note">{t('lifestyle.customNote')}</p>}
+      </div>
+
+      <div className="panel-section ls-way-section">
+        <div className="ls-head">{t('way.label')}</div>
+        <div className="ls-tiles ls-tiles-way" role="group" aria-label={t('way.label')}>
+          {TRAVEL_MODES.map((m) => {
+            const Icon = WAY_ICONS[m];
+            return (
+              <button
+                key={m}
+                type="button"
+                className={`ls-tile ${wayNow === m ? 'on' : ''}`}
+                aria-pressed={wayNow === m}
+                onClick={() => setWayMode(m)}
+              >
+                <Icon size={18} />
+                <span>{t(`way.${m}`)}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* The seven counts behind the preset. Closed by default; opening it is

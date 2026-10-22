@@ -1,0 +1,252 @@
+/* ==========================================================================
+   83 The What and Where bar, the quick filter row, and the route map
+   (T593). Imported by src/browse/WhereBar.jsx.
+
+   T600, the compact head: the bar sits on the page ground with no band
+   behind it. Every control is one --tap high. What is a kit select with
+   its label inside the box, Where a search box with a clear control, then
+   the secondary Search button and the Map or List pill. A desktop reads
+   them on one row; a phone on two: Where with the pill, What with Search.
+   Every gap in the head is --space-3.
+   ========================================================================== */
+
+.wbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "where where" "what go";
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
+}
+.wbar.has-view { grid-template-areas: "where view" "what go"; }
+.wbar.is-whereonly { grid-template-columns: minmax(0, 1fr) auto auto; grid-template-areas: "where go view"; }
+.wbar .wbar-what { grid-area: what; min-width: 0; }
+.wbar-where { grid-area: where; min-width: 0; }
+.wbar .wbar-go { grid-area: go; }
+.wbar .wbar-view { grid-area: view; }
+
+/* What: the kit field, its label read inside the box, as "What  Anything". */
+.wbar .wbar-what.field {
+  flex-direction: row;
+  align-items: center;
+  gap: 0;
+  min-height: var(--tap);
+  padding-left: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  transition: border-color var(--dur-1) var(--ease-out);
+}
+.wbar .wbar-what .field-label { flex: none; color: var(--text-2); white-space: nowrap; }
+.wbar .wbar-what .field-control { flex: 1 1 auto; min-width: 0; }
+.wbar .wbar-what .field-control select {
+  min-height: calc(var(--tap) - 2px);
+  padding-left: var(--space-2);
+  border: 0;
+  background: transparent;
+  text-overflow: ellipsis;
+}
+.wbar .wbar-what .field-control select:focus-visible { outline-offset: -2px; }
+@media (hover: hover) {
+  .wbar .wbar-what.field:hover { border-color: var(--neutral-300); }
+}
+.wbar .wbar-what.field:focus-within { border-color: var(--action); }
+
+.wbar-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: var(--tap);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  transition: border-color var(--dur-1) var(--ease-out);
+}
+@media (hover: hover) {
+  .wbar-box:hover { border-color: var(--neutral-300); }
+}
+.wbar-box:focus-within { border-color: var(--action); }
+.wbar-icon {
+  flex: none;
+  margin-left: var(--space-3);
+  color: var(--text-3);
+  pointer-events: none;
+}
+.wbar-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: calc(var(--tap) - 2px);
+  padding: 0 var(--space-2);
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: var(--text-lead);
+}
+.wbar-input::placeholder { color: var(--text-3); }
+/* The box carries the focus edge as well as the ring. */
+.wbar-input:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; border-radius: var(--radius-control); }
+.wbar-input::-webkit-search-cancel-button { display: none; }
+.wbar-clear { flex: none; color: var(--text-3); }
+.wbar-box .places-locate {
+  position: static;
+  flex: none;
+  width: var(--tap);
+  height: var(--tap);
+  margin: -1px -1px -1px 0;
+  transform: none;
+  border-radius: var(--radius-control);
+}
+/* The tab's suggestion list hangs under the box, as wide as it. */
+.wbar-box .places-sugg { top: calc(100% + var(--space-1)); }
+
+@media (min-width: 640px) {
+  .wbar,
+  .wbar.has-view {
+    grid-template-columns: minmax(160px, 240px) minmax(0, 1fr) auto auto;
+    grid-template-areas: "what where go view";
+  }
+  .wbar.is-whereonly { grid-template-columns: minmax(0, 1fr) auto auto; grid-template-areas: "where go view"; }
+}
+
+/* --------------------------------------------------------------------------
+   The quick filter row: All filters, then the tab's most used groups as
+   dropdown chips. One row that scrolls sideways on a phone; the popover
+   hangs outside the scroller so it is never clipped.
+   -------------------------------------------------------------------------- */
+.qfbar {
+  position: relative;
+  margin: 0 0 var(--space-3);
+}
+.qfbar-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  overflow-x: auto;
+  scrollbar-width: none;
+  /* Room for the focus ring inside the scroller. */
+  padding: 3px 2px;
+  margin: -3px -2px;
+}
+.qfbar-row::-webkit-scrollbar { display: none; }
+.qfbar-all { flex: none; }
+.qfbar-chip .ui-chip-label { display: inline-flex; align-items: center; gap: var(--space-1); }
+.qfbar-chev {
+  flex: none;
+  color: var(--text-2);
+  transition: transform var(--dur-1) var(--ease-out);
+}
+.qfbar-chip.is-open .qfbar-chev { transform: rotate(180deg); }
+
+.qfbar-pop {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  z-index: var(--z-popover);
+  width: max-content;
+  min-width: 200px;
+  max-width: min(320px, 100%);
+  padding: var(--space-3);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  box-shadow: var(--elev-2);
+  animation: qfbar-in var(--dur-2) var(--ease-out);
+}
+.qfbar-pop-h {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--text);
+}
+.qfbar-pop-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.qfbar-pop-clear { margin-top: var(--space-2); }
+@keyframes qfbar-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .qfbar-pop { animation: none; }
+  .qfbar-chev { transition: none; }
+}
+
+/* --------------------------------------------------------------------------
+   The route map (Trails and Cycling). The lines and their length pins are
+   drawn by the map itself (ExploreMap `lines`); the keyboard stops stay as
+   invisible buttons on the pins, so the name labels give way to the
+   lengths and every route keeps its name for a screen reader and its tip.
+   -------------------------------------------------------------------------- */
+.explore-shell.dtab-mapwrap.has-lines .xmap-kpin.is-label,
+.explore-shell.dtab-mapwrap.has-lines .xmap-kpin.is-cheapest {
+  width: var(--kpin-d, 16px);
+  height: var(--kpin-d, 16px);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  animation: none;
+}
+.explore-shell.dtab-mapwrap.has-lines .xmap-kpin-label { display: none; }
+
+/* End check: the Map or List pill sits after Search, a pill like Places'. */
+.wbar .wbar-view { border-radius: var(--radius-pill); }
+
+/* --------------------------------------------------------------------------
+   T600, the outdoor tabs' head and map view. The pill row, the bar, the
+   chips and the map stand --space-3 apart. A desktop narrows from the side
+   pane, so the quick chip row there would say everything twice: it is the
+   phone's quick way only, with All filters opening the sheet.
+   -------------------------------------------------------------------------- */
+.places-wrap:has(> .dtab-panel.is-outdoor) > .dtab-bar.xcats-bar { margin: 0 0 var(--space-3); }
+.dtab-panel.is-outdoor .xchips { margin: 0 0 var(--space-3); }
+/* End check: the quick chips show on a desktop too, as on Places (owner:
+   "I like the filters on top"); the pane keeps every group. */
+/* Trails and Cycling with no country: one quiet line over the map. */
+.dtab-mapnote {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-label);
+  color: var(--text-2);
+}
+/* The map fills the rest of the scroller (OutdoorMap writes --dmap-h);
+   a short window still gets a map worth reading. */
+.places-tab .explore-shell.dtab-mapwrap { margin-top: 0; margin-bottom: var(--space-3); }
+.places-tab .explore-shell.dtab-mapwrap .xmap {
+  height: var(--dmap-h, min(72dvh, 760px));
+  min-height: 360px;
+}
+
+/* --------------------------------------------------------------------------
+   T602, the category tabs framed as Places' focused view. No permanent left
+   panel: the quick row (All filters, Sort, the quick chips) is on top on
+   every tab and width. All filters opens the filter pane on a desktop,
+   closed by default, Places' pane in width and sections (78-filter-pane's
+   .xpane); a phone opens the sheet. The composed trips' length stands over
+   the list on every width.
+   -------------------------------------------------------------------------- */
+.qfbar .btn { flex: none; border-radius: var(--radius-pill); }
+.qfbar .btn.is-on {
+  background: var(--select-bg);
+  border-color: var(--select-border);
+  color: var(--select-ink);
+}
+.places-wrap > .dtab-bar.xcats-bar { margin: 0 0 var(--space-3); }
+.dtab-panel .qfbar + .xchips { margin: 0 0 var(--space-3); }
+@media (min-width: 769px) {
+  .places-shell aside.side-panel.places-side {
+    flex-basis: 320px;
+    width: 320px;
+    padding: var(--space-4) var(--space-4) var(--space-6) var(--space-5);
+    animation: dtab-pane-in var(--dur-2) var(--ease-out);
+  }
+  .dtab-refine.is-length { display: flex; }
+}
+@keyframes dtab-pane-in {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .places-shell aside.side-panel.places-side { animation: none; }
+}
+@media (max-width: 768px) {
+  /* The quick row runs edge to edge and scrolls, as on Places' phone. */
+  .dtab-panel .qfbar { margin: 0 calc(var(--space-4) * -1) var(--space-3); }
+  .dtab-panel .qfbar-row { margin: 0; padding: 3px var(--space-4); }
+}
