@@ -1,0 +1,390 @@
+/*
+ * Ask Carta as a chat (T570, T571; carta-design, with the Ask Carta motion
+ * exception). Roles and scales only. Desktop: a column docked on the right
+ * under the settings line, one hairline to the page it sits beside, no
+ * shadow; the page makes room. Phone: a full-screen sheet. Brown only for
+ * what acts or is live: the send button once there is a question, the
+ * working step's dot, the latest turn's Plan this trip.
+ */
+
+/* --- The panel ---------------------------------------------------------- */
+.ac {
+  position: fixed;
+  top: var(--chat-top, 0px);
+  right: 0;
+  bottom: 0;
+  z-index: var(--z-overlay);
+  display: flex;
+  flex-direction: column;
+  width: var(--chat-w);
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  animation: ac-in var(--dur-3) var(--ease-out);
+}
+:root { --chat-w: 420px; }
+@keyframes ac-in { from { opacity: 0; transform: translateX(var(--space-5)); } }
+.ac.is-phone {
+  top: 0;
+  width: 100vw;
+  height: 100dvh;
+  z-index: var(--z-modal);
+  border-left: 0;
+  padding-top: env(safe-area-inset-top);
+  animation-name: ac-up;
+}
+@keyframes ac-up { from { opacity: 0; transform: translateY(var(--space-6)); } }
+
+/* From 1024 px the list makes room, so the answer sits beside the places. */
+@media (min-width: 1024px) {
+  html.ac-open .places-shell,
+  html.ac-open .explore-shell:not(.ask-picks) { right: var(--chat-w); }
+}
+
+/* The head: chats, the title, a new chat, close. */
+.ac-head {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 56px;
+  padding: 0 var(--space-2);
+  border-bottom: 1px solid var(--border-soft);
+}
+.ac-title {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  margin: 0 0 0 var(--space-1);
+  font-size: var(--text-lead);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  color: var(--text);
+}
+.ac-title svg { flex: none; color: var(--text-2); }
+.ac-title:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+.ac-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--space-4) var(--space-4) var(--space-5);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+/* --- Empty: the greeting, where from, questions to ask ------------------- */
+.ac-hello { display: flex; flex-direction: column; min-height: 100%; justify-content: flex-end; }
+.ac-hello-h {
+  margin: 0;
+  font-size: var(--text-headline);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.015em;
+  color: var(--text);
+}
+.ac-where { margin: var(--space-2) 0 var(--space-5); font-size: var(--text-body); line-height: var(--leading-ui); color: var(--text-2); }
+.ac-where strong { font-weight: 600; color: var(--text); }
+.ac-starts { display: flex; flex-direction: column; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.btn.ac-start {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: var(--tap);
+  padding: var(--space-2) var(--space-3);
+  border: 0;
+  border-radius: var(--radius-control);
+  background: var(--surface-sunken);
+  font: inherit;
+  font-size: var(--text-body);
+  line-height: var(--leading-ui);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  animation: ask-in var(--dur-2) var(--ease-out) both;
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+.btn.ac-start { justify-content: flex-start; font-weight: 400; }
+.btn.ac-start .btn-label { white-space: normal; text-align: left; }
+.ac-start .btn-icon { flex: none; color: var(--text-2); }
+.ac-starts li:nth-child(2) .ac-start { animation-delay: 50ms; }
+.ac-starts li:nth-child(3) .ac-start { animation-delay: 100ms; }
+.btn.ac-start:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.btn.ac-more { align-self: flex-start; margin: var(--space-2) 0 0 calc(-1 * var(--space-3)); }
+@media (hover: hover) {
+  .btn.ac-start:hover { background: var(--surface-hover); }
+}
+
+/* --- The conversation ---------------------------------------------------- */
+.ac-turns { display: flex; flex-direction: column; gap: var(--space-6); margin: 0; padding: 0; list-style: none; }
+.ac-turn { display: flex; flex-direction: column; gap: var(--space-3); scroll-margin-top: var(--space-4); }
+.ac-q { display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-1); }
+/* A follow-up bound to the last place (T572) says so under the question. */
+.ac-about { font-size: var(--text-caption); line-height: var(--leading-ui); color: var(--text-2); }
+.ac-q p {
+  max-width: 85%;
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-card);
+  background: var(--surface-sunken);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--text);
+  overflow-wrap: anywhere;
+  animation: ask-in var(--dur-2) var(--ease-out);
+}
+.ac-a { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
+/* The answer inside a 420 px column: one step down, so a lead fits. */
+.ac-a .ask-answer { gap: var(--space-3); }
+.ac-a .ask-lead { font-size: var(--text-lead); }
+.ac-a .ask-written { padding: var(--space-3); }
+.ac-a .ask-written-text { font-size: var(--text-body); }
+.ac-a .ask-pick-meta,
+.ac-a .ask-receipt { margin-left: 0; }
+
+/* The work, as it happens: done steps ticked, the working one live. */
+.ac-steps { display: flex; flex-direction: column; gap: var(--space-1); margin: 0; padding: 0; list-style: none; }
+.ac-step {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 24px;
+  font-size: var(--text-label);
+  line-height: var(--leading-ui);
+  color: var(--text-3);
+  animation: ask-in var(--dur-2) var(--ease-out);
+}
+.ac-step.is-now { color: var(--text-2); }
+.ac-step-mark { flex: none; color: var(--text-3); }
+.ac-step-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin: 0 4px;
+  border-radius: var(--radius-pill);
+  background: var(--action);
+  animation: ac-pulse 1.2s var(--ease-in-out) infinite;
+}
+@keyframes ac-pulse { 50% { opacity: 0.3; transform: scale(0.75); } }
+
+/* A place Carta does not cover: the way out to the flights. */
+.ac-out-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--tap);
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--action);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* --- The trip card ------------------------------------------------------- */
+.ac-trip {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  overflow: hidden;
+  animation: ask-in var(--dur-3) var(--ease-out);
+}
+.ac-trip-sec,
+.ac-trip-flight > summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 60px;
+  padding: var(--space-2) var(--space-3);
+}
+.ac-trip-sec + .ac-trip-sec { border-top: 1px solid var(--border-soft); }
+.ac-trip-flight { display: block; padding: 0; }
+.ac-trip-flight > summary { cursor: pointer; list-style: none; }
+.ac-trip-flight > summary::-webkit-details-marker { display: none; }
+.ac-trip-flight > summary:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+.ac-trip-icon { flex: none; color: var(--text-2); }
+.ac-trip-route { display: flex; flex: 1 1 auto; flex-direction: column; gap: 2px; min-width: 0; }
+.ac-trip-h {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-body);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  color: var(--text);
+}
+.ac-route-arrow { color: var(--text-3); }
+.ac-trip-sub { font-size: var(--text-caption); line-height: var(--leading-ui); color: var(--text-2); }
+.ac-trip-sub .money { font-weight: 600; color: var(--text); }
+/* T576: the bed is tonight's price for these nights; said in words. */
+.ac-trip-live { display: flex; align-items: center; gap: var(--space-1); font-size: var(--text-caption); line-height: var(--leading-ui); color: var(--text-2); }
+.ac-trip-live::before { content: ''; flex: none; width: 6px; height: 6px; border-radius: var(--radius-pill); background: var(--status-success); }
+.ac-trip-marks { display: flex; flex: none; gap: var(--space-1); }
+.ac-trip-fig { display: flex; flex: none; flex-direction: column; align-items: flex-end; }
+.ac-trip-fig .money { font-size: var(--text-lead); font-weight: 600; color: var(--text); }
+.ac-trip-unit { font-size: var(--text-caption); color: var(--text-2); white-space: nowrap; }
+.ac-trip-chev { flex: none; color: var(--text-2); transition: transform var(--dur-2) var(--ease-out); }
+.ac-trip-flight[open] .ac-trip-chev { transform: rotate(180deg); }
+.ac-trip-legs { padding: 0 var(--space-3) var(--space-3); border-top: 1px solid var(--border-soft); }
+.ac-trip-wait { display: block; width: 70%; height: 12px; border-radius: var(--radius-sm); background: var(--surface-sunken); }
+.ac-trip-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3) var(--space-3);
+}
+@media (hover: hover) {
+  .ac-trip-flight > summary:hover { background: var(--surface-hover); }
+}
+
+/* Next questions, under the newest answer. */
+.ac-fu { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.btn.ac-fu-item {
+  justify-content: flex-start;
+  gap: var(--space-2);
+  width: 100%;
+  margin-left: calc(-1 * var(--space-3));
+  font-weight: 500;
+  color: var(--text);
+  text-align: left;
+  white-space: normal;
+}
+.ac-fu-item .ac-arrow { flex: none; color: var(--text-2); }
+.ac-fu li { animation: ask-in var(--dur-2) var(--ease-out) both; }
+.ac-fu li:nth-child(2) { animation-delay: 60ms; }
+.ac-fu li:nth-child(3) { animation-delay: 120ms; }
+
+/* --- Your chats ---------------------------------------------------------- */
+.ac-empty-line { margin: 0; font-size: var(--text-body); color: var(--text-2); }
+.ac-group + .ac-group { margin-top: var(--space-5); }
+.ac-group-h { margin: 0 0 var(--space-1); font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.ac-group ul { margin: 0; padding: 0; list-style: none; }
+.ac-row { display: flex; align-items: center; border-radius: var(--radius-control); }
+.ac-row.is-on { background: var(--select-bg); }
+.btn.ac-row-open {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: var(--tap);
+  padding: 0 var(--space-2);
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: var(--text-body);
+  color: var(--text);
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+.btn.ac-row-open { justify-content: flex-start; font-weight: 400; }
+.btn.ac-row-open .btn-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ac-row.is-on .btn.ac-row-open { color: var(--select-ink); font-weight: 600; }
+.btn.ac-row-open:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; border-radius: var(--radius-control); }
+@media (hover: hover) {
+  .ac-row:not(.is-on):hover { background: var(--surface-hover); }
+  .ac-row .ac-row-del { opacity: 0; transition: opacity var(--dur-1) var(--ease-out); }
+  .ac-row:hover .ac-row-del,
+  .ac-row .ac-row-del:focus-visible { opacity: 1; }
+}
+
+/* --- The field at the foot ----------------------------------------------- */
+.ac-compose {
+  flex: none;
+  padding: var(--space-2) var(--space-3) calc(var(--space-2) + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--border-soft);
+  background: var(--surface);
+}
+/* T573: Explore's filters, offered: Ignore or Keep. */
+.ac-scope {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-3);
+  margin-bottom: var(--space-2);
+}
+.ac-scope-label {
+  flex: 1 1 140px;
+  min-width: 0;
+  margin: 0;
+  font-size: var(--text-label);
+  line-height: var(--leading-ui);
+  color: var(--text-2);
+}
+.ac-within { margin: 0; font-size: var(--text-caption); line-height: var(--leading-ui); color: var(--text-2); }
+.ac-field {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-1) var(--space-1) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  transition: border-color var(--dur-1) var(--ease-out);
+}
+.ac-field:focus-within { border-color: var(--action); }
+.ac-field:has(.ac-input:focus-visible) { outline: 2px solid var(--focus); outline-offset: 2px; }
+.ac-field-box { position: relative; display: flex; flex: 1 1 auto; min-width: 0; align-self: stretch; }
+.ac-input {
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: var(--tap);
+  max-height: 160px;
+  padding: 11px 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: var(--text-lead);
+  font-weight: 400;
+  line-height: var(--leading-ui);
+  color: var(--text);
+  resize: none;
+  caret-color: var(--action);
+}
+/* The ring is round the whole field; the input's own stays transparent, so
+   forced-colours mode still shows one. */
+.ac-input:focus-visible { outline: 2px solid transparent; }
+.ac-hint {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  pointer-events: none;
+  font-size: var(--text-lead);
+  color: var(--text-3);
+  white-space: nowrap;
+}
+.ac-caret {
+  flex: none;
+  width: 2px;
+  height: 1.2em;
+  margin-left: 1px;
+  background: var(--text-3);
+  animation: ac-caret 1s steps(1) infinite;
+}
+@keyframes ac-caret { 50% { opacity: 0; } }
+.btn.ac-send { flex: none; width: var(--tap); min-width: var(--tap); padding: 0; }
+.btn.ac-send .btn-label { display: none; }
+.ac-disclaimer { margin: var(--space-1) 0 0; font-size: var(--text-caption); line-height: var(--leading-ui); color: var(--text-3); text-align: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ac,
+  .ac-start,
+  .ac-q p,
+  .ac-step,
+  .ac-step-dot,
+  .ac-trip,
+  .ac-fu li,
+  .ac-caret { animation: none; }
+  .ac-trip-chev,
+  .ac-start,
+  .ac-field,
+  .ac-row .ac-row-del { transition: none; }
+}

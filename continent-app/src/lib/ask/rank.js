@@ -91,6 +91,10 @@ export function predicateOf(intent, ctx, skip = new Set()) {
 // weather still shows on each place), then the close-by extras ("seaside"
 // is the heart of a question more often than its month), then the vibe.
 const RELAX = ['quiet', 'budget', 'warm', 'month', 'nb', 'nocar', 'vibe'];
+// A question that asks for warm puts the warmth first (T571): "warm in
+// November" keeps the places over WARM_C that month and lets go of the
+// month's best list instead, which in November held almost none of them.
+const RELAX_WARM = ['quiet', 'budget', 'month', 'warm', 'nb', 'nocar', 'vibe'];
 
 function rankScore(p, intent, ctx, months) {
   const f = intent.facets;
@@ -167,7 +171,7 @@ export function findFacts(intent, ctx, n = PICKS) {
   let pred = predicateOf(intent, ctx, skip);
   let hits = ctx.rows.filter(pred);
   const relaxed = [];
-  for (const k of RELAX) {
+  for (const k of intent.facets.warm ? RELAX_WARM : RELAX) {
     if (hits.length >= 3) break;
     const f = intent.facets;
     const present = k === 'month' ? months.length > 0 : k === 'nb' ? !!f.nb?.length : !!f[k];

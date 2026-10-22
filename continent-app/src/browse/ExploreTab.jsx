@@ -21,7 +21,7 @@ import {
 } from '../components/Icons.jsx';
 import { useTravelMonth, useSettings } from '../components/SettingsLine.jsx';
 import { cheapestReturn } from '../lib/flights/flights.js';
-import { destAnchor } from '../lib/origins.js';
+import { destAnchor, originLabel } from '../lib/origins.js';
 import { scrollBehavior } from '../lib/motion.js';
 import { openShared } from '../lib/sharedElement.js';
 import { MonthStrip } from '../components/MonthStrip.jsx';
@@ -65,7 +65,7 @@ import { PlaceOverview } from './PlaceOverview.jsx';
 import { overviewRegion, overviewReason, overviewScore, reasonText } from '../lib/placeOverview.js';
 import { MapDrawer } from '../components/MapDrawer.jsx';
 import { useGuidedData, vibeOf } from '../lib/guidedData.js';
-import { AskSearch } from './AskSearch.jsx';
+import { AskChatDoor, AskChatHost } from './ask/AskChatButton.jsx';
 import {
   noCarOk, underOk, quietOk, matchGuided, guidedComparator, whyFacts, makeLabels,
 } from '../lib/guidedSearch.js';
@@ -360,6 +360,8 @@ export function ExploreTab({
   seed = null, onSeedConsumed = null,
   // T558: Ask Carta hands a route to the trip planner (App's openTripInPlanner).
   onPlanTrip = null,
+  // T574: the chat, asked from another place, shows its places on Explore.
+  onShowExplore = null,
 }) {
   const { t, lang } = useI18n();
   // The guided search data (T439): vibes, areas and distances. Loaded on
@@ -804,16 +806,16 @@ export function ExploreTab({
         ? t('explore.emptyCause', { filter: lastChip.label })
         : t('results.empty');
 
-  // Desktop chrome: the search field portals into the app header's slot and
-  // the controls stand in the left panel; the phone keeps the toolbar card.
-  // Only the active tab may claim the slot, because both browse tabs stay
-  // mounted (keep-alive) and two portals into one div would interleave.
+  // Desktop chrome: Ask Carta's door portals into the app header's slot on
+  // every place (T574: Explore hosts the one chat and stays mounted, so the
+  // door is there on Plan and My trips too) and the controls stand in the
+  // left panel; the phone keeps the toolbar card.
   const isDesktop = useIsDesktop();
   const [headerSlot, setHeaderSlot] = React.useState(null);
   React.useEffect(() => {
-    if (isDesktop && isActive) setHeaderSlot(document.getElementById('header-search-slot'));
+    if (isDesktop) setHeaderSlot(document.getElementById('header-search-slot'));
     else setHeaderSlot(null);
-  }, [isDesktop, isActive]);
+  }, [isDesktop]);
 
   // T504: picking and opening. A pin picks a place (the overview shows);
   // the overview, a second tap on the same pin, or a list row opens it. A
@@ -902,31 +904,44 @@ export function ExploreTab({
     dests: data?.destinations || null,
     origin: settingsLine?.origin || null,
   }), [settingsLine?.lifestyle, settingsLine?.stayTier, settingsLine?.origin, data?.flights, data?.destinations]);
-  const searchField = (inHeader) => (
-    <AskSearch
+  // T570: Ask Carta is a chat behind one small button (the header on
+  // desktop, beside Filters on a phone), its trip card priced from the same
+  // home airport, dates and party as the list.
+  const askTrip = React.useMemo(() => ({
+    origin: settingsLine?.origin || null,
+    originName: settingsLine?.origin ? originLabel(data, settingsLine.origin) : '',
+    flights: data?.flights || null,
+    depart: settingsLine?.departDate || null,
+    back: settingsLine?.returnDate || null,
+    party: settingsLine?.party || 2,
+    stayTier: settingsLine?.stayTier || 'home',
+    destinations: data?.destinations || null,
+  }), [settingsLine?.origin, settingsLine?.departDate, settingsLine?.returnDate, settingsLine?.party, settingsLine?.stayTier, data]);
+  // T573: the filters on Explore now, which the chat offers to keep or
+  // ignore; the rows are the list they make.
+  const askFilters = React.useMemo(() => ({ labels: chips.map((c) => c.label), rows }), [chips, rows]);
+  const askHost = (
+    <AskChatHost
       t={t}
       lang={lang}
       guided={guided}
       rows={allRows}
       countries={availableCountries}
-      facets={{
-        vibe: xf.vibe, area: xf.area, near: xf.near,
-        country: countryFilter.length === 1 ? countryFilter[0] : null,
-        month: xf.month, budget: xf.budget, nb: xf.nb, nocar: xf.nocar, quiet: xf.quiet,
-        sort: sortKey === 'cost' ? 'cost' : null,
-      }}
-      nearRow={nearRow}
       labels={gLabels}
-      budgetSteps={BUDGET_STEPS}
-      onApply={applyGuided}
+      price={askPrice}
+      trip={askTrip}
+      onApply={(facets, keep) => {
+        applyGuided(facets, !keep);
+        // Asked from another place (T574): Explore shows the list.
+        if (!isActive) onShowExplore?.();
+      }}
+      filters={askFilters}
       onOpenPlace={openWithMember}
       onPlanTrip={onPlanTrip}
-      price={askPrice}
       favorites={favorites}
       onToggleFav={onToggleFav}
-      inHeader={inHeader}
-      requestOpen={openRequest && isActive && inHeader === isDesktop}
-      askSeed={inHeader === isDesktop ? askSeed : null}
+      openRequest={openRequest && isActive}
+      seed={askSeed}
       onOpenRequested={clearOpenRequest}
     />
   );
@@ -1092,7 +1107,8 @@ export function ExploreTab({
 
   return (
     <div className={`explore-shell${view === 'map' ? ' is-map' : ''}${railsIdle ? ' is-rails' : ''}`}>
-      {headerSlot && createPortal(searchField(true), headerSlot)}
+      {askHost}
+      {headerSlot && createPortal(<AskChatDoor t={t} className="ac-in-header" />, headerSlot)}
 
       {/* Desktop-only left panel (CSS hides it under 769px): the filter
           rail in folds, trip styles first, with one hairline to the panel's
@@ -1124,9 +1140,8 @@ export function ExploreTab({
             door share one row (brief V3-4). The trip styles live in the
             sheet now, and Lifestyle and the shortlist in the input row. */}
         <div className="explore-filterbar xtop">
-          {/* On desktop the same field has portalled into the app header
-              and this renders nothing. */}
-          {!headerSlot && searchField(false)}
+          {/* On desktop the same button has portalled into the header. */}
+          {!headerSlot && <AskChatDoor t={t} className="ac-in-bar" />}
           <Button
             variant="secondary"
             ref={filterBtnRef}

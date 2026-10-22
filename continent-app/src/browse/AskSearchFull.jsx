@@ -292,14 +292,16 @@ function Cite({ n }) {
 
 function WrittenAnswer({ t, written, device }) {
   const { state, sentences } = written;
+  // One per answer, and a chat (T570) shows many answers on one page.
+  const hId = React.useId();
   if (state === 'idle') return null;
   const line = {
     off: 'ask.written.off', cap: 'ask.written.cap', error: 'ask.written.error', withdrawn: 'ask.written.withdrawn',
   }[state];
   const quiet = !!line && !sentences.length;
   return (
-    <section className={`ask-written${quiet ? ' is-quiet' : ''}`} aria-labelledby="ask-h-written" aria-busy={state === 'writing'}>
-      <h3 className="ask-written-h" id="ask-h-written">
+    <section className={`ask-written${quiet ? ' is-quiet' : ''}`} aria-labelledby={hId} aria-busy={state === 'writing'}>
+      <h3 className="ask-written-h" id={hId}>
         <SparkIcon size={16} className="ask-written-mark" />
         {t('ask.written.title')}
       </h3>
@@ -322,12 +324,15 @@ function WrittenAnswer({ t, written, device }) {
   );
 }
 
-function AskAnswer({ t, answer, facts, intent, written, answerRef, onOpen, favorites, onToggleFav, onMore, device, children }) {
+/** The answer to one question; also each turn of the chat (T570), which
+ *  puts its trip card under the written answer through `afterWritten`. */
+export function AskAnswer({ t, answer, facts, intent, written, answerRef, onOpen, favorites, onToggleFav, onMore, device, afterWritten = null, children }) {
   return (
     <div className="ask-answer">
       <h3 className="ask-lead" tabIndex={-1} ref={answerRef}>{answer.lead}</h3>
       {answer.note && <p className="ask-note">{answer.note}</p>}
       <WrittenAnswer t={t} written={written} device={device} />
+      {afterWritten}
       {answer.picks.length > 0 && (
         <ol className="ask-picks explore-shell" aria-label={t('ask.picksLabel')}>
           {answer.picks.map((p) => {

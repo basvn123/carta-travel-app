@@ -238,8 +238,21 @@ export function AuthProvider({ children }) {
     if (error) throw error;
     if (data?.error) throw new Error(data.error);
     const u = session?.user || null;
+    // T575: Ask Carta's chats in the account, read under their own RLS (054).
+    // A project without the table has none to give; any other failure stops
+    // the export rather than hand over a file that leaves something out.
+    let askChats = [];
+    if (u?.id) {
+      const { data: rows, error: chatsError } = await supabase
+        .from('ask_chats').select('chat_id, title, turns, updated_at, deleted_at').eq('user_id', u.id);
+      if (chatsError && !['PGRST205', '42P01'].includes(chatsError.code)) throw chatsError;
+      askChats = (rows || []).map((r) => ({
+        chatId: r.chat_id, title: r.title, turns: r.turns, updatedAt: r.updated_at, deletedAt: r.deleted_at,
+      }));
+    }
     return {
       ...data,
+      askChats,
       account: {
         email: u?.email || null,
         name: u?.user_metadata?.full_name || null,
