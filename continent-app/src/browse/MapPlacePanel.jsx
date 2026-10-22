@@ -32,7 +32,8 @@ import '../styles/81-map-panel.css';
  *
  * Props
  *   rows        the places on the map (already capped by the caller)
- *   count       how many places the map holds (the heading's number)
+ *   count       how many places the map holds (the heading's number, read
+ *               by screen readers only since T603)
  *   picked      the picked place's row, or null
  *   overviewOf  (p) => { region, rating, reason }, the list's own wording
  *   onPick      (id) => void, a row picks its place
@@ -78,7 +79,9 @@ export function MapPlacePanel({
           compact={compact} />
       ) : (
         <>
-          <h2 className="mpp-count">
+          {/* T603 (owner 2026-10-22: "Remove: 3045 places on the map"):
+              the count stays as the list's heading for screen readers. */}
+          <h2 className="mpp-count sr-only">
             {count === 1 ? t('mapPanel.inViewOne') : t('mapPanel.inView', { n: count })}
           </h2>
           {rows.length === 0 ? (

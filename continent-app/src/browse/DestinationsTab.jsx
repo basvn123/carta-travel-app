@@ -3,7 +3,6 @@ import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
 import { useIsDesktop } from '../hooks/useIsDesktop.js';
 import { RatingBadge } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
-import { CountryPicker } from '../components/CountryPicker.jsx';
 import { stripDashes } from '../lib/format.js';
 import { countryName as localCountryName } from '../lib/countryName.js';
 import { needsCountry } from '../lib/favorites.js';
@@ -62,7 +61,7 @@ import {
 import { JourneysSection } from './JourneysSection.jsx';
 import { loadAllJourneyCards, dropJourneyHash } from '../lib/journeys.js';
 import CreditFold from './CreditFold.jsx';
-import { useTravelMonth } from '../components/SettingsLine.jsx';
+import { useSettings, useTravelMonth } from '../components/SettingsLine.jsx';
 import { CoverageEmpty } from './CoverageEmpty.jsx';
 import { MICROSTATES, countryGeo, pointGeo } from '../lib/coverageEmpty.js';
 import { loadStubs } from '../lib/stubs.js';
@@ -75,7 +74,6 @@ import { SectionOpening, SectionHead, Strip } from './SectionOpening.jsx';
 import { CountryGalleryCard } from './CountryGallery.jsx';
 import { countryKnownKey, countryPhotos } from '../lib/countryGallery.js';
 import { Button, Chip, Field, Segmented, Tile, TileGroup } from '../components/ui/index.js';
-import { CountryFold } from './RailFold.jsx';
 import { createPortal } from 'react-dom';
 import { pickIcons, buildRails, photoOf, photosOf } from '../lib/openingScreen.js';
 import { okPhoto, firstOkImage } from '../lib/photoVeto.js';
@@ -86,7 +84,7 @@ import {
 import { ExploreCategories } from './ExploreCategories.jsx';
 import { EmptyResult } from './EmptyResult.jsx';
 import { OutdoorMap } from './OutdoorMap.jsx';
-import { WhereBar, FilterChipBar } from './WhereBar.jsx';
+import { WhereBar, FilterChipBar, SortPill } from './WhereBar.jsx';
 import {
   baseOfOutdoor, pointOfOutdoor, mapRowOf, regionsForLayer,
 } from '../lib/exploreLayers.js';
@@ -670,6 +668,9 @@ export function DestinationsTab({
   // where a hanging panel would run off the screen, so it opens the sheet
   // centred, the way the shared filter sheet stands on a wide screen.
   const [sheetFrom, setSheetFrom] = useState('toolbar');
+  // T602: the desktop filter pane, closed by default and opened and closed
+  // by All filters, as Places' Filters pill opens its pane.
+  const [paneOpen, setPaneOpen] = useState(false);
 
   useEffect(() => {
     if (layerError.trails) return undefined;
@@ -2075,6 +2076,36 @@ export function DestinationsTab({
   }, [isBeachCat, isLakeCat, isMountainCat, isCycleCat, beachIndex, lakeIndex,
     mountainIndex, cycleIndex, availableCountries, countryName, lang]);
 
+  // T602: the settings line's Countries. One country in "Only these" is
+  // the tab's country (Trails and Cycling then load all its routes), once
+  // the layer says it has that country. Applied when the choice changes,
+  // so removing the country's chip sticks; a country that came from the
+  // settings line leaves with it.
+  const settings = useSettings();
+  const settingsCc = settings && !settings.countryNot && (settings.countryFilter || []).length === 1
+    ? settings.countryFilter[0] : '';
+  const fromSettings = useRef({ key: '', cc: '' });
+  useEffect(() => {
+    if (!isActive) return;
+    const offered = cat === 'trails'
+      ? (trailsIndex ? (trailsIndex.countries || []).map((c) => c.country) : null)
+      : countryOptions.length > 0 ? countryOptions.map(([cc]) => cc) : null;
+    const key = `${cat}:${settingsCc}`;
+    if (fromSettings.current.key === key) return;
+    if (!settingsCc) {
+      if (fromSettings.current.cc && country === fromSettings.current.cc) setCountry('');
+      fromSettings.current = { key, cc: '' };
+      return;
+    }
+    // Wait for the layer's country list before deciding.
+    if (!offered) return;
+    fromSettings.current = { key, cc: '' };
+    if (!offered.includes(settingsCc) || country === settingsCc) return;
+    fromSettings.current.cc = settingsCc;
+    setCountry(settingsCc);
+    setNearPlace(null);
+  }, [isActive, cat, settingsCc, trailsIndex, countryOptions, country]);
+
   // A country the tab that just opened does not publish. Cleared rather than
   // left set, because the picker would show a country the list is not
   // filtered by: every layer has its own set, and Andorra has no beaches.
@@ -2304,8 +2335,8 @@ export function DestinationsTab({
     + Object.values(mtnFacets).reduce((n, list) => n + (list?.length || 0), 0)
     + (itinDays != null ? 1 : 0) + (itinPace ? 1 : 0) + (itinScale ? 1 : 0);
 
-  const resetAll = () => {
-    setCountry('');
+  // Every filter but the country (the pane's Clear all, T602).
+  const resetFacets = () => {
     setBands([]);
     setLoopsOnly(false);
     setGrades([]);
@@ -2321,6 +2352,10 @@ export function DestinationsTab({
     setItinDays(null);
     setItinPace(null);
     setItinScale(null);
+  };
+  const resetAll = () => {
+    setCountry('');
+    resetFacets();
   };
 
   // Every filter that is on, as one removable chip (T384, brief V3-2, rule
@@ -2734,31 +2769,6 @@ export function DestinationsTab({
     setNearPlace(null);
     setSort({ key, dir: SORTS.find((x) => x.key === key).defaultDir });
   };
-  const renderSort = (cls, hideLabel) => (showSorts && sortDefs.length > 0 ? (
-    <Field
-      as="select"
-      className={cls}
-      label={t('places.sortLabel')}
-      hideLabel={hideLabel}
-      value={sortCur.key}
-      onChange={(e) => pickSort(e.target.value)}
-    >
-      {sortDefs.map(({ key, labelKey }) => (
-        <option key={key} value={key}>{t(labelKey)}</option>
-      ))}
-    </Field>
-  ) : null);
-
-  const renderCountry = (cls) => (
-    <CountryPicker
-      className={cls}
-      value={country}
-      options={countryOptions}
-      onChange={(cc) => { setCountry(cc); setNearPlace(null); }}
-      label={t('places.allCountries')}
-    />
-  );
-
   const renderFacetGroups = (only) => facetGroups
     // Inline only the short set flagged `toolbar`, or a group with a chip
     // on (an opening's "See all" can switch on a chip from any group);
@@ -2767,9 +2777,9 @@ export function DestinationsTab({
       ? g.toolbar === true || g.options.some((o) => o.on)
       : true))
     .map((g) => (
-      <div key={g.key} className="dtab-facet xrail-sec">
+      <div key={g.key} className="dtab-facet xpane-sec">
         <h3 className="dtab-facet-label xrail-h">{g.label}</h3>
-        <div className="dtab-chips xrail-chips" role="group" aria-label={g.label}>
+        <div className="dtab-chips xpane-chips" role="group" aria-label={g.label}>
           {g.options.map((o) => (
             <Chip
               key={o.key}
@@ -2885,7 +2895,6 @@ export function DestinationsTab({
   // The header's search slot belongs to whichever browse tab is on screen
   // (both stay mounted), the way ExploreTab claims it.
   const [headerSlot, setHeaderSlot] = useState(null);
-  const [tlibSlot, setTlibSlot] = useState(null);
   useEffect(() => {
     if (isDesktop && isActive) setHeaderSlot(document.getElementById('header-search-slot'));
     else setHeaderSlot(null);
@@ -2961,32 +2970,31 @@ export function DestinationsTab({
       {suggList || null}
     </WhereBar>
   ) : null;
-  const quickGroups = outdoorCat
-    ? (QUICK_GROUPS[cat] || []).map((k) => facetGroups.find((g) => g.key === k)).filter(Boolean)
-    : [];
-  const quickBar = outdoorCat && facetGroups.length > 0 ? (
+  const quickGroups = (QUICK_GROUPS[cat] || [])
+    .map((k) => facetGroups.find((g) => g.key === k)).filter(Boolean);
+  // T602: the one quick row on every tab and width: All filters (the
+  // desktop pane or the phone sheet), Sort, then the tab's quick chips.
+  const sortPill = showSorts && sortDefs.length > 0 && !isJourneyBrowse ? (
+    <SortPill t={t} options={sortDefs} value={sortCur.key} onChange={pickSort} />
+  ) : null;
+  const filterCount = activeFilters - (country ? 1 : 0);
+  const quickBar = facetGroups.length > 0 || sortPill ? (
     <FilterChipBar
       t={t}
       fmt={fmt}
       groups={quickGroups}
-      allCount={activeFilters - (country ? 1 : 0)}
-      onAll={() => { setSheetFrom('side'); setSheetOpen(true); }}
+      allCount={filterCount}
+      allRef={filterBtnRef}
+      allOn={facetGroups.length > 0 && (isDesktop ? paneOpen : sheetOpen)}
+      allControls={isDesktop ? 'dtab-side' : undefined}
+      lead={sortPill}
+      onAll={facetGroups.length > 0
+        ? () => {
+          if (isDesktop) setPaneOpen((v) => !v);
+          else { setSheetFrom('toolbar'); setSheetOpen(true); }
+        }
+        : null}
     />
-  ) : null;
-
-  const filtersButton = facetGroups.length > 0 ? (
-    <Button
-      ref={filterBtnRef}
-      variant="secondary"
-      className="dtab-filters"
-      iconStart={<FilterIcon size={16} />}
-      onClick={() => { setSheetFrom('toolbar'); setSheetOpen(true); }}
-      aria-haspopup="dialog"
-      aria-expanded={sheetOpen}
-    >
-      {t('filter.filters')}
-      {activeFilters > 0 && <Chip kind="count" className="dtab-count">{fmt(activeFilters)}</Chip>}
-    </Button>
   ) : null;
 
   // How long the composed trip is: a stepped select (T428, row T199-a: the
@@ -3010,13 +3018,11 @@ export function DestinationsTab({
     </Field>
   ) : null;
 
-  const countryControl = countryOptions.length > 0 ? renderCountry('places-country dtab-country-pick') : null;
-  const sortControl = renderSort('dtab-sort', true);
-  const refineRow = (sortControl || countryControl || tripLength) ? (
-    <div className="dtab-refine">
+  // The composed trips' length, over the list on every width (T602: the
+  // panel that held it on a desktop is gone; the sort is the quick row's).
+  const refineRow = tripLength ? (
+    <div className="dtab-refine is-length">
       {tripLength}
-      {sortControl}
-      {countryControl}
     </div>
   ) : null;
 
@@ -3069,45 +3075,25 @@ export function DestinationsTab({
           is for assistive technology. It steps aside while a dialog (a detail
           page, a sheet) is open, so that dialog's own h1 is the only one. */}
       <h1 className="sr-only tab-h1">{t('explore.title')}</h1>
-      {/* Desktop only (CSS hides it under 769px): Explore's panel, section
-          for section (T457): the six sections as tiles, then everything that
-          narrows the list, the country last in a fold with its flags. */}
-      <aside className="side-panel places-side" aria-label={t('places.sideAria')}>
-        <div className="side-block xrail">
-          <h2 className="sr-only">{t('places.sideAria')}</h2>
-          {tripLength && <div className="side-group xrail-sec">{tripLength}</div>}
-          {/* The trip library's filters (T498): JourneysSection portals its
-              groups here on a desktop, so the library has no bar of its own. */}
-          {isJourneyBrowse && <div className="side-group tlib-slot" ref={setTlibSlot} />}
-          {showSorts && sortDefs.length > 0 && (
-            <div className="side-group xrail-sec">{renderSort('dtab-sort-side', false)}</div>
-          )}
-          {facetGroups.length > 0 && (
-            <div className="side-group side-facets">
-              {renderFacetGroups('toolbar')}
-              <Button
-                variant="secondary"
-                block
-                className="side-allfilters"
-                iconStart={<FilterIcon size={16} />}
-                onClick={() => { setSheetFrom('side'); setSheetOpen(true); }}
-                aria-haspopup="dialog"
-                aria-expanded={sheetOpen}
-              >
-                {t('places.allFilters')}
-                {activeFilters - (country ? 1 : 0) > 0 && (
-                  <Chip kind="count" className="dtab-count">{fmt(activeFilters - (country ? 1 : 0))}</Chip>
-                )}
-              </Button>
+      {/* T602: the filter pane, desktop only (CSS hides it under 769px)
+          and only while All filters has it open: every facet group of the
+          tab in Places' pane sections. No sort (the quick row's pill) and
+          no country (the settings line's Countries, or Where). */}
+      {facetGroups.length > 0 && paneOpen && isDesktop && (
+        <aside className="side-panel places-side" id="dtab-side" aria-label={t('filter.filters')}>
+          <div className="xrail xpane">
+            <div className="xpane-head">
+              <h2 className="xpane-count">{t('filter.filters')}</h2>
+              {filterCount > 0 && (
+                <Button variant="quiet" size="sm" className="xpane-clear" onClick={resetFacets}>
+                  {t('filter.clearAll')}
+                </Button>
+              )}
             </div>
-          )}
-          {countryOptions.length > 0 && (
-            <CountryFold t={t} single name="dtab-country" className="side-country"
-              countries={countryOptions} selected={country ? [country] : []}
-              onPick={(cc) => { setCountry(cc); setNearPlace(null); }} />
-          )}
-        </div>
-      </aside>
+            {renderFacetGroups('all')}
+          </div>
+        </aside>
+      )}
 
       <div className="places-tab" ref={scrollRef}>
       <div className="places-wrap">
@@ -3118,7 +3104,6 @@ export function DestinationsTab({
           : (
             <div className="dtab-top">
               {searchField}
-              {!isDesktop && filtersButton}
             </div>
           ))}
         {/* Under the search row, as on Places (T498), so moving between the
@@ -3130,8 +3115,9 @@ export function DestinationsTab({
           aria-label={t((CATS.find((c) => c.key === cat) || CATS[0]).labelKey)}>
         {/* T600, the compact head: the pill row, then the What and Where
             bar with the Map or List pill on one row, then the quick filter
-            chips (a phone's; a desktop has the side pane) and the chips
-            that are on, then the map or the list. */}
+            row (All filters, Sort, the quick chips; T602 on every width
+            and tab, the trip library too) and the chips that are on, then
+            the map or the list. */}
         {whereBar}
 
         {quickBar}
@@ -3245,10 +3231,7 @@ export function DestinationsTab({
           </>
         )}
 
-        {!isJourneyBrowse && !mapOn && !(cat === 'trails' && showCountryIndex) && refineRow}
-        {/* The map view on a phone keeps the country, the one choice a map
-            narrows by (T600); a desktop has it in the side pane. */}
-        {mapOn && countryControl && <div className="dtab-refine">{countryControl}</div>}
+        {!isJourneyBrowse && !mapOn && refineRow}
 
         {/* Trails and Cycling with no country: the map holds each country's
             best, and says once how to get all of one (T600). */}
@@ -3674,7 +3657,9 @@ export function DestinationsTab({
             onClearSearch={() => setQuery('')}
             onBack={onPickCategory ? () => onPickCategory('places', country || '') : null}
             backLabel={t('nav.explore')}
-            panelSlot={isDesktop ? tlibSlot : null}
+            // T602: no side panel holds the library's filters; it carries
+            // its own Filters door on every width.
+            panelSlot={null}
             isDesktop={isDesktop}
             t={t}
             lang={lang}

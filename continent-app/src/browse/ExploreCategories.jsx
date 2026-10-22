@@ -1,6 +1,6 @@
 import React from 'react';
 import { useI18n } from '../i18n/index.jsx';
-import { Tile, TileGroup } from '../components/ui/index.js';
+import { Tabs, Tile, TileGroup } from '../components/ui/index.js';
 import {
   CompassIcon, BootIcon, BeachIcon, LakeIcon, MountainIcon, BikeIcon,
 } from '../components/Icons.jsx';
@@ -21,6 +21,13 @@ import {
  * pane): `variant="row"` draws the same six kit tiles as one row of pills,
  * icon beside the word, at the top of Explore's content. The row scrolls
  * sideways on a phone; the selected one keeps the tint and its tick.
+ *
+ * T601 (Explore v8, owner 2026-10-22: "more hierarchy"): the row is drawn
+ * as the kit Tabs, level 2 under the search: icon over nothing, icon beside
+ * the word, --text-2 at rest, the current one --text with the 2 px brown
+ * underline on the row's hairline. Same props; every tab that passes
+ * variant="row" gets the same look. Arrow keys, Home and End move and
+ * choose, as the kit Tabs do.
  */
 export const EXPLORE_TILES = [
   { key: 'places', labelKey: 'places.catPlaces', Icon: CompassIcon },
@@ -34,11 +41,27 @@ export const EXPLORE_TILES = [
 export function ExploreCategories({ current, onPick, columns = 3, panelId, className = '', variant = 'grid' }) {
   const row = variant === 'row';
   const { t } = useI18n();
+  if (row) {
+    return (
+      <Tabs label={t('places.sideBrowse')} value={current} panelId={panelId}
+        className={`xcats xcats-row ${className}`.trim()}
+        onChange={(key) => { if (key !== current) onPick(key); }}
+        tabs={EXPLORE_TILES.map(({ key, labelKey, Icon }) => ({
+          id: key,
+          label: (
+            <span className="xcats-tab" data-cat={key}>
+              <span className="xcats-tab-icon" aria-hidden="true"><Icon size={20} /></span>
+              <span className="xcats-tab-label">{t(labelKey)}</span>
+            </span>
+          ),
+        }))} />
+    );
+  }
   return (
-    <TileGroup kind="tabs" columns={row ? 1 : columns} label={t('places.sideBrowse')}
-      className={`xcats ${row ? 'xcats-row' : 'xrail-tiles'} ${className}`.trim()}>
+    <TileGroup kind="tabs" columns={columns} label={t('places.sideBrowse')}
+      className={`xcats xrail-tiles ${className}`.trim()}>
       {EXPLORE_TILES.map(({ key, labelKey, Icon }) => (
-        <Tile key={key} kind="tab" icon={<Icon size={row ? 18 : 20} />} selected={key === current}
+        <Tile key={key} kind="tab" icon={<Icon size={20} />} selected={key === current}
           aria-controls={panelId} data-cat={key}
           onClick={() => { if (key !== current) onPick(key); }}>
           {t(labelKey)}

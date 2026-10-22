@@ -5,7 +5,7 @@ import { KIND_ICONS } from './CategoryRail.jsx';
 import { formatMoney } from '../lib/money.js';
 import { DayPriceDot } from '../components/DayPriceDot.jsx';
 import {
-  DiamondIcon, GlobeIcon, MedalIcon, PersonIcon, SwimIcon, TrainIcon,
+  ChevronDownIcon, DiamondIcon, GlobeIcon, MedalIcon, PersonIcon, SwimIcon, TrainIcon,
 } from '../components/Icons.jsx';
 import '../styles/78-filter-pane.css';
 
@@ -14,11 +14,12 @@ import '../styles/78-filter-pane.css';
  * desktop screen with nothing folded, in the order a traveller narrows:
  *
  *   Kind of place   small chips with their icon, many can be on
- *   Good for        one choice in plain words (a base for the week, a day
+ *   Size            plain words, no icons (the old size glyphs read as noise);
+ *                   beside Kind of place since T604, the same question
+ *   Good for       one choice in plain words (a base for the week, a day
  *                   trip, a stop on the way) with one help line under it
  *   Budget a day    a stepped two-thumb range, min and max read out above it
  *   Month           twelve short month buttons and Any, one choice
- *   Size            plain words, no icons (the old size glyphs read as noise)
  *   Rating          Any, Very good, Excellent, Exceptional ("this band and up")
  *   Flight up to    Any, 2 h, 3 h, 4 h, 6 h (only with flights on the way)
  *   Max travel time the ground reach, only where its data exists
@@ -174,7 +175,13 @@ export function ExploreFilterRail({
   tripKinds, setTripKinds,
   flightLimitAvailable = false,
   count = null, onClearAll = null,
+  only = null,
 }) {
+  // T604: `only` draws a subset of the sections (a quick chip's popover
+  // draws one), so a filter has one look and one behaviour wherever it is.
+  const show = (key) => !only || only.includes(key);
+  const uid = React.useId();
+  const hid = (key) => `xpane-h-${key}${uid.replace(/[^a-zA-Z0-9]/g, '')}`;
   const rating = minVerdict(xf.verdicts);
   const goodFor = goodForOf(xf.roles);
   const hours = (n) => t('filter.paneHours', { n });
@@ -190,7 +197,7 @@ export function ExploreFilterRail({
 
   return (
     <div className="xrail xpane">
-      {count != null && (
+      {count != null && !only && (
         <div className="xpane-head">
           {/* T596 (owner 2026-10-22): no place count in the pane's head. */}
           <p className="xpane-count sr-only" aria-live="polite">
@@ -204,10 +211,10 @@ export function ExploreFilterRail({
         </div>
       )}
 
-      {setTripKinds && (
-        <section className="xpane-sec" aria-labelledby="xpane-h-type">
-          <h3 className="xrail-h" id="xpane-h-type">{t('filter.tripType')}</h3>
-          <div className="xpane-chips" role="group" aria-labelledby="xpane-h-type">
+      {setTripKinds && show('type') && (
+        <section className="xpane-sec" aria-labelledby={hid('type')}>
+          <h3 className="xrail-h" id={hid('type')}>{t('filter.tripType')}</h3>
+          <div className="xpane-chips" role="group" aria-labelledby={hid('type')}>
             {TRIP_KINDS.map((k) => {
               const Icon = KIND_ICONS[k.key];
               return (
@@ -222,63 +229,73 @@ export function ExploreFilterRail({
         </section>
       )}
 
-      <section className="xpane-sec" aria-labelledby="xpane-h-good">
-        <h3 className="xrail-h" id="xpane-h-good">{t('filter.goodFor')}</h3>
-        <ChipGroup label={t('filter.goodFor')} className="xpane-chips">
-          <Chip kind="choice" selected={!goodFor} onClick={() => patch({ roles: [] })}>
-            {t('filter.paneAny')}
-          </Chip>
-          {GOOD_FOR.map((g) => (
-            <Chip key={g.key} kind="choice" selected={goodFor === g.key}
-              onClick={() => patch({ roles: g.roles })}>
-              {t(`filter.goodFor.${g.key}`)}
+      {show('size') && (
+        <section className="xpane-sec" aria-labelledby={hid('size')}>
+          <h3 className="xrail-h" id={hid('size')}>{t('filter.size')}</h3>
+          <div className="xpane-chips" role="group" aria-labelledby={hid('size')}>
+            {SIZE_KEYS.map((k) => (
+              <Chip key={k} selected={xf.kinds.includes(k)}
+                onClick={() => patch({ kinds: toggleIn(xf.kinds, k) })}>
+                {t(`filter.sizeWord.${k}`)}
+              </Chip>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {show('good') && (
+        <section className="xpane-sec" aria-labelledby={hid('good')}>
+          <h3 className="xrail-h" id={hid('good')}>{t('filter.goodFor')}</h3>
+          <ChipGroup label={t('filter.goodFor')} className="xpane-chips">
+            <Chip kind="choice" selected={!goodFor} onClick={() => patch({ roles: [] })}>
+              {t('filter.paneAny')}
             </Chip>
-          ))}
-        </ChipGroup>
-      </section>
+            {GOOD_FOR.map((g) => (
+              <Chip key={g.key} kind="choice" selected={goodFor === g.key}
+                onClick={() => patch({ roles: g.roles })}>
+                {t(`filter.goodFor.${g.key}`)}
+              </Chip>
+            ))}
+          </ChipGroup>
+        </section>
+      )}
 
-      <section className="xpane-sec" aria-labelledby="xpane-h-budget">
-        {/* What the day figure holds, once per view (T498): the dot sits
-            after the label, outside it. */}
-        <div className="xpane-label-row">
-          <h3 className="xrail-h" id="xpane-h-budget">{t('filter.budget')}</h3>
-          <DayPriceDot />
-          <span className="xpane-unit">{t('filter.budgetUnit')}</span>
-        </div>
-        <BudgetRange t={t} xf={xf} patch={patch} />
-      </section>
+      {show('budget') && (
+        <section className="xpane-sec" aria-labelledby={hid('budget')}>
+          {/* What the day figure holds, once per view (T498): the dot sits
+              after the label, outside it. */}
+          <div className="xpane-label-row">
+            <h3 className="xrail-h" id={hid('budget')}>{t('filter.budget')}</h3>
+            <DayPriceDot />
+            <span className="xpane-unit">{t('filter.budgetUnit')}</span>
+          </div>
+          <BudgetRange t={t} xf={xf} patch={patch} />
+        </section>
+      )}
 
-      <section className="xpane-sec" aria-labelledby="xpane-h-month">
-        <h3 className="xrail-h" id="xpane-h-month">{t('filter.month')}</h3>
-        <MonthPick t={t} lang={lang} month={xf.month} onPick={(m) => patch({ month: m })} />
-      </section>
+      {show('month') && (
+        <section className="xpane-sec" aria-labelledby={hid('month')}>
+          <h3 className="xrail-h" id={hid('month')}>{t('filter.month')}</h3>
+          <MonthPick t={t} lang={lang} month={xf.month} onPick={(m) => patch({ month: m })} />
+        </section>
+      )}
 
-      <section className="xpane-sec" aria-labelledby="xpane-h-size">
-        <h3 className="xrail-h" id="xpane-h-size">{t('filter.size')}</h3>
-        <div className="xpane-chips" role="group" aria-labelledby="xpane-h-size">
-          {SIZE_KEYS.map((k) => (
-            <Chip key={k} selected={xf.kinds.includes(k)}
-              onClick={() => patch({ kinds: toggleIn(xf.kinds, k) })}>
-              {t(`filter.sizeWord.${k}`)}
-            </Chip>
-          ))}
-        </div>
-      </section>
+      {show('rating') && (
+        <section className="xpane-sec" aria-labelledby={hid('rating')}>
+          <h3 className="xrail-h" id={hid('rating')}>{t('sort.rating')}</h3>
+          <Segmented label={t('sort.rating')} size="sm" block className="xpane-seg"
+            value={rating}
+            onChange={(v) => patch({ verdicts: verdictsFrom(v) })}
+            options={[
+              { value: '', label: t('filter.paneAny') },
+              ...RATING_STEPS.map((k) => ({ value: k, label: t(`score.band${k}`) })),
+            ]} />
+        </section>
+      )}
 
-      <section className="xpane-sec" aria-labelledby="xpane-h-rating">
-        <h3 className="xrail-h" id="xpane-h-rating">{t('sort.rating')}</h3>
-        <Segmented label={t('sort.rating')} size="sm" block className="xpane-seg"
-          value={rating}
-          onChange={(v) => patch({ verdicts: verdictsFrom(v) })}
-          options={[
-            { value: '', label: t('filter.paneAny') },
-            ...RATING_STEPS.map((k) => ({ value: k, label: t(`score.band${k}`) })),
-          ]} />
-      </section>
-
-      {flightLimitAvailable && (
-        <section className="xpane-sec" aria-labelledby="xpane-h-flight">
-          <h3 className="xrail-h" id="xpane-h-flight">{t('filter.flightUpTo')}</h3>
+      {flightLimitAvailable && show('flight') && (
+        <section className="xpane-sec" aria-labelledby={hid('flight')}>
+          <h3 className="xrail-h" id={hid('flight')}>{t('filter.flightUpTo')}</h3>
           <Segmented label={t('filter.flightUpTo')} size="sm" block className="xpane-seg"
             value={xf.fh ? String(xf.fh) : ''}
             onChange={(v) => patch({ fh: v ? Number(v) : null })}
@@ -289,9 +306,9 @@ export function ExploreFilterRail({
         </section>
       )}
 
-      {reachAvailable && setReachHours && (
-        <section className="xpane-sec" aria-labelledby="xpane-h-reach">
-          <h3 className="xrail-h" id="xpane-h-reach">{t('filter.reach')}</h3>
+      {reachAvailable && setReachHours && show('reach') && (
+        <section className="xpane-sec" aria-labelledby={hid('reach')}>
+          <h3 className="xrail-h" id={hid('reach')}>{t('filter.reach')}</h3>
           <Segmented label={t('filter.reach')} size="sm" block className="xpane-seg"
             value={reachHours ? String(reachHours) : ''}
             onChange={(v) => setReachHours(v ? Number(v) : null)}
@@ -302,23 +319,168 @@ export function ExploreFilterRail({
         </section>
       )}
 
-      <section className="xpane-sec xpane-know" aria-labelledby="xpane-h-know">
-        <h3 className="xrail-h" id="xpane-h-know">{t('filter.goodToKnow')}</h3>
-        <div className="xpane-know-list">
-          {knowRows.map((r) => {
-            const Icon = KNOW_ICONS[r.key];
-            return (
-              <Switch key={r.key} className="xpane-know-row" checked={!!r.on} onChange={r.set}
-                label={(
-                  <span className="xpane-know-label">
-                    <span className="xpane-know-icon"><Icon size={r.key === 'gems' ? 12 : 18} /></span>
-                    {r.label}
-                  </span>
-                )} />
-            );
-          })}
+      {show('know') && (
+        <section className="xpane-sec xpane-know" aria-labelledby={hid('know')}>
+          <h3 className="xrail-h" id={hid('know')}>{t('filter.goodToKnow')}</h3>
+          <div className="xpane-know-list">
+            {knowRows.map((r) => {
+              const Icon = KNOW_ICONS[r.key];
+              return (
+                <Switch key={r.key} className="xpane-know-row" checked={!!r.on} onChange={r.set}
+                  label={(
+                    <span className="xpane-know-label">
+                      <span className="xpane-know-icon"><Icon size={r.key === 'gems' ? 12 : 18} /></span>
+                      {r.label}
+                    </span>
+                  )} />
+              );
+            })}
+          </div>
+        </section>
+      )}
+    </div>
+  );
+}
+
+/** The quick chips' groups, in the pane's own order (T604). */
+const QUICK_KEYS = ['type', 'good', 'budget', 'month', 'rating', 'flight'];
+
+/**
+ * The focused view's quick filter chips (T604, owner 2026-10-22: "make it
+ * consistent with the actual filter panel"). One chip per pane section, in
+ * the pane's order; a chip names the section until it is set, then the
+ * value it holds, in the selected tint with its tick. A chip opens a small
+ * popover that draws exactly that section of the pane (ExploreFilterRail
+ * with `only`), so a filter has the same controls, labels and state in the
+ * chip and in the pane. Escape or a press outside closes it and focus goes
+ * back to the chip; Clear empties that one section.
+ *
+ * Takes the pane's own props, unchanged.
+ */
+export function ExploreQuickFilters(props) {
+  const { t, lang, xf, patch, tripKinds, setTripKinds, flightLimitAvailable = false } = props;
+  const [openKey, setOpenKey] = React.useState(null);
+  const [left, setLeft] = React.useState(0);
+  const barRef = React.useRef(null);
+  const popRef = React.useRef(null);
+  const chipRefs = React.useRef(new Map());
+  const popId = `xqf${React.useId().replace(/[^a-zA-Z0-9]/g, '')}`;
+
+  const summary = {
+    type: () => {
+      const on = tripKinds || [];
+      if (on.length === 1) return t(`kind.${on[0]}`);
+      return on.length > 1 ? t('where.chipMany', { label: t('filter.tripType'), n: on.length }) : '';
+    },
+    good: () => {
+      const k = goodForOf(xf.roles);
+      return k ? t(`filter.goodFor.${k}`) : '';
+    },
+    budget: () => {
+      if (xf.bmin && xf.budget) {
+        return t('explore.qfRange', { lo: formatMoney(xf.bmin), hi: formatMoney(xf.budget) });
+      }
+      if (xf.budget) return t('explore.qfBudget', { eur: formatMoney(xf.budget) });
+      return xf.bmin ? t('filter.budgetFrom', { eur: formatMoney(xf.bmin) }) : '';
+    },
+    month: () => (xf.month
+      ? new Intl.DateTimeFormat(lang, { month: 'long' }).format(new Date(2026, xf.month - 1, 15))
+      : ''),
+    rating: () => {
+      const r = minVerdict(xf.verdicts);
+      return r ? t('explore.qfRatingUp', { band: t(`score.band${r}`) }) : '';
+    },
+    flight: () => (xf.fh ? t('explore.qfFlight', { n: xf.fh }) : ''),
+  };
+  const clear = {
+    type: () => setTripKinds([]),
+    good: () => patch({ roles: [] }),
+    budget: () => patch({ bmin: null, budget: null }),
+    month: () => patch({ month: null }),
+    rating: () => patch({ verdicts: [] }),
+    flight: () => patch({ fh: null }),
+  };
+  const label = {
+    type: t('filter.tripType'), good: t('filter.goodFor'), budget: t('filter.budget'),
+    month: t('filter.month'), rating: t('sort.rating'), flight: t('filter.flightUpTo'),
+  };
+  const keys = QUICK_KEYS.filter((k) => (k !== 'type' || setTripKinds) && (k !== 'flight' || flightLimitAvailable));
+  const open = keys.includes(openKey) ? openKey : null;
+
+  const close = React.useCallback((refocus) => {
+    const chip = chipRefs.current.get(openKey);
+    setOpenKey(null);
+    if (refocus) chip?.focus();
+  }, [openKey]);
+
+  // The popover hangs under its chip, kept inside the bar's width; focus
+  // moves into it so the keyboard reaches its controls next.
+  React.useLayoutEffect(() => {
+    if (!open) return;
+    const bar = barRef.current;
+    const chip = chipRefs.current.get(open);
+    const pop = popRef.current;
+    if (!bar || !chip || !pop) return;
+    const b = bar.getBoundingClientRect();
+    const c = chip.getBoundingClientRect();
+    setLeft(Math.max(0, Math.min(c.left - b.left, b.width - pop.offsetWidth)));
+    pop.querySelector('button:not(:disabled), input')?.focus({ preventScroll: true });
+  }, [open]);
+
+  React.useEffect(() => {
+    if (!open) return undefined;
+    const onDoc = (e) => {
+      if (popRef.current?.contains(e.target)) return;
+      if (chipRefs.current.get(open)?.contains(e.target)) return;
+      close(false);
+    };
+    const onKey = (e) => {
+      if (e.key !== 'Escape') return;
+      e.stopPropagation();
+      close(true);
+    };
+    document.addEventListener('mousedown', onDoc);
+    document.addEventListener('keydown', onKey, true);
+    return () => {
+      document.removeEventListener('mousedown', onDoc);
+      document.removeEventListener('keydown', onKey, true);
+    };
+  }, [open, close]);
+
+  return (
+    <div className="xqf" ref={barRef}>
+      <div className="xqf-row" role="group" aria-label={t('explore.qfAria')}>
+        {keys.map((k) => {
+          const value = summary[k]();
+          const isOpen = open === k;
+          return (
+            <Chip key={k} kind="filter" selected={!!value}
+              className={`xqf-chip${isOpen ? ' is-open' : ''}`}
+              ref={(el) => { if (el) chipRefs.current.set(k, el); else chipRefs.current.delete(k); }}
+              aria-pressed={undefined}
+              aria-haspopup="dialog"
+              aria-expanded={isOpen}
+              aria-controls={isOpen ? popId : undefined}
+              onClick={() => setOpenKey(isOpen ? null : k)}>
+              {value || label[k]}
+              <ChevronDownIcon size={14} className="xqf-chev" />
+            </Chip>
+          );
+        })}
+      </div>
+      {open && (
+        <div className="xqf-pop" id={popId} ref={popRef} role="dialog" aria-label={label[open]}
+          style={{ left }}>
+          <ExploreFilterRail {...props} count={null} onClearAll={null} only={[open]} />
+          {summary[open]() && (
+            <div className="xqf-foot">
+              <Button variant="quiet" size="sm" className="xqf-clear" onClick={clear[open]}>
+                {t('where.clearGroup')}
+              </Button>
+            </div>
+          )}
         </div>
-      </section>
+      )}
     </div>
   );
 }

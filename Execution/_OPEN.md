@@ -2007,3 +2007,6 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T598-a | T598 | The sticky desktop map in Explore's focused view does not grow taller once the list has scrolled | next task | open |  |
 | T600-a | T600 | When filters leave no map rows the outdoor map view falls back to the list while the pill still reads List | next task | open |  |
 | T600-b | T600 | Trails at Europe level maps only each country's best walks (339), not every walk | next task | open |  |
+| T601-a | T601 | On a phone the overview hero is about 490 px tall before the first rail; consider trimming | next task | open |  |
+| T602-a | T602 | .places-side .side-facets and .dtab-filters rules in 63-v6-destinations.css are unused since the left panel left the category tabs | next task | open |  |
+| T604-a | T604 | The outdoor tabs' quick chips still use FilterChipBar popovers, not the pane's own sections as Places does | next task | open |  |

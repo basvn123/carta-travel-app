@@ -70,23 +70,17 @@
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
 }
-.explore-shell .mpp-count {
-  margin: 0;
-  padding: var(--space-4) var(--space-4) var(--space-2);
-  font-size: var(--text-label);
-  font-weight: 600;
-  line-height: var(--leading-tight);
-  color: var(--text-2);
-}
+/* The list's heading (the count) is for screen readers only (T603), so the
+   list and the empty line carry the panel's top padding themselves. */
 .explore-shell .mpp-empty {
   margin: 0;
-  padding: 0 var(--space-4) var(--space-4);
+  padding: var(--space-4);
   max-width: 34ch;
   font-size: var(--text-body);
   line-height: var(--leading-body);
   color: var(--text-2);
 }
-.explore-shell .mpp-rows { display: block; padding: 0 var(--space-2) var(--space-4); }
+.explore-shell .mpp-rows { display: block; padding: var(--space-3) var(--space-2) var(--space-4); }
 
 /* The picked place. */
 .explore-shell .mpp-place { padding: var(--space-3) var(--space-4) var(--space-5); }
@@ -179,7 +173,8 @@
 /* Phone: the drawer's body. Full width, the photo shorter so the trip box
    shows at half height. */
 .explore-shell .mpp--compact .mpp-place { padding: 0 var(--space-4) var(--space-4); }
-.explore-shell .mpp--compact .mpp-count { padding-top: 0; }
+.explore-shell .mpp--compact .mpp-rows,
+.explore-shell .mpp--compact .mpp-empty { padding-top: 0; }
 .explore-shell .mpp--compact .mpp-media { aspect-ratio: 16 / 9; }
 .explore-shell .mpp--compact .mpp-name { font-size: var(--text-title); }
 

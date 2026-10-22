@@ -212,3 +212,41 @@
   height: var(--dmap-h, min(72dvh, 760px));
   min-height: 360px;
 }
+
+/* --------------------------------------------------------------------------
+   T602, the category tabs framed as Places' focused view. No permanent left
+   panel: the quick row (All filters, Sort, the quick chips) is on top on
+   every tab and width. All filters opens the filter pane on a desktop,
+   closed by default, Places' pane in width and sections (78-filter-pane's
+   .xpane); a phone opens the sheet. The composed trips' length stands over
+   the list on every width.
+   -------------------------------------------------------------------------- */
+.qfbar .btn { flex: none; border-radius: var(--radius-pill); }
+.qfbar .btn.is-on {
+  background: var(--select-bg);
+  border-color: var(--select-border);
+  color: var(--select-ink);
+}
+.places-wrap > .dtab-bar.xcats-bar { margin: 0 0 var(--space-3); }
+.dtab-panel .qfbar + .xchips { margin: 0 0 var(--space-3); }
+@media (min-width: 769px) {
+  .places-shell aside.side-panel.places-side {
+    flex-basis: 320px;
+    width: 320px;
+    padding: var(--space-4) var(--space-4) var(--space-6) var(--space-5);
+    animation: dtab-pane-in var(--dur-2) var(--ease-out);
+  }
+  .dtab-refine.is-length { display: flex; }
+}
+@keyframes dtab-pane-in {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .places-shell aside.side-panel.places-side { animation: none; }
+}
+@media (max-width: 768px) {
+  /* The quick row runs edge to edge and scrolls, as on Places' phone. */
+  .dtab-panel .qfbar { margin: 0 calc(var(--space-4) * -1) var(--space-3); }
+  .dtab-panel .qfbar-row { margin: 0; padding: 3px var(--space-4); }
+}

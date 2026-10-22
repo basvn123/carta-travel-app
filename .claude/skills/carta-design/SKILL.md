@@ -164,6 +164,26 @@ rules are amended in place where they are restated.
 - **Fewer words** (T596): no place counts on screen (they stay for screen readers), no help line under
   Good for, no positioning sentence in the footer.
 
+### Explore v8 (owner review 2026-10-22, T601 to T604)
+
+- **The overview hero** (T601): one licensed Commons photograph as a band across the content width
+  (the first place of the month's or the top-rated rail), a solid `--surface` panel over its lower edge
+  (`--radius-sheet`, `--elev-2`, at most 1040 px) holding "Where to next?", a small secondary Ask Carta
+  pill (no example caption) and one joined search field (What | Where | Search, Search the overview's
+  one primary; it rises 2 px on focus), the Map pill after it; the photo credit under the band. No text
+  on the photograph itself.
+- **Three levels under it:** the categories as kit Tabs (icon and word, the brown underline on the
+  current one, on a hairline) on every browse tab, then quiet 32 px quick chips.
+- **No permanent left panel on any browse tab** (T601, T602): filters live on top (quick chips, All
+  filters or Filters, Sort); on a desktop the 320 px filter pane slides in only when Filters is pressed,
+  closed by default, on a phone the sheet. Country is never a filter control: it comes from the settings
+  line's Countries (one country in Only these) or from a country typed in Where, and shows as the band
+  and a removable chip.
+- **Chips and pane are one control** (T604): each quick chip's popover draws the pane's own section;
+  a set chip shows its value in the selected tint with a tick. Action pills (icon first, 600) and filter
+  chips (chevron last, 500) share one 36 px height.
+- **No count on the map panel** (T603).
+
 ## Colour
 
 Single theme, light only: no `prefers-color-scheme` or `data-theme` blocks, `theme-color` is the page
