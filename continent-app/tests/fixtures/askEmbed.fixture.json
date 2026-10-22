@@ -3,7 +3,7 @@
  "about": "T551: Python reference vectors (int16 x32767, base64) and the two-stage top ten over passages-dest for 50 queries; regenerate with python pipeline/ask_index_layer.py --fixture after a model change.",
  "model": "minishlab/potion-multilingual-128M",
  "dims": 256,
- "built": "2026-10-22T10:18:06Z",
+ "built": "2026-10-22T12:47:53Z",
  "cases": [
   {
    "q": "rustig dorp aan een meer",
