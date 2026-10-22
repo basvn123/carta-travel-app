@@ -78,7 +78,6 @@ export function GuidedSearch({
   }, [requestOpen, onOpenRequested]);
   const [text, setText] = React.useState('');
   const [active, setActive] = React.useState(0);
-  const [slot, setSlot] = React.useState('what');
   const [index, setIndex] = React.useState(null);
   const triggerRef = React.useRef(null);
   const inputRef = React.useRef(null);
@@ -142,6 +141,140 @@ export function GuidedSearch({
   };
 
   const listOpen = options.length > 0;
+
+  return (
+    <div className={`gsearch${inHeader ? ' is-header' : ''}${hasFacets ? ' has-value' : ''}`}>
+      <Button ref={triggerRef} variant="secondary" className="gsearch-trigger"
+        iconStart={<SearchIcon size={18} />}
+        onClick={() => setOpen(true)} aria-haspopup="dialog" aria-expanded={open}>
+        <span className={hasFacets ? 'gsearch-summary' : 'gsearch-placeholder'}>
+          {hasFacets ? summary.join(', ') : t('gs.placeholder')}
+        </span>
+      </Button>
+      {hasFacets && (
+        <IconButton label={t('gs.clearAria')} className="gsearch-clear" onClick={() => onApply({}, true)}>
+          <CloseIcon size={16} />
+        </IconButton>
+      )}
+      {open && (
+        <SheetShell title={t('gs.title')} onClose={() => setOpen(false)} anchorRef={triggerRef}
+          width={720} className="gsearch-sheet" labelId="gsearch-title" initialFocusRef={inputRef}
+          closeLabel={t('gs.close')}>
+          <div className="gs">
+            <div className="gs-field">
+              <SearchIcon size={20} className="gs-field-icon" />
+              <input
+                ref={inputRef}
+                className="gs-input"
+                type="text"
+                role="combobox"
+                aria-label={t('gs.inputLabel')}
+                aria-expanded={listOpen}
+                aria-controls="gs-listbox"
+                aria-autocomplete="list"
+                aria-activedescendant={listOpen ? `gs-opt-${active}` : undefined}
+                placeholder={t('gs.inputPlaceholder')}
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                onKeyDown={onKeyDown}
+                autoComplete="off"
+                autoCapitalize="off"
+                spellCheck={false}
+                enterKeyHint="search"
+              />
+              {text && (
+                <IconButton label={t('gs.clearText')} className="gs-field-clear" onClick={() => { setText(''); inputRef.current?.focus(); }}>
+                  <CloseIcon size={16} />
+                </IconButton>
+              )}
+            </div>
+
+            {text.trim() ? (
+              <div className="gs-results">
+                {!vocab && <p className="gs-hint" role="status">{t('gs.loading')}</p>}
+                {listOpen && (
+                  <ul id="gs-listbox" role="listbox" aria-label={t('gs.optionsLabel')} className="gs-options">
+                    {options.map((o, i) => {
+                      const Icon = o.open || o.entry?.kind === 'near' ? CompassIcon
+                        : o.entry?.kind === 'vibe' ? (VIBE_ICONS[o.entry.value] || SparkIcon) : SearchIcon;
+                      return (
+                        <li
+                          key={o.key}
+                          id={`gs-opt-${i}`}
+                          role="option"
+                          aria-selected={i === active}
+                          className={`gs-option${i === active ? ' is-active' : ''}`}
+                          onMouseDown={(e) => e.preventDefault()}
+                          onMouseEnter={() => setActive(i)}
+                          onClick={() => choose(o)}
+                        >
+                          <span className="gs-option-icon" aria-hidden="true"><Icon size={18} /></span>
+                          <span className="gs-option-main">
+                            <span className="gs-option-label">
+                              {o.open ? o.entry.label : o.parts.map(partLabel).join(', ')}
+                            </span>
+                            {(o.open || o.entry?.kind === 'near') && o.entry.sub && (
+                              <span className="gs-option-sub">{o.entry.sub}</span>
+                            )}
+                          </span>
+                          <span className="gs-option-slot">{optionSlot(o)}</span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+                {vocab && result?.unknown?.length > 0 && (
+                  <div className="gs-cant" role="status">
+                    <p className="gs-cant-line">{t('gs.cant', { word: result.unknown.join(' ') })}</p>
+                    <p className="gs-cant-help">{t('gs.canHelp')}</p>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <>
+                {!hasFacets && examples.length > 0 && (
+                  <section className="gs-try" aria-labelledby="gs-h-try">
+                    <h3 className="gs-h" id="gs-h-try">{t('gs.tryOne')}</h3>
+                    <div className="gs-try-list">
+                      {examples.map((f) => {
+                        const Icon = VIBE_ICONS[f.vibe] || SparkIcon;
+                        const words = facetLabels(f, labels, null, t);
+                        return (
+                          <Button key={words.join('|')} variant="secondary" className="gs-try-item"
+                            iconStart={<Icon size={18} />} onClick={() => onApply(f, true)}>
+                            {words.join(', ')}
+                          </Button>
+                        );
+                      })}
+                    </div>
+                  </section>
+                )}
+                <GuidedSlots t={t} lang={lang} guided={guided} countries={countries} facets={facets}
+                  labels={labels} budgetSteps={budgetSteps} onApply={onApply} nearName={nearName} />
+              </>
+            )}
+
+            <div className="gs-foot">
+              {empty && hasFacets && <p className="gs-none" role="status">{emptyLine || t('gs.noMatch')}</p>}
+              <div className="gs-foot-actions">
+                <Button variant="quiet" disabled={!hasFacets} onClick={() => onApply({}, true)}>{t('gs.clear')}</Button>
+                <Button variant="primary" onClick={() => setOpen(false)}>{t('filter.showPlaces')}</Button>
+              </div>
+            </div>
+          </div>
+        </SheetShell>
+      )}
+    </div>
+  );
+}
+
+/**
+ * The five slots of a question (What, Where, When, Budget, Extras) as tabs
+ * over their panels, label over value. Shared by the guided search and
+ * Ask Carta's Refine (T558), so both edit Explore's facets the same way.
+ */
+export function GuidedSlots({ t, lang, guided, countries, facets, labels, budgetSteps, onApply, nearName, idPrefix = 'gs' }) {
+  const [slot, setSlot] = React.useState('what');
   const where = facets.area ? `a:${facets.area}` : facets.country ? `c:${facets.country}` : facets.near ? `n:${facets.near}` : '';
   const setWhere = (key) => {
     const [k, v] = key ? key.split(':') : [];
@@ -266,144 +399,26 @@ export function GuidedSearch({
   };
 
   return (
-    <div className={`gsearch${inHeader ? ' is-header' : ''}${hasFacets ? ' has-value' : ''}`}>
-      <Button ref={triggerRef} variant="secondary" className="gsearch-trigger"
-        iconStart={<SearchIcon size={18} />}
-        onClick={() => setOpen(true)} aria-haspopup="dialog" aria-expanded={open}>
-        <span className={hasFacets ? 'gsearch-summary' : 'gsearch-placeholder'}>
-          {hasFacets ? summary.join(', ') : t('gs.placeholder')}
-        </span>
-      </Button>
-      {hasFacets && (
-        <IconButton label={t('gs.clearAria')} className="gsearch-clear" onClick={() => onApply({}, true)}>
-          <CloseIcon size={16} />
-        </IconButton>
-      )}
-      {open && (
-        <SheetShell title={t('gs.title')} onClose={() => setOpen(false)} anchorRef={triggerRef}
-          width={720} className="gsearch-sheet" labelId="gsearch-title" initialFocusRef={inputRef}
-          closeLabel={t('gs.close')}>
-          <div className="gs">
-            <div className="gs-field">
-              <SearchIcon size={20} className="gs-field-icon" />
-              <input
-                ref={inputRef}
-                className="gs-input"
-                type="text"
-                role="combobox"
-                aria-label={t('gs.inputLabel')}
-                aria-expanded={listOpen}
-                aria-controls="gs-listbox"
-                aria-autocomplete="list"
-                aria-activedescendant={listOpen ? `gs-opt-${active}` : undefined}
-                placeholder={t('gs.inputPlaceholder')}
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                onKeyDown={onKeyDown}
-                autoComplete="off"
-                autoCapitalize="off"
-                spellCheck={false}
-                enterKeyHint="search"
-              />
-              {text && (
-                <IconButton label={t('gs.clearText')} className="gs-field-clear" onClick={() => { setText(''); inputRef.current?.focus(); }}>
-                  <CloseIcon size={16} />
-                </IconButton>
-              )}
-            </div>
-
-            {text.trim() ? (
-              <div className="gs-results">
-                {!vocab && <p className="gs-hint" role="status">{t('gs.loading')}</p>}
-                {listOpen && (
-                  <ul id="gs-listbox" role="listbox" aria-label={t('gs.optionsLabel')} className="gs-options">
-                    {options.map((o, i) => {
-                      const Icon = o.open || o.entry?.kind === 'near' ? CompassIcon
-                        : o.entry?.kind === 'vibe' ? (VIBE_ICONS[o.entry.value] || SparkIcon) : SearchIcon;
-                      return (
-                        <li
-                          key={o.key}
-                          id={`gs-opt-${i}`}
-                          role="option"
-                          aria-selected={i === active}
-                          className={`gs-option${i === active ? ' is-active' : ''}`}
-                          onMouseDown={(e) => e.preventDefault()}
-                          onMouseEnter={() => setActive(i)}
-                          onClick={() => choose(o)}
-                        >
-                          <span className="gs-option-icon" aria-hidden="true"><Icon size={18} /></span>
-                          <span className="gs-option-main">
-                            <span className="gs-option-label">
-                              {o.open ? o.entry.label : o.parts.map(partLabel).join(', ')}
-                            </span>
-                            {(o.open || o.entry?.kind === 'near') && o.entry.sub && (
-                              <span className="gs-option-sub">{o.entry.sub}</span>
-                            )}
-                          </span>
-                          <span className="gs-option-slot">{optionSlot(o)}</span>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                )}
-                {vocab && result?.unknown?.length > 0 && (
-                  <div className="gs-cant" role="status">
-                    <p className="gs-cant-line">{t('gs.cant', { word: result.unknown.join(' ') })}</p>
-                    <p className="gs-cant-help">{t('gs.canHelp')}</p>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <>
-                {!hasFacets && examples.length > 0 && (
-                  <section className="gs-try" aria-labelledby="gs-h-try">
-                    <h3 className="gs-h" id="gs-h-try">{t('gs.tryOne')}</h3>
-                    <div className="gs-try-list">
-                      {examples.map((f) => {
-                        const Icon = VIBE_ICONS[f.vibe] || SparkIcon;
-                        const words = facetLabels(f, labels, null, t);
-                        return (
-                          <Button key={words.join('|')} variant="secondary" className="gs-try-item"
-                            iconStart={<Icon size={18} />} onClick={() => onApply(f, true)}>
-                            {words.join(', ')}
-                          </Button>
-                        );
-                      })}
-                    </div>
-                  </section>
-                )}
-                <Tabs
-                  label={t('gs.slotsLabel')}
-                  className="gs-tabs"
-                  panelId="gs-panel"
-                  value={slot}
-                  onChange={setSlot}
-                  tabs={SLOTS.map((s) => ({
-                    id: s,
-                    label: (
-                      <span className="gs-slot">
-                        <span className="gs-slot-k">{t(`gs.${s}`)}</span>
-                        <span className="gs-slot-v">{slotValue(s)}</span>
-                      </span>
-                    ),
-                  }))}
-                />
-                <div id="gs-panel" role="tabpanel" aria-label={t(`gs.${slot}`)} className="gs-panel">
-                  {guided ? panel[slot] : <p className="gs-hint" role="status">{t('gs.loading')}</p>}
-                </div>
-              </>
-            )}
-
-            <div className="gs-foot">
-              {empty && hasFacets && <p className="gs-none" role="status">{emptyLine || t('gs.noMatch')}</p>}
-              <div className="gs-foot-actions">
-                <Button variant="quiet" disabled={!hasFacets} onClick={() => onApply({}, true)}>{t('gs.clear')}</Button>
-                <Button variant="primary" onClick={() => setOpen(false)}>{t('filter.showPlaces')}</Button>
-              </div>
-            </div>
-          </div>
-        </SheetShell>
-      )}
-    </div>
+    <>
+      <Tabs
+        label={t('gs.slotsLabel')}
+        className="gs-tabs"
+        panelId={`${idPrefix}-panel`}
+        value={slot}
+        onChange={setSlot}
+        tabs={SLOTS.map((s) => ({
+          id: s,
+          label: (
+            <span className="gs-slot">
+              <span className="gs-slot-k">{t(`gs.${s}`)}</span>
+              <span className="gs-slot-v">{slotValue(s)}</span>
+            </span>
+          ),
+        }))}
+      />
+      <div id={`${idPrefix}-panel`} role="tabpanel" aria-label={t(`gs.${slot}`)} className="gs-panel">
+        {guided ? panel[slot] : <p className="gs-hint" role="status">{t('gs.loading')}</p>}
+      </div>
+    </>
   );
 }

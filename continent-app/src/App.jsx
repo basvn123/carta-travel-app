@@ -83,6 +83,7 @@ import {
 import { usePlaceRows } from './hooks/usePlaceRows.js';
 import { countryName as localCountryName } from './lib/countryName.js';
 import { PlanStart } from './planner/PlanStart.jsx';
+import { PlanAsk } from './planner/PlanAsk.jsx';
 import { readFavList, isFav, favDestIds, toggleFav as toggleFavKey } from './lib/favorites.js';
 import { readTripShareFromUrl, decodeTripShare, readDayShareFromUrl } from './lib/shareLink.js';
 import { readShareTokenFromUrl, stripShareTokenFromUrl } from './auth/tripShares.js';
@@ -1603,6 +1604,7 @@ function TravelApp() {
               onOpenStyles={openTripStyles}
               seed={pendingExploreSeed}
               onSeedConsumed={clearExploreSeed}
+              onPlanTrip={openTripInPlanner}
               isMock={!!data.meta?.is_mock}
             />
           </div>
@@ -1772,6 +1774,7 @@ function TravelApp() {
           <PlanStart
             pageOver={!!selectedDest || savedTripsOpen || accountOpen || !!countryPage || !!pendingRegion}
             onNavigate={goTo}
+            ask={<PlanAsk data={data} onOpenPlace={openDetail} onPlanTrip={openTripInPlanner} />}
           />
         </div>
       )}

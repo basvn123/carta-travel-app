@@ -1,0 +1,798 @@
+{
+ "version": 1,
+ "about": "T551: Python reference vectors (int16 x32767, base64) and the two-stage top ten over passages-dest for 50 queries; regenerate with python pipeline/ask_index_layer.py --fixture after a model change.",
+ "model": "minishlab/potion-multilingual-128M",
+ "dims": 256,
+ "built": "2026-10-22T10:18:06Z",
+ "cases": [
+  {
+   "q": "rustig dorp aan een meer",
+   "v": "rfvpA6/m7fSI8n0MIwxGASYEPfuG+Dr+6AXb+0sJXeixA+kPf/pYB8fzffqdB+cMJQEf9IsFuPzn+/b2qA2pBykCNfrw9hzwSRAq9Wn33ewKA/P24Aaq9yf17Prc+yD8zgHn82rwtvOfB0H7zAELF9sEUwg6Fib0HPsjDR0C5f6nD8D1OP1w+xr+tPHPEowC8PySBrL+Y/RS/lb5iQVr/MEDfvE8/Gn7RPD58oAHoPuD/Gjz+wE9BNIHDA2FBqb+sghVBFX6jQORCr/7yv47A/gKDv3wESUErwNz/YsORPxd9Hj42wW2ABz3VfMOBOX//P9JAkH91/xi/j38hPx/9lsGFQFSCkv/ivvv/wEA3wCpAEAADf2M72f9iwWUCcryNgjcAT34vf8gBYYRbgTHC7MCJPp9A18AoAwg+HkFPgvG/qL94AIV/ur+GP9f/aUF5/3e9mvyUPaWAUIF/v6K/cj29AmNBNn6B/ZpB/n6Ywut/KgEov2OBJgE+fYO+7sIMPpk+HD7APaEAxoDE/9X+8kEav0s/1H+EfzwCY3/0/6P+oIGQwL8/qP9sgfI/Pj6rAMR+iYBxAPyAyEHxAcT/ZAJJP5WBs3+IwRIDGr4aQIo8l34hQPCCeL8EPsU+or/tAlRAFn8Gv989Gf7LvqCA8gCtPkj/lgAGg2/+7QGXgY=",
+   "top10": [
+    "dest:gem:minerve-herault",
+    "dest:gem:el-rocio",
+    "dest:gem:monsanto",
+    "dest:gem:hum-istria",
+    "dest:gem:zambujeira-do-mar",
+    "dest:gem:shiroka-laka",
+    "dest:gem:andros",
+    "dest:gem:saint-guilhem-le-desert",
+    "dest:gem:castelo-rodrigo",
+    "dest:gem:kovachevitsa"
+   ]
+  },
+  {
+   "q": "eilanden met mooie stranden",
+   "v": "9wSe/I7wNgJK8vEAfwFR9pX3rffy/cD/wPyL+wAHOAWaBfkQ6w9C9fLtQgOI+T4GCPnq+WL+uPhXB7j3Ev/iAaUE/vuW/Y/iTfpA9vX8aPSJCUr59gey/IEEkQNQ9B4H4gHl+WQGz/fb/sQI5QLSDLAD5f1FAD0GKfRPC2QDtwRJCRwNVQEZDsMEo/ZfD1z09Qk3B5D/afuv/jP9CAGo9OL7rPtgAuTrdfdhBsP4dvZL9Onx1Ath+c71/wet9e0I8gS6Bnb9xghEDE8KPwBpApgI8QbPETMJzgQRBVX6UvejA7r4Xv9HA/jxTvlRCO8DTfsA81jwzgaZCFMHXPH5/vP+uwKz+QkCv/1bDbIDwwD3B8r8Fgao7r/4TQz8/egAafnBB3AB+RA+BYz+4AWLCFX5ZPq29AMD8Aif/8f7mv7fB/v6MAPWELoObfng8+YFz/2r/0wGIg1uB932oAUPA4YK6Ag99bkBewVlDRX5MPmm9h750/eU+9j89APNB//2u/uSA18A4gX7+Yf6UAc58FULLgqi9aL+jQIb/7z6QwR8/mT8WfJt+ysCjQpM/5UDc/udBr8MzQro/eUOVwCL/loFpwt/DJAIvgDWA1cENv8Y/Mz+bAC/DbQDkQBl/4sDcgZO/IcCzvzCC+z/Vfuw/0j+q//K+Mb+CgOIAZ4EIwA=",
+   "top10": [
+    "dest:gem:formentera",
+    "dest:gem:marstrand",
+    "dest:FAE",
+    "dest:gem:santa-maria-azores",
+    "dest:gem:texel",
+    "dest:gem:elafonisos-simos",
+    "dest:gem:porto-santo",
+    "dest:gem:la-graciosa",
+    "dest:gem:romo",
+    "dest:gem:lefkada"
+   ]
+  },
+  {
+   "q": "middeleeuwse oude binnenstad",
+   "v": "Uvs27wz5qguR9mUVnPLY9z3zjvUp8jr+e/28/C71I/8cDBL6Cf/b87rpkxEfBSMLv/Yq/NL70/LV9BT0PglsC8MBrwD5+IPvtANmDtnvyfCS/WgB8fmm+/j9sfbY7xH+lPUsAqLpcO7/CPwLyAJz/BIHvREN+ynuKQGSAG7/bv2D/g35kv/sCGsSsQB7Ah4UnfEn/Rr+BgM597j6JwR++dH+UfsbA+7tzQ+Z/TX7svZaAjUBc/uG/mMDkw+2/2b1JPeS/m0PJAYUBBD5HvNMALAC9fK6A9v45QJr9aP0Ev6K/rD4fQBxEwn/Y/rdBYoHUfscACX4kvHA7F//UwDzBawCsfnX+6P7pAVI9hL9sPToBf/14/7tDdoDCP34Ag0KkviuAHUAZfy5A1MGagOF91MCUgRV9xf74gtP8bwIRQi8+2j63fqRAoj5k/nJAOz/JAA0/t0Br/5wBkn52QOK/nD+g/oA/u8BIwfT/TgBrP++/Hz6Lvj//on7xu/r/e730gIPAREB/gMg/p0DIv9nBfv9CPeS95QCQgONBhz0O/ypAtcEBf5G+jcASAMRCZT+xwL3/yn3qwz+BK8EVQwD/9oC7PyDBFAKFghb/moAtgEc9j3+PgaWApP/sPm6/PAAJP5O+Rz6HQP/Ayz5Tfp+/kIGuQOlBiP67ARp/TH6Z/k=",
+   "top10": [
+    "dest:gem:zierikzee",
+    "dest:gem:middelburg",
+    "dest:gem:erfurt",
+    "dest:gem:sarlat-la-caneda",
+    "dest:gem:deventer",
+    "dest:gem:dinkelsbuhl",
+    "dest:gem:troyes",
+    "dest:gem:nordlingen",
+    "dest:MST",
+    "dest:DUS"
+   ]
+  },
+  {
+   "q": "wijn en goed eten",
+   "v": "R+H87gjzNg7lBdMXkPSW8Kn7wOf//Dr4VPp+A7z2owlcGM/8FgnDBiz0dALd9hECh/X1CbQIiwT5Ad0iEQN7BZcFIQTI6yIAjf5lAQv/S/sA+Sf4FwXZ+Oj0QvM0A3oEFPzeCFf+oPArC9X8FgPiCSn5tAh2CcYGrgnu+KwDjQX9CG8DPfW2AHUQQw4p+ygDyv9uAokLV/f+CUENmAh19woMW/PdBs0LMQLR8w0HQfQNACcHNgq2+OwJ4wc8BsnzKQeV+xj73gKs9xX0/Pm5AVIA6P86Cf31HgPXAwj6BfoR58r4fQL/++gA0wGXATYHU/Zh+qDsIgwN//z4vvs7B14Cu/qOBe4IlQgb/e4I1vzgBg8CzvwmAVf9qP4qBvYB5PwzBZD74Ppd/1T/NPjaDr3/SPRX+lMGTflDAn3/+wXtAGD9U/gND6LzogJSBssEHwpA+Nr1ivvZ+d0CJPsZ+LP84/gk/D8A+vYRAnsCwQS9AbwFO/4PAKz+8/lg+/8CQwW6/qQBugg1+9YBsQro+pkAnfp6+P396gEZAFz/9gPW+Uv7YPrQAmEGvgZG+NoBFwc2BsP6C/xd/3D9dQEZAYAFxP7o/pwE3QDG/isEbwHi/NkBKwGQAFj/y/0yA4f9sQN7A8f+6vxzAur5QgTQ/iv7PP6WB1v97QKT/hj5egM=",
+   "top10": [
+    "dest:gem:villany",
+    "dest:gem:bernkastel-kues",
+    "dest:gem:metsovo",
+    "dest:gem:langhe",
+    "dest:gem:saint-emilion",
+    "dest:gem:beaune",
+    "dest:gem:tokaj",
+    "dest:gem:vipava-valley",
+    "dest:gem:epernay",
+    "dest:gem:milestii-mici"
+   ]
+  },
+  {
+   "q": "kuuroord met thermale baden",
+   "v": "ywpL1+74eBHo+r4Xsgz/DE8FXvjc4wACrQLb9e75WgrU8D/3ihZw9ioNjP5s/WkJxv6O/sn+Au0k/8MIjwQf+5QJ/wCX7PvtFf5r/vzw3A9Y7zcFjhMWAAsIUgk3/F4MPQr0/nEDH/ud90z2agO6BEP5QgGq/qX4Nf0B9dUEHAZRAswAagU5AbMELwOw+UXyTvx0As7vJfk6+QYE1P4a+ZYGc/7UA9f8NPYD+HAFpviH/dgFUQf4+E4LJwCqBWP7kP9H/X36ewYn/qQEnv8rAmAP4vvV/jUE3vKJA375rvx4/kP5PP5U/ezxUe29A+YCAAZ0A4kHe/769sIDJvWL/A/6+Ar/+xoEuvmNBJz+vwKr/N4FdAge9rP4gwm79mQGyPBIDEoKfgPAAUIDzgAd+fMETP4M+RsGggvI/nLvsvdXBCP59QDWAWoBx/sg/Mf3IvqD+kIM2wCb8+sDRwXIB2j6WgDK+ncK+QAzBMD4Jv60/4gGVf2+94D+4vW69en40/0DBzsCJQH0CZUAkwHAAb0F0v/w+1MEZvrF/yn3Wfz2B8L34fzC/MUB5vtB/Hv82/2AB40FMAMw/6QBVQTrAU/52gE3BWL85fs5/nz8BvkIAw8A0Qbx/xr7RQOsCqoH7QGoABgGhf27AMoBMwlfAyj7aP4mBHj2D/hW/c4Fw/8=",
+   "top10": [
+    "dest:gem:baden-baden",
+    "dest:OMR",
+    "dest:gem:heviz",
+    "dest:gem:karlovy-vary",
+    "dest:gem:spa-belgium",
+    "dest:gem:bad-kissingen",
+    "dest:FKB",
+    "dest:gem:baile-herculane",
+    "dest:gem:kolobrzeg",
+    "dest:gem:balaton"
+   ]
+  },
+  {
+   "q": "Bergdorf mit Seilbahnen und hohen Gipfeln",
+   "v": "2N1D4PUCmPsD+nECF/azABD5NvD2BqUDC/ou/r4MKQaU7SX6kvd/+Lr+qwwWCXn8Jgfw8mcMeA94AWv/bRO47+H9mvgKEZPzhP4gCeICkevL9bz65f9l/FMCufnK98AAnP3T9qMEVP/MDNP0wvL8BMUHNg+eEpn8Ov4XA7X5fAxoA28BwPMm9or7jv6tCWYFQf7NB0sGRP5S++cAdfqc+MwLswmp/gkFo+vHBFT3pvt697f7t/vXBU0LqfaqAML3wfR7AwQEfQNe8pIBpAxcB4cAsAFqEsoAn/WaBqQB2vw5BF74HPpJ94b4Cflj/oQCwf48Bu34X//7A7D+r/Y3CpwJ6/waCEcPnglj8SL+ivWM/2P9WPoS+MIC8g/7+ZD+jABmBaz6Mv7Q/JoIAQFSAzr7pgHwCp/1WAUz+hQB9hGO+crzKgFNBYIJ+AVu//T9S/k5Al/8zv7CAP39uAhc9mH5qwMI/AUJ2/eS9g4HKf7O+KL4bg8g96D9ofZ88msAz/0r+woD2vFnBan+YP75AfcB2f3R+ID6EPth/Pj7qv/SBOL+JwEmAFkFxPhQCML3gAWQA2D2lgCd9sr9oAo9ACX+W/0F/ycDPgDj/GoD5gRhAnkCmAuhAFf90wWoAiEA9Pqn/R4EK/82947/VgOMA+IBDABZBe3/PQAJ+nQDVPw=",
+   "top10": [
+    "dest:gem:oberstdorf",
+    "dest:gem:garmisch",
+    "dest:gem:grindelwald",
+    "dest:gem:megeve",
+    "dest:gem:alpbach",
+    "dest:INN",
+    "dest:gem:verbier",
+    "dest:gem:solden",
+    "dest:gem:trollstigen",
+    "dest:gem:kranjska-gora"
+   ]
+  },
+  {
+   "q": "Burgen und Schlösser",
+   "v": "9uRw1uYJ8Azi86MCKgXt3JUHYPJK+UMTggMmA+MCXfUO427/eOcqB3YLuf/PBIsQ0gv17arrh/EvBPYWx/F5AEgNSQa3Ayv1nvfN9MUAVAncA7QKvvl6A28Cr/itAisSvfhuAo4F7/Md/rcH+fVj/CIJRPeB+7j3bfvCAYv4TgbGApXvF/4b/UIK2P9k+hwAZ/QsBrf8EgLz/bcL5v7+BtAPzvr4BUL+RvhD/9f+0vmm/m359v/9DIoJ1AZ9A7L+YgHP/e0EOPxz+Fr5FfsEBhr+hgBQ/lwD2P9/+1j0Qvj0/Ff9Lu9hBxcGnQMADNMEp/07+icBlPvdC5f+xfdMAVL+XwNCAnf9dAUx/YsNlvWV+TUA1Pm0+10CB/5aB7H5sAHAB6r7sP4uAh8DdQsABOr6eP28+VoGvgcp+Xj/hwfj/C/6kv3GAcgC0QHS/Qf0ngAwB078sAhT+fz5qfz2/5/8NgSW/6sBAQCzA8X7zgCp+7P2df7SAfn+Mfu4A637V/zE/KoEF/lBAeoGLwIG/aX/wfxt/tEDR/8I/5L7LgGO+E0FIf9m/ZkD4PxDAID7bgL+Arr9LAJw/AYDhABS/BAFIPc3AFH/DfvaBC4AV/6e/coC0gmuASL/nfiSAI75dwU/ArX5TgBY/CT6owSzA9MGH/7aB7v8DwP2/G38bwE=",
+   "top10": [
+    "dest:BOJ",
+    "dest:gem:wurzburg",
+    "dest:gem:sopron",
+    "dest:gem:s-hertogenbosch",
+    "dest:gem:belogradchik",
+    "dest:BZG",
+    "dest:gem:sremski-karlovci",
+    "dest:gem:ceske-budejovice",
+    "dest:gem:oberstdorf",
+    "dest:FMM"
+   ]
+  },
+  {
+   "q": "Strandurlaub am Meer",
+   "v": "/uvx+uH1Lu0159ALAvUh+3EDpP15/ATyqQ+C8lQEIQF1+woPiQ5Q+3YALPmm/NcHT/96+6IGyPt3/Gny3AQU/wkKjf11BoDz8wVF+fX9X/ejEJb8Lg7iAXr6m/+G+cH4mwM6AUcLJfbc/LcDkQVbEY38xvf4ALEGbgECEs7ynxGnBgoAIQy0Dhn7svzeCED9OwsOABz7ZQepDLcDyQpO9935tvb6BZT0evRy+2b2CPqJ9iz8QQZP/8ryJwiW724CdAc0+VkG7QZdDoEN9/0TAjgG5P4EB5EBRQPs/g/0tfRCB7T4kAlk/7v0GPRQASkMYAiE9g34wgQeDCf+t/PRARUCDwM19BT+ggT3BqP+qv6QA0L9IwYT8ML3EwYmAEcEze9q/w3/8xJdCOkKRwOMBvT5y/jr8coBdwTyAQkCIQHpCOj2GwPDBmYNqfRK94ED2PdOBDYFHAUY/yr7xAFKAtEKsQXO8kUEowYtBpn1S/Nr93P2PPsxA5/3cQQIAnv1RvpWA8YDtgQM+pD9mwVR9cwOPQRO/k/+NQDc+yb8Qf5u/Ez9LfpG/Pf9WgaE/dAKlvZICKwHugYk/JcISf1NAb75agaaDjoAUv6dA8AG6/3c9SL6sfwmDvP+EP/bBjAAjQJd+5wD4v2KB/L70v66AWr7mQEY91L6eABXAWgGPgU=",
+   "top10": [
+    "dest:gem:marstrand",
+    "dest:gem:carrapateira",
+    "dest:gem:budva",
+    "dest:gem:romo",
+    "dest:gem:hoddevik",
+    "dest:gem:sitges",
+    "dest:gem:woolacombe",
+    "dest:gem:domburg",
+    "dest:gem:formentera",
+    "dest:gem:lefkada"
+   ]
+  },
+  {
+   "q": "Wandern in den Bergen",
+   "v": "Avap7G4AN/l15XcanvaGAK4EjOAu+8AP2O1G9xQOlher5Mr7nw5e/NX8shkjFfMR6Abu/gIAJfXjC3ALaACD9R8C6QN/86XvG/k7CfgMOP3K9zYEnAlpERL9r/zABcMBEPXP9a4Hn/9fA5AMbvxLBQcIQgK1B4ICrO8VA5b2BQwkE2D+M/s99U3+ywGdB2ADigM5Bz8J6PsV+WH99AbS9YgTHwHY+3AFgfXi/bAFw/tmAkD6g/3O+qwBQf+f/bMEzQVVAMUNwgNx9psE/AXP/pL9UftcAUUMr/b1BIn+AfFF95gBeQYtBvEB3vaiB4MK7Png9eDzBAV7/6v+/vflAloJ5/9lAAgFJvwE+gX9mPle9o3+Zwpw/r0APAQT+rz9VPg//ln4EQRW96j9wAApBssDIQnHAan3GQOR/Gj7Ggm3Bk8CffyP/U0MHP1XAWb4CwJ+/tz6lANO/nr8VQRo/5f+IQFUAv0ELgQzB+oBywBy/T//aQAf+pP4igdb9dz8/QZ6+/ECfPUj/9AA9QLNB1UAwQHz/pj9JQPjAnv9ngrp+MMAMf8T+Uz/pwJM/cb5dQnNAsn4pAAu/fAFPwjHAUMECAYn/O34mf5eA60DWARsAaH/jwYtAcb9IQAQ/Xb+Rv28A5kETwKE+AH9OP7/BTAAs/WI/8b8oP9D/FUBi/k=",
+   "top10": [
+    "dest:BGO",
+    "dest:gem:vannes",
+    "dest:gem:cuilcagh",
+    "dest:gem:thorsmork",
+    "dest:gem:veszprem",
+    "dest:BRE",
+    "dest:gem:mons-belgium",
+    "dest:gem:fort-william",
+    "dest:gem:ninglinspo",
+    "dest:gem:berovo"
+   ]
+  },
+  {
+   "q": "Altstadt am Meer mit Stadtmauern",
+   "v": "c/Bp7g0BOfli55YVhfkd/97sJAWZ+d76AAR0ASQIle+X/KD6pwrV/NsAaQmoAXIIRfoK8xH9f/6uApr6QwnI/dv+RfyoDn3uWwxX+yT+J/oIAlcQGwVd/uj/SADh+n/qZvhkATjvsvXDC88DugD//2v34Q0g/T/3wQ4U9R7nEwxe9J8D8P1LDZv5wgIZ++kIOQqzCqcDXv3k+Mn7ev7QACYDzfxaByP0MgGyAvTwIPhKAkABivbq+0cEMhGiAGv0T/+MADsSKAilBTn1zf3y+PMDjfL7/I7+VgZ5/Zz5BPaSCIby3AbVBSb8mwAYAnMWgwFX/aTySPkW8sj++/L0ChD/+vbJBoEDU/7d9vEAkwGv/cH6wv/tBD//fvyEBDAJ+vl//AsAjgLzAewAKAmk89oATgOB9Cz+7wxX92ACtwBRDLP21P/W/jb9mvP4/2H7wgCXAGX8qv1t98H6HgT7/pn8cwLFAFMJ/whJBZr+SQpZ+UrvFfJq9xH2sfmdAaX/DQCHAH4AHAY+/6L3vPwUBW0M6vqp/kUKjgL1DAL7PfZoBLAALPko+y38o/s9DlD2sAGDAs7/VQXKAHD/ZQkXCboPLvYaAYEIS/8W+woM8gHc+rX8Pf/D/v/7EgGB/sT72wAu+5IE/f28+3L3u/9XAIH+XwmZ/u/7RguUBVb8mAE=",
+   "top10": [
+    "dest:DUS",
+    "dest:gem:albenga",
+    "dest:gem:tartu",
+    "dest:BRE",
+    "dest:NUE",
+    "dest:gem:gorlitz",
+    "dest:gem:alkmaar",
+    "dest:gem:bamberg",
+    "dest:GRZ",
+    "dest:gem:melilla"
+   ]
+  },
+  {
+   "q": "village au bord d'un lac",
+   "v": "RfxX/cvrffmb4UcE+/85Coz/G/tr95bt0/aZB2IIXAEm+KIBqfkl+AD2kREa/4EKxwz4AQoQsPFs+HkJhPN6DP340g8VAvv0RhWC9vT6cQbh90b4wwiL6h723vVpCPv8bBMQ8lf7kPJ+/r/9MvuNECb26QD1D6z+Mf0kBkcID/5nEsIFkPgmAHQSRPcGFWP4EwNm/KT6Z/0BB/oDXQVy+3QBVPdD/CT5Gfun/nUItffP/c/wN/wNBe0NlwCS+9b3jgVc+8v6EwE6CUv5aQUHDlQJFwm6DTsDtPt/8+sFqwC6+WX5pwiPA8T6B/wZCkT+zv9N+lH4xQYPBofyzPmcA3r49gGKAgsCJP5s+q8IQQEmCxH9C/TD7Rj2zgbi9zf0FwFu/Sj/DfdcAJ0Sl/rCCYn/tf9//qMETgupA4z9TgI+/gwAhv/kA4X1+P9c913+yP6w+Yj9dvtc/QsGZwCk+Yv8CAPoAM71hPm+Cqj7cgK3/sYBSfXC+l4CTgFTAqsHCwFN+iMEv/rU/Hv/cA/d9nsFhgQh/lj8mv8kCYD9/wBn8ScLLATo+0MCNAal9WAAuwWb/H8JWAX2/HIDPQXi+sYArv8kB34Ab/27BmoF/QeL9i31E//+B9v+DwCJBVf/SwPrA+n+bvh1AOj8D/t/AcoCo/7e/mL+EQF1/oQGsgQ=",
+   "top10": [
+    "dest:gem:virpazar",
+    "dest:gem:scanno",
+    "dest:gem:balaton",
+    "dest:gem:lefkara",
+    "dest:gem:loutro",
+    "dest:gem:st-wolfgang",
+    "dest:gem:cudillero",
+    "dest:gem:rumsiskes",
+    "dest:gem:el-rocio",
+    "dest:gem:furnas"
+   ]
+  },
+  {
+   "q": "vie nocturne et fête",
+   "v": "xv4U/wLuCQEG5hMLwPPC/LEQSO+wAujyQveqCLTzb/rPCK4QCgUgBK3w6AJQ+Xn+dvuI9EMOShClAQUFJv/8Bd4DL/0bDZX5HAck/1nuUvBB/Cv5cgOoBG4H+/ag/dv24QG3Ao78mAEk+zv3cf5HAYLsTwfA+wwARf80BBEEM/ecEN8C5vrn+aMBXQd2+gELSwv9Cpr4+/2iATMFwfZ8A2v2KQid/OP8G/1+AJEQ+/wRBEUJegeg/SgPoQQO/e8BcQcL+N39+QZ/Dcz6lfYaAX4K+/d8AQf5iBG2AM74EPac7gj0GgSOAFf4VAZoBtILNACUAHMQKg1CAq8HfgC5B0UEAAjt+SX6YgbIAlj96QZQB3P6oAB3B3UORAj28yn/lg7IAnvtiwNcASsMOvtN++H38QGeAggCjfR5/0gABwKeBJsBGgDp9RcApQbpAhb7YvuuDLwACv199/32tBFy6/f9xwGj+UL2VgF1Cz0D8/39BQ762v5dAv7rTPdAB+AB9PuC/rUBwf5B/Tf7Lgag/rgGqQmOAer2OA6D+6wAggjJB+UBzvd4+kz2lffR/bj7WgJ0/KMA3QDE9TQBPvSOBXL/B/3oBs0MxP60BJcDBvrH/sQARgLN/XTwogkVBsICJgCw/gD+vPLP9nIA2vgv9NIBFgD7AlsBMQT2Aw/+iv8=",
+   "top10": [
+    "dest:NCL",
+    "dest:gem:fisterra",
+    "dest:gem:sitges",
+    "dest:gem:tubingen",
+    "dest:gem:bru-na-boinne",
+    "dest:BUD",
+    "dest:gem:marzamemi",
+    "dest:gem:hook-head",
+    "dest:gem:budva",
+    "dest:DUB"
+   ]
+  },
+  {
+   "q": "musées et galeries d'art",
+   "v": "wRyf97gDb/wh9y79RQBuAXf5qPoc/ZsATfYZBusLLf3eCl33FAECAl4ABAPn+qX9ZPp48tMK1u2y/nsMHfwHA5r5uvBT+6fdhAfb+fP9xvdk/5AGifgXCFT5EuRS+771cvTkBlABlwBk/c8OrQre8csHVxGPAPj58QmKBUL3agMYADgJSgdGAY/82gLU7aICyf02D3n6y/oo80Hw2vny9Ez+jAUS/+r/pf9r91j7q/Tk/Ifycvj3A7f15gPr/fn3rvKPASQOAf9b/Kv/8f3K/f/6/gQBCgMAbgbyCLH5Jfy//Rj8jAHIB3EPo/dSCDYEyfs2/rUCZflD9xn4GwGtCbMA4vNw8z0Jyf9M/qH6x/4+Bmb/TwT7A18CzwYsCez6AP3v/ID8LvrC98761PdN+BgWZAAjDQEOjvkE9UoKtv5J+xIISg/FApnzxQOq+aoApwWMAGQFZ/xt+In9iQOLAzP50fahBhj9lgbq+l0CVPfj98buaAKt9jUFLgQq80X7PfmRCmIGFv+vBBUPjPt1DDMG6AElAFD+5vwsBw/7UP+iAwf9Zgl8B1H+DfXyAA0HbPeVAO73xAHXBVMDz/5G/DUP8QF/A6/8Bwd/+n4EKAd0AC7/nAZ5Afj//gAh/bIAkwd8By4FmgjWCeL2uv0dAsUHnfpKBI8GUQGhAl8A3fQ=",
+   "top10": [
+    "dest:gem:teigebyen",
+    "dest:gem:rastatt",
+    "dest:BSL",
+    "dest:gem:gasawa",
+    "dest:gem:almagro",
+    "dest:gem:citta-di-castello",
+    "dest:AMS",
+    "dest:gem:kraliky",
+    "dest:gem:solingen",
+    "dest:gem:faenza"
+   ]
+  },
+  {
+   "q": "ville romantique pour un week-end en amoureux",
+   "v": "dwDv/U34Ngqt7foCRAMs9oUKQ/ZGDIbxmQTIDV4Eg/llBi8NrwieCWnvv/nY7XgG3Q7w8fMA0wRmAVkFwQZVA9j1SP+1+UD4+wE+Bi73tPsxBhTyCARX+fQEOATM914DN/cg+1fxyvoM/2QC1QxBARkSMwGb+3v/7f1A+UP5kwpREvoA5QA5A9sLpvnNBg4SqvWKCkb7/Q4lBPL7Ff996Cz8XAFkAoUBAgOT+TAROfyD/owJcAeh/UX3gQFT/Kjxuvqm9qgL1/yvCFn7JfuwAFjxc/LpCNsT6Ah7CSP6SvgzDo/th/4t/iAR9QEk/Yb6ewAe/owNPf+B/JoA4gDZ/ksEPP1v/u76R/Lq8VYBQwFWBtoIpgKu///9YwMK/jEE7wm0+nn3ofv8Air9OAjgBW7+hwVA9nL7RRIy7O8DPf6pBXgA+f0X/UUNRf8U/Ub2+AIsADgAdQKk/BD0AAcx7xQGcfcO96QA/wt8A7368wmh+scDh/OO8Ur+7//o/GQAageUASv/5v1aACkGEgTV/vYL8fHRBzQBa/+bCx3/q/mB+rf8KfdA/JL1IPXu/mX4NAMpBw0HnAkNDoP0K/3h/ugGOv9sAfv7v/0zAYAAlAF5BJ/+IgwU/VgEnPrz/VUAGgGbDbz/GgHs+O38Hf4XA4b5/QYDCBcExAYW/q/9EPY=",
+   "top10": [
+    "dest:gem:chester",
+    "dest:gem:asolo",
+    "dest:gem:schwerin",
+    "dest:gem:vaison-la-romaine",
+    "dest:gem:opatija",
+    "dest:gem:dinkelsbuhl",
+    "dest:gem:rovinj",
+    "dest:gem:carmona",
+    "dest:NIM",
+    "dest:gem:deauville"
+   ]
+  },
+  {
+   "q": "fjords et paysages spectaculaires",
+   "v": "YA6I7Lz1uvYB+D4IThO0+XkJx/jsCAAKtPv9AMgA7v2PDFMAuPTWCr/piwM6+g366vtB8oUKjfxaAB/z8AinDlQL3wTx9I7vuxGn/i71H/Em+QQQsQTP+LD8xfBG4+77MQkr70YKrvToAPQMZQEsBsUGDQNPA0T/7PL4FJb6Mv72A+r3ow4R+gEFcvs1BNvyLAWi/sQAlPuY/xb9ywNm9GD3uPe9+nj7UfuDAMn2TPiV9H7xbe9U+bYJLAMn9rYAIQDJ+fMFGgDq/OsFtwK3B88GxQFsBwUGg/pDDFgJa/2v/wb/zP3f+WP/7e1DFzANrQBV9SkAEQF6AELz6vzTBPb8fwk1AVcS0fgD9OQC2/xe/ov44fOf+VX2TAG6+0kHCvmCAcP+XfozAvoAjgJQAA/7vQA/ADn9xA80Apz+IwBQCDQGpASkA2cN6AAn/dH3lv5M+L8C0gBl/yH+HgLP+mgHI/mwAzz/Yf15CQQHVP/M8KP6If5G+pD8aAiQAgEDXALd+ekItfuV+gUFZvmh9R4PQQFP+4n5D/4jAAsEEQy69lAD0wNcAfUB8QLR/hP4/ghXC4H7ugsN+fAFtASBBIIBMghdAe4C2/ykArwK2AJc9FgB2wOWBXcCHP3WBHL8fwBpBN4Dev7M/lz+KwBLB1AFdgGq+FsGSv+Y/wwBof0=",
+   "top10": [
+    "dest:gem:bergen-nearby",
+    "dest:gem:geiranger",
+    "dest:gem:flam",
+    "dest:gem:westfjords",
+    "dest:BGO",
+    "dest:gem:odda",
+    "dest:AES",
+    "dest:gem:pulpit-rock",
+    "dest:gem:voringsfossen",
+    "dest:gem:loen-nordfjord"
+   ]
+  },
+  {
+   "q": "pueblo de montaña para hacer senderismo",
+   "v": "Cgjh/xj3CvRk4m0GuwFm/fD6B+nWBnII8AvcACgFK/yuDTIQ8QxWBIb3kvyCBsv8v/wK99MCdABxAhr3SwF/Df338PsY//z4Qwdx9Yb15ux78+z3TwdS9ejnb/isAm3zx/wk7p4AZ/jHAUn3Z/+jCUEPsQSp/17yJAMUCDX9WvhdCRH7xfNX93v/3vEpBcAEW/yVAv31lPKNAm/88wNZBQ75uPnK+RLzMOyp8oIFTfI/Byzrl/nsBg0D4PlQ/WwCxgaWA4z5QQib8gb5ygjtA4IAyPq+C1QKS/wsCzgPePll/RL7vwPv/Yf7A/O/+5UBf/jT/Y30QPM4AUD3vAQyB3X+O/v1CRgH/QoE/BoEygNlBBP6D/yA/dUBiQbq91PyewFh+gX7tfm7BwQIpgTxCNH4CvyyDxf0EAk7/1IFpBI+Ai8BLv+d+zwBlfxY/z4Glv+aAM31ov4ADqsA8gmj++H7XALrChkGIvWoBCsIt/+XA/UN/vye+lcCnALr+JcE3Qq4+MoDJfF3CFEH4vy9/IT89QGB/Fv3bP1gA8IBYQID/wkHhf8k+uUClgFD/bv72QhW/AH5DgQU/yEKPAttBFIPOPygBaX4kfpDADIAbAQR+Ov8VQraBoEB2vxb/SsGRgMQ/rL4bf//9UUAjgJKDEz/dvu+/n4ChfuRBUgCvP0=",
+   "top10": [
+    "dest:gem:alquezar",
+    "dest:gem:alpujarras-pampaneira",
+    "dest:gem:grazalema",
+    "dest:gem:albarracin",
+    "dest:gem:baume-les-messieurs",
+    "dest:gem:lousa",
+    "dest:gem:el-rocio",
+    "dest:gem:troodos",
+    "dest:gem:marvao",
+    "dest:gem:zahara-de-la-sierra"
+   ]
+  },
+  {
+   "q": "comida y vino",
+   "v": "+PdL81j1BgYz+h4Meu9g9ov8G+dPCkLtmQXuAzP+pgbwFSYHtRCrAVX3AfzG+qsDhPLQEM8CKQV99LwRBgMuAWwBPf5q7VQCyPmvA+P3Gf0N9tz4kwJa+6TzpfjBAjf8TfzKC6r8BvZBEs77CwADDNzvZAOqDLkAXwjr+L4M3v/nB54G6P5Z/KAQAAqw+VEKbwEF+40EHP6tDxATDQFz+FsGs/f+AOkGm/ov9PwJjvgQ/B8Log0bAgsNMwYNAWn9kfuY/9v5Qwq1/ITw7/bE/yn7nf/ECLLwNQljBG8B+gR79A351gad+cEFawP6ACEC/faR9NHqzwvV+nr6W/N/BDYF0Pmf/JQKtwYJ+s0JL/4nCHUHJ/ay9lv+ePqmBiYCAviZBhX9vPgS+uoA8fEtEYH5l/0Q+VIK7/FTA2AIigSo+vv72fi4Dc7zpQNzCVIAFwiV/Knw4Pvn/t0I1/t49iEAK/YD+BMEffVg/zAASgPPAhoDGwe/+eMCv/pwAYEDjwVi9UYAiQos9zIAWAl7+2T+K/zS/p4Auv0UAz79LgSb9UH4yf0yBWgCdAOa9k0BPwrc+Yn0RPqw9kf79/x3BA0EmABKBkQBVAE4/mkJsAR3+3QC6f/SA0j7sPwZAoP59QPtB+0AYvwt/yv58AZhAAf9QPvvAG7+AQYjACH8YQQ=",
+   "top10": [
+    "dest:gem:villany",
+    "dest:gem:vipava-valley",
+    "dest:gem:bernkastel-kues",
+    "dest:gem:cricova",
+    "dest:gem:milestii-mici",
+    "dest:gem:langhe",
+    "dest:gem:metsovo",
+    "dest:gem:beaune",
+    "dest:gem:laguardia",
+    "dest:gem:tinos"
+   ]
+  },
+  {
+   "q": "islas con calas y ferris",
+   "v": "LhRP5gb9KRKAAQ/wwwGN/3fxQP0WAaT5xv8yC6oRbwM6/DgWbwQZ8xfqI/7M9FPvmvJ++pzr9vFn/Yrxzvy+AI71qvOw/j31G+06+WUE5fR/ApcJygI3/0gEtP6/9N39awkOAUAFHfBtDggP8f3p/dv7L/sw9nYCzu1j9A0BsPs7CBz2twXfDNARyvhl/2LzSQB/BaP7EvV3AHMELwEr9ZgCV/jpAtr6+QifCkX42/o097gA8gZL/VwAqPxz8gkQ+fpGCeXzwgD/A1IF+P6HCBL5EAt5EE4ENwPhBfIOzvwtD+D2n/58AXzyMPiKCrEFMQXO83f6RP/eCM8GX/p4+lkIMfxj+Oz5yfwmA00EeAH0+0QBeP+37vP5Fgx1/8D31fgsBS0BlQTo+JH+y/2zAe7+sfuQ/dIGOQhICFD+MP6iCdkEDf2UFTkIr/a78goCBfiY/0ECewqZBn795QUfAgIFsAmB/Sr/wP1oBlwA8viv++/34fxGAJ4DJAB9BLb0kQK0BmIBew3cALYCnf4I8uADaAdV/GL97wHLAOn9igUu/60Fu/OFAv7+PP/k/DgB2QBNBCAIzQgM/34IKAKKAKUAvgP0BUAFTQL+AjsHvP06/3gDeAO/DWwGpwPfAGYBWv0NAJn8xwF1AQD+KgC4/Vj7fv2U/DMB+gDb/VgFrgA=",
+   "top10": [
+    "dest:gem:porquerolles",
+    "dest:FAE",
+    "dest:gem:formentera",
+    "dest:gem:favignana",
+    "dest:gem:cies-islands",
+    "dest:gem:elafonisos-simos",
+    "dest:FUE",
+    "dest:gem:comino",
+    "dest:gem:kalymnos",
+    "dest:gem:la-graciosa"
+   ]
+  },
+  {
+   "q": "playas de arena",
+   "v": "nQrN9fQCRfy48xQB/xOi8tXy8gJ1BFkE2v8zBvgGBfv9//MTjhUdAEz0QgFi6oX8gvTA+gYJhwHYAuX4BwKkBgAL+/vGBWzwnfub9uoE0fCg+KH/tf6k+lP+FPt3+gD7w/fE5zoDtQT0/yv/RA6kADEJfPJK/lYC+fQgA2EBHxYbC1UPgwngDloHz//6B8b6/w9/AS33Gv+MBNMESvns+mj76/0s87D5APU9ANn0uPHA9Iz5//teA5jybwBR8y3/IQTpBgD+tglvC6wRrgF38lEEwQClBvb41gGS+gf/MfwA/sb7Pgm8DvX0e/rTBVz9fwLP8B//rfro+8AFiu98//X8mwFg+1wIowN4Bp/3ogh1Amb86P4Q/lP3YxQ/ANACZ/iUANgF3AaO+4D6wAYKBy/5Q/sa+lIFYwij9wL9Fv0PDYn/d/8hB9oOpP/A+t0DrwDRCAcKDQ7o/+Xyev2MAa4EnAPr9lAC+QL6BQ37BfU39FH5WfW0+DMDTg2GCK74R/f1AngAYAFM/Iz8lARp+D0IsAyv8/f4SfwcBtvz+v5o+hr3Nv3YASL2PQUqBbcEsf1TB7wIdQeT/6kHnPzN/sn8MwYXDUQDZAb+BPYGf/nu/CX+vvuECD0B7PkBAhL/2Agp9LH93wNhCx37MPmeB433A//R+zUCcQEfAlUFOgQ=",
+   "top10": [
+    "dest:gem:santa-maria-azores",
+    "dest:gem:as-catedrais",
+    "dest:gem:polis-akamas",
+    "dest:gem:hel-peninsula",
+    "dest:gem:sitges",
+    "dest:gem:hossegor",
+    "dest:gem:lefkada",
+    "dest:gem:carrapateira",
+    "dest:TFS",
+    "dest:gem:skiathos"
+   ]
+  },
+  {
+   "q": "senderismo en las montañas",
+   "v": "Mx3GAgIBAwST7DcL3/Pz/nAAevT/BZwKpgbW/QIIZwcRChcK2gALBQT/fPXL/2743P5k+xcCLQAAAyv6UAbAD/b6sv0Z/tfx8fV69qz2Z+rq/AnzeQcx/aXxS/X3+twARPyW6lcEjP0hAU75NwNJ/0wSKAuuBYfy8fcaDqX5MwFtC9L3T/rc8H73p/KZA8D+2//t/WYCJ//FBE0BdAaaBSH9ewFK+g8AB+ae7+4IY/i4CJ7zq/IRAFwEYvrS+70HJQOVBf0A4Avw7FcEygS4B/H9PQGoBtkAAfxZAr0EBvmA/aX17Pw69XEBT/Cu/aD8o/srAYv3tQDUAJb5jQGCC8cDsP7ZA1AQLghY+mUB6AGk/rP8NgEQ/TsFSQYY+uH29gU5BiT6wPGE/fADCAS7C7v/owbuDpD9sAlg+pn8+hPWCD8LMv5RAFYG4/0y+zwCegTZ/wL59wAbAn39Kf9e91b99wHUDJQIFvcYBeMEiv6p+N4J7QAF+XX8TgG49wAD5gZu/lkFR+17AasKW/zR/DL70ftG9i71VwK+Aw37PBK6+xoHUgDa+VcCR/4M/2P0Wg3VAK71KQSl/twKMhBN/w4Lmf+mBen8uf0AAev/HQfq9/H6Aw94BskJ6f8SA2n+Uf9/Aqv78/3v9ID72v0bEUABpPpg/78CJ/t2/+P/zfQ=",
+   "top10": [
+    "dest:gem:ordesa",
+    "dest:gem:soca-valley",
+    "dest:gem:apuseni-scarisoara",
+    "dest:gem:monchique",
+    "dest:gem:serra-da-estrela",
+    "dest:gem:montserrat",
+    "dest:gem:northern-velebit",
+    "dest:gem:alquezar",
+    "dest:gem:alpujarras-pampaneira",
+    "dest:gem:ponta-de-sao-lourenco"
+   ]
+  },
+  {
+   "q": "paese tranquillo sul lago",
+   "v": "//8l+5LslQVo4Q33cw8NBeTpzQDRAxz7IvueCQP/yQmEAOENLvg9+XjtK/9R/pv/jQUL9D0LTehh/JYCuPqLDKcAhgR2BsoDiRCBA4DxGgCjBsryMgEI9o30uPXvBkrwBAuQ/MD5UwjpAXT6DPk0DqACNQiwFDn85vGpDgoNngAx/L4KFvj1B5UJcvLlB8v/KAkvByPxOwGrBj/3ZALQ80fxWPciAkj5C+n6/aMBIPZNABz74/L4ANoTtP+YAoD82gYvDCYFHAGQB2IAq/tNC+wEtf29BPAM9PmxCcj8I/hUAa/6jQvgC5cBqva/DoYGof6a9yP/yf62BZH49f+J/nwAbgawCCwHbPUnAvYMBQlFAqb/ewEx+Hrz9gB7+Uz5bAEzC1f9Yf1Z/N0H5ACaDK4Bvft4/gkB3Q4U8usBaQFJB+kAfgj4AbD4nAGh8UHyL/sC/HL6+QFB+boB5AKt+rMATfvP/xz6dvc0CwT9CPwR+7f7dPpz+z0EmgbI99EDhwE4ACwAXPpc/kD8xQeh+Ib7MQAB/TX/rPzpCNcCa/8e8MgCQgGFAvcB+v9C+qgGBgbq+5EA6gjF9vQDhgWB9wb/JgDuAwwBcP+eB3399wSG9Ej40gI0BOT+lf1vAR/9LAkjBJz/9PdiBRH89vjoB8H9r/wz/Iv+7AIb/tIHOwM=",
+   "top10": [
+    "dest:gem:monte-isola",
+    "dest:gem:lago-maggiore",
+    "dest:gem:como",
+    "dest:gem:garda",
+    "dest:gem:ascona",
+    "dest:gem:klontalersee",
+    "dest:gem:castiglione-del-lago",
+    "dest:gem:carvoeiro",
+    "dest:gem:st-wolfgang",
+    "dest:gem:virpazar"
+   ]
+  },
+  {
+   "q": "centro storico medievale",
+   "v": "VwtW8pX7tAHv6MUIvPh/9AUAU/VeA6v+FPt1/3sCvQQgCdz0OQYU90kEJP2AALf71vdB9ET5GPdqA2wEQwoUDYH0PfUxBGvrcghJ+lPeh/01A6/v7f3KBqr7t/th/QL+r/XI+0wB6OjE/OL82QF3/1f7vRn4B1vnZwlTA1D4tgFdE1v4bfm68aUJbgetBr0Kj/Z3Cgv9cPJIBW4CgQAm90YGfQWcAyHxsPLU+qwBdAHb/PEIZATAA6/9vAmRAnv0QvBG8dkM5gFT+zX4dQYUBBUKkOwZBMQBNwlI+x/wMv+k+2L8WwFVFZn9xgtNBsH9ywaY+GYB0AIb8EwKVwZl+jj60fHCAwL1OgKf9lX25PpaAhEAd/8dA8MDfwNtBM8EwgJr9CYIcvzuAqoJa/u3/DMByAXD74D6pwfw/Nn+VgSJBW/+SvsE96gAy/uYAPH73//p91P/bvVlAH34jgQSBQP7SwK0ASD2f/tW/Wf7JAqS/BT32PtH/5wAv/uW9SwJUPwcBFIGOAFQ9i4GOP8LARgKuAD9+j0Ebvv6ChT9kfrCA2AHhfjeAsAJTfoD/zP7oQIS/rj5U/aa9ov/8QNj/K8H/vmLCGcG4gahAqv6GgZH+DkEagcTBTH99PaUAEr+9AAjBq8CygNA/Uz/XPrI/6sFiwFCAYH7fwPO/tIDswE=",
+   "top10": [
+    "dest:gem:sarlat-la-caneda",
+    "dest:gem:besalu",
+    "dest:gem:trancoso",
+    "dest:gem:santillana-del-mar",
+    "dest:gem:laguardia",
+    "dest:gem:brasov",
+    "dest:gem:gubbio",
+    "dest:gem:siguenza",
+    "dest:gem:maulbronn",
+    "dest:gem:vaison-la-romaine"
+   ]
+  },
+  {
+   "q": "terme e benessere",
+   "v": "rvFd9ZP5KOyoBToL3/HhAjP9H+hv5xEViPFy/aUGIxHTB2L5pgAGDDwJq/Zf75YM7vX9/fgBPvckCYAG2gUX9ZgAO/iV/vADcAHK/MT59v0J98fwtBP0DP0C9wnDAB35rQ639hvuDQ17DF/0qhAHFp3qSAe69qEGUfrF+5ADRwki/P8EHwrw/+z/jAawAw8DIPhs9TDs4fr9Agj9TPvY8xwDdgMv+db6vO/m/sAMAQR3+84AJwxD/awLwvoa8i4EBftt8//2DgRK/dcIcvj+/CwGLvgu+GEDFvXWAUz9E/v3AKEAa/oUD933ZAIjAEP8U/zTDkz67vom/FoAHf0p+HEHFARiDB4I7/1n8q3uifw5AbgDOAfF/bz5Xwb++VACogGV9kQFvfgF/tkJ7P6VAS0MA/Vi+A0Et/V8/j0BWgPb/Hf7FAnACyUNEwB2AbUBC/tCBzQG3f/XA7wBZgclB0/7SAPbBV34h/nE/Dz8rvo+//wGcwBwBOz+EAIk90AGa/pC+b7/B/s1BOL4Rfz/AC77tPc9BUMGAPtL+uH+8fjYA2n5OwWFAoP/SwIb/OX2BwQzDU7+ZgE8+psCeQpd/6kFxf+hA4UBqQL5AwcC2vod+k8BUQGqAaUJO/4KAhQH2f2M+ykBTvwV/ekCZvo8/TwFp/8vAhj6xgC29n76yvk=",
+   "top10": [
+    "dest:gem:spa-belgium",
+    "dest:gem:baden-baden",
+    "dest:gem:heviz",
+    "dest:gem:verneuil-sur-avre",
+    "dest:gem:conques",
+    "dest:gem:le-bec-hellouin",
+    "dest:gem:sancerre",
+    "dest:gem:marianske-lazne",
+    "dest:gem:saturnia",
+    "dest:gem:trebon"
+   ]
+  },
+  {
+   "q": "isole con spiagge",
+   "v": "3vg7/YznZQCm7+TwygSs7df7nwPJBbAEgfyP/hkE8/hR/oUOwwPA9cP1RgAU+YgCP/cFA7T6m/Vs+wjtrPfTAJgFS/Pv/mHzB/va9Yz4zek8D4Tuv/v6BIQETAbp+PoAag1B+5sAiAJkAsgHCwFpDewD2f5LArUIYvrVDEkIawfeCE4NVgaxCSMIdPsyBdj3zwk9CBD2eAG4/sECqP5b7k30NfiI+lbrrfWUBrz4svcW83/3HgqyAJL23gK763EIOgNXBIMDfgMC/WsLOAAGA9cC7gU4CwgFygE3AqD3ivr0AxD3UwVtAsXyXfYGBVsAhASA8lL3CAFGDKcLs/L2A54AQQIo9RoC0QI/Bz7/gQPKBPkBqAGu9YP5vA/z+QH/8fWdBQUEPgvEAlgCfASEBNv3dPg79dgKHQmdABkCyPvrC2b+EwKBDbkT1/t49vf+twCXA1oH6wrjBu/3YwYZAn4OgwMS8qYAAANRB4D6FvFQ9kD9qPSh+8n/wwjQB7j0PQDiAv8AYwAV/pH/XQmJ8gsIIAgO+AP8kQEDAfP6vAPA/c7+6vVQ/gj+yArL/+4GwQFdBVsLgAWA/yYMHgW1/kQAHAwnDeQD9QVsBuwCD/+y/ur7+gAHD6oASgA+BA4DEAVY+GoBrPvaC5X8lfqkBer4iv/69vMC0QGNBNkDZf0=",
+   "top10": [
+    "dest:gem:formentera",
+    "dest:gem:favignana",
+    "dest:gem:santa-maria-azores",
+    "dest:LMP",
+    "dest:gem:marstrand",
+    "dest:gem:porquerolles",
+    "dest:TFS",
+    "dest:gem:lefkada",
+    "dest:gem:skiathos",
+    "dest:FAE"
+   ]
+  },
+  {
+   "q": "paese di montagna con funivie",
+   "v": "m/lkAD/zr/2W31kCNwm5+jn1AObaCQUDHQKbCqQA3QDREAUHsgul+Z/zY/RGAH//E/4Z+jsDyf32/gn6IA7GAVAERgfI96fuaQTH/mn9/+1q/8DrWQcK+6bqGvnfAWn9wQHt9qYACAG3Cev4lPlRDG3/cwtEB9b/YvyaEEL7mflN/x4Frvlh8HP8XvHHCsgB+gFg+3fySfFDASf4+vvl+934VvYQ+3//QOyb9UQGXe3UB73zTvQDAUMLIfGN+e7/TAoE/9wBCQKq8Xz6EgsVCuUApPo5DJQLwAPAEXYKY/at/eb92/e0+jv81/G0BuUFyv2hBWADOfoCBN/zZQbmB+j5LQmBCJUFAgwm/yIFd/enBrP5XAEO/wsEGgbV8s79DwPF/Z/8YwJ4A64IlPcFEXf9RAFjC7v2Wg9r+joF4BJVALT7AAff+GIDUwXR+w363P0ZB7D3SfslCv8Bvf4C+SUD8PjHArX7Mvk9AKMGBwZ5/HwC8f8a+sEE+QGL9vUElQby/4sCOfSDBU0FUwfw930AsP9i+Fr8MPapBREAswNx+q4A+fwUABj8MQXs/+n6Gwq8AMz0VQG5+2oFlwxB/o8LDQYRASz+nwO9/RX9PQKL9P/9wQT1/4gBVgi7ABMG3f2pBdv+KgI9+cAB0/73CUn8Gv/i+qP+z/nPBCb5A/8=",
+   "top10": [
+    "dest:gem:scanno",
+    "dest:gem:mont-ventoux",
+    "dest:gem:alpujarras-pampaneira",
+    "dest:gem:are-sweden",
+    "dest:gem:zakopane",
+    "dest:gem:baume-les-messieurs",
+    "dest:gem:metsovo",
+    "dest:gem:motovun",
+    "dest:gem:monchique",
+    "dest:gem:castelmezzano"
+   ]
+  },
+  {
+   "q": "where can I swim in a mountain lake",
+   "v": "rftr+wb6XvmE5s31Tu7BD876v/AfAJv6YgV7Apb6GATLCZ4LswLy9Az0wgMp7EsBlAXOAWYEZQCd+tDxAO8NDbL2uAlGAYHu/QgY++0CDP8N+mv2ngZLBWb0JgIvA6H2kA3r6ab5XQF1CQLzfvcnDFgBAgEYA2H96OwzAxv5/gLzCAcKv/sA/BUBfPMKB7TywwGxAlf2g/9iA9j2TP/R8CzzZPpm9gn9K/BHAAb+r/hKFEf6lu4k+UsCrQDd+u36eAgTBYr0Qw5S9S0DDP4oDGgErP3fAPoJGfSHBOP34vyg/WH8xA2yA0UHyepICiURLAfO9Mn24P77BBICbwJABsr+1AmdAtEVjgMx+aAEbgXR/kD8Kgga/x/zJfsF9pr/ePa8/DEElPmR80j+rP7ICVT5Qv56/AUCkAfv+BABm/7BCSMFVwXFA5D/lfrT86X7CADKA2f/dQnb+6v/qQRM+gQIggO1Aob/n/s1B5IBHvms+Av+oPNh+KD3CQE3+d34igCk+RENgPTb/kMAxQoo+QcBqAL+/j/6MvuCAJoDmv5n+DEBdvq1/gv+u/4D+FECgQZBCwwFXP19+FIGwgp1/mT88gIY/uj7Qv51AVUFnweY9nL98wPcB73/BQNwDwX9CQDV/uIHHv5fBTABZfgZDwn3dv+n/Z/69PiEA98JpP8=",
+   "top10": [
+    "dest:gem:matka",
+    "dest:gem:rummu-quarry",
+    "dest:gem:lake-plastiras",
+    "dest:gem:lake-sfanta-ana",
+    "dest:gem:klontalersee",
+    "dest:gem:masuria",
+    "dest:gem:lake-piva",
+    "dest:gem:bled",
+    "dest:gem:st-wolfgang",
+    "dest:gem:scanno"
+   ]
+  },
+  {
+   "q": "cobbled streets and a castle on the hill",
+   "v": "MRhY7c37I/406t/0lfzACXkLIvZq8Xv26viEEfcLgfEV/jYI0QJO9+nz3wG1/98DOQJk8joAMQcV71H+t/9R/5P0gf6uAqzowvw4AsroN/hm9Xv0rAl/+L3xoPA27R33Pfe0/LH0XfMV+Zb8ZAxWAdv41A2vAcj92vfFBJP8HANnBjMCQfnq/jz6qPAsAjoDgPgOCgwAMe+iBITmO/1B/sDx9fsH/lkAg/m4/drxR+hcAhINbPcd+1/99Ac180r4R/OCAZIFE/yU/Kb3lgOjCK8AkQHRCwEFSgpv/cT3hvf3+RACVwju/PICuP9i+db21P2l+MX3JvfV+eH87/fHAJ336/GxBbcAw/4Q9msFoRAFBzAAQ/U//c4DxQFACh38zfwjAAzxJfnSBYMGHf72CecC5AQ//b/7vg5z8vz9IQ3L+jP7UwEL/h4AxP2L+5X9a/27/9H6bgUW/xf9cwTs/vT/4PY6AaUGz/nJ+lMEzg5O/rL12PvQ7Qf/ewJF/aYHgwCO/K78W/wmALv/5QtC/2ICcvav+rz7SQSaBIn+mgG/AQMJWwIM/Ub+WgirABD30wTrBJT7C/4i/csHGQDE+jYEBgImAqQG1fdWALUAsQSw/IkBFwWLAX7+9ABy+Tr7QP95BqIDOPtj+132OAKBAxQCUPwj/qP8sQONCAT/TAA=",
+   "top10": [
+    "dest:gem:heidelberg",
+    "dest:gem:vianden",
+    "dest:gem:culla",
+    "dest:gem:helmsley",
+    "dest:gem:castellar-de-la-frontera",
+    "dest:gem:medinaceli",
+    "dest:gem:grajal-de-campos",
+    "dest:gem:hervas",
+    "dest:gem:poza-de-la-sal",
+    "dest:gem:erice"
+   ]
+  },
+  {
+   "q": "surf and sunshine on the Atlantic",
+   "v": "xwt7+d70O/ar8F0C/fKv5e794xQZ+jDvaPkRBw8K7Pdb+vsC7Q1xD5wB5gEh+nzvhwmN8F4P2AV3Ajj91AEDCkMOEQmMAobpPAXI/cgJMPgpB8T0WvWD/uAENA10+6vvcv78BloEuAje/GcRFvDEEx3zCvrOBcQA7/vkAhf/4wTbBesE1vhHELMGcwgjEPT0NgjdAQEAtf9ZBD8DPwhL9Dv5gP4g+Ov7JfLqBDX8FfSD/E74bvcmAH7+fQBy+h8A+PyTArAFcAkJD6AQav2zB60AzAIVBhH7ePhbB7L6hgC2+xEC1Bda/7TwPvBP/rwCLQos/aP9jQiMByUVBPHz/t0C9Acv/s36BgN+ELX1rAvUABD2nQnq+Y0AAwJV+8z7ZvSX/igKoQOl/tD4MfnFAYH3G//UANMAlgPxBNr5VvPrAaIJ4v5MC5wM7f4k/UwBjgKDAiMCgANOAI/9APy9+h//3P95AswBVgHrA9kAs/NH7rECg/mX/0T+PAJrBaT3zfViAcH+mwvL+lD5iAAL/ZgCfAOd9h74AwAtAG77rwWaAr8Bp/QQA7D8w/tv/QsFbv5uBgYENwPD+vIE6/ssBAj78ABEDK8DTALrCof+tgCA/AX9TwKWDKj/5/tbAe0B1QN1/3ECvv84AmsBswB9BLP75f5T+N4EygBW/LoJ8gY=",
+   "top10": [
+    "dest:gem:hoddevik",
+    "dest:gem:hossegor",
+    "dest:gem:pavilosta",
+    "dest:gem:newquay",
+    "dest:gem:tarifa",
+    "dest:gem:hel-peninsula",
+    "dest:gem:ile-de-re",
+    "dest:gem:woolacombe",
+    "dest:gem:nazare",
+    "dest:gem:sagres"
+   ]
+  },
+  {
+   "q": "fairytale castle",
+   "v": "7B1T9m0ErQJB84T+nQAUA98NWACD/3f9euqAES/+Tv7WCM8PjgKg+9f3uPSE/KT4P/dX8RX/w/+LAvT+9QjqBGUCi/rpBI/uoAVX/orxR/tj+iH2lQnYC1XrRPSuAIX8fw0j/qX+suM0A6EDihOv+Kvykwx7APryK+/79XXy+foZA7f6gwS7BEAAPfsvASr+FuxQDKb3uPOXAg/rrQDz/mDqbf0v/WoDGwR3AXj3DP6pAfgAIPjd8fX+7gN7+u/u6/t0+D4KLf7x+Jz83AoUDn0Ctv7nBdsCtAhgBbT28Puy9osJFwKoBL8E/QN0CvH7ePgg+TX/Mwpe914A5gXK/s/ycu3u/7H3BfpF+mwISQkYAE4BQ/0WBJsCRfgEDDkDqQBD9xz/gfx9CoAEnv4pCjT/u//1+QIG2gKW/OD3ygQV/L74KQQhAC4BxfxU/YQARPcM/9713gT4A6UAZgvSC1j0kAMK/qrxa/vb+TMCGw8lB4H5y/8s9lz+wwaJ/EgAIwmBAsgIne/R/f0FEg34+gUJVf3W/X32t/pFAlgG0v/e/3UGAAemBqEDoAOiBHr/igXTBtEAxfPY+3QCRf2HBLX7aQHQ/AQF4PvnAGYBK/z1AR8F7gRU+G/3qP0YAwkGtgYxBfoBYf/c9tn8uQT0BLL9TwT8/W/8bwKf//X8UAM=",
+   "top10": [
+    "dest:gem:lichtenstein-castle",
+    "dest:gem:trakoscan",
+    "dest:gem:pernstejn",
+    "dest:gem:almourol",
+    "dest:gem:burg-eltz",
+    "dest:gem:ksiaz-castle",
+    "dest:gem:haut-koenigsbourg",
+    "dest:gem:karlstejn",
+    "dest:gem:corvin-castle",
+    "dest:gem:postojna"
+   ]
+  },
+  {
+   "q": "canals and museums",
+   "v": "7iCz+50IU/167lr7o/10DcL87fSZ9FD9kPqACNT14QbxCYL6AQPuAf7zjvEA/BQGIwQIAL8HxelM9I0ENwKbCO78sPZc9RfmD/jpCMXy3vqe+B8BIPr1BBP0vPJh6Tj04v5//6X3nf3n89oPiQ0Y9uz2HwlWAf38ygQmAcH7HAUfC+sH5AXE/RP6vf7m71H9zP7VFRf/BwEE9pP7xQdj+M/+4/ywClj9BfvIARrz3vnQ+nX3kPImCbr//wszBkn5ovNoAvIN2gFRBgMFmvNTC7H/IQfTDTbxMAXMDsTzdgccAjL4x/4PCDQD0ve8ANIHxgIH8+0BQvhc+b/6Sv9oACoKJwMsAyEQPPxk+zkJLP6c/gMAZgGY/qz96wGZA/T6aATu/db+GPCK8SwELPjwAUwKl/my/l0L1wI598/9dQeR/cf+1gj//kYAi/gm+ukGNgR3/V0DrQRr/aT2P/p8A8v8I/1NDtb9UvZn/x39kPqX9vbut/158g0FCQTX+NX4zPk1A3sNIPxRALYFcwb0AVoDOf5OCN35fPgUCVkAAfsSAdv/KQPW/ob5jfdk/BgFbv5hBIz+dgVhBWEAXPvg85sCCP5xBHH/9wIv9HMEiwJz/PT6cAfoAqYAMQCqBCL83QJoCxgCvgMgCaz7Ff44BsICtfyZDMQHpQD9AvwDOPU=",
+   "top10": [
+    "dest:gem:delft",
+    "dest:AMS",
+    "dest:gem:rastatt",
+    "dest:gem:teigebyen",
+    "dest:gem:kulmbach",
+    "dest:gem:kongsvinger",
+    "dest:gem:solingen",
+    "dest:gem:nietap",
+    "dest:gem:gouda",
+    "dest:gem:emden"
+   ]
+  },
+  {
+   "q": "lakeside in austria",
+   "v": "2hoT6vPzoA3V+n0Hvfgj96LucgIxA/P1E/iWFIULXO4X/wsEBQOdA1QI0gMP+fUBugI4+oEVYe209Sb4VPfzDtr4hQmlDfL6IQY2AnsBL/1c+s79mwSo+i37iwcs9OYDs/bm9aAFlv59DdHq2wu2C8gFQwfuCPH9zfCPCHDuMAWo6GcMxhjU/Wn8m/3v+hD5p/0o/IL0WwQ+Bg0DzO5I/u3zJgK5DaP5qQthA6gFkgb/BLj+fe2S77n8VP76BKL+TQG7/rgJIvhE9u781vnPCY4J3f6wA3P/pAPP84Xwm/zo/zr4PQSw8sYPjv36CyUITxGO/Oz2ufisB3Py0P4uBKv7jQfcBf0CWwDM9T0MBgJN+976Mv5rBL39hQTN/B36kf19/uoEnvkr9IIKuALy/y327fx5/CUAjwIo/NcCZgE3ACv+xgFHBnYHTwWd9mwBTf+a+vT9Dwhf/j37jAET+7QGBPzbA5n3WPlhAU8B1fxC+rr/1fzD+A33hfmBAJoB9gKP+v8Evfdn/D8FQgjJ/Zj7P/c5/Nr7oPrf/3P3Sf9p+q399P3A+ywB4wET/mEG9QhP/DL7vgPa8zkBaQSk94ECBv3DA7b6h/3D/Lj+uAvE+xP9uwd7+j4Azvi2ApT1bwElAeoAKfzI+wL3DANQBOYDNgAcAK/9IAFu/CQMwv8=",
+   "top10": [
+    "dest:gem:achensee",
+    "dest:gem:zell-am-see",
+    "dest:gem:bad-gastein",
+    "dest:INN",
+    "dest:gem:bregenz",
+    "dest:SZG",
+    "dest:gem:hallstatt",
+    "dest:KLU",
+    "dest:gem:lucerne",
+    "dest:gem:mayrhofen"
+   ]
+  },
+  {
+   "q": "old town in croatia",
+   "v": "WQT19MsAGAFK69nzsAqmDx0HTvKZ8sL0XgtuEDj/IekxCZgAdQ/X+Yzjt/eWFVQAQ/3l+ez1Xwip/A4Cswvc/vwC2AMjBKfuNRP58C7ybPVS+vH4RArH+/0D/f3g/kz4/PBn8vb7DPUt//oDK/sHEy39Tgc/BJ36p/0AB+3zfBHiBPYIOAQd/20JdwDOAo4Gav7z/z4FjPgTBJL38wdM+LgDhQKY/hH2vvgtAv4H4AGGB3L9M/7B9jwEMAlsAHT9Qv5tBMMHRv9T9anv5gJLCY4C4/ntBrcCeQJQ/NwFxfeWBGX+bf/KB28Hv/ZEByARyQEJ9Vn9g+18/XD6efF2/8HxjwB5CLv/FAIV+ksBZP0QAgP+TP+T+bz0NgL4BysAlQCM/sgCoQhb/U0KUAFL/ND96AZl+bn9ixX4+KMJqAo/DaP6RwN0/if0+f/JBSoDTAG5/an84QDXA8kC3wKaAGwGxwXh9y//RARd/lz7Bgk8+ND8wfWw/Wf9OvclBA8ArQjBA/f93gYwBp321QIE/RgFwPfA9eUJdvUyCgL/dfNfBXb7uvTtAH72hwzoANP/sAKy+DH9eQ1N/7gBqga09AAJ7fS/B8kJrwNk/NH/JwCk/OQBsgRX+/IDlgKKAaL9jALR++D6oQVSAuj6qP1E/Ob+eQno/0b/yAMJDX/zgQk=",
+   "top10": [
+    "dest:gem:trogir",
+    "dest:gem:omis",
+    "dest:gem:rovinj",
+    "dest:ZAD",
+    "dest:gem:opatija",
+    "dest:gem:fredrikstad",
+    "dest:gem:tarnow",
+    "dest:gem:sibenik",
+    "dest:gem:le-croisic",
+    "dest:gem:ceuta"
+   ]
+  },
+  {
+   "q": "castles in germany",
+   "v": "ARqH5ecVjvyj9v4KzPy+/7oCtfk09KsCoeekCEsHrfuiAh0HcgPT9yvvJvO8CVD3Gvnd8s38fus59hoP5v1uAKnzIPbU9hrykgY0+Df9nAMK+A32EAfpBKnyKftQ7Jn6+AVy8e73HPO4Ao/8fv0c+yP/wgeJAdzprfe+BFfphhJ3AH4HdPjc/sz8Uv6t/Mn4LucGDCD5F/KzBG/8aPQw/GH0+fLF/kH5LQMmATLuRgGwB6L9sv0M/7gKLwelBinvavqaBBYMlvxx+RT5YglyC8cCEwKy/gQEQQrXBST0f/Xs+Ff7SQYv/4oP7ARfAn/6G/l+/LT+kP3m/x38tfX3+/XzevYiBZf9CQiACpkKnwdnASICpv/M93j48feoCjoJM/tSAI/+pP17Ah0BCgLHBZz/7wKe+iYMtAVC+cv/GQmZ+jX6zvm//iUH1AOU9vsCKfhr/w/+yv/SBwv4pwPmBToB3v8n9Uf34vqd+8IAaQgq/i37E/kY/28EpAaqAbb57AMKBqgGT/rr/g4CXfyE/isAz/dD/sH/I/w3AsD5cwAVCjj9tv7ODWkB1P8qBWf+ugFsBKb4NvcX9X0AtPk9/LkAGABy+b390/vz92EFD/6t/e0GEQnR++L5JwDaBmcAsQHJAJYE9QPA+zn/mAFDAj4AEAIB+JoBgwG6/r/+zv8=",
+   "top10": [
+    "dest:gem:meissen",
+    "dest:gem:go-weinstein",
+    "dest:gem:heidelberg",
+    "dest:gem:malbork",
+    "dest:gem:wolfertschwenden",
+    "dest:gem:badenweiler",
+    "dest:gem:hechingen",
+    "dest:gem:bad-langensalza",
+    "dest:gem:burg-eltz",
+    "dest:gem:neuschwanstein"
+   ]
+  },
+  {
+   "q": "food and wine in italy",
+   "v": "s/6K61P+SALT/JEDBPGy7H39yvPsCQTp6QRrDgL5TAlPE8oCIhBJ9PXt4vqz9jj3M/KrB2T4uAQH+7QURwHk+o4F/P2D7J775/Mm+Rv1bvN6+y74RgMK/7vwGfnkAbP8b/zXBT0BhfUvFwX3RwI2CiT23QeSCl8EGQ7S/PYF7QoKB8EEkf1D+kkTOA7l+94FDv7S/IP+mPiKDE8KG/6482/+MgQyBfz8LAKZ86AO+fY1+oUJGAlAAcwIigCAAs0AoPgyAKP8ggGd9KfsVPkABs384voLB5v6pBHjCJH95wNh+Yn4lwjEAJQJTwEsAb0EBPyG+DvsCQl5AA/7efMeCoUDtfi7BEYNHQ8u+LcKEQDMCUYAvvmy/rj4nvrQA30Cm/ylBib/rP4ZBG/9TfLPDn37/vWi+qQNzfoTBncIqQG++Hn9WvnqD7v28wQODrwBYQlt/Ejzbf/o/nMHzPqeALIHsvMB8jv+2/fB/OoEWwT0Ag8C0P/j/O/7xQJzAOoEUQJs+dsA2ghn+qD8kQhI+5n9bvpM/GsBngDZ/+34ggTX+YT1RfyaCBABLweU+iED0QQjAD/+gvjm8yT5QPtXAQsGc/1b/z//2wJ1/JwErQFj/QQFJv3o/i763f3/AwD9GAJXBAoBzf9z/5b8iQNb/7/+QP9cA3/97gUK/Mz2sQQ=",
+   "top10": [
+    "dest:gem:villany",
+    "dest:gem:langhe",
+    "dest:gem:bernkastel-kues",
+    "dest:gem:tuscany-siena",
+    "dest:gem:vipava-valley",
+    "dest:gem:cambados",
+    "dest:gem:beaune",
+    "dest:gem:laguardia",
+    "dest:gem:tokaj",
+    "dest:gem:cricova"
+   ]
+  },
+  {
+   "q": "beach town in portugal",
+   "v": "wwLn7gr4r/Ib78j7ahb59Fr2EfG6+RMQqAvzC1/5Z+w8/6ALzRqQ9Fr1E/kz94v8mBpy/K35F/1BANj8hAK0+agDAfrg9R7xrxWE+FQASvcVARv51AI8BPD9Uv8D/aH4CPwT9FYIAwde9x0DFf/FDDYI0Qjx9uXw/gjNE+P/mQxVD8ADxwI6FDcHb/OIBTz9TgOIA7b5RPch/zH6hwNF+yYFcwIb963qEvYI+gYF8vaIAGb0F/+Y96EAvv519N8IFgHU/w4AE/8mBVADgQCCB6YEaP5a8swDjgrtBe0EsPyqBbj6cwflCbkGFQGiAakWn/me9vIB7P+w/nMHnfsrCFoAuwD1BpAGygbO/BT9iQXMAjP67wIX+aju3fwWAyn9mwWFAMH/kQ3pAgcF/gMwBFkG6P5cA7QDhRjc/KX/4gsyEGf6VPhqBhv+5ABZ+/sGWgp7+iz/jABLAkD9qwd4AmoD9v/e8/MAKf9VBl8AK/3+/8X9dO44/+L3UANBBPb+1P9DAk/7KwPU/3z7swBZ/ScFlfZ4+MkKPQC0Arj8LvYdARX+dvJ0/bP2IAlUCGv+bP8e/cj/+Ajy9BkGhwbj/GcLxvjqCC0EsP5VAvAA5P3K+zsCv/vK/AD8MQAL/HgA8wEhA+P8zf1g/iL8e/kr+30C6QKH9zUBfATeA9r5TQU=",
+   "top10": [
+    "dest:gem:alcobaca",
+    "dest:gem:cascais",
+    "dest:gem:sao-martinho-do-porto",
+    "dest:gem:tavira",
+    "dest:gem:tomar",
+    "dest:gem:chaves",
+    "dest:gem:lagos-pt",
+    "dest:gem:sesimbra",
+    "dest:gem:ericeira",
+    "dest:OPO"
+   ]
+  },
+  {
+   "q": "Ruhiges Bergdorf im Juli",
+   "v": "8+Bi17L/9vr/80wanvoECd//1u71/kv5JQX/8TgG1+i67p8BRutl82b3HwEA/+wFd/q977kCj/oGD1cCrwuH7vkAE/C1BNv2bgaiEef9Yvg/BiD6Df/ABt8BFQm0+476af8eAxEGI/9P/N7yLu9Q/zUEEwc5B635JgymEEr7zQovBUoCBg5/+/MFCwPEArD+hvIFBFf0kwYs9LYGwP0P8AAJqAXq+8D/M/co+p/zZwfG9JoBvgPJ+AQLiAtPCIIDS/VtDTYLJgAt8A/+qQAh/k/8dP/DBc4Be/sKBX4Byv6r/Q4B0gDS/3MEPfUxBOQQJQTH/WwKGQT9Bdz+bvhm//4IcPerAbIECQI++kkDrvns/3P8UP7H+wb6AACsCfICxf3VCm/7IQDs/dQFyAimBEf3HPhHBqj6ygj6/PwFyQP588/zKfiL/SAOXAD1Aan5b//DAo/9AQJH/l/6UgZj/wf84v/B9jwHJPcX/x//aAMy9Iv+uf/7ByH64uxh9zv2igJ7/p78gfupBsj19foP/8wC9gjK+5UBJgALBHf9OvrY/e3+C/2x+1H5x/2//lUEF/hiBBz8OP95+jD+vQWB/ib+MwDBAEH5ev1cAeH/0fr//4T/ogNbAKYEav4Z/SIBdfs/AZgCl/+W9z380f5SAPQBHfsrBtL+TAC19+v//f4=",
+   "top10": [
+    "dest:DUS",
+    "dest:gem:rudesheim",
+    "dest:gem:reutlingen",
+    "dest:NUE",
+    "dest:gem:recklinghausen",
+    "dest:gem:oberstdorf",
+    "dest:gem:la-roche-en-ardenne",
+    "dest:DRS",
+    "dest:gem:berchtesgaden",
+    "dest:gem:aubagne"
+   ]
+  },
+  {
+   "q": "plage de sable près de Nice",
+   "v": "/fbD+dHmkwP16VHsn/pl8SD5fwHyCGP+wQIt+TX5ZACw7t4GbAUoBJf69Aa297D8m/5zAfQDdQUS9vcEw/WK/88HSvVwDwf2Xvj67BT3ZOJWAk/8Hu4NEyb4+/6p9jkAwwP69zoETQYr9pL46QU6Dyj+rQWM+zgINAATAvIIpf9QC0/+Zg9cBx3+6PRaCLv9gAG2+DrvvPgNA80ESgCK9XH8qfgS+OjqRO3q/3MILe9O79QDCQPTAugAZQj79b39xgQNCf4N4v7NB3kLQQQn+N8EmwXRCp/8wvaV9bP7i/zG8or3wQOA+GX7Hvgv+y/7VwT77y/7lgNCAfQKDPYxA5/+YgAM+GD+1QTf/b3/EQXT/uj13gGz+wD5cwtH/qoD1e91ANsDVgSHA0wHDQ8cBQD5Wf3O76gDCAm//bH2Gfj7Bxn+Uvz4BboDN/wC/SYHQgMVABoGAQYQ/sjxSwPu/cYQ6wQc+Z3/MAALCfP7W/Rn9UX8WvWY/jEC8wzICmD5vP3V/7EAnvvu+ur74ARl+TYHJAgu+Xr/2wCcBZD98f0F/3sBYf9K/1IGtwcXAUMArv2VBdIQEgv+/UIFnP0b/g/63APvBiEE1wW3BC4A1v1B/rH6nf2YCfQCEfsRALP9EQVa/tz6cPthCGH0pvnfAfL7LAFA9yMB9wX//gcEmAA=",
+   "top10": [
+    "dest:gem:hel-peninsula",
+    "dest:gem:ayia-napa",
+    "dest:gem:sinemorets",
+    "dest:gem:formentera",
+    "dest:gem:sitges",
+    "dest:gem:hossegor",
+    "dest:gem:carrapateira",
+    "dest:CLY",
+    "dest:gem:hoddevik",
+    "dest:gem:polignano"
+   ]
+  },
+  {
+   "q": "pueblo blanco en Andalucía",
+   "v": "ev+I7xn9w/Je5fIDHQty7hXnufw2F2/3F/V7DXEF2PEg+ej8OwmzC8z9oAASATD99gNF+ij8ZvitB34GR/0vBQr1pf7vBl0ELwbt/FkAHPIB7Qn4owbe+sPsKwJJEMXwjfye8ocE3+9r+z36yQN4A/wK/Q+bAbP04wvkDL0F2ANpCx0FH/eHAKkUmgAO/qkLbQF59Ln5Xuug/sMJuvYL/YTz4fbgARDtMfYMAbj89PmQ/r30fgBYDdYIJAGE+3oB8AmWAZ4GuwKn9lT72fsrBvQK1/00C6oHVAFgCbkNoQG0CXX3X/7jAMUGSv9g+BUIXfzx+7r7Q/hx9xD8ugJE+ID71vbpBsz/cQAnBxL+2gAE/McEev5lCUQEFgn6+HDve/dT8gb1XPjVAvIBOgLE/DX6BfurEG71QwcmACkIFf0FC0X3JP8I/a3/QwZQ+nQCqQAhAWf2n/zCBV/+pfMm/nf79wBfBT0COvwpAmgHbwAGEIgIPPdd/qcFggbuArr/oAi89jcE6/5h/F8Hy/7O+Tj8xQOZ/tv9mfuJChL55wGGAJYKWforBIIG+/54ANz+twI+9ksEMQgCAJYLMwdlAgQKjQEFAq77pwMLCegCcQEj+gz+cv/Z/nf8RwME/fMHJQKkA1n3r/sY/rX/xPpNARsCkv2wBpAKdAHu+cn0MgY=",
+   "top10": [
+    "dest:gem:vejer-de-la-frontera",
+    "dest:gem:grazalema",
+    "dest:gem:alpujarras-pampaneira",
+    "dest:gem:setenil-de-las-bodegas",
+    "dest:gem:mojacar",
+    "dest:gem:monsaraz",
+    "dest:gem:chamonix",
+    "dest:gem:alquezar",
+    "dest:gem:albarracin",
+    "dest:gem:sirolo-conero"
+   ]
+  },
+  {
+   "q": "spiaggia per famiglie in agosto",
+   "v": "EfhgAEL94O9G48r32ABc+pUCtgaH/goDOP7d/qgBO/Dm8gUTwAzZ/fj7FA5YAEv+FvRFAuEBBPov+nkEjAoO/mgGtfPZ/RoD/v3z9237F+0RDM0EB/0t+xoB7v+3+GH//P3c6aUBufifCvoB+fvdEL76qvQfA64Pz/yBClz/OxZ/BpIMRAUnDMEKJfwZD976MQoaCDbw2wZcClj2Xv5D9Rj8yvyG+ujoxvdb+8LxtPxDA+zz6weFAqD6FgLe9bsB4ggnAPv+igngA3z/Mfy7/NEF9fY7BG0IRPnv9wb1lAF+BhcCEwvUCNz73vR195n8rge+++kLS/4RAfMJg/Uu/bX6cAUM+qb9pQVtBDT9sgWH/PL9iwf49KT+FwVmAFT5aPsiAmv/sgoICAUHiv74BhH5pP7V/ewKTwCcAbf9/e9cEj/88v6y/IYKVf+587n6cgNSAWn/LwkP/Pb4uA3W/O790/+M8jr8YgB4BvHx0PnD8nf8uu4TDcb85/9nAST7o/+2A/79twMk/Vz88wdv/Q0G+AS2/Gb+oPuWCY36n/w3/Z7/X/v4AfX+dQqO/IEMpvMHCDUPfwvk/KkUyfr1/gj/Lf09Bt75OQIc+/QHyPrE/xH+OPc1D6z67wNGDB0EkgQA9ioJ0AIGAHj3/QCHBEz93v2K+LkC6wEUAeQGqQM=",
+   "top10": [
+    "dest:gem:syvota-epirus",
+    "dest:gem:hel-peninsula",
+    "dest:gem:sitges",
+    "dest:gem:parnu",
+    "dest:gem:dhermi",
+    "dest:gem:hossegor",
+    "dest:gem:lagos-pt",
+    "dest:gem:formentera",
+    "dest:TFS",
+    "dest:gem:carrapateira"
+   ]
+  },
+  {
+   "q": "goedkope stedentrip in mei",
+   "v": "hurg8PTpPv1g/cYBzvTq/qD76PZT9KUH4gPq7T0OBP+c+XL6UhQA+NkAQP5IBIULw//m+xcIqfpk4hT4aQaT+rn9Yfbr9fjqMxK/AZDxm+3jAAP2zv0J7/8BZPiM6ncDDuqb+9X4IPgT+iD9LQhJD3f/Ov+6/64DqP9DCOL6MAbTAQIRSQXhAKD64vqa+1YH3P2WBvkCagDT+pTvgAnu/WkIy/sO9H7/mwmeAwQCSP4v/HwIDQRG/KYFyAri80z+ZQeq/kMNhwWkBC/+Pv2ABG7/zAN2BhkKlf2b98z4+vYOBnr4EwWX7zwHjfifCYz6+P8z/KH8mvrH+oEG4vIyB+AMOv/mCeMEEfcU+6YGu/ctAUwCxApxA6326QQBAQv8q/nh+Bz8nP0FAwUILQZw+6b8fAqSAgD3uwo07jEDhwISBTf7jAWQ+44GXQPP+cn7zgJCDNkEGA8SB537NQpQ/VADofl3+McB0wh3BI36mwmq/vMHmfhi+kEIAf5UAGn+LgQOCPb6VAE6/LL5pfr+CyIBEPR2/nX9E//QBt/8NvtXAD8Gefyu+Dr7XwG9BE370wWu/PT5nBHVBYkASgioBCQOoPrq/qkKHgBy/hwJaQEqAEr3twhQAaoIHP+19v3+jP3dAhMA4P0d/2P29/sY/TQLNv6dACAItAWPAXz5YvY=",
+   "top10": [
+    "dest:BMA",
+    "dest:gem:szeged",
+    "dest:DUS",
+    "dest:gem:gouda",
+    "dest:ARN",
+    "dest:SKP",
+    "dest:MMX",
+    "dest:NYO",
+    "dest:GRQ",
+    "dest:gem:herceg-novi"
+   ]
+  },
+  {
+   "q": "hiking base in the alps in july",
+   "v": "7BfD+MkCUP116z8CSP5c9hXvJQli/gT3zvqiFfAa7OD97Q4CSP8KDZD2pAlt4gz03vI5/owLVQJ2/0j3UgE//aDoNPvvBUD4d/ZdCi7/svOj7Z4AUfrf/fjpdQvb9+kDogD/9ET3A/3X8Uv1Gf1K+7kDKwkvCyH3vvqmBjjx2gCGBzn5aP0l8VD7PgvD9kn7qfzbAroDr+l8/qECbv7A8g4BMvlO+E8J6/qI8072+gMNCS8EGf+FBW8Jr/79/pj3gf1eCCAL8AuH9Av7txPnAIP7WgRzC7MKK/m0B9wDKACH+Hb2pAB++ksEZPoN+w/5SgUlCrH98/yC/x0Fj/ltA83/EAfM/27+2wVqBCcC+AfA+j0DsQFcAuz2tgTn/7MAEAAt++r7vu2mAqwCF/pRCAf30/qkAckA9QND+NEA7wP2BDH68fzf/2kMdP64/kf7B/m/BFH1uQIC/eT5ZwGa/lj6+/6YBwsDNfh0BWEDzP+R+zIEYf4rAjX7efkx+hD2TgOTBrIEGvQ8/1kDKv/nAI7+cf+fAkb9XAFx+1H2ugCQ/K4BgQF0Ao3/oQCP/77+UQEJC776Cfr0+LYJDwxR/Pf9wQPmAVb3OACV+mP9M/40/lb/xQhN/8gARQUkBIb3qPuoBhsBhPzY/ikGTACNAkEAGf9TBPUCL//4+loB+/8=",
+   "top10": [
+    "dest:gem:alpe-di-siusi",
+    "dest:gem:alpbach",
+    "dest:gem:lyngen-alps",
+    "dest:gem:grossglockner-road",
+    "dest:gem:aletsch-glacier",
+    "dest:gem:mayrhofen",
+    "dest:gem:val-di-funes",
+    "dest:gem:zell-am-see",
+    "dest:gem:lech-am-arlberg",
+    "dest:gem:kandersteg"
+   ]
+  },
+  {
+   "q": "medieval towns in alsace",
+   "v": "rQ3H9ZUByAQT7JwWc/6s+/r8YgDT+YQCfv3BDBEKu/VYBBH4OAgdB0ICePEg+pL6BACL9Bz/ZfDY+A0BKwOMB1HvrvZH+pzrIQAzAz3rEPUB9sH0tfG1BmLsmvWc7J349vdf8x75ye+7/iUE1gb3BnEBfBMPCW3miP61BdLttgPCEXX4ufu19yUEdgOeAUkHluyeBon8Zu7n/KUDtggO9LwBF/yTAmHsWfdbAcgBKPmwAlv/T/2S+MIECg6pBaz6+Ppk+poPiwAk9yT0kQFTCh4BKviF/IMDfQwgAmv8KvzF/Xv7w/0RCE4IkALpBq0GAgXp9PQBwP0X+HsGdgLU/dP6AfczE/X2e/6H+ez8MfznAdQDfAThAocCswK7CbL8EAHB+E/7OvYw/6gIqgNOCMsF+Qaz9dv++hG6/uwE2AYnCWn5FfxH+OMAygFn/twAmgEF/yIBQP4WBab2mgLcALsBOQAd/Dr5y/6SBO/91BBX+X8BrvpU8pIFyQHr+awMbADbBfUDHvxc+AEHHAIhA+0HB/iP9HUC0PdABsr9IPkN/g0Ir/rbBQQBBQFmAe/29Acc+uz1QwD2+q3+4wb59yAMrP+iA5cGqAgZ/t7/tQIz9BkE2AXDAnr7hvwnAZ79evuKCfYCwv6L96H4z/wx/rsAUP5d/mj8aAZU+/n8Q/4=",
+   "top10": [
+    "dest:gem:quedlinburg",
+    "dest:gem:trancoso",
+    "dest:gem:rothenburg",
+    "dest:gem:brasov",
+    "dest:gem:riquewihr",
+    "dest:gem:obidos",
+    "dest:gem:hum-istria",
+    "dest:gem:kilkenny",
+    "dest:gem:provins",
+    "dest:gem:meissen"
+   ]
+  },
+  {
+   "q": "island in greece in september",
+   "v": "IgH/8xv9igA8+S7wJ/XIAYX75vu+/c8GogL7B6cJEPkPBe0NOwuj/R/mBw30BCr97vX2/Q/ucf0QCuL0FvR08pvvluqD+SbfYQrM9iQEEPqm/5b5igvBAU0HgAAb+1UFK/qa9FX2yPcRCmQLwv4rEQf4FPX6CsUIu/kyBkT/2vZiBJcQBf39BeMO3gedCe/1X/sEDkT4r/d4A5/7nwCe8LH5BQDD/JzpGf/qCAgAdPpB+uruJP1s87X1n/jK9yoHw/tJD+b4pfhHADD+9wOwAEz/7wS8B6obsBCCC78AE/gMDvf6+vjnB73+6QI2CMoDmvjL+ivznfz6BlIBRP5q/koASP9R/Cn+0gZpCmoCwf1F//sClQJF+KLxDQl3ArT2WALMAXQKmgcTALMA8/ZxA0b6Xfnx8nkEaAZABLf6VPzqBon9H/s0Db8FyQZo7Y0CtP13BSUA6AUqDNgCEwOECMsCTgpD/s/4nwKmCG/3Tv8F+bYD1AQwBFr/6gP5ANb0Qf2DAWP4KQSNADP7XArD+oQEOgNL/AgD6gKL9lEAHAMo/4ECn/jNBYwADAK/A/AAaARHBPsDAf9NAAsK4wC7AoIAIANLDXn/c/vBA+oAp/5/BukDD/tmBDEIwP/wAjcFsv79/7EBhwCPBOT/WP+P/8X9hfv+9aUGNQUuBRAC/wQ=",
+   "top10": [
+    "dest:gem:ios",
+    "dest:CFU",
+    "dest:gem:serifos",
+    "dest:gem:kythira",
+    "dest:gem:comino",
+    "dest:gem:faro-gotland",
+    "dest:gem:paros",
+    "dest:gem:graciosa-azores",
+    "dest:gem:karpathos",
+    "dest:JTR"
+   ]
+  },
+  {
+   "q": "Thermalbad in Ungarn",
+   "v": "d+u05g0Bqw6A5YoLRPfhDuYLJAxQ9PX1XwG5/mDrMBKx5uD2swe7DvQE8RENCzkBr/mvBAf6NvRY9o8B7fVxAZL3pPTu+RD2HwV2AX30BgpB7NUCWAiLBEAAlfmE/DQK8ApK/zkEnvrH/GD+UQjRAwTxWfrF+Ef8cgG3BHAFrhmYAxoDAvt+BooAKPrd/l7+3PHl9y71afZV+3LyIf0WAZEJKvR5B+wFxgFj9/EFxvvS/Hf9rPZS+d4E3/q1AqXydAfJ+CH9p/0+BBAL8veNBBgLVgMh8yYBBP1PAtX99vvw+TL5svVV/0z/fu5aAw36Vwjd9zwEKvtbAmkJvvs6+nT6WgaE/zAJ5vQU/pgDIP6v8UkG5P2JCsb+Hwdt9pkLcvNpA7EB+fnIA2cHZPePDPQIWwTg/Pn94A4v+3n0+v8qCiD/AwPnAKP7c/2i+if/CwTIBb4JxQST+TUBdQw9DBcGswtF/c0DFgN0AvX+bPhe/DsBpf31BJXwh/nR89L8l/st/aj7eP/VC4QHXgFdA2gBSPsEA3YIP/vA/T0HWPy9AfX1OQT6Byn/tADI+7j2s/2ODO3/7P9w+y8AyAQU+1UCQgdAArv9ZwBN/vEBCgCW/9X68/y9+bn7hP0jAGn+h/4SBFUKQf6uDTb3If/wAlH9hf9IBDH/LvjIAIQDzQE=",
+   "top10": [
+    "dest:gem:baden-baden",
+    "dest:gem:bad-ischl",
+    "dest:gem:karlovy-vary",
+    "dest:gem:heviz",
+    "dest:FKB",
+    "dest:gem:famagusta",
+    "dest:gem:baile-herculane",
+    "dest:gem:szentendre",
+    "dest:gem:ulcinj",
+    "dest:gem:spa-belgium"
+   ]
+  },
+  {
+   "q": "quiet beach without crowds",
+   "v": "+QzvC+fsxPRv5BQAzewZBTkOW/h89cILYPyqDZEEXPAJ+bwQFAdeCND+4vcVAlcI3Qfe+pEFKQSD9tsCmALzB9ICAQF4/yD4eAP2Atjx8PMuAV4I5QGo/KEH6P6/9KcFqvuW7eLp6v6MBYUK7wUlCFD+zf+bAzD/WPFwCSIFbApVBzoIagogAX4E3vlMA6bwwQPWCQsMLfka7xj4aPrvEOH4Nvyh/032WfY1/iz9BPt270wKWQZGBboCPQL0CNgJhP3sCGsAHQiYF1gGtPKQ9w0NKQilDeL1qgHQ9pwJIvT6AVT97AqEBBABE/koCNsEfAP79HD6+vR1+CcOWvtd+1AJRPyACCIGLwb0+s8BeAMg8zT3EQQv7WP/QwPQAt/5Ngbq/2P/gwKVA4oDZQK7AcQAruz89aX/uwo2+LUHvwBzBuwKUAFwB+AH9gO3953+fPrAA3MCO/ml/ND2NQVPAcIB0vzYA1L/GPhL+pD+ifvdCdICt/pZ/A8BaAMaAGULRvvA9Qv9XQCz/B765f79/mMD2ANK9tv8RPw//lb4Hf2z+jj/pQJE/cL6JwIy+5wCJvfJ9lECFQsj/EkPQf3W/qr+8P5GC3AFgAp9ByP78wlaAO/7CgD1CNf6Cf2d+IL/2AjW+sn/u/ak/zr2SPc9BEn5l/eG9SIA9gH+ABsHQwA=",
+   "top10": [
+    "dest:gem:loop-head",
+    "dest:gem:perast",
+    "dest:gem:halki",
+    "dest:gem:terschelling",
+    "dest:gem:faaborg",
+    "dest:gem:galaxidi",
+    "dest:gem:sinemorets",
+    "dest:gem:texel",
+    "dest:gem:pavilosta",
+    "dest:gem:andros"
+   ]
+  },
+  {
+   "q": "UNESCO old town under 80 euro a day",
+   "v": "GPhV8zf3u/l48dwK1eyU99v+mvr/6XjzYfswDwLtYOV5BMIJTxE1Ann2KQDnA/0DLQNx+xDvKPWXCBz/2RZbEA33aPEm/4/3qRJcAZD4QPH8AvwBBgHJAYkCD/73CBEFD/2a81EAZAMB/AYH7wMsDM78ZRaq/Ez+cwQECdL6LP/TBqwG9fSaC0sCp/7V+m33TgmVBScKeP04Bt/45PsH+TcCZAQXAkP2Q/t9Ai8GBfh6BLv14/gEBwYC/PXKBQH3zPd5Bd0Igwim9RT45/r4ApkCVQXg+0IQGv3t99oBgfoB/Yb2swJzEmoGr/+hBiABLvvj+Wn7aQNq/2f7ie0DDYb7bQBnEIIHIwFN+2kIMQjfB1kAEvyeB37/uQoK9v/+AAeMBFMDav+f/ID/mf2//24JUwKt9/wK+wyRBZD0dQUkCiEA4AN7A075Ff06/mACzvxB+1z+FwQ29gT8qAXo9t/3af4sBFH9MwX8Cv78WQCq+hb9TQAi/dj3kPvHAfkI8QWPBRz8LQFY9tD4Y/lCAsMJyfgB9fwBIfZ8Dxf9uPOMCecGIPtp+GH+ewcP/v7/zf7mBkYBPgP0/qH9uAgu92YH0em8ANQDKQcu/GH+APug9Tf51gagAbP7UgDm+lsCD/8rBzHzHgYHBRX50AQO/ZYI4AMBCGn59AbICH7+9vs=",
+   "top10": [
+    "dest:gem:berat",
+    "dest:gem:kuldiga",
+    "dest:gem:gjirokaster",
+    "dest:gem:salamanca",
+    "dest:gem:toledo",
+    "dest:gem:mafra",
+    "dest:gem:evora",
+    "dest:gem:kutna-hora",
+    "dest:gem:stralsund",
+    "dest:gem:caceres"
+   ]
+  },
+  {
+   "q": "ski village in Austria",
+   "v": "ivqF8L/89/Kp5rX4RfMS6QT7m/psCGzvDAbUCa0TGuv1BLT5dAfjEOv72wMQDk36xfvP+S0RcgU4+yAFsQJxBJX5hv3xCo7/dQsi+N4JrvYa/mTwUgyj9ir12wlKAG4PTgee+KgDYfQ9D/j07//8BswAkv8tDP788vkZ/Wzy+AYDBBH60/Qc8ePx+v7CAEP/ewEm8w/5bvVhBc0LEviF+T73NfhHA1P9wv35+zMEf/S7BdnyTegjAv4Oj/a1B3oFlPsq/1gGuAKN608BLgf4CDQE3gEkGLcGHfnq9C8AKviI/Qn3K/V4/2oCAfowCIMOgQDf/775Y/ruBBDrx/SSBnzy7QccB/IBFQLC9mADyv0SAmr7FQF/+aYBfwb2A1v7wQQf/JX7qwS+CGUR2Pe6BoX8c/9NAxX7Uw+49vsEQwwhA2b5/vz3/eAAdPwg/jz9svdeAmb9Of7m/sIIwv+1ADAA9P1r/uL1yPV+/vgJMgZR/VsKYwPIAAr9yPwg/DgFbABV+BwHGff2/agEKAL4+i77Z/02/cn2GPqmAVP9/fg8/XAFEwSy9SwHjQZT/E/6egxKANIAGwGC+q4EtwJV9xMCfgFaAvwAY/4nBJ/+LAhz+q/82QOR+un8b/7VA3sCzwOuAiT7jQFP+X//yQAmCsgB4P+I/Gb8ZwKK+QgH3gA=",
+   "top10": [
+    "dest:gem:alpbach",
+    "dest:gem:lech-am-arlberg",
+    "dest:gem:kranjska-gora",
+    "dest:gem:megeve",
+    "dest:gem:stubaital-neustift",
+    "dest:gem:verbier",
+    "dest:gem:mayrhofen",
+    "dest:gem:soldeu",
+    "dest:gem:engelberg",
+    "dest:gem:grindelwald"
+   ]
+  },
+  {
+   "q": "romantic weekend in Paris",
+   "v": "/fs4+eQFF/PI5iL1ag/b+9UJ3P4wD0QABQSbB1oARfiTALgejRM3/hTtAAIo9CD9Hxc9/a3/8P0O/oT5cQTy+hrzpQrP/rzvNg6hBX36zPUUAVv8KgfKBwz6QwG++g37iAEQ/zH91wqNA7cJfg9fB4wHUwMn/M/+GAIW+qAG8Q23BFEF4QL79ncQ7wC4AVEDLuyAC0YAqQZyAgf0rPw3+Ar7BAd6D9H6cAPuASMHivpJ+zcEmgqE/iDzcv92AS7+iPkn8swOdPsPAtX10gM/9tT8TPZfB7oc0QWZBYf01/X/AXv2eP8u/9wMOgpO9tYCGP/ABVcMQACp/r4GOwK0BuIK+//F+W/81vaa/fEEaP7lBgsKA/WkB2P9VwCC/1YCWQBo/UkBhvpXBhz6qgJ+/DwE9f/d7dP6SP8J+QP+wfvoAJ8C5fXEBXwRBAaGAjr4Zf6TA50NUADj9977xgbV9gj/nP+V/S4AogXw+g/9yQbX/ckPcftO9/z5Svrk8/EDhAdR+HP9cAZ3+rIFYwRnAlcJE+5jBdX67QWbAnMCFP30/jD8Mvq7+3H1v/XuAUEEMfsFDAgD7/3nBDD5Ovr7CBsGjfqx+4n+6wKJ9ysKiwatBLsCmQjM9OkFlAUHBXz/RfeyApoMkP7G+dD+lPyYBYD/QAe6CVb8rQF6/2oBvQE=",
+   "top10": [
+    "dest:ORY",
+    "dest:CDG",
+    "dest:BVA",
+    "dest:gem:deauville",
+    "dest:gem:puy-du-fou",
+    "dest:gem:rouen",
+    "dest:LYS",
+    "dest:NIM",
+    "dest:RDZ",
+    "dest:gem:eszterhaza"
+   ]
+  },
+  {
+   "q": "fjord cruise Norway",
+   "v": "fP2g5Iz7QAFm+HkLjgN/DTcE1u7g/Pz83gbbAeDztOzKCN0Lb/ejGeLlFPsfAXH7NAdv8GoCyPta/tn0IAWfAvsJhwfF/pHv9Ae//Tf71vHgBasLTQPuCUP8UfSu6pABxwkL/ukOgvY38yYTW/nVD3X5tPoE+770tPWh/2f8fP7M+Qb7kgl3+9v9owBJ/wLwy/o5CsME2v6ZALMTegEK8JEHCvdw7TP3sAXYCcD4U//v9VQC9fil9AwE0AK4+H/95vwc+OIOKv/sAzUJCAaF/9f77v6xBhUAKP91BAwBLQE//Xb+1vqJCvL+8+/SDZoSXfyf+4L69AkwBCX7B/cLCWIC+PqpA1MGffjo/f4EGfrr+yj60wVn+C/4sAdX+7sHzPU8AHQJ1wHDBDYLn/2d/5Hz2QGQA+wC0A30B/n+7P00CNP/ZgT+ChkMg/ws+Jr9Wf/n/vwFYAliBKoI0wWK/5UK3wXs9w/84wBlC8gFAPQY94n3HfjT+Fb9FQ6OAFv9QAEaBckIjgBI+ET4LwQH97kIGQBcA1D4AP13B1L6xgUw/SYGIgF3APYApwV4/Z8AQQJSAAoAuwSb9KMKIwLQBnb9CgVZA6oAvf4cCMYNWgKx+QX+sgZLB/D9TwNQAPr+hQS5BOsDZgIoBQj7tQGKA64C/gVD+5EF4/9x+AcCtv0=",
+   "top10": [
+    "dest:gem:bergen-nearby",
+    "dest:gem:geiranger",
+    "dest:AES",
+    "dest:BGO",
+    "dest:gem:flam",
+    "dest:gem:pulpit-rock",
+    "dest:gem:senja",
+    "dest:gem:saltstraumen",
+    "dest:gem:lofoten",
+    "dest:BOO"
+   ]
+  },
+  {
+   "q": "",
+   "v": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+   "top10": []
+  }
+ ]
+}

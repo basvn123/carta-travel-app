@@ -1,0 +1,236 @@
+/*
+ * Ask Carta (T558; carta-design: the guided search panel, the receipt, the
+ * comparison table, Status). The trigger and the field are the guided
+ * search's own (62-v6-explore.css .gsearch, .gs-field); this file adds the
+ * answer. Roles and scales only. Brown only for what acts; the written
+ * answer is ink, marked as AI by its heading and one meta line, never by a
+ * colour alone.
+ */
+
+/* The field: the question and its Ask, one row, held at the top of the
+   sheet while a long answer scrolls under it (a sticky bar: surface, a
+   hairline, no shadow). */
+.ask-body .ask-field {
+  position: sticky;
+  /* The sheet body's own top padding (62-v6-explore.css .gsearch-sheet
+     .fsheet-body) is covered too, so nothing scrolls into view above it. */
+  top: calc(-1 * var(--space-4));
+  z-index: 1;
+  margin: calc(-1 * var(--space-4)) 0 0;
+  padding: var(--space-4) 0 var(--space-2);
+  background: var(--surface);
+}
+.ask-field .gs-input { padding-right: 132px; }
+.ask-field .gs-field-clear { right: 84px; }
+.btn.ask-go { position: absolute; right: var(--space-2); }
+
+/* Before a question: suggested questions, then the slots. */
+.ask-try-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+  gap: var(--space-2);
+}
+.btn.ask-try-item {
+  justify-content: flex-start;
+  min-height: 52px;
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+}
+.ask-try-item .btn-icon { color: var(--text-2); }
+.ask-try-item .btn-label { white-space: normal; line-height: var(--leading-ui); }
+.ask-build { padding-top: var(--space-2); border-top: 1px solid var(--border-soft); }
+
+/* The answer. */
+.ask-answer { display: flex; flex-direction: column; gap: var(--space-4); }
+.ask-lead {
+  margin: 0;
+  max-width: var(--measure);
+  font-size: var(--text-title);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  color: var(--text);
+}
+.ask-lead:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.ask-note { margin: 0; font-size: var(--text-label); line-height: var(--leading-ui); color: var(--text-2); }
+
+/* The written answer: a quiet band, ink on the sunken ground. */
+.ask-written {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background: var(--surface-sunken);
+  border-radius: var(--radius-card);
+}
+.ask-written-h {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: var(--text-caption);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  color: var(--text-2);
+}
+.ask-written-mark { color: var(--text-2); }
+.ask-written-text {
+  margin: 0;
+  max-width: var(--measure);
+  font-size: var(--text-lead);
+  font-weight: 400;
+  line-height: var(--leading-body);
+  color: var(--text);
+}
+.ask-sentence { animation: ask-in var(--dur-2) var(--ease-out); }
+.ask-cite {
+  margin-left: 1px;
+  font-size: var(--text-micro);
+  font-weight: 600;
+  line-height: 0;
+  color: var(--text-3);
+}
+.ask-written-wait {
+  display: block;
+  height: calc(var(--text-lead) * 3 * 1.5);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+}
+.ask-written-off,
+.ask-written-meta { margin: 0; font-size: var(--text-caption); line-height: var(--leading-ui); color: var(--text-2); }
+/* No written answer to show: one plain line, never a card above the places. */
+.ask-written.is-quiet {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-3);
+  padding: 0;
+  background: none;
+}
+.ask-written.is-quiet .ask-written-h { display: none; }
+.ask-written.is-quiet .ask-written-off { display: flex; align-items: center; gap: var(--space-2); }
+.ask-written.is-quiet .ask-device { width: 100%; padding-top: 0; border-top: 0; }
+/* Answer on this device: one quiet offer and one meta line. */
+.ask-device { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-3); padding-top: var(--space-2); border-top: 1px solid var(--border-soft); }
+.ask-device .btn { margin-left: calc(-1 * var(--space-3)); }
+.ask-device-meta { margin: 0; font-size: var(--text-caption); line-height: var(--leading-ui); color: var(--text-2); }
+@keyframes ask-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* The places: Explore's own rows, a hairline between them. */
+/* The list wears .explore-shell so the rows take Explore's own row rules;
+   from the desktop width that class is also Explore's absolutely placed
+   page (24-destination-workspace.css), which a list in a sheet must not be. */
+.ask-answer .ask-picks.explore-shell {
+  position: static;
+  inset: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: none;
+}
+.ask-pick { padding: var(--space-2) 0; border-top: 1px solid var(--border-soft); }
+.ask-pick:first-child { border-top: 0; }
+.ask-pick-meta { margin: var(--space-1) 0 0; font-size: var(--text-caption); color: var(--text-2); }
+
+/* A total for the group: the receipt, folded under its row. */
+.ask-receipt { margin: var(--space-2) 0 0; }
+.ask-receipt-sum {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  cursor: pointer;
+  list-style: none;
+  font-size: var(--text-label);
+  color: var(--text-2);
+}
+.ask-receipt-sum::-webkit-details-marker { display: none; }
+.ask-receipt-total { margin-left: auto; font-size: var(--text-lead); font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; }
+.ask-receipt-chev { color: var(--text-2); transition: transform var(--dur-2) var(--ease-out); }
+details[open] > summary .ask-receipt-chev { transform: rotate(180deg); }
+.ask-receipt-lines {
+  margin: 0;
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+}
+.ask-receipt-line {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-top: 1px solid var(--border-soft);
+  font-size: var(--text-body);
+}
+.ask-receipt-line:first-child { border-top: 0; }
+.ask-receipt-line dt { color: var(--text-2); }
+.ask-receipt-line dd { margin: 0; color: var(--text); font-variant-numeric: tabular-nums; }
+.ask-receipt-line.is-sum { border-top: 2px solid var(--text); font-weight: 600; }
+.ask-receipt-line.is-sum dt { color: var(--text); }
+.ask-receipt-out { padding: var(--space-3) var(--space-3) 0; }
+.ask-receipt-out-h { margin: 0 0 var(--space-1); font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.ask-receipt-out ul { margin: 0; padding: 0; list-style: none; }
+.ask-receipt-out li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-1) 0;
+  font-size: var(--text-label);
+  color: var(--text);
+}
+.ask-receipt-out li span { color: var(--text-2); }
+
+/* Months and comparisons: items as columns, one row per attribute. */
+.ask-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.ask-table { width: 100%; border-collapse: collapse; font-size: var(--text-body); font-variant-numeric: tabular-nums; }
+.ask-table th,
+.ask-table td { padding: var(--space-2) var(--space-3) var(--space-2) 0; border-top: 1px solid var(--border-soft); text-align: left; vertical-align: top; }
+.ask-table thead th { border-top: 0; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.ask-table tbody th { font-weight: 500; color: var(--text-2); white-space: nowrap; }
+.ask-table td { color: var(--text); }
+.is-compare .ask-table td,
+.is-compare .ask-table thead th { min-width: 120px; }
+
+/* What the answer cannot back, in plain lines. */
+.ask-notes { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: var(--space-1); }
+.ask-notes li { font-size: var(--text-label); line-height: var(--leading-ui); color: var(--text-2); }
+
+/* Refine: the trip, then the five slots, folded. */
+.ask-refine { border-top: 1px solid var(--border-soft); }
+.ask-refine-sum {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--tap);
+  cursor: pointer;
+  list-style: none;
+  font-size: var(--text-lead);
+  font-weight: 600;
+  color: var(--text);
+}
+.ask-refine-sum::-webkit-details-marker { display: none; }
+.ask-trip { display: flex; flex-direction: column; gap: var(--space-3); padding-bottom: var(--space-4); }
+.ask-steps { display: grid; grid-template-columns: 1fr; gap: 0 var(--space-5); }
+
+@media (min-width: 769px) {
+  .ask-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  /* Beside the row's photo, from the width where rows have room. */
+  .ask-pick-meta,
+  .ask-receipt { margin-left: calc(72px + var(--space-3)); }
+}
+/* A phone footer with three actions drops Clear: the field has its own. */
+@media (max-width: 768px) {
+  .ask-sheet .gs-foot-actions.has-three .ask-clear { display: none; }
+}
+
+/* The Plan start page: the box under the title, full width of its column. */
+.ask.is-plan { width: 100%; margin: 0 0 var(--space-5); }
+.ask.is-plan .gsearch-trigger { width: 100%; min-height: 56px; justify-content: flex-start; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ask-sentence { animation: none; }
+  .ask-receipt-chev { transition: none; }
+}

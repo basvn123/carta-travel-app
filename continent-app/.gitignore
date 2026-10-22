@@ -13,6 +13,10 @@ public/boot.json
 public/dest/
 # Bed prices per country (T534), written by ../pipeline/stays/apply_stays.py.
 public/stays/
+# Ask Carta index (T551), written by ../pipeline/ask_index_layer.py and
+# scripts/build-ask-bm25.mjs. lexicon.json beside it is a reviewed input (T552).
+public/search/ask/*
+!public/search/ask/lexicon.json
 public/activities_full.json
 # Sharded from activities_full.json by sync-data.mjs, same status.
 public/poi/
