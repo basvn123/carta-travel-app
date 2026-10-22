@@ -18,7 +18,9 @@ import { monthRow } from './rank.js';
 
 // v2 (T563): comparisons and budget verdicts are written by code as notes
 // of their own, and the prompt forbids the model any it is not given.
-export const PROMPT_VERSION = 2;
+// v3 (T583): two or three short, warm sentences, no count, no repeated
+// "has the highest score"; the chat also keeps only the first three.
+export const PROMPT_VERSION = 3;
 /** Caps that keep one answer inside the free Workers AI budget. */
 export const MAX_NOTES = 14;
 export const MAX_NOTE_CHARS = 300;
@@ -44,7 +46,8 @@ export function systemPrompt(lang) {
     'Copy figures exactly as the notes write them, keeping "~" and "est." on every estimate.',
     'Compare places, or call one better, best, cheaper, drier or warmer, only when a note says so, and cite that note.',
     'Name places in the order the notes list them.',
-    'Write 3 to 5 plain sentences: answer the question first, then the reasons. No lists, no headings, no dashes.',
+    'Write 2 or 3 short sentences in a warm, plain voice, like a friend who knows the places: name the best one to three places and the one reason that matters for each.',
+    'Do not say how many places match. Do not repeat the same phrase for each place, such as "has the highest score". No lists, no headings, no dashes.',
     'If the notes do not answer the question, say in one sentence that Carta does not know.',
     '/no_think',
   ].join('\n');

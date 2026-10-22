@@ -7,7 +7,7 @@
  *
  *   composeAnswer(facts, intent, { t, lang, labels }) -> {
  *     lead      one sentence that reads the question back with the count
- *     note      the loosened filter, when there was one
+ *     note      always null since T583 (the loosened filter is not said)
  *     picks     [{ id, title, sub, why: [string], blurb, price?: receipt }]
  *     table     compare and when answers: { head: [string], rows: [[string]] }
  *     notes     honesty lines ("Getting there is not in the total yet.")
@@ -108,11 +108,9 @@ export function composeAnswer(facts, intent, ctx) {
   }
   const query = queryLabels(kept, ctx);
   const what = query.join(', ');
+  // T583: what was loosened is no longer said (owner 2026-10-22); the lead
+  // already names only what the answer applies.
   const out = { type: facts.type, lead: '', note: null, picks: [], table: null, notes: [], query };
-  const relaxed = facts.relaxed || [];
-  if (relaxed.length) {
-    out.note = t('ask.relaxed', { what: relaxed.map((k) => t(`ask.facet.${k}`)).join(', ') });
-  }
 
   if (facts.type === 'budget') {
     const q = facts.query;

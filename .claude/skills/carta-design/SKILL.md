@@ -354,9 +354,9 @@ reasoning in `docs/design-v6/DIRECTION.md` part 9), restated in Lagoon terms and
 
 **Navigation.** Anything that changes the view (a tab, the brand mark, a card that opens a page, a back control) is an `<a href>` with the view's URL; a section change pushes one history entry; `<button>` is for actions. Every detail page has its own URL, a save control and a share control in its page bar. The back control names the list it returns to, on a phone and a desktop alike: every full-screen page wears the one page bar, `PageBar.jsx` (back, the name once the heading has gone, save, share; T474). Opened by pointer or a link, focus goes to the page heading (tabindex -1); from the keyboard, the first control (`usePageArrival.js`); closing returns focus to the opener.
 
-**Settings line.** A full-width band on every priced view, under the header and on the same gutter as the content, shows every input its prices depend on, like a booking bar: origin, dates (or "Any dates"), party and Lifestyle as equal segments, label (13 px `--text-2`) over value (`--text`), hairlines between them; language and "Prices in EUR" compact at the end (T438). Each part is a `--tap` button that opens its control. No brown fill. On a phone it never wraps: it drops parts from the left and keeps Lifestyle.
+**Settings line.** A full-width band on every priced view, under the header and on the same gutter as the content, shows every input its prices depend on, like a booking bar (T577 to T582, owner 2026-10-22): From, When, People, Lifestyle, Countries and Getting there as equal segments, label (12 px `--text-2`) over value (`--text`), hairlines between them. Each part is a `--tap` button that opens its control; Getting there is one button that steps through Any way (a pin), Plane, Train, Bus and Car, each with its icon, and every price under it follows. No brown fill. From names a town, never an airport or an airport code: one search field without a placeholder, "Use my location", the countries that open their towns, and a search of all of Europe on press; the flight leaves from the priced airport nearest the town. When is Dates, Month or Any time over a Nights stepper, with no note about who picked the dates. People is three rows, Adults, Children (2 to 11) and Babies (under 2), each with its stepper and nothing else. Countries is Only these or All but these over a searchable list of tick rows; its chips read "Not France" in the second mode. On a phone the line is one sentence (the dates or month and a head count, never the nights), the bed and the way icon, and Countries is a door beside Filters.
 
-**Lifestyle control.** There is one: the Lifestyle panel. A surface that changes how the traveller travels opens or embeds it and never builds a second slider. Shown as a slider it is stepped, one labelled stop per level, the figures update in place, and one sentence under it states the trade-off with the figure.
+**Lifestyle control.** There is one: the Lifestyle panel. A surface that changes how the traveller travels opens or embeds it and never builds a second slider. Shown as a slider it is stepped, one labelled stop per level, and the figures update in place. The panel carries no sentences of its own (owner 2026-10-22, T580): a one-line title, the tiles, the fold and Done, and it fits a desktop screen without scrolling.
 
 **Filters.** Removable filter chips in one row above a filtered list, each named "Remove <filter>", ending in "Clear all", the same on every browse tab. At most one sticky refine row per list (`--surface`, `--border` bottom edge, `--tap` high, no shadow) holding Filters, sort, country and the active chips. Up to six categories on a phone are a 2 x 3 grid of equal buttons. The budget ceiling is a stepped select (Any, 40, 60, 80, 100, 130 a person a day, ground only, "Up to {price} a day"), never a free slider; it filters and does not re-price. A month select holds the twelve months plus "Any"; with a month, a card may carry one measured month fact ("Swim season includes July"), never a forecast.
 
@@ -442,8 +442,21 @@ what to ask by moving:
   each step fades in at `--dur-2`, done steps take a tick in `--text-3`, the working step has one 8 px
   `--action` dot that pulses (opacity and scale, 1.2 s) because it is live. Steps name real work,
   never a made-up delay.
+- **Typing, then the words** (T583, owner 2026-10-22). While Carta makes an answer, a typing bubble
+  shows: three 6 px `--text-3` dots in a `--surface` bubble, pulsing opacity in turn (1.2 s, staggered
+  0.2 s), `aria-hidden`, with "Carta is writing" for screen readers. It lasts the real wait, at least
+  750 ms, so a cached answer never snaps in; past 2.5 s the real steps replace it, never both. The
+  answer then appears word by word (about 30 ms a word, always under 1.5 s), the words to come holding
+  their place unseen so the bubble never grows. Under reduced motion, or in a chat reopened from the
+  list, nothing waits and the text shows at once.
 - **Arrivals.** The panel slides in once (`--dur-3`, a short translate), a question and each part of
   its answer fade in at `--dur-2`, and suggestions arrive with a stagger of at most 120 ms.
+
+One answer is at most three short sentences in a warm, plain voice, three places as compact rows with
+one "More places", and one question ("Got one in mind?") with the places and "Not yet" as quick
+replies. The trip card waits for the traveller's pick. No counts of matches, no "In short", no method
+line per answer: the one disclaimer under the field is the whole pedigree. The chat sits on
+`--surface-page`; Carta's turns are `--surface` bubbles, the traveller's are `--select-bg`.
 
 These are the only loops outside the home page. Everything else in this section still binds the chat:
 motion tokens for transitions, transform and opacity only, no overshoot or bounce, no marquee, one

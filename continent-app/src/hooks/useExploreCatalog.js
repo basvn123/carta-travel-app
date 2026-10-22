@@ -58,7 +58,7 @@ export function dedupeGateways(rows) {
  * both of them were really asking.
  */
 export function useExploreCatalog({
-  data, locationQuery, countryFilter, tripKinds,
+  data, locationQuery, countryFilter, countryNot = false, tripKinds,
   ratingRange, gemOnly, unescoOnly, topBeachOnly, bigOnly, topPick,
   reachHours, reachMinutes, sortKey, showFavOnly, favorites,
   indices: providedIndices,
@@ -148,7 +148,8 @@ export function useExploreCatalog({
           : false;
         if (!plain && !viaIndex && !viaRegion) return false;
       }
-      if (countryFilter.length && !countryFilter.includes(p.iso2)) return false;
+      // T581: the list holds the countries kept, or with countryNot the ones left out.
+      if (countryFilter.length && countryFilter.includes(p.iso2) === countryNot) return false;
       if (tripKinds.length > 0 && !matchesAnyKind(p.categories, tripKinds)) return false;
       if (ratingActive) {
         const s = p.rating?.score;
@@ -166,7 +167,7 @@ export function useExploreCatalog({
       return true;
     });
     // favorites only re-filters while the shortlist view is on (favDep).
-  }, [all, q, searchHits, countryFilter, tripKinds, ratingActive, rLo, rHi, gemOnly,
+  }, [all, q, searchHits, countryFilter, countryNot, tripKinds, ratingActive, rLo, rHi, gemOnly,
     unescoOnly, topBeachOnly, bigOnly, showFavOnly, favDep,
     reachActive, reachCutoffMin, reachMinutes]);
 

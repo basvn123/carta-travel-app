@@ -10,8 +10,6 @@ import { Segmented } from '../components/ui/index.js';
 import { PROFILES } from '../lib/lifestyleProfiles.js';
 import { useI18n } from '../i18n/index.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
-import { computeCosts, eurDay } from '../lib/costIndex.js';
-import { useSettledFigure } from '../lib/figureChange.js';
 import { Stepper as CountStepper } from '../components/FilterControls.jsx';
 
 /**
@@ -23,13 +21,13 @@ import { Stepper as CountStepper } from '../components/FilterControls.jsx';
  * editable, but they now sit inside a closed disclosure, because a preset
  * covers almost everybody and six steppers on open was most of the panel.
  *
- * Tiles borrow the Destinations category card exactly: a quiet --paper-dim
- * tile until it is on, then --ink-fill (T391, carta-design "Selected state";
- * it was the full accent, which is never a selection colour).
+ * Tiles are compact rows, the icon beside its word (T580, owner 2026-10-22:
+ * the whole panel fits a 1280x720 window without scrolling). Selected is the
+ * light tint plus a tick (carta-design "One selected state").
  *
- * Its foot is the instrument (T391, brief V4-6): one sentence that says what
- * the next way to sleep would change, with the figure, computed from the same
- * computeCosts() map the cards print from, and the dialog's one primary.
+ * The head is one sheet title line and the foot is the dialog's one primary
+ * (T580 took out the subtitle, the stay note and the trade-off sentence: the
+ * owner asked for a simpler, cleaner panel).
  *
  * The stay tier is the same `choices.stay_tier` the filter bar carries, so
  * every priced surface (map labels, receipt, compare, trip planner) follows
@@ -118,79 +116,17 @@ export function matchProfile(ls) {
   return null;
 }
 
-/** The median of a list of numbers, or null for an empty list. */
-function median(xs) {
-  if (!xs.length) return null;
-  const a = [...xs].sort((x, y) => x - y);
-  const m = a.length >> 1;
-  return a.length % 2 ? a[m] : (a[m - 1] + a[m]) / 2;
-}
-
-/**
- * The trade-off the panel's foot states (carta-design "Lifestyle control":
- * one sentence with the figure). The alternative is the next cheaper way to
- * sleep this dataset offers, or the next dearer one when the traveller is
- * already on the cheapest. For an open destination the figure is that
- * town's own bed at the two tiers; otherwise it is the median of the same
- * difference over every place where both tiers were measured for itself
- * (no tier that fell back to the entire place, no bed borrowed from the
- * country). Per person per night, through eurDay() like the cards. Null
- * when the data cannot carry a sentence.
- */
-function useTradeOff(data, choices, sleepTiles, destination) {
-  const stayTier = choices.stay_tier || 'home';
-  const groupSize = choices.group_size;
-  const group = sleepGroupOf(stayTier);
-  const idx = sleepTiles.findIndex((g) => g.key === group);
-  const alt = idx < 0 ? null : (sleepTiles[idx - 1] || sleepTiles[idx + 1] || null);
-  const altTier = alt ? tierForGroup(alt, stayTier) : null;
-  const destId = destination?.id || null;
-  return React.useMemo(() => {
-    if (!alt || !altTier || !data?.destinations) return null;
-    const pick = destId && data.destinations[destId]
-      ? { [destId]: data.destinations[destId] }
-      : data.destinations;
-    const base = { stay_tier: stayTier, group_size: groupSize };
-    const cur = computeCosts(pick, base);
-    const nxt = computeCosts(pick, { ...base, stay_tier: altTier });
-    const deltas = [];
-    for (const [id, a] of cur) {
-      const b = nxt.get(id);
-      if (!b || a.stayEur == null || b.stayEur == null) continue;
-      if (a.tierFallback || b.tierFallback) continue;
-      if (a.stayLevel !== 'city' || b.stayLevel !== 'city') continue;
-      deltas.push(b.stayEur - a.stayEur);
-    }
-    const d = destId ? (deltas[0] ?? null) : median(deltas);
-    if (d == null || Math.round(Math.abs(d)) < 1) return null;
-    return {
-      labelKey: alt.labelKey,
-      eur: eurDay(Math.abs(d)),
-      less: d < 0,
-      town: destId ? (destination.city || '') : '',
-      n: deltas.length,
-    };
-  }, [alt, altTier, data, destId, destination, stayTier, groupSize]);
-}
-
-/** The foot's sentence, the figure cut back in so it sits in mono. */
-function TradeOff({ trade }) {
-  const { t, lang } = useI18n();
-  const figRef = React.useRef(null);
-  useSettledFigure(figRef, trade ? `${trade.labelKey}${trade.eur}${trade.less}` : '');
-  if (!trade) return null;
-  const SLOT = '\u0001';
-  const key = `lifestyle.trade${trade.less ? 'Less' : 'More'}${trade.town ? 'In' : 'Median'}`;
-  const n = new Intl.NumberFormat(lang || 'en').format(trade.n);
-  const [before, after = ''] = t(key, { alt: t(trade.labelKey), eur: SLOT, town: trade.town, n }).split(SLOT);
+// The tick that marks a selected tile, so the state never rests on colour.
+function Tick() {
   return (
-    <p className="ls-trade" aria-live="polite">
-      {before}<span className="ls-trade-eur" ref={figRef}>{trade.eur}</span>{after}
-    </p>
+    <svg className="ls-tile-tick" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M5 12.5l4.5 4.5L19 7.5" />
+    </svg>
   );
 }
 
-export function LifestylePanel({ choices, setChoices, onClose, data, side = 'left', destination = null, leaving = false }) {
+export function LifestylePanel({ choices, setChoices, onClose, data, side = 'left', leaving = false }) {
   const { t } = useI18n();
   // A dialog for the keyboard: focus moves in to the close button on open,
   // Tab cycles inside, Escape closes, and focus goes back to the Lifestyle
@@ -240,8 +176,6 @@ export function LifestylePanel({ choices, setChoices, onClose, data, side = 'lef
 
   const maxFor = (key) => PERIOD_FIELDS.find((f) => f.key === key).max[cadence];
 
-  const trade = useTradeOff(data, choices, sleepTiles, destination);
-
   // On a phone the panel is a bottom sheet; its grab handle swipes it down,
   // a shortcut for the close and Done buttons, never the only way (T391).
   const drag = React.useRef({ id: null, y0: 0 });
@@ -290,10 +224,8 @@ export function LifestylePanel({ choices, setChoices, onClose, data, side = 'lef
       {/* The choices scroll; the grab handle, the close and the foot stay
           where the thumb and the eye left them (T391). */}
       <div className="ls-body">
-      <div className="panel-header">
-        <div className="panel-tag">{t('lifestyle.tag')}</div>
-        <h2 className="panel-city" id="lifestyle-title">{t('lifestyle.title')}</h2>
-        <p className="lifestyle-sub">{t('lifestyle.sub')}</p>
+      <div className="panel-header ls-header">
+        <h2 className="ls-title" id="lifestyle-title">{t('lifestyle.title')}</h2>
       </div>
 
       {sleepTiles.length > 1 && (
@@ -308,8 +240,9 @@ export function LifestylePanel({ choices, setChoices, onClose, data, side = 'lef
                 aria-pressed={activeGroup === key}
                 onClick={() => pickGroup({ key, offered })}
               >
-                <Icon size={22} />
+                <Icon size={18} />
                 <span>{t(labelKey)}</span>
+                {activeGroup === key && <Tick />}
               </button>
             ))}
           </div>
@@ -328,8 +261,6 @@ export function LifestylePanel({ choices, setChoices, onClose, data, side = 'lef
               />
             </div>
           )}
-
-          <p className="ls-note">{t('lifestyle.stayNote')}</p>
         </div>
       )}
 
@@ -346,8 +277,9 @@ export function LifestylePanel({ choices, setChoices, onClose, data, side = 'lef
                 aria-pressed={active === name}
                 onClick={() => setProfile(name)}
               >
-                <Icon size={20} />
+                <Icon size={18} />
                 <span>{t(PROFILE_LABEL_KEYS[name] || name)}</span>
+                {active === name && <Tick />}
               </button>
             );
           })}
@@ -395,11 +327,8 @@ export function LifestylePanel({ choices, setChoices, onClose, data, side = 'lef
       </div>
       </div>
 
-      {/* The instrument's foot: what the next way to sleep would change,
-          then the one primary. Sticky, so it stays in view while the
-          choices above it scroll. */}
+      {/* The foot: the one primary, in view while the choices scroll. */}
       <div className="ls-foot">
-        <TradeOff trade={trade} />
         <button type="button" className="ls-done" onClick={onClose}>{t('lifestyle.done')}</button>
       </div>
     </div>

@@ -1,51 +1,53 @@
 import React, {
-  createContext, useCallback, useContext, useEffect, useId, useLayoutEffect, useRef, useState,
+  createContext, useCallback, useContext, useEffect, useId, useLayoutEffect, useMemo, useRef, useState,
 } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { useSettledFigure } from '../lib/figureChange.js';
-import { OriginPicker } from './OriginPicker.jsx';
 import { DateField } from './DateField.jsx';
 import { Stepper } from './FilterControls.jsx';
 import { matchProfile, PROFILE_LABEL_KEYS } from '../browse/LifestylePanel.jsx';
-import { Button, Segmented } from './ui/index.js';
+import { Button, Chip, ChipGroup, IconButton, Segmented } from './ui/index.js';
 import { SheetShell } from '../browse/SheetShell.jsx';
 import { useIsDesktop } from '../hooks/useIsDesktop.js';
-import { BedIcon, ChevronDownIcon } from './Icons.jsx';
+import { BedIcon, BusIcon, CarIcon, ChevronDownIcon, MapPinIcon, TrainIcon } from './Icons.jsx';
+import { PlaneIcon } from './TransportIcons.jsx';
+import { FromPanel, fromName, fromPoint } from './FromPicker.jsx';
+import { CountriesPanel, countriesValue } from './CountriesControl.jsx';
+import { partyText } from '../lib/party.js';
+import { nextMode, TRAVEL_MODES } from '../lib/travelWay.js';
+import '../styles/77-settings-v2.css';
 
 /**
  * The settings line (T381; carta-design "Settings line", DIRECTION.md rule
  * shell R2): one compact row on every priced view that shows every input its
  * prices depend on, each part a button that opens the control that sets it.
  *
- *   origin    the departure airport (OriginPicker, settings face)
- *   dates     always real dates, labelled "Suggested dates" while Carta's
- *             pair stands (a popover with the calendar and a Nights stepper)
- *   party     how many travel (a popover with the shared Stepper)
+ *   from      where the trip starts: a town, any in Europe, or the device's
+ *             location (T577; FromPicker, never an airport code)
+ *   when      exact dates, a month, or any time (T578), and the nights
+ *   people    adults, children and babies (T579)
  *   lifestyle the bed and the habits (opens the one Lifestyle dialog)
+ *   countries only these, or all but these (T581, desktop; the phone has
+ *             its own door beside Filters)
+ *   way       how the traveller gets there: one button that steps through
+ *             any way, plane, train, bus and car (T582)
  *
- * Language and "Prices in EUR" left the line for Account (T496, owner
- * T485-g): neither moves a price.
- *
- * On a phone (T496, roadmap 1.3a T1 and T2) the line is one sentence and the
- * bed: "Prices for 14 Nov to 21 Nov, 2 people" opens one sheet with From, the
- * dates, Nights, People and one Done; the bed opens the Lifestyle dialog.
+ * On a phone (T496) the line is one sentence, the bed and the way: the
+ * sentence opens one sheet with From, When and People and one Done.
  *
  * The values live in App, which fills SettingsContext once; this file only
  * reads and writes them, so any surface can mount a line (or read a value
  * through useSettings / useTravelMonth) without a prop chain.
  *
  * Props, the contract other surfaces build against (register row T380-e):
- *   parts     which parts to draw, in this fixed order; default all four
- *   children  a surface's own filters (a budget ceiling, a month, car-free),
- *             drawn after the parts in the same band, in secondary styling
+ *   parts     which parts to draw, in this fixed order; default all six
+ *   children  a surface's own filters, drawn after the parts
  *   className extra class on the band
  * The shell's own line also carries an empty `#settings-line-slot` that a tab
  * may portal its filters into (the header search slot works the same way).
  *
- * No accent anywhere: labels --ui 13 px --ink-soft, values --ink, figures
- * --mono (styles in 60-v6-shell.css). On a phone the line never wraps:
- * container queries drop parts from the left (origin, then dates) and keep
- * Lifestyle, which moves the largest share of every figure.
+ * No accent anywhere: labels 12 px --text-2, values --text, figures tabular
+ * (styles in 60-v6-shell.css and 77-settings-v2.css).
  */
 
 export const SettingsContext = createContext(null);
@@ -56,17 +58,20 @@ export function useSettings() {
 }
 
 /**
- * The traveller's month (1 to 12), read from their own departure date, or
- * null while the dates are the pair Carta picked: a month fact is shown only
- * when the traveller has a month (carta-design "Month").
+ * The traveller's month (1 to 12), read from their own dates or the month
+ * they picked, or null while the dates are Carta's or any time: a month fact
+ * is shown only when the traveller has a month (carta-design "Month").
  */
 export function useTravelMonth() {
   return useContext(SettingsContext)?.travelMonth ?? null;
 }
 
-export const SETTINGS_PARTS = ['origin', 'dates', 'party', 'lifestyle'];
+export const SETTINGS_PARTS = ['origin', 'dates', 'party', 'lifestyle', 'countries', 'way'];
 const MAX_NIGHTS = 30;
 const MAX_PARTY = 12; // the party ceiling the old first-run receipt set
+const MAX_BABIES = 4;
+
+export const WAY_ICONS = { any: MapPinIcon, plane: PlaneIcon, train: TrainIcon, bus: BusIcon, car: CarIcon };
 
 /**
  * A small non-modal popover under a part: Escape or a press outside closes
@@ -75,7 +80,7 @@ const MAX_PARTY = 12; // the party ceiling the old first-run receipt set
  * here, so the band itself can clip what does not fit on a phone without
  * clipping the popover.
  */
-function SettingsPop({ id, label, anchorRef, onClose, children }) {
+function SettingsPop({ id, label, anchorRef, onClose, children, className = '' }) {
   const ref = useRef(null);
   useLayoutEffect(() => {
     const el = ref.current;
@@ -86,9 +91,11 @@ function SettingsPop({ id, label, anchorRef, onClose, children }) {
     const left = Math.max(gutter, Math.min(r.left, window.innerWidth - el.offsetWidth - gutter));
     el.style.left = `${Math.round(left)}px`;
   }, [anchorRef]);
-  // Focus moves in once, when the popover opens, never again on a re-render.
+  // Focus moves in once, when the popover opens, never again on a re-render
+  // (a field that focuses itself wins).
   useEffect(() => {
-    ref.current?.querySelector('button:not([disabled]), input, [tabindex="0"]')?.focus();
+    if (ref.current?.contains(document.activeElement)) return;
+    ref.current?.querySelector('input, button:not([disabled]), [tabindex="0"]')?.focus();
   }, []);
   useEffect(() => {
     const onKey = (e) => {
@@ -111,7 +118,7 @@ function SettingsPop({ id, label, anchorRef, onClose, children }) {
     };
   }, [anchorRef, onClose]);
   return (
-    <div className="settings-pop" id={id} role="dialog" aria-label={label} ref={ref}>
+    <div className={`settings-pop ${className}`.trim()} id={id} role="dialog" aria-label={label} ref={ref}>
       {children}
     </div>
   );
@@ -120,7 +127,7 @@ function SettingsPop({ id, label, anchorRef, onClose, children }) {
 /** One part: a label over (or before) its value, one button. */
 function Part({
   name, label, value, display, mono, onClick, expanded, popId, partRef, hasPopup = 'dialog',
-  // The phone face's two buttons draw their own content and name (T496).
+  // The phone face's buttons draw their own content and name (T496).
   ariaLabel, className = '', children,
 }) {
   const { t } = useI18n();
@@ -135,7 +142,7 @@ function Part({
       ref={partRef}
       className={`settings-part settings-part-${name} ${className}`.trim()}
       onClick={onClick}
-      aria-haspopup={hasPopup}
+      aria-haspopup={hasPopup || undefined}
       aria-expanded={hasPopup === 'dialog' && (popId || children) ? !!expanded : undefined}
       aria-controls={expanded && popId ? popId : undefined}
       aria-label={ariaLabel || t('settings.changeAria', { label, value })}
@@ -153,12 +160,12 @@ function Part({
 function useShortDate() {
   const { lang, languages } = useI18n();
   const bcp47 = languages.find((l) => l.code === lang)?.bcp47 || 'en-GB';
-  return (iso) => {
+  return useCallback((iso, opts = { day: 'numeric', month: 'short' }) => {
     if (!iso) return '';
     const [y, m, d] = iso.split('-').map(Number);
-    return new Intl.DateTimeFormat(bcp47, { day: 'numeric', month: 'short', timeZone: 'UTC' })
-      .format(new Date(Date.UTC(y, m - 1, d)));
-  };
+    return new Intl.DateTimeFormat(bcp47, { ...opts, timeZone: 'UTC' })
+      .format(new Date(Date.UTC(y, m - 1, d || 1)));
+  }, [bcp47]);
 }
 
 function addDaysISO(iso, n) {
@@ -173,48 +180,114 @@ function nightsBetween(a, b) {
   return Math.max(0, Math.round(ms / 86400000));
 }
 
+/** The next twelve months from today's, as 'YYYY-MM'. */
+function nextMonths(today = new Date()) {
+  const out = [];
+  for (let i = 0; i < 12; i++) {
+    const d = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() + i, 1));
+    out.push(d.toISOString().slice(0, 7));
+  }
+  return out;
+}
+
+/** The When value: the dates, the month or any time, then the nights (not
+ *  on a phone's one sentence, which has no room for them). */
+function whenValue(t, s, shortDate, { nightsToo = true } = {}) {
+  const nights = nightsBetween(s.departDate, s.returnDate);
+  let range = '';
+  if (s.dateFlex === 'any') range = t('dates.any');
+  else if (s.dateFlex === 'month' && s.departDate) range = shortDate(s.departDate, { month: 'long' });
+  else if (s.departDate && s.returnDate) {
+    range = t('settings.datesRange', { start: shortDate(s.departDate), end: shortDate(s.returnDate) });
+  }
+  if (!range) return t('settings.pickDates');
+  if (!nightsToo) return range;
+  return t(nights === 1 ? 'settings.datesNight' : 'settings.datesNights', { range, n: nights });
+}
+
 /**
- * The date controls every face shares: which end the next pick sets, the
- * calendar, then the trip's length as a Nights stepper (T496, 1.3a: the
- * length is its own choice) and who picked the dates.
+ * When (T578): exact dates, a month or any time, over the trip's length.
+ * A month moves the dates into it (the first day it can, the length kept),
+ * so every screen that needs a pair still has one; Explore prices the
+ * month's cheapest flight and the month's beds, and any time the cheapest
+ * flight Carta has and the year's beds.
  */
-function DatesControl({ s, pickEnd, setPickEnd, pickDate, shortDate, onUseCarta }) {
+function DatesControl({ s, pickEnd, setPickEnd, pickDate, shortDate }) {
   const { t } = useI18n();
   const nights = nightsBetween(s.departDate, s.returnDate);
   const setNights = (n) => {
     if (!s.departDate) return;
     s.setReturnDate(addDaysISO(s.departDate, Math.max(1, Math.min(MAX_NIGHTS, n))));
   };
+  const mode = s.dateFlex === 'month' ? 'month' : s.dateFlex === 'any' ? 'any' : 'exact';
+  const months = useMemo(() => nextMonths(), []);
+  const pickMonth = (ym) => {
+    const keep = Math.max(1, nights || 7);
+    const min = s.dateBounds?.min;
+    const first = `${ym}-01`;
+    const start = min && min > first && min.slice(0, 7) === ym ? min : first;
+    s.setDepartDate(start);
+    s.setReturnDate(addDaysISO(start, keep));
+  };
   return (
     <>
-      {/* One calendar for both ends: the kit Segmented above it says which
-          end the next pick sets (the lifted thumb, T426), and a pick of the
-          leaving day keeps the trip's length. */}
       <Segmented
         block
-        className="settings-ends"
-        label={t('settings.dates')}
-        value={pickEnd}
-        onChange={setPickEnd}
-        options={['start', 'end'].map((end) => ({
-          value: end,
-          label: (
-            <span className="settings-end-text">
-              <span className="settings-end-label">{t(end === 'start' ? 'settings.leave' : 'settings.return')}</span>
-              <span className="is-mono">{shortDate(end === 'start' ? s.departDate : s.returnDate)}</span>
-            </span>
-          ),
-        }))}
+        className="settings-flex"
+        label={t('dates.when')}
+        value={mode}
+        onChange={(v) => {
+          s.setDateFlex(v === 'exact' ? null : v);
+          if (v === 'month' && s.departDate && !months.includes(s.departDate.slice(0, 7))) pickMonth(months[0]);
+        }}
+        options={[
+          { value: 'exact', label: t('dates.exact') },
+          { value: 'month', label: t('dates.month') },
+          { value: 'any', label: t('dates.any') },
+        ]}
       />
-      <DateField
-        inline
-        value={pickEnd === 'start' ? s.departDate : s.returnDate}
-        rangeStart={s.departDate}
-        rangeEnd={s.returnDate}
-        min={pickEnd === 'end' ? (s.departDate || s.dateBounds?.min) : s.dateBounds?.min}
-        max={s.dateBounds?.max}
-        onChange={pickDate}
-      />
+      {mode === 'exact' && (
+        <>
+          {/* One calendar for both ends: the kit Segmented above it says which
+              end the next pick sets (the lifted thumb, T426), and a pick of the
+              leaving day keeps the trip's length. */}
+          <Segmented
+            block
+            size="sm"
+            className="settings-ends"
+            label={t('settings.dates')}
+            value={pickEnd}
+            onChange={setPickEnd}
+            options={['start', 'end'].map((end) => ({
+              value: end,
+              label: (
+                <span className="settings-end-text">
+                  <span className="settings-end-label">{t(end === 'start' ? 'settings.leave' : 'settings.return')}</span>
+                  <span className="is-mono">{shortDate(end === 'start' ? s.departDate : s.returnDate)}</span>
+                </span>
+              ),
+            }))}
+          />
+          <DateField
+            inline
+            value={pickEnd === 'start' ? s.departDate : s.returnDate}
+            rangeStart={s.departDate}
+            rangeEnd={s.returnDate}
+            min={pickEnd === 'end' ? (s.departDate || s.dateBounds?.min) : s.dateBounds?.min}
+            max={s.dateBounds?.max}
+            onChange={pickDate}
+          />
+        </>
+      )}
+      {mode === 'month' && (
+        <ChipGroup label={t('dates.monthsLabel')} className="settings-months">
+          {months.map((ym) => (
+            <Chip key={ym} kind="choice" selected={s.departDate?.slice(0, 7) === ym} onClick={() => pickMonth(ym)}>
+              {shortDate(`${ym}-01`, ym.endsWith('-01') ? { month: 'short', year: 'numeric' } : { month: 'short' })}
+            </Chip>
+          ))}
+        </ChipGroup>
+      )}
       <div className="settings-row">
         <span className="settings-row-label">{t('settings.nightsLabel')}</span>
         <Stepper
@@ -227,16 +300,75 @@ function DatesControl({ s, pickEnd, setPickEnd, pickDate, shortDate, onUseCarta 
           incLabel={t('settings.nightsInc')}
         />
       </div>
-      {s.ownDates ? (
-        s.defaultDates && (
-          <Button variant="secondary" size="sm" className="settings-text-btn" onClick={onUseCarta}>
-            {t('settings.useCartaDates')}
-          </Button>
-        )
-      ) : (
-        <p className="settings-note">{t('settings.cartaDates')}</p>
-      )}
     </>
+  );
+}
+
+/** People (T579): adults, children and babies, one row each. */
+function PartyControl({ s }) {
+  const { t } = useI18n();
+  const children = s.children || 0;
+  const adults = Math.max(1, (s.party || 2) - children);
+  const babies = s.babies || 0;
+  const rows = [
+    { key: 'adults', n: adults, min: 1, max: MAX_PARTY - children },
+    { key: 'children', n: children, min: 0, max: MAX_PARTY - adults, sub: 'party.childrenSub' },
+    { key: 'babies', n: babies, min: 0, max: MAX_BABIES, sub: 'party.babiesSub' },
+  ];
+  return (
+    <div className="party-rows">
+      {rows.map((r) => (
+        <div className="party-row" key={r.key}>
+          <span className="party-row-text">
+            <span className="party-row-label">{t(`party.${r.key}`)}</span>
+            {r.sub && <span className="party-row-sub">{t(r.sub)}</span>}
+          </span>
+          <Stepper
+            value={r.n}
+            min={r.min}
+            max={r.max}
+            onChange={(n) => s.setPartyParts({ adults, children, babies, [r.key]: n })}
+            ariaLabel={t('party.countAria', { n: r.n, who: t(`party.${r.key}`) })}
+            decLabel={t(`party.${r.key}Dec`)}
+            incLabel={t(`party.${r.key}Inc`)}
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** Getting there (T582): one button that steps to the next way. */
+function WayPart({ s, compact = false }) {
+  const { t } = useI18n();
+  const mode = TRAVEL_MODES.includes(s.transportMode) ? s.transportMode : 'any';
+  const next = nextMode(mode);
+  const Icon = WAY_ICONS[mode];
+  const label = t('way.label');
+  const word = t(`way.${mode}`);
+  const aria = t('way.cycleAria', { mode: word, next: t(`way.${next}`) });
+  if (compact) {
+    return (
+      <IconButton label={aria} className="settings-way-btn" onClick={() => s.setTransportMode(next)}>
+        <Icon size={20} />
+      </IconButton>
+    );
+  }
+  return (
+    <Part
+      name="way"
+      label={label}
+      value={word}
+      hasPopup={null}
+      ariaLabel={aria}
+      display={(
+        <span className="settings-way-value">
+          <Icon size={16} className="settings-way-icon" />
+          <span>{word}</span>
+        </span>
+      )}
+      onClick={() => s.setTransportMode(next)}
+    />
   );
 }
 
@@ -245,11 +377,14 @@ export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children,
   const { t } = useI18n();
   const isDesktop = useIsDesktop();
   const shortDate = useShortDate();
-  const [open, setOpen] = useState(null); // 'dates' | 'party' | 'sheet' | null
+  const [open, setOpen] = useState(null); // 'from' | 'dates' | 'party' | 'countries' | 'sheet' | null
   const [pickEnd, setPickEnd] = useState('start');
+  const [sheetFrom, setSheetFrom] = useState(false);
   const baseId = useId();
+  const fromRef = useRef(null);
   const datesRef = useRef(null);
   const partyRef = useRef(null);
+  const countriesRef = useRef(null);
   const summaryRef = useRef(null);
   // A pick on the leaving end moves the trip and keeps its length, then hands
   // the next pick to the return; a pick on the return end sets it, unless it
@@ -266,42 +401,39 @@ export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children,
     setPickEnd('end');
   }, [s, pickEnd]);
   const close = useCallback(() => setOpen(null), []);
+  const names = useMemo(() => new Map(s?.availableCountries || []), [s?.availableCountries]);
   if (!s) return null;
 
   const show = (p) => parts.includes(p);
   const toggle = (p) => {
     if (p === 'dates' || p === 'sheet') setPickEnd('start');
+    if (p === 'sheet') setSheetFrom(false);
     setOpen((v) => (v === p ? null : p));
   };
 
-  const ownDates = !!s.ownDates;
-  const nights = nightsBetween(s.departDate, s.returnDate);
-  // Always the real dates (1.3a D1, 2.20): the label says who picked them,
-  // so the assumption behind every figure is on screen.
-  const range = s.departDate && s.returnDate
-    ? t('settings.datesRange', { start: shortDate(s.departDate), end: shortDate(s.returnDate) })
-    : '';
-  const datesValue = range
-    ? t(nights === 1 ? 'settings.datesNight' : 'settings.datesNights', { range, n: nights })
-    : t('settings.pickDates');
-  const datesLabel = ownDates ? t('settings.dates') : t('settings.datesSuggested');
+  const from = fromName(s);
+  const whenText = whenValue(t, s, shortDate);
+  const children_ = s.children || 0;
   const party = Number.isFinite(s.party) ? s.party : 2;
-  const people = t(party === 1 ? 'settings.peopleOne' : 'settings.peopleMany', { n: party });
+  const people = partyText(t, { adults: Math.max(1, party - children_), children: children_, babies: s.babies || 0 });
   const profileKey = matchProfile(s.lifestyle || {});
   const bed = t(`stay.${s.stayTier || 'home'}`);
   const vibe = profileKey ? t(PROFILE_LABEL_KEYS[profileKey]) : t('lifestyle.custom');
-  const resetToCartaDates = () => {
-    if (!s.defaultDates) return;
-    s.setDepartDate(s.defaultDates.start);
-    s.setReturnDate(s.defaultDates.end);
-  };
-  const closeSheet = () => { close(); summaryRef.current?.focus(); };
+  const countryList = s.countryFilter || [];
+  const countriesText = countriesValue(t, countryList, s.countryNot, names);
+  const pickFrom = (p, then) => { s.setFrom(p); then?.(); };
 
-  // The phone face (1.3a T1): one sentence for the dates and the party, one
-  // button for the bed. The sentence opens the one settings sheet (T2); the
-  // bed opens the Lifestyle dialog, since a sheet never holds a sheet.
+  // The phone face (1.3a T1): one sentence for when and who, the bed, the
+  // way. The sentence opens the one settings sheet (T2); the bed opens the
+  // Lifestyle dialog, since a sheet never holds a sheet.
   if (!isDesktop) {
-    const summary = t('settings.summary', { dates: range || t('settings.pickDates'), people });
+    // Dates and a head count: the phone's sentence never cuts off (T502).
+    const heads = party + (s.babies || 0);
+    const summary = t('settings.summary', {
+      dates: whenValue(t, s, shortDate, { nightsToo: false }),
+      people: t(heads === 1 ? 'settings.peopleOne' : 'settings.peopleMany', { n: heads }),
+    });
+    const closeSheet = () => { close(); summaryRef.current?.focus(); };
     return (
       <div className={`settings-line settings-line-phone ${className}`.trim()} role="group" aria-label={t('settings.label')}>
         {(show('dates') || show('party') || show('origin')) && (
@@ -314,12 +446,7 @@ export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children,
             ariaLabel={t('settings.summaryAria', { summary })}
             onClick={() => toggle('sheet')}
           >
-            <span className="settings-summary-text" aria-hidden="true">
-              {/* "Prices for" is the first thing a narrow phone drops; it
-                  only stands while the dates are Carta's suggestion. */}
-              {!ownDates && <span className="settings-summary-pre">{`${t('settings.summaryPre')} `}</span>}
-              {summary}
-            </span>
+            <span className="settings-summary-text" aria-hidden="true">{summary}</span>
             <ChevronDownIcon size={16} className="settings-summary-chev" />
           </Part>
         )}
@@ -336,6 +463,7 @@ export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children,
             <ChevronDownIcon size={16} className="settings-summary-chev" />
           </Part>
         )}
+        {show('way') && s.setTransportMode && <WayPart s={s} compact />}
         {open === 'sheet' && (
           <SheetShell
             title={t('settings.label')}
@@ -347,39 +475,27 @@ export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children,
             {show('origin') && (
               <section className="settings-sheet-sec">
                 <h3 className="settings-sheet-h">{t('settings.from')}</h3>
-                <OriginPicker
-                  data={s.data}
-                  origin={s.origin}
-                  onChangeOrigin={s.setOrigin}
-                  fromLabel={t('settings.from')}
-                />
+                <Button variant="secondary" block className="from-current" aria-expanded={sheetFrom}
+                  iconStart={<MapPinIcon size={16} />} iconEnd={<ChevronDownIcon size={16} />}
+                  onClick={() => setSheetFrom((v) => !v)}>
+                  <span className="from-current-name">{from || t('origin.pickTown')}</span>
+                </Button>
+                {sheetFrom && (
+                  <FromPanel data={s.data} current={fromPoint(s)} autoFocus={false}
+                    onPick={(p) => pickFrom(p, () => setSheetFrom(false))} />
+                )}
               </section>
             )}
             {show('dates') && (
               <section className="settings-sheet-sec">
-                <h3 className="settings-sheet-h">{datesLabel}</h3>
-                <DatesControl
-                  s={s}
-                  pickEnd={pickEnd}
-                  setPickEnd={setPickEnd}
-                  pickDate={pickDate}
-                  shortDate={shortDate}
-                  onUseCarta={resetToCartaDates}
-                />
+                <h3 className="settings-sheet-h">{t('dates.when')}</h3>
+                <DatesControl s={s} pickEnd={pickEnd} setPickEnd={setPickEnd} pickDate={pickDate} shortDate={shortDate} />
               </section>
             )}
             {show('party') && (
-              <section className="settings-sheet-sec settings-row">
-                <h3 className="settings-sheet-h settings-row-label">{t('settings.party')}</h3>
-                <Stepper
-                  value={party}
-                  min={1}
-                  max={MAX_PARTY}
-                  onChange={(n) => s.setParty(n)}
-                  ariaLabel={t('settings.partyAria', { n: party })}
-                  decLabel={t('settings.partyDec')}
-                  incLabel={t('settings.partyInc')}
-                />
+              <section className="settings-sheet-sec">
+                <h3 className="settings-sheet-h">{t('settings.party')}</h3>
+                <PartyControl s={s} />
               </section>
             )}
             {/* The sheet's one primary. Every change holds at once; Done
@@ -398,12 +514,21 @@ export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children,
       <div className="settings-line-parts">
         {show('origin') && (
           <div className="settings-slot settings-slot-origin">
-            <OriginPicker
-              variant="settings"
-              data={s.data}
-              origin={s.origin}
-              onChangeOrigin={s.setOrigin}
+            <Part
+              name="origin"
+              label={t('settings.from')}
+              value={from || t('origin.pickTown')}
+              partRef={fromRef}
+              popId={`${baseId}-from`}
+              expanded={open === 'from'}
+              onClick={() => toggle('from')}
             />
+            {open === 'from' && (
+              <SettingsPop id={`${baseId}-from`} label={t('settings.from')} anchorRef={fromRef} onClose={close} className="settings-pop-list">
+                <FromPanel data={s.data} current={fromPoint(s)}
+                  onPick={(p) => pickFrom(p, () => { close(); fromRef.current?.focus(); })} />
+              </SettingsPop>
+            )}
           </div>
         )}
 
@@ -411,8 +536,8 @@ export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children,
           <div className="settings-slot settings-slot-dates">
             <Part
               name="dates"
-              label={datesLabel}
-              value={datesValue}
+              label={t('dates.when')}
+              value={whenText}
               mono
               partRef={datesRef}
               popId={`${baseId}-dates`}
@@ -420,15 +545,8 @@ export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children,
               onClick={() => toggle('dates')}
             />
             {open === 'dates' && (
-              <SettingsPop id={`${baseId}-dates`} label={datesLabel} anchorRef={datesRef} onClose={close}>
-                <DatesControl
-                  s={s}
-                  pickEnd={pickEnd}
-                  setPickEnd={setPickEnd}
-                  pickDate={pickDate}
-                  shortDate={shortDate}
-                  onUseCarta={() => { resetToCartaDates(); close(); datesRef.current?.focus(); }}
-                />
+              <SettingsPop id={`${baseId}-dates`} label={t('dates.when')} anchorRef={datesRef} onClose={close} className="settings-pop-dates">
+                <DatesControl s={s} pickEnd={pickEnd} setPickEnd={setPickEnd} pickDate={pickDate} shortDate={shortDate} />
               </SettingsPop>
             )}
           </div>
@@ -439,24 +557,15 @@ export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children,
             <Part
               name="party"
               label={t('settings.party')}
-              value={String(party)}
-              mono
+              value={people}
               partRef={partyRef}
               popId={`${baseId}-party`}
               expanded={open === 'party'}
               onClick={() => toggle('party')}
             />
             {open === 'party' && (
-              <SettingsPop id={`${baseId}-party`} label={t('settings.party')} anchorRef={partyRef} onClose={close}>
-                <Stepper
-                  value={party}
-                  min={1}
-                  max={MAX_PARTY}
-                  onChange={(n) => s.setParty(n)}
-                  ariaLabel={t('settings.partyAria', { n: party })}
-                  decLabel={t('settings.partyDec')}
-                  incLabel={t('settings.partyInc')}
-                />
+              <SettingsPop id={`${baseId}-party`} label={t('settings.party')} anchorRef={partyRef} onClose={close} className="settings-pop-party">
+                <PartyControl s={s} />
               </SettingsPop>
             )}
           </div>
@@ -476,6 +585,32 @@ export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children,
               )}
               onClick={s.openLifestyle}
             />
+          </div>
+        )}
+
+        {show('countries') && s.setCountryFilter && (
+          <div className="settings-slot settings-slot-countries">
+            <Part
+              name="countries"
+              label={t('settings.countries')}
+              value={countriesText}
+              partRef={countriesRef}
+              popId={`${baseId}-countries`}
+              expanded={open === 'countries'}
+              onClick={() => toggle('countries')}
+            />
+            {open === 'countries' && (
+              <SettingsPop id={`${baseId}-countries`} label={t('settings.countries')} anchorRef={countriesRef} onClose={close} className="settings-pop-list">
+                <CountriesPanel countries={s.availableCountries} list={countryList} setList={s.setCountryFilter}
+                  not={!!s.countryNot} setNot={s.setCountryNot} />
+              </SettingsPop>
+            )}
+          </div>
+        )}
+
+        {show('way') && s.setTransportMode && (
+          <div className="settings-slot settings-slot-way">
+            <WayPart s={s} />
           </div>
         )}
       </div>

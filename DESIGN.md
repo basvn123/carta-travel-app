@@ -679,6 +679,7 @@ Owner 2026-10-22: "I like some animation." Ask Carta is a chat (T570, `src/brows
 
 - **Typed suggestions.** While the chat's field is empty it types its suggested questions out one at a time in `--text-3`, holds each about 1.8 s, erases it and types the next, in a loop. A drawn 2 px `--text-3` caret blinks (1 s, stepped) only while the field has no focus. It stops on a typed letter, pauses while the tab is hidden or the field is out of view, is `aria-hidden`, and does not run at all under reduced motion.
 - **The work as steps.** While an answer is made, its real stages show as a list; done steps take a `--text-3` tick, the working one an 8 px `--action` dot pulsing (opacity and scale, 1.2 s), because it is live. Each step fades in at `--dur-2`.
+- **Typing, then the words** (T583). A typing bubble (three 6 px `--text-3` dots pulsing in turn, 1.2 s) lasts the real wait, at least 750 ms; past 2.5 s the steps replace it, never both. The answer then appears word by word, about 30 ms a word and under 1.5 s in all. Under reduced motion, or for a chat reopened from the list, the text shows at once.
 - **Arrivals.** The panel slides in once at `--dur-3`; a question, the trip card and the suggestions fade in at `--dur-2`, suggestions staggered by at most 120 ms.
 
 ### Interaction

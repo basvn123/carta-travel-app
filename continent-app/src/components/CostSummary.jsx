@@ -3,7 +3,7 @@ import { BAND_KEY } from '../lib/costIndex.js';
 import { Money } from './ui/Money.jsx';
 import { CostRow, CostSum } from './ui/CostRow.jsx';
 import { AirlineMark } from './flights/Flights.jsx';
-import { formatMoney } from '../lib/money.js';
+import { formatEst, formatMoney } from '../lib/money.js';
 
 /**
  * The day's cost on Explore: one shared predicate (isNational) and the
@@ -31,7 +31,8 @@ export function isNational(cost) {
  * food and drink, then the day as the sum with its band word under it. The
  * same day figure as the card, the pin and the destination page (one cost
  * truth, T429). Under the day, when the card shows one, the cheapest return
- * flight a person in the travel month (`cost.flight`, T518): it is not part of
+ * flight a person in the travel month (T518), or the train, bus or car the
+ * settings line asks for (`cost.way`, T582): it is not part of
  * the day, so it sits after the sum, never in it.
  */
 export function CostReceipt({ cost, t }) {
@@ -62,10 +63,15 @@ export function CostReceipt({ cost, t }) {
         <CostSum label={t('cost.dayTotal')} live={false}
           value={<Money value={cost.dayEur} est={isNational(cost)} />}
           each={t(BAND_KEY[cost.dayBand])} />
-        {cost.flight?.perSeat > 0 && (
+        {cost.way?.mode === 'plane' && cost.way.perPerson > 0 && (
           <CostRow kind="flight" label={t('flight.flightLine')}
-            mark={<AirlineMark code={cost.flight.airline} size="sm" />}
-            value={<span className="money">{t('flight.returnPerson', { price: formatMoney(cost.flight.perSeat) })}</span>} />
+            mark={<AirlineMark code={cost.way.airline} size="sm" />}
+            value={<span className="money">{t('flight.returnPerson', { price: formatMoney(cost.way.perPerson) })}</span>} />
+        )}
+        {/* T582: a train, bus or car journey, an estimate, return a person. */}
+        {cost.way && cost.way.mode !== 'plane' && cost.way.perPerson > 0 && (
+          <CostRow kind="flight" label={t(`way.${cost.way.mode}`)}
+            value={<span className="money">{t('flight.returnPerson', { price: formatEst(cost.way.perPerson, t('money.est')) })}</span>} />
         )}
       </dl>
     </div>
