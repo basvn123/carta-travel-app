@@ -197,7 +197,7 @@ function nightFor(dest, rec, tier, people, ms, month) {
  * basis is 'dated' | 'month' | 'annual'.
  */
 export function bedPrice({ dest, tier, adults = 2, children = 0, nights = 1, start = null,
-  month = null, fees = null } = {}) {
+  month = null, fees = null, live: allowLive = true } = {}) {
   if (!dest?.accommodation?.beds) return null;
   const want = normaliseTier(tier);
   const offered = tiersAt(dest);
@@ -225,7 +225,7 @@ export function bedPrice({ dest, tier, adults = 2, children = 0, nights = 1, sta
   }
   let avgNight = n > 0 ? lodging / n : first.night;
 
-  const live = startMs != null && n > 0
+  const live = allowLive && startMs != null && n > 0
     ? liveStay(dest.id, t, new Date(startMs).toISOString().slice(0, 10), n, people) : null;
   const seasonAvg = seasonSum / count;
   const ratio = live && seasonAvg > 0 ? live.factor / seasonAvg : null;
@@ -266,6 +266,18 @@ export function bedPrice({ dest, tier, adults = 2, children = 0, nights = 1, sta
     captured: useLive ? live.checked : dest.accommodation.captured || null,
     basis: useLive ? 'live' : basis,
   };
+}
+
+/** How far tonight's prices move a dated stay from the model (T559): the
+ *  live total over the modelled total, or null when the stay is not live. For
+ *  screens that price beds from something other than bedPrice() (a journey's
+ *  written budget), so they can scale their bed line by the same amount. */
+export function liveStayRatio({ dest, tier, adults = 2, children = 0, nights = 1, start = null } = {}) {
+  const live = bedPrice({ dest, tier, adults, children, nights, start });
+  if (live?.q !== 'live') return null;
+  const model = bedPrice({ dest, tier, adults, children, nights, start, live: false });
+  if (!(model?.total > 0)) return null;
+  return { ratio: live.total / model.total, checked: live.captured };
 }
 
 /** The cheapest bed for one person of two, per night (annual), across the

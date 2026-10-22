@@ -93,6 +93,12 @@ export const ATTRIBUTIONS = [
     credit: 'Nightly rate anchors from Inside Airbnb (insideairbnb.com)',
   },
   {
+    source: 'Xotelo',
+    license: 'Free API, no published terms (owner decision T559)',
+    credit: 'Hotel prices, and the live prices for your own nights, from '
+      + 'TripAdvisor data via Xotelo (xotelo.com)',
+  },
+  {
     source: 'Eurostat',
     license: 'CC BY 4.0',
     credit: 'Tourism statistics, including the visitor nights behind the '

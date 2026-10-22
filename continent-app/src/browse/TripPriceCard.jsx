@@ -17,6 +17,9 @@ import { ChevronDownIcon, ChevronRightIcon, DownloadIcon, PlusIcon } from '../co
 import { legCost } from '../lib/flights/flights.js';
 import { FlightRow, FlightLink, AirlineMark } from '../components/flights/Flights.jsx';
 import { homeFlightSetup, journeyAirports, bestRoundTrip, backDate, withEnds } from './cartaFlight.js';
+import { loadLiveStay, nearestLiveDest, useLiveStaysVersion } from '../lib/liveStays.js';
+import { liveStayRatio } from '../lib/stayPrice.js';
+import { useStaysVersion } from '../lib/staysData.js';
 
 /**
  * The trip page's price card (T431, owner 2026-10-15): what the week costs a
@@ -101,14 +104,50 @@ export function TripPriceCard({
     [fare, fl.file, codes, fl.from, flightBack, people, fl.bagKey],
   );
 
-  const price = useMemo(() => tripPrice(budget, {
-    sleepShare: shares.sleepShare,
-    spendShare: shares.spendShare,
-    days,
-    party: people,
-    fare: fare?.costTotal || 0,
-    carta,
-  }), [budget, shares.sleepShare, shares.spendShare, days, people, fare, carta]);
+  // T559: with the traveller's own dates, the week's beds follow tonight's
+  // prices at the nearest place Carta prices live (a journey names towns, not
+  // destinations), within 40 km of where it starts. The accommodation line
+  // moves by that place's live to model ratio; nothing else changes.
+  const staysVersion = useStaysVersion();
+  const liveVersion = useLiveStaysVersion();
+  const ownStart = ctx?.departDate || null;
+  const nights = Math.max(1, days - 1);
+  const liveDest = useMemo(
+    () => (ownStart && staysVersion >= 0
+      ? nearestLiveDest(ctx?.data?.destinations, trip.coordinates?.lat, trip.coordinates?.lon) : null),
+    [ownStart, staysVersion, ctx?.data, trip.coordinates?.lat, trip.coordinates?.lon],
+  );
+  React.useEffect(() => {
+    if (liveDest && ownStart) loadLiveStay(liveDest.id, ownStart, nights, people);
+  }, [liveDest, ownStart, nights, people]);
+  const live = useMemo(
+    () => (liveDest && ownStart && liveVersion >= 0
+      ? liveStayRatio({ dest: liveDest, tier: settings?.stayTier || 'home', adults: people, nights, start: ownStart })
+      : null),
+    [liveDest, ownStart, liveVersion, settings?.stayTier, people, nights],
+  );
+  const price = useMemo(() => {
+    const p = tripPrice(budget, {
+      sleepShare: shares.sleepShare,
+      spendShare: shares.spendShare,
+      days,
+      party: people,
+      fare: fare?.costTotal || 0,
+      carta,
+    });
+    const bed = p?.rows?.accommodation;
+    if (!live || !(bed > 0)) return p;
+    const delta = bed * (live.ratio - 1);
+    const perPerson = p.perPerson + delta;
+    return {
+      ...p,
+      rows: { ...p.rows, accommodation: bed + delta },
+      perPerson,
+      perDay: days > 0 ? Math.round(perPerson / days) : p.perDay,
+      total: p.total + delta * p.party,
+      liveStay: true,
+    };
+  }, [budget, shares.sleepShare, shares.spendShare, days, people, fare, carta, live]);
   // The trip's own range a person, simplest end to most generous, for the
   // sentence under the Lifestyle row.
   const ends = useMemo(() => ({
@@ -277,6 +316,7 @@ export function TripPriceCard({
                       )}
                     </>
                   )}
+                  sub={slot === 'accommodation' && price.liveStay ? t('stay.live') : null}
                   value={<Money value={v} est />}
                 />
               );

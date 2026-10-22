@@ -129,6 +129,21 @@ export function liveStay(destId, tier, start, nights, people) {
   };
 }
 
+/** The destination with live keys nearest to a point, within maxKm, or
+ *  null (T559). A journey names towns, not destination ids, so its trip card
+ *  asks for the live prices of the closest place Carta can price live. */
+export function nearestLiveDest(destinations, lat, lon, maxKm = 40) {
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+  let best = null, bestKm = maxKm;
+  const k = Math.cos((lat * Math.PI) / 180);
+  for (const d of Object.values(destinations || {})) {
+    if (!Number.isFinite(d?.lat) || !Number.isFinite(d?.lon)) continue;
+    const km = 111.2 * Math.hypot(d.lat - lat, (d.lon - lon) * k);
+    if (km < bestKm && stayRecord(d.id)?.xk?.length) { best = d; bestKm = km; }
+  }
+  return best;
+}
+
 function subscribe(fn) {
   listeners.add(fn);
   return () => listeners.delete(fn);

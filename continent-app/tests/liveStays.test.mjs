@@ -1,9 +1,9 @@
 // T540: live bed prices for the traveller's own nights (lib/liveStays.js). Run: npm test (continent-app/)
 import test from "node:test";
 import assert from "node:assert/strict";
-import { sampleNights, liveStay, setLiveResult } from "../src/lib/liveStays.js";
+import { sampleNights, liveStay, setLiveResult, nearestLiveDest } from "../src/lib/liveStays.js";
 import { setStayRecords } from "../src/lib/staysData.js";
-import { bedPrice } from "../src/lib/stayPrice.js";
+import { bedPrice, liveStayRatio } from "../src/lib/stayPrice.js";
 import { computeCosts } from "../src/lib/costIndex.js";
 
 const VIE = {
@@ -70,4 +70,22 @@ test("the cost index counts a live bed as measured in town", () => {
   assert.equal(row.stayLevel, "city");
   assert.equal(row.stayLive, "2027-01-01T10:00:00Z");
   setLiveResult();
+});
+
+test("liveStayRatio: live total over model total, null when not live (T559)", () => {
+  setLiveResult("VIE", START, 4, 2, { checked: "c", nights: { "2027-03-10": night(1.2, 1.35) } });
+  const r = liveStayRatio({ dest: VIE, tier: "hotel3", adults: 2, nights: 4, start: START });
+  assert.equal(Math.round(r.ratio * 1000) / 1000, Math.round(1.35 ** 0.6 * 1000) / 1000);
+  assert.equal(liveStayRatio({ dest: VIE, tier: "home", adults: 2, nights: 4, start: START }), null);
+  setLiveResult();
+});
+
+test("nearestLiveDest: the closest town with live keys, within the radius (T559)", () => {
+  const dests = {
+    VIE: { ...VIE, lat: 48.2085, lon: 16.3721 },
+    FAR: { id: "FAR", lat: 47.0, lon: 15.4 },          // no keys
+  };
+  assert.equal(nearestLiveDest(dests, 48.25, 16.4)?.id, "VIE");        // about 5 km
+  assert.equal(nearestLiveDest(dests, 47.0, 15.4), null);              // 150 km away
+  assert.equal(nearestLiveDest(dests, NaN, 16.4), null);
 });

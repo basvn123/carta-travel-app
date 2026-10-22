@@ -21,6 +21,10 @@
  * sends 2 nights), 6 upstream calls at a time: a first answer takes about ten
  * seconds, a cached one well under one. A request whose every upstream call
  * failed answers 502, uncached; the app keeps the modelled price.
+ *
+ * Off switch (T559): set the Pages environment variable LIVE_STAYS=off in the
+ * Cloudflare dashboard (Settings, Variables) and every request answers 503
+ * without calling Xotelo; the app shows the modelled price. No redeploy.
  */
 
 const KEY = /^g\d{3,9}-d\d{3,10}$/;
@@ -77,7 +81,10 @@ async function cell(key, night, adults, cache, waitUntil) {
   return v;
 }
 
-export async function onRequestGet({ request, waitUntil }) {
+export async function onRequestGet({ request, waitUntil, env }) {
+  if (String(env?.LIVE_STAYS || '').toLowerCase() === 'off') {
+    return new Response(null, { status: 503, headers: { 'cache-control': 'no-store' } });
+  }
   const q = new URL(request.url).searchParams;
   const keys = [...new Set((q.get('k') || '').split(','))].filter((k) => KEY.test(k));
   const nights = [...new Set((q.get('n') || '').split(','))].filter((d) => DATE.test(d)).sort();

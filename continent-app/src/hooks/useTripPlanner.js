@@ -5,6 +5,8 @@ import { priceTrip, normalizeTransferMode, tripStopDetails, MAX_PARTY } from '..
 import { reorderSavings } from '../lib/tripCostOptimizer.js';
 import { addDays } from '../lib/dates.js';
 import { useLiveFlights } from '../lib/flights/useLiveFlights.js';
+import { loadLiveStay, useLiveStaysVersion } from '../lib/liveStays.js';
+import { useStaysVersion } from '../lib/staysData.js';
 import {
   fetchTripPlanWithStops, createTripPlan, renameTripPlan, saveTripPlanStops,
 } from '../auth/tripPlanStorage.js';
@@ -357,7 +359,25 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
   }), [stops, tripStart, tripEnd, groupSize, children, babies, transportPref, legModes, ownLegs,
     ownStays, transferMode, baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, stayTier,
     lifestyle, flightHours]);
-  const pricedSwept = useMemo(() => priceTrip(tripState, { data, countryInsights }), [tripState, data, countryInsights]);
+  // T559: each dated stop asks for tonight's prices on its own nights; a live
+  // answer bumps liveVersion and reprices the beds (bedPrice reads it).
+  const liveVersion = useLiveStaysVersion();
+  const staysVersion = useStaysVersion();
+  const pricedSwept = useMemo(
+    () => (liveVersion >= 0 ? priceTrip(tripState, { data, countryInsights }) : null),
+    [tripState, data, countryInsights, liveVersion],
+  );
+  const liveAsks = (pricedSwept?.stopDetails || [])
+    .filter((s) => s.dest && s.arriveDate && s.nights > 0)
+    .map((s) => `${s.dest.id}|${s.arriveDate}|${s.nights}`).join(',');
+  useEffect(() => {
+    if (!liveAsks) return;
+    const people = Math.max(1, (tripState.groupSize || 1) + (tripState.children || 0));
+    for (const ask of liveAsks.split(',')) {
+      const [id, date, nights] = ask.split('|');
+      loadLiveStay(id, date, Number(nights), people);
+    }
+  }, [liveAsks, tripState.groupSize, tripState.children, staysVersion]);
   const liveFlights = useLiveFlights(pricedSwept.cartaFlight?.queries);
   const priced = useMemo(() => (liveFlights.size
     ? priceTrip({ ...tripState, liveFlights }, { data, countryInsights })
