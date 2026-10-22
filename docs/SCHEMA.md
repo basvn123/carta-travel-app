@@ -877,8 +877,16 @@ old scripts are in `pipeline/archive/`.
   unit, measured per month), `weekend` (Friday and Saturday factor), `peak`
   (`xmas`, `easter`, `aug15` factors), `single.hotel` (1-adult room ratio),
   `season_q` (one letter per month: `m` measured, `f` filled), `src[bed]`
-  (`q`, `from`, `km`, `n`, `scaled`). The app keeps the newer of the baked copy
+  (`q`, `from`, `km`, `n`, `scaled`), and optional `xk` (T540): up to six Xotelo
+  properties for the live price, each `[key, kind, stars, band, typ]` (`kind`
+  `h` hotel or `g` guesthouse, `stars` 0 when unknown, `band` the hotel price
+  quartile 0 to 3 or -1, `typ` the typical night in EUR; written by
+  `pipeline/stays/live_keys.py`). The app keeps the newer of the baked copy
   (`public/stays/v1/`) and the monthly refresh (`meta.stays.url`).
+- **Live (T540):** `/api/stays?k=keys&n=nights&a=adults` (a Pages Function)
+  answers Xotelo's median rate per property and night; `liveStays.js` turns it
+  into a factor and `bedPrice()` moves a dated hotel or private-room stay by
+  `(factor / model season) ^ 0.6`, marked `q: 'live'`.
 - **Runtime:** `continent-app/src/lib/stayPrice.js` `bedPrice()` prices night by
   night (each night its month, weekend and peak factors), sizes rooms to the
   party (dorm per bed, rooms `ceil(people / 2)`, the smallest home that sleeps
