@@ -1945,3 +1945,5 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T564-a | T564 | Answer on this device is off (VITE_ASK_ON_DEVICE): Qwen 2.5 1.5B on an Intel Iris Xe took 44 s and failed the check; retry with a better small model (Gemma 2 2B untried) and fix the backwards progress line and the silent wait | next task | open |  |
 | T565-a | T565 | search/ask ships with every Pages deploy (45 MiB, largest file 8.9 MB, Pages caps a file at 25 MiB); a much larger index must shard or move behind R2 with a binding | next task | open |  |
 | T565-b | T565 | The preview carries this branch; production gets Ask only after the owner merges p11-ask-carta (app and root) and deploys main, with the index built in the main checkout first (T551-a) | user | open | 1 |
+| T568-a | T568 | carta-design says a placeholder shows a real example; the owner asked for none in the Ask Carta bar, so it reads "Type your question": record the exception in the skill or name the words | user | open |  |
+| T568-b | T568 | The Plan start page (PlanAsk.jsx) keeps the old Ask trigger with an example placeholder; decide whether it takes the Explore bar | next task | open |  |

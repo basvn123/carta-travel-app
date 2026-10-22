@@ -1,5 +1,4 @@
 import React from 'react';
-import { createPortal } from 'react-dom';
 import { useIsDesktop } from '../hooks/useIsDesktop.js';
 import { fmtMonthRanges, MONTHS_SHORT } from './ClimateStrip.jsx';
 import { useExploreCatalog } from '../hooks/useExploreCatalog.js';
@@ -804,16 +803,9 @@ export function ExploreTab({
         ? t('explore.emptyCause', { filter: lastChip.label })
         : t('results.empty');
 
-  // Desktop chrome: the search field portals into the app header's slot and
-  // the controls stand in the left panel; the phone keeps the toolbar card.
-  // Only the active tab may claim the slot, because both browse tabs stay
-  // mounted (keep-alive) and two portals into one div would interleave.
+  // Desktop chrome: the controls stand in the left panel; the phone keeps
+  // the toolbar card. Ask Carta no longer portals into the header (T568).
   const isDesktop = useIsDesktop();
-  const [headerSlot, setHeaderSlot] = React.useState(null);
-  React.useEffect(() => {
-    if (isDesktop && isActive) setHeaderSlot(document.getElementById('header-search-slot'));
-    else setHeaderSlot(null);
-  }, [isDesktop, isActive]);
 
   // T504: picking and opening. A pin picks a place (the overview shows);
   // the overview, a second tap on the same pin, or a list row opens it. A
@@ -902,8 +894,13 @@ export function ExploreTab({
     dests: data?.destinations || null,
     origin: settingsLine?.origin || null,
   }), [settingsLine?.lifestyle, settingsLine?.stayTier, settingsLine?.origin, data?.flights, data?.destinations]);
-  const searchField = (inHeader) => (
+  // T568: Ask Carta is a field in the main panel, under the chips, at every
+  // width (it left the header); its suggestions name the list's top places.
+  const askPlaces = React.useMemo(() => listed.slice(0, 2).map((p) => p.city).filter(Boolean), [listed]);
+  const searchField = () => (
     <AskSearch
+      bar
+      places={askPlaces}
       t={t}
       lang={lang}
       guided={guided}
@@ -924,9 +921,8 @@ export function ExploreTab({
       price={askPrice}
       favorites={favorites}
       onToggleFav={onToggleFav}
-      inHeader={inHeader}
-      requestOpen={openRequest && isActive && inHeader === isDesktop}
-      askSeed={inHeader === isDesktop ? askSeed : null}
+      requestOpen={openRequest && isActive}
+      askSeed={askSeed}
       onOpenRequested={clearOpenRequest}
     />
   );
@@ -1092,7 +1088,6 @@ export function ExploreTab({
 
   return (
     <div className={`explore-shell${view === 'map' ? ' is-map' : ''}${railsIdle ? ' is-rails' : ''}`}>
-      {headerSlot && createPortal(searchField(true), headerSlot)}
 
       {/* Desktop-only left panel (CSS hides it under 769px): the filter
           rail in folds, trip styles first, with one hairline to the panel's
@@ -1124,9 +1119,6 @@ export function ExploreTab({
             door share one row (brief V3-4). The trip styles live in the
             sheet now, and Lifestyle and the shortlist in the input row. */}
         <div className="explore-filterbar xtop">
-          {/* On desktop the same field has portalled into the app header
-              and this renders nothing. */}
-          {!headerSlot && searchField(false)}
           <Button
             variant="secondary"
             ref={filterBtnRef}
@@ -1170,6 +1162,9 @@ export function ExploreTab({
         {/* On a phone the sort leads the chip row (62-v6-explore.css), so
             the list has one refine row; the bar's own sort shows otherwise. */}
         <FilterChips t={t} chips={chips} onClearAll={resetAll} lead={sortSelect} />
+
+        {/* T568: Ask Carta, under the filters it can set. */}
+        {searchField()}
 
         {/* The one community surface on a browse tab: a real count of what
             people have published, and one door. Absent entirely when
