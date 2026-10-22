@@ -38,7 +38,7 @@ import {
   existsSync, readFileSync, writeFileSync, rmSync, mkdirSync, renameSync,
   readdirSync, statSync, cpSync,
 } from 'node:fs';
-import { R2_TIER, normaliseBase } from '../../src/lib/dataHost.js';
+import { R2_TIER, PAGES_KEEP, normaliseBase } from '../../src/lib/dataHost.js';
 
 const appRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
 
@@ -176,6 +176,18 @@ async function main() {
     entries[name] = s;
     files += s.files;
     bytes += s.bytes;
+  }
+  // What stays on Pages although its folder went to R2 (T565, PAGES_KEEP).
+  for (const keep of PAGES_KEEP) {
+    const from = join(outDir, keep);
+    if (!existsSync(from)) continue;
+    const kept = sizeOf(from);
+    mkdirSync(dirname(join(distDir, keep)), { recursive: true });
+    moveEntry(from, join(distDir, keep));
+    const top = keep.split('/')[0];
+    if (entries[top]) { entries[top].files -= kept.files; entries[top].bytes -= kept.bytes; }
+    files -= kept.files;
+    bytes -= kept.bytes;
   }
   for (const name of ['app_data.json', 'activities_full.json']) {
     rmSync(join(distDir, name), { force: true });

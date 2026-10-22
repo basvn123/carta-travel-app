@@ -30,9 +30,11 @@
     "ci": "npm run lint && npm run test && npm run verify && npm run ci:routes && npm run ci:contract && npm run build && npm run ci:css-routes && npm run ci:smoke && npm run build:pages"
   },
   "dependencies": {
+    "@mlc-ai/web-llm": "0.2.85",
     "@supabase/supabase-js": "^2.110.2",
     "jspdf": "^3.0.4",
     "maplibre-gl": "^4.7.1",
+    "minisearch": "^7.2.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

@@ -4,8 +4,24 @@
     {
       "name": "carta-dev",
       "runtimeExecutable": "node",
-      "runtimeArgs": ["continent-app/node_modules/vite/bin/vite.js", "continent-app", "--port", "5173", "--strictPort"],
+      "runtimeArgs": [
+        "continent-app/node_modules/vite/bin/vite.js",
+        "continent-app",
+        "--port",
+        "5173",
+        "--strictPort"
+      ],
       "port": 5173
+    },
+    {
+      "name": "ask-end-check",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "C:/Users/Gebruiker/Documents/Portfolio/wt/p11-ask-carta-app/node_modules/vite/bin/vite.js",
+        "--config",
+        "C:/Users/Gebruiker/Documents/Portfolio/wt/vite.t558.mjs"
+      ],
+      "port": 5198
     }
   ]
 }

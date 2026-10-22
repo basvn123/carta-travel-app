@@ -183,7 +183,7 @@ export function makeLabels({ t, lang, guided, countries }) {
 
 // Words that carry no facet, per language (English is always on: people
 // type English in every language).
-const STOP = {
+export const STOP = {
   en: 'a an the in on at to of for with and or some somewhere place places town towns trip trips holiday holidays travel go going want find me i we in where what when good best nice',
   nl: 'een de het in op naar van voor met en of plek plekken ergens reis vakantie ik wij wil goed mooi',
   de: 'ein eine der die das im in am an auf nach von fur mit und oder ort orte reise urlaub ich wir will gut schon',
@@ -191,7 +191,7 @@ const STOP = {
   es: 'un una el la los las en a de del para con y o lugar lugares viaje vacaciones yo quiero buen bueno',
   it: 'un una il lo la i gli le in a di del della nel nella per con e o luogo luoghi viaggio vacanza voglio bel bello',
 };
-const NEAR = {
+export const NEAR = {
   en: ['near', 'around', 'close to', 'next to'],
   nl: ['bij', 'rond', 'vlakbij', 'in de buurt van', 'dichtbij'],
   de: ['bei', 'nahe', 'in der nahe von', 'rund um', 'um'],
@@ -216,7 +216,7 @@ const FIGURE = new RegExp(`^(?:${SIGN}|eur)?([0-9]{2,4})(?:${SIGN}|eur|euro|euro
 
 // English words for the vibes and extras, beside their labels in the
 // reader's language (which come from guided.json and i18n).
-const VIBE_WORDS = {
+export const VIBE_WORDS = {
   quiet: ['quiet', 'calm', 'peaceful', 'relaxing', 'relax', 'tranquil'],
   oldtown: ['old town', 'historic', 'medieval', 'old city', 'historic centre', 'historic center'],
   food: ['food', 'wine', 'foodie', 'gastronomy', 'eating', 'cuisine', 'food and wine'],
@@ -241,7 +241,7 @@ const VIBE_WORDS = {
 // The everyday words for the same vibes in the other five languages (the
 // labels themselves come from guided.json): people type "wandern", not
 // "Wanderbasis". Folded, so no accents.
-const VIBE_WORDS_I18N = {
+export const VIBE_WORDS_I18N = {
   nl: {
     hiking: ['wandelen', 'wandeling', 'wandelroutes', 'hiken'], beach: ['strand', 'stranden', 'zee', 'zwemmen'],
     mountain: ['bergen', 'berg'], lake: ['meer', 'meren'], food: ['eten', 'wijn'], castles: ['kasteel', 'kastelen', 'burcht'],
@@ -285,7 +285,7 @@ const VIBE_WORDS_I18N = {
 };
 // "Cheap" in a budget app is a question Carta can answer: the cheapest
 // first (T444; the check found "cheap beach in greece" refused).
-const CHEAP_WORDS = {
+export const CHEAP_WORDS = {
   en: ['cheap', 'cheapest', 'budget', 'affordable', 'inexpensive', 'low cost', 'on a budget', 'cheapest first'],
   nl: ['goedkoop', 'goedkope', 'goedkoopst', 'betaalbaar', 'betaalbare'],
   de: ['billig', 'gunstig', 'gunstige', 'preiswert', 'preiswerte'],
@@ -293,7 +293,7 @@ const CHEAP_WORDS = {
   es: ['barato', 'barata', 'baratos', 'economico', 'economica'],
   it: ['economico', 'economica', 'a buon mercato', 'conveniente'],
 };
-const EXTRA_WORDS = {
+export const EXTRA_WORDS = {
   beach: ['beach nearby', 'near a beach', 'close to a beach'],
   trail: ['trails', 'trail', 'trails nearby', 'walking trails'],
   lake: ['lake nearby', 'near a lake'],
@@ -305,7 +305,7 @@ const EXTRA_WORDS = {
 // is the vibe, "trails" the extra.
 const KIND_RANK = { vibe: 0, area: 1, country: 2, month: 3, sort: 4, extra: 5, place: 6 };
 
-const words = (s) => foldName(s).split(/[\s,;/.!?]+/).filter(Boolean);
+export const words = (s) => foldName(s).split(/[\s,;/.!?]+/).filter(Boolean);
 
 /**
  * The closed vocabulary for one language: every phrase Carta can answer,

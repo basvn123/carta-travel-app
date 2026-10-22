@@ -47,7 +47,7 @@ function door(go) {
  * in opens a saved trip from My trips. Neither tile is a primary: the choice
  * is the page, so both carry the same weight.
  */
-export function PlanStart({ onNavigate, pageOver = false }) {
+export function PlanStart({ onNavigate, pageOver = false, ask = null }) {
   const { t } = useI18n();
   // The page's one h1, unless a page stands over it (T411).
   const Title = pageOver ? 'div' : 'h1';
@@ -59,6 +59,8 @@ export function PlanStart({ onNavigate, pageOver = false }) {
     <div className="plan-start">
       <div className="plan-start-wrap">
         <Title className="plan-start-h">{t('nav.planNew')}</Title>
+        {/* T558: Ask Carta, read as a plan, above the two tiles. */}
+        {ask}
         <ul className="plan-start-tiles" role="list">
           {tiles.map(({ key, Art, title, sub }) => (
             <li key={key}>

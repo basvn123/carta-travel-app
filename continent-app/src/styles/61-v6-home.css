@@ -107,6 +107,23 @@
 }
 .home-search .home-glyph { color: var(--text); }
 .home-search span { min-width: 0; overflow-wrap: anywhere; }
+/* T566: the pill holds Ask Carta's own field and its Ask; the input keeps
+   its own focus ring and the pill's edge turns brown while it has focus. */
+.home-search { padding-right: var(--space-1); }
+.home-search:focus-within { border-color: var(--action); }
+.home-search-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: var(--tap);
+  border: 0;
+  border-radius: var(--radius-control);
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-lead);
+}
+.home-search-input::placeholder { color: var(--text-2); }
+.btn.home-search-go { flex: none; border-radius: var(--radius-pill); }
 @media (hover: hover) {
   .home-search:hover { border-color: var(--neutral-300); }
 }

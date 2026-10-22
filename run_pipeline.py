@@ -814,6 +814,22 @@ def guard_regions(ctx=None):
     return True, "region stages present"
 
 
+def guard_ask_index(ctx=None):
+    """Ask Carta's index (T551) needs model2vec, a laptop-only package from
+    requirements-ml.txt, and the wires it reads. Without model2vec the task
+    SKIPS: the Linux orchestrator does not install the ML requirements, and
+    the last built index stays valid until the next laptop run."""
+    import importlib.util
+    if importlib.util.find_spec("model2vec") is None:
+        return False, ("model2vec is not installed (requirements-ml.txt); the "
+                       "Ask Carta index is built on the laptop")
+    if not (CONTINENT / "public" / "app_data.json").exists():
+        return False, "continent-app/public/app_data.json is missing; run sync-data first"
+    if not (CONTINENT / "node_modules" / "minisearch").exists():
+        return False, "continent-app has no minisearch; run npm install in continent-app"
+    return True, "model2vec and minisearch present, app_data on the wire"
+
+
 def guard_beaches(ctx=None):
     """The beach layer needs its own scripts and the EEA bathing water cache.
 
@@ -2230,6 +2246,27 @@ TASKS = [
                  "sandwich is deliberate: the first pass discovers which images lack "
                  "TASL, the fill resolves them, the second pass flips ok_print. "
                  "Unchanged content keeps its content_hash, so re-runs are cheap."),
+    },
+    {
+        "key": "ask_index",
+        "title": "Ask Carta index: passages, vectors, pruned model, BM25 -> public/search/ask",
+        "cadence": "after",
+        "after": ["dossier", "beaches", "lakes", "mountains", "trails_rate"],
+        "writes_app_data": False,
+        "writes_wire": True,
+        "soft": True,
+        "cmds": [[PY, "pipeline/ask_index_layer.py"],
+                 [node_exe(), "continent-app/scripts/build-ask-bm25.mjs"]],
+        "guard": guard_ask_index,
+        "note": ("T551. One passage list per source (dest, highlight, sight, "
+                 "trail, journey, beach, lake, peak, country, lexicon) with "
+                 "int8 and sign-bit vectors from a pruned "
+                 "minishlab/potion-multilingual-128M (static, ~10 MB shipped), "
+                 "then the MiniSearch BM25 file. Reads only the shipped wires "
+                 "(public/app_data.json, dossier, layer files), so it follows "
+                 "the exports it reads; about 40 s, no network after the first "
+                 "model download. public/search is in R2_TIER, so the files "
+                 "travel with the other search wires."),
     },
     {
         "key": "photo_sources",

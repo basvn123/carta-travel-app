@@ -48,3 +48,17 @@ bucket_name = "carta-prerender"
 # build with its root set to continent-app therefore has to have the repo root
 # checked out too, which it does for a normal git integration. Worth knowing
 # before debugging an empty wire on the first build.
+
+# Ask Carta's written answer (T556), functions/api/ask/answer.js: open models
+# on Workers AI, inside the free 10,000 Neurons a day. The Function refuses to
+# call a model unless the ASK namespace below is bound too, because ASK holds
+# the daily Neurons counter that stops it at 9,000; so this binding alone can
+# never cost money. The namespace was created once with:
+#   npx wrangler kv namespace create carta-ask
+[ai]
+binding = "AI"
+
+# Created 2026-10-22 (T565) as carta-ask.
+[[kv_namespaces]]
+binding = "ASK"
+id = "d3eaced3f4c140efb5ff49afd9fd66e4"

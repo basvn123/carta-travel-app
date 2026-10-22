@@ -57,6 +57,12 @@ export const R2_TIER = Object.freeze([
 
 const TIER_SET = new Set(R2_TIER);
 
+// Paths under an R2_TIER entry that stay on the app host anyway (T565, row
+// T551-b): Ask Carta's index is read by its own Pages Function from the
+// deploy's assets (functions/api/ask.js), so the browser fetches it there
+// too and the R2 upload never carries it. stage-data.mjs moves it back.
+export const PAGES_KEEP = ['search/ask'];
+
 // Under node (sync-data, the stage script, the tests) import.meta.env does
 // not exist, so read it defensively; the base is then simply unset.
 const ENV = (import.meta && import.meta.env) || {};
@@ -83,7 +89,9 @@ export const DATA_BASE = normaliseBase(ENV.VITE_DATA_BASE);
 
 /** True when an absolute app path ("/poi/x.json") belongs to the data host. */
 export function isDataPath(path) {
-  const m = /^\/([^/?#]+)/.exec(String(path || ''));
+  const p = String(path || '');
+  if (PAGES_KEEP.some((k) => p === `/${k}` || p.startsWith(`/${k}/`))) return false;
+  const m = /^\/([^/?#]+)/.exec(p);
   return !!m && TIER_SET.has(m[1]);
 }
 

@@ -65,8 +65,7 @@ import { PlaceOverview } from './PlaceOverview.jsx';
 import { overviewRegion, overviewReason, overviewScore, reasonText } from '../lib/placeOverview.js';
 import { MapDrawer } from '../components/MapDrawer.jsx';
 import { useGuidedData, vibeOf } from '../lib/guidedData.js';
-import { GuidedSearch } from './GuidedSearch.jsx';
-import { BudgetSearch } from './BudgetSearch.jsx';
+import { AskSearch } from './AskSearch.jsx';
 import {
   noCarOk, underOk, quietOk, matchGuided, guidedComparator, whyFacts, makeLabels,
 } from '../lib/guidedSearch.js';
@@ -359,6 +358,8 @@ export function ExploreTab({
   // T462: a search handed over from the home page, once: { facets } applies
   // a guided question, { open: true } opens the search panel on arrival.
   seed = null, onSeedConsumed = null,
+  // T558: Ask Carta hands a route to the trip planner (App's openTripInPlanner).
+  onPlanTrip = null,
 }) {
   const { t, lang } = useI18n();
   // The guided search data (T439): vibes, areas and distances. Loaded on
@@ -870,6 +871,7 @@ export function ExploreTab({
   // takes the open request (the header one on a desktop, the tab's own on
   // a phone), so a hidden twin never opens a sheet of its own.
   const [openRequest, setOpenRequest] = React.useState(false);
+  const [askSeed, setAskSeed] = React.useState(null);
   const clearOpenRequest = React.useCallback(() => setOpenRequest(false), []);
   // A request Explore could not take (the visitor left before it opened)
   // must not open the panel on a later visit.
@@ -881,11 +883,27 @@ export function ExploreTab({
       setVisible(PAGE);
     }
     if (seed.open) setOpenRequest(true);
+    // T566: a question typed on Home is asked here at once.
+    if (seed.question) {
+      setAskSeed({ text: String(seed.question), n: Date.now() });
+      setOpenRequest(true);
+    }
     onSeedConsumed?.();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- once per hand-over: each seed is a new object
   }, [seed]);
+  // Ask Carta (T558) takes the guided search's place and the budget card's:
+  // one box for any question, its answer priced on the same inputs as the
+  // list (the Lifestyle, the bed, the home airport's flights), and the five
+  // slots kept inside it, so "Show all" is still applyGuided().
+  const askPrice = React.useMemo(() => ({
+    lifestyle: settingsLine?.lifestyle || null,
+    stayTier: settingsLine?.stayTier || 'home',
+    flights: data?.flights || null,
+    dests: data?.destinations || null,
+    origin: settingsLine?.origin || null,
+  }), [settingsLine?.lifestyle, settingsLine?.stayTier, settingsLine?.origin, data?.flights, data?.destinations]);
   const searchField = (inHeader) => (
-    <GuidedSearch
+    <AskSearch
       t={t}
       lang={lang}
       guided={guided}
@@ -899,13 +917,16 @@ export function ExploreTab({
       }}
       nearRow={nearRow}
       labels={gLabels}
-      empty={taxRows.length === 0}
-      emptyLine={emptyLine}
       budgetSteps={BUDGET_STEPS}
       onApply={applyGuided}
       onOpenPlace={openWithMember}
+      onPlanTrip={onPlanTrip}
+      price={askPrice}
+      favorites={favorites}
+      onToggleFav={onToggleFav}
       inHeader={inHeader}
       requestOpen={openRequest && isActive && inHeader === isDesktop}
+      askSeed={inHeader === isDesktop ? askSeed : null}
       onOpenRequested={clearOpenRequest}
     />
   );
@@ -1145,7 +1166,6 @@ export function ExploreTab({
         </div>
 
 
-        <BudgetSearch data={data} onOpen={openWithMember} />
         {/* C6: active filters as removable chips, right under the bar. */}
         {/* On a phone the sort leads the chip row (62-v6-explore.css), so
             the list has one refine row; the bar's own sort shows otherwise. */}
