@@ -4395,6 +4395,7 @@ export const it = {
   "dest.tierPrivate": "camera privata {eur}",
   "dest.tierHotel": "hotel 3 stelle {eur}",
   "dest.tierHome": "intero alloggio per due {eur}",
+  "stay.live": "Adeguato ai prezzi in tempo reale delle tue notti",
   "dest.cheapestMonth": "Più economico a {month}",
   "dest.gettingTitle": "Arrivare e muoversi",
   "dest.flyTo": "Vola a {iata}",

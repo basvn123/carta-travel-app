@@ -513,6 +513,8 @@ def main():
         for f in fails:
             print("GATE FAILED:", f)
         sys.exit(2)
+    from live_keys import attach
+    print("live keys:", attach(records, dests), "destinations")
     by_cc = defaultdict(dict)
     for d in dests:
         by_cc[d["iso2"]][d["id"]] = records[d["id"]]

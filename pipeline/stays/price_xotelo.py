@@ -107,17 +107,20 @@ def choose_anchors(dest, pool, osm_rows):
     if hotels:
         hotels.sort(key=lambda p: p["pmin"])
         q = len(hotels)
-        for lo, hi in ((0, .25), (.25, .5), (.5, .75), (.75, 1.0)):
+        for b, (lo, hi) in enumerate(((0, .25), (.25, .5), (.5, .75), (.75, 1.0))):
             band = hotels[int(lo * q):max(int(hi * q), int(lo * q) + 1)]
             if band:
-                picks.append(max(band, key=lambda p: p.get("reviews") or 0))
+                picks.append(dict(max(band, key=lambda p: p.get("reviews") or 0), _band=b))
     seen, out = set(), []
     for p in picks:
         if p["key"] in seen:
             continue
         seen.add(p["key"])
-        out.append({"key": p["key"], "kind": p["kind"],
-                    "stars": osm_stars(p, osm_rows) if p["kind"] == "hotel" else None})
+        a = {"key": p["key"], "kind": p["kind"],
+             "stars": osm_stars(p, osm_rows) if p["kind"] == "hotel" else None}
+        if "_band" in p:
+            a["band"] = p["_band"]          # price quartile, for the live price (T540)
+        out.append(a)
     return out
 
 

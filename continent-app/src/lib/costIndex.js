@@ -222,7 +222,8 @@ function stayAtTier(dest, tier, groupSize, when) {
  */
 function levelOf(raw, repaired) {
   if (repaired) return 'region';
-  return raw === 'city' || raw === 'measured' ? 'city'
+  // 'live' (T540): tonight's prices for the traveller's own nights.
+  return raw === 'city' || raw === 'measured' || raw === 'live' ? 'city'
     : raw === 'nearby' ? 'region' : 'country';
 }
 
@@ -302,6 +303,7 @@ export function computeCosts(destinations, choices) {
       source: repaired ? null : (at.bed?.from ?? null),
       stayKm: repaired ? null : (at.bed?.km ?? null),
       stayScaled: !!at.bed?.scaled,
+      stayLive: at.bed?.q === 'live' ? at.bed.captured : null,
     });
   }
   return out;

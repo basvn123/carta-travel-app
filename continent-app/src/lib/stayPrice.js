@@ -25,9 +25,18 @@
  * Night by night: each night takes its own month's price, the weekend factor
  * on Friday and Saturday, and a peak factor in the Christmas, Easter and
  * mid-August weeks. A stay of 28 July to 4 August pays July and August prices.
+ *
+ * Live (T540): for a dated stay whose prices /api/stays has fetched
+ * (liveStays.js), the hotel tiers and the private room follow tonight's
+ * factor (the town's hotels against their own typical night), marked q:
+ * 'live'. The stay moves by (live factor / the model's season for those
+ * nights) ^ LIVE_DAMP: six hotels are a small sample, so a real x2 festival
+ * week shows as about x1.5 and an ordinary week stays near the model. A ratio
+ * outside 0.4 to 3 is a broken answer, not a festival, and is ignored.
  */
 
 import { stayRecord } from './staysData.js';
+import { liveStay } from './liveStays.js';
 
 export const STAY_TIERS = ['dorm', 'private', 'room', 'home', 'hotel2', 'hotel3', 'hotel4', 'hotel5'];
 
@@ -47,6 +56,7 @@ export const DEFAULT_FEES = {
 };
 
 const HOME_CAPS = [2, 4, 6, 8];
+const LIVE_DAMP = 0.6;
 
 export function normaliseTier(t) {
   const k = ALIAS[t] || t;
@@ -213,7 +223,17 @@ export function bedPrice({ dest, tier, adults = 2, children = 0, nights = 1, sta
     if (i < n) lodging += one.night;
     seasonSum += one.season;
   }
-  const avgNight = n > 0 ? lodging / n : first.night;
+  let avgNight = n > 0 ? lodging / n : first.night;
+
+  const live = startMs != null && n > 0
+    ? liveStay(dest.id, t, new Date(startMs).toISOString().slice(0, 10), n, people) : null;
+  const seasonAvg = seasonSum / count;
+  const ratio = live && seasonAvg > 0 ? live.factor / seasonAvg : null;
+  const useLive = ratio != null && ratio >= 0.4 && ratio <= 3;
+  if (useLive) {
+    lodging *= ratio ** LIVE_DAMP;
+    avgNight = lodging / n;
+  }
 
   let cleaning = 0, service = 0, weekly = 1;
   if (t === 'home' && n > 0) {
@@ -239,12 +259,12 @@ export function bedPrice({ dest, tier, adults = 2, children = 0, nights = 1, sta
     cleaning: round2(cleaning),
     service: round2(service),
     weeklyDiscount: weekly < 1,
-    q: src.q || dest.accommodation.q || null,
-    from: src.from || null,
-    km: src.km ?? null,
-    scaled: !!src.scaled,
-    captured: dest.accommodation.captured || null,
-    basis,
+    q: useLive ? 'live' : src.q || dest.accommodation.q || null,
+    from: useLive ? null : src.from || null,
+    km: useLive ? null : src.km ?? null,
+    scaled: !useLive && !!src.scaled,
+    captured: useLive ? live.checked : dest.accommodation.captured || null,
+    basis: useLive ? 'live' : basis,
   };
 }
 

@@ -5300,6 +5300,7 @@ export const en = {
   "dest.tierPrivate": "private room {eur}",
   "dest.tierHotel": "3-star hotel {eur}",
   "dest.tierHome": "entire place for two {eur}",
+  "stay.live": "Adjusted to live prices for your nights",
   "dest.cheapestMonth": "Cheapest stays in {month}",
   "dest.gettingTitle": "Getting there and around",
   "dest.flyTo": "Fly to {iata}",

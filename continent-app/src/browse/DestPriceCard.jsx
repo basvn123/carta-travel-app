@@ -22,6 +22,8 @@ import { roundTripNear, legCost } from '../lib/flights/flights.js';
 import { destAnchor } from '../lib/origins.js';
 import { FlightRow, FlightLink, AirlineMark } from '../components/flights/Flights.jsx';
 import { homeFlightSetup, withEnds } from './cartaFlight.js';
+import { useStaysVersion } from '../lib/staysData.js';
+import { loadLiveStay } from '../lib/liveStays.js';
 
 /**
  * The destination page's price card (T429): what a day here costs at the
@@ -85,6 +87,16 @@ export function DestPriceCard({
     () => priceFromIndex(costRow, nights, people, fare, carta),
     [costRow, nights, people, fare, carta],
   );
+  // T540: with the traveller's own dates, ask for tonight's hotel prices on
+  // those nights; the cost index reprices the bed from them when they land.
+  const staysVersion = useStaysVersion();
+  const ownFrom = ctx?.departDate || null;
+  const ownTo = ctx?.returnDate || null;
+  React.useEffect(() => {
+    if (ownFrom && ownTo && ownTo > ownFrom) {
+      loadLiveStay(dest.id, ownFrom, Math.max(1, tripDaysBetween(ownFrom, ownTo)), people);
+    }
+  }, [dest.id, ownFrom, ownTo, people, staysVersion]);
 
   const dayRef = React.useRef(null);
   useSettledFigure(dayRef, price ? `${dest.id}:${Math.round(price.dayEur)}` : '');
@@ -293,7 +305,10 @@ export function DestPriceCard({
 
       <dl className="frr-lines costrows dprice-lines" ref={linesRef}>
         {price.lines.map((line) => (
-          <ReceiptLine key={line.key} t={t} line={{ key: line.key, label: label(line), eur: line.eur, est: line.est }} />
+          <ReceiptLine key={line.key} t={t} line={{
+            key: line.key, label: label(line), eur: line.eur, est: line.est,
+            prov: line.key === 'stay' && costRow?.stayLive ? [t('stay.live')] : undefined,
+          }} />
         ))}
         <ReceiptSum
           sumLabel={t('receipt.total', { people: peopleText })}
