@@ -43,7 +43,8 @@ import { useIdle } from './useHome.js';
  *   indices       App's exploreIndices (Map id -> day cost row)
  *   pageOver      a page or panel stands over the home page
  *   onNavigate    goToTab(key)
- *   onSearch      ({ facets } | { open: true }) hands a search to Explore
+ *   onSearch      ({ question } | { facets } | { open: true }) hands a search
+ *                 to Explore; a question is answered there by Ask Carta (T566)
  *   onCategory    opens Destinations on one kind
  *   onOpenDest    opens a destination page by id
  *   onOpenTrips   opens My trips
@@ -64,14 +65,24 @@ function SearchBlock({ t, onSearch, idPrefix }) {
   // at once when a search control is pointed at or touched, since a tap on
   // a phone has no hover.
   const warm = () => { loadGuidedData(); };
+  // T566: the pill is Ask Carta's own field. What is typed here is the
+  // question Explore answers on arrival; Ask with nothing typed opens it.
+  const [text, setText] = React.useState('');
+  const ask = (e) => {
+    e.preventDefault();
+    const q = text.trim();
+    onSearch(q ? { question: q } : { open: true });
+  };
   return (
     <>
-      <a className="home-search" href={tabHref('map')}
-        onPointerEnter={warm} onPointerDown={warm} onFocus={warm}
-        onClick={door(() => onSearch({ open: true }))}>
+      <form className="home-search" role="search" onSubmit={ask}
+        onPointerEnter={warm} onPointerDown={warm} onFocus={warm}>
         <Mute><SearchIcon size={20} /></Mute>
-        <span>{t('gs.placeholder')}</span>
-      </a>
+        <input className="home-search-input" type="text" value={text} maxLength={200}
+          onChange={(e) => setText(e.target.value)} aria-label={t('ask.inputLabel')}
+          placeholder={t('ask.placeholder')} autoComplete="off" spellCheck={false} enterKeyHint="search" />
+        <Button type="submit" variant="secondary" size="sm" className="home-search-go">{t('ask.go')}</Button>
+      </form>
       <div className="home-tries">
         <span className="home-tries-label" id={`${idPrefix}-tries`}>{t('home.tryLabel')}</span>
         <ul className="home-tries-list" aria-labelledby={`${idPrefix}-tries`}>
@@ -79,7 +90,7 @@ function SearchBlock({ t, onSearch, idPrefix }) {
             <li key={s.key}>
               <a className="home-try" href={exploreHref(s.facets)}
                 onPointerEnter={warm} onPointerDown={warm} onFocus={warm}
-                onClick={door(() => onSearch({ facets: s.facets }))}>
+                onClick={door(() => onSearch({ question: t(s.key, s.price ? { price: formatMoney(s.price) } : undefined) }))}>
                 {t(s.key, s.price ? { price: formatMoney(s.price) } : undefined)}
               </a>
             </li>

@@ -6,6 +6,9 @@
  *   - a sentence cites at least one note, and only notes that exist
  *   - every figure in it is written in a note (or in the question)
  *   - every catalogue place it names is in the notes
+ *   - a comparison or a verdict ("cheaper", "drier", "best") cites a note
+ *     the code wrote for it (kind 'cmp', context.js comparisonNotes, T563)
+ *   - a figure the notes give only as an estimate keeps its "~"
  *   - no dash survives (stripDashes), no reasoning block survives
  *
  * A failing sentence is dropped. When more than WITHDRAW of the sentences
@@ -64,6 +67,26 @@ export function splitSentences(text, final = true) {
 const digits = (s) => String(s).replace(/(\d)[.,\s'](?=\d{3}\b)/g, '$1');
 const figuresOf = (s) => (digits(s).match(/\d+(?:[.,]\d+)?/g) || []).map((x) => x.replace(',', '.'));
 
+// The words that compare or judge, in the six languages (folded). "Best
+// months" and its kin are the notes' own phrase, not a verdict.
+const COMPARE = new RegExp(`(?:^|[^\\p{L}])(${[
+  'than', 'cheaper', 'pricier', 'dearer', 'drier', 'wetter', 'warmer', 'colder', 'cooler', 'hotter', 'higher', 'lower',
+  'less', 'fewer', 'better', 'best', 'worse', 'worst', 'most', 'least', 'more expensive', 'more crowded', 'quieter', 'busier',
+  'dan', 'goedkoper', 'duurder', 'droger', 'natter', 'kouder', 'hoger', 'lager', 'minder', 'beter', 'beste', 'drukker', 'rustiger',
+  'gunstiger', 'billiger', 'teurer', 'trockener', 'warmer', 'kalter', 'hoher', 'niedriger', 'weniger', 'besser', 'beste', 'ruhiger',
+  'moins cher', 'plus cher', 'plus sec', 'plus chaud', 'meilleur', 'meilleure', 'mieux', 'moins', 'plus calme',
+  'mas barato', 'mas barata', 'mas caro', 'mas seco', 'mejor', 'peor', 'menos', 'mas tranquilo',
+  'piu economico', 'piu economica', 'piu caro', 'piu secco', 'migliore', 'meglio', 'peggiore', 'meno', 'piu tranquillo',
+].join('|')})(?=$|[^\\p{L}])`, 'u');
+// "Best months", "best visited in May" and their kin are the notes' own
+// season phrase, not a verdict on a place.
+const NOT_A_VERDICT = new RegExp([
+  'best(e)? (months|maanden|time|tijd|reisezeit|monate|season)', 'best (visited|in|from|between|during|enjoyed)',
+  'am besten (im|von|zwischen|besucht)', 'het best(e)? (in|van|tussen|bezocht)', 'meilleurs mois', 'meilleure periode',
+  'mejores meses', 'mejor epoca', 'mejor (en|de|entre)', 'mesi migliori', 'periodo migliore', 'meglio (a|da|tra|in)',
+  'beste reistijd', 'beste reisezeit',
+].join('|'), 'g');
+
 /**
  * The checker for one pack.
  *
@@ -83,6 +106,12 @@ export function makeChecker(pack, knownPlaces = []) {
   const watchRe = watch.length
     ? new RegExp(`(?:^|[^\\p{L}])(${watch.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})(?=$|[^\\p{L}])`, 'u')
     : null;
+  const cmpNotes = new Set(pack.notes.filter((n) => n.kind === 'cmp').map((n) => n.n));
+  const noteFold = pack.notes.map((n) => foldName(n.text));
+  // Figures the notes write only as estimates ("~€87 est."): the sentence
+  // must carry the tilde too.
+  const exact = new Set(figuresOf(noteText.replace(/~\s*[^\s;,]*\d[\d.,]*/g, ' ')));
+  const estOnly = new Set((noteText.match(/~\s*[^\s;,]*?\d[\d.,]*/g) || []).flatMap(figuresOf).filter((f) => !exact.has(f)));
   return function check(sentence) {
     const why = [];
     if (!sentence.cites.length) why.push('nocite');
@@ -92,6 +121,13 @@ export function makeChecker(pack, knownPlaces = []) {
     }
     const hit = watchRe ? sentence.text.match(watchRe) : null;
     if (hit) why.push(`place:${hit[1]}`);
+    const folded = foldName(sentence.text).replace(NOT_A_VERDICT, ' ');
+    const verdict = folded.match(COMPARE);
+    // A comparison stands on a note the code wrote for it, or on a cited
+    // note that makes the same comparison itself (a guide's "quieter than").
+    if (verdict && !sentence.cites.some((c) => cmpNotes.has(c)
+      || (noteFold[c - 1] || '').replace(NOT_A_VERDICT, ' ').includes(verdict[1]))) why.push(`compare:${verdict[1]}`);
+    if (!sentence.text.includes('~') && figuresOf(sentence.text).some((f) => estOnly.has(f))) why.push('estmark');
     return { text: stripDashes(sentence.text), cites: sentence.cites, ok: why.length === 0, why };
   };
 }

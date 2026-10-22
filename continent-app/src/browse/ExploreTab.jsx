@@ -871,6 +871,7 @@ export function ExploreTab({
   // takes the open request (the header one on a desktop, the tab's own on
   // a phone), so a hidden twin never opens a sheet of its own.
   const [openRequest, setOpenRequest] = React.useState(false);
+  const [askSeed, setAskSeed] = React.useState(null);
   const clearOpenRequest = React.useCallback(() => setOpenRequest(false), []);
   // A request Explore could not take (the visitor left before it opened)
   // must not open the panel on a later visit.
@@ -882,6 +883,11 @@ export function ExploreTab({
       setVisible(PAGE);
     }
     if (seed.open) setOpenRequest(true);
+    // T566: a question typed on Home is asked here at once.
+    if (seed.question) {
+      setAskSeed({ text: String(seed.question), n: Date.now() });
+      setOpenRequest(true);
+    }
     onSeedConsumed?.();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- once per hand-over: each seed is a new object
   }, [seed]);
@@ -920,6 +926,7 @@ export function ExploreTab({
       onToggleFav={onToggleFav}
       inHeader={inHeader}
       requestOpen={openRequest && isActive && inHeader === isDesktop}
+      askSeed={inHeader === isDesktop ? askSeed : null}
       onOpenRequested={clearOpenRequest}
     />
   );

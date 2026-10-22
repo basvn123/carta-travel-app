@@ -69,7 +69,10 @@ export function pieceOf(line) {
   if (!raw || raw === '[DONE]') return null;
   try {
     const j = JSON.parse(raw);
-    return j.response ?? j.choices?.[0]?.delta?.content ?? j.choices?.[0]?.text ?? null;
+    const v = j.response ?? j.choices?.[0]?.delta?.content ?? j.choices?.[0]?.text ?? null;
+    // A lone digit can arrive as a JSON number ({"response": 0}): keep it as
+    // text, and never test a piece for truth, or every "0" is lost ("80" -> "8").
+    return v == null || v === '' ? null : String(v);
   } catch { return null; }
 }
 
@@ -127,14 +130,14 @@ export async function onRequestPost({ request, env, waitUntil }) {
       buf = lines.pop();
       for (const line of lines) {
         const p = pieceOf(line.trim());
-        if (!p) continue;
+        if (p == null) continue;
         text += p;
         ctl.enqueue(enc.encode(`data: ${JSON.stringify({ t: p })}\n\n`));
       }
     },
     flush(ctl) {
       const p = pieceOf(buf.trim());
-      if (p) { text += p; ctl.enqueue(enc.encode(`data: ${JSON.stringify({ t: p })}\n\n`)); }
+      if (p != null) { text += p; ctl.enqueue(enc.encode(`data: ${JSON.stringify({ t: p })}\n\n`)); }
       ctl.enqueue(enc.encode(`event: done\ndata: ${JSON.stringify({ cached: false, model: model.id })}\n\n`));
       // Settle the booking at what the answer really took, and keep the answer.
       const real = neurons(model, tin, tokensOf(text));

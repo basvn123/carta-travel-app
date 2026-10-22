@@ -66,7 +66,11 @@ async function* serverStream(pack, signal) {
         if (!data) continue;
         if (ev.startsWith('event: done')) { yield { done: true, meta: JSON.parse(data.slice(5)) }; continue; }
         if (ev.startsWith('event: error')) throw Object.assign(new Error('stream'), { reason: 'error' });
-        try { yield { t: JSON.parse(data.slice(5)).t || '' }; } catch { /* a torn event */ }
+        try {
+          const t = JSON.parse(data.slice(5)).t;
+          // Never `|| ''`: a piece of 0 is a digit, not nothing.
+          yield { t: t == null ? '' : String(t) };
+        } catch { /* a torn event */ }
       }
     }
   } finally {

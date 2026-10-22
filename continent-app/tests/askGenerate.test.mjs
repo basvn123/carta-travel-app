@@ -9,12 +9,12 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import { splitSentences, verifyAnswer, cleanModelText } from "../src/lib/ask/verify.js";
-import { buildPack, wirePack, readWirePack, systemPrompt, userPrompt, MAX_NOTES, MAX_ANSWER_TOKENS } from "../src/lib/ask/context.js";
+import { buildPack, wirePack, readWirePack, systemPrompt, userPrompt, MAX_NOTES, MAX_ANSWER_TOKENS, PROMPT_VERSION } from "../src/lib/ask/context.js";
 import { writeAnswer } from "../src/lib/ask/generate.js";
 import { onRequestPost, CAP, MODELS, neurons, pieceOf } from "../functions/api/ask/answer.js";
 
 const PACK = {
-  v: 1, lang: "en", question: "porto or lisbon in may",
+  v: PROMPT_VERSION, lang: "en", question: "porto or lisbon in may",
   notes: [
     { n: 1, text: "Porto, Portugal; May: 19° by day, 60 mm rain; ~€101 est. a person a day; score 9.1 of 10" },
     { n: 2, text: "Lisbon, Portugal; May: 19° by day, 31 mm rain; ~€112 est. a person a day; score 9.1 of 10" },
@@ -34,7 +34,7 @@ test("sentences split on end marks, never inside 9.1 or est.", () => {
 });
 
 test("the checker drops invented figures, places and uncited sentences", () => {
-  const good = "Lisbon is drier in May, with 31 mm of rain against 60 mm in Porto [1][2]. Porto is the cheaper of the two at ~€101 est. a person a day [1].";
+  const good = "Lisbon gets 31 mm of rain in May and Porto 60 mm [1][2]. Porto costs ~€101 est. a person a day [1].";
   const r = verifyAnswer(good, PACK, KNOWN);
   assert.equal(r.kept.length, 2);
   assert.equal(r.withdrawn, false);
@@ -96,7 +96,7 @@ async function call(env, body = wirePack(PACK)) {
   await Promise.all(pending);
   return { res, text };
 }
-const ANSWER = "Lisbon is drier in May [2]. Porto is cheaper at ~€101 est. a person a day [1].";
+const ANSWER = "Lisbon gets 31 mm of rain in May [2]. Porto costs ~€101 est. a person a day [1].";
 
 test("no counter, no model: the Function refuses without the ASK binding", async () => {
   const calls = [];
@@ -130,7 +130,7 @@ test("answers, caches, settles the count, and stops at the cap", async () => {
 
 test("writeAnswer streams only checked sentences from the server", async () => {
   const calls = [];
-  const env = { AI: fakeAI("Lisbon is drier in May [2]. Seville is hotter [1]. Porto is cheaper at ~€101 est. a person a day [1]. Both score 9.1 [1][2].", calls), ASK: fakeKV() };
+  const env = { AI: fakeAI("Lisbon gets 31 mm of rain in May [2]. Seville is hot [1]. Porto costs ~€101 est. a person a day [1]. Both score 9.1 [1][2].", calls), ASK: fakeKV() };
   const realFetch = globalThis.fetch;
   globalThis.fetch = async (url, init) => onRequestPost({
     request: new Request(`https://carta.test${url}`, { ...init, headers: { ...init.headers, "cf-connecting-ip": "10.1.1.1" } }),
@@ -141,7 +141,7 @@ test("writeAnswer streams only checked sentences from the server", async () => {
     const r = await writeAnswer(PACK, { knownPlaces: KNOWN, onSentence: (s) => seen.push(s.text) });
     assert.equal(r.state, "done");
     assert.equal(r.backend, "server");
-    assert.deepEqual(seen, ["Lisbon is drier in May.", "Porto is cheaper at ~€101 est. a person a day.", "Both score 9.1."]);
+    assert.deepEqual(seen, ["Lisbon gets 31 mm of rain in May.", "Porto costs ~€101 est. a person a day.", "Both score 9.1."]);
   } finally { globalThis.fetch = realFetch; }
 });
 
@@ -204,4 +204,51 @@ test("every golden question's pack fits about 400 free answers a day", { skip: !
   }
   console.log(`ask packs: ${n} English golden questions, worst case ${worst} Neurons, mean ${(sum / n).toFixed(1)}, so ${Math.floor(CAP / (sum / n))} answers a day at the cap`);
   assert.ok(worst <= 25, `worst pack ${worst} Neurons`);
+});
+
+// T563: Workers AI may stream a lone digit as a number; a 0 must survive.
+test("a streamed 0 is a digit, not nothing", () => {
+  assert.equal(pieceOf('data: {"response":0}'), "0");
+  assert.equal(pieceOf('data: {"response":8}'), "8");
+  assert.equal(pieceOf('data: {"response":""}'), null);
+});
+
+// T563 v2: code writes the comparisons; a sentence that compares or judges
+// must cite one of them, and an estimate keeps its tilde.
+test("comparisons must cite a code-made comparison note; estimates keep their tilde", async () => {
+  const { comparisonNotes } = await import("../src/lib/ask/context.js");
+  const dest = (id, city, rain, high, score) => ({ id, city, country: "Portugal", rating: { score }, climate: { m: Array.from({ length: 12 }, () => [high, 10, rain, 80]), best: [6] } });
+  const facts = {
+    type: "compare", facets: { month: 5 },
+    picks: [
+      { id: "OPO", dest: dest("OPO", "Porto", 60, 19, 9.1), why: [{ k: "cost", dayEur: 101, est: true }] },
+      { id: "LIS", dest: dest("LIS", "Lisbon", 31, 19, 9.1), why: [{ k: "cost", dayEur: 112, est: true }] },
+    ],
+  };
+  const notes = comparisonNotes(facts);
+  assert.ok(notes.some((n) => /^Lisbon is drier in May: 31 mm of rain against 60 mm/.test(n)), notes.join(" | "));
+  assert.ok(notes.some((n) => /^Porto costs less a day than Lisbon/.test(n)));
+  assert.ok(notes.some((n) => /same score, 9\.1/.test(n)));
+  const pack = { question: "porto or lisbon", notes: [
+    { n: 1, kind: "fact", text: "Porto, Portugal; May: 60 mm rain; ~€101 est. a person a day; best months June" },
+    { n: 2, kind: "fact", text: "Lisbon, Portugal; May: 31 mm rain; ~€112 est. a person a day" },
+    { n: 3, kind: "cmp", text: notes.find((n) => n.startsWith("Lisbon is drier")) },
+  ] };
+  const r = verifyAnswer("Porto has less rain than Lisbon [1][2]. Lisbon is drier in May, 31 mm against 60 mm [3]. Porto costs €101 a day [1]. Porto costs ~€101 est. a day [1]. The best months for Porto are June [1].", pack, ["Porto", "Lisbon"]);
+  assert.deepEqual(r.failed.map((s) => s.why[0].split(":")[0]), ["compare", "estmark"]);
+  assert.equal(r.kept.length, 3);
+});
+
+test("budget verdicts and when notes are written by code", async () => {
+  const { comparisonNotes } = await import("../src/lib/ask/context.js");
+  const b = comparisonNotes({ type: "budget", query: { budget: 1500 }, picks: [
+    { dest: { city: "Barcelona" }, price: { group: "fits", total: 1148, core: 1044, est: false } },
+    { dest: { city: "San Sebastián" }, price: { group: "tight", total: 1542, core: 1402, est: true } },
+  ] });
+  assert.match(b[0], /^Barcelona fits within/);
+  assert.match(b[1], /^San Sebastián is over .* fits only by spending the buffer/);
+  const months = [[3, 82], [4, 69], [9, 81]].map(([high, rain], i) => ({ m: i + 1, high, rain }));
+  const w = comparisonNotes({ type: "when", when: { months }, picks: [{ dest: { city: "Hallstatt", crowding: { tier: 3 } } }] });
+  assert.match(w[0], /driest month is February, 69 mm/);
+  assert.match(w[1], /does not know its least crowded month/);
 });

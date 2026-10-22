@@ -13,7 +13,7 @@ import '../styles/75-ask.css';
 const AskSearchFull = React.lazy(() => import('./AskSearchFull.jsx'));
 
 export function AskSearch(props) {
-  const { t, mode = 'explore', inHeader = false, requestOpen = false } = props;
+  const { t, mode = 'explore', inHeader = false, requestOpen = false, askSeed = null } = props;
   const [wanted, setWanted] = React.useState(false);
   const placeholder = mode === 'plan' ? t('ask.placeholderPlan') : t('ask.placeholder');
   const door = (
@@ -24,7 +24,7 @@ export function AskSearch(props) {
       </Button>
     </div>
   );
-  if (!wanted && !requestOpen) return door;
+  if (!wanted && !requestOpen && !askSeed) return door;
   return (
     <React.Suspense fallback={door}>
       <AskSearchFull {...props} requestOpen={requestOpen || wanted === true} onOpenRequested={() => {

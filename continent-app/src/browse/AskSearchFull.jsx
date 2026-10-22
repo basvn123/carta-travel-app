@@ -14,6 +14,11 @@ import '../styles/75-ask.css';
 
 // One hybrid retriever for the app (T554): BM25 in the browser, /api/ask dense.
 const RETRIEVE = makeRetriever();
+// Answer on this device (T557) is off for travellers since T564: on a
+// laptop's integrated GPU Qwen 2.5 1.5B took 44 s and its answer failed the
+// check, while the server model answers in about 1.3 s. VITE_ASK_ON_DEVICE=1
+// turns the offer back on for a build or a dev server.
+const ON_DEVICE = import.meta.env?.VITE_ASK_ON_DEVICE === '1';
 
 /**
  * Ask Carta, the whole panel (T558; loaded on first use by AskSearch.jsx): one box where a traveller types any question ("1,500 for
@@ -41,7 +46,7 @@ const RETRIEVE = makeRetriever();
 export function AskSearchFull({
   t, lang, guided, rows, countries, labels, facets = {}, nearRow = null, budgetSteps = [40, 60, 80, 100, 130],
   onApply = null, onOpenPlace, onPlanTrip = null, price, mode = 'explore', inHeader = false,
-  requestOpen = false, onOpenRequested = null, retrieve = RETRIEVE, onDevice: deviceProp = undefined, favorites = null, onToggleFav = null,
+  requestOpen = false, onOpenRequested = null, askSeed = null, retrieve = RETRIEVE, onDevice: deviceProp = undefined, favorites = null, onToggleFav = null,
 }) {
   const [open, setOpen] = React.useState(false);
   React.useEffect(() => {
@@ -60,7 +65,7 @@ export function AskSearchFull({
   // loads later still, and only after the traveller asks for it.
   const [deviceMod, setDeviceMod] = React.useState(null);
   React.useEffect(() => {
-    if (!open || deviceMod || deviceProp !== undefined) return;
+    if (!ON_DEVICE || !open || deviceMod || deviceProp !== undefined) return;
     import('../lib/ask/onDevice.js').then((m) => setDeviceMod(m)).catch(() => {});
   }, [open, deviceMod, deviceProp]);
   const onDevice = deviceProp !== undefined ? deviceProp : deviceMod;
@@ -76,6 +81,14 @@ export function AskSearchFull({
     if (!ready) { setPending(q); return; }
     if (askState.ask(q)) requestAnimationFrame(() => answerRef.current?.focus({ preventScroll: false }));
   };
+  // A question handed over from Home (T566): asked once per hand-over; it
+  // waits for the vocabulary like any question asked too early.
+  React.useEffect(() => {
+    if (!askSeed?.text) return;
+    setOpen(true);
+    setText(askSeed.text);
+    setPending(askSeed.text);
+  }, [askSeed]);
   React.useEffect(() => {
     if (!ready || !pending) return;
     const q = pending;
@@ -272,7 +285,7 @@ function DeviceSwitch({ t, lang, device, onChange }) {
   );
 }
 
-/** A citation: the note it rests on, as a small figure after the sentence. */
+/** The notes a sentence rests on, as one small figure after it ("2, 3, 7"). */
 function Cite({ n }) {
   return <sup className="ask-cite">{n}</sup>;
 }
@@ -294,7 +307,7 @@ function WrittenAnswer({ t, written, device }) {
         <p className="ask-written-text">
           {sentences.map((s, i) => (
             <span key={i} className="ask-sentence">
-              {s.text}{s.cites.map((c) => <Cite key={c} n={c} />)}{' '}
+              {s.text}{s.cites.length > 0 && <Cite n={s.cites.join(', ')} />}{' '}
             </span>
           ))}
         </p>

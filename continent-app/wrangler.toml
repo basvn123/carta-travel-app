@@ -53,12 +53,12 @@ bucket_name = "carta-prerender"
 # on Workers AI, inside the free 10,000 Neurons a day. The Function refuses to
 # call a model unless the ASK namespace below is bound too, because ASK holds
 # the daily Neurons counter that stops it at 9,000; so this binding alone can
-# never cost money. To switch the written answer on, create the namespace once
-# and uncomment the block with its id:
+# never cost money. The namespace was created once with:
 #   npx wrangler kv namespace create carta-ask
 [ai]
 binding = "AI"
 
-# [[kv_namespaces]]
-# binding = "ASK"
-# id = "<the id the command above prints>"
+# Created 2026-10-22 (T565) as carta-ask.
+[[kv_namespaces]]
+binding = "ASK"
+id = "d3eaced3f4c140efb5ff49afd9fd66e4"

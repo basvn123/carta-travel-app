@@ -13,8 +13,12 @@
  * these notes say. Pure; no i18n beyond the facts answer it is given.
  */
 import { stripDashes } from '../format.js';
+import { formatMoney, formatEst } from '../money.js';
+import { monthRow } from './rank.js';
 
-export const PROMPT_VERSION = 1;
+// v2 (T563): comparisons and budget verdicts are written by code as notes
+// of their own, and the prompt forbids the model any it is not given.
+export const PROMPT_VERSION = 2;
 /** Caps that keep one answer inside the free Workers AI budget. */
 export const MAX_NOTES = 14;
 export const MAX_NOTE_CHARS = 300;
@@ -36,10 +40,12 @@ export function systemPrompt(lang) {
   return [
     `You write short travel answers for Carta in ${LANG_NAME[lang] || 'English'}.`,
     'Use only the numbered notes. Never add a fact, price, number, month or place that is not in them.',
-    'After every sentence write the note numbers it comes from, like [2] or [1][4].',
-    'Copy figures exactly as the notes write them, including "~" and "est.".',
+    'After every sentence, the first one too, write the note numbers it comes from, like [2] or [1][4].',
+    'Copy figures exactly as the notes write them, keeping "~" and "est." on every estimate.',
+    'Compare places, or call one better, best, cheaper, drier or warmer, only when a note says so, and cite that note.',
+    'Name places in the order the notes list them.',
     'Write 3 to 5 plain sentences: answer the question first, then the reasons. No lists, no headings, no dashes.',
-    'If the notes do not answer the question, say so in one sentence.',
+    'If the notes do not answer the question, say in one sentence that Carta does not know.',
     '/no_think',
   ].join('\n');
 }
@@ -60,6 +66,108 @@ function factNote(pick, shown) {
   return parts.join('; ');
 }
 
+const est = (eur, isEst, word) => (isEst ? formatEst(eur, word) : formatMoney(eur));
+const monthEn = (m) => new Intl.DateTimeFormat('en', { month: 'long' }).format(new Date(2026, m - 1, 15));
+const dayOf = (pick) => pick.why?.find((r) => r.k === 'cost') || null;
+
+/**
+ * The comparisons and verdicts a question needs, written by code (T563):
+ * the first live run showed a small model reverses a comparison it has to
+ * work out ("Porto has less rain" from 60 mm against 31 mm) and calls a
+ * place that is over budget a fit. Kept in English with the figures as the
+ * fact rows write them; the model answers in the reader's language.
+ */
+export function comparisonNotes(facts, { estWord = 'est.', monthName = monthEn } = {}) {
+  const out = [];
+  const picks = facts.picks || [];
+  if (facts.type === 'compare' && picks.length >= 2) {
+    const m = facts.facets?.month || null;
+    const pairs = [];
+    for (let i = 0; i < picks.length; i++) for (let j = i + 1; j < picks.length; j++) pairs.push([picks[i], picks[j]]);
+    for (const [a, b] of pairs.slice(0, 3)) {
+      const A = a.dest.city; const B = b.dest.city;
+      const ca = dayOf(a); const cb = dayOf(b);
+      if (ca && cb) {
+        out.push(ca.dayEur === cb.dayEur
+          ? `${A} and ${B} cost the same a person a day: ${est(ca.dayEur, ca.est, estWord)}.`
+          : ca.dayEur < cb.dayEur
+            ? `${A} costs less a day than ${B}: ${est(ca.dayEur, ca.est, estWord)} against ${est(cb.dayEur, cb.est, estWord)} a person.`
+            : `${B} costs less a day than ${A}: ${est(cb.dayEur, cb.est, estWord)} against ${est(ca.dayEur, ca.est, estWord)} a person.`);
+      }
+      const sa = a.dest.rating?.score; const sb = b.dest.rating?.score;
+      if (sa != null && sb != null) {
+        out.push(sa === sb ? `${A} and ${B} have the same score, ${sa.toFixed(1)}.`
+          : `${sa > sb ? A : B} has the higher score: ${Math.max(sa, sb).toFixed(1)} against ${Math.min(sa, sb).toFixed(1)}; the score rates the place overall, not one interest.`);
+      }
+      if (m) {
+        const ra = monthRow(a.dest, m); const rb = monthRow(b.dest, m);
+        if (ra && rb) {
+          const mn = monthName(m);
+          out.push(Math.round(ra.rain) === Math.round(rb.rain) ? `${A} and ${B} get the same rain in ${mn}, ${Math.round(ra.rain)} mm.`
+            : `${ra.rain < rb.rain ? A : B} is drier in ${mn}: ${Math.round(Math.min(ra.rain, rb.rain))} mm of rain against ${Math.round(Math.max(ra.rain, rb.rain))} mm.`);
+          out.push(Math.round(ra.high) === Math.round(rb.high) ? `${A} and ${B} are equally warm by day in ${mn}, ${Math.round(ra.high)}°.`
+            : `${ra.high > rb.high ? A : B} is warmer by day in ${mn}: ${Math.round(Math.max(ra.high, rb.high))}° against ${Math.round(Math.min(ra.high, rb.high))}°.`);
+        }
+      }
+    }
+  }
+  // A list answer (find, near, plan): Carta's own order, and the extremes
+  // among the places shown, so "the best match", "the cheapest" or "the
+  // driest" stand on a note instead of the model's arithmetic.
+  if ((facts.type === 'find' || facts.type === 'near' || facts.type === 'plan') && picks.length >= 2) {
+    const names = picks.slice(0, 6).map((p) => p.dest.city);
+    out.push(facts.type === 'plan'
+      ? `The route visits ${names.join(', then ')}.`
+      : `Carta lists these places best match first: ${names.join(', ')}.`);
+    const costed = picks.slice(0, 6).map((p) => [p, dayOf(p)]).filter(([, c]) => c);
+    if (costed.length >= 2) {
+      const lo = costed.reduce((x, y) => (y[1].dayEur < x[1].dayEur ? y : x));
+      const hi = costed.reduce((x, y) => (y[1].dayEur > x[1].dayEur ? y : x));
+      if (lo[1].dayEur !== hi[1].dayEur) {
+        out.push(`Of these, ${lo[0].dest.city} costs the least a day (${est(lo[1].dayEur, lo[1].est, estWord)} a person) and ${hi[0].dest.city} the most (${est(hi[1].dayEur, hi[1].est, estWord)}).`);
+      }
+    }
+    const scored = picks.slice(0, 6).filter((p) => p.dest.rating?.score != null);
+    if (scored.length >= 2) {
+      const top = scored.reduce((x, y) => (y.dest.rating.score > x.dest.rating.score ? y : x));
+      out.push(`Of these, ${top.dest.city} has the highest score, ${top.dest.rating.score.toFixed(1)}; the score rates the place overall, not one interest.`);
+    }
+    const m = facts.facets?.month || null;
+    if (m) {
+      const rows = picks.slice(0, 6).map((p) => [p, monthRow(p.dest, m)]).filter(([, r]) => r);
+      if (rows.length >= 2) {
+        const warm = rows.reduce((x, y) => (y[1].high > x[1].high ? y : x));
+        const dry = rows.reduce((x, y) => (y[1].rain < x[1].rain ? y : x));
+        out.push(`Of these in ${monthName(m)}, ${warm[0].dest.city} is the warmest by day (${Math.round(warm[1].high)}°) and ${dry[0].dest.city} the driest (${Math.round(dry[1].rain)} mm of rain).`);
+      }
+    }
+  }
+  if (facts.type === 'budget' && facts.query?.budget) {
+    const budget = formatMoney(facts.query.budget);
+    for (const p of picks.slice(0, 6)) {
+      const r = p.price;
+      if (!r) continue;
+      const total = est(r.total, r.est, estWord);
+      out.push(r.group === 'fits'
+        ? `${p.dest.city} fits within ${budget}: ${total} for the group.`
+        : `${p.dest.city} is over ${budget} at ${total}; it fits only by spending the buffer (${est(r.core, r.est, estWord)} without it).`);
+    }
+  }
+  if (facts.type === 'when' && picks[0]) {
+    const d = picks[0].dest;
+    const months = facts.when?.months || [];
+    if (months.length) {
+      const dry = months.reduce((x, y) => (y.rain < x.rain ? y : x));
+      const warm = months.reduce((x, y) => (y.high > x.high ? y : x));
+      out.push(`${d.city}'s driest month is ${monthName(dry.m)}, ${Math.round(dry.rain)} mm of rain; its warmest is ${monthName(warm.m)}, ${Math.round(warm.high)}° by day.`);
+    }
+    out.push(d.crowding?.tier
+      ? `Carta's crowd figure for ${d.city} covers the whole year, not single months, so Carta does not know its least crowded month.`
+      : `Carta has no crowd figure for ${d.city}.`);
+  }
+  return out;
+}
+
 /**
  * The pack for one question.
  *
@@ -78,13 +186,17 @@ export function buildPack({ question, lang, facts, answer, passages = [], labels
     notes.push({ kind: 'fact', destId: pick.id, text: cut(factNote(pick, shown), MAX_NOTE_CHARS) });
     places.set(pick.id, pick.dest);
   }
+  // The code-made comparisons go first, right under the lead, so a small
+  // model meets them before it starts weighing the fact rows itself.
+  const cmp = comparisonNotes(facts, { estWord: labels.estWord, monthName: labels.monthNameEn });
+  notes.unshift(...cmp.slice(0, 6).map((text) => ({ kind: 'cmp', destId: null, text: cut(text, MAX_NOTE_CHARS) })));
+  if (answer?.lead) notes.unshift({ kind: 'fact', destId: null, text: cut(answer.lead, MAX_NOTE_CHARS) });
   if (answer?.table && (facts.type === 'when' || facts.type === 'compare')) {
     for (const row of answer.table.rows.slice(0, 12)) {
-      if (notes.length >= 8) break;
+      if (notes.length >= 10) break;
       notes.push({ kind: 'fact', destId: null, text: cut(row.filter(Boolean).join(': '), MAX_NOTE_CHARS) });
     }
   }
-  if (answer?.lead) notes.unshift({ kind: 'fact', destId: null, text: cut(answer.lead, MAX_NOTE_CHARS) });
   for (const n of answer?.notes || []) if (notes.length < 9) notes.push({ kind: 'fact', destId: null, text: cut(n, MAX_NOTE_CHARS) });
   const pickIds = new Set(facts.picks.map((p) => p.id));
   for (const p of passages) {
@@ -94,7 +206,7 @@ export function buildPack({ question, lang, facts, answer, passages = [], labels
     if (p.destId && !pickIds.has(p.destId)) continue;
     notes.push({ kind: 'passage', destId: p.destId || null, pid: p.pid, source: p.source, text: cut(p.text, MAX_NOTE_CHARS) });
   }
-  const numbered = notes.map((n, i) => ({ ...n, n: i + 1 }));
+  const numbered = notes.slice(0, MAX_NOTES).map((n, i) => ({ ...n, n: i + 1 }));
   return {
     v: PROMPT_VERSION,
     lang,

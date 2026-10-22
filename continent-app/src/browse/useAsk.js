@@ -119,7 +119,7 @@ export function useAsk({ open, t, lang, guided, rows, countries, labels, price =
     if (!writeOn || !answer || !facts?.picks?.length) { setWritten(IDLE); return undefined; }
     const ctl = new AbortController();
     const monthsText = (d) => (d.climate?.best || []).map((m) => labels.month(m)).join(', ');
-    const pack = buildPack({ question, lang, facts, answer, passages: found?.passages || [], labels: { monthsText } });
+    const pack = buildPack({ question, lang, facts, answer, passages: found?.passages || [], labels: { monthsText, estWord: t('money.est') } });
     setWritten({ state: 'writing', sentences: [], backend: null });
     const shown = [];
     writeAnswer(pack, {
