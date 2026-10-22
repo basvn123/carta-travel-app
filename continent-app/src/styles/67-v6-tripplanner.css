@@ -493,6 +493,11 @@
   text-align: left;
   cursor: pointer;
 }
+/* The stop's bed CostRow (T538) sits flush in its line. Kept in the main
+   sheet, after the day row above (T567): css-routes cannot prove the two
+   never meet on one element, and in a route sheet this rule's place
+   against it would depend on load order. */
+.itin-bed-cost .costrow { padding: 0; }
 .itin-days-list .itin-day-row-meta small { font-size: var(--text-caption); color: var(--text-2); }
 .itin-days-list .itin-day-plan-btn { flex: none; }
 .itin-export-grid > .btn { justify-content: flex-start; min-width: 0; }

@@ -522,7 +522,6 @@
 .itin-extras { margin: var(--space-3) 0 0; }
 /* The stop's bed line is the kit CostRow (T538), beside its Find and Paid actions. */
 .itin-bed-cost { flex: 1 1 220px; min-width: 0; margin: 0; }
-.itin-bed-cost .costrow { padding: 0; }
 .itin-day-rows { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
 .itin-days-list .itin-day-row {
   display: flex;
