@@ -752,6 +752,18 @@ export function LinkIcon({ size = 15, className = '', labelled = false }) {
   );
 }
 
+/* Opens in a new tab on another site (T537): an arrow leaving a box. It
+   replaces the "↗" text glyph the links used to carry. */
+export function ExternalIcon({ size = 15, className = '', labelled = false }) {
+  return (
+    <Glyph size={size} className={className} labelled={labelled} label="Opens in a new tab">
+      <path d="M14 4h6v6" />
+      <path d="M20 4l-9 9" />
+      <path d="M18 14v4.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6H10" />
+    </Glyph>
+  );
+}
+
 /* Apple with a pulse line, deliberately unlike the filter/sliders glyphs,
    which it used to be mistaken for in the mobile toolbar. */
 export function LifestyleIcon({ size = 15, className = '', labelled = false }) {

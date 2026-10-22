@@ -101,10 +101,15 @@ export function legCost(leg, { paying = 1, bagKey = 'small' } = {}) {
   return { fare, bags, bagsKnown: bag.known, total: fare + bags, perSeat: leg.price + bag.eur };
 }
 
-/** A Google Flights search page for one route and day, to book from. */
-export function googleFlightsLink(from, to, date) {
-  const q = encodeURIComponent(`Flights from ${from} to ${to} on ${date} one way`);
-  return `https://www.google.com/travel/flights?q=${q}&curr=EUR`;
+/** The Google Flights search for a route: one way on `date`, or the return
+ *  when `back` is given, in the reader's language (T537: the app and the
+ *  sweep Worker used to build two different links, the Worker's always in
+ *  English, and a pair of flights linked to two one-way searches). */
+export function googleFlightsLink(from, to, date, { back = null, lang = 'en' } = {}) {
+  const what = back
+    ? `Flights from ${from} to ${to} on ${date} returning ${back}`
+    : `Flights from ${from} to ${to} on ${date} one way`;
+  return `https://www.google.com/travel/flights?q=${encodeURIComponent(what)}&curr=EUR&hl=${encodeURIComponent(lang)}`;
 }
 
 /**

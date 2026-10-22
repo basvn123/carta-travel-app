@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
-import { TrainIcon, BusIcon, CarIcon, SparkIcon } from '../components/Icons.jsx';
+import { TrainIcon, BusIcon, CarIcon, SparkIcon, ExternalIcon } from '../components/Icons.jsx';
 import { safeUrl, eurExact } from '../lib/format.js';
 import { formatEst } from '../lib/money.js';
 import { fmtDur } from './dayFormat.js';
@@ -136,7 +136,7 @@ export function DayTripTransport({ fromDest, toDest, opts, mode, onPickMode }) {
           )}
           <div className="trip-leg-links">
             {cur.links.map((l, j) => (
-              <a key={j} href={safeUrl(l.url)} target="_blank" rel="noreferrer">{l.label} ↗</a>
+              <a key={j} href={safeUrl(l.url)} target="_blank" rel="noreferrer">{l.label} <ExternalIcon size={12} className="link-ext" /></a>
             ))}
           </div>
         </>

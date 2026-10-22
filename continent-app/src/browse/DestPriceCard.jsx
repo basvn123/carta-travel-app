@@ -20,7 +20,7 @@ import { dayIncludesText } from '../lib/dayIncludes.js';
 import { matchProfile, PROFILE_LABEL_KEYS } from './LifestylePanel.jsx';
 import { roundTripNear, legCost } from '../lib/flights/flights.js';
 import { destAnchor } from '../lib/origins.js';
-import { FlightRow, AirlineMark } from '../components/flights/Flights.jsx';
+import { FlightRow, FlightLink, AirlineMark } from '../components/flights/Flights.jsx';
 import { homeFlightSetup, withEnds } from './cartaFlight.js';
 
 /**
@@ -291,7 +291,7 @@ export function DestPriceCard({
         </div>
       )}
 
-      <dl className="frr-lines dprice-lines" ref={linesRef}>
+      <dl className="frr-lines costrows dprice-lines" ref={linesRef}>
         {price.lines.map((line) => (
           <ReceiptLine key={line.key} t={t} line={{ key: line.key, label: label(line), eur: line.eur, est: line.est }} />
         ))}
@@ -310,9 +310,11 @@ export function DestPriceCard({
       {cartaLine && (
         <div className="dprice-flights">
           <FlightRow leg={withEnds(carta.out, home, airport)} cost={legCost(carta.out, { paying: people, bagKey })}
-            dir="out" bagKey={bagKey} wantedDate={from} />
+            dir="out" bagKey={bagKey} wantedDate={from} linkOut={false} />
           <FlightRow leg={withEnds(carta.back, airport, home)} cost={legCost(carta.back, { paying: people, bagKey })}
-            dir="back" bagKey={bagKey} wantedDate={to} />
+            dir="back" bagKey={bagKey} wantedDate={to} linkOut={false} />
+          {/* One way out to this return on Google Flights, not two one-way searches. */}
+          <FlightLink from={home} to={airport} date={carta.out?.date} back={carta.back?.date} />
         </div>
       )}
 

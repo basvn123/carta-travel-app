@@ -296,15 +296,6 @@
 .dprice-bar-food { background: var(--kind-village); }
 
 .dprice .dprice-lines { padding: 0; }
-.dprice .frr-line { padding: var(--space-2) 0; border-top-color: var(--border-soft); }
-.dprice .frr-line dd { font-size: var(--text-body); font-variant-numeric: tabular-nums; }
-.dprice .frr-label { font-size: var(--text-body); font-weight: 500; color: var(--text); }
-.dprice .frr-line.frr-sum { border-top: 2px solid var(--text); padding-top: var(--space-3); }
-.dprice .frr-sum .frr-label { font-weight: 600; }
-.dprice .frr-sum-eur { font-size: var(--text-title); font-weight: 700; }
-.dprice .frr-each { font-size: var(--text-caption); color: var(--text-2); }
-.dprice .frr-tilde,
-.dprice .frr-est { color: var(--text-2); }
 
 .dprice-foot {
   display: flex;

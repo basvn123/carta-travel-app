@@ -103,7 +103,7 @@ export function DestFood({ t, city, destination, isOpen, toggle, onOpenLifestyle
           </div>
         )}
 
-        <dl className="frr-lines dfood-lines" ref={linesRef}>
+        <dl className="frr-lines costrows dfood-lines" ref={linesRef}>
           {day.lines.map((l) => (
             <ReceiptLine key={l.key} t={t} line={{ key: l.key, label: t(l.label), eur: l.eur, est }} />
           ))}

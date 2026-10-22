@@ -1,6 +1,6 @@
 import React from 'react';
 import { useI18n } from '../i18n/index.jsx';
-import { Button, Card, IconButton } from '../components/ui/index.js';
+import { Button, Card, CostRow, CostSum, IconButton } from '../components/ui/index.js';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { CloseIcon } from '../components/Icons.jsx';
@@ -138,6 +138,10 @@ export function BudgetResults({ result, onOpen, onClear, monthName, pct, people 
  * named without an amount and never in the total, and a tinted foot with
  * what is left of the budget.
  */
+// The icon of a receipt line: getting there is drawn by the chosen way.
+const THERE_KIND = { fly: 'flight', car: 'drive', public: 'between' };
+const lineKind = (l) => (l.key === 'there' ? THERE_KIND[l.mode] || 'between' : l.key);
+
 function BudgetReceipt({ item, q, people, monthName, pct, money, onOpen, onClose }) {
   const { t } = useI18n();
   const r = budgetReceipt(item, q);
@@ -161,30 +165,23 @@ function BudgetReceipt({ item, q, people, monthName, pct, money, onOpen, onClose
         </div>
         <IconButton label={t('budget.close')} onClick={onClose}><CloseIcon size={16} /></IconButton>
       </header>
-      <dl className="bgs-lines">
+      <dl className="bgs-lines costrows">
         {r.lines.map((l) => (
-          <div className="bgs-line" key={l.key} data-line={l.key}>
-            <dt>{label(l)}</dt>
-            <dd>{money(l.eur, l.est)}</dd>
-          </div>
+          <CostRow key={l.key} kind={lineKind(l)} label={label(l)} value={money(l.eur, l.est)} />
         ))}
-        <div className="bgs-line bgs-sum">
-          <dt>{q.head === 1 ? t('budget.totalOne') : t('budget.total', { n: q.head })}</dt>
-          <dd>
-            <span className="bgs-sum-eur">{money(r.total, r.est)}</span>
-            <span className="bgs-sum-day">{t('budget.dayPp', { price: money(r.dayPp, r.est) })}</span>
-          </dd>
-        </div>
+        <CostSum
+          label={q.head === 1 ? t('budget.totalOne') : t('budget.total', { n: q.head })}
+          value={money(r.total, r.est)}
+          each={t('budget.dayPp', { price: money(r.dayPp, r.est) })}
+          live={false}
+        />
       </dl>
       {r.unpriced.length > 0 && (
         <>
           <h5 className="bgs-unpriced-title">{t('budget.notInTotal')}</h5>
-          <dl className="bgs-lines bgs-unpriced">
+          <dl className="bgs-lines bgs-unpriced costrows">
             {r.unpriced.map((u) => (
-              <div className="bgs-line" key={u.key} data-line={u.key}>
-                <dt>{unpricedLabel(u)}</dt>
-                <dd>{t('budget.notPriced')}</dd>
-              </div>
+              <CostRow key={u.key} kind={lineKind(u)} label={unpricedLabel(u)} tone="missing" value={t('budget.notPriced')} />
             ))}
           </dl>
         </>

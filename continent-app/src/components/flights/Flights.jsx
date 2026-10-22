@@ -20,6 +20,7 @@ import { useAirlines, airlineName } from '../../lib/flights/useAirlines.js';
 import { googleFlightsLink } from '../../lib/flights/flights.js';
 import { bagTier } from '../../lib/flights/bagFees.js';
 import { formatMoney } from '../../lib/money.js';
+import { ExternalIcon } from '../Icons.jsx';
 import '../../styles/74-flights.css';
 
 /** The airline's logo in a small white square, or its code when there is none. */
@@ -50,13 +51,35 @@ function checkedLabel(t, checked) {
 }
 
 /**
+ * The way out to the flight itself on Google Flights: a link with the icon
+ * that says it leaves Carta, and the note that the price may have moved
+ * since it was checked (carta-design: every external booking link says so,
+ * in words, not only in a tooltip). `back` makes it the return search, so a
+ * pair of flights gets one link, not two one-way ones.
+ */
+export function FlightLink({ from, to, date, back = null, className = '' }) {
+  const { t, lang } = useI18n();
+  if (!from || !to || !date) return null;
+  const href = googleFlightsLink(from, to, date, { back, lang });
+  return (
+    <div className={`flt-linkbar ${className}`.trim()}>
+      <a className="flt-link" href={href} target="_blank" rel="noopener noreferrer">
+        <span>{back ? t('flight.bookReturn') : t('flight.book')}</span>
+        <ExternalIcon size={14} />
+      </a>
+      <span className="flt-linknote">{t('flight.bookNote')}</span>
+    </div>
+  );
+}
+
+/**
  * One flight, one way. `leg` is a flights.js leg (date, price, airline, dep,
  * arr, stops, checked, source, from, to); `cost` its legCost() for the
  * party, `bagKey` the trip's bag. The figure is the fare a person, as Google
  * shows it; the party's total is in the trip's total. `state` 'loading' or
  * 'none' renders the row without a flight.
  */
-export function FlightRow({ leg, cost, dir = 'out', bagKey = 'small', state = null, wantedDate = null, children = null }) {
+export function FlightRow({ leg, cost, dir = 'out', bagKey = 'small', state = null, wantedDate = null, linkOut = true, children = null }) {
   const { t } = useI18n();
   const airlines = useAirlines();
   const label = dir === 'back' ? t('flight.back') : t('flight.out');
@@ -77,7 +100,6 @@ export function FlightRow({ leg, cost, dir = 'out', bagKey = 'small', state = nu
   // The header always shows the flight's own day, so a flight near (not on)
   // the wanted day is never read as that day's.
   const moved = Boolean(wantedDate && leg.date && wantedDate !== leg.date);
-  const link = leg.link || (leg.from && leg.to ? googleFlightsLink(leg.from, leg.to, leg.date) : null);
   return (
     <div className="flt-row">
       <AirlineMark code={leg.airline} />
@@ -101,10 +123,8 @@ export function FlightRow({ leg, cost, dir = 'out', bagKey = 'small', state = nu
       )}
       <div className="flt-foot">
         <span>{checkedLabel(t, leg.checked)}</span>
-        {link && (
-          <a href={link} target="_blank" rel="noopener noreferrer" title={t('flight.bookNote')}>{t('flight.book')}</a>
-        )}
       </div>
+      {linkOut && <FlightLink from={leg.from} to={leg.to} date={leg.date} className="flt-row-link" />}
       {cost && !cost.bagsKnown && <div className="flt-note">{t('flight.bagsExtra')}</div>}
       {children}
     </div>

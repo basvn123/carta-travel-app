@@ -290,6 +290,82 @@
 .money-est { font-size: 0.85em; font-weight: 500; color: var(--text-3); }
 .money.is-missing { color: var(--text-3); font-weight: 500; }
 
+/* CostRow and CostSum (T537): the one breakdown line. An 18 px icon for what
+   the money buys, the label (14 px 500) with an optional caption under it,
+   the figure right aligned and tabular. Hairlines between lines; the sum
+   takes a 2 px ink rule and the title size. No other price row layout. */
+.costrows { margin: 0; padding: 0; }
+.costrow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: var(--space-3);
+  align-items: start;
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--border-soft);
+}
+.costrow:first-child { border-top: 0; }
+.costrow dt {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  min-width: 0;
+}
+.costrow-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  color: var(--text-2);
+}
+.costrow-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.costrow-label {
+  font-size: var(--text-body);
+  font-weight: 500;
+  line-height: var(--leading-ui);
+  color: var(--text);
+}
+.costrow-sub {
+  font-size: var(--text-caption);
+  line-height: var(--leading-ui);
+  color: var(--text-3);
+}
+.costrow dd {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  font-size: var(--text-body);
+  font-weight: 600;
+  line-height: var(--leading-ui);
+  color: var(--text);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.costrow-mark { display: inline-flex; }
+.costrow.is-missing dd { font-weight: 400; color: var(--text-2); }
+/* The traveller's own figure: the amount with a small "yours" chip. Shared
+   by the receipt rows and the planner's legs, beds and review. */
+.plan-line-yours { display: inline-flex; align-items: baseline; gap: var(--space-1); font-weight: 600; color: var(--text); }
+.costrow.is-yours dd small,
+.plan-line-yours small {
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+  font-size: var(--text-micro);
+  font-weight: 600;
+  color: var(--text-2);
+}
+/* The label sits on the big figure's baseline, not on the per-person line under it. */
+.costsum { border-top: 2px solid var(--text); align-items: baseline; }
+.costsum .costrow-label { font-weight: 600; }
+.costsum dd { flex-direction: column; align-items: flex-end; gap: 2px; }
+.costsum-fig { font-size: var(--text-title); font-weight: 700; line-height: var(--leading-tight); }
+/* The estimate word stays a caption beside the big figure, never title-sized. */
+.costsum-fig .money-est { font-size: var(--text-label); font-weight: 500; }
+.costsum-each { font-size: var(--text-caption); font-weight: 400; color: var(--text-2); }
+
 /* ---- Reduced motion ----------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   .icon-btn, .ui-chip-filter, .ui-chip-choice, .seg-item, .ui-tab, .ui-tab::after, .card,
@@ -399,4 +475,13 @@
 
 @media (prefers-reduced-motion: reduce) {
   .ui-switch-track, .ui-switch-thumb, .ui-tile { transition: none; }
+}
+
+/* The external-link mark after a link's words (T537): sits on the text's
+   midline, in the link's own colour, and never wraps away from its words. */
+.link-ext {
+  display: inline-block;
+  vertical-align: -1px;
+  margin-inline-start: 2px;
+  flex: none;
 }

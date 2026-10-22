@@ -1348,15 +1348,6 @@
 .plan-total-toggle:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
 .plan-chev { color: var(--text-2); transition: transform var(--dur-2) var(--ease-out); }
 .plan-chev.is-open { transform: rotate(180deg); }
-.plan-line {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  min-height: 36px;
-  border-bottom: 1px solid var(--border-soft);
-  font-size: var(--text-body);
-}
 .plan-line-add {
   min-height: var(--tap);
   padding: 0;
@@ -1854,7 +1845,6 @@
   }
 }
 .plan-input dd { margin: 0; font-size: var(--text-body); color: var(--text); text-align: right; }
-.plan-line dd { margin: 0; color: var(--text); font-variant-numeric: tabular-nums; text-align: right; }
 .wrev-fact dd { margin: 2px 0 0; display: flex; flex-direction: column; align-items: flex-start; gap: 0; font-size: var(--text-body); font-weight: 600; color: var(--text); }
 .itin-extras > div { display: flex; justify-content: space-between; min-height: 36px; align-items: center; border-bottom: 1px solid var(--border-soft); font-size: var(--text-body); }
 .itin-extras dd { margin: 0; }

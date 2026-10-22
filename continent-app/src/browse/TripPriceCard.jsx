@@ -2,7 +2,7 @@ import React, { useId, useMemo, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { useFirstRun } from '../lib/firstRunContext.js';
 import { readOwnFare, writeOwnFare, markFirstResultSeen } from '../lib/firstRun.js';
-import { Button, Money, Segmented } from '../components/ui/index.js';
+import { Button, CostRow, CostSum, Money, Segmented } from '../components/ui/index.js';
 import { Stepper } from '../components/FilterControls.jsx';
 import { FlightSheet } from '../components/FlightSheet.jsx';
 import { InfoDot } from '../components/InfoDot.jsx';
@@ -15,7 +15,7 @@ import { SLOTS, includedRows, lifestyleShares, tripPrice } from '../lib/tripPric
 import { IncludedList } from './ItemParts.jsx';
 import { ChevronDownIcon, ChevronRightIcon, DownloadIcon, PlusIcon } from '../components/Icons.jsx';
 import { legCost } from '../lib/flights/flights.js';
-import { FlightRow, AirlineMark } from '../components/flights/Flights.jsx';
+import { FlightRow, FlightLink, AirlineMark } from '../components/flights/Flights.jsx';
 import { homeFlightSetup, journeyAirports, bestRoundTrip, backDate, withEnds } from './cartaFlight.js';
 
 /**
@@ -52,6 +52,9 @@ const LINE_KEY = {
   transport: 'journey.bTransport',
   activities: 'journey.bActivities',
 };
+
+// The icon each breakdown line carries (CostRow's COST_ICON keys).
+const SLOT_KIND = { accommodation: 'bed', food: 'food', transport: 'between', activities: 'tickets' };
 
 const SLOT = '';
 /** A sentence with one money node in it, keeping the language's word order. */
@@ -207,23 +210,17 @@ export function TripPriceCard({
       )}
 
       {price?.total != null && (
-        <dl className="tprice-sum">
+        <dl className="tprice-sum costrows">
           {price.fare > 0 && (
-            <div className="tprice-line is-own">
-              <dt>{t('journey.yourTravel')}</dt>
-              <dd>{eur(price.fare)}</dd>
-            </div>
+            <CostRow kind="travel" tone="yours" label={t('journey.yourTravel')} value={eur(price.fare)} />
           )}
           {flight && (
-            <div className="tprice-line is-own">
-              <dt><AirlineMark code={flight.out.airline} size="sm" />{' '}{t('flight.flightLine')}</dt>
-              <dd><Money value={flight.total} precision="cents" /></dd>
-            </div>
+            <CostRow kind="flight" label={t('flight.flightLine')}
+              mark={<AirlineMark code={flight.out.airline} size="sm" />}
+              value={<Money value={flight.total} precision="cents" />} />
           )}
-          <div className="tprice-line is-total">
-            <dt>{t('receipt.total', { people: peopleText })}</dt>
-            <dd><Money value={price.total} est precision="cents" /></dd>
-          </div>
+          <CostSum label={t('receipt.total', { people: peopleText })}
+            value={<Money value={price.total} est precision="cents" />} live={false} />
         </dl>
       )}
 
@@ -231,10 +228,11 @@ export function TripPriceCard({
         <div className="tprice-flights">
           <FlightRow leg={withEnds(flight.out, fl.file?.from, flight.airport)}
             cost={legCost(flight.out, { paying: people, bagKey: fl.bagKey })}
-            dir="out" bagKey={fl.bagKey} wantedDate={fl.from} />
+            dir="out" bagKey={fl.bagKey} wantedDate={fl.from} linkOut={false} />
           <FlightRow leg={withEnds(flight.back, flight.airport, fl.file?.from)}
             cost={legCost(flight.back, { paying: people, bagKey: fl.bagKey })}
-            dir="back" bagKey={fl.bagKey} wantedDate={flightBack} />
+            dir="back" bagKey={fl.bagKey} wantedDate={flightBack} linkOut={false} />
+          <FlightLink from={fl.file?.from} to={flight.airport} date={flight.out?.date} back={flight.back?.date} />
         </div>
       )}
 
@@ -260,23 +258,27 @@ export function TripPriceCard({
             iconEnd={<ChevronDownIcon size={16} className={open ? 'tday-chev is-open' : 'tday-chev'} />}>
             {t('journey.seeBreakdown')}
           </Button>
-          <dl className="tprice-lines" id={`${uid}-lines`} hidden={!open}>
+          <dl className="tprice-lines costrows" id={`${uid}-lines`} hidden={!open}>
             {SLOTS.map((slot) => {
               const row = budget.breakdown[slot];
               const v = price.rows[slot];
               if (!row || v == null) return null;
               return (
-                <div key={slot} className="tprice-line">
-                  <dt>
-                    {t(LINE_KEY[slot])}
-                    {row.note && (
-                      <InfoDot title={t(LINE_KEY[slot])}>
-                        <p className="infodot-text">{row.note}</p>
-                      </InfoDot>
-                    )}
-                  </dt>
-                  <dd><Money value={v} est /></dd>
-                </div>
+                <CostRow
+                  key={slot}
+                  kind={SLOT_KIND[slot]}
+                  label={(
+                    <>
+                      {t(LINE_KEY[slot])}
+                      {row.note && (
+                        <InfoDot title={t(LINE_KEY[slot])}>
+                          <p className="infodot-text">{row.note}</p>
+                        </InfoDot>
+                      )}
+                    </>
+                  )}
+                  value={<Money value={v} est />}
+                />
               );
             })}
           </dl>

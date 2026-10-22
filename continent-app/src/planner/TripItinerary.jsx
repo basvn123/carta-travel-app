@@ -17,7 +17,7 @@ import { cityLabel } from '../lib/placeName.js';
 import { PlanTotal, PaidField } from './PlanTotal.jsx';
 import { scrollBehavior } from '../lib/motion.js';
 import { usePaywall } from '../hooks/usePaywall.jsx';
-import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon, MapPinIcon, RouteIcon, CalendarIcon, LinkIcon, ChevronDownIcon, CloseIcon, TicketIcon, LuggageIcon, PencilIcon } from '../components/Icons.jsx';
+import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon, MapPinIcon, RouteIcon, CalendarIcon, LinkIcon, ChevronDownIcon, CloseIcon, TicketIcon, LuggageIcon, PencilIcon, ExternalIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { TRAVEL_MODE_LABEL, legLinks, stayDatesLink } from '../lib/transportLinks.js';
 import { SheetShell } from '../browse/SheetShell.jsx';
@@ -230,7 +230,7 @@ function AnchorTransferLeg({ leg, from, to, onMode }) {
                 title={leg.recommended === m ? t('transfer.cartaPick') : undefined}
               >
                 <span><MIcon size={12} /> {t(meta?.labelKey || m)}{leg.recommended === m && <SparkIcon size={9} />}</span>
-                <b>{`${o.est ? '~' : ''}${eurExact(o.eur_total)}`}</b>
+                <b><Money value={o.eur_total} precision="cents" est={!!o.est} /></b>
                 <small>~{fmtHours(o.hours)}</small>
               </button>
             );
@@ -331,7 +331,7 @@ function ItinLeg({ leg, onMode }) {
                 title={leg.recommended === m ? t('trip.cartaPick') : undefined}
               >
                 <span><MIcon size={12} /> {t(MODE_LABEL_KEY[m])}{leg.recommended === m && !o.own && <SparkIcon size={9} />}</span>
-                <b>{o.own && !(o.eur_total > 0) ? '-' : `${!o.own && o.est ? '~' : ''}${eurExact(o.eur_total)}`}</b>
+                <b>{o.own && !(o.eur_total > 0) ? '-' : <Money value={o.eur_total} precision="cents" est={!o.own && !!o.est} />}</b>
                 <small>{o.own ? t('trip.legBooked') : `~${fmtHours(o.hours)}`}</small>
               </button>
             );
@@ -341,7 +341,7 @@ function ItinLeg({ leg, onMode }) {
       {open && chosen?.links?.length > 0 && (
         <div className="trip-leg-links itin-leg-links">
           {chosen.links.map((l, j) => (
-            <a key={j} href={safeUrl(l.url)} target="_blank" rel="noreferrer">{l.label} ↗</a>
+            <a key={j} href={safeUrl(l.url)} target="_blank" rel="noreferrer">{l.label} <ExternalIcon size={12} className="link-ext" /></a>
           ))}
           <p className="booking-note">{t('prov.bookingNote')}</p>
         </div>

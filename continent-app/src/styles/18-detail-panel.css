@@ -334,32 +334,10 @@
    this cost the receipt its second and third rows on a phone: one line and a
    total, with the rest hidden behind it. */
 
-
 /* The sum that closes the receipt. The emphatic figure moved to the price card
    at the top of the panel, so this is the arithmetic line the rows add up to:
    a rule above it, the label left, the figure right. It still sticks to the
    foot of the panel, so the number never scrolls away. */
-.cost-total-card {
-  margin-top: 0;
-  border: none;
-  border-top: 1px solid var(--ink);
-  border-radius: 0;
-  background: var(--paper);
-  padding: 12px 4px 6px;
-}
-.cost-total-label {
-  font-family: var(--ui);
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--ink);
-}
-.cost-total-label small {
-  font-family: var(--mono);
-  font-size: 10.5px;
-  letter-spacing: 0.02em;
-  color: var(--ink-mute);
-  margin-left: 7px;
-}
 
 /* ─── Lifestyle: filter-bar entry point + unit rates ─── */
 .lifestyle-pill {
@@ -374,7 +352,6 @@
   color: var(--ink-mute);
   margin-top: 1px;
 }
-
 
 /* ─── Bigger Home shortcut on mobile (overrides the 19px rule above) ─── */
 @media (max-width: 768px) {
@@ -989,7 +966,6 @@
 /* Structured label/value rows inside the ⓘ popovers (stay, on the ground,
    local rates). One fact per line, label column fixed, easy to scan. */
 
-
 /* Lifestyle panel: one merged Eating & drinking section with the cadence
    toggle in its header row; consistent section rhythm. */
 .lifestyle-section-head {
@@ -1132,8 +1108,6 @@
 /* A leg that demands over an hour on foot gets an honest warning. */
 .day-timeline-longwalk { color: var(--warn-ink); font-size: var(--text-micro); }
 
-
-
 /* "Let Carta plan this city" (replaces the ambiguous Shape-my-day chip) */
 .day-carta-btn {
   display: inline-flex;
@@ -1265,7 +1239,6 @@
 .day-scenic-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .day-scenic-text b { font-size: 12.5px; color: var(--ink); }
 .day-scenic-text small { font-size: 11px; color: var(--ink-soft); }
-
 
 /* A walk pinned onto the day, shown with the plan itself. */
 .day-plan-walk-text b { font-size: 12.5px; color: var(--ink); }

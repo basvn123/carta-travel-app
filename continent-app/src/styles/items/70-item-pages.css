@@ -228,19 +228,8 @@
 
 .tprice-ls-btn .btn-icon { color: var(--text-2); }
 
-.tprice-line {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-3);
-  padding: var(--space-2) 0;
-  border-top: 1px solid var(--border-soft);
-  font-size: var(--text-body);
-}
 
-.tprice-line.is-total dt { color: var(--text); font-weight: 600; }
 
-.tprice-line.is-total dd { font-weight: 700; }
 
 .tprice-acts { display: grid; gap: var(--space-2); }
 

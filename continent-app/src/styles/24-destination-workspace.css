@@ -271,12 +271,7 @@
       because pointing at the cheapest option is the one thing this product
       exists to do; the priciest is the accent; the three in between are ink.
       A five-colour ramp would turn a measurement into a mood. ── */
-.cost-gauge {
-  display: inline-flex;
-  align-items: flex-end;
-  gap: 2px;
-  flex: none;
-}
+
 .cost-seg {
   display: block;
   width: 4px;
@@ -285,25 +280,6 @@
   background: var(--rule-soft);
 }
 .cost-seg.on { background: var(--ink-mute); }
-.cost-gauge.cheapest .cost-seg.on { background: var(--green); }
-.cost-gauge.dearest .cost-seg.on { background: var(--accent); }
-
-.xcard-cost {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  min-width: 0;
-}
-.xcard-cost-eur {
-  font-size: 13.5px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-}
-.xcard-cost-unit {
-  font-size: 11.5px;
-  color: var(--ink-mute);
-}
 
 /* ── The hover preview: what the card cannot fit, over the WHOLE card, not
       just the photo. The real name/rating/country underneath get fully
@@ -415,46 +391,10 @@
 .xcard-preview-row svg { flex: none; opacity: 0.75; }
 /* The same bed/food receipt the destination panel uses, retuned for a dark
    scrim and a fraction of the room: no provenance line, tighter rows. */
-.xcard-preview-cost {
-  margin: 0;
-  padding-top: 6px;
-  border-top: 1px solid rgba(255, 255, 255, 0.22);
-}
-.xcard-preview-cost .cost-receipt { margin-top: 0; }
-.xcard-preview-cost .cost-row {
-  grid-template-columns: minmax(0, 1fr) auto auto;
-  padding: 3px 0;
-  border-bottom-color: rgba(255, 255, 255, 0.16);
-}
-.xcard-preview-cost .cost-row-label {
-  min-width: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.78);
-}
-.xcard-preview-cost .cost-row-label svg { color: rgba(255, 255, 255, 0.6); }
-.xcard-preview-cost .cost-row-eur { font-size: 12px; color: var(--on-fill); }
-.xcard-preview-cost .cost-total {
-  grid-template-columns: minmax(0, 1fr) auto auto;
-  margin-top: 1px;
-  padding-top: 7px;
-  border-top: 2px solid rgba(255, 255, 255, 0.55);
-}
-.xcard-preview-cost .cost-total-label {
-  min-width: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  font-size: 11.5px;
-  color: rgba(255, 255, 255, 0.9);
-}
-.xcard-preview-cost .cost-total-band { color: rgba(255, 255, 255, 0.65); white-space: nowrap; }
+
 /* On the ink card the data green is 3.0:1; the cheapest word is paper and
    weight instead (T186). */
-.xcard-preview-cost .cost-total-band.cheapest { color: var(--paper); font-weight: 600; }
-.xcard-preview-cost .cost-total-eur { font-size: 19px; color: var(--on-fill); }
+
 @media (prefers-reduced-motion: reduce) {
   .xcard-preview, .xcard-preview > :where(.xpop-rank, .xpop-lead, .xpop-months, .xpop-row, .xpop-cost) { animation: none; }
 }
@@ -463,48 +403,7 @@
       in the product, so a reader who has read one can read them all. The
       footer is not a disclaimer, it is the reason to believe the numbers. ── */
 .cost-receipt { margin-top: 2px; }
-.cost-row {
-  display: grid;
-  grid-template-columns: 1fr auto auto;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--rule-soft);
-}
-.cost-row-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 12.5px;
-  color: var(--ink-soft);
-}
-.cost-row-label svg { flex: none; color: var(--ink-mute); }
-.cost-row-eur {
-  min-width: 46px;
-  text-align: right;
-  font-size: 13px;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-}
-.cost-total {
-  display: grid;
-  grid-template-columns: 1fr auto auto;
-  align-items: baseline;
-  gap: 12px;
-  margin-top: 1px;
-  padding-top: 11px;
-  border-top: 2px solid var(--ink);
-}
-.cost-total-label { font-size: 12.5px; font-weight: 600; color: var(--ink); }
-.cost-total-band { font-size: 11.5px; color: var(--ink-mute); }
-.cost-total-band.cheapest { color: var(--green); font-weight: 600; }
-.cost-total-band.dearest { color: var(--accent); font-weight: 600; }
-.cost-total-eur {
-  font-size: 23px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-}
+
 /* ── Panel: the locator map. maplibre-gl.css loads lazily and lands after
       this file, so the pin's transform lives on an INNER element: maplibre
       rewrites the marker root's inline transform on every frame. ── */
@@ -931,7 +830,7 @@
   }
   .xcard-foot { gap: 8px; margin-top: 7px; padding-top: 7px; }
   .rate-part { grid-template-columns: 108px 1fr 28px; }
-  .cost-total-eur { font-size: 21px; }
+
   /* A narrow card is a short card: the name, the country and the receipt
      are what a hover cannot afford to lose, so the description and the
      sights/stay/season facts drop first rather than force a wrap that
@@ -943,7 +842,7 @@
   .xcard-preview { justify-content: center; padding: 32px 11px 10px; gap: 8px; }
   .xcard-preview-lead, .xcard-preview-row { display: none; }
   .xcard-preview-name { font-size: 15px; }
-  .xcard-preview-cost .cost-total-band { display: none; }
+
 }
 
 /* Phone: the four sorts still share one full-width row, so they trade

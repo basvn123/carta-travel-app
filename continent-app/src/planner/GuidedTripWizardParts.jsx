@@ -6,7 +6,7 @@ import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { cityImage, flagUrl, isoToFlag, cityTier, cityInsight } from '../lib/tripGuide.js';
 import { knownForFacts } from '../lib/knownFor.js';
 import { haversineKm } from '../lib/runtime_pricing.js';
-import { eur } from '../lib/format.js';
+import { formatEst } from '../lib/money.js';
 
 // Presentational pieces of the guided trip wizard (a nights helper + the city
 // row and its bits), lifted out of GuidedTripWizard. Prop-driven, no closure.
@@ -84,7 +84,7 @@ export function StayRow({ id, dest, nights, onNights, anchorDest, isAnchor, comp
             {dest.rating?.hidden_gem && <HiddenGemTag />}
             {nightlyEur != null && (
               <span className="guide-stay-price" title={t('wizard.perNightGroupTitle')}>
-                {t('wizard.perNight', { price: eur(nightlyEur) })}
+                {t('wizard.perNight', { price: formatEst(nightlyEur, t('money.est')) })}
               </span>
             )}
             <button

@@ -21,6 +21,7 @@ import {
 } from './deviceTripStore.js';
 import { CheapTipsSection } from './CheapTipsSection.jsx';
 import { fmtHours, eurExact } from '../lib/format.js';
+import { formatApprox, formatEst } from '../lib/money.js';
 import { fmtDate, laterISO, useToday, planningHorizon } from '../lib/dates.js';
 import { fetchDrivingRoute } from '../lib/routing.js';
 import { useTripPlanner } from '../hooks/useTripPlanner.js';
@@ -31,7 +32,7 @@ import { usePaywall } from '../hooks/usePaywall.jsx';
 import { fetchTripPlans } from '../auth/tripPlanStorage.js';
 import { useI18n } from '../i18n/index.jsx';
 import { loadAssignments, TRIP_DRAFT_PLAN_ID } from './dayPlanStore.js';
-import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BulbIcon, InfoIcon, CloseIcon, ChevronDownIcon } from '../components/Icons.jsx';
+import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BulbIcon, InfoIcon, CloseIcon, ChevronDownIcon, ExternalIcon } from '../components/Icons.jsx';
 import { IconButton, Money, Chip, ChipGroup } from '../components/ui/index.js';
 import { Stepper as KitStepper } from '../components/FilterControls.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
@@ -179,7 +180,7 @@ function LegRow({ leg, onMode }) {
           ? (chosen.eur_total > 0
             ? t('trip.legBookedSummary', { mode: t(MODE_META[leg.mode].label), price: eurExact(chosen.eur_total) })
             : `${t(MODE_META[leg.mode].label)}, ${t('trip.legBookedNoPrice')}`)
-          : t('trip.legSummary', { mode: t(MODE_META[leg.mode].label), km: leg.road_km, price: `~${eurExact(chosen.eur_pp)}`, hours: fmtHours(chosen.hours) })}
+          : t('trip.legSummary', { mode: t(MODE_META[leg.mode].label), km: leg.road_km, price: legEst ? formatApprox(chosen.eur_pp, { precision: 'cents' }) : eurExact(chosen.eur_pp), hours: fmtHours(chosen.hours) })}
         {leg.long_haul && !chosen.own ? `, ${t('trip.longLeg')}` : ''}
         {!chosen.own && legEst && (
           <span className="fare-prov"><span className="fare-prov-est" title={t('prov.estTitle')}>{t('prov.est')}</span></span>
@@ -197,7 +198,7 @@ function LegRow({ leg, onMode }) {
                 title={leg.recommended === m ? t('trip.cartaPick') : undefined}
               >
                 <span><ModeIcon mode={m} /> {t(MODE_META[m].label)}{leg.recommended === m && !o.own && <span className="guide-reco-mark"><SparkIcon size={10} /></span>}</span>
-                <b>{o.own && !(o.eur_total > 0) ? '-' : t('trip.perPersonShort', { price: `${!o.own && o.est ? '~' : ''}${eurExact(o.eur_pp)}` })}</b>
+                <b>{o.own && !(o.eur_total > 0) ? '-' : t('trip.perPersonShort', { price: !o.own && o.est ? formatEst(o.eur_pp, t('money.est'), { precision: 'cents' }) : eurExact(o.eur_pp) })}</b>
                 <small>{o.own ? t('trip.legBooked') : `~${fmtHours(o.hours)}`}</small>
               </button>
             ))}
@@ -205,7 +206,7 @@ function LegRow({ leg, onMode }) {
           {chosen.note && <p className="trip-leg-note">{chosen.note}</p>}
           <div className="trip-leg-links">
             {chosen.links.map((l, j) => (
-              <a key={j} href={l.url} target="_blank" rel="noreferrer">{l.label} ↗</a>
+              <a key={j} href={l.url} target="_blank" rel="noreferrer">{l.label} <ExternalIcon size={12} className="link-ext" /></a>
             ))}
           </div>
           {!chosen.own && <p className="trip-leg-disclaimer">{t('trip.legDisclaimer')}</p>}

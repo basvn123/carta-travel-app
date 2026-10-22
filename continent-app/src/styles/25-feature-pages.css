@@ -1398,7 +1398,6 @@
 .xcard-role { font-weight: 600; }
 .xcard-hours { display: inline-flex; align-items: center; gap: 3px; color: var(--ink-mute); }
 .xcard-car { display: inline-flex; color: var(--ink-mute); }
-.xcard-cost { margin-left: auto; }
 
 /* the verdict ribbon: filled for the top tier, outlined for a detour */
 

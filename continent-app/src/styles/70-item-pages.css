@@ -657,8 +657,6 @@
 }
 .tprice-ls-say .money { color: var(--text); font-weight: 600; }
 .tprice-sum, .tprice-lines { display: grid; gap: 0; margin: 0; }
-.tprice-line dt { display: inline-flex; align-items: center; color: var(--text-2); }
-.tprice-line dd { margin: 0; color: var(--text); font-variant-numeric: tabular-nums; text-align: right; }
 .tprice-toggle { justify-self: start; margin-left: calc(-1 * var(--space-2)); }
 .tprice .iinc { margin: 0; }
 .tday-chev { transition: transform var(--dur-2) var(--ease-out); }
@@ -759,7 +757,6 @@
 /* Loading. */
 /* The sticky column clears the section rail (T431; the item maps too). */
 .tprice-fig-n .money-est { font-size: var(--text-body); font-weight: 400; color: var(--text-2); }
-.tprice-line .money-est { font-size: var(--text-caption); color: var(--text-2); }
 /* The back control keeps its whole label (T431: "Beach weeks" was cut to
    "Beach w"); the bar title gives way instead. */
 .ipage-bar .ipage-back { flex: none; max-width: 60%; }

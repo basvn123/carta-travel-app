@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ExternalIcon } from './Icons.jsx';
 import { flagUrl, isoToFlag } from '../lib/tripGuide.js';
 import { fmtMonths } from '../lib/dates.js';
 import { stripDashes as cleanDash, safeUrl } from '../lib/format.js';
@@ -34,7 +35,7 @@ function Flag({ iso2, className = 'cintel-flag' }) {
 function LinkOut({ href, children }) {
   const url = safeUrl(href);
   if (!url) return <span>{children}</span>;
-  return <a href={url} target="_blank" rel="noreferrer" className="cintel-link">{children} ↗</a>;
+  return <a href={url} target="_blank" rel="noreferrer" className="cintel-link">{children} <ExternalIcon size={12} className="link-ext" /></a>;
 }
 
 /** One icon-led line inside an intel row. `tone` = 'warn' tints the icon rust. */

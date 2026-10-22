@@ -75,14 +75,14 @@
 /* ── The card ── */
 .frr-card {
   overflow: hidden;
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
 }
 .frr-head {
   padding: var(--space-3) var(--space-4);
-  background: var(--paper-dim);
-  border-bottom: 1px solid var(--rule-soft);
+  background: var(--surface-sunken);
+  border-bottom: 1px solid var(--border-soft);
 }
 /* A head with one trailing control (the landing page's "Open {city}"):
    the place and the control on one row, the stay under both. */
@@ -96,83 +96,19 @@
 .frr-head-row > .btn { flex: 0 0 auto; }
 .frr-title {
   margin: 0;
-  font-family: var(--display);
-  font-size: 15px;
+  font-size: var(--text-lead);
   font-weight: 600;
-  line-height: 1.2;
-  color: var(--ink);
+  line-height: var(--leading-tight);
+  color: var(--text);
 }
 .frr-sub {
-  margin: 4px 0 0;
-  font-size: 12px;
-  color: var(--ink-soft);
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-caption);
+  color: var(--text-2);
 }
 
-.frr-lines { margin: 0; padding: 0 var(--space-4); }
-.frr-line {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: var(--space-3);
-  align-items: baseline;
-  padding: var(--space-3) 0;
-  border-top: 1px solid var(--rule-soft);
-}
-.frr-line:first-child { border-top: 0; }
-.frr-line dt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.frr-line dd {
-  margin: 0;
-  font-size: 15px;
-  font-weight: 500;
-  text-align: right;
-  white-space: nowrap;
-}
-.frr-label { font-size: 14px; font-weight: 600; }
-.frr-prov {
-  font-size: 12px;
-  line-height: 1.4;
-  color: var(--ink-soft);
-}
-.frr-prov.mono { font-size: 12px; }
-/* The arithmetic and its provenance words on one row, wrapping as words. */
-.frr-prov-pair {
-  display: flex;
-  flex-wrap: wrap;
-  column-gap: var(--space-2);
-}
-.frr-tilde { color: var(--ink-soft); }
-.frr-est {
-  text-decoration: none;
-  font-family: var(--ui);
-  font-size: 11px;
-  color: var(--ink-soft);
-}
-.frr-sr {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
-/* The sum: a 2px ink rule above, the figure at 34px. */
-.frr-line.frr-sum {
-  border-top: 2px solid var(--ink);
-  align-items: end;
-}
-.frr-sum dd { display: flex; flex-direction: column; align-items: flex-end; }
-.frr-sum-eur {
-  font-size: 34px;
-  font-weight: 500;
-  line-height: 1.1;
-}
-.frr-sum-eur .frr-est { font-size: 12px; }
-.frr-each {
-  margin-top: 2px;
-  font-size: 12px;
-  font-weight: 400;
-  color: var(--ink-soft);
-}
+/* The lines and the sum are CostRow and CostSum (T537, 04-ui.css). */
+.frr-lines { padding: 0 var(--space-4); }
 
 /* Repricing: since T392 each figure that changed settles in place through
    settleFigure() (lib/figureChange.js, called from ReceiptCard), so this
@@ -181,10 +117,10 @@
 .frr-foot {
   margin: 0;
   padding: var(--space-3) var(--space-4);
-  background: var(--accent-bg);
-  font-size: 13px;
-  line-height: 1.45;
-  color: var(--ink);
+  background: var(--action-tint);
+  font-size: var(--text-label);
+  line-height: var(--leading-body);
+  color: var(--text);
 }
 
 /* ── After the card ── */
@@ -297,8 +233,5 @@
   .frr-strip { grid-template-columns: 1fr 1fr; }
   .frr-strip .frr-cell:nth-child(-n+2) { border-bottom: 1px solid var(--rule-soft); }
   .frr-strip .frr-cell:nth-child(3) { border-left: 0; }
-}
-@media (max-width: 420px) {
-  .frr-sum-eur { font-size: 30px; }
 }
 

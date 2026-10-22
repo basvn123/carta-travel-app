@@ -89,19 +89,13 @@
 }
 /* The search clear is the house close control: CloseIcon in a --tap box. */
 
-
 /* --- 5 and 8. The price on the card, with its pedigree word -------------
    Line 1: name, score, then the day cost; line 2: where, what size, and the
    gauge. On a two-up phone card and in the split list the figure takes its
    own line under the name. */
 /* The name keeps at least about half the line; when the name, the score
    and the figure cannot share it, the figure wraps under them. */
-.explore-shell .xcard-cost-level {
-  font-family: var(--ui);
-  font-size: 12px;
-  font-weight: 400;
-  color: var(--ink-mute);
-}
+
 /* The label box was a fixed 62 px for two lines; the figure may now wrap to
    a line of its own, so the box grows with it instead of clipping it. */
 
@@ -113,9 +107,6 @@
 }
 
 /* Rail cards carry the day cost too. */
-.explore-shell .railcard-body .xcard-cost { gap: var(--space-1); margin: 2px 0 0; flex-wrap: wrap; }
-.explore-shell .railcard-body .xcard-cost-eur { font-family: var(--mono); font-size: 13px; }
-.explore-shell .railcard-body .cost-gauge { margin-left: auto; }
 
 /* On touch the info control is the door to the preview and its compact
    receipt (there is no hover there): a --tap box under the star, its disc
@@ -262,10 +253,7 @@
 /* The compact receipt on paper: hairlines, figures right in --mono. */
 .explore-shell .xpop-cost { padding-top: var(--space-2); border-top: 1px solid var(--rule-soft); }
 .explore-shell .xpop-cost .cost-receipt { margin-top: 0; }
-.explore-shell .xpop-cost .cost-row { padding: 3px 0; }
-.explore-shell .xpop-cost .cost-row-label { font-size: 12px; color: var(--ink-soft); }
-.explore-shell .xpop-cost .cost-row-eur { font-size: 13px; color: var(--ink); }
-.explore-shell .xpop-cost .cost-total-eur { font-size: 15px; color: var(--ink); }
+
 /* The cost bar (carta-design "The cost bar"): bed then food, the ink ramp,
    8 px, 1 px --paper between segments, no figures on it. */
 .xcost-bar {
@@ -327,8 +315,7 @@
 /* The gauge in ink, the cheapest band green as good news in data; the
    accent never marks a price band (explore N7). */
 .explore-shell .cost-seg.on { background: var(--ink-soft); }
-.explore-shell .cost-gauge.cheapest .cost-seg.on { background: var(--green); }
-.explore-shell .cost-gauge.dearest .cost-seg.on { background: var(--ink); }
+
 /* Counts beside a label are the house count chip. */
 .explore-shell .places-filter-btn .filter-tray-badge {
   background: var(--paper-dim);
@@ -425,7 +412,6 @@
 /* T411: the cut chips reach the tap floor on touch wherever they are drawn
    (the quality floor measured 34 px), and the country page's facts stand
    apart by the gap, not by middots (row T404-d). */
-
 
 /* ==========================================================================
    T427 (roadmap 1.2, the owner's Explore review of 2026-10-13): full width,

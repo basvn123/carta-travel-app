@@ -33,13 +33,9 @@
 .dfood-seg.is-area { background: var(--kind-area); }
 
 .dfood .dfood-lines { padding: 0; }
-.dfood .frr-line { padding: var(--space-2) 0; border-top-color: var(--border-soft); }
-.dfood .frr-label { font-size: var(--text-body); font-weight: 400; color: var(--text); }
-.dfood .frr-line dd { font-size: var(--text-body); font-variant-numeric: tabular-nums; }
-.dfood .frr-sum .frr-label { font-weight: 600; }
 /* The page has one headline day figure, the price card's; this sum is a
    part of it and stays at row-title size so the two never compete. */
-.dfood .frr-sum-eur { font-size: var(--text-lead); font-weight: 600; }
+.dfood .costsum-fig { font-size: var(--text-lead); font-weight: 600; }
 
 /* What things cost: label over value, two across on a phone, four from a
    wide column; hairlines above each row of cells, no card, no colour. */

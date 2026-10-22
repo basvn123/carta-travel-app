@@ -1,6 +1,7 @@
 import React from 'react';
 import { eurExact } from '../lib/format.js';
-import { formatEst } from '../lib/money.js';
+import { formatEst, formatApprox, formatMoney } from '../lib/money.js';
+import { CostRow, CostSum } from './ui/CostRow.jsx';
 import { settleFigure } from '../lib/figureChange.js';
 import { CostBar } from '../browse/CostBar.jsx';
 
@@ -51,60 +52,61 @@ import { CostBar } from '../browse/CostBar.jsx';
  */
 
 /** A figure, with the tilde and the est. tag when it stands in for a
- *  measurement. The tag carries its meaning as text, never colour alone. */
-export function ReceiptFigure({ eur, est, t }) {
+ *  measurement, set exactly as <Money est> sets it (T537: one estimate
+ *  notation, "~€87.00 est."; the receipt used to draw its own tilde span and
+ *  an 11 px abbr beside the kit's mark on the same card). The tag carries its
+ *  meaning as text, never colour alone. `precision` is cents on a receipt,
+ *  whole on the budget search (owner, 1.8). */
+export function ReceiptFigure({ eur, est, t, precision = 'cents' }) {
+  if (!est) return <span className="money">{formatMoney(eur, { precision })}</span>;
   return (
-    <>
-      {est && <span className="frr-tilde" aria-hidden="true">~</span>}
-      {eurExact(eur)}
-      {est && (
-        <abbr className="frr-est" title={t('prov.estTitle')}>
-          <span aria-hidden="true">{` ${t('prov.est')}`}</span>
-          <span className="frr-sr">{` ${t('prov.estTitle')}`}</span>
-        </abbr>
-      )}
-    </>
+    <span className="money is-est">
+      {formatApprox(eur, { precision })}
+      <abbr className="money-est" title={t('prov.estTitle')}>
+        <span aria-hidden="true">{` ${t('prov.est')}`}</span>
+        <span className="sr-only">{` ${t('prov.estTitle')}`}</span>
+      </abbr>
+    </span>
   );
 }
 
-/** One receipt line: the label, its provenance rows and the figure. Exported
- *  so a single line can illustrate a claim elsewhere on the same page set
- *  exactly as the receipt sets it (DIRECTION.md rule landing R8). */
-export function ReceiptLine({ line, t }) {
+/** A provenance row as one caption: plain words, or the arithmetic with the
+ *  words that say where its figure came from. */
+function provText(p) {
+  if (typeof p === 'string') return p;
+  return [p.mono, p.text].filter(Boolean).join(' ');
+}
+
+/** One receipt line: the icon for what it buys, the label, its provenance as
+ *  a caption and the figure. Exported so a single line can illustrate a
+ *  claim elsewhere on the same page set exactly as the receipt sets it
+ *  (DIRECTION.md rule landing R8). `line.kind` picks the icon (CostRow's
+ *  COST_ICON), else the key does. */
+export function ReceiptLine({ line, t, precision = 'cents' }) {
+  const sub = (line.prov || []).map(provText).filter(Boolean).join(', ') || null;
   return (
-    <div className="frr-line" data-line={line.key}>
-      <dt>
-        <span className="frr-label">{line.label}</span>
-        {(line.prov || []).map((p, i) => {
-          if (typeof p === 'string') return <span className="frr-prov" key={i}>{p}</span>;
-          // The arithmetic in mono and, on the same row, the words that
-          // say where its figure came from.
-          return (
-            <span className="frr-prov frr-prov-pair" key={i}>
-              <span className="mono">{p.mono}</span>
-              {p.text && <span>{p.text}</span>}
-            </span>
-          );
-        })}
-      </dt>
-      <dd className="mono" data-eur={line.eur} data-key={line.key}><ReceiptFigure eur={line.eur} est={line.est} t={t} /></dd>
-    </div>
+    <CostRow
+      kind={line.kind || line.key}
+      label={line.label}
+      sub={sub}
+      value={<span data-eur={line.eur} data-key={line.key}><ReceiptFigure eur={line.eur} est={line.est} t={t} precision={precision} /></span>}
+    />
   );
 }
 
 /** The sum line. `live` is false where the line illustrates a claim, so a
  *  screen reader hears a reprice once, from the receipt itself. */
-export function ReceiptSum({ sumLabel, total, est, each = null, eachText, live = true, t }) {
+export function ReceiptSum({ sumLabel, total, est, each = null, eachText, live = true, t, precision = 'cents' }) {
+  const eachFig = each != null && eachText
+    ? eachText(est ? formatEst(each, t('money.est'), { precision }) : formatMoney(each, { precision }))
+    : null;
   return (
-    <div className="frr-line frr-sum">
-      <dt><span className="frr-label">{sumLabel}</span></dt>
-      <dd className="mono" aria-live={live ? 'polite' : undefined}>
-        <span className="frr-sum-eur" data-eur={total} data-key="sum"><ReceiptFigure eur={total} est={est} t={t} /></span>
-        {each != null && eachText && (
-          <span className="frr-each">{eachText(est ? formatEst(each, t('money.est'), { precision: 'cents' }) : eurExact(each))}</span>
-        )}
-      </dd>
-    </div>
+    <CostSum
+      label={sumLabel}
+      live={live}
+      value={<span className="frr-sum-eur" data-eur={total} data-key="sum"><ReceiptFigure eur={total} est={est} t={t} precision={precision} /></span>}
+      each={eachFig}
+    />
   );
 }
 
@@ -159,7 +161,7 @@ export function ReceiptCard({
       {segments.length > 1 && (
         <div className="frr-bar"><CostBar t={t} segments={segments} /></div>
       )}
-      <dl className="frr-lines" ref={linesRef}>
+      <dl className="frr-lines costrows" ref={linesRef}>
         {lines.map((line) => <ReceiptLine line={line} t={t} key={line.key} />)}
         <ReceiptSum sumLabel={sumLabel} total={total} est={est} each={each} eachText={eachText} t={t} />
       </dl>

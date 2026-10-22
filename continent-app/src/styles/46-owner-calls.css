@@ -39,7 +39,7 @@
 
 /* The compact receipt on an Explore card says, per figure, whether it was
    measured in the city or is a country-level one (T098-b, owner call). */
-.cost-row-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+
 .cost-level {
   flex: none;
   font-size: 10.5px;

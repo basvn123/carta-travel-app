@@ -14,6 +14,7 @@
     "mark main figs"
     "mark bags bags"
     "foot foot foot"
+    "link link link"
     "note note note";
   column-gap: var(--space-3);
   row-gap: var(--space-1);
@@ -87,14 +88,37 @@
   font-size: var(--text-caption);
   color: var(--text-3);
 }
-.flt-foot a {
+/* The way out to Google Flights (T537): the link and its icon in the action
+   brown (it acts), a full 44 px target, and the "prices may have changed"
+   note as a visible caption beside it. */
+.flt-linkbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0 var(--space-3);
+}
+.flt-row-link { grid-area: link; }
+.flt-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--tap);
   color: var(--action);
+  font-size: var(--text-label);
   font-weight: 600;
   text-decoration: underline;
+  text-decoration-thickness: 1px;
   text-underline-offset: 3px;
-  /* a 44 px target without growing the line */
-  padding: var(--space-3) 0;
-  margin: calc(-1 * var(--space-3)) 0;
+  transition: color var(--dur-1) var(--ease-out);
+}
+@media (hover: hover) {
+  .flt-link:hover { color: var(--action-hover); }
+}
+.flt-link:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
+.flt-linknote { font-size: var(--text-caption); color: var(--text-3); }
+@media (prefers-reduced-motion: reduce) {
+  .flt-link { transition: none; }
 }
 .flt-note { grid-area: note; font-size: var(--text-caption); color: var(--text-3); }
 
@@ -152,6 +176,4 @@
 .tleg-flight .flt-hours { padding-top: var(--space-2); }
 /* The airline mark inside a receipt line's label. */
 .dprice .flt-mark,
-.tprice .flt-mark,
-.plan-line .flt-mark,
-.xcost .flt-mark { vertical-align: middle; margin-right: var(--space-2); }
+.tprice .flt-mark { vertical-align: middle; margin-right: var(--space-2); }

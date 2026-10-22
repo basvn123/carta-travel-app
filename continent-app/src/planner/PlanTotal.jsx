@@ -1,7 +1,7 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { useSettings } from '../components/SettingsLine.jsx';
-import { Button, Money } from '../components/ui/index.js';
+import { Button, CostRow, Money } from '../components/ui/index.js';
 import { PartyEditor } from './PartyEditor.jsx';
 import { partyText } from '../lib/party.js';
 import { useSettledFigure } from '../lib/figureChange.js';
@@ -48,20 +48,13 @@ function LineValue({ line, lang, t, onAddFare }) {
   }
   // Google Flights' fare (T518): a measured price, not Carta's estimate, so
   // it carries no tilde; the airline's mark says whose flight it is.
-  if (line.kind === 'flight') {
-    return (
-      <span className="plan-line-yours plan-line-flight">
-        <AirlineMark code={line.leg?.airline} size="sm" />
-        <Money value={line.eur} precision="cents" />
-      </span>
-    );
-  }
+  if (line.kind === 'flight') return <Money value={line.eur} precision="cents" />;
   if (line.kind === 'yours') {
     return (
-      <span className="plan-line-yours">
-        {formatMoney(line.eur, { precision: 'cents', locale: lang })}
+      <>
         <small>{t('plan.yours')}</small>
-      </span>
+        {formatMoney(line.eur, { precision: 'cents', locale: lang })}
+      </>
     );
   }
   return <Money value={line.eur} est precision="cents" />;
@@ -170,12 +163,16 @@ export function PlanTotal({
             {t('plan.whatsIn')}
           </Button>
           <div id={`${uid}-lines`} hidden={!open}>
-            <dl className="plan-lines">
+            <dl className="plan-lines costrows">
               {lines.map((l) => (
-                <div key={l.key} className={`plan-line is-${l.kind}`}>
-                  <dt>{t(LINE_KEY[l.key])}</dt>
-                  <dd><LineValue line={l} lang={lang} t={t} onAddFare={onAddFare} /></dd>
-                </div>
+                <CostRow
+                  key={l.key}
+                  kind={l.key}
+                  label={t(LINE_KEY[l.key])}
+                  tone={l.kind === 'missing' ? 'missing' : l.kind === 'yours' ? 'yours' : null}
+                  mark={l.kind === 'flight' && l.leg?.airline ? <AirlineMark code={l.leg.airline} size="sm" /> : null}
+                  value={<LineValue line={l} lang={lang} t={t} onAddFare={onAddFare} />}
+                />
               ))}
             </dl>
             {ready.of > 0 && (

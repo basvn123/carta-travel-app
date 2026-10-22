@@ -265,7 +265,6 @@
 .plan-total-empty { margin: 0; font-size: var(--text-body); color: var(--text-2); }
 .plan-total-inputs { margin: 0; display: flex; flex-direction: column; }
 .plan-lines { margin: 0 0 var(--space-3); display: flex; flex-direction: column; }
-.plan-line-yours { display: inline-flex; align-items: baseline; gap: var(--space-1); font-weight: 600; color: var(--text); }
 .plan-line-out { font-size: var(--text-caption); color: var(--text-3); }
 .plan-ready {
   display: flex;
@@ -962,7 +961,6 @@
 }
 .plan-input dt { font-size: var(--text-label); color: var(--text-2); }
 .plan-total-more { border-top: 1px solid var(--border-soft); }
-.plan-line dt { color: var(--text-2); }
 .plan-paid { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .plan-paid.is-set .plan-paid-input { border-color: var(--select-border); background: var(--select-bg); }
 .plan-paid-input::placeholder { color: var(--text-3); }

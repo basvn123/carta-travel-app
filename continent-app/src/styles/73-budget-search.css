@@ -140,38 +140,12 @@
 .bgs-receipt-title { margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); }
 .bgs-receipt-sub { margin: 2px 0 0; font-size: var(--text-label); color: var(--text-2); }
 .bgs-lines { margin: 0; padding: 0 var(--space-4); }
-.bgs-line {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: var(--space-3);
-  align-items: baseline;
-  padding: var(--space-3) 0;
-  border-top: 1px solid var(--border-soft);
-  font-size: var(--text-body);
-}
-.bgs-line:first-child { border-top: 0; }
-.bgs-line dt { color: var(--text); min-width: 0; }
-.bgs-line dd {
-  margin: 0;
-  text-align: right;
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
-  font-weight: 500;
-  color: var(--text);
-}
-.bgs-line.bgs-sum { border-top: 2px solid var(--text); align-items: end; }
-.bgs-sum dt { font-weight: 600; }
-.bgs-sum dd { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
-.bgs-sum-eur { font-size: var(--text-title); font-weight: 600; }
-.bgs-sum-day { font-size: var(--text-caption); font-weight: 400; color: var(--text-2); }
 .bgs-unpriced-title {
   margin: var(--space-3) var(--space-4) 0;
   font-size: var(--text-caption);
   font-weight: 600;
   color: var(--text-2);
 }
-.bgs-unpriced dt { color: var(--text-2); }
-.bgs-unpriced dd { font-weight: 400; color: var(--text-2); }
 .bgs-receipt-foot {
   margin: var(--space-2) 0 0;
   padding: var(--space-3) var(--space-4);

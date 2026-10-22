@@ -12,6 +12,7 @@ export { Card } from './Card.jsx';
 export { Field } from './Field.jsx';
 export { Icon } from './Icon.jsx';
 export { Money } from './Money.jsx';
+export { CostRow, CostSum } from './CostRow.jsx';
 export { Switch } from './Switch.jsx';
 export { Tile, TileGroup } from './Tile.jsx';
 export { StepRail, StepMini, StepList } from './StepRail.jsx';
