@@ -761,6 +761,40 @@ now splits it for the wire at dev/build time:
   bus{operators,url,note}, driving{side,vignette,tolls,warnings,car_recommended_for,car_not_needed_in},
   must_see:[{name,region,why}], insights:[..], food:[..], events:[..], sources:[..] } } }`
 
+## Ask Carta search wires (T551, added 2026-10-22)
+
+Written by `pipeline/ask_index_layer.py` (run_pipeline task `ask_index`) and,
+for `bm25.json`, `continent-app/scripts/build-ask-bm25.mjs`, into
+`public/search/ask/`. Read by the Ask Carta box in the browser (passages,
+BM25) and by the Pages Function `functions/api/ask.js` (model and vectors,
+through `functions/_lib/askEmbed.js` and `askScore.js`). Built data, not
+committed (`.gitignore`); `public/search` is in `R2_TIER`, so the files move
+to the data host with the other search wires when `VITE_DATA_BASE` is set.
+This is not part of the CI wire contract below, which pins `app_data.json`.
+
+| Wire | Shape |
+|---|---|
+| `search/ask/manifest.json` | `{version: 1, model, dims, built, sources: {<src>: {n, passages, i8, b1}}, model_files: {vocab, emb, scale}, bm25: {file, fields, boost, sources, n, bytes, gzip, options}}` |
+| `search/ask/passages-<src>.json` | `{source, rows: [[pid, destId or null, text, payload]]}`; pid `<src>:<id>`; text 1 to 3 sentences, at most 300 characters, no em or en dashes; payload `{cc, kind, m: [best months], tags, ref: {type, id}, name}`, for `lexicon` `{slot, value, lang}` |
+| `search/ask/vectors-<src>.i8` | n x D int8, row order of the passages: each row L2-normalised, x127, rounded |
+| `search/ask/vectors-<src>.b1` | n x D/8 bytes: sign bits, dimension i at byte i>>3, bit i&7 |
+| `search/ask/model/vocab.json` | `{version, type: "unigram", model, dims, unk_id, normalizer: [steps], metaspace: {replacement, prepend}, max_tokens, pieces: [...], scores: [...]}`: the pruned tokenizer |
+| `search/ask/model/emb.i8` | vocab x D int8, one row per piece: the row / its max absolute value x127 |
+| `search/ask/model/scale.f32` | vocab float32 little endian: each row's max absolute value |
+| `search/ask/bm25.json` | MiniSearch `toJSON()`; id = pid, fields name, tags, text, nothing stored; load with `ASK_BM25_OPTIONS` from `functions/_lib/askTerms.js` |
+| `search/ask/lexicon.json` | input, not output: `{version, phrases: [[phrase, lang, slot, value]]}` (T552), indexed as the `lexicon` source when present |
+
+Sources (one adapter each in `SOURCES`): `dest` (every destination: city,
+country, blurb or dossier intro, categories, Wikivoyage lead), `highlight`
+(dossier highlights with a fact, up to eight per destination), `sight`
+(activity items not already a highlight), `trail` (published trails),
+`journey` (the curated weeks), `beach`, `lake`, `peak` (the layer files),
+`country` (`country_insights.json`), `lexicon`. `ref.type` is what a hit
+opens: `dest` for dest, highlight and sight; otherwise `trail`, `journey`,
+`beach`, `lake`, `peak` or `country`. `destId` is the destination a hit
+belongs to or is nearest (same country, 25 km; 40 km for a journey), or
+null.
+
 ## Wire contract, checked in CI (T082)
 
 This table is the contract for the top level of `public/app_data.json`, and

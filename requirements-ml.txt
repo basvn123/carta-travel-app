@@ -8,3 +8,10 @@
 # (MIT licence), run on the CPU. Pulls in torch, transformers and tokenizers;
 # numpy and scikit-learn stay at the constraints.txt pins.
 sentence-transformers==3.3.1
+
+# pipeline/ask_index_layer.py (T551): the Ask Carta index, embedded with
+# minishlab/potion-multilingual-128M (MIT) through model2vec (MIT), a static
+# model on the CPU. model2vec pulls huggingface-hub 1.x, which breaks the
+# transformers sentence-transformers needs, so the hub stays below 1.0.
+model2vec==0.10.0
+huggingface-hub>=0.34,<1.0
