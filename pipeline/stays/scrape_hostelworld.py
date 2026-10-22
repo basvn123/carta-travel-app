@@ -3,8 +3,9 @@
 Same rules as scrape_booking.py: one plain browser tab, 3 to 6 s between
 pages, stop and resume tomorrow on a block, only medians are published.
 
-Per destination that has hostels (OSM supply or Xotelo pool) and per monthly
-probe date: the city list page for 1 guest. Each card gives "Dorms from" (per
+Per destination that has hostels (OSM supply or Xotelo pool) and per probe
+date (lean by default, T539: the January, March, May, August and October
+Tuesdays, about 6,000 pages; --full for all 12 months): the city list page for 1 guest. Each card gives "Dorms from" (per
 bed) and "Privates from" (the cheapest private for 1 guest; T530 checks
 whether Hostelworld shows it per person or per room, build_stays reads
 STATE/spike.json "hw_private_per_person").
@@ -28,6 +29,7 @@ from common import (JOURNAL_SCRAPE, STATE, blocked_until, journal, load_destinat
 from booking.page import close_overlays, decline_cookies  # noqa: E402
 from hostelworld.page import CARDS_JS, city_url, parse_card  # noqa: E402
 from price_xotelo import probe_day  # noqa: E402
+from scrape_booking import LEAN_MONTHS  # noqa: E402
 
 SOURCE = "hostelworld"
 CITY_MAP = STATE / "hostelworld_city.json"   # optional {dest_id: [city, country]}
@@ -66,6 +68,9 @@ async def run(a):
                 for k in range(1, 13):
                     day = probe_day(start, k)
                     if months and day.month not in months:
+                        continue
+                    # Lean (T539): the same five months as the Booking run.
+                    if not months and not a.full and day.month not in LEAN_MONTHS:
                         continue
                     task = f"{a.run}|{d['id']}|{day}"
                     if con.execute("select 1 from done where source=? and task=?",
@@ -114,6 +119,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--run", required=True)
     ap.add_argument("--only", default="")
+    ap.add_argument("--full", action="store_true", help="all 12 months (the pre-T539 plan)")
     ap.add_argument("--max-hours", type=float, default=3)
     ap.add_argument("--headed", action="store_true")
     ap.add_argument("--months", default="")

@@ -56,9 +56,31 @@ def test_probe_days_are_tuesdays_and_peaks_in_range():
         assert d.weekday() == 1 and abs(d.day - 15) <= 3
     assert easter(2027) == date(2027, 3, 28)
     assert all(timedelta(days=7) < p - start <= timedelta(days=365) for p in peak_days(start))
-    probes = probe_dates(start)
+    probes = probe_dates(start, full=True)
     assert len([p for p in probes if p[0] == "month"]) == 12
     assert len([p for p in probes if p[0] == "weekend"]) == 4
+
+
+def test_lean_plan_is_six_dates_and_skips_empty_towns():
+    from scrape_booking import bookable, LEAN_MONTHS
+    lean = probe_dates(date(2026, 10, 21))
+    assert len(lean) == 6
+    assert sorted(d.month for w, d in lean if w == "month") == sorted(LEAN_MONTHS)
+    assert [d.weekday() for w, d in lean if w == "weekend"] == [4]
+    assert bookable({"id": "X"}, {}) == (True, True)            # unknown: search it
+    assert bookable({"id": "X"}, {"X": {"hotel": 0, "hostel": 0}}) == (False, False)
+    assert bookable({"id": "X"}, {"X": {"hotel": 3, "hostel": 0}}) == (True, False)
+
+
+def test_fill_scales_the_fallback_to_the_measured_months():
+    measured = [0.8, None, 1.0, None, 1.2, None, None, 1.6, None, 1.0, None, None]
+    country = [0.5, 0.55, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 0.9, 0.7, 0.6, 0.6]
+    curve, flags = B.fill(measured, country)
+    assert flags.count(True) == 5
+    # The town sits about 1.55x the country curve; July follows that, so it
+    # lands near August's level, not at the country's raw 1.0.
+    assert curve[6] > curve[4] and curve[6] < curve[7]
+    assert curve[1] > curve[0] * 0.9
 
 
 def test_xotelo_helpers():

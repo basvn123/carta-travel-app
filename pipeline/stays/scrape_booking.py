@@ -17,10 +17,17 @@ How it behaves (and what it will not do):
 Per destination and probe date (see probe_dates): one popularity-ordered search
 (2 adults, 25 to 50 cards with price, star class and unit name) plus one hostel
 search for 1 adult (dorm bed price). On the first probe date only, a search per
-missing star class.
+star class that OSM says the town has but the first page did not show.
+
+Lean by default (T539): 6 probe dates (January, March, May, August and October
+Tuesdays, one May Friday), towns with nothing to book on OSM skipped, the hostel
+search only where OSM or the Xotelo pool shows a hostel. About 28,000 pages,
+some 55 hours nonstop. build_stays fills the other months from the curve the
+measured ones give, shaped by Eurostat's nights. --full keeps the 19 dates.
 
 Usage:
   python pipeline/stays/scrape_booking.py --run 2027-03 --max-hours 6
+  python pipeline/stays/scrape_booking.py --run 2027-03            (no cap)
   python pipeline/stays/scrape_booking.py --run 2027-03 --only FLR,PMI --headed
 """
 
@@ -44,16 +51,40 @@ SOURCE = "booking"
 DEST_MAP = STATE / "booking_dest.json"   # optional {dest_id: "search text"} overrides
 
 
-def probe_dates(start):
-    """19 probes: 12 monthly Tuesdays, 4 weekend Fridays (Feb, May, Aug, Nov),
-    the peak nights (14 Aug, 28 Dec, Easter Saturday)."""
-    out = [("month", probe_day(start, k)) for k in range(1, 13)]
-    for k in range(1, 13):
+LEAN_MONTHS = (1, 3, 5, 8, 10)     # low, shoulder, spring, high summer, autumn
+LEAN_WEEKEND = 5                  # one Friday, for the weekend factor
+
+
+def probe_dates(start, full=False):
+    """full: 19 probes, 12 monthly Tuesdays, 4 weekend Fridays (Feb, May, Aug,
+    Nov) and the peak nights (14 Aug, 28 Dec, Easter Saturday).
+    lean (default): 6 probes, the LEAN_MONTHS Tuesdays and one May Friday."""
+    months = range(1, 13)
+    out = [("month", probe_day(start, k)) for k in months]
+    if not full:
+        out = [p for p in out if p[1].month in LEAN_MONTHS]
+    for k in months:
         d = probe_day(start, k)
-        if d.month in (2, 5, 8, 11):
+        if d.month in ((2, 5, 8, 11) if full else (LEAN_WEEKEND,)):
             out.append(("weekend", d + timedelta(days=3)))
-    out += [("peak", d) for d in peak_days(start)]
+    if full:
+        out += [("peak", d) for d in peak_days(start)]
     return out
+
+
+def bookable(d, supply):
+    """(anything to book, hostels) from the OSM supply counts. A town missing
+    from the supply file is searched in full: unknown is not empty."""
+    s = supply.get(d["id"])
+    if s is None:
+        return True, True
+    return any(v for k, v in s.items()), bool(s.get("hostel"))
+
+
+def stars_seen(con, dest_id, day):
+    return {r[0] for r in con.execute(
+        "select distinct stars from obs where source=? and dest_id=? and chk_in=? and stars is not null",
+        (SOURCE, dest_id, day))}
 
 
 def search_text(d, overrides):
@@ -101,8 +132,11 @@ async def run(a):
     if only:
         dests = [d for d in dests if d["id"] in only]
     overrides = read_json(DEST_MAP, {}) or {}
+    supply = (read_json(STATE / "supply.json", {}) or {}).get("dests", {})
+    if not a.full:
+        dests = [d for d in dests if bookable(d, supply)[0] or d["id"] in overrides]
     start = date.fromisoformat(a.run + "-01")
-    probes = probe_dates(start)
+    probes = probe_dates(start, full=a.full)
     months = {int(m) for m in a.months.split(",") if m}
     if months:
         probes = [(w, d) for w, d in probes if w == "month" and d.month in months]
@@ -115,14 +149,22 @@ async def run(a):
         try:
             for d in dests:
                 ss = search_text(d, overrides)
+                _, hostels = bookable(d, supply)
+                sup = supply.get(d["id"])
                 for i, (what, day) in enumerate(probes):
                     out = (day + timedelta(days=1)).isoformat()
                     jobs = [("all", None, 2, None)]
-                    if what == "month":
+                    if what == "month" and (hostels or a.full):
                         jobs.append(("hostel", "hostel", 1, None))
                     if i == 0:
                         jobs += [(f"class{s}", "hotel", 2, s) for s in (2, 3, 4, 5)]
                     for name, kind, adults, stars in jobs:
+                        # A star search only when the town has that class (OSM)
+                        # and the popularity page did not already show one.
+                        if stars and not a.full and (
+                                (sup is not None and not sup.get(f"hotel{stars}"))
+                                or stars in stars_seen(con, d["id"], day.isoformat())):
+                            continue
                         task = f"{a.run}|{d['id']}|{day}|{name}"
                         if con.execute("select 1 from done where source=? and task=?",
                                        (SOURCE, task)).fetchone():
@@ -151,14 +193,16 @@ async def run(a):
         finally:
             await browser.close()
     left = sum(1 for d in dests for _ in probes) * 2
-    print(f"session: {pages} pages, {stored} prices; about {left} page slots in "
-          f"the full plan")
+    print(f"session: {pages} pages, {stored} prices; at most {left} page slots in "
+          f"this plan ({len(dests)} towns, {len(probes)} dates)")
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--run", required=True, help="run tag YYYY-MM, e.g. 2027-03")
     ap.add_argument("--only", default="")
+    ap.add_argument("--full", action="store_true",
+                    help="19 dates and every town (the pre-T539 plan)")
     ap.add_argument("--max-hours", type=float, default=6)
     ap.add_argument("--headed", action="store_true")
     ap.add_argument("--months", default="", help="spike: only these monthly probes, e.g. 2,8")

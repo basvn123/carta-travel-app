@@ -174,15 +174,23 @@ def normalise(curve):
 
 
 def fill(curve, *fallbacks):
-    """Fill gaps from fallbacks; returns (curve, measured flags)."""
+    """Fill gaps from fallbacks; returns (curve, measured flags).
+
+    A fallback is on its own scale (a country curve averages 1.0 over its own
+    year), so before it fills a gap it is scaled to the months already known:
+    the median of known / fallback over those months (T539). With the lean
+    scrape measuring 5 months, the other 7 then follow the fallback's shape at
+    the town's own level instead of jumping to the country's."""
     flags = [c is not None for c in curve]
     out = list(curve)
     for fb in fallbacks:
         if not fb:
             continue
+        both = [out[i] / fb[i] for i in range(12) if out[i] and fb[i]]
+        k = median(both) if both else 1.0
         for i in range(12):
             if out[i] is None and fb[i]:
-                out[i] = fb[i]
+                out[i] = fb[i] * k
     out = [c if c else 1.0 for c in out]
     mean = sum(out) / 12
     return [round(c / mean, 3) for c in out], flags
