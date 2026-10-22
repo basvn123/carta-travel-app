@@ -7,16 +7,6 @@
  * working step's dot, the latest turn's Plan this trip.
  */
 
-/* --- The door ----------------------------------------------------------- */
-.btn.ac-door { flex: none; }
-.btn.ac-door .btn-icon { color: var(--text-2); }
-.btn.ac-door[aria-expanded='true'] { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
-.btn.ac-door[aria-expanded='true'] .btn-icon { color: var(--select-ink); }
-.header-search-slot .btn.ac-door { min-height: 40px; margin-left: auto; }
-/* Phone: Ask Carta and Filters share the row in two equal halves. */
-.explore-filterbar .btn.ac-door.ac-in-bar,
-.explore-filterbar:has(.ac-door) .xfilters-btn { flex: 1 1 0; }
-
 /* --- The panel ---------------------------------------------------------- */
 .ac {
   position: fixed;
@@ -131,7 +121,9 @@
 /* --- The conversation ---------------------------------------------------- */
 .ac-turns { display: flex; flex-direction: column; gap: var(--space-6); margin: 0; padding: 0; list-style: none; }
 .ac-turn { display: flex; flex-direction: column; gap: var(--space-3); scroll-margin-top: var(--space-4); }
-.ac-q { display: flex; justify-content: flex-end; }
+.ac-q { display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-1); }
+/* A follow-up bound to the last place (T572) says so under the question. */
+.ac-about { font-size: var(--text-caption); line-height: var(--leading-ui); color: var(--text-2); }
 .ac-q p {
   max-width: 85%;
   margin: 0;
@@ -228,6 +220,9 @@
 .ac-route-arrow { color: var(--text-3); }
 .ac-trip-sub { font-size: var(--text-caption); line-height: var(--leading-ui); color: var(--text-2); }
 .ac-trip-sub .money { font-weight: 600; color: var(--text); }
+/* T576: the bed is tonight's price for these nights; said in words. */
+.ac-trip-live { display: flex; align-items: center; gap: var(--space-1); font-size: var(--text-caption); line-height: var(--leading-ui); color: var(--text-2); }
+.ac-trip-live::before { content: ''; flex: none; width: 6px; height: 6px; border-radius: var(--radius-pill); background: var(--status-success); }
 .ac-trip-marks { display: flex; flex: none; gap: var(--space-1); }
 .ac-trip-fig { display: flex; flex: none; flex-direction: column; align-items: flex-end; }
 .ac-trip-fig .money { font-size: var(--text-lead); font-weight: 600; color: var(--text); }
@@ -305,6 +300,24 @@
   border-top: 1px solid var(--border-soft);
   background: var(--surface);
 }
+/* T573: Explore's filters, offered: Ignore or Keep. */
+.ac-scope {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-3);
+  margin-bottom: var(--space-2);
+}
+.ac-scope-label {
+  flex: 1 1 140px;
+  min-width: 0;
+  margin: 0;
+  font-size: var(--text-label);
+  line-height: var(--leading-ui);
+  color: var(--text-2);
+}
+.ac-within { margin: 0; font-size: var(--text-caption); line-height: var(--leading-ui); color: var(--text-2); }
 .ac-field {
   display: flex;
   align-items: flex-end;

@@ -3,7 +3,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
-  KEY, MAX_CHATS, titleOf, loadChats, saveChats, upsertChat, removeChat, groupChats,
+  KEY, MAX_CHATS, titleOf, loadChats, saveChats, upsertChat, removeChat, groupChats, mergeChats,
 } from "../src/lib/ask/sessions.js";
 import { outsidePlace } from "../src/lib/ask/outside.js";
 
@@ -60,6 +60,9 @@ test("a destination outside Carta's Europe is named, a European one is not", () 
   assert.equal(outsidePlace("A week in Porto, cheapest way", { places: ["porto"], facets: {}, unknown: ["way"] }), null);
   assert.equal(outsidePlace("Warm in the cheapest way", { places: [], facets: {}, unknown: ["way"] }), null);
   assert.equal(outsidePlace("Warm in November", { places: [], facets: { month: 11 }, unknown: [] }), null);
+  // A verb after "to" is not a place (T572 end check).
+  assert.equal(outsidePlace("Where to stay there?", { places: [], facets: {}, unknown: ["stay"] }), null);
+  assert.equal(outsidePlace("Wat is er te doen in de buurt", { places: [], facets: {}, unknown: ["doen"] }), null);
 });
 
 test("warm in a month keeps the warm places and lets the month's best list go", async () => {
@@ -72,4 +75,51 @@ test("warm in a month keeps the warm places and lets the month's best list go", 
   const f = findFacts({ type: "find", facets: { warm: true, month: 11 }, unknown: [] }, { rows, byId, guided: null, today: new Date(2026, 9, 22) });
   assert.deepEqual(f.relaxed, ["month"]);
   assert.deepEqual(f.picks.map((p) => p.id).sort(), ["cyprus", "malta", "tenerife"]);
+});
+
+// T572: a follow-up that names no place is about the last answer's place.
+test("a follow-up that points back or asks nothing of its own binds to the last place", async () => {
+  const { bindFollowUp, pointsBack } = await import("../src/lib/ask/followup.js");
+  const prev = { id: "OPO", city: "Porto" };
+  const find = (facets = {}, unknown = []) => ({ type: "find", places: [], compare: [], facets, unknown });
+  // Points back, in four languages.
+  for (const q of ["Where to stay there?", "Wat is er daar te doen?", "Was kann man dort essen?", "Que faire là-bas ?"]) {
+    assert.ok(pointsBack(q), q);
+    const b = bindFollowUp(q, find({}, ["stay"]), prev);
+    assert.deepEqual([b.type, b.places, b.followOf, b.unknown], ["about", ["OPO"], "OPO", []], q);
+  }
+  // Asks nothing of its own: words the parser could not place.
+  assert.equal(bindFollowUp("What about food?", find({}, ["food"]), prev).followOf, "OPO");
+  // when and plan keep their type with the place.
+  assert.deepEqual(bindFollowUp("Plan 5 days there", { ...find(), type: "plan", budget: { days: 5 } }, prev).type, "plan");
+  // Its own search, a place of its own, a budget or no last place: untouched.
+  const warm = find({ warm: true, month: 11 });
+  assert.equal(bindFollowUp("Warm in November", warm, prev), warm);
+  const porto = { ...find(), type: "about", places: ["LIS"] };
+  assert.equal(bindFollowUp("And Lisbon?", porto, prev), porto);
+  const budget = { ...find(), type: "budget" };
+  assert.equal(bindFollowUp("1500 for two there", budget, prev), budget);
+  const q = find({}, ["stay"]);
+  assert.equal(bindFollowUp("Where to stay?", q, null), q);
+  // The French article is not "là".
+  assert.equal(pointsBack("Que faire à la plage"), false);
+});
+
+// T575: the device's chats and the account's, as one list.
+test("device and account chats merge: newer wins, tombstones delete, device-only chats go up", () => {
+  const row = (id, at, extra = {}) => ({ chat_id: id, title: id, turns: [{ q: id }], updated_at: new Date(at).toISOString(), deleted_at: null, ...extra });
+  const local = [chat("a", 500), chat("b", 100), chat("c", 300), chat("d", 900)];
+  const rows = [
+    row("a", 200),                                              // device newer: upload a
+    row("b", 400),                                              // account newer: take b
+    row("c", 250, { deleted_at: new Date(250).toISOString() }), // deleted, device changed after: keep and upload c
+    row("d", 100, { deleted_at: new Date(1000).toISOString() }),// deleted after the device's change: drop d
+    row("e", 600),                                              // account only: take e
+  ];
+  const { list, upload } = mergeChats(local, rows);
+  assert.deepEqual(list.map((c) => c.id), ["e", "a", "b", "c"]);
+  assert.equal(list.find((c) => c.id === "b").at, 400);
+  assert.deepEqual(upload.map((c) => c.id).sort(), ["a", "c"]);
+  // First sign-in: every device chat goes up.
+  assert.deepEqual(mergeChats([chat("x", 1), chat("y", 2)], []).upload.map((c) => c.id), ["x", "y"]);
 });

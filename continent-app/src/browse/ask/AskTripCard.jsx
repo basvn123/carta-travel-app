@@ -6,6 +6,9 @@ import { cheapestReturn, roundTripNear, legCost } from '../../lib/flights/flight
 import { destAnchor } from '../../lib/origins.js';
 import { fetchDestPois } from '../../lib/appData.js';
 import { RouteArrow } from './marks.jsx';
+import { loadLiveStay, useLiveStaysVersion } from '../../lib/liveStays.js';
+import { loadStays, useStaysVersion } from '../../lib/staysData.js';
+import { bedPrice } from '../../lib/stayPrice.js';
 
 /**
  * The trip around an answer's first place (T571): the flight there and back
@@ -17,7 +20,7 @@ import { RouteArrow } from './marks.jsx';
  *
  *   pick       the answer's first Pick ({ id, dest })
  *   month      the month the question named (1..12), else the settings dates
- *   trip       { origin, originName, flights, depart, back, party, destinations }
+ *   trip       { origin, originName, flights, depart, back, party, stayTier, destinations }
  *   primary    this is the latest turn, so Plan this trip is the primary
  */
 const THINGS = 3;
@@ -69,6 +72,30 @@ export function AskTripCard({ t, lang, pick, month = null, trip, primary, onOpen
     : null;
   const cost = dest.cost || {};
 
+  // T576: the bed for the trip's own nights (the flight's, else the
+  // traveller's dates), at tonight's prices where Carta can ask for them
+  // (/api/stays, T540): the same live reprice the place's own card uses.
+  const full = trip.destinations?.[id] || null;
+  const stayFrom = flight?.out.date || trip.depart || null;
+  const stayTo = flight?.back.date || trip.back || null;
+  const stayNights = stayFrom && stayTo
+    ? Math.max(1, Math.round((Date.parse(stayTo) - Date.parse(stayFrom)) / 86400000)) : 0;
+  const party = trip.party || 2;
+  const staysVersion = useStaysVersion();
+  const liveVersion = useLiveStaysVersion();
+  React.useEffect(() => { if (full?.iso2) loadStays(full.iso2); }, [full?.iso2]);
+  React.useEffect(() => {
+    if (stayFrom && stayNights) loadLiveStay(id, stayFrom, stayNights, party);
+  }, [id, stayFrom, stayNights, party, staysVersion]);
+  const bed = React.useMemo(
+    () => (full && stayNights
+      ? bedPrice({ dest: full, tier: trip.stayTier || 'home', adults: party, nights: stayNights, start: stayFrom })
+      : null),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- the versions say a stay or a live answer landed
+    [full, trip.stayTier, party, stayNights, stayFrom, staysVersion, liveVersion],
+  );
+  const liveBed = bed?.q === 'live' && bed.perPerson > 0 ? bed.perPerson / stayNights : null;
+
   return (
     <section className="ac-trip" aria-label={t('askChat.trip.title', { place: dest.city })}>
       <details className="ac-trip-sec ac-trip-flight">
@@ -108,11 +135,14 @@ export function AskTripCard({ t, lang, pick, month = null, trip, primary, onOpen
         <div className="ac-trip-route">
           <span className="ac-trip-h">{t('askChat.trip.stay')}</span>
           <span className="ac-trip-sub">
-            {cost.stayEur != null
-              ? <>{t('askChat.trip.bedFrom')} <Money value={cost.stayEur} est /> {t('askChat.trip.aNight')}</>
-              : t('askChat.trip.stayNone')}
+            {liveBed != null
+              ? <>{t('askChat.trip.bedFrom')} <Money value={liveBed} /> {t('askChat.trip.aNight')}</>
+              : cost.stayEur != null
+                ? <>{t('askChat.trip.bedFrom')} <Money value={cost.stayEur} est /> {t('askChat.trip.aNight')}</>
+                : t('askChat.trip.stayNone')}
             {cost.foodEur != null && <>, {t('askChat.trip.food')} <Money value={cost.foodEur} est /> {t('askChat.trip.aDay')}</>}
           </span>
+          {liveBed != null && <span className="ac-trip-live">{t('stay.live')}</span>}
         </div>
       </div>
 

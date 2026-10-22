@@ -1946,15 +1946,22 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T565-a | T565 | search/ask ships with every Pages deploy (45 MiB, largest file 8.9 MB, Pages caps a file at 25 MiB); a much larger index must shard or move behind R2 with a binding | next task | open |  |
 | T565-b | T565 | The preview carries this branch; production gets Ask only after the owner merges p11-ask-carta (app and root) and deploys main, with the index built in the main checkout first (T551-a) | user | open | 1 |
 | T568-a | T568 | carta-design says a placeholder shows a real example; the owner asked for none in the Ask Carta bar, so it reads "Type your question": record the exception in the skill or name the words | user | closed by T569 |  |
-| T568-b | T568 | The Plan start page (PlanAsk.jsx) keeps the old Ask trigger with an example placeholder; decide whether it takes the Explore bar | next task | open |  |
+| T568-b | T568 | The Plan start page (PlanAsk.jsx) keeps the old Ask trigger with an example placeholder; decide whether it takes the Explore bar | next task | closed by T574 |  |
 | T569-a | T569 | The dev server proxies /api/ask to the preview (branch p11-ask-carta); once production carries Ask (T565-b) point the default there or keep the preview current | next task | open |  |
-| T570-a | T570 | Ask Carta's chats live on this device only (localStorage); keeping them in the account, so they follow a traveller to a second device, is a decision about storing questions | user | open |  |
+| T570-a | T570 | Ask Carta's chats live on this device only (localStorage); keeping them in the account, so they follow a traveller to a second device, is a decision about storing questions | user | closed by T575 |  |
 | T570-b | T570 | "You're in Brussels (BRU)" in the chat is text; changing the origin there needs the settings line's origin picker to open from outside it | next task | open |  |
-| T570-c | T570 | The Ask Carta button is on Explore only; a global one (Plan, My trips, place pages) needs Explore's catalogue rows lifted to the app shell | next task | open |  |
-| T571-a | T571 | A chat follow-up is a new question: carry the last turn's place into a question that names none ("where to stay there?") | next task | open |  |
-| T571-b | T571 | The trip card's Where to stay is Carta's bed estimate; link the cheapest real stays once live stays (p11-live-stays-2) land | next task | open |  |
+| T570-c | T570 | The Ask Carta button is on Explore only; a global one (Plan, My trips, place pages) needs Explore's catalogue rows lifted to the app shell | next task | closed by T574 |  |
+| T571-a | T571 | A chat follow-up is a new question: carry the last turn's place into a question that names none ("where to stay there?") | next task | closed by T572 |  |
+| T571-b | T571 | The trip card's Where to stay is Carta's bed estimate; link the cheapest real stays once live stays (p11-live-stays-2) land | next task | closed by T576 |  |
 | T571-c | T571 | A month beyond the flight sweep shows the traveller's dates instead; a live /api/flights search for the asked month costs more Worker requests | user | open |  |
-| T571-d | T571 | Outside Europe the chat only links to Google Flights; whether Carta should cover any non-European destinations is the owner's call | user | open |  |
+| T571-d | T571 | Outside Europe the chat only links to Google Flights; whether Carta should cover any non-European destinations is the owner's call | user | closed by T572 (owner 2026-10-22: not now) |  |
 | T571-e | T571 | Marco de Canavezes shows a portrait of a man as its place photo (catalogue image QA) | next task | open |  |
 | T571-f | T571 | A written answer joined "with51" without a space; check the sentence join in generate/verify | next task | open |  |
 | T571-g | T571 | Pick the chat's next features from the report (thumbs, voice input, share a chat, save places to My trips, day plan in chat via plan-day, the local writer T564-a) | user | open |  |
+| T572-a | T572 | A month-only follow-up ("And in June?") is a new question, not bound to the last place; binding it needs a rule for when a month alone means the same place | next task | open |  |
+| T574-a | T574 | Only Explore makes room for the docked Ask Carta panel; on Plan and My trips it lies over the right edge, the planner's total bar included | next task | open |  |
+| T574-b | T574 | AskSearchFull.jsx's old panel is dead; move AskAnswer, WrittenAnswer, Receipt, AskTable and the on-device switch (T557) into browse/ask/ and retire it | next task | open |  |
+| T574-c | T574 | On a phone the Ask Carta doors are Explore and Plan's start page only; My trips and place pages have none | next task | open |  |
+| T575-a | T575 | Paste supabase/migrations/054_ask_chats.sql in the SQL editor (never db push), look for "ask chats self-check passed", then run node scripts/verify_live_policies.mjs; until then chats stay on the device | user | open | 1 |
+| T575-b | T575 | The privacy policy should say that, signed in, Ask Carta's questions and answers are kept in the account and appear in the export | user | open | 2 |
+| T576-a | T576 | Entire place, private room and dorm never get a live bed (Xotelo prices hotels and rooms only), so the owner's own Lifestyle sees the estimate; a live source for whole places is a product call | user | open |  |

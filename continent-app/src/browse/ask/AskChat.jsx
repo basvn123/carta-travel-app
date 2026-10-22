@@ -1,15 +1,17 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
-import { Button, IconButton } from '../../components/ui/index.js';
+import { Button, IconButton, Segmented } from '../../components/ui/index.js';
 import { ClockIcon, CloseIcon, PencilIcon, SparkIcon, TrashIcon, ArrowLeftIcon } from '../../components/Icons.jsx';
 import { useFocusTrap } from '../../hooks/useFocusTrap.js';
+import { useAuth } from '../../auth/AuthContext.jsx';
+import { fetchAskChats, upsertAskChat, deleteAskChat, missingTable } from '../../auth/askChatCloud.js';
 import { loadSearchIndex } from '../../lib/searchIndex.js';
 import { loadAskLexicon } from '../../lib/ask/data.js';
 import { buildAskVocab } from '../../lib/ask/intent.js';
 import { makeRetriever } from '../../lib/ask/retrieve.js';
 import { scrollBehavior } from '../../lib/motion.js';
 import {
-  loadChats, saveChats, upsertChat, removeChat, groupChats, newId, titleOf,
+  loadChats, saveChats, upsertChat, removeChat, groupChats, newId, titleOf, mergeChats,
 } from '../../lib/ask/sessions.js';
 import { AskTurn } from './AskTurn.jsx';
 import { CornerArrow, SendIcon } from './marks.jsx';
@@ -54,7 +56,7 @@ function YoureIn({ t, place }) {
 }
 
 export default function AskChat(props) {
-  const { t, lang, guided, rows, countries, labels, price, trip, seed, onClose, onOpenPlace, onPlanTrip, onApply, favorites, onToggleFav } = props;
+  const { t, lang, guided, rows, countries, labels, price, trip, seed, onClose, onOpenPlace, onPlanTrip, onApply, favorites, onToggleFav, filters = null } = props;
   const isPhone = useIsPhone();
   const panelRef = React.useRef(null);
   const listRef = React.useRef(null);
@@ -83,15 +85,68 @@ export default function AskChat(props) {
   const chatRef = React.useRef(null);
   const [view, setView] = React.useState('chat');
   const setChat = React.useCallback((next) => { chatRef.current = next; setChatState(next); }, []);
-  // Show a chat and keep it in the list on this device.
+  // T575: signed in, chats are kept in the account too. On open the
+  // device's and the account's merge (the first sign-in sends the device's
+  // up); a change goes up a moment after the turn settles; a missing table
+  // (054 not pasted) turns the cloud off for this visit, quietly.
+  const { user } = useAuth();
+  const userId = user?.id || null;
+  const cloud = React.useRef({ on: false, timers: new Map() });
+  const cloudFail = React.useCallback((err) => { if (missingTable(err)) cloud.current.on = false; }, []);
+  const sendUp = React.useCallback((c) => {
+    if (!cloud.current.on || !userId) return;
+    const timers = cloud.current.timers;
+    clearTimeout(timers.get(c.id)?.timer);
+    timers.set(c.id, {
+      chat: c,
+      timer: setTimeout(() => {
+        timers.delete(c.id);
+        if (cloud.current.on) upsertAskChat(userId, c).catch(cloudFail);
+      }, 1500),
+    });
+  }, [userId, cloudFail]);
+  React.useEffect(() => {
+    cloud.current.on = !!userId;
+    if (!userId) return undefined;
+    let live = true;
+    fetchAskChats(userId).then((rows) => {
+      if (!live) return;
+      const { list, upload } = mergeChats(loadChats(), rows);
+      saveChats(list);
+      setChats(list);
+      for (const c of upload) upsertAskChat(userId, c).catch(cloudFail);
+    }).catch(cloudFail);
+    const state = cloud.current;
+    // Closing the chat sends what is still waiting, rather than dropping it.
+    return () => {
+      live = false;
+      state.timers.forEach(({ chat: c, timer }) => {
+        clearTimeout(timer);
+        if (state.on) upsertAskChat(userId, c).catch(() => {});
+      });
+      state.timers.clear();
+    };
+  }, [userId, cloudFail]);
+
+  // Show a chat and keep it in the list on this device (and the account).
   const keep = React.useCallback((next) => {
     setChat(next);
     const out = upsertChat(loadChats(), next);
     saveChats(out);
     setChats(out);
-  }, [setChat]);
+    sendUp(next);
+  }, [setChat, sendUp]);
 
   const [text, setText] = React.useState('');
+  // T573: Explore's filters are offered, never assumed: a question asked
+  // with "Keep" answers within them and says so; "Ignore" (the default)
+  // asks all of Carta. The turn keeps which it was.
+  const filterLabels = filters?.labels || [];
+  const filterText = filterLabels.length
+    ? new Intl.ListFormat(lang, { type: 'conjunction' }).format(filterLabels) : '';
+  const [scope, setScope] = React.useState('all');
+  const scopeRef = React.useRef({ scope, filterText });
+  scopeRef.current = { scope: filterLabels.length ? scope : 'all', filterText };
   // The typed hint keeps running in a focused empty field (desktop focuses
   // it on open); the browser's own caret stands in for the drawn one.
   const [focused, setFocused] = React.useState(false);
@@ -99,14 +154,25 @@ export default function AskChat(props) {
     const question = String(q || '').trim();
     if (!question) return;
     const now = Date.now();
-    const turn = { id: newId(now), q: question, at: now };
     const cur = chatRef.current;
+    // T572: the place the last answer was about, for a follow-up to use.
+    const ref = cur?.turns[cur.turns.length - 1]?.subject || null;
+    const sc = scopeRef.current;
+    const turn = {
+      id: newId(now), q: question, at: now, ...(ref ? { ref } : {}),
+      ...(sc.scope === 'filters' ? { within: sc.filterText } : {}),
+    };
     keep(cur
       ? { ...cur, at: now, turns: [...cur.turns, turn] }
       : { id: newId(now), title: titleOf(question), at: now, turns: [turn] });
     setText('');
     if (fieldRef.current) fieldRef.current.style.height = '';
     setView('chat');
+  }, [keep]);
+  const onSubject = React.useCallback((turnId, subject) => {
+    const cur = chatRef.current;
+    if (!cur || !cur.turns.some((x) => x.id === turnId)) return;
+    keep({ ...cur, turns: cur.turns.map((x) => (x.id === turnId ? { ...x, subject } : x)) });
   }, [keep]);
   const onWritten = React.useCallback((turnId, written) => {
     const cur = chatRef.current;
@@ -154,12 +220,12 @@ export default function AskChat(props) {
   React.useEffect(() => { if (!isPhone) fieldRef.current?.focus(); }, [isPhone]);
 
   const ctx = React.useMemo(() => ({
-    t, lang, rows, byId, guided, price, labels, retrieve: RETRIEVE, trip,
-    favorites, onToggleFav, onWritten, onAsk: ask,
+    t, lang, rows, byId, guided, price, labels, retrieve: RETRIEVE, trip, filteredRows: filters?.rows || null,
+    favorites, onToggleFav, onWritten, onSubject, onAsk: ask,
     onOpen: (id) => { if (isPhone) onClose(); onOpenPlace(id); },
-    onApply: onApply ? (facets) => { if (isPhone) onClose(); onApply(facets); } : null,
+    onApply: onApply ? (facets, keep) => { if (isPhone) onClose(); onApply(facets, keep); } : null,
     onPlan: onPlanTrip ? (route) => { onClose(); onPlanTrip({ transport: 'public', ...route }); } : null,
-  }), [t, lang, rows, byId, guided, price, labels, trip, favorites, onToggleFav, onWritten, ask, isPhone, onClose, onOpenPlace, onPlanTrip, onApply]);
+  }), [t, lang, rows, byId, guided, price, labels, trip, filters, favorites, onToggleFav, onWritten, onSubject, ask, isPhone, onClose, onOpenPlace, onPlanTrip, onApply]);
 
   const [moreShown, setMoreShown] = React.useState(false);
   const starts = START.map((k) => t(k));
@@ -172,8 +238,13 @@ export default function AskChat(props) {
   const grow = (el) => { el.style.height = 'auto'; el.style.height = `${Math.min(el.scrollHeight, 160)}px`; };
   const groups = groupChats(chats);
   const remove = (id) => {
-    setChats((list) => { const out = removeChat(list, id); saveChats(out); return out; });
+    const out = removeChat(loadChats(), id);
+    saveChats(out);
+    setChats(out);
     if (chat?.id === id) setChat(null);
+    clearTimeout(cloud.current.timers.get(id)?.timer);
+    cloud.current.timers.delete(id);
+    if (cloud.current.on && userId) deleteAskChat(userId, id).catch(cloudFail);
   };
 
   const panel = (
@@ -247,6 +318,13 @@ export default function AskChat(props) {
       )}
 
       <form className="ac-compose" onSubmit={submit}>
+        {filterLabels.length > 0 && view === 'chat' && (
+          <div className="ac-scope">
+            <p className="ac-scope-label" id="ac-scope-label">{t('askChat.scope.label', { filters: filterText })}</p>
+            <Segmented size="sm" label={t('askChat.scope.aria')} value={scope} onChange={setScope}
+              options={[{ value: 'all', label: t('askChat.scope.all') }, { value: 'filters', label: t('askChat.scope.keep') }]} />
+          </div>
+        )}
         <div className="ac-field">
           <span className="ac-field-box">
             {hint && <span className="ac-hint" aria-hidden="true">{hint}{!focused && <span className="ac-caret" />}</span>}

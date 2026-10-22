@@ -81,6 +81,10 @@ export default defineConfig({
     host: true,
     proxy: {
       '/api/ask': { target: process.env.ASK_PROXY || 'https://preview.carta-app.pages.dev', changeOrigin: true },
+      // T576: live bed prices (Xotelo via /api/stays, read-only, cached 12 h
+      // at the edge) from production, which has the Function; STAYS_PROXY
+      // to choose another deploy.
+      '/api/stays': { target: process.env.STAYS_PROXY || 'https://carta-app.pages.dev', changeOrigin: true },
     },
   },
   css: { lightningcss: { targets: CSS_TARGETS } },

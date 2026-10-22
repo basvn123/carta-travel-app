@@ -7,6 +7,7 @@ import { composeAnswer, unknownNote } from '../../lib/ask/compose.js';
 import { buildPack } from '../../lib/ask/context.js';
 import { writeAnswer } from '../../lib/ask/generate.js';
 import { outsidePlace } from '../../lib/ask/outside.js';
+import { bindFollowUp, pointsBack } from '../../lib/ask/followup.js';
 import { googleFlightsLink } from '../../lib/flights/flights.js';
 import { AskAnswer } from '../AskSearchFull.jsx';
 import { AskTripCard } from './AskTripCard.jsx';
@@ -21,7 +22,8 @@ import { CornerArrow } from './marks.jsx';
  * the catalogue and shows the written answer it kept, without asking the
  * model again.
  *
- *   turn      { id, q, at, written? }
+ *   turn      { id, q, at, written?, ref?, subject? }: `ref` the place the
+ *             last answer was about (T572), `subject` this answer's own
  *   ctx       { t, lang, rows, byId, guided, price, labels, retrieve, trip,
  *               onOpen, onPlan, onAsk, onWritten }
  *   latest    the newest turn: it carries the follow-ups and the primary
@@ -30,12 +32,25 @@ const IDLE = { state: 'idle', sentences: [], backend: null };
 const TRIP_TYPES = new Set(['find', 'near', 'budget', 'plan', 'about', 'when']);
 
 function useTurn(turn, vocab, ctx) {
-  const { t, lang, rows, byId, guided, price, labels, retrieve } = ctx;
-  const parsed = React.useMemo(
+  const { t, lang, byId, guided, price, labels, retrieve } = ctx;
+  // T573: a question asked with Explore's filters kept answers within them.
+  const rows = turn.within && ctx.filteredRows?.length ? ctx.filteredRows : ctx.rows;
+  const raw = React.useMemo(
     () => (vocab ? parseIntent(turn.q, { vocab, lang, now: new Date(turn.at) }) : null),
     [vocab, turn.q, turn.at, lang],
   );
-  const outside = React.useMemo(() => (parsed ? outsidePlace(turn.q, parsed) : null), [parsed, turn.q]);
+  // T572: a follow-up that names no place is about the last answer's place;
+  // one that points back ("there") is never a place outside Europe.
+  const refId = turn.ref?.id || null;
+  const outside = React.useMemo(
+    () => (raw && !(refId && pointsBack(turn.q)) ? outsidePlace(turn.q, raw) : null),
+    [raw, turn.q, refId],
+  );
+  const parsed = React.useMemo(
+    () => (raw && !outside && refId ? bindFollowUp(turn.q, raw, turn.ref) : raw),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- turn.ref is read by its id
+    [raw, outside, refId, turn.q],
+  );
 
   // undefined while the search runs, null when there is none.
   const [found, setFound] = React.useState(undefined);
@@ -93,6 +108,16 @@ function useTurn(turn, vocab, ctx) {
     // The written answer follows the answer itself, not every label object.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [answer, hasWritten]);
+
+  // What this answer is about, for the next question to point back to.
+  const subjectId = facts?.picks?.[0]?.id || null;
+  React.useEffect(() => {
+    if (!facts) return;
+    const p = facts.picks?.[0];
+    const next = p ? { id: p.id, city: p.dest.city } : null;
+    if ((turn.subject?.id || null) !== (next?.id || null)) ctx.onSubject?.(turn.id, next);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once per answer's first place
+  }, [subjectId, facts == null]);
 
   const stage = !parsed ? 'read'
     : found === undefined ? 'search'
@@ -154,6 +179,7 @@ export function AskTurn({ turn, vocab, ctx, latest }) {
       <div className="ac-q">
         <span className="sr-only">{t('askChat.you')}</span>
         <p>{turn.q}</p>
+        {intent?.followOf && turn.ref?.city && <span className="ac-about">{t('askChat.about', { place: turn.ref.city })}</span>}
       </div>
       <div className="ac-a">
         <span className="sr-only">{t('askChat.carta')}</span>
@@ -179,11 +205,12 @@ export function AskTurn({ turn, vocab, ctx, latest }) {
                 primary={latest} onOpen={ctx.onOpen} onPlan={ctx.onPlan ? planAll : null} />
             ) : null} />
         )}
+        {turn.within && <p className="ac-within">{t('askChat.within', { filters: turn.within })}</p>}
         {answer && ctx.onApply && facts.count > 1 && (intent.type === 'find' || intent.type === 'near') && (
           <Button variant="quiet" size="sm" className="ac-showall" onClick={() => {
             const f = { ...intent.facets };
             delete f.warm;
-            ctx.onApply(f);
+            ctx.onApply(f, !!turn.within);
           }}>
             {t('ask.showAll', { count: facts.count })}
           </Button>

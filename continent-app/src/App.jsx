@@ -1608,6 +1608,7 @@ function TravelApp() {
               seed={pendingExploreSeed}
               onSeedConsumed={clearExploreSeed}
               onPlanTrip={openTripInPlanner}
+              onShowExplore={() => goToTab('map')}
               isMock={!!data.meta?.is_mock}
             />
           </div>
@@ -1777,7 +1778,7 @@ function TravelApp() {
           <PlanStart
             pageOver={!!selectedDest || savedTripsOpen || accountOpen || !!countryPage || !!pendingRegion}
             onNavigate={goTo}
-            ask={<PlanAsk data={data} onOpenPlace={openDetail} onPlanTrip={openTripInPlanner} />}
+            ask={<PlanAsk />}
           />
         </div>
       )}

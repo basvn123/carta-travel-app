@@ -65,7 +65,7 @@ import { PlaceOverview } from './PlaceOverview.jsx';
 import { overviewRegion, overviewReason, overviewScore, reasonText } from '../lib/placeOverview.js';
 import { MapDrawer } from '../components/MapDrawer.jsx';
 import { useGuidedData, vibeOf } from '../lib/guidedData.js';
-import { AskChatButton } from './ask/AskChatButton.jsx';
+import { AskChatDoor, AskChatHost } from './ask/AskChatButton.jsx';
 import {
   noCarOk, underOk, quietOk, matchGuided, guidedComparator, whyFacts, makeLabels,
 } from '../lib/guidedSearch.js';
@@ -360,6 +360,8 @@ export function ExploreTab({
   seed = null, onSeedConsumed = null,
   // T558: Ask Carta hands a route to the trip planner (App's openTripInPlanner).
   onPlanTrip = null,
+  // T574: the chat, asked from another place, shows its places on Explore.
+  onShowExplore = null,
 }) {
   const { t, lang } = useI18n();
   // The guided search data (T439): vibes, areas and distances. Loaded on
@@ -804,16 +806,16 @@ export function ExploreTab({
         ? t('explore.emptyCause', { filter: lastChip.label })
         : t('results.empty');
 
-  // Desktop chrome: Ask Carta's button portals into the app header's slot
-  // and the controls stand in the left panel; the phone keeps the toolbar
-  // card. Only the active tab may claim the slot (both browse tabs stay
-  // mounted, and two portals into one div would interleave).
+  // Desktop chrome: Ask Carta's door portals into the app header's slot on
+  // every place (T574: Explore hosts the one chat and stays mounted, so the
+  // door is there on Plan and My trips too) and the controls stand in the
+  // left panel; the phone keeps the toolbar card.
   const isDesktop = useIsDesktop();
   const [headerSlot, setHeaderSlot] = React.useState(null);
   React.useEffect(() => {
-    if (isDesktop && isActive) setHeaderSlot(document.getElementById('header-search-slot'));
+    if (isDesktop) setHeaderSlot(document.getElementById('header-search-slot'));
     else setHeaderSlot(null);
-  }, [isDesktop, isActive]);
+  }, [isDesktop]);
 
   // T504: picking and opening. A pin picks a place (the overview shows);
   // the overview, a second tap on the same pin, or a list row opens it. A
@@ -912,11 +914,14 @@ export function ExploreTab({
     depart: settingsLine?.departDate || null,
     back: settingsLine?.returnDate || null,
     party: settingsLine?.party || 2,
+    stayTier: settingsLine?.stayTier || 'home',
     destinations: data?.destinations || null,
-  }), [settingsLine?.origin, settingsLine?.departDate, settingsLine?.returnDate, settingsLine?.party, data]);
-  const askButton = (className) => (
-    <AskChatButton
-      className={className}
+  }), [settingsLine?.origin, settingsLine?.departDate, settingsLine?.returnDate, settingsLine?.party, settingsLine?.stayTier, data]);
+  // T573: the filters on Explore now, which the chat offers to keep or
+  // ignore; the rows are the list they make.
+  const askFilters = React.useMemo(() => ({ labels: chips.map((c) => c.label), rows }), [chips, rows]);
+  const askHost = (
+    <AskChatHost
       t={t}
       lang={lang}
       guided={guided}
@@ -925,13 +930,18 @@ export function ExploreTab({
       labels={gLabels}
       price={askPrice}
       trip={askTrip}
-      onApply={(facets) => applyGuided(facets, true)}
+      onApply={(facets, keep) => {
+        applyGuided(facets, !keep);
+        // Asked from another place (T574): Explore shows the list.
+        if (!isActive) onShowExplore?.();
+      }}
+      filters={askFilters}
       onOpenPlace={openWithMember}
       onPlanTrip={onPlanTrip}
       favorites={favorites}
       onToggleFav={onToggleFav}
-      openRequest={openRequest && isActive && !!headerSlot === isDesktop}
-      seed={!!headerSlot === isDesktop ? askSeed : null}
+      openRequest={openRequest && isActive}
+      seed={askSeed}
       onOpenRequested={clearOpenRequest}
     />
   );
@@ -1097,7 +1107,8 @@ export function ExploreTab({
 
   return (
     <div className={`explore-shell${view === 'map' ? ' is-map' : ''}${railsIdle ? ' is-rails' : ''}`}>
-      {headerSlot && createPortal(askButton('ac-in-header'), headerSlot)}
+      {askHost}
+      {headerSlot && createPortal(<AskChatDoor t={t} className="ac-in-header" />, headerSlot)}
 
       {/* Desktop-only left panel (CSS hides it under 769px): the filter
           rail in folds, trip styles first, with one hairline to the panel's
@@ -1130,7 +1141,7 @@ export function ExploreTab({
             sheet now, and Lifestyle and the shortlist in the input row. */}
         <div className="explore-filterbar xtop">
           {/* On desktop the same button has portalled into the header. */}
-          {!headerSlot && askButton('ac-in-bar')}
+          {!headerSlot && <AskChatDoor t={t} className="ac-in-bar" />}
           <Button
             variant="secondary"
             ref={filterBtnRef}

@@ -15,6 +15,17 @@ const BEFORE = new Set(['to', 'in', 'into', 'naar', 'nach', 'in', 'à', 'au', 'a
 
 const fold = (s) => s.normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
+// What follows "to" without being a place: "where to stay", "what to do"
+// (T572's end check read "Where to stay there?" as a trip to "Stay").
+const VERBS = new Set([
+  'stay', 'go', 'eat', 'do', 'see', 'visit', 'sleep', 'travel', 'fly', 'get', 'find', 'book', 'drink', 'swim', 'hike', 'walk', 'park', 'spend',
+  'slapen', 'eten', 'gaan', 'doen', 'zien', 'bezoeken', 'blijven', 'logeren',
+  'schlafen', 'essen', 'gehen', 'sehen', 'besuchen', 'bleiben', 'übernachten',
+  'dormir', 'manger', 'aller', 'faire', 'voir', 'visiter', 'rester', 'loger',
+  'comer', 'ir', 'hacer', 'ver', 'visitar', 'quedarse', 'alojarse',
+  'mangiare', 'andare', 'fare', 'vedere', 'visitare', 'restare', 'alloggiare',
+].map(fold));
+
 export function outsidePlace(text, intent) {
   if (!intent || intent.places?.length || intent.compare?.length) return null;
   if (intent.facets?.near || intent.facets?.country) return null;
@@ -23,7 +34,7 @@ export function outsidePlace(text, intent) {
   const words = String(text || '').split(/[\s,.;:!?()"]+/).filter(Boolean);
   for (let i = 1; i < words.length; i++) {
     const w = words[i];
-    if (!BEFORE.has(words[i - 1].toLowerCase()) || !unknown.has(fold(w))) continue;
+    if (!BEFORE.has(words[i - 1].toLowerCase()) || !unknown.has(fold(w)) || VERBS.has(fold(w))) continue;
     // A name runs on while the next word is unknown too ("New York").
     let name = w;
     while (i + 1 < words.length && unknown.has(fold(words[i + 1])) && /^\p{Lu}/u.test(words[i + 1])) {
