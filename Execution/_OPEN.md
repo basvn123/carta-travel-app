@@ -1911,22 +1911,27 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T538-a | T538 | The country brief cost fold (now CostRow, est. marked) was not opened in a browser; it is reached only from the Help me choose match cards | next task | open |  |
 | T550-a | T550 | Five held-out Ask questions miss (Czech old towns vibe, "two week" read as 7 days, "wanneer naar kreta", "randonnee pas chere" sort, "borghi medievali" vibe); a fix moves the case to the golden set and a new held-out case is written | next task | open |  |
 | T551-a | T551 | The Ask index (passages, vectors, pruned model, bm25.json, about 50 MB) is not in git: run `python pipeline/ask_index_layer.py` then `node continent-app/scripts/build-ask-bm25.mjs` in the main checkout before the deploy build | user | open | 1 |
-| T551-b | T551 | After the R2 cutover the ask files leave Pages: /api/ask then needs an R2 binding or a data-host fetch, and push-data must include search/ask/ | next task | open |  |
+| T551-b | T551 | After the R2 cutover the ask files leave Pages: /api/ask then needs an R2 binding or a data-host fetch, and push-data must include search/ask/ | next task | closed by T565 |  |
 | T551-c | T551 | BM25 over dest + highlight + lexicon was 1,196 KB gzip, over the 400 KB budget | next task | closed by T554 |  |
 | T551-d | T551 | The JS/Python parity fixture is tied to manifest.built; after any index rebuild rerun `--fixture` and recommit it, or the two parity tests skip | next task | open |  |
 | T551-e | T551 | Root continent-app/ mirror lacked the new ask app files that run_pipeline's ask_index task calls | next task | closed by T558 |  |
 | T551-f | T551 | 4,331 trails have no destination within 25 km, so a place filter on Ask drops them | next task | open |  |
 | T552-a | T552 | The optional local-model lexicon refresh (`ask_lexicon.py --ollama`) was never run: Ollama is not installed; candidates then need a review | user | open |  |
 | T554-a | T554 | Dense retrieval alone is modest (recall@10 0.44); relevance weighs 0.1 in ranking; a stronger open embedder needs a runtime the Pages Function lacks | next task | open |  |
-| T556-a | T556 | Written answers on Workers AI are off until the owner runs `npx wrangler kv namespace create carta-ask`, uncomments the ASK block in continent-app/wrangler.toml with its id, and confirms Workers AI is on for the account | user | open | 2 |
+| T556-a | T556 | Written answers on Workers AI are off until the owner runs `npx wrangler kv namespace create carta-ask`, uncomments the ASK block in continent-app/wrangler.toml with its id, and confirms Workers AI is on for the account | user | closed by T565 | 2 |
 | T556-b | T556 | /api/ask/answer accepts the notes as text, so within the daily cap anyone could use it as a free model; consider signing packs or building them server side | next task | open |  |
-| T557-a | T557 | Upload the 38 Qwen 2.5 1.5B MLC files to R2 under carta/ask/model/ (commands in P11/T557-notes.md); until then Answer on this device fails to load in production | user | open | 3 |
+| T557-a | T557 | Upload the 38 Qwen 2.5 1.5B MLC files to R2 under carta/ask/model/ (commands in P11/T557-notes.md); until then Answer on this device fails to load in production | user | closed by T564 | 3 |
 | T557-b | T557 | Review the CSP change: script-src gains 'wasm-unsafe-eval' for WebLLM (public/_headers; vercel.json rollback host unchanged) | user | open | 1 |
 | T557-c | T557 | The panel must import onDevice.js dynamically to stay inside the entry budget | next task | closed by T558 |  |
 | T557-d | T557 | Once opted in, WebLLM ships on both the main thread and the worker (about 2.1 MB gzip each); a small worker protocol would drop one copy | next task | open |  |
 | T557-e | T557 | The panel carries no model credit line yet (Qwen is Apache-2.0; Gemma, the alternative, is under Google's Gemma terms) | user | open |  |
 | T557-f | T557 | Both on-device models need shader-f16; devices without it get no offer; fallback Qwen q4f32_1 is about 1.1 GB | next task | open |  |
-| T558-a | T558 | On-device bake-off (Qwen 2.5 1.5B against Gemma 2 2B on golden packs, procedure in P11/T557-notes.md) not run: needs the model files and a WebGPU browser | next task | open | 4 |
-| T558-b | T558 | The written answer was never produced by a real model: the faithfulness rate (target 95% of sentences pass the check, 0 invented places or prices) and prompt quality on qwen3-30b-a3b are unmeasured | next task | open | 3 |
-| T558-c | T558 | Home's search block still says "Search by vibe, place or month" and hands guided facets to Explore, not the typed question to Ask | next task | open |  |
+| T558-a | T558 | On-device bake-off (Qwen 2.5 1.5B against Gemma 2 2B on golden packs, procedure in P11/T557-notes.md) not run: needs the model files and a WebGPU browser | next task | closed by T564 | 4 |
+| T558-b | T558 | The written answer was never produced by a real model: the faithfulness rate (target 95% of sentences pass the check, 0 invented places or prices) and prompt quality on qwen3-30b-a3b are unmeasured | next task | closed by T563 | 3 |
+| T558-c | T558 | Home's search block still says "Search by vibe, place or month" and hands guided facets to Explore, not the typed question to Ask | next task | closed by T566 |  |
 | T558-d | T558 | Merge app p11-ask-carta into master and root p11-ask-carta into main, then build and deploy; a dry-run merge onto app master c9d7ce3 (with T540) is clean | user | open | 1 |
+| T563-a | T563 | Soft judgements still pass when they cite a code-made note ("Barcelona is the best option"); the overall-score caveat on compare notes is not re-measured on the live model | next task | open |  |
+| T563-b | T563 | Non-English context packs mix English labels ("best months", "score ... of 10", English country names); the model translates, but the notes should be localised | next task | open |  |
+| T564-a | T564 | Answer on this device is off (VITE_ASK_ON_DEVICE): Qwen 2.5 1.5B on an Intel Iris Xe took 44 s and failed the check; retry with a better small model (Gemma 2 2B untried) and fix the backwards progress line and the silent wait | next task | open |  |
+| T565-a | T565 | search/ask ships with every Pages deploy (45 MiB, largest file 8.9 MB, Pages caps a file at 25 MiB); a much larger index must shard or move behind R2 with a binding | next task | open |  |
+| T565-b | T565 | The preview carries this branch; production gets Ask only after the owner merges p11-ask-carta (app and root) and deploys main, with the index built in the main checkout first (T551-a) | user | open | 1 |
