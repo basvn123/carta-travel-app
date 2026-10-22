@@ -1905,3 +1905,6 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T536-b | T536 | The live stays prefix data/stays-live/v1 is empty until T532-a, so every load asks its manifest once and gets a 404 (harmless, the baked copy prices) | user | open | 4 |
 | T536-c | T536 | Not opened in the browser in the end check: trip planner, day planner, the PDFs, My trips; covered by node tests only | next task | open |  |
 | T536-d | T536 | Register ids T513-a, T514-a and T514-b exist twice (live flights and food sessions both used them); renumber one set | next task | open |  |
+| T537-a | T537 | Cost figures not yet on the kit CostRow or estimate notation: itin-bed, itin-extras, tsum-row, CountryBrief folds, Neighbourhoods hood prices (no est mark when not measured), FlightChip and pin labels; dead BreakdownSection, .itin-bd-sec, duplicate pricedPartySize | next task | open |  |
+| T537-b | T537 | In dev the trip wizard reaches Trips with "0 days" when the dates come only from the URL; not investigated, may predate T537 | next task | open |  |
+| T537-c | T537 | Not opened in the browser: trip planner TripPriceCard flight link, Explore hover receipt, day planner, PDFs | next task | open |  |
