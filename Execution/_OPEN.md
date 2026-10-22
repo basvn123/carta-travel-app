@@ -1981,3 +1981,9 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T583-d | T583 | AskSearchFull.jsx's default export is imported nowhere and still holds ask.showAll and ask.more (with T574-b) | next task | open |  |
 | T583-e | T583 | The written answer's off, cap and error lines still show on compare, when and about answers | next task | open |  |
 | T583-f | T583 | Warmer, Cheaper and Quieter after Not yet were tried in English only; check they parse in nl, de, fr, es and it | next task | open |  |
+| T605-a | T605 | Rebuild the home page from scratch on app master as one batch from T606, to the plan artifact 2Jbd2LipGXYFMryXLzf6VW and the twelve decisions in the T605 report | next task | open | 1 |
+| T605-b | T605 | The hero film needs licensed video clips (Pexels first, D3); each download is approved by the owner, until then the hero runs on Commons photographs | user | open | 2 |
+| T605-c | T605 | Confirm the repository origin in the Claude app (Help, Troubleshooting, Review Pinned Git Origins) so session worktrees can merge main's protected carta-design skill | user | open |  |
+| T605-d | T605 | Lighthouse navigation on the home page hangs (PAGE_HUNG) at 390 px with 4x CPU; find the long main-thread work on first load | next task | open |  |
+| T605-e | T605 | The trip planner total in the Wise style the owner pinned (huge tabular total, receipt rows under it) | next task | open |  |
+| T605-f | T605 | Komoot-style photo rails on Explore (owner's board, D12); needs the owner's call on titles over photos outside the home page | next task | open |  |
