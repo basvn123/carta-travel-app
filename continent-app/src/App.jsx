@@ -120,7 +120,7 @@ import { AccountPanel } from './auth/AccountPanel.jsx';
 const SavedTripsPanel = lazy(() => import('./auth/SavedTripsPanel.jsx').then((m) => ({ default: m.SavedTripsPanel })));
 import { PaywallProvider } from './hooks/usePaywall.jsx';
 import { LegalFromUrl } from './components/LegalFromUrl.jsx';
-import { originHome } from './lib/origins.js';
+import { originHome, nearestOrigin } from './lib/origins.js';
 import { useAppData } from './hooks/useAppData.js';
 import { Button } from './components/Button.jsx';
 import { CATALOGUE_MODE, loadFullCatalogue } from './lib/appData.js';
@@ -199,7 +199,7 @@ function TravelApp() {
   // stays mounted with a leaving class until its exit has run.
   const lifestyleSheet = usePresence(lifestyleOpen);
   const {
-    priceMode, setPriceMode, countryFilter, setCountryFilter,
+    priceMode, setPriceMode, countryFilter, setCountryFilter, countryNot, setCountryNot,
     tripKinds, setTripKinds, ratingRange, setRatingRange, gemOnly, setGemOnly,
     unescoOnly, setUnescoOnly, topBeachOnly, setTopBeachOnly,
     bigOnly, setBigOnly,
@@ -504,13 +504,23 @@ function TravelApp() {
   // and synced into choices.trip_days for components that read it.
   const [departDate, setDepartDate] = useState(init.departDate ?? null);
   const [returnDate, setReturnDate] = useState(init.returnDate ?? null);
+  // T578: how fixed the dates are. null: these dates; 'month': any days in
+  // the month of departDate; 'any': whenever is cheapest. The dates stay set
+  // either way, so every screen that needs a pair still has one.
+  const [dateFlex, setDateFlex] = useState(init.dateFlex ?? null);
 
   const [choices, setChoices] = useState({
     group_size: init.group_size ?? 2,   // two, stated wherever it applies (T100); data defaults no longer decide it
+    // T579: of those seats, how many are children (2 to 11); babies (under 2)
+    // sit on a lap and are counted apart (lib/travelWay.js partyOf).
+    children: init.children ?? 0,
+    babies: init.babies ?? 0,
     trip_days: 7,
     baggage_key: init.baggage_key ?? 'priority_10kg',
     baggage_per_direction_eur: 25,
-    transport_mode: init.transport_mode ?? 'plane',  // 'plane' | 'car' (car only for trips <= max_drive_km)
+    // 'any' | 'plane' | 'train' | 'bus' | 'car' (T582: the settings line's
+    // way button; any way prices the cheapest that reaches a place).
+    transport_mode: init.transport_mode ?? 'any',
     // How expensive to sleep: 'dorm'|'private'|'home'|'hotel3'|'hotel4'|'hotel5'.
     // Home (entire place) is the classic anchor; the rest price from measured
     // city tiers where they exist and honestly fall back where they don't.
@@ -1132,6 +1142,21 @@ function TravelApp() {
     origin: code,
     home: originHome(data, code) ?? prev.home,
   })), [data]);
+  // T577: where the traveller starts, any town in Europe or their own
+  // location: it becomes the start of every road and rail way, and the
+  // nearest priced airport becomes the flight's origin.
+  const setFrom = useCallback((placePt) => setChoices((prev) => {
+    if (!placePt || !Number.isFinite(placePt.lat) || !Number.isFinite(placePt.lon)) {
+      return { ...prev, drive_home: null };
+    }
+    const code = nearestOrigin(data, placePt) || prev.origin;
+    return {
+      ...prev,
+      origin: code,
+      home: { lat: placePt.lat, lon: placePt.lon },
+      drive_home: { name: placePt.name || '', lat: placePt.lat, lon: placePt.lon, iso2: placePt.iso2 || null, country: placePt.country || '' },
+    };
+  }), [data]);
 
   // Stable callback props for the two planner tabs. Both are memoized and both
   // stay mounted behind display:none, so a fresh arrow here re-rendered two
@@ -1240,6 +1265,7 @@ function TravelApp() {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- value key: the fields composeTrip reads, so a trip_days write does not reprice the catalogue
     [choices.group_size, choices.baggage_key, choices.baggage_per_direction_eur,
       choices.transport_mode, choices.stay_tier, choices.origin, choices.home, choices.lifestyle,
+      choices.children, choices.babies,
       choices.origin_pref, choices.car_model, choices.accommodation_model, choices.drive_home],
   );
 
@@ -1259,7 +1285,7 @@ function TravelApp() {
     pricedAll, availableCountries, priceRange, setPriceRange, priceBounds,
   } = useDestinationSearch({
     data, departDate, returnDate, choices: pricingChoices,
-    locationQuery: debouncedLocationQuery, countryFilter, priceMode, tripKinds,
+    locationQuery: debouncedLocationQuery, countryFilter, countryNot, priceMode, tripKinds,
     ratingRange, gemOnly, unescoOnly, topBeachOnly, bigOnly, topPick,
     reachHours, reachMinutes,
     initialPriceRange: init.priceRange,
@@ -1270,7 +1296,7 @@ function TravelApp() {
   // The bottom nav steps aside while a text field has focus on a phone (T401).
   useKeyboardOpen();
   useUrlSync(!!data, {
-    departDate, returnDate, choices, priceMode, countryFilter,
+    departDate, returnDate, choices, priceMode, countryFilter, countryNot, dateFlex,
     tripKinds, priceRange, priceBounds, selectedId, favorites, sortKey, showFavOnly,
     ratingRange, gemOnly, unescoOnly, topBeachOnly, bigOnly, topPick, reachHours,
     // The address names the place on screen: a page over the view wins.
@@ -1324,10 +1350,14 @@ function TravelApp() {
   }, [data]);
   const datedStay = !!(departDate && returnDate);
   const exploreIndices = useMemo(
-    () => (data && staysVersion >= 0 && liveVersion >= 0 ? computeCosts(data.destinations, datedStay
-      ? { ...choices, start: departDate, nights: Math.max(1, tripDaysBetween(departDate, returnDate)) }
-      : choices) : null),
-    [data, choices, staysVersion, liveVersion, datedStay, departDate, returnDate],
+    // T578: with a month the bed is that month's; any time, the year's average.
+    () => (data && staysVersion >= 0 && liveVersion >= 0 ? computeCosts(data.destinations,
+      dateFlex === 'any' ? choices
+        : dateFlex === 'month' && departDate ? { ...choices, month: Number(departDate.slice(5, 7)) }
+          : datedStay
+            ? { ...choices, start: departDate, nights: Math.max(1, tripDaysBetween(departDate, returnDate)) }
+            : choices) : null),
+    [data, choices, staysVersion, liveVersion, datedStay, departDate, returnDate, dateFlex],
   );
   // The catalogue as rows, for the country and region pages (T498), computed
   // only while one of them shows.
@@ -1348,23 +1378,52 @@ function TravelApp() {
   const setParty = useCallback((n) => {
     setChoices((prev) => ({ ...prev, group_size: Math.max(1, Math.round(n)) }));
   }, []);
+  // T579: the party as adults, children and babies. The seats (adults plus
+  // children) stay group_size, which every price already reads.
+  const setPartyParts = useCallback(({ adults, children, babies }) => {
+    setChoices((prev) => {
+      const kids = Math.max(0, Math.round(children ?? prev.children ?? 0));
+      const grown = Math.max(1, Math.round(adults ?? ((prev.group_size || 2) - (prev.children || 0))));
+      return { ...prev, group_size: grown + kids, children: kids, babies: Math.max(0, Math.round(babies ?? prev.babies ?? 0)) };
+    });
+  }, []);
+  const setTransportMode = useCallback((mode) => {
+    setChoices((prev) => ({ ...prev, transport_mode: mode }));
+  }, []);
   const ownDates = !!(departDate && returnDate && defaultDates
     && (departDate !== defaultDates.start || returnDate !== defaultDates.end));
+  const travelMonth = dateFlex === 'any' ? null
+    : dateFlex === 'month' || ownDates ? Number(String(departDate).slice(5, 7)) || null : null;
   const settings = useMemo(() => ({
     data,
     origin: choices.origin,
     setOrigin,
+    // T577: the From place (a named town or the traveller's location), else
+    // null and the line names the home airport's town.
+    fromPlace: choices.drive_home || null,
+    setFrom,
     departDate, returnDate, setDepartDate, setReturnDate,
     defaultDates, dateBounds,
     ownDates,
-    travelMonth: ownDates ? Number(String(departDate).slice(5, 7)) || null : null,
+    dateFlex, setDateFlex,
+    travelMonth,
     party: choices.group_size,
+    children: choices.children || 0,
+    babies: choices.babies || 0,
     setParty,
+    setPartyParts,
+    transportMode: choices.transport_mode || 'any',
+    setTransportMode,
+    // T581: Explore's countries, in or out.
+    countryFilter, setCountryFilter, countryNot, setCountryNot,
+    availableCountries,
     stayTier: choices.stay_tier || 'home',
     lifestyle: choices.lifestyle,
     openLifestyle,
-  }), [data, choices.origin, setOrigin, departDate, returnDate, defaultDates, dateBounds,
-    ownDates, choices.group_size, setParty, choices.stay_tier, choices.lifestyle, openLifestyle]);
+  }), [data, choices.origin, setOrigin, choices.drive_home, setFrom, departDate, returnDate, defaultDates, dateBounds,
+    ownDates, dateFlex, travelMonth, choices.group_size, choices.children, choices.babies, setParty, setPartyParts,
+    choices.transport_mode, setTransportMode, countryFilter, setCountryFilter, countryNot, setCountryNot,
+    availableCountries, choices.stay_tier, choices.lifestyle, openLifestyle]);
 
   // Which parts of the settings line each tab shows. Explore and Destinations
   // price from every input. The Trip planner keeps its own origin, dates and
@@ -1572,6 +1631,7 @@ function TravelApp() {
               setLocationQuery={setLocationQuery}
               countryFilter={countryFilter}
               setCountryFilter={setCountryFilter}
+              countryNot={countryNot}
               tripKinds={tripKinds}
               setTripKinds={setTripKinds}
               ratingRange={ratingRange}

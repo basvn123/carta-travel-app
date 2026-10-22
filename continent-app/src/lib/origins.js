@@ -94,6 +94,20 @@ export function originHome(data, code) {
   return o && o.lat != null && o.lon != null ? { lat: o.lat, lon: o.lon } : null;
 }
 
+/** The priced origin airport nearest a point (T577: the From picker takes any
+ *  town, the flight leaves from the closest airport Carta has fares for). */
+export function nearestOrigin(data, pt) {
+  const origins = data?.meta?.origins || {};
+  if (!pt || !Number.isFinite(pt.lat) || !Number.isFinite(pt.lon)) return null;
+  let best = null;
+  for (const [code, o] of Object.entries(origins)) {
+    if (o.lat == null || o.lon == null) continue;
+    const km = haversineKm(pt.lat, pt.lon, o.lat, o.lon);
+    if (km != null && (best == null || km < best.km)) best = { code, km };
+  }
+  return best ? best.code : null;
+}
+
 /** "Charleroi (CRL)" style label for a chosen origin code. */
 export function originLabel(data, code) {
   if (!code) return '';

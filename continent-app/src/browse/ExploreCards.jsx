@@ -3,7 +3,8 @@ import { openShared } from '../lib/sharedElement.js';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
-import { BookmarkIcon } from '../components/Icons.jsx';
+import { BookmarkIcon, BusIcon, CarIcon, TrainIcon } from '../components/Icons.jsx';
+import { formatEst } from '../lib/money.js';
 import { Card, IconButton, Money } from '../components/ui/index.js';
 import { isNational } from '../components/CostSummary.jsx';
 import { useSettledFigure } from '../lib/figureChange.js';
@@ -26,16 +27,18 @@ import { FlightChip } from '../components/flights/Flights.jsx';
  *              words, no gauge (owner, 2026-10-13). Under it, when
  *              the home airport's sweep has one in the travel month, the
  *              cheapest return flight a person with its airline's mark
- *              (T518, `cost.flight`, set by ExploreTab): one quiet caption
- *              line, nothing at all when there is no flight.
+ *              (T518), or the train, bus or car the settings line asks
+ *              for, or the cheapest of them (T582, `cost.way`, set by
+ *              ExploreTab): one quiet caption line, nothing at all when
+ *              no way is priced.
  */
 
 export function DayPrice({ cost, t }) {
   const ref = React.useRef(null);
   useSettledFigure(ref, cost?.dayEur ?? null);
-  const flight = cost?.flight || null;
+  const way = cost?.way || null;
   const day = cost && cost.dayEur != null;
-  if (!day && !flight) return null;
+  if (!day && !way) return null;
   return (
     <>
       {day && (
@@ -45,14 +48,32 @@ export function DayPrice({ cost, t }) {
           <span className="xprice-unit"> {t('dest.priceDayUnit')}</span>
         </span>
       )}
-      {flight && (
+      {way && (
         // Its own line under the day price, in the row and on the tile alike
         // (the tile's price slot is inline, so the line is a block here).
         <span className="xprice-flight">
-          <FlightChip perSeat={flight.perSeat} airline={flight.airline} />
+          <WayChip way={way} t={t} />
         </span>
       )}
     </>
+  );
+}
+
+const WAY_ICONS = { train: TrainIcon, bus: BusIcon, car: CarIcon };
+
+/** How a card gets there (T582): the flight with its airline's mark, or a
+ *  train, bus or car journey as an estimate, return a person. */
+export function WayChip({ way, t }) {
+  if (!way || !(way.perPerson > 0)) return null;
+  if (way.mode === 'plane') return <FlightChip perSeat={way.perPerson} airline={way.airline} />;
+  const Icon = WAY_ICONS[way.mode];
+  return (
+    <span className="flt-chip way-chip">
+      {Icon && <Icon size={16} className="way-chip-icon" />}
+      <span className="flt-chip-text money">
+        {t(`way.${way.mode}From`, { price: formatEst(way.perPerson, t('money.est')) })}
+      </span>
+    </span>
   );
 }
 

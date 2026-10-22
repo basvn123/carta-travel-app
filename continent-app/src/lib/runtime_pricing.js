@@ -119,7 +119,9 @@ const isPoint = (p) => !!p && Number.isFinite(p.lat) && Number.isFinite(p.lon);
  *  Map tab holds its results back until the question is answered.
  */
 export function needsDriveHome(choices) {
-  return (choices?.transport_mode === 'car') && !isPoint(choices?.drive_home);
+  // T577: the From picker names the start for every way, and without a named
+  // town the home airport's town stands in, so only a missing both waits.
+  return (choices?.transport_mode === 'car') && !isPoint(choices?.drive_home) && !isPoint(choices?.home);
 }
 
 /** Where a drive starts. The town the traveller named always wins; the origin
@@ -127,7 +129,6 @@ export function needsDriveHome(choices) {
  *  comparison offered when no fare exists. */
 function driveOrigin(choices) {
   if (isPoint(choices?.drive_home)) return choices.drive_home;
-  if (choices?.transport_mode === 'car') return null;
   return isPoint(choices?.home) ? choices.home : null;
 }
 
@@ -547,22 +548,49 @@ export function composeTrip(dest, departDate, returnDate, choices, allDests = nu
   const drivable = !!driving;
   const carGrand = drivable ? driving.total + stayTotal : null;
 
-  // --- Pick the effective mode.
-  const wantCar = choices.transport_mode === 'car';
-  let mode = wantCar && drivable ? 'car' : 'plane';
-  if (mode === 'plane' && planeGrand == null) {
-    if (drivable) mode = 'car';        // no flight, but we can drive
-    else return null;                  // unreachable for these dates
+  // --- Train and bus (T582): the caller's ground pricer (lib/travelWay.js,
+  // handed in as opts.ground so this module stays free of the leg
+  // estimator), the party's return journey from the From point, or null.
+  const want = choices.transport_mode || 'any';
+  const wayTotal = (m) => {
+    if (typeof opts?.ground !== 'function') return null;
+    const r = opts.ground(dest, m);
+    return r && Number.isFinite(r.total) ? r.total : null;
+  };
+  const trainWay = want === 'train' || want === 'any' ? wayTotal('train') : null;
+  const busWay = want === 'bus' || want === 'any' ? wayTotal('bus') : null;
+  const trainGrand = trainWay != null ? trainWay + stayTotal : null;
+  const busGrand = busWay != null ? busWay + stayTotal : null;
+
+  // --- Pick the effective mode. A chosen way prices that way; plane falls
+  // back to the car as it always did; any way takes the cheapest that reaches.
+  let mode;
+  if (want === 'train' || want === 'bus') {
+    if ((want === 'train' ? trainGrand : busGrand) == null) return null;
+    mode = want;
+  } else if (want === 'any') {
+    const options = [['plane', planeGrand], ['car', carGrand], ['train', trainGrand], ['bus', busGrand]]
+      .filter(([, v]) => v != null);
+    if (!options.length) return null;
+    mode = options.reduce((a, b) => (b[1] < a[1] ? b : a))[0];
+  } else {
+    mode = want === 'car' && drivable ? 'car' : 'plane';
+    if (mode === 'plane' && planeGrand == null) {
+      if (drivable) mode = 'car';        // no flight, but we can drive
+      else return null;                  // unreachable for these dates
+    }
   }
 
-  const grandTotal = mode === 'car' ? carGrand : planeGrand;
+  const grandTotal = { plane: planeGrand, car: carGrand, train: trainGrand, bus: busGrand }[mode];
   const grandPerPerson = grandTotal / groupSize;
   const lt = dest.local_transport || null;
 
   return {
     nights,
-    transport_mode:     mode,            // the mode actually priced
-    requested_mode:     choices.transport_mode || 'plane',
+    transport_mode:     mode,            // the mode actually priced: plane | car | train | bus
+    requested_mode:     want,
+    // T582: the train or bus journey in the total, group return, when priced.
+    way_total:          mode === 'train' ? round2(trainWay) : mode === 'bus' ? round2(busWay) : null,
     drivable,
 
     // Can you actually fly here for these dates? Distinct from transport_mode:

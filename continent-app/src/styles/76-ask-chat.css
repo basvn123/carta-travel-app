@@ -1,6 +1,8 @@
 /*
- * Ask Carta as a chat (T570, T571; carta-design, with the Ask Carta motion
- * exception). Roles and scales only. Desktop: a column docked on the right
+ * Ask Carta as a chat (T570, T571, T583; carta-design, with the Ask Carta
+ * motion exception). T583: the conversation sits on the warm page ground,
+ * Carta's turns as surface bubbles, the traveller's as a select-tinted
+ * bubble on the right; a typing bubble while Carta writes. Roles and scales only. Desktop: a column docked on the right
  * under the settings line, one hairline to the page it sits beside, no
  * shadow; the page makes room. Phone: a full-screen sheet. Brown only for
  * what acts or is live: the send button once there is a question, the
@@ -17,7 +19,7 @@
   display: flex;
   flex-direction: column;
   width: var(--chat-w);
-  background: var(--surface);
+  background: var(--surface-page);
   border-left: 1px solid var(--border);
   animation: ac-in var(--dur-3) var(--ease-out);
 }
@@ -49,6 +51,7 @@
   min-height: 56px;
   padding: 0 var(--space-2);
   border-bottom: 1px solid var(--border-soft);
+  background: var(--surface);
 }
 .ac-title {
   display: flex;
@@ -70,7 +73,7 @@
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: var(--space-4) var(--space-4) var(--space-5);
+  padding: var(--space-4) var(--space-3) var(--space-5);
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
 }
@@ -97,7 +100,7 @@
   padding: var(--space-2) var(--space-3);
   border: 0;
   border-radius: var(--radius-control);
-  background: var(--surface-sunken);
+  background: var(--surface);
   font: inherit;
   font-size: var(--text-body);
   line-height: var(--leading-ui);
@@ -119,7 +122,7 @@
 }
 
 /* --- The conversation ---------------------------------------------------- */
-.ac-turns { display: flex; flex-direction: column; gap: var(--space-6); margin: 0; padding: 0; list-style: none; }
+.ac-turns { display: flex; flex-direction: column; gap: var(--space-5); margin: 0; padding: 0; list-style: none; }
 .ac-turn { display: flex; flex-direction: column; gap: var(--space-3); scroll-margin-top: var(--space-4); }
 .ac-q { display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-1); }
 /* A follow-up bound to the last place (T572) says so under the question. */
@@ -129,19 +132,96 @@
   margin: 0;
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-card);
-  background: var(--surface-sunken);
+  background: var(--select-bg);
   font-size: var(--text-body);
   line-height: var(--leading-body);
-  color: var(--text);
+  color: var(--select-ink);
   overflow-wrap: anywhere;
   animation: ask-in var(--dur-2) var(--ease-out);
 }
-.ac-a { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
+.ac-a { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); min-width: 0; }
+.ac-a > * { max-width: 100%; }
+/* Carta's turn: a surface bubble on the page ground (T583). */
+.ac-bubble {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  align-self: stretch;
+  padding: var(--space-3);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  animation: ask-in var(--dur-2) var(--ease-out);
+}
+.ac-text {
+  margin: 0;
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--text);
+}
+/* Words still to come hold their place unseen, so the bubble never grows. */
+.ac-rest { opacity: 0; }
 /* The answer inside a 420 px column: one step down, so a lead fits. */
 .ac-a .ask-answer { gap: var(--space-3); }
 .ac-a .ask-lead { font-size: var(--text-lead); }
-.ac-a .ask-written { padding: var(--space-3); }
+.ac-a .ask-written { padding: 0; background: none; }
 .ac-a .ask-written-text { font-size: var(--text-body); }
+
+/* The places: Explore's own rows, a step smaller, a hairline between. */
+.ac .ac-places.explore-shell {
+  position: static;
+  inset: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: none;
+  animation: ask-in var(--dur-2) var(--ease-out);
+}
+.ac-place { border-top: 1px solid var(--border-soft); }
+.ac .ac-places .xrow { border-bottom: 0; }
+.ac .ac-places .xrow-hit { gap: var(--space-3); padding: var(--space-2) 0; }
+.ac .ac-places .xrow-media { width: 56px; height: 56px; border-radius: var(--radius-control); }
+.ac .ac-places .xrow-name { font-size: var(--text-body); }
+.btn.ac-more-places { align-self: flex-start; margin: calc(-1 * var(--space-1)) 0 calc(-1 * var(--space-1)) calc(-1 * var(--space-3)); }
+@media (hover: hover) {
+  .ac-places .xrow:hover { background: none; }
+  .ac-places .xrow:hover .xrow-name { text-decoration: underline; text-underline-offset: 3px; }
+}
+
+/* "Got one in mind?" and its quick replies. */
+.ac-replies { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.ac-replies li { animation: ask-in var(--dur-2) var(--ease-out) both; }
+.ac-replies li:nth-child(2) { animation-delay: 40ms; }
+.ac-replies li:nth-child(3) { animation-delay: 80ms; }
+.ac-replies li:nth-child(n+4) { animation-delay: 120ms; }
+.btn.ac-reply { border-radius: var(--radius-pill); }
+
+/* Carta is writing: three dots in a bubble, pulsing in turn. */
+.ac-typing {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  animation: ask-in var(--dur-2) var(--ease-out);
+}
+.ac-dots { display: inline-flex; gap: var(--space-1); }
+.ac-dots i {
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--text-3);
+  animation: ac-dot 1.2s var(--ease-in-out) infinite;
+}
+.ac-dots i:nth-child(2) { animation-delay: 0.2s; }
+.ac-dots i:nth-child(3) { animation-delay: 0.4s; }
+@keyframes ac-dot { 0%, 60%, 100% { opacity: 0.3; } 30% { opacity: 1; } }
 .ac-a .ask-pick-meta,
 .ac-a .ask-receipt { margin-left: 0; }
 
@@ -187,6 +267,7 @@
 .ac-trip {
   display: flex;
   flex-direction: column;
+  align-self: stretch;
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
   background: var(--surface);
@@ -382,7 +463,12 @@
   .ac-step-dot,
   .ac-trip,
   .ac-fu li,
+  .ac-bubble,
+  .ac-typing,
+  .ac-places,
+  .ac-replies li,
   .ac-caret { animation: none; }
+  .ac-dots i { animation: none; opacity: 0.6; }
   .ac-trip-chev,
   .ac-start,
   .ac-field,

@@ -123,3 +123,38 @@ test("device and account chats merge: newer wins, tombstones delete, device-only
   // First sign-in: every device chat goes up.
   assert.deepEqual(mergeChats([chat("x", 1), chat("y", 2)], []).upload.map((c) => c.id), ["x", "y"]);
 });
+
+// T583: the short reply. The written answer keeps its first three sentences
+// without note marks, a plain line stands in when none came, the reveal
+// ends in time, and "Got one in mind?" offers the first places by name.
+test("the reply keeps three sentences, drops note marks, and paces the reveal", async () => {
+  const { trimSentences, replyText, shortLine, revealPace, placeChips, MAX_SENTENCES } = await import("../src/lib/ask/reply.js");
+  const s = [1, 2, 3, 4, 5].map((n) => ({ text: `Sentence ${n}.`, cites: [n] }));
+  assert.equal(MAX_SENTENCES, 3);
+  assert.equal(trimSentences(s).length, 3);
+  assert.equal(replyText(s), "Sentence 1. Sentence 2. Sentence 3.");
+  assert.equal(replyText("Ohrid is cheap [1]. Bitola too [2]. Struga is by the lake [3]. Skopje is busy [4]."),
+    "Ohrid is cheap. Bitola too. Struga is by the lake.");
+  assert.deepEqual(trimSentences(null), []);
+  const t = (k, v) => (k === "askChat.short.one" ? `${v.place} looks like a good fit.` : `${v.places} look like a good fit.`);
+  assert.equal(shortLine(["Ohrid"], { t, lang: "en" }), "Ohrid looks like a good fit.");
+  assert.equal(shortLine(["Ohrid", "Bitola", "Struga"], { t, lang: "en" }), "Ohrid, Bitola, and Struga look like a good fit.");
+  assert.equal(shortLine([], { t }), "");
+  // About 30 ms a word; a long answer speeds up so it ends under 1.5 s.
+  assert.equal(revealPace(20), 30);
+  assert.ok(revealPace(120) * 120 <= 1500);
+  assert.ok(revealPace(10000) >= 8);
+  const picks = ["a", "b", "b", "c", "d"].map((id) => ({ id, dest: { city: id.toUpperCase() } }));
+  assert.deepEqual(placeChips(picks), [{ id: "a", city: "A" }, { id: "b", city: "B" }, { id: "c", city: "C" }]);
+  assert.deepEqual(placeChips([{ id: "x" }]), []);
+});
+
+test("a loosened filter is no longer said in the answer", async () => {
+  const { composeAnswer } = await import("../src/lib/ask/compose.js");
+  const t = (k, v = {}) => `${k}${JSON.stringify(v)}`;
+  const labels = { month: (m) => `M${m}`, vibe: (v) => v, area: (a) => a, country: (c) => c, budget: (b) => b, extra: (x) => x };
+  const facts = { type: "find", count: 2, relaxed: ["month"], picks: [], notes: [] };
+  const a = composeAnswer(facts, { type: "find", facets: { warm: true, month: 11 } }, { t, labels });
+  assert.equal(a.note, null);
+  assert.ok(!JSON.stringify(a).includes("ask.relaxed"));
+});

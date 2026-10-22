@@ -292,19 +292,15 @@ function Cite({ n }) {
 
 function WrittenAnswer({ t, written, device }) {
   const { state, sentences } = written;
-  // One per answer, and a chat (T570) shows many answers on one page.
-  const hId = React.useId();
   if (state === 'idle') return null;
   const line = {
     off: 'ask.written.off', cap: 'ask.written.cap', error: 'ask.written.error', withdrawn: 'ask.written.withdrawn',
   }[state];
   const quiet = !!line && !sentences.length;
   return (
-    <section className={`ask-written${quiet ? ' is-quiet' : ''}`} aria-labelledby={hId} aria-busy={state === 'writing'}>
-      <h3 className="ask-written-h" id={hId}>
-        <SparkIcon size={16} className="ask-written-mark" />
-        {t('ask.written.title')}
-      </h3>
+    // T583: no "In short" heading and no meta line under it; the one quiet
+    // disclaimer under the chat's field says it is written by AI.
+    <div className={`ask-written${quiet ? ' is-quiet' : ''}`} aria-busy={state === 'writing'}>
       {sentences.length > 0 && (
         <p className="ask-written-text">
           {sentences.map((s, i) => (
@@ -316,11 +312,8 @@ function WrittenAnswer({ t, written, device }) {
       )}
       {state === 'writing' && !sentences.length && <span className="ask-written-wait" role="status">{t('ask.written.writing')}</span>}
       {quiet && <p className="ask-written-off"><SparkIcon size={16} className="ask-written-mark" />{t(line)}</p>}
-      {(state === 'done' || sentences.length > 0) && (
-        <p className="ask-written-meta">{t(written.backend === 'device' ? 'ask.device.meta' : 'ask.written.meta')}</p>
-      )}
       {device}
-    </section>
+    </div>
   );
 }
 

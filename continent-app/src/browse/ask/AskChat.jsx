@@ -150,7 +150,9 @@ export default function AskChat(props) {
   // The typed hint keeps running in a focused empty field (desktop focuses
   // it on open); the browser's own caret stands in for the drawn one.
   const [focused, setFocused] = React.useState(false);
-  const ask = React.useCallback((q) => {
+  // `extra` marks a quick reply (T583): { pick, subject } when the traveller
+  // picked a place, { notYet } when not yet.
+  const ask = React.useCallback((q, extra = null) => {
     const question = String(q || '').trim();
     if (!question) return;
     const now = Date.now();
@@ -160,7 +162,8 @@ export default function AskChat(props) {
     const sc = scopeRef.current;
     const turn = {
       id: newId(now), q: question, at: now, ...(ref ? { ref } : {}),
-      ...(sc.scope === 'filters' ? { within: sc.filterText } : {}),
+      ...(sc.scope === 'filters' && !extra ? { within: sc.filterText } : {}),
+      ...(extra || {}),
     };
     keep(cur
       ? { ...cur, at: now, turns: [...cur.turns, turn] }
@@ -221,7 +224,9 @@ export default function AskChat(props) {
 
   const ctx = React.useMemo(() => ({
     t, lang, rows, byId, guided, price, labels, retrieve: RETRIEVE, trip, filteredRows: filters?.rows || null,
-    favorites, onToggleFav, onWritten, onSubject, onAsk: ask,
+    favorites, onToggleFav, onWritten, onSubject, onAsk: (q) => ask(q),
+    onPick: (place, month) => ask(place.city, { pick: { id: place.id, month: month || null }, subject: { id: place.id, city: place.city } }),
+    onNotYet: (month) => ask(t('askChat.notYet'), { notYet: { month: month || null } }),
     onOpen: (id) => { if (isPhone) onClose(); onOpenPlace(id); },
     onApply: onApply ? (facets, keep) => { if (isPhone) onClose(); onApply(facets, keep); } : null,
     onPlan: onPlanTrip ? (route) => { onClose(); onPlanTrip({ transport: 'public', ...route }); } : null,

@@ -2430,94 +2430,90 @@
 /* ══════════════════════════════════════════════════════════════════════════
    Lifestyle panel
    Two questions, asked as two grids of tiles: where you sleep and how you eat
-   and drink. It was six wrapped chips, six more wrapped chips and six open
-   steppers under two mono paragraphs, which is a form, not a choice.
-
-   The tiles are the Destinations category card verbatim (.side-cat): quiet
-   --paper-dim until one is on, then the full accent. Same product, same one
-   way "selected" reads. The panel ground stays --paper throughout, header
-   included, so nothing in here stands on white.
+   and drink, then the counts behind them in a closed fold.
    ══════════════════════════════════════════════════════════════════════════ */
 
-.lifestyle-panel .panel-header { padding-bottom: 16px; }
-.lifestyle-panel .panel-city { margin-bottom: 6px; }
-
-/* One line under the title, in sans, doing the work the two mono paragraphs
-   used to. Prose is never mono here: mono carries measured facts. */
-.lifestyle-sub {
-  font-size: 12.5px;
-  line-height: 1.5;
-  color: var(--ink-soft);
-  max-width: 46ch;
+/* T580 (owner 2026-10-22): the panel fits a 1280x720 window without a
+   scroll. One sheet title line, compact rows of tiles, a quiet fold. */
+/* The title sits on the close button's line (both at --space-2 from the top). */
+.accom-panel.lifestyle-panel .panel-header.ls-header {
+  padding: var(--space-2) calc(var(--tap) + var(--space-3)) var(--space-1) var(--space-5);
+  border-bottom: 0;
+}
+.ls-title {
+  margin: 0;
+  min-height: var(--tap);
+  display: flex;
+  align-items: center;
+  font-family: var(--ui);
+  font-size: var(--text-title);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--text);
+}
+.accom-panel.lifestyle-panel .panel-section {
+  padding: var(--space-3) var(--space-5);
+  border-bottom: 0;
 }
 
-/* Section heading. Plain sentence case, no icon and no tiny-caps: the tiles
-   below are already the loud thing, and an iconed overline over a grid of
-   iconed tiles is two decorations doing one job. */
+/* Section heading: 13 px 600 in --text-2, sentence case, no icon. */
 .ls-head {
-  margin-bottom: 11px;
-  font-size: 13.5px;
+  margin-bottom: var(--space-2);
+  font-size: var(--text-label);
   font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--ink);
+  color: var(--text-2);
 }
 
 .ls-tiles {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
 }
-.ls-tiles-3 { grid-template-columns: repeat(3, 1fr); }
 
+/* A tile is one compact row: the icon beside its word, at the touch height.
+   A two-word label may wrap to a second line inside the row. */
 .ls-tile {
+  position: relative;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 7px;
+  gap: var(--space-2);
   min-width: 0;
-  min-height: 74px;
-  padding: 12px 5px 11px;
-  border: 1px solid var(--rule-soft);
-  border-radius: 10px;
-  background: var(--paper-dim);
+  min-height: var(--tap);
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-control);
+  background: var(--surface);
   font-family: inherit;
-  font-size: 11.5px;
+  font-size: var(--text-label);
   font-weight: 600;
-  line-height: 1.25;
-  text-align: center;
-  color: var(--ink-soft);
+  line-height: 1.2;
+  text-align: left;
+  color: var(--text-2);
+  cursor: pointer;
   transition: color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
 }
-.ls-tile svg { flex: none; color: var(--ink-mute); transition: color var(--dur-1) var(--ease-out); }
-.ls-tile span {
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+.ls-tile svg { flex: none; color: var(--text-2); transition: color var(--dur-1) var(--ease-out); }
+.ls-tile span { min-width: 0; overflow-wrap: break-word; }
 @media (hover: hover) {
-  .ls-tile:hover { color: var(--ink); border-color: var(--rule); }
+  .ls-tile:hover { color: var(--text); border-color: var(--border); }
+  .ls-tile:hover svg { color: var(--text); }
 }
-@media (hover: hover) {
-  .ls-tile:hover svg { color: var(--ink-soft); }
-}
-/* Selected is --ink-fill (T391, carta-design "Selected state"); the accent
-   is never a selection colour. */
+/* Selected: the light tint, its ink, and a tick in the corner. */
 .ls-tile.on {
   background: var(--select-bg);
   border-color: var(--select-border);
   color: var(--select-ink);
 }
 .ls-tile.on svg { color: var(--select-ink); }
-.ls-tile:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.ls-tile .ls-tile-tick { position: absolute; top: var(--space-1); right: var(--space-1); }
+.ls-tile:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 
 /* Which bed, which home, which hotel (T535): asked only once the kind is
-   chosen, as the kit's segmented control under its 12 px label, so the three
-   ways to sleep stay three tiles and the second question reads as part of
-   the tile above it. */
+   chosen, as the kit's segmented control under its 12 px label. */
 .ls-kind {
   display: grid;
-  gap: var(--space-2);
+  gap: var(--space-1);
   margin-top: var(--space-3);
 }
 .ls-kind-label {
@@ -2526,80 +2522,78 @@
   color: var(--text-2);
 }
 
-/* The honest small print, in sans and in one line. */
+/* The one note left: a hand-tuned lifestyle says it matches no preset. */
 .ls-note {
-  margin-top: 10px;
-  font-size: 11.5px;
-  line-height: 1.5;
-  color: var(--ink-mute);
+  margin-top: var(--space-2);
+  font-size: var(--text-caption);
+  line-height: 1.4;
+  color: var(--text-2);
 }
 
-/* The six counts, closed. A preset answers this for almost everybody, and
-   open they were most of the panel's height. */
+/* The counts, closed: a quiet disclosure row, the word and a chevron over a
+   hairline, no fill. */
+.accom-panel.lifestyle-panel .panel-section.lifestyle-food { padding-top: var(--space-1); padding-bottom: var(--space-3); }
 .ls-tune-btn {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: var(--space-2);
   width: 100%;
-  padding: 11px 13px;
-  border: 1px solid var(--rule-soft);
-  border-radius: 10px;
-  background: var(--paper-dim);
+  min-height: var(--tap);
+  padding: 0;
+  border: 0;
+  border-top: 1px solid var(--border-soft);
+  border-radius: 0;
+  background: none;
   font-family: inherit;
-  font-size: 12.5px;
+  font-size: var(--text-label);
   font-weight: 600;
-  color: var(--ink-soft);
-  transition: color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
+  color: var(--text-2);
+  cursor: pointer;
+  transition: color var(--dur-1) var(--ease-out);
 }
 @media (hover: hover) {
-  .ls-tune-btn:hover { color: var(--ink); border-color: var(--rule); }
+  .ls-tune-btn:hover { color: var(--text); }
 }
-.ls-tune-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.ls-tune-btn .ls-tune-chev { flex: none; color: var(--ink-mute); transition: transform var(--dur-2) var(--ease-out); }
-.ls-tune-btn.open { color: var(--ink); }
+.ls-tune-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.ls-tune-btn .ls-tune-chev { flex: none; color: var(--text-2); transition: transform var(--dur-2) var(--ease-out); }
+.ls-tune-btn.open { color: var(--text); }
 .ls-tune-btn.open .ls-tune-chev { transform: rotate(180deg); }
 @media (prefers-reduced-motion: reduce) {
   .ls-tune-btn .ls-tune-chev { transition: none; }
 }
 
-.ls-tune { margin-top: 14px; }
-/* Two colours in this panel, beige and action-brown. .panel-segment's default
-   active fill is --ink-fill, which is right in the map's dark chrome and a
-   third colour in here, so the cadence toggle takes the accent like every
-   other "on" state on this screen. It is also a secondary control sitting
-   under a disclosure, so it gives up the 12px padding it uses elsewhere. */
-.ls-tune .lifestyle-cadence { width: 100%; margin-bottom: 16px; border-color: var(--rule-soft); }
-.ls-tune .lifestyle-cadence button { padding: 8px 12px; font-size: 12.5px; font-weight: 600; }
-.ls-tune .lifestyle-cadence button.seg-on { background: var(--accent); color: var(--on-fill); }
+.ls-tune { margin-top: var(--space-2); }
+.ls-tune .lifestyle-cadence { width: 100%; margin-bottom: var(--space-3); border-color: var(--border-soft); }
+.ls-tune .lifestyle-cadence button { padding: var(--space-2) var(--space-3); font-size: var(--text-label); font-weight: 600; }
 
-/* One line per count: name on the left, the stepper on the right. Stacked
-   (the panel's old shape) each count took three lines, and the per-week hint
-   under every one of them repeated what the toggle above says once. */
+/* One line per count: name on the left, the stepper on the right, hairlines
+   between them. */
 .lifestyle-food .stepper {
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: var(--space-3);
 }
 .lifestyle-food .stepper-label { flex: 1; min-width: 0; }
 .lifestyle-food .stepper-controls { flex: none; }
-/* Hairlines rather than 20px of air: a run of related facts is divided by
-   rules, and one-line rows this close need the rule to stay separate. */
 .lifestyle-food .stepper + .stepper {
-  margin-top: 11px;
-  padding-top: 11px;
-  border-top: 1px solid var(--rule-soft);
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border-soft);
 }
 
-/* Two abreast on a phone, where the panel is the full 390px: the habits read
-   as 3x2, the shape the tiles were drawn for. The three ways to sleep stay
-   one row (T535). */
+/* On a phone the habits read as 3x2 still: the rows are short enough, and
+   a narrow tile stacks its icon over its word rather than squeezing it. */
 @media (max-width: 480px) {
-  .ls-tiles { grid-template-columns: repeat(2, 1fr); }
-  .ls-tiles-3 { grid-template-columns: repeat(2, 1fr); }
-  /* The three ways to sleep keep one row: short words, one question. */
-  .ls-tiles-stay { grid-template-columns: repeat(3, 1fr); }
+  .accom-panel.lifestyle-panel .panel-header.ls-header { padding: 0 calc(var(--tap) + var(--space-3)) var(--space-1) var(--space-4); }
+  .accom-panel.lifestyle-panel .panel-section { padding-left: var(--space-4); padding-right: var(--space-4); }
+  .ls-tile {
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-1);
+    text-align: center;
+  }
 }
 
 /* The account hub's lifestyle row states what it is set to on its right

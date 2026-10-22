@@ -503,26 +503,11 @@ html.tab-vt::view-transition-new(root) { animation: shell-tab-in var(--dur-2) va
   display: flex;
   flex: none;
   align-items: center;
+  justify-content: flex-end;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-5);
   border-top: 1px solid var(--border-soft);
   background: var(--surface);
-}
-.ls-trade {
-  flex: 1 1 auto;
-  min-width: 0;
-  margin: 0;
-  font-family: var(--ui);
-  font-size: var(--text-label);
-  line-height: 1.4;
-  color: var(--text-2);
-}
-.ls-trade-eur {
-  display: inline-block;
-  font-family: var(--font);
-  font-variant-numeric: tabular-nums;
-  font-weight: 600;
-  color: var(--text);
 }
 /* The dialog's one primary: it closes, the prices behind are already set. */
 .ls-done {
@@ -585,10 +570,13 @@ html.tab-vt::view-transition-new(root) { animation: shell-tab-in var(--dur-2) va
     border-radius: var(--radius-pill);
     background: var(--border);
   }
-  .lifestyle-panel .ls-close { top: var(--space-1); }
+  /* On the title's line, under the grab handle. */
+  .lifestyle-panel .ls-close { top: var(--space-5); }
   .ls-foot {
     padding: var(--space-3) var(--space-4) calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
   }
+  /* On a phone the one primary runs the full width of the sheet. */
+  .ls-done { flex: 1 1 auto; margin-left: 0; font-size: var(--text-lead); }
 }
 @media (max-width: 768px) and (orientation: landscape) {
   .accom-panel.lifestyle-panel,

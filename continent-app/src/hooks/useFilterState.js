@@ -16,6 +16,8 @@ export function useFilterState(init) {
     Array.isArray(init.countryFilter)
       ? init.countryFilter
       : (init.countryFilter && init.countryFilter !== 'all' ? [init.countryFilter] : []));
+  // T581: the same list read the other way round, "every country but these".
+  const [countryNot, setCountryNot] = useState(init.countryNot ?? false);
   const [tripKinds, setTripKinds] = useState(init.tripKinds ?? []);
   // Rating slicer: a [min, max] band over the 0-10 score ([0,10] = off/Any) plus
   // a hidden-gems-only toggle. Replaces the old minimum-tier button list; a
@@ -42,6 +44,7 @@ export function useFilterState(init) {
   return {
     priceMode, setPriceMode,
     countryFilter, setCountryFilter,
+    countryNot, setCountryNot,
     tripKinds, setTripKinds,
     ratingRange, setRatingRange,
     gemOnly, setGemOnly,

@@ -1965,3 +1965,19 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T575-a | T575 | Paste supabase/migrations/054_ask_chats.sql in the SQL editor (never db push), look for "ask chats self-check passed", then run node scripts/verify_live_policies.mjs; until then chats stay on the device | user | open | 1 |
 | T575-b | T575 | The privacy policy should say that, signed in, Ask Carta's questions and answers are kept in the account and appear in the export | user | open | 2 |
 | T576-a | T576 | Entire place, private room and dorm never get a live bed (Xotelo prices hotels and rooms only), so the owner's own Lifestyle sees the estimate; a live source for whole places is a product call | user | open |  |
+| T577-a | T577 | The From and Countries panels' list rows are raw buttons (5 new design-lint raw-button findings); the kit needs a list row component they can use | next task | open |  |
+| T577-b | T577 | The planners' own OriginPicker (trip wizard, flight sheet) still shows airport codes and "city, country or airport code"; move it onto FromPanel | next task | open |  |
+| T578-a | T578 | The destination page, trip page and planners read the dates as exact; with When set to a month or any time they price the first days of the month | next task | open |  |
+| T579-a | T579 | priceTrip (tripTotal.js) on the destination page, trip page and planners does not read children or babies yet | next task | open |  |
+| T579-b | T579 | Review the party shares in lib/party.js (child 60 percent food, half rail ticket, full plane seat; baby 15 percent food, about 30 a flight leg); they are Carta estimates | user | open |  |
+| T579-c | T579 | With a baby, the Explore flight caption folds the lap fee into Google's price, so it is no longer Google's own figure; show the fee apart or mark it | next task | open |  |
+| T580-a | T580 | App.jsx passes LifestylePanel an unused destination prop; scripts/verify_lifestyle.mjs expects 10 tiles (9 since T535) | next task | open |  |
+| T582-a | T582 | The destination page, trip page and planners price their own transport (priceTrip) and ignore the settings line's way button | next task | open |  |
+| T582-b | T582 | Any way is the new default: links without t= used to mean plane and now mean the cheapest way | user | open |  |
+| T582-c | T582 | Ask Carta's trip card prices the flight only, whatever the way button says | next task | open |  |
+| T583-a | T583 | The Ask Carta writer prompt is version 3: deploy the app and functions/api/ask together in one release, then check real answers are 2 or 3 warm sentences | user | open | 1 |
+| T583-b | T583 | Ask Carta's More places stops at 6 places (the facts limit) | next task | open |  |
+| T583-c | T583 | The budget answer's line by line receipt is gone from the chat; only the group total shows on the row | next task | open |  |
+| T583-d | T583 | AskSearchFull.jsx's default export is imported nowhere and still holds ask.showAll and ask.more (with T574-b) | next task | open |  |
+| T583-e | T583 | The written answer's off, cap and error lines still show on compare, when and about answers | next task | open |  |
+| T583-f | T583 | Warmer, Cheaper and Quieter after Not yet were tried in English only; check they parse in nl, de, fr, es and it | next task | open |  |

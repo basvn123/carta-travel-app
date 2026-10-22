@@ -64,6 +64,7 @@ import {
   DEFAULT_LIFESTYLE, CLUB_DRINKS_PER_NIGHT, groundSpendPerPerson,
 } from './runtime_pricing.js';
 import { bedPrice, cheapestMonths } from './stayPrice.js';
+import { foodShare, partyOf } from './party.js';
 import { formatMoney } from './money.js';
 
 // Sanity gate on a harvested nightly rate. Below the floor the number is a
@@ -272,6 +273,7 @@ export function computeCosts(destinations, choices) {
   const when = { start: choices?.start || null, month: choices?.month || null,
     nights: choices?.nights || null, fees: choices?.accommodation_model || null };
   const scale = bandScale(lifestyle, stayTier);
+  const eatShare = foodShare(partyOf(choices));
   const medians = countryStayMedians(destinations);
   const out = new Map();
   for (const [id, d] of Object.entries(destinations || {})) {
@@ -282,7 +284,10 @@ export function computeCosts(destinations, choices) {
       const m = medians.get(d.iso2);
       if (m != null) { stayEur = m; repaired = true; }
     }
-    const foodEur = foodPerDay(d, lifestyle);
+    // T579: children eat less and a baby a little, so a seat's food is the
+    // party's average (1 for adults only).
+    const foodBase = foodPerDay(d, lifestyle);
+    const foodEur = foodBase != null ? foodBase * eatShare : null;
     const dayEur = stayEur != null && foodEur != null ? stayEur + foodEur : null;
     const a = d.accommodation || {};
     out.set(id, {

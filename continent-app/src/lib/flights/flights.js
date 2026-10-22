@@ -126,6 +126,23 @@ export function cheapestReturn(file, airport, month, now = Date.now()) {
   return { out, back, perSeat: out.price + back.price };
 }
 
+/**
+ * Whenever is cheapest (T578, "any time"): the cheapest return over every
+ * month the sweep has flights for, each month paired as cheapestReturn pairs
+ * it, so the way home never comes before the way out.
+ */
+export function cheapestReturnAnyMonth(file, airport, now = Date.now()) {
+  const days = file?.to?.[airport];
+  if (!days) return null;
+  const months = [...new Set(Object.keys(days).map((d) => d.slice(0, 7)))];
+  let best = null;
+  for (const m of months) {
+    const r = cheapestReturn(file, airport, m, now);
+    if (r && (!best || r.perSeat < best.perSeat)) best = r;
+  }
+  return best;
+}
+
 export function nextMonth(month) {
   if (!month) return null;
   const [y, m] = month.split('-').map(Number);

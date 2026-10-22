@@ -20,7 +20,9 @@ import {
   ChevronDownIcon, ChevronRightIcon, MapPinIcon, ListDayIcon, CloseIcon,
 } from '../components/Icons.jsx';
 import { useTravelMonth, useSettings } from '../components/SettingsLine.jsx';
-import { cheapestReturn } from '../lib/flights/flights.js';
+import { cheapestReturn, cheapestReturnAnyMonth } from '../lib/flights/flights.js';
+import { homePoint, wayFor } from '../lib/travelWay.js';
+import { partyOf } from '../lib/party.js';
 import { destAnchor, originLabel } from '../lib/origins.js';
 import { scrollBehavior } from '../lib/motion.js';
 import { openShared } from '../lib/sharedElement.js';
@@ -66,6 +68,7 @@ import { overviewRegion, overviewReason, overviewScore, reasonText } from '../li
 import { MapDrawer } from '../components/MapDrawer.jsx';
 import { useGuidedData, vibeOf } from '../lib/guidedData.js';
 import { AskChatDoor, AskChatHost } from './ask/AskChatButton.jsx';
+import { CountriesButton } from '../components/CountriesControl.jsx';
 import {
   noCarOk, underOk, quietOk, matchGuided, guidedComparator, whyFacts, makeLabels,
 } from '../lib/guidedSearch.js';
@@ -331,7 +334,7 @@ export function ExploreTab({
   isActive = true,
   pageOver = false,
   locationQuery, setLocationQuery,
-  countryFilter, setCountryFilter,
+  countryFilter, setCountryFilter, countryNot = false,
   tripKinds, setTripKinds,
   ratingRange, setRatingRange,
   gemOnly, setGemOnly,
@@ -498,40 +501,61 @@ export function ExploreTab({
     [dxf.month, data, choices, indices],
   );
   const { all: catAllRows, rows: catRows, availableCountries, indices: costIndex } = useExploreCatalog({
-    data, locationQuery, countryFilter, tripKinds,
+    data, locationQuery, countryFilter, countryNot, tripKinds,
     ratingRange, gemOnly, unescoOnly, topBeachOnly, bigOnly, topPick,
     reachHours, reachMinutes, sortKey, showFavOnly, favorites,
     indices: monthIndices, searchHits,
   });
 
-  // T518: the cheapest return flight a person from the home airport's sweep
-  // (data.flights), in the travel month: the traveller's own month when they
-  // set dates (travelMonth), else the month of the dates in use. It rides on
-  // the row's cost as `cost.flight`, so the row, the tile and the hover
-  // receipt read it where they read the day price (DayPrice, CostReceipt).
-  // A place with no flight that month keeps its row object untouched.
+  // How the traveller gets there (T518, T582): under the settings line's
+  // way, each place carries `cost.way`, { mode, perPerson, airline?, hours? }:
+  // the cheapest return flight a seat in the travel month from the home
+  // airport's sweep (data.flights), or a train, coach or car journey from
+  // the traveller's From point (lib/travelWay.js), or with any way the
+  // cheapest of them. The party splits it (children, babies on a lap, T579).
+  // With a month or any time (T578) the flight is the month's or the
+  // year's cheapest. A place the chosen ground way cannot reach leaves the
+  // list; a place without a flight keeps its row in plane mode, as before.
   const settingsLine = useSettings();
+  const setCountryNot = settingsLine?.setCountryNot;
+  // The one country the list is narrowed to, for its page link and the
+  // category doors; none while the list leaves countries out (T581).
+  const oneCountry = !countryNot && countryFilter.length === 1 ? countryFilter[0] : null;
   const flights = data?.flights || null;
-  const flightMonth = settingsLine?.departDate
-    ? String(settingsLine.departDate).slice(0, 7)
-    : new Date().toISOString().slice(0, 7);
-  const flightRows = React.useMemo(() => {
-    if (!flights || !data?.destinations) return null;
+  const dateFlex = settingsLine?.dateFlex || null;
+  const flightMonth = dateFlex === 'any' ? null
+    : settingsLine?.departDate
+      ? String(settingsLine.departDate).slice(0, 7)
+      : new Date().toISOString().slice(0, 7);
+  const wayMode = settingsLine?.transportMode || 'any';
+  const party = React.useMemo(
+    () => partyOf({ group_size: settingsLine?.party, children: settingsLine?.children, babies: settingsLine?.babies }),
+    [settingsLine?.party, settingsLine?.children, settingsLine?.babies],
+  );
+  const home = React.useMemo(
+    () => homePoint({ drive_home: settingsLine?.fromPlace, origin: settingsLine?.origin }, data),
+    [settingsLine?.fromPlace, settingsLine?.origin, data],
+  );
+  const wayRows = React.useMemo(() => {
+    if (!data?.destinations) return null;
     const m = new Map();
     for (const p of catAllRows) {
-      const r = cheapestReturn(flights, destAnchor(data.destinations[p.id]), flightMonth);
-      if (r) m.set(p.id, { ...p, cost: { ...p.cost, flight: { perSeat: r.perSeat, airline: r.out.airline } } });
+      const d = data.destinations[p.id];
+      const r = flights && (wayMode === 'plane' || wayMode === 'any')
+        ? (flightMonth ? cheapestReturn(flights, destAnchor(d), flightMonth) : cheapestReturnAnyMonth(flights, destAnchor(d)))
+        : null;
+      const flight = r ? { perSeat: r.perSeat, airline: r.out.airline } : null;
+      const way = wayFor(d || p, wayMode, { home, party, flight });
+      m.set(p.id, way ? { ...p, cost: { ...p.cost, way } } : (wayMode === 'plane' ? p : null));
     }
     return m;
-  }, [catAllRows, flights, flightMonth, data]);
-  const allRows = React.useMemo(
-    () => (flightRows?.size ? catAllRows.map((p) => flightRows.get(p.id) || p) : catAllRows),
-    [catAllRows, flightRows],
+  }, [catAllRows, flights, flightMonth, wayMode, home, party, data]);
+  const withWay = React.useCallback(
+    (list) => (wayRows ? list.map((p) => (wayRows.has(p.id) ? wayRows.get(p.id) : p)).filter(Boolean) : list),
+    [wayRows],
   );
-  const rows = React.useMemo(
-    () => (flightRows?.size ? catRows.map((p) => flightRows.get(p.id) || p) : catRows),
-    [catRows, flightRows],
-  );
+  const allRows = React.useMemo(() => withWay(catAllRows), [catAllRows, withWay]);
+  const rows = React.useMemo(() => withWay(catRows), [catRows, withWay]);
 
   // The guided search's context (T442): the place a "near" facet names (from
   // the list's own merged catalogue), and the one way each facet is named.
@@ -636,9 +660,10 @@ export function ExploreTab({
     if (q.get('xg') === '1') setGemOnly(true);
     if (q.get('xu') === '1') setUnescoOnly(true);
     if (q.get('xc')) setCountryFilter(q.get('xc').split(',').filter(Boolean));
+    if (q.get('xo') === '1') setCountryNot?.(true);
     if (q.get('xs')) setSortKey(q.get('xs'));
     // App's useState setters, so stable; the ref keeps it to one read anyway.
-  }, [setGemOnly, setUnescoOnly, setCountryFilter, setSortKey]);
+  }, [setGemOnly, setUnescoOnly, setCountryFilter, setCountryNot, setSortKey]);
 
   // Then the writer: replaceState keeps the #trip hash and never triggers a
   // reload.
@@ -660,6 +685,7 @@ export function ExploreTab({
     setOrDrop('xg', gemOnly ? '1' : '');
     setOrDrop('xu', unescoOnly ? '1' : '');
     setOrDrop('xc', countryFilter.join(','));
+    setOrDrop('xo', countryNot && countryFilter.length ? '1' : '');
     setOrDrop('xs', sortKey !== 'beauty' ? sortKey : '');
     setOrDrop('xw', view === 'map' ? 'map' : '');
     setOrDrop('xi', pickedId || '');
@@ -667,7 +693,7 @@ export function ExploreTab({
     // The state rides along: it marks the history step a place opened.
     window.history.replaceState(window.history.state, '',
       `${window.location.pathname}${qs ? '?' + qs : ''}${window.location.hash}`);
-  }, [xf, gemOnly, unescoOnly, countryFilter, sortKey, view, pickedId, isActive]);
+  }, [xf, gemOnly, unescoOnly, countryFilter, countryNot, sortKey, view, pickedId, isActive]);
 
   // New result set: back to one page, back to the top. Keyed on what the set
   // holds, not on the array's identity (T502: a return to Explore rebuilt the
@@ -773,11 +799,11 @@ export function ExploreTab({
     if (showFavOnly) list.push({ key: 'fav', label: t('filter.shortlistOnly'), remove: () => setShowFavOnly(false) });
     for (const iso2 of countryFilter) {
       const name = (availableCountries.find(([c]) => c === iso2) || [])[1] || iso2;
-      list.push({ key: `c:${iso2}`, label: name, remove: () => setCountryFilter(countryFilter.filter((x) => x !== iso2)) });
+      list.push({ key: `c:${iso2}`, label: countryNot ? t('settings.countryNot', { country: name }) : name, remove: () => setCountryFilter(countryFilter.filter((x) => x !== iso2)) });
     }
     if (reachAvailable && reachHours != null) list.push({ key: 'reach', label: t('filter.reachHours', { n: reachHours }), remove: () => setReachHours(null) });
     return list;
-  }, [xf, tripKinds, gemOnly, unescoOnly, showFavOnly, countryFilter, reachHours, reachAvailable, availableCountries, t, patchXf, setTripKinds, setGemOnly, setUnescoOnly, setShowFavOnly, setCountryFilter, setReachHours, gLabels, nearRow]);
+  }, [xf, tripKinds, gemOnly, unescoOnly, showFavOnly, countryFilter, countryNot, reachHours, reachAvailable, availableCountries, t, patchXf, setTripKinds, setGemOnly, setUnescoOnly, setShowFavOnly, setCountryFilter, setReachHours, gLabels, nearRow]);
 
   // The filter set last, so an empty grid can name it and offer to remove
   // just that one (brief V3-11). A chip key that was not there a render ago
@@ -1079,7 +1105,7 @@ export function ExploreTab({
   // App with the one country picked here, so the country travels (rule 3).
   const catTiles = onPickCategory ? (
     <ExploreCategories current="places" columns={isDesktop ? 2 : 3}
-      onPick={(key) => onPickCategory(key, countryFilter.length === 1 ? countryFilter[0] : '')} />
+      onPick={(key) => onPickCategory(key, oneCountry || '')} />
   ) : null;
 
   const filterRail = (
@@ -1142,6 +1168,9 @@ export function ExploreTab({
         <div className="explore-filterbar xtop">
           {/* On desktop the same button has portalled into the header. */}
           {!headerSlot && <AskChatDoor t={t} className="ac-in-bar" />}
+          {/* T581: the countries, in or out, as their own door on a phone
+              (the desktop has them on the settings line). */}
+          <CountriesButton s={settingsLine} />
           <Button
             variant="secondary"
             ref={filterBtnRef}
@@ -1191,13 +1220,13 @@ export function ExploreTab({
             nothing is published. */}
         <GuidesStrip onOpen={onOpenGuides} />
 
-        {countryFilter.length === 1 && onOpenCountry && (
+        {oneCountry && onOpenCountry && (
           <Button variant="quiet" size="sm" className="xcountry-link"
             iconEnd={<ChevronRightIcon size={16} />}
-            onClick={() => onOpenCountry(countryFilter[0])}>
+            onClick={() => onOpenCountry(oneCountry)}>
             {t('cpage.open', {
-              country: (availableCountries.find(([c]) => c === countryFilter[0]) || [])[1]
-                || countryFilter[0],
+              country: (availableCountries.find(([c]) => c === oneCountry) || [])[1]
+                || oneCountry,
             })}
           </Button>
         )}
@@ -1301,7 +1330,7 @@ export function ExploreTab({
                 of the rails, so three (two on a phone) follow it. */}
             {railsIdle && onOpenStyles && (
               <TripStylesRow t={t} lang={lang} id="xrail-styles"
-                country={countryFilter.length === 1 ? countryFilter[0] : null}
+                country={oneCountry}
                 onPick={(slug) => onOpenStyles(slug)} onSeeAll={() => onOpenStyles(null)} />
             )}
             {railsIdle && (

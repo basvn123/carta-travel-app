@@ -135,7 +135,7 @@ const PLACE_PARAM_KEYS = ['tab', 'mode', 'cat', 'view'];
 
 /** Build a query string (no leading '?') from the live app state. */
 export function encodeState({
-  departDate, returnDate, choices, priceMode, countryFilter,
+  departDate, returnDate, choices, priceMode, countryFilter, countryNot, dateFlex,
   tripKinds, priceRange, priceBounds, selectedId, favorites, sortKey, showFavOnly,
   ratingRange, gemOnly, unescoOnly, topBeachOnly, bigOnly, topPick, reachHours, activeTab,
   exploreCat,
@@ -149,8 +149,14 @@ export function encodeState({
   if (departDate) q.set('d', departDate);
   if (returnDate) q.set('r', returnDate);
   if (choices?.group_size) q.set('g', String(choices.group_size));
+  // T579: children and babies, only when there are any.
+  if (choices?.children > 0) q.set('gc', String(choices.children));
+  if (choices?.babies > 0) q.set('gb', String(choices.babies));
+  // T578: a month ("m") or any time ("a") instead of the dates themselves.
+  if (dateFlex === 'month' || dateFlex === 'any') q.set('df', dateFlex === 'month' ? 'm' : 'a');
   if (choices?.baggage_key) q.set('b', choices.baggage_key);
-  if (choices?.transport_mode && choices.transport_mode !== 'plane') q.set('t', choices.transport_mode);
+  // T582: any way is the default, so only a chosen way is stored.
+  if (choices?.transport_mode && choices.transport_mode !== 'any') q.set('t', choices.transport_mode);
   if (choices?.stay_tier && choices.stay_tier !== 'home') q.set('st', choices.stay_tier);
   if (choices?.origin) q.set('o', choices.origin);
   // Where a drive starts, packed as "lat,lon,name". The name is free text and
@@ -163,6 +169,7 @@ export function encodeState({
   // else "Total" silently flips back to per-person on reload.
   if (priceMode && priceMode !== 'pp') q.set('pm', priceMode);
   if (countryFilter && countryFilter.length) q.set('cf', countryFilter.join('.'));
+  if (countryNot && countryFilter && countryFilter.length) q.set('cn', '1');
   if (tripKinds && tripKinds.length) q.set('tk', tripKinds.join('.'));
   // Only store a price range if it's actually a narrowing of the full bounds.
   if (priceRange && priceBounds &&
@@ -212,6 +219,9 @@ export function decodeState(search) {
   if (has('d')) out.departDate = q.get('d');
   if (has('r')) out.returnDate = q.get('r');
   if (has('g')) out.group_size = Math.max(1, parseInt(q.get('g'), 10) || 1);
+  if (has('gc')) out.children = Math.max(0, parseInt(q.get('gc'), 10) || 0);
+  if (has('gb')) out.babies = Math.max(0, parseInt(q.get('gb'), 10) || 0);
+  if (has('df')) out.dateFlex = q.get('df') === 'm' ? 'month' : q.get('df') === 'a' ? 'any' : null;
   if (has('b')) out.baggage_key = q.get('b');
   if (has('t')) out.transport_mode = q.get('t');
   if (has('st')) out.stay_tier = q.get('st');
@@ -229,6 +239,7 @@ export function decodeState(search) {
   if (has('pm')) out.priceMode = q.get('pm');
   // iso2 codes joined by '.', legacy links stored a single code (still parses).
   if (has('cf')) out.countryFilter = q.get('cf').split('.').filter((c) => c && c !== 'all');
+  if (has('cn')) out.countryNot = q.get('cn') === '1';
   if (has('tk')) out.tripKinds = q.get('tk').split('.').filter(Boolean);
   if (has('pr')) {
     const [lo, hi] = q.get('pr').split('.').map(Number);

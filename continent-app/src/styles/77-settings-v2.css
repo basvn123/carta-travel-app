@@ -1,0 +1,231 @@
+/*
+ * The settings line, second pass (T577 to T582, the owner 2026-10-22):
+ * From as a town, When with a month or any time, People as adults,
+ * children and babies, Countries in or out, and Getting there as one
+ * button that steps through the ways. Loaded with SettingsLine.jsx, after
+ * 60-v6-shell.css, whose band, parts and popovers it builds on.
+ */
+
+/* ---- Popovers: a list popover, the dates and the party. ---- */
+.settings-pop.settings-pop-list {
+  width: min(360px, calc(100vw - 2 * var(--space-4)));
+  padding: var(--space-3);
+}
+.settings-pop.settings-pop-dates { width: min(344px, calc(100vw - 2 * var(--space-4))); }
+.settings-pop.settings-pop-party { width: min(320px, calc(100vw - 2 * var(--space-4))); }
+
+/* ---- From and Countries: one field, one quiet action, a list of rows. ---- */
+.from-panel,
+.ctry-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.from-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.from-field-icon {
+  position: absolute;
+  left: var(--space-3);
+  color: var(--text-3);
+  pointer-events: none;
+}
+.from-input {
+  width: 100%;
+  min-height: var(--tap);
+  padding: 0 var(--space-3) 0 calc(var(--space-3) + 18px + var(--space-2));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface-sunken);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-lead);
+  font-weight: 400;
+  transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
+}
+.from-input:focus { border-color: var(--action); background: var(--surface); outline: none; }
+.from-input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.from-input::-webkit-search-cancel-button { cursor: pointer; }
+.btn.from-locate { align-self: flex-start; }
+.from-note {
+  margin: 0;
+  padding: 0 var(--space-1);
+  font-size: var(--text-label);
+  color: var(--text-2);
+}
+.from-list {
+  max-height: min(52dvh, 420px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  margin: 0 calc(-1 * var(--space-1));
+  padding: 0 var(--space-1);
+}
+.from-ul { list-style: none; margin: 0; padding: 0; }
+.from-ul + .from-ul { margin-top: var(--space-1); padding-top: var(--space-1); border-top: 1px solid var(--border-soft); }
+.ctry-list {
+  max-height: min(46dvh, 360px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.from-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: var(--tap);
+  padding: 0 var(--space-2);
+  border: 0;
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-body);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+}
+@media (hover: hover) {
+  .from-row:hover:not(:disabled) { background: var(--surface-hover); }
+}
+.from-row:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+.from-row.is-on { background: var(--select-bg); color: var(--select-ink); }
+.from-row:disabled { color: var(--text-3); cursor: default; }
+.from-row-icon,
+.from-row-chev { flex: none; color: var(--text-2); }
+.from-row.is-on .from-row-icon,
+.from-row-tick { flex: none; color: var(--select-ink); }
+.from-row-flag {
+  display: inline-flex;
+  flex: none;
+  width: 18px;
+  justify-content: center;
+}
+.from-row-main {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+  line-height: var(--leading-ui);
+}
+.from-row-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.from-row-sub {
+  overflow: hidden;
+  font-size: var(--text-caption);
+  color: var(--text-3);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.from-row.is-on .from-row-sub { color: var(--select-ink); }
+.from-europe .from-row-name { color: var(--action); font-weight: 500; }
+.from-back .from-row-name { color: var(--text-2); }
+.from-h {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: var(--space-2) var(--space-2) var(--space-1);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  line-height: var(--leading-ui);
+  color: var(--text-2);
+}
+.ctry-mode { margin-bottom: var(--space-1); }
+.ctry-foot {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: var(--space-1);
+  border-top: 1px solid var(--border-soft);
+}
+
+/* The phone sheet's From: the current town as one kit button that opens the panel. */
+.btn.from-current { justify-content: flex-start; }
+.from-current-name { flex: 1 1 auto; min-width: 0; overflow: hidden; text-align: left; text-overflow: ellipsis; white-space: nowrap; }
+.from-current[aria-expanded="true"] { border-color: var(--select-border); }
+.from-current + .from-panel { margin-top: var(--space-3); }
+.settings-sheet .from-list { max-height: 40dvh; }
+
+/* ---- When: the three ways to say it, the months, the nights. ---- */
+.settings-flex { margin-bottom: var(--space-3); }
+.settings-months {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+.settings-months .chip { justify-content: center; width: 100%; padding-inline: var(--space-1); }
+@media (max-width: 380px) {
+  .settings-months { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* ---- People: one row a kind of traveller, the word left, the count right.
+   The stepper's buttons go to 36 px on a fine pointer (44 on a touch
+   screen), so the popover is no wider than its rows (the owner's
+   screenshot: a lone stepper adrift in white). ---- */
+.party-rows { display: flex; flex-direction: column; }
+.party-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: 52px;
+  padding: var(--space-1) 0;
+}
+.party-row + .party-row { border-top: 1px solid var(--border-soft); }
+.party-row-text { display: flex; flex-direction: column; min-width: 0; line-height: var(--leading-ui); }
+.party-row-label { font-size: var(--text-body); font-weight: 500; color: var(--text); }
+.party-row-sub { font-size: var(--text-caption); color: var(--text-3); }
+.party-rows .fstepper { gap: var(--space-1); }
+.party-rows .fstepper-btn,
+.settings-pop-dates .fstepper-btn {
+  border-color: var(--border);
+  background: var(--surface);
+  color: var(--text);
+  transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
+}
+@media (pointer: fine) {
+  .party-rows .fstepper-btn,
+  .settings-pop-dates .fstepper-btn { width: 36px; height: 36px; }
+}
+@media (hover: hover) {
+  .party-rows .fstepper-btn:hover:not(:disabled),
+  .settings-pop-dates .fstepper-btn:hover:not(:disabled) { border-color: var(--text-2); background: var(--surface-hover); }
+}
+.party-rows .fstepper-btn:disabled,
+.settings-pop-dates .fstepper-btn:disabled { border-color: var(--border-soft); color: var(--text-3); }
+.party-rows .fstepper-value,
+.settings-pop-dates .fstepper-value {
+  min-width: var(--space-6);
+  font-family: var(--font);
+  font-size: var(--text-lead);
+  color: var(--text);
+}
+.settings-sheet .party-rows { margin-top: calc(-1 * var(--space-1)); }
+
+/* ---- Getting there: the way, its icon before its word. ---- */
+.settings-way-value { display: inline-flex; align-items: center; gap: var(--space-2); }
+.settings-way-icon { flex: none; color: var(--text-2); }
+.settings-way-btn { flex: none; margin-left: var(--space-1); }
+
+/* ---- Desktop: six equal parts. The way is a narrower segment; values
+   that do not fit end in an ellipsis rather than wrap. ---- */
+@media (min-width: 769px) {
+  .settings-line-parts > .settings-slot-way { flex: 0 1 168px; }
+  .settings-line-parts > .settings-slot-countries { flex: 1 1 0; }
+}
+@media (min-width: 769px) and (max-width: 1180px) {
+  .settings-line .settings-vibe { display: none; }
+}
+
+/* ---- Phone: the Countries door beside Filters. ---- */
+.btn.ctry-btn { flex: 1 1 0; min-width: 0; }
+.btn.ctry-btn .btn-icon { color: var(--text-2); }
+.ctry-btn-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ctry-sheet .ctry-list { max-height: 46dvh; }
+
+@media (prefers-reduced-motion: reduce) {
+  .from-input,
+  .from-row,
+  .party-rows .fstepper-btn,
+  .settings-pop-dates .fstepper-btn { transition: none; }
+}
