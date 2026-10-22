@@ -12,7 +12,7 @@ import { tripIcs, downloadIcs } from '../lib/icsExport.js';
 import { buildTripShareUrl } from '../lib/shareLink.js';
 import { groundLinkFor } from '../lib/groundLinks.js';
 import { useI18n } from '../i18n/index.jsx';
-import { Button, Money } from '../components/ui/index.js';
+import { Button, Money, CostRow } from '../components/ui/index.js';
 import { cityLabel } from '../lib/placeName.js';
 import { PlanTotal, PaidField } from './PlanTotal.jsx';
 import { scrollBehavior } from '../lib/motion.js';
@@ -347,34 +347,6 @@ function ItinLeg({ leg, onMode }) {
         </div>
       )}
     </div>
-  );
-}
-
-/** One titled group of the chronological receipt (Getting there / each stop /
- *  Getting home / For the whole trip), its rows under a header that carries
- *  the group subtotal, so the receipt reads like the journey.
- *
- *  The subtotal is dropped when the group holds a single priced row: repeating
- *  the same number twice, once in the header and once right under it, was the
- *  main thing making the receipt feel cluttered. */
-function BreakdownSection({ title, sub, total, children }) {
-  // An unpriced flight row (T273) is a route line, not a figure, so it does
-  // not count towards the "more than one priced row" rule for the subtotal.
-  const pricedRows = React.Children.toArray(children).filter(
-    (c) => typeof c?.props?.className === 'string' && c.props.className.includes('trip-total-row')
-      && !c.props.className.includes('unpriced'),
-  ).length;
-  return (
-    <section className="itin-bd-sec">
-      <header className="itin-bd-sec-head">
-        <span className="itin-bd-sec-title">
-          {title}
-          {sub && <small className="itin-bd-sec-sub">{sub}</small>}
-        </span>
-        {total > 0 && pricedRows > 1 && <span className="itin-bd-sec-total">{eurExact(total)}</span>}
-      </header>
-      <div className="itin-bd-sec-rows">{children}</div>
-    </section>
   );
 }
 
@@ -739,14 +711,12 @@ export function TripItinerary({
                       </Button>
                       {sc && (
                         <div className="itin-bed">
-                          <span className="itin-bed-lbl">
-                            {t('plan.lineBeds')}
-                            <span className="itin-bed-fig">
-                              {sc.ownAccom
+                          <dl className="costrows itin-bed-cost">
+                            <CostRow kind="bed" label={t('plan.lineBeds')} tone={sc.ownAccom ? 'yours' : null}
+                              value={sc.ownAccom
                                 ? <span className="plan-line-yours"><Money value={sc.accomTotal} precision="cents" /><small>{t('plan.yours')}</small></span>
-                                : <Money value={sc.accomTotal} est precision="cents" />}
-                            </span>
-                          </span>
+                                : <Money value={sc.accomTotal} est precision="cents" />} />
+                          </dl>
                           <span className="itin-bed-acts">
                             {!sc.ownAccom && (
                               <a
@@ -857,12 +827,12 @@ export function TripItinerary({
               setTransferMode={setTransferMode}
             />
             {(carRental || vignettes) && (
-              <dl className="itin-extras">
+              <dl className="itin-extras costrows">
                 {carRental && (
-                  <div><dt>{t('itin.rentalCar')}</dt><dd><Money value={carRental.eur_total} est precision="cents" /></dd></div>
+                  <CostRow kind="car" label={t('itin.rentalCar')} value={<Money value={carRental.eur_total} est precision="cents" />} />
                 )}
                 {vignettes && (
-                  <div><dt>{t('itin.vignettes')}</dt><dd><Money value={vignettes.eur_total} est precision="cents" /></dd></div>
+                  <CostRow kind="there" label={t('itin.vignettes')} value={<Money value={vignettes.eur_total} est precision="cents" />} />
                 )}
               </dl>
             )}

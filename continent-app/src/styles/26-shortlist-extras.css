@@ -350,8 +350,7 @@
   .tpage-back { min-height: var(--tap); }
   .tpage-bar-act { width: var(--tap); height: var(--tap); }
   .guide-people button,
-  .guide-summary-party .guide-people button,
-  .itin-bd-party .guide-people button { width: var(--tap); height: var(--tap); }
+.guide-summary-party .guide-people button { width: var(--tap); height: var(--tap); }
   .tprac-row.is-link > a { min-height: var(--tap); align-items: center; }
   .itin-drive-row { min-height: var(--tap); }
   .itin-tab, .itin-overview-total, .itin-export-toggle, .extras-add-btn { min-height: var(--tap); }

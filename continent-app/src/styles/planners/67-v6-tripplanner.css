@@ -371,24 +371,10 @@
 .tsum { display: flex; flex-direction: column; gap: var(--space-2); }
 .tsum-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
 .tsum-h { margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); }
-.tsum-list { display: flex; flex-direction: column; }
-.tsum-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
-  align-items: center;
-  gap: var(--space-3);
-  min-height: var(--tap);
-  border-bottom: 1px solid var(--border-soft);
-  font-size: var(--text-body);
-}
-.tsum-route { display: flex; align-items: center; gap: var(--space-2); color: var(--text); }
-.tsum-mode { display: inline-flex; align-items: center; gap: var(--space-1); color: var(--text-2); font-size: var(--text-caption); }
-.tsum-eur { text-align: right; font-variant-numeric: tabular-nums; }
-@media (max-width: 640px) {
-  .tsum-row { grid-template-columns: minmax(0, 1fr) auto; padding-block: var(--space-2); }
-  .tsum-mode { grid-column: 1; }
-  .tsum-eur { grid-column: 2; grid-row: 1 / span 2; }
-}
+.tsum-route { display: inline-flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); }
+/* The rows are the kit CostRow (T538); the booked mark keeps its tick. */
+.tsum-mode { display: inline-flex; align-items: center; gap: var(--space-1); }
+.tsum .costrow.is-transfer .costrow-label { color: var(--text-2); font-weight: 400; }
 .wrev { display: flex; flex-direction: column; gap: var(--space-5); }
 .wrev-main { display: flex; flex-direction: column; gap: var(--space-5); }
 .wrev-hero { margin: 0; display: flex; flex-direction: column; gap: var(--space-2); }
@@ -525,8 +511,6 @@
 }
 .itin-stopcard .itin-stop-city { font-size: var(--text-lead); font-weight: 600; color: var(--text); }
 .itin-stopcard .itin-stop-sub { font-size: var(--text-caption); color: var(--text-2); }
-.itin-bed-lbl { display: flex; flex-direction: column; gap: 2px; font-size: var(--text-caption); color: var(--text-2); padding-bottom: 10px; }
-.itin-bed-fig { font-size: var(--text-body); color: var(--text); font-variant-numeric: tabular-nums; }
 .itin-hop {
   display: flex;
   align-items: flex-end;
@@ -535,7 +519,10 @@
   gap: var(--space-3);
   padding: 0 0 0 var(--space-6);
 }
-.itin-extras { margin: var(--space-3) 0 0; display: flex; flex-direction: column; }
+.itin-extras { margin: var(--space-3) 0 0; }
+/* The stop's bed line is the kit CostRow (T538), beside its Find and Paid actions. */
+.itin-bed-cost { flex: 1 1 220px; min-width: 0; margin: 0; }
+.itin-bed-cost .costrow { padding: 0; }
 .itin-day-rows { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
 .itin-days-list .itin-day-row {
   display: flex;
@@ -987,7 +974,6 @@
   border-top: 1px solid var(--border-soft);
 }
 .itin-hop > .itin-transfer { flex: 1 1 260px; min-width: 0; }
-.itin-extras dt { color: var(--text-2); }
 .itin-days-list .itin-day-row-num { width: 56px; flex: none; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
 .itin-days-list .itin-day-row-meta { display: flex; flex-direction: column; min-width: 0; }
 .itin-days-list .itin-day-row-meta b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
@@ -1035,7 +1021,6 @@
   font-size: var(--text-lead);
   color: var(--text);
 }
-.tsum-row.is-transfer .tsum-route { color: var(--text-2); }
 .bgo-track .bgo-text {
   display: -webkit-box;
   -webkit-line-clamp: 5;

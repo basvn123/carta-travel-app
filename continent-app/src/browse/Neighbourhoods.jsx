@@ -43,7 +43,7 @@ export function Neighbourhoods({ sleep, t }) {
               <span style={{ width: `${Math.max(6, ((n.night_eur || 0) / max) * 100)}%` }} />
             </span>
             <span className="destp-hood-eur mono">
-              {n.night_eur != null ? eurExact(n.night_eur) : ''}
+              {n.night_eur != null ? bedEur(n.night_eur) : ''}
             </span>
           </li>
         ))}

@@ -1678,7 +1678,6 @@
 }
 .cbrief-band.b0, .cbrief-band.b1 { color: var(--green); border-color: var(--budget-low-rule); }
 .cbrief-band.b3, .cbrief-band.b4 { color: var(--rate-soft); border-color: var(--rate-rule); }
-.cbrief-fig-label svg { color: var(--ink-mute); }
 
 /* Places, as a list with hairlines: a run of related facts, not five cards. */
 .cbrief-list { list-style: none; }

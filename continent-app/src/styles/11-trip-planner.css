@@ -246,12 +246,6 @@
 }
 .trip-add-btn:disabled { opacity: 0.35; cursor: default; }
 
-/* Totals */
-.trip-total-row .lbl { color: var(--ink-soft); font-size: 13px; }
-.trip-total-row .lbl small { display: block; color: var(--ink-mute); font-size: 10.5px; font-family: var(--mono); margin-top: 1px; }
-.trip-total-row .val { font-family: var(--mono); font-size: 13px; color: var(--ink); white-space: nowrap; }
-.trip-total-row.grand .lbl { font-family: var(--display); font-size: 16px; color: var(--ink); }
-.trip-total-row.grand .val { font-size: 17px; font-weight: 600; }
 .trip-note-error { color: var(--accent); }
 
 /* Own-flight (another airline) editable fields in the Trip total block: the

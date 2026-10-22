@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { legLinks, TRAVEL_MODES, TRAVEL_MODE_LABEL } from '../lib/transportLinks.js';
 import { fmtDate, addDays } from '../lib/dates.js';
 import { useI18n } from '../i18n/index.jsx';
-import { Button, Money } from '../components/ui/index.js';
+import { Button, Money, CostRow } from '../components/ui/index.js';
 import {
   TrainIcon, BusIcon, CarIcon, FerryIcon, CheckIcon, ChevronDownIcon,
 } from '../components/Icons.jsx';
@@ -288,15 +288,12 @@ export function TravelLegsSummary({ legs, values, estimates = {}, onEdit, transf
         <h2 className="tsum-h">{t('travel.title')}</h2>
         {onEdit && <Button variant="quiet" size="sm" onClick={onEdit}>{t('travel.edit')}</Button>}
       </div>
-      <div className="tsum-list">
+      <dl className="tsum-list costrows">
         {rows.map(({ leg, transfer, key }) => {
           if (transfer) {
             return (
-              <div className="tsum-row is-transfer" key={key}>
-                <span className="tsum-route">{transfer.label}</span>
-                <span className="tsum-mode"><BusIcon size={12} /> {t('plan.transfer')}</span>
-                <span className="tsum-eur"><Money value={transfer.eur} est precision="cents" /></span>
-              </div>
+              <CostRow key={key} kind="transfers" className="is-transfer" label={transfer.label}
+                sub={t('plan.transfer')} value={<Money value={transfer.eur} est precision="cents" />} />
             );
           }
           const v = values[leg.key] || {};
@@ -306,33 +303,34 @@ export function TravelLegsSummary({ legs, values, estimates = {}, onEdit, transf
           // Carta's flight for the way there or home (T518), Google's fare.
           const fLeg = (leg.kind === 'out' || leg.kind === 'back') && !leg.booked && (!v.mode || v.mode === 'fly') ? cartaFlight?.[leg.kind] : null;
           return (
-            <div className="tsum-row" key={leg.key}>
-              <span className="tsum-route">
-                {cityLabel(leg.from.city) || leg.from.name}
-                <span className="tleg-arrow" aria-hidden="true">&rarr;</span>
-                {cityLabel(leg.to.city) || leg.to.name}
-              </span>
-              {leg.booked
+            <CostRow
+              key={leg.key}
+              kind={leg.booked ? null : v.mode || null}
+              label={(
+                <span className="tsum-route">
+                  {cityLabel(leg.from.city) || leg.from.name}
+                  <span className="tleg-arrow" aria-hidden="true">&rarr;</span>
+                  {cityLabel(leg.to.city) || leg.to.name}
+                </span>
+              )}
+              sub={leg.booked
                 ? <span className="tsum-mode"><CheckIcon size={12} /> {t('travel.booked')}</span>
-                : Icon && <span className="tsum-mode"><Icon size={12} /> {t(TRAVEL_MODE_LABEL[v.mode])}</span>}
-              <span className="tsum-eur">
-                {paid > 0 ? (
-                  <span className="plan-line-yours"><Money value={paid} precision="cents" /><small>{t('plan.yours')}</small></span>
-                ) : fLeg?.cost ? (
-                  <span className="plan-line-yours plan-line-flight">
-                    <AirlineMark code={fLeg.airline} size="sm" />
-                    <Money value={fLeg.cost.total} precision="cents" />
-                  </span>
-                ) : est > 0 ? (
-                  <Money value={est} est precision="cents" />
-                ) : (
-                  <span className="plan-line-out">{t('plan.notIn')}</span>
-                )}
-              </span>
-            </div>
+                : (Icon ? t(TRAVEL_MODE_LABEL[v.mode]) : null)}
+              tone={paid > 0 ? 'yours' : (!fLeg?.cost && !(est > 0) ? 'missing' : null)}
+              mark={!(paid > 0) && fLeg?.cost ? <AirlineMark code={fLeg.airline} size="sm" /> : null}
+              value={paid > 0 ? (
+                <span className="plan-line-yours"><Money value={paid} precision="cents" /><small>{t('plan.yours')}</small></span>
+              ) : fLeg?.cost ? (
+                <Money value={fLeg.cost.total} precision="cents" />
+              ) : est > 0 ? (
+                <Money value={est} est precision="cents" />
+              ) : (
+                t('plan.notIn')
+              )}
+            />
           );
         })}
-      </div>
+      </dl>
     </div>
   );
 }

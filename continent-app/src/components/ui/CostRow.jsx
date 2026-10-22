@@ -21,7 +21,7 @@
  */
 import React from 'react';
 import {
-  BedIcon, DiningIcon, BusIcon, TrainIcon, CarIcon, TicketIcon, PiggyIcon, RouteIcon,
+  BedIcon, DiningIcon, BusIcon, TrainIcon, CarIcon, TicketIcon, PiggyIcon, RouteIcon, FerryIcon,
 } from '../Icons.jsx';
 import { PlaneIcon } from '../TransportIcons.jsx';
 
@@ -41,6 +41,10 @@ export const COST_ICON = {
   transfers: BusIcon,
   local: BusIcon,
   between: TrainIcon,
+  train: TrainIcon,
+  bus: BusIcon,
+  ferry: FerryIcon,
+  fly: PlaneIcon,
   drive: CarIcon,
   car: CarIcon,
   tickets: TicketIcon,

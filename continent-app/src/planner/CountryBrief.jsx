@@ -1,7 +1,8 @@
 import React from 'react';
 import { flagUrl, isoToFlag } from '../lib/tripGuide.js';
 import { monthName } from '../lib/dates.js';
-import { eur } from '../lib/format.js';
+import { formatEst } from '../lib/money.js';
+import { Money, CostRow } from '../components/ui/index.js';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { Fold } from '../browse/Fold.jsx';
@@ -749,22 +750,15 @@ function BriefBody({
 
       <Fold
         id="cb-cost" icon={ReceiptIcon} title={t('brief.costs')}
-        summary={brief.dayEur != null ? eur(Math.round(brief.dayEur)) : null}
+        summary={brief.dayEur != null ? formatEst(brief.dayEur, t('money.est')) : null}
         open={isOpen('cost')} onToggle={() => toggle('cost')}
       >
         {brief.dayEur != null ? (
-          <div className="cbrief-figs">
-            <div className="cbrief-fig">
-              <span className="cbrief-fig-label"><BedIcon size={11} /> {t('brief.bed')}</span>
-              <b className="cbrief-fig-val">{eur(Math.round(brief.stayEur))}</b>
-              <small className="cbrief-fig-sub">{t('brief.aNight')}</small>
-            </div>
-            <div className="cbrief-fig">
-              <span className="cbrief-fig-label"><DiningIcon size={11} /> {t('brief.eatingOut')}</span>
-              <b className="cbrief-fig-val">{eur(Math.round(brief.foodEur))}</b>
-              <small className="cbrief-fig-sub">{t('brief.aDay')}</small>
-            </div>
-          </div>
+          // A country's figures are its medians, so both carry the estimate mark.
+          <dl className="costrows cbrief-costs">
+            <CostRow kind="bed" label={t('brief.bed')} sub={t('brief.aNight')} value={<Money value={brief.stayEur} est />} />
+            <CostRow kind="food" label={t('brief.eatingOut')} sub={t('brief.aDay')} value={<Money value={brief.foodEur} est />} />
+          </dl>
         ) : (
           <p className="cbrief-note">{t('brief.noPrices')}</p>
         )}

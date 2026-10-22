@@ -575,19 +575,6 @@
 }
 .itin-overview-total small { display: block; font-family: var(--mono); font-size: 11px; font-weight: 400; color: var(--ink-soft); }
 
-/* ── Overview: expandable cost breakdown (mirrors the Map tab's receipt) ── */
-.itin-breakdown-toggle {
-  width: 100%;
-  gap: 8px;
-  cursor: pointer;
-  background: none;
-  border: none;
-  border-top: 1px solid var(--rule);
-  text-align: left;
-}
-.itin-breakdown-toggle > span:first-child { display: inline-flex; align-items: baseline; gap: 6px; }
-.itin-breakdown-toggle .itin-breakdown-caret svg { align-self: center; color: var(--ink-mute); }
-.itin-breakdown-body { padding: 2px 2px 2px; }
 
 /* ── Overview: stay-to-stay leg connectors in the route view ──
    A thin rail between two stop cards carries the chosen mode, its time and
@@ -618,91 +605,6 @@
   transition: color .15s, border-color .15s;
 }
 .itin-leg-modes .trip-leg-mode { flex: 1; }
-
-/* ── Overview: the grouped receipt ──
-   Journey order, one group per part of the story, then the grand total and a
-   per-person line. Deliberately plain: figures in mono, words in the body
-   face, no glyph on any row, one hairline per group. The earlier version put
-   an accent icon on every line and set the subtitles in wide-tracked mono,
-   which read like a log file rather than a bill. */
-.itin-bd-sec { margin: 18px 0 0; }
-.itin-bd-sec-head {
-  display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
-  padding: 0 2px 7px;
-  border-bottom: 1px solid var(--rule);
-}
-.itin-bd-sec-title {
-  font-family: var(--display); font-size: 13.5px;
-  color: var(--ink);
-  min-width: 0;
-}
-.itin-bd-sec-total {
-  font-family: var(--mono); font-size: 11.5px; color: var(--ink-mute);
-  font-variant-numeric: tabular-nums; white-space: nowrap;
-}
-.itin-bd-sec-sub {
-  display: inline-block;
-  margin-left: 8px;
-  font-family: var(--mono); font-size: 10px;
-  color: var(--ink-mute);
-}
-.itin-bd-sec-rows { padding: 3px 0 0; }
-/* Row typography inside the receipt: the label carries the meaning, the
-   sub-line is a sentence (body face, not mono), the figure is the only mono. */
-.itin-breakdown-body .trip-total-row .lbl { font-size: 13px; color: var(--ink); }
-.itin-breakdown-body .trip-total-row .lbl small,
-.itin-bd-leg .lbl small {
-  font-family: inherit;
-  font-size: 11.5px;
-  letter-spacing: 0;
-  color: var(--ink-mute);
-  margin-top: 2px;
-  line-height: 1.45;
-}
-.itin-breakdown-body .trip-total-row .val {
-  font-size: 12.5px; color: var(--ink);
-  font-variant-numeric: tabular-nums;
-}
-/* Every glyph in here repeated the word beside it. */
-.itin-breakdown-body .trip-total-row .lbl > svg,
-.itin-bd-leg .lbl > svg { display: none; }
-.itin-bd-grand {
-  display: flex; align-items: baseline; justify-content: space-between;
-  margin-top: 22px;
-  padding: 13px 2px 0;
-  border-top: 1px solid var(--ink);
-}
-.itin-bd-grand-lbl { font-family: var(--ui); font-size: 14px; font-weight: 600; color: var(--ink); }
-.itin-bd-grand-val { font-family: var(--mono); font-size: 17px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
-.itin-bd-pp {
-  text-align: right;
-  font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute);
-  padding: 4px 2px 0;
-}
-.itin-bd-foot-note {
-  margin: 14px 2px 0;
-  font-size: 11.5px; line-height: 1.55; color: var(--ink-mute);
-}
-/* The leg between two stops: an indented connector, quieter than a priced row
-   because it belongs to the pair of stops around it. */
-.itin-bd-leg {
-  display: flex; align-items: baseline; justify-content: space-between;
-  gap: 12px;
-  margin: 4px 0 4px 2px;
-  padding: 5px 2px 5px 13px;
-  border-left: 1px solid var(--rule);
-}
-.itin-bd-leg .lbl {
-  display: flex; flex-direction: column;
-  font-size: 12px; color: var(--ink-soft);
-}
-.itin-bd-leg .val { font-family: var(--mono); font-size: 11.5px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
-.itin-breakdown-caret {
-  display: inline-flex;
-  color: var(--ink-mute);
-  transition: transform .18s ease;
-}
-.itin-breakdown-caret.open { transform: rotate(180deg); }
 
 /* ── Overview: the day list, each with a jump into the Day planner ── */
 /* flex-wrap carries the imported-activity chips (.itin-day-extras spans the

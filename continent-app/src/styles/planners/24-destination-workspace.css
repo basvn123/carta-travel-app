@@ -52,14 +52,6 @@
 }
 .cbrief-close:focus-visible { outline: 2px solid var(--on-fill); outline-offset: 1px; }
 .cbrief-body { overflow-y: auto; overscroll-behavior: contain; }
-.cbrief-fig-label {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 11px;
-  color: var(--ink-mute);
-}
-.cbrief-fig-sub { display: block; font-size: 10.5px; color: var(--ink-mute); }
 .cbrief-chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .cbrief-tips { list-style: none; display: grid; gap: 7px; }
 .fsheet.cbrief-sheet { max-height: 88dvh; }
@@ -367,30 +359,6 @@
 .tleg-field { display: block; }
 .tleg-field-label { display: block; font-size: 11px; color: var(--ink-mute); margin-bottom: 3px; }
 .tleg-text:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
-.tsum-list { display: grid; gap: 6px; }
-.tsum-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  flex-wrap: wrap;
-  padding: 7px 0;
-  border-bottom: 1px solid var(--rule-soft);
-  font-size: 13px;
-}
-.tsum-row:last-child { border-bottom: 0; }
-.tsum-mode {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 11.5px;
-  color: var(--ink-mute);
-}
-.tsum-eur {
-  margin-left: auto;
-  font-family: var(--mono);
-  font-size: 12.5px;
-  font-variant-numeric: tabular-nums;
-}
 .guide-booked-card .guide-note { margin-top: 10px; }
 @media (hover: hover) {
   .guide-when-reopen:hover { border-color: var(--accent); color: var(--accent); }
@@ -450,14 +418,6 @@
   width: var(--tap);
   height: var(--tap);
   transform: translate(-50%, -50%);
-}
-.cbrief-figs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
-.cbrief-fig-val {
-  display: block;
-  margin-top: 3px;
-  font-family: var(--mono);
-  font-size: 16px;
-  font-variant-numeric: tabular-nums;
 }
 .cbrief-note { margin-top: 8px; font-size: 11.5px; line-height: 1.5; color: var(--ink-mute); }
 .cbrief-foot { padding: 10px 14px; border-top: 1px solid var(--rule-soft); background: var(--paper-dim); }
@@ -541,9 +501,6 @@
 }
 .tleg-modes { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
 .tsum-route { display: inline-flex; align-items: baseline; gap: 6px; flex-wrap: wrap; min-width: 0; }
-@media (max-width: 719px) {
-  .cbrief-figs { grid-template-columns: 1fr; }
-}
 @media (prefers-reduced-motion: reduce) {
   .guide-ccard-info { transition: none; }
 }

@@ -234,21 +234,6 @@
    bar over hairline lines with the figure right aligned in --mono 15 px, a
    2 px ink rule over the sum, and an --accent-bg footer with what one
    changed input would do. Every figure to the cent. */
-.itin-breakdown {
-  margin-top: 8px;
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  background: var(--bg-card);
-  box-shadow: var(--shadow-card);
-  overflow: hidden;
-}
-.itin-breakdown .itin-overview-total {
-  min-height: var(--tap);
-  margin-top: 0;
-  padding: var(--space-3) var(--space-4);
-  border-top: none;
-  background: var(--paper-dim);
-}
 .itin-total-lbl { display: inline-flex; align-items: baseline; gap: var(--space-2); }
 .itin-total-figs {
   display: flex;
@@ -266,29 +251,6 @@
   color: var(--ink);
 }
 .itin-total-figs small { font-variant-numeric: tabular-nums; }
-.itin-breakdown-body { padding: 0 var(--space-4); }
-.itin-breakdown-body .costbar { margin-top: var(--space-3); }
-.itin-breakdown-body .itin-bd-leg { border-bottom: 1px solid var(--rule-soft); }
-.itin-bd-grand { border-top: 2px solid var(--ink); }
-.itin-bd-grand-val { font-size: 17px; }
-.itin-bd-what-if {
-  margin: var(--space-3) calc(-1 * var(--space-4)) 0;
-  padding: var(--space-3) var(--space-4);
-  background: var(--accent-bg);
-  font-family: var(--ui);
-  font-size: 13px;
-  line-height: 1.4;
-  color: var(--ink);
-}
-.itin-bd-what-if .mono {
-  font-family: var(--mono);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-@media (hover: hover) {
-  .itin-breakdown .itin-overview-total:hover .itin-breakdown-caret { color: var(--ink); }
-}
 
 /* The day switcher (brief V4-7 as amended, rule "Day list"): one control,
    "Day 3 of 8" and the date in --mono, flanked by Previous and Next at --tap;

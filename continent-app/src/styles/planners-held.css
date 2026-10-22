@@ -858,12 +858,6 @@
   box-shadow: var(--shadow-card);
   overflow: hidden;
 }
-.cbrief-fig {
-  padding: 8px 10px;
-  border: 1px solid var(--rule-soft);
-  border-radius: 10px;
-  background: var(--paper-dim);
-}
 .cbrief-chip {
   display: inline-flex;
   align-items: baseline;
@@ -1726,14 +1720,6 @@
 }
 .dayt-menu-pop .dayp-menu-item.btn { justify-content: flex-start; width: 100%; color: var(--text); border-radius: 0; }
 .dayw-chosen .dayw-start-change.btn { flex: none; min-height: var(--tap); border-radius: var(--radius-pill); }
-.trip-total-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 12px;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--rule);
-}
 .trip-ownflight-fields { display: flex; gap: 8px; margin-top: 8px; }
 .trip-save-row { display: flex; gap: 10px; margin-top: 16px; }
 .itin-visit-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
@@ -1846,8 +1832,6 @@
 }
 .plan-input dd { margin: 0; font-size: var(--text-body); color: var(--text); text-align: right; }
 .wrev-fact dd { margin: 2px 0 0; display: flex; flex-direction: column; align-items: flex-start; gap: 0; font-size: var(--text-body); font-weight: 600; color: var(--text); }
-.itin-extras > div { display: flex; justify-content: space-between; min-height: 36px; align-items: center; border-bottom: 1px solid var(--border-soft); font-size: var(--text-body); }
-.itin-extras dd { margin: 0; }
 .plan-ws .plan-ws-actions .btn { min-height: var(--tap-main); }
 .trip-device-signin.btn { padding: 0 var(--space-1); }
 .trip-total-bar.btn {
@@ -2051,8 +2035,6 @@
   margin-left: 8px;
   color: var(--ink-soft);
 }
-.trip-total-row.grand { border-bottom: none; padding-top: 12px; }
-.itin-bd-sec-rows .trip-total-row { border: none; padding: 7px 2px; }
 .itin-day { padding-top: 14px; }
 .itin-day-date { font-family: var(--mono); font-size: 11px; color: var(--ink-mute);}
 .itin-day-empty { font-size: 13px; color: var(--ink-soft); line-height: 1.55; font-style: italic; }
@@ -2068,7 +2050,6 @@
 .itin-day { padding: 12px 0; border-top: 1px solid var(--rule-soft); }
 .itin-day.is-daytrip .itin-day-no { background: var(--accent-bg); color: var(--accent); }
 .itin-day.is-travel .itin-day-no { background: var(--rate-bg); color: var(--rate); }
-.itin-breakdown-body .trip-total-row { border-bottom: 1px solid var(--rule-soft); }
 .itin-dayswitch {
   display: flex;
   align-items: center;
@@ -2107,18 +2088,6 @@
   background: var(--surface-sunken);
 }
 .trip-topcard-count { font-size: var(--text-caption); }
-.itin-breakdown-body .trip-total-row .val {
-  font-family: var(--mono);
-  font-size: 15px;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-}
-.itin-breakdown-body .itin-bd-leg .val {
-  font-family: var(--mono);
-  font-size: 15px;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-}
 .map-drawer.is-strip .map-drawer-strip { border-bottom-color: transparent; }
 .map-drawer.is-full .map-drawer-chev { transform: rotate(0deg); }
 .map-drawer-body[hidden] { display: none; }
