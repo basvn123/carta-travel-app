@@ -447,8 +447,10 @@ def backup_master():
     stamp = now_utc().strftime("%Y%m%d_%H%M%S")
     dst = BACKUPS / f"app_data.{stamp}.json"
     shutil.copy2(APP_DATA, dst)
-    # prune to the newest KEEP_BACKUPS
-    old = sorted(BACKUPS.glob("app_data.*.json"))
+    # prune to the newest KEEP_BACKUPS timestamped copies only: hand-named
+    # snapshots (app_data.pre_expansion_*.json, premop) sort after the
+    # timestamps, so a plain name sort pruned the copy just made (T536).
+    old = sorted(BACKUPS.glob("app_data.[0-9]*.json"))
     for p in old[:-KEEP_BACKUPS]:
         try:
             p.unlink()

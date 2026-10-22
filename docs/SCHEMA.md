@@ -800,6 +800,8 @@ here yet.
 | `cost_basket` | meta | required | app_data.json block |
 | `cost_validation` | meta | required | app_data.json block |
 | `stays` | meta | required | app_data.json block |
+| `food_model` | meta | required | food and drink model v2 (T513): method and validation |
+| `food_country` | meta | required | food and drink model v2 (T513): the country bases |
 | `car_model` | meta | required | app_data.json block; Schema v14 section 2 |
 | `n_destinations` | meta | required | app_data.json block |
 | `is_mock` | meta | required | app_data.json block |
@@ -808,20 +810,12 @@ here yet.
 | `data_sources` | meta | required | Schema v16 |
 | `crowding_model` | meta | required | Schema v17 |
 | `activities_model` | meta | required | not yet described |
-| `all_origins` | meta | required | not yet described |
 | `climate_model` | meta | required | not yet described |
 | `climate_period` | meta | required | not yet described |
 | `country_context_model` | meta | required | not yet described |
 | `designation_model` | meta | required | not yet described |
-| `fares_model` | meta | required | not yet described |
-| `fares_model_est` | meta | required | not yet described |
-| `fares_model_tp` | meta | required | not yet described |
-| `fares_model_volotea` | meta | required | not yet described |
-| `fares_model_vueling` | meta | required | not yet described |
-| `fares_model_wizz` | meta | required | not yet described |
 | `image_model` | meta | required | not yet described |
 | `member_model` | meta | required | not yet described |
-| `origin_coverage` | meta | required | not yet described |
 | `place_model` | meta | required | not yet described |
 | `rating_model` | meta | required | Schema v14 section 1 |
 | `tourist_premium_model` | meta | required | Schema v14 section 3 |
