@@ -1,6 +1,7 @@
 import React from 'react';
 import { loadDossier } from '../lib/dossier.js';
 import { eur } from '../lib/format.js';
+import { bedFromPerPerson } from '../lib/stayPrice.js';
 import {
   ParkingIcon, CarIcon, BedIcon, ChevronRightIcon, TrainIcon, BusIcon,
 } from '../components/Icons.jsx';
@@ -16,7 +17,7 @@ import { PlaneIcon } from '../components/TransportIcons.jsx';
  *                          each with its distance, its walk, its fee and a
  *                          directions link built from its coordinate
  *   what is the drive      the trip's own legs, which carry km and minutes
- *   what does a bed cost   dossier.sleep.per_person_night_eur, the same
+ *   what does a bed cost   the cheapest bed in dossier.sleep.beds, the same
  *                          measured rate the cost panel reads
  *   how do I get in        dossier.practical.getting_there, the anchor
  *                          airport and whether a car is needed at all
@@ -152,7 +153,7 @@ export function TripPractical({ detail, t }) {
     }
 
     // A bed for the nights this trip actually spends here.
-    const perNight = doc.sleep?.per_person_night_eur;
+    const perNight = bedFromPerPerson(doc.sleep?.beds);
     if (Number.isFinite(perNight)) {
       sleepRows.push(
         <Row

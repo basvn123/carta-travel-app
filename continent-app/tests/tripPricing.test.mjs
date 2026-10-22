@@ -12,7 +12,7 @@ import { accommodationPerPerson, groundSpendPerPerson, DEFAULT_LIFESTYLE } from 
 const town = {
   id: "berat",
   city: "Berat",
-  accommodation: { per_person_night_eur: 21.5, cleaning_per_person_eur: 6 },
+  accommodation: { beds: { bnb_home: { "2": 64, "4": 86 }, private: 40, dorm: 15 }, q: "measured" },
   costs: {
     meal_mid_eur: 14, meal_cheap_eur: 7, fastfood_eur: 5, drink_out_eur: 3,
     coffee_eur: 1.5, grocery_day_eur: 9, club_entry_eur: 0, cocktail_eur: 6,

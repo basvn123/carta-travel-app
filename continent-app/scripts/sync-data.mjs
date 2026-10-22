@@ -162,7 +162,9 @@ for (const d of Object.values(data.destinations || {})) delete d.routes;
 const DEAD_WIRE_FIELDS = [
   ['accommodation', ['longtail_base', 'premium_base', 'pop_factor', 'settlement_tier',
     'calib_base', 'adr_calibration', 'tourist_premium']],
-  ['costs', ['premium_base', 'tourist_premium']],
+  // drivers / n_rcpt / city: the food model's provenance (T513), kept in the
+  // master for audit; the page shows the estimate mark and nothing else.
+  ['costs', ['premium_base', 'tourist_premium', 'drivers', 'n_rcpt', 'city']],
   ['rating', ['inputs_present']],
 ];
 {

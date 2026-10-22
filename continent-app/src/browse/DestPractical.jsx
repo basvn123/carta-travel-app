@@ -5,6 +5,7 @@ import { Fold } from './Fold.jsx';
 import { RatingBreakdown } from './RatingBreakdown.jsx';
 import { Neighbourhoods } from './Neighbourhoods.jsx';
 import { GettingThere } from './GettingThere.jsx';
+import { DestFood } from './DestFood.jsx';
 import { FlashDeck } from './FlashDeck.jsx';
 import { cardCategory } from '../lib/flashcards.js';
 import { Section } from './DestTiles.jsx';
@@ -17,7 +18,8 @@ import {
 /**
  * The destination page's Practical tab (T499, roadmap 1.4): what a traveller
  * reads once they have decided. Getting there and around, why it rates,
- * where to sleep, insider tips, parking and packing, then the exits to the
+ * where to sleep, food and drink (T515), insider tips, parking and packing,
+ * then the exits to the
  * booking sites. Moved from DestinationPage.jsx (T429, T446), not rewritten;
  * the folds keep their remembered state (carta-design "Remembered state").
  */
@@ -30,10 +32,10 @@ const PACK_GLYPH = {
 export function DestPractical({ p }) {
   const {
     t, lang, city, destination, data, getting, rhythm, bookAhead, verdict, verdictBand, fmtScore,
-    sleep, tips, packs, month, parking, exits, isOpen, toggle,
+    sleep, tips, packs, month, parking, exits, isOpen, toggle, onOpenLifestyle,
   } = p;
   const hasGetting = !!(getting || rhythm || bookAhead.length > 0);
-  const hasSleep = !!(sleep?.neighbourhoods?.length > 0 || sleep?.tiers || sleep?.seasonality);
+  const hasSleep = !!(sleep?.neighbourhoods?.length > 0 || sleep?.beds || sleep?.curve);
   const hasPark = !!(parking && (parking.spots?.length > 0 || parking.park_ride || parking.web));
   const sleepNames = (sleep?.neighbourhoods || []).slice(0, 3).map((n) => n.name).filter(Boolean).join(', ');
   const parkSearch = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`parking ${city}`)}`;
@@ -100,6 +102,11 @@ export function DestPractical({ p }) {
             <Neighbourhoods sleep={sleep} t={t} />
           </Fold>
         )}
+
+        {/* Food and drink: the traveller's day at their Lifestyle, then what
+            things cost here (T515). The page's fifth and last fold. */}
+        <DestFood t={t} city={city} destination={destination}
+          isOpen={isOpen} toggle={toggle} onOpenLifestyle={onOpenLifestyle} />
 
         {/* Insider tips: rule codes with evidence behind every sentence. */}
         {tips.length > 0 && (

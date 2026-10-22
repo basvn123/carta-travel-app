@@ -74,6 +74,8 @@ export function tripFigures(budget, share, days = 7) {
 /** The i18n key of the sentence that says what a stop's figure assumes. */
 export function sayKey(stopKey) {
   return {
+    // The stops are the three kinds (T535); a hostel stop reads as its low end.
+    hostel: 'journey.lsSayDorm',
     dorm: 'journey.lsSayDorm',
     private: 'journey.lsSayPrivate',
     home: 'journey.lsSayHome',

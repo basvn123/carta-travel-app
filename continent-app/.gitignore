@@ -11,6 +11,8 @@ public/app_data.json
 # The boot index and per-country records split from it (T054), same status.
 public/boot.json
 public/dest/
+# Bed prices per country (T534), written by ../pipeline/stays/apply_stays.py.
+public/stays/
 public/activities_full.json
 # Sharded from activities_full.json by sync-data.mjs, same status.
 public/poi/

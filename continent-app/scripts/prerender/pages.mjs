@@ -23,6 +23,7 @@ import { paths, canonicalFor } from '../../src/lib/urlScheme.js';
 import { fmtHours } from '../../src/lib/format.js';
 import { DEFAULT_LIFESTYLE, groundSpendPerPerson } from '../../src/lib/runtime_pricing.js';
 import { cheapestStayMonths } from '../../src/lib/costIndex.js';
+import { seasonCurve } from '../../src/lib/stayPrice.js';
 import * as B from '../../src/lib/beachStory.js';
 import * as L from '../../src/lib/lakeStory.js';
 import * as M from '../../src/lib/mountainStory.js';
@@ -540,24 +541,25 @@ const monthYear = (iso) => {
     : new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(d);
 };
 
+// Who the bed prices come from (schema v18, T534), said the same way on every
+// page that prints one.
+const BED_CREDIT = 'Bed prices from TripAdvisor via Xotelo, Inside Airbnb and sampled Booking.com and Hostelworld lists';
+
 /**
- * Where the bed figure came from, in the receipt's own words (T098,
- * CostSummary.jsx). A city-level bed names the place its listings come from,
- * which for a small town is often the nearest city Inside Airbnb covers; when
- * the wire does not name that place the sentence names only the listings.
+ * Where the bed figure came from, in the receipt's own words (T098, T534):
+ * measured in the town (with the month it was checked), borrowed from a named
+ * town nearby, or estimated from similar towns in the country.
  */
 export function bedSource(cost) {
   if (!cost || cost.stayEur == null) return null;
-  if (cost.stayLevel === 'region') return t('cost.bedRepaired');
+  const when = monthYear(cost.captured);
   if (cost.stayLevel === 'city') {
-    const when = monthYear(cost.captured);
-    if (cost.listings && cost.source && when) {
-      return t('cost.bedCityN', { n: n0(cost.listings), place: clean(cost.source), when });
-    }
-    if (cost.listings) return `Bed: from ${n0(cost.listings)} Inside Airbnb listings${when ? ` captured ${when}` : ''}.`;
-    return t('cost.bedCity');
+    return `Bed: measured here from dated hotel, hostel and Airbnb prices${when ? `, checked ${when}` : ''}.`;
   }
-  return String(cost.stayBasis || '').startsWith('airbnb_pli_scaled') ? t('cost.bedScaled') : t('cost.bedCountry');
+  if (cost.stayLevel === 'region' && cost.source) {
+    return `Bed: priced from ${clean(cost.source)}${cost.stayKm != null ? `, ${n0(cost.stayKm)} km away` : ''}.`;
+  }
+  return 'Bed: estimated from similar towns in the country.';
 }
 
 /** Where the food figure came from (T098). */
@@ -615,12 +617,13 @@ export function costPage(dos, ctx) {
   const bedMeasured = cost.stayLevel === 'city';
   const foodMeasured = cost.foodLevel === 'city';
   const a = row?.accommodation || {};
-  const shared = cost.stayLevel !== 'region' && a.entire_home_night_eur > 0;
-  const sleeps = a.typical_capacity || 4;
+  // computeCosts prices a party of two: an entire place for two, shared.
+  const shared = cost.stayLevel !== 'region' && cost.stayTier === 'home' && !!a.beds?.bnb_home;
+  const sleeps = 2;
   const peers = ctx.pricedOf(cc);
   const median = peers.length ? peers[peers.length >> 1].week : null;
   const dearer = peers.filter((d) => d.perDay > week.perDay).length;
-  const curve = bedMeasured && Array.isArray(a.seasonality) && a.seasonality.length === 12 ? a.seasonality : null;
+  const curve = bedMeasured ? seasonCurve(row) : null;
   const cheapMonths = curve ? (cheapestStayMonths(row) || []).map(monthOf).filter(Boolean) : [];
   const monthWeek = curve ? curve.map((f, i) => ({ m: MONTH[i], eur: r2(cost.stayEur * f * WEEK) + week.food })) : null;
   const cheapest = monthWeek ? monthWeek.reduce((x, y) => (y.eur < x.eur ? y : x)) : null;
@@ -668,7 +671,7 @@ export function costPage(dos, ctx) {
       monthWeek ? {
         h2: 'What the week costs, month by month',
         links: monthWeek.map((x) => ({ name: x.m, meta: eur0(x.eur), metaNum: true })),
-        note: `The bed follows the Inside Airbnb calendar${cost.source ? ` for ${clean(cost.source)}` : ''}; food stays at the same figure all year.`,
+        note: 'The bed follows its measured price for each month; food stays at the same figure all year.',
       } : null,
       {
         h2: `What ${joinNames(OTHER_LENGTHS.map(String)).replace(' and ', ' or ')} days in ${name} cost`,
@@ -686,7 +689,7 @@ export function costPage(dos, ctx) {
       },
     ],
     coverage: [bedSource(cost), foodSource(cost)].filter(Boolean).join(' '),
-    credits: ['Bed prices from Inside Airbnb', 'food prices from Numbeo', "Eurostat's price level index where a figure is scaled"],
+    credits: [BED_CREDIT, 'food prices from Numbeo', "Eurostat's price level index where a figure is scaled"],
     crumbs: [home, countryCrumb(cc), destCrumb({ name, slug: dos.slug })],
     boot: `#dest=${encodeURIComponent(dos.id)}`,
     measured: bedMeasured || foodMeasured,
@@ -699,7 +702,7 @@ export function costPage(dos, ctx) {
       ...(image ? { image: imageNode(image) } : {}),
       additionalProperty: [
         prop('Week cost for one person, bed and food, no flights', Math.round(week.total), 'EUR',
-          estimateWord === 'measured' ? 'measured: bed from Inside Airbnb listings, food from Numbeo' : 'estimate: at least one part is a national or nearby figure'),
+          estimateWord === 'measured' ? 'measured: bed from dated hotel, hostel and Airbnb prices, food from Numbeo' : 'estimate: at least one part is a national or nearby figure'),
         prop('Day cost for one person, bed and food', Math.round(week.perDay), 'EUR', estimateWord === 'measured' ? 'measured' : 'estimate'),
       ],
     },
@@ -779,8 +782,8 @@ export function daysPage(cc, n, band, ctx) {
         ],
       },
     ],
-    coverage: `${n0(measured)} of these ${n0(rows.length)} bed prices come from Inside Airbnb listings in or near the town; the other ${n0(rows.length - measured)} are country-level figures and carry a tilde. Food is priced from Numbeo, at the town's own rates where it measures them and at country rates elsewhere.`,
-    credits: ['Bed prices from Inside Airbnb', 'food prices from Numbeo', "Eurostat's price level index where a figure is scaled"],
+    coverage: `${n0(measured)} of these ${n0(rows.length)} bed prices are measured in the town itself; the other ${n0(rows.length - measured)} come from a town nearby or from similar towns in the country and carry a tilde. Food is priced from Numbeo, at the town's own rates where it measures them and at country rates elsewhere.`,
+    credits: [BED_CREDIT, 'food prices from Numbeo', "Eurostat's price level index where a figure is scaled"],
     crumbs: band ? [home, countryCrumb(cc), { name: `${n} days`, path: paths.days(cc, n) }] : [home, countryCrumb(cc)],
     boot: null,
     subject: {
@@ -904,7 +907,7 @@ export function receiptPage(plan, ctx) {
       others.length ? { h2: `More weeks priced in ${where}`, links: others.map(receiptLink) } : null,
     ],
     coverage: provenance,
-    credits: ['Bed prices from Inside Airbnb', 'food prices from Numbeo', "Eurostat's price level index where a figure is scaled", 'trip composed by Carta from its own destination catalogue'],
+    credits: [BED_CREDIT, 'food prices from Numbeo', "Eurostat's price level index where a figure is scaled", 'trip composed by Carta from its own destination catalogue'],
     crumbs: [home, countryCrumb(cc), sectionCrumb(cc, 'trips'), { name: names, path: paths.trip(trip.id) }],
     boot: null,
     noindex: !plan.measured,
@@ -1129,7 +1132,7 @@ export function countryPage(cc, ctx) {
       ctx.journeysOf(cc).length ? { h2: `Planned journeys in ${where}`, links: ctx.journeysOf(cc).map((j) => ({ name: clean(j.title), path: paths.journey(j.id), meta: `${j.durationDays} days`, metaNum: true })) } : null,
     ],
     coverage: sections.map((s) => ctx.coverage(s.section, cc)).filter(Boolean).slice(0, 3).join(' ') || null,
-    credits: ['Stay prices from Inside Airbnb and the catalogue', 'food from national price data', 'places from OpenStreetMap and Wikidata'],
+    credits: [BED_CREDIT, 'food from national price data', 'places from OpenStreetMap and Wikidata'],
     crumbs: [home],
     subject: {
       '@type': 'Country', name: where,

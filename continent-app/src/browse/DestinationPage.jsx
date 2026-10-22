@@ -9,6 +9,8 @@ import { activityLink } from '../lib/activityAffiliates.js';
 import { useForecast } from '../lib/weather.js';
 import { packingList, packMonth } from '../lib/packing.js';
 import { cheapestStayMonths } from '../lib/costIndex.js';
+import { useStaysVersion } from '../lib/staysData.js';
+import { seasonCurve } from '../lib/stayPrice.js';
 import { monthName } from '../lib/dates.js';
 import { fmtMonthRanges } from './ClimateStrip.jsx';
 import { useI18n } from '../i18n/index.jsx';
@@ -131,6 +133,17 @@ function GalleryStrip({ gallery, city, iso2, fallbackUrl, destId, final = true }
   );
 }
 
+/** The Where to sleep data (T534): beds, the measured month shape and the
+ *  neighbourhood medians, or null when there is none of it. `version` is
+ *  staysVersion: a new country file means a new curve. */
+function destSleep(destination, d, version) {
+  const beds = destination?.accommodation?.beds || null;
+  const curve = version >= 0 ? seasonCurve(destination) : null;
+  const hoods = d?.sleep?.neighbourhoods || destination?.accommodation?.neighbourhoods || null;
+  return beds || curve || hoods?.length
+    ? { beds, curve, neighbourhoods: hoods, q: destination?.accommodation?.q || null } : null;
+}
+
 export function DestinationPage({
   destination, data, choices, onOpenLifestyle, onClose, onSelect,
   isFavorite, onToggleFavorite, onOpenFeature, onOpenItin,
@@ -175,6 +188,7 @@ export function DestinationPage({
     && (firstRun.departDate !== defaults.start || (firstRun.returnDate && firstRun.returnDate !== defaults.end)));
 
   const dossier = useDossier(destination?.id);
+  const staysVersion = useStaysVersion();
   // D7: a member search lands here with ?dm=<name>; that member is the
   // reason the reader arrived, so it gets the focus.
   const memberFocus = React.useMemo(() => {
@@ -307,7 +321,10 @@ export function DestinationPage({
     ? { ...verdictRaw, tier: verdictRaw.tier ?? tierForScore(verdictRaw.score) }
     : verdictRaw;
   const verdictBand = verdict && bandKey(verdict.tier) ? t(bandKey(verdict.tier)) : '';
-  const sleep = d?.sleep || null;
+  // T534: the beds and the 12-month price shape come from the destination's
+  // own stays data (live once its country file is in, staysVersion); the
+  // dossier keeps the neighbourhood medians.
+  const sleep = destSleep(destination, d, staysVersion);
   const getting = d?.practical?.getting_there || null;
   const bookAhead = d?.practical?.book_ahead || [];
   const rhythm = d?.practical?.rhythm || null;
@@ -415,7 +432,8 @@ export function DestinationPage({
     try {
       const { downloadDestinationPdf } = await import('../lib/destinationPdf.js');
       await downloadDestinationPdf({
-        dossier: d, destination, cost: pdfCost, t, lang,
+        // The page's own sleep view (T534): live beds and month shape.
+        dossier: { ...d, sleep: sleep || d.sleep }, destination, cost: pdfCost, t, lang,
         lifestyleLabel: lifestyleLine,
         stayDays: stayLen?.n || null,
       });
@@ -519,7 +537,7 @@ export function DestinationPage({
     tripsForMap, nearbyForMap, aroundForMap, routeRows, hasRoutes, members, memberFocus,
     forecast, monthPick: datesOwn ? tripMonth : null, cheapMonths, water, festivals,
     getting, rhythm, bookAhead, verdict, verdictBand, sleep, tips, packs, month, parking, exits,
-    isOpen, toggle,
+    isOpen, toggle, onOpenLifestyle,
     onOpenFeature, onSelect, onOpenItin, goTab,
     exportPdf, pdfBusy, pdfReady: !!d,
     priceCard: wide ? null : priceCard,

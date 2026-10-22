@@ -403,6 +403,9 @@
 /* ── Who: the party, then the Lifestyle's two answers ─────────────────── */
 .wwho-party .wiz-party-label small { font-size: var(--text-caption); font-weight: 400; color: var(--text-3); }
 .wlife-tiles .ui-tile { min-height: 96px; }
+/* Which bed, which home, which hotel (T535), under the chosen kind. */
+.wlife-kind { display: grid; gap: var(--space-2); margin-top: var(--space-3); }
+.wlife-kind-label { font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
 @media (max-width: 768px) {
   .wlife-tiles .ui-tile { min-height: 80px; }
 }

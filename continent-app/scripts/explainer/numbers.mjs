@@ -33,7 +33,7 @@ const LAYERS = [
   ['mountain', 'Summits'],
 ];
 const BED_KEYS = ['cost.bedCity', 'cost.bedCountry', 'cost.bedScaled', 'cost.bedRepaired'];
-const FOOD_KEYS = ['cost.foodCity', 'cost.foodCountry', 'cost.foodScaled'];
+const FOOD_KEYS = ['cost.foodCity', 'cost.foodRegion', 'cost.foodCountry', 'cost.foodScaled'];
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const fmt = (n) => Number(n).toLocaleString('en-GB');

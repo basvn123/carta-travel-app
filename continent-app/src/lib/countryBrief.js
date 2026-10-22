@@ -114,9 +114,11 @@ function whyLine(d) {
  *
  * @param destinations  data.destinations
  * @param insights      the { [countryName]: record } map from useCountryInsights
+ * @param lifestyle     the traveller's Lifestyle, so a country's day of eating
+ *                      out is priced the way its town cards are (T514)
  * @returns Map(countryName -> brief)
  */
-export function buildCountryBriefs(destinations, insights = null) {
+export function buildCountryBriefs(destinations, insights = null, lifestyle = null) {
   const byCountry = new Map();
   for (const [id, d] of Object.entries(destinations || {})) {
     if (!d?.country) continue;
@@ -137,7 +139,7 @@ export function buildCountryBriefs(destinations, insights = null) {
     for (const { id, d } of rows) {
       const s = stayPerNight(d);
       if (s != null) stays.push(s);
-      const f = foodPerDay(d);
+      const f = foodPerDay(d, lifestyle);
       if (f != null) foods.push(f);
       const cats = new Set(d.categories || []);
       for (const g of THEME_GROUPS) {

@@ -2511,43 +2511,20 @@
 .ls-tile.on svg { color: var(--select-ink); }
 .ls-tile:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-/* Which hotel, asked only once a hotel is the answer, so the four ways to
-   sleep stay four tiles wide instead of six. The row is tinted rather than
-   bare, which is what marks it as belonging to the tile above it. */
-.ls-grades {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px;
-  margin-top: 8px;
-  padding: 9px 11px;
-  border: 1px solid var(--rule-soft);
-  border-radius: 10px;
-  background: var(--paper-dim);
+/* Which bed, which home, which hotel (T535): asked only once the kind is
+   chosen, as the kit's segmented control under its 12 px label, so the three
+   ways to sleep stay three tiles and the second question reads as part of
+   the tile above it. */
+.ls-kind {
+  display: grid;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
 }
-.ls-grades-label {
-  margin-right: 2px;
-  font-size: 11.5px;
+.ls-kind-label {
+  font-size: var(--text-caption);
   font-weight: 600;
-  color: var(--ink-soft);
+  color: var(--text-2);
 }
-.ls-grade {
-  padding: 5px 11px;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  background: var(--bg-card);
-  font-family: inherit;
-  font-size: 11.5px;
-  font-weight: 600;
-  color: var(--ink-soft);
-  white-space: nowrap;
-  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
-}
-@media (hover: hover) {
-  .ls-grade:hover { color: var(--ink); border-color: var(--rule); }
-}
-.ls-grade.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
-.ls-grade:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* The honest small print, in sans and in one line. */
 .ls-note {
@@ -2615,12 +2592,14 @@
   border-top: 1px solid var(--rule-soft);
 }
 
-/* Two abreast on a phone, where the panel is the full 390px. Four sleep tiles
-   read as 2x2 and the six habits as 3x2, which is the shape the tiles were
-   drawn for. */
+/* Two abreast on a phone, where the panel is the full 390px: the habits read
+   as 3x2, the shape the tiles were drawn for. The three ways to sleep stay
+   one row (T535). */
 @media (max-width: 480px) {
   .ls-tiles { grid-template-columns: repeat(2, 1fr); }
   .ls-tiles-3 { grid-template-columns: repeat(2, 1fr); }
+  /* The three ways to sleep keep one row: short words, one question. */
+  .ls-tiles-stay { grid-template-columns: repeat(3, 1fr); }
 }
 
 /* The account hub's lifestyle row states what it is set to on its right

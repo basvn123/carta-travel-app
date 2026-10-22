@@ -129,11 +129,6 @@
 }
 .daytrip-mode-btn span svg:last-child:not(:first-child) { color: var(--accent); }
 .daytrip-pick-note { font-family: var(--mono); font-size: var(--text-micro); color: var(--ink-mute); }
-.fare-prov-age {
-  font-size: 10px;
-  color: var(--ink-mute);
-  white-space: nowrap;
-}
 .trip-sheet-footer-row {
   display: flex;
   align-items: center;

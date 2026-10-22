@@ -2,11 +2,15 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { nearestCurve, priceStates, goodAndCheap, priceRow } from "../src/lib/priceMonths.js";
+import { setStayRecords } from "../src/lib/staysData.js";
 
 const curve = [0.7, 0.8, 1, 1, 1.1, 1.2, 1.3, 1.3, 1.1, 1, 0.8, 0.7];
+// Schema v18 (T534): the curve is the measured month prices of the stays wire.
+const measured = { month: { bnb_home: curve.map((f) => Math.round(f * 1000)) }, season_q: "mmmmmmmmmmmm" };
+setStayRecords({ A: measured, B: measured, C: { month: {}, season_q: "ffffffffffff" } });
 const dests = {
-  A: { city: "Near", city_lat: 50, city_lon: 4, accommodation: { seasonality: curve } },
-  B: { city: "Far", city_lat: 51, city_lon: 4, accommodation: { seasonality: curve } },
+  A: { city: "Near", city_lat: 50, city_lon: 4, accommodation: { beds: {} } },
+  B: { city: "Far", city_lat: 51, city_lon: 4, accommodation: { beds: {} } },
   C: { city: "NoCurve", city_lat: 50.01, city_lon: 4, accommodation: {} },
 };
 

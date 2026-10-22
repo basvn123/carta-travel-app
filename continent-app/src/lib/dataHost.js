@@ -48,6 +48,11 @@ export const R2_TIER = Object.freeze([
   'search_index.json',
   // T439: the guided search's precomputed areas, distances and vibes.
   'search',
+  // T534: bed prices per country. 'stays' ships with each build; 'stays-live'
+  // is written only by the monthly Actions refresh and is listed so the
+  // phase-2 prune never deletes it.
+  'stays',
+  'stays-live',
 ]);
 
 const TIER_SET = new Set(R2_TIER);

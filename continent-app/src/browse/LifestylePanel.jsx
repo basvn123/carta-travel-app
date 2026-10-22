@@ -1,11 +1,12 @@
 import React from 'react';
 import { offeredStayTiers } from '../lib/runtime_pricing.js';
 import {
-  BedIcon, BunkIcon, HomeIcon, HotelIcon,
+  BunkIcon, HomeIcon, HotelIcon,
   BackpackIcon, LeafIcon, DiningIcon, CoffeeIcon, MusicIcon, FriendsIcon,
   ChevronDownIcon, CloseIcon,
 } from '../components/Icons.jsx';
-import { HOTEL_GRADES, sleepGroupOf, offeredSleepGroups, tierForGroup } from '../lib/sleepGroups.js';
+import { sleepGroupOf, offeredSleepGroups, optionsFor, tierForGroup } from '../lib/sleepGroups.js';
+import { Segmented } from '../components/ui/index.js';
 import { PROFILES } from '../lib/lifestyleProfiles.js';
 import { useI18n } from '../i18n/index.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
@@ -43,6 +44,10 @@ import { Stepper as CountStepper } from '../components/FilterControls.jsx';
 
 // The six frequencies that follow the week/day cadence. `max` differs per
 // cadence so the steppers stay sensible.
+// coffees_per_day is outside PERIOD_FIELDS on purpose: it never rescales with
+// the cadence toggle (toCadence leaves it alone).
+const COFFEE_MAX = 6;
+
 const PERIOD_FIELDS = [
   { key: 'dinners_per_week',            max: { week: 21, day: 3 } },
   { key: 'lunches_per_week',            max: { week: 21, day: 4 } },
@@ -79,7 +84,7 @@ export const PROFILE_ICONS = {
 
 // One glyph per way to sleep. The table itself lives in lib/sleepGroups.js
 // so the headless harness can import it without a JSX loader.
-export const SLEEP_ICONS = { dorm: BunkIcon, private: BedIcon, home: HomeIcon, hotel: HotelIcon };
+export const SLEEP_ICONS = { hostel: BunkIcon, home: HomeIcon, hotel: HotelIcon };
 
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
@@ -204,7 +209,7 @@ export function LifestylePanel({ choices, setChoices, onClose, data, side = 'lef
   const active = matchProfile(ls);
 
   // Only the tiers this dataset measured (apply_stay_tiers.py writes
-  // meta.stay_tiers_available); 'home' is always there. With nothing measured
+  // meta.stays.tiers); 'home' is always there. With nothing measured
   // this is a single option, so the section hides rather than showing a
   // control that cannot change anything.
   const stayTiers = React.useMemo(() => offeredStayTiers(data?.meta), [data?.meta]);
@@ -216,14 +221,14 @@ export function LifestylePanel({ choices, setChoices, onClose, data, side = 'lef
     .map((g) => ({ ...g, Icon: SLEEP_ICONS[g.key] })), [stayTiers]);
 
   const activeGroup = sleepGroupOf(stayTier);
-  const hotelTile = sleepTiles.find((g) => g.key === 'hotel');
-  const hotelGrades = hotelTile
-    ? HOTEL_GRADES.filter((h) => hotelTile.offered.includes(h.tier))
-    : [];
+  // The chosen kind's second question (which bed, which home, which hotel),
+  // drawn only when it has more than one answer here.
+  const activeTile = sleepTiles.find((g) => g.key === activeGroup) || null;
+  const kindOptions = activeTile ? optionsFor(activeTile) : [];
 
-  // Picking a tile keeps the grade already chosen inside it, and otherwise
-  // lands on that tile's first offered grade (3-star for hotels, which is the
-  // grade most people mean by "a hotel").
+  // Picking a tile keeps the option already chosen inside it, and otherwise
+  // lands on that kind's first offered option (a dorm bed, an entire place,
+  // a 3-star hotel: what most people mean by the word).
   const pickGroup = (g) => {
     if (g.offered.includes(stayTier)) return;
     setTier(tierForGroup(g, stayTier));
@@ -294,7 +299,7 @@ export function LifestylePanel({ choices, setChoices, onClose, data, side = 'lef
       {sleepTiles.length > 1 && (
         <div className="panel-section">
           <div className="ls-head">{t('lifestyle.stay')}</div>
-          <div className="ls-tiles" role="group" aria-label={t('lifestyle.stay')}>
+          <div className="ls-tiles ls-tiles-3 ls-tiles-stay" role="group" aria-label={t('lifestyle.stay')}>
             {sleepTiles.map(({ key, labelKey, Icon, offered }) => (
               <button
                 key={key}
@@ -309,21 +314,18 @@ export function LifestylePanel({ choices, setChoices, onClose, data, side = 'lef
             ))}
           </div>
 
-          {/* Which hotel, asked only once a hotel is the answer. */}
-          {activeGroup === 'hotel' && hotelGrades.length > 1 && (
-            <div className="ls-grades" role="group" aria-label={t('lifestyle.hotelGrade')}>
-              <span className="ls-grades-label">{t('lifestyle.hotelGrade')}</span>
-              {hotelGrades.map(({ tier, labelKey }) => (
-                <button
-                  key={tier}
-                  type="button"
-                  className={`ls-grade ${stayTier === tier ? 'on' : ''}`}
-                  aria-pressed={stayTier === tier}
-                  onClick={() => setTier(tier)}
-                >
-                  {t(labelKey)}
-                </button>
-              ))}
+          {/* Which bed, which home, which hotel: asked once the kind is chosen. */}
+          {kindOptions.length > 1 && (
+            <div className="ls-kind">
+              <span className="ls-kind-label" aria-hidden="true">{t(activeTile.askKey)}</span>
+              <Segmented
+                label={t(activeTile.askKey)}
+                size="sm"
+                block
+                value={stayTier === 'hotel' ? 'hotel3' : stayTier}
+                onChange={setTier}
+                options={kindOptions.map((o) => ({ value: o.tier, label: t(o.labelKey) }))}
+              />
             </div>
           )}
 
@@ -353,7 +355,7 @@ export function LifestylePanel({ choices, setChoices, onClose, data, side = 'lef
         {!active && <p className="ls-note">{t('lifestyle.customNote')}</p>}
       </div>
 
-      {/* The six counts behind the preset. Closed by default; opening it is
+      {/* The seven counts behind the preset. Closed by default; opening it is
           what makes the preset above a starting point rather than the only
           answer. */}
       <div className="panel-section lifestyle-food">
@@ -383,6 +385,9 @@ export function LifestylePanel({ choices, setChoices, onClose, data, side = 'lef
               onChange={(v) => setLs({ self_catered_days_per_week: v })} min={0} max={maxFor('self_catered_days_per_week')} />
             <Stepper label={t('lifestyle.drinksAtBars')} value={ls.drinks_per_week ?? 0}
               onChange={(v) => setLs({ drinks_per_week: v })} min={0} max={maxFor('drinks_per_week')} />
+            {/* Always a day count, whatever the cadence: nobody plans coffee by the week. */}
+            <Stepper label={t('lifestyle.coffeesPerDay')} value={ls.coffees_per_day ?? 0}
+              onChange={(v) => setLs({ coffees_per_day: v })} min={0} max={COFFEE_MAX} />
             <Stepper label={t('lifestyle.clubNights')} value={ls.club_nights_per_week ?? 0}
               onChange={(v) => setLs({ club_nights_per_week: v })} min={0} max={maxFor('club_nights_per_week')} />
           </div>

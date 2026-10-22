@@ -76,6 +76,7 @@ import { knownFor } from '../lib/knownFor.js';
 import { catalogue, CATALOGUE_MODE, loadFullCatalogue } from '../lib/appData.js';
 import { decodeBootIndex } from '../lib/bootIndex.js';
 import { formatMoney } from '../lib/money.js';
+import { computeCosts } from '../lib/costIndex.js';
 
 // 'viewport' catalogue mode (T059): the zoom from which the map fetches the
 // countries on screen. Below it the map draws clusters, which the boot pins
@@ -345,6 +346,8 @@ export function ExploreTab({
   favorites, onToggleFav,
   selectedId, onSelect,
   indices,
+  // T534: with a month picked in the filter, beds are repriced for that month.
+  choices = null,
   isMock = false,
   onOpenGuides,
   // T498 (roadmap 1.3b): the country page is App's (#country=), the six
@@ -483,11 +486,19 @@ export function ExploreTab({
   const sentinelRef = React.useRef(null);
   const scrollRef = React.useRef(null);
 
+  // T534: a month in the filter prices every card's bed for that month (the
+  // measured month curve), so "November" shows November's prices.
+  const monthIndices = React.useMemo(
+    () => (dxf.month && data && indices
+      ? computeCosts(data.destinations, { ...(choices || {}), month: dxf.month })
+      : indices),
+    [dxf.month, data, choices, indices],
+  );
   const { all: catAllRows, rows: catRows, availableCountries, indices: costIndex } = useExploreCatalog({
     data, locationQuery, countryFilter, tripKinds,
     ratingRange, gemOnly, unescoOnly, topBeachOnly, bigOnly, topPick,
     reachHours, reachMinutes, sortKey, showFavOnly, favorites,
-    indices, searchHits,
+    indices: monthIndices, searchHits,
   });
 
   // T518: the cheapest return flight a person from the home airport's sweep

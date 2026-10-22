@@ -27,13 +27,10 @@ function place(id, { night = 40, meal = 14, level = "city", foodLevel = "city", 
     tier: "city",
     rating: { score },
     climate: { best },
+    // Schema v18 (T534): annual beds; q says whether the bed was measured here.
     accommodation: {
-      per_person_night_eur: night,
-      cleaning_per_person_eur: 10,
-      entire_home_night_eur: night * 3,
-      typical_capacity: 3,
-      level,
-      seasonality: [0.9, 0.9, 1, 1, 1.1, 1.2, 1.3, 1.3, 1.1, 1, 0.9, 1],
+      beds: { bnb_home: { "2": night * 2, "4": night * 3 }, private: Math.round(night * 1.6), dorm: Math.round(night * 0.7) },
+      q: level === "city" ? "measured" : "modelled",
     },
     costs: {
       meal_mid_eur: meal * 2, meal_cheap_eur: meal, fastfood_eur: 9, drink_out_eur: 4,

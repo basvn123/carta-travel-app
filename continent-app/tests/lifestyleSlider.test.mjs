@@ -3,12 +3,12 @@
 // authored range. Run: npm test (continent-app/)
 import test from "node:test";
 import assert from "node:assert/strict";
-import { offeredSleepGroups, tierForGroup } from "../src/lib/sleepGroups.js";
+import { offeredSleepGroups, optionsFor, tierForGroup } from "../src/lib/sleepGroups.js";
 import { offeredStayTiers } from "../src/lib/runtime_pricing.js";
 import { stopIndexFor, stopShare, between, tripFigures, sayKey } from "../src/lib/lifestyleSlider.js";
 
-// The tiers the 2026-10 dataset measured (public/boot.json meta.stay_tiers_available).
-const MEASURED = ["dorm", "private", "hotel", "hotel3", "hotel4", "hotel5"];
+// The tiers a v18 dataset can price (meta.stays.tiers, written by apply_stays.py).
+const MEASURED = { stays: { tiers: ["dorm", "private", "room", "home", "hotel2", "hotel3", "hotel4", "hotel5"] } };
 
 // The Andorra hiking week's authored budget (public/journeys/journey/ad-hiking-coma-pedrosa-madriu.json).
 const ANDORRA = {
@@ -22,11 +22,15 @@ const ANDORRA = {
   },
 };
 
-test("the slider offers the panel's four sleep groups, cheapest first", () => {
-  const stops = offeredSleepGroups(offeredStayTiers({ stay_tiers_available: MEASURED }));
-  assert.deepEqual(stops.map((s) => s.key), ["dorm", "private", "home", "hotel"]);
-  // Star grades exist, so the unstarred hotel tier is not offered.
-  assert.deepEqual(stops[3].offered, ["hotel3", "hotel4", "hotel5"]);
+test("the slider offers the panel's three kinds of stay, cheapest first", () => {
+  const stops = offeredSleepGroups(offeredStayTiers(MEASURED));
+  assert.deepEqual(stops.map((s) => s.key), ["hostel", "home", "hotel"]);
+  // A hostel means a dorm bed, a home an entire place, a hotel 3 star, until somebody says otherwise.
+  assert.deepEqual(stops[0].offered, ["dorm", "private"]);
+  assert.deepEqual(stops[1].offered, ["home", "room"]);
+  assert.deepEqual(stops[2].offered, ["hotel3", "hotel2", "hotel4", "hotel5"]);
+  assert.deepEqual(optionsFor(stops[1]).map((o) => o.tier), ["room", "home"]);
+  assert.deepEqual(optionsFor(stops[2]).map((o) => o.tier), ["hotel2", "hotel3", "hotel4", "hotel5"]);
 });
 
 test("with nothing measured there is one stop, so no slider", () => {
@@ -35,19 +39,22 @@ test("with nothing measured there is one stop, so no slider", () => {
 });
 
 test("the stored tier picks its stop, and an unknown tier lands on the entire place", () => {
-  const stops = offeredSleepGroups(offeredStayTiers({ stay_tiers_available: MEASURED }));
+  const stops = offeredSleepGroups(offeredStayTiers(MEASURED));
   assert.equal(stopIndexFor(stops, "dorm"), 0);
-  assert.equal(stopIndexFor(stops, "home"), 2);
-  assert.equal(stopIndexFor(stops, "hotel4"), 3);
-  assert.equal(stopIndexFor(stops, "castle"), 2);
+  assert.equal(stopIndexFor(stops, "private"), 0);
+  assert.equal(stopIndexFor(stops, "room"), 1);
+  assert.equal(stopIndexFor(stops, "home"), 1);
+  assert.equal(stopIndexFor(stops, "hotel4"), 2);
+  assert.equal(stopIndexFor(stops, "castle"), 1);
   assert.equal(stopIndexFor([], "home"), -1);
 });
 
 test("moving to the hotel stop keeps a chosen grade and otherwise lands on 3 star", () => {
-  const stops = offeredSleepGroups(offeredStayTiers({ stay_tiers_available: MEASURED }));
-  assert.equal(tierForGroup(stops[3], "hotel5"), "hotel5");
-  assert.equal(tierForGroup(stops[3], "home"), "hotel3");
+  const stops = offeredSleepGroups(offeredStayTiers(MEASURED));
+  assert.equal(tierForGroup(stops[2], "hotel5"), "hotel5");
+  assert.equal(tierForGroup(stops[2], "home"), "hotel3");
   assert.equal(tierForGroup(stops[0], "hotel5"), "dorm");
+  assert.equal(tierForGroup(stops[1], "room"), "room");
 });
 
 test("stops sit evenly from the low end to the high end", () => {
@@ -75,11 +82,11 @@ test("the ends of the slider show the authored figures exactly", () => {
   assert.equal(high.rows.activities, 200);
 });
 
-test("the entire place, third of four stops, sits two thirds along the range", () => {
-  const f = tripFigures(ANDORRA, stopShare(2, 4));
-  assert.equal(f.total, 1093);
-  assert.equal(f.perDay, 156);
-  assert.equal(f.rows.food, 263);
+test("the home, middle of three stops, sits half way along the range", () => {
+  const f = tripFigures(ANDORRA, stopShare(1, 3));
+  assert.equal(f.total, 1015);
+  assert.equal(f.perDay, 145);
+  assert.equal(f.rows.food, 245);
 });
 
 test("no per-day range means the total over the days", () => {
@@ -91,7 +98,7 @@ test("no per-day range means the total over the days", () => {
 });
 
 test("every stop has its own sentence", () => {
-  const keys = ["dorm", "private", "home", "hotel"].map(sayKey);
-  assert.equal(new Set(keys).size, 4);
+  const keys = ["hostel", "home", "hotel"].map(sayKey);
+  assert.equal(new Set(keys).size, 3);
   assert.equal(sayKey("castle"), "journey.lsSayHome");
 });

@@ -75,6 +75,7 @@ function TabFallback() {
 }
 import { tripDaysBetween, DEFAULT_LIFESTYLE } from './lib/runtime_pricing.js';
 import { computeCosts } from './lib/costIndex.js';
+import { loadStaysFor, setLiveBase, useStaysVersion } from './lib/staysData.js';
 import { FirstRunContext } from './lib/firstRunContext.js';
 import {
   loadInitialState, tabHref, routeFromSearch, placeOf, VIEW_KEYS, countryFromHash, countryHash,
@@ -1308,9 +1309,21 @@ function TravelApp() {
   // size or a single frequency. That is 3,038 destinations repriced in about
   // 7 ms, which is why there is no loading state anywhere near it: the grid
   // simply renders the new numbers on the next frame.
+  // T534: the bed prices for the dates on screen, the traveller's own or
+  // Carta's suggested week (night by night, so a week across July and August
+  // pays both months); repriced when a country's stays arrive.
+  const staysVersion = useStaysVersion();
+  useEffect(() => {
+    if (!data) return;
+    setLiveBase(data.meta?.stays?.url, data.meta?.stays?.built);
+    loadStaysFor(data.destinations);
+  }, [data]);
+  const datedStay = !!(departDate && returnDate);
   const exploreIndices = useMemo(
-    () => (data ? computeCosts(data.destinations, choices) : null),
-    [data, choices],
+    () => (data && staysVersion >= 0 ? computeCosts(data.destinations, datedStay
+      ? { ...choices, start: departDate, nights: Math.max(1, tripDaysBetween(departDate, returnDate)) }
+      : choices) : null),
+    [data, choices, staysVersion, datedStay, departDate, returnDate],
   );
   // The catalogue as rows, for the country and region pages (T498), computed
   // only while one of them shows.

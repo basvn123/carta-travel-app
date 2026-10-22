@@ -42,6 +42,7 @@ import { fileURLToPath } from 'node:url';
 import { COUNTRY_SLUGS, paths, parsePath } from '../../src/lib/urlScheme.js';
 import { prerenderKey } from '../../src/lib/prerenderShell.js';
 import { computeCosts } from '../../src/lib/costIndex.js';
+import { setStayRecords, mergeStayFiles } from '../../src/lib/staysData.js';
 import * as C from '../../src/lib/cycleStory.js';
 import { renderPage, clean, ORIGIN } from './html.mjs';
 import * as P from './pages.mjs';
@@ -132,6 +133,9 @@ for (const f of list('region')) {
 // Destinations: costs over the whole catalogue (the national medians need every row).
 const destRows = {};
 for (const f of list('dest')) if (f.endsWith('.json')) Object.assign(destRows, readJson(`dest/${f}`));
+// T534: the month curves and sources the bed price reads, from the baked copy.
+setStayRecords(mergeStayFiles(list('stays/v1').filter((f) => f.endsWith('.json') && f !== 'manifest.json')
+  .map((f) => readJson(`stays/v1/${f}`))));
 const costs = computeCosts(destRows, {});
 const dossierFiles = list('dossier').filter((f) => f.endsWith('.json'));
 const dests = new Map(); // id -> { id, slug, name, cc, score, dayEur, measured, lat, lon, built, week, perDay }

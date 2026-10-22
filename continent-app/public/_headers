@@ -52,6 +52,14 @@
 /dest/*
   Cache-Control: public, max-age=3600, stale-while-revalidate=86400
 
+# Bed prices per country (T534): the copy that ships, and the monthly
+# refresh the Actions workflow writes under stays-live.
+/stays/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+/stays-live/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
 # The six root JSON documents the map boots from. One vercel alternation rule,
 # expanded.
 /search_index.json

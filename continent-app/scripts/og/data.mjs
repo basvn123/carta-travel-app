@@ -14,6 +14,17 @@ export const DEFAULT_DATA = path.join(APP_ROOT, 'public');
 
 const readJson = (p) => JSON.parse(fs.readFileSync(p, 'utf8'));
 
+/** The baked stays files (T534), merged, for setStayRecords. */
+export function loadStayRecords(dir = DEFAULT_DATA) {
+  const root = path.join(dir, 'stays', 'v1');
+  if (!fs.existsSync(root)) return {};
+  const out = {};
+  for (const f of fs.readdirSync(root).filter((n) => n.endsWith('.json') && n !== 'manifest.json')) {
+    Object.assign(out, readJson(path.join(root, f)).dests || {});
+  }
+  return out;
+}
+
 export function loadBoot(dir = DEFAULT_DATA) {
   return readJson(path.join(dir, 'boot.json'));
 }

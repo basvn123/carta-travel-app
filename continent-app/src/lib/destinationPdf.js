@@ -26,6 +26,7 @@
  */
 
 import { stripDashes } from './format.js';
+import { bedFromPerPerson } from './stayPrice.js';
 import { activityLink } from './activityAffiliates.js';
 import { destShareUrl } from './dossier.js';
 import { trailClimbUp, gradeLabelKey } from './trailStory.js';
@@ -253,7 +254,7 @@ export async function downloadDestinationPdf({
   if (d.place?.visit_h != null) facts.push([T('pdf.factVisit'), `${Math.round(d.place.visit_h)} h`]);
   if (d.when?.best?.length) facts.push([T('pdf.factBest'), monthList(d.when.best)]);
   if (cost?.dayEur != null) facts.push([T('pdf.factDay'), eurFmt(cost.dayEur)]);
-  const bedFrom = d.sleep?.tiers?.dorm_pp_night_eur ?? d.sleep?.per_person_night_eur;
+  const bedFrom = bedFromPerPerson(d.sleep?.beds);
   if (bedFrom != null) facts.push([T('dest.factSleep'), eurFmt(bedFrom)]);
   if (getting.airport) facts.push([T('pdf.airport'), getting.airport + (getting.transfer_min != null ? `, ${getting.transfer_min} min` : '')]);
   if (facts.length) {
@@ -561,12 +562,12 @@ export async function downloadDestinationPdf({
 
   // ------------------------------------------------------------ sleep
   const sleep = d.sleep;
-  if (sleep && (sleep.tiers || sleep.neighbourhoods?.length || sleep.seasonality)) {
+  if (sleep && (sleep.beds || sleep.neighbourhoods?.length || sleep.curve)) {
     h2(T('dest.sleepTitle'));
-    const tiers = sleep.tiers || {};
+    const beds = sleep.beds || {};
     const tierRows = [
-      ['dest.tierDorm', tiers.dorm_pp_night_eur], ['dest.tierPrivate', tiers.private_room_night_eur],
-      ['dest.tierHotel', tiers.hotel_night_eur], ['pdf.hotel4', tiers.hotel4_night_eur],
+      ['dest.tierDorm', beds.dorm], ['dest.tierPrivate', beds.private],
+      ['dest.tierHotel', beds.hotel3], ['pdf.hotel4', beds.hotel4],
     ].filter(([, v]) => v != null);
     if (tierRows.length) {
       keyValue(tierRows.map(([k, v]) => [T(k, { eur: '' }).replace(/\s*(EUR|€)\s*\d[\d.,]*/i, '').trim().replace(/^\w/, (c) => c.toUpperCase()), eurCents(v)]), { labelW: 60 });
@@ -589,9 +590,9 @@ export async function downloadDestinationPdf({
       }
       para(T('dest.sleepNote'), { size: 8, color: C.mute });
     }
-    if (sleep.seasonality?.length === 12) {
-      const sMin = Math.min(...sleep.seasonality);
-      const cheap = sleep.seasonality.indexOf(sMin);
+    if (sleep.curve?.length === 12) {
+      const sMin = Math.min(...sleep.curve);
+      const cheap = sleep.curve.indexOf(sMin);
       if (cheap >= 0) para(T('dest.cheapestMonth', { month: MONTH_LONG[cheap] }) + '.', { size: 9, color: C.soft });
     }
   }

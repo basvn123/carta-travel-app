@@ -3,23 +3,30 @@ import { BedIcon } from '../components/Icons.jsx';
 import { MONTHS_SHORT } from './ClimateStrip.jsx';
 import { monthName } from '../lib/dates.js';
 import { eurExact } from '../lib/format.js';
+import { formatEst } from '../lib/money.js';
 
 /**
  * Where to sleep (PLAN.md D3): the neighbourhood prices the wire always
  * carried and no renderer ever spent. Cheapest to dearest with a bar per
  * neighbourhood, the stay tiers underneath, and the 12-month price curve so
- * "when is it cheap" sits beside "where is it cheap". Data is the dossier's
- * `sleep` section (Inside Airbnb city anchors); absent entirely when the
- * destination has no neighbourhood rows - never an empty shell.
+ * "when is it cheap" sits beside "where is it cheap". Data (schema v18):
+ * `sleep.beds` (annual bed prices), `sleep.curve` (the measured 12-month
+ * shape, lib/stayPrice.js seasonCurve) and `sleep.neighbourhoods` (Inside
+ * Airbnb medians); absent entirely when there is none of it, never an empty
+ * shell.
  */
 export function Neighbourhoods({ sleep, t }) {
   const hoods = sleep?.neighbourhoods || [];
   // 397 destinations carry neighbourhood rows (the Inside Airbnb anchor
   // cities); the tiers and the price curve reach further. Render whatever
   // exists, nothing when nothing does.
-  if (!hoods.length && !sleep?.tiers && !sleep?.seasonality) return null;
+  if (!hoods.length && !sleep?.beds && !sleep?.curve) return null;
   const max = Math.max(...hoods.map((n) => n.night_eur || 0), 1);
-  const seasonality = sleep.seasonality || null;
+  const seasonality = sleep.curve || null;
+  const beds = sleep.beds || null;
+  // A bed not measured in this town is a stand-in: the tilde and the word.
+  const bedEur = (v) => (sleep.q === 'measured' ? eurExact(v)
+    : formatEst(v, t('money.est'), { precision: 'cents' }));
   const sMin = seasonality ? Math.min(...seasonality) : 0;
   const sMax = seasonality ? Math.max(...seasonality) : 1;
   const cheapMonth = seasonality ? seasonality.indexOf(sMin) : -1;
@@ -42,16 +49,14 @@ export function Neighbourhoods({ sleep, t }) {
         ))}
       </ul>
       )}
-      {sleep.tiers && (
+      {beds && (
         <p className="destp-sleep-tiers">
           <BedIcon size={13} />
           {[
-            sleep.tiers.dorm_pp_night_eur != null
-              && t('dest.tierDorm', { eur: eurExact(sleep.tiers.dorm_pp_night_eur) }),
-            sleep.tiers.private_room_night_eur != null
-              && t('dest.tierPrivate', { eur: eurExact(sleep.tiers.private_room_night_eur) }),
-            sleep.tiers.hotel_night_eur != null
-              && t('dest.tierHotel', { eur: eurExact(sleep.tiers.hotel_night_eur) }),
+            beds.dorm != null && t('dest.tierDorm', { eur: bedEur(beds.dorm) }),
+            beds.private != null && t('dest.tierPrivate', { eur: bedEur(beds.private) }),
+            beds.bnb_home?.['2'] != null && t('dest.tierHome', { eur: bedEur(beds.bnb_home['2']) }),
+            beds.hotel3 != null && t('dest.tierHotel', { eur: bedEur(beds.hotel3) }),
           ].filter(Boolean).map((s, i) => (
             <span key={s} className="destp-sleep-tier">{i > 0 && <span className="destp-sleep-sep" aria-hidden="true" />}{s}</span>
           ))}

@@ -145,11 +145,13 @@ export const PERSONAS = [
   },
   {
     id: 'budget', title: 'home.pBudgetTitle', body: 'home.pBudget', facets: { budget: 60 },
-    place: 'gem:mostar-ba', label: 'Mostar',
+    // T536: Ohrid, not Mostar. With measured bed prices (an entire place for
+    // two) Mostar is about 80 a day and no longer fits the 60 a day search.
+    place: 'OHD', label: 'Ohrid',
     photo: {
-      url: commons('0/0e/Mostar_Stari_Most_BW_2024-10-01_13-03-38.jpg'), w: 3698, h: 5562, focus: 'center 40%',
-      credit: 'Stari Most, Mostar', author: 'Berthold Werner', licence: 'CC BY-SA 4.0',
-      page: 'https://commons.wikimedia.org/wiki/File:Mostar_Stari_Most_BW_2024-10-01_13-03-38.jpg',
+      url: commons('4/4b/Church_of_St._John_at_Kaneo_5.jpg'), w: 5000, h: 3345, focus: 'center 45%',
+      credit: 'St. John at Kaneo, Ohrid', author: 'kallerna', licence: 'CC BY-SA 4.0',
+      page: 'https://commons.wikimedia.org/wiki/File:Church_of_St._John_at_Kaneo_5.jpg',
     },
   },
 ];

@@ -91,8 +91,8 @@ export function windowFits(win, bounds) {
  *  national figure, 'region' the country median standing in for a broken
  *  harvest (costIndex.js names them the same way). */
 function stayLevel(dest, accom) {
-  if (accom?.tier && accom.tier !== 'home') return 'city';   // a measured city tier
-  return dest?.accommodation?.level === 'city' ? 'city' : 'country';
+  // v18 (T534): measured in this town, or borrowed / modelled (an estimate).
+  return (accom?.q || dest?.accommodation?.q) === 'measured' ? 'city' : 'country';
 }
 
 /** The stay line for one tier, or null when nothing usable is on the wire. */
@@ -110,8 +110,8 @@ function stayLine(dest, nights, from, people, stayTier, model, costRow) {
       tier: accom.tier,
       tierAsked: accom.tier_requested,
       tierFallback: !!accom.tier_fallback,
-      listings: level === 'city' && accom.tier === 'home' ? (a.n_listings ?? null) : null,
-      place: a.source_place || null,
+      listings: null,
+      place: accom.from || null,
       captured: a.captured || null,
     };
   }

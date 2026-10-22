@@ -157,9 +157,10 @@ export function budgetTripState(destId, q, { lifestyle = null, stayTier = 'home'
 }
 
 /** A figure is an estimate when it stands in for the town (isNational()'s
- *  rule in CostSummary.jsx): a bed or a basket read at country level. */
+ *  rule in CostSummary.jsx): a bed not measured in the town (v18 q), or a
+ *  basket read at country level. */
 export function isEstimate(dest) {
-  return dest?.accommodation?.level !== 'city' || dest?.costs?.level !== 'city';
+  return dest?.accommodation?.q !== 'measured' || dest?.costs?.level !== 'city';
 }
 
 /**

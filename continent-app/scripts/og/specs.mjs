@@ -16,6 +16,16 @@
  * are English and T212-b records the translation work.
  */
 import { computeCosts, cheapestStayMonths, eurDay } from '../../src/lib/costIndex.js';
+import { setStayRecords } from '../../src/lib/staysData.js';
+import { loadStayRecords } from './data.mjs';
+
+// T534: the bed price reads the month curves of the baked stays files.
+let staysSeeded = false;
+function seedStays() {
+  if (staysSeeded) return;
+  setStayRecords(loadStayRecords());
+  staysSeeded = true;
+}
 
 const NUM = new Intl.NumberFormat('en', { maximumFractionDigits: 0 });
 const DEC1 = new Intl.NumberFormat('en', { maximumFractionDigits: 1, minimumFractionDigits: 1 });
@@ -50,12 +60,13 @@ function score(row) {
 }
 
 export function destinationSpec(key, dest) {
+  seedStays();
   const cost = computeCosts({ [key]: dest }, {}).get(key);
   if (!cost || cost.dayEur == null) return null;
   const city = cost.stayLevel === 'city';
-  const stayNote = city && cost.listings
-    ? `Measured from ${NUM.format(cost.listings)} stays in this town`
-    : cost.stayLevel === 'region' ? 'Borrowed from the nearest measured town' : 'National figure, not measured here';
+  const stayNote = city ? 'Measured in this town'
+    : cost.stayLevel === 'region' && cost.source ? `Priced from ${cost.source}`
+      : 'Estimated from similar towns';
   const foodNote = cost.foodLevel === 'city' ? 'Priced at this town’s own rates' : 'National basket';
   const months = cheapestStayMonths(dest);
   const rating = dest.rating?.score;

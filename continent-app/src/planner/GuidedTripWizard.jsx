@@ -444,8 +444,9 @@ export function GuidedTripWizard({
   // eating out. Transport is booked outside Carta now, so the cards carry the
   // catalogue's own measurements instead (lib/countryBrief.js).
   const countryBriefs = useMemo(
-    () => buildCountryBriefs(destinations, countryInsights),
-    [destinations, countryInsights],
+    () => buildCountryBriefs(destinations, countryInsights,
+      lifestyle || data?.meta?.defaults?.lifestyle || null),
+    [destinations, countryInsights, lifestyle, data],
   );
   const openBrief = briefCountry ? countryBriefs.get(briefCountry) || null : null;
 

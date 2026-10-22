@@ -1,13 +1,16 @@
 /*
  * priceMonths.js (T103, spec I5): the price row under the weather row.
  *
- * The only monthly money signal Carta measures is the twelve-month nightly
- * stay curve of a destination (accommodation.seasonality, from Inside Airbnb
- * calendars, a ratio to the year's mean). Journeys carry no monthly price of
+ * The monthly money signal Carta measures is the twelve-month bed price of a
+ * destination (schema v18: dated hotel and Airbnb prices per month, from the
+ * stays wire; lib/stayPrice.js seasonCurve, a ratio to the year's mean).
+ * Journeys carry no monthly price of
  * their own, so a trip borrows the curve of the nearest destination that has
  * one, within MAX_KM of the trip's own point. No curve in range means no row:
  * the page says so plainly. Nothing here prices a flight (T272).
  */
+
+import { seasonCurve } from './stayPrice.js';
 
 export const MAX_KM = 30;
 export const CHEAP_BELOW = 0.92;   // a month this far under the year's mean reads cheap
@@ -28,7 +31,7 @@ export function nearestCurve(destinations, lat, lon, maxKm = MAX_KM) {
   if (!destinations || !Number.isFinite(lat) || !Number.isFinite(lon)) return null;
   let best = null;
   for (const [id, d] of Object.entries(destinations)) {
-    const s = d?.accommodation?.seasonality;
+    const s = seasonCurve(d?.id || id);
     if (!isCurve(s) || !Number.isFinite(d.city_lat) || !Number.isFinite(d.city_lon)) continue;
     const km = haversineKm(lat, lon, d.city_lat, d.city_lon);
     if (km <= maxKm && (!best || km < best.km)) {

@@ -5,13 +5,16 @@ import {
   calendarDefaultWindow, windowFits, priceReceipt, receiptFooter, nearestPricedDest,
   receiptMix, tierMeasured,
 } from "../src/lib/firstRun.js";
+import { setStayRecords } from "../src/lib/staysData.js";
 
+// Schema v18 (T534): annual beds on the destination, the month curve in the
+// stays wire. q "modelled": the bed is an estimate, like a national figure.
 const dest = {
+  id: "TRS",
   city: "Trieste",
   accommodation: {
-    per_person_night_eur: 32.5, cleaning_per_person_eur: 16.24, entire_home_night_eur: 130,
-    typical_capacity: 4, level: "country", price_source: "inside_airbnb_country+pop",
-    tiers: { dorm_pp_night_eur: 24, private_room_night_eur: 60 },
+    beds: { dorm: 24, private: 60, bnb_home: { "2": 110, "4": 130 } },
+    q: "modelled",
   },
   costs: {
     meal_mid_eur: 35, meal_cheap_eur: 17, fastfood_eur: 10, drink_out_eur: 5, cocktail_eur: 12,
@@ -19,6 +22,8 @@ const dest = {
   },
 };
 const opts = { from: "2026-11-07", to: "2026-11-14", people: 2, stayTier: "home" };
+const curve = (base) => [0.8, 0.8, 0.9, 1, 1.1, 1.2, 1.4, 1.4, 1.1, 1, 0.85, 0.95].map((f) => Math.round(base * f));
+setStayRecords({ TRS: { month: { dorm: curve(24), private: curve(60), bnb_home: curve(130) } } });
 
 test("the default window is the first Saturday at least four weeks out", () => {
   // 2026-10-07 is a Wednesday; +28 is Wednesday 4 November; the Saturday is the 7th.
@@ -65,12 +70,12 @@ test("more people cost more in total", () => {
 
 test("a destination without a bed or a food figure prices no receipt", () => {
   assert.equal(priceReceipt({ ...dest, costs: null }, opts), null);
-  assert.equal(priceReceipt({ ...dest, accommodation: { per_person_night_eur: 0 } }, opts), null);
+  assert.equal(priceReceipt({ ...dest, accommodation: { beds: {} } }, opts), null);
   assert.equal(priceReceipt(dest, { ...opts, to: opts.from }), null);
 });
 
 test("a broken harvest borrows the country median and says it is an estimate", () => {
-  const broken = { ...dest, accommodation: { ...dest.accommodation, per_person_night_eur: 0, tiers: null } };
+  const broken = { ...dest, accommodation: { beds: {} } };
   const r = priceReceipt(broken, { ...opts, costRow: { stayLevel: "region", stayEur: 30 } });
   const s = r.lines.find((l) => l.key === "stay");
   assert.equal(s.level, "region");
@@ -80,7 +85,7 @@ test("a broken harvest borrows the country median and says it is an estimate", (
 
 test("the footer names a measured cheaper tier while the dates are Carta's", () => {
   const r = priceReceipt(dest, opts);
-  const meta = { stay_tiers_available: ["dorm", "private"] };
+  const meta = { stays: { tiers: ["dorm", "private"] } };
   const f = receiptFooter(dest, r, opts, { datesOwn: false, meta });
   assert.equal(f.kind, "tier");
   assert.equal(f.tier, "dorm");
@@ -90,7 +95,7 @@ test("the footer names a measured cheaper tier while the dates are Carta's", () 
 test("the footer names the week after once the dates are the visitor's own", () => {
   const r = priceReceipt(dest, opts);
   const f = receiptFooter(dest, r, opts, { datesOwn: true, meta: null });
-  // The global curve is flat from one November week to the next, so the
+  // The month curve is flat from one November week to the next, so the
   // footer reaches four weeks out, into December's rate.
   assert.equal(f.kind, "month");
   assert.ok(Math.abs(f.total - r.total) >= 0.01);
@@ -119,7 +124,7 @@ test("a solo traveller in a private room pays for the whole double room (T100)",
 test("the receipt's mix names what is measured, line by line (T382, T371-b)", () => {
   const level = (acc, food) => ({
     ...dest,
-    accommodation: { ...dest.accommodation, level: acc },
+    accommodation: { ...dest.accommodation, q: acc === "city" ? "measured" : "modelled" },
     costs: { ...dest.costs, level: food },
   });
   assert.equal(receiptMix(priceReceipt(level("city", "city"), opts)), "all");
@@ -130,11 +135,11 @@ test("the receipt's mix names what is measured, line by line (T382, T371-b)", ()
 });
 
 test("a tier the town does not measure is said to be not measured; the entire place never is (T382)", () => {
-  const measuredTown = { ...dest, accommodation: { ...dest.accommodation, level: "city" } };
+  const measuredTown = { ...dest, accommodation: { ...dest.accommodation, q: "measured" } };
   assert.equal(tierMeasured(measuredTown, opts, "home"), true);
   assert.equal(tierMeasured(measuredTown, opts, "dorm"), true);
   assert.equal(tierMeasured(measuredTown, opts, "hotel4"), false);
-  const bare = { ...dest, accommodation: { ...dest.accommodation, tiers: undefined } };
+  const bare = { ...dest, accommodation: { ...dest.accommodation, beds: { bnb_home: { "2": 110, "4": 130 } } } };
   assert.equal(tierMeasured(bare, opts, "dorm"), false);
   assert.equal(tierMeasured(bare, opts, "home"), true);
 });

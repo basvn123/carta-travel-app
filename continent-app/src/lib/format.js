@@ -120,9 +120,3 @@ export const PRICE_SOURCE_LABELS = {
   pli_scaled: 'estimated prices',
 };
 
-// Human labels for dest.accommodation.price_source (Airbnb nightly rate).
-export const ACCOM_SOURCE_LABELS = {
-  inside_airbnb_city: 'Airbnb city rates',
-  inside_airbnb_country: 'Airbnb country rates',
-  airbnb_pli_scaled: 'estimated Airbnb rates',
-};

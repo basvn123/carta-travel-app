@@ -2,9 +2,9 @@ import React, { useMemo } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { useFirstRun } from '../lib/firstRunContext.js';
 import { offeredStayTiers, DEFAULT_LIFESTYLE } from '../lib/runtime_pricing.js';
-import { offeredSleepGroups, sleepGroupOf, tierForGroup } from '../lib/sleepGroups.js';
+import { offeredSleepGroups, optionsFor, sleepGroupOf, tierForGroup } from '../lib/sleepGroups.js';
 import { PROFILES, PROFILE_ICONS, PROFILE_LABEL_KEYS, SLEEP_ICONS, matchProfile } from '../browse/LifestylePanel.jsx';
-import { Tile, TileGroup } from '../components/ui/index.js';
+import { Segmented, Tile, TileGroup } from '../components/ui/index.js';
 
 /**
  * The Lifestyle panel's two answers, embedded in the trip planner's Who step
@@ -24,9 +24,12 @@ export function LifestyleChoices() {
   const stayTier = choices.stay_tier || 'home';
   const activeGroup = sleepGroupOf(stayTier);
   const activeProfile = matchProfile(choices.lifestyle || DEFAULT_LIFESTYLE);
+  const activeKind = groups.find((g) => g.key === activeGroup) || null;
+  const kindOptions = activeKind ? optionsFor(activeKind) : [];
   if (!setChoices) return null;
 
   const pickGroup = (g) => setChoices((prev) => ({ ...prev, stay_tier: tierForGroup(g, prev.stay_tier || 'home') }));
+  const pickTier = (tier) => setChoices((prev) => ({ ...prev, stay_tier: tier }));
   const pickProfile = (name) => setChoices((prev) => ({ ...prev, lifestyle: { ...PROFILES[name] } }));
 
   return (
@@ -34,7 +37,7 @@ export function LifestyleChoices() {
       {groups.length > 1 && (
         <div className="wlife-q">
           <h2 className="wlife-h" id="wlife-sleep">{t('lifestyle.stay')}</h2>
-          <TileGroup label={t('lifestyle.stay')} kind="choice" columns={4} className="wlife-tiles" aria-labelledby="wlife-sleep">
+          <TileGroup label={t('lifestyle.stay')} kind="choice" columns={3} className="wlife-tiles" aria-labelledby="wlife-sleep">
             {groups.map((g) => {
               const Icon = SLEEP_ICONS[g.key];
               return (
@@ -50,6 +53,18 @@ export function LifestyleChoices() {
               );
             })}
           </TileGroup>
+          {kindOptions.length > 1 && (
+            <div className="wlife-kind">
+              <span className="wlife-kind-label" aria-hidden="true">{t(activeKind.askKey)}</span>
+              <Segmented
+                label={t(activeKind.askKey)}
+                block
+                value={stayTier === 'hotel' ? 'hotel3' : stayTier}
+                onChange={pickTier}
+                options={kindOptions.map((o) => ({ value: o.tier, label: t(o.labelKey) }))}
+              />
+            </div>
+          )}
         </div>
       )}
       <div className="wlife-q">

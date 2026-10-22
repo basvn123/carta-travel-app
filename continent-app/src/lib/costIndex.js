@@ -45,8 +45,10 @@
  * shows a control and a price has promised the control moves the price. Food
  * is priced through groundSpendPerPerson, the same function the trip receipt
  * and the day planner use, so a card and a receipt cannot disagree about what
- * dinner costs. The bed is priced through stayTierNightly, so choosing a dorm
- * reprices every card that has a measured hostel.
+ * dinner costs. The bed is priced through bedPrice (lib/stayPrice.js), the
+ * same function the planner's Beds line uses, for the traveller's party, tier
+ * and month or dates, over the default trip length, fees included, so a card
+ * times the nights is the planner's number (T534).
  *
  * The GAUGE does not simply follow. If the five bands stayed fixed in euros,
  * picking Backpacker would paint the whole continent green and picking Foodie
@@ -59,8 +61,9 @@
  * depends only on the lifestyle and stays reproducible.
  */
 import {
-  DEFAULT_LIFESTYLE, CLUB_DRINKS_PER_NIGHT, groundSpendPerPerson, stayTierNightly,
+  DEFAULT_LIFESTYLE, CLUB_DRINKS_PER_NIGHT, groundSpendPerPerson,
 } from './runtime_pricing.js';
+import { bedPrice, cheapestMonths } from './stayPrice.js';
 import { formatMoney } from './money.js';
 
 // Sanity gate on a harvested nightly rate. Below the floor the number is a
@@ -117,9 +120,14 @@ const REF_PRICES = {
 // a measured one. Same job as REF_PRICES: the RATIO between tiers is what is
 // used, never the absolute number.
 const REF_STAY = {
-  home: 31.25, dorm: 28.98, private: 38.81, hotel: 42.5,
+  home: 31.25, dorm: 28.98, private: 38.81, room: 36, hotel: 50, hotel2: 40,
   hotel3: 50, hotel4: 70, hotel5: 120,
 };
+
+// The stay a card prices when the traveller has set no dates: the default
+// trip length, so Airbnb's cleaning fee and weekly discount land the way the
+// planner lands them for the same week.
+const CARD_NIGHTS = 7;
 
 /** One day of eating and drinking at `lifestyle`, against the reference
  *  prices. The same arithmetic groundSpendPerPerson does, on one basket.
@@ -164,16 +172,11 @@ export function bandFor(kind, eur, scale = 1) {
 /** i18n keys for the five bands, so the five words live in one place. */
 export const BAND_KEY = ['cost.band0', 'cost.band1', 'cost.band2', 'cost.band3', 'cost.band4'];
 
-/** Per-person nightly stay cost, or null when the wire has nothing usable. */
+/** Per-person nightly stay cost (an entire place for two, a week, fees in),
+ *  or null when the wire has nothing usable. */
 export function stayPerNight(dest) {
-  const a = dest?.accommodation;
-  if (!a) return null;
-  let v = null;
-  if (a.entire_home_night_eur != null) {
-    const cap = a.typical_capacity || 4;
-    v = a.entire_home_night_eur / Math.max(1, cap);
-  }
-  if (!(v > 0) && a.per_person_night_eur != null) v = a.per_person_night_eur;
+  const b = bedPrice({ dest, tier: 'home', adults: 2, nights: CARD_NIGHTS });
+  const v = b ? b.perPerson / CARD_NIGHTS : null;
   // The gate is the whole point: a zero is a broken harvest, not a bargain.
   if (!(v >= STAY_MIN_EUR && v <= STAY_MAX_EUR)) return null;
   return v;
@@ -194,20 +197,21 @@ export function foodPerDay(dest, lifestyle) {
 }
 
 /**
- * One person, one night, at the tier they chose.
+ * One person, one night, at the tier they chose, for their party and their
+ * month or dates (`when` = { start, month, nights }).
  *
- * A tier only prices where the town has a measured one: 226 of the 3,038
- * destinations carry hostel and hotel rates. Everywhere else falls back to the
- * entire-place anchor and says so through `tierFallback`, so a village never
+ * A town that cannot price the tier (no hostel, no 5-star hotel) falls back
+ * to the entire place and says so through `fallback`, so a village never
  * quotes a dorm bed it does not have.
  */
-function stayAtTier(dest, tier, groupSize) {
-  const home = stayPerNight(dest);
-  if (!tier || tier === 'home') return { eur: home, fallback: false };
-  const t = stayTierNightly(dest?.accommodation, tier, groupSize);
-  const v = t?.nightlyPp;
-  if (v >= STAY_MIN_EUR && v <= STAY_MAX_EUR) return { eur: v, fallback: false };
-  return { eur: home, fallback: true };
+function stayAtTier(dest, tier, groupSize, when) {
+  const nights = when?.nights || CARD_NIGHTS;
+  const b = bedPrice({ dest, tier, adults: groupSize, nights, start: when?.start || null,
+    month: when?.month || null, fees: when?.fees || null });
+  if (!b) return { eur: null, fallback: false, bed: null };
+  const v = b.perPerson / nights;
+  if (!(v >= STAY_MIN_EUR && v <= STAY_MAX_EUR)) return { eur: null, fallback: false, bed: null };
+  return { eur: v, fallback: b.fallback, bed: b };
 }
 
 /**
@@ -218,7 +222,8 @@ function stayAtTier(dest, tier, groupSize) {
  */
 function levelOf(raw, repaired) {
   if (repaired) return 'region';
-  return raw === 'city' ? 'city' : 'country';
+  return raw === 'city' || raw === 'measured' ? 'city'
+    : raw === 'nearby' ? 'region' : 'country';
 }
 
 /**
@@ -252,16 +257,24 @@ function countryStayMedians(destinations) {
  *   stayLevel / foodLevel            'city' | 'country' | 'region'
  *   listings / captured / source     how many stays were measured, when, where
  *   stayBasis / foodBasis            the price_source behind each figure (T098)
+ *
+ * choices.month (1..12, the Explore month filter) or choices.start (the
+ * traveller's first night, with choices.nights) price the bed for that time
+ * of year; without either the bed is the year's average.
  */
 export function computeCosts(destinations, choices) {
   const lifestyle = choices?.lifestyle;
   const stayTier = choices?.stay_tier || 'home';
-  const groupSize = choices?.group_size || 1;
+  // Two, the app's default party: a bed is one person's share of a room or
+  // a place for two unless the traveller says otherwise.
+  const groupSize = choices?.group_size || 2;
+  const when = { start: choices?.start || null, month: choices?.month || null,
+    nights: choices?.nights || null, fees: choices?.accommodation_model || null };
   const scale = bandScale(lifestyle, stayTier);
   const medians = countryStayMedians(destinations);
   const out = new Map();
   for (const [id, d] of Object.entries(destinations || {})) {
-    const at = stayAtTier(d, stayTier, groupSize);
+    const at = stayAtTier(d, stayTier, groupSize, when);
     let stayEur = at.eur;
     let repaired = false;
     if (stayEur == null) {
@@ -278,15 +291,17 @@ export function computeCosts(destinations, choices) {
       stayBand: bandFor('stay', stayEur, scale.stay),
       foodBand: bandFor('food', foodEur, scale.food),
       dayBand: bandFor('day', dayEur, scale.day),
-      stayLevel: levelOf(a.level, repaired),
-      stayBasis: repaired ? null : (a.price_source || null),
+      stayLevel: levelOf(at.bed?.q || a.q, repaired),
+      stayBasis: repaired ? null : (at.bed?.q || a.q || null),
       foodBasis: d.costs?.price_source || null,
       foodLevel: levelOf(d.costs?.level, false),
       stayTier,
       tierFallback: at.fallback,
-      listings: repaired ? null : (a.n_listings ?? null),
+      listings: null,
       captured: repaired ? null : (a.captured ?? null),
-      source: repaired ? null : (a.source_place ?? null),
+      source: repaired ? null : (at.bed?.from ?? null),
+      stayKm: repaired ? null : (at.bed?.km ?? null),
+      stayScaled: !!at.bed?.scaled,
     });
   }
   return out;
@@ -295,15 +310,8 @@ export function computeCosts(destinations, choices) {
 /** Whole euros, the only precision the underlying data earns. */
 export const eurDay = (v) => (v == null ? null : formatMoney(v, { precision: 'whole' }));
 
-/** The two cheapest months to stay, from the Airbnb seasonality curve, or
- *  null when this destination has no measured curve. 1-based months. */
+/** The two cheapest months to stay, from the measured month curve (stays
+ *  wire), or null when this destination has none yet. 1-based months. */
 export function cheapestStayMonths(dest) {
-  const s = dest?.accommodation?.seasonality;
-  if (!Array.isArray(s) || s.length !== 12) return null;
-  return s
-    .map((v, i) => [v, i + 1])
-    .sort((a, b) => a[0] - b[0])
-    .slice(0, 2)
-    .map(([, m]) => m)
-    .sort((a, b) => a - b);
+  return cheapestMonths(dest);
 }

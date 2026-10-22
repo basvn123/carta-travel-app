@@ -16,7 +16,7 @@
  * Pure functions only, so the node tests import them.
  */
 import { between } from './lifestyleSlider.js';
-import { SLEEP_GROUPS, sleepGroupOf } from './sleepGroups.js';
+import { normaliseTier } from './stayPrice.js';
 import { refDayFood } from './costIndex.js';
 import { PROFILES } from './lifestyleProfiles.js';
 
@@ -31,6 +31,12 @@ const SPEND_LOW = Math.min(...PRESET_DAYS);
 const SPEND_HIGH = Math.max(...PRESET_DAYS);
 
 const clamp01 = (v) => (Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : 0.5);
+
+// Where each way to sleep sits on a trip's authored bed range, simplest to
+// most comfortable (T535 kept the four old positions and fitted the Airbnb
+// room between a private room and an entire place).
+const SLEEP_LADDER = { dorm: 0, private: 1 / 3, room: 0.5, home: 2 / 3,
+  hotel2: 1, hotel3: 1, hotel4: 1, hotel5: 1 };
 
 /**
  * Where the traveller's Lifestyle sits on a trip's written ranges.
@@ -48,8 +54,7 @@ const clamp01 = (v) => (Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : 0.5);
  * defaults do.
  */
 export function lifestyleShares(lifestyle, stayTier) {
-  const at = SLEEP_GROUPS.findIndex((g) => g.key === sleepGroupOf(stayTier));
-  const sleepShare = at >= 0 ? at / (SLEEP_GROUPS.length - 1) : 0.5;
+  const sleepShare = SLEEP_LADDER[normaliseTier(stayTier)] ?? SLEEP_LADDER.home;
   const spendShare = SPEND_HIGH > SPEND_LOW
     ? clamp01((refDayFood(lifestyle) - SPEND_LOW) / (SPEND_HIGH - SPEND_LOW))
     : 0.5;

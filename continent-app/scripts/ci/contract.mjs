@@ -5,7 +5,7 @@
  *
  * There is no runtime validator in the app. src/lib/appData.js fetches
  * /app_data.json and hands the parsed object straight to useAppData, which
- * reads meta.defaults, meta.baggage_options, meta.accommodation_model and
+ * reads meta.defaults, meta.baggage_options, meta.stays and
  * meta.car_model with optional chaining and falls back on every one of them.
  * withOriginRoutes then walks destinations and rebuilds routes. Nothing
  * throws. A payload missing half its keys renders an app with no prices and
@@ -32,13 +32,13 @@
  * documentation claims. As of T029 public/app_data.json has
  * meta.schema_version 17 while docs/SCHEMA.md's header still says 15; the
  * document's own later sections go up to "Schema v17", so 15 is stale prose
- * and 17 is the contract. Pinning to the file rather than the doc is the
+ * and 17 was the contract; T534 (stay prices, 2026-10-21) moved it to 18. Pinning to the file rather than the doc is the
  * whole point of the gate: a pipeline change that bumps the version has to
  * come here and to SCHEMA.md in the same task, and a tripwire nobody has to
  * touch is a tripwire that is not attached to anything.
  */
 
-export const EXPECTED_SCHEMA_VERSION = 17;
+export const EXPECTED_SCHEMA_VERSION = 18;
 
 // Top-level keys the boot path reads before it can render a price.
 const REQUIRED_META = [

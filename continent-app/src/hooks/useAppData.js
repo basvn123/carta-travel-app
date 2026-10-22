@@ -96,7 +96,8 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
               j.meta.baggage_options?.[baggageKey]?.per_direction_eur ?? prev.baggage_per_direction_eur,
             transport_mode: init.transport_mode ?? prev.transport_mode,
             lifestyle: { ...prev.lifestyle, ...(def?.lifestyle || {}), ...(init.lifestyle || {}) },
-            accommodation_model: j.meta.accommodation_model ?? prev.accommodation_model,
+            // v18 (T534): Airbnb's fee constants travel as meta.stays.fees.
+            accommodation_model: j.meta.stays?.fees ?? j.meta.accommodation_model ?? prev.accommodation_model,
             car_model: j.meta.car_model ?? prev.car_model,
             // Drive-comparison departs from the chosen origin airport (falls back
             // to the data's configured home when the origin has no coordinates).
