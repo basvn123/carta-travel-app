@@ -1910,8 +1910,11 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T537-c | T537 | Not opened in the browser: trip planner TripPriceCard flight link, Explore hover receipt, day planner, PDFs | next task | open |  |
 | T538-a | T538 | The country brief cost fold (now CostRow, est. marked) was not opened in a browser; it is reached only from the Help me choose match cards | next task | open |  |
 | T540-a | T540 | Production Pages deploy of app master c9d7ce3 (live bed prices) waits for the owner: the session's permission check refused it; R2 stays files with xk are already up | user | closed by T540 | 1 |
-| T540-b | T540 | Only the destination card calls loadLiveStay; the trip card and the planner's stop beds would use live prices through bedPrice but never ask | next task | open |  |
+| T540-b | T540 | Only the destination card calls loadLiveStay; the trip card and the planner's stop beds would use live prices through bedPrice but never ask | next task | closed by T561 |  |
 | T540-c | T540 | Xotelo publishes no terms and is now called per visitor from Cloudflare (12 h cache); owner decides whether that use is acceptable | user | open |  |
-| T540-d | T540 | The monthly refresh needs xotelo_props.json in the state bucket, or build_stays writes no xk and the newer live copy switches live prices off | next task | open |  |
-| T540-e | T540 | Live damping (0.6) and typical night (geometric mean of the yearly range) are unchecked judgement calls; compare with SerpApi or hand checks | next task | open |  |
+| T540-d | T540 | The monthly refresh needs xotelo_props.json in the state bucket, or build_stays writes no xk and the newer live copy switches live prices off | next task | closed by T560 |  |
+| T540-e | T540 | Live damping (0.6) and typical night (geometric mean of the yearly range) are unchecked judgement calls; compare with SerpApi or hand checks | next task | closed by T562 |  |
 | T539-a | T539 | The scaled month fill has not run on real lean-scrape data yet; the first scrape's build must pass the seasonal gate | next task | open |  |
+| T562-a | T562 | Upload the 44 calibrated stays files to R2, deploy app master 999ad92 to Pages, browser end check, fast-forward root main and push: the permission check refused the R2 upload, so the owner approves | user | open | 1 |
+| T561-a | T561 | The journey trip card's live adjustment uses the nearest live town within 40 km; multi-town journeys are approximated until journeys carry per-night destination ids | next task | open |  |
+| T562-b | T562 | Live bias measured once on 26 towns (0.804); rerun calibrate_live.py after each quarterly Xotelo discover, per country as the pool grows | next task | open |  |
