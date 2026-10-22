@@ -44,7 +44,7 @@ def _print_roster(collectors):
     print("-" * 100)
     for cls in collectors:
         print(f"{cls.name:18} {cls.group:9} {cls.description}")
-        run = cls.run
+        run = cls.schedule
         task = run.task or "none"
         print(f"{'':18} {'':9}   runs: {run.cadence}, task {task}, failure {run.failure}")
         for src in cls.sources:

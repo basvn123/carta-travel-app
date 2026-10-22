@@ -2010,3 +2010,5 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T601-a | T601 | On a phone the overview hero is about 490 px tall before the first rail; consider trimming | next task | open |  |
 | T602-a | T602 | .places-side .side-facets and .dtab-filters rules in 63-v6-destinations.css are unused since the left panel left the category tabs | next task | open |  |
 | T604-a | T604 | The outdoor tabs' quick chips still use FilterChipBar popovers, not the pane's own sections as Places does | next task | open |  |
+| T617-a | T617 | tests/test_data_licences.py fails 3 tests on main: pipeline/stays/calibrate_live.py is a harvester with no RUNS entry and no licence row, so validate() and the rendered ledger disagree | next task | open |  |
+| T617-b | T617 | Merge p3-ingestion-run-shadow into main and push, then rerun verify_tasks.sh ingestion and ship on the box (stage 7.6) | user | open | before stage 7.7 |
