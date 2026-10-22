@@ -495,14 +495,21 @@ def main():
     iab = (read_json(STATE / "iab.json", {}) or {}).get("dests", {})
     supply = (read_json(STATE / "supply.json", {}) or {}).get("dests", {})
     records = build(dests, obs, iab, supply, euro)
+    from live_keys import attach
+    live_keys = attach(records, dests)
+    print("live keys:", live_keys, "destinations")
     prev = read_json(V / "manifest.json")
     fails, notes = gates(records, prev, read_json(STATE / "calibration.json"))
+    # T559: a build without the Xotelo pool writes no `xk`, and the newer live
+    # copy would switch live bed prices off everywhere. Refuse to publish that.
+    if live_keys == 0 and (prev or {}).get("live_keys", 1) > 0:
+        fails.append("no live keys (xotelo_props.json missing from the state?)")
     manifest = {
         "v": 1, "schema": 18, "built": now_iso(), "n": len(records),
         "coverage": coverage(records),
         "sources": {s: sum(1 for o in obs if o["src"] == s)
                     for s in ("xotelo", "booking", "hostelworld")},
-        "iab_dests": len(iab), "hicp_latest": max((max(v) for v in (euro.get("hicp") or {}).values()), default=None),
+        "iab_dests": len(iab), "live_keys": live_keys, "hicp_latest": max((max(v) for v in (euro.get("hicp") or {}).values()), default=None),
         "gate": {"fails": fails, "notes": notes},
     }
     print("coverage:", manifest["coverage"])
@@ -513,8 +520,6 @@ def main():
         for f in fails:
             print("GATE FAILED:", f)
         sys.exit(2)
-    from live_keys import attach
-    print("live keys:", attach(records, dests), "destinations")
     by_cc = defaultdict(dict)
     for d in dests:
         by_cc[d["iso2"]][d["id"]] = records[d["id"]]
