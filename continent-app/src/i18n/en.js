@@ -7172,7 +7172,6 @@ export const en = {
   "ask.title": "Ask Carta",
   "ask.inputLabel": "Your question",
   "ask.go": "Ask",
-  "ask.barPlaceholder": "Type your question",
   "ask.seeAnswer": "See answer",
   "ask.sug.compare": "{a} or {b}",
   "ask.sug.when": "When is the best time for {place}",

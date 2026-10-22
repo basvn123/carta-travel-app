@@ -6571,7 +6571,6 @@ export const it = {
   "ask.title": "Chiedi a Carta",
   "ask.inputLabel": "La tua domanda",
   "ask.go": "Chiedi",
-  "ask.barPlaceholder": "Scrivi la tua domanda",
   "ask.seeAnswer": "Vedi la risposta",
   "ask.sug.compare": "{a} o {b}",
   "ask.sug.when": "Quando andare a {place}",

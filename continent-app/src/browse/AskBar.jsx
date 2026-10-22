@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, IconButton } from '../components/ui/index.js';
 import { CloseIcon, SparkIcon } from '../components/Icons.jsx';
+import { prefersReducedMotion } from '../lib/motion.js';
 
 /**
  * Ask Carta's bar on Explore (T568): a real field under the filter chips,
@@ -8,7 +9,10 @@ import { CloseIcon, SparkIcon } from '../components/Icons.jsx';
  * once; the answer opens in the panel (AskSearchFull). Under the field, a
  * few questions to ask, the first ones built from the places the list
  * shows now, so they follow the filters. "/" anywhere on the page puts the
- * caret in the field.
+ * caret in the field. While the field is empty and idle it types those same
+ * questions out and erases them, one after another (T569, the owner: no
+ * placeholder, some animation); a focus, a typed letter, a hidden tab, the
+ * bar out of view or reduced motion stops it.
  *
  *   asked        the question the panel has answered ('' for none)
  *   places       city names at the top of the list now, for the suggestions
@@ -28,6 +32,49 @@ function askSuggestions(t, places = []) {
   return out;
 }
 
+// Milliseconds a letter types and erases in, and how long a whole question
+// holds before it goes.
+const TYPE_MS = 45;
+const ERASE_MS = 18;
+const HOLD_MS = 1800;
+
+/** The questions, typed out and erased in turn while `on`; '' when off. */
+function useTypedHint(lines, on, boxRef) {
+  const [shown, setShown] = React.useState('');
+  const key = lines.join('|');
+  React.useEffect(() => {
+    if (!on || !lines.length || prefersReducedMotion()) { setShown(''); return undefined; }
+    let line = 0;
+    let n = 0;
+    let erasing = false;
+    let timer = 0;
+    let visible = true;
+    const tick = () => {
+      if (!visible || document.hidden) { timer = setTimeout(tick, 400); return; }
+      const full = lines[line];
+      if (!erasing) {
+        n += 1;
+        setShown(full.slice(0, n));
+        if (n >= full.length) { erasing = true; timer = setTimeout(tick, HOLD_MS); return; }
+        timer = setTimeout(tick, TYPE_MS);
+      } else {
+        n -= 1;
+        setShown(full.slice(0, Math.max(0, n)));
+        if (n <= 0) { erasing = false; line = (line + 1) % lines.length; timer = setTimeout(tick, TYPE_MS * 8); return; }
+        timer = setTimeout(tick, ERASE_MS);
+      }
+    };
+    const io = typeof IntersectionObserver === 'function' && boxRef.current
+      ? new IntersectionObserver(([e]) => { visible = e.isIntersecting; })
+      : null;
+    if (io) io.observe(boxRef.current);
+    timer = setTimeout(tick, 600);
+    return () => { clearTimeout(timer); io?.disconnect(); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `key` stands for the lines
+  }, [key, on, boxRef]);
+  return shown;
+}
+
 export const AskBar = React.forwardRef(function AskBar(
   { t, asked = '', places = [], onAsk, onOpen, onClear },
   ref,
@@ -35,6 +82,8 @@ export const AskBar = React.forwardRef(function AskBar(
   const [text, setText] = React.useState(asked);
   React.useEffect(() => { setText(asked); }, [asked]);
   const inputRef = React.useRef(null);
+  const boxRef = React.useRef(null);
+  const [focused, setFocused] = React.useState(false);
 
   // "/" puts the caret in the field, unless the reader is typing elsewhere.
   React.useEffect(() => {
@@ -65,15 +114,19 @@ export const AskBar = React.forwardRef(function AskBar(
     inputRef.current?.focus();
   };
   const sugs = askSuggestions(t, places);
+  const hint = useTypedHint(sugs, !text && !focused, boxRef);
 
   return (
-    <div className={`ask-bar${text ? ' has-text' : ''}`}>
+    <div className={`ask-bar${text ? ' has-text' : ''}`} ref={boxRef}>
       {/* The ref is the field, so the answer panel hangs from it. */}
       <form ref={ref} className="ask-bar-field" role="search" onSubmit={submit}>
         <label className="ask-bar-label" htmlFor="ask-bar-input">
           <SparkIcon size={18} />
           <span>{t('ask.title')}</span>
         </label>
+        <span className="ask-bar-input-wrap">
+        {/* The typed hint: drawn, not read (the label names the field). */}
+        {hint && <span className="ask-bar-hint" aria-hidden="true">{hint}<span className="ask-bar-caret" /></span>}
         <input
           ref={inputRef}
           id="ask-bar-input"
@@ -81,11 +134,13 @@ export const AskBar = React.forwardRef(function AskBar(
           type="text"
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder={t('ask.barPlaceholder')}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
           autoComplete="off"
           enterKeyHint="search"
           aria-keyshortcuts="/"
         />
+        </span>
         {text ? (
           <IconButton label={t('ask.clearAria')} className="ask-bar-clear" onClick={clear}>
             <CloseIcon size={16} />

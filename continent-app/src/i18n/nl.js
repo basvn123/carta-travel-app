@@ -6571,7 +6571,6 @@ export const nl = {
   "ask.title": "Vraag Carta",
   "ask.inputLabel": "Je vraag",
   "ask.go": "Vraag",
-  "ask.barPlaceholder": "Typ je vraag",
   "ask.seeAnswer": "Bekijk het antwoord",
   "ask.sug.compare": "{a} of {b}",
   "ask.sug.when": "Wanneer is de beste tijd voor {place}",

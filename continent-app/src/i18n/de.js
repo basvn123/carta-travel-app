@@ -6571,7 +6571,6 @@ export const de = {
   "ask.title": "Frag Carta",
   "ask.inputLabel": "Deine Frage",
   "ask.go": "Fragen",
-  "ask.barPlaceholder": "Frage eingeben",
   "ask.seeAnswer": "Antwort ansehen",
   "ask.sug.compare": "{a} oder {b}",
   "ask.sug.when": "Wann ist die beste Reisezeit für {place}",

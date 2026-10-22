@@ -287,8 +287,10 @@ old ones, and the `raw-button` lint rule (T425) meters what is left; `node scrip
   meta, rating, price, actions. The price slot takes `<Money>`. One stretched link or button on the title
   opens the card; actions sit above the stretch; nothing interactive nests. Selected is a brown edge.
 - **Field**: input, select or textarea with a visible label, help and error under it tied by
-  `aria-describedby`; errors in `--danger` with the field edge `--danger`. A placeholder shows a real
-  example and never stands in for the label.
+  `aria-describedby`; errors in `--danger` with the field edge `--danger`. A placeholder is optional
+  (owner 2026-10-22, T569): the label names the field, so an empty field may stay empty, and a
+  placeholder, when there is one, never stands in for the label. Ask Carta's bar has none; its empty
+  field types its suggested questions instead (see Interaction and motion).
 - **Icon** and **Money** as above.
 - **Score** (`RatingBadge.jsx`, T437): a drawn star in `--rate` and the figure in `--text`, tabular,
   12 px or more, no fill; the star is always filled (owner, 2026-10-14, T447: an outlined star read as
@@ -399,7 +401,8 @@ Routine motion animates `transform` and `opacity`; a press, hover or selection m
 padding, `grid-template-*`, `box-shadow`, `filter` or `backdrop-filter`; `transition: all` is never
 written. A changing figure updates in place, tabular, in a box that keeps its width, with one opacity dip
 through `settleFigure()` (`src/lib/figureChange.js`); no count-up, no scale bump. Nothing moves because the
-page scrolled, nothing loops, the bottom nav never moves. Every transition has a
+page scrolled, nothing loops (outside the home page and Ask Carta exceptions below), the bottom nav
+never moves. Every transition has a
 `prefers-reduced-motion: reduce` branch that sets it to `none`; scripted motion asks
 `prefersReducedMotion()` or `durationMs()` in `src/lib/motion.js`.
 
@@ -420,8 +423,23 @@ one surface that persuades rather than operates, so it may move on its own, with
 
 Still binding on the home page: motion tokens for every transition, transform, opacity, clip-path and
 stroke-dashoffset only, no overshoot or bounce, no parallax, no count-up, no marquee, no gradient or
-scrim, one primary, 44 px targets. No other surface takes this exception; a loop anywhere else is a
-defect.
+scrim, one primary, 44 px targets. No other surface takes this exception.
+
+The Ask Carta exception (T569, owner 2026-10-22: "I like some animation"). Ask Carta's bar
+(`src/browse/AskBar.jsx`) is a question box, and a question box may show what to ask by moving:
+
+- **Typed suggestions.** While the field is empty and has no focus, it types out its suggested
+  questions one at a time in `--text-3` with a 2 px caret, holds each, erases it and types the next,
+  around and around. Typing and erasing are timed per letter (about 45 ms and 18 ms), the hold about
+  1.8 s. It stops at once on focus or a typed letter, pauses while the tab is hidden or the bar is out
+  of view, is `aria-hidden` (the label names the field), and under `prefers-reduced-motion: reduce`
+  does not run at all: the field is simply empty.
+- **The caret blinks** (1 s, stepped, no fade) only while the suggestions type.
+- **Suggestions arrive** with one opacity fade at `--dur-2` when the list under them changes.
+
+These are the only loops outside the home page. Everything else in this section still binds the bar:
+motion tokens for transitions, transform and opacity only, no overshoot or bounce, no marquee, one
+primary. A loop on any other surface is a defect.
 
 Phone first. Design the phone layout first, at 360 px. Every fixed or sticky bar reads
 `env(safe-area-inset-*)`; full-height layouts use `100dvh`. The one primary sits in the lower half of the

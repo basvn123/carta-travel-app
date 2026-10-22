@@ -54,7 +54,29 @@
 /* The ring is drawn round the whole field (above); the input's own stays
    transparent, so forced-colours mode still shows one. */
 .ask-bar-input:focus-visible { outline: 2px solid transparent; }
-.ask-bar-input::placeholder { color: var(--text-3); }
+.ask-bar-input-wrap { position: relative; display: flex; flex: 1 1 auto; align-items: center; min-width: 0; }
+.ask-bar-input-wrap .ask-bar-input { width: 100%; }
+/* T569: the typed hint, under the empty input, in the input's own type. */
+.ask-bar-hint {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  pointer-events: none;
+  font-size: var(--text-lead);
+  color: var(--text-3);
+  white-space: nowrap;
+}
+.ask-bar-caret {
+  flex: none;
+  width: 2px;
+  height: 1.2em;
+  margin-left: 1px;
+  background: var(--text-3);
+  animation: ask-caret 1s steps(1) infinite;
+}
+@keyframes ask-caret { 50% { opacity: 0; } }
 .ask-bar-kbd {
   display: none;
   align-items: center;
@@ -71,7 +93,7 @@
 @media (pointer: fine) { .ask-bar-kbd { display: inline-flex; } }
 .btn.ask-bar-go { flex: none; }
 .ask-bar-sugs { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
-.btn.ask-bar-sug { font-weight: 500; color: var(--text-2); }
+.btn.ask-bar-sug { font-weight: 500; color: var(--text-2); animation: ask-in var(--dur-2) var(--ease-out); }
 @media (hover: hover) {
   .ask-bar-field:hover:not(:focus-within) { border-color: var(--text-3); }
   .btn.ask-bar-sug:hover { color: var(--text); }
@@ -315,5 +337,7 @@ details[open] > summary .ask-receipt-chev { transform: rotate(180deg); }
 @media (prefers-reduced-motion: reduce) {
   .ask-sentence { animation: none; }
   .ask-bar-field { transition: none; }
+  .btn.ask-bar-sug,
+  .ask-bar-caret { animation: none; }
   .ask-receipt-chev { transition: none; }
 }

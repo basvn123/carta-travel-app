@@ -72,7 +72,17 @@ function forecastProxy() {
 export default defineConfig({
   // T480: English in a first-paint part and a lazy rest (scripts/i18n/enSplit.mjs).
   plugins: [react(), numbersPage(), englishSplit(APP_ROOT), forecastProxy()],
-  server: { port: 5173, host: true },
+  // T569: Ask Carta's two Functions (/api/ask, /api/ask/answer) need the
+  // Workers AI and KV bindings, which only a Pages deploy has; the dev server
+  // hands them to one (the preview by default, ASK_PROXY to choose another),
+  // so the written answer works on localhost on the same free daily cap.
+  server: {
+    port: 5173,
+    host: true,
+    proxy: {
+      '/api/ask': { target: process.env.ASK_PROXY || 'https://preview.carta-app.pages.dev', changeOrigin: true },
+    },
+  },
   css: { lightningcss: { targets: CSS_TARGETS } },
   build: { cssMinify: 'lightningcss' },
 });
