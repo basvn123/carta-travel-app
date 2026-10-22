@@ -1,6 +1,8 @@
-import React, { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Button, Chip, Field, IconButton } from '../components/ui/index.js';
-import { ChevronDownIcon, CloseIcon, FilterIcon, SearchIcon } from '../components/Icons.jsx';
+import { CheckIcon, ChevronDownIcon, CloseIcon, FilterIcon, SearchIcon, SortIcon } from '../components/Icons.jsx';
+import '../styles/78-filter-pane.css';
 import '../styles/83-where-bar.css';
 
 /*
@@ -104,7 +106,10 @@ export function WhereBar({ t, what = null, where, onSearch, after = null, childr
  * --radius-control, at most 320 px, never modal. Escape, a tap outside or
  * the chip again closes it, and Escape hands focus back to the chip.
  */
-export function FilterChipBar({ t, groups, onAll, allCount = 0, fmt = String }) {
+export function FilterChipBar({
+  t, groups, onAll, allCount = 0, fmt = String,
+  allOn = false, allControls = undefined, allRef = undefined, lead = null,
+}) {
   const [openKey, setOpenKey] = useState(null);
   const [left, setLeft] = useState(0);
   const barRef = useRef(null);
@@ -167,17 +172,23 @@ export function FilterChipBar({ t, groups, onAll, allCount = 0, fmt = String }) 
       <div className="qfbar-row" role="group" aria-label={t('where.chipsAria')}>
         {onAll && (
           <Button
+            ref={allRef}
             variant="secondary"
             size="sm"
-            className="qfbar-all"
+            className={`qfbar-all${allOn ? ' is-on' : ''}`}
             iconStart={<FilterIcon size={15} />}
             onClick={() => { setOpenKey(null); onAll(); }}
-            aria-haspopup="dialog"
+            // T602: on a desktop All filters opens and closes the side pane
+            // (allControls names it); on a phone it opens the sheet.
+            aria-haspopup={allControls ? undefined : 'dialog'}
+            aria-expanded={allOn}
+            aria-controls={allControls}
           >
             {t('places.allFilters')}
             {allCount > 0 && <Chip kind="count" className="dtab-count">{fmt(allCount)}</Chip>}
           </Button>
         )}
+        {lead}
         {groups.map((g) => {
           const isOpen = openKey === g.key;
           const on = g.options.some((o) => o.on);
@@ -230,5 +241,97 @@ export function FilterChipBar({ t, groups, onAll, allCount = 0, fmt = String }) 
         </div>
       )}
     </div>
+  );
+}
+
+/*
+ * T602: the Sort pill of the category tabs, the look of Places' toolbar
+ * Sort (a secondary sm pill, a menu of radio items under it; the menu's
+ * styles are .xsort-menu in 84-explore-overview.css). `options` are
+ * { key, labelKey }, `value` the current key.
+ */
+export function SortPill({ t, options, value, onChange, className = '' }) {
+  const [pos, setPos] = useState(null);
+  const btnRef = useRef(null);
+  const menuRef = useRef(null);
+  const id = `qs${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
+  const cur = options.find((o) => o.key === value) || options[0];
+  const open = pos != null;
+  const close = useCallback((refocus) => {
+    setPos(null);
+    if (refocus) btnRef.current?.focus();
+  }, []);
+  const toggle = () => {
+    if (open) { close(false); return; }
+    const r = btnRef.current.getBoundingClientRect();
+    const width = 220;
+    setPos({
+      top: Math.round(r.bottom + 4),
+      left: Math.round(Math.max(16, Math.min(r.left, window.innerWidth - width - 16))),
+    });
+  };
+  useEffect(() => {
+    if (!open) return undefined;
+    menuRef.current?.querySelector('[aria-checked="true"]')?.focus();
+    const onDown = (e) => {
+      if (menuRef.current?.contains(e.target) || btnRef.current?.contains(e.target)) return;
+      close(false);
+    };
+    const onKey = (e) => {
+      if (e.key !== 'Escape') return;
+      e.stopPropagation();
+      close(true);
+    };
+    const onScroll = (e) => { if (!menuRef.current?.contains(e.target)) close(false); };
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('keydown', onKey, true);
+    window.addEventListener('scroll', onScroll, true);
+    window.addEventListener('resize', onScroll);
+    return () => {
+      document.removeEventListener('mousedown', onDown);
+      document.removeEventListener('keydown', onKey, true);
+      window.removeEventListener('scroll', onScroll, true);
+      window.removeEventListener('resize', onScroll);
+    };
+  }, [open, close]);
+  if (!cur) return null;
+  const onMenuKey = (e) => {
+    const items = [...menuRef.current.querySelectorAll('[role="menuitemradio"]')];
+    const i = items.indexOf(document.activeElement);
+    let next = null;
+    if (e.key === 'ArrowDown') next = items[(i + 1) % items.length];
+    else if (e.key === 'ArrowUp') next = items[(i - 1 + items.length) % items.length];
+    else if (e.key === 'Home') next = items[0];
+    else if (e.key === 'End') next = items[items.length - 1];
+    else if (e.key === 'Tab') { close(false); return; }
+    if (next) { e.preventDefault(); next.focus(); }
+  };
+  return (
+    <>
+      <Button ref={btnRef} variant="secondary" size="sm" className={`qfbar-sort${open ? ' is-open' : ''} ${className}`.trim()}
+        iconStart={<SortIcon size={15} />} aria-haspopup="menu" aria-expanded={open}
+        aria-controls={open ? id : undefined}
+        aria-label={`${t('places.sortLabel')}: ${t(cur.labelKey)}`}
+        onClick={toggle}>
+        {t('explore.toolSort')}
+      </Button>
+      {open && createPortal(
+        <div className="xsort-menu" role="menu" id={id} ref={menuRef} aria-label={t('places.sortLabel')}
+          style={{ top: pos.top, left: pos.left }} onKeyDown={onMenuKey}>
+          {options.map((o) => {
+            const on = o.key === cur.key;
+            return (
+              <Button key={o.key} variant="quiet" size="sm" role="menuitemradio" aria-checked={on}
+                tabIndex={-1} className={`xsort-item${on ? ' is-on' : ''}`}
+                iconEnd={on ? <CheckIcon size={16} /> : null}
+                onClick={() => { onChange(o.key); close(true); }}>
+                {t(o.labelKey)}
+              </Button>
+            );
+          })}
+        </div>,
+        document.body,
+      )}
+    </>
   );
 }

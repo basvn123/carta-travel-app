@@ -4,9 +4,7 @@ import { createPortal } from 'react-dom';
 import { useIsDesktop } from '../hooks/useIsDesktop.js';
 import { fmtMonthRanges, MONTHS_SHORT } from './ClimateStrip.jsx';
 import { useExploreCatalog } from '../hooks/useExploreCatalog.js';
-import { ExploreFilterRail, minVerdict, goodForOf, legMinutes, verdictsFrom } from './ExploreFilterRail.jsx';
-import { FilterChipBar } from './WhereBar.jsx';
-import { TRIP_KINDS } from '../lib/trip_kinds.js';
+import { ExploreFilterRail, ExploreQuickFilters, minVerdict, goodForOf, legMinutes } from './ExploreFilterRail.jsx';
 import { PlacesFilterSheet } from './PlacesFilterSheet.jsx';
 import { ExploreRails, interleaveByCountry } from './ExploreRails.jsx';
 import { ExploreCategories } from './ExploreCategories.jsx';
@@ -91,8 +89,9 @@ import {
 // T585: the start dialog.
 import { StartDialog, shouldOpenStart, markStartSeen } from './StartDialog.jsx';
 import { SortIcon, ShareIcon, BookmarkIcon, CheckIcon } from '../components/Icons.jsx';
-import { Field } from '../components/ui/index.js';
 import { EXPLORE_TILES } from './ExploreCategories.jsx';
+import { isResizable, srcSetFor, fallbackSrc } from '../lib/heroImage.js';
+import { commonsPageUrl } from '../lib/imageCredit.js';
 import '../styles/84-explore-overview.css';
 
 // 'viewport' catalogue mode (T059): the zoom from which the map fetches the
@@ -1029,7 +1028,8 @@ export function ExploreTab({
   });
   // T588: Filters opens and closes the side pane on a desktop (the
   // overview never shows it); Share copies this view's address.
-  const [paneOpen, setPaneOpen] = React.useState(true);
+  // T601 (owner 2026-10-22): closed until Filters opens it.
+  const [paneOpen, setPaneOpen] = React.useState(false);
   const [toast, setToast] = React.useState(null);
   React.useEffect(() => {
     if (!toast) return undefined;
@@ -1135,6 +1135,16 @@ export function ExploreTab({
     }
     return out;
   }, [rails, railLead]);
+  // T601: the hero's photograph, the first place of "Best in {month}" (else
+  // Top rated) whose photo is a Wikimedia Commons file, so its file page
+  // carries the author and the licence the credit links to.
+  const heroPhoto = React.useMemo(() => {
+    for (const key of ['now', 'top']) {
+      const p = rails.find((r) => r.key === key)?.rows.find((x) => isResizable(x.image) && commonsPageUrl(x.image));
+      if (p) return { url: p.image, city: p.city, page: commonsPageUrl(p.image), source: 'Wikimedia Commons' };
+    }
+    return null;
+  }, [rails]);
   // The desktop pane beside the overview, opened by "All filters" there;
   // any filter picked in it opens the focused view, where the pane stays.
   const [ovPane, setOvPane] = React.useState(false);
@@ -1181,42 +1191,6 @@ export function ExploreTab({
     ? [...BUDGET_STEPS, xf.budget].sort((x, y) => x - y)
     : BUDGET_STEPS;
 
-  // T598: the focused view's quick filter chips. Each is one of the pane's
-  // groups over the same state (xf and the trip kinds), so a chip and the
-  // pane always agree. A one-choice group picks again to clear.
-  const quickGroups = (() => {
-    const single = (key, label, values, cur, labelOf, set) => ({
-      key, label,
-      options: values.map((v) => ({ key: String(v), label: labelOf(v), on: cur != null && String(cur) === String(v) })),
-      onToggle: (k) => {
-        const v = values.find((x) => String(x) === k);
-        set(cur != null && String(cur) === k ? null : v);
-      },
-    });
-    const monthFmt = new Intl.DateTimeFormat(lang, { month: 'long' });
-    const goodFor = goodForOf(xf.roles);
-    const out = [
-      {
-        key: 'kind', label: t('filter.tripType'),
-        options: TRIP_KINDS.map((k) => ({ key: k.key, label: t(`kind.${k.key}`), on: tripKinds.includes(k.key) })),
-        onToggle: (k) => setTripKinds(tripKinds.includes(k) ? tripKinds.filter((x) => x !== k) : [...tripKinds, k]),
-      },
-      single('budget', t('filter.budget'), budgetSteps, xf.budget,
-        (n) => t('explore.qfBudget', { eur: formatMoney(n) }), (v) => patchXf({ budget: v })),
-      single('month', t('filter.month'), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], xf.month,
-        (m) => monthFmt.format(new Date(2026, m - 1, 15)), (v) => patchXf({ month: v })),
-      single('good', t('filter.goodFor'), Object.keys(QUICK_GOOD_FOR), goodFor || null,
-        (k) => t(`filter.goodFor.${k}`), (v) => patchXf({ roles: v ? QUICK_GOOD_FOR[v] : [] })),
-      single('rating', t('sort.rating'), ['1', '2', '3'], minVerdict(xf.verdicts) || null,
-        (k) => t(`score.band${k}`), (v) => patchXf({ verdicts: verdictsFrom(v || '') })),
-    ];
-    if (flightLimitAvailable) {
-      out.push(single('flight', t('filter.flightUpTo'), [2, 3, 4, 6], xf.fh,
-        (n) => t('explore.qfFlight', { n }), (v) => patchXf({ fh: v })));
-    }
-    return out;
-  })();
-
   // T598 (owner point 11): on a desktop the map starts right under the chip
   // row and fills the rest of the screen. The frame's top is measured with
   // the list scrolled to the top (the head and chips above it change with
@@ -1246,23 +1220,17 @@ export function ExploreTab({
       onPick={(key) => onPickCategory(key, oneCountry || '')} />
   ) : null;
 
+  // T604: the pane and the quick chips' popovers take the same props, so a
+  // filter is one control over one state wherever it is drawn.
+  const railProps = {
+    t, lang, xf, patch: patchXf, budgetSteps,
+    showFavOnly, setShowFavOnly, gemOnly, setGemOnly, unescoOnly, setUnescoOnly,
+    countryFilter, setCountryFilter, availableCountries,
+    reachHours, setReachHours, reachAvailable,
+    tripKinds, setTripKinds, onOpenCountry, flightLimitAvailable,
+  };
   const filterRail = (
-    <ExploreFilterRail
-      t={t}
-      lang={lang}
-      xf={xf}
-      patch={patchXf}
-      budgetSteps={budgetSteps}
-      showFavOnly={showFavOnly} setShowFavOnly={setShowFavOnly}
-      gemOnly={gemOnly} setGemOnly={setGemOnly}
-      unescoOnly={unescoOnly} setUnescoOnly={setUnescoOnly}
-      countryFilter={countryFilter} setCountryFilter={setCountryFilter}
-      availableCountries={availableCountries}
-      reachHours={reachHours} setReachHours={setReachHours}
-      reachAvailable={reachAvailable}
-      tripKinds={tripKinds} setTripKinds={setTripKinds}
-      onOpenCountry={onOpenCountry}
-      flightLimitAvailable={flightLimitAvailable}
+    <ExploreFilterRail {...railProps}
       count={gridTotal}
       onClearAll={chips.length ? resetAll : null}
     />
@@ -1301,8 +1269,7 @@ export function ExploreTab({
             toggle, then the categories and the quick chips. The phone's
             old Ask Carta and Filters row is gone: both live in the block. */}
         {railsIdle && (
-          <OverviewHero t={t} TitleTag={TitleTag} lang={lang}
-            month={xf.month || railMonth}
+          <OverviewHero t={t} TitleTag={TitleTag} photo={heroPhoto}
             locationQuery={locationQuery} setLocationQuery={setLocationQuery}
             onShowAll={() => setFocusAll(true)}
             onPickCategory={onPickCategory
@@ -1389,7 +1356,7 @@ export function ExploreTab({
         {/* T598 (owner points 7 and 11): quick filter chips right under the
             head, AllTrails style, each a small popover over the same state
             the pane edits; then the active filters. */}
-        {!railsIdle && <FilterChipBar t={t} groups={quickGroups} fmt={(n) => n.toLocaleString(lang)} />}
+        {!railsIdle && <ExploreQuickFilters {...railProps} />}
         {!railsIdle && <FilterChips t={t} chips={chips} onClearAll={resetAll} />}
 
         {/* The one community surface on a browse tab: a real count of what
@@ -1676,25 +1643,25 @@ function useExploreLens({ isActive, railsIdle, focusAll, setFocusAll, clear }) {
 }
 
 /**
- * The overview's head (T586, rebuilt compact by T595 on the owner's points
- * 1, 2, 5 and 6 of 2026-10-22). One block, top to bottom:
+ * The overview's head (T586, T595; rebuilt as a hero by T601, Explore v8,
+ * owner 2026-10-22: "more hierarchy, more professional, some background
+ * image"). Top to bottom:
  *
- *   the headline      a short human question
- *   Ask Carta         a field-like door with the spark and a typed-looking
- *                     example; it opens the one chat (the header and the
- *                     Plan page no longer carry a door)
- *   the bar           What | Where | Search | the map toggle, on one line
- *                     from 769 px. Where works for every What: Places
- *                     searches the catalogue, a category hands the typed
- *                     text to its tab, Trip styles ignores it.
- *   the pick row      the category pills, then quick chips that act at
- *                     once (the rails' doors), All filters and Show all
- *                     places. One row on a wide screen when it fits; on a
- *                     phone each group scrolls sideways on its own line.
+ *   the band          one licensed catalogue photograph (Commons, credited
+ *                     under the band) with a solid panel over its lower
+ *                     edge: the headline with Ask Carta beside it (under it
+ *                     on a phone), then the bar
+ *   the bar           one joined field What | Where | Search, the Map pill
+ *                     apart after it (desktop). Where works for every What:
+ *                     Places searches the catalogue, a category hands the
+ *                     typed text to its tab, Trip styles ignores it.
+ *   level 2           the categories as tabs (ExploreCategories row)
+ *   level 3           small quiet chips: the rails' doors, Countries on a
+ *                     phone, All filters and Show all places
  */
 function OverviewHero({
-  t, TitleTag, lang, month, locationQuery, setLocationQuery, onShowAll, onPickCategory, onOpenStyles,
-  viewToggle, cats, quick, countries, filtersRef, filtersOn, filterCount, onAllFilters,
+  t, TitleTag, locationQuery, setLocationQuery, onShowAll, onPickCategory, onOpenStyles,
+  viewToggle, cats, quick, countries, filtersRef, filtersOn, filterCount, onAllFilters, photo,
 }) {
   const [what, setWhat] = React.useState('places');
   const [where, setWhere] = React.useState(locationQuery || '');
@@ -1707,39 +1674,79 @@ function OverviewHero({
     if (what !== 'places') { onPickCategory?.(what, q); return; }
     if (q) setLocationQuery(q); else onShowAll();
   };
-  const askMonth = new Intl.DateTimeFormat(lang, { month: 'long' })
-    .format(new Date(2026, (month || 11) - 1, 15));
+  const whatId = React.useId();
   const whereId = React.useId();
+  // T601: the photograph fades in once it has arrived, never from a blank
+  // box the page waits on; a cached photo is shown at once.
+  const photoUrl = photo?.url || null;
+  const [shown, setShown] = React.useState(null);
+  const imgRef = React.useCallback((el) => {
+    if (el && el.complete && el.naturalWidth) setShown(photoUrl);
+  }, [photoUrl]);
   return (
-    <section className="xov-hero" aria-labelledby="xov-title">
-      <TitleTag className="xov-title" id="xov-title">{t('explore.heroTitle')}</TitleTag>
-      <Button variant="secondary" className="xov-ask" aria-expanded={askOpen}
-        iconStart={<SparkIcon size={20} />} iconEnd={<ChevronRightIcon size={18} />}
-        onClick={(e) => (askOpen ? closeAskChat() : openAskChat(e.currentTarget))}>
-        <span className="xov-ask-name">{t('askChat.open')}</span>
-        <span className="xov-ask-prompt">
-          {t('explore.askPrompt', { month: askMonth, eur: formatMoney(80) })}
-        </span>
-      </Button>
-      <form className="xov-bar" role="search" aria-label={t('explore.heroSearchAria')} onSubmit={submit}>
-        <Field as="select" className="xov-what" label={t('explore.heroWhat')} hideLabel
-          value={what} onChange={(e) => setWhat(e.target.value)}>
-          {kinds.map(({ key, labelKey }) => <option key={key} value={key}>{t(labelKey)}</option>)}
-          {onOpenStyles && <option value="styles">{t('journey.rowStyles')}</option>}
-        </Field>
-        <div className="xov-where">
-          <label className="sr-only" htmlFor={whereId}>{t('explore.heroWhere')}</label>
-          <SearchIcon size={18} className="xov-where-icon" />
-          <input id={whereId} type="search" className="xov-where-input" value={where}
-            placeholder={t('explore.wherePh')} autoComplete="off" enterKeyHint="search"
-            disabled={what === 'styles'}
-            onChange={(e) => setWhere(e.target.value)} />
+    <section className={`xov-hero${photo ? ' has-photo' : ''}`} aria-labelledby="xov-title">
+      {/* T601 (owner 2026-10-22: "more professional, include some background
+          image"): a band with one licensed catalogue photograph and the
+          search on a solid panel over its lower edge; no text on the photo. */}
+      <div className="xov-band">
+        {photo && (
+          <div className="xov-photo" aria-hidden="true">
+            <img key={photo.url} ref={imgRef}
+              className={`xov-photo-img${shown === photo.url ? ' is-in' : ''}`}
+              src={fallbackSrc(photo.url, 960)} srcSet={srcSetFor(photo.url, 960)}
+              sizes="100vw" alt="" width={16} height={9}
+              loading="eager" decoding="async" fetchpriority="high"
+              onLoad={() => setShown(photo.url)} />
+          </div>
+        )}
+        <div className="xov-panel">
+          <div className="xov-head">
+            <TitleTag className="xov-title" id="xov-title">{t('explore.heroTitle')}</TitleTag>
+            {/* Ask Carta: the chat's one door, small and secondary (T601). */}
+            <Button variant="secondary" size="sm" className="xov-ask" aria-expanded={askOpen}
+              iconStart={<SparkIcon size={16} />}
+              onClick={(e) => (askOpen ? closeAskChat() : openAskChat(e.currentTarget))}>
+              {t('askChat.open')}
+            </Button>
+          </div>
+          <form className="xov-bar" role="search" aria-label={t('explore.heroSearchAria')} onSubmit={submit}>
+            {/* One joined control, What | Where | Search, then Map apart. */}
+            <div className="xov-field">
+              <div className="xov-seg xov-seg-what">
+                <label className="xov-seg-cap" htmlFor={whatId}>{t('explore.heroWhat')}</label>
+                <select id={whatId} className="xov-what-select" value={what}
+                  onChange={(e) => setWhat(e.target.value)}>
+                  {kinds.map(({ key, labelKey }) => <option key={key} value={key}>{t(labelKey)}</option>)}
+                  {onOpenStyles && <option value="styles">{t('journey.rowStyles')}</option>}
+                </select>
+                <ChevronDownIcon size={16} className="xov-what-chev" />
+              </div>
+              <span className="xov-sep" aria-hidden="true" />
+              <div className="xov-seg xov-seg-where">
+                <MapPinIcon size={20} className="xov-where-icon" />
+                <label className="xov-seg-cap" htmlFor={whereId}>{t('explore.heroWhere')}</label>
+                <input id={whereId} type="search" className="xov-where-input" value={where}
+                  placeholder={t('explore.wherePh')} autoComplete="off" enterKeyHint="search"
+                  disabled={what === 'styles'}
+                  onChange={(e) => setWhere(e.target.value)} />
+              </div>
+              <Button type="submit" variant="primary" className="xov-go"
+                iconStart={<SearchIcon size={18} />}>
+                <span className="xov-go-word">{t('explore.heroSearch')}</span>
+              </Button>
+            </div>
+            {viewToggle}
+          </form>
         </div>
-        <Button type="submit" variant="secondary" className="xov-go" iconStart={<SearchIcon size={18} />}>
-          {t('explore.heroSearch')}
-        </Button>
-        {viewToggle}
-      </form>
+      </div>
+      {photo?.page && (
+        <p className="xov-credit">
+          <a href={photo.page} target="_blank" rel="noopener noreferrer">
+            {t('explore.heroCredit', { place: photo.city, source: photo.source })}
+          </a>
+        </p>
+      )}
+      {/* Level 2, the categories as tabs; level 3, the quick chips. */}
       <div className="xov-picks">
         {cats && <div className="xov-cats">{cats}</div>}
         <div className="xov-quick" role="group" aria-label={t('explore.quickAria')}>
@@ -1767,10 +1774,6 @@ function OverviewHero({
     </section>
   );
 }
-
-/** "Good for" in the quick chips (T598): the pane's three choices and the
- * role keys each stands for (ExploreFilterRail's GOOD_FOR). */
-const QUICK_GOOD_FOR = { base: ['base', 'basecamp'], daytrip: ['daytrip'], stop: ['stop'] };
 
 /** The quick chips' icons: the same line icons the filter pane uses. */
 const QUICK_ICONS = {
