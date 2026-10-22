@@ -1984,7 +1984,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T585-a | T585 | The start dialog's rows open a settings part by clicking the settings line's button on the page; SettingsLine needs an openPart() hook | next task | open |  |
 | T586-a | T586 | Browser Forward into an Explore lens does not restore the lens's filters | next task | open |  |
 | T586-b | T586 | The overview hides the place list with CSS instead of not rendering it; cost on slow phones not measured | next task | open |  |
-| T586-c | T586 | The rails' extra door row (Go without a car) sits alone at the foot of the overview; keep or drop it | user | open |  |
+| T586-c | T586 | The rails' extra door row (Go without a car) sits alone at the foot of the overview; keep or drop it | user | closed by T595 |  |
 | T587-a | T587 | Country and region pages, the weeks rail and the countries track still use the old Strip; story cards show one photo, not the swipe | next task | open |  |
 | T588-a | T588 | No shared toast helper: Share's Link copied toast is local to ExploreTab | next task | open |  |
 | T589-a | T589 | The filter pane is about 1.5 desktop screens (1,191 px); Good to know as chips instead of switch rows would save about 140 px | user | open |  |
@@ -1995,10 +1995,15 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T592-b | T592 | The map panel shows no flight times because the way rows carry none | next task | open |  |
 | T592-c | T592 | The map panel's Why go reads knownFor, which is English only | next task | open |  |
 | T592-d | T592 | .xmap-picked and .xdrawer-rows rules in 62-v6-explore.css are unused since the floating panel | next task | open |  |
-| T593-a | T593 | Outdoor tabs: the desktop side pane repeats the quick filter row and at rest can hold only the Country fold; decide which stays | user | open |  |
+| T593-a | T593 | Outdoor tabs: the desktop side pane repeats the quick filter row and at rest can hold only the Country fold; decide which stays | user | closed by T600 |  |
 | T593-b | T593 | Germany hands 2.66 MB of route lines to the map on every list change; measure on a slow phone | next task | open |  |
 | T593-c | T593 | Europe-wide Trails has no map because routes load per country | next task | open |  |
 | T593-d | T593 | Trails' What select uses highlights; walks, day hikes and hut to hut have no facet behind them | next task | open |  |
 | T594-a | T594 | The trip and day planners have no site footer (fixed-height workspaces); should they | user | open |  |
 | T594-b | T594 | The footer has no Where the numbers come from or Data and photo credits link because neither has its own page | next task | open |  |
 | T594-c | T594 | On a phone the floating Map pill sits over the footer's copyright line at the bottom | next task | open |  |
+| T595-a | T595 | explore.heroDoor is unused and the ac-in-header and ac-in-plan rules in 76-ask-door.css are dead since Ask Carta has one door | next task | open |  |
+| T597-a | T597 | Under Plane a place without a flight shows no total and no reason; should it say there is no flight on these dates | user | open |  |
+| T598-a | T598 | The sticky desktop map in Explore's focused view does not grow taller once the list has scrolled | next task | open |  |
+| T600-a | T600 | When filters leave no map rows the outdoor map view falls back to the list while the pill still reads List | next task | open |  |
+| T600-b | T600 | Trails at Europe level maps only each country's best walks (339), not every walk | next task | open |  |

@@ -192,7 +192,8 @@ export function ExploreFilterRail({
     <div className="xrail xpane">
       {count != null && (
         <div className="xpane-head">
-          <p className="xpane-count" aria-live="polite">
+          {/* T596 (owner 2026-10-22): no place count in the pane's head. */}
+          <p className="xpane-count sr-only" aria-live="polite">
             {count === 1 ? t('filter.paneCountOne') : t('filter.paneCount', { n: count.toLocaleString(lang) })}
           </p>
           {onClearAll && (
@@ -234,7 +235,6 @@ export function ExploreFilterRail({
             </Chip>
           ))}
         </ChipGroup>
-        <p className="xpane-help">{t(`filter.goodForHelp.${goodFor || 'any'}`)}</p>
       </section>
 
       <section className="xpane-sec" aria-labelledby="xpane-h-budget">

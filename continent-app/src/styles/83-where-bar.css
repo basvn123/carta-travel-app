@@ -2,26 +2,55 @@
    83 The What and Where bar, the quick filter row, and the route map
    (T593). Imported by src/browse/WhereBar.jsx.
 
-   The bar is a --surface band on the page ground: --radius-card, a --border
-   edge and no shadow (one elevation, the edge). What is a kit select, Where
-   a search box of the same height with a clear control, then the secondary
-   Search button. On a phone the two fields stack and the button is full
-   width.
+   T600, the compact head: the bar sits on the page ground with no band
+   behind it. Every control is one --tap high. What is a kit select with
+   its label inside the box, Where a search box with a clear control, then
+   the secondary Search button and the Map or List pill. A desktop reads
+   them on one row; a phone on two: Where with the pill, What with Search.
+   Every gap in the head is --space-3.
    ========================================================================== */
 
 .wbar {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-3);
-  margin: 0 0 var(--space-4);
-  padding: var(--space-4);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  background: var(--surface);
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "where where" "what go";
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
 }
-.wbar .wbar-what,
-.wbar-where { min-width: 0; }
-.wbar-where { display: flex; flex-direction: column; gap: 6px; }
+.wbar.has-view { grid-template-areas: "where view" "what go"; }
+.wbar.is-whereonly { grid-template-columns: minmax(0, 1fr) auto auto; grid-template-areas: "where go view"; }
+.wbar .wbar-what { grid-area: what; min-width: 0; }
+.wbar-where { grid-area: where; min-width: 0; }
+.wbar .wbar-go { grid-area: go; }
+.wbar .wbar-view { grid-area: view; }
+
+/* What: the kit field, its label read inside the box, as "What  Anything". */
+.wbar .wbar-what.field {
+  flex-direction: row;
+  align-items: center;
+  gap: 0;
+  min-height: var(--tap);
+  padding-left: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  transition: border-color var(--dur-1) var(--ease-out);
+}
+.wbar .wbar-what .field-label { flex: none; color: var(--text-2); white-space: nowrap; }
+.wbar .wbar-what .field-control { flex: 1 1 auto; min-width: 0; }
+.wbar .wbar-what .field-control select {
+  min-height: calc(var(--tap) - 2px);
+  padding-left: var(--space-2);
+  border: 0;
+  background: transparent;
+  text-overflow: ellipsis;
+}
+.wbar .wbar-what .field-control select:focus-visible { outline-offset: -2px; }
+@media (hover: hover) {
+  .wbar .wbar-what.field:hover { border-color: var(--neutral-300); }
+}
+.wbar .wbar-what.field:focus-within { border-color: var(--action); }
 
 .wbar-box {
   position: relative;
@@ -71,15 +100,13 @@
 /* The tab's suggestion list hangs under the box, as wide as it. */
 .wbar-box .places-sugg { top: calc(100% + var(--space-1)); }
 
-.wbar-go { width: 100%; }
-
 @media (min-width: 640px) {
-  .wbar {
-    grid-template-columns: minmax(150px, 220px) minmax(0, 1fr) auto;
-    align-items: end;
+  .wbar,
+  .wbar.has-view {
+    grid-template-columns: minmax(160px, 240px) minmax(0, 1fr) auto auto;
+    grid-template-areas: "what where go view";
   }
-  .wbar.is-whereonly { grid-template-columns: minmax(0, 1fr) auto; }
-  .wbar-go { width: auto; }
+  .wbar.is-whereonly { grid-template-columns: minmax(0, 1fr) auto auto; grid-template-areas: "where go view"; }
 }
 
 /* --------------------------------------------------------------------------
@@ -89,7 +116,7 @@
    -------------------------------------------------------------------------- */
 .qfbar {
   position: relative;
-  margin: 0 0 var(--space-4);
+  margin: 0 0 var(--space-3);
 }
 .qfbar-row {
   display: flex;
@@ -161,7 +188,27 @@
 
 /* End check: the Map or List pill sits after Search, a pill like Places'. */
 .wbar .wbar-view { border-radius: var(--radius-pill); }
-@media (min-width: 640px) {
-  .wbar:has(.wbar-view) { grid-template-columns: minmax(150px, 220px) minmax(0, 1fr) auto auto; }
-  .wbar.is-whereonly:has(.wbar-view) { grid-template-columns: minmax(0, 1fr) auto auto; }
+
+/* --------------------------------------------------------------------------
+   T600, the outdoor tabs' head and map view. The pill row, the bar, the
+   chips and the map stand --space-3 apart. A desktop narrows from the side
+   pane, so the quick chip row there would say everything twice: it is the
+   phone's quick way only, with All filters opening the sheet.
+   -------------------------------------------------------------------------- */
+.places-wrap:has(> .dtab-panel.is-outdoor) > .dtab-bar.xcats-bar { margin: 0 0 var(--space-3); }
+.dtab-panel.is-outdoor .xchips { margin: 0 0 var(--space-3); }
+/* End check: the quick chips show on a desktop too, as on Places (owner:
+   "I like the filters on top"); the pane keeps every group. */
+/* Trails and Cycling with no country: one quiet line over the map. */
+.dtab-mapnote {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-label);
+  color: var(--text-2);
+}
+/* The map fills the rest of the scroller (OutdoorMap writes --dmap-h);
+   a short window still gets a map worth reading. */
+.places-tab .explore-shell.dtab-mapwrap { margin-top: 0; margin-bottom: var(--space-3); }
+.places-tab .explore-shell.dtab-mapwrap .xmap {
+  height: var(--dmap-h, min(72dvh, 760px));
+  min-height: 360px;
 }

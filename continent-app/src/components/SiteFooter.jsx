@@ -56,7 +56,6 @@ export function SiteFooter() {
       <div className="site-footer-inner">
         <div className="site-footer-brand">
           <Logo size={28} />
-          <p className="site-footer-line">{t('home.sub')}</p>
         </div>
         <div className="site-footer-cols">
           {col('explore', t('footer.explore'), [

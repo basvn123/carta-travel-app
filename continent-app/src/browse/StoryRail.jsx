@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowLeftIcon, ChevronRightIcon } from '../components/Icons.jsx';
 import { Button, Card, IconButton } from '../components/ui/index.js';
 import { prefersReducedMotion, scrollBehavior } from '../lib/motion.js';
+import { HeroImage } from '../components/HeroImage.jsx';
 import '../styles/80-story-rail.css';
 
 /**
@@ -10,10 +11,11 @@ import '../styles/80-story-rail.css';
  * in Carta's colours.
  *
  *   lead card   the rail's own card, first in the strip: a warm sunken box,
- *               tilted a little at rest, that holds the rail's heading, one
- *               short line, up to three icon facts drawn from the rail's own
- *               rows ("From ~€38 a day", "Good in November"; never a count of
- *               the catalogue) and "See all" as the card's one action.
+ *               tilted a little at rest, that holds the rail's heading, a
+ *               fanned stack of its first three photographs (T599), the one
+ *               fact marked `figure` set large, up to two more icon facts
+ *               drawn from the rail's own rows (never a count of the
+ *               catalogue) and "See all" as the card's one action.
  *   photo cards StoryCard: a tall 4:5 photograph with two solid pills on it
  *               (a status top left, the Score top right), the save control
  *               on the photo, then the title, one meta line and the price on
@@ -96,36 +98,63 @@ function useStripPosition(ref, count) {
   return pos;
 }
 
-/** The rail's own card: heading, line, facts and "See all". */
-function LeadCard({ id, title, line, facts, onSeeAll, headingLevel, t }) {
+/** The rail's own card, filled top to bottom (T599): the heading (and a
+ *  short line where one helps), a fanned stack of the first three places'
+ *  photographs so the card previews what the rail holds, the rail's one
+ *  strong figure set large (the cheapest day), the other facts small with
+ *  their icons, and "See all" as the card's one action. The photographs are
+ *  decorative: the stack is hidden from screen readers and the images keep
+ *  their empty alt. */
+function LeadCard({ id, title, line, facts, photos, onSeeAll, headingLevel, t }) {
   const H = headingLevel === 3 ? 'h3' : 'h2';
-  const shown = (facts || []).filter((f) => f && f.text).slice(0, 3);
+  const all = (facts || []).filter((f) => f && f.text);
+  const figure = all.find((f) => f.figure) || null;
+  const shown = all.filter((f) => f !== figure).slice(0, figure ? 2 : 3);
+  // End check: the stack draws only photographs that exist (a placeholder
+  // tile in a fan read as three blank cards), loaded at once and small.
+  const stack = (photos || []).filter((ph) => ph && ph.url).slice(0, 3);
   return (
     <div className={`storyr-lead card${onSeeAll ? ' is-interactive' : ''}`}>
-      <H className="storyr-lead-title" id={id}>{title}</H>
-      {line && <p className="storyr-lead-line">{line}</p>}
-      {shown.length > 0 && (
-        <ul className="storyr-facts">
-          {shown.map((f, i) => {
-            const Icon = f.icon;
-            return (
-              <li key={f.key || i} className="storyr-fact">
-                {Icon && <Icon size={16} className="storyr-fact-icon" />}
-                <span>{f.text}</span>
-              </li>
-            );
-          })}
-        </ul>
+      <div className="storyr-lead-head">
+        <H className="storyr-lead-title" id={id}>{title}</H>
+        {line && <p className="storyr-lead-line">{line}</p>}
+      </div>
+      {stack.length > 0 && (
+        <div className="storyr-stack" data-n={stack.length} aria-hidden="true">
+          {stack.map((photo, i) => (
+            <span key={i} className="storyr-stack-photo" style={{ '--s': i }}>
+              <HeroImage url={photo.url} city={photo.city} maxWidth={320} sizes="160px" ratio={[4, 5]} eager />
+            </span>
+          ))}
+        </div>
       )}
-      {onSeeAll && (
-        // The card's one action, stretched over it like the kit Card's link.
-        // The kit Button, its own box let go (80-story-rail.css) so the
-        // stretch covers the card.
-        <Button variant="quiet" size="sm" className="card-open storyr-lead-open" onClick={onSeeAll}
-          aria-describedby={id} iconEnd={<ArrowLeftIcon size={20} className="storyr-lead-arrow" />}>
-          {t('rail.seeAllPlain')}
-        </Button>
-      )}
+      <div className="storyr-lead-foot">
+        {figure && (
+          <p className={`storyr-figure${typeof figure.text === 'string' ? ' is-plain' : ''}`}>{figure.text}</p>
+        )}
+        {shown.length > 0 && (
+          <ul className="storyr-facts">
+            {shown.map((f, i) => {
+              const Icon = f.icon;
+              return (
+                <li key={f.key || i} className="storyr-fact">
+                  {Icon && <Icon size={16} className="storyr-fact-icon" />}
+                  <span>{f.text}</span>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+        {onSeeAll && (
+          // The card's one action, stretched over it like the kit Card's link.
+          // The kit Button, its own box let go (80-story-rail.css) so the
+          // stretch covers the card.
+          <Button variant="quiet" size="sm" className="card-open storyr-lead-open" onClick={onSeeAll}
+            aria-describedby={id} iconEnd={<ArrowLeftIcon size={20} className="storyr-lead-arrow" />}>
+            {t('rail.seeAllPlain')}
+          </Button>
+        )}
+      </div>
     </div>
   );
 }
@@ -136,11 +165,16 @@ function LeadCard({ id, title, line, facts, onSeeAll, headingLevel, t }) {
  */
 export function StoryRail({
   id, title, line = null, facts = [], onSeeAll = null, t, headingLevel = 2, className = '', children,
+  stack = null,
 }) {
   const sectionRef = React.useRef(null);
   const stripRef = React.useRef(null);
   const items = React.Children.toArray(children).filter(Boolean);
   const count = items.length + 1;
+  // The lead card's stack: the photographs of the rail's first three cards.
+  // `stack` is the callers' list of { url, city }; the cards' own <img>
+  // elements are not reused (wrapped cards carry no photo prop).
+  const photos = stack || [];
   const pos = useStripPosition(stripRef, count);
   const arrival = useArrival(sectionRef);
 
@@ -167,7 +201,7 @@ export function StoryRail({
     <section ref={sectionRef} className={`storyr ${className}`.trim()} aria-labelledby={id} data-arrival={arrival}>
       <ul className="storyr-strip" ref={stripRef} onKeyDown={onKeyDown} aria-label={typeof title === 'string' ? title : undefined}>
         <li className="storyr-item storyr-item--lead" style={{ '--i': 0 }}>
-          <LeadCard id={id} title={title} line={line} facts={facts} onSeeAll={onSeeAll}
+          <LeadCard id={id} title={title} line={line} facts={facts} photos={photos} onSeeAll={onSeeAll}
             headingLevel={headingLevel} t={t} />
         </li>
         {items.map((child, i) => (

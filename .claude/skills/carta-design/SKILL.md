@@ -138,6 +138,32 @@ rules are amended in place where they are restated.
   sentence ("2 days, about {price} a person") and "Open {place}". It opens on hover, and on a keyboard
   focus only where there is hover.
 
+### Explore v7 (owner review 2026-10-22, T595 to T600)
+
+- **The overview's top is one compact block** (T595): "Where to next?"; Ask Carta as a field-like door
+  with an example question (the chat's one door: none in the header, none on Plan); one bar of What,
+  Where (it works for every kind: Places searches places, a category opens its tab with the text, a
+  country name on Trails or Cycling picks that country), Search and the Map toggle; then one row of the
+  category pills and the quick chips (the rails' doors, Countries on a phone, All filters, Show all
+  places). Nothing waits at the foot of the overview; rails draw no doors of their own.
+- **The focused head is one row** (T598): a round arrow back and the title (`--text-title`) on the left,
+  the pills on the right; under it the quick filter chips (Kind of place, Budget, Month, Good for,
+  Rating, Flight time), each a popover on the pane's own state, then the active chips. No count line.
+  The desktop map fills the screen under the chips. On a phone the arrow and the title share a row and
+  the pills scroll under it.
+- **Every outdoor tab has a map** (T600): Beaches, Lakes, Mountains and Cycling Europe-wide, Trails with
+  each country's best walks until a country is picked. The head is the pill row, one What and Where row
+  with the Map or List pill, the quick chips, then the content, `--space-3` apart; the quick chips show
+  on every width and the desktop pane keeps every group. Beach, lake and mountain pins carry the Score;
+  routes carry their length.
+- **Lead cards show what the rail holds** (T599): title, an optional short line, a fanned stack of the
+  rail's first three photographs (decorative, `--surface` edge), one large figure, at most two small icon
+  facts, See all. A rail line shows only where it says something the heading does not.
+- **Lifestyle holds Getting there** (T597): the five ways as tiles bound to the same setting as the
+  settings line; with Plane chosen only flights are priced, and a place with no flight shows no total.
+- **Fewer words** (T596): no place counts on screen (they stay for screen readers), no help line under
+  Good for, no positioning sentence in the footer.
+
 ## Colour
 
 Single theme, light only: no `prefers-color-scheme` or `data-theme` blocks, `theme-color` is the page
@@ -493,8 +519,8 @@ stroke-dashoffset only, no overshoot or bounce, no parallax, no count-up, no mar
 scrim, one primary, 44 px targets. No other surface takes this exception.
 
 The Ask Carta exception (T569, owner 2026-10-22: "I like some animation"; T570 moved it into the
-chat). Ask Carta is a chat (`src/browse/ask/`): one "Ask Carta" button (the header on desktop,
-beside Filters on a phone) opens a panel docked right under the settings line on desktop, the list
+chat). Ask Carta is a chat (`src/browse/ask/`): one "Ask Carta" door (since T595, 2026-10-22: a field-like door in Explore's
+overview, and nowhere else) opens a panel docked right under the settings line on desktop, the list
 making room beside it, and a full-screen sheet on a phone. A chat may show that it is working and
 what to ask by moving:
 

@@ -576,7 +576,7 @@ export function composeTrip(dest, departDate, returnDate, choices, allDests = nu
   } else {
     mode = want === 'car' && drivable ? 'car' : 'plane';
     if (mode === 'plane' && planeGrand == null) {
-      if (drivable) mode = 'car';        // no flight, but we can drive
+      if (drivable && want !== 'plane') mode = 'car';  // no flight, but we can drive (never when only flying was asked, T597)
       else return null;                  // unreachable for these dates
     }
   }
