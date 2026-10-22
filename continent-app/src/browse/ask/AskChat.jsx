@@ -64,6 +64,16 @@ export default function AskChat(props) {
   const boxRef = React.useRef(null);
   const titleRef = React.useRef(null);
 
+  // T584: the head and the foot stand on the panel's own ground; a hairline
+  // shows only where the conversation runs on under them.
+  const markEdges = React.useCallback(() => {
+    const el = boxRef.current;
+    if (!el) return;
+    el.classList.toggle('is-scrolled', el.scrollTop > 2);
+    el.classList.toggle('has-more', el.scrollHeight - el.scrollTop - el.clientHeight > 2);
+  }, []);
+  React.useEffect(() => { markEdges(); });
+
   // The vocabulary, built once per panel (useAsk's stage 1 data).
   const [index, setIndex] = React.useState(null);
   const [lexicon, setLexicon] = React.useState(undefined);
@@ -292,7 +302,7 @@ export default function AskChat(props) {
           ))}
         </div>
       ) : (
-        <div className="ac-body" ref={boxRef}>
+        <div className="ac-body" ref={boxRef} onScroll={markEdges}>
           {!chat ? (
             <div className="ac-hello">
               <h3 className="ac-hello-h">{t('askChat.hello')}</h3>

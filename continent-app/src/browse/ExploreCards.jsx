@@ -5,8 +5,8 @@ import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { BookmarkIcon, BusIcon, CarIcon, TrainIcon } from '../components/Icons.jsx';
 import { formatEst } from '../lib/money.js';
-import { Card, IconButton, Money } from '../components/ui/index.js';
-import { isNational } from '../components/CostSummary.jsx';
+import { Card, IconButton } from '../components/ui/index.js';
+import { PriceParts } from '../components/PriceParts.jsx';
 import { useSettledFigure } from '../lib/figureChange.js';
 import { countryName } from '../lib/countryName.js';
 import { FlightChip } from '../components/flights/Flights.jsx';
@@ -21,42 +21,22 @@ import { FlightChip } from '../components/flights/Flights.jsx';
  *   PlaceTile  a rail tile: the kit Card (layout tile), a 4:3 photograph
  *              with only the save control over it, then the name, the
  *              country, and the price beside the Score.
- *   DayPrice   the one price line: the day cost per person at the
- *              traveller's Lifestyle (costIndex.js), whole euros, with the
- *              estimate mark only when the figure is a stand-in. No source
- *              words, no gauge (owner, 2026-10-13). Under it, when
- *              the home airport's sweep has one in the travel month, the
- *              cheapest return flight a person with its airline's mark
- *              (T518), or the train, bus or car the settings line asks
- *              for, or the cheapest of them (T582, `cost.way`, set by
- *              ExploreTab): one quiet caption line, nothing at all when
- *              no way is priced.
+ *   DayPrice   the one price line (T590, owner decision 5): PriceParts
+ *              inline, the day cost a person at the traveller's Lifestyle
+ *              (costIndex.js) as the strong figure, then the way there
+ *              (the cheapest return flight for the travel month, T518, or
+ *              the train, bus or car the settings line asks for, T582,
+ *              `cost.way`, set by ExploreTab), the bed and the food and
+ *              drink, each an icon and a whole-euro figure. An estimate
+ *              carries the tilde alone (owner decision 4). No source words,
+ *              no gauge (owner, 2026-10-13).
  */
 
 export function DayPrice({ cost, t }) {
   const ref = React.useRef(null);
   useSettledFigure(ref, cost?.dayEur ?? null);
-  const way = cost?.way || null;
-  const day = cost && cost.dayEur != null;
-  if (!day && !way) return null;
-  return (
-    <>
-      {day && (
-        <span className="xprice" ref={ref}>
-          <Money value={cost.dayEur} est={isNational(cost)} />
-          {/* "a person a day" wherever a place is priced (owner 1.8, T504). */}
-          <span className="xprice-unit"> {t('dest.priceDayUnit')}</span>
-        </span>
-      )}
-      {way && (
-        // Its own line under the day price, in the row and on the tile alike
-        // (the tile's price slot is inline, so the line is a block here).
-        <span className="xprice-flight">
-          <WayChip way={way} t={t} />
-        </span>
-      )}
-    </>
-  );
+  // .xprice stays on the root: the harnesses and the tile's price slot read it.
+  return <PriceParts cost={cost} t={t} className="xprice" figRef={ref} />;
 }
 
 const WAY_ICONS = { train: TrainIcon, bus: BusIcon, car: CarIcon };

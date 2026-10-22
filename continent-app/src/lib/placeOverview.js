@@ -87,3 +87,34 @@ export function regionLine(p, region, t) {
   const country = countryName(p?.iso2, p?.country);
   return region ? t('overview.regionCountry', { region, country }) : country;
 }
+
+/**
+ * The dates line on a place card (T590, owner decision 5): the traveller's
+ * own dates ("21 to 28 Nov"), the month they picked ("November"), or null
+ * while the dates are Carta's or any time (a card never shows dates the
+ * traveller did not set). `s` is the settings context (useSettings), `bcp47`
+ * the reader's locale.
+ */
+export function tripDates(s, t, bcp47 = 'en-GB') {
+  if (!s || s.dateFlex === 'any' || !s.departDate) return null;
+  const parse = (iso) => {
+    const [y, m, d] = String(iso).split('-').map(Number);
+    return y && m ? new Date(Date.UTC(y, m - 1, d || 1)) : null;
+  };
+  const fmt = (date, opts) => {
+    try {
+      return new Intl.DateTimeFormat(bcp47, { ...opts, timeZone: 'UTC' }).format(date);
+    } catch {
+      return new Intl.DateTimeFormat('en-GB', { ...opts, timeZone: 'UTC' }).format(date);
+    }
+  };
+  const a = parse(s.departDate);
+  if (!a) return null;
+  if (s.dateFlex === 'month') return fmt(a, { month: 'long' });
+  if (!s.ownDates || !s.returnDate) return null;
+  const b = parse(s.returnDate);
+  if (!b) return null;
+  const sameMonth = a.getUTCFullYear() === b.getUTCFullYear() && a.getUTCMonth() === b.getUTCMonth();
+  const start = sameMonth ? fmt(a, { day: 'numeric' }) : fmt(a, { day: 'numeric', month: 'short' });
+  return t('settings.datesRange', { start, end: fmt(b, { day: 'numeric', month: 'short' }) });
+}

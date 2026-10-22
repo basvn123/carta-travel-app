@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo, Suspense, lazy } from 'react';
 import { AppHeader } from './components/AppHeader.jsx';
 import { BottomNav } from './components/BottomNav.jsx';
+import { setFooterNavigate } from './components/SiteFooter.jsx';
 import { AnnouncementBar, PassExpiryBanner, BottomSlot } from './components/AnnouncementBar.jsx';
 import { SettingsLine, SettingsContext } from './components/SettingsLine.jsx';
 import { LoadingBlock } from './components/StateBlocks.jsx';
@@ -497,6 +498,15 @@ function TravelApp() {
     }
     goToTab(key);
   };
+  // The site footer's links (T594) go through this same door: a place or view
+  // key, an Explore category (opts.cat) or the FAQ in Account.
+  useEffect(() => {
+    setFooterNavigate((key, opts) => {
+      if (key === 'faq') { openAccountAt('faq'); return; }
+      if (key === 'places') { goToTab('places', { cat: opts?.cat }); return; }
+      goTo(key);
+    });
+  });
 
   const [selectedId, setSelectedId] = useState(init.selectedId ?? null);
 

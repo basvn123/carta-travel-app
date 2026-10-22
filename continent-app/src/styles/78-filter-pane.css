@@ -1,0 +1,223 @@
+/* ==========================================================================
+   T589 (Explore v6): the filter pane. One column that fits about one
+   desktop screen with nothing folded: sections parted by a hairline and
+   spacing, 12 px 600 labels in --text-2, small chips, a stepped budget
+   range, a month row, short Segmented choices and icon + switch rows (the
+   Hostelworld filter card the owner picked, in Carta's colours).
+   Scoped under .xpane; the phone's Filters sheet renders the same pane.
+   ========================================================================== */
+
+/* The desktop side panel gets the width the pane is drawn for: 280 px of
+   content, so four rating words sit in one Segmented. */
+@media (min-width: 769px) {
+  .side-panel.explore-side {
+    flex-basis: 320px;
+    width: 320px;
+    padding: var(--space-4) var(--space-4) var(--space-6) var(--space-5);
+  }
+}
+
+.xrail.xpane { display: flex; flex-direction: column; gap: 0; }
+
+.xpane-sec {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--border-soft);
+}
+.xpane > .xpane-sec:first-child,
+.xpane-head + .xpane-sec { border-top: 0; padding-top: var(--space-1); }
+.xpane .xrail-h { margin: 0; }
+
+/* The head: the live count and a quiet Clear all. Desktop panel only: the
+   phone sheet has both in its own foot. */
+.xpane-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  min-height: 32px;
+  padding-bottom: var(--space-2);
+}
+.xpane-count {
+  margin: 0;
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.xpane-clear { margin-right: calc(-1 * var(--space-2)); }
+.fsheet .xpane-head { display: none; }
+.fsheet .xpane-head + .xpane-sec { border-top: 0; }
+
+/* Chips: one wrapping row, a step smaller than the kit's default in the
+   panel so three or four sit on a line. Coarse pointers keep the kit's tap
+   height. */
+.xpane-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.xpane-chips .ui-chip-filter,
+.xpane-chips .ui-chip-choice { padding: 0 10px; gap: 5px; }
+.xpane-chips .ui-chip-icon svg { width: 16px; height: 16px; }
+
+.xpane-help {
+  margin: 0;
+  font-size: var(--text-caption);
+  line-height: var(--leading-ui);
+  color: var(--text-3);
+}
+
+/* ---- Budget: Min and Max read-outs over a stepped two-thumb range ------- */
+.xpane-label-row { display: flex; align-items: center; gap: var(--space-1); min-width: 0; }
+.xpane-unit {
+  margin-left: auto;
+  font-size: var(--text-caption);
+  color: var(--text-3);
+  white-space: nowrap;
+}
+.xpane-range { display: flex; flex-direction: column; gap: var(--space-1); }
+.xpane-range-read { display: flex; justify-content: space-between; gap: var(--space-3); }
+.xpane-range-val { display: inline-flex; align-items: baseline; gap: var(--space-1); }
+.xpane-range-cap { font-size: var(--text-caption); color: var(--text-3); }
+.xpane-range-fig {
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.xpane-range-track {
+  position: relative;
+  height: 28px;
+  margin: 0 10px; /* half a thumb, so a thumb at either end stays inside */
+}
+.xpane-range-track::before,
+.xpane-range-fill {
+  content: '';
+  position: absolute;
+  top: 50%;
+  height: 4px;
+  margin-top: -2px;
+  border-radius: var(--radius-pill);
+}
+.xpane-range-track::before { left: 0; right: 0; background: var(--border); }
+.xpane-range-fill { left: var(--lo); right: calc(100% - var(--hi)); background: var(--action); }
+/* Two native ranges laid over one track: only the thumbs take the pointer,
+   so each keeps its own keyboard, focus and screen-reader value. */
+.xpane-range-in {
+  position: absolute;
+  top: 0;
+  left: -10px;
+  width: calc(100% + 20px);
+  height: 100%;
+  margin: 0;
+  background: none;
+  pointer-events: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.xpane-range-in.is-hi { z-index: 1; }
+.xpane-range-in::-webkit-slider-runnable-track { background: none; border: 0; height: 100%; }
+.xpane-range-in::-moz-range-track { background: none; border: 0; }
+.xpane-range-in::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  margin-top: 4px;
+  border: 2px solid var(--surface);
+  border-radius: var(--radius-pill);
+  background: var(--action);
+  box-shadow: var(--elev-1);
+  cursor: grab;
+  pointer-events: auto;
+}
+.xpane-range-in::-moz-range-thumb {
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--surface);
+  border-radius: var(--radius-pill);
+  background: var(--action);
+  box-shadow: var(--elev-1);
+  cursor: grab;
+  pointer-events: auto;
+}
+.xpane-range-in:focus-visible::-webkit-slider-thumb { outline: 2px solid var(--focus); outline-offset: 2px; }
+.xpane-range-in:focus-visible::-moz-range-thumb { outline: 2px solid var(--focus); outline-offset: 2px; }
+@media (pointer: coarse) {
+  .xpane-range-track { height: var(--tap); }
+  .xpane-range-in::-webkit-slider-thumb { margin-top: 12px; }
+}
+
+/* ---- Month: Any, then the twelve months in two rows of six -------------- */
+.xpane-months.ui-chip-group {
+  display: grid;
+  grid-template-columns: auto repeat(6, minmax(0, 1fr));
+  gap: 4px;
+}
+.xpane-months .ui-chip.xpane-month {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 30px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: var(--text-label);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+}
+.xpane-months .ui-chip.xpane-month.is-any { grid-row: span 2; padding: 0 var(--space-3); }
+@media (hover: hover) {
+  .xpane-month:hover:not(.is-selected) { border-color: var(--neutral-300); }
+}
+.xpane-month:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.xpane-months .ui-chip.xpane-month.is-selected {
+  background: var(--select-bg);
+  border-color: var(--select-border);
+  color: var(--select-ink);
+  font-weight: 600;
+}
+@media (pointer: coarse) {
+  .xpane-months .ui-chip.xpane-month { min-height: var(--tap); }
+}
+
+/* ---- Short Segmented choices (rating, flight, reach) -------------------- */
+.xpane-seg .seg-item {
+  padding: 0 var(--space-1);
+  font-size: var(--text-caption);
+}
+
+/* ---- Good to know: icon, word, switch; hairline between rows ----------- */
+.xpane-know { gap: 0; }
+.xpane-know .xrail-h { margin-bottom: var(--space-1); }
+.xpane-know-row.ui-switch { min-height: 36px; padding: 0; }
+.xpane-know-row + .xpane-know-row { border-top: 1px solid var(--border-soft); }
+.xpane-know-row:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
+.xpane-know-label { display: inline-flex; align-items: center; gap: var(--space-3); }
+.xpane-know-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 18px;
+  color: var(--text-2);
+}
+.xpane-know-row.is-on .xpane-know-icon { color: var(--select-ink); }
+@media (pointer: coarse) {
+  .xpane-know-row.ui-switch { min-height: var(--tap); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xpane-month { transition: none; }
+}
+
+/* The month letters are kit choice chips; the edge and tint are the mark, a
+   tick would not fit a letter. */
+.xpane-month .ui-chip-tick { display: none; }
+.xpane-month .ui-chip-label { display: contents; }

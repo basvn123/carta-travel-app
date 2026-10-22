@@ -1,0 +1,262 @@
+/* ==========================================================================
+   79: the place card, the price parts and the lean preview (T590, T591).
+   Imported by src/components/PriceParts.jsx and src/browse/PlaceOverview.jsx.
+   Owner decisions of 2026-10-22: 1 (a card lifts on hover), 2 (the Score on
+   the photo in a solid pill), 3 (the text on the page ground, no box under
+   it), 4 (the tilde alone marks an estimate) and 5 (prices as icon parts).
+   Roles and scales only.
+   ========================================================================== */
+
+/* --- PriceParts: icon + figure parts and one total --------------------- */
+.pparts {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-3);
+  min-width: 0;
+  font-variant-numeric: tabular-nums;
+}
+.pparts--inline { display: flex; }
+.pparts-total { white-space: nowrap; font-size: var(--text-body); color: var(--text); }
+.pparts-total .money { font-weight: 600; }
+.pparts-unit { font-weight: 400; color: var(--text-2); }
+.pparts-list {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-3);
+  min-width: 0;
+}
+.pparts-part {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-label);
+  line-height: var(--leading-tight);
+  color: var(--text);
+  white-space: nowrap;
+}
+.pparts-icon { flex: none; color: var(--text-2); }
+/* Explore's old price line set every .money in it at 600; only the total
+   is the strong figure now. */
+.explore-shell .xprice .pparts-fig.money,
+.pparts .pparts-fig.money { font-weight: 500; }
+
+/* The stack (the map's side panel): one part a row, icon, unit, figure on
+   the right, the total last under a hairline. */
+.pparts--stack {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-2);
+}
+.pparts--stack .pparts-part {
+  display: grid;
+  grid-template-columns: 16px 1fr auto;
+  grid-template-areas: 'icon unit fig';
+  column-gap: var(--space-2);
+  font-size: var(--text-body);
+}
+.pparts--stack .pparts-icon { grid-area: icon; }
+.pparts--stack .pparts-unit { grid-area: unit; }
+.pparts--stack .pparts-fig { grid-area: fig; text-align: right; }
+.pparts--stack .pparts-total {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border-soft);
+}
+.pparts--stack .pparts-total .pparts-unit { order: -1; }
+
+/* --- The card list: a grid of photo cards from 769 px ------------------ */
+@media (min-width: 769px) {
+  .explore-shell .xrows.xrows--cards {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--space-6) var(--space-5);
+  }
+}
+
+/* The card: the photograph, then its words straight on the page ground.
+   It keeps .xrow for the harnesses and the popover's anchoring; these
+   rules take back what the row look set (border, hover fill, flex row). */
+.explore-shell .xrow.xov--card {
+  display: block;
+  margin: calc(-1 * var(--space-1));
+  padding: var(--space-1);
+  border-bottom: 0;
+  border-radius: var(--radius-card);
+  background: none;
+  transition: transform var(--dur-2) var(--ease-out);
+}
+.explore-shell .xov--card .xrow-hit.xpc-hit {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-3);
+  padding: 0;
+  border-radius: var(--radius-card);
+}
+.explore-shell .xov--card .xpc-media {
+  position: relative;
+  display: block;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--surface-sunken);
+}
+.explore-shell .xov--card .xpc-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* The Score on the photo, in a solid pill (owner decision 2): no scrim. */
+.explore-shell .xov--card .xpc-score {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+}
+.explore-shell .xov--card .xpc-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.explore-shell .xov--card .xpc-name { font-size: var(--text-lead); font-weight: 600; }
+.explore-shell .xov--card .xpc-why { margin-top: 0; }
+.explore-shell .xov--card .xpc-dates {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+  font-size: var(--text-label);
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+.explore-shell .xov--card .xprice { margin-top: var(--space-1); }
+/* The save control over the photo's top right corner. */
+.explore-shell .xov--card .xpc-save {
+  position: absolute;
+  top: calc(var(--space-1) + var(--space-2));
+  right: calc(var(--space-1) + var(--space-2));
+  z-index: 1;
+  margin: 0;
+}
+
+/* States. Selected is the tint and the brown edge; a card the map points at
+   rings in ink (house rule "Map and list in sync"). */
+@media (hover: hover) {
+  .explore-shell .xrow.xov--card:hover { background: none; transform: translateY(-4px); }
+}
+.explore-shell .xrow.xov--card.is-selected {
+  outline: 2px solid var(--select-border);
+  outline-offset: 0;
+  background: var(--select-bg);
+}
+.explore-shell .xrow.xov--card.is-linked { outline: 2px solid var(--text); outline-offset: 0; }
+.explore-shell .xov--card .xrow-hit.xpc-hit:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: var(--space-1);
+}
+
+/* On a phone the card lies on its side, photo left and words right, about
+   five to a screen. The reason line waits for the place's page. */
+@media (max-width: 768px) {
+  .explore-shell .xrows.xrows--cards { gap: var(--space-3) 0; }
+  .explore-shell .xov--card .xrow-hit.xpc-hit {
+    flex-direction: row;
+    gap: var(--space-3);
+    min-height: 104px;
+  }
+  .explore-shell .xov--card .xpc-media {
+    flex: none;
+    width: 112px;
+    aspect-ratio: auto;
+    align-self: stretch;
+  }
+  .explore-shell .xov--card .xpc-score { top: var(--space-1); left: var(--space-1); }
+  .explore-shell .xov--card .xpc-body {
+    justify-content: center;
+    padding: var(--space-1) 0;
+  }
+  /* Only the name shares its line with the save control. */
+  .explore-shell .xov--card .xpc-name { padding-right: var(--tap); }
+  .explore-shell .xov--card .pparts-list { gap: var(--space-1) var(--space-2); }
+  .explore-shell .xov--card .xpc-why { display: none; }
+  .explore-shell .xov--card .xpc-dates { margin-top: 0; }
+  .explore-shell .xov--card .xpc-save {
+    top: var(--space-1);
+    right: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+}
+
+/* --- T591: the lean preview -------------------------------------------- */
+.explore-shell .xcard-preview.xpop.xpop-v6 {
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 0;
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--elev-2);
+  color: var(--text);
+}
+.explore-shell .xpop-v6 .xpop-lead {
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--text);
+  -webkit-line-clamp: 2;
+}
+.explore-shell .xpop-v6 .xpop-facts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-label);
+  line-height: var(--leading-ui);
+  color: var(--text-2);
+}
+.explore-shell .xpop-v6 .xpop-verdict {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+}
+.explore-shell .xpop-v6 .xpop-plan { font-variant-numeric: tabular-nums; }
+.explore-shell .xpop-v6 .xpop-open {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: var(--space-1);
+  min-height: var(--tap);
+  margin: calc(-1 * var(--space-2)) 0 calc(-1 * var(--space-2));
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+@media (hover: hover) {
+  .explore-shell .xpop-v6 .xpop-open:hover { text-decoration-thickness: 2px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .explore-shell .xrow.xov--card { transition: none; }
+  .explore-shell .xrow.xov--card:hover { transform: none; }
+}

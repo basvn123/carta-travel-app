@@ -1,3 +1,4 @@
+import { SiteFooter } from '../components/SiteFooter.jsx';
 import React from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { tabHref } from '../lib/urlState.js';
@@ -79,6 +80,7 @@ export function PlanStart({ onNavigate, pageOver = false, ask = null }) {
           {t('plan.openSaved')}
         </a>
       </div>
+      <SiteFooter />
     </div>
   );
 }

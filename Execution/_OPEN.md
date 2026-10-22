@@ -1981,3 +1981,24 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T583-d | T583 | AskSearchFull.jsx's default export is imported nowhere and still holds ask.showAll and ask.more (with T574-b) | next task | open |  |
 | T583-e | T583 | The written answer's off, cap and error lines still show on compare, when and about answers | next task | open |  |
 | T583-f | T583 | Warmer, Cheaper and Quieter after Not yet were tried in English only; check they parse in nl, de, fr, es and it | next task | open |  |
+| T585-a | T585 | The start dialog's rows open a settings part by clicking the settings line's button on the page; SettingsLine needs an openPart() hook | next task | open |  |
+| T586-a | T586 | Browser Forward into an Explore lens does not restore the lens's filters | next task | open |  |
+| T586-b | T586 | The overview hides the place list with CSS instead of not rendering it; cost on slow phones not measured | next task | open |  |
+| T586-c | T586 | The rails' extra door row (Go without a car) sits alone at the foot of the overview; keep or drop it | user | open |  |
+| T587-a | T587 | Country and region pages, the weeks rail and the countries track still use the old Strip; story cards show one photo, not the swipe | next task | open |  |
+| T588-a | T588 | No shared toast helper: Share's Link copied toast is local to ExploreTab | next task | open |  |
+| T589-a | T589 | The filter pane is about 1.5 desktop screens (1,191 px); Good to know as chips instead of switch rows would save about 140 px | user | open |  |
+| T589-b | T589 | Flight up to reads the flight's length from local clock times, 1 to 2 h off across time zones; the sweep carries no duration | next task | open |  |
+| T589-c | T589 | tests/explore.spec.mjs:96 and parts of scripts/verify_explore.mjs still look for the old tiles, selects and folds | next task | open |  |
+| T590-a | T590 | est. remains on time estimates (walk and ride minutes, itinerary legs, trip.estimate) and in unused keys; .money-est CSS is dead | next task | open |  |
+| T592-a | T592 | The map panel's trip total sums day price times nights plus the way there; take it from priceTrip() as budgetSearch.js does | next task | open |  |
+| T592-b | T592 | The map panel shows no flight times because the way rows carry none | next task | open |  |
+| T592-c | T592 | The map panel's Why go reads knownFor, which is English only | next task | open |  |
+| T592-d | T592 | .xmap-picked and .xdrawer-rows rules in 62-v6-explore.css are unused since the floating panel | next task | open |  |
+| T593-a | T593 | Outdoor tabs: the desktop side pane repeats the quick filter row and at rest can hold only the Country fold; decide which stays | user | open |  |
+| T593-b | T593 | Germany hands 2.66 MB of route lines to the map on every list change; measure on a slow phone | next task | open |  |
+| T593-c | T593 | Europe-wide Trails has no map because routes load per country | next task | open |  |
+| T593-d | T593 | Trails' What select uses highlights; walks, day hikes and hut to hut have no facet behind them | next task | open |  |
+| T594-a | T594 | The trip and day planners have no site footer (fixed-height workspaces); should they | user | open |  |
+| T594-b | T594 | The footer has no Where the numbers come from or Data and photo credits link because neither has its own page | next task | open |  |
+| T594-c | T594 | On a phone the floating Map pill sits over the footer's copyright line at the bottom | next task | open |  |

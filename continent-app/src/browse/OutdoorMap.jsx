@@ -14,12 +14,14 @@ const noop = () => {};
  * T489-c). The rows come in already shaped for the Explore map
  * (lib/exploreLayers.js mapRowOf): an ink dot per item by its Score, the
  * best in view labelled with the name and the nearest town's day figure,
- * the camera fitted to the list. A tap hands the id back. The frame wears
+ * the camera fitted to the list. A tap hands the id back. Trails and
+ * cycling pass `lines` (T593): each route drawn as its simplified line with
+ * a length pill at its start in place of the dot. The frame wears
  * the Explore map's own rules (`explore-shell`), so the two maps are one.
  */
-export function OutdoorMap({ rows, onSelect, onBack, t }) {
+export function OutdoorMap({ rows, onSelect, onBack, t, lines = null }) {
   return (
-    <div className="explore-shell dtab-mapwrap">
+    <div className={`explore-shell dtab-mapwrap${lines ? ' has-lines' : ''}`}>
       <React.Suspense fallback={(
         <div className="xmap xmap-skel">
           <LoadingBlock label={t('explore.mapLoading')} rows={1} shape="card" />
@@ -27,7 +29,7 @@ export function OutdoorMap({ rows, onSelect, onBack, t }) {
       )}>
         <ExploreMap rows={rows} all={rows} pins={null} onSelect={onSelect}
           onViewport={noop} onNeedDetail={noop} t={t} onBack={onBack}
-          visible framed={rows.length > 0} />
+          visible framed={rows.length > 0} lines={lines} />
       </React.Suspense>
     </div>
   );

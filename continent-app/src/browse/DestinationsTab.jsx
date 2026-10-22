@@ -86,12 +86,14 @@ import {
 import { ExploreCategories } from './ExploreCategories.jsx';
 import { EmptyResult } from './EmptyResult.jsx';
 import { OutdoorMap } from './OutdoorMap.jsx';
+import { WhereBar, FilterChipBar } from './WhereBar.jsx';
 import {
   baseOfOutdoor, pointOfOutdoor, mapRowOf, regionsForLayer,
 } from '../lib/exploreLayers.js';
 import { loadRegionIndex, nearestPriced } from '../lib/regions.js';
 import { usePlaceRows } from '../hooks/usePlaceRows.js';
 import { isNational } from '../components/CostSummary.jsx';
+import { SiteFooter } from '../components/SiteFooter.jsx';
 
 /**
  * The Destinations tab: the whole catalogue and every published trip as a
@@ -151,6 +153,28 @@ const NEAR_MAX_ROWS = 80;
  * still wins, because those arrive through their own effects after this.
  */
 const MEMORY_KEY = 'carta.places.v1';
+// T593: the What and Where bar and the quick filter row, per outdoor tab.
+// What is one existing facet group (the tab's kinds); the quick row holds
+// the groups a reader reaches for first, in the reference's order.
+const WHAT_GROUP = {
+  trails: 'highlights', cycling: 'cycle-bike', beaches: 'beach-bestfor',
+  lakes: 'lake-doing', mountains: 'mtn-kind',
+};
+const QUICK_GROUPS = {
+  trails: ['grade', 'length', 'climb', 'shape'],
+  cycling: ['cycle-surface', 'cycle-length', 'cycle-climb'],
+  beaches: ['beach-water', 'beach-substrate', 'beach-facilities'],
+  lakes: ['lake-swim', 'lake-water', 'lake-setting'],
+  mountains: ['mtn-acc', 'mtn-diff', 'mtn-ele'],
+};
+/** The first point of a route's (Multi)LineString, [lon, lat], or null. */
+function lineStartOf(geometry) {
+  const c = geometry?.coordinates;
+  if (!Array.isArray(c) || !c.length) return null;
+  const p = geometry.type === 'MultiLineString' ? c[0]?.[0] : c[0];
+  return Array.isArray(p) && Number.isFinite(p[0]) && Number.isFinite(p[1]) ? p : null;
+}
+
 function readMemory() {
   try {
     const raw = window.localStorage.getItem(MEMORY_KEY);
@@ -2520,7 +2544,29 @@ export function DestinationsTab({
     else if (cat === 'cycling') for (const r of cycleRows?.routes || []) push('cycling', r, routeTitle(r, t), r.cc, countryName(r.cc), r.score, okPhoto(r.img));
     return out;
   }, [outdoorCat, isActive, cat, beachRows, lakeRows, mountainRows, tripRows, cycleRows, bedFood, countryName, t]);
-  const mapRows = useMemo(() => mapItems.map((x) => x.m), [mapItems]);
+  // T593: a walk or a ride is drawn as its line (the list rows carry the
+  // simplified one), its pin moved to the start with the length on it.
+  const routeMap = useMemo(() => {
+    if (cat !== 'trails' && cat !== 'cycling') return null;
+    const features = [];
+    const starts = new Map();
+    mapItems.forEach(({ m, row }, i) => {
+      const geometry = cat === 'trails' ? row.tr?.geometry : row.geometry;
+      const at = lineStartOf(geometry);
+      if (!at) return;
+      const km = cat === 'trails' ? (row.tr?.distance_m ?? 0) / 1000 : row.km;
+      const label = Number.isFinite(km) && km > 0
+        ? t('where.km', { n: km.toLocaleString(lang, { maximumFractionDigits: km < 10 ? 1 : 0 }) })
+        : '';
+      starts.set(m.id, at);
+      features.push({ type: 'Feature', geometry, properties: { id: m.id, label, rank: i } });
+    });
+    return features.length ? { lines: { type: 'FeatureCollection', features }, starts } : null;
+  }, [cat, mapItems, t, lang]);
+  const mapRows = useMemo(() => mapItems.map(({ m }) => {
+    const at = routeMap?.starts.get(m.id);
+    return at ? { ...m, lon: at[0], lat: at[1] } : m;
+  }), [mapItems, routeMap]);
   const openMapItem = useCallback((id) => {
     const hit = mapItems.find((x) => x.m.id === id);
     if (!hit) return;
@@ -2592,7 +2638,7 @@ export function DestinationsTab({
   const catTiles = (
     <ExploreCategories
       current={cat === 'trips' ? 'places' : cat}
-      columns={isDesktop ? 2 : 3}
+      variant="row"
       panelId="dtab-panel"
       className="dtab-cats"
       onPick={(key) => {
@@ -2668,6 +2714,80 @@ export function DestinationsTab({
       </div>
     ));
 
+  // The locate door and the suggestion list, built once: they ride in the
+  // phone toolbar's field and in the What and Where bar alike (T593).
+  // On a desktop the head's labelled near-me door does this (T457: two
+  // doors to one action, and the header field lost a third of its width to
+  // the crosshair); a phone keeps it in the field.
+  const locateBtn = (canLocate && !(isDesktop && nearMeDoor) && (
+    <button
+      type="button"
+      className="places-locate"
+      onClick={useMyLocation}
+      disabled={locBusy}
+      aria-busy={locBusy || undefined}
+      title={t('places.useMyLocation')}
+      aria-label={t('places.useMyLocation')}
+    >
+      {locBusy
+        ? <span className="state-pulse"><CrosshairIcon size={16} /></span>
+        : <CrosshairIcon size={16} />}
+    </button>
+  ));
+  const suggList = (suggOpen && (suggestions.length > 0 || canGeo) && (
+    <div className="places-sugg" role="listbox">
+      {/* Two groups, headed only once the second one exists: the
+          places Carta prices, then anywhere else on the map. */}
+      {suggestions.length > 0 && geoHits && geoHits.length > 0 && (
+        <p className="places-sugg-head">{t('places.suggCatalogue')}</p>
+      )}
+      {suggestions.map((d) => (
+        <button key={d.id} className="places-sugg-item" onClick={() => pickDest(d)}>
+          <span className="places-sugg-city">{d.city}</span>
+          <span className="places-sugg-country">{d.country}</span>
+        </button>
+      ))}
+      {canGeo && !geoHits && (
+        <button
+          type="button"
+          className="places-sugg-item places-sugg-any"
+          onClick={runGeoSearch}
+          disabled={geoBusy}
+        >
+          <span className="places-sugg-city">
+            <MapPinIcon size={13} />
+            {geoBusy ? t('places.searchingAny') : t('places.searchAny', { q: term })}
+          </span>
+          {!geoBusy && <span className="places-sugg-country">{t('places.searchAnyHint')}</span>}
+        </button>
+      )}
+      {geoHits && geoHits.length > 0 && (
+        <>
+          <p className="places-sugg-head">{t('places.suggAnywhere')}</p>
+          {geoHits.map((r, i) => {
+            const { title, rest } = geoLines(r);
+            return (
+              <button
+                key={`${r.lat},${r.lon},${i}`}
+                className="places-sugg-item is-geo"
+                onClick={() => pickGeo(r)}
+              >
+                <span className="places-sugg-city">
+                  <MapPinIcon size={13} />
+                  {title}
+                </span>
+                <span className="places-sugg-country">{rest}</span>
+              </button>
+            );
+          })}
+        </>
+      )}
+      {geoHits && geoHits.length === 0 && (
+        <p className="places-sugg-note">{t('places.anywhereNone')}</p>
+      )}
+    </div>
+  ));
+
   // The search field, built once. It renders inline in the phone toolbar and
   // portals into the app header on desktop; the suggestion list rides with it.
   const searchField = (
@@ -2685,77 +2805,8 @@ export function DestinationsTab({
         placeholder={t('places.searchDest')}
         aria-label={t('places.searchDest')}
       />
-      {/* On a desktop the head's labelled near-me door does this (T457: two
-          doors to one action, and the header field lost a third of its
-          width to the crosshair); a phone keeps it in the field. */}
-      {canLocate && !(isDesktop && nearMeDoor) && (
-        <button
-          type="button"
-          className="places-locate"
-          onClick={useMyLocation}
-          disabled={locBusy}
-          aria-busy={locBusy || undefined}
-          title={t('places.useMyLocation')}
-          aria-label={t('places.useMyLocation')}
-        >
-          {locBusy
-            ? <span className="state-pulse"><CrosshairIcon size={16} /></span>
-            : <CrosshairIcon size={16} />}
-        </button>
-      )}
-      {suggOpen && (suggestions.length > 0 || canGeo) && (
-        <div className="places-sugg" role="listbox">
-          {/* Two groups, headed only once the second one exists: the
-              places Carta prices, then anywhere else on the map. */}
-          {suggestions.length > 0 && geoHits && geoHits.length > 0 && (
-            <p className="places-sugg-head">{t('places.suggCatalogue')}</p>
-          )}
-          {suggestions.map((d) => (
-            <button key={d.id} className="places-sugg-item" onClick={() => pickDest(d)}>
-              <span className="places-sugg-city">{d.city}</span>
-              <span className="places-sugg-country">{d.country}</span>
-            </button>
-          ))}
-          {canGeo && !geoHits && (
-            <button
-              type="button"
-              className="places-sugg-item places-sugg-any"
-              onClick={runGeoSearch}
-              disabled={geoBusy}
-            >
-              <span className="places-sugg-city">
-                <MapPinIcon size={13} />
-                {geoBusy ? t('places.searchingAny') : t('places.searchAny', { q: term })}
-              </span>
-              {!geoBusy && <span className="places-sugg-country">{t('places.searchAnyHint')}</span>}
-            </button>
-          )}
-          {geoHits && geoHits.length > 0 && (
-            <>
-              <p className="places-sugg-head">{t('places.suggAnywhere')}</p>
-              {geoHits.map((r, i) => {
-                const { title, rest } = geoLines(r);
-                return (
-                  <button
-                    key={`${r.lat},${r.lon},${i}`}
-                    className="places-sugg-item is-geo"
-                    onClick={() => pickGeo(r)}
-                  >
-                    <span className="places-sugg-city">
-                      <MapPinIcon size={13} />
-                      {title}
-                    </span>
-                    <span className="places-sugg-country">{rest}</span>
-                  </button>
-                );
-              })}
-            </>
-          )}
-          {geoHits && geoHits.length === 0 && (
-            <p className="places-sugg-note">{t('places.anywhereNone')}</p>
-          )}
-        </div>
-      )}
+      {locateBtn}
+      {suggList}
     </div>
   );
 
@@ -2767,6 +2818,74 @@ export function DestinationsTab({
     if (isDesktop && isActive) setHeaderSlot(document.getElementById('header-search-slot'));
     else setHeaderSlot(null);
   }, [isDesktop, isActive]);
+
+  // ── The What and Where bar and the quick filter row (T593) ──────────────
+  // What sets one facet group to a single choice (or none); Where is the
+  // tab's search text, live as before. Search applies What and, when the
+  // text is exactly a town Carta knows, measures the list from that town.
+  const whatGroup = outdoorCat ? facetGroups.find((g) => g.key === WHAT_GROUP[cat]) : null;
+  const whatOpts = whatGroup ? whatGroup.options.filter((o) => o.key !== 'loop') : [];
+  const whatOn = whatOpts.filter((o) => o.on);
+  const whatSpec = whatOpts.length > 0
+    ? { value: whatOn.length === 1 ? whatOn[0].key : '', options: whatOpts }
+    : null;
+  const applyWhat = (key) => {
+    if (!whatGroup) return;
+    for (const o of whatOpts) if (o.on && o.key !== key) whatGroup.onToggle(o.key);
+    if (key && !whatOpts.some((o) => o.key === key && o.on)) whatGroup.onToggle(key);
+  };
+  const runWhere = (whatKey) => {
+    if (whatKey != null) applyWhat(whatKey);
+    setSuggOpen(false);
+    const town = term && !typedCc ? suggestions.find((d) => norm(d.city) === norm(term)) : null;
+    if (town) pickDest(town);
+    scrollRef.current?.scrollTo?.(0, 0);
+  };
+  const whereBar = outdoorCat ? (
+    <WhereBar
+      t={t}
+      what={whatSpec}
+      onSearch={runWhere}
+      after={viewSwitch ? (
+        // End check (T593 with T592): the one Map or List pill, as on
+        // Places, in the bar every outdoor tab opens on, so the map is one
+        // press away at rest too.
+        <Button variant="secondary" className="xview-toggle wbar-view"
+          iconStart={viewSwitch.value === 'map' ? <ListDayIcon size={16} /> : <MapPinIcon size={16} />}
+          onClick={() => viewSwitch.onChange(viewSwitch.value === 'map' ? 'top' : 'map')}>
+          {t(viewSwitch.value === 'map' ? 'explore.viewList' : 'explore.viewMap')}
+        </Button>
+      ) : null}
+      where={{
+        value: query,
+        boxRef: searchRef,
+        onChange: (e) => { setQuery(e.target.value); setSuggOpen(true); },
+        onFocus: () => setSuggOpen(true),
+        onKeyDown: (e) => {
+          // Enter keeps the field's own answer (the best town or the map);
+          // the Search button is the bar's.
+          if (e.key === 'Enter') { e.preventDefault(); onSearchEnter(); }
+          else if (e.key === 'Escape') setSuggOpen(false);
+        },
+        onClear: () => { setQuery(''); setSuggOpen(false); },
+        extra: locateBtn || null,
+      }}
+    >
+      {suggList || null}
+    </WhereBar>
+  ) : null;
+  const quickGroups = outdoorCat
+    ? (QUICK_GROUPS[cat] || []).map((k) => facetGroups.find((g) => g.key === k)).filter(Boolean)
+    : [];
+  const quickBar = outdoorCat && facetGroups.length > 0 ? (
+    <FilterChipBar
+      t={t}
+      fmt={fmt}
+      groups={quickGroups}
+      allCount={activeFilters - (country ? 1 : 0)}
+      onAll={() => { setSheetFrom('side'); setSheetOpen(true); }}
+    />
+  ) : null;
 
   const filtersButton = facetGroups.length > 0 ? (
     <Button
@@ -2836,10 +2955,6 @@ export function DestinationsTab({
       )}
       {/* A country's walks open on its rails too (T457): the band is their
           head, so the view switch stands in it. */}
-      {viewSwitch && !sectionHead && (
-        <Segmented size="sm" className="dtab-view" label={viewSwitch.label} value={viewSwitch.value}
-          onChange={viewSwitch.onChange} options={viewSwitch.options} />
-      )}
     </div>
   ) : null;
 
@@ -2873,12 +2988,6 @@ export function DestinationsTab({
       <aside className="side-panel places-side" aria-label={t('places.sideAria')}>
         <div className="side-block xrail">
           <h2 className="sr-only">{t('places.sideAria')}</h2>
-          {isDesktop && (
-            <section className="xrail-sec" aria-labelledby="dtab-h-browse">
-              <h3 className="xrail-h" id="dtab-h-browse">{t('places.sideBrowse')}</h3>
-              {catTiles}
-            </section>
-          )}
           {tripLength && <div className="side-group xrail-sec">{tripLength}</div>}
           {/* The trip library's filters (T498): JourneysSection portals its
               groups here on a desktop, so the library has no bar of its own. */}
@@ -2915,20 +3024,25 @@ export function DestinationsTab({
 
       <div className="places-tab" ref={scrollRef}>
       <div className="places-wrap">
-        {headerSlot
+        {/* The outdoor tabs search from their What and Where bar (T593);
+            Places' trip library keeps the field. */}
+        {!outdoorCat && (headerSlot
           ? createPortal(searchField, headerSlot)
           : (
             <div className="dtab-top">
               {searchField}
               {!isDesktop && filtersButton}
             </div>
-          )}
+          ))}
         {/* Under the search row, as on Places (T498), so moving between the
             six never moves the grid. */}
-        {!isDesktop && <div className="dtab-bar">{catTiles}</div>}
+        {/* T586: the six as one row of pills on every width, as on Places. */}
+        <div className="dtab-bar xcats-bar">{catTiles}</div>
 
         <div className="dtab-panel" id="dtab-panel" role="tabpanel"
           aria-label={t((CATS.find((c) => c.key === cat) || CATS[0]).labelKey)}>
+        {whereBar}
+
         {/* A refused or failed location fix, said once, under the field that
             asked for it. Cleared as soon as anything is typed. */}
         {locErr && <p className="places-locate-err" role="status">{locErr}</p>}
@@ -2994,16 +3108,10 @@ export function DestinationsTab({
             "Explore Europe" over a filtered list); the rails and the view
             switch step aside while the list is the answer. */}
         {!opening && sectionHead && !(cat === 'trails' && showCountryIndex) && (
-          <SectionHead title={sectionHead.title} id={`dtab-head-${cat}`} nearMe={nearMeDoor} view={viewSwitch} />
+          <SectionHead title={sectionHead.title} id={`dtab-head-${cat}`} nearMe={nearMeDoor} />
         )}
         {/* No head and no country band (a search, a place to measure from):
             the List | Map switch still has a row of its own (T498). */}
-        {viewSwitch && !sectionHead && !countryBand && (
-          <div className="dtab-head dtab-head-bare">
-            <Segmented size="sm" className="dtab-view" label={viewSwitch.label} value={viewSwitch.value}
-              onChange={viewSwitch.onChange} options={viewSwitch.options} />
-          </div>
-        )}
 
         {/* Trails at rest: the head, then the countries (a walk is ranked
             within its country, so the section opens on them). */}
@@ -3039,6 +3147,8 @@ export function DestinationsTab({
 
         {!isJourneyBrowse && !(cat === 'trails' && showCountryIndex) && refineRow}
 
+        {quickBar}
+
         {activeChips.length > 0 && (
           <FilterChips t={t} chips={activeChips} onClearAll={clearAllChips} />
         )}
@@ -3047,6 +3157,7 @@ export function DestinationsTab({
             list, the lists kept mounted under it so List is instant. */}
         {mapOn && (
           <OutdoorMap rows={mapRows} onSelect={openMapItem} t={t}
+            lines={routeMap?.lines || null}
             onBack={() => setDview('top')} />
         )}
         <div className="dtab-lists" hidden={mapOn || undefined}>
@@ -3824,6 +3935,7 @@ export function DestinationsTab({
           noun={cat}
         />
       )}
+      <SiteFooter />
       </div>
     </div>
   );

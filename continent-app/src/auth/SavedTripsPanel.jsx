@@ -41,6 +41,7 @@ import {
 } from '../lib/myTrips.js';
 import { useVisitedCountries, toggleVisitedCountry } from '../lib/visitedCountries.js';
 import { UNDO_MS, UndoToast, CrewBar, TripPrice, whenText } from './mytrips/parts.jsx';
+import { SiteFooter } from '../components/SiteFooter.jsx';
 import {
   TripsTab, ShortlistTab, ShortlistFilters, VisitedTab, YearFilter, VisitedCountriesSheet,
 } from './mytrips/MyTripsTabs.jsx';
@@ -943,6 +944,7 @@ export function SavedTripsPanel({
           />
         )}
         {undo && <UndoToast key={undo.key} label={undo.label} onUndo={undoRemoval} onClose={flushUndo} />}
+        <SiteFooter />
       </div>
     </div>
   );

@@ -74,7 +74,7 @@ export async function downloadDayPdf({
     { label: t('day.stepDays'), value: t(totalDays === 1 ? 'day.oneDay' : 'day.nDays', { n: totalDays }) },
     { label: t('day.stepStart'), value: stay?.label || cityLabel(first.dest?.city || '') },
     fig && Number.isFinite(fig.eur)
-      ? { label: t('dayws.costLabel'), value: `${fig.est ? '~' : ''}${formatMoney(fig.eur, { precision: 'whole', locale: lang })}${fig.est ? ` ${t('money.est')}` : ''}` }
+      ? { label: t('dayws.costLabel'), value: `${fig.est ? '~' : ''}${formatMoney(fig.eur, { precision: 'whole', locale: lang })}` }
       : null,
   ].filter(Boolean), 3);
 

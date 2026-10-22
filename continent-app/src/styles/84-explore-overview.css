@@ -1,0 +1,322 @@
+/* ==========================================================================
+   Explore v6: the overview first page (T586), the focused view's toolbar
+   (T588) and the start dialog (T585). Imported by browse/ExploreTab.jsx.
+   Tokens only; every rule is scoped under .explore-shell or its own block.
+   ========================================================================== */
+
+/* --- T586. The overview and the focused view ----------------------------
+   The overview uses the full width: no side pane and no list, only the
+   head, the tab row, the rails and one door to every place. */
+@media (min-width: 769px) {
+  .explore-shell.is-overview .explore-side { display: none; }
+}
+.explore-shell.is-overview .xcontent-main > .xrows,
+.explore-shell.is-overview .xcontent-main > .xempty,
+.explore-shell.is-overview .places-sentinel { display: none; }
+
+/* Overview and focused view crossfade: the wrap fades in each time the
+   mode changes (two names, so the animation restarts on every switch). */
+.explore-shell.is-overview .explore-wrap { animation: xov-fade-a var(--dur-3) var(--ease-out); }
+.explore-shell.is-focus .explore-wrap { animation: xov-fade-b var(--dur-3) var(--ease-out); }
+@keyframes xov-fade-a { from { opacity: 0; } to { opacity: 1; } }
+@keyframes xov-fade-b { from { opacity: 0; } to { opacity: 1; } }
+
+/* The head: a headline with a verb, then the What / Where bar. */
+.xov-hero {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: var(--space-2) 0 var(--space-5);
+}
+.xov-title {
+  margin: 0;
+  font-size: var(--text-headline);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.02em;
+  color: var(--text);
+  text-wrap: balance;
+}
+.xov-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.xov-bar .field-label { font-size: var(--text-label); }
+.xov-where { position: relative; }
+.xov-where .field-control input { padding-left: calc(var(--space-3) + 18px + var(--space-2)); }
+.xov-where-icon {
+  position: absolute;
+  left: var(--space-3);
+  bottom: calc((var(--tap) - 18px) / 2);
+  color: var(--text-2);
+  pointer-events: none;
+}
+.xov-go { align-self: end; }
+.xov-door { align-self: flex-start; }
+@media (min-width: 769px) {
+  .xov-hero { margin: var(--space-4) 0 var(--space-5); }
+  .xov-title { font-size: var(--text-display); }
+  .xov-bar {
+    grid-template-columns: minmax(160px, 220px) minmax(0, 1fr) auto;
+    align-items: end;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-5);
+    max-width: 920px;
+  }
+}
+
+/* The tab row: the six categories as pills, icon beside the word. It
+   scrolls sideways on a phone and never wraps; the selected pill keeps the
+   kit's tint and tick. */
+.explore-shell .xcats-bar { margin: 0 0 var(--space-5); }
+.xcats-row.ui-tile-group {
+  display: flex;
+  gap: var(--space-2);
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 2px;
+  margin: -2px;
+}
+.xcats-row.ui-tile-group::-webkit-scrollbar { display: none; }
+.xcats-row .ui-tile {
+  flex: none;
+  flex-direction: row;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-pill);
+}
+.xcats-row .ui-tile-icon svg { width: 18px; height: 18px; }
+.xcats-row .ui-tile-label { white-space: nowrap; font-weight: 600; }
+.xcats-row .ui-tile-tick { position: static; }
+
+/* The focused view's way back: a link naming the overview. */
+.xov-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  margin: calc(var(--space-2) * -1) 0 var(--space-1);
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--action);
+  text-decoration: none;
+}
+@media (hover: hover) {
+  .xov-back:hover { text-decoration: underline; text-underline-offset: 3px; }
+}
+.xov-back:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
+
+/* The overview ends in one door to every place, beside the map toggle. */
+.xov-end {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  margin: var(--space-6) 0 var(--space-4);
+}
+@media (max-width: 768px) {
+  /* A phone keeps its floating List/Map switch. */
+  .xov-end .xov-view { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .explore-shell.is-overview .explore-wrap,
+  .explore-shell.is-focus .explore-wrap { animation: none; }
+}
+
+/* --- T588. The focused view's toolbar ----------------------------------
+   The title with the live count under it, then one row of pill buttons:
+   Share, Sort, Filters, Saved (Countries on a phone) and the map toggle.
+   On a phone the row runs under the title and scrolls sideways. */
+.explore-shell.is-focus .xbar { align-items: flex-end; flex-wrap: wrap; }
+.explore-shell.is-focus .xbar-lead { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.xbar-count {
+  font-size: var(--text-label);
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+.explore-shell .xtools {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-left: auto;
+}
+.xtools .btn,
+.xtools .seg { border-radius: var(--radius-pill); }
+.xtools .btn .xfilters-n { margin-left: var(--space-1); }
+/* A pane that is open, or Saved that is on: the selected tint. */
+.xtools .btn.is-on,
+.xtools .btn[aria-pressed="true"] {
+  background: var(--select-bg);
+  border-color: var(--select-border);
+  color: var(--select-ink);
+}
+@media (min-width: 769px) {
+  .explore-shell.is-pane-closed .explore-side { display: none; }
+}
+@media (max-width: 768px) {
+  .explore-shell.is-focus .xbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-2);
+  }
+  /* The title shows again on a phone: it names the list the count counts. */
+  .explore-shell.is-focus .xbar .xbar-title {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip-path: none;
+    white-space: normal;
+    font-size: var(--text-title);
+  }
+  .explore-shell .xtools {
+    margin: 0 calc(var(--space-4) * -1);
+    padding: 2px var(--space-4);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .explore-shell .xtools::-webkit-scrollbar { display: none; }
+  .xtools > * { flex: none; }
+  /* The phone keeps its floating List/Map switch until T592 places the
+     map toggle. */
+  .xtools .xtool-view { display: none; }
+}
+
+/* Sort's menu: a popover under its pill. */
+.xsort-menu {
+  position: fixed;
+  z-index: var(--z-menu);
+  display: flex;
+  flex-direction: column;
+  width: 220px;
+  padding: var(--space-1);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  box-shadow: var(--elev-2);
+  animation: xov-fade-a var(--dur-2) var(--ease-out);
+}
+.xsort-menu .xsort-item {
+  justify-content: space-between;
+  width: 100%;
+  min-height: var(--tap);
+  color: var(--text);
+  font-weight: 500;
+}
+.xsort-menu .xsort-item.is-on { font-weight: 600; }
+.xsort-menu .xsort-item .btn-label { flex: 1; text-align: left; }
+
+/* Share's answer: a toast in the bottom slot, above the bottom nav on a
+   phone and bottom centre on a desktop. */
+.xtoast-slot {
+  position: fixed;
+  left: 50%;
+  bottom: var(--space-5);
+  z-index: var(--z-toast);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.xtoast {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-control);
+  background: var(--text);
+  color: var(--surface);
+  font-size: var(--text-label);
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: var(--elev-2);
+  animation: xov-fade-a var(--dur-2) var(--ease-out);
+}
+@media (max-width: 768px) {
+  .xtoast-slot { bottom: calc(var(--bottom-nav-h) + var(--tap) + var(--space-5)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .xsort-menu, .xtoast { animation: none; }
+}
+
+/* --- T585. The start dialog --------------------------------------------
+   The dialog family: one scrim (--text at 28 percent, no blur), --surface,
+   --radius-sheet, --elev-3, arriving in --dur-3 and leaving in --dur-2. */
+.xstart-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5);
+  background: color-mix(in srgb, var(--text) 28%, transparent);
+  animation: xov-fade-a var(--dur-3) var(--ease-out);
+}
+.xstart-scrim.is-leaving { opacity: 0; transition: opacity var(--dur-2) var(--ease-out); }
+.xstart {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 560px;
+  max-height: calc(100dvh - var(--space-8));
+  overflow-y: auto;
+  padding: var(--space-6) var(--space-6) var(--space-5);
+  border-radius: var(--radius-sheet);
+  background: var(--surface);
+  box-shadow: var(--elev-3);
+  animation: xstart-in var(--dur-3) var(--ease-out);
+}
+.xstart.is-leaving { opacity: 0; transform: translateY(8px); transition: opacity var(--dur-2) var(--ease-out), transform var(--dur-2) var(--ease-out); }
+@keyframes xstart-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.xstart-close { position: absolute; top: var(--space-2); right: var(--space-2); }
+.xstart-icon { display: inline-flex; align-self: center; color: var(--text-2); }
+.xstart-title {
+  margin: 0 var(--space-6);
+  font-size: var(--text-title);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  text-align: center;
+  text-wrap: balance;
+  color: var(--text);
+}
+.xstart-field textarea { font-size: var(--text-lead); min-height: 96px; }
+.xstart-lead { margin: var(--space-1) 0 0; font-size: var(--text-label); color: var(--text-2); }
+.xstart-rows { display: flex; flex-direction: column; gap: var(--space-2); }
+.xstart-row.btn { min-height: var(--tap); padding: 0 var(--space-4); }
+.xstart-row .btn-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  width: 100%;
+  min-width: 0;
+}
+.xstart-row-label { font-weight: 600; color: var(--text); }
+.xstart-row-value {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+  font-size: var(--text-label);
+  color: var(--text-2);
+}
+.xstart-foot { display: flex; justify-content: flex-end; margin-top: var(--space-2); }
+@media (prefers-reduced-motion: reduce) {
+  .xstart-scrim, .xstart { animation: none; }
+  .xstart-scrim.is-leaving, .xstart.is-leaving { transition: none; }
+}
+
+/* End check (T586): on a phone the map view keeps the map tall; the six
+   categories and the way back wait in the list view. */
+@media (max-width: 768px) {
+  .explore-shell.is-map .xcats-bar,
+  .explore-shell.is-map .xov-back { display: none; }
+}
