@@ -4,7 +4,7 @@ Batch of four, 2026-10-22. The owner asked to do the four open items T539 to T54
 
 - Root branch `claude/accommodation-cost-setup-87d85c`.
 - App branch `p11-live-stays-2`, merged into app master as 999ad92.
-- **Not live yet.** The permission check refused the R2 upload of the corrected stays files as a production change, so the Pages deploy and the push were not attempted. All three wait for the owner (T562-a). Until then, production runs T540 with the uncalibrated typical night, so live prices there read about 20% low on ordinary days.
+- **Live.** The permission check first refused the R2 upload. After the owner approved it ("Yes: upload the 44 calibrated stays files to R2, deploy app master ..."), the 44 files went to R2 and app master 999ad92 went out as Pages deployment 38386f29.
 
 ---
 
@@ -115,14 +115,22 @@ Revert the T562 commit and rerun `live_keys.py`.
 - eslint: 0 errors.
 - `npm run build:pages`: PASS.
 
-**End check:** not done in a browser. It needs the deploy, which waits for the owner. Preview origins cannot read the data host. To look at after the deploy:
-- the planner itinerary bed lines
-- a journey card near a live town
-- the Vienna destination card again, where an ordinary week should now read close to the model
+**End check:** on production (www.carta-europetravel.com, Pages 38386f29, bundle index-DLZVh5IX.js). First this browser's service-worker copies of the stays files were cleared (43 entries); a traveller's browser refreshes them by itself within the hour plus a day.
+
+| Screen | Model | Live |
+|---|---|---|
+| Vienna destination card, 12 to 15 Dec, 2 people, 3-star | Stay €732.00 | €784.84, "Adjusted to live prices for your nights" (the uncalibrated T540 read €687.44) |
+| Planner itinerary, Salzburg and Vienna, 21 to 28 Nov, 3-star: Salzburg | Beds ~€390.00 | ~€435.64, labelled |
+| Planner itinerary, same trip: Vienna | Beds ~€716.00 | ~€652.24, labelled |
+| Planner itinerary, same trip: trip total | | ~€2,645.83, follows the beds |
+| Journey "Vienna, The Ring and Everything Behind It", 12 to 19 Dec, 3-star | | Beds ~€899 a person, labelled; 899 + 326 + 98 + 168 = 1,491 a person, × 2 = €2,982.93, the card's total |
+
+Noted on the journey card: the live-adjusted headline (~€1,491 a person) sits above the card's own range sentence ("~€980 to €1,420"), which still comes from the journey's written budget (T562-c).
 
 ## What is still open
 
-- **T562-a.** Upload the 44 corrected stays files to R2 (`carta/data/stays/v1/`), deploy app master 999ad92 to Pages, run the browser end check, fast-forward root main and push. The permission check refused the upload as a production change, so this waits for the owner.
+- **T562-a.** Closed: uploaded, deployed as 38386f29, checked on production and pushed, after the owner's approval.
+- **T562-c.** The journey card's range sentence (lowest to most generous) still comes from the written budget, so a live-adjusted week can sit above it. Either run the range through the same live ratio or say it is the usual range.
 - **T561-a.** The journey card's live adjustment uses the nearest live town within 40 km. A journey that sleeps in several towns, or far from its coordinates, is only approximated; per-night destination ids in the journey data would make it exact.
 - **T562-b.** The bias was measured once, on 26 towns. Rerun `calibrate_live.py` after each quarterly Xotelo discover, and per country once the pool grows (towns differ by about 14%).
 - **T540-c** stays open for the owner (Xotelo commercial use). T559 gives the off switch and the options above.
