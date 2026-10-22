@@ -183,7 +183,7 @@ function LegRow({ leg, onMode }) {
           : t('trip.legSummary', { mode: t(MODE_META[leg.mode].label), km: leg.road_km, price: legEst ? formatApprox(chosen.eur_pp, { precision: 'cents' }) : eurExact(chosen.eur_pp), hours: fmtHours(chosen.hours) })}
         {leg.long_haul && !chosen.own ? `, ${t('trip.longLeg')}` : ''}
         {!chosen.own && legEst && (
-          <span className="fare-prov"><span className="fare-prov-est" title={t('prov.estTitle')}>{t('prov.est')}</span></span>
+          <span className="sr-only">{` ${t('prov.estTitle')}`}</span>
         )}
         <span className="trip-leg-caret">{open ? '−' : '+'}</span>
       </button>

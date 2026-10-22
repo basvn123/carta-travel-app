@@ -1,9 +1,10 @@
+import { SiteFooter } from '../components/SiteFooter.jsx';
 import React from 'react';
 import { createPortal } from 'react-dom';
 import { useIsDesktop } from '../hooks/useIsDesktop.js';
 import { fmtMonthRanges, MONTHS_SHORT } from './ClimateStrip.jsx';
 import { useExploreCatalog } from '../hooks/useExploreCatalog.js';
-import { ExploreFilterRail, minVerdict } from './ExploreFilterRail.jsx';
+import { ExploreFilterRail, minVerdict, goodForOf, legMinutes } from './ExploreFilterRail.jsx';
 import { PlacesFilterSheet } from './PlacesFilterSheet.jsx';
 import { ExploreRails, interleaveByCountry } from './ExploreRails.jsx';
 import { ExploreCategories } from './ExploreCategories.jsx';
@@ -16,8 +17,8 @@ import { useI18n } from '../i18n/index.jsx';
 import { GuidesStrip } from '../community/GuidesStrip.jsx';
 import { FULL_RATING_RANGE } from '../lib/rating.js';
 import {
-  FilterIcon, CalendarIcon, CameraIcon, ClockIcon, TrainIcon,
-  ChevronDownIcon, ChevronRightIcon, MapPinIcon, ListDayIcon, CloseIcon,
+  FilterIcon,
+  ChevronDownIcon, ChevronRightIcon, MapPinIcon, ListDayIcon,
 } from '../components/Icons.jsx';
 import { useTravelMonth, useSettings } from '../components/SettingsLine.jsx';
 import { cheapestReturn, cheapestReturnAnyMonth } from '../lib/flights/flights.js';
@@ -26,7 +27,6 @@ import { partyOf } from '../lib/party.js';
 import { destAnchor, originLabel } from '../lib/origins.js';
 import { scrollBehavior } from '../lib/motion.js';
 import { openShared } from '../lib/sharedElement.js';
-import { MonthStrip } from '../components/MonthStrip.jsx';
 import { LoadingBlock } from '../components/StateBlocks.jsx';
 
 // The map is the ONE thing in this tab that pulls maplibre-gl (~930 KB raw),
@@ -61,11 +61,11 @@ function prefetchMap() {
   }
   loadExploreMap().catch(() => { mapPrefetched = false; });
 }
-import { CostReceipt } from '../components/CostSummary.jsx';
-import { Button, Chip, IconButton, Segmented } from '../components/ui/index.js';
+import { Button, Chip } from '../components/ui/index.js';
 import { PlaceOverview } from './PlaceOverview.jsx';
 import { overviewRegion, overviewReason, overviewScore, reasonText } from '../lib/placeOverview.js';
 import { MapDrawer } from '../components/MapDrawer.jsx';
+import { MapPlacePanel } from './MapPlacePanel.jsx';
 import { useGuidedData, vibeOf } from '../lib/guidedData.js';
 import { AskChatDoor, AskChatHost } from './ask/AskChatButton.jsx';
 import { CountriesButton } from '../components/CountriesControl.jsx';
@@ -73,12 +73,21 @@ import {
   noCarOk, underOk, quietOk, matchGuided, guidedComparator, whyFacts, makeLabels,
 } from '../lib/guidedSearch.js';
 import { visitLength } from '../lib/nearby.js';
-import { placeSights } from '../lib/placeStory.js';
+import { monthName } from '../lib/dates.js';
 import { knownFor } from '../lib/knownFor.js';
 import { catalogue, CATALOGUE_MODE, loadFullCatalogue } from '../lib/appData.js';
 import { decodeBootIndex } from '../lib/bootIndex.js';
 import { formatMoney } from '../lib/money.js';
 import { computeCosts } from '../lib/costIndex.js';
+// T586: the overview first page.
+import { SearchIcon, ArrowLeftIcon, SparkIcon } from '../components/Icons.jsx';
+// T588: the focused view's toolbar.
+// T585: the start dialog.
+import { StartDialog, shouldOpenStart, markStartSeen } from './StartDialog.jsx';
+import { SortIcon, ShareIcon, BookmarkIcon, CheckIcon } from '../components/Icons.jsx';
+import { Field } from '../components/ui/index.js';
+import { EXPLORE_TILES } from './ExploreCategories.jsx';
+import '../styles/84-explore-overview.css';
 
 // 'viewport' catalogue mode (T059): the zoom from which the map fetches the
 // countries on screen. Below it the map draws clusters, which the boot pins
@@ -136,15 +145,6 @@ const LEGACY_CHEAP = 70;
 
 
 
-/** Door-to-door ground minutes as "3 h 20 min", the same units in all six
- *  languages. */
-function groundTime(min) {
-  const h = Math.floor(min / 60);
-  const m = Math.round(min % 60);
-  if (h === 0) return `${m} min`;
-  return m === 0 ? `${h} h` : `${h} h ${m} min`;
-}
-
 // The popover's width cap and its gap to the card (house rule "Dialog
 // family": a popover is at most 320 px wide, beside or under its card).
 const POP_W = 320;
@@ -168,79 +168,72 @@ function placePopover(card) {
 }
 
 /**
- * The preview: what the card cannot fit, in a paper popover beside the card
- * (V4, T393, explore N6). It used to be an ink panel over the whole card
- * that repeated the name and score and hid the photograph; the card now
- * stays whole and the popover adds only what it cannot show: where the
- * place ranks in its country, what you do with it, what it is known for,
- * the season as a twelve-month strip (the chosen month outlined), the
- * sights, one length-of-stay line, the reach line, and the compact receipt
- * with its cost bar, the same bed and food the destination page shows.
+ * The preview (T591, owner 2026-10-22): the receipt, the sights, the month
+ * strip and the country rank went; the card itself now carries the price
+ * parts and the dates. What is left is what helps a decision in one look: the
+ * hook line (what the place is known for), one month verdict for the chosen
+ * month ("Good in November", else "Best in Apr to Jun"), one plan sentence
+ * ("3 days in November, about 225 euros a person": the visit length times the
+ * day total) and one quiet action that opens the place. A paper popover
+ * beside the card, never over its photograph (explore N6).
  *
  * WCAG 1.4.13: dismissible (Escape), hoverable (a child of the card, and a
  * transparent bridge spans the gap so the pointer can travel into it),
- * persistent (nothing times it out).
+ * persistent (nothing times it out). The action repeats the card's own link
+ * for a pointer, so it stays out of the tab order and the accessible
+ * description (the card link already opens the place).
  */
-function CardPreview({ id, p, t, best, role, countryLine, reachMin, month, place, reveal = false }) {
+function CardPreview({ id, p, t, month, place, reveal = false, onOpen }) {
   // Opened by the info control (a tap on a phone), the popover under the
   // card is brought into view if it opened below the fold.
   const ref = React.useRef(null);
   React.useEffect(() => {
     if (reveal) ref.current?.scrollIntoView?.({ block: 'nearest', behavior: scrollBehavior() });
   }, [reveal]);
-  const stay = visitLength(p);
-  const sights = placeSights(p, 3);
   const lead = knownFor(p);
   const good = p.climate?.best || [];
+  const lang = t.lang || 'en';
+  const inMonth = month && good.includes(month) ? monthName(month, lang) : null;
+  const verdict = inMonth
+    ? t('gs.whyMonth', { month: inMonth })
+    : (good.length ? t('explore.bestMonths', { months: fmtMonthRanges(good, t) }) : null);
+  const stay = visitLength(p);
+  const days = stay ? Math.max(1, stay.n || Math.round(stay.days) || 1) : null;
+  const day = p.cost?.dayEur;
+  const total = days && Number.isFinite(day) ? formatMoney(day * days) : null;
+  const monthWord = month ? monthName(month, lang) : null;
+  const plan = days && total
+    ? t(`card.plan${days === 1 ? 'One' : 'Days'}${monthWord ? 'In' : ''}`, { n: days, month: monthWord, total })
+    : (stay ? t(stay.key, { n: stay.n }) : null);
   return (
     <div
       id={id}
       ref={ref}
-      className={`xcard-preview xpop xpop--${place.side}`}
+      className={`xcard-preview xpop xpop--${place.side} xpop-v6`}
       role="tooltip"
       style={{ '--xpop-dx': `${place.dx}px`, '--xpop-w': `${place.w}px` }}
     >
-      {(countryLine || role) && (
-        <p className="xpop-rank">
-          {countryLine && <span>{countryLine}</span>}
-          {role && <span className="xpop-role">{t(`role.short.${role.key}`)}</span>}
-        </p>
-      )}
       {lead && <p className="xpop-lead">{lead}</p>}
-      {good.length > 0 && (
-        <div className="xpop-months">
-          <p className="xpop-row">
-            <CalendarIcon size={12} />
-            <span>{t('explore.bestMonths', { months: best })}</span>
-          </p>
-          <MonthStrip good={good} className={`xpop-strip${month ? ` xpop-m${month}` : ''}`} />
-        </div>
-      )}
-      {sights.length > 0 && (
-        <p className="xpop-row">
-          <CameraIcon size={12} />
-          <span>{sights.join(', ')}</span>
+      {(verdict || plan) && (
+        <p className="xpop-facts">
+          {verdict && <span className={`xpop-verdict${inMonth ? ' is-good' : ''}`}>{verdict}</span>}
+          {plan && <span className="xpop-plan">{plan}</span>}
         </p>
       )}
-      {stay && (
-        <p className="xpop-row">
-          <ClockIcon size={12} />
-          <span>{t(stay.key, { n: stay.n })}</span>
-        </p>
-      )}
-      {/* How do I get there: shown in the preview only, and only where the
-          traveller's origin has a reach table (owner call, T362 on T193-f). */}
-      {reachMin != null && (
-        <p className="xpop-row">
-          <TrainIcon size={12} />
-          <span>{t('explore.reachFrom', { time: groundTime(reachMin) })}</span>
-        </p>
-      )}
-      {p.cost?.dayEur != null && (
-        <div className="xpop-cost">
-          <CostReceipt cost={p.cost} t={t} compact />
-        </div>
-      )}
+      <a
+        className="xpop-open"
+        href={`#dest=${encodeURIComponent(p.id)}`}
+        tabIndex={-1}
+        aria-hidden="true"
+        onClick={(e) => {
+          if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+          e.preventDefault();
+          onOpen?.(e);
+        }}
+      >
+        <span>{t('card.openPlace', { place: p.city })}</span>
+        <ChevronRightIcon size={16} />
+      </a>
     </div>
   );
 }
@@ -252,10 +245,13 @@ const HOVER_MS = 150;
 const FOCUS_MS = 400;
 
 const ExploreCard = React.memo(function ExploreCard({
-  p, role, selected, fav, onSelect, onToggleFav, t, reachMin,
+  p, selected, fav, onSelect, onToggleFav, t,
   linked = false, onLink = null, month = null, region = null, reason = null, rating = null,
+  layout = 'row',
 }) {
-  const best = p.climate?.best?.length ? fmtMonthRanges(p.climate.best, t) : null;
+  // The preview speaks of the chosen month, else the traveller's own (T591).
+  const travelMonth = useTravelMonth();
+  const previewMonth = month || travelMonth || null;
   // One popover, three doors: hover, focus, and the info control, which
   // pins it until it is pressed again, Escape, or a tap elsewhere.
   const [open, setOpen] = React.useState(null);
@@ -294,20 +290,13 @@ const ExploreCard = React.memo(function ExploreCard({
     };
   }, [preview]);
 
-  // The country half of the verdict, only where it is earned. It lives in
-  // the preview: on the card it was a fifth fact fighting four others.
-  const rank = p.country_rank;
-  const countryLine = rank === 1
-    ? t('card.topOf', { country: p.country })
-    : (p.country_badge ? t('card.rankIn', { n: rank, country: p.country }) : null);
-
   // T504 (roadmap 1.5): the row IS the place's one overview, the same
   // component the map's selected place and the phone's drawer draw. The
   // popover beside it adds what a row cannot fit; it is not a second overview.
   return (
     <PlaceOverview
       p={p} region={region} reason={reason} rating={rating} fav={fav} onToggleFav={onToggleFav} t={t}
-      selected={selected} linked={linked}
+      selected={selected} linked={linked} layout={layout}
       className={preview ? 'previewing' : ''}
       rootRef={cardRef}
       rootProps={{
@@ -315,15 +304,20 @@ const ExploreCard = React.memo(function ExploreCard({
         onPointerLeave: () => { drop('hover'); onLink?.(null); },
       }}
       hitProps={{
-        onFocus: () => { later('focus', FOCUS_MS); onLink?.(p.id); },
+        onFocus: (e) => {
+          // A phone has no hover: a focus there (a page arriving, a tap) never
+          // opens the preview over the list; the card itself opens the place.
+          if (e.target.matches?.(':focus-visible') && window.matchMedia?.('(hover: hover)').matches) later('focus', FOCUS_MS);
+          onLink?.(p.id);
+        },
         onBlur: () => { drop('focus'); onLink?.(null); },
         'aria-describedby': preview && place ? popId : undefined,
       }}
       onOpen={(e) => openShared(e.currentTarget, p.id, () => onSelect(p.id))}
     >
       {preview && place && (
-        <CardPreview id={popId} p={p} t={t} best={best} role={role} countryLine={countryLine}
-          reachMin={reachMin} month={month} place={place} reveal={open === 'pin'} />
+        <CardPreview id={popId} p={p} t={t} month={previewMonth} place={place} reveal={open === 'pin'}
+          onOpen={(e) => openShared(cardRef.current?.querySelector('.xrow-hit') || e.currentTarget, p.id, () => onSelect(p.id))} />
       )}
     </PlaceOverview>
   );
@@ -394,6 +388,9 @@ export function ExploreTab({
       nocar: q.get('xp')?.includes('c') || false,
       badged: q.get('xp')?.includes('b') || false,
       budget,
+      // T589: the budget floor (xbm) and the longest flight in hours (xfh).
+      bmin: Number(q.get('xbm')) > 0 ? Number(q.get('xbm')) : null,
+      fh: Number(q.get('xfh')) > 0 ? Number(q.get('xfh')) : null,
       quiet: q.get('xp')?.includes('q') || false,
       sea: q.get('xp')?.includes('s') || false,
       // A vibe from the guided search data (T427): "hiking", "beach", ...
@@ -416,6 +413,11 @@ export function ExploreTab({
   // (T427, reversing T383-a): the auto-filled month made a filter chip, and
   // a chip hid every rail the moment a traveller set dates.
   const travelMonth = useTravelMonth();
+  // T586: the rails name the month the settings line shows, so "Best in"
+  // never says October above a trip the line dates in November. The
+  // traveller's own month first, then the dates on show, then today.
+  const shownDepart = useSettings()?.departDate;
+  const railMonth = travelMonth || Number(String(shownDepart || '').slice(5, 7)) || new Date().getMonth() + 1;
   // C7: grid or map. The bbox narrows the count only WHILE the map is the
   // view - an invisible filter surviving the switch back would make the
   // grid quietly lie about what it holds.
@@ -528,6 +530,8 @@ export function ExploreTab({
       ? String(settingsLine.departDate).slice(0, 7)
       : new Date().toISOString().slice(0, 7);
   const wayMode = settingsLine?.transportMode || 'any';
+  // T589: "Flight up to" shows only while flights can be the way there.
+  const flightLimitAvailable = !!flights && (wayMode === 'plane' || wayMode === 'any');
   const party = React.useMemo(
     () => partyOf({ group_size: settingsLine?.party, children: settingsLine?.children, babies: settingsLine?.babies }),
     [settingsLine?.party, settingsLine?.children, settingsLine?.babies],
@@ -546,7 +550,9 @@ export function ExploreTab({
         : null;
       const flight = r ? { perSeat: r.perSeat, airline: r.out.airline } : null;
       const way = wayFor(d || p, wayMode, { home, party, flight });
-      m.set(p.id, way ? { ...p, cost: { ...p.cost, way } } : (wayMode === 'plane' ? p : null));
+      // T589: the outbound flight's length, for the "Flight up to" filter.
+      const fmin = r ? legMinutes(r.out) : null;
+      m.set(p.id, way ? { ...p, cost: { ...p.cost, way }, fmin } : (wayMode === 'plane' ? p : null));
     }
     return m;
   }, [catAllRows, flights, flightMonth, wayMode, home, party, data]);
@@ -610,6 +616,12 @@ export function ExploreTab({
     if (dxf.month && !(p.climate?.best || []).includes(dxf.month)) return false;
     if (dxf.nocar && !noCarOk(p)) return false;
     if (dxf.budget && !underOk(dxf.budget)(p)) return false;
+    if (dxf.bmin && !(p.cost?.dayEur != null && p.cost.dayEur >= dxf.bmin)) return false;
+    // T589: a flight longer than the limit drops the place; no flight drops
+    // it only when the traveller goes by plane.
+    if (dxf.fh && flightLimitAvailable) {
+      if (p.fmin != null ? p.fmin > dxf.fh * 60 : wayMode === 'plane') return false;
+    }
     if (dxf.quiet && !quietOk(p)) return false;
     if (dxf.badged && !p.country_badge) return false;
     if (dxf.sea && !(p.categories || []).some((c) => c === 'beach' || c === 'coast' || c === 'island')) return false;
@@ -618,7 +630,7 @@ export function ExploreTab({
     // showing places that may not match (T442).
     if ((dxf.vibe || dxf.area || dxf.near || dxf.nb.length) && !matchGuided(p, dxf, gctx)) return false;
     return true;
-  }), [rows, dxf, roleFor, gctx]);
+  }), [rows, dxf, roleFor, gctx, flightLimitAvailable, wayMode]);
   // A guided question ranks its answer: nearest first around a place, the
   // strongest vibe first otherwise, while the reader keeps the default sort.
   const guidedRows = React.useMemo(() => {
@@ -676,6 +688,8 @@ export function ExploreTab({
     setOrDrop('xr', xf.roles.join(','));
     setOrDrop('xm', xf.month || '');
     setOrDrop('xb', xf.budget || '');
+    setOrDrop('xbm', xf.bmin || '');
+    setOrDrop('xfh', xf.fh || '');
     const flags = `${xf.nocar ? 'c' : ''}${xf.quiet ? 'q' : ''}${xf.sea ? 's' : ''}${xf.badged ? 'b' : ''}`;
     setOrDrop('xp', flags);
     setOrDrop('xe', xf.vibe || '');
@@ -765,7 +779,7 @@ export function ExploreTab({
     setTopPick(null);
     setReachHours(null);
     setTripKinds([]);
-    setXf({ kinds: [], verdicts: [], roles: [], month: null, budget: null,
+    setXf({ kinds: [], verdicts: [], roles: [], month: null, budget: null, bmin: null, fh: null,
       nocar: false, quiet: false, sea: false, badged: false, vibe: null,
       area: null, near: null, nb: [] });
   };
@@ -778,13 +792,15 @@ export function ExploreTab({
     // and before V3 they made no chip at all.
     for (const k of tripKinds) list.push({ key: `s:${k}`, label: t(`kind.${k}`), remove: () => setTripKinds(tripKinds.filter((x) => x !== k)) });
     if (xf.budget) list.push({ key: 'budget', label: t('explore.budgetUpTo', { eur: formatMoney(xf.budget) }), remove: drop({ budget: null }) });
+    if (xf.bmin) list.push({ key: 'bmin', label: t('filter.budgetFrom', { eur: formatMoney(xf.bmin) }), remove: drop({ bmin: null }) });
+    if (xf.fh && flightLimitAvailable) list.push({ key: 'fh', label: t('filter.flightChip', { n: xf.fh }), remove: drop({ fh: null }) });
     for (const k of xf.kinds) list.push({ key: `k:${k}`, label: t(`pkind.${k}`), remove: drop({ kinds: xf.kinds.filter((x) => x !== k) }) });
     // One chip for the rating, "Excellent and up" (T440): the rail asks for
     // a band and every band above it.
     if (xf.verdicts.length) {
       list.push({ key: 'rating', label: t('filter.ratingAtLeast', { band: t(`score.band${minVerdict(xf.verdicts)}`) }), remove: drop({ verdicts: [] }) });
     }
-    for (const r of xf.roles) list.push({ key: `r:${r}`, label: t(`role.short.${r}`), remove: drop({ roles: xf.roles.filter((x) => x !== r) }) });
+    if (goodForOf(xf.roles)) list.push({ key: 'role', label: t(`filter.goodFor.${goodForOf(xf.roles)}`), remove: drop({ roles: [] }) });
     if (xf.month) list.push({ key: 'month', label: t('gs.whyMonth', { month: gLabels.monthInline(xf.month) }), remove: drop({ month: null }) });
     if (xf.nocar) list.push({ key: 'nocar', label: t('filter.noCar'), remove: drop({ nocar: false }) });
     if (xf.quiet) list.push({ key: 'quiet', label: t('filter.notCrowded'), remove: drop({ quiet: false }) });
@@ -802,8 +818,11 @@ export function ExploreTab({
       list.push({ key: `c:${iso2}`, label: countryNot ? t('settings.countryNot', { country: name }) : name, remove: () => setCountryFilter(countryFilter.filter((x) => x !== iso2)) });
     }
     if (reachAvailable && reachHours != null) list.push({ key: 'reach', label: t('filter.reachHours', { n: reachHours }), remove: () => setReachHours(null) });
+    // T586: a Where search narrows the list, so it shows as a chip too; the
+    // focused view then always says why it holds what it holds.
+    if (locationQuery && locationQuery.trim()) list.push({ key: 'q', label: `“${locationQuery.trim()}”`, remove: () => setLocationQuery('') });
     return list;
-  }, [xf, tripKinds, gemOnly, unescoOnly, showFavOnly, countryFilter, countryNot, reachHours, reachAvailable, availableCountries, t, patchXf, setTripKinds, setGemOnly, setUnescoOnly, setShowFavOnly, setCountryFilter, setReachHours, gLabels, nearRow]);
+  }, [xf, locationQuery, setLocationQuery, flightLimitAvailable, tripKinds, gemOnly, unescoOnly, showFavOnly, countryFilter, countryNot, reachHours, reachAvailable, availableCountries, t, patchXf, setTripKinds, setGemOnly, setUnescoOnly, setShowFavOnly, setCountryFilter, setReachHours, gLabels, nearRow]);
 
   // The filter set last, so an empty grid can name it and offer to remove
   // just that one (brief V3-11). A chip key that was not there a render ago
@@ -978,13 +997,64 @@ export function ExploreTab({
   // grid page: once the reader narrows anything, or puts the map up, the
   // grid is the answer. ExploreRails shows the first three as strips and
   // the rest as one row of doors.
-  const railsIdle = chips.length === 0 && !locationQuery
+  // T586: the idle page is an overview, not every place expanded. "Show all
+  // places" enters the focused list without a filter (xall=1 in the URL),
+  // and the countries do not count as a lens: they belong to the settings
+  // line, so an overview of three countries is still an overview.
+  const [focusAll, setFocusAll] = React.useState(() => (
+    typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('xall') === '1'));
+  const lensChips = chips.filter((c) => !c.key.startsWith('c:')).length;
+  const railsIdle = lensChips === 0 && !locationQuery && !focusAll
     && tripKinds.length === 0 && !showFavOnly && view === 'grid';
+  const lens = useExploreLens({
+    isActive, railsIdle, focusAll, setFocusAll,
+    clear: () => {
+      // Everything a lens set, the settings line's countries excepted.
+      setRatingRange([...FULL_RATING_RANGE]);
+      setGemOnly(false);
+      setUnescoOnly(false);
+      setTopBeachOnly(false);
+      setBigOnly(false);
+      setTopPick(null);
+      setReachHours(null);
+      setTripKinds([]);
+      setShowFavOnly(false);
+      setLocationQuery('');
+      setView('grid');
+      setXf({ kinds: [], verdicts: [], roles: [], month: null, budget: null,
+        nocar: false, quiet: false, sea: false, badged: false, vibe: null,
+        area: null, near: null, nb: [], bmin: null, fh: null });
+      setPickedId(null);
+    },
+  });
+  // T588: Filters opens and closes the side pane on a desktop (the
+  // overview never shows it); Share copies this view's address.
+  const [paneOpen, setPaneOpen] = React.useState(true);
+  const [toast, setToast] = React.useState(null);
+  React.useEffect(() => {
+    if (!toast) return undefined;
+    const h = setTimeout(() => setToast(null), 2600);
+    return () => clearTimeout(h);
+  }, [toast]);
+  const shareView = () => {
+    const fail = () => setToast(t('explore.linkFailed'));
+    try {
+      navigator.clipboard.writeText(window.location.href)
+        .then(() => setToast(t('explore.linkCopied')), fail);
+    } catch { fail(); }
+  };
+  // T585: the start dialog, once per device on a wide screen, and again
+  // from the overview's door.
+  const [startOpen, setStartOpen] = React.useState(false);
+  React.useEffect(() => {
+    if (!isActive || pageOver) return;
+    if (shouldOpenStart()) { markStartSeen(); setStartOpen(true); }
+  }, [isActive, pageOver]);
   const rails = React.useMemo(() => {
     if (!railsIdle) return [];
     // The month the rails speak about: one set by hand, else the month of
     // the traveller's dates, else this month (T427).
-    const month = xf.month || travelMonth || new Date().getMonth() + 1;
+    const month = xf.month || railMonth;
     const monthName = new Intl.DateTimeFormat(lang, { month: 'long' }).format(new Date(2026, month - 1, 15));
     const inSeason = (p) => (p.climate?.best || []).includes(month);
     const byRating = (a, b) => (b.rating?.score || 0) - (a.rating?.score || 0);
@@ -1048,7 +1118,7 @@ export function ExploreTab({
       { key: 'quiet', title: t('rail.quiet'), short: t('rail.quiet'), rows: q.quiet,
         seeAll: () => patchXf({ quiet: true }) },
     ];
-  }, [railsIdle, rows, xf.month, xf.budget, travelMonth, lang, guided, favorites, t, patchXf,
+  }, [railsIdle, rows, xf.month, xf.budget, railMonth, lang, guided, favorites, t, patchXf,
     setGemOnly, setSortKey, setShowFavOnly]);
 
   // The control bar's three instruments. The count is a measured figure,
@@ -1061,39 +1131,29 @@ export function ExploreTab({
   const sortOptions = (xf.vibe || xf.near)
     ? [{ key: 'beauty', labelKey: 'sort.match' }, { key: 'rating', labelKey: 'sort.rating' }, ...SORTS.slice(1)]
     : SORTS;
-  const sortSelect = (
-    <label className="xgrid-sort">
-      <span className="xgrid-sort-label">{t('places.sortLabel')}</span>
-      <span className="xgrid-sort-field">
-        <select value={sortOptions.some((x) => x.key === sortKey) ? sortKey : 'beauty'}
-          onChange={(e) => setSortKey(e.target.value)}
-          aria-label={t('explore.sortAria')}>
-          {sortOptions.map((x) => <option key={x.key} value={x.key}>{t(x.labelKey)}</option>)}
-        </select>
-        <ChevronDownIcon size={14} className="xgrid-sort-chev" />
-      </span>
-    </label>
+  // T588: the sort is a menu behind one pill in the toolbar.
+  const sortMenu = (
+    <SortMenu t={t} options={sortOptions} onChange={setSortKey}
+      value={sortOptions.some((x) => x.key === sortKey) ? sortKey : 'beauty'} />
   );
 
-  // The desktop switch is the kit Segmented (T427). The phone's floating
-  // switch below is redrawn with the map in T441.
-  // One List/Map switch, the kit Segmented, drawn twice: in the top band on
-  // a desktop, floating above the bottom nav on a phone (T441; the phone's
-  // was a dark slab, row T426-d). Reaching it starts loading the map.
-  const viewSwitch = (cls) => (
-    <span className={cls} onPointerEnter={prefetchMap} onFocus={prefetchMap}>
-      <Segmented
-        size="sm"
-        label={t('explore.viewAria')}
-        value={view}
-        onChange={setView}
-        options={[
-          { value: 'grid', label: t('explore.viewList'), icon: <ListDayIcon size={15} /> },
-          { value: 'map', label: t('explore.viewMap'), icon: <MapPinIcon size={15} /> },
-        ]}
-      />
-    </span>
-  );
+  // T592 (owner, 2026-10-22): one toggle, not a List | Map pair. In the
+  // list it offers the map, on the map it offers the list: a secondary pill
+  // with the icon of where it goes. Drawn in the desktop toolbar, floating
+  // above the bottom nav on a phone, and in the map drawer's strip. Reaching
+  // it starts loading the map.
+  const viewSwitch = (cls) => {
+    const toMap = view !== 'map';
+    return (
+      <span className={cls} onPointerEnter={prefetchMap} onFocus={prefetchMap}>
+        <Button variant="secondary" size="sm" className="xview-toggle"
+          iconStart={toMap ? <MapPinIcon size={16} /> : <ListDayIcon size={16} />}
+          onClick={() => setView(toMap ? 'map' : 'grid')}>
+          {t(toMap ? 'explore.viewMap' : 'explore.viewList')}
+        </Button>
+      </span>
+    );
+  };
 
   // The budget steps the rail offers; an old link's 70 euro step (xp=e) shows as its
   // own step (T440 moved the budget into the rail with the month).
@@ -1103,8 +1163,10 @@ export function ExploreTab({
 
   // The six categories (T498): Places is this view; a layer hands over to
   // App with the one country picked here, so the country travels (rule 3).
+  // T586 (owner decision 7): one row of pills at the top of the content,
+  // on a phone and a desktop alike, instead of tiles in the side pane.
   const catTiles = onPickCategory ? (
-    <ExploreCategories current="places" columns={isDesktop ? 2 : 3}
+    <ExploreCategories current="places" variant="row"
       onPick={(key) => onPickCategory(key, oneCountry || '')} />
   ) : null;
 
@@ -1124,6 +1186,9 @@ export function ExploreTab({
       reachAvailable={reachAvailable}
       tripKinds={tripKinds} setTripKinds={setTripKinds}
       onOpenCountry={onOpenCountry}
+      flightLimitAvailable={flightLimitAvailable}
+      count={gridTotal}
+      onClearAll={chips.length ? resetAll : null}
     />
   );
 
@@ -1132,7 +1197,7 @@ export function ExploreTab({
 
 
   return (
-    <div className={`explore-shell${view === 'map' ? ' is-map' : ''}${railsIdle ? ' is-rails' : ''}`}>
+    <div className={`explore-shell${view === 'map' ? ' is-map' : ''}${railsIdle ? ' is-rails is-overview' : ' is-focus'}${paneOpen ? '' : ' is-pane-closed'}`}>
       {askHost}
       {headerSlot && createPortal(<AskChatDoor t={t} className="ac-in-header" />, headerSlot)}
 
@@ -1141,19 +1206,13 @@ export function ExploreTab({
           right. V3 (T383): the trip-style tiles became the rail's first
           group, and Lifestyle and the shortlist moved into the input row
           over the grid, where the figures they change are. */}
-      <aside className="side-panel explore-side" aria-label={t('filter.filters')}>
+      <aside className="side-panel explore-side" id="explore-side" aria-label={t('filter.filters')}>
         <div className="side-block">
           {/* T457: one heading for the panel, so its h3s sit under an h2, as
               on Destinations. */}
           <h2 className="sr-only">{t('filter.filters')}</h2>
-          {/* What Explore holds, first (T498, roadmap 1.3b A): the six
-              categories two across, then this category's filters. */}
-          {catTiles && (
-            <section className="xrail-sec xcats-sec" aria-labelledby="xcats-h">
-              <h3 className="xrail-h" id="xcats-h">{t('places.sideBrowse')}</h3>
-              {catTiles}
-            </section>
-          )}
+          {/* The six categories left the pane for the tab row over the
+              content (T586, owner decision 7). */}
           {/* No "Refine" eyebrow (T440). "Clear all" lives once, in the chips
               row above the list (T444). */}
           {filterRail}
@@ -1170,7 +1229,9 @@ export function ExploreTab({
           {!headerSlot && <AskChatDoor t={t} className="ac-in-bar" />}
           {/* T581: the countries, in or out, as their own door on a phone
               (the desktop has them on the settings line). */}
-          <CountriesButton s={settingsLine} />
+          {/* In the focused view both move into the toolbar (T588). */}
+          {railsIdle && <CountriesButton s={settingsLine} />}
+          {railsIdle && (
           <Button
             variant="secondary"
             ref={filterBtnRef}
@@ -1183,37 +1244,87 @@ export function ExploreTab({
             {t('filter.filters')}
             {chips.length > 0 && <Chip kind="count" className="xfilters-n">{chips.length}</Chip>}
           </Button>
+          )}
         </div>
-        {/* Phone only: the six categories as the 2 x 3 grid under the
-            search row (T498, roadmap 1.3b A). */}
-        {!isDesktop && catTiles && <div className="xcats-bar">{catTiles}</div>}
+        {/* T586: the overview leads with what to look for and where. */}
+        {railsIdle && (
+          <OverviewHero t={t} TitleTag={TitleTag}
+            locationQuery={locationQuery} setLocationQuery={setLocationQuery}
+            onShowAll={() => setFocusAll(true)}
+            onPickCategory={onPickCategory ? (key) => onPickCategory(key, oneCountry || '') : null}
+            onOpenStyles={onOpenStyles ? () => onOpenStyles(null) : null}
+            onTellCarta={isDesktop ? () => setStartOpen(true) : null} />
+        )}
+        {/* The six categories as one row of tabs (T586, owner decision 7). */}
+        {catTiles && <div className="xcats-bar">{catTiles}</div>}
+        {/* The focused view's way back to the overview (T586): a link to
+            the overview's address; Back in the browser does the same. */}
+        {!railsIdle && (
+          <a className="xov-back" href={lens.href}
+            onClick={(e) => { e.preventDefault(); lens.back(); }}>
+            <ArrowLeftIcon size={16} />
+            {t('explore.backOverview')}
+          </a>
+        )}
 
         {/* The control bar: what this page is and how many places it holds
             right now (the count, V3), and the two ways to rearrange them.
             On a phone the title is read but not drawn, so the count is the
             visible line, sharing its row with the sort; the grid/map switch
             floats above the bottom nav instead (.xview-fab). */}
+        {!railsIdle && (
         <div className="xbar">
           <div className="xbar-lead">
             {/* The page's one h1, only while this tab is the one showing:
                 the tab stays mounted under Destinations, and its h1 made a
                 second one there (row T380-g). Hidden, it is a plain div. */}
-            {/* No count beside the title (owner, 2026-10-13): the list is
-                the answer, and an empty one says so in words. */}
-            <TitleTag className="xbar-title">{t('explore.title')}</TitleTag>
+            {/* T588: the title and the live count under it (owner
+                2026-10-22, reversing 2026-10-13). */}
+            <TitleTag className="xbar-title">{t('explore.placesTitle')}</TitleTag>
+            <span className="xbar-count">
+              {t(gridTotal === 1 ? 'explore.countOne' : 'explore.countMany',
+                { n: new Intl.NumberFormat(lang).format(gridTotal) })}
+            </span>
             {isMock && <span className="explore-mock">{t('explore.mockData')}</span>}
           </div>
-          <div className="xbar-tools">
-            {viewSwitch('xview-seg')}
-            {sortSelect}
+          {/* T588: one row of pills: Share, Sort, Filters, Saved, then the
+              countries on a phone and the map toggle last. */}
+          <div className="xbar-tools xtools" role="group" aria-label={t('explore.toolsAria')}>
+            <Button variant="secondary" size="sm" className="xtool" iconStart={<ShareIcon size={18} />}
+              onClick={shareView}>
+              {t('explore.toolShare')}
+            </Button>
+            {sortMenu}
+            <Button
+              variant="secondary"
+              size="sm"
+              ref={filterBtnRef}
+              className={`xtool${isDesktop && paneOpen ? ' is-on' : ''}`}
+              iconStart={<FilterIcon size={18} />}
+              onClick={() => (isDesktop ? setPaneOpen((v) => !v) : setSheetOpen(true))}
+              aria-haspopup={isDesktop ? undefined : 'dialog'}
+              aria-expanded={isDesktop ? paneOpen : sheetOpen}
+              aria-controls={isDesktop ? 'explore-side' : undefined}
+            >
+              {t('filter.filters')}
+              {chips.length > 0 && <Chip kind="count" className="xfilters-n">{chips.length}</Chip>}
+            </Button>
+            <Button variant="secondary" size="sm" className={`xtool${showFavOnly ? ' is-on' : ''}`}
+              iconStart={<BookmarkIcon size={18} />} aria-pressed={showFavOnly}
+              onClick={() => setShowFavOnly(!showFavOnly)}>
+              {t('explore.toolSaved')}
+            </Button>
+            {!isDesktop && <CountriesButton s={settingsLine} className="xtool" />}
+            {viewSwitch('xtool-view')}
           </div>
         </div>
+        )}
 
 
         {/* C6: active filters as removable chips, right under the bar. */}
         {/* On a phone the sort leads the chip row (62-v6-explore.css), so
             the list has one refine row; the bar's own sort shows otherwise. */}
-        <FilterChips t={t} chips={chips} onClearAll={resetAll} lead={sortSelect} />
+        {!railsIdle && <FilterChips t={t} chips={chips} onClearAll={resetAll} />}
 
         {/* The one community surface on a browse tab: a real count of what
             people have published, and one door. Absent entirely when
@@ -1282,23 +1393,18 @@ export function ExploreTab({
                   pickedId={pickedRow ? pickedRow.id : null} onPick={onPick}
                   drawerState={!isDesktop && view === 'map' ? drawer : null} />
               </React.Suspense>
-              {/* T504 (roadmap 1.5 C): the picked place on a desktop map,
-                  the same overview its list row shows, docked at the foot
-                  of the map with its own close. */}
-              {isDesktop && view === 'map' && pickedRow && (
-                <div className="xmap-picked" role="group" aria-label={pickedRow.city}>
-                  <PlaceOverview p={pickedRow} {...overviewOf(pickedRow)} t={t} selected
-                    fav={favSet.has(pickedRow.id)} onToggleFav={onToggleFav}
-                    onOpen={() => openPlace(pickedRow.id)} />
-                  <IconButton label={t('detail.close')} tone="plain" className="xmap-picked-close"
-                    onClick={() => onPick(null)}>
-                    <CloseIcon size={16} />
-                  </IconButton>
-                </div>
+              {/* T592 (owner decision 6): the map the Kayak way. On a
+                  desktop the panel floats on the left over the map: the
+                  places on the map, or the picked one with its trip box.
+                  On a phone the same panel is the drawer's body; the strip
+                  holds the toggle back to the list. */}
+              {isDesktop && view === 'map' && (
+                <MapPlacePanel t={t}
+                  rows={shownRows.slice(0, DRAWER_MAX)} count={shownRows.length}
+                  picked={pickedRow} overviewOf={overviewOf}
+                  onPick={onPick} onBack={() => setPickedId(null)} onOpen={openPlace}
+                  favSet={favSet} onToggleFav={onToggleFav} />
               )}
-              {/* On a phone the map lies under T500's drawer: the strip holds
-                  List | Map and the handle; half and full hold the places on
-                  the map as the same overview rows, the picked one first. */}
               {!isDesktop && view === 'map' && (
                 <MapDrawer
                   className="xdrawer"
@@ -1308,18 +1414,11 @@ export function ExploreTab({
                   labels={{ strip: t('explore.drawerStrip'), half: t('drawer.half'), full: t('drawer.full') }}
                   strip={viewSwitch('xview-strip')}
                 >
-                  <div className="xrows xdrawer-rows">
-                    {pickedRow && (
-                      <PlaceOverview key={`picked-${pickedRow.id}`} p={pickedRow} {...overviewOf(pickedRow)} t={t} selected
-                        fav={favSet.has(pickedRow.id)} onToggleFav={onToggleFav}
-                        onOpen={() => openPlace(pickedRow.id)} />
-                    )}
-                    {shownRows.slice(0, DRAWER_MAX).filter((p) => p.id !== pickedRow?.id).map((p) => (
-                      <PlaceOverview key={p.id} p={p} {...overviewOf(p)} t={t}
-                        fav={favSet.has(p.id)} onToggleFav={onToggleFav}
-                        onOpen={() => openPlace(p.id)} />
-                    ))}
-                  </div>
+                  <MapPlacePanel t={t} compact
+                    rows={shownRows.slice(0, DRAWER_MAX)} count={shownRows.length}
+                    picked={pickedRow} overviewOf={overviewOf}
+                    onPick={onPick} onBack={() => setPickedId(null)} onOpen={openPlace}
+                    favSet={favSet} onToggleFav={onToggleFav} />
                 </MapDrawer>
               )}
             </div>
@@ -1336,10 +1435,18 @@ export function ExploreTab({
             {railsIdle && (
               <ExploreRails rails={rails} onSelect={openPlace} t={t}
                 favorites={favSet} onToggleFav={onToggleFav}
+                month={xf.month || railMonth}
                 lead={(isDesktop ? 4 : 3) - (onOpenStyles ? 1 : 0)} />
             )}
-            {railsIdle && listed.length > 0 && (
-              <h2 className="xlist-title">{t('explore.allPlaces')}</h2>
+            {/* The overview ends in one door to every place (T586); the
+                list under it shows only in the focused view. */}
+            {railsIdle && (
+              <div className="xov-end">
+                <Button variant="secondary" onClick={() => setFocusAll(true)}>
+                  {t('explore.showAllPlaces')}
+                </Button>
+                {viewSwitch('xov-view')}
+              </div>
             )}
 
             {gridTotal === 0 && (
@@ -1373,10 +1480,11 @@ export function ExploreTab({
               </EmptyResult>
             )}
 
-            <div className={`xrows${pending ? ' is-pending' : ''}`} aria-busy={pending || undefined}>
+            <div className={`xrows xrows--cards${pending ? ' is-pending' : ''}`} aria-busy={pending || undefined}>
               {listed.map((p) => (
                 <ExploreCard
                   key={p.id}
+                  layout="card"
                   p={p}
                   role={roleFor(p)}
                   selected={p.id === (pickedId || selectedId)}
@@ -1399,6 +1507,7 @@ export function ExploreTab({
           </div>
         </div>
       </div>
+      <SiteFooter />
 
       {viewSwitch('xview-fab')}
       </div>
@@ -1408,6 +1517,13 @@ export function ExploreTab({
           rail already owns both, and the sheet rendering its own country
           dropdown on top of the rail's would be the duplicate control this
           change exists to remove. */}
+      {startOpen && <StartDialog t={t} onClose={() => setStartOpen(false)} />}
+
+      {/* T588: Share's answer, in the bottom slot. */}
+      <div className="xtoast-slot" role="status" aria-live="polite">
+        {toast && <p className="xtoast">{toast}</p>}
+      </div>
+
       {sheetOpen && (
         <PlacesFilterSheet
           onClose={() => setSheetOpen(false)}
@@ -1421,5 +1537,223 @@ export function ExploreTab({
         />
       )}
     </div>
+  );
+}
+
+// T586: the URL keys a lens sets. The overview's address keeps the rest
+// (the countries, the sort), so Back lands on the same overview.
+const LENS_KEYS = ['xk', 'xv', 'xr', 'xm', 'xb', 'xp', 'xe', 'xa', 'xn', 'xd', 'xg', 'xu', 'xw', 'xi', 'xall'];
+function overviewHref() {
+  if (typeof window === 'undefined') return '';
+  const q = new URLSearchParams(window.location.search);
+  for (const k of LENS_KEYS) q.delete(k);
+  const qs = q.toString();
+  return `${window.location.pathname}${qs ? '?' + qs : ''}${window.location.hash}`;
+}
+
+/**
+ * The overview and its lenses as history (T586). Entering a focused view
+ * (a chip, See all, Show all places, a search) is one history step, so the
+ * browser's Back returns to the overview; filters changed inside a lens
+ * replace that step as before. The step carries `cartaLens` in its state,
+ * and a page opened from the lens spreads the state, so stepping back from
+ * a place lands in the lens, not on the overview.
+ */
+function useExploreLens({ isActive, railsIdle, focusAll, setFocusAll, clear }) {
+  const clearRef = React.useRef(clear);
+  clearRef.current = clear;
+  const pushed = React.useRef(false);
+  const idleRef = React.useRef(railsIdle);
+  const wasIdle = React.useRef(railsIdle);
+  // "Show all places" rides the URL as xall=1. Declared after the filter
+  // writer in ExploreTab, so it runs after it and keeps its keys.
+  React.useEffect(() => {
+    if (!isActive) return;
+    const q = new URLSearchParams(window.location.search);
+    if (focusAll) q.set('xall', '1'); else q.delete('xall');
+    const qs = q.toString();
+    try {
+      window.history.replaceState(window.history.state, '',
+        `${window.location.pathname}${qs ? '?' + qs : ''}${window.location.hash}`);
+    } catch { /* sandboxed */ }
+  }, [focusAll, isActive]);
+  React.useEffect(() => {
+    idleRef.current = railsIdle;
+    if (!isActive) { wasIdle.current = railsIdle; return; }
+    try {
+      const st = window.history.state || {};
+      if (railsIdle && st.cartaLens) {
+        // Back on the overview by a chip or the link: this step is the
+        // overview now, so a later lens steps back onto it.
+        const { cartaLens: _drop, ...rest } = st;
+        window.history.replaceState(rest, '', window.location.href);
+      } else if (!railsIdle && wasIdle.current) {
+        const lensUrl = window.location.href;
+        window.history.replaceState(st, '', overviewHref());
+        window.history.pushState({ ...st, cartaLens: 1 }, '', lensUrl);
+        pushed.current = true;
+      }
+    } catch { /* sandboxed: the views still change */ }
+    wasIdle.current = railsIdle;
+  }, [railsIdle, isActive]);
+  React.useEffect(() => {
+    const onPop = (e) => {
+      if (!pushed.current || idleRef.current) return;
+      if ((e.state || {}).cartaLens) return;
+      clearRef.current();
+      setFocusAll(false);
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, [setFocusAll]);
+  const back = React.useCallback(() => {
+    // The link always clears the lens in place. Stepping back through
+    // history missed whenever a place page or the map had pushed their own
+    // steps on top of the lens; the browser's Back still pops the lens.
+    clearRef.current();
+    setFocusAll(false);
+  }, [setFocusAll]);
+  return { back, href: overviewHref() };
+}
+
+/**
+ * The overview's head (T586): a headline with a verb, then the Komoot-style
+ * bar, "What" over a select of Explore's kinds and "Where" over the place
+ * search, with one secondary Search. Places with a place name searches the
+ * catalogue; Places alone opens every place; another kind hands over to its
+ * tab, as its pill in the tab row does. Beside the bar, on a wide screen,
+ * a quiet door to tell Carta in words.
+ */
+function OverviewHero({
+  t, TitleTag, locationQuery, setLocationQuery, onShowAll, onPickCategory, onOpenStyles, onTellCarta,
+}) {
+  const [what, setWhat] = React.useState('places');
+  const [where, setWhere] = React.useState(locationQuery || '');
+  const kinds = EXPLORE_TILES.filter((k) => k.key === 'places' || onPickCategory);
+  const submit = (e) => {
+    e.preventDefault();
+    if (what === 'styles') { onOpenStyles?.(); return; }
+    if (what !== 'places') { onPickCategory?.(what); return; }
+    const q = where.trim();
+    if (q) setLocationQuery(q); else onShowAll();
+  };
+  return (
+    <section className="xov-hero" aria-labelledby="xov-title">
+      <TitleTag className="xov-title" id="xov-title">{t('explore.heroTitle')}</TitleTag>
+      <form className="xov-bar" role="search" aria-label={t('explore.heroSearchAria')} onSubmit={submit}>
+        <Field as="select" className="xov-what" label={t('explore.heroWhat')}
+          value={what} onChange={(e) => setWhat(e.target.value)}>
+          {kinds.map(({ key, labelKey }) => <option key={key} value={key}>{t(labelKey)}</option>)}
+          {onOpenStyles && <option value="styles">{t('journey.rowStyles')}</option>}
+        </Field>
+        <div className="xov-where">
+          <Field type="search" label={t('explore.heroWhere')} value={where}
+            disabled={what !== 'places'} autoComplete="off" enterKeyHint="search"
+            onChange={(e) => setWhere(e.target.value)} />
+          <SearchIcon size={18} className="xov-where-icon" />
+        </div>
+        <Button type="submit" variant="secondary" className="xov-go" iconStart={<SearchIcon size={18} />}>
+          {t('explore.heroSearch')}
+        </Button>
+      </form>
+      {onTellCarta && (
+        <Button variant="quiet" size="sm" className="xov-door" iconStart={<SparkIcon size={16} />}
+          onClick={onTellCarta}>
+          {t('explore.heroDoor')}
+        </Button>
+      )}
+    </section>
+  );
+}
+
+/**
+ * Sort as a menu behind one pill (T588): the choices as menu radios, the
+ * current one ticked. Arrow keys, Home and End move inside it; Escape, a
+ * pick or a press outside closes it and focus goes back to the pill. The
+ * menu is fixed under the pill, so the toolbar's sideways scroll on a
+ * phone does not clip it.
+ */
+function SortMenu({ t, options, value, onChange }) {
+  const [pos, setPos] = React.useState(null);
+  const btnRef = React.useRef(null);
+  const menuRef = React.useRef(null);
+  const id = React.useId();
+  const cur = options.find((o) => o.key === value) || options[0];
+  const open = pos != null;
+  const close = React.useCallback((refocus) => {
+    setPos(null);
+    if (refocus) btnRef.current?.focus();
+  }, []);
+  const toggle = () => {
+    if (open) { close(false); return; }
+    const r = btnRef.current.getBoundingClientRect();
+    const width = 220;
+    setPos({
+      top: Math.round(r.bottom + 4),
+      left: Math.round(Math.max(16, Math.min(r.left, window.innerWidth - width - 16))),
+    });
+  };
+  React.useEffect(() => {
+    if (!open) return undefined;
+    menuRef.current?.querySelector('[aria-checked="true"]')?.focus();
+    const onDown = (e) => {
+      if (menuRef.current?.contains(e.target) || btnRef.current?.contains(e.target)) return;
+      close(false);
+    };
+    const onKey = (e) => {
+      if (e.key !== 'Escape') return;
+      e.stopPropagation();
+      close(true);
+    };
+    const onScroll = (e) => { if (!menuRef.current?.contains(e.target)) close(false); };
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('keydown', onKey, true);
+    window.addEventListener('scroll', onScroll, true);
+    window.addEventListener('resize', onScroll);
+    return () => {
+      document.removeEventListener('mousedown', onDown);
+      document.removeEventListener('keydown', onKey, true);
+      window.removeEventListener('scroll', onScroll, true);
+      window.removeEventListener('resize', onScroll);
+    };
+  }, [open, close]);
+  const onMenuKey = (e) => {
+    const items = [...menuRef.current.querySelectorAll('[role="menuitemradio"]')];
+    const i = items.indexOf(document.activeElement);
+    let next = null;
+    if (e.key === 'ArrowDown') next = items[(i + 1) % items.length];
+    else if (e.key === 'ArrowUp') next = items[(i - 1 + items.length) % items.length];
+    else if (e.key === 'Home') next = items[0];
+    else if (e.key === 'End') next = items[items.length - 1];
+    else if (e.key === 'Tab') { close(false); return; }
+    if (next) { e.preventDefault(); next.focus(); }
+  };
+  return (
+    <>
+      <Button ref={btnRef} variant="secondary" size="sm" className={`xtool${open ? ' is-open' : ''}`}
+        iconStart={<SortIcon size={18} />} aria-haspopup="menu" aria-expanded={open}
+        aria-controls={open ? id : undefined}
+        aria-label={`${t('places.sortLabel')}: ${t(cur.labelKey)}`}
+        onClick={toggle}>
+        {t('explore.toolSort')}
+      </Button>
+      {open && createPortal(
+        <div className="xsort-menu" role="menu" id={id} ref={menuRef} aria-label={t('places.sortLabel')}
+          style={{ top: pos.top, left: pos.left }} onKeyDown={onMenuKey}>
+          {options.map((o) => {
+            const on = o.key === cur.key;
+            return (
+              <Button key={o.key} variant="quiet" size="sm" role="menuitemradio" aria-checked={on}
+                tabIndex={-1} className={`xsort-item${on ? ' is-on' : ''}`}
+                iconEnd={on ? <CheckIcon size={16} /> : null}
+                onClick={() => { onChange(o.key); close(true); }}>
+                {t(o.labelKey)}
+              </Button>
+            );
+          })}
+        </div>,
+        document.body,
+      )}
+    </>
   );
 }

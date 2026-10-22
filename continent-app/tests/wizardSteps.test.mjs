@@ -49,7 +49,8 @@ const t = (key, vars = {}) => {
 
 test("a day cost is one visible phrase and one spoken phrase", () => {
   const est = dayCostText({ min: 86.6, national: true }, t, "en");
-  assert.equal(est.visible, "~€87 est.");
+  // T590 (owner decision 4): the tilde alone, the estimate word left the screen.
+  assert.equal(est.visible, "~€87");
   assert.equal(est.spoken, "about €87");
   const measured = dayCostText({ min: 41, national: false }, t, "en");
   assert.equal(measured.visible, "€41");

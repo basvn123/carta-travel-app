@@ -1,0 +1,69 @@
+/* The site footer (T594): a quiet band on --surface-sunken at the end of every
+   tab's content. Link columns, 4 across from 1024 px, 2 across below. */
+.site-footer {
+  background: var(--surface-sunken);
+  border-top: 1px solid var(--border-soft);
+  margin-top: var(--space-8);
+  color: var(--text-2);
+  font-size: var(--text-body);
+}
+.site-footer-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: var(--space-7) var(--space-5) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+.site-footer-brand { display: flex; flex-direction: column; gap: var(--space-3); max-width: 44ch; }
+.site-footer-line { margin: 0; color: var(--text-2); font-size: var(--text-body); line-height: 1.5; }
+.site-footer-cols {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-6) var(--space-5);
+}
+.site-footer-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.site-footer-h {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.3;
+}
+.site-footer-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  color: var(--text-2);
+  font-size: var(--text-body);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+  border-radius: var(--radius-sm);
+}
+.site-footer-link:hover { color: var(--text); text-decoration: underline; text-underline-offset: 3px; }
+.site-footer-link:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.site-footer-base {
+  margin: 0;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+  color: var(--text-3);
+  font-size: var(--text-caption);
+}
+@media (pointer: coarse) {
+  .site-footer-link { min-height: var(--tap); }
+}
+@media (min-width: 1024px) {
+  .site-footer-inner { padding-left: var(--space-5); padding-right: var(--space-5); }
+  .site-footer-cols { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (max-width: 768px) {
+  /* The explore wrap pads for the bottom nav already; the other tab containers
+     end above it, so the band only needs its own breathing room. */
+  .site-footer { margin-top: var(--space-7); }
+  .site-footer-inner { padding: var(--space-6) var(--space-4) var(--space-5); }
+}
+/* Explore's map view is a full-bleed workspace, not a page: no footer. */
+.explore-shell.is-map .site-footer { display: none; }
+/* On a phone .explore-wrap reserves room for the bottom nav below its content;
+   with the footer after it, the footer takes that place instead. */
+.explore-wrap:has(+ .site-footer) { padding-bottom: 0; }

@@ -1,3 +1,4 @@
+import { SiteFooter } from '../components/SiteFooter.jsx';
 import React, { useEffect, useRef, useState } from 'react';
 import { useI18n, LANGUAGES } from '../i18n/index.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
@@ -285,6 +286,7 @@ export default function PricingPage({ onBack = null, backLabel = '' }) {
             <a className="prc-terms" href="?legal=terms" onClick={(ev) => { ev.preventDefault(); setTermsOpen(true); }}>{t('pass.terms')}</a>
           </p>
         </div>
+        <SiteFooter />
       </div>
       {termsOpen && <TermsOfService onClose={() => setTermsOpen(false)} />}
     </div>

@@ -1295,3 +1295,13 @@ export function HotelIcon({ size = 15, className = '', labelled = false }) {
     </Glyph>
   );
 }
+
+/* Sort: two arrows, one up and one down (T588, Explore's Sort menu). */
+export function SortIcon({ size = 18, className = '', labelled = false }) {
+  return (
+    <Glyph size={size} className={className} labelled={labelled} label="Sort">
+      <path d="M8 19V5M4.5 8.5 8 5l3.5 3.5" />
+      <path d="M16 5v14M12.5 15.5 16 19l3.5-3.5" />
+    </Glyph>
+  );
+}

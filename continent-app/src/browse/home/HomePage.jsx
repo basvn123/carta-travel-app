@@ -1,3 +1,4 @@
+import { SiteFooter } from '../../components/SiteFooter.jsx';
 import React from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { Button, Chip } from '../../components/ui/index.js';
@@ -264,6 +265,7 @@ export function HomePage({
 
         <HomeCredits t={t} photos={photos} />
       </div>
+      <SiteFooter />
     </div>
   );
 }

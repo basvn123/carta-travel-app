@@ -73,14 +73,13 @@ try {
   const cardText = await page.locator('.xrow').first().innerText();
   check('the card names a price in euros', /€\d/.test(cardText), cardText.replace(/\n/g, ' | ').slice(0, 90));
 
-  // T427 (owner decision 2026-10-13): a stand-in figure carries the estimate
-  // mark, the tilde joined to the figure and the word after it, and nothing
-  // else says where it came from. Carta still prices no flight (T279-a): no
-  // "not a live quote" title anywhere on a card.
+  // T590 (owner decision 4, 2026-10-22): a stand-in figure carries the tilde
+  // alone, never the estimate word, and nothing else says where it came
+  // from: no "not a live quote" title anywhere on a card.
   const prices = await page.locator('.xrow .xprice').allInnerTexts();
   const cardTitles = await page.locator('.xrow [title]').evaluateAll((els) => els.map((e) => e.title).join('\n'));
-  check('every tilde on a card comes with the estimate word',
-    prices.every((p) => !p.includes('~') || /est\./.test(p)) && !/not a live quote/i.test(cardTitles),
+  check('no card prints the estimate word',
+    prices.every((p) => !/\best\./.test(p)) && !/not a live quote/i.test(cardTitles),
     prices.slice(0, 3).join(' | '));
   check('no card says national or names a source',
     !(await page.locator('.xrow').allInnerTexts()).some((s) => /\bnational\b/i.test(s)));

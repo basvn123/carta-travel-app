@@ -1,7 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Strip } from './SectionOpening.jsx';
-import { StyleCard, JourneyCard, RAIL_SIZES } from './JourneyCards.jsx';
-import { loadJourneyIndex, loadAllJourneyCards } from '../lib/journeys.js';
+import { JourneyCard, RAIL_SIZES } from './JourneyCards.jsx';
+import { StoryRail, StoryCard, STORY_SIZES } from './StoryRail.jsx';
+import { HeroImage } from '../components/HeroImage.jsx';
+import { PiggyIcon } from '../components/Icons.jsx';
+import { Money } from '../components/ui/index.js';
+import { loadJourneyIndex, loadAllJourneyCards, typeLabel, typeDesc } from '../lib/journeys.js';
 import { fitLength, lengthOptions, readTripLength } from '../lib/tripLength.js';
 import { inCountry, lowestPerDay, weeksFor } from '../lib/tripFilters.js';
 
@@ -14,6 +18,9 @@ import { inCountry, lowestPerDay, weeksFor } from '../lib/tripFilters.js';
  *
  * A rail with nothing to show is absent, not an empty box: both return null
  * while loading and when empty.
+ *
+ * T587: the styles row is a StoryRail (StoryRail.jsx); the weeks row on the
+ * country and region pages stays a Strip.
  */
 
 const LEAD_STYLE = 'hiking';
@@ -61,14 +68,48 @@ export function TripStylesRow({ t, lang: _lang, country = null, onPick, onSeeAll
   }, [library, styles, length, country]);
 
   if (!styles.length) return null;
+  const lows = styles.map((tp) => perDay[tp.slug]).filter(Number.isFinite);
+  const facts = lows.length
+    ? [{ key: 'from', icon: PiggyIcon, text: withMoney(t('rail.factFrom', { price: SLOT }), <Money value={Math.min(...lows)} est />) }]
+    : [];
+  // T587: a StoryRail, the lead card holding the heading and "See all", the
+  // styles as tall photo cards (no Score and no status: a style has neither).
   return (
-    <Strip id={id} title={t('journey.rowStyles')} onSeeAll={onSeeAll} t={t} className="jrail jrail-styles">
+    <StoryRail id={id} title={t('journey.rowStyles')} line={t('rail.line.styles')} facts={facts}
+      onSeeAll={onSeeAll} t={t} className="jrail-styles">
       {styles.map((tp) => (
-        <li key={tp.slug} className="dtab-item">
-          <StyleCard type={tp} perDay={perDay[tp.slug]} onPick={onPick} t={t} sizes={RAIL_SIZES} />
-        </li>
+        <StyleStoryCard key={tp.slug} type={tp} perDay={perDay[tp.slug]} onPick={onPick} t={t} />
       ))}
-    </Strip>
+    </StoryRail>
+  );
+}
+
+const SLOT = '\u0001';
+/** A sentence with the kit's Money in its one slot. */
+function withMoney(text, money) {
+  const at = text.indexOf(SLOT);
+  if (at < 0) return text;
+  return <>{text.slice(0, at)}{money}{text.slice(at + SLOT.length)}</>;
+}
+
+/** One style as a StoryRail photo card: the photograph of people doing it,
+ *  the name, one line of what the week is, and "From {price} a person a
+ *  day", the cheapest of its weeks at the list's length. */
+function StyleStoryCard({ type, perDay, onPick, t }) {
+  const name = typeLabel(type.slug, t, type.name);
+  const desc = typeDesc(type.slug, t);
+  return (
+    <StoryCard
+      className="jstyle-story"
+      data-style={type.slug}
+      photo={<HeroImage url={type.hero?.url} city={name} maxWidth={640} sizes={STORY_SIZES} ratio={[4, 5]} />}
+      title={name}
+      onOpen={() => onPick(type.slug)}
+      meta={desc ? <span>{desc}</span> : null}
+      price={Number.isFinite(perDay)
+        ? <span className="xprice">{withMoney(t('journey.fromPpDay', { eur: SLOT }), <Money value={perDay} est />)}</span>
+        : <span className="jcap-fig is-none">{t('journey.fromNone')}</span>}
+    />
   );
 }
 

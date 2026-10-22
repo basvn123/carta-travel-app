@@ -51,21 +51,18 @@ import { CostBar } from '../browse/CostBar.jsx';
  * region on the sum is not torn down and rebuilt either.
  */
 
-/** A figure, with the tilde and the est. tag when it stands in for a
- *  measurement, set exactly as <Money est> sets it (T537: one estimate
- *  notation, "~€87.00 est."; the receipt used to draw its own tilde span and
- *  an 11 px abbr beside the kit's mark on the same card). The tag carries its
- *  meaning as text, never colour alone. `precision` is cents on a receipt,
+/** A figure, with the tilde when it stands in for a measurement, set exactly
+ *  as <Money est> sets it (T537: one estimate notation; T590: the tilde
+ *  alone on screen, the estimate word left it). The meaning is spoken as
+ *  text, never colour alone. `precision` is cents on a receipt,
  *  whole on the budget search (owner, 1.8). */
 export function ReceiptFigure({ eur, est, t, precision = 'cents' }) {
   if (!est) return <span className="money">{formatMoney(eur, { precision })}</span>;
   return (
     <span className="money is-est">
-      {formatApprox(eur, { precision })}
-      <abbr className="money-est" title={t('prov.estTitle')}>
-        <span aria-hidden="true">{` ${t('prov.est')}`}</span>
-        <span className="sr-only">{` ${t('prov.estTitle')}`}</span>
-      </abbr>
+      {/* T590: the tilde is the mark on screen; the meaning stays spoken. */}
+      <span title={t('prov.estTitle')}>{formatApprox(eur, { precision })}</span>
+      <span className="sr-only">{` ${t('prov.estTitle')}`}</span>
     </span>
   );
 }
