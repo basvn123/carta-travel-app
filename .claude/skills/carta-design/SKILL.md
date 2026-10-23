@@ -368,7 +368,7 @@ Photography leads, and every photo is real and licensed with its credit (`docs/t
   carries words (T620, owner after Mindtrip and Komoot): one even tint over the whole film
   (`--home-film-tint`, never a gradient), and on it the slogan, one line and Ask Carta's field, whose
   "Ask Carta" is the page's one primary (T621), in white with a soft shadow under the words; on a wider
-  screen the app header lies on the film, transparent and white, until the film has scrolled by (T621).
+  screen the app header lies on the film, white on one flat `--home-film-bar` (T623), until the film has scrolled by (T621).
   The film's clips carry no credit on the page (owner, T621; the Pexels License asks for none). No other
   scrim, no gradient, no alpha band; every other credit on the caption line under its picture.
   Everywhere else the rule above holds.

@@ -13,8 +13,8 @@
  *             (T620, T621), the slogan, the line and Ask Carta stand on it
  *             under one tint, and nothing else sits on it or under it (no
  *             pill, no bars, no pause, no credit line)
- *   header    (desktop) the app header is transparent and white on the film
- *             and the usual bar once the film has scrolled by (T621)
+ *   header    (desktop) the app header is white on a see-through ink bar on
+ *             the film (T623) and the usual bar once the film has scrolled by
  *   film      a clip plays and the film moves on to the next shot by itself
  *   week      the week card shows one total and its lines; another place
  *             changes the total in place
@@ -139,6 +139,12 @@ async function run(browser, vp) {
         + document.querySelectorAll('.hv-film-credit').length,
       tint: getComputedStyle(document.querySelector('.hv-film'), '::after').backgroundColor,
       winGap: Math.round(window.innerWidth - r.width),
+      // The whole placeholder shows (T623): measured in the field's own font.
+      cut: (() => {
+        const i = document.querySelector('#hv-ask'); const cs = getComputedStyle(i);
+        const c = document.createElement('canvas').getContext('2d'); c.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+        return c.measureText(i.placeholder).width > i.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) + 1;
+      })(),
       // The page hides sideways overflow, so hscroll cannot see a field
       // that runs off the film: every word and control must end inside it.
       spill: [...stage.querySelectorAll('.hv-hero-copy *')].filter((e) => {
@@ -147,8 +153,8 @@ async function run(browser, vp) {
       }).length,
     };
   });
-  check(k, 'hero', hero.wGap <= 1 && hero.winGap <= 1 && hero.hShare >= 0.95 && hero.spill === 0 && hero.words && hero.extras === 0 && /^(rgba?|color)\(/.test(hero.tint),
-    `gap to page ${hero.wGap}px, to window ${hero.winGap}px, ${Math.round(hero.hShare * 100)}% of the page box, words on film ${hero.words}, ${hero.spill} spilling, ${hero.extras} extras, tint ${hero.tint}`);
+  check(k, 'hero', hero.wGap <= 1 && hero.winGap <= 1 && hero.hShare >= 0.95 && hero.spill === 0 && !hero.cut && hero.words && hero.extras === 0 && /^(rgba?|color)\(/.test(hero.tint),
+    `gap to page ${hero.wGap}px, to window ${hero.winGap}px, ${Math.round(hero.hShare * 100)}% of the page box, words on film ${hero.words}, ${hero.spill} spilling, placeholder cut ${hero.cut}, ${hero.extras} extras, tint ${hero.tint}`);
 
   // The header on the film (T621, wider screens): transparent and white over
   // the film, the usual bar once the film has scrolled by.
@@ -166,9 +172,11 @@ async function run(browser, vp) {
     const under = await bar('top');
     const past = await bar('past');
     await bar('top');
-    const clear = (c) => /rgba\(0, 0, 0, 0\)|transparent/.test(c);
-    check(k, 'header', under.state === 'under' && clear(under.bg) && /255, 255, 255/.test(under.ink) && under.overlap === 0
-      && past.state === 'past' && !clear(past.bg),
+    // Under the film the bar is a see-through ink (T623: --home-film-bar,
+    // 30 percent); past it, the usual opaque bar.
+    const alpha = (c) => { const m = c.match(/\/\s*([\d.]+)\)|rgba\([^)]*,\s*([\d.]+)\)/); return m ? Number(m[1] ?? m[2]) : 1; };
+    check(k, 'header', under.state === 'under' && alpha(under.bg) > 0.2 && alpha(under.bg) < 0.4 && /255, 255, 255/.test(under.ink) && under.overlap === 0
+      && past.state === 'past' && alpha(past.bg) === 1,
       `top: ${under.state}, ${under.bg}, ink ${under.ink}, film at ${under.overlap}px; past: ${past.state}, ${past.bg}`);
   }
 
@@ -298,7 +306,11 @@ async function run(browser, vp) {
     film: document.documentElement.dataset.homeFilm || null,
     bar: getComputedStyle(document.querySelector('.top-bar')).backgroundColor,
   }));
-  check(k, 'ask', asked.qs === 1 && !asked.film, `chat open in ${opened} ms, ${asked.qs} question(s) asked, header ${asked.bar}`);
+  const ring = await page.evaluate(() => {
+    const h = document.querySelector('.ac-title');
+    return h && document.activeElement === h ? getComputedStyle(h).outlineStyle : 'n/a';
+  });
+  check(k, 'ask', asked.qs === 1 && !asked.film && (ring === 'none' || ring === 'n/a'), `chat open in ${opened} ms, ${asked.qs} question(s) asked, header ${asked.bar}, title ring ${ring}`);
   check(k, 'console', errors.length === 0, errors.slice(0, 3).join(' | '));
   await ctx.close();
 }

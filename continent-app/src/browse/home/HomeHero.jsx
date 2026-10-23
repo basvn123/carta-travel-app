@@ -54,7 +54,9 @@ export function HomeHero({ onSearch, titleAs = 'h1', children }) {
  *  with nothing typed opens the chat there. Explore's vocabulary and the
  *  chat's own code are fetched the moment the field is pointed at or
  *  touched. `primary` makes its button the page's one primary, "Ask Carta"
- *  with the spark (the hero); otherwise it is a quiet "Ask". */
+ *  with the spark (the hero); otherwise it is a quiet "Ask". The glyph and
+ *  the field share a box (T623): on a phone the hero puts the primary under
+ *  it at full width, so the whole placeholder shows in every language. */
 const warmChat = () => import('../ask/AskChat.jsx').catch(() => {});
 export function AskField({ t, onSearch, id, primary = false }) {
   const [text, setText] = React.useState('');
@@ -66,10 +68,12 @@ export function AskField({ t, onSearch, id, primary = false }) {
   };
   return (
     <form className="hv-ask" role="search" onSubmit={ask} onPointerEnter={warm} onPointerDown={warm} onFocus={warm}>
-      <span className="hv-ask-glyph" aria-hidden="true"><SearchIcon size={20} /></span>
-      <input id={id} className="hv-ask-input" type="text" value={text} maxLength={200}
-        onChange={(e) => setText(e.target.value)} aria-label={t('ask.inputLabel')}
-        placeholder={t('home.askPlaceholder')} autoComplete="off" spellCheck={false} enterKeyHint="search" />
+      <span className="hv-ask-box">
+        <span className="hv-ask-glyph" aria-hidden="true"><SearchIcon size={20} /></span>
+        <input id={id} className="hv-ask-input" type="text" value={text} maxLength={200}
+          onChange={(e) => setText(e.target.value)} aria-label={t('ask.inputLabel')}
+          placeholder={t('home.askPlaceholder')} autoComplete="off" spellCheck={false} enterKeyHint="search" />
+      </span>
       {primary ? (
         <Button type="submit" variant="primary" className="hv-ask-go hv-ask-go-main" iconStart={<SparkIcon size={18} />}>
           {t('askChat.open')}

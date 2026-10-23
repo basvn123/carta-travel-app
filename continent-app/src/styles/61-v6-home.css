@@ -180,6 +180,7 @@ a.hv-pill:hover { background: var(--surface-hover); }
   justify-content: space-between;
   gap: var(--space-3);
   padding: var(--space-3) var(--gutter);
+  background: var(--home-film-bar); /* the same flat bar as the desktop header on the film (T623) */
   --text: var(--home-ink-on-deep);
   --border: color-mix(in srgb, var(--home-ink-on-deep) 45%, transparent);
 }
@@ -249,6 +250,9 @@ a.hv-pill:hover { background: var(--surface-hover); }
 .hv-ask:focus-within { border-color: var(--action); outline: 2px solid var(--focus); outline-offset: 2px; }
 .hv-hero .hv-ask { border-color: transparent; box-shadow: var(--elev-2); }
 .hv-hero .hv-ask:focus-within { outline-color: var(--home-ink-on-deep); }
+/* The glyph and the field's box (T623): no box of its own unless the
+   phone's hero gives it one (below). */
+.hv-ask-box { display: contents; }
 .hv-ask-glyph { display: inline-flex; color: var(--text-2); }
 .hv-ask-input {
   flex: 1;
@@ -267,7 +271,34 @@ a.hv-pill:hover { background: var(--surface-hover); }
 .hv-ask-go { min-height: var(--tap); border-radius: var(--radius-pill); }
 /* The hero's field: one tall pill, "Ask Carta" its primary (T621). */
 .hv-hero .hv-ask { min-height: 64px; padding: var(--space-2) var(--space-2) var(--space-2) var(--space-5); }
-.hv-ask-go-main { flex: none; min-height: 48px; padding-inline: var(--space-4); font-size: var(--text-body); }
+.hv-ask-go-main { flex: none; min-height: 48px; padding-inline: var(--space-5); font-size: var(--text-lead); }
+/* On a phone the field takes the whole width, so "A place, a month or a
+   budget" is never cut, and "Ask Carta" stands under it at full width
+   (T623, register T621-b). */
+@media (max-width: 768px) {
+  .hv-hero .hv-ask {
+    display: grid;
+    gap: var(--space-3);
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+  }
+  .hv-hero .hv-ask:focus-within { outline: 0; }
+  .hv-hero .hv-ask-box {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 56px;
+    padding: var(--space-1) var(--space-4);
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    box-shadow: var(--elev-2);
+  }
+  .hv-hero .hv-ask-box:focus-within { outline: 2px solid var(--home-ink-on-deep); outline-offset: 2px; }
+  .hv-hero .hv-ask-go-main { width: 100%; min-height: var(--tap-main); }
+}
 
 .hv-acts {
   display: grid;
@@ -646,7 +677,6 @@ a.hv-pill:hover { background: var(--surface-hover); }
   .hv-hero-copy { padding: 0 var(--space-6) clamp(var(--space-7), 11cqh, 136px); gap: var(--space-5); }
   .hv-sub { font-size: var(--text-title); line-height: 1.45; }
   .hv-acts { max-width: 640px; }
-  .hv-ask-go-main { padding-inline: var(--space-5); font-size: var(--text-lead); }
 
   /* The header on the film (T621). HomePage sets data-home-film on the root:
      "under" while the film is under the app header, "past" once it has
@@ -659,7 +689,10 @@ a.hv-pill:hover { background: var(--surface-hover); }
     transition: background-color var(--dur-2) var(--ease-out), border-color var(--dur-2) var(--ease-out);
   }
   :root[data-home-film="under"] .top-bar {
-    background: transparent;
+    /* One flat bar of ink behind the header (T623, register T621-a): with
+       the film's tint under it the white labels measure at least 4.9:1 on
+       the brightest tenth of every clip's sky, 5.6 to 7.8:1 at the median. */
+    background: var(--home-film-bar);
     border-bottom-color: transparent;
     --text: var(--home-ink-on-deep);
     --text-2: var(--home-ink-on-deep);

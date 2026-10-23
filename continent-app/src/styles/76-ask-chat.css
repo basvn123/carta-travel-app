@@ -70,7 +70,10 @@
   color: var(--text);
 }
 .ac-title svg { flex: none; color: var(--text-2); }
-.ac-title:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+/* The title takes focus only from code (tabindex -1: opening the chat on a
+   phone moves focus here so a screen reader names the dialog); Tab never
+   reaches it, so it draws no ring (T623, register T621-c). */
+.ac-title:focus-visible { outline: none; }
 
 .ac-body {
   flex: 1 1 auto;
