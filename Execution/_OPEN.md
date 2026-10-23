@@ -2042,3 +2042,36 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T622-d | T622 | Places' focused view tool row still scrolls sideways on a phone | next task | open |  |
 | T622-e | T622 | i18n key where.placeholder is unused after T622; remove it in all six files | next task | open |  |
 | T623-a | T623 | src/browse/ExploreMap.jsx:901 fails lint (react-hooks/exhaustive-deps: collectKpins missing from a useCallback), from T600; fix it in a task that may touch ExploreMap | next task | open |  |
+| T630-a | T630 | Run pipeline/trails/way_tags.py --refresh then export_wire.py (trailslab DB) to fill row sac_scale, detail technique, exposure and sac_segments; SAC cards, filter and profile stay placeholders until then | next task | open | 1 |
+| T630-b | T630 | Run pipeline/cycling/export_cycling.py to publish the cycle route shape rt (only loop today) | next task | open |  |
+| T630-c | T630 | Run the enrich_peaks context pass for every country, then export_peaks, to fill huts, slopeDeg and rangeRank | next task | open |  |
+| T630-d | T630 | Stub harvest_trail_ferry_and_bus_stops (pipeline/field_stubs/t630_routes.py): trail public transport or ferry reachability has no source; transit_stops.py has rail and bus stations only | next task | open |  |
+| T630-e | T630 | Stubs harvest_lift_prices and harvest_lift_hours: cable car and railway price and opening hours have no source | next task | open |  |
+| T630-f | T630 | Pace multipliers 1.3/1.0/0.8/0.6 and 10 to 15 min breaks per hour in src/lib/routeEffort.js PACES are the task's choice; owner may tune | user | open |  |
+| T630-g | T630 | Greenway del Lago di Como is missing: not a row in data/trails/famous_registry*.json, so coverage_report gives no reason code (as a row it would be way_only_not_derived); owner decides whether to seed it | user | open |  |
+| T630-h | T630 | Dossier around rows carry no sac_scale, trail ascent or cycle time, so the destination sheet's Around strip shows placeholders; add them in pipeline/dossier/build_dossier.py | next task | open |  |
+| T630-i | T630 | Peak slopeDeg is the gentlest-side slope from terrain.py easiest_slope, a proxy; a per-route slope or via ferrata source would be better | next task | open |  |
+| T630-j | T630 | Wrong values seen, not changed: trail 10280 difficulty easy against grade hard and 1,220 m up in 6.9 km; lift on 43.8% of the 740 full mountain rows, not the 48.2% of 948 measured in the audit | next task | open |  |
+| T630-l | T630 | Visual design of every new explore-completeness field (placeholder length in card cells at 390 px, monthly rows, facilities table, pace chips) for the next design batch | user | open |  |
+| T631-a | T631 | Run python pipeline/harvest_climate_power.py --daily, then apply_climate.py, then sync-data, to fill rain days, wind and elevation (unlocks altitude temperatures for about 15.5% of destinations) | next task | open | 1 |
+| T631-c | T631 | Re-run the beach context pass (enrich_beaches, new pool and rentals clauses) then export_beaches for access model, dog, shade, operator, pool, kidsPool, rentals | next task | open | 2 |
+| T631-b | T631 | Re-enrich lakes for water.zones, then run export_lakes (after the beach export) for zones, beaches around the lake, sports and ferry stops | next task | open | 3 |
+| T631-d | T631 | 15 stubs in pipeline/field_stubs/t631_water.py (sunshine hours, lake wind profile and thermal winds, beach and destination water temperature, ferry lines, watersport zones, lake lifeguards and currents, swimming bans, lido prices, water-entry surface, walks from pier and town, luxury audience, gorge flag); list in data/reports/field_stubs.md | next task | open |  |
+| T631-e | T631 | The lake beach list uses a circle around the lake centre and only inland-flagged beaches (10 of 176 in IT); switch to the lake polygon | next task | open |  |
+| T631-f | T631 | Confirm or change the 30 km threshold under which a lake or beach sheet shows its base town's climate, labelled | user | open |  |
+| T631-g | T631 | KeyFacts (lib/detailSkeleton.js keyFactCells) still leaves a missing cell out; the new slots live in the Facts rows and sections; decide whether the fact band keeps slots too | user | open |  |
+| T631-h | T631 | DetailSkeleton renders rows.slice(0, 3) while its comment says at most five rows | next task | open |  |
+| T632-a | T632 | Rebuild the dossier so derive_do.py's do[].kind and do[].town reach the things-to-do tiles | next task | open |  |
+| T632-b | T632 | Stub harvest_do_fee: POI shards carry no OSM fee/charge or Wikidata admission, so tile entry prices stay placeholders | next task | open |  |
+| T632-c | T632 | Stub harvest_do_duration: no visit duration source for things to do | next task | open |  |
+| T632-d | T632 | Stubs harvest_local_transit_train/_bus/_ferry: trains, buses and ferries between the towns of a destination (open GTFS, ferry operators, OSM route=ferry) | next task | open |  |
+| T632-e | T632 | Stub harvest_local_rules: no open source known for local rules | next task | open |  |
+| T632-f | T632 | Stub harvest_swimming_bans: destination swimming bans (water.bans) | next task | open |  |
+| T632-g | T632 | The destination PDF lacks an offline map and emergency contacts (stubs build_pdf_offline_map, harvest_emergency_contacts); not built | next task | open |  |
+| T632-h | T632 | GPX for trip pages: only straight lines between stops exist; a waypoint GPX is a product call | user | open |  |
+| T632-i | T632 | The invented transfer mode fallback || 'train' also lives in src/planner/TravelLegsSection.jsx:172 | next task | open |  |
+| T632-j | T632 | Wrong value, not changed: Lake Como airport BGY 60 min; apply_airport_anchors.py picks the nearest Ryanair-served airport by straight line and a 65 km/h road estimate, never a rail-served hub, and writes no transfer_mode | next task | open |  |
+| T632-k | T632 | Wrong value, not changed: Lake Como Car needed comes from car_layer.py:212-213 (lake and alps in RURAL_STRONG); ferries are never considered | next task | open |  |
+| T632-l | T632 | Wrong value, not changed: Crowds is a static annual Eurostat tier (harvest_tourism_density.py), not linked to the month on screen | next task | open |  |
+| T632-m | T632 | Route addresses in the destination PDF use window.location.origin, so a PDF made on a preview deploy prints preview links | next task | open |  |
+| T632-n | T632 | DO_TYPE_KEYS in destParts.js is unused by the tiles now; the EU bathing-water block shows on both When to go and Practical | next task | open |  |
