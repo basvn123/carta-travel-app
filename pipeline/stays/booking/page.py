@@ -7,20 +7,25 @@ CARD = '[data-testid="property-card"]'
 
 # Runs in the page: one record per visible property card. Star class is the
 # number of star/square icons in the rating block; Booking draws stars for
-# official classes and squares for its own "comparable" estimate.
+# official classes and squares (circles since 2026, T624) for its own
+# "comparable" estimate. The icons are now bare spans, and the "4 out of 5
+# stars" label sits on a button around the block, not on the block itself.
 EXTRACT_JS = r"""
 () => Array.from(document.querySelectorAll('[data-testid="property-card"]')).map(c => {
   const q = s => c.querySelector(s);
   const txt = s => { const e = q(s); return e ? e.textContent.trim() : null; };
   const a = q('a[data-testid="title-link"]') || q('a[href*="/hotel/"]');
   const starBox = q('[data-testid="rating-stars"]') || q('[data-testid="rating-squares"]')
-               || q('[aria-label*="out of 5"]');
+               || q('[data-testid="rating-circles"]') || q('[aria-label*="out of 5"]');
   let stars = null, starKind = null;
   if (starBox) {
-    const n = starBox.querySelectorAll('svg, span[aria-hidden="true"]').length;
-    const m = (starBox.getAttribute('aria-label') || '').match(/(\d)(\.5)? out of 5/);
+    const n = starBox.querySelectorAll('svg, span[aria-hidden="true"], :scope > span').length;
+    const label = starBox.getAttribute('aria-label')
+               || (q('[aria-label*="out of 5"]') || {}).ariaLabel || '';
+    const m = label.match(/(\d)(\.5)? out of 5/);
     stars = m ? parseInt(m[1]) : (n || null);
-    starKind = starBox.getAttribute('data-testid') === 'rating-squares' ? 'squares' : 'stars';
+    starKind = ['rating-squares', 'rating-circles'].includes(starBox.getAttribute('data-testid'))
+             ? 'squares' : 'stars';
   }
   return {
     href: a ? a.getAttribute('href') : null,
@@ -106,8 +111,15 @@ async def close_overlays(page):
                 await el.click(timeout=600)
 
 
+def search_dropped(url):
+    """Booking turns away a browser it will not serve (headless Chrome, T624)
+    with a 202 and a redirect to a bare searchresults page: the search is gone
+    from the URL and the page has no cards, which is a block, not an empty town."""
+    return "/searchresults" in (url or "") and "ss=" not in url
+
+
 async def looks_blocked(page, status):
-    if status in (403, 429):
+    if status in (403, 429) or search_dropped(page.url):
         return True
     html = (await page.content())[:20000].lower()
     return ("awswaf" in html and CARD not in html) or "captcha" in html

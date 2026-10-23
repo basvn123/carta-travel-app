@@ -10,7 +10,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import build_stays as B  # noqa: E402
-from booking.page import classify, parse_money, prop_key  # noqa: E402
+from booking.page import classify, parse_money, prop_key, search_dropped  # noqa: E402
 from booking.urls import search_url  # noqa: E402
 from common import journal  # noqa: E402
 from hostelworld.page import city_url, parse_card  # noqa: E402
@@ -39,6 +39,13 @@ def test_booking_card_classify_and_key():
 def test_search_url_filters():
     u = search_url("Florence, Italy", "2027-02-16", "2027-02-17", kind="hostel", stars=4)
     assert "nflt=ht_id%3D203%3Bclass%3D4" in u and "selected_currency=EUR" in u
+
+
+def test_dropped_search_is_a_block():
+    u = search_url("Munich, Germany", "2027-01-12", "2027-01-13")
+    assert not search_dropped(u)
+    assert search_dropped("https://www.booking.com/searchresults.en-gb.html")
+    assert not search_dropped("https://www.booking.com/hotel/de/platzl.en-gb.html")
 
 
 def test_hostelworld_card_and_url():

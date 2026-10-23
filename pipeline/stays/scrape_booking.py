@@ -178,7 +178,9 @@ async def run(a):
                         if cards is None:
                             set_block(con, SOURCE, 20, f"challenge at {d['id']} {day}")
                             print(f"blocked at {d['id']} {day}: stopping, "
-                                  f"resume tomorrow")
+                                  f"resume tomorrow"
+                                  + ("" if a.headed else
+                                     " (Booking refuses headless Chrome: run with --headed)"))
                             return
                         stored += store(con, d["id"], cards, day.isoformat(), adults,
                                         forced_kind=kind if kind == "hostel" else None)
