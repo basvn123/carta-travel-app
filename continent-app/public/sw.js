@@ -163,6 +163,14 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(staleWhileRevalidate(request));
     return;
   }
+  // Bed prices (T646): a stays country file carries its build in the URL
+  // (?b=), so the cached copy below is always the right build. The manifest
+  // is the one stays file without a version, and it says which build is
+  // current, so it goes to the network first.
+  if (/^\/stays(-live)?\/v1\/manifest\.json$/.test(path)) {
+    event.respondWith(networkFirst(request));
+    return;
+  }
   // The published content layers are CROSS-REFERENCING wires: a country file
   // lists cards by id and each card points at /{layer}/trip/{id}.json. Served
   // stale-while-revalidate the two halves go stale independently, so a cached

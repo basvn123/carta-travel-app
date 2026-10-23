@@ -17,7 +17,7 @@
  */
 import { searchDay } from '../../shared/flightSearch.mjs';
 import { flattenRoutes, jobsForMinute, DORMANT_AFTER } from './plan.mjs';
-import { buildFile, buildIndex, logoSource } from './publish.mjs';
+import { buildFile, buildIndex, logoSource, routeMoves, ROUTE_MOVE } from './publish.mjs';
 
 const ROUTES_KEY = 'data/flights/_routes.json';
 const FILE_PREFIX = 'data/flights/';
@@ -146,6 +146,10 @@ export async function publish(env, now = Date.now()) {
   const changed = (await env.DB.prepare(
     'SELECT origin AS code FROM fares WHERE checked > ?1 UNION SELECT dest AS code FROM fares WHERE checked > ?1',
   ).bind(Math.floor(since / 1000)).all()).results.map((r) => r.code);
+  // T645: the airports' coordinates set each route's price ceiling.
+  const routes = await env.DATA.get(ROUTES_KEY);
+  const airports = routes ? (await routes.json()).airports || null : null;
+  const gate = { rejected: 0, moved: 0 };
   for (const origin of changed) {
     const out = (await env.DB.prepare(
       `SELECT dest, date, price, airline, dep, arr, stops, checked FROM fares
@@ -155,9 +159,21 @@ export async function publish(env, now = Date.now()) {
       `SELECT origin, date, price, airline, dep, arr, stops, checked FROM fares
        WHERE dest = ? AND date >= ? ORDER BY origin, date`,
     ).bind(origin, today).all()).results;
-    await env.DATA.put(`${FILE_PREFIX}${origin}.json`, JSON.stringify(buildFile(origin, out, checkedIso, back)), {
+    const file = buildFile(origin, out, checkedIso, back, airports, gate);
+    const prev = await env.DATA.get(`${FILE_PREFIX}${origin}.json`);
+    const moves = prev ? routeMoves(await prev.json(), file) : [];
+    if (moves.length) {
+      gate.moved += moves.length;
+      console.log(`flight-sweep: ${origin} route medians moved over ${ROUTE_MOVE * 100}%`,
+        JSON.stringify(moves.slice(0, 10)));
+    }
+    await env.DATA.put(`${FILE_PREFIX}${origin}.json`, JSON.stringify(file), {
       httpMetadata: { contentType: 'application/json', cacheControl: 'public, max-age=900' },
     });
+  }
+  if (gate.rejected || gate.moved) {
+    console.log(`flight-sweep: publish left out ${gate.rejected} implausible prices; `
+      + `${gate.moved} route medians moved over ${ROUTE_MOVE * 100}%`);
   }
   const counts = Object.fromEntries((await env.DB.prepare(
     'SELECT origin, COUNT(*) AS n FROM fares WHERE price IS NOT NULL GROUP BY origin',
@@ -168,7 +184,7 @@ export async function publish(env, now = Date.now()) {
     httpMetadata: { contentType: 'application/json', cacheControl: 'public, max-age=900' },
   });
   await setState(env, 'published_at', now).run();
-  return { files: changed.length };
+  return { files: changed.length, rejected: gate.rejected, moved: gate.moved };
 }
 
 /** Copy Google's logo for airlines not tried yet into R2 data/airlines/{code}.png. */

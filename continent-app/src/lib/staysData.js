@@ -23,6 +23,12 @@ const listeners = new Set();
 let version = 0;
 let liveBase = null;
 let liveBuilt = null;   // Promise of the live copy's `built`, or null
+let bakedVersion = null;
+
+// T646: every country file is asked for with its build in the URL (?b=), so a
+// new build is a new URL: neither the browser cache (max-age 1 h plus a day
+// stale) nor the service worker can hand back last build's file after a fix.
+const versioned = (url, b) => (b ? `${url}?b=${encodeURIComponent(b)}` : url);
 
 /** Point the loader at the live copy (meta.stays.url) and ask its manifest
  *  once. Country files are fetched live only when the manifest exists and is
@@ -30,11 +36,13 @@ let liveBuilt = null;   // Promise of the live copy's `built`, or null
  *  refresh that has not run yet costs one request, not one per country. The
  *  dev server skips it: the data host only admits the app's own origins. */
 export function setLiveBase(url, bakedBuilt = null) {
+  bakedVersion = bakedBuilt;
   const ok = typeof url === 'string' && /^https:\/\//.test(url)
     && !(typeof location !== 'undefined' && /^(localhost|127\.)/.test(location.hostname));
   if (!ok || url === liveBase) return;
   liveBase = url;
-  liveBuilt = getJson(`${url}manifest.json`)
+  // The manifest is the one file without a version: revalidated every time.
+  liveBuilt = getJson(`${url}manifest.json`, 'no-cache')
     .then((m) => (m?.built && (!bakedBuilt || m.built > bakedBuilt) ? m.built : null))
     .catch(() => null);
 }
@@ -43,8 +51,8 @@ export function stayRecord(id) {
   return id ? records.get(id) || null : null;
 }
 
-async function getJson(url) {
-  const r = await fetch(url, { credentials: 'omit' });
+async function getJson(url, cache = 'default') {
+  const r = await fetch(url, { credentials: 'omit', cache });
   if (!r.ok) throw new Error(`${r.status} ${url}`);
   const ct = r.headers.get('content-type') || '';
   if (!ct.includes('json')) throw new Error(`not json: ${url}`);
@@ -59,9 +67,10 @@ export function loadStays(cc) {
   const file = `${encodeURIComponent(cc)}.json`;
   const base = liveBase;
   const live = liveBuilt
-    ? liveBuilt.then((b) => (b ? getJson(`${base}${file}`) : null))
+    ? liveBuilt.then((b) => (b ? getJson(versioned(`${base}${file}`, b)) : null))
     : Promise.resolve(null);
-  const p = Promise.allSettled([getJson(dataUrl(`/stays/v1/${file}`)), live]).then((res) => {
+  const baked = getJson(versioned(dataUrl(`/stays/v1/${file}`), bakedVersion));
+  const p = Promise.allSettled([baked, live]).then((res) => {
     const files = res.filter((x) => x.status === 'fulfilled' && x.value?.dests).map((x) => x.value);
     if (!files.length) return 0;
     const best = files.sort((a, b) => String(b.built || '').localeCompare(String(a.built || '')))[0];

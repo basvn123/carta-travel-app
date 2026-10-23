@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import {
   flattenRoutes, jobsForMinute, NEAR_CYCLE, FAR_CYCLE, NEAR_DAYS, FAR_WEEKS, km,
 } from "../workers/flight-sweep/src/plan.mjs";
-import { buildFile, buildIndex } from "../workers/flight-sweep/src/publish.mjs";
+import { buildFile, buildIndex, priceOk, routeMoves } from "../workers/flight-sweep/src/publish.mjs";
 
 const ALL_YEAR = 4095;
 const routes = {
@@ -107,4 +107,33 @@ test("the index names every airline and says which have a logo", () => {
   assert.deepEqual(idx.airlines.VY, { name: "Vueling", logo: true });
   assert.equal(idx.airlines.FR.logo, false);
   assert.equal(idx.origins.BRU, 40);
+});
+
+// T645: the publish gate leaves out implausible prices and reports big moves.
+test("priceOk: zero, negative and above the distance ceiling are out", () => {
+  assert.equal(priceOk(0, 500), false);
+  assert.equal(priceOk(-5, 500), false);
+  assert.equal(priceOk(87, 1300), true);
+  assert.equal(priceOk(8700, 1300), false);           // cents read as euros
+  assert.equal(priceOk(1200, null), true);
+  assert.equal(priceOk(2000, null), false);
+});
+
+test("buildFile leaves rejected days out and counts them", () => {
+  const airports = { BRU: [50.9, 4.48], BCN: [41.3, 2.08] };
+  const stats = {};
+  const file = buildFile("BRU", [
+    { dest: "BCN", date: "2026-11-18", price: 87, airline: "VY", dep: "21:55", arr: "23:59", stops: 0, checked: 1 },
+    { dest: "BCN", date: "2026-11-19", price: 8700, airline: "VY", dep: "21:55", arr: "23:59", stops: 0, checked: 1 },
+    { dest: "BCN", date: "2026-11-20", price: null, checked: 1 },
+  ], "2026-10-23T20:00:00Z", [], airports, stats);
+  assert.deepEqual(Object.keys(file.to.BCN), ["2026-11-18", "2026-11-20"]);
+  assert.equal(file.to.BCN["2026-11-20"], null);
+  assert.equal(stats.rejected, 1);
+});
+
+test("routeMoves reports a route median that moved over 40%", () => {
+  const f = (p) => ({ to: { BCN: { a: [p], b: [p + 2] }, LIS: { a: [60] } } });
+  assert.deepEqual(routeMoves(f(50), f(52)), []);
+  assert.deepEqual(routeMoves(f(50), f(150)).map((m) => m.dest), ["BCN"]);
 });
