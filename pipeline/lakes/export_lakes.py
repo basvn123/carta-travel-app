@@ -526,21 +526,36 @@ def beaches_by_cc(cc):
 def beaches_around(lake, rows=None):
     """Published beaches on this lake's shore: [{id, n, km}], nearest first.
 
-    No lake polygon reaches this step, only the centre and the area, so
-    "on the shore" is a circle of the same area, widened the way every other
-    spatial question about a lake is (enrich_lakes.shore_radius_km), and only
-    beaches the beach export marked `inland` count, so a sea beach near a
-    coastal lagoon is not listed. Distances are from the lake centre, which
-    the sheet says. Same country only; a lake on a border lists its own side."""
+    T642 (closes T631-e): with the lake's outline (lake_outlines.py) a beach
+    counts when it is within lake_outlines.BUFFER_M of the water line, whatever
+    the beach export's `inland` flag says (10 of 176 Italian beaches carry it).
+    Without an outline the old rule stays as the fallback: a circle of the
+    lake's area widened by enrich_lakes.shore_radius_km, `inland` beaches only,
+    so a sea beach near a coastal lagoon is not listed. `km` is from the lake
+    centre in both cases, which the sheet says. Same country only; a lake on a
+    border lists its own side."""
+    import lake_outlines  # noqa: WPS433
     from enrich_lakes import shore_radius_km  # noqa: WPS433 - export keeps no hard dep
+    outline = lake_outlines.outline_for(lake, li.lake_id(lake))
     radius = shore_radius_km(lake) + 0.5
     out = []
+    box = None
+    if outline:
+        xs, ys = [p[0] for p in outline], [p[1] for p in outline]
+        pad = 0.01  # ~1 km, wider than the 400 m buffer
+        box = (min(xs) - pad, min(ys) - pad, max(xs) + pad, max(ys) + pad)
     for b in (rows if rows is not None else beaches_by_cc(lake["iso2"])):
-        if not b.get("inland"):
+        if outline:
+            if not (box[0] <= b["lon"] <= box[2] and box[1] <= b["lat"] <= box[3]):
+                continue
+            if lake_outlines.near(outline, b["lat"], b["lon"]) > lake_outlines.BUFFER_M:
+                continue
+        elif not b.get("inland"):
             continue
         km = haversine_km(lake["lat"], lake["lon"], b["lat"], b["lon"])
-        if km <= radius:
-            out.append({"id": b["id"], "n": b["name"], "km": round(km, 1)})
+        if not outline and km > radius:
+            continue
+        out.append({"id": b["id"], "n": b["name"], "km": round(km, 1)})
     out.sort(key=lambda r: r["km"])
     return out[:BEACHES_PER_LAKE]
 

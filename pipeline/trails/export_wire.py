@@ -603,7 +603,18 @@ def wire_difficulty(t):
     tagged grade it checks its own effort class against, and overwriting it
     in the lab would trip tagged_difficulty_mismatch. Only the wire changes.
     """
-    return t.get("grade") or t.get("difficulty")
+    if t.get("grade"):
+        return t["grade"]
+    # T642-j: no published grade. The old effort class (`difficulty`) used to
+    # ship as it stood, so a 6.9 km route with 1,220 m of climb could read
+    # "easy". It now never sits below the distance/ascent ladder or the SAC
+    # grade the row carries (the same two floors attributes.py applies).
+    import attributes  # noqa: E402  (psycopg, db: already imported above)
+    old = t.get("difficulty")
+    floors = [old if old in attributes.GRADE_RANK else None,
+              attributes.effort_grade(t) if t.get("distance_m") else None,
+              attributes.SAC_GRADE.get(sac_scale_of(t))]
+    return attributes._max_grade(*floors) or old
 
 
 def sac_scale_of(t):
