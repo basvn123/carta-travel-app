@@ -9,7 +9,7 @@ import { openShared } from '../lib/sharedElement.js';
 import { countryName } from '../lib/countryName.js';
 import { useI18n } from '../i18n/index.jsx';
 import { DayPrice, SaveButton } from './ExploreCards.jsx';
-import { StoryRail, StoryCard, STORY_SIZES } from './StoryRail.jsx';
+import { StoryRail, StoryCard, STORY_MAX, STORY_SIZES } from './StoryRail.jsx';
 
 /**
  * Explore's sections (T427, after the owner's review of 2026-10-13).
@@ -121,7 +121,7 @@ function PlaceStoryCard({ p, railKey, month, monthShort, onSelect, fav, onToggle
     <StoryCard
       className="xstory"
       photo={(
-        <HeroImage url={p.image} city={p.city} iso2={p.iso2} className="storyr-img" maxWidth={640}
+        <HeroImage url={p.image} city={p.city} iso2={p.iso2} className="storyr-img" maxWidth={STORY_MAX}
           sizes={STORY_SIZES} ratio={[4, 5]} />
       )}
       status={status}

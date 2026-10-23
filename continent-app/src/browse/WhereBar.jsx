@@ -43,6 +43,9 @@ export function WhereBar({ t, what = null, where, onSearch, after = null, childr
         <Field
           as="select"
           className="wbar-what"
+          // T622 (owner 2026-10-23: "the what ... needs to go, the drop down
+          // with just anything is fine"): the label is read, not drawn.
+          hideLabel
           label={t('where.what')}
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
@@ -66,7 +69,9 @@ export function WhereBar({ t, what = null, where, onSearch, after = null, childr
             onChange={where.onChange}
             onFocus={where.onFocus}
             onKeyDown={where.onKeyDown}
-            placeholder={t('where.placeholder')}
+            // T622 (owner 2026-10-23: "I don't like the placeholder towns,
+            // regio"): the field reads its one word, as the overview's does.
+            placeholder={t('where.where')}
             autoComplete="off"
             enterKeyHint="search"
           />
@@ -84,7 +89,7 @@ export function WhereBar({ t, what = null, where, onSearch, after = null, childr
         </div>
       </div>
       <Button variant="secondary" className="wbar-go" onClick={submit} iconStart={<SearchIcon size={15} />}>
-        {t('where.search')}
+        <span className="wbar-go-word">{t('where.search')}</span>
       </Button>
       {after}
     </div>
@@ -108,7 +113,7 @@ export function WhereBar({ t, what = null, where, onSearch, after = null, childr
  */
 export function FilterChipBar({
   t, groups, onAll, allCount = 0, fmt = String,
-  allOn = false, allControls = undefined, allRef = undefined, lead = null,
+  allOn = false, allControls = undefined, allRef = undefined, lead = null, trail = null,
 }) {
   const [openKey, setOpenKey] = useState(null);
   const [left, setLeft] = useState(0);
@@ -158,7 +163,7 @@ export function FilterChipBar({
     if (openKey && !open) setOpenKey(null);
   }, [openKey, open]);
 
-  if (!groups.length && !onAll) return null;
+  if (!groups.length && !onAll && !lead && !trail) return null;
 
   const chipText = (g) => {
     const on = g.options.filter((o) => o.on);
@@ -210,6 +215,8 @@ export function FilterChipBar({
             </Chip>
           );
         })}
+        {/* T622: a view control at the row's end (Full list). */}
+        {trail && <span className="qfbar-trail">{trail}</span>}
       </div>
       {open && (
         <div className="qfbar-pop" id={popId} ref={popRef} role="group" aria-label={open.label} style={{ left }}>

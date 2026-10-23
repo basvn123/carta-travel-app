@@ -123,7 +123,7 @@ function LeadCard({ id, title, line, facts, photos, onSeeAll, headingLevel, t })
         <div className="storyr-stack" data-n={stack.length} aria-hidden="true">
           {stack.map((photo, i) => (
             <span key={i} className="storyr-stack-photo" style={{ '--s': i }}>
-              <HeroImage url={photo.url} city={photo.city} maxWidth={320} sizes="160px" ratio={[4, 5]} eager />
+              <HeroImage url={photo.url} city={photo.city} maxWidth={500} sizes="300px" ratio={[4, 5]} eager />
             </span>
           ))}
         </div>
@@ -271,4 +271,10 @@ export function StoryCard({
 
 /** Photo sizes for a StoryRail card: about 70 percent of a phone, then the
  *  desktop widths of 80-story-rail.css. */
-export const STORY_SIZES = '(max-width: 559px) 70vw, (max-width: 1079px) 36vw, 300px';
+// T622 (owner 2026-10-23: "the images need to be more sharp, it is often
+// blurry"): a 4:5 card crops a 3:2 landscape photo, so the photo it needs is
+// about 1.9 times the card's width (5/4 times 3/2). The sizes say that width,
+// and the callers allow the ladder up to 1280, so a phone at 2x or 3x gets a
+// 960 or a 1280 instead of an upscaled 500.
+export const STORY_MAX = 1280;
+export const STORY_SIZES = '(max-width: 559px) 133vw, (max-width: 1079px) 68vw, 570px';

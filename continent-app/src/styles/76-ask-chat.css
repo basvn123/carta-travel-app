@@ -92,7 +92,27 @@
   letter-spacing: -0.015em;
   color: var(--text);
 }
-.ac-where { margin: var(--space-2) 0 var(--space-5); font-size: var(--text-body); line-height: var(--leading-ui); color: var(--text-2); }
+.ac-where-wrap { margin: var(--space-2) 0 var(--space-5); }
+.ac-where {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+  margin: 0;
+  font-size: var(--text-body);
+  line-height: var(--leading-ui);
+  color: var(--text-2);
+}
+.ac-where-icon { flex: none; color: var(--text-2); }
+.btn.ac-where-change { margin-left: calc(var(--space-1) * -1); }
+/* T622: the From panel opens in place under the line, on the panel's white. */
+.ac-where-panel {
+  margin-top: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
 .ac-where strong { font-weight: 600; color: var(--text); }
 .ac-starts { display: flex; flex-direction: column; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
 .btn.ac-start {

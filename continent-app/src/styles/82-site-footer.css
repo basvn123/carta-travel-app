@@ -67,3 +67,11 @@
 /* On a phone .explore-wrap reserves room for the bottom nav below its content;
    with the footer after it, the footer takes that place instead. */
 .explore-wrap:has(+ .site-footer) { padding-bottom: 0; }
+
+/* T622 (owner 2026-10-23: "footer only on desktop, not mobile"): inside the
+   app a phone ends its scroll on the content; the links live in Account.
+   The home page keeps its footer on every width. */
+@media (max-width: 768px) {
+  .site-footer { display: none; }
+  .hv-page .site-footer { display: block; }
+}

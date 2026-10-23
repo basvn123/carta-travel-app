@@ -2036,3 +2036,8 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T621-d | T621 | The home page hides its scrollbar so the film reaches the window's edge (owner's call); recorded so no later task restores the column without asking | user | open |  |
 | T617-a | T617 | tests/test_data_licences.py fails 3 tests on main: pipeline/stays/calibrate_live.py is a harvester with no RUNS entry and no licence row, so validate() and the rendered ledger disagree | next task | open |  |
 | T617-b | T617 | Merge p3-ingestion-run-shadow into main and push, then rerun verify_tasks.sh ingestion and ship on the box (stage 7.6) | user | closed by T623 | before stage 7.7 |
+| T622-a | T622 | Desktop end check of the new Explore head was DOM-only (pane too narrow for a 1440 px screenshot); look at /explore and one category tab at 1440 px | next task | open |  |
+| T622-b | T622 | The owner's "one phone pane for categories and filters" idea: categories became a static six-across row, not part of the sheet; confirm | user | closed by T622 (owner 2026-10-23: keep the static row) |  |
+| T622-c | T622 | carta-design Explore v6 to v8 rules (hero band on phone, near-me door, By country track, phone settings sentence, Map after Search) are outdated by T622; rewrite them | next task | open |  |
+| T622-d | T622 | Places' focused view tool row still scrolls sideways on a phone | next task | open |  |
+| T622-e | T622 | i18n key where.placeholder is unused after T622; remove it in all six files | next task | open |  |

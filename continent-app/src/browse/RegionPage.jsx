@@ -113,7 +113,7 @@ function RegionTile({ card, onOpen }) {
       className="rgnp-card rgnp-tile"
       media={(
         <HeroImage url={cardImage(card)} city={card.name} iso2={card.cc || card.country}
-          className="rgnp-media-img" maxWidth={640} sizes="(max-width: 768px) 78vw, 280px" ratio={[4, 3]} />
+          className="rgnp-media-img" maxWidth={960} sizes="(max-width: 768px) 78vw, 280px" ratio={[4, 3]} />
       )}
       title={card.name}
       onOpen={() => onOpen(card)}

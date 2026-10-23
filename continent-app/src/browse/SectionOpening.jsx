@@ -10,7 +10,7 @@ import {
 import { Button, Card, IconButton, Money, Segmented } from '../components/ui/index.js';
 import { TilePhotos } from './PhotoGallery.jsx';
 import { BedFoodLine } from './DestCards.jsx';
-import { StoryRail, StoryCard, STORY_SIZES } from './StoryRail.jsx';
+import { StoryRail, StoryCard, STORY_MAX, STORY_SIZES } from './StoryRail.jsx';
 import { tripGrade } from '../lib/trailCards.js';
 import { GRADE_KEY } from '../lib/cardFillings.js';
 import { useI18n } from '../i18n/index.jsx';
@@ -179,7 +179,7 @@ export function RailTile({ row, describe, photo, photos = null, onOpen, sharedKe
       media={urls.length > 1 ? (
         <TilePhotos urls={urls} city={d.name} onOpen={open} sizes={RAIL_SIZES} />
       ) : (
-        <HeroImage url={url} city={d.name} className="dtab-tile-img" maxWidth={640}
+        <HeroImage url={url} city={d.name} className="dtab-tile-img" maxWidth={960}
           sizes={RAIL_SIZES} ratio={[4, 3]} />
       )}
       title={d.name}
@@ -299,7 +299,7 @@ function SectionStoryCard({ layer, row, describe, photo, photos, onOpen, sharedK
   const where = d.where && d.where !== status ? d.where : null;
   return (
     <StoryCard
-      photo={<HeroImage url={url} city={d.name} iso2={d.cc} maxWidth={640} sizes={STORY_SIZES} ratio={[4, 5]} />}
+      photo={<HeroImage url={url} city={d.name} iso2={d.cc} maxWidth={STORY_MAX} sizes={STORY_SIZES} ratio={[4, 5]} />}
       status={status}
       score={d.rating && d.rating.score != null ? <ScoreChip rating={d.rating} size="sm" /> : null}
       title={d.name}

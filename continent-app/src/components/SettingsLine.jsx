@@ -9,7 +9,7 @@ import { matchProfile, PROFILE_LABEL_KEYS } from '../browse/LifestylePanel.jsx';
 import { Button, Chip, ChipGroup, IconButton, Segmented } from './ui/index.js';
 import { SheetShell } from '../browse/SheetShell.jsx';
 import { useIsDesktop } from '../hooks/useIsDesktop.js';
-import { BedIcon, BusIcon, CarIcon, ChevronDownIcon, MapPinIcon, TrainIcon } from './Icons.jsx';
+import { BedIcon, BusIcon, CalendarIcon, CarIcon, ChevronDownIcon, MapPinIcon, RouteIcon, TrainIcon } from './Icons.jsx';
 import { PlaneIcon } from './TransportIcons.jsx';
 import { FromPanel, fromName, fromPoint } from './FromPicker.jsx';
 import { CountriesPanel, countriesValue } from './CountriesControl.jsx';
@@ -423,47 +423,82 @@ export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children,
   const countriesText = countriesValue(t, countryList, s.countryNot, names);
   const pickFrom = (p, then) => { s.setFrom(p); then?.(); };
 
-  // The phone face (1.3a T1): one sentence for when and who, the bed, the
-  // way. The sentence opens the one settings sheet (T2); the bed opens the
-  // Lifestyle dialog, since a sheet never holds a sheet.
+  // The phone face (T622, owner 2026-10-23: "the when part is cut off,
+  // just show when, from, type, transport ... use icons, but no full on
+  // text"): four equal buttons, an icon over one short word each. When and
+  // From open the one settings sheet (From with its town panel open), the
+  // stay opens the Lifestyle dialog, and the way steps through the ways,
+  // its icon showing the current one. Every value is in the button's name.
   if (!isDesktop) {
-    // Dates and a head count: the phone's sentence never cuts off (T502).
     const heads = party + (s.babies || 0);
     const summary = t('settings.summary', {
       dates: whenValue(t, s, shortDate, { nightsToo: false }),
       people: t(heads === 1 ? 'settings.peopleOne' : 'settings.peopleMany', { n: heads }),
     });
     const closeSheet = () => { close(); summaryRef.current?.focus(); };
+    const openSheet = (withFrom) => {
+      setPickEnd('start');
+      setSheetFrom(!!withFrom);
+      setOpen((v) => (v === 'sheet' ? null : 'sheet'));
+    };
+    const mode = TRAVEL_MODES.includes(s.transportMode) ? s.transportMode : 'any';
+    // Any way draws a route, so it never reads as From's pin beside it.
+    const WayIcon = mode === 'any' ? RouteIcon : WAY_ICONS[mode];
+    const nextWay = nextMode(mode);
     return (
       <div className={`settings-line settings-line-phone ${className}`.trim()} role="group" aria-label={t('settings.label')}>
-        {(show('dates') || show('party') || show('origin')) && (
+        {(show('dates') || show('party')) && (
           <Part
-            name="summary"
-            className="settings-summary"
+            name="when"
+            className="settings-quad"
             partRef={summaryRef}
             value={summary}
-            expanded={open === 'sheet'}
+            expanded={open === 'sheet' && !sheetFrom}
             ariaLabel={t('settings.summaryAria', { summary })}
-            onClick={() => toggle('sheet')}
+            onClick={() => openSheet(false)}
           >
-            <span className="settings-summary-text" aria-hidden="true">{summary}</span>
-            <ChevronDownIcon size={16} className="settings-summary-chev" />
+            <CalendarIcon size={20} className="settings-quad-icon" />
+            <span className="settings-quad-word" aria-hidden="true">{t('dates.when')}</span>
+          </Part>
+        )}
+        {show('origin') && (
+          <Part
+            name="from"
+            className="settings-quad"
+            value={from || t('origin.pickTown')}
+            expanded={open === 'sheet' && sheetFrom}
+            ariaLabel={t('settings.changeAria', { label: t('settings.from'), value: from || t('origin.pickTown') })}
+            onClick={() => openSheet(true)}
+          >
+            <MapPinIcon size={20} className="settings-quad-icon" />
+            <span className="settings-quad-word" aria-hidden="true">{t('settings.from')}</span>
           </Part>
         )}
         {show('lifestyle') && s.openLifestyle && (
           <Part
             name="bed"
-            className="settings-bed"
+            className="settings-quad"
             value={`${bed}, ${vibe}`}
             ariaLabel={t('settings.changeAria', { label: t('settings.lifestyle'), value: `${bed}, ${vibe}` })}
             onClick={s.openLifestyle}
           >
-            <BedIcon size={16} className="settings-bed-icon" />
-            <span className="settings-bed-text" aria-hidden="true">{bed}</span>
-            <ChevronDownIcon size={16} className="settings-summary-chev" />
+            <BedIcon size={20} className="settings-quad-icon" />
+            <span className="settings-quad-word" aria-hidden="true">{t('settings.stayShort')}</span>
           </Part>
         )}
-        {show('way') && s.setTransportMode && <WayPart s={s} compact />}
+        {show('way') && s.setTransportMode && (
+          <Part
+            name="way"
+            className="settings-quad"
+            value={t(`way.${mode}`)}
+            hasPopup={null}
+            ariaLabel={t('way.cycleAria', { mode: t(`way.${mode}`), next: t(`way.${nextWay}`) })}
+            onClick={() => s.setTransportMode(nextWay)}
+          >
+            <WayIcon size={20} className="settings-quad-icon" />
+            <span className="settings-quad-word" aria-hidden="true">{t('settings.wayShort')}</span>
+          </Part>
+        )}
         {open === 'sheet' && (
           <SheetShell
             title={t('settings.label')}
