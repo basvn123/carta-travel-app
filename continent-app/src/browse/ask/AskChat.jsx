@@ -194,7 +194,15 @@ export default function AskChat(props) {
   }, [keep]);
 
   // A question handed over asks at once, once per hand-over.
-  React.useEffect(() => { if (seed?.text) ask(seed.text); }, [seed, ask]);
+  // A seed is asked once (T621): StrictMode runs this effect twice, and
+  // `ask` takes a new identity as the catalogue arrives, which asked Home's
+  // question two or three times.
+  const askedSeed = React.useRef(null);
+  React.useEffect(() => {
+    if (!seed?.text || askedSeed.current === seed) return;
+    askedSeed.current = seed;
+    ask(seed.text);
+  }, [seed, ask]);
 
   // The newest question scrolls to the top of the conversation.
   const turnCount = chat?.turns.length || 0;
