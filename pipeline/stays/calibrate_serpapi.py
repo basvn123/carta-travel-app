@@ -1,9 +1,12 @@
 """Accuracy check against Google Hotels through SerpApi's FREE tier (250/month).
 
-Not a price source: it samples destinations from the last built stays files,
-asks Google Hotels for the same bed type and month, and records how far our
-figure is from Google's median. build_stays gates the publish on this
-(median absolute error above 25% blocks it).
+Not a price source: it samples destinations that have observations in the
+journals, asks Google Hotels for one bed type and month each, and stores
+Google's median as a reference (STATE/calibration.json "refs"). build_stays
+compares the build it is about to publish against these references and blocks
+the publish on a median error above 25% (T645). Before T645 this script read
+the last built files, but the monthly workflow runs it before the build, when
+STAYS_OUT/v1 is still empty, so the check never had anything to compare.
 
   hotel3/hotel4   hotel_class=3 / 4, 2 adults
   dorm            property_types=14 (hostels), 1 adult
@@ -25,7 +28,8 @@ from pathlib import Path
 import httpx
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from common import OUT, STATE, load_destinations, median, now_iso, read_json, today, write_json  # noqa: E402
+from common import (JOURNAL, JOURNAL_SCRAPE, STATE, journal, load_destinations,  # noqa: E402
+                    median, now_iso, today, write_json)
 from price_xotelo import probe_day  # noqa: E402
 
 API = "https://serpapi.com/search.json"
@@ -36,12 +40,15 @@ CHECKS = [("hotel3", {"hotel_class": "3", "adults": 2}),
           ("bnb_home", {"vacation_rentals": "true", "adults": 4})]
 
 
-def ours(rec, bed, month):
-    m = (rec.get("month") or {}).get(bed)
-    if m and m[month - 1]:
-        return m[month - 1]
-    v = (rec.get("beds") or {}).get(bed)
-    return v.get("4") if isinstance(v, dict) else v
+def sample_ids(n):
+    """Destinations with observations in either journal, shuffled."""
+    ids = set()
+    for path in (JOURNAL, JOURNAL_SCRAPE):
+        if path.exists():
+            ids |= {r[0] for r in journal(path).execute("select distinct dest_id from obs")}
+    ids = sorted(ids)
+    random.shuffle(ids)
+    return ids
 
 
 def main():
@@ -52,25 +59,17 @@ def main():
     if not key:
         print("SERPAPI_KEY not set: calibration skipped (free key, see owner steps)")
         return
-    recs = {}
-    for f in (OUT / "v1").glob("*.json"):
-        if f.name != "manifest.json":
-            recs.update(read_json(f, {}).get("dests", {}))
     dests = {d["id"]: d for d in load_destinations()}
-    ids = [i for i in recs if i in dests and recs[i].get("q") != "modelled"]
-    random.shuffle(ids)
     day = probe_day(today(), 1)
-    errs = {b: [] for b, _ in CHECKS}
-    used = 0
+    refs, used = [], 0
     client = httpx.Client(timeout=60)
-    for i in ids:
+    for i in sample_ids(a.n):
         if used >= a.n:
             break
+        if i not in dests:
+            continue
         d = dests[i]
         bed, params = CHECKS[used % len(CHECKS)]
-        mine = ours(recs[i], bed, day.month)
-        if not mine:
-            continue
         r = client.get(API, params={
             "engine": "google_hotels", "q": f"{d['city']}, {d['country']}",
             "check_in_date": day.isoformat(),
@@ -84,13 +83,9 @@ def main():
                   for p in r.json().get("properties", [])]
         g = median([p for p in prices if p])
         if g:
-            errs[bed].append(abs(mine - g) / g)
-    summary = {b: {"n": len(v), "mape": round(median(v), 3) if v else None}
-               for b, v in errs.items()}
-    allv = [x for v in errs.values() for x in v]
-    write_json(RESULT, {"captured": now_iso(), "searches": used, "by_bed": summary,
-                        "mape": round(median(allv), 3) if allv else None})
-    print("calibration:", summary)
+            refs.append({"dest": i, "bed": bed, "month": day.month, "google": round(g, 1)})
+    write_json(RESULT, {"captured": now_iso(), "searches": used, "refs": refs})
+    print(f"calibration: {len(refs)} Google references from {used} searches")
 
 
 if __name__ == "__main__":

@@ -38,14 +38,15 @@ Usage:  python pipeline/stays/build_stays.py [--gate]
 """
 
 import argparse
+import os
 import sys
 from collections import defaultdict
 from datetime import date, datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from common import (BED_TYPES, CONTRACT_COLUMNS, HOME_CAPS, JOURNAL_SCRAPE, OUT, STATE,  # noqa: E402
-                    UNITS, haversine_km, journal, load_destinations, median, now_iso,
+from common import (BED_TYPES, CONTRACT_COLUMNS, HOME_CAPS, JOURNAL_SCRAPE, OUT, ROOT,  # noqa: E402
+                    STATE, UNITS, haversine_km, journal, load_destinations, median, now_iso,
                     read_json, write_json)
 from booking.page import per_ok  # noqa: E402
 
@@ -99,6 +100,20 @@ HW_PRIVATE_GUESTS = 2
 HOTEL_LEVEL_EXCLUDES = {"tax_included": 0, "from_or_discount": 1}
 # Weekend and peak factors need this many same-property pairs.
 MIN_PAIRS = 2
+# The publish gate (T645, owner decision B2). Moves to config/pricing.json in F3.
+REJECT_MAX = 0.05                  # contract rejections per source
+JUMP_COUNTRY = 0.25                # country x bed tier median move
+JUMP_DEST = 0.40                   # one destination's bed tier move
+COVERAGE_DROP = 0.02               # measured + nearby destinations per bed tier
+MIN_STAR_PROPS = 2                 # hotels behind a measured star class
+SERPAPI_MAPE_MAX, SERPAPI_MIN_N = 0.25, 10
+# The fixed test set (plan F0/F1): three named, plus one city, beach and mountain.
+TEST_SET = {"gem:como": "Lake Como", "gem:kotor": "Kotor", "BGO": "Bergen",
+            "OPO": "Porto (city)", "gem:lagos-pt": "Lagos (beach)",
+            "gem:chamonix": "Chamonix (mountain)"}
+EXPLAIN = Path(__file__).resolve().parent / "gate_explain.json"
+# The last published build: the copy the app ships (apply_stays bakes it).
+PUBLISHED = ROOT / "continent-app" / "public" / "stays" / "v1"
 
 
 def size_bucket(pop):
@@ -550,16 +565,178 @@ def coverage(records):
     return {k: dict(v) for k, v in cov.items()}
 
 
-def gates(records, prev, calib):
-    fails, notes = [], []
-    if prev:
+def bed_value(rec, k):
+    """A record's annual price for one bed type (bnb_home: the 4-person place)."""
+    v = ((rec or {}).get("beds") or {}).get(k)
+    return v.get("4") if isinstance(v, dict) else v
+
+
+def summarise(records, iso_of):
+    """{cc: {bed: median price}} and {cc: {bed: measured towns}} for the manifest,
+    so the next build can compare against this one without its country files."""
+    vals, cov = defaultdict(lambda: defaultdict(list)), defaultdict(lambda: defaultdict(int))
+    for did, r in records.items():
+        cc = iso_of.get(did)
+        for k in BED_TYPES:
+            v = bed_value(r, k)
+            if cc and v:
+                vals[cc][k].append(v)
+                cov[cc][k] += (r["src"].get(k) or {}).get("q") == "measured"
+    return ({cc: {k: round(median(v), 1) for k, v in kk.items()} for cc, kk in vals.items()},
+            {cc: dict(kk) for cc, kk in cov.items()})
+
+
+def load_prev():
+    """(records or None, manifest or None, where) of the last PUBLISHED build:
+    STAYS_PREV if set, else the copy the app ships (apply_stays bakes it), else
+    the manifest alone (on Actions the workflow downloads only the live one)."""
+    dirs = [Path(os.environ["STAYS_PREV"])] if os.environ.get("STAYS_PREV") else [PUBLISHED]
+    for d in dirs:
+        files = [f for f in d.glob("*.json") if f.name != "manifest.json"] if d.exists() else []
+        if files:
+            recs = {}
+            for f in files:
+                recs.update((read_json(f) or {}).get("dests") or {})
+            return recs, read_json(d / "manifest.json"), str(d)
+    m = read_json(V / "manifest.json")
+    return None, m, str(V / "manifest.json") if m else None
+
+
+def explained(explain, key, new):
+    """A move passes when the explain file names it: same key, same new value (2%)."""
+    return any(e.get("key") == key and e.get("new") is not None
+               and abs(e["new"] - new) <= 0.02 * max(abs(new), 1) for e in explain)
+
+
+def move(old, new):
+    return (new / old - 1) if old and new else None
+
+
+def gates(records, iso_of, stats=None, prev=None, prev_manifest=None, calib=None, explain=()):
+    """The publish gate (T645). Returns (fails, notes, report lines). Every
+    check writes its lines; a fail blocks the publish unless explained."""
+    fails, notes, rep = [], [], []
+    levels, cc_cov = summarise(records, iso_of)
+    if prev is not None:
+        p_levels, p_cov = summarise(prev, iso_of)
+    elif prev_manifest and prev_manifest.get("levels"):
+        p_levels, p_cov = prev_manifest["levels"], prev_manifest.get("cc_cov") or {}
+    else:
+        p_levels, p_cov = None, None
+
+    # 1. Contract.
+    rep.append("## 1. Contract (rejected rows per source, block above "
+               f"{REJECT_MAX:.0%})")
+    for s, v in sorted((stats or {}).items()):
+        rej = sum(v["rejected"].values())
+        share = rej / v["rows"] if v["rows"] else 0
+        line = f"- {s}: {v['rows']} rows, {v['legacy']} legacy, {rej} rejected ({share:.1%}) {v['rejected']}"
+        rep.append(line)
+        if share > REJECT_MAX:
+            fails.append(f"contract: {s} rejected {share:.1%} of its rows {v['rejected']}")
+
+    # 2. Jumps against the previous published version (B2).
+    rep.append(f"\n## 2. Jumps (country x bed tier above {JUMP_COUNTRY:.0%}, "
+               f"destination above {JUMP_DEST:.0%})")
+    if p_levels is None:
+        notes.append("no previous published version: jump and loss checks skipped")
+        rep.append("- no previous published version: skipped")
+    else:
+        n_cc = n_dest = 0
+        for cc, kk in sorted(p_levels.items()):
+            for k, old in kk.items():
+                new = (levels.get(cc) or {}).get(k)
+                mv = move(old, new)
+                if mv is not None and abs(mv) > JUMP_COUNTRY and not explained(explain, f"{cc}:{k}", new):
+                    n_cc += 1
+                    fails.append(f"jump {cc} {k}: {old:.0f} -> {new:.0f} ({mv:+.0%})")
+        if prev is not None:
+            for did, r in sorted(records.items()):
+                for k in BED_TYPES:
+                    old, new = bed_value(prev.get(did), k), bed_value(r, k)
+                    mv = move(old, new)
+                    if mv is not None and abs(mv) > JUMP_DEST and not explained(explain, f"{did}:{k}", new):
+                        n_dest += 1
+                        fails.append(f"jump {did} {k}: {old:.0f} -> {new:.0f} ({mv:+.0%})")
+        else:
+            notes.append("previous country files not available: per-destination jumps skipped")
+        rep.append(f"- {n_cc} country x bed tier moves and {n_dest} destination moves over "
+                   "the thresholds without an explain entry")
+
+    # 3. Nothing measured goes missing.
+    rep.append("\n## 3. Losses (a country loses all measured data, or a measured bed tier)")
+    lost = 0
+    for cc, kk in sorted((p_cov or {}).items()):
+        had = {k for k, n in kk.items() if n}
+        now = {k for k, n in (cc_cov.get(cc) or {}).items() if n}
+        if had and not now:
+            lost += 1
+            fails.append(f"loss {cc}: had measured {sorted(had)}, now nothing measured")
+            continue
+        for k in sorted(had - now):
+            lost += 1
+            fails.append(f"loss {cc} {k}: measured before, not now")
+    rep.append(f"- {lost} losses")
+
+    # 4. Minimum samples behind every measured value.
+    rep.append(f"\n## 4. Minimum samples (a measured star class needs {MIN_STAR_PROPS} "
+               f"hotels, weekend and peak factors {MIN_PAIRS} pairs, a country curve "
+               f"{MIN_CURVE_TOWNS} towns)")
+    thin = 0
+    for did, r in records.items():
+        for k, src in r["src"].items():
+            if (k.startswith("hotel") and src.get("q") == "measured" and not src.get("scaled")
+                    and (src.get("n") or 0) < MIN_STAR_PROPS):
+                thin += 1
+                fails.append(f"thin {did} {k}: measured from {src.get('n')} hotels")
+    rep.append(f"- {thin} measured values under their minimum")
+
+    # 5. The fixed test set, in euros.
+    rep.append("\n## 5. Fixed test set (euros per night; destination threshold applies)\n")
+    rep.append("| Destination | Bed | Before | After | Move | Status |")
+    rep.append("|---|---|---|---|---|---|")
+    for did, name in TEST_SET.items():
+        r = records.get(did)
+        for k in BED_TYPES:
+            old, new = bed_value((prev or {}).get(did), k), bed_value(r, k)
+            if old is None and new is None:
+                continue
+            mv = move(old, new)
+            status = ("new" if old is None else "gone" if new is None else
+                      "explained" if mv is not None and abs(mv) > JUMP_DEST and explained(explain, f"{did}:{k}", new)
+                      else "BLOCKED" if mv is not None and abs(mv) > JUMP_DEST else "ok")
+            rep.append(f"| {name} | {k} | {'' if old is None else round(old)} | "
+                       f"{'' if new is None else round(new)} | "
+                       f"{'' if mv is None else f'{mv:+.0%}'} | {status} |")
+
+    # 6. SerpApi: Google Hotels medians against THIS build.
+    rep.append(f"\n## 6. SerpApi (Google Hotels median error, block above {SERPAPI_MAPE_MAX:.0%} "
+               f"from {SERPAPI_MIN_N} references)")
+    errs = []
+    for ref in (calib or {}).get("refs") or []:
+        mine = None
+        r = records.get(ref.get("dest"))
+        if r:
+            cur = (r.get("month") or {}).get(ref["bed"])
+            mine = cur[ref["month"] - 1] if cur and cur[ref["month"] - 1] else bed_value(r, ref["bed"])
+        if mine and ref.get("google"):
+            errs.append(abs(mine - ref["google"]) / ref["google"])
+    if len(errs) >= SERPAPI_MIN_N:
+        mape = median(errs)
+        rep.append(f"- {len(errs)} references, median error {mape:.0%}")
+        if mape > SERPAPI_MAPE_MAX:
+            fails.append(f"SerpApi median error {mape:.0%} > {SERPAPI_MAPE_MAX:.0%} over {len(errs)} references")
+    else:
+        rep.append(f"- {len(errs)} references: too few to judge (no SERPAPI_KEY, or a calibration from before T645)")
+        notes.append(f"SerpApi: {len(errs)} references, not judged")
+
+    # Coverage (the T531 check, kept).
+    if prev_manifest:
         for k, v in coverage(records).items():
             now = v.get("measured", 0) + v.get("nearby", 0)
-            before = sum(prev.get("coverage", {}).get(k, {}).get(q, 0) for q in ("measured", "nearby"))
-            if before and now < before * 0.98:
-                fails.append(f"{k}: measured+nearby fell {before} -> {now}")
-    if calib and calib.get("mape") and calib["mape"] > 0.25:
-        fails.append(f"SerpApi median error {calib['mape']:.0%} > 25%")
+            before = sum(prev_manifest.get("coverage", {}).get(k, {}).get(q, 0) for q in ("measured", "nearby"))
+            if before and now < before * (1 - COVERAGE_DROP):
+                fails.append(f"coverage {k}: measured+nearby fell {before} -> {now}")
     for i in SEASONAL_CHECK:
         r = records.get(i)
         cur = (r or {}).get("month", {}).get("hotel3")
@@ -569,7 +746,21 @@ def gates(records, prev, calib):
             if sum(1 for c in r["month"].values() if min(c) and max(c) / min(c) < 1.05) > 2]
     if flat:
         notes.append(f"{len(flat)} destinations with flat curves on >2 bed types")
-    return fails, notes
+    return fails, notes, rep
+
+
+def write_report(fails, notes, rep, where):
+    lines = [f"# Stays gate report, {now_iso()}", "",
+             f"**{'PASSED' if not fails else 'FAILED'}**: {len(fails)} blocking, "
+             f"{len(notes)} notes. Compared against: {where or 'nothing (first build)'}.", ""]
+    lines += rep
+    lines += ["", "## Blocking", ""] + [f"- {f}" for f in fails[:300]]
+    if len(fails) > 300:
+        lines.append(f"- ... and {len(fails) - 300} more")
+    lines += ["", "## Notes", ""] + [f"- {n}" for n in notes]
+    lines += ["", "A move that is right is listed in pipeline/stays/gate_explain.json "
+              "(key, old, new, reason, who, date); key is CC:bed or destination:bed."]
+    (STATE / "gate_report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def main():
@@ -594,12 +785,16 @@ def main():
     from live_keys import attach
     live_keys = attach(records, dests)
     print("live keys:", live_keys, "destinations")
-    prev = read_json(V / "manifest.json")
-    fails, notes = gates(records, prev, read_json(STATE / "calibration.json"))
+    prev_recs, prev, where = load_prev()
+    fails, notes, rep = gates(records, iso_of, stats, prev_recs, prev,
+                              read_json(STATE / "calibration.json"),
+                              read_json(EXPLAIN, []) or [])
     # T559: a build without the Xotelo pool writes no `xk`, and the newer live
     # copy would switch live bed prices off everywhere. Refuse to publish that.
     if live_keys == 0 and (prev or {}).get("live_keys", 1) > 0:
         fails.append("no live keys (xotelo_props.json missing from the state?)")
+    write_report(fails, notes, rep, where)
+    levels, cc_cov = summarise(records, iso_of)
     manifest = {
         "v": 1, "schema": 18, "built": now_iso(), "n": len(records),
         "coverage": coverage(records),
@@ -607,14 +802,18 @@ def main():
                     for s in ("xotelo", "booking", "hostelworld")},
         "contract": stats,
         "iab_dests": len(iab), "live_keys": live_keys, "hicp_latest": max((max(v) for v in (euro.get("hicp") or {}).values()), default=None),
-        "gate": {"fails": fails, "notes": notes},
+        "levels": levels, "cc_cov": cc_cov,
+        "gate": {"passed": not fails, "fails": fails[:300], "n_fails": len(fails),
+                 "notes": notes, "against": where},
     }
     print("coverage:", manifest["coverage"])
     print("observations:", manifest["sources"], "IAB destinations:", len(iab))
     for n in notes:
         print("note:", n)
+    print(f"gate {'passed' if not fails else 'FAILED'}: {len(fails)} blocking, "
+          f"report at {STATE / 'gate_report.md'}")
     if a.gate and fails:
-        for f in fails:
+        for f in fails[:20]:
             print("GATE FAILED:", f)
         sys.exit(2)
     by_cc = defaultdict(dict)

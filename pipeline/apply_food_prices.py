@@ -84,6 +84,12 @@ DEFAULT_TARGETS = [
 ]
 
 VERSION = "carta_food_v2"
+# The publish gate (T645): a country's median basket (the eight items summed)
+# may move at most FOOD_JUMP against what the target holds now, unless the move
+# is listed in pipeline/stays/gate_explain.json as {"key": "food:CC", "new": ...}.
+# Moves to config/pricing.json in F3.
+FOOD_JUMP = 0.25
+EXPLAIN = ROOT / "pipeline" / "stays" / "gate_explain.json"
 ITEMS = ("meal_mid_eur", "meal_cheap_eur", "fastfood_eur", "drink_out_eur",
          "cocktail_eur", "coffee_eur", "grocery_day_eur", "club_entry_eur")
 # Which group each item tilts with, and which Eurostat category prices it.
@@ -564,6 +570,31 @@ def summarise(dests, out, model):
     print(f"  shop receipts moved groceries at {rc} places")
 
 
+def basket(block):
+    vals = [(block or {}).get(i) for i in ITEMS]
+    return sum(v for v in vals if v) if any(vals) else None
+
+
+def food_gate(dests, out, explain=()):
+    """Blocking lines: countries whose median basket moves more than FOOD_JUMP."""
+    old_by, new_by = defaultdict(list), defaultdict(list)
+    for did, block in out.items():
+        d = dests.get(did) or {}
+        cc, o, n = d.get("iso2"), basket(d.get("costs")), basket(block)
+        if cc and o and n:
+            old_by[cc].append(o)
+            new_by[cc].append(n)
+    fails = []
+    for cc in sorted(old_by):
+        o, n = statistics.median(old_by[cc]), statistics.median(new_by[cc])
+        mv = n / o - 1
+        ok = any(e.get("key") == f"food:{cc}" and abs((e.get("new") or 0) - n) <= 0.02 * n
+                 for e in explain)
+        if abs(mv) > FOOD_JUMP and not ok:
+            fails.append(f"food {cc}: basket {o:.1f} -> {n:.1f} ({mv:+.0%})")
+    return fails
+
+
 def patch(path, inputs, baskets, report_only=False):
     if not path.exists():
         print(f"  skip (missing): {path}")
@@ -573,8 +604,15 @@ def patch(path, inputs, baskets, report_only=False):
     dests = data.get("destinations", {})
     out, model, country = price_all(dests, inputs, baskets)
     summarise(dests, out, model)
+    explain = json.loads(EXPLAIN.read_text(encoding="utf-8")) if EXPLAIN.exists() else []
+    fails = food_gate(dests, out, explain)
+    for f in fails:
+        print("  GATE:", f)
     if report_only:
         return
+    if fails:
+        raise SystemExit(f"food gate failed on {len(fails)} countries: {path.name} not written "
+                         f"(explain a right move in {EXPLAIN.relative_to(ROOT)})")
     save_snapshot(path, dests)
     for did, block in out.items():
         dests[did]["costs"] = block

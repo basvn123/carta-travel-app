@@ -35,6 +35,7 @@ Usage
   python -I pipeline/flights/build_routes.py              download and build
   python -I pipeline/flights/build_routes.py --offline    reuse downloads
   python -I pipeline/flights/build_routes.py --upload     also put it on R2
+  --accept-drop   write even when the route gate (route_gate) fails
 """
 import csv
 import gzip
@@ -171,6 +172,28 @@ def anchor_airports():
     return codes
 
 
+# The publish gate (T645). Prices are not in this file (the flight-sweep Worker
+# checks them when it publishes); what can go wrong here is a download that
+# silently loses routes. Moves to config/pricing.json in F3.
+ROUTE_DROP = 0.10          # share of all routes that may disappear in one build
+HUB_ROUTES = 10            # an airport this busy may not lose every route
+
+
+def route_gate(prev, new):
+    """Blocking lines comparing two {from: {to: mask}} route maps."""
+    if not prev:
+        return []
+    fails = []
+    n_old = sum(len(v) for v in prev.values())
+    n_new = sum(len(v) for v in new.values())
+    if n_old and n_new < n_old * (1 - ROUTE_DROP):
+        fails.append(f"routes fell {n_old} -> {n_new} ({n_new / n_old - 1:+.0%})")
+    for a, dests in sorted(prev.items()):
+        if len(dests) >= HUB_ROUTES and not new.get(a):
+            fails.append(f"{a} had {len(dests)} routes and now has none")
+    return fails
+
+
 def main(argv):
     offline = "--offline" in argv
     RAW.mkdir(parents=True, exist_ok=True)
@@ -228,6 +251,13 @@ def main(argv):
         "airports": {c: [round(about[c]["lat"], 3), round(about[c]["lon"], 3)]
                      for c in sorted(served | anchors) if c in about},
     }
+    prev = json.loads(OUT.read_text(encoding="utf-8")).get("routes") if OUT.exists() else None
+    fails = route_gate(prev, out["routes"])
+    for f in fails:
+        log(f"GATE: {f}")
+    if fails and "--accept-drop" not in argv:
+        log(f"gate failed: {OUT.relative_to(ROOT)} not written (--accept-drop when the drop is right)")
+        return 2
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(out, separators=(",", ":")), encoding="utf-8")
     AIRPORTS_OUT.write_text(json.dumps({c: about[c] for c in sorted(served)}, ensure_ascii=False,
