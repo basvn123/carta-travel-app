@@ -437,6 +437,104 @@ def ride_minutes(distance_m, ascent_m):
     return int(round(minutes))
 
 
+# Route shape (T630). The hiking side ships f.rt (loop, out_back, point,
+# figure8); the cycling wire had only `loop`, true on the 19% of routes a
+# mapper tagged roundtrip=yes. This derives the same three words from the
+# line itself, so the app can print one vocabulary for both layers.
+SHAPE_LOOP_MIN_M = 150.0
+SHAPE_LOOP_SHARE = 0.02
+SHAPE_RETRACE_M = 120.0
+SHAPE_RETRACE_SHARE = 0.03
+SHAPE_SAMPLES = 24
+
+
+def _line_points(geometry):
+    """[(lon, lat)] of a GeoJSON LineString / MultiLineString, in order."""
+    if not isinstance(geometry, dict):
+        return []
+    coords = geometry.get("coordinates")
+    if not isinstance(coords, list):
+        return []
+    lines = [coords] if geometry.get("type") == "LineString" else coords
+    pts = []
+    for line in lines:
+        for c in line or []:
+            if isinstance(c, (list, tuple)) and len(c) >= 2:
+                pts.append((float(c[0]), float(c[1])))
+    return pts
+
+
+def _metres(a, b):
+    import math
+    lat = math.radians((a[1] + b[1]) / 2.0)
+    dx = math.radians(b[0] - a[0]) * math.cos(lat) * 6371008.8
+    dy = math.radians(b[1] - a[1]) * 6371008.8
+    return math.hypot(dx, dy)
+
+
+def route_shape(geometry, roundtrip=None):
+    """'loop', 'out_back' or 'point' from the line, or None when there is no
+    usable line. A mapper's roundtrip=yes still wins as 'loop'.
+
+    loop       start and end within max(150 m, 2% of the length)
+    out_back   start and end apart, but the way back runs over the way out:
+               the point at fraction f and the point at 1 - f stay within
+               max(120 m, 3% of the length) of each other on average, and the
+               turning point is not the start
+    point      everything else (start and end differ, the way is not retraced)
+
+    Pure: no database, no wire."""
+    if roundtrip:
+        return "loop"
+    pts = _line_points(geometry)
+    if len(pts) < 3:
+        return None
+    cum = [0.0]
+    for a, b in zip(pts, pts[1:]):
+        cum.append(cum[-1] + _metres(a, b))
+    total = cum[-1]
+    if total < 300.0:
+        return None
+
+    def at(frac):
+        target = total * frac
+        lo, hi = 0, len(cum) - 1
+        while hi - lo > 1:
+            mid = (lo + hi) // 2
+            if cum[mid] <= target:
+                lo = mid
+            else:
+                hi = mid
+        span = cum[hi] - cum[lo] or 1.0
+        f = (target - cum[lo]) / span
+        return (pts[lo][0] + (pts[hi][0] - pts[lo][0]) * f,
+                pts[lo][1] + (pts[hi][1] - pts[lo][1]) * f)
+
+    gap = _metres(pts[0], pts[-1])
+    if gap <= max(SHAPE_LOOP_MIN_M, total * SHAPE_LOOP_SHARE):
+        # Start and end meet. A line that goes out and comes back over itself
+        # also meets, so tell a ring from a retrace by the middle: a loop's
+        # midpoint is far from the start, a retrace's midpoint is the far end
+        # and the two halves lie on each other.
+        sep = [_metres(at(i / (2.0 * SHAPE_SAMPLES)),
+                       at(1.0 - i / (2.0 * SHAPE_SAMPLES)))
+               for i in range(1, SHAPE_SAMPLES)]
+        mean = sum(sep) / len(sep)
+        if mean <= max(SHAPE_RETRACE_M, total * SHAPE_RETRACE_SHARE):
+            return "out_back"
+        return "loop"
+    sep = [_metres(at(i / (2.0 * SHAPE_SAMPLES)),
+                   at(1.0 - i / (2.0 * SHAPE_SAMPLES)))
+           for i in range(1, SHAPE_SAMPLES)]
+    mean = sum(sep) / len(sep)
+    # Ends apart yet halves lie on each other would be a retrace that does not
+    # return all the way; call it out_back only when the gap is small against
+    # the length.
+    if mean <= max(SHAPE_RETRACE_M, total * SHAPE_RETRACE_SHARE)             and gap <= total * 0.15:
+        return "out_back"
+    return "point"
+
+
 def route_card(row, tier):
     """The country-file card. A listed row has NO score key."""
     surface = row.get("surface") or {}
@@ -465,6 +563,12 @@ def route_card(row, tier):
         card["dur"] = {"min": dur, "rule": RIDE_RULE}
     if row.get("roundtrip"):
         card["loop"] = True
+    # T630: the shape in the trail vocabulary (loop, out_back, point). The
+    # card carries a simplified line (`placeholder`); a retrace survives the
+    # simplification, so the test is run on it.
+    shape = route_shape(_geo(row.get("placeholder")), row.get("roundtrip"))
+    if shape:
+        card["rt"] = shape
     if row.get("cycle_network"):
         card["fam"] = row["cycle_network"]
     if surface.get("paved_share") is not None:
@@ -570,6 +674,7 @@ def route_full(row, tier):
         "dur": ({"min": ride_minutes(row.get("distance_m"), row.get("ascent_m")),
                  "rule": RIDE_RULE} if row.get("distance_m") else None),
         "loop": bool(row.get("roundtrip")),
+        "rt": route_shape(_geo(row.get("placeholder")), row.get("roundtrip")),
         "t": tier,
         "bbox": parse_bbox(row.get("bbox")),
         "osm": osm,

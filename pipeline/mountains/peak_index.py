@@ -573,6 +573,56 @@ def terrain_of(peak):
     return peak.get("terrain") or {}
 
 
+RANK_MIN_RANGE = 3
+
+
+def range_ranks(peaks, id_of, fold_fn=None):
+    """T630: where each summit stands in its range, by height and by
+    prominence, ACROSS countries.
+
+    Ranges cross borders (the Alps are in eight countries, the Pyrenees in
+    three), so the rank is taken over the whole enriched pool and not over one
+    country file. `peaks` is every enriched peak, `id_of` the wire id function.
+    Returns {wire id: {"n": peaks in the range, "h": height rank, "p":
+    prominence rank}}, 1 is the highest. A range with fewer than
+    RANK_MIN_RANGE peaks is not ranked (second of two says nothing), and a
+    peak without the figure gets no rank for that figure. The rank is among
+    the peaks THIS catalogue holds for the range, which is a coverage
+    statement, and the wire key says so (`rangeRank`).
+
+    Ties share the better rank (competition ranking)."""
+    norm = fold_fn or (lambda s: str(s).lower())
+    groups = {}
+    for peak in peaks:
+        name = peak.get("range")
+        if not name:
+            continue
+        groups.setdefault(" ".join(norm(name).split()), []).append(peak)
+    out = {}
+    for members in groups.values():
+        if len(members) < RANK_MIN_RANGE:
+            continue
+        by_h = sorted((p for p in members if p.get("ele") is not None),
+                      key=lambda p: -p["ele"])
+        by_p = []
+        for p in members:
+            prom, _src = prominence_of(p)
+            if prom is not None:
+                by_p.append((prom, p))
+        by_p.sort(key=lambda t: -t[0])
+        for i, p in enumerate(by_h):
+            rank = i + 1
+            if i and p["ele"] == by_h[i - 1]["ele"]:
+                rank = out[id_of(by_h[i - 1])]["h"]
+            out.setdefault(id_of(p), {"n": len(members)})["h"] = rank
+        for i, (prom, p) in enumerate(by_p):
+            rank = i + 1
+            if i and prom == by_p[i - 1][0]:
+                rank = out[id_of(by_p[i - 1][1])]["p"]
+            out.setdefault(id_of(p), {"n": len(members)})["p"] = rank
+    return out
+
+
 def prominence_of(peak):
     """(metres, source). Published first, computed second, and the order is
     not a preference for Wikidata: a published prominence was measured

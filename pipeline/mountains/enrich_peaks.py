@@ -1170,6 +1170,49 @@ def context_radius_m(peak):
     return CONTEXT_RADIUS.get(kind_hint(peak), 2600)
 
 
+def _clip(value, n):
+    return str(value).strip()[:n] if value not in (None, "") else None
+
+
+def hut_record(tags, metres, kind):
+    """T630: one mountain hut, from its OSM tags, for the peak page.
+
+    Beds (capacity or beds), when it is open (opening_hours, or the seasonal
+    tag), and how to reach it (phone, website, email, with the contact:*
+    spellings as the fallback). Every field is absent when OSM has nothing:
+    a hut is a name and a distance at minimum, and a page that prints a bed
+    count nobody tagged would be inventing it. The free text is clipped
+    because it ends up in a wire row.
+
+    Returns None for an unnamed hut with nothing else to say."""
+    def first(*keys):
+        for k in keys:
+            if tags.get(k):
+                return tags[k]
+        return None
+
+    beds = first("beds", "capacity", "capacity:beds")
+    try:
+        beds = int(re.search(r"\d+", str(beds)).group()) if beds else None
+    except (AttributeError, ValueError):
+        beds = None
+    rec = {
+        "name": _clip(tags.get("name"), 60),
+        "kind": kind,
+        "m": int(metres),
+        "beds": beds,
+        "open": _clip(first("opening_hours", "seasonal", "opening_hours:signed"), 80),
+        "phone": _clip(first("phone", "contact:phone", "contact:mobile"), 30),
+        "web": _clip(first("website", "contact:website", "url"), 120),
+        "email": _clip(first("email", "contact:email"), 80),
+        "ele": _clip(tags.get("ele"), 8),
+    }
+    rec = {k: v for k, v in rec.items() if v is not None}
+    if "name" not in rec and len(rec) <= 2:
+        return None
+    return rec
+
+
 def context_for(batch):
     """{peak key: {counts, near}} for a batch.
 
@@ -1188,7 +1231,8 @@ def context_for(batch):
     except SourceError as exc:
         print(f"    context batch failed: {str(exc)[:90]}")
         return {}
-    out = {row_key(b): {"tags": {}, "near": {}, "names": {}, "grades": {}}
+    out = {row_key(b): {"tags": {}, "near": {}, "names": {}, "grades": {},
+                        "huts": []}
            for b in batch}
     for el in elements:
         tags = el.get("tags") or {}
@@ -1239,6 +1283,10 @@ def context_for(batch):
                 bucket["names"].setdefault("rail", name[:60])
             if name and key == "tourism" and value in ("alpine_hut", "wilderness_hut"):
                 bucket["names"].setdefault("hut", name[:60])
+            if key == "tourism" and value in ("alpine_hut", "wilderness_hut"):
+                hut = hut_record(tags, metres, value)
+                if hut:
+                    bucket["huts"].append(hut)
             if name and key == "boundary" and value == "national_park":
                 bucket["names"].setdefault("park", name[:60])
         # A summit node for this mountain carries facts nothing else does.
