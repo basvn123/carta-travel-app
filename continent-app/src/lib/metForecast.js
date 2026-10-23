@@ -24,6 +24,22 @@ export function cell(lat, lon) {
   return [Math.round(lat * 100) / 100, Math.round(lon * 100) / 100];
 }
 
+/**
+ * The `altitude` query parameter, made safe (T630, summit forecast). MET
+ * corrects the temperature for the height of the point and takes whole
+ * metres. Returns null when none was asked for, undefined when the value is
+ * not a number (the caller answers 400), else metres clamped to 0 to 5000
+ * and rounded to 50 m, so the edge cache key stays coarse: a request with an
+ * altitude is a different upstream URL from one without, and two summits 20 m
+ * apart share an answer.
+ */
+export function altitudeStep(raw) {
+  if (raw == null || raw === '') return null;
+  const n = Number(raw);
+  if (!Number.isFinite(n)) return undefined;
+  return Math.round(Math.min(5000, Math.max(0, n)) / 50) * 50;
+}
+
 /** A MET symbol_code ("lightrainshowers_day") as the kind the UI draws. */
 export function metKind(symbol) {
   const s = String(symbol || '').replace(/_(day|night|polartwilight)$/, '');

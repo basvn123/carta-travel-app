@@ -101,7 +101,9 @@ export const PlaceCard = React.memo(function PlaceCard({
   // A row holds what decides a click and no more (T452, owner 2026-10-15:
   // "just enough to attract them"): two measured values, then up to three
   // words of what it is like. The page holds the rest.
-  const shown = values.filter((v) => !v.none).slice(0, 2);
+  // T630: a route card carries its badges (SAC, length, climb, time) and shows
+  // all of them, a missing one as the placeholder.
+  const shown = fill.badges?.length ? fill.badges : values.filter((v) => !v.none).slice(0, 2);
   if (gem) parts.push({ key: 'gem', cls: 'pcard-gem', text: gem });
   return (
     <Card

@@ -1,6 +1,8 @@
 import React from 'react';
 import { useI18n, tOutsideProvider } from '../i18n/index.jsx';
 import { monthName } from '../lib/dates.js';
+import NotYet from '../components/NotYet.jsx';
+import { climateExtras, windSeriesKmh } from '../lib/waterFacts.js';
 
 /**
  * Real climate normals (NASA POWER, 2001-2020) as a 12-month comfort strip:
@@ -148,5 +150,84 @@ export function ClimateStrip({ climate, month = null, figures = false, compact =
       </div>
       )}
     </>
+  );
+}
+
+/**
+ * The monthly figures the strip does not draw (T631): rain days, wind,
+ * sunshine hours, water temperature and the temperature at altitude. Every
+ * series keeps its slot; a series the wire does not carry says so with the
+ * shared placeholder, never a blank. Derived and modelled series are marked
+ * as such in their own label.
+ *
+ *   climate      the dest climate block (compact wire or master names)
+ *   water        { temps: [12]|null, est: bool } the water temperature, or
+ *                null when the place has no source (beaches, destinations)
+ *   altitude     altitudeSeries() answer, null when it cannot be derived
+ *   sameLevel    { town } when the place sits at the town's height, so the
+ *                altitude row says the valley figures apply
+ */
+export function ClimateExtras({ climate, water = null, altitude = null, sameLevel = null }) {
+  const { t, lang } = useI18n();
+  const { rainDays } = climateExtras(climate);
+  const wind = windSeriesKmh(climate);
+  const nf = (n) => {
+    try { return new Intl.NumberFormat(lang, { maximumFractionDigits: 1 }).format(n); } catch { return String(n); }
+  };
+  const mShort = (i) => monthName(i + 1, lang, false) || MONTHS_SHORT[i];
+  const series = [
+    { key: 'rain', label: t('wx.rainDays'), note: t('wx.rainDaysNote'), values: rainDays },
+    { key: 'wind', label: t('wx.wind'), note: t('wx.windNote'), values: wind },
+    { key: 'sun', label: t('wx.sunHours'), values: null },
+    {
+      key: 'water',
+      label: t('wx.waterTemp'),
+      note: water?.temps && water.est ? `${t('prov.est')} ${t('wx.estimate')}` : null,
+      values: water?.temps || null,
+      unit: '°',
+    },
+    altitude
+      ? {
+        key: 'alt-hi',
+        label: t('wx.altHigh', { name: altitude.name || t('wx.altThePeak'), m: nf(altitude.m) }),
+        note: t('wx.altNote'),
+        values: altitude.hi,
+        unit: '°',
+      }
+      : { key: 'alt-hi', label: t('wx.altitude'), values: null, sameLevel },
+    altitude && {
+      key: 'alt-lo',
+      label: t('wx.altLow', { name: altitude.name || t('wx.altThePeak'), m: nf(altitude.m) }),
+      values: altitude.lo,
+      unit: '°',
+    },
+  ].filter(Boolean);
+  return (
+    <div className="clm-extras" data-testid="climate-extras">
+      <ol className="clm-months" aria-hidden="true">
+        {MONTHS_INITIAL.map((m, i) => <li key={i}>{m}</li>)}
+      </ol>
+      {series.map((s) => (
+        <div className="clm-series" key={s.key} data-testid={`clm-${s.key}`}>
+          <p className="clm-label">
+            {s.label}
+            {s.note && <small>{s.note}</small>}
+          </p>
+          {s.values ? (
+            <ol className="clm-cells">
+              {s.values.map((v, i) => (
+                <li key={i} aria-label={`${mShort(i)}: ${v == null ? t('data.notYet') : `${nf(v)}${s.unit || ''}`}`}>
+                  {v == null ? '' : `${Math.round(v)}${s.unit || ''}`}
+                </li>
+              ))}
+            </ol>
+          ) : s.sameLevel ? (
+            <p className="not-yet-line" data-testid="clm-same">{t('wx.sameLevel', { town: s.sameLevel.town })}</p>
+          ) : (
+            <NotYet />
+          )}
+        </div>
+      ))}
+    </div>
   );
 }

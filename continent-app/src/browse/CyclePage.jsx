@@ -31,6 +31,7 @@ import { CountryFlag } from '../components/CountryFlag.jsx';
 import {
   SlopeProfile, MixBar, MixKeys, TrafficBar,
 } from './RouteFigures.jsx';
+import { CycleRouteFacts } from './RouteFacts.jsx';
 import { Instrument, Row, EmptyTrack, SpanAxis } from './Signature.jsx';
 import { kmOf, trafficMix } from '../lib/signature.js';
 import { PhotoGallery } from './PhotoGallery.jsx';
@@ -816,6 +817,7 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
               <span className="cycle-facts-bike">{bikeLine(carta.surface.bike, t)}</span>
             )}
           </p>
+          <CycleRouteFacts route={route} t={t} lang={lang} />
           {!rated && <p className="cycle-unrated">{listedLine(t)}</p>}
         </>
       ),

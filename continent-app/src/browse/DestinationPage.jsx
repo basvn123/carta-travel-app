@@ -43,6 +43,7 @@ import { DestOverview } from './DestOverview.jsx';
 import { DestNearby } from './DestNearby.jsx';
 import { DestWhen } from './DestWhen.jsx';
 import { DestPractical } from './DestPractical.jsx';
+import { notYet } from '../components/NotYet.jsx';
 
 /**
  * The full-screen destination page, v4 (T499, roadmap 1.4, owner answers
@@ -386,9 +387,12 @@ export function DestinationPage({
     getting?.airport && {
       k: 'airport',
       label: t('dest.keyAirport'),
-      value: getting.transfer_min != null
-        ? t('dest.keyAirportValue', { iata: getting.airport, n: getting.transfer_min, mode: t(`mode.${getting.transfer_mode || 'train'}`) })
-        : getting.airport,
+      // T632: no transfer mode in the data is the placeholder, not "train".
+      value: getting.transfer_min == null
+        ? getting.airport
+        : getting.transfer_mode
+          ? t('dest.keyAirportValue', { iata: getting.airport, n: getting.transfer_min, mode: t(`mode.${getting.transfer_mode}`) })
+          : t('dest.keyAirportNoMode', { iata: getting.airport, n: getting.transfer_min, mode: notYet(t) }),
     },
     getting?.car_needed != null && { k: 'car', label: t('dest.keyCar'), value: t(getting.car_needed ? 'dest.keyCarYes' : 'dest.keyCarNo') },
     // "Time here" left the facts (T446): a rule of thumb from the sights'

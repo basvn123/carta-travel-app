@@ -6,6 +6,7 @@ import {
 import { SpanAxis } from './Signature.jsx';
 import { InfoDot } from '../components/InfoDot.jsx';
 import { glossaryIdIn } from '../lib/glossary.js';
+import { sacRuns } from '../lib/routeEffort.js';
 
 /**
  * The route figures, one family for the trail page, the cycling page and the
@@ -252,7 +253,7 @@ export function TrafficBar({ split, t, testId = 'route-traffic', totalM = null, 
  */
 export function SlopeProfile({
   elevation, atM = null, onScrub = null, labels, testId = 'trail-slope',
-  markM = null, plain = false,
+  markM = null, plain = false, sacSegments = null,
 }) {
   const profile = elevation?.profile;
   const [at, setAt] = React.useState(null);
@@ -273,7 +274,11 @@ export function SlopeProfile({
     const span = Math.max(1, eMax - eMin);
     const x = (d) => PAD + Math.min(1, d / dMax) * (W - 2 * PAD);
     const y = (e) => H - PAD - ((e - eMin) / span) * (H - 2 * PAD);
-    const runs = slopeRuns(profile).map((r) => {
+    // T630: with SAC segments the profile is shaded by SAC grade (the same
+    // three tones, T1 and T2, T3 and T4, T5 and T6) instead of by steepness;
+    // a stretch no segment covers stays unshaded under the line.
+    const sourceRuns = sacSegments ? sacRuns(profile, sacSegments) : slopeRuns(profile);
+    const runs = sourceRuns.map((r) => {
       const seg = profile.slice(r.from, r.to + 1).map(([d, e]) => [x(d), y(e)]);
       const poly = [[seg[0][0], H], ...seg, [seg[seg.length - 1][0], H]];
       return { key: `${r.from}-${r.cls}`, cls: r.cls, points: pts(poly) };
@@ -282,7 +287,7 @@ export function SlopeProfile({
     const line = pts(xy);
     const area = pts([[xy[0][0], H], ...xy, [xy[xy.length - 1][0], H]]);
     return { H, dMax, eMin, eMax, span, runs, line, area };
-  }, [profile, elevation]);
+  }, [profile, elevation, sacSegments]);
 
   const report = React.useCallback((v) => {
     setAt(v);
@@ -325,7 +330,7 @@ export function SlopeProfile({
   const readout = read
     ? labels.at({ km: km(read.along), m: count(read.ele), pct: Math.round(Math.abs(read.grade)) })
     : labels.range({ min: count(eMin), max: count(eMax) });
-  const slopeParts = slopeShares(elevation);
+  const slopeParts = sacSegments ? null : slopeShares(elevation);
 
   return (
     <div className="sig-trail" data-testid={testId}>
@@ -355,9 +360,10 @@ export function SlopeProfile({
         onKeyDown={onKey}
       >
         <svg viewBox={`0 0 ${W} ${H}`} className="tpage-elev-svg sig-profile" aria-hidden="true" preserveAspectRatio="none">
-          {plain ? (
+          {plain || sacSegments ? (
             <polygon points={geo.area} className="sig-plain-area" />
-          ) : geo.runs.map((r) => (
+          ) : null}
+          {plain ? null : geo.runs.map((r) => (
             <polygon key={r.key} points={r.points} className={`sig-slope is-slope${r.cls}`} />
           ))}
           <polyline points={geo.line} className="sig-profile-line" vectorEffect="non-scaling-stroke" />

@@ -7,6 +7,7 @@ import { DestForecast } from './DestForecast.jsx';
 import { NearestLine } from './CoverageEmpty.jsx';
 import { Section, DoTile, DoList, SightList, OutdoorTile, TripTile } from './DestTiles.jsx';
 import { kindsList } from '../lib/destOverview.js';
+import { DestRouteGpx } from './DestRouteGpx.jsx';
 
 /**
  * The destination page's Overview tab (T499, roadmap 1.4,
@@ -180,6 +181,7 @@ function TakeAway({ p }) {
         loading={pdfBusy} iconStart={<DownloadIcon size={16} />}>
         {pdfBusy ? t('dest.pdfBuilding') : t('dest.pdf')}
       </Button>
+      <DestRouteGpx routes={p.routeRows} t={t} />
     </Section>
   );
 }

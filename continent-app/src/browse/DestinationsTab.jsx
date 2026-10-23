@@ -47,7 +47,10 @@ import {
   ASCENT_BANDS, tripClimbBand, GRADES, tripGrade,
   ROUTE_TYPES, tripRouteType, HIGHLIGHTS, tripHighlights,
   SUITABILITY, tripSuitability, isListed,
+  tripSacBand, tripDurationBands, tripReachable,
 } from '../lib/trailCards.js';
+import { SAC_BANDS, DURATION_BANDS } from '../lib/routeEffort.js';
+import NotYet from '../components/NotYet.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { geocodeAddress, reverseGeocode, geoLines } from '../lib/geocode.js';
 import { rankPlaces } from '../lib/placeSearch.js';
@@ -520,7 +523,11 @@ export function DestinationsTab({
   const [climbs, setClimbs] = useState([]);          // ASCENT_BANDS keys
   const [shapes, setShapes] = useState([]);          // ROUTE_TYPES keys
   const [hls, setHls] = useState([]);                // HIGHLIGHTS keys
-  const [suits, setSuits] = useState([]);            // SUITABILITY keys
+  const [suits, setSuits] = useState([]);
+  // T630: SAC grade, longest time and public transport, on the trails tab.
+  const [sacs, setSacs] = useState([]);              // SAC_BANDS keys
+  const [durs, setDurs] = useState([]);              // DURATION_BANDS keys
+  const [reachOnly, setReachOnly] = useState(false);            // SUITABILITY keys
   const [loopsOnly, setLoopsOnly] = useState(false);
   const [trailSort, setTrailSort] = useState({ key: 'rating', dir: -1 });
   const [visible, setVisible] = useState(PAGE);
@@ -1204,9 +1211,12 @@ export function DestinationsTab({
       const on = tripSuitability(tr);
       if (!suits.some((k) => on.includes(k))) return false;
     }
+    if (sacs.length && !sacs.includes(tripSacBand(tr))) return false;
+    if (durs.length && !durs.some((k) => tripDurationBands(tr).includes(k))) return false;
+    if (reachOnly && !tripReachable(tr)) return false;
     if (loopsOnly && !tr.is_loop) return false;
     return true;
-  }, [bands, grades, climbs, shapes, hls, suits, loopsOnly]);
+  }, [bands, grades, climbs, shapes, hls, suits, loopsOnly, sacs, durs, reachOnly]);
 
   const tripRows = useMemo(() => {
     if (!tripCards) return null;
@@ -1278,6 +1288,9 @@ export function DestinationsTab({
     const byShape = tally(ROUTE_TYPES);
     const byHl = tally(HIGHLIGHTS);
     const bySuit = tally(SUITABILITY);
+    const bySac = tally(SAC_BANDS);
+    const byDur = tally(DURATION_BANDS);
+    let reach = 0;
     let loops = 0;
     let listed = 0;
     for (const c of rows) {
@@ -1287,10 +1300,13 @@ export function DestinationsTab({
       bump(byShape, tripRouteType(c.tr));
       for (const k of new Set(tripHighlights(c.tr))) bump(byHl, k);
       for (const k of new Set(tripSuitability(c.tr))) bump(bySuit, k);
+      bump(bySac, tripSacBand(c.tr));
+      for (const k of tripDurationBands(c.tr)) bump(byDur, k);
+      if (tripReachable(c.tr)) reach += 1;
       if (c.tr.is_loop) loops += 1;
       if (isListed(c.tr)) listed += 1;
     }
-    return { byBand, byGrade, byClimb, byShape, byHl, bySuit,
+    return { byBand, byGrade, byClimb, byShape, byHl, bySuit, bySac, byDur, reach,
       loops, listed, total: rows.length };
   }, [cat, tripCards, q]);
 
@@ -1964,7 +1980,7 @@ export function DestinationsTab({
     scrollRef.current?.scrollTo?.(0, 0);
   }, [cat, country, q, nearPlace, sort, trailSort, bands, loopsOnly,
     mtnFacets, lakeFacets, beachFacets, journeyView,
-    grades, climbs, shapes, hls, suits,
+    grades, climbs, shapes, hls, suits, sacs, durs, reachOnly,
     itinDays, itinPace, itinScale,
     cycleFacets, cycleSort, cycleShowLocal]);
 
@@ -2025,10 +2041,12 @@ export function DestinationsTab({
   // the list, the list says so and offers to clear them, rather than calling
   // the country empty.
   const trailFiltersOn = !!q || bands.length > 0 || grades.length > 0 || climbs.length > 0
-    || shapes.length > 0 || hls.length > 0 || suits.length > 0 || loopsOnly;
+    || shapes.length > 0 || hls.length > 0 || suits.length > 0 || loopsOnly
+    || sacs.length > 0 || durs.length > 0 || reachOnly;
   const clearTrailFilters = () => {
     setQuery(''); setBands([]); setGrades([]); setClimbs([]);
     setShapes([]); setHls([]); setSuits([]); setLoopsOnly(false);
+    setSacs([]); setDurs([]); setReachOnly(false);
   };
   // A geocoded point with no country (an ocean, a border way) has no trails
   // file to read, so the trip categories say so rather than render nothing.
@@ -2198,6 +2216,44 @@ export function DestinationsTab({
         trailFacets.byHl, setHls);
       fromCounts('suitability', t('trails.suitLabel'), SUITABILITY, suits,
         trailFacets.bySuit, setSuits);
+      // T630: three groups that stay on screen even when no row can answer
+      // them yet. A chip with no rows behind it is disabled and the group
+      // says so (notYet), instead of the group being left out.
+      const sacTotal = SAC_BANDS.reduce((n, d) => n + (trailFacets.bySac.get(d.key) || 0), 0);
+      out.push({
+        key: 'sac',
+        label: t('route.facetSac'),
+        notYet: sacTotal === 0,
+        onToggle: toggleChip(setSacs),
+        options: SAC_BANDS.map((d) => {
+          const n = trailFacets.bySac.get(d.key) || 0;
+          const isOn = sacs.includes(d.key);
+          return { key: d.key, label: t(d.labelKey), n, on: isOn, disabled: !n && !isOn };
+        }),
+      });
+      out.push({
+        key: 'duration',
+        label: t('route.facetDuration'),
+        onToggle: toggleChip(setDurs),
+        options: DURATION_BANDS.map((d) => {
+          const n = trailFacets.byDur.get(d.key) || 0;
+          const isOn = durs.includes(d.key);
+          return { key: d.key, label: t(d.labelKey), n, on: isOn, disabled: !n && !isOn };
+        }),
+      });
+      out.push({
+        key: 'reach',
+        label: t('route.facetTransit'),
+        notYet: trailFacets.reach === 0,
+        onToggle: () => setReachOnly((v) => !v),
+        options: [{
+          key: 'reach',
+          label: t('route.facetTransitOn'),
+          n: trailFacets.reach,
+          on: reachOnly,
+          disabled: trailFacets.reach === 0 && !reachOnly,
+        }],
+      });
     }
     if (isCycleCat && cycleRows && cycleScope.length > 0) {
       // Six groups, in the order a rider decides in. Same contract as the
@@ -2320,7 +2376,7 @@ export function DestinationsTab({
     }
     return out;
   }, [isCycleCat, cycleRows, cycleScope, cycleCounts, cycleFacets, cat, t, showCountryIndex, isItinCat, itinFacets,
-    itinPace, itinScale, trailFacets, bands, loopsOnly,
+    itinPace, itinScale, trailFacets, bands, loopsOnly, sacs, durs, reachOnly,
     grades, climbs, shapes, hls, suits, isBeachCat, beachRows,
     beachFacets, beachCounts, isLakeCat, lakeRows, lakeFacets, lakeCounts,
     isMountainCat, mountainRows, mtnFacets, mtnCounts]);
@@ -2331,6 +2387,7 @@ export function DestinationsTab({
     + Object.values(cycleFacets).reduce((n, list) => n + (list?.length || 0), 0)
     + bands.length + (loopsOnly ? 1 : 0)
     + grades.length + climbs.length + shapes.length + hls.length + suits.length
+    + sacs.length + durs.length + (reachOnly ? 1 : 0)
     + Object.values(beachFacets).reduce((n, list) => n + (list?.length || 0), 0)
     + Object.values(lakeFacets).reduce((n, list) => n + (list?.length || 0), 0)
     + Object.values(mtnFacets).reduce((n, list) => n + (list?.length || 0), 0)
@@ -2345,6 +2402,9 @@ export function DestinationsTab({
     setShapes([]);
     setHls([]);
     setSuits([]);
+    setSacs([]);
+    setDurs([]);
+    setReachOnly(false);
     setBeachFacets({});
     setLakeFacets({});
     setMtnFacets({});
@@ -2397,7 +2457,8 @@ export function DestinationsTab({
   // in each Europe-wide cut), and with one on that country's own walks.
   const facetsOff = (f) => !Object.values(f).some((l) => l?.length);
   const trailChipsOn = bands.length > 0 || grades.length > 0 || climbs.length > 0
-    || shapes.length > 0 || hls.length > 0 || suits.length > 0 || loopsOnly;
+    || shapes.length > 0 || hls.length > 0 || suits.length > 0 || loopsOnly
+    || sacs.length > 0 || durs.length > 0 || reachOnly;
   const atRest = !q && !query.trim() && !nearPlace;
   const openingLayer = !atRest ? null
     : isBeachCat ? (!country && facetsOff(beachFacets) && topBeaches?.length ? 'beach' : null)
@@ -2801,6 +2862,7 @@ export function DestinationsTab({
             </Chip>
           ))}
         </div>
+        {g.notYet && <NotYet />}
       </div>
     ));
 

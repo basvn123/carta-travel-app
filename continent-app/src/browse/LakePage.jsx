@@ -31,6 +31,8 @@ import {
 } from '../components/Icons.jsx';
 import { lakeShore, shoreSummary } from '../lib/derivedModules.js';
 import { LakeShore } from './DerivedModules.jsx';
+import { BaseClimate, LakeWater } from './WaterSheet.jsx';
+import { notYet } from '../components/NotYet.jsx';
 
 import { LakeSignature } from './Signature.jsx';
 
@@ -123,17 +125,21 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
   const size = lake.size || {};
   const seasonLine = lakeSeason(lake, t);
   const facts = [
-    size.areaKm2 && {
+    // T631: area and depth keep their slot at every lake; the 7% without an
+    // area and the 67% without a depth show the shared placeholder.
+    {
       key: 'area',
       label: t('lake.factArea'),
-      value: `${size.areaKm2.toLocaleString(lang)} km²`,
-      mono: true,
+      value: size.areaKm2 ? `${size.areaKm2.toLocaleString(lang)} km²` : notYet(t),
+      mono: Boolean(size.areaKm2),
+      empty: !size.areaKm2,
     },
-    size.depthM && {
+    {
       key: 'depth',
       label: t('lake.factDepth'),
-      value: `${size.depthM.toLocaleString(lang)} m`,
-      mono: true,
+      value: size.depthM ? `${size.depthM.toLocaleString(lang)} m` : notYet(t),
+      mono: Boolean(size.depthM),
+      empty: !size.depthM,
     },
     size.elevM != null && {
       key: 'elev',
@@ -141,13 +147,14 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
       value: `${size.elevM.toLocaleString(lang)} m`,
       mono: true,
     },
-    lake.water && {
+    {
       key: 'water',
       label: t('lake.factWater'),
-      value: t(`lake.water${lake.water.class}`),
-      note: lake.water.sites > 0
+      value: lake.water ? t(`lake.water${lake.water.class}`) : notYet(t),
+      empty: !lake.water,
+      note: lake.water && (lake.water.sites > 0
         ? t('lake.factSites', { n: lake.water.sites })
-        : (displayName(lake.water.site) || ''),
+        : (displayName(lake.water.site) || '')),
     },
     lake.access && {
       key: 'access',
@@ -238,6 +245,13 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
             <h3 className="dsk-sub">{t('derived.shoreHead')}</h3>
             <LakeShore shore={shore} t={t} lang={lang} />
           </div>
+          <BaseClimate
+            base={lake.base}
+            kind="lake"
+            water={{ temps: lake.swim?.temps || null, est: Boolean(lake.swim?.est) }}
+            placeM={Number.isFinite(size.elevM) ? size.elevM : null}
+            placeName={lake.name}
+          />
           {lake.walks?.length > 0 && (
             <div className="lpage-walks">
               <h3 className="dsk-sub">{t('lake.walksHead')}</h3>
@@ -260,16 +274,16 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
         </>
       ),
     },
-    facts.length > 0 && {
+    {
       key: 'facts',
       icon: InfoIcon,
       label: t('lake.factsHead'),
-      summary: previewWords(facts.slice(0, 3).map((f) => f.value).join(', ')),
+      summary: previewWords(facts.filter((f) => !f.empty).slice(0, 3).map((f) => f.value).join(', ')),
       body: (
         <div className="bpage-facts">
           <dl>
             {facts.map((fact) => (
-              <div key={fact.key} className="bpage-fact">
+              <div key={fact.key} className={`bpage-fact${fact.empty ? ' bpage-fact-empty' : ''}`}>
                 <dt>{fact.label}</dt>
                 <dd className={fact.mono ? 'mono' : ''}>
                   {fact.value}
@@ -278,6 +292,7 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
               </div>
             ))}
           </dl>
+          <LakeWater lake={lake} />
         </div>
       ),
     },

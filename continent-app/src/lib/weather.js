@@ -21,10 +21,12 @@ const cache = new Map();
 
 /** Daily rows { date, kind, hi, lo, rainMm, updated }, or null when the
  *  forecast could not be fetched. `updated` is when MET last ran the model. */
-export function fetchForecast(lat, lon) {
-  const key = `${lat.toFixed(2)},${lon.toFixed(2)}`;
+export function fetchForecast(lat, lon, altitude = null) {
+  // T630: a summit passes its height; MET corrects the temperature for it.
+  const alt = Number.isFinite(altitude) ? Math.round(altitude) : null;
+  const key = `${lat.toFixed(2)},${lon.toFixed(2)}${alt != null ? `,${alt}` : ''}`;
   if (!cache.has(key)) {
-    cache.set(key, fetch(`/api/forecast?lat=${lat.toFixed(2)}&lon=${lon.toFixed(2)}`)
+    cache.set(key, fetch(`/api/forecast?lat=${lat.toFixed(2)}&lon=${lon.toFixed(2)}${alt != null ? `&altitude=${alt}` : ''}`)
       .then((r) => (r.ok ? r.json() : null))
       .then((j) => {
         if (!j || !Array.isArray(j.days) || !j.days.length) return null;
@@ -36,14 +38,14 @@ export function fetchForecast(lat, lon) {
 }
 
 /** 7 daily rows, undefined while loading, null when the fetch failed. */
-export function useForecast(lat, lon, open) {
+export function useForecast(lat, lon, open, altitude = null) {
   const [rows, setRows] = useState(undefined);
   useEffect(() => {
     if (!open || lat == null || lon == null) return undefined;
     let live = true;
     setRows(undefined);
-    fetchForecast(lat, lon).then((r) => { if (live) setRows(r); });
+    fetchForecast(lat, lon, altitude).then((r) => { if (live) setRows(r); });
     return () => { live = false; };
-  }, [lat, lon, open]);
+  }, [lat, lon, open, altitude]);
   return rows;
 }

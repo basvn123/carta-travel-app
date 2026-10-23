@@ -6,6 +6,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { useAnchoredSheet } from './sheetAnchor.js';
 import { durationMs } from '../lib/motion.js';
 import { Button, Chip, IconButton } from '../components/ui/index.js';
+import NotYet from '../components/NotYet.jsx';
 
 /**
  * The Destinations filters, in the shape Explore already uses: one modal
@@ -222,6 +223,7 @@ export function PlacesFilterSheet({
                         </Chip>
                       ))}
                     </div>
+                    {g.notYet && <NotYet />}
                   </div>
                 ))}
               </div>

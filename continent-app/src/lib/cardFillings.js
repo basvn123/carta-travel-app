@@ -40,6 +40,7 @@ import { trailClimbUp, trailPlace } from './trailStory.js';
 import { compassPoint } from './signature.js';
 import { count, stripDashes } from './format.js';
 import { activeLocale } from './localeState.js';
+import { sacLabel, clock } from './routeEffort.js';
 
 export const VALUE_COUNT = 3;
 export const ICON_MAX = 3;
@@ -136,6 +137,30 @@ const hookOf = (labels, cls = '') => labels
   .slice(0, HOOK_MAX)
   .map((text) => ({ text, cls }));
 
+/**
+ * The route badges (T630): a route card shows its SAC grade (hikes), length,
+ * climb and time, four cells whose slot stays when the figure is missing and
+ * says so (the shared placeholder). Walking time is the stored DIN 33466
+ * time; a ride's time is the stored riding time. Not the card's three
+ * values: PlaceCard draws these in their place when a filling carries them.
+ */
+// The shared placeholder's short string (components/NotYet.jsx is a React file
+// and these fillings run in node tests, so the key is read here).
+const notYet = (t) => t('data.notYet');
+
+export function routeBadges({ sac, km, climb, minutes, withSac }, t) {
+  const cells = [];
+  if (withSac) {
+    cells.push({ key: 'sac', label: t('card.vSac'), value: sacLabel(sac) || notYet(t), none: !sacLabel(sac) });
+  }
+  cells.push(
+    { key: 'length', label: t('card.vLength'), value: km ?? notYet(t), none: km == null },
+    { key: 'climb', label: t('card.vClimb'), value: climb ?? notYet(t), none: climb == null },
+    { key: 'time', label: t('card.vTime'), value: minutes ?? notYet(t), none: minutes == null },
+  );
+  return cells;
+}
+
 /* ── Trails (walks and the drawn city days) ─────────────────────────────── */
 
 const TRAIL_ICON = {
@@ -209,6 +234,13 @@ export function trailFilling(card, { t, countryName = () => null }) {
     hook,
     values,
     icons: icons.slice(0, ICON_MAX),
+    badges: isCityDay ? undefined : routeBadges({
+      sac: tr.sac_scale,
+      km: kmText(tr.distance_m),
+      climb: num(climb) != null ? `+${count(climb)} m` : null,
+      minutes: num(tr.duration_min) != null ? clock(tr.duration_min) : null,
+      withSac: true,
+    }, t),
   };
 }
 
@@ -250,6 +282,13 @@ export function cycleFilling(r, { t, countryName = '' }) {
     hook: hookOf(r.sec ? [t('cycle.stretch')] : evidence),
     values,
     icons: icons.slice(0, ICON_MAX),
+    // A ride has no SAC grade; its fourth figure is the riding time.
+    badges: routeBadges({
+      km: num(r.km) != null ? `${dec(r.km)} km` : null,
+      climb: num(r.asc) != null ? `+${count(r.asc)} m` : null,
+      minutes: num(r.dur?.min) != null ? clock(r.dur.min) : null,
+      withSac: false,
+    }, t),
   };
 }
 

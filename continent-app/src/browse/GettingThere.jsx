@@ -2,6 +2,7 @@ import React from 'react';
 import { CarIcon, TrainIcon, BusIcon, FerryIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { formatEst } from '../lib/money.js';
+import { notYet } from '../components/NotYet.jsx';
 
 /**
  * Getting there and around (PLAN.md D3): the transit verdict in words
@@ -38,7 +39,7 @@ const reasonLine = (why) => (why ? (LEGACY_REASON[why.trim()] || why) : '');
 export function GettingThere({ getting, t }) {
   if (!getting || (!getting.airport && getting.transit == null
       && getting.car_needed == null)) return null;
-  const ModeIcon = MODE_ICON[getting.transfer_mode] || TrainIcon;
+  const ModeIcon = MODE_ICON[getting.transfer_mode] || null;
   return (
     <div className="destp-getting">
       {/* Car-free first (T385, brief V3-5): the transit verdict answers "can
@@ -56,15 +57,22 @@ export function GettingThere({ getting, t }) {
         <p className="destp-get-row">
           <PlaneIcon size={14} />
           <span>
-            {getting.transfer_min != null
-              ? t('dest.flyToWithTransfer', {
-                iata: getting.airport,
-                n: getting.transfer_min,
-                mode: t(`mode.${getting.transfer_mode || 'train'}`),
-              })
-              : t('dest.flyTo', { iata: getting.airport })}
+            {getting.transfer_min == null
+              ? t('dest.flyTo', { iata: getting.airport })
+              // T632: the transfer mode was defaulted to "train" when the
+              // data had none; a mode the data does not have is the
+              // placeholder, the minutes stay.
+              : getting.transfer_mode
+                ? t('dest.flyToWithTransfer', {
+                  iata: getting.airport,
+                  n: getting.transfer_min,
+                  mode: t(`mode.${getting.transfer_mode}`),
+                })
+                : t('dest.flyToTransferNoMode', {
+                  iata: getting.airport, n: getting.transfer_min, mode: notYet(t),
+                })}
           </span>
-          {getting.transfer_min != null && <ModeIcon size={13} />}
+          {getting.transfer_min != null && ModeIcon && <ModeIcon size={13} />}
         </p>
       )}
       {getting.car_needed != null && (

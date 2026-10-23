@@ -1,5 +1,5 @@
 /**
- * /api/forecast?lat=..&lon=.. : the 7-day forecast, proxied from MET Norway
+ * /api/forecast?lat=..&lon=..[&altitude=m] : the 7-day forecast, proxied from MET Norway
  * (T483, roadmap 1.10, owner decision T469-a).
  *
  * Why a proxy: the browser used to call Open-Meteo directly, which the live
@@ -17,7 +17,7 @@
  * Pages does not apply public/_headers to a Function's response, so the
  * headers are set here. public/_routes.json routes /api/* to Functions.
  */
-import { MET_URL, MET_USER_AGENT, cell, metDaily } from '../../src/lib/metForecast.js';
+import { MET_URL, MET_USER_AGENT, cell, metDaily, altitudeStep } from '../../src/lib/metForecast.js';
 
 const HOLD = 1800;
 
@@ -30,9 +30,14 @@ export async function onRequestGet({ request }) {
     return new Response(null, { status: 400 });
   }
   const [clat, clon] = cell(lat, lon);
+  // T630: an optional altitude in metres for a summit forecast. Validated,
+  // clamped and stepped (altitudeStep), so it cannot widen the cache key
+  // beyond one entry per 50 m band.
+  const alt = altitudeStep(q.get('altitude'));
+  if (alt === undefined) return new Response(null, { status: 400 });
   let body;
   try {
-    const res = await fetch(`${MET_URL}?lat=${clat}&lon=${clon}`, {
+    const res = await fetch(`${MET_URL}?lat=${clat}&lon=${clon}${alt != null ? `&altitude=${alt}` : ''}`, {
       headers: { 'user-agent': MET_USER_AGENT, accept: 'application/json' },
       cf: { cacheTtl: HOLD, cacheEverything: true },
     });

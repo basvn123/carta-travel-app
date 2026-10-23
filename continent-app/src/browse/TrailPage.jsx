@@ -3,10 +3,11 @@ import '../styles/items.css';
 import { ReportProblem } from '../components/ReportProblem.jsx';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import { RouteRainWarning } from './RouteRainWarning.jsx';
 import { loadTrail, loadTrails } from '../lib/trails.js';
 import {
   haversineKm, stopNameFromRef, trailRating,
-  tripGrade, gradeIsDerived, tripRouteType, tripHighlights,
+  tripGrade, gradeIsDerived, tripHighlights,
   tripSuitability, suitabilityIsDerived, HIGHLIGHTS, SUITABILITY, ROUTE_TYPES,
   trailWaymarked, trailSeason,
 } from '../lib/trailCards.js';
@@ -17,6 +18,8 @@ import {
 } from '../lib/trailGeo.js';
 import { SurfaceBar, Stages, Bases } from './RouteParts.jsx';
 import { SlopeProfile } from './RouteFigures.jsx';
+import { TrailRouteFacts } from './RouteFacts.jsx';
+import NotYet from '../components/NotYet.jsx';
 import { pointAlong } from '../lib/signature.js';
 import { Instrument, Row as SigRow } from './Signature.jsx';
 import {
@@ -587,7 +590,6 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
       : tr.difficulty === 'moderate' ? 'places.diffModerate'
         : tr.difficulty === 'hard' ? 'places.diffHard' : null;
   const derivedGrade = gradeIsDerived(src) || gradeIsDerived(tr);
-  const shapeKey = ROUTE_LABEL[tripRouteType(src) || tripRouteType(tr)];
   const highlightCodes = tripHighlights(src).length
     ? tripHighlights(src) : tripHighlights(tr);
   const suits = tripSuitability(src).length
@@ -783,11 +785,12 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
       body: (
         <>
           <div className="tpage-facts">
-            {isNum(totalM) && <Fact label={t('trails.factDistance')} value={`${km1(totalM)} km`} />}
-            {isNum(src.duration_min) && <Fact label={t(isCityDay ? 'trails.factDay' : 'trails.factTime')} value={`${hoursText(src.duration_min)} h`} />}
-            {isNum(ascent) && <Fact label={t('trails.factAscent')} value={`${Math.round(ascent)} m`} />}
-            {isNum(detail?.descent_m) && <Fact label={t('trails.factDescent')} value={`${Math.round(detail.descent_m)} m`} />}
-            {isNum(detail?.elevation?.ele_max_m) && <Fact label={t('trails.factHigh')} value={`${Math.round(detail.elevation.ele_max_m)} m`} />}
+            {/* T630: every fact keeps its slot, the placeholder where the wire has no value. */}
+            <Fact label={t('trails.factDistance')} value={isNum(totalM) ? `${km1(totalM)} km` : <NotYet />} />
+            <Fact label={t(isCityDay ? 'trails.factDay' : 'trails.factTime')} value={isNum(src.duration_min) ? `${hoursText(src.duration_min)} h` : <NotYet />} />
+            <Fact label={t('trails.factAscent')} value={isNum(ascent) ? `${Math.round(ascent)} m` : <NotYet />} />
+            <Fact label={t('trails.factDescent')} value={isNum(detail?.descent_m ?? tr.descent_m) ? `${Math.round(detail?.descent_m ?? tr.descent_m)} m` : <NotYet />} />
+            <Fact label={t('trails.factHigh')} value={isNum(detail?.elevation?.ele_max_m) ? `${Math.round(detail.elevation.ele_max_m)} m` : <NotYet />} />
             {isCityDay && isNum(tr.n_stops) && <Fact label={t('trails.factStops')} value={String(tr.n_stops)} />}
             {diffKey && (
               <Fact
@@ -797,8 +800,8 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
                 word
               />
             )}
-            {shapeKey && <Fact label={t('trails.shapeLabel')} value={t(shapeKey)} word />}
           </div>
+          <TrailRouteFacts row={tr} detail={detail} t={t} lang={lang} isCityDay={isCityDay} />
           {/* What the walk goes past and who it suits, as chips rather than
               as prose. Two rows, and the second one says which claims came
               off the map and which are ours: "a mapper recorded that dogs are
@@ -905,6 +908,7 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
       )}
       hook={hook}
       keyFacts={keyFacts}
+      keyFactsLead={<RouteRainWarning lat={start?.lat} lon={start?.lon} sac={src.sac_scale} highlights={highlightCodes} />}
       keyFactsFoot={diffKey && derivedGrade ? `~ ${t('trails.gradeDerived')}` : null}
       whyGo={whyGo}
       whyGoTitle={sights.length ? t('trails.seeTitle') : null}

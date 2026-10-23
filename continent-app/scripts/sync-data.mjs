@@ -230,6 +230,13 @@ const DEAD_WIRE_FIELDS = [
           m.t_high ?? null, m.t_low ?? null, m.precip_mm ?? null, m.comfort ?? null,
         ]),
         best: d.climate.summary?.best_months || [],
+        // T631: the parallel arrays apply_climate.py adds beside `months`,
+        // kept under short names and only when they exist: rd rain days per
+        // month, wind mean 10 m wind in m/s, elev the ground elevation (m)
+        // the temperatures are lapse corrected to.
+        ...(Array.isArray(d.climate.rain_days) ? { rd: d.climate.rain_days } : {}),
+        ...(Array.isArray(d.climate.wind_ms) ? { wind: d.climate.wind_ms } : {}),
+        ...(Number.isFinite(d.climate.elev_m) ? { elev: d.climate.elev_m } : {}),
       };
       after += JSON.stringify(d.climate).length;
     }
