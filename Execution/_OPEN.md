@@ -2027,7 +2027,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T610-e | T610 | The site footer's left edge sits 21 px right of the home page's and its column labels are h2s (SiteFooter, T594) | next task | open |  |
 | T619-a | T619 | `npm run build:pages` (the deploy build) does not run `css-routes --check`, so a deploy can ship with route sheet problems (T618 did); make scripts/build-pages.mjs fail on a problem | next task | open |  |
 | T620-a | T620 | Desktop end check of the new Explore head was DOM-only (pane too narrow for a 1440 px screenshot); look at /explore and one category tab at 1440 px | next task | open |  |
-| T620-b | T620 | The owner's "one phone pane for categories and filters" idea: categories became a static six-across row, not part of the sheet; confirm | user | open |  |
+| T620-b | T620 | The owner's "one phone pane for categories and filters" idea: categories became a static six-across row, not part of the sheet; confirm | user | closed by T620 (owner 2026-10-23: keep the static row) |  |
 | T620-c | T620 | carta-design Explore v6 to v8 rules (hero band on phone, near-me door, By country track, phone settings sentence, Map after Search) are outdated by T620; rewrite them | next task | open |  |
 | T620-d | T620 | Places' focused view tool row still scrolls sideways on a phone | next task | open |  |
 | T620-e | T620 | i18n key where.placeholder is unused after T620; remove it in all six files | next task | open |  |
