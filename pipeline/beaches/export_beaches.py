@@ -324,6 +324,70 @@ def services_of(beach):
     return out
 
 
+def access_model(tags):
+    """Free, paid or mixed, only from what OSM says about the beach itself.
+
+    fee=yes is paid. fee=no is free, except where the beach is also tagged
+    leisure=beach_resort (an operated stretch with a free public part), which
+    is mixed. A beach_resort with no fee tag is mixed too: it is operated, and
+    nothing says the whole of it is free or the whole of it is paid. No fee
+    tag and no resort tag says nothing, and the key is left off (the app shows
+    its placeholder), never "free"."""
+    fee = (tags.get("fee") or "").strip().lower()
+    resort = (tags.get("leisure") or "").strip().lower() == "beach_resort"
+    if fee == "yes":
+        return "paid"
+    if fee == "no":
+        return "mixed" if resort else "free"
+    if resort:
+        return "mixed"
+    return ""
+
+
+def dog_rule(tags):
+    """yes | leash | no | seasonal, from OSM `dog`; empty when unmapped."""
+    value = (tags.get("dog") or "").strip().lower()
+    if value in ("yes", "designated", "unleashed"):
+        return "yes"
+    if value in ("leashed", "leash"):
+        return "leash"
+    if value == "no":
+        return "no"
+    if value in ("seasonal", "outside_season", "winter_only", "summer_no"):
+        return "seasonal"
+    return ""
+
+
+def shade_of(tags):
+    """yes | no from OSM `shade` (natural shade, trees or a man made cover are
+    all shade to somebody on the sand); empty when unmapped."""
+    value = (tags.get("shade") or "").strip().lower()
+    if value in ("yes", "trees", "natural", "partial"):
+        return "yes"
+    if value == "no":
+        return "no"
+    return ""
+
+
+def operator_of(tags):
+    return (tags.get("operator") or "").strip()[:80]
+
+
+def facilities_of(beach):
+    """T631: the beach furniture and the pool, from the proximity context
+    (enrich_beaches.CONTEXT_CLAUSES). Keys only when found: absence is
+    unknown, never "none"."""
+    ctx = beach.get("context") or {}
+    out = {}
+    if ctx.get("swimming_pool"):
+        out["pool"] = True
+    if ctx.get("kids_pool"):
+        out["kidsPool"] = True
+    if ctx.get("sunbed_rental"):
+        out["rentals"] = True
+    return out
+
+
 def v2_fields(beach):
     """The fields 03-BEACHES.md adds to the row, on both tiers.
 
@@ -416,6 +480,21 @@ def wire_beach(beach, comps, score10, tier, reasons):
         row["services"] = services
     if tags.get("supervised") == "yes" or tags.get("lifeguard") == "yes":
         row["lifeguard"] = True
+    # T631: the access model (free, paid, mixed), the dog rule, natural shade
+    # and the operator, each only when the OSM tags of the beach say so.
+    model = access_model(tags)
+    if model:
+        row["fee"] = model
+    dog = dog_rule(tags)
+    if dog:
+        row["dog"] = dog
+    shade = shade_of(tags)
+    if shade:
+        row["shade"] = shade
+    operator = operator_of(tags)
+    if operator:
+        row["operator"] = operator
+    row.update(facilities_of(beach))
     if tags.get("nudism") in ("yes", "designated", "customary"):
         row["nudism"] = True
     if tags.get("wheelchair") in ("yes", "designated"):

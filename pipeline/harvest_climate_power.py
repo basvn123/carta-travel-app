@@ -25,6 +25,16 @@ Method:
     WorldClim stage used (weights temp .60 / dry .25 / sun .15), so best
     months keep their meaning.
 
+T631 adds a second, optional pass (--daily) for the two series the
+climatology endpoint does not carry: rain days per month (days with
+PRECTOTCORR >= 1 mm, averaged over the 20 years) and mean 10 m wind speed
+(WS10M). It reads the daily endpoint once per point, keeps only the twelve
+monthly aggregates in cache/climate_power_daily.json and folds them into
+cache/climate.json as `rain_days` and `wind_ms`, parallel arrays beside the
+unchanged `months` rows. NASA POWER has no sunshine duration (only
+ALLSKY_SFC_SW_DWN radiation), so sunshine hours stay a stub
+(pipeline/field_stubs/t631_water.py).
+
 Writes cache/climate.json in the schema apply_climate.py reads, for EVERY
 destination it can resolve (existing entries are replaced; a failed fetch
 keeps whatever was there). Raw responses are memoised in
@@ -55,8 +65,11 @@ DATA = ROOT / "continent-app" / "public" / "app_data.json"
 CACHE = ROOT / "cache" / "climate.json"
 RAW = ROOT / "cache" / "climate_power_raw.json"
 ELEV = ROOT / "cache" / "climate_elevations.json"
+DAILY = ROOT / "cache" / "climate_power_daily.json"
 
 POWER = "https://power.larc.nasa.gov/api/temporal/climatology/point"
+POWER_DAILY = "https://power.larc.nasa.gov/api/temporal/daily/point"
+RAIN_DAY_MM = 1.0   # a rain day is a day with at least 1 mm (WMO convention)
 ELEV_API = "https://api.open-meteo.com/v1/elevation"
 UA = {"User-Agent": "CartaClimate/1.0 (https://carta-europetravel.com; bas.vannieuwenhuyse123@gmail.com)"}
 PACE_S = 0.8  # per worker; both APIs 429 under real bursts
@@ -200,14 +213,119 @@ def build_record(raw, dest_elev, lat, lon):
     }
 
 
+def monthly_from_daily(precip, wind):
+    """Twelve rain-day counts and twelve mean wind speeds from daily series.
+
+    `precip` and `wind` are POWER's {"YYYYMMDD": value} maps (PRECTOTCORR in
+    mm/day, WS10M in m/s). Rain days are the mean number of days per month
+    with at least RAIN_DAY_MM over the years present, rounded to one decimal;
+    wind is the mean of every valid day of that calendar month. POWER's fill
+    value -999 is skipped. Returns (rain_days, wind_ms), each a list of 12
+    numbers, with None for a month that has no valid day at all."""
+    rain_n = [dict() for _ in range(12)]     # month -> {year: rain days}
+    rain_seen = [dict() for _ in range(12)]  # month -> {year: valid days}
+    wind_sum = [0.0] * 12
+    wind_cnt = [0] * 12
+    for day, mm in (precip or {}).items():
+        if mm is None or mm <= -990 or len(day) != 8:
+            continue
+        year, month = day[:4], int(day[4:6]) - 1
+        rain_seen[month][year] = rain_seen[month].get(year, 0) + 1
+        if mm >= RAIN_DAY_MM:
+            rain_n[month][year] = rain_n[month].get(year, 0) + 1
+    for day, ms in (wind or {}).items():
+        if ms is None or ms <= -990 or len(day) != 8:
+            continue
+        month = int(day[4:6]) - 1
+        wind_sum[month] += ms
+        wind_cnt[month] += 1
+    rain_days, wind_ms = [], []
+    for m in range(12):
+        years = rain_seen[m]
+        if years:
+            total = sum(rain_n[m].get(y, 0) for y in years)
+            rain_days.append(round(total / len(years), 1))
+        else:
+            rain_days.append(None)
+        wind_ms.append(round(wind_sum[m] / wind_cnt[m], 1) if wind_cnt[m] else None)
+    return rain_days, wind_ms
+
+
+def fetch_power_daily(lat, lon):
+    """{"rain_days": [12], "wind_ms": [12]} for one point, or None."""
+    qs = urllib.parse.urlencode({
+        "parameters": "PRECTOTCORR,WS10M",
+        "community": "RE",
+        "longitude": f"{lon:.4f}", "latitude": f"{lat:.4f}",
+        "start": "20010101", "end": "20201231",
+        "format": "JSON",
+    })
+    d = get(f"{POWER_DAILY}?{qs}", timeout=180)
+    pp = d.get("properties", {}).get("parameter", {})
+    rain_days, wind_ms = monthly_from_daily(pp.get("PRECTOTCORR"), pp.get("WS10M"))
+    if any(v is None for v in rain_days) or any(v is None for v in wind_ms):
+        return None
+    return {"rain_days": rain_days, "wind_ms": wind_ms}
+
+
+def run_daily(dests, limit=0):
+    """The --daily pass: fold rain days and wind into cache/climate.json.
+
+    Additive: only the keys `rain_days` and `wind_ms` are written onto an
+    existing record, `months` is never touched. Resumable through DAILY."""
+    cache = load_json(CACHE, {})
+    daily = load_json(DAILY, {})
+    ids = [d for d in dests if d in cache]
+    if limit:
+        ids = ids[:limit]
+    todo = [d for d in ids if d not in daily]
+    print(f"[power-daily] {len(ids)} records, {len(todo)} to fetch")
+    ok = fail = 0
+    for n, did in enumerate(todo, 1):
+        lat, lon = coords_of(dests[did])
+        if lat is None:
+            fail += 1
+            continue
+        rec = None
+        for attempt in range(3):
+            try:
+                rec = fetch_power_daily(lat, lon)
+                time.sleep(PACE_S)
+                break
+            except Exception as e:  # noqa: BLE001 - 429s clear on a pause
+                print(f"  {did}: {e}", flush=True)
+                time.sleep(6 * (attempt + 1))
+        if rec is None:
+            fail += 1
+            continue
+        daily[did] = rec
+        ok += 1
+        if n % 50 == 0:
+            save_json(DAILY, daily)
+            print(f"  {n}/{len(todo)} ({ok} ok, {fail} failed)", flush=True)
+    save_json(DAILY, daily)
+    for did in ids:
+        if did in daily and did in cache:
+            cache[did]["rain_days"] = daily[did]["rain_days"]
+            cache[did]["wind_ms"] = daily[did]["wind_ms"]
+    save_json(CACHE, cache)
+    print(f"[power-daily] done: {ok} fetched, {fail} failed -> {CACHE}")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--daily", action="store_true",
+                    help="T631: only fetch rain days and wind (daily endpoint) "
+                         "and fold them into cache/climate.json")
     args = ap.parse_args()
 
     dests = load_json(DATA, {}).get("destinations", {})
     if args.limit:
         dests = dict(list(dests.items())[: args.limit])
+    if args.daily:
+        run_daily(dests, args.limit)
+        return
     print(f"[power] {len(dests)} destinations")
 
     print("[power] resolving ground elevations...")

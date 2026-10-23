@@ -795,6 +795,97 @@ opens: `dest` for dest, highlight and sight; otherwise `trail`, `journey`,
 belongs to or is nearest (same country, 25 km; 40 km for a journey), or
 null.
 
+## Explore completeness, climate, lakes and beaches (T631, added 2026-10-23)
+
+Additive keys only: nothing is renamed or removed, `schema_version` is not
+bumped, and the CI contract table below is unchanged (only top-level
+`app_data` keys are pinned there). Every key below is optional. The app reads
+each with absence tolerated and shows the shared placeholder
+(`components/NotYet.jsx`) where it is missing. All of the pipeline code is
+written and compiled but NOT run: the "after" coverage of these keys is 0%
+until the named step runs.
+
+### Destination climate (`dest.climate`)
+
+The existing tuple `m` (twelve `[t_high, t_low, precip_mm, comfort]`) and
+`best` are untouched. Three parallel keys sit beside them.
+
+| Master key (`app_data/app_data.json`) | Wire key (compact, `sync-data.mjs`) | Meaning | Written by |
+|---|---|---|---|
+| `climate.rain_days` | `climate.rd` | 12 numbers: mean days per calendar month with at least 1 mm (NASA POWER daily PRECTOTCORR, 2001 to 2020) | `harvest_climate_power.py --daily`, then `apply_climate.py` |
+| `climate.wind_ms` | `climate.wind` | 12 numbers: mean 10 m wind in m/s (WS10M); the app shows km/h | same |
+| `climate.elev_m` | `climate.elev` | ground elevation in metres the temperatures are lapse corrected to (Copernicus DEM via Open-Meteo, `cache/climate_elevations.json`, 3,868 of 3,868) | `apply_climate.py` |
+
+`harvest_climate_power.py --daily` keeps only the twelve monthly aggregates
+per destination in `cache/climate_power_daily.json` (resumable) and folds them
+into `cache/climate.json`. Run order: `harvest_climate_power.py` (existing),
+`harvest_climate_power.py --daily`, `apply_climate.py`, `sync-data.mjs`.
+
+Temperature at altitude is derived in the app (`lib/waterFacts.js
+altitudeSeries`), not stored: the valley `m` series minus 6.5 C per 1,000 m
+over the difference between the highest mapped peak in the dossier
+(`around.mountains[].elev_m`) and `climate.elev`. It needs `climate.elev`, so
+it appears after the `apply_climate.py` run, and only where the peak is at
+least 150 m above or below the town. It is labelled as derived on the sheet.
+
+NASA POWER has no sunshine duration (only `ALLSKY_SFC_SW_DWN` radiation), so
+sunshine hours are a stub (`climate.sun_h`, `pipeline/field_stubs/t631_water.py`).
+
+### Lakes (`public/lakes/{CC}.json`)
+
+| Key | Meaning | Written by |
+|---|---|---|
+| `water.zones` | `[{n, q, km}]` up to 12 EEA bathing sites on the lake: name, class, km from the lake centre, nearest first. `water.class` is kept as the headline | `enrich_lakes.join_bathing` stores `lake["water"]["zones"]`, `export_lakes.zones_of` exports it. Needs a lake re-enrich, then an export |
+| `sports` | water sport codes mapped on or at the shore, in the order windsurfing, sailing, water_ski, canoe, rowing, scuba_diving, surfing, fishing, swimming. From the `sport` counts the Overpass context sweep already caches in `lake["context"]` (`enrich_lakes.py` CONTEXT_CLAUSES), nothing new is fetched | `export_lakes.watersports_of` |
+| `ferry` | `{stops: n}` ferry terminals found by the sweep. Counts only; line names are a stub (`ferry.lines`) | `export_lakes.ferry_of` |
+| `beaches` | `[{id, n, km}]` up to 8 published beaches marked `inland` within `shore_radius_km(lake) + 0.5` km of the lake centre, nearest first, same country. Distances are from the lake centre. No lake polygon reaches the export, so this is a circle of the same area, not the shore | `export_lakes.beaches_around`, reads `public/beaches/{CC}.json`; run the beach export before the lake export |
+
+Kept as is and shown: `size.areaKm2` (93.1%), `size.depthM` (33.1%), `swim.temps`
+(99.8%, a CHELSA model, `swim.est` true), `swim.rule` (100%, 84.3% not
+"unknown"), `hazards` (31.8% non-empty), `water.class` (55.0%), the `ferry` tag
+in `services` (6.1%).
+
+### Beaches (`public/beaches/{CC}.json`)
+
+All from the OSM tags the harvest keeps on every beach (`osm_tags`) and the
+proximity context (`enrich_beaches.py` CONTEXT_CLAUSES). Each key is omitted
+when the source says nothing; absence means unknown, never "no".
+
+| Key | Values | Source |
+|---|---|---|
+| `fee` | `free` (fee=no), `paid` (fee=yes), `mixed` (leisure=beach_resort, or fee=no on a beach_resort) | `export_beaches.access_model` |
+| `dog` | `yes`, `leash`, `no`, `seasonal` | OSM `dog`, `export_beaches.dog_rule` |
+| `shade` | `yes` (shade=yes, trees, natural, partial), `no` | OSM `shade`, `export_beaches.shade_of` |
+| `operator` | string, 80 characters at most | OSM `operator` |
+| `pool` | `true` | context bucket `swimming_pool` (leisure=swimming_pool added to the existing leisure clause, plus water_park) |
+| `kidsPool` | `true` | context bucket `kids_pool`: a swimming pool whose `pool=` value or name says children |
+| `rentals` | `true` | context bucket `sunbed_rental`: a new Overpass clause, `rental` matching umbrella, sunbed, sun_lounger, deckchair or beach |
+| `sst` | 12 numbers | forwarded by `v2_fields` when a beach carries it; no source today (stub) |
+
+The context buckets only exist after `enrich_beaches.py` re-runs its Overpass
+context pass (two extra lookups per batch), then `export_beaches.py`.
+Lifeguard (`lifeguard: true`, 5.8%), `surface` (57.5%), `services` toilets
+16.1%, showers 9.3%, food 19.6% and `water` (82.6%) are existing keys.
+
+### Derived in the app, not stored
+
+Water shoes (from `surface`: pebble, shingle, rock, gravel give yes, sand and
+fineGravel give no, everything else nothing), the audience tags (family from
+`bestFor` families, quiet from `bestFor` seclusion, dog friendly from `dog`;
+luxury is a stub), and the slippery-rock warning on trails (SAC T2 or harder
+via `sac_scale`, or `f.hl` containing `gorge`, with at least 1 mm of rain in the
+next three MET Norway forecast days at the trailhead; nothing is shown when the
+forecast is unavailable).
+
+### Field stubs
+
+Fields with a slot on the sheet and no source are listed in
+`pipeline/field_stubs/t631_water.py` (sunshine hours, lake wind profile and
+thermal winds, water temperature for beaches and destinations, ferry line
+names, water sport zones, lake lifeguards, swimming bans, currents, lido prices,
+surface at the water entry, walk from pier and centre, luxury audience, gorge
+flag). `python pipeline/field_stubs/report.py` lists them.
+
 ## Wire contract, checked in CI (T082)
 
 This table is the contract for the top level of `public/app_data.json`, and
