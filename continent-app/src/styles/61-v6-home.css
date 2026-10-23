@@ -3,14 +3,14 @@
    browse/home/)
 
    One thing said and then shown: "A cheap flight is not a cheap trip".
-   A film of real places with their own prices on a rounded stage, the slogan
-   on paper under it, a week priced with a real flight, six travellers asking
+   A film of real places filling the first screen with the slogan, one line,
+   Ask Carta and Plan a trip on it (T620), a week priced with a real flight, six travellers asking
    in their own words, five colour panels each playing a recording of the
    app, the story's trip drawn on Slovenia, five promises as a rail, the
    plans as columns, the question again, the site footer.
 
    The home page exception v2 (DESIGN.md, owner decisions D4 to D6,
-   2026-10-23): the film plays and its price pills drift, the panels' clips
+   2026-10-23; T620): the film plays as one continuous cut, the panels' clips
    play in view and move the story on, the chats type, the route draws
    itself once, sections arrive once. Nothing scrubs or moves with the
    scroll itself. Grounds and sizes come from the --home-* and --text-hero
@@ -31,6 +31,9 @@
   scrollbar-gutter: stable;
   background: var(--surface-page);
   color: var(--text);
+  /* The hero's film takes this box's visible height (cqh). */
+  container: hv-page / size;
+  --hv-credit-peek: 40px; /* the credit line under the film, in the first screen on a wider one */
 }
 
 .hv-wrap {
@@ -38,28 +41,6 @@
   margin: 0 auto;
   padding: 0 var(--gutter) var(--space-8);
 }
-
-/* The phone's own top line: the mark and Log in. The desktop has the app
-   header for both. */
-.hv-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--gutter);
-}
-.hv-top-brand {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: var(--tap);
-  color: var(--text);
-  font-size: var(--text-title);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  text-decoration: none;
-}
-.hv-top-login { min-height: var(--tap); }
 
 .hv-section { margin-top: clamp(80px, 11vw, 152px); }
 
@@ -137,116 +118,100 @@ a.hv-pill:hover { background: var(--surface-hover); }
 
 /* ── The hero ─────────────────────────────────────────────────────────── */
 
-.hv-film { position: relative; }
-.hv-stage {
+/* The film fills the first screen (T620, owner 2026-10-23, after Mindtrip and
+   Komoot): edge to edge on a phone, a hair inside the window on a wider
+   screen. Its height is the page's own visible height (the page is the size
+   container); the credit line follows under it. One even tint lies over the
+   whole film, never a gradient, and the words stand on it in white. */
+.hv-hero { position: relative; }
+.hv-hero-stage {
   position: relative;
-  height: clamp(260px, 38svh, 360px);
-  border-radius: var(--radius-stage);
-  overflow: hidden;
-  /* Chrome composites a playing video past a rounded overflow clip and
-     shows its square corners; a clip path holds them. */
-  clip-path: inset(0 round var(--radius-stage));
   isolation: isolate;
-  background: var(--surface-sunken);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 86svh;
+  height: clamp(540px, 100cqh, 1100px);
+  overflow: hidden;
+  background: var(--neutral-900);
+  color: var(--home-ink-on-deep);
+}
+
+.hv-film { position: absolute; inset: 0; z-index: 0; }
+.hv-film::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: var(--home-film-tint);
 }
 .hv-shot {
   position: absolute;
   inset: 0;
-  border-radius: inherit;
   opacity: 0;
   transition: opacity var(--dur-film-fade) var(--ease-in-out);
 }
 .hv-shot.is-on { opacity: 1; z-index: 1; }
-/* A leaving shot takes its pills with it at once, and the new pills come in
-   halfway through the crossfade: two prices never overlap. */
-.hv-shot .hv-pills { opacity: 0; transition: opacity var(--dur-2) var(--ease-out); }
-.hv-shot.is-on .hv-pills { opacity: 1; transition-delay: calc(var(--dur-film-fade) / 2); }
 .hv-shot-media {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: inherit;
   transform-origin: 50% 60%;
 }
 /* A shot without a clip is a still that pushes in slowly while it is on
    screen. */
-.hv-stage.is-running .hv-shot.is-on img.hv-shot-media {
+.hv-film.is-running .hv-shot.is-on img.hv-shot-media {
   animation: hv-push calc(var(--dur-film) + var(--dur-film-fade)) linear both;
 }
 
-.hv-pills {
+/* The phone's own top line, on the film's top edge: the mark and Log in.
+   The desktop has the app header for both. */
+.hv-top {
   position: absolute;
-  left: var(--space-4);
-  right: var(--space-4);
-  bottom: var(--space-5);
+  z-index: 3;
+  top: 0;
+  left: 0;
+  right: 0;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--gutter);
+}
+.hv-top-brand {
+  display: inline-flex;
+  align-items: center;
   gap: var(--space-2);
+  min-height: var(--tap);
+  color: inherit;
+  font-size: var(--text-title);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-decoration: none;
 }
-.hv-stage.is-running .hv-shot.is-on .hv-pill-a { animation: hv-drift var(--dur-drift) ease-in-out infinite; }
-.hv-stage.is-running .hv-shot.is-on .hv-pill-b {
-  animation: hv-drift calc(var(--dur-drift) * 1.125) ease-in-out calc(var(--dur-drift) * -0.4) infinite;
-}
-
-/* Where the film stands: one bar a shot across the top, the current one
-   filling for its time. Decoration, hidden from assistive tech. */
-.hv-film-steps {
-  position: absolute;
-  z-index: 2;
-  top: var(--space-4);
-  left: var(--space-5);
-  right: calc(var(--space-5) + var(--tap));
-  display: flex;
-  gap: var(--space-1);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.hv-film-steps li {
-  position: relative;
-  flex: 1;
-  height: 3px;
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  opacity: 0.5;
-  overflow: hidden;
-}
-.hv-film-steps li.is-done { opacity: 0.9; }
-.hv-film-steps li.is-on { opacity: 1; background: var(--surface-sunken); }
-.hv-film-steps li.is-on::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--surface);
-  transform-origin: left center;
-  transform: scaleX(1);
-}
-.hv-stage.is-running .hv-film-steps li.is-on::after { animation: hv-fill var(--dur-film) linear both; }
-
-.hv-film-pause {
-  position: absolute;
-  z-index: 2;
-  top: var(--space-2);
-  right: var(--space-3);
-}
-.hv-film-credit {
-  margin: var(--space-2) 0 0;
-  animation: hv-fade var(--dur-2) var(--ease-out) calc(var(--dur-film-fade) / 2) both;
-  min-height: 1.5em;
-  font-size: var(--text-caption);
-  color: var(--text-3);
-}
+.hv-top-brand:focus-visible,
+.hv-top-login:focus-visible { outline: 2px solid var(--home-ink-on-deep); outline-offset: 2px; }
+.hv-page .hv-top-login { min-height: var(--tap); color: inherit; }
+.hv-page .hv-top-login:hover { background: color-mix(in srgb, var(--home-ink-on-deep) 16%, transparent); }
 
 .hv-hero-copy {
+  position: relative;
+  z-index: 3;
   display: grid;
+  justify-items: center;
   gap: var(--space-4);
-  margin-top: var(--space-5);
+  padding: 0 var(--gutter) var(--space-7);
+  text-align: center;
+  /* A soft shadow under the words only (not a scrim): it holds the line on a
+     busy stretch of a clip, such as Dubrovnik's roofs. */
+  text-shadow: 0 1px 2px color-mix(in srgb, var(--neutral-900) 45%, transparent),
+    0 0 24px color-mix(in srgb, var(--neutral-900) 35%, transparent);
 }
+.hv-hero-copy .hv-acts { text-shadow: none; }
 .hv-slogan {
   margin: 0;
-  max-width: 18ch;
+  max-width: 14ch;
   font-size: var(--text-hero);
   font-weight: 700;
   line-height: var(--leading-hero);
@@ -254,13 +219,22 @@ a.hv-pill:hover { background: var(--surface-hover); }
   text-wrap: balance;
   animation: hv-rise var(--dur-reveal) var(--ease-out) both;
 }
-.hv-hero-side { display: grid; gap: var(--space-4); align-content: end; }
 .hv-sub {
   margin: 0;
-  max-width: 40ch;
+  max-width: 44ch;
   font-size: var(--text-lead);
   line-height: 1.5;
-  color: var(--text-2);
+  text-wrap: pretty;
+  animation: hv-rise var(--dur-reveal) var(--ease-out) 80ms both;
+}
+.hv-film-credit {
+  margin: 0;
+  padding: var(--space-2) var(--gutter);
+  min-height: var(--hv-credit-peek);
+  animation: hv-fade var(--dur-2) var(--ease-out) calc(var(--dur-film-fade) / 2) both;
+  font-size: var(--text-caption);
+  line-height: 1.5;
+  color: var(--text-3);
 }
 
 .hv-ask {
@@ -272,9 +246,12 @@ a.hv-pill:hover { background: var(--surface-hover); }
   border: 1px solid var(--border);
   border-radius: var(--radius-pill);
   background: var(--surface);
+  color: var(--text);
   transition: border-color var(--dur-1) var(--ease-out);
 }
 .hv-ask:focus-within { border-color: var(--action); outline: 2px solid var(--focus); outline-offset: 2px; }
+.hv-hero .hv-ask { border-color: transparent; box-shadow: var(--elev-2); }
+.hv-hero .hv-ask:focus-within { outline-color: var(--home-ink-on-deep); }
 .hv-ask-glyph { display: inline-flex; color: var(--text-2); }
 .hv-ask-input {
   flex: 1;
@@ -285,18 +262,22 @@ a.hv-pill:hover { background: var(--surface-hover); }
   color: var(--text);
   font: inherit;
   font-size: var(--text-lead);
+  text-align: left;
 }
 .hv-ask-input:focus-visible { outline-color: transparent; } /* the form draws the ring */
 .hv-ask-input::placeholder { color: var(--text-3); }
 .hv-ask-go { min-height: var(--tap); border-radius: var(--radius-pill); }
 
-.hv-acts { display: flex; flex-wrap: wrap; gap: var(--space-3); }
-.hv-cta { flex: 1; min-height: var(--tap-main); font-size: var(--text-lead); }
-.hv-login { min-height: var(--tap-main); font-size: var(--text-lead); }
-/* A phone has Log in on its top line already. */
-@media (max-width: 768px) {
-  .hv-login { display: none; }
+.hv-acts {
+  display: grid;
+  gap: var(--space-3);
+  width: 100%;
+  max-width: 560px;
+  margin-top: var(--space-2);
+  animation: hv-rise var(--dur-reveal) var(--ease-out) 160ms both;
 }
+.hv-cta { min-height: var(--tap-main); font-size: var(--text-lead); }
+.hv-hero .hv-cta:focus-visible { outline: 2px solid var(--home-ink-on-deep); outline-offset: 2px; }
 
 /* ── The week ─────────────────────────────────────────────────────────── */
 
@@ -647,10 +628,6 @@ a.hv-pill:hover { background: var(--surface-hover); }
 }
 
 @keyframes hv-push { from { transform: scale(1); } to { transform: scale(1.08); } }
-@keyframes hv-drift {
-  0%, 100% { transform: translate(0, 0); }
-  50% { transform: translate(4px, -8px); }
-}
 @keyframes hv-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @keyframes hv-rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 @keyframes hv-fade { from { opacity: 0; } to { opacity: 1; } }
@@ -666,13 +643,20 @@ a.hv-pill:hover { background: var(--surface-hover); }
 
 @media (min-width: 769px) {
   .hv-top { display: none; }
-  .hv-wrap { padding: var(--space-5) var(--space-6) var(--space-8); }
-  .hv-stage { height: clamp(300px, 40svh, 520px); }
-  .hv-pills { left: var(--space-6); bottom: var(--space-6); }
-  .hv-film-steps { top: var(--space-5); left: var(--space-6); right: calc(var(--space-6) + var(--tap) + var(--space-3)); }
-  .hv-film-pause { top: var(--space-3); right: var(--space-4); }
+  .hv-wrap { padding: 0 var(--space-6) var(--space-8); }
+  .hv-hero-stage {
+    margin: var(--space-2) var(--space-2) 0;
+    height: clamp(560px, calc(100cqh - var(--space-2) - var(--hv-credit-peek)), 1100px);
+    border-radius: var(--radius-stage);
+    /* Chrome composites a playing video past a rounded overflow clip and
+       shows its square corners; a clip path holds them. */
+    clip-path: inset(0 round var(--radius-stage));
+  }
+  .hv-hero-copy { padding: 0 var(--space-6) clamp(var(--space-7), 9cqh, 112px); gap: var(--space-5); }
+  .hv-film-credit { padding-inline: var(--space-5); }
   .hv-sub { font-size: var(--text-title); line-height: 1.45; }
-  .hv-cta { flex: 0 0 auto; padding-inline: var(--space-6); }
+  .hv-acts { grid-template-columns: minmax(0, 1fr) auto; align-items: center; max-width: 680px; }
+  .hv-cta { padding-inline: var(--space-6); }
   .hv-panel { padding: var(--space-7); }
   .hv-plan-cols { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .hv-plan { padding: var(--space-6) var(--space-5) var(--space-5) 0; }
@@ -681,18 +665,6 @@ a.hv-pill:hover { background: var(--surface-hover); }
 }
 
 @media (min-width: 1024px) {
-  .hv-hero-copy { gap: var(--space-5); margin-top: var(--space-5); }
-  .hv-slogan { max-width: none; }
-  .hv-hero-side {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 520px);
-    grid-template-areas: 'sub ask' 'sub acts';
-    column-gap: var(--space-8);
-    row-gap: var(--space-3);
-    align-items: start;
-  }
-  .hv-sub { grid-area: sub; }
-  .hv-ask { grid-area: ask; }
-  .hv-acts { grid-area: acts; }
   .hv-week { grid-template-columns: minmax(0, 1fr) minmax(0, 500px); gap: var(--space-8); }
   .hv-voices-panel { grid-template-columns: minmax(0, 1fr) minmax(0, 420px); gap: var(--space-7); }
   .hv-chapter {
@@ -720,14 +692,14 @@ a.hv-pill:hover { background: var(--surface-hover); }
   .hv-say-carta { transition: none; }
   .hv-shot-media,
   .hv-pill,
-  .hv-film-steps li::after,
   .hv-advance,
   .hv-slogan,
+  .hv-sub,
+  .hv-acts,
   .hv-chapter-text,
   .hv-voices-photo img,
   .hv-film-credit,
   .hv-why-glyph { animation: none !important; }
-  .hv-shot .hv-pills { transition: none; }
   .hv-say-carta { opacity: 1; transform: none; }
   .hv-route-line,
   .hv-route-line-under { stroke-dashoffset: 0; transition: none !important; }

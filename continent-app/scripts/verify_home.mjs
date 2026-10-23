@@ -9,9 +9,10 @@
  *   h1        exactly one visible h1, the slogan
  *   primary   exactly one visible primary button, "Plan a trip"
  *   hscroll   nothing scrolls sideways
- *   film      the film's stage shows a photo with a pill naming a place and
- *             its day price, and moves on to the next shot by itself
- *   pause     the pause control stops the film, and says so (aria-pressed)
+ *   hero      the film fills the page box edge to edge (T620), the slogan,
+ *             the line, Ask Carta and Plan a trip stand on it under one tint,
+ *             and nothing else sits on it (no pill, no bars, no pause)
+ *   film      a clip plays and the film moves on to the next shot by itself
  *   week      the week card shows one total and its lines; another place
  *             changes the total in place
  *   voices    six traveller tabs; a picked tab types its question and answers
@@ -118,30 +119,38 @@ async function run(browser, vp) {
   check(k, 'primary', floor.prim === 1, `${floor.prim} visible, "${floor.primText}"`);
   check(k, 'hscroll', !floor.wide, floor.wide ? 'sideways scroll' : '');
 
-  // The film: a clip playing, a priced pill, and the next shot by itself.
+  // The hero (T620): the film fills the page's visible box from edge to edge
+  // (a hair inside on a wider screen), the slogan, Ask Carta and the primary
+  // stand on it, and nothing sits on the film but those words.
+  const hero = await page.evaluate(() => {
+    const box = document.querySelector('.hv-page').getBoundingClientRect();
+    const stage = document.querySelector('.hv-hero-stage');
+    const r = stage.getBoundingClientRect();
+    const inside = (sel) => { const e = document.querySelector(sel); return !!e && stage.contains(e); };
+    return {
+      wGap: Math.round(box.width - r.width), hShare: r.height / box.height,
+      words: inside('.hv-slogan') && inside('.hv-sub') && inside('#hv-ask') && inside('.hv-cta'),
+      extras: stage.querySelectorAll('.hv-pill, .hv-film-steps, .hv-film-pause, button[aria-pressed]').length,
+      tint: getComputedStyle(document.querySelector('.hv-film'), '::after').backgroundColor,
+    };
+  });
+  const wideOk = vp.isMobile ? hero.wGap <= 1 : hero.wGap <= 40;
+  check(k, 'hero', wideOk && hero.hShare >= 0.85 && hero.words && hero.extras === 0 && /^(rgba?|color)\(/.test(hero.tint),
+    `width gap ${hero.wGap}px, ${Math.round(hero.hShare * 100)}% of the page box, words on film ${hero.words}, ${hero.extras} extras, tint ${hero.tint}`);
+
+  // The film: a clip playing, and the next shot by itself, with no control.
   await page.waitForFunction(() => {
     const v = document.querySelector('.hv-shot.is-on video');
     return v && v.readyState >= 2 && !v.paused && v.currentTime > 0;
   }, null, { timeout: 60000 }).catch(() => {});
   const film0 = await page.evaluate(() => ({
     shot: [...document.querySelectorAll('.hv-shot')].findIndex((s) => s.classList.contains('is-on')),
-    pill: document.querySelector('.hv-shot.is-on .hv-pill-a')?.textContent.trim(),
-    running: document.querySelector('.hv-stage')?.classList.contains('is-running')
+    running: document.querySelector('.hv-film')?.classList.contains('is-running')
       && !document.querySelector('.hv-shot.is-on video')?.paused,
   }));
   await page.waitForTimeout(9800);
   const film1 = await page.evaluate(() => [...document.querySelectorAll('.hv-shot')].findIndex((s) => s.classList.contains('is-on')));
-  check(k, 'film', film0.running && /\d/.test(film0.pill || '') && film1 !== film0.shot,
-    `pill "${film0.pill}", shot ${film0.shot} then ${film1}`);
-
-  const pauseBtn = page.locator('.hv-film-pause');
-  await pauseBtn.click();
-  const paused = await page.evaluate(() => ({
-    pressed: document.querySelector('.hv-film-pause')?.getAttribute('aria-pressed'),
-    running: document.querySelector('.hv-stage')?.classList.contains('is-running'),
-  }));
-  check(k, 'pause', paused.pressed === 'true' && !paused.running, `aria-pressed ${paused.pressed}, running ${paused.running}`);
-  await pauseBtn.click();
+  check(k, 'film', film0.running && film1 !== film0.shot, `shot ${film0.shot} then ${film1}`);
 
   if (vp.isMobile) {
     const fold = await page.evaluate(() => {
@@ -250,7 +259,7 @@ async function reduced(browser) {
   await page.evaluate(() => { const b = document.querySelector('.hv-page'); b.scrollTo(0, b.scrollHeight / 2); });
   await page.waitForTimeout(800);
   const r = await page.evaluate(() => ({
-    running: document.querySelector('.hv-stage')?.classList.contains('is-running'),
+    running: document.querySelector('.hv-film')?.classList.contains('is-running'),
     waiting: document.querySelectorAll('.hv-page [data-reveal="wait"]').length,
     moving: document.getAnimations().filter((a) => a.playState === 'running'
       && a.effect?.target?.closest?.('.hv-page')).length,

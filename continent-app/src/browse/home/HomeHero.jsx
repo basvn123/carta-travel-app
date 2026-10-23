@@ -1,62 +1,55 @@
 import React from 'react';
 import { useI18n } from '../../i18n/index.jsx';
-import { Button, IconButton, Money } from '../../components/ui/index.js';
+import { Button } from '../../components/ui/index.js';
 import { SearchIcon } from '../../components/Icons.jsx';
 import { srcSetFor, thumbAt } from '../../lib/heroImage.js';
 import { loadGuidedData } from '../../lib/guidedData.js';
 import { tabHref } from '../../lib/urlState.js';
-import { FILM, isEstimate, placeDay } from '../../lib/homeDemo.js';
+import { FILM } from '../../lib/homeDemo.js';
 import { useAutoAdvance, useInView, usePageVisible, useReducedMotion } from './useHome.js';
 
 /**
- * The hero (T606, owner decisions D1, D2, D4 and D7 of 2026-10-23).
+ * The hero (T620, owner 2026-10-23, after Mindtrip and Komoot): the film
+ * fills the first screen from edge to edge and the words stand on it.
  *
- * A film on a rounded stage, then the slogan on paper under it, never on the
- * picture (D2). The film is five licensed clips of real places (T618, the
- * owner's approval of stock video, 2026-10-23), each a place in the catalogue;
- * on each, a solid pill names the place and its own day price, and a second
- * gives the cheapest return flight there from the traveller's home airport,
- * Google Flights' price: the cheap part beside what a day costs. The pills
- * drift a few pixels on loops of different length; a pill opens its place.
+ * The film is the five licensed clips of real places (T618), cut together as
+ * one continuous film: each clip crossfades into the next, with no bars, no
+ * pills and no control on it, so it reads as footage, not as slides. One even
+ * tint over the whole film (--home-film-tint, no gradient) keeps white words
+ * readable on every clip (T620 measured them). The owner chose no pause
+ * control; the film still stops off screen, in a hidden tab and under reduced
+ * motion, where the first shot's poster stands still (register T620-a).
  *
- * The film moves only while it is on screen, the tab is visible and nobody
- * paused it, and never under reduced motion (the first shot's poster then
- * stands still). Pause is a real button (WCAG 2.2.2). A shot without a clip
- * falls back to a photograph with a slow push in.
- *
- * Under the stage: the slogan, one line of what Carta does, Ask Carta's
- * field (the question goes to Explore, where the chat answers it, T566),
- * "Plan a trip", the page's one primary, and "Log in" beside it for a
- * visitor who is not signed in (D7).
+ * On the film: the slogan, one line of what Carta does, Ask Carta's field
+ * (the question goes to Explore, where the chat answers it, T566) and "Plan a
+ * trip", the page's one primary. The shown clip's credit sits on the caption
+ * line under the film.
  *
  * Props
- *   rows       catalogue rows with day costs (homeDemo searchRows)
- *   flightFor  (placeId) => { perSeat, airline } | null, from the sweep
- *   signedIn   hides "Log in"
  *   door       the page's click handler factory
- *   onSearch, onNavigate, onLogin, onOpenDest (a pill opens its place)
+ *   onSearch, onNavigate
  */
-export function HomeHero({ rows, flightFor, signedIn, door, onSearch, onNavigate, onLogin, onOpenDest, titleAs = 'h1' }) {
+export function HomeHero({ door, onSearch, onNavigate, titleAs = 'h1', children }) {
   const { t } = useI18n();
   const Title = titleAs;
+  const [at, setAt] = React.useState(0);
   return (
     <section className="hv-hero" aria-labelledby="hv-title">
-      <HomeFilm rows={rows} flightFor={flightFor} door={door} onOpenDest={onOpenDest} />
-      <div className="hv-hero-copy">
-        <Title id="hv-title" className="hv-slogan">{t('home.title')}</Title>
-        <div className="hv-hero-side">
+      <div className="hv-hero-stage">
+        <HomeFilm onShot={setAt} />
+        {children}
+        <div className="hv-hero-copy">
+          <Title id="hv-title" className="hv-slogan">{t('home.title')}</Title>
           <p className="hv-sub">{t('home.sub')}</p>
-          <AskField t={t} onSearch={onSearch} id="hv-ask" />
           <div className="hv-acts">
+            <AskField t={t} onSearch={onSearch} id="hv-ask" />
             <a className="btn btn-primary hv-cta" href={tabHref('trip')} onClick={door(() => onNavigate('trip'))}>
               <span className="btn-label">{t('home.ctaPlan')}</span>
             </a>
-            {!signedIn && (
-              <Button variant="quiet" className="hv-login" onClick={onLogin}>{t('home.login')}</Button>
-            )}
           </div>
         </div>
       </div>
+      <FilmCredit at={at} />
     </section>
   );
 }
@@ -83,79 +76,39 @@ export function AskField({ t, onSearch, id }) {
   );
 }
 
-const PauseGlyph = () => (
-  <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="4" y="3" width="3" height="10" rx="1" fill="currentColor" /><rect x="9" y="3" width="3" height="10" rx="1" fill="currentColor" /></svg>
-);
-const PlayGlyph = () => (
-  <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3.2v9.6a.6.6 0 0 0 .9.5l7.6-4.8a.6.6 0 0 0 0-1L5.9 2.7a.6.6 0 0 0-.9.5Z" fill="currentColor" /></svg>
-);
-
-/** The stage: every shot stacked, the current one shown; the next shot's
- *  picture is fetched while the current one plays, nothing further. */
-function HomeFilm({ rows, flightFor, door, onOpenDest }) {
-  const { t } = useI18n();
-  const stageRef = React.useRef(null);
-  const onScreen = useInView(stageRef, { threshold: 0.3 });
+/** The film: every shot stacked, the current one shown; the next shot's
+ *  clip is fetched while the current one plays, nothing further. Pure
+ *  decoration for assistive tech: the words on it carry the message. */
+function HomeFilm({ onShot }) {
+  const ref = React.useRef(null);
+  const onScreen = useInView(ref, { threshold: 0.2 });
   const visible = usePageVisible();
   const reduced = useReducedMotion();
-  const [paused, setPaused] = React.useState(false);
-  const running = onScreen && visible && !reduced && !paused;
+  const running = onScreen && visible && !reduced;
   const film = useAutoAdvance(FILM.length, { ms: 9000, running });
   const at = film.index;
   const [loaded, setLoaded] = React.useState(() => new Set([0, 1]));
   React.useEffect(() => {
+    onShot(at);
     setLoaded((s) => (s.has(at + 1) || at + 1 >= FILM.length ? s : new Set([...s, at + 1])));
-  }, [at]);
+  }, [at, onShot]);
 
   return (
-    <div className="hv-film">
-    <div className={`hv-stage${running ? ' is-running' : ''}`} ref={stageRef}
-      role="region" aria-roledescription={t('home.filmRole')} aria-label={t('home.filmLabel')}>
+    <div className={`hv-film${running ? ' is-running' : ''}`} ref={ref} aria-hidden="true">
       {FILM.map((shot, i) => {
         const on = i === at;
-        const cost = placeDay(rows, shot.place);
-        const fly = flightFor ? flightFor(shot.place) : null;
         return (
-          <div key={shot.id} className={`hv-shot${on ? ' is-on' : ''}`} aria-hidden={on ? undefined : 'true'}>
+          <div key={shot.id} className={`hv-shot${on ? ' is-on' : ''}`}>
             {loaded.has(i) && (shot.clip ? (
               <FilmClip clip={shot.clip} on={on} playing={on && running} first={i === 0} />
             ) : (
-              <img className="hv-shot-media" src={thumbAt(shot.photo.url, 1280)} srcSet={srcSetFor(shot.photo.url, 1600)}
-                sizes="(min-width: 1240px) 1240px, 100vw" alt="" style={{ objectPosition: shot.photo.focus }}
+              <img className="hv-shot-media" src={thumbAt(shot.photo.url, 1280)} srcSet={srcSetFor(shot.photo.url, 1920)}
+                sizes="100vw" alt="" style={{ objectPosition: shot.photo.focus }}
                 loading={i === 0 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : undefined} decoding="async" />
             ))}
-            <div className="hv-pills">
-              <a className="hv-pill hv-pill-a" href={`#dest=${encodeURIComponent(shot.place)}`} tabIndex={on ? 0 : -1}
-                onClick={door(() => onOpenDest(shot.place))}>
-                <span className="hv-pill-name">{shot.label}</span>
-                {cost && (
-                  <span className="hv-pill-fig">
-                    <Money value={cost.dayEur} est={isEstimate(cost)} />
-                    <span className="hv-pill-unit">{t('home.aDayUnit')}</span>
-                  </span>
-                )}
-              </a>
-              {fly && (
-                <span className="hv-pill hv-pill-b">
-                  <span className="hv-pill-name">{t('home.returnFlight')}</span>
-                  <span className="hv-pill-fig"><Money value={fly.perSeat} /></span>
-                </span>
-              )}
-            </div>
           </div>
         );
       })}
-      <ol className="hv-film-steps" aria-hidden="true">
-        {FILM.map((shot, i) => <li key={shot.id} className={i === at ? 'is-on' : i < at ? 'is-done' : ''} />)}
-      </ol>
-      {!reduced && (
-        <IconButton className="hv-film-pause" tone="photo" label={t('home.filmPause')}
-          pressed={paused} onClick={() => setPaused((p) => !p)}>
-          {paused ? <PlayGlyph /> : <PauseGlyph />}
-        </IconButton>
-      )}
-    </div>
-    <FilmCredit at={at} />
     </div>
   );
 }
@@ -178,14 +131,14 @@ function FilmClip({ clip, on, playing, first }) {
   }, [playing]);
   return (
     <video ref={ref} className="hv-shot-media" muted playsInline loop
-      preload={on ? 'auto' : 'metadata'} poster={clip.poster} aria-hidden="true"
+      preload={on ? 'auto' : 'metadata'} poster={clip.poster}
       fetchpriority={first ? 'high' : undefined}>
       <source src={clip.mp4} type="video/mp4" />
     </video>
   );
 }
 
-/** The shown shot's credit, on its caption line under the stage (a credit
+/** The shown shot's credit, on its caption line under the film (a credit
  *  is text, never on the picture). */
 function FilmCredit({ at }) {
   const { t } = useI18n();

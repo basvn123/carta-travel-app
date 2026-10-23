@@ -346,9 +346,9 @@
   --home-ground-clay: var(--umber-200);          /* --text 10.0:1, --text-2 5.6:1; no --text-3 or --action text */
   --home-ground-sea:  var(--lagoon-200);         /* --text 10.4:1, --text-2 5.8:1; no --text-3 or --action text */
   --home-ink-on-deep: var(--surface);
+  --home-film-tint:   color-mix(in srgb, var(--neutral-900) 40%, transparent); /* one even tint over the hero film (T620): white on it measured >= 5.7:1 median, >= 3.4:1 on the brightest tenth, on all five clips */
   --dur-film:         9000ms;                    /* one clip or still of the hero film */
   --dur-film-fade:    1200ms;                    /* the crossfade between two of them */
-  --dur-drift:        8000ms;                    /* one loop of a price pill's drift */
   --dur-reveal:       640ms;                     /* a home section arriving once */
   --dur-draw:         1600ms;                    /* the route card's line drawing itself */
   --dur-advance:      7000ms;                    /* a home tab moving on by itself */

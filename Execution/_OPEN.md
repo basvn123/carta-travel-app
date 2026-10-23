@@ -2026,3 +2026,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T610-d | T610 | A 3 px sideways document scroll at a 502 px window (not at 360, 390 or 1440); find the element | next task | open |  |
 | T610-e | T610 | The site footer's left edge sits 21 px right of the home page's and its column labels are h2s (SiteFooter, T594) | next task | open |  |
 | T619-a | T619 | `npm run build:pages` (the deploy build) does not run `css-routes --check`, so a deploy can ship with route sheet problems (T618 did); make scripts/build-pages.mjs fail on a problem | next task | open |  |
+| T620-a | T620 | The home hero film has no pause control (owner's choice, 2026-10-23), so the home page fails WCAG 2.2.2; a tiny corner icon would restore it without bars on the film | user | open |  |
+| T620-b | T620 | The hero clips are 1280 x 720 and look soft across a 1424 px desktop film under the tint; swap in 1920 x 1080 sources from the same Pexels pages (about 2.5 times the bytes) | next task | open |  |
+| T620-c | T620 | home.filmPause, home.filmRole and home.filmLabel are no longer read by any component; remove them from the six language files | next task | open |  |
+| T620-d | T620 | The home surface brief (continent-app/.impeccable/surfaces/continent-app-src-browse-home.md) still describes the T463 pinned-phone home; rewrite it for home v2 and T620 | next task | open |  |

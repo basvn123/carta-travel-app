@@ -26,9 +26,10 @@ import { useIdle, useReveal } from './useHome.js';
  *
  * It says one thing, "A cheap flight is not a cheap trip", and then shows it:
  *
- *   Top     (phone) the mark and Log in, the brand the phone had no room for
- *   Hero    the film of real places with their own prices, the slogan on
- *           paper under it, Ask Carta's field, Plan a trip, Log in
+ *   Hero    the film of real places from edge to edge, the slogan, one line,
+ *           Ask Carta's field and Plan a trip on it (T620); on a phone the
+ *           mark and Log in stand on its top edge
+ *   Credit  the shown clip's credit on the caption line under the film
  *   Week    the point in figures: a real flight, then the week it leads to
  *   Voices  six travellers, each asking in their own words, each answered
  *           with one real place and its price
@@ -100,15 +101,15 @@ export function HomePage({
 
   return (
     <div className="hv-page">
-      <div className="hv-top">
-        <a className="hv-top-brand" href="?tab=home" aria-label="Carta"><Logo size={28} /><span>Carta</span></a>
-        {!user && (
-          <Button variant="quiet" size="sm" className="hv-top-login" onClick={login}>{t('home.login')}</Button>
-        )}
-      </div>
+      <HomeHero door={door} onSearch={onSearch} onNavigate={onNavigate} titleAs={pageOver ? 'div' : 'h1'}>
+        <div className="hv-top">
+          <a className="hv-top-brand" href="?tab=home" aria-label="Carta"><Logo size={28} /><span>Carta</span></a>
+          {!user && (
+            <Button variant="quiet" size="sm" className="hv-top-login" onClick={login}>{t('home.login')}</Button>
+          )}
+        </div>
+      </HomeHero>
       <div className="hv-wrap">
-        <HomeHero rows={rows} flightFor={flightFor} signedIn={!!user} door={door}
-          onSearch={onSearch} onNavigate={onNavigate} onLogin={login} onOpenDest={onOpenDest} titleAs={pageOver ? 'div' : 'h1'} />
         <HomeWeek rows={rows} flightFor={flightFor} fromName={fromName} places={destinations}
           door={door} onOpenDest={onOpenDest} />
         <HomeVoices rows={rows} photosOn={photosOn} door={door} onSearch={onSearch} onCategory={onCategory} />

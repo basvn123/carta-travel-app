@@ -362,15 +362,17 @@ Photography leads, and every photo is real and licensed with its credit (`docs/t
 - **No text on a photograph.** Name, figure, length and credit sit under the photo on `--surface`, flush
   with its edge; no scrim, no gradient, no alpha band. The only things over a photo are round icon
   buttons (`IconButton tone="photo"`: a white disc with `--elev-1`), such as save.
-- **The home page exception (T462, owner 2026-10-17; T606, 2026-10-23).** On the home page only
-  (`src/browse/home/`), a short label or a price may sit on a photograph inside a solid `--surface`
-  pill with `--elev-1`, so its contrast never depends on the photo: the hero film's place and day
-  price, and the cheapest return flight there (Google Flights' price). Still no scrim, no gradient, no
-  alpha band, and never a sentence on a photo; the slogan sits on paper under the film, and every credit
-  on the caption line under its picture. Everywhere else the rule above holds.
+- **The home page exception (T462, owner 2026-10-17; T606 and T620, 2026-10-23).** On the home page
+  only (`src/browse/home/`), a short label or a price may sit on a photograph inside a solid `--surface`
+  pill with `--elev-1` (the route card's towns and total). The hero film is the one photograph that
+  carries words (T620, owner after Mindtrip and Komoot): one even tint over the whole film
+  (`--home-film-tint`, never a gradient), and on it the slogan, one line, Ask Carta's field and "Plan a
+  trip" in white with a soft shadow under the words. No other scrim, no gradient, no alpha band; every
+  credit on the caption line under its picture. Everywhere else the rule above holds.
 - One aspect per row or rail: 4:3 on kit tiles, 3:2 on browse and library cards where they already use
   it. On a phone the photo takes at most a third of a choice card's height. A hero is at most 40 percent
-  of the viewport height on a phone and 60 percent on desktop.
+  of the viewport height on a phone and 60 percent on desktop (the home page's hero film, which fills
+  the first screen, is the one exception, T620).
 - Corners `--radius-card` on a free photo; a photo at the top of a tile takes the tile's corners.
 - A missing photo is the flag-and-name placeholder on `--surface-sunken`, never a grey or tinted box.
   Credits are text.
@@ -528,11 +530,12 @@ the page was rebuilt from scratch, T606, decisions D2 to D6 in `Execution/P15/T6
 The home page (`src/browse/home/`) is the one surface that persuades rather than operates, so it may move
 on its own, within these limits (values and tokens in DESIGN.md "Home page exception v2"):
 
-- **A film, not a carousel of claims.** The hero is a rounded stage of real places, one shot each
-  `--dur-film`, crossfading; each shot is a licensed, credited clip (T618), a still only as fallback. It moves only
-  on screen, in a visible tab, unpaused; a pause control is always there; reduced motion stands it still.
-- **Price pills drift** a few pixels on slow loops, out of step, while the film runs. A pill is a place's
-  own day price or Google Flights' fare, never a claim.
+- **A film, not a carousel of claims.** The hero is a film of real places that fills the first screen
+  (edge to edge on a phone, inset with `--radius-stage` corners on a wider screen), one shot each
+  `--dur-film`, crossfading as one continuous cut: no progress bars, no pills, no control on it. Each shot
+  is a licensed, credited clip (T618), a still only as fallback. It moves only on screen and in a visible
+  tab; reduced motion stands it still. The owner chose no pause control (T620, 2026-10-23), which leaves
+  WCAG 2.2.2 open (register T620-a).
 - **The app is shown by recordings of the app.** Each story panel plays a clip from
   `scripts/record_home_clips.mjs` (the running app through real links, recorded in all six languages) in
   a straight phone frame, never a coded copy of the app and never a click that did not happen. A clip
@@ -545,11 +548,11 @@ on its own, within these limits (values and tokens in DESIGN.md "Home page excep
   primitives), never two alike in a row.
 - **Sections arrive once** as they enter the viewport (opacity and a short rise in `--dur-reveal`), below
   the first viewport only, never before the observer exists, and never left waiting after a long jump.
-- **Labels on photographs** in a solid pill (see Photography).
+- **Labels on photographs** in a solid pill, and the hero film's words under one tint (see Photography).
 
 Still binding on the home page: motion tokens for every transition; transform, opacity, clip-path and
 stroke-dashoffset only (and a panel's background colour); nothing tied to the scroll position; no
-overshoot or bounce, no parallax, no count-up, no marquee, no gradient or scrim, one primary, 44 px
+overshoot or bounce, no parallax, no count-up, no marquee, no gradient or scrim (the hero film's one even tint aside), one primary, 44 px
 targets. No other surface takes this exception.
 
 The Ask Carta exception (T569, owner 2026-10-22: "I like some animation"; T570 moved it into the
@@ -632,7 +635,7 @@ The voice did not change with the look. Carta sounds like an instrument, not a b
 3. Gradients of any kind, a scrim over a photo, glassy blur as decoration, an inset or stacked shadow, or
    a border and a shadow on the same object.
 4. Text on a photograph. The caption sits under it on `--surface`. (The home page's solid pill labels
-   are the one exception; see Photography.)
+   and its hero film's words under one tint are the exceptions; see Photography.)
 5. Uppercase eyebrows or kickers, letter-spaced labels, a costume face for numbers, or any face but
    Figtree.
 6. Fabricated social proof: testimonials, user counts, press, partner logos, "popular" badges without a
