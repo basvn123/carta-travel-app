@@ -1,59 +1,50 @@
 /**
- * The home page's data (T463, after T462): the five chapters of the story,
- * the screens that show them, the questions under the hero and the six
- * travellers, all pure so tests/home.test.mjs runs them in Node against the
- * shipped catalogue.
+ * The home page's data (T606, the from-scratch rebuild after the T605
+ * critique; it replaces T463's screens and devices). Everything here is pure,
+ * so tests/home.test.mjs runs it in Node against the shipped catalogue.
  *
- * The screens are captures of the running app (scripts/shoot_home_screens.mjs
- * writes public/home/<lang>/<screen>.webp), one set per language, opened
- * through the same links a traveller can open: a search, Lake Bled's page,
- * the Julian Alps trip and a day at Bled. The home page never draws a copy of
- * the app; the owner found the coded demo of T462 unconvincing.
- *
- * A traveller's card is one real place: its photograph, its name and its own
- * day price at the traveller's Lifestyle, read from the same cost index as
- * Explore, so the card and the place's page agree (T464).
+ * The page shows the app in two ways only, both real:
+ *   - real places from the catalogue, each with its own day price at the
+ *     traveller's Lifestyle (the same cost index Explore reads), and the
+ *     cheapest return flight from the traveller's home airport in the
+ *     flight sweep (Google Flights' price, shown as theirs);
+ *   - screen recordings of the running app (scripts/record_home_clips.mjs
+ *     writes public/home/clips/<lang>/<chapter>.{mp4,webp}), opened
+ *     through the same links a traveller can open. The page never draws a
+ *     copy of the app.
  */
 
-/** The languages the screens were captured in; anything else reads English. */
-export const SCREEN_LANGS = ['en', 'nl', 'de', 'fr', 'es', 'it'];
+/** The languages the clips are recorded in; anything else plays English. */
+export const CLIP_LANGS = ['en', 'nl', 'de', 'fr', 'es', 'it'];
 
-/** A captured screen's address. `desk` is the laptop capture, the rest phone. */
-export function screenSrc(lang, id) {
-  const l = SCREEN_LANGS.includes(lang) ? lang : 'en';
-  return `/home/${l}/${id}.webp`;
+/** A chapter clip's address (an H.264 .mp4): `poster` is the still the
+ *  clip opens on. */
+export function clipSrc(lang, id, kind = 'mp4') {
+  const l = CLIP_LANGS.includes(lang) ? lang : 'en';
+  return `/home/clips/${l}/${id}.${kind === 'poster' ? 'webp' : kind}`;
 }
 
-/** The pixel size of each capture, so its box is reserved before it loads. */
-export const SCREEN_SIZE = { phone: [600, 1298], desk: [1728, 1080] };
+/** The clips' frame: a phone at 390 by 844, captured at 2x and stored at 546
+ *  by 1182, twice the size the page draws it. */
+export const CLIP_SIZE = [546, 1182];
 
-/** The place the story opens, and the search that finds it. */
+/** The trip the story, the route card and the recordings all follow. */
 export const STORY_PLACE = 'gem:bled';
 export const STORY_SEARCH = { vibe: 'lake', area: 'alps', month: 7 };
-
-/** The story, in order: one chapter per moment, each with the screen that
- *  shows it and the one door that goes there. `peek` is how far the screen
- *  rises inside a phone chapter card (T464), as a share of the capture's
- *  height, so the card's window shows what its chapter claims: the day
- *  price on the place's page, the priced beds of the route, the day kit
- *  and its exports. */
-export const CHAPTERS = [
-  { id: 'find', tab: 'home.chFind', title: 'home.ch1Title', body: 'home.ch1', alt: 'home.ch1Alt', door: 'search', peek: '-14%' },
-  { id: 'place', tab: 'home.chPrice', title: 'home.ch2Title', body: 'home.ch2', alt: 'home.ch2Alt', door: 'place', peek: '-41%' },
-  { id: 'plan', tab: 'home.chPlan', title: 'home.ch3Title', body: 'home.ch3', alt: 'home.ch3Alt', door: 'trip', peek: '-9%' },
-  { id: 'day', tab: 'home.chDay', title: 'home.ch4Title', body: 'home.ch4', alt: 'home.ch4Alt', door: 'day', peek: '-14%' },
-  { id: 'share', tab: 'home.chShare', title: 'home.ch5Title', body: 'home.ch5', alt: 'home.ch5Alt', door: 'trips', peek: '-37.5%' },
+export const ROUTE_STOPS = [
+  { id: 'LJU', nights: 2 },
+  { id: 'gem:bled', nights: 3 },
+  { id: 'gem:bohinj', nights: 2 },
 ];
 
-/** The searches offered under the hero: a whole i18n string each (never a
- *  built sentence) and the guided facets it applies in Explore. The one with
- *  a budget leads (T464): it is the only chip that shows what Carta does
- *  differently, and on a phone the third chip sat off the screen. Walking
- *  comes next, because hikers are the first audience (PRODUCT.md). */
-export const SEARCHES = [
-  { key: 'home.try2', facets: { vibe: 'beach', country: 'PT', budget: 80 }, price: 80 },
-  { key: 'home.try3', facets: { vibe: 'hiking', area: 'alps', month: 7 } },
-  { key: 'home.try1', facets: STORY_SEARCH },
+/** The story, in order: one panel per moment, its clip and its one door.
+ *  `ground` names the panel's home ground token (61-v6-home.css). */
+export const CHAPTERS = [
+  { id: 'find', tab: 'home.chFind', title: 'home.ch1Title', body: 'home.ch1', alt: 'home.ch1Alt', door: 'search', ground: 'clay' },
+  { id: 'place', tab: 'home.chPrice', title: 'home.ch2Title', body: 'home.ch2', alt: 'home.ch2Alt', door: 'place', ground: 'lake' },
+  { id: 'plan', tab: 'home.chPlan', title: 'home.ch3Title', body: 'home.ch3', alt: 'home.ch3Alt', door: 'trip', ground: 'deep' },
+  { id: 'day', tab: 'home.chDay', title: 'home.ch4Title', body: 'home.ch4', alt: 'home.ch4Alt', door: 'day', ground: 'mist' },
+  { id: 'share', tab: 'home.chShare', title: 'home.ch5Title', body: 'home.ch5', alt: 'home.ch5Alt', door: 'trips', ground: 'sea' },
 ];
 
 /** Explore's own address for a guided question (the URL lib/guidedSearch.js
@@ -77,30 +68,21 @@ export function exploreHref(f = {}) {
 const commons = (path) => `https://upload.wikimedia.org/wikipedia/commons/thumb/${path}/1280px-${path.split('/').pop()}`;
 
 /**
- * The six travellers, in PRODUCT.md's order (hikers first, then families at
- * the beach, cyclists, car-free travellers, city breaks and tight budgets).
- * Each opens Explore on its own question, except cyclists, whose routes live
- * in Destinations and carry no day price of their own: their pill names what
- * the card opens instead of a figure.
+ * The six travellers, in PRODUCT.md's order (hikers first). Each is one real
+ * place: `place` is a catalogue id its own search returns, `label` its short
+ * name, and every figure shown for it is that place's own day price. `ask`
+ * is the question the traveller types in the "Who it is for" chat, with
+ * `askPrice` filled in through formatMoney where the question names a
+ * budget. Cyclists' routes carry no day price of their own; their answer
+ * opens the cycling tab.
  *
- * Each card is one real place (T464, after the critique found a "from" day price of 60 euros
- * printed on the Matterhorn, a figure that belonged to a town in
- * Slovenia): `place` is a catalogue id that the card's own search returns,
- * `label` its short name, and the pill on the photo is that place's own day
- * price at the traveller's Lifestyle. So the photograph, the name and the
- * figure are the same place, and Explore shows the same figure for it.
- *
- * `photo` is one Commons file of that place, checked by hand (2026-10-17):
- * its Commons categories say what it shows ("Triglav National Park",
- * "Praia dos Pescadores, Albufeira", "Views of Cesky Krumlov from the
- * castle", "Views of Ribeira from Cais de Gaia", "Stari Most viewed from
- * south"), the original is at least 2900 px wide, and its author and licence
- * travel with it to the credits. `focus` is the object-position that keeps
- * the subject in the card's 4:5 crop.
+ * `photo` is one Commons file of that place, checked by hand (2026-10-17),
+ * with its author and licence for the credits. `focus` is the
+ * object-position that keeps the subject in a crop.
  */
 export const PERSONAS = [
   {
-    id: 'hike', title: 'home.pHikeTitle', body: 'home.pHike', facets: { vibe: 'hiking', area: 'alps' },
+    id: 'hike', title: 'home.pHikeTitle', body: 'home.pHike', ask: 'home.qHike', facets: { vibe: 'hiking', area: 'alps' },
     place: 'gem:soca-valley', label: 'Bovec',
     photo: {
       url: commons('c/cd/Bovec_Bav%C5%A1ki_Grintavec_Obere_So%C4%8Da_Jalovec_17072018_3951.jpg'), w: 7360, h: 4912, focus: '40% center',
@@ -109,7 +91,7 @@ export const PERSONAS = [
     },
   },
   {
-    id: 'family', title: 'home.pFamilyTitle', body: 'home.pFamily', facets: { vibe: 'family', nb: ['beach'] },
+    id: 'family', title: 'home.pFamilyTitle', body: 'home.pFamily', ask: 'home.qFamily', askPrice: 90, facets: { vibe: 'family', nb: ['beach'] },
     place: 'gem:albufeira', label: 'Albufeira',
     photo: {
       url: commons('6/6a/15-09-2017_Praia_dos_Pescadores%2C_Albufeira_%283%29.JPG'), w: 3456, h: 4608, focus: 'center 55%',
@@ -118,7 +100,7 @@ export const PERSONAS = [
     },
   },
   {
-    id: 'cycle', title: 'home.pCycleTitle', body: 'home.pCycle', kind: 'cycling', pill: 'home.pCyclePill',
+    id: 'cycle', title: 'home.pCycleTitle', body: 'home.pCycle', ask: 'home.qCycle', kind: 'cycling', pill: 'home.pCyclePill',
     photo: {
       url: commons('2/2a/Col_Aubisque.jpg'), w: 3622, h: 2194, focus: '78% center',
       credit: "Col d'Aubisque", author: 'Myrabella', licence: 'CC BY-SA 3.0',
@@ -126,7 +108,7 @@ export const PERSONAS = [
     },
   },
   {
-    id: 'nocar', title: 'home.pNoCarTitle', body: 'home.pNoCar', facets: { vibe: 'oldtown', nocar: true },
+    id: 'nocar', title: 'home.pNoCarTitle', body: 'home.pNoCar', ask: 'home.qNoCar', facets: { vibe: 'oldtown', nocar: true },
     place: 'gem:cesky-krumlov', label: 'Český Krumlov',
     photo: {
       url: commons('0/0c/View_of_%C4%8Cesk%C3%BD_Krumlov_from_the_castle%2C_20250504_1305_8880.jpg'), w: 5802, h: 3848, focus: '38% center',
@@ -135,7 +117,7 @@ export const PERSONAS = [
     },
   },
   {
-    id: 'city', title: 'home.pCityTitle', body: 'home.pCity', facets: { vibe: 'city' },
+    id: 'city', title: 'home.pCityTitle', body: 'home.pCity', ask: 'home.qCity', facets: { vibe: 'city' },
     place: 'OPO', label: 'Porto',
     photo: {
       url: commons('2/21/Rabelo_boats_and_Ribeira_seen_from_Cais_de_Gaia%2C_20250605_1623_9879.jpg'), w: 5920, h: 3951, focus: '42% center',
@@ -144,7 +126,7 @@ export const PERSONAS = [
     },
   },
   {
-    id: 'budget', title: 'home.pBudgetTitle', body: 'home.pBudget', facets: { budget: 60 },
+    id: 'budget', title: 'home.pBudgetTitle', body: 'home.pBudget', ask: 'home.qBudget', askPrice: 60, facets: { budget: 60 },
     // T536: Ohrid, not Mostar. With measured bed prices (an entire place for
     // two) Mostar is about 80 a day and no longer fits the 60 a day search.
     place: 'OHD', label: 'Ohrid',
@@ -155,6 +137,31 @@ export const PERSONAS = [
     },
   },
 ];
+
+/** Lake Bled for the route card, checked on Commons 2026-10-23. */
+export const ROUTE_PHOTO = {
+  url: commons('8/84/Lake_Bled_from_the_Mountain.jpg'), w: 4000, h: 3000, focus: 'center 60%',
+  credit: 'Lake Bled from the mountain', author: 'Canadianhockey91', licence: 'CC BY-SA 3.0',
+  page: 'https://commons.wikimedia.org/wiki/File:Lake_Bled_from_the_Mountain.jpg',
+};
+
+/**
+ * The hero film (owner D3 and D4, 2026-10-23): one shot after another, each a
+ * traveller's place with that place's own price on it. Until licensed clips
+ * arrive (register row T605-b) a shot is the place's photograph with a slow
+ * push in; a shot with `clip` plays the clip instead and keeps the photo as
+ * its poster. Hikers lead (PRODUCT.md).
+ */
+export const FILM = ['hike', 'family', 'nocar', 'city', 'budget'].map((id) => {
+  const p = PERSONAS.find((x) => x.id === id);
+  return { id, place: p.place, label: p.label, title: p.title, facets: p.facets, photo: p.photo, clip: null };
+});
+
+/** The places the week card can price, each with a flight from most of
+ *  Europe in the sweep. Porto leads: a city break is where a cheap flight
+ *  most often meets a dear bed. */
+export const WEEK_PLACES = ['OPO', 'gem:albufeira', 'gem:cesky-krumlov', 'OHD', 'gem:bled'];
+export const WEEK_NIGHTS = [3, 5, 7];
 
 /** True when the day figure leans on a country-level stand-in. The same
  *  predicate as isNational() in components/CostSummary.jsx, restated here
@@ -178,18 +185,94 @@ export function searchRows(destinations, indices) {
   }));
 }
 
-/** One place's day cost row ({ dayEur, stayLevel, foodLevel }) from the
- *  catalogue rows, or null when it has none: the card then shows no figure
- *  rather than a guess. */
+/** One place's day cost row ({ dayEur, stayEur, foodEur, stayLevel,
+ *  foodLevel }) from the catalogue rows, or null when it has none: the page
+ *  then shows no figure rather than a guess. */
 export function placeDay(rows, id) {
   if (!id || !rows?.length) return null;
   const row = rows.find((r) => r.id === id);
   return row?.cost?.dayEur != null ? row.cost : null;
 }
 
-/** Each traveller's photo with its credit, keyed by persona id. */
-export function personaPhotos() {
-  const out = {};
-  for (const p of PERSONAS) out[p.id] = p.photo?.url ? p.photo : null;
-  return out;
+/**
+ * The week card's sum, a person: the return flight (Google Flights' price
+ * from the sweep, `flight` is { perSeat, airline, checked } or null), the
+ * bed for the nights and food and drink for the days. The total counts the
+ * flight only when there is one; without it the card says the flight is not
+ * priced and the total is the ground alone. The same arithmetic as the map
+ * panel's TripParts (bed and food times the nights, plus the way there).
+ */
+export function weekSum(cost, nights, flight = null) {
+  if (!cost || cost.stayEur == null || cost.foodEur == null || !(nights > 0)) return null;
+  const bed = cost.stayEur * nights;
+  const food = cost.foodEur * nights;
+  const fly = flight && flight.perSeat > 0 ? flight.perSeat : null;
+  return {
+    flight: fly,
+    bed,
+    food,
+    ground: bed + food,
+    total: bed + food + (fly || 0),
+    stayEst: cost.stayLevel !== 'city',
+    foodEst: cost.foodLevel !== 'city',
+    // How many times the flight the whole week costs, for the headline.
+    times: fly ? (bed + food + fly) / fly : null,
+  };
+}
+
+/** The route card's stops with their own day price and nights, and the
+ *  trip's ground total a person (beds plus food and drink): null when any
+ *  stop has no price, so the card never sums a guess. */
+export function routeTotals(rows, stops = ROUTE_STOPS) {
+  const out = stops.map((s) => ({ ...s, cost: placeDay(rows, s.id) }));
+  if (out.some((s) => !s.cost)) return { stops: out, total: null, nights: 0, est: false };
+  const total = out.reduce((sum, s) => sum + s.cost.dayEur * s.nights, 0);
+  const nights = out.reduce((n, s) => n + s.nights, 0);
+  return { stops: out, total, nights, est: out.some((s) => isEstimate(s.cost)) };
+}
+
+/** Slovenia's outline (public/country_shapes.json, SI), lon and lat. */
+export const SLOVENIA = [[16.516, 46.5], [16.321, 46.535], [16.237, 46.484], [16.253, 46.389], [16.227, 46.373], [16.067, 46.371], [15.933, 46.278], [15.636, 46.201], [15.593, 46.14], [15.666, 46.048], [15.652, 45.862], [15.277, 45.733], [15.354, 45.66], [15.284, 45.58], [15.339, 45.467], [15.242, 45.441], [14.955, 45.5], [14.793, 45.478], [14.569, 45.657], [14.37, 45.481], [14.086, 45.478], [13.993, 45.509], [13.879, 45.428], [13.615, 45.477], [13.578, 45.517], [13.72, 45.588], [13.875, 45.615], [13.722, 45.761], [13.583, 45.812], [13.601, 45.98], [13.488, 45.987], [13.486, 46.04], [13.617, 46.133], [13.633, 46.177], [13.421, 46.212], [13.378, 46.262], [13.4, 46.318], [13.68, 46.463], [13.7, 46.52], [14.55, 46.4], [14.757, 46.499], [14.893, 46.606], [15.217, 46.643], [15.439, 46.63], [15.633, 46.698], [15.767, 46.711], [15.958, 46.678], [15.977, 46.801], [16.093, 46.863], [16.284, 46.857], [16.335, 46.722], [16.385, 46.681], [16.381, 46.639], [16.516, 46.5]];
+
+/**
+ * A projection for the route card: lon and lat to x and y in a box of
+ * `w` by `h`, fitted around `bounds` ([[lon, lat], ...]) with `pad`, the
+ * longitude shrunk by the cosine of the middle latitude so the shapes keep
+ * their proportions. North is up.
+ */
+export function fitProjection(bounds, w, h, pad = 0) {
+  const lons = bounds.map((p) => p[0]);
+  const lats = bounds.map((p) => p[1]);
+  const [x0, x1] = [Math.min(...lons), Math.max(...lons)];
+  const [y0, y1] = [Math.min(...lats), Math.max(...lats)];
+  const k = Math.cos(((y0 + y1) / 2) * (Math.PI / 180));
+  const sx = (w - 2 * pad) / ((x1 - x0) * k || 1);
+  const sy = (h - 2 * pad) / ((y1 - y0) || 1);
+  const s = Math.min(sx, sy);
+  const ox = (w - (x1 - x0) * k * s) / 2;
+  const oy = (h - (y1 - y0) * s) / 2;
+  return ([lon, lat]) => [ox + (lon - x0) * k * s, oy + (y1 - lat) * s];
+}
+
+/** An SVG path through points, as a soft curve (Catmull-Rom as cubic
+ *  Beziers), so the route reads as a hand-drawn line, not a polyline. */
+export function smoothPath(pts) {
+  if (pts.length < 2) return '';
+  const f = (n) => Math.round(n * 10) / 10;
+  let d = `M${f(pts[0][0])} ${f(pts[0][1])}`;
+  for (let i = 0; i < pts.length - 1; i += 1) {
+    const p0 = pts[i - 1] || pts[i];
+    const p1 = pts[i];
+    const p2 = pts[i + 1];
+    const p3 = pts[i + 2] || p2;
+    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+    const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+    d += ` C${f(c1[0])} ${f(c1[1])} ${f(c2[0])} ${f(c2[1])} ${f(p2[0])} ${f(p2[1])}`;
+  }
+  return d;
+}
+
+/** Each photo the page shows with its credit, for the credits line. */
+export function pagePhotos() {
+  return [...PERSONAS.map((p) => p.photo), ROUTE_PHOTO].filter((p) => p?.url);
 }

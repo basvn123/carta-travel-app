@@ -270,7 +270,9 @@ from them.
 - Leading: `--leading-tight` 1.2 for headings, `--leading-ui` 1.35 for controls, `--leading-body` 1.5 for
   prose. Prose caps at `--measure` (68ch).
 - Headline and display may take a small negative letter-spacing (-0.01em to -0.02em). Nothing else is
-  letter-spaced, and nothing is uppercase: no eyebrows, no kickers, no small caps.
+  letter-spaced, and nothing is uppercase: no eyebrows, no kickers, no small caps. The home page alone
+  sets its slogan in `--text-hero` with `--tracking-hero` (-0.035em) and its section titles in
+  `--text-showcase` at -0.03em (T606, owner D6: one face, a larger size, no second typeface).
 - Weights 400, 500, 600 and 700 only, in the roles above. Inputs are 16 px so iOS does not zoom.
 
 **Figures.** The separate mono face is retired (owner decision 2026-10-13, PRODUCT.md "Numbers"). `body`
@@ -360,10 +362,12 @@ Photography leads, and every photo is real and licensed with its credit (`docs/t
 - **No text on a photograph.** Name, figure, length and credit sit under the photo on `--surface`, flush
   with its edge; no scrim, no gradient, no alpha band. The only things over a photo are round icon
   buttons (`IconButton tone="photo"`: a white disc with `--elev-1`), such as save.
-- **The home page exception (T462, owner 2026-10-17).** On the home page only (`src/browse/home/`), a
-  short label or a price may sit on a photograph inside a solid `--surface` pill with `--elev-1`, so
-  its contrast never depends on the photo. Still no scrim, no gradient, no alpha band, and never a
-  sentence on a photo. Everywhere else the rule above holds.
+- **The home page exception (T462, owner 2026-10-17; T606, 2026-10-23).** On the home page only
+  (`src/browse/home/`), a short label or a price may sit on a photograph inside a solid `--surface`
+  pill with `--elev-1`, so its contrast never depends on the photo: the hero film's place and day
+  price, and the cheapest return flight there (Google Flights' price). Still no scrim, no gradient, no
+  alpha band, and never a sentence on a photo; the slogan sits on paper under the film, and every credit
+  on the caption line under its picture. Everywhere else the rule above holds.
 - One aspect per row or rail: 4:3 on kit tiles, 3:2 on browse and library cards where they already use
   it. On a phone the photo takes at most a third of a choice card's height. A hero is at most 40 percent
   of the viewport height on a phone and 60 percent on desktop.
@@ -519,24 +523,34 @@ never moves. Every transition has a
 `prefers-reduced-motion: reduce` branch that sets it to `none`; scripted motion asks
 `prefersReducedMotion()` or `durationMs()` in `src/lib/motion.js`.
 
-The home page exception (T462, owner 2026-10-17: "allow it"). The home page (`src/browse/home/`) is the
-one surface that persuades rather than operates, so it may move on its own, within these limits:
+The home page exception v2 (T462, owner 2026-10-17: "allow it"; widened by the owner on 2026-10-23 when
+the page was rebuilt from scratch, T606, decisions D2 to D6 in `Execution/P15/T605-home-research.md`).
+The home page (`src/browse/home/`) is the one surface that persuades rather than operates, so it may move
+on its own, within these limits (values and tokens in DESIGN.md "Home page exception v2"):
 
-- **One pinned product phone that follows the story** (T463, owner 2026-10-17, replacing T462's
-  looping demo). From 1024 px a phone frame holding real captures of the app stays pinned beside the
-  chapters and crossfades its screen (opacity, `--dur-3`) to the chapter in the middle of the page; the
-  chapter bar follows. Nothing scrubs, slides or scales with the scroll and nothing plays by itself;
-  below 1024 px the chapters are a snap track with Previous and Next. Under
-  `prefers-reduced-motion: reduce` the screen swaps at once. Show the app as real captures from
-  `scripts/shoot_home_screens.mjs` in a straight phone or browser frame, never a coded copy of it.
-- **Sections may reveal once** as they enter the viewport (opacity and a short translate at `--dur-3`,
-  `--ease-out`), only below the first viewport, and only after the observer exists, so content is never
-  hidden without it. Under reduced motion nothing reveals; it is simply there.
+- **A film, not a carousel of claims.** The hero is a rounded stage of real places, one shot each
+  `--dur-film`, crossfading; a still pushes in slowly until licensed clips arrive (T605-b). It moves only
+  on screen, in a visible tab, unpaused; a pause control is always there; reduced motion stands it still.
+- **Price pills drift** a few pixels on slow loops, out of step, while the film runs. A pill is a place's
+  own day price or Google Flights' fare, never a claim.
+- **The app is shown by recordings of the app.** Each story panel plays a clip from
+  `scripts/record_home_clips.mjs` (the running app through real links, recorded in all six languages) in
+  a straight phone frame, never a coded copy of the app and never a click that did not happen. A clip
+  plays only in view, one at a time, and moves the story on when it ends.
+- **Tabs may move on by themselves** until the first touch, click or focus, with a neutral line filling
+  under the row; the question in a voices tab types itself out (Ask Carta's typing).
+- **One drawing that means something:** the story's trip drawn on its country, the line drawing itself
+  once by `stroke-dashoffset` in `--dur-draw`, the towns and the total arriving after it.
+- **Coloured grounds** behind the panels from the `--home-ground-*` tokens (existing umber and lagoon
+  primitives), never two alike in a row.
+- **Sections arrive once** as they enter the viewport (opacity and a short rise in `--dur-reveal`), below
+  the first viewport only, never before the observer exists, and never left waiting after a long jump.
 - **Labels on photographs** in a solid pill (see Photography).
 
-Still binding on the home page: motion tokens for every transition, transform, opacity, clip-path and
-stroke-dashoffset only, no overshoot or bounce, no parallax, no count-up, no marquee, no gradient or
-scrim, one primary, 44 px targets. No other surface takes this exception.
+Still binding on the home page: motion tokens for every transition; transform, opacity, clip-path and
+stroke-dashoffset only (and a panel's background colour); nothing tied to the scroll position; no
+overshoot or bounce, no parallax, no count-up, no marquee, no gradient or scrim, one primary, 44 px
+targets. No other surface takes this exception.
 
 The Ask Carta exception (T569, owner 2026-10-22: "I like some animation"; T570 moved it into the
 chat). Ask Carta is a chat (`src/browse/ask/`): one "Ask Carta" door (since T595, 2026-10-22: a field-like door in Explore's
@@ -635,7 +649,7 @@ The voice did not change with the look. Carta sounds like an instrument, not a b
 Also never: catalogue counts, method sentences or coverage notes as page furniture; a filled rating chip;
 a row of three stat counters as a hero device, numbered markers `01 / 02 / 03` unless order
 matters, scroll-triggered counters, marquees, parallax or fade-in on every section. (The home page may
-reveal its sections once and pin one product phone that follows its chapters; see Interaction and motion.)
+let its sections arrive once and play its film and its recorded clips; see Interaction and motion.)
 
 ## Quality floor
 

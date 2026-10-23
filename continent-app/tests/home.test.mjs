@@ -1,21 +1,23 @@
-// The home page (T463, T464: src/lib/homeDemo.js and the home.* strings).
+// The home page v2 (T606: src/lib/homeDemo.js and the home.* strings).
 // Run: npm test (continent-app/)
 //
-// The fixtures pin the story's shape, each traveller's card (one real place:
-// its photo, its name and its own day price) and the photo credits. The
-// real-data tests run when public/app_data.json and public/search/guided.json
-// are present: every question must return places today, every traveller's
-// place must be one its own search returns, with a price, and every captured
-// screen must exist in all six languages. The catalog tests keep the six
-// languages in step and the copy inside the house rules.
+// The fixtures pin the story's shape, the week card's sum, the route card's
+// total and drawing, the hero film and each traveller (one real place: its
+// photo, its name and its own day price). The real-data tests run when
+// public/app_data.json and public/search/guided.json are present: every
+// traveller's place must be one its own search returns, with a price, and the
+// route's towns must all be priced. Every recorded clip must exist in all six
+// languages. The catalog tests keep the six languages in step and the copy
+// inside the house rules.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import {
-  CHAPTERS, PERSONAS, SEARCHES, SCREEN_LANGS, STORY_PLACE, STORY_SEARCH,
-  exploreHref, isEstimate, personaPhotos, placeDay, screenSrc, searchRows,
+  CHAPTERS, CLIP_LANGS, FILM, PERSONAS, ROUTE_PHOTO, ROUTE_STOPS, SLOVENIA, STORY_PLACE, STORY_SEARCH,
+  WEEK_NIGHTS, WEEK_PLACES, clipSrc, exploreHref, fitProjection, isEstimate, pagePhotos, placeDay,
+  routeTotals, searchRows, smoothPath, weekSum,
 } from '../src/lib/homeDemo.js';
 import { computeCosts } from '../src/lib/costIndex.js';
 import { matchAll } from '../src/lib/guidedSearch.js';
@@ -30,19 +32,23 @@ const here = dirname(fileURLToPath(import.meta.url));
 const pub = join(here, '..', 'public');
 const CATALOGS = { en, nl, de, fr, es, it: itCat };
 const cost = (dayEur, level = 'city') => ({ dayEur, stayLevel: level, foodLevel: level });
+const parts = (stayEur, foodEur, level = 'city') => ({ stayEur, foodEur, dayEur: stayEur + foodEur, stayLevel: level, foodLevel: level });
 
-test('the story has five chapters, each with its screen, words and door', () => {
+test('the story has five chapters, each with its clip, words, door and ground', () => {
   assert.deepEqual(CHAPTERS.map((c) => c.id), ['find', 'place', 'plan', 'day', 'share']);
   for (const c of CHAPTERS) {
     for (const k of ['tab', 'title', 'body', 'alt']) assert.ok(en[c[k]], `${c.id} ${k} ${c[k]} is a string`);
     assert.ok(['search', 'place', 'trip', 'day', 'trips'].includes(c.door), `${c.id} door`);
+    assert.ok(['mist', 'lake', 'deep', 'clay', 'sea'].includes(c.ground), `${c.id} ground`);
   }
+  // Two panels in a row never share a ground, so the story visibly moves on.
+  CHAPTERS.slice(1).forEach((c, i) => assert.notEqual(c.ground, CHAPTERS[i].ground, `${c.id} ground`));
 });
 
-test('a screen is read in the UI language, and English stands in for any other', () => {
-  assert.equal(screenSrc('de', 'plan'), '/home/de/plan.webp');
-  assert.equal(screenSrc('pt', 'plan'), '/home/en/plan.webp');
-  assert.equal(screenSrc(undefined, 'desk'), '/home/en/desk.webp');
+test('a clip is read in the UI language, and English stands in for any other', () => {
+  assert.equal(clipSrc('de', 'plan'), '/home/clips/de/plan.mp4');
+  assert.equal(clipSrc('pt', 'plan'), '/home/clips/en/plan.mp4');
+  assert.equal(clipSrc('fr', 'day', 'poster'), '/home/clips/fr/day.webp');
 });
 
 test('a question keeps its facets in its address, so a new tab opens it', () => {
@@ -51,7 +57,6 @@ test('a question keeps its facets in its address, so a new tab opens it', () => 
   assert.equal(exploreHref({ vibe: 'oldtown', nocar: true }), '?tab=map&xe=oldtown&xp=c');
   assert.equal(exploreHref({ budget: 60 }), '?tab=map&xb=60');
   assert.equal(exploreHref(), '?tab=map');
-  for (const s of SEARCHES) assert.match(exploreHref(s.facets), /^\?tab=map&xe=/);
   assert.equal(exploreHref(STORY_SEARCH), '?tab=map&xe=lake&xa=alps&xm=7');
 });
 
@@ -68,7 +73,7 @@ const ROWS = [
   { id: 'd', iso2: 'CH', cost: null },
 ];
 
-test("a traveller's price is its own place's day, and nothing when that place has none", () => {
+test("a place's price is its own day, and nothing when it has none", () => {
   assert.equal(placeDay(ROWS, 'b').dayEur, 61);
   assert.equal(isEstimate(placeDay(ROWS, 'a')), true, 'a country-level stand-in keeps its mark');
   assert.equal(placeDay(ROWS, 'd'), null, 'an unpriced place shows no figure');
@@ -84,29 +89,83 @@ test("the catalogue rows carry each place's day cost, and nothing without indice
   assert.deepEqual(searchRows({ a: {} }, null), []);
 });
 
-test('six travellers, hikers first, each with a door, a place and a credited photo', () => {
+test('the week card adds the flight to the bed and the food, and never guesses a flight', () => {
+  const s = weekSum(parts(56, 41.5), 7, { perSeat: 133 });
+  assert.equal(s.bed, 392);
+  assert.equal(s.food, 290.5);
+  assert.equal(s.flight, 133);
+  assert.equal(s.total, 815.5);
+  assert.ok(s.times > 6 && s.times < 6.2, 'the trip is about six times the flight');
+  const ground = weekSum(parts(56, 41.5), 3, null);
+  assert.equal(ground.flight, null, 'no flight in the sweep, no flight figure');
+  assert.equal(ground.total, ground.ground, 'without a flight the total is the ground alone');
+  assert.equal(weekSum(parts(56, 41.5), 3, { perSeat: 0 }).flight, null, 'a zero fare is no fare');
+  assert.equal(weekSum(parts(56, 41.5, 'country'), 3, null).stayEst, true);
+  assert.equal(weekSum(null, 7, null), null);
+  assert.equal(weekSum(parts(56, 41.5), 0, null), null);
+  assert.equal(weekSum({ dayEur: 90, stayEur: null, foodEur: 40 }, 7, null), null, 'a missing part is no sum');
+  assert.deepEqual(WEEK_NIGHTS, [3, 5, 7]);
+  assert.equal(new Set(WEEK_PLACES).size, WEEK_PLACES.length);
+});
+
+test("the route card sums each town's day for its nights, and nothing when a town has no price", () => {
+  const rows = [
+    { id: 'LJU', cost: cost(100) },
+    { id: 'gem:bled', cost: cost(80, 'country') },
+    { id: 'gem:bohinj', cost: cost(70) },
+  ];
+  const r = routeTotals(rows);
+  assert.equal(r.nights, 7);
+  assert.equal(r.total, 100 * 2 + 80 * 3 + 70 * 2);
+  assert.equal(r.est, true, 'one estimated town marks the total');
+  assert.equal(routeTotals(rows.slice(0, 2)).total, null);
+  assert.deepEqual(ROUTE_STOPS.map((s) => s.id), ['LJU', 'gem:bled', 'gem:bohinj']);
+});
+
+test('the route drawing keeps north up and its points inside the card', () => {
+  const p = fitProjection(SLOVENIA, 640, 420, 20);
+  for (const pt of SLOVENIA) {
+    const [x, y] = p(pt);
+    assert.ok(x >= 19.9 && x <= 620.1 && y >= 19.9 && y <= 400.1, `${pt} lands at ${x},${y}`);
+  }
+  const north = p([14.5, 46.8]);
+  const south = p([14.5, 45.5]);
+  assert.ok(north[1] < south[1], 'north is up');
+  const d = smoothPath([[0, 0], [10, 5], [20, 0]]);
+  assert.match(d, /^M0 0 C/);
+  assert.equal((d.match(/C/g) || []).length, 2, 'one curve between each pair of towns');
+  assert.equal(smoothPath([[1, 1]]), '');
+});
+
+test('six travellers, hikers first, each with a question, a door, a place and a credited photo', () => {
   assert.equal(PERSONAS.length, 6);
   assert.equal(PERSONAS[0].id, 'hike');
   for (const p of PERSONAS) {
     assert.ok(p.facets || p.kind, `${p.id} opens something`);
-    // A card with no question has no price to show, so it names what it opens.
+    assert.ok(en[p.ask], `${p.id} asks a question`);
+    if (p.askPrice) assert.match(en[p.ask], /\{price\}/, `${p.id} names its budget through a placeholder`);
     if (!p.facets) assert.ok(p.pill && en[p.pill], `${p.id} has a pill label`);
-    // A card with a question is one real place: its name sits on its photo.
     if (p.facets) assert.ok(p.place && p.label, `${p.id} names its place`);
-    const ph = p.photo;
-    assert.match(ph.url, /^https:\/\/upload\.wikimedia\.org\/wikipedia\/commons\/thumb\/.+\/1280px-/, `${p.id} is a Commons thumb`);
-    assert.ok(ph.author && ph.licence && ph.credit, `${p.id} carries its credit`);
-    assert.match(ph.page, /^https:\/\/commons\.wikimedia\.org\/wiki\/File:/, `${p.id} links its file page`);
-    assert.ok(Math.min(ph.w, ph.h) >= 2000, `${p.id} original is large enough for a sharp 4:5 crop`);
   }
-  const photos = personaPhotos();
-  assert.deepEqual(Object.keys(photos), PERSONAS.map((p) => p.id));
-  assert.equal(photos.city.credit, 'Ribeira, Porto');
+  for (const ph of pagePhotos()) {
+    assert.match(ph.url, /^https:\/\/upload\.wikimedia\.org\/wikipedia\/commons\/thumb\/.+\/1280px-/, `${ph.credit} is a Commons thumb`);
+    assert.ok(ph.author && ph.licence && ph.credit, `${ph.credit} carries its credit`);
+    assert.match(ph.page, /^https:\/\/commons\.wikimedia\.org\/wiki\/File:/, `${ph.credit} links its file page`);
+    assert.ok(Math.min(ph.w, ph.h) >= 2000, `${ph.credit} original is large enough`);
+  }
+  assert.equal(ROUTE_PHOTO.author, 'Canadianhockey91');
+});
+
+test('the hero film is one priced place a shot, hikers first, until clips arrive', () => {
+  assert.equal(FILM[0].id, 'hike');
+  for (const shot of FILM) {
+    assert.ok(shot.place && shot.label && shot.photo?.url && shot.facets, `${shot.id} is a priced place with a search`);
+    assert.equal(shot.clip, null, `${shot.id} has no licensed clip yet (register T605-b)`);
+  }
 });
 
 const appData = join(pub, 'app_data.json');
 const guidedFile = join(pub, 'search', 'guided.json');
-const journeysFile = join(pub, 'journeys', 'index.json');
 const haveData = existsSync(appData) && existsSync(guidedFile);
 
 function shipped() {
@@ -116,14 +175,6 @@ function shipped() {
   return { data, guided, rows };
 }
 
-test('every search offered under the hero returns at least three places today', { skip: !haveData }, () => {
-  const { guided, rows } = shipped();
-  for (const s of SEARCHES) {
-    const hits = rows.filter((p) => matchAll(p, s.facets, { guided, nearRow: null })).length;
-    assert.ok(hits >= 3, `${s.key} returns ${hits}`);
-  }
-});
-
 test("the story's place is in the catalogue and its search finds it", { skip: !haveData }, () => {
   const { data, guided, rows } = shipped();
   assert.ok(data.destinations[STORY_PLACE], STORY_PLACE);
@@ -132,8 +183,8 @@ test("the story's place is in the catalogue and its search finds it", { skip: !h
 });
 
 test("every traveller's place is in the catalogue, priced, and returned by its own search", { skip: !haveData }, () => {
-  // The photo, the name and the figure are one place, and the card opens a
-  // search that lists it: a card can never show a place its door leaves out.
+  // The photo, the name and the figure are one place, and the answer opens a
+  // search that lists it: the page never shows a place its door leaves out.
   const { data, guided, rows } = shipped();
   for (const p of PERSONAS.filter((x) => x.facets)) {
     assert.ok(data.destinations[p.place], `${p.id}: ${p.place} is in the catalogue`);
@@ -144,13 +195,24 @@ test("every traveller's place is in the catalogue, priced, and returned by its o
   }
 });
 
-test('every captured screen exists in all six languages', () => {
-  for (const lang of SCREEN_LANGS) {
-    for (const id of [...CHAPTERS.map((c) => c.id), 'trip', 'desk']) {
-      const f = join(pub, screenSrc(lang, id));
-      assert.ok(existsSync(f), `${lang}/${id}.webp`);
-      const size = statSync(f).size;
-      assert.ok(size > 10000 && size < 250000, `${lang}/${id}.webp is ${size} bytes`);
+test('the route and the week card price every town they name', { skip: !haveData }, () => {
+  const { data, rows } = shipped();
+  assert.notEqual(routeTotals(rows).total, null, 'every route town is priced');
+  for (const id of WEEK_PLACES) {
+    assert.ok(data.destinations[id], `${id} is in the catalogue`);
+    assert.ok(weekSum(placeDay(rows, id), 7, null), `${id} has a bed and a food price`);
+  }
+});
+
+test('every chapter clip and its poster exist in all six languages, inside the budget', () => {
+  for (const lang of CLIP_LANGS) {
+    for (const c of CHAPTERS) {
+      const mp4 = join(pub, clipSrc(lang, c.id));
+      const poster = join(pub, clipSrc(lang, c.id, 'poster'));
+      assert.ok(existsSync(mp4), `${lang}/${c.id}.mp4`);
+      assert.ok(existsSync(poster), `${lang}/${c.id}.webp`);
+      const size = statSync(mp4).size;
+      assert.ok(size > 20000 && size < 1600000, `${lang}/${c.id}.mp4 is ${size} bytes`);
     }
   }
 });
@@ -162,15 +224,18 @@ const vars = (s) => (String(s).match(/\{[a-zA-Z]+\}/g) || []).sort().join(',');
 
 test('every language carries the same home strings with the same placeholders', () => {
   const ref = homeKeys(en);
-  assert.ok(ref.length >= 30, `en has ${ref.length} home strings`);
+  assert.ok(ref.length >= 60, `en has ${ref.length} home strings`);
   for (const [lang, cat] of Object.entries(CATALOGS)) {
     assert.deepEqual(homeKeys(cat), ref, `${lang} home keys`);
     for (const k of ref) assert.equal(vars(cat[k]), vars(en[k]), `${lang} ${k} placeholders`);
   }
 });
 
-test('the old landing strings are gone', () => {
+test('the retired home strings are gone', () => {
+  const retired = ['home.tryLabel', 'home.try2', 'home.try3', 'home.deskAlt', 'home.tripAlt', 'home.chapterPos',
+    'home.addsTitle', 'home.promise1', 'home.promise2', 'home.promise3', 'home.credits', 'home.aDay', 'home.planStory'];
   for (const [lang, cat] of Object.entries(CATALOGS)) {
+    for (const k of retired) assert.equal(cat[k], undefined, `${lang} ${k}`);
     assert.deepEqual(Object.keys(cat).filter((k) => k.startsWith('landing.')), [], lang);
   }
 });
@@ -185,6 +250,7 @@ test('the home copy keeps the house rules in every language', () => {
       const s = cat[k];
       assert.ok(!/[–—·•]/.test(s), `${lang} ${k} has a dash or a middot: ${s}`);
       assert.ok(!/€|EUR/.test(s), `${lang} ${k} carries a euro sign: ${s}`);
+      assert.ok(!/\best\./i.test(s), `${lang} ${k} writes the retired estimate word: ${s}`);
       // A catalogue count is three or more digits, or a grouped figure.
       assert.ok(!/\d{3,}|\d[.,]\d{3}/.test(s), `${lang} ${k} carries a count: ${s}`);
       for (const w of BANNED[lang] || []) {
@@ -192,4 +258,6 @@ test('the home copy keeps the house rules in every language', () => {
       }
     }
   }
+  // The headline has no terminal punctuation (carta-design, Copy).
+  for (const [lang, cat] of Object.entries(CATALOGS)) assert.ok(!/[.!]$/.test(cat['home.title']), `${lang} home.title`);
 });

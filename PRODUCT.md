@@ -106,7 +106,7 @@ Carta prices and plans; it never sells. No booking, no commission on travel: it 
 
 Carta never navigates (owner, 2026-10-21, T471-b). No route guidance, no GPS, no turn-by-turn of its own. Carta plans and prices; the traveller's maps app takes them there. Every day and every ride therefore ends in a hand-over to that app, worded "Open in Google Maps" (or "Open Day 2 in Google Maps"), never "Navigate" or "Start route".
 
-Carta is not entirely free, and never says it is. Browsing, both planners, one saved trip, sharing and co-planners (owner T488-b) and GPX are free; a Trip Pass (60 days) or the yearly plan adds every PDF, ICS and KML export, more saved trips, booking import and more AI plans (`lib/pricing.js` TIERS, gates in `hooks/usePaywall.jsx`). The sentence for it is "Planning is free. A Trip Pass adds exports, more saved trips and more AI plans." (`pass.freeSentence`, roadmap 1.15); never "100% free" or "free forever". The pass appears only at a paid moment, in Account and on /pricing (T496, T497).
+Carta is not entirely free, and never says it is. Browsing, both planners, one saved trip, sharing and co-planners (owner T488-b) and GPX are free; a Trip Pass (60 days) or the yearly plan adds every PDF, ICS and KML export, more saved trips, booking import and more AI plans (`lib/pricing.js` TIERS, gates in `hooks/usePaywall.jsx`). The sentence for it is "Planning is free. A Trip Pass adds exports, more saved trips and more AI plans." (`pass.freeSentence`, roadmap 1.15); never "100% free" or "free forever". The pass appears at a paid moment, in Account and on /pricing (T496, T497), and on the home page, where a visitor deciding whether to trust Carta sees the three plans as plain columns (owner decision D9, 2026-10-23, T606).
 
 ## Accessibility constraints
 
@@ -120,7 +120,7 @@ Colour is never the only carrier. The place-kind hierarchy is an ink-density ram
 
 Focus and keyboard. Visible focus on every interactive element, `outline: 2px solid var(--accent)` with an offset. `outline: none` is never shipped without a replacement. Every `aria-modal` overlay traps focus through `useFocusTrap` and closes on Escape. Navigation is a real `<a>`, actions are a real `<button>`, headings stay in order with one `h1` per view.
 
-Motion. `prefers-reduced-motion: reduce` is honoured on every transition and animation. Animations stay under 300 ms and animate only transform and opacity. No parallax, no scroll-triggered counters, no bounce. The home page carries the one owner-approved exception (T462, T463, DESIGN.md "Home page exception"): a pinned phone of real app captures whose screen crossfades to the chapter in view, and sections that may reveal once; reduced motion swaps and shows at once.
+Motion. `prefers-reduced-motion: reduce` is honoured on every transition and animation. Animations stay under 300 ms and animate only transform and opacity. No parallax, no scroll-triggered counters, no bounce. The home page carries the one owner-approved exception (T462, widened by T606 on 2026-10-23, DESIGN.md "Home page exception v2"): a film of real places with drifting price pills and a pause control, recordings of the app that play in view, tabs that move on until touched, a route that draws itself once, and sections that arrive once; under reduced motion it all stands still and shows at once.
 
 Language. The document language follows the chosen UI language. Strings are never built by concatenation; they go through the i18n keys so word order survives translation.
 

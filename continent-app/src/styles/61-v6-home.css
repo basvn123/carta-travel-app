@@ -1,26 +1,26 @@
 /* ==========================================================================
-   The home page (T463, after T462; browse/home/)
+   The home page, v2 (T606 batch, rebuilt from scratch on 2026-10-23;
+   browse/home/)
 
-   The trip told in the app's own screens: the promise, the real search and
-   the same priced trip on a laptop and a phone; five chapters beside one
-   pinned phone; six travellers on a photo rail; the passes as the app's pass
-   dialog shows them; the search again; the photo credits. Phone first at
-   360px; from 1024px the hero splits into words and devices and the phone
-   pins beside the chapters.
+   One thing said and then shown: "A cheap flight is not a cheap trip".
+   A film of real places with their own prices on a rounded stage, the slogan
+   on paper under it, a week priced with a real flight, six travellers asking
+   in their own words, five colour panels each playing a recording of the
+   app, the story's trip drawn on Slovenia, five promises as a rail, the
+   plans as columns, the question again, the site footer.
 
-   The devices hold real captures (public/home/<lang>/): a straight phone
-   (an ink bezel, a 9:41 bar, the island) and a light browser window, each
-   one object with one shadow and no border.
-
-   The home page exception (DESIGN.md, owner 2026-10-17): the pinned phone
-   crossfades to the chapter in view, and a price sits on a photo in a solid
-   --surface pill. Nothing loops and nothing moves with the scroll itself.
-   Tokens only; every transition has its reduced-motion branch at the end.
+   The home page exception v2 (DESIGN.md, owner decisions D4 to D6,
+   2026-10-23): the film plays and its price pills drift, the panels' clips
+   play in view and move the story on, the chats type, the route draws
+   itself once, sections arrive once. Nothing scrubs or moves with the
+   scroll itself. Grounds and sizes come from the --home-* and --text-hero
+   tokens in 01-tokens.css, read by this file alone. Every animation has its
+   reduced-motion branch at the end, where the page simply stands still.
    ========================================================================== */
 
 /* ── The page ─────────────────────────────────────────────────────────── */
 
-.home-page {
+.hv-page {
   position: absolute;
   top: var(--filter-h);
   left: 0;
@@ -31,693 +31,704 @@
   scrollbar-gutter: stable;
   background: var(--surface-page);
   color: var(--text);
-  /* The hero's laptop bleeds to this box's right edge (T464), measured in
-     its own width (cqw) so the scrollbar never makes it scroll sideways. */
-  container-type: inline-size;
-}
-.home-wrap {
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: var(--space-4) var(--gutter) calc(var(--space-8) + env(safe-area-inset-bottom, 0px));
 }
 
-.home-section { margin-top: calc(var(--space-7) + var(--space-2)); }
-/* A section heading is title size on a phone and headline from 769 px:
-   one step under the page's h1 at every width. */
-.home-h2 {
-  margin: 0 0 var(--space-4);
+.hv-wrap {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 var(--gutter) var(--space-8);
+}
+
+/* The phone's own top line: the mark and Log in. The desktop has the app
+   header for both. */
+.hv-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--gutter);
+}
+.hv-top-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  color: var(--text);
   font-size: var(--text-title);
   font-weight: 700;
-  line-height: var(--leading-tight);
   letter-spacing: -0.02em;
-  text-wrap: balance;
-  color: var(--text);
+  text-decoration: none;
 }
-.home-h3 {
-  margin: 0;
+.hv-top-login { min-height: var(--tap); }
+
+.hv-section { margin-top: clamp(80px, 11vw, 152px); }
+
+.hv-h2 {
+  margin: 0 0 var(--space-5);
+  max-width: 18ch;
+  font-size: var(--text-showcase);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+.hv-h3 {
+  margin: 0 0 var(--space-4);
+  max-width: 14ch;
+  font-size: var(--text-display);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+.hv-lead {
+  margin: 0 0 var(--space-5);
+  max-width: 46ch;
+  font-size: var(--text-title);
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--text-2);
+}
+.hv-caption {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-caption);
+  color: var(--text-3);
+}
+.hv-caption a,
+.hv-film-credit a { color: inherit; text-underline-offset: 2px; }
+.hv-page a.btn { text-decoration: none; }
+
+.hv-door {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--tap);
+  color: var(--action);
   font-size: var(--text-lead);
   font-weight: 600;
-  line-height: var(--leading-tight);
-  color: var(--text);
+  text-decoration: none;
 }
-.home-glyph { display: inline-flex; flex: none; }
-.home-flip { transform: scaleX(-1); }
-.home-door { text-decoration: none; }
+.hv-door:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* A label or a price on a photograph: a solid pill, its contrast never
+   resting on the picture (carta-design, Photography). */
+.hv-pill,
+.hv-route-pill,
+.hv-route-total {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+  color: var(--text);
+  font-size: var(--text-lead);
+  font-weight: 600;
+  line-height: 1.6;
+  white-space: nowrap;
+  text-decoration: none;
+}
+.hv-pill-fig { display: inline-flex; align-items: baseline; gap: var(--space-1); font-weight: 700; }
+.hv-pill-unit,
+.hv-unit { color: var(--text-2); font-size: var(--text-label); font-weight: 500; }
+a.hv-pill:hover { background: var(--surface-hover); }
 
 /* ── The hero ─────────────────────────────────────────────────────────── */
 
-.home-hero {
-  display: grid;
-  align-items: center;
+.hv-film { position: relative; }
+.hv-stage {
+  position: relative;
+  height: clamp(260px, 38svh, 360px);
+  border-radius: var(--radius-stage);
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--surface-sunken);
 }
-.home-hero-text { min-width: 0; }
-.home-title {
+.hv-shot {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity var(--dur-film-fade) var(--ease-in-out);
+}
+.hv-shot.is-on { opacity: 1; z-index: 1; }
+/* A leaving shot takes its pills with it at once, and the new pills come in
+   halfway through the crossfade: two prices never overlap. */
+.hv-shot .hv-pills { opacity: 0; transition: opacity var(--dur-2) var(--ease-out); }
+.hv-shot.is-on .hv-pills { opacity: 1; transition-delay: calc(var(--dur-film-fade) / 2); }
+.hv-shot-media {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: 50% 60%;
+}
+/* A still pushes in slowly while it is the shot on screen: the film's
+   motion until licensed clips arrive (register T605-b). */
+.hv-stage.is-running .hv-shot.is-on img.hv-shot-media {
+  animation: hv-push calc(var(--dur-film) + var(--dur-film-fade)) linear both;
+}
+
+.hv-pills {
+  position: absolute;
+  left: var(--space-4);
+  right: var(--space-4);
+  bottom: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+.hv-stage.is-running .hv-shot.is-on .hv-pill-a { animation: hv-drift var(--dur-drift) ease-in-out infinite; }
+.hv-stage.is-running .hv-shot.is-on .hv-pill-b {
+  animation: hv-drift calc(var(--dur-drift) * 1.125) ease-in-out calc(var(--dur-drift) * -0.4) infinite;
+}
+
+/* Where the film stands: one bar a shot across the top, the current one
+   filling for its time. Decoration, hidden from assistive tech. */
+.hv-film-steps {
+  position: absolute;
+  z-index: 2;
+  top: var(--space-4);
+  left: var(--space-5);
+  right: calc(var(--space-5) + var(--tap));
+  display: flex;
+  gap: var(--space-1);
   margin: 0;
-  font-size: var(--text-headline);
-  font-weight: 700;
-  line-height: var(--leading-tight);
-  letter-spacing: -0.02em;
-  text-wrap: balance;
-  color: var(--text);
+  padding: 0;
+  list-style: none;
 }
-.home-sub {
-  max-width: 34em;
-  margin: var(--space-3) 0 0;
-  font-size: var(--text-body);
-  line-height: var(--leading-body);
+.hv-film-steps li {
+  position: relative;
+  flex: 1;
+  height: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  opacity: 0.5;
+  overflow: hidden;
+}
+.hv-film-steps li.is-done { opacity: 0.9; }
+.hv-film-steps li.is-on { opacity: 1; background: var(--surface-sunken); }
+.hv-film-steps li.is-on::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--surface);
+  transform-origin: left center;
+  transform: scaleX(1);
+}
+.hv-stage.is-running .hv-film-steps li.is-on::after { animation: hv-fill var(--dur-film) linear both; }
+
+.hv-film-pause {
+  position: absolute;
+  z-index: 2;
+  top: var(--space-2);
+  right: var(--space-3);
+}
+.hv-film-credit {
+  margin: var(--space-2) 0 0;
+  animation: hv-fade var(--dur-2) var(--ease-out) calc(var(--dur-film-fade) / 2) both;
+  min-height: 1.5em;
+  font-size: var(--text-caption);
+  color: var(--text-3);
+}
+
+.hv-hero-copy {
+  display: grid;
+  gap: var(--space-4);
+  margin-top: var(--space-5);
+}
+.hv-slogan {
+  margin: 0;
+  max-width: 18ch;
+  font-size: var(--text-hero);
+  font-weight: 700;
+  line-height: var(--leading-hero);
+  letter-spacing: var(--tracking-hero);
+  text-wrap: balance;
+  animation: hv-rise var(--dur-reveal) var(--ease-out) both;
+}
+.hv-hero-side { display: grid; gap: var(--space-4); align-content: end; }
+.hv-sub {
+  margin: 0;
+  max-width: 40ch;
+  font-size: var(--text-lead);
+  line-height: 1.5;
   color: var(--text-2);
 }
 
-/* The search: Explore's guided search, one tap away. Shaped like the field
-   it opens, a link because it goes there. */
-.home-search {
+.hv-ask {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  min-height: calc(var(--tap) + var(--space-2));
-  margin-top: var(--space-4);
-  padding: 0 var(--space-4);
+  gap: var(--space-2);
+  min-height: 56px;
+  padding: var(--space-1) var(--space-1) var(--space-1) var(--space-4);
   border: 1px solid var(--border);
   border-radius: var(--radius-pill);
   background: var(--surface);
-  color: var(--text-2);
-  font-size: var(--text-body);
-  text-decoration: none;
   transition: border-color var(--dur-1) var(--ease-out);
 }
-.home-search .home-glyph { color: var(--text); }
-.home-search span { min-width: 0; overflow-wrap: anywhere; }
-/* T566: the pill holds Ask Carta's own field and its Ask; the input keeps
-   its own focus ring and the pill's edge turns brown while it has focus. */
-.home-search { padding-right: var(--space-1); }
-.home-search:focus-within { border-color: var(--action); }
-.home-search-input {
-  flex: 1 1 auto;
+.hv-ask:focus-within { border-color: var(--action); outline: 2px solid var(--focus); outline-offset: 2px; }
+.hv-ask-glyph { display: inline-flex; color: var(--text-2); }
+.hv-ask-input {
+  flex: 1;
   min-width: 0;
   min-height: var(--tap);
   border: 0;
-  border-radius: var(--radius-control);
-  background: none;
+  background: transparent;
   color: var(--text);
   font: inherit;
   font-size: var(--text-lead);
 }
-.home-search-input::placeholder { color: var(--text-2); }
-.btn.home-search-go { flex: none; border-radius: var(--radius-pill); }
-@media (hover: hover) {
-  .home-search:hover { border-color: var(--neutral-300); }
-}
-.home-search:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.hv-ask-input:focus-visible { outline-color: transparent; } /* the form draws the ring */
+.hv-ask-input::placeholder { color: var(--text-3); }
+.hv-ask-go { min-height: var(--tap); border-radius: var(--radius-pill); }
 
-/* Three questions that return places today, in one scrolling row on a
-   phone so the primary keeps its place in the first screen. */
-.home-tries {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin-top: var(--space-3);
-  min-width: 0;
-}
-.home-tries-label {
-  flex: none;
-  font-size: var(--text-label);
-  color: var(--text-2);
-}
-.home-tries-list {
-  display: flex;
-  gap: var(--space-2);
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  overflow-x: auto;
-  scroll-snap-type: x proximity;
-  scrollbar-width: none;
-}
-.home-tries-list::-webkit-scrollbar { display: none; }
-/* On a phone the row runs to the screen's edge, so a chip cut by the edge
-   reads as "more this way" rather than as a clipped box. */
+.hv-acts { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.hv-cta { flex: 1; min-height: var(--tap-main); font-size: var(--text-lead); }
+.hv-login { min-height: var(--tap-main); font-size: var(--text-lead); }
+/* A phone has Log in on its top line already. */
 @media (max-width: 768px) {
-  .home-tries-list {
-    margin-right: calc(var(--gutter) * -1);
-    padding-right: var(--gutter);
-    scroll-padding-inline: 0 var(--gutter);
-  }
+  .hv-login { display: none; }
 }
-.home-tries-list li { flex: none; scroll-snap-align: start; }
-.home-try {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--tap);
-  padding: 0 var(--space-3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  color: var(--text);
-  font-size: var(--text-label);
+
+/* ── The week ─────────────────────────────────────────────────────────── */
+
+.hv-week { display: grid; gap: var(--space-6); align-items: center; }
+.hv-week-line {
+  margin: 0;
+  max-width: 24ch;
+  font-size: var(--text-headline);
   font-weight: 500;
-  white-space: nowrap;
-  text-decoration: none;
-  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
-}
-@media (hover: hover) {
-  .home-try:hover { background: var(--surface-hover); border-color: var(--neutral-300); }
-}
-.home-try:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-@media (pointer: fine) {
-  .home-try { min-height: calc(var(--tap) - var(--space-3)); }
-}
-
-.home-cta {
-  width: 100%;
-  margin-top: var(--space-4);
-  text-decoration: none;
-}
-
-/* The same trip on a laptop and a phone. The phone is pulled up over the
-   window's corner; both keep their box before the capture arrives. */
-.home-devices {
-  position: relative;
-  min-width: 0;
-}
-.home-devices-desk { display: none; }
-.home-devices-phone {
-  position: relative;
-  width: min(78%, 300px);
-  margin: 0 auto;
-}
-
-/* A peek (phone only, T464): the device rises from a hairline and only its
-   top is in view, where each capture carries its point (the trip's total,
-   a place's day price). The whole hero then fits the first screen, and a
-   chapter card is half as tall as a whole phone made it. */
-.home-peek { position: relative; overflow: hidden; }
-.home-devices-peek {
-  height: 300px;
-  margin: var(--space-5) calc(var(--gutter) * -1) 0;
-  padding: var(--space-2) var(--gutter) 0;
-  border-bottom: 1px solid var(--border);
-}
-
-/* ── The devices ──────────────────────────────────────────────────────── */
-
-.home-browser {
-  overflow: hidden;
-  border-radius: var(--radius-card);
-  background: var(--surface);
-  box-shadow: var(--elev-3);
-}
-.home-browser-bar {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  height: calc(var(--space-6) + var(--space-1));
-  padding: 0 var(--space-3);
-  border-bottom: 1px solid var(--border-soft);
-  background: var(--surface);
-}
-.home-browser-dots { display: inline-flex; gap: var(--space-1); flex: none; }
-.home-browser-dots i {
-  width: var(--space-2);
-  height: var(--space-2);
-  border-radius: var(--radius-pill);
-  background: var(--border);
-}
-.home-browser-url {
-  flex: 0 1 auto;
-  min-width: 0;
-  margin: 0 auto;
-  padding: var(--space-1) var(--space-4);
-  border-radius: var(--radius-pill);
-  background: var(--surface-sunken);
+  line-height: 1.3;
   color: var(--text-2);
-  font-size: var(--text-caption);
-  line-height: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
-.home-browser-dots + .home-browser-url { transform: translateX(calc(var(--space-6) * -0.5)); }
-.home-browser-img {
+.hv-fig { color: var(--text); font-weight: 700; white-space: nowrap; }
+
+.hv-week-card {
+  padding: var(--space-5);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-stage);
+  background: var(--surface);
+}
+.hv-week-inputs { display: grid; gap: var(--space-3); justify-items: start; }
+.hv-week-places { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.hv-week-total { display: grid; gap: var(--space-1); margin-top: var(--space-5); }
+.hv-week-total-label { font-size: var(--text-label); color: var(--text-2); }
+.hv-week-total-fig {
+  font-size: var(--text-showcase);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.hv-week-rows { margin: var(--space-4) 0 0; }
+.hv-week-note { margin: var(--space-3) 0 0; font-size: var(--text-caption); color: var(--text-3); }
+.hv-week-door { margin-top: var(--space-4); }
+
+/* ── The voices ───────────────────────────────────────────────────────── */
+
+.hv-voices-tabs,
+.hv-story-tabs { position: relative; }
+.hv-voices-tabs .ui-tabs,
+.hv-story-tabs .ui-tabs { overflow-x: auto; scrollbar-width: none; }
+/* A one-word tab ("Find", "Plan") is still a 44 px target on touch. */
+.hv-voices-tabs [role="tab"],
+.hv-story-tabs [role="tab"] { min-width: var(--tap); justify-content: center; }
+
+/* The line that fills while a tab waits to move on. Neutral, so it never
+   reads as a second selected tab's underline. */
+.hv-advance {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--text-3);
+  transform-origin: left center;
+  transform: scaleX(0);
+  animation: hv-fill var(--dur-advance) linear both;
+  pointer-events: none;
+}
+.hv-advance.is-clip { animation: none; transform: scaleX(var(--p, 0)); }
+
+.hv-panel {
+  margin-top: var(--space-4);
+  padding: var(--space-5);
+  border-radius: var(--radius-stage);
+}
+.hv-voices-panel {
+  display: grid;
+  gap: var(--space-5);
+  background: var(--home-ground-mist);
+}
+.hv-chat { display: grid; align-content: center; gap: var(--space-3); }
+.hv-say {
+  max-width: 520px;
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-sheet);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+}
+.hv-say-who {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--text-2);
+}
+.hv-say-text { margin: 0; font-size: var(--text-title); font-weight: 500; line-height: 1.4; }
+.hv-caret {
+  display: inline-block;
+  width: 2px;
+  height: 1.05em;
+  margin-left: 2px;
+  vertical-align: -0.15em;
+  background: var(--text-3);
+  opacity: 0;
+}
+.hv-caret.is-typing { opacity: 1; }
+.hv-say-carta {
+  margin-left: var(--space-6);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity var(--dur-3) var(--ease-out), transform var(--dur-3) var(--ease-out);
+}
+.hv-say-carta.is-in { opacity: 1; transform: none; }
+.hv-answer-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-3);
+}
+.hv-answer-name,
+.hv-answer-fig { font-size: var(--text-title); font-weight: 700; }
+.hv-answer-text { margin: var(--space-1) 0 var(--space-1); color: var(--text-2); font-size: var(--text-lead); line-height: 1.45; }
+
+.hv-voices-photo { margin: 0; }
+.hv-voices-photo img,
+.hv-photo-wait {
   display: block;
   width: 100%;
-  height: auto;
-  aspect-ratio: 1440 / 900;
-  background: var(--surface-page);
+  max-width: 100%;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--radius-card);
+  object-fit: cover;
+  background: var(--surface-sunken);
 }
+.hv-voices-photo img { animation: hv-fade var(--dur-3) var(--ease-out) both; }
 
-.home-phone {
+/* ── The story ────────────────────────────────────────────────────────── */
+
+.hv-chapter {
+  display: grid;
+  gap: var(--space-6);
+  justify-items: start;
+  transition: background-color var(--dur-3) var(--ease-in-out), color var(--dur-3) var(--ease-in-out);
+}
+.hv-chapter.is-mist { background: var(--home-ground-mist); }
+.hv-chapter.is-lake { background: var(--home-ground-lake); }
+.hv-chapter.is-deep { background: var(--home-ground-deep); color: var(--home-ink-on-deep); }
+.hv-chapter.is-clay { background: var(--home-ground-clay); }
+.hv-chapter.is-sea { background: var(--home-ground-sea); }
+.hv-chapter-text { animation: hv-rise var(--dur-reveal) var(--ease-out) both; }
+.hv-chapter-body {
+  margin: 0 0 var(--space-5);
+  max-width: 34ch;
+  font-size: var(--text-title);
+  line-height: 1.45;
+  color: var(--text-2);
+}
+.hv-chapter.is-deep .hv-chapter-body { color: var(--home-ink-on-deep); }
+
+.hv-phone { position: relative; justify-self: center; width: min(72vw, 280px); }
+.hv-phone-bezel {
   padding: var(--space-2);
   border-radius: calc(var(--radius-sheet) * 2);
   background: var(--text);
   box-shadow: var(--elev-3);
 }
-.home-phone-glass {
-  overflow: hidden;
-  border-radius: calc(var(--radius-sheet) * 2 - var(--space-2));
-  background: var(--surface-page);
-}
-.home-phone-bar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  aspect-ratio: 390 / 40;
-  padding: 0 9%;
-  color: var(--text);
-  font-size: var(--text-caption);
-  font-weight: 600;
-}
-.home-phone-time { position: relative; top: 1px; }
-.home-phone-island {
-  position: absolute;
-  top: 22%;
-  left: 50%;
-  width: 30%;
-  height: 62%;
-  border-radius: var(--radius-pill);
-  background: var(--text);
-  transform: translateX(-50%);
-}
-.home-phone-icons { width: 16%; height: auto; fill: currentColor; }
-.home-phone-icons .home-phone-cell { stroke: currentColor; stroke-width: 1; opacity: 0.45; }
-.home-phone-view {
-  position: relative;
-  aspect-ratio: 600 / 1298;
-  background: var(--surface-page);
-}
-.home-phone-img {
-  position: absolute;
-  inset: 0;
+.hv-phone-screen {
   display: block;
   width: 100%;
-  height: 100%;
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: 546 / 1182;
+  border-radius: calc(var(--radius-sheet) * 2 - var(--space-2));
   object-fit: cover;
-  object-position: top;
-}
-
-/* ── The story ────────────────────────────────────────────────────────── */
-
-.home-story-grid { display: grid; gap: var(--space-4); }
-.home-story-grid > :where(.home-story-stage, .home-story-col) { min-width: 0; }
-.home-story-stage { display: none; }
-
-/* The chapter bar: the kit's tabs, scrolling sideways when the language
-   is long. */
-.home-story-bar {
-  gap: var(--space-4);
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.home-story-bar::-webkit-scrollbar { display: none; }
-.home-story-bar .ui-tab { flex: none; min-width: var(--tap); justify-content: center; }
-.home-story-bar.is-wide { display: none; }
-
-/* Narrow: a snap track, one chapter a slide, the next one showing. */
-.home-chapters {
-  position: relative;
-  display: flex;
-  gap: var(--space-3);
-  margin: var(--space-4) calc(var(--gutter) * -1) 0;
-  padding: 0 var(--gutter);
-  list-style: none;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-padding: 0 var(--gutter);
-  scrollbar-width: none;
-}
-.home-chapters::-webkit-scrollbar { display: none; }
-.home-chapters:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
-.home-chapter {
-  flex: 0 0 86%;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  min-width: 0;
-  overflow: hidden;
-  padding: var(--space-5) var(--space-4) 0;
-  border-radius: var(--radius-sheet);
-  background: var(--surface);
-  scroll-snap-align: start;
-}
-.home-chapter-peek {
-  height: 250px;
-  margin: auto calc(var(--space-4) * -1) 0;
-  padding: var(--space-1) var(--space-4) 0;
-}
-.home-chapter-phone {
-  width: min(86%, 270px);
-  margin: 0 auto;
-  box-shadow: var(--elev-2);
-}
-/* The screen rises inside the phone so the window shows the chapter's
-   point (CHAPTERS[].peek); the hero's trip rises past its own header. */
-.home-peek .home-phone-view { overflow: hidden; }
-.home-chapter-peek .home-phone-img { transform: translateY(var(--peek-y, 0%)); }
-.home-devices-peek .home-phone-img { transform: translateY(-9%); }
-.home-chapter-text { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); min-width: 0; }
-.home-chapter-title { font-size: var(--text-lead); }
-.home-chapter-body {
-  margin: 0;
-  font-size: var(--text-body);
-  line-height: var(--leading-body);
-  color: var(--text-2);
-}
-.home-chapter-text .home-door { margin-left: calc(var(--space-3) * -1); }
-
-.home-track-nav {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-3);
-  margin-top: var(--space-3);
-}
-.home-track-pos {
-  min-width: 5em;
-  text-align: center;
-  font-size: var(--text-label);
-  color: var(--text-2);
-}
-
-/* ── The travellers ───────────────────────────────────────────────────── */
-
-.home-who-head {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--space-4);
-}
-.home-rail-arrows { display: none; gap: var(--space-1); flex: none; margin-bottom: var(--space-4); }
-@media (pointer: fine) {
-  .home-rail-arrows { display: flex; }
-}
-.home-who-track {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 64%;
-  gap: var(--space-4);
-  margin: 0 calc(var(--gutter) * -1);
-  padding: 0 var(--gutter) var(--space-2);
-  list-style: none;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-padding: 0 var(--gutter);
-  scrollbar-width: none;
-}
-.home-who-track::-webkit-scrollbar { display: none; }
-.home-who-track li { min-width: 0; scroll-snap-align: start; }
-.home-who-card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  color: var(--text);
-  text-decoration: none;
-  border-radius: var(--radius-card);
-}
-.home-who-card:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-.home-who-media {
-  position: relative;
-  display: block;
-  aspect-ratio: 4 / 5;
-  margin-bottom: var(--space-2);
-  overflow: hidden;
-  border-radius: var(--radius-card);
   background: var(--surface-sunken);
 }
-.home-who-img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: var(--who-focus, center);
-}
-.home-who-price {
+.hv-phone-play {
   position: absolute;
-  left: var(--space-3);
-  bottom: var(--space-3);
-  display: inline-flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0 var(--space-2);
-  max-width: calc(100% - var(--space-5));
-  padding: var(--space-1) var(--space-3);
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border: 0;
   border-radius: var(--radius-pill);
   background: var(--surface);
-  box-shadow: var(--elev-1);
+  box-shadow: var(--elev-2);
   color: var(--text);
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+}
+.hv-phone-play:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+/* ── The route ────────────────────────────────────────────────────────── */
+
+.hv-route { display: grid; gap: var(--space-6); align-items: center; }
+.hv-route-card { margin: 0; }
+.hv-route-map {
+  position: relative;
+  aspect-ratio: 640 / 420;
+  max-width: 100%;
+  border-radius: var(--radius-stage);
+  background: var(--surface-sunken);
+  overflow: hidden;
+}
+.hv-route-map svg { display: block; width: 100%; height: 100%; }
+.hv-route-land { fill: var(--surface); stroke: var(--border); stroke-width: 1.5; stroke-linejoin: round; }
+.hv-route-line,
+.hv-route-line-under {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+.hv-route-line-under { stroke: var(--surface); stroke-width: 10; }
+.hv-route-line { stroke: var(--action); stroke-width: 4; }
+.hv-route-card.is-drawn .hv-route-line,
+.hv-route-card.is-drawn .hv-route-line-under {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset var(--dur-draw) var(--ease-in-out);
+}
+.hv-route-dot { fill: var(--surface); stroke: var(--action); stroke-width: 3; opacity: 0; }
+.hv-route-pill,
+.hv-route-total {
+  position: absolute;
+  z-index: 1;
+  opacity: 0;
   font-size: var(--text-label);
-  font-weight: 600;
-  line-height: var(--leading-ui);
-  font-variant-numeric: tabular-nums;
+  min-height: 36px;
+  padding: var(--space-1) var(--space-3);
+  transform: translate(-50%, 14px);
 }
-.home-who-place { font-weight: 700; }
-.home-who-title { font-size: var(--text-lead); font-weight: 600; line-height: var(--leading-tight); }
-.home-who-body { font-size: var(--text-body); line-height: var(--leading-body); color: var(--text-2); }
-@media (hover: hover) {
-  .home-who-card:hover .home-who-title { text-decoration: underline; text-underline-offset: 3px; }
+/* The northmost town's pill sits above its dot, the others below. */
+.hv-route-pill.is-up { transform: translate(-50%, calc(-100% - 14px)); }
+.hv-route-total {
+  right: var(--space-4);
+  bottom: var(--space-4);
+  gap: var(--space-2);
+  font-size: var(--text-lead);
+  box-shadow: var(--elev-2);
+  transform: none;
 }
-
-/* ── The passes ───────────────────────────────────────────────────────── */
-
-/* The free sentence sits under the heading, before the plans. */
-.home-passes-free { margin: calc(-1 * var(--space-2)) 0 var(--space-5); }
-
-.home-plan-grid {
-  display: grid;
-  gap: var(--space-3);
-  margin: 0;
-  padding: 0;
-  list-style: none;
+.hv-route-total .money { font-size: var(--text-title); font-weight: 700; }
+.hv-route-total-label { color: var(--text-2); font-size: var(--text-label); font-weight: 500; }
+.hv-route-card.is-drawn .hv-route-dot,
+.hv-route-card.is-drawn .hv-route-pill,
+.hv-route-card.is-drawn .hv-route-total {
+  opacity: 1;
+  transition: opacity var(--dur-3) var(--ease-out) calc(var(--dur-draw) * var(--i) / 2);
 }
-.home-plan {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  min-width: 0;
-  padding: var(--space-5);
-  border: 1px solid var(--border);
+.hv-route-photo {
+  position: absolute;
+  left: 5%;
+  bottom: 8%;
+  width: 30%;
+  padding: var(--space-1);
   border-radius: var(--radius-card);
   background: var(--surface);
+  box-shadow: var(--elev-2);
+  transform: rotate(-3deg);
 }
-/* The recommended plan: a brown edge and its chip, the same ground. */
-.home-plan.is-featured { border: 2px solid var(--action); padding: calc(var(--space-5) - 1px); }
-.home-plan-top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-2); }
-.home-plan-top .ui-chip { order: 2; }
-.home-plan-name { font-size: var(--text-lead); font-weight: 600; }
-.home-plan-price { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 var(--space-2); margin-top: var(--space-1); }
-.home-plan-fig { font-size: var(--text-headline); font-weight: 700; line-height: var(--leading-tight); font-variant-numeric: tabular-nums; }
-.home-plan-per { font-size: var(--text-label); color: var(--text-2); }
-.home-plan-note { font-size: var(--text-label); color: var(--text-2); }
-.home-plan-blurb {
-  margin: var(--space-2) 0 0;
-  font-size: var(--text-body);
-  line-height: var(--leading-body);
-  color: var(--text);
+.hv-route-photo img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: calc(var(--radius-card) - var(--space-1));
+  object-fit: cover;
 }
 
-.home-pass-more {
+/* ── Why Carta ────────────────────────────────────────────────────────── */
+
+.hv-why-head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--space-4); }
+.hv-why-nav { display: none; gap: var(--space-2); margin-bottom: var(--space-5); }
+.hv-flip { transform: scaleX(-1); }
+.hv-why-rail {
   display: grid;
-  gap: var(--space-6);
-  margin-top: var(--space-6);
-}
-.home-adds ul {
-  display: grid;
-  gap: var(--space-2);
-  margin: var(--space-3) 0 var(--space-5);
-  padding: 0;
+  grid-auto-flow: column;
+  grid-auto-columns: min(80%, 340px);
+  gap: var(--space-4);
+  margin: 0;
+  padding: var(--space-1) 0 var(--space-4);
   list-style: none;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
 }
-.home-adds li {
+.hv-why-card {
   display: flex;
-  align-items: flex-start;
-  gap: var(--space-2);
-  font-size: var(--text-body);
-  line-height: var(--leading-body);
+  flex-direction: column;
+  min-height: 360px;
+  padding: var(--space-6);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-stage);
+  background: var(--surface);
+  scroll-snap-align: start;
+  transition: transform var(--dur-2) var(--ease-out);
 }
-.home-adds li .home-glyph { margin-top: 3px; color: var(--text-2); }
-.home-promises {
+.hv-why-title {
+  margin: 0 0 var(--space-3);
+  font-size: var(--text-headline);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.hv-why-body { margin: 0; font-size: var(--text-lead); line-height: 1.5; color: var(--text-2); }
+.hv-why-glyph { display: inline-flex; margin-top: auto; padding-top: var(--space-6); color: var(--text); }
+.hv-why-glyph svg :is(path, circle, rect, line, polyline, polygon) { stroke-width: 1.2px; }
+.hv-why[data-reveal="wait"] .hv-why-glyph { clip-path: inset(0 100% 0 0); }
+.hv-why[data-reveal="in"] .hv-why-glyph {
+  animation: hv-wipe var(--dur-reveal) var(--ease-out) both;
+  animation-delay: calc(var(--i) * 90ms + var(--dur-3));
+}
+
+/* ── Plans ────────────────────────────────────────────────────────────── */
+
+.hv-plan-cols {
+  display: grid;
   margin: 0;
   padding: 0;
   list-style: none;
-  border-top: 1px solid var(--border-soft);
+  border-top: 1px solid var(--border);
 }
-.home-promises li {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  min-height: calc(var(--tap) + var(--space-3));
-  border-bottom: 1px solid var(--border-soft);
-  font-size: var(--text-body);
-  font-weight: 500;
+.hv-plan {
+  display: grid;
+  align-content: start;
+  gap: var(--space-2);
+  padding: var(--space-5) 0;
 }
-.home-promises .home-glyph { color: var(--text-2); }
-
-/* On a phone a plan is one row (T464): its name and terms on the left, the
-   price on the right, the way a fare list reads. The blurb and the list of
-   what a pass adds wait behind "Compare passes", which opens the full table;
-   the section was the tallest on the page (1,118 px at 390). */
-@media (max-width: 768px) {
-  .home-plan {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    column-gap: var(--space-3);
-    row-gap: 0;
-    padding: var(--space-3) var(--space-4);
-  }
-  .home-plan.is-featured { padding: calc(var(--space-3) - 1px) calc(var(--space-4) - 1px); }
-  .home-plan-top { grid-column: 1; justify-content: flex-start; }
-  .home-plan-top .ui-chip { order: 0; }
-  .home-plan-note { grid-column: 1; }
-  .home-plan-price {
-    grid-column: 2;
-    grid-row: 1 / span 2;
-    flex-direction: column;
-    align-items: flex-end;
-    margin: 0;
-  }
-  .home-plan-fig { font-size: var(--text-title); }
-  .home-plan-blurb, .home-adds .home-h3, .home-adds ul { display: none; }
-  /* Free has no terms line, so it keeps its one sentence. */
-  .home-plan:first-child .home-plan-blurb { display: block; grid-column: 1; margin: 0; font-size: var(--text-label); color: var(--text-2); }
-  .home-pass-more { gap: var(--space-5); margin-top: var(--space-4); }
-  .home-pass-door { width: 100%; }
-  .home-promises li { min-height: var(--tap); }
-}
+.hv-plan + .hv-plan { border-top: 1px solid var(--border); }
+.hv-plan-top { display: flex; align-items: center; gap: var(--space-2); }
+.hv-plan-name { font-size: var(--text-title); font-weight: 600; }
+.hv-plan-price { display: flex; align-items: baseline; gap: var(--space-2); }
+.hv-plan-fig { font-size: var(--text-display); font-weight: 700; letter-spacing: -0.02em; }
+.hv-plan-per,
+.hv-plan-note { font-size: var(--text-body); color: var(--text-2); }
+.hv-plan-list { display: grid; gap: var(--space-2); margin: var(--space-3) 0 0; padding: 0; list-style: none; }
+.hv-plan-list li { display: flex; gap: var(--space-2); font-size: var(--text-body); line-height: 1.5; }
+.hv-tick { display: inline-flex; flex: none; padding-top: 2px; color: var(--text-2); }
+.hv-plans-door { margin-top: var(--space-5); }
 
 /* ── The close ────────────────────────────────────────────────────────── */
 
-.home-close { max-width: 640px; }
+.hv-close { max-width: 760px; }
+.hv-close-title { max-width: 16ch; }
 
-/* ── Credits ──────────────────────────────────────────────────────────── */
+/* ── Arrivals ─────────────────────────────────────────────────────────── */
 
-.home-credits {
-  margin-top: var(--space-8);
-  padding-top: var(--space-2);
-  border-top: 1px solid var(--border);
-  font-size: var(--text-caption);
-  line-height: var(--leading-body);
-  color: var(--text-3);
+.hv-section[data-reveal="wait"] { opacity: 0; transform: translateY(32px); }
+.hv-section[data-reveal="in"] {
+  opacity: 1;
+  transform: none;
+  transition: opacity var(--dur-reveal) var(--ease-out), transform var(--dur-reveal) var(--ease-out);
 }
-.home-credits summary {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--tap);
-  font-size: var(--text-label);
-  font-weight: 600;
-  color: var(--text-2);
-  cursor: pointer;
+
+@keyframes hv-push { from { transform: scale(1); } to { transform: scale(1.08); } }
+@keyframes hv-drift {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(4px, -8px); }
 }
-.home-credits summary:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-.home-credits ul { margin: 0; padding: 0 0 0 var(--space-4); }
-.home-credits li { margin: var(--space-1) 0; }
-.home-credits a { color: var(--text-2); text-underline-offset: 2px; }
-@media (pointer: coarse) {
-  .home-credits li { margin: 0; }
-  .home-credits a { display: inline-flex; align-items: center; min-height: var(--tap); }
+@keyframes hv-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes hv-rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes hv-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes hv-wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+
+/* ── Pointers ─────────────────────────────────────────────────────────── */
+
+@media (hover: hover) {
+  .hv-why-card:hover { transform: translateY(-4px); }
 }
 
 /* ── Wider screens ────────────────────────────────────────────────────── */
 
-@media (min-width: 600px) {
-  .home-chapter { flex-basis: 60%; }
-  .home-who-track { grid-auto-columns: calc((100% - var(--space-4)) / 2.3); }
-}
-
 @media (min-width: 769px) {
-  .home-wrap { padding-top: var(--space-6); }
-  .home-title { font-size: var(--text-display); }
-  .home-h2 { margin-bottom: var(--space-5); font-size: var(--text-headline); }
-  .home-sub { font-size: var(--text-lead); font-weight: 400; }
-  .home-cta { width: auto; }
-  /* From 769 px the laptop is the hero's one device (T464): the phone on
-     top of it repeated the same total, and neither was readable. */
-  .home-devices { margin-top: var(--space-6); }
-  .home-devices-desk { display: block; }
-  .home-devices-peek { display: none; }
-  .home-tries { align-items: flex-start; }
-  .home-tries-label { line-height: calc(var(--tap) - var(--space-3)); }
-  .home-tries-list { flex-wrap: wrap; overflow: visible; }
-  .home-plan-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .home-chapter { flex-basis: 44%; }
-  .home-who-track { grid-auto-columns: calc((100% - var(--space-4) * 2) / 3.2); }
+  .hv-top { display: none; }
+  .hv-wrap { padding: var(--space-5) var(--space-6) var(--space-8); }
+  .hv-stage { height: clamp(300px, 40svh, 520px); }
+  .hv-pills { left: var(--space-6); bottom: var(--space-6); }
+  .hv-film-steps { top: var(--space-5); left: var(--space-6); right: calc(var(--space-6) + var(--tap) + var(--space-3)); }
+  .hv-film-pause { top: var(--space-3); right: var(--space-4); }
+  .hv-sub { font-size: var(--text-title); line-height: 1.45; }
+  .hv-cta { flex: 0 0 auto; padding-inline: var(--space-6); }
+  .hv-panel { padding: var(--space-7); }
+  .hv-plan-cols { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .hv-plan { padding: var(--space-6) var(--space-5) var(--space-5) 0; }
+  .hv-plan + .hv-plan { border-top: 0; border-left: 1px solid var(--border); padding-left: var(--space-5); }
+  .hv-week-card { padding: var(--space-6); }
 }
 
 @media (min-width: 1024px) {
-  .home-wrap { padding-top: var(--space-8); padding-left: var(--space-6); padding-right: var(--space-6); }
-  .home-section { margin-top: calc(var(--space-8) * 2); }
-
-  .home-wrap { padding-top: var(--space-6); }
-  .home-hero {
-    --home-bleed: calc(max(0px, (100cqw - 1180px) / 2) + var(--space-6));
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    gap: var(--space-7);
-    /* The hero's box reaches the page's right edge and clips there, so the
-       laptop is cut by the edge of the page and nothing scrolls sideways. */
-    margin-right: calc(var(--home-bleed) * -1);
-    padding-right: var(--home-bleed);
-    overflow-x: clip;
-  }
-  /* The laptop runs past the column to the window's right edge, so the
-     capture (the app at 1152 px) is drawn near its own size: the receipt
-     column, which carries the figures, stays whole on the left, and the
-     edge cuts into the map. .home-page clips the overflow. */
-  .home-devices { margin-top: 0; padding: var(--space-4) 0 0; }
-  /* The rail's photographs reach into the first desktop screen. */
-  .home-hero + .home-section { margin-top: var(--space-7); }
-  .home-devices-desk {
-    width: min(1000px, calc(100% + var(--home-bleed) + 140px));
-  }
-
-  /* The story: chapters on the left, the pinned phone on the right. */
-  .home-story-grid {
-    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
-    gap: var(--space-8);
+  .hv-hero-copy { gap: var(--space-5); margin-top: var(--space-5); }
+  .hv-slogan { max-width: none; }
+  .hv-hero-side {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 520px);
+    grid-template-areas: 'sub ask' 'sub acts';
+    column-gap: var(--space-8);
+    row-gap: var(--space-3);
     align-items: start;
   }
-  .home-story-stage { display: block; order: 2; align-self: stretch; }
-  .home-story-pin {
-    position: sticky;
-    top: var(--space-6);
-    display: flex;
-    flex-direction: column;
+  .hv-sub { grid-area: sub; }
+  .hv-ask { grid-area: ask; }
+  .hv-acts { grid-area: acts; }
+  .hv-week { grid-template-columns: minmax(0, 1fr) minmax(0, 500px); gap: var(--space-8); }
+  .hv-voices-panel { grid-template-columns: minmax(0, 1fr) minmax(0, 420px); gap: var(--space-7); }
+  .hv-chapter {
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    gap: var(--space-4);
+    min-height: 600px;
+    padding: var(--space-7) var(--space-8);
   }
-  .home-story-phone { width: min(360px, calc((100dvh - 230px) / 2.25)); }
-  .home-story-phone .home-phone-img {
-    opacity: 0;
-    transition: opacity var(--dur-3) var(--ease-out);
+  .hv-phone { width: 300px; }
+  .hv-route { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: var(--space-8); }
+  .hv-why-nav { display: flex; }
+  .hv-why-rail {
+    margin-inline: calc(var(--space-6) * -1);
+    padding-inline: var(--space-6);
+    scroll-padding-inline: var(--space-6);
   }
-  .home-story-phone .home-phone-img.is-on { opacity: 1; }
-  .home-story-bar.is-wide { display: flex; }
-  .home-story-bar.is-narrow { display: none; }
-  .home-track-nav { display: none; }
-
-  .home-chapters {
-    display: block;
-    margin: 0;
-    padding: 4dvh 0 26dvh;
-    overflow: visible;
-    scroll-snap-type: none;
-  }
-  .home-chapter {
-    min-height: 32dvh;
-    overflow: visible;
-    justify-content: center;
-    padding: 0;
-    background: none;
-    border-radius: 0;
-  }
-  .home-chapter-peek { display: none; }
-  .home-chapter-text { max-width: 30rem; gap: var(--space-3); }
-  .home-chapter-title { font-size: var(--text-headline); letter-spacing: -0.02em; text-wrap: balance; }
-  .home-chapter-body { font-size: var(--text-lead); }
-
-  .home-who-track { grid-auto-columns: calc((100% - var(--space-4) * 3) / 4); margin: 0; padding: 0 0 var(--space-2); scroll-padding: 0; }
-  .home-pass-more { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-8); }
 }
 
+/* ── Reduced motion: the page stands still and shows everything ───────── */
+
 @media (prefers-reduced-motion: reduce) {
-  .home-search, .home-try, .home-story-phone .home-phone-img { transition: none; }
+  .hv-shot,
+  .hv-chapter,
+  .hv-why-card,
+  .hv-say-carta { transition: none; }
+  .hv-shot-media,
+  .hv-pill,
+  .hv-film-steps li::after,
+  .hv-advance,
+  .hv-slogan,
+  .hv-chapter-text,
+  .hv-voices-photo img,
+  .hv-film-credit,
+  .hv-why-glyph { animation: none !important; }
+  .hv-shot .hv-pills { transition: none; }
+  .hv-say-carta { opacity: 1; transform: none; }
+  .hv-route-line,
+  .hv-route-line-under { stroke-dashoffset: 0; transition: none !important; }
+  .hv-route-dot,
+  .hv-route-pill,
+  .hv-route-total { opacity: 1; transition: none !important; }
+  .hv-section[data-reveal] { opacity: 1; transform: none; transition: none; }
+  .hv-why-glyph { clip-path: none; }
 }
