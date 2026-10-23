@@ -2011,12 +2011,12 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T602-a | T602 | .places-side .side-facets and .dtab-filters rules in 63-v6-destinations.css are unused since the left panel left the category tabs | next task | open |  |
 | T604-a | T604 | The outdoor tabs' quick chips still use FilterChipBar popovers, not the pane's own sections as Places does | next task | open |  |
 | T605-a | T605 | Rebuild the home page from scratch on app master as one batch from T606, to the plan artifact 2Jbd2LipGXYFMryXLzf6VW and the twelve decisions in the T605 report | next task | closed by T606-T610 | 1 |
-| T605-b | T605 | The hero film needs licensed video clips (Pexels first, D3); each download is approved by the owner, until then the hero runs on Commons photographs | user | open | 2 |
+| T605-b | T605 | The hero film needs licensed video clips (Pexels first, D3); each download is approved by the owner, until then the hero runs on Commons photographs | user | closed by T618 | 2 |
 | T605-c | T605 | Confirm the repository origin in the Claude app (Help, Troubleshooting, Review Pinned Git Origins) so session worktrees can merge main's protected carta-design skill | user | open |  |
 | T605-d | T605 | Lighthouse navigation on the home page hangs (PAGE_HUNG) at 390 px with 4x CPU; find the long main-thread work on first load | next task | open |  |
 | T605-e | T605 | The trip planner total in the Wise style the owner pinned (huge tabular total, receipt rows under it) | next task | open |  |
 | T605-f | T605 | Komoot-style photo rails on Explore (owner's board, D12); needs the owner's call on titles over photos outside the home page | next task | open |  |
-| T606-a | T606 | Review the rebuilt home page, then merge app p15-home-v2 into master and root p15-home-v2 into main and deploy; the deploy is the owner's | user | open | 1 |
+| T606-a | T606 | Review the rebuilt home page, then merge app p15-home-v2 into master and root p15-home-v2 into main and deploy; the deploy is the owner's | user | closed by T618 | 1 |
 | T608-a | T608 | The week card's flight and the film's flight pill are the cheapest return over the coming months, not the traveller's dates from the settings line | next task | open |  |
 | T607-a | T607 | "60 Carta bot day plans" in the plans list is pass.addPlansTrip, shared with the pass sheet; the critique reads "Carta bot" as jargon | next task | open |  |
 | T609-a | T609 | The find and place clips are 0.9 to 1.4 MB each; a lower quality or a shorter move would halve them | next task | open |  |

@@ -5,25 +5,24 @@ import { SearchIcon } from '../../components/Icons.jsx';
 import { srcSetFor, thumbAt } from '../../lib/heroImage.js';
 import { loadGuidedData } from '../../lib/guidedData.js';
 import { tabHref } from '../../lib/urlState.js';
-import { FILM, exploreHref, isEstimate, placeDay } from '../../lib/homeDemo.js';
+import { FILM, isEstimate, placeDay } from '../../lib/homeDemo.js';
 import { useAutoAdvance, useInView, usePageVisible, useReducedMotion } from './useHome.js';
 
 /**
  * The hero (T606, owner decisions D1, D2, D4 and D7 of 2026-10-23).
  *
  * A film on a rounded stage, then the slogan on paper under it, never on the
- * picture (D2). The film is one traveller's place after another; on each, a
- * solid pill names the place and its own day price, and a second gives the
- * cheapest return flight there from the traveller's home airport, Google
- * Flights' price: the cheap part beside what a day costs. The pills drift a
- * few pixels on loops of different length; a pill is a link to that
- * traveller's search.
+ * picture (D2). The film is five licensed clips of real places (T618, the
+ * owner's approval of stock video, 2026-10-23), each a place in the catalogue;
+ * on each, a solid pill names the place and its own day price, and a second
+ * gives the cheapest return flight there from the traveller's home airport,
+ * Google Flights' price: the cheap part beside what a day costs. The pills
+ * drift a few pixels on loops of different length; a pill opens its place.
  *
  * The film moves only while it is on screen, the tab is visible and nobody
- * paused it, and never under reduced motion (the first shot then stands
- * still). Pause is a real button (WCAG 2.2.2). Until licensed clips arrive
- * (register T605-b) a shot is its photograph with a slow push in; a shot with
- * `clip` plays it.
+ * paused it, and never under reduced motion (the first shot's poster then
+ * stands still). Pause is a real button (WCAG 2.2.2). A shot without a clip
+ * falls back to a photograph with a slow push in.
  *
  * Under the stage: the slogan, one line of what Carta does, Ask Carta's
  * field (the question goes to Explore, where the chat answers it, T566),
@@ -35,14 +34,14 @@ import { useAutoAdvance, useInView, usePageVisible, useReducedMotion } from './u
  *   flightFor  (placeId) => { perSeat, airline } | null, from the sweep
  *   signedIn   hides "Log in"
  *   door       the page's click handler factory
- *   onSearch, onNavigate, onLogin
+ *   onSearch, onNavigate, onLogin, onOpenDest (a pill opens its place)
  */
-export function HomeHero({ rows, flightFor, signedIn, door, onSearch, onNavigate, onLogin, titleAs = 'h1' }) {
+export function HomeHero({ rows, flightFor, signedIn, door, onSearch, onNavigate, onLogin, onOpenDest, titleAs = 'h1' }) {
   const { t } = useI18n();
   const Title = titleAs;
   return (
     <section className="hv-hero" aria-labelledby="hv-title">
-      <HomeFilm rows={rows} flightFor={flightFor} door={door} onSearch={onSearch} />
+      <HomeFilm rows={rows} flightFor={flightFor} door={door} onOpenDest={onOpenDest} />
       <div className="hv-hero-copy">
         <Title id="hv-title" className="hv-slogan">{t('home.title')}</Title>
         <div className="hv-hero-side">
@@ -93,7 +92,7 @@ const PlayGlyph = () => (
 
 /** The stage: every shot stacked, the current one shown; the next shot's
  *  picture is fetched while the current one plays, nothing further. */
-function HomeFilm({ rows, flightFor, door, onSearch }) {
+function HomeFilm({ rows, flightFor, door, onOpenDest }) {
   const { t } = useI18n();
   const stageRef = React.useRef(null);
   const onScreen = useInView(stageRef, { threshold: 0.3 });
@@ -119,18 +118,15 @@ function HomeFilm({ rows, flightFor, door, onSearch }) {
         return (
           <div key={shot.id} className={`hv-shot${on ? ' is-on' : ''}`} aria-hidden={on ? undefined : 'true'}>
             {loaded.has(i) && (shot.clip ? (
-              <video className="hv-shot-media" muted playsInline loop preload="none"
-                poster={thumbAt(shot.photo.url, 1600)} ref={(v) => { if (v) { if (on && running) v.play().catch(() => {}); else v.pause(); } }}>
-                <source src={shot.clip.mp4} type="video/mp4" />
-              </video>
+              <FilmClip clip={shot.clip} on={on} playing={on && running} first={i === 0} />
             ) : (
               <img className="hv-shot-media" src={thumbAt(shot.photo.url, 1280)} srcSet={srcSetFor(shot.photo.url, 1600)}
                 sizes="(min-width: 1240px) 1240px, 100vw" alt="" style={{ objectPosition: shot.photo.focus }}
                 loading={i === 0 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : undefined} decoding="async" />
             ))}
             <div className="hv-pills">
-              <a className="hv-pill hv-pill-a" href={exploreHref(shot.facets)} tabIndex={on ? 0 : -1}
-                onClick={door(() => onSearch({ facets: shot.facets }))}>
+              <a className="hv-pill hv-pill-a" href={`#dest=${encodeURIComponent(shot.place)}`} tabIndex={on ? 0 : -1}
+                onClick={door(() => onOpenDest(shot.place))}>
                 <span className="hv-pill-name">{shot.label}</span>
                 {cost && (
                   <span className="hv-pill-fig">
@@ -164,11 +160,36 @@ function HomeFilm({ rows, flightFor, door, onSearch }) {
   );
 }
 
-/** The shown photograph's credit, on its caption line under the stage
- *  (a credit is text, never on the picture). */
+/** One shot's clip: its poster shows at once (the first shot's poster is the
+ *  page's first picture), the clip plays from its start each time its shot
+ *  comes on and stops when the film stops; a shot off screen loads nothing
+ *  past its metadata. */
+function FilmClip({ clip, on, playing, first }) {
+  const ref = React.useRef(null);
+  React.useEffect(() => {
+    const v = ref.current;
+    if (!v) return;
+    if (on && v.currentTime > 0 && v.paused) v.currentTime = 0;
+  }, [on]);
+  React.useEffect(() => {
+    const v = ref.current;
+    if (!v) return;
+    if (playing) v.play().catch(() => {}); else v.pause();
+  }, [playing]);
+  return (
+    <video ref={ref} className="hv-shot-media" muted playsInline loop
+      preload={on ? 'auto' : 'metadata'} poster={clip.poster} aria-hidden="true"
+      fetchpriority={first ? 'high' : undefined}>
+      <source src={clip.mp4} type="video/mp4" />
+    </video>
+  );
+}
+
+/** The shown shot's credit, on its caption line under the stage (a credit
+ *  is text, never on the picture). */
 function FilmCredit({ at }) {
   const { t } = useI18n();
-  const p = FILM[at]?.photo;
+  const p = FILM[at]?.credit || FILM[at]?.photo;
   if (!p) return null;
   return (
     <p key={at} className="hv-film-credit">

@@ -146,16 +146,21 @@ export const ROUTE_PHOTO = {
 };
 
 /**
- * The hero film (owner D3 and D4, 2026-10-23): one shot after another, each a
- * traveller's place with that place's own price on it. Until licensed clips
- * arrive (register row T605-b) a shot is the place's photograph with a slow
- * push in; a shot with `clip` plays the clip instead and keeps the photo as
- * its poster. Hikers lead (PRODUCT.md).
+ * The hero film (owner D3 and D4, 2026-10-23; clips approved 2026-10-23,
+ * T618): five licensed Pexels clips, each a place in the catalogue with that
+ * place's own price on it. Each clip is an 11 second H.264 cut at 1280x720
+ * with a WebP poster of its first frame, in public/home/film/. The lake leads
+ * (hikers first, PRODUCT.md).
  */
-export const FILM = ['hike', 'family', 'nocar', 'city', 'budget'].map((id) => {
-  const p = PERSONAS.find((x) => x.id === id);
-  return { id, place: p.place, label: p.label, title: p.title, facets: p.facets, photo: p.photo, clip: null };
-});
+const pexels = (id, credit, author) => ({ credit, author, licence: 'Pexels License', page: `https://www.pexels.com/video/${id}/` });
+const filmClip = (id) => ({ mp4: `/home/film/${id}.mp4`, poster: `/home/film/${id}.webp` });
+export const FILM = [
+  { id: 'bled', place: 'gem:bled', label: 'Bled', clip: filmClip('bled'), credit: pexels(35327836, 'Lake Bled and its church island from the air', 'Rui Veiga') },
+  { id: 'lagos', place: 'gem:lagos-pt', label: 'Lagos', clip: filmClip('lagos'), credit: pexels(36749579, 'Ponta da Piedade, Lagos, from the air', 'Mike Art') },
+  { id: 'dubrovnik', place: 'DBV', label: 'Dubrovnik', clip: filmClip('dubrovnik'), credit: pexels(12079872, 'Dubrovnik from the air', 'Lazar Krstić') },
+  { id: 'porto', place: 'OPO', label: 'Porto', clip: filmClip('porto'), credit: pexels(34285846, 'Porto’s waterfront from the air', 'K') },
+  { id: 'hallstatt', place: 'gem:hallstatt', label: 'Hallstatt', clip: filmClip('hallstatt'), credit: pexels(37011265, 'Hallstatt from the air', 'Ahmet Yüksek') },
+];
 
 /** The places the week card can price, each with a flight from most of
  *  Europe in the sweep. Porto leads: a city break is where a cheap flight

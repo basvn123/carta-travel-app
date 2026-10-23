@@ -529,7 +529,7 @@ The home page (`src/browse/home/`) is the one surface that persuades rather than
 on its own, within these limits (values and tokens in DESIGN.md "Home page exception v2"):
 
 - **A film, not a carousel of claims.** The hero is a rounded stage of real places, one shot each
-  `--dur-film`, crossfading; a still pushes in slowly until licensed clips arrive (T605-b). It moves only
+  `--dur-film`, crossfading; each shot is a licensed, credited clip (T618), a still only as fallback. It moves only
   on screen, in a visible tab, unpaused; a pause control is always there; reduced motion stands it still.
 - **Price pills drift** a few pixels on slow loops, out of step, while the film runs. A pill is a place's
   own day price or Google Flights' fare, never a claim.

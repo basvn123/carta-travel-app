@@ -156,11 +156,15 @@ test('six travellers, hikers first, each with a question, a door, a place and a 
   assert.equal(ROUTE_PHOTO.author, 'Canadianhockey91');
 });
 
-test('the hero film is one priced place a shot, hikers first, until clips arrive', () => {
-  assert.equal(FILM[0].id, 'hike');
+test('the hero film is five licensed clips of catalogue places, the lake first', () => {
+  assert.equal(FILM.length, 5);
+  assert.equal(FILM[0].place, 'gem:bled');
   for (const shot of FILM) {
-    assert.ok(shot.place && shot.label && shot.photo?.url && shot.facets, `${shot.id} is a priced place with a search`);
-    assert.equal(shot.clip, null, `${shot.id} has no licensed clip yet (register T605-b)`);
+    assert.ok(shot.place && shot.label, `${shot.id} names a place`);
+    assert.ok(shot.credit?.author && shot.credit.licence === 'Pexels License' && shot.credit.page.startsWith('https://www.pexels.com/video/'), `${shot.id} is credited`);
+    for (const f of [shot.clip.mp4, shot.clip.poster]) {
+      assert.ok(existsSync(join(pub, f.slice(1))), `${f} is shipped`);
+    }
   }
 });
 

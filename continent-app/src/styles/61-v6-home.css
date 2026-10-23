@@ -143,12 +143,16 @@ a.hv-pill:hover { background: var(--surface-hover); }
   height: clamp(260px, 38svh, 360px);
   border-radius: var(--radius-stage);
   overflow: hidden;
+  /* Chrome composites a playing video past a rounded overflow clip and
+     shows its square corners; a clip path holds them. */
+  clip-path: inset(0 round var(--radius-stage));
   isolation: isolate;
   background: var(--surface-sunken);
 }
 .hv-shot {
   position: absolute;
   inset: 0;
+  border-radius: inherit;
   opacity: 0;
   transition: opacity var(--dur-film-fade) var(--ease-in-out);
 }
@@ -162,10 +166,11 @@ a.hv-pill:hover { background: var(--surface-hover); }
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: inherit;
   transform-origin: 50% 60%;
 }
-/* A still pushes in slowly while it is the shot on screen: the film's
-   motion until licensed clips arrive (register T605-b). */
+/* A shot without a clip is a still that pushes in slowly while it is on
+   screen. */
 .hv-stage.is-running .hv-shot.is-on img.hv-shot-media {
   animation: hv-push calc(var(--dur-film) + var(--dur-film-fade)) linear both;
 }

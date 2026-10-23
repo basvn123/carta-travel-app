@@ -108,7 +108,7 @@ export function HomePage({
       </div>
       <div className="hv-wrap">
         <HomeHero rows={rows} flightFor={flightFor} signedIn={!!user} door={door}
-          onSearch={onSearch} onNavigate={onNavigate} onLogin={login} titleAs={pageOver ? 'div' : 'h1'} />
+          onSearch={onSearch} onNavigate={onNavigate} onLogin={login} onOpenDest={onOpenDest} titleAs={pageOver ? 'div' : 'h1'} />
         <HomeWeek rows={rows} flightFor={flightFor} fromName={fromName} places={destinations}
           door={door} onOpenDest={onOpenDest} />
         <HomeVoices rows={rows} photosOn={photosOn} door={door} onSearch={onSearch} onCategory={onCategory} />

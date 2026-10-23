@@ -118,15 +118,16 @@ async function run(browser, vp) {
   check(k, 'primary', floor.prim === 1, `${floor.prim} visible, "${floor.primText}"`);
   check(k, 'hscroll', !floor.wide, floor.wide ? 'sideways scroll' : '');
 
-  // The film: a loaded photo, a priced pill, and the next shot by itself.
+  // The film: a clip playing, a priced pill, and the next shot by itself.
   await page.waitForFunction(() => {
-    const img = document.querySelector('.hv-shot.is-on img');
-    return img && img.complete && img.naturalWidth > 0;
+    const v = document.querySelector('.hv-shot.is-on video');
+    return v && v.readyState >= 2 && !v.paused && v.currentTime > 0;
   }, null, { timeout: 60000 }).catch(() => {});
   const film0 = await page.evaluate(() => ({
     shot: [...document.querySelectorAll('.hv-shot')].findIndex((s) => s.classList.contains('is-on')),
     pill: document.querySelector('.hv-shot.is-on .hv-pill-a')?.textContent.trim(),
-    running: document.querySelector('.hv-stage')?.classList.contains('is-running'),
+    running: document.querySelector('.hv-stage')?.classList.contains('is-running')
+      && !document.querySelector('.hv-shot.is-on video')?.paused,
   }));
   await page.waitForTimeout(9800);
   const film1 = await page.evaluate(() => [...document.querySelectorAll('.hv-shot')].findIndex((s) => s.classList.contains('is-on')));
