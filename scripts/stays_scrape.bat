@@ -27,7 +27,8 @@ set "RUN=%YEAR%-%MON%"
 
 echo. >> "%LOG%"
 echo ==== stays scrape %RUN% started %DATE% %TIME% ==== >> "%LOG%"
-REM Booking turns away headless Chrome (T624), so it runs in a visible window.
+REM Booking turns away headless Chrome (T624), so it runs headed, in a window
+REM placed off-screen (T634); add --show to watch it.
 python pipeline\stays\scrape_booking.py --run %RUN% --max-hours 4.5 --headed >> "%LOG%" 2>&1
 python pipeline\stays\scrape_hostelworld.py --run %RUN% --max-hours 1.5 >> "%LOG%" 2>&1
 

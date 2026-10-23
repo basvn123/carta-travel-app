@@ -150,7 +150,11 @@ async def run(a):
     t0 = time.monotonic()
     pages = stored = 0
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=not a.headed)
+        # A headed window is placed off-screen (T634): Booking serves it like any
+        # browser, and the owner's screen stays free. --show puts it on screen.
+        browser = await p.chromium.launch(
+            headless=not a.headed,
+            args=[] if a.show or not a.headed else ["--window-position=-32000,-32000"])
         ctx = await browser.new_context(locale="en-GB", viewport={"width": 1366, "height": 900})
         page = await ctx.new_page()
         try:
@@ -214,6 +218,7 @@ def main():
                     help="19 dates and every town (the pre-T539 plan)")
     ap.add_argument("--max-hours", type=float, default=6)
     ap.add_argument("--headed", action="store_true")
+    ap.add_argument("--show", action="store_true", help="with --headed: window on screen")
     ap.add_argument("--months", default="", help="spike: only these monthly probes, e.g. 2,8")
     asyncio.run(run(ap.parse_args()))
 
