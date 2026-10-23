@@ -3,7 +3,8 @@
 Tier: Scheduled (run_pipeline task climate)
 
 Adds:
-  - dest.climate              12-month normal + summary (only for dests present
+  - dest.climate              12-month normal + summary (+ T631: rain_days,
+                              wind_ms, elev_m parallel keys when harvested) (only for dests present
                               in cache/climate.json; others are left untouched)
   - meta.climate_model        source / period / comfort-index definition
   - meta.data_sources.open_meteo  attribution entry
@@ -28,6 +29,7 @@ from pipeline_io import atomic_write_json
 
 ROOT = Path(__file__).resolve().parents[1]
 CACHE = ROOT / "cache" / "climate.json"
+ELEV = ROOT / "cache" / "climate_elevations.json"
 DEFAULT_TARGETS = [
     ROOT / "app_data" / "app_data.json",                  # real dataset
     ROOT / "continent-app" / "public" / "app_data.json",  # what the dev app serves
@@ -44,6 +46,13 @@ CLIMATE_MODEL = {
     "source": "NASA POWER (MERRA-2), 2001-2020 climatology, lapse-corrected",
     "period": "2001-2020",
     "vars": ["t_high", "t_low", "t_mean", "precip_mm", "comfort"],
+    # T631: parallel arrays beside `months`, never inside it. rain_days is the
+    # mean count of days with at least 1 mm per calendar month, wind_ms the
+    # mean 10 m wind in m/s (both from the NASA POWER daily endpoint, see
+    # harvest_climate_power.py --daily); elev_m is the destination ground
+    # elevation (Copernicus DEM via Open-Meteo) the temperatures are lapse
+    # corrected to, which the app needs to derive a temperature at altitude.
+    "parallel": ["rain_days", "wind_ms", "elev_m"],
     "comfort": {
         "range": "0-100",
         "weights": {"temp": 0.60, "dry": 0.25, "sun": 0.15},
@@ -70,7 +79,20 @@ def _load(path):
     return {}
 
 
-def patch(path: Path, cache: dict) -> None:
+def extras(rec: dict, did: str, elev: dict) -> dict:
+    """The T631 parallel keys for one destination, only those that exist."""
+    out = {}
+    for key in ("rain_days", "wind_ms"):
+        vals = rec.get(key)
+        if isinstance(vals, list) and len(vals) == 12:
+            out[key] = vals
+    e = rec.get("elev_m", elev.get(did))
+    if isinstance(e, (int, float)):
+        out["elev_m"] = round(e)
+    return out
+
+
+def patch(path: Path, cache: dict, elev: dict | None = None) -> None:
     if not path.exists():
         print(f"  skip (missing): {path}")
         return
@@ -88,6 +110,7 @@ def patch(path: Path, cache: dict) -> None:
             "period": rec["period"],
             "months": rec["months"],
             "summary": rec["summary"],
+            **extras(rec, did, elev or {}),
         }
         applied += 1
 
@@ -111,8 +134,9 @@ def main() -> None:
         return
     targets = [Path(a) for a in sys.argv[1:]] or DEFAULT_TARGETS
     print(f"Applying climate layer (schema v15) from {len(cache)} cached normals:")
+    elev = _load(ELEV)
     for t in targets:
-        patch(t, cache)
+        patch(t, cache, elev)
 
 
 if __name__ == "__main__":

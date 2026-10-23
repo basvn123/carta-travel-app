@@ -917,8 +917,34 @@ CONTEXT_CLAUSES = (
     'nwr(around:{r},{lat},{lon})'
     '["tourism"~"^(hotel|apartment|camp_site|viewpoint|guest_house|hostel)$"];\n'
     'nwr(around:{r},{lat},{lon})'
-    '["leisure"~"^(marina|nature_reserve)$"];\n'
+    '["leisure"~"^(marina|nature_reserve|swimming_pool|water_park)$"];\n'
+    # T631: sunbed and umbrella rentals. OSM tags them as rental=umbrella;sunbed
+    # on a shop or amenity node, so the clause keys on `rental`, not on the
+    # element kind. Two clauses added to the five above: one more spatial
+    # lookup (rental) and the swimming_pool value folded into the leisure one.
+    'nwr(around:{r},{lat},{lon})'
+    '["rental"~"umbrella|sunbed|sun_lounger|deckchair|beach"];\n'
 )
+
+# T631: tag shapes that count as a rental of beach furniture, and a pool that
+# is meant for children (by its pool= value or its name, in the languages of
+# the coast). Pure, so they are tested without Overpass.
+RENTAL_RE = re.compile(r"umbrella|sunbed|sun_lounger|deckchair|beach", re.I)
+KIDS_POOL_RE = re.compile(
+    r"child|kid|paddl|kinder|enfant|infantil|bambin|ni.os|dzieci", re.I)
+
+
+def context_extras(tags):
+    """Context buckets one Overpass element adds beyond the tag values:
+    {"sunbed_rental": 1} for a beach furniture rental, {"kids_pool": 1} for a
+    children's pool. Empty for everything else."""
+    out = {}
+    if RENTAL_RE.search(tags.get("rental") or ""):
+        out["sunbed_rental"] = 1
+    if tags.get("leisure") == "swimming_pool" and KIDS_POOL_RE.search(
+            f"{tags.get('pool') or ''} {tags.get('name') or ''}"):
+        out["kids_pool"] = 1
+    return out
 
 
 def context_for(batch, radius=CONTEXT_RADIUS_M):
@@ -958,6 +984,8 @@ def context_for(batch, radius=CONTEXT_RADIUS_M):
             value = tags.get(key)
             if value:
                 bucket[value] = bucket.get(value, 0) + 1
+        for key, n in context_extras(tags).items():
+            bucket[key] = bucket.get(key, 0) + n
     return out
 
 
