@@ -2030,9 +2030,9 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T620-b | T620 | The hero clips are 1280 x 720 and look soft across a 1424 px desktop film under the tint; swap in 1920 x 1080 sources from the same Pexels pages (about 2.5 times the bytes) | next task | open |  |
 | T620-c | T620 | home.filmPause, home.filmRole and home.filmLabel are no longer read by any component; remove them from the six language files | next task | open |  |
 | T620-d | T620 | The home surface brief (continent-app/.impeccable/surfaces/continent-app-src-browse-home.md) still describes the T463 pinned-phone home; rewrite it for home v2 and T620 | next task | open |  |
-| T621-a | T621 | The transparent home header's white labels measure 3.8 to 6.9:1 on the clips' sky band (Bled 4.3, Dubrovnik 3.8, under 4.5:1 for small text); choose a flat 30 percent ink bar behind it on the film or darker-sky clips | user | open |  |
-| T621-b | T621 | On a phone the hero field's placeholder is cut beside "Ask Carta"; add a shorter phone placeholder in the six languages | next task | open |  |
-| T621-c | T621 | The Ask Carta chat's title shows a square focus ring when the chat opens from the keyboard; give programmatic focus a designed ring or none | next task | open |  |
+| T621-a | T621 | The transparent home header's white labels measure 3.8 to 6.9:1 on the clips' sky band (Bled 4.3, Dubrovnik 3.8, under 4.5:1 for small text); choose a flat 30 percent ink bar behind it on the film or darker-sky clips | user | closed by T623 |  |
+| T621-b | T621 | On a phone the hero field's placeholder is cut beside "Ask Carta"; add a shorter phone placeholder in the six languages | next task | closed by T623 |  |
+| T621-c | T621 | The Ask Carta chat's title shows a square focus ring when the chat opens from the keyboard; give programmatic focus a designed ring or none | next task | closed by T623 |  |
 | T621-d | T621 | The home page hides its scrollbar so the film reaches the window's edge (owner's call); recorded so no later task restores the column without asking | user | open |  |
 | T617-a | T617 | tests/test_data_licences.py fails 3 tests on main: pipeline/stays/calibrate_live.py is a harvester with no RUNS entry and no licence row, so validate() and the rendered ledger disagree | next task | open |  |
 | T617-b | T617 | Merge p3-ingestion-run-shadow into main and push, then rerun verify_tasks.sh ingestion and ship on the box (stage 7.6) | user | closed by T623 | before stage 7.7 |
@@ -2041,3 +2041,4 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T622-c | T622 | carta-design Explore v6 to v8 rules (hero band on phone, near-me door, By country track, phone settings sentence, Map after Search) are outdated by T622; rewrite them | next task | open |  |
 | T622-d | T622 | Places' focused view tool row still scrolls sideways on a phone | next task | open |  |
 | T622-e | T622 | i18n key where.placeholder is unused after T622; remove it in all six files | next task | open |  |
+| T623-a | T623 | src/browse/ExploreMap.jsx:901 fails lint (react-hooks/exhaustive-deps: collectKpins missing from a useCallback), from T600; fix it in a task that may touch ExploreMap | next task | open |  |
