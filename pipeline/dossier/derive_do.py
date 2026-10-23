@@ -111,6 +111,63 @@ def _fmt_km(km):
     return f"{km:.0f} km" if km >= 1 else f"{km * 1000:.0f} m"
 
 
+def _km_between(a_lat, a_lon, b_lat, b_lon):
+    """Great-circle distance in km (haversine)."""
+    from math import asin, cos, radians, sin, sqrt
+    dlat, dlon = radians(b_lat - a_lat), radians(b_lon - a_lon)
+    h = sin(dlat / 2) ** 2 + cos(radians(a_lat)) * cos(radians(b_lat)) * sin(dlon / 2) ** 2
+    return 12742 * asin(sqrt(h))
+
+
+TOWN_MAX_KM = 8.0   # beyond this the nearest town says nothing about the place
+
+
+def town_of(dest, lat, lon):
+    """T632: the town a thing to do belongs to. The nearest member town of the
+    destination (Bellagio, Varenna for Lake Como) within TOWN_MAX_KM; for a
+    destination with no members, the destination's own name when the point is
+    within TOWN_MAX_KM of its centre. None when the point is unknown or far."""
+    if lat is None or lon is None:
+        return None
+    best, best_km = None, None
+    for m in dest.get("members") or []:
+        if m.get("lat") is None or m.get("lon") is None or not m.get("name"):
+            continue
+        km = _km_between(lat, lon, m["lat"], m["lon"])
+        if best_km is None or km < best_km:
+            best, best_km = m["name"], km
+    if best is not None and best_km <= TOWN_MAX_KM:
+        return best
+    if not dest.get("members") and dest.get("lat") is not None and dest.get("lon") is not None:
+        if _km_between(lat, lon, dest["lat"], dest["lon"]) <= TOWN_MAX_KM:
+            return re.sub(r"\s*\([^)]*\)\s*$", "", dest.get("city") or "") or None
+    return None
+
+
+def facts_of(dest, poi):
+    """T632: the tile facts a POI can carry: subcategory (`kind`, the
+    normalized POI kind), `town`, and `fee` / `fee_eur` / `duration_min` when
+    the POI row has them. The POI shards carry no fee or duration today
+    (harvested keys: name, kind, lat, lon, rate, sig, heritage, wiki, img,
+    desc, active), so those stay absent until
+    pipeline/field_stubs/t632_practical.py is filled by a harvest; the app
+    shows its placeholder."""
+    if not poi:
+        return {}
+    out = {"kind": poi.get("kind"),
+           "town": town_of(dest, poi.get("lat"), poi.get("lon"))}
+    fee = poi.get("fee")
+    if fee in ("yes", "no"):
+        out["fee"] = fee
+    price = poi.get("fee_eur")
+    if isinstance(price, (int, float)) and price >= 0:
+        out["fee_eur"] = round(price, 2)
+    dur = poi.get("duration_min") or (poi.get("visit_h") and round(poi["visit_h"] * 60))
+    if isinstance(dur, (int, float)) and dur > 0:
+        out["duration_min"] = int(dur)
+    return {k: v for k, v in out.items() if v is not None}
+
+
 def derive(dest, items, highlights, nearby, listings, events, poi_wd,
            taken=(), landmarks=()):
     """Open-data things to do. `taken` are names the web sweep already shipped."""
@@ -179,6 +236,7 @@ def derive(dest, items, highlights, nearby, listings, events, poi_wd,
             "name": li["name"],
             "type": ACTIVE_TYPE.get((poi or {}).get("kind"), "activity"),
             "detail": usable_desc((poi or {}).get("desc")),
+            **facts_of(dest, poi),
         }, srcs, curated=True)
 
     # ---- published feature layers: each entity passed its own pipeline.
@@ -269,6 +327,7 @@ def derive(dest, items, highlights, nearby, listings, events, poi_wd,
             "name": it["name"],
             "type": ACTIVE_TYPE.get(it.get("kind"), "activity"),
             "detail": usable_desc(it.get("desc")),
+            **facts_of(dest, it),
         }, srcs)
 
     # ---- Wikidata landmarks: the backstop that gives a remote village
@@ -297,6 +356,8 @@ def derive(dest, items, highlights, nearby, listings, events, poi_wd,
                      else "experience" if lm["kind"] in ("Sauna & baths", "Market")
                      else "activity"),
             "detail": detail,
+            **facts_of(dest, {"kind": lm.get("kind"), "lat": lm.get("lat"),
+                              "lon": lm.get("lon")}),
         }, srcs)
 
     # Wikivoyage SEE listings are deliberately not a candidate source here.
