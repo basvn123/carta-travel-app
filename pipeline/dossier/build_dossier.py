@@ -1228,6 +1228,20 @@ def compose_practical(dest):
             getting["transfer_min"] = tr.get("transfer_minutes_one_way")
         if tr.get("transfer_mode"):
             getting["transfer_mode"] = tr.get("transfer_mode")
+    # T642: every airport within reach with its time per mode (airport_access.py).
+    ap_list = [a for a in (dest.get("airports") or []) if a.get("iata")]
+    if ap_list:
+        getting["airports"] = [
+            {"iata": a["iata"], "km": round(a.get("straight_km") or 0),
+             "transfer_min": a.get("transfer_min"), "transfer_mode": a.get("transfer_mode"),
+             "options": [{"mode": o["mode"], "minutes": o["minutes"], "source": o["source"]}
+                         for o in a.get("options") or []]}
+            for a in ap_list]
+        if iata and "transfer_min" not in getting:
+            own = next((a for a in ap_list if a["iata"] == iata), None)
+            if own and own.get("transfer_min") is not None:
+                getting["transfer_min"] = own["transfer_min"]
+                getting["transfer_mode"] = own.get("transfer_mode")
     for src_key, out_key in (("transit_quality", "transit"),
                              ("car_needed", "car_needed"),
                              ("reason", "why"),
