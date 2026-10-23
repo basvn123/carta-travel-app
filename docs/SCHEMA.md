@@ -1045,3 +1045,28 @@ old scripts are in `pipeline/archive/`.
 - **Refresh:** `.github/workflows/stays-refresh.yml` (weekly Xotelo slice,
   monthly build and gated publish), `scripts/stays_scrape.bat` (owner's laptop,
   March and September), `run_pipeline.py` tasks `stays` and `stays_discover`.
+
+## Explore completeness, practical, things to do and export (T632, added 2026-10-23)
+
+Additive only. Every key below is optional in the dossier (`SCHEMA = "dossier_v2"`
+is unchanged) and the app shows "Not available yet" where a key is absent.
+
+| Key (dossier) | Type | Source | Status |
+|---|---|---|---|
+| `do[].kind` | string, the normalized POI kind (`Viewpoint`, `Cave`, ...) | `derive_do.facts_of`, from the POI shard `kind` | code written, awaiting dossier rebuild |
+| `do[].town` | string, nearest member town within 8 km, or the destination name when it has no members | `derive_do.town_of` | code written, awaiting dossier rebuild |
+| `do[].fee` | `"yes"` or `"no"` | OSM `fee` tag, not in the POI shards today | stub `harvest_do_fee` |
+| `do[].fee_eur` | number | OSM `charge`, Wikidata P2555 | stub `harvest_do_fee` |
+| `do[].duration_min` | integer minutes | Wikivoyage / operator pages | stub `harvest_do_duration` |
+| `practical.transit.train` / `.bus` / `.ferry` | list of `{from, to, operator, freq_per_day, url}` | open GTFS, ferry operators | stubs `harvest_local_transit_*` |
+| `practical.local_rules` | list of `{code, text, url}` | none known as open data | stub `harvest_local_rules` |
+| `water.bans` | list of `{site, from, to, reason}` | EEA prohibitions, regional notices | stub `harvest_swimming_bans` |
+| `practical.emergency` | `{number, hospital}` | 112 and OSM | stub `harvest_emergency_contacts` |
+
+Not new keys, now shown by the app: `parking.web.restricted` and
+`parking.web.restricted_note` (the warning slot), `parking.spots`,
+`parking.park_ride`. The destination PDF prints, per listed hiking and cycling
+route, the URL of its route page, where the GPX downloads. Offline map and
+emergency contacts in the PDF are stubs (`build_pdf_offline_map`,
+`harvest_emergency_contacts`). Stubs live in
+`pipeline/field_stubs/t632_practical.py`.
