@@ -28,13 +28,15 @@
   bottom: var(--bottom-nav-h);
   overflow-y: auto;
   overflow-x: hidden;
-  scrollbar-gutter: stable;
+  /* No scrollbar column: the film runs to the window's right edge (T621,
+     owner). The wheel, the keys and a finger still scroll the page. */
+  scrollbar-width: none;
   background: var(--surface-page);
   color: var(--text);
   /* The hero's film takes this box's visible height (cqh). */
   container: hv-page / size;
-  --hv-credit-peek: 40px; /* the credit line under the film, in the first screen on a wider one */
 }
+.hv-page::-webkit-scrollbar { display: none; }
 
 .hv-wrap {
   max-width: 1240px;
@@ -75,8 +77,7 @@
   font-size: var(--text-caption);
   color: var(--text-3);
 }
-.hv-caption a,
-.hv-film-credit a { color: inherit; text-underline-offset: 2px; }
+.hv-caption a { color: inherit; text-underline-offset: 2px; }
 .hv-page a.btn { text-decoration: none; }
 
 .hv-door {
@@ -118,11 +119,12 @@ a.hv-pill:hover { background: var(--surface-hover); }
 
 /* ── The hero ─────────────────────────────────────────────────────────── */
 
-/* The film fills the first screen (T620, owner 2026-10-23, after Mindtrip and
-   Komoot): edge to edge on a phone, a hair inside the window on a wider
-   screen. Its height is the page's own visible height (the page is the size
-   container); the credit line follows under it. One even tint lies over the
-   whole film, never a gradient, and the words stand on it in white. */
+/* The film fills the first screen from edge to edge (T620 and T621, owner
+   2026-10-23, after Mindtrip and Komoot): on a wider screen it starts under
+   the app header, which lies on it (see "The header on the film"). Its
+   height is the page's own visible height (the page is the size container).
+   One even tint lies over the whole film, never a gradient, and the words
+   stand on it in white. */
 .hv-hero { position: relative; }
 .hv-hero-stage {
   position: relative;
@@ -178,6 +180,8 @@ a.hv-pill:hover { background: var(--surface-hover); }
   justify-content: space-between;
   gap: var(--space-3);
   padding: var(--space-3) var(--gutter);
+  --text: var(--home-ink-on-deep);
+  --border: color-mix(in srgb, var(--home-ink-on-deep) 45%, transparent);
 }
 .hv-top-brand {
   display: inline-flex;
@@ -199,10 +203,12 @@ a.hv-pill:hover { background: var(--surface-hover); }
   position: relative;
   z-index: 3;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   justify-items: center;
   gap: var(--space-4);
   padding: 0 var(--gutter) var(--space-7);
   text-align: center;
+  --focus: var(--home-ink-on-deep); /* a focus ring on the film is white */
   /* A soft shadow under the words only (not a scrim): it holds the line on a
      busy stretch of a clip, such as Dubrovnik's roofs. */
   text-shadow: 0 1px 2px color-mix(in srgb, var(--neutral-900) 45%, transparent),
@@ -227,15 +233,6 @@ a.hv-pill:hover { background: var(--surface-hover); }
   text-wrap: pretty;
   animation: hv-rise var(--dur-reveal) var(--ease-out) 80ms both;
 }
-.hv-film-credit {
-  margin: 0;
-  padding: var(--space-2) var(--gutter);
-  min-height: var(--hv-credit-peek);
-  animation: hv-fade var(--dur-2) var(--ease-out) calc(var(--dur-film-fade) / 2) both;
-  font-size: var(--text-caption);
-  line-height: 1.5;
-  color: var(--text-3);
-}
 
 .hv-ask {
   display: flex;
@@ -256,6 +253,7 @@ a.hv-pill:hover { background: var(--surface-hover); }
 .hv-ask-input {
   flex: 1;
   min-width: 0;
+  width: 0; /* no intrinsic input width: the row never outgrows a phone */
   min-height: var(--tap);
   border: 0;
   background: transparent;
@@ -267,6 +265,9 @@ a.hv-pill:hover { background: var(--surface-hover); }
 .hv-ask-input:focus-visible { outline-color: transparent; } /* the form draws the ring */
 .hv-ask-input::placeholder { color: var(--text-3); }
 .hv-ask-go { min-height: var(--tap); border-radius: var(--radius-pill); }
+/* The hero's field: one tall pill, "Ask Carta" its primary (T621). */
+.hv-hero .hv-ask { min-height: 64px; padding: var(--space-2) var(--space-2) var(--space-2) var(--space-5); }
+.hv-ask-go-main { flex: none; min-height: 48px; padding-inline: var(--space-4); font-size: var(--text-body); }
 
 .hv-acts {
   display: grid;
@@ -276,8 +277,6 @@ a.hv-pill:hover { background: var(--surface-hover); }
   margin-top: var(--space-2);
   animation: hv-rise var(--dur-reveal) var(--ease-out) 160ms both;
 }
-.hv-cta { min-height: var(--tap-main); font-size: var(--text-lead); }
-.hv-hero .hv-cta:focus-visible { outline: 2px solid var(--home-ink-on-deep); outline-offset: 2px; }
 
 /* ── The week ─────────────────────────────────────────────────────────── */
 
@@ -644,19 +643,32 @@ a.hv-pill:hover { background: var(--surface-hover); }
 @media (min-width: 769px) {
   .hv-top { display: none; }
   .hv-wrap { padding: 0 var(--space-6) var(--space-8); }
-  .hv-hero-stage {
-    margin: var(--space-2) var(--space-2) 0;
-    height: clamp(560px, calc(100cqh - var(--space-2) - var(--hv-credit-peek)), 1100px);
-    border-radius: var(--radius-stage);
-    /* Chrome composites a playing video past a rounded overflow clip and
-       shows its square corners; a clip path holds them. */
-    clip-path: inset(0 round var(--radius-stage));
-  }
-  .hv-hero-copy { padding: 0 var(--space-6) clamp(var(--space-7), 9cqh, 112px); gap: var(--space-5); }
-  .hv-film-credit { padding-inline: var(--space-5); }
+  .hv-hero-copy { padding: 0 var(--space-6) clamp(var(--space-7), 11cqh, 136px); gap: var(--space-5); }
   .hv-sub { font-size: var(--text-title); line-height: 1.45; }
-  .hv-acts { grid-template-columns: minmax(0, 1fr) auto; align-items: center; max-width: 680px; }
-  .hv-cta { padding-inline: var(--space-6); }
+  .hv-acts { max-width: 640px; }
+  .hv-ask-go-main { padding-inline: var(--space-5); font-size: var(--text-lead); }
+
+  /* The header on the film (T621). HomePage sets data-home-film on the root:
+     "under" while the film is under the app header, "past" once it has
+     scrolled by. The page then starts at the window's top, and under the
+     film the header is transparent and white, its own tokens turned white
+     so the mark, the tabs and the account disc follow. It holds no menu, so
+     nothing white lands on white. */
+  :root[data-home-film] .hv-page { top: 0; }
+  :root[data-home-film] .top-bar {
+    transition: background-color var(--dur-2) var(--ease-out), border-color var(--dur-2) var(--ease-out);
+  }
+  :root[data-home-film="under"] .top-bar {
+    background: transparent;
+    border-bottom-color: transparent;
+    --text: var(--home-ink-on-deep);
+    --text-2: var(--home-ink-on-deep);
+    --border: color-mix(in srgb, var(--home-ink-on-deep) 45%, transparent);
+    --surface-sunken: color-mix(in srgb, var(--home-ink-on-deep) 18%, transparent);
+    --focus: var(--home-ink-on-deep); /* the ring on the film is white */
+    text-shadow: 0 1px 2px color-mix(in srgb, var(--neutral-900) 45%, transparent),
+      0 0 16px color-mix(in srgb, var(--neutral-900) 40%, transparent);
+  }
   .hv-panel { padding: var(--space-7); }
   .hv-plan-cols { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .hv-plan { padding: var(--space-6) var(--space-5) var(--space-5) 0; }
@@ -698,7 +710,6 @@ a.hv-pill:hover { background: var(--surface-hover); }
   .hv-acts,
   .hv-chapter-text,
   .hv-voices-photo img,
-  .hv-film-credit,
   .hv-why-glyph { animation: none !important; }
   .hv-say-carta { opacity: 1; transform: none; }
   .hv-route-line,

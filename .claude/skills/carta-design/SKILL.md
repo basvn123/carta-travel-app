@@ -366,9 +366,12 @@ Photography leads, and every photo is real and licensed with its credit (`docs/t
   only (`src/browse/home/`), a short label or a price may sit on a photograph inside a solid `--surface`
   pill with `--elev-1` (the route card's towns and total). The hero film is the one photograph that
   carries words (T620, owner after Mindtrip and Komoot): one even tint over the whole film
-  (`--home-film-tint`, never a gradient), and on it the slogan, one line, Ask Carta's field and "Plan a
-  trip" in white with a soft shadow under the words. No other scrim, no gradient, no alpha band; every
-  credit on the caption line under its picture. Everywhere else the rule above holds.
+  (`--home-film-tint`, never a gradient), and on it the slogan, one line and Ask Carta's field, whose
+  "Ask Carta" is the page's one primary (T621), in white with a soft shadow under the words; on a wider
+  screen the app header lies on the film, transparent and white, until the film has scrolled by (T621).
+  The film's clips carry no credit on the page (owner, T621; the Pexels License asks for none). No other
+  scrim, no gradient, no alpha band; every other credit on the caption line under its picture.
+  Everywhere else the rule above holds.
 - One aspect per row or rail: 4:3 on kit tiles, 3:2 on browse and library cards where they already use
   it. On a phone the photo takes at most a third of a choice card's height. A hero is at most 40 percent
   of the viewport height on a phone and 60 percent on desktop (the home page's hero film, which fills
@@ -531,9 +534,9 @@ The home page (`src/browse/home/`) is the one surface that persuades rather than
 on its own, within these limits (values and tokens in DESIGN.md "Home page exception v2"):
 
 - **A film, not a carousel of claims.** The hero is a film of real places that fills the first screen
-  (edge to edge on a phone, inset with `--radius-stage` corners on a wider screen), one shot each
+  and the window's whole width at every size, under the app header (T621), one shot each
   `--dur-film`, crossfading as one continuous cut: no progress bars, no pills, no control on it. Each shot
-  is a licensed, credited clip (T618), a still only as fallback. It moves only on screen and in a visible
+  is a licensed clip (T618), its credit kept in `homeDemo.js`, a still only as fallback. It moves only on screen and in a visible
   tab; reduced motion stands it still. The owner chose no pause control (T620, 2026-10-23), which leaves
   WCAG 2.2.2 open (register T620-a).
 - **The app is shown by recordings of the app.** Each story panel plays a clip from

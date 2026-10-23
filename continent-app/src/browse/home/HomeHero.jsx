@@ -1,16 +1,16 @@
 import React from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { Button } from '../../components/ui/index.js';
-import { SearchIcon } from '../../components/Icons.jsx';
+import { SearchIcon, SparkIcon } from '../../components/Icons.jsx';
 import { srcSetFor, thumbAt } from '../../lib/heroImage.js';
 import { loadGuidedData } from '../../lib/guidedData.js';
-import { tabHref } from '../../lib/urlState.js';
 import { FILM } from '../../lib/homeDemo.js';
 import { useAutoAdvance, useInView, usePageVisible, useReducedMotion } from './useHome.js';
 
 /**
- * The hero (T620, owner 2026-10-23, after Mindtrip and Komoot): the film
- * fills the first screen from edge to edge and the words stand on it.
+ * The hero (T620 and T621, owner 2026-10-23, after Mindtrip and Komoot): the
+ * film fills the first screen from edge to edge, the app header lies on it
+ * (HomePage tells the shell), and the words stand on it.
  *
  * The film is the five licensed clips of real places (T618), cut together as
  * one continuous film: each clip crossfades into the next, with no bars, no
@@ -20,46 +20,45 @@ import { useAutoAdvance, useInView, usePageVisible, useReducedMotion } from './u
  * control; the film still stops off screen, in a hidden tab and under reduced
  * motion, where the first shot's poster stands still (register T620-a).
  *
- * On the film: the slogan, one line of what Carta does, Ask Carta's field
- * (the question goes to Explore, where the chat answers it, T566) and "Plan a
- * trip", the page's one primary. The shown clip's credit sits on the caption
- * line under the film.
+ * On the film: the slogan, one line of what Carta does, and Ask Carta's
+ * field alone (T621), its "Ask Carta" the page's one primary. What is asked
+ * opens Carta's chat on Explore at once, already asking (T566); the chat's
+ * code is fetched the moment the field is pointed at, so it opens without a
+ * wait. The clips' credits stay in homeDemo.js (the Pexels License asks for
+ * none on the page; owner, T621).
  *
  * Props
- *   door       the page's click handler factory
- *   onSearch, onNavigate
+ *   onSearch   ({ question } | { open: true }) hands the question to Explore
  */
-export function HomeHero({ door, onSearch, onNavigate, titleAs = 'h1', children }) {
+export function HomeHero({ onSearch, titleAs = 'h1', children }) {
   const { t } = useI18n();
   const Title = titleAs;
-  const [at, setAt] = React.useState(0);
   return (
     <section className="hv-hero" aria-labelledby="hv-title">
       <div className="hv-hero-stage">
-        <HomeFilm onShot={setAt} />
+        <HomeFilm />
         {children}
         <div className="hv-hero-copy">
           <Title id="hv-title" className="hv-slogan">{t('home.title')}</Title>
           <p className="hv-sub">{t('home.sub')}</p>
           <div className="hv-acts">
-            <AskField t={t} onSearch={onSearch} id="hv-ask" />
-            <a className="btn btn-primary hv-cta" href={tabHref('trip')} onClick={door(() => onNavigate('trip'))}>
-              <span className="btn-label">{t('home.ctaPlan')}</span>
-            </a>
+            <AskField t={t} onSearch={onSearch} id="hv-ask" primary />
           </div>
         </div>
       </div>
-      <FilmCredit at={at} />
     </section>
   );
 }
 
 /** Ask Carta's field: what is typed goes to Explore as the question; Ask
- *  with nothing typed opens the chat there. Explore's vocabulary is fetched
- *  the moment the field is pointed at or touched. */
-export function AskField({ t, onSearch, id }) {
+ *  with nothing typed opens the chat there. Explore's vocabulary and the
+ *  chat's own code are fetched the moment the field is pointed at or
+ *  touched. `primary` makes its button the page's one primary, "Ask Carta"
+ *  with the spark (the hero); otherwise it is a quiet "Ask". */
+const warmChat = () => import('../ask/AskChat.jsx').catch(() => {});
+export function AskField({ t, onSearch, id, primary = false }) {
   const [text, setText] = React.useState('');
-  const warm = () => { loadGuidedData(); };
+  const warm = () => { loadGuidedData(); warmChat(); };
   const ask = (e) => {
     e.preventDefault();
     const q = text.trim();
@@ -71,7 +70,13 @@ export function AskField({ t, onSearch, id }) {
       <input id={id} className="hv-ask-input" type="text" value={text} maxLength={200}
         onChange={(e) => setText(e.target.value)} aria-label={t('ask.inputLabel')}
         placeholder={t('home.askPlaceholder')} autoComplete="off" spellCheck={false} enterKeyHint="search" />
-      <Button type="submit" variant="secondary" size="sm" className="hv-ask-go">{t('ask.go')}</Button>
+      {primary ? (
+        <Button type="submit" variant="primary" className="hv-ask-go hv-ask-go-main" iconStart={<SparkIcon size={18} />}>
+          {t('askChat.open')}
+        </Button>
+      ) : (
+        <Button type="submit" variant="secondary" size="sm" className="hv-ask-go">{t('ask.go')}</Button>
+      )}
     </form>
   );
 }
@@ -79,7 +84,7 @@ export function AskField({ t, onSearch, id }) {
 /** The film: every shot stacked, the current one shown; the next shot's
  *  clip is fetched while the current one plays, nothing further. Pure
  *  decoration for assistive tech: the words on it carry the message. */
-function HomeFilm({ onShot }) {
+function HomeFilm() {
   const ref = React.useRef(null);
   const onScreen = useInView(ref, { threshold: 0.2 });
   const visible = usePageVisible();
@@ -89,9 +94,8 @@ function HomeFilm({ onShot }) {
   const at = film.index;
   const [loaded, setLoaded] = React.useState(() => new Set([0, 1]));
   React.useEffect(() => {
-    onShot(at);
     setLoaded((s) => (s.has(at + 1) || at + 1 >= FILM.length ? s : new Set([...s, at + 1])));
-  }, [at, onShot]);
+  }, [at]);
 
   return (
     <div className={`hv-film${running ? ' is-running' : ''}`} ref={ref} aria-hidden="true">
@@ -135,19 +139,5 @@ function FilmClip({ clip, on, playing, first }) {
       fetchpriority={first ? 'high' : undefined}>
       <source src={clip.mp4} type="video/mp4" />
     </video>
-  );
-}
-
-/** The shown shot's credit, on its caption line under the film (a credit
- *  is text, never on the picture). */
-function FilmCredit({ at }) {
-  const { t } = useI18n();
-  const p = FILM[at]?.credit || FILM[at]?.photo;
-  if (!p) return null;
-  return (
-    <p key={at} className="hv-film-credit">
-      <a href={p.page} target="_blank" rel="noopener noreferrer">{p.credit}</a>
-      {t('home.photoBy', { who: p.author, licence: p.licence })}
-    </p>
   );
 }

@@ -26,10 +26,9 @@ import { useIdle, useReveal } from './useHome.js';
  *
  * It says one thing, "A cheap flight is not a cheap trip", and then shows it:
  *
- *   Hero    the film of real places from edge to edge, the slogan, one line,
- *           Ask Carta's field and Plan a trip on it (T620); on a phone the
- *           mark and Log in stand on its top edge
- *   Credit  the shown clip's credit on the caption line under the film
+ *   Hero    the film of real places from edge to edge under the app header
+ *           (T621), the slogan, one line and Ask Carta's field on it (T620);
+ *           on a phone the mark and Log in stand on its top edge
  *   Week    the point in figures: a real flight, then the week it leads to
  *   Voices  six travellers, each asking in their own words, each answered
  *           with one real place and its price
@@ -99,9 +98,39 @@ export function HomePage({
   const login = () => onNavigate('account');
   const close = useReveal();
 
+  // T621: while the film is under the app header, the header lies on it
+  // (transparent, white); scrolled past the film, or with a page over the
+  // home page, it is the usual bar again. The shell reads the root's
+  // data-home-film; leaving the home page takes it away.
+  const pageRef = React.useRef(null);
+  React.useEffect(() => {
+    const box = pageRef.current;
+    const root = document.documentElement;
+    if (!box) return undefined;
+    let raf = 0;
+    const sync = () => {
+      raf = 0;
+      const stage = box.querySelector('.hv-hero-stage');
+      const bar = document.querySelector('.top-bar');
+      const under = !pageOver && !!stage && box.scrollTop < stage.offsetHeight - (bar?.offsetHeight || 0);
+      const v = under ? 'under' : 'past';
+      if (root.dataset.homeFilm !== v) root.dataset.homeFilm = v;
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(sync); };
+    sync();
+    box.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      box.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (raf) cancelAnimationFrame(raf);
+      delete root.dataset.homeFilm;
+    };
+  }, [pageOver]);
+
   return (
-    <div className="hv-page">
-      <HomeHero door={door} onSearch={onSearch} onNavigate={onNavigate} titleAs={pageOver ? 'div' : 'h1'}>
+    <div className="hv-page" ref={pageRef}>
+      <HomeHero onSearch={onSearch} titleAs={pageOver ? 'div' : 'h1'}>
         <div className="hv-top">
           <a className="hv-top-brand" href="?tab=home" aria-label="Carta"><Logo size={28} /><span>Carta</span></a>
           {!user && (

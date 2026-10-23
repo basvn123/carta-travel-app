@@ -9,9 +9,12 @@
  *   h1        exactly one visible h1, the slogan
  *   primary   exactly one visible primary button, "Plan a trip"
  *   hscroll   nothing scrolls sideways
- *   hero      the film fills the page box edge to edge (T620), the slogan,
- *             the line, Ask Carta and Plan a trip stand on it under one tint,
- *             and nothing else sits on it (no pill, no bars, no pause)
+ *   hero      the film fills the page box and the window edge to edge
+ *             (T620, T621), the slogan, the line and Ask Carta stand on it
+ *             under one tint, and nothing else sits on it or under it (no
+ *             pill, no bars, no pause, no credit line)
+ *   header    (desktop) the app header is transparent and white on the film
+ *             and the usual bar once the film has scrolled by (T621)
  *   film      a clip plays and the film moves on to the next shot by itself
  *   week      the week card shows one total and its lines; another place
  *             changes the total in place
@@ -27,6 +30,8 @@
  *             arrive above it
  *   taps      (phone) every control measures at least 44 by 44 px
  *   fold      (phone) the primary ends above the bottom nav in the first screen
+ *   ask       a question asked in the hero opens the chat on Explore, asked
+ *             exactly once, and the header is the usual bar there (T621)
  *   copy      no dash, middot, banned word, catalogue count or "est." on the page
  *   console   no page error and no console error
  * And once, with prefers-reduced-motion:
@@ -129,14 +134,43 @@ async function run(browser, vp) {
     const inside = (sel) => { const e = document.querySelector(sel); return !!e && stage.contains(e); };
     return {
       wGap: Math.round(box.width - r.width), hShare: r.height / box.height,
-      words: inside('.hv-slogan') && inside('.hv-sub') && inside('#hv-ask') && inside('.hv-cta'),
-      extras: stage.querySelectorAll('.hv-pill, .hv-film-steps, .hv-film-pause, button[aria-pressed]').length,
+      words: inside('.hv-slogan') && inside('.hv-sub') && inside('#hv-ask') && inside('.hv-ask-go-main'),
+      extras: stage.querySelectorAll('.hv-pill, .hv-film-steps, .hv-film-pause, .hv-cta, button[aria-pressed]').length
+        + document.querySelectorAll('.hv-film-credit').length,
       tint: getComputedStyle(document.querySelector('.hv-film'), '::after').backgroundColor,
+      winGap: Math.round(window.innerWidth - r.width),
+      // The page hides sideways overflow, so hscroll cannot see a field
+      // that runs off the film: every word and control must end inside it.
+      spill: [...stage.querySelectorAll('.hv-hero-copy *')].filter((e) => {
+        const b = e.getBoundingClientRect();
+        return b.width > 0 && (b.right > r.right + 1 || b.left < r.left - 1);
+      }).length,
     };
   });
-  const wideOk = vp.isMobile ? hero.wGap <= 1 : hero.wGap <= 40;
-  check(k, 'hero', wideOk && hero.hShare >= 0.85 && hero.words && hero.extras === 0 && /^(rgba?|color)\(/.test(hero.tint),
-    `width gap ${hero.wGap}px, ${Math.round(hero.hShare * 100)}% of the page box, words on film ${hero.words}, ${hero.extras} extras, tint ${hero.tint}`);
+  check(k, 'hero', hero.wGap <= 1 && hero.winGap <= 1 && hero.hShare >= 0.95 && hero.spill === 0 && hero.words && hero.extras === 0 && /^(rgba?|color)\(/.test(hero.tint),
+    `gap to page ${hero.wGap}px, to window ${hero.winGap}px, ${Math.round(hero.hShare * 100)}% of the page box, words on film ${hero.words}, ${hero.spill} spilling, ${hero.extras} extras, tint ${hero.tint}`);
+
+  // The header on the film (T621, wider screens): transparent and white over
+  // the film, the usual bar once the film has scrolled by.
+  if (!vp.isMobile) {
+    const bar = (pos) => page.evaluate(async (y) => {
+      const box = document.querySelector('.hv-page');
+      box.scrollTo(0, y === 'past' ? document.querySelector('.hv-hero-stage').offsetHeight + 40 : 0);
+      await new Promise((r) => setTimeout(r, 400));
+      const tb = document.querySelector('.top-bar');
+      const cs = getComputedStyle(tb);
+      return { state: document.documentElement.dataset.homeFilm, bg: cs.backgroundColor,
+        ink: getComputedStyle(tb.querySelector('.header-nav-item')).color,
+        overlap: Math.round(document.querySelector('.hv-hero-stage').getBoundingClientRect().top) };
+    }, pos);
+    const under = await bar('top');
+    const past = await bar('past');
+    await bar('top');
+    const clear = (c) => /rgba\(0, 0, 0, 0\)|transparent/.test(c);
+    check(k, 'header', under.state === 'under' && clear(under.bg) && /255, 255, 255/.test(under.ink) && under.overlap === 0
+      && past.state === 'past' && !clear(past.bg),
+      `top: ${under.state}, ${under.bg}, ink ${under.ink}, film at ${under.overlap}px; past: ${past.state}, ${past.bg}`);
+  }
 
   // The film: a clip playing, and the next shot by itself, with no control.
   await page.waitForFunction(() => {
@@ -155,7 +189,7 @@ async function run(browser, vp) {
   if (vp.isMobile) {
     const fold = await page.evaluate(() => {
       const nav = document.querySelector('.bottom-nav');
-      const cta = document.querySelector('.hv-cta');
+      const cta = document.querySelector('.hv-ask-go-main');
       return { top: nav ? nav.getBoundingClientRect().top : window.innerHeight, cta: cta?.getBoundingClientRect().bottom };
     });
     check(k, 'fold', fold.cta != null && fold.cta <= fold.top, `primary ends ${Math.round(fold.cta)}, nav at ${Math.round(fold.top)}`);
@@ -231,7 +265,7 @@ async function run(browser, vp) {
 
   if (vp.isMobile) {
     const small = await page.evaluate(() => [...document.querySelectorAll('.hv-page a, .hv-page button, .hv-page [role="tab"]')]
-      .filter((e) => e.offsetParent && !e.closest('.site-footer-col') && !e.closest('.hv-caption, .hv-film-credit'))
+      .filter((e) => e.offsetParent && !e.closest('.site-footer-col') && !e.closest('.hv-caption'))
       .map((e) => ({ t: (e.textContent || e.getAttribute('aria-label') || '').trim().slice(0, 30), r: e.getBoundingClientRect() }))
       .filter((x) => x.r.width > 0 && (x.r.height < 43.5 || x.r.width < 43.5))
       .map((x) => `${x.t} ${Math.round(x.r.width)}x${Math.round(x.r.height)}`));
@@ -248,6 +282,23 @@ async function run(browser, vp) {
     return bad;
   }, BANNED);
   check(k, 'copy', copy.length === 0, copy.join(', '));
+
+  // Ask Carta from the hero (T621): the chat opens on Explore already asking,
+  // and the question is asked once.
+  await page.evaluate(() => document.querySelector('.hv-page').scrollTo(0, 0));
+  await page.waitForTimeout(400);
+  await page.fill('#hv-ask', 'A beach in May for two under 900 euros');
+  const t0 = Date.now();
+  await page.press('#hv-ask', 'Enter');
+  await page.waitForSelector('.ac .ac-q', { timeout: 30000 }).catch(() => {});
+  const opened = Date.now() - t0;
+  await page.waitForTimeout(2500);
+  const asked = await page.evaluate(() => ({
+    qs: document.querySelectorAll('.ac .ac-q').length,
+    film: document.documentElement.dataset.homeFilm || null,
+    bar: getComputedStyle(document.querySelector('.top-bar')).backgroundColor,
+  }));
+  check(k, 'ask', asked.qs === 1 && !asked.film, `chat open in ${opened} ms, ${asked.qs} question(s) asked, header ${asked.bar}`);
   check(k, 'console', errors.length === 0, errors.slice(0, 3).join(' | '));
   await ctx.close();
 }

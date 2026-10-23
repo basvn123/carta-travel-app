@@ -922,8 +922,12 @@ export function ExploreTab({
   // A request Explore could not take (the visitor left before it opened)
   // must not open the panel on a later visit.
   React.useEffect(() => { if (!isActive) setOpenRequest(false); }, [isActive]);
+  // One hand-over makes one ask seed (T621): StrictMode runs this effect
+  // twice, and two seeds asked the question twice.
+  const tookSeed = React.useRef(null);
   React.useEffect(() => {
-    if (!seed) return;
+    if (!seed || tookSeed.current === seed) return;
+    tookSeed.current = seed;
     if (seed.facets) {
       applyGuided(seed.facets, true);
       setVisible(PAGE);
