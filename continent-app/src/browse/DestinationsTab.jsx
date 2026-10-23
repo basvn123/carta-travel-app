@@ -56,8 +56,9 @@ import {
   SearchIcon, ChevronRightIcon, RouteIcon, SkylineIcon, SuitcaseIcon, BootIcon,
   BeachIcon, MountainIcon, MapPinIcon, CrosshairIcon,
   CityIcon, TownIcon, VillageIcon, AreaIcon, LoopIcon, LakeIcon, FilterIcon,
-  BikeIcon, ArrowLeftIcon, ListDayIcon,
+  BikeIcon, ArrowLeftIcon, ListDayIcon, CheckIcon,
 } from '../components/Icons.jsx';
+import { CountriesButton } from '../components/CountriesControl.jsx';
 import { JourneysSection } from './JourneysSection.jsx';
 import { loadAllJourneyCards, dropJourneyHash } from '../lib/journeys.js';
 import CreditFold from './CreditFold.jsx';
@@ -2537,16 +2538,18 @@ export function DestinationsTab({
     : null;
   // The near-me door, in the head of every section (T430): the way in most
   // people take first, said in the section's own words.
-  const nearMeDoor = sectionHead && canLocate
-    ? { label: t(`dtab.nearMe.${cat}`), onPick: useMyLocation, busy: locBusy }
-    : null;
+  // T620 (owner 2026-10-23: "summits near me ... is not aligned and not
+  // clean"): the near-me door is the crosshair inside the Where field on
+  // every width, so the head is the title alone.
+  const nearMeDoor = null;
   const isDesktop = useIsDesktop();
   // The By country track is one of the rails (T457): four on a desktop and
   // three on a phone in all, as on Explore, so the full list comes after the
   // same number of rails as Explore's "All places" does.
-  const hasCountryTrack = !!opening && (opening.layer === 'trail'
-    ? !!opening.europe
-    : countryOptions.length > 0);
+  // T620 (owner 2026-10-23: "the by country section needs to go, use the
+  // country filter"): Countries is a control in the filter row, so no rail
+  // is spent on a country track any more.
+  const hasCountryTrack = false;
   const railCap = (isDesktop ? 4 : 3) - (hasCountryTrack ? 1 : 0);
   const openingRails = useMemo(() => {
     if (!opening) return { rails: [], starters: [] };
@@ -2695,7 +2698,12 @@ export function DestinationsTab({
   } : null;
   // The Full list view left with the List | Map switch (T498): the list is
   // always under the rails, and the cuts beyond the rail cap are doors.
-  const listView = false;
+  // T620 (owner 2026-10-23: "browse the full list ... needs to be a button
+  // on top so users can pick this"): Full list is a toggle in the filter
+  // row; on, the rails step aside and the list is the answer.
+  const [fullList, setFullList] = useState(false);
+  useEffect(() => { setFullList(false); }, [cat]);
+  const listView = fullList;
 
   // A picked country's coasts, ranges and regions that hold this layer: one
   // row of door buttons over the list it narrows (T489-i, carta-design
@@ -2801,7 +2809,7 @@ export function DestinationsTab({
   // On a desktop the head's labelled near-me door does this (T457: two
   // doors to one action, and the header field lost a third of its width to
   // the crosshair); a phone keeps it in the field.
-  const locateBtn = (canLocate && !(isDesktop && nearMeDoor) && (
+  const locateBtn = (canLocate && (
     <button
       type="button"
       className="places-locate"
@@ -2978,7 +2986,20 @@ export function DestinationsTab({
     <SortPill t={t} options={sortDefs} value={sortCur.key} onChange={pickSort} />
   ) : null;
   const filterCount = activeFilters - (country ? 1 : 0);
-  const quickBar = facetGroups.length > 0 || sortPill ? (
+  // The Full list toggle (T620): only where the section has a list under
+  // its rails (Europe-wide trails open on their countries instead).
+  const fullListBtn = opening && !opening.europe && !mapOn ? (
+    <Button variant="secondary" size="sm" className={`qfbar-full${fullList ? ' is-on' : ''}`}
+      aria-pressed={fullList}
+      iconStart={fullList ? <CheckIcon size={15} /> : <ListDayIcon size={15} />}
+      onClick={() => { setFullList((v) => !v); scrollRef.current?.scrollTo?.(0, 0); }}>
+      {t('dtab.fullList')}
+    </Button>
+  ) : null;
+  // The section's quick cuts sit on top (T620): the cuts that got no rail,
+  // and with the full list on, every cut.
+  const topStarters = opening && !mapOn ? (fullList ? openingDoors : openingRails.starters) : [];
+  const quickBar = facetGroups.length > 0 || sortPill || fullListBtn ? (
     <FilterChipBar
       t={t}
       fmt={fmt}
@@ -2987,7 +3008,13 @@ export function DestinationsTab({
       allRef={filterBtnRef}
       allOn={facetGroups.length > 0 && (isDesktop ? paneOpen : sheetOpen)}
       allControls={isDesktop ? 'dtab-side' : undefined}
-      lead={sortPill}
+      lead={(
+        <>
+          {settings?.setCountryFilter && <CountriesButton s={settings} size="sm" className="qfbar-ctry" />}
+          {sortPill}
+        </>
+      )}
+      trail={fullListBtn}
       onAll={facetGroups.length > 0
         ? () => {
           if (isDesktop) setPaneOpen((v) => !v);
@@ -3056,18 +3083,6 @@ export function DestinationsTab({
     setNearPlace(null);
     scrollRef.current?.scrollTo?.(0, 0);
   };
-  // The countries this section can open, as gallery cards (T428).
-  const countryTrack = countryOptions.length > 0 ? (
-    <Strip id={`dtab-bycountry-${cat}`} title={t('dtab.byCountry')} t={t} className="dtab-bycountry">
-      {countryOptions.map(([cc, name]) => (
-        <li key={cc} className="dtab-item dtab-item-country">
-          <CountryGalleryCard cc={cc} name={name} onPick={pickCountry} t={t}
-            href={`?tab=places&dc=${cat}&dn=${cc}`}
-            sizes="(max-width: 768px) 80vw, 320px" />
-        </li>
-      ))}
-    </Strip>
-  ) : null;
 
   return (
     <div className="places-shell">
@@ -3118,9 +3133,27 @@ export function DestinationsTab({
             row (All filters, Sort, the quick chips; T602 on every width
             and tab, the trip library too) and the chips that are on, then
             the map or the list. */}
+        {/* T620 (owner 2026-10-23: "more compact", "the filters ... need to
+            be blended in on top"): the section's title first (desktop; a
+            phone reads it from the tab), then the search, the one filter
+            row (All filters, Countries, Sort, the quick chips, Full list)
+            and the section's quick cuts, all before the first rail. */}
+        {sectionHead && !mapOn && <SectionHead title={sectionHead.title} id={`dtab-head-${cat}`} />}
+
         {whereBar}
 
         {quickBar}
+
+        {topStarters.length > 0 && (
+          <nav className="dtab-starters is-top" aria-label={t('dtab.tryOne')}>
+            {topStarters.map((st) => (
+              <Button key={st.key} variant="secondary" size="sm" className="dtab-starter" data-rail={st.key}
+                onClick={st.onPick}>
+                {st.title}
+              </Button>
+            ))}
+          </nav>
+        )}
 
         {activeChips.length > 0 && (
           <FilterChips t={t} chips={activeChips} onClearAll={clearAllChips} />
@@ -3190,17 +3223,13 @@ export function DestinationsTab({
         {/* A section narrowed by a filter keeps its head (T457: Explore keeps
             "Explore Europe" over a filtered list); the rails and the view
             switch step aside while the list is the answer. */}
-        {!opening && !mapOn && sectionHead && !(cat === 'trails' && showCountryIndex) && (
-          <SectionHead title={sectionHead.title} id={`dtab-head-${cat}`} nearMe={nearMeDoor} />
-        )}
+
         {/* No head and no country band (a search, a place to measure from):
             the List | Map switch still has a row of its own (T498). */}
 
         {/* Trails at rest: the head, then the countries (a walk is ranked
             within its country, so the section opens on them). */}
-        {cat === 'trails' && sectionHead && !opening && !mapOn && topTrails !== undefined && !topTrails?.length && (
-          <SectionHead title={sectionHead.title} id="dtab-head-trails" nearMe={nearMeDoor} />
-        )}
+
 
         {/* The section's opening while it is at rest (T183, rebuilt T428):
             the head, Try one, the rails, the countries; then the list. */}
@@ -3209,12 +3238,12 @@ export function DestinationsTab({
           <>
             <SectionOpening
               layer={opening.layer}
-              head={sectionHead}
+              head={null}
               // T600: the Map or List pill in the Where row is the one view
               // control; the head no longer repeats it as a switch.
               view={null}
               rails={listView || mapOn ? [] : openingRails.rails}
-              starters={listView ? openingDoors : mapOn ? [] : openingRails.starters}
+              starters={[]}
               describe={describeRow}
               photo={(row) => photoOf(opening.layer, row)}
               photos={(row) => photosOf(opening.layer, row)}
@@ -3223,11 +3252,11 @@ export function DestinationsTab({
               nearMe={nearMeDoor}
               t={t}
             >
-              {!listView && !mapOn && opening.layer !== 'trail' && countryTrack}
+
             </SectionOpening>
             {/* Europe-wide trails have no list under them: the countries
                 follow. In the Full list view the head names the list. */}
-            {!opening.europe && !listView && !mapOn && <h2 className="open-gridhead dtab-gridhead">{t('open.gridHead')}</h2>}
+            {!opening.europe && !mapOn && <h2 className="open-gridhead dtab-gridhead" id="dtab-fulllist">{t('open.gridHead')}</h2>}
           </>
         )}
 

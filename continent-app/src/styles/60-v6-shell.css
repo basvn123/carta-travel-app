@@ -953,58 +953,56 @@ html.kbd-open .bottom-nav { display: none; }
 .bottom-nav-item.active .bottom-nav-initial { background: var(--surface); color: var(--select-ink); }
 .bottom-nav-item:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
 
-/* The settings line on a phone (1.3a T1): one sentence for the dates and
-   the party, one button for the bed, a hairline between them. */
+/* The settings line on a phone (T620, owner 2026-10-23): four equal
+   buttons, an icon over one short word (When, From, Stay, Transport), so
+   nothing is ever cut off. Hairlines between them; the open one takes the
+   sunken ground. Values live in each button's name. */
 .settings-line-phone { gap: 0; padding: 0 var(--space-2); }
-.settings-summary,
-.settings-bed {
+.settings-line-phone > .settings-quad + .settings-quad::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 1px;
+  height: var(--space-5);
+  transform: translateY(-50%);
+  background: var(--border-soft);
+}
+.settings-quad {
+  position: relative;
   display: inline-flex;
+  flex: 1 1 0;
+  flex-direction: column;
   align-items: center;
-  gap: var(--space-1);
-  min-height: var(--tap);
-  padding: 0 var(--space-2);
+  justify-content: center;
+  gap: 2px;
+  min-width: 0;
+  min-height: 52px;
+  padding: var(--space-1) var(--space-1);
   border: 0;
   border-radius: var(--radius-control);
   background: transparent;
   color: var(--text);
   font: inherit;
-  font-size: var(--text-label);
-  font-weight: 500;
-  white-space: nowrap;
   cursor: pointer;
   transition: background-color var(--dur-1) var(--ease-out);
 }
-.settings-summary { flex: 1 1 auto; min-width: 0; }
-.settings-summary-text {
-  min-width: 0;
+.settings-quad-icon { flex: none; color: var(--text-2); }
+.settings-quad-word {
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  font-size: var(--text-caption);
+  font-weight: 600;
+  line-height: var(--leading-ui);
+  color: var(--text);
 }
-.settings-summary-pre { color: var(--text-2); }
-.settings-summary-chev,
-.settings-bed-icon { flex: none; color: var(--text-2); }
-.settings-bed { flex: none; margin-left: var(--space-1); }
-.settings-bed::before {
-  content: "";
-  align-self: center;
-  width: 1px;
-  height: var(--space-5);
-  margin-right: var(--space-2);
-  background: var(--border-soft);
-}
-.settings-summary[aria-expanded="true"] { background: var(--surface-sunken); }
+.settings-quad[aria-expanded="true"] { background: var(--surface-sunken); }
 @media (hover: hover) {
-  .settings-summary:hover,
-  .settings-bed:hover { background: var(--surface-sunken); }
+  .settings-quad:hover { background: var(--surface-sunken); }
 }
-.settings-summary:focus-visible,
-.settings-bed:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
-/* "Prices for" drops first on a phone, so the dates and the party never
-   cut off (T502: at 390 px it ended in "2 ..."); the bed always stays. */
-@container settings (max-width: 440px) {
-  .settings-summary-pre { display: none; }
-}
+.settings-quad:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
 
 /* The settings sheet (1.3a T2) and the date popover share their rows: a
    section label over the control, a Nights and a People stepper on one line
@@ -1167,7 +1165,7 @@ html.kbd-open .settings-done { display: none; }
 
 @media (prefers-reduced-motion: reduce) {
   .account-door, .account-door-disc,
-  .settings-summary, .settings-bed, .plan-start-tile { transition: none; }
+  .settings-quad, .plan-start-tile { transition: none; }
 }
 
 /* Account carries the currency with the language (T496, owner T485-g). */

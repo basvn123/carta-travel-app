@@ -86,7 +86,7 @@ export function CountriesPanel({ countries, list, setList, not, setNot, autoFocu
 }
 
 /** The phone's door (T581): a secondary beside Filters that opens the panel as a sheet. */
-export function CountriesButton({ s, className = '' }) {
+export function CountriesButton({ s, className = '', size }) {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
@@ -96,8 +96,8 @@ export function CountriesButton({ s, className = '' }) {
   const value = countriesValue(t, list, s.countryNot, names);
   return (
     <>
-      <Button ref={ref} variant="secondary" className={`ctry-btn${list.length ? ' is-set' : ''} ${className}`.trim()}
-        iconStart={<GlobeIcon size={18} />} onClick={() => setOpen(true)}
+      <Button ref={ref} variant="secondary" size={size} className={`ctry-btn${list.length ? ' is-set' : ''} ${className}`.trim()}
+        iconStart={<GlobeIcon size={size === 'sm' ? 15 : 18} />} onClick={() => setOpen(true)}
         aria-haspopup="dialog" aria-expanded={open}
         aria-label={`${t('settings.countries')}: ${value}`}>
         <span className="ctry-btn-text">{list.length ? value : t('settings.countries')}</span>

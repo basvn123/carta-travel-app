@@ -212,6 +212,11 @@
 @media (min-width: 769px) {
   .settings-line-parts > .settings-slot-way { flex: 0 1 168px; }
   .settings-line-parts > .settings-slot-countries { flex: 1 1 0; }
+  /* T620 (owner 2026-10-23: "the when part on desktop is cut off"): the
+     dates and their nights are the longest value, so When takes the most
+     room and the shorter parts give it up. */
+  .settings-line-parts > .settings-slot-dates { flex: 1.8 1 0; }
+  .settings-line-parts > .settings-slot-party { flex: 0.9 1 0; }
 }
 @media (min-width: 769px) and (max-width: 1180px) {
   .settings-line .settings-vibe { display: none; }

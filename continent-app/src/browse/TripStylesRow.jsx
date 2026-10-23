@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Strip } from './SectionOpening.jsx';
 import { JourneyCard, RAIL_SIZES } from './JourneyCards.jsx';
-import { StoryRail, StoryCard, STORY_SIZES } from './StoryRail.jsx';
+import { StoryRail, StoryCard, STORY_MAX, STORY_SIZES } from './StoryRail.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { PiggyIcon } from '../components/Icons.jsx';
 import { Money } from '../components/ui/index.js';
@@ -103,7 +103,7 @@ function StyleStoryCard({ type, perDay, onPick, t }) {
     <StoryCard
       className="jstyle-story"
       data-style={type.slug}
-      photo={<HeroImage url={type.hero?.url} city={name} maxWidth={640} sizes={STORY_SIZES} ratio={[4, 5]} />}
+      photo={<HeroImage url={type.hero?.url} city={name} maxWidth={STORY_MAX} sizes={STORY_SIZES} ratio={[4, 5]} />}
       title={name}
       onOpen={() => onPick(type.slug)}
       meta={desc ? <span>{desc}</span> : null}

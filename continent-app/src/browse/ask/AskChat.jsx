@@ -1,7 +1,9 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
 import { Button, IconButton, Segmented } from '../../components/ui/index.js';
-import { ClockIcon, CloseIcon, PencilIcon, SparkIcon, TrashIcon, ArrowLeftIcon } from '../../components/Icons.jsx';
+import { ClockIcon, CloseIcon, MapPinIcon, PencilIcon, SparkIcon, TrashIcon, ArrowLeftIcon } from '../../components/Icons.jsx';
+import { useSettings } from '../../components/SettingsLine.jsx';
+import { FromPanel, fromPoint } from '../../components/FromPicker.jsx';
 import { useFocusTrap } from '../../hooks/useFocusTrap.js';
 import { useAuth } from '../../auth/AuthContext.jsx';
 import { fetchAskChats, upsertAskChat, deleteAskChat, missingTable } from '../../auth/askChatCloud.js';
@@ -49,10 +51,39 @@ function useIsPhone() {
   return m;
 }
 
-/** "You're in {place}" with the place in bold, in any word order. */
+/**
+ * "You're in {place}" with the place in bold, in any word order, and a
+ * Change that opens the From panel in place (T620, owner 2026-10-23: "I
+ * need to be able to change this location in the chatbot itself"). The
+ * pick sets the one From in the settings line, so every price follows.
+ */
 function YoureIn({ t, place }) {
+  const s = useSettings();
+  const [open, setOpen] = React.useState(false);
   const [a, b = ''] = t('askChat.youreIn', { place: '\u0000' }).split('\u0000');
-  return <p className="ac-where">{a}<strong>{place}</strong>{b}</p>;
+  const panelId = React.useId();
+  const canChange = !!s?.setFrom;
+  return (
+    <div className="ac-where-wrap">
+      <p className="ac-where">
+        <MapPinIcon size={16} className="ac-where-icon" />
+        <span>{a}<strong>{place}</strong>{b}</span>
+        {canChange && (
+          <Button variant="quiet" size="sm" className="ac-where-change"
+            aria-expanded={open} aria-controls={open ? panelId : undefined}
+            onClick={() => setOpen((v) => !v)}>
+            {t('askChat.changeFrom')}
+          </Button>
+        )}
+      </p>
+      {open && canChange && (
+        <div className="ac-where-panel" id={panelId}>
+          <FromPanel data={s.data} current={fromPoint(s)}
+            onPick={(p) => { s.setFrom(p); setOpen(false); }} />
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default function AskChat(props) {

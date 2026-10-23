@@ -135,7 +135,7 @@ export function PhotoGallery({
  * both are hidden from screen readers, for whom the tile is one link and the
  * page's gallery holds every photograph.
  */
-export function TilePhotos({ urls = [], city = '', iso2, onOpen, sizes, maxWidth = 640, ratio = [4, 3] }) {
+export function TilePhotos({ urls = [], city = '', iso2, onOpen, sizes, maxWidth = 960, ratio = [4, 3] }) {
   const { t } = useI18n();
   const [all, setAll] = useState(false);
   const [idx, setIdx] = useState(0);

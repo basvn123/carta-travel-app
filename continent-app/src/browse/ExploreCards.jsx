@@ -85,7 +85,7 @@ export function PlaceTile({ p, onSelect, fav, onToggleFav, t }) {
       className="xtile"
       media={(
         <HeroImage url={p.image} city={p.city} iso2={p.iso2}
-          className="xtile-img" maxWidth={640}
+          className="xtile-img" maxWidth={960}
           sizes="(max-width: 768px) 78vw, 280px" ratio={[4, 3]} />
       )}
       title={p.city}
