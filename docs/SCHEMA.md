@@ -748,6 +748,32 @@ cabin, 20 kg checked, `src/lib/flights/bagFees.js`) are Carta's estimates and
 carry the tilde and "est.". The airport transfers stay ground costs Carta
 prices.
 
+## Explore completeness, routes and peaks (T630, added 2026-10-23)
+
+Additive only: no key renamed or removed. Every key below is absent, not null,
+when the pass has nothing to say, and the app shows the shared placeholder
+(`components/NotYet.jsx`) for an absent one. "Awaiting run" means the code is
+written and a pipeline run has not filled the wire yet.
+
+| Layer | Key | Where | Source | State |
+|---|---|---|---|---|
+| trails | `sac_scale` | country row `trips[]` | relation tag, else worst member way (`grade_parts.sac_worst`), `export_wire.sac_scale_of` | awaiting run |
+| trails | `technique` `{worst, share}` | detail | OSM `hiking_technique` on member ways, worst wins, `way_tags.py` | awaiting run |
+| trails | `exposure` `{worst, share}` | detail | OSM `hiking_exposure`, same pattern | awaiting run |
+| trails | `sac_segments` `[[from_m, to_m, "T2"]]` | detail | member ways with `sac_scale`, run length coded, positions approximate (member order) | awaiting run |
+| trails | `transit` `{rail, bus, ferry}` | country row | stub, `pipeline/field_stubs/t630_routes.py` | stub |
+| trails | `duration_min` | row and detail | DIN 33466 (`elevation.py:duration_min_din33466`: 4 km/h, 300 m/h up, 500 m/h down, the smaller of flat and vertical time counted half), with `elevation.duration_rule` | live |
+| cycling | `rt` `loop` / `out_back` / `point` | country card and detail | `export_cycling.route_shape`, from the line (roundtrip=yes stays `loop`) | awaiting run |
+| cycling | `dur.min`, `dur.rule` = `flat18_climb10` | card and detail | house rule, 18 km/h plus 10 min per 100 m of climb | live |
+| mountains | `slopeDeg` | full row | `terrain.easiest_slope`, steepest stretch of the gentlest side; the app warns over 30 | awaiting run |
+| mountains | `huts[]` `{name, kind, m, beds, open, phone, web, email, ele}` | full row | OSM tourism=alpine_hut / wilderness_hut near the summit, `enrich_peaks.hut_record` | awaiting run |
+| mountains | `rangeRank` `{n, h, p}` | full and stub rows | rank by height and prominence within `range`, across countries, `peak_index.range_ranks` | awaiting run |
+| mountains | `lift.price`, `lift.hours` | full row | stub | stub |
+
+Pace multipliers, break time, average grade and the SAC T-grade mapping are
+applied in the app (`src/lib/routeEffort.js`) on the stored base time. The app
+never recomputes DIN 33466.
+
 ## Served data split (added 2026-07-12)
 
 The master `app_data/app_data.json` is unchanged, but `continent-app/scripts/sync-data.mjs`

@@ -606,6 +606,54 @@ def wire_difficulty(t):
     return t.get("grade") or t.get("difficulty")
 
 
+def sac_scale_of(t):
+    """T630: the SAC grade a route carries, as the OSM word, for the country
+    row. The relation's own tag when it has one, else the hardest member way
+    grade that cleared way_tags.py's noise floor (grade_parts.sac_worst, from
+    the same pass). None when neither says anything; the app shows a
+    placeholder then, never a guessed T1."""
+    if t.get("sac_scale"):
+        return t["sac_scale"]
+    parts = t.get("grade_parts") or {}
+    tags = t.get("way_tags") or {}
+    return parts.get("sac_worst") or tags.get("sac_worst") or None
+
+
+def transit_of(t):
+    """T630: can a walker reach the start by public transport or ferry.
+
+    {"rail": bool, "bus": bool, "ferry": bool} from t["transit"], a column no
+    pass fills yet (transit_stops.py holds rail and bus stations only, no
+    ferry piers and no ordinary bus stops; the stub is
+    pipeline/field_stubs/t630_routes.py). The SELECT does not list the column
+    either, so today this returns None and the wire carries no key. When the
+    pass exists, add the column to the SELECT lists and the key appears; the
+    app already reads `transit` and shows a placeholder until it does."""
+    tr = t.get("transit")
+    if not isinstance(tr, dict):
+        return None
+    out = {k: bool(tr[k]) for k in ("rail", "bus", "ferry") if k in tr}
+    return out or None
+
+
+def way_extras_of(t):
+    """T630: the detail keys that come from the member way pass
+    (way_tags.py): exposure and technique apart from the SAC grade, the SAC
+    grade along the line, and the transit flag. Each key is absent, not null,
+    when nothing said anything, so the app tests for the key."""
+    tags = t.get("way_tags") or {}
+    out = {}
+    if tags.get("technique_worst"):
+        out["technique"] = {"worst": tags["technique_worst"],
+                            "share": tags.get("technique_worst_share")}
+    if tags.get("exposure_worst"):
+        out["exposure"] = {"worst": tags["exposure_worst"],
+                           "share": tags.get("exposure_worst_share")}
+    if tags.get("sac_segments"):
+        out["sac_segments"] = tags["sac_segments"]
+    return out
+
+
 def filters_of(t):
     """Everything a chip reads, as codes, on both the card and the page.
 
@@ -843,6 +891,14 @@ def wire_item(t, n_stops, hier=None):
         item["rating"] = float(t["rating"])
     if t.get("is_loop") is not None:
         item["is_loop"] = bool(t["is_loop"])
+    # T630: the SAC grade on the country row too, so a card and the SAC
+    # filter can read it without opening the detail file.
+    sac = sac_scale_of(t)
+    if sac:
+        item["sac_scale"] = sac
+    transit = transit_of(t)
+    if transit:
+        item["transit"] = transit
     filters = filters_of(t)
     if filters:
         item["f"] = filters
@@ -929,6 +985,8 @@ def detail_item(t, stops, generated_at, hier=None):
     # gets the reason rather than the label.
     if t.get("grade_parts"):
         out["grade_parts"] = t["grade_parts"]
+    # T630: exposure, technique and the SAC grade along the line.
+    out.update(way_extras_of(t))
     if t.get("suitability"):
         out["suitability"] = t["suitability"]
     if t.get("surface"):
