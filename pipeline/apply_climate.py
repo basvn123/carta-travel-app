@@ -62,7 +62,7 @@ CLIMATE_MODEL = {
     # (satellite, NASA MUR SST, 2003-2022 mean), only when open sea lies within
     # 25 km (harvest_sea_temp.py).
     "sun_h_method": SUN_METHOD,
-    "water_c_method": "measured: NASA JPL MUR SST v4.1 monthly, mean of 2003-2022, nearest open-water cell within 25 km",
+    "water_c_method": "measured: NASA JPL MUR SST v4.1 monthly, mean of 2003-2022, nearest open-water cell within 20 km",
     "comfort": {
         "range": "0-100",
         "weights": {"temp": 0.60, "dry": 0.25, "sun": 0.15},
@@ -107,7 +107,7 @@ def extras(rec: dict, did: str, elev: dict) -> dict:
         if sun:
             out["sun_h"] = sun
     sea = _SEA.get(did) or {}
-    if isinstance(sea.get("c"), list) and len(sea["c"]) == 12 and sea.get("km", 99) <= 25:
+    if isinstance(sea.get("c"), list) and len(sea["c"]) == 12 and sea.get("km", 99) <= 20:
         out["water_c"] = sea["c"]
     for key in ("rain_days", "wind_ms"):
         vals = rec.get(key)
