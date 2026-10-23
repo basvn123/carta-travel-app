@@ -6,7 +6,7 @@ Inputs (STATE, pulled from R2 on Actions):
   iab.json         Inside Airbnb medians per destination
   supply.json      OSM counts per destination
   eurostat.json    HICP CP112 (drift), nights (season fill-in), PLI (ladder)
-  spike.json       hw_private_per_person (T530)
+  spike.json       hw_private_unit: person | room (B4 sample, T643; else HW_PRIVATE_UNIT)
   calibration.json SerpApi free-tier error (gate)
 
 Method, per destination and bed type:
@@ -44,8 +44,10 @@ from datetime import date, datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from common import (BED_TYPES, HOME_CAPS, JOURNAL_SCRAPE, OUT, STATE, haversine_km, journal,  # noqa: E402
-                    load_destinations, median, now_iso, read_json, write_json)
+from common import (BED_TYPES, CONTRACT_COLUMNS, HOME_CAPS, JOURNAL_SCRAPE, OUT, STATE,  # noqa: E402
+                    UNITS, haversine_km, journal, load_destinations, median, now_iso,
+                    read_json, write_json)
+from booking.page import per_ok  # noqa: E402
 
 V = OUT / "v1"
 MAX_AGE_DAYS = 400
@@ -68,6 +70,26 @@ STAR_STEP = 1.08
 # fewer, one city's calendar (Barcelona's trade fairs) would become the
 # country's, so the country's own Eurostat tourism season stands in.
 MIN_CURVE_TOWNS = 3
+# Observation contract (T643). A row journalled before the contract columns
+# existed takes its source's known behaviour, and counts as legacy:
+#   booking      selected_currency=EUR is in every search URL; 12 cards sampled
+#                on 2026-10-23 (Bergen, Kotor) all said "Includes taxes and
+#                charges" and "1 night, 2 adults"
+#   hostelworld  this laptop's pages showed euros without a currency in the URL
+#                (2026-10-23); list prices are "From" prices and do not say
+#                whether city tax is in (a Lisbon hostel page says it is not)
+#   xotelo       currency=EUR is requested; the OTAs' rates do not say
+LEGACY = {"booking": {"currency": "EUR", "tax_included": 1, "from_or_discount": None},
+          "hostelworld": {"currency": "EUR", "tax_included": None, "from_or_discount": 1},
+          "xotelo": {"currency": "EUR", "tax_included": None, "from_or_discount": 0}}
+# What Hostelworld's "Privates From" is per when the journal row does not say.
+# B4 sample (scripts/hw_unit_sample.py, 2026-10-23): 259 hostels in 10 cities,
+# private / dorm bed median 1.14 for 2 guests, so per person; the 2-guest and
+# 1-guest list prices were the same (median ratio 1.0), so the list ignores the
+# guest count. Without a verdict a private row with no unit is rejected.
+HW_PRIVATE_UNIT = "person"
+# A per-person private price is for one of two sharing the room.
+HW_PRIVATE_GUESTS = 2
 
 
 def size_bucket(pop):
@@ -81,25 +103,71 @@ def month_add(y, m, k):
 
 # ------------------------------------------------------------------ inputs -- #
 
-def load_obs(con, hicp, iso_of, hw_pp):
-    """Observations newer than MAX_AGE_DAYS, levelled to today's prices."""
-    rows = con.execute(
-        "select source, dest_id, prop_key, kind, stars, bed, adults, chk_in, "
-        "price_eur, captured from obs").fetchall()
+def legacy_fields(src, bed, hw_unit):
+    """Contract fields for a row journalled before T643, from what the source
+    is known to do. None in `unit` or `currency` means unknown: rejected."""
+    known = LEGACY.get(src)
+    if not known:
+        return {"currency": None, "unit": None, "tax_included": None, "from_or_discount": None}
+    unit = "bed" if bed == "dorm" else "room"
+    if src == "hostelworld" and bed == "private":
+        unit = hw_unit
+    return dict(known, unit=unit)
+
+
+def contract(r, hw_unit):
+    """(row, None) when the row meets the observation contract, else (None, reason)."""
+    if r.get("currency") is None and r.get("unit") is None:
+        r.update(legacy_fields(r["source"], r["bed"], hw_unit), legacy=True)
+    elif r["source"] == "hostelworld" and r["bed"] == "private" and not r.get("unit"):
+        r.update(unit=hw_unit, legacy=True)          # scraped before the B4 verdict
+    if r.get("unit") not in UNITS:
+        return None, "unit unknown"
+    if r.get("currency") != "EUR":
+        return None, f"currency {r.get('currency') or 'unknown'}"
+    if r.get("nights") != 1:
+        return None, "not one night"
+    if r["source"] == "booking" and r.get("per_text") and not per_ok(r["per_text"], r["adults"]):
+        return None, "not the searched adults"
+    if not r.get("price_eur") or r["price_eur"] <= 0:
+        return None, "no price"
+    return r, None
+
+
+def load_obs(con, hicp, iso_of, stats=None, hw_unit=None):
+    """Observations newer than MAX_AGE_DAYS that meet the contract, per room
+    (dorm: per bed), levelled to today's prices. `stats` counts per source:
+    rows read, legacy rows, and rejections by reason (T643)."""
+    stats = {} if stats is None else stats
+    have = {r[1] for r in con.execute("pragma table_info(obs)")}
+    cols = ["source", "dest_id", "prop_key", "kind", "stars", "bed", "adults", "chk_in",
+            "nights", "price_eur", "captured"] + [c for c, _ in CONTRACT_COLUMNS if c in have]
     cutoff = date.today().toordinal() - MAX_AGE_DAYS
     out = []
-    for src, did, key, kind, stars, bed, adults, chk, price, cap in rows:
+    for vals in con.execute(f"select {','.join(cols)} from obs"):
+        r = dict(zip(cols, vals))
+        src, did = r["source"], r["dest_id"]
         if src == "fixture" or did not in iso_of:
             continue
-        cap_d = datetime.fromisoformat(cap.replace("Z", "")).date()
+        cap_d = datetime.fromisoformat(r["captured"].replace("Z", "")).date()
         if cap_d.toordinal() < cutoff:
             continue
-        if src == "hostelworld" and bed == "private" and hw_pp:
-            price = price * 2            # per person on the site -> per room
+        st = stats.setdefault(src, {"rows": 0, "legacy": 0, "rejected": defaultdict(int)})
+        st["rows"] += 1
+        r, why = contract(r, hw_unit)
+        if why:
+            st["rejected"][why] += 1
+            continue
+        st["legacy"] += bool(r.get("legacy"))
+        price = r["price_eur"]
+        if r["unit"] == "person":
+            price *= HW_PRIVATE_GUESTS       # per person in a shared room -> the room
         price *= drift(hicp, iso_of[did], cap_d)
-        out.append({"src": src, "dest": did, "key": f"{src}:{key}", "kind": kind,
-                    "stars": stars, "bed": bed, "adults": adults,
-                    "day": date.fromisoformat(chk), "price": price, "cap": cap_d})
+        out.append({"src": src, "dest": did, "key": f"{src}:{r['prop_key']}", "kind": r["kind"],
+                    "stars": r["stars"], "bed": r["bed"], "adults": r["adults"],
+                    "day": date.fromisoformat(r["chk_in"]), "price": price, "cap": cap_d,
+                    "tax_included": r.get("tax_included"),
+                    "from_or_discount": r.get("from_or_discount")})
     return out
 
 
@@ -487,11 +555,14 @@ def main():
     iso_of = {d["id"]: d["iso2"] for d in dests}
     euro = read_json(STATE / "eurostat.json", {}) or {}
     spike = read_json(STATE / "spike.json", {}) or read_json(STATE / "spike" / "spike.json", {}) or {}
-    obs = load_obs(journal(), euro.get("hicp") or {}, iso_of,
-                   spike.get("hw_private_per_person"))
+    hw_unit = spike.get("hw_private_unit") or HW_PRIVATE_UNIT
+    stats = {}
+    obs = load_obs(journal(), euro.get("hicp") or {}, iso_of, stats, hw_unit)
     if JOURNAL_SCRAPE.exists():
-        obs += load_obs(journal(JOURNAL_SCRAPE), euro.get("hicp") or {}, iso_of,
-                        spike.get("hw_private_per_person"))
+        obs += load_obs(journal(JOURNAL_SCRAPE), euro.get("hicp") or {}, iso_of, stats, hw_unit)
+    stats = {s: dict(v, rejected=dict(v["rejected"])) for s, v in stats.items()}
+    for s, v in stats.items():
+        print(f"contract {s}: {v['rows']} rows, {v['legacy']} legacy, rejected {v['rejected']}")
     iab = (read_json(STATE / "iab.json", {}) or {}).get("dests", {})
     supply = (read_json(STATE / "supply.json", {}) or {}).get("dests", {})
     records = build(dests, obs, iab, supply, euro)
@@ -509,6 +580,7 @@ def main():
         "coverage": coverage(records),
         "sources": {s: sum(1 for o in obs if o["src"] == s)
                     for s in ("xotelo", "booking", "hostelworld")},
+        "contract": stats,
         "iab_dests": len(iab), "live_keys": live_keys, "hicp_latest": max((max(v) for v in (euro.get("hicp") or {}).values()), default=None),
         "gate": {"fails": fails, "notes": notes},
     }

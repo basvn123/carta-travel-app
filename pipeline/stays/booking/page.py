@@ -31,7 +31,9 @@ EXTRACT_JS = r"""
     href: a ? a.getAttribute('href') : null,
     title: txt('[data-testid="title"]'),
     price: txt('[data-testid="price-and-discounted-price"]'),
+    priceLines: (q('[data-testid="price-and-discounted-price"]') || {}).innerText || null,
     priceFor: txt('[data-testid="price-for-x-nights"]'),
+    tax: txt('[data-testid="taxes-and-charges"]'),
     unit: txt('[data-testid="recommended-units"]'),
     review: txt('[data-testid="review-score"]'),
     stars, starKind,
@@ -59,6 +61,61 @@ def parse_money(txt):
     with contextlib.suppress(ValueError):
         return float(s)
     return None
+
+
+AMOUNT = re.compile(r"(€|EUR|£|GBP|US\$|\$|CHF|zł|PLN|Kč|CZK|kr|SEK|NOK|DKK|Ft|HUF|lei|RON)"
+                    r"\s*(\d[\d.,\s]*\d|\d)", re.I)
+CURRENCY = {"€": "EUR", "eur": "EUR", "£": "GBP", "gbp": "GBP", "us$": "USD", "$": "USD",
+            "chf": "CHF", "zł": "PLN", "pln": "PLN", "kč": "CZK", "czk": "CZK",
+            "kr": "SEK/NOK/DKK", "sek": "SEK", "nok": "NOK", "dkk": "DKK", "ft": "HUF",
+            "huf": "HUF", "lei": "RON", "ron": "RON"}
+INCLUDES_TAX = re.compile(r"includes taxes", re.I)
+PLUS_TAX = re.compile(r"\+\s*(.+?)\s+taxes", re.I)
+
+
+def amounts(txt):
+    """Every amount in a price text, in order: [(currency, value)]."""
+    out = []
+    for sym, num in AMOUNT.findall((txt or "").replace("\xa0", " ")):
+        v = parse_money(num)
+        if v is not None:
+            out.append((CURRENCY.get(sym.lower(), sym), v))
+    return out
+
+
+def card_price(card):
+    """The contract fields of one Booking card (T643).
+
+    A card with a deal prints the old price and the new one in the same block;
+    the last amount is what the traveller pays (from_or_discount = 1). "+€12
+    taxes and charges" is added to the price; "Includes taxes and charges"
+    keeps it; no tax line at all leaves tax_included 0."""
+    text = card.get("priceLines") or card.get("price") or ""
+    found = amounts(text)
+    if not found:
+        return None
+    currency, price = found[-1]
+    tax_text = card.get("tax") or ""
+    if INCLUDES_TAX.search(tax_text):
+        tax = 1
+    elif PLUS_TAX.search(tax_text):
+        extra = amounts(PLUS_TAX.search(tax_text).group(1))
+        if not extra or extra[0][0] != currency:
+            return None
+        price, tax = price + extra[0][1], 1
+    else:
+        tax = 0
+    return {"price": price, "currency": currency, "tax_included": tax,
+            "from_or_discount": 1 if len(found) > 1 else 0,
+            "price_text": " | ".join(x for x in (text.replace("\n", " | "), tax_text) if x),
+            "per_text": card.get("priceFor")}
+
+
+def per_ok(per_text, adults, nights=1):
+    """True when the card prices exactly the search: '1 night, 2 adults'."""
+    want = (f"{nights} night{'s' if nights > 1 else ''}, "
+            f"{adults} adult{'s' if adults > 1 else ''}")
+    return bool(per_text) and per_text.strip().lower().startswith(want)
 
 
 def prop_key(href):
@@ -125,15 +182,29 @@ async def looks_blocked(page, status):
     return ("awswaf" in html and CARD not in html) or "captcha" in html
 
 
-async def read_cards(page, want=25):
-    """Cards on the page; one scroll pass to load the lazy second batch."""
-    with contextlib.suppress(Exception):
-        await page.wait_for_selector(CARD, timeout=15000)
-    cards = await page.evaluate(EXTRACT_JS)
-    if len(cards) < want:
+# The results header when a search found nothing ("0 properties found",
+# "No properties found"): seen, the page is done, no 15 s wait for cards.
+EMPTY_JS = r"""
+() => /(^|\s)0 properties found|no properties found|no exact matches/i
+        .test((document.querySelector('h1') || {}).innerText || '')
+"""
+
+
+async def read_cards(page, timeout_ms=15000, scroll=False):
+    """The cards the page shows first (about 25). T643: no scroll pass by
+    default (with each source counted once per town, more cards from one
+    page do not move the price) and no 15 s wait on an empty search."""
+    waited = 0
+    while waited < timeout_ms:
+        with contextlib.suppress(Exception):
+            if await page.locator(CARD).count() or await page.evaluate(EMPTY_JS):
+                break
+        await page.wait_for_timeout(250)
+        waited += 250
+    await page.wait_for_timeout(500)       # let the first batch finish rendering
+    if scroll:
         for _ in range(6):
             with contextlib.suppress(Exception):
                 await page.evaluate("() => window.scrollBy(0, 1400)")
             await page.wait_for_timeout(500)
-        cards = await page.evaluate(EXTRACT_JS)
-    return cards
+    return await page.evaluate(EXTRACT_JS)

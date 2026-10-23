@@ -20,12 +20,14 @@ import asyncio
 import random
 import sys
 import time
+from collections import Counter
 from datetime import date, timedelta
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from common import (JOURNAL_SCRAPE, STATE, blocked_until, journal, load_destinations, now_iso,  # noqa: E402
-                    priority, read_json, set_block)
+from common import (JOURNAL_SCRAPE, STATE, blocked_until, insert_obs, journal,  # noqa: E402
+                    load_destinations, migrate_scrape, now_iso, priority, read_json,
+                    set_block)
 from booking.page import close_overlays, decline_cookies  # noqa: E402
 from hostelworld.page import CARDS_JS, city_url, parse_card  # noqa: E402
 from price_xotelo import probe_day  # noqa: E402
@@ -33,6 +35,16 @@ from scrape_booking import LEAN_MONTHS  # noqa: E402
 
 SOURCE = "hostelworld"
 CITY_MAP = STATE / "hostelworld_city.json"   # optional {dest_id: [city, country]}
+
+
+def hw_private_unit():
+    """'person' or 'room' from the B4 sample (scripts/hw_unit_sample.py writes
+    it into STATE/spike.json), else None."""
+    spike = read_json(STATE / "spike.json", {}) or {}
+    if spike.get("hw_private_unit") in ("person", "room"):
+        return spike["hw_private_unit"]
+    pp = spike.get("hw_private_per_person")
+    return None if pp is None else ("person" if pp else "room")
 
 
 def has_hostels(d, supply, anchors):
@@ -44,6 +56,9 @@ def has_hostels(d, supply, anchors):
 async def run(a):
     from playwright.async_api import async_playwright
     con = journal(JOURNAL_SCRAPE)
+    migrate_scrape(con)
+    private_unit = hw_private_unit()
+    rejects = Counter()
     if blocked_until(con, SOURCE):
         print("Hostelworld blocked us earlier; try again tomorrow")
         return
@@ -92,14 +107,25 @@ async def run(a):
                     await close_overlays(page)
                     cards = [parse_card(c) for c in await page.evaluate(CARDS_JS)]
                     for c in cards:
-                        for bed, price in (("dorm", c["dorm"]), ("private", c["private"])):
-                            if price and 3 <= price <= 1500:
-                                con.execute(
-                                    "insert or ignore into obs values (?,?,?,?,?,?,?,?,?,?,?,?)",
-                                    (SOURCE, d["id"], c["key"], "hostel", None, bed,
-                                     1, day.isoformat(), 1,
-                                     price, None, now_iso()))
-                                stored += 1
+                        for bed in ("dorm", "private"):
+                            price, cur = c[bed], c[f"{bed}_currency"]
+                            if not price or not 3 <= price <= 1500:
+                                continue
+                            if cur != "EUR":
+                                rejects[f"currency {cur}"] += 1
+                                continue
+                            # T643 contract. "From" prices; a list page does not
+                            # say whether city tax is in (tax_included NULL). The
+                            # private unit is the B4 sample's verdict, NULL until
+                            # there is one (build_stays then fills or rejects it).
+                            insert_obs(con, source=SOURCE, dest_id=d["id"], prop_key=c["key"],
+                                       kind="hostel", stars=None, bed=bed, adults=1,
+                                       chk_in=day.isoformat(), nights=1, price_eur=price,
+                                       ota=None, captured=now_iso(), currency=cur,
+                                       unit="bed" if bed == "dorm" else private_unit,
+                                       tax_included=None, from_or_discount=1,
+                                       price_text=c[f"{bed}_text"], per_text=None)
+                            stored += 1
                     con.execute("insert or replace into done values (?,?,?)",
                                 (SOURCE, task, now_iso()))
                     con.commit()
@@ -112,7 +138,7 @@ async def run(a):
             print("max hours reached; the next run resumes here")
         finally:
             await browser.close()
-    print(f"session: {pages} pages, {stored} prices")
+    print(f"session: {pages} pages, {stored} prices, rejected {dict(rejects)}")
 
 
 def main():

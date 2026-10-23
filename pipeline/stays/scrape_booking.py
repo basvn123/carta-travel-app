@@ -36,15 +36,16 @@ import asyncio
 import random
 import sys
 import time
+from collections import Counter
 from datetime import date, timedelta
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from common import (JOURNAL_SCRAPE, blocked_until, journal, load_destinations, now_iso,  # noqa: E402
-                    priority, read_json, set_block, STATE)
-from booking.page import (classify, close_overlays, decline_cookies,  # noqa: E402
-                          looks_blocked, parse_money, prop_key, read_cards,
-                          search_dropped)
+from common import (JOURNAL_SCRAPE, blocked_until, insert_obs, journal,  # noqa: E402
+                    load_destinations, migrate_scrape, now_iso, priority, read_json,
+                    set_block, STATE)
+from booking.page import (card_price, classify, close_overlays, decline_cookies,  # noqa: E402
+                          looks_blocked, per_ok, prop_key, read_cards, search_dropped)
 from booking.urls import search_url  # noqa: E402
 from price_xotelo import peak_days, probe_day  # noqa: E402
 
@@ -93,6 +94,7 @@ def search_text(d, overrides):
 
 
 async def visit(page, url):
+    """(cards, retried): cards None when Booking blocked the page."""
     for attempt in range(2):
         resp = await page.goto(url, wait_until="domcontentloaded", timeout=60000)
         await page.wait_for_timeout(1500)
@@ -101,35 +103,70 @@ async def visit(page, url):
         # Booking now and then drops the search on a page it serves a minute
         # later (T633): one plain retry before the night's run stops.
         if attempt or not search_dropped(page.url):
-            return None
+            return None, attempt > 0
         await page.wait_for_timeout(60000)
     await decline_cookies(page)
     await close_overlays(page)
-    return await read_cards(page)
+    return await read_cards(page), attempt > 0
 
 
-def store(con, dest_id, cards, chk_in, adults, forced_kind=None):
+def store(con, dest_id, cards, chk_in, adults, forced_kind=None, rejects=None):
+    """Store the cards that meet the contract (T643); count the rest by reason
+    in `rejects`. Only EUR, only the searched '1 night, N adults', price with
+    taxes (B3): a card without a tax line is kept with tax_included 0."""
     n = 0
+    rejects = rejects if rejects is not None else Counter()
     for c in cards:
-        price = parse_money(c.get("price"))
         key = prop_key(c.get("href"))
-        if not price or not key or not 5 <= price <= 5000:
+        cp = card_price(c)
+        if not key or not cp:
+            rejects["no price or link"] += 1
+            continue
+        if cp["currency"] != "EUR":
+            rejects[f"currency {cp['currency']}"] += 1
+            continue
+        if not per_ok(cp["per_text"], adults):
+            rejects["not 1 night for the searched adults"] += 1
+            continue
+        if not 5 <= cp["price"] <= 5000:
+            rejects["price outside 5 to 5000"] += 1
             continue
         kind, bed, stars = classify(c, forced_kind)
         if forced_kind == "hostel":
             # A hostel card's unit names the bed ("Bed in 6-Bed Mixed Dormitory")
             # or a room ("Double Room with Private Bathroom").
             bed = "dorm" if bed == "dorm" else "private"
-        con.execute("insert or ignore into obs values (?,?,?,?,?,?,?,?,?,?,?,?)",
-                    (SOURCE, dest_id, key, kind, stars, bed, adults, chk_in, 1,
-                     price, None, now_iso()))
+        insert_obs(con, source=SOURCE, dest_id=dest_id, prop_key=key, kind=kind,
+                   stars=stars, bed=bed, adults=adults, chk_in=chk_in, nights=1,
+                   price_eur=cp["price"], ota=None, captured=now_iso(),
+                   currency=cp["currency"], unit="bed" if bed == "dorm" else "room",
+                   tax_included=cp["tax_included"],
+                   from_or_discount=cp["from_or_discount"],
+                   price_text=cp["price_text"], per_text=cp["per_text"])
         n += 1
     return n
+
+
+def hostelworld_covers(con, d, supply, anchors):
+    """Hostelworld prices this town's hostels (its own plan: OSM hostels or a
+    Xotelo hostel anchor), unless its city page already came back empty.
+    Booking's hostel search is then skipped (T643): Hostelworld reads dorms
+    and privates in a fraction of the time."""
+    planned = (supply.get(d["id"]) or {}).get("hostel", 0) > 0 or \
+        any(x.get("kind") == "hostel" for x in anchors.get(d["id"], []))
+    if not planned:
+        return False
+    tried = con.execute("select count(*) from done where source='hostelworld' and task like ?",
+                        (f"%|{d['id']}|%",)).fetchone()[0]
+    found = con.execute("select count(*) from obs where source='hostelworld' and dest_id=?",
+                        (d["id"],)).fetchone()[0]
+    return not (tried and not found)
 
 
 async def run(a):
     from playwright.async_api import async_playwright
     con = journal(JOURNAL_SCRAPE)
+    migrate_scrape(con)
     until = blocked_until(con, SOURCE)
     if until:
         print(f"Booking blocked us earlier; resuming after {until}")
@@ -140,6 +177,7 @@ async def run(a):
         dests = [d for d in dests if d["id"] in only]
     overrides = read_json(DEST_MAP, {}) or {}
     supply = (read_json(STATE / "supply.json", {}) or {}).get("dests", {})
+    anchors = read_json(STATE / "xotelo_anchors.json", {}) or {}
     if not a.full:
         dests = [d for d in dests if bookable(d, supply)[0] or d["id"] in overrides]
     start = date.fromisoformat(a.run + "-01")
@@ -148,7 +186,9 @@ async def run(a):
     if months:
         probes = [(w, d) for w, d in probes if w == "month" and d.month in months]
     t0 = time.monotonic()
-    pages = stored = 0
+    pages = stored = retries = 0
+    page_s = 0.0                      # seconds spent loading and reading pages
+    rejects = Counter()
     async with async_playwright() as p:
         # A headed window is placed off-screen (T634): Booking serves it like any
         # browser, and the owner's screen stays free. --show puts it on screen.
@@ -165,7 +205,8 @@ async def run(a):
                 for i, (what, day) in enumerate(probes):
                     out = (day + timedelta(days=1)).isoformat()
                     jobs = [("all", None, 2, None)]
-                    if what == "month" and (hostels or a.full):
+                    if what == "month" and (hostels or a.full) and (
+                            a.full or not hostelworld_covers(con, d, supply, anchors)):
                         jobs.append(("hostel", "hostel", 1, None))
                     if i == 0:
                         jobs += [(f"class{s}", "hotel", 2, s) for s in (2, 3, 4, 5)]
@@ -184,8 +225,11 @@ async def run(a):
                             raise TimeoutError
                         url = search_url(ss, day.isoformat(), out, adults=adults,
                                          kind=kind, stars=stars)
-                        cards = await visit(page, url)
+                        tp = time.monotonic()
+                        cards, retried = await visit(page, url)
+                        page_s += time.monotonic() - tp
                         pages += 1
+                        retries += retried
                         if cards is None:
                             set_block(con, SOURCE, 20, f"challenge at {d['id']} {day}")
                             print(f"blocked at {d['id']} {day}: stopping, "
@@ -194,13 +238,17 @@ async def run(a):
                                      " (Booking refuses headless Chrome: run with --headed)"))
                             return
                         stored += store(con, d["id"], cards, day.isoformat(), adults,
-                                        forced_kind=kind if kind == "hostel" else None)
+                                        forced_kind=kind if kind == "hostel" else None,
+                                        rejects=rejects)
                         con.execute("insert or replace into done values (?,?,?)",
                                     (SOURCE, task, now_iso()))
                         con.commit()
                         await page.wait_for_timeout(int(random.uniform(3000, 6000)))
                 print(f"{d['id']}: {pages} pages, {stored} prices, "
-                      f"{(time.monotonic() - t0) / 3600:.1f} h", flush=True)
+                      f"{(time.monotonic() - t0) / 3600:.1f} h, "
+                      f"{page_s / max(pages, 1):.1f} s per page read, "
+                      f"{(time.monotonic() - t0) / max(pages, 1):.1f} s per page in all, "
+                      f"{retries} retried, rejected {dict(rejects)}", flush=True)
         except TimeoutError:
             print("max hours reached; tomorrow's run resumes here")
         finally:

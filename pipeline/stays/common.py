@@ -155,6 +155,43 @@ def journal(path=None):
     return con
 
 
+# ------------------------------------------------- observation contract --- #
+# Every stays source stores the same facts about a price (T643). The columns
+# below were added after the first scrape; a row without them is "legacy" and
+# build_stays fills them from the source's known behaviour (LEGACY in there).
+#   currency          ISO code the page showed (EUR is the only one priced)
+#   unit              bed | person | room | place: what one price buys
+#   tax_included      1 the price includes taxes and charges, 0 it does not,
+#                     NULL the source does not say (Xotelo, Hostelworld lists)
+#   from_or_discount  1 a "from" or discounted price, 0 a plain price
+#   price_text        the price as the page printed it (never published)
+#   per_text          the page's "1 night, 2 adults" line (Booking)
+CONTRACT_COLUMNS = [("currency", "text"), ("unit", "text"), ("tax_included", "integer"),
+                    ("from_or_discount", "integer"), ("price_text", "text"),
+                    ("per_text", "text")]
+OBS_FIELDS = ["source", "dest_id", "prop_key", "kind", "stars", "bed", "adults", "chk_in",
+              "nights", "price_eur", "ota", "captured"] + [c for c, _ in CONTRACT_COLUMNS]
+UNITS = ("bed", "person", "room", "place")
+
+
+def migrate_scrape(con):
+    """Add the contract columns to an existing journal (additive only). Only
+    the scrapers call this, when they start: a journal another process still
+    writes with the old 12-column inserts must not change under it."""
+    have = {r[1] for r in con.execute("pragma table_info(obs)")}
+    for col, typ in CONTRACT_COLUMNS:
+        if col not in have:
+            con.execute(f"alter table obs add column {col} {typ}")
+    con.commit()
+
+
+def insert_obs(con, **row):
+    """Insert one observation by column name (never by position)."""
+    cols = [c for c in OBS_FIELDS if c in row]
+    con.execute(f"insert or ignore into obs ({','.join(cols)}) values "
+                f"({','.join('?' * len(cols))})", [row[c] for c in cols])
+
+
 def mark_done(con, source, task):
     con.execute("insert or replace into done values (?,?,?)",
                 (source, task, now_iso()))
