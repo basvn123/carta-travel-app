@@ -1110,3 +1110,19 @@ Still stubs (no open source, or no licence that allows it), in
 `pipeline/field_stubs/`: lido prices, surface at the water entry, luxury
 audience, lake currents, lake thermal winds, bus services, local rules, visit
 duration, the lift price, the offline map in the PDF.
+
+## Wrong values fixed at the source (T642, added 2026-10-23)
+
+All additive. Existing keys keep their meaning.
+
+| Key | Shape | Source | Notes |
+|---|---|---|---|
+| `dest.airports[]` | `{iata, straight_km, road_km, ryanair, options[], transfer_min, transfer_mode, transfer_source}` | `pipeline/airport_access.py` (airport tier rows, GTFS) | up to 4 airports within 110 km, nearest first, the anchor always kept. `options[]` is `{mode, minutes, source}` with source `road_estimate` (mode `car`, haversine x 1.3 at 65 km/h) or `gtfs:<feed>+access_estimate` (mode `train`, median door to door over a Wednesday, 07:00 to 21:00 every 30 min). |
+| `dest.transfer.transfer_mode` / `transfer_mode_source` | `"car"` / `"road_estimate"` | `apply_airport_anchors.py` | the existing `transfer_minutes_one_way` is the road estimate, now labelled. |
+| `practical.getting_there.airports[]` | `{iata, km, transfer_min, transfer_mode, options[]}` | `build_dossier.py` | read by GettingThere and the Airport key fact. |
+| `dest.local_transport.car_basis` | `"category"` or `"transit_lines"` | `car_layer.py` | `transit_lines` when `practical.transit.*` decided the value. |
+| `dest.local_transport.car_useful_for` | string | `car_layer.py` | what a car still adds where it is optional (remote valleys, trailheads). |
+| `dest.local_transport.parking_hard` | bool | `cache/parking_osm.json` | fewer than 2 public lots within 1.5 km of the centre; absent without a parking harvest. |
+| `dest.crowding.monthly` | `{share[12], tier[12], geo, years[], source}` | Eurostat `tour_occ_nin2m` (NUTS 2, else country) | `share` is the month's part of the year's nights; `tier[i]` applies the annual tier cutoffs to density x 12 x share. |
+| trips `difficulty` | grade, else the old class raised to the distance/ascent ladder and SAC grade | `export_wire.wire_difficulty` | never below the floors `attributes.py` applies. |
+| lake `beaches[]` | `{id, n, km}` | `lake_outlines.py`, `cache/lake_outlines.json` | beaches within 400 m of the lake outline, any `inland` value; no outline falls back to the old circle plus `inland`. |

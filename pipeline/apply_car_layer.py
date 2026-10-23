@@ -15,6 +15,12 @@ distance is stored here.
 Usage:
     python apply_car_layer.py                      # patches the default targets
     python apply_car_layer.py path/to/app_data.json [more.json ...]
+    python apply_car_layer.py --transit cache/transit_lines.json   # T642: {dest_id: {train,bus,ferry}}
+
+T642: the car rule also reads the destination's rail/bus/ferry lines
+(practical.transit.train/bus/ferry from T641, a {dest_id: {...}} JSON via
+--transit or the default cache/transit_lines.json when it exists) and the OSM
+parking harvest (cache/parking_osm.json). Both absent: the category rule.
 """
 
 import json
@@ -31,7 +37,15 @@ DEFAULT_TARGETS = [
 ]
 
 
-def patch(path: Path) -> None:
+TRANSIT_DEFAULT = ROOT / "cache" / "transit_lines.json"
+PARKING = ROOT / "cache" / "parking_osm.json"
+
+
+def _load(p: Path):
+    return json.loads(p.read_text(encoding="utf-8")) if p.exists() else None
+
+
+def patch(path: Path, transit=None, parking=None) -> None:
     if not path.exists():
         print(f"  skip (missing): {path}")
         return
@@ -49,6 +63,8 @@ def patch(path: Path) -> None:
             dest.get("iso2"),
             dest.get("tier"),
             dest.get("categories") or [],
+            transit=(transit or {}).get(dest.get("id")),
+            parking=(parking or {}).get(dest.get("id")),
         )
         dest["local_transport"] = lt
         if lt["car_needed"]:
@@ -61,10 +77,19 @@ def patch(path: Path) -> None:
 
 
 def main() -> None:
-    targets = [Path(a) for a in sys.argv[1:]] or DEFAULT_TARGETS
-    print("Applying car layer (schema v8):")
+    args = sys.argv[1:]
+    transit_path = TRANSIT_DEFAULT
+    if "--transit" in args:
+        i = args.index("--transit")
+        transit_path = Path(args[i + 1])
+        del args[i:i + 2]
+    targets = [Path(a) for a in args] or DEFAULT_TARGETS
+    transit = _load(transit_path)
+    parking = (_load(PARKING) or {}).get("dests")
+    print(f"Applying car layer (schema v8): transit lines {'yes' if transit else 'absent'}, "
+          f"parking {len(parking) if parking else 'absent'}")
     for t in targets:
-        patch(t)
+        patch(t, transit, parking)
 
 
 if __name__ == "__main__":

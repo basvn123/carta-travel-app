@@ -56,12 +56,21 @@ ROOT = Path(__file__).resolve().parents[1]
 MASTER = ROOT / "app_data" / "app_data.json"
 NIGHTS_CACHE = ROOT / "cache" / "eurostat_nights_nuts3.json"
 GEO_CACHE = ROOT / "cache" / "nuts3_2021.geojson"
+MONTHLY_CACHE = ROOT / "cache" / "eurostat_nights_nuts2_monthly.json"
 
 UA = {"User-Agent": "CartaTravelApp/1.0 (portfolio project; data@carta-europetravel.com)"}
 NIGHTS_URL = (
     "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/"
     "tour_occ_nin3?format=JSON&lang=EN&c_resid=TOTAL&unit=NR&nace_r2=I551-I553"
 )
+# T642-l: monthly nights per NUTS 2 (and country), same filters. Eurostat reuse policy
+# (CC BY 4.0 equivalent): free reuse with attribution, commercial use allowed.
+MONTHLY_URL = (
+    "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/"
+    "tour_occ_nin2m?format=JSON&lang=EN&c_resid=TOTAL&unit=NR&nace_r2=I551-I553"
+    "&sinceTimePeriod=2022-01"
+)
+MONTHLY_MAX_YEARS = 3
 GEO_URL = (
     "https://gisco-services.ec.europa.eu/distribution/v2/nuts/geojson/"
     "NUTS_RG_10M_2021_4326_LEVL_3.geojson"
@@ -111,6 +120,52 @@ def load_nights(refresh):
     NIGHTS_CACHE.parent.mkdir(exist_ok=True)
     atomic_write_json(NIGHTS_CACHE, out, indent=None, ensure_ascii=False)
     print(f"  nights: {len(out)} NUTS 3 regions with data -> cache/{NIGHTS_CACHE.name}")
+    return out
+
+
+# --------------------------------------------------------------------------- #
+# 1b. Monthly seasonality per NUTS 2 (T642-l)                                  #
+# --------------------------------------------------------------------------- #
+def load_monthly(refresh):
+    """{geo: {"share": [12 floats summing to 1], "years": [...], "name": str}}.
+
+    The share of a year's nights that falls in each month, averaged over the
+    complete years (all 12 months present) of the last three. Regions with no
+    complete year are absent; the destination then keeps the annual tier only.
+    """
+    if MONTHLY_CACHE.exists() and not refresh:
+        return load(MONTHLY_CACHE)
+    print("Downloading Eurostat monthly nights per NUTS 2 (tour_occ_nin2m)...")
+    raw = json.loads(http_bytes(MONTHLY_URL).decode("utf-8"))
+    ids, sizes = raw["id"], raw["size"]
+    dim = {k: raw["dimension"][k]["category"] for k in ids}
+    strides, acc = {}, 1
+    for k, n in zip(reversed(ids), reversed(sizes)):
+        strides[k] = acc
+        acc *= n
+    values = raw["value"]
+    years = sorted(dim["time"]["index"], key=lambda y: dim["time"]["index"][y])
+    out = {}
+    for geo, gi in dim["geo"]["index"].items():
+        shares, used = [], []
+        for yr in reversed(years):
+            row = []
+            for m in range(1, 13):
+                flat = (gi * strides["geo"] + dim["time"]["index"][yr] * strides["time"]
+                        + dim["month"]["index"]["M%02d" % m] * strides["month"])
+                row.append(values.get(str(flat)))
+            if all(v is not None for v in row) and sum(row) > 0:
+                tot = float(sum(row))
+                shares.append([v / tot for v in row])
+                used.append(int(yr))
+            if len(used) >= MONTHLY_MAX_YEARS:
+                break
+        if shares:
+            avg = [sum(c) / len(shares) for c in zip(*shares)]
+            out[geo] = {"share": [round(x, 5) for x in avg], "years": sorted(used),
+                        "name": dim["geo"]["label"].get(geo)}
+    atomic_write_json(MONTHLY_CACHE, out, indent=None, ensure_ascii=False)
+    print(f"  monthly: {len(out)} regions with a complete year -> cache/{MONTHLY_CACHE.name}")
     return out
 
 
@@ -189,7 +244,11 @@ def assign_tiers(regions):
     return [float(math.expm1(c)) for c in cuts]      # cutoffs back in density units
 
 
-def match_destinations(dests, regions):
+def month_tier(density, cuts):
+    return 3 if density >= cuts[2] else 2 if density >= cuts[1] else 1 if density >= cuts[0] else 0
+
+
+def match_destinations(dests, regions, monthly=None, cuts=None):
     geoms = [r["geom"] for r in regions]
     tree = STRtree(geoms)                              # shapely 2.x: query returns indices
     matched = 0
@@ -224,6 +283,18 @@ def match_destinations(dests, regions):
             "year": region["year"],
             "source": "jrc_eurostat_nuts3",
         }
+        # T642-l: the same density spread over the year by the region's own
+        # monthly nights (NUTS 2, else the country). tier[i] is the annual
+        # tier's scale applied to month i alone (density x 12 x share).
+        m = (monthly or {}).get(region["code"][:4]) or (monthly or {}).get(region["code"][:2])
+        if m and cuts:
+            d["crowding"]["monthly"] = {
+                "share": m["share"],
+                "tier": [month_tier(region["density"] * 12 * x, cuts) for x in m["share"]],
+                "geo": region["code"][:4] if (monthly or {}).get(region["code"][:4]) else region["code"][:2],
+                "years": m["years"],
+                "source": "eurostat_tour_occ_nin2m",
+            }
         matched += 1
     return matched
 
@@ -241,7 +312,8 @@ def main():
 
     data = load(MASTER)
     dests = data["destinations"]
-    matched = match_destinations(dests, regions)
+    monthly = load_monthly(refresh)
+    matched = match_destinations(dests, regions, monthly, cuts)
     print(f"Matched: {matched} destinations carry a crowding block")
 
     by_tier = {}
