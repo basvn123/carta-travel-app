@@ -90,6 +90,15 @@ LEGACY = {"booking": {"currency": "EUR", "tax_included": 1, "from_or_discount": 
 HW_PRIVATE_UNIT = "person"
 # A per-person private price is for one of two sharing the room.
 HW_PRIVATE_GUESTS = 2
+# Rows that may not set a hotel level (T644): a price that says it is without
+# taxes, or a "from" or discounted price, would put the level under what a
+# traveller pays. Excluded, not adjusted: Booking already adds a "+€X taxes"
+# line at scrape time, so a remaining 0 has no known factor, and a deal says
+# nothing about the normal rate. NULL (the source does not say: Xotelo) stays
+# in. Moves to config/pricing.json in F3.
+HOTEL_LEVEL_EXCLUDES = {"tax_included": 0, "from_or_discount": 1}
+# Weekend and peak factors need this many same-property pairs.
+MIN_PAIRS = 2
 
 
 def size_bucket(pop):
@@ -214,23 +223,34 @@ def is_peak(day):
 
 
 def curve_and_level(obs):
-    """obs of one destination and bed type -> (level, rel[12] or None, n_props)."""
+    """obs of one destination and bed type -> (level, rel[12] or None, n_props).
+
+    One vote per source (T644): each source's median of its property medians,
+    then the median of those, so Booking's 25 to 50 cards a page no longer
+    outvote Xotelo's 4 anchors a town. The month curve is weighted the same
+    way: per source, then the median across sources. One source alone gives
+    its own median, as before."""
     base = [o for o in obs if not is_weekend_probe(o["day"]) and not is_peak(o["day"])]
-    by_prop = defaultdict(list)
+    by_src = defaultdict(lambda: defaultdict(list))
     for o in base:
-        by_prop[o["key"]].append(o)
-    if not by_prop:
+        by_src[o["src"]][o["key"]].append(o)
+    if not by_src:
         return None, [None] * 12, 0
-    levels, rel = [], [[] for _ in range(12)]
-    for ps in by_prop.values():
-        med = median([p["price"] for p in ps])
-        ps = [p for p in ps if med / OUTLIER <= p["price"] <= med * OUTLIER]
-        med = median([p["price"] for p in ps])
-        levels.append(med)
-        for p in ps:
-            rel[p["day"].month - 1].append(p["price"] / med)
-    curve = [median(r) if r else None for r in rel]
-    return median(levels), curve, len(by_prop)
+    src_levels, src_curves, n = [], [], 0
+    for by_prop in by_src.values():
+        levels, rel = [], [[] for _ in range(12)]
+        for ps in by_prop.values():
+            med = median([p["price"] for p in ps])
+            ps = [p for p in ps if med / OUTLIER <= p["price"] <= med * OUTLIER]
+            med = median([p["price"] for p in ps])
+            levels.append(med)
+            for p in ps:
+                rel[p["day"].month - 1].append(p["price"] / med)
+        src_levels.append(median(levels))
+        src_curves.append([median(r) if r else None for r in rel])
+        n += len(by_prop)
+    curve = [median([c[i] for c in src_curves]) for i in range(12)]
+    return median(src_levels), curve, n
 
 
 def normalise(curve):
@@ -286,6 +306,9 @@ def build(dests, obs, iab, supply, euro):
     by_dest = defaultdict(lambda: defaultdict(list))
     for o in obs:
         k = bed_key(o)
+        if k and (k.startswith("hotel") or k == "single") and any(
+                o.get(f) == v for f, v in HOTEL_LEVEL_EXCLUDES.items()):
+            continue
         if k:
             by_dest[o["dest"]][k].append(o)
     nights = euro.get("nights") or {}
@@ -308,11 +331,13 @@ def build(dests, obs, iab, supply, euro):
         _, pc, _ = curve_and_level(pooled)
         m["_pooled"] = normalise(pc)
         m["_weekend"] = pair_ratio(pooled, is_weekend_probe)
-        m["_peaks"] = {name: pair_ratio(pooled, lambda day, mm=mm, dd=dd:
-                                        (day.month, day.day) == (mm, dd))[0]
-                       for name, (mm, dd) in PEAKS.items()}
-        m["_peaks"]["easter"] = pair_ratio(
-            pooled, lambda day: day.weekday() == 5 and day.month in (3, 4))[0]
+        # A peak factor needs MIN_PAIRS pairs, like the weekend factor (T644):
+        # one property's 14 August used to set the town's.
+        peaks = {name: pair_ratio(pooled, lambda day, mm=mm, dd=dd:
+                                  (day.month, day.day) == (mm, dd))
+                 for name, (mm, dd) in PEAKS.items()}
+        peaks["easter"] = pair_ratio(pooled, lambda day: day.weekday() == 5 and day.month in (3, 4))
+        m["_peaks"] = {name: r for name, (r, n) in peaks.items() if n >= MIN_PAIRS}
         meas[d["id"]] = m
 
     # Country aggregates: curves, star ratios, Airbnb ratios, levels by size.
@@ -496,7 +521,7 @@ def build(dests, obs, iab, supply, euro):
             rec["month"]["bnb_room"] = [round(room * c) for c in apt_curve]
 
         wk, wn = m["_weekend"]
-        rec["weekend"] = wk if wk and wn >= 2 else None
+        rec["weekend"] = wk if wk and wn >= MIN_PAIRS else None
         rec["peak"] = {k: v for k, v in m["_peaks"].items() if v}
         rec["season_q"] = "".join("m" if f else "f" for f in flags_any)
         sup = supply.get(d["id"]) or {}

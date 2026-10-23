@@ -133,6 +133,8 @@ def _seasonal_obs(dest="PMI"):
     fri = date(2027, 2, 19)
     obs.append(_obs(dest, "h0", "hotel", "room", fri, 80 * _season(2) * 1.2, 3))
     obs.append(_obs(dest, "h0", "hotel", "room", date(2027, 8, 14), 80 * _season(8) * 1.3, 3))
+    # A peak factor needs two pairs (T644).
+    obs.append(_obs(dest, "h1", "hotel", "room", date(2027, 8, 14), 90 * _season(8) * 1.3, 3))
     return obs
 
 
