@@ -568,8 +568,7 @@
 .wpicked-i,
 .wpicked-date,
 .tlegs .tleg-date,
-.trip-topcard-sub,
-.itin .fare-prov-est { font-size: var(--text-caption); }
+.trip-topcard-sub { font-size: var(--text-caption); }
 .trip-wizard-modal .wiz-step.now .wiz-step-mark {
   background: var(--select-bg);
   color: var(--select-ink);
@@ -633,17 +632,6 @@
 .plan-input .fstepper { gap: var(--space-3); }
 .plan-input-panel { flex-basis: 100%; padding-bottom: var(--space-2); }
 .plan-input .plan-input-btn.btn { text-align: right; white-space: normal; }
-.party-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  min-height: 64px;
-  padding: var(--space-2) var(--space-4);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-}
 .party.is-compact .party-label b { font-size: var(--text-body); }
 .party-rule { margin: 0; font-size: var(--text-caption); color: var(--text-2); line-height: var(--leading-body); }
 .wwho-party { display: block; }
@@ -1003,7 +991,6 @@
   .wrev-main > .wrev-stays,
   .wrev-main > .tsum { grid-column: 1 / -1; }
 }
-.party.is-compact .party-row { min-height: 0; padding: var(--space-2) 0; border: 0; border-top: 1px solid var(--border-soft); border-radius: 0; background: none; }
 .party-label { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 @media (min-width: 900px) {
   .wwho-party .party-rule { grid-column: 1 / -1; }

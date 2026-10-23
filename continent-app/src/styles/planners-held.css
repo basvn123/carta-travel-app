@@ -2119,3 +2119,33 @@
 .dayb-ticks > span:first-child { transform: none; }
 .daymap-sheet .fsheet-body { position: relative; flex: 1 1 auto; padding: 0; overflow: hidden; }
 .citypick-ic.is-num { font-variant-numeric: tabular-nums; font-size: var(--text-caption); font-weight: 700; line-height: 1; min-width: 10px; text-align: center; }
+.trip-wizard-modal .wstay-route-i {
+  width: 28px;
+  height: 28px;
+  margin-top: var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  color: var(--text);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.day-guide-rec.picked { border-color: var(--good-ink); background: rgba(22, 121, 79, 0.05); }
+.itin .fare-prov-est { font-size: var(--text-caption); }
+/* T619: the planners' party rows only. Held unscoped, this card row would
+   also box the settings line's people rows (77-settings-v2.css). */
+.party > .party-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: 64px;
+  padding: var(--space-2) var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+.party.is-compact .party-row { min-height: 0; padding: var(--space-2) 0; border: 0; border-top: 1px solid var(--border-soft); border-radius: 0; background: none; }

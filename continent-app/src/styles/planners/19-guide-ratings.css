@@ -20,7 +20,6 @@
   .guide-stay-wrap { flex-direction: column; }
 }
 .day-guide-moods { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
-.day-guide-rec.picked { border-color: var(--good-ink); background: rgba(22, 121, 79, 0.05); }
 @media (max-width: 700px) {
   .day-guide-moods { grid-template-columns: 1fr; }
 }

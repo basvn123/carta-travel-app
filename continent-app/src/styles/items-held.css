@@ -27,3 +27,5 @@
   letter-spacing: 0;
   color: var(--text);
 }
+.cycle-surface { white-space: nowrap; }
+.cycle-bike { white-space: nowrap; }

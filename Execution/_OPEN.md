@@ -2025,3 +2025,4 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T610-c | T610 | On a phone the story clip shows the app's own bottom nav just above the real one; crop it in record_home_clips.mjs | next task | open |  |
 | T610-d | T610 | A 3 px sideways document scroll at a 502 px window (not at 360, 390 or 1440); find the element | next task | open |  |
 | T610-e | T610 | The site footer's left edge sits 21 px right of the home page's and its column labels are h2s (SiteFooter, T594) | next task | open |  |
+| T619-a | T619 | `npm run build:pages` (the deploy build) does not run `css-routes --check`, so a deploy can ship with route sheet problems (T618 did); make scripts/build-pages.mjs fail on a problem | next task | open |  |

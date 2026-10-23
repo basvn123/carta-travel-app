@@ -12,7 +12,7 @@
   padding: 18px 20px 64px;
 }
 .cycle-map-pin.end { background: var(--ink); }
-.cycle-surface, .cycle-safety, .cycle-free, .cycle-bike, .cycle-pace, .cycle-season { white-space: nowrap; }
+.cycle-safety, .cycle-free, .cycle-pace, .cycle-season { white-space: nowrap; }
 .cycle-stage-line { font-size: 15px; color: var(--ink); }
 .cycle-stage-meta, .cycle-stage-sleep, .cycle-stage-bail {
   font-family: var(--mono);

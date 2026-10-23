@@ -309,20 +309,6 @@
 
 /* Stay: the picked cities, numbered in route order. */
 .trip-wizard-modal .wstay-route { margin: 0; padding: 0; list-style: none; }
-.trip-wizard-modal .wstay-route-i {
-  width: 28px;
-  height: 28px;
-  margin-top: var(--space-3);
-  border-radius: var(--radius-pill);
-  background: var(--surface-sunken);
-  color: var(--text);
-  font-size: var(--text-caption);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
 /* With the map in the right column the Stay briefing takes the step's width. */
 .trip-wizard-modal .guide-stay-wrap.is-aside { display: block; }
