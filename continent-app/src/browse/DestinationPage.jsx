@@ -639,21 +639,12 @@ export function DestinationPage({
             )}
             {/* What this place is: two or three sentences from our own
                 facts, one opening line after Wikivoyage. Never the article.
-                The intro is written in English; in another language the
-                guide link stands alone rather than an English paragraph
-                (T446). */}
-            {settled && shortIntro && lang !== 'en' && guideUrl && (
-              <p className="destp-short">
-                <a className="destp-short-src" href={guideUrl} target="_blank" rel="noreferrer">{t('detail.readGuide')}</a>
-              </p>
-            )}
+                The intro is written in English; in another language the head
+                shows nothing rather than an English paragraph (T446). The
+                guide link lives in the sources line under the tabs, so the
+                head never sends a traveller away before the planner. */}
             {settled && shortIntro && lang === 'en' && (
-              <p className="destp-short">
-                {shortIntro}
-                {guideUrl && (
-                  <> <a className="destp-short-src" href={guideUrl} target="_blank" rel="noreferrer">{t('detail.readGuide')}</a></>
-                )}
-              </p>
+              <p className="destp-short">{shortIntro}</p>
             )}
           </div>
 
@@ -682,11 +673,15 @@ export function DestinationPage({
               </div>
 
               {/* The sources the page owes, in one line before the utility row
-                  (T446): the route data's licence and the live forecast. */}
-              {(hasRoutes || weatherOn) && (
+                  (T446): the route data's licence, the live forecast and the
+                  Wikivoyage guide the intro line comes from. */}
+              {(hasRoutes || weatherOn || guideUrl) && (
                 <div className="destp-sources">
                   <p>
                     {[hasRoutes && t('dest.routesCredit'), weatherOn && t('explore.weatherCredit', { time: fmtUpdated(forecast[0]?.updated) })].filter(Boolean).join(' ')}
+                    {guideUrl && (
+                      <>{(hasRoutes || weatherOn) && ' '}<a className="destp-short-src" href={guideUrl} target="_blank" rel="noreferrer">{t('detail.readGuide')}</a></>
+                    )}
                   </p>
                   {hasRoutes && <CreditFold t={t} licenceKeys={['credit.licence.routes']} />}
                 </div>

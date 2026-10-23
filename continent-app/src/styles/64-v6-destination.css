@@ -136,6 +136,8 @@
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+/* In the sources line under the tabs the guide link takes the caption size. */
+.destp-v3 .destp-sources .destp-short-src { font-size: inherit; }
 @media (hover: hover) {
   .destp-v3 .destp-short-src:hover { color: var(--action-hover); }
 }
