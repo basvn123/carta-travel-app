@@ -2042,3 +2042,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T622-d | T622 | Places' focused view tool row still scrolls sideways on a phone | next task | open |  |
 | T622-e | T622 | i18n key where.placeholder is unused after T622; remove it in all six files | next task | open |  |
 | T623-a | T623 | src/browse/ExploreMap.jsx:901 fails lint (react-hooks/exhaustive-deps: collectKpins missing from a useCallback), from T600; fix it in a task that may touch ExploreMap | next task | open |  |
+| T624-a | T624 | Booking scrapes at about 57 s per page headed, not the ~7 s T539 assumed: the lean plan is ~520 h (~115 nights of 4.5 h), not 64 h; profile where the page time goes before re-cutting the plan or the nightly hours | next task | open |  |
+| T624-b | T624 | Hostelworld parse_card returned the same figure for dorm and private on a live Munich card (15.53/15.53), so private-room medians may be dorm prices; check live card text and fix hostelworld/page.py | next task | open |  |
+| T624-c | T624 | Both stay scrapers end the night's session on a network error (ERR_INTERNET_DISCONNECTED, 2026-10-23); add a wait-and-retry per page | next task | open |  |
+| T624-d | T624 | No rclone R2 remote on the laptop, so stays_scrape.bat cannot upload journal_scrape.sqlite to carta-stays-state; set the five RCLONE_CONFIG_R2_* variables (T045) or run rclone config | user | open |  |
