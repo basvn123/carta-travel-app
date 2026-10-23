@@ -1055,6 +1055,7 @@ is unchanged) and the app shows "Not available yet" where a key is absent.
 |---|---|---|---|
 | `do[].kind` | string, the normalized POI kind (`Viewpoint`, `Cave`, ...) | `derive_do.facts_of`, from the POI shard `kind` | code written, awaiting dossier rebuild |
 | `do[].town` | string, nearest member town within 8 km, or the destination name when it has no members | `derive_do.town_of` | code written, awaiting dossier rebuild |
+| `around.trails[]` / `around.cycling[]` / `nearby.*[]` `ascent_m`, `descent_m`, `sac_scale` (trails), `duration_min` (cycling riding time, from the wire's `dur.min`) | number (m), number (m), OSM word (`mountain_hiking`, ...), integer minutes | copied from the country wires by `build_dossier.load_layer_index` (T640, T630-h); a key is omitted when the wire row has none, `sac_scale` appears once `export_wire.py` has run with the T630 way tags | code written, awaiting dossier rebuild |
 | `do[].fee` | `"yes"` or `"no"` | OSM `fee` tag, not in the POI shards today | stub `harvest_do_fee` |
 | `do[].fee_eur` | number | OSM `charge`, Wikidata P2555 | stub `harvest_do_fee` |
 | `do[].duration_min` | integer minutes | Wikivoyage / operator pages | stub `harvest_do_duration` |

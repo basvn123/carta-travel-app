@@ -812,7 +812,8 @@ def join_nearby(dest, layer_index):
                 "lat": round(f["lat"], 5), "lon": round(f["lon"], 5),
             }
             for k in ("tier", "score", "thumb", "elev_m", "km_len",
-                      "duration_min", "difficulty", "water"):
+                      "duration_min", "difficulty", "water", "ascent_m",
+                      "descent_m", "sac_scale"):
                 if f.get(k) is not None:
                     entry[k] = f[k]
             picked.append(entry)
@@ -867,7 +868,7 @@ def compose_around(dest, layer_index):
             }
             for k in ("tier", "score", "thumb", "elev_m", "km_len",
                       "duration_min", "difficulty", "water", "ascent_m",
-                      "listed"):
+                      "descent_m", "sac_scale", "listed"):
                 if f.get(k) is not None:
                     entry[k] = f[k]
             picked.append(entry)
@@ -1387,6 +1388,10 @@ def load_layer_index():
                     "km_len": round((t.get("distance_m") or 0) / 1000, 1) or None,
                     "duration_min": t.get("duration_min"),
                     "difficulty": t.get("difficulty"),
+                    # T640 (T630-h): the Around strip's four slots.
+                    "ascent_m": t.get("ascent_m"),
+                    "descent_m": t.get("descent_m"),
+                    "sac_scale": t.get("sac_scale"),
                 })
             for t in data.get("listed", []) or []:
                 bbox = t.get("bbox") or []
@@ -1400,6 +1405,9 @@ def load_layer_index():
                     "km_len": round((t.get("distance_m") or 0) / 1000, 1) or None,
                     "duration_min": t.get("duration_min"),
                     "difficulty": t.get("difficulty"),
+                    "ascent_m": t.get("ascent_m"),
+                    "descent_m": t.get("descent_m"),
+                    "sac_scale": t.get("sac_scale"),
                 })
             add("trails", fn[:2], rows)
 
@@ -1435,6 +1443,8 @@ def load_layer_index():
                         "thumb": direct_commons_url(img, 500) if img else None,
                         "km_len": t.get("km"),
                         "ascent_m": t.get("asc"),
+                        # T640 (T630-h): riding time, the wire's dur.min.
+                        "duration_min": (t.get("dur") or {}).get("min"),
                     }
                     if listed:
                         row["listed"] = True
