@@ -1034,6 +1034,33 @@ old scripts are in `pipeline/archive/`.
   quartile 0 to 3 or -1, `typ` the typical night in EUR; written by
   `pipeline/stays/live_keys.py`). The app keeps the newer of the baked copy
   (`public/stays/v1/`) and the monthly refresh (`meta.stays.url`).
+- **Observation contract (T643):** every journal row says `currency`, `unit`
+  (`bed`, `person`, `room` or `place`), `tax_included`, `from_or_discount`, and
+  keeps the page's `price_text` and `per_text`. `build_stays.py` rejects a row
+  with an unknown unit or a currency other than EUR and counts rejections per
+  source; rows from before the contract take their source's known behaviour
+  (`LEGACY`) and count as legacy. Hostelworld's private prices are per person
+  (B4 sample, `scripts/hw_unit_sample.py`) and are doubled into a room.
+- **One publish path (T645, T646):** `python run_pipeline.py --only stays`.
+  `build_stays.py --gate` runs the gate (contract rejections over 5% per source,
+  a country x bed tier median moving over 25% or a destination's bed tier over
+  40% against the last published copy unless listed in
+  `pipeline/stays/gate_explain.json`, a lost country or measured tier, minimum
+  samples, the six test destinations, SerpApi references) and writes
+  `cache/stays/gate_report.md`. The manifest carries the stamp:
+  `gate.passed`, `gate.hash` (sha256 of the country files) and `build` (its
+  first 12 characters), plus `levels` and `cc_cov` per country for the next
+  comparison. `apply_stays.py` refuses a build without a passed stamp or whose
+  files changed after it; `--override "reason"` is the only way round, and the
+  reason lands in `meta.stays.override`. Food prices gate inside
+  `apply_food_prices.py` (a country basket moving over 25%, key `food:CC` in the
+  same explain file) before anything is written.
+- **Versioned fetch (T646):** the app asks for each country file as
+  `stays/v1/{cc}.json?b={built}` (the baked copy with `meta.stays.built`, the
+  live copy with its manifest's `built`), so a fixed build reaches browsers at
+  once despite the hour of `max-age` and the day of `stale-while-revalidate`;
+  the live manifest is fetched with `cache: 'no-cache'` and network first in
+  the service worker.
 - **Live (T540):** `/api/stays?k=keys&n=nights&a=adults` (a Pages Function)
   answers Xotelo's median rate per property and night; `liveStays.js` turns it
   into a factor and `bedPrice()` moves a dated hotel or private-room stay by

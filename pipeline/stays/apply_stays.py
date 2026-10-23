@@ -33,6 +33,7 @@ PUBLIC = ROOT / "continent-app" / "public" / "stays" / "v1"
 # The monthly Actions refresh writes here (r2:carta/data/stays-live/v1/); a
 # deploy re-uploads public/stays/ under data/stays/, so the two never collide.
 LIVE_URL = "https://data.carta-europetravel.com/data/stays-live/v1/"
+OVERRIDE = ""        # the reason given with --override, kept in meta.stays
 
 # Airbnb pricing on top of the listed nightly price (kept from schema v17's
 # accommodation_model, which measured them on Inside Airbnb and Airbnb's
@@ -70,20 +71,47 @@ def patch(path, records, manifest, iab):
     meta.pop("accommodation_validation", None)
     tiers = sorted({TIER_OF[k] for r in records.values() for k in (r.get("beds") or {})
                     if k in TIER_OF}, key=list(TIER_OF.values()).index)
-    meta["stays"] = {"v": 1, "built": manifest.get("built"), "url": LIVE_URL,
-                     "fees": FEES, "tiers": tiers}
+    meta["stays"] = {"v": 1, "built": manifest.get("built"), "build": manifest.get("build"),
+                     "url": LIVE_URL, "fees": FEES, "tiers": tiers}
+    if OVERRIDE:
+        meta["stays"]["override"] = OVERRIDE
     meta["schema_version"] = max(meta.get("schema_version", 17), 18)
     write_json(path, data, compact=path == SERVED)
     return n
 
 
+def stamp_problem(manifest, folder):
+    """Why a build may not be published, or None (T646)."""
+    from build_stays import files_hash
+    gate = (manifest or {}).get("gate") or {}
+    if not gate.get("passed"):
+        return "the gate did not pass (see cache/stays/gate_report.md)"
+    if not gate.get("hash"):
+        return "no gate stamp: built before T646"
+    if files_hash(folder) != gate["hash"]:
+        return "the files changed after the gate stamped them"
+    return None
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--override", default="", help="publish a build the gate did not pass; give the reason")
     a = ap.parse_args()
     manifest = read_json(V / "manifest.json")
     if not manifest:
         sys.exit("no stays build: run build_stays.py first")
+    # T646: one publish path. Only a build whose gate passed, with the files
+    # that gate stamped, is published; --override is the documented way round
+    # it (the reason is printed and kept in meta.stays.override).
+    problem = stamp_problem(manifest, V)
+    if problem and not a.override:
+        sys.exit(f"apply_stays refused: {problem}. Run build_stays.py --gate "
+                 "(run_pipeline.py --only stays), or --override \"reason\".")
+    if problem:
+        print(f"OVERRIDE ({problem}): {a.override}")
+        global OVERRIDE
+        OVERRIDE = a.override
     records = {}
     for f in V.glob("*.json"):
         if f.name != "manifest.json":

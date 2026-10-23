@@ -5,6 +5,8 @@
 #
 # The task fires every night at 01:00; scripts\stays_scrape.bat exits at once
 # outside March and September, so it costs nothing the rest of the year.
+# Booking and Hostelworld run side by side for up to 6 hours, then the safe
+# journal upload (T646); the 7-hour limit below covers both.
 # Remove it with:  Unregister-ScheduledTask -TaskName CartaStayScrape -Confirm:$false
 
 $bat = Join-Path (Resolve-Path "$PSScriptRoot\..") "scripts\stays_scrape.bat"

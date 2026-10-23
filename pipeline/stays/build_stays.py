@@ -38,6 +38,7 @@ Usage:  python pipeline/stays/build_stays.py [--gate]
 """
 
 import argparse
+import hashlib
 import os
 import sys
 from collections import defaultdict
@@ -749,6 +750,16 @@ def gates(records, iso_of, stats=None, prev=None, prev_manifest=None, calib=None
     return fails, notes, rep
 
 
+def files_hash(folder):
+    """sha256 over the country files of a build, in name order (not the manifest)."""
+    h = hashlib.sha256()
+    for f in sorted(Path(folder).glob("*.json")):
+        if f.name != "manifest.json":
+            h.update(f.name.encode())
+            h.update(f.read_bytes())
+    return h.hexdigest()
+
+
 def write_report(fails, notes, rep, where):
     lines = [f"# Stays gate report, {now_iso()}", "",
              f"**{'PASSED' if not fails else 'FAILED'}**: {len(fails)} blocking, "
@@ -822,6 +833,12 @@ def main():
     for cc, recs in by_cc.items():
         write_json(V / f"{cc}.json", {"v": 1, "cc": cc, "built": manifest["built"],
                                       "dests": recs}, compact=True)
+    # The gate stamp (T646): apply_stays publishes only files whose hash is the
+    # one a passed gate stamped here, so a build run without --gate, or files
+    # changed after the build, never reach the app.
+    h = files_hash(V)
+    manifest["build"] = h[:12]
+    manifest["gate"]["hash"] = h
     write_json(V / "manifest.json", manifest)
     print(f"wrote {len(by_cc)} country files to {V}")
 

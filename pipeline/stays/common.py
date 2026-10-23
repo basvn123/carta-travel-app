@@ -181,7 +181,13 @@ def migrate_scrape(con):
     have = {r[1] for r in con.execute("pragma table_info(obs)")}
     for col, typ in CONTRACT_COLUMNS:
         if col not in have:
-            con.execute(f"alter table obs add column {col} {typ}")
+            try:
+                con.execute(f"alter table obs add column {col} {typ}")
+            except sqlite3.OperationalError as e:
+                # Booking and Hostelworld start together (T646): the other
+                # scraper may have added the column a moment ago.
+                if "duplicate column" not in str(e):
+                    raise
     con.commit()
 
 
