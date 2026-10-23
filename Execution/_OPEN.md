@@ -2034,3 +2034,5 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T621-b | T621 | On a phone the hero field's placeholder is cut beside "Ask Carta"; add a shorter phone placeholder in the six languages | next task | open |  |
 | T621-c | T621 | The Ask Carta chat's title shows a square focus ring when the chat opens from the keyboard; give programmatic focus a designed ring or none | next task | open |  |
 | T621-d | T621 | The home page hides its scrollbar so the film reaches the window's edge (owner's call); recorded so no later task restores the column without asking | user | open |  |
+| T617-a | T617 | tests/test_data_licences.py fails 3 tests on main: pipeline/stays/calibrate_live.py is a harvester with no RUNS entry and no licence row, so validate() and the rendered ledger disagree | next task | open |  |
+| T617-b | T617 | Merge p3-ingestion-run-shadow into main and push, then rerun verify_tasks.sh ingestion and ship on the box (stage 7.6) | user | closed by T623 | before stage 7.7 |

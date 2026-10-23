@@ -43,7 +43,8 @@ def test_roster_is_not_vacuous(live_registry):
 
 def test_every_collector_carries_its_governance(live_registry):
     for name, cls in live_registry.items():
-        assert cls.run is registry.RUNS[name]
+        assert cls.schedule is registry.RUNS[name]
+        assert callable(cls.run), name
         assert cls.sources, name
         assert all(name in s.collectors for s in cls.sources)
 

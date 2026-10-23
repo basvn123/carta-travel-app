@@ -217,7 +217,9 @@ def register(cls):
         raise MissingLicenceRow(
             f"collector {cls.name!r} ({cls.__module__}) has no licence governance: "
             f"add {' and '.join(missing)} in src/ingestion/core/registry.py")
-    cls.run = RUNS[cls.name]
+    # Not cls.run: that name is Collector.run(), and shadowing it with this
+    # record made every collector uncallable from run_all (T617).
+    cls.schedule = RUNS[cls.name]
     cls.sources = sources_for(name=cls.name)
     REGISTRY[cls.name] = cls
     return cls
