@@ -748,6 +748,32 @@ cabin, 20 kg checked, `src/lib/flights/bagFees.js`) are Carta's estimates and
 carry the tilde and "est.". The airport transfers stay ground costs Carta
 prices.
 
+## Explore completeness, routes and peaks (T630, added 2026-10-23)
+
+Additive only: no key renamed or removed. Every key below is absent, not null,
+when the pass has nothing to say, and the app shows the shared placeholder
+(`components/NotYet.jsx`) for an absent one. "Awaiting run" means the code is
+written and a pipeline run has not filled the wire yet.
+
+| Layer | Key | Where | Source | State |
+|---|---|---|---|---|
+| trails | `sac_scale` | country row `trips[]` | relation tag, else worst member way (`grade_parts.sac_worst`), `export_wire.sac_scale_of` | awaiting run |
+| trails | `technique` `{worst, share}` | detail | OSM `hiking_technique` on member ways, worst wins, `way_tags.py` | awaiting run |
+| trails | `exposure` `{worst, share}` | detail | OSM `hiking_exposure`, same pattern | awaiting run |
+| trails | `sac_segments` `[[from_m, to_m, "T2"]]` | detail | member ways with `sac_scale`, run length coded, positions approximate (member order) | awaiting run |
+| trails | `transit` `{rail, bus, ferry}` | country row | stub, `pipeline/field_stubs/t630_routes.py` | stub |
+| trails | `duration_min` | row and detail | DIN 33466 (`elevation.py:duration_min_din33466`: 4 km/h, 300 m/h up, 500 m/h down, the smaller of flat and vertical time counted half), with `elevation.duration_rule` | live |
+| cycling | `rt` `loop` / `out_back` / `point` | country card and detail | `export_cycling.route_shape`, from the line (roundtrip=yes stays `loop`) | awaiting run |
+| cycling | `dur.min`, `dur.rule` = `flat18_climb10` | card and detail | house rule, 18 km/h plus 10 min per 100 m of climb | live |
+| mountains | `slopeDeg` | full row | `terrain.easiest_slope`, steepest stretch of the gentlest side; the app warns over 30 | awaiting run |
+| mountains | `huts[]` `{name, kind, m, beds, open, phone, web, email, ele}` | full row | OSM tourism=alpine_hut / wilderness_hut near the summit, `enrich_peaks.hut_record` | awaiting run |
+| mountains | `rangeRank` `{n, h, p}` | full and stub rows | rank by height and prominence within `range`, across countries, `peak_index.range_ranks` | awaiting run |
+| mountains | `lift.price`, `lift.hours` | full row | stub | stub |
+
+Pace multipliers, break time, average grade and the SAC T-grade mapping are
+applied in the app (`src/lib/routeEffort.js`) on the stored base time. The app
+never recomputes DIN 33466.
+
 ## Served data split (added 2026-07-12)
 
 The master `app_data/app_data.json` is unchanged, but `continent-app/scripts/sync-data.mjs`
@@ -794,6 +820,97 @@ opens: `dest` for dest, highlight and sight; otherwise `trail`, `journey`,
 `beach`, `lake`, `peak` or `country`. `destId` is the destination a hit
 belongs to or is nearest (same country, 25 km; 40 km for a journey), or
 null.
+
+## Explore completeness, climate, lakes and beaches (T631, added 2026-10-23)
+
+Additive keys only: nothing is renamed or removed, `schema_version` is not
+bumped, and the CI contract table below is unchanged (only top-level
+`app_data` keys are pinned there). Every key below is optional. The app reads
+each with absence tolerated and shows the shared placeholder
+(`components/NotYet.jsx`) where it is missing. All of the pipeline code is
+written and compiled but NOT run: the "after" coverage of these keys is 0%
+until the named step runs.
+
+### Destination climate (`dest.climate`)
+
+The existing tuple `m` (twelve `[t_high, t_low, precip_mm, comfort]`) and
+`best` are untouched. Three parallel keys sit beside them.
+
+| Master key (`app_data/app_data.json`) | Wire key (compact, `sync-data.mjs`) | Meaning | Written by |
+|---|---|---|---|
+| `climate.rain_days` | `climate.rd` | 12 numbers: mean days per calendar month with at least 1 mm (NASA POWER daily PRECTOTCORR, 2001 to 2020) | `harvest_climate_power.py --daily`, then `apply_climate.py` |
+| `climate.wind_ms` | `climate.wind` | 12 numbers: mean 10 m wind in m/s (WS10M); the app shows km/h | same |
+| `climate.elev_m` | `climate.elev` | ground elevation in metres the temperatures are lapse corrected to (Copernicus DEM via Open-Meteo, `cache/climate_elevations.json`, 3,868 of 3,868) | `apply_climate.py` |
+
+`harvest_climate_power.py --daily` keeps only the twelve monthly aggregates
+per destination in `cache/climate_power_daily.json` (resumable) and folds them
+into `cache/climate.json`. Run order: `harvest_climate_power.py` (existing),
+`harvest_climate_power.py --daily`, `apply_climate.py`, `sync-data.mjs`.
+
+Temperature at altitude is derived in the app (`lib/waterFacts.js
+altitudeSeries`), not stored: the valley `m` series minus 6.5 C per 1,000 m
+over the difference between the highest mapped peak in the dossier
+(`around.mountains[].elev_m`) and `climate.elev`. It needs `climate.elev`, so
+it appears after the `apply_climate.py` run, and only where the peak is at
+least 150 m above or below the town. It is labelled as derived on the sheet.
+
+NASA POWER has no sunshine duration (only `ALLSKY_SFC_SW_DWN` radiation), so
+sunshine hours are a stub (`climate.sun_h`, `pipeline/field_stubs/t631_water.py`).
+
+### Lakes (`public/lakes/{CC}.json`)
+
+| Key | Meaning | Written by |
+|---|---|---|
+| `water.zones` | `[{n, q, km}]` up to 12 EEA bathing sites on the lake: name, class, km from the lake centre, nearest first. `water.class` is kept as the headline | `enrich_lakes.join_bathing` stores `lake["water"]["zones"]`, `export_lakes.zones_of` exports it. Needs a lake re-enrich, then an export |
+| `sports` | water sport codes mapped on or at the shore, in the order windsurfing, sailing, water_ski, canoe, rowing, scuba_diving, surfing, fishing, swimming. From the `sport` counts the Overpass context sweep already caches in `lake["context"]` (`enrich_lakes.py` CONTEXT_CLAUSES), nothing new is fetched | `export_lakes.watersports_of` |
+| `ferry` | `{stops: n}` ferry terminals found by the sweep. Counts only; line names are a stub (`ferry.lines`) | `export_lakes.ferry_of` |
+| `beaches` | `[{id, n, km}]` up to 8 published beaches marked `inland` within `shore_radius_km(lake) + 0.5` km of the lake centre, nearest first, same country. Distances are from the lake centre. No lake polygon reaches the export, so this is a circle of the same area, not the shore | `export_lakes.beaches_around`, reads `public/beaches/{CC}.json`; run the beach export before the lake export |
+
+Kept as is and shown: `size.areaKm2` (93.1%), `size.depthM` (33.1%), `swim.temps`
+(99.8%, a CHELSA model, `swim.est` true), `swim.rule` (100%, 84.3% not
+"unknown"), `hazards` (31.8% non-empty), `water.class` (55.0%), the `ferry` tag
+in `services` (6.1%).
+
+### Beaches (`public/beaches/{CC}.json`)
+
+All from the OSM tags the harvest keeps on every beach (`osm_tags`) and the
+proximity context (`enrich_beaches.py` CONTEXT_CLAUSES). Each key is omitted
+when the source says nothing; absence means unknown, never "no".
+
+| Key | Values | Source |
+|---|---|---|
+| `fee` | `free` (fee=no), `paid` (fee=yes), `mixed` (leisure=beach_resort, or fee=no on a beach_resort) | `export_beaches.access_model` |
+| `dog` | `yes`, `leash`, `no`, `seasonal` | OSM `dog`, `export_beaches.dog_rule` |
+| `shade` | `yes` (shade=yes, trees, natural, partial), `no` | OSM `shade`, `export_beaches.shade_of` |
+| `operator` | string, 80 characters at most | OSM `operator` |
+| `pool` | `true` | context bucket `swimming_pool` (leisure=swimming_pool added to the existing leisure clause, plus water_park) |
+| `kidsPool` | `true` | context bucket `kids_pool`: a swimming pool whose `pool=` value or name says children |
+| `rentals` | `true` | context bucket `sunbed_rental`: a new Overpass clause, `rental` matching umbrella, sunbed, sun_lounger, deckchair or beach |
+| `sst` | 12 numbers | forwarded by `v2_fields` when a beach carries it; no source today (stub) |
+
+The context buckets only exist after `enrich_beaches.py` re-runs its Overpass
+context pass (two extra lookups per batch), then `export_beaches.py`.
+Lifeguard (`lifeguard: true`, 5.8%), `surface` (57.5%), `services` toilets
+16.1%, showers 9.3%, food 19.6% and `water` (82.6%) are existing keys.
+
+### Derived in the app, not stored
+
+Water shoes (from `surface`: pebble, shingle, rock, gravel give yes, sand and
+fineGravel give no, everything else nothing), the audience tags (family from
+`bestFor` families, quiet from `bestFor` seclusion, dog friendly from `dog`;
+luxury is a stub), and the slippery-rock warning on trails (SAC T2 or harder
+via `sac_scale`, or `f.hl` containing `gorge`, with at least 1 mm of rain in the
+next three MET Norway forecast days at the trailhead; nothing is shown when the
+forecast is unavailable).
+
+### Field stubs
+
+Fields with a slot on the sheet and no source are listed in
+`pipeline/field_stubs/t631_water.py` (sunshine hours, lake wind profile and
+thermal winds, water temperature for beaches and destinations, ferry line
+names, water sport zones, lake lifeguards, swimming bans, currents, lido prices,
+surface at the water entry, walk from pier and centre, luxury audience, gorge
+flag). `python pipeline/field_stubs/report.py` lists them.
 
 ## Wire contract, checked in CI (T082)
 
@@ -928,3 +1045,28 @@ old scripts are in `pipeline/archive/`.
 - **Refresh:** `.github/workflows/stays-refresh.yml` (weekly Xotelo slice,
   monthly build and gated publish), `scripts/stays_scrape.bat` (owner's laptop,
   March and September), `run_pipeline.py` tasks `stays` and `stays_discover`.
+
+## Explore completeness, practical, things to do and export (T632, added 2026-10-23)
+
+Additive only. Every key below is optional in the dossier (`SCHEMA = "dossier_v2"`
+is unchanged) and the app shows "Not available yet" where a key is absent.
+
+| Key (dossier) | Type | Source | Status |
+|---|---|---|---|
+| `do[].kind` | string, the normalized POI kind (`Viewpoint`, `Cave`, ...) | `derive_do.facts_of`, from the POI shard `kind` | code written, awaiting dossier rebuild |
+| `do[].town` | string, nearest member town within 8 km, or the destination name when it has no members | `derive_do.town_of` | code written, awaiting dossier rebuild |
+| `do[].fee` | `"yes"` or `"no"` | OSM `fee` tag, not in the POI shards today | stub `harvest_do_fee` |
+| `do[].fee_eur` | number | OSM `charge`, Wikidata P2555 | stub `harvest_do_fee` |
+| `do[].duration_min` | integer minutes | Wikivoyage / operator pages | stub `harvest_do_duration` |
+| `practical.transit.train` / `.bus` / `.ferry` | list of `{from, to, operator, freq_per_day, url}` | open GTFS, ferry operators | stubs `harvest_local_transit_*` |
+| `practical.local_rules` | list of `{code, text, url}` | none known as open data | stub `harvest_local_rules` |
+| `water.bans` | list of `{site, from, to, reason}` | EEA prohibitions, regional notices | stub `harvest_swimming_bans` |
+| `practical.emergency` | `{number, hospital}` | 112 and OSM | stub `harvest_emergency_contacts` |
+
+Not new keys, now shown by the app: `parking.web.restricted` and
+`parking.web.restricted_note` (the warning slot), `parking.spots`,
+`parking.park_ride`. The destination PDF prints, per listed hiking and cycling
+route, the URL of its route page, where the GPX downloads. Offline map and
+emergency contacts in the PDF are stubs (`build_pdf_offline_map`,
+`harvest_emergency_contacts`). Stubs live in
+`pipeline/field_stubs/t632_practical.py`.

@@ -568,6 +568,35 @@ def display_name(peak):
     return name
 
 
+HUTS_MAX = 6
+
+
+def huts_of(peak):
+    """The huts list for the wire: named first, nearest first, capped. A
+    list of dicts as enrich_peaks.hut_record wrote them, or None."""
+    huts = (pi._osm(peak).get("huts") or [])
+    huts = [h for h in huts if isinstance(h, dict) and h.get("name")]
+    huts.sort(key=lambda h: h.get("m", 10 ** 9))
+    seen, out = set(), []
+    for h in huts:
+        key = fold(h["name"])
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(h)
+    return out[:HUTS_MAX] or None
+
+
+def attach_range_ranks(rows, ranks):
+    """T630: put the cross-country range rank on every row that has one, as
+    rangeRank {n, h, p}. Applied after the rows are built because the rank
+    needs every country's peaks, which no single country's pass has."""
+    for row in rows:
+        rk = ranks.get(row.get("id"))
+        if rk and row.get("range"):
+            row["rangeRank"] = rk
+
+
 def wire_peak(peak, comps, score10, tier, reasons, expected, view_band=None,
               images=None):
     kind = pi.kind_of(peak)
@@ -679,6 +708,17 @@ def wire_peak(peak, comps, score10, tier, reasons, expected, view_band=None,
         row["highpointOf"] = peak["highpoint_of"][:60]
     if lift:
         row["lift"] = lift
+    # T630: the steepest stretch of the gentlest side, in degrees, the number
+    # terrain.easiest_slope already computes and only fed `diff` with. The app
+    # warns over 30. A proxy, not a route: it is labelled so on the page.
+    slope = terrain.get("slope_deg")
+    if slope is not None:
+        row["slopeDeg"] = round(float(slope), 1)
+    # T630: mountain huts within the context radius, nearest first, with the
+    # beds, opening and contact OSM carries (enrich_peaks.hut_record).
+    huts = huts_of(peak)
+    if huts:
+        row["huts"] = huts
     if peak.get("season"):
         row["season"] = peak["season"]
     if peak.get("near"):
@@ -1280,6 +1320,8 @@ def main():
     terrain, seasons = load_measurements()
     print(f"[mountains] measured terrain for {len(terrain)} coordinates, "
           f"climatology for {len(seasons)}")
+    all_pool = [p for peaks in pools.values() for p in peaks]
+    range_rank = pi.range_ranks(all_pool, peak_id, fold)
     scored_by_cc = {cc: score_country(cc, global_max, terrain, seasons)
                     for cc in countries if cc in pools}
     expectation = fit_expectation(
@@ -1371,6 +1413,8 @@ def main():
             if args.verbose:
                 print(f"  {cc}: nothing clears the gate")
             continue
+        attach_range_ranks(rows, range_rank)
+        attach_range_ranks(listed, range_rank)
         for row in rows:
             credits.update(row["credit"])
         for row in listed:

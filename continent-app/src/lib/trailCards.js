@@ -17,6 +17,7 @@
  * picture of its own now shows its route glyph and says nothing.
  */
 import { matchesAnyKind } from './trip_kinds.js';
+import { sacBand, durationBands, transitModes } from './routeEffort.js';
 
 export function haversineKm(lat1, lon1, lat2, lon2) {
   const R = 6371, dLat = (lat2 - lat1) * Math.PI / 180, dLon = (lon2 - lon1) * Math.PI / 180;
@@ -242,6 +243,17 @@ export const ROUTE_TYPES = [
 ];
 
 export const tripRouteType = (tr) => tr?.f?.rt ?? null;
+
+/**
+ * T630: the three filters that read the new route fields. SAC reads the
+ * country row's `sac_scale` (absent until the next export, so the SAC chips
+ * are disabled with the placeholder note), duration reads `duration_min`
+ * (DIN 33466, on every row), transit reads `transit` {rail, bus, ferry}
+ * (absent until a pass fills it).
+ */
+export const tripSacBand = (tr) => sacBand(tr?.sac_scale);
+export const tripDurationBands = (tr) => durationBands(tr?.duration_min);
+export const tripReachable = (tr) => transitModes(tr?.transit).length > 0;
 
 /**
  * What the walk goes past, as codes.

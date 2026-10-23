@@ -28,6 +28,7 @@
 import { stripDashes } from './format.js';
 import { bedFromPerPerson } from './stayPrice.js';
 import { activityLink } from './activityAffiliates.js';
+import { routePageUrlHere } from './routeLinks.js';
 import { destShareUrl } from './dossier.js';
 import { trailClimbUp, gradeLabelKey } from './trailStory.js';
 import { pdfOutdoorRows } from './destOverview.js';
@@ -289,7 +290,10 @@ export async function downloadDestinationPdf({
   if (d.when?.crowding?.label) glance.push([T('pdf.crowding'), `${d.when.crowding.label} (${d.when.crowding.year || ''})`]);
   if (getting.airport) {
     glance.push([T('pdf.airport'), getting.transfer_min != null
-      ? T('dest.flyToWithTransfer', { iata: getting.airport, n: getting.transfer_min, mode: T(`mode.${getting.transfer_mode || 'train'}`) })
+      ? (getting.transfer_mode
+        ? T('dest.flyToWithTransfer', { iata: getting.airport, n: getting.transfer_min, mode: T(`mode.${getting.transfer_mode}`) })
+        // T632: no invented "train" when the data has no transfer mode.
+        : T('dest.flyToTransferNoMode', { iata: getting.airport, n: getting.transfer_min, mode: T('data.notYet') }))
       : T('dest.flyTo', { iata: getting.airport })]);
   }
   if (getting.transit) glance.push([T('pdf.transit'), `${T(`dest.transit.${getting.transit}`)}${getting.why ? ` ${getting.why}` : ''}`]);
@@ -387,6 +391,17 @@ export async function downloadDestinationPdf({
         doc.text(`${kmFmt(r.km)} ${T(`dir.${r.dir}`)}`, PAGE_W - M, y + 0.3,
           { baseline: 'top', align: 'right' });
         y += lh(9) + 1.2;
+        // T632: a PDF cannot carry a download button, so the route's own
+        // page address is printed and linked; the GPX downloads there.
+        const gpxUrl = routePageUrlHere(key, r);
+        if (gpxUrl) {
+          ensure(lh(7) + 1);
+          font(MONO, 'normal', 7, C.mute);
+          const gpxLine = doc.splitTextToSize(`${T('dest.gpxPdf')}: ${gpxUrl}`, W - 4)[0];
+          doc.text(gpxLine, M + 3, y, { baseline: 'top' });
+          doc.link(M + 3, y, Math.min(W - 3, doc.getTextWidth(gpxLine)), lh(7), { url: gpxUrl });
+          y += lh(7) + 0.8;
+        }
         if (r.stage?.name) {
           ensure(lh(7.5) + 1);
           font(SANS, 'italic', 7.5, C.mute);

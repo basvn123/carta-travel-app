@@ -1,6 +1,7 @@
 import React from 'react';
 import { safeUrl } from '../lib/format.js';
-import { ClimateStrip } from './ClimateStrip.jsx';
+import { ClimateStrip, ClimateExtras } from './ClimateStrip.jsx';
+import { altitudeSeries, highPointOf } from '../lib/waterFacts.js';
 import { CrowdCalendar } from './CrowdCalendar.jsx';
 import { BathingWater } from './BathingWater.jsx';
 import { Section } from './DestTiles.jsx';
@@ -14,10 +15,15 @@ import { Section } from './DestTiles.jsx';
  */
 export function DestWhen({ p }) {
   const { t, destination, water, monthPick, cheapMonths, festivals, monthList } = p;
+  // T631: the temperature at the highest mapped peak around, derived from the
+  // valley figures; null (placeholder) until the wire carries the town's own
+  // elevation (apply_climate.py, awaiting run).
+  const altitude = altitudeSeries(destination.climate, highPointOf(p.d?.around));
   return (
     <>
       <Section id="when" title={t('dest.whenTitle')}>
         {destination.climate?.m && <ClimateStrip climate={destination.climate} month={monthPick} figures />}
+        <ClimateExtras climate={destination.climate} water={null} altitude={altitude} />
         {cheapMonths && (
           <p className="xp-when-fact">{t('explore.whenCheapStay', { months: monthList(cheapMonths) })}</p>
         )}

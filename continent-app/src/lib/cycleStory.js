@@ -20,6 +20,7 @@
  * AllTrails all forbid reuse of their ratings. Everything here is derived
  * from open data, and it says so.
  */
+import { DURATION_BANDS, durationBands, cycleShapeKey } from './routeEffort.js';
 
 /** A number the sentence can name, or nothing. Keeps "83 percent" out of the
  *  UI when the share was never measured. */
@@ -60,6 +61,7 @@ const WHY_ICON = {
  * caller takes the first few: the point is an argument for the ride, not an
  * inventory of it.
  */
+
 export function whyText(reason, t) {
   if (!reason || !reason.code) return null;
   const { code } = reason;
@@ -414,8 +416,13 @@ export const CYCLE_SHAPES = [
   { key: 'loop', labelKey: 'cycle.facLoop' },
   { key: 'carfree', labelKey: 'cycle.facCarfree' },
 ];
+// T630: the longest riding time, from `dur.min` (flat 18 km/h plus 10 min per
+// 100 m of climb). Cumulative "up to" bands, so a 90 minute ride is under all
+// four and a chip's count is the rows it leaves.
+export const CYCLE_DURATIONS = DURATION_BANDS.map(({ key, labelKey }) => ({ key, labelKey }));
 export const CYCLE_FACET_GROUPS = [
   { key: 'length', labelKey: 'cycle.facLength', options: CYCLE_LENGTH_BANDS, toolbar: true },
+  { key: 'duration', labelKey: 'route.facetDuration', options: CYCLE_DURATIONS },
   { key: 'surface', labelKey: 'cycle.facSurface', options: CYCLE_SURFACES },
   { key: 'network', labelKey: 'cycle.facNetwork', options: CYCLE_NETWORKS },
   { key: 'bike', labelKey: 'cycle.facBike', options: CYCLE_BIKES },
@@ -442,7 +449,7 @@ export function cycleNetBand(r) {
 }
 export function cycleShapes(r) {
   const out = [];
-  if (r && r.loop) out.push('loop');
+  if (r && cycleShapeKey(r) === 'loop') out.push('loop');
   if (r && r.free != null && r.free >= 0.7) out.push('carfree');
   return out;
 }
@@ -452,6 +459,7 @@ export function cycleShapes(r) {
 export function cycleFacetValues(r) {
   return {
     length: cycleLengthBand(r),
+    duration: durationBands(r && r.dur && r.dur.min),
     surface: cycleSurfaceBand(r),
     network: cycleNetBand(r),
     bike: (r && r.bike) || null,

@@ -34,6 +34,8 @@ import {
 import { MountainSignature } from './Signature.jsx';
 import { InfoDot } from '../components/InfoDot.jsx';
 import { numberSentence } from '../lib/numberSentences.js';
+import { PeakFacts } from './PeakFacts.jsx';
+import { notYet } from '../components/NotYet.jsx';
 
 /**
  * The mountain page: one published summit, and the argument for going there.
@@ -230,10 +232,11 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
       note: t('mtn.factIsolationNote'),
       mono: true,
     },
-    mountain.range && {
+    {
       key: 'range',
       label: t('mtn.factRange'),
-      value: mountain.range,
+      // T630: the slot stays; the placeholder where the wire has no range.
+      value: mountain.range || notYet(t),
     },
     mountain.highpointOf && {
       key: 'highpoint',
@@ -337,19 +340,22 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
       label: t('mtn.factsHead'),
       summary: previewWords(facts.slice(0, 3).map((f) => f.value).join(', ')),
       body: (
-        <div className="bpage-facts">
-          <dl>
-            {facts.map((fact) => (
-              <div key={fact.key} className="bpage-fact">
-                <dt>{fact.label}{fact.term && <InfoDot term={fact.term} />}</dt>
-                <dd className={fact.mono ? 'mono' : ''}>
-                  {fact.value}
-                  {fact.note && <small>{fact.note}</small>}
-                </dd>
-              </div>
-            ))}
-          </dl>
-        </div>
+        <>
+          <div className="bpage-facts">
+            <dl>
+              {facts.map((fact) => (
+                <div key={fact.key} className="bpage-fact">
+                  <dt>{fact.label}{fact.term && <InfoDot term={fact.term} />}</dt>
+                  <dd className={fact.mono ? 'mono' : ''}>
+                    {fact.value}
+                    {fact.note && <small>{fact.note}</small>}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+          <PeakFacts mountain={mountain} t={t} lang={lang} />
+        </>
       ),
     },
     COMPONENT_ORDER.some((key) => mountain.comp?.[key] != null) && {

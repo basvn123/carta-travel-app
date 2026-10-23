@@ -73,7 +73,8 @@ SCHEMA_SQL = ROOT / "tools" / "trailslab" / "initdb" / "07_filters.sql"
 # named derivation in attributes.py, and a key nothing reads is a key that
 # rots.
 WAY_KEYS = ("highway", "sac_scale", "trail_visibility", "via_ferrata_scale",
-            "surface", "smoothness", "wheelchair", "dog", "width", "tracktype")
+            "surface", "smoothness", "wheelchair", "dog", "width", "tracktype",
+            "hiking_technique", "hiking_exposure")
 
 # The SAC scale, hardest last. attributes.py maps these onto the published
 # five value grade; here they are only ordered so "worst" has a meaning.
@@ -81,6 +82,19 @@ SAC_ORDER = ["hiking", "mountain_hiking", "demanding_mountain_hiking",
              "alpine_hiking", "demanding_alpine_hiking",
              "difficult_alpine_hiking"]
 SAC_RANK = {v: i + 1 for i, v in enumerate(SAC_ORDER)}
+
+# T630: exposure and technique, read apart from sac_scale. sac_scale folds
+# several things into one grade; hiking_technique / hiking_exposure (the tags
+# some mappers add beside it) say what makes a section hard, so a card can
+# say "exposed" without calling the whole route alpine. The value spellings
+# vary, so both are reduced to a rank by the first matching word and anything
+# unrecognised is ignored rather than guessed. Worst member way wins, with
+# the same noise floor as sac_scale.
+TECHNIQUE_ORDER = ["none", "easy", "moderate", "difficult", "scrambling",
+                   "climbing"]
+TECHNIQUE_RANK = {v: i + 1 for i, v in enumerate(TECHNIQUE_ORDER)}
+EXPOSURE_ORDER = ["none", "low", "moderate", "high", "extreme"]
+EXPOSURE_RANK = {v: i + 1 for i, v in enumerate(EXPOSURE_ORDER)}
 
 # trail_visibility, best first. "horrible" and "no" are the two that turn a
 # marked path into route finding.
@@ -187,6 +201,37 @@ def sac_value(raw):
     return None
 
 
+def graded_value(raw, rank):
+    """hiking_technique / hiking_exposure as a key of `rank`, or None."""
+    token = first_token(raw)
+    return token if token in rank else None
+
+
+def sac_segments(members):
+    """T630: SAC grade along the route, run-length coded.
+
+    [[start_m, end_m, "T2"], ...] in member way order, from the ways that carry
+    a sac_scale; ways without one are skipped, so the runs do not tile the
+    whole line. Member order is the order of the relation, which follows the
+    walking direction for a well built route and not otherwise, so the
+    positions are approximate and the app must treat them as such. None when
+    no member says anything."""
+    out, pos = [], 0.0
+    for length, tags in members:
+        if length <= 0:
+            continue
+        sac = sac_value(tags.get("sac_scale"))
+        if sac:
+            label = "T%d" % SAC_RANK[sac]
+            a, b = int(round(pos)), int(round(pos + length))
+            if out and out[-1][2] == label and out[-1][1] == a:
+                out[-1][1] = b
+            else:
+                out.append([a, b, label])
+        pos += length
+    return out or None
+
+
 def ferrata_value(raw):
     """via_ferrata_scale 0..6, tolerant of 'A'..'F' and 'K1'..'K6'."""
     token = first_token(raw)
@@ -228,6 +273,8 @@ def summarise(members):
     sac_m = defaultdict(float)
     vis_m = defaultdict(float)
     ferrata_m = defaultdict(float)
+    technique_m = defaultdict(float)
+    exposure_m = defaultdict(float)
     road_m = path_m = steps_m = rollable_m = 0.0
     surface_quality_m = smoothness_m = 0.0
 
@@ -258,6 +305,12 @@ def summarise(members):
         ferrata = ferrata_value(tags.get("via_ferrata_scale"))
         if ferrata is not None:
             ferrata_m[ferrata] += length
+        technique = graded_value(tags.get("hiking_technique"), TECHNIQUE_RANK)
+        if technique:
+            technique_m[technique] += length
+        exposure = graded_value(tags.get("hiking_exposure"), EXPOSURE_RANK)
+        if exposure:
+            exposure_m[exposure] += length
 
         surface = first_token(tags.get("surface"))
         if surface in SURFACE_SCORE:
@@ -278,6 +331,11 @@ def summarise(members):
     vis_worst, vis_worst_share = _worst(vis_m, VIS_RANK, total)
     ferrata_worst, ferrata_worst_share = _worst(
         ferrata_m, {k: k for k in ferrata_m}, total)
+
+    technique_worst, technique_worst_share = _worst(
+        technique_m, TECHNIQUE_RANK, total)
+    exposure_worst, exposure_worst_share = _worst(
+        exposure_m, EXPOSURE_RANK, total)
 
     surface_cov = covered.get("surface", 0.0)
     smooth_cov = covered.get("smoothness", 0.0)
@@ -300,6 +358,11 @@ def summarise(members):
         "visibility_worst_share": vis_worst_share,
         "ferrata_max": ferrata_worst,
         "ferrata_share": ferrata_worst_share,
+        "technique_worst": technique_worst,
+        "technique_worst_share": technique_worst_share,
+        "exposure_worst": exposure_worst,
+        "exposure_worst_share": exposure_worst_share,
+        "sac_segments": sac_segments(members),
         "surface": shares(by_key["surface"]),
         # Quality over the tagged length only, so a country that does not tag
         # surface scores nothing rather than scoring badly.

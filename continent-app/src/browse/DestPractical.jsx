@@ -6,6 +6,7 @@ import { RatingBreakdown } from './RatingBreakdown.jsx';
 import { Neighbourhoods } from './Neighbourhoods.jsx';
 import { GettingThere } from './GettingThere.jsx';
 import { DestFood } from './DestFood.jsx';
+import { PracticalSlots } from './DestPracticalSlots.jsx';
 import { FlashDeck } from './FlashDeck.jsx';
 import { cardCategory } from '../lib/flashcards.js';
 import { Section } from './DestTiles.jsx';
@@ -64,6 +65,8 @@ export function DestPractical({ p }) {
           </p>
         )}
       </Section>
+
+      <PracticalSlots p={p} />
 
       <div className="destp-folds">
         {/* The verdict, with its argument. The Score in the head opens it. */}

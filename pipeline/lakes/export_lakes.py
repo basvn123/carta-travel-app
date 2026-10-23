@@ -465,6 +465,86 @@ def services_of(lake):
     return out
 
 
+# T631: the sport tags enrich_lakes already counts into lake["context"]
+# (the Overpass context sweep reads `sport` values, see CONTEXT_CLAUSES), in a
+# fixed reading order. Nothing new is fetched: this only exports what the cache
+# holds, so a lake the sweep never reached exports no list rather than an
+# empty one.
+WATERSPORT_ORDER = ("windsurfing", "sailing", "water_ski", "canoe", "rowing",
+                    "scuba_diving", "surfing", "fishing", "swimming")
+
+
+def watersports_of(lake):
+    """Water sports mapped on or at the shore, from the cached context counts.
+
+    Returns codes in WATERSPORT_ORDER. The wind profile that goes with
+    windsurfing and sailing is NOT here: it needs a wind source per lake and
+    is a stub (pipeline/field_stubs/t631_water.py)."""
+    ctx = lake.get("context") or {}
+    return [s for s in WATERSPORT_ORDER if ctx.get(s)]
+
+
+def ferry_of(lake):
+    """How many ferry terminals the shore sweep found. Counts only: OSM
+    gives the terminals, not the line names, so the names are a stub."""
+    ctx = lake.get("context") or {}
+    n = ctx.get("ferry_terminal")
+    return int(n) if n else 0
+
+
+def zones_of(lake):
+    """The bathing-water zones behind the lake's headline class (T631):
+    [{n: site name, q: class, km: distance from the lake centre}], nearest
+    first, at most twelve. Empty when the lake has no EEA join or the join
+    was done before T631 stored the list (a re-enrich fills it)."""
+    water = lake.get("water") or {}
+    out = []
+    for z in water.get("zones") or []:
+        if z.get("name") and z.get("q"):
+            out.append({"n": z["name"], "q": z["q"], "km": z.get("km")})
+    return out[:12]
+
+
+BEACH_WIRE_DIR = ROOT / "continent-app" / "public" / "beaches"
+_BEACH_CACHE = {}
+BEACHES_PER_LAKE = 8
+
+
+def beaches_by_cc(cc):
+    """The published beach rows of one country, read once per run. {} rows
+    when the beach wire is absent (a lake export before a beach export)."""
+    if cc not in _BEACH_CACHE:
+        path = BEACH_WIRE_DIR / f"{cc}.json"
+        try:
+            rows = json.loads(path.read_text(encoding="utf-8")).get("beaches", [])
+        except (OSError, ValueError):
+            rows = []
+        _BEACH_CACHE[cc] = rows
+    return _BEACH_CACHE[cc]
+
+
+def beaches_around(lake, rows=None):
+    """Published beaches on this lake's shore: [{id, n, km}], nearest first.
+
+    No lake polygon reaches this step, only the centre and the area, so
+    "on the shore" is a circle of the same area, widened the way every other
+    spatial question about a lake is (enrich_lakes.shore_radius_km), and only
+    beaches the beach export marked `inland` count, so a sea beach near a
+    coastal lagoon is not listed. Distances are from the lake centre, which
+    the sheet says. Same country only; a lake on a border lists its own side."""
+    from enrich_lakes import shore_radius_km  # noqa: WPS433 - export keeps no hard dep
+    radius = shore_radius_km(lake) + 0.5
+    out = []
+    for b in (rows if rows is not None else beaches_by_cc(lake["iso2"])):
+        if not b.get("inland"):
+            continue
+        km = haversine_km(lake["lat"], lake["lon"], b["lat"], b["lon"])
+        if km <= radius:
+            out.append({"id": b["id"], "n": b["name"], "km": round(km, 1)})
+    out.sort(key=lambda r: r["km"])
+    return out[:BEACHES_PER_LAKE]
+
+
 def access_of(lake):
     facts = set((lake.get("article") or {}).get("facts") or [])
     ctx = lake.get("context") or {}
@@ -566,6 +646,19 @@ def wire_lake(lake, comps, score10, tier, reasons, expected):
     services = services_of(lake)
     if services:
         row["services"] = services
+    # T631: swim and shore detail, each key only when the cache answered.
+    zones = zones_of(lake)
+    if zones and row.get("water"):
+        row["water"]["zones"] = zones
+    sports = watersports_of(lake)
+    if sports:
+        row["sports"] = sports
+    ferries = ferry_of(lake)
+    if ferries:
+        row["ferry"] = {"stops": ferries}
+    around = beaches_around(lake)
+    if around:
+        row["beaches"] = around
     if lake.get("walks"):
         row["walks"] = lake["walks"][:3]
         row["nWalks"] = lake.get("n_walks") or len(lake["walks"])

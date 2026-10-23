@@ -2,6 +2,8 @@ import React from 'react';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { tileUrl } from '../lib/mapTile.js';
 import { trailClimbUp, gradeLabelKey } from '../lib/trailStory.js';
+import { notYet } from '../components/NotYet.jsx';
+import { sacLabel, clock } from '../lib/routeEffort.js';
 import {
   BootIcon, BikeIcon, MountainIcon, LakeIcon, BeachIcon, TreeIcon, StarIcon,
 } from '../components/Icons.jsx';
@@ -51,13 +53,19 @@ export function FeaturePhoto({ src, lat, lon, alt = '', className = '' }) {
 function rowMeta(row, layer, t) {
   const bits = [];
   if (layer === 'trails' || layer === 'cycling') {
-    if (row.km_len != null) bits.push(`${Math.round(row.km_len)} km`);
+    // T630: every route row keeps four slots, SAC grade (hikes only), length,
+    // climb and time (a ride's riding time); a figure the row does not carry
+    // says so instead of leaving the slot out.
+    if (layer === 'trails') bits.push(sacLabel(row.sac_scale) || notYet(t));
+    bits.push(row.km_len != null ? `${Math.round(row.km_len)} km` : notYet(t));
     // The climb read uphill and the grade: never the stored ascent of a line
     // drawn summit to valley, never a grade code without a label (T108-d,
     // T108-f). Both helpers read whatever the row carries, so a dossier
     // built from the current wire and one built from the next both work.
     const up = trailClimbUp(row);
-    if (up != null) bits.push(`${Math.round(up)} m up`);
+    bits.push(up != null ? `${Math.round(up)} m up` : notYet(t));
+    const mins = row.duration_min ?? row.dur?.min;
+    bits.push(mins != null ? clock(mins) : notYet(t));
     const gradeKey = gradeLabelKey(row);
     if (gradeKey) bits.push(t(gradeKey));
   } else if (layer === 'mountains') {
@@ -153,7 +161,7 @@ export function AroundHere({ city, nearby, around, t, onOpenFeature, onShowMap }
                   <span className="dar-sub">
                     {Icon && <Icon size={11} />}
                     <span>{t(`dest.layerKind.${row.layer}`)}</span>
-                    {meta.map((m) => <span key={m} className="mono">{m}</span>)}
+                    {meta.map((m, i) => <span key={`${i}-${m}`} className="mono">{m}</span>)}
                   </span>
                 </span>
                 <span className="dar-right">

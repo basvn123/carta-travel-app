@@ -290,6 +290,17 @@ def join_bathing(lake, bathing):
         "km": round(km, 2),
         "sites": len(sites),
         "excellent": sum(1 for p, _ in sites if p.get("q") == "Excellent"),
+        # T631: the per-zone list behind the headline class. The sites are
+        # already in hand here (the join just ranked them), so keeping the
+        # twelve nearest costs nothing; the export turns them into the zone
+        # list on the lake sheet. Name, class and distance from the lake
+        # centre, nearest first.
+        "zones": [
+            {"name": p.get("name") or "", "q": p.get("q") or "",
+             "km": round(km_, 2)}
+            for p, km_ in sorted(sites, key=lambda pair: pair[1])[:12]
+            if p.get("name")
+        ],
     }
 
 

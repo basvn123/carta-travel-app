@@ -7,7 +7,9 @@ import { safeUrl } from '../lib/format.js';
 import { activityLink } from '../lib/activityAffiliates.js';
 import { tierForScore } from '../lib/rating.js';
 import { featureHref, linkOpener } from '../lib/featureHref.js';
-import { cleanName, fmtKm, DO_TYPE_KEYS } from './destParts.js';
+import { cleanName, fmtKm } from './destParts.js';
+import { doFacts } from '../lib/doFacts.js';
+import { notYet } from '../components/NotYet.jsx';
 
 /**
  * The tiles and lists the destination page's tabs share (T499, moved out of
@@ -31,6 +33,19 @@ export function Section({ id, title, children, className = '' }) {
   );
 }
 
+/** The four facts of a thing to do, each with its slot (T632): subcategory,
+ *  entry price, visit time and town. A fact the data does not have yet says
+ *  so with the shared placeholder, labelled, so the slot is never blank. */
+function DoFactSlots({ item, t }) {
+  return doFacts(item, t).map((f) => (
+    <span key={f.k} data-testid={`do-fact-${f.k}`} className={f.value == null ? 'not-yet' : undefined}>
+      {f.value == null
+        ? `${f.label}: ${notYet(t)}`
+        : f.k === 'kind' ? f.value : `${f.label}: ${f.value}`}
+    </span>
+  ));
+}
+
 /** A thing to do with a photograph, as a tile. An item with a booking link
  *  opens it; an item the catalogue knows opens its page; the rest are text,
  *  with no link styling, so nothing looks clickable that is not (1.4 part 6). */
@@ -51,7 +66,7 @@ export function DoTile({ item, t, monthList, onOpenFeature }) {
       media={<img src={item.photo} alt="" loading="lazy" />}
       meta={(
         <span className="dtile-meta">
-          <span>{t(DO_TYPE_KEYS[item.type] || 'dest.doType.activity')}</span>
+          <DoFactSlots item={item} t={t} />
           {item.season?.length > 0 && <span>{monthList(item.season)}</span>}
         </span>
       )}
@@ -75,7 +90,7 @@ export function DoList({ items, t, monthList, onOpenFeature }) {
             <span className="ddo-list-main">
               <span className="ddo-list-name">{item.name}</span>
               <span className="ddo-list-meta">
-                <span>{t(DO_TYPE_KEYS[item.type] || 'dest.doType.activity')}</span>
+                <DoFactSlots item={item} t={t} />
                 {item.season?.length > 0 && <span>{monthList(item.season)}</span>}
               </span>
             </span>

@@ -1,0 +1,245 @@
+[
+ {
+  "field": "reachable by public transport or ferry",
+  "layer": "trails",
+  "wire_key": "transit {rail, bus, ferry}",
+  "source": "OSM ferry terminals and public_transport bus stops near the trailhead; pipeline/trails/transit_stops.py holds rail and bus stations only",
+  "stub": "harvest_trail_ferry_and_bus_stops",
+  "task": "T630",
+  "module": "t630_routes.py"
+ },
+ {
+  "field": "cable car and mountain railway price",
+  "layer": "mountains",
+  "wire_key": "lift.price",
+  "source": "none known (operator websites, no open feed)",
+  "stub": "harvest_lift_prices",
+  "task": "T630",
+  "module": "t630_routes.py"
+ },
+ {
+  "field": "cable car and mountain railway opening hours",
+  "layer": "mountains",
+  "wire_key": "lift.hours",
+  "source": "OSM opening_hours on the aerialway, where tagged",
+  "stub": "harvest_lift_hours",
+  "task": "T630",
+  "module": "t630_routes.py"
+ },
+ {
+  "field": "sunshine_hours",
+  "layer": "destinations",
+  "wire_key": "climate.sun_h",
+  "source": "none in NASA POWER (radiation only, no duration); ERA5 or E-OBS sunshine duration, or national met services",
+  "stub": "harvest_sunshine_hours",
+  "task": "T631",
+  "module": "t631_water.py"
+ },
+ {
+  "field": "thermal_winds",
+  "layer": "lakes",
+  "wire_key": "wind.profile",
+  "source": "none known (open data): per-lake wind profile for watersports, e.g. ERA5 hourly wind by month at the lake, or windsurf spot guides",
+  "stub": "harvest_lake_wind_profile",
+  "task": "T631",
+  "module": "t631_water.py"
+ },
+ {
+  "field": "water_temperature_beach",
+  "layer": "beaches",
+  "wire_key": "sst",
+  "source": "monthly sea surface temperature climatology per beach (Copernicus Marine); the export already forwards `sst` when a beach carries it",
+  "stub": "harvest_beach_water_temperature",
+  "task": "T631",
+  "module": "t631_water.py"
+ },
+ {
+  "field": "water_temperature_destination",
+  "layer": "destinations",
+  "wire_key": "climate.water_c",
+  "source": "none known: nearest coast or lake sea surface temperature climatology per destination",
+  "stub": "harvest_destination_water_temperature",
+  "task": "T631",
+  "module": "t631_water.py"
+ },
+ {
+  "field": "ferry_line_names",
+  "layer": "lakes",
+  "wire_key": "ferry.lines",
+  "source": "OSM route=ferry relations touching the lake, or national operator timetables (GTFS)",
+  "stub": "harvest_lake_ferry_lines",
+  "task": "T631",
+  "module": "t631_water.py"
+ },
+ {
+  "field": "watersport_zones",
+  "layer": "lakes",
+  "wire_key": "sportZones",
+  "source": "OSM sport=windsurfing/sailing/water_ski polygons with geometry (the context sweep keeps counts only)",
+  "stub": "harvest_lake_sport_zones",
+  "task": "T631",
+  "module": "t631_water.py"
+ },
+ {
+  "field": "lake_lifeguards",
+  "layer": "lakes",
+  "wire_key": "lifeguards",
+  "source": "OSM lifeguard=* and supervised=* on swimming areas on the lake; no lake level source",
+  "stub": "harvest_lake_lifeguards",
+  "task": "T631",
+  "module": "t631_water.py"
+ },
+ {
+  "field": "lake_swimming_bans",
+  "layer": "lakes",
+  "wire_key": "swim.ban",
+  "source": "municipal or national bathing ordinances; only the swim.rule verdict exists today",
+  "stub": "harvest_lake_swim_bans",
+  "task": "T631",
+  "module": "t631_water.py"
+ },
+ {
+  "field": "lake_currents",
+  "layer": "lakes",
+  "wire_key": "currents",
+  "source": "none known: the `currents` hazard code exists on 38 lakes, no description or location",
+  "stub": "harvest_lake_currents",
+  "task": "T631",
+  "module": "t631_water.py"
+ },
+ {
+  "field": "lido_price",
+  "layer": "beaches",
+  "wire_key": "lido.price",
+  "source": "none known (open data): entry, sunbed and umbrella prices and reservation need per lido",
+  "stub": "harvest_lido_prices",
+  "task": "T631",
+  "module": "t631_water.py"
+ },
+ {
+  "field": "surface_at_water_entry",
+  "layer": "beaches",
+  "wire_key": "entrySurface",
+  "source": "OSM surface on the beach is for the sand; the sea bed at the entry needs a survey or photo classification",
+  "stub": "harvest_beach_entry_surface",
+  "task": "T631",
+  "module": "t631_water.py"
+ },
+ {
+  "field": "walk_from_ferry_pier",
+  "layer": "beaches",
+  "wire_key": "walkFrom.pier",
+  "source": "routing from the nearest ferry pier to the beach (pedestrian router); base.km is straight line to a town, not a walk",
+  "stub": "harvest_beach_walk_from_pier",
+  "task": "T631",
+  "module": "t631_water.py"
+ },
+ {
+  "field": "walk_from_centre",
+  "layer": "beaches",
+  "wire_key": "walkFrom.centre",
+  "source": "routing from the base town centre to the beach (pedestrian router)",
+  "stub": "harvest_beach_walk_from_centre",
+  "task": "T631",
+  "module": "t631_water.py"
+ },
+ {
+  "field": "beach_audience_luxury",
+  "layer": "beaches",
+  "wire_key": "audience.luxury",
+  "source": "none exact: would need hotel star and lido tier near the beach",
+  "stub": "harvest_beach_audience_luxury",
+  "task": "T631",
+  "module": "t631_water.py"
+ },
+ {
+  "field": "gorge_wet_rock_flag",
+  "layer": "trails",
+  "wire_key": "gorge",
+  "source": "OSM natural=gorge or name words on the route; no flag in the trails wire today (T630 owns the trail schema)",
+  "stub": "harvest_route_gorge_flag",
+  "task": "T631",
+  "module": "t631_water.py"
+ },
+ {
+  "field": "train services between the towns",
+  "layer": "destinations",
+  "wire_key": "practical.transit.train",
+  "source": "open GTFS feeds (national rail operators, Transitland)",
+  "stub": "harvest_local_transit_train",
+  "task": "T632",
+  "module": "t632_practical.py"
+ },
+ {
+  "field": "bus services between the towns",
+  "layer": "destinations",
+  "wire_key": "practical.transit.bus",
+  "source": "open GTFS feeds (regional bus operators, Transitland)",
+  "stub": "harvest_local_transit_bus",
+  "task": "T632",
+  "module": "t632_practical.py"
+ },
+ {
+  "field": "ferry services between the towns",
+  "layer": "destinations",
+  "wire_key": "practical.transit.ferry",
+  "source": "ferry operator timetables, OSM route=ferry relations, GTFS where published",
+  "stub": "harvest_local_transit_ferry",
+  "task": "T632",
+  "module": "t632_practical.py"
+ },
+ {
+  "field": "local rules (traffic zones, alcohol, dress, drone, fire)",
+  "layer": "destinations",
+  "wire_key": "practical.local_rules",
+  "source": "none known as open data; national tourism boards and Wikivoyage Respect sections",
+  "stub": "harvest_local_rules",
+  "task": "T632",
+  "module": "t632_practical.py"
+ },
+ {
+  "field": "swimming bans",
+  "layer": "destinations",
+  "wire_key": "water.bans",
+  "source": "EEA bathing water prohibition flags, regional authority notices (T631 owns the field on beach and lake pages)",
+  "stub": "harvest_swimming_bans",
+  "task": "T632",
+  "module": "t632_practical.py"
+ },
+ {
+  "field": "thing to do: entry price",
+  "layer": "destinations",
+  "wire_key": "do[].fee / do[].fee_eur",
+  "source": "OSM fee and charge tags (not in the POI shards today), Wikidata admission P2555",
+  "stub": "harvest_do_fee",
+  "task": "T632",
+  "module": "t632_practical.py"
+ },
+ {
+  "field": "thing to do: visit duration",
+  "layer": "destinations",
+  "wire_key": "do[].duration_min",
+  "source": "Wikivoyage listings, operator pages (not in the POI shards today)",
+  "stub": "harvest_do_duration",
+  "task": "T632",
+  "module": "t632_practical.py"
+ },
+ {
+  "field": "offline map in the destination PDF",
+  "layer": "destinations",
+  "wire_key": "pdf.offline_map",
+  "source": "static map tiles rendered per destination, or an OsmAnd/Organic Maps deep link",
+  "stub": "build_pdf_offline_map",
+  "task": "T632",
+  "module": "t632_practical.py"
+ },
+ {
+  "field": "emergency contacts in the destination PDF",
+  "layer": "destinations",
+  "wire_key": "practical.emergency",
+  "source": "112 and national numbers per country (open reference lists), nearest hospital from OSM",
+  "stub": "harvest_emergency_contacts",
+  "task": "T632",
+  "module": "t632_practical.py"
+ }
+]

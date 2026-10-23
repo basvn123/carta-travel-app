@@ -32,6 +32,8 @@ import {
   beachFacing, beachWalkIn, facingSummary, walkInSummary,
 } from '../lib/derivedModules.js';
 import { BeachFacing, BeachWalkIn } from './DerivedModules.jsx';
+import { BaseClimate, BeachFacilities } from './WaterSheet.jsx';
+import { notYet } from '../components/NotYet.jsx';
 
 import { BeachSignature, CompassRosette } from './Signature.jsx';
 import { compassPoint } from '../lib/signature.js';
@@ -131,10 +133,15 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
       value: t(`beach.water${beach.water.class}`),
       note: displayName(beach.water.site) || '',
     },
-    beach.surface && {
+    // T631: the surface keeps its slot; the 42% of beaches with none mapped
+    // show the shared placeholder.
+    {
       key: 'surface',
       label: t('beach.factSurface'),
-      value: t(`beach.surfaceWord${beach.surface.charAt(0).toUpperCase()}${beach.surface.slice(1)}`),
+      value: beach.surface
+        ? t(`beach.surfaceWord${beach.surface.charAt(0).toUpperCase()}${beach.surface.slice(1)}`)
+        : notYet(t),
+      empty: !beach.surface,
     },
     beach.access && {
       key: 'access',
@@ -249,19 +256,24 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
             <h3 className="dsk-sub">{t('derived.walkinHead')}</h3>
             <BeachWalkIn walkIn={walkIn} t={t} />
           </div>
+          <BaseClimate
+            base={beach.base}
+            kind="beach"
+            water={beach.sst ? { temps: beach.sst, est: true } : null}
+          />
         </>
       ),
     },
-    facts.length > 0 && {
+    {
       key: 'facts',
       icon: InfoIcon,
       label: t('beach.factsHead'),
-      summary: previewWords(facts.slice(0, 3).map((f) => f.value).join(', ')),
+      summary: previewWords(facts.filter((f) => !f.empty).slice(0, 3).map((f) => f.value).join(', ')),
       body: (
         <div className="bpage-facts">
           <dl>
             {facts.map((fact) => (
-              <div key={fact.key} className="bpage-fact">
+              <div key={fact.key} className={`bpage-fact${fact.empty ? ' bpage-fact-empty' : ''}`}>
                 <dt>{fact.label}</dt>
                 <dd className={fact.mono ? 'mono' : ''}>
                   {fact.value}
@@ -270,6 +282,7 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
               </div>
             ))}
           </dl>
+          <BeachFacilities beach={beach} />
         </div>
       ),
     },
