@@ -26,10 +26,13 @@ import json
 import sys
 from pathlib import Path
 from pipeline_io import atomic_write_json
+from derive_sunshine import METHOD as SUN_METHOD, sun_hours
 
 ROOT = Path(__file__).resolve().parents[1]
 CACHE = ROOT / "cache" / "climate.json"
 ELEV = ROOT / "cache" / "climate_elevations.json"
+RAW = ROOT / "cache" / "climate_power_raw.json"       # NASA POWER monthly means (ALLSKY_SFC_SW_DWN)
+SEA = ROOT / "cache" / "sea_temp_dest.json"           # T641: harvest_sea_temp.py --dests
 DEFAULT_TARGETS = [
     ROOT / "app_data" / "app_data.json",                  # real dataset
     ROOT / "continent-app" / "public" / "app_data.json",  # what the dev app serves
@@ -52,7 +55,14 @@ CLIMATE_MODEL = {
     # harvest_climate_power.py --daily); elev_m is the destination ground
     # elevation (Copernicus DEM via Open-Meteo) the temperatures are lapse
     # corrected to, which the app needs to derive a temperature at altitude.
-    "parallel": ["rain_days", "wind_ms", "elev_m"],
+    "parallel": ["rain_days", "wind_ms", "elev_m", "sun_h", "water_c"],
+    # T641: sun_h is twelve monthly totals of sunshine hours, MODELLED from the
+    # POWER all-sky radiation (derive_sunshine.py). water_c is twelve monthly
+    # mean sea surface temperatures in C for a coastal destination, MEASURED
+    # (satellite, NASA MUR SST, 2003-2022 mean), only when open sea lies within
+    # 25 km (harvest_sea_temp.py).
+    "sun_h_method": SUN_METHOD,
+    "water_c_method": "measured: NASA JPL MUR SST v4.1 monthly, mean of 2003-2022, nearest open-water cell within 20 km",
     "comfort": {
         "range": "0-100",
         "weights": {"temp": 0.60, "dry": 0.25, "sun": 0.15},
@@ -79,9 +89,26 @@ def _load(path):
     return {}
 
 
+_RAW = None
+_SEA = None
+
+
 def extras(rec: dict, did: str, elev: dict) -> dict:
     """The T631 parallel keys for one destination, only those that exist."""
+    global _RAW, _SEA
+    if _RAW is None:
+        _RAW = _load(RAW)
+        _SEA = _load(SEA)
     out = {}
+    raw = _RAW.get(did) or {}
+    lat = rec.get("lat")
+    if isinstance(lat, (int, float)):
+        sun = sun_hours(lat, raw.get("ALLSKY_SFC_SW_DWN"))
+        if sun:
+            out["sun_h"] = sun
+    sea = _SEA.get(did) or {}
+    if isinstance(sea.get("c"), list) and len(sea["c"]) == 12 and sea.get("km", 99) <= 20:
+        out["water_c"] = sea["c"]
     for key in ("rain_days", "wind_ms"):
         vals = rec.get(key)
         if isinstance(vals, list) and len(vals) == 12:

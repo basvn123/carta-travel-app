@@ -1059,7 +1059,7 @@ is unchanged) and the app shows "Not available yet" where a key is absent.
 | `do[].fee` | `"yes"` or `"no"` | OSM `fee` tag, not in the POI shards today | stub `harvest_do_fee` |
 | `do[].fee_eur` | number | OSM `charge`, Wikidata P2555 | stub `harvest_do_fee` |
 | `do[].duration_min` | integer minutes | Wikivoyage / operator pages | stub `harvest_do_duration` |
-| `practical.transit.train` / `.bus` / `.ferry` | list of `{from, to, operator, freq_per_day, url}` | open GTFS, ferry operators | stubs `harvest_local_transit_*` |
+| `practical.transit.train` / `.bus` / `.ferry` | list of `{name, from, to, minutes?, operator?, source, date, method}` | open GTFS, OSM ferry relations | wired by T641 (bus still a stub) |
 | `practical.local_rules` | list of `{code, text, url}` | none known as open data | stub `harvest_local_rules` |
 | `water.bans` | list of `{site, from, to, reason}` | EEA prohibitions, regional notices | stub `harvest_swimming_bans` |
 | `practical.emergency` | `{number, hospital}` | 112 and OSM | stub `harvest_emergency_contacts` |
@@ -1071,6 +1071,46 @@ route, the URL of its route page, where the GPX downloads. Offline map and
 emergency contacts in the PDF are stubs (`build_pdf_offline_map`,
 `harvest_emergency_contacts`). Stubs live in
 `pipeline/field_stubs/t632_practical.py`.
+
+## Explore data fill, open sources for the field stubs (T641, added 2026-10-23)
+
+Additive only; every key is absent, not null, when its harvest has not run or
+the source says nothing (absence means "not mapped", never "none"). Price
+fields are records `{value, unit, currency, source, date, quality}`, are not
+read by any screen and are not added to any total. Harvests write
+`cache/<name>.json` as `{"_meta": {...}, "rows": {id: row}}`
+(`pipeline/explore_overlay.py`); the exports and the dossier builder merge the
+row for the id they write.
+
+| Layer | Key | Shape | Source and licence | Method | Written by |
+|---|---|---|---|---|---|
+| destinations | `climate.sun_h` (wire `sun_h`) | 12 numbers, sunshine hours per month | NASA POWER ALLSKY_SFC_SW_DWN (open) through Angstrom-Prescott a=0.25 b=0.50 (FAO-56) | modelled | `derive_sunshine.py`, folded by `apply_climate.py` |
+| destinations | `climate.water_c` (wire `water_c`) | 12 numbers, C, only when open water lies within 20 km | NASA JPL MUR SST v4.1 monthly mean 2017 to 2022, via NOAA CoastWatch ERDDAP (public domain) | measured | `harvest_sea_temp.py --dests`, folded by `apply_climate.py` |
+| destinations | `practical.transit.train` / `.bus` / `.ferry` | list of `{name, from, to, minutes?, operator?, freq_per_day?, trips?, source, date, method}`; a mode with no line is omitted | train and bus: GTFS feeds in `pipeline/transit/feeds.json` that carry a verified commercial licence (today Trenord, CC BY 4.0); ferry: also OpenStreetMap `route=ferry` (ODbL 1.0). `from` and `to` are a destination or one of its member towns | measured | `transit/gtfs_lines.py`, `transit/osm_ferry_legs.py`, `dossier/derive_practical.py` |
+| destinations | `practical.emergency` | `{numbers: ["112", ...], general?: "112", hospital?: {name, km_line, lat, lon, emergency, phone?}, src: {numbers, hospital, date, method}}` | Wikidata P2852 (CC0); OSM `amenity=hospital` (ODbL 1.0). Wikidata does not say which service answers which number, so none is labelled; mountain rescue numbers are not in it and are not invented | measured | `harvest_emergency.py` |
+| destinations | `water.bans` | list of `{site, reason, lat, lon, src, date, method}` | OSM `swimming=no`, `bathing=no` within 5 km of the centre or a member town (ODbL 1.0). The EEA bathing water layer has no prohibition field | measured | `harvest_swim_bans.py` |
+| destinations | `do[].fee` `"yes"`/`"no"`, `do[].price` | `price` = `{value, unit, currency, source, date, quality: "osm_text"}`; `fee_eur` is NOT written | OSM `fee` and `charge` on the object at the POI (ODbL 1.0) | measured | `harvest_poi_fees.py`, `dossier/derive_do.facts_of` |
+| lakes | `ferry.lines` | `[{ref, operator?, stops: [...], min?: [lo, hi], n}]` trips folded by (operator, ref) | OSM `route=ferry` relations within 300 m of the lake shape (ODbL 1.0) | measured | `lakes/harvest_water_detail.py` |
+| lakes | `sportZones` | `[{sport, name?, lat, lon}]` up to 40, no geometry | OSM `sport=` windsurfing, kitesurfing, sailing, water_ski, wakeboarding, canoe, kayak, rowing, scuba_diving, surfing within 200 m of the lake shape | measured | same |
+| lakes | `lifeguards` | `{n, sites: [{n?, lat, lon}]}` | OSM `lifeguard=yes/seasonal`, `emergency=lifeguard*`, `leisure=swimming_area` + `supervised=yes` | measured | same |
+| lakes | `swim.ban` | `{n, sites: [...], src: "osm"}` | OSM `swimming=no`, `bathing=no` | measured | same |
+| lakes | `wind.profile` | `{ms: [12], src, m: "modelled"}` mean 10 m wind in m/s | NASA POWER WS10M climatology 2001 to 2020 at the lake centre (open). Thermal winds are not in any open source | modelled | same |
+| beaches | `sst` | 12 numbers, C | NASA JPL MUR SST, nearest valid cell within 6 km | measured | `harvest_sea_temp.py --beaches`, `export_beaches.v2_fields` |
+| beaches | `walkFrom` | `{centre?: {km, min, town, m}, pier?: {km, min, name?, m}}`, `m` = `modelled` | base town and beach positions, OSM ferry terminals within 4 km; straight line x 1.3 at 4.5 km/h, not a routed path | modelled | `beaches/harvest_beach_walks.py` |
+| mountains | `lift.hours` (string), `lift.fare` (price record, not shown) | OSM `opening_hours` string kept unparsed; `charge` when it parses to one amount | OSM aerialway and funicular within 2.5 km of the peak | measured | `mountains/harvest_lift_hours.py`, `export_peaks.py` |
+| trails | `transit` `{rail?, bus?, ferry?}` | each true only when found within 500 m of the start of the line; the key is absent when none was found | OSM stations, coach stations, bus stops (`highway=bus_stop`, `public_transport=platform` + `bus=yes`) and ferry terminals in `transit_stops` | measured | `trails/transit_stops.py` (new kinds `ferry`, `bus_stop`), `trails/export_wire.py` |
+
+The transit line shape is the contract T642's car rule reads: `practical.transit.train`,
+`practical.transit.bus`, `practical.transit.ferry`, each a list of lines
+`{name, from, to, minutes?, operator?, source, date, method}`.
+
+The gorge flag needs no new key: 1,224 of 17,619 trails already carry
+`f.hl` = `gorge` (OSM `natural=gorge`), which the wet rock warning reads.
+
+Still stubs (no open source, or no licence that allows it), in
+`pipeline/field_stubs/`: lido prices, surface at the water entry, luxury
+audience, lake currents, lake thermal winds, bus services, local rules, visit
+duration, the lift price, the offline map in the PDF.
 
 ## Wrong values fixed at the source (T642, added 2026-10-23)
 

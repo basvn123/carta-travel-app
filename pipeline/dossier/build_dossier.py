@@ -53,6 +53,7 @@ from common import (  # noqa: E402
     nav_links, norm_name, usable_desc, sanitize_strings, slugify, thumb_at,
 )
 from derive_do import derive  # noqa: E402
+import derive_practical  # noqa: E402  (T641: emergency, transit, swim bans)
 
 SCHEMA = "dossier_v2"
 OUT_DIR = os.path.join(PUB, "dossier")
@@ -1260,6 +1261,8 @@ def compose_practical(dest):
     for key in ("book_ahead", "rhythm", "pairs", "eat"):
         if extra.get(key):
             practical[key] = extra[key]
+    # T641: emergency numbers and transit lines from the open harvests.
+    practical.update(derive_practical.practical_extras(dest.get("id")))
     return practical
 
 
@@ -1656,6 +1659,9 @@ def build_one(dest, ctx, refusal_log):
     if bw.get("rating"):
         water = {k: bw[k] for k in ("rating", "excellent_pct", "n_sites",
                                     "nearest", "year") if bw.get(k) is not None}
+    bans = derive_practical.water_bans(did)       # T641: OSM swimming=no near the destination
+    if bans:
+        water = {**(water or {}), "bans": bans}
 
     # D2: the verdict, shown honestly - the score, its parts, its
     # confidence, and where the place stands in its country. The earlier

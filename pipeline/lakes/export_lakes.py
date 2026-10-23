@@ -90,6 +90,7 @@ from harvest_lakes import COUNTRIES, fold, name_tokens  # noqa: E402
 import lake_index as li  # noqa: E402
 import lake_images  # noqa: E402
 import seed_lakes  # noqa: E402
+import explore_overlay as xov  # noqa: E402  (T641 harvests: lake water detail)
 
 ROOT = HERE.parents[1]
 OUT_DIR = ROOT / "continent-app" / "public" / "lakes"
@@ -671,6 +672,19 @@ def wire_lake(lake, comps, score10, tier, reasons, expected):
     ferries = ferry_of(lake)
     if ferries:
         row["ferry"] = {"stops": ferries}
+    # T641: ferry lines, water sport zones, lifeguards, swimming bans and the
+    # wind profile, from harvest_water_detail.py. Each key only when mapped.
+    detail = xov.load_rows("lake_water_detail").get(row["id"]) or {}
+    if detail.get("ferry"):
+        row.setdefault("ferry", {})["lines"] = detail["ferry"]
+    if detail.get("sportZones"):
+        row["sportZones"] = detail["sportZones"]
+    if detail.get("lifeguards"):
+        row["lifeguards"] = detail["lifeguards"]
+    if detail.get("ban"):
+        row["swim"]["ban"] = detail["ban"]
+    if detail.get("wind"):
+        row["wind"] = {"profile": detail["wind"]}
     around = beaches_around(lake)
     if around:
         row["beaches"] = around

@@ -43,6 +43,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
+import derive_practical  # noqa: E402  (T641)
 from common import (  # noqa: E402
     is_self_reference, name_matches, name_tokens, norm_name, usable_desc,
 )
@@ -157,6 +158,14 @@ def facts_of(dest, poi):
     out = {"kind": poi.get("kind"),
            "town": town_of(dest, poi.get("lat"), poi.get("lon"))}
     fee = poi.get("fee")
+    # T641: the OSM fee flag and price record, by position (harvest_poi_fees.py).
+    # `price` is a record for the price plan; no screen reads it, and fee_eur
+    # (which the tile shows as an amount) is deliberately not set from it.
+    extra = derive_practical.poi_facts(poi.get("lat"), poi.get("lon"))
+    if fee not in ("yes", "no") and extra.get("fee"):
+        fee = extra["fee"]
+    if extra.get("price"):
+        out["price"] = extra["price"]
     if fee in ("yes", "no"):
         out["fee"] = fee
     price = poi.get("fee_eur")
