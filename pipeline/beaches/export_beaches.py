@@ -77,6 +77,7 @@ from pipeline_io import in_europe  # noqa: E402
 from sources import haversine_km, load_cache  # noqa: E402
 from harvest_beaches import COUNTRIES, name_tokens  # noqa: E402
 import beauty_index as bi  # noqa: E402
+import explore_overlay as xov  # noqa: E402  (T641 harvests: sea temperature, walks)
 
 # The lake layer's card-shape helpers, loaded by path the way enrich_beaches
 # already loads them: beach, lake and peak cards are the same 25/12 crop, so
@@ -421,8 +422,16 @@ def v2_fields(beach):
             "code": protection.get("code") or "",
         }
     sst = beach.get("sst")
+    if not (isinstance(sst, list) and len(sst) == 12):
+        # T641: monthly water temperature, NASA MUR SST (harvest_sea_temp.py)
+        sst = (xov.load_rows("sea_temp_beaches").get(bi.unique_beach_id(beach)) or {}).get("c")
     if isinstance(sst, list) and len(sst) == 12:
         out["sst"] = sst
+    # T641: walk from the town centre and the nearest ferry pier, modelled
+    # (harvest_beach_walks.py): walkFrom {centre: {km, min, town, m}, pier: {km, min, name?, m}}
+    walk = xov.load_rows("beach_walks").get(bi.unique_beach_id(beach))
+    if walk:
+        out["walkFrom"] = walk
     name_src = beach.get("name_src") or ""
     if name_src in ("eea", "osm_near"):
         out["nameSrc"] = name_src

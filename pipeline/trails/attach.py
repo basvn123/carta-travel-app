@@ -197,6 +197,7 @@ ACCESS_SQL = """
            ST_Y(s.geom), ST_X(s.geom)
     FROM transit_stops s
     WHERE s.country = %(cc)s
+      AND s.kind IN ('station', 'bus_station')   -- T641: ferry and bus_stop rows exist now
       AND ST_DWithin(s.geom::geography, %(pt)s::geography, %(snap)s)
     ORDER BY d_pt
     LIMIT 1

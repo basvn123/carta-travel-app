@@ -227,6 +227,7 @@ TRIPS_SQL = """
            t.stage_index, t.stage_count, t.co_located,
            t.stage_of, t.top_of,
            eff.info AS repair_info,
+           {transit_col} AS transit,
            ST_NPoints(eff.geom) AS n_full,
            ST_XMin(eff.geom), ST_YMin(eff.geom),
            ST_XMax(eff.geom), ST_YMax(eff.geom),
@@ -268,14 +269,40 @@ TRIP_COLS = ("id", "country", "category", "title", "description",
              "hierarchy", "hierarchy_src", "parent_refs",
              "stage_index", "stage_count", "co_located",
              "stage_of", "top_of",
-             "repair_info",
+             "repair_info", "transit",
              "n_full", "xmin", "ymin", "xmax", "ymax",
              "wire_geom", "full_geom")
 
 
+# T641: can a walker reach the start by rail, bus or ferry. The flags come from
+# transit_stops (transit_stops.py: station and bus_station as before, plus
+# ferry terminals and bus stops) within TRANSIT_M of the start of the line.
+# Written as a subquery so the table is only needed when it exists; a database
+# without it (or an old one without the new kinds) yields NULL and the wire
+# carries no `transit` key, as before.
+TRANSIT_M = 500
+TRANSIT_COL = """(
+        SELECT jsonb_object_agg(q.k, true) FROM (
+            SELECT DISTINCT CASE s.kind
+                       WHEN 'station' THEN 'rail'
+                       WHEN 'bus_station' THEN 'bus'
+                       WHEN 'bus_stop' THEN 'bus'
+                       WHEN 'ferry' THEN 'ferry' END AS k
+            FROM transit_stops s
+            WHERE s.country = t.country
+              AND ST_DWithin(s.geom::geography,
+                             ST_StartPoint(ST_GeometryN(eff.geom, 1))::geography,
+                             %(transit_m)s)
+        ) q WHERE q.k IS NOT NULL)"""
+
+
 def fetch_trips(conn, statuses, countries, tolerance):
     with conn.cursor() as cur:
-        cur.execute(TRIPS_SQL, {
+        cur.execute("SELECT to_regclass('transit_stops') IS NOT NULL")
+        has_transit = bool(cur.fetchone()[0])
+        sql = TRIPS_SQL.replace("{transit_col}", TRANSIT_COL if has_transit else "NULL::jsonb")
+        cur.execute(sql, {
+            "transit_m": TRANSIT_M,
             "tol": tolerance,
             "wire_dp": WIRE_DECIMALS,
             "full_dp": FULL_DECIMALS,
@@ -622,13 +649,11 @@ def sac_scale_of(t):
 def transit_of(t):
     """T630: can a walker reach the start by public transport or ferry.
 
-    {"rail": bool, "bus": bool, "ferry": bool} from t["transit"], a column no
-    pass fills yet (transit_stops.py holds rail and bus stations only, no
-    ferry piers and no ordinary bus stops; the stub is
-    pipeline/field_stubs/t630_routes.py). The SELECT does not list the column
-    either, so today this returns None and the wire carries no key. When the
-    pass exists, add the column to the SELECT lists and the key appears; the
-    app already reads `transit` and shows a placeholder until it does."""
+    {"rail": bool, "bus": bool, "ferry": bool} from t["transit"], which TRIPS_SQL
+    now computes (T641) from transit_stops within 500 m of the start of the
+    line: rail for a station, bus for a coach station or a bus stop, ferry for a
+    ferry terminal. A mode that is absent was not found near the start (the
+    flags only ever say yes); the key is omitted when none was found."""
     tr = t.get("transit")
     if not isinstance(tr, dict):
         return None

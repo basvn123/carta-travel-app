@@ -68,7 +68,29 @@ def station_kind(tags):
     return "station" if _amenity_kind(tags) == "station" else None
 
 
-KEYS = ("railway", "amenity")
+KEYS = ("railway", "amenity", "highway", "public_transport")
+
+
+def stop_kind(tags):
+    """T641: the kinds that are not stations. 'ferry' for a ferry terminal
+    (amenity=ferry_terminal, or a public_transport station/platform with
+    ferry=yes), 'bus_stop' for highway=bus_stop or a public_transport platform
+    with bus=yes. attach.py keeps reading only 'station' and 'bus_station' for
+    its car-free access point; export_wire.py reads all four for the
+    `transit` flags on a route's start."""
+    if tags.get("amenity") == "ferry_terminal":
+        return "ferry"
+    if tags.get("public_transport") in ("station", "platform", "stop_position") and tags.get("ferry") == "yes":
+        return "ferry"
+    if tags.get("highway") == "bus_stop":
+        return "bus_stop"
+    if tags.get("public_transport") == "platform" and tags.get("bus") == "yes":
+        return "bus_stop"
+    return None
+
+
+def any_kind(tags):
+    return station_kind(tags) or stop_kind(tags)
 
 
 def scan(pbf):
@@ -78,7 +100,7 @@ def scan(pbf):
         fp = osmium.FileProcessor(str(pbf), osmium.osm.NODE) \
             .with_filter(osmium.filter.KeyFilter(key))
         for node in fp:
-            kind = station_kind(node.tags)
+            kind = any_kind(node.tags)
             loc = node.location
             if kind and loc.valid():
                 out.append((kind, loc.lat, loc.lon, node.tags.get("name")))
@@ -88,7 +110,7 @@ def scan(pbf):
         fp = osmium.FileProcessor(str(pbf), osmium.osm.WAY) \
             .with_filter(osmium.filter.KeyFilter(key))
         for way in fp:
-            kind = station_kind(way.tags)
+            kind = any_kind(way.tags)
             if kind and len(way.nodes) >= 1:
                 pending.append((kind, way.nodes[0].ref, way.tags.get("name")))
     if pending:
