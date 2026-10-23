@@ -43,7 +43,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from common import (JOURNAL_SCRAPE, blocked_until, journal, load_destinations, now_iso,  # noqa: E402
                     priority, read_json, set_block, STATE)
 from booking.page import (classify, close_overlays, decline_cookies,  # noqa: E402
-                          looks_blocked, parse_money, prop_key, read_cards)
+                          looks_blocked, parse_money, prop_key, read_cards,
+                          search_dropped)
 from booking.urls import search_url  # noqa: E402
 from price_xotelo import peak_days, probe_day  # noqa: E402
 
@@ -92,10 +93,16 @@ def search_text(d, overrides):
 
 
 async def visit(page, url):
-    resp = await page.goto(url, wait_until="domcontentloaded", timeout=60000)
-    await page.wait_for_timeout(1500)
-    if await looks_blocked(page, resp.status if resp else None):
-        return None
+    for attempt in range(2):
+        resp = await page.goto(url, wait_until="domcontentloaded", timeout=60000)
+        await page.wait_for_timeout(1500)
+        if not await looks_blocked(page, resp.status if resp else None):
+            break
+        # Booking now and then drops the search on a page it serves a minute
+        # later (T633): one plain retry before the night's run stops.
+        if attempt or not search_dropped(page.url):
+            return None
+        await page.wait_for_timeout(60000)
     await decline_cookies(page)
     await close_overlays(page)
     return await read_cards(page)
