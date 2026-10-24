@@ -35,6 +35,8 @@ export function climateExtras(climate) {
   const wind = climate?.wind ?? climate?.wind_ms;
   const elev = climate?.elev ?? climate?.elev_m;
   return {
+    sunH: isSeries(climate?.sun_h) ? climate.sun_h : null,
+    waterC: isSeries(climate?.water_c) ? climate.water_c : null,
     rainDays: isSeries(rain) ? rain : null,
     windMs: isSeries(wind) ? wind : null,
     elevM: isNum(elev) ? elev : null,
@@ -186,14 +188,14 @@ export function wetRockRoute(sac, highlights) {
  *   hazards     codes, e.g. ['cold_shock', 'currents']
  *   lifeguard   true | null
  */
-export function swimSafetyRows({ rule, depthM, hazards, lifeguard }) {
+export function swimSafetyRows({ rule, depthM, hazards, lifeguard, banN = 0 }) {
   const have = new Set(hazards || []);
   const ruleKnown = rule && rule !== 'unknown';
   return [
     { key: 'rule', label: 'wx.ssRule', value: ruleKnown ? { key: `lake.swim${cap(rule)}` } : null },
     { key: 'depth', label: 'wx.ssDepth', value: isNum(depthM) && depthM > 0 ? { key: 'wx.ssDepthValue', params: { m: Math.round(depthM) } } : null },
     { key: 'currents', label: 'wx.ssCurrents', value: have.has('currents') ? { key: 'lake.hazCurrents' } : null },
-    { key: 'ban', label: 'wx.ssBan', value: banValue(rule) },
+    { key: 'ban', label: 'wx.ssBan', value: banN > 0 ? { key: 'wx.ssBanMapped', params: { n: banN } } : banValue(rule) },
     { key: 'guard', label: 'wx.ssGuard', value: lifeguard === true ? { key: 'wx.ssGuardYes' } : null },
   ];
 }
@@ -208,4 +210,20 @@ function banValue(rule) {
 function cap(s) {
   const str = String(s || '');
   return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
+}
+
+/**
+ * The lake wind profile (T641): the twelve monthly mean 10 m wind speeds in
+ * m/s from NASA POWER, as { lo, hi, peak } in km/h and the 0 based month of
+ * the strongest mean. null when the wire has no profile. Thermal winds are not
+ * in any open source and are not derived here.
+ */
+export function windProfileOf(profile) {
+  const ms = profile?.ms;
+  if (!isSeries(ms)) return null;
+  const kmh = ms.map((v) => (isNum(v) ? v * 3.6 : null));
+  const ok = kmh.filter(isNum);
+  if (ok.length !== 12) return null;
+  const hi = Math.max(...ok);
+  return { lo: Math.round(Math.min(...ok)), hi: Math.round(hi), peak: kmh.indexOf(hi) };
 }

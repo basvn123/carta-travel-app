@@ -75,6 +75,20 @@ export function GettingThere({ getting, t }) {
           {getting.transfer_min != null && ModeIcon && <ModeIcon size={13} />}
         </p>
       )}
+      {/* T642: every airport within reach, each mode with its own time. A
+          road estimate says so; public transport comes from a timetable feed. */}
+      {getting.airports?.length > 1 && (
+        <ul className="destp-get-airports" aria-label={t('dest.airportsMore')}>
+          {getting.airports.map((a) => (
+            <li key={a.iata} className="destp-get-airport">
+              <b>{a.iata}</b>
+              {' '}
+              {(a.options || []).map((o) => t(o.source === 'road_estimate' ? 'dest.airportOptEst' : 'dest.airportOpt',
+                { n: o.minutes, mode: t(`mode.${o.mode}`) })).join(', ')}
+            </li>
+          ))}
+        </ul>
+      )}
       {getting.car_needed != null && (
         <p className="destp-get-row">
           <CarIcon size={14} />

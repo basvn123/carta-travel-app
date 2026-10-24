@@ -169,7 +169,7 @@ export function ClimateStrip({ climate, month = null, figures = false, compact =
  */
 export function ClimateExtras({ climate, water = null, altitude = null, sameLevel = null }) {
   const { t, lang } = useI18n();
-  const { rainDays } = climateExtras(climate);
+  const { rainDays, sunH, waterC } = climateExtras(climate);
   const wind = windSeriesKmh(climate);
   const nf = (n) => {
     try { return new Intl.NumberFormat(lang, { maximumFractionDigits: 1 }).format(n); } catch { return String(n); }
@@ -178,12 +178,17 @@ export function ClimateExtras({ climate, water = null, altitude = null, sameLeve
   const series = [
     { key: 'rain', label: t('wx.rainDays'), note: t('wx.rainDaysNote'), values: rainDays },
     { key: 'wind', label: t('wx.wind'), note: t('wx.windNote'), values: wind },
-    { key: 'sun', label: t('wx.sunHours'), values: null },
+    {
+      key: 'sun',
+      label: t('wx.sunHours'),
+      note: sunH ? `${t('prov.est')} ${t('wx.estimate')}` : null,
+      values: sunH,
+    },
     {
       key: 'water',
       label: t('wx.waterTemp'),
-      note: water?.temps && water.est ? `${t('prov.est')} ${t('wx.estimate')}` : null,
-      values: water?.temps || null,
+      note: (water?.temps || waterC) && (water ? water.est : false) ? `${t('prov.est')} ${t('wx.estimate')}` : null,
+      values: water?.temps || waterC || null,
       unit: '°',
     },
     altitude

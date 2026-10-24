@@ -24,6 +24,8 @@ const MODES = [['train', TrainIcon], ['bus', BusIcon], ['ferry', FerryIcon]];
 
 const legText = (t, leg) => [
   t('dest.pr.leg', { from: leg.from, to: leg.to }),
+  leg.name,
+  Number.isFinite(leg.minutes) ? `${leg.minutes} min` : null,
   leg.operator,
 ].filter(Boolean).join(', ');
 

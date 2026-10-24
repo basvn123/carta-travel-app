@@ -8,7 +8,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   climateExtras, windKmh, windSeriesKmh, highPointOf, altitudeSeries, baseClimateUse,
-  waterShoesHint, audienceOf, routeRainWarning, wetRockRoute, swimSafetyRows,
+  waterShoesHint, audienceOf, routeRainWarning, wetRockRoute, swimSafetyRows, windProfileOf,
   LAPSE_C_PER_KM, BASE_CLIMATE_MAX_KM,
 } from "../src/lib/waterFacts.js";
 
@@ -27,14 +27,14 @@ const WITH_EXTRAS = {
 };
 
 test("climateExtras reads the compact and the master names, and tolerates none", () => {
-  assert.deepEqual(climateExtras(COMO), { rainDays: null, windMs: null, elevM: null });
+  assert.deepEqual(climateExtras(COMO), { sunH: null, waterC: null, rainDays: null, windMs: null, elevM: null });
   const e = climateExtras(WITH_EXTRAS);
   assert.equal(e.rainDays.length, 12);
   assert.equal(e.elevM, 197);
   const master = climateExtras({ rain_days: WITH_EXTRAS.rd, wind_ms: WITH_EXTRAS.wind, elev_m: 197 });
   assert.equal(master.windMs.length, 12);
   assert.deepEqual(climateExtras({ rd: [1, 2] }).rainDays, null, "a series of the wrong length is dropped");
-  assert.deepEqual(climateExtras(null), { rainDays: null, windMs: null, elevM: null });
+  assert.deepEqual(climateExtras(null), { sunH: null, waterC: null, rainDays: null, windMs: null, elevM: null });
 });
 
 test("wind converts m/s to km/h", () => {
@@ -135,4 +135,19 @@ test("swimSafetyRows keeps five slots and never reads a gap as safe", () => {
   assert.equal(swimSafetyRows({ rule: "yes", hazards: ["currents"], lifeguard: true })
     .find((r) => r.key === "currents").value.key, "lake.hazCurrents");
   assert.equal(swimSafetyRows({ rule: "yes", lifeguard: true }).find((r) => r.key === "guard").value.key, "wx.ssGuardYes");
+});
+
+test("T641: sunshine and water temperature series, the wind profile and a mapped swimming ban", () => {
+  const sun = [114, 129, 193, 197, 239, 281, 313, 270, 214, 141, 88, 93];
+  const e = climateExtras({ ...COMO, sun_h: sun, water_c: sun.map((v) => v / 10) });
+  assert.deepEqual(e.sunH, sun);
+  assert.equal(e.waterC.length, 12);
+  assert.equal(climateExtras({ ...COMO, sun_h: [1, 2] }).sunH, null, "a short series is dropped");
+  const w = windProfileOf({ ms: [1.9, 1.8, 1.9, 1.9, 1.9, 1.8, 1.7, 1.6, 1.7, 1.7, 1.7, 1.8] });
+  assert.deepEqual(w, { lo: 6, hi: 7, peak: 0 });
+  assert.equal(windProfileOf({ ms: [1, 2] }), null);
+  assert.equal(windProfileOf(null), null);
+  const rows = swimSafetyRows({ rule: "yes", depthM: null, hazards: [], lifeguard: true, banN: 2 });
+  assert.deepEqual(rows.find((r) => r.key === "ban").value, { key: "wx.ssBanMapped", params: { n: 2 } });
+  assert.equal(rows.find((r) => r.key === "guard").value.key, "wx.ssGuardYes");
 });

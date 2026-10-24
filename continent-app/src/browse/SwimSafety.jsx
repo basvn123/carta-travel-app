@@ -20,9 +20,9 @@ import { swimSafetyRows } from '../lib/waterFacts.js';
  *   hazards    hazard codes, e.g. ['cold_shock']  (lake hazards)
  *   lifeguard  true when a lifeguard is mapped, else null (never false)
  */
-export function SwimSafety({ rule = null, depthM = null, hazards = [], lifeguard = null, headingLevel = 3 }) {
+export function SwimSafety({ rule = null, depthM = null, hazards = [], lifeguard = null, banN = 0, headingLevel = 3 }) {
   const { t } = useI18n();
-  const rows = swimSafetyRows({ rule, depthM, hazards, lifeguard });
+  const rows = swimSafetyRows({ rule, depthM, hazards, lifeguard, banN });
   const Heading = `h${headingLevel}`;
   const lines = (hazards || [])
     .filter((code) => code !== 'currents')
