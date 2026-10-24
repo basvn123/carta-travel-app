@@ -37,6 +37,8 @@ import { useFirstRun } from '../lib/firstRunContext.js';
 import { destAnchor } from '../lib/origins.js';
 import { FlightRow, AirlineMark } from '../components/flights/Flights.jsx';
 import { homeFlightSetup, openJawNear, backDate, withEnds } from './cartaFlight.js';
+import { useDayView } from '../hooks/useDayView.js';
+import { quoteStay, seatsOf } from '../lib/price/index.js';
 
 /**
  * One published trip as a page of its own.
@@ -269,7 +271,34 @@ function tripGroup(detail) {
 }
 
 /**
- * The trip's own receipt, from the wire's cost block and its legs.
+ * The trip's beds and days from the engine (T702, plan F6): every stop is
+ * the destination's day price at the traveller's settings (party, stay,
+ * Lifestyle), times its nights and the seats, the figure its own page shows.
+ * Null when a stop is not a priced destination; the wire's stay figure then
+ * stands in, as before.
+ */
+function tripStays(detail, destinations, req) {
+  const stops = detail?.stops || [];
+  if (!stops.length || !destinations) return null;
+  let beds = 0;
+  let days = 0;
+  let est = false;
+  for (const s of stops) {
+    if (!(s.nights > 0)) continue;
+    const d = destinations[s.dest];
+    const q = d ? quoteStay(d, s.nights, null, req, destinations) : null;
+    if (!q?.day || q.day.dayEur == null) return null;
+    beds += q.accomTotal;
+    days += q.groundTotal;
+    est = est || q.day.lines.some((l) => l.status === 'included' && l.quality !== 'measured' && l.quality !== 'live');
+  }
+  if (!(beds > 0)) return null;
+  return { beds: Math.round(beds * 100) / 100, days: Math.round(days * 100) / 100, seats: seatsOf(req), est };
+}
+
+/**
+ * The trip's own receipt, from the wire's cost block and its legs (the beds
+ * and days from the engine since T702, `stays`).
  *
  * The stay is one line; each ground leg is its own line with its fare to the
  * cent, because a receipt that folds the legs into one rounded figure cannot
@@ -278,9 +307,9 @@ function tripGroup(detail) {
  * on screen, and the day figure is that total over the trip's days, labelled
  * as such: a figure for the whole party, not for one person.
  */
-function tripReceipt(detail, t, flight = null) {
+function tripReceipt(detail, t, flight = null, stays = null) {
   const cost = detail.cost || {};
-  const group = tripGroup(detail);
+  const group = stays ? stays.seats : tripGroup(detail);
   const anyEst = cost.est !== false;
   const lines = [];
   // Carta's flight first, there and home, each with its airline (T518).
@@ -300,7 +329,10 @@ function tripReceipt(detail, t, flight = null) {
       est: false,
     });
   }
-  if (Number.isFinite(cost.stay_eur)) {
+  if (stays) {
+    lines.push({ k: 'stay', label: t('trip.costStay', { n: detail.nights }), eur: stays.beds, est: stays.est });
+    if (stays.days > 0) lines.push({ k: 'food', label: t('receipt.ground'), eur: stays.days, est: stays.est });
+  } else if (Number.isFinite(cost.stay_eur)) {
     lines.push({
       k: 'stay',
       label: t('trip.costStay', { n: detail.nights }),
@@ -480,14 +512,16 @@ export function TripPage({
   // the party the receipt prices. Null without a flight near those days.
   const ctx = useFirstRun();
   const fl = homeFlightSetup(ctx);
+  const view = useDayView();
+  const stays = useMemo(() => tripStays(rawDetail, data?.destinations, view.request), [rawDetail, data, view.request]);
   const ends = useMemo(() => tripAirports(rawDetail, data?.destinations), [rawDetail, data]);
   const flightBack = backDate(fl.from, rawDetail?.nights || ((rawDetail?.days || 2) - 1));
   const flight = useMemo(() => {
     if (!rawDetail) return null;
     const rt = openJawNear(fl.file, ends.start, ends.end, fl.from, flightBack,
-      { paying: tripGroup(rawDetail), bagKey: fl.bagKey });
+      { paying: stays ? stays.seats : tripGroup(rawDetail), bagKey: fl.bagKey });
     return rt ? { ...rt, home: fl.file.from, start: ends.start, end: ends.end } : null;
-  }, [rawDetail, fl.file, ends, fl.from, flightBack, fl.bagKey]);
+  }, [rawDetail, fl.file, ends, fl.from, flightBack, fl.bagKey, stays]);
   const detail = useMemo(() => cartaLegs(rawDetail, flight, fl.file?.from, ends), [rawDetail, flight, fl.file, ends]);
   // Arrival focus follows the one page rule (hooks/usePageArrival.js, T474).
   const arrivalRef = usePageArrival(pageRef, detail?.id ?? null);
@@ -585,7 +619,7 @@ export function TripPage({
   // the cost fold's summary both read its day line, so the page never shows
   // two different figures for the same day. Until the detail lands, the card's
   // own rounded figure stands in, marked as an estimate the same way.
-  const receipt = detail ? tripReceipt(detail, t, flight) : null;
+  const receipt = detail ? tripReceipt(detail, t, flight, stays) : null;
   let perDayText = null;
   if (receipt && Number.isFinite(receipt.perDay)) {
     perDayText = costFig(receipt.perDay, receipt.est, t);

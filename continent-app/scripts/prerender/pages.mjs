@@ -21,7 +21,6 @@
 import { en } from '../../src/i18n/en.js';
 import { paths, canonicalFor } from '../../src/lib/urlScheme.js';
 import { fmtHours } from '../../src/lib/format.js';
-import { DEFAULT_LIFESTYLE, groundSpendPerPerson } from '../../src/lib/runtime_pricing.js';
 import { foodBreakdown, DEFAULT_PRICE_REQUEST } from '../../src/lib/price/index.js';
 import { cheapestStayMonths } from '../../src/lib/costIndex.js';
 import { seasonCurve } from '../../src/lib/stayPrice.js';
@@ -573,8 +572,8 @@ export function foodSource(cost) {
 /**
  * A week for one person as receipt lines: the bed for seven nights, then the
  * week of eating and drinking out item by item at the default Lifestyle,
- * through groundSpendPerPerson, the function the trip receipt and the day
- * planner price from. The total is the sum of the printed lines, so the
+ * through the engine's food line (foodBreakdown), the figures the trip
+ * receipt and the day planner price from. The total is the sum of the printed lines, so the
  * receipt always adds up. Null when the place has no day cost.
  */
 export function weekReceipt(cost, row) {
@@ -815,8 +814,8 @@ const P_RECEIPT_DAYS = RECEIPT_DAYS;
  * The priced plan of one trip, or null when it cannot honestly be a receipt:
  * not a week, a stop that is not a priced destination, two stops that are the
  * same place, or nights that do not add up to the trip's own nights. Beds are
- * the stop's nightly figure times its nights; food is groundSpendPerPerson at
- * the default Lifestyle for the days spent there (the day of departure is
+ * the stop's nightly figure times its nights; food is the engine's food line
+ * at the default request for the days spent there (the day of departure is
  * eaten at the last stop). The total is the sum of the printed lines.
  */
 export function receiptPlan(trip, ctx) {
@@ -831,12 +830,13 @@ export function receiptPlan(trip, ctx) {
   }
   if (new Set(stops.map((s) => s.d.id)).size !== stops.length) return null;
   if (stops.reduce((a, s) => a + s.n, 0) !== trip.nights) return null;
-  const ls = DEFAULT_LIFESTYLE;
   const lines = [];
   stops.forEach((s, i) => {
     s.days = s.n + (i === stops.length - 1 ? trip.days - trip.nights : 0);
     s.bed = r2(s.cost.stayEur * s.n);
-    s.food = groundSpendPerPerson(s.row, s.days, ls).total;
+    // T702 (plan F6): the engine's food line a day, the figure the page's
+    // day price holds, times the days eaten there.
+    s.food = r2(s.cost.foodEur * s.days);
     lines.push({ label: `${s.d.name}, ${s.n} ${s.n === 1 ? 'night' : 'nights'} at ${eur2(s.cost.stayEur)}`, eur: s.bed });
     lines.push({ label: `${s.d.name}, eating and drinking out, ${s.days} ${s.days === 1 ? 'day' : 'days'}`, eur: s.food });
   });

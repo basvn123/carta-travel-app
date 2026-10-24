@@ -11,7 +11,7 @@ import { setStayRecords } from "../src/lib/staysData.js";
 import { DEFAULT_LIFESTYLE } from "../src/lib/runtime_pricing.js";
 import { PROFILES } from "../src/lib/lifestyleProfiles.js";
 import { calendarDefaultWindow } from "../src/lib/firstRun.js";
-import { SCREENS, DAY_SCREENS } from "./fixtures/price/screens.mjs";
+import { SCREENS, DAY_SCREENS, EXACT_SCREENS } from "./fixtures/price/screens.mjs";
 
 const DIR = new URL("./fixtures/price/", import.meta.url);
 const FX = JSON.parse(readFileSync(new URL("destinations.json", DIR), "utf8"));
@@ -90,10 +90,10 @@ export function deviations(now = snapshot()) {
   const out = {};
   for (const [rk, byId] of Object.entries(now)) {
     for (const [id, bySc] of Object.entries(byId)) {
-      // The day planner prices a stop at its own exact dates (T666): it meets
-      // the card when the request is exact.
+      // The day planner and the trips price a stop at its own exact dates
+      // (T666, T702): they meet the card when the request is exact.
       const keys = DAY_SCREENS.filter((k) => (rk === "default" || !STATIC.includes(k))
-        && (k !== "dayPlanner" || REQUESTS[rk].ownDates));
+        && (!EXACT_SCREENS.includes(k) || REQUESTS[rk].ownDates));
       const vals = keys.map((k) => bySc[k]).filter((v) => v != null);
       out[`${rk} ${id}`] = Math.max(...vals) - Math.min(...vals);
     }

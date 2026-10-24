@@ -2,7 +2,7 @@
 // Upcoming and past are decided by the dates alone, the countdown reads the
 // same words on the day and while a trip runs, the visited record counts
 // hand-marked countries without counting a wish, and a saved trip prices
-// through the same priceTrip() the trip planner uses.
+// through the same quoteTrip() the trip planner uses.
 // Run: npm test (continent-app/). The pricing case uses public/app_data.json
 // and skips without it.
 import test from 'node:test';
@@ -90,7 +90,7 @@ const DATA = new URL('../public/app_data.json', import.meta.url);
 const have = existsSync(DATA);
 test('tripFigure prices a saved trip the way the planner does', { skip: have ? false : 'no app_data.json' }, async () => {
   const data = JSON.parse(readFileSync(DATA, 'utf8'));
-  const { priceTrip } = await import('../src/lib/tripTotal.js');
+  const { quoteTrip } = await import('../src/lib/tripTotal.js');
   const ids = Object.keys(data.destinations).filter((id) => data.destinations[id].costs).slice(0, 2);
   const plan = {
     stops: [
@@ -101,7 +101,7 @@ test('tripFigure prices a saved trip the way the planner does', { skip: have ? f
   };
   const fig = tripFigure(plan, { data, stayTier: 'home' });
   assert.ok(fig, 'a two-stop trip is priced');
-  const direct = priceTrip(plannerStateFromPlan(plan, { stayTier: 'home' }), { data });
+  const direct = quoteTrip(plannerStateFromPlan(plan, { stayTier: 'home' }), { data });
   assert.equal(fig.total, direct.grandTotal);
   assert.equal(fig.party, 2);
   assert.equal(fig.est, true);

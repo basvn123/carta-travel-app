@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { tripDaysBetween, DEFAULT_LIFESTYLE, haversineKm } from '../lib/runtime_pricing.js';
 import { suggestNextStops } from '../lib/trip_planner_pricing.js';
-import { priceTrip, normalizeTransferMode, tripStopDetails, MAX_PARTY } from '../lib/tripTotal.js';
+import { quoteTrip, normalizeTransferMode, tripStopDetails, MAX_PARTY, PLANNER_BAG } from '../lib/tripTotal.js';
 import { reorderSavings } from '../lib/tripCostOptimizer.js';
 import { addDays } from '../lib/dates.js';
 import { useLiveFlights } from '../lib/flights/useLiveFlights.js';
@@ -87,10 +87,11 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
   useEffect(() => {
     if (preferredStayTier) setStayTier(preferredStayTier);
   }, [preferredStayTier]);
-  // The bag the traveller expects to book: 'cabin' (free small bag),
+  // The bag the traveller expects to book (T702: the 10 kg cabin bag until
+  // they pick, PLANNER_BAG): 'cabin' (free small bag),
   // 'priority' (10 kg cabin bag) or 'checked' (20 kg hold bag). Priced per
   // person per flight, by airline, on top of the fare (flights/bagFees.js).
-  const [baggage, setBaggage] = useState(draft?.baggage || 'cabin');
+  const [baggage, setBaggage] = useState(draft?.baggage || PLANNER_BAG);
   // When they want to fly, each way: 'any', 'morning', 'midday', 'evening'.
   // The planner prices the cheapest flight inside those hours (T517).
   const [flightHours, setFlightHoursRaw] = useState(draft?.flightHours || { out: 'any', back: 'any' });
@@ -153,7 +154,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
       flightHours, baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, planId, planLabel, planned,
       stayTier, ownStays, deviceKey]);
 
-  // Each stop with its chained dates (the same chain priceTrip prices).
+  // Each stop with its chained dates (the same chain quoteTrip prices).
   const stopDetails = useMemo(
     () => tripStopDetails(stops, destinations, tripStart),
     [stops, destinations, tripStart],
@@ -364,7 +365,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
   const liveVersion = useLiveStaysVersion();
   const staysVersion = useStaysVersion();
   const pricedSwept = useMemo(
-    () => (liveVersion >= 0 ? priceTrip(tripState, { data, countryInsights }) : null),
+    () => (liveVersion >= 0 ? quoteTrip(tripState, { data, countryInsights }) : null),
     [tripState, data, countryInsights, liveVersion],
   );
   const liveAsks = (pricedSwept?.stopDetails || [])
@@ -380,7 +381,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
   }, [liveAsks, tripState.groupSize, tripState.children, staysVersion]);
   const liveFlights = useLiveFlights(pricedSwept.cartaFlight?.queries);
   const priced = useMemo(() => (liveFlights.size
-    ? priceTrip({ ...tripState, liveFlights }, { data, countryInsights })
+    ? quoteTrip({ ...tripState, liveFlights }, { data, countryInsights })
     : pricedSwept), [liveFlights, pricedSwept, tripState, data, countryInsights]);
   const {
     flight, legs, anchorLegs, flightTransfer, driveLegs, carRental, vignettes, stayCosts,
@@ -486,7 +487,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     setReturnAnchorId(sorted[0]?.choices?.returnAnchorId || null);
     setOwnFlight(sorted[0]?.choices?.ownFlight || null);
     setCarHome(sorted[0]?.choices?.carHome || null);
-    setBaggage(sorted[0]?.choices?.baggage || 'cabin');
+    setBaggage(sorted[0]?.choices?.baggage || PLANNER_BAG);
     // Pricing inputs must round-trip too, otherwise a reopened trip is repriced
     // with whatever the hook currently holds (default 2 travellers) instead of
     // the saved party size/pace, and the headline total comes out wrong.
@@ -529,7 +530,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
             nights: s.nights,
             groupSize,
             activities: s.activities || [],
-            ...(i === 0 ? { baggage, transportPref, transferMode, pace, ...(anchorId ? { anchorId } : {}), ...(anchorOrigin ? { anchorOrigin } : {}), ...(returnAnchorId ? { returnAnchorId } : {}), ...(ownFlight ? { ownFlight } : {}), ...(carHome ? { carHome } : {}), ...(Object.keys(legModes).length ? { legModes } : {}), ...(Object.keys(ownLegs).length ? { ownLegs } : {}), ...(Object.keys(ownStays).length ? { ownStays } : {}), ...(children ? { children } : {}), ...(babies ? { babies } : {}) } : {}),
+            ...(i === 0 ? { baggage, transportPref, transferMode, pace, ...(anchorId ? { anchorId } : {}), ...(anchorOrigin ? { anchorOrigin } : {}), ...(returnAnchorId ? { returnAnchorId } : {}), ...(ownFlight ? { ownFlight } : {}), ...(carHome ? { carHome } : {}), ...(Object.keys(legModes).length ? { legModes } : {}), ...(Object.keys(ownLegs).length ? { ownLegs } : {}), ...(Object.keys(ownStays).length ? { ownStays } : {}), ...(children ? { children } : {}), ...(babies ? { babies } : {}), priceRequest: { stay: stayTier, lifestyle } } : {}),
           },
         };
       }));
@@ -565,7 +566,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
       setSaveState('idle');
       throw e;
     }
-  }, [planId, planLabel, stops, stopDetails, groupSize, legs, flight, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, baggage, transportPref, transferMode, pace, legModes, ownLegs, ownStays, children, babies]);
+  }, [planId, planLabel, stops, stopDetails, groupSize, legs, flight, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, baggage, transportPref, transferMode, pace, legModes, ownLegs, ownStays, children, babies, stayTier, lifestyle]);
 
   // The trip as the device keeps it (T500): the same fields the draft holds,
   // so a device trip reopens exactly as it was saved.
@@ -592,7 +593,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     setTransferModeRaw(normalizeTransferMode(d.transferMode));
     setPace(d.pace || 'balanced');
     if (d.stayTier) setStayTier(d.stayTier);
-    setBaggage(d.baggage || 'cabin');
+    setBaggage(d.baggage || PLANNER_BAG);
     setFlightHoursRaw(d.flightHours || { out: 'any', back: 'any' });
     setAnchorId(d.anchorId || null);
     setAnchorOrigin(d.anchorOrigin || null);

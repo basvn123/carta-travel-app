@@ -9,7 +9,7 @@
  * Every stored trip date is a plain YYYY-MM-DD string in the traveller's own
  * calendar, so comparisons are string comparisons against localToday().
  */
-import { priceTrip } from './tripTotal.js';
+import { quoteTrip, PLANNER_BAG } from './tripTotal.js';
 
 const pad = (n) => String(n).padStart(2, '0');
 const isoOf = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
@@ -98,8 +98,10 @@ export function yearOf(iso) {
  * The planner state a saved trip row prices from: its stops with their
  * nights, and the answers the planner stored on the first stop (party,
  * transport, own figures). The same transform useTripPlanner.loadPlan
- * applies, so My trips prints the figure the trip planner prints when the
- * trip is opened, for the traveller's Lifestyle now.
+ * applies. T702 (plan F6): a trip saved since then keeps its own price
+ * request (choices.priceRequest: the stay and the Lifestyle it was planned
+ * with), so its figure does not move when the traveller's settings do; an
+ * older trip prices at the traveller's settings now.
  */
 export function plannerStateFromPlan(plan, { stayTier = 'home', lifestyle = null } = {}) {
   const stops = (plan?.stops || []).filter((s) => s.destination_id);
@@ -120,14 +122,14 @@ export function plannerStateFromPlan(plan, { stayTier = 'home', lifestyle = null
     ownLegs: c.ownLegs || {},
     ownStays: c.ownStays || {},
     transferMode: c.transferMode,
-    baggage: c.baggage || 'cabin',
+    baggage: c.baggage || PLANNER_BAG,
     anchorId: c.anchorId || null,
     anchorOrigin: c.anchorOrigin || null,
     returnAnchorId: c.returnAnchorId || null,
     ownFlight: c.ownFlight || null,
     carHome: c.carHome || null,
-    stayTier,
-    lifestyle,
+    stayTier: c.priceRequest?.stay || stayTier,
+    lifestyle: c.priceRequest?.lifestyle || lifestyle,
   };
 }
 
@@ -142,7 +144,7 @@ export function tripFigure(plan, { data, stayTier, lifestyle } = {}) {
   if (!state || !data?.destinations) return null;
   if (!state.stops.some((s) => data.destinations[s.destinationId])) return null;
   let priced;
-  try { priced = priceTrip(state, { data }); } catch { return null; }
+  try { priced = quoteTrip(state, { data }); } catch { return null; }
   const total = priced?.grandTotal;
   if (!Number.isFinite(total) || total <= 0) return null;
   const p = priced.parts || {};

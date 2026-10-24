@@ -8,7 +8,7 @@ import { fetchDestPois } from '../../lib/appData.js';
 import { RouteArrow } from './marks.jsx';
 import { loadLiveStay, useLiveStaysVersion } from '../../lib/liveStays.js';
 import { loadStays, useStaysVersion } from '../../lib/staysData.js';
-import { bedPrice } from '../../lib/stayPrice.js';
+import { quoteStay, tripRequest } from '../../lib/price/index.js';
 
 /**
  * The trip around an answer's first place (T571): the flight there and back
@@ -87,14 +87,16 @@ export function AskTripCard({ t, lang, pick, month = null, trip, primary, onOpen
   React.useEffect(() => {
     if (stayFrom && stayNights) loadLiveStay(id, stayFrom, stayNights, party);
   }, [id, stayFrom, stayNights, party, staysVersion]);
+  // T702 (plan F6): the bed is the engine's, at the trip's party and dates.
   const bed = React.useMemo(
     () => (full && stayNights
-      ? bedPrice({ dest: full, tier: trip.stayTier || 'home', adults: party, nights: stayNights, start: stayFrom })
+      ? quoteStay(full, stayNights, stayFrom, tripRequest({ groupSize: party, stayTier: trip.stayTier }), trip.destinations)
       : null),
     // eslint-disable-next-line react-hooks/exhaustive-deps -- the versions say a stay or a live answer landed
-    [full, trip.stayTier, party, stayNights, stayFrom, staysVersion, liveVersion],
+    [full, trip.stayTier, party, stayNights, stayFrom, trip.destinations, staysVersion, liveVersion],
   );
-  const liveBed = bed?.q === 'live' && bed.perPerson > 0 ? bed.perPerson / stayNights : null;
+  const bedLine = bed?.day?.lines?.find((l) => l.key === 'bed');
+  const liveBed = bedLine?.quality === 'live' && bedLine.eur > 0 ? bedLine.eur : null;
 
   return (
     <section className="ac-trip" aria-label={t('askChat.trip.title', { place: dest.city })}>

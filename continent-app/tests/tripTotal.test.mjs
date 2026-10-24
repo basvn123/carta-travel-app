@@ -1,5 +1,5 @@
 // T432: one price for the whole trip planner. The wizard's running estimate
-// and the planned trip both price through lib/tripTotal.js priceTrip(); the
+// and the planned trip both price through lib/tripTotal.js quoteTrip(); the
 // wizard prices the very state it hands over (wizardPlannerState), so the
 // figure on the last step is the figure the planned trip opens on. These
 // tests walk a matrix of budget shapes through it and check the rules that
@@ -11,7 +11,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import {
-  priceTrip, tripLines, tripReadiness, wizardPlannerState, paidEur, MAX_PARTY,
+  quoteTrip, tripLines, tripReadiness, wizardPlannerState, paidEur, MAX_PARTY,
 } from "../src/lib/tripTotal.js";
 import { DEFAULT_LIFESTYLE } from "../src/lib/runtime_pricing.js";
 
@@ -58,7 +58,7 @@ function handOver(ids, { party = 2, children = 0, babies = 0, mode = "fly", out 
   };
 }
 
-const price = (h, opts = {}) => priceTrip(
+const price = (h, opts = {}) => quoteTrip(
   wizardPlannerState(h, { stayTier: opts.stayTier || "home", lifestyle: opts.lifestyle || DEFAULT_LIFESTYLE }),
   { data, countryInsights: null },
 );

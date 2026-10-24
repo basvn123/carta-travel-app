@@ -11,7 +11,7 @@ import { ReadyTripsStep } from './ReadyTripsStep.jsx';
 // until they tap "What's there".
 const TripPage = lazy(() => import('../browse/TripPage.jsx').then((m) => ({ default: m.TripPage })));
 import { PlanTotal } from './PlanTotal.jsx';
-import { priceTrip as priceWholeTrip, wizardPlannerState, paidEur } from '../lib/tripTotal.js';
+import { quoteTrip as priceWholeTrip, wizardPlannerState, paidEur, PLANNER_BAG } from '../lib/tripTotal.js';
 import { prefillMode, openJaw, publishedLeg } from '../lib/gettingThere.js';
 import { loadDossier } from '../lib/dossier.js';
 import { TRAVEL_MODE_LABEL } from '../lib/transportLinks.js';
@@ -22,11 +22,12 @@ import { loadBeachIndex } from '../lib/beaches.js';
 import { loadLakeIndex } from '../lib/lakes.js';
 import { loadMountainIndex } from '../lib/mountains.js';
 import { loadCyclingIndex } from '../lib/cycling.js';
-import { computeCosts, eurDay } from '../lib/costIndex.js';
+import { eurDay } from '../lib/costIndex.js';
+import { priceDays, tripRequest, atDates } from '../lib/price/index.js';
 import { routeOrder } from '../lib/cartaRoute.js';
 import { loadTrip } from '../lib/trips.js';
 import { tripHeadline } from '../lib/tripStory.js';
-import { haversineKm, tripDaysBetween, accommodationPerPerson } from '../lib/runtime_pricing.js';
+import { haversineKm, tripDaysBetween } from '../lib/runtime_pricing.js';
 import { cityLabel, cityKeyName } from '../lib/placeName.js';
 import { duplicateHeroes } from '../lib/heroImage.js';
 import { pickWithDupes } from '../lib/countryCovers.js';
@@ -959,7 +960,7 @@ export function GuidedTripWizard({
       // Driving there means driving between the stops too.
       transport: ownCarChosen ? 'owncar' : 'auto',
       pace,
-      baggage: 'cabin',
+      baggage: PLANNER_BAG,
       anchorId: booked.travel && !ownCarChosen ? arrivalId : null,
       anchorOrigin: null,
       returnAnchorId: null,
@@ -992,24 +993,29 @@ export function GuidedTripWizard({
     trackLaunch('trip_priced', '', readyTrip ? 'ready' : 'built');
   };
 
-  // Rough per-night stay price for the WHOLE group at a candidate city, from
-  // the same accommodation model the receipt uses (a 2-night stay so one-off
-  // fees amortize), at the traveller's chosen stay tier. Cached hard: the Stay
-  // list can hold hundreds of rows, and the tier is in the key so switching it
-  // does not serve stale prices.
-  const nightlyCache = useRef(new Map());
-  // Both are callbacks so the memos that call them can name them as
-  // dependencies; they change exactly when the inputs that move a price or
-  // a filter verdict do.
-  const nightlyFor = useCallback((id, dest) => {
-    const key = `${id}|${groupSize}|${startDate || ''}|${effectiveStayTier}`;
-    const cache = nightlyCache.current;
-    if (cache.has(key)) return cache.get(key);
-    const a = accommodationPerPerson(dest, 2, startDate || null, null, groupSize, effectiveStayTier);
-    const v = a && a.total > 0 ? Math.round((a.total * groupSize) / 2) : null;
-    cache.set(key, v);
-    return v;
-  }, [groupSize, startDate, effectiveStayTier]);
+  // The wizard's price request (T702, plan F6): its party, the stay tier and
+  // the Lifestyle, the same question the trip it hands over is priced for.
+  const dailyLifestyle = useMemo(
+    () => lifestyle || data?.meta?.defaults?.lifestyle || null,
+    [lifestyle, data],
+  );
+  const wizardRequest = useMemo(
+    () => tripRequest({ groupSize: adults, children: kids, babies, stayTier: effectiveStayTier, lifestyle: dailyLifestyle }),
+    [adults, kids, babies, effectiveStayTier, dailyLifestyle],
+  );
+  // The per-night stay price for the WHOLE group at a candidate city: the
+  // engine's bed at a 2-night stay from the start date (so one-off fees
+  // amortize), priced once for the catalogue per request.
+  const nightBeds = useMemo(() => {
+    const start = startDate || null;
+    const req = start ? atDates(wizardRequest, start, addDays(start, 2)) : { ...wizardRequest, nights: 2 };
+    return priceDays(destinations, req);
+  }, [destinations, wizardRequest, startDate]);
+  // A callback so the memos that call it can name it as a dependency.
+  const nightlyFor = useCallback((id) => {
+    const bed = nightBeds.get(id)?.stayEur;
+    return bed > 0 ? Math.round(bed * groupSize) : null;
+  }, [nightBeds, groupSize]);
   const passesStayFilters = useCallback((id, dest) => {
     if (stayMinRating > 0 && (dest.rating?.score ?? 0) < stayMinRating) return false;
     if (stayMaxNightly > 0) {
@@ -1020,12 +1026,6 @@ export function GuidedTripWizard({
   }, [stayMinRating, stayMaxNightly, nightlyFor]);
 
 
-  // The daily lifestyle the estimate prices the days at, handed to the
-  // planner with the trip so its receipt prices the same days (T388).
-  const dailyLifestyle = useMemo(
-    () => lifestyle || data?.meta?.defaults?.lifestyle || null,
-    [lifestyle, data],
-  );
   // The whole trip priced by the planner's own function (lib/tripTotal.js,
   // T432): the hand-over above, as the planned trip will hold it.
   const priced = useMemo(() => (handOver.stops.length
@@ -1060,10 +1060,7 @@ export function GuidedTripWizard({
   // index Explore prices its cards with, so a country here and a town there
   // never disagree. A country card says "from" the cheapest town (never an
   // average); the brief gives the range.
-  const dayCosts = useMemo(
-    () => computeCosts(destinations, { lifestyle: dailyLifestyle, stay_tier: effectiveStayTier, group_size: groupSize }),
-    [destinations, dailyLifestyle, effectiveStayTier, groupSize],
-  );
+  const dayCosts = useMemo(() => priceDays(destinations, wizardRequest), [destinations, wizardRequest]);
   const countryDayCost = useMemo(() => {
     const out = new Map();
     for (const [id, row] of dayCosts) {
@@ -1086,7 +1083,7 @@ export function GuidedTripWizard({
     return out;
   }, [dayCosts, destinations]);
   // A ready-made trip's beds and days for the party, stop by stop through
-  // stopStayCost, the receipt's own function. null when a stop is missing.
+  // the engine (lib/price/stay.js), the receipt's own. null when a stop is missing.
   const cityIndex = useMemo(() => {
     const m = new Map();
     for (const [id, d] of Object.entries(destinations)) {

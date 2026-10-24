@@ -27,6 +27,7 @@ import { costContext, costRow } from '../costIndex.js';
 import { groundSpendPerPerson } from '../runtime_pricing.js';
 import { foodShare } from '../party.js';
 import { DEFAULT_PRICE_REQUEST, costChoices, seatsOf } from './request.js';
+import { carHire } from './car.js';
 
 const cents = (v) => Math.round(v * 100) / 100;
 const num = (v) => (v != null && Number.isFinite(v) ? cents(v) : null);
@@ -37,7 +38,28 @@ function bedQuality(row) {
   return row.stayLevel === 'city' && !row.stayRepaired ? 'measured' : 'modelled';
 }
 
-function linesOf(row, req) {
+// The month a hire is priced in: the exact start, the month's middle, or
+// none (the year's average season).
+function hireStart(req) {
+  const w = req.when;
+  if (w.kind === 'exact') return w.start;
+  if (w.kind === 'month' && w.ym) return `${w.ym}-15`;
+  return null;
+}
+
+function carLine(iso2, req, chosen, st) {
+  const seats = seatsOf(req);
+  const hire = iso2 ? carHire(iso2, req.nights, hireStart(req), seats) : null;
+  const eur = hire ? num(hire.eur_total / seats / req.nights) : null;
+  return {
+    key: 'car', status: st('car', 'not_included'), eur,
+    quality: eur == null ? 'missing' : 'modelled',
+    basis: { chosen, cars: hire?.cars ?? null, days: req.nights, seats },
+    provenance: eur == null ? null : { source: 'config car.model + car.rental_by_country (rentalEstimate)' },
+  };
+}
+
+function linesOf(row, req, iso2) {
   const off = new Set(req.excluded || []);
   const st = (key, status) => (off.has(key) ? 'excluded' : status);
   const car = req.transport === 'car';
@@ -57,8 +79,13 @@ function linesOf(row, req) {
     },
     // F8 prices local transport; until then the item is known to be missing.
     { key: 'transport', status: st('transport', 'not_included'), eur: null, quality: 'missing', basis: null, provenance: null },
-    // F6 adds the car line (rentalEstimate) when the traveller travels by car.
-    { key: 'car', status: st('car', 'not_included'), eur: null, quality: 'missing', basis: { chosen: car }, provenance: null },
+    // T702 (F6): the car hire (lib/price/car.js, rentalEstimate) a person a
+    // day, with the cars the party fills in its basis (seven people are two
+    // cars, V6). Never in the day: going by car on Explore is driving one's
+    // own car there (the way there prices it), and a hire is a trip choice
+    // the trip price adds (quoteTrip, transport 'car'). basis.chosen still
+    // says whether the traveller goes by car.
+    carLine(iso2, req, car, st),
     // F9: activities are optional and off by default.
     { key: 'activities', status: st('activities', 'optional'), eur: null, quality: 'missing', basis: null, provenance: null },
     // T695: events (festivals, concerts) have no price data yet; the line is
@@ -67,8 +94,8 @@ function linesOf(row, req) {
   ];
 }
 
-function answer(row, req) {
-  const lines = linesOf(row, req);
+function answer(row, req, iso2 = null) {
+  const lines = linesOf(row, req, iso2);
   const counted = lines.filter((l) => l.status === 'included');
   // A day needs every included line priced: a bed or food line without data
   // leaves the day unpriced rather than cheaper (rule 8).
@@ -92,7 +119,7 @@ export function priceDays(destinations, req = DEFAULT_PRICE_REQUEST) {
   const r = req || DEFAULT_PRICE_REQUEST;
   const ctx = costContext(destinations, costChoices(r));
   const out = new Map();
-  for (const [id, d] of Object.entries(destinations || {})) out.set(id, answer(costRow(d, ctx), r));
+  for (const [id, d] of Object.entries(destinations || {})) out.set(id, answer(costRow(d, ctx), r, d.iso2));
   return out;
 }
 
@@ -105,7 +132,7 @@ export function priceDay(dest, req = DEFAULT_PRICE_REQUEST, destinations = null)
   if (!dest) return null;
   const r = req || DEFAULT_PRICE_REQUEST;
   const ctx = costContext(destinations || { [dest.id]: dest }, costChoices(r));
-  return answer(costRow(dest, ctx), r);
+  return answer(costRow(dest, ctx), r, dest.iso2);
 }
 
 /**

@@ -355,15 +355,8 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
       before={before}
       primary={beach.base ? (
         <Button variant="primary" iconEnd={<ChevronRightIcon size={20} />} onClick={() => onSelectDest?.(beach.base.id)}>
-          {t('beach.basedOn', { city: beach.base.city })}
+          {(baseDay && view.stayIn(beach.base.city, baseDay.dayEur)) || t('beach.basedOn', { city: beach.base.city })}
         </Button>
-      ) : null}
-      costLine={baseDay && beach.base ? (
-        <>
-          {t('item.dayIn', { city: beach.base.city })}{' '}
-          <strong><Money value={view.day(baseDay.dayEur)} est={baseDay.est} /></strong>{' '}
-          {view.unit}
-        </>
       ) : null}
       actions={[
         <a key="dir" className="btn btn-secondary" href={mapsUrl} target="_blank" rel="noopener noreferrer">

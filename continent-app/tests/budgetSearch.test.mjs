@@ -1,6 +1,6 @@
 // T506 (roadmap 1.19): search on a total budget. Every destination is priced
-// through the one engine, lib/tripTotal.js priceTrip(); these tests check the
-// search adds no second formula (its bed and food lines are priceTrip's parts
+// through the one engine, lib/tripTotal.js quoteTrip(); these tests check the
+// search adds no second formula (its bed and food lines are quoteTrip's parts
 // for the very trip the planner would price), the buffer is on by default,
 // the receipt sums to the total in whole euros, nothing unpriced carries an
 // amount, and the rules from the 2.22 plan always hold: more budget never
@@ -15,7 +15,7 @@ import {
   parseBudget, normalizeQuery, startForMonth, nextMonth, priceForBudget, budgetSearch,
   budgetReceipt, budgetTripState, verdictOf, BUFFER_DEFAULT, UNPRICED,
 } from "../src/lib/budgetSearch.js";
-import { priceTrip, wizardPlannerState } from "../src/lib/tripTotal.js";
+import { quoteTrip, wizardPlannerState } from "../src/lib/tripTotal.js";
 
 const TODAY = new Date(2026, 9, 21); // 21 Oct 2026
 
@@ -81,7 +81,7 @@ test("the month names a real start date, never one in the past", () => {
   assert.equal(q.end, "2026-10-28");
 });
 
-test("the search prices beds and food with priceTrip, nothing of its own", () => {
+test("the search prices beds and food with quoteTrip, nothing of its own", () => {
   const q = normalizeQuery({ budget: 1500, adults: 2, days: 5, month: 10 }, TODAY);
   for (const d of ALL) {
     const p = priceForBudget(d, q);
@@ -90,10 +90,10 @@ test("the search prices beds and food with priceTrip, nothing of its own", () =>
       startDate: q.start, groupSize: 2, transport: "auto",
       stops: [{ destinationId: d.id, nights: q.nights }],
     });
-    const planned = priceTrip(state, { data: { destinations: { [d.id]: d } } });
+    const planned = quoteTrip(state, { data: { destinations: { [d.id]: d } } });
     assert.equal(p.beds, Math.round(planned.parts.beds), `${d.id} beds`);
     assert.equal(p.days, Math.round(planned.parts.days), `${d.id} food and drink`);
-    const own = priceTrip(budgetTripState(d.id, q), { data: { destinations: { [d.id]: d } } });
+    const own = quoteTrip(budgetTripState(d.id, q), { data: { destinations: { [d.id]: d } } });
     assert.equal(own.parts.travel + own.parts.transfers + own.parts.drive + own.parts.car, 0,
       "no getting-there figure of Carta's enters the total");
   }

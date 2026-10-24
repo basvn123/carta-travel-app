@@ -8,7 +8,7 @@ import {
 } from "../src/lib/flights/flights.js";
 import { bagFee, bagTier } from "../src/lib/flights/bagFees.js";
 import { existsSync, readFileSync } from "node:fs";
-import { priceTrip, tripLines } from "../src/lib/tripTotal.js";
+import { quoteTrip, tripLines } from "../src/lib/tripTotal.js";
 import { withOriginRoutes, destAnchor } from "../src/lib/origins.js";
 
 const NOW = Date.UTC(2026, 9, 21, 20, 0);
@@ -98,7 +98,7 @@ test("bags: per person per way, by airline, full-service cabin bag included", ()
   assert.equal(legCost(null), null);
 });
 
-// ---- In a whole trip (priceTrip) ------------------------------------------
+// ---- In a whole trip (quoteTrip) ------------------------------------------
 
 const DATA = new URL("../public/app_data.json", import.meta.url);
 const raw = existsSync(DATA) ? JSON.parse(readFileSync(DATA, "utf8")) : null;
@@ -121,7 +121,7 @@ test("a trip's total carries Carta's flight there and home, and a typed fare rep
     stops: [{ destinationId: bcn.id, nights: 3, activities: [] }],
     tripStart: start, tripEnd: end, groupSize: 2, baggage: "priority_10kg", transportPref: "auto",
   };
-  const p = priceTrip(state, { data });
+  const p = quoteTrip(state, { data });
   assert.equal(p.cartaFlight.out.price, 87);
   assert.equal(p.cartaFlight.back.airline, "FR");
   // Vueling cabin bag 18, Ryanair 20, for two people each way.
@@ -131,7 +131,7 @@ test("a trip's total carries Carta's flight there and home, and a typed fare rep
   const sum = lines.reduce((n, l) => n + l.eur, 0);
   assert.ok(Math.abs(sum - p.grandTotal) < 0.05, `lines ${sum} sum to the total ${p.grandTotal}`);
 
-  const typed = priceTrip({ ...state, ownFlight: { mode: "fly", costOut: 150, costBack: 0 } }, { data });
+  const typed = quoteTrip({ ...state, ownFlight: { mode: "fly", costOut: 150, costBack: 0 } }, { data });
   assert.equal(typed.cartaFlight.out, null);
   assert.equal(typed.parts.flights, (64 + 20) * 2);
   assert.equal(tripLines(typed).find((l) => l.key === "out").kind, "yours");
