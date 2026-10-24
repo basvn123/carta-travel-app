@@ -2296,8 +2296,56 @@ TASKS = [
                  "trips and journeys wait on T269-g. Under load trails took "
                  "798 s, cycling 708 s and region 285 s."),
     },
+    # ---- T647: the trails lab on an on-demand worker (owner decision D5) ---- #
+    {
+        "key": "trailslab_worker",
+        "title": "Trails lab on an on-demand x86 worker: way tags, transit stops, "
+                 "trails + cycling export behind their gates, dump back to R2",
+        # Weekly on purpose, with the real interval inside the script: it spawns
+        # only when the last good run is 28 days old, and otherwise keeps the
+        # newest dump from expiring (archive/db/ lives 30 days, and "monthly"
+        # here means every fifth Monday, 35 days).
+        "cadence": "weekly",
+        "writes_app_data": False,
+        "writes_wire": True,
+        "soft": True,
+        # The guard and the probe are looked up when called, so they can live
+        # below the table next to the rest of this hunk.
+        "guard": lambda ctx: _trailslab_worker_guard(ctx),
+        "dry_run": lambda ctx: _trailslab_worker_dry(ctx),
+        "cmds": [[PY, "infra/hetzner/cax41/trailslab_worker.py", "run"]],
+        "note": ("infra/hetzner/cax41/trailslab_worker.py: spawn.sh trailslab "
+                 "(CPX42, about 5 h, ceiling 10 h, about EUR 0.65 at the "
+                 "planning rate), then the wires that passed gate.py and "
+                 "difficulty_gate.py on the worker AND again here against this "
+                 "box's wire go into continent-app/public/trails and /cycling, "
+                 "so this run's ship publishes them, and the fresh dump moves "
+                 "to archive/db/trailslab/. Skips with the reason unless "
+                 "CARTA_TRAILSLAB_WORKER=1, HCLOUD_TOKEN, R2 and the worker key "
+                 "are all in place. The trails_* tasks above still skip here "
+                 "(no lab on this box). Owner steps: "
+                 "Execution/P15/_OPEN-explore-data-runs.md, T647."),
+    },
 ]
 TASK_BY_KEY = {t["key"]: t for t in TASKS}
+
+
+def _trailslab_worker_guard(ctx=None):
+    """T647: (ok, reason) from trailslab_worker.py check, which exits 3 with
+    the reason when a prerequisite is missing (the switch, HCLOUD_TOKEN, R2,
+    the worker key, bash on a Windows laptop)."""
+    try:
+        r = subprocess.run([PY, str(ROOT / "infra/hetzner/cax41/trailslab_worker.py"), "check"],
+                           cwd=str(ROOT), capture_output=True, text=True, timeout=60)
+    except (OSError, subprocess.TimeoutExpired) as e:
+        return False, f"trailslab_worker.py check did not run ({type(e).__name__})"
+    reason = (r.stdout.strip().splitlines() or [""])[-1]
+    return r.returncode == 0, reason or f"trailslab_worker.py check exited {r.returncode}"
+
+
+def _trailslab_worker_dry(ctx=None):
+    """T647: every command a real run would issue, spawn.sh --dry-run included."""
+    return run_cmd([PY, "infra/hetzner/cax41/trailslab_worker.py", "run", "--dry-run"]) == 0
 
 # Names --only accepts that expand to several tasks, in this order. Not tasks:
 # they have no cadence, no state entry and no line in --list.

@@ -336,6 +336,11 @@ classes:
       it is, but trip_reviews is the human review ledger and the publish
       gate's audit trail, and it exists only inside Docker's vhdx on this
       laptop. This dump is what stops the laptop being its system of record.
+      Since T647 the trailslab worker job restores the newest one, and
+      run_pipeline.py's trailslab_worker task moves the dump the worker writes
+      back into this prefix (encrypted to the owner key and the worker key,
+      or plain by owner decision), which restarts the 30-day expiry;
+      infra/hetzner/README.md, "The trailslab job".
 
   - name: supabase-dump
     kind: db-dump
