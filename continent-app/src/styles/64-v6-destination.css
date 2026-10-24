@@ -162,6 +162,11 @@
   font-weight: 500;
   color: var(--text-2);
 }
+.destp-key dd.destp-key-note {
+  font-size: var(--text-caption);
+  font-weight: 400;
+  color: var(--text-2);
+}
 .destp-key dd {
   margin: 2px 0 0;
   font-size: var(--text-body);

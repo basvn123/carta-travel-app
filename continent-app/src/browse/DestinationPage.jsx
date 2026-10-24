@@ -1,7 +1,6 @@
 import React from 'react';
 import { ReportProblem } from '../components/ReportProblem.jsx';
 import { knownFor } from '../lib/knownFor.js';
-import { crowdBadgeWorthShowing } from '../components/CrowdingBadge.jsx';
 import { matchProfile, PROFILE_LABEL_KEYS } from './LifestylePanel.jsx';
 import { safeUrl } from '../lib/format.js';
 import { useDossier, destShareUrl } from '../lib/dossier.js';
@@ -37,13 +36,18 @@ import {
   DEST_TABS, tabFromHash, hashWithTab, aroundCategories, defaultAroundKey, emptyOutdoorKinds,
 } from '../lib/destOverview.js';
 import {
-  baseCity, monthOf, CROWD_KEY, photoMatcher, thumb500, NOT_A_VIEW, isArea, useDoPhotos,
+  baseCity, monthOf, photoMatcher, thumb500, NOT_A_VIEW, isArea, useDoPhotos,
 } from './destParts.js';
 import { DestOverview } from './DestOverview.jsx';
 import { DestNearby } from './DestNearby.jsx';
 import { DestWhen } from './DestWhen.jsx';
 import { DestPractical } from './DestPractical.jsx';
 import { notYet } from '../components/NotYet.jsx';
+import { useSettings } from '../components/SettingsLine.jsx';
+import { resolveWhen, whenMonth } from '../lib/when.js';
+import { crowdFor, CROWD_TIER_KEYS } from '../lib/crowdMonth.js';
+import { mobilityStat } from '../lib/mobility.js';
+import { pickAirport, airportLine } from '../lib/airportPick.js';
 
 /**
  * The full-screen destination page, v4 (T499, roadmap 1.4, owner answers
@@ -188,6 +192,14 @@ export function DestinationPage({
   const datesOwn = !!(defaults && firstRun?.departDate
     && (firstRun.departDate !== defaults.start || (firstRun.returnDate && firstRun.returnDate !== defaults.end)));
 
+  // T649: the traveller's when (exact, month or any), read once by lib/when.js
+  // for every stat on this page; outside the shell it is built from the
+  // first-run dates.
+  const settingsCtx = useSettings();
+  const tripWhen = settingsCtx?.when
+    ?? resolveWhen({ ownDates: datesOwn, departDate: firstRun?.departDate, returnDate: firstRun?.returnDate });
+  const statMonth = whenMonth(tripWhen);
+
   const dossier = useDossier(destination?.id);
   const staysVersion = useStaysVersion();
   // D7: a member search lands here with ?dm=<name>; that member is the
@@ -326,7 +338,12 @@ export function DestinationPage({
   // own stays data (live once its country file is in, staysVersion); the
   // dossier keeps the neighbourhood medians.
   const sleep = destSleep(destination, d, staysVersion);
-  const getting = d?.practical?.getting_there || null;
+  // T651: the wire's airports[] (every airport with its options) joins the
+  // dossier's getting-there record when the dossier lacks it.
+  const gettingRaw = d?.practical?.getting_there || null;
+  const getting = destination.airports?.length && !gettingRaw?.airports
+    ? { ...(gettingRaw || {}), airport: gettingRaw?.airport || destination.airports[0].iata, airports: destination.airports }
+    : gettingRaw;
   const bookAhead = d?.practical?.book_ahead || [];
   const rhythm = d?.practical?.rhythm || null;
   const pairs = d?.practical?.pairs || [];
@@ -373,39 +390,42 @@ export function DestinationPage({
   // facts, label over value. The day cost is not among them: the head and
   // the price card carry it. A missing fact is left out, never "Not
   // recorded" (Zungoli shows three).
-  const crowdOn = crowdBadgeWorthShowing(destination);
-  const climateMonth = tripMonth ? destination.climate?.m?.[tripMonth - 1] : null;
+  // T649: the Crowds stat follows the traveller's when (one month's tier, the
+  // yearly pattern for any time); no data for the question is the placeholder.
+  const aroundStat = mobilityStat(destination, t, lang);
+  const airportPick = pickAirport(getting);
+  const crowd = crowdFor(destination.crowding, tripWhen);
+  const crowdMonth = crowd?.month ?? statMonth;
+  const crowdValue = !crowd ? notYet(t)
+    : crowd.kind === 'tier' ? t(CROWD_TIER_KEYS[crowd.tier])
+    : crowd.kind === 'pattern' ? t('dest.crowdPattern', { quiet: monthList(crowd.quiet), busy: monthList(crowd.busy) })
+    : t('dest.crowdFlat', { label: t(CROWD_TIER_KEYS[crowd.tier]) });
+  const climateMonth = statMonth ? destination.climate?.m?.[statMonth - 1] : null;
   const keyFacts = [
     when?.best?.length > 0 && { k: 'best', label: t('dest.keyBest'), value: monthList(when.best) },
     // A month fact only once the traveller has a month (carta-design "Month").
-    datesOwn && climateMonth?.[0] != null && {
+    climateMonth?.[0] != null && {
       k: 'month',
-      label: t('dest.keyMonth', { month: monthName(tripMonth, lang, true) }),
+      label: t('dest.keyMonth', { month: monthName(statMonth, lang, true) }),
       value: t('dest.keyMonthValue', { hi: Math.round(climateMonth[0]), mm: Math.round(climateMonth[2] ?? 0) }),
     },
-    // T642: the month on screen when the region has a monthly series, else the annual tier.
-    crowdOn && {
+    {
       k: 'crowds',
-      label: t('dest.keyCrowds'),
-      value: t(CROWD_KEY[(datesOwn && tripMonth ? destination.crowding.monthly?.tier?.[tripMonth - 1] : null)
-        ?? destination.crowding.tier] || 'crowd.moderate'),
+      label: crowdMonth && tripWhen.kind !== 'any'
+        ? t('dest.keyCrowdsIn', { month: monthName(crowdMonth, lang, true) })
+        : t('dest.keyCrowds'),
+      value: crowdValue,
     },
-    getting?.airport && {
+    airportPick && {
       k: 'airport',
       label: t('dest.keyAirport'),
-      // T632: no transfer mode in the data is the placeholder, not "train".
-      value: getting.airports?.length > 1
-        // T642: every airport within reach, nearest first, each with its fastest transfer.
-        ? getting.airports.map((a) => (a.transfer_mode
-          ? t('dest.keyAirportValue', { iata: a.iata, n: a.transfer_min, mode: t(`mode.${a.transfer_mode}`) })
-          : a.iata)).join(' / ')
-        : getting.transfer_min == null
-        ? getting.airport
-        : getting.transfer_mode
-          ? t('dest.keyAirportValue', { iata: getting.airport, n: getting.transfer_min, mode: t(`mode.${getting.transfer_mode}`) })
-          : t('dest.keyAirportNoMode', { iata: getting.airport, n: getting.transfer_min, mode: notYet(t) }),
+      // T651: the best airport only (shortest public transport, else the
+      // shortest road estimate); Getting there keeps the full list.
+      value: airportLine(airportPick, t, notYet(t)),
     },
-    getting?.car_needed != null && { k: 'car', label: t('dest.keyCar'), value: t(getting.car_needed ? 'dest.keyCarYes' : 'dest.keyCarNo') },
+    // T650: Getting around, from local_transport.mobility; the placeholder
+    // until the data has it (car_needed stays in the data for the price card).
+    { k: 'around', label: t('dest.keyAround'), value: aroundStat?.value ?? notYet(t), note: aroundStat?.note || null },
     // "Time here" left the facts (T446): a rule of thumb from the sights'
     // hours, it contradicted the intro ("three or four days") and the card's
     // stay on the same screen.
@@ -550,7 +570,7 @@ export function DestinationPage({
     cats, aroundKey, setAroundKey: setAroundPick, emptyKinds,
     aroundKm: around?.radius_km || 20, area: isArea(d),
     tripsForMap, nearbyForMap, aroundForMap, routeRows, hasRoutes, members, memberFocus,
-    forecast, monthPick: datesOwn ? tripMonth : null, cheapMonths, water, festivals,
+    forecast, monthPick: statMonth, cheapMonths, water, festivals,
     getting, rhythm, bookAhead, verdict, verdictBand, sleep, tips, packs, month, parking, exits,
     isOpen, toggle, onOpenLifestyle,
     onOpenFeature, onSelect, onOpenItin, goTab,

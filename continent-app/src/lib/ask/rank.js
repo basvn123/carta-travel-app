@@ -136,7 +136,7 @@ export function reasonsFor(p, intent, ctx) {
   const row = m ? monthRow(p, m) : null;
   if (row) out.push({ k: f.warm ? 'warm' : 'month', ...row });
   if (p.cost?.dayEur != null) out.push({ k: 'cost', dayEur: Math.round(p.cost.dayEur), est: p.cost.stayLevel !== 'measured' });
-  if (f.quiet && p.crowding?.tier === 1) out.push({ k: 'quiet' });
+  if (f.quiet && quietOk(p)) out.push({ k: 'quiet' });
   if (f.nocar && noCarOk(p)) out.push({ k: 'nocar', transit: p.local_transport?.transit_quality });
   if (p.rating?.score != null) out.push({ k: 'rating', score: p.rating.score, label: p.rating.label });
   return out;

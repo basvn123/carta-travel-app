@@ -37,6 +37,7 @@ function KeyFacts({ facts }) {
         <div className="destp-key" key={f.k}>
           <dt>{f.label}</dt>
           <dd>{f.value}</dd>
+          {f.note ? <dd className="destp-key-note">{f.note}</dd> : null}
         </div>
       ))}
     </dl>

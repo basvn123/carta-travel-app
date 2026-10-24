@@ -21,6 +21,7 @@ import {
   ChevronRightIcon, MapPinIcon, ListDayIcon,
 } from '../components/Icons.jsx';
 import { useTravelMonth, useSettings } from '../components/SettingsLine.jsx';
+import { resolveWhen } from '../lib/when.js';
 import { fromName } from '../components/FromPicker.jsx';
 import { cheapestReturn, cheapestReturnAnyMonth } from '../lib/flights/flights.js';
 import { homePoint, wayFor } from '../lib/travelWay.js';
@@ -530,6 +531,12 @@ export function ExploreTab({
   const oneCountry = !countryNot && countryFilter.length === 1 ? countryFilter[0] : null;
   const flights = data?.flights || null;
   const dateFlex = settingsLine?.dateFlex || null;
+  // T649: the month the quiet flag judges, from the one helper: the Explore
+  // month filter when set, else the traveller's own when.
+  const quietWhen = React.useMemo(
+    () => (dxf.month ? resolveWhen({ xm: dxf.month }) : (settingsLine?.when || null)),
+    [dxf.month, settingsLine?.when],
+  );
   const flightMonth = dateFlex === 'any' ? null
     : settingsLine?.departDate
       ? String(settingsLine.departDate).slice(0, 7)
@@ -627,7 +634,7 @@ export function ExploreTab({
     if (dxf.fh && flightLimitAvailable) {
       if (p.fmin != null ? p.fmin > dxf.fh * 60 : wayMode === 'plane') return false;
     }
-    if (dxf.quiet && !quietOk(p)) return false;
+    if (dxf.quiet && !quietOk(p, quietWhen)) return false;
     if (dxf.badged && !p.country_badge) return false;
     if (dxf.sea && !(p.categories || []).some((c) => c === 'beach' || c === 'coast' || c === 'island')) return false;
     // The guided facets (vibe, area, near, close by) hold only once the
@@ -635,7 +642,7 @@ export function ExploreTab({
     // showing places that may not match (T442).
     if ((dxf.vibe || dxf.area || dxf.near || dxf.nb.length) && !matchGuided(p, dxf, gctx)) return false;
     return true;
-  }), [rows, dxf, roleFor, gctx, flightLimitAvailable, wayMode]);
+  }), [rows, dxf, roleFor, gctx, flightLimitAvailable, wayMode, quietWhen]);
   // A guided question ranks its answer: nearest first around a place, the
   // strongest vibe first otherwise, while the reader keeps the default sort.
   const guidedRows = React.useMemo(() => {
@@ -1065,6 +1072,8 @@ export function ExploreTab({
     const month = xf.month || railMonth;
     const monthName = new Intl.DateTimeFormat(lang, { month: 'long' }).format(new Date(2026, month - 1, 15));
     const inSeason = (p) => (p.climate?.best || []).includes(month);
+    // T649: the same tier the Crowds stat shows, in the month the rail names.
+    const railWhen = resolveWhen({ xm: month });
     const byRating = (a, b) => (b.rating?.score || 0) - (a.rating?.score || 0);
     const q = {
       top: rows.filter((p) => p.rating?.tier === 3),
@@ -1074,7 +1083,7 @@ export function ExploreTab({
       beach: guided ? interleaveByCountry(rows.filter((p) => inSeason(p) && vibeOf(guided, p.id, 'beach') >= 80).sort(byRating)) : [],
       nocar: interleaveByCountry(rows.filter(noCarOk)),
       // Quiet in high season says something only in June to September.
-      quiet: month >= 6 && month <= 9 ? interleaveByCountry(rows.filter(quietOk)) : [],
+      quiet: month >= 6 && month <= 9 ? interleaveByCountry(rows.filter((p) => quietOk(p, railWhen))) : [],
       saved: favorites && favorites.size ? rows.filter((p) => favorites.has(p.id)) : [],
     };
     // V3 (T383): the page leads with cost (house rule "Rails and cuts",

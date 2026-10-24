@@ -133,6 +133,7 @@ import { useKeyboardOpen } from './hooks/useKeyboardOpen.js';
 import { usePanelState } from './hooks/usePanelState.js';
 import { useFilterState } from './hooks/useFilterState.js';
 import { useReach } from './lib/reach.js';
+import { resolveWhen, whenMonth } from './lib/when.js';
 
 // Once someone picks "continue without an account" on the entry gate, don't
 // ask again on this device, only a fresh sign-in should bring accounts back.
@@ -1404,8 +1405,13 @@ function TravelApp() {
   }, []);
   const ownDates = !!(departDate && returnDate && defaultDates
     && (departDate !== defaultDates.start || returnDate !== defaultDates.end));
-  const travelMonth = dateFlex === 'any' ? null
-    : dateFlex === 'month' || ownDates ? Number(String(departDate).slice(5, 7)) || null : null;
+  // T649: the one reader of the traveller's "when" (lib/when.js); travelMonth
+  // is its start month, `when` the whole answer (exact, month or any).
+  const when = useMemo(
+    () => resolveWhen({ dateFlex, departDate, returnDate, ownDates }),
+    [dateFlex, departDate, returnDate, ownDates],
+  );
+  const travelMonth = whenMonth(when);
   const settings = useMemo(() => ({
     data,
     origin: choices.origin,
@@ -1418,7 +1424,7 @@ function TravelApp() {
     defaultDates, dateBounds,
     ownDates,
     dateFlex, setDateFlex,
-    travelMonth,
+    travelMonth, when,
     party: choices.group_size,
     children: choices.children || 0,
     babies: choices.babies || 0,
@@ -1433,7 +1439,7 @@ function TravelApp() {
     lifestyle: choices.lifestyle,
     openLifestyle,
   }), [data, choices.origin, setOrigin, choices.drive_home, setFrom, departDate, returnDate, defaultDates, dateBounds,
-    ownDates, dateFlex, travelMonth, choices.group_size, choices.children, choices.babies, setParty, setPartyParts,
+    ownDates, dateFlex, travelMonth, when, choices.group_size, choices.children, choices.babies, setParty, setPartyParts,
     choices.transport_mode, setTransportMode, countryFilter, setCountryFilter, countryNot, setCountryNot,
     availableCountries, choices.stay_tier, choices.lifestyle, openLifestyle]);
 
