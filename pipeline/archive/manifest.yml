@@ -231,6 +231,62 @@ classes:
     remote_object_count: 1
     notes: Per-country raw and rich peak snapshots, pipeline/mountains.
 
+  # T640: the Hetzner box's explore data fill. lakes-json is a member-filtered
+  # view of lakes-cache: the box streams the lakes-cache tarball and keeps only
+  # cache/lakes/*.json (raw_CC, rich_CC, the indexes, about 193 MB), never the
+  # extracts and CHELSA crop that make up the other 4.5 GB. It shares the
+  # tarball's key, so it is pull_only, and the pull leaves cache/lakes/
+  # .partial-from-r2 behind, which makes pack.py and push.py refuse lakes-cache
+  # on that machine. A partial copy can never overwrite the full archive.
+  - name: lakes-json
+    kind: derived-cache
+    local_path: cache/lakes
+    r2_key_pattern: "archive/caches/lakes-cache.tar.gz"
+    pull_members: ["cache/lakes/*.json"]
+    pull_only: true
+    treatment: tar-members
+    lifecycle_days: null
+    local_size_mb: 193
+    local_object_count: 90
+    remote_object_count: 0
+    notes: Pull-only view of lakes-cache for enrich_lakes and export_lakes on the box.
+
+  # T640: the overlay caches the explore data fill harvests write (T641, T642).
+  # Every one is resumable, so carrying them between runs is what lets a long
+  # pass (sea temperature, lake water detail, POI fees) finish over two Mondays
+  # instead of starting again. The box creates this class, so `optional` makes
+  # a pull before its first push a no-op rather than an error.
+  - name: explore-overlays
+    kind: derived-cache
+    local_path: cache
+    local_path_globs:
+      - climate_power_daily.json
+      - sea_temp
+      - "sea_temp_*.json"
+      - "dest_transit*.json"
+      - transit_lines.json
+      - beach_walks.json
+      - dest_emergency.json
+      - dest_swim_bans.json
+      - poi_fees.json
+      - peak_lift_hours.json
+      - lake_outlines.json
+      - lake_water_detail.json
+      - eurostat_nights_nuts2_monthly.json
+      - gtfs
+    r2_key_pattern: "archive/caches/explore-overlays.tar.gz"
+    optional: true
+    treatment: tar-per-layer
+    lifecycle_days: null
+    local_size_mb: 60
+    local_object_count: null
+    remote_object_count: 1
+    notes: >
+      Overlay caches of the explore data fill (pipeline/explore_overlay.py),
+      the NASA POWER daily memo, the Eurostat monthly nights and the GTFS
+      feeds with a verified licence (cache/gtfs/<feed id>/). Packed and pushed
+      by the box after a good run; the laptop pulls it before a hand run.
+
   - name: trips-cache
     kind: derived-cache
     local_path: cache/trips

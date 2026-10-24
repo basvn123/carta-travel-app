@@ -237,6 +237,11 @@ const DEAD_WIRE_FIELDS = [
         ...(Array.isArray(d.climate.rain_days) ? { rd: d.climate.rain_days } : {}),
         ...(Array.isArray(d.climate.wind_ms) ? { wind: d.climate.wind_ms } : {}),
         ...(Number.isFinite(d.climate.elev_m) ? { elev: d.climate.elev_m } : {}),
+        // T641: sun_h twelve monthly sunshine totals in hours (modelled from
+        // NASA POWER radiation), water_c twelve monthly sea or lake surface
+        // temperatures in C (NASA MUR SST) for a destination on the water.
+        ...(Array.isArray(d.climate.sun_h) ? { sun_h: d.climate.sun_h } : {}),
+        ...(Array.isArray(d.climate.water_c) ? { water_c: d.climate.water_c } : {}),
       };
       after += JSON.stringify(d.climate).length;
     }

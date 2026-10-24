@@ -1404,7 +1404,10 @@ def context_only(cc):
         print(f"  {cc}: nothing enriched yet")
         return None
     peaks = rich["peaks"]
-    todo = [p for p in peaks if not p.get("osm")]
+    # T640 wiring: a context from before T630 has no `huts` list (T630 added
+    # it to context_for), so it is asked again; one with `huts: []` is done.
+    todo = [p for p in peaks
+            if not p.get("osm") or "huts" not in (p.get("osm") or {})]
     if not todo:
         print(f"  {cc}: context already complete")
         return rich

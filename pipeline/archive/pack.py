@@ -100,7 +100,17 @@ def iter_layer_files(entry: dict) -> list[Path]:
     if not entry.get("local_path"):
         return []
     base = REPO_ROOT / entry["local_path"]
-    roots = [base / g for g in entry["local_path_globs"]] if entry.get("local_path_globs") else [base]
+    if entry.get("local_path_globs"):
+        # T640: a glob entry with a wildcard (sea_temp_*.json) expands; a plain
+        # name is a child of local_path, as before.
+        roots = []
+        for g in entry["local_path_globs"]:
+            if any(ch in g for ch in "*?["):
+                roots += sorted(base.glob(g))
+            else:
+                roots.append(base / g)
+    else:
+        roots = [base]
     excludes = [base / x for x in entry.get("local_path_excludes") or []]
 
     files: list[Path] = []
@@ -261,6 +271,18 @@ def main() -> int:
     files_before = bytes_before = tarballs = bytes_after = 0
     for entry in entries:
         name = entry["name"]
+        if entry.get("pull_only"):
+            print(f"- {name}: pull-only class, never packed")
+            continue
+        # T640: a member-filtered pull (push.py pull_members) leaves this
+        # marker. Packing that folder would make a partial tarball that the
+        # next push uploads over the full one.
+        marker = (REPO_ROOT / entry["local_path"] / ".partial-from-r2") if entry.get("local_path") else None
+        if marker is not None and marker.exists():
+            print(f"- {name}: REFUSED, {entry['local_path']} is a partial copy pulled from R2 "
+                  f"({marker.name}); pack it on the machine that holds the full layer")
+            refused.append(name)
+            continue
         files = iter_layer_files(entry)
         if not files:
             print(f"- {name}: nothing at {entry.get('local_path')}, skipping")

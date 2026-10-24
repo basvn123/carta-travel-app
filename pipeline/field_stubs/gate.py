@@ -30,6 +30,24 @@ Layers:
     cycling    continent-app/public/cycling/{CC}.json  key routes, listed
     dossier    cache/dossier/*.json is NOT used; the dossier lives under
                continent-app/public/dossier/*.json     (dict id -> dossier)
+    master     app_data/app_data.json, key destinations    (T640 wiring: the
+               airports[], car rule, monthly crowds and climate writers)
+
+Layer rules on top of the two above (T640 wiring, from T642's fixes):
+    LAYER_RANGES  ranges that only make sense in one layer (transfer minutes,
+                  a crowd share), so a key name that means something else in
+                  another layer is not judged by them.
+    ENUMS         a key whose value must be one of a set (car_basis,
+                  transfer_mode, trail difficulty).
+    trails        difficulty never below the distance and ascent ladder of
+                  pipeline/trails/attributes.py (T642-j), when that module
+                  imports (it needs the trailslab venv).
+
+The previous wire is a git ref by default (--ref HEAD). --prev-dir DIR reads
+it from a snapshot instead, laid out like the repo (DIR/<repo path>). That is
+how pipeline/field_stubs/publish.py gates a scheduled run: on the Hetzner box
+the previous wire is what last week's run left in the working tree, not HEAD,
+and the master is gitignored.
 
 Usage, from the repo root:
     python pipeline/field_stubs/gate.py --layer cycling
@@ -59,6 +77,8 @@ RANGES = {
     "fare": (0, 100000, False), "fare_eur": (0, 100000, False),
     "price": (0, 100000, False), "value_eur": (0, 100000, False),
     "sunshine_h": (0, 24 * 31, True),
+    # T640 wiring: the T641 key names as they ship (beach `sst`, climate `sun_h`).
+    "sst": (0, 32, True), "sun_h": (0, 24 * 31, True),
     "elev_m": (-450, 8900, True),
     "slope_deg": (0, 90, True), "slopeDeg": (0, 90, True),
 }
@@ -72,6 +92,25 @@ LAYERS = {
     "trails": ("continent-app/public/trails", ("trips", "listed"), "country"),
     "cycling": ("continent-app/public/cycling", ("routes", "listed"), "country"),
     "dossier": ("continent-app/public/dossier", None, "dossierdir"),
+    "master": ("app_data/app_data.json", ("destinations",), "dict"),
+}
+
+# layer -> {key name: (low, high, inclusive_low)}, on top of RANGES.
+LAYER_RANGES = {
+    "master": {
+        "transfer_min": (0, 600, True), "minutes": (0, 1440, False),
+        "straight_km": (0, 110, True), "road_km": (0, 200, False),
+        "share": (0, 1, True),
+    },
+}
+
+# layer -> {key name: allowed values}. None is always allowed (absent value).
+ENUMS = {
+    "master": {
+        "car_basis": {"category", "transit_lines"},
+        "transfer_mode": {"car", "train", "bus", "ferry"},
+    },
+    "trails": {"difficulty": {"easy", "moderate", "hard", "very_hard", "alpine"}},
 }
 
 
@@ -103,7 +142,12 @@ def rows_of(doc, keys, kind):
     if doc is None:
         return out
     if kind in ("dict", "dossierdir"):
-        src = doc.get("dests", doc) if isinstance(doc, dict) else {}
+        if not isinstance(doc, dict):
+            src = {}
+        elif keys:
+            src = doc.get(keys[0]) or {}
+        else:
+            src = doc.get("dests", doc)
         for k, v in src.items():
             if isinstance(v, dict):
                 out[str(k)] = v
@@ -132,30 +176,92 @@ def flat_keys(row):
     return ks
 
 
-def walk_numbers(node, key=None):
+def walk_numbers(node, key=None, ranges=None):
     """Yield (key name, number) for every number under a known-range key."""
+    ranges = RANGES if ranges is None else ranges
     if isinstance(node, dict):
         for k, v in node.items():
-            yield from walk_numbers(v, k)
+            yield from walk_numbers(v, k, ranges)
     elif isinstance(node, list):
         for v in node:
-            yield from walk_numbers(v, key)
+            yield from walk_numbers(v, key, ranges)
     elif isinstance(node, (int, float)) and not isinstance(node, bool):
-        if key in RANGES:
+        if key in ranges:
             yield key, node
 
 
-def range_failures(rows, limit=12):
+def walk_values(node, keys, key=None):
+    """Yield (key name, scalar) for every scalar under one of `keys`."""
+    if isinstance(node, dict):
+        for k, v in node.items():
+            yield from walk_values(v, keys, k)
+    elif isinstance(node, list):
+        for v in node:
+            yield from walk_values(v, keys, key)
+    elif key in keys and node is not None:
+        yield key, node
+
+
+def range_failures(rows, limit=12, layer=None):
+    ranges = dict(RANGES, **LAYER_RANGES.get(layer, {}))
+    enums = ENUMS.get(layer, {})
     bad, total = [], 0
     for rid, row in rows.items():
-        for key, num in walk_numbers(row):
-            lo, hi, inc = RANGES[key]
+        for key, num in walk_numbers(row, ranges=ranges):
+            lo, hi, inc = ranges[key]
             ok = (lo <= num <= hi) if inc else (lo < num <= hi)
             if not ok:
                 total += 1
                 if len(bad) < limit:
                     bad.append(f"{rid}: {key}={num} outside {lo}..{hi}")
+        for key, val in walk_values(row, enums):
+            if val not in enums[key]:
+                total += 1
+                if len(bad) < limit:
+                    bad.append(f"{rid}: {key}={val!r} not one of {sorted(enums[key])}")
+    if layer == "trails":
+        n, ex = difficulty_floor_failures(rows)
+        total += n
+        bad += ex[:max(0, limit - len(bad))]
     return total, bad
+
+
+_EFFORT = []
+
+
+def _effort_grade():
+    """(attributes.effort_grade, attributes.GRADE_RANK), or None when the
+    trails module cannot import (it needs the trailslab venv)."""
+    if not _EFFORT:
+        try:
+            sys.path.insert(0, str(ROOT / "pipeline" / "trails"))
+            import attributes  # noqa: E402
+            _EFFORT.append((attributes.effort_grade, attributes.GRADE_RANK))
+        except Exception as exc:  # environment dependent
+            print(f"[gate:trails] difficulty floor not checked: attributes.py "
+                  f"did not import ({type(exc).__name__}: {exc})")
+            _EFFORT.append(None)
+    return _EFFORT[0]
+
+
+def difficulty_floor_failures(rows, limit=5):
+    """T642-j: a published difficulty is never below the distance and ascent
+    ladder. Rows without a known difficulty or a distance are not judged."""
+    eg = _effort_grade()
+    if not eg:
+        return 0, []
+    effort, rank = eg
+    bad, n = [], 0
+    for rid, row in rows.items():
+        d = row.get("difficulty")
+        if d not in rank or not row.get("distance_m"):
+            continue
+        floor = effort(row)
+        if rank.get(floor, -1) > rank[d]:
+            n += 1
+            if len(bad) < limit:
+                bad.append(f"{rid}: difficulty={d} below the effort floor {floor}")
+    return n, bad
 
 
 def coverage(rows, ids):
@@ -166,7 +272,7 @@ def coverage(rows, ids):
     return counts
 
 
-def judge(prev_rows, new_rows, allow_row_loss=False, label=""):
+def judge(prev_rows, new_rows, allow_row_loss=False, label="", layer=None):
     """Return (fail_lines, info_lines) for one file or one whole layer."""
     fails, info = [], []
     lost = sorted(set(prev_rows) - set(new_rows))
@@ -186,13 +292,13 @@ def judge(prev_rows, new_rows, allow_row_loss=False, label=""):
     if gained:
         top = sorted(gained.items(), key=lambda kv: -kv[1])[:8]
         info.append(label + "coverage gained: " + ", ".join(f"{k} +{n}" for k, n in top))
-    n_bad, bad = range_failures(new_rows)
+    n_bad, bad = range_failures(new_rows, layer=layer)
     if n_bad:
         fails.append(f"{label}{n_bad} value(s) out of range, e.g. " + "; ".join(bad[:5]))
     return fails, info
 
 
-def run(layer, ref, countries, allow_row_loss, verbose, base=None):
+def run(layer, ref, countries, allow_row_loss, verbose, base=None, prev_dir=None):
     rel, keys, kind = LAYERS[layer]
     base = Path(base) if base else ROOT
     all_fail, all_info = [], []
@@ -212,21 +318,22 @@ def run(layer, ref, countries, allow_row_loss, verbose, base=None):
     tot_prev = tot_new = 0
     for f in files:
         new_doc = load(base / f)
-        prev_doc = git_show(ref, f)
+        prev_doc = load(Path(prev_dir) / f) if prev_dir else git_show(ref, f)
         new_rows = rows_of(new_doc, keys, kind)
         prev_rows = rows_of(prev_doc, keys, kind)
         tot_new += len(new_rows)
         tot_prev += len(prev_rows)
         if prev_doc is None:
             # No previous wire for this file: only the range rule can apply.
-            n_bad, bad = range_failures(new_rows)
+            n_bad, bad = range_failures(new_rows, layer=layer)
             if n_bad:
                 all_fail.append(f"{f}: {n_bad} value(s) out of range, e.g. " + "; ".join(bad[:5]))
             continue
-        fl, inf = judge(prev_rows, new_rows, allow_row_loss, label=f"{f}: ")
+        fl, inf = judge(prev_rows, new_rows, allow_row_loss, label=f"{f}: ", layer=layer)
         all_fail += fl
         all_info += inf
-    print(f"[gate:{layer}] {len(files)} file(s), rows {tot_prev} -> {tot_new}, ref {ref}")
+    print(f"[gate:{layer}] {len(files)} file(s), rows {tot_prev} -> {tot_new}, "
+          + (f"previous from {prev_dir}" if prev_dir else f"ref {ref}"))
     if verbose:
         for line in all_info:
             print("  info:", line)
@@ -253,6 +360,20 @@ def self_test():
     assert judge(prev, lost, allow_row_loss=True)[0] == []
     fare = {"a": {"fare": 0}}
     assert any("fare=0" in x for x in judge({}, fare)[0])
+    # T640 wiring: layer ranges and enums apply in their own layer only.
+    m_prev = {"X": {"airports": [{"iata": "MXP", "transfer_min": 70}]}}
+    m_bad = {"X": {"airports": [{"iata": "MXP", "transfer_min": 900}]}}
+    assert any("transfer_min=900" in x for x in judge(m_prev, m_bad, layer="master")[0])
+    assert judge(m_prev, m_bad, layer="beaches")[0] == []
+    lt = {"X": {"local_transport": {"car_basis": "guess"}}}
+    assert any("car_basis" in x for x in judge({}, lt, layer="master")[0])
+    lt_ok = {"X": {"local_transport": {"car_basis": "transit_lines"}}}
+    assert judge({}, lt_ok, layer="master")[0] == []
+    tr = {"1": {"difficulty": "medium"}}
+    assert any("difficulty" in x for x in judge({}, tr, layer="trails")[0])
+    # master rows come from the destinations key, not the top level.
+    doc = {"meta": {"x": 1}, "destinations": {"A": {"x": 1}}}
+    assert set(rows_of(doc, ("destinations",), "dict")) == {"A"}
     print("gate self-test passed")
     return 0
 
@@ -263,6 +384,8 @@ def main():
     ap.add_argument("--ref", default="HEAD", help="git ref holding the previous wire")
     ap.add_argument("--base", help="root to read the NEW files from (default: this repo)")
     ap.add_argument("--countries", help="comma separated ISO2, country-file layers only")
+    ap.add_argument("--prev-dir", help="read the previous wire from this snapshot "
+                    "(laid out like the repo) instead of --ref")
     ap.add_argument("--allow-row-loss", action="store_true")
     ap.add_argument("--verbose", action="store_true")
     ap.add_argument("--self-test", action="store_true")
@@ -272,7 +395,7 @@ def main():
     if not a.layer:
         ap.error("--layer is required")
     cc = set(a.countries.split(",")) if a.countries else None
-    sys.exit(run(a.layer, a.ref, cc, a.allow_row_loss, a.verbose, a.base))
+    sys.exit(run(a.layer, a.ref, cc, a.allow_row_loss, a.verbose, a.base, a.prev_dir))
 
 
 if __name__ == "__main__":

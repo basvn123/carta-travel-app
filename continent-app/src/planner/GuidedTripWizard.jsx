@@ -608,7 +608,7 @@ export function GuidedTripWizard({
     const got = endTransfers[id] || null;
     return nearbyAirports(data?.meta, d.city_lat ?? d.lat, d.city_lon ?? d.lon, { limit: 3 })
       .map((a) => (got && got.airport === a.iata
-        ? { ...a, transferMin: got.transfer_min ?? null, transferMode: got.transfer_mode || 'train' }
+        ? { ...a, transferMin: got.transfer_min ?? null, transferMode: got.transfer_mode || null }
         : a));
   }, [destinations, endTransfers, data?.meta]);
 

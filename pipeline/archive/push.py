@@ -48,11 +48,25 @@ the inputs and every cache tarball, and extracts each tarball at the repo root.
 The run ends with pack.py then push.py, which re-uploads only changed layers.
 Snapshots and database dumps are never pulled automatically. Restoring either
 is a deliberate act; the report has the commands.
+
+Three class keys added for the Hetzner box's explore data fill (T640):
+  pull_members  glob list (repo-relative, `*` stays inside one folder). The
+                pull streams the tarball through `rclone cat` and extracts only
+                the matching members, so neither the tarball nor the members
+                left out ever touch the disk. A partial copy is marked with
+                <local_path>/.partial-from-r2, and pack.py and this script then
+                refuse to pack or push any class whose local_path holds that
+                marker: a partial cache/lakes must never replace the full
+                lakes-cache tarball.
+  pull_only     the class is never pushed (and never packed).
+  optional      a missing R2 object is not an error on pull (a class the box
+                creates itself does not exist before its first push).
 """
 
 from __future__ import annotations
 
 import argparse
+import fnmatch
 import os
 import shlex
 import shutil
@@ -116,6 +130,29 @@ def key_dir(entry: dict) -> str:
     return entry["r2_key_pattern"].split("{", 1)[0].rstrip("/")
 
 
+PARTIAL_MARKER = ".partial-from-r2"
+
+
+def partial_copy(entry: dict) -> Path | None:
+    """The marker file when local_path holds a member-filtered pull, else None."""
+    lp = entry.get("local_path")
+    if not lp:
+        return None
+    marker = REPO_ROOT / lp / PARTIAL_MARKER
+    return marker if marker.exists() else None
+
+
+def member_wanted(name: str, patterns: list[str]) -> bool:
+    """fnmatch per path segment, so `cache/lakes/*.json` does not reach into
+    cache/lakes/osm/x.json."""
+    parts = name.split("/")
+    for pat in patterns:
+        pp = pat.split("/")
+        if len(pp) == len(parts) and all(fnmatch.fnmatchcase(a, b) for a, b in zip(parts, pp)):
+            return True
+    return False
+
+
 # --- push -------------------------------------------------------------------
 
 def push_entry(entry: dict, manifest: dict, out_dir: Path, dump_dir: Path, dry_run: bool) -> None:
@@ -123,6 +160,13 @@ def push_entry(entry: dict, manifest: dict, out_dir: Path, dump_dir: Path, dry_r
     pattern = entry["r2_key_pattern"]
     print(f"- {name} ({kind}, {entry['treatment']}, lifecycle "
           f"{entry['lifecycle_days'] or 'none'})")
+    if entry.get("pull_only"):
+        print("  pull-only class: never pushed (it is a member-filtered copy of another class)")
+        return
+    marker = partial_copy(entry) if kind == "derived-cache" else None
+    if marker:
+        raise SystemExit(f"refusing to push {name}: {rel(marker)} says {entry['local_path']} is a "
+                         "partial copy pulled from R2; pushing it would overwrite the full tarball")
 
     if kind == "run-staging":
         print("  written in R2 by the workers, nothing to push; listed for its lifecycle rule")
@@ -183,6 +227,35 @@ def safe_extract(tarball: Path) -> None:
         tar.extractall(REPO_ROOT, filter="data")
 
 
+def stream_extract(src: str, patterns: list[str], entry: dict) -> None:
+    """rclone cat the tarball and extract the members that match, streaming."""
+    exe = shutil.which("rclone")
+    if exe is None:
+        raise SystemExit("rclone is not on PATH")
+    if src.endswith(".zst"):
+        raise SystemExit("pull_members supports .tar.gz and .tar only")
+    mode = "r|gz" if src.endswith(".gz") else "r|"
+    proc = subprocess.Popen([exe, "cat", src], stdout=subprocess.PIPE)
+    n = size = 0
+    try:
+        with tarfile.open(fileobj=proc.stdout, mode=mode) as tar:
+            for m in tar:
+                if m.isfile() and member_wanted(m.name, patterns):
+                    tar.extract(m, REPO_ROOT, filter="data")
+                    n += 1
+                    size += m.size
+    finally:
+        proc.stdout.close()
+        rc = proc.wait()
+    if rc != 0:
+        raise SystemExit(f"rclone cat {src} exited {rc}")
+    marker = REPO_ROOT / entry["local_path"] / PARTIAL_MARKER
+    marker.parent.mkdir(parents=True, exist_ok=True)
+    marker.write_text(f"Member-filtered pull of {src} ({', '.join(patterns)}), {n} files. "
+                      "pack.py and push.py refuse to pack or push this folder.\n", encoding="utf-8")
+    print(f"  extracted {n} member(s), {size / 1e6:.1f} MB; marked {rel(marker)}")
+
+
 def pull_entry(entry: dict, manifest: dict, out_dir: Path, dry_run: bool) -> None:
     kind, name = entry["kind"], entry["name"]
     pattern = entry["r2_key_pattern"]
@@ -193,6 +266,26 @@ def pull_entry(entry: dict, manifest: dict, out_dir: Path, dry_run: bool) -> Non
         print(f"- {name}: worker staging, read by spawn.sh only; not pulled")
         return
     print(f"- {name}")
+
+    if entry.get("optional"):
+        probe = ["rclone", "lsf", remote(manifest, pattern)]
+        print(f"  + {shlex.join(probe)}   (optional class: absent in R2 is fine)")
+        if not dry_run:
+            exe = shutil.which("rclone")
+            if exe is None:
+                raise SystemExit("rclone is not on PATH")
+            r = subprocess.run([exe, *probe[1:]], capture_output=True, text=True)
+            if r.returncode != 0 or not r.stdout.strip():
+                print(f"  {pattern} is not in R2 yet (nothing pushed so far); nothing to pull")
+                return
+
+    if kind == "derived-cache" and entry.get("pull_members"):
+        pats = entry["pull_members"]
+        src = remote(manifest, pattern)
+        print(f"  + rclone cat {src} | extract only {', '.join(pats)} at the repo root (streamed, no tarball on disk)")
+        if not dry_run:
+            stream_extract(src, pats, entry)
+        return
 
     if kind == "derived-cache":
         tarball = out_dir / Path(pattern).name
