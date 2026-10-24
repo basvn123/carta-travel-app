@@ -2139,19 +2139,24 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T650-g | T650 | pipeline/field_stubs/gate.py ENUMS could check car_free in good, ok, hard | next task | open |  |
 | T651-a | T651 | German writes "146 Min." on the Practical tab and "146 min" in the key fact; dest.airportOptEst is now unused | next task | open |  |
 | T651-b | T651 | 264 airport-tier places (DBV, BGO, CDG and others) have no airports[] and show their own code without a time | next task | open |  |
-| T653-a | T653 | A date changed inside the planning engine (the wizard's When) is not written back into the trip settings, so the gear can show the setup answer while the trip runs on other dates | next task | open |  |
+| T653-a | T653 | A date changed inside the planning engine (the wizard's When) is not written back into the trip settings, so the gear can show the setup answer while the trip runs on other dates | next task | closed by T675 |  |
 | T654-a | T654 | The new kit piece ChoiceRows (components/ui) is not yet in the carta-design kit list or the style guide page | next task | open |  |
 | T654-b | T654 | The planner flow's CSS (86-plan-flow.css, about 14.5 KB) sits in the first paint because the css-routes proof refused it as a route sheet | next task | open |  |
-| T656-a | T656 | The ready-trip door reads the trips layer only, not the 253-week journeys library | next task | open |  |
-| T656-b | T656 | Compare up to three countries side by side (day cost, stay a night for the tier, flight, weather, crowds) was planned and not built | next task | open |  |
-| T656-c | T656 | The engine's steps (Where, Stay, Trips, Stays, Getting there, Review) still wear the old wizard chrome, not the Polarsteps sheet of the flow | next task | open |  |
-| T656-d | T656 | A "Plan a trip here" seed still opens the whole old wizard step list instead of the flow | next task | open |  |
+| T656-a | T656 | The ready-trip door reads the trips layer only, not the 253-week journeys library | next task | closed by T669 |  |
+| T656-b | T656 | Compare up to three countries side by side (day cost, stay a night for the tier, flight, weather, crowds) was planned and not built | next task | closed by T670 |  |
+| T656-c | T656 | The engine's steps (Where, Stay, Trips, Stays, Getting there, Review) still wear the old wizard chrome, not the Polarsteps sheet of the flow | next task | closed by T668 |  |
+| T656-d | T656 | A "Plan a trip here" seed still opens the whole old wizard step list instead of the flow | next task | closed by T675 |  |
 | T657-a | T657 | Behind booked flights the matches use a 1,100 km straight-line hop from the arrival, not a ground travel time | next task | open |  |
-| T657-b | T657 | Stays read from uploaded bookings stay in settings.imports and do not fill the Your stays rows (needs a city to destination match) | next task | open |  |
-| T658-a | T658 | "Let Carta plan the days" stores daysHow but opens the first day like planning yourself; starting the AI day plan from it is batch 2 | next task | open | 1 |
+| T657-b | T657 | Stays read from uploaded bookings stay in settings.imports and do not fill the Your stays rows (needs a city to destination match) | next task | closed by T675 |  |
+| T658-a | T658 | "Let Carta plan the days" stores daysHow but opens the first day like planning yourself; starting the AI day plan from it is batch 2 | next task | closed by T674 | 1 |
 | T658-b | T658 | Child ages, slower walkers and the trip's goal are collected but not yet used by pricing or the day plans | next task | open |  |
-| T659-a | T659 | "Add my trip as it is" runs the new trip questions; it does not ask where you are now and until when | next task | open |  |
+| T659-a | T659 | "Add my trip as it is" runs the new trip questions; it does not ask where you are now and until when | next task | closed by T675 |  |
 | T660-a | T660 | Review the new trip planner flow on a preview, then merge app p15-trip-planner-flow and root p15-trip-planner-flow and deploy | user | open | 2 |
-| T660-b | T660 | The end check could not run a booking upload (parse-booking needs a signed-in pass) or live flight rows (data host refuses localhost); check both on the preview | next task | open |  |
+| T660-b | T660 | The end check could not run a booking upload (parse-booking needs a signed-in pass) or live flight rows (data host refuses localhost); check both on the preview | next task | closed by T675 |  |
 | T660-c | T660 | Place the research gaps outside this batch: visas and entry rules, group voting, offline maps beyond the exports, currency | user | open |  |
-| T660-d | T660 | Batch 2: the day planner rebuild on the flow (ideas overview by section, save and assign to days, day page list beside map, day costs overview, stop guide rows) | next task | open | 3 |
+| T660-d | T660 | Batch 2: the day planner rebuild on the flow (ideas overview by section, save and assign to days, day page list beside map, day costs overview, stop guide rows) | next task | closed by T676 | 3 |
+| T671-a | T671 | What's on in the day ideas reads only the dossier's festivals by month; there is no dated events source, so the section is a placeholder in most towns | next task | open |  |
+| T673-a | T673 | The town guide's insider tip has no data source (always the placeholder) and where to sleep is empty for towns without neighbourhoods in their dossier | next task | open |  |
+| T675-a | T675 | Settings edits on a planned trip move the party, the start date and the flight ranking; the booked answer, where from and the guide answers change nothing on a trip already planned (offer to re-plan?) | user | open |  |
+| T676-a | T676 | Review both planner batches on a preview, then merge app p15-day-planner (holds batch 1) and root p15-day-planner and deploy; expect conflicts with PB1 and PB2 in App.jsx, DayPlannerTab.jsx, TripPlannerTab.jsx, GuidedTripWizard.jsx | user | open | 1 |
+| T676-b | T676 | On the preview, check real flight figures in compare and on a planned trip (localhost cannot load the flights file from the data host) | next task | open | 2 |
