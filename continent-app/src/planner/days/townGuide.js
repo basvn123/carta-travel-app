@@ -10,6 +10,14 @@
  */
 export const GUIDE_KEYS = ['vibe', 'sleep', 'when', 'getting', 'know', 'on', 'tip'];
 
+/** The dossier's rule tips that read as an insider's advice (T734). The
+ *  ones about transport and the season are left to the getting-there and
+ *  best-time rows, which already say them. */
+export const INSIDER_TIPS = [
+  'hiddenGem', 'timeItWith', 'shoulderBeatsPeak', 'halfDayEnough', 'worthTwoDays', 'pairWith',
+  'crowdWarning', 'wholeCentreListed', 'freeParking', 'beachDays', 'gatewayFor', 'warmWinter',
+];
+
 export function townGuide(dossier, { month = null } = {}) {
   const d = dossier || {};
   const items = {
@@ -35,14 +43,20 @@ export function townGuide(dossier, { month = null } = {}) {
       ...(d.practical?.rhythm ? [{ text: d.practical.rhythm }] : []),
       ...((d.practical?.book_ahead || []).length ? [{ bookAhead: d.practical.book_ahead.slice(0, 4) }] : []),
     ],
+    // T734: only what happens at a time (an entry with its months); a
+    // listed building is not something on.
     on: (d.festivals || d.events || [])
-      .filter((e) => !month || !Array.isArray(e.months) || e.months.includes(month))
+      .filter((e) => Array.isArray(e.months) && e.months.length && (!month || e.months.includes(month)))
       .slice(0, 3)
       .map((e) => ({ text: e.name || e.title || '', what: e.what || e.desc || '' }))
       .filter((e) => e.text),
-    // No hand-written tips are in the dossier yet (its tips[] are codes the
-    // app does not phrase); the row keeps its place with the placeholder.
-    tip: [],
+    // T734: the dossier's rule tips (codes with arguments, phrased by
+    // tipText in six languages), the insider kinds first in the order above.
+    tip: (Array.isArray(d.tips) ? d.tips : [])
+      .filter((x) => x && INSIDER_TIPS.includes(x.code))
+      .sort((a, b) => INSIDER_TIPS.indexOf(a.code) - INSIDER_TIPS.indexOf(b.code))
+      .slice(0, 3)
+      .map((x) => ({ tip: { code: x.code, args: x.args || {} } })),
   };
   return GUIDE_KEYS.map((key) => ({ key, items: items[key] }));
 }

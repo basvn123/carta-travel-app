@@ -63,3 +63,15 @@ test("crowd bands", () => {
   assert.equal(crowdBand(0.8), "busy");
   assert.equal(crowdBand(null), null);
 });
+
+test("a month past the sweep: fares come later, not no flight", async () => {
+  const { sweepEnd } = await import("../src/lib/countryCompare.js");
+  const end = sweepEnd(flightFile);
+  assert.match(end, /^\d{4}-\d{2}-\d{2}$/);
+  const later = `${Number(end.slice(0, 4)) + 1}-01`;
+  const rows = compareCountries({ names: ["Portugal"], destinations, dayCosts, flightFile, month: 1, yearMonth: later });
+  assert.equal(rows[0].flight, null);
+  assert.equal(rows[0].flightAhead, true);
+  const none = compareCountries({ names: ["Portugal"], destinations, dayCosts, flightFile: null, month: 1, yearMonth: later });
+  assert.equal(none[0].flightAhead, false);
+});

@@ -161,9 +161,13 @@ if (ONLY.includes('L')) try {
   await page.waitForTimeout(1500);
   note('L where');
   await shot(page, 'L0-where');
-  // Where: Portugal by hand.
-  const pt = page.getByRole('button', { name: /^Portugal/ }).first();
-  if (await pt.count()) await pt.click(); else await page.getByText('Portugal', { exact: true }).first().click();
+  // Where: Portugal, picked already by the free field's words.
+  const wzw = (await draft(page)).wizard || {};
+  check('L the free field picked Portugal on Where', (wzw.countries || []).includes('Portugal'), JSON.stringify(wzw.countries));
+  if (!(wzw.countries || []).includes('Portugal')) {
+    const pt = page.getByRole('button', { name: /^Portugal/ }).first();
+    if (await pt.count()) await pt.click(); else await page.getByText('Portugal', { exact: true }).first().click();
+  }
   await page.locator('.guide-next').click();
   await page.waitForTimeout(1500);
   if (await page.locator('.guide-template').count()) await page.locator('.guide-template').first().click();

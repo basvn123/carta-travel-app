@@ -7476,4 +7476,17 @@ export const nl = {
   "pf.q.nowWhereHelp": "De plaats waar je bent, of de dichtstbijzijnde.",
   "pf.q.nowUntil": "Tot wanneer ben je weg?",
   "pf.q.nowUntilHelp": "De dag dat je naar huis gaat. De reis loopt vanaf vandaag.",
+  // T731: a saved answer on a planned trip
+  "pf.set.guideNote": "Carta gebruikt dit als het plaatsen voorstelt. Je geplande stops blijven zoals ze zijn.",
+  "pf.set.nFlights": "Vluchten geboekt: vul in wat je betaalde, dan vervangt dat Carta's prijs.",
+  "pf.set.nFlightsGo": "Prijs invullen",
+  "pf.set.nStays": "Verblijven geboekt: vul per verblijf in wat je betaalde, dan vervangt dat Carta's prijs.",
+  "pf.set.nStaysGo": "Naar de verblijven",
+  "pf.set.nFrom": "Vluchten worden nu geprijsd vanaf {name}.",
+  "pf.set.nMoved": "De reis begint nu op {date}, met dezelfde nachten.",
+  "pf.set.nWhenKept": "Je reis houdt zijn data. Kies exacte data om hem te verplaatsen.",
+  // T733: a day nobody answered for
+  "flight.unknown": "Nog geen prijs gevonden voor die dag. Vul de jouwe in, of kijk op Google Flights.",
+  // T733: fares not out yet
+  "cmp.flightAhead": "Prijzen zo ver vooruit zijn er nog niet",
 };

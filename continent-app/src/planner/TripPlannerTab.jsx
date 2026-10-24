@@ -1345,16 +1345,46 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   // own party and dates: the people, and a new start date (the nights stay,
   // so the end moves with it). What matters most needs nothing here: the
   // trip reads it from the settings and re-ranks its flights.
+  // T731 (row T675-a, decided): a planned trip is the traveller's own work, so
+  // a saved answer never rebuilds it. Each answer says in one line what it
+  // did, with the next move where there is one: From prices the flights from
+  // the new place; booked flights or stays ask for what was paid; a When
+  // that is not two dates keeps the trip's dates; the help-me-choose answers
+  // steer Carta's suggestions and leave the stops alone.
+  const goToTripPart = (id) => {
+    setSettingsOpen(false);
+    window.requestAnimationFrame(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: scrollBehavior(), block: 'center' });
+    });
+  };
   const applySettings = (s, prev) => {
     const p = s.party;
     const q = prev.party;
     if (p.adults !== q.adults || p.kids !== q.kids || p.babies !== q.babies) {
       tp.setParty({ adults: p.adults, children: p.kids, babies: p.babies });
     }
-    if (s.when.mode === 'exact' && s.when.start && s.when.start !== prev.when.start && s.when.start !== tp.tripStart) {
-      tp.setTripStart(s.when.start);
-      if (tp.plannedNights > 0) tp.setTripEnd(addDays(s.when.start, tp.plannedNights));
+    if (s.booked.flights && !prev.booked.flights) {
+      return { text: t('pf.set.nFlights'), actionLabel: t('pf.set.nFlightsGo'), onAction: () => goToTripPart('itin-fare-out') };
     }
+    if (s.booked.stays && !prev.booked.stays) {
+      return { text: t('pf.set.nStays'), actionLabel: t('pf.set.nStaysGo'), onAction: () => goToTripPart('itin-route-h') };
+    }
+    const fromName = s.from?.name || '';
+    if (fromName && fromName !== (prev.from?.name || '')) {
+      // The trip's own departure airport gives way to the new From.
+      tp.setAnchorOrigin(null);
+      return { text: t('pf.set.nFrom', { name: fromName }) };
+    }
+    if (JSON.stringify(s.when) !== JSON.stringify(prev.when)) {
+      if (s.when.mode === 'exact' && s.when.start && s.when.start !== tp.tripStart) {
+        tp.setTripStart(s.when.start);
+        if (tp.plannedNights > 0) tp.setTripEnd(addDays(s.when.start, tp.plannedNights));
+        return { text: t('pf.set.nMoved', { date: fmtDate(s.when.start, true) }) };
+      }
+      return { text: t('pf.set.nWhenKept') };
+    }
+    if (JSON.stringify(s.guide) !== JSON.stringify(prev.guide)) return { text: t('pf.set.guideNote') };
+    return null;
   };
 
   // The trip's name and its one line (the name is a field, so the view's h1
@@ -1483,7 +1513,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
       )}
 
       {settingsOpen && (
-        <TripSettingsSheet anchorRef={settingsGearRef} onClose={() => setSettingsOpen(false)} onSaved={applySettings} />
+        <TripSettingsSheet anchorRef={settingsGearRef} onClose={() => setSettingsOpen(false)} onSaved={applySettings} planned />
       )}
 
       {askDays && (

@@ -76,8 +76,9 @@ export function FlightLink({ from, to, date, back = null, className = '' }) {
  * One flight, one way. `leg` is a flights.js leg (date, price, airline, dep,
  * arr, stops, checked, source, from, to); `cost` its legCost() for the
  * party, `bagKey` the trip's bag. The figure is the fare a person, as Google
- * shows it; the party's total is in the trip's total. `state` 'loading' or
- * 'none' renders the row without a flight.
+ * shows it; the party's total is in the trip's total. `state` 'loading',
+ * 'unknown' (no answer for that day yet, T733) or 'none' (a known empty day)
+ * renders the row without a flight.
  */
 export function FlightRow({ leg, cost, dir = 'out', bagKey = 'small', state = null, wantedDate = null, linkOut = true, children = null }) {
   const { t } = useI18n();
@@ -89,7 +90,7 @@ export function FlightRow({ leg, cost, dir = 'out', bagKey = 'small', state = nu
         <span className="flt-mark flt-mark-md flt-mark-empty" aria-hidden="true" />
         <div className="flt-main">
           <div className="flt-dir">{label}</div>
-          <div className="flt-meta">{state === 'loading' ? t('flight.loading') : t('flight.none')}</div>
+          <div className="flt-meta">{state === 'loading' ? t('flight.loading') : state === 'unknown' ? t('flight.unknown') : t('flight.none')}</div>
         </div>
         {children}
       </div>

@@ -8084,4 +8084,17 @@ export const en = {
   "pf.q.nowWhereHelp": "The town you're in, or the nearest one.",
   "pf.q.nowUntil": "Until when are you away?",
   "pf.q.nowUntilHelp": "The day you go home. The trip runs from today.",
+  // T731: a saved answer on a planned trip
+  "pf.set.guideNote": "Carta uses these when it suggests places. Your planned stops stay as they are.",
+  "pf.set.nFlights": "Flights booked: add what you paid and it replaces Carta's fare.",
+  "pf.set.nFlightsGo": "Add the fare",
+  "pf.set.nStays": "Stays booked: add what you paid on each stay and it replaces Carta's price.",
+  "pf.set.nStaysGo": "Go to the stays",
+  "pf.set.nFrom": "Flights are now priced from {name}.",
+  "pf.set.nMoved": "The trip now starts on {date}, with the same nights.",
+  "pf.set.nWhenKept": "Your trip keeps its dates. Pick exact dates to move it.",
+  // T733: a day nobody answered for
+  "flight.unknown": "No fare found for that day yet. Add yours, or look on Google Flights.",
+  // T733: fares not out yet
+  "cmp.flightAhead": "Fares this far ahead are not out yet",
 };

@@ -67,6 +67,9 @@ export function compareCountries({
     const tiers = ids.map((id) => destinations[id]?.crowding?.tier).filter(Number.isFinite);
     const crowdShare = tiers.length >= 3 ? tiers.filter((x) => x >= 3).length / tiers.length : null;
     let flight = null;
+    // T733: a month past the sweep's last day has no fares yet; that is not
+    // "no flight", so the row says the fares come later.
+    const ahead = Boolean(flightFile && yearMonth && sweepEnd(flightFile) && yearMonth > sweepEnd(flightFile).slice(0, 7));
     if (flightFile) {
       const airports = [...new Set(ids.map((id) => destAnchor(destinations[id]) || id))];
       for (const ap of airports) {
@@ -85,6 +88,7 @@ export function compareCountries({
       night: costs.length >= 2 ? median(costs.map((c) => c.stayEur)) : null,
       food: costs.length >= 2 ? median(costs.map((c) => c.foodEur)) : null,
       flight,
+      flightAhead: !flight && ahead,
       weather: weather && (weather.high != null || weather.rain != null) ? weather : null,
       crowds: crowdBand(crowdShare),
       best,
@@ -95,4 +99,13 @@ export function compareCountries({
   const withDay = rows.filter((r) => r.day != null);
   const cheapest = withDay.length >= 2 ? withDay.reduce((a, b) => (b.day < a.day ? b : a)) : null;
   return rows.map((r) => ({ ...r, bestValue: cheapest ? r === cheapest : false }));
+}
+
+/** The last day the swept file holds a fare for ('YYYY-MM-DD'), or ''. */
+export function sweepEnd(file) {
+  let end = '';
+  for (const days of Object.values(file?.to || {})) {
+    for (const d of Object.keys(days || {})) if (d > end) end = d;
+  }
+  return end;
 }

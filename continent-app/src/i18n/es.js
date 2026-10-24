@@ -7476,4 +7476,17 @@ export const es = {
   "pf.q.nowWhereHelp": "El pueblo o la ciudad donde estás, o el más cercano.",
   "pf.q.nowUntil": "¿Hasta cuándo estás de viaje?",
   "pf.q.nowUntilHelp": "El día que vuelves a casa. El viaje cuenta desde hoy.",
+  // T731: a saved answer on a planned trip
+  "pf.set.guideNote": "Carta lo usa al sugerir lugares. Tus paradas planificadas se quedan como están.",
+  "pf.set.nFlights": "Vuelos reservados: añade lo que pagaste y sustituirá la tarifa de Carta.",
+  "pf.set.nFlightsGo": "Añadir la tarifa",
+  "pf.set.nStays": "Alojamientos reservados: añade lo que pagaste en cada uno y sustituirá el precio de Carta.",
+  "pf.set.nStaysGo": "Ir a los alojamientos",
+  "pf.set.nFrom": "Los vuelos se calculan ahora desde {name}.",
+  "pf.set.nMoved": "El viaje empieza ahora el {date}, con las mismas noches.",
+  "pf.set.nWhenKept": "Tu viaje mantiene sus fechas. Elige fechas exactas para moverlo.",
+  // T733: a day nobody answered for
+  "flight.unknown": "Aún no hay tarifa para ese día. Añade la tuya o mira en Google Flights.",
+  // T733: fares not out yet
+  "cmp.flightAhead": "Aún no hay tarifas con tanta antelación",
 };

@@ -45,7 +45,7 @@ function LegRow({ leg, value, onChange, adults, estimate, t, lang, partyText, fl
   const cf = flightProps?.cartaFlight;
   const showFlight = Boolean(dir && cf && !paid && !leg.booked && (!mode || mode === 'fly'));
   const fLeg = showFlight ? cf[dir] : null;
-  const fState = fLeg ? null : (fLeg === undefined && flightProps?.waiting?.[dir] ? 'loading' : 'none');
+  const fState = fLeg ? null : (fLeg === undefined ? (flightProps?.waiting?.[dir] ? 'loading' : 'unknown') : 'none');
   const [open, setOpen] = useState(false);
   // The places to book this hop, always in view (T458): a traveller deciding
   // how to get from one stop to the next wants the trains and buses one tap

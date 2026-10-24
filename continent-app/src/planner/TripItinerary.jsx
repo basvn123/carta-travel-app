@@ -82,7 +82,10 @@ function useFlightWaiting(queries) {
  */
 function ItinFlight({ dir, leg, waiting, query, baggage, hours, onHours, fareField }) {
   const { t } = useI18n();
-  const state = leg ? null : (leg === undefined && waiting ? 'loading' : 'none');
+  // T733: a day nobody has answered for (not in the sweep, and the live
+  // search gave up) is 'unknown', never "no flight that day": only a known
+  // empty day (null) says that.
+  const state = leg ? null : (leg === undefined ? (waiting ? 'loading' : 'unknown') : 'none');
   return (
     <div className="itin-flight">
       <FlightRow leg={leg || null} cost={leg?.cost} dir={dir} bagKey={baggage} state={state} wantedDate={query?.date || null}>

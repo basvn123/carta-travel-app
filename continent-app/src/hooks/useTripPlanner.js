@@ -618,7 +618,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     groupSize, setGroupSize, children, babies, setParty,
     transportPref, setTransportPref, transferMode, setTransferMode, pace, setPace, setLegMode, setOwnLeg, carRental,
     // The raw share-link ingredients (the same fields the draft persists).
-    anchorId, anchorOrigin, returnAnchorId, legModes, ownLegs, ownStays, setOwnStay,
+    anchorId, anchorOrigin, setAnchorOrigin, returnAnchorId, legModes, ownLegs, ownStays, setOwnStay,
     priced, lifestyle,
     cheaperOrder, applyCheaperOrder,
     addStop, removeStop, setStopNights, setStopActivities, moveStop, reorderStop,

@@ -39,7 +39,7 @@ export function CompareSheet({
         <span className="cmp-fig">{t('cmp.return', { price: formatMoney(r.flight.perSeat, { locale: lang }) })}</span>
         <span className="cmp-sub">{r.flight.airport}</span>
       </>
-    ) : <span className="cmp-none">{t('cmp.noFlight')}</span>) },
+    ) : <span className="cmp-none">{t(r.flightAhead ? 'cmp.flightAhead' : 'cmp.noFlight')}</span>) },
     { key: 'weather', label: month ? t('cmp.weatherIn', { month: monthName(month) }) : t('cmp.weather'), cell: (r) => (r.weather ? (
       <>
         {r.weather.high != null && <span className="cmp-fig">{t('cmp.high', { n: Math.round(r.weather.high) })}</span>}

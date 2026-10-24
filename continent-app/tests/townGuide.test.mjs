@@ -9,7 +9,8 @@ const lis = {
   sleep: { neighbourhoods: [{ name: "Campolide", night_eur: 116 }, { name: "Alfama", night_eur: 98 }, { name: "Baixa" }, { name: "Belem", night_eur: 90 }] },
   when: { best: [6, 7, 8, 9], crowding: { tier: 3, label: "Crowded" } },
   practical: { getting_there: { airport: "LIS", transit: "excellent", car_needed: false }, rhythm: "Many museums close Mondays.", book_ahead: ["Belem Tower"] },
-  festivals: [{ name: "NOS Alive", months: [7], what: "Music by the river" }, { name: "Santos", months: [6] }],
+  festivals: [{ name: "NOS Alive", months: [7], what: "Music by the river" }, { name: "Santos", months: [6] }, { name: "Old Registry", what: "building in Lisbon" }],
+  tips: [{ code: "carNeeded", args: {} }, { code: "pairWith", args: { name: "Sintra", minutes: 36 } }, { code: "hiddenGem", args: {} }],
   gallery: [{ url: "a" }, { url: "a" }, { thumb: "b" }],
 };
 
@@ -25,7 +26,9 @@ test("every row in order, filled from what the dossier states", () => {
   assert.deepEqual(by.getting, [{ airport: "LIS" }, { transit: "excellent" }, { carNeeded: false }]);
   assert.deepEqual(by.know[1].bookAhead, ["Belem Tower"]);
   assert.deepEqual(by.on.map((e) => e.text), ["NOS Alive"]);
-  assert.deepEqual(by.tip, []);
+  // Insider kinds only, in their order; the car is the getting-there row's.
+  assert.deepEqual(by.tip.map((x) => x.tip.code), ["hiddenGem", "pairWith"]);
+  assert.deepEqual(by.tip[1].tip.args, { name: "Sintra", minutes: 36 });
 });
 
 test("no dossier: every row empty, none left out", () => {

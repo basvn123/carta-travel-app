@@ -19,11 +19,14 @@ import { normalizeSettings, VISIBILITY } from './tripSettings.js';
  * app-wide values the questions also write. A planned trip, which keeps its
  * own party and dates, takes each saved answer through `onSaved(next, prev)`.
  */
-export function TripSettingsSheet({ onClose, anchorRef, onSaved = null }) {
+export function TripSettingsSheet({ onClose, anchorRef, onSaved = null, planned = false }) {
   const { t } = useI18n();
   const app = useSettings();
   const [settings, save] = useTripSettings();
   const [editing, setEditing] = useState('');
+  // T731: what a saved answer did to a planned trip, in one line, with the
+  // next move when there is one ({ text, actionLabel?, onAction? }).
+  const [notice, setNotice] = useState(null);
   const lifestyle = useLifestyleLabel();
   const months = useMonths();
   const bcp47 = useBcp47();
@@ -85,7 +88,11 @@ export function TripSettingsSheet({ onClose, anchorRef, onSaved = null }) {
             id={editing}
             settings={s}
             doneLabel={t('pf.set.save')}
-            commit={(next) => { save(next); onSaved?.(normalizeSettings(next), s); setEditing(''); }}
+            commit={(next) => {
+              save(next);
+              setNotice(onSaved ? onSaved(normalizeSettings(next), s) || null : null);
+              setEditing('');
+            }}
           />
         </div>
       </SheetShell>
@@ -95,6 +102,14 @@ export function TripSettingsSheet({ onClose, anchorRef, onSaved = null }) {
   return (
     <SheetShell title={t('pf.settings')} onClose={onClose} anchorRef={anchorRef} className="pf-settings">
       <div className="pf-set">
+        {notice && (
+          <div className="pf-set-notice" role="status">
+            <p className="pf-note">{notice.text}</p>
+            {notice.actionLabel && (
+              <Button variant="secondary" size="sm" onClick={notice.onAction}>{notice.actionLabel}</Button>
+            )}
+          </div>
+        )}
         <div className="pf-set-trip">
           <label className="pf-label" htmlFor="pf-set-name">{t('pf.create.name')}</label>
           <input
@@ -117,6 +132,7 @@ export function TripSettingsSheet({ onClose, anchorRef, onSaved = null }) {
         {groups.map((g) => (
           <section className="pf-set-group" key={g.key} aria-labelledby={`pf-set-${g.key}`}>
             <h3 className="pf-label" id={`pf-set-${g.key}`}>{g.title}</h3>
+            {planned && g.key === 'guide' && <p className="pf-note pf-set-groupnote">{t('pf.set.guideNote')}</p>}
             <ul className="pf-set-rows">
               {g.rows.map((r) => (
                 <li key={r.id}>

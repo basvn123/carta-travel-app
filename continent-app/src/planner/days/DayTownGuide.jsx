@@ -10,6 +10,7 @@ import { formatRange } from '../../lib/format.js';
 import { cityLabel } from '../../lib/placeName.js';
 import { loadDossier } from '../../lib/dossier.js';
 import { townGuide, townPhotos } from './townGuide.js';
+import { tipText } from '../../browse/destParts.js';
 
 const ICON = { vibe: SparkIcon, sleep: BedIcon, when: CalendarIcon, getting: PlaneIcon, know: BulbIcon, on: MusicIcon, tip: InfoIcon };
 
@@ -93,6 +94,14 @@ export function DayTownGuide({ dest, destId, month = null, showHead = true }) {
               {e.what && <span className="dtg-sub">{e.what}</span>}
             </li>
           ))}
+        </ul>
+      );
+    }
+    if (key === 'tip') {
+      const tr = Object.assign((k, a) => t(k, a), { lang });
+      return (
+        <ul className="dtg-list">
+          {items.map((x) => <li key={x.tip.code}><span>{tipText(x.tip, tr)}</span></li>)}
         </ul>
       );
     }
