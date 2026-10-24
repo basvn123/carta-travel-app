@@ -118,7 +118,10 @@ export function driveOrigin(choices) {
  *  not road-reachable or beyond `max_drive_km`. Fuel + a motorway-toll allowance,
  *  multiplied by the number of cars the group fills. Comparable to the plane fare.
  */
-export function drivingEstimate(dest, home, choices, model) {
+// How near the corridor's start a drive must begin for the corridor to count.
+const TOLL_FROM_KM = rule('car.toll_corridor_start_km');
+
+export function drivingEstimate(dest, home, choices, model, tollFrom = null) {
   if (!home || !dest || dest.lat == null || dest.lon == null) return null;
   const m = { ...DEFAULT_CAR_MODEL, ...(model || {}) };
   const lt = dest.local_transport || {};
@@ -140,7 +143,12 @@ export function drivingEstimate(dest, home, choices, model) {
   // Tolls: prefer the per-country corridor estimate (dest.driving_toll, toll
   // layer v14: real peage/vignette/bridge rates per country crossed); the flat
   // per-100km allowance remains the fallback for unmapped destinations.
-  const dt = dest.driving_toll;
+  // T716 (plan F10, row T471-f): the corridor is measured from the pipeline's
+  // start (meta.home, `tollFrom`), so it counts only for a drive that starts
+  // there; from anywhere else the flat allowance prices the tolls of the
+  // traveller's own road, never Brussels' corridor and its notes.
+  const fromCorridor = tollFrom && haversineKm(home.lat, home.lon, tollFrom.lat, tollFrom.lon) <= TOLL_FROM_KM;
+  const dt = fromCorridor ? dest.driving_toll : null;
   const tolls = dt?.total_rt_eur != null
     ? cars * dt.total_rt_eur
     : cars * (rtKm / 100) * (m.toll_eur_per_100km || 0);

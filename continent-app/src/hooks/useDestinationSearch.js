@@ -109,7 +109,8 @@ export function useDestinationSearch({
         crowding: d.crowding || null,
         image: d.image?.url || null,     // hero thumbnail for the map hover card
       };
-      const b = quoteComposed(d, departDate, returnDate, choices, data.destinations, { ...flightOpts, day: days.get(destId) });
+      const b = quoteComposed(d, departDate, returnDate, choices, data.destinations,
+        { ...flightOpts, day: days.get(destId), tollFrom: data.meta?.home || null });
       if (b == null) {
         unreach.push({ ...row, total: null, pp: null, reachable: false });
       } else {

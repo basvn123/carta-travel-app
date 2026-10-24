@@ -375,7 +375,7 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
       const model = { ...(carModel || {}), max_drive_km: CAR.max_drive_km };
       const half = (dest) => {
         if (!dest) return null;
-        const rt = drivingEstimate(dest, home, { group_size: seats }, model);
+        const rt = drivingEstimate(dest, home, { group_size: seats }, model, data?.meta?.home || null);
         if (!rt) return null;
         return {
           road_km: rt.road_km,

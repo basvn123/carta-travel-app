@@ -69,7 +69,10 @@ export function quoteComposed(dest, departDate, returnDate, choices, allDests = 
   const bedLine = day.lines.find((l) => l.key === 'bed');
   const accomPerPerson = bedLine.status === 'included' ? round2(day.stayEur * nights) : 0;
   const accomTotal = accomPerPerson * groupSize;
-  const groundPerPerson = day.lines.find((l) => l.key === 'food').status === 'included' ? round2(day.foodEur * nights) : 0;
+  const foodLine = day.lines.find((l) => l.key === 'food');
+  // T714: local transport joins the days once the place has a fare (B11).
+  const local = day.lines.find((l) => l.key === 'transport' && l.status === 'included')?.eur || 0;
+  const groundPerPerson = round2(((foodLine.status === 'included' ? day.foodEur : 0) + local) * nights);
   const groundTotal = groundPerPerson * groupSize;
 
   const stayTotal = accomTotal + groundTotal;
@@ -100,7 +103,7 @@ export function quoteComposed(dest, departDate, returnDate, choices, allDests = 
   const planeGrand = route ? flightTotal + transferTotal + rentalTotal + stayTotal : null;
 
   // --- Car option: drive there & back. You have your car, so no rental.
-  const driving = drivingEstimate(dest, home, choices, carModel); // null if not drivable
+  const driving = drivingEstimate(dest, home, choices, carModel, opts?.tollFrom || null); // null if not drivable
   const drivable = !!driving;
   const carGrand = drivable ? driving.total + stayTotal : null;
 

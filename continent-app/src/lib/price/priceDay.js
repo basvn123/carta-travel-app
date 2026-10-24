@@ -25,9 +25,12 @@
  */
 import { costContext, costRow } from '../costIndex.js';
 import { groundSpendPerPerson } from '../runtime_pricing.js';
-import { foodShare } from '../party.js';
+import { foodShare, ticketShare } from '../party.js';
 import { DEFAULT_PRICE_REQUEST, costChoices, seatsOf } from './request.js';
 import { carHire } from './car.js';
+import { rule } from './config.js';
+
+const RIDES = rule('transport.rides_per_day');
 
 const cents = (v) => Math.round(v * 100) / 100;
 const num = (v) => (v != null && Number.isFinite(v) ? cents(v) : null);
@@ -59,7 +62,36 @@ function carLine(iso2, req, chosen, st) {
   };
 }
 
-function linesOf(row, req, iso2) {
+/**
+ * Local transport a person a day (T714, plan F8, owner B11): the place's
+ * fare record (local_transport.fare: ride_eur, day_pass_eur, currency,
+ * source, date, quality) times the rides a day its kind of place takes
+ * (config transport.rides_per_day), capped by a day pass, at the party's
+ * ticket share for children. In the day as soon as the place has a fare;
+ * without one the line is missing and the day is bed and food (rule 8: never
+ * a zero).
+ */
+function transportLine(dest, req, st) {
+  const fare = dest?.local_transport?.fare;
+  const okEur = (v) => typeof v === 'number' && Number.isFinite(v) && v > 0;
+  const euro = fare && (!fare.currency || String(fare.currency).toUpperCase() === 'EUR');
+  const rides = RIDES[dest?.place?.class] ?? RIDES.town;
+  const byRide = euro && okEur(fare.ride_eur) ? fare.ride_eur * rides : null;
+  const pass = euro && okEur(fare.day_pass_eur) ? fare.day_pass_eur : null;
+  const adult = byRide != null && pass != null ? Math.min(byRide, pass) : (byRide ?? pass);
+  if (adult == null) {
+    return { key: 'transport', status: st('transport', 'not_included'), eur: null, quality: 'missing', basis: null, provenance: null };
+  }
+  const share = ticketShare({ ...req.group, seats: seatsOf(req) });
+  return {
+    key: 'transport', status: st('transport', 'included'), eur: num(adult * share),
+    quality: fare.quality === 'measured' ? 'measured' : 'modelled',
+    basis: { rides, ride_eur: fare.ride_eur ?? null, day_pass_eur: fare.day_pass_eur ?? null, share, capped: pass != null && byRide != null && pass < byRide },
+    provenance: { source: fare.source || null, date: fare.date || null },
+  };
+}
+
+function linesOf(row, req, iso2, dest = null) {
   const off = new Set(req.excluded || []);
   const st = (key, status) => (off.has(key) ? 'excluded' : status);
   const car = req.transport === 'car';
@@ -77,8 +109,8 @@ function linesOf(row, req, iso2) {
       basis: { share: foodShare({ ...req.group, seats: seatsOf(req) }) },
       provenance: { level: row.foodLevel, source: row.foodBasis },
     },
-    // F8 prices local transport; until then the item is known to be missing.
-    { key: 'transport', status: st('transport', 'not_included'), eur: null, quality: 'missing', basis: null, provenance: null },
+    // T714 (F8, B11): local transport in the day once the place has a fare.
+    transportLine(dest, req, st),
     // T702 (F6): the car hire (lib/price/car.js, rentalEstimate) a person a
     // day, with the cars the party fills in its basis (seven people are two
     // cars, V6). Never in the day: going by car on Explore is driving one's
@@ -94,8 +126,8 @@ function linesOf(row, req, iso2) {
   ];
 }
 
-function answer(row, req, iso2 = null) {
-  const lines = linesOf(row, req, iso2);
+function answer(row, req, iso2 = null, dest = null) {
+  const lines = linesOf(row, req, iso2, dest);
   const counted = lines.filter((l) => l.status === 'included');
   // A day needs every included line priced: a bed or food line without data
   // leaves the day unpriced rather than cheaper (rule 8).
@@ -119,7 +151,7 @@ export function priceDays(destinations, req = DEFAULT_PRICE_REQUEST) {
   const r = req || DEFAULT_PRICE_REQUEST;
   const ctx = costContext(destinations, costChoices(r));
   const out = new Map();
-  for (const [id, d] of Object.entries(destinations || {})) out.set(id, answer(costRow(d, ctx), r, d.iso2));
+  for (const [id, d] of Object.entries(destinations || {})) out.set(id, answer(costRow(d, ctx), r, d.iso2, d));
   return out;
 }
 
@@ -132,7 +164,7 @@ export function priceDay(dest, req = DEFAULT_PRICE_REQUEST, destinations = null)
   if (!dest) return null;
   const r = req || DEFAULT_PRICE_REQUEST;
   const ctx = costContext(destinations || { [dest.id]: dest }, costChoices(r));
-  return answer(costRow(dest, ctx), r, dest.iso2);
+  return answer(costRow(dest, ctx), r, dest.iso2, dest);
 }
 
 /**

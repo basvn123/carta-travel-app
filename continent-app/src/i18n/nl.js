@@ -6853,6 +6853,7 @@ export const nl = {
   "price.item.food": "Eten en drinken",
   "price.item.transport": "Lokaal vervoer",
   "price.item.car": "Huurauto",
+  "price.actEach": "{price} per persoon",
   "price.item.activities": "Activiteiten en tickets",
   "price.item.events": "Evenementen",
   "price.item.flight": "Vlucht heen en terug",
