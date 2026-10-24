@@ -2141,7 +2141,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T651-b | T651 | 264 airport-tier places (DBV, BGO, CDG and others) have no airports[] and show their own code without a time | next task | open |  |
 | T653-a | T653 | A date changed inside the planning engine (the wizard's When) is not written back into the trip settings, so the gear can show the setup answer while the trip runs on other dates | next task | closed by T675 |  |
 | T654-a | T654 | The new kit piece ChoiceRows (components/ui) is not yet in the carta-design kit list or the style guide page | next task | open |  |
-| T654-b | T654 | The planner flow's CSS (86-plan-flow.css, about 14.5 KB) sits in the first paint because the css-routes proof refused it as a route sheet | next task | open |  |
+| T654-b | T654 | The planner flow's CSS (86-plan-flow.css, about 14.5 KB) sits in the first paint because the css-routes proof refused it as a route sheet | next task | closed by T732 |  |
 | T656-a | T656 | The ready-trip door reads the trips layer only, not the 253-week journeys library | next task | closed by T669 |  |
 | T656-b | T656 | Compare up to three countries side by side (day cost, stay a night for the tier, flight, weather, crowds) was planned and not built | next task | closed by T670 |  |
 | T656-c | T656 | The engine's steps (Where, Stay, Trips, Stays, Getting there, Review) still wear the old wizard chrome, not the Polarsteps sheet of the flow | next task | closed by T668 |  |
@@ -2151,15 +2151,15 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T658-a | T658 | "Let Carta plan the days" stores daysHow but opens the first day like planning yourself; starting the AI day plan from it is batch 2 | next task | closed by T674 | 1 |
 | T658-b | T658 | Child ages, slower walkers and the trip's goal are collected but not yet used by pricing or the day plans | next task | open |  |
 | T659-a | T659 | "Add my trip as it is" runs the new trip questions; it does not ask where you are now and until when | next task | closed by T675 |  |
-| T660-a | T660 | Review the new trip planner flow on a preview, then merge app p15-trip-planner-flow and root p15-trip-planner-flow and deploy | user | open | 2 |
+| T660-a | T660 | Review the new trip planner flow on a preview, then merge app p15-trip-planner-flow and root p15-trip-planner-flow and deploy | user | closed by T735 | 2 |
 | T660-b | T660 | The end check could not run a booking upload (parse-booking needs a signed-in pass) or live flight rows (data host refuses localhost); check both on the preview | next task | closed by T675 |  |
 | T660-c | T660 | Place the research gaps outside this batch: visas and entry rules, group voting, offline maps beyond the exports, currency | user | open |  |
 | T660-d | T660 | Batch 2: the day planner rebuild on the flow (ideas overview by section, save and assign to days, day page list beside map, day costs overview, stop guide rows) | next task | closed by T676 | 3 |
-| T671-a | T671 | What's on in the day ideas reads only the dossier's festivals by month; there is no dated events source, so the section is a placeholder in most towns | next task | open |  |
-| T673-a | T673 | The town guide's insider tip has no data source (always the placeholder) and where to sleep is empty for towns without neighbourhoods in their dossier | next task | open |  |
-| T675-a | T675 | Settings edits on a planned trip move the party, the start date and the flight ranking; the booked answer, where from and the guide answers change nothing on a trip already planned (offer to re-plan?) | user | open |  |
-| T676-a | T676 | Review both planner batches on a preview, then merge app p15-day-planner (holds batch 1) and root p15-day-planner and deploy; expect conflicts with PB1 and PB2 in App.jsx, DayPlannerTab.jsx, TripPlannerTab.jsx, GuidedTripWizard.jsx | user | open | 1 |
-| T676-b | T676 | On the preview, check real flight figures in compare and on a planned trip (localhost cannot load the flights file from the data host) | next task | open | 2 |
+| T671-a | T671 | What's on in the day ideas reads only the dossier's festivals by month; there is no dated events source, so the section is a placeholder in most towns | next task | closed by T734 |  |
+| T673-a | T673 | The town guide's insider tip has no data source (always the placeholder) and where to sleep is empty for towns without neighbourhoods in their dossier | next task | closed by T734 |  |
+| T675-a | T675 | Settings edits on a planned trip move the party, the start date and the flight ranking; the booked answer, where from and the guide answers change nothing on a trip already planned (offer to re-plan?) | user | closed by T731 |  |
+| T676-a | T676 | Review both planner batches on a preview, then merge app p15-day-planner (holds batch 1) and root p15-day-planner and deploy; expect conflicts with PB1 and PB2 in App.jsx, DayPlannerTab.jsx, TripPlannerTab.jsx, GuidedTripWizard.jsx | user | closed by T735 | 1 |
+| T676-b | T676 | On the preview, check real flight figures in compare and on a planned trip (localhost cannot load the flights file from the data host) | next task | closed by T733 | 2 |
 | T661-a | T661 | The price baseline holds day prices only; add the trip prices (calculator with flight, composeTrip, priceTrip, wizard, country brief, Ask budget, saved trips) to tests/priceGolden.test.mjs before F6 moves them | next task | open | 1 |
 | T661-b | T661 | F2 also touched files outside its list in plan section 7 (DestPriceCard.jsx, useExploreCatalog.js, DestFood.jsx, scripts/og/specs.mjs, scripts/ask-eval-live.mjs, tests): each was a day-price path doc 4.3 names; confirm or move them to their phase | user | open |  |
 | T662-a | T662 | The EUR 400 a night per person ceiling repairs expensive beds with the country entire-place median (720 solo 5-star, 425 solo entire places, 142 solo 4-star, 56 under the default request); bounds and repair per stay tier in F3, then drop the V6 skip in tests/priceEngine.test.mjs | next task | closed by T692 |  |
@@ -2191,3 +2191,5 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T695-b | T695 | The opened price and the per person or group switch were built from the kit without a design pass; they go through the owner's design batch (plan ground rule 5) | user | open |  |
 | T696-a | T696 | The admin Prices view was not opened in the browser (the admin page needs an unlock); check it on a signed-in session | next task | open |  |
 | T698-a | T698 | carta-design's Budget search (T506) section describes the removed BudgetSearch component; update or remove it | next task | open |  |
+| T734-a | T734 | Dossier gem-douro has a time-it-with tip whose name is a sentence ("Join the vindima harvest"), so it reads "Time it with Join the vindima harvest" on the destination page and the town guide; fix the festival name in the dossier pipeline | next task | open |  |
+| T735-a | T735 | Merge app p15-planner-final (planner batches 1, 2 and T731 to T735; master already merged in, a fast-forward) and root p15-planner-final, then deploy; if master moved, merge it into the branch again and rerun the three end-check scripts first | user | open | 1 |
