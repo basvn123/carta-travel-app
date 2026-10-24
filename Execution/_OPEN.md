@@ -1807,7 +1807,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T502-g | T502 | An empty search shows two different "no match" messages at once | next task | closed by T504 |  |
 | T502-h | T502 | Some new links still write the old key ?tab=places, and ?tab=places opens the last category used rather than Places; decide whether old links always land on Places | user | open |  |
 | T502-i | T502 | 52 harnesses in scripts/verify_*.mjs still use removed selectors or old tab keys (the eight main-flow harnesses were updated) | next task | open |  |
-| T503-a | T503 | A trip card's "a person a day" divides the per-person trip total by the nights; confirm nights, or nights plus one | user | open |  |
+| T503-a | T503 | A trip card's "a person a day" divides the per-person trip total by the nights; confirm nights, or nights plus one | user | closed by T662 |  |
 | T503-b | T503 | The pass price stays in cents (6.99 and 14.99 euros, the amount charged) against the whole-euros rule 1.8; confirm the exception | user | open |  |
 | T503-c | T503 | The numbers page keeps its catalogue counts and method text as the one page where they may stand; confirm | user | open |  |
 | T503-d | T503 | The numbers page is English only; build the six language versions plus /:lang/about/numbers rewrites in public/_redirects | next task | open |  |
@@ -2129,7 +2129,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T649-b | T649 | Monthly crowd seasonality is Eurostat NUTS 2, so Alpine resorts in one region share a curve (Zermatt equals Verbier, Zermatt November 1 and December 3); a resort-level source would separate them | next task | open |  |
 | T649-c | T649 | Lake Como November reads Moderate (tier 1), not Quiet; if strongly seasonal low months should read Quiet, change the SEASON_* constants in harvest_tourism_density.py | user | open |  |
 | T649-d | T649 | The Explore month filter xm=11 and xm=12 returns no places: ExploreTab.jsx:628 keeps only places whose climate.best includes the month, and climate.best holds months 3 to 10 only | next task | open |  |
-| T649-e | T649 | The F2 price engine month helper must import src/lib/when.js, not add a second date reader | next task | open |  |
+| T649-e | T649 | The F2 price engine month helper must import src/lib/when.js, not add a second date reader | next task | closed by T662 |  |
 | T650-a | T650 | Ferry lines (osm_ferry_legs, Overpass, on the box) are needed before ferry shows in mobility.modes for Lake Como; islands without ferry data stay hard (Naxos, Hvar) | next task | open |  |
 | T650-b | T650 | Only the Trenord feed is verified, so 23 destinations have a line-based car_free grade and the rest are category-based (links T641-b) | next task | open |  |
 | T650-c | T650 | Lake Como parking_hard is false (two or more public lots within 1.5 km); the brief expected parking hard; decide whether the PARKING_HARD_MAX_SPOTS rule is the right test | user | open |  |
@@ -2139,3 +2139,13 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T650-g | T650 | pipeline/field_stubs/gate.py ENUMS could check car_free in good, ok, hard | next task | open |  |
 | T651-a | T651 | German writes "146 Min." on the Practical tab and "146 min" in the key fact; dest.airportOptEst is now unused | next task | open |  |
 | T651-b | T651 | 264 airport-tier places (DBV, BGO, CDG and others) have no airports[] and show their own code without a time | next task | open |  |
+| T661-a | T661 | The price baseline holds day prices only; add the trip prices (calculator with flight, composeTrip, priceTrip, wizard, country brief, Ask budget, saved trips) to tests/priceGolden.test.mjs before F6 moves them | next task | open | 1 |
+| T661-b | T661 | F2 also touched files outside its list in plan section 7 (DestPriceCard.jsx, useExploreCatalog.js, DestFood.jsx, scripts/og/specs.mjs, scripts/ask-eval-live.mjs, tests): each was a day-price path doc 4.3 names; confirm or move them to their phase | user | open |  |
+| T662-a | T662 | The EUR 400 a night per person ceiling repairs expensive beds with the country entire-place median (720 solo 5-star, 425 solo entire places, 142 solo 4-star, 56 under the default request); bounds and repair per stay tier in F3, then drop the V6 skip in tests/priceEngine.test.mjs | next task | open |  |
+| T662-b | T662 | Under "any time" the flight is the year's cheapest month while the bed is the year's average; decide whether any time flies a typical month instead | user | open |  |
+| T663-a | T663 | The default Explore card now prices the year's average (B5) instead of Carta's suggested week: median +8.5% (p10 +4.2%, p90 +20.4%) over 3,868 places; owner to see this before the deploy | user | open |  |
+| T663-b | T663 | The flight's date mode on the Explore card and the calculator (lib/price/flight.js) is tested in node only: the flight sweep is blocked by CORS on localhost; check it on a preview deploy | next task | open |  |
+| T663-c | T663 | A traveller who picks exactly Carta's suggested week reads as "not own dates" (App compares with Carta's pair), so the price falls back to the year's average; store an explicit own-dates flag when the traveller picks | next task | open |  |
+| T663-d | T663 | The Explore card's flight leaves the bag out, the calculator adds the default bag; one default bag in F3 | next task | open |  |
+| T665-a | T665 | scripts/og/render.mjs calls destinationSpec without the catalogue, so its own render path gets no country repair; pass the destination rows | next task | open |  |
+| T666-a | T666 | The day planner's new-plan card (homeTownId figure) still reads the app map; price it at the plan's start date once the wizard has one | next task | open |  |
