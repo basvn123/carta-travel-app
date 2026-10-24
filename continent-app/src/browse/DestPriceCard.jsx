@@ -18,7 +18,8 @@ import { isNational } from '../components/CostSummary.jsx';
 import { InfoDot } from '../components/InfoDot.jsx';
 import { dayIncludesText } from '../lib/dayIncludes.js';
 import { matchProfile, PROFILE_LABEL_KEYS } from './LifestylePanel.jsx';
-import { roundTripNear, legCost } from '../lib/flights/flights.js';
+import { legCost } from '../lib/flights/flights.js';
+import { flightLegs, flightQuote } from '../lib/price/flight.js';
 import { destAnchor } from '../lib/origins.js';
 import { FlightRow, FlightLink, AirlineMark } from '../components/flights/Flights.jsx';
 import { homeFlightSetup, withEnds } from './cartaFlight.js';
@@ -71,17 +72,21 @@ export function DestPriceCard({
   const to = ctx?.returnDate || defaults?.end || null;
   const datesOwn = !!(defaults && from && to && (from !== defaults.start || to !== defaults.end));
   const costRow = ctx?.indices?.get?.(dest.id) || null;
-  const nights = from && to && to > from ? Math.max(1, tripDaysBetween(from, to)) : 7;
+  // T663: the request's nights (the date pair's length), the ones the day
+  // figure was priced over.
+  const request = ctx?.priceRequest || null;
+  const nights = request?.nights || (from && to && to > from ? Math.max(1, tripDaysBetween(from, to)) : 7);
   const people = Math.max(1, Math.min(MAX_PARTY, Math.round(choices?.group_size || 2)));
-  // Carta's return flight near the dates (T518), from the home airport's
-  // sweep; a fare the traveller typed wins over it, and with neither the
-  // card prices the stay alone, as before.
+  // Carta's return flight (T518), from the home airport's sweep, on the
+  // bed's date mode (T663, V7): near the exact dates, the month's cheapest,
+  // or the year's cheapest. A fare the traveller typed wins over it, and with
+  // neither the card prices the stay alone, as before.
   const flightFile = ctx?.data?.flights || null;
   const bagKey = homeFlightSetup(ctx).bagKey;
   const airport = destAnchor(dest);
   const carta = React.useMemo(
-    () => (fare ? null : roundTripNear(flightFile, airport, from, to, { paying: people, bagKey })),
-    [fare, flightFile, airport, from, to, people, bagKey],
+    () => (fare ? null : flightQuote(flightLegs(flightFile, airport, request), { paying: people, bagKey })),
+    [fare, flightFile, airport, request, people, bagKey],
   );
   const price = React.useMemo(
     () => priceFromIndex(costRow, nights, people, fare, carta),

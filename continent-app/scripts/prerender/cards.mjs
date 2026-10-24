@@ -42,7 +42,7 @@ export async function renderCards(jobs, { out, data, destRows, onFallback }) {
     for (const job of jobs) {
       const { card } = job;
       let spec = null;
-      if (card.type === 'destination') spec = destRows[card.key] ? destinationSpec(card.key, destRows[card.key]) : null;
+      if (card.type === 'destination') spec = destRows[card.key] ? destinationSpec(card.key, destRows[card.key], destRows) : null;
       else if (card.type === 'trail') spec = trailSpec(trailWithGeometry(card.row));
       else spec = SPEC[card.type]?.(card.row) || null;
       if (!spec) { onFallback(job); fell += 1; continue; }

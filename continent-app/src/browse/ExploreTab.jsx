@@ -23,7 +23,7 @@ import {
 import { useTravelMonth, useSettings } from '../components/SettingsLine.jsx';
 import { resolveWhen } from '../lib/when.js';
 import { fromName } from '../components/FromPicker.jsx';
-import { cheapestReturn, cheapestReturnAnyMonth } from '../lib/flights/flights.js';
+import { flightLegs } from '../lib/price/flight.js';
 import { homePoint, wayFor } from '../lib/travelWay.js';
 import { partyOf } from '../lib/party.js';
 import { destAnchor } from '../lib/origins.js';
@@ -81,7 +81,6 @@ import { knownFor } from '../lib/knownFor.js';
 import { catalogue, CATALOGUE_MODE, loadFullCatalogue } from '../lib/appData.js';
 import { decodeBootIndex } from '../lib/bootIndex.js';
 import { formatMoney } from '../lib/money.js';
-import { computeCosts } from '../lib/costIndex.js';
 // T586: the overview first page.
 import {
   SearchIcon, ArrowLeftIcon, SparkIcon, CameraIcon, DiamondIcon, TrainIcon, PersonIcon, PiggyIcon, SunIcon,
@@ -348,8 +347,6 @@ export function ExploreTab({
   favorites, onToggleFav,
   selectedId, onSelect,
   indices,
-  // T534: with a month picked in the filter, beds are repriced for that month.
-  choices = null,
   isMock = false,
   onOpenGuides,
   // T498 (roadmap 1.3b): the country page is App's (#country=), the six
@@ -501,18 +498,15 @@ export function ExploreTab({
   const scrollRef = React.useRef(null);
 
   // T534: a month in the filter prices every card's bed for that month (the
-  // measured month curve), so "November" shows November's prices.
-  const monthIndices = React.useMemo(
-    () => (dxf.month && data && indices
-      ? computeCosts(data.destinations, { ...(choices || {}), month: dxf.month })
-      : indices),
-    [dxf.month, data, choices, indices],
-  );
+  // measured month curve), so "November" shows November's prices. T663 (B7):
+  // the filter is the app's "when" while it is on, so App prices the month
+  // in the one request and the destination page behind a card says the same
+  // (reported to App by the effect after useSettings below).
   const { all: catAllRows, rows: catRows, availableCountries, indices: costIndex } = useExploreCatalog({
     data, locationQuery, countryFilter, countryNot, tripKinds,
     ratingRange, gemOnly, unescoOnly, topBeachOnly, bigOnly, topPick,
     reachHours, reachMinutes, sortKey, showFavOnly, favorites,
-    indices: monthIndices, searchHits,
+    indices, searchHits,
   });
 
   // How the traveller gets there (T518, T582): under the settings line's
@@ -525,22 +519,21 @@ export function ExploreTab({
   // year's cheapest. A place the chosen ground way cannot reach leaves the
   // list; a place without a flight keeps its row in plane mode, as before.
   const settingsLine = useSettings();
+  const setExploreMonth = settingsLine?.setExploreMonth;
+  React.useEffect(() => { setExploreMonth?.(dxf.month || null); }, [dxf.month, setExploreMonth]);
   const setCountryNot = settingsLine?.setCountryNot;
   // The one country the list is narrowed to, for its page link and the
   // category doors; none while the list leaves countries out (T581).
   const oneCountry = !countryNot && countryFilter.length === 1 ? countryFilter[0] : null;
   const flights = data?.flights || null;
-  const dateFlex = settingsLine?.dateFlex || null;
   // T649: the month the quiet flag judges, from the one helper: the Explore
   // month filter when set, else the traveller's own when.
   const quietWhen = React.useMemo(
     () => (dxf.month ? resolveWhen({ xm: dxf.month }) : (settingsLine?.when || null)),
     [dxf.month, settingsLine?.when],
   );
-  const flightMonth = dateFlex === 'any' ? null
-    : settingsLine?.departDate
-      ? String(settingsLine.departDate).slice(0, 7)
-      : new Date().toISOString().slice(0, 7);
+  // T663 (V7): the flight follows the bed's date mode, from the one request.
+  const request = settingsLine?.priceRequest || null;
   const wayMode = settingsLine?.transportMode || 'any';
   // T589: "Flight up to" shows only while flights can be the way there.
   const flightLimitAvailable = !!flights && (wayMode === 'plane' || wayMode === 'any');
@@ -557,17 +550,15 @@ export function ExploreTab({
     const m = new Map();
     for (const p of catAllRows) {
       const d = data.destinations[p.id];
-      const r = flights && (wayMode === 'plane' || wayMode === 'any')
-        ? (flightMonth ? cheapestReturn(flights, destAnchor(d), flightMonth) : cheapestReturnAnyMonth(flights, destAnchor(d)))
-        : null;
-      const flight = r ? { perSeat: r.perSeat, airline: r.out.airline } : null;
+      const r = flights && (wayMode === 'plane' || wayMode === 'any') ? flightLegs(flights, destAnchor(d), request) : null;
+      const flight = r ? { perSeat: r.out.price + r.back.price, airline: r.out.airline } : null;
       const way = wayFor(d || p, wayMode, { home, party, flight });
       // T589: the outbound flight's length, for the "Flight up to" filter.
       const fmin = r ? legMinutes(r.out) : null;
       m.set(p.id, way ? { ...p, cost: { ...p.cost, way }, fmin } : (wayMode === 'plane' ? p : null));
     }
     return m;
-  }, [catAllRows, flights, flightMonth, wayMode, home, party, data]);
+  }, [catAllRows, flights, request, wayMode, home, party, data]);
   const withWay = React.useCallback(
     (list) => (wayRows ? list.map((p) => (wayRows.has(p.id) ? wayRows.get(p.id) : p)).filter(Boolean) : list),
     [wayRows],

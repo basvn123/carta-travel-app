@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { firstOkImage, okPhoto } from '../lib/photoVeto.js';
 import { useI18n } from '../i18n/index.jsx';
 import { catalogue } from '../lib/appData.js';
-import { stayPerNight } from '../lib/costIndex.js';
+import { priceDay, requestKey, DEFAULT_PRICE_REQUEST } from '../lib/price/index.js';
+import { useFirstRun } from '../lib/firstRunContext.js';
 import { placeExits } from '../lib/detailSkeleton.js';
 import { formatMoney } from '../lib/money.js';
 
@@ -16,12 +17,16 @@ import { formatMoney } from '../lib/money.js';
 /**
  * Euros a night at each base town, for the "cheaper" exit. The base ids are
  * catalogue ids (beach.base.id, lake.base.id, mountain.near.dest_id), so the
- * shared catalogue loads their shards and stayPerNight reads the same
- * accommodation figure the cards and the receipt use. Returns an object
- * id -> euros, empty until the shards land.
+ * shared catalogue loads their shards. T664 (F2): the bed line of the
+ * engine's day price for the app's one request (lib/price/), so the exit
+ * compares towns at the stay, party and dates the traveller chose, as the
+ * cards and the receipt price them. Returns an object id -> euros a person
+ * a night, empty until the shards land.
  */
 export function useBaseStays(ids) {
   const key = (ids || []).filter(Boolean).sort().join('|');
+  const request = useFirstRun()?.priceRequest || DEFAULT_PRICE_REQUEST;
+  const reqKey = requestKey(request);
   const [stays, setStays] = useState({});
   useEffect(() => {
     let live = true;
@@ -32,13 +37,15 @@ export function useBaseStays(ids) {
       const dests = catalogue.snapshot()?.destinations || {};
       const out = {};
       for (const id of want) {
-        const v = stayPerNight(dests[id]);
+        const v = dests[id] ? priceDay(dests[id], request, dests)?.stayEur : null;
         if (Number.isFinite(v)) out[id] = v;
       }
       setStays(out);
     }).catch(() => {});
     return () => { live = false; };
-  }, [key]);
+    // The request is read through its key, which carries every field.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key, reqKey]);
   return stays;
 }
 
