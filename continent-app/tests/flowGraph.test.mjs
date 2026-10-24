@@ -96,3 +96,10 @@ test("toggle: none clears the rest, max drops the oldest", () => {
   assert.deepEqual(toggleValue(likes, ["beach", "food", "city"], "hiking"), ["food", "city", "hiking"]);
   assert.deepEqual(toggleValue(QUESTIONS.priority, ["price"], "comfort"), ["comfort"]);
 });
+
+test("a trip under way asks where you are and until when, not When and From", () => {
+  const s = normalizeSettings({ kind: "now", booked: { flights: true } });
+  assert.deepEqual(setupScreens(s), ["tell", "booked", "who", "sleep", "priority", "nowWhere", "nowUntil"]);
+  assert.equal(normalizeSettings({ kind: "later" }).kind, "new");
+  assert.deepEqual(normalizeSettings({ now: { name: "Porto", lat: 41.1, lon: -8.6, countryCode: "PT" } }).now, { name: "Porto", lat: 41.1, lng: -8.6, countryCode: "PT" });
+});

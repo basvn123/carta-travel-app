@@ -16,6 +16,9 @@
   border-bottom: 1px solid var(--rule);
 }
 .trip-topcard-name:focus { outline: none; }
+/* T675: the trip settings gear, top right of the trip's name. */
+.trip-topcard > .icon-btn.trip-topcard-gear { position: absolute; top: 6px; right: 12px; }
+.trip-topcard:has(.trip-topcard-gear) .trip-topcard-name { padding-right: 48px; }
 .trip-block:first-child { margin-top: 6px; }
 .trip-block-title {
   font-family: var(--display);

@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { loadTripsFor, rankTrips, groupTripVariants } from '../lib/trips.js';
+import { loadAllJourneyCards } from '../lib/journeys.js';
+import { buildCityIndex, journeyToTripCard } from '../lib/journeyTrips.js';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
 import { NON_PHOTO_IMG } from '../lib/countryCovers.js';
@@ -174,6 +176,8 @@ function TripCard({ trip, photo, chosen, starred, onPick, onOpen, t, dayCostFor 
           </span>
           {chosen && <span className="wtrip-check"><CheckIcon size={12} /></span>}
         </div>
+        {/* A journey from the library has its own title (T669). */}
+        {shown.journey && shown.title && <p className="wtrip-title">{shown.title}</p>}
         <p className="wtrip-route">
           {(shown.cities || []).map((c, i) => (
             <React.Fragment key={`${c.city}-${i}`}>
@@ -251,12 +255,19 @@ export function ReadyTripsStep({
     setFailed(false);
     if (!ccKey) { setRows([]); return undefined; }
     setShown(12);
-    loadTripsFor(ccKey.split(',')).then(
-      (list) => { if (live) setRows(list || []); },
+    // T669: the curated journeys library joins the generated trips. A
+    // journey whose towns the catalogue cannot place is not offered.
+    Promise.all([loadTripsFor(ccKey.split(',')), loadAllJourneyCards().catch(() => [])]).then(
+      ([list, cards]) => {
+        if (!live) return;
+        const index = buildCityIndex(destinations || {});
+        const journeys = (cards || []).map((c) => journeyToTripCard(c, index, destinations || {})).filter(Boolean);
+        setRows([...(list || []), ...journeys]);
+      },
       () => { if (live) setFailed(true); },
     );
     return () => { live = false; };
-  }, [ccKey, tries]);
+  }, [ccKey, tries]); // eslint-disable-line react-hooks/exhaustive-deps -- destinations is the loaded catalogue, read once per country set
 
   // A trip is offered when it visits at least one country still ticked. Length
   // follows the window from the first step, one day either side, because a

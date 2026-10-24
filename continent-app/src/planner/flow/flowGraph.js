@@ -23,12 +23,16 @@ import { wizardSteps } from '../wizard/wizardSteps.js';
 import { datesFromBookings } from './tripSettings.js';
 
 export const SETUP = ['tell', 'booked', 'who', 'sleep', 'priority', 'when', 'from'];
+/** A trip already under way (T675): where the traveller is now and until
+ *  when stand in for When and Where from; the way there is behind them. */
+export const NOW_SETUP = ['tell', 'booked', 'who', 'sleep', 'priority', 'nowWhere', 'nowUntil'];
 export const GUIDE = ['g:shape', 'g:likes', 'g:weather', 'g:reach', 'g:avoid', 'g:budget'];
 export const RHYTHM_SCREENS = ['r:mornings', 'r:pace', 'r:detail', 'r:goal', 'r:food', 'r:around'];
 export const DOORS = ['guide', 'know', 'ready'];
 
 /** The setup questions this trip is asked, in order. */
 export function setupScreens(s) {
+  if (s.kind === 'now') return NOW_SETUP;
   return SETUP.filter((id) => {
     if (id === 'when') return !datesFromBookings(s);
     if (id === 'from') return !s.booked.flights;

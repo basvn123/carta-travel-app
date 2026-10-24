@@ -265,6 +265,64 @@ export function FromScreen({ settings, commit, doneLabel }) {
   );
 }
 
+// ---- On a trip now (T675): where you are, until when ----
+
+/** The town the traveller is in, by the same search as Where from. */
+export function NowWhereScreen({ settings, commit, doneLabel }) {
+  const app = useSettings();
+  const [picked, setPicked] = useState(settings.now);
+  const current = picked ? { name: picked.name, lat: picked.lat, lon: picked.lng } : null;
+  return (
+    <>
+      <div className="pf-from">
+        <FromPanel
+          data={app?.data}
+          current={current}
+          autoFocus={false}
+          onPick={(pt) => setPicked({ name: pt.name, lat: pt.lat, lng: pt.lon, countryCode: pt.iso2 || '' })}
+        />
+      </div>
+      <Foot onContinue={() => commit(answer(settings, 'nowWhere', { now: picked }))} disabled={!picked} label={doneLabel} />
+    </>
+  );
+}
+
+/** The day the traveller goes home; the trip runs from today to it. */
+export function NowUntilScreen({ settings, commit, doneLabel }) {
+  const { t } = useI18n();
+  const app = useSettings();
+  const today = todayISO();
+  const [end, setEnd] = useState(settings.when.end > today ? settings.when.end : '');
+  const nights = nightsBetween(today, end);
+  const go = () => {
+    const when = { mode: 'exact', start: today, end, months: [], nights };
+    syncWhen(app, when);
+    commit(markAnswered(answer(settings, 'nowUntil', { when }), 'when'));
+  };
+  return (
+    <>
+      <div className="pf-group">
+        <DateField
+          inline
+          value={end}
+          rangeStart={today}
+          rangeEnd={end || null}
+          min={addDaysISO(today, 1)}
+          max={app?.dateBounds?.max}
+          onChange={setEnd}
+        />
+      </div>
+      {nights > 0 && (
+        <div className="pf-group pf-line">
+          <span className="pf-line-label">{t('pf.when.nights')}</span>
+          <strong>{nights}</strong>
+        </div>
+      )}
+      <Foot onContinue={go} disabled={!nights} label={doneLabel} />
+    </>
+  );
+}
+
 // ---- What you're up for: photo tiles (after GetYourGuide's rails) ----
 
 /** Up to three kinds of trip, each a real catalogue photograph with its name

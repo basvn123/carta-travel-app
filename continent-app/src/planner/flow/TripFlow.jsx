@@ -10,7 +10,7 @@ import { QuestionBody } from './QuestionScreen.jsx';
 import { TripSettingsSheet } from './TripSettingsSheet.jsx';
 import { useBcp47, useMonths, useTripSettings, whenText } from './flowHooks.js';
 import { engineScreens, guideScreens, hasDoors, nextScreen, prevScreen, progressOf } from './flowGraph.js';
-import { quizAnswers, spendFor } from './tripSettings.js';
+import { normalizeSettings, quizAnswers, spendFor } from './tripSettings.js';
 
 /**
  * TripFlow (T656), the trip planner before a route exists: the trip's own
@@ -23,7 +23,7 @@ import { quizAnswers, spendFor } from './tripSettings.js';
  *   renderEngine({ flowSteps, initialWhereTab, onCancel })
  *      the caller's GuidedTripWizard mount with those props
  */
-export function TripFlow({ renderEngine }) {
+export function TripFlow({ renderEngine, seed = null }) {
   const { t } = useI18n();
   const [settings, save] = useTripSettings();
   const [phase, setPhase] = useState('home'); // home | doors | g:* | engine
@@ -41,27 +41,38 @@ export function TripFlow({ renderEngine }) {
   /** Hand over to the engine: its first step by name, the build mode the
    *  door implies, and (behind Guide me) the quiz answered from the guide, so
    *  its Where step opens on the matches. */
-  const startEngine = (d = door) => {
-    const steps = engineScreens(settings, hasDoors(settings) ? d : 'know').map((x) => x.slice(2));
+  const startEngine = (d = door, s = settings) => {
+    const steps = engineScreens(s, hasDoors(s) ? d : 'know').map((x) => x.slice(2));
     const wizard = { stepName: steps[0], step: 1, buildMode: d === 'ready' ? 'ready' : 'custom' };
-    if (d === 'guide') wizard.quiz = { ...quizAnswers(settings, spendFor(settings)), editing: '' };
+    if (d === 'guide') wizard.quiz = { ...quizAnswers(s, spendFor(s)), editing: '' };
     // A flight read from an uploaded booking brings its price: the way there
     // and home start as the traveller's own figures, never overwriting one
     // they typed (T657).
     const tv = { ...(plannerStore.getState().wizard?.travelValues || {}) };
-    for (const b of settings.imports) {
+    for (const b of s.imports) {
       const key = b.kind === 'flight_home' ? 'back' : (b.kind === 'flight_out' || b.kind === 'flight' ? 'out' : '');
       if (key && b.eur > 0 && !tv[key]?.eur) tv[key] = { mode: 'fly', service: b.title || b.code || '', eur: String(b.eur) };
     }
     // "No flying" makes the train the way there and home until the traveller
     // picks another; they type what it cost (Carta has no train fares yet).
-    if (settings.guide.reach === 'overland') {
+    if (s.guide.reach === 'overland') {
       for (const key of ['out', 'back']) if (!tv[key]?.mode) tv[key] = { ...(tv[key] || {}), mode: 'train' };
     }
     if (Object.keys(tv).length) wizard.travelValues = tv;
     plannerStore.setWizard(wizard);
     setPhase('engine');
   };
+  // T675 (row T656-d): "Plan a trip here" is the I know where door with the
+  // country picked; the engine lands on its Where. Booked stays switch off,
+  // as they did in the old wizard: that path has no Where to land on.
+  useEffect(() => {
+    if (!seed?.iso2) return;
+    const next = { ...settings, booked: { ...settings.booked, stays: false } };
+    if (settings.booked.stays) save(next);
+    setDoor('know');
+    startEngine('know', normalizeSettings(next));
+  }, [seed]); // eslint-disable-line react-hooks/exhaustive-deps -- one-shot hand-off per seed; the wizard consumes it and clears it
+
   const guide = useMemo(() => guideScreens(settings), [settings]);
   const afterGuide = (id, s) => {
     let k = nextScreen(guide, id);

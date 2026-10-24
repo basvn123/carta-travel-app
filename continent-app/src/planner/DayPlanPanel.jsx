@@ -395,10 +395,19 @@ export function DayPlanPanel({
   useEffect(() => { if (asking) keepRef.current?.focus(); }, [asking]);
   useEffect(() => { setAsking(false); }, [dayNumber]);
 
+  // T673: Wanderlog's day head, the two moves on a whole day as links beside
+  // the title: fill it (Carta plans it from the trip's rhythm) and put it in
+  // the best order (asked first, as before).
   const head = (
     <div className="dayp-head">
       <h2 className="dayp-h">{t('dayws.tabYourDay')}</h2>
       {onDetail && <DetailMenu value={detail} onChange={onDetail} />}
+      <div className="dayp-links">
+        <Button variant="quiet" size="sm" iconStart={<SparkIcon size={16} />} onClick={onAskCarta}>{t('days.fill')}</Button>
+        {canBestRoute && items.length > 1 && (
+          <Button variant="quiet" size="sm" iconStart={<RouteIcon size={16} />} aria-expanded={asking} onClick={() => setAsking(true)}>{t('days.bestOrder')}</Button>
+        )}
+      </div>
     </div>
   );
 
@@ -551,10 +560,6 @@ export function DayPlanPanel({
 
       <div className="dayp-tools" role="toolbar" aria-label={t('dayws.toolbarAria', { n: dayNumber })}>
         <Button size="sm" iconStart={<PlusIcon size={16} />} onClick={() => onAdd(null)}>{t('dayws.addPlaces')}</Button>
-        <Button size="sm" iconStart={<SparkIcon size={16} />} onClick={onAskCarta}>{t('dayws.askCarta')}</Button>
-        {canBestRoute && (
-          <Button size="sm" iconStart={<RouteIcon size={16} />} aria-expanded={asking} onClick={() => setAsking(true)}>{t('dayws.bestRoute')}</Button>
-        )}
       </div>
       {asking && (
         <div

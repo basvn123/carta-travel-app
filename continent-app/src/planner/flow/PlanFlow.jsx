@@ -91,7 +91,11 @@ export function PlanFlow({ onNavigate, onCreated, onAddPast = null, pageOver = f
         value={kind}
         onPick={setKind}
         onClose={() => go('home')}
-        onContinue={() => go(kind === 'now' ? 'now' : 'tell')}
+        onContinue={() => {
+          if (kind === 'now') { go('now'); return; }
+          if (settings.kind !== 'new') save({ ...settings, kind: 'new' });
+          go('tell');
+        }}
         onPast={() => (onAddPast ? onAddPast() : onNavigate('trips'))}
       />
     );
@@ -99,7 +103,12 @@ export function PlanFlow({ onNavigate, onCreated, onAddPast = null, pageOver = f
     body = (
       <OnTripSheet
         onBack={() => go('kind')}
-        onPick={(v) => (v === 'add' ? go('tell') : onNavigate('day'))}
+        onPick={(v) => {
+          if (v !== 'add') { onNavigate('day'); return; }
+          // T675: adding a trip under way asks where you are and until when.
+          if (settings.kind !== 'now') save({ ...settings, kind: 'now' });
+          go('tell');
+        }}
       />
     );
   } else if (screen === 'create') {

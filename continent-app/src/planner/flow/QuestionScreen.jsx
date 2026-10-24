@@ -10,11 +10,13 @@ import { answer, markAnswered, normalizeSettings, fromImports } from './tripSett
 import { prefillFromText } from './prefill.js';
 import { syncParty, syncWhen } from './appSync.js';
 import { useSettings } from '../../components/SettingsLine.jsx';
-import { WhoScreen, SleepScreen, WhenScreen, FromScreen, LikesScreen, BudgetScreen } from './setupScreens.jsx';
+import { plannerStore } from '../plannerStore.js';
+import { WhoScreen, SleepScreen, WhenScreen, FromScreen, LikesScreen, BudgetScreen, NowWhereScreen, NowUntilScreen } from './setupScreens.jsx';
 
 /** The questions with their own controls (setupScreens.jsx). */
 const CUSTOM = {
   who: WhoScreen, sleep: SleepScreen, when: WhenScreen, from: FromScreen, 'g:likes': LikesScreen, 'g:budget': BudgetScreen,
+  nowWhere: NowWhereScreen, nowUntil: NowUntilScreen,
 };
 
 /**
@@ -106,12 +108,17 @@ function TellBody({ settings, commit }) {
 
   const go = () => {
     let s = { ...read, note: text.trim() };
-    const { patch, answered: ids } = prefillFromText(text, { countries });
+    const { patch, answered: ids, countries: named } = prefillFromText(text, { countries });
     // The words never overwrite an answer already given on a screen.
     const FIELD = { who: 'party', when: 'when', priority: 'priority', booked: 'booked' };
     for (const id of ids) if (read.answered.includes(id)) delete patch[FIELD[id]];
     s = normalizeSettings({ ...s, ...patch, guide: { ...s.guide, ...(patch.guide || {}) } });
     for (const id of ids) s = markAnswered(s, id);
+    // T676: the countries the words name are the ones picked on Where (up to
+    // three, the compare limit), unless the engine already holds a choice.
+    if (named.length && !(plannerStore.getState().wizard?.countries || []).length) {
+      plannerStore.setWizard({ countries: named.slice(0, 3) });
+    }
     // What the words (or a booking) answered moves Explore's prices too, as
     // the Who and When screens do when they are asked.
     if (patch.party) syncParty(app, s.party);

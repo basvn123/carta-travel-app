@@ -5,6 +5,7 @@ import { CountryBrief } from '../CountryBrief.jsx';
 import { WhereQuiz } from '../WhereQuiz.jsx';
 import { CountryMatchCards, DayCostLine } from '../CountryMatchCards.jsx';
 import { PlannerSection } from '../PlannerSection.jsx';
+import { Button } from '../../components/ui/index.js';
 import { favDestIds } from '../../lib/favorites.js';
 import { monthName } from '../../lib/dates.js';
 import { googleFlightsExploreLink } from '../../lib/transportLinks.js';
@@ -109,6 +110,8 @@ export function StepWhere({
   nearAirports, tripYearMonth, whereView, setWhereView, favorites, destinations, countryCovers,
   recommendedNames, mapAside, data, originCode, windowNights, flexNights, dateMode, startDate, endDate,
   onOpenDest, onOpenCountry, onOpenTrip, onPlanTrip,
+  // T670: compare the picked countries side by side (CompareSheet).
+  onCompare = null,
 }) {
   const { t, lang } = useI18n();
   const StepTitle = titleTag;
@@ -201,6 +204,13 @@ export function StepWhere({
           </button>
         ))}
       </div>
+
+      {onCompare && countries.size >= 2 && (
+        <div className="cmp-bar">
+          <span className="cmp-bar-text">{t('cmp.picked', { n: countries.size })}</span>
+          <Button variant="secondary" size="sm" onClick={onCompare}>{t('cmp.open')}</Button>
+        </div>
+      )}
 
       <div className={`guide-where ${openBrief ? 'has-brief' : ''}`}>
         <div className="guide-where-col">

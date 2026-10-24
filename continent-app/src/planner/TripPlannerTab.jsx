@@ -13,6 +13,7 @@ import { TripMap } from '../map/TripMap.jsx';
 import { TripItinerary, TransferModePicker } from './TripItinerary.jsx';
 import { GuidedTripWizard } from './GuidedTripWizard.jsx';
 import { TripFlow } from './flow/TripFlow.jsx';
+import { TripSettingsSheet } from './flow/TripSettingsSheet.jsx';
 import { plannerStore } from './plannerStore.js';
 import { DaysPrompt } from './flow/DaysPrompt.jsx';
 import { PlanTotal } from './PlanTotal.jsx';
@@ -25,7 +26,7 @@ import {
 import { CheapTipsSection } from './CheapTipsSection.jsx';
 import { fmtHours, eurExact } from '../lib/format.js';
 import { formatApprox, formatEst } from '../lib/money.js';
-import { fmtDate, laterISO, useToday, planningHorizon } from '../lib/dates.js';
+import { fmtDate, laterISO, useToday, planningHorizon, addDays } from '../lib/dates.js';
 import { fetchDrivingRoute } from '../lib/routing.js';
 import { useTripPlanner } from '../hooks/useTripPlanner.js';
 import { MAX_PARTY } from '../lib/tripTotal.js';
@@ -35,7 +36,7 @@ import { usePaywall } from '../hooks/usePaywall.jsx';
 import { fetchTripPlans } from '../auth/tripPlanStorage.js';
 import { useI18n } from '../i18n/index.jsx';
 import { loadAssignments, TRIP_DRAFT_PLAN_ID } from './dayPlanStore.js';
-import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BulbIcon, InfoIcon, CloseIcon, ChevronDownIcon, ExternalIcon } from '../components/Icons.jsx';
+import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BulbIcon, InfoIcon, CloseIcon, ChevronDownIcon, ExternalIcon, SettingsIcon } from '../components/Icons.jsx';
 import { IconButton, Money, Chip, ChipGroup } from '../components/ui/index.js';
 import { Stepper as KitStepper } from '../components/FilterControls.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
@@ -495,6 +496,9 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   const [deviceError, setDeviceError] = useState(false);
   // A device trip meeting an account that already holds one (T490-f).
   const [keepChoice, setKeepChoice] = useState(null);
+  // T675: the trip settings sheet, opened from the planned trip's gear.
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const settingsGearRef = useRef(null);
   const [pendingMove, setPendingMove] = useState(null);
   const migrating = useRef(false);
   const stopRefs = useRef({});
@@ -903,7 +907,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
         <Button
           variant="primary"
           className="trip-planday-btn"
-          onClick={() => onPlanDay({ planId: tp.planId, stopIndex: 0, dayIndex: 0 })}
+          onClick={() => onPlanDay({ planId: tp.planId, stopIndex: 0, dayIndex: 0, overview: true })}
         >
           <SparkIcon size={14} /> {t('trip.planYourDays')}
         </Button>
@@ -954,9 +958,9 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     return (
       <div className="trip-planner-screen trip-planner-blank">
         {/* T656: the trip's page before a route (TripFlow), which hands the
-            wizard only its planning steps. A "Plan a trip here" seed still
-            opens the whole wizard: its jump to Where is counted on that list. */}
-        {tripSeed ? renderWizard() : <TripFlow renderEngine={renderWizard} />}
+            wizard only its planning steps. T675: a "Plan a trip here" seed
+            enters there too, on the I know where door. */}
+        <TripFlow renderEngine={renderWizard} seed={tripSeed} />
         {saveNotice && <div className="trip-save-toast" role="status">{saveNotice}</div>}
         {keepChoice && (
           <KeepTripChoice
@@ -1337,11 +1341,31 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     });
   };
 
+  // T675: a saved trip setting moves the planned trip too, which keeps its
+  // own party and dates: the people, and a new start date (the nights stay,
+  // so the end moves with it). What matters most needs nothing here: the
+  // trip reads it from the settings and re-ranks its flights.
+  const applySettings = (s, prev) => {
+    const p = s.party;
+    const q = prev.party;
+    if (p.adults !== q.adults || p.kids !== q.kids || p.babies !== q.babies) {
+      tp.setParty({ adults: p.adults, children: p.kids, babies: p.babies });
+    }
+    if (s.when.mode === 'exact' && s.when.start && s.when.start !== prev.when.start && s.when.start !== tp.tripStart) {
+      tp.setTripStart(s.when.start);
+      if (tp.plannedNights > 0) tp.setTripEnd(addDays(s.when.start, tp.plannedNights));
+    }
+  };
+
   // The trip's name and its one line (the name is a field, so the view's h1
-  // carries the same words for assistive tech, T193).
+  // carries the same words for assistive tech, T193). T675: the gear opens
+  // the trip settings from the planned trip, as it does before the route.
   const head = (
     <div className="trip-topcard">
       <h1 className="sr-only tab-h1">{tp.planLabel || t('trip.planYourTrip')}</h1>
+      <IconButton ref={settingsGearRef} tone="surface" className="trip-topcard-gear" label={t('pf.settings')} onClick={() => setSettingsOpen(true)}>
+        <SettingsIcon size={18} />
+      </IconButton>
       <input
         className="trip-topcard-name"
         value={tp.planLabel}
@@ -1458,10 +1482,21 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
         <div className="trip-save-toast" role="status">{saveNotice}</div>
       )}
 
+      {settingsOpen && (
+        <TripSettingsSheet anchorRef={settingsGearRef} onClose={() => setSettingsOpen(false)} onSaved={applySettings} />
+      )}
+
       {askDays && (
         <DaysPrompt
           onClose={() => setAskDays(false)}
-          onPlan={() => { setAskDays(false); onPlanDay({ planId: tp.planId, stopIndex: 0, dayIndex: 0 }); }}
+          onPlan={(how) => {
+            setAskDays(false);
+            // T674: Carta plans: the first day opens with the plan at work;
+            // planning yourself: the days overview with the ideas.
+            onPlanDay(how === 'carta'
+              ? { planId: tp.planId, stopIndex: 0, dayIndex: 0, autoFill: true }
+              : { planId: tp.planId, stopIndex: 0, dayIndex: 0, overview: true });
+          }}
         />
       )}
 

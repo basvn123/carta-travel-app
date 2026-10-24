@@ -46,6 +46,8 @@ export const QUESTIONS = {
   },
   when: { titleKey: 'pf.q.when', custom: true },
   from: { titleKey: 'pf.q.from', helpKey: 'pf.q.fromHelp', custom: true },
+  nowWhere: { titleKey: 'pf.q.nowWhere', helpKey: 'pf.q.nowWhereHelp', custom: true },
+  nowUntil: { titleKey: 'pf.q.nowUntil', helpKey: 'pf.q.nowUntilHelp', custom: true },
 
   // ---- Help me choose ----
   'g:shape': {

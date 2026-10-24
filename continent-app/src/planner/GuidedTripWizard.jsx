@@ -4,7 +4,8 @@ import { countriesFromData, cityTier } from '../lib/tripGuide.js';
 import { monthOptions } from '../lib/wizardFlights.js';
 import { TRAVEL_STYLES, nearbyAirports } from '../lib/wizardTransit.js';
 import { plannerStore, usePlannerStore } from './plannerStore.js';
-import { fromDraft, flightRanking } from './flow/tripSettings.js';
+import { fromDraft, flightRanking, normalizeSettings, withEngineEdits } from './flow/tripSettings.js';
+import { staysFromImports, nearestStop, arrivalFromImports } from './flow/importStays.js';
 import { trackLaunch } from '../lib/launchEvents.js';
 import { ReadyTripsStep } from './ReadyTripsStep.jsx';
 // The trip's own page, the one the Destinations tab opens. Lazy because it
@@ -26,6 +27,11 @@ import { loadCyclingIndex } from '../lib/cycling.js';
 import { computeCosts, eurDay } from '../lib/costIndex.js';
 import { routeOrder } from '../lib/cartaRoute.js';
 import { loadTrip } from '../lib/trips.js';
+import { loadJourney } from '../lib/journeys.js';
+import { JourneyPeek } from './JourneyPeek.jsx';
+import { CompareSheet } from './CompareSheet.jsx';
+import { MAX_COMPARE } from '../lib/countryCompare.js';
+import { buildCityIndex, isJourneyId, journeyStops, JOURNEY_PREFIX } from '../lib/journeyTrips.js';
 import { tripHeadline } from '../lib/tripStory.js';
 import { haversineKm, tripDaysBetween, accommodationPerPerson } from '../lib/runtime_pricing.js';
 import { cityLabel, cityKeyName } from '../lib/placeName.js';
@@ -239,15 +245,21 @@ export function GuidedTripWizard({
       setCountries(new Set([hit.country]));
       setWhereTab('hand');
       setTripPick(null);
-      // Booked (with Who), When, then Where, once nothing is booked.
-      goStep(wizardSteps({}, 'ready').indexOf('Where') + 1);
+      // Booked (with Who), When, then Where, once nothing is booked; in the
+      // flow (T675) its own list, which starts at Where.
+      const list = flowSteps?.length ? flowSteps : wizardSteps({}, 'ready');
+      goStep(Math.max(1, list.indexOf('Where') + 1));
     }
     onSeedConsumed && onSeedConsumed();
-  }, [seed, allCountries, goStep, onSeedConsumed]);
+  }, [seed, allCountries, goStep, onSeedConsumed, flowSteps]);
   // Which trip's full page is open over the step. The page is the one the
   // Destinations tab shows, mounted here so "What's there" answers the
   // question in the place that already answers it properly.
   const [tripPageId, setTripPageId] = useState('');
+  // T669: a journey's card, for its What's there sheet.
+  const [journeyPeek, setJourneyPeek] = useState(null);
+  // T670: the picked countries side by side.
+  const [compareOpen, setCompareOpen] = useState(false);
   // Inline, the wizard IS the Trip planner page, so each step's question is
   // the page's one h1. As a modal over another page, or while a trip's own
   // page (which has its h1) is open over it, it steps down to h2 (T193).
@@ -362,6 +374,33 @@ export function GuidedTripWizard({
     () => order.filter((id) => (nights[id] || 0) > 0),
     [order, nights],
   );
+  // T675 (row T657-b): stays read from uploaded bookings fill Your stays
+  // once the catalogue is here: the town, the nights to the next check-in,
+  // the price paid. Once per mount, and never over towns already chosen.
+  const importedStays = useRef(false);
+  useEffect(() => {
+    if (importedStays.current || !flowSteps?.length || !Object.keys(destinations).length) return;
+    importedStays.current = true;
+    const s = fromDraft(plannerStore.getState());
+    // An uploaded flight out answers "Where do you land?".
+    if (s.booked.flights && !arrivalId) {
+      const lands = arrivalFromImports(s.imports, destinations);
+      if (lands) setArrivalId(lands);
+    }
+    if (order.length) return;
+    let rows = s.booked.stays ? staysFromImports(s.imports, destinations, s.when) : [];
+    // T675 (row T659-a): a trip under way starts where the traveller is,
+    // for the nights until they go home.
+    if (!rows.length && s.kind === 'now') {
+      const here = nearestStop(s.now, destinations);
+      if (here) rows = [{ id: here, nights: Math.min(21, s.when.nights || 1), eur: 0 }];
+    }
+    if (!rows.length) return;
+    setOrder(rows.map((r) => r.id));
+    setNights(Object.fromEntries(rows.map((r) => [r.id, r.nights])));
+    setOwnStays((prev) => ({ ...Object.fromEntries(rows.filter((r) => r.eur > 0).map((r) => [r.id, r.eur])), ...prev }));
+    setCountries((prev) => (prev.size ? prev : new Set(rows.map((r) => destinations[r.id]?.country).filter(Boolean))));
+  }, [destinations, flowSteps]); // eslint-disable-line react-hooks/exhaustive-deps -- one-shot, guarded by importedStays: the rows are read once the catalogue arrives
   const totalNights = useMemo(
     () => includedIds.reduce((sum, id) => sum + (nights[id] || 0), 0),
     [includedIds, nights],
@@ -496,13 +535,21 @@ export function GuidedTripWizard({
     let live = true;
     setTripLoading(true);
     setTripFailed(false);
-    loadTrip(tripPickId).then((detail) => {
+    // T669: a journey from the library loads its own file, and its base
+    // towns become the stops (lib/journeyTrips.js journeyStops).
+    const loadDetail = isJourneyId(tripPickId)
+      ? loadJourney(tripPickId.slice(JOURNEY_PREFIX.length)).then((j) => {
+        const { stops, missing } = journeyStops(j, tripPick, buildCityIndex(destinations), destinations);
+        return stops.length ? { id: tripPickId, journey: true, stops, missingStops: missing } : null;
+      })
+      : loadTrip(tripPickId);
+    loadDetail.then((detail) => {
       if (!live) return;
       setTripLoading(false);
       if (!detail) { setTripDetail(null); return; }
       setTripDetail(detail);
       const stops = (detail.stops || []).filter((s) => destinations[s.dest]);
-      setTripMissing((detail.stops || []).length - stops.length);
+      setTripMissing((detail.stops || []).length - stops.length + (detail.missingStops || 0));
       const nextNights = {};
       stops.forEach((s) => { nextNights[s.dest] = Math.max(1, s.nights || 1); });
       setNights(nextNights);
@@ -513,7 +560,7 @@ export function GuidedTripWizard({
       setTripFailed(true);
     });
     return () => { live = false; };
-  }, [tripPickId, destinations, tripTry]);
+  }, [tripPickId, destinations, tripTry]); // eslint-disable-line react-hooks/exhaustive-deps -- tripPick is read for a journey's fallback town only; the load is keyed on its id
 
   // ---- The trip as dates: one anchor, everything else relative to it ------
   // Nothing below stores a calendar date of its own. Move the start and the
@@ -1238,7 +1285,15 @@ export function GuidedTripWizard({
   // The wizard is the writer; the store makes the draft survive tab hops and
   // reloads and gives other surfaces one place to read the context from.
   useEffect(() => {
+    // T675: the flow's settings follow the engine's When and Who (row T653-a).
+    const flowSettings = plannerStore.getState().settings;
+    const engineSettings = (raw) => {
+      const ns = normalizeSettings(raw);
+      const next = withEngineEdits(ns, { dateMode, startDate, endDate, flexMonth, nights: windowNights, adults, kids, babies });
+      return next === ns ? raw : next;
+    };
     plannerStore.set({
+      ...(flowSettings ? { settings: engineSettings(flowSettings) } : {}),
       origin: originPlace
         ? { name: originPlace.name, lat: originPlace.lat, lng: originPlace.lon, countryCode: originPlace.iso2 || '' }
         : null,
@@ -1430,10 +1485,14 @@ export function GuidedTripWizard({
       <div
         ref={modalRef}
         {...(inline ? {} : { role: 'dialog', 'aria-modal': 'true', 'aria-label': t('wizard.planYourTrip') })}
-        className={`guide-modal trip-wizard-modal wiz-${layout} ${inline ? 'wiz-inline' : ''} ${stepName === 'When' ? 'wiz-when' : ''} ${stepName === 'Stays' ? 'wiz-top' : ''} ${stepDir === 'back' ? 'wiz-back' : ''}`}
+        className={`guide-modal trip-wizard-modal wiz-${layout} ${inline ? 'wiz-inline' : ''} ${flowSteps?.length ? 'wiz-flow' : ''} ${stepName === 'When' ? 'wiz-when' : ''} ${stepName === 'Stays' ? 'wiz-top' : ''} ${stepDir === 'back' ? 'wiz-back' : ''}`}
         onClick={(e) => e.stopPropagation()}
       >
-        <WizardHead {...{ inline, steps, step, isDesktop, stepsOpen, setStepsOpen, goStep }} onClose={handleCancel} />
+        <WizardHead
+          {...{ inline, steps, step, isDesktop, stepsOpen, setStepsOpen, goStep }}
+          onClose={handleCancel}
+          flowBack={flowSteps?.length ? () => (step > 1 ? goStep(step - 1) : onCancel()) : null}
+        />
 
         <div className="guide-body" ref={bodyRef}>
           {/* What Carta is planning around, on a phone only and scrolling with
@@ -1488,6 +1547,7 @@ export function GuidedTripWizard({
                   {...{ onOpenDest, onOpenCountry, onOpenTrip }}
                   mapAside={railOn}
                   onPlanTrip={planTripFromBrief}
+                  onCompare={() => setCompareOpen(true)}
                 />
               )}
 
@@ -1507,7 +1567,7 @@ export function GuidedTripWizard({
                     dayCostFor={tripDayCost}
                     onRestorePick={restoreTripPick}
                     onToggleCountry={toggleCountry}
-                    onOpenTrip={(trip) => setTripPageId(trip.id)}
+                    onOpenTrip={(trip) => { if (trip.journey) setJourneyPeek(trip); setTripPageId(trip.id); }}
                     onBuildOwn={setBuildMode}
                   />
                 </>
@@ -1603,7 +1663,27 @@ export function GuidedTripWizard({
       {/* "What's there", answered by the page that answers it everywhere
           else. It covers the wizard; its big button is the decision: choose
           this trip, close the page, go to Getting there. */}
-      {tripPageId && (
+      {compareOpen && countries.size >= 2 && (
+        <CompareSheet
+          names={[...countries].slice(0, MAX_COMPARE)}
+          destinations={destinations}
+          dayCosts={dayCosts}
+          flightFile={data?.flights || null}
+          month={tripMonth || null}
+          yearMonth={tripYearMonth || null}
+          insights={countryInsights}
+          onClose={() => setCompareOpen(false)}
+          onRemove={toggleCountry}
+        />
+      )}
+      {tripPageId && isJourneyId(tripPageId) && journeyPeek && (
+        <JourneyPeek
+          card={journeyPeek}
+          onClose={() => setTripPageId('')}
+          onChoose={(card) => { setTripPageId(''); pickReadyTrip(card, { advance: true }); }}
+        />
+      )}
+      {tripPageId && !isJourneyId(tripPageId) && (
         <Suspense fallback={null}>
           <TripPage
             trip={{ id: tripPageId }}

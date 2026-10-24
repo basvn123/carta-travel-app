@@ -32,6 +32,8 @@ import {
   canonicalPoiIndices, poiIdentityKeys, DAY_STYLES,
 } from './dayDraft.js';
 import { AiDayPlanModal } from './AiDayPlanModal.jsx';
+import { TripDaysOverview } from './days/TripDaysOverview.jsx';
+import { DayTownGuide } from './days/DayTownGuide.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
 import { CartaChatPlanner } from './CartaChatPlanner.jsx';
 import {
@@ -83,7 +85,7 @@ import {
 } from './dayPlanStore.js';
 import { loadTripDraft } from './tripDraftStore.js';
 import { plannerStore } from './plannerStore.js';
-import { fromDraft } from './flow/tripSettings.js';
+import { fromDraft, dayAiPreset, dayPrefs } from './flow/tripSettings.js';
 
 const OPEN_DAY_KEY = 'carta.dayOpen.v1'; // T507: the day open when the page was left
 import {
@@ -98,7 +100,7 @@ import {
 
   ClockIcon, CoffeeIcon, FilterIcon, ChevronDownIcon,
   UploadIcon, CrosshairIcon, TownIcon,
-  CloseIcon,
+  CloseIcon, ListDayIcon,
 } from '../components/Icons.jsx';
 import {
   ContinueTripCards, DayPlanCards, hasImminentTrip,
@@ -265,6 +267,8 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   // live in prefs.aiPlans keyed "stopIdx:dayIdx", so they survive reloads and
   // ride the same per-plan cloud sync as every other answer.
   const [aiOpen, setAiOpen] = useState(false);
+  // T672: the trip's days overview instead of one day.
+  const [overview, setOverview] = useState(false);
   // Carta keeps the walking order optimal on every add ('auto'); manual
   // reordering switches to 'manual' until "Best route" is tapped again.
   const [routeMode, setRouteMode] = useState('auto');
@@ -476,7 +480,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     if (!openPlanId) return;
     (async () => {
       if (typeof openPlanId === 'object') {
-        const { planId: targetPlanId, stopIndex, dayIndex } = openPlanId;
+        const { planId: targetPlanId, stopIndex, dayIndex, overview: wantOverview, autoFill } = openPlanId;
         let opened = false;
         if (targetPlanId) {
           try { await openPlan(targetPlanId); opened = true; } catch { /* plan gone */ }
@@ -492,7 +496,29 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
           // What: the places to add (T501, roadmap 1.3d state 5).
           const a = loadAssignments(targetPlanId || TRIP_DRAFT_PLAN_ID);
           const onDay = a?.[Math.max(0, stopIndex || 0)]?.[Math.max(0, dayIndex || 0)] || [];
-          setAdding(onDay.length ? null : 'end');
+          // T672: "Plan your days" opens the trip's days overview first.
+          setOverview(Boolean(wantOverview));
+          // T674: the trip's day rhythm (trip settings) under the day's own
+          // prefs: what was set on a day stays; what was never set follows
+          // the rhythm. The detail level is the device's, set when answered.
+          const tripSettings = fromDraft(plannerStore.getState());
+          const rhythm = dayPrefs(tripSettings);
+          const planKey = targetPlanId || TRIP_DRAFT_PLAN_ID;
+          const stored = loadPrefs(planKey) || {};
+          const merged = { ...stored };
+          for (const k of ['dayStartMin', 'pace', 'stepFree', 'groupSize']) {
+            if (merged[k] == null && rhythm[k] != null) merged[k] = rhythm[k];
+          }
+          setPrefs(merged);
+          persistPrefs(planKey, merged);
+          if (rhythm.detail) setDetailState(rhythm.detail);
+          // "Let Carta plan the days": the first day opens with Carta at work.
+          if (autoFill) {
+            setBotPreset({ ...dayAiPreset(tripSettings), autoRun: true });
+            setAiOpen(true);
+          }
+          // An empty day opens on its places, unless Carta is about to fill it.
+          setAdding(onDay.length || wantOverview || autoFill ? null : 'end');
           setDrawer('half');
         }
       } else {
@@ -1182,6 +1208,8 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
       lang,
       stay: stayAnchor ? { lat: stayAnchor.lat, lon: stayAnchor.lon } : null,
       candidates,
+      // T674: a trip's day carries the trip's rhythm as the profile.
+      ...(plan && !plan.standalone ? { profile: dayAiPreset(fromDraft(plannerStore.getState())).profile } : {}),
     });
     // The bot answers with names and reasons; the photos are already here.
     return res.ok ? { ...res, plan: decorateAiStops(res.plan, items) } : res;
@@ -3756,6 +3784,13 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     );
   }
 
+  // ---- The trip's days overview (T672) -------------------------------------
+  const overviewOn = overview && plan && !plan.standalone && stops.length > 0;
+  const applyOverviewChange = ({ assignments: nextA, prefs: nextP }) => {
+    if (nextP && nextP !== prefs) { setPrefs(nextP); persistPrefs(plan?.id, nextP); }
+    if (nextA && nextA !== assignments) { setAssignments(nextA); persistAssignments(plan?.id, nextA); }
+  };
+
   // ---- The planned day (T433) ---------------------------------------------
   // The trip planner's planned-trip pattern: on a phone a page (the day's
   // card first, a small map card that opens the full map, the timeline, the
@@ -3962,6 +3997,22 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
 
   const scheduleShown = schedule ? { ...schedule, startMin: Number.isFinite(prefs?.dayStartMin) ? prefs.dayStartMin : DAY_START_MIN } : null;
 
+  const overviewBody = overviewOn ? (
+    <TripDaysOverview
+      tripName={plan.label || ''}
+      stops={stops}
+      planDays={planDays}
+      assignments={assignments}
+      prefs={prefs}
+      itemsForStop={itemsForStop}
+      ensurePois={ensurePois}
+      destinations={data?.destinations || {}}
+      tripPriced={tripPriced}
+      onChange={applyOverviewChange}
+      onOpenDay={(k) => { goToPlanDay(k); setOverview(false); setAdding(null); }}
+    />
+  ) : null;
+
   // The day itself: the same column on a desktop and in the drawer on a
   // phone. The day's figure is not in here: it is fixed in the cost bar (a
   // desktop) or the drawer's strip (a phone), always in sight.
@@ -3975,6 +4026,12 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
           <Button size="sm" iconStart={<BookmarkIcon size={16} />} onClick={saveToSavedTrips}>{t('dayws.saveDay')}</Button>
         )}
       </div>
+
+      {!plan.standalone && (
+        <Button variant="quiet" size="sm" className="dayws-alldays" iconStart={<ListDayIcon size={16} />} onClick={() => setOverview(true)}>
+          {t('days.allDays')}
+        </Button>
+      )}
 
       {stop && planDays.length > 0 && (
         <DaySwitcher
@@ -3990,6 +4047,15 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
 
       {/* From the trip: the city, the date and the bed are the trip's, said
           once and not asked again (roadmap 1.3d state 5). */}
+      {stop?.dest && (
+        <DayTownGuide
+          dest={stop.dest}
+          destId={stop.destination_id}
+          month={days[dayIdx] ? Number(days[dayIdx].slice(5, 7)) : null}
+          showHead={dayIdx === 0}
+        />
+      )}
+
       {!plan.standalone && stop && (
         <p className="dayws-fromtrip">
           {t('dayws.fromTrip', { city: dayCity, name: tripName })}
@@ -4094,7 +4160,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
             focusIdx={focusRow}
             onAdd={openAdd}
             onBestRoute={optimizeNow}
-            onAskCarta={() => { setBotPreset(null); setAiOpen(true); }}
+            onAskCarta={() => { setBotPreset(plan.standalone ? null : dayAiPreset(fromDraft(plannerStore.getState()))); setAiOpen(true); }}
             canBestRoute={assignedItems.length >= 2}
             aiSummary={aiPlan?.summary || ''}
             walksBlock={pinnedWalksBlock}
@@ -4157,7 +4223,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
         <>
           <div className="dayws-panel">
             {pageBar}
-            <div className="dayws-scroll">{dayBody}</div>
+            <div className="dayws-scroll">{overviewBody || dayBody}</div>
             <DayCostBar
               dayCost={dayCost}
               dayNumber={dayNumber}
@@ -4187,7 +4253,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
               labels={{ strip: t('drawer.dayStrip'), half: t('drawer.dayHalf'), full: t('drawer.dayFull') }}
               strip={<DayStrip title={dayTitle} sub={daySub} dayCost={dayCost} onOpen={openReceipt} dayNumber={dayNumber} />}
             >
-              <div className="dayws-drawer-body">{dayBody}</div>
+              <div className="dayws-drawer-body">{overviewBody || dayBody}</div>
             </MapDrawer>
           </div>
         </>

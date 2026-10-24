@@ -16,9 +16,10 @@ import { normalizeSettings, VISIBILITY } from './tripSettings.js';
  * the planner asked, grouped, each row the answer in a few words. A row opens
  * the same question it was asked with, on this sheet, with Save; changing an
  * answer re-prices the trip, because the trip reads these settings and the
- * app-wide values the questions also write.
+ * app-wide values the questions also write. A planned trip, which keeps its
+ * own party and dates, takes each saved answer through `onSaved(next, prev)`.
  */
-export function TripSettingsSheet({ onClose, anchorRef }) {
+export function TripSettingsSheet({ onClose, anchorRef, onSaved = null }) {
   const { t } = useI18n();
   const app = useSettings();
   const [settings, save] = useTripSettings();
@@ -84,7 +85,7 @@ export function TripSettingsSheet({ onClose, anchorRef }) {
             id={editing}
             settings={s}
             doneLabel={t('pf.set.save')}
-            commit={(next) => { save(next); setEditing(''); }}
+            commit={(next) => { save(next); onSaved?.(normalizeSettings(next), s); setEditing(''); }}
           />
         </div>
       </SheetShell>

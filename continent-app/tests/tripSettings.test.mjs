@@ -173,3 +173,36 @@ test("quiz answers never leave a quiz question open", async () => {
   assert.equal(q.around, "any");
   assert.equal(q.typesDone, true);
 });
+
+test("the day rhythm becomes the AI day plan's preset", async () => {
+  const { dayAiPreset } = await import("../src/planner/flow/tripSettings.js");
+  const s = normalizeSettings({
+    party: { kind: "family", adults: 2, kids: 2, slowWalkers: true },
+    rhythm: { mornings: "slow", pace: "slow", goal: "outdoors", food: "cook", around: "walk" },
+  });
+  const p = dayAiPreset(s);
+  assert.equal(p.vibe, "active");
+  assert.equal(p.pace, "relaxed");
+  assert.equal(p.autoRun, true);
+  assert.deepEqual(p.profile, { companions: "family", startTime: "11:00", steps: 15000, food: "picnic", stepFree: true, moods: ["nature", "active"] });
+  const open = dayAiPreset(defaultSettings());
+  assert.equal(open.autoRun, false);
+  assert.equal(open.profile.startTime, null);
+});
+
+test("the engine's date and head count edits reach the settings", async () => {
+  const { withEngineEdits } = await import("../src/planner/flow/tripSettings.js");
+  const s = normalizeSettings({ when: { mode: "months", months: [6, 7], nights: 7 }, party: { kind: "family", adults: 2, kids: 2, kidAges: [6, 9] } });
+  // Nothing moved: the same object, so the store does not emit.
+  assert.equal(withEngineEdits(s, { dateMode: "flex", flexMonth: "2027-06", nights: 7, adults: 2, kids: 2, babies: 0 }), s);
+  const exact = withEngineEdits(s, { dateMode: "exact", startDate: "2027-08-02", endDate: "2027-08-12", nights: 10, adults: 2, kids: 1, babies: 0 });
+  assert.deepEqual(exact.when, { mode: "exact", start: "2027-08-02", end: "2027-08-12", months: [], nights: 10 });
+  assert.equal(exact.party.kids, 1);
+  assert.deepEqual(exact.party.kidAges, [6]);
+  assert.equal(exact.party.kind, "family");
+  // A month outside the picked ones replaces them; any month clears them.
+  assert.deepEqual(withEngineEdits(s, { dateMode: "flex", flexMonth: "2027-09", nights: 7, adults: 2, kids: 2 }).when.months, [9]);
+  assert.equal(withEngineEdits(s, { dateMode: "flex", flexMonth: "", nights: 5, adults: 2, kids: 2 }).when.mode, "any");
+  // An exact trip waiting for its second date keeps the answer it had.
+  assert.equal(withEngineEdits(s, { dateMode: "exact", startDate: "2027-08-02", endDate: "", nights: 0, adults: 2, kids: 2, babies: 0 }), s);
+});

@@ -2,7 +2,8 @@ import React from 'react';
 import { SheetShell } from '../../browse/SheetShell.jsx';
 import { Button } from '../../components/Button.jsx';
 import { TripTotalBar } from '../TripTotalBar.jsx';
-import { CheckIcon, ChevronRightIcon, CloseIcon } from '../../components/Icons.jsx';
+import { ArrowLeftIcon, CheckIcon, ChevronRightIcon, CloseIcon } from '../../components/Icons.jsx';
+import { IconButton, StepRail } from '../../components/ui/index.js';
 import { cityLabel } from '../../lib/placeName.js';
 import { STEP_LABEL_KEYS } from './wizardSteps.js';
 import { useI18n } from '../../i18n/index.jsx';
@@ -13,8 +14,41 @@ import { useI18n } from '../../i18n/index.jsx';
  * not act, so it is not brown) and a button that opens the list as a sheet;
  * from 769 px every step is named, done ones tappable.
  */
-export function WizardHead({ inline, onClose, steps, step, isDesktop, stepsOpen, setStepsOpen, goStep }) {
+export function WizardHead({ inline, onClose, steps, step, isDesktop, stepsOpen, setStepsOpen, goStep, flowBack = null }) {
   const { t } = useI18n();
+  // T667: inside the trip planner flow the head is the flow's sheet head: a
+  // round back control, the step's name in the middle with where it sits
+  // ("2 of 5"), and a thin progress line; done steps stay one tap away on a
+  // desktop through the rail under it.
+  if (flowBack) {
+    return (
+      <div className="guide-head pf-ehead">
+        <div className="pf-ehead-row">
+          <IconButton tone="surface" className="pf-round" label={t('pf.back')} onClick={flowBack}>
+            <ArrowLeftIcon size={18} />
+          </IconButton>
+          <span className="pf-ehead-mid">
+            <span className="pf-ehead-title">{steps[step - 1] ? t(STEP_LABEL_KEYS[steps[step - 1]]) : t('wizard.planYourTrip')}</span>
+            {steps.length > 1 && <span className="pf-ehead-pos">{t('pf.position', { x: step, n: steps.length })}</span>}
+          </span>
+          <span className="pf-ehead-end" aria-hidden="true" />
+        </div>
+        <span className="pf-ehead-bar" aria-hidden="true">
+          <span style={{ transform: `scaleX(${Math.min(1, step / Math.max(1, steps.length))})` }} />
+        </span>
+        {steps.length > 1 && isDesktop && (
+          <div className="pf-ehead-rail">
+            <StepRail
+              label={t('wizard.stepsTitle')}
+              steps={steps.map((label) => ({ key: label, label: t(STEP_LABEL_KEYS[label]) }))}
+              at={step - 1}
+              onGo={(i) => goStep(i + 1)}
+            />
+          </div>
+        )}
+      </div>
+    );
+  }
   return (
     <div className="guide-head">
       {!inline && <button className="guide-close" onClick={onClose} aria-label={t('wizard.close')}><CloseIcon size={16} /></button>}
@@ -167,13 +201,10 @@ export function WizardFoot({
           {note}
         </div>
         <div className="guide-foot-actions">
-          {step > 1 && (
+          {/* In the trip planner flow (T656, T667) Back is the head's round
+              control, so the foot keeps the way on only. */}
+          {step > 1 && !onBackOut && (
             <Button className="guide-back wiz-foot-btn" onClick={() => goStep(step - 1)}>{t('wizard.back')}</Button>
-          )}
-          {/* T656: in the new trip flow the first planning step has a way
-              back to the questions before it. */}
-          {step === 1 && onBackOut && (
-            <Button className="guide-back wiz-foot-btn" onClick={onBackOut}>{t('wizard.back')}</Button>
           )}
           {step < steps.length ? (
             // "Next" names where it goes: the difference between a form that

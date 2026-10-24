@@ -84,7 +84,18 @@ export function defaultSettings() {
     note: '',
     imports: [],
     daysHow: '',
+    // T675 (row T659-a): a trip already under way ('now') asks where the
+    // traveller is and until when, instead of When and Where from.
+    kind: 'new',
+    now: null,
   };
+}
+
+/** A picked place ({ name, lat, lng, countryCode }) made safe, or null. */
+function placeOf(p) {
+  return p && typeof p === 'object' && Number.isFinite(Number(p.lat))
+    ? { name: String(p.name || ''), lat: Number(p.lat), lng: Number(p.lng ?? p.lon), countryCode: String(p.countryCode || '') }
+    : null;
 }
 
 /** Any stored object made safe: unknown keys dropped, every value checked. */
@@ -122,9 +133,9 @@ export function normalizeSettings(raw) {
       months: Array.isArray(w.months) ? [...new Set(w.months.map(Number).filter((m) => m >= 1 && m <= 12))].sort((a, x) => a - x) : [],
       nights: clampInt(w.nights, 1, 60, d.when.nights),
     },
-    from: raw.from && typeof raw.from === 'object' && Number.isFinite(Number(raw.from.lat))
-      ? { name: String(raw.from.name || ''), lat: Number(raw.from.lat), lng: Number(raw.from.lng ?? raw.from.lon), countryCode: String(raw.from.countryCode || '') }
-      : null,
+    from: placeOf(raw.from),
+    kind: raw.kind === 'now' ? 'now' : 'new',
+    now: placeOf(raw.now),
     guide: {
       shape: oneOf(g.shape, TRIP_SHAPES, ''),
       likes: someOf(g.likes, LIKES).slice(0, 3),
@@ -367,4 +378,66 @@ export function nextMonthKey(m, today = new Date()) {
   const now = today.getMonth() + 1;
   const year = m >= now ? y : y + 1;
   return `${year}-${String(m).padStart(2, '0')}`;
+}
+
+/**
+ * The day rhythm as the AI day plan's preset (T674): the modal's vibe and
+ * pace, and the plan-day profile the Edge Function validates (companions,
+ * startTime HH:MM, steps, food sit|quick|picnic, stepFree, moods). `autoRun`
+ * when the rhythm answers what the modal would ask (the pace and the goal),
+ * so "Fill this day" asks nothing it already knows.
+ */
+export function dayAiPreset(s) {
+  const r = s.rhythm;
+  const companions = { solo: 'solo', couple: 'partner', friends: 'friends', family: 'family', group: 'group' }[s.party.kind] || null;
+  const startTime = { early: '08:00', onthego: '09:30', slow: '11:00' }[r.mornings] || null;
+  const steps = r.steps || ({ walk: 15000, transit: 10000, taxi: 5000, car: 5000 }[r.around]) || null;
+  const food = { street: 'quick', local: 'sit', fine: 'sit', cook: 'picnic' }[r.food] || null;
+  const moods = { culture: ['museums', 'sights'], relax: ['beach', 'views'], outdoors: ['nature', 'active'], food: ['food', 'local'] }[r.goal] || [];
+  return {
+    vibe: { culture: 'culture', outdoors: 'active', food: 'foodie' }[r.goal] || 'mix',
+    pace: { packed: 'packed', balanced: 'balanced', slow: 'relaxed' }[r.pace] || 'balanced',
+    autoRun: Boolean(r.pace && r.goal),
+    profile: {
+      companions,
+      startTime,
+      steps,
+      food,
+      stepFree: Boolean(s.party.slowWalkers),
+      moods,
+    },
+  };
+}
+
+/**
+ * The planning engine's own edits back into the settings (T675, row T653-a):
+ * a date changed on its When, or a head count on its Who, so the gear never
+ * shows the setup answer while the trip runs on other dates. `e` carries the
+ * engine's dateMode ('exact' | 'flex'), startDate, endDate, flexMonth
+ * ("YYYY-MM" or ''), the nights, and the head counts. An exact trip still
+ * waiting for its second date keeps the old answer. Returns `s` itself when
+ * nothing moved, so the store's no-op guard holds.
+ */
+export function withEngineEdits(s, e) {
+  const nights = Number(e.nights) > 0 ? Number(e.nights) : s.when.nights;
+  let when = s.when;
+  if (e.dateMode === 'flex') {
+    const m = Number(String(e.flexMonth || '').slice(5, 7)) || 0;
+    when = m
+      ? { mode: 'months', start: '', end: '', months: s.when.months.includes(m) ? s.when.months : [m], nights }
+      : { mode: s.when.mode === 'unsure' ? 'unsure' : 'any', start: '', end: '', months: [], nights };
+  } else if (e.startDate && e.endDate) {
+    when = { mode: 'exact', start: e.startDate, end: e.endDate, months: [], nights };
+  }
+  const adults = Number(e.adults) > 0 ? Number(e.adults) : s.party.adults;
+  const kids = Number(e.kids) >= 0 ? Number(e.kids) : s.party.kids;
+  const babies = Number(e.babies) >= 0 ? Number(e.babies) : s.party.babies;
+  const sameWhen = JSON.stringify(when) === JSON.stringify(s.when);
+  const sameParty = adults === s.party.adults && kids === s.party.kids && babies === s.party.babies;
+  if (sameWhen && sameParty) return s;
+  return normalizeSettings({
+    ...s,
+    when,
+    party: sameParty ? s.party : { ...s.party, adults, kids, babies, kidAges: s.party.kidAges.slice(0, kids) },
+  });
 }

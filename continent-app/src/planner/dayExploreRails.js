@@ -283,11 +283,63 @@ export function doRow(item, town, i) {
     km: town.km,
     photo: item.img || '',
     rating: null,
-    sub: '',
-    desc: item.text || item.desc || item.why || '',
+    // T671: the dossier's do[] carries its kind as `type` (experience,
+    // festival, activity) and its line as `detail`.
+    sub: item.type || '',
+    desc: item.text || item.detail || item.desc || item.why || '',
     score: 0,
     add: null,
     open: { type: 'dest', id: town.id },
+  };
+}
+
+/** A published summit, as a rail row (T671): the peaks wire has its own
+ *  photograph, score and tier; height and prominence stand in for length. */
+export function peakRow(m, stay) {
+  if (!Number.isFinite(m?.lat) || !Number.isFinite(m?.lon)) return null;
+  const km = stay ? haversineKm(stay.lat, stay.lon, m.lat, m.lon) : null;
+  return {
+    key: `peak:${m.id}`,
+    kind: 'peak',
+    layer: 'mountain',
+    name: m.name || '',
+    lat: m.lat,
+    lon: m.lon,
+    km: km == null ? null : Math.round(km),
+    photo: m.images?.[0]?.u || m.img || '',
+    rating: m.score != null ? { score: m.score, tier: m.tier ?? 0 } : null,
+    sub: '',
+    desc: '',
+    score: m.score ?? 0,
+    eleM: Number.isFinite(m.ele) ? Math.round(m.ele) : null,
+    lift: Boolean(m.lift),
+    add: null,
+    open: { type: 'feature', layer: 'mountain', ref: { id: m.id, cc: m.cc } },
+  };
+}
+
+/** A published cycle route, as a rail row (T671). The wire carries a bbox,
+ *  not a point, so its place is the centre of its extent. */
+export function cycleRow(r, centre, stay) {
+  if (!centre) return null;
+  const km = stay ? haversineKm(stay.lat, stay.lon, centre.lat, centre.lon) : null;
+  return {
+    key: `cycle:${r.id}`,
+    kind: 'cycle',
+    layer: 'cycle',
+    name: r.name || r.ref || '',
+    lat: centre.lat,
+    lon: centre.lon,
+    km: km == null ? null : Math.round(km),
+    photo: typeof r.img === 'string' ? r.img : (r.img?.u || ''),
+    rating: r.score != null ? { score: r.score, tier: r.tier ?? 0 } : null,
+    sub: '',
+    desc: r.why || '',
+    score: r.score ?? 0,
+    lenKm: Number.isFinite(r.km) ? Math.round(r.km * 10) / 10 : null,
+    ascentM: Number.isFinite(r.asc) ? Math.round(r.asc) : null,
+    add: null,
+    open: { type: 'feature', layer: 'cycle', ref: { id: r.id, cc: r.cc } },
   };
 }
 
@@ -303,7 +355,7 @@ export function eventRow(ev, town, i) {
     photo: ev.img || '',
     rating: null,
     sub: ev.when || ev.dates || '',
-    desc: ev.desc || ev.text || '',
+    desc: ev.desc || ev.text || ev.what || '',
     score: 0,
     add: null,
     open: { type: 'dest', id: town.id },
@@ -330,8 +382,10 @@ export function eventOnDate(ev, iso) {
     const b = /^\d{4}-\d{2}-\d{2}/.test(String(to)) ? String(to).slice(0, 10) : a;
     return iso >= a && iso <= b;
   }
-  // Month-only events: "runs in August" matches any August day.
+  // Month-only events: "runs in August" matches any August day. The dossier
+  // writes them as a list (`months: [7]`); older sources as one number.
+  if (Array.isArray(ev.months)) return ev.months.map(Number).includes(month);
   const m = ev.month ?? ev.m ?? null;
-  if (Number.isFinite(Number(m))) return Number(m) === month;
+  if (m != null && Number.isFinite(Number(m))) return Number(m) === month;
   return false;
 }
