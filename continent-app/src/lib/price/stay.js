@@ -44,7 +44,8 @@ export function tripRequest(state = {}) {
  *   accom        { per_night, total } a person, or null without a bed price
  *   ground       { per_day, total } a person (food and drink), or null
  *   accomTotal   the bed for every seat, all nights
- *   groundTotal  the days for every seat, all nights
+ *   groundTotal  the days for every seat, all nights (food and drink, and
+ *                local transport once the place has a fare, T714)
  * A 0-night pass-through stop books nothing and costs nothing.
  */
 export function quoteStay(dest, nights, arriveDate, req = DEFAULT_PRICE_REQUEST, destinations = null) {
@@ -57,8 +58,10 @@ export function quoteStay(dest, nights, arriveDate, req = DEFAULT_PRICE_REQUEST,
   if (!day) return null;
   const bed = day.stayEur;
   const food = day.foodEur;
+  // T714: local transport joins the days once the place has a fare (B11).
+  const local = day.lines.find((l) => l.key === 'transport' && l.status === 'included')?.eur || 0;
   const accomTotal = round2((bed || 0) * n * seats);
-  const groundTotal = round2((food || 0) * n * seats);
+  const groundTotal = round2(((food || 0) + local) * n * seats);
   return {
     day,
     accom: bed != null ? { per_night: bed, total: round2(bed * n) } : null,

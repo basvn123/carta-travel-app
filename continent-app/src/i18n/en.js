@@ -7461,6 +7461,7 @@ export const en = {
   "price.item.food": "Food and drink",
   "price.item.transport": "Local transport",
   "price.item.car": "Car hire",
+  "price.actEach": "{price} a person",
   "price.item.activities": "Activities and tickets",
   "price.item.events": "Events",
   "price.item.flight": "Flight there and back",

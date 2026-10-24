@@ -6853,6 +6853,7 @@ export const fr = {
   "price.item.food": "Repas et boissons",
   "price.item.transport": "Transports locaux",
   "price.item.car": "Location de voiture",
+  "price.actEach": "{price} par personne",
   "price.item.activities": "Activités et billets",
   "price.item.events": "Événements",
   "price.item.flight": "Vol aller-retour",

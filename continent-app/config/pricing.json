@@ -337,6 +337,21 @@
       "review": "2027-04-24",
       "test": "tests/priceEngine.test.mjs"
     },
+    "transport.rides_per_day": {
+      "value": {
+        "metro": 3,
+        "city": 2,
+        "town": 1,
+        "village": 1,
+        "area": 1
+      },
+      "unit": "rides a person a day, by place class",
+      "kind": "estimate",
+      "source": "Carta estimate (T714, price plan F8): a metro day is three hops, a city day two, a town or a village a return trip into the centre counted as one day ticket or one ride each way at most; a day pass caps it",
+      "date": "2026-10-24",
+      "review": "2027-04-24",
+      "test": "tests/priceTransport.test.mjs"
+    },
     "request.default_nights": {
       "value": 7,
       "unit": "nights",
@@ -387,6 +402,15 @@
       "date": "2026-07-21",
       "review": "2026-11-24",
       "test": "tests/priceGolden.test.mjs"
+    },
+    "car.toll_corridor_start_km": {
+      "value": 30,
+      "unit": "km",
+      "kind": "estimate",
+      "source": "Carta rule (T716, price plan F10): the toll layer's corridors are measured from the pipeline's start (meta.home); a drive that begins within this distance of it uses them, any other drive the flat car.model toll allowance",
+      "date": "2026-10-24",
+      "review": "2027-04-24",
+      "test": "tests/priceTransport.test.mjs"
     },
     "ground.transfer_public": {
       "value": {

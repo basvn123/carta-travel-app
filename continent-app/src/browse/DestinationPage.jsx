@@ -563,6 +563,7 @@ export function DestinationPage({
         onPlanTrip={onPlanTrip}
         onPlanDay={onPlanDay}
         carDayEur={getting?.car_needed ? getting.rental_eur_day ?? null : null}
+        doItems={doItems}
       />
       {/* Friends showing you a trip that stops here (T466); nothing at all
           for a guest or when no friend trip stops here. */}
