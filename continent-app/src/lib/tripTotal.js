@@ -84,6 +84,8 @@ const hasRoutes = (d) => d && Object.keys(d.routes || {}).length > 0;
  *          ownStays, transferMode, baggage, anchorId, anchorOrigin,
  *          returnAnchorId, ownFlight, carHome, stayTier, lifestyle,
  *          flightHours: { out, back } ('any' | 'morning' | 'midday' | 'evening'),
+ *          flightRank: 'price' | 'balanced' | 'comfort' (T657, the trip settings'
+ *                      what matters most; the order live flights are picked in),
  *          liveFlights: Map from useLiveFlights() }
  * ctx.data.flights is the home airport's swept flight file (T517).
  * ctx:   { data, countryInsights }
@@ -219,6 +221,7 @@ export function priceTrip(state, { data = null, countryInsights = null } = {}) {
       const leg = pickLeg({
         file, live: live?.get?.(`${from}-${to}-${date}`) || null, dir,
         airport: dir === 'out' ? to : from, date, hours: hours[dir] || 'any',
+        rank: state?.flightRank || 'price',
       });
       return leg ? { ...leg, from, to, cost: legCost(leg, { paying, bagKey }) } : leg;
     };

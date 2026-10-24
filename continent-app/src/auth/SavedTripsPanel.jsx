@@ -114,6 +114,8 @@ export function SavedTripsPanel({
   // prices with, so every figure here is the figure there.
   costs = null, stayTier = 'home', lifestyle = null,
   onOpenFriends = null, onPlanTripCountry = null, onOpenDeviceTrip = null,
+  // T659: Plan's "Add a past trip" opens My trips on the past-trip form.
+  startWithPast = false, onPastStarted = null,
 }) {
   const { user, configured } = useAuth();
   const { t, lang } = useI18n();
@@ -252,6 +254,13 @@ export function SavedTripsPanel({
     [t],
   );
   const openPastForm = (initial) => { setPastError(''); setPastEdit(initial || null); setPastOpen(true); };
+  useEffect(() => {
+    if (!startWithPast) return;
+    // The form lives on the Visited tab.
+    pickTab('visited');
+    openPastForm(null);
+    onPastStarted && onPastStarted();
+  }, [startWithPast]); // eslint-disable-line react-hooks/exhaustive-deps -- a one-shot hand-off from Plan
 
   const handleSavePastTrip = async (form) => {
     const payload = { ...form, label: form.label || defaultPastLabel(form.places) };

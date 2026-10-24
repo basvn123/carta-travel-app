@@ -120,6 +120,7 @@ export function WizardStepsSheet({ steps, step, goStep, onClose, hasProgress, st
 export function WizardFoot({
   railOn, priced, onOpenTotal, hasProgress, isDesktop, startOver, stepName, tripPick, pickFreeNights,
   windowNights, totalNights, includedIds, step, steps, goStep, canNext, finish,
+  onBackOut = null,
 }) {
   const { t } = useI18n();
   let note = null;
@@ -168,6 +169,11 @@ export function WizardFoot({
         <div className="guide-foot-actions">
           {step > 1 && (
             <Button className="guide-back wiz-foot-btn" onClick={() => goStep(step - 1)}>{t('wizard.back')}</Button>
+          )}
+          {/* T656: in the new trip flow the first planning step has a way
+              back to the questions before it. */}
+          {step === 1 && onBackOut && (
+            <Button className="guide-back wiz-foot-btn" onClick={onBackOut}>{t('wizard.back')}</Button>
           )}
           {step < steps.length ? (
             // "Next" names where it goes: the difference between a form that

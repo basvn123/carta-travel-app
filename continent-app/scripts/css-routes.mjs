@@ -56,7 +56,7 @@ const postcss = req('postcss');
 
 /** The route families: their lazy entries (chunk names) and who they serve. */
 export const FAMILIES = {
-  planners: { roots: ['TripPlannerTab', 'DayPlannerTab'], who: 'the trip and day planners' },
+  planners: { roots: ['TripPlannerTab', 'DayPlannerTab', 'PlanFlow'], who: 'the trip and day planners' },
   admin: { roots: ['AdminPage'], who: 'the admin page' },
   items: { roots: ['StubPage', 'TrailPage', 'BeachPage', 'LakePage', 'MountainPage', 'CyclePage', 'TripPage', 'JourneyPage'], who: 'the item pages' },
 };

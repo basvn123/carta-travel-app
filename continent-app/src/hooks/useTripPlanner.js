@@ -12,6 +12,8 @@ import {
 } from '../auth/tripPlanStorage.js';
 import { assignmentsKey, prefsKey, extrasKey, persistAssignments, persistPrefs, persistTripExtras, TRIP_DRAFT_PLAN_ID } from '../planner/dayPlanStore.js';
 import { loadRestorableDraft, persistTripDraft, clearTripDraft } from '../planner/tripDraftStore.js';
+import { usePlannerStore } from '../planner/plannerStore.js';
+import { fromDraft, flightRanking } from '../planner/flow/tripSettings.js';
 
 
 const DEFAULT_STOP_NIGHTS = 2;
@@ -353,12 +355,15 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
   // The flight there and home is Google Flights' price: first the sweep's
   // cheapest for the day, then, once the live search for the trip's exact
   // days answers (useLiveFlights), every flight of the day in the chosen hours.
+  // T657: the trip settings' "what matters most" orders the live flights.
+  const plannerDraft = usePlannerStore();
+  const flightRank = useMemo(() => flightRanking(fromDraft(plannerDraft)).sort, [plannerDraft]);
   const tripState = useMemo(() => ({
     stops, tripStart, tripEnd, groupSize, children, babies, transportPref, legModes, ownLegs, ownStays, transferMode,
-    baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, stayTier, lifestyle, flightHours,
+    baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, stayTier, lifestyle, flightHours, flightRank,
   }), [stops, tripStart, tripEnd, groupSize, children, babies, transportPref, legModes, ownLegs,
     ownStays, transferMode, baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, stayTier,
-    lifestyle, flightHours]);
+    lifestyle, flightHours, flightRank]);
   // T559: each dated stop asks for tonight's prices on its own nights; a live
   // answer bumps liveVersion and reprices the beds (bedPrice reads it).
   const liveVersion = useLiveStaysVersion();

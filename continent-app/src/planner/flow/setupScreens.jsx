@@ -1,0 +1,536 @@
+import React, { useMemo, useState } from 'react';
+import { useBcp47, useMonths, whenText } from './flowHooks.js';
+import { formatMoney } from '../../lib/money.js';
+import { useFirstRun } from '../../lib/firstRunContext.js';
+import { likePhotos } from './guidePhotos.js';
+import { syncParty, syncWhen } from './appSync.js';
+import { QUESTIONS, toggleValue } from './questions.js';
+import { useI18n } from '../../i18n/index.jsx';
+import { useSettings } from '../../components/SettingsLine.jsx';
+import { FromPanel, fromPoint } from '../../components/FromPicker.jsx';
+import { DateField } from '../../components/DateField.jsx';
+import { Stepper } from '../../components/FilterControls.jsx';
+import { HeroImage } from '../../components/HeroImage.jsx';
+import {
+  Button, Chip, ChipGroup, ChoiceRows, Field, IconButton, Segmented, Switch,
+} from '../../components/ui/index.js';
+import {
+  ArrowLeftIcon, CalendarIcon, CameraIcon, CheckIcon, ChevronRightIcon, CloseIcon, EyeIcon, FriendsIcon, PencilIcon, PlusIcon,
+} from '../../components/Icons.jsx';
+import { LifestyleChoices } from '../LifestyleChoices.jsx';
+import { PartyEditor } from '../PartyEditor.jsx';
+import { answer, markAnswered, normalizeSettings, withPartyKind, PARTY_KINDS, VISIBILITY } from './tripSettings.js';
+
+/*
+ * The setup questions that need their own controls (T655), and the Create
+ * trip screen. Each question writes the trip settings AND the app-wide value
+ * it shares with Explore (people, dates, From, the Lifestyle), so the price a
+ * place shows on Explore and in the planner is always the same figure.
+ *
+ * Each question gets { settings, commit }: commit(nextSettings) stores the
+ * answer and moves on. QuestionScreen.jsx maps the question ids to them.
+ */
+
+const MAX_NIGHTS = 60;
+
+function addDaysISO(iso, n) {
+  const d = new Date(`${iso}T12:00:00`);
+  d.setDate(d.getDate() + n);
+  return d.toISOString().slice(0, 10);
+}
+function nightsBetween(a, b) {
+  if (!a || !b) return 0;
+  return Math.max(0, Math.round((new Date(`${b}T12:00:00`) - new Date(`${a}T12:00:00`)) / 86400000));
+}
+function todayISO() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+function Foot({ onContinue, disabled = false, label }) {
+  const { t } = useI18n();
+  return (
+    <div className="pf-foot">
+      <Button variant="primary" block disabled={disabled} onClick={onContinue}>{label || t('pf.continue')}</Button>
+    </div>
+  );
+}
+
+// ---- Who is going ----
+
+const KIND_ICONS = { solo: 'PersonIcon', couple: 'HeartIcon', friends: 'FriendsIcon', family: 'FamilyIcon', group: 'FriendsIcon' };
+
+export function WhoScreen({ settings, commit, doneLabel }) {
+  const { t } = useI18n();
+  const app = useSettings();
+  const [s, setS] = useState(settings);
+  const p = s.party;
+  const setParty = (patch) => setS((cur) => normalizeSettings({ ...cur, party: { ...cur.party, ...patch } }));
+  const go = () => {
+    syncParty(app, p);
+    commit(answer(s, 'who', {}));
+  };
+  return (
+    <>
+      <ChoiceRows
+        label={t('pf.q.who')}
+        options={Object.keys(PARTY_KINDS).map((k) => ({ value: k, icon: KIND_ICONS[k], label: t(`pf.who.${k}`) }))}
+        value={[p.kind]}
+        onPick={(k) => setS((cur) => withPartyKind(cur, k))}
+      />
+      <div className="pf-group">
+        <PartyEditor
+          value={{ adults: p.adults, children: p.kids, babies: p.babies }}
+          onChange={({ adults, children, babies }) => setParty({
+            adults, kids: children, babies,
+            kidAges: [...p.kidAges, ...Array(Math.max(0, children - p.kidAges.length)).fill(7)].slice(0, children),
+          })}
+        />
+        {p.kids > 0 && (
+          <div className="pf-ages">
+            <p className="pf-label">{t('pf.who.ages')}</p>
+            <div className="pf-ages-row">
+              {Array.from({ length: p.kids }, (_, i) => (
+                <Field
+                  key={i}
+                  as="select"
+                  label={t('pf.who.ageOf', { n: i + 1 })}
+                  value={p.kidAges[i] ?? 7}
+                  onChange={(e) => {
+                    const ages = [...p.kidAges];
+                    ages[i] = Number(e.target.value);
+                    setParty({ kidAges: ages });
+                  }}
+                >
+                  {Array.from({ length: 9 }, (_, k) => k + 3).map((a) => (
+                    <option key={a} value={a}>{t('pf.who.age', { n: a })}</option>
+                  ))}
+                </Field>
+              ))}
+            </div>
+          </div>
+        )}
+        <Switch
+          label={t('pf.who.slow')}
+          hint={t('pf.who.slowHint')}
+          checked={p.slowWalkers}
+          onChange={(v) => setParty({ slowWalkers: v })}
+        />
+      </div>
+      <Foot onContinue={go} label={doneLabel} />
+    </>
+  );
+}
+
+// ---- Where you sleep and how you spend ----
+
+/** The Lifestyle's two answers (the one Lifestyle control, embedded). They
+ *  are app-wide choices, so there is nothing to keep here but "answered". */
+export function SleepScreen({ settings, commit, doneLabel }) {
+  return (
+    <>
+      <div className="pf-life"><LifestyleChoices /></div>
+      <Foot onContinue={() => commit(markAnswered(settings, 'sleep'))} label={doneLabel} />
+    </>
+  );
+}
+
+// ---- When ----
+
+export function WhenScreen({ settings, commit, doneLabel }) {
+  const { t } = useI18n();
+  const app = useSettings();
+  const months = useMonths();
+  const bcp47 = useBcp47();
+  const [w, setW] = useState(settings.when);
+  const [pickEnd, setPickEnd] = useState('start');
+  const set = (patch) => setW((cur) => ({ ...cur, ...patch }));
+  const min = app?.dateBounds?.min || todayISO();
+  const max = app?.dateBounds?.max;
+  const short = (iso) => (iso ? new Intl.DateTimeFormat(bcp47, { day: 'numeric', month: 'short' }).format(new Date(`${iso}T12:00:00`)) : t('pf.when.set'));
+
+  const pickDate = (iso) => {
+    if (pickEnd === 'start') {
+      const keep = nightsBetween(w.start, w.end) || w.nights || 7;
+      set({ start: iso, end: addDaysISO(iso, keep), nights: keep });
+      setPickEnd('end');
+    } else if (w.start && iso > w.start) {
+      set({ end: iso, nights: nightsBetween(w.start, iso) });
+    }
+  };
+  const ready = w.mode !== 'exact' || (w.start && w.end);
+  const go = () => {
+    const when = { ...w, mode: w.mode === 'months' && !w.months.length ? 'any' : w.mode };
+    // The app-wide When follows, so Explore prices the same days.
+    syncWhen(app, when);
+    commit(answer(settings, 'when', { when }));
+  };
+
+  return (
+    <>
+      <ChoiceRows
+        label={t('pf.q.when')}
+        options={[
+          { value: 'exact', icon: 'CalendarIcon', label: t('pf.when.exact') },
+          { value: 'months', icon: 'SunIcon', label: t('pf.when.months') },
+          { value: 'any', icon: 'PiggyIcon', label: t('pf.when.any'), sub: t('pf.when.anySub') },
+          { value: 'unsure', icon: 'QuestionIcon', label: t('pf.when.unsure') },
+        ]}
+        value={[w.mode]}
+        onPick={(mode) => set({ mode })}
+      />
+      {w.mode === 'exact' && (
+        <div className="pf-group">
+          <Segmented
+            block
+            size="sm"
+            label={t('pf.when.exact')}
+            value={pickEnd}
+            onChange={setPickEnd}
+            options={[
+              { value: 'start', label: t('pf.when.startOn', { date: short(w.start) }) },
+              { value: 'end', label: t('pf.when.endOn', { date: short(w.end) }) },
+            ]}
+          />
+          <DateField
+            inline
+            value={pickEnd === 'start' ? w.start : w.end}
+            rangeStart={w.start || null}
+            rangeEnd={w.end || null}
+            min={pickEnd === 'end' && w.start ? addDaysISO(w.start, 1) : min}
+            max={max}
+            onChange={pickDate}
+          />
+        </div>
+      )}
+      {w.mode === 'months' && (
+        <div className="pf-group">
+          <p className="pf-label" id="pf-months-label">{t('pf.when.monthsLabel')}</p>
+          <div className="pf-chips" role="group" aria-labelledby="pf-months-label">
+            {months.map(({ m, label }) => (
+              <Chip
+                key={m}
+                kind="filter"
+                selected={w.months.includes(m)}
+                onClick={() => set({ months: w.months.includes(m) ? w.months.filter((x) => x !== m) : [...w.months, m] })}
+              >
+                {label}
+              </Chip>
+            ))}
+          </div>
+        </div>
+      )}
+      {w.mode !== 'exact' && (
+        <div className="pf-group pf-line">
+          <span className="pf-line-label">{t('pf.when.nights')}</span>
+          <Stepper
+            value={w.nights}
+            min={1}
+            max={MAX_NIGHTS}
+            onChange={(n) => set({ nights: n })}
+            ariaLabel={t('pf.when.nightsAria', { n: w.nights })}
+            decLabel={t('trip.fewer')}
+            incLabel={t('trip.more')}
+          />
+        </div>
+      )}
+      <Foot onContinue={go} disabled={!ready} label={doneLabel} />
+    </>
+  );
+}
+
+// ---- Where from ----
+
+export function FromScreen({ settings, commit, doneLabel }) {
+  const app = useSettings();
+  const [picked, setPicked] = useState(settings.from);
+  const current = picked ? { name: picked.name, lat: picked.lat, lon: picked.lng } : fromPoint(app);
+  const go = () => {
+    const pt = picked || (current ? { name: current.name, lat: current.lat, lng: current.lon, countryCode: '' } : null);
+    if (picked) app?.setFrom?.({ name: picked.name, lat: picked.lat, lon: picked.lng });
+    commit(answer(settings, 'from', { from: pt }));
+  };
+  return (
+    <>
+      <div className="pf-from">
+        <FromPanel
+          data={app?.data}
+          current={current}
+          autoFocus={false}
+          onPick={(pt) => setPicked({ name: pt.name, lat: pt.lat, lng: pt.lon, countryCode: pt.iso2 || '' })}
+        />
+      </div>
+      <Foot onContinue={go} disabled={!current} label={doneLabel} />
+    </>
+  );
+}
+
+// ---- What you're up for: photo tiles (after GetYourGuide's rails) ----
+
+/** Up to three kinds of trip, each a real catalogue photograph with its name
+ *  under it (never on it). Selected is the brown edge and a tick. */
+export function LikesScreen({ settings, commit, doneLabel }) {
+  const { t } = useI18n();
+  const ctx = useFirstRun();
+  const q = QUESTIONS['g:likes'];
+  const [picked, setPicked] = useState(settings.guide.likes);
+  const keys = q.options.map((o) => o.value);
+  const photos = useMemo(() => likePhotos(ctx?.data?.destinations, keys), [ctx?.data?.destinations]); // eslint-disable-line react-hooks/exhaustive-deps -- keys are the fixed option list
+  // The layer photographs carry an author and a licence; they are credited
+  // in one line under the grid (carta-design: a credit is text, under the photo).
+  const credits = Object.values(photos).filter((p) => p.by).map((p) => `${p.city}, ${p.by}, ${p.lic}`).join('; ');
+  return (
+    <>
+      <div className="pf-likes" role="group" aria-label={t(q.titleKey)}>
+        {q.options.map((o) => {
+          const on = picked.includes(o.value);
+          const ph = photos[o.value];
+          return (
+            <Button
+              key={o.value}
+              variant="quiet"
+              className={`pf-like${on ? ' is-on' : ''}`}
+              aria-pressed={on}
+              onClick={() => setPicked((cur) => toggleValue(q, cur, o.value))}
+            >
+              <span className="pf-like-media">
+                <HeroImage url={ph?.url} city={ph?.city || t(o.labelKey)} iso2={ph?.iso2} className="pf-like-img" ratio={[1, 1]} maxWidth={320} />
+                {on && <span className="pf-like-tick" aria-hidden="true"><CheckIcon size={14} /></span>}
+              </span>
+              <span className="pf-like-name">{t(o.labelKey)}</span>
+            </Button>
+          );
+        })}
+      </div>
+      {credits && <p className="pf-credit">{t('pf.likes.credit', { list: credits })}</p>}
+      <Foot
+        disabled={!picked.length}
+        label={doneLabel}
+        onContinue={() => commit(answer(settings, 'g:likes', { guide: { ...settings.guide, likes: picked } }))}
+      />
+    </>
+  );
+}
+
+// ---- Budget ----
+
+const DAY_STEPS = [40, 60, 80, 100, 130, 180];
+const TRIP_STEPS = [500, 800, 1200, 1800, 2500, 4000];
+
+/** An optional budget, a person a day or for the whole trip. Places that fit
+ *  it are marked, and the trip's cost card says how far under or over it is. */
+export function BudgetScreen({ settings, commit, doneLabel }) {
+  const { t } = useI18n();
+  const [b, setB] = useState(settings.guide.budget);
+  const steps = b.kind === 'total' ? TRIP_STEPS : DAY_STEPS;
+  const set = (patch) => setB((cur) => ({ ...cur, ...patch }));
+  const save = (budget) => commit(answer(settings, 'g:budget', { guide: { ...settings.guide, budget } }));
+  return (
+    <>
+      <Segmented
+        block
+        label={t('pf.q.budget')}
+        value={b.kind}
+        onChange={(kind) => set({ kind, eur: 0 })}
+        options={[
+          { value: 'day', label: t('pf.budget.day') },
+          { value: 'total', label: t('pf.budget.total') },
+        ]}
+      />
+      <ChipGroup label={t('pf.q.budget')} className="pf-chips">
+        {steps.map((eur) => (
+          <Chip key={eur} kind="choice" selected={b.eur === eur} onClick={() => set({ eur })}>
+            {t('pf.budget.upTo', { price: formatMoney(eur) })}
+          </Chip>
+        ))}
+      </ChipGroup>
+      <div className="pf-foot">
+        <Button variant="primary" block disabled={!b.eur} onClick={() => save(b)}>{doneLabel || t('pf.continue')}</Button>
+        <Button variant="secondary" block onClick={() => save({ kind: b.kind, eur: 0 })}>{t('pf.budget.none')}</Button>
+      </div>
+    </>
+  );
+}
+
+// ---- Create trip (after the Polarsteps "new trip" screen) ----
+
+/** Twelve well rated places with a photograph, the cover choices. */
+function useCoverChoices(data) {
+  return useMemo(() => {
+    const seen = new Set();
+    const rows = Object.values(data?.destinations || {})
+      .filter((d) => d?.image?.url && d.city && (d.rating?.score || 0) >= 8.5)
+      .sort((a, b) => (b.rating?.fame || 0) - (a.rating?.fame || 0));
+    const out = [];
+    for (const d of rows) {
+      if (seen.has(d.image.url) || seen.has(d.city)) continue;
+      seen.add(d.image.url);
+      seen.add(d.city);
+      out.push({ url: d.image.url, city: d.city, iso2: d.iso2 });
+      if (out.length >= 12) break;
+    }
+    return out;
+  }, [data?.destinations]);
+}
+
+export function CreateScreen({ settings, save, onBack, onDone, onEditWhen }) {
+  const { t } = useI18n();
+  const app = useSettings();
+  const months = useMonths();
+  const bcp47 = useBcp47();
+  const covers = useCoverChoices(app?.data);
+  const [name, setName] = useState(settings.trip.name);
+  const [cover, setCover] = useState(settings.trip.cover);
+  const [coversOpen, setCoversOpen] = useState(false);
+  const [visibility, setVisibility] = useState(settings.trip.visibility);
+  const [buddies, setBuddies] = useState(settings.trip.buddies);
+  const [buddiesOpen, setBuddiesOpen] = useState(false);
+  const [buddy, setBuddy] = useState('');
+  const coverRow = covers.find((c) => c.url === cover);
+  const when = whenText(t, settings.when, months, bcp47);
+
+  const create = () => {
+    const trip = {
+      ...settings.trip,
+      name: name.trim() || t('pf.create.defaultName'),
+      cover,
+      visibility,
+      buddies,
+      created: settings.trip.created || Date.now(),
+    };
+    save(normalizeSettings({ ...settings, trip }));
+    onDone();
+  };
+  const addBuddy = () => {
+    const n = buddy.trim();
+    if (!n) return;
+    setBuddies((cur) => [...cur, n].slice(0, 19));
+    setBuddy('');
+  };
+
+  return (
+    <div className="pf-create">
+      <div className={`pf-create-head${coverRow ? ' has-photo' : ''}`}>
+        {coverRow && <HeroImage url={coverRow.url} city={coverRow.city} iso2={coverRow.iso2} className="pf-create-photo" ratio={[16, 9]} maxWidth={720} />}
+        <div className="pf-create-bar">
+          <IconButton tone={coverRow ? 'photo' : 'surface'} label={t('pf.back')} onClick={onBack} className="pf-round"><ArrowLeftIcon size={18} /></IconButton>
+          {!coverRow && <h2 className="pf-title pf-create-title" tabIndex={-1}>{t('pf.create.title')}</h2>}
+          {coverRow ? (
+            <IconButton tone="photo" label={t('pf.create.cover')} onClick={() => setCoversOpen((v) => !v)} className="pf-round pf-create-end" aria-expanded={coversOpen}>
+              <CameraIcon size={18} />
+            </IconButton>
+          ) : <span className="pf-create-end" aria-hidden="true" />}
+        </div>
+        {!coverRow && (
+          <Button variant="secondary" size="sm" className="pf-cover-pill" iconStart={<CameraIcon size={16} />} onClick={() => setCoversOpen((v) => !v)} aria-expanded={coversOpen}>
+            {t('pf.create.cover')}
+          </Button>
+        )}
+      </div>
+      {coverRow && <h2 className="pf-title pf-create-title is-under" tabIndex={-1}>{t('pf.create.title')}</h2>}
+
+      {coversOpen && (
+        <div className="pf-covers" role="radiogroup" aria-label={t('pf.create.cover')}>
+          {covers.map((c) => (
+            <Button
+              key={c.url}
+              variant="quiet"
+              className={`pf-cover${cover === c.url ? ' is-on' : ''}`}
+              role="radio"
+              aria-checked={cover === c.url}
+              onClick={() => { setCover(c.url); setCoversOpen(false); }}
+            >
+              <HeroImage url={c.url} city={c.city} iso2={c.iso2} className="pf-cover-img" ratio={[1, 1]} maxWidth={240} />
+              <span className="pf-cover-name">{c.city}</span>
+            </Button>
+          ))}
+        </div>
+      )}
+
+      <div className="pf-card pf-dates">
+        <p className="pf-dates-head"><CalendarIcon size={18} /> {t('pf.create.dates')}</p>
+        <div className="pf-dates-row">
+          <Button variant="quiet" className="pf-dates-cell" onClick={onEditWhen}>
+            <span className="pf-dates-label">{t(settings.when.mode === 'exact' ? 'pf.when.start' : 'pf.when.when')}</span>
+            <span className="pf-dates-value">{when.start || t('pf.when.set')}</span>
+          </Button>
+          <ChevronRightIcon size={18} className="pf-dates-arrow" />
+          <Button variant="quiet" className="pf-dates-cell is-end" onClick={onEditWhen}>
+            <span className="pf-dates-label">{t(settings.when.mode === 'exact' ? 'pf.when.end' : 'pf.when.length')}</span>
+            <span className="pf-dates-value">{when.end || t('pf.when.optional')}</span>
+          </Button>
+        </div>
+      </div>
+
+      <div className="pf-card pf-field-row">
+        <PencilIcon size={18} />
+        <label className="sr-only" htmlFor="pf-trip-name">{t('pf.create.name')}</label>
+        <input
+          id="pf-trip-name"
+          className="pf-input"
+          value={name}
+          maxLength={80}
+          placeholder={t('pf.create.name')}
+          onChange={(e) => setName(e.target.value)}
+        />
+      </div>
+
+      <div className="pf-card">
+        <Button
+          variant="quiet"
+          className="pf-link-row"
+          iconStart={<FriendsIcon size={18} className="pf-ico" />}
+          iconEnd={<ChevronRightIcon size={18} className="pf-ico" />}
+          aria-expanded={buddiesOpen}
+          onClick={() => setBuddiesOpen((v) => !v)}
+        >
+          <span className="pf-link-text">
+            <span>{t('pf.create.buddies')}</span>
+            {buddies.length > 0 && <span className="pf-link-sub">{buddies.join(', ')}</span>}
+          </span>
+        </Button>
+        {buddiesOpen && (
+          <div className="pf-buddies">
+            {buddies.length > 0 && (
+              <ul className="pf-buddy-list">
+                {buddies.map((b, i) => (
+                  <li key={`${b}-${i}`}>
+                    <span>{b}</span>
+                    <IconButton label={t('pf.create.removeBuddy', { name: b })} onClick={() => setBuddies((cur) => cur.filter((_, k) => k !== i))}>
+                      <CloseIcon size={16} />
+                    </IconButton>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <div className="pf-buddy-add">
+              <Field
+                label={t('pf.create.buddyName')}
+                hideLabel
+                value={buddy}
+                maxLength={40}
+                onChange={(e) => setBuddy(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addBuddy(); } }}
+              />
+              <Button variant="secondary" iconStart={<PlusIcon size={16} />} onClick={addBuddy} disabled={!buddy.trim()}>{t('pf.create.addBuddy')}</Button>
+            </div>
+            <p className="pf-note">{t('pf.create.inviteLater')}</p>
+          </div>
+        )}
+      </div>
+
+      <div className="pf-card pf-field-row">
+        <EyeIcon size={18} />
+        <label className="pf-field-label" htmlFor="pf-vis">{t('pf.create.visibility')}</label>
+        <select id="pf-vis" className="pf-select" value={visibility} onChange={(e) => setVisibility(e.target.value)}>
+          {VISIBILITY.map((v) => <option key={v} value={v}>{t(`pf.vis.${v}`)}</option>)}
+        </select>
+      </div>
+
+      <div className="pf-foot">
+        <Button variant="primary" block onClick={create}>{t('pf.create.go')}</Button>
+      </div>
+    </div>
+  );
+}
+

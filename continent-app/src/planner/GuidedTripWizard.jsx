@@ -3,7 +3,8 @@ import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { countriesFromData, cityTier } from '../lib/tripGuide.js';
 import { monthOptions } from '../lib/wizardFlights.js';
 import { TRAVEL_STYLES, nearbyAirports } from '../lib/wizardTransit.js';
-import { plannerStore } from './plannerStore.js';
+import { plannerStore, usePlannerStore } from './plannerStore.js';
+import { fromDraft, flightRanking } from './flow/tripSettings.js';
 import { trackLaunch } from '../lib/launchEvents.js';
 import { ReadyTripsStep } from './ReadyTripsStep.jsx';
 // The trip's own page, the one the Destinations tab opens. Lazy because it
@@ -95,6 +96,12 @@ export function GuidedTripWizard({
   // page, browse one country in the Destinations tab, open one published
   // trip's page. Null in the modal mount, where there is nothing to hand to.
   onOpenDest = null, onOpenCountry = null, onOpenTrip = null,
+  // T656: the new trip flow (planner/flow) asks the setup questions itself
+  // and hands the wizard only its planning steps, by name, in its order
+  // (flowGraph.engineScreens). The Where step opens on the tab the door the
+  // traveller chose implies: 'help' behind "help me choose", 'hand' behind
+  // "I know where". Null in the old mounts, which keep their own step list.
+  flowSteps = null, initialWhereTab = null,
   // A hand-off in: { iso2 } from "Plan a trip here" on a destination page
   // (App.openTripForCountry) or a ?tab=trip&cc= link. Applied once the
   // catalogue can name the country, then reported consumed.
@@ -150,7 +157,11 @@ export function GuidedTripWizard({
   const savedDates = useRef(plannerStore.getState().travelDates || {}).current;
   // Reopened by the step's name; an older draft's number is moved to the
   // six-step list (Who folded into the first step, T490-c).
-  const [step, setStep] = useState(() => restoreStep(savedDraft));
+  const [step, setStep] = useState(() => {
+    if (!flowSteps?.length) return restoreStep(savedDraft);
+    const at = flowSteps.indexOf(savedDraft.stepName);
+    return at >= 0 ? at + 1 : 1;
+  });
   // Which way the last move went, so the incoming screen slides in from the
   // side it came from. Steps should read as travel through one form.
   const [stepDir, setStepDir] = useState('fwd');
@@ -183,7 +194,7 @@ export function GuidedTripWizard({
   // quiz for a traveller who has chosen nothing, and on the picker for one who
   // already has, because arriving back at a quiz you have answered is a step
   // backwards.
-  const [whereTab, setWhereTab] = useState(() => (
+  const [whereTab, setWhereTab] = useState(() => initialWhereTab || (
     (savedDraft.countries || []).length ? 'hand' : 'help'
   ));
   // The quiz answers, restored from the draft so a reload does not re-ask.
@@ -407,8 +418,8 @@ export function GuidedTripWizard({
   // Getting there is on every path except travel AND beds booked; booked beds
   // replace Where and the city picker (lib in ./wizard/wizardSteps.js).
   const steps = useMemo(
-    () => wizardSteps(booked, buildMode),
-    [booked, buildMode],
+    () => (flowSteps?.length ? flowSteps : wizardSteps(booked, buildMode)),
+    [flowSteps, booked, buildMode],
   );
 
   // A step number past the end (a path that got shorter) lands on the last
@@ -724,13 +735,19 @@ export function GuidedTripWizard({
 
   const countryMatches = useMemo(() => {
     if (!quiz.types?.length) return [];
+    // T657: behind booked flights the trip starts where the flight lands, so
+    // the matches are measured from the arrival and kept within a short hop
+    // of it, not from home.
+    const landed = booked.travel && arrivalDest && arrivalDest.lat != null;
     const rows = matchCountries({
       destinations,
       insights: countryInsights,
       layerIndexes,
-      answers: quiz,
+      answers: landed ? { ...quiz, distance: 'short' } : quiz,
       month: tripMonth,
-      origin: originPoint ? { lat: originPoint.lat, lon: originPoint.lon } : null,
+      origin: landed
+        ? { lat: arrivalDest.lat, lon: arrivalDest.lon }
+        : (originPoint ? { lat: originPoint.lat, lon: originPoint.lon } : null),
     });
     // The card wants a photograph and three real places; the scorer returns
     // ids, because it stays node-runnable and knows nothing about images.
@@ -742,7 +759,7 @@ export function GuidedTripWizard({
         .filter((x) => x.dest),
     }));
   }, [quiz, destinations, countryInsights, layerIndexes, tripMonth, originPoint,
-    countryCovers, countryBriefs]);
+    countryCovers, countryBriefs, booked.travel, arrivalDest]);
 
   /** The names the quiz recommended, for the map's dotted outline. */
   const recommendedNames = useMemo(
@@ -1028,12 +1045,15 @@ export function GuidedTripWizard({
   );
   // The whole trip priced by the planner's own function (lib/tripTotal.js,
   // T432): the hand-over above, as the planned trip will hold it.
+  // T657: the trip settings' "what matters most" orders the live flights.
+  const plannerDraft = usePlannerStore();
+  const flightRank = useMemo(() => flightRanking(fromDraft(plannerDraft)).sort, [plannerDraft]);
   const priced = useMemo(() => (handOver.stops.length
     ? priceWholeTrip(
-      wizardPlannerState(handOver, { stayTier: effectiveStayTier, lifestyle: dailyLifestyle }),
+      { ...wizardPlannerState(handOver, { stayTier: effectiveStayTier, lifestyle: dailyLifestyle }), flightRank },
       { data, countryInsights },
     )
-    : null), [handOver, effectiveStayTier, dailyLifestyle, data, countryInsights]);
+    : null), [handOver, effectiveStayTier, dailyLifestyle, data, countryInsights, flightRank]);
   // Carta's figure for each leg the traveller has not priced, keyed the way
   // the Getting there rows are, so a row shows the estimate its own figure
   // replaces.
@@ -1553,6 +1573,7 @@ export function GuidedTripWizard({
           {...{ railOn, priced, hasProgress, isDesktop, startOver, stepName, tripPick, pickFreeNights }}
           {...{ windowNights, totalNights, includedIds, step, steps, goStep, canNext, finish }}
           onOpenTotal={openTotal}
+          onBackOut={flowSteps?.length ? onCancel : null}
         />
       </div>
 

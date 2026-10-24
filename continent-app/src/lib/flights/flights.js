@@ -64,14 +64,43 @@ export function sweptCheapest(file, dir, airport, month = null, now = Date.now()
   return best;
 }
 
+/** Hours a traveller who puts comfort first would rather not fly at. */
+const unsocial = (dep, arr) => {
+  const h = (t) => (t ? Number(t.slice(0, 2)) + Number(t.slice(3, 5)) / 60 : 12);
+  return h(dep) < 7 || h(dep) >= 22 || h(arr) < 6.5 || h(arr) >= 23.5;
+};
+
+/** What a stop and an unsocial hour are worth, in euros a seat, per rank
+ *  (the trip settings' "what matters most", flowGraph flightRanking). */
+const RANK_COST = {
+  price: { stop: 0, hour: 0 },
+  balanced: { stop: 35, hour: 25 },
+  comfort: { stop: 120, hour: 70 },
+};
+
 /**
- * The flight for one direction of a trip: the cheapest live flight in the
- * hours wanted, else the swept one if it fits those hours.
+ * Flights of one day in the order a rank wants them (T657): `price` keeps
+ * the cheapest first (the list as it arrives); `balanced` and `comfort` add
+ * a cost to each stop and to an early or late flight before comparing, so a
+ * direct flight at a decent hour wins over a cheaper one with a change at
+ * dawn. Ties keep the cheaper flight first.
+ */
+export function rankFlights(flights, rank = 'price') {
+  const c = RANK_COST[rank] || RANK_COST.price;
+  if (!c.stop && !c.hour) return flights;
+  const score = (f) => (Number(f.price) || 0) + (Number(f.stops) || 0) * c.stop + (unsocial(f.dep, f.arr) ? c.hour : 0);
+  return [...flights].sort((a, b) => score(a) - score(b) || (a.price - b.price));
+}
+
+/**
+ * The flight for one direction of a trip: the first live flight in the
+ * hours wanted, in the order the trip's rank wants them (the cheapest when
+ * price comes first), else the swept one if it fits those hours.
  * live: the /api/flights answer for that day ({checked, flights}) or null.
  */
-export function pickLeg({ file, live, dir, airport, date, hours = 'any', now = Date.now() }) {
+export function pickLeg({ file, live, dir, airport, date, hours = 'any', rank = 'price', now = Date.now() }) {
   if (live && Array.isArray(live.flights)) {
-    const f = live.flights.find((x) => fitsHours(x.dep, hours));
+    const f = rankFlights(live.flights, rank).find((x) => fitsHours(x.dep, hours));
     if (f) {
       return {
         date, price: f.price, airline: f.airline, dep: f.dep, arr: f.arr, stops: f.stops,

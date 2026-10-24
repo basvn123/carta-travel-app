@@ -485,3 +485,63 @@
   margin-inline-start: 2px;
   flex: none;
 }
+
+/* ChoiceRows (T654): answer rows for a one-question screen, after the
+   Polarsteps trip-kind sheet. Bordered, full width, a mark on the left;
+   selected is the one selected state plus the filled mark. */
+.ui-crows { display: flex; flex-direction: column; gap: var(--space-2); }
+.ui-crow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: 56px;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
+}
+.ui-crow:hover { background: var(--surface-hover); }
+.ui-crow:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.ui-crow.is-on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
+.ui-crow-mark {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--text-3);
+  background: var(--surface);
+  position: relative;
+}
+.ui-crow-mark.is-dot { border-radius: var(--radius-pill); }
+.ui-crow-mark.is-box { border-radius: var(--radius-sm); }
+.ui-crow.is-on .ui-crow-mark { border-color: var(--select-border); }
+.ui-crow.is-on .ui-crow-mark.is-dot::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--select-border);
+}
+.ui-crow.is-on .ui-crow-mark.is-box { background: var(--select-border); }
+.ui-crow.is-on .ui-crow-mark.is-box::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 6px;
+  height: 11px;
+  border: solid var(--surface);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.ui-crow-icon { display: flex; flex: none; color: var(--text-2); }
+.ui-crow.is-on .ui-crow-icon { color: var(--select-ink); }
+.ui-crow-text { display: flex; flex-direction: column; min-width: 0; }
+.ui-crow-label { font-size: var(--text-lead); font-weight: 500; line-height: var(--leading-ui); }
+.ui-crow-sub { font-size: var(--text-label); color: var(--text-2); line-height: var(--leading-ui); }
+.ui-crow.is-on .ui-crow-sub { color: var(--select-ink); }

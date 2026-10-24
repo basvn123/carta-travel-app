@@ -69,6 +69,7 @@
 @import './styles/70-item-pages.css';
 /* T466: Friends, its milestones and the friends line on a destination page. */
 @import './styles/71-friends.css';
+@import './styles/86-plan-flow.css';
 /* T481: route rules css-routes --hold keeps in the first paint, after the
    whole main sheet as their route sheet loaded them. */
 @import './styles/planners-held.css';

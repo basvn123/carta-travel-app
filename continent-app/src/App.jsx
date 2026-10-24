@@ -54,6 +54,9 @@ function lazyWithReload(factory) {
 // longer mounts a map at all.
 const TripPlannerTab = lazyWithReload(() => import('./planner/TripPlannerTab.jsx').then((m) => ({ default: m.TripPlannerTab })));
 const DayPlannerTab = lazyWithReload(() => import('./planner/DayPlannerTab.jsx').then((m) => ({ default: m.DayPlannerTab })));
+// The Plan place with nothing open (T654): the opening, the trip-kind sheet
+// and a new trip's setup questions. Lazy, with the planners' sheet.
+const PlanFlow = lazyWithReload(() => import('./planner/flow/PlanFlow.jsx').then((m) => ({ default: m.PlanFlow })));
 // The back office. Lazy because it ships to one account in the whole user
 // base, and every traveller would otherwise pay for its bytes.
 const AdminPage = lazyWithReload(() => import('./admin/AdminPage.jsx').then((m) => ({ default: m.AdminPage })));
@@ -84,8 +87,6 @@ import {
 } from './lib/urlState.js';
 import { usePlaceRows } from './hooks/usePlaceRows.js';
 import { countryName as localCountryName } from './lib/countryName.js';
-import { PlanStart } from './planner/PlanStart.jsx';
-import { PlanAsk } from './planner/PlanAsk.jsx';
 import { readFavList, isFav, favDestIds, toggleFav as toggleFavKey } from './lib/favorites.js';
 import { readTripShareFromUrl, decodeTripShare, readDayShareFromUrl } from './lib/shareLink.js';
 import { readShareTokenFromUrl, stripShareTokenFromUrl } from './auth/tripShares.js';
@@ -150,7 +151,13 @@ const FIRST_VISIT = (() => {
 // Plan door open (T496). A draft with stops, or a saved plan being edited.
 function hasPlanOpen() {
   const d = loadTripDraft();
-  return !!(d && (d.planId || d.stops?.length));
+  if (d && (d.planId || d.stops?.length)) return true;
+  // T656: a trip made in the new flow is open from Create trip on, before it
+  // has a route: the Plan door reopens its page, not the opening screen.
+  try {
+    const raw = window.localStorage.getItem('carta.plannerDraft.v1');
+    return Boolean(raw && JSON.parse(raw)?.settings?.trip?.created);
+  } catch { return false; }
 }
 
 // The pass picker used to be mounted here, in the account panel and in the
@@ -1192,6 +1199,8 @@ function TravelApp() {
   const clearPendingDayPlan = useCallback(() => setPendingDayPlanId(null), []);
   const clearPendingTripSeed = useCallback(() => setPendingTripSeed(null), []);
   const clearPendingDaySeed = useCallback(() => setPendingDaySeed(null), []);
+  // T659: Plan's "Add a past trip" opens My trips on the past-trip form.
+  const [pastAtOpen, setPastAtOpen] = useState(false);
   const planDay = useCallback((target) => {
     setPendingDayPlanId(target); // { planId|null, stopIndex, dayIndex }
     goToTab('day');
@@ -1849,15 +1858,19 @@ function TravelApp() {
         </div>
       )}
 
-      {/* Plan with nothing in progress (T496, owner T490-a): two large
-          tiles, Trip and One day. Not kept alive: it holds no state. */}
+      {/* Plan with nothing in progress (T654, replacing the two tiles of
+          T496): the opening, the trip-kind sheet and the setup questions.
+          Not kept alive: its answers live in the planner draft. */}
       {activeTab === 'planstart' && (
         <div inert={behindPanel} onClick={(e) => e.stopPropagation()}>
-          <PlanStart
-            pageOver={!!selectedDest || savedTripsOpen || accountOpen || !!countryPage || !!pendingRegion}
-            onNavigate={goTo}
-            ask={<PlanAsk />}
-          />
+          <Suspense fallback={<TabFallback />}>
+            <PlanFlow
+              pageOver={!!selectedDest || savedTripsOpen || accountOpen || !!countryPage || !!pendingRegion}
+              onNavigate={goTo}
+              onCreated={() => goTo('trip')}
+              onAddPast={() => { setPastAtOpen(true); goTo('trips'); }}
+            />
+          </Suspense>
         </div>
       )}
 
@@ -1977,6 +1990,8 @@ function TravelApp() {
           <Suspense fallback={<div className="mt-loading" aria-busy="true" />}>
           <SavedTripsPanel
             data={data}
+            startWithPast={pastAtOpen}
+            onPastStarted={() => setPastAtOpen(false)}
             onClose={closeOverlay}
             onLoadTrip={(trip) => {
               handleLoadTrip(trip);

@@ -10,6 +10,9 @@ import { tripLines, tripReadiness } from '../lib/tripTotal.js';
 import { useLifestyleLabel, useTotalDelta } from './planHooks.js';
 import { ChevronDownIcon, ChevronRightIcon, PlusIcon } from '../components/Icons.jsx';
 import { AirlineMark } from '../components/flights/Flights.jsx';
+import { usePlannerStore } from './plannerStore.js';
+import { fromDraft } from './flow/tripSettings.js';
+import { budgetCheck } from './flow/budget.js';
 
 /**
  * The trip's one price card (T432). The wizard holds it in a sticky side
@@ -26,7 +29,32 @@ import { AirlineMark } from '../components/flights/Flights.jsx';
  *                estimate, the traveller's own figure, or a part only they can
  *                price (their fare), which is named and counted as not in
  *   readiness    how many of the trip's prices are the traveller's own
+ *
+ * T658: laid out after Airbnb's price box. The total is the headline and
+ * the button that opens the lines; under it the figure a person and a person
+ * a day; the inputs sit in a bordered grid; one grey note says how many
+ * prices are the traveller's own and, when the trip settings carry a budget,
+ * how far under or over it the trip is; one stacked bar sits above the lines.
  */
+
+/**
+ * The cost bar (carta-design): one stacked bar above the lines, a segment a
+ * line in receipt order on the kind ramp, no legend, no percentages. The
+ * lines under it name and price each part; the bar only shows the weight.
+ */
+const BAR_SHADES = ['--kind-metro', '--kind-city', '--kind-town', '--kind-village', '--kind-area'];
+function CostBar({ lines }) {
+  const parts = lines.filter((l) => l.eur > 0);
+  const sum = parts.reduce((n, l) => n + l.eur, 0);
+  if (parts.length < 2 || !(sum > 0)) return null;
+  return (
+    <span className="plan-costbar" aria-hidden="true">
+      {parts.map((l, i) => (
+        <span key={l.key} style={{ flexGrow: l.eur / sum, background: `var(${BAR_SHADES[i % BAR_SHADES.length]})` }} />
+      ))}
+    </span>
+  );
+}
 
 const LINE_KEY = {
   out: 'itin.secGetThere',
@@ -82,6 +110,10 @@ export function PlanTotal({
   const partyObj = partyIn || priced?.party || { adults: priced?.groupSize || 1, children: 0, babies: 0 };
   const party = Math.max(1, (partyObj.adults || 0) + (partyObj.children || 0) + (partyObj.babies || 0));
   const hasTrip = Boolean(priced && priced.stopDetails.length);
+  const nights = hasTrip ? priced.stopDetails.reduce((n, st) => n + (st.nights || 0), 0) : 0;
+  // The trip settings' budget, when there is one (T658).
+  const draft = usePlannerStore();
+  const budget = hasTrip ? budgetCheck(priced, fromDraft(draft).guide.budget, { party, nights }) : null;
 
   return (
     <section id={id} tabIndex={id ? -1 : undefined} className={`plan-total plan-total-${variant} ${className}`.trim()} aria-labelledby={`${uid}-h`}>
@@ -90,7 +122,17 @@ export function PlanTotal({
         {hasTrip ? (
           <>
             <p className="plan-total-fig">
-              <span ref={figRef} className="plan-total-n"><Money value={total} est precision="cents" /></span>
+              <Button
+                variant="quiet"
+                className="plan-total-open"
+                aria-expanded={open}
+                aria-controls={`${uid}-lines`}
+                onClick={() => setOpen((v) => !v)}
+              >
+                <span ref={figRef} className="plan-total-n">
+                  {t('plan.inTotal', { price: formatEst(total, t('money.est'), { precision: 'cents', locale: lang }) })}
+                </span>
+              </Button>
               {delta != null && (
                 <span className={`plan-total-delta ${delta < 0 ? 'is-down' : 'is-up'}`} aria-live="polite">
                   {delta < 0 ? '-' : '+'}{formatMoney(Math.abs(delta), { precision: 'cents', locale: lang })}
@@ -103,6 +145,12 @@ export function PlanTotal({
                 <>
                   {', '}
                   <span className="plan-total-ppfig">{t('plan.aPerson', { price: formatEst(priced.perPerson, t('money.est'), { precision: 'cents', locale: lang }) })}</span>
+                </>
+              )}
+              {nights > 0 && (
+                <>
+                  {', '}
+                  <span className="plan-total-ppfig">{t('plan.aPersonADay', { price: formatEst(priced.perPerson / nights, t('money.est'), { precision: 'whole', locale: lang }) })}</span>
                 </>
               )}
             </p>
@@ -149,41 +197,32 @@ export function PlanTotal({
         )}
       </dl>
 
+      {hasTrip && (ready.of > 0 || budget) && (
+        <p className="plan-total-note">
+          {ready.of > 0 && <span>{t('plan.readiness', { n: ready.yours, of: ready.of })}</span>}
+          {budget && (
+            <span className={budget.over ? 'is-over' : ''}>
+              {t(budget.over ? 'plan.budgetOver' : 'plan.budgetUnder', { price: formatEst(budget.gap, t('money.est'), { precision: 'whole', locale: lang }) })}
+            </span>
+          )}
+        </p>
+      )}
+
       {hasTrip && (
-        <div className="plan-total-more">
-          <Button
-            variant="quiet"
-            block
-            className="plan-total-toggle"
-            aria-expanded={open}
-            aria-controls={`${uid}-lines`}
-            onClick={() => setOpen((v) => !v)}
-            iconEnd={<ChevronDownIcon size={16} className={open ? 'plan-chev is-open' : 'plan-chev'} />}
-          >
-            {t('plan.whatsIn')}
-          </Button>
-          <div id={`${uid}-lines`} hidden={!open}>
-            <dl className="plan-lines costrows">
-              {lines.map((l) => (
-                <CostRow
-                  key={l.key}
-                  kind={l.key}
-                  label={t(LINE_KEY[l.key])}
-                  tone={l.kind === 'missing' ? 'missing' : l.kind === 'yours' ? 'yours' : null}
-                  mark={l.kind === 'flight' && l.leg?.airline ? <AirlineMark code={l.leg.airline} size="sm" /> : null}
-                  value={<LineValue line={l} lang={lang} t={t} onAddFare={onAddFare} />}
-                />
-              ))}
-            </dl>
-            {ready.of > 0 && (
-              <p className="plan-ready">
-                <span className="plan-ready-bar" aria-hidden="true">
-                  <span style={{ width: `${Math.round((ready.yours / ready.of) * 100)}%` }} />
-                </span>
-                {t('plan.readiness', { n: ready.yours, of: ready.of })}
-              </p>
-            )}
-          </div>
+        <div className="plan-total-more" id={`${uid}-lines`} hidden={!open}>
+          <CostBar lines={lines} />
+          <dl className="plan-lines costrows">
+            {lines.map((l) => (
+              <CostRow
+                key={l.key}
+                kind={l.key}
+                label={t(LINE_KEY[l.key])}
+                tone={l.kind === 'missing' ? 'missing' : l.kind === 'yours' ? 'yours' : null}
+                mark={l.kind === 'flight' && l.leg?.airline ? <AirlineMark code={l.leg.airline} size="sm" /> : null}
+                value={<LineValue line={l} lang={lang} t={t} onAddFare={onAddFare} />}
+              />
+            ))}
+          </dl>
         </div>
       )}
       {footer}

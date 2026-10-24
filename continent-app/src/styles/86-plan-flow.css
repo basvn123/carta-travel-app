@@ -1,0 +1,572 @@
+/* The trip planner flow (T654 onward): the Plan place's stage, after the
+   Polarsteps planner. A map fills the screen and each step sits on a white
+   sheet in front of it: risen from the bottom on a phone, a card on the left
+   from 769 px. Tokens only (carta-design); selection is the one selected
+   state; the sheet carries the one shadow. */
+
+/* The page box, the trip planner screen's (11-trip-planner.css): from under
+   the top bar to above the bottom nav, scrolling inside, so a long step (the
+   photo grid) scrolls on a phone. Inside the trip planner screen, which is
+   that box already, it fills it (T660 end check: the screen's overflow was
+   hidden and a long step could not be scrolled by touch). */
+.pf {
+  position: absolute;
+  top: var(--filter-h);
+  left: 0;
+  right: 0;
+  bottom: var(--bottom-nav-h);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--surface-page);
+}
+.trip-planner-screen .pf { top: 0; bottom: 0; }
+
+.pf-stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.pf-map {
+  position: relative;
+  height: max(220px, 38dvh);
+  background: var(--surface-sunken);
+  pointer-events: none;
+  overflow: hidden;
+}
+.pf-map .trip-map { inset: 0; left: 0; } /* full bleed: the planner rule moves it right of a panel */
+.pf-map-still { position: absolute; inset: 0; background: var(--surface-sunken); }
+
+.pf-bar {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  z-index: var(--z-float);
+  display: flex;
+  gap: var(--space-2);
+}
+
+.pf-sheet {
+  position: relative;
+  z-index: var(--z-sticky);
+  margin-top: calc(-1 * var(--space-6));
+  flex: 1;
+  background: var(--surface);
+  border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+  box-shadow: var(--elev-3);
+  padding: var(--space-2) var(--gutter) var(--space-6);
+}
+.pf-handle {
+  display: block;
+  width: 40px;
+  height: 4px;
+  margin: 0 auto var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--border);
+}
+
+@media (min-width: 769px) {
+  .pf-stage {
+    display: block;
+    height: 100%;
+    min-height: 560px;
+  }
+  .pf-map { position: absolute; inset: 0; height: auto; }
+  .pf-bar { top: var(--space-4); right: var(--space-4); }
+  .pf-sheet {
+    position: absolute;
+    top: var(--space-5);
+    left: var(--space-5);
+    bottom: auto;
+    width: min(440px, calc(100% - 2 * var(--space-5)));
+    max-height: calc(100% - 2 * var(--space-5));
+    margin: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border-radius: var(--radius-sheet);
+    padding: var(--space-5) var(--space-5) var(--space-5);
+  }
+  .pf-stage.is-wide .pf-sheet { width: min(560px, calc(100% - 2 * var(--space-5))); }
+  .pf-handle { display: none; }
+}
+@media (min-width: 1024px) {
+  .pf-sheet { top: var(--space-6); left: var(--space-6); max-height: calc(100% - 2 * var(--space-6)); }
+}
+
+/* ---- The opening (after Mindtrip's assistant) ---- */
+
+.pf-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding-block: var(--space-3) var(--space-2);
+}
+.pf-mark { display: block; }
+.pf-intro-line {
+  margin: 0;
+  font-size: var(--text-title);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.01em;
+  color: var(--text);
+  text-wrap: balance;
+  max-width: 30ch;
+}
+@media (min-width: 769px) {
+  .pf-intro-line { font-size: var(--text-headline); }
+}
+.pf-intro-start { min-width: 200px; }
+.pf-title:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+.pf-continue {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: var(--tap-main);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  color: var(--text);
+  text-decoration: none;
+  transition: background var(--dur-1) var(--ease-out);
+}
+.pf-continue:hover { background: var(--surface-hover); }
+.pf-continue-text { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.pf-continue-label { font-size: var(--text-lead); font-weight: 600; }
+.pf-continue-sub { font-size: var(--text-label); color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pf-continue svg { color: var(--text-2); flex: none; }
+
+.pf-quiet {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--action);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ---- A question on the sheet (after Polarsteps' question sheet) ---- */
+
+.pf-step { display: flex; flex-direction: column; gap: var(--space-3); }
+
+.pf-head {
+  display: grid;
+  grid-template-columns: var(--tap) 1fr var(--tap);
+  align-items: center;
+  min-height: var(--tap);
+}
+.pf-head-side { display: flex; }
+.pf-head-side.is-end { justify-content: flex-end; }
+.pf-head-pos {
+  text-align: center;
+  font-size: var(--text-caption);
+  color: var(--text-3);
+}
+.pf-round.icon-btn { border-radius: var(--radius-pill); }
+
+.pf-step > .pf-title {
+  margin: var(--space-1) 0 0;
+  text-align: center;
+  font-size: var(--text-title);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  color: var(--text);
+  text-wrap: balance;
+}
+.pf-help {
+  margin: calc(-1 * var(--space-1)) auto var(--space-2);
+  max-width: 36ch;
+  text-align: center;
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--text-2);
+}
+
+.pf-foot { display: flex; flex-direction: column; gap: var(--space-2); margin-top: var(--space-3); }
+
+.pf-past { align-self: center; margin-top: var(--space-4); color: var(--text-2); }
+
+.pf-note { margin: 0; min-height: 1.35em; font-size: var(--text-label); color: var(--text-2); }
+
+/* ---- Tell Carta about your trip (after Layla's prompt box) ---- */
+
+.pf-prompt {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sheet);
+  background: var(--surface);
+  transition: border-color var(--dur-1) var(--ease-out);
+}
+.pf-prompt:focus-within { border-color: var(--action); }
+.pf-prompt-field {
+  width: 100%;
+  min-height: 112px;
+  padding: var(--space-4) var(--space-4) var(--space-2);
+  border: 0;
+  border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-lead);
+  line-height: var(--leading-body);
+  resize: none;
+}
+.pf-prompt-field:focus { outline: none; border-color: transparent; } /* the box's brown edge is the focus mark */
+.pf-prompt-field::placeholder { color: var(--text-3); }
+.pf-prompt-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3) var(--space-3);
+}
+
+/* ---- Setup questions with their own controls (T655) ---- */
+
+.pf-group { display: flex; flex-direction: column; gap: var(--space-3); margin-top: var(--space-2); }
+.pf-label {
+  margin: 0;
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--text-2);
+}
+.pf-ages-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: var(--space-2); }
+.pf-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.pf-line { flex-direction: row; align-items: center; justify-content: space-between; }
+.pf-line-label { font-size: var(--text-lead); font-weight: 500; color: var(--text); }
+.pf-life .wlife-q + .wlife-q { margin-top: var(--space-4); }
+.pf-from { min-height: 320px; }
+
+/* ---- Create trip (after the Polarsteps "new trip" screen) ---- */
+
+.pf-create { display: flex; flex-direction: column; gap: var(--space-3); }
+.pf-create-head {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  margin: calc(-1 * var(--space-2)) calc(-1 * var(--gutter)) 0;
+  padding: var(--space-2) var(--gutter) var(--space-5);
+  background: var(--surface-sunken);
+  border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+  overflow: hidden;
+}
+@media (min-width: 769px) {
+  .pf-create-head { margin: calc(-1 * var(--space-5)) calc(-1 * var(--space-5)) 0; padding: var(--space-4) var(--space-5) var(--space-5); }
+}
+.pf-create-head.has-photo { min-height: 180px; padding-bottom: 0; }
+.pf-create-photo { position: absolute; inset: 0; width: 100%; height: 100%; }
+.pf-create-photo img { width: 100%; height: 100%; object-fit: cover; }
+.pf-create-bar {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--tap) 1fr var(--tap);
+  align-items: center;
+  width: 100%;
+}
+.pf-create-end { justify-self: end; }
+.pf-create-title { margin: 0; text-align: center; font-size: var(--text-lead); font-weight: 700; color: var(--text); }
+.pf-create-title.is-under { margin-top: var(--space-1); font-size: var(--text-title); }
+.pf-cover-pill { position: relative; }
+
+.pf-covers {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+.pf-cover.btn { display: flex; flex-direction: column; align-items: stretch; gap: var(--space-1); height: auto; padding: 0; background: none; }
+.pf-cover .btn-label { display: contents; }
+.pf-cover-img { border-radius: var(--radius-card); overflow: hidden; outline: 2px solid transparent; outline-offset: -2px; }
+.pf-cover.is-on .pf-cover-img { outline-color: var(--select-border); }
+.pf-cover-name { font-size: var(--text-caption); color: var(--text-2); text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.pf-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.pf-dates { padding: var(--space-3) var(--space-4) var(--space-2); }
+.pf-dates-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-2);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border-soft);
+  font-size: var(--text-lead);
+  font-weight: 600;
+  color: var(--text);
+}
+.pf-dates-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--space-2); }
+.pf-dates-arrow { color: var(--text-2); }
+.pf-dates-cell.btn { display: flex; flex-direction: column; align-items: flex-start; height: auto; min-height: var(--tap-main); padding: var(--space-2) var(--space-1); }
+.pf-dates-cell.is-end.btn { align-items: flex-end; text-align: right; }
+.pf-dates-cell .btn-label { display: contents; }
+.pf-dates-label { font-size: var(--text-caption); color: var(--text-2); font-weight: 400; }
+.pf-dates-value { font-size: var(--text-lead); font-weight: 600; color: var(--action); }
+
+.pf-field-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--tap-main);
+  padding: 0 var(--space-4);
+  color: var(--text-2);
+}
+.pf-field-row:focus-within { border-color: var(--action); }
+.pf-input {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--tap);
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-lead);
+}
+.pf-input::placeholder { color: var(--text-3); }
+.pf-input:focus { outline: none; border-color: transparent; } /* the row's brown edge is the focus mark */
+.pf-field-label { flex: 1; font-size: var(--text-lead); color: var(--text); }
+.pf-select {
+  min-height: var(--tap);
+  padding: 0 var(--space-2);
+  border: 0;
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--action);
+  font: inherit;
+  font-size: var(--text-label);
+  font-weight: 600;
+  cursor: pointer;
+}
+.pf-select:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+.pf-link-row.btn {
+  width: 100%;
+  justify-content: flex-start;
+  min-height: var(--tap-main);
+  padding: var(--space-2) var(--space-4);
+  color: var(--text);
+  font-weight: 500;
+}
+.pf-link-row .btn-label { flex: 1; text-align: left; }
+.pf-ico { color: var(--text-2); }
+.pf-link-text { display: flex; flex-direction: column; }
+.pf-link-sub { font-size: var(--text-label); color: var(--text-2); font-weight: 400; }
+.pf-buddies { display: flex; flex-direction: column; gap: var(--space-2); padding: 0 var(--space-4) var(--space-3); }
+.pf-buddy-list { list-style: none; margin: 0; padding: 0; }
+.pf-buddy-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-soft);
+  font-size: var(--text-body);
+  color: var(--text);
+}
+.pf-buddy-add { display: flex; gap: var(--space-2); align-items: flex-end; }
+.pf-buddy-add .field { flex: 1; }
+
+/* ---- Trip settings sheet (T655) ---- */
+
+.pf-set { display: flex; flex-direction: column; gap: var(--space-5); }
+.pf-set-trip { display: flex; flex-direction: column; gap: var(--space-2); }
+.pf-set-input {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  padding: 0 var(--space-3);
+  min-height: var(--tap);
+}
+.pf-set-input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-color: var(--action); }
+.pf-set-input.pf-input:focus { border-color: var(--action); }
+.pf-set-group { display: flex; flex-direction: column; gap: var(--space-1); }
+.pf-set-rows { list-style: none; margin: 0; padding: 0; }
+.pf-set-rows li + li { border-top: 1px solid var(--border-soft); }
+.pf-set-row.btn {
+  width: 100%;
+  justify-content: space-between;
+  min-height: var(--tap-main);
+  padding: var(--space-2) 0;
+  color: var(--text);
+  border-radius: 0;
+}
+.pf-set-row .btn-label { flex: 1; min-width: 0; }
+.pf-set-text { display: flex; flex-direction: column; align-items: flex-start; text-align: left; min-width: 0; }
+.pf-set-label { font-size: var(--text-caption); color: var(--text-2); font-weight: 400; }
+.pf-set-value { font-size: var(--text-body); font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+.pf-set-value.is-empty { color: var(--text-3); font-weight: 400; }
+.pf-set-edit { display: flex; flex-direction: column; gap: var(--space-3); }
+.pf-set-back { align-self: flex-start; }
+
+/* ---- The trip's page before a route (T656, after the Polarsteps trip view) ---- */
+
+.pf-home { display: flex; flex-direction: column; gap: var(--space-3); }
+.pf-home-cover { border-radius: var(--radius-card); overflow: hidden; }
+.pf-home-name {
+  margin: 0;
+  font-size: var(--text-title);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  color: var(--text);
+}
+@media (min-width: 769px) {
+  .pf-home-name { font-size: var(--text-headline); }
+}
+.pf-home-start {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+}
+.pf-home-dot {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  color: var(--text);
+}
+.pf-home-when { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.pf-home-label { font-size: var(--text-lead); font-weight: 600; color: var(--text); }
+.pf-home-date { font-size: var(--text-caption); color: var(--text-2); }
+.pf-home-nights {
+  flex: none;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  font-size: var(--text-caption);
+  color: var(--text-2);
+}
+.pf-home-empty { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.pf-home-empty li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-card);
+  background: var(--surface-sunken);
+}
+.pf-home-empty li span:first-child { width: 48px; height: 48px; border-radius: var(--radius-control); background: var(--surface-hover); }
+.pf-home-empty li span:last-child { flex: 1; height: 12px; max-width: 60%; border-radius: var(--radius-pill); background: var(--surface-hover); }
+
+/* ---- What you're up for: photo tiles (T656) ---- */
+
+.pf-likes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+@media (min-width: 480px) {
+  .pf-likes { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+.pf-like.btn {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-2);
+  height: auto;
+  padding: 0;
+  background: none;
+  color: var(--text);
+  text-align: left;
+}
+.pf-like .btn-label { display: contents; }
+.pf-like-media { position: relative; display: block; border-radius: var(--radius-card); overflow: hidden; outline: 2px solid transparent; outline-offset: -2px; }
+.pf-like.is-on .pf-like-media { outline-color: var(--select-border); }
+.pf-like-tick {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--select-ink);
+  box-shadow: var(--elev-1);
+}
+.pf-like-name { font-size: var(--text-body); font-weight: 600; }
+.pf-like.is-on .pf-like-name { color: var(--select-ink); }
+
+/* ---- The trip's price card, after Airbnb's price box (T658) ---- */
+
+.plan-total .plan-total-fig { display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--space-2); margin: 0; }
+.plan-total .plan-total-open.btn {
+  height: auto;
+  min-height: var(--tap);
+  padding: 0;
+  background: none;
+}
+.plan-total .plan-total-open .plan-total-n {
+  font-size: var(--text-title);
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 5px;
+}
+.plan-total .plan-total-inputs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: var(--space-3) 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  overflow: hidden;
+}
+.plan-total .plan-total-inputs .plan-input {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-width: 0;
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border: 0;
+  border-top: 1px solid var(--border);
+}
+.plan-total .plan-total-inputs .plan-input:first-child { grid-column: 1 / -1; border-top: 0; }
+.plan-total .plan-total-inputs .plan-input + .plan-input + .plan-input { border-left: 1px solid var(--border); }
+.plan-total .plan-total-inputs .plan-input dt { font-size: var(--text-micro); font-weight: 600; color: var(--text); }
+.plan-total .plan-total-inputs .plan-input dd { text-align: left; font-size: var(--text-body); }
+.plan-total .plan-total-note {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-1) var(--space-3);
+  margin: 0 0 var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-control);
+  background: var(--surface-sunken);
+  font-size: var(--text-label);
+  color: var(--text-2);
+  text-align: center;
+}
+.plan-total .plan-total-note .is-over { color: var(--amber-ink); }
+.plan-total .plan-costbar {
+  display: flex;
+  gap: 1px;
+  height: 8px;
+  margin-bottom: var(--space-3);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  background: var(--surface);
+}
+.plan-total .plan-costbar > span { min-width: 2px; }
+
+/* ---- Plan your days? (T658) ---- */
+
+.pf-days .pf-head-pos { margin: 0; text-align: left; }
+
+/* HeroImage leaves its box to the caller (T660 end check: unsized it drew
+   1 by 1). Square tiles, a 16:9 cover. */
+.pf-like-img, .pf-cover-img { display: block; width: 100%; height: auto; aspect-ratio: 1 / 1; object-fit: cover; }
+.pf-home-cover { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
+.pf-create-photo { object-fit: cover; }
+
+.pf-credit { margin: 0; font-size: var(--text-caption); color: var(--text-3); line-height: var(--leading-body); }

@@ -743,6 +743,17 @@ export function ShareIcon({ size = 15, className = '', labelled = false }) {
   );
 }
 
+/** The trip settings door (T654): a gear, the same line weight as the rest. */
+export function SettingsIcon({ size = 15, className = '', labelled = false }) {
+  return (
+    <Glyph size={size} className={className} labelled={labelled} label="Settings">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M12 2.8v2.4M12 18.8v2.4M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M2.8 12h2.4M18.8 12h2.4M4.9 19.1l1.7-1.7M17.4 6.6l1.7-1.7" />
+      <circle cx="12" cy="12" r="6.6" />
+    </Glyph>
+  );
+}
+
 export function LinkIcon({ size = 15, className = '', labelled = false }) {
   return (
     <Glyph size={size} className={className} labelled={labelled} label="Link">

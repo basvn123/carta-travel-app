@@ -83,6 +83,7 @@ import {
 } from './dayPlanStore.js';
 import { loadTripDraft } from './tripDraftStore.js';
 import { plannerStore } from './plannerStore.js';
+import { fromDraft } from './flow/tripSettings.js';
 
 const OPEN_DAY_KEY = 'carta.dayOpen.v1'; // T507: the day open when the page was left
 import {
@@ -606,7 +607,8 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   const chatPresets = useMemo(() => {
     if (landingStep !== 'chat') return null;
     const st = plannerStore.getState() || {};
-    const started = (st.wizard?.countries || []).length > 0 || (st.stops || []).length > 0;
+    const started = (st.wizard?.countries || []).length > 0 || (st.stops || []).length > 0
+      || Boolean(st.settings?.trip?.created);
     if (!started) return null;
     const tr = st.travelers || {};
     const quiz = st.wizard?.quiz || {};
@@ -625,6 +627,15 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     if (types.some((k) => /beach|islands|lakes/.test(k))) moods.push('beach');
     if (moods.length) out.moods = moods;
     if (quiz.pace === 'moving') out.steps = 20000;
+    // T658: the day rhythm asked after the trip was planned wins over the
+    // guesses above: the traveller said it in so many words.
+    const rhythm = fromDraft(st).rhythm;
+    const start = { early: 'early', onthego: 'normal', slow: 'late' }[rhythm.mornings];
+    if (start) out.start = start;
+    const steps = rhythm.steps || { walk: 15000, transit: 10000, taxi: 5000, car: 5000 }[rhythm.around];
+    if (steps) out.steps = steps;
+    const food = { street: 'quick', local: 'sit', fine: 'sit', cook: 'picnic' }[rhythm.food];
+    if (food) out.food = food;
     return Object.keys(out).length ? out : null;
   }, [landingStep]);
 

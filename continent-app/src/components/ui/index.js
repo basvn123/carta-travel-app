@@ -15,5 +15,6 @@ export { Money } from './Money.jsx';
 export { CostRow, CostSum } from './CostRow.jsx';
 export { Switch } from './Switch.jsx';
 export { Tile, TileGroup } from './Tile.jsx';
+export { ChoiceRows } from './ChoiceRows.jsx';
 export { StepRail, StepMini, StepList } from './StepRail.jsx';
 export { Recap } from './Recap.jsx';

@@ -140,3 +140,19 @@ test("near the wanted day: the cheapest within four days, with its own date", as
   assert.equal(rt.out.date, "2026-11-22");
   assert.equal(roundTripNear(file, "BRU", "2026-11-21", "2026-11-26", { now: NOW }), null);
 });
+
+// T657: the trip settings' "what matters most" orders the day's flights.
+test("rankFlights: price keeps the cheapest, comfort takes the direct flight at a decent hour", async () => {
+  const { rankFlights, pickLeg } = await import("../src/lib/flights/flights.js");
+  const day = [
+    { price: 49, stops: 1, dep: "06:05", arr: "11:40", airline: "A" },
+    { price: 79, stops: 0, dep: "09:30", arr: "11:45", airline: "B" },
+    { price: 60, stops: 0, dep: "05:50", arr: "08:05", airline: "C" },
+  ];
+  assert.equal(rankFlights(day, "price")[0].airline, "A");
+  assert.equal(rankFlights(day, "balanced")[0].airline, "B");
+  assert.equal(rankFlights(day, "comfort")[0].airline, "B");
+  const live = { checked: new Date().toISOString(), flights: day };
+  assert.equal(pickLeg({ file: null, live, dir: "out", airport: "PSA", date: "2027-05-03" }).airline, "A");
+  assert.equal(pickLeg({ file: null, live, dir: "out", airport: "PSA", date: "2027-05-03", rank: "comfort" }).airline, "B");
+});

@@ -12,6 +12,9 @@ import { ErrorBlock } from '../components/StateBlocks.jsx';
 import { TripMap } from '../map/TripMap.jsx';
 import { TripItinerary, TransferModePicker } from './TripItinerary.jsx';
 import { GuidedTripWizard } from './GuidedTripWizard.jsx';
+import { TripFlow } from './flow/TripFlow.jsx';
+import { plannerStore } from './plannerStore.js';
+import { DaysPrompt } from './flow/DaysPrompt.jsx';
 import { PlanTotal } from './PlanTotal.jsx';
 import { TripTotalBar } from './TripTotalBar.jsx';
 import { MapDrawer } from '../components/MapDrawer.jsx';
@@ -513,7 +516,10 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     setWizardOpen(false);
     setSelectedStop(null);
     setDrawer('half');
+    // T658: a trip the new flow made is asked about its days once.
+    if (onPlanDay && plannerStore.getState().settings?.trip?.created) setAskDays(true);
   };
+  const [askDays, setAskDays] = useState(false);
 
   const handleStartOver = () => {
     if (!window.confirm(t('trip.confirmStartOver'))) return;
@@ -926,23 +932,31 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   // rather than as a modal that covers it. The map layout returns the moment
   // there is a trip to draw.
   const emptyPlanner = !tp.planned && tp.stopDetails.length === 0;
+  const renderWizard = ({ flowSteps = null, initialWhereTab = null, onCancel = null } = {}) => (
+    <GuidedTripWizard
+      inline
+      data={data}
+      stayTier={tp.stayTier}
+      lifestyle={lifestyle}
+      favorites={favorites}
+      onOpenDest={onOpenDest}
+      onOpenCountry={onOpenCountry}
+      onOpenTrip={onOpenTrip}
+      onCancel={onCancel || (() => setWizardOpen(false))}
+      onComplete={handleWizardComplete}
+      seed={tripSeed}
+      onSeedConsumed={onTripSeedConsumed}
+      flowSteps={flowSteps}
+      initialWhereTab={initialWhereTab}
+    />
+  );
   if (emptyPlanner) {
     return (
       <div className="trip-planner-screen trip-planner-blank">
-        <GuidedTripWizard
-          inline
-          data={data}
-          stayTier={tp.stayTier}
-          lifestyle={lifestyle}
-          favorites={favorites}
-          onOpenDest={onOpenDest}
-          onOpenCountry={onOpenCountry}
-          onOpenTrip={onOpenTrip}
-          onCancel={() => setWizardOpen(false)}
-          onComplete={handleWizardComplete}
-          seed={tripSeed}
-          onSeedConsumed={onTripSeedConsumed}
-        />
+        {/* T656: the trip's page before a route (TripFlow), which hands the
+            wizard only its planning steps. A "Plan a trip here" seed still
+            opens the whole wizard: its jump to Where is counted on that list. */}
+        {tripSeed ? renderWizard() : <TripFlow renderEngine={renderWizard} />}
         {saveNotice && <div className="trip-save-toast" role="status">{saveNotice}</div>}
         {keepChoice && (
           <KeepTripChoice
@@ -1442,6 +1456,13 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
 
       {saveNotice && (
         <div className="trip-save-toast" role="status">{saveNotice}</div>
+      )}
+
+      {askDays && (
+        <DaysPrompt
+          onClose={() => setAskDays(false)}
+          onPlan={() => { setAskDays(false); onPlanDay({ planId: tp.planId, stopIndex: 0, dayIndex: 0 }); }}
+        />
       )}
 
       {keepChoice && (

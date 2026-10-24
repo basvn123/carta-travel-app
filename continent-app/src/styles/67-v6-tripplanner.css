@@ -382,7 +382,6 @@
   min-height: var(--tap);
   border-top: 1px solid var(--border-soft);
 }
-.plan-ready-bar > span { display: block; height: 100%; background: var(--text); border-radius: inherit; }
 .plan-whatif b { color: var(--text); font-variant-numeric: tabular-nums; }
 
 /* The phone's figure, in the footer's left half. */
