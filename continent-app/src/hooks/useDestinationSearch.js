@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { composeTrip } from '../lib/runtime_pricing.js';
+import { priceDays, priceRequest, atDates } from '../lib/price/index.js';
+import { quoteComposed } from '../lib/price/compose.js';
 import { groundReturn, homePoint, partyOf } from '../lib/travelWay.js';
 import { matchesAnyKind } from '../lib/trip_kinds.js';
 import { isFullRatingRange } from '../lib/rating.js';
@@ -82,6 +83,9 @@ export function useDestinationSearch({
       flights: data.flights || null,
       ground: home ? (dest, mode) => groundReturn(dest, home, mode, party) : null,
     };
+    // T702 (plan F6): every stay is the engine's day at these dates, priced
+    // once for the catalogue, so a place costs here what it costs on Explore.
+    const days = priceDays(data.destinations, atDates(priceRequest({ choices }), departDate, returnDate));
     for (const [destId, d] of Object.entries(data.destinations)) {
       if (d.lat == null || d.lon == null) continue;
       const row = {
@@ -105,7 +109,7 @@ export function useDestinationSearch({
         crowding: d.crowding || null,
         image: d.image?.url || null,     // hero thumbnail for the map hover card
       };
-      const b = composeTrip(d, departDate, returnDate, choices, data.destinations, flightOpts);
+      const b = quoteComposed(d, departDate, returnDate, choices, data.destinations, { ...flightOpts, day: days.get(destId) });
       if (b == null) {
         unreach.push({ ...row, total: null, pp: null, reachable: false });
       } else {

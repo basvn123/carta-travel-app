@@ -26,7 +26,7 @@ import { dayReceiptFigures } from '../lib/dayTickets.js';
  * can never say two figures.
  *
  *   dayCost  { eur, est, stayEur, foodEur, tickets, party } or null
- *   trip     { priced } a trip's priceTrip() output, or null outside a trip
+ *   trip     { priced } a trip's quoteTrip() output, or null outside a trip
  */
 
 /** How many people a trip is priced for, counted as TripTotalBar counts it. */

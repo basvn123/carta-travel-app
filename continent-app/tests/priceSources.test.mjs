@@ -1,8 +1,7 @@
 // T662 (F2): invariant V2 of plan "Carta prijslogica Explore": no price is
 // worked out outside the engine (lib/price/). The scan finds every call of a
 // price kernel function in src/ and scripts/ (comments stripped) and fails on
-// a file that is not in ALLOWED. ALLOWED says which phase removes each entry;
-// F6 empties the list down to the kernel itself.
+// a file that is not in ALLOWED. Since F6 (T702) ALLOWED is the kernel itself.
 // Run: npm test (continent-app/)
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -18,30 +17,18 @@ const KERNEL = ["computeCosts", "costRow", "costContext", "bedPrice", "groundSpe
 const CALL = new RegExp(`(?<![\\w.]function\\s|function\\s)\\b(${KERNEL.join("|")})\\s*\\(`, "g");
 
 // The kernel: where the functions are defined, and what the engine wraps.
+// priceTrip, composeTrip and priceFromIndex stay in the scan so a copy that
+// comes back outside the engine fails here (T702 moved them into lib/price/
+// as quoteTrip, quoteComposed and quoteNights).
 const KERNEL_FILES = {
   "src/lib/costIndex.js": "kernel (computeCosts, costRow)",
   "src/lib/stayPrice.js": "kernel (bedPrice)",
-  "src/lib/runtime_pricing.js": "kernel (groundSpendPerPerson; composeTrip moves to quoteTrip in F6)",
+  "src/lib/runtime_pricing.js": "kernel (accommodationPerPerson wraps bedPrice)",
   "src/lib/price/priceDay.js": "the engine",
 };
 
-// Paths that still price on their own, and the phase that moves them.
-export const ALLOWED = {
-  ...KERNEL_FILES,
-  "scripts/prerender/pages.mjs": "F6 (the prerendered trip page, groundSpendPerPerson)",
-  // F6: trip prices (quoteTrip).
-  "src/browse/DestPriceCard.jsx": "F6 (calculator total through priceFromIndex)",
-  "src/browse/ask/AskTripCard.jsx": "F6 (Ask trip card)",
-  "src/hooks/useDestinationSearch.js": "F6 (composed trips in Places)",
-  "src/hooks/useTripPlanner.js": "F6 (trip planner)",
-  "src/lib/budgetSearch.js": "F6 (Ask budget)",
-  "src/lib/countryBrief.js": "F6 (country brief)",
-  "src/lib/firstRun.js": "F6 (first-run receipt)",
-  "src/lib/myTrips.js": "F6 (saved trips)",
-  "src/lib/trip_planner_pricing.js": "F6 (trip planner)",
-  "src/planner/GuidedTripWizard.jsx": "F6 (wizard)",
-  "src/planner/DayPlannerTab.jsx": "F6 (priceTrip, the trip around a day)",
-};
+// T702 (F6): no path prices on its own any more; the list is the kernel.
+export const ALLOWED = { ...KERNEL_FILES };
 
 function walk(dir, out = []) {
   for (const f of readdirSync(dir)) {

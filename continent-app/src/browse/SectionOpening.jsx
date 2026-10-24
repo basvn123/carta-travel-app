@@ -9,7 +9,6 @@ import {
 } from '../components/Icons.jsx';
 import { Button, Card, IconButton, Money, Segmented } from '../components/ui/index.js';
 import { TilePhotos } from './PhotoGallery.jsx';
-import { BedFoodLine } from './DestCards.jsx';
 import { StoryRail, StoryCard, STORY_MAX, STORY_SIZES } from './StoryRail.jsx';
 import { tripGrade } from '../lib/trailCards.js';
 import { GRADE_KEY } from '../lib/cardFillings.js';
@@ -160,7 +159,7 @@ export function Strip({ id, title, onSeeAll = null, t, className = '', children 
 /** One wire row as a rail tile, on Explore's three lines (T457): the name;
  *  the flag and where it is, on one line; the measured fact and the Score
  *  on one line, the fact where Explore's tile has its price. */
-export function RailTile({ row, describe, photo, photos = null, onOpen, sharedKey, t = null }) {
+export function RailTile({ row, describe, photo, photos = null, onOpen, sharedKey }) {
   const d = describe(row);
   const key = sharedKey ? sharedKey(row) : null;
   const url = photo(row);
@@ -190,7 +189,8 @@ export function RailTile({ row, describe, photo, photos = null, onOpen, sharedKe
           <span className="dtab-where">{d.where}</span>
         </span>
       ) : null}
-      price={t && d.base && d.base.dayEur != null ? <BedFoodLine base={d.base} t={t} /> : d.fact ? (
+      // T700 (plan section 5): a beach, lake, peak or route tile carries no town price.
+      price={d.fact ? (
         <span className="dtab-fact">
           {d.factLabel && <span className="dtab-fact-l">{d.factLabel} </span>}
           {d.fact}
@@ -240,21 +240,10 @@ function statusOf(layer, row, t, lang) {
   return seasonMonths(layer, row).includes(now) ? t('rail.goodIn', { month: monthWord(now, lang, 'short') }) : null;
 }
 
-const SLOT = '\u0001';
-function withMoney(text, money) {
-  const at = text.indexOf(SLOT);
-  if (at < 0) return text;
-  return <>{text.slice(0, at)}{money}{text.slice(at + SLOT.length)}</>;
-}
-
 /** Up to three facts for a rail's lead card, read from its rows, one of
  *  them marked as the card's large figure. */
 function sectionFacts(layer, rows, describe, t, lang) {
   const facts = [];
-  const days = rows.map((r) => describe(r).base?.dayEur).filter(Number.isFinite);
-  if (days.length) {
-    facts.push({ key: 'from', icon: PiggyIcon, text: withMoney(t('rail.factFrom', { price: SLOT }), <Money value={Math.min(...days)} est />) });
-  }
   const now = new Date().getMonth() + 1;
   if (layer !== 'trail' && rows.length && rows.every((r) => seasonMonths(layer, r).includes(now))) {
     facts.push({ key: 'month', icon: CalendarIcon, text: t('rail.goodIn', { month: monthWord(now, lang, 'long') }) });
@@ -310,7 +299,7 @@ function SectionStoryCard({ layer, row, describe, photo, photos, onOpen, sharedK
           <span className="dtab-where">{where}</span>
         </span>
       ) : null}
-      price={d.base && d.base.dayEur != null ? <BedFoodLine base={d.base} t={t} /> : d.fact ? (
+      price={d.fact ? (
         <span className="dtab-fact">
           {d.factLabel && <span className="dtab-fact-l">{d.factLabel} </span>}
           {d.fact}

@@ -32,7 +32,8 @@
  * photograph and the rating come from the catalogue, so a name on this list is
  * always a place the rest of the app can open.
  */
-import { stayPerNight, foodPerDay, bandFor } from './costIndex.js';
+import { bandFor } from './costIndex.js';
+import { DEFAULT_PRICE_REQUEST, priceDays } from './price/index.js';
 import { placeLine, isTemplateBlurb } from './placeStory.js';
 import { omioSlug } from './omio.js';
 
@@ -119,6 +120,10 @@ function whyLine(d) {
  * @returns Map(countryName -> brief)
  */
 export function buildCountryBriefs(destinations, insights = null, lifestyle = null) {
+  // T702 (plan F6): a country's typical bed and food are the medians of its
+  // towns' day prices from the engine, at the default request (B5) and the
+  // traveller's Lifestyle, the figures Explore shows for the same question.
+  const days = priceDays(destinations, lifestyle ? { ...DEFAULT_PRICE_REQUEST, lifestyle } : DEFAULT_PRICE_REQUEST);
   const byCountry = new Map();
   for (const [id, d] of Object.entries(destinations || {})) {
     if (!d?.country) continue;
@@ -137,10 +142,9 @@ export function buildCountryBriefs(destinations, insights = null, lifestyle = nu
     // fact with somewhere to go, so the count and the rows are both kept.
     const themeRows = new Map();
     for (const { id, d } of rows) {
-      const s = stayPerNight(d);
-      if (s != null) stays.push(s);
-      const f = foodPerDay(d, lifestyle);
-      if (f != null) foods.push(f);
+      const day = days.get(id);
+      if (day?.stayEur != null) stays.push(day.stayEur);
+      if (day?.foodEur != null) foods.push(day.foodEur);
       const cats = new Set(d.categories || []);
       for (const g of THEME_GROUPS) {
         if (g.tags.some((tag) => cats.has(tag))) {

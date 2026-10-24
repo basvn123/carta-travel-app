@@ -206,7 +206,7 @@ function TripBox({ p, t, onOpen }) {
  * the airline for a flight), the bed and the food and drink, one total, all a
  * person; an estimate carries the tilde alone. Kept apart from the per-day
  * PriceParts on purpose: the panel prices the stay, the card prices a day.
- * Open (T592-a): take the total from priceTrip() as budgetSearch.js does.
+ * Open (T592-a): take the total from quoteTrip() as budgetSearch.js does.
  */
 function TripParts({ cost, nights, t }) {
   const airlines = useAirlines();

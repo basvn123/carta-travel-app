@@ -5,7 +5,7 @@ import { bedPrice, tiersAt, normaliseTier, peakOf, monthRates, cheapestMonths, s
 import { setStayRecords } from "../src/lib/staysData.js";
 import { computeCosts } from "../src/lib/costIndex.js";
 import { accommodationPerPerson } from "../src/lib/runtime_pricing.js";
-import { stopStayCost } from "../src/lib/trip_planner_pricing.js";
+import { quoteStay, tripRequest, priceDay, atDates } from "../src/lib/price/index.js";
 
 // Mallorca-like: August about twice November, a 3-star room at 84 a night.
 const SEASON = [0.6, 0.6, 0.7, 0.85, 1, 1.3, 1.6, 1.7, 1.3, 0.9, 0.6, 0.65];
@@ -110,11 +110,16 @@ test("one stay, one price: the Explore card times the nights is the planner's Be
   const nights = 7;
   const start = "2027-06-08";
   const card = computeCosts({ PMI }, { group_size: 2, stay_tier: "hotel3", start, nights }).get("PMI");
-  const stop = stopStayCost(PMI, nights, start, { groupSize: 2, stayTier: "hotel3" });
-  assert.ok(Math.abs(card.stayEur * nights * 2 - stop.accomTotal) < 0.05,
+  // T702: the planner's stop is the engine's day, so the two agree to the cent.
+  const stop = quoteStay(PMI, nights, start, tripRequest({ groupSize: 2, stayTier: "hotel3" }));
+  // The cost index is within rounding of it; the engine row the card shows
+  // (whole cents a day, T662) times the nights is the Beds line to the cent.
+  assert.ok(Math.abs(card.stayEur * nights * 2 - stop.accomTotal) < 0.1,
     `card ${card.stayEur * nights * 2} vs planner ${stop.accomTotal}`);
+  const shown = priceDay(PMI, atDates(tripRequest({ groupSize: 2, stayTier: "hotel3" }), start, "2027-06-15"));
+  assert.equal(Math.round(shown.stayEur * nights * 2 * 100) / 100, stop.accomTotal);
   const pp = accommodationPerPerson(PMI, nights, start, null, 2, "hotel3");
-  assert.ok(Math.abs(pp.total * 2 - stop.accomTotal) < 0.05);
+  assert.ok(Math.abs(pp.total * 2 - stop.accomTotal) < 0.1);
 });
 
 test("a month in the Explore filter moves the card price", () => {

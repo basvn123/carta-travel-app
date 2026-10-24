@@ -428,15 +428,8 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
       before={before}
       primary={mountain.near?.dest_id ? (
         <Button variant="primary" iconEnd={<ChevronRightIcon size={20} />} onClick={() => onSelectDest?.(mountain.near.dest_id)}>
-          {t('mtn.basedOn', { city: mountain.near.city })}
+          {(baseDay && view.stayIn(mountain.near.city, baseDay.dayEur)) || t('mtn.basedOn', { city: mountain.near.city })}
         </Button>
-      ) : null}
-      costLine={baseDay && mountain.near?.city ? (
-        <>
-          {t('item.dayIn', { city: mountain.near.city })}{' '}
-          <strong><Money value={view.day(baseDay.dayEur)} est={baseDay.est} /></strong>{' '}
-          {view.unit}
-        </>
       ) : null}
       actions={[
         <a key="dir" className="btn btn-secondary" href={mapsUrl} target="_blank" rel="noopener noreferrer">

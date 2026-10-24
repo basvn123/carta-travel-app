@@ -61,7 +61,7 @@ import { ticketOf, dayTicketTotals } from '../lib/dayTickets.js';
 import { DayCostBar, DayStrip, DayReceiptSheet } from './DayCost.jsx';
 import { MapDrawer } from '../components/MapDrawer.jsx';
 import { PageBar } from '../browse/PageBar.jsx';
-import { priceTrip } from '../lib/tripTotal.js';
+import { quoteTrip } from '../lib/tripTotal.js';
 import { plannerStateFromPlan } from '../lib/myTrips.js';
 import { formatSteps, kmToSteps, stepsToKm } from '../lib/steps.js';
 import { fetchForecast } from '../lib/weather.js';
@@ -212,7 +212,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   // T666: the app's one price request (lib/price/); a stop's day is priced
   // at the stop's own dates with it.
   priceRequest = null,
-  // T501: what the trip around a day costs (priceTrip at the traveller's
+  // T501: what the trip around a day costs (quoteTrip at the traveller's
   // Lifestyle and stay tier) and the party a standalone day is priced for.
   stayTier = 'home', lifestyle = null, groupSize = 1,
   // A day plan someone shared as a link (#day=, read by App once).
@@ -2032,10 +2032,10 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
       if (plan.tripDraft) {
         const d = loadTripDraft();
         if (!d?.stops?.length) return null;
-        return priceTrip({ ...d, stayTier, lifestyle: lifestyle || d.lifestyle }, { data });
+        return quoteTrip({ ...d, stayTier, lifestyle: lifestyle || d.lifestyle }, { data });
       }
       const st = plannerStateFromPlan(plan, { stayTier, lifestyle });
-      return st ? priceTrip(st, { data }) : null;
+      return st ? quoteTrip(st, { data }) : null;
     } catch {
       return null;
     }

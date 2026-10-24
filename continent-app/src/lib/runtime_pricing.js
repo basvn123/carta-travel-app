@@ -15,8 +15,7 @@
 
 import { round2 } from './math.js';
 import { buildAviasalesLink } from './affiliate.js';
-import { bedPrice, tiersAt, STAY_TIERS as STAY_TIER_LIST } from './stayPrice.js';
-import { roundTripNear } from './flights/flights.js';
+import { bedPrice, STAY_TIERS as STAY_TIER_LIST } from './stayPrice.js';
 import { rule } from './price/config.js';
 
 // Nights between two ISO date strings (return must be >= depart).
@@ -110,7 +109,7 @@ export function needsDriveHome(choices) {
 /** Where a drive starts. The town the traveller named always wins; the origin
  *  airport is the fallback only in plane mode, where the drive is just the
  *  comparison offered when no fare exists. */
-function driveOrigin(choices) {
+export function driveOrigin(choices) {
   if (isPoint(choices?.drive_home)) return choices.drive_home;
   return isPoint(choices?.home) ? choices.home : null;
 }
@@ -160,40 +159,6 @@ export function drivingEstimate(dest, home, choices, model) {
     total: round2(total),
     per_person: round2(total / group),
     drive_hours_one_way: Math.round((roadKm / (m.avg_speed_kmh || 90)) * 10) / 10,
-  };
-}
-
-/** Cost of *renting a car at the destination* for the stay, or null if the
- *  destination does not need one. Economy day-rate x days x number of cars, with
- *  a summer-season uplift on the day-rate (the stored rate is an annual midpoint)
- *  and a weekly discount for stays of 7+ nights. Scales with trip length & group.
- */
-export function rentalEstimate(dest, nights, choices, model, departDate) {
-  const lt = dest.local_transport || {};
-  if (!lt.car_needed) return null;
-  const m = { ...DEFAULT_CAR_MODEL, ...(model || {}) };
-  const days = Math.max(1, nights);
-  const group = Math.max(1, choices.group_size || 1);
-  const cars = carsForGroup(group, m.car_capacity);
-  const baseRate = (m.rental_eur_per_day_by_iso2 && m.rental_eur_per_day_by_iso2[dest.iso2])
-    || lt.rental_eur_per_day || m.rental_eur_per_day_default;
-  // Summer rentals cost more, lift the annual-midpoint day-rate by depart month.
-  const month = departDate ? Number(departDate.slice(5, 7)) : null;
-  const season = (month && m.rental_seasonality && m.rental_seasonality[month] != null)
-    ? m.rental_seasonality[month] : 1;
-  const rate = baseRate * season;
-  const gross = cars * days * rate;
-  const disc = days >= 7 ? (m.rental_weekly_discount_pct || 0) / 100 : 0;
-  const total = gross * (1 - disc);
-  return {
-    cars,
-    days,
-    rate: round2(rate),            // effective day-rate after season
-    base_rate: round2(baseRate),   // stored annual midpoint
-    season,
-    discount_pct: Math.round(disc * 100),
-    total: round2(total),
-    per_person: round2(total / group),
   };
 }
 
@@ -435,7 +400,7 @@ export function airportLastLeg(dest, straightKm) {
  *  none, the route into a served airport within PLANE_REACH_KM, with the last
  *  leg priced in. Returns { route, via }, either of which may be null.
  */
-function airRoute(dest, choices, allDests) {
+export function airRoute(dest, choices, allDests) {
   const own = pickAirRoute(dest, choices.origin_pref);
   if (own) return { route: own, via: null };
 
@@ -463,197 +428,6 @@ function airRoute(dest, choices, allDests) {
   }
   return { route: null, via: null };
 }
-
-/** Full trip cost for these dates + choices. Prices the trip two ways and picks
- *  the one in `choices.transport_mode` ('plane' | 'car'):
- *    - plane: the air routes decide whether and where you can fly (this
- *      destination or an airport within PLANE_REACH_KM of it). The total is
- *      the return flight when the home airport's swept file has one near
- *      these dates (T518: `opts.flights`, flights/flights.js roundTripNear,
- *      fare and bags for every seat), the last leg in (shuttle or a rental
- *      car), a rental at the destination when one is needed there, and the
- *      stay. Without a flight near the dates the plane total leaves it out,
- *      as before (T511), and `flight` is null so the screen can say so.
- *    - car  : fuel + tolls to drive there and back (only if road-reachable and
- *      within max_drive_km); no rental, you brought your own car.
- *  Accommodation + on-the-ground are added the same way for both. Returns null
- *  if the destination cannot be reached either way.
- *
- *  `allDests` (the whole catalogue) is optional but enables the nearby-airport
- *  reach above; without it only destinations with their own air route can be
- *  flown to. `opts.flights` is the home airport's swept flight file
- *  (data.flights); without it no flight is priced.
- */
-export function composeTrip(dest, departDate, returnDate, choices, allDests = null, opts = {}) {
-  if (!dest || !departDate || !returnDate || returnDate <= departDate) return null;
-
-  const groupSize = Math.max(1, choices.group_size || 1);
-  const nights = Math.max(1, tripDaysBetween(departDate, returnDate));
-  const home = driveOrigin(choices);
-  const carModel = choices.car_model || null;
-
-  // Accommodation + on-the-ground are the same whichever way you travel.
-  const accom = accommodationPerPerson(dest, nights, departDate, choices.accommodation_model, groupSize, choices.stay_tier);
-  const accomPerPerson = accom ? accom.total : 0;
-  const accomTotal = accomPerPerson * groupSize;
-
-  const ground = groundSpendPerPerson(dest, nights, choices.lifestyle);
-  const groundPerPerson = ground ? ground.total : 0;
-  const groundTotal = groundPerPerson * groupSize;
-
-  const stayTotal = accomTotal + groundTotal;
-
-  // --- Plane option: the last leg in, and a rental if a car is needed there.
-  const { route, via: viaAirport } = airRoute(dest, choices, allDests);
-  const rental = rentalEstimate(dest, nights, choices, carModel, departDate); // null if not needed
-  const rentalTotal = rental ? rental.total : 0;
-
-  // Airport transfer: for gems / anchored dests the flight lands at an anchor
-  // airport and you finish the trip by bus/shuttle. ground_eur is a per-person
-  // one-way fare, so count it round-trip and per person. Zero for dests you fly
-  // straight into (ground_eur = 0).
-  const transferPpOneWay = route ? (route.ground_eur || 0) : 0;
-  const transferPerPerson = transferPpOneWay * 2;          // there + back
-  const transferTotal = transferPerPerson * groupSize;
-
-  // The return flight (T518): out near the first day, home near the last,
-  // into the airport the route lands at, for every seat that pays, with the
-  // traveller's bag on both legs. Null when the sweep has no flight near
-  // these dates, never a guess.
-  const flightRt = route && opts?.flights
-    ? roundTripNear(opts.flights, route.anchor_airport || dest.anchor_airport || dest.iata,
-      departDate, returnDate, { paying: groupSize, bagKey: choices.baggage_key || rule('request.default_bag') })
-    : null;
-  const flightTotal = flightRt ? flightRt.total : 0;
-
-  const planeGrand = route ? flightTotal + transferTotal + rentalTotal + stayTotal : null;
-
-  // --- Car option: drive there & back. You have your car, so no rental.
-  const driving = drivingEstimate(dest, home, choices, carModel); // null if not drivable
-  const drivable = !!driving;
-  const carGrand = drivable ? driving.total + stayTotal : null;
-
-  // --- Train and bus (T582): the caller's ground pricer (lib/travelWay.js,
-  // handed in as opts.ground so this module stays free of the leg
-  // estimator), the party's return journey from the From point, or null.
-  const want = choices.transport_mode || 'any';
-  const wayTotal = (m) => {
-    if (typeof opts?.ground !== 'function') return null;
-    const r = opts.ground(dest, m);
-    return r && Number.isFinite(r.total) ? r.total : null;
-  };
-  const trainWay = want === 'train' || want === 'any' ? wayTotal('train') : null;
-  const busWay = want === 'bus' || want === 'any' ? wayTotal('bus') : null;
-  const trainGrand = trainWay != null ? trainWay + stayTotal : null;
-  const busGrand = busWay != null ? busWay + stayTotal : null;
-
-  // --- Pick the effective mode. A chosen way prices that way; plane falls
-  // back to the car as it always did; any way takes the cheapest that reaches.
-  let mode;
-  if (want === 'train' || want === 'bus') {
-    if ((want === 'train' ? trainGrand : busGrand) == null) return null;
-    mode = want;
-  } else if (want === 'any') {
-    const options = [['plane', planeGrand], ['car', carGrand], ['train', trainGrand], ['bus', busGrand]]
-      .filter(([, v]) => v != null);
-    if (!options.length) return null;
-    mode = options.reduce((a, b) => (b[1] < a[1] ? b : a))[0];
-  } else {
-    mode = want === 'car' && drivable ? 'car' : 'plane';
-    if (mode === 'plane' && planeGrand == null) {
-      if (drivable && want !== 'plane') mode = 'car';  // no flight, but we can drive (never when only flying was asked, T597)
-      else return null;                  // unreachable for these dates
-    }
-  }
-
-  const grandTotal = { plane: planeGrand, car: carGrand, train: trainGrand, bus: busGrand }[mode];
-  const grandPerPerson = grandTotal / groupSize;
-  const lt = dest.local_transport || null;
-
-  return {
-    nights,
-    transport_mode:     mode,            // the mode actually priced: plane | car | train | bus
-    requested_mode:     want,
-    // T582: the train or bus journey in the total, group return, when priced.
-    way_total:          mode === 'train' ? round2(trainWay) : mode === 'bus' ? round2(busWay) : null,
-    drivable,
-
-    // Can you actually fly here for these dates? Distinct from transport_mode:
-    // in plane mode a flightless destination is quietly priced as a drive, and
-    // this is the flag that keeps the UI honest about that.
-    plane_reachable:    planeGrand != null,
-    // Set only when the flight lands at a *nearby* airport rather than this
-    // destination's own: { kind: 'shuttle' | 'rental', city, iata, road_km, ... }
-    via_airport:        viaAirport,
-
-    // The air route (present when one exists; no fare, T511)
-    origin:             route?.origin || null,
-    anchor_airport:     route?.anchor_airport || null,
-    ground_one_way_eur: route?.ground_eur || 0,
-    ground_minutes:     route?.ground_minutes || 0,
-
-    // The return flight in the plane total (T518), or null when none was
-    // found near these dates: { out, back, total } for the group, the legs
-    // as flights/flights.js returns them (airline, date, price a seat, checked).
-    flight:             flightRt ? {
-      out: flightRt.out, back: flightRt.back, total: round2(flightRt.total),
-      perSeat: round2(flightRt.perSeat), bags: round2(flightRt.bags), bagsKnown: flightRt.bagsKnown,
-    } : null,
-    flight_total:       round2(flightTotal),
-
-    // Airport->destination transfer (bus/shuttle), round-trip. 0 when you fly
-    // straight in (no anchor). Included in the plane total.
-    transfer_one_way_eur: round2(transferPpOneWay),
-    transfer_per_person:  round2(transferPerPerson),
-    transfer_total:       round2(transferTotal),
-
-    // Driving (present when drivable)
-    driving:            driving,         // group-total breakdown (fuel + tolls)
-    // The point the drive was measured from, so the receipt can name it rather
-    // than saying "from your airport" about a road trip. Null when the fallback
-    // origin airport supplied the coordinates.
-    drive_from:         driving ? (choices.drive_home?.name || null) : null,
-
-    // Local transport / rental at the destination
-    local_transport:    lt,
-    rental:             rental,          // group-total breakdown (null if not needed)
-    rental_total:       round2(rentalTotal),
-
-    // Accommodation (per person + totals)
-    // v18 (T534): how the bed was found, measured | nearby | modelled.
-    accom_level:        accom?.q || dest.accommodation?.q || null,
-    accom_source:       accom?.from || null,
-    accom_entire_home_night_eur: dest.accommodation?.beds?.bnb_home?.['4'] ?? null,
-    accommodation:      accom,
-    accom_per_person:   round2(accomPerPerson),
-    accom_total:        round2(accomTotal),
-    // Stay tier actually priced ('home' when no tier chosen or none measured)
-    // + the honesty flag for a requested-but-unmeasured tier.
-    stay_tier:          accom ? accom.tier : 'home',
-    stay_tier_fallback: accom ? accom.tier_fallback : false,
-    stay_tiers_available: tiersAt(dest),
-
-    // On-the-ground (per person + totals)
-    cost_level:         dest.costs?.level || null,
-    price_source:       dest.costs?.price_source || null,
-    ground:             ground,
-    ground_per_person:  round2(groundPerPerson),
-    ground_total:       round2(groundTotal),
-
-    // The plane and car totals (for the comparison) + the selected one.
-    plane_grand_total:  planeGrand != null ? round2(planeGrand) : null,
-    car_grand_total:    carGrand != null ? round2(carGrand) : null,
-    grand_total:        round2(grandTotal),
-    grand_total_pp:     round2(grandPerPerson),
-  };
-}
-
-/** Cheapest bookable total for these dates, or null. */
-export function cheapestTotal(dest, departDate, returnDate, choices, allDests = null, opts = {}) {
-  const b = composeTrip(dest, departDate, returnDate, choices, allDests, opts);
-  return b ? b.grand_total : null;
-}
-
 
 // Flight booking deeplink, the one external service the app links to.
 // `origin` must be the SAME airport the displayed fare departs from (e.g. CRL for

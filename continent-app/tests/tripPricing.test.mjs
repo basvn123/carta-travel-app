@@ -4,8 +4,13 @@
 // read EUR 586 against EUR 771). Run: npm test (from continent-app/)
 import test from "node:test";
 import assert from "node:assert/strict";
-import { stopStayCost, pickLegMode } from "../src/lib/trip_planner_pricing.js";
-import { accommodationPerPerson, groundSpendPerPerson, DEFAULT_LIFESTYLE } from "../src/lib/runtime_pricing.js";
+import { pickLegMode } from "../src/lib/trip_planner_pricing.js";
+import { DEFAULT_LIFESTYLE } from "../src/lib/runtime_pricing.js";
+import { quoteStay, tripRequest, priceDay, atDates } from "../src/lib/price/index.js";
+
+// T702: a stop is priced by the engine (lib/price/stay.js quoteStay).
+const stopStayCost = (dest, nights, start, { groupSize = 1, stayTier = "home", lifestyle = null } = {}) =>
+  quoteStay(dest, nights, start, tripRequest({ groupSize, stayTier, lifestyle }));
 
 // A town with a measured bed and a cost basket, the two things a stop is
 // priced from. No seasonality curve, so the month does not move the figure.
@@ -25,17 +30,17 @@ const thrifty = {
 
 test("a stop is its bed plus its days, for the whole party", () => {
   const c = stopStayCost(town, 3, "2026-11-10", { groupSize: 2, stayTier: "home", lifestyle: thrifty });
-  const accom = accommodationPerPerson(town, 3, "2026-11-10", null, 2, "home");
-  const ground = groundSpendPerPerson(town, 3, thrifty);
-  assert.equal(c.accomTotal, Math.round(accom.total * 2 * 100) / 100);
-  assert.equal(c.groundTotal, Math.round(ground.total * 2 * 100) / 100);
+  // The destination page's day at the same dates, times the nights and the seats (V1, V3).
+  const day = priceDay(town, atDates(tripRequest({ groupSize: 2, stayTier: "home", lifestyle: thrifty }), "2026-11-10", "2026-11-13"));
+  assert.equal(c.accomTotal, Math.round(day.stayEur * 3 * 2 * 100) / 100);
+  assert.equal(c.groundTotal, Math.round(day.foodEur * 3 * 2 * 100) / 100);
   assert.equal(c.total, Math.round((c.accomTotal + c.groundTotal) * 100) / 100);
 });
 
 test("the days are priced at the lifestyle handed over, the app default without one", () => {
   const withDefault = stopStayCost(town, 3, null, { groupSize: 1 });
-  const atDefault = groundSpendPerPerson(town, 3, DEFAULT_LIFESTYLE);
-  assert.equal(withDefault.groundTotal, atDefault.total);
+  const atDefault = stopStayCost(town, 3, null, { groupSize: 1, lifestyle: DEFAULT_LIFESTYLE });
+  assert.equal(withDefault.groundTotal, atDefault.groundTotal);
   const thriftyDays = stopStayCost(town, 3, null, { groupSize: 1, lifestyle: thrifty });
   assert.notEqual(thriftyDays.groundTotal, withDefault.groundTotal);
 });
@@ -47,9 +52,7 @@ test("a pass-through stop books no bed", () => {
 });
 
 test("one trip, two screens, one total", () => {
-  // The wizard sums stopStayCost over its stops (GuidedTripWizard, stopCosts);
-  // the planner sums the same function over the same stops (useTripPlanner,
-  // stayCosts). Same inputs in, so the same figure out.
+  // The wizard and the planner both price a stop with quoteStay (T702). Same inputs in, so the same figure out.
   const stops = [["2026-11-10", 3], ["2026-11-13", 4]];
   const opts = { groupSize: 2, stayTier: "home", lifestyle: thrifty };
   const wizard = stops.map(([d, n]) => stopStayCost(town, n, d, opts));

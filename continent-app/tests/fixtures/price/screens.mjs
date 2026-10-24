@@ -6,8 +6,12 @@
 //
 // A request is the app state a traveller can set:
 //   { choices, departDate, returnDate, dateFlex, defaultDates, xm }
-import { priceFromIndex } from '../../../src/lib/destPrice.js';
-import { priceDay, priceDays, priceRequest, atDates, DEFAULT_PRICE_REQUEST } from '../../../src/lib/price/index.js';
+import { quoteNights } from '../../../src/lib/price/nights.js';
+import {
+  priceDay, priceDays, priceRequest, atDates, DEFAULT_PRICE_REQUEST, seatsOf,
+} from '../../../src/lib/price/index.js';
+import { quoteTrip } from '../../../src/lib/price/trip.js';
+import { quoteComposed } from '../../../src/lib/price/compose.js';
 import { weekReceipt } from '../../../scripts/prerender/pages.mjs';
 
 const cents = (v) => (v == null || !Number.isFinite(v) ? null : Math.round(v * 100));
@@ -50,14 +54,43 @@ export const SCREENS = {
   prerender: (all, id) => cents(priceDays(all, DEFAULT_PRICE_REQUEST).get(id)?.dayEur),
   prerenderWeek: (all, id) => cents(weekReceipt(priceDays(all, DEFAULT_PRICE_REQUEST).get(id), all[id])?.perDay),
   og: (all, id) => cents(priceDay(all[id], DEFAULT_PRICE_REQUEST, all)?.dayEur),
+  // T702 (F6): the trip planner, the wizard's hand-over, a saved trip and
+  // the Ask budget (quoteTrip): one stop over the request's pair, its beds
+  // and days a person a night.
+  tripPlanner: (all, id, r) => cents(tripDay(all, id, r)),
+  // T708 (F6): a composed trip in Places (quoteComposed), its stay a person a night.
+  placesTrip: (all, id, r) => cents(placesDay(all, id, r)),
 };
+
+function tripDay(all, id, r) {
+  const q = requestOf(r);
+  const priced = quoteTrip({
+    stops: [{ destinationId: id, nights: q.nights, activities: [] }], tripStart: r.departDate,
+    groupSize: q.group.adults, children: q.group.children, babies: q.group.babies,
+    stayTier: q.stay, lifestyle: q.lifestyle,
+  }, { data: { destinations: all, meta: {} } });
+  const s = priced.stayCosts[0];
+  return s?.day?.dayEur == null ? null : (s.accomTotal + s.groundTotal) / seatsOf(q) / q.nights;
+}
+
+function placesDay(all, id, r) {
+  const q = requestOf(r);
+  // The fixture towns have no air route: a zero-cost way there isolates the stay.
+  const b = quoteComposed(all[id], r.departDate, r.returnDate, { ...r.choices, transport_mode: 'train' }, all,
+    { ground: () => ({ total: 0 }) });
+  return b ? (b.accom_total + b.ground_total) / seatsOf(q) / q.nights : null;
+}
 
 function calc(all, id, r) {
   const people = Math.max(1, Math.min(12, Math.round(r.choices?.group_size || 2)));
-  return priceFromIndex(appRow(all, id, r), requestOf(r).nights, people, null, null);
+  return quoteNights(appRow(all, id, r), requestOf(r).nights, people, null, null);
 }
 
 // Screens that show a day price per person per day (the calculator total and
 // the cheaper-base bed are other units and are compared on their own).
 export const DAY_SCREENS = ['explore', 'destHeader', 'placesCard', 'calculatorDay', 'dayPlanner', 'placePage',
-  'prerender', 'prerenderWeek', 'og'];
+  'prerender', 'prerenderWeek', 'og', 'tripPlanner', 'placesTrip'];
+
+// Screens that price at the trip's own exact dates (T666, T702): they meet
+// the card when the request is exact.
+export const EXACT_SCREENS = ['dayPlanner', 'tripPlanner', 'placesTrip'];

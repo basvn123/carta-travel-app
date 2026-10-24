@@ -23,8 +23,6 @@ import {
   trailFilling, cycleFilling, cycleTourFilling, beachFilling, lakeFilling, mountainFilling,
 } from '../lib/cardFillings.js';
 import { okPhoto, firstOkImage } from '../lib/photoVeto.js';
-import { Money } from '../components/ui/index.js';
-import { useDayView } from '../hooks/useDayView.js';
 
 /*
  * The outdoor layers' cards and the composed trip card (T498, split out of
@@ -32,26 +30,10 @@ import { useDayView } from '../hooks/useDayView.js';
  * modules where the merge touches the file, no rewrite). One frame,
  * browse/PlaceCard.jsx, five fillings, lib/cardFillings.js.
  *
- * T498 adds one line to the beach, lake, mountain, walk and ride cards
- * (owner answer T489-d): "Bed and food in {city}: {price} a person a day",
- * the day cost of the nearest priced town at the traveller's Lifestyle, from
- * the same cost index the Explore card and the destination page read. A card
- * whose town has no price carries no line.
+ * T700 (price plan section 5, V12): the beach, lake, mountain, walk and ride
+ * cards carry no town price. A stay price stands only at or towards a
+ * destination; the place page's button to its base town carries it.
  */
-
-/** The nearest town's day, as the card's one price line. `base` is
- *  { city, dayEur, est } or null. */
-export function BedFoodLine({ base, t }) {
-  const view = useDayView();   // T694: per person or the group's total
-  if (!base || base.dayEur == null) return null;
-  return (
-    <span className="pcard-dayin">
-      <span className="pcard-dayin-l">{t('item.dayIn', { city: base.city })}</span>{' '}
-      <Money value={view.day(base.dayEur)} est={base.est} />{' '}
-      <span className="pcard-dayin-u">{view.unit}</span>
-    </span>
-  );
-}
 
 /**
  * One published trip as a photo card: the name, the measured facts, the kind.
@@ -140,7 +122,7 @@ function TrailMedia({ tr, assoc }) {
   return <PlaceCardNoPhoto><RouteIcon size={26} /></PlaceCardNoPhoto>;
 }
 
-export const TripCard = React.memo(function TripCard({ card, km, onOpen, t, countryName, base = null }) {
+export const TripCard = React.memo(function TripCard({ card, km, onOpen, t, countryName }) {
   const { tr, assoc, price } = card;
   const isCityDay = tr.category === 'citytrip';
   const fill = useMemo(() => trailFilling(card, { t, countryName }), [card, t, countryName]);
@@ -161,7 +143,6 @@ export const TripCard = React.memo(function TripCard({ card, km, onOpen, t, coun
   // A flying row's figure a person includes the return flight when the
   // home airport's sweep has one near the dates (T518, composeTrip); only
   // without one is it the stay and the ground, and its title says so.
-  const dayLine = !isCityDay && base && base.dayEur != null ? <BedFoodLine base={base} t={t} /> : null;
   const foot = isCityDay && price ? (
     <span className="places-card-price"
       title={price.mode === 'plane' && !price.flight ? t('places.priceNoFlight') : undefined}>
@@ -181,14 +162,13 @@ export const TripCard = React.memo(function TripCard({ card, km, onOpen, t, coun
       fill={fill}
       hookClass="places-card-kinds"
       foot={foot}
-      dayLine={dayLine}
     />
   );
 });
 
 /** A ranked or listed cycle route. A listed row has no score, and says so in
  *  the seal's place rather than leaving a gap. */
-export const CycleCard = React.memo(function CycleCard({ r, countryName, onOpen, t, base = null }) {
+export const CycleCard = React.memo(function CycleCard({ r, countryName, onOpen, t }) {
   const rating = r.score != null ? cycleRating(r, t) : null;
   const fill = useMemo(() => cycleFilling(r, { t, countryName }), [r, t, countryName]);
   return (
@@ -203,7 +183,6 @@ export const CycleCard = React.memo(function CycleCard({ r, countryName, onOpen,
         : <span className="cycle-card-unrated">{t('cycle.notScored')}</span>}
       strip={<CardStrip kind="cycle" row={r} />}
       fill={fill}
-      dayLine={base && base.dayEur != null ? <BedFoodLine base={base} t={t} /> : null}
     />
   );
 });
@@ -224,7 +203,7 @@ export const CycleTourCard = React.memo(function CycleTourCard({ tr, countryName
   );
 });
 
-export const BeachCard = React.memo(function BeachCard({ beach, km, countryName, onOpen, t, base = null }) {
+export const BeachCard = React.memo(function BeachCard({ beach, km, countryName, onOpen, t }) {
   const shot = firstOkImage(beach.images);
   const fill = useMemo(() => beachFilling(beach, { t, countryName }), [beach, t, countryName]);
   return (
@@ -236,7 +215,6 @@ export const BeachCard = React.memo(function BeachCard({ beach, km, countryName,
       seal={<RatingBadge rating={beachRating(beach, t)} size="sm" showGem={false} />}
       lead={km != null ? [{ key: 'km', cls: 'places-card-km', text: bandChip(km, t) }] : null}
       fill={fill}
-      dayLine={base && base.dayEur != null ? <BedFoodLine base={base} t={t} /> : null}
     />
   );
 });
@@ -277,7 +255,7 @@ function LakeMonthFact({ lake, month, warmC, t, lang }) {
   );
 }
 
-export const LakeCard = React.memo(function LakeCard({ lake, km, countryName, onOpen, t, month = null, warmC = 18, lang, base = null }) {
+export const LakeCard = React.memo(function LakeCard({ lake, km, countryName, onOpen, t, month = null, warmC = 18, lang }) {
   const shot = firstOkImage(lake.images);
   const fill = useMemo(() => lakeFilling(lake, { t, countryName }), [lake, t, countryName]);
   const { swim } = fill;
@@ -299,7 +277,6 @@ export const LakeCard = React.memo(function LakeCard({ lake, km, countryName, on
       lead={lead}
       note={month ? <LakeMonthFact lake={lake} month={month} warmC={warmC} t={t} lang={lang} /> : undefined}
       fill={fill}
-      dayLine={base && base.dayEur != null ? <BedFoodLine base={base} t={t} /> : null}
     />
   );
 });
@@ -310,7 +287,7 @@ export const LakeCard = React.memo(function LakeCard({ lake, km, countryName, on
  * "can I get up it without walking" decides whether this is a morning out or
  * an expedition.
  */
-export const MountainCard = React.memo(function MountainCard({ mountain, km, countryName, onOpen, t, base = null }) {
+export const MountainCard = React.memo(function MountainCard({ mountain, km, countryName, onOpen, t }) {
   const shot = firstOkImage(mountain.images);
   const fill = useMemo(() => mountainFilling(mountain, { t, countryName }), [mountain, t, countryName]);
   const ride = isLiftServed(mountain);
@@ -328,7 +305,6 @@ export const MountainCard = React.memo(function MountainCard({ mountain, km, cou
       strip={<CardStrip kind="mountain" row={mountain} />}
       lead={lead}
       fill={fill}
-      dayLine={base && base.dayEur != null ? <BedFoodLine base={base} t={t} /> : null}
     />
   );
 });

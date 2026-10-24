@@ -55,8 +55,9 @@ export function PriceItemList({ cost, way = null }) {
       continue;
     }
     const l = lines.get(key);
-    // The car is an item only when the traveller goes by car (plan 3).
-    if (key === 'car' && !l?.basis?.chosen) continue;
+    // The car is an item only when it is in the price (plan 3; T702: a hire
+    // is a trip choice, never in the day).
+    if (key === 'car' && l?.status !== 'included') continue;
     if (!l && key !== 'events') continue;
     const priced = l?.eur != null;
     rows.push({ key, label: t(`price.item.${key}`), amount: priced ? formatMoney(view.day(l.eur)) : null, priced });

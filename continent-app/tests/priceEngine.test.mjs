@@ -83,14 +83,51 @@ test("an excluded item leaves the sum and is marked, never deleted (rule 9)", ()
 
 test("an item without data is missing, never zero (rule 8)", () => {
   const row = priceDay(ALL.LIS, DEFAULT_PRICE_REQUEST, ALL);
-  for (const k of ["transport", "car", "activities"]) {
+  for (const k of ["transport", "activities"]) {
     const l = row.lines.find((x) => x.key === k);
     assert.equal(l.eur, null, k);
     assert.equal(l.quality, "missing", k);
     assert.notEqual(l.status, "included", k);
   }
+  // T702: the car is priced, but not in the day unless the traveller goes by car.
+  const car = row.lines.find((x) => x.key === "car");
+  assert.ok(car.eur > 0);
+  assert.equal(car.status, "not_included");
+  const noIso = priceDay({ ...ALL.LIS, id: "Y", iso2: null }, DEFAULT_PRICE_REQUEST, ALL).lines.find((x) => x.key === "car");
+  assert.equal(noIso.eur, null);
+  assert.equal(noIso.quality, "missing");
   const noFood = { ...ALL.LIS, id: "X", costs: null };
   assert.equal(priceDay(noFood, DEFAULT_PRICE_REQUEST, ALL).dayEur, null);
+});
+
+test("T702: a car hire is never in the day, going by car or not", () => {
+  const byCar = priceRequest({ choices: { transport_mode: "car" } });
+  for (const id of IDS) {
+    const base = priceDay(ALL[id], DEFAULT_PRICE_REQUEST, ALL);
+    const row = priceDay(ALL[id], byCar, ALL);
+    const car = row.lines.find((x) => x.key === "car");
+    assert.equal(car.status, "not_included", id);
+    assert.equal(car.basis.chosen, true, id);
+    assert.equal(row.dayEur, base.dayEur, `${id}: going by car does not move the day`);
+  }
+});
+
+test("V6 (car): a bigger party never pays more a head for the car, unless it fills another car", () => {
+  const cap = 4;
+  for (const id of IDS) {
+    let prev = null;
+    for (let seats = 1; seats <= 12; seats += 1) {
+      const req = priceRequest({ choices: { group_size: seats, transport_mode: "car" } });
+      const car = priceDay(ALL[id], req, ALL).lines.find((x) => x.key === "car");
+      if (car.eur == null) break;
+      assert.equal(car.basis.cars, Math.ceil(seats / cap), `${id} ${seats}`);
+      if (prev && car.eur > prev.eur) assert.ok(car.basis.cars > prev.basis.cars, `${id} ${seats}: ${prev.eur} -> ${car.eur}`);
+      prev = car;
+    }
+  }
+  // Seven people are two cars (plan F6).
+  const seven = priceDay(ALL[IDS[0]], priceRequest({ choices: { group_size: 7, transport_mode: "car" } }), ALL);
+  assert.equal(seven.lines.find((x) => x.key === "car").basis.cars, 2);
 });
 
 test("V6 (bed): a bigger party never pays more a head, unless it needs another room or a bigger place", () => {

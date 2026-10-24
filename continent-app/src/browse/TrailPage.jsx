@@ -1003,7 +1003,7 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
       rows={rows}
       primary={follow ? null : (isCityDay && assoc.destId ? (
         <Button variant="primary" iconEnd={<ChevronRightIcon size={20} />} onClick={() => onSelectDest(assoc.destId)}>
-          {t('trails.openDest', { city: assoc.dest?.city || '' })}
+          {(baseDay && view.stayIn(assoc.dest?.city, baseDay.dayEur)) || t('trails.openDest', { city: assoc.dest?.city || '' })}
         </Button>
       ) : (
         /* Taking it into the app you already walk with is the primary action,
@@ -1014,13 +1014,6 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
           {t(canShareFiles ? 'trails.sendToApp' : 'trails.gpx')}
         </Button>
       ))}
-      costLine={!follow && baseDay && assoc.dest?.city ? (
-        <>
-          {t('item.dayIn', { city: assoc.dest.city })}{' '}
-          <strong><Money value={view.day(baseDay.dayEur)} est={baseDay.est} /></strong>{' '}
-          {view.unit}
-        </>
-      ) : null}
       actions={follow ? [] : [
         start && dirUrl && (
           <a key="dir" className="btn btn-secondary" href={dirUrl} target="_blank" rel="noopener noreferrer">
