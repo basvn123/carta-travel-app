@@ -1151,6 +1151,20 @@ All additive. Existing keys keep their meaning.
 | `dest.local_transport.car_basis` | `"category"` or `"transit_lines"` | `car_layer.py` | `transit_lines` when `practical.transit.*` decided the value. |
 | `dest.local_transport.car_useful_for` | string | `car_layer.py` | what a car still adds where it is optional (remote valleys, trailheads). |
 | `dest.local_transport.parking_hard` | bool | `cache/parking_osm.json` | fewer than 2 public lots within 1.5 km of the centre; absent without a parking harvest. |
-| `dest.crowding.monthly` | `{share[12], tier[12], geo, years[], source}` | Eurostat `tour_occ_nin2m` (NUTS 2, else country) | `share` is the month's part of the year's nights; `tier[i]` applies the annual tier cutoffs to density x 12 x share. |
+| `dest.crowding.monthly` | `{share[12], tier[12], geo, years[], source}` | Eurostat `tour_occ_nin2m` (NUTS 2, else country) | `share` is the month's part of the year's nights; `tier[i]` is the annual tier moved by that month's seasonality (T649, see below; the T642 rule applied the annual cutoffs to density x 12 x share and left almost every place flat). |
 | trips `difficulty` | grade, else the old class raised to the distance/ascent ladder and SAC grade | `export_wire.wire_difficulty` | never below the floors `attributes.py` applies. |
 | lake `beaches[]` | `{id, n, km}` | `lake_outlines.py`, `cache/lake_outlines.json` | beaches within 400 m of the lake outline, any `inland` value; no outline falls back to the old circle plus `inland`. |
+
+## Crowds by month (T649, added 2026-10-24)
+
+`crowding.monthly.tier[i]` uses the same scale as `crowding.tier`: 0 quiet, 1 moderate, 2 busy, 3 crowded.
+`crowding.monthly.rule` is the rule version (`t649-v1`). Shape otherwise unchanged
+(`share[12]`, `tier[12]`, `geo`, `years[]`, `source`, `rule`); `meta.crowding_model.monthly_rule` records the constants.
+
+Rule (`harvest_tourism_density.month_tier`): `ratio = share * 12` (1.0 is an even month);
+`shift = round(SEASON_GAIN * log2(ratio))`, zero when its size is under `SEASON_DEAD_BAND`, then clamped to
+`-SEASON_MAX_DOWN .. +SEASON_MAX_UP`; `tier[i] = clamp(annual tier + shift, 0, 3)`.
+Constants: `SEASON_GAIN` 3.0, `SEASON_MAX_UP` 1, `SEASON_MAX_DOWN` 2, `SEASON_DEAD_BAND` 0.5.
+Seasonality is regional (NUTS 2, else country), so two places in one region share a share curve and differ
+only through their annual tier.
+
