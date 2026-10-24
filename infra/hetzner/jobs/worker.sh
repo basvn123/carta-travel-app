@@ -9,7 +9,8 @@
 # In order, each phase timed and each reported to R2 as it starts:
 #   setup    the software the job's needs column asks for: docker.io, a Python
 #            3.12 venv with requirements.txt + constraints.txt, the CPU torch
-#            and OpenCLIP stack, libvips with the AV1 encoder and pyvips
+#            and OpenCLIP stack, libvips with the AV1 encoder and pyvips,
+#            the PGDG PostgreSQL client (T647)
 #   inputs   rclone copy of the job's inputs prefix, filtered by its include
 #            patterns, into /srv/carta/in (the local mirror the job reads)
 #   job      infra/hetzner/jobs/<job>.sh under `timeout`, with every core
@@ -120,7 +121,8 @@ setup() {
     run python3.12 -m venv "$VENV" || return 1
     run "$VENV/bin/python" -m pip install -q --upgrade pip || return 1
     # The orchestrator's pins (T048). Wheels only: every package has an
-    # aarch64 cp312 wheel, so nothing compiles on a box billed by the hour.
+    # aarch64 cp312 wheel, so nothing compiles on a box billed by the hour;
+    # T299 checked the same pins on x86_64 (all 71 resolve), for x86 workers.
     run "$VENV/bin/python" -m pip install -q --only-binary=:all: \
       -r "$CARTA_REPO/requirements.txt" -c "$CARTA_REPO/constraints.txt" || return 1
   fi
@@ -139,6 +141,28 @@ setup() {
     run env DEBIAN_FRONTEND=noninteractive apt-get install -y -q \
       libvips-dev libheif-plugin-aomenc || return 1
     run "$VENV/bin/python" -m pip install -q "pyvips==3.2.0" || return 1
+  fi
+  if job_needs pgclient; then
+    # T647. pg_restore must be at least as new as the pg_dump that wrote the
+    # file: the trailslab dumps come from pg_dump 18 (T045 report), and the
+    # lab image's own client is 17, so the PGDG client is installed on the
+    # host and talks to the container over 127.0.0.1. Same key check as the
+    # orchestrator (cax11/cloud-init.yaml, T048-g).
+    local major="${CARTA_PG_CLIENT_MAJOR:-18}" key=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc
+    local fpr="B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8" codename=noble
+    run install -d /usr/share/postgresql-common/pgdg || return 1
+    run curl -fsSL --retry 3 --connect-timeout 20 -o "$key" https://www.postgresql.org/media/keys/ACCC4CF8.asc || return 1
+    if [ "$DRY" != "1" ] && ! gpg --show-keys --with-colons "$key" 2>/dev/null | grep -q "^fpr:::::::::${fpr}:"; then
+      echo "worker.sh: the PGDG signing key does not have fingerprint $fpr; not trusting it"; rm -f "$key"; return 1
+    fi
+    [ -r /etc/os-release ] && codename="$(. /etc/os-release && echo "${VERSION_CODENAME:-noble}")"
+    if [ "$DRY" = "1" ]; then
+      echo "+ write /etc/apt/sources.list.d/pgdg.list: deb [signed-by=$key] https://apt.postgresql.org/pub/repos/apt ${codename}-pgdg main"
+    else
+      echo "deb [signed-by=$key] https://apt.postgresql.org/pub/repos/apt ${codename}-pgdg main" > /etc/apt/sources.list.d/pgdg.list
+    fi
+    run apt-get update -qq || return 1
+    run env DEBIAN_FRONTEND=noninteractive apt-get install -y -q "postgresql-client-${major}" || return 1
   fi
   return 0
 }

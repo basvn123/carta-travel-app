@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-# Spawn an on-demand CAX41 for one heavy job, wait for it, and delete it.
+# Spawn an on-demand worker for one heavy job, wait for it, and delete it. The
+# server type is per job (jobs.tsv column server_type, T647): a CAX41 unless
+# the row names another, e.g. the x86 CPX42 the trailslab job needs.
 # CARTA_CLOUD_ARCHITECTURE.md section 6.2: "create -> cloud-init pulls the repo
 # and the inputs from R2 -> run -> push artifacts to R2 -> delete".
 # Task report: Execution/P3/T047-on-demand-cax41.md. Owner procedure:
@@ -52,6 +54,21 @@
 #   CARTA_STATE_DIR         ledger, locks and fetched logs, default <repo>/logs
 #   CARTA_CACHE_DIR         where the rescore holds live, default <repo>/cache
 #   CARTA_PYTHON            default python3
+#   CARTA_WORKER_TYPE       the server type for jobs whose row has a dash,
+#                           default cax41. CARTA_WORKER_TYPE_<JOB> (upper case,
+#                           e.g. CARTA_WORKER_TYPE_TRAILSLAB=ccx33) beats the
+#                           row for that one job.
+#   CARTA_RUN_ID_FILE       when set, the run id is written there as soon as it
+#                           exists, so a caller (run_pipeline.py's
+#                           trailslab_worker task) can read the run's staging
+#                           prefix archive/runs/<run id>/ afterwards.
+#   For jobs whose needs include gpg (T647, trailslab), unless the job
+#   argument is "plain":
+#   CARTA_WORKER_GPG_KEY_FILE  the worker's armored SECRET key, default
+#                           ~/.config/carta/trailslab-worker.sec.asc (mode 600)
+#   CARTA_BACKUP_KEY        the owner's backup key in this box's keyring; its
+#                           PUBLIC half is exported and handed to the worker so
+#                           every dump it writes is also encrypted to the owner
 #
 # Exit codes: 0 the job succeeded and its outputs were promoted; 1 the job
 # failed, timed out or the infrastructure failed; 2 usage; 4 another spawn of
@@ -87,7 +104,7 @@ while [ $# -gt 0 ]; do
     --cost) MODE=cost ;;
     --list) MODE=list ;;
     --render) MODE=render; RENDER_TO="${2:-}"; shift ;;
-    -h|--help) sed -n '2,64p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    -h|--help) sed -n '2,77p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0 ;;
     --) shift; ARGS+=("$@"); break ;;
     -*) if [ -n "$JOB" ]; then ARGS+=("$1"); else echo "unknown option $1 (try --help)" >&2; exit 2; fi ;;
     *) if [ -z "$JOB" ]; then JOB="$1"; else ARGS+=("$1"); fi ;;
@@ -95,7 +112,7 @@ while [ $# -gt 0 ]; do
   shift
 done
 
-SERVER_TYPE="${CARTA_WORKER_TYPE:-cax41}"
+SERVER_TYPE="${CARTA_WORKER_TYPE:-cax41}"   # per job below, once the row is read
 IMAGE="ubuntu-24.04"
 ORCH="${CARTA_SERVER_NAME:-carta-orchestrator}"
 KEY_NAME="${CARTA_SSH_KEY_NAME:-carta-orchestrator}"
@@ -149,12 +166,22 @@ max_ceiling_s() {
 # --- the ledger ----------------------------------------------------------------
 # One row per worker: logs/cax41_runs.tsv, pushed to R2 after every change.
 LEDGER_HEADER="run_id	job	args	created_at	deleted_at	wall_hours	started_hours	ipv4	eur	eur_started_h	outcome	exit_code"
+# job_server_type <job>: the server type a job runs on (T647). A subshell, so
+# reading another job's row never changes the current job's JOB_* values.
+job_server_type() {
+  ( local up; up="$(printf '%s' "$1" | tr '[:lower:]-' '[:upper:]_')"
+    local per="CARTA_WORKER_TYPE_$up"
+    if [ -n "${!per:-}" ]; then echo "${!per}"; exit 0; fi
+    if job_row "$1" 2>/dev/null && [ -n "$JOB_SERVER_TYPE" ]; then echo "$JOB_SERVER_TYPE"; exit 0; fi
+    echo "${CARTA_WORKER_TYPE:-cax41}" )
+}
+
 ledger_append() {  # run_id job args created_epoch deleted_epoch|"" ipv4 outcome exit_code
   local run_id="$1" job="$2" args="$3" c="$4" d="$5" v4="$6" outcome="$7" code="$8"
   local deleted_at wall="" started="" eur="" eur_s="" price
   if [ -n "$d" ]; then
     deleted_at="$(iso "$d")"
-    if price="$("$PY" "$HERE/cost.py" price --seconds $(( d - c )) --ipv4 "$v4" 2>/dev/null)"; then
+    if price="$("$PY" "$HERE/cost.py" price --seconds $(( d - c )) --ipv4 "$v4" --type "$(job_server_type "$job")" 2>/dev/null)"; then
       IFS=$'\t' read -r wall started eur eur_s <<< "$price"
     else
       warn "cost.py did not run ($PY); the row has no cost, fill it from the wall time"
@@ -262,9 +289,9 @@ sweep() {
 # --- modes that do not spawn ---------------------------------------------------
 case "$MODE" in
   list)
-    printf '%-16s %-9s %-10s %s\n' job ceiling_h expected_h needs
+    printf '%-16s %-9s %-10s %-7s %s\n' job ceiling_h expected_h type needs
     for j in $(job_names); do
-      job_row "$j"; printf '%-16s %-9s %-10s %s\n' "$j" "$JOB_CEILING_H" "$JOB_EXPECTED_H" "${JOB_NEEDS:--}"
+      job_row "$j"; printf '%-16s %-9s %-10s %-7s %s\n' "$j" "$JOB_CEILING_H" "$JOB_EXPECTED_H" "$(job_server_type "$j")" "${JOB_NEEDS:--}"
     done
     exit 0 ;;
   cost)
@@ -286,6 +313,34 @@ done
 case "$IPV4" in 0|1) ;; *) die 2 "IPV4 must be 0 or 1" ;; esac
 CEILING_S="${CARTA_CEILING_S:-$(hours_to_s "$JOB_CEILING_H")}"
 ARGS_STR="${ARGS[*]:-}"
+SERVER_TYPE="$(job_server_type "$JOB")"
+WORKER_ARCH="$(server_arch "$SERVER_TYPE")" || die 2 "server type '$SERVER_TYPE' for $JOB is not a cax, cx, cpx or ccx type"
+
+# --- the dump keys (T647, jobs whose needs include gpg) --------------------------
+# Default "worker-key": the worker gets its own secret key (to decrypt the
+# trailslab dump) and the owner's public key (so the dump it writes back is
+# encrypted to both). The job argument "plain" turns both off: the dump is then
+# read and written unencrypted (owner decision, README "The trailslab job").
+# Base64 on one line, so the values pass the quote and newline check below.
+GPG_SECRET_B64=""; GPG_PUBLIC_B64=""; GPG_MODE="none"
+if job_needs gpg; then
+  GPG_MODE="worker-key"
+  for a in ${ARGS[@]+"${ARGS[@]}"}; do [ "$a" = "plain" ] && GPG_MODE="plain"; done
+fi
+GPG_KEY_FILE="${CARTA_WORKER_GPG_KEY_FILE:-${HOME:-/home/carta}/.config/carta/trailslab-worker.sec.asc}"
+load_gpg_keys() {  # fills GPG_SECRET_B64 and GPG_PUBLIC_B64, or says why not
+  [ "$GPG_MODE" = "worker-key" ] || return 0
+  if [ -r "$GPG_KEY_FILE" ]; then
+    GPG_SECRET_B64="$(base64 -w0 < "$GPG_KEY_FILE")"
+  else
+    echo "the worker key $GPG_KEY_FILE is not readable (CARTA_WORKER_GPG_KEY_FILE)"; return 1
+  fi
+  if [ -z "${CARTA_BACKUP_KEY:-}" ]; then echo "CARTA_BACKUP_KEY is not set"; return 1; fi
+  if ! command -v gpg >/dev/null; then echo "gpg is not installed"; return 1; fi
+  GPG_PUBLIC_B64="$(gpg --batch --armor --export "$CARTA_BACKUP_KEY" 2>/dev/null | base64 -w0)"
+  if [ -z "$GPG_PUBLIC_B64" ]; then echo "public key '$CARTA_BACKUP_KEY' is not in this keyring"; return 1; fi
+  return 0
+}
 
 # --- render the user data ------------------------------------------------------
 # render FILE REDACT: the cloud-init template with every placeholder filled.
@@ -297,12 +352,20 @@ render() {
   ak="${CARTA_WORKER_R2_ACCESS_KEY_ID:-${RCLONE_CONFIG_R2_ACCESS_KEY_ID:-}}"
   sk="${CARTA_WORKER_R2_SECRET_ACCESS_KEY:-${RCLONE_CONFIG_R2_SECRET_ACCESS_KEY:-}}"
   tok=""; [ "$SELF_DELETE" = "1" ] && tok="${HCLOUD_TOKEN:-}"
+  local gsec="$GPG_SECRET_B64" gpub="$GPG_PUBLIC_B64"
   if [ "$redact" = "1" ]; then
     ep="https://REDACTED.r2.cloudflarestorage.com"; ak="REDACTED"; sk="REDACTED"
     [ "$SELF_DELETE" = "1" ] && tok="REDACTED"
+    # Same length as the real value, so the 32 KiB check stays honest. Without
+    # the key files (a laptop), a typical size: an ed25519 secret key is about
+    # 1.4 KB in base64, an RSA 4096 public key about 4.7 KB.
+    if [ "$GPG_MODE" = "worker-key" ]; then
+      gsec="$(printf 'R%.0s' $(seq 1 "${#gsec}"))"; [ -n "$GPG_SECRET_B64" ] || gsec="REDACTED$(printf 'R%.0s' $(seq 1 1400))"
+      gpub="$(printf 'R%.0s' $(seq 1 "${#gpub}"))"; [ -n "$GPG_PUBLIC_B64" ] || gpub="REDACTED$(printf 'R%.0s' $(seq 1 4700))"
+    fi
   fi
   local v
-  for v in "$ep" "$ak" "$sk" "$tok" "$REPO_URL" "$REPO_BRANCH"; do
+  for v in "$ep" "$ak" "$sk" "$tok" "$REPO_URL" "$REPO_BRANCH" "$gsec" "$gpub"; do
     case "$v" in *"'"*|*$'\n'*|*'@@'*) die 1 "a value for the user data contains a quote, a newline or @@; refusing to render" ;; esac
   done
   # tr strips CR: a Windows checkout with core.autocrlf would otherwise hand
@@ -319,6 +382,9 @@ render() {
   content="${content//@@R2_ACCESS_KEY_ID@@/"$ak"}"
   content="${content//@@R2_SECRET_ACCESS_KEY@@/"$sk"}"
   content="${content//@@CARTA_WORKER_HCLOUD_TOKEN@@/"$tok"}"
+  content="${content//@@CARTA_WORKER_ARCH@@/"$WORKER_ARCH"}"
+  content="${content//@@CARTA_WORKER_GPG_SECRET_B64@@/"$gsec"}"
+  content="${content//@@CARTA_WORKER_GPG_PUBLIC_B64@@/"$gpub"}"
   ( umask 077; printf '%s\n' "$content" > "$out" )
   if grep -q '@@[A-Z0-9_]*@@' "$out"; then die 1 "a placeholder was left unrendered in $out"; fi
   local size; size=$(wc -c < "$out" | tr -d ' ')
@@ -327,6 +393,9 @@ render() {
 }
 
 RUN_ID="$(date -u +%Y%m%dt%H%M%Sz)-$(od -An -N2 -tx1 /dev/urandom | tr -d ' \n')"
+if [ -n "${CARTA_RUN_ID_FILE:-}" ] && [ "$MODE" = "run" ]; then
+  printf '%s\n' "$RUN_ID" > "$CARTA_RUN_ID_FILE" || warn "could not write the run id to $CARTA_RUN_ID_FILE"
+fi
 NAME="carta-worker-${JOB//_/-}-$RUN_ID"
 RUN_PREFIX="archive/runs/$RUN_ID"
 
@@ -347,13 +416,16 @@ if [ "$DRY_RUN" -eq 0 ]; then
     [ -n "${!v:-}" ] || die 1 "$v is not set; the worker could not pull inputs or report"
   done
   "$PY" -c 'import sys' 2>/dev/null || warn "$PY does not run; ledger rows will carry no cost"
+  if ! why="$(load_gpg_keys)"; then die 1 "$JOB needs the dump keys ($GPG_MODE): $why. README.md \"The trailslab job\" has the setup; the job argument plain runs without keys."; fi
+  load_gpg_keys >/dev/null
 else
+  load_gpg_keys >/dev/null 2>&1 || true
   say "DRY RUN: nothing is created, no token is needed. Every command below is what a real run executes."
 fi
 if [ "$KEEP" -eq 1 ]; then
   printf '\n%s\n' "#################################################################"
-  printf '%s\n'   "# --keep IS ON. This run will NOT delete its CAX41 at the end."
-  printf '%s\n'   "# It bills about EUR 0.056 an hour until you delete it:"
+  printf '%s\n'   "# --keep IS ON. This run will NOT delete its worker at the end."
+  printf '%s\n'   "# It bills by the hour ($SERVER_TYPE, see cost.py) until you delete it:"
   printf '%s\n'   "#   hcloud server delete $NAME"
   printf '%s\n'   "# The sweep deletes it ${KEEP_HOURS} h after its ceiling if you forget."
   printf '%s\n\n' "#################################################################"
@@ -491,6 +563,8 @@ else
 fi
 say "run $RUN_ID: $JOB ${ARGS_STR} on $SERVER_TYPE in $LOCATION, repo $REPO_URL@$REPO_BRANCH"
 say "ceiling $(( CEILING_S / 60 )) min, deadline $(iso "$DEADLINE"); planned ${JOB_EXPECTED_H} h"
+say "$("$PY" "$HERE/cost.py" plan --hours "$JOB_EXPECTED_H" --type "$SERVER_TYPE" --ipv4 "$IPV4" 2>&1 || echo "planned cost unknown for $SERVER_TYPE")"
+[ "$GPG_MODE" != "none" ] && say "dump keys: $GPG_MODE"
 
 ip_args=()
 [ "$IPV4" -eq 0 ] && ip_args+=(--without-ipv4)

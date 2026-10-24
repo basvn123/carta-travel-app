@@ -1,9 +1,10 @@
 #cloud-config
 #
 # Carta on-demand worker: Hetzner CAX41 (Ampere arm64, 16 vCPU, 31 GB,
-# 320 GB NVMe), Ubuntu 24.04, alive for one job and then deleted.
-# CARTA_CLOUD_ARCHITECTURE.md section 6.2. Task report:
-# Execution/P3/T047-on-demand-cax41.md.
+# 320 GB NVMe) by default, or the x86 type a job's row in jobs.tsv names
+# (T647: the trailslab job runs on a CPX42), Ubuntu 24.04, alive for one job
+# and then deleted. CARTA_CLOUD_ARCHITECTURE.md section 6.2. Task reports:
+# Execution/P3/T047-on-demand-cax41.md, and T647 for x86 and the dump keys.
 #
 # Do not pass this file to Hetzner by hand. spawn.sh renders the @@...@@
 # placeholders (run id, job, arguments, repo, deadline, the R2 credentials and,
@@ -77,12 +78,21 @@ write_files:
       RCLONE_CONFIG_R2_SECRET_ACCESS_KEY='@@R2_SECRET_ACCESS_KEY@@'
       # Empty unless spawn.sh ran with CARTA_WORKER_SELF_DELETE=1.
       CARTA_WORKER_HCLOUD_TOKEN='@@CARTA_WORKER_HCLOUD_TOKEN@@'
-      # Same pin as the orchestrator (cax11/cloud-init.yaml), whose arm64
-      # checksum this is; that file also carries the amd64 one (T299). Workers
-      # are arm64 only. Change the version in both files together.
+      # T647. Empty unless the job's needs include gpg (trailslab) and the
+      # job argument is not "plain": the worker's own SECRET key, to decrypt
+      # the trailslab dump, and the owner's PUBLIC backup key, so the dump it
+      # writes back is encrypted to both. Base64 of the armored keys, one line.
+      CARTA_WORKER_GPG_SECRET_B64='@@CARTA_WORKER_GPG_SECRET_B64@@'
+      CARTA_WORKER_GPG_PUBLIC_B64='@@CARTA_WORKER_GPG_PUBLIC_B64@@'
+      # amd64 or arm64, from the server type spawn.sh created (T647).
+      CARTA_WORKER_ARCH='@@CARTA_WORKER_ARCH@@'
+      # Same pin as the orchestrator (cax11/cloud-init.yaml), with both of its
+      # checksums (T299): arm64 for CAX workers, amd64 for the x86 types a job
+      # may name (T647). Change the version in both files together.
       # https://downloads.rclone.org/v1.75.1/SHA256SUMS
       RCLONE_VERSION='1.75.1'
-      RCLONE_SHA256='03f2504174034b6d004152ed7369251c9a9ec1f7e0836eda420f5c7a5ec0dff9'
+      RCLONE_SHA256_ARM64='03f2504174034b6d004152ed7369251c9a9ec1f7e0836eda420f5c7a5ec0dff9'
+      RCLONE_SHA256_AMD64='982b5aa772841168f8e380f139e9e787b2a105403e32b94da8676a0e1c0a13ab'
 
   - path: /usr/local/sbin/carta-worker-boot
     owner: root:root
@@ -142,12 +152,21 @@ write_files:
       shutdown -h "+$mins" "carta worker deadline" || true
 
       install_rclone() {
-        local t; t=$(mktemp -d)
+        # The box's own architecture decides, so a wrong label cannot install
+        # a binary that does not run; CARTA_WORKER_ARCH is only cross-checked.
+        local t arch sum; t=$(mktemp -d)
+        arch="$(dpkg --print-architecture)"
+        case "$arch" in
+          arm64) sum="$RCLONE_SHA256_ARM64" ;;
+          amd64) sum="$RCLONE_SHA256_AMD64" ;;
+          *) say "unsupported architecture $arch"; return 1 ;;
+        esac
+        [ "$arch" = "${CARTA_WORKER_ARCH:-$arch}" ] || say "note: spawn.sh expected $CARTA_WORKER_ARCH, the box is $arch"
         curl -fsSL --retry 3 --connect-timeout 20 -o "$t/rclone.zip" \
-          "https://downloads.rclone.org/v${RCLONE_VERSION}/rclone-v${RCLONE_VERSION}-linux-arm64.zip" || return 1
-        echo "$RCLONE_SHA256  $t/rclone.zip" | sha256sum -c - || return 1
+          "https://downloads.rclone.org/v${RCLONE_VERSION}/rclone-v${RCLONE_VERSION}-linux-${arch}.zip" || return 1
+        echo "$sum  $t/rclone.zip" | sha256sum -c - || return 1
         unzip -q "$t/rclone.zip" -d "$t" &&
-          install -m 0755 "$t/rclone-v${RCLONE_VERSION}-linux-arm64/rclone" /usr/local/bin/rclone
+          install -m 0755 "$t/rclone-v${RCLONE_VERSION}-linux-${arch}/rclone" /usr/local/bin/rclone
         local rc=$?; rm -rf "$t"; return $rc
       }
       # Without rclone there is no way to report. The box powers off, and the

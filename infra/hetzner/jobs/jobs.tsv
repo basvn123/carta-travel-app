@@ -1,4 +1,5 @@
-# Jobs the on-demand CAX41 can run (T047). One row per job, tab-separated.
+# Jobs the on-demand workers can run (T047; per-job server type T647). One row
+# per job, tab-separated.
 # Read by infra/hetzner/cax41/spawn.sh on the orchestrator and by
 # infra/hetzner/jobs/worker.sh on the worker, so both sides agree on the
 # ceiling and the prefixes. A dash means "none". Lines starting with # are
@@ -14,11 +15,17 @@
 # needs            setup worker.sh does before the job: python (venv from
 #                  requirements.txt + constraints.txt), photos (CPU torch and
 #                  OpenCLIP), docker (docker.io from Ubuntu), vips (libvips-dev
-#                  and the libheif AV1 encoder plugin from Ubuntu, pyvips)
+#                  and the libheif AV1 encoder plugin from Ubuntu, pyvips),
+#                  pgclient (the PGDG PostgreSQL client, CARTA_PG_CLIENT_MAJOR,
+#                  default 18), gpg (spawn.sh hands the worker the dump keys
+#                  of infra/hetzner/README.md "The trailslab job")
+# server_type      Hetzner type for this job (T647); a dash means the default,
+#                  CARTA_WORKER_TYPE or cax41. cax* is arm64, cx*, cpx* and
+#                  ccx* are x86 (amd64); cloud-init installs the matching rclone
 # wraps            the local command the job runs, for the reader
-job	inputs_prefix	inputs_include	outputs_prefix	ceiling_h	expected_h	needs	wraps
-selftest	-	-	archive/built/selftest	1	0.25	-	uname, nproc, free, df and an R2 round trip; proves spawn, status, push and delete
-valhalla_tiles	archive/inputs/geofabrik	*/{arg}-latest.osm.pbf	archive/built/valhalla	6	1	docker	docker run ghcr.io/valhalla/valhalla-scripted with serve_tiles=False, as tools/trailslab/valhalla/docker-compose.yml configures it
-planetiler	archive/inputs/geofabrik	*/{arg}-latest.osm.pbf	tiles/basemap	8	2	docker	STUB, exits 3: no Planetiler profile or consumer exists in the repo (architecture section 5.4)
-clip_sweep	archive/caches	{arg}-cache.tar.gz,photo-embeddings.tar.gz,photo-support.tar.gz	archive/caches	12	3	python,photos	python pipeline/photos/rescore.py <layer>, then pipeline/archive/pack.py for the layer and the embeddings
-image_transcode	archive/caches	{arg}-cache.tar.gz	archive/built/derive	8	7.5	python,vips	python pipeline/photos/derive.py run <layer> --upload r2: 3 AVIF + 2 WebP per source straight to img/{ab}/{cd}/{sha1}/ (immutable), manifest to img/manifest/<layer>.json; out/ (report, journals, manifest copy) promoted to archive/built/derive
+job	inputs_prefix	inputs_include	outputs_prefix	ceiling_h	expected_h	needs	server_type	wraps
+selftest	-	-	archive/built/selftest	1	0.25	-	-	uname, nproc, free, df and an R2 round trip; proves spawn, status, push and delete
+valhalla_tiles	archive/inputs/geofabrik	*/{arg}-latest.osm.pbf	archive/built/valhalla	6	1	docker	-	docker run ghcr.io/valhalla/valhalla-scripted with serve_tiles=False, as tools/trailslab/valhalla/docker-compose.yml configures it
+planetiler	archive/inputs/geofabrik	*/{arg}-latest.osm.pbf	tiles/basemap	8	2	docker	-	STUB, exits 3: no Planetiler profile or consumer exists in the repo (architecture section 5.4)
+clip_sweep	archive/caches	{arg}-cache.tar.gz,photo-embeddings.tar.gz,photo-support.tar.gz	archive/caches	12	3	python,photos	-	python pipeline/photos/rescore.py <layer>, then pipeline/archive/pack.py for the layer and the embeddings
+image_transcode	archive/caches	{arg}-cache.tar.gz	archive/built/derive	8	7.5	python,vips	-	python pipeline/photos/derive.py run <layer> --upload r2: 3 AVIF + 2 WebP per source straight to img/{ab}/{cd}/{sha1}/ (immutable), manifest to img/manifest/<layer>.json; out/ (report, journals, manifest copy) promoted to archive/built/derive
