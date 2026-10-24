@@ -39,6 +39,18 @@ export function resolveWhen(s = {}) {
   return { kind: 'exact', month: start, months: spans ? [start, end] : [start] };
 }
 
+/**
+ * The Explore month filter (xm) from a query string ("?tab=map&xm=11"), or
+ * null. The destination page reads it here so it follows the filter the
+ * reader came from (ExploreTab keeps xm in the URL).
+ */
+export function xmFromSearch(search) {
+  try {
+    const n = Number(new URLSearchParams(search || '').get('xm'));
+    return Number.isInteger(n) && n >= 1 && n <= 12 ? n : null;
+  } catch { return null; }
+}
+
 /** The single month the traveller has (the start month), or null. This is the
  *  value App.jsx publishes as travelMonth. */
 export const whenMonth = (w) => (w && w.kind !== 'any' ? w.month : null);

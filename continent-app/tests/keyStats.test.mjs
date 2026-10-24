@@ -5,9 +5,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { resolveWhen, whenMonth, busiestMonth } from '../src/lib/when.js';
+import { resolveWhen, whenMonth, busiestMonth, xmFromSearch } from '../src/lib/when.js';
 import { crowdFor, crowdTierFor, quietFor } from '../src/lib/crowdMonth.js';
-import { mobilityOf, carFreeOf, noCarOk, mobilityStat } from '../src/lib/mobility.js';
+import { mobilityOf, carFreeOf, noCarOk, mobilityStat, gettingAroundRows } from '../src/lib/mobility.js';
 import { pickAirport, airportLine, flyLine, airportOptionLabel } from '../src/lib/airportPick.js';
 import { en } from '../src/i18n/en.js';
 
@@ -130,4 +130,21 @@ test('airport: a public transport time beats a shorter road estimate; train plus
     { mode: 'train+bus', minutes: 75, source: 'gtfs:x' }] }] });
   assert.equal(p.minutes, 75);
   assert.equal(airportLine(p, t), 'XXX, 75 min by train and bus');
+});
+
+test('when: the Explore month filter in the URL wins over the dates (destination page)', () => {
+  assert.equal(xmFromSearch('?tab=map&xm=11'), 11);
+  assert.equal(xmFromSearch('?xm=13'), null);
+  assert.equal(xmFromSearch('?tab=map'), null);
+  const w = resolveWhen({ xm: xmFromSearch('?xm=11'), dateFlex: 'any' });
+  assert.deepEqual([w.kind, whenMonth(w)], ['month', 11]);
+});
+
+test('getting there: car and transit rows read the mobility stat, never "a car is needed"', () => {
+  const r = gettingAroundRows(como, { car_needed: true, rental_eur_day: 52 }, t, 'en', (n) => `~${n}`);
+  assert.equal(r.transit, 'Easy without a car. By train and bus. A car helps for trailheads and lake villages.');
+  assert.equal(r.tone, 'good');
+  assert.equal(r.rental, 'Rental ~52 a day.');
+  assert.equal(gettingAroundRows(como, { car_needed: false }, t).rental, null);
+  assert.equal(gettingAroundRows({ local_transport: {} }, { car_needed: true }, t), null);
 });

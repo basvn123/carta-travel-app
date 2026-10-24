@@ -55,7 +55,7 @@ export function DestPractical({ p }) {
           so in one line (T367): every tab exists for every place, so the bar
           never shifts between places (1.4 part 3). */}
       <Section id="getting" title={t('dest.gettingTitle')}>
-        {getting && <GettingThere getting={lang === 'en' ? getting : { ...getting, why: null }} t={t} />}
+        {getting && <GettingThere getting={lang === 'en' ? getting : { ...getting, why: null }} t={t} place={destination} lang={lang} />}
         {!hasGetting && <div className="sec-none" data-testid="section-none"><p>{t('dest.gettingNone', { city })}</p></div>}
         {rhythm && lang === 'en' && <p className="destp-rhythm">{rhythm}</p>}
         {bookAhead.length > 0 && (

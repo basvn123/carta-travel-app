@@ -44,7 +44,7 @@ import { DestWhen } from './DestWhen.jsx';
 import { DestPractical } from './DestPractical.jsx';
 import { notYet } from '../components/NotYet.jsx';
 import { useSettings } from '../components/SettingsLine.jsx';
-import { resolveWhen, whenMonth } from '../lib/when.js';
+import { resolveWhen, whenMonth, xmFromSearch } from '../lib/when.js';
 import { crowdFor, CROWD_TIER_KEYS } from '../lib/crowdMonth.js';
 import { mobilityStat } from '../lib/mobility.js';
 import { pickAirport, airportLine } from '../lib/airportPick.js';
@@ -196,8 +196,12 @@ export function DestinationPage({
   // for every stat on this page; outside the shell it is built from the
   // first-run dates.
   const settingsCtx = useSettings();
-  const tripWhen = settingsCtx?.when
-    ?? resolveWhen({ ownDates: datesOwn, departDate: firstRun?.departDate, returnDate: firstRun?.returnDate });
+  // The Explore month filter (xm in the URL) wins over the settings line, as
+  // when.js documents; ExploreTab does the same for its own cards.
+  const xm = xmFromSearch(typeof window === 'undefined' ? '' : window.location.search);
+  const tripWhen = xm ? resolveWhen({ xm })
+    : (settingsCtx?.when
+      ?? resolveWhen({ ownDates: datesOwn, departDate: firstRun?.departDate, returnDate: firstRun?.returnDate }));
   const statMonth = whenMonth(tripWhen);
 
   const dossier = useDossier(destination?.id);

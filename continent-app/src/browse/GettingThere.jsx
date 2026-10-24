@@ -3,6 +3,7 @@ import { CarIcon, TrainIcon, BusIcon, FerryIcon } from '../components/Icons.jsx'
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { formatEst } from '../lib/money.js';
 import { notYet } from '../components/NotYet.jsx';
+import { gettingAroundRows } from '../lib/mobility.js';
 import { pickAirport, flyLine, airportOptionLabel } from '../lib/airportPick.js';
 
 /**
@@ -37,18 +38,27 @@ const LEGACY_REASON = {
 };
 const reasonLine = (why) => (why ? (LEGACY_REASON[why.trim()] || why) : '');
 
-export function GettingThere({ getting, t }) {
+export function GettingThere({ getting, t, place = null, lang = 'en' }) {
   if (!getting || (!getting.airport && getting.transit == null
       && getting.car_needed == null)) return null;
   // T651: the lead row names the best airport by the shared pick (shortest
   // public transport, else the shortest road estimate); the list keeps all.
   const pick = pickAirport(getting);
   const ModeIcon = (pick?.road ? CarIcon : MODE_ICON[pick?.mode]) || null;
+  // T650: with mobility on the place, the transit and car rows read the same
+  // helper as the Getting around stat; the legacy sentences stay only without.
+  const around = gettingAroundRows(place, getting, t, lang, (n) => formatEst(n, t('money.est')));
   return (
     <div className="destp-getting">
       {/* Car-free first (T385, brief V3-5): the transit verdict answers "can
           I do this without a car" before the airport and the car. */}
-      {getting.transit && (
+      {around && (
+        <p className={`destp-get-row destp-get-transit is-${around.tone}`}>
+          <span className="destp-get-dot" aria-hidden="true" />
+          <span>{around.transit}</span>
+        </p>
+      )}
+      {!around && getting.transit && (
         <p className={`destp-get-row destp-get-transit is-${getting.transit}`}>
           <span className="destp-get-dot" aria-hidden="true" />
           <span>
@@ -81,7 +91,13 @@ export function GettingThere({ getting, t }) {
           ))}
         </ul>
       )}
-      {getting.car_needed != null && (
+      {around?.rental && (
+        <p className="destp-get-row">
+          <CarIcon size={14} />
+          <span>{around.rental}</span>
+        </p>
+      )}
+      {!around && getting.car_needed != null && (
         <p className="destp-get-row">
           <CarIcon size={14} />
           <span>

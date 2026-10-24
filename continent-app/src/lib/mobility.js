@@ -35,6 +35,27 @@ export function noCarOk(place) {
 }
 
 /**
+ * Getting there's car and local transport rows from the same mobility object
+ * and the same words as the stat (one source per stat). Null while the place
+ * has no mobility: the caller then keeps its legacy sentences.
+ *   transit: the first row ("Easy without a car. By train and bus. ...")
+ *   tone:    'good' or 'limited', for the dot
+ *   rental:  the rental figure line when a car is on the price card, else null
+ *            (never says a car is needed)
+ */
+export function gettingAroundRows(place, getting, t, lang = 'en', fmtEur = (n) => String(n)) {
+  const stat = mobilityStat(place, t, lang);
+  if (!stat) return null;
+  const rental = getting?.car_needed && getting.rental_eur_day != null
+    ? t('dest.carRental', { eur: fmtEur(getting.rental_eur_day) }) : null;
+  return {
+    transit: [`${stat.value}.`, stat.note].filter(Boolean).join(' '),
+    tone: carFreeOf(place) === 'good' ? 'good' : 'limited',
+    rental,
+  };
+}
+
+/**
  * The Getting around stat as words: { value, note } or null (placeholder).
  * `t` is the i18n function, `lang` the BCP 47 code for the list joins.
  */
