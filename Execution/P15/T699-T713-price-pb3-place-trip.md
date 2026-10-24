@@ -8,9 +8,9 @@
 
 **Preconditions.** PB1 and PB2 merged (app master 6fc164e, root main f60a60051). Invariants V1, V2, V6, V9, V11 and V12 of the plan are tests.
 
-**Branches.** App `p15-price-pb3-place-trip` (from master 6fc164e, worktree `wt/p15-price-pb3-app`), head da70da2, one commit per task. Root `p15-price-pb3-place-trip` (from main f60a60051, worktree `wt/p15-price-pb3-root`): mirror ba09ffe4e, then this report and the register.
+**Branches.** App `p15-price-pb3-place-trip` (from master 6fc164e, worktree `wt/p15-price-pb3-app`), one commit per task, plus three T702 test fixes after the first merge. Merged into app master. Root `p15-price-pb3-place-trip` (from main f60a60051, worktree `wt/p15-price-pb3-root`): mirror ba09ffe4e, then this report and the register.
 
-**Static checks.** `npm test` in the worktree: 714 pass, 3 fail. The 3 are the `numbersPage` tests, which need `public/boot.json`, absent in a worktree; they pass on the main checkout. eslint on every touched file: 0 new warnings or errors. The one error, `ExploreMap.jsx` exhaustive-deps, was there before and the file was not touched. Fast NOPUBLIC build (`wt/vite.t699.mjs`) passes.
+**Static checks.** `npm test` on app master after the merge: 758 of 758 pass. In the worktree: 714 pass, 3 fail. The 3 are the `numbersPage` tests, which need `public/boot.json`, absent in a worktree; they pass on the main checkout. eslint on every touched file: 0 new warnings or errors. The one error, `ExploreMap.jsx` exhaustive-deps, was there before and the file was not touched. Fast NOPUBLIC build (`wt/vite.t699.mjs`) passes.
 
 **End check.** One round on the batch head, run before T713 and again after it. Dev server on port 5299 over the main tree's `public/`, headless Chromium, script `wt/pb3-endcheck.mjs` (outside the repo), at 390 x 844 and 1280 x 800. Result: 45 of 46 checks pass on both runs.
 - Lake (Bled), beach (Navagio) and mountain (Matterhorn) pages: no cost line, and the button to the base reads "Stay in Lake Bled, €110 a person a day" (Zakynthos €97, Breuil-Cervinia €115).
@@ -248,6 +248,7 @@ See the header: the children's rows move as described there; adults-only and hir
 |---|---|---|
 | Rule-8 engine test failed | the car line now carries data | the test asserts the car is priced but not in the day; a place without a country has no car figure |
 | stayPrice test 795.70 against 795.76 | it compared the raw cost index with the engine's day, which is rounded to cents | it compares with the engine row the card shows (exact), and the raw index within 0.10 |
+| tripTotal real-data test failed on master (skipped in a worktree without public/) | it pinned the old rule: beds and meals at three quarters of four adults, and a baby adds nothing | it pins the engine's rule: a child takes a bed and eats 60 percent, a baby takes no bed and eats 15 percent (party.shares), meals within the engine's cents a day (commits 0b6abdd, 3 more on the branch) |
 
 ### What is still open
 

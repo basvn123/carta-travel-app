@@ -14,6 +14,7 @@ import {
   quoteTrip, tripLines, tripReadiness, wizardPlannerState, paidEur, MAX_PARTY,
 } from "../src/lib/tripTotal.js";
 import { DEFAULT_LIFESTYLE } from "../src/lib/runtime_pricing.js";
+import { rule } from "../src/lib/price/config.js";
 
 const DATA = new URL("../public/app_data.json", import.meta.url);
 const have = existsSync(DATA);
@@ -169,17 +170,25 @@ test("the party is capped where the planner caps it", { skip }, () => {
   assert.equal(p.groupSize, MAX_PARTY);
 });
 
-test("children count half on beds, meals and public fares; babies travel free", { skip }, () => {
+test("children take a bed, eat their share and ride at their fare; babies take no bed and eat theirs", { skip }, () => {
   const trip = [byCity("Berat", "AL"), byCity("Gjirokastër", "AL")];
   const two = price(handOver(trip, { party: 2 }));
   const fourAdults = price(handOver(trip, { party: 4 }));
   const family = price(handOver(trip, { party: 2, children: 2 }));
   const withBaby = price(handOver(trip, { party: 2, babies: 1 }));
-  // Children are priced for the beds and legs of four people, at the weight 3 / 4.
-  close(family.parts.beds, Math.round(fourAdults.parts.beds * 0.75 * 100) / 100, "beds at three quarters of four adults");
-  close(family.parts.days, Math.round(fourAdults.parts.days * 0.75 * 100) / 100, "meals at three quarters of four adults");
+  // T702: a child takes a seat and a bed like an adult (the day price's beds
+  // per seat) and eats the configured share (party.shares, as the day price).
+  const share = (2 + rule("party.shares").child_food * 2) / 4;
+  close(family.parts.beds, fourAdults.parts.beds, "beds for four seats");
+  // Within the cents the engine rounds each person's day to (T662).
+  const meals = fourAdults.parts.days * share;
+  assert.ok(Math.abs(family.parts.days - meals) <= 0.1, `meals at the children's share: ${family.parts.days} vs ${meals}`);
   assert.ok(family.grandTotal < fourAdults.grandTotal && family.grandTotal > two.grandTotal, "between two and four adults");
-  close(withBaby.grandTotal, two.grandTotal, "a baby adds nothing");
+  // A baby sits on a lap and sleeps in the parents' bed, and eats the
+  // configured baby share (party.shares.baby_food), as the day price does.
+  close(withBaby.parts.beds, two.parts.beds, "a baby takes no bed");
+  const babyMeals = two.parts.days * (2 + rule("party.shares").baby_food) / 2;
+  assert.ok(Math.abs(withBaby.parts.days - babyMeals) <= 0.1, `a baby eats its share: ${withBaby.parts.days} vs ${babyMeals}`);
   assert.equal(family.party.children, 2);
   assert.equal(withBaby.party.seats, 3, "a baby still needs a seat in a car");
   close(sum(tripLines(family)), family.grandTotal, "the lines still add up");
