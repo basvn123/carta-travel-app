@@ -8,8 +8,11 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const ROOT = new URL("..", import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1");
+// T678: fileURLToPath decodes the URL, so a path with a space ("Travel App")
+// is scanned too; a vacuous scan fails below rather than passing.
+const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const KERNEL = ["computeCosts", "costRow", "costContext", "bedPrice", "groundSpendPerPerson", "priceTrip",
   "composeTrip", "stayPerNight", "foodPerDay", "priceFromIndex"];
 const CALL = new RegExp(`(?<![\\w.]function\\s|function\\s)\\b(${KERNEL.join("|")})\\s*\\(`, "g");
@@ -68,6 +71,7 @@ export function pricingFiles() {
 
 test("V2: no price is worked out outside the engine, except the listed paths", () => {
   const found = pricingFiles();
+  assert.ok(found.has("src/lib/costIndex.js"), `the scan found the kernel (root ${ROOT})`);
   const extra = [...found.keys()].filter((f) => !(f in ALLOWED));
   assert.deepEqual(extra, [], `price calls outside lib/price/: ${extra.map((f) => `${f} (${found.get(f)})`).join(", ")}`);
 });
