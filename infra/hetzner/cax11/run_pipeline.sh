@@ -60,6 +60,11 @@
 #   CARTA_VENV         default /home/carta/venv ($HOME/venv)
 #   CARTA_ARCHIVE_OUT  pack.py's tarball and dump directory, default $HOME/archive-out
 #   CARTA_SHIP         build (default), data or none; passed as --ship
+#   CARTA_EXTRA_TASKS  comma list passed as --also (T640): these tasks run when
+#                      due above the ceiling, and their cache classes are pulled
+#                      and pushed (see the T640 block below)
+#   CARTA_MAX_HOURS    passed as --max-hours when CARTA_EXTRA_TASKS is set
+#                      (blank = 16, 0 = no limit)
 #   VITE_DATA_BASE     the data host, https://data.carta-europetravel.com/data.
 #                      Unset (the default), the build is same-origin and stays
 #                      on the box. Set it only after the production cutover
@@ -85,6 +90,8 @@ RUN_LOG="$LOG_DIR/pipeline_run.log"
 PULL_CLASSES=(master-current pipeline-state fare-estimation-history)
 PACK_CLASSES=(fare-estimation-history)
 PUSH_CLASSES=(master-snapshots master-current pipeline-state fare-estimation-history raw-mirrors)
+# CARTA_EXTRA_TASKS (T640) adds the classes its tasks read and write; see
+# the T640 block below, which runs after load-env.sh has read the secrets file.
 
 DRY_RUN=0
 PULL_ONLY=0
@@ -131,6 +138,39 @@ echo "============================================================"
 # and load-env.sh unsets every blank, which would erase a default set earlier.
 export CARTA_ARCHIVE_OUT="${CARTA_ARCHIVE_OUT:-$HOME/archive-out}"
 DUMP_DIR="$CARTA_ARCHIVE_OUT/dumps"
+
+# --- T640: extra tasks above the ceiling and the caches they need ------------
+# CARTA_EXTRA_TASKS is passed to run_pipeline.py as --also. Each task names the
+# archive classes it reads (pulled when the box does not hold them yet) and the
+# ones it changes (packed and pushed after a good run). Pull-only classes are
+# never pushed from here: regions-cache is not changed by these tasks, and
+# lakes-json is a member-filtered copy that push.py and pack.py refuse anyway.
+EXTRA_TASKS="${CARTA_EXTRA_TASKS:-}"
+EXTRA_TASKS="${EXTRA_TASKS// /}"
+add_class() {  # array name, class: append once
+  local -n arr="$1"
+  local c
+  for c in "${arr[@]}"; do [ "$c" = "$2" ] && return 0; done
+  arr+=("$2")
+}
+if [ -n "$EXTRA_TASKS" ]; then
+  IFS=',' read -r -a _extra <<< "$EXTRA_TASKS"
+  for t in "${_extra[@]}"; do
+    case "$t" in
+      beach_context) add_class PULL_CLASSES beaches-cache; add_class PULL_CLASSES regions-cache
+                     add_class PACK_CLASSES beaches-cache; add_class PUSH_CLASSES beaches-cache ;;
+      peak_context)  add_class PULL_CLASSES mountains-cache
+                     add_class PACK_CLASSES mountains-cache; add_class PUSH_CLASSES mountains-cache ;;
+      lake_detail)   add_class PULL_CLASSES lakes-json; add_class PULL_CLASSES regions-cache ;;
+    esac
+  done
+  # Every explore data fill task reads or writes an overlay cache.
+  add_class PULL_CLASSES explore-overlays
+  add_class PACK_CLASSES explore-overlays
+  add_class PUSH_CLASSES explore-overlays
+fi
+MAX_HOURS="${CARTA_MAX_HOURS:-}"
+if [ -z "$MAX_HOURS" ] && [ -n "$EXTRA_TASKS" ]; then MAX_HOURS=16; fi
 
 # Python children print place names; the systemd environment has no locale.
 export LANG="${LANG:-C.UTF-8}" PYTHONUTF8=1 PYTHONIOENCODING=utf-8
@@ -196,6 +236,12 @@ local_present() {  # class -> 0 when the box already holds it
     master-current) [ -f app_data/app_data.json ] ;;
     pipeline-state) [ -f logs/pipeline_state.json ] ;;
     fare-estimation-history) [ -d data/history ] || [ -d data/models ] ;;
+    # T640: a layer cache counts as present once its per-country files are.
+    beaches-cache) compgen -G 'cache/beaches/rich_*.json' >/dev/null ;;
+    mountains-cache) compgen -G 'cache/mountains/rich_*.json' >/dev/null ;;
+    lakes-json) compgen -G 'cache/lakes/rich_*.json' >/dev/null ;;
+    regions-cache) [ -f cache/regions/regions.gpkg ] ;;
+    explore-overlays) [ -f cache/climate_power_daily.json ] || [ -d cache/sea_temp ] ;;
     *) return 1 ;;
   esac
 }
@@ -230,6 +276,13 @@ case "$CADENCE" in
   all) ;;
   *) say "CARTA_MAX_CADENCE=$CADENCE is not weekly, monthly, quarterly or all"; exit 2 ;;
 esac
+if [ -n "$EXTRA_TASKS" ]; then
+  ARGS+=(--also "$EXTRA_TASKS")
+  case "$MAX_HOURS" in
+    0|"") ;;
+    *) ARGS+=(--max-hours "$MAX_HOURS") ;;
+  esac
+fi
 [ $DRY_RUN -eq 1 ] && ARGS+=(--dry-run)
 ARGS+=("${PASS[@]}")
 
