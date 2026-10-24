@@ -224,13 +224,93 @@ def car_needed_for(city, iso2, tier, categories):
     return (False, "limited", TOWN_NO_CAR)
 
 
-def local_transport_for(city, iso2, tier, categories):
-    """Build the dest.local_transport block."""
+# T642-k: places whose category says "car" only because the surroundings are
+# rural. With rail or ferry service on the doorstep the car is optional there.
+# Genuinely remote categories stay car-needed whatever lines exist.
+REMOTE_STRONG = {
+    "remote", "wilderness", "national-park", "fjord", "arctic", "adventure",
+    "hiking", "carpathians", "surf", "diving",
+}
+# What a car is still useful for when it is not needed (the "car useful for" note).
+USEFUL_FOR = (
+    ({"mountains", "alps", "valley", "hiking", "national-park", "carpathians", "skiing"},
+     "Remote valleys and trailheads that no line reaches."),
+    ({"lake", "fjord"}, "Villages round the lake that lines skip, and viewpoints above it."),
+    ({"countryside", "country", "village", "wine", "vineyards", "provence", "tuscany",
+      "puglia", "wachau", "salzkammergut", "andalusia", "normandy", "brittany", "cornwall"},
+     "Villages and vineyards off the main line."),
+)
+PARKING_HARD_MAX_SPOTS = 2  # fewer public lots than this within 1.5 km of the centre
+
+
+def _lines(transit, key):
+    v = (transit or {}).get(key)
+    return [x for x in v if isinstance(x, dict) or x] if isinstance(v, list) else []
+
+
+def transit_service(transit):
+    """('none'|'thin'|'served', modes) from practical.transit.train/bus/ferry lists."""
+    if not transit:
+        return None, []
+    modes = [m for m in ("train", "ferry", "bus") if _lines(transit, m)]
+    rail_or_ferry = [m for m in modes if m in ("train", "ferry")]
+    if rail_or_ferry and ("bus" in modes or len(rail_or_ferry) == 2 or len(_lines(transit, rail_or_ferry[0])) >= 2):
+        return "served", modes
+    if modes:
+        return "thin", modes
+    return "none", modes
+
+
+def car_useful_for(categories):
+    cats = set(categories or [])
+    for keys, text in USEFUL_FOR:
+        if cats & keys:
+            return text
+    return None
+
+
+def parking_is_hard(spots):
+    """True when the centre has almost no public parking, None with no harvest."""
+    if spots is None:
+        return None
+    public = [s for s in spots if not s.get("pr")]
+    return len(public) < PARKING_HARD_MAX_SPOTS
+
+
+def local_transport_for(city, iso2, tier, categories, transit=None, parking=None):
+    """Build the dest.local_transport block.
+
+    transit: optional {train: [...], bus: [...], ferry: [...]} (practical.transit,
+    T641). parking: optional list of raw OSM spots for the destination
+    (cache/parking_osm.json). Both absent: the category rule, as before.
+    """
     needed, quality, reason = car_needed_for(city, iso2, tier, categories)
-    return {
+    cats = set(categories or [])
+    basis = "category"
+    level, modes = transit_service(transit)
+    # The RURAL_STRONG branch (lake, alps, village ...) put every such place at
+    # "car needed" without looking at lines. With rail or ferry plus a second
+    # mode, and nothing remote about it, the car becomes optional.
+    if (city not in CAR_OVERRIDES and needed and quality == "poor"
+            and cats & RURAL_STRONG and not cats & REMOTE_STRONG and "island" not in cats):
+        if level == "served":
+            needed, quality = False, ("good" if "train" in modes else "limited")
+            reason = "Reached by " + " and ".join(m for m in modes if m != "bus" or len(modes) == 1) + "; a car is optional."
+            basis = "transit_lines"
+        elif level == "none":
+            basis = "transit_lines"
+    out = {
         "car_needed": needed,
         "transit_quality": quality,
         "reason": reason,
         "rental_eur_per_day": RENTAL_EUR_PER_DAY.get(iso2, RENTAL_EUR_PER_DAY_DEFAULT),
-        "road_connected": iso2 not in NON_ROAD_ISO2 and "island" not in set(categories or []),
+        "road_connected": iso2 not in NON_ROAD_ISO2 and "island" not in cats,
+        "car_basis": basis,
     }
+    useful = car_useful_for(categories)
+    if useful:
+        out["car_useful_for"] = useful
+    ph = parking_is_hard(parking)
+    if ph is not None:
+        out["parking_hard"] = ph
+    return out

@@ -2047,7 +2047,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T624-c | T624 | Both stay scrapers end the night's session on a network error (ERR_INTERNET_DISCONNECTED, 2026-10-23); add a wait-and-retry per page | next task | open |  |
 | T624-d | T624 | No rclone R2 remote on the laptop, so stays_scrape.bat cannot upload journal_scrape.sqlite to carta-stays-state; set the five RCLONE_CONFIG_R2_* variables (T045) or run rclone config | user | open |  |
 | T630-a | T630 | Run pipeline/trails/way_tags.py --refresh then export_wire.py (trailslab DB) to fill row sac_scale, detail technique, exposure and sac_segments; SAC cards, filter and profile stay placeholders until then | next task | open | 1 |
-| T630-b | T630 | Run pipeline/cycling/export_cycling.py to publish the cycle route shape rt (only loop today) | next task | open |  |
+| T630-b | T630 | Run pipeline/cycling/export_cycling.py to publish the cycle route shape rt (only loop today) | next task | closed by T640 |  |
 | T630-c | T630 | Run the enrich_peaks context pass for every country, then export_peaks, to fill huts, slopeDeg and rangeRank | next task | open |  |
 | T630-d | T630 | Stub harvest_trail_ferry_and_bus_stops (pipeline/field_stubs/t630_routes.py): trail public transport or ferry reachability has no source; transit_stops.py has rail and bus stations only | next task | open |  |
 | T630-e | T630 | Stubs harvest_lift_prices and harvest_lift_hours: cable car and railway price and opening hours have no source | next task | open |  |
@@ -2073,7 +2073,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T632-f | T632 | Stub harvest_swimming_bans: destination swimming bans (water.bans) | next task | open |  |
 | T632-g | T632 | The destination PDF lacks an offline map and emergency contacts (stubs build_pdf_offline_map, harvest_emergency_contacts); not built | next task | open |  |
 | T632-h | T632 | GPX for trip pages: only straight lines between stops exist; a waypoint GPX is a product call | user | open |  |
-| T632-i | T632 | The invented transfer mode fallback || 'train' also lives in src/planner/TravelLegsSection.jsx:172 | next task | open |  |
+| T632-i | T632 | The invented transfer mode fallback || 'train' also lives in src/planner/TravelLegsSection.jsx:172 | next task | closed by T642 |  |
 | T632-j | T632 | Wrong value, not changed: Lake Como airport BGY 60 min; apply_airport_anchors.py picks the nearest Ryanair-served airport by straight line and a 65 km/h road estimate, never a rail-served hub, and writes no transfer_mode | next task | open |  |
 | T632-k | T632 | Wrong value, not changed: Lake Como Car needed comes from car_layer.py:212-213 (lake and alps in RURAL_STRONG); ferries are never considered | next task | open |  |
 | T632-l | T632 | Wrong value, not changed: Crowds is a static annual Eurostat tier (harvest_tourism_density.py), not linked to the month on screen | next task | open |  |
@@ -2091,3 +2091,37 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T645-f | T645 | Audit finding "build_routes.py should reject prices <= 0 or above a distance ceiling" was wrong for that file (it holds no prices); the price check went into the flight-sweep publish and build_routes got a route-loss gate | next task | closed by T645 |  |
 | T646-a | T646 | The versioned stays fetch (staysData.js, sw.js) reaches users only with the next app deploy; root main and app master are merged locally, not pushed | user | open |  |
 | T646-b | T646 | Audit finding "_headers keeps a bad stays wire for a day" needed no _headers change: with ?b= in the URL a new build is a new cache entry, and a second matching rule would comma-join Cache-Control on Pages | next task | closed by T646 |  |
+| T640-a | T640 | Owner steps before a Monday 09:00 box run: merge p15-explore-data-fill into main (root) and master (app) and push, move the box repo to that commit, add CARTA_EXTRA_TASKS, disk check, optional dry run; see Execution/P15/_OPEN-explore-data-runs.md | user | open | 1 |
+| T640-b | T640 | After box Monday 1 and 2: read the run log (SOFT-FAIL, FAIL, DEFERRED, guard lines), measure fill rates, close the run rows (T630-c, T630-e, T630-h, T631-a, T631-b, T631-c, T632-a, T632-b, T632-d, T632-f, T632-g) and replace the estimated task hours with measured ones | next task | open | 2 |
+| T640-c | T640 | Box run results reach production only through the box ship; confirm VITE_DATA_BASE on the box and copy the published wires back into git | user | open | 3 |
+| T640-d | T640 | pipeline/apply_airport_anchors.py steps 1 to 4 crash on current data (no dest.routes since T511) after clearing 18 estimated anchors; only --airports-only is safe; retire or fix | next task | open |  |
+| T640-f | T640 | beaches-cache and mountains-cache are now pushed from the box; pull them on the laptop before any local rebuild | user | open |  |
+| T640-g | T640 | No row in the five nature, trail and cycling wires carries nb neighbours; the joins task output is missing | next task | open |  |
+| T640-h | T640 | Cycling gate waived for HR 4114 and 4116: wire_truth.mark_sections keeps a sticky sec mark that a fresh export cannot reproduce; decide the rule (both rows are separate loops) | next task | open |  |
+| T640-i | T640 | All quarterly explore tasks fall due on the same Monday; stagger them across the quarter so no run exceeds a few hours | next task | open |  |
+| T641-a | T641 | Confirm commercial terms of the Swiss national timetable (opentransportdata.swiss) and verify Delcomar and any bus feed, then set licence_verified in pipeline/transit/feeds.json | user | open |  |
+| T641-b | T641 | Register more licence-verified GTFS feeds across Europe; train and bus lines cover Lombardy only (23 destinations) | next task | open |  |
+| T641-c | T641 | Beach walks from centre and pier are straight line x 1.3, labelled modelled; replace with a pedestrian router | next task | open |  |
+| T641-d | T641 | Lake Como swim.temps (CHELSA model) reads 0 C in January and February; check the lake water model | next task | open |  |
+| T641-e | T641 | Mountain rescue numbers are not in Wikidata, so practical.emergency carries unlabelled numbers | next task | open |  |
+| T641-f | T641 | Stub beach luxury audience: no open source (candidate OSM hotel stars within 300 m) | next task | open |  |
+| T641-g | T641 | Stub lido entry, sunbed and umbrella prices and reservation: no open source (candidate OSM charge on leisure=beach_resort, rarely tagged) | next task | open |  |
+| T641-h | T641 | Stub beach entry surface: OSM surface is the sand, not the sea bed (candidate survey or photo classification) | next task | open |  |
+| T641-i | T641 | Stub lake currents: hazard code on 38 lakes without description (candidate authority notices) | next task | open |  |
+| T641-j | T641 | Stub lake thermal winds: no open source names Ora or Breva; monthly mean wind is wired as wind.profile | next task | open |  |
+| T641-k | T641 | Price records now written for price plan F9, not shown: lift.fare, do[].price (value, unit, currency, source, date, quality) | next task | open |  |
+| T642-a | T642 | Lake Como has 0 beaches around: the beach inventory has no lake-shore beaches; add a lake-shore beach harvest (OSM natural=beach on lakes, EEA lake sites) | next task | open |  |
+| T642-b | T642 | Airport public transport times exist for 83 destinations (Trenord only) and are upper bounds in Milan (no metro footpaths) | next task | open |  |
+| T642-c | T642 | transfer_mode is car for road estimates; the price model uses a bus or shuttle tier; copy decision | user | open |  |
+| T642-d | T642 | Three new i18n keys from T642 exist in en.js only | next task | open |  |
+| T642-e | T642 | Greenway seed rule proposal (OSM relations route hiking/foot/bicycle named greenway, via verde, voie verte or ciclovia, 5 km or longer); Greenway del Lago di Como is relation 5205171; Europe-wide count not measured | user | open |  |
+| T647-a | T647 | Decision D6: x86 CPX42 worker for trailslab (pgrouting is amd64 only); confirm the price with hcloud and update RATES in infra/hetzner/cax41/cost.py | user | open | 4 |
+| T647-b | T647 | Before 2026-11-01: choose the dump-key option, make the worker keypair on the box and put a dump encrypted to both keys (or a fresh one) in archive/db/trailslab/, or the only lab copy is the laptop Docker disk | user | open | 5 |
+| T647-c | T647 | Decision D7: a separate worker R2 token (links T047-f) | user | open | 6 |
+| T647-d | T647 | Selftest spawn on cpx22, the --no-install LI test run with measured step times, then CARTA_TRAILSLAB_WORKER=1 on the box | user | open | 7 |
+| T647-e | T647 | The worker does not run attributes.py, rate.py or attach.py after way_tags; grades, ratings and routes_attach do not pick up the refreshed tags | next task | open |  |
+| T647-f | T647 | Promotion of approved trips to published has no home once the laptop is retired (the worker runs export_wire --no-promote) | next task | open |  |
+| T647-g | T647 | No override in the difficulty gate for a deliberate row-set change on the worker | next task | open |  |
+| T647-h | T647 | R2 Geofabrik extracts are from 2026-08, so every worker run downloads about 30 GB; decide whether to push fresh extracts back; cost.py mtd label still says hetzner_cax41 | next task | open |  |
+| T648-a | T648 | Around strip slots (AroundHere rowMeta: SAC, length, climb, time) were not found on the Lake Como sheet; RoutesFromHere.jsx:62-63 omits absent figures instead of a placeholder; check after the dossier rebuild | next task | open |  |
+| T648-b | T648 | continent-app/scripts/verify_booked_route.mjs expects six wizard steps, the wizard has five | next task | open |  |

@@ -1,0 +1,48 @@
+{
+  "_note": "Only feeds whose licence allows commercial use AND was read on the date given may carry licence_verified true. Add a feed by copying an entry; bbox is [south, west, north, east] of the area it serves.",
+  "feeds": [
+    {
+      "id": "trenord-lombardia",
+      "name": "Trenord regional rail, Regione Lombardia open data",
+      "operator": "Trenord",
+      "url": "https://www.dati.lombardia.it/download/3z4k-mxz9/application%2Fzip",
+      "licence": "CC BY 4.0",
+      "licence_url": "https://creativecommons.org/licenses/by/4.0/",
+      "licence_source": "https://www.dati.lombardia.it/api/views/3z4k-mxz9.json (licenseId CC_40_BY)",
+      "licence_read": "2026-10-23",
+      "attribution": "Trenord, dati.lombardia.it",
+      "commercial_ok": true,
+      "licence_verified": true,
+      "bbox": [44.6, 8.4, 46.7, 11.5]
+    },
+    {
+      "id": "delcomar-sardegna",
+      "name": "Delcomar ferries, Regione Sardegna open data",
+      "operator": "Delcomar",
+      "url": "https://www.sardegnamobilita.it/opendata/dati_mare.zip",
+      "licence": "CC BY (version not stated by the catalogue)",
+      "licence_url": "https://creativecommons.org/licenses/by/",
+      "licence_source": "Mobility Database catalogue entry mdb-1047 urls.license",
+      "licence_read": "2026-10-23",
+      "attribution": "Regione Sardegna, sardegnamobilita.it",
+      "commercial_ok": true,
+      "licence_verified": false,
+      "bbox": [38.8, 8.1, 41.3, 9.9]
+    },
+    {
+      "id": "opentransportdata-ch",
+      "name": "Swiss national timetable (opentransportdata.swiss)",
+      "operator": "",
+      "url": "https://data.opentransportdata.swiss/dataset/timetable-2026-gtfs2020/permalink",
+      "licence": "opentransportdata.swiss terms of use (attribution)",
+      "licence_url": "https://opentransportdata.swiss/en/terms-of-use/",
+      "licence_source": "terms page not machine readable in this session; owner to confirm that commercial use is allowed",
+      "licence_read": "",
+      "attribution": "opentransportdata.swiss",
+      "commercial_ok": false,
+      "licence_verified": false,
+      "bbox": [45.8, 5.9, 47.9, 10.6],
+      "size_mb": 290
+    }
+  ]
+}

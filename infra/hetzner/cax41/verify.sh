@@ -247,6 +247,34 @@ if [ "$rc" -eq 0 ] && grep -q '"state": "ok"' "$T/worker4.txt" && grep -q 'libhe
 else
   fail "worker.sh image_transcode dry run (exit $rc)"; tail -n 5 "$T/worker4.txt" | sed 's/^/      /'
 fi
+# trailslab (T647): the steps in order, no promotion, both gates, the dump to
+# both keys; worker.sh adds the PGDG client; the x86 type reaches create.
+tj="$T/job-trailslab.txt"
+if grep -q 'way_tags.py --refresh --countries CH' "$tj" && grep -q 'transit_stops.py --countries CH' "$tj" \
+   && grep -q 'export_wire.py --no-promote' "$tj" && grep -q 'gate.py --layer trails' "$tj" \
+   && grep -q 'difficulty_gate.py --ref' "$tj" && grep -q 'export_cycling.py' "$tj" \
+   && grep -q 'gate.py --layer cycling' "$tj" && grep -q 'pg_dump .* -Fc' "$tj" \
+   && [ "$(grep -c -- '--recipient' "$tj")" -ge 1 ] && grep -q 'MANIFEST dump=db/trailslab-' "$tj" \
+   && [ "$(at 'way_tags.py' "$tj")" -lt "$(at 'export_wire.py' "$tj")" ] \
+   && [ "$(at 'export_wire.py' "$tj")" -lt "$(at 'pg_dump' "$tj")" ]; then
+  pass "trailslab: restore, way_tags and transit_stops per country, exports behind gate.py and difficulty_gate.py, then the dump"
+else
+  fail "trailslab job commands"; tail -n 5 "$tj" | sed 's/^/      /'
+fi
+CARTA_DRY_RUN=1 CARTA_WORKER_ROOT="$T/w" bash "$JOBS/worker.sh" trailslab 20260101t000000z-test > "$T/worker5.txt" 2>&1
+rc=$?
+if [ "$rc" -eq 0 ] && grep -q 'postgresql-client-18' "$T/worker5.txt" && grep -q 'docker.io' "$T/worker5.txt" \
+   && grep -qF -- '--include support/' "$T/worker5.txt" && grep -q '"state": "ok"' "$T/worker5.txt"; then
+  pass "worker.sh dry run of trailslab: docker, venv, PGDG client 18, support inputs, status ok"
+else
+  fail "worker.sh trailslab dry run (exit $rc)"; tail -n 5 "$T/worker5.txt" | sed 's/^/      /'
+fi
+grep -q -- '--type cpx42' "$T/dry-trailslab.txt" && grep -q -- '--type cax41' "$T/dry-selftest.txt" \
+  && grep -q "CARTA_WORKER_ARCH='amd64'" "$T/ud-trailslab.yaml" && grep -q "CARTA_WORKER_ARCH='arm64'" "$T/ud-selftest.yaml" \
+  && pass "per-job server type: trailslab on cpx42 (amd64), selftest on cax41 (arm64)" \
+  || fail "per-job server type or architecture"
+grep -q "CARTA_WORKER_GPG_SECRET_B64='REDACTED" "$T/ud-trailslab.yaml" && grep -q "CARTA_WORKER_GPG_SECRET_B64=''" "$T/ud-selftest.yaml" \
+  && pass "only a gpg job carries the dump keys (redacted in the render)" || fail "dump keys in the user data"
 CARTA_DRY_RUN=1 CARTA_WORKER_ROOT="$T/w" bash "$JOBS/worker.sh" planetiler 20260101t000000z-test switzerland > "$T/worker3.txt" 2>&1
 rc=$?
 [ "$rc" -eq 3 ] && grep -q '"state": "failed", "phase": "job", "exit_code": 3' "$T/worker3.txt" \

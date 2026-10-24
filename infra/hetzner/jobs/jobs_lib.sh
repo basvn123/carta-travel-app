@@ -13,20 +13,32 @@ job_names() {
 }
 
 # job_row <job>: set JOB_INPUTS_PREFIX, JOB_INPUTS_INCLUDE, JOB_OUTPUTS_PREFIX,
-# JOB_CEILING_H, JOB_EXPECTED_H, JOB_NEEDS and JOB_WRAPS from the table.
-# A dash in the table becomes an empty value. Returns 1 for an unknown job.
+# JOB_CEILING_H, JOB_EXPECTED_H, JOB_NEEDS, JOB_SERVER_TYPE and JOB_WRAPS from
+# the table. A dash in the table becomes an empty value (for JOB_SERVER_TYPE:
+# use the default type). Returns 1 for an unknown job.
 job_row() {
   local want="$1" line
   line="$(tr -d '\r' < "$CARTA_JOBS_TSV" | awk -F'\t' -v j="$want" '!/^#/ && $1 == j {print; exit}')"
   [ -n "$line" ] || return 1
   local _job
   IFS=$'\t' read -r _job JOB_INPUTS_PREFIX JOB_INPUTS_INCLUDE JOB_OUTPUTS_PREFIX \
-    JOB_CEILING_H JOB_EXPECTED_H JOB_NEEDS JOB_WRAPS <<< "$line"
+    JOB_CEILING_H JOB_EXPECTED_H JOB_NEEDS JOB_SERVER_TYPE JOB_WRAPS <<< "$line"
   local v
-  for v in JOB_INPUTS_PREFIX JOB_INPUTS_INCLUDE JOB_OUTPUTS_PREFIX JOB_NEEDS; do
+  for v in JOB_INPUTS_PREFIX JOB_INPUTS_INCLUDE JOB_OUTPUTS_PREFIX JOB_NEEDS JOB_SERVER_TYPE; do
     if [ "${!v}" = "-" ]; then printf -v "$v" '%s' ""; fi
   done
   return 0
+}
+
+# server_arch <hetzner type>: amd64 or arm64, the names rclone and Docker use.
+# cax* is Ampere arm64; cx*, cpx* and ccx* are x86 (T299 maps them the same way
+# in cax11/provision.sh). Returns 1 for a type it does not know.
+server_arch() {
+  case "$1" in
+    cax[0-9]*) echo arm64 ;;
+    cx[0-9]*|cpx[0-9]*|ccx[0-9]*) echo amd64 ;;
+    *) return 1 ;;
+  esac
 }
 
 # hours_to_s <hours, may be fractional>: whole seconds.

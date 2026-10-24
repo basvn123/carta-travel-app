@@ -53,6 +53,7 @@ from common import (  # noqa: E402
     nav_links, norm_name, usable_desc, sanitize_strings, slugify, thumb_at,
 )
 from derive_do import derive  # noqa: E402
+import derive_practical  # noqa: E402  (T641: emergency, transit, swim bans)
 
 SCHEMA = "dossier_v2"
 OUT_DIR = os.path.join(PUB, "dossier")
@@ -812,7 +813,8 @@ def join_nearby(dest, layer_index):
                 "lat": round(f["lat"], 5), "lon": round(f["lon"], 5),
             }
             for k in ("tier", "score", "thumb", "elev_m", "km_len",
-                      "duration_min", "difficulty", "water"):
+                      "duration_min", "difficulty", "water", "ascent_m",
+                      "descent_m", "sac_scale"):
                 if f.get(k) is not None:
                     entry[k] = f[k]
             picked.append(entry)
@@ -867,7 +869,7 @@ def compose_around(dest, layer_index):
             }
             for k in ("tier", "score", "thumb", "elev_m", "km_len",
                       "duration_min", "difficulty", "water", "ascent_m",
-                      "listed"):
+                      "descent_m", "sac_scale", "listed"):
                 if f.get(k) is not None:
                     entry[k] = f[k]
             picked.append(entry)
@@ -1228,6 +1230,20 @@ def compose_practical(dest):
             getting["transfer_min"] = tr.get("transfer_minutes_one_way")
         if tr.get("transfer_mode"):
             getting["transfer_mode"] = tr.get("transfer_mode")
+    # T642: every airport within reach with its time per mode (airport_access.py).
+    ap_list = [a for a in (dest.get("airports") or []) if a.get("iata")]
+    if ap_list:
+        getting["airports"] = [
+            {"iata": a["iata"], "km": round(a.get("straight_km") or 0),
+             "transfer_min": a.get("transfer_min"), "transfer_mode": a.get("transfer_mode"),
+             "options": [{"mode": o["mode"], "minutes": o["minutes"], "source": o["source"]}
+                         for o in a.get("options") or []]}
+            for a in ap_list]
+        if iata and "transfer_min" not in getting:
+            own = next((a for a in ap_list if a["iata"] == iata), None)
+            if own and own.get("transfer_min") is not None:
+                getting["transfer_min"] = own["transfer_min"]
+                getting["transfer_mode"] = own.get("transfer_mode")
     for src_key, out_key in (("transit_quality", "transit"),
                              ("car_needed", "car_needed"),
                              ("reason", "why"),
@@ -1245,6 +1261,8 @@ def compose_practical(dest):
     for key in ("book_ahead", "rhythm", "pairs", "eat"):
         if extra.get(key):
             practical[key] = extra[key]
+    # T641: emergency numbers and transit lines from the open harvests.
+    practical.update(derive_practical.practical_extras(dest.get("id")))
     return practical
 
 
@@ -1387,6 +1405,10 @@ def load_layer_index():
                     "km_len": round((t.get("distance_m") or 0) / 1000, 1) or None,
                     "duration_min": t.get("duration_min"),
                     "difficulty": t.get("difficulty"),
+                    # T640 (T630-h): the Around strip's four slots.
+                    "ascent_m": t.get("ascent_m"),
+                    "descent_m": t.get("descent_m"),
+                    "sac_scale": t.get("sac_scale"),
                 })
             for t in data.get("listed", []) or []:
                 bbox = t.get("bbox") or []
@@ -1400,6 +1422,9 @@ def load_layer_index():
                     "km_len": round((t.get("distance_m") or 0) / 1000, 1) or None,
                     "duration_min": t.get("duration_min"),
                     "difficulty": t.get("difficulty"),
+                    "ascent_m": t.get("ascent_m"),
+                    "descent_m": t.get("descent_m"),
+                    "sac_scale": t.get("sac_scale"),
                 })
             add("trails", fn[:2], rows)
 
@@ -1435,6 +1460,8 @@ def load_layer_index():
                         "thumb": direct_commons_url(img, 500) if img else None,
                         "km_len": t.get("km"),
                         "ascent_m": t.get("asc"),
+                        # T640 (T630-h): riding time, the wire's dur.min.
+                        "duration_min": (t.get("dur") or {}).get("min"),
                     }
                     if listed:
                         row["listed"] = True
@@ -1632,6 +1659,9 @@ def build_one(dest, ctx, refusal_log):
     if bw.get("rating"):
         water = {k: bw[k] for k in ("rating", "excellent_pct", "n_sites",
                                     "nearest", "year") if bw.get(k) is not None}
+    bans = derive_practical.water_bans(did)       # T641: OSM swimming=no near the destination
+    if bans:
+        water = {**(water or {}), "bans": bans}
 
     # D2: the verdict, shown honestly - the score, its parts, its
     # confidence, and where the place stands in its country. The earlier

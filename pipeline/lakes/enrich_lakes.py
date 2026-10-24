@@ -1208,6 +1208,10 @@ def enrich_country(cc, shortlist_n=SHORTLIST, refresh=False, bathing=None,
         join_local(lake, bathing, protected, dests)
         join_trails(lake, cc)
         join_climate(lake)
+        if not lake.get("climate") and (previous.get(lake["key"]) or {}).get("climate"):
+            # T640 wiring: no CHELSA crop on this machine (or no pixel): the
+            # season the last enrich measured stands rather than vanishing.
+            lake["climate"] = previous[lake["key"]]["climate"]
         lake["prelim"] = prelim_score(lake)
 
     # Region ids first, because the shortlist is now cut region by region and

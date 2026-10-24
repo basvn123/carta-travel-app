@@ -5,8 +5,9 @@ import { catalogue } from '../lib/appData.js';
 import { ClimateStrip, ClimateExtras } from './ClimateStrip.jsx';
 import { SwimSafety } from './SwimSafety.jsx';
 import {
-  altitudeSeries, audienceOf, baseClimateUse, waterShoesHint, MIN_ALTITUDE_GAIN_M,
+  altitudeSeries, audienceOf, baseClimateUse, waterShoesHint, windProfileOf, MIN_ALTITUDE_GAIN_M,
 } from '../lib/waterFacts.js';
+import { monthName } from '../lib/dates.js';
 
 /**
  * The blocks T631 adds to the lake and beach sheets (explore completeness):
@@ -116,6 +117,21 @@ const SPORT_KEY = {
 export function LakeWater({ lake }) {
   const { t, lang } = useI18n();
   const zones = lake.water?.zones || [];
+  const wind = windProfileOf(lake.wind?.profile);
+  const sportZones = lake.sportZones || [];
+  const ferryLines = lake.ferry?.lines || [];
+  // T641: water sport zones grouped by sport, named zones first.
+  const zoneBySport = new Map();
+  sportZones.forEach((z) => {
+    const g = zoneBySport.get(z.sport) || { n: 0, names: [] };
+    g.n += 1;
+    if (z.name && g.names.length < 2) g.names.push(z.name);
+    zoneBySport.set(z.sport, g);
+  });
+  const zoneText = [...zoneBySport.entries()].filter(([s]) => SPORT_KEY[s]).map(([s, g]) => (
+    `${t(SPORT_KEY[s])}: ${g.names.length ? g.names.join(', ') : g.n}`)).join('; ');
+  const lineText = (l) => [`${l.ref}: ${(l.stops || []).slice(0, 6).join(', ')}`, l.operator,
+    l.min ? `${l.min[0] === l.min[1] ? l.min[0] : `${l.min[0]} to ${l.min[1]}`} min` : null].filter(Boolean).join(', ');
   const beaches = lake.beaches || [];
   const sports = lake.sports || [];
   const ferryTag = (lake.services || []).includes('ferry');
@@ -129,7 +145,8 @@ export function LakeWater({ lake }) {
         rule={lake.swim?.rule || null}
         depthM={lake.size?.depthM || null}
         hazards={lake.hazards || []}
-        lifeguard={null}
+        lifeguard={lake.lifeguards ? true : null}
+        banN={lake.swim?.ban?.n || 0}
       />
       <h3 className="dsk-sub">{t('wx.zonesHead')}</h3>
       {zones.length > 0 ? (
@@ -154,16 +171,20 @@ export function LakeWater({ lake }) {
         <Row id="lake-sports" label={t('wx.sportsMapped')}>
           {sports.length > 0 && sports.map((s) => (SPORT_KEY[s] ? t(SPORT_KEY[s]) : null)).filter(Boolean).join(', ')}
         </Row>
-        <Row id="lake-wind-profile" label={t('wx.windProfile')} />
+        <Row id="lake-wind-profile" label={t('wx.windProfile')}>
+          {wind && t('wx.windRange', { lo: wind.lo, hi: wind.hi, month: monthName(wind.peak + 1, lang, false) })}
+        </Row>
         <Row id="lake-thermal" label={t('wx.thermalWinds')} />
-        <Row id="lake-sport-zones" label={t('wx.sportZones')} />
+        <Row id="lake-sport-zones" label={t('wx.sportZones')}>{zoneText}</Row>
       </dl>
       <h3 className="dsk-sub">{t('wx.ferryHead')}</h3>
       <dl>
         <Row id="lake-ferry" label={t('wx.ferryService')}>
           {ferryTag && (stops ? t('wx.ferryStops', { n: stops }) : t('wx.ferryTag'))}
         </Row>
-        <Row id="lake-ferry-lines" label={t('wx.ferryLines')} />
+        <Row id="lake-ferry-lines" label={t('wx.ferryLines')}>
+          {ferryLines.length > 0 && ferryLines.slice(0, 4).map(lineText).join('; ')}
+        </Row>
       </dl>
     </div>
   );
@@ -209,8 +230,12 @@ export function BeachFacilities({ beach }) {
         <Row id="bf-lido-entry" label={t('wx.bfLidoEntry')} />
         <Row id="bf-lido-sunbed" label={t('wx.bfLidoSunbed')} />
         <Row id="bf-lido-book" label={t('wx.bfLidoBook')} />
-        <Row id="bf-walk-pier" label={t('wx.bfWalkPier')} />
-        <Row id="bf-walk-centre" label={t('wx.bfWalkCentre')} />
+        <Row id="bf-walk-pier" label={t('wx.bfWalkPier')}>
+          {beach.walkFrom?.pier && t('wx.walkLine', { km: beach.walkFrom.pier.km, min: beach.walkFrom.pier.min })}
+        </Row>
+        <Row id="bf-walk-centre" label={t('wx.bfWalkCentre')}>
+          {beach.walkFrom?.centre && t('wx.walkLine', { km: beach.walkFrom.centre.km, min: beach.walkFrom.centre.min })}
+        </Row>
       </dl>
       <h3 className="dsk-sub">{t('wx.audHead')}</h3>
       <dl>

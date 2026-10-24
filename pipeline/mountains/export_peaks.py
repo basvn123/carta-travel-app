@@ -71,6 +71,8 @@ from peak_sources import haversine_km, load_cache  # noqa: E402
 from harvest_peaks import (COUNTRIES, COUNTRY_QID, fold,  # noqa: E402
                            name_tokens)
 import peak_index as pi  # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import explore_overlay as xov  # noqa: E402  (T641: lift hours)
 
 if sys.platform == "win32":
     # A Bosnian summit name stops an export dead on a cp1252
@@ -708,6 +710,11 @@ def wire_peak(peak, comps, score10, tier, reasons, expected, view_band=None,
         row["highpointOf"] = peak["highpoint_of"][:60]
     if lift:
         row["lift"] = lift
+        # T641: opening hours (and a fare record the app does not show) of the
+        # lift, from OpenStreetMap (harvest_lift_hours.py).
+        lh = xov.load_rows("peak_lift_hours").get(row["id"])
+        if lh:
+            row["lift"] = {**lift, "hours": lh["hours"], **({"fare": lh["fare"]} if lh.get("fare") else {})}
     # T630: the steepest stretch of the gentlest side, in degrees, the number
     # terrain.easiest_slope already computes and only fed `diff` with. The app
     # warns over 30. A proxy, not a route: it is labelled so on the page.

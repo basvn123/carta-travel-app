@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { legLinks, TRAVEL_MODES, TRAVEL_MODE_LABEL } from '../lib/transportLinks.js';
 import { fmtDate, addDays } from '../lib/dates.js';
 import { useI18n } from '../i18n/index.jsx';
+import { notYet } from '../components/NotYet.jsx';
 import { Button, Money, CostRow } from '../components/ui/index.js';
 import {
   TrainIcon, BusIcon, CarIcon, FerryIcon, CheckIcon, ChevronDownIcon,
@@ -168,9 +169,12 @@ function LegRow({ leg, value, onChange, adults, estimate, t, lang, partyText, fl
                   <span key={a.iata} className="tleg-airport">
                     <b>{a.iata}</b>
                     <small>
-                      {a.transferMin != null
-                        ? t('travel.airportTransfer', { km: a.km, n: a.transferMin, mode: t(`mode.${a.transferMode || 'train'}`) })
-                        : t('travel.airportKm', { km: a.km })}
+                      {a.transferMin != null && a.transferMode
+                        ? t('travel.airportTransfer', { km: a.km, n: a.transferMin, mode: t(`mode.${a.transferMode}`) })
+                        : a.transferMin != null
+                          // T642: no mode in the data reads the placeholder, the minutes stay.
+                          ? t('travel.airportTransfer', { km: a.km, n: a.transferMin, mode: notYet(t) })
+                          : t('travel.airportKm', { km: a.km })}
                     </small>
                   </span>
                 ))}

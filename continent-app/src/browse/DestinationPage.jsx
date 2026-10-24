@@ -383,12 +383,23 @@ export function DestinationPage({
       label: t('dest.keyMonth', { month: monthName(tripMonth, lang, true) }),
       value: t('dest.keyMonthValue', { hi: Math.round(climateMonth[0]), mm: Math.round(climateMonth[2] ?? 0) }),
     },
-    crowdOn && { k: 'crowds', label: t('dest.keyCrowds'), value: t(CROWD_KEY[destination.crowding.tier] || 'crowd.moderate') },
+    // T642: the month on screen when the region has a monthly series, else the annual tier.
+    crowdOn && {
+      k: 'crowds',
+      label: t('dest.keyCrowds'),
+      value: t(CROWD_KEY[(datesOwn && tripMonth ? destination.crowding.monthly?.tier?.[tripMonth - 1] : null)
+        ?? destination.crowding.tier] || 'crowd.moderate'),
+    },
     getting?.airport && {
       k: 'airport',
       label: t('dest.keyAirport'),
       // T632: no transfer mode in the data is the placeholder, not "train".
-      value: getting.transfer_min == null
+      value: getting.airports?.length > 1
+        // T642: every airport within reach, nearest first, each with its fastest transfer.
+        ? getting.airports.map((a) => (a.transfer_mode
+          ? t('dest.keyAirportValue', { iata: a.iata, n: a.transfer_min, mode: t(`mode.${a.transfer_mode}`) })
+          : a.iata)).join(' / ')
+        : getting.transfer_min == null
         ? getting.airport
         : getting.transfer_mode
           ? t('dest.keyAirportValue', { iata: getting.airport, n: getting.transfer_min, mode: t(`mode.${getting.transfer_mode}`) })

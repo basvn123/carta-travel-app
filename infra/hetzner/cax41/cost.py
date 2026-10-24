@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
-"""What the on-demand CAX41 runs cost: the one place the rates live (T047).
+"""What the on-demand worker runs cost: the one place the rates live (T047).
 
-spawn.sh calls `cost.py price` for every ledger row, and `cost.py mtd` prints
-the month-to-date total from the ledger it appends to. Task report:
-Execution/P3/T047-on-demand-cax41.md.
+spawn.sh calls `cost.py price` for every ledger row, `cost.py plan` for the
+planned cost it prints before a create, and `cost.py mtd` prints the
+month-to-date total from the ledger it appends to. Task reports:
+Execution/P3/T047-on-demand-cax41.md, and T647 for the per-job server type.
 
     python3 infra/hetzner/cax41/cost.py price --seconds 21600 --ipv4 1
+    python3 infra/hetzner/cax41/cost.py price --seconds 18000 --type cpx42
+    python3 infra/hetzner/cax41/cost.py plan --hours 5 --type cpx42
     python3 infra/hetzner/cax41/cost.py mtd                      # this month
     python3 infra/hetzner/cax41/cost.py mtd --month 2026-10 --ledger logs/cax41_runs.tsv
     python3 infra/hetzner/cax41/cost.py check                    # the arithmetic self-test
@@ -14,6 +17,19 @@ Rates, from CARTA_CLOUD_ARCHITECTURE.md sections 6.1, 6.2 and 7 (post-June-2026
 Hetzner prices, not yet read off an invoice):
   CAX41        EUR 0.056 an hour (EUR 40.99 a month cap)
   primary IPv4 EUR 0.60 a month, pro-rated per hour over 730 hours
+x86 types (T647; the trailslab job needs amd64, see infra/hetzner/README.md).
+These are PLANNING rates, not read off Hetzner: the only x86 price the repo
+has is T299's CPX22 at EUR 23.58 a month with VAT (2 vCPU, 4 GB, 80 GB,
+console 2026-10-03), so each CPX here is that figure scaled by its vCPU count
+and spread over 730 hours. Pessimistic on purpose (Hetzner's larger types cost
+less per core). Replace each with `hcloud server-type describe <type>` before
+trusting a ledger figure for it (register row T647-c):
+  CPX22        2 vCPU, 4 GB, 80 GB    EUR 23.58 a month  -> 0.0323 an hour (T299)
+  CPX32        4 vCPU, 8 GB, 160 GB   EUR 47.16 a month  -> 0.0646 an hour
+  CPX42        8 vCPU, 16 GB, 320 GB  EUR 94.32 a month  -> 0.1292 an hour
+  CPX52        12 vCPU, 24 GB, 480 GB EUR 141.48 a month -> 0.1938 an hour
+CARTA_WORKER_EUR_PER_HOUR overrides the rate for any type, including one that
+is not in the table.
 
 Two figures per run, because Hetzner's rounding has not been checked against a
 bill. `eur` is wall-clock hours times the rate, the architecture document's own
@@ -31,11 +47,20 @@ import argparse
 import csv
 import datetime as dt
 import math
+import os
 import sys
 from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 
 CAX41_EUR_PER_HOUR = Decimal("0.056")
+# server type -> (EUR an hour, where the figure comes from)
+RATES = {
+    "cax41": (CAX41_EUR_PER_HOUR, "architecture 6.2"),
+    "cpx22": (Decimal("0.0323"), "T299 console price, EUR 23.58 a month with VAT"),
+    "cpx32": (Decimal("0.0646"), "planning: CPX22 x2, unverified"),
+    "cpx42": (Decimal("0.1292"), "planning: CPX22 x4, unverified"),
+    "cpx52": (Decimal("0.1938"), "planning: CPX22 x6, unverified"),
+}
 IPV4_EUR_PER_MONTH = Decimal("0.60")
 HOURS_PER_MONTH = Decimal("730")
 IPV4_EUR_PER_HOUR = IPV4_EUR_PER_MONTH / HOURS_PER_MONTH
@@ -51,11 +76,23 @@ def cents(x: Decimal) -> Decimal:
     return x.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
 
 
-def price(seconds: int, ipv4: bool) -> dict:
+def server_rate(server_type: str = "cax41") -> Decimal:
+    """EUR an hour for one server type; CARTA_WORKER_EUR_PER_HOUR wins."""
+    override = os.environ.get("CARTA_WORKER_EUR_PER_HOUR")
+    if override:
+        return Decimal(override)
+    try:
+        return RATES[server_type.lower()][0]
+    except KeyError:
+        raise SystemExit(f"cost.py: no rate for server type {server_type!r}; add it to "
+                         f"RATES or set CARTA_WORKER_EUR_PER_HOUR") from None
+
+
+def price(seconds: int, ipv4: bool, server_type: str = "cax41") -> dict:
     """Cost of one run of `seconds` from create to confirmed delete."""
     hours = Decimal(max(0, seconds)) / Decimal(3600)
     started = Decimal(max(1, math.ceil(seconds / 3600))) if seconds > 0 else Decimal(0)
-    rate = CAX41_EUR_PER_HOUR + (IPV4_EUR_PER_HOUR if ipv4 else Decimal(0))
+    rate = server_rate(server_type) + (IPV4_EUR_PER_HOUR if ipv4 else Decimal(0))
     return {
         "wall_hours": hours.quantize(Decimal("0.001")),
         "started_hours": started,
@@ -98,8 +135,18 @@ def month_to_date(rows: list[dict], month: str) -> dict:
 
 
 def cmd_price(a: argparse.Namespace) -> int:
-    p = price(a.seconds, a.ipv4 == 1)
+    p = price(a.seconds, a.ipv4 == 1, a.type)
     print(f"{p['wall_hours']}\t{p['started_hours']}\t{p['eur']}\t{p['eur_started_h']}")
+    return 0
+
+
+def cmd_plan(a: argparse.Namespace) -> int:
+    """One line for spawn.sh: the planned cost of a run of the expected hours."""
+    p = price(int(Decimal(a.hours) * 3600), a.ipv4 == 1, a.type)
+    src = "CARTA_WORKER_EUR_PER_HOUR" if os.environ.get("CARTA_WORKER_EUR_PER_HOUR") \
+        else RATES.get(a.type.lower(), (None, "?"))[1]
+    print(f"planned cost {a.type} {a.hours} h: EUR {cents(p['eur'])} "
+          f"(EUR {cents(p['eur_started_h'])} at started hours; rate {src})")
     return 0
 
 
@@ -147,6 +194,15 @@ def cmd_check(_a: argparse.Namespace) -> int:
     ok = p["started_hours"] == 2 and cents(p["eur_started_h"]) == Decimal("0.11")
     bad += not ok
     print(f"{'PASS' if ok else 'FAIL'}  61 min = 2 started hours = EUR {cents(p['eur_started_h'])}")
+    # T647: the x86 planning rate, and the trailslab job's planned 5 h on it.
+    for secs, v4, typ, want, label in [
+        (5 * 3600, False, "cpx42", Decimal("0.65"), "5 h on a CPX42 (0.1292 x 5 = 0.646)"),
+        (10 * 3600, True, "cpx42", Decimal("1.30"), "10 h CPX42 ceiling with IPv4 (1.292 + 0.0082)"),
+    ]:
+        got = cents(price(secs, v4, typ)["eur"])
+        ok = got == want
+        bad += not ok
+        print(f"{'PASS' if ok else 'FAIL'}  {label}: EUR {got}")
     print(f"IPv4 share per hour: EUR {IPV4_EUR_PER_HOUR.quantize(Decimal('0.000001'))}")
     return 1 if bad else 0
 
@@ -157,7 +213,13 @@ def main() -> int:
     p = sub.add_parser("price", help="cost of one run; prints wall_h started_h eur eur_started_h")
     p.add_argument("--seconds", type=int, required=True)
     p.add_argument("--ipv4", type=int, choices=(0, 1), default=1)
+    p.add_argument("--type", default="cax41", help="Hetzner server type (default cax41)")
     p.set_defaults(fn=cmd_price)
+    pl = sub.add_parser("plan", help="planned cost of a run of --hours on --type")
+    pl.add_argument("--hours", required=True)
+    pl.add_argument("--type", default="cax41")
+    pl.add_argument("--ipv4", type=int, choices=(0, 1), default=1)
+    pl.set_defaults(fn=cmd_plan)
     m = sub.add_parser("mtd", help="month-to-date total from the ledger")
     m.add_argument("--ledger", default=str(DEFAULT_LEDGER))
     m.add_argument("--month", help="YYYY-MM, default the current UTC month")
