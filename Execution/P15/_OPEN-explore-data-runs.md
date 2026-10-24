@@ -31,3 +31,52 @@ Gate = `python pipeline/field_stubs/gate.py --layer <layer>` (T640). Exit 1 mean
 | T642 | (orchestrator adds the new rules and the repairs here) | | | | | | |
 
 Mirror to the app: after the last step, `node continent-app/scripts/sync-data.mjs` in `continent-app/`, then commit the app repo and mirror it into the root repo (the root tracks `continent-app/public`).
+
+## T647 trailslab worker
+
+Steps 4 and 5 above, run without the laptop: `run_pipeline.py`'s weekly `trailslab_worker` task spawns an on-demand x86 worker (`infra/hetzner/jobs/trailslab.sh`, CPX42) every 28 days that restores the newest trailslab dump from R2, runs `way_tags.py --refresh` and `transit_stops.py` per country over fresh Geofabrik extracts, exports trails (`--no-promote`) and cycling behind `gate.py` and `pipeline/trails/difficulty_gate.py`, and writes a fresh dump back. The orchestrator gates the wires again against its own copy, installs what passed into `continent-app/public`, so the same Monday ship publishes it, and moves the dump into `archive/db/trailslab/`. Design and reasons: `infra/hetzner/README.md`, "The trailslab job". It stays a logged skip until every step below is done.
+
+Owner decisions first:
+
+| Decision | Recommendation | Why |
+|---|---|---|
+| D6, x86 workers | Yes, for this job: CPX42 (8 vCPU, 16 GB, 320 GB) | The dumps come from the laptop's amd64-only `pgrouting/pgrouting:17-3.5-3.7` lab; no CAX type has had stock in the EU since 2026-09-03 (T299). The rate in `cost.py` (EUR 0.1292 an hour, about EUR 0.65 a run) is a planning figure: confirm it with `hcloud server-type describe cpx42`. |
+| Dump keys | `worker-key`: a dedicated worker keypair, every new dump encrypted to the owner key and the worker key | Keeps "every dump in R2 is encrypted" true and the owner's offline key opens every dump. `plain` (unencrypted, ODbL data plus the curator ledger) is the alternative; set `CARTA_TRAILSLAB_DUMP_CRYPT=plain` and upload one plain dump instead of step 4. The Supabase dump is unchanged either way. |
+| D7, a separate R2 token for workers (T047-f) | Yes, before the first trailslab run | The worker now also holds a gpg secret key and runs Docker images and pip packages; a token of its own can be revoked without touching the box's. R2 tokens scope to a bucket, not a prefix, so it is still Object Read and Write on `carta`. |
+| The Hetzner token | Already T047-a: a Read and Write token in the box's `HCLOUD_TOKEN` | `env.example` has the line; only the owner can see whether the box's file has a value. |
+
+Steps, in order, on the box as `carta` unless marked laptop. Do 4 before 2026-11-01, when `trailslab-2026-10-22.dump.gpg` expires.
+
+1. The code: merge this branch, push, and on the box `cd ~/carta && git pull`. The worker clones the branch in `CARTA_REPO_BRANCH`, so it must be pushed and contain `infra/hetzner/jobs/trailslab.sh`.
+2. The token and the static checks (T047-a, if not done): `HCLOUD_TOKEN` in `~/.config/carta/env`, then
+   `bash infra/hetzner/cax41/verify.sh` (ends "0 failed"), `bash infra/hetzner/cax41/spawn.sh --list` (trailslab shows cpx42), `bash infra/hetzner/cax41/spawn.sh --dry-run trailslab worker-key LI`, and the sweep timer from `_OPEN-hetzner.md` step 17.
+3. A selftest spawn first, on x86, since no CAX is in stock: `CARTA_WORKER_TYPE_SELFTEST=cpx22 bash infra/hetzner/cax41/spawn.sh selftest`. It passes when spawn.sh ends "outcome ok, exit 0", `hcloud server list --selector role=worker` is empty, and `rclone cat r2:carta/archive/built/selftest/selftest.txt` shows x86_64. This proves the amd64 rclone path in cloud-init for a few cents.
+4. The worker key (box), then the dump it can read (laptop):
+   ```
+   # box
+   export GNUPGHOME="$(mktemp -d)"
+   gpg --batch --passphrase '' --quick-generate-key "Carta trailslab worker" future-default default never
+   gpg --armor --export-secret-keys "Carta trailslab worker" > ~/.config/carta/trailslab-worker.sec.asc
+   chmod 600 ~/.config/carta/trailslab-worker.sec.asc
+   gpg --armor --export "Carta trailslab worker" > ~/carta-trailslab-worker.pub.asc
+   rm -rf "$GNUPGHOME"; unset GNUPGHOME
+   gpg --list-keys "$CARTA_BACKUP_KEY"        # the owner's public key must be in the box keyring (T045-d)
+   ```
+   Laptop, option A (the lab has changes after 2026-10-22, e.g. T641's transit work): `docker start trailslab-db`, then
+   ```
+   scp carta@<box>:carta-trailslab-worker.pub.asc . && gpg --import carta-trailslab-worker.pub.asc
+   pg_dump -h localhost -p 5433 -U trailslab -d trailslab -Fc -Z 6 | gpg --trust-model always --encrypt -r 1F6E1DCD2DD731E1A2C088A7BCA9DCA8D738AC84 -r "Carta trailslab worker" -o trailslab-$(date +%F).dump.gpg
+   rclone copyto trailslab-$(date +%F).dump.gpg r2:carta/archive/db/trailslab/trailslab-$(date +%F).dump.gpg
+   ```
+   Option B (re-encrypt the 2026-10-22 dump without Docker): `rclone lsl r2:carta/archive/db/ | grep trailslab` for its exact key, then
+   ```
+   rclone copyto r2:carta/archive/db/<key as listed> t.dump.gpg
+   gpg --decrypt t.dump.gpg | gpg --trust-model always --encrypt -r 1F6E1DCD2DD731E1A2C088A7BCA9DCA8D738AC84 -r "Carta trailslab worker" -o trailslab-2026-10-22-w.dump.gpg
+   rclone copyto trailslab-2026-10-22-w.dump.gpg r2:carta/archive/db/trailslab/trailslab-2026-10-22-w.dump.gpg
+   ```
+   Either way the new object restarts the 30-day clock. Delete the local copies afterwards.
+5. Settings in `~/.config/carta/env`: `CARTA_TRAILSLAB_DUMP_CRYPT=worker-key` (or blank), and `CARTA_WORKER_R2_ACCESS_KEY_ID` / `CARTA_WORKER_R2_SECRET_ACCESS_KEY` if D7 is yes. Leave `CARTA_TRAILSLAB_WORKER` blank for now. Then `CARTA_TRAILSLAB_WORKER=1 python3 infra/hetzner/cax41/trailslab_worker.py check` must print "ready".
+6. One hand-started test run that installs nothing: `CARTA_TRAILSLAB_WORKER=1 python3 infra/hetzner/cax41/trailslab_worker.py run --force --countries LI --no-install`. One country in the loop, both full exports, both gates on both machines, the dump moved to `archive/db/trailslab/`. About 3 to 4 h, about EUR 0.50. Read `logs/trailslab_worker/<run id>/out/MANIFEST.txt`, `out/reports/steps.tsv` and `out/reports/extracts.tsv`, and write the real per-step seconds into the register row (T647-d) so `expected_h` and the reserve can be set from measurements.
+7. Switch it on: `CARTA_TRAILSLAB_WORKER=1` in `~/.config/carta/env`. The next Monday run spawns (the last good run is the step 6 one only if it is 28 days old; `--force` once more runs it now). Afterwards, `git diff --stat continent-app/public/trails continent-app/public/cycling` on the box shows what the ship carried, and `cat logs/trailslab_worker.json` the state.
+
+Rollback: `CARTA_TRAILSLAB_WORKER=` (blank) stops the task at once. A wire that shipped wrongly: `tar -xzf logs/trailslab_worker/<run id>/prev-trails.tar.gz -C ~/carta` after removing `continent-app/public/trails` (same for cycling), then the next ship. The dumps are never deleted by the job; the older ones expire on their own.

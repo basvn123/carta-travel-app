@@ -139,6 +139,7 @@ harvest to save sixty cents a month.
 | CAX11, always on (an x86 fallback costs what its describe output says) | EUR 5.99 |
 | Primary IPv4 (default; IPV4=0 drops it) | about EUR 0.60 |
 | CAX41 workers, on demand (T047) | EUR 0.056 an hour of existence; see cax41/cost.py |
+| The trailslab worker, a CPX42 every 28 days (T647) | about EUR 0.65 a run at the planning rate (unverified) |
 | Traffic, up to 20 TB | included |
 | Hetzner backups | not enabled |
 
@@ -248,6 +249,106 @@ schema-checks the user data for every job, dry-runs every job, and drives
 spawn.sh with fake hcloud and rclone binaries through every failure path to
 prove the delete is always issued.
 
+## The trailslab job (T647, owner decision D5)
+
+The trails lab moves off the laptop as an on-demand job: create a server,
+restore the trailslab dump from R2, run the trailslab steps, write a fresh
+dump back, delete the server. Three files: `jobs/trailslab.sh` (the worker
+side), `cax41/trailslab_worker.py` (the orchestrator side, run by
+`run_pipeline.py`'s `trailslab_worker` task) and
+`pipeline/trails/difficulty_gate.py` (T642's rule as a gate).
+
+Server type. jobs.tsv has a `server_type` column now; a dash keeps the
+CAX41. The trailslab row names a CPX42 (x86, 8 vCPU, 16 GB, 320 GB), for
+three reasons: the laptop's lab, which made every dump so far, runs
+`pgrouting/pgrouting:17-3.5-3.7`, an amd64-only image, and the job restores
+into that same image rather than into a different pgRouting build; no CAX type
+has been in stock in any EU location since 2026-09-03 (T299), so an arm64-only
+job may not run at all; and 320 GB holds the restored lab (the laptop's Docker
+disk is 31.6 GB with everything in it), the decrypted dump while it restores,
+one Geofabrik extract at a time (France is the largest, 5.1 GB) and the new
+dump, with room to spare. On an arm64 type the job falls back to the
+multi-arch imresamu image `tools/trailslab/docker-compose.yml` names.
+`CARTA_WORKER_TYPE_TRAILSLAB=cpx32` (or any cx, cpx or ccx type) overrides the
+row for this job only. cloud-init installs the rclone build for the box's own
+architecture, and `cost.py` prices each run at its type's rate. The x86 rates
+in `cost.py` are planning figures scaled from T299's CPX22 price, not read
+off Hetzner; replace them from `hcloud server-type describe cpx42`.
+
+What the worker does, in order, each step with its exit code and seconds in
+`out/reports/steps.tsv`: import the dump keys; start the lab container on
+127.0.0.1:5433 (fsync off: the box is thrown away); pick the newest dump in
+`archive/db/` it can read, download, decrypt, `pg_restore -j` with the PGDG
+client 18 (the dumps come from pg_dump 18, the image's own client is 17),
+ANALYZE; for every country with hikes in the lab, fetch its Geofabrik extract
+(R2's `archive/inputs/geofabrik/<date>/` when not older than 35 days, else
+download.geofabrik.de, checked against its .md5), run
+`way_tags.py --refresh --countries CC` and `transit_stops.py --countries CC`,
+delete the extract and record its date and replication timestamp in
+`out/reports/extracts.tsv`; export trails (`export_wire.py --no-promote`) and
+cycling (`export_cycling.py`) over the previous wire the orchestrator
+uploaded, gate them (`gate.py --layer trails` plus `difficulty_gate.py`, and
+`gate.py --layer cycling`) against that previous wire, and pack only what
+passed; `pg_dump -Fc`, read back with `pg_restore -l`, encrypt, decrypt once
+more and compare by sha256. `out/MANIFEST.txt` says what passed. The loop
+stops early when less than 2.5 h of the ceiling is left, so the exports and
+the dump always fit: the dump is the one output that must not be lost.
+
+Why `--no-promote`: moving an approved trip to published is the human review
+step's decision. On an unattended worker it would change the row set the
+difficulty gate holds fixed, and it would write a publish decision nobody made
+into the dump. The laptop's `trails_rate` task still promotes.
+
+What the orchestrator does (`trailslab_worker.py run`): it uploads what the
+worker's LFS-free clone cannot have (`cache/nuts3_2021.geojson`, which the
+trails export files rows by) and its own live top-level wire files, spawns,
+and after an ok status gates each passed layer once more against this box's
+working tree (a git tree built with `hash-object` and `mktree`, so no index
+and no ref is touched), installs it into `continent-app/public/` (top-level
+files overwritten, the detail folders mirrored, the old folder tarred first
+for rollback), and moves the fresh dump from `archive/built/trailslab/db/` to
+`archive/db/trailslab/`, the trailslab-dump class, which restarts R2's 30-day
+expiry. The same Monday ship then publishes the wires.
+
+Cadence. The task is weekly, but it spawns only when the last good run is 28
+days old. "Monthly" in run_pipeline.py is 30 days, which on a Monday schedule
+is every fifth Monday, 35 days, and `archive/db/` expires after 30: the lab
+would spend five days with no dump. On the Mondays between runs the task
+only looks at the newest dump, and copies it server side to a new dated key
+when it is older than 21 days (after a failed run).
+
+Timing (planning, not measured on a worker). The laptop's full `way_tags.py`
+pass logged 1 to 3 minutes per large country (Germany 31 s for the relations
+plus 69 s of node locations, France 31 s plus 83 s; logs/way_tags.log,
+2026-08-30); transit_stops.py reads each extract twice more, at roughly a
+minute per GB; 30 GB of extracts download in about 10 minutes from Geofabrik.
+Estimates: boot, clone, Docker, venv and client 0.3 h; dump fetch, decrypt
+and restore 1 h (the least known figure: index builds on 8 cores); the
+country loop 1.5 h; both exports and gates 0.5 h; dump, check, encrypt and
+verify 0.75 h; push 0.1 h. That is about 4.2 h, so expected_h is 5 and the
+ceiling 10, twice the plan. At the planning rate a 5 h run is EUR 0.65 and the
+ceiling EUR 1.30, one run every four weeks.
+
+The dump keys, an owner decision. A worker cannot decrypt a dump encrypted
+only to the owner's personal key ("Carta backups", 1F6E1DCD...D738AC84). Two
+settings, `CARTA_TRAILSLAB_DUMP_CRYPT` on the box, which becomes the job
+argument spawn.sh passes:
+- `worker-key` (the default, recommended). A dedicated keypair, "Carta
+  trailslab worker", made on the box without a passphrase; its secret half
+  lives only in `~/.config/carta/trailslab-worker.sec.asc` (mode 600) and in
+  the user data of the worker while it exists. spawn.sh hands the worker that
+  secret key and the public half of `CARTA_BACKUP_KEY`, and every dump the
+  worker writes is encrypted to both, so the owner's offline key still opens
+  all of them and push.py's "dumps go to R2 encrypted only" rule keeps
+  holding. The one-time cost: the current dump is encrypted to the owner only,
+  so it must be re-encrypted to both keys once, on the laptop.
+- `plain`. The dump is read and written unencrypted. It holds ODbL OSM data
+  and the trip_reviews ledger (curator decisions, no user rows), so the harm
+  of a leak is small, but it breaks the rule that every dump in R2 is
+  encrypted, and anyone holding an R2 token could read it.
+The Supabase dump is not touched by either: it holds personal data and stays
+encrypted to the owner key only, from the box's run_pipeline.sh.
+
 ## What comes next
 
 T048 left the monthly and quarterly tiers unscheduled once the Windows task is
@@ -258,7 +359,9 @@ trails_splice, trails_derive_routes, cycling_harvest) read and write the
 trailslab PostGIS lab, which lives on neither box. Moving them to the worker
 means a job that starts the lab in Docker on the CAX41 (the imresamu image
 T006 named), restores T045's trailslab dump, runs the tasks and dumps it back:
-a task of its own.
+a task of its own. T647 built that job for the weekly steps (way tags,
+transit stops, both exports; "The trailslab job" above); the ingest, splice,
+route derivation and cycling harvest can join it as further steps.
 
 The derive stage (`pipeline/photos/derive.py`, migration step 4) replaced the
 `image_transcode` stub in T049. Its `vips` need installs `libvips-dev` and
