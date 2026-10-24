@@ -20,7 +20,8 @@ import { monthRow } from './rank.js';
 // of their own, and the prompt forbids the model any it is not given.
 // v3 (T583): two or three short, warm sentences, no count, no repeated
 // "has the highest score"; the chat also keeps only the first three.
-export const PROMPT_VERSION = 3;
+// v4 (price plan rule 2, 2026-10-24): figures carry no estimate mark.
+export const PROMPT_VERSION = 4;
 /** Caps that keep one answer inside the free Workers AI budget. */
 export const MAX_NOTES = 14;
 export const MAX_NOTE_CHARS = 300;
@@ -43,7 +44,7 @@ export function systemPrompt(lang) {
     `You write short travel answers for Carta in ${LANG_NAME[lang] || 'English'}.`,
     'Use only the numbered notes. Never add a fact, price, number, month or place that is not in them.',
     'After every sentence, the first one too, write the note numbers it comes from, like [2] or [1][4].',
-    'Copy figures exactly as the notes write them, keeping "~" and "est." on every estimate.',
+    'Copy figures exactly as the notes write them.',
     'Compare places, or call one better, best, cheaper, drier or warmer, only when a note says so, and cite that note.',
     'Name places in the order the notes list them.',
     'Write 2 or 3 short sentences in a warm, plain voice, like a friend who knows the places: name the best one to three places and the one reason that matters for each.',

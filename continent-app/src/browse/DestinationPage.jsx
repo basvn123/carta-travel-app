@@ -48,6 +48,8 @@ import { resolveWhen, whenMonth, xmFromSearch } from '../lib/when.js';
 import { crowdFor, CROWD_TIER_KEYS } from '../lib/crowdMonth.js';
 import { mobilityStat } from '../lib/mobility.js';
 import { pickAirport, airportLine } from '../lib/airportPick.js';
+import { useDayView } from '../hooks/useDayView.js';
+import { includedParts } from '../lib/price/display.js';
 
 /**
  * The full-screen destination page, v4 (T499, roadmap 1.4, owner answers
@@ -187,6 +189,7 @@ export function DestinationPage({
   const wide = useWide();
   const headRef = React.useRef(null);
   const firstRun = useFirstRun();
+  const view = useDayView();   // T694: per person or the group's total
   const tripMonth = monthOf(firstRun?.departDate || firstRun?.defaultDates?.start || null);
   const defaults = firstRun?.defaultDates || null;
   const datesOwn = !!(defaults && firstRun?.departDate
@@ -670,10 +673,10 @@ export function DestinationPage({
             {pdfCost?.dayEur != null && (
               <div className="destp-day">
                 <p className="destp-dayline">
-                  <Money value={pdfCost.dayEur} est={isNational(pdfCost)} />
-                  <span className="destp-dayline-unit">{t('dest.priceDayUnit')}</span>
+                  <Money value={view.day(pdfCost.dayEur)} est={isNational(pdfCost)} />
+                  <span className="destp-dayline-unit">{view.unit}</span>
                 </p>
-                <p className="destp-dayline-incl">{dayIncludesText(t)}</p>
+                <p className="destp-dayline-incl">{dayIncludesText(t, includedParts(pdfCost))}</p>
               </div>
             )}
             {/* What this place is: two or three sentences from our own

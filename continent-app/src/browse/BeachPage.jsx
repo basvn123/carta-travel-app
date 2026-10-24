@@ -37,6 +37,7 @@ import { notYet } from '../components/NotYet.jsx';
 
 import { BeachSignature, CompassRosette } from './Signature.jsx';
 import { compassPoint } from '../lib/signature.js';
+import { useDayView } from '../hooks/useDayView.js';
 
 /**
  * The beach page: one published beach, and the argument for going there.
@@ -103,6 +104,7 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
   const highlights = useMemo(() => (beach ? beachHighlights(beach, t) : []), [beach, t]);
   const photos = useMemo(() => toPhotos(images, { fallbackCaption: beach?.name || '' }), [images, beach?.name]);
   const baseDay = useBaseDay(beach?.base?.id || null);
+  const view = useDayView();   // T694: per person or the group's total
   const { onPdf, pdfBusy } = useItemPdf('beach', beach, { countryName });
 
   if (!beach) return null;
@@ -359,8 +361,8 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
       costLine={baseDay && beach.base ? (
         <>
           {t('item.dayIn', { city: beach.base.city })}{' '}
-          <strong><Money value={baseDay.dayEur} est={baseDay.est} /></strong>{' '}
-          {t('dest.priceDayUnit')}
+          <strong><Money value={view.day(baseDay.dayEur)} est={baseDay.est} /></strong>{' '}
+          {view.unit}
         </>
       ) : null}
       actions={[

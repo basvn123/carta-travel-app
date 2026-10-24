@@ -30,6 +30,9 @@ import { originHome, destAnchor } from './origins.js';
 import { pickLeg, legCost } from './flights/flights.js';
 import { addDays } from './dates.js';
 import { round2 } from './math.js';
+import { rule } from './price/config.js';
+
+const CAR = rule('car.model');   // T691: the one car model's fallbacks
 
 // A hop the traveller paid for themselves. An own entry replaces the estimate
 // for that mode and leaves the other modes priced, so switching back is one tap.
@@ -37,7 +40,7 @@ export const OWN_LEG_MODES = new Set(['fly', 'ferry', 'train', 'bus', 'car']);
 
 /** The largest party the planner prices. The wizard caps its steppers here
  *  too, so a party never shrinks at the hand-over. */
-export const MAX_PARTY = 20;
+export const MAX_PARTY = rule('party.limits').max_seats;
 
 const NO_DESTINATIONS = Object.freeze({});
 
@@ -301,8 +304,8 @@ export function priceTrip(state, { data = null, countryInsights = null } = {}) {
   if ((flight?.combinable || flight?.own) && flight.ground_total > 0) {
     const iso2 = first?.dest?.iso2;
     const fuelByIso = carModel?.fuel_price_by_iso2 || {};
-    const petrol = fuelByIso[iso2] ?? carModel?.fuel_price_eur_per_l ?? 1.8;
-    const consumption = carModel?.consumption_l_per_100km ?? 6.5;
+    const petrol = fuelByIso[iso2] ?? carModel?.fuel_price_eur_per_l ?? CAR.fuel_price_eur_per_l;
+    const consumption = carModel?.consumption_l_per_100km ?? CAR.consumption_l_per_100km;
     const capacity = carModel?.car_capacity ?? 4;
     const hasRental = transportPref === 'car';
     const kmOf = (eurPp, minutes) => (minutes > 0 ? (minutes / 60) * 42 : Math.max(1, (eurPp || 0) / 0.15));
@@ -358,7 +361,7 @@ export function priceTrip(state, { data = null, countryInsights = null } = {}) {
     const home = (carHome && carHome.lat != null ? carHome : null)
       || originHome(data, data?.meta?.selected_origin) || data?.meta?.home || null;
     if (home) {
-      const model = { ...(carModel || {}), max_drive_km: 4000 };
+      const model = { ...(carModel || {}), max_drive_km: CAR.max_drive_km };
       const half = (dest) => {
         if (!dest) return null;
         const rt = drivingEstimate(dest, home, { group_size: seats }, model);
@@ -406,7 +409,7 @@ export function priceTrip(state, { data = null, countryInsights = null } = {}) {
     }
     const items = [...isoSet].filter((iso) => prices[iso] != null).map((iso) => ({ iso2: iso, eur: prices[iso] }));
     if (items.length) {
-      const cars = Math.max(1, Math.ceil(seats / Math.max(1, carModel?.car_capacity || 4)));
+      const cars = Math.max(1, Math.ceil(seats / Math.max(1, carModel?.car_capacity || CAR.car_capacity)));
       vignettes = { items, cars, eur_total: round2(items.reduce((n, v) => n + v.eur, 0) * cars) };
     }
   }

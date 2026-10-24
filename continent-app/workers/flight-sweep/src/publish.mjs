@@ -16,6 +16,7 @@
  */
 
 import { km } from './plan.mjs';
+import PRICING from '../../../config/pricing.json' with { type: 'json' };
 
 export const FILE_VERSION = 1;
 
@@ -26,8 +27,13 @@ export const FILE_VERSION = 1;
  * file, as if not searched, so the app shows no price rather than a wrong one.
  * Moves to config/pricing.json in F3.
  */
-export const PRICE_CEILING = { base: 150, perKm: 0.5, min: 250, noDistance: 1500 };
-export const ROUTE_MOVE = 0.4;
+// T693: config/pricing.json gate.sweep, the one copy app and pipeline read.
+const SWEEP = PRICING.rules['gate.sweep'].value;
+export const PRICE_CEILING = {
+  base: SWEEP.ceiling_base_eur, perKm: SWEEP.ceiling_per_km_eur,
+  min: SWEEP.ceiling_min_eur, noDistance: SWEEP.ceiling_no_distance_eur,
+};
+export const ROUTE_MOVE = SWEEP.route_move;
 
 const distance = (a, b) => (a && b ? km(a, b) : null);
 

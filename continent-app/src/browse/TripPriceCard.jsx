@@ -20,6 +20,7 @@ import { homeFlightSetup, journeyAirports, bestRoundTrip, backDate, withEnds } f
 import { loadLiveStay, nearestLiveDest, useLiveStaysVersion } from '../lib/liveStays.js';
 import { liveStayRatio } from '../lib/stayPrice.js';
 import { useStaysVersion } from '../lib/staysData.js';
+import { rule } from '../lib/price/config.js';
 
 /**
  * The trip page's price card (T431, owner 2026-10-15): what the week costs a
@@ -47,7 +48,7 @@ import { useStaysVersion } from '../lib/staysData.js';
  * From 1024 px the page holds it in a sticky side column; on a phone it sits
  * in the page after the reasons to go.
  */
-const MAX_PARTY = 12;
+const MAX_PARTY = rule('party.limits').max_seats;   // T691: one cap
 
 const LINE_KEY = {
   accommodation: 'journey.bAccommodation',
@@ -205,7 +206,6 @@ export function TripPriceCard({
           <p className="tprice-fig">
             <span ref={figRef} className="tprice-fig-n"><Money value={price.perPerson} est /></span>
             <span className="tprice-unit">{t('journey.pricePp')}</span>
-            <InfoDot term="estimate" />
           </p>
         ) : (
           <p className="tprice-none">{t('money.onRequest')}</p>
@@ -316,7 +316,6 @@ export function TripPriceCard({
                       )}
                     </>
                   )}
-                  sub={slot === 'accommodation' && price.liveStay ? t('stay.live') : null}
                   value={<Money value={v} est />}
                 />
               );

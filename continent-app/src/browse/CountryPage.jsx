@@ -21,6 +21,7 @@ import { countryHash } from '../lib/urlState.js';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { usePageArrival } from '../hooks/usePageArrival.js';
 import CreditFold from './CreditFold.jsx';
+import { useDayView } from '../hooks/useDayView.js';
 
 /**
  * A country as a destination of its own (PLAN.md C9; T450 on the kit; T498
@@ -71,6 +72,7 @@ export function CountryPage({
   onOpenJourney = null, onSeeAllWeeks = null,
 }) {
   const { t, lang } = useI18n();
+  const view = useDayView();   // T694: per person or the group's total
   const mine = React.useMemo(
     () => rows.filter((p) => p.iso2 === iso2)
       .sort((a, b) => (b.rating?.score ?? 0) - (a.rating?.score ?? 0)),
@@ -182,8 +184,8 @@ export function CountryPage({
                       <div className="rgnp-fact">
                         <dt>{t('cpage.kDay')}<DayPriceDot /></dt>
                         <dd>
-                          <Money value={day} est={dayEst} />
-                          <span className="rgnp-unit"> {t('dest.priceDayUnit')}</span>
+                          <Money value={view.day(day)} est={dayEst} />
+                          <span className="rgnp-unit"> {view.unit}</span>
                         </dd>
                       </div>
                     )}

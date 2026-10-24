@@ -9,6 +9,7 @@
  */
 import { cheapestReturn, cheapestReturnAnyMonth, sweptNear, legCost } from '../flights/flights.js';
 import { flightWindow } from './request.js';
+import { rule } from './config.js';
 
 /** { out, back, kind } for the request, or null when either way has no flight. */
 export function flightLegs(file, airport, req, now = Date.now()) {
@@ -25,7 +26,7 @@ export function flightLegs(file, airport, req, now = Date.now()) {
 
 /** The legs priced for a party, in the shape roundTripNear returns:
  *  { out, back, fare, bags, bagsKnown, total, perSeat, checked, kind }. */
-export function flightQuote(legs, { paying = 1, bagKey = 'small' } = {}) {
+export function flightQuote(legs, { paying = 1, bagKey = rule('request.default_bag') } = {}) {
   if (!legs) return null;
   const a = legCost(legs.out, { paying, bagKey });
   const b = legCost(legs.back, { paying, bagKey });

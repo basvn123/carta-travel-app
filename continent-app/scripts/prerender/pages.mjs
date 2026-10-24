@@ -882,7 +882,7 @@ export function receiptPage(plan, ctx) {
     lead: [hook, `${noFlights} The transport line is the catalogue's own estimate, marked with a tilde.`],
     receipt: {
       head: `${names}, ${trip.days} days, one person`,
-      lines: lines.map((l) => ({ label: l.label, value: `${l.est ? '~' : ''}${eur2(l.eur)}` })),
+      lines: lines.map((l) => ({ label: l.label, value: eur2(l.eur) })),
       totalLabel: 'The week, one person',
       total: eur2(total),
       foot,

@@ -101,10 +101,8 @@ test("V6 (bed): a bigger party never pays more a head, unless it needs another r
         const req = priceRequest({ choices: { group_size: seats, stay_tier: stay } });
         const row = priceDay(ALL[id], req, ALL);
         const bed = row.lines[0];
-        // A bed over the EUR 400 ceiling is repaired with the country's
-        // entire-place median (plan 6.1; bounds per tier arrive in F3,
-        // T662-b), so it is no comparison for a party size.
-        if (bed.provenance.repaired || prev?.provenance.repaired) { prev = bed; continue; }
+        // T692: bounds per stay tier, so a solo 5-star room is no longer
+        // repaired with a cheap entire place (T662-a).
         if (prev && bed.eur > prev.eur) {
           const grew = bed.basis.units > prev.basis.units || bed.basis.tier === "home";
           assert.ok(grew, `${id} ${stay} ${seats}: ${prev.eur} -> ${bed.eur} with ${prev.basis.units} -> ${bed.basis.units} ${bed.basis.unit}`);

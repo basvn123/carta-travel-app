@@ -8,6 +8,7 @@ import {
   ChevronDownIcon, DiamondIcon, GlobeIcon, MedalIcon, PersonIcon, SwimIcon, TrainIcon,
 } from '../components/Icons.jsx';
 import '../styles/78-filter-pane.css';
+import { useDayView } from '../hooks/useDayView.js';
 
 /**
  * The Explore filter pane (T589, Explore v6). One column that fits about one
@@ -96,12 +97,16 @@ function budgetStops(xf) {
 }
 
 function BudgetRange({ t, xf, patch }) {
+  // T694 (V15, V16): the stops are stored a person a day and shown in the
+  // traveller's view, the same factor the cards use, so a filter compares
+  // the number on the card and gives the same places in both views.
+  const view = useDayView();
   const stops = budgetStops(xf);
   const anyAt = stops.length; // the stop past the last euro step is "Any"
   const lo = Math.max(0, stops.indexOf(xf.bmin || 0));
   const hi = xf.budget ? stops.indexOf(xf.budget) : anyAt;
   const pct = (i) => `${(i / anyAt) * 100}%`;
-  const label = (i) => (i >= anyAt ? t('filter.budgetAny') : formatMoney(stops[i]));
+  const label = (i) => (i >= anyAt ? t('filter.budgetAny') : formatMoney(stops[i] * view.factor));
   const setLo = (i) => {
     const v = Math.min(i, hi - 1);
     patch({ bmin: v > 0 ? stops[v] : null });
@@ -177,6 +182,7 @@ export function ExploreFilterRail({
   count = null, onClearAll = null,
   only = null,
 }) {
+  const view = useDayView();   // T694: the budget's unit in the traveller's view
   // T604: `only` draws a subset of the sections (a quick chip's popover
   // draws one), so a filter has one look and one behaviour wherever it is.
   const show = (key) => !only || only.includes(key);
@@ -267,7 +273,7 @@ export function ExploreFilterRail({
           <div className="xpane-label-row">
             <h3 className="xrail-h" id={hid('budget')}>{t('filter.budget')}</h3>
             <DayPriceDot />
-            <span className="xpane-unit">{t('filter.budgetUnit')}</span>
+            <span className="xpane-unit">{view.total ? view.unit : t('filter.budgetUnit')}</span>
           </div>
           <BudgetRange t={t} xf={xf} patch={patch} />
         </section>
@@ -359,6 +365,8 @@ const QUICK_KEYS = ['type', 'good', 'budget', 'month', 'rating', 'flight'];
  */
 export function ExploreQuickFilters(props) {
   const { t, lang, xf, patch, tripKinds, setTripKinds, flightLimitAvailable = false } = props;
+  const { factor } = useDayView();   // T694: chip figures in the traveller's view
+  const eurIn = (v) => formatMoney(v * factor);
   const [openKey, setOpenKey] = React.useState(null);
   const [left, setLeft] = React.useState(0);
   const barRef = React.useRef(null);
@@ -378,10 +386,10 @@ export function ExploreQuickFilters(props) {
     },
     budget: () => {
       if (xf.bmin && xf.budget) {
-        return t('explore.qfRange', { lo: formatMoney(xf.bmin), hi: formatMoney(xf.budget) });
+        return t('explore.qfRange', { lo: eurIn(xf.bmin), hi: eurIn(xf.budget) });
       }
-      if (xf.budget) return t('explore.qfBudget', { eur: formatMoney(xf.budget) });
-      return xf.bmin ? t('filter.budgetFrom', { eur: formatMoney(xf.bmin) }) : '';
+      if (xf.budget) return t('explore.qfBudget', { eur: eurIn(xf.budget) });
+      return xf.bmin ? t('filter.budgetFrom', { eur: eurIn(xf.bmin) }) : '';
     },
     month: () => (xf.month
       ? new Intl.DateTimeFormat(lang, { month: 'long' }).format(new Date(2026, xf.month - 1, 15))

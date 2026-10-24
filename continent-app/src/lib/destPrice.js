@@ -35,6 +35,9 @@ export function priceFromIndex(costRow, nights, people, fare = null, carta = nul
   const n = Math.max(1, Math.round(Number(nights) || 1));
   const p = Math.max(1, Math.round(Number(people) || 1));
 
+  // T695 (rule 9): an item switched off in the opened price leaves the
+  // receipt, so the total is always the sum of the items that are on (V9).
+  const off = new Set((costRow.lines || []).filter((l) => l.status === 'excluded').map((l) => l.key));
   const lines = [];
   const fareEur = Number(fare?.costTotal);
   if (Number.isFinite(fareEur) && fareEur > 0) {
@@ -42,8 +45,8 @@ export function priceFromIndex(costRow, nights, people, fare = null, carta = nul
   } else if (carta?.total > 0) {
     lines.push({ key: 'flight', eur: round2(carta.total), est: false, carta });
   }
-  lines.push({ key: 'stay', eur: round2(stay * n * p), est: costRow.stayLevel !== 'city' });
-  lines.push({ key: 'ground', eur: round2(food * n * p), est: costRow.foodLevel !== 'city' });
+  if (!off.has('bed')) lines.push({ key: 'stay', eur: round2(stay * n * p), est: costRow.stayLevel !== 'city' });
+  if (!off.has('food')) lines.push({ key: 'ground', eur: round2(food * n * p), est: costRow.foodLevel !== 'city' });
 
   const total = round2(lines.reduce((s, l) => s + l.eur, 0));
   return {
@@ -51,7 +54,7 @@ export function priceFromIndex(costRow, nights, people, fare = null, carta = nul
     total,
     each: p > 1 ? round2(total / p) : null,
     est: lines.some((l) => l.est),
-    dayEur: stay + food,
+    dayEur: (off.has('bed') ? 0 : stay) + (off.has('food') ? 0 : food),
     nights: n,
     people: p,
   };

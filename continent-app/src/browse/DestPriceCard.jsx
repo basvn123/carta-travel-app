@@ -14,7 +14,6 @@ import { ReceiptLine, ReceiptSum, useSettleChanged } from '../components/Receipt
 import { FlightSheet } from '../components/FlightSheet.jsx';
 import { ReportProblem } from '../components/ReportProblem.jsx';
 import { ChevronDownIcon, ChevronRightIcon, RouteIcon, SunIcon } from '../components/Icons.jsx';
-import { isNational } from '../components/CostSummary.jsx';
 import { InfoDot } from '../components/InfoDot.jsx';
 import { dayIncludesText } from '../lib/dayIncludes.js';
 import { matchProfile, PROFILE_LABEL_KEYS } from './LifestylePanel.jsx';
@@ -25,6 +24,10 @@ import { FlightRow, FlightLink, AirlineMark } from '../components/flights/Flight
 import { homeFlightSetup, withEnds } from './cartaFlight.js';
 import { useStaysVersion } from '../lib/staysData.js';
 import { loadLiveStay } from '../lib/liveStays.js';
+import { rule } from '../lib/price/config.js';
+import { useDayView } from '../hooks/useDayView.js';
+import { PriceItems } from '../components/PriceItems.jsx';
+import { includedParts } from '../lib/price/display.js';
 
 /**
  * The destination page's price card (T429): what a day here costs at the
@@ -48,13 +51,15 @@ import { loadLiveStay } from '../lib/liveStays.js';
  * On a phone the card sits in the page after the key facts, never sticky;
  * from 1024 px the page's grid holds it in a sticky side column.
  */
-const MAX_PARTY = 12;
+const MAX_PARTY = rule('party.limits').max_seats;   // T691: one cap
 
 export function DestPriceCard({
   dest, city, onOpenLifestyle, onPlanTrip, onPlanDay, reportItem, carDayEur = null,
 }) {
   const { t, lang, languages } = useI18n();
   const ctx = useFirstRun();
+  const view = useDayView();   // T694: per person or the group's total
+  const flightOff = !!view.request.excluded?.includes('flight');
   const uid = React.useId();
   const receiptKey = `dest:${dest.id}`;
   const [fare, setFare] = React.useState(() => readOwnFare(receiptKey));
@@ -89,8 +94,9 @@ export function DestPriceCard({
     [fare, flightFile, airport, request, people, bagKey],
   );
   const price = React.useMemo(
-    () => priceFromIndex(costRow, nights, people, fare, carta),
-    [costRow, nights, people, fare, carta],
+    // T695: a flight switched off in the opened price leaves the receipt.
+    () => (flightOff ? priceFromIndex(costRow, nights, people, null, null) : priceFromIndex(costRow, nights, people, fare, carta)),
+    [costRow, nights, people, fare, carta, flightOff],
   );
   // T540: with the traveller's own dates, ask for tonight's hotel prices on
   // those nights; the cost index reprices the bed from them when they land.
@@ -175,19 +181,21 @@ export function DestPriceCard({
       <header className="dprice-head">
         <h2 className="dprice-title" id={`${uid}-h`}>{t('dest.priceTitle', { nights: nightsText, city })}</h2>
         <p className="dprice-day">
-          {/* One dot explains the mark, on its first occurrence (carta-design
-              "InfoDot", T446), set against "est." so it never reads as a
-              separator between the figure and its unit. */}
+          {/* Plan rule 2 (2026-10-24): the amount and its unit, no estimate
+              mark and no dot explaining one. */}
           <span className="dprice-fig">
-            <span ref={dayRef}><Money value={price.dayEur} est={isNational(costRow)} /></span>
-            {isNational(costRow) && <InfoDot term="estimate" />}
+            <span ref={dayRef}>
+              <PriceItems cost={costRow} way={carta?.perSeat > 0 ? { mode: 'plane', perPerson: carta.perSeat } : null}>
+                <Money value={view.day(price.dayEur)} />
+              </PriceItems>
+            </span>
           </span>
-          <span className="dprice-day-unit">{t('dest.priceDayUnit')}</span>
+          <span className="dprice-day-unit">{view.unit}</span>
         </p>
         {/* What the day includes (T499, owner answer T491-h). From 1024 px
             the card is where the first screen reads it; on a phone the head
             carries it and this line hides (64-v6-destination.css). */}
-        <p className="dprice-incl">{dayIncludesText(t)}</p>
+        <p className="dprice-incl">{dayIncludesText(t, includedParts(costRow))}</p>
       </header>
 
       <div className="dprice-inputs" role="group" aria-label={t('receipt.stripAria')}>
@@ -312,7 +320,6 @@ export function DestPriceCard({
         {price.lines.map((line) => (
           <ReceiptLine key={line.key} t={t} line={{
             key: line.key, label: label(line), eur: line.eur, est: line.est,
-            prov: line.key === 'stay' && costRow?.stayLive ? [t('stay.live')] : undefined,
           }} />
         ))}
         <ReceiptSum

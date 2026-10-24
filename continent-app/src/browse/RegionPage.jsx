@@ -52,6 +52,7 @@ import { Strip } from './SectionOpening.jsx';
 import { DayPrice, SaveButton } from './ExploreCards.jsx';
 import { fmtMonthRanges } from './ClimateStrip.jsx';
 import { WeeksRow } from './TripStylesRow.jsx';
+import { useDayView } from '../hooks/useDayView.js';
 
 const KIND_KEY = {
   coast: 'region.kind.coast',
@@ -175,6 +176,7 @@ export function RegionPage({
   onSeeAllLayer = null, favorites = null, onToggleFav = null,
 }) {
   const { t, lang } = useI18n();
+  const view = useDayView();   // T694: per person or the group's total
   const [data, setData] = useState(undefined);
   const [failed, setFailed] = useState(false);
   const [tries, setTries] = useState(0);
@@ -395,8 +397,8 @@ export function RegionPage({
                 <div className="rgnp-fact">
                   <dt>{t('item.dayIn', { city: priced.city })}</dt>
                   <dd>
-                    <Money value={priced.cost.dayEur} est={isNational(priced.cost)} />
-                    <span className="rgnp-unit"> {t('dest.priceDayUnit')}</span>
+                    <Money value={view.day(priced.cost.dayEur)} est={isNational(priced.cost)} />
+                    <span className="rgnp-unit"> {view.unit}</span>
                   </dd>
                 </div>
               )}

@@ -24,6 +24,7 @@ import { useTravelMonth, useSettings } from '../components/SettingsLine.jsx';
 import { resolveWhen } from '../lib/when.js';
 import { fromName } from '../components/FromPicker.jsx';
 import { flightLegs } from '../lib/price/flight.js';
+import { legCost } from '../lib/flights/flights.js';
 import { homePoint, wayFor } from '../lib/travelWay.js';
 import { partyOf } from '../lib/party.js';
 import { destAnchor } from '../lib/origins.js';
@@ -93,6 +94,7 @@ import { SortIcon, ShareIcon, BookmarkIcon, CheckIcon } from '../components/Icon
 import { isResizable, srcSetFor, fallbackSrc } from '../lib/heroImage.js';
 import { commonsPageUrl } from '../lib/imageCredit.js';
 import '../styles/84-explore-overview.css';
+import { viewFactor } from '../lib/price/display.js';
 
 // 'viewport' catalogue mode (T059): the zoom from which the map fetches the
 // countries on screen. Below it the map draws clusters, which the boot pins
@@ -551,7 +553,12 @@ export function ExploreTab({
     for (const p of catAllRows) {
       const d = data.destinations[p.id];
       const r = flights && (wayMode === 'plane' || wayMode === 'any') ? flightLegs(flights, destAnchor(d), request) : null;
-      const flight = r ? { perSeat: r.out.price + r.back.price, airline: r.out.airline } : null;
+      // T691: the traveller's bag on both legs, as the calculator prices it.
+      const bagKey = request?.baggage;
+      const flight = r ? {
+        perSeat: legCost(r.out, { paying: 1, bagKey }).perSeat + legCost(r.back, { paying: 1, bagKey }).perSeat,
+        airline: r.out.airline,
+      } : null;
       const way = wayFor(d || p, wayMode, { home, party, flight });
       // T589: the outbound flight's length, for the "Flight up to" filter.
       const fmin = r ? legMinutes(r.out) : null;
@@ -794,8 +801,10 @@ export function ExploreTab({
     // Trip styles first: they are the first group of the rail (V3, T383),
     // and before V3 they made no chip at all.
     for (const k of tripKinds) list.push({ key: `s:${k}`, label: t(`kind.${k}`), remove: () => setTripKinds(tripKinds.filter((x) => x !== k)) });
-    if (xf.budget) list.push({ key: 'budget', label: t('explore.budgetUpTo', { eur: formatMoney(xf.budget) }), remove: drop({ budget: null }) });
-    if (xf.bmin) list.push({ key: 'bmin', label: t('filter.budgetFrom', { eur: formatMoney(xf.bmin) }), remove: drop({ bmin: null }) });
+    // T694: the chips say the budget in the traveller's view (V15).
+    const vf = viewFactor(request);
+    if (xf.budget) list.push({ key: 'budget', label: t('explore.budgetUpTo', { eur: formatMoney(xf.budget * vf) }), remove: drop({ budget: null }) });
+    if (xf.bmin) list.push({ key: 'bmin', label: t('filter.budgetFrom', { eur: formatMoney(xf.bmin * vf) }), remove: drop({ bmin: null }) });
     if (xf.fh && flightLimitAvailable) list.push({ key: 'fh', label: t('filter.flightChip', { n: xf.fh }), remove: drop({ fh: null }) });
     for (const k of xf.kinds) list.push({ key: `k:${k}`, label: t(`pkind.${k}`), remove: drop({ kinds: xf.kinds.filter((x) => x !== k) }) });
     // One chip for the rating, "Excellent and up" (T440): the rail asks for
@@ -825,7 +834,7 @@ export function ExploreTab({
     // focused view then always says why it holds what it holds.
     if (locationQuery && locationQuery.trim()) list.push({ key: 'q', label: `“${locationQuery.trim()}”`, remove: () => setLocationQuery('') });
     return list;
-  }, [xf, locationQuery, setLocationQuery, flightLimitAvailable, tripKinds, gemOnly, unescoOnly, showFavOnly, countryFilter, countryNot, reachHours, reachAvailable, availableCountries, t, patchXf, setTripKinds, setGemOnly, setUnescoOnly, setShowFavOnly, setCountryFilter, setReachHours, gLabels, nearRow]);
+  }, [xf, locationQuery, setLocationQuery, flightLimitAvailable, tripKinds, gemOnly, unescoOnly, showFavOnly, countryFilter, countryNot, reachHours, reachAvailable, availableCountries, t, patchXf, setTripKinds, setGemOnly, setUnescoOnly, setShowFavOnly, setCountryFilter, setReachHours, gLabels, nearRow, request]);
 
   // The filter set last, so an empty grid can name it and offer to remove
   // just that one (brief V3-11). A chip key that was not there a render ago
