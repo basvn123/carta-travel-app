@@ -19,6 +19,7 @@ Only medians per destination are ever published: no property names, photos,
 links or single-hotel prices leave the state directory.
 """
 
+import asyncio
 import json
 import math
 import os
@@ -26,6 +27,7 @@ import sqlite3
 import statistics
 import sys
 import time
+import traceback
 from datetime import date, datetime, timezone
 from pathlib import Path
 
@@ -196,6 +198,54 @@ def insert_obs(con, **row):
     cols = [c for c in OBS_FIELDS if c in row]
     con.execute(f"insert or ignore into obs ({','.join(cols)}) values "
                 f"({','.join('?' * len(cols))})", [row[c] for c in cols])
+
+
+# ------------------------------------------------------------ robustness --- #
+# T679: a scrape session never ends on one bad page. A page that fails (a
+# timeout, a dropped or sleeping network, a crashed browser, an error nobody
+# foresaw) is skipped without being marked done, so a later run retries it;
+# each failure in a row waits longer; only a long outage ends the session, and
+# the next hourly start picks it up. A block from the site is not a failure
+# here: the scrapers stop on it on purpose.
+WAITS = (30, 60, 120, 300, 600)        # seconds after the 1st, 2nd, ... failure in a row
+GIVE_UP = 40                           # failures in a row (about 5 hours) end the session
+
+
+class OutOfTime(Exception):
+    """--max-hours reached (never Playwright's TimeoutError, which is a page's)."""
+
+
+class Trouble:
+    def __init__(self, source, waits=WAITS, give_up=GIVE_UP):
+        self.source, self.waits, self.give_up = source, waits, give_up
+        self.row = self.total = 0
+
+    def ok(self):
+        self.row = 0
+
+    async def failed(self, err, where):
+        """Log one failed page and wait; False when the session should end."""
+        self.row += 1
+        self.total += 1
+        first = (str(err).strip().splitlines() or [type(err).__name__])[0][:160]
+        print(f"{self.source}: page failed at {where} ({type(err).__name__}: {first}); "
+              f"{self.row} in a row", flush=True)
+        if self.row == 1 and not isinstance(err, (asyncio.TimeoutError, TimeoutError)):
+            traceback.print_exc(limit=3)
+        if self.row >= self.give_up:
+            print(f"{self.source}: {self.row} failures in a row, ending this session; "
+                  "the next start resumes", flush=True)
+            return False
+        await asyncio.sleep(self.waits[min(self.row - 1, len(self.waits) - 1)])
+        return True
+
+
+def browser_gone(page):
+    """True when the page or its browser can no longer be used."""
+    try:
+        return page.is_closed() or not page.context.browser.is_connected()
+    except Exception:
+        return True
 
 
 def mark_done(con, source, task):

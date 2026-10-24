@@ -17,17 +17,19 @@ Usage:
 
 import argparse
 import asyncio
+import contextlib
 import random
 import sys
 import time
+import traceback
 from collections import Counter
 from datetime import date, timedelta
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from common import (JOURNAL_SCRAPE, STATE, blocked_until, insert_obs, journal,  # noqa: E402
-                    load_destinations, migrate_scrape, now_iso, priority, read_json,
-                    set_block)
+from common import (JOURNAL_SCRAPE, STATE, OutOfTime, Trouble, blocked_until,  # noqa: E402
+                    browser_gone, insert_obs, journal, load_destinations, migrate_scrape,
+                    now_iso, priority, read_json, set_block)
 from booking.page import close_overlays, decline_cookies  # noqa: E402
 from hostelworld.page import CARDS_JS, city_url, parse_card  # noqa: E402
 from price_xotelo import probe_day  # noqa: E402
@@ -73,13 +75,24 @@ async def run(a):
     start = date.fromisoformat(a.run + "-01")
     t0 = time.monotonic()
     pages = stored = 0
+    trouble = Trouble(SOURCE)
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=not a.headed)
-        page = await (await browser.new_context(locale="en-GB")).new_page()
+        browser = page = None
+
+        async def fresh_page():
+            nonlocal browser, page
+            with contextlib.suppress(Exception):
+                if browser:
+                    await browser.close()
+            browser = await p.chromium.launch(headless=not a.headed)
+            page = await (await browser.new_context(locale="en-GB")).new_page()
+
+        await fresh_page()
         try:
             for d in dests:
                 city, country = overrides.get(d["id"]) or (d["city"], d["country"])
                 months = {int(m) for m in a.months.split(",") if m}
+                town_pages = 0
                 for k in range(1, 13):
                     day = probe_day(start, k)
                     if months and day.month not in months:
@@ -92,53 +105,71 @@ async def run(a):
                                    (SOURCE, task)).fetchone():
                         continue
                     if a.max_hours and time.monotonic() - t0 > a.max_hours * 3600:
-                        raise TimeoutError
+                        raise OutOfTime
                     url = city_url(city, country, day.isoformat(),
                                    (day + timedelta(days=1)).isoformat())
-                    resp = await page.goto(url, wait_until="domcontentloaded",
-                                           timeout=60000)
-                    pages += 1
-                    if resp and resp.status in (403, 429):
-                        set_block(con, SOURCE, 20, f"{resp.status} at {d['id']}")
-                        print("blocked: stopping, resume tomorrow")
-                        return
-                    await page.wait_for_timeout(2500)
-                    await decline_cookies(page)
-                    await close_overlays(page)
-                    cards = [parse_card(c) for c in await page.evaluate(CARDS_JS)]
-                    for c in cards:
-                        for bed in ("dorm", "private"):
-                            price, cur = c[bed], c[f"{bed}_currency"]
-                            if not price or not 3 <= price <= 1500:
-                                continue
-                            if cur != "EUR":
-                                rejects[f"currency {cur}"] += 1
-                                continue
-                            # T643 contract. "From" prices; a list page does not
-                            # say whether city tax is in (tax_included NULL). The
-                            # private unit is the B4 sample's verdict, NULL until
-                            # there is one (build_stays then fills or rejects it).
-                            insert_obs(con, source=SOURCE, dest_id=d["id"], prop_key=c["key"],
-                                       kind="hostel", stars=None, bed=bed, adults=1,
-                                       chk_in=day.isoformat(), nights=1, price_eur=price,
-                                       ota=None, captured=now_iso(), currency=cur,
-                                       unit="bed" if bed == "dorm" else private_unit,
-                                       tax_included=None, from_or_discount=1,
-                                       price_text=c[f"{bed}_text"], per_text=None)
-                            stored += 1
-                    con.execute("insert or replace into done values (?,?,?)",
-                                (SOURCE, task, now_iso()))
-                    con.commit()
-                    if not cards and pages == 1:
+                    # T679: one bad page (a timeout, a dropped network, a dead
+                    # browser) is skipped, not marked done, and retried later.
+                    try:
+                        resp = await page.goto(url, wait_until="domcontentloaded",
+                                               timeout=60000)
+                        pages += 1
+                        town_pages += 1
+                        if resp and resp.status in (403, 429):
+                            set_block(con, SOURCE, 20, f"{resp.status} at {d['id']}")
+                            print("blocked: stopping, resume tomorrow")
+                            return
+                        await page.wait_for_timeout(2500)
+                        await decline_cookies(page)
+                        await close_overlays(page)
+                        cards = [parse_card(c) for c in await page.evaluate(CARDS_JS)]
+                        for c in cards:
+                            for bed in ("dorm", "private"):
+                                price, cur = c[bed], c[f"{bed}_currency"]
+                                if not price or not 3 <= price <= 1500:
+                                    continue
+                                if cur != "EUR":
+                                    rejects[f"currency {cur}"] += 1
+                                    continue
+                                # T643 contract. "From" prices; a list page does not
+                                # say whether city tax is in (tax_included NULL). The
+                                # private unit is the B4 sample's verdict, NULL until
+                                # there is one (build_stays then fills or rejects it).
+                                insert_obs(con, source=SOURCE, dest_id=d["id"], prop_key=c["key"],
+                                           kind="hostel", stars=None, bed=bed, adults=1,
+                                           chk_in=day.isoformat(), nights=1, price_eur=price,
+                                           ota=None, captured=now_iso(), currency=cur,
+                                           unit="bed" if bed == "dorm" else private_unit,
+                                           tax_included=None, from_or_discount=1,
+                                           price_text=c[f"{bed}_text"], per_text=None)
+                                stored += 1
+                        con.execute("insert or replace into done values (?,?,?)",
+                                    (SOURCE, task, now_iso()))
+                        con.commit()
+                    except Exception as e:
+                        con.rollback()
+                        if not await trouble.failed(e, f"{d['id']} {day}"):
+                            return
+                        if browser_gone(page):
+                            try:
+                                await fresh_page()
+                            except Exception as e2:
+                                if not await trouble.failed(e2, "browser restart"):
+                                    return
+                        continue
+                    trouble.ok()
+                    if not cards and town_pages == 1:
                         print(f"{d['id']}: no cards at {url} (add hostelworld_city.json "
                               f"override?)")
                         break
                     await page.wait_for_timeout(int(random.uniform(3000, 6000)))
-        except TimeoutError:
+        except OutOfTime:
             print("max hours reached; the next run resumes here")
         finally:
-            await browser.close()
-    print(f"session: {pages} pages, {stored} prices, rejected {dict(rejects)}")
+            with contextlib.suppress(Exception):
+                await browser.close()
+    print(f"session: {pages} pages, {stored} prices, {trouble.total} pages failed, "
+          f"rejected {dict(rejects)}")
 
 
 def main():
@@ -149,7 +180,13 @@ def main():
     ap.add_argument("--max-hours", type=float, default=3)
     ap.add_argument("--headed", action="store_true")
     ap.add_argument("--months", default="")
-    asyncio.run(run(ap.parse_args()))
+    a = ap.parse_args()
+    try:
+        asyncio.run(run(a))
+    except Exception:
+        # T679: never a bare crash; the next start resumes from the journal.
+        traceback.print_exc()
+        sys.exit(1)
 
 
 if __name__ == "__main__":

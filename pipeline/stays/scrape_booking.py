@@ -33,17 +33,19 @@ Usage:
 
 import argparse
 import asyncio
+import contextlib
 import random
 import sys
 import time
+import traceback
 from collections import Counter
 from datetime import date, timedelta
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from common import (JOURNAL_SCRAPE, blocked_until, insert_obs, journal,  # noqa: E402
-                    load_destinations, migrate_scrape, now_iso, priority, read_json,
-                    set_block, STATE)
+from common import (JOURNAL_SCRAPE, OutOfTime, Trouble, blocked_until, browser_gone,  # noqa: E402
+                    insert_obs, journal, load_destinations, migrate_scrape, now_iso,
+                    priority, read_json, set_block, STATE)
 from booking.page import (card_price, classify, close_overlays, decline_cookies,  # noqa: E402
                           looks_blocked, per_ok, prop_key, read_cards, search_dropped)
 from booking.urls import search_url  # noqa: E402
@@ -189,14 +191,24 @@ async def run(a):
     pages = stored = retries = 0
     page_s = 0.0                      # seconds spent loading and reading pages
     rejects = Counter()
+    trouble = Trouble(SOURCE)
     async with async_playwright() as p:
-        # A headed window is placed off-screen (T634): Booking serves it like any
-        # browser, and the owner's screen stays free. --show puts it on screen.
-        browser = await p.chromium.launch(
-            headless=not a.headed,
-            args=[] if a.show or not a.headed else ["--window-position=-32000,-32000"])
-        ctx = await browser.new_context(locale="en-GB", viewport={"width": 1366, "height": 900})
-        page = await ctx.new_page()
+        browser = page = None
+
+        async def fresh_page():
+            # A headed window is placed off-screen (T634): Booking serves it like any
+            # browser, and the owner's screen stays free. --show puts it on screen.
+            nonlocal browser, page
+            with contextlib.suppress(Exception):
+                if browser:
+                    await browser.close()
+            browser = await p.chromium.launch(
+                headless=not a.headed,
+                args=[] if a.show or not a.headed else ["--window-position=-32000,-32000"])
+            ctx = await browser.new_context(locale="en-GB", viewport={"width": 1366, "height": 900})
+            page = await ctx.new_page()
+
+        await fresh_page()
         try:
             for d in dests:
                 ss = search_text(d, overrides)
@@ -222,14 +234,28 @@ async def run(a):
                                        (SOURCE, task)).fetchone():
                             continue
                         if a.max_hours and time.monotonic() - t0 > a.max_hours * 3600:
-                            raise TimeoutError
+                            raise OutOfTime
                         url = search_url(ss, day.isoformat(), out, adults=adults,
                                          kind=kind, stars=stars)
-                        tp = time.monotonic()
-                        cards, retried = await visit(page, url)
-                        page_s += time.monotonic() - tp
-                        pages += 1
-                        retries += retried
+                        # T679: one bad page (a timeout, a dropped network, a dead
+                        # browser) is skipped, not marked done, and retried later.
+                        try:
+                            tp = time.monotonic()
+                            cards, retried = await visit(page, url)
+                            page_s += time.monotonic() - tp
+                            pages += 1
+                            retries += retried
+                        except Exception as e:
+                            if not await trouble.failed(e, f"{d['id']} {day} {name}"):
+                                return
+                            if browser_gone(page):
+                                try:
+                                    await fresh_page()
+                                except Exception as e2:
+                                    if not await trouble.failed(e2, "browser restart"):
+                                        return
+                            continue
+                        trouble.ok()
                         if cards is None:
                             set_block(con, SOURCE, 20, f"challenge at {d['id']} {day}")
                             print(f"blocked at {d['id']} {day}: stopping, "
@@ -237,24 +263,32 @@ async def run(a):
                                   + ("" if a.headed else
                                      " (Booking refuses headless Chrome: run with --headed)"))
                             return
-                        stored += store(con, d["id"], cards, day.isoformat(), adults,
-                                        forced_kind=kind if kind == "hostel" else None,
-                                        rejects=rejects)
-                        con.execute("insert or replace into done values (?,?,?)",
-                                    (SOURCE, task, now_iso()))
-                        con.commit()
+                        try:
+                            stored += store(con, d["id"], cards, day.isoformat(), adults,
+                                            forced_kind=kind if kind == "hostel" else None,
+                                            rejects=rejects)
+                            con.execute("insert or replace into done values (?,?,?)",
+                                        (SOURCE, task, now_iso()))
+                            con.commit()
+                        except Exception as e:
+                            con.rollback()
+                            if not await trouble.failed(e, f"{d['id']} {day} {name} (journal)"):
+                                return
+                            continue
                         await page.wait_for_timeout(int(random.uniform(3000, 6000)))
                 print(f"{d['id']}: {pages} pages, {stored} prices, "
                       f"{(time.monotonic() - t0) / 3600:.1f} h, "
                       f"{page_s / max(pages, 1):.1f} s per page read, "
                       f"{(time.monotonic() - t0) / max(pages, 1):.1f} s per page in all, "
                       f"{retries} retried, rejected {dict(rejects)}", flush=True)
-        except TimeoutError:
-            print("max hours reached; tomorrow's run resumes here")
+        except OutOfTime:
+            print("max hours reached; the next run resumes here")
         finally:
-            await browser.close()
+            with contextlib.suppress(Exception):
+                await browser.close()
     left = sum(1 for d in dests for _ in probes) * 2
-    print(f"session: {pages} pages, {stored} prices; at most {left} page slots in "
+    print(f"session: {pages} pages, {stored} prices, {trouble.total} pages failed; "
+          f"at most {left} page slots in "
           f"this plan ({len(dests)} towns, {len(probes)} dates)")
 
 
@@ -268,7 +302,13 @@ def main():
     ap.add_argument("--headed", action="store_true")
     ap.add_argument("--show", action="store_true", help="with --headed: window on screen")
     ap.add_argument("--months", default="", help="spike: only these monthly probes, e.g. 2,8")
-    asyncio.run(run(ap.parse_args()))
+    a = ap.parse_args()
+    try:
+        asyncio.run(run(a))
+    except Exception:
+        # T679: never a bare crash; the next start resumes from the journal.
+        traceback.print_exc()
+        sys.exit(1)
 
 
 if __name__ == "__main__":
