@@ -102,6 +102,20 @@ USAGE
   python run_pipeline.py --force             # bypass the other-python concurrency guard
   python run_pipeline.py --ship none         # skip the npm build at the end
   python run_pipeline.py --no-backup         # skip the pre-write master backup (not advised)
+  python run_pipeline.py --max-cadence weekly --also climate_daily,dossier
+                                             # the weekly tier PLUS these tasks when due
+                                             #   (and the `after` tasks that follow them)
+  python run_pipeline.py --also ... --max-hours 16
+                                             # start no --also task after 16 h; the rest
+                                             #   stay due and run next time
+
+--also (T640) is how the Hetzner box (weekly ceiling, register row T048-h) runs
+the explore data fill without lifting the ceiling for everything else: the
+stays, food and flight tasks of price batch F0 stay held back. run_pipeline.sh
+passes CARTA_EXTRA_TASKS as --also. A task may carry a "rev": a task whose
+recorded rev differs from its own is due whatever its clock says, so a task
+whose commands changed runs on the next scheduled run, and one never run is
+due anyway.
 
 Keys: see TASKS below or `--list`. Safe to re-run; interrupted runs resume.
 """
@@ -570,6 +584,62 @@ def guard_brouter_up(ctx):
                        "--country GB --up --wait`")
 
 
+def guard_reachable(label, *hosts):
+    """A network source: due tasks SKIP, not fail, when none of `hosts` answers
+    on 443 (an IPv6-only box, a DNS hiccup, the source down for the day)."""
+    def _g(ctx=None):
+        if ctx and ctx.get("dry_run"):
+            return True, f"{label}: not probed under --dry-run (no network)"
+        errs = []
+        for h in hosts:
+            try:
+                with socket.create_connection((h, 443), timeout=6):
+                    return True, f"{label} reachable ({h})"
+            except OSError as e:
+                errs.append(f"{h}: {type(e).__name__}")
+        return False, f"{label} not reachable ({'; '.join(errs)}); the task waits for the next run"
+    return _g
+
+
+def guard_files(*specs):
+    """specs: (glob relative to the repo, minimum matches, what to do)."""
+    def _g(ctx=None):
+        for pattern, need, fix in specs:
+            n = len(list(ROOT.glob(pattern)))
+            if n < need:
+                return False, f"{pattern}: {n} found, {need} needed; {fix}"
+        return True, "inputs present: " + ", ".join(p for p, _, _ in specs)
+    return _g
+
+
+def guard_all(*guards):
+    """Every guard must pass; the first refusal is the reason."""
+    def _g(ctx=None):
+        reasons = []
+        for g in guards:
+            ok, why = g(ctx)
+            if not ok:
+                return False, why
+            reasons.append(why)
+        return True, "; ".join(reasons)
+    return _g
+
+
+OVERPASS = ("overpass-api.de", "overpass.kumi.systems")
+
+
+def guard_trailslab_extracts(ctx=None):
+    """way_tags.py re-reads the Geofabrik extracts the ingest downloaded."""
+    ok, why = guard_trailslab_up(ctx)
+    if not ok:
+        return False, why + " (T640: this task runs through the trails lab worker, D5 / T647)"
+    n = len(list((ROOT / "data" / "raw" / "geofabrik").glob("*/*.osm.pbf")))
+    if n < 20:
+        return False, (f"only {n} Geofabrik extracts under data/raw/geofabrik; "
+                       "way_tags.py --refresh reads them")
+    return True, f"{why}; {n} extracts"
+
+
 # --------------------------------------------------------------------------- #
 # Freshness report
 # --------------------------------------------------------------------------- #
@@ -929,7 +999,10 @@ def guard_mountains(ctx=None):
 # Before T047 the hold was only ever written by hand, so a scheduled rebuild
 # ran unguarded, and nothing at all stopped a rebuild starting beside a sweep.
 # The hold is a correctness guard only; memory is not what it arbitrates.
-RESCORE_LAYERS = {"beaches": "beaches", "lakes": "lakes", "mountains": "mountains"}
+RESCORE_LAYERS = {"beaches": "beaches", "lakes": "lakes", "mountains": "mountains",
+                  # T640: the explore data fill re-enriches the same caches.
+                  "beach_context": "beaches", "lake_detail": "lakes",
+                  "peak_context": "mountains"}
 # A marker written on another machine cannot be checked by PID. Older than
 # this, it is taken as the leftover of a run that died there, and reported.
 RESCORE_MARKER_MAX_AGE_S = 48 * 3600
@@ -1119,6 +1192,14 @@ def guard_dossier(ctx=None):
 #   dry_run(ctx)    optional read-only probe executed under --dry-run
 #   soft            failures are logged and retried next run, never block the ship
 #   note            printed reminder (e.g. "bump the YEAR first")
+#   rev             optional string; when the state records another rev for
+#                   this task (or none), the task is due now (T640). Bump it
+#                   when the commands change in a way the next run must apply.
+#   est_h           optional expected hours of a warm run, printed in the plan
+#                   (T640, so a long first run is visible before it starts)
+PUBLISH = "pipeline/field_stubs/publish.py"
+MASTER_KEEP = ["--keep", "continent-app/public/app_data.json"]
+
 TASKS = [
     {
         "key": "ingestion",
@@ -1467,11 +1548,19 @@ TASKS = [
     },
     {
         "key": "crowding",
-        "title": "Regional crowding (Eurostat tourism density)",
+        "title": "Regional crowding (Eurostat tourism density, T642 monthly shares)",
         "cadence": "quarterly",
         "writes_app_data": True,
-        "cmds": [[PY, "pipeline/harvest_tourism_density.py"]],
-        "note": "Eurostat updates ~annually; pass --refresh in the script to re-download.",
+        # T640: soft and gated, so a bad Eurostat pull keeps last quarter's
+        # crowding instead of stopping the run before the ship.
+        "soft": True,
+        "rev": "T642",
+        "est_h": 0.2,
+        "cmds": [[PY, PUBLISH, "--layer", "master", *MASTER_KEEP, "--",
+                  PY, "pipeline/harvest_tourism_density.py"]],
+        "guard": guard_reachable("Eurostat", "ec.europa.eu"),
+        "note": ("Eurostat updates ~annually; pass --refresh in the script to re-download. "
+                 "T642 adds dest.crowding.monthly from tour_occ_nin2m."),
     },
     {
         "key": "flight_routes",
@@ -2189,12 +2278,236 @@ TASKS = [
     # exactly poi_images' two plus must_descs' one, without poi_images'
     # retries (T029). It is now a name in TASK_ALIASES below, so
     # `--only poi_enrich` runs those two tasks, retries included (T261).
+    # ---- explore data fill (T640 to T642): the box runs these through --also ---- #
+    # List order is run order, and it is the order of
+    # Execution/P15/_OPEN-explore-data-runs.md: transit lines and the car rule,
+    # airports (reads the GTFS feeds transit_lines fetched), sea temperature
+    # (read by climate_daily and beach_context), climate, the three nature
+    # layers, the destination overlays the dossier reads, then the dossier.
+    # Every publishing step goes through pipeline/field_stubs/publish.py, which
+    # snapshots the previous wire, runs the export, gates it and puts the
+    # snapshot back when the gate fails. All soft: a failed gate is a
+    # SOFT-FAIL, the ship goes out with the previous wire, and the task is due
+    # again next run (every harvest here is resumable, so the retry is cheap).
+    {
+        "key": "transit_lines",
+        "title": "Transit lines between towns (GTFS + OSM ferries) -> car rule",
+        "cadence": "monthly",
+        "writes_app_data": True,
+        "soft": True,
+        "rev": "T642",
+        "est_h": 1.0,
+        "guard": guard_reachable("Overpass", *OVERPASS),
+        "cmds": [
+            [PY, "pipeline/transit/gtfs_lines.py"],
+            [PY, "pipeline/transit/osm_ferry_legs.py"],
+            [PY, "pipeline/transit/merge_lines.py"],
+            [PY, PUBLISH, "--layer", "master", *MASTER_KEEP, "--",
+             PY, "pipeline/apply_car_layer.py", "--transit", "cache/transit_lines.json"],
+        ],
+        "note": ("T641 lines (cache/dest_transit.json from the GTFS feeds in "
+                 "pipeline/transit/feeds.json with a verified licence, "
+                 "cache/dest_transit_ferry.json from OSM) folded by merge_lines "
+                 "into cache/transit_lines.json, which T642's car rule reads "
+                 "(local_transport.car_basis, car_useful_for, parking_hard). "
+                 "Monthly because timetables change."),
+    },
+    {
+        "key": "airports",
+        "title": "Airports within reach per destination, per-mode transfer (T642)",
+        "cadence": "quarterly",
+        "writes_app_data": True,
+        "soft": True,
+        "rev": "T642",
+        "est_h": 0.1,
+        "guard": guard_files(("app_data/app_data.json", 1, "pull master-current first")),
+        "cmds": [[PY, PUBLISH, "--layer", "master", *MASTER_KEEP, "--",
+                  PY, "pipeline/apply_airport_anchors.py", "--airports-only"]],
+        "note": ("dest.airports[] (up to 4 within 110 km, road estimate and the "
+                 "GTFS train option) and the transfer_mode label. --airports-only: "
+                 "the re-anchoring half of the script predates T511 and must not "
+                 "run on today's data (see its docstring)."),
+    },
+    {
+        "key": "sea_temp",
+        "title": "Sea surface temperature climatology for beaches and destinations (T641)",
+        "cadence": "quarterly",
+        "writes_app_data": False,
+        "soft": True,
+        "est_h": 2.5,
+        "guard": guard_all(
+            guard_reachable("NOAA CoastWatch ERDDAP", "coastwatch.pfeg.noaa.gov"),
+            guard_files(("continent-app/public/beaches/??.json", 20,
+                         "the beach wire is tracked; check the checkout"))),
+        "cmds": [[PY, "pipeline/harvest_sea_temp.py", "--beaches", "--dests"]],
+        "note": ("NASA JPL MUR SST monthly means via ERDDAP, one call per 1 degree "
+                 "tile, tiles cached in cache/sea_temp/ (resumable, carried in the "
+                 "explore-overlays archive class). Writes cache/sea_temp_beaches.json "
+                 "(read by beach_context's export) and cache/sea_temp_dest.json "
+                 "(read by climate_daily's apply_climate). Publishes nothing itself."),
+    },
+    {
+        "key": "climate_daily",
+        "title": "Climate: rain days, wind, sunshine, water temperature -> catalogue",
+        "cadence": "quarterly",
+        "writes_app_data": True,
+        "soft": True,
+        "rev": "T641",
+        "est_h": 2.2,
+        "guard": guard_reachable("NASA POWER", "power.larc.nasa.gov"),
+        "cmds": [[PY, PUBLISH, "--layer", "climate", "--layer", "master", *MASTER_KEEP, "--",
+                  PY, "pipeline/harvest_climate_power.py", "--daily", "::",
+                  PY, "pipeline/apply_climate.py"]],
+        "note": ("NASA POWER daily endpoint, one point per destination (about "
+                 "3,868 calls, 1 worker, resumable through "
+                 "cache/climate_power_daily.json), folded into cache/climate.json; "
+                 "apply_climate adds rain_days, wind_ms, elev_m, sun_h (derived) and "
+                 "water_c (sea_temp). Gated on climate and the master: rain days "
+                 "0 to 31, wind 0 to 40 m/s, water 0 to 32 C, no coverage lost."),
+    },
+    {
+        "key": "beach_context",
+        "title": "Beaches: context v2 (rentals, kids pool), walks, sea temp -> public/beaches",
+        "cadence": "quarterly",
+        "writes_app_data": False,
+        "writes_wire": True,
+        "soft": True,
+        "rev": "T641",
+        "est_h": 5.0,
+        "guard": guard_all(
+            guard_beaches,
+            guard_files(("cache/beaches/raw_*.json", 20, "pull beaches-cache from R2"),
+                        ("cache/beaches/rich_*.json", 20, "pull beaches-cache from R2")),
+            guard_reachable("Overpass", *OVERPASS)),
+        "cmds": [
+            [PY, "pipeline/beaches/enrich_beaches.py"],
+            [PY, "pipeline/beaches/harvest_beach_walks.py"],
+            [PY, PUBLISH, "--layer", "beaches", "--", PY, "pipeline/beaches/export_beaches.py"],
+        ],
+        "note": ("enrich_beaches re-asks Overpass only for the beaches whose "
+                 "context predates CONTEXT_V 2 (T631 sunbed rentals and children's "
+                 "pools; photographs and article facts are kept), about 400 "
+                 "batches of 12. Then the walks (T641, modelled straight line x "
+                 "1.3) and the gated export, which also reads cache/sea_temp_beaches.json."),
+    },
+    {
+        "key": "peak_context",
+        "title": "Mountains: huts in the context, lift hours -> public/mountains",
+        "cadence": "quarterly",
+        "writes_app_data": False,
+        "writes_wire": True,
+        "soft": True,
+        "rev": "T630",
+        "est_h": 3.0,
+        "guard": guard_all(
+            guard_mountains,
+            guard_files(("cache/mountains/rich_*.json", 20, "pull mountains-cache from R2")),
+            guard_reachable("Overpass", *OVERPASS)),
+        "cmds": [
+            [PY, "pipeline/mountains/enrich_peaks.py", "--context-only"],
+            [PY, "pipeline/mountains/harvest_lift_hours.py"],
+            [PY, PUBLISH, "--layer", "peaks", "--", PY, "pipeline/mountains/export_peaks.py"],
+        ],
+        "note": ("--context-only re-asks the peaks with no OSM context or one "
+                 "from before T630's hut records (8,898 enriched peaks today, "
+                 "batches of 20), then T641's lift opening hours, then the gated "
+                 "export (huts, slopeDeg, rangeRank, lift.hours)."),
+    },
+    {
+        "key": "lake_detail",
+        "title": "Lakes: re-enrich, outlines, water detail -> public/lakes",
+        "cadence": "quarterly",
+        "writes_app_data": False,
+        "writes_wire": True,
+        "soft": True,
+        "rev": "T642",
+        "est_h": 5.0,
+        "guard": guard_all(
+            guard_files(("cache/lakes/raw_*.json", 20, "pull lakes-json from R2"),
+                        ("cache/lakes/rich_*.json", 20, "pull lakes-json from R2"),
+                        ("cache/eea_bathing_water.json", 1, "run the bathing_water task"),
+                        ("cache/regions/*", 1, "pull regions-cache from R2 (rg stamping)")),
+            guard_reachable("Overpass", *OVERPASS)),
+        "cmds": [
+            [PY, "pipeline/lakes/enrich_lakes.py"],
+            [PY, "pipeline/lakes/lake_outlines.py"],
+            [PY, "pipeline/lakes/harvest_water_detail.py"],
+            [PY, PUBLISH, "--layer", "lakes", "--", PY, "pipeline/lakes/export_lakes.py"],
+        ],
+        "note": ("after beach_context in this list because export_lakes joins the "
+                 "beach wire (T642 beaches within 400 m of the outline). enrich is "
+                 "warm (T631 bathing zones, no Overpass for lakes that have a "
+                 "context; the previous climate stands where CHELSA is not on "
+                 "disk), outlines and water detail (ferry lines, sport zones, "
+                 "lifeguards, bans, wind profile) are resumable Overpass passes."),
+    },
+    {
+        "key": "dest_overlays",
+        "title": "Destination overlays: emergency numbers, hospitals, swim bans",
+        "cadence": "quarterly",
+        "writes_app_data": False,
+        "soft": True,
+        "est_h": 2.5,
+        "guard": guard_reachable("Overpass", *OVERPASS),
+        "cmds": [
+            [PY, "pipeline/harvest_emergency.py"],
+            [PY, "pipeline/harvest_swim_bans.py"],
+        ],
+        "note": ("cache/dest_emergency.json (Wikidata P2852 + OSM hospitals) and "
+                 "cache/dest_swim_bans.json (OSM swimming=no), read by the "
+                 "dossier's derive_practical. Publish through the dossier gate."),
+    },
+    {
+        "key": "poi_fees",
+        "title": "POI entry fee flags and charge records (OSM, not shown)",
+        "cadence": "quarterly",
+        "writes_app_data": False,
+        "soft": True,
+        "est_h": 2.5,
+        "guard": guard_all(
+            guard_files(("continent-app/public/poi/*.json", 100,
+                         "the POI shards are written by the ship (sync-data); run one build first")),
+            guard_reachable("Overpass", *OVERPASS)),
+        "cmds": [[PY, "pipeline/harvest_poi_fees.py"]],
+        "note": ("cache/poi_fees.json, resumable (asked POIs are skipped), read by "
+                 "derive_do.facts_of in the dossier build. No price is shown."),
+    },
+    {
+        "key": "trails_fields",
+        "title": "Trails + cycling: SAC, technique, exposure, transit flags, route shape",
+        "cadence": "quarterly",
+        "writes_app_data": False,
+        "writes_wire": True,
+        "soft": True,
+        "rev": "T642",
+        "est_h": 6.0,
+        "guard": guard_trailslab_extracts,
+        "cmds": [
+            [PY, "pipeline/trails/way_tags.py", "--refresh"],
+            [PY, "pipeline/trails/transit_stops.py"],
+            [PY, PUBLISH, "--layer", "trails", "--", PY, "pipeline/trails/export_wire.py",
+             "--countries",
+             "AL,AD,AT,BE,BA,BG,HR,CY,CZ,DK,EE,FI,FR,DE,GB,GR,HU,IS,IE,IT,"
+             "XK,LV,LI,LT,LU,MK,MT,MD,MC,ME,NL,NO,PL,PT,RO,RS,SK,SI,ES,SE,"
+             "CH,SM,FO"],
+            [PY, PUBLISH, "--layer", "cycling", "--", PY, "pipeline/cycling/export_cycling.py"],
+        ],
+        "note": ("needs the trailslab PostGIS lab and the Geofabrik extracts, so it "
+                 "SKIPS on the Hetzner box; it runs where the lab runs (the owner's "
+                 "laptop, or the trails lab worker of decision D5, task T647). "
+                 "T630 sac_scale, technique, exposure, sac_segments; T641 ferry and "
+                 "bus stop kinds; T642 difficulty floor (gate.py checks it); cycling rt."),
+    },
     {
         "key": "dossier",
         "title": "Destination dossiers: the per-destination contract for panel + PDF",
         "cadence": "monthly",
         "writes_wire": True,
         "soft": True,
+        # T640: due on the next run whatever its clock says, because T641 and
+        # T642 changed what the build reads (derive_practical, airports, fees).
+        "rev": "T642",
+        "est_h": 1.5,
         "cmds": [
             # Sources first: landmarks and city intros are what let a remote
             # village say anything and stop a gateway describing its airport.
@@ -2211,11 +2524,14 @@ TASKS = [
             [PY, "pipeline/dossier/web_sweep.py", "--all", "--if-configured"],
             [PY, "pipeline/dossier/plan_research.py", "--tier", "2", "--copy-siblings"],
             [PY, "pipeline/dossier/research_do.py"],
-            # Then the build-fill-build sandwich, then the gate.
-            [PY, "pipeline/dossier/build_dossier.py", "--all"],
-            [PY, "pipeline/dossier/fill_licences.py"],
-            [PY, "pipeline/dossier/build_dossier.py", "--all"],
-            [PY, "pipeline/dossier/audit.py", "--strict"],
+            # Then the build-fill-build sandwich, then the gates: audit.py's
+            # hard checks and (T640) gate.py's coverage and range rules, with
+            # the previous dossiers put back when either fails.
+            [PY, PUBLISH, "--layer", "dossier", "--",
+             PY, "pipeline/dossier/build_dossier.py", "--all", "::",
+             PY, "pipeline/dossier/fill_licences.py", "::",
+             PY, "pipeline/dossier/build_dossier.py", "--all", "::",
+             PY, "pipeline/dossier/audit.py", "--strict"],
         ],
         "guard": guard_dossier,
         "dry_run": dossier_audit_dry,
@@ -2246,6 +2562,17 @@ TASKS = [
                  "sandwich is deliberate: the first pass discovers which images lack "
                  "TASL, the fill resolves them, the second pass flips ok_print. "
                  "Unchanged content keeps its content_hash, so re-runs are cheap."),
+    },
+    {
+        "key": "field_stubs_report",
+        "title": "Field stubs: what still has no source (data/reports/field_stubs.md)",
+        "cadence": "after",
+        "after": ["dossier"],
+        "writes_app_data": False,
+        "soft": True,
+        "est_h": 0.01,
+        "cmds": [[PY, "pipeline/field_stubs/report.py"]],
+        "note": "T641's list of the fields still stubbed; report only, writes no wire.",
     },
     {
         "key": "ask_index",
@@ -2320,7 +2647,47 @@ def _last_success(task_key, state):
         return None
 
 
+def rev_changed(task, state):
+    """T640: a task whose commands changed since it last ran (its "rev")."""
+    rev = task.get("rev")
+    return bool(rev) and state.get(task["key"], {}).get("rev") != rev
+
+
+def also_keys(args):
+    """The --also task keys, validated."""
+    keys = [k.strip() for k in (getattr(args, "also", None) or "").split(",") if k.strip()]
+    unknown = [k for k in keys if k not in TASK_BY_KEY]
+    if unknown:
+        sys.exit(f"unknown --also task key(s): {', '.join(unknown)}")
+    bad = [k for k in keys if TASK_BY_KEY[k]["cadence"] in ("backfill", "manual")]
+    if bad:
+        sys.exit(f"--also refuses backfill/manual task(s) {', '.join(bad)}: use --only by hand")
+    return keys
+
+
+def also_closure(args):
+    """--also keys plus every `after` task that follows one of them, transitively,
+    so a chain an --also task starts finishes in the same run."""
+    keys = set(also_keys(args))
+    grew = True
+    while grew:
+        grew = False
+        for t in TASKS:
+            if t["cadence"] == "after" and t["key"] not in keys \
+                    and keys.intersection(t.get("after") or []):
+                keys.add(t["key"])
+                grew = True
+    return keys
+
+
+def admitted(t, args, ceiling, extra):
+    """Under the ceiling, or named by --also (or following one)."""
+    return CADENCE_RANK[t["cadence"]] <= ceiling or t["key"] in extra
+
+
 def is_due(task, state):
+    if task["cadence"] not in ("after", "backfill", "manual") and rev_changed(task, state):
+        return True
     if task["cadence"] == "after":
         # Event-driven: due when something it follows has moved since. Never
         # due on a lab where the trigger has not run at all, so a fresh clone
@@ -2349,11 +2716,12 @@ def chain_followups(plan, state, args, done_keys):
     if args.only:
         return []
     ceiling = CADENCE_RANK.get(args.max_cadence, 3) if args.max_cadence else 3
+    extra = also_closure(args)
     added = []
     for t in TASKS:
         if t["cadence"] != "after" or t in plan or t["key"] in done_keys:
             continue
-        if CADENCE_RANK[t["cadence"]] <= ceiling and is_due(t, state):
+        if admitted(t, args, ceiling, extra) and is_due(t, state):
             plan.append(t)
             added.append(t["key"])
     return added
@@ -2400,8 +2768,10 @@ def select_tasks(args, state):
                      "pass --allow-backfill if a person really started this.")
         return [TASK_BY_KEY[k] for k in keys]
     ceiling = CADENCE_RANK.get(args.max_cadence, 3) if args.max_cadence else 3
+    extra = also_closure(args)
     return [t for t in TASKS
-            if CADENCE_RANK[t["cadence"]] <= ceiling and is_due(t, state)]
+            if CADENCE_RANK[t["cadence"]] <= 3 and admitted(t, args, ceiling, extra)
+            and is_due(t, state)]
 
 
 def held_back(args, state):
@@ -2411,8 +2781,10 @@ def held_back(args, state):
     if args.only or not args.max_cadence:
         return []
     ceiling = CADENCE_RANK[args.max_cadence]
+    extra = also_closure(args)
     return [t["key"] for t in TASKS
-            if ceiling < CADENCE_RANK[t["cadence"]] <= 3 and is_due(t, state)]
+            if ceiling < CADENCE_RANK[t["cadence"]] <= 3 and t["key"] not in extra
+            and is_due(t, state)]
 
 
 def cmd_list(args):
@@ -2421,6 +2793,8 @@ def cmd_list(args):
     for t in TASKS:
         last = state.get(t["key"], {}).get("last_success", "-")
         due = "yes" if is_due(t, state) else ("--" if t["cadence"] in ("backfill", "manual") else "no")
+        if due == "yes" and rev_changed(t, state) and t["cadence"] != "after":
+            due = "rev"
         title = t["title"]
         if t["cadence"] == "after":     # say what triggers it, the column can't
             title += "  (follows " + ", ".join(t["after"]) + ")"
@@ -2433,6 +2807,18 @@ def run_dry_probes(plan):
     exists so a plan can show what a real run WOULD change (which published
     trails would be demoted, say) rather than only naming the task."""
     probed = []
+    # T640: what each planned guard would say on this machine, so a dry run on
+    # the box shows which tasks will skip (network guards are not probed).
+    log("\nguards on this machine (a skip is not a failure):")
+    for t in plan:
+        guard = t.get("guard")
+        if not guard or t.get("dry_run"):
+            continue
+        try:
+            ok, reason = guard({"dry_run": True})
+        except Exception as e:
+            ok, reason = False, f"guard raised {type(e).__name__}: {e}"
+        log(f"  {t['key']:<18} {'runs ' if ok else 'SKIPS'}  {reason}")
     for t in plan:
         probe = t.get("dry_run")
         if not probe:
@@ -2469,7 +2855,17 @@ def main():
                          "started this from a script)")
     ap.add_argument("--ship", choices=["build", "data", "none"], default="build",
                     help="after writers: full vite build (default), sync-only, or nothing")
+    ap.add_argument("--also", default="",
+                    help="comma-list of task keys to add to the plan when due, above the "
+                         "--max-cadence ceiling (their `after` followers come too). T640")
+    ap.add_argument("--max-hours", type=float, default=None,
+                    help="start no --also task once the run is this many hours old; "
+                         "the rest stay due for the next run. T640")
     args = ap.parse_args()
+    if args.only and args.also:
+        log("(--also is ignored with --only: --only names exactly what runs)")
+        args.also = ""
+    also_keys(args)
     if os.name != "nt":
         _exit_on_sigterm()
 
@@ -2492,14 +2888,30 @@ def main():
     if held:
         log(f"HELD BACK by --max-cadence {args.max_cadence}: {len(held)} due task(s) "
             f"will not run here: {', '.join(held)}")
+    extra = also_closure(args)
+    if extra:
+        added_by_also = [t["key"] for t in plan if t["key"] in extra
+                         and CADENCE_RANK[t["cadence"]] > CADENCE_RANK.get(args.max_cadence or "quarterly", 3)]
+        log(f"ADDED by --also: {', '.join(added_by_also) or 'nothing due'}"
+            f" (followers that may join: "
+            f"{', '.join(k for k in sorted(extra) if TASK_BY_KEY[k]['cadence'] == 'after') or '-'})")
     if not plan:
         log("nothing due. (`--list` to see cadences, `--only <key>` to force one.)")
         return 0
     log("plan:")
+    est_total = 0.0
     for t in plan:
-        log(f"  - {t['key']:<18} [{t['cadence']}]  {t['title']}")
+        est = t.get("est_h")
+        est_total += est or 0
+        why = " rev " + t["rev"] if rev_changed(t, state) else ""
+        log(f"  - {t['key']:<18} [{t['cadence']}{why}]"
+            + (f" ~{est:g} h" if est else "") + f"  {t['title']}")
         if t.get("note"):
             log(f"      note: {t['note']}")
+    if est_total:
+        log(f"expected hours of the tasks that state one: about {est_total:.1f}"
+            + (f" (--max-hours {args.max_hours:g}: --also tasks not started after that)"
+               if args.max_hours else ""))
     if args.dry_run:
         probed = run_dry_probes(plan)
         log("")
@@ -2535,6 +2947,8 @@ def main():
     ctx = {"dest_count": dest_count(), "state": state}
     backed_up = False
     ran, skipped, failed, soft_failed = [], [], [], []
+    run_t0 = time.time()
+    deferred = []
     held_by_run = []   # rescore holds this run wrote; released however it ends
     heartbeat("/start")
     try:
@@ -2548,6 +2962,12 @@ def main():
             # heartbeat /fail, on exactly the runs nobody is watching.
             hold = None
             t0 = time.time()
+            if (args.max_hours and t["key"] in extra
+                    and (t0 - run_t0) / 3600 >= args.max_hours):
+                log(f"  DEFERRED: the run is {(t0 - run_t0) / 3600:.1f} h old (--max-hours "
+                    f"{args.max_hours:g}); still due, it runs next time")
+                deferred.append(t["key"])
+                continue
             try:
                 guard = t.get("guard")
                 if guard:
@@ -2604,6 +3024,8 @@ def main():
                 log(f"  OK ({dt}s)")
                 ran.append(t["key"])
                 state.setdefault(t["key"], {})["last_success"] = now_utc().isoformat()
+                if t.get("rev"):
+                    state[t["key"]]["rev"] = t["rev"]
                 save_state(state)
                 ctx["dest_count"] = dest_count()
                 # Whatever this unblocked joins the plan now, so a chain
@@ -2676,7 +3098,8 @@ def main():
 
     log("\n" + "=" * 70)
     log(f"done. ran={ran or '-'}  skipped={skipped or '-'}  failed={failed or '-'}"
-        f"  soft-failed={soft_failed or '-'}")
+        f"  soft-failed={soft_failed or '-'}"
+        + (f"  deferred={deferred}" if deferred else ""))
     log("=" * 70)
     heartbeat("/fail" if failed else "")
     return 1 if failed else 0
