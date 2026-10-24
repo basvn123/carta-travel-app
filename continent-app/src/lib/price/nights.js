@@ -30,7 +30,13 @@
 
 const round2 = (v) => Math.round(v * 100) / 100;
 
-export function quoteNights(costRow, nights, people, fare = null, carta = null) {
+/**
+ * `activities` (T715, plan F9): the things to do the traveller switched on
+ * in the calculator, [{ eur }] a person for the visit (lib/price/doPrice.js);
+ * off by default, so the total is the reference amount until one is on, and
+ * switching one on adds exactly its price times the party (V9).
+ */
+export function quoteNights(costRow, nights, people, fare = null, carta = null, activities = []) {
   if (costRow?.stayEur == null || costRow?.foodEur == null) return null;
   const stay = Number(costRow.stayEur);
   const food = Number(costRow.foodEur);
@@ -52,6 +58,11 @@ export function quoteNights(costRow, nights, people, fare = null, carta = null) 
   if (!off.has('food')) lines.push({ key: 'ground', eur: round2(food * n * p), est: costRow.foodLevel !== 'city' });
   const car = (costRow.lines || []).find((l) => l.key === 'car' && l.status === 'included' && l.eur != null);
   if (car) lines.push({ key: 'car', eur: round2(car.eur * n * p), est: true });
+  // T714: local transport once the place has a fare (B11).
+  const local = (costRow.lines || []).find((l) => l.key === 'transport' && l.status === 'included' && l.eur != null);
+  if (local) lines.push({ key: 'transport', eur: round2(local.eur * n * p), est: local.quality !== 'measured' });
+  const acts = (activities || []).filter((a) => Number.isFinite(a?.eur) && a.eur > 0);
+  if (acts.length) lines.push({ key: 'activities', eur: round2(acts.reduce((s2, a) => s2 + a.eur, 0) * p), est: false });
 
   const total = round2(lines.reduce((s, l) => s + l.eur, 0));
   return {
@@ -59,7 +70,7 @@ export function quoteNights(costRow, nights, people, fare = null, carta = null) 
     total,
     each: p > 1 ? round2(total / p) : null,
     est: lines.some((l) => l.est),
-    dayEur: (off.has('bed') ? 0 : stay) + (off.has('food') ? 0 : food) + (car ? car.eur : 0),
+    dayEur: (off.has('bed') ? 0 : stay) + (off.has('food') ? 0 : food) + (car ? car.eur : 0) + (local ? local.eur : 0),
     nights: n,
     people: p,
   };

@@ -2177,3 +2177,9 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T711-a | T711 | The golden grid holds the trip planner and the Places trip; the calculator with a flight, the country brief's medians, the Ask budget's buffer and the trip page are not cells yet | next task | open |  |
 | T712-a | T712 | Nothing guards the first load: one re-export in lib/price/index.js split the chunks into 101 preloads (T707); add a check on the fast build's preload count and bytes | next task | open |  |
 | T713-a | T713 | The babies' lap fee on a trip's flight has no unit test; it needs a flight file fixture for quoteTrip | next task | open |  |
+| T714-a | T714 | PB4 (price plan F7, calibration of the star ladder, Airbnb ratios, PLI exponent and bands) did not run: it waits for the first gated publish of the new stays scrape (T645-a) | next task | open | after T645-a |
+| T714-b | T714 | No place has a local transport fare (0 of 3,868): choose a fare source (operator fare pages, a licensed dataset) and write the pipeline layer for local_transport.fare on the box; the engine prices it as soon as it exists | user | open |  |
+| T714-c | T714 | B9 says the homepage may promise local transport now, but no place has a fare yet; the homepage and the day sentence keep "a bed plus food and drink" until fares exist | user | open | after T714-b |
+| T715-a | T715 | The activity switches in the destination calculator were not seen with data in a browser (no published dossier has a price yet); check them at both widths once the box publishes do[].price | next task | open | after the dossier rebuild |
+| T716-a | T716 | Toll corridors are measured from Brussels only; a corridor for each origin needs the toll layer to run per start on the box | next task | open |  |
+| T716-b | T716 | The plan's F10 asks for a food season, while the owner decided on 2026-10-07 (T103-c) that there is no seasonal ground cost; confirm which stands | user | open |  |

@@ -7,7 +7,10 @@ import { addDays } from '../lib/dates.js';
 import { quoteNights } from '../lib/price/nights.js';
 import { useSettledFigure } from '../lib/figureChange.js';
 import { Button, Money, Segmented } from '../components/ui/index.js';
-import { formatEst } from '../lib/money.js';
+import { formatEst, formatMoney } from '../lib/money.js';
+import { doPriceOf } from '../lib/price/doPrice.js';
+import { Switch } from '../components/ui/Switch.jsx';
+import '../styles/86-price-items.css';
 import { Stepper } from '../components/FilterControls.jsx';
 import { DateField } from '../components/DateField.jsx';
 import { ReceiptLine, ReceiptSum, useSettleChanged } from '../components/ReceiptCard.jsx';
@@ -54,7 +57,7 @@ import { includedParts } from '../lib/price/display.js';
 const MAX_PARTY = rule('party.limits').max_seats;   // T691: one cap
 
 export function DestPriceCard({
-  dest, city, onOpenLifestyle, onPlanTrip, onPlanDay, reportItem, carDayEur = null,
+  dest, city, onOpenLifestyle, onPlanTrip, onPlanDay, reportItem, carDayEur = null, doItems = null,
 }) {
   const { t, lang, languages } = useI18n();
   const ctx = useFirstRun();
@@ -93,10 +96,21 @@ export function DestPriceCard({
     () => (fare ? null : flightQuote(flightLegs(flightFile, airport, request), { paying: people, bagKey })),
     [fare, flightFile, airport, request, people, bagKey],
   );
+  // T715 (plan F9, B10): the things to do here with a price, as switches in
+  // the calculator, all off by default; never in the day figure or a card.
+  const pricedDo = React.useMemo(() => (doItems || []).map((item) => {
+    const rec = item.price || (Number.isFinite(item.fee_eur) ? { value: item.fee_eur, currency: 'EUR' } : null);
+    const p = doPriceOf(rec, 'activity');
+    return p?.kind === 'eur' ? { key: item.name, name: item.name, eur: p.eur } : null;
+  }).filter(Boolean).slice(0, 6), [doItems]);
+  const [actsOn, setActsOn] = React.useState(() => new Set());
+  const chosenActs = React.useMemo(() => pricedDo.filter((a) => actsOn.has(a.key)), [pricedDo, actsOn]);
   const price = React.useMemo(
     // T695: a flight switched off in the opened price leaves the receipt.
-    () => (flightOff ? quoteNights(costRow, nights, people, null, null) : quoteNights(costRow, nights, people, fare, carta)),
-    [costRow, nights, people, fare, carta, flightOff],
+    () => (flightOff
+      ? quoteNights(costRow, nights, people, null, null, chosenActs)
+      : quoteNights(costRow, nights, people, fare, carta, chosenActs)),
+    [costRow, nights, people, fare, carta, flightOff, chosenActs],
   );
   // T540: with the traveller's own dates, ask for tonight's hotel prices on
   // those nights; the cost index reprices the bed from them when they land.
@@ -171,7 +185,9 @@ export function DestPriceCard({
   ) : t('receipt.yourFlight'));
   const label = (line) => (line.key === 'flight' ? flightLabel(line)
     : line.key === 'stay' ? t('receipt.stay', { nights: nightsText })
-    : line.key === 'car' ? t('price.item.car') : t('receipt.ground'));
+    : line.key === 'car' ? t('price.item.car')
+    : line.key === 'transport' ? t('price.item.transport')
+    : line.key === 'activities' ? t('price.item.activities') : t('receipt.ground'));
   const cartaLine = price.lines.find((l) => l.key === 'flight' && l.carta) || null;
   const stayLine = price.lines.find((l) => l.key === 'stay');
   const foodLine = price.lines.find((l) => l.key === 'ground');
@@ -332,6 +348,17 @@ export function DestPriceCard({
           t={t}
         />
       </dl>
+      {pricedDo.length > 0 && (
+        <ul className="pitems-list dprice-acts" aria-label={t('price.item.activities')}>
+          {pricedDo.map((a) => (
+            <li className="pitems-row" key={a.key}>
+              <Switch label={a.name} hint={t('price.actEach', { price: formatMoney(a.eur, { precision: Number.isInteger(a.eur) ? 'whole' : 'cents' }) })}
+                checked={actsOn.has(a.key)}
+                onChange={(on) => setActsOn((prev) => { const next = new Set(prev); if (on) next.add(a.key); else next.delete(a.key); return next; })} />
+            </li>
+          ))}
+        </ul>
+      )}
 
       {/* The flight the line prices, there and home, each with its airline,
           times, when Google Flights was checked and the link to book. */}
