@@ -5,7 +5,7 @@ import { doFacts, kindSlug } from '../src/lib/doFacts.js';
 // A stand-in for t(): a missing key comes back as the key, like the app's.
 const LABELS = {
   'dest.doType.swim': 'Swim', 'dest.doKind.viewpoint': 'Viewpoint', 'dest.doFree': 'Free',
-  'dest.doPaid': 'Paid', 'dest.doMin': '{n} min', 'dest.doHours': '{n} h', 'dest.doFeeEur': 'EUR {n}',
+  'dest.doPaid': 'Paid', 'dest.doMin': '{n} min', 'dest.doHours': '{n} h',
   'dest.doLabel.kind': 'Type', 'dest.doLabel.fee': 'Entry', 'dest.doLabel.duration': 'Visit', 'dest.doLabel.town': 'Town',
 };
 const t = (k, v = {}) => (LABELS[k] ?? k).replace(/\{(\w+)\}/g, (_, n) => v[n]);
@@ -28,7 +28,7 @@ test('the POI kind wins, labelled when known and raw otherwise', () => {
 
 test('price, duration and town read the harvested keys', () => {
   assert.deepEqual(by(doFacts({ kind: 'Cave', fee: 'yes', fee_eur: 12.5, duration_min: 45, town: 'Bellagio' }, t)),
-    { kind: 'Cave', fee: 'EUR 12.5', duration: '45 min', town: 'Bellagio' });
+    { kind: 'Cave', fee: '€12.50', duration: '45 min', town: 'Bellagio' });
   assert.equal(by(doFacts({ fee: 'no' }, t)).fee, 'Free');
   assert.equal(by(doFacts({ fee: 'yes' }, t)).fee, 'Paid');
   assert.equal(by(doFacts({ duration_min: 120 }, t)).duration, '2 h');

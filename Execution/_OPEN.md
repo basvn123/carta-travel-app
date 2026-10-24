@@ -1968,7 +1968,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T577-a | T577 | The From and Countries panels' list rows are raw buttons (5 new design-lint raw-button findings); the kit needs a list row component they can use | next task | open |  |
 | T577-b | T577 | The planners' own OriginPicker (trip wizard, flight sheet) still shows airport codes and "city, country or airport code"; move it onto FromPanel | next task | open |  |
 | T578-a | T578 | The destination page, trip page and planners read the dates as exact; with When set to a month or any time they price the first days of the month | next task | open |  |
-| T579-a | T579 | priceTrip (tripTotal.js) on the destination page, trip page and planners does not read children or babies yet | next task | open |  |
+| T579-a | T579 | priceTrip (tripTotal.js) on the destination page, trip page and planners does not read children or babies yet | next task | closed by T702 |  |
 | T579-b | T579 | Review the party shares in lib/party.js (child 60 percent food, half rail ticket, full plane seat; baby 15 percent food, about 30 a flight leg); they are Carta estimates | user | open |  |
 | T579-c | T579 | With a baby, the Explore flight caption folds the lap fee into Google's price, so it is no longer Google's own figure; show the fee apart or mark it | next task | open |  |
 | T580-a | T580 | App.jsx passes LifestylePanel an unused destination prop; scripts/verify_lifestyle.mjs expects 10 tiles (9 since T535) | next task | open |  |
@@ -2109,7 +2109,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T641-h | T641 | Stub beach entry surface: OSM surface is the sand, not the sea bed (candidate survey or photo classification) | next task | open |  |
 | T641-i | T641 | Stub lake currents: hazard code on 38 lakes without description (candidate authority notices) | next task | open |  |
 | T641-j | T641 | Stub lake thermal winds: no open source names Ora or Breva; monthly mean wind is wired as wind.profile | next task | open |  |
-| T641-k | T641 | Price records now written for price plan F9, not shown: lift.fare, do[].price (value, unit, currency, source, date, quality) | next task | open |  |
+| T641-k | T641 | Price records now written for price plan F9, not shown: lift.fare, do[].price (value, unit, currency, source, date, quality) | next task | closed by T701 |  |
 | T642-a | T642 | Lake Como has 0 beaches around: the beach inventory has no lake-shore beaches; add a lake-shore beach harvest (OSM natural=beach on lakes, EEA lake sites) | next task | open |  |
 | T642-b | T642 | Airport public transport times exist for 83 destinations (Trenord only) and are upper bounds in Milan (no metro footpaths) | next task | open |  |
 | T642-c | T642 | transfer_mode is car for road estimates; the price model uses a bus or shuttle tier; copy decision | user | closed by T651 |  |
@@ -2139,7 +2139,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T650-g | T650 | pipeline/field_stubs/gate.py ENUMS could check car_free in good, ok, hard | next task | open |  |
 | T651-a | T651 | German writes "146 Min." on the Practical tab and "146 min" in the key fact; dest.airportOptEst is now unused | next task | open |  |
 | T651-b | T651 | 264 airport-tier places (DBV, BGO, CDG and others) have no airports[] and show their own code without a time | next task | open |  |
-| T661-a | T661 | The price baseline holds day prices only; add the trip prices (calculator with flight, composeTrip, priceTrip, wizard, country brief, Ask budget, saved trips) to tests/priceGolden.test.mjs before F6 moves them | next task | open | 1 |
+| T661-a | T661 | The price baseline holds day prices only; add the trip prices (calculator with flight, composeTrip, priceTrip, wizard, country brief, Ask budget, saved trips) to tests/priceGolden.test.mjs before F6 moves them | next task | closed by T711 | 1 |
 | T661-b | T661 | F2 also touched files outside its list in plan section 7 (DestPriceCard.jsx, useExploreCatalog.js, DestFood.jsx, scripts/og/specs.mjs, scripts/ask-eval-live.mjs, tests): each was a day-price path doc 4.3 names; confirm or move them to their phase | user | open |  |
 | T662-a | T662 | The EUR 400 a night per person ceiling repairs expensive beds with the country entire-place median (720 solo 5-star, 425 solo entire places, 142 solo 4-star, 56 under the default request); bounds and repair per stay tier in F3, then drop the V6 skip in tests/priceEngine.test.mjs | next task | closed by T692 |  |
 | T662-b | T662 | Under "any time" the flight is the year's cheapest month while the bed is the year's average; decide whether any time flies a typical month instead | user | closed by T667 |  |
@@ -2157,7 +2157,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T690-b | T690 | Rule dates of 2026-09-14 mean on or before the repository baseline; set the real dates when F7 recalibrates each rule | next task | open |  |
 | T690-c | T690 | The app applies peaks over 23 Dec to 1 Jan, 12 to 17 Aug and Easter Thursday to Monday, while the pipeline measures 28 Dec, 14 Aug and any March or April Saturday; align in F7 | next task | open |  |
 | T690-d | T690 | V13 scans top-level constants in the price modules only; inline literals in the trip-price files (tripTotal, transport, budgetSearch) come in with F6 | next task | open |  |
-| T691-a | T691 | The planner, wizard, share links and saved trips pass the bag key cabin, which prices no bag; the lap fee is added only on Explore; tripTotal weighs a child 0.5 for food against party.js 0.6: F6 | next task | open |  |
+| T691-a | T691 | The planner, wizard, share links and saved trips pass the bag key cabin, which prices no bag; the lap fee is added only on Explore; tripTotal weighs a child 0.5 for food against party.js 0.6: F6 | next task | closed by T713 |  |
 | T691-b | T691 | The ground-fare calibration has one cell (Spain, train); extend it so calibrated fares reach more countries (F7) | next task | open |  |
 | T691-c | T691 | To merge drifted copies F3 touched files outside its list (tripTotal.js, transport.js, shareLink.js, AiDayPlanModal.jsx, SettingsLine.jsx, TripPriceCard.jsx, eslint.config.js); confirm | user | open |  |
 | T692-a | T692 | A far swept fare is now shown up to 8 days old (the sweep checks later dates weekly; plan 6.1), against PRODUCT.md's former 3 days, which T698 updated; confirm | user | open |  |
@@ -2170,3 +2170,10 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T695-b | T695 | The opened price and the per person or group switch were built from the kit without a design pass; they go through the owner's design batch (plan ground rule 5) | user | open |  |
 | T696-a | T696 | The admin Prices view was not opened in the browser (the admin page needs an unlock); check it on a signed-in session | next task | open |  |
 | T698-a | T698 | carta-design's Budget search (T506) section describes the removed BudgetSearch component; update or remove it | next task | open |  |
+| T701-a | T701 | Do-prices show only where a record exists (OSM charge tags on things to do, OSM-tagged lift fares); lidos, ferries and entry tickets have no other source, so their slots show the placeholder until F9 | next task | open |  |
+| T702-a | T702 | Confirm the car reading: a car hire is never in the day price (going by car on Explore is one's own car, priced as the way there), and the trip adds a hire only when the planner's transport is car (hire); the plan says "Autoregel via rentalEstimate als vervoer = auto" | user | open |  |
+| T703-a | T703 | My trips prices a saved trip with its own saved stay and Lifestyle, while the opened trip in the planner prices at the app's settings (the Lifestyle panel owns the stay app-wide); decide which wins when they differ | user | open |  |
+| T710-a | T710 | lib/tripPrice.js and TripPriceCard still split the wire's trip budget by the Lifestyle slider, and the trip page's legs and its fallback stay figure come from the wire; move them onto the engine | next task | open |  |
+| T711-a | T711 | The golden grid holds the trip planner and the Places trip; the calculator with a flight, the country brief's medians, the Ask budget's buffer and the trip page are not cells yet | next task | open |  |
+| T712-a | T712 | Nothing guards the first load: one re-export in lib/price/index.js split the chunks into 101 preloads (T707); add a check on the fast build's preload count and bytes | next task | open |  |
+| T713-a | T713 | The babies' lap fee on a trip's flight has no unit test; it needs a flight file fixture for quoteTrip | next task | open |  |

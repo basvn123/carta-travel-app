@@ -18,6 +18,7 @@
  * harmless trip, never inject markup or oversized state.
  */
 import { rule } from './price/config.js';
+import { PLANNER_BAG } from './price/request.js';
 
 const LIMITS = rule('party.limits');   // T691: one cap for every screen
 
@@ -164,7 +165,7 @@ function sanitizeShared(d) {
     babies: clampInt(d.babies, 0, LIMITS.max_babies, 0),
     transportPref: oneOf(d.transportPref, ['auto', 'car', 'owncar', 'public'], 'auto'),
     pace: oneOf(d.pace, ['relaxed', 'balanced', 'packed'], 'balanced'),
-    baggage: oneOf(d.baggage, ['cabin', 'priority', 'checked'], 'cabin'),
+    baggage: oneOf(d.baggage, ['cabin', 'priority', 'checked'], PLANNER_BAG),
     anchorId: strOrNull(d.anchorId),
     anchorOrigin: strOrNull(d.anchorOrigin),
     returnAnchorId: strOrNull(d.returnAnchorId),

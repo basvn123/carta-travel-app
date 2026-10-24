@@ -31,6 +31,11 @@ export const DEFAULT_NIGHTS = rule('request.default_nights');
 /** The items a price can hold, in the order a breakdown lists them. */
 export const PRICE_ITEMS = ['bed', 'food', 'transport', 'car', 'activities', 'events', 'flight'];
 
+/** The planner's bag when the traveller has picked none (T702, T713): the
+ *  10 kg cabin bag, the same tier as the app's default (request.default_bag,
+ *  priority_10kg), in the planner's own vocabulary (cabin, priority, checked). */
+export const PLANNER_BAG = 'priority';
+
 const ANY_WHEN = Object.freeze({ kind: 'any', month: null, months: Object.freeze([]), start: null, end: null, ym: null });
 
 /**

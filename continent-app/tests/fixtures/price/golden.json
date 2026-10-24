@@ -11,7 +11,9 @@
    "cheaperBaseBed": 5990,
    "prerender": 12473,
    "prerenderWeek": 12473,
-   "og": 12473
+   "og": 12473,
+   "tripPlanner": 11224,
+   "placesTrip": 11224
   },
   "gem:kotor": {
    "explore": 8965,
@@ -24,7 +26,9 @@
    "cheaperBaseBed": 4408,
    "prerender": 8965,
    "prerenderWeek": 8965,
-   "og": 8965
+   "og": 8965,
+   "tripPlanner": 7802,
+   "placesTrip": 7802
   },
   "BGO": {
    "explore": 16077,
@@ -37,7 +41,9 @@
    "cheaperBaseBed": 8646,
    "prerender": 16077,
    "prerenderWeek": 16077,
-   "og": 16077
+   "og": 16077,
+   "tripPlanner": 15176,
+   "placesTrip": 15176
   },
   "LIS": {
    "explore": 11417,
@@ -50,7 +56,9 @@
    "cheaperBaseBed": 6951,
    "prerender": 11417,
    "prerenderWeek": 11417,
-   "og": 11417
+   "og": 11417,
+   "tripPlanner": 10747,
+   "placesTrip": 10747
   },
   "gem:lagos-pt": {
    "explore": 9891,
@@ -63,7 +71,9 @@
    "cheaperBaseBed": 5651,
    "prerender": 9891,
    "prerenderWeek": 9891,
-   "og": 9891
+   "og": 9891,
+   "tripPlanner": 9332,
+   "placesTrip": 9332
   },
   "gem:zermatt": {
    "explore": 23120,
@@ -76,7 +86,9 @@
    "cheaperBaseBed": 11698,
    "prerender": 23120,
    "prerenderWeek": 23120,
-   "og": 23120
+   "og": 23120,
+   "tripPlanner": 20932,
+   "placesTrip": 20932
   }
  },
  "group7": {
@@ -91,7 +103,9 @@
    "cheaperBaseBed": 9029,
    "prerender": 12473,
    "prerenderWeek": 12473,
-   "og": 12473
+   "og": 12473,
+   "tripPlanner": 15854,
+   "placesTrip": 15854
   },
   "gem:kotor": {
    "explore": 9725,
@@ -104,7 +118,9 @@
    "cheaperBaseBed": 4686,
    "prerender": 8965,
    "prerenderWeek": 8965,
-   "og": 8965
+   "og": 8965,
+   "tripPlanner": 9725,
+   "placesTrip": 9725
   },
   "BGO": {
    "explore": 21046,
@@ -117,7 +133,9 @@
    "cheaperBaseBed": 12343,
    "prerender": 16077,
    "prerenderWeek": 16077,
-   "og": 16077
+   "og": 16077,
+   "tripPlanner": 21046,
+   "placesTrip": 21046
   },
   "LIS": {
    "explore": 11196,
@@ -130,7 +148,9 @@
    "cheaperBaseBed": 6743,
    "prerender": 11417,
    "prerenderWeek": 11417,
-   "og": 11417
+   "og": 11417,
+   "tripPlanner": 11196,
+   "placesTrip": 11196
   },
   "gem:lagos-pt": {
    "explore": 11139,
@@ -143,7 +163,9 @@
    "cheaperBaseBed": 6743,
    "prerender": 9891,
    "prerenderWeek": 9891,
-   "og": 9891
+   "og": 9891,
+   "tripPlanner": 11139,
+   "placesTrip": 11139
   },
   "gem:zermatt": {
    "explore": 25325,
@@ -156,7 +178,9 @@
    "cheaperBaseBed": 13543,
    "prerender": 23120,
    "prerenderWeek": 23120,
-   "og": 23120
+   "og": 23120,
+   "tripPlanner": 25325,
+   "placesTrip": 25325
   }
  },
  "month": {
@@ -171,7 +195,9 @@
    "cheaperBaseBed": 4741,
    "prerender": 12473,
    "prerenderWeek": 12473,
-   "og": 12473
+   "og": 12473,
+   "tripPlanner": 11224,
+   "placesTrip": 11224
   },
   "gem:kotor": {
    "explore": 7802,
@@ -184,7 +210,9 @@
    "cheaperBaseBed": 3245,
    "prerender": 8965,
    "prerenderWeek": 8965,
-   "og": 8965
+   "og": 8965,
+   "tripPlanner": 7802,
+   "placesTrip": 7802
   },
   "BGO": {
    "explore": 15176,
@@ -197,7 +225,9 @@
    "cheaperBaseBed": 7745,
    "prerender": 16077,
    "prerenderWeek": 16077,
-   "og": 16077
+   "og": 16077,
+   "tripPlanner": 15176,
+   "placesTrip": 15176
   },
   "LIS": {
    "explore": 10747,
@@ -210,7 +240,9 @@
    "cheaperBaseBed": 6281,
    "prerender": 11417,
    "prerenderWeek": 11417,
-   "og": 11417
+   "og": 11417,
+   "tripPlanner": 10747,
+   "placesTrip": 10747
   },
   "gem:lagos-pt": {
    "explore": 9332,
@@ -223,7 +255,9 @@
    "cheaperBaseBed": 5092,
    "prerender": 9891,
    "prerenderWeek": 9891,
-   "og": 9891
+   "og": 9891,
+   "tripPlanner": 9332,
+   "placesTrip": 9332
   },
   "gem:zermatt": {
    "explore": 20932,
@@ -236,7 +270,9 @@
    "cheaperBaseBed": 9510,
    "prerender": 23120,
    "prerenderWeek": 23120,
-   "og": 23120
+   "og": 23120,
+   "tripPlanner": 20932,
+   "placesTrip": 20932
   }
  },
  "any": {
@@ -251,7 +287,9 @@
    "cheaperBaseBed": 5990,
    "prerender": 12473,
    "prerenderWeek": 12473,
-   "og": 12473
+   "og": 12473,
+   "tripPlanner": 11224,
+   "placesTrip": 11224
   },
   "gem:kotor": {
    "explore": 8965,
@@ -264,7 +302,9 @@
    "cheaperBaseBed": 4408,
    "prerender": 8965,
    "prerenderWeek": 8965,
-   "og": 8965
+   "og": 8965,
+   "tripPlanner": 7802,
+   "placesTrip": 7802
   },
   "BGO": {
    "explore": 16077,
@@ -277,7 +317,9 @@
    "cheaperBaseBed": 8646,
    "prerender": 16077,
    "prerenderWeek": 16077,
-   "og": 16077
+   "og": 16077,
+   "tripPlanner": 15176,
+   "placesTrip": 15176
   },
   "LIS": {
    "explore": 11417,
@@ -290,7 +332,9 @@
    "cheaperBaseBed": 6951,
    "prerender": 11417,
    "prerenderWeek": 11417,
-   "og": 11417
+   "og": 11417,
+   "tripPlanner": 10747,
+   "placesTrip": 10747
   },
   "gem:lagos-pt": {
    "explore": 9891,
@@ -303,7 +347,9 @@
    "cheaperBaseBed": 5651,
    "prerender": 9891,
    "prerenderWeek": 9891,
-   "og": 9891
+   "og": 9891,
+   "tripPlanner": 9332,
+   "placesTrip": 9332
   },
   "gem:zermatt": {
    "explore": 23120,
@@ -316,7 +362,9 @@
    "cheaperBaseBed": 11698,
    "prerender": 23120,
    "prerenderWeek": 23120,
-   "og": 23120
+   "og": 23120,
+   "tripPlanner": 20932,
+   "placesTrip": 20932
   }
  }
 }

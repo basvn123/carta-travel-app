@@ -371,15 +371,8 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
       before={before}
       primary={lake.base ? (
         <Button variant="primary" iconEnd={<ChevronRightIcon size={20} />} onClick={() => onSelectDest?.(lake.base.id)}>
-          {t('lake.basedOn', { city: lake.base.city })}
+          {(baseDay && view.stayIn(lake.base.city, baseDay.dayEur)) || t('lake.basedOn', { city: lake.base.city })}
         </Button>
-      ) : null}
-      costLine={baseDay && lake.base ? (
-        <>
-          {t('item.dayIn', { city: lake.base.city })}{' '}
-          <strong><Money value={view.day(baseDay.dayEur)} est={baseDay.est} /></strong>{' '}
-          {view.unit}
-        </>
       ) : null}
       actions={[
         <a key="dir" className="btn btn-secondary" href={mapsUrl} target="_blank" rel="noopener noreferrer">

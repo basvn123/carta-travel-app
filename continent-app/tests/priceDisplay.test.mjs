@@ -139,14 +139,14 @@ test("V5: a placeholder item is never counted and never zero", () => {
 });
 
 test("V9: the calculator drops a switched-off item and the flight, and adds up", async () => {
-  const { priceFromIndex } = await import("../src/lib/destPrice.js");
+  const { quoteNights } = await import("../src/lib/price/nights.js");
   const row = priceDays(FX.destinations, priceRequest({ choices: { price_excluded: ["food"] } })).get("gem:como");
   const carta = { total: 300, perSeat: 150 };
-  const r = priceFromIndex(row, 7, 2, null, carta);
+  const r = quoteNights(row, 7, 2, null, carta);
   assert.deepEqual(r.lines.map((l) => l.key), ["flight", "stay"]);
   assert.equal(r.total, Math.round(r.lines.reduce((s, l) => s + l.eur, 0) * 100) / 100);
   assert.equal(r.dayEur, row.stayEur);
-  const all = priceFromIndex(priceDays(FX.destinations, priceRequest({})).get("gem:como"), 7, 2, null, carta);
+  const all = quoteNights(priceDays(FX.destinations, priceRequest({})).get("gem:como"), 7, 2, null, carta);
   assert.deepEqual(all.lines.map((l) => l.key), ["flight", "stay", "ground"]);
 });
 

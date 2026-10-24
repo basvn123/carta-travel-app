@@ -5,7 +5,7 @@ import { useSettledFigure } from '../lib/figureChange.js';
 import { formatMoney } from '../lib/money.js';
 import { ChevronRightIcon } from '../components/Icons.jsx';
 
-/** How many people the trip is priced for, from priceTrip()'s own party. */
+/** How many people the trip is priced for, from quoteTrip()'s own party. */
 function pricedPartySize(priced) {
   const p = priced?.party || null;
   if (p) return Math.max(1, (p.adults || 0) + (p.children || 0) + (p.babies || 0));
@@ -17,7 +17,7 @@ function pricedPartySize(priced) {
  *
  * The trip's one figure, fixed where the traveller can always see it: under
  * the map from 1024 px, in the drawer's strip on a phone, in the wizard's foot.
- * It reads ONLY priceTrip()'s output (`priced.grandTotal`, `priced.party`),
+ * It reads ONLY quoteTrip()'s output (`priced.grandTotal`, `priced.party`),
  * the same object the receipt (PlanTotal) reads, so the two can never say two
  * totals. It sums nothing.
  *

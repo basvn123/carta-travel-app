@@ -5,25 +5,25 @@
  * The question is the traveller's own: "we have 1,500 for five days in
  * October, the two of us, where can we go". The answer is a rule, not a
  * model: every destination is priced with the one price engine,
- * `priceTrip()` in lib/tripTotal.js, for a one-stop trip of that length in
+ * `quoteTrip()` in lib/tripTotal.js, for a one-stop trip of that length in
  * that month for that party at the traveller's Lifestyle and bed, and the
  * total for the group is held against the budget. No second formula lives
- * here; this file only builds the state priceTrip reads, rounds its parts
+ * here; this file only builds the state quoteTrip reads, rounds its parts
  * to whole euros (owner 1.8: whole euros everywhere, the receipt too), adds
  * the buffer (T475-d: 10% and on by default) and sorts the outcome.
  *
  * What it prices today: the bed and the food and drink, the two parts
- * priceTrip prices for a stay, and in 'fly' mode getting there (T518): the
+ * quoteTrip prices for a stay, and in 'fly' mode getting there (T518): the
  * return flight from the home airport's swept file (flights/flights.js
  * roundTripNear, the same helper the city cards use, bags included at the
- * traveller's baggage choice) plus priceTrip's airport transfers. What it
+ * traveller's baggage choice) plus quoteTrip's airport transfers. What it
  * does not price yet, and never folds into the total: getting there by car,
  * train or bus (3.11), local transport and tickets (2.22, 2.23). Those are
  * receipt lines without an amount.
  *
  * Pure: no React, no i18n, so tests/budgetSearch.test.mjs runs it in node.
  */
-import { priceTrip, MAX_PARTY } from './tripTotal.js';
+import { quoteTrip, MAX_PARTY } from './tripTotal.js';
 import { addDays } from './dates.js';
 import { roundTripNear } from './flights/flights.js';
 import { destAnchor } from './origins.js';
@@ -143,9 +143,9 @@ export function budgetTripState(destId, q, { lifestyle = null, stayTier = 'home'
     children: q.children,
     babies: 0,
     // The stay alone: with 'owncar', no home in the context and no typed
-    // figure, priceTrip routes no flight, prices no drive and no transfer,
+    // figure, quoteTrip routes no flight, prices no drive and no transfer,
     // so getting there stays its own line, not priced yet. Flying (T518):
-    // 'auto' routes the flight's airport, so priceTrip adds the transfer
+    // 'auto' routes the flight's airport, so quoteTrip adds the transfer
     // from the runway to the bed; the fare itself is roundTripNear's.
     transportPref: fly ? 'auto' : 'owncar',
     baggage: bagKey || 'priority_10kg',
@@ -179,7 +179,7 @@ export function priceForBudget(dest, q, opts = {}) {
       { paying: q.head, bagKey: opts.bagKey || 'priority_10kg' })
     : null;
   if (fly && !flight) return null;
-  const priced = priceTrip(
+  const priced = quoteTrip(
     budgetTripState(dest.id, q, opts),
     { data: { destinations: { [dest.id]: dest } } },
   );

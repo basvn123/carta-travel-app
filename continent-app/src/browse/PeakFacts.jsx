@@ -1,5 +1,7 @@
 import React from 'react';
 import NotYet from '../components/NotYet.jsx';
+import { doPriceOf } from '../lib/price/doPrice.js';
+import { formatMoney } from '../lib/money.js';
 import { DestForecast } from './DestForecast.jsx';
 import { useForecast } from '../lib/weather.js';
 import {
@@ -14,7 +16,7 @@ import {
  * the shared placeholder (components/NotYet.jsx).
  *
  * Wire keys (docs/SCHEMA.md, T630): `rangeRank` {n, h, p}, `slopeDeg`,
- * `huts[]`, `lift.price`, `lift.hours`. The summit forecast is live: MET
+ * `huts[]`, `lift.fare`, `lift.hours`. The summit forecast is live: MET
  * Norway through /api/forecast with the summit's own altitude.
  */
 
@@ -96,6 +98,9 @@ export function PeakFacts({ mountain, t, lang }) {
   const slope = isNum(mountain.slopeDeg) ? mountain.slopeDeg : null;
   const state = slopeState(slope);
   const lift = mountain.lift || null;
+  // The lift's fare record (harvest_lift_hours.py `fare`, T701); a zero or an
+  // unknown fare keeps the placeholder.
+  const liftFare = doPriceOf(lift?.fare, 'lift');
   return (
     <div className="bpage-facts bpage-peakfacts" data-testid="peak-facts">
       <dl>
@@ -111,7 +116,7 @@ export function PeakFacts({ mountain, t, lang }) {
           )}
         </Slot>
         <Slot label={t('mtn.liftPrice')} testId="pf-lift-price">
-          {lift?.price ? String(lift.price) : <NotYet />}
+          {liftFare ? formatMoney(liftFare.eur, { precision: Number.isInteger(liftFare.eur) ? 'whole' : 'cents' }) : <NotYet />}
         </Slot>
         <Slot label={t('mtn.liftHours')} testId="pf-lift-hours">
           {lift?.hours ? String(lift.hours) : <NotYet />}

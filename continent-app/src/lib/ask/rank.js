@@ -2,7 +2,7 @@
  * Ask Carta, stage 3: an Intent and the retrieved passages become the facts
  * of an answer (T555). Pure, no React and no i18n: every number here comes
  * from code that already prices and filters Explore (guidedSearch.js
- * predicates, budgetSearch.js on tripTotal.js priceTrip, cartaRoute.js),
+ * predicates, budgetSearch.js on tripTotal.js quoteTrip, cartaRoute.js),
  * so an answer can never disagree with the list it opens. compose.js turns
  * these facts into words; the model in stage 5 only rewords them.
  *

@@ -75,11 +75,13 @@ test("a destination without a bed or a food figure prices no receipt", () => {
 });
 
 test("a broken harvest borrows the country median and says it is an estimate", () => {
-  const broken = { ...dest, accommodation: { beds: {} } };
-  const r = priceReceipt(broken, { ...opts, costRow: { stayLevel: "region", stayEur: 30 } });
+  // T702: the repair is the engine's, from the catalogue handed in.
+  const town = { ...dest, iso2: "IT" };
+  const broken = { ...town, id: "BRK", accommodation: { beds: {} } };
+  const r = priceReceipt(broken, { ...opts, destinations: { TRS: town, BRK: broken } });
   const s = r.lines.find((l) => l.key === "stay");
-  assert.equal(s.level, "region");
-  assert.equal(s.eur, 30 * 7 * 2);
+  assert.notEqual(s.level, "city");
+  assert.ok(s.eur > 0);
   assert.equal(s.est, true);
 });
 

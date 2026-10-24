@@ -1,6 +1,9 @@
 /**
  * The destination page's price card, as arithmetic (T429, owner decision
- * 2026-10-13: one cost truth).
+ * 2026-10-13: one cost truth). In the engine since T702 (plan F6, was
+ * lib/destPrice.js priceFromIndex): `quoteNights` multiplies the engine's
+ * day row by the nights and the party, every included line once, so a car
+ * the traveller travels with is in the total as it is in the day.
  *
  * The page prices a stay on the SAME basis as the Explore card and the map
  * pin: the computeCosts row at the traveller's Lifestyle (lib/costIndex.js),
@@ -27,7 +30,7 @@
 
 const round2 = (v) => Math.round(v * 100) / 100;
 
-export function priceFromIndex(costRow, nights, people, fare = null, carta = null) {
+export function quoteNights(costRow, nights, people, fare = null, carta = null) {
   if (costRow?.stayEur == null || costRow?.foodEur == null) return null;
   const stay = Number(costRow.stayEur);
   const food = Number(costRow.foodEur);
@@ -47,6 +50,8 @@ export function priceFromIndex(costRow, nights, people, fare = null, carta = nul
   }
   if (!off.has('bed')) lines.push({ key: 'stay', eur: round2(stay * n * p), est: costRow.stayLevel !== 'city' });
   if (!off.has('food')) lines.push({ key: 'ground', eur: round2(food * n * p), est: costRow.foodLevel !== 'city' });
+  const car = (costRow.lines || []).find((l) => l.key === 'car' && l.status === 'included' && l.eur != null);
+  if (car) lines.push({ key: 'car', eur: round2(car.eur * n * p), est: true });
 
   const total = round2(lines.reduce((s, l) => s + l.eur, 0));
   return {
@@ -54,7 +59,7 @@ export function priceFromIndex(costRow, nights, people, fare = null, carta = nul
     total,
     each: p > 1 ? round2(total / p) : null,
     est: lines.some((l) => l.est),
-    dayEur: (off.has('bed') ? 0 : stay) + (off.has('food') ? 0 : food),
+    dayEur: (off.has('bed') ? 0 : stay) + (off.has('food') ? 0 : food) + (car ? car.eur : 0),
     nights: n,
     people: p,
   };

@@ -4,7 +4,7 @@ import { useFirstRun } from '../lib/firstRunContext.js';
 import { readOwnFare, writeOwnFare, markFirstResultSeen } from '../lib/firstRun.js';
 import { tripDaysBetween } from '../lib/runtime_pricing.js';
 import { addDays } from '../lib/dates.js';
-import { priceFromIndex } from '../lib/destPrice.js';
+import { quoteNights } from '../lib/price/nights.js';
 import { useSettledFigure } from '../lib/figureChange.js';
 import { Button, Money, Segmented } from '../components/ui/index.js';
 import { formatEst } from '../lib/money.js';
@@ -35,7 +35,7 @@ import { includedParts } from '../lib/price/display.js';
  *
  * One cost truth (owner decision 2026-10-13, closing T374-d and T385-a): the
  * day figure is the computeCosts row the Explore card and the map pin print,
- * and the total is that day times the nights and the party (lib/destPrice.js).
+ * and the total is that day times the nights and the party (lib/price/nights.js).
  * The card says no more than that: no orientation sentence, no method rows
  * under the lines, no "what a different stay would cost" footer, and one
  * line naming what the total leaves out (owner, T429 brief).
@@ -95,7 +95,7 @@ export function DestPriceCard({
   );
   const price = React.useMemo(
     // T695: a flight switched off in the opened price leaves the receipt.
-    () => (flightOff ? priceFromIndex(costRow, nights, people, null, null) : priceFromIndex(costRow, nights, people, fare, carta)),
+    () => (flightOff ? quoteNights(costRow, nights, people, null, null) : quoteNights(costRow, nights, people, fare, carta)),
     [costRow, nights, people, fare, carta, flightOff],
   );
   // T540: with the traveller's own dates, ask for tonight's hotel prices on
@@ -170,7 +170,8 @@ export function DestPriceCard({
     </span>
   ) : t('receipt.yourFlight'));
   const label = (line) => (line.key === 'flight' ? flightLabel(line)
-    : line.key === 'stay' ? t('receipt.stay', { nights: nightsText }) : t('receipt.ground'));
+    : line.key === 'stay' ? t('receipt.stay', { nights: nightsText })
+    : line.key === 'car' ? t('price.item.car') : t('receipt.ground'));
   const cartaLine = price.lines.find((l) => l.key === 'flight' && l.carta) || null;
   const stayLine = price.lines.find((l) => l.key === 'stay');
   const foodLine = price.lines.find((l) => l.key === 'ground');

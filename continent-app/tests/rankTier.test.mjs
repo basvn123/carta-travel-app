@@ -18,7 +18,7 @@ import {
 } from "../src/lib/bootIndex.js";
 import { createCatalogue } from "../src/lib/catalogue.js";
 import { withOriginRoutes, defaultOrigin } from "../src/lib/origins.js";
-import { composeTrip } from "../src/lib/runtime_pricing.js";
+import { quoteComposed } from "../src/lib/price/compose.js";
 import { computeCosts } from "../src/lib/costIndex.js";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -175,8 +175,8 @@ test("every destination prices the same from its lite record as from its full on
   let priced = 0;
   for (const choices of variants) {
     for (const id of Object.keys(full.destinations)) {
-      const a = composeTrip(full.destinations[id], depart, ret, choices, full.destinations);
-      const b = composeTrip(lite.destinations[id], depart, ret, choices, lite.destinations);
+      const a = quoteComposed(full.destinations[id], depart, ret, choices, full.destinations);
+      const b = quoteComposed(lite.destinations[id], depart, ret, choices, lite.destinations);
       assert.equal(JSON.stringify(b), JSON.stringify(a), `${id} prices the same (${JSON.stringify(choices).slice(0, 60)})`);
       if (a) priced += 1;
     }

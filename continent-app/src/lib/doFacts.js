@@ -8,6 +8,9 @@
  * rebuild with derive_do.py), else the type label for the 18% of items whose
  * type says more than "activity", else null.
  */
+import { doPriceOf } from './price/doPrice.js';
+import { formatMoney } from './money.js';
+
 const DO_TYPE_LABEL = {
   trail: 'dest.doType.trail', festival: 'dest.doType.festival', swim: 'dest.doType.swim',
   experience: 'dest.doType.experience',
@@ -28,9 +31,14 @@ export function doFacts(item, t) {
     kind = t(DO_TYPE_LABEL[item.type]);
   }
 
+  // The price record first (T701, plan section 5), the older fee_eur figure
+  // next; a zero is "Free" (an entry is a category where paying also occurs).
   let fee = null;
-  if (isNum(item?.fee_eur)) {
-    fee = item.fee_eur === 0 ? t('dest.doFree') : t('dest.doFeeEur', { n: Math.round(item.fee_eur * 100) / 100 });
+  const price = doPriceOf(item?.price, 'activity')
+    || doPriceOf(isNum(item?.fee_eur) ? { value: item.fee_eur, currency: 'EUR' } : null, 'activity');
+  if (price) {
+    fee = price.kind === 'free' ? t('dest.doFree')
+      : formatMoney(price.eur, { precision: Number.isInteger(price.eur) ? 'whole' : 'cents' });
   } else if (item?.fee === 'no') fee = t('dest.doFree');
   else if (item?.fee === 'yes') fee = t('dest.doPaid');
 

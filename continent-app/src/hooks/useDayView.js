@@ -3,6 +3,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { useFirstRun } from '../lib/firstRunContext.js';
 import { DEFAULT_PRICE_REQUEST } from '../lib/price/request.js';
 import { dayUnit, isTotalView, shownDay, shownWay, viewFactor } from '../lib/price/display.js';
+import { formatMoney } from '../lib/money.js';
 
 /**
  * The traveller's price view for a screen (T694, plan rule 4): per person,
@@ -15,6 +16,8 @@ import { dayUnit, isTotalView, shownDay, shownWay, viewFactor } from '../lib/pri
  *   unit       "a person a day" or "for 2 people, 7 nights"
  *   factor     1, or seats x nights
  *   total      true in the group view
+ *   stayIn(city, eur)  the button to a base town with its day price (T699,
+ *              plan section 5: the town's price lives only there), or null
  */
 export function useDayView() {
   const { t } = useI18n();
@@ -26,5 +29,7 @@ export function useDayView() {
     unit: dayUnit(t, req),
     factor: viewFactor(req),
     total: isTotalView(req),
+    stayIn: (city, eur) => (eur == null || !city ? null
+      : t('item.baseStay', { city, price: formatMoney(shownDay(eur, req)), unit: dayUnit(t, req) })),
   }), [req, t]);
 }

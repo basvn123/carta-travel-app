@@ -22,17 +22,10 @@
  * Every figure keeps its cents. A line whose figure stands in from a national
  * basket is an estimate and says so; a total that holds an estimate is one.
  */
-import {
-  accommodationPerPerson, groundSpendPerPerson, offeredStayTiers, tripDaysBetween,
-} from './runtime_pricing.js';
+import { offeredStayTiers, tripDaysBetween } from './runtime_pricing.js';
+import { atDates, priceDay, tripRequest } from './price/index.js';
 import { round2 } from './math.js';
 import { addDays } from './dates.js';
-
-// The same sanity gate costIndex.js puts on a harvested nightly rate, applied
-// before season: under the floor is a broken harvest, over the ceiling a data
-// error, and neither may price a receipt.
-const STAY_MIN_EUR = 6;
-const STAY_MAX_EUR = 400;
 
 /** How far out the default trip starts, and on which weekday. */
 export const DEFAULT_LEAD_DAYS = 28;
@@ -87,67 +80,32 @@ export function windowFits(win, bounds) {
   return true;
 }
 
-/** Where the bed figure came from: 'city' measured here, 'country' the
- *  national figure, 'region' the country median standing in for a broken
- *  harvest (costIndex.js names them the same way). */
-function stayLevel(dest, accom) {
-  // v18 (T534): measured in this town, or borrowed / modelled (an estimate).
-  return (accom?.q || dest?.accommodation?.q) === 'measured' ? 'city' : 'country';
+/** The stay and ground lines from the engine's day (T702, plan F6): the
+ *  bed and the food a person a day, times the nights and the people, so the
+ *  receipt is the destination page's day for the same question (V1). */
+function stayLine(day, nights, people) {
+  const bed = day.lines.find((l) => l.key === 'bed');
+  const level = day.stayLevel === 'city' && !day.stayRepaired ? 'city' : (day.stayLevel || 'country');
+  return {
+    key: 'stay',
+    eur: Math.round(day.stayEur * nights * people * 100) / 100,
+    est: level !== 'city',
+    level,
+    tier: bed?.basis?.tier || 'home',
+    tierAsked: day.request?.stay || 'home',
+    tierFallback: !!bed?.basis?.tierFallback,
+    listings: null,
+    place: null,
+    captured: day.captured || null,
+  };
 }
 
-/** The stay line for one tier, or null when nothing usable is on the wire. */
-function stayLine(dest, nights, from, people, stayTier, model, costRow) {
-  const accom = accommodationPerPerson(dest, nights, from, model, people, stayTier);
-  const base = accom && accom.season > 0 ? accom.nightly_pp / accom.season : null;
-  if (accom && base >= STAY_MIN_EUR && base <= STAY_MAX_EUR && accom.total > 0) {
-    const a = dest.accommodation || {};
-    const level = stayLevel(dest, accom);
-    return {
-      key: 'stay',
-      eur: round2(accom.total * people),
-      est: level !== 'city',
-      level,
-      tier: accom.tier,
-      tierAsked: accom.tier_requested,
-      tierFallback: !!accom.tier_fallback,
-      listings: null,
-      place: accom.from || null,
-      captured: a.captured || null,
-    };
-  }
-  // A broken harvest: the country median of measured towns stands in, the
-  // repair costIndex.js already makes for the Explore cards. It is a per
-  // person, per night figure with no season, so it is an estimate.
-  if (costRow?.stayLevel === 'region' && costRow.stayEur > 0) {
-    return {
-      key: 'stay',
-      eur: round2(costRow.stayEur * nights * people),
-      est: true,
-      level: 'region',
-      tier: 'home',
-      tierAsked: stayTier || 'home',
-      tierFallback: false,
-      listings: null,
-      place: null,
-      captured: null,
-    };
-  }
-  return null;
-}
-
-/** The ground line: eating and drinking, per day per person, times the days
- *  and the people. The per-day figure is the one printed in the line's second
- *  row, so the line is computed from it and the multiplication on screen is
- *  exact to the cent. */
-function groundLine(dest, nights, people, lifestyle) {
-  const g = groundSpendPerPerson(dest, nights, lifestyle);
-  if (!g || !(g.total > 0)) return null;
-  const perDay = round2(g.total / nights);
-  const level = dest.costs?.level === 'city' ? 'city' : 'country';
+function groundLine(day, nights, people) {
+  const level = day.foodLevel === 'city' ? 'city' : 'country';
   return {
     key: 'ground',
-    eur: round2(perDay * nights * people),
-    perDay,
+    eur: Math.round(day.foodEur * nights * people * 100) / 100,
+    perDay: day.foodEur,
     days: nights,
     est: level !== 'city',
     level,
@@ -163,9 +121,7 @@ function groundLine(dest, nights, people, lifestyle) {
  *   opts.people                the party size (choices.group_size)
  *   opts.stayTier              choices.stay_tier
  *   opts.lifestyle             choices.lifestyle
- *   opts.accommodationModel    choices.accommodation_model (meta)
- *   opts.costRow               this destination's computeCosts row, for the
- *                              broken-harvest repair
+ *   opts.destinations          the catalogue, for the engine's country repair
  *   opts.ownFare               { costTotal, airline, origin } the traveller typed
  */
 export function priceReceipt(dest, opts = {}) {
@@ -173,9 +129,11 @@ export function priceReceipt(dest, opts = {}) {
   if (!dest || !from || !to || to <= from) return null;
   const nights = Math.max(1, tripDaysBetween(from, to));
   const people = Math.max(1, Math.round(opts.people || 1));
-  const stay = stayLine(dest, nights, from, people, opts.stayTier, opts.accommodationModel, opts.costRow);
-  const ground = groundLine(dest, nights, people, opts.lifestyle);
-  if (!stay || !ground) return null;
+  const req = atDates(tripRequest({ groupSize: people, stayTier: opts.stayTier, lifestyle: opts.lifestyle }), from, to);
+  const day = priceDay(dest, req, opts.destinations || null);
+  if (day?.stayEur == null || !(day.foodEur > 0)) return null;
+  const stay = stayLine(day, nights, people);
+  const ground = groundLine(day, nights, people);
 
   const lines = [];
   const fareEur = Number(opts.ownFare?.costTotal);

@@ -1155,7 +1155,7 @@
 .plan-ws.is-phone .trip-save-toast { bottom: calc(var(--bottom-nav-h) + var(--drawer-strip) + var(--space-3)); }
 
 /* The total bar (T500, owner T490-g): the trip's one figure, read from
-   priceTrip(). It opens the receipt and never holds the primary. */
+   quoteTrip(). It opens the receipt and never holds the primary. */
 .trip-total-bar {
   display: flex;
   align-items: center;
