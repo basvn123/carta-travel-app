@@ -15,7 +15,8 @@
  * language is not in the URL yet (T205, hreflang section), so the words here
  * are English and T212-b records the translation work.
  */
-import { computeCosts, cheapestStayMonths, eurDay } from '../../src/lib/costIndex.js';
+import { cheapestStayMonths, eurDay } from '../../src/lib/costIndex.js';
+import { priceDay, DEFAULT_PRICE_REQUEST } from '../../src/lib/price/index.js';
 import { setStayRecords } from '../../src/lib/staysData.js';
 import { loadStayRecords } from './data.mjs';
 
@@ -59,9 +60,11 @@ function score(row) {
   return typeof s === 'number' ? { label: 'Carta score', value: DEC1.format(s), unit: 'of 10', tone: 'rate' } : null;
 }
 
-export function destinationSpec(key, dest) {
+/** `all` is the catalogue, so a place with no usable bed borrows its
+ *  country's median the way the app and the prerendered page do (T665). */
+export function destinationSpec(key, dest, all = null) {
   seedStays();
-  const cost = computeCosts({ [key]: dest }, {}).get(key);
+  const cost = priceDay({ ...dest, id: dest.id || key }, DEFAULT_PRICE_REQUEST, all);
   if (!cost || cost.dayEur == null) return null;
   const city = cost.stayLevel === 'city';
   const stayNote = city ? 'Measured in this town'

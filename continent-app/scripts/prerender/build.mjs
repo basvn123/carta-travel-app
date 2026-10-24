@@ -41,7 +41,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { COUNTRY_SLUGS, paths, parsePath } from '../../src/lib/urlScheme.js';
 import { prerenderKey } from '../../src/lib/prerenderShell.js';
-import { computeCosts } from '../../src/lib/costIndex.js';
+import { priceDays, DEFAULT_PRICE_REQUEST } from '../../src/lib/price/index.js';
 import { setStayRecords, mergeStayFiles } from '../../src/lib/staysData.js';
 import * as C from '../../src/lib/cycleStory.js';
 import { renderPage, clean, ORIGIN } from './html.mjs';
@@ -136,7 +136,9 @@ for (const f of list('dest')) if (f.endsWith('.json')) Object.assign(destRows, r
 // T534: the month curves and sources the bed price reads, from the baked copy.
 setStayRecords(mergeStayFiles(list('stays/v1').filter((f) => f.endsWith('.json') && f !== 'manifest.json')
   .map((f) => readJson(`stays/v1/${f}`))));
-const costs = computeCosts(destRows, {});
+// T665 (F2): the default request (B5) through the engine, the price the app
+// shows before the traveller picks anything.
+const costs = priceDays(destRows, DEFAULT_PRICE_REQUEST);
 const dossierFiles = list('dossier').filter((f) => f.endsWith('.json'));
 const dests = new Map(); // id -> { id, slug, name, cc, score, dayEur, measured, lat, lon, built, week, perDay }
 const destByCity = new Map();

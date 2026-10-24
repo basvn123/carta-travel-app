@@ -197,11 +197,18 @@ function nextMonths(today = new Date()) {
 }
 
 /** The When value: the dates, the month or any time, then the nights (not
- *  on a phone's one sentence, which has no room for them). */
+ *  on a phone's one sentence, which has no room for them).
+ *
+ *  T667 (owner, 2026-10-24): the value says what the prices are for, from
+ *  the one price request (lib/price/). Carta's own suggested dates are not
+ *  the traveller's, so the prices are the year's average and the value reads
+ *  "Any time"; the Explore month filter, while on, names its month. */
 function whenValue(t, s, shortDate, { nightsToo = true } = {}) {
   const nights = nightsBetween(s.departDate, s.returnDate);
+  const w = s.priceRequest?.when || null;
   let range = '';
-  if (s.dateFlex === 'any') range = t('dates.any');
+  if (s.dateFlex === 'any' || w?.kind === 'any') range = t('dates.any');
+  else if (w?.kind === 'month' && w.ym) range = shortDate(`${w.ym}-01`, { month: 'long' });
   else if (s.dateFlex === 'month' && s.departDate) range = shortDate(s.departDate, { month: 'long' });
   else if (s.departDate && s.returnDate) {
     range = t('settings.datesRange', { start: shortDate(s.departDate), end: shortDate(s.returnDate) });

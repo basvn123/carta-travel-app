@@ -22,6 +22,7 @@ import { en } from '../../src/i18n/en.js';
 import { paths, canonicalFor } from '../../src/lib/urlScheme.js';
 import { fmtHours } from '../../src/lib/format.js';
 import { DEFAULT_LIFESTYLE, groundSpendPerPerson } from '../../src/lib/runtime_pricing.js';
+import { foodBreakdown, DEFAULT_PRICE_REQUEST } from '../../src/lib/price/index.js';
 import { cheapestStayMonths } from '../../src/lib/costIndex.js';
 import { seasonCurve } from '../../src/lib/stayPrice.js';
 import * as B from '../../src/lib/beachStory.js';
@@ -578,9 +579,10 @@ export function foodSource(cost) {
  */
 export function weekReceipt(cost, row) {
   if (!cost || cost.dayEur == null) return null;
-  const ls = DEFAULT_LIFESTYLE;
+  const ls = DEFAULT_PRICE_REQUEST.lifestyle;
   const lines = [{ label: `A bed for the night, ${WEEK} nights at ${eur2(cost.stayEur)}`, eur: r2(cost.stayEur * WEEK) }];
-  const g = row?.costs ? groundSpendPerPerson(row, WEEK, ls) : null;
+  // T665 (F2): the engine's food line item by item, for the default request.
+  const g = row?.costs ? foodBreakdown(row, DEFAULT_PRICE_REQUEST, WEEK) : null;
   if (g) {
     const item = (label, n, eur) => { if (n > 0 && eur > 0) lines.push({ label: `${label}, ${n0(n)}`, eur }); };
     item(t('lifestyle.dinnersOut'), ls.dinners_per_week, g.dinners);

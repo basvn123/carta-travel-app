@@ -205,9 +205,11 @@ export function foodPerDay(dest, lifestyle) {
  * to the entire place and says so through `fallback`, so a village never
  * quotes a dorm bed it does not have.
  */
-function stayAtTier(dest, tier, groupSize, when) {
+function stayAtTier(dest, tier, party, when) {
   const nights = when?.nights || CARD_NIGHTS;
-  const b = bedPrice({ dest, tier, adults: groupSize, nights, start: when?.start || null,
+  // T662: the party's own adults and children (lib/party.js partyOf), so a
+  // child shares a room and takes half a dorm bed the way bedPrice says.
+  const b = bedPrice({ dest, tier, adults: party.adults, children: party.children, nights, start: when?.start || null,
     month: when?.month || null, fees: when?.fees || null });
   if (!b) return { eur: null, fallback: false, bed: null };
   const v = b.perPerson / nights;
@@ -234,7 +236,11 @@ function levelOf(raw, repaired) {
  * number its own country's measured towns actually show, and is labelled as
  * borrowed rather than measured.
  */
+const MEDIANS = new WeakMap();
 function countryStayMedians(destinations) {
+  // Once per catalogue object: the medians read only the annual entire place
+  // for two, which no traveller choice moves (T662).
+  if (destinations && typeof destinations === 'object' && MEDIANS.has(destinations)) return MEDIANS.get(destinations);
   const byCc = new Map();
   for (const d of Object.values(destinations || {})) {
     const v = stayPerNight(d);
@@ -247,6 +253,7 @@ function countryStayMedians(destinations) {
     arr.sort((a, b) => a - b);
     out.set(cc, arr[arr.length >> 1]);
   }
+  if (destinations && typeof destinations === 'object') MEDIANS.set(destinations, out);
   return out;
 }
 
@@ -265,53 +272,73 @@ function countryStayMedians(destinations) {
  * of year; without either the bed is the year's average.
  */
 export function computeCosts(destinations, choices) {
+  const ctx = costContext(destinations, choices);
+  const out = new Map();
+  for (const [id, d] of Object.entries(destinations || {})) out.set(id, costRow(d, ctx));
+  return out;
+}
+
+/**
+ * What every row of one pricing shares (T662): the choices read once, the
+ * band scale and the country medians of `destinations` (the whole catalogue,
+ * so a place priced on its own is repaired the way the catalogue repairs it).
+ * lib/price/ builds this from a price request; computeCosts from choices.
+ */
+export function costContext(destinations, choices) {
   const lifestyle = choices?.lifestyle;
   const stayTier = choices?.stay_tier || 'home';
   // Two, the app's default party: a bed is one person's share of a room or
   // a place for two unless the traveller says otherwise.
-  const groupSize = choices?.group_size || 2;
+  const party = partyOf(choices);
   const when = { start: choices?.start || null, month: choices?.month || null,
     nights: choices?.nights || null, fees: choices?.accommodation_model || null };
-  const scale = bandScale(lifestyle, stayTier);
-  const eatShare = foodShare(partyOf(choices));
-  const medians = countryStayMedians(destinations);
-  const out = new Map();
-  for (const [id, d] of Object.entries(destinations || {})) {
-    const at = stayAtTier(d, stayTier, groupSize, when);
-    let stayEur = at.eur;
-    let repaired = false;
-    if (stayEur == null) {
-      const m = medians.get(d.iso2);
-      if (m != null) { stayEur = m; repaired = true; }
-    }
-    // T579: children eat less and a baby a little, so a seat's food is the
-    // party's average (1 for adults only).
-    const foodBase = foodPerDay(d, lifestyle);
-    const foodEur = foodBase != null ? foodBase * eatShare : null;
-    const dayEur = stayEur != null && foodEur != null ? stayEur + foodEur : null;
-    const a = d.accommodation || {};
-    out.set(id, {
-      stayEur,
-      foodEur,
-      dayEur,
-      stayBand: bandFor('stay', stayEur, scale.stay),
-      foodBand: bandFor('food', foodEur, scale.food),
-      dayBand: bandFor('day', dayEur, scale.day),
-      stayLevel: levelOf(at.bed?.q || a.q, repaired),
-      stayBasis: repaired ? null : (at.bed?.q || a.q || null),
-      foodBasis: d.costs?.price_source || null,
-      foodLevel: levelOf(d.costs?.level, false),
-      stayTier,
-      tierFallback: at.fallback,
-      listings: null,
-      captured: repaired ? null : (a.captured ?? null),
-      source: repaired ? null : (at.bed?.from ?? null),
-      stayKm: repaired ? null : (at.bed?.km ?? null),
-      stayScaled: !!at.bed?.scaled,
-      stayLive: at.bed?.q === 'live' ? at.bed.captured : null,
-    });
+  return {
+    lifestyle, stayTier, party, when,
+    scale: bandScale(lifestyle, stayTier),
+    eatShare: foodShare(party),
+    medians: countryStayMedians(destinations),
+  };
+}
+
+/** One destination's cost row (the shape computeCosts documents) in `ctx`. */
+export function costRow(d, ctx) {
+  const { lifestyle, stayTier, party, when, scale, eatShare, medians } = ctx;
+  const at = stayAtTier(d, stayTier, party, when);
+  let stayEur = at.eur;
+  let repaired = false;
+  if (stayEur == null) {
+    const m = medians.get(d.iso2);
+    if (m != null) { stayEur = m; repaired = true; }
   }
-  return out;
+  // T579: children eat less and a baby a little, so a seat's food is the
+  // party's average (1 for adults only).
+  const foodBase = foodPerDay(d, lifestyle);
+  const foodEur = foodBase != null ? foodBase * eatShare : null;
+  const dayEur = stayEur != null && foodEur != null ? stayEur + foodEur : null;
+  const a = d.accommodation || {};
+  return {
+    stayEur,
+    foodEur,
+    dayEur,
+    stayBand: bandFor('stay', stayEur, scale.stay),
+    foodBand: bandFor('food', foodEur, scale.food),
+    dayBand: bandFor('day', dayEur, scale.day),
+    stayLevel: levelOf(at.bed?.q || a.q, repaired),
+    stayBasis: repaired ? null : (at.bed?.q || a.q || null),
+    foodBasis: d.costs?.price_source || null,
+    foodLevel: levelOf(d.costs?.level, false),
+    stayTier,
+    tierFallback: at.fallback,
+    listings: null,
+    captured: repaired ? null : (a.captured ?? null),
+    source: repaired ? null : (at.bed?.from ?? null),
+    stayKm: repaired ? null : (at.bed?.km ?? null),
+    stayScaled: !!at.bed?.scaled,
+    stayLive: at.bed?.q === 'live' ? at.bed.captured : null,
+    // T662: what the engine (lib/price/) reports as each line's basis.
+    stayRepaired: repaired,
+    stayUnits: at.bed ? { unit: at.bed.unit, units: at.bed.units, tier: at.bed.tier, basis: at.bed.basis } : null,
+  };
 }
 
 /** Whole euros, the only precision the underlying data earns. */

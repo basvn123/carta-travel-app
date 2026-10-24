@@ -1,0 +1,1693 @@
+{
+ "_note": "T661 (F1): six baseline destinations copied from public/app_data.json and public/stays/v1/{cc}.json, stays built 2026-10-21T23:42:53Z. Read by tests/priceGolden.test.mjs.",
+ "meta_stays_fees": {
+  "service_fee_pct": 14,
+  "cleaning_fee_frac_of_night": 0.5,
+  "weekly_discount_pct": 8,
+  "min_nights_for_weekly": 7
+ },
+ "destinations": {
+  "gem:como": {
+   "id": "gem:como",
+   "city": "Lake Como",
+   "country": "Italy",
+   "iso2": "IT",
+   "accommodation": {
+    "beds": {
+     "dorm": 36,
+     "private": 110,
+     "hotel2": 140,
+     "hotel3": 204,
+     "hotel4": 220,
+     "hotel5": 409,
+     "bnb_home": {
+      "2": 106,
+      "4": 129,
+      "6": 172,
+      "8": 242
+     },
+     "bnb_room": 119
+    },
+    "q": "modelled",
+    "captured": null,
+    "supply": {
+     "hostel": false,
+     "hotel": true,
+     "hotel5": true,
+     "bnb": true
+    }
+   },
+   "costs": {
+    "meal_mid_eur": 41.8,
+    "meal_cheap_eur": 20.3,
+    "fastfood_eur": 11.2,
+    "drink_out_eur": 5.97,
+    "cocktail_eur": 14.3,
+    "coffee_eur": 2.1,
+    "grocery_day_eur": 14.7,
+    "club_entry_eur": 12.4,
+    "level": "region",
+    "price_source": "carta_food_v2"
+   },
+   "local_transport": {
+    "car_needed": true,
+    "transit_quality": "poor",
+    "reason": "Sights are spread out with limited public transport - rent a car.",
+    "rental_eur_per_day": 52,
+    "road_connected": true
+   },
+   "iata": null,
+   "anchor_airport": "BGY",
+   "categories": [
+    "lake",
+    "alps",
+    "iconic"
+   ],
+   "tier": "gem"
+  },
+  "gem:kotor": {
+   "id": "gem:kotor",
+   "city": "Kotor",
+   "country": "Montenegro",
+   "iso2": "ME",
+   "accommodation": {
+    "beds": {
+     "dorm": 18,
+     "private": 67,
+     "hotel2": 78,
+     "hotel3": 114,
+     "hotel4": 123,
+     "hotel5": 229,
+     "bnb_home": {
+      "2": 78,
+      "4": 95,
+      "6": 126,
+      "8": 177
+     },
+     "bnb_room": 64
+    },
+    "q": "modelled",
+    "captured": null,
+    "supply": {
+     "hostel": true,
+     "hotel": true,
+     "hotel5": false,
+     "bnb": true
+    }
+   },
+   "costs": {
+    "meal_mid_eur": 27.3,
+    "meal_cheap_eur": 13,
+    "fastfood_eur": 7.7,
+    "drink_out_eur": 4.09,
+    "cocktail_eur": 11.9,
+    "coffee_eur": 2.78,
+    "grocery_day_eur": 11.1,
+    "club_entry_eur": 9.1,
+    "level": "region",
+    "price_source": "carta_food_v2"
+   },
+   "local_transport": {
+    "car_needed": false,
+    "transit_quality": "good",
+    "reason": "Walkable centre with rail links - a car is not needed.",
+    "rental_eur_per_day": 33,
+    "road_connected": true
+   },
+   "iata": null,
+   "anchor_airport": "TGD",
+   "categories": [
+    "unesco",
+    "medieval"
+   ],
+   "tier": "gem"
+  },
+  "BGO": {
+   "id": "BGO",
+   "city": "Bergen",
+   "country": "Norway",
+   "iso2": "NO",
+   "accommodation": {
+    "beds": {
+     "dorm": 39,
+     "private": 144,
+     "hotel2": 168,
+     "hotel3": 244,
+     "hotel4": 264,
+     "hotel5": 489,
+     "bnb_home": {
+      "2": 153,
+      "4": 187,
+      "6": 250,
+      "8": 350
+     },
+     "bnb_room": 137
+    },
+    "q": "modelled",
+    "captured": null,
+    "supply": {
+     "hostel": true,
+     "hotel": true,
+     "hotel5": true,
+     "bnb": true
+    }
+   },
+   "costs": {
+    "meal_mid_eur": 42,
+    "meal_cheap_eur": 18.7,
+    "fastfood_eur": 12.9,
+    "drink_out_eur": 9.26,
+    "cocktail_eur": 21.2,
+    "coffee_eur": 4.41,
+    "grocery_day_eur": 17.9,
+    "club_entry_eur": 14.5,
+    "level": "region",
+    "price_source": "carta_food_v2"
+   },
+   "local_transport": {
+    "car_needed": false,
+    "transit_quality": "excellent",
+    "reason": "Compact and well served by public transport - skip the car.",
+    "rental_eur_per_day": 75,
+    "road_connected": true
+   },
+   "iata": "BGO",
+   "anchor_airport": "BGO",
+   "categories": [
+    "city",
+    "coast",
+    "fjord",
+    "nature",
+    "unesco",
+    "historic"
+   ],
+   "tier": "airport"
+  },
+  "LIS": {
+   "id": "LIS",
+   "city": "Lisbon",
+   "country": "Portugal",
+   "iso2": "PT",
+   "accommodation": {
+    "beds": {
+     "dorm": 21,
+     "private": 78,
+     "hotel2": 90,
+     "hotel3": 131,
+     "hotel4": 141,
+     "hotel5": 263,
+     "bnb_home": {
+      "2": 123,
+      "4": 154,
+      "6": 202,
+      "8": 260
+     },
+     "bnb_room": 72
+    },
+    "q": "measured",
+    "captured": null,
+    "supply": {
+     "hostel": true,
+     "hotel": true,
+     "hotel5": true,
+     "bnb": true
+    },
+    "neighbourhoods": [
+     {
+      "name": "guas Livres",
+      "night_eur": 98,
+      "cap": 4,
+      "n": 20
+     },
+     {
+      "name": "Venteira",
+      "night_eur": 102,
+      "cap": 4,
+      "n": 16
+     },
+     {
+      "name": "Benfica",
+      "night_eur": 114,
+      "cap": 4,
+      "n": 15
+     },
+     {
+      "name": "Lumiar",
+      "night_eur": 119,
+      "cap": 4,
+      "n": 30
+     },
+     {
+      "name": "Beato",
+      "night_eur": 121,
+      "cap": 4,
+      "n": 45
+     },
+     {
+      "name": "Odivelas",
+      "night_eur": 121,
+      "cap": 4,
+      "n": 20
+     },
+     {
+      "name": "Marvila",
+      "night_eur": 125,
+      "cap": 4,
+      "n": 21
+     },
+     {
+      "name": "Moscavide e Portela",
+      "night_eur": 126,
+      "cap": 4,
+      "n": 24
+     }
+    ]
+   },
+   "costs": {
+    "meal_mid_eur": 27.9,
+    "meal_cheap_eur": 15.2,
+    "fastfood_eur": 10.1,
+    "drink_out_eur": 3.04,
+    "cocktail_eur": 7.3,
+    "coffee_eur": 2.45,
+    "grocery_day_eur": 11.5,
+    "club_entry_eur": 8.8,
+    "level": "city",
+    "price_source": "carta_food_v2"
+   },
+   "local_transport": {
+    "car_needed": false,
+    "transit_quality": "excellent",
+    "reason": "Compact and well served by public transport - skip the car.",
+    "rental_eur_per_day": 26,
+    "road_connected": true
+   },
+   "iata": "LIS",
+   "anchor_airport": "LIS",
+   "categories": [
+    "city",
+    "coast",
+    "unesco",
+    "food",
+    "historic",
+    "nightlife",
+    "iconic"
+   ],
+   "tier": "airport"
+  },
+  "gem:lagos-pt": {
+   "id": "gem:lagos-pt",
+   "city": "Lagos",
+   "country": "Portugal",
+   "iso2": "PT",
+   "accommodation": {
+    "beds": {
+     "dorm": 21,
+     "private": 78,
+     "hotel2": 90,
+     "hotel3": 131,
+     "hotel4": 141,
+     "hotel5": 263,
+     "bnb_home": {
+      "2": 100,
+      "4": 122,
+      "6": 163,
+      "8": 229
+     },
+     "bnb_room": 74
+    },
+    "q": "modelled",
+    "captured": null,
+    "supply": {
+     "hostel": true,
+     "hotel": true,
+     "hotel5": true,
+     "bnb": true
+    }
+   },
+   "costs": {
+    "meal_mid_eur": 25.8,
+    "meal_cheap_eur": 13.8,
+    "fastfood_eur": 9.2,
+    "drink_out_eur": 2.87,
+    "cocktail_eur": 8.3,
+    "coffee_eur": 2.13,
+    "grocery_day_eur": 12.2,
+    "club_entry_eur": 9.9,
+    "level": "region",
+    "price_source": "carta_food_v2"
+   },
+   "local_transport": {
+    "car_needed": true,
+    "transit_quality": "limited",
+    "reason": "Beaches and coves are spread out; a car helps a lot.",
+    "rental_eur_per_day": 26,
+    "road_connected": true
+   },
+   "iata": null,
+   "anchor_airport": "FAO",
+   "categories": [
+    "town",
+    "coast",
+    "beach",
+    "party"
+   ],
+   "tier": "gem"
+  },
+  "gem:zermatt": {
+   "id": "gem:zermatt",
+   "city": "Zermatt",
+   "country": "Switzerland",
+   "iso2": "CH",
+   "accommodation": {
+    "beds": {
+     "dorm": 47,
+     "private": 175,
+     "hotel2": 204,
+     "hotel3": 297,
+     "hotel4": 321,
+     "hotel5": 596,
+     "bnb_home": {
+      "2": 207,
+      "4": 253,
+      "6": 338,
+      "8": 474
+     },
+     "bnb_room": 166
+    },
+    "q": "modelled",
+    "captured": null,
+    "supply": {
+     "hostel": true,
+     "hotel": true,
+     "hotel5": false,
+     "bnb": true
+    }
+   },
+   "costs": {
+    "meal_mid_eur": 72.5,
+    "meal_cheap_eur": 36.2,
+    "fastfood_eur": 18.4,
+    "drink_out_eur": 10.43,
+    "cocktail_eur": 20.9,
+    "coffee_eur": 7.33,
+    "grocery_day_eur": 21.7,
+    "club_entry_eur": 25,
+    "level": "region",
+    "price_source": "carta_food_v2"
+   },
+   "local_transport": {
+    "car_needed": false,
+    "transit_quality": "good",
+    "reason": "Car-free Alpine village - park in Tasch and take the train; cogwheel railways and lifts do the rest.",
+    "rental_eur_per_day": 69,
+    "road_connected": true
+   },
+   "iata": null,
+   "anchor_airport": null,
+   "categories": [
+    "alps"
+   ],
+   "tier": "gem"
+  }
+ },
+ "stays": {
+  "gem:como": {
+   "id": "gem:como",
+   "beds": {
+    "dorm": 36,
+    "private": 110,
+    "hotel2": 140,
+    "hotel3": 204,
+    "hotel4": 220,
+    "hotel5": 409,
+    "bnb_home": {
+     "2": 106,
+     "4": 129,
+     "6": 172,
+     "8": 242
+    },
+    "bnb_room": 119
+   },
+   "month": {
+    "dorm": [
+     29,
+     29,
+     31,
+     34,
+     37,
+     42,
+     47,
+     49,
+     40,
+     34,
+     28,
+     29
+    ],
+    "private": [
+     89,
+     90,
+     94,
+     104,
+     113,
+     129,
+     144,
+     149,
+     124,
+     104,
+     85,
+     89
+    ],
+    "hotel2": [
+     114,
+     115,
+     121,
+     133,
+     145,
+     165,
+     185,
+     191,
+     159,
+     133,
+     108,
+     115
+    ],
+    "hotel3": [
+     165,
+     168,
+     176,
+     194,
+     211,
+     241,
+     269,
+     278,
+     231,
+     194,
+     158,
+     167
+    ],
+    "hotel4": [
+     179,
+     180,
+     190,
+     210,
+     227,
+     259,
+     291,
+     300,
+     248,
+     210,
+     170,
+     180
+    ],
+    "hotel5": [
+     331,
+     336,
+     352,
+     389,
+     422,
+     482,
+     540,
+     558,
+     463,
+     389,
+     316,
+     334
+    ],
+    "bnb_home": [
+     104,
+     106,
+     111,
+     123,
+     133,
+     152,
+     170,
+     176,
+     146,
+     123,
+     100,
+     105
+    ],
+    "bnb_room": [
+     96,
+     97,
+     102,
+     113,
+     122,
+     140,
+     156,
+     162,
+     134,
+     113,
+     92,
+     97
+    ]
+   },
+   "src": {
+    "dorm": {
+     "q": "modelled",
+     "n": 2
+    },
+    "private": {
+     "q": "modelled",
+     "n": 2
+    },
+    "hotel2": {
+     "q": "modelled",
+     "n": 2,
+     "scaled": true
+    },
+    "hotel3": {
+     "q": "modelled",
+     "n": 2,
+     "scaled": true
+    },
+    "hotel4": {
+     "q": "modelled",
+     "n": 2,
+     "scaled": true
+    },
+    "hotel5": {
+     "q": "modelled",
+     "n": 2,
+     "scaled": true
+    },
+    "bnb_home": {
+     "q": "modelled",
+     "n": 38
+    },
+    "bnb_room": {
+     "q": "modelled",
+     "n": 2,
+     "via": "private"
+    }
+   },
+   "single": {},
+   "weekend": null,
+   "peak": {},
+   "season_q": "ffffffffffff",
+   "supply": {
+    "hostel": false,
+    "hotel": true,
+    "hotel5": true,
+    "bnb": true
+   },
+   "q": "modelled",
+   "captured": null,
+   "xk": [
+    [
+     "g187768-d562237",
+     "h",
+     0,
+     0,
+     208
+    ],
+    [
+     "g187768-d197760",
+     "h",
+     3,
+     2,
+     285
+    ]
+   ]
+  },
+  "gem:kotor": {
+   "id": "gem:kotor",
+   "beds": {
+    "dorm": 18,
+    "private": 67,
+    "hotel2": 78,
+    "hotel3": 114,
+    "hotel4": 123,
+    "hotel5": 229,
+    "bnb_home": {
+     "2": 78,
+     "4": 95,
+     "6": 126,
+     "8": 177
+    },
+    "bnb_room": 64
+   },
+   "month": {
+    "dorm": [
+     11,
+     11,
+     13,
+     17,
+     21,
+     24,
+     27,
+     27,
+     23,
+     18,
+     13,
+     11
+    ],
+    "private": [
+     40,
+     42,
+     49,
+     65,
+     77,
+     88,
+     100,
+     102,
+     86,
+     69,
+     48,
+     41
+    ],
+    "hotel2": [
+     46,
+     49,
+     57,
+     76,
+     90,
+     103,
+     117,
+     118,
+     100,
+     80,
+     56,
+     47
+    ],
+    "hotel3": [
+     67,
+     72,
+     83,
+     110,
+     131,
+     150,
+     170,
+     172,
+     146,
+     116,
+     82,
+     69
+    ],
+    "hotel4": [
+     72,
+     78,
+     90,
+     119,
+     142,
+     162,
+     183,
+     186,
+     158,
+     126,
+     88,
+     75
+    ],
+    "hotel5": [
+     135,
+     144,
+     167,
+     221,
+     262,
+     301,
+     340,
+     345,
+     292,
+     233,
+     164,
+     139
+    ],
+    "bnb_home": [
+     56,
+     60,
+     69,
+     92,
+     109,
+     125,
+     141,
+     144,
+     121,
+     97,
+     68,
+     58
+    ],
+    "bnb_room": [
+     38,
+     40,
+     47,
+     61,
+     73,
+     84,
+     95,
+     96,
+     81,
+     65,
+     46,
+     39
+    ]
+   },
+   "src": {
+    "dorm": {
+     "q": "modelled",
+     "eu": true
+    },
+    "private": {
+     "q": "modelled",
+     "eu": true
+    },
+    "hotel2": {
+     "q": "modelled",
+     "eu": true,
+     "scaled": true
+    },
+    "hotel3": {
+     "q": "modelled",
+     "eu": true,
+     "scaled": true
+    },
+    "hotel4": {
+     "q": "modelled",
+     "eu": true,
+     "scaled": true
+    },
+    "hotel5": {
+     "q": "modelled",
+     "eu": true,
+     "scaled": true
+    },
+    "bnb_home": {
+     "q": "modelled",
+     "eu": true
+    },
+    "bnb_room": {
+     "q": "modelled",
+     "eu": true,
+     "via": "private"
+    }
+   },
+   "single": {},
+   "weekend": null,
+   "peak": {},
+   "season_q": "ffffffffffff",
+   "supply": {
+    "hostel": true,
+    "hotel": true,
+    "hotel5": false,
+    "bnb": true
+   },
+   "q": "modelled",
+   "captured": null
+  },
+  "BGO": {
+   "id": "BGO",
+   "beds": {
+    "dorm": 39,
+    "private": 144,
+    "hotel2": 168,
+    "hotel3": 244,
+    "hotel4": 264,
+    "hotel5": 489,
+    "bnb_home": {
+     "2": 153,
+     "4": 187,
+     "6": 250,
+     "8": 350
+    },
+    "bnb_room": 137
+   },
+   "month": {
+    "dorm": [
+     33,
+     35,
+     36,
+     35,
+     39,
+     45,
+     52,
+     47,
+     39,
+     36,
+     34,
+     33
+    ],
+    "private": [
+     122,
+     129,
+     134,
+     130,
+     146,
+     167,
+     193,
+     174,
+     147,
+     134,
+     127,
+     121
+    ],
+    "hotel2": [
+     142,
+     150,
+     156,
+     152,
+     170,
+     194,
+     225,
+     203,
+     171,
+     156,
+     149,
+     142
+    ],
+    "hotel3": [
+     207,
+     219,
+     227,
+     221,
+     247,
+     283,
+     327,
+     296,
+     249,
+     227,
+     216,
+     206
+    ],
+    "hotel4": [
+     223,
+     237,
+     246,
+     239,
+     268,
+     306,
+     353,
+     320,
+     269,
+     245,
+     234,
+     222
+    ],
+    "hotel5": [
+     414,
+     439,
+     456,
+     444,
+     495,
+     567,
+     656,
+     593,
+     498,
+     455,
+     433,
+     413
+    ],
+    "bnb_home": [
+     159,
+     168,
+     174,
+     170,
+     189,
+     217,
+     251,
+     227,
+     191,
+     174,
+     166,
+     158
+    ],
+    "bnb_room": [
+     116,
+     123,
+     128,
+     124,
+     139,
+     159,
+     184,
+     166,
+     140,
+     127,
+     121,
+     116
+    ]
+   },
+   "src": {
+    "dorm": {
+     "q": "modelled",
+     "eu": true
+    },
+    "private": {
+     "q": "modelled",
+     "eu": true
+    },
+    "hotel2": {
+     "q": "modelled",
+     "eu": true,
+     "scaled": true
+    },
+    "hotel3": {
+     "q": "modelled",
+     "eu": true,
+     "scaled": true
+    },
+    "hotel4": {
+     "q": "modelled",
+     "eu": true,
+     "scaled": true
+    },
+    "hotel5": {
+     "q": "modelled",
+     "eu": true,
+     "scaled": true
+    },
+    "bnb_home": {
+     "q": "modelled",
+     "n": 2
+    },
+    "bnb_room": {
+     "q": "modelled",
+     "eu": true,
+     "via": "private"
+    }
+   },
+   "single": {},
+   "weekend": null,
+   "peak": {},
+   "season_q": "ffffffffffff",
+   "supply": {
+    "hostel": true,
+    "hotel": true,
+    "hotel5": true,
+    "bnb": true
+   },
+   "q": "modelled",
+   "captured": null,
+   "xk": [
+    [
+     "g190455-d1544828",
+     "g",
+     0,
+     -1,
+     245
+    ],
+    [
+     "g190455-d206873",
+     "h",
+     0,
+     0,
+     116
+    ],
+    [
+     "g190455-d5923717",
+     "h",
+     0,
+     1,
+     134
+    ],
+    [
+     "g190455-d206868",
+     "h",
+     0,
+     2,
+     170
+    ],
+    [
+     "g190455-d603845",
+     "h",
+     0,
+     3,
+     223
+    ]
+   ]
+  },
+  "LIS": {
+   "id": "LIS",
+   "beds": {
+    "dorm": 21,
+    "private": 78,
+    "hotel2": 90,
+    "hotel3": 131,
+    "hotel4": 141,
+    "hotel5": 263,
+    "bnb_home": {
+     "2": 123,
+     "4": 154,
+     "6": 202,
+     "8": 260
+    },
+    "bnb_room": 72
+   },
+   "month": {
+    "dorm": [
+     17,
+     18,
+     20,
+     21,
+     22,
+     22,
+     24,
+     26,
+     23,
+     22,
+     19,
+     18
+    ],
+    "private": [
+     63,
+     66,
+     73,
+     79,
+     82,
+     83,
+     89,
+     95,
+     85,
+     81,
+     70,
+     66
+    ],
+    "hotel2": [
+     73,
+     77,
+     85,
+     92,
+     95,
+     97,
+     104,
+     110,
+     99,
+     94,
+     81,
+     77
+    ],
+    "hotel3": [
+     106,
+     112,
+     123,
+     134,
+     139,
+     141,
+     151,
+     161,
+     144,
+     138,
+     118,
+     112
+    ],
+    "hotel4": [
+     115,
+     120,
+     132,
+     144,
+     149,
+     152,
+     163,
+     174,
+     156,
+     148,
+     127,
+     120
+    ],
+    "hotel5": [
+     213,
+     224,
+     247,
+     268,
+     278,
+     282,
+     303,
+     322,
+     289,
+     276,
+     236,
+     224
+    ],
+    "bnb_home": [
+     125,
+     131,
+     144,
+     156,
+     162,
+     165,
+     177,
+     188,
+     169,
+     161,
+     138,
+     131
+    ],
+    "bnb_room": [
+     58,
+     61,
+     67,
+     73,
+     76,
+     77,
+     83,
+     88,
+     79,
+     75,
+     65,
+     61
+    ]
+   },
+   "src": {
+    "dorm": {
+     "q": "modelled",
+     "eu": true
+    },
+    "private": {
+     "q": "modelled",
+     "eu": true
+    },
+    "hotel2": {
+     "q": "modelled",
+     "eu": true,
+     "scaled": true
+    },
+    "hotel3": {
+     "q": "modelled",
+     "eu": true,
+     "scaled": true
+    },
+    "hotel4": {
+     "q": "modelled",
+     "eu": true,
+     "scaled": true
+    },
+    "hotel5": {
+     "q": "modelled",
+     "eu": true,
+     "scaled": true
+    },
+    "bnb_home": {
+     "q": "measured",
+     "n": 15711,
+     "iab": "2026-09-19"
+    },
+    "bnb_room": {
+     "q": "measured",
+     "n": 15711,
+     "iab": "2026-09-19"
+    }
+   },
+   "single": {},
+   "weekend": null,
+   "peak": {},
+   "season_q": "ffffffffffff",
+   "supply": {
+    "hostel": true,
+    "hotel": true,
+    "hotel5": true,
+    "bnb": true
+   },
+   "q": "measured",
+   "captured": null,
+   "xk": [
+    [
+     "g189100-d3428727",
+     "g",
+     0,
+     -1,
+     121
+    ],
+    [
+     "g189100-d3215475",
+     "g",
+     0,
+     -1,
+     222
+    ],
+    [
+     "g189100-d206900",
+     "h",
+     4,
+     0,
+     89
+    ],
+    [
+     "g189100-d7363512",
+     "h",
+     0,
+     1,
+     135
+    ],
+    [
+     "g189100-d230824",
+     "h",
+     0,
+     2,
+     179
+    ],
+    [
+     "g189100-d276952",
+     "h",
+     5,
+     3,
+     304
+    ]
+   ]
+  },
+  "gem:lagos-pt": {
+   "id": "gem:lagos-pt",
+   "beds": {
+    "dorm": 21,
+    "private": 78,
+    "hotel2": 90,
+    "hotel3": 131,
+    "hotel4": 141,
+    "hotel5": 263,
+    "bnb_home": {
+     "2": 100,
+     "4": 122,
+     "6": 163,
+     "8": 229
+    },
+    "bnb_room": 74
+   },
+   "month": {
+    "dorm": [
+     17,
+     18,
+     20,
+     21,
+     22,
+     22,
+     24,
+     26,
+     23,
+     22,
+     19,
+     18
+    ],
+    "private": [
+     63,
+     66,
+     73,
+     79,
+     82,
+     83,
+     89,
+     95,
+     85,
+     81,
+     70,
+     66
+    ],
+    "hotel2": [
+     73,
+     77,
+     85,
+     92,
+     95,
+     97,
+     104,
+     110,
+     99,
+     94,
+     81,
+     77
+    ],
+    "hotel3": [
+     106,
+     112,
+     123,
+     134,
+     139,
+     141,
+     151,
+     161,
+     144,
+     138,
+     118,
+     112
+    ],
+    "hotel4": [
+     115,
+     120,
+     132,
+     144,
+     149,
+     152,
+     163,
+     174,
+     156,
+     148,
+     127,
+     120
+    ],
+    "hotel5": [
+     213,
+     224,
+     247,
+     268,
+     278,
+     282,
+     303,
+     322,
+     289,
+     276,
+     236,
+     224
+    ],
+    "bnb_home": [
+     99,
+     104,
+     114,
+     124,
+     129,
+     131,
+     140,
+     149,
+     134,
+     128,
+     109,
+     104
+    ],
+    "bnb_room": [
+     60,
+     63,
+     69,
+     75,
+     78,
+     79,
+     85,
+     91,
+     81,
+     78,
+     66,
+     63
+    ]
+   },
+   "src": {
+    "dorm": {
+     "q": "modelled",
+     "eu": true
+    },
+    "private": {
+     "q": "modelled",
+     "eu": true
+    },
+    "hotel2": {
+     "q": "modelled",
+     "eu": true,
+     "scaled": true
+    },
+    "hotel3": {
+     "q": "modelled",
+     "eu": true,
+     "scaled": true
+    },
+    "hotel4": {
+     "q": "modelled",
+     "eu": true,
+     "scaled": true
+    },
+    "hotel5": {
+     "q": "modelled",
+     "eu": true,
+     "scaled": true
+    },
+    "bnb_home": {
+     "q": "modelled",
+     "n": 6
+    },
+    "bnb_room": {
+     "q": "modelled",
+     "eu": true,
+     "via": "private"
+    }
+   },
+   "single": {},
+   "weekend": null,
+   "peak": {},
+   "season_q": "ffffffffffff",
+   "supply": {
+    "hostel": true,
+    "hotel": true,
+    "hotel5": true,
+    "bnb": true
+   },
+   "q": "modelled",
+   "captured": null,
+   "xk": [
+    [
+     "g189100-d1052275",
+     "g",
+     0,
+     -1,
+     63
+    ],
+    [
+     "g189100-d6628008",
+     "g",
+     0,
+     -1,
+     106
+    ],
+    [
+     "g189100-d315099",
+     "h",
+     0,
+     0,
+     107
+    ],
+    [
+     "g189100-d206416",
+     "h",
+     0,
+     1,
+     112
+    ],
+    [
+     "g189100-d1389862",
+     "h",
+     0,
+     2,
+     153
+    ],
+    [
+     "g189100-d1823167",
+     "h",
+     5,
+     3,
+     194
+    ]
+   ]
+  },
+  "gem:zermatt": {
+   "id": "gem:zermatt",
+   "beds": {
+    "dorm": 47,
+    "private": 175,
+    "hotel2": 204,
+    "hotel3": 297,
+    "hotel4": 321,
+    "hotel5": 596,
+    "bnb_home": {
+     "2": 207,
+     "4": 253,
+     "6": 338,
+     "8": 474
+    },
+    "bnb_room": 166
+   },
+   "month": {
+    "dorm": [
+     46,
+     49,
+     46,
+     43,
+     46,
+     49,
+     56,
+     55,
+     49,
+     46,
+     38,
+     44
+    ],
+    "private": [
+     170,
+     181,
+     170,
+     161,
+     170,
+     184,
+     207,
+     205,
+     183,
+     169,
+     140,
+     165
+    ],
+    "hotel2": [
+     199,
+     211,
+     198,
+     187,
+     198,
+     214,
+     241,
+     239,
+     214,
+     197,
+     163,
+     192
+    ],
+    "hotel3": [
+     289,
+     306,
+     288,
+     273,
+     288,
+     312,
+     351,
+     348,
+     311,
+     287,
+     237,
+     280
+    ],
+    "hotel4": [
+     313,
+     331,
+     311,
+     294,
+     311,
+     337,
+     378,
+     376,
+     335,
+     310,
+     257,
+     302
+    ],
+    "hotel5": [
+     579,
+     614,
+     577,
+     547,
+     578,
+     625,
+     703,
+     697,
+     623,
+     575,
+     476,
+     561
+    ],
+    "bnb_home": [
+     246,
+     261,
+     245,
+     232,
+     245,
+     265,
+     298,
+     296,
+     264,
+     244,
+     202,
+     238
+    ],
+    "bnb_room": [
+     162,
+     171,
+     161,
+     152,
+     161,
+     174,
+     196,
+     194,
+     174,
+     160,
+     133,
+     156
+    ]
+   },
+   "src": {
+    "dorm": {
+     "q": "modelled",
+     "eu": true
+    },
+    "private": {
+     "q": "modelled",
+     "eu": true
+    },
+    "hotel2": {
+     "q": "modelled",
+     "eu": true,
+     "scaled": true
+    },
+    "hotel3": {
+     "q": "modelled",
+     "eu": true,
+     "scaled": true
+    },
+    "hotel4": {
+     "q": "modelled",
+     "eu": true,
+     "scaled": true
+    },
+    "hotel5": {
+     "q": "modelled",
+     "eu": true,
+     "scaled": true
+    },
+    "bnb_home": {
+     "q": "modelled",
+     "n": 1
+    },
+    "bnb_room": {
+     "q": "modelled",
+     "eu": true,
+     "via": "private"
+    }
+   },
+   "single": {},
+   "weekend": null,
+   "peak": {},
+   "season_q": "ffffffffffff",
+   "supply": {
+    "hostel": true,
+    "hotel": true,
+    "hotel5": false,
+    "bnb": true
+   },
+   "q": "modelled",
+   "captured": null,
+   "xk": [
+    [
+     "g188045-d676570",
+     "g",
+     0,
+     -1,
+     443
+    ],
+    [
+     "g188045-d1157859",
+     "h",
+     0,
+     0,
+     317
+    ],
+    [
+     "g188045-d238694",
+     "h",
+     0,
+     1,
+     372
+    ],
+    [
+     "g188045-d227521",
+     "h",
+     4,
+     2,
+     379
+    ],
+    [
+     "g188045-d619925",
+     "h",
+     0,
+     3,
+     940
+    ]
+   ]
+  }
+ }
+}

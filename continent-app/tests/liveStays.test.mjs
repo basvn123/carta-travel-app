@@ -5,6 +5,7 @@ import { sampleNights, liveStay, setLiveResult, nearestLiveDest } from "../src/l
 import { setStayRecords } from "../src/lib/staysData.js";
 import { bedPrice, liveStayRatio } from "../src/lib/stayPrice.js";
 import { computeCosts } from "../src/lib/costIndex.js";
+import { priceDay, priceRequest } from "../src/lib/price/index.js";
 
 const VIE = {
   id: "VIE", city: "Vienna", iso2: "AT",
@@ -69,6 +70,31 @@ test("the cost index counts a live bed as measured in town", () => {
   const row = computeCosts({ VIE }, { stay_tier: "hotel3", group_size: 2, start: START, nights: 4 }).get("VIE");
   assert.equal(row.stayLevel, "city");
   assert.equal(row.stayLive, "2027-01-01T10:00:00Z");
+  setLiveResult();
+});
+
+test("V8 (T662): through the engine, live moves only the bed line, within 0.4 to 3 times the model", () => {
+  const own = (extra = {}) => priceRequest({ choices: { group_size: 2, stay_tier: "hotel3" },
+    departDate: START, returnDate: "2027-03-14", ownDates: true, ...extra });
+  setLiveResult();
+  const model = priceDay(VIE, own(), { VIE });
+  setLiveResult("VIE", START, 4, 2, { checked: "2027-01-01T10:00:00Z", nights: { "2027-03-10": night(1.2) } });
+  const live = priceDay(VIE, own(), { VIE });
+  const bed = (r) => r.lines.find((l) => l.key === "bed");
+  const food = (r) => r.lines.find((l) => l.key === "food");
+  assert.equal(bed(live).quality, "live");
+  assert.notEqual(bed(live).eur, bed(model).eur);
+  const ratio = bed(live).eur / bed(model).eur;
+  assert.ok(ratio >= 0.4 && ratio <= 3, String(ratio));
+  assert.deepEqual(food(live), food(model), "food untouched");
+  assert.equal(live.dayEur, Math.round((bed(live).eur + food(live).eur) * 100) / 100);
+  // Live counts only for exact dates: a month or any time ignores it.
+  for (const r of [own({ dateFlex: "month" }), own({ dateFlex: "any" }), own({ xm: 3 })]) {
+    assert.notEqual(bed(priceDay(VIE, r, { VIE })).quality, "live");
+  }
+  // A broken answer (ratio over 3) leaves the model.
+  setLiveResult("VIE", START, 4, 2, { checked: "x", nights: { "2027-03-10": night(1.2, 7.5) } });
+  assert.equal(bed(priceDay(VIE, own(), { VIE })).eur, bed(model).eur);
   setLiveResult();
 });
 
