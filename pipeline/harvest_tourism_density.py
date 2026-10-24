@@ -244,7 +244,27 @@ def assign_tiers(regions):
     return [float(math.expm1(c)) for c in cuts]      # cutoffs back in density units
 
 
-def month_tier(density, cuts):
+# T649: monthly crowd tier = the place's absolute pressure (its annual tier, 0 quiet
+# .. 3 crowded, the same scale as crowding.tier) moved by its own seasonality
+# (that month's share of the year's nights against an even 1/12).
+SEASON_GAIN = 3.0       # tier steps per doubling of the month's load: ratio 2x -> +3, 0.5x -> -3
+SEASON_MAX_UP = 1       # a month cannot read more than one tier above the annual tier
+SEASON_MAX_DOWN = 2     # nor more than two below (a packed place still has a quiet January)
+SEASON_DEAD_BAND = 0.5  # shifts below half a tier round to 0, so a flat place stays flat
+RULE_VERSION = "t649-v1"
+
+
+def month_tier(annual_tier, share):
+    """Tier of one month. share is that month's fraction of the year (1/12 = even)."""
+    ratio = max(share, 1e-6) * 12.0
+    raw = SEASON_GAIN * math.log2(ratio)
+    shift = 0 if abs(raw) < SEASON_DEAD_BAND else int(round(raw))
+    shift = max(-SEASON_MAX_DOWN, min(SEASON_MAX_UP, shift))
+    return max(0, min(3, annual_tier + shift))
+
+
+def month_tier_t642(density, cuts):
+    """Superseded T642 rule (annual density x 12 x share against the annual cuts), kept for before/after."""
     return 3 if density >= cuts[2] else 2 if density >= cuts[1] else 1 if density >= cuts[0] else 0
 
 
@@ -284,16 +304,17 @@ def match_destinations(dests, regions, monthly=None, cuts=None):
             "source": "jrc_eurostat_nuts3",
         }
         # T642-l: the same density spread over the year by the region's own
-        # monthly nights (NUTS 2, else the country). tier[i] is the annual
-        # tier's scale applied to month i alone (density x 12 x share).
+        # monthly nights (NUTS 2, else the country). tier[i] is the annual tier
+        # moved by month i's seasonality (T649, month_tier).
         m = (monthly or {}).get(region["code"][:4]) or (monthly or {}).get(region["code"][:2])
         if m and cuts:
             d["crowding"]["monthly"] = {
                 "share": m["share"],
-                "tier": [month_tier(region["density"] * 12 * x, cuts) for x in m["share"]],
+                "tier": [month_tier(region["tier"], x) for x in m["share"]],
                 "geo": region["code"][:4] if (monthly or {}).get(region["code"][:4]) else region["code"][:2],
                 "years": m["years"],
                 "source": "eurostat_tour_occ_nin2m",
+                "rule": RULE_VERSION,
             }
         matched += 1
     return matched
@@ -328,6 +349,9 @@ def main():
         "tier_cutoffs_nights_per_km2": [round(c, 1) for c in cuts],
         "tier_labels": TIER_LABELS,
         "level": "NUTS 3 (province)",
+        "monthly_rule": {"version": RULE_VERSION, "season_gain": SEASON_GAIN,
+                         "max_up": SEASON_MAX_UP, "max_down": SEASON_MAX_DOWN,
+                         "dead_band": SEASON_DEAD_BAND},
     }
     data["meta"].setdefault("data_sources", {})["tourism_density"] = {
         "provider": "Eurostat (tour_occ_nin3 nights + GISCO NUTS 3 boundaries), JRC EU Tourism Dashboard indicator",

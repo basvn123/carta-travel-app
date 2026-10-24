@@ -6,6 +6,8 @@ Adds:
   - meta.car_model                 (driving + rental parameters; see car_layer.py)
   - dest.local_transport           (car_needed / transit_quality / reason / rental
                                      rate / road_connected, per destination)
+  - dest.local_transport.mobility  (T650: car_free good|ok|hard, modes, car_useful_for
+                                     codes, parking_hard, basis, source; car_needed stays)
   - bumps meta.schema_version to 8
 
 Idempotent: re-running just refreshes the values. Distances/fuel are computed at
@@ -57,6 +59,7 @@ def patch(path: Path, transit=None, parking=None) -> None:
     meta["schema_version"] = max(meta.get("schema_version", 0), 8)
 
     n_needed = 0
+    free = {"good": 0, "ok": 0, "hard": 0}
     for dest in data.get("destinations", {}).values():
         lt = car_layer.local_transport_for(
             dest.get("city"),
@@ -69,10 +72,11 @@ def patch(path: Path, transit=None, parking=None) -> None:
         dest["local_transport"] = lt
         if lt["car_needed"]:
             n_needed += 1
+        free[lt["mobility"]["car_free"]] += 1
 
     atomic_write_json(path, data, indent=1, ensure_ascii=False)
     n = len(data.get("destinations", {}))
-    print(f"  {path.name}: {n} destinations, {n_needed} need a car "
+    print(f"  {path.name}: {n} destinations, {n_needed} need a car, car_free {free} "
           f"({path.stat().st_size / 1024 / 1024:.2f} MB)")
 
 

@@ -66,6 +66,12 @@ export function useTravelMonth() {
   return useContext(SettingsContext)?.travelMonth ?? null;
 }
 
+/** T649: the traveller's whole "when" (lib/when.js): exact, month or any. */
+export function useWhen() {
+  return useContext(SettingsContext)?.when ?? ANY_WHEN;
+}
+const ANY_WHEN = { kind: 'any', month: null, months: [] };
+
 export const SETTINGS_PARTS = ['origin', 'dates', 'party', 'lifestyle', 'countries', 'way'];
 const MAX_NIGHTS = 30;
 const MAX_PARTY = 12; // the party ceiling the old first-run receipt set

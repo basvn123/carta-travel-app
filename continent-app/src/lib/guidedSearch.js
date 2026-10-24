@@ -23,6 +23,8 @@
  */
 import { foldName } from './searchIndex.js';
 import { formatMoney } from './money.js';
+import { quietFor } from './crowdMonth.js';
+import { noCarOk } from './mobility.js';
 
 /** A vibe counts from the top tenth of its text scores (T439 maps them to
  *  55 to 75); facts score 70 to 100. The list ranks by the score. */
@@ -36,11 +38,13 @@ export const EXTRAS = ['beach', 'trail', 'lake', 'nocar', 'quiet'];
 // One predicate each, shared by the rails, the filters and the search, so a
 // rail's "See all", a chip and a search answer always agree (moved here
 // from ExploreTab.jsx in T442).
-export const noCarOk = (p) => !p.local_transport?.car_needed
-  && (p.local_transport?.transit_quality === 'good'
-    || p.local_transport?.transit_quality === 'excellent');
+// T650: "no car needed" reads local_transport.mobility.car_free (good or ok)
+// through lib/mobility.js, the same source as the Getting around stat.
+export { noCarOk };
 export const underOk = (eur) => (p) => p.cost?.dayEur != null && p.cost.dayEur <= eur;
-export const quietOk = (p) => p.crowding?.tier === 1;
+// T649: "not crowded" is the month's tier from lib/crowdMonth.js (the chosen
+// month, else the yearly level), the same word the Crowds stat shows.
+export const quietOk = (p, when = null) => quietFor(p.crowding, when);
 export const monthOk = (m) => (p) => (p.climate?.best || []).includes(m);
 
 export function vibeScore(guided, id, vibe) {

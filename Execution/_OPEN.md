@@ -2112,8 +2112,8 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T641-k | T641 | Price records now written for price plan F9, not shown: lift.fare, do[].price (value, unit, currency, source, date, quality) | next task | open |  |
 | T642-a | T642 | Lake Como has 0 beaches around: the beach inventory has no lake-shore beaches; add a lake-shore beach harvest (OSM natural=beach on lakes, EEA lake sites) | next task | open |  |
 | T642-b | T642 | Airport public transport times exist for 83 destinations (Trenord only) and are upper bounds in Milan (no metro footpaths) | next task | open |  |
-| T642-c | T642 | transfer_mode is car for road estimates; the price model uses a bus or shuttle tier; copy decision | user | open |  |
-| T642-d | T642 | Three new i18n keys from T642 exist in en.js only | next task | open |  |
+| T642-c | T642 | transfer_mode is car for road estimates; the price model uses a bus or shuttle tier; copy decision | user | closed by T651 |  |
+| T642-d | T642 | Three new i18n keys from T642 exist in en.js only | next task | closed by T651 |  |
 | T642-e | T642 | Greenway seed rule proposal (OSM relations route hiking/foot/bicycle named greenway, via verde, voie verte or ciclovia, 5 km or longer); Greenway del Lago di Como is relation 5205171; Europe-wide count not measured | user | open |  |
 | T647-a | T647 | Decision D6: x86 CPX42 worker for trailslab (pgrouting is amd64 only); confirm the price with hcloud and update RATES in infra/hetzner/cax41/cost.py | user | open | 4 |
 | T647-b | T647 | Before 2026-11-01: choose the dump-key option, make the worker keypair on the box and put a dump encrypted to both keys (or a fresh one) in archive/db/trailslab/, or the only lab copy is the laptop Docker disk | user | open | 5 |
@@ -2125,3 +2125,17 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T647-h | T647 | R2 Geofabrik extracts are from 2026-08, so every worker run downloads about 30 GB; decide whether to push fresh extracts back; cost.py mtd label still says hetzner_cax41 | next task | open |  |
 | T648-a | T648 | Around strip slots (AroundHere rowMeta: SAC, length, climb, time) were not found on the Lake Como sheet; RoutesFromHere.jsx:62-63 omits absent figures instead of a placeholder; check after the dossier rebuild | next task | open |  |
 | T648-b | T648 | continent-app/scripts/verify_booked_route.mjs expects six wizard steps, the wizard has five | next task | open |  |
+| T649-a | T649 | After the Monday box run (T640-b): verify the key stats on the real wire (crowding.monthly rule t649-v1, local_transport.mobility, airports[]) for Lake Como in August and November, Dubrovnik, Bergen, Naxos, Paris, and the quiet and no car flag counts; then remove the two fallbacks (quiet flag on the annual tier, no car flag on car_needed) in crowdMonth.js and mobility.js | next task | open | 1 |
+| T649-b | T649 | Monthly crowd seasonality is Eurostat NUTS 2, so Alpine resorts in one region share a curve (Zermatt equals Verbier, Zermatt November 1 and December 3); a resort-level source would separate them | next task | open |  |
+| T649-c | T649 | Lake Como November reads Moderate (tier 1), not Quiet; if strongly seasonal low months should read Quiet, change the SEASON_* constants in harvest_tourism_density.py | user | open |  |
+| T649-d | T649 | The Explore month filter xm=11 and xm=12 returns no places: ExploreTab.jsx:628 keeps only places whose climate.best includes the month, and climate.best holds months 3 to 10 only | next task | open |  |
+| T649-e | T649 | The F2 price engine month helper must import src/lib/when.js, not add a second date reader | next task | open |  |
+| T650-a | T650 | Ferry lines (osm_ferry_legs, Overpass, on the box) are needed before ferry shows in mobility.modes for Lake Como; islands without ferry data stay hard (Naxos, Hvar) | next task | open |  |
+| T650-b | T650 | Only the Trenord feed is verified, so 23 destinations have a line-based car_free grade and the rest are category-based (links T641-b) | next task | open |  |
+| T650-c | T650 | Lake Como parking_hard is false (two or more public lots within 1.5 km); the brief expected parking hard; decide whether the PARKING_HARD_MAX_SPOTS rule is the right test | user | open |  |
+| T650-d | T650 | The price card car hire line, ask/compose.js:165, CountryPage.jsx:139 and ask/rank.js:255 still read car_needed; revisit with price plan F6 | next task | open |  |
+| T650-e | T650 | Fjord places map to the lake_villages code, so Bergen reads "A car helps for lake villages"; give fjords their own code or wording | next task | open |  |
+| T650-f | T650 | Practical tab Trains, Buses and Ferries show placeholders while mobility lists train and bus; they fill with the dossier rebuild (practical.transit); verify after the Monday run | next task | open |  |
+| T650-g | T650 | pipeline/field_stubs/gate.py ENUMS could check car_free in good, ok, hard | next task | open |  |
+| T651-a | T651 | German writes "146 Min." on the Practical tab and "146 min" in the key fact; dest.airportOptEst is now unused | next task | open |  |
+| T651-b | T651 | 264 airport-tier places (DBV, BGO, CDG and others) have no airports[] and show their own code without a time | next task | open |  |

@@ -1151,6 +1151,37 @@ All additive. Existing keys keep their meaning.
 | `dest.local_transport.car_basis` | `"category"` or `"transit_lines"` | `car_layer.py` | `transit_lines` when `practical.transit.*` decided the value. |
 | `dest.local_transport.car_useful_for` | string | `car_layer.py` | what a car still adds where it is optional (remote valleys, trailheads). |
 | `dest.local_transport.parking_hard` | bool | `cache/parking_osm.json` | fewer than 2 public lots within 1.5 km of the centre; absent without a parking harvest. |
-| `dest.crowding.monthly` | `{share[12], tier[12], geo, years[], source}` | Eurostat `tour_occ_nin2m` (NUTS 2, else country) | `share` is the month's part of the year's nights; `tier[i]` applies the annual tier cutoffs to density x 12 x share. |
+| `dest.crowding.monthly` | `{share[12], tier[12], geo, years[], source}` | Eurostat `tour_occ_nin2m` (NUTS 2, else country) | `share` is the month's part of the year's nights; `tier[i]` is the annual tier moved by that month's seasonality (T649, see below; the T642 rule applied the annual cutoffs to density x 12 x share and left almost every place flat). |
 | trips `difficulty` | grade, else the old class raised to the distance/ascent ladder and SAC grade | `export_wire.wire_difficulty` | never below the floors `attributes.py` applies. |
 | lake `beaches[]` | `{id, n, km}` | `lake_outlines.py`, `cache/lake_outlines.json` | beaches within 400 m of the lake outline, any `inland` value; no outline falls back to the old circle plus `inland`. |
+
+## Crowds by month (T649, added 2026-10-24)
+
+`crowding.monthly.tier[i]` uses the same scale as `crowding.tier`: 0 quiet, 1 moderate, 2 busy, 3 crowded.
+`crowding.monthly.rule` is the rule version (`t649-v1`). Shape otherwise unchanged
+(`share[12]`, `tier[12]`, `geo`, `years[]`, `source`, `rule`); `meta.crowding_model.monthly_rule` records the constants.
+
+Rule (`harvest_tourism_density.month_tier`): `ratio = share * 12` (1.0 is an even month);
+`shift = round(SEASON_GAIN * log2(ratio))`, zero when its size is under `SEASON_DEAD_BAND`, then clamped to
+`-SEASON_MAX_DOWN .. +SEASON_MAX_UP`; `tier[i] = clamp(annual tier + shift, 0, 3)`.
+Constants: `SEASON_GAIN` 3.0, `SEASON_MAX_UP` 1, `SEASON_MAX_DOWN` 2, `SEASON_DEAD_BAND` 0.5.
+Seasonality is regional (NUTS 2, else country), so two places in one region share a share curve and differ
+only through their annual tier.
+
+
+## Mobility score (T650, added 2026-10-24)
+
+Additive. `local_transport.car_needed`, `car_basis`, `car_useful_for` (string) and `parking_hard` keep their T642 meaning;
+`car_needed` is read by the price plan's car line and stays.
+
+| Key | Shape | Source | Notes |
+|---|---|---|---|
+| `dest.local_transport.mobility` | `{car_free, modes[], car_useful_for?[], parking_hard?, basis, source}` | `car_layer.mobility_for`, written by `apply_car_layer.py` | one grade of how well the place works without a car |
+| `mobility.car_free` | `"good"`, `"ok"` or `"hard"` | lines, else the category rule | good: rail or ferry plus a second mode (the T642 `transit_service` "served" rule); ok: one mode ("thin"); hard: a remote category (`REMOTE_STRONG`, unless the place is also tagged `city`), an island without a ferry line, or a place the category rule sends to a car and no line contradicts |
+| `mobility.modes` | subset of `["train","bus","ferry"]` in that order, may be `[]` | `practical.transit` | `[]` whenever basis is `category`: no line is ever invented |
+| `mobility.car_useful_for` | codes from `trailheads`, `lake_villages`, `countryside`, in `USEFUL_FOR` order, every match | categories | omitted when none match; the T642 string next to it is unchanged |
+| `mobility.parking_hard` | bool | `cache/parking_osm.json` | omitted when no parking harvest covers the place; true when fewer than 2 public lots lie within 1.5 km of the centre |
+| `mobility.basis` | `"transit_lines"` or `"category"` | | `transit_lines` when `practical.transit` lines gave the grade. Without them (every place outside a harvested feed) the grade is the category rule: tagged `city` or transit_quality excellent gives good, any other place the rule does not send to a car gives ok, a place it sends to a car gives hard |
+| `mobility.source` | string | | for example `practical.transit (Trenord) + categories`, or `categories (no transit lines for this place)` |
+
+`crowding.monthly` and `local_transport.mobility` reach the app wire unchanged: `sync-data.mjs` has no strip rule for either block.
