@@ -175,8 +175,12 @@ def anchor_airports():
 # The publish gate (T645). Prices are not in this file (the flight-sweep Worker
 # checks them when it publishes); what can go wrong here is a download that
 # silently loses routes. Moves to config/pricing.json in F3.
-ROUTE_DROP = 0.10          # share of all routes that may disappear in one build
-HUB_ROUTES = 10            # an airport this busy may not lose every route
+# T693: config/pricing.json gate.routes.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from pricing_config import rule  # noqa: E402
+
+ROUTE_DROP = rule("gate.routes")["drop"]          # share of all routes that may disappear in one build
+HUB_ROUTES = rule("gate.routes")["hub_routes"]    # an airport this busy may not lose every route
 
 
 def route_gate(prev, new):

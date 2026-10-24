@@ -69,11 +69,17 @@ DEFAULT_TARGETS = [
 ]
 
 ANCHOR_MAX_STRAIGHT_KM = 60.0  # only anchor when the airport basically serves the city
-DETOUR = 1.3
-EUR_PER_ROAD_KM = 0.15
-GROUND_FLOOR_EUR = 10
-GROUND_CAP_EUR = 60
-TRANSFER_KMH = 65.0
+# T693: the airport-transfer band from config/pricing.json ground.transfer_public,
+# the copy the app's runtime_pricing.js and groundFares.js read.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from pricing_config import rule  # noqa: E402
+
+_TRANSFER = rule("ground.transfer_public")
+DETOUR = _TRANSFER["detour"]
+EUR_PER_ROAD_KM = _TRANSFER["per_km_eur"]
+GROUND_FLOOR_EUR = _TRANSFER["floor_eur"]
+GROUND_CAP_EUR = _TRANSFER["cap_eur"]
+TRANSFER_KMH = float(_TRANSFER["kmh"])
 
 
 def haversine(a_lat, a_lon, b_lat, b_lon):

@@ -31,39 +31,30 @@ Provenance (researched June 2026; fact-checked + corrected 2026-06-07):
   - Consumption   : ODYSSEE-MURE - new EU thermal cars ~5.6 L/100km; we use 6.5
     as a real-world mixed-driving figure for a compact with luggage.
 """
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from pricing_config import int_keys, rule  # noqa: E402
+
+# T693: every number here comes from continent-app/config/pricing.json
+# (car.model, car.fuel_by_country, car.rental_by_country), the file the app reads.
+_CAR = rule("car.model")
 
 # ---------------------------------------------------------------------------
 # Fuel: petrol price EUR/L by destination country (ISO2). Fallback = EU avg.
 # EU-27: EC Weekly Oil Bulletin 01-Jun-2026 (EUR-native). Non-EU: globalpetrol
 # prices.com 01-Jun-2026 USD x 0.862.
 # ---------------------------------------------------------------------------
-FUEL_EUR_PER_L = {
-    # EU-27 - EC Oil Bulletin (EUR, no conversion)
-    "BE": 1.85, "NL": 2.30, "FR": 2.06, "DE": 1.96, "LU": 1.70,
-    "IE": 1.84, "ES": 1.55, "PT": 1.94, "IT": 1.95, "AT": 1.74,
-    "DK": 2.39, "SE": 1.61, "FI": 2.20, "PL": 1.42,
-    "CZ": 1.72, "SK": 1.74, "HU": 1.69, "SI": 1.72, "HR": 1.70, "RO": 1.84,
-    "BG": 1.53, "GR": 2.06, "EE": 1.81, "LV": 1.88, "LT": 1.79,
-    "MT": 1.34, "CY": 1.61,
-    # Non-EU - globalpetrolprices USD x 0.862
-    "GB": 1.74, "CH": 2.30, "NO": 1.80, "IS": 1.51, "TR": 1.18,
-    "AL": 0.83, "RS": 1.65, "ME": 1.65, "MK": 1.43, "BA": 1.54,
-}
-FUEL_EUR_PER_L_DEFAULT = 1.81  # EU-27 average petrol
+FUEL_EUR_PER_L = rule("car.fuel_by_country")
+FUEL_EUR_PER_L_DEFAULT = _CAR["fuel_price_eur_per_l"]  # EU-27 average petrol
 
 # ---------------------------------------------------------------------------
 # Rental: economy/compact EUR per day by country (ISO2). Fallback = EU avg.
 # (tripbudgetcalculator.com / Rick Steves 2026 midpoints x 0.862)
 # ---------------------------------------------------------------------------
-RENTAL_EUR_PER_DAY = {
-    "PT": 26, "ES": 30, "PL": 23, "GR": 35, "FR": 47, "IT": 52, "DE": 45,
-    "NL": 49, "CH": 69, "IS": 82, "NO": 75, "GB": 60, "IE": 52, "AT": 47,
-    "BE": 45, "LU": 47, "DK": 56, "SE": 52, "FI": 52, "CZ": 33, "SK": 36,
-    "HU": 33, "SI": 38, "HR": 33, "RO": 30, "BG": 28, "EE": 36, "LV": 36,
-    "LT": 36, "AL": 28, "RS": 30, "ME": 33, "MK": 30, "BA": 30, "MT": 33,
-    "CY": 33, "TR": 28,
-}
-RENTAL_EUR_PER_DAY_DEFAULT = 39
+RENTAL_EUR_PER_DAY = rule("car.rental_by_country")
+RENTAL_EUR_PER_DAY_DEFAULT = _CAR["rental_eur_per_day_default"]
 
 # ---------------------------------------------------------------------------
 # Rental seasonality: the day-rates above are annual midpoints, but this app
@@ -77,23 +68,20 @@ RENTAL_EUR_PER_DAY_DEFAULT = 39
 # vs real Aug ~108). Source: rentcarla.com seasonal-pricing study + Blue Car
 # Rental Iceland 2026 (peak ~+60% vs low season).
 # ---------------------------------------------------------------------------
-RENTAL_SEASONALITY = {
-    1: 0.85, 2: 0.85, 3: 0.90, 4: 0.95, 5: 1.05, 6: 1.15,
-    7: 1.25, 8: 1.25, 9: 1.10, 10: 0.98, 11: 0.88, 12: 0.90,
-}
+RENTAL_SEASONALITY = int_keys(_CAR["rental_seasonality"])
 
 CAR_MODEL = {
-    "consumption_l_per_100km": 6.5,     # compact car, mixed driving, with luggage
+    "consumption_l_per_100km": _CAR["consumption_l_per_100km"],  # compact car, mixed driving, with luggage
     "fuel_price_eur_per_l": FUEL_EUR_PER_L_DEFAULT,
     "fuel_price_by_iso2": FUEL_EUR_PER_L,
-    "road_detour_factor": 1.3,          # road km / straight-line km (typical)
-    "toll_eur_per_100km": 2.2,          # motorway toll / vignette allowance
-    "avg_speed_kmh": 90,                # for the drive-time estimate
-    "car_capacity": 4,                  # seats used per car (fuel & rental split)
-    "max_drive_km": 3500,               # offer the car option to any road-connected European destination
+    "road_detour_factor": _CAR["road_detour_factor"],  # road km / straight-line km (typical)
+    "toll_eur_per_100km": _CAR["toll_eur_per_100km"],  # motorway toll / vignette allowance
+    "avg_speed_kmh": _CAR["avg_speed_kmh"],  # for the drive-time estimate
+    "car_capacity": _CAR["car_capacity"],  # seats used per car (fuel & rental split)
+    "max_drive_km": _CAR["max_drive_km"],  # offer the car option to any road-connected European destination
     "rental_eur_per_day_by_iso2": RENTAL_EUR_PER_DAY,
     "rental_eur_per_day_default": RENTAL_EUR_PER_DAY_DEFAULT,
-    "rental_weekly_discount_pct": 15.0, # rentals of 7+ days
+    "rental_weekly_discount_pct": _CAR["rental_weekly_discount_pct"],  # rentals of 7+ days
     "rental_seasonality": RENTAL_SEASONALITY,  # multiplier on the day-rate by depart month
     "notes": ("Fuel computed at runtime from home->dest haversine x detour. "
               "Petrol EUR/L: EU-27 from EC Oil Bulletin (Jun 2026, EUR), non-EU "
