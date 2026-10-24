@@ -38,8 +38,12 @@ OVERRIDE = ""        # the reason given with --override, kept in meta.stays
 # Airbnb pricing on top of the listed nightly price (kept from schema v17's
 # accommodation_model, which measured them on Inside Airbnb and Airbnb's
 # published fee pages).
-FEES = {"service_fee_pct": 14, "cleaning_fee_frac_of_night": 0.5,
-        "weekly_discount_pct": 8, "min_nights_for_weekly": 7}
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from pricing_config import rule  # noqa: E402
+
+# T693: the Airbnb fees the wire ships as meta.stays.fees, from the one
+# config (stay.fees), the copy the app's DEFAULT_FEES reads too.
+FEES = rule("stay.fees")
 
 
 def compact(rec, hoods=None):

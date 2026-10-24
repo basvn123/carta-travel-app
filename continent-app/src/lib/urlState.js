@@ -154,8 +154,8 @@ export function browseQueryFrom(search) {
 
 /** Build a query string (no leading '?') from the live app state. */
 export function encodeState({
-  departDate, returnDate, choices, priceMode, countryFilter, countryNot, dateFlex,
-  tripKinds, priceRange, priceBounds, selectedId, favorites, sortKey, showFavOnly,
+  departDate, returnDate, choices, countryFilter, countryNot, dateFlex,
+  tripKinds, selectedId, favorites, sortKey, showFavOnly,
   ratingRange, gemOnly, unescoOnly, topBeachOnly, bigOnly, topPick, reachHours, activeTab,
   exploreCat,
 }) {
@@ -177,6 +177,8 @@ export function encodeState({
   // T582: any way is the default, so only a chosen way is stored.
   if (choices?.transport_mode && choices.transport_mode !== 'any') q.set('t', choices.transport_mode);
   if (choices?.stay_tier && choices.stay_tier !== 'home') q.set('st', choices.stay_tier);
+  if (choices?.price_view === 'total') q.set('pv', 't');   // T694: the group's total
+  if (choices?.price_excluded?.length) q.set('px', choices.price_excluded.join('.'));   // T695
   if (choices?.origin) q.set('o', choices.origin);
   // Where a drive starts, packed as "lat,lon,name". The name is free text and
   // can hold commas of its own, so the decoder splits on the first two only.
@@ -184,17 +186,11 @@ export function encodeState({
   if (dh && Number.isFinite(dh.lat) && Number.isFinite(dh.lon)) {
     q.set('dh', `${dh.lat.toFixed(4)},${dh.lon.toFixed(4)},${dh.name || ''}`);
   }
-  // Store anything that differs from the APP default ('pp', see App.jsx),
-  // else "Total" silently flips back to per-person on reload.
-  if (priceMode && priceMode !== 'pp') q.set('pm', priceMode);
+  // T697 (plan 4.4): the old price mode (pm) and price range (pr) filtered
+  // nothing and are no longer written; the price view is pv (T694).
   if (countryFilter && countryFilter.length) q.set('cf', countryFilter.join('.'));
   if (countryNot && countryFilter && countryFilter.length) q.set('cn', '1');
   if (tripKinds && tripKinds.length) q.set('tk', tripKinds.join('.'));
-  // Only store a price range if it's actually a narrowing of the full bounds.
-  if (priceRange && priceBounds &&
-      (priceRange[0] > priceBounds[0] || priceRange[1] < priceBounds[1])) {
-    q.set('pr', `${Math.round(priceRange[0])}.${Math.round(priceRange[1])}`);
-  }
   // Note: the open destination (selectedId) is deliberately NOT persisted, so
   // the app always opens on the full map with nothing pre-selected.
   // The shortlist, as `kind:id` keys joined by '.'. Destination ids carry no
@@ -244,6 +240,8 @@ export function decodeState(search) {
   if (has('b')) out.baggage_key = q.get('b');
   if (has('t')) out.transport_mode = q.get('t');
   if (has('st')) out.stay_tier = q.get('st');
+  if (has('pv')) out.price_view = q.get('pv') === 't' ? 'total' : 'pp';
+  if (has('px')) out.price_excluded = q.get('px').split('.').filter((k) => /^[a-z]{2,12}$/.test(k)).slice(0, 8);
   if (has('o')) out.origin = q.get('o');
   if (has('dh')) {
     const raw = q.get('dh');
@@ -255,15 +253,10 @@ export function decodeState(search) {
       out.drive_home = { lat, lon, name: cut2 < 0 ? '' : raw.slice(cut2 + 1) };
     }
   }
-  if (has('pm')) out.priceMode = q.get('pm');
   // iso2 codes joined by '.', legacy links stored a single code (still parses).
   if (has('cf')) out.countryFilter = q.get('cf').split('.').filter((c) => c && c !== 'all');
   if (has('cn')) out.countryNot = q.get('cn') === '1';
   if (has('tk')) out.tripKinds = q.get('tk').split('.').filter(Boolean);
-  if (has('pr')) {
-    const [lo, hi] = q.get('pr').split('.').map(Number);
-    if (!Number.isNaN(lo) && !Number.isNaN(hi)) out.priceRange = [lo, hi];
-  }
   // 'sel' is intentionally ignored on load (see encodeState), open the full map.
   // Keys now, bare destination ids in older links: readFavList migrates the
   // second onto the first, so a link shared before the shortlist grew past
@@ -384,7 +377,7 @@ export function loadInitialState() {
 
 
 // Every key encodeState can write; persistState replaces exactly these.
-const OWN_KEYS = ['b', 'big', 'cat', 'cc', 'cf', 'd', 'dest', 'dh', 'fav', 'favonly', 'feat', 'g', 'gem', 'ls', 'mode', 'o', 'pm', 'pr', 'r', 'rh', 'rr', 'sort', 'st', 't', 'tab', 'tb', 'tk', 'top', 'un'];
+const OWN_KEYS = ['b', 'big', 'cat', 'cc', 'cf', 'd', 'dest', 'dh', 'fav', 'favonly', 'feat', 'g', 'gem', 'ls', 'mode', 'o', 'pm', 'pr', 'pv', 'px', 'r', 'rh', 'rr', 'sort', 'st', 't', 'tab', 'tb', 'tk', 'top', 'un'];
 
 /** Push the encoded state into the URL (replaceState) and the localStorage mirror.
  *

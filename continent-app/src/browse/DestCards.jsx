@@ -24,6 +24,7 @@ import {
 } from '../lib/cardFillings.js';
 import { okPhoto, firstOkImage } from '../lib/photoVeto.js';
 import { Money } from '../components/ui/index.js';
+import { useDayView } from '../hooks/useDayView.js';
 
 /*
  * The outdoor layers' cards and the composed trip card (T498, split out of
@@ -41,12 +42,13 @@ import { Money } from '../components/ui/index.js';
 /** The nearest town's day, as the card's one price line. `base` is
  *  { city, dayEur, est } or null. */
 export function BedFoodLine({ base, t }) {
+  const view = useDayView();   // T694: per person or the group's total
   if (!base || base.dayEur == null) return null;
   return (
     <span className="pcard-dayin">
       <span className="pcard-dayin-l">{t('item.dayIn', { city: base.city })}</span>{' '}
-      <Money value={base.dayEur} est={base.est} />{' '}
-      <span className="pcard-dayin-u">{t('dest.priceDayUnit')}</span>
+      <Money value={view.day(base.dayEur)} est={base.est} />{' '}
+      <span className="pcard-dayin-u">{view.unit}</span>
     </span>
   );
 }

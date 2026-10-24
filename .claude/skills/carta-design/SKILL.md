@@ -21,6 +21,8 @@ semantics, two across at the top of the desktop panel and the 2 x 3 grid at the 
 section's head carries "Highlights | Full list" where Explore's carries List | Map: the full list is one choice
 from the top. The rails take Explore's tile widths and lines, and the countries track counts as one of the rails.
 
+Updated 2026-10-24 (T689, T694, T695, the price plan): one amount and its unit, no estimate mark; per person or the whole group; the opened price with item switches.
+
 Updated 2026-10-13 (T438) after the owner reviewed Explore: the lagoon teal became one warm brown
 (umber), a rating became a star and an ink figure (the Score, T437), provenance on the page became the
 estimate mark alone, and catalogue counts left the page furniture.
@@ -296,28 +298,36 @@ in the kit. Two screens can never write the same figure two ways.
 - **No euro sign in an i18n string.** Templates take a formatted figure (`{price}`, `{eur}`); the formatter
   supplies the symbol. A `€` or `EUR` typed into JSX or a string is a bug (the `money-literal` lint rule
   (T425) catches it).
-- **One estimate notation.** The tilde joined to the figure, and nothing after it (owner 2026-10-22,
-  T590: "the mention of estimate is not needed, keep it simple"). `formatEst()` for a string,
-  `<Money est>` in JSX; a screen reader hears "about {price}" (`money.estSpoken`). Never a space after
-  the tilde, never the word "est." on screen, never an estimate shown by colour alone. Measured figures never carry it:
-  a figure is an estimate when it is a stand-in (`isNational()` in `CostSummary.jsx`), and only those
-  take the mark.
+- **One amount and its unit** (owner 2026-10-24, price plan rule 2, replacing T590's tilde). An
+  estimate is written like any figure: no tilde, no "est.", no "live", no assumption line, and a screen
+  reader hears the figure itself. Whether a price is measured, live or an estimate is stored by the
+  price engine (`src/lib/price/`) and shown only in the admin page's Prices view. `formatEst()` and
+  `<Money est>` stay for their callers and draw the plain figure; never a mark of your own instead.
+- **Per person or the whole group** (T694, plan rule 4). One Segmented control under People in the
+  settings line; every day figure, pin, filter stop and chip draws through `useDayView()`, the total
+  being the figure times seats and nights ("for 2 people, 7 nights"). Nothing builds its own total.
+- **The opened price** (T695, plan rule 9). The amount on a card and on the destination header opens,
+  on a tap, the InfoDot popover listing the items in it (bed, food and drink, local transport, car hire
+  when going by car, activities, events, the way there) with their amounts and a kit Switch each;
+  switching one off is a setting and applies everywhere. An item without data shows `NotYet`, never a
+  zero and never a switch. `components/PriceItems.jsx` is the one component.
 - **Ranges** go through `formatMoneyRange()`: "€40 to €60", with the language's own joiner.
 - **Per unit** is one phrase per language through i18n ("a person", "a day", "a night", "for the trip").
   No `/pp`, `/p`, `/day` in JSX. When two units apply the order is one: "a person a day" (T474); a
   person's share is "a person", never "each"; a unit is never a suffix glued to a figure.
 - **No figure** prints words (`money.onRequest`, "Price on request"), never a blank, a lone dash or
   "€NaN".
-- **The estimate mark is the whole pedigree on the page** (owner decision 2026-10-13, T438). No method
+- **The amount is the whole pedigree on the page** (owner decisions 2026-10-13, T438, and 2026-10-24). No method
   sentences ("measured from N stays", "the national basket", "N of M figures measured"), no "national"
   word after a figure, no source footers. Never a flight figure presented as Carta's own, never a bookable
   claim, never a stored figure shown as current. Every external booking link warns that prices may have changed.
 - **Flights** (T511 to T518, 2026-10-21). A flight figure is Google Flights' price, not Carta's estimate,
-  so it never carries the tilde or "est.". It always travels with the airline mark, the departure and
+  It always travels with the airline mark, the departure and
   arrival times, when it was checked and the link out to Google Flights with "prices may have changed".
   The airline mark is the airline's own logo in a white square, never recoloured, tinted or redrawn. A
-  fare the traveller typed in replaces it and is labelled as theirs. A price checked more than 3 days ago
-  is not shown. Bag fees (10 kg cabin, 20 kg checked) are Carta's estimates and take the tilde and word.
+  fare the traveller typed in replaces it and is labelled as theirs. A swept price older than its sweep
+  cycle is not shown (3 days for the next two weeks, 8 days beyond, T692). Bag fees (10 kg cabin, 20 kg
+  checked) are Carta's estimates; the traveller's bag is priced on every flight (T691).
   Cents on receipts, whole euros on cards, like every other figure.
 - **One day-cost basis.** The traveller's Lifestyle prices the day everywhere: the card, the pin and the
   page show the same figure (owner decision 2026-10-13, T374-d).
@@ -448,7 +458,7 @@ reasoning in `docs/design-v6/DIRECTION.md` part 9), restated in Lagoon terms and
 
 **The cost bar.** At most one stacked bar above a receipt's lines, never instead of them: 8 px, full width, one segment per line in receipt order in the `--kind-*` ramp, 1 px `--surface` gaps, no brown, no legend, no percentages.
 
-**Cost on cards and pages.** A card or page that offers a place or a trip carries one price line: the day cost per person at the traveller's Lifestyle ("From {price} a person" with its length on a collection card, from the cheapest member, never an average; in a trip list whose length control already states the days, the card carries no length, owner 2026-10-15), read from `src/lib/costIndex.js` so it agrees with Explore and the receipt. It carries the estimate mark when it is an estimate and nothing else about its source (T438). No figure when the data is too thin. A page shows one per person per day figure and every other mention on the page is that value.
+**Cost on cards and pages.** A card or page that offers a place or a trip carries one price line: the day cost per person at the traveller's Lifestyle ("From {price} a person" with its length on a collection card, from the cheapest member, never an average; in a trip list whose length control already states the days, the card carries no length, owner 2026-10-15), read from `src/lib/costIndex.js` so it agrees with Explore and the receipt. It carries nothing about its source (T438; the estimate mark left on 2026-10-24). No figure when the data is too thin. A page shows one per person per day figure and every other mention on the page is that value.
 
 **Best value.** The cheapest item in a comparison (the cheapest pin in view, a "Best value" status chip) is marked in `--best` with `--text` on it, once per view. It is a marker, not a selection and not an action.
 
@@ -460,7 +470,7 @@ reasoning in `docs/design-v6/DIRECTION.md` part 9), restated in Lagoon terms and
 
 **Plan cards.** Equal weight; the recommended plan is marked with a brown border and a "Recommended" chip and keeps the same ground. Never dim the free plan. State limits as plain numbers.
 
-**My trips, Account and the pass screens (T503).** A trip on My trips carries one price: what it costs a person a day, in whole euros, with the estimate mark where it is one (owner 1.8); the party's total belongs to the receipt in Plan. A trip kept without an account says where it is ("Saved on this device") in one 13 px `--text-2` line under its card, with "Sign in" as a quiet small button, offered only as the way to have it on a second device, never as a condition. The Visited band carries the countries (the figure, the flags, Edit or Add in the same cell, the names as a list for screen readers); there is no second list of countries, and with nothing on the record the band is that one cell and its Add, never a row of zeros. "See all prices" is a quiet link (13 px 600 `--action`, underlined, `--tap` high) to `/pricing` at the foot of Account's Your plan and of the pass sheet, never a second primary; following it from the sheet closes the sheet first. Where the numbers come from (`/about/numbers`) is a link row in Account's help menu and desktop rail; the method and the counts live on that page and nowhere else. The pass price itself stays in cents, the amount charged.
+**My trips, Account and the pass screens (T503).** A trip on My trips carries one price: what it costs a person a day, in whole euros (owner 1.8); the party's total belongs to the receipt in Plan. A trip kept without an account says where it is ("Saved on this device") in one 13 px `--text-2` line under its card, with "Sign in" as a quiet small button, offered only as the way to have it on a second device, never as a condition. The Visited band carries the countries (the figure, the flags, Edit or Add in the same cell, the names as a list for screen readers); there is no second list of countries, and with nothing on the record the band is that one cell and its Add, never a row of zeros. "See all prices" is a quiet link (13 px 600 `--action`, underlined, `--tap` high) to `/pricing` at the foot of Account's Your plan and of the pass sheet, never a second primary; following it from the sheet closes the sheet first. Where the numbers come from (`/about/numbers`) is a link row in Account's help menu and desktop rail; the method and the counts live on that page and nowhere else. The pass price itself stays in cents, the amount charged.
 
 **Suitability strip (retired 2026-10-15, T431).** The three-cell band under a trip hero is gone: the trip page carries a fact band (days, distance, climb, highest point, where you sleep, start) and the difficulty as a status chip in the head (five squares filled `--text` to the level, outlined `--text-3` beyond, plus the word, with an InfoDot). The five squares stay the one difficulty drawing everywhere.
 
@@ -648,8 +658,8 @@ The voice did not change with the look. Carta sounds like an instrument, not a b
    line icons.
 8. A hex, font name, px font size, radius or spacing in a component when a token exists; any colour not in
    DESIGN.md; black (`#000`) as ink. Hex lives only in `:root` and the token mirror `src/map/tokenColors.js`.
-9. A euro sign or "EUR" in an i18n string or JSX, `toFixed` on a price, a rounded receipt line, or an
-   estimate without its tilde (the word "est." left the screen on 2026-10-22, T590).
+9. A euro sign or "EUR" in an i18n string or JSX, `toFixed` on a price, a rounded receipt line, or any
+   mark of provenance on a price: a tilde, "est.", "live", a method line (2026-10-24, price plan rule 2).
 10. Functional text under 11 px, a figure or rating under 12 px, or a touch target under 44 px on a coarse
     pointer.
 
@@ -663,7 +673,7 @@ let its sections arrive once and play its film and its recorded clips; see Inter
 - 360 px wide with no horizontal scroll; one `h1` per view, headings in order.
 - Real `<a>` for navigation, real `<button>` for actions; visible focus on every interactive element.
 - Every text pair 4.5:1 or better (`node scripts/ci/token-contrast.mjs`); `--text-3` never for body copy.
-- Colour is never the only carrier: estimates carry text, selection carries a mark, place kind survives
+- Colour is never the only carrier: selection carries a mark, place kind survives
   greyscale, `--green` and `--danger` come with words.
 - `prefers-reduced-motion: reduce` on every transition; motion from tokens only.
 - Every `aria-modal` overlay traps focus and closes on Escape.

@@ -1,0 +1,45 @@
+/* T695: the opened price (components/PriceItems.jsx). The popover is the
+   InfoDot's (31-infodot.css); this adds the trigger and the item rows, on
+   tokens only. */
+.pitems { display: inline; }
+.pitems-trigger {
+  position: relative;
+  z-index: 1;               /* above a card's stretched link */
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  cursor: pointer;
+  text-decoration: underline dotted var(--border);
+  text-underline-offset: 3px;
+}
+.pitems-trigger:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+@media (hover: hover) {
+  .pitems-trigger:hover { text-decoration-color: var(--text-2); }
+}
+.pitems-pop { max-width: 320px; }
+.pitems-list {
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.pitems-row + .pitems-row { border-top: 1px solid var(--border-soft); }
+.pitems-static {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: 32px;
+  padding: var(--space-1) 0;
+  font-size: var(--text-body);
+  color: var(--text);
+}
+.pitems-amount { font-variant-numeric: tabular-nums; color: var(--text-2); }

@@ -1,0 +1,1308 @@
+{
+  "_about": "The one configuration of every rule that moves a price (plan \"Carta prijslogica Explore\" section 6.1, phase F3, T690). App and pipeline read this file; a number that moves a price and is not here is a bug (invariant V13, tests/priceConfig.test.mjs). Each rule: value, unit, kind (measured, sourced, estimate), source, date (when the value was set), review (when to check it again) and the test that pins it.",
+  "version": 1,
+  "rules": {
+    "stay.fees": {
+      "value": {
+        "service_fee_pct": 14,
+        "cleaning_fee_frac_of_night": 0.5,
+        "weekly_discount_pct": 8,
+        "min_nights_for_weekly": 7
+      },
+      "unit": "percent / fraction of a night / nights",
+      "kind": "estimate",
+      "source": "Carta estimate of Airbnb guest fees (T534); the stays wire ships the same table as meta.stays.fees",
+      "date": "2026-10-21",
+      "review": "2027-04-24",
+      "test": "tests/stayPrice.test.mjs"
+    },
+    "stay.home_caps": {
+      "value": [
+        2,
+        4,
+        6,
+        8
+      ],
+      "unit": "sleepers",
+      "kind": "sourced",
+      "source": "Inside Airbnb accommodates buckets (build_stays.py, T534)",
+      "date": "2026-10-21",
+      "review": "2027-04-24",
+      "test": "tests/stayPrice.test.mjs"
+    },
+    "stay.people_per_room": {
+      "value": 2,
+      "unit": "people",
+      "kind": "estimate",
+      "source": "Carta rule: a double room sleeps two (T534)",
+      "date": "2026-10-21",
+      "review": "2027-04-24",
+      "test": "tests/stayPrice.test.mjs"
+    },
+    "stay.dorm_child_weight": {
+      "value": 0.5,
+      "unit": "beds per child",
+      "kind": "estimate",
+      "source": "Carta rule: two children share a dorm bed (T534)",
+      "date": "2026-10-21",
+      "review": "2027-04-24",
+      "test": "tests/priceEngine.test.mjs"
+    },
+    "stay.weekend_nights": {
+      "value": [
+        5,
+        6
+      ],
+      "unit": "UTC weekday (Fri, Sat)",
+      "kind": "sourced",
+      "source": "Weekend factor measured on Friday against Tuesday (build_stays.py)",
+      "date": "2026-10-21",
+      "review": "2027-04-24",
+      "test": "tests/stayPrice.test.mjs"
+    },
+    "stay.peaks": {
+      "value": {
+        "xmas": {
+          "from": "12-23",
+          "to": "01-01"
+        },
+        "aug15": {
+          "from": "08-12",
+          "to": "08-17"
+        },
+        "easter": {
+          "days_before": 3,
+          "days_after": 1
+        }
+      },
+      "unit": "month-day windows; days around Easter Sunday",
+      "kind": "estimate",
+      "source": "Carta windows for the measured peak factors (T534); the pipeline measures single days (row T690-c)",
+      "date": "2026-10-21",
+      "review": "2027-04-24",
+      "test": "tests/stayPrice.test.mjs"
+    },
+    "stay.live": {
+      "value": {
+        "damp": 0.6,
+        "ratio_min": 0.4,
+        "ratio_max": 3
+      },
+      "unit": "exponent / ratio",
+      "kind": "estimate",
+      "source": "Carta estimate: six hotels are a small sample, so live moves the model by its ratio ^ 0.6 (T540)",
+      "date": "2026-10-22",
+      "review": "2027-04-24",
+      "test": "tests/liveStays.test.mjs"
+    },
+    "stay.bounds_pp_night": {
+      "value": {
+        "dorm": [
+          6,
+          150
+        ],
+        "hotel5": [
+          6,
+          900
+        ],
+        "default": [
+          6,
+          500
+        ]
+      },
+      "unit": "EUR per person per night",
+      "kind": "measured",
+      "source": "Set 2026-10-24 (T692) from the shipped wire: p99 per tier (dorm 439 is the broken Chamonix-type value, T645-b; a solo 5-star room is at most 658) with headroom; before, one bound of 6 to 400 for every tier",
+      "date": "2026-10-24",
+      "review": "2027-04-24",
+      "test": "tests/priceEngine.test.mjs"
+    },
+    "stay.repair": {
+      "value": {
+        "method": "country_median_same_request"
+      },
+      "unit": "rule",
+      "kind": "estimate",
+      "source": "Plan 6.1: a bed outside its bounds borrows the country median of the same tier, party and dates (T692); before, the entire place for two over the year",
+      "date": "2026-10-24",
+      "review": "2027-04-24",
+      "test": "tests/priceEngine.test.mjs"
+    },
+    "bands.cuts": {
+      "value": {
+        "day": [
+          65,
+          80,
+          100,
+          125
+        ],
+        "stay": [
+          22,
+          30,
+          40,
+          55
+        ],
+        "food": [
+          40,
+          50,
+          62,
+          78
+        ]
+      },
+      "unit": "EUR per person per day",
+      "kind": "measured",
+      "source": "Cut from the catalogue then shipped (costIndex.js); frozen, to be re-cut in F7 (T534-a, T514-a)",
+      "date": "2026-09-14",
+      "review": "2026-12-31",
+      "test": "tests/priceGolden.test.mjs"
+    },
+    "bands.ref_prices": {
+      "value": {
+        "meal_mid_eur": 32.8,
+        "meal_cheap_eur": 15,
+        "fastfood_eur": 10,
+        "drink_out_eur": 5,
+        "cocktail_eur": 12,
+        "coffee_eur": 3.45,
+        "grocery_day_eur": 12.42,
+        "club_entry_eur": 11.08
+      },
+      "unit": "EUR",
+      "kind": "measured",
+      "source": "Catalogue medians, frozen (costIndex.js REF_PRICES)",
+      "date": "2026-09-14",
+      "review": "2026-12-31",
+      "test": "tests/priceGolden.test.mjs"
+    },
+    "bands.ref_stay": {
+      "value": {
+        "home": 31.25,
+        "dorm": 28.98,
+        "private": 38.81,
+        "room": 36,
+        "hotel": 50,
+        "hotel2": 40,
+        "hotel3": 50,
+        "hotel4": 70,
+        "hotel5": 120
+      },
+      "unit": "EUR per person per night",
+      "kind": "measured",
+      "source": "Catalogue medians per tier, frozen (costIndex.js REF_STAY)",
+      "date": "2026-09-14",
+      "review": "2026-12-31",
+      "test": "tests/priceGolden.test.mjs"
+    },
+    "bands.scale_clamp": {
+      "value": [
+        0.25,
+        4
+      ],
+      "unit": "ratio",
+      "kind": "estimate",
+      "source": "Carta clamp on the lifestyle band scale (costIndex.js)",
+      "date": "2026-09-14",
+      "review": "2027-04-24",
+      "test": "tests/priceGolden.test.mjs"
+    },
+    "lifestyle.default": {
+      "value": {
+        "cadence": "week",
+        "dinners_per_week": 5,
+        "lunches_per_week": 4,
+        "fastfood_per_week": 2,
+        "drinks_per_week": 7,
+        "club_nights_per_week": 1,
+        "coffees_per_day": 1,
+        "self_catered_days_per_week": 2
+      },
+      "unit": "per week (coffees per day)",
+      "kind": "estimate",
+      "source": "Carta Easygoing preset (T474); coffees 0 to 1 by owner decision B8, 2026-10-24",
+      "date": "2026-10-24",
+      "review": "2027-04-24",
+      "test": "tests/priceGolden.test.mjs"
+    },
+    "lifestyle.profiles": {
+      "value": {
+        "Backpacker": {
+          "cadence": "week",
+          "dinners_per_week": 1,
+          "lunches_per_week": 3,
+          "fastfood_per_week": 4,
+          "drinks_per_week": 4,
+          "club_nights_per_week": 0,
+          "coffees_per_day": 0,
+          "self_catered_days_per_week": 5
+        },
+        "Easygoing": {
+          "cadence": "week",
+          "dinners_per_week": 5,
+          "lunches_per_week": 4,
+          "fastfood_per_week": 2,
+          "drinks_per_week": 7,
+          "club_nights_per_week": 1,
+          "coffees_per_day": 1,
+          "self_catered_days_per_week": 2
+        },
+        "Foodie": {
+          "cadence": "week",
+          "dinners_per_week": 7,
+          "lunches_per_week": 5,
+          "fastfood_per_week": 0,
+          "drinks_per_week": 5,
+          "club_nights_per_week": 0,
+          "coffees_per_day": 1,
+          "self_catered_days_per_week": 0
+        },
+        "Cafe & culture": {
+          "cadence": "week",
+          "dinners_per_week": 3,
+          "lunches_per_week": 5,
+          "fastfood_per_week": 1,
+          "drinks_per_week": 3,
+          "club_nights_per_week": 0,
+          "coffees_per_day": 1,
+          "self_catered_days_per_week": 2
+        },
+        "Nightlife": {
+          "cadence": "week",
+          "dinners_per_week": 3,
+          "lunches_per_week": 2,
+          "fastfood_per_week": 4,
+          "drinks_per_week": 12,
+          "club_nights_per_week": 3,
+          "coffees_per_day": 1,
+          "self_catered_days_per_week": 1
+        },
+        "Family": {
+          "cadence": "week",
+          "dinners_per_week": 2,
+          "lunches_per_week": 4,
+          "fastfood_per_week": 3,
+          "drinks_per_week": 2,
+          "club_nights_per_week": 0,
+          "coffees_per_day": 1,
+          "self_catered_days_per_week": 5
+        }
+      },
+      "unit": "per week (coffees per day)",
+      "kind": "estimate",
+      "source": "Carta presets (T474); coffees by owner decision B8, 2026-10-24: one a day, none for Backpacker",
+      "date": "2026-10-24",
+      "review": "2027-04-24",
+      "test": "tests/lifestyleSlider.test.mjs"
+    },
+    "lifestyle.club_drinks_per_night": {
+      "value": 3,
+      "unit": "cocktails",
+      "kind": "estimate",
+      "source": "Carta estimate (runtime_pricing.js)",
+      "date": "2026-09-14",
+      "review": "2027-04-24",
+      "test": "tests/priceGolden.test.mjs"
+    },
+    "party.shares": {
+      "value": {
+        "child_food": 0.6,
+        "baby_food": 0.15,
+        "child_ticket": 0.5
+      },
+      "unit": "share of an adult",
+      "kind": "estimate",
+      "source": "Carta estimate (T579)",
+      "date": "2026-10-22",
+      "review": "2027-04-24",
+      "test": "tests/priceEngine.test.mjs"
+    },
+    "party.baby_lap_fee_leg": {
+      "value": 30,
+      "unit": "EUR per baby per flight leg",
+      "kind": "estimate",
+      "source": "Carta estimate of a low-cost lap-infant fee (T579)",
+      "date": "2026-10-22",
+      "review": "2027-01-24",
+      "test": "tests/priceGolden.test.mjs"
+    },
+    "party.limits": {
+      "value": {
+        "default_seats": 2,
+        "max_seats": 20,
+        "max_babies": 4
+      },
+      "unit": "people",
+      "kind": "estimate",
+      "source": "One cap for every screen (T691): before 12 (settings line, price cards), 20 (planner, share links, AI day plan) and 99 (party.js); babies 4 (settings line) and 19 (share links)",
+      "date": "2026-10-24",
+      "review": "2027-04-24",
+      "test": "tests/priceEngine.test.mjs"
+    },
+    "request.default_nights": {
+      "value": 7,
+      "unit": "nights",
+      "kind": "estimate",
+      "source": "B5 (owner 2026-10-24); the card week of T534 (costIndex.js CARD_NIGHTS) and lib/price DEFAULT_NIGHTS in one place",
+      "date": "2026-10-24",
+      "review": "2027-04-24",
+      "test": "tests/priceEngine.test.mjs"
+    },
+    "request.default_bag": {
+      "value": "priority_10kg",
+      "unit": "baggage key",
+      "kind": "estimate",
+      "source": "The app default (App.jsx baggage_key) for every flight price (T691): before, the planner and lower layers defaulted to keys that priced no bag",
+      "date": "2026-10-24",
+      "review": "2027-04-24",
+      "test": "tests/priceEngine.test.mjs"
+    },
+    "car.model": {
+      "value": {
+        "consumption_l_per_100km": 6.5,
+        "fuel_price_eur_per_l": 1.81,
+        "road_detour_factor": 1.3,
+        "toll_eur_per_100km": 2.2,
+        "avg_speed_kmh": 90,
+        "car_capacity": 4,
+        "max_drive_km": 3500,
+        "rental_eur_per_day_default": 39,
+        "rental_weekly_discount_pct": 15,
+        "rental_seasonality": {
+          "1": 0.85,
+          "2": 0.85,
+          "3": 0.9,
+          "4": 0.95,
+          "5": 1.05,
+          "6": 1.15,
+          "7": 1.25,
+          "8": 1.25,
+          "9": 1.1,
+          "10": 0.98,
+          "11": 0.88,
+          "12": 0.9
+        }
+      },
+      "unit": "litres, EUR, km, km/h, seats",
+      "kind": "estimate",
+      "source": "car_layer.py CAR_MODEL, also baked as meta.car_model; the rental fallback is one value, 39 (T691: the app said 42, transport.js 40)",
+      "date": "2026-07-21",
+      "review": "2026-11-24",
+      "test": "tests/priceGolden.test.mjs"
+    },
+    "ground.transfer_public": {
+      "value": {
+        "per_km_eur": 0.15,
+        "floor_eur": 10,
+        "cap_eur": 60,
+        "detour": 1.3,
+        "kmh": 65
+      },
+      "unit": "EUR per person one way, km/h",
+      "kind": "estimate",
+      "source": "Carta airport-transfer band (T051); one copy for runtime_pricing.js, groundFares.js and apply_airport_anchors.py (T691)",
+      "date": "2026-09-14",
+      "review": "2027-04-24",
+      "test": "tests/priceGolden.test.mjs"
+    },
+    "ground.overland_floors": {
+      "value": {
+        "train_floor_eur": 4,
+        "train_floor_km": 40,
+        "bus_floor_eur": 3,
+        "detour": 1.3
+      },
+      "unit": "EUR, km",
+      "kind": "estimate",
+      "source": "Carta fare floors (groundFares.js)",
+      "date": "2026-09-14",
+      "review": "2027-04-24",
+      "test": "tests/priceGolden.test.mjs"
+    },
+    "ground.sea_bands": {
+      "value": {
+        "channel": {
+          "train": {
+            "perKm": 0.26,
+            "floor": 59,
+            "cap": 220
+          },
+          "bus": {
+            "perKm": 0.085,
+            "floor": 29
+          },
+          "ferryPerCar": 95
+        },
+        "irishsea": {
+          "train": {
+            "perKm": 0.12,
+            "floor": 45,
+            "cap": 120
+          },
+          "bus": {
+            "perKm": 0.08,
+            "floor": 35
+          },
+          "ferryPerCar": 130
+        }
+      },
+      "unit": "EUR per km, EUR",
+      "kind": "estimate",
+      "source": "Eurostar advance band, Rail & Sail through-ticket, LeShuttle and Irish Sea deck prices as Carta read them (groundFares.js)",
+      "date": "2026-09-14",
+      "review": "2027-04-24",
+      "test": "tests/priceGolden.test.mjs"
+    },
+    "ground.country_profiles": {
+      "value": {
+        "default": {
+          "rail": "fair",
+          "railKmh": 75,
+          "railEur": 0.1,
+          "railOverheadH": 0.5,
+          "busKmh": 70,
+          "busEur": 0.06,
+          "busOverheadH": 0.6
+        },
+        "countries": {
+          "BE": {
+            "rail": "excellent",
+            "railKmh": 90,
+            "railEur": 0.16,
+            "railOverheadH": 0.25,
+            "busKmh": 70,
+            "busEur": 0.07,
+            "busOverheadH": 0.7
+          },
+          "NL": {
+            "rail": "excellent",
+            "railKmh": 95,
+            "railEur": 0.17,
+            "railOverheadH": 0.25,
+            "busKmh": 70,
+            "busEur": 0.07,
+            "busOverheadH": 0.7
+          },
+          "DE": {
+            "rail": "excellent",
+            "railKmh": 110,
+            "railEur": 0.13,
+            "railOverheadH": 0.3,
+            "busKmh": 80,
+            "busEur": 0.06,
+            "busOverheadH": 0.7
+          },
+          "AT": {
+            "rail": "excellent",
+            "railKmh": 100,
+            "railEur": 0.13,
+            "railOverheadH": 0.25,
+            "busKmh": 75,
+            "busEur": 0.06,
+            "busOverheadH": 0.7
+          },
+          "CH": {
+            "rail": "excellent",
+            "railKmh": 95,
+            "railEur": 0.28,
+            "railOverheadH": 0.2,
+            "busKmh": 65,
+            "busEur": 0.1,
+            "busOverheadH": 0.7
+          },
+          "DK": {
+            "rail": "excellent",
+            "railKmh": 100,
+            "railEur": 0.18,
+            "railOverheadH": 0.25,
+            "busKmh": 75,
+            "busEur": 0.07,
+            "busOverheadH": 0.7
+          },
+          "CZ": {
+            "rail": "excellent",
+            "railKmh": 85,
+            "railEur": 0.08,
+            "railOverheadH": 0.3,
+            "busKmh": 75,
+            "busEur": 0.045,
+            "busOverheadH": 0.6
+          },
+          "LU": {
+            "rail": "excellent",
+            "railKmh": 80,
+            "railEur": 0,
+            "railOverheadH": 0.25,
+            "busKmh": 65,
+            "busEur": 0,
+            "busOverheadH": 0.5
+          },
+          "FR": {
+            "rail": "good",
+            "railKmh": 120,
+            "railEur": 0.11,
+            "railOverheadH": 0.35,
+            "busKmh": 80,
+            "busEur": 0.055,
+            "busOverheadH": 0.75
+          },
+          "ES": {
+            "rail": "good",
+            "railKmh": 115,
+            "railEur": 0.1,
+            "railOverheadH": 0.35,
+            "busKmh": 80,
+            "busEur": 0.05,
+            "busOverheadH": 0.7
+          },
+          "IT": {
+            "rail": "good",
+            "railKmh": 110,
+            "railEur": 0.1,
+            "railOverheadH": 0.35,
+            "busKmh": 75,
+            "busEur": 0.05,
+            "busOverheadH": 0.7
+          },
+          "PT": {
+            "rail": "good",
+            "railKmh": 90,
+            "railEur": 0.08,
+            "railOverheadH": 0.35,
+            "busKmh": 75,
+            "busEur": 0.05,
+            "busOverheadH": 0.6
+          },
+          "UK": {
+            "rail": "good",
+            "railKmh": 100,
+            "railEur": 0.22,
+            "railOverheadH": 0.3,
+            "busKmh": 70,
+            "busEur": 0.07,
+            "busOverheadH": 0.7
+          },
+          "GB": {
+            "rail": "good",
+            "railKmh": 100,
+            "railEur": 0.22,
+            "railOverheadH": 0.3,
+            "busKmh": 70,
+            "busEur": 0.07,
+            "busOverheadH": 0.7
+          },
+          "SE": {
+            "rail": "good",
+            "railKmh": 105,
+            "railEur": 0.13,
+            "railOverheadH": 0.35,
+            "busKmh": 80,
+            "busEur": 0.06,
+            "busOverheadH": 0.75
+          },
+          "FI": {
+            "rail": "good",
+            "railKmh": 100,
+            "railEur": 0.12,
+            "railOverheadH": 0.35,
+            "busKmh": 75,
+            "busEur": 0.06,
+            "busOverheadH": 0.75
+          },
+          "PL": {
+            "rail": "good",
+            "railKmh": 90,
+            "railEur": 0.07,
+            "railOverheadH": 0.35,
+            "busKmh": 75,
+            "busEur": 0.04,
+            "busOverheadH": 0.6
+          },
+          "HU": {
+            "rail": "good",
+            "railKmh": 80,
+            "railEur": 0.06,
+            "railOverheadH": 0.35,
+            "busKmh": 70,
+            "busEur": 0.04,
+            "busOverheadH": 0.6
+          },
+          "SK": {
+            "rail": "good",
+            "railKmh": 75,
+            "railEur": 0.06,
+            "railOverheadH": 0.35,
+            "busKmh": 70,
+            "busEur": 0.04,
+            "busOverheadH": 0.6
+          },
+          "NO": {
+            "rail": "fair",
+            "railKmh": 85,
+            "railEur": 0.16,
+            "railOverheadH": 0.5,
+            "busKmh": 70,
+            "busEur": 0.08,
+            "busOverheadH": 0.75
+          },
+          "IE": {
+            "rail": "fair",
+            "railKmh": 85,
+            "railEur": 0.13,
+            "railOverheadH": 0.5,
+            "busKmh": 70,
+            "busEur": 0.06,
+            "busOverheadH": 0.6
+          },
+          "SI": {
+            "rail": "fair",
+            "railKmh": 65,
+            "railEur": 0.07,
+            "railOverheadH": 0.55,
+            "busKmh": 70,
+            "busEur": 0.05,
+            "busOverheadH": 0.5
+          },
+          "HR": {
+            "rail": "fair",
+            "railKmh": 60,
+            "railEur": 0.06,
+            "railOverheadH": 0.6,
+            "busKmh": 75,
+            "busEur": 0.05,
+            "busOverheadH": 0.4
+          },
+          "RO": {
+            "rail": "fair",
+            "railKmh": 55,
+            "railEur": 0.05,
+            "railOverheadH": 0.6,
+            "busKmh": 65,
+            "busEur": 0.04,
+            "busOverheadH": 0.45
+          },
+          "BG": {
+            "rail": "fair",
+            "railKmh": 55,
+            "railEur": 0.04,
+            "railOverheadH": 0.6,
+            "busKmh": 65,
+            "busEur": 0.035,
+            "busOverheadH": 0.45
+          },
+          "GR": {
+            "rail": "fair",
+            "railKmh": 70,
+            "railEur": 0.07,
+            "railOverheadH": 0.55,
+            "busKmh": 70,
+            "busEur": 0.05,
+            "busOverheadH": 0.45
+          },
+          "LT": {
+            "rail": "fair",
+            "railKmh": 80,
+            "railEur": 0.06,
+            "railOverheadH": 0.5,
+            "busKmh": 75,
+            "busEur": 0.04,
+            "busOverheadH": 0.5
+          },
+          "LV": {
+            "rail": "fair",
+            "railKmh": 65,
+            "railEur": 0.06,
+            "railOverheadH": 0.5,
+            "busKmh": 70,
+            "busEur": 0.04,
+            "busOverheadH": 0.5
+          },
+          "EE": {
+            "rail": "fair",
+            "railKmh": 75,
+            "railEur": 0.06,
+            "railOverheadH": 0.5,
+            "busKmh": 75,
+            "busEur": 0.04,
+            "busOverheadH": 0.5
+          },
+          "TR": {
+            "rail": "fair",
+            "railKmh": 80,
+            "railEur": 0.04,
+            "railOverheadH": 0.5,
+            "busKmh": 75,
+            "busEur": 0.03,
+            "busOverheadH": 0.4
+          },
+          "MA": {
+            "rail": "fair",
+            "railKmh": 75,
+            "railEur": 0.05,
+            "railOverheadH": 0.5,
+            "busKmh": 65,
+            "busEur": 0.03,
+            "busOverheadH": 0.45
+          },
+          "RS": {
+            "rail": "poor",
+            "railKmh": 50,
+            "railEur": 0.04,
+            "railOverheadH": 0.8,
+            "busKmh": 65,
+            "busEur": 0.035,
+            "busOverheadH": 0.4
+          },
+          "BA": {
+            "rail": "poor",
+            "railKmh": 45,
+            "railEur": 0.04,
+            "railOverheadH": 0.8,
+            "busKmh": 60,
+            "busEur": 0.035,
+            "busOverheadH": 0.4
+          },
+          "ME": {
+            "rail": "poor",
+            "railKmh": 50,
+            "railEur": 0.04,
+            "railOverheadH": 0.8,
+            "busKmh": 60,
+            "busEur": 0.035,
+            "busOverheadH": 0.4
+          },
+          "MK": {
+            "rail": "poor",
+            "railKmh": 45,
+            "railEur": 0.04,
+            "railOverheadH": 0.8,
+            "busKmh": 60,
+            "busEur": 0.03,
+            "busOverheadH": 0.4
+          },
+          "XK": {
+            "rail": "poor",
+            "railKmh": 40,
+            "railEur": 0.03,
+            "railOverheadH": 0.8,
+            "busKmh": 60,
+            "busEur": 0.03,
+            "busOverheadH": 0.4
+          },
+          "AL": {
+            "rail": "none",
+            "railKmh": 0,
+            "railEur": 0,
+            "railOverheadH": 0,
+            "busKmh": 60,
+            "busEur": 0.03,
+            "busOverheadH": 0.4
+          },
+          "MT": {
+            "rail": "none",
+            "railKmh": 0,
+            "railEur": 0,
+            "railOverheadH": 0,
+            "busKmh": 40,
+            "busEur": 0.02,
+            "busOverheadH": 0.4
+          },
+          "CY": {
+            "rail": "none",
+            "railKmh": 0,
+            "railEur": 0,
+            "railOverheadH": 0,
+            "busKmh": 60,
+            "busEur": 0.03,
+            "busOverheadH": 0.45
+          },
+          "IS": {
+            "rail": "none",
+            "railKmh": 0,
+            "railEur": 0,
+            "railOverheadH": 0,
+            "busKmh": 65,
+            "busEur": 0.1,
+            "busOverheadH": 0.6
+          },
+          "LI": {
+            "rail": "fair",
+            "railKmh": 70,
+            "railEur": 0.15,
+            "railOverheadH": 0.4,
+            "busKmh": 65,
+            "busEur": 0.06,
+            "busOverheadH": 0.4
+          },
+          "MC": {
+            "rail": "good",
+            "railKmh": 90,
+            "railEur": 0.11,
+            "railOverheadH": 0.3,
+            "busKmh": 60,
+            "busEur": 0.06,
+            "busOverheadH": 0.6
+          },
+          "MD": {
+            "rail": "poor",
+            "railKmh": 45,
+            "railEur": 0.03,
+            "railOverheadH": 0.8,
+            "busKmh": 60,
+            "busEur": 0.03,
+            "busOverheadH": 0.45
+          },
+          "AD": {
+            "rail": "none",
+            "railKmh": 0,
+            "railEur": 0,
+            "railOverheadH": 0,
+            "busKmh": 55,
+            "busEur": 0.05,
+            "busOverheadH": 0.5
+          },
+          "SM": {
+            "rail": "none",
+            "railKmh": 0,
+            "railEur": 0,
+            "railOverheadH": 0,
+            "busKmh": 55,
+            "busEur": 0.04,
+            "busOverheadH": 0.5
+          },
+          "FO": {
+            "rail": "none",
+            "railKmh": 0,
+            "railEur": 0,
+            "railOverheadH": 0,
+            "busKmh": 55,
+            "busEur": 0.06,
+            "busOverheadH": 0.6
+          }
+        }
+      },
+      "unit": "EUR per km, km/h, hours",
+      "kind": "estimate",
+      "source": "Carta curated national network profiles, 2026 (countryTransport.js)",
+      "date": "2026-09-14",
+      "review": "2027-04-24",
+      "test": "tests/priceGolden.test.mjs"
+    },
+    "ground.rail_score_bonus": {
+      "value": {
+        "excellent": -3.5,
+        "good": -1.5,
+        "fair": 0,
+        "poor": 2.5,
+        "none": 0
+      },
+      "unit": "score points",
+      "kind": "estimate",
+      "source": "Carta mode ranking (countryTransport.js)",
+      "date": "2026-09-14",
+      "review": "2027-04-24",
+      "test": "tests/priceGolden.test.mjs"
+    },
+    "ground.calibration": {
+      "value": {
+        "meta": {
+          "generated_at": "2026-08-05T21:23:23+00:00",
+          "method": "daily-min fares -> per-pair medians -> Theil-Sen price ~ km (great-circle x 1.3); cells below 30 obs / 5 pairs or outside (0.02, 0.4) EUR/km, (0.0, 30.0) EUR base are not emitted (consumers fall back to priors)",
+          "samples": {
+            "sources": {
+              "renfe_kaggle": {
+                "usable": true,
+                "note": "thegurus Renfe archive: real ticket prices per OD city pair, fare bucket and class (2019-2020 vintage)"
+              },
+              "sncf_availability": {
+                "usable": false,
+                "note": "TGV MAX 30-day seat availability: OD + times, NO price column (occupancy proxy only)"
+              },
+              "flixbus_gtfs": {
+                "usable": false,
+                "note": "Flix GTFS carries no fare_attributes/fare_rules/fare_products (confirmed against the archive)"
+              },
+              "germany gtfs.de": {
+                "usable": false,
+                "note": "schedules only, no fare files"
+              },
+              "netherlands OVapi": {
+                "usable": false,
+                "note": "schedules only, no fare files"
+              },
+              "sweden Trafiklab": {
+                "usable": false,
+                "note": "schedules only, no fare files"
+              },
+              "norway Entur": {
+                "usable": false,
+                "note": "schedules only, no fare files"
+              },
+              "nordic_ferries": {
+                "usable": false,
+                "note": "operator index + SL regional GTFS, no fares; Ferryhopper sampling not collected (commercial terms unconfirmed)"
+              },
+              "ryanair_archive": {
+                "usable": false,
+                "note": "LCC scraper code repos, flights anyway: out of scope for ground"
+              }
+            },
+            "cells": {
+              "ES.train": {
+                "raw_rows": 38753060,
+                "priced_rows": 29593009,
+                "od_day_minima": 11244,
+                "pairs": 62,
+                "date_range": [
+                  "2019-04-12",
+                  "2020-12-05"
+                ],
+                "unmatched_cities": {},
+                "pairs_fit": 62,
+                "median_abs_resid_eur": 3.06
+              }
+            },
+            "rejects": []
+          }
+        },
+        "countries": {
+          "ES": {
+            "train": {
+              "base_eur": 3.03,
+              "per_km_eur": 0.064,
+              "n": 11244
+            }
+          }
+        }
+      },
+      "unit": "EUR base and per km per country and mode",
+      "kind": "measured",
+      "source": "data/derived/ground_fare_calibration.json (src/estimation/ground_calibration.py, generated 2026-08-05T21:23:23+00:00); loaded since T691, before only by a verify script",
+      "date": "2026-10-24",
+      "review": "2027-01-24",
+      "test": "tests/priceConfig.test.mjs"
+    },
+    "ground.plane_reach_km": {
+      "value": 200,
+      "unit": "km",
+      "kind": "estimate",
+      "source": "Carta radius for airport-anchored places (runtime_pricing.js)",
+      "date": "2026-09-14",
+      "review": "2027-04-24",
+      "test": "tests/priceGolden.test.mjs"
+    },
+    "flights.max_age_days": {
+      "value": {
+        "near": 3,
+        "far": 8,
+        "far_after_days": 14
+      },
+      "unit": "days",
+      "kind": "sourced",
+      "source": "The sweep checks dates within 14 days every other day and later ones weekly (workers/flight-sweep/src/plan.mjs); a far fare may be 8 days old (T692). Before, 3 days for every date",
+      "date": "2026-10-24",
+      "review": "2027-04-24",
+      "test": "tests/flights.test.mjs"
+    },
+    "flights.nearest_day_spread": {
+      "value": 4,
+      "unit": "days",
+      "kind": "sourced",
+      "source": "The sweep cadence: a wanted day is never more than 4 days from a checked one (flights.js)",
+      "date": "2026-10-21",
+      "review": "2027-04-24",
+      "test": "tests/priceGolden.test.mjs"
+    },
+    "flights.bag_fees": {
+      "value": {
+        "airlines": {
+          "FR": {
+            "cabin": 20,
+            "checked": 35,
+            "source": "ryanair.com fees page",
+            "read": "2026-10-21"
+          },
+          "W6": {
+            "cabin": 25,
+            "checked": 35,
+            "source": "wizzair.com services and fees",
+            "read": "2026-10-21"
+          },
+          "U2": {
+            "cabin": 15,
+            "checked": 30,
+            "source": "easyjet.com baggage",
+            "read": "2026-10-21"
+          },
+          "VY": {
+            "cabin": 18,
+            "checked": 25,
+            "source": "vueling.com luggage",
+            "read": "2026-10-21"
+          },
+          "V7": {
+            "cabin": 15,
+            "checked": 25,
+            "source": "volotea.com baggage",
+            "read": "2026-10-21"
+          },
+          "HV": {
+            "cabin": 15,
+            "checked": 30,
+            "source": "transavia.com baggage",
+            "read": "2026-10-21"
+          },
+          "TO": {
+            "cabin": 15,
+            "checked": 30,
+            "source": "transavia.com baggage",
+            "read": "2026-10-21"
+          },
+          "DY": {
+            "cabin": 15,
+            "checked": 30,
+            "source": "norwegian.com baggage",
+            "read": "2026-10-21"
+          },
+          "EW": {
+            "cabin": 15,
+            "checked": 30,
+            "source": "eurowings.com baggage",
+            "read": "2026-10-21"
+          },
+          "BT": {
+            "cabin": 15,
+            "checked": 30,
+            "source": "airbaltic.com baggage",
+            "read": "2026-10-21"
+          },
+          "PC": {
+            "cabin": 0,
+            "checked": 25,
+            "source": "flypgs.com baggage",
+            "read": "2026-10-21"
+          },
+          "LS": {
+            "cabin": 0,
+            "checked": 40,
+            "source": "jet2.com baggage",
+            "read": "2026-10-21"
+          },
+          "XQ": {
+            "cabin": 0,
+            "checked": 30,
+            "source": "sunexpress.com baggage",
+            "read": "2026-10-21"
+          },
+          "4U": {
+            "cabin": 0,
+            "checked": 30,
+            "source": "eurowings.com baggage",
+            "read": "2026-10-21"
+          }
+        },
+        "full_service_checked": 35
+      },
+      "unit": "EUR per person per direction",
+      "kind": "sourced",
+      "source": "Airline fee pages, read 2026-10-21 (bagFees.js, T517); recalibrate in F7",
+      "date": "2026-10-21",
+      "review": "2027-01-21",
+      "test": "tests/flights.test.mjs"
+    },
+    "stays.model": {
+      "value": {
+        "max_age_days": 400,
+        "near_km": 30,
+        "outlier": 2.5,
+        "curve_min": 0.5,
+        "curve_max": 2.2,
+        "star_step": 1.08,
+        "star_default": {
+          "2": 0.72,
+          "3": 0.92,
+          "4": 1.25,
+          "5": 2.1
+        },
+        "season_damp": 0.35,
+        "home_cap_ratios": {
+          "2": 0.8,
+          "4": 1,
+          "6": 1.35,
+          "8": 1.7
+        },
+        "airbnb_home_ratio": 1.15,
+        "airbnb_room_ratio": 0.95,
+        "hw_private_unit": "person",
+        "hw_private_guests": 2,
+        "pli_default": 100,
+        "pli_proxy": {
+          "GB": "IE",
+          "FO": "DK",
+          "AD": "ES",
+          "LI": "CH",
+          "MC": "FR",
+          "SM": "IT",
+          "MD": "RO"
+        }
+      },
+      "unit": "days, km, ratios",
+      "kind": "estimate",
+      "source": "pipeline/stays/build_stays.py (T530 to T536, T643); most are estimates to calibrate in F7",
+      "date": "2026-10-22",
+      "review": "2026-12-31",
+      "test": "pipeline/stays/tests/test_stays.py"
+    },
+    "car.fuel_by_country": {
+      "value": {
+        "BE": 1.85,
+        "NL": 2.3,
+        "FR": 2.06,
+        "DE": 1.96,
+        "LU": 1.7,
+        "IE": 1.84,
+        "ES": 1.55,
+        "PT": 1.94,
+        "IT": 1.95,
+        "AT": 1.74,
+        "DK": 2.39,
+        "SE": 1.61,
+        "FI": 2.2,
+        "PL": 1.42,
+        "CZ": 1.72,
+        "SK": 1.74,
+        "HU": 1.69,
+        "SI": 1.72,
+        "HR": 1.7,
+        "RO": 1.84,
+        "BG": 1.53,
+        "GR": 2.06,
+        "EE": 1.81,
+        "LV": 1.88,
+        "LT": 1.79,
+        "MT": 1.34,
+        "CY": 1.61,
+        "GB": 1.74,
+        "CH": 2.3,
+        "NO": 1.8,
+        "IS": 1.51,
+        "TR": 1.18,
+        "AL": 0.83,
+        "RS": 1.65,
+        "ME": 1.65,
+        "MK": 1.43,
+        "BA": 1.54
+      },
+      "unit": "EUR per litre petrol",
+      "kind": "sourced",
+      "source": "car_layer.py FUEL_EUR_PER_L: EU-27 from the EC Weekly Oil Bulletin of 1 June 2026, non-EU from globalpetrolprices.com 1 June 2026 at USD x 0.862",
+      "date": "2026-07-21",
+      "review": "2026-11-24",
+      "test": "tests/priceGolden.test.mjs"
+    },
+    "car.rental_by_country": {
+      "value": {
+        "PT": 26,
+        "ES": 30,
+        "PL": 23,
+        "GR": 35,
+        "FR": 47,
+        "IT": 52,
+        "DE": 45,
+        "NL": 49,
+        "CH": 69,
+        "IS": 82,
+        "NO": 75,
+        "GB": 60,
+        "IE": 52,
+        "AT": 47,
+        "BE": 45,
+        "LU": 47,
+        "DK": 56,
+        "SE": 52,
+        "FI": 52,
+        "CZ": 33,
+        "SK": 36,
+        "HU": 33,
+        "SI": 38,
+        "HR": 33,
+        "RO": 30,
+        "BG": 28,
+        "EE": 36,
+        "LV": 36,
+        "LT": 36,
+        "AL": 28,
+        "RS": 30,
+        "ME": 33,
+        "MK": 30,
+        "BA": 30,
+        "MT": 33,
+        "CY": 33,
+        "TR": 28
+      },
+      "unit": "EUR per car per day, annual midpoint",
+      "kind": "estimate",
+      "source": "car_layer.py RENTAL_EUR_PER_DAY: economy or compact day rates, tripbudgetcalculator.com and Rick Steves 2026 midpoints at USD x 0.862",
+      "date": "2026-07-21",
+      "review": "2026-11-24",
+      "test": "tests/priceGolden.test.mjs"
+    },
+    "gate.stays": {
+      "value": {
+        "reject_max": 0.05,
+        "jump_country": 0.25,
+        "jump_dest": 0.4,
+        "coverage_drop": 0.02,
+        "min_star_props": 2,
+        "min_pairs": 2,
+        "min_curve_towns": 3,
+        "serpapi_mape_max": 0.25,
+        "serpapi_min_n": 10,
+        "explain_tolerance": 0.02
+      },
+      "unit": "shares, counts",
+      "kind": "estimate",
+      "source": "F0 (T643 to T646); B2 (owner 2026-10-23): 25% per country and tier, 40% per destination",
+      "date": "2026-10-23",
+      "review": "2027-04-24",
+      "test": "pipeline/stays/tests/test_gate.py"
+    },
+    "gate.food": {
+      "value": {
+        "jump": 0.25,
+        "tolerance": 0.02
+      },
+      "unit": "share",
+      "kind": "estimate",
+      "source": "F0 (T645) food basket gate",
+      "date": "2026-10-23",
+      "review": "2027-04-24",
+      "test": "tests/priceGolden.test.mjs"
+    },
+    "gate.routes": {
+      "value": {
+        "drop": 0.1,
+        "hub_routes": 10
+      },
+      "unit": "share, count",
+      "kind": "estimate",
+      "source": "F0 (T645) route list gate",
+      "date": "2026-10-23",
+      "review": "2027-04-24",
+      "test": "tests/priceGolden.test.mjs"
+    },
+    "gate.sweep": {
+      "value": {
+        "ceiling_base_eur": 150,
+        "ceiling_per_km_eur": 0.5,
+        "ceiling_min_eur": 250,
+        "ceiling_no_distance_eur": 1500,
+        "route_move": 0.4
+      },
+      "unit": "EUR one way, share",
+      "kind": "estimate",
+      "source": "F0 (T645) believable one-way fare in the sweep worker",
+      "date": "2026-10-23",
+      "review": "2027-04-24",
+      "test": "tests/flightSweep.test.mjs"
+    }
+  }
+}

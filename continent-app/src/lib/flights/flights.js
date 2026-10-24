@@ -18,9 +18,26 @@
  * Pure: no fetching here (flightData.js and useLiveFlights.js do that).
  */
 import { bagFee } from './bagFees.js';
+import { rule } from '../price/config.js';
 
-/** Anything older than this is ignored: a stale price reads as current. */
-export const MAX_AGE_MS = 3 * 86400000;
+const NEAREST_SPREAD = rule('flights.nearest_day_spread');
+// T691: one default bag for every flight price (config request.default_bag).
+const DEFAULT_BAG = rule('request.default_bag');
+
+/**
+ * Anything older than this is ignored: a stale price reads as current. T692
+ * (plan 6.1, config flights.max_age_days): the age follows the sweep's
+ * cadence, which checks the next two weeks every other day and later dates
+ * once a week, so a far fare may be up to 8 days old; before, 3 days for
+ * every date, and far fares dropped out most of the week.
+ */
+const AGE = rule('flights.max_age_days');
+const DAY_MS = 86400000;
+export const MAX_AGE_MS = AGE.near * DAY_MS;
+export function maxAgeMs(date, now = Date.now()) {
+  const ahead = (Date.parse(`${date}T00:00:00Z`) - now) / DAY_MS;
+  return (ahead > AGE.far_after_days ? AGE.far : AGE.near) * DAY_MS;
+}
 
 export const HOURS = Object.freeze({
   any: [0, 24],
@@ -47,7 +64,7 @@ export function sweptDay(file, dir, airport, date, now = Date.now()) {
   const v = days[date];
   if (v === null) return null;
   const leg = fromDay(date, v);
-  return leg && now - leg.checked <= MAX_AGE_MS ? leg : undefined;
+  return leg && now - leg.checked <= maxAgeMs(date, now) ? leg : undefined;
 }
 
 /** The cheapest swept flight in a month ('2026-11') or over all days: a leg or null. */
@@ -58,7 +75,7 @@ export function sweptCheapest(file, dir, airport, month = null, now = Date.now()
   for (const [date, v] of Object.entries(days)) {
     if (month && !date.startsWith(month)) continue;
     const leg = fromDay(date, v);
-    if (!leg || now - leg.checked > MAX_AGE_MS) continue;
+    if (!leg || now - leg.checked > maxAgeMs(date, now)) continue;
     if (!best || leg.price < best.price) best = leg;
   }
   return best;
@@ -92,7 +109,7 @@ export function pickLeg({ file, live, dir, airport, date, hours = 'any', now = D
  * `bagKey` for everyone with a seat.
  * party: { paying } ; returns { fare, bags, bagsKnown, total, perSeat }
  */
-export function legCost(leg, { paying = 1, bagKey = 'small' } = {}) {
+export function legCost(leg, { paying = 1, bagKey = DEFAULT_BAG } = {}) {
   if (!leg) return null;
   const seats = Math.max(1, paying);
   const bag = bagFee(leg.airline, bagKey);
@@ -157,7 +174,7 @@ export function nextMonth(month) {
  * null. The leg keeps its own date, which every screen shows beside it, so a
  * price for the 19th is never presented as the 18th's.
  */
-export function sweptNear(file, dir, airport, date, { spread = 4, now = Date.now() } = {}) {
+export function sweptNear(file, dir, airport, date, { spread = NEAREST_SPREAD, now = Date.now() } = {}) {
   if (!date) return null;
   const at = Date.parse(`${date}T00:00:00Z`);
   let best = null;
@@ -179,7 +196,7 @@ export function sweptNear(file, dir, airport, date, { spread = 4, now = Date.now
  * Returns { out, back, fare, bags, bagsKnown, total, perSeat, checked } for
  * the party, or null when either way has no flight near those days.
  */
-export function roundTripNear(file, airport, outDate, backDate, { paying = 1, bagKey = 'small', now = Date.now() } = {}) {
+export function roundTripNear(file, airport, outDate, backDate, { paying = 1, bagKey = DEFAULT_BAG, now = Date.now() } = {}) {
   if (!file || !airport || airport === file.from) return null;
   const out = sweptNear(file, 'out', airport, outDate, { now });
   const back = sweptNear(file, 'back', airport, backDate, { now });

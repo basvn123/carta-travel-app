@@ -61,6 +61,9 @@ function linesOf(row, req) {
     { key: 'car', status: st('car', 'not_included'), eur: null, quality: 'missing', basis: { chosen: car }, provenance: null },
     // F9: activities are optional and off by default.
     { key: 'activities', status: st('activities', 'optional'), eur: null, quality: 'missing', basis: null, provenance: null },
+    // T695: events (festivals, concerts) have no price data yet; the line is
+    // the placeholder the opened price shows (owner, 2026-10-24).
+    { key: 'events', status: st('events', 'optional'), eur: null, quality: 'missing', basis: null, provenance: null },
   ];
 }
 

@@ -115,3 +115,9 @@ export function mergeStayFiles(files) {
   for (const f of files) Object.assign(out, f?.dests || {});
   return out;
 }
+
+/** Goes up whenever a country's stays file is merged in; caches of figures
+ *  that read the month curves key on it (lib/costIndex.js, T692). */
+export function staysDataVersion() {
+  return version;
+}

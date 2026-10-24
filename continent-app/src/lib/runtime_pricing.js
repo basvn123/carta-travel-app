@@ -17,6 +17,7 @@ import { round2 } from './math.js';
 import { buildAviasalesLink } from './affiliate.js';
 import { bedPrice, tiersAt, STAY_TIERS as STAY_TIER_LIST } from './stayPrice.js';
 import { roundTripNear } from './flights/flights.js';
+import { rule } from './price/config.js';
 
 // Nights between two ISO date strings (return must be >= depart).
 export function tripDaysBetween(departDate, returnDate) {
@@ -30,42 +31,24 @@ export function tripDaysBetween(departDate, returnDate) {
 // `cadence` ('week' | 'day') is how the user reads/edits the frequencies: the six
 // per-period counts below are interpreted per-week or per-day accordingly. Coffees
 // are always per-day. Defaults are expressed in the weekly cadence.
-export const DEFAULT_LIFESTYLE = {
-  cadence: 'week',
-  dinners_per_week: 5,
-  lunches_per_week: 4,
-  fastfood_per_week: 2,
-  drinks_per_week: 7,
-  club_nights_per_week: 1,
-  coffees_per_day: 0,
-  self_catered_days_per_week: 2,
-};
+// T692: config/pricing.json lifestyle.default, the Easygoing preset with one
+// coffee a day (owner decision B8, 2026-10-24; it was 0).
+export const DEFAULT_LIFESTYLE = rule('lifestyle.default');
 
-// A club night = cover charge + this many premium drinks.
-export const CLUB_DRINKS_PER_NIGHT = 3;
+// A club night = cover charge + this many premium drinks (config/pricing.json).
+export const CLUB_DRINKS_PER_NIGHT = rule('lifestyle.club_drinks_per_night');
 
 // Fallback car model if app_data.meta.car_model is missing. Mirrors car_layer.py:
 // drives the "compare car vs plane" estimate (fuel + tolls to get there) and the
 // "rent a car at the destination" estimate. See SCHEMA.md.
+// Day-rates are annual midpoints; rental_seasonality multiplies them by the
+// depart month so summer trips land near each range's top. Overridden by
+// meta.car_model. T690: config/pricing.json car.model; the country tables
+// come from the wire (meta.car_model, dest.local_transport).
 export const DEFAULT_CAR_MODEL = {
-  consumption_l_per_100km: 6.5,
-  fuel_price_eur_per_l: 1.81,
+  ...rule('car.model'),
   fuel_price_by_iso2: {},
-  road_detour_factor: 1.3,
-  toll_eur_per_100km: 2.2,
-  avg_speed_kmh: 90,
-  car_capacity: 4,
-  max_drive_km: 3500,   // reach any road-connected European destination (islands gated by road_connected)
   rental_eur_per_day_by_iso2: {},
-  rental_eur_per_day_default: 42,
-  rental_weekly_discount_pct: 15.0,
-  // Day-rates are annual midpoints; this multiplies them by the depart month so
-  // summer trips (what this app prices) land near each range's top. Mirrors the
-  // accommodation seasonality with a gentler peak. Overridden by meta.car_model.
-  rental_seasonality: {
-    1: 0.85, 2: 0.85, 3: 0.90, 4: 0.95, 5: 1.05, 6: 1.15,
-    7: 1.25, 8: 1.25, 9: 1.10, 10: 0.98, 11: 0.88, 12: 0.90,
-  },
 };
 
 // Great-circle distance in km between two lat/lon points.
@@ -148,7 +131,7 @@ export function drivingEstimate(dest, home, choices, model) {
   const straight = haversineKm(home.lat, home.lon, dc.lat, dc.lon);
   if (straight == null) return null;
   const roadKm = straight * (m.road_detour_factor || 1.3);
-  if (roadKm > (m.max_drive_km || 700)) return null;
+  if (roadKm > (m.max_drive_km || DEFAULT_CAR_MODEL.max_drive_km)) return null;
 
   const group = Math.max(1, choices.group_size || 1);
   const cars = carsForGroup(group, m.car_capacity);
@@ -338,15 +321,17 @@ export function groundSpendPerPerson(dest, nights, lifestyle) {
  * from 60 km out to PLANE_REACH_KM is resolved here, at runtime, against the
  * live catalogue, so widening the radius needs no data rebuild.
  */
-export const PLANE_REACH_KM = 200;
+export const PLANE_REACH_KM = rule('ground.plane_reach_km');
 
 // Last-leg model. Same scale the pipeline uses for its baked-in anchors, so a
 // transfer costs the same whether it was baked at build time or computed here.
-const LEG_DETOUR     = 1.3;    // straight-line km -> road km
-const LEG_EUR_PER_KM = 0.15;   // per person, one way
-const LEG_FLOOR_EUR  = 10;
-const LEG_CAP_EUR    = 60;
-const LEG_KMH        = 65;
+// config/pricing.json ground.transfer_public, the one copy (T690).
+const TRANSFER = rule('ground.transfer_public');
+const LEG_DETOUR     = TRANSFER.detour;       // straight-line km -> road km
+const LEG_EUR_PER_KM = TRANSFER.per_km_eur;   // per person, one way
+const LEG_FLOOR_EUR  = TRANSFER.floor_eur;
+const LEG_CAP_EUR    = TRANSFER.cap_eur;
+const LEG_KMH        = TRANSFER.kmh;
 
 // Built once per catalogue object, coordinates never change, so the index is
 // pure. Keyed weakly so reloading the catalogue drops the old index with it.
@@ -537,7 +522,7 @@ export function composeTrip(dest, departDate, returnDate, choices, allDests = nu
   // these dates, never a guess.
   const flightRt = route && opts?.flights
     ? roundTripNear(opts.flights, route.anchor_airport || dest.anchor_airport || dest.iata,
-      departDate, returnDate, { paying: groupSize, bagKey: choices.baggage_key || 'small' })
+      departDate, returnDate, { paying: groupSize, bagKey: choices.baggage_key || rule('request.default_bag') })
     : null;
   const flightTotal = flightRt ? flightRt.total : 0;
 

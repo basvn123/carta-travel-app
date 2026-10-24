@@ -35,6 +35,7 @@ import { BaseClimate, LakeWater } from './WaterSheet.jsx';
 import { notYet } from '../components/NotYet.jsx';
 
 import { LakeSignature } from './Signature.jsx';
+import { useDayView } from '../hooks/useDayView.js';
 
 /**
  * The lake page: one published water body, and the argument for going there.
@@ -112,6 +113,7 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
   const highlights = useMemo(() => (lake ? lakeHighlights(lake, t) : []), [lake, t]);
   const photos = useMemo(() => toPhotos(images, { fallbackCaption: lake?.name || '' }), [images, lake?.name]);
   const baseDay = useBaseDay(lake?.base?.id || null);
+  const view = useDayView();   // T694: per person or the group's total
   const { onPdf, pdfBusy } = useItemPdf('lake', lake, { countryName });
 
   if (!lake) return null;
@@ -375,8 +377,8 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
       costLine={baseDay && lake.base ? (
         <>
           {t('item.dayIn', { city: lake.base.city })}{' '}
-          <strong><Money value={baseDay.dayEur} est={baseDay.est} /></strong>{' '}
-          {t('dest.priceDayUnit')}
+          <strong><Money value={view.day(baseDay.dayEur)} est={baseDay.est} /></strong>{' '}
+          {view.unit}
         </>
       ) : null}
       actions={[

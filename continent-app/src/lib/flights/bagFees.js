@@ -13,33 +13,21 @@
  *
  * Owner review: register row T517-a.
  */
+import { rule } from '../price/config.js';
 
 // [cabin 10 kg trolley, checked 20 to 23 kg], EUR per person per direction.
 // 0 = included in the cheapest fare.
-const READ = '2026-10-21';
-export const BAG_FEES = Object.freeze({
-  FR: { cabin: 20, checked: 35, source: 'ryanair.com fees page', read: READ },
-  W6: { cabin: 25, checked: 35, source: 'wizzair.com services and fees', read: READ },
-  U2: { cabin: 15, checked: 30, source: 'easyjet.com baggage', read: READ },
-  VY: { cabin: 18, checked: 25, source: 'vueling.com luggage', read: READ },
-  V7: { cabin: 15, checked: 25, source: 'volotea.com baggage', read: READ },
-  HV: { cabin: 15, checked: 30, source: 'transavia.com baggage', read: READ },
-  TO: { cabin: 15, checked: 30, source: 'transavia.com baggage', read: READ },
-  DY: { cabin: 15, checked: 30, source: 'norwegian.com baggage', read: READ },
-  EW: { cabin: 15, checked: 30, source: 'eurowings.com baggage', read: READ },
-  BT: { cabin: 15, checked: 30, source: 'airbaltic.com baggage', read: READ },
-  PC: { cabin: 0, checked: 25, source: 'flypgs.com baggage', read: READ },
-  LS: { cabin: 0, checked: 40, source: 'jet2.com baggage', read: READ },
-  XQ: { cabin: 0, checked: 30, source: 'sunexpress.com baggage', read: READ },
-  '4U': { cabin: 0, checked: 30, source: 'eurowings.com baggage', read: READ },
-});
+// T690: the table (with each airline's source and read date) lives in
+// config/pricing.json flights.bag_fees.
+const BAGS = rule('flights.bag_fees');
+export const BAG_FEES = Object.freeze(BAGS.airlines);
 
 // Full-service airlines: the cabin bag comes with the lightest economy fare.
 const FULL_SERVICE = new Set([
   'SN', 'KL', 'AF', 'LH', 'BA', 'IB', 'AZ', 'OS', 'LX', 'TP', 'SK', 'AY', 'A3', 'LO', 'OK',
   'JU', 'OU', 'TK', 'EI', 'UX', 'I2', 'EN', 'WK', 'FB', 'RO', 'JP', 'KM', 'CY', 'FI', 'OA',
 ]);
-const FULL_SERVICE_CHECKED = 35;
+const FULL_SERVICE_CHECKED = BAGS.full_service_checked;
 
 /** The app's baggage keys (meta.baggage_options and the planner) to a tier. */
 export function bagTier(key) {

@@ -72,6 +72,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from pipeline_io import atomic_write_json  # noqa: E402
+from pricing_config import rule  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 INPUTS = ROOT / "cache" / "food_price_inputs.json"
@@ -88,7 +89,8 @@ VERSION = "carta_food_v2"
 # may move at most FOOD_JUMP against what the target holds now, unless the move
 # is listed in pipeline/stays/gate_explain.json as {"key": "food:CC", "new": ...}.
 # Moves to config/pricing.json in F3.
-FOOD_JUMP = 0.25
+FOOD_JUMP = rule("gate.food")["jump"]            # T693: config/pricing.json gate.food
+FOOD_TOLERANCE = rule("gate.food")["tolerance"]
 EXPLAIN = ROOT / "pipeline" / "stays" / "gate_explain.json"
 ITEMS = ("meal_mid_eur", "meal_cheap_eur", "fastfood_eur", "drink_out_eur",
          "cocktail_eur", "coffee_eur", "grocery_day_eur", "club_entry_eur")
@@ -588,7 +590,7 @@ def food_gate(dests, out, explain=()):
     for cc in sorted(old_by):
         o, n = statistics.median(old_by[cc]), statistics.median(new_by[cc])
         mv = n / o - 1
-        ok = any(e.get("key") == f"food:{cc}" and abs((e.get("new") or 0) - n) <= 0.02 * n
+        ok = any(e.get("key") == f"food:{cc}" and abs((e.get("new") or 0) - n) <= FOOD_TOLERANCE * n
                  for e in explain)
         if abs(mv) > FOOD_JUMP and not ok:
             fails.append(f"food {cc}: basket {o:.1f} -> {n:.1f} ({mv:+.0%})")

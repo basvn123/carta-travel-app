@@ -51,27 +51,39 @@ from common import (BED_TYPES, CONTRACT_COLUMNS, HOME_CAPS, JOURNAL_SCRAPE, OUT,
                     read_json, write_json)
 from booking.page import per_ok  # noqa: E402
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from pricing_config import int_keys, rule  # noqa: E402
+
+# T693: the model and gate numbers come from continent-app/config/pricing.json
+# (stays.model, gate.stays), the file the app reads too.
+_MODEL = rule("stays.model")
+_GATE = rule("gate.stays")
+
 V = OUT / "v1"
-MAX_AGE_DAYS = 400
-NEAR_KM = 30
+MAX_AGE_DAYS = _MODEL["max_age_days"]
+NEAR_KM = _MODEL["near_km"]
 PEAKS = {"aug15": (8, 14), "xmas": (12, 28)}
-PLI_PROXY = {"GB": "IE", "FO": "DK", "AD": "ES", "LI": "CH", "MC": "FR",
-             "SM": "IT", "MD": "RO"}
+PLI_PROXY = _MODEL["pli_proxy"]
+PLI_DEFAULT = _MODEL["pli_default"]
 # Last-resort star ratios to the town's hotel level, used only when no country
 # in Europe has measured both (never expected after the first runs).
-STAR_DEFAULT = {2: 0.72, 3: 0.92, 4: 1.25, 5: 2.1}
+STAR_DEFAULT = int_keys(_MODEL["star_default"])
 SEASONAL_CHECK = ["PMI", "JTR", "DBV", "EDI"]
 # One OTA rate can be a typo or a suite: a price this far from the property's
 # own median is dropped, and a month can move a price at most this far.
-OUTLIER = 2.5
-CURVE_MIN, CURVE_MAX = 0.5, 2.2
+OUTLIER = _MODEL["outlier"]
+CURVE_MIN, CURVE_MAX = _MODEL["curve_min"], _MODEL["curve_max"]
 # Star classes never come out cheaper than the class below (the T536 first
 # build had Vienna's 4-star under its 3-star from 26 classed hotels).
-STAR_STEP = 1.08
+STAR_STEP = _MODEL["star_step"]
 # A country's season curve needs this many measured towns behind it; with
 # fewer, one city's calendar (Barcelona's trade fairs) would become the
 # country's, so the country's own Eurostat tourism season stands in.
-MIN_CURVE_TOWNS = 3
+MIN_CURVE_TOWNS = _GATE["min_curve_towns"]
+SEASON_DAMP = _MODEL["season_damp"]
+HOME_CAP_RATIOS = int_keys(_MODEL["home_cap_ratios"])
+AIRBNB_HOME_RATIO = _MODEL["airbnb_home_ratio"]
+AIRBNB_ROOM_RATIO = _MODEL["airbnb_room_ratio"]
 # Observation contract (T643). A row journalled before the contract columns
 # existed takes its source's known behaviour, and counts as legacy:
 #   booking      selected_currency=EUR is in every search URL; 12 cards sampled
@@ -89,9 +101,9 @@ LEGACY = {"booking": {"currency": "EUR", "tax_included": 1, "from_or_discount": 
 # private / dorm bed median 1.14 for 2 guests, so per person; the 2-guest and
 # 1-guest list prices were the same (median ratio 1.0), so the list ignores the
 # guest count. Without a verdict a private row with no unit is rejected.
-HW_PRIVATE_UNIT = "person"
+HW_PRIVATE_UNIT = _MODEL["hw_private_unit"]
 # A per-person private price is for one of two sharing the room.
-HW_PRIVATE_GUESTS = 2
+HW_PRIVATE_GUESTS = _MODEL["hw_private_guests"]
 # Rows that may not set a hotel level (T644): a price that says it is without
 # taxes, or a "from" or discounted price, would put the level under what a
 # traveller pays. Excluded, not adjusted: Booking already adds a "+€X taxes"
@@ -100,14 +112,15 @@ HW_PRIVATE_GUESTS = 2
 # in. Moves to config/pricing.json in F3.
 HOTEL_LEVEL_EXCLUDES = {"tax_included": 0, "from_or_discount": 1}
 # Weekend and peak factors need this many same-property pairs.
-MIN_PAIRS = 2
-# The publish gate (T645, owner decision B2). Moves to config/pricing.json in F3.
-REJECT_MAX = 0.05                  # contract rejections per source
-JUMP_COUNTRY = 0.25                # country x bed tier median move
-JUMP_DEST = 0.40                   # one destination's bed tier move
-COVERAGE_DROP = 0.02               # measured + nearby destinations per bed tier
-MIN_STAR_PROPS = 2                 # hotels behind a measured star class
-SERPAPI_MAPE_MAX, SERPAPI_MIN_N = 0.25, 10
+MIN_PAIRS = _GATE["min_pairs"]
+# The publish gate (T645, owner decision B2), in config/pricing.json gate.stays.
+REJECT_MAX = _GATE["reject_max"]              # contract rejections per source
+JUMP_COUNTRY = _GATE["jump_country"]          # country x bed tier median move
+JUMP_DEST = _GATE["jump_dest"]                # one destination's bed tier move
+COVERAGE_DROP = _GATE["coverage_drop"]        # measured + nearby destinations per bed tier
+MIN_STAR_PROPS = _GATE["min_star_props"]      # hotels behind a measured star class
+SERPAPI_MAPE_MAX, SERPAPI_MIN_N = _GATE["serpapi_mape_max"], _GATE["serpapi_min_n"]
+EXPLAIN_TOLERANCE = _GATE["explain_tolerance"]
 # The fixed test set (plan F0/F1): three named, plus one city, beach and mountain.
 TEST_SET = {"gem:como": "Lake Como", "gem:kotor": "Kotor", "BGO": "Bergen",
             "OPO": "Porto (city)", "gem:lagos-pt": "Lagos (beach)",
@@ -373,7 +386,7 @@ def build(dests, obs, iab, supply, euro):
                 if c:
                     cc_curve[cc][k][i].append(c)
             lvl_by[(cc, k)][size_bucket(d["pop"])].append(v["level"])
-            lvl_by[("EU", k)][size_bucket(d["pop"])].append(v["level"] / (pli.get(cc, 100) / 100))
+            lvl_by[("EU", k)][size_bucket(d["pop"])].append(v["level"] / (pli.get(cc, PLI_DEFAULT) / 100))
         if "hotel_all" in m:
             for s in (2, 3, 4, 5):
                 if f"hotel{s}" in m and m[f"hotel{s}"]["n"] >= 2:
@@ -388,7 +401,7 @@ def build(dests, obs, iab, supply, euro):
             bnb_ratio[cc]["room"].append(ia["room"] / m["private"]["level"])
         if h4:
             lvl_by[(cc, "iab_home")][size_bucket(d["pop"])].append(h4)
-            lvl_by[("EU", "iab_home")][size_bucket(d["pop"])].append(h4 / (pli.get(cc, 100) / 100))
+            lvl_by[("EU", "iab_home")][size_bucket(d["pop"])].append(h4 / (pli.get(cc, PLI_DEFAULT) / 100))
             for c in HOME_CAPS:
                 v = (ia.get("home") or {}).get(str(c))
                 if v:
@@ -398,9 +411,9 @@ def build(dests, obs, iab, supply, euro):
                 for cc, kk in cc_curve.items()}
     ratio = lambda table, cc, k, default: (median(table[cc][k]) if table[cc][k] else  # noqa: E731
                                           median(table["EU"][k]) if table["EU"][k] else default)
-    caps = {c: (median(v) if v else {2: 0.8, 4: 1.0, 6: 1.35, 8: 1.7}[c]) for c, v in cap_ratio.items()}
+    caps = {c: (median(v) if v else HOME_CAP_RATIOS[c]) for c, v in cap_ratio.items()}
     for c in HOME_CAPS:
-        caps.setdefault(c, {2: 0.8, 4: 1.0, 6: 1.35, 8: 1.7}[c])
+        caps.setdefault(c, HOME_CAP_RATIOS[c])
 
     # Europe's season, the mean of the countries Eurostat covers: the last
     # fallback for a country it does not (the UK, Bosnia).
@@ -409,7 +422,7 @@ def build(dests, obs, iab, supply, euro):
 
     def nights_curve(cc):
         n = nights.get(cc) or eu_nights
-        return [round(x ** 0.35, 3) for x in n] if n else None
+        return [round(x ** SEASON_DAMP, 3) for x in n] if n else None
 
     # Pass 2: every bed type for every destination.
     records = {}
@@ -462,7 +475,7 @@ def build(dests, obs, iab, supply, euro):
             eu = lvl_by.get(("EU", k)) or {}
             vals = eu.get(sb) or [x for v in eu.values() for x in v]
             if vals:
-                p = pli.get(cc) or pli.get(PLI_PROXY.get(cc, ""), 100)
+                p = pli.get(cc) or pli.get(PLI_PROXY.get(cc, ""), PLI_DEFAULT)
                 return median(vals) * p / 100, {"q": "modelled", "eu": True}
             return None, None
 
@@ -516,7 +529,7 @@ def build(dests, obs, iab, supply, euro):
             src = {"q": "measured", "n": ia.get("n"), "iab": ia.get("snapshot")}
         else:
             if "apt" in m:
-                base4 = m["apt"]["level"] * ratio(bnb_ratio, cc, "home", 1.15)
+                base4 = m["apt"]["level"] * ratio(bnb_ratio, cc, "home", AIRBNB_HOME_RATIO)
                 src = {"q": "measured", "n": m["apt"]["n"], "via": "apartments"}
             else:
                 base4, src = ladder("iab_home")
@@ -529,7 +542,7 @@ def build(dests, obs, iab, supply, euro):
         if room:
             rsrc = {"q": "measured", "n": ia.get("n"), "iab": ia.get("snapshot")}
         elif "private" in rec["beds"]:
-            room = rec["beds"]["private"] * ratio(bnb_ratio, cc, "room", 0.95)
+            room = rec["beds"]["private"] * ratio(bnb_ratio, cc, "room", AIRBNB_ROOM_RATIO)
             rsrc = dict(rec["src"]["private"], via="private")
         if room:
             rec["beds"]["bnb_room"] = round(room)
@@ -606,7 +619,7 @@ def load_prev():
 def explained(explain, key, new):
     """A move passes when the explain file names it: same key, same new value (2%)."""
     return any(e.get("key") == key and e.get("new") is not None
-               and abs(e["new"] - new) <= 0.02 * max(abs(new), 1) for e in explain)
+               and abs(e["new"] - new) <= EXPLAIN_TOLERANCE * max(abs(new), 1) for e in explain)
 
 
 def move(old, new):

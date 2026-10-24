@@ -55,6 +55,7 @@ import { useBaseDay } from '../hooks/useBaseDay.js';
 import { useItemPdf } from '../hooks/useItemPdf.js';
 import { installMapGestures } from '../lib/mapGestures.js';
 import { MapShell } from './MapShell.jsx';
+import { useDayView } from '../hooks/useDayView.js';
 
 /**
  * The trail page: a published hike or city day as a page of its own, opened
@@ -343,6 +344,7 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
   }, [tr, detail, assoc.dest, lang]);
   const rating = trailRating(detail || tr);
   const baseDay = useBaseDay(assoc.destId || null);
+  const view = useDayView();   // T694: per person or the group's total
   const { onPdf, pdfBusy } = useItemPdf('trail', tr, { detail, place, assoc });
 
   const { fix, err: fixErr } = useLiveFix(follow);
@@ -1015,8 +1017,8 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
       costLine={!follow && baseDay && assoc.dest?.city ? (
         <>
           {t('item.dayIn', { city: assoc.dest.city })}{' '}
-          <strong><Money value={baseDay.dayEur} est={baseDay.est} /></strong>{' '}
-          {t('dest.priceDayUnit')}
+          <strong><Money value={view.day(baseDay.dayEur)} est={baseDay.est} /></strong>{' '}
+          {view.unit}
         </>
       ) : null}
       actions={follow ? [] : [

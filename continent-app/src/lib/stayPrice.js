@@ -37,6 +37,7 @@
 
 import { stayRecord } from './staysData.js';
 import { liveStay } from './liveStays.js';
+import { rule } from './price/config.js';
 
 export const STAY_TIERS = ['dorm', 'private', 'room', 'home', 'hotel2', 'hotel3', 'hotel4', 'hotel5'];
 
@@ -47,16 +48,16 @@ const WIRE = { dorm: 'dorm', private: 'private', room: 'bnb_room', home: 'bnb_ho
   hotel2: 'hotel2', hotel3: 'hotel3', hotel4: 'hotel4', hotel5: 'hotel5' };
 
 // Airbnb's own charges on top of the nightly price; the pipeline ships the
-// same numbers as meta.stays.fees, which win when present.
-export const DEFAULT_FEES = {
-  service_fee_pct: 14,
-  cleaning_fee_frac_of_night: 0.5,
-  weekly_discount_pct: 8,
-  min_nights_for_weekly: 7,
-};
+// same numbers as meta.stays.fees, which win when present. T690: every rule
+// below is read from config/pricing.json (lib/price/config.js).
+export const DEFAULT_FEES = rule('stay.fees');
 
-const HOME_CAPS = [2, 4, 6, 8];
-const LIVE_DAMP = 0.6;
+const HOME_CAPS = rule('stay.home_caps');
+const LIVE = rule('stay.live');
+const PEAKS = rule('stay.peaks');
+const PEOPLE_PER_ROOM = rule('stay.people_per_room');
+const DORM_CHILD = rule('stay.dorm_child_weight');
+const WEEKEND = rule('stay.weekend_nights');
 
 export function normaliseTier(t) {
   const k = ALIAS[t] || t;
@@ -114,15 +115,17 @@ function easterSunday(y) {
 const DAY = 86400000;
 
 /** Which peak week a night falls in, if any: 'xmas' | 'easter' | 'aug15'. */
+const monthDay = (d) => `${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
+// A window may run over the new year (23 Dec to 1 Jan).
+const inWindow = (md, w) => (w.from <= w.to ? md >= w.from && md <= w.to : md >= w.from || md <= w.to);
+
 export function peakOf(ms) {
   const d = new Date(ms);
-  const m = d.getUTCMonth() + 1, day = d.getUTCDate();
-  if ((m === 12 && day >= 23) || (m === 1 && day <= 1)) return 'xmas';
-  if (m === 8 && day >= 12 && day <= 17) return 'aug15';
-  if (m === 3 || m === 4) {
-    const e = easterSunday(d.getUTCFullYear());
-    if (ms >= e - 3 * DAY && ms <= e + DAY) return 'easter';
-  }
+  const md = monthDay(d);
+  if (inWindow(md, PEAKS.xmas)) return 'xmas';
+  if (inWindow(md, PEAKS.aug15)) return 'aug15';
+  const e = easterSunday(d.getUTCFullYear());
+  if (ms >= e - PEAKS.easter.days_before * DAY && ms <= e + PEAKS.easter.days_after * DAY) return 'easter';
   return null;
 }
 
@@ -157,7 +160,7 @@ function nightFor(dest, rec, tier, people, ms, month) {
     const curve = rec?.month?.[key];
     base = m && curve?.[m - 1] ? curve[m - 1] : annual;
     if (tier === 'dorm') { units = people; unit = 'bed'; } else {
-      units = Math.ceil(people / 2);
+      units = Math.ceil(people / PEOPLE_PER_ROOM);
       unit = 'room';
       // One traveller in a hotel books a single room where it was measured.
       if (people === 1 && tier.startsWith('hotel') && rec?.single?.hotel) {
@@ -169,7 +172,7 @@ function nightFor(dest, rec, tier, people, ms, month) {
   let rate = base;
   if (ms != null) {
     const wd = new Date(ms).getUTCDay();
-    if ((wd === 5 || wd === 6) && rec?.weekend > 1) rate *= rec.weekend;
+    if (WEEKEND.includes(wd) && rec?.weekend > 1) rate *= rec.weekend;
     const pk = peakOf(ms);
     if (pk && rec?.peak?.[pk] > 1) rate *= rec.peak[pk];
   }
@@ -207,7 +210,7 @@ export function bedPrice({ dest, tier, adults = 2, children = 0, nights = 1, sta
   const rec = stayRecord(dest.id);
   const heads = Math.max(1, (adults || 0) + (children || 0));
   // Rooms are shared by whoever is travelling; a dorm bed is per sleeper.
-  const people = t === 'dorm' ? Math.max(1, (adults || 0) + Math.ceil((children || 0) / 2)) : heads;
+  const people = t === 'dorm' ? Math.max(1, (adults || 0) + Math.ceil((children || 0) * DORM_CHILD)) : heads;
   const n = Math.max(0, Math.round(nights || 0));
   const f = { ...DEFAULT_FEES, ...(fees || {}) };
   const startMs = parseDay(start);
@@ -229,9 +232,9 @@ export function bedPrice({ dest, tier, adults = 2, children = 0, nights = 1, sta
     ? liveStay(dest.id, t, new Date(startMs).toISOString().slice(0, 10), n, people) : null;
   const seasonAvg = seasonSum / count;
   const ratio = live && seasonAvg > 0 ? live.factor / seasonAvg : null;
-  const useLive = ratio != null && ratio >= 0.4 && ratio <= 3;
+  const useLive = ratio != null && ratio >= LIVE.ratio_min && ratio <= LIVE.ratio_max;
   if (useLive) {
-    lodging *= ratio ** LIVE_DAMP;
+    lodging *= ratio ** LIVE.damp;
     avgNight = lodging / n;
   }
 

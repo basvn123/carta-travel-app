@@ -16,6 +16,9 @@ import { transportProfile, legRailQuality, RAIL_SCORE_BONUS, landmassOf } from '
 import { buildOmioLink } from './omio.js';
 import { resolveGroundFare } from './groundFares.js';
 import { isNum } from '../map/coords.js';
+import { rule } from './price/config.js';
+
+const CAR = rule('car.model');   // T691: the one car model's fallbacks
 
 const DETOUR = 1.3;             // road km vs straight-line (matches car_layer.py)
 // Rail follows its own alignment, not the road network: dividing ROAD km
@@ -62,8 +65,8 @@ function carHours(roadKm) {
 function carCosts(destA, destB, roadKm, group, carModel) {
   const cm = carModel || {};
   const fuelByIso = cm.fuel_price_by_iso2 || {};
-  const petrolA = fuelByIso[destA.iso2] ?? cm.fuel_price_eur_per_l ?? 1.8;
-  const petrolB = fuelByIso[destB.iso2] ?? cm.fuel_price_eur_per_l ?? 1.8;
+  const petrolA = fuelByIso[destA.iso2] ?? cm.fuel_price_eur_per_l ?? CAR.fuel_price_eur_per_l;
+  const petrolB = fuelByIso[destB.iso2] ?? cm.fuel_price_eur_per_l ?? CAR.fuel_price_eur_per_l;
   const petrol = (petrolA + petrolB) / 2;
   const lPer100 = cm.consumption_l_per_100km ?? 6.5;
   const cars = Math.max(1, Math.ceil(group / Math.max(1, cm.car_capacity || 4)));
@@ -433,7 +436,7 @@ const TRANSFER = {
  *  Returns `{ road_km, modes: { public?, taxi?, rental? }, recommended,
  *  estimated }`. */
 export function transferModesFromKm(roadKm, groupSize = 1, {
-  petrol = 1.8, consumption = 6.5, capacity = 4, hasRental = false,
+  petrol = CAR.fuel_price_eur_per_l, consumption = CAR.consumption_l_per_100km, capacity = CAR.car_capacity, hasRental = false,
   transitPoor = false, publicOverride = null,
 } = {}) {
   const group = Math.max(1, groupSize || 1);
@@ -508,7 +511,7 @@ export function airportTransferOptions(fromDest, toDest, groupSize = 1, { carMod
   const roadKm = straightKm * DETOUR;
   const cm = carModel || {};
   const fuelByIso = cm.fuel_price_by_iso2 || {};
-  const petrol = fuelByIso[toDest.iso2] ?? cm.fuel_price_eur_per_l ?? 1.8;
+  const petrol = fuelByIso[toDest.iso2] ?? cm.fuel_price_eur_per_l ?? CAR.fuel_price_eur_per_l;
   // If EITHER end has no real rail/bus, don't pretend a public transfer exists.
   const transitPoor = (fromDest.local_transport || {}).transit_quality === 'poor'
     || (toDest.local_transport || {}).transit_quality === 'poor';
@@ -569,7 +572,7 @@ export function carAdvice(dests, groupSize = 1, countryInsights = null) {
 export function rentalEstimate(carModel, iso2, days, startDate, groupSize = 1) {
   if (!carModel || !days || days <= 0) return null;
   const byIso = carModel.rental_eur_per_day_by_iso2 || {};
-  let rate = byIso[iso2] ?? carModel.rental_eur_per_day_default ?? 40;
+  let rate = byIso[iso2] ?? carModel.rental_eur_per_day_default ?? CAR.rental_eur_per_day_default;
   const month = startDate ? Number(startDate.slice(5, 7)) : null;
   const season = month ? (carModel.rental_seasonality?.[String(month)] ?? 1) : 1;
   rate *= season;

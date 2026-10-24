@@ -546,6 +546,10 @@ function TravelApp() {
     // costed from the departure airport (see needsDriveHome).
     drive_home: init.drive_home ?? null,
     lifestyle: { ...DEFAULT_LIFESTYLE, ...(init.lifestyle || {}) },
+    // T694: every price per person ('pp') or for the whole group ('total').
+    price_view: init.price_view === 'total' ? 'total' : 'pp',
+    // T695: the items switched off in the opened price (lib/price PRICE_ITEMS).
+    price_excluded: Array.isArray(init.price_excluded) ? init.price_excluded : [],
   });
 
   // Shortlist (favorites) + list controls, also persisted in the URL.
@@ -1408,6 +1412,12 @@ function TravelApp() {
   const setTransportMode = useCallback((mode) => {
     setChoices((prev) => ({ ...prev, transport_mode: mode }));
   }, []);
+  const setPriceView = useCallback((view) => {
+    setChoices((prev) => ({ ...prev, price_view: view === 'total' ? 'total' : 'pp' }));
+  }, []);
+  const setPriceExcluded = useCallback((list) => {
+    setChoices((prev) => ({ ...prev, price_excluded: Array.isArray(list) ? list : [] }));
+  }, []);
   // T649: the one reader of the traveller's "when" (lib/when.js); travelMonth
   // is its start month, `when` the whole answer (exact, month or any). T663:
   // the Explore month filter takes part, as it does in the price request.
@@ -1438,6 +1448,10 @@ function TravelApp() {
     setPartyParts,
     transportMode: choices.transport_mode || 'any',
     setTransportMode,
+    priceView: choices.price_view || 'pp',
+    setPriceView,
+    priceExcluded: choices.price_excluded || [],
+    setPriceExcluded,
     // T581: Explore's countries, in or out.
     countryFilter, setCountryFilter, countryNot, setCountryNot,
     availableCountries,
@@ -1446,7 +1460,7 @@ function TravelApp() {
     openLifestyle,
   }), [data, choices.origin, setOrigin, choices.drive_home, setFrom, departDate, returnDate, defaultDates, dateBounds,
     ownDates, dateFlex, travelMonth, when, request, exploreMonth, choices.group_size, choices.children, choices.babies, setParty, setPartyParts,
-    choices.transport_mode, setTransportMode, countryFilter, setCountryFilter, countryNot, setCountryNot,
+    choices.transport_mode, setTransportMode, choices.price_view, setPriceView, choices.price_excluded, setPriceExcluded, countryFilter, setCountryFilter, countryNot, setCountryNot,
     availableCountries, choices.stay_tier, choices.lifestyle, openLifestyle]);
 
   // Which parts of the settings line each tab shows. Explore and Destinations

@@ -142,7 +142,6 @@ export function AskTripCard({ t, lang, pick, month = null, trip, primary, onOpen
                 : t('askChat.trip.stayNone')}
             {cost.foodEur != null && <>, {t('askChat.trip.food')} <Money value={cost.foodEur} est /> {t('askChat.trip.aDay')}</>}
           </span>
-          {liveBed != null && <span className="ac-trip-live">{t('stay.live')}</span>}
         </div>
       </div>
 

@@ -17,6 +17,9 @@
  * whitelisted and clamped on decode: a tampered link can at worst open a
  * harmless trip, never inject markup or oversized state.
  */
+import { rule } from './price/config.js';
+
+const LIMITS = rule('party.limits');   // T691: one cap for every screen
 
 const PARAM = 'trip';
 
@@ -156,9 +159,9 @@ function sanitizeShared(d) {
     ownLegs,
     ownStays,
     ownFlight,
-    groupSize: clampInt(d.groupSize, 1, 20, 2),
-    children: clampInt(d.children, 0, 19, 0),
-    babies: clampInt(d.babies, 0, 19, 0),
+    groupSize: clampInt(d.groupSize, 1, LIMITS.max_seats, LIMITS.default_seats),
+    children: clampInt(d.children, 0, LIMITS.max_seats - 1, 0),
+    babies: clampInt(d.babies, 0, LIMITS.max_babies, 0),
     transportPref: oneOf(d.transportPref, ['auto', 'car', 'owncar', 'public'], 'auto'),
     pace: oneOf(d.pace, ['relaxed', 'balanced', 'packed'], 'balanced'),
     baggage: oneOf(d.baggage, ['cabin', 'priority', 'checked'], 'cabin'),

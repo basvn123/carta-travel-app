@@ -12,6 +12,9 @@ import {
   CheckIcon, CalendarIcon, PersonIcon, TicketIcon, CloseIcon,
 } from '../components/Icons.jsx';
 import { formatSteps, kmToSteps } from '../lib/steps.js';
+import { rule } from '../lib/price/config.js';
+
+const MAX_SEATS = rule('party.limits').max_seats;   // T691: one cap
 
 const STYLE_ICONS = {
   classic: CastleIcon, culture: MuseumIcon, active: TreeIcon,
@@ -84,7 +87,7 @@ export function AiDayPlanModal({
   useEffect(() => {
     if (date && date < today) setDate(laterISO(date, today));
   }, [date, today]);
-  const [people, setPeople] = useState(Math.max(1, Math.min(20, groupSize || 2)));
+  const [people, setPeople] = useState(Math.max(1, Math.min(MAX_SEATS, groupSize || 2)));
   const [wantEvents, setWantEvents] = useState(false);
   const [phase, setPhase] = useState('form'); // form | busy | done | fail
   const [result, setResult] = useState(null);  // the current proposal
@@ -199,7 +202,7 @@ export function AiDayPlanModal({
                 <span className="trip-people ai-plan-people">
                   <button type="button" onClick={() => setPeople((n) => Math.max(1, n - 1))} aria-label={t('ai.fewerPeople')}>-</button>
                   <span>{people}</span>
-                  <button type="button" onClick={() => setPeople((n) => Math.min(20, n + 1))} aria-label={t('ai.morePeople')}>+</button>
+                  <button type="button" onClick={() => setPeople((n) => Math.min(MAX_SEATS, n + 1))} aria-label={t('ai.morePeople')}>+</button>
                 </span>
               </label>
             </div>

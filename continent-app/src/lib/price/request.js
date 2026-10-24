@@ -23,12 +23,13 @@
 import { DEFAULT_LIFESTYLE, tripDaysBetween } from '../runtime_pricing.js';
 import { resolveWhen } from '../when.js';
 import { partyOf } from '../party.js';
+import { rule } from './config.js';
 
 /** The stay a price assumes when the traveller has set no dates (B5). */
-export const DEFAULT_NIGHTS = 7;
+export const DEFAULT_NIGHTS = rule('request.default_nights');
 
 /** The items a price can hold, in the order a breakdown lists them. */
-export const PRICE_ITEMS = ['bed', 'food', 'transport', 'car', 'activities', 'flight'];
+export const PRICE_ITEMS = ['bed', 'food', 'transport', 'car', 'activities', 'events', 'flight'];
 
 const ANY_WHEN = Object.freeze({ kind: 'any', month: null, months: Object.freeze([]), start: null, end: null, ym: null });
 
@@ -47,7 +48,7 @@ export const DEFAULT_PRICE_REQUEST = Object.freeze({
   transport: 'any',
   origin: null,
   driveHome: null,
-  baggage: 'priority_10kg',
+  baggage: rule('request.default_bag'),
   view: 'pp',
   excluded: Object.freeze([]),
   activities: Object.freeze([]),
@@ -99,8 +100,9 @@ export function priceRequest(s = {}) {
     origin: c.origin ?? null,
     driveHome: c.drive_home ?? null,
     baggage: c.baggage_key || DEFAULT_PRICE_REQUEST.baggage,
-    view: s.view || DEFAULT_PRICE_REQUEST.view,
-    excluded: s.excluded || DEFAULT_PRICE_REQUEST.excluded,
+    view: (c.price_view || s.view) === 'total' ? 'total' : DEFAULT_PRICE_REQUEST.view,
+    // T695: items the traveller switched off in the opened price.
+    excluded: (c.price_excluded || s.excluded || DEFAULT_PRICE_REQUEST.excluded).filter((k) => PRICE_ITEMS.includes(k)),
   };
 }
 

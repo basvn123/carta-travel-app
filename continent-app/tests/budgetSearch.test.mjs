@@ -171,7 +171,9 @@ test("results sort in season first, then the Score, and just-over is summed", ()
   assert.deepEqual(r.fits.map((x) => x.id), ["mid", "cheap", "dear"], "dear is out of season in October");
   const dear = priceForBudget(DEAR, normalizeQuery({ budget: 1, adults: 2, days: 5, month: 10 }, TODAY));
   const tightBudget = dear.total - 1;
-  const near = budgetSearch([DEAR], { budget: Math.floor(dear.total / 1.1), adults: 2, days: 5, month: 10 }, {}, TODAY);
+  // A euro under the trip without its buffer: just over, never tight (T692:
+  // the old budget, the total over 1.1 rounded down, sat on the tight edge).
+  const near = budgetSearch([DEAR], { budget: Math.floor(dear.core) - 1, adults: 2, days: 5, month: 10 }, {}, TODAY);
   assert.equal(near.over.count, 1);
   assert.ok(near.over.more >= dear.total - near.query.budget && near.over.more % 50 === 0);
   assert.equal(budgetSearch([DEAR], { budget: tightBudget, adults: 2, days: 5, month: 10 }, {}, TODAY).tight.length, 1);

@@ -713,7 +713,6 @@ export function TripItinerary({
                         <div className="itin-bed">
                           <dl className="costrows itin-bed-cost">
                             <CostRow kind="bed" label={t('plan.lineBeds')} tone={sc.ownAccom ? 'yours' : null}
-                              sub={!sc.ownAccom && sc.accom?.q === 'live' ? t('stay.live') : null}
                               value={sc.ownAccom
                                 ? <span className="plan-line-yours"><Money value={sc.accomTotal} precision="cents" /><small>{t('plan.yours')}</small></span>
                                 : <Money value={sc.accomTotal} est precision="cents" />} />

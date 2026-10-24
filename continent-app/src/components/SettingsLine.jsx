@@ -16,6 +16,7 @@ import { CountriesPanel, countriesValue } from './CountriesControl.jsx';
 import { partyText } from '../lib/party.js';
 import { nextMode, TRAVEL_MODES } from '../lib/travelWay.js';
 import '../styles/77-settings-v2.css';
+import { rule } from '../lib/price/config.js';
 
 /**
  * The settings line (T381; carta-design "Settings line", DIRECTION.md rule
@@ -74,8 +75,8 @@ const ANY_WHEN = { kind: 'any', month: null, months: [] };
 
 export const SETTINGS_PARTS = ['origin', 'dates', 'party', 'lifestyle', 'countries', 'way'];
 const MAX_NIGHTS = 30;
-const MAX_PARTY = 12; // the party ceiling the old first-run receipt set
-const MAX_BABIES = 4;
+// T691: one cap for every screen (config/pricing.json party.limits).
+const { max_seats: MAX_PARTY, max_babies: MAX_BABIES } = rule('party.limits');
 
 export const WAY_ICONS = { any: MapPinIcon, plane: PlaneIcon, train: TrainIcon, bus: BusIcon, car: CarIcon };
 
@@ -347,6 +348,25 @@ function PartyControl({ s }) {
           />
         </div>
       ))}
+      {s.setPriceView && (
+        // T694 (plan rule 4, owner 2026-10-24): every price in the app per
+        // person or for the whole group; filters and sorting follow.
+        <div className="party-row party-view">
+          <span className="party-row-text">
+            <span className="party-row-label" id="party-view-label">{t('party.view')}</span>
+          </span>
+          <Segmented
+            label={t('party.view')}
+            size="sm"
+            value={s.priceView === 'total' ? 'total' : 'pp'}
+            onChange={s.setPriceView}
+            options={[
+              { value: 'pp', label: t('party.viewPp') },
+              { value: 'total', label: t('party.viewTotal') },
+            ]}
+          />
+        </div>
+      )}
     </div>
   );
 }

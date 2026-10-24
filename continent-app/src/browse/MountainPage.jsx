@@ -36,6 +36,7 @@ import { InfoDot } from '../components/InfoDot.jsx';
 import { numberSentence } from '../lib/numberSentences.js';
 import { PeakFacts } from './PeakFacts.jsx';
 import { notYet } from '../components/NotYet.jsx';
+import { useDayView } from '../hooks/useDayView.js';
 
 /**
  * The mountain page: one published summit, and the argument for going there.
@@ -163,6 +164,7 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
   const highlights = useMemo(() => (mountain ? mountainHighlights(mountain, t) : []), [mountain, t]);
   const photos = useMemo(() => toPhotos(images, { fallbackCaption: mountain?.name || '' }), [images, mountain?.name]);
   const baseDay = useBaseDay(mountain?.near?.dest_id || null);
+  const view = useDayView();   // T694: per person or the group's total
   const { onPdf, pdfBusy } = useItemPdf('mountain', mountain, { countryName });
 
   if (!mountain) return null;
@@ -432,8 +434,8 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
       costLine={baseDay && mountain.near?.city ? (
         <>
           {t('item.dayIn', { city: mountain.near.city })}{' '}
-          <strong><Money value={baseDay.dayEur} est={baseDay.est} /></strong>{' '}
-          {t('dest.priceDayUnit')}
+          <strong><Money value={view.day(baseDay.dayEur)} est={baseDay.est} /></strong>{' '}
+          {view.unit}
         </>
       ) : null}
       actions={[

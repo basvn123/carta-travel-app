@@ -4,6 +4,8 @@ import { PlaneIcon } from './TransportIcons.jsx';
 import { Money } from './ui/Money.jsx';
 import { isNational } from './CostSummary.jsx';
 import { formatApprox, formatMoney } from '../lib/money.js';
+import { useDayView } from '../hooks/useDayView.js';
+import { PriceItems } from './PriceItems.jsx';
 import '../styles/79-place-card.css';
 
 /**
@@ -52,7 +54,11 @@ function wayOf(cost) {
 }
 
 export function PriceParts({ cost, t, variant = 'inline', showTotal = true, className = '', figRef = null }) {
-  const way = wayOf(cost);
+  // T694: every figure in the traveller's view (per person, or the group's
+  // total for the stay: the parts and the total times the same factor).
+  const view = useDayView();
+  // T695: a way there the traveller switched off leaves the card too.
+  const way = view.request.excluded?.includes('flight') ? null : wayOf(cost);
   const day = cost && Number.isFinite(cost.dayEur);
   if (!day && !way) return null;
   const stack = variant === 'stack';
@@ -63,35 +69,38 @@ export function PriceParts({ cost, t, variant = 'inline', showTotal = true, clas
   if (way) {
     const Icon = WAY_ICON[way.mode];
     const plane = way.mode === 'plane';
-    const fig = plane ? formatMoney(way.perPerson) : formatApprox(way.perPerson);
+    const fig = plane ? formatMoney(view.way(way.perPerson)) : formatApprox(view.way(way.perPerson));
     const spoken = plane
       ? t('card.flightSpoken', { price: fig })
-      : t('card.waySpoken', { mode: t(`way.${way.mode}`), price: say(way.perPerson, true) });
-    parts.push({ key: 'way', Icon, fig, spoken, unit: t('card.unitReturn') });
+      : t('card.waySpoken', { mode: t(`way.${way.mode}`), price: say(view.way(way.perPerson), true) });
+    parts.push({ key: 'way', Icon, fig, spoken, unit: view.total ? t('price.unitReturnGroup') : t('card.unitReturn') });
   }
   if (Number.isFinite(cost?.stayEur)) {
     const est = cost.stayLevel !== 'city';
     parts.push({
       key: 'bed', Icon: BedIcon,
-      fig: est ? formatApprox(cost.stayEur) : formatMoney(cost.stayEur),
-      spoken: t('card.bedSpoken', { price: say(cost.stayEur, est) }),
-      unit: t('card.unitNight'),
+      fig: formatMoney(view.day(cost.stayEur)),
+      spoken: t('card.bedSpoken', { price: say(view.day(cost.stayEur), est) }),
+      unit: view.total ? t('price.unitStay') : t('card.unitNight'),
     });
   }
   if (Number.isFinite(cost?.foodEur)) {
     const est = cost.foodLevel !== 'city';
     parts.push({
       key: 'food', Icon: DiningIcon,
-      fig: est ? formatApprox(cost.foodEur) : formatMoney(cost.foodEur),
-      spoken: t('card.foodSpoken', { price: say(cost.foodEur, est) }),
-      unit: t('card.unitDay'),
+      fig: formatMoney(view.day(cost.foodEur)),
+      spoken: t('card.foodSpoken', { price: say(view.day(cost.foodEur), est) }),
+      unit: view.total ? t('price.unitStay') : t('card.unitDay'),
     });
   }
 
   const total = day && showTotal ? (
     <span className="pparts-total" ref={figRef}>
-      <Money value={cost.dayEur} est={isNational(cost)} />
-      <span className="pparts-unit"> {t('dest.priceDayUnit')}</span>
+      {/* T695: a tap on the amount opens the items in it, with switches. */}
+      <PriceItems cost={cost} way={wayOf(cost)}>
+        <Money value={view.day(cost.dayEur)} est={isNational(cost)} />
+      </PriceItems>
+      <span className="pparts-unit"> {view.unit}</span>
     </span>
   ) : null;
 
