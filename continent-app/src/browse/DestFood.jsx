@@ -1,7 +1,8 @@
 import React from 'react';
 import '../styles/74-dest-food.css';
 import { useFirstRun } from '../lib/firstRunContext.js';
-import { groundSpendPerPerson, DEFAULT_LIFESTYLE } from '../lib/runtime_pricing.js';
+import { DEFAULT_LIFESTYLE } from '../lib/runtime_pricing.js';
+import { foodBreakdown, DEFAULT_PRICE_REQUEST } from '../lib/price/index.js';
 import { ReceiptLine, ReceiptSum, useSettleChanged } from '../components/ReceiptCard.jsx';
 import { Button, Money } from '../components/ui/index.js';
 import { ChevronRightIcon, DiningIcon } from '../components/Icons.jsx';
@@ -42,19 +43,23 @@ export function DestFood({ t, city, destination, isOpen, toggle, onOpenLifestyle
   const ctx = useFirstRun();
   const costs = destination?.costs;
   const lifestyle = ctx?.choices?.lifestyle || DEFAULT_LIFESTYLE;
+  // T664 (F2): the engine's food line item by item, at the request's
+  // lifestyle and the party's child share, so the fold and the day figure
+  // price the same seat.
+  const request = ctx?.priceRequest || DEFAULT_PRICE_REQUEST;
   const costRow = ctx?.indices?.get?.(destination?.id) || null;
   // Food only: the bed's level is the price card's business, not this fold's.
   const est = (costRow?.foodLevel ?? costs?.level) !== 'city';
 
   const day = React.useMemo(() => {
-    const g = costs ? groundSpendPerPerson(destination, 1, lifestyle) : null;
+    const g = costs ? foodBreakdown(destination, request, 1) : null;
     if (!g) return null;
     const lines = LINES
       .map((l, i) => ({ ...l, ramp: RAMP[i], eur: round2(l.parts.reduce((s, k) => s + (g[k] || 0), 0)) }))
       .filter((l) => l.eur > 0);
     // The sum is the sum of the rounded lines, so the receipt adds up on screen.
     return { lines, total: round2(lines.reduce((s, l) => s + l.eur, 0)) };
-  }, [costs, destination, lifestyle]);
+  }, [costs, destination, request]);
 
   const linesRef = React.useRef(null);
   useSettleChanged(linesRef, day ? `${day.lines.map((l) => `${l.key}:${l.eur}`).join('|')}|${day.total}` : '');

@@ -632,13 +632,15 @@ Every euro the traveller reads goes through one formatter, `src/lib/money.js` (`
 - **Whole euros in comparison contexts:** cards, pins, lists, rails, filters and chips, where many places are compared at once ("€87"). This is the one owner-approved rounding.
 - **Cents on receipts and totals:** receipts, totals, ledgers, pass prices and exports (`precision="cents"`, "€87.40"). A rounded figure on a receipt is a defect.
 - **Locale placement:** the reader's language decides where the symbol goes and how digits group ("€1,268" in English, "1.268 €" in German). It defaults to the app language.
-- **Estimates:** written `~€87 est.`: the tilde joined to the figure, then the estimate word from i18n (`money.est`: "est." in English, French and Spanish, "gesch." in Dutch and German, "stim." in Italian). Never "~ €87", never "est. €87", never one mark without the other. The estimate word sits at 0.85em, 500 weight, in `--text-3`.
+- **Estimates:** written like any figure, `€87` (owner, 2026-10-24, price plan rule 2; before, `~€87`). Whether a figure is measured, live or estimated is stored by the price engine and shown only in the admin Prices view. `<Money est>` and `formatEst()` stay for their callers and draw the plain figure.
 - **Per unit (T474):** one phrase per unit and one order when two apply: "a person a day" ("per persoon per dag", "pro Person und Tag", "par personne et par jour", "por persona y día", "a persona al giorno"), "a person" for a person's share (never "each"), "a day", "a night", "a car". The unit is its own i18n phrase or part of the template, never a suffix glued to a figure.
 - **Ranges:** the language's own range word between two formatted figures ("€40 to €60"; "tot", "bis", "à", "a", "a" in Dutch, German, French, Spanish and Italian). No dash between figures.
 - **Missing values:** words, never a blank, a dash or "€NaN": `<Money>` prints `money.onRequest` ("Price on request") in `--text-3` at 500.
 - **Fields with no data yet (T630 to T632, owner decision 2026-10-23):** on the Explore detail sheets (trail, cycle route, peak, lake, beach, and the destination sheet's Around, When to go and Practical tabs and its export section) every field of the explore-completeness spec keeps its slot. A slot without a value shows the one shared placeholder, `components/NotYet.jsx` (`data.notYet` "Not available yet" in a cell, `data.notYetLine` in a section), in `--ink-soft` (`.not-yet` in `src/styles/45-empty-states.css`). For these fields this overrides "a missing fact is left out" and "Say less". No new token.
 - **No euro sign in i18n:** strings never carry a euro sign; a template takes a formatted figure (`{price}`, `{eur}`) from the formatter. Per person is one phrase per language (`money.perPerson`).
-- **Typesetting:** `.money` is tabular and never wraps between the tilde, the figure and the word.
+- **Typesetting:** `.money` is tabular and never wraps inside the figure.
+- **The opened price (T695):** the amount on a card and on the destination header is a button (`.pitems-trigger`, a dotted `--border` underline, `--focus` ring) that opens the InfoDot popover with the items in the price, each a kit Switch with its amount; an item without data shows `NotYet`, with no switch. Styles in `86-price-items.css`.
+- **Per person or the whole group (T694):** a Segmented control under People in the settings line; every day figure, pin, filter stop and chip shows the same factor.
 - **Not for:** `toFixed` on a price, a euro literal in a template, string concatenation of a symbol.
 
 ### Navigation
@@ -733,7 +735,7 @@ These are owner decisions about specific surfaces. They still hold; where a valu
 - **Do** show selection as `--select-bg` with `--select-ink` and a mark: a tick on a chip, an underline on a tab, a lifted thumb on a segment.
 - **Do** put a caption under a photograph, never on it (the home page's solid pill labels and its hero film's words under one tint are the exceptions, see Motion).
 - **Do** give every control a 44 px (`--tap`) target on touch and the 2 px `--focus` ring on `:focus-visible`.
-- **Do** print every euro through `formatMoney()` or `<Money>`: whole euros where places are compared, cents on receipts and totals, `~€87 est.` for an estimate.
+- **Do** print every euro through `formatMoney()` or `<Money>`: whole euros where places are compared, cents on receipts and totals, an estimate like any figure.
 - **Do** declare elevation once: a `--border` at rest, or an `--elev-*` shadow on what floats.
 - **Do** take every duration and easing from the motion tokens and give every transition a reduced-motion branch.
 

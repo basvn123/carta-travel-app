@@ -141,7 +141,7 @@ export function ReceiptCard({
       slot: l.key,
       label: l.label,
       weight: l.eur,
-      figure: `${l.est ? '~' : ''}${eurExact(l.eur)}`,
+      figure: eurExact(l.eur),
     }))
     : [];
   return (

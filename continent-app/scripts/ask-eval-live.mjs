@@ -20,7 +20,7 @@ import { buildPack, wirePack } from "../src/lib/ask/context.js";
 import { verifyAnswer, cleanModelText } from "../src/lib/ask/verify.js";
 import { makeRetriever } from "../src/lib/ask/retrieve.js";
 import { makeLabels } from "../src/lib/guidedSearch.js";
-import { computeCosts } from "../src/lib/costIndex.js";
+import { priceDays, DEFAULT_PRICE_REQUEST } from "../src/lib/price/index.js";
 import { onRequestGet } from "../functions/api/ask.js";
 import MiniSearch from "minisearch";
 import { ASK_BM25_OPTIONS } from "../functions/_lib/askTerms.js";
@@ -33,7 +33,7 @@ const pub = (p) => new URL(`../public/${p}`, import.meta.url);
 const J = (p) => JSON.parse(readFileSync(pub(p), "utf8"));
 
 const data = J("app_data.json");
-const costs = computeCosts(data.destinations, {});
+const costs = priceDays(data.destinations, DEFAULT_PRICE_REQUEST);
 const rows = Object.values(data.destinations).map((d) => ({ ...d, cost: costs.get(d.id) }));
 const byId = new Map(rows.map((p) => [p.id, p]));
 const guided = J("search/guided.json");

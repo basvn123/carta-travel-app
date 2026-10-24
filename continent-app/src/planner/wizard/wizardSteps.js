@@ -8,7 +8,7 @@
  * Your stays in place of Where and the city picker; travel and beds booked
  * drops Getting there.
  */
-import { formatEst, formatMoney } from '../../lib/money.js';
+import { formatMoney } from '../../lib/money.js';
 
 /** The step after Where, by how the trip is being built. */
 export const STEP3 = { stays: 'Stays', ready: 'Trips', custom: 'Stay' };
@@ -62,12 +62,10 @@ export function restoreStep(draft = {}) {
 export function dayCostText(cost, t, locale) {
   if (!cost || !Number.isFinite(cost.min)) return null;
   const opts = { precision: 'whole', locale };
+  // Price plan rule 2 (owner 2026-10-24): an estimate reads like any figure,
+  // on screen and to a screen reader; cost.national stays in the data.
   const plain = formatMoney(cost.min, opts);
-  if (!cost.national) return { visible: plain, spoken: plain };
-  return {
-    visible: formatEst(cost.min, t('money.est'), opts),
-    spoken: t('money.estSpoken', { price: plain }),
-  };
+  return { visible: plain, spoken: plain };
 }
 
 /** The night count as one translated phrase: "1 night", "7 nights". */

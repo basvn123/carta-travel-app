@@ -21,6 +21,8 @@ import {
 } from './runtime_pricing.js';
 import { preferredPublicMode } from './transport.js';
 import { round2 } from './math.js';
+import { rule } from './price/config.js';
+import { resolveGroundFare } from './groundFares.js';
 
 
 /** The round flight's airports for flying into `destA` and out of `destB`,
@@ -144,10 +146,12 @@ export function flightReasonLabel(reason) {
   return FLIGHT_REASON_LABELS[reason] || 'Add your fare in the Trip planner.';
 }
 
-const GROUND_DETOUR_FACTOR = 1.3;   // road km vs straight-line km (mirrors car_layer.py / apply_airport_anchors.py)
-const GROUND_EUR_PER_KM = 0.15;     // rough European train/bus fare per road km
-const GROUND_FLOOR_EUR = 10;        // no realistic intercity fare is cheaper than this
-const GROUND_KMH = 65;              // average effective speed including stops/transfers
+// T691: the fare comes from the one ground-fare model (groundFares.js: the
+// country network priors and the shipped calibration, config/pricing.json),
+// the cheaper of train and bus; before, a flat 0.15 a road km with a EUR 10
+// floor that no other screen used. The time model stays here.
+const GROUND_DETOUR_FACTOR = rule('ground.overland_floors').detour;   // road km vs straight-line km
+const GROUND_KMH = rule('ground.transfer_public').kmh;               // average effective speed including stops/transfers
 const GROUND_LONG_HAUL_KM = 800;    // beyond this, ground transport stops being a realistic recommendation
 
 /** Estimated cost/time to get from `destA` to `destB` overland (train/bus/
@@ -174,7 +178,11 @@ export function interCityGroundEstimate(destA, destB, groupSize = 1) {
   if (straightKm == null) return null;
   const roadKm = straightKm * GROUND_DETOUR_FACTOR;
   const group = Math.max(1, groupSize || 1);
-  const perPerson = Math.max(GROUND_FLOOR_EUR, GROUND_EUR_PER_KM * roadKm);
+  const fares = ['train', 'bus']
+    .map((mode) => resolveGroundFare({ mode, isoA: destA.iso2, isoB: destB.iso2, km: roadKm }))
+    .filter((f) => f && f.eur > 0);
+  if (!fares.length) return null;
+  const perPerson = Math.min(...fares.map((f) => f.eur));
   const minutes = Math.round((roadKm / GROUND_KMH) * 60);
 
   return {

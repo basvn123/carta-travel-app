@@ -10,6 +10,7 @@ import { DateField } from '../components/DateField.jsx';
 import { Button, Chip, IconButton, Card, Money } from '../components/ui/index.js';
 import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { tripDaysBetween, haversineKm, cityCoords, withCityCoords } from '../lib/runtime_pricing.js';
+import { priceDay, atDates } from '../lib/price/index.js';
 import { legTransportOptions } from '../lib/transport.js';
 import { cityLabel, cityKeyName } from '../lib/placeName.js';
 import { fetchDestPoiMap } from '../lib/appData.js';
@@ -208,6 +209,9 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   // T433: Explore's cost map (App computes it once) for the day's one
   // per-person figure, and the Lifestyle panel that moves it.
   costs = null, onOpenLifestyle = null,
+  // T666: the app's one price request (lib/price/); a stop's day is priced
+  // at the stop's own dates with it.
+  priceRequest = null,
   // T501: what the trip around a day costs (priceTrip at the traveller's
   // Lifestyle and stay tier) and the party a standalone day is priced for.
   stayTier = 'home', lifestyle = null, groupSize = 1,
@@ -744,6 +748,14 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   })), [plan, destinations]);
 
   const stop = stops[stopIdx] || null;
+  // T666 (F2): what a day at a stop costs one person, at the stop's own
+  // dates (arrival to departure, exact) and the traveller's other choices,
+  // through the engine; without dates or a request, the app's map row.
+  const stopCost = useCallback((s) => {
+    if (!s) return null;
+    if (!priceRequest || !s.dest || !s.arrive_date || !s.depart_date) return costs?.get(s.destination_id) || null;
+    return priceDay(s.dest, atDates(priceRequest, s.arrive_date, s.depart_date), destinations);
+  }, [priceRequest, costs, destinations]);
   const days = useMemo(() => {
     if (!stop) return [];
     return Array.from({ length: stop.nights }, (_, i) => addDays(stop.arrive_date, i));
@@ -2133,7 +2145,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
       stepFree: !!prefs?.stepFree,
       groupSize: prefs?.groupSize || aiGroupSize(),
       dayFig: (id) => {
-        const c = costs?.get(id);
+        const c = stopCost(stops.find((s) => s.destination_id === id)) || costs?.get(id);
         return c && c.dayEur != null ? { eur: c.dayEur, est: c.stayLevel !== 'city' || c.foodLevel !== 'city' } : null;
       },
       t,
@@ -3815,10 +3827,10 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     }] : []),
   ] : [];
 
-  // What a day here costs one person at the traveller's Lifestyle: the same
-  // computeCosts() figure Explore prints for the town (PRODUCT.md: a day plan
-  // carries one per-person figure).
-  const costRow = costs && stop ? costs.get(stop.destination_id) : null;
+  // What a day here costs one person at the traveller's Lifestyle: the
+  // engine's figure for the town at this stop's dates (T666; PRODUCT.md: a
+  // day plan carries one per-person figure).
+  const costRow = stop ? stopCost(stop) : null;
   // T501: plus the tickets whose price is known, a person (owner T492-d);
   // the party is the trip's inside a trip, else the traveller's own.
   const dayTickets = dayTicketTotals(assignedItems);

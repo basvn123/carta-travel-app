@@ -78,7 +78,7 @@ function TabFallback() {
   );
 }
 import { tripDaysBetween, DEFAULT_LIFESTYLE } from './lib/runtime_pricing.js';
-import { computeCosts } from './lib/costIndex.js';
+import { priceDays, priceRequest } from './lib/price/index.js';
 import { loadStaysFor, setLiveBase, useStaysVersion } from './lib/staysData.js';
 import { useLiveStaysVersion } from './lib/liveStays.js';
 import { FirstRunContext } from './lib/firstRunContext.js';
@@ -134,7 +134,7 @@ import { useKeyboardOpen } from './hooks/useKeyboardOpen.js';
 import { usePanelState } from './hooks/usePanelState.js';
 import { useFilterState } from './hooks/useFilterState.js';
 import { useReach } from './lib/reach.js';
-import { resolveWhen, whenMonth } from './lib/when.js';
+import { resolveWhen, whenMonth, xmFromSearch } from './lib/when.js';
 
 // Once someone picks "continue without an account" on the entry gate, don't
 // ask again on this device, only a fresh sign-in should bring accounts back.
@@ -526,6 +526,10 @@ function TravelApp() {
   // the month of departDate; 'any': whenever is cheapest. The dates stay set
   // either way, so every screen that needs a pair still has one.
   const [dateFlex, setDateFlex] = useState(init.dateFlex ?? null);
+  // T663 (B7): the Explore month filter (xm) is the app's "when" while it is
+  // on, so the destination page and every price follow the month the cards
+  // show. ExploreTab owns the control and reports it here.
+  const [exploreMonth, setExploreMonth] = useState(() => xmFromSearch(window.location.search));
 
   const [choices, setChoices] = useState({
     group_size: init.group_size ?? 2,   // two, stated wherever it applies (T100); data defaults no longer decide it
@@ -549,6 +553,10 @@ function TravelApp() {
     // costed from the departure airport (see needsDriveHome).
     drive_home: init.drive_home ?? null,
     lifestyle: { ...DEFAULT_LIFESTYLE, ...(init.lifestyle || {}) },
+    // T694: every price per person ('pp') or for the whole group ('total').
+    price_view: init.price_view === 'total' ? 'total' : 'pp',
+    // T695: the items switched off in the opened price (lib/price PRICE_ITEMS).
+    price_excluded: Array.isArray(init.price_excluded) ? init.price_excluded : [],
   });
 
   // Shortlist (favorites) + list controls, also persisted in the URL.
@@ -1359,9 +1367,11 @@ function TravelApp() {
   // size or a single frequency. That is 3,038 destinations repriced in about
   // 7 ms, which is why there is no loading state anywhere near it: the grid
   // simply renders the new numbers on the next frame.
-  // T534: the bed prices for the dates on screen, the traveller's own or
-  // Carta's suggested week (night by night, so a week across July and August
-  // pays both months); repriced when a country's stays arrive.
+  // T534: the bed prices night by night for the traveller's own dates (a
+  // week across July and August pays both months); repriced when a
+  // country's stays arrive. T663: every price on every screen comes from one
+  // price request (lib/price/), so Carta's suggested week reads as any time,
+  // a month as that month, and the Explore month filter wins (B5, B7, V7).
   const staysVersion = useStaysVersion();
   // T540: a live answer for the open destination's dates reprices its bed.
   const liveVersion = useLiveStaysVersion();
@@ -1370,16 +1380,15 @@ function TravelApp() {
     setLiveBase(data.meta?.stays?.url, data.meta?.stays?.built);
     loadStaysFor(data.destinations);
   }, [data]);
-  const datedStay = !!(departDate && returnDate);
+  const ownDates = !!(departDate && returnDate && defaultDates
+    && (departDate !== defaultDates.start || returnDate !== defaultDates.end));
+  const request = useMemo(
+    () => priceRequest({ choices, departDate, returnDate, dateFlex, ownDates, xm: exploreMonth }),
+    [choices, departDate, returnDate, dateFlex, ownDates, exploreMonth],
+  );
   const exploreIndices = useMemo(
-    // T578: with a month the bed is that month's; any time, the year's average.
-    () => (data && staysVersion >= 0 && liveVersion >= 0 ? computeCosts(data.destinations,
-      dateFlex === 'any' ? choices
-        : dateFlex === 'month' && departDate ? { ...choices, month: Number(departDate.slice(5, 7)) }
-          : datedStay
-            ? { ...choices, start: departDate, nights: Math.max(1, tripDaysBetween(departDate, returnDate)) }
-            : choices) : null),
-    [data, choices, staysVersion, liveVersion, datedStay, departDate, returnDate, dateFlex],
+    () => (data && staysVersion >= 0 && liveVersion >= 0 ? priceDays(data.destinations, request) : null),
+    [data, request, staysVersion, liveVersion],
   );
   // The catalogue as rows, for the country and region pages (T498), computed
   // only while one of them shows.
@@ -1389,9 +1398,9 @@ function TravelApp() {
   // given once here, so the destination page and the trip page price the
   // same trip from the same inputs without a prop chain through each tab.
   const firstRun = useMemo(() => ({
-    data, choices, setChoices, setOrigin, indices: exploreIndices,
+    data, choices, setChoices, setOrigin, indices: exploreIndices, priceRequest: request,
     departDate, returnDate, setDepartDate, setReturnDate, defaultDates, dateBounds,
-  }), [data, choices, setOrigin, exploreIndices, departDate, returnDate, defaultDates, dateBounds]);
+  }), [data, choices, setOrigin, exploreIndices, request, departDate, returnDate, defaultDates, dateBounds]);
 
   // The settings line's values (T381, components/SettingsLine.jsx): every
   // global input a price depends on, given once so any surface can show or
@@ -1412,13 +1421,18 @@ function TravelApp() {
   const setTransportMode = useCallback((mode) => {
     setChoices((prev) => ({ ...prev, transport_mode: mode }));
   }, []);
-  const ownDates = !!(departDate && returnDate && defaultDates
-    && (departDate !== defaultDates.start || returnDate !== defaultDates.end));
+  const setPriceView = useCallback((view) => {
+    setChoices((prev) => ({ ...prev, price_view: view === 'total' ? 'total' : 'pp' }));
+  }, []);
+  const setPriceExcluded = useCallback((list) => {
+    setChoices((prev) => ({ ...prev, price_excluded: Array.isArray(list) ? list : [] }));
+  }, []);
   // T649: the one reader of the traveller's "when" (lib/when.js); travelMonth
-  // is its start month, `when` the whole answer (exact, month or any).
+  // is its start month, `when` the whole answer (exact, month or any). T663:
+  // the Explore month filter takes part, as it does in the price request.
   const when = useMemo(
-    () => resolveWhen({ dateFlex, departDate, returnDate, ownDates }),
-    [dateFlex, departDate, returnDate, ownDates],
+    () => resolveWhen({ dateFlex, departDate, returnDate, ownDates, xm: exploreMonth }),
+    [dateFlex, departDate, returnDate, ownDates, exploreMonth],
   );
   const travelMonth = whenMonth(when);
   const settings = useMemo(() => ({
@@ -1434,6 +1448,8 @@ function TravelApp() {
     ownDates,
     dateFlex, setDateFlex,
     travelMonth, when,
+    // T663: the one price request, and the Explore month filter it reads.
+    priceRequest: request, exploreMonth, setExploreMonth,
     party: choices.group_size,
     children: choices.children || 0,
     babies: choices.babies || 0,
@@ -1441,6 +1457,10 @@ function TravelApp() {
     setPartyParts,
     transportMode: choices.transport_mode || 'any',
     setTransportMode,
+    priceView: choices.price_view || 'pp',
+    setPriceView,
+    priceExcluded: choices.price_excluded || [],
+    setPriceExcluded,
     // T581: Explore's countries, in or out.
     countryFilter, setCountryFilter, countryNot, setCountryNot,
     availableCountries,
@@ -1448,8 +1468,8 @@ function TravelApp() {
     lifestyle: choices.lifestyle,
     openLifestyle,
   }), [data, choices.origin, setOrigin, choices.drive_home, setFrom, departDate, returnDate, defaultDates, dateBounds,
-    ownDates, dateFlex, travelMonth, when, choices.group_size, choices.children, choices.babies, setParty, setPartyParts,
-    choices.transport_mode, setTransportMode, countryFilter, setCountryFilter, countryNot, setCountryNot,
+    ownDates, dateFlex, travelMonth, when, request, exploreMonth, choices.group_size, choices.children, choices.babies, setParty, setPartyParts,
+    choices.transport_mode, setTransportMode, choices.price_view, setPriceView, choices.price_excluded, setPriceExcluded, countryFilter, setCountryFilter, countryNot, setCountryNot,
     availableCountries, choices.stay_tier, choices.lifestyle, openLifestyle]);
 
   // Which parts of the settings line each tab shows. Explore and Destinations
@@ -1686,7 +1706,6 @@ function TravelApp() {
               selectedId={selectedId}
               onSelect={openDetail}
               indices={exploreIndices}
-              choices={choices}
               onOpenLifestyle={openLifestyle}
               onOpenGuides={openGuides}
               onOpenCountry={openCountryPage}
@@ -1848,6 +1867,7 @@ function TravelApp() {
               onOpenTrip={openTripFromDay}
               onOpenLifestyle={openLifestyle}
               costs={exploreIndices}
+              priceRequest={request}
               stayTier={choices.stay_tier || 'home'}
               lifestyle={choices.lifestyle}
               groupSize={choices.group_size || 1}

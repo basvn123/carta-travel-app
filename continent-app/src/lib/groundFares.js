@@ -35,37 +35,29 @@
  */
 import { transportProfile } from './countryTransport.js';
 import { isNum } from '../map/coords.js';
+import { rule } from './price/config.js';
 
 // Straight-line km to road km when the caller has no better distance
 // (matches transport.js DETOUR and the pipeline's car_layer.py).
-const FALLBACK_DETOUR = 1.3;
+const FLOORS = rule('ground.overland_floors');   // config/pricing.json (T690)
+const FALLBACK_DETOUR = FLOORS.detour;
 
 // Overland fare floors: a minimum fare worth ~40 km at the country's own
 // per-km rate, never under EUR 4 (train) / EUR 3 (bus). Same numbers the
 // leg estimator has always applied.
-const TRAIN_FLOOR_EUR = 4;
-const TRAIN_FLOOR_KM = 40;
-const BUS_FLOOR_EUR = 3;
+const TRAIN_FLOOR_EUR = FLOORS.train_floor_eur;
+const TRAIN_FLOOR_KM = FLOORS.train_floor_km;
+const BUS_FLOOR_EUR = FLOORS.bus_floor_eur;
 
 // Airport-transfer public fare band (bus / shuttle / airport train), formerly
 // transport.js TRANSFER: per km with a floor and a short-hop cap.
-const PUBLIC_TRANSFER = { perKm: 0.15, floor: 10, cap: 60 };
+const TRANSFER = rule('ground.transfer_public');
+const PUBLIC_TRANSFER = { perKm: TRANSFER.per_km_eur, floor: TRANSFER.floor_eur, cap: TRANSFER.cap_eur };
 
 // The two sea gaps people cross "overland-style". Train and bus are through
 // fares that include the crossing; ferry is the per-car deck price used by
 // the car mode. Same bands seaCrossingOptions has always priced.
-const SEA_BANDS = {
-  channel: {
-    train: { perKm: 0.26, floor: 59, cap: 220 },  // Eurostar advance-fare band
-    bus: { perKm: 0.085, floor: 29 },
-    ferryPerCar: 95,                              // LeShuttle / Dover-Calais deck
-  },
-  irishsea: {
-    train: { perKm: 0.12, floor: 45, cap: 120 },  // Rail & Sail through-ticket
-    bus: { perKm: 0.08, floor: 35 },
-    ferryPerCar: 130,
-  },
-};
+const SEA_BANDS = rule('ground.sea_bands');
 
 // --- Calibration artifact (contract C) -------------------------------------
 // { meta: {...}, countries: { ISO2: { train|bus|ferry: { base_eur, per_km_eur, n } } } }
@@ -74,11 +66,16 @@ const SEA_BANDS = {
 // for missing countries or modes.
 
 let CALIBRATION = null;
+// T691: the shipped calibration (config/pricing.json ground.calibration) is
+// loaded at start, so a calibrated country's train and bus fares come from
+// it and the priors stand in only where it has no cell. Before, only a verify
+// script ever installed it.
 
 /** Install (or clear, with null) the contract C calibration artifact. */
 export function setGroundFareCalibration(artifact) {
   CALIBRATION = artifact && artifact.countries ? artifact : null;
 }
+setGroundFareCalibration(rule('ground.calibration'));
 
 /** The currently loaded calibration artifact, for tests and diagnostics. */
 export function getGroundFareCalibration() {

@@ -11,10 +11,12 @@
  *   locale     the reader's language decides where the symbol goes and how
  *              digits group (€1,268 in English, 1.268 € in German). Defaults
  *              to the app language.
- *   est        an estimate is written ~€87, the tilde alone (owner decision 4,
- *              2026-10-22, T590: the estimate word left the screen):
- *              formatApprox() or formatEst() for a string, <Money est> in
- *              JSX. Never "~ €87".
+ *   est        an estimate is written like any figure (owner, 2026-10-24,
+ *              price plan rule 2: one amount and its unit, nothing else).
+ *              Whether a price is measured, live or estimated is stored with
+ *              it (lib/price/) and shown only in the internal view.
+ *              formatApprox() and formatEst() stay for their callers and
+ *              return the plain figure.
  *   missing    what a non-finite value prints. Callers that can say "price on
  *              request" in words do so; the default keeps a NaN from ever
  *              reaching the screen as "€NaN".
@@ -52,15 +54,14 @@ export function formatMoney(value, { precision = 'whole', locale, missing = '-' 
   return numberFormat(locale || activeLocale(), cents ? 2 : 0).format(cents ? value : Math.round(value));
 }
 
-/** The estimate form of a figure: "~€87". */
+/** An estimate's figure: the plain figure since the price plan's rule 2
+ *  (2026-10-24); before that "~€87". */
 export function formatApprox(value, opts) {
-  const s = formatMoney(value, opts);
-  return Number.isFinite(value) ? `~${s}` : s;
+  return formatMoney(value, opts);
 }
 
-/** The whole estimate in one string: "~€87", the same as formatApprox (T590).
- *  The second argument, the estimate word, is kept for its callers and no
- *  longer printed. */
+/** The same as formatApprox. The second argument, the estimate word, is
+ *  kept for its callers and no longer printed. */
 export function formatEst(value, estWord, opts) {
   return formatApprox(value, opts);
 }

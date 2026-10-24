@@ -937,7 +937,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T099-a | T099 | The planner's Finish step still shows its own receipt (TripPlannerTab.jsx) instead of the first-run receipt component, so the three doors in docs/FIRST_RUN_RESULT.md do not yet show the same receipt; the planner block also prices transfers and drives, so moving it is its own task | next task | open | |
 | T099-b | T099 | The trip page shows the written budget range (suitability strip cost cell, Budget and Per day facts, cheaper-trip exits) beside the priced receipt; make them read the receipt or say they are the guide's written range; the 7 of 253 trips with no catalogue town within 30 km keep only the written range | next task | open | |
 | T099-c | T099 | Hut-to-hut weeks are priced at the nearest town's beds (the Andorra High Route at Andorra la Vella's entire-place rate); decide on a hut tier or a receipt line saying the huts are not priced | user | open | |
-| T099-d | T099 | docs/FIRST_RUN_RESULT.md names the ground line Food and getting around, but the engine prices no local transport, so T099 shipped Food and drink and lists local transport under Not in this total; accept the label (and update the doc's key table) or have local transport priced | user | open | |
+| T099-d | T099 | docs/FIRST_RUN_RESULT.md names the ground line Food and getting around, but the engine prices no local transport, so T099 shipped Food and drink and lists local transport under Not in this total; accept the label (and update the doc's key table) or have local transport priced | user | closed by T698 | |
 | T099-e | T099 | After the first run the receipt's second rows show one short fact each; the design puts the full provenance behind the InfoDot glossary, which does not exist in src yet; wire it when the InfoDot lands | next task | open | |
 | T100-a | T100 | The Lifestyle slider on the trip page (JourneyPage.jsx) has no party-size control beside it, and Explore cards, the planner and the budget block were not re-checked at the new default of two people; JourneyPage is outside T100's scope | next task | open | |
 | T100-b | T100 | The party size lives only in the URL (g) and choices state, so it is not remembered across sessions the way the airport is; decide whether it should be | next task | open | |
@@ -1452,7 +1452,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T429-h | T429 | Data seen on the page: a gallery credit reads "0, CC BY 3.0" (Valbona, the author field holds 0), and the Lifestyle panel's trade-off line names the record, "Rome (Fiumicino)", not the town | next task | open |  |
 | T429-i | T429 | src/browse/ExploreMap.jsx:621 fails eslint react-hooks/exhaustive-deps (collectKpins missing); predates T429, which did not touch the file | next task | open |  |
 | T446-a | T446 | The destination price card prices Carta default 7 nights while the page may recommend half a day (Valbona) or three or four days (Rome intro); choose whether the card prices the recommended visit until dates are set | user | closed by T447 |  |
-| T446-b | T446 | The day figure is bed plus food, while PRODUCT.md describes it as bed, food and local transport; change the figure or the document | user | open |  |
+| T446-b | T446 | The day figure is bed plus food, while PRODUCT.md describes it as bed, food and local transport; change the figure or the document | user | closed by T698 |  |
 | T446-c | T446 | Day-trip drive times from the trip model are straight-line (Valbona to Theth 23 min by car); now marked est. on the page, but the pipeline should route them or drop the minutes | next task | open |  |
 | T446-d | T446 | The destination page shows the same landmarks in the gallery, Things to do and Highlights, and the map labels only some numbered pins; one numbered track tied to the map would remove the repetition | next task | open |  |
 | T446-e | T446 | Dossier intro, rhythm line and highlight kinds are English only and now hide in the other five languages; translate them in the pipeline | next task | open |  |
@@ -1807,7 +1807,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T502-g | T502 | An empty search shows two different "no match" messages at once | next task | closed by T504 |  |
 | T502-h | T502 | Some new links still write the old key ?tab=places, and ?tab=places opens the last category used rather than Places; decide whether old links always land on Places | user | open |  |
 | T502-i | T502 | 52 harnesses in scripts/verify_*.mjs still use removed selectors or old tab keys (the eight main-flow harnesses were updated) | next task | open |  |
-| T503-a | T503 | A trip card's "a person a day" divides the per-person trip total by the nights; confirm nights, or nights plus one | user | open |  |
+| T503-a | T503 | A trip card's "a person a day" divides the per-person trip total by the nights; confirm nights, or nights plus one | user | closed by T662 |  |
 | T503-b | T503 | The pass price stays in cents (6.99 and 14.99 euros, the amount charged) against the whole-euros rule 1.8; confirm the exception | user | open |  |
 | T503-c | T503 | The numbers page keeps its catalogue counts and method text as the one page where they may stand; confirm | user | open |  |
 | T503-d | T503 | The numbers page is English only; build the six language versions plus /:lang/about/numbers rewrites in public/_redirects | next task | open |  |
@@ -1823,7 +1823,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T504-e | T504 | Reloading #country=IT&region=X opens only the region: readRegionFromUrl strips the whole hash at boot before the country is read | next task | open |  |
 | T504-f | T504 | DayPrice says "a person a day" in My trips and SavedTripsPanel too; check that the longer French and German units fit their rows | next task | open |  |
 | T504-g | T504 | A typed /#country=IT link loses its hash to persistState about a second after load (urlState.js keeps only journey and dest), so Back from a region opened there closes the country too; add country and region to that rule | next task | open |  |
-| T504-h | T504 | Map pin labels and the hover tip say "a day", not "a person a day"; on German phone rail tiles "Tag" wraps onto its own line | next task | open |  |
+| T504-h | T504 | Map pin labels and the hover tip say "a day", not "a person a day"; on German phone rail tiles "Tag" wraps onto its own line | next task | closed by T694 |  |
 | T505-a | T505 | The numbers.mjs lede is typed by hand and can drift from PRODUCT.md; feed it from a file inside the app repo or check it against PRODUCT.md | next task | open |  |
 | T505-c | T505 | Next steps carta/3-waves.md still summarises the T201 sentence; update it once p0-next-steps-docs is merged | next task | open |  |
 | T505-d | T505 | Execution/P12/T202-competitive-positioning.md lacks Google Maps and ViaMichelin; a new positioning report should refer to it (closed report not edited) | next task | open |  |
@@ -2044,7 +2044,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T623-a | T623 | src/browse/ExploreMap.jsx:901 fails lint (react-hooks/exhaustive-deps: collectKpins missing from a useCallback), from T600; fix it in a task that may touch ExploreMap | next task | open |  |
 | T624-a | T624 | Booking scrapes at about 57 s per page headed, not the ~7 s T539 assumed: the lean plan is ~520 h (~115 nights of 4.5 h), not 64 h; profile where the page time goes before re-cutting the plan or the nightly hours | next task | closed by T643 |  |
 | T624-b | T624 | Hostelworld parse_card returned the same figure for dorm and private on a live Munich card (15.53/15.53), so private-room medians may be dorm prices; check live card text and fix hostelworld/page.py | next task | open |  |
-| T624-c | T624 | Both stay scrapers end the night's session on a network error (ERR_INTERNET_DISCONNECTED, 2026-10-23); add a wait-and-retry per page | next task | open |  |
+| T624-c | T624 | Both stay scrapers end the night's session on a network error (ERR_INTERNET_DISCONNECTED, 2026-10-23); add a wait-and-retry per page | next task | closed by T679 |  |
 | T624-d | T624 | No rclone R2 remote on the laptop, so stays_scrape.bat cannot upload journal_scrape.sqlite to carta-stays-state; set the five RCLONE_CONFIG_R2_* variables (T045) or run rclone config | user | open |  |
 | T630-a | T630 | Run pipeline/trails/way_tags.py --refresh then export_wire.py (trailslab DB) to fill row sac_scale, detail technique, exposure and sac_segments; SAC cards, filter and profile stay placeholders until then | next task | open | 1 |
 | T630-b | T630 | Run pipeline/cycling/export_cycling.py to publish the cycle route shape rt (only loop today) | next task | closed by T640 |  |
@@ -2129,7 +2129,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T649-b | T649 | Monthly crowd seasonality is Eurostat NUTS 2, so Alpine resorts in one region share a curve (Zermatt equals Verbier, Zermatt November 1 and December 3); a resort-level source would separate them | next task | open |  |
 | T649-c | T649 | Lake Como November reads Moderate (tier 1), not Quiet; if strongly seasonal low months should read Quiet, change the SEASON_* constants in harvest_tourism_density.py | user | open |  |
 | T649-d | T649 | The Explore month filter xm=11 and xm=12 returns no places: ExploreTab.jsx:628 keeps only places whose climate.best includes the month, and climate.best holds months 3 to 10 only | next task | open |  |
-| T649-e | T649 | The F2 price engine month helper must import src/lib/when.js, not add a second date reader | next task | open |  |
+| T649-e | T649 | The F2 price engine month helper must import src/lib/when.js, not add a second date reader | next task | closed by T662 |  |
 | T650-a | T650 | Ferry lines (osm_ferry_legs, Overpass, on the box) are needed before ferry shows in mobility.modes for Lake Como; islands without ferry data stay hard (Naxos, Hvar) | next task | open |  |
 | T650-b | T650 | Only the Trenord feed is verified, so 23 destinations have a line-based car_free grade and the rest are category-based (links T641-b) | next task | open |  |
 | T650-c | T650 | Lake Como parking_hard is false (two or more public lots within 1.5 km); the brief expected parking hard; decide whether the PARKING_HARD_MAX_SPOTS rule is the right test | user | open |  |
@@ -2160,3 +2160,34 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T675-a | T675 | Settings edits on a planned trip move the party, the start date and the flight ranking; the booked answer, where from and the guide answers change nothing on a trip already planned (offer to re-plan?) | user | open |  |
 | T676-a | T676 | Review both planner batches on a preview, then merge app p15-day-planner (holds batch 1) and root p15-day-planner and deploy; expect conflicts with PB1 and PB2 in App.jsx, DayPlannerTab.jsx, TripPlannerTab.jsx, GuidedTripWizard.jsx | user | open | 1 |
 | T676-b | T676 | On the preview, check real flight figures in compare and on a planned trip (localhost cannot load the flights file from the data host) | next task | open | 2 |
+| T661-a | T661 | The price baseline holds day prices only; add the trip prices (calculator with flight, composeTrip, priceTrip, wizard, country brief, Ask budget, saved trips) to tests/priceGolden.test.mjs before F6 moves them | next task | open | 1 |
+| T661-b | T661 | F2 also touched files outside its list in plan section 7 (DestPriceCard.jsx, useExploreCatalog.js, DestFood.jsx, scripts/og/specs.mjs, scripts/ask-eval-live.mjs, tests): each was a day-price path doc 4.3 names; confirm or move them to their phase | user | open |  |
+| T662-a | T662 | The EUR 400 a night per person ceiling repairs expensive beds with the country entire-place median (720 solo 5-star, 425 solo entire places, 142 solo 4-star, 56 under the default request); bounds and repair per stay tier in F3, then drop the V6 skip in tests/priceEngine.test.mjs | next task | closed by T692 |  |
+| T662-b | T662 | Under "any time" the flight is the year's cheapest month while the bed is the year's average; decide whether any time flies a typical month instead | user | closed by T667 |  |
+| T663-a | T663 | The default Explore card now prices the year's average (B5) instead of Carta's suggested week: median +8.5% (p10 +4.2%, p90 +20.4%) over 3,868 places; owner to see this before the deploy | user | closed by T667 |  |
+| T663-b | T663 | The flight's date mode on the Explore card and the calculator (lib/price/flight.js) is tested in node only: the flight sweep is blocked by CORS on localhost; check it on a preview deploy | next task | open |  |
+| T663-c | T663 | A traveller who picks exactly Carta's suggested week reads as "not own dates" (App compares with Carta's pair), so the price falls back to the year's average; store an explicit own-dates flag when the traveller picks | next task | open |  |
+| T663-d | T663 | The Explore card's flight leaves the bag out, the calculator adds the default bag; one default bag in F3 | next task | closed by T691 |  |
+| T665-a | T665 | scripts/og/render.mjs calls destinationSpec without the catalogue, so its own render path gets no country repair; pass the destination rows | next task | open |  |
+| T666-a | T666 | The day planner's new-plan card (homeTownId figure) still reads the app map; price it at the plan's start date once the wizard has one | next task | open |  |
+| T667-a | T667 | Owner 2026-10-24: under any time the flight is the cheapest period that passes every active filter (flight length, bag, party); today lib/price/flight.js takes the year's cheapest return and the filters drop the place afterwards | next task | open |  |
+| T667-b | T667 | Owner B11 2026-10-24: local transport gets an estimate and joins the day price; plan F8 puts it after F4, so decide whether PB2 adds the estimate or PB5 moves forward | next task | closed by T698 | 1 |
+| T689-a | T689 | The prerendered cost pages and the OG card still print source lines ("Measured in this town", "National basket"); keep them for search pages or remove them under plan rule 2 | user | open |  |
+| T689-b | T689 | Leftovers of the estimate mark: the .is-est and .ac-trip-live CSS, the glossary.estimate term and the money.est key are unused; remove them | next task | open |  |
+| T690-a | T690 | The app bundle carries the whole config/pricing.json (6.8 KB gzip), 1.8 KB of it pipeline-only (stays model, gates, car tables); split the file if size matters | next task | open |  |
+| T690-b | T690 | Rule dates of 2026-09-14 mean on or before the repository baseline; set the real dates when F7 recalibrates each rule | next task | open |  |
+| T690-c | T690 | The app applies peaks over 23 Dec to 1 Jan, 12 to 17 Aug and Easter Thursday to Monday, while the pipeline measures 28 Dec, 14 Aug and any March or April Saturday; align in F7 | next task | open |  |
+| T690-d | T690 | V13 scans top-level constants in the price modules only; inline literals in the trip-price files (tripTotal, transport, budgetSearch) come in with F6 | next task | open |  |
+| T691-a | T691 | The planner, wizard, share links and saved trips pass the bag key cabin, which prices no bag; the lap fee is added only on Explore; tripTotal weighs a child 0.5 for food against party.js 0.6: F6 | next task | open |  |
+| T691-b | T691 | The ground-fare calibration has one cell (Spain, train); extend it so calibrated fares reach more countries (F7) | next task | open |  |
+| T691-c | T691 | To merge drifted copies F3 touched files outside its list (tripTotal.js, transport.js, shareLink.js, AiDayPlanModal.jsx, SettingsLine.jsx, TripPriceCard.jsx, eslint.config.js); confirm | user | open |  |
+| T692-a | T692 | A far swept fare is now shown up to 8 days old (the sweep checks later dates weekly; plan 6.1), against PRODUCT.md's former 3 days, which T698 updated; confirm | user | open |  |
+| T692-b | T692 | 591 places carry a dorm rate over EUR 150 a night in the wire (the T645-b kind of value); 128 now borrow the dorm median, the rest fall back to an entire place; fix at source | next task | open |  |
+| T692-c | T692 | A full reprice takes about 35 ms on the laptop against 20 ms before (one median pass per request); measure on a phone | next task | open |  |
+| T692-d | T692 | A lifestyle saved or linked before B8 (no coffee) now reads Custom instead of its preset name; accept or migrate | user | open |  |
+| T694-a | T694 | Not yet in the per person or group view: rail from facts, the food fold, the day planner, My trips, Ask answers and every trip price (F6) | next task | open |  |
+| T694-b | T694 | The old priceMode and priceRange state (useFilterState, useAccountSync, useDestinationSearch) can go now that the view is pv; F6 | next task | open |  |
+| T695-a | T695 | The opened price is on Explore cards and the destination header only; add it to Places cards, pins and place pages; on a phone a small scroll closes it, as the InfoDot does | next task | open |  |
+| T695-b | T695 | The opened price and the per person or group switch were built from the kit without a design pass; they go through the owner's design batch (plan ground rule 5) | user | open |  |
+| T696-a | T696 | The admin Prices view was not opened in the browser (the admin page needs an unlock); check it on a signed-in session | next task | open |  |
+| T698-a | T698 | carta-design's Budget search (T506) section describes the removed BudgetSearch component; update or remove it | next task | open |  |

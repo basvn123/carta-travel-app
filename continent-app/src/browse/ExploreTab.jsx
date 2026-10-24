@@ -23,7 +23,8 @@ import {
 import { useTravelMonth, useSettings } from '../components/SettingsLine.jsx';
 import { resolveWhen } from '../lib/when.js';
 import { fromName } from '../components/FromPicker.jsx';
-import { cheapestReturn, cheapestReturnAnyMonth } from '../lib/flights/flights.js';
+import { flightLegs } from '../lib/price/flight.js';
+import { legCost } from '../lib/flights/flights.js';
 import { homePoint, wayFor } from '../lib/travelWay.js';
 import { partyOf } from '../lib/party.js';
 import { destAnchor } from '../lib/origins.js';
@@ -81,7 +82,6 @@ import { knownFor } from '../lib/knownFor.js';
 import { catalogue, CATALOGUE_MODE, loadFullCatalogue } from '../lib/appData.js';
 import { decodeBootIndex } from '../lib/bootIndex.js';
 import { formatMoney } from '../lib/money.js';
-import { computeCosts } from '../lib/costIndex.js';
 // T586: the overview first page.
 import {
   SearchIcon, ArrowLeftIcon, SparkIcon, CameraIcon, DiamondIcon, TrainIcon, PersonIcon, PiggyIcon, SunIcon,
@@ -94,6 +94,7 @@ import { SortIcon, ShareIcon, BookmarkIcon, CheckIcon } from '../components/Icon
 import { isResizable, srcSetFor, fallbackSrc } from '../lib/heroImage.js';
 import { commonsPageUrl } from '../lib/imageCredit.js';
 import '../styles/84-explore-overview.css';
+import { viewFactor } from '../lib/price/display.js';
 
 // 'viewport' catalogue mode (T059): the zoom from which the map fetches the
 // countries on screen. Below it the map draws clusters, which the boot pins
@@ -348,8 +349,6 @@ export function ExploreTab({
   favorites, onToggleFav,
   selectedId, onSelect,
   indices,
-  // T534: with a month picked in the filter, beds are repriced for that month.
-  choices = null,
   isMock = false,
   onOpenGuides,
   // T498 (roadmap 1.3b): the country page is App's (#country=), the six
@@ -501,18 +500,15 @@ export function ExploreTab({
   const scrollRef = React.useRef(null);
 
   // T534: a month in the filter prices every card's bed for that month (the
-  // measured month curve), so "November" shows November's prices.
-  const monthIndices = React.useMemo(
-    () => (dxf.month && data && indices
-      ? computeCosts(data.destinations, { ...(choices || {}), month: dxf.month })
-      : indices),
-    [dxf.month, data, choices, indices],
-  );
+  // measured month curve), so "November" shows November's prices. T663 (B7):
+  // the filter is the app's "when" while it is on, so App prices the month
+  // in the one request and the destination page behind a card says the same
+  // (reported to App by the effect after useSettings below).
   const { all: catAllRows, rows: catRows, availableCountries, indices: costIndex } = useExploreCatalog({
     data, locationQuery, countryFilter, countryNot, tripKinds,
     ratingRange, gemOnly, unescoOnly, topBeachOnly, bigOnly, topPick,
     reachHours, reachMinutes, sortKey, showFavOnly, favorites,
-    indices: monthIndices, searchHits,
+    indices, searchHits,
   });
 
   // How the traveller gets there (T518, T582): under the settings line's
@@ -525,22 +521,21 @@ export function ExploreTab({
   // year's cheapest. A place the chosen ground way cannot reach leaves the
   // list; a place without a flight keeps its row in plane mode, as before.
   const settingsLine = useSettings();
+  const setExploreMonth = settingsLine?.setExploreMonth;
+  React.useEffect(() => { setExploreMonth?.(dxf.month || null); }, [dxf.month, setExploreMonth]);
   const setCountryNot = settingsLine?.setCountryNot;
   // The one country the list is narrowed to, for its page link and the
   // category doors; none while the list leaves countries out (T581).
   const oneCountry = !countryNot && countryFilter.length === 1 ? countryFilter[0] : null;
   const flights = data?.flights || null;
-  const dateFlex = settingsLine?.dateFlex || null;
   // T649: the month the quiet flag judges, from the one helper: the Explore
   // month filter when set, else the traveller's own when.
   const quietWhen = React.useMemo(
     () => (dxf.month ? resolveWhen({ xm: dxf.month }) : (settingsLine?.when || null)),
     [dxf.month, settingsLine?.when],
   );
-  const flightMonth = dateFlex === 'any' ? null
-    : settingsLine?.departDate
-      ? String(settingsLine.departDate).slice(0, 7)
-      : new Date().toISOString().slice(0, 7);
+  // T663 (V7): the flight follows the bed's date mode, from the one request.
+  const request = settingsLine?.priceRequest || null;
   const wayMode = settingsLine?.transportMode || 'any';
   // T589: "Flight up to" shows only while flights can be the way there.
   const flightLimitAvailable = !!flights && (wayMode === 'plane' || wayMode === 'any');
@@ -557,17 +552,20 @@ export function ExploreTab({
     const m = new Map();
     for (const p of catAllRows) {
       const d = data.destinations[p.id];
-      const r = flights && (wayMode === 'plane' || wayMode === 'any')
-        ? (flightMonth ? cheapestReturn(flights, destAnchor(d), flightMonth) : cheapestReturnAnyMonth(flights, destAnchor(d)))
-        : null;
-      const flight = r ? { perSeat: r.perSeat, airline: r.out.airline } : null;
+      const r = flights && (wayMode === 'plane' || wayMode === 'any') ? flightLegs(flights, destAnchor(d), request) : null;
+      // T691: the traveller's bag on both legs, as the calculator prices it.
+      const bagKey = request?.baggage;
+      const flight = r ? {
+        perSeat: legCost(r.out, { paying: 1, bagKey }).perSeat + legCost(r.back, { paying: 1, bagKey }).perSeat,
+        airline: r.out.airline,
+      } : null;
       const way = wayFor(d || p, wayMode, { home, party, flight });
       // T589: the outbound flight's length, for the "Flight up to" filter.
       const fmin = r ? legMinutes(r.out) : null;
       m.set(p.id, way ? { ...p, cost: { ...p.cost, way }, fmin } : (wayMode === 'plane' ? p : null));
     }
     return m;
-  }, [catAllRows, flights, flightMonth, wayMode, home, party, data]);
+  }, [catAllRows, flights, request, wayMode, home, party, data]);
   const withWay = React.useCallback(
     (list) => (wayRows ? list.map((p) => (wayRows.has(p.id) ? wayRows.get(p.id) : p)).filter(Boolean) : list),
     [wayRows],
@@ -803,8 +801,10 @@ export function ExploreTab({
     // Trip styles first: they are the first group of the rail (V3, T383),
     // and before V3 they made no chip at all.
     for (const k of tripKinds) list.push({ key: `s:${k}`, label: t(`kind.${k}`), remove: () => setTripKinds(tripKinds.filter((x) => x !== k)) });
-    if (xf.budget) list.push({ key: 'budget', label: t('explore.budgetUpTo', { eur: formatMoney(xf.budget) }), remove: drop({ budget: null }) });
-    if (xf.bmin) list.push({ key: 'bmin', label: t('filter.budgetFrom', { eur: formatMoney(xf.bmin) }), remove: drop({ bmin: null }) });
+    // T694: the chips say the budget in the traveller's view (V15).
+    const vf = viewFactor(request);
+    if (xf.budget) list.push({ key: 'budget', label: t('explore.budgetUpTo', { eur: formatMoney(xf.budget * vf) }), remove: drop({ budget: null }) });
+    if (xf.bmin) list.push({ key: 'bmin', label: t('filter.budgetFrom', { eur: formatMoney(xf.bmin * vf) }), remove: drop({ bmin: null }) });
     if (xf.fh && flightLimitAvailable) list.push({ key: 'fh', label: t('filter.flightChip', { n: xf.fh }), remove: drop({ fh: null }) });
     for (const k of xf.kinds) list.push({ key: `k:${k}`, label: t(`pkind.${k}`), remove: drop({ kinds: xf.kinds.filter((x) => x !== k) }) });
     // One chip for the rating, "Excellent and up" (T440): the rail asks for
@@ -834,7 +834,7 @@ export function ExploreTab({
     // focused view then always says why it holds what it holds.
     if (locationQuery && locationQuery.trim()) list.push({ key: 'q', label: `“${locationQuery.trim()}”`, remove: () => setLocationQuery('') });
     return list;
-  }, [xf, locationQuery, setLocationQuery, flightLimitAvailable, tripKinds, gemOnly, unescoOnly, showFavOnly, countryFilter, countryNot, reachHours, reachAvailable, availableCountries, t, patchXf, setTripKinds, setGemOnly, setUnescoOnly, setShowFavOnly, setCountryFilter, setReachHours, gLabels, nearRow]);
+  }, [xf, locationQuery, setLocationQuery, flightLimitAvailable, tripKinds, gemOnly, unescoOnly, showFavOnly, countryFilter, countryNot, reachHours, reachAvailable, availableCountries, t, patchXf, setTripKinds, setGemOnly, setUnescoOnly, setShowFavOnly, setCountryFilter, setReachHours, gLabels, nearRow, request]);
 
   // The filter set last, so an empty grid can name it and offer to remove
   // just that one (brief V3-11). A chip key that was not there a render ago

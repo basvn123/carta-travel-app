@@ -13,6 +13,7 @@ import { CloseIcon } from '../components/Icons.jsx';
 import { countryName } from '../lib/countryName.js';
 import { drawerVisiblePx } from '../lib/mapDrawerState.js';
 import { ScoreChip } from '../components/RatingBadge.jsx';
+import { useDayView } from '../hooks/useDayView.js';
 
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
@@ -306,6 +307,11 @@ export function ExploreMap({
   // translator through a ref so a language switch reaches them.
   const tRef = useRef(t);
   tRef.current = t;
+  // T694: pins print the cards' figure and unit in the traveller's view
+  // ("a person a day", or the group's total for the stay; T504-h).
+  const view = useDayView();
+  const unitRef = useRef(view.unit);
+  unitRef.current = view.unit;
   // The canvas crossfades in over --dur-3 at its first style frame (T441;
   // V4 waited for 'load'), from the still sunken frame, instead of popping
   // in half drawn. A slow style still shows its frame after 1.5 seconds.
@@ -328,7 +334,7 @@ export function ExploreMap({
     // because a null property does not survive into a maplibre feature.
     const costOf = (p) => costs?.get(p.id) || p.cost;
     const dayOf = (p) => {
-      const eur = costOf(p)?.dayEur;
+      const eur = view.day(costOf(p)?.dayEur);
       return eur != null ? Math.round(eur) : -1;
     };
     const loaded = (p) => ({
@@ -367,7 +373,7 @@ export function ExploreMap({
         };
       }),
     };
-  }, [source, pins, costs]);
+  }, [source, pins, costs, view]);
   // The map's load handler seeds its source from the payload current at load
   // time, not the one current when the map was created: the catalogue can
   // grow in between, and the setData effect below skips until the map is ready.
@@ -411,7 +417,7 @@ export function ExploreMap({
     };
     // The day cost as the cards print it ("€87 a day"); -1 is "no figure".
     const eurHtml = (eur, est, cls) => (eur != null && eur >= 0
-      ? `<span class="${cls}"><span class="xmap-fig">${esc(dayFig(eur, est, tRef.current('money.est')))}</span> ${esc(tRef.current('cost.perDay'))}</span>`
+      ? `<span class="${cls}"><span class="xmap-fig">${esc(dayFig(eur, est, tRef.current('money.est')))}</span> ${esc(unitRef.current)}</span>`
       : '');
     const showTip = (map, f) => {
       const { city, score, tier, ld, eur, est, cc } = f.properties;
@@ -966,7 +972,7 @@ export function ExploreMap({
                 {peek.eur >= 0 && (
                   <p className="xmap-card-eur">
                     <span className="xmap-card-eur-line">
-                      <span className="xmap-fig">{dayFig(peek.eur, peek.est, t('money.est'))}</span> {t('cost.perDay')}
+                      <span className="xmap-fig">{dayFig(peek.eur, peek.est, t('money.est'))}</span> {view.unit}
                     </span>
                   </p>
                 )}

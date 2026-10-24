@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { matchesAnyKind } from '../lib/trip_kinds.js';
 import { isFullRatingRange } from '../lib/rating.js';
 import { isBigPlace } from '../lib/placeSize.js';
-import { computeCosts } from '../lib/costIndex.js';
+import { priceDays, DEFAULT_PRICE_REQUEST } from '../lib/price/index.js';
 import { duplicateHeroes } from '../lib/heroImage.js';
 
 // Accent- and case-insensitive text key, so "malaga" matches "Málaga".
@@ -71,7 +71,8 @@ export function useExploreCatalog({
   const reachCutoffMin = reachActive ? reachHours * 60 : Infinity;
 
   const indices = useMemo(
-    () => providedIndices || (data ? computeCosts(data.destinations) : new Map()),
+    // T663: without the app's map, the default request (B5), through the engine.
+    () => providedIndices || (data ? priceDays(data.destinations, DEFAULT_PRICE_REQUEST) : new Map()),
     [providedIndices, data],
   );
 
