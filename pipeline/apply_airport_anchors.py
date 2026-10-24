@@ -42,6 +42,14 @@ first, so re-running refreshes cleanly.
 Usage:
     python apply_airport_anchors.py                 # both default data files
     python apply_airport_anchors.py path/to.json ...
+    python apply_airport_anchors.py --airports-only # T642 step 3b only (scheduled)
+
+--airports-only (T640 wiring) writes the additive T642 keys (airports[] and the
+transfer_mode label) and nothing else. Steps 1 to 3 and 4 re-anchor from the
+Ryanair `routes`, which T511 removed from the catalogue: on today's data step 3
+raises on an empty `served` list after step 1 has already cleared 18 anchors,
+and step 4 would flag every place out of driving range as unreachable. The
+scheduled `airports` task therefore runs this flag only.
 """
 
 import copy
@@ -76,7 +84,33 @@ def haversine(a_lat, a_lon, b_lat, b_lon):
     return 2 * 6371 * math.asin(math.sqrt(x))
 
 
-def patch(path: Path) -> None:
+def write_airports(ds: dict) -> None:
+    """3b. T642: several airports within reach, per-mode transfer times, and a
+    transfer_mode that is always written. Additive: anchor_airport and the
+    `transfer` minutes stay exactly as they were."""
+    airports = [{"iata": a["iata"], "lat": a["lat"], "lon": a["lon"], "ryanair": bool(a.get("routes"))}
+                for a in ds.values()
+                if a.get("tier") == "airport" and a.get("iata") and a.get("lat") is not None]
+    n_lists = n_multi = n_pt = 0
+    for v in ds.values():
+        v.pop("airports", None)
+        if v.get("tier") == "airport":
+            continue
+        lst = airport_access.airports_for(v, airports, v.get("anchor_airport"))
+        if not lst:
+            continue
+        v["airports"] = lst
+        n_lists += 1
+        n_multi += len(lst) > 1
+        n_pt += any(o["mode"] == "train" for a in lst for o in a["options"])
+        tr = v.get("transfer")
+        if tr and tr.get("transfer_minutes_one_way") is not None:
+            tr["transfer_mode"] = "car"  # the transfer minutes are the road estimate
+            tr["transfer_mode_source"] = "road_estimate"
+    print(f"  airports[]: {n_lists} dests, {n_multi} with 2+ airports, {n_pt} with a GTFS public transport option")
+
+
+def patch(path: Path, airports_only: bool = False) -> None:
     if not path.exists():
         print(f"  skip (missing): {path}")
         return
@@ -93,6 +127,12 @@ def patch(path: Path) -> None:
         if lt.get("road_connected") is False or v.get("lat") is None:
             return False
         return haversine(home["lat"], home["lon"], v["lat"], v["lon"]) * drive_detour <= max_drive
+
+    if airports_only:
+        write_airports(ds)
+        atomic_write_json(path, data, indent=1, ensure_ascii=False)
+        print(f"  {path.name}: {len(ds)} dests, airports[] only (anchors untouched)")
+        return
 
     # 1. Reset any previous auto-anchors so the run is idempotent.
     for v in ds.values():
@@ -138,29 +178,8 @@ def patch(path: Path) -> None:
         v["anchor_estimated"] = True
         anchored += 1
 
-    # 3b. T642: several airports within reach, per-mode transfer times, and a
-    #     transfer_mode that is always written. Additive: anchor_airport and the
-    #     `transfer` minutes stay exactly as they were.
-    airports = [{"iata": a["iata"], "lat": a["lat"], "lon": a["lon"], "ryanair": bool(a.get("routes"))}
-                for a in ds.values()
-                if a.get("tier") == "airport" and a.get("iata") and a.get("lat") is not None]
-    n_lists = n_multi = n_pt = 0
-    for v in ds.values():
-        v.pop("airports", None)
-        if v.get("tier") == "airport":
-            continue
-        lst = airport_access.airports_for(v, airports, v.get("anchor_airport"))
-        if not lst:
-            continue
-        v["airports"] = lst
-        n_lists += 1
-        n_multi += len(lst) > 1
-        n_pt += any(o["mode"] == "train" for a in lst for o in a["options"])
-        tr = v.get("transfer")
-        if tr and tr.get("transfer_minutes_one_way") is not None:
-            tr["transfer_mode"] = "car"  # the transfer minutes are the road estimate
-            tr["transfer_mode_source"] = "road_estimate"
-    print(f"  airports[]: {n_lists} dests, {n_multi} with 2+ airports, {n_pt} with a GTFS public transport option")
+    # 3b. T642: airports[] and the transfer_mode label (write_airports).
+    write_airports(ds)
 
     # 4. Reachability-flag consistency pass (same definition as fix_data.py step E,
     #    so the two scripts agree): `no_ryanair_route` is True only when a dest has
@@ -183,10 +202,13 @@ def patch(path: Path) -> None:
 
 
 def main() -> None:
-    targets = [Path(a) for a in sys.argv[1:]] or DEFAULT_TARGETS
-    print("Anchoring unserved destinations to nearest airport + ground transfer:")
+    args = sys.argv[1:]
+    airports_only = "--airports-only" in args
+    targets = [Path(a) for a in args if a != "--airports-only"] or DEFAULT_TARGETS
+    print("Airports within reach per destination (T642), anchors untouched:" if airports_only
+          else "Anchoring unserved destinations to nearest airport + ground transfer:")
     for t in targets:
-        patch(t)
+        patch(t, airports_only)
 
 
 if __name__ == "__main__":

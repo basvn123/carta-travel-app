@@ -149,6 +149,12 @@ PROTECTED_MAX_KM = 6.0
 DEST_MAX_KM = 90.0
 CONTEXT_RADIUS_M = 400
 OSM_BATCH = 12           # beaches per Overpass request
+# T640 wiring: the version of the context query. A beach whose cached context
+# was fetched by an older query (no `context_v`, or a lower one) is asked
+# again, and only the context is: its photographs and article facts stay.
+# 2 = T631's sunbed and umbrella rentals and the children's pool clauses.
+# Bump it whenever the context query gains a clause the export reads.
+CONTEXT_V = 2
 # Twelve, not thirty. Each beach in a batch adds five spatial lookups, so
 # thirty is a 150 clause query, and on a loaded endpoint that is the
 # difference between an answer and a 504. Italy spent twenty five minutes
@@ -1174,18 +1180,30 @@ def enrich_country(cc, shortlist_n=None, refresh=False, bathing=None,
     # so during a long harvest this pass is skipped and picked up afterwards.
     # It is per beach idempotent, so a later run fills exactly the beaches
     # that have no context yet.
+    def stale(was):
+        return (was.get("context") is None
+                or (was.get("context_v") or 1) < CONTEXT_V)
+
     todo = [] if not context else [
         b for b in short
-        if refresh or (previous.get(b["key"]) or {}).get("context") is None]
+        if refresh or stale(previous.get(b["key"]) or {})]
     for b in short:
         was = previous.get(b["key"]) or {}
         if was.get("context") is not None and not refresh:
             b["context"] = was["context"]
+            if was.get("context_v"):
+                b["context_v"] = was["context_v"]
     for i in range(0, len(todo), OSM_BATCH):
         chunk = todo[i:i + OSM_BATCH]
         found = context_for(chunk)
         for b in chunk:
-            b["context"] = found.get(b["key"], {})
+            if b["key"] in found:
+                b["context"] = found[b["key"]]
+                b["context_v"] = CONTEXT_V
+            elif b.get("context") is None:
+                # A failed batch: an empty context, still at the old version,
+                # so the next run asks again.
+                b["context"] = {}
         print(f"    context {min(i + OSM_BATCH, len(todo))}/{len(todo)}")
 
     # 4. Region ids, local and free. Stored here so export reads, never
