@@ -1168,3 +1168,20 @@ Constants: `SEASON_GAIN` 3.0, `SEASON_MAX_UP` 1, `SEASON_MAX_DOWN` 2, `SEASON_DE
 Seasonality is regional (NUTS 2, else country), so two places in one region share a share curve and differ
 only through their annual tier.
 
+
+## Mobility score (T650, added 2026-10-24)
+
+Additive. `local_transport.car_needed`, `car_basis`, `car_useful_for` (string) and `parking_hard` keep their T642 meaning;
+`car_needed` is read by the price plan's car line and stays.
+
+| Key | Shape | Source | Notes |
+|---|---|---|---|
+| `dest.local_transport.mobility` | `{car_free, modes[], car_useful_for?[], parking_hard?, basis, source}` | `car_layer.mobility_for`, written by `apply_car_layer.py` | one grade of how well the place works without a car |
+| `mobility.car_free` | `"good"`, `"ok"` or `"hard"` | lines, else the category rule | good: rail or ferry plus a second mode (the T642 `transit_service` "served" rule); ok: one mode ("thin"); hard: a remote category (`REMOTE_STRONG`, unless the place is also tagged `city`), an island without a ferry line, or a place the category rule sends to a car and no line contradicts |
+| `mobility.modes` | subset of `["train","bus","ferry"]` in that order, may be `[]` | `practical.transit` | `[]` whenever basis is `category`: no line is ever invented |
+| `mobility.car_useful_for` | codes from `trailheads`, `lake_villages`, `countryside`, in `USEFUL_FOR` order, every match | categories | omitted when none match; the T642 string next to it is unchanged |
+| `mobility.parking_hard` | bool | `cache/parking_osm.json` | omitted when no parking harvest covers the place; true when fewer than 2 public lots lie within 1.5 km of the centre |
+| `mobility.basis` | `"transit_lines"` or `"category"` | | `transit_lines` when `practical.transit` lines gave the grade. Without them (every place outside a harvested feed) the grade is the category rule: tagged `city` or transit_quality excellent gives good, any other place the rule does not send to a car gives ok, a place it sends to a car gives hard |
+| `mobility.source` | string | | for example `practical.transit (Trenord) + categories`, or `categories (no transit lines for this place)` |
+
+`crowding.monthly` and `local_transport.mobility` reach the app wire unchanged: `sync-data.mjs` has no strip rule for either block.

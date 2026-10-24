@@ -240,6 +240,10 @@ USEFUL_FOR = (
       "puglia", "wachau", "salzkammergut", "andalusia", "normandy", "brittany", "cornwall"},
      "Villages and vineyards off the main line."),
 )
+# T650: the same groups as codes, in USEFUL_FOR order, for dest.local_transport.mobility.car_useful_for.
+USEFUL_FOR_CODES = ("trailheads", "lake_villages", "countryside")
+CAR_FREE_RANK = {"hard": 0, "ok": 1, "good": 2}
+MOBILITY_MODE_ORDER = ("train", "bus", "ferry")
 PARKING_HARD_MAX_SPOTS = 2  # fewer public lots than this within 1.5 km of the centre
 
 
@@ -267,6 +271,70 @@ def car_useful_for(categories):
         if cats & keys:
             return text
     return None
+
+
+def car_useful_codes(categories):
+    """Every USEFUL_FOR group the categories match, as codes, in USEFUL_FOR order."""
+    cats = set(categories or [])
+    return [code for (keys, _t), code in zip(USEFUL_FOR, USEFUL_FOR_CODES) if cats & keys]
+
+
+def _line_sources(transit, modes):
+    """Short names of who runs the lines the mobility value rests on."""
+    names = []
+    for m in modes:
+        for leg in _lines(transit, m):
+            n = (leg.get("operator") or "").strip() if isinstance(leg, dict) else ""
+            if not n and isinstance(leg, dict):
+                n = "OSM ferries" if m == "ferry" else (leg.get("source") or "").split(",")[0].split(" (")[0].strip()
+            if n and n not in names:
+                names.append(n)
+    return ", ".join(names[:3])
+
+
+def mobility_for(city, categories, needed, quality, transit=None, parking=None):
+    """dest.local_transport.mobility (T650). car_needed stays; this is the car-free grade.
+
+    good: rail or ferry plus a second mode (T642 'served'); ok: one mode ('thin');
+    hard: a remote category, an island without a ferry line, or a place the
+    category rule says needs a car and no line contradicts. With no practical.transit
+    the value comes from the category rule alone (basis 'category'): a compact
+    'city' or an excellent transit_quality is good, any other place the rule
+    does not send to a car is ok, a place it sends to a car is hard. No line is
+    ever invented, so modes is [] on that basis.
+    """
+    cats = set(categories or [])
+    curated = city in CAR_OVERRIDES
+    level, found = transit_service(transit)
+    modes = [m for m in MOBILITY_MODE_ORDER if m in found]
+    if not needed:
+        cv = "good" if (quality == "excellent" or "city" in cats) else "ok"
+    else:
+        cv = "hard"
+    lv = {"served": "good", "thin": "ok"}.get(level)
+    if lv and (cv == "hard" or CAR_FREE_RANK[lv] >= CAR_FREE_RANK[cv] or not curated):
+        value, basis = lv, "transit_lines"
+    else:
+        value, basis = cv, "category"
+    if not curated:
+        if cats & REMOTE_STRONG and "city" not in cats:   # a city on a fjord (Bergen) is not remote
+            value = "hard"
+        elif "island" in cats and "ferry" not in modes:
+            value = "hard"
+    out = {
+        "car_free": value,
+        "modes": modes if basis == "transit_lines" else [],
+        "basis": basis,
+        "source": ("practical.transit (" + (_line_sources(transit, modes) or "lines") + ") + categories")
+        if basis == "transit_lines" else "categories (no transit lines for this place)",
+    }
+    codes = car_useful_codes(categories)
+    if codes:
+        out["car_useful_for"] = codes
+    ph = parking_is_hard(parking)
+    if ph is not None:
+        out["parking_hard"] = ph
+    return out
 
 
 def parking_is_hard(spots):
@@ -313,4 +381,5 @@ def local_transport_for(city, iso2, tier, categories, transit=None, parking=None
     ph = parking_is_hard(parking)
     if ph is not None:
         out["parking_hard"] = ph
+    out["mobility"] = mobility_for(city, categories, needed, quality, transit, parking)
     return out
