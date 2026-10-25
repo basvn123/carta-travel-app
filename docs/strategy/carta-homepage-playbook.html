@@ -1,0 +1,587 @@
+<title>Carta Homepage Playbook</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: a reading column of reference pairs (their page, then Carta's version) and a copy bank; Carta's Lagoon-in-brown tokens, the slogan sizes from the home page itself */
+:root {
+  --paper: #f6f4f1;
+  --surface: #ffffff;
+  --sunken: #efebe6;
+  --ink: #1f2a33;
+  --ink-2: #4a5661;
+  --ink-3: #6b7680;
+  --line: #e3ddd5;
+  --brown: #8c5a2b;
+  --brown-ink: #74471f;
+  --mist: #f6e7d3;
+  --sun-bg: #fdefc0;
+  --rust: #a8400f;
+  --moss: #3f6b3a;
+  --film: #2e4a56;
+  --on-film: #ffffff;
+  --font: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --r: 14px;
+  --r-lg: 22px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #171411; --surface: #211c18; --sunken: #2a241f; --ink: #f0ebe4; --ink-2: #c9c0b5; --ink-3: #a1968a;
+  --line: #3a322b; --brown: #d49a5e; --brown-ink: #e6b07a; --mist: #3a2b1d; --sun-bg: #3d3416;
+  --rust: #e8875a; --moss: #93c08a; --film: #1d3038; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --paper: #171411; --surface: #211c18; --sunken: #2a241f; --ink: #f0ebe4; --ink-2: #c9c0b5; --ink-3: #a1968a;
+  --line: #3a322b; --brown: #d49a5e; --brown-ink: #e6b07a; --mist: #3a2b1d; --sun-bg: #3d3416;
+  --rust: #e8875a; --moss: #93c08a; --film: #1d3038; color-scheme: dark }
+
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font: 400 16px/1.6 var(--font); font-variant-numeric: tabular-nums; }
+.wrap { max-width: 1080px; margin: 0 auto; padding-block: 48px 96px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3, h4 { text-wrap: balance; margin: 0; }
+h1 { font: 800 clamp(38px, 6.5vw, 72px)/1 var(--font); letter-spacing: -0.035em; }
+h2 { font: 750 clamp(28px, 4vw, 40px)/1.08 var(--font); letter-spacing: -0.025em; margin-bottom: 10px; }
+h3 { font: 700 20px/1.25 var(--font); letter-spacing: -0.01em; margin-bottom: 6px; }
+h4 { font: 700 15px/1.3 var(--font); margin-bottom: 4px; }
+p { margin: 0 0 12px; max-width: 70ch; }
+a { color: var(--brown-ink); }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--brown); outline-offset: 2px; border-radius: 4px; }
+.eyebrow { font: 700 12px/1 var(--font); letter-spacing: .09em; text-transform: uppercase; color: var(--brown-ink); margin-bottom: 14px; display: block; }
+.lede { font-size: 19px; color: var(--ink-2); max-width: 62ch; margin-top: 18px; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; padding: 0; list-style: none; }
+.meta li { font: 600 13px var(--font); padding: 6px 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--ink-2); }
+
+nav.toc { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; margin: 36px calc(-1 * max(16px, env(safe-area-inset-left, 0px))) 0;
+  padding: 10px max(16px, env(safe-area-inset-left, 0px)); background: var(--paper); border-bottom: 1px solid var(--line);
+  display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--paper); }
+nav.toc a { flex: none; font: 600 13px var(--font); color: var(--ink-2); text-decoration: none; padding: 7px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); }
+nav.toc a:hover { color: var(--brown-ink); border-color: var(--brown); }
+
+section { margin-top: 72px; scroll-margin-top: 70px; }
+section > .intro { color: var(--ink-2); max-width: 68ch; }
+
+/* The hero proposal, drawn as Carta would set it */
+.hero { margin-top: 30px; border-radius: var(--r-lg); overflow: hidden; background: var(--film); position: relative; min-height: 340px;
+  display: grid; align-content: end; padding: 28px; color: var(--on-film);
+  background-image: linear-gradient(rgba(20, 30, 36, .38), rgba(20, 30, 36, .38)), url("img/v2-desk-hero.jpg"); background-size: cover; background-position: center; }
+.hero .slogan { font: 800 clamp(36px, 6.6vw, 76px)/0.96 var(--font); letter-spacing: -0.045em; max-width: 14ch; text-shadow: 0 1px 12px rgba(0,0,0,.25); }
+.hero .sub { font-size: clamp(16px, 2vw, 20px); max-width: 46ch; margin: 14px 0 0; text-shadow: 0 1px 8px rgba(0,0,0,.3); }
+.hero .ask { margin-top: 18px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; max-width: 560px; }
+.hero .field { flex: 1 1 260px; min-width: 0; background: #ffffff; color: #4a5661; border-radius: 12px; padding: 12px 14px; font-size: 15px; }
+.hero .btn { background: #8c5a2b; color: #ffffff; font-weight: 700; padding: 12px 16px; border-radius: 12px; font-size: 15px; }
+.hero .tag { position: absolute; top: 14px; left: 14px; font: 700 11px var(--font); letter-spacing: .06em; text-transform: uppercase; background: #ffffff; color: #1f2a33; padding: 4px 9px; border-radius: 999px; }
+
+/* Message house */
+.house { margin-top: 22px; display: grid; gap: 10px; }
+.house .roof { padding: 20px; border-radius: var(--r); background: var(--ink); color: var(--paper); }
+.house .roof b { display: block; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; opacity: .7; margin-bottom: 4px; }
+.house .roof span { font: 800 clamp(22px, 3vw, 30px)/1.12 var(--font); letter-spacing: -0.02em; }
+.pillars { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.pillar { padding: 16px; border-radius: var(--r); background: var(--surface); border: 1px solid var(--line); min-width: 0; }
+.pillar b { display: block; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--brown-ink); margin-bottom: 4px; }
+.pillar h4 { font-size: 18px; }
+.pillar p { font-size: 14px; color: var(--ink-2); margin: 6px 0 0; }
+.house .floor { padding: 14px 18px; border-radius: var(--r); background: var(--mist); font-size: 15px; }
+.house .floor b { color: var(--brown-ink); }
+
+/* Headline options */
+.options { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 12px; margin-top: 20px; }
+.opt { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 18px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.opt .h { font: 800 26px/1.05 var(--font); letter-spacing: -0.035em; }
+.opt .s { font-size: 15px; color: var(--ink-2); margin: 0; }
+.opt .why { font-size: 13px; color: var(--ink-3); margin: 0; }
+.opt.best { border-color: var(--brown); box-shadow: inset 0 0 0 1px var(--brown); }
+.opt .lbl { justify-self: start; font: 800 11px var(--font); letter-spacing: .06em; text-transform: uppercase; padding: 3px 8px; border-radius: 6px; background: var(--sunken); color: var(--ink-2); }
+.opt.best .lbl { background: var(--brown); color: var(--surface); }
+
+/* Reference pairs */
+.pair { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 14px; margin-top: 18px; align-items: stretch; }
+.theirs, .ours { border-radius: var(--r); overflow: hidden; min-width: 0; display: flex; flex-direction: column; }
+.theirs { background: var(--surface); border: 1px solid var(--line); }
+.theirs img { display: block; width: 100%; height: 260px; object-fit: cover; object-position: top center; background: var(--sunken); border-bottom: 1px solid var(--line); cursor: zoom-in; }
+.theirs .type { height: 260px; display: grid; align-content: center; gap: 10px; padding: 26px; background: var(--sunken); border-bottom: 1px solid var(--line); }
+.theirs .type .l { font: 750 clamp(24px, 3vw, 32px)/1.08 var(--font); letter-spacing: -0.025em; }
+.theirs .type small { font-size: 12px; color: var(--ink-3); }
+.theirs .body, .ours .body { padding: 14px 16px 16px; display: grid; gap: 6px; }
+.src { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.src b { font-size: 15px; }
+.src span { font: 600 11px var(--font); letter-spacing: .07em; text-transform: uppercase; color: var(--ink-3); }
+.theirs p, .ours p { font-size: 14px; margin: 0; }
+.ours { background: var(--mist); border: 1px solid var(--brown); }
+.ours .say { padding: 22px 18px 6px; display: grid; gap: 8px; }
+.ours .say .l { font: 800 clamp(24px, 3vw, 32px)/1.04 var(--font); letter-spacing: -0.035em; color: var(--ink); }
+.ours .say .m { font-size: 15px; color: var(--ink-2); }
+.ours .say .c { justify-self: start; font: 700 13px var(--font); background: var(--brown); color: var(--surface); padding: 8px 12px; border-radius: 10px; }
+.ours .body { border-top: 1px solid var(--line); }
+.ours b.t { color: var(--brown-ink); }
+
+/* Copy bank */
+.bank { display: grid; gap: 14px; margin-top: 20px; }
+.group { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 16px 18px; }
+.group .gh { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; flex-wrap: wrap; }
+.group .gh span { font-size: 13px; color: var(--ink-3); }
+.group ul { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 0; }
+.group li { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; padding: 9px 0; border-top: 1px solid var(--line); }
+.group li:first-child { border-top: 0; }
+.group li .t { font-size: 16px; font-weight: 600; }
+.group li .t small { display: block; font-weight: 400; font-size: 13px; color: var(--ink-3); }
+.copy { font: 600 12px var(--font); border: 1px solid var(--line); background: var(--paper); color: var(--ink-2); border-radius: 999px; padding: 6px 10px; cursor: pointer; min-height: 32px; }
+.copy:hover { border-color: var(--brown); color: var(--brown-ink); }
+
+/* Page blueprint */
+.spec { margin-top: 26px; display: grid; gap: 0; border-left: 2px solid var(--line); padding-left: 0; list-style: none; }
+.spec > li { position: relative; padding: 0 0 40px 28px; }
+.spec > li::before { content: ""; position: absolute; left: -7px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--brown); box-shadow: 0 0 0 4px var(--paper); }
+.spec .where { font: 700 12px var(--font); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.spec h3 { margin-top: 4px; font-size: 24px; }
+.spec .grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 18px; margin-top: 10px; align-items: start; }
+.spec dl { margin: 0; display: grid; grid-template-columns: 104px 1fr; gap: 8px 14px; font-size: 15px; }
+.spec dt { font-weight: 700; color: var(--ink-2); }
+.spec dd { margin: 0; min-width: 0; }
+.spec dd q { quotes: none; font-weight: 600; }
+.spec figure { margin: 0; display: grid; gap: 6px; }
+.spec figure img { width: 100%; border-radius: 10px; border: 1px solid var(--line); display: block; cursor: zoom-in; }
+.spec figcaption { font-size: 12px; color: var(--ink-3); }
+.newsec { display: inline-block; font: 700 11px var(--font); letter-spacing: .05em; text-transform: uppercase; padding: 3px 8px; border-radius: 6px; background: var(--sun-bg); color: var(--ink); margin-left: 8px; vertical-align: middle; }
+
+/* Juggle drawing for the new section */
+.jug { display: grid; gap: 8px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 16px; }
+.jug .row { display: flex; flex-wrap: wrap; gap: 6px; }
+.jug .chip { font-size: 13px; padding: 6px 10px; border-radius: 999px; background: var(--sunken); color: var(--ink-2); text-decoration: line-through; text-decoration-color: var(--ink-3); }
+.jug .to { font: 800 22px/1.1 var(--font); letter-spacing: -0.02em; margin-top: 4px; }
+.jug .to em { font-style: normal; color: var(--brown-ink); }
+
+/* Rules */
+.tbl { overflow-x: auto; margin-top: 18px; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 14px; }
+th, td { text-align: left; vertical-align: top; padding: 11px 14px; border-bottom: 1px solid var(--line); }
+th { font: 700 12px var(--font); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); background: var(--sunken); }
+tr:last-child td { border-bottom: 0; }
+td.no { color: var(--rust); }
+td.yes { color: var(--moss); font-weight: 600; }
+.note { margin-top: 16px; padding: 14px 16px; border-radius: var(--r); background: var(--sun-bg); font-size: 15px; }
+.note b { display: block; }
+
+.zoom { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; padding: max(16px, env(safe-area-inset-top, 0px)) 16px; background: rgba(15, 12, 10, .86); cursor: zoom-out; }
+.zoom img { max-width: 100%; max-height: 100%; border-radius: 8px; }
+.toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--paper); padding: 8px 14px; border-radius: 999px; font-size: 14px; z-index: 40; }
+
+@media (max-width: 760px) {
+  .pair, .spec .grid { grid-template-columns: 1fr; }
+  .pillars { grid-template-columns: 1fr; }
+  .spec dl { grid-template-columns: 1fr; gap: 2px; }
+  .spec dt { margin-top: 8px; }
+  .theirs img, .theirs .type { height: 210px; }
+  .hero { padding: 20px; min-height: 300px; }
+}
+</style>
+
+<div class="wrap">
+<header>
+  <span class="eyebrow">Carta home page, copy and patterns</span>
+  <h1>Say what Carta is in one screen</h1>
+  <p class="lede">Part two of two. Built on the competitor analysis: the message every section repeats, a bank of headlines and lines ready to paste, the references worth learning from with Carta's own version beside each, and the page section by section.</p>
+  <ul class="meta">
+    <li>Based on <a href="https://claude.ai/artifact/B2JWknKqtmtQZkenxdqJpD">Carta Market Position</a></li>
+    <li>10 reference screenshots, 3 headline studies</li>
+    <li>60 lines checked against Carta's copy rules</li>
+    <li>10 sections, top to bottom</li>
+  </ul>
+
+  <div class="hero" aria-label="Sketch of the proposed hero, set over the current home film still">
+    <span class="tag">Proposed hero</span>
+    <div class="slogan">Plan the whole trip. See what it costs.</div>
+    <p class="sub">The flight, the bed and every day there, in one plan and one total. For any trip in Europe.</p>
+    <div class="ask"><span class="field">A walking weekend from Brussels for two</span><span class="btn">Ask Carta</span></div>
+  </div>
+</header>
+
+<nav class="toc" aria-label="Sections">
+  <a href="#message">The message</a>
+  <a href="#hero">Hero options</a>
+  <a href="#refs">References</a>
+  <a href="#bank">Copy bank</a>
+  <a href="#page">The page</a>
+  <a href="#rules">Copy rules</a>
+</nav>
+
+<section id="message">
+  <h2>The message, before any design</h2>
+  <p class="intro">A visitor gives the first screen about five seconds. The competitor analysis gives three edges no rival holds together. Every section of the page repeats one of them; nothing on the page introduces a fourth.</p>
+  <div class="house">
+    <div class="roof"><b>The promise</b><span>Plan the whole trip in one place, and see what it costs before you book.</span></div>
+    <div class="pillars">
+      <div class="pillar"><b>Edge 1, all in one</b><h4>One plan, not five apps</h4><p>Choose, price, route, plan each day and share, without copying between tabs.</p></div>
+      <div class="pillar"><b>Edge 2, the days</b><h4>What a day costs, everywhere</h4><p>A bed plus food and drink, per person, in every place, before you choose it.</p></div>
+      <div class="pillar"><b>Edge 3, the total</b><h4>One honest total</h4><p>Google Flights' fare, the beds and the days, for your whole party.</p></div>
+    </div>
+    <div class="floor"><b>The trust line under all three:</b> No booking, no commission. Every estimate is marked as one.</div>
+  </div>
+  <div class="note"><b>The clarity test</b>Show the hero to someone for five seconds, then ask: "What does this app do?" The answer must contain "plans a trip" and "what it costs". Wise's 2026 teardown is the warning: its real advantage (fair rate, visible fee) sat below the fold. Carta puts "what it costs" in the headline.</div>
+</section>
+
+<section id="hero">
+  <h2>Six hero options</h2>
+  <p class="intro">Each pairs a headline (a verb or a figure, under eight words) with one subline that completes it. The recommended one names both halves of the promise, so the page never depends on the subline to be understood.</p>
+  <div class="options">
+    <div class="opt best"><span class="lbl">Recommended</span><div class="h">Plan the whole trip. See what it costs.</div><p class="s">The flight, the bed and every day there, in one plan and one total. For any trip in Europe.</p><p class="why">Two verbs, two edges. A stranger knows it plans and it prices.</p></div>
+    <div class="opt"><span class="lbl">Keep as section title</span><div class="h">A cheap flight is not a cheap trip.</div><p class="s">Carta puts the flight, the bed and every day there in one plan, with one honest total.</p><p class="why">Today's slogan. The best line for the problem, weaker as a first line: it says what is wrong, not what Carta is. Move it to the week card.</p></div>
+    <div class="opt"><span class="lbl">All in one led</span><div class="h">Five apps for one trip? Use one.</div><p class="s">Carta plans the route, the stays and every day, and tells you what each day costs.</p><p class="why">Names the juggling directly, Splitwise style: the feeling it removes.</p></div>
+    <div class="opt"><span class="lbl">Cost led</span><div class="h">Know what a trip costs before you go.</div><p class="s">See the bed and the days in every place in Europe, then plan the whole trip in one place.</p><p class="why">Clearest for the budget audience; plans comes second.</p></div>
+    <div class="opt"><span class="lbl">Budget first</span><div class="h">How far does your budget go?</div><p class="s">Tell Carta what you have. See the places that fit, then plan the trip and every day.</p><p class="why">Pairs with the budget field as the hero's input. A question is allowed; it carries a verb.</p></div>
+    <div class="opt"><span class="lbl">Short slogan</span><div class="h">Your trip. One plan. One total.</div><p class="s">The flight, the bed and every day there, planned and priced in one place.</p><p class="why">The Mindtrip manner: very short, set huge. Fails the verb rule on its own, so only with a verb in the sub.</p></div>
+  </div>
+</section>
+
+<section id="refs">
+  <h2>What the best pages do, and Carta's version</h2>
+  <p class="intro">Left: the reference, as captured from the live site by the earlier home page session (click to enlarge), or set as text where only the words were found. Right: the same move done in Carta's words. Nothing on the right copies their look; it borrows the structure.</p>
+
+  <div class="pair">
+    <article class="theirs"><img src="img/ref-mindtrip-hero.jpg" alt="Mindtrip hero: a huge short slogan over a slow aerial beach film" loading="lazy">
+      <div class="body"><div class="src"><b>Mindtrip</b><span>Hero</span></div>
+      <p>"Travel better." Two words, 128 px, over a slow film. It works because the product is shown right under it. Weakness: it could sell any travel brand.</p></div></article>
+    <article class="ours"><div class="say"><div class="l">Plan the whole trip. See what it costs.</div><div class="m">The flight, the bed and every day there, in one plan and one total.</div><span class="c">Ask Carta</span></div>
+      <div class="body"><p><b class="t">Take</b> the scale and the slow film. <b class="t">Add</b> what only Carta can say: "what it costs". Short, but not generic.</p></div></article>
+  </div>
+
+  <div class="pair">
+    <article class="theirs"><div class="type"><div class="l">One app for all your travel planning needs</div><small>Wanderlog, homepage tagline, words only</small></div>
+      <div class="body"><div class="src"><b>Wanderlog</b><span>All in one</span></div>
+      <p>The direct rival's all-in-one claim. It promises organising, not knowing: Wanderlog prices only what you type in.</p></div></article>
+    <article class="ours"><div class="say"><div class="l">One plan instead of five apps.</div><div class="m">And the only one that knows what each day costs.</div></div>
+      <div class="body"><p><b class="t">Do</b> claim all in one, then win on the half Wanderlog cannot say. Never "all your needs": Carta does not book or navigate.</p></div></article>
+  </div>
+
+  <div class="pair">
+    <article class="theirs"><img src="img/ref-mindtrip-works.jpg" alt="Mindtrip Works for you panel: a coloured panel with a person and floating choice chips" loading="lazy">
+      <div class="body"><div class="src"><b>Mindtrip</b><span>Story panels</span></div>
+      <p>Each chapter is one rounded colour panel with tabs, a looping video and chips that drift around it.</p></div></article>
+    <article class="ours"><div class="say"><div class="l">Find it. Price it. Plan it.</div><div class="m">Five panels, each playing a recording of the real app: Find, Price, Plan, Your days, Share.</div></div>
+      <div class="body"><p><b class="t">Chips</b> carry real figures: "Bovec ~€89 a day", "Bus to Bled €7". A Mindtrip chip says a mood; a Carta chip says a price.</p></div></article>
+  </div>
+
+  <div class="pair">
+    <article class="theirs"><img src="img/ref-wise-total.jpg" alt="Wise transfer card with a huge amount, arrival time and the total fee in rows" loading="lazy">
+      <div class="body"><div class="src"><b>Wise</b><span>The total</span></div>
+      <p>Hero copy "Money for here, there and everywhere", but the page sells with the card: you type a figure and see the fee and the total.</p></div></article>
+    <article class="ours"><div class="say"><div class="l">A cheap flight is not a cheap trip.</div><div class="m">Pick a place and a week. See the flight, the bed, food and drink, and one total.</div><span class="c">Plan this trip</span></div>
+      <div class="body"><p><b class="t">The week card</b> is Carta's Wise card. Today's slogan becomes its title, where it explains the figure under it.</p></div></article>
+  </div>
+
+  <div class="pair">
+    <article class="theirs"><img src="img/ref-headspace-ebb.jpg" alt="Headspace Ebb: a yellow panel with a short chat between a person and the product" loading="lazy">
+      <div class="body"><div class="src"><b>Headspace</b><span>The need</span></div>
+      <p>"Be kind to your mind". The page shows a person stating the need in their own words, and the product answering.</p></div></article>
+    <article class="ours"><div class="say"><div class="l">Ask it like you would ask a friend.</div><div class="m">"A beach for two kids in June, under €90 a day." Carta answers with a real place and its day price.</div></div>
+      <div class="body"><p><b class="t">Six tabs</b>, one per traveller: hikers, families at the beach, cyclists, without a car, city breaks, tight budget.</p></div></article>
+  </div>
+
+  <div class="pair">
+    <article class="theirs"><img src="img/ref-komoot-route.jpg" alt="Komoot: a photo and a hand-drawn route from A to B over a map" loading="lazy">
+      <div class="body"><div class="src"><b>Komoot</b><span>Meaning</span></div>
+      <p>One drawing that means something: the route draws itself between two points, with a warm human caption.</p></div></article>
+    <article class="ours"><div class="say"><div class="l">Every bed and every bus, in one total.</div><div class="m">Ljubljana to Bled to Bohinj, drawn on the map, ending in what the week costs for two.</div></div>
+      <div class="body"><p><b class="t">The line ends in a price.</b> That is the one thing a Komoot drawing can never say.</p></div></article>
+  </div>
+
+  <div class="pair">
+    <article class="theirs"><img src="img/ref-komoot-hero.jpg" alt="Komoot hero: Explore beyond the map over a cycling film, with sign up and log in" loading="lazy">
+      <div class="body"><div class="src"><b>Komoot</b><span>Hero doors</span></div>
+      <p>Sign up and log in right in the first screen, over a looping film.</p></div></article>
+    <article class="ours"><div class="say"><div class="l">Start planning</div><div class="m">One primary in the hero (Ask Carta or Plan a trip). Log in sits quiet in the header.</div></div>
+      <div class="body"><p><b class="t">Never</b> "Sign up for free". Carta never says free without the pass sentence.</p></div></article>
+  </div>
+
+  <div class="pair">
+    <article class="theirs"><img src="img/ref-apple-cards.jpg" alt="Apple why buy here: a rail of tall white cards, each with a headline and a picture" loading="lazy">
+      <div class="body"><div class="src"><b>Apple</b><span>Reasons rail</span></div>
+      <p>"Why buy here": tall cards, a small label, a two-line headline, one picture each.</p></div></article>
+    <article class="ours"><div class="say"><div class="l">Why plan with Carta</div><div class="m">No booking, no commission. Every estimate marked. Every day opens in Google Maps. Plan together. Six languages.</div></div>
+      <div class="body"><p><b class="t">The trust rail.</b> It answers the question every AI planner raises: why should I believe this price?</p></div></article>
+  </div>
+
+  <div class="pair">
+    <article class="theirs"><div class="type"><div class="l">Less stress when sharing expenses</div><small>Splitwise, words only (unverified)</small></div>
+      <div class="body"><div class="src"><b>Splitwise</b><span>Name the feeling</span></div>
+      <p>It names the feeling it takes away, not the feature. Revolut ("Change the way you money") and Superhuman ("The most productive email app ever made") do the same in one line.</p></div></article>
+    <article class="ours"><div class="say"><div class="l">No surprise bill at the end of the week.</div><div class="m">See what the days cost before you book the flight.</div></div>
+      <div class="body"><p><b class="t">Use once,</b> as a section line or a store subtitle. The hero stays factual.</p></div></article>
+  </div>
+
+  <div class="pair">
+    <article class="theirs"><div class="type"><div class="l">Discover how to get anywhere</div><small>Rome2Rio, tagline, words only</small></div>
+      <div class="body"><div class="src"><b>Rome2Rio</b><span>One job</span></div>
+      <p>A verb and a promise about one job. Clear because it claims exactly what it does and nothing more.</p></div></article>
+    <article class="ours"><div class="say"><div class="l">See what anywhere costs.</div><div class="m">The day price of every place, before you choose it.</div></div>
+      <div class="body"><p><b class="t">Good for</b> the Explore page head or an SEO landing page, not the hero.</p></div></article>
+  </div>
+
+  <div class="pair">
+    <article class="theirs"><img src="img/ref-linear-pricing.jpg" alt="Linear pricing: plain columns divided by hairlines with tick lists" loading="lazy">
+      <div class="body"><div class="src"><b>Linear</b><span>Plans</span></div>
+      <p>Plain columns, hairlines, a tick list each, one button under the recommended plan.</p></div></article>
+    <article class="ours"><div class="say"><div class="l">Planning is free. A Trip Pass adds exports, more saved trips and more AI plans.</div><div class="m">Free, Trip Pass €6.99 once, Yearly plan €14.99.</div></div>
+      <div class="body"><p><b class="t">Word for word</b> the pass sentence, then three columns. Add one line: "Less than one month of most planning apps."</p></div></article>
+  </div>
+
+  <div class="pair">
+    <article class="theirs"><img src="img/ref-hopper-footer.jpg" alt="Hopper footer with the logo, link columns and social icons" loading="lazy">
+      <div class="body"><div class="src"><b>Hopper</b><span>Close</span></div>
+      <p>A clean footer with the logo on top and link columns. Hopper's own line: "Spend Less, Travel Better".</p></div></article>
+    <article class="ours"><div class="say"><div class="l">Where do you want to go next?</div><div class="m">The Ask Carta field one last time, then the footer: Explore, Plan, Carta, Legal.</div></div>
+      <div class="body"><p><b class="t">End on a question</b> with the field under it, so the last screen is an action, not a goodbye.</p></div></article>
+  </div>
+
+  <div class="pair">
+    <article class="theirs"><img src="img/ref-linear-hero.jpg" alt="Linear product interface shown in the hero" loading="lazy">
+      <div class="body"><div class="src"><b>Linear</b><span>Product in use</span></div>
+      <p>"The product development system for teams and agents". The product UI is the hero image. Live animation of the interface can feel slow on weaker machines.</p></div></article>
+    <article class="ours"><div class="say"><div class="l">This is Carta, recorded.</div><div class="m">Real screen recordings in a phone frame, played only in view. Every tap in them happened in the app.</div></div>
+      <div class="body"><p><b class="t">Show, then say.</b> A visitor understands "one plan" faster from ten seconds of the planner than from any sentence.</p></div></article>
+  </div>
+</section>
+
+<section id="bank">
+  <h2>The copy bank</h2>
+  <p class="intro">Every line is checked against Carta's rules: a verb or a figure in each headline, no banned words, no dashes, no counts of places, never "free" without the pass sentence, never "navigate". Press Copy to take one.</p>
+  <div class="bank" id="bankEl"></div>
+</section>
+
+<section id="page">
+  <h2>The page, top to bottom</h2>
+  <p class="intro">The home page on main already has most of these sections (T606 to T623). This is what each one should say, which edge it carries, and which reference shapes it. One section is new.</p>
+  <ol class="spec">
+    <li><span class="where">1, first screen</span><h3>Hero: the promise over the film</h3>
+      <div class="grid"><dl>
+        <dt>Headline</dt><dd><q>Plan the whole trip. See what it costs.</q></dd>
+        <dt>Subline</dt><dd><q>The flight, the bed and every day there, in one plan and one total. For any trip in Europe.</q></dd>
+        <dt>Action</dt><dd>The Ask Carta field, the one primary. Its typed suggestions: "A walking weekend from Brussels", "A beach week for four in June", "Where can I go for €400?"</dd>
+        <dt>Edges</dt><dd>1, 2 and 3 in one line</dd>
+        <dt>Pattern</dt><dd>Mindtrip's scale and film, Komoot's doors</dd>
+      </dl>
+      <figure><img src="img/v2-desk-hero.jpg" alt="Current Carta home hero on desktop" loading="lazy"><figcaption>Today on main: the film and "A cheap flight is not a cheap trip"</figcaption></figure></div></li>
+
+    <li><span class="where">2, right under the film</span><h3>Three lines that say how <span class="newsec">Adjust</span></h3>
+      <div class="grid"><dl>
+        <dt>Lines</dt><dd><q>See what a day costs in every place.</q> <q>Plan the route and every day in one place.</q> <q>Share it, then open each day in Google Maps.</q></dd>
+        <dt>Form</dt><dd>Three short rows with an icon each, not stat counters and no numbers 01 to 03.</dd>
+        <dt>Edges</dt><dd>2, 1, 9</dd>
+      </dl>
+      <figure><img src="img/v2-phone-hero.jpg" alt="Current Carta home hero on a phone" loading="lazy"><figcaption>On a phone the three rows sit under the field</figcaption></figure></div></li>
+
+    <li><span class="where">3</span><h3>One plan instead of five apps <span class="newsec">New</span></h3>
+      <div class="grid"><dl>
+        <dt>Title</dt><dd><q>Stop stitching trips together from five apps.</q></dd>
+        <dt>Line</dt><dd><q>Carta puts the flight, the stays, the days and the group in one plan, and every figure updates when you change one.</q></dd>
+        <dt>Drawing</dt><dd>Six jobs as grey pills (the flight, the bed, the daily budget, the route, the day plan, the group chat) that fold into one Carta trip card with its total. Named by job, never by brand: no rival logos on the page.</dd>
+        <dt>Edges</dt><dd>1, the all-in-one claim the page does not make anywhere else yet</dd>
+        <dt>Pattern</dt><dd>Wanderlog's claim, shown instead of told</dd>
+      </dl>
+      <div class="jug" aria-label="Sketch of the new section">
+        <div class="row"><span class="chip">the flight</span><span class="chip">the bed</span><span class="chip">the daily budget</span><span class="chip">the route</span><span class="chip">the day plan</span><span class="chip">the group chat</span></div>
+        <div class="to">One plan. <em>One total.</em></div>
+      </div></div></li>
+
+    <li><span class="where">4</span><h3>The week card</h3>
+      <div class="grid"><dl>
+        <dt>Title</dt><dd><q>A cheap flight is not a cheap trip.</q></dd>
+        <dt>Line</dt><dd><q>Pick a place and a week. See the flight, the bed, food and drink, and one total.</q></dd>
+        <dt>Action</dt><dd>Plan this trip</dd>
+        <dt>Edges</dt><dd>2 and 3, the figures</dd>
+        <dt>Pattern</dt><dd>Wise's total card</dd>
+      </dl>
+      <figure><img src="img/v2-desk-week.jpg" alt="Current Carta week card" loading="lazy"><figcaption>Today on main: a real flight, then the week</figcaption></figure></div></li>
+
+    <li><span class="where">5</span><h3>Who it is for: the need in their words</h3>
+      <div class="grid"><dl>
+        <dt>Title</dt><dd><q>Ask it like you would ask a friend.</q></dd>
+        <dt>Tabs</dt><dd>Hikers: <q>A walking weekend near a lake, under €80 a day</q>. Families: <q>A beach with clean water for two kids in June</q>. Without a car: <q>A week by train and bus, starting in Brussels</q>. Tight budget: <q>Somewhere good for €400</q>.</dd>
+        <dt>Answer</dt><dd>A real place, its photo and its day price, from today's catalogue.</dd>
+        <dt>Pattern</dt><dd>Headspace's Ebb panel</dd>
+      </dl>
+      <figure><img src="img/v2-desk-voices.jpg" alt="Current Carta voices section" loading="lazy"><figcaption>Today on main: six travellers, each answered with a real place</figcaption></figure></div></li>
+
+    <li><span class="where">6</span><h3>The story: the app, recorded</h3>
+      <div class="grid"><dl>
+        <dt>Title</dt><dd><q>Find it. Price it. Plan it.</q></dd>
+        <dt>Panels</dt><dd>Find: <q>Browse places by what a day costs.</q> Price: <q>See the flight, the bed and the days add up.</q> Plan: <q>Build the route city by city.</q> Your days: <q>Plan each day, hour by hour.</q> Share: <q>Send one link. Plan it together.</q></dd>
+        <dt>Pattern</dt><dd>Mindtrip's panels with Linear's product-in-use</dd>
+      </dl>
+      <figure><img src="img/v2-desk-story.jpg" alt="Current Carta story panel with a recording in a phone frame" loading="lazy"><figcaption>Today on main: recordings of the real app</figcaption></figure></div></li>
+
+    <li><span class="where">7</span><h3>The route card</h3>
+      <div class="grid"><dl>
+        <dt>Title</dt><dd><q>Every bed and every bus, in one total.</q></dd>
+        <dt>Line</dt><dd><q>Ljubljana, Bled and Bohinj in a week, for two.</q></dd>
+        <dt>Pattern</dt><dd>Komoot's route drawing, ending in the total</dd>
+      </dl>
+      <figure><img src="img/v2-desk-route.jpg" alt="Current Carta route card: the Julian Alps trip drawn on Slovenia" loading="lazy"><figcaption>Today on main: the trip draws itself</figcaption></figure></div></li>
+
+    <li><span class="where">8</span><h3>Why plan with Carta</h3>
+      <div class="grid"><dl>
+        <dt>Cards</dt><dd><q>No booking, no commission.</q> Carta sells nothing, so it ranks nothing for money. <q>Every estimate is marked.</q> A tilde where a figure is a stand-in. <q>Flight prices with their source.</q> Google Flights' fare, with when it was checked. <q>Open every day in Google Maps.</q> <q>Plan together.</q> One link, one spend ledger. <q>In your language.</q> Six languages, the exports too.</dd>
+        <dt>Edges</dt><dd>5, 6, 9, 10, 8</dd>
+        <dt>Pattern</dt><dd>Apple's card rail</dd>
+      </dl>
+      <figure><img src="img/ref-apple-cards.jpg" alt="" loading="lazy"><figcaption>The pattern: Apple</figcaption></figure></div></li>
+
+    <li><span class="where">9</span><h3>Plans</h3>
+      <div class="grid"><dl>
+        <dt>Title</dt><dd><q>Planning is free. A Trip Pass adds exports, more saved trips and more AI plans.</q></dd>
+        <dt>Columns</dt><dd>Free. Trip Pass, €6.99 once, 60 days: <q>One trip's worth of planning, from first idea to the day you fly.</q> Yearly plan, €14.99: <q>For anyone who takes more than one trip a year.</q></dd>
+        <dt>Pattern</dt><dd>Linear's columns</dd>
+      </dl>
+      <figure><img src="img/ref-linear-pricing.jpg" alt="" loading="lazy"><figcaption>The pattern: Linear, set in Carta's light theme</figcaption></figure></div></li>
+
+    <li><span class="where">10, end</span><h3>Close and footer</h3>
+      <div class="grid"><dl>
+        <dt>Title</dt><dd><q>Where do you want to go next?</q></dd>
+        <dt>Action</dt><dd>The Ask Carta field</dd>
+        <dt>Footer</dt><dd>The mark and the line <q>Plan the whole trip in one place, with what each day costs.</q> Then Explore, Plan, Carta, Legal.</dd>
+        <dt>Pattern</dt><dd>Hopper's footer</dd>
+      </dl>
+      <figure><img src="img/ref-hopper-footer.jpg" alt="" loading="lazy"><figcaption>The pattern: Hopper</figcaption></figure></div></li>
+  </ol>
+</section>
+
+<section id="rules">
+  <h2>Copy rules for the home page</h2>
+  <p class="intro">From PRODUCT.md and carta-design. Every line in the bank passes them. Use this table to check any new line before it ships.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Rule</th><th>Write</th><th>Never write</th></tr></thead>
+    <tbody>
+      <tr><td><b>A verb or a figure in each headline</b></td><td class="yes">See what the whole trip costs</td><td class="no">Your travel companion</td></tr>
+      <tr><td><b>Free only with the pass sentence</b></td><td class="yes">Planning is free. A Trip Pass adds exports, more saved trips and more AI plans.</td><td class="no">100% free, Sign up for free</td></tr>
+      <tr><td><b>Say what the day figure holds</b></td><td class="yes">The bed and food and drink, a person a day</td><td class="no">Everything included, all costs</td></tr>
+      <tr><td><b>The flight is Google's price</b></td><td class="yes">Google Flights' fare, checked today</td><td class="no">Our cheapest flights</td></tr>
+      <tr><td><b>Carta hands over, it does not guide</b></td><td class="yes">Open Day 2 in Google Maps</td><td class="no">Navigate, Start route, Directions</td></tr>
+      <tr><td><b>No catalogue counts on the page</b></td><td class="yes">Every place in Europe we price</td><td class="no">3,868 destinations</td></tr>
+      <tr><td><b>No invented proof</b></td><td class="yes">When the figures were checked</td><td class="no">Loved by 10,000 travellers, press logos</td></tr>
+      <tr><td><b>Banned words</b></td><td class="yes">Plan, see, find, share, open</td><td class="no">seamless, unlock, effortless, elevate, empower, curated, simply, just, easy</td></tr>
+      <tr><td><b>No dashes or middots</b></td><td class="yes">One plan, one total.</td><td class="no">One plan — one total</td></tr>
+      <tr><td><b>Name jobs, not rivals</b></td><td class="yes">Instead of five apps</td><td class="no">Better than Wanderlog</td></tr>
+    </tbody></table></div>
+  <div class="note"><b>Two claims to hold back until they ship</b>"From your airport to the trail" waits for the airport-to-outdoors leg (T202-a). "Local transport included" waits for roadmap 1.16 and 2.14.</div>
+</section>
+</div>
+
+<script>
+const BANK = [
+  ["Hero headlines", "A verb or a figure, under eight words", [
+    ["Plan the whole trip. See what it costs.", "Recommended"],
+    ["A cheap flight is not a cheap trip.", "Best as the week card title"],
+    ["Five apps for one trip? Use one.", ""],
+    ["Know what a trip costs before you go.", ""],
+    ["How far does your budget go?", "With the budget field"],
+    ["See the whole trip before you book it.", ""],
+    ["Plan any trip in Europe, with honest prices.", "The owner's sentence, T462"],
+  ]],
+  ["Sublines", "One sentence under the headline", [
+    ["The flight, the bed and every day there, in one plan and one total. For any trip in Europe.", "Recommended"],
+    ["Stop stitching trips together from five apps. Carta plans the whole trip in one place, with what each day costs.", "The positioning sentence"],
+    ["Find a place, see what a day there costs, plan every day and share it.", ""],
+    ["Tell Carta what you have. See the places that fit, then plan the trip and every day.", ""],
+  ]],
+  ["All in one, less juggling", "Edge 1", [
+    ["Stop stitching trips together from five apps.", ""],
+    ["One plan instead of five apps.", ""],
+    ["The route, the stays and every day, in one place.", ""],
+    ["Change one thing. Every figure follows.", "For the planner panel"],
+    ["No more copying prices between tabs.", ""],
+  ]],
+  ["What a day costs", "Edge 2", [
+    ["See what a day costs in every place.", ""],
+    ["The bed and food and drink, a person a day, before you choose.", ""],
+    ["Choose a place by what the days cost, not only the flight.", ""],
+    ["See what anywhere costs.", "Explore head or SEO page"],
+    ["No surprise bill at the end of the week.", "Store subtitle"],
+  ]],
+  ["One honest total", "Edge 3", [
+    ["The flight, the bed and every day there, in one total.", ""],
+    ["Every bed and every bus, in one total.", "Route card"],
+    ["One total for the whole group.", ""],
+    ["Pick a place and a week. See the flight, the bed, food and drink, and one total.", "Week card line"],
+  ]],
+  ["Budget first", "Edge 4", [
+    ["How much do you have?", "The budget field label"],
+    ["Where can your budget take you?", ""],
+    ["Places that fit your budget, and what is left.", ""],
+  ]],
+  ["Trust", "Edges 5 and 6", [
+    ["No booking, no commission.", ""],
+    ["Carta sells nothing. It shows you the numbers.", ""],
+    ["Every estimate is marked as one.", ""],
+    ["Flight prices are Google Flights', with when they were checked.", ""],
+    ["Book with the operator. Carta takes no cut.", ""],
+  ]],
+  ["Outdoors and audiences", "Edges 7 and 8", [
+    ["The walk, the town and what the weekend costs.", "Hikers"],
+    ["Find the trail. See what a night nearby costs.", "Hikers"],
+    ["Beaches with clean water, priced for the whole family.", "Families"],
+    ["A week by train and bus, every leg priced.", "Without a car"],
+    ["Any trip in Europe, by plane, train, bus or car.", ""],
+  ]],
+  ["Days, together, hand-off", "Edges 9 to 12", [
+    ["Plan every day, hour by hour.", ""],
+    ["Plan every day. Open it in Google Maps.", ""],
+    ["One link for the group. One place for the money.", ""],
+    ["Drop in your bookings. Carta fills the plan.", "Trip Pass feature"],
+    ["Ask Carta. It answers with places you can afford.", ""],
+  ]],
+  ["Section titles", "Plain, a verb where it can", [
+    ["Find it. Price it. Plan it.", "Story"],
+    ["Ask it like you would ask a friend.", "Who it is for"],
+    ["Why plan with Carta", "Trust rail"],
+    ["Where do you want to go next?", "Close"],
+  ]],
+  ["Buttons", "Verb first, no terminal punctuation", [
+    ["Ask Carta", "Hero primary"],
+    ["Plan a trip", ""],
+    ["Plan this trip", "Week and route cards"],
+    ["See places that fit", "Budget field"],
+    ["See all plans", "Under the plans"],
+  ]],
+  ["Plans", "Word for word where marked", [
+    ["Planning is free. A Trip Pass adds exports, more saved trips and more AI plans.", "pass.freeSentence, exact"],
+    ["One trip's worth of planning, from first idea to the day you fly.", "pass.tripBlurb, exact"],
+    ["For anyone who takes more than one trip a year.", "pass.yearBlurb, exact"],
+    ["Less than one month of most planning apps.", "Check before use: true against Wanderlog, Komoot, TripIt"],
+  ]],
+  ["Store and search", "Short lines outside the page", [
+    ["Plan the whole trip and see what it costs.", "Store title line"],
+    ["The flight, the bed and every day there, in one plan.", "Store subtitle"],
+    ["Plan any trip in Europe in one place: the flight, the bed and what each day costs, in one honest total. No booking, no commission.", "Meta description, 150 characters"],
+    ["Plan the whole trip in one place, with what each day costs.", "Footer line"],
+  ]],
+];
+const bankEl = document.getElementById("bankEl");
+for (const [title, hint, lines] of BANK) {
+  const g = document.createElement("div"); g.className = "group";
+  g.innerHTML = `<div class="gh"><h3>${title}</h3><span>${hint}</span></div>`;
+  const ul = document.createElement("ul");
+  lines.forEach(([t, note], i) => {
+    const li = document.createElement("li");
+    const span = document.createElement("span"); span.className = "t"; span.textContent = t;
+    if (note) { const s = document.createElement("small"); s.textContent = note; span.append(s); }
+    const b = document.createElement("button"); b.type = "button"; b.className = "copy"; b.textContent = "Copy";
+    b.setAttribute("aria-label", "Copy: " + t);
+    b.addEventListener("click", () => {
+      const done = () => toast("Copied");
+      try { navigator.clipboard.writeText(t).then(done, () => select(span)); } catch { select(span); }
+    });
+    li.append(span, b); ul.append(li);
+  });
+  g.append(ul); bankEl.append(g);
+}
+function select(el) { const r = document.createRange(); r.selectNodeContents(el.firstChild ? el.childNodes[0] : el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast("Selected, press Ctrl+C"); }
+function toast(msg) { const t = document.createElement("div"); t.className = "toast"; t.setAttribute("role", "status"); t.textContent = msg; document.body.append(t); setTimeout(() => t.remove(), 1600); }
+document.addEventListener("click", e => {
+  const img = e.target.closest(".theirs img, .spec figure img");
+  if (!img) return;
+  const z = document.createElement("div"); z.className = "zoom";
+  const i = document.createElement("img"); i.src = img.src; i.alt = img.alt; z.append(i);
+  z.addEventListener("click", () => z.remove()); document.body.append(z);
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape") document.querySelector(".zoom")?.remove(); });
+</script>

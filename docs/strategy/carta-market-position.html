@@ -1,0 +1,581 @@
+<title>Carta Market Position</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: one reading column with wide bands for the matrix and the canvas; Carta's own Lagoon-in-brown tokens so the analysis reads like the product */
+:root {
+  --paper: #f6f4f1;
+  --surface: #ffffff;
+  --sunken: #efebe6;
+  --ink: #1f2a33;
+  --ink-2: #4a5661;
+  --ink-3: #6b7680;
+  --line: #e3ddd5;
+  --brown: #8c5a2b;
+  --brown-ink: #74471f;
+  --mist: #f6e7d3;
+  --sun-bg: #fdefc0;
+  --rust: #a8400f;
+  --moss: #3f6b3a;
+  --font: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --r: 14px;
+  --r-lg: 22px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #171411; --surface: #211c18; --sunken: #2a241f; --ink: #f0ebe4; --ink-2: #c9c0b5; --ink-3: #a1968a;
+  --line: #3a322b; --brown: #d49a5e; --brown-ink: #e6b07a; --mist: #3a2b1d; --sun-bg: #3d3416;
+  --rust: #e8875a; --moss: #93c08a; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --paper: #171411; --surface: #211c18; --sunken: #2a241f; --ink: #f0ebe4; --ink-2: #c9c0b5; --ink-3: #a1968a;
+  --line: #3a322b; --brown: #d49a5e; --brown-ink: #e6b07a; --mist: #3a2b1d; --sun-bg: #3d3416;
+  --rust: #e8875a; --moss: #93c08a; color-scheme: dark }
+
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font: 400 16px/1.6 var(--font); font-variant-numeric: tabular-nums; }
+.wrap { max-width: 1080px; margin: 0 auto; padding-block: 48px 96px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3, h4 { text-wrap: balance; margin: 0; }
+h1 { font: 800 clamp(38px, 6.5vw, 72px)/1 var(--font); letter-spacing: -0.035em; }
+h2 { font: 750 clamp(28px, 4vw, 40px)/1.08 var(--font); letter-spacing: -0.025em; margin-bottom: 10px; }
+h3 { font: 700 20px/1.25 var(--font); letter-spacing: -0.01em; margin-bottom: 6px; }
+h4 { font: 700 15px/1.3 var(--font); margin-bottom: 4px; }
+p { margin: 0 0 12px; max-width: 70ch; }
+a { color: var(--brown-ink); }
+a:focus-visible, summary:focus-visible { outline: 2px solid var(--brown); outline-offset: 2px; border-radius: 4px; }
+.eyebrow { font: 700 12px/1 var(--font); letter-spacing: .09em; text-transform: uppercase; color: var(--brown-ink); margin-bottom: 14px; display: block; }
+.lede { font-size: 19px; color: var(--ink-2); max-width: 62ch; margin-top: 18px; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; padding: 0; list-style: none; }
+.meta li { font: 600 13px var(--font); padding: 6px 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--ink-2); }
+
+nav.toc { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; margin: 36px calc(-1 * max(16px, env(safe-area-inset-left, 0px))) 0;
+  padding: 10px max(16px, env(safe-area-inset-left, 0px)); background: var(--paper); border-bottom: 1px solid var(--line);
+  display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--paper); }
+nav.toc a { flex: none; font: 600 13px var(--font); color: var(--ink-2); text-decoration: none; padding: 7px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); }
+nav.toc a:hover { color: var(--brown-ink); border-color: var(--brown); }
+
+section { margin-top: 72px; scroll-margin-top: 70px; }
+section > .intro { color: var(--ink-2); max-width: 68ch; }
+
+/* The answer box */
+.answer { margin-top: 30px; padding: 26px; border-radius: var(--r-lg); background: var(--surface); border: 1px solid var(--line); display: grid; gap: 14px; }
+.answer .big { font: 800 clamp(24px, 3.4vw, 34px)/1.12 var(--font); letter-spacing: -0.025em; max-width: 30ch; }
+.answer .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.answer .row div { padding: 14px; border-radius: var(--r); background: var(--sunken); font-size: 15px; }
+.answer .row b { display: block; color: var(--brown-ink); font-size: 13px; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 4px; }
+
+/* Stack diagram: the tools a trip needs today, folding into one plan */
+.stack { margin-top: 22px; display: grid; grid-template-columns: minmax(0, 1.3fr) auto minmax(0, 1fr); gap: 18px; align-items: center; }
+.tools { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.tool { padding: 10px 12px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); font-size: 14px; min-width: 0; }
+.tool b { display: block; font-size: 14px; }
+.tool span { color: var(--ink-3); font-size: 13px; }
+.arrow { font: 800 34px var(--font); color: var(--brown); text-align: center; }
+.one { padding: 22px; border-radius: var(--r-lg); background: var(--mist); display: grid; gap: 8px; }
+.one .logo { font: 800 30px/1 var(--font); letter-spacing: -0.03em; color: var(--brown-ink); }
+.one ol { margin: 6px 0 0; padding-left: 20px; font-size: 15px; }
+.one ol li { margin-bottom: 4px; }
+.one small { color: var(--ink-2); font-size: 13px; }
+
+/* Figures */
+.figs { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; margin-top: 20px; }
+.fig { padding: 18px; border-radius: var(--r); background: var(--surface); border: 1px solid var(--line); display: grid; gap: 6px; align-content: start; }
+.fig .n { font: 800 34px/1 var(--font); letter-spacing: -0.03em; }
+.fig p { font-size: 14px; color: var(--ink-2); margin: 0; }
+.fig a { font-size: 12px; color: var(--ink-3); overflow-wrap: anywhere; }
+
+/* Tables */
+.tbl { overflow-x: auto; margin-top: 18px; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+.wide table { min-width: 940px; }
+.mid table { min-width: 720px; }
+th, td { text-align: left; vertical-align: top; padding: 11px 12px; border-bottom: 1px solid var(--line); }
+th { font: 700 12px var(--font); letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); background: var(--sunken); }
+tr:last-child td { border-bottom: 0; }
+td b { white-space: nowrap; }
+tr.carta td { background: var(--mist); }
+.m td:not(:first-child), .m th:not(:first-child) { text-align: center; }
+.y, .h, .n0 { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; font: 800 12px var(--font); }
+.y { background: var(--brown); color: var(--surface); }
+.h { border: 2px solid var(--brown); color: var(--brown-ink); }
+.n0 { border: 1px solid var(--line); color: var(--ink-3); }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--ink-2); margin-top: 10px; align-items: center; }
+.legend span { display: inline-flex; gap: 6px; align-items: center; }
+
+/* Edge list */
+.edges { counter-reset: e; display: grid; gap: 12px; margin-top: 22px; padding: 0; list-style: none; }
+.edges > li { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 18px 20px 18px 70px; position: relative; }
+.edges > li::before { counter-increment: e; content: counter(e); position: absolute; left: 18px; top: 18px; width: 36px; height: 36px; border-radius: 10px;
+  background: var(--mist); color: var(--brown-ink); display: grid; place-items: center; font-weight: 800; }
+.edges h3 { font-size: 19px; }
+.edges .say { font-weight: 600; color: var(--brown-ink); margin: 2px 0 8px; }
+.edges dl { display: grid; grid-template-columns: 120px 1fr; gap: 6px 14px; margin: 0; font-size: 14.5px; }
+.edges dt { font-weight: 700; color: var(--ink-2); }
+.edges dd { margin: 0; min-width: 0; }
+.strength { display: inline-block; font: 700 11px var(--font); letter-spacing: .05em; text-transform: uppercase; padding: 3px 8px; border-radius: 6px; margin-left: 8px; vertical-align: middle; }
+.s-core { background: var(--brown); color: var(--surface); }
+.s-strong { background: var(--mist); color: var(--brown-ink); }
+.s-support { background: var(--sunken); color: var(--ink-2); }
+
+/* Competitor cards */
+.comps { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; margin-top: 18px; }
+.comp { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 16px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.comp .top { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.comp .top span { font: 600 11px var(--font); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+.comp q { display: block; font-style: italic; color: var(--ink-2); font-size: 14px; quotes: none; }
+.comp p { font-size: 14px; margin: 0; }
+.comp p b { color: var(--ink-2); }
+.comp .vs { padding: 8px 10px; border-radius: 10px; background: var(--mist); font-size: 14px; }
+
+/* Canvas */
+.canvas { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-template-areas:
+  "kp ka vp cr cs" "kp kr vp ch cs" "co co rv rv rv"; gap: 10px; margin-top: 20px; }
+.cell { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px; font-size: 14px; min-width: 0; }
+.cell h4 { color: var(--brown-ink); font-size: 13px; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 8px; }
+.cell ul { margin: 0; padding-left: 16px; }
+.cell li { margin-bottom: 5px; }
+.cell.vp { background: var(--mist); border-color: var(--brown); }
+.kp { grid-area: kp; } .ka { grid-area: ka; } .kr { grid-area: kr; } .vp { grid-area: vp; } .cr { grid-area: cr; }
+.ch { grid-area: ch; } .cs { grid-area: cs; } .co { grid-area: co; } .rv { grid-area: rv; }
+
+/* Pricing ladder */
+.ladder { margin-top: 18px; display: grid; gap: 8px; }
+.bar { display: grid; grid-template-columns: 190px 1fr 92px; gap: 12px; align-items: center; font-size: 14px; }
+.bar .track { height: 14px; border-radius: 999px; background: var(--sunken); overflow: hidden; }
+.bar .fill { height: 100%; border-radius: 999px; background: var(--ink-3); }
+.bar.carta .fill { background: var(--brown); }
+.bar.carta b { color: var(--brown-ink); }
+.bar .v { text-align: right; font-weight: 700; }
+
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; margin-top: 18px; }
+.box { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 16px 18px; min-width: 0; }
+.box ul { margin: 6px 0 0; padding-left: 18px; font-size: 15px; }
+.box li { margin-bottom: 6px; }
+.box.win h3::before { content: "Carta wins  "; color: var(--moss); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
+.box.lose h3::before { content: "They win  "; color: var(--rust); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
+.note { margin-top: 16px; padding: 14px 16px; border-radius: var(--r); background: var(--sun-bg); font-size: 15px; }
+.note b { display: block; }
+.src { font-size: 13px; color: var(--ink-3); }
+.src li { margin-bottom: 4px; overflow-wrap: anywhere; }
+
+@media (max-width: 860px) {
+  .stack { grid-template-columns: 1fr; }
+  .arrow { transform: rotate(90deg); }
+  .canvas { grid-template-columns: 1fr 1fr; grid-template-areas: "vp vp" "cs cs" "cr ch" "ka kr" "kp kp" "rv rv" "co co"; }
+}
+@media (max-width: 560px) {
+  .tools { grid-template-columns: 1fr; }
+  .edges > li { padding: 62px 16px 16px; }
+  .edges > li::before { left: 16px; top: 16px; }
+  .edges dl { grid-template-columns: 1fr; gap: 2px; }
+  .edges dt { margin-top: 8px; }
+  .canvas { grid-template-columns: 1fr; grid-template-areas: "vp" "cs" "cr" "ch" "ka" "kr" "kp" "rv" "co"; }
+  .bar { grid-template-columns: 1fr 70px; }
+  .bar .track { grid-column: 1 / -1; grid-row: 2; }
+}
+</style>
+
+<div class="wrap">
+<header>
+  <span class="eyebrow">Carta, competitor analysis and business model</span>
+  <h1>Where Carta wins, and how it makes money</h1>
+  <p class="lede">Built from the repository (the app, PRODUCT.md, the positioning and unit economics files) and a fresh look at 22 travel products and 12 clarity benchmarks. Part one of two. Part two turns this into home page copy.</p>
+  <ul class="meta">
+    <li>Read: app code, PRODUCT.md, T201, T202, unit economics</li>
+    <li>22 competitors in 6 categories</li>
+    <li>14 edges, ranked</li>
+    <li>Business model canvas and pricing</li>
+    <li>23 October 2026</li>
+  </ul>
+
+  <div class="answer">
+    <div class="big">Carta is the one place to plan a trip in Europe and see what it really costs: the flight, the bed and every day there, in one total.</div>
+    <div class="row">
+      <div><b>The problem</b>Planning a trip means five to eight apps, and none of them says what the days cost. A cheap flight can still lead to an expensive week.</div>
+      <div><b>The answer</b>One plan: find a place by what a day costs, price the whole trip, plan each day, share it, then hand over to Google Maps and the operators.</div>
+      <div><b>Why trust it</b>No booking and no commission, so no reason to push anything. Every estimate is marked as one; every flight price says where it came from.</div>
+    </div>
+  </div>
+</header>
+
+<nav class="toc" aria-label="Sections">
+  <a href="#product">What Carta is</a>
+  <a href="#juggle">The juggling</a>
+  <a href="#market">The market</a>
+  <a href="#matrix">Who does what</a>
+  <a href="#rivals">Rival by rival</a>
+  <a href="#edges">Your edges</a>
+  <a href="#gaps">Where they win</a>
+  <a href="#value">Value proposition</a>
+  <a href="#model">Business model</a>
+  <a href="#money">The numbers</a>
+  <a href="#next">What to do next</a>
+</nav>
+
+<section id="product">
+  <h2>What Carta is, read from the code</h2>
+  <p class="intro">Everything below exists in <code>continent-app/src</code> today. It is grouped by the steps of a trip, because that is how a traveller will understand it.</p>
+  <div class="tbl mid"><table>
+    <thead><tr><th>Step</th><th>What Carta does</th><th>Where in the app</th><th>Replaces</th></tr></thead>
+    <tbody>
+      <tr><td><b>Choose</b></td><td>Explore about 3,900 places in 43 countries by what a day costs a person (bed plus food and drink), with month scores, climate, crowding and the Score. Six categories: places, trails, beaches, lakes, mountains, cycling.</td><td>Explore, destination and item pages</td><td>Budget Your Trip, Numbeo, Weather Spark, Lonely Planet</td></tr>
+      <tr><td><b>Fit the budget</b></td><td>"How much do you have?" Type a budget, get the places that fit and the ones that are tight, with what is left.</td><td><code>BudgetSearch.jsx</code>, <code>lib/budgetSearch.js</code></td><td>A spreadsheet</td></tr>
+      <tr><td><b>Ask</b></td><td>Ask Carta: a chat that answers with real places and their prices, and turns an answer into a trip.</td><td><code>browse/ask/</code> (Gemini edge functions)</td><td>ChatGPT, Mindtrip, Layla</td></tr>
+      <tr><td><b>Get there</b></td><td>Google Flights' price for the route and day, with airline, times and check time. Ground legs priced by mode (train, bus, car) and handed to Omio, Trainline or Rome2Rio.</td><td><code>GettingThere.jsx</code>, <code>TravelLegsSection.jsx</code></td><td>Skyscanner, Google Flights, Rome2Rio</td></tr>
+      <tr><td><b>Plan the trip</b></td><td>Multi-city planner, city by city, with one total for the party; ready-made trip styles; a guided wizard.</td><td><code>TripPlannerTab.jsx</code>, <code>GuidedTripWizard.jsx</code></td><td>Wanderlog, Stippl, Lambus</td></tr>
+      <tr><td><b>Plan the days</b></td><td>Day planner from a catalogue of sights: list, parts of the day or hour by hour, with a day cost. AI day plans.</td><td><code>DayPlannerTab.jsx</code>, <code>aiDayPlan.js</code></td><td>Visit A City, Wanderlog, Google My Maps</td></tr>
+      <tr><td><b>Plan together</b></td><td>Co-planners, one share link, a shared spend ledger for the group.</td><td><code>ExpenseLedger.jsx</code>, sharing</td><td>WhatsApp threads, Tricount, Splitwise</td></tr>
+      <tr><td><b>Keep bookings</b></td><td>Booking import: drop confirmations in, the trip fills itself (Trip Pass).</td><td><code>MagicImportZone.jsx</code></td><td>TripIt</td></tr>
+      <tr><td><b>Go</b></td><td>Every day opens in Google Maps. PDF, calendar (ICS), KML and GPX exports. Six languages.</td><td><code>dayPlanIcs.js</code>, <code>dayPlanKml.js</code></td><td>Copying into notes and calendars</td></tr>
+    </tbody></table></div>
+</section>
+
+<section id="juggle">
+  <h2>The juggling Carta removes</h2>
+  <p class="intro">A budget trip in Europe today, done the usual way. Each tool does one job and none of them talks to the others, so the traveller is the integration layer: copying dates, prices and places between tabs.</p>
+  <div class="stack">
+    <div class="tools" aria-label="The usual tool stack">
+      <div class="tool"><b>Skyscanner or Google Flights</b><span>the flight</span></div>
+      <div class="tool"><b>Booking.com or Airbnb</b><span>the bed</span></div>
+      <div class="tool"><b>Numbeo or Budget Your Trip</b><span>a guess at the days</span></div>
+      <div class="tool"><b>Rome2Rio or Omio</b><span>between towns</span></div>
+      <div class="tool"><b>Wanderlog or a spreadsheet</b><span>the itinerary</span></div>
+      <div class="tool"><b>Komoot or AllTrails</b><span>the walks</span></div>
+      <div class="tool"><b>ChatGPT</b><span>ideas, with invented prices</span></div>
+      <div class="tool"><b>WhatsApp and Tricount</b><span>the group and the money</span></div>
+    </div>
+    <div class="arrow" aria-hidden="true">→</div>
+    <div class="one">
+      <div class="logo">Carta</div>
+      <ol>
+        <li>Find a place by what a day costs</li>
+        <li>See the whole trip in one total</li>
+        <li>Plan the route and every day</li>
+        <li>Share it and split the spend</li>
+        <li>Open it in Google Maps, book with the operator</li>
+      </ol>
+      <small>Carta keeps the booking sites and Google Maps as the last step. It replaces the juggling between them, not the shops.</small>
+    </div>
+  </div>
+  <div class="figs" id="stats">
+    <div class="fig"><div class="n">38</div><p>sites visited in the 45 days before booking a holiday (Expedia with Compete).</p><a href="https://skift.com/2013/08/26/travelers-visit-38-sites-before-booking-a-vacation-stud" target="_blank" rel="noopener">skift.com</a></div>
+<div class="fig"><div class="n">303 min</div><p>with travel content before booking, across 141 pages (Expedia Group).</p><a href="https://www.hotel-online.com/news/travelers-spend-over-5-hours-researching-trips-on-average-longer-than-flying-from-los-angeles-to-washington-dc" target="_blank" rel="noopener">www.hotel-online.com</a></div>
+<div class="fig"><div class="n">47%</div><p>of a European leisure trip budget goes on the bed (27%) and food and drink (20%) (European Travel Commission, 2025).</p><a href="https://www.travelextra.ie/european-travel-commission-says-average-trip-will-cost-e2500-in-2025/" target="_blank" rel="noopener">www.travelextra.ie</a></div>
+<div class="fig"><div class="n">94%</div><p>of US holidaymakers spent more than planned (TopCashback survey of 2,000+ adults).</p><a href="https://www.kjrh.com/money/consumer/guilty-spending-survey-finds-that-more-than-half-of-vacationers-overspend-feel-guilty" target="_blank" rel="noopener">www.kjrh.com</a></div>
+<div class="fig"><div class="n">90%</div><p>of ChatGPT itineraries in one test had at least one error; 24% sent people to closed venues.</p><a href="https://www.travolution.com/news/marketing/survey-finds-chatgpt-itineraries-to-be-riddled-with-inaccuracies/" target="_blank" rel="noopener">www.travolution.com</a></div>
+<div class="fig"><div class="n">7 to 8</div><p>apps used by a leisure traveller across search, booking and the trip (Travelport, 2018).</p><a href="https://www.travelpulse.com/news/travel-technology/travelers-increasingly-rely-on-mobile-apps-when-traveling.html" target="_blank" rel="noopener">www.travelpulse.com</a></div>
+  </div>
+</section>
+
+<section id="market">
+  <h2>The market in six groups</h2>
+  <p class="intro">Each group beats Carta on one axis. None of them can say the second half of Carta's sentence: what the whole trip costs, honestly, in one plan.</p>
+  <div class="tbl mid"><table>
+    <thead><tr><th>Group</th><th>Who</th><th>What they price</th><th>What they never say</th></tr></thead>
+    <tbody>
+      <tr><td><b>Flight search</b></td><td>Skyscanner, Google Flights, Kayak, Hopper</td><td>The ticket</td><td>What the bed and the days cost after landing</td></tr>
+      <tr><td><b>Cost of travel data</b></td><td>Budget Your Trip, Price of Travel, Numbeo</td><td>An average day per city, as a list</td><td>Your dates, your party, your trip; no plan, no map</td></tr>
+      <tr><td><b>AI trip planners</b></td><td>Mindtrip, Layla, ChatGPT, Booking.com AI</td><td>Whatever the partner sells</td><td>A sourced figure; they earn when you book</td></tr>
+      <tr><td><b>Itinerary planners</b></td><td>Wanderlog, Polarsteps, Stippl, Lambus, TripIt</td><td>Only what you type in</td><td>What a place costs before you chose it</td></tr>
+      <tr><td><b>Journey planners</b></td><td>Rome2Rio, Omio</td><td>The leg from A to B</td><td>What B costs once you are there</td></tr>
+      <tr><td><b>Outdoor</b></td><td>Komoot, AllTrails</td><td>Nothing</td><td>What the night in the valley costs</td></tr>
+    </tbody></table></div>
+</section>
+
+<section id="matrix">
+  <h2>Who does what</h2>
+  <p class="intro">Capabilities a budget traveller needs for one trip, product by product. Filled is a real feature, ringed is partial (only what the user types, or only one country, or behind a booking), empty is absent.</p>
+  <div class="tbl wide"><table class="m">
+    <thead><tr><th>Product</th><th>Day cost per place</th><th>Flight price</th><th>Whole-trip total</th><th>Budget-first search</th><th>Multi-city plan</th><th>Day by day</th><th>Trails and beaches</th><th>Plan together</th><th>Neutral (no commission)</th></tr></thead>
+    <tbody>
+      <tr class="carta"><td><b>Carta</b></td><td><span class="y">✓</span></td><td><span class="y">✓</span></td><td><span class="y">✓</span></td><td><span class="y">✓</span></td><td><span class="y">✓</span></td><td><span class="y">✓</span></td><td><span class="y">✓</span></td><td><span class="y">✓</span></td><td><span class="y">✓</span></td></tr>
+      <tr><td><b>Wanderlog</b></td><td><span class="n0">·</span></td><td><span class="h">◐</span></td><td><span class="h">◐</span></td><td><span class="n0">·</span></td><td><span class="y">✓</span></td><td><span class="y">✓</span></td><td><span class="n0">·</span></td><td><span class="y">✓</span></td><td><span class="h">◐</span></td></tr>
+      <tr><td><b>Polarsteps</b></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="y">✓</span></td><td><span class="h">◐</span></td><td><span class="n0">·</span></td><td><span class="y">✓</span></td><td><span class="y">✓</span></td></tr>
+      <tr><td><b>Mindtrip</b></td><td><span class="n0">·</span></td><td><span class="y">✓</span></td><td><span class="h">◐</span></td><td><span class="n0">·</span></td><td><span class="y">✓</span></td><td><span class="y">✓</span></td><td><span class="n0">·</span></td><td><span class="y">✓</span></td><td><span class="n0">·</span></td></tr>
+      <tr><td><b>Layla</b></td><td><span class="n0">·</span></td><td><span class="y">✓</span></td><td><span class="h">◐</span></td><td><span class="h">◐</span></td><td><span class="y">✓</span></td><td><span class="y">✓</span></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td></tr>
+      <tr><td><b>ChatGPT</b></td><td><span class="h">◐</span></td><td><span class="h">◐</span></td><td><span class="h">◐</span></td><td><span class="h">◐</span></td><td><span class="h">◐</span></td><td><span class="h">◐</span></td><td><span class="h">◐</span></td><td><span class="n0">·</span></td><td><span class="h">◐</span></td></tr>
+      <tr><td><b>Lambus</b></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="h">◐</span></td><td><span class="n0">·</span></td><td><span class="y">✓</span></td><td><span class="y">✓</span></td><td><span class="n0">·</span></td><td><span class="y">✓</span></td><td><span class="y">✓</span></td></tr>
+      <tr><td><b>TripIt</b></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="h">◐</span></td><td><span class="h">◐</span></td><td><span class="n0">·</span></td><td><span class="h">◐</span></td><td><span class="y">✓</span></td></tr>
+      <tr><td><b>Skyscanner</b></td><td><span class="n0">·</span></td><td><span class="y">✓</span></td><td><span class="n0">·</span></td><td><span class="h">◐</span></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td></tr>
+      <tr><td><b>Google Travel</b></td><td><span class="n0">·</span></td><td><span class="y">✓</span></td><td><span class="n0">·</span></td><td><span class="h">◐</span></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td></tr>
+      <tr><td><b>Rome2Rio</b></td><td><span class="n0">·</span></td><td><span class="h">◐</span></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td></tr>
+      <tr><td><b>Budget Your Trip</b></td><td><span class="h">◐</span></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="h">◐</span></td></tr>
+      <tr><td><b>Komoot</b></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="h">◐</span></td><td><span class="n0">·</span></td><td><span class="y">✓</span></td><td><span class="y">✓</span></td><td><span class="y">✓</span></td></tr>
+      <tr><td><b>AllTrails</b></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="n0">·</span></td><td><span class="y">✓</span></td><td><span class="h">◐</span></td><td><span class="y">✓</span></td></tr>
+    </tbody></table></div>
+  <div class="legend"><span><span class="y">✓</span> has it</span><span><span class="h">◐</span> partial</span><span><span class="n0">·</span> absent</span><span>ChatGPT is ringed across the board: it answers anything, but its prices are not sourced and it keeps no plan.</span></div>
+  <div class="note"><b>The one column nobody else fills</b>Day cost per place, from real local prices, for your dates and your party. Budget Your Trip comes closest and is a static list of averages. Everyone else either prices the ticket or prices nothing.</div>
+</section>
+
+<section id="rivals">
+  <h2>Rival by rival</h2>
+  <p class="intro">Their own homepage line, how they make money, and the sentence that puts Carta beside them. Prices are 2026 list prices.</p>
+  <div class="comps" id="comps">
+    <article class="comp"><div class="top"><b>Wanderlog</b><span>Itinerary planner</span></div><q>One app for all your travel planning needs</q><p><b>Model</b> Free; Pro about $40 a year. YC company, 8M+ trips planned.</p><p><b>Best at</b> Itinerary and map in one view, live co-editing, Gmail import.</p><div class="vs">Wanderlog organises the places you already chose. Carta starts from what each place costs.</div></article>
+<article class="comp"><div class="top"><b>Polarsteps</b><span>Tracker and planner</span></div><q>Plan, track and relive your travels (store copy)</q><p><b>Model</b> Free; Plus €29.99 a year; printed travel books; booking links since 2025. 10M+ users.</p><p><b>Best at</b> Tracking the route during the trip and the book after it.</p><div class="vs">Polarsteps remembers the trip. Carta prices it before you go.</div></article>
+<article class="comp"><div class="top"><b>Mindtrip</b><span>AI planner</span></div><q>Travel better.</q><p><b>Model</b> Free; earns on bookings via Priceline and Viator. About $22.5M raised.</p><p><b>Best at</b> Chat on a map, inspiration, group chat.</p><div class="vs">Mindtrip is paid when you book. Carta is paid by you, so it has nothing to push.</div></article>
+<article class="comp"><div class="top"><b>Layla</b><span>AI planner</span></div><q>Hey, I'm Layla your personal trip planner</q><p><b>Model</b> Freemium, about $49 a year; affiliate to Skyscanner, Booking.com, GetYourGuide.</p><p><b>Best at</b> A chat itinerary with things to book.</p><div class="vs">Layla shows the affiliate's price. Carta shows what the day costs and marks every estimate.</div></article>
+<article class="comp"><div class="top"><b>Lambus</b><span>Group planner</span></div><q>All-in-one travel planner (blog wording, unverified)</q><p><b>Model</b> €9.99 a trip or €24.99 a year.</p><p><b>Best at</b> Group trips, documents, cost splitting.</p><div class="vs">Lambus splits what you spent. Carta tells you what you will spend, before you book.</div></article>
+<article class="comp"><div class="top"><b>Stippl</b><span>Route planner</span></div><q>The ultimate way to include AI in your travel planning (AI page)</q><p><b>Model</b> Free; PRO €24.99 a year; Booking.com and Airbnb links.</p><p><b>Best at</b> Multi-stop routes that adjust when a stay changes.</p><div class="vs">Stippl draws the route. Carta prices every stop on it.</div></article>
+<article class="comp"><div class="top"><b>TripIt</b><span>Organiser</span></div><q>Homepage headline not verified</q><p><b>Model</b> Free; Pro $48.99 a year. 22M+ travellers.</p><p><b>Best at</b> Turning confirmation emails into one itinerary.</p><div class="vs">TripIt starts once everything is booked. Carta helps you decide what to book.</div></article>
+<article class="comp"><div class="top"><b>Rome2Rio</b><span>Journey planner</span></div><q>Discover how to get anywhere</q><p><b>Model</b> Free; affiliate and ads; owned by Omio. About 18M monthly users.</p><p><b>Best at</b> Every way from A to B with estimated prices.</p><div class="vs">Rome2Rio prices the leg. Carta prices the leg, the stay and the days.</div></article>
+<article class="comp"><div class="top"><b>Omio</b><span>Ticket seller</span></div><q>Trains, Buses and Flights all in one search (unverified)</q><p><b>Model</b> Commission and booking fee. $596M raised.</p><p><b>Best at</b> One checkout for trains and buses across Europe.</p><div class="vs">Omio sells the seat. Carta tells you which town the seat should go to, then sends you to Omio.</div></article>
+<article class="comp"><div class="top"><b>Skyscanner</b><span>Flight search</span></div><q>Homepage headline not verified</q><p><b>Model</b> Metasearch, paid by partners. About 110M monthly visitors.</p><p><b>Best at</b> Everywhere: the cheapest places to fly to.</p><div class="vs">Skyscanner finds the cheap flight. Carta finds the cheap week.</div></article>
+<article class="comp"><div class="top"><b>Google Flights</b><span>Flight search</span></div><q>No marketing headline</q><p><b>Model</b> Free; ads and hotel ads.</p><p><b>Best at</b> Explore map, price insights, date grid.</p><div class="vs">Google maps the fare. Carta adds the bed and the days, using Google's fare as Google's.</div></article>
+<article class="comp"><div class="top"><b>Komoot</b><span>Outdoor</span></div><q>Homepage headline not verified</q><p><b>Model</b> Premium €59.99 a year. 45M+ users; Bending Spoons since 2025.</p><p><b>Best at</b> Route planning by surface and climb, turn-by-turn.</p><div class="vs">Komoot gets you round the loop. Carta tells you what the weekend around it costs.</div></article>
+<article class="comp"><div class="top"><b>AllTrails</b><span>Outdoor</span></div><q>Find your outdoors (unverified)</q><p><b>Model</b> Plus $35.99 a year, Peak $79.99. 95M+ users.</p><p><b>Best at</b> The trail database with reviews.</p><div class="vs">AllTrails ranks the walk. Carta prices the bed and the day in the town beside it.</div></article>
+<article class="comp"><div class="top"><b>Budget Your Trip</b><span>Cost data</span></div><q>Homepage headline not verified</q><p><b>Model</b> Free; ads and affiliate.</p><p><b>Best at</b> Daily cost per city from travellers' reported spend.</p><div class="vs">The closest idea, as static tables. Carta turns the figure into a plan with your dates and party.</div></article>
+<article class="comp"><div class="top"><b>Price of Travel</b><span>Cost data</span></div><q>Homepage headline not verified</q><p><b>Model</b> Free; ads and affiliate. 54 European cities.</p><p><b>Best at</b> A clear backpacker index per city.</p><div class="vs">54 cities as articles. Carta prices thousands of places inside a planner.</div></article>
+<article class="comp"><div class="top"><b>ChatGPT</b><span>General AI</span></div><q>No homepage headline</q><p><b>Model</b> Subscription. 22 to 29% of travellers have used AI to plan.</p><p><b>Best at</b> A fast first draft and back and forth.</p><div class="vs">ChatGPT guesses prices. Carta's come from a priced catalogue, marked where they are estimates.</div></article>
+<article class="comp"><div class="top"><b>Booking.com AI</b><span>Booking site</span></div><q>No homepage headline</q><p><b>Model</b> Commission on stays.</p><p><b>Best at</b> Live inventory and prices.</p><div class="vs">Booking.com suggests its own stays. Carta has no stays to sell.</div></article>
+<article class="comp"><div class="top"><b>Hopper</b><span>Deals</span></div><q>Spend Less, Travel Better (store copy)</q><p><b>Model</b> Booking commission plus price freeze products. $850M revenue (2024).</p><p><b>Best at</b> Fare prediction and price freeze.</p><div class="vs">Hopper times the flight. Carta prices the whole trip around it.</div></article>
+  </div>
+</section>
+
+<section id="edges">
+  <h2>Your edges, exactly</h2>
+  <p class="intro">Ranked by how hard they are to copy. "Core" edges need Carta's priced catalogue, so a competitor cannot add them with a feature sprint. "Strong" edges are real today and worth leading with. "Support" edges help a visitor decide, but do not carry a headline alone.</p>
+  <ol class="edges">
+    <li><h3>All in one plan, less juggling <span class="strength s-core">Core</span></h3>
+      <p class="say">"Stop stitching trips together from five apps."</p>
+      <dl><dt>What it is</dt><dd>The flight, the bed, the days, the route, the day plans, the group and the spend in one plan, where one change updates every figure.</dd>
+      <dt>Proof</dt><dd>Explore, Plan and My trips share one cost index (<code>costIndex.js</code>), so the card, the receipt, the planner and the day plan always show the same figure.</dd>
+      <dt>Beats</dt><dd>The eight-tool stack above. Wanderlog and Mindtrip come closest on planning, but they cannot price a place they were not told about.</dd></dl></li>
+
+    <li><h3>What a day costs, before you choose <span class="strength s-core">Core</span></h3>
+      <p class="say">"A cheap flight is not a cheap trip."</p>
+      <dl><dt>What it is</dt><dd>A bed plus food and drink, per person per day, for every place in the catalogue, at the traveller's own travel style.</dd>
+      <dt>Proof</dt><dd>Priced from local rates where they were measured, with a tilde where a figure is a stand-in. About 3,900 places in 43 countries.</dd>
+      <dt>Beats</dt><dd>Every flight search (they stop at the airport) and every itinerary planner (they only know what you type).</dd></dl></li>
+
+    <li><h3>One honest total for the whole trip <span class="strength s-core">Core</span></h3>
+      <p class="say">"The flight, the bed and every day there, in one total."</p>
+      <dl><dt>What it is</dt><dd>Google Flights' fare plus the beds plus the days, for the whole party, as one receipt with every line visible.</dd>
+      <dt>Proof</dt><dd><code>priceTrip()</code> and <code>PlanTotal.jsx</code>; the flight carries its airline, times and check time.</dd>
+      <dt>Beats</dt><dd>Skyscanner and Google Flights, which price a leg, and Budget Your Trip, which prices an average day.</dd></dl></li>
+
+    <li><h3>Start from your budget, not a destination <span class="strength s-strong">Strong</span></h3>
+      <p class="say">"Tell Carta what you have. See where it takes you."</p>
+      <dl><dt>What it is</dt><dd>One field, "How much do you have?", and the places that fit, the ones that are tight, and what is left.</dd>
+      <dt>Proof</dt><dd><code>BudgetSearch.jsx</code> with a 10 percent buffer line by default.</dd>
+      <dt>Beats</dt><dd>Kayak Explore and Skyscanner Everywhere filter by fare only. Nobody filters by the cost of the whole stay.</dd></dl></li>
+
+    <li><h3>Numbers you can trust <span class="strength s-strong">Strong</span></h3>
+      <p class="say">"Every estimate is marked as one."</p>
+      <dl><dt>What it is</dt><dd>A tilde on every stand-in figure, the flight named as Google Flights' with when it was checked, never a stored price shown as current.</dd>
+      <dt>Proof</dt><dd><code>formatEst()</code>, the flight rules in PRODUCT.md, and the significance engine that rebuilt sight ratings from open evidence.</dd>
+      <dt>Beats</dt><dd>AI planners, whose reviews fault prices they cannot back and touristy picks.</dd></dl></li>
+
+    <li><h3>No booking, no commission, no push <span class="strength s-strong">Strong</span></h3>
+      <p class="say">"Carta sells nothing. It shows you the numbers and hands you to the operator."</p>
+      <dl><dt>What it is</dt><dd>Carta earns from the traveller (the pass), not from the hotel. It has no reason to rank a place higher because it pays more.</dd>
+      <dt>Proof</dt><dd>PRODUCT.md principle; affiliate links are a hand-off at the last step, never a ranking signal.</dd>
+      <dt>Beats</dt><dd>Booking.com AI, Expedia, Mindtrip and Layla, whose business is the booking.</dd></dl></li>
+
+    <li><h3>The walk and the town, priced together <span class="strength s-strong">Strong</span></h3>
+      <p class="say">"Komoot gets you round the loop. Carta tells you what the weekend costs."</p>
+      <dl><dt>What it is</dt><dd>Trails, beaches with EU bathing water quality, lakes, mountains and cycling routes, each beside the town you sleep in and what it costs.</dd>
+      <dt>Proof</dt><dd>About 17,600 trails and 22,300 bathing waters in the data layers; hikers are the launch audience.</dd>
+      <dt>Beats</dt><dd>Komoot, AllTrails and Outdooractive, which price nothing.</dd></dl></li>
+
+    <li><h3>Built for Europe, end to end <span class="strength s-strong">Strong</span></h3>
+      <p class="say">"Any trip in Europe, by plane, train, bus or car."</p>
+      <dl><dt>What it is</dt><dd>Small towns, low-cost airports, buses and trains, local prices, 43 countries, six European languages including the exports.</dd>
+      <dt>Proof</dt><dd>The catalogue, the six i18n files, the Getting there modes.</dd>
+      <dt>Beats</dt><dd>US-first planners (Wanderlog, Roadtrippers, TripIt, AllTrails) whose Europe coverage thins east of the Alps.</dd></dl></li>
+
+    <li><h3>Plan each day, then hand over to Google Maps <span class="strength s-support">Support</span></h3>
+      <p class="say">"Plan every day. Open it in Google Maps."</p>
+      <dl><dt>What it is</dt><dd>Hour-by-hour or by parts of the day, with a day cost; then each day opens in the traveller's own maps app. No lock-in.</dd>
+      <dt>Proof</dt><dd><code>DayPlannerTab.jsx</code>, the Google Maps hand-off rule, ICS and KML exports.</dd>
+      <dt>Beats</dt><dd>Google Maps itself, the best at getting there and the worst at planning.</dd></dl></li>
+
+    <li><h3>Plan together, settle up after <span class="strength s-support">Support</span></h3>
+      <p class="say">"One link for the group. One place for the money."</p>
+      <dl><dt>What it is</dt><dd>Co-planners and a shared spend ledger inside the same trip.</dd>
+      <dt>Proof</dt><dd><code>ExpenseLedger.jsx</code>, co-planners free since T488.</dd>
+      <dt>Beats</dt><dd>WhatsApp plus Tricount plus a shared doc. Lambus has this too, at a higher price.</dd></dl></li>
+
+    <li><h3>Bookings in, one itinerary out <span class="strength s-support">Support</span></h3>
+      <p class="say">"Drop in your bookings. Carta fills the plan."</p>
+      <dl><dt>What it is</dt><dd>Booking confirmations become trip stops (Trip Pass).</dd>
+      <dt>Proof</dt><dd><code>MagicImportZone.jsx</code>, the parse-booking edge function.</dd>
+      <dt>Beats</dt><dd>TripIt, which only starts once everything is booked.</dd></dl></li>
+
+    <li><h3>Ask in plain words, get real places with prices <span class="strength s-support">Support</span></h3>
+      <p class="say">"Ask Carta. It answers with places you can afford."</p>
+      <dl><dt>What it is</dt><dd>A chat that answers from the priced catalogue, not from the open web.</dd>
+      <dt>Proof</dt><dd><code>browse/ask/</code>, grounded on catalogue rows.</dd>
+      <dt>Beats</dt><dd>ChatGPT and Mindtrip on price truth; it does not try to beat them on chat breadth.</dd></dl></li>
+
+    <li><h3>A fair price, paid once <span class="strength s-strong">Strong</span></h3>
+      <p class="say">"Planning is free. A Trip Pass adds exports, more saved trips and more AI plans."</p>
+      <dl><dt>What it is</dt><dd>Free to plan; €6.99 for one trip (60 days) or €14.99 a year. No ads.</dd>
+      <dt>Proof</dt><dd><code>lib/pricing.js</code> TIERS.</dd>
+      <dt>Beats</dt><dd>Stippl and Lambus (€24.99), Polarsteps Plus (€29.99), Wanderlog Pro (about $40), TripIt Pro ($48.99) and Komoot Premium (€59.99), all higher by the year (see the ladder below).</dd></dl></li>
+
+    <li><h3>A cost base that lets it stay cheap and independent <span class="strength s-support">Support</span></h3>
+      <p class="say">Internal, not a headline.</p>
+      <dl><dt>What it is</dt><dd>Static precomputed data on a CDN: about €11 a month today, €55 to €75 at launch traffic, 88 to 93 percent gross margin.</dd>
+      <dt>Proof</dt><dd>CARTA_UNIT_ECONOMICS.md sections 2 and 5.</dd>
+      <dt>Beats</dt><dd>Venture-funded AI planners that must monetise each user through bookings.</dd></dl></li>
+  </ol>
+</section>
+
+<section id="gaps">
+  <h2>Where they still win</h2>
+  <p class="intro">Worth knowing before a visitor points it out. None of these is a reason to change the position; each is a reason not to claim it.</p>
+  <div class="two">
+    <div class="box lose"><h3>Do not compete here</h3>
+      <ul>
+        <li><b>Live fare depth.</b> Skyscanner and Google Flights search every carrier live; Carta shows Google Flights' price from a sweep and one live search in the planner.</li>
+        <li><b>Navigation.</b> Komoot and AllTrails guide you on the trail. Carta never navigates, by design.</li>
+        <li><b>Community size.</b> Reviews, photos and user tours at Tripadvisor, AllTrails and Komoot scale. Carta has no testimonials and must not invent any.</li>
+        <li><b>Brand and native apps.</b> Polarsteps and Wanderlog have store apps and large audiences. Carta is a web app with a store wrapper.</li>
+        <li><b>The world.</b> Rome2Rio and Mindtrip cover the globe. Carta is Europe only.</li>
+      </ul></div>
+    <div class="box"><h3>Gaps to close in the product</h3>
+      <ul>
+        <li><b>Local transport and tickets</b> are not in the day figure yet (roadmap 1.16, 2.14). Never say "everything included" until they are.</li>
+        <li><b>The airport-to-trail leg</b> (T202-a): the claim no rival can copy, not built yet.</li>
+        <li><b>Proof of freshness</b> is the only social proof Carta may use. Show when figures were checked.</li>
+        <li><b>Measurement</b>: visitors, priced-trip completions and affiliate clicks have no instrument yet (LAUNCH-METRICS.md).</li>
+      </ul></div>
+  </div>
+</section>
+
+<section id="value">
+  <h2>The value proposition</h2>
+  <p class="intro">Who it is for, what they are trying to do, what hurts today, and what Carta changes. The headline set in part two is written from this table.</p>
+  <div class="tbl mid"><table>
+    <thead><tr><th>Traveller</th><th>Job</th><th>Pain today</th><th>What Carta gives</th></tr></thead>
+    <tbody>
+      <tr><td><b>Hiker</b> (launch audience)</td><td>A walking weekend or a hut-to-hut week</td><td>Komoot has the route, nobody has the cost of the valley</td><td>The walk, the town to sleep in and what the weekend costs</td></tr>
+      <tr><td><b>Family on one income</b></td><td>A beach week the budget can carry</td><td>The cheap flight leads to an expensive resort</td><td>Beaches with clean water, priced for two adults and two children</td></tr>
+      <tr><td><b>Student or young worker</b></td><td>Go somewhere good for little</td><td>Hours of tabs to find a place that fits €400</td><td>"How much do you have?" and the list of places that fit</td></tr>
+      <tr><td><b>Car-free traveller</b></td><td>A trip by train and bus</td><td>Rome2Rio for legs, nothing for the stay</td><td>Each leg priced by mode, each town priced by the day</td></tr>
+      <tr><td><b>Group of friends</b></td><td>Agree on a plan and split the cost</td><td>A WhatsApp thread, a doc and Tricount</td><td>One link, co-planners, one spend ledger</td></tr>
+      <tr><td><b>Retiree on a fixed income</b></td><td>A longer, slower trip</td><td>Fear of the surprise bill</td><td>Every day priced before booking, every estimate marked</td></tr>
+    </tbody></table></div>
+
+  <h3 style="margin-top:28px">Key propositions, in order</h3>
+  <div class="figs">
+    <div class="fig"><div class="n">1</div><h4>See what the whole trip costs</h4><p>The flight, the bed and every day there, in one honest total, before you book anything.</p></div>
+    <div class="fig"><div class="n">2</div><h4>Plan it all in one place</h4><p>Choose, price, route, plan each day and share, without moving between apps.</p></div>
+    <div class="fig"><div class="n">3</div><h4>Trust every figure</h4><p>No commission, estimates marked, flight prices with their source and check time.</p></div>
+  </div>
+</section>
+
+<section id="model">
+  <h2>Business model</h2>
+  <p class="intro">The model already in the repository, written out as a canvas. Carta earns from the traveller, not from the hotel, which is what lets it stay neutral.</p>
+  <div class="canvas">
+    <div class="cell kp"><h4>Key partners</h4><ul>
+      <li>Google Flights (fare source, link out)</li><li>Omio, Trainline, Rome2Rio (ground legs, affiliate)</li><li>Booking and stay partners (hand-off)</li><li>Open data: Wikimedia, Wikidata, Wikivoyage, EEA, Eurostat, OSM, Overture</li><li>Gemini (Ask Carta, AI plans)</li><li>Stripe, Supabase, Cloudflare</li></ul></div>
+    <div class="cell ka"><h4>Key activities</h4><ul>
+      <li>Harvest and price the catalogue (pipeline)</li><li>Keep figures fresh (weekly fares, monthly ratings)</li><li>Build planners and the day engine</li><li>Publish indexable pages for SEO</li></ul></div>
+    <div class="cell kr"><h4>Key resources</h4><ul>
+      <li>The priced catalogue and its provenance chain</li><li>Trails, beaches, lakes, mountains layers</li><li>Six-language product</li><li>Trust in the numbers</li></ul></div>
+    <div class="cell vp"><h4>Value proposition</h4><ul>
+      <li><b>See what the whole trip costs</b>: flight, bed and days in one total</li>
+      <li><b>One place to plan</b>: choose, price, route, days, share</li>
+      <li><b>Neutral</b>: no booking, no commission</li>
+      <li><b>Honest</b>: estimates marked, sources named</li>
+      <li>Hand-off to Google Maps and operators, no lock-in</li></ul></div>
+    <div class="cell cr"><h4>Customer relationships</h4><ul>
+      <li>Self-serve, free to plan</li><li>Saved trips bring people back ("what changed since you saved")</li><li>Pay at the moment of value (export, more trips)</li></ul></div>
+    <div class="cell ch"><h4>Channels</h4><ul>
+      <li>Organic search: one page per place, trail, beach, lake</li><li>Shared trip links and share cards</li><li>Store listings (wrapper)</li><li>No paid ads (unit economics rule)</li></ul></div>
+    <div class="cell cs"><h4>Customer segments</h4><ul>
+      <li>Hikers first</li><li>Families looking for beaches</li><li>Cyclists and bikepackers</li><li>Budget city breaks</li><li>Car-free travellers</li><li>Students, young workers, retirees</li><li>Europe-based, planning on a phone</li></ul></div>
+    <div class="cell co"><h4>Cost structure</h4><ul>
+      <li>Infrastructure about €11 a month today, €55 to €75 at launch traffic</li><li>AI per use: about €0.01 a plan, €0.05 a grounded search, capped per pass</li><li>Stripe €0.25 plus about 1.5 percent; 21 percent VAT inside the price</li><li>Owner time (the main cost)</li></ul></div>
+    <div class="cell rv"><h4>Revenue streams</h4><ul>
+      <li><b>Trip Pass</b> €6.99 once, 60 days: every PDF, ICS and KML export, more saved trips, booking import, 60 AI plans</li>
+      <li><b>Yearly plan</b> €14.99, renews: the same for a year, 300 AI plans; pays off from the third trip</li>
+      <li><b>Affiliate hand-offs</b> on ground legs and stays: about €0.01 per monthly user, linear with traffic</li>
+      <li>Later, if wanted: partner data licences or a white-label cost widget for tourist boards (not in the repo, an idea to test)</li></ul></div>
+  </div>
+
+  <h3 style="margin-top:32px">Price per year against the market</h3>
+  <p class="intro">What a traveller pays for a year of planning. Carta's yearly plan is the lowest paid tier in the set, and a single trip costs less than one month of most rivals.</p>
+  <div class="ladder" id="ladder">
+    <div class="bar carta"><b>Carta, one Trip Pass</b><div class="track"><div class="fill" style="width:11.7%"></div></div><span class="v">€6.99</span></div>
+<div class="bar carta"><b>Carta, yearly plan</b><div class="track"><div class="fill" style="width:25.0%"></div></div><span class="v">€14.99</span></div>
+<div class="bar"><b>Stippl PRO</b><div class="track"><div class="fill" style="width:41.6%"></div></div><span class="v">€24.99</span></div>
+<div class="bar"><b>Lambus</b><div class="track"><div class="fill" style="width:41.6%"></div></div><span class="v">€24.99</span></div>
+<div class="bar"><b>Polarsteps Plus</b><div class="track"><div class="fill" style="width:50.0%"></div></div><span class="v">€29.99</span></div>
+<div class="bar"><b>AllTrails Plus</b><div class="track"><div class="fill" style="width:55.0%"></div></div><span class="v">$35.99</span></div>
+<div class="bar"><b>Wanderlog Pro</b><div class="track"><div class="fill" style="width:61.7%"></div></div><span class="v">about $40</span></div>
+<div class="bar"><b>TripIt Pro</b><div class="track"><div class="fill" style="width:75.0%"></div></div><span class="v">$48.99</span></div>
+<div class="bar"><b>Layla</b><div class="track"><div class="fill" style="width:75.0%"></div></div><span class="v">about $49</span></div>
+<div class="bar"><b>Komoot Premium</b><div class="track"><div class="fill" style="width:100.0%"></div></div><span class="v">€59.99</span></div>
+  </div>
+  <p class="src" id="ladder-note">Bars in euros, dollar prices converted at about 0.92. Layla and Lambus prices rest on one source each. The Trip Pass covers 60 days, not a year; it is shown because most travellers plan one or two trips a year.</p>
+</section>
+
+<section id="money">
+  <h2>The numbers that govern the plan</h2>
+  <div class="figs">
+    <div class="fig"><div class="n">€6.85</div><p>Contribution per purchase (70 percent Trip Pass, 30 percent yearly mix), after VAT, Stripe and AI.</p></div>
+    <div class="fig"><div class="n">€0.17</div><p>What one visitor is worth at a 2.5 percent purchase rate. No paid channel buys a European travel visitor for that, so growth is organic.</p></div>
+    <div class="fig"><div class="n">9</div><p>Trip Passes a month cover the fixed cost. The risk is not cost; it is whether people arrive.</p></div>
+    <div class="fig"><div class="n">€27k</div><p>Base case run rate at month 12 (12,000 monthly users). Bear €2.4k, bull €144k.</p></div>
+  </div>
+  <div class="tbl mid"><table>
+    <thead><tr><th>Scenario at month 12</th><th>Monthly users</th><th>Purchase rate</th><th>Monthly contribution</th><th>Gross margin</th></tr></thead>
+    <tbody>
+      <tr><td><b>Bear</b></td><td>3,000</td><td>1.0%</td><td>€201</td><td>88%</td></tr>
+      <tr><td><b>Base</b></td><td>12,000</td><td>2.5%</td><td>€2,235</td><td>92%</td></tr>
+      <tr><td><b>Bull</b></td><td>40,000</td><td>4.0%</td><td>€12,010</td><td>93%</td></tr>
+    </tbody></table></div>
+  <p class="src">From CARTA_UNIT_ECONOMICS.md section 5, modelled before the yearly plan started to renew (T460). Renewal raises lifetime value above the €9.11 per payer in that model.</p>
+
+  <div class="two">
+    <div class="box"><h3>Growth engine</h3>
+      <ul>
+        <li>Every place, trail, beach and lake is an indexable page with a figure nobody else publishes: "what a day in Bovec costs".</li>
+        <li>Every shared trip is an invitation: the link shows the total and the route.</li>
+        <li>Saved trips bring travellers back when prices move.</li>
+        <li>The home page converts the visitor who arrives from search: it must make the value clear in one screen.</li>
+      </ul></div>
+    <div class="box"><h3>Risks, in order</h3>
+      <ul>
+        <li>Conversion under 1 percent (travel converts low): run the price test, instrument the paywall before launch.</li>
+        <li>AI price rises: caps hold; per-fact grounding removes most of the exposure.</li>
+        <li>App store fees of 15 to 30 percent if passes are sold in the wrapper.</li>
+        <li>A rival adds day costs: the moat is the catalogue and its freshness, so keep the pipeline running.</li>
+      </ul></div>
+  </div>
+</section>
+
+<section id="next">
+  <h2>What to do with this</h2>
+  <ul class="edges" style="counter-reset:e">
+    <li><h3>Lead every surface with edges 1 to 3</h3><p style="margin:0">All in one plan, what a day costs, one honest total. They are the reason to switch. Edges 4 to 8 are the proof row under the hero.</p></li>
+    <li><h3>Use edges 5 and 6 as the trust line</h3><p style="margin:0">"No booking, no commission. Every estimate marked." It answers the question every AI planner raises.</p></li>
+    <li><h3>Speak to one traveller at a time</h3><p style="margin:0">Hiker first, then families at the beach, then budget city breaks. Each gets one example with a real place and its day price.</p></li>
+    <li><h3>Build the airport-to-trail leg</h3><p style="margin:0">The one claim no rival can copy (T202-a). It joins the departure airport to the outdoor layers.</p></li>
+    <li><h3>Turn this into the home page</h3><p style="margin:0">Part two, the homepage playbook, gives the sentences and the section-by-section build.</p></li>
+  </ul>
+  <h3 style="margin-top:28px">Sources</h3>
+  <ul class="src" id="sources">
+    <li>Repository: PRODUCT.md; docs/competitors.md; Execution/P12/T201-positioning.md; Execution/P12/T202-competitive-positioning.md; docs/GTM-ACQUISITION-CONSTRAINT.md; additional docs/Carta/Plan/Finance/CARTA_UNIT_ECONOMICS.md; continent-app/src/lib/pricing.js; the Carta competitor notebook.</li>
+    <li>Market research, 23 October 2026, from indexed pages, store listings and press (live sites were not reachable from this session, so headlines marked unverified should be re-checked in a browser).</li>
+<li>Wanderlog: wanderlog.com; pilotplans.com; techcrunch.com (2021 seed)</li>
+<li>TripIt: App Store; tripit.com blog, January 2026</li>
+<li>Polarsteps: support.polarsteps.com; App Store</li>
+<li>Stippl: docs.stippl.io blog</li>
+<li>Lambus: tripprof.com best trip planning apps 2026</li>
+<li>Mindtrip: mindtrip.ai; phocuswire.com; travolution.com</li>
+<li>Layla: layla.ai; finder.techleap.nl; dupple.com</li>
+<li>Rome2Rio and Omio: App Store; techcrunch.com 2019; coverager.com</li>
+<li>Skyscanner: wikipedia.org; Google Flights: going.com</li>
+<li>Komoot: bikeradar.com; AllTrails: alltrails.com; theinertia.com</li>
+<li>Budget Your Trip: budgetyourtrip.com; Price of Travel: statista.com</li>
+<li>ChatGPT accuracy: travolution.com; ctvnews.ca; Adobe and Global Rescue on AI use</li>
+<li>Problem figures: skift.com; hotel-online.com; travelextra.ie (ETC); kjrh.com (TopCashback); travelpulse.com (Travelport)</li>
+  </ul>
+</section>
+</div>
