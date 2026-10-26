@@ -3,7 +3,7 @@
  *
  * Every minute (cron "* * * * *") it runs that minute's share of searches
  * (plan.mjs), one Google Flights page each (workers/shared/flightSearch.mjs),
- * and keeps the cheapest flight per route and day in D1. Every hour at :07
+ * and keeps the cheapest flight per route and day in D1. Every 10 minutes (T739; was hourly at :07)
  * it writes one file per home airport to R2 (publish.mjs), which the app
  * reads from data.carta-europetravel.com/data/flights/{IATA}.json.
  *
@@ -17,11 +17,14 @@
  */
 import { searchDay } from '../../shared/flightSearch.mjs';
 import { flattenRoutes, jobsForMinute, DORMANT_AFTER } from './plan.mjs';
-import { buildFile, buildIndex, logoSource, routeMoves, ROUTE_MOVE } from './publish.mjs';
+import { buildFile, buildIndex, logoSource, nextBatch, routeMoves, ROUTE_MOVE } from './publish.mjs';
 
 const ROUTES_KEY = 'data/flights/_routes.json';
 const FILE_PREFIX = 'data/flights/';
-const PARALLEL = 6;
+// T739: 3, was 6. Google drops over half of Cloudflare's requests at 6 at once.
+const PARALLEL = 3;
+// T739: publish every 10 minutes, PUBLISH_BATCH airports a run (publish.mjs).
+const PUBLISH_CRON = '*/10 * * * *';
 const BLOCKS_TO_PAUSE = 3;
 const PAUSE_MS = 3600000;
 const ROUTES_TTL_MS = 3600000;
@@ -143,9 +146,13 @@ export async function publish(env, now = Date.now()) {
   await env.DB.prepare('DELETE FROM runs WHERE minute < ?').bind(Math.floor(now / 60000) - 10080).run();
 
   // An airport's file changes when a flight from it or to it was checked.
-  const changed = (await env.DB.prepare(
+  // T739: worked through a queue, PUBLISH_BATCH airports per run.
+  const pendingRaw = await state(env, 'publish_queue');
+  const pending = pendingRaw ? JSON.parse(pendingRaw) : null;
+  const changedNow = pending && pending.queue && pending.queue.length ? [] : (await env.DB.prepare(
     'SELECT origin AS code FROM fares WHERE checked > ?1 UNION SELECT dest AS code FROM fares WHERE checked > ?1',
   ).bind(Math.floor(since / 1000)).all()).results.map((r) => r.code);
+  const { batch: changed, rest, started } = nextBatch(pending, changedNow, now);
   // T645: the airports' coordinates set each route's price ceiling.
   const routes = await env.DATA.get(ROUTES_KEY);
   const airports = routes ? (await routes.json()).airports || null : null;
@@ -175,6 +182,11 @@ export async function publish(env, now = Date.now()) {
     console.log(`flight-sweep: publish left out ${gate.rejected} implausible prices; `
       + `${gate.moved} route medians moved over ${ROUTE_MOVE * 100}%`);
   }
+  if (rest.length) {
+    await setState(env, 'publish_queue', JSON.stringify({ queue: rest, started })).run();
+    console.log(`flight-sweep: published ${changed.length} airports, ${rest.length} queued`);
+    return { files: changed.length, queued: rest.length, rejected: gate.rejected, moved: gate.moved };
+  }
   const counts = Object.fromEntries((await env.DB.prepare(
     'SELECT origin, COUNT(*) AS n FROM fares WHERE price IS NOT NULL GROUP BY origin',
   ).all()).results.map((r) => [r.origin, r.n]));
@@ -183,8 +195,9 @@ export async function publish(env, now = Date.now()) {
   await env.DATA.put(`${FILE_PREFIX}_index.json`, JSON.stringify(buildIndex(counts, airlines, checkedIso)), {
     httpMetadata: { contentType: 'application/json', cacheControl: 'public, max-age=900' },
   });
-  await setState(env, 'published_at', now).run();
-  return { files: changed.length, rejected: gate.rejected, moved: gate.moved };
+  await setState(env, 'published_at', started).run();
+  await setState(env, 'publish_queue', '').run();
+  return { files: changed.length, queued: 0, rejected: gate.rejected, moved: gate.moved };
 }
 
 /** Copy Google's logo for airlines not tried yet into R2 data/airlines/{code}.png. */
@@ -209,7 +222,7 @@ async function copyLogos(env) {
 
 export default {
   async scheduled(event, env, ctx) {
-    if (event.cron === '7 * * * *') ctx.waitUntil(publish(env, event.scheduledTime));
+    if (event.cron === PUBLISH_CRON) ctx.waitUntil(publish(env, event.scheduledTime));
     else ctx.waitUntil(sweepMinute(env, event.scheduledTime));
   },
 
@@ -225,6 +238,7 @@ export default {
       lastHour: hour,
       pausedUntil: Number(await state(env, 'pause_until')) || null,
       publishedAt: Number(await state(env, 'published_at')) || null,
+      publishQueued: ((JSON.parse((await state(env, 'publish_queue')) || 'null') || {}).queue || []).length,
       fares: await env.DB.prepare('SELECT COUNT(*) AS n FROM fares').first('n'),
       found: await env.DB.prepare('SELECT COUNT(*) AS n FROM found').first('n'),
       dormant: await env.DB.prepare('SELECT COUNT(*) AS n FROM misses WHERE n >= ?').bind(DORMANT_AFTER).first('n'),

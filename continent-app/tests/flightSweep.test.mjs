@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import {
   flattenRoutes, jobsForMinute, NEAR_CYCLE, FAR_CYCLE, NEAR_DAYS, FAR_WEEKS, km,
 } from "../workers/flight-sweep/src/plan.mjs";
-import { buildFile, buildIndex, priceOk, routeMoves } from "../workers/flight-sweep/src/publish.mjs";
+import { buildFile, buildIndex, nextBatch, priceOk, routeMoves } from "../workers/flight-sweep/src/publish.mjs";
 
 const ALL_YEAR = 4095;
 const routes = {
@@ -136,4 +136,19 @@ test("routeMoves reports a route median that moved over 40%", () => {
   const f = (p) => ({ to: { BCN: { a: [p], b: [p + 2] }, LIS: { a: [60] } } });
   assert.deepEqual(routeMoves(f(50), f(52)), []);
   assert.deepEqual(routeMoves(f(50), f(150)).map((m) => m.dest), ["BCN"]);
+});
+
+// T739: publish works through a queue so one run stays under 1,000 calls.
+test("nextBatch starts a queue, carries the rest and keeps its start time", () => {
+  const codes = Array.from({ length: 150 }, (_, i) => `A${String(i).padStart(3, "0")}`);
+  const first = nextBatch(null, [...codes, "A000"], 1000, 60);
+  assert.equal(first.batch.length, 60);
+  assert.equal(first.rest.length, 90);
+  assert.equal(first.started, 1000);
+  const second = nextBatch({ queue: first.rest, started: first.started }, ["NEW"], 2000, 60);
+  assert.equal(second.batch[0], "A060");
+  assert.equal(second.started, 1000);           // the queue's start, not this run's
+  const last = nextBatch({ queue: second.rest, started: 1000 }, [], 3000, 60);
+  assert.equal(last.rest.length, 0);
+  assert.equal(nextBatch({ queue: [], started: 1 }, ["X"], 4000).started, 4000);
 });

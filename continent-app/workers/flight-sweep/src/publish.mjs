@@ -106,3 +106,27 @@ export function buildIndex(counts, airlines, checkedIso) {
 
 /** Google's own small airline logo, copied once per airline into R2. */
 export const logoSource = (code) => `https://www.gstatic.com/flights/airline_logos/70px/${code}.png`;
+
+/**
+ * T739: one publish run may make at most 1,000 calls (D1, R2, fetch), and an
+ * airport costs four (two D1 reads, one R2 read, one R2 write). With every
+ * airport changed after the 2026-10-23 seed, a single run needed about 1,900
+ * and Cloudflare stopped it each hour, so nothing was published for three
+ * days. Publishing now works through a queue, PUBLISH_BATCH airports a run.
+ *
+ * pending:  the saved queue {queue: [...codes], started} or null
+ * changed:  airports changed since the last full publish (read only when no
+ *           queue is pending)
+ * returns   {batch, rest, started}: publish `batch` now; save `rest` (and
+ *           `started`) when it is not empty; else the publish is complete and
+ *           `started` becomes the new published_at, so a fare checked while
+ *           the queue drained is picked up next time.
+ */
+export const PUBLISH_BATCH = 60;
+
+export function nextBatch(pending, changed, now, size = PUBLISH_BATCH) {
+  const fresh = !(pending && Array.isArray(pending.queue) && pending.queue.length);
+  const queue = fresh ? [...new Set(changed)].sort() : pending.queue;
+  const started = fresh ? now : pending.started;
+  return { batch: queue.slice(0, size), rest: queue.slice(size), started };
+}

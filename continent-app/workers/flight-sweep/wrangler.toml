@@ -13,8 +13,9 @@ compatibility_flags = ["nodejs_compat"]
 workers_dev = true
 
 [triggers]
-# Every minute: that minute's share of searches. At :07: publish to R2.
-crons = ["* * * * *", "7 * * * *"]
+# Every minute: that minute's share of searches. Every 10 minutes: publish the
+# next batch of changed airports to R2 (T739: one run may make 1,000 calls).
+crons = ["* * * * *", "*/10 * * * *"]
 
 [[d1_databases]]
 binding = "DB"
