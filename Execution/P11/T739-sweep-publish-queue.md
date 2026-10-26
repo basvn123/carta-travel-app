@@ -44,7 +44,7 @@ Coordination: the price-engine session (travel-app-db) owns T693 on the same Wor
 
 ## What is still open
 
-T739-a (deploy, then check the publish), T739-b (if Google still drops most searches at 3 at once, search from the laptop on a schedule and keep the Worker for publishing). Closes T645-e: the Worker running on 2026-10-26 already carried the T645 gate (its route-median lines are in the live log).
+T739-a (deploy, then check the publish), T739-b (if Google still drops most searches at 3 at once, search from the laptop on a schedule and keep the Worker for publishing). T645-e was already closed by the owner (deployed 2026-10-25, version de8283eb); its route-median lines are in the live log.
 
 ## Rollback procedure
 
