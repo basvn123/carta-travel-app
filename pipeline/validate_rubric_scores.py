@@ -12,7 +12,9 @@ cards and docs/RATING_RUBRIC.md:
   - at most 10 web sources per shard; a thin_card flag with no source is low
     confidence, and a low-confidence score stays at 7.5 or below unless a
     source backs it
-  - the five hidden controls sit within 0.5 of their hand scores on average
+  - the five hidden controls do not lean one way: their signed mean gap to
+    the hand scores stays within 0.5 (owner decision 2026-10-27); the mean
+    absolute gap of 0.5 is held on all controls pooled, in the --all run
     (skipped with --schema-only, which is what a scorer runs: it never reads
     data/rating/hidden/)
 
@@ -49,7 +51,8 @@ BANDS = (("exceptional", 9.0), ("excellent", 8.3), ("very_good", 7.6),
 MAX_WORDS = 25
 MAX_SOURCES = 10
 LOW_CAP = 7.5
-CONTROL_MAX_GAP = 0.5
+CONTROL_MAX_GAP = 0.5      # mean absolute gap, all controls pooled
+CONTROL_MAX_BIAS = 0.5     # signed mean gap, per shard
 EM_DASH = "—"
 
 
@@ -159,9 +162,17 @@ def check_shard(shard, schema_only):
         gaps = {i: round(by_id[i]["appeal"] - hand, 1) for i, hand in ctl.items()
                 if i in by_id and isinstance(by_id[i].get("appeal"), (int, float))}
         mean = sum(abs(g) for g in gaps.values()) / len(gaps) if gaps else None
-        controls = {"gaps": gaps, "mean_abs_gap": None if mean is None else round(mean, 2)}
-        if mean is None or mean > CONTROL_MAX_GAP:
-            problems.append(f"hidden controls mean gap {mean} > {CONTROL_MAX_GAP}: redo the shard")
+        bias = sum(gaps.values()) / len(gaps) if gaps else None
+        controls = {"gaps": gaps,
+                    "mean_abs_gap": None if mean is None else round(mean, 2),
+                    "bias": None if bias is None else round(bias, 2)}
+        # Owner decision 2026-10-27: five controls are too few for a mean
+        # absolute gap per shard (two scorers both put Roskilde a point above
+        # its hand score), so a shard fails on a one-way lean only; the 0.5
+        # mean gap is held on all controls pooled (--all).
+        if bias is None or abs(bias) > CONTROL_MAX_BIAS:
+            problems.append(f"hidden controls lean {bias:+.2f} beyond "
+                            f"+-{CONTROL_MAX_BIAS}: redo the shard")
     return problems, rows, controls
 
 
@@ -205,6 +216,7 @@ def main():
     shards = range(1, N_SHARDS + 1) if args.all else [args.shard]
     failed = 0
     passing = []
+    pooled = []
     for s in shards:
         if args.merge:
             merge_parts(s)
@@ -212,7 +224,9 @@ def main():
         status = "FAIL" if problems else "pass"
         line = f"{name(s)}: {status}  {len(rows)} rows  {summary(rows)}"
         if controls:
-            line += f"  controls mean gap {controls['mean_abs_gap']} {controls['gaps']}"
+            line += (f"  controls lean {controls['bias']:+.2f} mean gap "
+                     f"{controls['mean_abs_gap']} {controls['gaps']}")
+            pooled += list(controls["gaps"].values())
         print(line)
         for p in problems[:40]:
             print("   ", p)
@@ -220,6 +234,14 @@ def main():
             failed += 1
         else:
             passing.append((s, rows))
+    if args.all and pooled:
+        mean = sum(abs(g) for g in pooled) / len(pooled)
+        bias = sum(pooled) / len(pooled)
+        ok = mean <= CONTROL_MAX_GAP
+        print(f"all controls pooled ({len(pooled)}): mean gap {mean:.2f}, lean {bias:+.2f}: "
+              f"{'pass' if ok else 'FAIL'} (max {CONTROL_MAX_GAP})")
+        if not ok:
+            failed += 1
     if args.write:
         if failed:
             print(f"{failed} shard(s) fail: not writing {MERGED.name}")
