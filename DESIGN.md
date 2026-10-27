@@ -706,16 +706,16 @@ The home tokens, read by `61-v6-home.css` alone:
 
 Everything else in this file still binds the home page: transform and opacity (plus `stroke-dashoffset`, `clip-path` and a panel's `background-color`), no overshoot, no parallax, nothing tied to the scroll position, no count-up, one primary, `--tap` targets, no catalogue counts. No other surface takes this exception.
 
-### Plan opening exception (T743 to T746)
+### Plan opening exception (T743 to T747)
 
-Owner 2026-10-27: the first page of the Plan place is a page of its own, not a sheet over a map, and it fits one screen with no scroll at every size from 360 by 640 up. Its point is two actions: Start planning and Planned trips. It may do four things no other surface does:
+Owner 2026-10-27: the first page of the Plan place is a page of its own, not a sheet over a map, and it fits one screen with no scroll at every size from 360 by 640 up. Its point is two actions: Start planning and Carta's own trips. It may do four things no other surface does:
 
 - **A warm paper ground.** `--plan-ground` (`--umber-50`, `#faf6f1`) behind the whole page, in place of `--surface-page`. `--text` 13.6:1, `--text-2` 7.6:1, `--text-3` 5.3:1, `--action` 5.4:1 on it.
 - **One larger headline in two colours.** Figtree 700 at `--text-plan-hero` with `--tracking-plan`, the face of every tab; the second half, "at a price you know", is `--action`.
-- **Two tall actions.** 56 px, `--text-lead` 700, `--radius-card`: Start planning in `--action` with `--elev-1`, Planned trips on `--action-tint` in `--select-ink` with a calendar glyph. Stacked full width on a phone, side by side from 769 px.
-- **Play a day** (T746). One photograph of a planned week in season (the month picks the style, the style gives its cheapest week a person a day) fills the space under the actions, or the right half from 1024 px. On it a white card (`--elev-2`) plays one day of that week: day number and title, four bars, and morning, afternoon, evening and where you sleep, one at a time for 3.6 s each, once on its own and again on Play; a round `--action` button plays, pauses and replays. The bar of the part on show fills linearly while it plays; that is the one animation here longer than `--dur-3`, and it never loops. Its link, "More trips like this", opens that style's planned trips. Below 640 px of height the photograph leaves and the card stays. Under reduced motion nothing plays until Play, and the bars do not run.
+- **Two tall actions.** 56 px, `--text-lead` 700, `--radius-card`: Start planning in `--action` with `--elev-1`, Carta's own trips on `--action-tint` in `--select-ink` with a calendar glyph. Stacked full width on a phone, side by side from 769 px.
+- **Carta's own recommended trips** (T747, replacing T746's played day). A white card (`--elev-1`, `--elev-2` on hover) at the bottom of a phone, or centred on the right from 1024 px: a fan of five trip-style photographs from the journeys index (the month's style in the middle), each framed in 3 px of `--surface` with `--elev-2`, turned 5 degrees a step; under it Carta's mark, "Carta's own recommended trips" and one `--action` pill, "See the trips". The whole card is one link to the planned trips; it names no single trip and plays nothing. Each photograph is a share of the card's width (27 per cent on a phone, 21 from 1024 px), so the fan always fits. The fan opens once from a stack (`--dur-4`, 50 ms apart) and spreads a little on hover. The headline and the two actions sit centred in the room the card leaves.
 
-No eyebrow, no mark, no watermark. No other surface takes this exception.
+No eyebrow, no watermark; the mark appears once, on the card. No other surface takes this exception.
 
 ### Ask Carta exception (T569)
 

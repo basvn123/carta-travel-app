@@ -970,30 +970,6 @@ export function ArrowLeftIcon({ size = 15, className = '', labelled = false }) {
   );
 }
 
-export function PlayIcon({ size = 15, className = '', labelled = false }) {
-  return (
-    <Glyph size={size} className={className} labelled={labelled} label="Play">
-      <path d="M8 5.5v13l10.5-6.5z" fill="currentColor" />
-    </Glyph>
-  );
-}
-
-export function PauseIcon({ size = 15, className = '', labelled = false }) {
-  return (
-    <Glyph size={size} className={className} labelled={labelled} label="Pause">
-      <path d="M8.5 5.5v13M15.5 5.5v13" strokeWidth="2.5" />
-    </Glyph>
-  );
-}
-
-export function ReplayIcon({ size = 15, className = '', labelled = false }) {
-  return (
-    <Glyph size={size} className={className} labelled={labelled} label="Replay">
-      <path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3M4.5 4.5v3.8h3.8" />
-    </Glyph>
-  );
-}
-
 export function ArrowRightIcon({ size = 15, className = '', labelled = false }) {
   return (
     <Glyph size={size} className={className} labelled={labelled} label="Next">

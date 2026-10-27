@@ -32,11 +32,11 @@
   .pf-map { position: absolute; inset: 0; height: auto; }
 }
 
-/* ---- The opening (T743 to T746, owner 2026-10-27) ----
+/* ---- The opening (T743 to T747, owner 2026-10-27) ----
    The Plan place with nothing open: one screen on warm paper, no scroll.
-   The headline and the two actions that matter, large; under them (from
-   1024 px: beside them) one photograph of a planned week in season, down to
-   the bottom, with a day of it playing on a white card.
+   The headline and the two actions that matter, large; under them, down at
+   the bottom (from 1024 px: beside them), Carta's own recommended trips: a
+   fan of trip-style photographs, the mark, a title and one button.
    The headline is Figtree, as on every tab. White cards carry the only
    shadows; nothing has a border; text never sits on a photograph. */
 .pf.is-opening { background: var(--plan-ground); }
@@ -55,11 +55,12 @@
 
 .pf-open.is-bare { justify-content: center; }
 
-/* The words and the actions. */
+/* The words and the actions: centred in the room the collection leaves. */
 .pf-open-text {
   display: flex;
-  flex: none;
+  flex: 1 1 auto;
   flex-direction: column;
+  justify-content: center;
   align-items: flex-start;
 }
 
@@ -154,161 +155,116 @@
 
 .pf-open-resume > svg { flex: none; color: var(--text-3); }
 
-/* The stage: one photograph down to the bottom, the day standing on it. */
+/* The stage: Carta's own trips, down at the bottom on a phone. */
 .pf-open-stage {
-  position: relative;
   display: flex;
-  flex: 1 1 auto;
+  flex: none;
   flex-direction: column;
   justify-content: flex-end;
   min-height: 0;
-  padding: var(--space-3);
-  overflow: hidden;
-  border-radius: var(--radius-card);
-  background: var(--surface-sunken);
-  animation: pf-open-arrive var(--dur-3) var(--ease-out) both;
 }
 
-.pf-open-stage .pf-open-img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Play a day (T746): one day of a planned week, morning to bed. */
-.pf-day {
-  position: relative;
-  flex: none;
-  padding: var(--space-3) var(--space-4) var(--space-2);
+/* Carta's own recommended trips (T747): a fan of trip-style photographs,
+   the mark, one title and one button, one link. Every photograph is --pw of
+   the fan's width and steps --step of its own width from the next, so the
+   fan always fits the card whatever its width. */
+.pf-coll {
+  --pw: 27%;
+  --step: 62%;
+  --turn: 5deg;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-4) var(--space-3);
   border-radius: var(--radius-card);
   background: var(--surface);
-  box-shadow: var(--elev-2);
+  box-shadow: var(--elev-1);
+  color: var(--text);
+  text-decoration: none;
+  transition: box-shadow var(--dur-3) var(--ease-out);
 }
 
-.pf-day.is-wait { min-height: 168px; box-shadow: none; background: var(--surface); opacity: 0.6; }
+.pf-coll-fan { position: relative; display: block; padding-top: calc(var(--pw) * 1.45 + var(--space-3)); }
 
-.pf-day-head { display: flex; align-items: center; gap: var(--space-3); }
-
-.pf-day-meta { display: flex; flex: 1; flex-direction: column; min-width: 0; }
-
-.pf-day-over { font-size: var(--text-caption); font-weight: 600; color: var(--text-3); }
-
-.pf-day-title {
-  display: -webkit-box;
+.pf-coll-photo {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  z-index: var(--z);
+  display: block;
+  width: var(--pw);
+  aspect-ratio: 2 / 2.9;
   overflow: hidden;
+  border: 3px solid var(--surface);
+  border-radius: var(--radius-control);
+  background: var(--surface-sunken);
+  box-shadow: var(--elev-2);
+  transform: translateX(calc(-50% + var(--k) * var(--step))) translateY(calc(var(--k) * var(--k) * 3px)) rotate(calc(var(--k) * var(--turn)));
+  transform-origin: 50% 100%;
+  transition: transform var(--dur-3) var(--ease-out);
+  animation: pf-coll-fan var(--dur-4) var(--ease-out) backwards;
+  animation-delay: calc(var(--i) * 50ms);
+}
+
+.pf-coll-photo .pf-coll-img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* The fan opens once from a stack. */
+@keyframes pf-coll-fan {
+  from { opacity: 0; transform: translateX(-50%) translateY(10px) rotate(0deg) scale(0.92); }
+}
+
+.pf-coll-foot { display: flex; align-items: center; gap: var(--space-3); }
+
+.pf-coll-mark { flex: none; }
+
+.pf-coll-title {
+  flex: 1;
+  min-width: 0;
   font-size: var(--text-lead);
   font-weight: 700;
   line-height: var(--leading-tight);
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
 }
 
-.pf-day-play.icon-btn {
+.pf-coll-go {
+  display: inline-flex;
   flex: none;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--tap);
+  padding: 0 var(--space-4);
   border-radius: var(--radius-pill);
   background: var(--action);
   color: var(--action-text);
+  font-size: var(--text-label);
+  font-weight: 700;
   transition: background var(--dur-1) var(--ease-out);
 }
 
-.pf-day-play.icon-btn:hover { background: var(--action-hover); }
+.pf-coll-go svg { transition: transform var(--dur-2) var(--ease-out); }
 
-.pf-day-bars { display: flex; gap: var(--space-1); margin-top: var(--space-3); }
-
-.pf-day-bar {
-  flex: 1;
-  height: 3px;
-  overflow: hidden;
-  border-radius: var(--radius-pill);
-  background: var(--border);
+@media (hover: hover) {
+  .pf-coll:hover { box-shadow: var(--elev-2); }
+  .pf-coll:hover { --step: 70%; --turn: 7deg; }
+  .pf-coll:hover .pf-coll-photo { transform: translateX(calc(-50% + var(--k) * var(--step))) translateY(calc(var(--k) * var(--k) * 3px - 6px)) rotate(calc(var(--k) * var(--turn))); }
+  .pf-coll:hover .pf-coll-go { background: var(--action-hover); }
+  .pf-coll:hover .pf-coll-go svg { transform: translateX(3px); }
 }
-
-.pf-day-fill {
-  display: block;
-  height: 100%;
-  background: var(--action);
-  transform: scaleX(0);
-  transform-origin: left center;
-}
-
-.pf-day-bar.is-done .pf-day-fill { transform: scaleX(1); }
-
-/* The bar of the part on show fills while it plays; paused, it holds. */
-@keyframes pf-day-fill { to { transform: scaleX(1); } }
-
-.pf-day-bar.is-now .pf-day-fill {
-  animation: pf-day-fill var(--step-ms, 3600ms) linear forwards;
-  animation-play-state: paused;
-}
-
-.pf-day.is-playing .pf-day-bar.is-now .pf-day-fill { animation-play-state: running; }
-
-.pf-day-now {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  margin-top: var(--space-3);
-  animation: pf-day-in var(--dur-2) var(--ease-out) both;
-}
-
-@keyframes pf-day-in { from { opacity: 0; transform: translateY(4px); } }
-
-.pf-day-when { font-size: var(--text-caption); font-weight: 700; color: var(--select-ink); }
-
-.pf-day-text {
-  display: -webkit-box;
-  min-height: calc(2 * 1.45em);
-  overflow: hidden;
-  font-size: var(--text-body);
-  line-height: 1.45;
-  color: var(--text);
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-
-.pf-day-week {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  max-width: 100%;
-  min-height: var(--tap);
-  font-size: var(--text-caption);
-  font-weight: 600;
-  color: var(--action);
-  text-decoration: none;
-}
-
-.pf-day-week > span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-
-.pf-day-week > svg { flex: none; }
-
-.pf-day-week:hover > span { text-decoration: underline; text-underline-offset: 3px; }
-
-/* The stage arrives once. */
-@keyframes pf-open-arrive { from { opacity: 0; transform: translateY(12px); } }
 
 .pf-open-resume:focus-visible,
-.pf-day-week:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+.pf-coll:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
 
 /* A short phone keeps the day and lets the photograph go. */
 @media (max-height: 700px) {
   .pf-open { gap: var(--space-4); padding-top: var(--space-4); }
   .pf-open-actions { margin-top: var(--space-4); }
-  .pf-day-text { -webkit-line-clamp: 1; min-height: 1.45em; }
+  .pf-coll { --pw: 22%; --step: 70%; }
 }
 
-@media (max-height: 640px) {
-  .pf-open-stage { flex: none; padding: 0; background: none; }
-  .pf-open-stage .pf-open-img { display: none; }
-}
 
 @media (min-width: 769px) {
   .pf-open { gap: var(--space-6); padding: var(--space-6) var(--space-6) var(--space-5); }
   .pf-open-actions { flex-direction: row; width: auto; }
   .pf-open-actions .btn { padding-inline: var(--space-6); }
-  .pf-open-stage { padding: var(--space-4); }
 }
 
 /* From 1024 px: the words on the left, the day and the styles on the right. */
@@ -321,16 +277,19 @@
     padding: var(--space-7);
   }
   .pf-open.is-bare { grid-template-columns: minmax(0, 1fr); }
-  .pf-open-stage { height: 100%; max-height: 760px; padding: var(--space-5); }
-  .pf-day { max-width: 460px; padding: var(--space-4) var(--space-5) var(--space-2); }
+  .pf-open-stage { justify-content: center; }
+  .pf-coll { --pw: 21%; --step: 74%; padding: var(--space-6) var(--space-5) var(--space-4); }
+  .pf-coll:hover { --step: 80%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pf-open-start .btn-icon { transition: none; }
-  .pf-open-stage,
-  .pf-day-now { animation: none; }
-  .pf-day-bar.is-now .pf-day-fill { animation: none; transform: scaleX(1); }
-  .pf-open-start:hover .btn-icon { transform: none; }
+  .pf-open-start .btn-icon,
+  .pf-coll-photo,
+  .pf-coll-go svg { transition: none; }
+  .pf-coll-photo { animation: none; }
+  .pf-open-start:hover .btn-icon,
+  .pf-coll:hover .pf-coll-go svg { transform: none; }
+  .pf-coll:hover .pf-coll-photo { transform: translateX(calc(-50% + var(--k) * var(--step))) translateY(calc(var(--k) * var(--k) * 3px)) rotate(calc(var(--k) * var(--turn))); }
 }
 
 .pf-title:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
