@@ -374,39 +374,58 @@ export function LikesScreen({ settings, commit, doneLabel }) {
 
 // ---- Budget ----
 
-const DAY_STEPS = [40, 60, 80, 100, 130, 180];
+// The quick amounts under the field (T753: the whole trip only).
 const TRIP_STEPS = [500, 800, 1200, 1800, 2500, 4000];
+const BUDGET_MAX = 100000;
 
 /** An optional budget, a person a day or for the whole trip. Places that fit
  *  it are marked, and the trip's cost card says how far under or over it is. */
+/**
+ * The budget (T753): one figure for the whole trip, a person, typed or taken
+ * from six quick amounts. A day budget is no longer asked (an older one
+ * opens empty); the whole trip is the figure people actually hold.
+ */
 export function BudgetScreen({ settings, commit, doneLabel }) {
   const { t } = useI18n();
-  const [b, setB] = useState(settings.guide.budget);
-  const steps = b.kind === 'total' ? TRIP_STEPS : DAY_STEPS;
-  const set = (patch) => setB((cur) => ({ ...cur, ...patch }));
-  const save = (budget) => commit(answer(settings, 'g:budget', { guide: { ...settings.guide, budget } }));
+  const bcp47 = useBcp47();
+  const start = settings.guide.budget;
+  const [eur, setEur] = useState(start.kind === 'total' ? start.eur : 0);
+  const grouped = (n) => n.toLocaleString(bcp47);
+  // The currency sign as the one money formatter writes it, not a literal.
+  const sign = formatMoney(0).replace(/[\d\s.,]/g, '');
+  const save = (n) => commit(answer(settings, 'g:budget', { guide: { ...settings.guide, budget: { kind: 'total', eur: n } } }));
+  const onType = (e) => {
+    const n = Number(String(e.target.value).replace(/\D/g, '')) || 0;
+    setEur(Math.min(BUDGET_MAX, n));
+  };
   return (
     <>
-      <Segmented
-        block
-        label={t('pf.q.budget')}
-        value={b.kind}
-        onChange={(kind) => set({ kind, eur: 0 })}
-        options={[
-          { value: 'day', label: t('pf.budget.day') },
-          { value: 'total', label: t('pf.budget.total') },
-        ]}
-      />
-      <ChipGroup label={t('pf.q.budget')} className="pf-chips">
-        {steps.map((eur) => (
-          <Chip key={eur} kind="choice" selected={b.eur === eur} onClick={() => set({ eur })}>
-            {t('pf.budget.upTo', { price: formatMoney(eur) })}
-          </Chip>
-        ))}
-      </ChipGroup>
+      <div className="pf-budget">
+        <label className="pf-budget-label" htmlFor="pf-budget-eur">{t('pf.budget.label')}</label>
+        <div className="pf-budget-field">
+          <span className="pf-budget-cur" aria-hidden="true">{sign}</span>
+          <input
+            id="pf-budget-eur"
+            className="pf-budget-input"
+            inputMode="numeric"
+            autoComplete="off"
+            placeholder={grouped(1500)}
+            value={eur ? grouped(eur) : ''}
+            onChange={onType}
+            onKeyDown={(e) => { if (e.key === 'Enter' && eur) save(eur); }}
+          />
+        </div>
+        <ChipGroup label={t('pf.budget.quick')} className="pf-budget-steps">
+          {TRIP_STEPS.map((n) => (
+            <Chip key={n} kind="choice" selected={eur === n} onClick={() => setEur(n)}>
+              {formatMoney(n)}
+            </Chip>
+          ))}
+        </ChipGroup>
+      </div>
       <div className="pf-foot">
-        <Button variant="primary" block disabled={!b.eur} onClick={() => save(b)}>{doneLabel || t('pf.continue')}</Button>
-        <Button variant="secondary" block onClick={() => save({ kind: b.kind, eur: 0 })}>{t('pf.budget.none')}</Button>
+        <Button variant="primary" block disabled={!eur} onClick={() => save(eur)}>{doneLabel || t('pf.continue')}</Button>
+        <Button variant="quiet" block onClick={() => save(0)}>{t('pf.budget.none')}</Button>
       </div>
     </>
   );

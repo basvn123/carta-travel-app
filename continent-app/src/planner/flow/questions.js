@@ -50,17 +50,22 @@ export const QUESTIONS = {
   nowUntil: { titleKey: 'pf.q.nowUntil', helpKey: 'pf.q.nowUntilHelp', custom: true },
 
   // ---- Help me choose ----
+  // T753: as many shapes as fit, or no preference.
   'g:shape': {
-    titleKey: 'pf.q.shape',
+    titleKey: 'pf.q.shape', multi: true, none: 'any',
     options: [
       opt('one', 'MapPinIcon', { labelKey: 'pf.o.shapeOne' }),
       opt('towns', 'RouteIcon', { labelKey: 'pf.o.shapeTowns' }),
       opt('road', 'CarIcon', { labelKey: 'pf.o.shapeRoad' }),
       opt('countries', 'GlobeIcon', { labelKey: 'pf.o.shapeCountries' }),
       opt('oneway', 'RoadIcon', { labelKey: 'pf.o.shapeOneway' }),
+      opt('any', 'SparkIcon', { labelKey: 'pf.o.shapeAny' }),
     ],
-    read: (s) => (s.guide.shape ? [s.guide.shape] : []),
-    write: (s, [v]) => ({ guide: { ...s.guide, shape: v } }),
+    read: (s) => (s.guide.shapes.length ? s.guide.shapes : ['any']),
+    write: (s, values) => {
+      const shapes = values.filter((v) => v !== 'any');
+      return { guide: { ...s.guide, shapes, shape: shapes.length === 1 ? shapes[0] : '' } };
+    },
   },
   'g:likes': {
     titleKey: 'pf.q.likes', helpKey: 'pf.q.likesHelp', multi: true, max: 3, photos: true,
@@ -101,7 +106,7 @@ export const QUESTIONS = {
     read: (s) => (s.guide.avoid.length ? s.guide.avoid : ['none']),
     write: (s, values) => ({ guide: { ...s.guide, avoid: values.filter((v) => v !== 'none') } }),
   },
-  'g:budget': { titleKey: 'pf.q.budget', helpKey: 'pf.q.budgetHelp', custom: true, skippable: true },
+  'g:budget': { titleKey: 'pf.q.budget', custom: true, skippable: true },
 
   // ---- The days ----
   daysAsk: {

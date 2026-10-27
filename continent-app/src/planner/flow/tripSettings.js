@@ -78,7 +78,7 @@ export function defaultSettings() {
     priority: 'balance',
     when: { mode: 'exact', start: '', end: '', months: [], nights: 7 },
     from: null,
-    guide: { shape: '', likes: [], weather: '', reach: '', avoid: [], budget: { kind: 'day', eur: 0 } },
+    guide: { shapes: [], shape: '', likes: [], weather: '', reach: '', avoid: [], budget: { kind: 'total', eur: 0 } },
     rhythm: { mornings: '', pace: '', detail: '', goal: '', food: '', around: '', steps: 0 },
     trip: { name: '', visibility: 'private', cover: '', created: 0, buddies: [] },
     note: '',
@@ -106,6 +106,7 @@ export function normalizeSettings(raw) {
   const p = raw.party || {};
   const w = raw.when || {};
   const g = raw.guide || {};
+  const shapes = someOf(Array.isArray(g.shapes) ? g.shapes : (g.shape ? [g.shape] : []), TRIP_SHAPES);
   const r = raw.rhythm || {};
   const tr = raw.trip || {};
   const adults = clampInt(p.adults, 1, 20, d.party.adults);
@@ -137,7 +138,10 @@ export function normalizeSettings(raw) {
     kind: raw.kind === 'now' ? 'now' : 'new',
     now: placeOf(raw.now),
     guide: {
-      shape: oneOf(g.shape, TRIP_SHAPES, ''),
+      // T753: several shapes, or none for no preference. `shape` stays the
+      // one shape when exactly one is picked, for readers of the old field.
+      shapes,
+      shape: shapes.length === 1 ? shapes[0] : '',
       likes: someOf(g.likes, LIKES).slice(0, 3),
       weather: oneOf(g.weather, WEATHER, ''),
       reach: oneOf(g.reach, REACH, ''),
@@ -262,7 +266,12 @@ export function quizAnswers(s, spend = 'standard') {
   if (g.weather === 'snow' && !types.includes('ski')) types.push('ski');
   if (s.party.kind === 'family' && !types.includes('family')) types.push('family');
   const around = g.reach === 'overland' ? 'trainonly' : (g.avoid.includes('car') ? 'flytrain' : 'any');
-  const pace = g.shape === 'one' ? 'base' : (g.shape === 'towns' ? 'fewstops' : (g.shape ? 'moving' : ''));
+  // Any moving shape means moving; only one place means a base; otherwise
+  // a few stops (T753: the shapes are several now).
+  const shapes = g.shapes || [];
+  const pace = !shapes.length ? ''
+    : shapes.some((x) => x === 'road' || x === 'countries' || x === 'oneway') ? 'moving'
+      : shapes.every((x) => x === 'one') ? 'base' : 'fewstops';
   const avoid = [];
   if (g.avoid.includes('crowds')) avoid.push('crowds');
   if (g.avoid.includes('heat') || g.weather === 'mild') avoid.push('heat');

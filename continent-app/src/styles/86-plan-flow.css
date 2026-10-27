@@ -523,6 +523,63 @@
   .pf-carta-rail { grid-auto-columns: calc((100% - 2 * var(--space-3)) / 3); }
 }
 
+/* ---- The budget (T753): one figure for the whole trip ----
+   A large figure in a white field, the euro sign before it, tabular so it
+   settles as it is typed; under it six quick amounts as an even grid (three
+   across on a phone, six from 769 px), each the same width. */
+.pf-budget { display: flex; flex-direction: column; gap: var(--space-3); }
+
+.pf-budget-label { text-align: center; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
+
+.pf-budget-field {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 64px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  transition: border-color var(--dur-1) var(--ease-out);
+}
+
+.pf-budget-field:focus-within { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+.pf-budget-cur { font-size: var(--text-title); font-weight: 600; color: var(--text-3); }
+
+.pf-budget-input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-headline);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+.pf-budget-input:focus-visible { outline: 2px solid transparent; } /* the field draws the ring; forced colours still show this one */
+
+.pf-budget-input::placeholder { color: var(--text-3); font-weight: 400; }
+
+.pf-budget-steps.ui-chip-group,
+.pf-budget-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.pf-budget-steps .ui-chip { justify-content: center; font-variant-numeric: tabular-nums; }
+
+@media (min-width: 769px) {
+  .pf-budget-steps.ui-chip-group,
+  .pf-budget-steps { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+}
+
 .pf-title:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 
 /* ---- A question on the sheet (after Polarsteps' question sheet) ---- */

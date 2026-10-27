@@ -138,7 +138,7 @@ export function prefillFromText(text, { countries = [] } = {}) {
   const likes = Object.entries(LIKE_WORDS).filter(([, ws]) => any(tx, ws)).map(([k]) => k).slice(0, 3);
   const guide = {};
   if (likes.length) guide.likes = likes;
-  if (any(tx, WORDS.roadtrip)) guide.shape = 'road';
+  if (any(tx, WORDS.roadtrip)) { guide.shape = 'road'; guide.shapes = ['road']; }
   if (any(tx, WORDS.overland)) guide.reach = 'overland';
   if (Object.keys(guide).length) patch.guide = guide;
 
