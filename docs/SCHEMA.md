@@ -989,7 +989,8 @@ here yet.
 | `beauty` | destination | every | app_data.json block |
 | `image` | destination | every | app_data.json block (`hires` stripped on the wire) |
 | `activities` | destination | every | app_data.json block (`items_full` moved to `poi/`) |
-| `rating` | destination | every | Schema v14 section 1 |
+| `rating` | destination | some | Schema v14 section 1; on every record except a gateway (T755), which is rated as its city; `tests/test_one_row_per_city.py` holds "rated or a gateway" |
+| `gateway_of` | destination | some | T755: on the other airports of a multi-airport city (CIA, ORY, BVA, STN, LTN, LGW, BGY, LIN, TSF, NYO, BMA, WMI, TRF), the id of the city's row; such a record has no `rating` and ranks nowhere, flight search still reads it |
 | `transfer` | destination | every | not yet described (minutes and euros one way from the anchor airport) |
 | `climate` | destination | every | not yet described (twelve monthly rows and the best months) |
 | `place` | destination | every | not yet described (place class and visit hours, `apply_place_layer.py`) |
