@@ -1,0 +1,932 @@
+[
+ {
+  "id": "gem:lambourn",
+  "appeal": 6.2,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 6,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Quiet Berkshire market village; the White Horse and Uffington Castle lie 8 km away, but the village itself offers little.",
+   "nl": "Rustig marktdorp in Berkshire; het White Horse en Uffington Castle liggen 8 km verder, maar het dorp zelf biedt weinig.",
+   "de": "Ruhiges Marktdorf in Berkshire; White Horse und Uffington Castle liegen 8 km entfernt, das Dorf selbst bietet wenig.",
+   "fr": "Village-marché tranquille du Berkshire; le White Horse et Uffington Castle sont à 8 km, mais le village offre peu.",
+   "es": "Tranquilo pueblo de mercado en Berkshire; el White Horse y Uffington Castle están a 8 km, pero el pueblo ofrece poco.",
+   "it": "Tranquillo paese di mercato nel Berkshire; il White Horse e Uffington Castle sono a 8 km, ma il paese offre poco."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:portsmouth",
+  "appeal": 6.8,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 6,
+   "sights": 7,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Naval harbour city with HMS Victory, the Mary Rose and Spinnaker Tower; a plain urban fabric around them.",
+   "nl": "Marinehavenstad met HMS Victory, de Mary Rose en de Spinnaker Tower; daaromheen een gewone stedelijke bebouwing.",
+   "de": "Marinehafenstadt mit HMS Victory, Mary Rose und Spinnaker Tower; drumherum ein eher gewöhnliches Stadtbild.",
+   "fr": "Ville portuaire militaire avec le HMS Victory, le Mary Rose et la Spinnaker Tower; un tissu urbain assez ordinaire autour.",
+   "es": "Ciudad portuaria naval con el HMS Victory, el Mary Rose y la Spinnaker Tower; un tejido urbano bastante corriente alrededor.",
+   "it": "Città portuale navale con la HMS Victory, la Mary Rose e la Spinnaker Tower; intorno un tessuto urbano piuttosto comune."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:rimburg",
+  "appeal": 5.6,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 5,
+   "sights": 4,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Small Dutch border village with a castle; the sights listed lie 5 to 8 km away and the village itself is thin.",
+   "nl": "Klein Nederlands grensdorp met een kasteel; de genoemde bezienswaardigheden liggen 5 tot 8 km weg en het dorp zelf is mager.",
+   "de": "Kleines niederländisches Grenzdorf mit Burg; die genannten Sehenswürdigkeiten liegen 5 bis 8 km entfernt, der Ort selbst gibt wenig her.",
+   "fr": "Petit village frontalier néerlandais avec un château; les sites cités sont à 5 à 8 km et le village lui-même est mince.",
+   "es": "Pequeño pueblo fronterizo neerlandés con castillo; los lugares citados están a 5 u 8 km y el pueblo en sí es escaso.",
+   "it": "Piccolo villaggio di confine olandese con castello; i luoghi citati sono a 5 o 8 km e il paese in sé offre poco."
+  },
+  "confidence": "low",
+  "flags": [
+   "thin_card"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:north-walsham",
+  "appeal": 5.6,
+  "band": "none",
+  "criteria": {
+   "setting": 4,
+   "character": 6,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Norfolk market town with a market cross; the halls and priory listed lie 5 to 7 km out, little inside the town.",
+   "nl": "Marktstad in Norfolk met een marktkruis; de genoemde hallen en priorij liggen 5 tot 7 km buiten, in de stad weinig.",
+   "de": "Marktstadt in Norfolk mit Marktkreuz; die genannten Herrenhäuser und das Priorat liegen 5 bis 7 km entfernt, in der Stadt wenig.",
+   "fr": "Ville-marché du Norfolk avec une croix de marché; les demeures et le prieuré cités sont à 5 à 7 km, peu de chose en ville.",
+   "es": "Ciudad de mercado de Norfolk con una cruz de mercado; las mansiones y el priorato citados están a 5 o 7 km, poco dentro.",
+   "it": "Cittadina di mercato del Norfolk con una croce del mercato; le dimore e il priorato citati sono a 5 o 7 km, poco in città."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:bonneval-sur-arc",
+  "appeal": 7.4,
+  "band": "good",
+  "criteria": {
+   "setting": 8,
+   "character": 7,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "Stone village at 1,849 m below the Col de l'Iseran, in the Plus Beaux Villages list; a quiet end of the valley.",
+   "nl": "Stenen dorp op 1.849 m onder de Col de l'Iseran, opgenomen bij Les Plus Beaux Villages de France; een rustig einde van het dal.",
+   "de": "Steindorf auf 1.849 m unterhalb des Col de l'Iseran, bei den Plus Beaux Villages de France gelistet; ein ruhiges Talende.",
+   "fr": "Village de pierre à 1 849 m sous le col de l'Iseran, classé Plus Beaux Villages de France; un bout de vallée tranquille.",
+   "es": "Pueblo de piedra a 1.849 m bajo el Col de l'Iseran, entre Les Plus Beaux Villages de France; un final de valle tranquilo.",
+   "it": "Villaggio di pietra a 1.849 m sotto il Col de l'Iseran, tra Les Plus Beaux Villages de France; una testata di valle tranquilla."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:gavle",
+  "appeal": 5.8,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 5,
+   "sights": 5,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Swedish city with a castle, the Gävle goat and a railway museum; a modest centre that holds little beyond a few hours.",
+   "nl": "Zweedse stad met een kasteel, de Gävle-bok en een spoorwegmuseum; een bescheiden centrum dat weinig meer dan enkele uren vult.",
+   "de": "Schwedische Stadt mit Schloss, Gävle-Bock und Eisenbahnmuseum; ein bescheidenes Zentrum, das kaum mehr als ein paar Stunden füllt.",
+   "fr": "Ville suédoise avec un château, le bouc de Gävle et un musée du chemin de fer; un centre modeste qui occupe quelques heures.",
+   "es": "Ciudad sueca con un castillo, la cabra de Gävle y un museo ferroviario; un centro modesto que llena apenas unas horas.",
+   "it": "Città svedese con un castello, la capra di Gävle e un museo ferroviario; un centro modesto che riempie poche ore."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:castle-cary",
+  "appeal": 5.9,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 6,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Small Somerset market town with its own ruined castle site; Cadbury Castle lies 7 km away and little else holds a visit.",
+   "nl": "Klein marktstadje in Somerset met een eigen kasteelterrein; Cadbury Castle ligt 7 km verder en verder houdt weinig een bezoek vast.",
+   "de": "Kleine Marktstadt in Somerset mit eigener Burgstätte; Cadbury Castle liegt 7 km entfernt, sonst hält wenig einen Besuch.",
+   "fr": "Petite ville-marché du Somerset avec son propre site de château; Cadbury Castle est à 7 km, et peu d'autres choses retiennent.",
+   "es": "Pequeña ciudad de mercado de Somerset con su propio recinto de castillo; Cadbury Castle está a 7 km y poco más retiene.",
+   "it": "Piccola cittadina di mercato del Somerset con un proprio sito di castello; Cadbury Castle è a 7 km e poco altro trattiene."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:castelvecchio-di-rocca-barbena",
+  "appeal": 6.4,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 7,
+   "sights": 4,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Tiny hill village among the Ligurian Borghi più belli, with the Toirano Caves 7 km away; very little to fill a day.",
+   "nl": "Piepklein heuveldorp bij de Ligurische Borghi più belli, met de grotten van Toirano op 7 km; weinig om een dag te vullen.",
+   "de": "Winziges Hügeldorf unter den ligurischen Borghi più belli, die Grotten von Toirano liegen 7 km entfernt; kaum Stoff für einen Tag.",
+   "fr": "Minuscule village perché parmi les Borghi più belli de Ligurie, les grottes de Toirano à 7 km; peu de quoi remplir une journée.",
+   "es": "Diminuto pueblo de colina entre los Borghi più belli de Liguria, con las cuevas de Toirano a 7 km; poco para llenar un día.",
+   "it": "Minuscolo borgo collinare tra i Borghi più belli della Liguria, con le grotte di Toirano a 7 km; poco per riempire una giornata."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:labastide-murat",
+  "appeal": 6.0,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 6,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Quiet village in a UNESCO Geopark; its sights are churches and a château 4 to 7 km away, with little in the village.",
+   "nl": "Rustig dorp in een UNESCO Geopark; de bezienswaardigheden zijn kerken en een kasteel op 4 tot 7 km, in het dorp weinig.",
+   "de": "Ruhiges Dorf in einem UNESCO-Geopark; die Sehenswürdigkeiten sind Kirchen und ein Schloss in 4 bis 7 km, im Dorf wenig.",
+   "fr": "Village tranquille dans un géoparc UNESCO; ses sites sont des églises et un château à 4 à 7 km, peu de chose au village.",
+   "es": "Pueblo tranquilo en un geoparque de la UNESCO; sus atractivos son iglesias y un castillo a 4 o 7 km, poco en el pueblo.",
+   "it": "Paese tranquillo in un geoparco UNESCO; le attrazioni sono chiese e un castello a 4 o 7 km, poco nel paese."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:mladenovac",
+  "appeal": 5.0,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 4,
+   "sights": 3,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Serbian town south of Belgrade filed with zero population; Pavlovac Monastery lies 8 km away and the card holds little else.",
+   "nl": "Servische stad ten zuiden van Belgrado met bevolking nul op de kaart; Pavlovac-klooster ligt 8 km weg en de kaart zegt verder weinig.",
+   "de": "Serbische Stadt südlich von Belgrad mit Einwohnerzahl null auf der Karte; das Kloster Pavlovac liegt 8 km entfernt, sonst wenig.",
+   "fr": "Ville serbe au sud de Belgrade fichée avec une population nulle; le monastère de Pavlovac est à 8 km et la fiche en dit peu.",
+   "es": "Ciudad serbia al sur de Belgrado con población cero en la ficha; el monasterio de Pavlovac está a 8 km y poco más consta.",
+   "it": "Cittadina serba a sud di Belgrado con popolazione zero nella scheda; il monastero di Pavlovac è a 8 km e poco altro risulta."
+  },
+  "confidence": "low",
+  "flags": [
+   "thin_card",
+   "class_mismatch",
+   "data_conflict"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:sauveterre-de-rouergue",
+  "appeal": 6.8,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 8,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Bastide village in the Plus Beaux Villages list with its own church and the Porte des Anglais; small and quiet.",
+   "nl": "Bastidedorp bij Les Plus Beaux Villages de France met een eigen kerk en de Porte des Anglais; klein en rustig.",
+   "de": "Bastidendorf bei den Plus Beaux Villages de France mit eigener Kirche und der Porte des Anglais; klein und ruhig.",
+   "fr": "Village de bastide classé Plus Beaux Villages de France, avec son église et la porte des Anglais; petit et calme.",
+   "es": "Pueblo bastida entre Les Plus Beaux Villages de France, con su iglesia y la Porte des Anglais; pequeño y tranquilo.",
+   "it": "Villaggio bastide tra Les Plus Beaux Villages de France, con la sua chiesa e la Porte des Anglais; piccolo e tranquillo."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:sainte-maxime",
+  "appeal": 6.6,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 7,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Riviera beach town facing Saint-Tropez, with a promenade and the Tour Suffren; a seaside stay more than a sightseeing stop.",
+   "nl": "Rivierastrandstad tegenover Saint-Tropez, met een boulevard en de Tour Suffren; meer een kustverblijf dan een bezienswaardigheid.",
+   "de": "Strandstadt an der Riviera gegenüber von Saint-Tropez, mit Promenade und Tour Suffren; eher Badeaufenthalt als Sightseeing.",
+   "fr": "Station balnéaire de la Riviera face à Saint-Tropez, avec sa promenade et la tour Suffren; plus un séjour balnéaire qu'une visite.",
+   "es": "Localidad de playa de la Riviera frente a Saint-Tropez, con paseo marítimo y la Tour Suffren; más una estancia costera que una visita.",
+   "it": "Località balneare della Riviera di fronte a Saint-Tropez, con lungomare e la Tour Suffren; più un soggiorno al mare che una visita."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:varzi",
+  "appeal": 6.2,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 7,
+   "sights": 4,
+   "atmosphere": 6,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Small Oltrepò Pavese borgo in the Borghi più belli list; the card names few sights, so it suits an hour's stroll.",
+   "nl": "Klein borgo in de Oltrepò Pavese bij de Borghi più belli; de kaart noemt weinig bezienswaardigheden, geschikt voor een uurtje wandelen.",
+   "de": "Kleiner Borgo im Oltrepò Pavese bei den Borghi più belli; die Karte nennt wenige Sehenswürdigkeiten, für einen kurzen Spaziergang.",
+   "fr": "Petit borgo de l'Oltrepò Pavese classé Borghi più belli; la fiche cite peu de sites, idéal pour une heure de balade.",
+   "es": "Pequeño borgo del Oltrepò Pavese entre los Borghi più belli; la ficha cita pocos lugares, apto para un paseo de una hora.",
+   "it": "Piccolo borgo dell'Oltrepò Pavese tra i Borghi più belli; la scheda cita pochi luoghi, adatto a una passeggiata di un'ora."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:robertsbridge",
+  "appeal": 6.0,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Quiet East Sussex village with Bodiam Castle 5 km and Battle Abbey 8 km away; a base more than a place to see.",
+   "nl": "Rustig dorp in East Sussex met Bodiam Castle op 5 km en Battle Abbey op 8 km; meer een uitvalsbasis dan een bezienswaardigheid.",
+   "de": "Ruhiges Dorf in East Sussex, Bodiam Castle liegt 5 km, Battle Abbey 8 km entfernt; eher Standort als Sehenswürdigkeit.",
+   "fr": "Village tranquille de l'East Sussex, Bodiam Castle à 5 km et Battle Abbey à 8 km; plus une base qu'un lieu à voir.",
+   "es": "Tranquilo pueblo de East Sussex con Bodiam Castle a 5 km y Battle Abbey a 8 km; más una base que un lugar que ver.",
+   "it": "Tranquillo villaggio dell'East Sussex con Bodiam Castle a 5 km e Battle Abbey a 8 km; più una base che un luogo da vedere."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:kiel",
+  "appeal": 6.0,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 5,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Baltic port city with a shipping museum, Moenkeberg beach and Kiel Castle; a modern, workaday centre with little old fabric.",
+   "nl": "Oostzeehavenstad met een scheepvaartmuseum, het strand van Moenkeberg en Kiel Castle; een modern, nuchter centrum met weinig oude bebouwing.",
+   "de": "Ostseehafenstadt mit Schifffahrtsmuseum, Strand Mönkeberg und Kieler Schloss; ein modernes, nüchternes Zentrum mit wenig alter Bausubstanz.",
+   "fr": "Ville portuaire de la Baltique avec un musée de la marine, la plage de Moenkeberg et le château; centre moderne et sobre.",
+   "es": "Ciudad portuaria del Báltico con museo marítimo, la playa de Moenkeberg y el castillo; un centro moderno y sobrio con poco casco antiguo.",
+   "it": "Città portuale del Baltico con museo marinaro, la spiaggia di Moenkeberg e il castello; un centro moderno e sobrio con poco di antico."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:chipiona",
+  "appeal": 6.0,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 5,
+   "sights": 4,
+   "atmosphere": 6,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Andalusian beach town with its own castle and a lone listed sight; the card gives little beyond sand and a seafront.",
+   "nl": "Andalusisch strandstadje met een eigen kasteel en nauwelijks andere genoemde bezienswaardigheden; de kaart toont vooral zand en boulevard.",
+   "de": "Andalusischer Badeort mit eigener Burg und kaum weiteren genannten Sehenswürdigkeiten; die Karte zeigt vor allem Strand und Promenade.",
+   "fr": "Station balnéaire andalouse avec son propre château et peu d'autres sites cités; la fiche montre surtout sable et front de mer.",
+   "es": "Localidad de playa andaluza con su propio castillo y pocos más lugares citados; la ficha muestra sobre todo arena y paseo marítimo.",
+   "it": "Località balneare andalusa con un proprio castello e pochi altri luoghi citati; la scheda mostra soprattutto sabbia e lungomare."
+  },
+  "confidence": "low",
+  "flags": [
+   "thin_card"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:gerberoy",
+  "appeal": 7.2,
+  "band": "good",
+  "criteria": {
+   "setting": 7,
+   "character": 8,
+   "sights": 6,
+   "atmosphere": 7,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Small village of the Plus Beaux Villages list around a collegiate church; compact and calm, with little beyond a short visit.",
+   "nl": "Klein dorp van Les Plus Beaux Villages de France rond een collegiale kerk; compact en rustig, met weinig meer dan een kort bezoek.",
+   "de": "Kleines Dorf der Plus Beaux Villages de France um eine Stiftskirche; kompakt und ruhig, mehr als ein kurzer Besuch lohnt kaum.",
+   "fr": "Petit village des Plus Beaux Villages de France autour d'une collégiale; compact et calme, guère plus qu'une courte visite.",
+   "es": "Pequeño pueblo de Les Plus Beaux Villages de France en torno a una colegiata; compacto y tranquilo, poco más que una visita corta.",
+   "it": "Piccolo villaggio di Les Plus Beaux Villages de France intorno a una collegiata; compatto e calmo, poco più di una breve visita."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:borgo-san-lorenzo",
+  "appeal": 6.2,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 6,
+   "sights": 6,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Mugello town beside Lake Bilancino with Medici villas at Cafaggiolo and Trebbio 7 to 8 km out; the town itself is ordinary.",
+   "nl": "Stadje in de Mugello bij het Bilancinomeer, met Medici-villa's in Cafaggiolo en Trebbio op 7 tot 8 km; het stadje zelf is gewoon.",
+   "de": "Städtchen im Mugello am Lago di Bilancino, Medici-Villen in Cafaggiolo und Trebbio 7 bis 8 km entfernt; der Ort selbst ist gewöhnlich.",
+   "fr": "Bourg du Mugello près du lac de Bilancino, avec les villas médicéennes de Cafaggiolo et du Trebbio à 7 à 8 km; ville ordinaire.",
+   "es": "Localidad del Mugello junto al lago Bilancino, con villas mediceas en Cafaggiolo y Trebbio a 7 u 8 km; el pueblo en sí es corriente.",
+   "it": "Cittadina del Mugello presso il lago di Bilancino, con le ville medicee di Cafaggiolo e Trebbio a 7 o 8 km; il paese è ordinario."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:zamardi",
+  "appeal": 5.8,
+  "band": "none",
+  "criteria": {
+   "setting": 6,
+   "character": 4,
+   "sights": 4,
+   "atmosphere": 6,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Lake Balaton resort village with its Nagystrand beach 2 km away; Tihany Abbey lies 6 km off, and the village is mostly a beach stay.",
+   "nl": "Badplaats aan het Balatonmeer met het Nagystrand op 2 km; Tihany Abbey ligt 6 km verder, het dorp is vooral een strandverblijf.",
+   "de": "Badeort am Balaton mit dem Nagystrand in 2 km; die Abtei Tihany liegt 6 km entfernt, der Ort ist vor allem Strandurlaub.",
+   "fr": "Station balnéaire du Balaton avec la plage Nagystrand à 2 km; l'abbaye de Tihany est à 6 km, un séjour surtout balnéaire.",
+   "es": "Localidad turística del Balatón con la playa Nagystrand a 2 km; la abadía de Tihany está a 6 km, sobre todo una estancia de playa.",
+   "it": "Località balneare del Balaton con la spiaggia Nagystrand a 2 km; l'abbazia di Tihany è a 6 km, soprattutto un soggiorno di mare."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:high-wycombe",
+  "appeal": 5.4,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 4,
+   "sights": 5,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Buckinghamshire commercial town with a small museum; Hughenden Manor and Cliveden lie nearby, but the centre has little to hold you.",
+   "nl": "Zakelijke stad in Buckinghamshire met een klein museum; Hughenden Manor en Cliveden liggen dichtbij, maar het centrum houdt weinig vast.",
+   "de": "Gewerblich geprägte Stadt in Buckinghamshire mit kleinem Museum; Hughenden Manor und Cliveden liegen nah, doch das Zentrum hält wenig.",
+   "fr": "Ville commerçante du Buckinghamshire avec un petit musée; Hughenden Manor et Cliveden sont proches, mais le centre retient peu.",
+   "es": "Ciudad comercial de Buckinghamshire con un pequeño museo; Hughenden Manor y Cliveden están cerca, pero el centro retiene poco.",
+   "it": "Città commerciale del Buckinghamshire con un piccolo museo; Hughenden Manor e Cliveden sono vicini, ma il centro trattiene poco."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:siofok",
+  "appeal": 5.9,
+  "band": "none",
+  "criteria": {
+   "setting": 6,
+   "character": 4,
+   "sights": 3,
+   "atmosphere": 6,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Lake Balaton resort town with beaches and the Kálmán Imre museum; sights are thin and the place is built for summer stays.",
+   "nl": "Badplaats aan het Balatonmeer, met stranden en het Kálmán Imre-museum; weinig bezienswaardigheden, vooral gebouwd voor zomerverblijf.",
+   "de": "Urlaubsort am Balaton, mit Stränden und dem Kálmán-Imre-Museum; wenige Sehenswürdigkeiten, auf Sommeraufenthalte ausgerichtet.",
+   "fr": "Station balnéaire du Balaton, avec plages et musée Kálmán Imre; peu de sites, pensée pour les séjours d'été.",
+   "es": "Localidad turística del Balatón, con playas y el museo Kálmán Imre; pocos atractivos, pensada para estancias de verano.",
+   "it": "Località turistica del Balaton, con spiagge e il museo Kálmán Imre; poche attrazioni, pensata per i soggiorni estivi."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:vila-do-conde",
+  "appeal": 6.5,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Portuguese coastal town on the Ave estuary with Lagoa and Aguçadoura beaches near; churches are modest and the card names no landmark.",
+   "nl": "Portugese kuststad aan de monding van de Ave, met de stranden Lagoa en Aguçadoura vlakbij; kerken zijn bescheiden en de kaart noemt geen blikvanger.",
+   "de": "Portugiesische Küstenstadt, mit den Stränden Lagoa und Aguçadoura in der Nähe; die Kirchen sind bescheiden, ein Wahrzeichen nennt die Karte nicht.",
+   "fr": "Ville côtière portugaise avec les plages de Lagoa et d'Aguçadoura proches; les églises sont modestes et la fiche ne cite aucun repère.",
+   "es": "Ciudad costera portuguesa con las playas de Lagoa y Aguçadoura cerca; las iglesias son modestas y la ficha no cita ningún emblema.",
+   "it": "Città costiera portoghese con le spiagge di Lagoa e Aguçadoura vicine; le chiese sono modeste e la scheda non cita alcun simbolo."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:glorenza",
+  "appeal": 7.4,
+  "band": "good",
+  "criteria": {
+   "setting": 8,
+   "character": 9,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 8
+  },
+  "why": {
+   "en": "Tiny walled town in South Tyrol, listed among the Borghi più belli, below the Ortler; compact, with little beyond a half day.",
+   "nl": "Piepklein ommuurd stadje in Zuid-Tirol bij de Borghi più belli, onder de Ortler; compact, met weinig meer dan een halve dag.",
+   "de": "Winzige Mauerstadt in Südtirol, bei den Borghi più belli gelistet, unterhalb des Ortlers; kompakt, mehr als ein halber Tag lohnt kaum.",
+   "fr": "Minuscule ville fortifiée du Tyrol du Sud, classée Borghi più belli, sous l'Ortler; compacte, guère plus d'une demi-journée.",
+   "es": "Diminuta ciudad amurallada del Tirol del Sur entre los Borghi più belli, bajo el Ortler; compacta, poco más de medio día.",
+   "it": "Minuscola città murata dell'Alto Adige tra i Borghi più belli, sotto l'Ortles; compatta, poco più di mezza giornata."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:pouzauges",
+  "appeal": 6.0,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 5,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Vendée village in the Petites Cités de Caractère with a ruined château and donjon; quiet, with little beyond a short stop.",
+   "nl": "Dorp in de Vendée bij de Petites Cités de Caractère met een kasteelruïne en donjon; rustig, met weinig meer dan een korte stop.",
+   "de": "Dorf in der Vendée bei den Petites Cités de Caractère mit Burgruine und Bergfried; ruhig, mehr als ein kurzer Halt lohnt kaum.",
+   "fr": "Village vendéen des Petites Cités de Caractère avec un château en ruine et un donjon; calme, guère plus qu'une courte halte.",
+   "es": "Pueblo de la Vendée entre las Petites Cités de Caractère con un castillo en ruinas y un torreón; tranquilo, poco más que una parada breve.",
+   "it": "Paese della Vandea tra le Petites Cités de Caractère con castello in rovina e mastio; tranquillo, poco più di una breve sosta."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:rayleigh",
+  "appeal": 5.5,
+  "band": "none",
+  "criteria": {
+   "setting": 4,
+   "character": 5,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Essex commuter market town with Rayleigh Mount; Hadleigh Castle lies 5 km out, and the town itself gives little reason to stop.",
+   "nl": "Forensenstad en marktplaats in Essex met Rayleigh Mount; Hadleigh Castle ligt 5 km verder, de stad zelf geeft weinig reden om te stoppen.",
+   "de": "Pendlerstadt in Essex mit Rayleigh Mount; Hadleigh Castle liegt 5 km entfernt, der Ort selbst bietet kaum Anlass zum Halt.",
+   "fr": "Ville-dortoir de l'Essex avec Rayleigh Mount; Hadleigh Castle est à 5 km, et la ville elle-même donne peu de raisons de s'arrêter.",
+   "es": "Ciudad dormitorio de Essex con Rayleigh Mount; Hadleigh Castle está a 5 km, y la ciudad en sí da pocos motivos para parar.",
+   "it": "Cittadina dormitorio dell'Essex con Rayleigh Mount; Hadleigh Castle è a 5 km, e la città in sé dà pochi motivi per fermarsi."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:gravelines",
+  "appeal": 6.3,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 7,
+   "sights": 6,
+   "atmosphere": 5,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Fortified North Sea town with city walls, a lighthouse and a belfry; compact, with a beach 2.5 km away.",
+   "nl": "Versterkte stad aan de Noordzee met stadsmuren, een vuurtoren en een belfort; compact, met een strand op 2,5 km.",
+   "de": "Befestigte Stadt an der Nordsee mit Stadtmauern, Leuchtturm und Belfried; kompakt, der Strand liegt 2,5 km entfernt.",
+   "fr": "Ville fortifiée de la mer du Nord avec remparts, phare et beffroi; compacte, la plage est à 2,5 km.",
+   "es": "Ciudad fortificada del Mar del Norte con murallas, faro y campanario; compacta, con una playa a 2,5 km.",
+   "it": "Città fortificata sul Mare del Nord con mura, faro e campanile; compatta, con una spiaggia a 2,5 km."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:olargues",
+  "appeal": 7.2,
+  "band": "good",
+  "criteria": {
+   "setting": 7,
+   "character": 8,
+   "sights": 6,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Hill village in the Plus Beaux Villages list with the Pont du Diable; the Héric gorges lie 5 km off, but little else.",
+   "nl": "Heuveldorp bij Les Plus Beaux Villages de France met de Pont du Diable; de kloof van Héric ligt 5 km weg, maar verder weinig.",
+   "de": "Hügeldorf bei den Plus Beaux Villages de France mit der Pont du Diable; die Héric-Schlucht liegt 5 km entfernt, sonst wenig.",
+   "fr": "Village perché des Plus Beaux Villages de France avec le Pont du Diable; les gorges d'Héric sont à 5 km, mais peu d'autre.",
+   "es": "Pueblo colgado de Les Plus Beaux Villages de France con el Pont du Diable; las gargantas de Héric están a 5 km, poco más.",
+   "it": "Villaggio collinare di Les Plus Beaux Villages de France con il Pont du Diable; le gole d'Héric sono a 5 km, poco altro."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:opi",
+  "appeal": 7.4,
+  "band": "good",
+  "criteria": {
+   "setting": 8,
+   "character": 7,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "Hilltop village at 1,250 m in the Borghi più belli list, beside Abruzzo National Park; Val Fondillo lies 5 km away.",
+   "nl": "Dorp op 1.250 m bij de Borghi più belli, naast het Nationaal Park Abruzzo; Val Fondillo ligt 5 km verder.",
+   "de": "Bergdorf auf 1.250 m bei den Borghi più belli, am Nationalpark Abruzzen; das Val Fondillo liegt 5 km entfernt.",
+   "fr": "Village perché à 1 250 m classé Borghi più belli, au bord du parc national des Abruzzes; le Val Fondillo est à 5 km.",
+   "es": "Pueblo a 1.250 m entre los Borghi più belli, junto al Parque Nacional de los Abruzos; el Val Fondillo está a 5 km.",
+   "it": "Borgo a 1.250 m tra i Borghi più belli, accanto al Parco Nazionale d'Abruzzo; la Val Fondillo è a 5 km."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:durres",
+  "appeal": 6.0,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 5,
+   "sights": 6,
+   "atmosphere": 5,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Albanian port city with a Roman amphitheatre, mosques and a beach 3 km away; an uneven, busy urban fabric around them.",
+   "nl": "Albanese havenstad met een Romeins amfitheater, moskeeën en een strand op 3 km; daaromheen een ongelijke, drukke bebouwing.",
+   "de": "Albanische Hafenstadt mit römischem Amphitheater, Moscheen und Strand in 3 km; drumherum ein ungleichmäßiges, lebhaftes Stadtbild.",
+   "fr": "Ville portuaire albanaise avec un amphithéâtre romain, des mosquées et une plage à 3 km; un tissu urbain inégal et animé.",
+   "es": "Ciudad portuaria albanesa con anfiteatro romano, mezquitas y una playa a 3 km; un tejido urbano desigual y animado alrededor.",
+   "it": "Città portuale albanese con anfiteatro romano, moschee e una spiaggia a 3 km; intorno un tessuto urbano disomogeneo e vivace."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:bazouges-la-perouse",
+  "appeal": 6.1,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 5,
+   "character": 7,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Brittany village in the Petites Cités de Caractère; the château de la Ballue lies 3 km away and the village is small.",
+   "nl": "Bretons dorp bij de Petites Cités de Caractère; het kasteel van La Ballue ligt 3 km weg en het dorp zelf is klein.",
+   "de": "Bretonisches Dorf bei den Petites Cités de Caractère; das Schloss La Ballue liegt 3 km entfernt, der Ort selbst ist klein.",
+   "fr": "Village breton des Petites Cités de Caractère; le château de la Ballue est à 3 km et le village est petit.",
+   "es": "Pueblo bretón de las Petites Cités de Caractère; el castillo de La Ballue está a 3 km y el pueblo es pequeño.",
+   "it": "Paese bretone tra le Petites Cités de Caractère; il castello della Ballue è a 3 km e il paese è piccolo."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:whittlesey",
+  "appeal": 5.6,
+  "band": "none",
+  "criteria": {
+   "setting": 4,
+   "character": 6,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Fenland market town with a guildhall; Peterborough Cathedral is 8 km away, and the town offers little of its own.",
+   "nl": "Marktstad in de Fens met een gildehal; de kathedraal van Peterborough ligt 8 km weg, de stad zelf biedt weinig.",
+   "de": "Marktstadt in den Fens mit Gildehaus; die Kathedrale von Peterborough liegt 8 km entfernt, der Ort selbst bietet wenig.",
+   "fr": "Ville-marché des Fens avec une halle des corporations; la cathédrale de Peterborough est à 8 km, la ville offre peu.",
+   "es": "Ciudad de mercado de los Fens con una casa gremial; la catedral de Peterborough está a 8 km, la ciudad ofrece poco.",
+   "it": "Cittadina di mercato dei Fens con un palazzo delle corporazioni; la cattedrale di Peterborough è a 8 km, la città offre poco."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:hechingen",
+  "appeal": 6.7,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 6,
+   "sights": 7,
+   "atmosphere": 5,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Swabian town below Burg Hohenzollern, 3 km away, with a museum and walks on the Raichberg; the town centre is ordinary.",
+   "nl": "Zwabische stad onder Burg Hohenzollern, 3 km verder, met een museum en wandelingen op de Raichberg; het centrum is gewoon.",
+   "de": "Schwäbische Stadt unterhalb der Burg Hohenzollern, 3 km entfernt, mit Museum und Wanderungen am Raichberg; das Zentrum ist gewöhnlich.",
+   "fr": "Ville souabe sous le château de Hohenzollern, à 3 km, avec un musée et des randonnées au Raichberg; centre ordinaire.",
+   "es": "Ciudad suaba bajo el castillo de Hohenzollern, a 3 km, con un museo y rutas en el Raichberg; el centro es corriente.",
+   "it": "Cittadina sveva sotto il castello di Hohenzollern, a 3 km, con un museo e passeggiate sul Raichberg; il centro è ordinario."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:pomponesco",
+  "appeal": 6.0,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 5,
+   "character": 7,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Small Po-plain village in the Borghi più belli list; Viadana and Guastalla cathedral lie 5 to 6 km off and the card names little here.",
+   "nl": "Klein dorp in de Povlakte bij de Borghi più belli; Viadana en Guastalla liggen 5 tot 6 km weg, de kaart noemt weinig.",
+   "de": "Kleines Dorf in der Poebene bei den Borghi più belli; Viadana und Guastalla liegen 5 bis 6 km entfernt, wenig Eigenes.",
+   "fr": "Petit village de la plaine du Pô classé Borghi più belli; Viadana et Guastalla sont à 5 à 6 km, peu de choses propres.",
+   "es": "Pequeño pueblo de la llanura del Po entre los Borghi più belli; Viadana y Guastalla están a 5 o 6 km, poco propio.",
+   "it": "Piccolo borgo della pianura padana tra i Borghi più belli; Viadana e Guastalla sono a 5 o 6 km, poco di proprio."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:vastervik",
+  "appeal": 6.2,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Swedish coastal town with Stegeholm castle ruin, a town hall and boatmen's cottages; a calm harbour stop with limited sights.",
+   "nl": "Zweedse kuststad met de kasteelruïne Stegeholm, een stadhuis en bootsmanshuisjes; een rustige havenstop met beperkte bezienswaardigheden.",
+   "de": "Schwedische Küstenstadt mit der Burgruine Stegeholm, Rathaus und Bootsmannshäusern; ein ruhiger Hafenhalt mit begrenzten Sehenswürdigkeiten.",
+   "fr": "Ville côtière suédoise avec les ruines du château de Stegeholm, un hôtel de ville et des maisons de bateliers; escale calme.",
+   "es": "Ciudad costera sueca con las ruinas del castillo de Stegeholm, un ayuntamiento y casas de barqueros; parada tranquila con pocos atractivos.",
+   "it": "Città costiera svedese con le rovine del castello di Stegeholm, un municipio e case di barcaioli; sosta tranquilla con poche attrazioni."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:l-abergement-clemenciat",
+  "appeal": 5.6,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 5,
+   "sights": 3,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Small Ain village with no sight of its own; the church and château of Châtillon-sur-Chalaronne lie 4 to 5 km away.",
+   "nl": "Klein dorp in de Ain zonder eigen bezienswaardigheid; de kerk en het kasteel van Châtillon-sur-Chalaronne liggen 4 tot 5 km weg.",
+   "de": "Kleines Dorf im Ain ohne eigene Sehenswürdigkeit; Kirche und Schloss von Châtillon-sur-Chalaronne liegen 4 bis 5 km entfernt.",
+   "fr": "Petit village de l'Ain sans site propre; l'église et le château de Châtillon-sur-Chalaronne sont à 4 à 5 km.",
+   "es": "Pequeño pueblo del Ain sin atractivo propio; la iglesia y el castillo de Châtillon-sur-Chalaronne están a 4 o 5 km.",
+   "it": "Piccolo paese dell'Ain senza attrazioni proprie; la chiesa e il castello di Châtillon-sur-Chalaronne sono a 4 o 5 km."
+  },
+  "confidence": "low",
+  "flags": [
+   "thin_card"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:armagh",
+  "appeal": 6.6,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 5,
+   "character": 7,
+   "sights": 6,
+   "atmosphere": 5,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Cathedral city with St Patrick's Cathedral and county museums, and Navan Fort listed nearby; small, quiet, with a short list of sights.",
+   "nl": "Kathedraalstad met de St Patrick's Cathedral en streekmusea, en Navan Fort in de buurt; klein, rustig, met een korte lijst bezienswaardigheden.",
+   "de": "Kathedralstadt mit St Patrick's Cathedral und Regionalmuseen, Navan Fort in der Nähe; klein, ruhig, mit kurzer Sehenswürdigkeitenliste.",
+   "fr": "Ville cathédrale avec St Patrick's Cathedral et des musées locaux, Navan Fort à proximité; petite, calme, peu de sites.",
+   "es": "Ciudad catedralicia con la St Patrick's Cathedral y museos locales, y Navan Fort cerca; pequeña, tranquila, con pocos atractivos.",
+   "it": "Città cattedrale con la St Patrick's Cathedral e musei locali, con Navan Fort nei pressi; piccola, tranquilla, poche attrazioni."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:lliria",
+  "appeal": 6.2,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 5,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 5,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Valencian town named a UNESCO Creative City, with a Roman baths site and Iberian Edeta; the centre is modest.",
+   "nl": "Valenciaanse stad met de status UNESCO Creatieve Stad, een Romeins badhuis en het Iberische Edeta; het centrum is bescheiden.",
+   "de": "Valencianische Stadt, UNESCO-Kreativstadt, mit römischer Thermenanlage und iberischem Edeta; das Zentrum ist bescheiden.",
+   "fr": "Ville valencienne désignée Ville créative de l'UNESCO, avec des thermes romains et l'ibérique Edeta; centre modeste.",
+   "es": "Ciudad valenciana designada Ciudad Creativa de la UNESCO, con unas termas romanas y la ibérica Edeta; el centro es modesto.",
+   "it": "Cittadina valenciana Città Creativa UNESCO, con terme romane e l'iberica Edeta; il centro è modesto."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:riva-del-garda",
+  "appeal": 7.5,
+  "band": "good",
+  "criteria": {
+   "setting": 9,
+   "character": 6,
+   "sights": 6,
+   "atmosphere": 7,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Lake Garda's northern shore under steep mountains, with the Varone waterfall 3 km off and Lake Ledro near; a busy, mixed town.",
+   "nl": "Noordoever van het Gardameer onder steile bergen, met de Varone-waterval op 3 km en het Ledromeer dichtbij; een drukke, gemengde stad.",
+   "de": "Nordufer des Gardasees unter steilen Bergen, mit dem Varone-Wasserfall in 3 km und dem Ledrosee nah; ein belebter, gemischter Ort.",
+   "fr": "Rive nord du Garde sous des montagnes abruptes, avec la cascade de Varone à 3 km et le lac de Ledro proche; ville animée.",
+   "es": "Orilla norte del lago de Garda bajo montañas abruptas, con la cascada de Varone a 3 km y el lago de Ledro cerca; ciudad mezclada.",
+   "it": "Sponda nord del Garda sotto montagne ripide, con la cascata del Varone a 3 km e il lago di Ledro vicino; città movimentata e mista."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:huesca",
+  "appeal": 6.3,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 5,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Aragonese city with a cathedral, San Pedro el Viejo and a diocesan museum; a quiet provincial centre without a standout.",
+   "nl": "Aragonese stad met een kathedraal, San Pedro el Viejo en een bisdommuseum; een rustig provinciaal centrum zonder blikvanger.",
+   "de": "Aragonische Stadt mit Kathedrale, San Pedro el Viejo und Diözesanmuseum; ein ruhiges Provinzzentrum ohne herausragende Sehenswürdigkeit.",
+   "fr": "Ville aragonaise avec cathédrale, San Pedro el Viejo et musée diocésain; un centre provincial calme sans site phare.",
+   "es": "Ciudad aragonesa con catedral, San Pedro el Viejo y un museo diocesano; un centro provincial tranquilo sin gran reclamo.",
+   "it": "Città aragonese con cattedrale, San Pedro el Viejo e un museo diocesano; un centro provinciale tranquillo senza grande richiamo."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:sanok",
+  "appeal": 6.6,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 6,
+   "sights": 7,
+   "atmosphere": 5,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Carpathian foothill town with its castle, an Orthodox cathedral and a museum of folk architecture; an easy halt, not a long stay.",
+   "nl": "Stad aan de Karpatenvoet met een kasteel, een orthodoxe kathedraal en een museum voor volksarchitectuur; een prettige stop, geen lang verblijf.",
+   "de": "Stadt am Karpatenrand mit Burg, orthodoxer Kathedrale und Museum für Volksarchitektur; ein angenehmer Halt, kein langer Aufenthalt.",
+   "fr": "Ville au pied des Carpates avec un château, une cathédrale orthodoxe et un musée d'architecture populaire; étape agréable, pas un long séjour.",
+   "es": "Ciudad al pie de los Cárpatos con castillo, catedral ortodoxa y un museo de arquitectura popular; una parada agradable, no una estancia larga.",
+   "it": "Cittadina ai piedi dei Carpazi con castello, cattedrale ortodossa e museo di architettura popolare; una sosta gradevole, non un lungo soggiorno."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ }
+]
