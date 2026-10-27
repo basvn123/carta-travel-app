@@ -131,8 +131,6 @@
 
 .pf-line-label { font-size: var(--text-lead); font-weight: 500; color: var(--text); }
 
-.pf-life .wlife-q + .wlife-q { margin-top: var(--space-4); }
-
 .pf-from { min-height: 320px; }
 
 .pf-create { display: flex; flex-direction: column; gap: var(--space-3); }

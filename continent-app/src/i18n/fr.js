@@ -7208,6 +7208,7 @@ export const fr = {
   "pf.who.slowHint": "Marches plus courtes, sans marches si possible",
   "pf.q.sleep": "Comment aimez-vous voyager ?",
   "pf.q.sleepHelp": "Cela fixe chaque prix que vous verrez.",
+  "pf.sleep.later": "Vous pourrez tout modifier plus tard dans les réglages du voyage.",
   "pf.q.priority": "Qu'est-ce qui compte le plus ?",
   "pf.q.priorityHelp": "Carta classe vols, logements et lieux selon cela.",
   "pf.o.price": "Le prix le plus bas",

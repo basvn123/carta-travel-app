@@ -7816,6 +7816,7 @@ export const en = {
   "pf.who.slowHint": "Shorter walks, step free where it can",
   "pf.q.sleep": "How do you like to travel?",
   "pf.q.sleepHelp": "This sets every price you'll see.",
+  "pf.sleep.later": "You can change all of this later in Trip settings.",
   "pf.q.priority": "What matters most?",
   "pf.q.priorityHelp": "Carta ranks flights, stays and places by it.",
   "pf.o.price": "The lowest price",

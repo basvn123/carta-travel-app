@@ -7208,6 +7208,7 @@ export const es = {
   "pf.who.slowHint": "Paseos más cortos, sin escalones cuando se pueda",
   "pf.q.sleep": "¿Cómo te gusta viajar?",
   "pf.q.sleepHelp": "Esto fija cada precio que verás.",
+  "pf.sleep.later": "Puedes cambiar todo esto más tarde en los ajustes del viaje.",
   "pf.q.priority": "¿Qué es lo más importante?",
   "pf.q.priorityHelp": "Carta ordena vuelos, alojamientos y lugares según esto.",
   "pf.o.price": "El precio más bajo",

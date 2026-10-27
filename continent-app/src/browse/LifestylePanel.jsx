@@ -46,9 +46,9 @@ import { TRAVEL_MODES } from '../lib/travelWay.js';
 // cadence so the steppers stay sensible.
 // coffees_per_day is outside PERIOD_FIELDS on purpose: it never rescales with
 // the cadence toggle (toCadence leaves it alone).
-const COFFEE_MAX = 6;
+export const COFFEE_MAX = 6;
 
-const PERIOD_FIELDS = [
+export const PERIOD_FIELDS = [
   { key: 'dinners_per_week',            max: { week: 21, day: 3 } },
   { key: 'lunches_per_week',            max: { week: 21, day: 4 } },
   { key: 'fastfood_per_week',          max: { week: 21, day: 4 } },
@@ -88,11 +88,12 @@ export const SLEEP_ICONS = { hostel: BunkIcon, home: HomeIcon, hotel: HotelIcon 
 
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
-// Re-express a lifestyle object in the target cadence. Week -> day keeps one
+// Re-express a lifestyle object in the target cadence (exported for the
+// planner's lifestyle step, T750). Week -> day keeps one
 // decimal (3 dinners/week is honestly 0.4/day, not 0) so no category the
 // traveller set is silently zeroed and the priced total survives the toggle;
 // day -> week rounds back to whole numbers.
-function toCadence(ls, target) {
+export function toCadence(ls, target) {
   const from = ls.cadence || 'week';
   if (from === target) return { ...ls, cadence: target };
   const out = { ...ls, cadence: target };

@@ -17,7 +17,7 @@ import {
 import {
   ArrowLeftIcon, CalendarIcon, CameraIcon, CheckIcon, ChevronRightIcon, CloseIcon, EyeIcon, FriendsIcon, PencilIcon, PlusIcon,
 } from '../../components/Icons.jsx';
-import { LifestyleChoices } from '../LifestyleChoices.jsx';
+import { LifestyleStep } from './LifestyleStep.jsx';
 import { PartyEditor } from '../PartyEditor.jsx';
 import { answer, markAnswered, normalizeSettings, withPartyKind, PARTY_KINDS, VISIBILITY } from './tripSettings.js';
 
@@ -124,12 +124,13 @@ export function WhoScreen({ settings, commit, doneLabel }) {
 
 // ---- Where you sleep and how you spend ----
 
-/** The Lifestyle's two answers (the one Lifestyle control, embedded). They
- *  are app-wide choices, so there is nothing to keep here but "answered". */
+/** The whole Lifestyle (T750: where you sleep, how you spend, getting there
+ *  and the counts). They are app-wide choices, so there is nothing to keep
+ *  here but "answered". */
 export function SleepScreen({ settings, commit, doneLabel }) {
   return (
     <>
-      <div className="pf-life"><LifestyleChoices /></div>
+      <LifestyleStep />
       <Foot onContinue={() => commit(markAnswered(settings, 'sleep'))} label={doneLabel} />
     </>
   );

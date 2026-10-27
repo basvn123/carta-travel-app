@@ -7208,6 +7208,7 @@ export const nl = {
   "pf.who.slowHint": "Kortere stukken lopen, zonder trappen waar het kan",
   "pf.q.sleep": "Hoe reis je graag?",
   "pf.q.sleepHelp": "Dit bepaalt elke prijs die je ziet.",
+  "pf.sleep.later": "Je kunt dit later allemaal aanpassen in Reisinstellingen.",
   "pf.q.priority": "Wat vind je het belangrijkst?",
   "pf.q.priorityHelp": "Carta rangschikt vluchten, verblijven en plekken hierop.",
   "pf.o.price": "De laagste prijs",

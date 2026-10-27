@@ -278,6 +278,95 @@
   .pf-coll:hover .pf-coll-photo { transform: translateX(calc(-50% + var(--k) * var(--step))) translateY(calc(var(--k) * var(--k) * 3px)) rotate(calc(var(--k) * var(--turn))); }
 }
 
+/* ---- How do you like to travel? (T750) ----
+   The whole Lifestyle on one step: where you sleep, how you spend, getting
+   there, and the counts behind one Fine tune button. A phone gets compact
+   rows, the icon beside its word, 48 px; from 769 px the tiles stand as the
+   kit draws them, the icon over its word, three across. */
+.pf-ls { display: flex; flex-direction: column; gap: var(--space-5); }
+
+.pf-ls-q { display: flex; flex-direction: column; gap: var(--space-2); }
+
+.pf-ls-h { margin: 0; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
+
+.pf-ls-tiles .ui-tile {
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: var(--space-2);
+  min-height: var(--tap-main);
+  padding: 0 var(--space-3);
+}
+
+.pf-ls-tiles.is-three .ui-tile { justify-content: center; padding: 0 var(--space-2); }
+
+.pf-ls-tiles .ui-tile-icon svg { width: 20px; height: 20px; }
+
+.pf-ls-tiles .ui-tile-label { text-align: left; }
+
+.pf-ls-tiles.is-spend { --tile-cols: 2 !important; }
+
+.pf-ls-kind { margin-top: var(--space-1); }
+
+.pf-ls-note { margin: 0; font-size: var(--text-caption); color: var(--text-3); }
+
+.pf-ls-way { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+
+.pf-ls-tune.btn { align-self: flex-start; }
+
+.pf-ls-chev { transition: transform var(--dur-2) var(--ease-out); }
+
+.pf-ls-tune.is-open .pf-ls-chev { transform: rotate(180deg); }
+
+.pf-ls-counts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+
+.pf-ls-counts .seg { margin-bottom: var(--space-2); }
+
+.pf-ls-count {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: var(--tap-main);
+}
+
+.pf-ls-count-label { font-size: var(--text-body); color: var(--text); }
+
+.pf-ls-later {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: var(--text-caption);
+  color: var(--text-3);
+}
+
+.pf-ls-later svg { flex: none; }
+
+@media (min-width: 769px) {
+  .pf-ls-tiles .ui-tile,
+  .pf-ls-tiles.is-three .ui-tile {
+    flex-direction: column;
+    justify-content: center;
+    min-height: 76px;
+    padding: var(--space-2);
+  }
+  .pf-ls-tiles .ui-tile-label { text-align: center; }
+  .pf-ls-tiles.is-spend { --tile-cols: 3 !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-ls-chev { transition: none; }
+}
+
 .pf-title:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 
 /* ---- A question on the sheet (after Polarsteps' question sheet) ---- */
