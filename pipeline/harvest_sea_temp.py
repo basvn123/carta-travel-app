@@ -20,6 +20,14 @@ Outputs (cache/, read by export_beaches.py and apply_climate.py):
     sea_temp_dest.json      rows: {destination id: {"c": [12], "km": d}}
 Tiles are cached in cache/sea_temp/ (one small json each, resumable).
 
+T740, after the first box run (2026-10-26: 12.7 h, then one tile's HTTP 503
+ended the task and nothing was written): a tile the server refuses after its
+retries is skipped and logged, never fatal, and --max-hours stops fetching new
+tiles once the budget is spent (cached tiles are still read). Either way the
+outputs are written with what there is, and the exit code is 3, so the
+pipeline keeps the task due and the next run resumes from the cached tiles.
+A complete run exits 0.
+
 Usage, from the repo root:
     python pipeline/harvest_sea_temp.py --point 40.62,14.48          # one point
     python pipeline/harvest_sea_temp.py --beaches --countries IT     # sample
@@ -66,6 +74,12 @@ def _tile_dir(base: Path) -> Path:
     return d
 
 
+# T740: tiles refused by the server, and the fetch deadline (time.monotonic()).
+FAILED_TILES: set = set()
+DEADLINE = None
+SKIPPED_BY_DEADLINE: set = set()
+
+
 def fetch_tile(la: int, lo: int, base: Path) -> dict:
     """{(lat, lon): [12]} for the 1 degree tile whose south-west corner is
     (la, lo). Cached on disk; an empty tile (open land) is cached too."""
@@ -73,6 +87,9 @@ def fetch_tile(la: int, lo: int, base: Path) -> dict:
     if path.exists():
         doc = json.loads(path.read_text(encoding="utf-8"))
         return {(c[0], c[1]): c[2] for c in doc["cells"]}
+    if DEADLINE is not None and time.monotonic() > DEADLINE:
+        SKIPPED_BY_DEADLINE.add((la, lo))
+        return {}
     t0, t1 = f"{YEAR_FROM}-01-16T12:00:00Z", f"{YEAR_TO}-12-16T12:00:00Z"
     url = (f"{ERDDAP}%5B({t0}):1:({t1})%5D%5B({la}):{STRIDE}:({la + 1})%5D"
            f"%5B({lo}):{STRIDE}:({lo + 1})%5D")
@@ -131,7 +148,16 @@ def lookup(lat: float, lon: float, base: Path, max_km: float):
              for la in (lat - span, lat + span) for lo in (lon - span, lon + span)}
     best = None
     for la, lo in sorted(tiles):
-        for (cl, co), vals in fetch_tile(la, lo, base).items():
+        if (la, lo) in FAILED_TILES:
+            continue
+        try:
+            cells = fetch_tile(la, lo, base)
+        except RuntimeError as exc:
+            # T740: one refused tile is logged and skipped, never fatal.
+            FAILED_TILES.add((la, lo))
+            print(f"  tile skipped: {exc}", flush=True)
+            continue
+        for (cl, co), vals in cells.items():
             km = haversine_km(lat, lon, cl, co)
             if km <= max_km and (best is None or km < best[1]):
                 best = (vals, km, (cl, co))
@@ -177,7 +203,12 @@ def main():
     ap.add_argument("--countries")
     ap.add_argument("--limit", type=int)
     ap.add_argument("--out-dir")
+    ap.add_argument("--max-hours", type=float, default=0,
+                    help="stop fetching new tiles after this many hours (0: no limit)")
     a = ap.parse_args()
+    global DEADLINE
+    if a.max_hours:
+        DEADLINE = time.monotonic() + a.max_hours * 3600
     base = Path(a.out_dir) if a.out_dir else ov.CACHE
     base.mkdir(parents=True, exist_ok=True)
     if a.point:
@@ -201,6 +232,11 @@ def main():
     if a.dests:
         rows = run(cap(dest_points()), base, DEST_MAX_KM, "destinations")
         ov.save("sea_temp_dest", rows, meta, base)
+    if FAILED_TILES or SKIPPED_BY_DEADLINE:
+        print(f"incomplete: {len(FAILED_TILES)} tile(s) refused by the server, "
+              f"{len(SKIPPED_BY_DEADLINE)} left for the next run by --max-hours; "
+              "the outputs hold what there is, the next run resumes from cache/sea_temp/")
+        sys.exit(3)
 
 
 if __name__ == "__main__":

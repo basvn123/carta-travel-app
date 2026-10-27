@@ -2339,7 +2339,9 @@ TASKS = [
             guard_reachable("NOAA CoastWatch ERDDAP", "coastwatch.pfeg.noaa.gov"),
             guard_files(("continent-app/public/beaches/??.json", 20,
                          "the beach wire is tracked; check the checkout"))),
-        "cmds": [[PY, "pipeline/harvest_sea_temp.py", "--beaches", "--dests"]],
+        # T740: its own budget, so a slow ERDDAP day cannot use the batch's
+        # 16 h (the first box run took 12.7 h); unfinished tiles resume next run.
+        "cmds": [[PY, "pipeline/harvest_sea_temp.py", "--beaches", "--dests", "--max-hours", "6"]],
         "note": ("NASA JPL MUR SST monthly means via ERDDAP, one call per 1 degree "
                  "tile, tiles cached in cache/sea_temp/ (resumable, carried in the "
                  "explore-overlays archive class). Writes cache/sea_temp_beaches.json "
