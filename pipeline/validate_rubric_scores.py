@@ -22,6 +22,8 @@ Usage:
     python validate_rubric_scores.py 03 --merge         # join parts/ first
     python validate_rubric_scores.py --all --write      # check every shard and
                                                         # write app_data/rubric_appeal.json
+    python validate_rubric_scores.py handcheck --merge   # the blind hand-score
+                                                        # check (no controls, never merged)
 """
 
 import argparse
@@ -55,8 +57,13 @@ def band_of(appeal):
     return next(name for name, lo in BANDS if appeal >= lo - 1e-9)
 
 
+def name(shard):
+    """shard_03, or handcheck for the blind hand-score sample."""
+    return shard if isinstance(shard, str) else f"shard_{shard:02d}"
+
+
 def card_ids(shard):
-    path = CARDS / f"shard_{shard:02d}.jsonl"
+    path = CARDS / f"{name(shard)}.jsonl"
     return [json.loads(line)["id"] for line in path.read_text(encoding="utf-8").splitlines() if line]
 
 
@@ -64,11 +71,11 @@ def merge_parts(shard):
     """Join data/rating/rubric_scores/shard_XX/part_*.json into shard_XX.json
     in card order. A scorer writes its shard in parts of about 40."""
     rows = []
-    for p in sorted((SCORES / f"shard_{shard:02d}").glob("part_*.json")):
+    for p in sorted((SCORES / name(shard)).glob("part_*.json")):
         rows += json.loads(p.read_text(encoding="utf-8"))
     order = {did: k for k, did in enumerate(card_ids(shard))}
     rows.sort(key=lambda r: order.get(r.get("id"), len(order)))
-    out = SCORES / f"shard_{shard:02d}.json"
+    out = SCORES / f"{name(shard)}.json"
     out.write_text(json.dumps(rows, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     return out
 
@@ -121,9 +128,9 @@ def check_row(r):
 
 def check_shard(shard, schema_only):
     """(problems, rows, control summary or None)."""
-    path = SCORES / f"shard_{shard:02d}.json"
+    path = SCORES / f"{name(shard)}.json"
     if not path.exists():
-        return [f"shard {shard:02d}: {path.relative_to(ROOT)} missing"], [], None
+        return [f"{name(shard)}: {path.relative_to(ROOT)} missing"], [], None
     rows = json.loads(path.read_text(encoding="utf-8"))
     problems = []
     want = card_ids(shard)
@@ -144,7 +151,7 @@ def check_shard(shard, schema_only):
         problems.append(f"{len(urls)} web sources (max {MAX_SOURCES} per shard)")
 
     controls = None
-    if not schema_only:
+    if not schema_only and isinstance(shard, int):
         hidden = [json.loads(line) for line in HIDDEN.read_text(encoding="utf-8").splitlines() if line]
         ctl = {h["id"]: h["hand_appeal"] for h in hidden
                if h["role"] == "control" and h["shard"] == shard}
@@ -188,7 +195,8 @@ def write_merged(all_rows):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("shard", nargs="?", type=int)
+    ap.add_argument("shard", nargs="?",
+                    type=lambda v: v if v == "handcheck" else int(v))
     ap.add_argument("--schema-only", action="store_true")
     ap.add_argument("--merge", action="store_true")
     ap.add_argument("--all", action="store_true")
@@ -202,7 +210,7 @@ def main():
             merge_parts(s)
         problems, rows, controls = check_shard(s, args.schema_only)
         status = "FAIL" if problems else "pass"
-        line = f"shard {s:02d}: {status}  {len(rows)} rows  {summary(rows)}"
+        line = f"{name(s)}: {status}  {len(rows)} rows  {summary(rows)}"
         if controls:
             line += f"  controls mean gap {controls['mean_abs_gap']} {controls['gaps']}"
         print(line)

@@ -270,8 +270,14 @@ def main():
     rng = random.Random(SEED)
 
     if args.handcheck:
-        hand = sorted(i for i in curated if i in pool and i not in anchor_ids)
-        ids = sorted(rng.sample(hand, round(args.handcheck * len(hand))))
+        # A share of all hand scores, drawn from those that are neither an
+        # anchor (its score is printed) nor a shard control (already scored).
+        controls = set()
+        if HIDDEN.exists():
+            controls = {json.loads(line)["id"] for line in HIDDEN.read_text(encoding="utf-8").splitlines()
+                        if line and json.loads(line)["role"] == "control"}
+        hand = sorted(i for i in curated if i in pool and i not in anchor_ids | controls)
+        ids = sorted(random.Random(SEED + 1).sample(hand, round(args.handcheck * len(curated))))
         out = Path(args.out or OUT_DIR / "handcheck.jsonl")
         write_jsonl(out, cards(ids))
         print(f"{len(ids)} blind hand-check cards -> {out}")
