@@ -32,12 +32,13 @@
   .pf-map { position: absolute; inset: 0; height: auto; }
 }
 
-/* ---- The opening (T743 to T745, owner 2026-10-27) ----
+/* ---- The opening (T743 to T746, owner 2026-10-27) ----
    The Plan place with nothing open: one screen on warm paper, no scroll.
-   Three planned weeks in season fill the space the text leaves (a phone:
-   above it; from 1024 px: beside it), each a photograph with a white card
-   (style, days, name, from-price) and a door to the whole week. The headline is Figtree, as on every tab.
-   Photographs and the chip carry the only shadows; nothing has a border. */
+   The headline and the two actions that matter, large; under them (from
+   1024 px: beside them) one photograph of a planned week in season, down to
+   the bottom, with a day of it playing on a white card.
+   The headline is Figtree, as on every tab. White cards carry the only
+   shadows; nothing has a border; text never sits on a photograph. */
 .pf.is-opening { background: var(--plan-ground); }
 
 .pf-open {
@@ -49,115 +50,10 @@
   height: 100%;
   min-height: 100%;
   margin: 0 auto;
-  padding: var(--space-3) var(--gutter) var(--space-5);
+  padding: var(--space-5) var(--gutter) var(--space-4);
 }
 
 .pf-open.is-bare { justify-content: center; }
-
-/* The picture: one large photograph and two stacked beside it. */
-.pf-open-pic {
-  display: grid;
-  flex: 1 1 auto;
-  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
-  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
-  gap: var(--space-2);
-  min-height: 180px;
-}
-
-.pf-open-tile {
-  position: relative;
-  display: block;
-  min-height: 0;
-  overflow: hidden;
-  border-radius: var(--radius-card);
-  background: var(--surface-sunken);
-}
-
-.pf-open-tile.is-t0 { grid-row: 1 / span 2; }
-
-.pf-open-tile .pf-open-img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform var(--dur-4) var(--ease-out);
-}
-
-.pf-open-tile.is-t0 .pf-open-img { object-position: 30% 50%; }
-
-@media (hover: hover) {
-  .pf-open-tile:hover .pf-open-img { transform: scale(1.04); }
-}
-
-.pf-open-tile:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
-
-/* The week's card: a white surface on the photograph, never text on it.
-   The style and days, the week's name, what a day costs from, and an arrow
-   that says the tile opens the whole week. */
-.pf-open-chip {
-  position: absolute;
-  left: var(--space-2);
-  right: var(--space-2);
-  bottom: var(--space-2);
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-control);
-  background: var(--surface);
-  box-shadow: var(--elev-2);
-  transition: transform var(--dur-3) var(--ease-out), box-shadow var(--dur-3) var(--ease-out);
-}
-
-.pf-open-tile.is-t0 .pf-open-chip { left: var(--space-3); right: auto; bottom: var(--space-3); max-width: calc(100% - 2 * var(--space-3)); }
-
-.pf-open-chip-kind { font-size: var(--text-caption); font-weight: 600; color: var(--text-3); }
-
-.pf-open-chip-name {
-  overflow: hidden;
-  font-size: var(--text-label);
-  font-weight: 700;
-  line-height: var(--leading-tight);
-  color: var(--text);
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.pf-open-chip-price {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2);
-  font-size: var(--text-caption);
-  color: var(--text-2);
-  white-space: nowrap;
-}
-
-.pf-open-chip-price .pf-open-chip-fig { font-weight: 700; color: var(--text); }
-
-/* A phone: the small tiles carry the style, the days and the price; the
-   name stays on the large one, so no card covers its photograph. */
-@media (max-width: 768px) {
-  .pf-open-tile:not(.is-t0) .pf-open-chip-name { display: none; }
-}
-
-.pf-open-chip-go { flex: none; color: var(--action); transition: transform var(--dur-2) var(--ease-out); }
-
-@media (hover: hover) {
-  .pf-open-tile:hover .pf-open-chip { transform: translateY(-3px); box-shadow: var(--elev-3); }
-  .pf-open-tile:hover .pf-open-chip-go { transform: translateX(3px); }
-}
-
-/* The weeks arrive once, one after the other; then they stand still. */
-@keyframes pf-open-arrive {
-  from { opacity: 0; transform: translateY(12px) scale(0.985); }
-}
-
-.pf-open-tile:not(.is-wait) {
-  animation: pf-open-arrive var(--dur-3) var(--ease-out) both;
-  animation-delay: calc(var(--i, 0) * 70ms);
-}
 
 /* The words and the actions. */
 .pf-open-text {
@@ -180,23 +76,34 @@
 
 .pf-open-accent { color: var(--action); }
 
-.pf-open-lede {
-  margin: var(--space-3) 0 0;
-  max-width: 46ch;
-  font-size: var(--text-lead);
-  line-height: var(--leading-body);
-  color: var(--text-2);
-  text-wrap: pretty;
-}
-
+/* The two actions are the page's point: tall, bold, stacked full width on a
+   phone, side by side from 769 px. */
 .pf-open-actions {
   display: flex;
+  flex-direction: column;
   gap: var(--space-2);
   width: 100%;
   margin-top: var(--space-5);
 }
 
-.pf-open-actions .btn { flex: 1 1 0; min-height: var(--tap-main); }
+.pf-open-actions .btn {
+  gap: var(--space-2);
+  min-height: 56px;
+  padding-inline: var(--space-5);
+  border-radius: var(--radius-card);
+  font-size: var(--text-lead);
+  font-weight: 700;
+}
+
+.pf-open-start.btn { box-shadow: var(--elev-1); }
+
+.pf-open-browse.btn {
+  border-color: transparent;
+  background: var(--action-tint);
+  color: var(--select-ink);
+}
+
+.pf-open-browse.btn:hover { border-color: transparent; background: var(--action-tint); box-shadow: var(--elev-1); }
 
 .pf-open-start .btn-icon { transition: transform var(--dur-2) var(--ease-out); }
 
@@ -221,8 +128,6 @@
 }
 
 .pf-open-resume:hover { box-shadow: var(--elev-2); }
-
-.pf-open-resume:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
 
 .pf-open-resume-icon {
   display: grid;
@@ -249,26 +154,164 @@
 
 .pf-open-resume > svg { flex: none; color: var(--text-3); }
 
-/* A short phone gives the picture less, then none, so nothing scrolls. */
-@media (max-height: 700px) {
-  .pf-open { gap: var(--space-4); }
-  .pf-open-pic { min-height: 120px; }
-  .pf-open-lede { font-size: var(--text-body); }
-  .pf-open-actions { margin-top: var(--space-4); }
+/* The stage: one photograph down to the bottom, the day standing on it. */
+.pf-open-stage {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 0;
+  padding: var(--space-3);
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--surface-sunken);
+  animation: pf-open-arrive var(--dur-3) var(--ease-out) both;
 }
 
-@media (max-height: 560px) {
-  .pf-open-pic { display: none; }
-  .pf-open { justify-content: center; }
+.pf-open-stage .pf-open-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Play a day (T746): one day of a planned week, morning to bed. */
+.pf-day {
+  position: relative;
+  flex: none;
+  padding: var(--space-3) var(--space-4) var(--space-2);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--elev-2);
+}
+
+.pf-day.is-wait { min-height: 168px; box-shadow: none; background: var(--surface); opacity: 0.6; }
+
+.pf-day-head { display: flex; align-items: center; gap: var(--space-3); }
+
+.pf-day-meta { display: flex; flex: 1; flex-direction: column; min-width: 0; }
+
+.pf-day-over { font-size: var(--text-caption); font-weight: 600; color: var(--text-3); }
+
+.pf-day-title {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: var(--text-lead);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.pf-day-play.icon-btn {
+  flex: none;
+  border-radius: var(--radius-pill);
+  background: var(--action);
+  color: var(--action-text);
+  transition: background var(--dur-1) var(--ease-out);
+}
+
+.pf-day-play.icon-btn:hover { background: var(--action-hover); }
+
+.pf-day-bars { display: flex; gap: var(--space-1); margin-top: var(--space-3); }
+
+.pf-day-bar {
+  flex: 1;
+  height: 3px;
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+  background: var(--border);
+}
+
+.pf-day-fill {
+  display: block;
+  height: 100%;
+  background: var(--action);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+.pf-day-bar.is-done .pf-day-fill { transform: scaleX(1); }
+
+/* The bar of the part on show fills while it plays; paused, it holds. */
+@keyframes pf-day-fill { to { transform: scaleX(1); } }
+
+.pf-day-bar.is-now .pf-day-fill {
+  animation: pf-day-fill var(--step-ms, 3600ms) linear forwards;
+  animation-play-state: paused;
+}
+
+.pf-day.is-playing .pf-day-bar.is-now .pf-day-fill { animation-play-state: running; }
+
+.pf-day-now {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: var(--space-3);
+  animation: pf-day-in var(--dur-2) var(--ease-out) both;
+}
+
+@keyframes pf-day-in { from { opacity: 0; transform: translateY(4px); } }
+
+.pf-day-when { font-size: var(--text-caption); font-weight: 700; color: var(--select-ink); }
+
+.pf-day-text {
+  display: -webkit-box;
+  min-height: calc(2 * 1.45em);
+  overflow: hidden;
+  font-size: var(--text-body);
+  line-height: 1.45;
+  color: var(--text);
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.pf-day-week {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  max-width: 100%;
+  min-height: var(--tap);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--action);
+  text-decoration: none;
+}
+
+.pf-day-week > span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+.pf-day-week > svg { flex: none; }
+
+.pf-day-week:hover > span { text-decoration: underline; text-underline-offset: 3px; }
+
+/* The stage arrives once. */
+@keyframes pf-open-arrive { from { opacity: 0; transform: translateY(12px); } }
+
+.pf-open-resume:focus-visible,
+.pf-day-week:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+
+/* A short phone keeps the day and lets the photograph go. */
+@media (max-height: 700px) {
+  .pf-open { gap: var(--space-4); padding-top: var(--space-4); }
+  .pf-open-actions { margin-top: var(--space-4); }
+  .pf-day-text { -webkit-line-clamp: 1; min-height: 1.45em; }
+}
+
+@media (max-height: 640px) {
+  .pf-open-stage { flex: none; padding: 0; background: none; }
+  .pf-open-stage .pf-open-img { display: none; }
 }
 
 @media (min-width: 769px) {
-  .pf-open { gap: var(--space-6); padding: var(--space-5) var(--space-6) var(--space-6); }
-  .pf-open-actions { width: auto; }
-  .pf-open-actions .btn { flex: none; padding-inline: var(--space-5); }
+  .pf-open { gap: var(--space-6); padding: var(--space-6) var(--space-6) var(--space-5); }
+  .pf-open-actions { flex-direction: row; width: auto; }
+  .pf-open-actions .btn { padding-inline: var(--space-6); }
+  .pf-open-stage { padding: var(--space-4); }
 }
 
-/* From 1024 px: the words on the left, the picture on the right. */
+/* From 1024 px: the words on the left, the day and the styles on the right. */
 @media (min-width: 1024px) {
   .pf-open {
     display: grid;
@@ -278,24 +321,15 @@
     padding: var(--space-7);
   }
   .pf-open.is-bare { grid-template-columns: minmax(0, 1fr); }
-  .pf-open-text { order: -1; }
-  .pf-open-pic { height: 100%; max-height: 680px; min-height: 0; gap: var(--space-3); }
-  .pf-open-lede { margin-top: var(--space-4); }
-  .pf-open-actions { margin-top: var(--space-6); }
-  .pf-open-chip { left: var(--space-3); right: var(--space-3); bottom: var(--space-3); padding: var(--space-2) var(--space-3); }
-  .pf-open-tile.is-t0 .pf-open-chip { left: var(--space-4); bottom: var(--space-4); padding: var(--space-3) var(--space-4); }
-  .pf-open-tile.is-t0 .pf-open-chip-name { font-size: var(--text-lead); }
+  .pf-open-stage { height: 100%; max-height: 760px; padding: var(--space-5); }
+  .pf-day { max-width: 460px; padding: var(--space-4) var(--space-5) var(--space-2); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pf-open-tile .pf-open-img,
-  .pf-open-chip,
-  .pf-open-chip-go,
   .pf-open-start .btn-icon { transition: none; }
-  .pf-open-tile:not(.is-wait) { animation: none; }
-  .pf-open-tile:hover .pf-open-img,
-  .pf-open-tile:hover .pf-open-chip,
-  .pf-open-tile:hover .pf-open-chip-go,
+  .pf-open-stage,
+  .pf-day-now { animation: none; }
+  .pf-day-bar.is-now .pf-day-fill { animation: none; transform: scaleX(1); }
   .pf-open-start:hover .btn-icon { transform: none; }
 }
 
