@@ -91,6 +91,7 @@ every ranking, rail and top list. Flight search still reads the airport rows.
 """
 
 import json
+import math
 import re
 from pathlib import Path
 
@@ -103,6 +104,7 @@ from rating_config import cfg, int_keys, section
 ROOT = Path(__file__).resolve().parents[1]
 DEST_PV_CACHE = ROOT / "cache" / "dest_pageviews.json"
 CURATED_APPEAL = ROOT / "app_data" / "curated_appeal.json"
+RUBRIC_APPEAL = ROOT / "app_data" / "rubric_appeal.json"
 GOLDEN_ANCHORS = ROOT / "tests" / "golden_ratings.json"
 ROUTES_ATTACH = ROOT / "data" / "derived" / "routes_attach.json"
 
@@ -114,6 +116,19 @@ ROUTES_ATTACH = ROOT / "data" / "derived" / "routes_attach.json"
 # looked at the place; the whole change happens in the 0.30 beneath it.
 # T754: every number below comes from continent-app/config/rating.json.
 WEIGHTS = section("weights")
+
+# Formula v5 (T759, rating v5 batch R2): Q = 0.60 A + 0.15 B + 0.15 D + 0.10 R
+# for every place. A is the hand score, else the rubric score (T758, scored
+# by Claude in Claude Code sessions from a fact card against
+# docs/RATING_RUBRIC.md), both on the hand scale and both opened per class by
+# appeal_scale. Only a place with neither takes the frozen fallback estimate,
+# marked estimated and capped below Exceptional. formula "v4" restores the
+# v4 blend above: the switch is the rollback.
+FORMULA = cfg("formula")
+WEIGHTS_V5 = section("weights_v5")
+ESTIMATED_CAP = cfg("estimated.cap")
+CURVE_TOP_SHARE = cfg("class_curve.top_share")
+CURVE_TOP_SCORE = cfg("class_curve.top_score")
 
 # Highlights (A2, 2026-09): peak-and-depth over the ABSOLUTE per-POI
 # significance (`it.sig`, 0-3, written by score_significance.py from
@@ -141,16 +156,16 @@ SIG_UNMEASURED = cfg("highlights.sig_unmeasured")  # sig for an unscored POI:
 # into rating.components.highlights, the wire key the app reads, until schema
 # v19 (T775) renames it.
 #
-# NOT LIVE (T756): switched on by depth.live in config/rating.json. Measured
-# on the shipped catalogue it fails gates the rating must keep - the famous
-# floors (Paris 8.9, Barcelona 8.7 against 9.0), the tier-3 population (26,
-# gate 35 to 70) and one golden pair - because a within-class percentile
-# averages 0.5 in every class where v4 highlights averaged about 0.9, and the
-# POI data has no market, food or nightlife kinds yet (T774). Until the owner
-# decides (Execution/_OPEN.md T756-a) the score reads v4 highlights and depth
-# is computed for the gates and reports only.
+# Live from T759 (owner decision 2026-10-27, closing T756-a) under formula
+# v5. Built in T756 but held back: under the v4 blend it failed the famous
+# floors and the tier-3 population, because a within-class percentile
+# averages 0.5 where v4 highlights averaged about 0.9. A POI counts only
+# within depth.poi_own_km of the place's centre (by class): the POI lists
+# reach into neighbouring towns, and Begunje (988 people) held the 99th
+# village percentile on Bled's sights 10 km away.
 _D = section("depth")
 DEPTH_LIVE = _D["live"]
+DEPTH_POI_OWN_KM = {k: v for k, v in _D["poi_own_km"].items() if k != "_about"}
 DEPTH_CATEGORIES = list(_D["categories"])
 DEPTH_WEIGHT = dict(_D["item_weight"])
 DEPTH_PER_CATEGORY = _D["per_category_max"]
@@ -208,6 +223,7 @@ RATING_MODEL = {
     # rating_v4's; what changed is that every calibration is frozen in the
     # reference and every number is read from config/rating.json.
     "version": rating_config.version(),
+    "formula": FORMULA,
     "formula_generation": "rating_v4",
     "config": "continent-app/config/rating.json",
     "reference": cfg("reference"),
@@ -253,6 +269,19 @@ def load_curated_appeal():
     if CURATED_APPEAL.exists():
         return json.loads(CURATED_APPEAL.read_text(encoding="utf-8"))
     return {}
+
+
+def load_appeal():
+    """The appeal a place is scored on. v4: the hand scores. v5: the hand
+    scores, else the rubric scores (T758); a hand score always wins. Each
+    entry carries `source` (curated | rubric), which sets the confidence."""
+    out = {did: dict(rec, source="curated")
+           for did, rec in load_curated_appeal().items()}
+    if FORMULA == "v5" and RUBRIC_APPEAL.exists():
+        for did, rec in json.loads(RUBRIC_APPEAL.read_text(encoding="utf-8")).items():
+            if did not in out:
+                out[did] = {"appeal": rec["appeal"], "source": "rubric"}
+    return out
 
 
 def highlights_parts(dest):
@@ -368,8 +397,13 @@ def depth_items(did, dest):
     known = setting + ring
 
     items = (dest.get("activities") or {}).get("items_full") or []
+    own_km = DEPTH_POI_OWN_KM.get(appeal_scale.class_of(dest))
     for i, it in enumerate(items):
         if it.get("dup") or it.get("noise"):
+            continue
+        if (own_km is not None and lat is not None
+                and isinstance(it.get("lat"), (int, float))
+                and beauty_layer._haversine_km(lat, lon, it["lat"], it["lon"]) > own_km):
             continue
         rate = it.get("rate") or 0
         if rate >= 3:
@@ -532,10 +566,16 @@ def blend_score(dest, appeal_rec, scales=None, fallback=None, hl=0.0):
         appeal = float(appeal_rec["appeal"])
         if scales:
             appeal = appeal_scale.rescale(appeal, appeal_scale.class_of(dest), scales)
-        total = (WEIGHTS["appeal"] * appeal
-                 + WEIGHTS["acclaim"] * acclaim
-                 + WEIGHTS["beauty"] * beauty
-                 + WEIGHTS["highlights"] * highlights)
+        if FORMULA == "v5":
+            total = (WEIGHTS_V5["appeal"] * appeal
+                     + WEIGHTS_V5["beauty"] * beauty
+                     + WEIGHTS_V5["depth"] * highlights
+                     + WEIGHTS_V5["recognition"] * acclaim)
+        else:
+            total = (WEIGHTS["appeal"] * appeal
+                     + WEIGHTS["acclaim"] * acclaim
+                     + WEIGHTS["beauty"] * beauty
+                     + WEIGHTS["highlights"] * highlights)
     else:
         # No curator has seen this one yet, which since the 2026-08 expansion
         # is 1,468 destinations rather than a rounding error. Guessing weights
@@ -668,6 +708,42 @@ def _by_class(dests, ids, scores, comps):
     return fitted_by_class, curated_by_class
 
 
+def build_q_curves(dests, scales, fallback, hl01):
+    """{class: [[q, score], ...]} for formula v5: four knots per class that
+    read the blended Q on the appeal scale (config class_curve). Measured on
+    the places that carry an appeal (hand or rubric), once, on a
+    recalibration."""
+    appeal = load_appeal()
+    ids, scores, comps = _scores(dests, scales, fallback, hl01, appeal)
+    by_class = {}
+    for i, did in enumerate(ids):
+        if "appeal" in comps[i]:
+            by_class.setdefault(appeal_scale.class_of(dests[did]), []).append(
+                (scores[i], comps[i]["appeal"] * 10.0))
+
+    def pick(vals, p):
+        return vals[min(len(vals) - 1, int(p * (len(vals) - 1)))]
+
+    out = {}
+    for cls, pairs in by_class.items():
+        qs = sorted(q for q, _ in pairs)
+        aps = sorted(a for _, a in pairs)
+        ceiling = appeal_scale.CLASS_CEILING.get(cls, appeal_scale.DEFAULT_CEILING)
+        knots = [[qs[0], aps[0]],
+                 [pick(qs, 0.5), pick(aps, 0.5)],
+                 # exactly the top share at or above top_score: the n-th
+                 # highest Q, n = top_share x class size rounded up
+                 [qs[len(qs) - math.ceil(CURVE_TOP_SHARE * len(qs))], CURVE_TOP_SCORE],
+                 [qs[-1], ceiling]]
+        # Strictly increasing in both, or the interpolation is not monotone.
+        clean = [knots[0]]
+        for x, y in knots[1:]:
+            if x > clean[-1][0] and y > clean[-1][1]:
+                clean.append([x, y])
+        out[cls] = [[round(x, 4), round(y, 4)] for x, y in clean]
+    return out
+
+
 def build_reference(dests):
     """The "rating" part of the frozen reference, measured on ``dests``.
 
@@ -707,6 +783,8 @@ def build_reference(dests):
         "fallback": {"coefficients": list(fallback),
                      "terms": ["acclaim", "beauty", "highlights", "intercept"]},
         "curves": curves,
+        "q_curves": (build_q_curves(dests, scales, fallback, hl01)
+                     if FORMULA == "v5" else {}),
         "fame_knots": _fame_knots(slot_views, cfg("fame.knots")),
     }
 
@@ -744,7 +822,7 @@ def compute_ratings(dests):
     only and adding or removing places moves nobody else.
     """
     pv = load_dest_pageviews()
-    appeal = load_curated_appeal()
+    appeal = load_appeal()
     ref = rating_config.reference("rating")
 
     scales = appeal_scale.frozen_scales()
@@ -833,6 +911,28 @@ def compute_ratings(dests):
         "clamped_this_run": n_guarded,
     }
 
+    # v5 (T759): every place reads its blended Q through its class's frozen
+    # curve (config class_curve), so the bands keep their meaning per class.
+    if FORMULA == "v5":
+        q_curves = ref["q_curves"]
+        for i, did in enumerate(ids):
+            knots = q_curves.get(appeal_scale.class_of(dests[did]))
+            if not knots:
+                continue
+            x = scores[i]
+            if x > knots[-1][0]:
+                # beyond the highest measured Q: the top segment's slope, then
+                # the class ceiling caps it
+                (x0, y0), (x1, y1) = knots[-2], knots[-1]
+                y = y1 + (x - x1) * (y1 - y0) / (x1 - x0)
+            else:
+                y = appeal_scale._interp(knots, x)
+            scores[i] = min(knots[-1][1], max(0.0, y))
+        RATING_MODEL["class_curve"] = {
+            "top_share": CURVE_TOP_SHARE, "top_score": CURVE_TOP_SCORE,
+            "knots": q_curves,
+        }
+
 
     # One row per city (T755): the other airports of a multi-airport city are
     # its gateways. They keep their own row for flight search and lose their
@@ -853,7 +953,8 @@ def compute_ratings(dests):
     measured_fame = set(pv)
 
     counts = {3: 0, 2: 0, 1: 0, 0: 0, "hidden_gem": 0,
-              "curated": 0, "modelled": 0, "provisional": 0}
+              "curated": 0, "modelled": 0, "provisional": 0,
+              "rubric": 0, "estimated": 0}
     counts["gateway"] = 0
     for i, did in enumerate(ids):
         if rep[i] != i:
@@ -863,6 +964,8 @@ def compute_ratings(dests):
             continue
         dests[did].pop("gateway_of", None)
         score = round(scores[i], 1)
+        if FORMULA == "v5" and "appeal" not in comps[i]:
+            score = min(score, ESTIMATED_CAP)
         tier = tier_for(score)
         fame_pct = fame_pctls[i]
         hidden = ((tier >= 2 and fame_pct <= HIDDEN_GEM_FAME_PCTL[2])
@@ -872,6 +975,11 @@ def compute_ratings(dests):
         conf, inputs = confidence_for(
             dests[did], "appeal" in comps[i],
             did in measured_fame, bool(fabric.get(did)))
+        if FORMULA == "v5":
+            # v5 (T759): the confidence says where the appeal came from. The
+            # app reads none of these values yet (T763 shows them).
+            conf = ((appeal.get(did) or {}).get("source")
+                    if "appeal" in comps[i] else "estimated")
         counts[conf] += 1
         dests[did]["rating"] = {
             "score": score,

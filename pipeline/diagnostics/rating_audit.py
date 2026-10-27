@@ -148,6 +148,10 @@ def audit(data):
             for conf, rows in sorted(by_conf.items())
         }
     for part in ("curated", "fitted"):
+        # T759: under formula v5 every place carries an appeal (hand or
+        # rubric), so the fitted part is empty.
+        if not split[part]["scores"]:
+            continue
         tiers = split[part]["tiers"]
         n = split[part]["scores"]["n"]
         split[part]["tier2_plus_rate"] = round((tiers["3"] + tiers["2"]) / n, 4)
