@@ -87,13 +87,14 @@ Multi-airport cities are unified onto their primary airport first (same
 convention as the beauty layer) so Paris ranks once, not three times.
 """
 
-import datetime as _dt
 import json
-import math
 from pathlib import Path
 
 import appeal_scale
 import beauty_layer
+import place_registries
+import rating_config
+from rating_config import cfg, int_keys, section
 
 ROOT = Path(__file__).resolve().parents[1]
 DEST_PV_CACHE = ROOT / "cache" / "dest_pageviews.json"
@@ -106,7 +107,8 @@ GOLDEN_ANCHORS = ROOT / "tests" / "golden_ratings.json"
 # combination lands at mean 6.56 and correlation -0.02, against v2's +0.09.
 # Appeal stays at 0.70 because it remains the only term that has actually
 # looked at the place; the whole change happens in the 0.30 beneath it.
-WEIGHTS = {"appeal": 0.70, "beauty": 0.13, "acclaim": 0.06, "highlights": 0.11}
+# T754: every number below comes from continent-app/config/rating.json.
+WEIGHTS = section("weights")
 
 # Highlights (A2, 2026-09): peak-and-depth over the ABSOLUTE per-POI
 # significance (`it.sig`, 0-3, written by score_significance.py from
@@ -118,11 +120,11 @@ WEIGHTS = {"appeal": 0.70, "beauty": 0.13, "acclaim": 0.06, "highlights": 0.11}
 # the measure still asks "how good is the best of what is here" rather than
 # "how much is here" - the question a traveller on a two-day visit is
 # actually asking.
-HIGHLIGHT_K = 6
-PEAK_W = 0.55                   # the single best sight
-DEPTH_W = 0.45                  # the best six, position-discounted
-DEPTH_DECAY = 0.55              # i-th sight counts 1/(1+0.55i)
-SIG_UNMEASURED = 0.9            # sig for a POI the significance run missed:
+HIGHLIGHT_K = cfg("highlights.k")
+PEAK_W = cfg("highlights.peak_w")           # the single best sight
+DEPTH_W = cfg("highlights.depth_w")         # the best six, position-discounted
+DEPTH_DECAY = cfg("highlights.decay")       # i-th sight counts 1/(1+0.55i)
+SIG_UNMEASURED = cfg("highlights.sig_unmeasured")  # sig for an unscored POI:
                                 # the catalogue median is ~1.5; unmeasured
                                 # sits below it, never at world-class
 
@@ -130,21 +132,12 @@ SIG_UNMEASURED = 0.9            # sig for a POI the significance run missed:
 # stay in step with) score_place_candidates.DESIGNATION_WEIGHT. A place in two
 # registers gains, but with sharply diminishing returns - three lists do not
 # make somewhere three times as beautiful.
-ACCLAIM_WEIGHT = {
-    "unesco_whc": 1.00,
-    "beautiful_village": 0.95,
-    "heritage_town": 0.72,
-    "spa_town": 0.68,
-    "national_park": 0.62,
-    "unesco_tentative": 0.50,
-    "capital_of_culture": 0.55,
-    "cittaslow": 0.45,
-    "market_town": 0.25,
-    "blue_flag": 0.35,
-    "eden": 0.50,
-}
-ACCLAIM_DEFAULT = 0.40
-ACCLAIM_EXTRA = 0.18            # each further register, on the remaining gap
+# T754: geoparks (0.30) and biosphere reserves (0.25) carry their own
+# weights; they used to be read as national parks (0.62).
+ACCLAIM_WEIGHT = section("recognition.weights")
+ACCLAIM_DEFAULT = cfg("recognition.default")
+ACCLAIM_EXTRA = cfg("recognition.extra")     # each further register, on the gap
+ACCLAIM_EXTRA_MAX = cfg("recognition.extra_max")
 
 # Recalibrated twice, both times to hold the tier POPULATIONS steady so that a
 # destination changing tier always means the model changed its mind about that
@@ -162,19 +155,25 @@ ACCLAIM_EXTRA = 0.18            # each further register, on the remaining gap
 # reproduce v2's tier populations (40 / 190 / 603 -> 44 / 188 / 643), so a
 # destination moving tier means the model changed its mind about that place,
 # not that the ruler moved.
-TIER_CUTOFFS = {3: 8.7, 2: 7.8, 1: 6.9}
-TIER_LABELS = {3: "Worth the journey", 2: "Worth a detour", 1: "Worth a visit"}
+TIER_CUTOFFS = int_keys(cfg("tiers.cutoffs"))
+TIER_LABELS = int_keys(cfg("tiers.labels"))
 
 # Hidden gem: rated high AND in the catalogue's low-fame tail, or curated
 # as a gem by the editors (and still at least tier-1 quality).
-HIDDEN_GEM_FAME_PCTL = {2: 0.40, 1: 0.20}   # min tier -> max fame percentile
-HIDDEN_GEM_MIN_SCORE = 7.0                   # floor for curator-flagged gems
+HIDDEN_GEM_FAME_PCTL = int_keys(cfg("hidden_gem.max_fame_pctl_by_tier"))
+HIDDEN_GEM_MIN_SCORE = cfg("hidden_gem.curated_min_score")
 # The curator flag alone can't overrule fame: a place in the catalogue's TOP
 # fame tail (Utrecht at ~13k views/day) is not hidden, whatever the flag says.
-HIDDEN_GEM_CURATED_MAX_FAME_PCTL = 0.6
+HIDDEN_GEM_CURATED_MAX_FAME_PCTL = cfg("hidden_gem.curated_max_fame_pctl")
 
 RATING_MODEL = {
-    "version": "rating_v4",
+    # T754: the rating version (rating v5, batch R1). The model maths is still
+    # rating_v4's; what changed is that every calibration is frozen in the
+    # reference and every number is read from config/rating.json.
+    "version": rating_config.version(),
+    "formula_generation": "rating_v4",
+    "config": "continent-app/config/rating.json",
+    "reference": cfg("reference"),
     "weights": WEIGHTS,
     "tier_cutoffs": {str(k): v for k, v in TIER_CUTOFFS.items()},
     "tier_labels": {str(k): v for k, v in TIER_LABELS.items()},
@@ -255,27 +254,23 @@ def highlights_parts(dest):
     return peak, depth
 
 
-def highlights_map(dests):
+def highlights_map(dests, p99=None):
     """{dest id: highlights 0-1}, p99-calibrated across the whole catalogue.
 
     hl = clip(0.55 peak + 0.45 depth / depth_p99, 0, 1).
 
     The p99 was measured from the catalogue at scoring time, which made it a
     cohort statistic: it drifted on every ingest and moved highlights, and so
-    ratings, for places whose own sights had not changed. It is FROZEN with
-    the other anchors (2026-09-04) so the depth scale is a property of the
-    model rather than of today's catalogue size. Returns (map, depth_p99).
+    ratings, for places whose own sights had not changed. It is FROZEN in the
+    reference (T754; first frozen 2026-09-04) so the depth scale is a property
+    of the model rather than of today's catalogue size. Pass ``p99`` only to
+    recalibrate. Returns (map, depth_p99).
     """
     parts = {did: highlights_parts(d) for did, d in dests.items()}
-    depths = sorted(p[1] for p in parts.values())
-    if not depths:
+    if not parts:
         return {}, 0.0
-    anchor_path = ROOT / appeal_scale.ANCHOR_FILE
-    frozen_p99 = None
-    if anchor_path.exists():
-        frozen_p99 = json.loads(
-            anchor_path.read_text(encoding="utf-8")).get("depth_p99")
-    p99 = frozen_p99 or depths[int(0.99 * (len(depths) - 1))] or 1.0
+    if p99 is None:
+        p99 = rating_config.reference("rating")["depth_p99"]
     out = {did: min(1.0, max(0.0, PEAK_W * peak + DEPTH_W * (depth / p99)))
            for did, (peak, depth) in parts.items()}
     return out, round(p99, 3)
@@ -290,19 +285,19 @@ def acclaim01(dest):
     desigs = dest.get("designations") or []
     if not desigs:
         return 0.0
-    vals = sorted((ACCLAIM_WEIGHT.get(d.get("kind"), ACCLAIM_DEFAULT)
+    vals = sorted((ACCLAIM_WEIGHT.get(place_registries.kind_of(d),
+                                      ACCLAIM_DEFAULT)
                    for d in desigs), reverse=True)
     score = vals[0]
-    for extra in vals[1:4]:
+    for extra in vals[1:1 + ACCLAIM_EXTRA_MAX]:
         score += (1.0 - score) * ACCLAIM_EXTRA * extra
     return min(1.0, score)
 
 
-# Used only if the fit cannot run (fewer than FALLBACK_MIN_N curated anchors).
-# These are the coefficients the fit produced on the 1,570-destination curated
-# set, kept as a documented starting point rather than a magic number.
-FALLBACK_DEFAULT = (0.098, 0.322, 0.085, 4.146)
-FALLBACK_MIN_N = 200
+# The fit runs only when the reference is recalibrated (T754): a normal run
+# reads the frozen coefficients, so a new curated place cannot move every
+# fitted score. Fewer than FALLBACK_MIN_N curated anchors refuses to fit.
+FALLBACK_MIN_N = cfg("fallback.min_n")
 
 
 def fit_fallback(dests, appeal, scales, hl01):
@@ -331,7 +326,8 @@ def fit_fallback(dests, appeal, scales, hl01):
         X.append([acclaim01(d) * 10.0, beauty, hl, 1.0])
         y.append(real)
     if len(X) < FALLBACK_MIN_N:
-        return FALLBACK_DEFAULT
+        raise ValueError(f"only {len(X)} curated places, the fallback fit "
+                         f"needs {FALLBACK_MIN_N}")
     n = 4
     xtx = [[sum(X[k][i] * X[k][j] for k in range(len(X))) for j in range(n)]
            for i in range(n)]
@@ -341,7 +337,7 @@ def fit_fallback(dests, appeal, scales, hl01):
         piv = max(range(i, n), key=lambda r: abs(m[r][i]))
         m[i], m[piv] = m[piv], m[i]
         if not m[i][i]:
-            return FALLBACK_DEFAULT
+            raise ValueError("the fallback fit is singular")
         for r in range(n):
             if r != i:
                 f = m[r][i] / m[i][i]
@@ -381,10 +377,11 @@ def blend_score(dest, appeal_rec, scales=None, fallback=None, hl=0.0):
         # unfairness as marking a village down for being small.
         #
         # `fallback` is therefore fitted, not chosen: least squares of the real
-        # score against these three terms over every curated destination, run
-        # at scoring time so it can never go stale. Mean absolute error 0.52
-        # against the hand-picked blend's 2.02.
-        fb = fallback or FALLBACK_DEFAULT
+        # score against these three terms over every curated destination.
+        # Mean absolute error 0.52 against the hand-picked blend's 2.02. Since
+        # T754 the fit is frozen in the reference and refit only on a
+        # recalibration, so it cannot drift with the catalogue.
+        fb = fallback
         total = (fb[0] * acclaim + fb[1] * beauty + fb[2] * highlights + fb[3])
         appeal = None
     comps = {"beauty": round(beauty / 10.0, 3),
@@ -402,7 +399,7 @@ def blend_score(dest, appeal_rec, scales=None, fallback=None, hl=0.0):
 # meaningfully-rated sights (rate >= 2 under the significance engine's local
 # quotas) exist to feed the evidence. Shown, not hidden: a modelled 8.1 is
 # an 8.1 with a quiet mark, never a silent demotion.
-RATED_POIS_MIN = 3
+RATED_POIS_MIN = cfg("confidence.rated_pois_min")
 
 
 def rated_poi_count(dest):
@@ -457,46 +454,41 @@ def _percentiles(values):
     return pct
 
 
-def compute_ratings(dests):
-    """Attach dest['rating'] to every destination. Returns summary counts."""
-    pv = load_dest_pageviews()
-    appeal = load_curated_appeal()
+def _fame_pctl(views, knots):
+    """Fame percentile read on the frozen breakpoints (T754)."""
+    return appeal_scale._interp(knots, views) if knots else 0.0
 
-    scales = appeal_scale.scales_for(dests, appeal)
-    hl01, depth_p99 = highlights_map(dests)
-    RATING_MODEL["highlights_model"] = {
-        "formula": "clip(0.55*peak + 0.45*depth/depth_p99, 0, 1)",
-        "peak": "best sight's absolute significance (it.sig / 3)",
-        "depth": f"sum over top {HIGHLIGHT_K} of sig_i / (1 + {DEPTH_DECAY}*i)",
-        "depth_p99": depth_p99,
-        "sig_source": ("score_significance.py: catalogue-wide percentile of "
-                       "composite open-signal evidence, 0-3"),
-    }
-    fallback = fit_fallback(dests, appeal, scales, hl01)
-    RATING_MODEL["fallback_fit"] = {
-        "coefficients": list(fallback),
-        "terms": ["acclaim", "beauty", "highlights", "intercept"],
-        "note": ("fitted at scoring time on the curated destinations, applied "
-                 "to the ones with no curated appeal"),
-    }
 
+def _fame_knots(slot_views, n_knots):
+    """Breakpoints [[views, percentile], ...] of one catalogue's city slots.
+
+    Average rank on ties (as _percentiles), one knot per distinct value,
+    thinned to n_knots so a lookup reproduces the reference percentiles.
+    """
+    pct = _percentiles(slot_views)
+    by_value = {}
+    for v, p in zip(slot_views, pct):
+        by_value[v] = p
+    pairs = sorted(by_value.items())
+    if len(pairs) > n_knots:
+        step = (len(pairs) - 1) / (n_knots - 1)
+        pairs = [pairs[round(k * step)] for k in range(n_knots)]
+    return [[float(v), round(p, 6)] for v, p in pairs]
+
+
+def _scores(dests, scales, fallback, hl01, appeal):
+    """Raw blended scores before calibration: (ids, scores, comps)."""
     ids = list(dests.keys())
-    scores, comps, views_list, curated_gem = [], [], [], []
+    scores, comps = [], []
     for did in ids:
-        d = dests[did]
-        rec = appeal.get(did)
-        s, c = blend_score(d, rec, scales, fallback, hl01.get(did, 0.0))
+        s, c = blend_score(dests[did], appeal.get(did), scales, fallback,
+                           hl01.get(did, 0.0))
         scores.append(s)
         comps.append(c)
-        views_list.append(pv.get(did) or 0)
-        curated_gem.append(bool(rec and rec.get("gem")))
+    return ids, scores, comps
 
-    # A4 (2026-09): the regression's raw output regresses to the mean, so a
-    # fitted place was 5.6x less likely to earn a label than a curated one.
-    # Keep the regression as the RANKING device and map each fitted place's
-    # within-class rank onto the curated score distribution of its class
-    # (appeal_scale.quantile_calibrate: monotone, class-relative, never
-    # country-relative). Curated scores are never touched.
+
+def _by_class(dests, ids, scores, comps):
     fitted_by_class, curated_by_class = {}, {}
     for i, did in enumerate(ids):
         cls = appeal_scale.class_of(dests[did])
@@ -504,42 +496,118 @@ def compute_ratings(dests):
             curated_by_class.setdefault(cls, []).append(scores[i])
         else:
             fitted_by_class.setdefault(cls, []).append((i, scores[i]))
-    # The map is FROZEN (2026-09-04 ruling): a place's calibrated score is a
-    # lookup of its own regression output on a stored curve, not its rank in
-    # today's cohort. Growing the catalogue therefore rates the newcomers and
-    # leaves every existing score exactly where it was. Re-fitting is
-    # deliberate: delete the anchor file to re-freeze.
-    anchor_path = ROOT / appeal_scale.ANCHOR_FILE
-    if anchor_path.exists():
-        anchors = json.loads(anchor_path.read_text(encoding="utf-8"))
-        curves = anchors["curves"]
-        froze_now = False
-    else:
-        curves = appeal_scale.build_anchor_curves(fitted_by_class,
-                                                  curated_by_class)
-        anchor_path.parent.mkdir(parents=True, exist_ok=True)
-        anchor_path.write_text(json.dumps({
-            "frozen": _dt.date.today().isoformat(),
-            "model": "fitted_quantile_v2_frozen",
-            "why": ("cohort-relative calibration re-rated 1,118 existing "
-                    "places when 122 arrived; an absolute scale must not "
-                    "depend on who else is in the catalogue"),
-            "n_reference_fitted": sum(len(v) for v in fitted_by_class.values()),
-            "n_reference_curated": sum(len(v) for v in curated_by_class.values()),
-            "knots_per_class": appeal_scale.ANCHOR_KNOTS,
-            "curves": curves,
-        }, indent=1), encoding="utf-8")
-        froze_now = True
+    return fitted_by_class, curated_by_class
 
-    calibrated = appeal_scale.apply_anchor_curves(fitted_by_class, curves)
+
+def build_reference(dests):
+    """The "rating" part of the frozen reference, measured on ``dests``.
+
+    Runs only on a recalibration (apply_rating_layer.py --recalibrate). Every
+    cohort statistic the score reads is measured here once: the per-class
+    appeal scales, the depth p99, the fallback coefficients, the fitted-score
+    curves and the fame breakpoints. Scoring afterwards is a lookup.
+    """
+    appeal = load_curated_appeal()
+    pv = load_dest_pageviews()
+    scales = appeal_scale.scales_for(dests, appeal)
+    depths = sorted(highlights_parts(d)[1] for d in dests.values())
+    p99 = depths[int(0.99 * (len(depths) - 1))] or 1.0
+    hl01, _ = highlights_map(dests, p99=p99)
+    fallback = fit_fallback(dests, appeal, scales, hl01)
+    ids, scores, comps = _scores(dests, scales, fallback, hl01, appeal)
+    fitted_by_class, curated_by_class = _by_class(dests, ids, scores, comps)
+    curves = appeal_scale.build_anchor_curves(fitted_by_class,
+                                              curated_by_class)
+    slots = _city_slots(dests, ids)
+    slot_views = [pv.get(ids[i]) or 0 for i in sorted(set(slots))]
+    return {
+        "n_destinations": len(dests),
+        "n_curated": sum(len(v) for v in curated_by_class.values()),
+        "n_fitted": sum(len(v) for v in fitted_by_class.values()),
+        "appeal_scales": {cls: [round(m, 4), round(t, 4), c]
+                          for cls, (m, t, c) in sorted(scales.items())},
+        "depth_p99": round(p99, 3),
+        "fallback": {"coefficients": list(fallback),
+                     "terms": ["acclaim", "beauty", "highlights", "intercept"]},
+        "curves": curves,
+        "fame_knots": _fame_knots(slot_views, cfg("fame.knots")),
+    }
+
+
+def _city_slots(dests, ids):
+    """index -> the index of its city's representative row.
+
+    Multi-airport cities (Rome's FCO and CIA, London's four) are one city:
+    the primary airport (beauty_layer's convention) represents it.
+    """
+    groups = {}
+    for i, did in enumerate(ids):
+        d = dests[did]
+        if d.get("tier") != "airport":
+            continue
+        key = (d.get("iso2"), beauty_layer._base_city(d.get("city")))
+        groups.setdefault(key, []).append(i)
+    rep = list(range(len(ids)))
+    for idxs in groups.values():
+        if len(idxs) < 2:
+            continue
+        recs = [dests[ids[i]] for i in idxs]
+        pi = idxs[recs.index(beauty_layer._pick_primary(recs))]
+        for i in idxs:
+            rep[i] = pi
+    return rep
+
+
+def compute_ratings(dests):
+    """Attach dest['rating'] to every destination. Returns summary counts.
+
+    T754: nothing here is measured on ``dests``. The class scales, depth p99,
+    fallback coefficients, curves and fame breakpoints are read from the
+    frozen reference, so a destination's score depends on its own evidence
+    only and adding or removing places moves nobody else.
+    """
+    pv = load_dest_pageviews()
+    appeal = load_curated_appeal()
+    ref = rating_config.reference("rating")
+
+    scales = appeal_scale.frozen_scales()
+    hl01, depth_p99 = highlights_map(dests)
+    RATING_MODEL["highlights_model"] = {
+        "formula": "clip(0.55*peak + 0.45*depth/depth_p99, 0, 1)",
+        "peak": "best sight's absolute significance (it.sig / 3)",
+        "depth": f"sum over top {HIGHLIGHT_K} of sig_i / (1 + {DEPTH_DECAY}*i)",
+        "depth_p99": depth_p99,
+        "sig_source": ("score_significance.py: composite open-signal evidence "
+                       "on the frozen reference breakpoints, 0-3"),
+    }
+    fallback = tuple(ref["fallback"]["coefficients"])
+    RATING_MODEL["fallback_fit"] = {
+        "coefficients": list(fallback),
+        "terms": ["acclaim", "beauty", "highlights", "intercept"],
+        "note": ("frozen in the reference (T754), fitted on the curated "
+                 "destinations, applied to the ones with no curated appeal"),
+    }
+
+    ids, scores, comps = _scores(dests, scales, fallback, hl01, appeal)
+    views_list = [pv.get(did) or 0 for did in ids]
+    curated_gem = [bool((appeal.get(did) or {}).get("gem")) for did in ids]
+
+    # A4 (2026-09): the regression's raw output regresses to the mean, so a
+    # fitted place was 5.6x less likely to earn a label than a curated one.
+    # Each fitted place's raw output is read off its class's frozen curve
+    # (monotone, class-relative, never country-relative). Curated scores are
+    # never touched.
+    fitted_by_class, curated_by_class = _by_class(dests, ids, scores, comps)
+    calibrated = appeal_scale.apply_anchor_curves(fitted_by_class,
+                                                  ref["curves"])
     for i, s in calibrated.items():
         scores[i] = s
 
     RATING_MODEL["fitted_calibration"] = dict(
         appeal_scale.CALIBRATION_MODEL,
         version="fitted_quantile_v2_frozen",
-        anchors=appeal_scale.ANCHOR_FILE,
-        anchors_frozen_this_run=froze_now,
+        anchors=cfg("reference"),
+        anchors_frozen_this_run=False,
         n_fitted=len(calibrated),
         n_curated=sum(len(v) for v in curated_by_class.values()),
     )
@@ -572,35 +640,21 @@ def compute_ratings(dests):
     }
 
 
-    # Unify multi-airport cities BEFORE ranking so a city holds one slot's
-    # worth of identical numbers (mirrors beauty_layer convention).
-    groups = {}
-    for i, did in enumerate(ids):
-        d = dests[did]
-        if d.get("tier") != "airport":
-            continue
-        key = (d.get("iso2"), beauty_layer._base_city(d.get("city")))
-        groups.setdefault(key, []).append(i)
-    rep = list(range(len(ids)))          # index -> its group representative
-    for idxs in groups.values():
-        if len(idxs) < 2:
-            continue
-        recs = [dests[ids[i]] for i in idxs]
-        primary = beauty_layer._pick_primary(recs)
-        pi = idxs[recs.index(primary)]
-        for i in idxs:
-            rep[i] = pi
+    # Unify multi-airport cities so a city holds one slot's worth of identical
+    # numbers (mirrors the beauty layer's convention).
+    rep = _city_slots(dests, ids)
+    for i, pi in enumerate(rep):
+        if pi != i:
             scores[i] = scores[pi]
             comps[i] = dict(comps[pi])
             views_list[i] = views_list[pi]
             curated_gem[i] = curated_gem[pi]
 
-    # Fame percentiles over unique city slots only (London's four airports
-    # hold ONE slot); siblings inherit the primary's percentile.
-    slots = sorted({rep[i] for i in range(len(ids))})
-    slot_fame_pctls = _percentiles([views_list[i] for i in slots])
-    slot_pos = {s: k for k, s in enumerate(slots)}
-    fame_pctls = [slot_fame_pctls[slot_pos[rep[i]]] for i in range(len(ids))]
+    # Fame percentile per city slot, read on the frozen breakpoints (T754):
+    # it used to be a rank within today's catalogue, so adding places moved
+    # the hidden-gem flag of places whose own fame had not changed.
+    fame_pctls = [_fame_pctl(views_list[i], ref["fame_knots"])
+                  for i in range(len(ids))]
 
     try:
         fabric = json.loads((ROOT / "cache" / "urban_fabric.json")

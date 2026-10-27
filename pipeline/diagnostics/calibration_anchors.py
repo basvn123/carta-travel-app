@@ -50,8 +50,14 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "pipeline"))
 import appeal_scale  # noqa: E402
+import rating_config  # noqa: E402
 
+# T754: the curves live in the "rating" part of the frozen v5 reference.
 ANCHOR_PATH = ROOT / appeal_scale.ANCHOR_FILE
+
+
+def stored_curves():
+    return rating_config.reference("rating")["curves"]
 GOLDEN = ROOT / "tests" / "golden_ratings.json"
 REFERENCE = ROOT / "reports" / "rating_reference_population.json"
 WIRE_PATH = "continent-app/public/app_data.json"
@@ -198,7 +204,7 @@ def print_figures(label, fig):
 
 def check(path=None):
     data = load_wire(path)
-    curves = json.loads(ANCHOR_PATH.read_text(encoding="utf-8"))["curves"]
+    curves = stored_curves()
     shipped = split(data)[2]
     proj = project(data, curves)
     moved = sum(1 for did in shipped if abs(proj[did] - shipped[did]) > 1e-9)
@@ -221,10 +227,13 @@ def rebuild(rev, write=True):
         print(f"REFUSED: replay mean abs {mae:.3f} (max {MAX_REPLAY_MEAN_ABS}) "
               f"within 0.1 {within:.1%} (min {MIN_REPLAY_WITHIN_01:.0%})")
         return 1
-    old = json.loads(ANCHOR_PATH.read_text(encoding="utf-8")) \
-        if ANCHOR_PATH.exists() else {}
+    try:
+        old = dict(rating_config.reference("rating"))
+    except (FileNotFoundError, ValueError):
+        old = {}
     depth_p99 = data["meta"]["rating_model"]["highlights_model"]["depth_p99"]
-    out = {
+    out = dict(old)
+    out.update({
         "frozen": old.get("frozen", "2026-09-04"),
         "rebuilt": f"{date.today().isoformat()} by T321 "
                    "(pipeline/diagnostics/calibration_anchors.py)",
@@ -243,10 +252,12 @@ def rebuild(rev, write=True):
         "depth_p99": depth_p99,
         "depth_p99_note": old.get("depth_p99_note", ""),
         "curves": curves,
-    }
+    })
     if write:
-        ANCHOR_PATH.write_text(json.dumps(out, indent=1), encoding="utf-8")
-        print(f"wrote {ANCHOR_PATH.relative_to(ROOT)}")
+        # A rebuilt curve is a model change: it goes through the same
+        # version guard as apply_rating_layer.py --recalibrate (T754).
+        path = rating_config.write_part("rating", out, rating_config.version())
+        print(f"wrote {path.relative_to(ROOT)}")
     return 0
 
 

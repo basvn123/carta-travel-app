@@ -261,7 +261,7 @@ def test_anchor_curve_meets_the_contract():
             pytest.skip(msg)
         print("SKIP:", msg)
         return
-    curves = json.loads(anchors.ANCHOR_PATH.read_text(encoding="utf-8"))["curves"]
+    curves = anchors.stored_curves()
     fig = anchors.contract_figures(data, anchors.project(data, curves))
     print(f"stored curve projected on {INPUT.name}: curated sd "
           f"{fig['curated_sd']:.3f}  fitted sd {fig['fitted_sd']:.3f}  "

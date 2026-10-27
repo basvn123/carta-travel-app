@@ -1,0 +1,103 @@
+{
+  "_about": "The one configuration of every number that moves a rating (Carta rating v5, Roadmap/2.10b-rating-v5.md; batch R1, T754). The pipeline reads it through pipeline/rating_config.py; the app will read it in T776. What was measured on the reference catalogue (zlog spread, breakpoints, class scales, curves, fallback coefficients) lives in the frozen reference named below, never here. Changing a number here is a model change: bump version, then rebuild the reference with apply_rating_layer.py --recalibrate --version <new>.",
+  "version": "v5.0-r1",
+  "reference": "reports/rating_reference_v5.json",
+
+  "weights": {
+    "_about": "Destination score blend (rating_v4 weights, kept in R1; the v5 weights 0.60/0.15/0.15/0.10 wait for the rubric scores of R2).",
+    "appeal": 0.70,
+    "beauty": 0.13,
+    "acclaim": 0.06,
+    "highlights": 0.11
+  },
+
+  "tiers": {
+    "cutoffs": {"3": 8.7, "2": 7.8, "1": 6.9},
+    "labels": {"3": "Worth the journey", "2": "Worth a detour", "1": "Worth a visit"}
+  },
+
+  "hidden_gem": {
+    "_about": "Rated high AND in the low-fame tail (fame percentile read on the frozen fame breakpoints), or curated as a gem.",
+    "max_fame_pctl_by_tier": {"2": 0.40, "1": 0.20},
+    "curated_min_score": 7.0,
+    "curated_max_fame_pctl": 0.6
+  },
+
+  "recognition": {
+    "_about": "Register weights, 0 to 1. The best register counts in full; each further one (up to extra_max) closes extra x its weight of the remaining gap. Keyed by designation kind, or by registry id where a registry has its own weight (geoparks and biosphere reserves were filed as national parks until T754).",
+    "weights": {
+      "unesco_whc": 1.00,
+      "beautiful_village": 0.95,
+      "heritage_town": 0.72,
+      "spa_town": 0.68,
+      "national_park": 0.62,
+      "capital_of_culture": 0.55,
+      "unesco_tentative": 0.50,
+      "eden": 0.50,
+      "cittaslow": 0.45,
+      "blue_flag": 0.35,
+      "unesco_geopark": 0.30,
+      "market_town": 0.25,
+      "biosphere_reserve": 0.25
+    },
+    "default": 0.40,
+    "extra": 0.18,
+    "extra_max": 3,
+    "corroborating": ["unesco_whc", "beautiful_village", "heritage_town", "spa_town", "national_park"]
+  },
+
+  "highlights": {
+    "_about": "rating_v4 highlights: 0.55 x best sight + 0.45 x best six position-discounted, over it.sig. Replaced by depth in T756.",
+    "k": 6,
+    "peak_w": 0.55,
+    "depth_w": 0.45,
+    "decay": 0.55,
+    "sig_unmeasured": 0.9
+  },
+
+  "confidence": {
+    "rated_pois_min": 3
+  },
+
+  "fallback": {
+    "_about": "Places with no curated appeal: a linear fit on acclaim, beauty and highlights, frozen in the reference (never refit on a normal run), then the frozen per-class curve.",
+    "min_n": 200
+  },
+
+  "appeal_scale": {
+    "_about": "Per-class opening of the curated appeal: [class median, best in class] maps onto [median, ceiling], bent by gamma. The median and best are frozen in the reference.",
+    "class_ceiling": {"metro": 10.0, "city": 9.7, "area": 9.7, "town": 9.6, "village": 9.6},
+    "default_ceiling": 9.6,
+    "gamma": 0.7,
+    "min_class_n": 20,
+    "anchor_knots": 241,
+    "calibration_shrink": 0.12,
+    "calibration_p95_cap": 0.95
+  },
+
+  "significance": {
+    "_about": "POI significance (score_significance.py): composite of open signals, z-scored on the FROZEN reference mean and spread, placed on the frozen breakpoints (sig 0 to 3), then local quotas give rate 3/2/1.",
+    "weights": {"views": 0.30, "sitelinks": 0.30, "heritage": 0.15, "wv": 0.15, "prior": 0.10, "docum": 0.06},
+    "local_blend": 0.6,
+    "rate3_share": 0.12,
+    "rate2_share": 0.28,
+    "rate3_min_items": 6,
+    "rate3_cap": 12,
+    "wv_match_km": 1.5,
+    "heritage_floor_sitelinks": 15,
+    "gate_min_anchor_recall": 0.80,
+    "knots": 401
+  },
+
+  "fame": {
+    "_about": "Fame breakpoints (avg daily Wikipedia views per city slot) are frozen in the reference so the hidden-gem flag does not move when places are added.",
+    "knots": 201
+  },
+
+  "stability": {
+    "_about": "Gate 1: adding places moves no existing score by more than max_move and changes no tier.",
+    "sample": 100,
+    "max_move": 0.05,
+    "seed": 754
+  }
+}

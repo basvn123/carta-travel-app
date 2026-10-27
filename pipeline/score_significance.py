@@ -46,6 +46,13 @@ Modes:
     python score_significance.py             # report + validation, no writes
     python score_significance.py apply       # gate must pass, then write
                                              # it.rate, it.sig (+ it.pop)
+    python score_significance.py --recalibrate --version v5.x
+                                             # measure the zlog mean/spread
+                                             # and the percentile breakpoints
+                                             # on today's catalogue into the
+                                             # frozen reference (T754); needs
+                                             # a version bump in
+                                             # continent-app/config/rating.json
     python score_significance.py apply --sig-only
                                              # write ONLY it.sig - the absolute
                                              # 0-3 significance (catalogue-wide
@@ -68,6 +75,8 @@ from collections import defaultdict
 from pathlib import Path
 
 from pipeline_io import atomic_write_json, load_json
+import rating_config
+from rating_config import cfg, section
 from dedupe_pois import name_core, haversine_km
 from backfill_landmarks import TYPE_BLACKLIST, BAD_DESC_RE, tokens
 
@@ -83,72 +92,75 @@ WV_CACHE = ROOT / "cache" / "wikivoyage_listings.json"
 OUT_LEDGER = ROOT / "cache" / "poi_significance.json"
 OUT_REPORT = ROOT / "logs" / "significance_report.json"
 
-WEIGHTS = {"views": 0.30, "sitelinks": 0.30, "heritage": 0.15,
-           "wv": 0.15, "prior": 0.10,
-           # 2026-09 (A2): documentation presence - the enrichers found a
-           # Commons image and/or a Wikipedia description for this POI by
-           # geosearch + name match. Weak but INDEPENDENT evidence that the
-           # sight is documentable at all, and the only signal that varies
-           # inside the no-wiki mass (84% of POIs), which otherwise collapses
-           # into six giant prior-x-heritage tie blocks. Kept small so it can
-           # break ties without ever outranking sitelinks or pageviews.
-           "docum": 0.06}
-LOCAL_BLEND = 0.6                 # vs catalogue-wide percentile
-RATE3_SHARE = 0.12
-RATE2_SHARE = 0.28
-RATE3_MIN_ITEMS = 6               # dests smaller than this get no forced 3
-RATE3_CAP = 12
-WV_MATCH_KM = 1.5                 # listing-to-POI geo tolerance
+# T754: every number here comes from continent-app/config/rating.json
+# (significance). "docum" (2026-09, A2) is documentation presence - the
+# enrichers found a Commons image and/or a Wikipedia description for this POI
+# by geosearch + name match. Weak but INDEPENDENT evidence that the sight is
+# documentable at all, and the only signal that varies inside the no-wiki
+# mass (84% of POIs), which otherwise collapses into six giant
+# prior-x-heritage tie blocks. Kept small so it can break ties without ever
+# outranking sitelinks or pageviews.
+WEIGHTS = section("significance.weights")
+LOCAL_BLEND = cfg("significance.local_blend")   # vs catalogue-wide percentile
+RATE3_SHARE = cfg("significance.rate3_share")
+RATE2_SHARE = cfg("significance.rate2_share")
+RATE3_MIN_ITEMS = cfg("significance.rate3_min_items")  # smaller: no forced 3
+RATE3_CAP = cfg("significance.rate3_cap")
+WV_MATCH_KM = cfg("significance.wv_match_km")   # listing-to-POI geo tolerance
 
 # Validation gate (playbook: tier precision >= ~0.8 on a gold set).
-GATE_MIN_ANCHOR_RECALL = 0.80
+GATE_MIN_ANCHOR_RECALL = cfg("significance.gate_min_anchor_recall")
 
 
-def zlog(values):
-    """log1p then z-score; zeros stay meaningfully low."""
+def zlog_stats(values):
+    """(mean, sd) of log1p(values): what zlog() is measured against."""
     logs = [math.log1p(max(0.0, v)) for v in values]
     n = len(logs)
     if not n:
-        return []
+        return 0.0, 1.0
     mean = sum(logs) / n
     var = sum((x - mean) ** 2 for x in logs) / n
-    sd = math.sqrt(var) or 1.0
-    return [(x - mean) / sd for x in logs]
+    return mean, (math.sqrt(var) or 1.0)
 
 
-SIG_ANCHOR_FILE = ROOT / "reports" / "significance_anchors.json"
-SIG_ANCHOR_KNOTS = 401
+def zlog(values, stats):
+    """log1p then z-score on FROZEN (mean, sd); zeros stay meaningfully low.
+
+    T754 (closes T321-b with the breakpoints): the mean and spread used to be
+    measured on the catalogue of the day, so ingesting places moved every
+    POI's composite score and, through it, every sig - the frozen breakpoints
+    below were being read with a ruler that moved. Both now come from the
+    reference, so a POI's significance depends on its own evidence only.
+    """
+    mean, sd = stats
+    return [(math.log1p(max(0.0, v)) - mean) / sd for v in values]
 
 
-def _euro_percentiles(scores):
+SIG_ANCHOR_KNOTS = cfg("significance.knots")
+
+
+def build_knots(scores, n_knots=SIG_ANCHOR_KNOTS):
+    """Percentile breakpoints [[score, pct], ...] of one catalogue's POIs."""
+    ordered = sorted(scores)
+    knots = []
+    for k in range(n_knots):
+        idx = round(k * (len(ordered) - 1) / (n_knots - 1))
+        knots.append([round(ordered[idx], 6), k / (n_knots - 1)])
+    for i in range(1, len(knots)):
+        if knots[i][0] < knots[i - 1][0]:
+            knots[i][0] = knots[i - 1][0]
+    return knots
+
+
+def _euro_percentiles(scores, knots):
     """Catalogue-wide percentile per score, from FROZEN breakpoints.
 
     The breakpoints are the sorted composite scores of the reference cohort,
-    sampled at SIG_ANCHOR_KNOTS points. A score's percentile is its position
-    on that fixed curve, so a POI's significance depends on its own evidence
-    and never on how many places the catalogue happens to hold.
+    sampled at SIG_ANCHOR_KNOTS points (the "significance" part of the
+    frozen reference). A score's percentile is its position on that fixed
+    curve, so a POI's significance depends on its own evidence and never on
+    how many places the catalogue happens to hold.
     """
-    if SIG_ANCHOR_FILE.exists():
-        knots = json.loads(SIG_ANCHOR_FILE.read_text(encoding="utf-8"))["knots"]
-    else:
-        ordered = sorted(scores)
-        knots = []
-        for k in range(SIG_ANCHOR_KNOTS):
-            idx = round(k * (len(ordered) - 1) / (SIG_ANCHOR_KNOTS - 1))
-            knots.append([ordered[idx], k / (SIG_ANCHOR_KNOTS - 1)])
-        for i in range(1, len(knots)):
-            if knots[i][0] < knots[i - 1][0]:
-                knots[i][0] = knots[i - 1][0]
-        SIG_ANCHOR_FILE.parent.mkdir(parents=True, exist_ok=True)
-        SIG_ANCHOR_FILE.write_text(json.dumps({
-            "frozen": "2026-09-04",
-            "why": ("catalogue-wide percentiles re-normalised sig on every "
-                    "ingest, moving highlights and ratings for places whose "
-                    "own evidence had not changed"),
-            "n_reference_pois": len(ordered),
-            "knots": knots,
-        }, indent=1), encoding="utf-8")
-
     out = []
     for v in scores:
         if v <= knots[0][0]:
@@ -278,7 +290,11 @@ def lm_match(item, lm_rows):
     return best
 
 
-def compute(data):
+def compute(data, ref=None):
+    """Score every live POI. ``ref`` is the frozen "significance" reference
+    ({zlog: {views, sitelinks}, knots}); a recalibration passes its own."""
+    if ref is None:
+        ref = rating_config.reference("significance")
     pop = (load_json(ENRICH_CACHE).get("pop")) or {}
     wd = load_json(WD_CACHE)
     lm_index = build_lm_index(load_json(LM_CACHE) if LM_CACHE.exists() else {})
@@ -326,8 +342,8 @@ def compute(data):
                                      or heritage or wvw > 0 or lm_hit),
             })
 
-    zs_views = zlog([r["views"] for r in rows])
-    zs_sl = zlog([r["sl"] for r in rows])
+    zs_views = zlog([r["views"] for r in rows], ref["zlog"]["views"])
+    zs_sl = zlog([r["sl"] for r in rows], ref["zlog"]["sitelinks"])
     for r, zv, zs in zip(rows, zs_views, zs_sl):
         her = 1.0 if r["heritage"] else 0.0
         if r["visitors"] > 0:      # direct visitor counts are rare but decisive
@@ -347,9 +363,10 @@ def compute(data):
     # therefore ratings - across the whole catalogue. Vranje's highlights went
     # 0.383 -> 0.615 on an ingest that touched nothing of Vranje's. An
     # absolute significance cannot work that way, so the percentile
-    # breakpoints are fitted once, stored, and looked up thereafter. Delete
-    # SIG_ANCHOR_FILE to re-freeze, which is a deliberate model revision.
-    euro = _euro_percentiles([r["score"] for r in rows])
+    # breakpoints are fitted once, stored, and looked up thereafter.
+    # Re-freezing is a deliberate model revision: --recalibrate, which
+    # demands a version bump (T754).
+    euro = _euro_percentiles([r["score"] for r in rows], ref["knots"])
     for r, e in zip(rows, euro):
         r["euro_pct"] = e
         # Absolute significance, 0-3: where this sight stands against every
@@ -391,7 +408,7 @@ def compute(data):
     # popularity so quotas in POI-dense cities cannot bury a designated,
     # internationally notable monument - e.g. a UNESCO ensemble ranking
     # 60th in Brussels' 150-item list).
-    HERITAGE_FLOOR_SL = 15
+    HERITAGE_FLOOR_SL = cfg("significance.heritage_floor_sitelinks")
     for r in rows:
         if (r["heritage"] and r["sl"] >= HERITAGE_FLOOR_SL
                 and r["new_rate"] < 2):
@@ -439,15 +456,52 @@ def spearman(old, new):
     return num / (da * db) if da and db else None
 
 
+def recalibrate(data, version):
+    """Measure the "significance" part of the reference on ``data``.
+
+    Two passes: the first measures the zlog mean and spread of the live POIs,
+    the second scores them with those stats and samples the breakpoints.
+    """
+    probe = {"zlog": {"views": (0.0, 1.0), "sitelinks": (0.0, 1.0)},
+             "knots": [[0.0, 0.0], [1.0, 1.0]]}
+    rows, _ = compute(data, probe)
+    stats = {"views": zlog_stats([r["views"] for r in rows]),
+             "sitelinks": zlog_stats([r["sl"] for r in rows])}
+    ref = {"zlog": {k: [round(m, 6), round(sd, 6)] for k, (m, sd)
+                    in stats.items()},
+           "knots": [[0.0, 0.0], [1.0, 1.0]]}
+    rows, _ = compute(data, ref)
+    ref["knots"] = build_knots([r["score"] for r in rows])
+    ref["n_reference_pois"] = len(rows)
+    ref["why"] = ("catalogue-wide z-scores and percentiles re-normalised sig "
+                  "on every ingest, moving highlights and ratings for places "
+                  "whose own evidence had not changed; both are measured "
+                  "once here and looked up thereafter")
+    path = rating_config.write_part("significance", ref, version)
+    print(f"significance reference {version}: {len(rows)} POIs, zlog "
+          f"{ref['zlog']} -> {path}")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("mode", nargs="?", default="report",
                     choices=["report", "apply"])
     ap.add_argument("--sig-only", action="store_true",
                     help="apply: write it.sig only; never touch rate or pop")
+    ap.add_argument("--recalibrate", action="store_true",
+                    help="measure the frozen significance reference on the "
+                         "current catalogue (needs --version)")
+    ap.add_argument("--version",
+                    help="with --recalibrate: the new version, which must "
+                         "already be in continent-app/config/rating.json")
     args = ap.parse_args()
 
     data = json.loads(DATA.read_text(encoding="utf-8"))
+    if args.recalibrate:
+        if not args.version:
+            sys.exit("REFUSED: --recalibrate needs --version")
+        recalibrate(data, args.version)
+        return
     rows, by_dest = compute(data)
     checks = validate(rows)
 
