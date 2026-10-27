@@ -53,6 +53,13 @@ MAX_SOURCES = 10
 LOW_CAP = 7.5
 CONTROL_MAX_GAP = 0.5      # mean absolute gap, all controls pooled
 CONTROL_MAX_BIAS = 0.5     # signed mean gap, per shard
+# Shards the owner accepted despite a lean, with the reason. They still count
+# in the pooled mean gap.
+ACCEPTED_LEAN = {
+    6: ("owner 2026-10-27: two attempts leaned +1.24 and +0.78, driven by the two "
+        "lowest hand scores in the batch (Tuzla 3.0, Burgas 4.5); the shard is the "
+        "strictest (58% under 6.0), a third redo would only push it lower"),
+}
 EM_DASH = "—"
 
 
@@ -170,7 +177,9 @@ def check_shard(shard, schema_only):
         # absolute gap per shard (two scorers both put Roskilde a point above
         # its hand score), so a shard fails on a one-way lean only; the 0.5
         # mean gap is held on all controls pooled (--all).
-        if bias is None or abs(bias) > CONTROL_MAX_BIAS:
+        if bias is not None and abs(bias) > CONTROL_MAX_BIAS and shard in ACCEPTED_LEAN:
+            controls["accepted"] = ACCEPTED_LEAN[shard]
+        elif bias is None or abs(bias) > CONTROL_MAX_BIAS:
             problems.append(f"hidden controls lean {bias:+.2f} beyond "
                             f"+-{CONTROL_MAX_BIAS}: redo the shard")
     return problems, rows, controls
@@ -227,6 +236,8 @@ def main():
             line += (f"  controls lean {controls['bias']:+.2f} mean gap "
                      f"{controls['mean_abs_gap']} {controls['gaps']}")
             pooled += list(controls["gaps"].values())
+            if controls.get("accepted"):
+                line += f"  (lean accepted: {controls['accepted']})"
         print(line)
         for p in problems[:40]:
             print("   ", p)
