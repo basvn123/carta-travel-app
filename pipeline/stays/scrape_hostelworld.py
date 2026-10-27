@@ -181,6 +181,10 @@ def main():
     ap.add_argument("--headed", action="store_true")
     ap.add_argument("--months", default="")
     a = ap.parse_args()
+    # T741: under Task Scheduler the log is a file and Python writes it as cp1252;
+    # a town id with a Polish or Czech letter then ended every run on its log line.
+    for stream in (sys.stdout, sys.stderr):
+        stream.reconfigure(encoding="utf-8", errors="replace")
     try:
         asyncio.run(run(a))
     except Exception:

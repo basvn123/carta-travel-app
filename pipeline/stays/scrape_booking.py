@@ -303,6 +303,10 @@ def main():
     ap.add_argument("--show", action="store_true", help="with --headed: window on screen")
     ap.add_argument("--months", default="", help="spike: only these monthly probes, e.g. 2,8")
     a = ap.parse_args()
+    # T741: under Task Scheduler the log is a file and Python writes it as cp1252;
+    # a town id with a Polish or Czech letter then ended every run on its log line.
+    for stream in (sys.stdout, sys.stderr):
+        stream.reconfigure(encoding="utf-8", errors="replace")
     try:
         asyncio.run(run(a))
     except Exception:
