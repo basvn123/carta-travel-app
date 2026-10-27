@@ -1,11 +1,12 @@
 /**
  * Which searches the sweep runs in a given minute (T514).
  *
- * Three tiers share one clock, so the load is flat (about 120 searches a
- * minute for the whole of Europe) and every route is treated the same:
+ * Three tiers share one clock, so the load is flat (about 24 searches a
+ * minute for the whole of Europe; T780, was about 100 before Google started
+ * refusing us) and every route is treated the same:
  *
- *   near   the next 14 days, every other day, each route twice a day
- *   far    weeks 3 to 26, one day per week, each route once a week
+ *   near   the next 14 days, every fourth day, each route every 3 days
+ *   far    weeks 3 to 26, one day per week, each route every 2 weeks
  *   find   every pair of Carta airports that no route covers yet, one day
  *          21 days out, direct flights only, each pair once a month
  *
@@ -16,10 +17,15 @@
  * a row is dormant and only the find tier looks at it again.
  */
 
-export const NEAR_CYCLE = 720; // minutes in 12 hours
-export const FAR_CYCLE = 10080; // minutes in a week
-export const FIND_CYCLE = 43200; // minutes in 30 days
-export const NEAR_DAYS = [1, 3, 5, 7, 9, 11, 13];
+// T780: as few searches as the app needs (owner, 2026-10-27: a price may be a
+// few days old). Each cycle stays under its flights.max_age_days in
+// config/pricing.json (near 5, far 16), or prices drop out between checks.
+export const NEAR_CYCLE = 4320; // minutes in 3 days; was 12 hours
+export const FAR_CYCLE = 20160; // minutes in 2 weeks; was a week
+export const FIND_CYCLE = 129600; // minutes in 90 days; T780, was 30
+// T780: every fourth day, was every other day; the app takes the nearest
+// swept day within flights.nearest_day_spread (4) of the one asked for.
+export const NEAR_DAYS = [1, 5, 9, 13];
 export const FAR_WEEKS = 24; // weeks 3 to 26
 export const FIND_AHEAD = 21;
 export const FIND_MIN_KM = 150; // closer than this nobody flies
@@ -29,6 +35,23 @@ const DAY = 86400000;
 
 export const isoDay = (ms) => new Date(ms).toISOString().slice(0, 10);
 const monthBit = (ms) => 1 << new Date(ms).getUTCMonth();
+
+/**
+ * The route indices whose turn it is in this minute of a cycle. With more
+ * routes than minutes, every cycle-th route; with fewer (T780: the far cycle
+ * is 2 weeks, 20,160 minutes, for about 10,000 routes), spread evenly over
+ * the cycle instead of all in its first half.
+ */
+export function routesInMinute(minute, cycle, n) {
+  const slot = minute % cycle;
+  const out = [];
+  if (n >= cycle) {
+    for (let r = slot; r < n; r += cycle) out.push(r);
+    return out;
+  }
+  for (let r = Math.ceil((slot * n) / cycle); r < Math.ceil(((slot + 1) * n) / cycle); r++) out.push(r);
+  return out;
+}
 
 /** The route list as sorted [origin, dest, monthMask] triples. */
 export function flattenRoutes(routes, extra = []) {
@@ -68,12 +91,12 @@ export function jobsForMinute(list, airports, nowMs, dormant = new Set()) {
     if (mask & monthBit(ms)) jobs.push({ o, d, date: isoDay(ms), tier });
   };
 
-  for (let r = minute % NEAR_CYCLE; r < list.length; r += NEAR_CYCLE) {
+  for (const r of routesInMinute(minute, NEAR_CYCLE, list.length)) {
     const [o, d, mask] = list[r];
     if (dormant.has(o + d)) continue;
     for (const k of NEAR_DAYS) add(o, d, today + k * DAY, 'near', mask);
   }
-  for (let r = minute % FAR_CYCLE; r < list.length; r += FAR_CYCLE) {
+  for (const r of routesInMinute(minute, FAR_CYCLE, list.length)) {
     const [o, d, mask] = list[r];
     if (dormant.has(o + d)) continue;
     for (let w = 0; w < FAR_WEEKS; w++) {
@@ -94,4 +117,22 @@ export function jobsForMinute(list, airports, nowMs, dormant = new Set()) {
     jobs.push({ o, d, date: isoDay(today + FIND_AHEAD * DAY), tier: 'find' });
   }
   return jobs;
+}
+
+/**
+ * How long to pause after Google refuses a search (T780). The first refusal
+ * pauses an hour; a refusal within 2 hours of the last pause ending doubles
+ * it, up to a day, so a block that keeps coming back is left alone longer.
+ * @param {number} now
+ * @param {number} lastUntil   when the previous pause ended (0: never)
+ * @param {number} lastLevel   that pause's level (0 = one hour)
+ * @returns {{until:number, level:number}}
+ */
+export const PAUSE_BASE_MS = 3600000;
+export const PAUSE_MAX_MS = 86400000;
+export const PAUSE_RESET_MS = 7200000;
+export function nextPause(now, lastUntil = 0, lastLevel = 0) {
+  const level = lastUntil && now - lastUntil < PAUSE_RESET_MS ? lastLevel + 1 : 0;
+  const ms = Math.min(PAUSE_BASE_MS * 2 ** level, PAUSE_MAX_MS);
+  return { until: now + ms, level };
 }

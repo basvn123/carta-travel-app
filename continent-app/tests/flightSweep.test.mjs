@@ -2,8 +2,10 @@
 // Run: npm test (continent-app/)
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import {
-  flattenRoutes, jobsForMinute, NEAR_CYCLE, FAR_CYCLE, NEAR_DAYS, FAR_WEEKS, km,
+  flattenRoutes, jobsForMinute, nextPause, routesInMinute, NEAR_CYCLE, FAR_CYCLE, FIND_CYCLE, NEAR_DAYS, FAR_WEEKS, km,
+  PAUSE_BASE_MS, PAUSE_MAX_MS,
 } from "../workers/flight-sweep/src/plan.mjs";
 import { buildFile, buildIndex, nextBatch, priceOk, routeMoves } from "../workers/flight-sweep/src/publish.mjs";
 
@@ -22,7 +24,7 @@ test("routes flatten sorted, discovered routes join as all-year", () => {
   assert.equal(list.at(-1)[2], ALL_YEAR);
 });
 
-test("over 12 hours every route gets its 7 near days once", () => {
+test("over a near cycle every route gets its near days once (T780)", () => {
   const list = flattenRoutes(routes);
   const near = new Map();
   for (let m = 0; m < NEAR_CYCLE; m++) {
@@ -36,7 +38,7 @@ test("over 12 hours every route gets its 7 near days once", () => {
   assert.equal(near.get("BRUFAO"), undefined);
 });
 
-test("over a week every route gets 24 far days, in weeks 3 to 26", () => {
+test("over a far cycle every route gets 24 far days, in weeks 3 to 26", () => {
   const list = flattenRoutes(routes);
   const days = [];
   for (let m = 0; m < FAR_CYCLE; m++) {
@@ -59,7 +61,7 @@ test("dormant routes are left to the find tier", () => {
   const dormant = new Set(["BRUBCN"]);
   let near = 0;
   let found = 0;
-  for (let m = 0; m < 43200; m += 1) {
+  for (let m = 0; m < FIND_CYCLE; m += 1) {
     for (const j of jobsForMinute(list, airports, NOW + m * 60000, dormant)) {
       if (j.o + j.d !== "BRUBCN") continue;
       if (j.tier === "find") found++; else near++;
@@ -72,7 +74,7 @@ test("dormant routes are left to the find tier", () => {
 test("the find tier skips pairs closer than 150 km and known routes", () => {
   const list = flattenRoutes(routes);
   const finds = [];
-  for (let m = 0; m < 43200; m++) {
+  for (let m = 0; m < FIND_CYCLE; m++) {
     for (const j of jobsForMinute(list, airports, NOW + m * 60000)) if (j.tier === "find") finds.push(j.o + j.d);
   }
   assert.ok(km(airports.BRU, airports.CRL) < 150);
@@ -151,4 +153,35 @@ test("nextBatch starts a queue, carries the rest and keeps its start time", () =
   const last = nextBatch({ queue: second.rest, started: 1000 }, [], 3000, 60);
   assert.equal(last.rest.length, 0);
   assert.equal(nextBatch({ queue: [], started: 1 }, ["X"], 4000).started, 4000);
+});
+
+test("a refusal pauses an hour, a refusal soon after doubles it, up to a day (T780)", () => {
+  const H = 3600000;
+  assert.deepEqual(nextPause(NOW), { until: NOW + PAUSE_BASE_MS, level: 0 });
+  // Blocked again 10 minutes after the last pause ended: two hours.
+  assert.deepEqual(nextPause(NOW, NOW - 10 * 60000, 0), { until: NOW + 2 * H, level: 1 });
+  assert.equal(nextPause(NOW, NOW - 60000, 9).until, NOW + PAUSE_MAX_MS);
+  // Quiet for 3 hours since the last pause: back to one hour.
+  assert.deepEqual(nextPause(NOW, NOW - 3 * H, 4), { until: NOW + H, level: 0 });
+});
+
+test("the near cycle stays inside the app's near fare age (T780)", () => {
+  const age = JSON.parse(readFileSync(new URL("../config/pricing.json", import.meta.url)))
+    .rules["flights.max_age_days"].value;
+  assert.ok(NEAR_CYCLE * 60000 < age.near * 86400000);
+  assert.ok(FAR_CYCLE * 60000 < age.far * 86400000);
+});
+
+test("each route has exactly one minute a cycle, spread evenly when there are fewer routes (T780)", () => {
+  for (const [cycle, n] of [[10, 25], [20, 7], [20160, 10094]]) {
+    const seen = new Array(n).fill(0);
+    let most = 0;
+    for (let m = 0; m < cycle; m++) {
+      const rs = routesInMinute(m, cycle, n);
+      most = Math.max(most, rs.length);
+      rs.forEach((r) => seen[r]++);
+    }
+    assert.ok(seen.every((c) => c === 1), `cycle ${cycle}, ${n} routes`);
+    assert.ok(most <= Math.ceil(n / cycle), `cycle ${cycle}: at most ${Math.ceil(n / cycle)} a minute`);
+  }
 });

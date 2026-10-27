@@ -14,9 +14,9 @@ import { withOriginRoutes, destAnchor } from "../src/lib/origins.js";
 const NOW = Date.UTC(2026, 9, 21, 20, 0);
 const fresh = Math.floor((NOW - 3600000) / 60000);
 const stale = Math.floor((NOW - MAX_AGE_MS - 60000) / 60000);
-// T692: a far date (over 14 days ahead) is swept weekly, so it may be 8 days old.
-const farOk = Math.floor((NOW - 5 * 86400000) / 60000);
-const farStale = Math.floor((NOW - 8 * 86400000 - 60000) / 60000);
+// T692, T780: a far date (over 14 days ahead) is swept every 2 weeks, so it may be 16 days old.
+const farOk = Math.floor((NOW - 10 * 86400000) / 60000);
+const farStale = Math.floor((NOW - 16 * 86400000 - 60000) / 60000);
 const file = {
   v: 1, from: "BRU", checked: "2026-10-21T19:07:00Z",
   to: {
@@ -41,10 +41,10 @@ test("a swept day is a leg, a searched day with no flight is null, an unsearched
   assert.equal(sweptDay(file, "back", "BCN", "2026-11-25", NOW).price, 70);
 });
 
-test("a price older than its sweep cycle is never shown: 3 days near, 8 days far (T692)", () => {
-  assert.equal(sweptDay(file, "out", "BCN", "2026-10-27", NOW), undefined, "near, over 3 days");
-  assert.equal(sweptDay(file, "out", "BCN", "2026-11-24", NOW), undefined, "far, over 8 days");
-  assert.equal(sweptDay(file, "out", "BCN", "2026-11-26", NOW).price, 99, "far, 5 days old");
+test("a price older than its sweep cycle is never shown: 5 days near, 16 days far (T692, T780)", () => {
+  assert.equal(sweptDay(file, "out", "BCN", "2026-10-27", NOW), undefined, "near, over 5 days");
+  assert.equal(sweptDay(file, "out", "BCN", "2026-11-24", NOW), undefined, "far, over 16 days");
+  assert.equal(sweptDay(file, "out", "BCN", "2026-11-26", NOW).price, 99, "far, 10 days old");
   assert.equal(sweptCheapest(file, "out", "BCN", "2026-11", NOW).price, 64);
 });
 

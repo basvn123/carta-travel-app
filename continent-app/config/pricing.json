@@ -1015,14 +1015,14 @@
     },
     "flights.max_age_days": {
       "value": {
-        "near": 3,
-        "far": 8,
+        "near": 5,
+        "far": 16,
         "far_after_days": 14
       },
       "unit": "days",
       "kind": "sourced",
-      "source": "The sweep checks dates within 14 days every other day and later ones weekly (workers/flight-sweep/src/plan.mjs); a far fare may be 8 days old (T692). Before, 3 days for every date",
-      "date": "2026-10-24",
+      "source": "The sweep checks dates within 14 days every 3 days and later ones every 2 weeks (workers/flight-sweep/src/plan.mjs, T780), each age a cycle plus a day or two for a pause; owner 2026-10-27: a price may be a few days old. Before: near 3, far 8 (T692)",
+      "date": "2026-10-27",
       "review": "2027-04-24",
       "test": "tests/flights.test.mjs"
     },

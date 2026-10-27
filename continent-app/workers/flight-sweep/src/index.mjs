@@ -9,24 +9,28 @@
  *
  * Inputs: data/flights/_routes.json on R2 (pipeline/flights/build_routes.py,
  * monthly, from Eurostat), plus routes the find tier discovered (table found).
- * Guard: three refusals from Google in one minute pause the sweep for an
- * hour. GET /status shows the last hour's counts.
+ * Guard (T780): the first refusal from Google stops that minute and pauses
+ * the sweep for an hour, longer when refusals keep coming back (nextPause).
+ * GET /status shows the last hour's counts.
  *
  * Needs Workers Paid: a search costs 10 to 25 ms of CPU and the free plan
  * allows 10 ms per invocation.
  */
 import { searchDay } from '../../shared/flightSearch.mjs';
-import { flattenRoutes, jobsForMinute, DORMANT_AFTER } from './plan.mjs';
+import { flattenRoutes, jobsForMinute, nextPause, DORMANT_AFTER } from './plan.mjs';
 import { buildFile, buildIndex, logoSource, nextBatch, routeMoves, ROUTE_MOVE } from './publish.mjs';
 
 const ROUTES_KEY = 'data/flights/_routes.json';
 const FILE_PREFIX = 'data/flights/';
 // T739: 3, was 6. Google drops over half of Cloudflare's requests at 6 at once.
-const PARALLEL = 3;
+// T780: 1, with a short random gap after each search, after blocks at 3.
+const PARALLEL = 1;
+const GAP_MS = [300, 900];
+// T780: no new search after 50 s, so one minute's run never overlaps the next.
+const BUDGET_MS = 50000;
 // T739: publish every 10 minutes, PUBLISH_BATCH airports a run (publish.mjs).
 const PUBLISH_CRON = '*/10 * * * *';
-const BLOCKS_TO_PAUSE = 3;
-const PAUSE_MS = 3600000;
+const BLOCKS_TO_PAUSE = 1; // T780: was 3
 const ROUTES_TTL_MS = 3600000;
 const LOGOS_PER_PUBLISH = 25;
 const AIRLINE_KEY = /^[A-Z0-9]{2}$/;
@@ -70,17 +74,24 @@ export async function sweepMinute(env, now = Date.now()) {
     .bind(DORMANT_AFTER).all()).results.map((r) => r.k));
   const jobs = jobsForMinute(flattenRoutes(data.routes, found), data.airports, now, dormant);
 
+  // T780: counted as results come in, so the first refusal stops the minute
+  // (before, the count was taken after the pool and never stopped it).
   let blocked = 0;
-  const results = await pool(jobs, PARALLEL,
-    (j) => searchDay({ from: j.o, to: j.d, date: j.date, directOnly: j.tier === 'find' }),
-    () => blocked >= BLOCKS_TO_PAUSE);
-  results.forEach((r) => { if (r && r.blocked) blocked++; });
+  const started = Date.now();
+  const results = await pool(jobs, PARALLEL, async (j) => {
+    const r = await searchDay({ from: j.o, to: j.d, date: j.date, directOnly: j.tier === 'find' });
+    if (r && r.blocked) blocked++;
+    else await new Promise((ok) => setTimeout(ok, GAP_MS[0] + Math.random() * (GAP_MS[1] - GAP_MS[0])));
+    return r;
+  }, () => blocked >= BLOCKS_TO_PAUSE || Date.now() - started > BUDGET_MS);
 
   const checked = Math.floor(now / 1000);
   const writes = [];
   const airlineNames = new Map();
   const routeDirect = new Map(); // 'BRUBCN' -> any direct flight this minute
-  const counts = { jobs: jobs.length, ok: 0, empty: 0, failed: 0, blocked };
+  // Jobs left over when the minute stopped are not counted; they wait for the
+  // route's next turn.
+  const counts = { jobs: results.filter(Boolean).length, ok: 0, empty: 0, failed: 0, blocked };
   jobs.forEach((j, k) => {
     const r = results[k];
     if (!r || !r.ok) { if (r && !r.blocked) counts.failed++; return; }
@@ -130,8 +141,10 @@ export async function sweepMinute(env, now = Date.now()) {
     'INSERT OR REPLACE INTO runs (minute, jobs, ok, empty, failed, blocked) VALUES (?, ?, ?, ?, ?, ?)',
   ).bind(Math.floor(now / 60000), counts.jobs, counts.ok, counts.empty, counts.failed, counts.blocked));
   if (blocked >= BLOCKS_TO_PAUSE) {
-    writes.push(setState(env, 'pause_until', now + PAUSE_MS));
-    console.warn(`flight-sweep: ${blocked} refusals, pausing for an hour`,
+    const pause = nextPause(now, pausedUntil, Number(await state(env, 'pause_level')) || 0);
+    writes.push(setState(env, 'pause_until', pause.until));
+    writes.push(setState(env, 'pause_level', pause.level));
+    console.warn(`flight-sweep: ${blocked} refusals, pausing ${Math.round((pause.until - now) / 60000)} minutes`,
       results.filter((r) => r && r.blocked).map((r) => r.reason));
   }
   for (let i = 0; i < writes.length; i += 90) await env.DB.batch(writes.slice(i, i + 90));
@@ -237,6 +250,7 @@ export default {
     return Response.json({
       lastHour: hour,
       pausedUntil: Number(await state(env, 'pause_until')) || null,
+      pauseLevel: Number(await state(env, 'pause_level')) || 0,
       publishedAt: Number(await state(env, 'published_at')) || null,
       publishQueued: ((JSON.parse((await state(env, 'publish_queue')) || 'null') || {}).queue || []).length,
       fares: await env.DB.prepare('SELECT COUNT(*) AS n FROM fares').first('n'),

@@ -27,9 +27,9 @@ const DEFAULT_BAG = rule('request.default_bag');
 /**
  * Anything older than this is ignored: a stale price reads as current. T692
  * (plan 6.1, config flights.max_age_days): the age follows the sweep's
- * cadence, which checks the next two weeks every other day and later dates
- * once a week, so a far fare may be up to 8 days old; before, 3 days for
- * every date, and far fares dropped out most of the week.
+ * cadence. T780 slowed the sweep after Google refused it: the next two weeks
+ * are checked every 3 days and later dates every 2 weeks, so a near fare may
+ * be 5 days old and a far one 16 (were 3 and 8).
  */
 const AGE = rule('flights.max_age_days');
 const DAY_MS = 86400000;
