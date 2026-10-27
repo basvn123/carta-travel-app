@@ -59,6 +59,9 @@ ACCEPTED_LEAN = {
     6: ("owner 2026-10-27: two attempts leaned +1.24 and +0.78, driven by the two "
         "lowest hand scores in the batch (Tuzla 3.0, Burgas 4.5); the shard is the "
         "strictest (58% under 6.0), a third redo would only push it lower"),
+    10: ("owner 2026-10-27: two attempts leaned +0.68 and +0.60, the second nearly all "
+         "Szczecin (scored 5.8, below Leipzig 6.5, against a hand score of 4.0); "
+         "without it the shard leans +0.30"),
 }
 EM_DASH = "—"
 

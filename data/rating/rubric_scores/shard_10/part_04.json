@@ -1,0 +1,882 @@
+[
+ {
+  "id": "gem:sid",
+  "appeal": 3.8,
+  "band": "none",
+  "criteria": {
+   "setting": 3,
+   "character": 3,
+   "sights": 3,
+   "atmosphere": 3,
+   "uniqueness": 2
+  },
+  "why": {
+   "en": "Srem border town filed as an area, with a few churches and the Privina Glava monastery 6 km out; little to draw a visit.",
+   "nl": "Grensstadje in Srem, als gebied geboekt, met enkele kerken en het klooster Privina Glava op 6 km; weinig om voor te komen.",
+   "de": "Grenzstadt in Syrmien, als Gebiet geführt, mit einigen Kirchen und dem Kloster Privina Glava 6 km entfernt; kaum ein Grund zu kommen.",
+   "fr": "Ville frontière du Srem classée comme zone, avec quelques églises et le monastère de Privina Glava à 6 km ; peu d'attrait.",
+   "es": "Ciudad fronteriza de Srem catalogada como zona, con algunas iglesias y el monasterio de Privina Glava a 6 km; poco atractivo.",
+   "it": "Cittadina di confine dello Sirmio schedata come area, con qualche chiesa e il monastero di Privina Glava a 6 km; poco richiamo."
+  },
+  "confidence": "medium",
+  "flags": [
+   "class_mismatch"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:menet",
+  "appeal": 5.5,
+  "band": "none",
+  "criteria": {
+   "setting": 6,
+   "character": 6,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Cantal Petite Cité de Caractère around the Église Saint-Pierre; a quiet upland village, quickly seen.",
+   "nl": "Petite Cité de Caractère in de Cantal rond de Église Saint-Pierre; een stil hoogland-dorp, snel gezien.",
+   "de": "Petite Cité de Caractère im Cantal um die Église Saint-Pierre; ein ruhiges Hochlanddorf, schnell gesehen.",
+   "fr": "Petite Cité de Caractère du Cantal autour de l'église Saint-Pierre ; un village calme des hautes terres, vite vu.",
+   "es": "Petite Cité de Caractère del Cantal en torno a la iglesia de Saint-Pierre; un pueblo tranquilo de montaña, se ve rápido.",
+   "it": "Petite Cité de Caractère del Cantal attorno alla chiesa di Saint-Pierre; un paese quieto d'altura, visto in fretta."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:fossbergom",
+  "appeal": 6.4,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 6,
+   "sights": 6,
+   "atmosphere": 5,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Ottadalen village with the Lom stave church and the Prestfossen falls, Glittertind 21 km away; a mountain gateway, short on sights.",
+   "nl": "Dorp in Ottadalen met de staafkerk van Lom en de Prestfossen, Glittertind op 21 km; een poort naar de bergen, met weinig bezienswaardigheden.",
+   "de": "Dorf im Ottadalen mit der Stabkirche Lom und dem Prestfossen, der Glittertind 21 km entfernt; ein Tor zu den Bergen, wenig Sehenswertes.",
+   "fr": "Village de l'Ottadalen avec l'église en bois debout de Lom et la chute de Prestfossen ; porte des montagnes, peu de sites.",
+   "es": "Pueblo del Ottadalen con la iglesia de madera de Lom y la cascada Prestfossen, el Glittertind a 21 km; puerta a la montaña, pocos monumentos.",
+   "it": "Villaggio dell'Ottadalen con la chiesa lignea di Lom e la cascata Prestfossen, il Glittertind a 21 km; porta dei monti, poche attrazioni."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:halle-saale",
+  "appeal": 5.6,
+  "band": "none",
+  "criteria": {
+   "setting": 4,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Saale city with a site on the UNESCO tentative list and riverside parks such as the Peißnitz; the card lists few sights, an uneven centre.",
+   "nl": "Stad aan de Saale met een plek op de voorlopige UNESCO-lijst en rivierparken als de Peißnitz; de kaart noemt weinig, een wisselend centrum.",
+   "de": "Saalestadt mit einer Stätte auf der UNESCO-Vorschlagsliste und Flussparks wie der Peißnitz; die Karte nennt wenig, ein uneinheitliches Zentrum.",
+   "fr": "Ville sur la Saale, un site sur la liste indicative UNESCO et des parcs riverains comme la Peißnitz ; centre inégal.",
+   "es": "Ciudad del Saale con un lugar en la lista indicativa UNESCO y parques fluviales como el Peißnitz; pocos monumentos citados, centro desigual.",
+   "it": "Città sulla Saale con un sito nella lista propositiva UNESCO e parchi fluviali come la Peißnitz; poche attrazioni citate, centro disomogeneo."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:rewal",
+  "appeal": 5.2,
+  "band": "none",
+  "criteria": {
+   "setting": 6,
+   "character": 4,
+   "sights": 5,
+   "atmosphere": 4,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Baltic resort village with the clifftop church ruin at Trzęsacz and the Niechorze lighthouse nearby; a beach stop, crowded in summer.",
+   "nl": "Badplaatsje aan de Oostzee met de kerkruïne op de klif bij Trzęsacz en de vuurtoren van Niechorze vlakbij; een strandstop, druk in de zomer.",
+   "de": "Ostseebadeort mit der Kirchenruine auf der Klippe von Trzęsacz und dem Leuchtturm Niechorze in der Nähe; ein Strandhalt, im Sommer voll.",
+   "fr": "Station balnéaire de la Baltique avec l'église en ruine sur la falaise de Trzęsacz et le phare de Niechorze ; une halte plage, bondée l'été.",
+   "es": "Pueblo playero del Báltico con la iglesia en ruinas sobre el acantilado de Trzęsacz y el faro de Niechorze; parada de playa, lleno en verano.",
+   "it": "Località balneare sul Baltico con la chiesa in rovina sulla scogliera di Trzęsacz e il faro di Niechorze; sosta da spiaggia, affollata d'estate."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:kastelruth",
+  "appeal": 7.2,
+  "band": "good",
+  "criteria": {
+   "setting": 9,
+   "character": 7,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Borghi più belli village under the Schlern, with Sassolungo and Seceda within 15 km; a superb Dolomites base, few sights in the village.",
+   "nl": "Borghi più belli-dorp onder de Schlern, met Sassolungo en Seceda binnen 15 km; een prachtige Dolomietenbasis, weinig in het dorp zelf.",
+   "de": "Borghi-più-belli-Dorf unter dem Schlern, Langkofel und Seceda in 15 km Nähe; ein herrlicher Dolomitenstandort, im Dorf wenig Sehenswertes.",
+   "fr": "Village Borghi più belli sous le Schlern, avec le Sassolungo et la Seceda à 15 km ; superbe base dolomitique, peu de sites au village.",
+   "es": "Pueblo de los Borghi più belli bajo el Schlern, con el Sassolungo y la Seceda a 15 km; gran base dolomítica, poco en el pueblo.",
+   "it": "Borgo tra i più belli d'Italia sotto lo Sciliar, con Sassolungo e Seceda entro 15 km; splendida base dolomitica, poco in paese."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:castiglione-della-pescaia",
+  "appeal": 6.6,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Maremma harbour village below its castle, beside the Diaccia Botrona marsh and near Cala Violina; a pleasant beach base, busy in summer.",
+   "nl": "Havendorp in de Maremma onder zijn kasteel, naast het moeras Diaccia Botrona en bij Cala Violina; een fijne strandbasis, druk in de zomer.",
+   "de": "Hafendorf in der Maremma unter seiner Burg, neben dem Sumpf Diaccia Botrona und nahe Cala Violina; ein netter Strandstandort, im Sommer voll.",
+   "fr": "Village portuaire de Maremme sous son château, près du marais de Diaccia Botrona et de Cala Violina ; base balnéaire agréable, chargée l'été.",
+   "es": "Pueblo portuario de la Maremma bajo su castillo, junto a la marisma Diaccia Botrona y cerca de Cala Violina; base de playa, llena en verano.",
+   "it": "Borgo portuale della Maremma sotto il castello, accanto alla Diaccia Botrona e vicino a Cala Violina; buona base balneare, affollata d'estate."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:hafnarfjorður",
+  "appeal": 5.0,
+  "band": "none",
+  "criteria": {
+   "setting": 6,
+   "character": 4,
+   "sights": 4,
+   "atmosphere": 4,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Harbour town on lava fields south of Reykjavík with the Hafnarborg art centre; a few hours, few reasons to stay.",
+   "nl": "Havenstad op lavavelden ten zuiden van Reykjavík met kunstcentrum Hafnarborg; een paar uur, weinig reden om te blijven.",
+   "de": "Hafenstadt auf Lavafeldern südlich von Reykjavík mit dem Kunstzentrum Hafnarborg; ein paar Stunden, wenig Gründe zu bleiben.",
+   "fr": "Port sur des champs de lave au sud de Reykjavík avec le centre d'art Hafnarborg ; quelques heures, peu de raisons de rester.",
+   "es": "Ciudad portuaria sobre campos de lava al sur de Reikiavik con el centro de arte Hafnarborg; unas horas, pocas razones para quedarse.",
+   "it": "Città portuale su campi di lava a sud di Reykjavík con il centro d'arte Hafnarborg; qualche ora, pochi motivi per restare."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:carpentras",
+  "appeal": 5.9,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 6,
+   "sights": 6,
+   "atmosphere": 5,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Provençal market town with a Roman arch, its cathedral and the Inguimbertine library, Mont Ventoux in view; pleasant but a half day.",
+   "nl": "Provençaals marktstadje met een Romeinse boog, kathedraal en de bibliotheek Inguimbertine, de Mont Ventoux in zicht; prettig, een halve dag.",
+   "de": "Provenzalische Marktstadt mit römischem Bogen, Kathedrale und Bibliothek Inguimbertine, der Mont Ventoux in Sicht; nett, ein halber Tag.",
+   "fr": "Ville de marché provençale avec arc romain, cathédrale et bibliothèque Inguimbertine, face au Ventoux ; agréable, une demi-journée.",
+   "es": "Villa de mercado provenzal con arco romano, catedral y la biblioteca Inguimbertine, el Mont Ventoux a la vista; agradable, media jornada.",
+   "it": "Cittadina provenzale di mercato con arco romano, cattedrale e biblioteca Inguimbertine, il Mont Ventoux in vista; piacevole, mezza giornata."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:royal-tunbridge-wells",
+  "appeal": 5.8,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Spa town with theatres, Penshurst Place and Groombridge Place nearby; genteel and comfortable, but its best sights are outside.",
+   "nl": "Kuurstad met theaters, Penshurst Place en Groombridge Place vlakbij; deftig en comfortabel, maar het beste ligt buiten de stad.",
+   "de": "Kurstadt mit Theatern, Penshurst Place und Groombridge Place in der Nähe; vornehm und bequem, doch das Beste liegt ausserhalb.",
+   "fr": "Ville d'eaux avec ses théâtres, Penshurst Place et Groombridge Place à proximité ; bourgeoise et confortable, le meilleur est hors les murs.",
+   "es": "Ciudad balneario con teatros, Penshurst Place y Groombridge Place cerca; señorial y cómoda, pero lo mejor está fuera.",
+   "it": "Città termale con teatri, Penshurst Place e Groombridge Place vicini; signorile e comoda, ma il meglio è fuori città."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:thetford",
+  "appeal": 5.0,
+  "band": "none",
+  "criteria": {
+   "setting": 4,
+   "character": 5,
+   "sights": 6,
+   "atmosphere": 4,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Breckland town with a ruined priory, a castle mound and Grime's Graves flint mines 9 km away; a few sights, a plain centre.",
+   "nl": "Stad in de Breckland met een priorijruïne, een kasteelheuvel en de vuursteenmijnen van Grime's Graves op 9 km; enkele bezienswaardigheden, een gewoon centrum.",
+   "de": "Stadt in der Breckland mit Prioratsruine, Burghügel und den Feuersteinminen Grime's Graves 9 km entfernt; einige Ziele, ein schlichtes Zentrum.",
+   "fr": "Ville du Breckland avec un prieuré en ruine, une motte castrale et les minières de Grime's Graves à 9 km ; quelques sites, centre banal.",
+   "es": "Ciudad de Breckland con un priorato en ruinas, un montículo de castillo y las minas de sílex de Grime's Graves a 9 km; centro corriente.",
+   "it": "Cittadina del Breckland con un priorato in rovina, una motta e le miniere di selce di Grime's Graves a 9 km; centro anonimo."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:medina-de-rioseco",
+  "appeal": 6.0,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 4,
+   "character": 7,
+   "sights": 6,
+   "atmosphere": 5,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Listed Tierra de Campos town with the churches of Santa María de Mediavilla and Santiago; a fine half day on the plain.",
+   "nl": "Beschermd stadje in de Tierra de Campos met de kerken Santa María de Mediavilla en Santiago; een mooie halve dag op de vlakte.",
+   "de": "Geschützte Stadt in der Tierra de Campos mit den Kirchen Santa María de Mediavilla und Santiago; ein schöner halber Tag in der Ebene.",
+   "fr": "Bourg protégé de la Tierra de Campos avec les églises Santa María de Mediavilla et Santiago ; une belle demi-journée dans la plaine.",
+   "es": "Conjunto histórico de Tierra de Campos con las iglesias de Santa María de Mediavilla y Santiago; una buena media jornada en la llanura.",
+   "it": "Cittadina tutelata della Tierra de Campos con le chiese di Santa María de Mediavilla e Santiago; una bella mezza giornata in pianura."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:malborghetto",
+  "appeal": 6.0,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 8,
+   "character": 5,
+   "sights": 4,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Val Canale hamlet under the Jôf di Montasio and Monte Lussari; a quiet base for Julian Alps walks, little in the village.",
+   "nl": "Gehucht in het Val Canale onder de Jôf di Montasio en de Monte Lussari; een rustige basis voor wandelingen in de Julische Alpen.",
+   "de": "Weiler im Kanaltal unter dem Jôf di Montasio und dem Monte Lussari; ein ruhiger Standort für Touren in den Julischen Alpen.",
+   "fr": "Hameau du Val Canale sous le Jôf di Montasio et le Monte Lussari ; une base calme pour les Alpes juliennes, peu au village.",
+   "es": "Aldea del Val Canale bajo el Jôf di Montasio y el Monte Lussari; base tranquila para los Alpes Julianos, poco en el pueblo.",
+   "it": "Frazione della Val Canale sotto lo Jôf di Montasio e il Monte Lussari; base tranquilla per le Alpi Giulie, poco in paese."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:santa-pola",
+  "appeal": 5.0,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 4,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Alicante fishing and beach town with a castle and old watchtowers along the coast; a resort, little to see beyond the beach.",
+   "nl": "Vissers- en badplaats bij Alicante met een kasteel en oude wachttorens langs de kust; een badplaats, weinig naast het strand.",
+   "de": "Fischer- und Badeort bei Alicante mit Burg und alten Wachtürmen an der Küste; ein Ferienort, abseits des Strandes wenig.",
+   "fr": "Port de pêche et plage près d'Alicante, avec un château et d'anciennes tours de guet ; une station, peu à voir hors plage.",
+   "es": "Villa pesquera y de playa de Alicante con castillo y antiguas torres vigía; un destino de sol, poco más allá de la playa.",
+   "it": "Paese di pescatori e di mare vicino ad Alicante, con un castello e antiche torri di guardia; località balneare, poco oltre la spiaggia."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:ploiesti",
+  "appeal": 4.2,
+  "band": "none",
+  "criteria": {
+   "setting": 3,
+   "character": 3,
+   "sights": 5,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Oil city with the Palatul Culturii and a clock museum; a few museums in a largely modern town.",
+   "nl": "Oliestad met het Palatul Culturii en een klokkenmuseum; enkele musea in een grotendeels moderne stad.",
+   "de": "Ölstadt mit dem Palatul Culturii und einem Uhrenmuseum; einige Museen in einer weitgehend modernen Stadt.",
+   "fr": "Ville pétrolière avec le Palatul Culturii et un musée de l'horlogerie ; quelques musées dans une ville surtout moderne.",
+   "es": "Ciudad petrolera con el Palatul Culturii y un museo del reloj; algunos museos en una ciudad sobre todo moderna.",
+   "it": "Città del petrolio con il Palatul Culturii e un museo dell'orologio; qualche museo in una città perlopiù moderna."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:camerata-cornello",
+  "appeal": 5.6,
+  "band": "none",
+  "criteria": {
+   "setting": 6,
+   "character": 6,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Borghi più belli hamlet in the Val Brembana, San Pellegrino Terme 8 km away; a short detour up the valley.",
+   "nl": "Borghi più belli-gehucht in de Val Brembana, San Pellegrino Terme op 8 km; een korte omweg het dal in.",
+   "de": "Borghi-più-belli-Weiler im Val Brembana, San Pellegrino Terme 8 km entfernt; ein kurzer Abstecher ins Tal.",
+   "fr": "Hameau Borghi più belli du Val Brembana, San Pellegrino Terme à 8 km ; un court détour dans la vallée.",
+   "es": "Aldea de los Borghi più belli en el Val Brembana, San Pellegrino Terme a 8 km; un breve desvío por el valle.",
+   "it": "Borgo tra i più belli d'Italia in Val Brembana, San Pellegrino Terme a 8 km; una breve deviazione nella valle."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:bourg-charente",
+  "appeal": 5.0,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 5,
+   "sights": 4,
+   "atmosphere": 4,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Charente village with its château in Cognac country, Jarnac 4 km away; a pleasant pause, not a destination.",
+   "nl": "Dorp aan de Charente met kasteel in het cognacgebied, Jarnac op 4 km; een prettige pauze, geen bestemming.",
+   "de": "Dorf an der Charente mit Schloss im Cognac-Land, Jarnac 4 km entfernt; eine nette Pause, kein Ziel.",
+   "fr": "Village de Charente avec son château en pays de Cognac, Jarnac à 4 km ; une pause agréable, pas une destination.",
+   "es": "Pueblo del Charente con su castillo en tierra de coñac, Jarnac a 4 km; una pausa agradable, no un destino.",
+   "it": "Villaggio della Charente con il suo castello nella terra del cognac, Jarnac a 4 km; una pausa piacevole, non una meta."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:ivanovo",
+  "appeal": 6.5,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 4,
+   "sights": 8,
+   "atmosphere": 5,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "Village by the UNESCO-listed Rock-Hewn Churches of Ivanovo in the Rusenski Lom Nature Park; one remarkable site, little else.",
+   "nl": "Dorp bij de UNESCO-rotskerken van Ivanovo in het natuurpark Rusenski Lom; één opmerkelijke plek, verder weinig.",
+   "de": "Dorf an den Felsenkirchen von Iwanowo, UNESCO-Welterbe im Naturpark Rusenski Lom; eine bemerkenswerte Stätte, sonst wenig.",
+   "fr": "Village des églises rupestres d'Ivanovo, classées à l'UNESCO, dans le parc naturel de Rusenski Lom ; un site remarquable, rien d'autre.",
+   "es": "Pueblo de las iglesias rupestres de Ivanovo, Patrimonio de la UNESCO, en el parque natural Rusenski Lom; un lugar notable y poco más.",
+   "it": "Villaggio delle chiese rupestri di Ivanovo, patrimonio UNESCO, nel parco naturale di Rusenski Lom; un sito notevole, poco altro."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:cisternino",
+  "appeal": 6.5,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 7,
+   "sights": 4,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Borghi più belli hill town in Apulia; the card's listed churches and palace sit 8 km away, so the village itself is a short stroll.",
+   "nl": "Borghi più belli-heuvelstadje in Apulië; de genoemde kerken en het paleis liggen op 8 km, dus het dorp zelf is een korte wandeling.",
+   "de": "Borghi-più-belli-Hügelstadt in Apulien; die genannten Kirchen und der Palast liegen 8 km entfernt, der Ort selbst ist ein kurzer Bummel.",
+   "fr": "Bourg perché Borghi più belli des Pouilles ; les églises et le palais cités sont à 8 km, le village lui-même se voit vite.",
+   "es": "Pueblo en alto de los Borghi più belli en Apulia; las iglesias y el palacio citados están a 8 km, el pueblo se ve rápido.",
+   "it": "Borgo collinare pugliese tra i più belli d'Italia; chiese e palazzo citati sono a 8 km, il paese in sé è una breve passeggiata."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:wolfertschwenden",
+  "appeal": 4.2,
+  "band": "none",
+  "criteria": {
+   "setting": 4,
+   "character": 4,
+   "sights": 3,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Allgäu farming village with the old Ittelsburg refuge and chapel; a few earthworks, nothing that draws a trip.",
+   "nl": "Boerendorp in de Allgäu met de oude vluchtburcht en kapel van Ittelsburg; een paar wallen, niets dat een reis waard is.",
+   "de": "Allgäuer Bauerndorf mit der Fliehburg Ittelsburg und Kapelle; ein paar Burgställe, nichts, was eine Reise lohnt.",
+   "fr": "Village agricole de l'Allgäu avec l'ancien refuge et la chapelle d'Ittelsburg ; quelques mottes, rien qui justifie le voyage.",
+   "es": "Pueblo agrícola de Algovia con el antiguo refugio y la capilla de Ittelsburg; algunos restos, nada que justifique el viaje.",
+   "it": "Villaggio agricolo dell'Allgäu con l'antico rifugio e la cappella di Ittelsburg; qualche rudere, nulla che valga il viaggio."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:hasselt",
+  "appeal": 5.9,
+  "band": "none",
+  "criteria": {
+   "setting": 4,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Limburg city with St Quentin's cathedral, the Virga-Jesse basilica and the Z33 art house; lively, but a day covers it.",
+   "nl": "Limburgse stad met de Sint-Quintinuskathedraal, de Virga-Jessebasiliek en kunsthuis Z33; levendig, maar in een dag gezien.",
+   "de": "Limburger Stadt mit Quintinuskathedrale, Virga-Jesse-Basilika und dem Kunsthaus Z33; lebhaft, doch an einem Tag gesehen.",
+   "fr": "Ville limbourgeoise avec la cathédrale Saint-Quentin, la basilique Virga-Jesse et le centre d'art Z33 ; vivante, une journée suffit.",
+   "es": "Ciudad de Limburgo con la catedral de San Quintín, la basílica Virga-Jesse y el centro de arte Z33; animada, pero basta un día.",
+   "it": "Città del Limburgo con la cattedrale di San Quintino, la basilica Virga-Jesse e il centro d'arte Z33; vivace, ma basta un giorno."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:bondone",
+  "appeal": 6.0,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 6,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Borghi più belli mountain village above Lake Idro, with the Rocca d'Anfo nearby; a fine lake view, little inside it.",
+   "nl": "Borghi più belli-bergdorp boven het Idromeer, met de Rocca d'Anfo vlakbij; een mooi uitzicht op het meer, weinig in het dorp.",
+   "de": "Borghi-più-belli-Bergdorf über dem Idrosee, die Rocca d'Anfo nahebei; ein schöner Seeblick, im Ort selbst wenig.",
+   "fr": "Village de montagne Borghi più belli au-dessus du lac d'Idro, la Rocca d'Anfo tout près ; belle vue, peu à voir dedans.",
+   "es": "Pueblo de montaña de los Borghi più belli sobre el lago de Idro, con la Rocca d'Anfo cerca; buena vista, poco dentro.",
+   "it": "Borgo montano tra i più belli d'Italia sopra il lago d'Idro, con la Rocca d'Anfo vicina; bella vista, poco al suo interno."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:montaione",
+  "appeal": 5.9,
+  "band": "none",
+  "criteria": {
+   "setting": 6,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Borghi più belli hill village in the Tuscan Valdelsa with a small archaeology museum; its main churches and museums lie 7 to 8 km away.",
+   "nl": "Borghi più belli-heuveldorp in de Toscaanse Valdelsa met een klein archeologisch museum; de belangrijkste kerken en musea liggen op 7 tot 8 km.",
+   "de": "Borghi-più-belli-Hügeldorf im toskanischen Valdelsa mit kleinem Archäologiemuseum; die wichtigsten Kirchen und Museen liegen 7 bis 8 km entfernt.",
+   "fr": "Village perché Borghi più belli du Valdelsa toscan, avec un petit musée archéologique ; ses grandes églises et musées sont à 7 ou 8 km.",
+   "es": "Pueblo en alto de los Borghi più belli en el Valdelsa toscano, con un museo arqueológico; sus iglesias principales están a 7 u 8 km.",
+   "it": "Borgo collinare tra i più belli d'Italia in Valdelsa, con un piccolo museo archeologico; chiese e musei principali sono a 7-8 km."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:windermere",
+  "appeal": 6.8,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 8,
+   "character": 5,
+   "sights": 6,
+   "atmosphere": 5,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Lakeside base near Blackwell, Wray Castle and Hill Top; superb surroundings, a busy and ordinary village.",
+   "nl": "Uitvalsbasis aan het meer bij Blackwell, Wray Castle en Hill Top; prachtige omgeving, een druk en gewoon dorp.",
+   "de": "Standort am See nahe Blackwell, Wray Castle und Hill Top; herrliche Umgebung, ein belebtes, gewöhnliches Dorf.",
+   "fr": "Base au bord du lac près de Blackwell, Wray Castle et Hill Top ; environs superbes, village animé et ordinaire.",
+   "es": "Base junto al lago cerca de Blackwell, Wray Castle y Hill Top; entorno magnífico, pueblo concurrido y corriente.",
+   "it": "Base sul lago vicino a Blackwell, Wray Castle e Hill Top; dintorni splendidi, paese affollato e ordinario."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:sagunto",
+  "appeal": 6.3,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 6,
+   "sights": 7,
+   "atmosphere": 5,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Valencian town crowned by the long Castell de Sagunt above a Roman theatre; strong history, a modern sprawl below.",
+   "nl": "Valenciaanse stad met het lange Castell de Sagunt boven een Romeins theater; rijke geschiedenis, moderne uitbreiding eronder.",
+   "de": "Valencianische Stadt unter dem langgestreckten Castell de Sagunt über einem römischen Theater; reiche Geschichte, moderne Ausdehnung darunter.",
+   "fr": "Ville valencienne couronnée par le long château de Sagonte au-dessus d'un théâtre romain ; histoire forte, étalement moderne en contrebas.",
+   "es": "Ciudad valenciana coronada por el largo castillo de Sagunto sobre un teatro romano; mucha historia, expansión moderna abajo.",
+   "it": "Città valenciana coronata dal lungo castello di Sagunto sopra un teatro romano; storia forte, espansione moderna in basso."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:stykkisholmur",
+  "appeal": 6.0,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 5,
+   "sights": 4,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Icelandic village whose card lists only the Helgafell hill 4 km away; too little on record to rate it above a quiet stop.",
+   "nl": "IJslands dorp waarvan de kaart alleen de heuvel Helgafell op 4 km noemt; te weinig bekend om meer dan een rustige stop te zijn.",
+   "de": "Isländisches Dorf, dessen Karte nur den Hügel Helgafell 4 km entfernt nennt; zu wenig, um mehr als einen ruhigen Halt zu sehen.",
+   "fr": "Village islandais dont la fiche ne cite que la colline d'Helgafell à 4 km ; trop peu pour y voir plus qu'une halte calme.",
+   "es": "Pueblo islandés cuya ficha solo cita la colina de Helgafell a 4 km; demasiado poco para verlo como más que una parada tranquila.",
+   "it": "Villaggio islandese la cui scheda cita solo la collina di Helgafell a 4 km; troppo poco per considerarlo più di una sosta quieta."
+  },
+  "confidence": "low",
+  "flags": [
+   "thin_card"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:roseto-degli-abruzzi",
+  "appeal": 4.6,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 3,
+   "sights": 3,
+   "atmosphere": 5,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Adriatic beach town with Villa Clemente and a sailors' memorial; its listed churches and galleries lie 7 to 9 km away.",
+   "nl": "Adriatische badplaats met Villa Clemente en een zeemansmonument; de genoemde kerken en galerieën liggen op 7 tot 9 km.",
+   "de": "Adriabadeort mit Villa Clemente und einem Seemannsdenkmal; die genannten Kirchen und Galerien liegen 7 bis 9 km entfernt.",
+   "fr": "Station de l'Adriatique avec la Villa Clemente et un monument aux marins ; les églises et galeries citées sont à 7 ou 9 km.",
+   "es": "Pueblo playero del Adriático con Villa Clemente y un monumento a los marineros; sus iglesias y galerías citadas están a 7 o 9 km.",
+   "it": "Località balneare adriatica con Villa Clemente e il monumento ai caduti del mare; chiese e pinacoteche citate sono a 7-9 km."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:issoire",
+  "appeal": 5.8,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 5,
+   "sights": 7,
+   "atmosphere": 4,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Auvergne town around the Romanesque Abbatiale Saint-Austremoine; one great church in an otherwise ordinary town.",
+   "nl": "Stad in de Auvergne rond de romaanse Abbatiale Saint-Austremoine; één grote kerk in een verder gewone stad.",
+   "de": "Stadt in der Auvergne um die romanische Abteikirche Saint-Austremoine; eine grosse Kirche in einer sonst gewöhnlichen Stadt.",
+   "fr": "Ville d'Auvergne autour de l'abbatiale romane Saint-Austremoine ; une grande église dans une ville par ailleurs ordinaire.",
+   "es": "Ciudad de Auvernia en torno a la abacial románica de Saint-Austremoine; una gran iglesia en una ciudad por lo demás corriente.",
+   "it": "Città dell'Alvernia attorno all'abbaziale romanica di Saint-Austremoine; una grande chiesa in una città per il resto ordinaria."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:alta",
+  "appeal": 6.4,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 4,
+   "sights": 7,
+   "atmosphere": 5,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "Arctic town with the UNESCO-listed Rock Art of Alta and the Northern Lights Cathedral; strong sights, a plain modern town.",
+   "nl": "Arctische stad met de UNESCO-rotstekeningen van Alta en de Noorderlichtkathedraal; sterke bezienswaardigheden, een gewone moderne stad.",
+   "de": "Arktische Stadt mit den Felsritzungen von Alta, UNESCO-Welterbe, und der Nordlichtkathedrale; starke Ziele, eine schlichte moderne Stadt.",
+   "fr": "Ville arctique avec l'art rupestre d'Alta, classé à l'UNESCO, et la cathédrale des aurores boréales ; beaux sites, ville moderne banale.",
+   "es": "Ciudad ártica con el arte rupestre de Alta, Patrimonio de la UNESCO, y la catedral de la aurora boreal; buenos lugares, ciudad moderna sencilla.",
+   "it": "Città artica con le incisioni rupestri di Alta, patrimonio UNESCO, e la cattedrale dell'aurora boreale; luoghi forti, città moderna anonima."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:miltenberg",
+  "appeal": 6.8,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 8,
+   "sights": 6,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Half-timbered Main town below the Mildenburg, with the old inn Zum Riesen; a lovely street, done in half a day.",
+   "nl": "Vakwerkstadje aan de Main onder de Mildenburg, met de oude herberg Zum Riesen; een mooie straat, in een halve dag gezien.",
+   "de": "Fachwerkstadt am Main unter der Mildenburg, mit dem alten Gasthaus Zum Riesen; eine schöne Gasse, in einem halben Tag gesehen.",
+   "fr": "Petite ville à colombages sur le Main, sous la Mildenburg, avec la vieille auberge Zum Riesen ; une jolie rue, vue en une demi-journée.",
+   "es": "Pueblo de entramado junto al Meno bajo la Mildenburg, con la vieja posada Zum Riesen; una calle bonita, se ve en media jornada.",
+   "it": "Cittadina a graticcio sul Meno sotto la Mildenburg, con l'antica locanda Zum Riesen; una bella via, vista in mezza giornata."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:selestat",
+  "appeal": 6.1,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 5,
+   "character": 7,
+   "sights": 6,
+   "atmosphere": 5,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Alsace town with the Humanist Library and the churches of Sainte-Foy and Saint-Georges; a good stop, quieter than its neighbours.",
+   "nl": "Elzasser stad met de Humanistische Bibliotheek en de kerken Sainte-Foy en Saint-Georges; een goede stop, stiller dan de buren.",
+   "de": "Elsässer Stadt mit der Humanistischen Bibliothek und den Kirchen Sainte-Foy und Saint-Georges; ein guter Halt, ruhiger als die Nachbarn.",
+   "fr": "Ville d'Alsace avec la Bibliothèque humaniste et les églises Sainte-Foy et Saint-Georges ; une bonne halte, plus calme que ses voisines.",
+   "es": "Ciudad alsaciana con la Biblioteca Humanista y las iglesias de Sainte-Foy y Saint-Georges; buena parada, más tranquila que sus vecinas.",
+   "it": "Città alsaziana con la Biblioteca umanistica e le chiese di Sainte-Foy e Saint-Georges; una buona sosta, più quieta delle vicine."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:olomouc",
+  "appeal": 7.4,
+  "band": "good",
+  "criteria": {
+   "setting": 5,
+   "character": 8,
+   "sights": 7,
+   "atmosphere": 7,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "UNESCO-listed Holy Trinity Column and the country's second largest historic preservation zone; a rich, little-touristed centre, flat setting.",
+   "nl": "De Drievuldigheidszuil op de UNESCO-lijst en de op een na grootste beschermde historische zone van het land; rijk, weinig toeristisch, vlakke ligging.",
+   "de": "Die Dreifaltigkeitssäule als UNESCO-Welterbe und die zweitgrösste Denkmalzone des Landes; reich, wenig touristisch, flache Lage.",
+   "fr": "Colonne de la Sainte-Trinité classée à l'UNESCO et deuxième secteur sauvegardé du pays ; un centre riche, peu touristique, site plat.",
+   "es": "La Columna de la Santísima Trinidad, Patrimonio UNESCO, y la segunda zona histórica protegida del país; centro rico y poco turístico, entorno llano.",
+   "it": "Colonna della Santissima Trinità patrimonio UNESCO e seconda zona storica tutelata del paese; centro ricco, poco turistico, sito piatto."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:monteleone-di-spoleto",
+  "appeal": 5.6,
+  "band": "none",
+  "criteria": {
+   "setting": 6,
+   "character": 6,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Borghi più belli mountain village in Valnerina with the church of San Francesco, Cascia 9 km away; remote, quickly seen.",
+   "nl": "Borghi più belli-bergdorp in de Valnerina met de kerk San Francesco, Cascia op 9 km; afgelegen en snel gezien.",
+   "de": "Borghi-più-belli-Bergdorf in der Valnerina mit der Kirche San Francesco, Cascia 9 km entfernt; abgelegen, schnell gesehen.",
+   "fr": "Village de montagne Borghi più belli en Valnerina avec l'église San Francesco, Cascia à 9 km ; isolé, vite vu.",
+   "es": "Pueblo de montaña de los Borghi più belli en la Valnerina con la iglesia de San Francesco, Cascia a 9 km; apartado, se ve rápido.",
+   "it": "Borgo montano tra i più belli d'Italia in Valnerina con la chiesa di San Francesco, Cascia a 9 km; isolato, visto in fretta."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:savennieres",
+  "appeal": 5.5,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Loire wine village with an old church and windmill, the Château de Serrant 7 km away; a pleasant stop among vineyards.",
+   "nl": "Loirewijndorp met een oude kerk en windmolen, het Château de Serrant op 7 km; een prettige stop tussen de wijngaarden.",
+   "de": "Weindorf an der Loire mit alter Kirche und Windmühle, Château de Serrant 7 km entfernt; ein netter Halt zwischen Reben.",
+   "fr": "Village viticole de Loire avec une église ancienne et un moulin, le château de Serrant à 7 km ; une halte agréable dans les vignes.",
+   "es": "Pueblo vinícola del Loira con iglesia antigua y molino, el castillo de Serrant a 7 km; parada agradable entre viñedos.",
+   "it": "Villaggio vinicolo della Loira con una chiesa antica e un mulino, il castello di Serrant a 7 km; una sosta piacevole tra le vigne."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:wellingborough",
+  "appeal": 4.0,
+  "band": "none",
+  "criteria": {
+   "setting": 3,
+   "character": 4,
+   "sights": 3,
+   "atmosphere": 3,
+   "uniqueness": 2
+  },
+  "why": {
+   "en": "Northamptonshire market town with All Hallows church and nearby halls; nothing here to draw a visitor.",
+   "nl": "Marktstad in Northamptonshire met de All Hallows-kerk en landhuizen in de buurt; niets dat een bezoeker trekt.",
+   "de": "Marktstadt in Northamptonshire mit der Kirche All Hallows und Landsitzen in der Nähe; nichts, was Besucher anzieht.",
+   "fr": "Bourg du Northamptonshire avec l'église All Hallows et des manoirs voisins ; rien qui attire le visiteur.",
+   "es": "Villa de mercado de Northamptonshire con la iglesia de All Hallows y casas señoriales cerca; nada que atraiga al visitante.",
+   "it": "Cittadina mercantile del Northamptonshire con la chiesa di All Hallows e dimore vicine; nulla che attiri un visitatore."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:castrogeriz",
+  "appeal": 6.2,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 6,
+   "sights": 6,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Listed Camino village below its castle with Nuestra Señora del Manzano and the San Antón ruins nearby; a strong pilgrim stop, little more.",
+   "nl": "Beschermd caminodorp onder zijn kasteel met Nuestra Señora del Manzano en de ruïne van San Antón vlakbij; een sterke pelgrimsstop, weinig meer.",
+   "de": "Geschütztes Dorf am Jakobsweg unter seiner Burg, mit Nuestra Señora del Manzano und der Ruine San Antón; ein starker Pilgerhalt, kaum mehr.",
+   "fr": "Village protégé du Chemin, sous son château, avec Nuestra Señora del Manzano et les ruines de San Antón ; belle étape, guère plus.",
+   "es": "Conjunto histórico del Camino bajo su castillo, con Nuestra Señora del Manzano y las ruinas de San Antón; gran etapa jacobea, poco más.",
+   "it": "Borgo tutelato sul Cammino sotto il castello, con Nuestra Señora del Manzano e le rovine di San Antón; bella tappa, poco altro."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:achicourt",
+  "appeal": 4.5,
+  "band": "none",
+  "criteria": {
+   "setting": 4,
+   "character": 4,
+   "sights": 3,
+   "atmosphere": 4,
+   "uniqueness": 2
+  },
+  "why": {
+   "en": "Suburb on the edge of Arras; the cathedral, citadel and town hall on the card belong to Arras, the village itself has little.",
+   "nl": "Voorstad aan de rand van Arras; de kathedraal, citadel en het stadhuis op de kaart horen bij Arras, het dorp zelf biedt weinig.",
+   "de": "Vorort am Rand von Arras; Kathedrale, Zitadelle und Rathaus auf der Karte gehören zu Arras, das Dorf selbst bietet wenig.",
+   "fr": "Commune de la périphérie d'Arras ; cathédrale, citadelle et hôtel de ville cités appartiennent à Arras, le village offre peu.",
+   "es": "Suburbio en las afueras de Arras; la catedral, la ciudadela y el ayuntamiento citados son de Arras, el pueblo ofrece poco.",
+   "it": "Sobborgo ai margini di Arras; cattedrale, cittadella e municipio citati appartengono ad Arras, il paese in sé offre poco."
+  },
+  "confidence": "medium",
+  "flags": [
+   "data_conflict"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:roseto-valfortore",
+  "appeal": 5.4,
+  "band": "none",
+  "criteria": {
+   "setting": 6,
+   "character": 6,
+   "sights": 3,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Borghi più belli hill village in the Daunian mountains near the Monte Cornacchia forest; remote and quiet, with few sights.",
+   "nl": "Borghi più belli-heuveldorp in de Monti Dauni bij het bos van Monte Cornacchia; afgelegen en stil, met weinig bezienswaardigheden.",
+   "de": "Borghi-più-belli-Hügeldorf in den Monti Dauni nahe dem Wald am Monte Cornacchia; abgelegen und still, mit wenig Sehenswertem.",
+   "fr": "Village perché Borghi più belli des monts Dauni près de la forêt du Monte Cornacchia ; isolé et calme, peu de sites.",
+   "es": "Pueblo en alto de los Borghi più belli en los montes Dauni, cerca del bosque del Monte Cornacchia; apartado y tranquilo, pocos monumentos.",
+   "it": "Borgo collinare tra i più belli d'Italia sui Monti Dauni vicino al bosco del Monte Cornacchia; isolato e quieto, poche attrazioni."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ }
+]
