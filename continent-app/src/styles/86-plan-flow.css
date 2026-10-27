@@ -434,14 +434,54 @@
 
 /* ---- The trip's page before a route (T656, after the Polarsteps trip view) ---- */
 .pf-home-cover { border-radius: var(--radius-card); overflow: hidden; }
-.pf-home-empty li {
+/* No stops yet (T751): one dashed slot under the start, joined to it by a
+   dashed line, so the empty route reads as a place to fill, not as rows
+   still loading. */
+.pf-home-slot {
+  position: relative;
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-3);
+  margin-top: var(--space-4);
+  padding: var(--space-3) var(--space-4) var(--space-3) var(--space-3);
+  border: 1.5px dashed var(--neutral-300);
   border-radius: var(--radius-card);
-  background: var(--surface-sunken);
 }
+
+.pf-home-slot::before {
+  content: '';
+  position: absolute;
+  left: 17px; /* under the centre of the start dot */
+  bottom: 100%;
+  height: calc(var(--space-4) + var(--space-2));
+  border-left: 1.5px dashed var(--neutral-300);
+}
+
+.pf-home-slot-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-pill);
+  background: var(--action-tint);
+  color: var(--select-ink);
+}
+
+.pf-home-slot-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+
+.pf-home-slot-title { font-size: var(--text-lead); font-weight: 600; color: var(--text); }
+
+.pf-home-slot-sub { font-size: var(--text-body); line-height: var(--leading-body); color: var(--text-2); }
+
+/* Who can see it (T751): the three answers as chips, not a select. */
+.pf-vis-card { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-3) var(--space-4) var(--space-4); }
+
+.pf-vis-head { display: flex; align-items: center; gap: var(--space-3); font-size: var(--text-body); font-weight: 500; color: var(--text); }
+
+.pf-vis-head svg { flex: none; color: var(--text-2); }
+
+.pf-vis { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 
 /* ---- What you're up for: photo tiles (T656) ---- */
 .pf-like.btn {

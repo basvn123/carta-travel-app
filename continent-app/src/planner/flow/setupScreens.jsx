@@ -18,8 +18,9 @@ import {
   ArrowLeftIcon, CalendarIcon, CameraIcon, CheckIcon, ChevronRightIcon, CloseIcon, EyeIcon, FriendsIcon, PencilIcon, PlusIcon,
 } from '../../components/Icons.jsx';
 import { LifestyleStep } from './LifestyleStep.jsx';
+import { VisibilityChoice } from './VisibilityChoice.jsx';
 import { PartyEditor } from '../PartyEditor.jsx';
-import { answer, markAnswered, normalizeSettings, withPartyKind, PARTY_KINDS, VISIBILITY } from './tripSettings.js';
+import { answer, markAnswered, normalizeSettings, withPartyKind, PARTY_KINDS } from './tripSettings.js';
 
 /*
  * The setup questions that need their own controls (T655), and the Create
@@ -573,17 +574,13 @@ export function CreateScreen({ settings, save, onBack, onDone, onEditWhen }) {
               />
               <Button variant="secondary" iconStart={<PlusIcon size={16} />} onClick={addBuddy} disabled={!buddy.trim()}>{t('pf.create.addBuddy')}</Button>
             </div>
-            <p className="pf-note">{t('pf.create.inviteLater')}</p>
           </div>
         )}
       </div>
 
-      <div className="pf-card pf-field-row">
-        <EyeIcon size={18} />
-        <label className="pf-field-label" htmlFor="pf-vis">{t('pf.create.visibility')}</label>
-        <select id="pf-vis" className="pf-select" value={visibility} onChange={(e) => setVisibility(e.target.value)}>
-          {VISIBILITY.map((v) => <option key={v} value={v}>{t(`pf.vis.${v}`)}</option>)}
-        </select>
+      <div className="pf-card pf-vis-card">
+        <span className="pf-vis-head"><EyeIcon size={18} />{t('pf.create.visibility')}</span>
+        <VisibilityChoice value={visibility} onChange={setVisibility} />
       </div>
 
       <div className="pf-foot">

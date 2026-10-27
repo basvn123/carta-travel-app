@@ -7244,7 +7244,6 @@ export const nl = {
   "pf.create.buddyName": "Voornaam",
   "pf.create.addBuddy": "Toevoegen",
   "pf.create.removeBuddy": "{name} verwijderen",
-  "pf.create.inviteLater": "Zodra de reis bewaard is, stuur je ze een link om samen te plannen.",
   "pf.create.visibility": "Wie kan hem zien?",
   "pf.vis.private": "Alleen ik",
   "pf.vis.friends": "Vrienden",
@@ -7277,6 +7276,8 @@ export const nl = {
   // T656: the trip page before a route, the doors and help me choose
   "pf.home.starts": "Reis begint",
   "pf.home.nightsPlanned": "{x} van {n} nachten gepland",
+  "pf.home.noStops": "Nog geen stops",
+  "pf.home.noStopsSub": "Begin met plannen om de plekken op je route toe te voegen.",
   "pf.home.plan": "Begin met plannen",
   "pf.doors.title": "Hoe wil je kiezen waarheen?",
   "pf.doors.help": "Bij elke plek zie je wat een dag er jou kost.",

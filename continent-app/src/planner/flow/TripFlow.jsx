@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { plannerStore } from '../plannerStore.js';
 import { Button, ChoiceRows, IconButton } from '../../components/ui/index.js';
-import { HomeIcon, PlusIcon, SettingsIcon } from '../../components/Icons.jsx';
+import { HomeIcon, MapPinIcon, PlusIcon, SettingsIcon } from '../../components/Icons.jsx';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { PlanStage, SheetHead } from './PlanStage.jsx';
 import { QUESTIONS } from './questions.js';
@@ -151,8 +151,9 @@ export function TripFlow({ renderEngine, seed = null }) {
 
 /**
  * The trip's page with no route yet (after the Polarsteps trip view): the
- * trip's name, when it starts, how many of its nights are planned, three
- * empty rows where the stops will be, and Start planning.
+ * trip's name, when it starts, how many of its nights are planned, one
+ * dashed slot where the first stop will go (T751: three grey rows read as
+ * a page still loading), and Start planning.
  */
 function TripHome({ settings, onStart }) {
   const { t } = useI18n();
@@ -176,11 +177,13 @@ function TripHome({ settings, onStart }) {
         </span>
         <span className="pf-home-nights">{t('pf.home.nightsPlanned', { x: 0, n: nights })}</span>
       </div>
-      <ul className="pf-home-empty" aria-hidden="true">
-        <li><span /><span /></li>
-        <li><span /><span /></li>
-        <li><span /><span /></li>
-      </ul>
+      <div className="pf-home-slot">
+        <span className="pf-home-slot-icon" aria-hidden="true"><MapPinIcon size={18} /></span>
+        <span className="pf-home-slot-text">
+          <span className="pf-home-slot-title">{t('pf.home.noStops')}</span>
+          <span className="pf-home-slot-sub">{t('pf.home.noStopsSub')}</span>
+        </span>
+      </div>
       <div className="pf-foot">
         <Button variant="primary" block iconStart={<PlusIcon size={18} />} onClick={onStart}>{t('pf.home.plan')}</Button>
       </div>

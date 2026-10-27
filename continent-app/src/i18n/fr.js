@@ -7244,7 +7244,6 @@ export const fr = {
   "pf.create.buddyName": "Prénom",
   "pf.create.addBuddy": "Ajouter",
   "pf.create.removeBuddy": "Retirer {name}",
-  "pf.create.inviteLater": "Une fois le voyage enregistré, envoyez-leur un lien pour planifier ensemble.",
   "pf.create.visibility": "Qui peut le voir ?",
   "pf.vis.private": "Moi seul",
   "pf.vis.friends": "Amis",
@@ -7277,6 +7276,8 @@ export const fr = {
   // T656: the trip page before a route, the doors and help me choose
   "pf.home.starts": "Début du voyage",
   "pf.home.nightsPlanned": "{x} nuits sur {n} planifiées",
+  "pf.home.noStops": "Pas encore d'étapes",
+  "pf.home.noStopsSub": "Commencez à planifier pour ajouter les étapes de votre itinéraire.",
   "pf.home.plan": "Commencer",
   "pf.doors.title": "Comment voulez-vous choisir où ?",
   "pf.doors.help": "Chaque lieu indique ce qu'une journée vous y coûte.",

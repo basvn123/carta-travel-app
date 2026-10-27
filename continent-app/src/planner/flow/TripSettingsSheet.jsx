@@ -9,7 +9,8 @@ import { useLifestyleLabel } from '../planHooks.js';
 import { QUESTIONS } from './questions.js';
 import { QuestionBody } from './QuestionScreen.jsx';
 import { useBcp47, useMonths, useTripSettings, whenText } from './flowHooks.js';
-import { normalizeSettings, VISIBILITY } from './tripSettings.js';
+import { normalizeSettings } from './tripSettings.js';
+import { VisibilityChoice } from './VisibilityChoice.jsx';
 
 /**
  * Trip settings (T655), behind the gear on the planner's map: every answer
@@ -119,15 +120,11 @@ export function TripSettingsSheet({ onClose, anchorRef, onSaved = null, planned 
             maxLength={80}
             onChange={(e) => save(normalizeSettings({ ...s, trip: { ...s.trip, name: e.target.value } }))}
           />
-          <label className="pf-label" htmlFor="pf-set-vis">{t('pf.create.visibility')}</label>
-          <select
-            id="pf-set-vis"
-            className="pf-select pf-set-input"
+          <span className="pf-label">{t('pf.create.visibility')}</span>
+          <VisibilityChoice
             value={s.trip.visibility}
-            onChange={(e) => save(normalizeSettings({ ...s, trip: { ...s.trip, visibility: e.target.value } }))}
-          >
-            {VISIBILITY.map((v) => <option key={v} value={v}>{t(`pf.vis.${v}`)}</option>)}
-          </select>
+            onChange={(v) => save(normalizeSettings({ ...s, trip: { ...s.trip, visibility: v } }))}
+          />
         </div>
         {groups.map((g) => (
           <section className="pf-set-group" key={g.key} aria-labelledby={`pf-set-${g.key}`}>
