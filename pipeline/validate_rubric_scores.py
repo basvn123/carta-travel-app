@@ -1,0 +1,224 @@
+"""Validate rating v5 rubric scores, and merge the passing shards (T758).
+
+Tier: Manual (after each rubric scoring shard)
+
+Checks one shard's data/rating/rubric_scores/shard_XX.json against its fact
+cards and docs/RATING_RUBRIC.md:
+  - the schema and the ranges (appeal 0-10 with one decimal, five criteria
+    0-10, confidence high|medium|low, known flags, sources as URLs)
+  - the band matches the appeal
+  - six languages present, each reason at most 25 words, no em dash anywhere
+  - every card id covered exactly once, no other id
+  - at most 10 web sources per shard; a thin_card flag with no source is low
+    confidence, and a low-confidence score stays at 7.5 or below unless a
+    source backs it
+  - the five hidden controls sit within 0.5 of their hand scores on average
+    (skipped with --schema-only, which is what a scorer runs: it never reads
+    data/rating/hidden/)
+
+Usage:
+    python validate_rubric_scores.py 03                 # full check of shard 03
+    python validate_rubric_scores.py 03 --schema-only   # the scorer's own check
+    python validate_rubric_scores.py 03 --merge         # join parts/ first
+    python validate_rubric_scores.py --all --write      # check every shard and
+                                                        # write app_data/rubric_appeal.json
+"""
+
+import argparse
+import json
+import re
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+CARDS = ROOT / "data" / "rating" / "fact_cards"
+SCORES = ROOT / "data" / "rating" / "rubric_scores"
+HIDDEN = ROOT / "data" / "rating" / "hidden" / "scorer_hidden.jsonl"
+MERGED = ROOT / "app_data" / "rubric_appeal.json"
+
+N_SHARDS = 15
+LANGS = ("en", "nl", "de", "fr", "es", "it")
+CRITERIA = ("setting", "character", "sights", "atmosphere", "uniqueness")
+CONFIDENCE = ("high", "medium", "low")
+FLAGS = {"thin_card", "class_mismatch", "name_ambiguous", "data_conflict",
+         "duplicate_suspect", "airport_named", "beyond_class"}
+BANDS = (("exceptional", 9.0), ("excellent", 8.3), ("very_good", 7.6),
+         ("good", 6.9), ("pleasant", 6.0), ("none", -1.0))
+MAX_WORDS = 25
+MAX_SOURCES = 10
+LOW_CAP = 7.5
+CONTROL_MAX_GAP = 0.5
+EM_DASH = "—"
+
+
+def band_of(appeal):
+    return next(name for name, lo in BANDS if appeal >= lo - 1e-9)
+
+
+def card_ids(shard):
+    path = CARDS / f"shard_{shard:02d}.jsonl"
+    return [json.loads(line)["id"] for line in path.read_text(encoding="utf-8").splitlines() if line]
+
+
+def merge_parts(shard):
+    """Join data/rating/rubric_scores/shard_XX/part_*.json into shard_XX.json
+    in card order. A scorer writes its shard in parts of about 40."""
+    rows = []
+    for p in sorted((SCORES / f"shard_{shard:02d}").glob("part_*.json")):
+        rows += json.loads(p.read_text(encoding="utf-8"))
+    order = {did: k for k, did in enumerate(card_ids(shard))}
+    rows.sort(key=lambda r: order.get(r.get("id"), len(order)))
+    out = SCORES / f"shard_{shard:02d}.json"
+    out.write_text(json.dumps(rows, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    return out
+
+
+def check_row(r):
+    """Problems with one score row, as strings."""
+    p = []
+    did = r.get("id")
+    a = r.get("appeal")
+    if not isinstance(a, (int, float)) or not 0 <= a <= 10 or round(a, 1) != a:
+        p.append(f"{did}: appeal {a!r} is not 0-10 with one decimal")
+        return p
+    if r.get("band") != band_of(a):
+        p.append(f"{did}: band {r.get('band')!r} does not match appeal {a} ({band_of(a)})")
+    crit = r.get("criteria") or {}
+    for c in CRITERIA:
+        v = crit.get(c)
+        if not isinstance(v, (int, float)) or not 0 <= v <= 10:
+            p.append(f"{did}: criterion {c} {v!r} is not 0-10")
+    extra = set(crit) - set(CRITERIA)
+    if extra:
+        p.append(f"{did}: unknown criteria {sorted(extra)}")
+    why = r.get("why") or {}
+    for lang in LANGS:
+        text = why.get(lang)
+        if not isinstance(text, str) or not text.strip():
+            p.append(f"{did}: why.{lang} missing")
+        elif len(text.split()) > MAX_WORDS:
+            p.append(f"{did}: why.{lang} has {len(text.split())} words (max {MAX_WORDS})")
+    conf = r.get("confidence")
+    if conf not in CONFIDENCE:
+        p.append(f"{did}: confidence {conf!r}")
+    flags = r.get("flags")
+    if not isinstance(flags, list) or set(flags) - FLAGS:
+        p.append(f"{did}: flags {flags!r} (known: {sorted(FLAGS)})")
+        flags = []
+    sources = r.get("sources")
+    if not isinstance(sources, list) or any(
+            not isinstance(s, str) or not re.match(r"https?://", s) for s in sources):
+        p.append(f"{did}: sources must be a list of URLs")
+        sources = []
+    if "thin_card" in flags and not sources and conf != "low":
+        p.append(f"{did}: thin_card with no source must be low confidence")
+    if conf == "low" and not sources and a > LOW_CAP:
+        p.append(f"{did}: low confidence with no source above {LOW_CAP}")
+    if EM_DASH in json.dumps(r, ensure_ascii=False):
+        p.append(f"{did}: em dash")
+    return p
+
+
+def check_shard(shard, schema_only):
+    """(problems, rows, control summary or None)."""
+    path = SCORES / f"shard_{shard:02d}.json"
+    if not path.exists():
+        return [f"shard {shard:02d}: {path.relative_to(ROOT)} missing"], [], None
+    rows = json.loads(path.read_text(encoding="utf-8"))
+    problems = []
+    want = card_ids(shard)
+    got = [r.get("id") for r in rows]
+    dup = sorted({i for i in got if got.count(i) > 1})
+    missing = sorted(set(want) - set(got))
+    extra = sorted(set(got) - set(want))
+    if dup:
+        problems.append(f"ids scored more than once: {dup[:10]}")
+    if missing:
+        problems.append(f"{len(missing)} card ids not scored: {missing[:10]}")
+    if extra:
+        problems.append(f"ids not in the shard: {extra[:10]}")
+    for r in rows:
+        problems += check_row(r)
+    urls = {s for r in rows for s in (r.get("sources") or []) if isinstance(s, str)}
+    if len(urls) > MAX_SOURCES:
+        problems.append(f"{len(urls)} web sources (max {MAX_SOURCES} per shard)")
+
+    controls = None
+    if not schema_only:
+        hidden = [json.loads(line) for line in HIDDEN.read_text(encoding="utf-8").splitlines() if line]
+        ctl = {h["id"]: h["hand_appeal"] for h in hidden
+               if h["role"] == "control" and h["shard"] == shard}
+        by_id = {r.get("id"): r for r in rows}
+        gaps = {i: round(by_id[i]["appeal"] - hand, 1) for i, hand in ctl.items()
+                if i in by_id and isinstance(by_id[i].get("appeal"), (int, float))}
+        mean = sum(abs(g) for g in gaps.values()) / len(gaps) if gaps else None
+        controls = {"gaps": gaps, "mean_abs_gap": None if mean is None else round(mean, 2)}
+        if mean is None or mean > CONTROL_MAX_GAP:
+            problems.append(f"hidden controls mean gap {mean} > {CONTROL_MAX_GAP}: redo the shard")
+    return problems, rows, controls
+
+
+def summary(rows):
+    bands = {}
+    for r in rows:
+        bands[r.get("band")] = bands.get(r.get("band"), 0) + 1
+    conf = {}
+    for r in rows:
+        conf[r.get("confidence")] = conf.get(r.get("confidence"), 0) + 1
+    return f"bands {bands}  confidence {conf}"
+
+
+def write_merged(all_rows):
+    """Every rubric score except the hidden controls (hand scores win, and
+    the controls are hand-scored) into app_data/rubric_appeal.json."""
+    hidden = {json.loads(line)["id"]: json.loads(line)
+              for line in HIDDEN.read_text(encoding="utf-8").splitlines() if line}
+    out = {}
+    for shard, rows in all_rows:
+        for r in rows:
+            if (hidden.get(r["id"]) or {}).get("role") == "control":
+                continue
+            out[r["id"]] = {k: r[k] for k in ("appeal", "band", "criteria", "why",
+                                               "confidence", "flags", "sources")}
+            out[r["id"]]["shard"] = shard
+    MERGED.write_text(json.dumps(out, ensure_ascii=False, indent=1, sort_keys=True) + "\n",
+                      encoding="utf-8")
+    return len(out)
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("shard", nargs="?", type=int)
+    ap.add_argument("--schema-only", action="store_true")
+    ap.add_argument("--merge", action="store_true")
+    ap.add_argument("--all", action="store_true")
+    ap.add_argument("--write", action="store_true")
+    args = ap.parse_args()
+    shards = range(1, N_SHARDS + 1) if args.all else [args.shard]
+    failed = 0
+    passing = []
+    for s in shards:
+        if args.merge:
+            merge_parts(s)
+        problems, rows, controls = check_shard(s, args.schema_only)
+        status = "FAIL" if problems else "pass"
+        line = f"shard {s:02d}: {status}  {len(rows)} rows  {summary(rows)}"
+        if controls:
+            line += f"  controls mean gap {controls['mean_abs_gap']} {controls['gaps']}"
+        print(line)
+        for p in problems[:40]:
+            print("   ", p)
+        if problems:
+            failed += 1
+        else:
+            passing.append((s, rows))
+    if args.write:
+        if failed:
+            print(f"{failed} shard(s) fail: not writing {MERGED.name}")
+        else:
+            print(f"{write_merged(passing)} rubric scores -> {MERGED.relative_to(ROOT)}")
+    return 1 if failed else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
