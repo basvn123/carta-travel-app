@@ -83,8 +83,12 @@ def test_zlog_does_not_depend_on_the_cohort():
 
 
 def test_recalibration_needs_a_version_bump():
+    # Raises unless the stored part already carries the config's version, so
+    # the call below can only ever be refused, never write.
+    rating_config.reference("rating")
     try:
-        rating_config.write_part("rating", {}, rating_config.version())
+        rating_config.write_part("rating", {},
+                                 rating_config.part_version("rating"))
     except SystemExit as e:
         assert "REFUSED" in str(e)
     else:

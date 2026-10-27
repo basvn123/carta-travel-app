@@ -55,6 +55,12 @@ def reference_path():
 
 
 PARTS = ("significance", "rating")
+
+
+def part_version(part):
+    """The reference version this config reads for one part (T756): a model
+    change that leaves a part alone does not force it to be re-measured."""
+    return cfg("reference_versions")[part]
 _REF_CACHE = {}
 
 
@@ -81,13 +87,13 @@ def reference(part):
     if not got:
         raise FileNotFoundError(
             f"{reference_path()} has no {part} part: recalibrate it with "
-            f"--recalibrate --version {version()}")
-    if got.get("version") != version():
+            f"--recalibrate --version {part_version(part)}")
+    if got.get("version") != part_version(part):
         raise ValueError(
             f"the {part} part of {reference_path().name} is "
-            f"{got.get('version')} but config/rating.json is {version()}: "
-            f"recalibrate (--recalibrate --version {version()}) or restore "
-            f"the matching config")
+            f"{got.get('version')} but config/rating.json reads "
+            f"{part_version(part)}: recalibrate (--recalibrate --version "
+            f"{part_version(part)}) or restore the matching config")
     return got
 
 
@@ -97,17 +103,18 @@ def write_part(part, payload, requested_version):
     already carry it, so a recalibration can never pass for a normal run."""
     if part not in PARTS:
         raise ValueError(f"unknown reference part {part}")
-    if requested_version != version():
+    if requested_version != part_version(part):
         raise SystemExit(
-            f"REFUSED: --version {requested_version} is not the version in "
-            f"config/rating.json ({version()}); bump the config first")
+            f"REFUSED: --version {requested_version} is not the {part} "
+            f"version in config/rating.json ({part_version(part)}); bump the "
+            f"config first")
     ref = dict(_read_reference())
     old = (ref.get(part) or {}).get("version")
     if old == requested_version:
         raise SystemExit(
             f"REFUSED: the {part} part is already {old}; a recalibration "
             f"needs a new version in config/rating.json")
-    ref["version"] = requested_version
+    ref["version"] = version()
     ref[part] = dict(payload, version=requested_version)
     path = reference_path()
     path.parent.mkdir(parents=True, exist_ok=True)

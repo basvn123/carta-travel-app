@@ -185,7 +185,7 @@ def main() -> None:
         path = rating_config.write_part("rating", payload, args.version)
         print(f"  rating reference {args.version}: "
               f"{payload['n_curated']} curated, {payload['n_fitted']} fitted, "
-              f"depth p99 {payload['depth_p99']}, fallback "
+              f"depth classes {len(payload['depth_knots'])}, fallback "
               f"{payload['fallback']['coefficients']} -> {path}")
     counts = rating_layer.compute_ratings(dests)
 

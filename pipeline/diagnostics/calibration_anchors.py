@@ -231,7 +231,9 @@ def rebuild(rev, write=True):
         old = dict(rating_config.reference("rating"))
     except (FileNotFoundError, ValueError):
         old = {}
-    depth_p99 = data["meta"]["rating_model"]["highlights_model"]["depth_p99"]
+    # rating_v4 wires only; v5 (T756) has no depth p99.
+    depth_p99 = ((data["meta"]["rating_model"].get("highlights_model") or {})
+                 .get("depth_p99"))
     out = dict(old)
     out.update({
         "frozen": old.get("frozen", "2026-09-04"),

@@ -2,6 +2,11 @@
   "_about": "The one configuration of every number that moves a rating (Carta rating v5, Roadmap/2.10b-rating-v5.md; batch R1, T754). The pipeline reads it through pipeline/rating_config.py; the app will read it in T776. What was measured on the reference catalogue (zlog spread, breakpoints, class scales, curves, fallback coefficients) lives in the frozen reference named below, never here. Changing a number here is a model change: bump version, then rebuild the reference with apply_rating_layer.py --recalibrate --version <new>.",
   "version": "v5.0-r1",
   "reference": "reports/rating_reference_v5.json",
+  "reference_versions": {
+    "_about": "Which version of each part of the frozen reference this config reads. A part is rebuilt only by its own --recalibrate, which must name the version given here; a model change that does not touch a part leaves it at its version (turning depth.live or beauty.live on changes the rating part, not the significance part).",
+    "significance": "v5.0-r1",
+    "rating": "v5.0-r1"
+  },
 
   "weights": {
     "_about": "Destination score blend (rating_v4 weights, kept in R1; the v5 weights 0.60/0.15/0.15/0.10 wait for the rubric scores of R2).",
@@ -46,8 +51,56 @@
     "corroborating": ["unesco_whc", "beautiful_village", "heritage_town", "spa_town", "national_park"]
   },
 
+  "depth": {
+    "_about": "D, depth (T756), NOT LIVE until live is true (an owner decision, Execution/_OPEN.md T756-a: switched on it fails the famous floors, the tier-3 population and a golden pair). How much there is to do. POIs at rate 3 (must_see) and rate 2 (recommended), plus rated nature items (beaches, lakes, peaks, hikes, cycling routes) scored at least nature_min_score between beauty's setting_km and reach_km (about 30 minutes by road: 25 km straight x 1.3 detour at 65 km/h). Sorted into eight categories; within a category the i-th item counts its weight / i, up to per_category_max (a POI's weight is also scaled by its absolute significance sig / 3 when poi_weight_by_sig: rate is a town-relative quota, so every 52-POI metro holds about six rate-3 items whatever they are); each category covered adds category_bonus. The raw sum is read as a percentile on the frozen per-class breakpoints and written to rating.components.highlights (the key is renamed in schema v19, T775). Rate stands in for the POI labels of T774.",
+    "live": false,
+    "categories": ["sights", "museums", "nature", "food_drink", "active", "family", "nightlife", "markets"],
+    "item_weight": {"must_see": 1.0, "recommended": 0.5, "nature_item": 1.0},
+    "poi_weight_by_sig": true,
+    "sig_max": 3.0,
+    "per_category_max": 4,
+    "category_bonus": 0.25,
+    "nature_min_score": 7.6,
+    "reach_km": 25.0,
+    "poi_nature_match_km": 0.3,
+    "knots": 201,
+    "kind_category": {
+      "Museum": "museums",
+      "Theme park": "family", "Water park": "family", "Ferris wheel": "family",
+      "Swimming": "active", "Skiing": "active", "Climbing": "active", "Diving": "active",
+      "Surfing": "active", "Activity": "active", "Sauna & baths": "active",
+      "Peak": "nature", "Nature reserve": "nature", "Glacier": "nature", "Canyon": "nature",
+      "River": "nature", "Island": "nature", "Geyser": "nature", "Lake": "nature",
+      "Waterfall": "nature", "Cliffs": "nature", "Beach": "nature", "Viewpoint": "nature",
+      "National park": "nature"
+    },
+    "default_category": "sights",
+    "name_category": {
+      "_about": "Name patterns (case-insensitive regex) that override the kind, checked in this order: the shipped POI kinds have no market, food, zoo or nightlife kind.",
+      "markets": "\\b(market|markt|mercado|mercato|marché|bazaa?r|mercat|targ|piac)\\b",
+      "food_drink": "\\b(brewery|brauerei|winery|vineyard|wine|weingut|bodega|cantina|distillery|cellar|food hall|chocolate)\\b",
+      "family": "\\b(zoo|aquarium|aquar|tierpark|dierentuin|safari|legoland|playground)\\b",
+      "nightlife": "\\b(bar|pub|club|nightclub|jazz|cabaret|casino|opera)\\b"
+    }
+  },
+
+  "beauty": {
+    "_about": "Beauty v2 (T756), NOT LIVE until live is true (Execution/_OPEN.md T756-a: switched on it fails the beauty/population gate, 0.152 against 0.12, and the tier-3 population). What you see within setting_km of the centre. An item scored item_floor is worth 0 and item_floor + item_span is worth 1; the best item counts in full and the second closes second_item_share of the gap. Keys follow the wire: nature = natural setting, beach = water (renamed in schema v19). heritage stays measured for the culture match but weighs 0: UNESCO is counted in recognition.",
+    "live": false,
+    "weights": {"urban": 0.35, "nature": 0.35, "beach": 0.20, "iconic": 0.10, "heritage": 0.0},
+    "standout_bonus": 0.20,
+    "standout_excludes": ["urban", "heritage"],
+    "setting_km": 5.0,
+    "item_floor": 5.0,
+    "item_span": 4.0,
+    "second_item_share": 0.25,
+    "nature_tags_saturate": 2.0,
+    "register_tags": ["national-park", "unesco"],
+    "score_floor": 0.06
+  },
+
   "highlights": {
-    "_about": "rating_v4 highlights: 0.55 x best sight + 0.45 x best six position-discounted, over it.sig. Replaced by depth in T756.",
+    "_about": "rating_v4 highlights, live until depth.live is turned on: 0.55 x best sight + 0.45 x best six position-discounted, over it.sig.",
     "k": 6,
     "peak_w": 0.55,
     "depth_w": 0.45,

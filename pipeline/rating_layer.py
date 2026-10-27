@@ -91,6 +91,7 @@ every ranking, rail and top list. Flight search still reads the airport rows.
 """
 
 import json
+import re
 from pathlib import Path
 
 import appeal_scale
@@ -103,6 +104,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DEST_PV_CACHE = ROOT / "cache" / "dest_pageviews.json"
 CURATED_APPEAL = ROOT / "app_data" / "curated_appeal.json"
 GOLDEN_ANCHORS = ROOT / "tests" / "golden_ratings.json"
+ROUTES_ATTACH = ROOT / "data" / "derived" / "routes_attach.json"
 
 # Chosen by grid search over the shipped catalogue, not by taste. The search
 # held the catalogue mean at v2's 6.56 (so tier populations survive) and
@@ -130,6 +132,38 @@ DEPTH_DECAY = cfg("highlights.decay")       # i-th sight counts 1/(1+0.55i)
 SIG_UNMEASURED = cfg("highlights.sig_unmeasured")  # sig for an unscored POI:
                                 # the catalogue median is ~1.5; unmeasured
                                 # sits below it, never at world-class
+
+# Depth (T756, rating v5 batch R1) replaces v4's highlights, which read the
+# best six sights' significance and saturated: 0.98 to 1.0 for almost every
+# famous place, and one big sight outscored variety. Depth asks how much there
+# is to do, across distinct kinds, against the place's own class. Every
+# number is in continent-app/config/rating.json (depth). The value is written
+# into rating.components.highlights, the wire key the app reads, until schema
+# v19 (T775) renames it.
+#
+# NOT LIVE (T756): switched on by depth.live in config/rating.json. Measured
+# on the shipped catalogue it fails gates the rating must keep - the famous
+# floors (Paris 8.9, Barcelona 8.7 against 9.0), the tier-3 population (26,
+# gate 35 to 70) and one golden pair - because a within-class percentile
+# averages 0.5 in every class where v4 highlights averaged about 0.9, and the
+# POI data has no market, food or nightlife kinds yet (T774). Until the owner
+# decides (Execution/_OPEN.md T756-a) the score reads v4 highlights and depth
+# is computed for the gates and reports only.
+_D = section("depth")
+DEPTH_LIVE = _D["live"]
+DEPTH_CATEGORIES = list(_D["categories"])
+DEPTH_WEIGHT = dict(_D["item_weight"])
+DEPTH_PER_CATEGORY = _D["per_category_max"]
+DEPTH_CATEGORY_BONUS = _D["category_bonus"]
+DEPTH_NATURE_MIN = _D["nature_min_score"]
+DEPTH_REACH_KM = _D["reach_km"]
+DEPTH_POI_MATCH_KM = _D["poi_nature_match_km"]
+DEPTH_POI_BY_SIG = _D["poi_weight_by_sig"]
+SIG_MAX = _D["sig_max"]                     # it.sig runs 0-3 (score_significance)
+DEPTH_KIND_CATEGORY = dict(_D["kind_category"])
+DEPTH_DEFAULT_CATEGORY = _D["default_category"]
+DEPTH_NAME_CATEGORY = [(cat, re.compile(pat, re.I)) for cat, pat
+                       in section("depth.name_category").items()]
 
 # Acclaim: what membership of each register is worth, 0-1. Mirrors (and must
 # stay in step with) score_place_candidates.DESIGNATION_WEIGHT. A place in two
@@ -191,9 +225,13 @@ RATING_MODEL = {
                    "(curated_appeal.json), read through the per-class scale"),
         "acclaim": "membership of authoritative place registers (dest.designations)",
         "beauty": "composite Beauty Index (UNESCO, nature tags, iconic, beaches)",
-        "highlights": (f"peak-and-depth over the best {HIGHLIGHT_K} sights' "
-                       "ABSOLUTE significance (it.sig), p99-normalised at "
-                       "scoring time"),
+        "highlights": (("depth (T756): how much there is to do across eight "
+                        "categories, with diminishing returns, as a percentile "
+                        "within the place class (key renamed in schema v19)")
+                       if DEPTH_LIVE else
+                       (f"peak-and-depth over the best {HIGHLIGHT_K} sights' "
+                        "ABSOLUTE significance (it.sig), on the frozen depth "
+                        "p99")),
         "fame": "avg daily Wikipedia pageviews - hidden-gem signal only, not scored",
     },
     "appeal_scale": appeal_scale.APPEAL_SCALE_MODEL,
@@ -279,6 +317,134 @@ def highlights_map(dests, p99=None):
     return out, round(p99, 3)
 
 
+def poi_category(item):
+    """One of the eight depth categories for a POI: a name pattern first (the
+    shipped kinds have no market, food, zoo or nightlife kind), then the kind,
+    then sights."""
+    name = item.get("name") or ""
+    for cat, rx in DEPTH_NAME_CATEGORY:
+        if rx.search(name):
+            return cat
+    return DEPTH_KIND_CATEGORY.get(item.get("kind"), DEPTH_DEFAULT_CATEGORY)
+
+
+_ROUTES = None
+
+
+def load_routes():
+    """{dest id: {"hiking": [...], "cycling": [...]}} from trails/attach.py."""
+    global _ROUTES
+    if _ROUTES is None:
+        _ROUTES = (json.loads(ROUTES_ATTACH.read_text(encoding="utf-8"))
+                   if ROUTES_ATTACH.exists() else {})
+    return _ROUTES
+
+
+def depth_items(did, dest):
+    """[(fact key, category, weight)] the depth term counts for one place.
+
+    POIs at rate 3 and 2; rated beaches, lakes and peaks scored at least
+    DEPTH_NATURE_MIN between beauty's setting radius and DEPTH_REACH_KM; hikes
+    and cycling routes rated at least that within DEPTH_REACH_KM. An item
+    inside the setting radius is beauty's (beauty_layer.setting_items), and a
+    nature POI standing on such an item is the same fact, so neither counts
+    here: no fact feeds two components.
+    """
+    out = []
+    lat, lon = beauty_layer.centre(dest)
+    setting = [it for rows in beauty_layer.setting_items(dest).values()
+               for it in rows]
+    ring = []
+    if lat is not None and lon is not None:
+        idx = beauty_layer.nature_index()
+        for kind in beauty_layer.NATURE_KINDS:
+            for km, row in idx[kind].near(lat, lon, DEPTH_REACH_KM):
+                if km <= beauty_layer.SETTING_KM:
+                    continue
+                if row["score"] >= DEPTH_NATURE_MIN:
+                    ring.append(row)
+                    out.append((row["key"], "nature",
+                                DEPTH_WEIGHT["nature_item"]))
+    known = setting + ring
+
+    items = (dest.get("activities") or {}).get("items_full") or []
+    for i, it in enumerate(items):
+        if it.get("dup") or it.get("noise"):
+            continue
+        rate = it.get("rate") or 0
+        if rate >= 3:
+            w = DEPTH_WEIGHT["must_see"]
+        elif rate == 2:
+            w = DEPTH_WEIGHT["recommended"]
+        else:
+            continue
+        if DEPTH_POI_BY_SIG:
+            w *= min(1.0, max(0.0, (it.get("sig") or 0.0) / SIG_MAX))
+        cat = poi_category(it)
+        if (cat == "nature" and isinstance(it.get("lat"), (int, float))
+                and any(beauty_layer._haversine_km(it["lat"], it["lon"],
+                                                   k["lat"], k["lon"])
+                        <= DEPTH_POI_MATCH_KM for k in known)):
+            continue
+        out.append((f"poi:{did}:{i}", cat, w))
+
+    routes = load_routes().get(did) or {}
+    for activity in ("hiking", "cycling"):
+        for r in routes.get(activity) or []:
+            if ((r.get("km") if r.get("km") is not None else 1e9)
+                    <= DEPTH_REACH_KM
+                    and (r.get("rating") or 0) >= DEPTH_NATURE_MIN):
+                out.append((f"{activity}:{r['id']}", "active",
+                            DEPTH_WEIGHT["nature_item"]))
+    return out
+
+
+def depth_raw(did, dest):
+    """Diminishing returns within a category (the i-th item counts w / i, up
+    to DEPTH_PER_CATEGORY), plus a bonus per category covered, so variety
+    beats ten churches."""
+    by_cat = {}
+    for _key, cat, w in depth_items(did, dest):
+        by_cat.setdefault(cat, []).append(w)
+    total = 0.0
+    for ws in by_cat.values():
+        ws.sort(reverse=True)
+        total += sum(w / (k + 1) for k, w in enumerate(ws[:DEPTH_PER_CATEGORY]))
+    return total + DEPTH_CATEGORY_BONUS * len(by_cat)
+
+
+def depth_knots(raw_by_class, n_knots):
+    """{class: [[raw, percentile], ...]} measured on one catalogue."""
+    out = {}
+    for cls, vals in raw_by_class.items():
+        pct = _percentiles(vals)
+        by_value = {}
+        for v, q in zip(vals, pct):
+            by_value[round(v, 4)] = q
+        pairs = sorted(by_value.items())
+        if len(pairs) > n_knots:
+            step = (len(pairs) - 1) / (n_knots - 1)
+            pairs = [pairs[round(k * step)] for k in range(n_knots)]
+        out[cls] = [[v, round(q, 6)] for v, q in pairs]
+    return out
+
+
+def depth_map(dests, knots=None):
+    """{dest id: depth 0-1}: the raw depth read as a percentile within its
+    class on the FROZEN breakpoints, so a village is compared with villages
+    and adding places moves nobody. Pass ``knots`` only to recalibrate.
+    Returns (map, raw map)."""
+    if knots is None:
+        knots = rating_config.reference("rating")["depth_knots"]
+    raw = {did: depth_raw(did, d) for did, d in dests.items()}
+    out = {}
+    for did, d in dests.items():
+        k = knots.get(appeal_scale.class_of(d)) or knots.get("__pooled__")
+        out[did] = (min(1.0, max(0.0, appeal_scale._interp(k, raw[did])))
+                    if k else 0.0)
+    return out, raw
+
+
 def acclaim01(dest):
     """What other people's juries say about this place, 0-1.
 
@@ -309,7 +475,7 @@ def fit_fallback(dests, appeal, scales, hl01):
     Fitted on the destinations that DO have a curated appeal, then applied to
     the ones that do not, so a place nobody has scored by hand still lands on
     the same scale as its neighbours instead of a tier and a half below them.
-    ``hl01`` is the precomputed highlights map (highlights_map), so the fit
+    ``hl01`` is the precomputed depth map (depth_map), so the fit
     reads exactly the values the scorer will. Returns
     (w_acclaim, w_beauty, w_highlights, intercept).
     """
@@ -513,9 +679,16 @@ def build_reference(dests):
     appeal = load_curated_appeal()
     pv = load_dest_pageviews()
     scales = appeal_scale.scales_for(dests, appeal)
+    raw = {did: depth_raw(did, d) for did, d in dests.items()}
+    raw_by_class = {}
+    for did, d in dests.items():
+        raw_by_class.setdefault(appeal_scale.class_of(d), []).append(raw[did])
+    raw_by_class["__pooled__"] = list(raw.values())
+    knots = depth_knots(raw_by_class, cfg("depth.knots"))
     depths = sorted(highlights_parts(d)[1] for d in dests.values())
     p99 = depths[int(0.99 * (len(depths) - 1))] or 1.0
-    hl01, _ = highlights_map(dests, p99=p99)
+    hl01 = (depth_map(dests, knots=knots)[0] if DEPTH_LIVE
+            else highlights_map(dests, p99=p99)[0])
     fallback = fit_fallback(dests, appeal, scales, hl01)
     ids, scores, comps = _scores(dests, scales, fallback, hl01, appeal)
     fitted_by_class, curated_by_class = _by_class(dests, ids, scores, comps)
@@ -529,6 +702,7 @@ def build_reference(dests):
         "n_fitted": sum(len(v) for v in fitted_by_class.values()),
         "appeal_scales": {cls: [round(m, 4), round(t, 4), c]
                           for cls, (m, t, c) in sorted(scales.items())},
+        "depth_knots": knots,
         "depth_p99": round(p99, 3),
         "fallback": {"coefficients": list(fallback),
                      "terms": ["acclaim", "beauty", "highlights", "intercept"]},
@@ -574,14 +748,31 @@ def compute_ratings(dests):
     ref = rating_config.reference("rating")
 
     scales = appeal_scale.frozen_scales()
-    hl01, depth_p99 = highlights_map(dests)
-    RATING_MODEL["highlights_model"] = {
-        "formula": "clip(0.55*peak + 0.45*depth/depth_p99, 0, 1)",
-        "peak": "best sight's absolute significance (it.sig / 3)",
-        "depth": f"sum over top {HIGHLIGHT_K} of sig_i / (1 + {DEPTH_DECAY}*i)",
-        "depth_p99": depth_p99,
-        "sig_source": ("score_significance.py: composite open-signal evidence "
-                       "on the frozen reference breakpoints, 0-3"),
+    if DEPTH_LIVE:
+        hl01, _raw = depth_map(dests)
+    else:
+        hl01, depth_p99 = highlights_map(dests)
+        RATING_MODEL["highlights_model"] = {
+            "formula": "clip(0.55*peak + 0.45*depth/depth_p99, 0, 1)",
+            "peak": "best sight's absolute significance (it.sig / 3)",
+            "depth": (f"sum over top {HIGHLIGHT_K} of sig_i / "
+                      f"(1 + {DEPTH_DECAY}*i)"),
+            "depth_p99": depth_p99,
+            "sig_source": ("score_significance.py: composite open-signal "
+                           "evidence on the frozen reference breakpoints, 0-3"),
+        }
+    RATING_MODEL["depth_model"] = {
+        "live": DEPTH_LIVE,
+        "written_to": "rating.components.highlights (until schema v19)",
+        "items": ("POIs at rate 3 (weight 1) and rate 2 (0.5); rated "
+                  f"beaches, lakes, peaks, hikes and cycling routes scored "
+                  f">= {DEPTH_NATURE_MIN} within {DEPTH_REACH_KM:g} km and "
+                  f"beyond beauty's {beauty_layer.SETTING_KM:g} km"),
+        "categories": DEPTH_CATEGORIES,
+        "formula": (f"sum over categories of sum_i w_i / i (i <= "
+                    f"{DEPTH_PER_CATEGORY}) + {DEPTH_CATEGORY_BONUS} x "
+                    "categories covered; percentile within the class on "
+                    "frozen breakpoints"),
     }
     fallback = tuple(ref["fallback"]["coefficients"])
     RATING_MODEL["fallback_fit"] = {
