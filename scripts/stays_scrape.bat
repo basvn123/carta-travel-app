@@ -17,7 +17,7 @@ REM When a run finishes it uploads that journal to the private R2 bucket
 REM (state/journal_scrape.sqlite), where the monthly Actions build reads it.
 REM
 REM Needs: pip install playwright httpx
-REM        rclone, with the five RCLONE_CONFIG_R2_* variables set (T045).
+REM        Node with wrangler logged in (npx wrangler whoami), for the R2 upload (T742).
 REM Manual run any month:  set FORCE=1 ^&^& scripts\stays_scrape.bat
 REM A run that spans two months keeps one tag (else the second month starts the
 REM plan again):  set STAYS_RUN=2026-10 before calling this file.
@@ -35,7 +35,7 @@ if /i "%SITE%"=="hostelworld" set "LOG=%CD%\logs\stays_hostelworld.log"
 
 for /f %%m in ('powershell -NoProfile -Command "Get-Date -Format MM"') do set "MON=%%m"
 for /f %%y in ('powershell -NoProfile -Command "Get-Date -Format yyyy"') do set "YEAR=%%y"
-for /f %%s in ('powershell -NoProfile -Command "Get-Date -Format yyyyMMdd-HHmm"') do set "STAMP=%%s"
+for /f %%s in ('powershell -NoProfile -Command "Get-Date -Format yyyyMMdd"') do set "DAY=%%s"
 if not "%FORCE%"=="1" (
   if not "%MON%"=="03" if not "%MON%"=="09" exit /b 0
 )
@@ -75,29 +75,43 @@ type "logs\stays_hw.log" >> "%LOG%"
 del "logs\stays_hw.done"
 
 :upload
-where rclone >nul 2>&1
-if errorlevel 1 (
-  echo rclone not found: journal not uploaded >> "%LOG%"
-  goto finish
-)
-REM Safe upload (T646, T679). The other site's scraper may be writing the journal
-REM right now, so upload a consistent snapshot (SQLite backup API), never the live
-REM file. Keep a dated copy of the remote one on R2, and never replace it with a
-REM journal that has fewer rows (another machine's run, or an older copy).
-set "REMOTE=r2:carta-stays-state/state/journal_scrape.sqlite"
-set "REMOTE_COPY=cache\stays\journal_scrape.remote-%SITE%.sqlite"
+REM Upload (T742) through wrangler, which is logged in on this laptop; the rclone
+REM key in RCLONE_CONFIG_R2_* is refused (403) on carta-stays-state. Same rules as
+REM T646/T679: a consistent snapshot of the journal (the other site's scraper may
+REM be writing it), never replace R2's copy with one that has fewer rows, keep one
+REM backup of R2's copy per day, and skip the upload when nothing is new (the
+REM idle task runs every hour).
+set "BUCKET=carta-stays-state/state"
 set "SNAP=cache\stays\journal_scrape.upload-%SITE%.sqlite"
-if exist "%REMOTE_COPY%" del "%REMOTE_COPY%"
+set "REMOTE_COPY=cache\stays\journal_scrape.remote-%SITE%.sqlite"
 if exist "%SNAP%" del "%SNAP%"
-rclone copyto "%REMOTE%" "%REMOTE_COPY%" >> "%LOG%" 2>&1
-if exist "%REMOTE_COPY%" rclone copyto "%REMOTE%" "r2:carta-stays-state/state/backup/journal_scrape-%STAMP%-%SITE%.sqlite" >> "%LOG%" 2>&1
-python -c "import os,sqlite3,sys; src=sqlite3.connect(sys.argv[1], timeout=60); dst=sqlite3.connect(sys.argv[3]); src.backup(dst); dst.close(); n=lambda p: sqlite3.connect(p).execute('select count(*) from obs').fetchone()[0]; a=n(sys.argv[3]); b=n(sys.argv[2]) if os.path.exists(sys.argv[2]) else 0; print('journal rows: snapshot', a, 'remote', b); sys.exit(1 if a < b else 0)" "cache\stays\journal_scrape.sqlite" "%REMOTE_COPY%" "%SNAP%" >> "%LOG%" 2>&1
-if errorlevel 1 (
-  echo upload refused: the snapshot is missing or has fewer rows than R2's >> "%LOG%"
+if exist "%REMOTE_COPY%" del "%REMOTE_COPY%"
+python -c "import sqlite3,sys; src=sqlite3.connect(sys.argv[1], timeout=60); dst=sqlite3.connect(sys.argv[2]); src.backup(dst); dst.close()" "cache\stays\journal_scrape.sqlite" "%SNAP%" >> "%LOG%" 2>&1
+if not exist "%SNAP%" (
+  echo upload skipped: no snapshot of the journal >> "%LOG%"
   goto finish
 )
-rclone copyto "%SNAP%" "%REMOTE%" >> "%LOG%" 2>&1
+pushd continent-app
+call npx wrangler whoami >nul 2>&1
+call npx wrangler r2 object get "%BUCKET%/journal_scrape.sqlite" --remote --file "..\%REMOTE_COPY%" >nul 2>&1
+REM A failed get (no copy on R2 yet) can leave an empty file: not a journal.
+if errorlevel 1 if exist "..\%REMOTE_COPY%" del "..\%REMOTE_COPY%"
+popd
+python -c "import os,sqlite3,sys; n=lambda p: sqlite3.connect(p).execute('select count(*) from obs').fetchone()[0]; a=n(sys.argv[1]); b=n(sys.argv[2]) if os.path.exists(sys.argv[2]) else 0; print('journal rows: snapshot', a, 'R2', b); sys.exit(3 if a == b else 1 if a < b else 0)" "%SNAP%" "%REMOTE_COPY%" >> "%LOG%" 2>&1
+if errorlevel 3 (
+  echo upload skipped: R2 already has these rows >> "%LOG%"
+  goto finish
+)
+if errorlevel 1 (
+  echo upload refused: the snapshot has fewer rows than R2's >> "%LOG%"
+  goto finish
+)
+pushd continent-app
+if exist "..\%REMOTE_COPY%" call npx wrangler r2 object put "%BUCKET%/backup/journal_scrape-%DAY%.sqlite" --remote --file "..\%REMOTE_COPY%" >> "%LOG%" 2>&1
+call npx wrangler r2 object put "%BUCKET%/journal_scrape.sqlite" --remote --file "..\%SNAP%" >> "%LOG%" 2>&1
+popd
 :finish
 if exist "%SNAP%" del "%SNAP%"
+if exist "%REMOTE_COPY%" del "%REMOTE_COPY%"
 echo ==== stays scrape %RUN% %SITE% done %DATE% %TIME% ==== >> "%LOG%"
 exit /b 0
