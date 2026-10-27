@@ -970,6 +970,14 @@ export function ArrowLeftIcon({ size = 15, className = '', labelled = false }) {
   );
 }
 
+export function ArrowRightIcon({ size = 15, className = '', labelled = false }) {
+  return (
+    <Glyph size={size} className={className} labelled={labelled} label="Next">
+      <path d="M4.5 12h15M13.2 5.3 19.9 12l-6.7 6.7" />
+    </Glyph>
+  );
+}
+
 export function QuestionIcon({ size = 15, className = '', labelled = false }) {
   return (
     <Glyph size={size} className={className} labelled={labelled} label="Questions">

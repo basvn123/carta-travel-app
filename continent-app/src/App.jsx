@@ -1889,6 +1889,8 @@ function TravelApp() {
               onNavigate={goTo}
               onCreated={() => goTo('trip')}
               onAddPast={() => { setPastAtOpen(true); goTo('trips'); }}
+              onOpenJourney={(id) => openFeature('journey', { id })}
+              onOpenStyle={(slug) => openTripStyles(slug)}
             />
           </Suspense>
         </div>

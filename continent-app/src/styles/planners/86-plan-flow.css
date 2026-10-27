@@ -73,51 +73,6 @@
   .pf-sheet { top: var(--space-6); left: var(--space-6); max-height: calc(100% - 2 * var(--space-6)); }
 }
 
-.pf-intro {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-4);
-  padding-block: var(--space-3) var(--space-2);
-}
-
-.pf-intro-start { min-width: 200px; }
-
-.pf-continue {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  width: 100%;
-  min-height: var(--tap-main);
-  padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  color: var(--text);
-  text-decoration: none;
-  transition: background var(--dur-1) var(--ease-out);
-}
-
-.pf-continue:hover { background: var(--surface-hover); }
-
-.pf-continue-text { display: flex; flex-direction: column; flex: 1; min-width: 0; }
-
-.pf-continue-label { font-size: var(--text-lead); font-weight: 600; }
-
-.pf-continue-sub { font-size: var(--text-label); color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-.pf-continue svg { color: var(--text-2); flex: none; }
-
-.pf-quiet {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--tap);
-  font-size: var(--text-label);
-  font-weight: 600;
-  color: var(--action);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
 .pf-step { display: flex; flex-direction: column; gap: var(--space-3); }
 
 .pf-head {

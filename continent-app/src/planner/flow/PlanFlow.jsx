@@ -1,11 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import '../../styles/planners.css';
 import { useI18n } from '../../i18n/index.jsx';
-import { tabHref } from '../../lib/urlState.js';
 import { loadTripDraft } from '../tripDraftStore.js';
-import Logo from '../../components/Logo.jsx';
 import { Button, ChoiceRows, IconButton } from '../../components/ui/index.js';
-import { ChevronRightIcon, ClockIcon, SettingsIcon } from '../../components/Icons.jsx';
+import { ClockIcon, SettingsIcon } from '../../components/Icons.jsx';
 import { PlanStage, SheetHead } from './PlanStage.jsx';
 import { QUESTIONS } from './questions.js';
 import { setupScreens, nextScreen, prevScreen, progressOf } from './flowGraph.js';
@@ -13,15 +11,7 @@ import { QuestionBody } from './QuestionScreen.jsx';
 import { useTripSettings } from './flowHooks.js';
 import { CreateScreen } from './setupScreens.jsx';
 import { TripSettingsSheet } from './TripSettingsSheet.jsx';
-
-/** A plain click stays in the app; a modified click opens the address. */
-function door(go) {
-  return (e) => {
-    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-    e.preventDefault();
-    go();
-  };
-}
+import { PlanHome } from './PlanHome.jsx';
 
 /**
  * PlanFlow (T654, T655), the Plan place with nothing open yet: the opening
@@ -32,8 +22,10 @@ function door(go) {
  *   onNavigate(view)   'trip' | 'day' | 'trips'  (App's goTo)
  *   onCreated()        the trip exists: open it in the trip planner
  *   onAddPast()        My trips' past-trip form (T659)
+ *   onOpenJourney(id)  one written week of the journeys library (T743)
+ *   onOpenStyle(slug)  one style's weeks, or every style for null (T743)
  */
-export function PlanFlow({ onNavigate, onCreated, onAddPast = null, pageOver = false }) {
+export function PlanFlow({ onNavigate, onCreated, onAddPast = null, onOpenJourney = null, onOpenStyle = null, pageOver = false }) {
   const { t } = useI18n();
   const [settings, save] = useTripSettings();
   const [screen, setScreen] = useState('home');
@@ -73,19 +65,25 @@ export function PlanFlow({ onNavigate, onCreated, onAddPast = null, pageOver = f
     </IconButton>
   ) : null;
 
-  let body;
+  // The opening is a page of its own on warm paper (T743): no map, no sheet.
   if (screen === 'home') {
-    body = (
-      <HomeIntro
-        titleTag={Title}
-        hasTrip={hasTrip}
-        tripName={settings.trip.name}
-        onStart={() => go('kind')}
-        onContinue={() => onNavigate('trip')}
-        onNavigate={onNavigate}
-      />
+    return (
+      <div className="pf is-opening" ref={sheetRef}>
+        <PlanHome
+          titleTag={Title}
+          hasTrip={hasTrip}
+          tripName={settings.trip.name}
+          onStart={() => go('kind')}
+          onContinue={() => onNavigate('trip')}
+          onOpenJourney={(id) => (onOpenJourney ? onOpenJourney(id) : onNavigate('trips'))}
+          onOpenStyle={(slug) => (onOpenStyle ? onOpenStyle(slug) : onNavigate('trips'))}
+        />
+      </div>
     );
-  } else if (screen === 'kind') {
+  }
+
+  let body;
+  if (screen === 'kind') {
     body = (
       <KindSheet
         value={kind}
@@ -151,29 +149,6 @@ export function PlanFlow({ onNavigate, onCreated, onAddPast = null, pageOver = f
       {settingsOpen && (
         <TripSettingsSheet anchorRef={gearRef} onClose={() => setSettingsOpen(false)} />
       )}
-    </div>
-  );
-}
-
-/** The opening screen: the mark, one sentence, Start planning (Mindtrip). */
-function HomeIntro({ titleTag, hasTrip, tripName, onStart, onContinue, onNavigate }) {
-  const { t } = useI18n();
-  const Title = titleTag;
-  return (
-    <div className="pf-intro">
-      <Logo size={48} className="pf-mark" />
-      <Title className="pf-title pf-intro-line" tabIndex={-1}>{t('pf.home.line')}</Title>
-      <Button variant="primary" className="pf-intro-start" onClick={onStart}>{t('pf.home.start')}</Button>
-      {hasTrip && (
-        <a className="pf-continue" href={tabHref('trip')} onClick={door(onContinue)}>
-          <span className="pf-continue-text">
-            <span className="pf-continue-label">{t('pf.home.continue')}</span>
-            {tripName && <span className="pf-continue-sub">{tripName}</span>}
-          </span>
-          <ChevronRightIcon size={18} />
-        </a>
-      )}
-      <a className="pf-quiet" href={tabHref('trips')} onClick={door(() => onNavigate('trips'))}>{t('pf.home.trips')}</a>
     </div>
   );
 }

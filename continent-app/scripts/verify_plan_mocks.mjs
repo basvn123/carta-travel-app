@@ -100,7 +100,7 @@ const ONLY = process.env.ONLY || 'ULNS';
 if (ONLY.includes('U')) try {
   const page = await fresh();
   await page.goto(`${BASE}/?tab=plan&paymock`, { waitUntil: 'domcontentloaded' });
-  await page.waitForSelector('.pf-intro', { timeout: 30000 });
+  await page.waitForSelector('.pf-open', { timeout: 30000 });
   await page.getByRole('button', { name: 'Start planning' }).click();
   await cont(page);
   await page.waitForSelector('#pf-tell');
@@ -138,7 +138,7 @@ if (ONLY.includes('U')) try {
 if (ONLY.includes('L')) try {
   const page = await fresh();
   await page.goto(`${BASE}/?tab=plan`, { waitUntil: 'domcontentloaded' });
-  await page.waitForSelector('.pf-intro', { timeout: 30000 });
+  await page.waitForSelector('.pf-open', { timeout: 30000 });
   await page.getByRole('button', { name: 'Start planning' }).click();
   await cont(page);
   await page.waitForSelector('#pf-tell');
@@ -224,7 +224,7 @@ if (ONLY.includes('L')) try {
 if (ONLY.includes('N')) try {
   const page = await fresh();
   await page.goto(`${BASE}/?tab=plan`, { waitUntil: 'domcontentloaded' });
-  await page.waitForSelector('.pf-intro', { timeout: 30000 });
+  await page.waitForSelector('.pf-open', { timeout: 30000 });
   await page.getByRole('button', { name: 'Start planning' }).click();
   await page.getByRole('radio', { name: /on a trip/i }).click();
   await cont(page);

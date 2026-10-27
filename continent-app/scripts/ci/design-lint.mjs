@@ -75,7 +75,10 @@ const BANNED_WORDS = ['seamless', 'seamlessly', 'unlock', 'effortless', 'effortl
 const bannedRe = new RegExp(`\\b(${BANNED_WORDS.join('|')})\\b`, 'i');
 
 // T198: the only legal values of a font-family declaration outside :root.
-const FONT_TOKENS = /^(inherit|var\(\s*--(display|ui|mono|font)\s*\))$/;  // --font: T421 Lagoon
+// T743 (owner, 2026-10-27): --serif, Instrument Serif for the Plan opening's
+// headings. The family named inside an @font-face block is the face being
+// declared, so those lines are not checked.
+const FONT_TOKENS = /^(inherit|var\(\s*--(display|ui|mono|font|serif)\s*\))$/;  // --font: T421 Lagoon
 // T364: the one file that may hold a hex in JavaScript, and the artwork that
 // is not a design token (flags are country artwork, the Google mark is a brand).
 const MIRROR_FILE = 'src/map/tokenColors.js';
@@ -111,13 +114,16 @@ function scanFile(abs, rel) {
   let depth = 0;
   let rootDepth = -1; // brace depth at which a :root block opened, or -1
   let block = null; // current declaration block for the outline check
+  let inFontFace = false; // inside an @font-face block (T743)
   for (let i = 0; i < lines.length; i++) {
     const l = lines[i];
     if (l.includes('—')) add('em-dash', i);
     if (l.includes('·')) add('middot', i);
     if (isEnStrings && bannedRe.test(l.replace(/^\s*[\w$]+\s*:\s*/, ''))) add('banned-word', i, l.match(bannedRe)[1]);
     if (/\b(marquee|parallax)\b/i.test(l)) add('motion-effect', i);
-    const ff = l.match(/\bfont-?[fF]amily\s*:\s*([^;}\n]*)/);
+    if (isCss && /@font-face\s*\{/.test(l)) inFontFace = true;
+    const ff = !inFontFace && l.match(/\bfont-?[fF]amily\s*:\s*([^;}\n]*)/);
+    if (inFontFace && l.includes('}')) inFontFace = false;
     if (ff) {
       const value = ff[1].trim().replace(/\s*!important\s*$/, '').replace(/,\s*$/, '').replace(/^(['"`])(.*)\1$/, '$2').trim();
       if (!FONT_TOKENS.test(value)) add('font-literal', i, value.slice(0, 60));
@@ -133,7 +139,7 @@ function scanFile(abs, rel) {
     if (/^\s*:root\b[^{]*\{/.test(l) && rootDepth < 0) rootDepth = depth;
     const inRoot = rootDepth >= 0;
     const tok = inRoot && l.match(/(?:^|[{;])\s*--([\w-]+)\s*:\s*([^;}]*)/);
-    if (tok && !/^(display|ui|mono)$/.test(tok[1]) && FACE_VALUE.test(tok[2])) add('font-literal', i, '--' + tok[1]);
+    if (tok && !/^(display|ui|mono|serif)$/.test(tok[1]) && FACE_VALUE.test(tok[2])) add('font-literal', i, '--' + tok[1]);
     if (!inRoot && /#[0-9a-fA-F]{3,8}\b/.test(l.replace(/url\([^)]*\)/g, ''))) add('hex-literal', i);
     if (/-gradient\s*\(/.test(l)) add('gradient', i);
     if (!inRoot) {
