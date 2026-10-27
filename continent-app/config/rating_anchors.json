@@ -896,7 +896,7 @@
       "why": "Windmills, castle, meteorite crater, slow island"
     }
   ],
-  "calibration_about": "T758: 30 well-known hand-scored places in the Good and Pleasant range, two per class and range, the most visited first. Added after the first three shards scored their hidden controls 0.4 to 1.4 above the hand scale: the hand scale is strict for famous places that are pleasant rather than compelling. Not anchors, not controls, not in the blind hand check.",
+  "calibration_about": "T758: 30 well-known hand-scored places in the Good and Pleasant range, two per class and range, the most visited first. Added after the first three shards scored their hidden controls 0.4 to 1.4 above the hand scale: the hand scale is strict for famous places that are pleasant rather than compelling. Not anchors, not controls, not in the blind hand check. Six places under 6.0 added after shard 06: the hand scale uses the whole no-badge range (3.0 for a plain industrial city), and scorers had bunched weak places at 5.0 to 5.8.",
   "calibration": [
     {
       "id": "MAN",
@@ -1137,6 +1137,54 @@
       "class": "area",
       "appeal": 7.5,
       "why": "UNESCO Roman frontier"
+    },
+    {
+      "id": "HHN",
+      "name": "Frankfurt-Hahn",
+      "country": "Germany",
+      "class": "village",
+      "appeal": 2.5,
+      "why": "Remote Hunsrueck airfield, no town appeal"
+    },
+    {
+      "id": "TGD",
+      "name": "Podgorica",
+      "country": "Montenegro",
+      "class": "city",
+      "appeal": 3.5,
+      "why": "Transit capital, almost no leisure draw"
+    },
+    {
+      "id": "BHX",
+      "name": "Birmingham",
+      "country": "United Kingdom",
+      "class": "metro",
+      "appeal": 4.5,
+      "why": "Canals and balti, but visually unrewarding sprawl"
+    },
+    {
+      "id": "SKP",
+      "name": "Skopje",
+      "country": "North Macedonia",
+      "class": "metro",
+      "appeal": 4.5,
+      "why": "Kitsch statues; decent old bazaar"
+    },
+    {
+      "id": "TIA",
+      "name": "Tirana",
+      "country": "Albania",
+      "class": "metro",
+      "appeal": 5.5,
+      "why": "Lively, colourful, quirky; little conventional beauty"
+    },
+    {
+      "id": "MMX",
+      "name": "Malmö",
+      "country": "Sweden",
+      "class": "metro",
+      "appeal": 5.0,
+      "why": "Pleasant squares, Turning Torso; quickly done"
     }
   ]
 }
