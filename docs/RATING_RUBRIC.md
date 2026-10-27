@@ -100,6 +100,8 @@ Keep each word's meaning. Exceptional is rare: a shard of about 150 places will 
 3. Ask: is this place clearly better than the anchors, about level with them, or weaker? Better goes to the top of the band, level to the anchors' own scores, weaker to the bottom.
 4. Write the appeal with one decimal.
 
+The hand scale is strict, and every rubric score must sit on it. `rating_anchors.json` also holds a `calibration` list: 30 famous hand-scored places in the Good and Pleasant range, such as Milan 7.0, Geneva 6.3, Monaco 6.0, Windsor 7.0 and Carcassonne 7.5. A card full of named sights does not lift a place by itself; a well-known place that is pleasant rather than compelling lands between 6.0 and 7.0. Before writing a score above 7.5, name to yourself the anchor or calibration place it beats.
+
 When a class has fewer than four anchors in a band (city and town Exceptional have two each), compare with the anchors of the band below as well, and keep 9.0 or more for places that clearly pass the test.
 
 ## 5. The reason sentence

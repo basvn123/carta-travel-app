@@ -895,5 +895,248 @@
       "appeal": 6.0,
       "why": "Windmills, castle, meteorite crater, slow island"
     }
+  ],
+  "calibration_about": "T758: 30 well-known hand-scored places in the Good and Pleasant range, two per class and range, the most visited first. Added after the first three shards scored their hidden controls 0.4 to 1.4 above the hand scale: the hand scale is strict for famous places that are pleasant rather than compelling. Not anchors, not controls, not in the blind hand check.",
+  "calibration": [
+    {
+      "id": "MAN",
+      "name": "Manchester",
+      "country": "United Kingdom",
+      "class": "metro",
+      "appeal": 6.0,
+      "why": "Music, food halls, industrial heritage; little beauty"
+    },
+    {
+      "id": "OTP",
+      "name": "Bucharest (Otopeni)",
+      "country": "Romania",
+      "class": "metro",
+      "appeal": 6.0,
+      "why": "Belle-epoque pockets, nightlife; brutal concrete swathes"
+    },
+    {
+      "id": "MXP",
+      "name": "Milan (Malpensa)",
+      "country": "Italy",
+      "class": "metro",
+      "appeal": 7.0,
+      "why": "Duomo, Last Supper; uneven business city"
+    },
+    {
+      "id": "gem:the-hague",
+      "name": "The Hague",
+      "country": "Netherlands",
+      "class": "metro",
+      "appeal": 7.0,
+      "why": "Mauritshuis and beach, stately not charming"
+    },
+    {
+      "id": "GOA",
+      "name": "Genoa",
+      "country": "Italy",
+      "class": "metro",
+      "appeal": 7.4,
+      "why": "Rolli palaces, vast medieval maze, underrated"
+    },
+    {
+      "id": "VLC",
+      "name": "Valencia",
+      "country": "Spain",
+      "class": "metro",
+      "appeal": 7.5,
+      "why": "Ciudad de las Artes, old town, paella, beach"
+    },
+    {
+      "id": "GVA",
+      "name": "Geneva",
+      "country": "Switzerland",
+      "class": "city",
+      "appeal": 6.3,
+      "why": "Grand lake setting, polished but sterile"
+    },
+    {
+      "id": "ORK",
+      "name": "Cork",
+      "country": "Ireland",
+      "class": "city",
+      "appeal": 6.0,
+      "why": "English Market, food scene; pleasant not memorable"
+    },
+    {
+      "id": "LUX",
+      "name": "Luxembourg",
+      "country": "Luxembourg",
+      "class": "city",
+      "appeal": 7.0,
+      "why": "Dramatic gorge-top old town, casemates"
+    },
+    {
+      "id": "TRS",
+      "name": "Trieste",
+      "country": "Italy",
+      "class": "city",
+      "appeal": 7.0,
+      "why": "Habsburg cafes, Miramare, singular border mood"
+    },
+    {
+      "id": "TFN",
+      "name": "Tenerife North",
+      "country": "Spain",
+      "class": "city",
+      "appeal": 7.7,
+      "why": "Teide, Anaga cloud forest, UNESCO La Laguna"
+    },
+    {
+      "id": "LJU",
+      "name": "Ljubljana",
+      "country": "Slovenia",
+      "class": "city",
+      "appeal": 7.5,
+      "why": "Riverside charm, Plecnik architecture, relaxed cafe life"
+    },
+    {
+      "id": "gem:monaco-mc",
+      "name": "Monaco",
+      "country": "Monaco",
+      "class": "town",
+      "appeal": 6.0,
+      "why": "Glittering spectacle, little soul or depth"
+    },
+    {
+      "id": "gem:fatima",
+      "name": "Fatima",
+      "country": "Portugal",
+      "class": "town",
+      "appeal": 6.4,
+      "why": "World pilgrimage site"
+    },
+    {
+      "id": "gem:windsor",
+      "name": "Windsor",
+      "country": "United Kingdom",
+      "class": "town",
+      "appeal": 7.0,
+      "why": "World's oldest lived-in castle"
+    },
+    {
+      "id": "CGN",
+      "name": "Cologne-Bonn",
+      "country": "Germany",
+      "class": "town",
+      "appeal": 6.5,
+      "why": "Mighty cathedral, Rhine, uneven postwar fabric"
+    },
+    {
+      "id": "gem:lagos-pt",
+      "name": "Lagos",
+      "country": "Portugal",
+      "class": "town",
+      "appeal": 7.5,
+      "why": "Ponta da Piedade cliffs, golden coves, lively"
+    },
+    {
+      "id": "CCF",
+      "name": "Carcassonne",
+      "country": "France",
+      "class": "town",
+      "appeal": 7.5,
+      "why": "Storybook walled cite, dull lower town"
+    },
+    {
+      "id": "gem:san-marino",
+      "name": "San Marino",
+      "country": "San Marino",
+      "class": "village",
+      "appeal": 6.0,
+      "why": "Dramatic towers, trinket-shop old town"
+    },
+    {
+      "id": "gem:ayia-napa",
+      "name": "Ayia Napa & Cape Greco",
+      "country": "Cyprus",
+      "class": "village",
+      "appeal": 6.0,
+      "why": "Cape Greco sea caves offset tacky strip"
+    },
+    {
+      "id": "gem:guadalupe",
+      "name": "Guadalupe",
+      "country": "Spain",
+      "class": "village",
+      "appeal": 7.0,
+      "why": "UNESCO monastery village"
+    },
+    {
+      "id": "gem:mycenae",
+      "name": "Mycenae",
+      "country": "Greece",
+      "class": "village",
+      "appeal": 7.1,
+      "why": "Homeric citadel, cornerstone of European prehistory"
+    },
+    {
+      "id": "gem:delphi",
+      "name": "Delphi",
+      "country": "Greece",
+      "class": "village",
+      "appeal": 7.5,
+      "why": "Sublime sanctuary setting; essentially one grand site"
+    },
+    {
+      "id": "gem:saint-tropez",
+      "name": "Saint-Tropez",
+      "country": "France",
+      "class": "village",
+      "appeal": 7.5,
+      "why": "Legendary Riviera port plus Pampelonne"
+    },
+    {
+      "id": "gem:sommaroy",
+      "name": "Sommarøy",
+      "country": "Norway",
+      "class": "area",
+      "appeal": 6.4,
+      "why": "Caribbean-look beaches above the circle"
+    },
+    {
+      "id": "gem:kea",
+      "name": "Kea (Tzia)",
+      "country": "Greece",
+      "class": "area",
+      "appeal": 6.4,
+      "why": "Trail network and Britannic wreck, weekender secret"
+    },
+    {
+      "id": "JER",
+      "name": "Jersey",
+      "country": "United Kingdom",
+      "class": "area",
+      "appeal": 6.8,
+      "why": "Big beaches, cliff walks, wartime history, mild"
+    },
+    {
+      "id": "TFS",
+      "name": "Tenerife South",
+      "country": "Spain",
+      "class": "area",
+      "appeal": 7.0,
+      "why": "Great beaches and Teide access, resort strip"
+    },
+    {
+      "id": "AHO",
+      "name": "Alghero",
+      "country": "Italy",
+      "class": "area",
+      "appeal": 7.2,
+      "why": "Catalan old town, grottoes, fine beaches"
+    },
+    {
+      "id": "gem:hadrians-wall",
+      "name": "Hadrian's Wall (Housesteads)",
+      "country": "United Kingdom",
+      "class": "area",
+      "appeal": 7.5,
+      "why": "UNESCO Roman frontier"
+    }
   ]
 }
