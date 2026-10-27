@@ -202,11 +202,32 @@ def walk_values(node, keys, key=None):
         yield key, node
 
 
+def without_anchor_distance(row):
+    """T740: airports_for (pipeline/airport_access.py) keeps a place's anchor
+    airport whatever its distance, by design, because its flights are priced
+    through it (up to 514 km, Flores via PDL). The within-reach range of
+    straight_km and road_km is for the other airports, all within
+    MAX_STRAIGHT_KM; the anchor entry's two distances are left out of it."""
+    anchor = row.get("anchor_airport") if isinstance(row, dict) else None
+    lst = row.get("airports") if anchor else None
+    if not isinstance(lst, list):
+        return row
+    out = dict(row)
+    out["airports"] = [
+        {k: v for k, v in a.items() if k not in ("straight_km", "road_km")}
+        if isinstance(a, dict) and a.get("iata") == anchor else a
+        for a in lst
+    ]
+    return out
+
+
 def range_failures(rows, limit=12, layer=None):
     ranges = dict(RANGES, **LAYER_RANGES.get(layer, {}))
     enums = ENUMS.get(layer, {})
     bad, total = [], 0
     for rid, row in rows.items():
+        if layer == "master":
+            row = without_anchor_distance(row)
         for key, num in walk_numbers(row, ranges=ranges):
             lo, hi, inc = ranges[key]
             ok = (lo <= num <= hi) if inc else (lo < num <= hi)
@@ -365,6 +386,14 @@ def self_test():
     m_bad = {"X": {"airports": [{"iata": "MXP", "transfer_min": 900}]}}
     assert any("transfer_min=900" in x for x in judge(m_prev, m_bad, layer="master")[0])
     assert judge(m_prev, m_bad, layer="beaches")[0] == []
+    # T740: the anchor airport may be far; any other airport may not.
+    far_anchor = {"X": {"anchor_airport": "PDL", "airports": [
+        {"iata": "PDL", "straight_km": 514.1, "road_km": 668.3, "transfer_min": 90}]}}
+    assert judge({}, far_anchor, layer="master")[0] == [], judge({}, far_anchor, layer="master")
+    far_other = {"X": {"anchor_airport": "PDL", "airports": [
+        {"iata": "HOR", "straight_km": 240.0, "road_km": 312.0, "transfer_min": 90},
+        {"iata": "PDL", "straight_km": 514.1, "road_km": 668.3, "transfer_min": 90}]}}
+    assert any("straight_km=240.0" in x for x in judge({}, far_other, layer="master")[0])
     lt = {"X": {"local_transport": {"car_basis": "guess"}}}
     assert any("car_basis" in x for x in judge({}, lt, layer="master")[0])
     lt_ok = {"X": {"local_transport": {"car_basis": "transit_lines"}}}

@@ -274,20 +274,27 @@ def airports_for(dest, airports, anchor_iata=None):
     keep = cand[:MAX_AIRPORTS]
     if anchor_iata and anchor_iata not in [a["iata"] for _, a in keep]:
         keep = keep[:MAX_AIRPORTS - 1] + [c for c in cand if c[1]["iata"] == anchor_iata]
+    # T740: a place with no road link (an island) reaches a far anchor airport
+    # by air or sea, not by the road estimate; no mode is invented, so that
+    # entry carries its distance and no options, and the app names the code.
+    no_road = (dest.get("local_transport") or {}).get("road_connected") is False
     out = []
     for km, a in keep:
-        options = [{"mode": "car", "minutes": road_minutes(km), "source": "road_estimate"}]
+        options = []
+        if not (no_road and km > MAX_STRAIGHT_KM):
+            options.append({"mode": "car", "minutes": road_minutes(km), "source": "road_estimate"})
         pt = public_transport_minutes(a, lat, lon)
         if pt:
             options.insert(0, {"mode": "train", "minutes": pt[0], "source": pt[1]})
-        road = options[-1]
-        head = options[0]
-        if head["mode"] == "train" and head["minutes"] > road["minutes"] * PT_SLACK:
+        head = options[0] if options else None
+        road = options[-1] if options else None
+        if head and head["mode"] == "train" and road["mode"] == "car" and head["minutes"] > road["minutes"] * PT_SLACK:
             head = road
         out.append({
             "iata": a["iata"], "straight_km": round(km, 1), "road_km": round(km * DETOUR, 1),
             "ryanair": bool(a.get("ryanair")), "options": options,
-            "transfer_min": head["minutes"], "transfer_mode": head["mode"],
-            "transfer_source": head["source"],
+            "transfer_min": head["minutes"] if head else None,
+            "transfer_mode": head["mode"] if head else None,
+            "transfer_source": head["source"] if head else None,
         })
     return out
