@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { tabHref } from '../../lib/urlState.js';
-import { loadJourneyIndex, loadJourneyType, typeLabel, splitAround } from '../../lib/journeys.js';
+import { loadJourneyIndex, loadJourneyType, journeyHash, typeLabel, splitAround } from '../../lib/journeys.js';
 import { cardPerDay } from '../../lib/tripFilters.js';
 import { WEEK } from '../../lib/tripLength.js';
 import { HeroImage } from '../../components/HeroImage.jsx';
@@ -17,72 +17,104 @@ function door(go) {
   };
 }
 
-// The three styles whose photographs make the page's picture: a walk, a
-// city, the sea. The first is the large one and carries the price chip.
-const SHOW = ['hiking', 'city', 'water-sports'];
+// The styles to look in first, by month: what a week in Europe is for then.
+// Each yields its cheapest week in season; the first three that have one
+// make the picture. The tail is the fallback for a thin month.
+const SEASON = {
+  1: ['winter-sports', 'city', 'culinary'], 2: ['winter-sports', 'city', 'culinary'],
+  3: ['city', 'winter-sports', 'cozy-towns'], 4: ['hiking', 'city', 'cycling'],
+  5: ['hiking', 'cycling', 'water-sports'], 6: ['hiking', 'water-sports', 'city'],
+  7: ['water-sports', 'hiking', 'city'], 8: ['water-sports', 'hiking', 'city'],
+  9: ['hiking', 'cycling', 'city'], 10: ['hiking', 'city', 'cycling'],
+  11: ['city', 'culinary', 'cozy-towns'], 12: ['winter-sports', 'city', 'culinary'],
+};
+const FALLBACK = ['city', 'cozy-towns', 'culinary', 'cycling', 'hiking', 'nature-escape'];
+
 // A photograph covers a tile taller than itself, so it is asked for at the
 // width its height needs, not the tile's width.
 const SIZES = ['(max-width: 768px) 190vw, 72vw', '(max-width: 768px) 60vw, 34vw', '(max-width: 768px) 60vw, 34vw'];
 
+const cheapest = (rows) => rows.reduce((a, b) => (a && cardPerDay(a, WEEK) <= cardPerDay(b, WEEK) ? a : b), null);
+
 /**
- * The picture: three style photographs from the journeys library, and the
- * first style's cheapest week a person a day that is in season this month.
- * Resolves null on any failure, so the page stands without it.
+ * Three planned weeks in season this month, one a style, each the style's
+ * cheapest a person a day. Resolves null on any failure, so the page
+ * stands without its picture.
  */
-function loadPicture(month) {
+function loadWeeks(month) {
   return loadJourneyIndex().then((ix) => {
     if (!ix) return null;
-    const bySlug = new Map(ix.types.map((tp) => [tp.slug, tp]));
-    const tiles = SHOW.map((s) => bySlug.get(s)).filter((tp) => tp?.hero?.url);
-    const fill = ix.types.filter((tp) => tp.hero?.url && !SHOW.includes(tp.slug));
-    while (tiles.length < 3 && fill.length) tiles.push(fill.shift());
-    if (tiles.length < 3) return null;
-    return loadJourneyType(tiles[0].slug).then((rows) => {
-      const all = (rows || []).filter((r) => Number.isFinite(cardPerDay(r, WEEK)));
-      const season = all.filter((r) => (r.months || []).includes(month));
-      const pool = season.length ? season : all;
-      const best = pool.reduce((a, b) => (a && cardPerDay(a, WEEK) <= cardPerDay(b, WEEK) ? a : b), null);
-      return { tiles, week: best };
-    }).catch(() => ({ tiles, week: null }));
+    const known = new Map(ix.types.map((tp) => [tp.slug, tp]));
+    const order = [...new Set([...(SEASON[month] || []), ...FALLBACK])].filter((s) => known.has(s));
+    return Promise.all(order.map((slug) => loadJourneyType(slug).catch(() => null))).then((lists) => {
+      const picked = [];
+      const spare = [];
+      lists.forEach((rows, i) => {
+        const tp = known.get(order[i]);
+        const all = (rows || []).filter((r) => Number.isFinite(cardPerDay(r, WEEK)) && (r.hero?.url || tp.hero?.url));
+        const season = cheapest(all.filter((r) => (r.months || []).includes(month)));
+        if (season) picked.push({ tp, week: season });
+        else if (all.length) spare.push({ tp, week: cheapest(all) });
+      });
+      const weeks = [...picked, ...spare].slice(0, 3);
+      return weeks.length === 3 ? weeks : null;
+    });
   }).catch(() => null);
 }
 
-/** The price chip on the large photograph: the style, the days, the price. */
-function PriceChip({ tile, week }) {
+/** The week's own name: the title before its colon, as the library writes
+ *  it, and before its first comma when that is still long. */
+function shortTitle(title) {
+  const head = String(title || '').split(':')[0].trim();
+  return head.length > 28 ? head.split(',')[0].trim() : head;
+}
+
+/** One planned week as a photograph and a white card: the style and days,
+ *  its name, and what a day of it costs from. A link to the whole week. */
+function WeekTile({ item, index, onOpen }) {
   const { t } = useI18n();
-  if (!week) return null;
+  const { tp, week } = item;
+  const style = typeLabel(tp.slug, t, tp.name);
   const [before, , after] = splitAround(t, 'saved.costFromDay', { eur: '' }, 'eur');
   return (
-    <span className="pf-open-chip">
-      <span className="pf-open-chip-kind">
-        {t('pf.home.chipKind', { style: typeLabel(tile.slug, t, tile.name), days: t('journey.nDays', { n: week.days || 7 }) })}
+    <a className={`pf-open-tile is-t${index}`} href={journeyHash(week.id)} onClick={door(() => onOpen(week.id))}
+      style={{ '--i': index }}>
+      <HeroImage url={week.hero?.url || tp.hero?.url} city={week.title} iso2={week.cc} className="pf-open-img"
+        maxWidth={index === 0 ? 1920 : 1280} sizes={SIZES[index]} ratio={[4, 3]} eager={index === 0} />
+      <span className="pf-open-chip">
+        <span className="pf-open-chip-kind">
+          {t('pf.home.chipKind', { style, days: t('journey.nDays', { n: week.days || 7 }) })}
+        </span>
+        <span className="pf-open-chip-name">{shortTitle(week.title)}</span>
+        <span className="pf-open-chip-price">
+          <span>{before}<Money value={cardPerDay(week, WEEK)} className="pf-open-chip-fig" />{after}</span>
+          <ArrowRightIcon size={14} className="pf-open-chip-go" />
+        </span>
       </span>
-      <span className="pf-open-chip-price">
-        {before}<Money value={cardPerDay(week, WEEK)} className="pf-open-chip-fig" />{after}
-      </span>
-    </span>
+    </a>
   );
 }
 
 /**
- * PlanHome (T743, T744), the Plan place with nothing open: one screen, no
- * scroll. Three photographs of the trip styles, each a door to its weeks,
- * one honest price on the first; the headline in the app's face; one line;
- * Start planning, the planned trips, and the trip in progress when there is
- * one.
+ * PlanHome (T743 to T745), the Plan place with nothing open: one screen, no
+ * scroll. Three planned weeks in season this month, each a photograph with
+ * its name and what a day costs, each a door to the whole week; the
+ * headline; one line; Start planning, the planned trips, and the trip in
+ * progress when there is one.
  *
  *   onStart()            the trip-kind sheet
  *   onContinue()         the trip in progress, in the trip planner
+ *   onOpenJourney(id)    one planned week, its whole plan
  *   onOpenStyle(slug)    one style's weeks (null: every style)
  */
-export function PlanHome({ titleTag = 'h1', hasTrip, tripName, onStart, onContinue, onOpenStyle }) {
+export function PlanHome({ titleTag = 'h1', hasTrip, tripName, onStart, onContinue, onOpenJourney, onOpenStyle }) {
   const { t } = useI18n();
   const Title = titleTag;
-  const [pic, setPic] = useState(undefined);
+  const [weeks, setWeeks] = useState(undefined);
 
   useEffect(() => {
     let live = true;
-    loadPicture(new Date().getMonth() + 1).then((v) => { if (live) setPic(v); });
+    loadWeeks(new Date().getMonth() + 1).then((v) => { if (live) setWeeks(v); });
     return () => { live = false; };
   }, []);
 
@@ -90,22 +122,13 @@ export function PlanHome({ titleTag = 'h1', hasTrip, tripName, onStart, onContin
   const [lead, , tail] = splitAround(t, 'pf.home.title', { accent }, 'accent');
 
   return (
-    <div className={`pf-open${pic === null ? ' is-bare' : ''}`}>
-      {pic !== null && (
-        <div className="pf-open-pic" aria-busy={pic === undefined || undefined}>
-          {[0, 1, 2].map((i) => {
-            const tile = pic?.tiles[i];
-            if (!tile) return <span key={i} className={`pf-open-tile is-t${i} is-wait`} aria-hidden="true" />;
-            return (
-              <a key={tile.slug} className={`pf-open-tile is-t${i}`} href={tabHref('places')}
-                onClick={door(() => onOpenStyle(tile.slug))} aria-label={typeLabel(tile.slug, t, tile.name)}>
-                <HeroImage url={tile.hero.url} city={tile.name} className="pf-open-img" maxWidth={i === 0 ? 1920 : 1280}
-                  sizes={SIZES[i]} ratio={[4, 3]} eager={i === 0} />
-                {i === 0 && <PriceChip tile={tile} week={pic.week} />}
-              </a>
-            );
-          })}
-        </div>
+    <div className={`pf-open${weeks === null ? ' is-bare' : ''}`}>
+      {weeks !== null && (
+        <section className="pf-open-pic" aria-label={t('pf.home.inSeason')} aria-busy={weeks === undefined || undefined}>
+          {weeks
+            ? weeks.map((item, i) => <WeekTile key={item.week.id} item={item} index={i} onOpen={onOpenJourney} />)
+            : [0, 1, 2].map((i) => <span key={i} className={`pf-open-tile is-t${i} is-wait`} aria-hidden="true" />)}
+        </section>
       )}
 
       <div className="pf-open-text">

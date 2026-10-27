@@ -22,9 +22,10 @@ import { PlanHome } from './PlanHome.jsx';
  *   onNavigate(view)   'trip' | 'day' | 'trips'  (App's goTo)
  *   onCreated()        the trip exists: open it in the trip planner
  *   onAddPast()        My trips' past-trip form (T659)
+ *   onOpenJourney(id)  one planned week of the journeys library (T745)
  *   onOpenStyle(slug)  one style's weeks, or every style for null (T743)
  */
-export function PlanFlow({ onNavigate, onCreated, onAddPast = null, onOpenStyle = null, pageOver = false }) {
+export function PlanFlow({ onNavigate, onCreated, onAddPast = null, onOpenJourney = null, onOpenStyle = null, pageOver = false }) {
   const { t } = useI18n();
   const [settings, save] = useTripSettings();
   const [screen, setScreen] = useState('home');
@@ -74,6 +75,7 @@ export function PlanFlow({ onNavigate, onCreated, onAddPast = null, onOpenStyle 
           tripName={settings.trip.name}
           onStart={() => go('kind')}
           onContinue={() => onNavigate('trip')}
+          onOpenJourney={(id) => (onOpenJourney ? onOpenJourney(id) : onNavigate('trips'))}
           onOpenStyle={(slug) => (onOpenStyle ? onOpenStyle(slug) : onNavigate('trips'))}
         />
       </div>

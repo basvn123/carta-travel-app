@@ -32,11 +32,11 @@
   .pf-map { position: absolute; inset: 0; height: auto; }
 }
 
-/* ---- The opening (T743, T744, owner 2026-10-27) ----
+/* ---- The opening (T743 to T745, owner 2026-10-27) ----
    The Plan place with nothing open: one screen on warm paper, no scroll.
-   Three photographs of trip styles fill the space the text leaves (a phone:
-   above it; from 1024 px: beside it), each a door to its weeks; one white
-   price chip stands on the first. The headline is Figtree, as on every tab.
+   Three planned weeks in season fill the space the text leaves (a phone:
+   above it; from 1024 px: beside it), each a photograph with a white card
+   (style, days, name, from-price) and a door to the whole week. The headline is Figtree, as on every tab.
    Photographs and the chip carry the only shadows; nothing has a border. */
 .pf.is-opening { background: var(--plan-ground); }
 
@@ -92,26 +92,72 @@
 
 .pf-open-tile:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
 
-/* The price chip: a white surface on the photograph, never text on it. */
+/* The week's card: a white surface on the photograph, never text on it.
+   The style and days, the week's name, what a day costs from, and an arrow
+   that says the tile opens the whole week. */
 .pf-open-chip {
   position: absolute;
-  left: var(--space-3);
-  bottom: var(--space-3);
+  left: var(--space-2);
+  right: var(--space-2);
+  bottom: var(--space-2);
   display: flex;
   flex-direction: column;
   gap: 2px;
-  max-width: calc(100% - 2 * var(--space-3));
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-control);
   background: var(--surface);
   box-shadow: var(--elev-2);
+  transition: transform var(--dur-3) var(--ease-out), box-shadow var(--dur-3) var(--ease-out);
 }
+
+.pf-open-tile.is-t0 .pf-open-chip { left: var(--space-3); right: auto; bottom: var(--space-3); max-width: calc(100% - 2 * var(--space-3)); }
 
 .pf-open-chip-kind { font-size: var(--text-caption); font-weight: 600; color: var(--text-3); }
 
-.pf-open-chip-price { font-size: var(--text-label); color: var(--text-2); white-space: nowrap; }
+.pf-open-chip-name {
+  overflow: hidden;
+  font-size: var(--text-label);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  color: var(--text);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.pf-open-chip-price {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-size: var(--text-caption);
+  color: var(--text-2);
+  white-space: nowrap;
+}
 
 .pf-open-chip-price .pf-open-chip-fig { font-weight: 700; color: var(--text); }
+
+/* A phone: the small tiles carry the style, the days and the price; the
+   name stays on the large one, so no card covers its photograph. */
+@media (max-width: 768px) {
+  .pf-open-tile:not(.is-t0) .pf-open-chip-name { display: none; }
+}
+
+.pf-open-chip-go { flex: none; color: var(--action); transition: transform var(--dur-2) var(--ease-out); }
+
+@media (hover: hover) {
+  .pf-open-tile:hover .pf-open-chip { transform: translateY(-3px); box-shadow: var(--elev-3); }
+  .pf-open-tile:hover .pf-open-chip-go { transform: translateX(3px); }
+}
+
+/* The weeks arrive once, one after the other; then they stand still. */
+@keyframes pf-open-arrive {
+  from { opacity: 0; transform: translateY(12px) scale(0.985); }
+}
+
+.pf-open-tile:not(.is-wait) {
+  animation: pf-open-arrive var(--dur-3) var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
 
 /* The words and the actions. */
 .pf-open-text {
@@ -236,13 +282,20 @@
   .pf-open-pic { height: 100%; max-height: 680px; min-height: 0; gap: var(--space-3); }
   .pf-open-lede { margin-top: var(--space-4); }
   .pf-open-actions { margin-top: var(--space-6); }
-  .pf-open-chip { left: var(--space-4); bottom: var(--space-4); padding: var(--space-3) var(--space-4); }
+  .pf-open-chip { left: var(--space-3); right: var(--space-3); bottom: var(--space-3); padding: var(--space-2) var(--space-3); }
+  .pf-open-tile.is-t0 .pf-open-chip { left: var(--space-4); bottom: var(--space-4); padding: var(--space-3) var(--space-4); }
+  .pf-open-tile.is-t0 .pf-open-chip-name { font-size: var(--text-lead); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .pf-open-tile .pf-open-img,
+  .pf-open-chip,
+  .pf-open-chip-go,
   .pf-open-start .btn-icon { transition: none; }
+  .pf-open-tile:not(.is-wait) { animation: none; }
   .pf-open-tile:hover .pf-open-img,
+  .pf-open-tile:hover .pf-open-chip,
+  .pf-open-tile:hover .pf-open-chip-go,
   .pf-open-start:hover .btn-icon { transform: none; }
 }
 

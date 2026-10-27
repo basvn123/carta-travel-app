@@ -706,13 +706,14 @@ The home tokens, read by `61-v6-home.css` alone:
 
 Everything else in this file still binds the home page: transform and opacity (plus `stroke-dashoffset`, `clip-path` and a panel's `background-color`), no overshoot, no parallax, nothing tied to the scroll position, no count-up, one primary, `--tap` targets, no catalogue counts. No other surface takes this exception.
 
-### Plan opening exception (T743, T744)
+### Plan opening exception (T743 to T745)
 
 Owner 2026-10-27: the first page of the Plan place is a page of its own, not a sheet over a map, and it fits one screen with no scroll at every size from 360 by 640 up. It may do three things no other surface does:
 
 - **A warm paper ground.** `--plan-ground` (`--umber-50`, `#faf6f1`) behind the whole page, in place of `--surface-page`. `--text` 13.6:1, `--text-2` 7.6:1, `--text-3` 5.3:1, `--action` 5.4:1 on it.
-- **One larger headline in two colours.** Figtree 700 at `--text-plan-hero` with `--tracking-plan`, the face of every tab (T744 retired T743's serif at the owner's request); the second half of the line is `--action`.
-- **Photographs that take the space the words leave.** Three journeys-library style photographs (a walk, a city, the sea) in one large and two stacked tiles: above the words on a phone, beside them from 1024 px. They shrink on a short phone and leave below 560 px of height. Each is a link to its style's weeks. One white chip (`--surface`, `--elev-2`) on the large photograph carries the style, the days and "From €79 a day", the style's cheapest week in season; text never sits on the photograph itself.
+- **One larger headline in two colours.** Figtree 700 at `--text-plan-hero` with `--tracking-plan`, the face of every tab (T744 retired T743's serif at the owner's request); the second half of the line ("at a price you know", T745) is `--action`.
+- **Three planned weeks that take the space the words leave** (T745). The month picks the styles (October: hiking, cities, cycling; winter: ski weeks; summer: the sea), and each style gives its cheapest week a person a day that is in season. One large and two stacked tiles: above the words on a phone, beside them from 1024 px; they shrink on a short phone and leave below 560 px of height. Each tile is the week's own photograph and a link to the whole week. A white card on each (`--surface`, `--elev-2`) carries the style and days, the week's name (not on a phone's small tiles), "From €79 a day" and an arrow; text never sits on the photograph itself.
+- **One arrival and a hover.** The weeks arrive once, 70 ms apart (`--dur-3`, opacity and a 12 px rise); on hover the photograph scales to 1.04, the card lifts 3 px to `--elev-3` and its arrow moves 3 px. Nothing loops; under reduced motion it all stands still.
 
 Two buttons, Start planning (primary) and Planned trips (secondary), and the trip in progress as one quiet row when there is one. No eyebrow, no mark, no watermark. No other surface takes this exception.
 
