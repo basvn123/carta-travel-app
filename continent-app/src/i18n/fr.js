@@ -7189,7 +7189,7 @@ export const fr = {
   "pf.tell.skip": "Passer, posez-moi les questions",
   // T655: the trip planner's setup questions, Create trip and the settings sheet
   "pf.q.booked": "Qu'avez-vous déjà réservé ?",
-  "pf.q.bookedHelp": "Choisissez tout ce qui s'applique. Carta planifie autour.",
+  "pf.q.bookedHelp": "Choisissez tout ce qui s'applique.",
   "pf.o.nothing": "Rien encore",
   "pf.o.flights": "Vols ou train",
   "pf.o.stays": "Où je dors",

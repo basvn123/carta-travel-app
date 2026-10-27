@@ -7189,7 +7189,7 @@ export const it = {
   "pf.tell.skip": "Salta, chiedimelo",
   // T655: the trip planner's setup questions, Create trip and the settings sheet
   "pf.q.booked": "Cosa hai già prenotato?",
-  "pf.q.bookedHelp": "Scegli tutto ciò che vale. Carta pianifica intorno.",
+  "pf.q.bookedHelp": "Scegli tutto ciò che vale.",
   "pf.o.nothing": "Ancora niente",
   "pf.o.flights": "Voli o treno",
   "pf.o.stays": "Dove dormo",
