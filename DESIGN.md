@@ -717,6 +717,8 @@ Owner 2026-10-27: the first page of the Plan place is a page of its own, not a s
 
 No eyebrow, no watermark; the mark appears once, on the card. No other surface takes this exception.
 
+The steps after it (T748, owner 2026-10-27) stand on the same `--plan-ground`, with no map behind them: straight on the paper on a phone, on a white `--surface` card (`--radius-sheet`, `--elev-2`, 520 px, 640 px for a list of places) centred on the page from 769 px. The settings button sits on its own row above the step on a phone and in the page's top right corner from 769 px.
+
 ### Ask Carta exception (T569)
 
 Owner 2026-10-22: "I like some animation." Ask Carta is a chat (T570, `src/browse/ask/`, `76-ask-chat.css`): one "Ask Carta" button (header on desktop, beside Filters on a phone) opens a panel docked right under the settings line on desktop (the list makes room, `--chat-w` 420 px) and a full-screen sheet on a phone. It may move on its own, and nothing else outside the home page may loop:

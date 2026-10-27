@@ -7180,7 +7180,7 @@ export const nl = {
   "pf.close": "Sluiten",
   "pf.position": "{x} van {n}",
   "pf.q.tell": "Vertel Carta over je reis",
-  "pf.q.tellHelp": "Waar, wanneer, met wie en wat je leuk vindt. Of voeg een boeking toe en Carta leest hem.",
+  "pf.q.tellHelp": "Waar, wanneer, met wie en wat je leuk vindt.",
   "pf.tell.label": "Je reis in je eigen woorden",
   "pf.tell.placeholder": "Een week Portugal met mijn partner in mei, stranden en lekker eten",
   "pf.tell.attach": "Boeking toevoegen",

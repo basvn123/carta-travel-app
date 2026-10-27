@@ -5,72 +5,46 @@
    cascade could override; scripts/css-routes.mjs --check proves it on a build. */
 .trip-planner-screen .pf { top: 0; bottom: 0; }
 
+/* The stage (T748): a phone shows the step straight on the warm paper, the
+   round buttons on a row of their own above it so they never sit on the
+   step's own close; from 769 px the step is a white card centred on the
+   page and the buttons stand in its top right corner. */
 .pf-stage {
   position: relative;
-  display: flex;
-  flex-direction: column;
   min-height: 100%;
 }
 
-.pf-map .trip-map { inset: 0; left: 0; }
-
-.pf-map-still { position: absolute; inset: 0; background: var(--surface-sunken); }
-
 .pf-bar {
-  position: absolute;
-  top: var(--space-3);
-  right: var(--space-3);
-  z-index: var(--z-float);
   display: flex;
+  justify-content: flex-end;
   gap: var(--space-2);
+  padding: var(--space-3) var(--gutter) 0;
 }
 
-.pf-sheet {
-  position: relative;
-  z-index: var(--z-sticky);
-  margin-top: calc(-1 * var(--space-6));
-  flex: 1;
-  background: var(--surface);
-  border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
-  box-shadow: var(--elev-3);
-  padding: var(--space-2) var(--gutter) var(--space-6);
-}
-
-.pf-handle {
-  display: block;
-  width: 40px;
-  height: 4px;
-  margin: 0 auto var(--space-3);
-  border-radius: var(--radius-pill);
-  background: var(--border);
-}
+.pf-sheet { padding: var(--space-3) var(--gutter) var(--space-6); }
 
 @media (min-width: 769px) {
   .pf-stage {
-    display: block;
-    height: 100%;
-    min-height: 560px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--space-7) var(--space-5) var(--space-8);
   }
-  .pf-bar { top: var(--space-4); right: var(--space-4); }
-  .pf-sheet {
+  .pf-bar {
     position: absolute;
-    top: var(--space-5);
-    left: var(--space-5);
-    bottom: auto;
-    width: min(440px, calc(100% - 2 * var(--space-5)));
-    max-height: calc(100% - 2 * var(--space-5));
-    margin: 0;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    border-radius: var(--radius-sheet);
-    padding: var(--space-5) var(--space-5) var(--space-5);
+    top: var(--space-4);
+    right: var(--space-4);
+    z-index: var(--z-float);
+    padding: 0;
   }
-  .pf-stage.is-wide .pf-sheet { width: min(560px, calc(100% - 2 * var(--space-5))); }
-  .pf-handle { display: none; }
-}
-
-@media (min-width: 1024px) {
-  .pf-sheet { top: var(--space-6); left: var(--space-6); max-height: calc(100% - 2 * var(--space-6)); }
+  .pf-sheet {
+    width: min(520px, 100%);
+    padding: var(--space-5);
+    border-radius: var(--radius-sheet);
+    background: var(--surface);
+    box-shadow: var(--elev-2);
+  }
+  .pf-stage.is-wide .pf-sheet { width: min(640px, 100%); }
 }
 
 .pf-step { display: flex; flex-direction: column; gap: var(--space-3); }

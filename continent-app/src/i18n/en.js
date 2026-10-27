@@ -7788,7 +7788,7 @@ export const en = {
   "pf.close": "Close",
   "pf.position": "{x} of {n}",
   "pf.q.tell": "Tell Carta about your trip",
-  "pf.q.tellHelp": "Where, when, who and what you like. Or add a booking and Carta reads it.",
+  "pf.q.tellHelp": "Where, when, who and what you like.",
   "pf.tell.label": "Your trip in your own words",
   "pf.tell.placeholder": "A week in Portugal with my partner in May, beaches and good food",
   "pf.tell.attach": "Add a booking",

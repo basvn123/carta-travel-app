@@ -1,41 +1,21 @@
-import React, { Suspense, lazy } from 'react';
+import React from 'react';
 import { IconButton } from '../../components/ui/index.js';
 import { ArrowLeftIcon, CloseIcon } from '../../components/Icons.jsx';
 
-// The map is the stage's backdrop, not its content: loaded after the sheet,
-// and the sheet works without it.
-const TripMap = lazy(() => import('../../map/TripMap.jsx').then((m) => ({ default: m.TripMap })));
-
 /**
- * PlanStage (T654): the planner's one layout, after the Polarsteps planner.
- * A map of Europe (or of the trip so far) fills the screen, and the step
- * sits on a white sheet in front of it: on a phone the sheet rises from the
- * bottom over the lower part of the map with a grab handle; from 769 px it is
- * a card standing on the left of the map. The map is decoration here, so it
- * is hidden from assistive tech and takes no pointer.
+ * PlanStage (T654, T748): the planner's one layout. The step sits on the
+ * Plan place's warm paper: straight on it on a phone, on a white card
+ * centred on the page from 769 px. T654 put a map of Europe behind it; it
+ * showed no stops on any step, so T748 took it out (owner 2026-10-27).
  *
- *   bar       round buttons over the map, top right (settings, share)
- *   stops     the trip's stops, drawn on the map when there are any
+ *   bar       round buttons, top right (settings, share)
  *   wide      a wider card on desktop, for steps that hold a list of places
  */
-export function PlanStage({ bar = null, stops = [], wide = false, sheetLabel, children }) {
+export function PlanStage({ bar = null, wide = false, sheetLabel, children }) {
   return (
     <div className={`pf-stage${wide ? ' is-wide' : ''}`}>
-      <div className="pf-map" aria-hidden="true">
-        <Suspense fallback={<div className="pf-map-still" />}>
-          <TripMap
-            stops={stops}
-            basemap="record"
-            scrollZoom={false}
-            showRoute={stops.length > 1}
-            padBottom={0}
-            easeToSelected={false}
-          />
-        </Suspense>
-      </div>
       {bar && <div className="pf-bar">{bar}</div>}
       <section className="pf-sheet" aria-label={sheetLabel}>
-        <span className="pf-handle" aria-hidden="true" />
         {children}
       </section>
     </div>

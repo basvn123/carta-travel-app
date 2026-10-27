@@ -7180,7 +7180,7 @@ export const es = {
   "pf.close": "Cerrar",
   "pf.position": "{x} de {n}",
   "pf.q.tell": "Cuéntale a Carta tu viaje",
-  "pf.q.tellHelp": "Dónde, cuándo, con quién y qué te gusta. O añade una reserva y Carta la lee.",
+  "pf.q.tellHelp": "Dónde, cuándo, con quién y qué te gusta.",
   "pf.tell.label": "Tu viaje con tus palabras",
   "pf.tell.placeholder": "Una semana en Portugal con mi pareja en mayo, playas y buena comida",
   "pf.tell.attach": "Añadir una reserva",

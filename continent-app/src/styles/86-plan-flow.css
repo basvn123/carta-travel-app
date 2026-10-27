@@ -1,7 +1,7 @@
-/* The trip planner flow (T654 onward): the Plan place's stage, after the
-   Polarsteps planner. A map fills the screen and each step sits on a white
-   sheet in front of it: risen from the bottom on a phone, a card on the left
-   from 769 px. Tokens only (carta-design); selection is the one selected
+/* The trip planner flow (T654 onward): the Plan place's stage. Every step
+   stands on the warm paper of the Plan place (T748 took out the map that
+   stood behind it): straight on the paper on a phone, on a white card
+   centred on the page from 769 px. Tokens only (carta-design); selection is the one selected
    state; the sheet carries the one shadow. */
 
 /* The page box, the trip planner screen's (11-trip-planner.css): from under
@@ -17,19 +17,7 @@
   bottom: var(--bottom-nav-h);
   overflow-y: auto;
   overscroll-behavior: contain;
-  background: var(--surface-page);
-}
-
-.pf-map {
-  position: relative;
-  height: max(220px, 38dvh);
-  background: var(--surface-sunken);
-  pointer-events: none;
-  overflow: hidden;
-} /* full bleed: the planner rule moves it right of a panel */
-
-@media (min-width: 769px) {
-  .pf-map { position: absolute; inset: 0; height: auto; }
+  background: var(--plan-ground);
 }
 
 /* ---- The opening (T743 to T747, owner 2026-10-27) ----
@@ -39,8 +27,6 @@
    fan of trip-style photographs, the mark, a title and one button.
    The headline is Figtree, as on every tab. White cards carry the only
    shadows; nothing has a border; text never sits on a photograph. */
-.pf.is-opening { background: var(--plan-ground); }
-
 .pf-open {
   display: flex;
   flex-direction: column;
