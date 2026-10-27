@@ -46,6 +46,8 @@ REM Its own browser folder (T646): another project's Playwright install deletes
 REM the browsers it does not use from the shared folder, which killed a run on
 REM 2026-10-23. Installing is a no-op when the browsers are already there.
 set "PLAYWRIGHT_BROWSERS_PATH=%LOCALAPPDATA%\ms-playwright-carta-stays"
+REM UTF-8 output (T741): a town name with a letter outside cp1252 crashed the log line.
+set "PYTHONIOENCODING=utf-8"
 python -m playwright install chromium chromium-headless-shell >nul 2>&1
 
 echo. >> "%LOG%"
