@@ -448,7 +448,7 @@ function KeepTripChoice({ device, account, onKeepDevice, onKeepAccount, onClose 
   );
 }
 
-export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, origin, onChangeOrigin, onPlanDay, openSharedTrip, onSharedTripConsumed, tripSeed = null, onTripSeedConsumed = null, stayTier = 'home', lifestyle = null, favorites = null, onOpenDest = null, onOpenCountry = null, onOpenTrip = null }) {
+export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, origin, onChangeOrigin, onPlanDay, openSharedTrip, onSharedTripConsumed, tripSeed = null, onTripSeedConsumed = null, stayTier = 'home', lifestyle = null, favorites = null, onOpenDest = null, onOpenCountry = null, onOpenTrip = null, onOpenJourney = null }) {
   const { t, lang } = useI18n();
   const paywall = usePaywall();
   const countryInsights = useCountryInsights();
@@ -936,7 +936,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   // rather than as a modal that covers it. The map layout returns the moment
   // there is a trip to draw.
   const emptyPlanner = !tp.planned && tp.stopDetails.length === 0;
-  const renderWizard = ({ flowSteps = null, initialWhereTab = null, onCancel = null } = {}) => (
+  const renderWizard = ({ flowSteps = null, initialWhereTab = null, lockWhereTab = false, onCancel = null } = {}) => (
     <GuidedTripWizard
       inline
       data={data}
@@ -952,6 +952,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
       onSeedConsumed={onTripSeedConsumed}
       flowSteps={flowSteps}
       initialWhereTab={initialWhereTab}
+      lockWhereTab={lockWhereTab}
     />
   );
   if (emptyPlanner) {
@@ -960,7 +961,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
         {/* T656: the trip's page before a route (TripFlow), which hands the
             wizard only its planning steps. T675: a "Plan a trip here" seed
             enters there too, on the I know where door. */}
-        <TripFlow renderEngine={renderWizard} seed={tripSeed} />
+        <TripFlow renderEngine={renderWizard} seed={tripSeed} onOpenJourney={onOpenJourney} />
         {saveNotice && <div className="trip-save-toast" role="status">{saveNotice}</div>}
         {keepChoice && (
           <KeepTripChoice

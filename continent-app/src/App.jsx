@@ -877,6 +877,9 @@ function TravelApp() {
     else return;
     goToTab('places');
   }, [goToTab]);
+  // One of Carta's own trips from the trip planner (T752): stable, like every
+  // callback handed to the planner tabs, which stay mounted behind display:none.
+  const openJourneyPage = useCallback((id) => openFeature('journey', { id }), [openFeature]);
 
   // ── The country page and the region page (T498, roadmap 1.3b D and E) ──
   //
@@ -1843,6 +1846,7 @@ function TravelApp() {
               onOpenDest={openDetail}
               onOpenCountry={openCountryPage}
               onOpenTrip={openTripPage}
+              onOpenJourney={openJourneyPage}
               onOpenLifestyle={openLifestyle}
             />}
           </Suspense>
@@ -1889,7 +1893,7 @@ function TravelApp() {
               onNavigate={goTo}
               onCreated={() => goTo('trip')}
               onAddPast={() => { setPastAtOpen(true); goTo('trips'); }}
-              onOpenStyle={(slug) => openTripStyles(slug)}
+              onOpenJourney={(id) => openFeature('journey', { id })}
             />
           </Suspense>
         </div>

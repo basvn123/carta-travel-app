@@ -73,9 +73,9 @@ function TripCollection({ fan, onOpen }) {
  *
  *   onStart()            the trip-kind sheet
  *   onContinue()         the trip in progress, in the trip planner
- *   onOpenStyle(slug)    the planned trips (null: every style)
+ *   onOpenTrips()        Carta's own trips (T752)
  */
-export function PlanHome({ titleTag = 'h1', hasTrip, tripName, onStart, onContinue, onOpenStyle }) {
+export function PlanHome({ titleTag = 'h1', hasTrip, tripName, onStart, onContinue, onOpenTrips }) {
   const { t } = useI18n();
   const Title = titleTag;
   const [fan, setFan] = useState(undefined);
@@ -100,7 +100,7 @@ export function PlanHome({ titleTag = 'h1', hasTrip, tripName, onStart, onContin
             {t('pf.home.start')}
           </Button>
           <Button variant="secondary" className="pf-open-browse" iconStart={<CalendarIcon size={20} />}
-            onClick={() => onOpenStyle(null)}>
+            onClick={onOpenTrips}>
             {t('pf.home.browse')}
           </Button>
         </div>
@@ -118,7 +118,7 @@ export function PlanHome({ titleTag = 'h1', hasTrip, tripName, onStart, onContin
 
       {fan !== null && (
         <div className="pf-open-stage">
-          <TripCollection fan={fan} onOpen={() => onOpenStyle(null)} />
+          <TripCollection fan={fan} onOpen={onOpenTrips} />
         </div>
       )}
     </div>

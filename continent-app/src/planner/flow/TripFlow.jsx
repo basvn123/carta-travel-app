@@ -8,6 +8,7 @@ import { PlanStage, SheetHead } from './PlanStage.jsx';
 import { QUESTIONS } from './questions.js';
 import { QuestionBody } from './QuestionScreen.jsx';
 import { TripSettingsSheet } from './TripSettingsSheet.jsx';
+import { CartaTrips } from './CartaTrips.jsx';
 import { useBcp47, useMonths, useTripSettings, whenText } from './flowHooks.js';
 import { engineScreens, guideScreens, hasDoors, nextScreen, prevScreen, progressOf } from './flowGraph.js';
 import { normalizeSettings, quizAnswers, spendFor } from './tripSettings.js';
@@ -20,13 +21,14 @@ import { normalizeSettings, quizAnswers, spendFor } from './tripSettings.js';
  * "Guide me", and then the planning engine itself, the wizard's planning
  * steps, rendered by the caller through `renderEngine`.
  *
- *   renderEngine({ flowSteps, initialWhereTab, onCancel })
+ *   renderEngine({ flowSteps, initialWhereTab, lockWhereTab, onCancel })
  *      the caller's GuidedTripWizard mount with those props
+ *   onOpenJourney(id)   one of Carta's own trips, its whole week (T752)
  */
-export function TripFlow({ renderEngine, seed = null }) {
+export function TripFlow({ renderEngine, seed = null, onOpenJourney = null }) {
   const { t } = useI18n();
   const [settings, save] = useTripSettings();
-  const [phase, setPhase] = useState('home'); // home | doors | g:* | engine
+  const [phase, setPhase] = useState('home'); // home | doors | carta | g:* | engine
   const [door, setDoor] = useState('guide');
   const [settingsOpen, setSettingsOpen] = useState(false);
   const gearRef = useRef(null);
@@ -87,6 +89,8 @@ export function TripFlow({ renderEngine, seed = null }) {
     return renderEngine({
       flowSteps: engineScreens(settings, d).map((x) => x.slice(2)),
       initialWhereTab: d === 'guide' ? 'help' : 'hand',
+      // "I know where" is the picker alone (T752): no Help me choose tab.
+      lockWhereTab: d === 'know',
       onCancel: () => setPhase(d === 'guide' ? guide[guide.length - 1] : (hasDoors(settings) ? 'doors' : 'home')),
     });
   }
@@ -97,6 +101,16 @@ export function TripFlow({ renderEngine, seed = null }) {
     </IconButton>
   );
 
+  // Carta's own trips (T752): the same page the Plan opening opens, a full
+  // page rather than a step on the card.
+  if (phase === 'carta') {
+    return (
+      <div className="pf is-carta" ref={rootRef}>
+        <CartaTrips titleTag="h2" onBack={() => setPhase('doors')} onOpenJourney={(id) => onOpenJourney?.(id)} />
+      </div>
+    );
+  }
+
   let body;
   if (phase === 'home') {
     body = <TripHome settings={settings} onStart={start} />;
@@ -105,19 +119,22 @@ export function TripFlow({ renderEngine, seed = null }) {
       <div className="pf-step">
         <SheetHead onBack={() => setPhase('home')} backLabel={t('pf.back')} />
         <h2 className="pf-title" tabIndex={-1}>{t('pf.doors.title')}</h2>
-        <p className="pf-help">{t('pf.doors.help')}</p>
         <ChoiceRows
           label={t('pf.doors.title')}
           options={[
-            { value: 'guide', icon: 'CompassIcon', label: t('pf.doors.guide'), sub: t(settings.booked.flights ? 'pf.doors.guideFlightSub' : 'pf.doors.guideSub') },
-            { value: 'know', icon: 'MapPinIcon', label: t('pf.doors.know'), sub: t('pf.doors.knowSub') },
-            { value: 'ready', icon: 'RouteIcon', label: t('pf.doors.ready'), sub: t('pf.doors.readySub') },
+            { value: 'guide', icon: 'CompassIcon', label: t('pf.doors.guide') },
+            { value: 'know', icon: 'MapPinIcon', label: t('pf.doors.know') },
+            { value: 'ready', icon: 'RouteIcon', label: t('pf.doors.ready') },
           ]}
           value={[door]}
           onPick={setDoor}
         />
         <div className="pf-foot">
-          <Button variant="primary" block onClick={() => (door === 'guide' ? setPhase(guide[0]) : startEngine(door))}>
+          <Button variant="primary" block onClick={() => {
+            if (door === 'guide') setPhase(guide[0]);
+            else if (door === 'ready') setPhase('carta');
+            else startEngine(door);
+          }}>
             {t('pf.continue')}
           </Button>
         </div>

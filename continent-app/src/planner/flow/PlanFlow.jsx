@@ -12,6 +12,7 @@ import { useTripSettings } from './flowHooks.js';
 import { CreateScreen } from './setupScreens.jsx';
 import { TripSettingsSheet } from './TripSettingsSheet.jsx';
 import { PlanHome } from './PlanHome.jsx';
+import { CartaTrips } from './CartaTrips.jsx';
 
 /**
  * PlanFlow (T654, T655), the Plan place with nothing open yet: the opening
@@ -22,9 +23,9 @@ import { PlanHome } from './PlanHome.jsx';
  *   onNavigate(view)   'trip' | 'day' | 'trips'  (App's goTo)
  *   onCreated()        the trip exists: open it in the trip planner
  *   onAddPast()        My trips' past-trip form (T659)
- *   onOpenStyle(slug)  one style's weeks, or every style for null (T743)
+ *   onOpenJourney(id)  one of Carta's own trips, its whole week (T752)
  */
-export function PlanFlow({ onNavigate, onCreated, onAddPast = null, onOpenStyle = null, pageOver = false }) {
+export function PlanFlow({ onNavigate, onCreated, onAddPast = null, onOpenJourney = null, pageOver = false }) {
   const { t } = useI18n();
   const [settings, save] = useTripSettings();
   const [screen, setScreen] = useState('home');
@@ -74,7 +75,20 @@ export function PlanFlow({ onNavigate, onCreated, onAddPast = null, onOpenStyle 
           tripName={settings.trip.name}
           onStart={() => go('kind')}
           onContinue={() => onNavigate('trip')}
-          onOpenStyle={(slug) => (onOpenStyle ? onOpenStyle(slug) : onNavigate('trips'))}
+          onOpenTrips={() => go('carta')}
+        />
+      </div>
+    );
+  }
+
+  // Carta's own trips (T752): a full page of its own, like the opening.
+  if (screen === 'carta') {
+    return (
+      <div className="pf is-carta" ref={sheetRef}>
+        <CartaTrips
+          titleTag={Title}
+          onBack={() => go('home')}
+          onOpenJourney={(id) => (onOpenJourney ? onOpenJourney(id) : onNavigate('trips'))}
         />
       </div>
     );

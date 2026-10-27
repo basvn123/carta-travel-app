@@ -109,6 +109,9 @@ export function GuidedTripWizard({
   // traveller chose implies: 'help' behind "help me choose", 'hand' behind
   // "I know where". Null in the old mounts, which keep their own step list.
   flowSteps = null, initialWhereTab = null,
+  // T752: behind "I know where" the Where step is the picker alone, with no
+  // Help me choose tab (that door has its own questions).
+  lockWhereTab = false,
   // A hand-off in: { iso2 } from "Plan a trip here" on a destination page
   // (App.openTripForCountry) or a ?tab=trip&cc= link. Applied once the
   // catalogue can name the country, then reported consumed.
@@ -1543,6 +1546,7 @@ export function GuidedTripWizard({
                   {...{ recommendedNames, data, originCode, windowNights, flexNights, dateMode, startDate, endDate }}
                   {...{ onOpenDest, onOpenCountry, onOpenTrip }}
                   mapAside={railOn}
+                  whereTabs={!lockWhereTab}
                   onPlanTrip={planTripFromBrief}
                   onCompare={() => setCompareOpen(true)}
                 />

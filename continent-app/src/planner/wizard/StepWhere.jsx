@@ -5,11 +5,11 @@ import { CountryBrief } from '../CountryBrief.jsx';
 import { WhereQuiz } from '../WhereQuiz.jsx';
 import { CountryMatchCards, DayCostLine } from '../CountryMatchCards.jsx';
 import { PlannerSection } from '../PlannerSection.jsx';
-import { Button } from '../../components/ui/index.js';
+import { Button, IconButton } from '../../components/ui/index.js';
 import { favDestIds } from '../../lib/favorites.js';
 import { monthName } from '../../lib/dates.js';
 import { googleFlightsExploreLink } from '../../lib/transportLinks.js';
-import { CheckIcon, InfoIcon, StarIcon, CloseIcon } from '../../components/Icons.jsx';
+import { CheckIcon, InfoIcon, StarIcon, CloseIcon, ListDayIcon, MapPinIcon } from '../../components/Icons.jsx';
 import { PlaneIcon } from '../../components/TransportIcons.jsx';
 import { Flag } from '../GuidedTripWizardParts.jsx';
 import { dayCostText } from './wizardSteps.js';
@@ -43,58 +43,54 @@ function ExploreFlightsCard({ airport, month = '', lang = 'en', t }) {
 }
 
 /**
- * One country to pick by hand (T490-i, roadmap 1.3c 2.5): one accessible name,
- * "Italy, from about {price} a person a day", with the cost line inside the pick
- * button under the name band; the shortlist count is its description; the
- * info button stays outside the pick button.
+ * One country to pick by hand (T490-i; T752 redrew it as Explore's tile, the
+ * kit Card anatomy): the photograph with a tick once picked, the flag and the
+ * name, the shortlist count, and what a day there costs from. The pick is the
+ * card's one stretched button, with "Italy, from about {price} a person a day"
+ * as its name; the info button stands above it in the corner.
  */
 function CountryCard({ c, on, reading, img, favN, cost, onToggle, onInfo }) {
   const { t } = useI18n();
   const text = dayCostText(cost, t);
   const favId = `ccard-fav-${c.iso2 || c.country}`;
   return (
-    <div className={`guide-ccard ${on ? 'on' : ''} ${reading ? 'reading' : ''}`}>
-      <button
-        type="button"
-        className="guide-ccard-pick"
-        onClick={() => onToggle(c.country)}
-        aria-pressed={on}
-        aria-label={text ? t('wizard.countryPickName', { country: c.country, price: text.spoken }) : c.country}
-        aria-describedby={favN > 0 ? favId : undefined}
-      >
+    <article className={`card card-tile card-wrap is-interactive pf-ccard${on ? ' is-selected' : ''}${reading ? ' is-reading' : ''}`}>
+      <div className="card-media">
         <HeroImage
           url={img}
           city={c.country}
           iso2={c.iso2}
-          className="guide-ccard-img"
+          className="pf-ccard-img"
           maxWidth={960}
           ratio={[4, 3]}
           sizes="(max-width: 480px) 46vw, (max-width: 768px) 30vw, 240px"
         />
-        {/* Flag, name, the shortlist count, the tick and the day's cost sit
-            in a band under the photograph, never on it. */}
-        <span className="guide-ccard-overlay">
-          <span className="guide-ccard-name">
+        {on && <span className="pf-ccard-tick" aria-hidden="true"><CheckIcon size={14} /></span>}
+      </div>
+      <div className="card-body pf-ccard-body">
+        <h3 className="card-title">
+          <button
+            type="button"
+            className="card-open pf-ccard-name"
+            onClick={() => onToggle(c.country)}
+            aria-pressed={on}
+            aria-label={text ? t('wizard.countryPickName', { country: c.country, price: text.spoken }) : c.country}
+            aria-describedby={favN > 0 ? favId : undefined}
+          >
             <Flag iso2={c.iso2} className="guide-flag-img-sm" />
-            {c.country}
-            {on && <span className="guide-ccard-check"><CheckIcon size={12} /></span>}
-          </span>
-          {favN > 0 && (
-            <span className="guide-ccard-fav" id={favId}>{t('wizard.onShortlist', { n: favN })}</span>
-          )}
-          <DayCostLine cost={cost} t={t} as="span" className="wiz-ccard-cost" />
-        </span>
-      </button>
-      <button
-        type="button"
-        className="guide-ccard-info"
-        onClick={(e) => { e.stopPropagation(); onInfo(c.country); }}
-        aria-expanded={reading}
-        aria-label={t('brief.whatsThereIn', { country: c.country })}
-      >
-        <InfoIcon size={15} />
-      </button>
-    </div>
+            <span>{c.country}</span>
+          </button>
+        </h3>
+        {favN > 0 && <div className="card-meta pf-ccard-fav" id={favId}><StarIcon size={11} /> {t('wizard.onShortlist', { n: favN })}</div>}
+        <div className="card-figures"><div className="card-price"><DayCostLine cost={cost} t={t} as="span" className="pf-ccard-cost" /></div></div>
+      </div>
+      <div className="card-actions">
+        <IconButton tone="surface" className="pf-ccard-info" label={t('brief.whatsThereIn', { country: c.country })}
+          aria-expanded={reading} onClick={(e) => { e.stopPropagation(); onInfo(c.country); }}>
+          <InfoIcon size={16} />
+        </IconButton>
+      </div>
+    </article>
   );
 }
 
@@ -112,6 +108,8 @@ export function StepWhere({
   onOpenDest, onOpenCountry, onOpenTrip, onPlanTrip,
   // T670: compare the picked countries side by side (CompareSheet).
   onCompare = null,
+  // T752: false behind "I know where": the picker alone, no Help me choose tab.
+  whereTabs = true,
 }) {
   const { t, lang } = useI18n();
   const StepTitle = titleTag;
@@ -159,11 +157,12 @@ export function StepWhere({
   };
   const toggleBrief = (name) => setBriefCountry(briefCountry === name ? '' : name);
   const view = mapAside ? 'list' : whereView;
+  const tab = whereTabs ? whereTab : 'hand';
 
   return (
     <>
       <StepTitle className="guide-title">{t('wizard.whereTitle')}</StepTitle>
-      <p className="guide-sub">{t('wizard.whereSub')}</p>
+      {whereTabs && <p className="guide-sub">{t('wizard.whereSub')}</p>}
 
       {/* The picks live above the tabs, because they belong to neither. */}
       {countries.size > 0 && (
@@ -187,6 +186,7 @@ export function StepWhere({
         </div>
       )}
 
+      {whereTabs && (
       <div className="guide-datemode guide-wtabs" role="tablist" aria-label={t('wizard.whereTitle')}>
         {WHERE_TABS.map((tab) => (
           <button
@@ -204,6 +204,7 @@ export function StepWhere({
           </button>
         ))}
       </div>
+      )}
 
       {onCompare && countries.size >= 2 && (
         <div className="cmp-bar">
@@ -214,7 +215,7 @@ export function StepWhere({
 
       <div className={`guide-where ${openBrief ? 'has-brief' : ''}`}>
         <div className="guide-where-col">
-          {whereTab === 'help' ? (
+          {tab === 'help' ? (
             <div role="tabpanel" id="wpanel-help" aria-labelledby="wtab-help">
               <WhereQuiz
                 answers={quiz}
@@ -240,11 +241,16 @@ export function StepWhere({
               <ExploreFlightsCard airport={nearAirports[0]} month={tripYearMonth} lang={lang} t={t} />
             </div>
           ) : (
-            <div role="tabpanel" id="wpanel-hand" aria-labelledby="wtab-hand">
+            <div {...(whereTabs ? { role: 'tabpanel', id: 'wpanel-hand', 'aria-labelledby': 'wtab-hand' } : {})}>
+              {/* Explore's one toggle (T592): in the grid it offers the map,
+                  on the map it offers the grid, with the icon of where it goes. */}
               {!mapAside && (
-                <div className="guide-datemode guide-stay-view guide-where-view">
-                  <button className={whereView === 'list' ? 'on' : ''} aria-pressed={whereView === 'list'} onClick={() => setWhereView('list')}>{t('wizard.grid')}</button>
-                  <button className={whereView === 'map' ? 'on' : ''} aria-pressed={whereView === 'map'} onClick={() => setWhereView('map')}>{t('wizard.map')}</button>
+                <div className="pf-where-bar">
+                  <Button variant="secondary" size="sm" className="pf-view-toggle"
+                    iconStart={whereView === 'map' ? <ListDayIcon size={16} /> : <MapPinIcon size={16} />}
+                    onClick={() => setWhereView(whereView === 'map' ? 'list' : 'map')}>
+                    {t(whereView === 'map' ? 'explore.viewList' : 'explore.viewMap')}
+                  </Button>
                 </div>
               )}
 
@@ -274,7 +280,7 @@ export function StepWhere({
               )}
 
               {view === 'list' ? (
-                <div className="guide-cgrid">
+                <div className="pf-cgrid">
                   {handCountries.map((c) => (
                     <CountryCard
                       key={c.country}
