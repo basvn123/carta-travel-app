@@ -1,0 +1,550 @@
+[
+ {
+  "edition": 2027,
+  "list": "destinations",
+  "rank": null,
+  "name": "The Veneto",
+  "country": "Italy",
+  "id": null,
+  "url": "https://www.timeout.com/news/lonely-planet-best-in-travel-2027-092326"
+ },
+ {
+  "edition": 2027,
+  "list": "destinations",
+  "rank": null,
+  "name": "Dessau",
+  "country": "Germany",
+  "id": "gem:dessau",
+  "url": "https://www.timeout.com/news/lonely-planet-best-in-travel-2027-092326"
+ },
+ {
+  "edition": 2027,
+  "list": "destinations",
+  "rank": null,
+  "name": "Skanör-Falsterbo",
+  "country": "Sweden",
+  "id": null,
+  "url": "https://www.timeout.com/news/lonely-planet-best-in-travel-2027-092326"
+ },
+ {
+  "edition": 2027,
+  "list": "destinations",
+  "rank": null,
+  "name": "Šibenik",
+  "country": "Croatia",
+  "id": "gem:sibenik",
+  "url": "https://www.timeout.com/news/lonely-planet-best-in-travel-2027-092326"
+ },
+ {
+  "edition": 2027,
+  "list": "destinations",
+  "rank": null,
+  "name": "León",
+  "country": "Spain",
+  "id": "gem:leon",
+  "url": "https://www.timeout.com/news/lonely-planet-best-in-travel-2027-092326"
+ },
+ {
+  "edition": 2027,
+  "list": "experiences",
+  "rank": null,
+  "name": "St Cuthbert's Way",
+  "country": "United Kingdom",
+  "id": null,
+  "url": "https://euronews.com/2026/09/23/where-to-travel-in-europe-in-2027-lonely-planet-reveals-its-best-destinations-and-experien",
+  "note": "ends at Lindisfarne (gem:lindisfarne), not mapped"
+ },
+ {
+  "edition": 2027,
+  "list": "experiences",
+  "rank": null,
+  "name": "Route Napoléon",
+  "country": "France",
+  "id": null,
+  "url": "https://euronews.com/2026/09/23/where-to-travel-in-europe-in-2027-lonely-planet-reveals-its-best-destinations-and-experien"
+ },
+ {
+  "edition": 2027,
+  "list": "experiences",
+  "rank": null,
+  "name": "Aeolian Islands (sailing)",
+  "country": "Italy",
+  "id": null,
+  "url": "https://euronews.com/2026/09/23/where-to-travel-in-europe-in-2027-lonely-planet-reveals-its-best-destinations-and-experien",
+  "note": "catalogue has only gem:lipari-aeolian, not same name"
+ },
+ {
+  "edition": 2027,
+  "list": "experiences",
+  "rank": null,
+  "name": "Aegean Sea (diving)",
+  "country": "Greece",
+  "id": null,
+  "url": "https://euronews.com/2026/09/23/where-to-travel-in-europe-in-2027-lonely-planet-reveals-its-best-destinations-and-experien"
+ },
+ {
+  "edition": 2027,
+  "list": "experiences",
+  "rank": null,
+  "name": "Killary Fjord",
+  "country": "Ireland",
+  "id": null,
+  "url": "https://euronews.com/2026/09/23/where-to-travel-in-europe-in-2027-lonely-planet-reveals-its-best-destinations-and-experien",
+  "note": "near gem:connemara, not same name"
+ },
+ {
+  "edition": 2026,
+  "list": "destinations",
+  "rank": null,
+  "name": "Finland",
+  "country": "Finland",
+  "id": null,
+  "url": "https://www.travelgo.gr/en/best-of/501844/lonely-planet-top-25-travel-destinations-2026"
+ },
+ {
+  "edition": 2026,
+  "list": "destinations",
+  "rank": null,
+  "name": "Tipperary",
+  "country": "Ireland",
+  "id": null,
+  "url": "https://www.travelgo.gr/en/best-of/501844/lonely-planet-top-25-travel-destinations-2026"
+ },
+ {
+  "edition": 2026,
+  "list": "destinations",
+  "rank": null,
+  "name": "Cádiz",
+  "country": "Spain",
+  "id": "gem:cadiz",
+  "url": "https://www.travelgo.gr/en/best-of/501844/lonely-planet-top-25-travel-destinations-2026"
+ },
+ {
+  "edition": 2026,
+  "list": "destinations",
+  "rank": null,
+  "name": "Utrecht",
+  "country": "Netherlands",
+  "id": "gem:utrecht",
+  "url": "https://www.travelgo.gr/en/best-of/501844/lonely-planet-top-25-travel-destinations-2026"
+ },
+ {
+  "edition": 2026,
+  "list": "destinations",
+  "rank": null,
+  "name": "Sardinia",
+  "country": "Italy",
+  "id": null,
+  "url": "https://www.travelgo.gr/en/best-of/501844/lonely-planet-top-25-travel-destinations-2026"
+ },
+ {
+  "edition": 2026,
+  "list": "experiences",
+  "rank": null,
+  "name": "Azores (whale-spotting)",
+  "country": "Portugal",
+  "id": null,
+  "url": "https://travellingforbusiness.co.uk/destinations/lonely-planets-best-in-travel-destinations-for-2026-revealed"
+ },
+ {
+  "edition": 2026,
+  "list": "experiences",
+  "rank": null,
+  "name": "Belgrade (after-dark club scene)",
+  "country": "Serbia",
+  "id": "BEG",
+  "url": "https://travellingforbusiness.co.uk/destinations/lonely-planets-best-in-travel-destinations-for-2026-revealed"
+ },
+ {
+  "edition": 2026,
+  "list": "experiences",
+  "rank": null,
+  "name": "Bristol (street-art exploration)",
+  "country": "United Kingdom",
+  "id": "BRS",
+  "url": "https://travellingforbusiness.co.uk/destinations/lonely-planets-best-in-travel-destinations-for-2026-revealed"
+ },
+ {
+  "edition": 2026,
+  "list": "experiences",
+  "rank": null,
+  "name": "England (top-flight football match)",
+  "country": "United Kingdom",
+  "id": null,
+  "url": "https://travellingforbusiness.co.uk/destinations/lonely-planets-best-in-travel-destinations-for-2026-revealed"
+ },
+ {
+  "edition": 2026,
+  "list": "experiences",
+  "rank": null,
+  "name": "Southern France (modernist architect's house)",
+  "country": "France",
+  "id": null,
+  "url": "https://travellingforbusiness.co.uk/destinations/lonely-planets-best-in-travel-destinations-for-2026-revealed"
+ },
+ {
+  "edition": 2025,
+  "list": "cities",
+  "rank": 1,
+  "name": "Toulouse",
+  "country": "France",
+  "id": "TLS",
+  "url": "https://themanual.com/?p=1365782"
+ },
+ {
+  "edition": 2025,
+  "list": "cities",
+  "rank": 3,
+  "name": "Bansko",
+  "country": "Bulgaria",
+  "id": "gem:bansko",
+  "url": "https://themanual.com/?p=1365782"
+ },
+ {
+  "edition": 2025,
+  "list": "cities",
+  "rank": 5,
+  "name": "Genoa",
+  "country": "Italy",
+  "id": "GOA",
+  "url": "https://themanual.com/?p=1365782"
+ },
+ {
+  "edition": 2025,
+  "list": "cities",
+  "rank": 9,
+  "name": "Palma de Mallorca",
+  "country": "Spain",
+  "id": "PMI",
+  "url": "https://themanual.com/?p=1365782"
+ },
+ {
+  "edition": 2025,
+  "list": "countries",
+  "rank": 2,
+  "name": "Lithuania",
+  "country": "Lithuania",
+  "id": null,
+  "url": "https://themanual.com/?p=1365782"
+ },
+ {
+  "edition": 2025,
+  "list": "countries",
+  "rank": 9,
+  "name": "Slovakia",
+  "country": "Slovakia",
+  "id": null,
+  "url": "https://themanual.com/?p=1365782"
+ },
+ {
+  "edition": 2025,
+  "list": "countries",
+  "rank": 10,
+  "name": "Armenia",
+  "country": "Armenia",
+  "id": null,
+  "url": "https://themanual.com/?p=1365782",
+  "note": "Caucasus, marked"
+ },
+ {
+  "edition": 2025,
+  "list": "regions",
+  "rank": 5,
+  "name": "Valais",
+  "country": "Switzerland",
+  "id": null,
+  "url": "https://themanual.com/?p=1365782"
+ },
+ {
+  "edition": 2025,
+  "list": "regions",
+  "rank": 6,
+  "name": "Giresun & Ordu",
+  "country": "Türkiye",
+  "id": null,
+  "url": "https://themanual.com/?p=1365782",
+  "note": "Turkey, marked"
+ },
+ {
+  "edition": 2025,
+  "list": "regions",
+  "rank": 7,
+  "name": "Bavaria",
+  "country": "Germany",
+  "id": null,
+  "url": "https://themanual.com/?p=1365782"
+ },
+ {
+  "edition": 2025,
+  "list": "regions",
+  "rank": 8,
+  "name": "East Anglia",
+  "country": "United Kingdom",
+  "id": null,
+  "url": "https://themanual.com/?p=1365782"
+ },
+ {
+  "edition": 2024,
+  "list": "countries",
+  "rank": 9,
+  "name": "Croatia",
+  "country": "Croatia",
+  "id": null,
+  "url": "https://www.tageskarte.io/tourismus/detail/lonely-planet-best-in-travel-2024-keine-reiseziele-in-deutschland-empfohlen.html"
+ },
+ {
+  "edition": 2024,
+  "list": "cities",
+  "rank": 2,
+  "name": "Paris",
+  "country": "France",
+  "id": "CDG",
+  "url": "https://www.tageskarte.io/tourismus/detail/lonely-planet-best-in-travel-2024-keine-reiseziele-in-deutschland-empfohlen.html"
+ },
+ {
+  "edition": 2024,
+  "list": "cities",
+  "rank": 4,
+  "name": "Mostar",
+  "country": "Bosnia and Herzegovina",
+  "id": "gem:mostar-ba",
+  "url": "https://www.tageskarte.io/tourismus/detail/lonely-planet-best-in-travel-2024-keine-reiseziele-in-deutschland-empfohlen.html"
+ },
+ {
+  "edition": 2024,
+  "list": "cities",
+  "rank": 8,
+  "name": "Prague",
+  "country": "Czechia",
+  "id": "PRG",
+  "url": "https://www.tageskarte.io/tourismus/detail/lonely-planet-best-in-travel-2024-keine-reiseziele-in-deutschland-empfohlen.html"
+ },
+ {
+  "edition": 2024,
+  "list": "cities",
+  "rank": 9,
+  "name": "Izmir",
+  "country": "Türkiye",
+  "id": null,
+  "url": "https://www.tageskarte.io/tourismus/detail/lonely-planet-best-in-travel-2024-keine-reiseziele-in-deutschland-empfohlen.html",
+  "note": "Turkey, marked; not in catalogue"
+ },
+ {
+  "edition": 2024,
+  "list": "regions",
+  "rank": 1,
+  "name": "Trans-Dinarica Cycle Route",
+  "country": "Western Balkans",
+  "id": null,
+  "url": "https://www.tageskarte.io/tourismus/detail/lonely-planet-best-in-travel-2024-keine-reiseziele-in-deutschland-empfohlen.html"
+ },
+ {
+  "edition": 2024,
+  "list": "regions",
+  "rank": 3,
+  "name": "Tuscany",
+  "country": "Italy",
+  "id": null,
+  "url": "https://www.tageskarte.io/tourismus/detail/lonely-planet-best-in-travel-2024-keine-reiseziele-in-deutschland-empfohlen.html"
+ },
+ {
+  "edition": 2024,
+  "list": "regions",
+  "rank": 4,
+  "name": "Donegal",
+  "country": "Ireland",
+  "id": null,
+  "url": "https://www.tageskarte.io/tourismus/detail/lonely-planet-best-in-travel-2024-keine-reiseziele-in-deutschland-empfohlen.html"
+ },
+ {
+  "edition": 2024,
+  "list": "regions",
+  "rank": 5,
+  "name": "Basque Country",
+  "country": "Spain",
+  "id": null,
+  "url": "https://www.tageskarte.io/tourismus/detail/lonely-planet-best-in-travel-2024-keine-reiseziele-in-deutschland-empfohlen.html"
+ },
+ {
+  "edition": 2024,
+  "list": "regions",
+  "rank": 9,
+  "name": "Saalfelden Leogang",
+  "country": "Austria",
+  "id": null,
+  "url": "https://www.tageskarte.io/tourismus/detail/lonely-planet-best-in-travel-2024-keine-reiseziele-in-deutschland-empfohlen.html"
+ },
+ {
+  "edition": 2024,
+  "list": "regions",
+  "rank": 10,
+  "name": "Scotland's Far North",
+  "country": "United Kingdom",
+  "id": null,
+  "url": "https://www.tageskarte.io/tourismus/detail/lonely-planet-best-in-travel-2024-keine-reiseziele-in-deutschland-empfohlen.html"
+ },
+ {
+  "edition": 2024,
+  "list": "sustainable",
+  "rank": 1,
+  "name": "Spain",
+  "country": "Spain",
+  "id": null,
+  "url": "https://www.tageskarte.io/tourismus/detail/lonely-planet-best-in-travel-2024-keine-reiseziele-in-deutschland-empfohlen.html"
+ },
+ {
+  "edition": 2024,
+  "list": "sustainable",
+  "rank": 4,
+  "name": "The Trails of Wales",
+  "country": "United Kingdom",
+  "id": null,
+  "url": "https://www.tageskarte.io/tourismus/detail/lonely-planet-best-in-travel-2024-keine-reiseziele-in-deutschland-empfohlen.html"
+ },
+ {
+  "edition": 2024,
+  "list": "sustainable",
+  "rank": 5,
+  "name": "Caminho Português",
+  "country": "Portugal & Spain",
+  "id": null,
+  "url": "https://www.tageskarte.io/tourismus/detail/lonely-planet-best-in-travel-2024-keine-reiseziele-in-deutschland-empfohlen.html"
+ },
+ {
+  "edition": 2024,
+  "list": "sustainable",
+  "rank": 9,
+  "name": "Hiking trails in the Baltics",
+  "country": "Estonia, Latvia, Lithuania",
+  "id": null,
+  "url": "https://www.tageskarte.io/tourismus/detail/lonely-planet-best-in-travel-2024-keine-reiseziele-in-deutschland-empfohlen.html"
+ },
+ {
+  "edition": 2024,
+  "list": "worth the money",
+  "rank": 2,
+  "name": "Poland",
+  "country": "Poland",
+  "id": null,
+  "url": "https://www.tageskarte.io/tourismus/detail/lonely-planet-best-in-travel-2024-keine-reiseziele-in-deutschland-empfohlen.html"
+ },
+ {
+  "edition": 2024,
+  "list": "worth the money",
+  "rank": 4,
+  "name": "Danube Limes",
+  "country": "Romania",
+  "id": null,
+  "url": "https://www.tageskarte.io/tourismus/detail/lonely-planet-best-in-travel-2024-keine-reiseziele-in-deutschland-empfohlen.html",
+  "note": "Romania per this source; another source said Bulgaria"
+ },
+ {
+  "edition": 2024,
+  "list": "worth the money",
+  "rank": 5,
+  "name": "Normandy",
+  "country": "France",
+  "id": null,
+  "url": "https://www.tageskarte.io/tourismus/detail/lonely-planet-best-in-travel-2024-keine-reiseziele-in-deutschland-empfohlen.html"
+ },
+ {
+  "edition": 2024,
+  "list": "worth the money",
+  "rank": 7,
+  "name": "Ikaria",
+  "country": "Greece",
+  "id": "gem:ikaria",
+  "url": "https://www.tageskarte.io/tourismus/detail/lonely-planet-best-in-travel-2024-keine-reiseziele-in-deutschland-empfohlen.html"
+ },
+ {
+  "edition": 2024,
+  "list": "worth the money",
+  "rank": 10,
+  "name": "Night trains",
+  "country": "Europe",
+  "id": null,
+  "url": "https://www.tageskarte.io/tourismus/detail/lonely-planet-best-in-travel-2024-keine-reiseziele-in-deutschland-empfohlen.html"
+ },
+ {
+  "edition": 2023,
+  "list": "eat",
+  "rank": null,
+  "name": "Umbria",
+  "country": "Italy",
+  "id": null,
+  "url": "https://www.timeout.com/news/this-is-where-you-should-travel-in-2023-according-to-lonely-planet-111622"
+ },
+ {
+  "edition": 2023,
+  "list": "journey",
+  "rank": null,
+  "name": "Istanbul to Sofia night train",
+  "country": "Türkiye / Bulgaria",
+  "id": null,
+  "url": "https://www.timeout.com/news/this-is-where-you-should-travel-in-2023-according-to-lonely-planet-111622",
+  "note": "Turkey leg marked"
+ },
+ {
+  "edition": 2023,
+  "list": "unwind",
+  "rank": null,
+  "name": "Halkidiki",
+  "country": "Greece",
+  "id": null,
+  "url": "https://www.timeout.com/news/this-is-where-you-should-travel-in-2023-according-to-lonely-planet-111622"
+ },
+ {
+  "edition": 2023,
+  "list": "unwind",
+  "rank": null,
+  "name": "Malta",
+  "country": "Malta",
+  "id": "MLA",
+  "url": "https://www.timeout.com/news/this-is-where-you-should-travel-in-2023-according-to-lonely-planet-111622"
+ },
+ {
+  "edition": 2023,
+  "list": "connect",
+  "rank": null,
+  "name": "Albania",
+  "country": "Albania",
+  "id": null,
+  "url": "https://www.timeout.com/news/this-is-where-you-should-travel-in-2023-according-to-lonely-planet-111622"
+ },
+ {
+  "edition": 2023,
+  "list": "learn",
+  "rank": null,
+  "name": "Manchester",
+  "country": "United Kingdom",
+  "id": "MAN",
+  "url": "https://www.timeout.com/news/this-is-where-you-should-travel-in-2023-according-to-lonely-planet-111622"
+ },
+ {
+  "edition": 2023,
+  "list": "learn",
+  "rank": null,
+  "name": "Dresden",
+  "country": "Germany",
+  "id": "DRS",
+  "url": "https://www.timeout.com/news/this-is-where-you-should-travel-in-2023-according-to-lonely-planet-111622"
+ },
+ {
+  "edition": 2023,
+  "list": "learn",
+  "rank": null,
+  "name": "Scotland",
+  "country": "United Kingdom",
+  "id": null,
+  "url": "https://www.timeout.com/news/this-is-where-you-should-travel-in-2023-according-to-lonely-planet-111622"
+ },
+ {
+  "edition": 2023,
+  "list": "learn",
+  "rank": null,
+  "name": "Marseille",
+  "country": "France",
+  "id": "MRS",
+  "url": "https://www.timeout.com/news/this-is-where-you-should-travel-in-2023-according-to-lonely-planet-111622"
+ }
+]

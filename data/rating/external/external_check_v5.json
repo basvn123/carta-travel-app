@@ -1,0 +1,412 @@
+{
+ "n_rated": 3855,
+ "top": 200,
+ "spearman": {
+  "tripadvisor": 0.034,
+  "lonelyplanet": 0.094,
+  "unesco": 0.159,
+  "wikivoyage": 0.184
+ },
+ "top_covered": {
+  "tripadvisor": 6,
+  "lonelyplanet": 4,
+  "unesco": 106,
+  "wikivoyage": 128
+ },
+ "named_mapped": 28,
+ "named_not_rated": [],
+ "gaps": [
+  {
+   "kind": "named_low",
+   "id": "gem:ikaria",
+   "name": "Ikaria",
+   "country": "Greece",
+   "class": "area",
+   "score": 5.5,
+   "our_rank": 2808,
+   "confidence": "curated",
+   "references": "Lonely Planet 2024 worth the money #7; Wikivoyage guide",
+   "urls": [
+    "https://www.tageskarte.io/tourismus/detail/lonely-planet-best-in-travel-2024-keine-reiseziele-in-deutschland-empfohlen.html"
+   ]
+  },
+  {
+   "kind": "named_low",
+   "id": "BEG",
+   "name": "Belgrade",
+   "country": "Serbia",
+   "class": "metro",
+   "score": 5.9,
+   "our_rank": 2371,
+   "confidence": "curated",
+   "references": "Lonely Planet 2026 experiences; Wikivoyage guide",
+   "urls": [
+    "https://travellingforbusiness.co.uk/destinations/lonely-planets-best-in-travel-destinations-for-2026-revealed"
+   ]
+  },
+  {
+   "kind": "named_low",
+   "id": "gem:dessau",
+   "name": "Dessau",
+   "country": "Germany",
+   "class": "city",
+   "score": 6.3,
+   "our_rank": 1913,
+   "confidence": "rubric",
+   "references": "Lonely Planet 2027 destinations; UNESCO World Heritage at the place",
+   "urls": [
+    "https://www.timeout.com/news/lonely-planet-best-in-travel-2027-092326"
+   ]
+  },
+  {
+   "kind": "named_low",
+   "id": "MAN",
+   "name": "Manchester",
+   "country": "United Kingdom",
+   "class": "metro",
+   "score": 6.3,
+   "our_rank": 1891,
+   "confidence": "curated",
+   "references": "Lonely Planet 2023 learn; Wikivoyage guide",
+   "urls": [
+    "https://www.timeout.com/news/this-is-where-you-should-travel-in-2023-according-to-lonely-planet-111622"
+   ]
+  },
+  {
+   "kind": "named_low",
+   "id": "TLS",
+   "name": "Toulouse",
+   "country": "France",
+   "class": "metro",
+   "score": 6.4,
+   "our_rank": 1772,
+   "confidence": "curated",
+   "references": "Lonely Planet 2025 cities #1; UNESCO World Heritage at the place; Wikivoyage guide",
+   "urls": [
+    "https://themanual.com/?p=1365782"
+   ]
+  },
+  {
+   "kind": "named_low",
+   "id": "HER",
+   "name": "Heraklion (Crete)",
+   "country": "Greece",
+   "class": "city",
+   "score": 6.7,
+   "our_rank": 1435,
+   "confidence": "curated",
+   "references": "Tripadvisor TC Europe top destinations 2025 #5; Tripadvisor TC world top destinations 2025 #9; Tripadvisor TC world top destinations 2026 #9; Wikivoyage guide",
+   "urls": [
+    "https://tripadvisor.mediaroom.com/Travellers-Choice-Best-of-the-Best-Destinations-2025",
+    "https://tripadvisor.mediaroom.com/Travellers-Choice-Best-of-the-Best-Destinations-2026"
+   ]
+  },
+  {
+   "kind": "named_low",
+   "id": "GLA",
+   "name": "Glasgow",
+   "country": "United Kingdom",
+   "class": "metro",
+   "score": 6.7,
+   "our_rank": 1434,
+   "confidence": "curated",
+   "references": "Tripadvisor TC world trending 2026 #7; Wikivoyage guide",
+   "urls": [
+    "https://tripadvisor.mediaroom.com/Travellers-Choice-Best-of-the-Best-Destinations-2026"
+   ]
+  },
+  {
+   "kind": "named_low",
+   "id": "DRS",
+   "name": "Dresden",
+   "country": "Germany",
+   "class": "metro",
+   "score": 6.8,
+   "our_rank": 1343,
+   "confidence": "curated",
+   "references": "Lonely Planet 2023 learn; Wikivoyage guide",
+   "urls": [
+    "https://www.timeout.com/news/this-is-where-you-should-travel-in-2023-according-to-lonely-planet-111622"
+   ]
+  },
+  {
+   "kind": "named_low",
+   "id": "gem:leon",
+   "name": "Leon",
+   "country": "Spain",
+   "class": "city",
+   "score": 6.9,
+   "our_rank": 1295,
+   "confidence": "curated",
+   "references": "Lonely Planet 2027 destinations; Wikivoyage guide",
+   "urls": [
+    "https://www.timeout.com/news/lonely-planet-best-in-travel-2027-092326"
+   ]
+  },
+  {
+   "kind": "named_low",
+   "id": "gem:bansko",
+   "name": "Bansko",
+   "country": "Bulgaria",
+   "class": "town",
+   "score": 7.0,
+   "our_rank": 1151,
+   "confidence": "curated",
+   "references": "Lonely Planet 2025 cities #3; Wikivoyage guide",
+   "urls": [
+    "https://themanual.com/?p=1365782"
+   ]
+  },
+  {
+   "kind": "named_low",
+   "id": "MRS",
+   "name": "Marseille",
+   "country": "France",
+   "class": "metro",
+   "score": 7.0,
+   "our_rank": 1140,
+   "confidence": "curated",
+   "references": "Lonely Planet 2023 learn; Wikivoyage guide",
+   "urls": [
+    "https://www.timeout.com/news/this-is-where-you-should-travel-in-2023-according-to-lonely-planet-111622"
+   ]
+  },
+  {
+   "kind": "named_low",
+   "id": "MXP",
+   "name": "Milan (Malpensa)",
+   "country": "Italy",
+   "class": "metro",
+   "score": 7.3,
+   "our_rank": 856,
+   "confidence": "curated",
+   "references": "Tripadvisor TC world trending 2026 #6; UNESCO World Heritage at the place; Wikivoyage guide",
+   "urls": [
+    "https://tripadvisor.mediaroom.com/Travellers-Choice-Best-of-the-Best-Destinations-2026"
+   ]
+  },
+  {
+   "kind": "named_low",
+   "id": "BRS",
+   "name": "Bristol",
+   "country": "United Kingdom",
+   "class": "metro",
+   "score": 7.3,
+   "our_rank": 852,
+   "confidence": "curated",
+   "references": "Lonely Planet 2026 experiences; Wikivoyage guide",
+   "urls": [
+    "https://travellingforbusiness.co.uk/destinations/lonely-planets-best-in-travel-destinations-for-2026-revealed"
+   ]
+  },
+  {
+   "kind": "named_low",
+   "id": "gem:mostar-ba",
+   "name": "Mostar",
+   "country": "Bosnia and Herzegovina",
+   "class": "city",
+   "score": 7.7,
+   "our_rank": 622,
+   "confidence": "curated",
+   "references": "Lonely Planet 2024 cities #4; Wikivoyage guide",
+   "urls": [
+    "https://www.tageskarte.io/tourismus/detail/lonely-planet-best-in-travel-2024-keine-reiseziele-in-deutschland-empfohlen.html"
+   ]
+  },
+  {
+   "kind": "named_low",
+   "id": "PMI",
+   "name": "Palma de Mallorca",
+   "country": "Spain",
+   "class": "metro",
+   "score": 7.9,
+   "our_rank": 430,
+   "confidence": "curated",
+   "references": "Tripadvisor TC Europe top destinations 2025 #9; Lonely Planet 2025 cities #9; Wikivoyage guide",
+   "urls": [
+    "https://themanual.com/?p=1365782",
+    "https://tripadvisor.mediaroom.com/Travellers-Choice-Best-of-the-Best-Destinations-2025"
+   ]
+  },
+  {
+   "kind": "top_unsupported",
+   "id": "gem:orta-san-giulio",
+   "name": "Orta San Giulio",
+   "country": "Italy",
+   "class": "village",
+   "score": 9.4,
+   "our_rank": 16,
+   "confidence": "curated",
+   "references": "none",
+   "urls": []
+  },
+  {
+   "kind": "top_unsupported",
+   "id": "gem:castel-gandolfo",
+   "name": "Castel Gandolfo",
+   "country": "Italy",
+   "class": "village",
+   "score": 9.2,
+   "our_rank": 34,
+   "confidence": "rubric",
+   "references": "none",
+   "urls": []
+  },
+  {
+   "kind": "top_unsupported",
+   "id": "gem:ortisei",
+   "name": "Ortisei (Val Gardena)",
+   "country": "Italy",
+   "class": "village",
+   "score": 9.2,
+   "our_rank": 38,
+   "confidence": "curated",
+   "references": "none",
+   "urls": []
+  },
+  {
+   "kind": "top_unsupported",
+   "id": "KEF",
+   "name": "Reykjavik (Keflavik)",
+   "country": "Iceland",
+   "class": "city",
+   "score": 9.1,
+   "our_rank": 45,
+   "confidence": "curated",
+   "references": "none",
+   "urls": []
+  },
+  {
+   "kind": "top_unsupported",
+   "id": "gem:dolomites",
+   "name": "Dolomites (Cortina)",
+   "country": "Italy",
+   "class": "area",
+   "score": 9.1,
+   "our_rank": 54,
+   "confidence": "curated",
+   "references": "none",
+   "urls": []
+  },
+  {
+   "kind": "top_unsupported",
+   "id": "gem:malcesine",
+   "name": "Malcesine",
+   "country": "Italy",
+   "class": "village",
+   "score": 9.1,
+   "our_rank": 62,
+   "confidence": "rubric",
+   "references": "none",
+   "urls": []
+  },
+  {
+   "kind": "top_unsupported",
+   "id": "gem:montserrat",
+   "name": "Montserrat",
+   "country": "Spain",
+   "class": "village",
+   "score": 9.1,
+   "our_rank": 64,
+   "confidence": "curated",
+   "references": "none",
+   "urls": []
+  },
+  {
+   "kind": "top_unsupported",
+   "id": "gem:tenno",
+   "name": "Tenno",
+   "country": "Italy",
+   "class": "village",
+   "score": 9.1,
+   "our_rank": 72,
+   "confidence": "rubric",
+   "references": "none",
+   "urls": []
+  },
+  {
+   "kind": "top_unsupported",
+   "id": "gem:cala-gonone",
+   "name": "Cala Gonone (Golfo di Orosei)",
+   "country": "Italy",
+   "class": "village",
+   "score": 9.0,
+   "our_rank": 80,
+   "confidence": "curated",
+   "references": "none",
+   "urls": []
+  },
+  {
+   "kind": "top_unsupported",
+   "id": "gem:fort-william",
+   "name": "Fort William (Glencoe)",
+   "country": "United Kingdom",
+   "class": "town",
+   "score": 9.0,
+   "our_rank": 83,
+   "confidence": "curated",
+   "references": "none",
+   "urls": []
+  },
+  {
+   "kind": "top_unsupported",
+   "id": "gem:lago-maggiore",
+   "name": "Lago Maggiore (Stresa)",
+   "country": "Italy",
+   "class": "village",
+   "score": 9.0,
+   "our_rank": 87,
+   "confidence": "curated",
+   "references": "none",
+   "urls": []
+  },
+  {
+   "kind": "top_unsupported",
+   "id": "gem:lagos-pt",
+   "name": "Lagos",
+   "country": "Portugal",
+   "class": "town",
+   "score": 9.0,
+   "our_rank": 88,
+   "confidence": "curated",
+   "references": "none",
+   "urls": []
+  },
+  {
+   "kind": "top_unsupported",
+   "id": "gem:morskie-oko",
+   "name": "Morskie Oko (Tatra NP)",
+   "country": "Poland",
+   "class": "village",
+   "score": 9.0,
+   "our_rank": 92,
+   "confidence": "curated",
+   "references": "none",
+   "urls": []
+  },
+  {
+   "kind": "top_unsupported",
+   "id": "gem:portoferraio",
+   "name": "Portoferraio",
+   "country": "Italy",
+   "class": "town",
+   "score": 9.0,
+   "our_rank": 97,
+   "confidence": "rubric",
+   "references": "none",
+   "urls": []
+  },
+  {
+   "kind": "top_unsupported",
+   "id": "gem:schonau-am-konigssee",
+   "name": "Schönau am Königssee",
+   "country": "Germany",
+   "class": "village",
+   "score": 9.0,
+   "our_rank": 103,
+   "confidence": "rubric",
+   "references": "none",
+   "urls": []
+  }
+ ]
+}

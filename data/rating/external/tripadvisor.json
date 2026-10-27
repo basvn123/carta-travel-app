@@ -1,0 +1,209 @@
+[
+ {
+  "list": "TC Europe top destinations",
+  "year": 2025,
+  "rank": 1,
+  "name": "London",
+  "country": "United Kingdom",
+  "id": "LHR",
+  "url": "https://tripadvisor.mediaroom.com/Travellers-Choice-Best-of-the-Best-Destinations-2025"
+ },
+ {
+  "list": "TC Europe top destinations",
+  "year": 2025,
+  "rank": 2,
+  "name": "Sicily",
+  "country": "Italy",
+  "id": null,
+  "url": "https://tripadvisor.mediaroom.com/Travellers-Choice-Best-of-the-Best-Destinations-2025"
+ },
+ {
+  "list": "TC Europe top destinations",
+  "year": 2025,
+  "rank": 3,
+  "name": "Paris",
+  "country": "France",
+  "id": "CDG",
+  "url": "https://tripadvisor.mediaroom.com/Travellers-Choice-Best-of-the-Best-Destinations-2025"
+ },
+ {
+  "list": "TC Europe top destinations",
+  "year": 2025,
+  "rank": 4,
+  "name": "Rome",
+  "country": "Italy",
+  "id": "FCO",
+  "url": "https://tripadvisor.mediaroom.com/Travellers-Choice-Best-of-the-Best-Destinations-2025"
+ },
+ {
+  "list": "TC Europe top destinations",
+  "year": 2025,
+  "rank": 5,
+  "name": "Crete",
+  "country": "Greece",
+  "id": "HER",
+  "url": "https://tripadvisor.mediaroom.com/Travellers-Choice-Best-of-the-Best-Destinations-2025"
+ },
+ {
+  "list": "TC Europe top destinations",
+  "year": 2025,
+  "rank": 6,
+  "name": "Barcelona",
+  "country": "Spain",
+  "id": "BCN",
+  "url": "https://tripadvisor.mediaroom.com/Travellers-Choice-Best-of-the-Best-Destinations-2025"
+ },
+ {
+  "list": "TC Europe top destinations",
+  "year": 2025,
+  "rank": 7,
+  "name": "Lisbon",
+  "country": "Portugal",
+  "id": "LIS",
+  "url": "https://tripadvisor.mediaroom.com/Travellers-Choice-Best-of-the-Best-Destinations-2025"
+ },
+ {
+  "list": "TC Europe top destinations",
+  "year": 2025,
+  "rank": 8,
+  "name": "Istanbul",
+  "country": "Turkiye",
+  "id": null,
+  "url": "https://tripadvisor.mediaroom.com/Travellers-Choice-Best-of-the-Best-Destinations-2025"
+ },
+ {
+  "list": "TC Europe top destinations",
+  "year": 2025,
+  "rank": 9,
+  "name": "Majorca",
+  "country": "Spain",
+  "id": "PMI",
+  "url": "https://tripadvisor.mediaroom.com/Travellers-Choice-Best-of-the-Best-Destinations-2025"
+ },
+ {
+  "list": "TC Europe top destinations",
+  "year": 2025,
+  "rank": 10,
+  "name": "Edinburgh",
+  "country": "United Kingdom",
+  "id": "EDI",
+  "url": "https://tripadvisor.mediaroom.com/Travellers-Choice-Best-of-the-Best-Destinations-2025"
+ },
+ {
+  "list": "TC world top destinations",
+  "year": 2025,
+  "rank": 1,
+  "name": "London",
+  "country": "United Kingdom",
+  "id": "LHR",
+  "url": "https://tripadvisor.mediaroom.com/Travellers-Choice-Best-of-the-Best-Destinations-2025"
+ },
+ {
+  "list": "TC world top destinations",
+  "year": 2025,
+  "rank": 4,
+  "name": "Sicily",
+  "country": "Italy",
+  "id": null,
+  "url": "https://tripadvisor.mediaroom.com/Travellers-Choice-Best-of-the-Best-Destinations-2025"
+ },
+ {
+  "list": "TC world top destinations",
+  "year": 2025,
+  "rank": 5,
+  "name": "Paris",
+  "country": "France",
+  "id": "CDG",
+  "url": "https://tripadvisor.mediaroom.com/Travellers-Choice-Best-of-the-Best-Destinations-2025"
+ },
+ {
+  "list": "TC world top destinations",
+  "year": 2025,
+  "rank": 6,
+  "name": "Rome",
+  "country": "Italy",
+  "id": "FCO",
+  "url": "https://tripadvisor.mediaroom.com/Travellers-Choice-Best-of-the-Best-Destinations-2025"
+ },
+ {
+  "list": "TC world top destinations",
+  "year": 2025,
+  "rank": 9,
+  "name": "Crete",
+  "country": "Greece",
+  "id": "HER",
+  "url": "https://tripadvisor.mediaroom.com/Travellers-Choice-Best-of-the-Best-Destinations-2025"
+ },
+ {
+  "list": "TC world top destinations",
+  "year": 2026,
+  "rank": 2,
+  "name": "London",
+  "country": "United Kingdom",
+  "id": "LHR",
+  "url": "https://tripadvisor.mediaroom.com/Travellers-Choice-Best-of-the-Best-Destinations-2026"
+ },
+ {
+  "list": "TC world top destinations",
+  "year": 2026,
+  "rank": 5,
+  "name": "Paris",
+  "country": "France",
+  "id": "CDG",
+  "url": "https://tripadvisor.mediaroom.com/Travellers-Choice-Best-of-the-Best-Destinations-2026"
+ },
+ {
+  "list": "TC world top destinations",
+  "year": 2026,
+  "rank": 6,
+  "name": "Rome",
+  "country": "Italy",
+  "id": "FCO",
+  "url": "https://tripadvisor.mediaroom.com/Travellers-Choice-Best-of-the-Best-Destinations-2026"
+ },
+ {
+  "list": "TC world top destinations",
+  "year": 2026,
+  "rank": 9,
+  "name": "Crete",
+  "country": "Greece",
+  "id": "HER",
+  "url": "https://tripadvisor.mediaroom.com/Travellers-Choice-Best-of-the-Best-Destinations-2026"
+ },
+ {
+  "list": "TC world trending",
+  "year": 2026,
+  "rank": 1,
+  "name": "Madeira",
+  "country": "Portugal",
+  "id": "FNC",
+  "url": "https://tripadvisor.mediaroom.com/Travellers-Choice-Best-of-the-Best-Destinations-2026"
+ },
+ {
+  "list": "TC world trending",
+  "year": 2026,
+  "rank": 2,
+  "name": "Tbilisi",
+  "country": "Georgia",
+  "id": null,
+  "url": "https://tripadvisor.mediaroom.com/Travellers-Choice-Best-of-the-Best-Destinations-2026"
+ },
+ {
+  "list": "TC world trending",
+  "year": 2026,
+  "rank": 6,
+  "name": "Milan",
+  "country": "Italy",
+  "id": "MXP",
+  "url": "https://tripadvisor.mediaroom.com/Travellers-Choice-Best-of-the-Best-Destinations-2026"
+ },
+ {
+  "list": "TC world trending",
+  "year": 2026,
+  "rank": 7,
+  "name": "Glasgow",
+  "country": "United Kingdom",
+  "id": "GLA",
+  "url": "https://tripadvisor.mediaroom.com/Travellers-Choice-Best-of-the-Best-Destinations-2026"
+ }
+]
