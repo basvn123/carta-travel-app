@@ -354,13 +354,12 @@
   --dur-draw:         1600ms;                    /* the route card's line drawing itself */
   --dur-advance:      7000ms;                    /* a home tab moving on by itself */
 
-  /* The Plan opening (T743, owner request 2026-10-27): the first page of the
-     Plan place, on warm paper with one editorial serif headline. Read only by
-     src/styles/planners/86-plan-flow.css; no other surface takes them. The
-     ground is an existing primitive: --text 13.6:1, --text-2 7.6:1,
+  /* The Plan opening (T743, T744, owner 2026-10-27): the first page of the
+     Plan place, one screen on warm paper, the headline in the app's face.
+     Read only by src/styles/86-plan-flow.css; no other surface takes them.
+     The ground is an existing primitive: --text 13.6:1, --text-2 7.6:1,
      --text-3 5.3:1, --action 5.4:1 on it. */
-  --serif:            'Instrument Serif', Georgia, 'Times New Roman', serif;
   --plan-ground:      var(--umber-50);
-  --text-plan-hero:   clamp(40px, 5.4vw, 76px);  /* the headline, Instrument Serif 400 */
-  --tracking-plan:    -0.015em;
+  --text-plan-hero:   clamp(32px, 3.9vw, 56px);  /* the headline, Figtree 700 */
+  --tracking-plan:    -0.025em;
 }

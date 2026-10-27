@@ -116,11 +116,11 @@ typography:
     lineHeight: 1.35
     fontFeature: "tnum"
   plan-hero:
-    fontFamily: "Instrument Serif, Georgia, Times New Roman, serif"
-    fontSize: "clamp(40px, 5.4vw, 76px)"
-    fontWeight: 400
-    lineHeight: 1.02
-    letterSpacing: "-0.015em"
+    fontFamily: "Figtree, system-ui, -apple-system, Segoe UI, sans-serif"
+    fontSize: "clamp(32px, 3.9vw, 56px)"
+    fontWeight: 700
+    lineHeight: 1.08
+    letterSpacing: "-0.025em"
 rounded:
   sm: "6px"
   control: "10px"
@@ -706,16 +706,15 @@ The home tokens, read by `61-v6-home.css` alone:
 
 Everything else in this file still binds the home page: transform and opacity (plus `stroke-dashoffset`, `clip-path` and a panel's `background-color`), no overshoot, no parallax, nothing tied to the scroll position, no count-up, one primary, `--tap` targets, no catalogue counts. No other surface takes this exception.
 
-### Plan opening exception (T743)
+### Plan opening exception (T743, T744)
 
-Owner 2026-10-27: the first page of the Plan place stops being a sheet over a map and becomes a page of its own that reads like a European travel journal rather than a tool. It may do four things no other surface does:
+Owner 2026-10-27: the first page of the Plan place is a page of its own, not a sheet over a map, and it fits one screen with no scroll at every size from 360 by 640 up. It may do three things no other surface does:
 
 - **A warm paper ground.** `--plan-ground` (`--umber-50`, `#faf6f1`) behind the whole page, in place of `--surface-page`. `--text` 13.6:1, `--text-2` 7.6:1, `--text-3` 5.3:1, `--action` 5.4:1 on it.
-- **One editorial serif.** `--serif` (Instrument Serif 400, OFL, self-hosted in `public/fonts` as latin and latin-ext woff2, declared with `@font-face` in `86-plan-flow.css`; a browser fetches it only when this page draws it) for the headline (`--text-plan-hero`, `--tracking-plan`) and the section heading. Everything else, every figure included, stays Figtree. `design-lint` allows `var(--serif)` as a fourth type token.
-- **A cartographic watermark.** Contour rings of one summit and a dotted route, `public/img/plan-contours.svg`, used as a CSS mask over `--text` at 5 per cent opacity, top right, `aria-hidden`, no pointer. No other surface draws a background texture.
-- **No eyebrow.** "Meet Carta" sits beside the compass mark as a masthead, never as a kicker above the heading.
+- **One larger headline in two colours.** Figtree 700 at `--text-plan-hero` with `--tracking-plan`, the face of every tab (T744 retired T743's serif at the owner's request); the second half of the line is `--action`.
+- **Photographs that take the space the words leave.** Three journeys-library style photographs (a walk, a city, the sea) in one large and two stacked tiles: above the words on a phone, beside them from 1024 px. They shrink on a short phone and leave below 560 px of height. Each is a link to its style's weeks. One white chip (`--surface`, `--elev-2`) on the large photograph carries the style, the days and "From €79 a day", the style's cheapest week in season; text never sits on the photograph itself.
 
-The planned trips on the page are the journeys library's weeks (one a style, in season, cheapest a person a day), on white cards with one shadow (`--elev-1`, `--elev-2` on hover) and no border. No other surface takes this exception.
+Two buttons, Start planning (primary) and Planned trips (secondary), and the trip in progress as one quiet row when there is one. No eyebrow, no mark, no watermark. No other surface takes this exception.
 
 ### Ask Carta exception (T569)
 
@@ -792,4 +791,4 @@ Retired decisions, kept so the record reads in order. None of these is a rule an
 
 **Selection as a dark fill (T380 to T422).** The one selected state was `--ink-fill`, first a slate slab, then deep teal under white labels in T421. T422 moved the kit onto the `--select-*` tint; older surfaces keep `--ink-fill` until the migration reaches them.
 
-**Last synced with `src/styles/01-tokens.css`:** 2026-10-27 (T743: the Plan opening tokens, `--serif`, `--plan-ground`, `--text-plan-hero` and `--tracking-plan`, read by `86-plan-flow.css` alone). Before that 2026-10-23 (T623: `--home-film-bar` added). Before that 2026-10-23 (T620: `--home-film-tint` added, `--dur-drift` removed with the price pills). Before that 2026-10-23 (T606: the home tokens, `--text-hero`, `--text-showcase`, `--tracking-hero`, `--leading-hero`, `--radius-stage`, the five `--home-ground-*`, `--home-ink-on-deep` and the six home motion durations, read by `61-v6-home.css` alone). Before that 2026-10-20 (T474: the z-index ladder, `--z-float` to `--z-max` and the two pin layers, values unchanged; `--z-map-ui` and `--z-sheet` retired unused, `--z-nav` moved to 50 and `--z-toast` to 80, where those layers sat). Before that 2026-10-13 (T438: the umber ramp, the roles on it, rate, gem, best and warning retuned; before that T421 to T424, Lagoon: primitives, roles, legacy aliases, Figtree, the type, radius, elevation and layer scales; the kit in `03-button.css` and `04-ui.css`; the money formatter; the style guide; restructured into the DESIGN.md format with frontmatter). Before that 2026-10-08 (T380, the six motion tokens), 2026-10-07 (T363) and 2026-10-03 (T191).
+**Last synced with `src/styles/01-tokens.css`:** 2026-10-27 (T744: `--serif` removed, `--text-plan-hero` and `--tracking-plan` retuned for Figtree 700; T743 before it: the Plan opening tokens `--plan-ground`, `--text-plan-hero` and `--tracking-plan`, read by `86-plan-flow.css` alone). Before that 2026-10-23 (T623: `--home-film-bar` added). Before that 2026-10-23 (T620: `--home-film-tint` added, `--dur-drift` removed with the price pills). Before that 2026-10-23 (T606: the home tokens, `--text-hero`, `--text-showcase`, `--tracking-hero`, `--leading-hero`, `--radius-stage`, the five `--home-ground-*`, `--home-ink-on-deep` and the six home motion durations, read by `61-v6-home.css` alone). Before that 2026-10-20 (T474: the z-index ladder, `--z-float` to `--z-max` and the two pin layers, values unchanged; `--z-map-ui` and `--z-sheet` retired unused, `--z-nav` moved to 50 and `--z-toast` to 80, where those layers sat). Before that 2026-10-13 (T438: the umber ramp, the roles on it, rate, gem, best and warning retuned; before that T421 to T424, Lagoon: primitives, roles, legacy aliases, Figtree, the type, radius, elevation and layer scales; the kit in `03-button.css` and `04-ui.css`; the money formatter; the style guide; restructured into the DESIGN.md format with frontmatter). Before that 2026-10-08 (T380, the six motion tokens), 2026-10-07 (T363) and 2026-10-03 (T191).

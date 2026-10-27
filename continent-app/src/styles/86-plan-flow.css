@@ -32,95 +32,111 @@
   .pf-map { position: absolute; inset: 0; height: auto; }
 }
 
-/* ---- The opening (T743, owner request 2026-10-27) ----
-   The Plan place with nothing open: a page of its own on warm paper, no map
-   and no sheet. One editorial serif for the two headings (--serif; a browser
-   fetches the face only when this page draws it), Figtree for everything else.
-   The watermark is contour rings and a dotted route at 5 per cent ink, drawn
-   from a mask so its colour is a token. Cards carry one elevation, a shadow,
-   and no border. */
-@font-face {
-  font-family: 'Instrument Serif';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url(/fonts/InstrumentSerif-latin-ext.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-@font-face {
-  font-family: 'Instrument Serif';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url(/fonts/InstrumentSerif-latin.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
+/* ---- The opening (T743, T744, owner 2026-10-27) ----
+   The Plan place with nothing open: one screen on warm paper, no scroll.
+   Three photographs of trip styles fill the space the text leaves (a phone:
+   above it; from 1024 px: beside it), each a door to its weeks; one white
+   price chip stands on the first. The headline is Figtree, as on every tab.
+   Photographs and the chip carry the only shadows; nothing has a border. */
 .pf.is-opening { background: var(--plan-ground); }
 
 .pf-open {
-  position: relative;
-  isolation: isolate;
-  min-height: 100%;
-  overflow: hidden;
-}
-
-.pf-open-contours {
-  position: absolute;
-  z-index: -1;
-  top: calc(-1 * var(--space-4));
-  right: -38vw;
-  width: 132vw;
-  aspect-ratio: 4 / 3;
-  background: var(--text);
-  opacity: 0.05;
-  -webkit-mask: url(/img/plan-contours.svg) center / contain no-repeat;
-  mask: url(/img/plan-contours.svg) center / contain no-repeat;
-  pointer-events: none;
-}
-
-.pf-open-inner {
   display: flex;
   flex-direction: column;
-  gap: var(--space-8);
+  gap: var(--space-5);
   width: 100%;
-  max-width: 1200px;
+  max-width: 1280px;
+  height: 100%;
+  min-height: 100%;
   margin: 0 auto;
-  padding: var(--space-6) var(--gutter) var(--space-8);
+  padding: var(--space-3) var(--gutter) var(--space-5);
 }
 
-/* The hero: the mark and Carta's name, the headline, one line, the action. */
-.pf-open-hero {
+.pf-open.is-bare { justify-content: center; }
+
+/* The picture: one large photograph and two stacked beside it. */
+.pf-open-pic {
+  display: grid;
+  flex: 1 1 auto;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-2);
+  min-height: 180px;
+}
+
+.pf-open-tile {
+  position: relative;
+  display: block;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--surface-sunken);
+}
+
+.pf-open-tile.is-t0 { grid-row: 1 / span 2; }
+
+.pf-open-tile .pf-open-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--dur-4) var(--ease-out);
+}
+
+.pf-open-tile.is-t0 .pf-open-img { object-position: 30% 50%; }
+
+@media (hover: hover) {
+  .pf-open-tile:hover .pf-open-img { transform: scale(1.04); }
+}
+
+.pf-open-tile:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+
+/* The price chip: a white surface on the photograph, never text on it. */
+.pf-open-chip {
+  position: absolute;
+  left: var(--space-3);
+  bottom: var(--space-3);
   display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: calc(100% - 2 * var(--space-3));
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  box-shadow: var(--elev-2);
+}
+
+.pf-open-chip-kind { font-size: var(--text-caption); font-weight: 600; color: var(--text-3); }
+
+.pf-open-chip-price { font-size: var(--text-label); color: var(--text-2); white-space: nowrap; }
+
+.pf-open-chip-price .pf-open-chip-fig { font-weight: 700; color: var(--text); }
+
+/* The words and the actions. */
+.pf-open-text {
+  display: flex;
+  flex: none;
   flex-direction: column;
   align-items: flex-start;
 }
 
-.pf-open-mast {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin: 0 0 var(--space-6);
-  font-size: var(--text-label);
-  font-weight: 600;
-  color: var(--text-2);
-}
-
 .pf-open-title {
   margin: 0;
-  max-width: 13ch;
-  font-family: var(--serif);
+  max-width: 17ch;
   font-size: var(--text-plan-hero);
-  font-weight: 400;
-  line-height: 1.02;
+  font-weight: 700;
+  line-height: 1.08;
   letter-spacing: var(--tracking-plan);
   color: var(--text);
   text-wrap: balance;
 }
 
+.pf-open-accent { color: var(--action); }
+
 .pf-open-lede {
-  margin: var(--space-4) 0 0;
-  max-width: 44ch;
+  margin: var(--space-3) 0 0;
+  max-width: 46ch;
   font-size: var(--text-lead);
   line-height: var(--leading-body);
   color: var(--text-2);
@@ -129,31 +145,26 @@
 
 .pf-open-actions {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-2);
   width: 100%;
-  margin-top: var(--space-6);
+  margin-top: var(--space-5);
 }
 
-.pf-open-start.btn {
-  min-height: var(--tap-main);
-  padding-inline: var(--space-5) var(--space-4);
-  font-size: var(--text-lead);
-}
+.pf-open-actions .btn { flex: 1 1 0; min-height: var(--tap-main); }
 
 .pf-open-start .btn-icon { transition: transform var(--dur-2) var(--ease-out); }
 
 .pf-open-start:hover .btn-icon { transform: translateX(3px); }
 
-/* The trip in progress: one quiet card beside the action. */
+/* The trip in progress: one quiet row under the actions. */
 .pf-open-resume {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  flex: 1 1 260px;
-  max-width: 380px;
+  width: 100%;
+  max-width: 440px;
   min-height: var(--tap-main);
+  margin-top: var(--space-3);
   padding: var(--space-2) var(--space-3) var(--space-2) var(--space-2);
   border-radius: var(--radius-card);
   background: var(--surface);
@@ -164,6 +175,8 @@
 }
 
 .pf-open-resume:hover { box-shadow: var(--elev-2); }
+
+.pf-open-resume:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
 
 .pf-open-resume-icon {
   display: grid;
@@ -176,7 +189,7 @@
   color: var(--select-ink);
 }
 
-.pf-open-resume-text { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.pf-open-resume-text { display: flex; flex: 1; flex-direction: column; min-width: 0; }
 
 .pf-open-resume-label { font-size: var(--text-caption); font-weight: 600; color: var(--text-3); }
 
@@ -190,204 +203,47 @@
 
 .pf-open-resume > svg { flex: none; color: var(--text-3); }
 
-/* The planned trips to start from. */
-.pf-open-lib-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--space-2) var(--space-4);
-  margin-bottom: var(--space-4);
+/* A short phone gives the picture less, then none, so nothing scrolls. */
+@media (max-height: 700px) {
+  .pf-open { gap: var(--space-4); }
+  .pf-open-pic { min-height: 120px; }
+  .pf-open-lede { font-size: var(--text-body); }
+  .pf-open-actions { margin-top: var(--space-4); }
 }
 
-.pf-open-lib-title {
-  margin: 0;
-  font-family: var(--serif);
-  font-size: var(--text-headline);
-  font-weight: 400;
-  line-height: var(--leading-tight);
-  letter-spacing: var(--tracking-plan);
-  color: var(--text);
+@media (max-height: 560px) {
+  .pf-open-pic { display: none; }
+  .pf-open { justify-content: center; }
 }
-
-.pf-open-lib-help {
-  margin: var(--space-1) 0 0;
-  font-size: var(--text-body);
-  line-height: var(--leading-body);
-  color: var(--text-2);
-}
-
-.pf-open-all {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  min-height: var(--tap);
-  font-size: var(--text-label);
-  font-weight: 600;
-  color: var(--action);
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-.pf-open-all:hover { text-decoration: underline; text-underline-offset: 3px; }
-
-/* A phone swipes the trips; from 769 px they stand in a grid. */
-.pf-open-rail {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 74%;
-  gap: var(--space-3);
-  margin: 0 calc(-1 * var(--gutter));
-  padding: var(--space-1) var(--gutter) var(--space-3);
-  list-style: none;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory;
-  scroll-padding-inline: var(--gutter);
-  scrollbar-width: none;
-}
-
-.pf-open-rail::-webkit-scrollbar { display: none; }
-
-.pf-tpl { min-width: 0; scroll-snap-align: start; }
-
-.pf-tpl.is-wait {
-  aspect-ratio: 4 / 5;
-  border-radius: var(--radius-card);
-  background: var(--surface-sunken);
-}
-
-.pf-tpl-link {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow: hidden;
-  border-radius: var(--radius-card);
-  background: var(--surface);
-  box-shadow: var(--elev-1);
-  color: var(--text);
-  text-decoration: none;
-  transition: box-shadow var(--dur-3) var(--ease-out), transform var(--dur-3) var(--ease-out);
-}
-
-.pf-tpl-media {
-  display: block;
-  aspect-ratio: 3 / 2;
-  overflow: hidden;
-  background: var(--surface-sunken);
-}
-
-.pf-tpl-media .pf-tpl-img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform var(--dur-4) var(--ease-out);
-}
-
-@media (hover: hover) {
-  .pf-tpl-link:hover { box-shadow: var(--elev-2); transform: translateY(-2px); }
-  .pf-tpl-link:hover .pf-tpl-img { transform: scale(1.04); }
-}
-
-.pf-tpl-body {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: var(--space-1);
-  padding: var(--space-3) var(--space-4) var(--space-4);
-}
-
-.pf-tpl-kind {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: var(--text-caption);
-  font-weight: 600;
-  color: var(--text-3);
-}
-
-.pf-tpl-sep { width: 1px; height: 10px; background: var(--border); }
-
-.pf-tpl-title {
-  display: -webkit-box;
-  overflow: hidden;
-  font-size: var(--text-lead);
-  font-weight: 600;
-  line-height: var(--leading-tight);
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-
-.pf-tpl-price {
-  margin-top: auto;
-  padding-top: var(--space-2);
-  font-size: var(--text-label);
-  color: var(--text-2);
-}
-
-.pf-tpl-price .pf-tpl-fig { font-weight: 700; color: var(--text); }
-
-/* The styles, each a door to its weeks: one row to swipe on a phone,
-   wrapped from 769 px. */
-.pf-open-styles {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin: var(--space-3) calc(-1 * var(--gutter)) 0;
-  padding: var(--space-1) var(--gutter);
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.pf-open-styles::-webkit-scrollbar { display: none; }
-
-.pf-open-styles-label {
-  flex: none;
-  white-space: nowrap;
-  margin-right: var(--space-1);
-  font-size: var(--text-caption);
-  font-weight: 600;
-  color: var(--text-3);
-}
-
-.pf-open-style.ui-chip { background: var(--surface); color: var(--text); text-decoration: none; }
-
-.pf-open-resume:focus-visible,
-.pf-open-all:focus-visible,
-.pf-tpl-link:focus-visible,
-.pf-open-style:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
 
 @media (min-width: 769px) {
-  .pf-open-contours { top: calc(-1 * var(--space-7)); right: -12vw; width: min(78vw, 980px); }
-  .pf-open-inner { gap: var(--space-8); padding: var(--space-8) var(--space-6) var(--space-8); }
-  .pf-open-mast { margin-bottom: var(--space-7); }
-  .pf-open-lede { margin-top: var(--space-5); }
-  .pf-open-lib-title { font-size: var(--text-display); }
-  .pf-open-styles { flex-wrap: wrap; margin: var(--space-5) 0 0; padding: 0; overflow: visible; }
-  .pf-tpl-media { aspect-ratio: 4 / 3; }
-  .pf-open-rail {
-    grid-auto-flow: row;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-5) var(--space-4);
-    margin: 0;
-    padding: 0;
-    overflow: visible;
-  }
+  .pf-open { gap: var(--space-6); padding: var(--space-5) var(--space-6) var(--space-6); }
+  .pf-open-actions { width: auto; }
+  .pf-open-actions .btn { flex: none; padding-inline: var(--space-5); }
 }
 
+/* From 1024 px: the words on the left, the picture on the right. */
 @media (min-width: 1024px) {
-  .pf-open-inner { padding-inline: var(--space-7); }
-  .pf-open-rail { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .pf-open {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    align-items: center;
+    gap: var(--space-8);
+    padding: var(--space-7);
+  }
+  .pf-open.is-bare { grid-template-columns: minmax(0, 1fr); }
+  .pf-open-text { order: -1; }
+  .pf-open-pic { height: 100%; max-height: 680px; min-height: 0; gap: var(--space-3); }
+  .pf-open-lede { margin-top: var(--space-4); }
+  .pf-open-actions { margin-top: var(--space-6); }
+  .pf-open-chip { left: var(--space-4); bottom: var(--space-4); padding: var(--space-3) var(--space-4); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pf-open-start .btn-icon,
-  .pf-tpl-link,
-  .pf-tpl-media .pf-tpl-img { transition: none; }
-  .pf-open-start:hover .btn-icon,
-  .pf-tpl-link:hover,
-  .pf-tpl-link:hover .pf-tpl-img { transform: none; }
+  .pf-open-tile .pf-open-img,
+  .pf-open-start .btn-icon { transition: none; }
+  .pf-open-tile:hover .pf-open-img,
+  .pf-open-start:hover .btn-icon { transform: none; }
 }
 
 .pf-title:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }

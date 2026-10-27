@@ -2214,4 +2214,4 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T740-b | T740 | Read the second Monday run's log (pipeline_2026-11-02.log): the eight deferred tasks and sea_temp's resumed tiles; some may defer once more under the 16 h budget | next task | open | 2 |
 | T741-a | T741 | rclone on the laptop now reaches R2 but every call to the carta-stays-state bucket answers 403 Forbidden, so the stays journal is not uploaded; give the token object read and write on that bucket (see T624-d) | user | closed by T742 |  |
 | T743-a | T743 | A planned trip on the Plan opening opens its written week but cannot pre-fill the trip planner: the journeys wire has no catalogue stop ids; map each week to catalogue destinations with nights, then use openTripInPlanner (see Execution/P15/T743-plan-opening.md) | next task | open |  |
-| T743-b | T743 | pf.home.line, pf.home.continue and pf.home.trips are unused since T743; remove them from the six catalogs | next task | open |  |
+| T743-b | T743 | pf.home.line, pf.home.continue and pf.home.trips are unused since T743; remove them from the six catalogs | next task | closed by T744 |  |
