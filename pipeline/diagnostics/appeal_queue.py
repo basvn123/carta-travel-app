@@ -58,6 +58,8 @@ def main():
     data = json.loads(INPUT.read_text(encoding="utf-8"))
     dests = data["destinations"]
 
+    # T755: a gateway airport has no rating of its own; its city row counts.
+    dests = {k: v for k, v in dests.items() if v.get("rating")}
     by_country = {}
     for d in dests.values():
         by_country.setdefault(d.get("country"), []).append(

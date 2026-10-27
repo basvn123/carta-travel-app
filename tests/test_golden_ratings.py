@@ -44,9 +44,16 @@ def evaluate(app_data_path=DEFAULT_INPUT):
     dests = data["destinations"]
     model = (data["meta"].get("rating_model") or {}).get("version", "?")
 
+    def city(did):
+        # T755: a gateway airport is rated as its city.
+        d = dests.get(did)
+        if d is not None and "rating" not in d and d.get("gateway_of"):
+            return dests.get(d["gateway_of"])
+        return d
+
     results = []
     for pair in golden["pairs"]:
-        w, l = dests.get(pair["winner"]), dests.get(pair["loser"])
+        w, l = city(pair["winner"]), city(pair["loser"])
         assert w is not None, f"golden id missing from catalogue: {pair['winner']}"
         assert l is not None, f"golden id missing from catalogue: {pair['loser']}"
         sw = w["rating"]["score"]

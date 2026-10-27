@@ -180,6 +180,9 @@ export const RANK_FIELDS = Object.freeze({
   city: true,
   country: true,
   tier: true,
+  // T755: a multi-airport city's other airports name the city row; Explore
+  // drops them and flight search lends them the city's rating.
+  gateway_of: true,
   iata: true,
   anchor_airport: true,
   anchor_estimated: true,

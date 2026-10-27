@@ -83,8 +83,11 @@ Result on the shipped catalogue, at fixed tier populations: the top tier goes
 from 35% to 40% villages, towns and landscapes, and Hallstatt, Zermatt,
 Meteora, Lauterbrunnen, Kotor and Taormina join it.
 
-Multi-airport cities are unified onto their primary airport first (same
-convention as the beauty layer) so Paris ranks once, not three times.
+Multi-airport cities are one destination (T755): the primary airport's row
+(beauty_layer.CITY_PRIMARY_IATA, else the busiest) carries the city's rating,
+and every other airport of the city becomes a gateway - `gateway_of: <primary
+id>` and no rating block of its own - so Rome, Paris and London appear once in
+every ranking, rail and top list. Flight search still reads the airport rows.
 """
 
 import json
@@ -640,15 +643,10 @@ def compute_ratings(dests):
     }
 
 
-    # Unify multi-airport cities so a city holds one slot's worth of identical
-    # numbers (mirrors the beauty layer's convention).
+    # One row per city (T755): the other airports of a multi-airport city are
+    # its gateways. They keep their own row for flight search and lose their
+    # rating, so no ranking can list the city twice.
     rep = _city_slots(dests, ids)
-    for i, pi in enumerate(rep):
-        if pi != i:
-            scores[i] = scores[pi]
-            comps[i] = dict(comps[pi])
-            views_list[i] = views_list[pi]
-            curated_gem[i] = curated_gem[pi]
 
     # Fame percentile per city slot, read on the frozen breakpoints (T754):
     # it used to be a rank within today's catalogue, so adding places moved
@@ -665,7 +663,14 @@ def compute_ratings(dests):
 
     counts = {3: 0, 2: 0, 1: 0, 0: 0, "hidden_gem": 0,
               "curated": 0, "modelled": 0, "provisional": 0}
+    counts["gateway"] = 0
     for i, did in enumerate(ids):
+        if rep[i] != i:
+            dests[did]["gateway_of"] = ids[rep[i]]
+            dests[did].pop("rating", None)
+            counts["gateway"] += 1
+            continue
+        dests[did].pop("gateway_of", None)
         score = round(scores[i], 1)
         tier = tier_for(score)
         fame_pct = fame_pctls[i]

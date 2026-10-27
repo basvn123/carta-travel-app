@@ -61,8 +61,8 @@ DEFAULT_TARGETS = [
 # unless the curators explicitly said so.
 # ---------------------------------------------------------------------------
 FAMOUS_FLOOR = {   # dest id -> minimum defensible score
-    "CIA": 9.0,    # Rome
-    "BVA": 9.0,    # Paris
+    "FCO": 9.0,    # Rome (T755: the city's row; CIA is its gateway)
+    "CDG": 9.0,    # Paris (T755: the city's row; ORY, BVA are gateways)
     "BCN": 9.0,    # Barcelona
     "AMS": 8.5,    # Amsterdam
     "gem:bruges": 8.5,
@@ -128,6 +128,8 @@ def validate(dests) -> list:
     for did, d in dests.items():
         r = d.get("rating")
         if not r:
+            if d.get("gateway_of") in dests:
+                continue            # T755: a gateway is rated as its city
             problems.append(f"{did} has no rating block")
             continue
         if r["score"] < 8.5 or (appeal.get(did) or {}).get("gem"):
@@ -204,7 +206,8 @@ def main() -> None:
     atomic_write_json(master_path, data)
     print(f"  {master_path.name}: {len(dests)} dests | "
           f"3-star {counts[3]} | 2-star {counts[2]} | 1-star {counts[1]} | "
-          f"unrated {counts[0]} | hidden gems {counts['hidden_gem']}")
+          f"unrated {counts[0]} | hidden gems {counts['hidden_gem']} | "
+          f"gateways {counts['gateway']}")
 
     # Mirror rating blocks onto the other targets by destination id.
     for path in targets[1:]:
@@ -216,9 +219,15 @@ def main() -> None:
         n = 0
         for did, d in sdests.items():
             src = dests.get(did)
-            if src and "rating" in src:
+            if not src:
+                continue
+            if "rating" in src:
                 d["rating"] = src["rating"]
+                d.pop("gateway_of", None)
                 n += 1
+            elif src.get("gateway_of"):
+                d["gateway_of"] = src["gateway_of"]
+                d.pop("rating", None)
         served["meta"]["rating_model"] = rating_layer.RATING_MODEL
         served["meta"]["schema_version"] = max(
             served["meta"].get("schema_version", 0), 17)
