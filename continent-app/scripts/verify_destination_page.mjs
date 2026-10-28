@@ -81,8 +81,8 @@ const brokenImages = (page) => page.evaluate(() => Array.from(document.querySele
 // The page first, then the dossier: a check run before the page mounts
 // would find no loading block and pass too early.
 const settle = async (page) => {
-  await page.waitForSelector('.destp .destp-head', { timeout: 45000 });
-  await page.waitForFunction(() => !document.querySelector('.destp-wait'), null, { timeout: 45000 });
+  await page.waitForSelector('.destp .destp-head', { timeout: 90000 });
+  await page.waitForFunction(() => !document.querySelector('.destp-wait'), null, { timeout: 90000 });
 };
 const scrollTo = (page, sel) => page.evaluate((s) => {
   document.querySelector(s)?.scrollIntoView({ block: 'start' });
@@ -90,8 +90,8 @@ const scrollTo = (page, sel) => page.evaluate((s) => {
 // T502: a direct load of #dest= drops the hash (known), so the page is
 // opened the way a card link does it: the app boots, then the hash moves.
 const openDest = async (page, id) => {
-  await page.goto(BASE, { waitUntil: 'domcontentloaded', timeout: 45000 });
-  await page.waitForSelector('.bottom-nav', { state: 'attached', timeout: 45000 });
+  await page.goto(BASE, { waitUntil: 'domcontentloaded', timeout: 90000 });
+  await page.waitForSelector('.bottom-nav', { state: 'attached', timeout: 90000 });
   await page.waitForTimeout(2500);
   await page.evaluate((d) => { window.location.hash = `dest=${d}`; }, id);
   await settle(page);
@@ -112,8 +112,10 @@ const openFold = async (page, id) => {
 const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 wire(page);
 await seed(page);
-await page.goto(BASE + '#dest=gem:valbona', { waitUntil: 'domcontentloaded', timeout: 45000 });
-await page.waitForTimeout(6000);
+await page.goto(BASE + '#dest=gem:valbona', { waitUntil: 'domcontentloaded', timeout: 90000 });
+// Waits for the page rather than a fixed 6 s: a cold dev server needs longer
+// for the lazy chunks, and a fixed sleep read that as a missing page.
+await page.locator('.destp').waitFor({ timeout: 90000 }).catch(() => {});
 const destp = page.locator('.destp');
 check('hash #dest= opens the page at boot', await destp.isVisible());
 await openDest(page, 'gem:valbona');
@@ -140,7 +142,9 @@ check('score sits in the head', await page.locator('.destp-score .score-chip').c
 // The price card: one cost truth, a receipt that adds up, one primary.
 check('price card renders', await page.locator('.dprice').count() === 1);
 const sum = await page.evaluate(() => {
-  const lines = Array.from(document.querySelectorAll('.dprice .frr-line:not(.frr-sum) dd[data-eur]'))
+  // The lines are kit CostRows since T537: the figure is a span[data-eur]
+  // inside the dd, and the sum row is the one keyed "sum".
+  const lines = Array.from(document.querySelectorAll('.dprice .dprice-lines .costrow:not(.costsum) [data-eur]'))
     .map((el) => Number(el.getAttribute('data-eur')));
   const total = Number(document.querySelector('.dprice .frr-sum-eur')?.getAttribute('data-eur'));
   return { lines, total, ok: Math.abs(lines.reduce((a, b) => a + b, 0) - total) < 0.011 };
@@ -267,7 +271,10 @@ await page.waitForTimeout(1500);
 const shortText = await page.locator('.destp-short').textContent().catch(() => '');
 check('Rome intro is short and names the place', /rome/i.test(shortText) && shortText.length < 460 && !/airport/i.test(shortText.slice(0, 60)), shortText.slice(0, 60));
 const romeDay = await page.locator('.dprice-day .money').textContent().catch(() => '');
-check('Rome prints its day figure with the estimate mark', /~€\d+ est\./.test(romeDay), romeDay);
+// Plan rule 2 (owner, 2026-10-24): the day figure is one amount and its unit,
+// with no tilde and no "est." (the estimate mark this check once asked for).
+check('Rome prints its day figure as a plain amount, no estimate mark',
+  /€\s?\d/.test(romeDay) && !/~|\best\b/i.test(romeDay), romeDay);
 // Rome's Pantheon (a Wikidata Special:FilePath image before the fix) loads.
 await tab(page, 'Nearby');
 await scrollTo(page, '#sec-highlights');
@@ -306,8 +313,8 @@ check('gateway record describes the city, not the airport',
   /paris/i.test(cdgText) && !/^\s*paris charles de gaulle airport/i.test(cdgText), cdgText.slice(0, 50));
 
 // T502 (T499): opened from a card, a tab rewrites &tab= without a history step.
-await page.goto(BASE, { waitUntil: 'domcontentloaded', timeout: 45000 });
-await page.waitForSelector('a.card-open[href^="#dest="]', { timeout: 45000 });
+await page.goto(BASE, { waitUntil: 'domcontentloaded', timeout: 90000 });
+await page.waitForSelector('a.card-open[href^="#dest="]', { timeout: 90000 });
 await page.waitForTimeout(1500);
 await page.locator('a.card-open[href^="#dest="]:visible').first().click();
 await settle(page);
@@ -354,10 +361,12 @@ check('phone page covers the viewport', covers);
 const phoneScroll = await phone.evaluate(() => document.querySelector('.destp-scroll')?.scrollHeight || 0);
 check('phone page stays within 7,000 px (Overview)', phoneScroll < 7000, `${phoneScroll}px`);
 await tab(phone, 'Nearby');
-const tracksSwipe = await phone.evaluate(() => {
-  const s = document.querySelector('#sec-do .dphoto-strip, #sec-routes .dphoto-strip');
-  return s ? s.scrollWidth > s.clientWidth + 20 : false;
-});
+// T499: walks and rides left #sec-routes for one track per kind in reach
+// (#sec-around-*), so any photo track on Nearby counts, as long as one of
+// them overflows its width.
+const tracksSwipe = await phone.evaluate(() => Array.from(document.querySelectorAll(
+  '#sec-do .dphoto-strip, [id^="sec-around-"] .dphoto-strip, #sec-highlights .dphoto-strip',
+)).some((s) => s.scrollWidth > s.clientWidth + 20));
 check('phone photo tracks swipe sideways', tracksSwipe);
 await phone.screenshot({ path: 'shots/destp-phone.png' });
 await phone.locator('.destp-scroll').evaluate((el) => { el.scrollTop = 900; });
