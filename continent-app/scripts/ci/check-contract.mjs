@@ -77,7 +77,7 @@ import { fileURLToPath } from 'node:url';
 import {
   validateAppData, validateSplitWires, EXPECTED_SCHEMA_VERSION,
   parseSchemaContract, extractSupabaseCalls, validateDbContract,
-  normaliseCatalogue, CATALOGUE_SQL,
+  normaliseCatalogue, CATALOGUE_SQL, validateV19Pois, validateNatureWires,
 } from './contract.mjs';
 import { splitCatalogue, mergeCatalogue } from '../../src/lib/bootIndex.js';
 
@@ -206,6 +206,20 @@ const CATALOGUE_BREAKS = {
   },
   'meta-block-dropped': (d) => {
     delete d.meta.car_model;
+    return d;
+  },
+  // Schema v19 (T762): the second-level keys are held too.
+  'v19-rating-band-dropped': (d) => {
+    for (const r of Object.values(d.destinations)) if (r.rating) delete r.rating.band;
+    return d;
+  },
+  'v19-taste-like-missing': (d) => {
+    for (const r of Object.values(d.destinations)) if (r.taste) delete r.taste.likes.ski;
+    return d;
+  },
+  'v19-gateway-points-nowhere': (d) => {
+    const city = Object.values(d.destinations).find((r) => r.rating);
+    if (city) city.gateways = ['NOT-A-GATEWAY'];
     return d;
   },
 };
@@ -415,6 +429,45 @@ if (seed && seed in PAYLOAD_SEEDS) {
     if (rejected === Object.keys(WIRE_BREAKS).length) {
       pass(`${rejected}/${rejected} seeded split-wire breaks rejected`);
     }
+  }
+}
+
+// ------------------------------------------------- schema v19: POIs and nature
+// The POI shards carry label, category and tags; every rated nature row
+// carries v5 {score, band, rank, facts, confidence} (T761, T762).
+{
+  const PUB = path.join(APP_ROOT, 'public');
+  const poiDir = path.join(PUB, 'poi');
+  if (fs.existsSync(poiDir)) {
+    const names = fs.readdirSync(poiDir).filter((f) => f.endsWith('.json')).sort();
+    const step = Math.max(1, Math.floor(names.length / 40));
+    const shards = {};
+    for (let i = 0; i < names.length; i += step) {
+      shards[names[i]] = JSON.parse(fs.readFileSync(path.join(poiDir, names[i]), 'utf8'));
+    }
+    const problems = validateV19Pois(shards);
+    if (problems.length) fail(`POI shards miss v19 keys:\n          ${problems.slice(0, 8).join('\n          ')}`);
+    else pass(`${Object.keys(shards).length} POI shards carry label, category and tags`);
+    const broken = { x: [{ name: 'seeded', kind: 'Square', category: 'nowhere', tags: [] }] };
+    if (!validateV19Pois(broken).length) fail('v19 POI break was ACCEPTED');
+  }
+  const ROW_KEY = { trails: 'trips', beaches: 'beaches', lakes: 'lakes', mountains: 'mountains', cycling: 'routes' };
+  const byKind = {};
+  for (const [kind, key] of Object.entries(ROW_KEY)) {
+    const dir = path.join(PUB, kind);
+    if (!fs.existsSync(dir)) continue;
+    byKind[kind] = [];
+    for (const f of fs.readdirSync(dir).filter((x) => /^[A-Z]{2}\.json$/.test(x))) {
+      const rows = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'))[key] || [];
+      byKind[kind].push(...rows.filter((r) => (r.t || 'r') === 'r' && (kind !== 'trails' || r.category === 'hike')));
+    }
+  }
+  const problems = validateNatureWires(byKind);
+  if (problems.length) fail(`nature rows miss v19 keys:\n          ${problems.slice(0, 8).join('\n          ')}`);
+  else pass(`${Object.values(byKind).reduce((a, r) => a + r.length, 0)} rated nature rows carry v5`);
+  const one = Object.keys(byKind)[0];
+  if (one && !validateNatureWires({ [one]: [{ id: 'seeded', v5: { score: 11, band: 'best', confidence: 'sure', facts: null, rank: null } }] }).length) {
+    fail('v19 nature break was ACCEPTED');
   }
 }
 

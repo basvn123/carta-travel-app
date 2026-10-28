@@ -214,6 +214,14 @@ RAW = {
     "shape": shape_raw,
 }
 
+def v5_raw(row):
+    """{part: raw value, or None when not measured}, before any percentile.
+
+    pipeline/nature_tiers.py ranks each part across Europe on frozen
+    breakpoints instead of inside the route's NUTS 2 region, so a route is
+    placed on the same ladder as every other route (rating v5, T761)."""
+    return {k: fn(row) for k, fn in RAW.items()}
+
 
 # ---------------------------------------------------------------------------
 # Reasons
@@ -310,6 +318,16 @@ COLS = ("id", "country", "name", "ref", "network", "cycle_network",
         "distance_m", "ascent_m", "roundtrip", "raw_tags", "surface",
         "safety", "scenic", "services", "near", "regions")
 
+# v5 (T761): the routes the wire ships, fetched by id across Europe.
+FETCH_IDS_SQL = FETCH_SQL.split("    WHERE r.status")[0] + "    WHERE r.id = ANY(%(ids)s)\n"
+
+
+def fetch_ids(conn, ids):
+    with conn.cursor() as cur:
+        cur.execute(FETCH_IDS_SQL, {"ids": list(ids)})
+        return [dict(zip(COLS, r)) for r in cur.fetchall()]
+
+
 UPDATE_SQL = """
     UPDATE cycle_routes SET rating = %s, rating_parts = %s, reasons = %s
     WHERE id = %s
@@ -346,6 +364,10 @@ def rate_group(rows, basis, verbose=False):
         if total_w <= 0:
             out.append((row, None, None, None))
             continue
+        # v5 (T761): this OLD score stays as it was (the wire's `score` reads
+        # it until the app moves to v5) and T763 deletes it, renormalising
+        # and all; the v5 score (nature_tiers.py) counts a missing part at the
+        # median and never renormalises.
         score = sum(parts[k] * w for k, w in live.items()) / total_w
         detail = {
             "parts": parts,

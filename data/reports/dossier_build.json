@@ -1,57 +1,483 @@
 {
- "generated_at": "2026-09-16T16:23:13Z",
+ "generated_at": "2026-10-28T10:42:51Z",
  "built": 3868,
- "written": 939,
- "avg_gallery": 6.86,
- "avg_gallery_print": 6.86,
- "avg_highlights": 11.87,
- "merged_duplicates": 12609,
- "avg_do": 3.79,
- "n_with_licence_refusals": 1630,
+ "written": 3868,
+ "avg_gallery": 5.14,
+ "avg_gallery_print": 5.14,
+ "avg_highlights": 4.96,
+ "merged_duplicates": 125,
+ "avg_do": 2.47,
+ "n_with_licence_refusals": 1721,
  "refusals_sample": {
-  "ALC": [
+  "BRU": [
    {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Tossal-plantagral.jpg/500px-Tossal-plantagral.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Royal_Museums_of_Fine_Arts_of_Belgium_20180629.jpg/960px-Royal_Museums_of_Fine_Arts_of_Belgium_20180629.jpg",
     "why": "licence"
    },
    {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Alicante.museoasegurada.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Belgique_-_Bruxelles_-_Schuman_-_Berlaymont_-_01.jpg/960px-Belgique_-_Bruxelles_-_Schuman_-_Berlaymont_-_01.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Albertine_-_01.jpg/960px-Albertine_-_01.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Parc_du_Cinquantenaire_30-05-06.JPG/960px-Parc_du_Cinquantenaire_30-05-06.JPG",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Constant_Vanden_Stockstadion%2C_Anderlecht.jpg/960px-Constant_Vanden_Stockstadion%2C_Anderlecht.jpg",
+    "why": "not_a_photograph"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Royal_Museums_of_Fine_Arts_of_Belgium_20180629.jpg/960px-Royal_Museums_of_Fine_Arts_of_Belgium_20180629.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Belgique_-_Bruxelles_-_Schuman_-_Berlaymont_-_01.jpg/960px-Belgique_-_Bruxelles_-_Schuman_-_Berlaymont_-_01.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Albertine_-_01.jpg/960px-Albertine_-_01.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Hortamuseum.tif/960px-Hortamuseum.tif.jpg",
+    "why": "not_a_photograph"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Parc_du_Cinquantenaire_30-05-06.JPG/960px-Parc_du_Cinquantenaire_30-05-06.JPG",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/House_of_European_History%2C_Brussels_%28sept._2019%29.jpg/960px-House_of_European_History%2C_Brussels_%28sept._2019%29.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Bruxelles_%28Cinquantenaire%29_la_grande_Mosqu%C3%A9e.JPG/960px-Bruxelles_%28Cinquantenaire%29_la_grande_Mosqu%C3%A9e.JPG",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Centre_Belge_de_la_Bande_Dessin%C3%A9e_-_30.jpg/960px-Centre_Belge_de_la_Bande_Dessin%C3%A9e_-_30.jpg",
+    "why": "licence"
+   }
+  ],
+  "MAD": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/MNCARS_05.jpg/960px-MNCARS_05.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Madrid%2C_Plaza_Mayor%2C_2016%2C_%2802%29.jpg/960px-Madrid%2C_Plaza_Mayor%2C_2016%2C_%2802%29.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/June_Parc_Retiro_Madrid_-_Mythos_Spain_Photography_2014_-_panoramio_%288%29.jpg/960px-June_Parc_Retiro_Madrid_-_Mythos_Spain_Photography_2014_-_panoramio_%288%29.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Puerta_del_Sol_%28Madrid%29_10.jpg/960px-Puerta_del_Sol_%28Madrid%29_10.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/MNCARS_05.jpg/960px-MNCARS_05.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Madrid%2C_Plaza_Mayor%2C_2016%2C_%2802%29.jpg/960px-Madrid%2C_Plaza_Mayor%2C_2016%2C_%2802%29.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/June_Parc_Retiro_Madrid_-_Mythos_Spain_Photography_2014_-_panoramio_%288%29.jpg/960px-June_Parc_Retiro_Madrid_-_Mythos_Spain_Photography_2014_-_panoramio_%288%29.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Puerta_del_Sol_%28Madrid%29_10.jpg/960px-Puerta_del_Sol_%28Madrid%29_10.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Museo_Arqueol%C3%B3gico_Nacional_%2835039235760%29.jpg/960px-Museo_Arqueol%C3%B3gico_Nacional_%2835039235760%29.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Templo_de_Debod_Madrid.JPG/960px-Templo_de_Debod_Madrid.JPG",
+    "why": "licence"
+   }
+  ],
+  "BCN": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/SF_maig_2026.jpg/960px-SF_maig_2026.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/G%C3%BCell_BCN_edited.jpg/960px-G%C3%BCell_BCN_edited.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Palau_m%C3%BAsica_catalana_exterior.jpg/960px-Palau_m%C3%BAsica_catalana_exterior.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Barcellona_ramblas_2004_09.jpg/960px-Barcellona_ramblas_2004_09.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/14-08-06-barcelona-RalfR-304.jpg/960px-14-08-06-barcelona-RalfR-304.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Palau_G%C3%BCell%2C_Antoni_Gaudi%2C_Barcelona_2.jpg/960px-Palau_G%C3%BCell%2C_Antoni_Gaudi%2C_Barcelona_2.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/WLM14ES_-_Palau_Nacional_i_seu_del_MNAC_de_Barcelona_-_MARIA_ROSA_FERRE.jpg/960px-WLM14ES_-_Palau_Nacional_i_seu_del_MNAC_de_Barcelona_-_MARIA_ROSA_FERRE.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Fundaci%C3%B3_Mir%C3%B3.JPG/960px-Fundaci%C3%B3_Mir%C3%B3.JPG",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/SF_maig_2026.jpg/960px-SF_maig_2026.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/G%C3%BCell_BCN_edited.jpg/960px-G%C3%BCell_BCN_edited.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Palau_m%C3%BAsica_catalana_exterior.jpg/960px-Palau_m%C3%BAsica_catalana_exterior.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Barcellona_ramblas_2004_09.jpg/960px-Barcellona_ramblas_2004_09.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/14-08-06-barcelona-RalfR-304.jpg/960px-14-08-06-barcelona-RalfR-304.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Palau_G%C3%BCell%2C_Antoni_Gaudi%2C_Barcelona_2.jpg/960px-Palau_G%C3%BCell%2C_Antoni_Gaudi%2C_Barcelona_2.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/WLM14ES_-_Palau_Nacional_i_seu_del_MNAC_de_Barcelona_-_MARIA_ROSA_FERRE.jpg/960px-WLM14ES_-_Palau_Nacional_i_seu_del_MNAC_de_Barcelona_-_MARIA_ROSA_FERRE.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Fundaci%C3%B3_Mir%C3%B3.JPG/960px-Fundaci%C3%B3_Mir%C3%B3.JPG",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Biblioteca_de_Catalunya_-_Nau_de_tramuntana.JPG/960px-Biblioteca_de_Catalunya_-_Nau_de_tramuntana.JPG",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Palau_Reial_Major_2574.jpg/960px-Palau_Reial_Major_2574.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Santa_Maria_del_Mar%2C_Barcelona_05.jpg/960px-Santa_Maria_del_Mar%2C_Barcelona_05.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Palau_Berenguer_d%27Aguilar.jpg/960px-Palau_Berenguer_d%27Aguilar.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Barcelona_274.JPG/960px-Barcelona_274.JPG",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Arc_de_Triomf_Barcelona.jpg/960px-Arc_de_Triomf_Barcelona.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Front_of_Mercat_de_Boqueria.jpg/960px-Front_of_Mercat_de_Boqueria.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Aerial_view_of_Barceloneta_Beach_and_Port_Vell_in_Barcelona%2C_Spain_%2851226238126%29.jpg/960px-Aerial_view_of_Barceloneta_Beach_and_Port_Vell_in_Barcelona%2C_Spain_%2851226238126%29.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Vista_a%C3%A8ria_Ciutadella_1960.jpg/960px-Vista_a%C3%A8ria_Ciutadella_1960.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/La_font_de_Montju%C3%AFc_amb_Collserola_al_fons.jpg/960px-La_font_de_Montju%C3%AFc_amb_Collserola_al_fons.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/105_Museu_d%27Hist%C3%B2ria_de_Catalunya%2C_vista_a%C3%A8ria_del_Raval.JPG/960px-105_Museu_d%27Hist%C3%B2ria_de_Catalunya%2C_vista_a%C3%A8ria_del_Raval.JPG",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Zoo_de_Barcelona.JPG/960px-Zoo_de_Barcelona.JPG",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Monument_a_Colom_2.jpg/960px-Monument_a_Colom_2.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Pla%C3%A7a_d%27Espanya_%28Barcelona%29_03.jpg/960px-Pla%C3%A7a_d%27Espanya_%28Barcelona%29_03.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Torre_de_Collserola_2013.jpg/960px-Torre_de_Collserola_2013.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Queen_Angelfish_14-05-2009_15-24-48.JPG/960px-Queen_Angelfish_14-05-2009_15-24-48.JPG",
+    "why": "licence"
+   }
+  ],
+  "VLC": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Valencia%2C_Ciudad_de_las_Ciencias_y_de_las_Artes.jpg/960px-Valencia%2C_Ciudad_de_las_Ciencias_y_de_las_Artes.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Catedral_de_Valencia%2C_Valencia%2C_Espa%C3%B1a%2C_2014-06-30%2C_DD_160.JPG/960px-Catedral_de_Valencia%2C_Valencia%2C_Espa%C3%B1a%2C_2014-06-30%2C_DD_160.JPG",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Maqueta_Nuevo_Mestalla.jpg/960px-Maqueta_Nuevo_Mestalla.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Valencia%2C_Ciudad_de_las_Ciencias_y_de_las_Artes.jpg/960px-Valencia%2C_Ciudad_de_las_Ciencias_y_de_las_Artes.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Catedral_de_Valencia%2C_Valencia%2C_Espa%C3%B1a%2C_2014-06-30%2C_DD_160.JPG/960px-Catedral_de_Valencia%2C_Valencia%2C_Espa%C3%B1a%2C_2014-06-30%2C_DD_160.JPG",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Maqueta_Nuevo_Mestalla.jpg/960px-Maqueta_Nuevo_Mestalla.jpg",
+    "why": "licence"
+   }
+  ],
+  "SVQ": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Giralda_de_Sevilla_%283%29.jpg/960px-Giralda_de_Sevilla_%283%29.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Casa_pilatos_2018002.jpg/960px-Casa_pilatos_2018002.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Puente_del_Alamillo_Guadalquivir_Seville_Spain.jpg/960px-Puente_del_Alamillo_Guadalquivir_Seville_Spain.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Palacio_de_San_Telmo%2C_Sevilla%2C_Espa%C3%B1a%2C_2015-12-06%2C_DD_74.JPG/960px-Palacio_de_San_Telmo%2C_Sevilla%2C_Espa%C3%B1a%2C_2015-12-06%2C_DD_74.JPG",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Giralda_de_Sevilla_%283%29.jpg/960px-Giralda_de_Sevilla_%283%29.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Puente_del_Alamillo_Guadalquivir_Seville_Spain.jpg/960px-Puente_del_Alamillo_Guadalquivir_Seville_Spain.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Casa_pilatos_2018002.jpg/960px-Casa_pilatos_2018002.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Palacio_de_San_Telmo%2C_Sevilla%2C_Espa%C3%B1a%2C_2015-12-06%2C_DD_74.JPG/960px-Palacio_de_San_Telmo%2C_Sevilla%2C_Espa%C3%B1a%2C_2015-12-06%2C_DD_74.JPG",
+    "why": "licence"
+   }
+  ],
+  "BIO": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Madrid_Arena.jpg/960px-Madrid_Arena.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Madrid_Arena.jpg/960px-Madrid_Arena.jpg",
     "why": "licence"
    }
   ],
   "MAH": [
    {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/c/cb/Fort_Marlborough.jpg?utm_source=ca.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/S%27Albufera_des_Grau_%28Parc_Natural_de%29_018.jpg/960px-S%27Albufera_des_Grau_%28Parc_Natural_de%29_018.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Illa_del_Rei_2011.JPG/960px-Illa_del_Rei_2011.JPG",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Monte_Toro.JPG/960px-Monte_Toro.JPG",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Cami_de_Cavalls_-_Es_Talaier_Cala_en_Turqueta.JPG/960px-Cami_de_Cavalls_-_Es_Talaier_Cala_en_Turqueta.JPG",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Cova_des_Coloms.jpg/960px-Cova_des_Coloms.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Faro_de_la_Isla_del_Aire.jpg/960px-Faro_de_la_Isla_del_Aire.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/S%27Albufera_des_Grau_%28Parc_Natural_de%29_018.jpg/960px-S%27Albufera_des_Grau_%28Parc_Natural_de%29_018.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Illa_del_Rei_2011.JPG/960px-Illa_del_Rei_2011.JPG",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Monte_Toro.JPG/960px-Monte_Toro.JPG",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Cami_de_Cavalls_-_Es_Talaier_Cala_en_Turqueta.JPG/960px-Cami_de_Cavalls_-_Es_Talaier_Cala_en_Turqueta.JPG",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Cova_des_Coloms.jpg/960px-Cova_des_Coloms.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Faro_de_la_Isla_del_Aire.jpg/960px-Faro_de_la_Isla_del_Aire.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Torre_de_Son_Ganxo_%28Sant_Llu%C3%ADs%29_-_3.jpg/960px-Torre_de_Son_Ganxo_%28Sant_Llu%C3%ADs%29_-_3.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Taloiot.JPG/960px-Taloiot.JPG",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Santuari_al_poblat_talai%C3%B2tic_de_So_Na_Ca%C3%A7ana_%28Menorca%29.jpg/960px-Santuari_al_poblat_talai%C3%B2tic_de_So_Na_Ca%C3%A7ana_%28Menorca%29.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Illa_de_la_Quarantena.jpg/960px-Illa_de_la_Quarantena.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Fornells_-_Castell_de_Sant_Antoni.JPG/960px-Fornells_-_Castell_de_Sant_Antoni.JPG",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/E09_Far_de_Fav%C3%A0ritx.JPG/960px-E09_Far_de_Fav%C3%A0ritx.JPG",
     "why": "licence"
    }
   ],
-  "REU": [
+  "SCQ": [
    {
-    "url": "https://upload.wikimedia.org/wikipedia/en/thumb/b/b3/Huracancondor.jpg/500px-Huracancondor.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Castelo_Rocha_Forte.webm.480p.jpg/960px-Castelo_Rocha_Forte.webm.480p.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Praza_do_Obradorio.jpg/960px-Praza_do_Obradorio.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Castelo_Rocha_Forte.webm.480p.jpg/960px-Castelo_Rocha_Forte.webm.480p.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Praza_do_Obradorio.jpg/960px-Praza_do_Obradorio.jpg",
     "why": "licence"
    }
   ],
-  "GRO": [
+  "LCG": [
    {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Fachada_del_Museu_Arqueologia_de_Catalunya.jpg/500px-Fachada_del_Museu_Arqueologia_de_Catalunya.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/CastroElvi%C3%B1aV.jpg/960px-CastroElvi%C3%B1aV.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/CastroElvi%C3%B1aV.jpg/960px-CastroElvi%C3%B1aV.jpg",
     "why": "licence"
    }
   ],
-  "MJV": [
+  "SDR": [
    {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/c/ce/Museo_Arqueologico_de_Murcia.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Centro_Bot%C3%ADn_%2837578627575%29.jpg/960px-Centro_Bot%C3%ADn_%2837578627575%29.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/9/95/Abra_del_Pas.jpg",
+    "why": "not_a_photograph"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Centro_Bot%C3%ADn_%2837578627575%29.jpg/960px-Centro_Bot%C3%ADn_%2837578627575%29.jpg",
+    "why": "licence"
+   }
+  ],
+  "ZAZ": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Zaragoza_-_Basilica_de_Nuestra_Se%C3%B1ora_del_Pilar_01.jpg/960px-Zaragoza_-_Basilica_de_Nuestra_Se%C3%B1ora_del_Pilar_01.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Zaragoza_-_Basilica_de_Nuestra_Se%C3%B1ora_del_Pilar_01.jpg/960px-Zaragoza_-_Basilica_de_Nuestra_Se%C3%B1ora_del_Pilar_01.jpg",
+    "why": "licence"
+   }
+  ],
+  "VLL": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Valladolid_Cathedral_2023_-_Main_Fa%C3%A7ade_with_Sunstar.jpg/960px-Valladolid_Cathedral_2023_-_Main_Fa%C3%A7ade_with_Sunstar.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Valladolid_Cathedral_2023_-_Main_Fa%C3%A7ade_with_Sunstar.jpg/960px-Valladolid_Cathedral_2023_-_Main_Fa%C3%A7ade_with_Sunstar.jpg",
     "why": "licence"
    }
   ],
   "VIT": [
    {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Museo_de_Bellas_Artes_de_Vitoria.JPG/500px-Museo_de_Bellas_Artes_de_Vitoria.JPG",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Retablo_de_Santa_Ana.jpg/960px-Retablo_de_Santa_Ana.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Ajuria_enea.jpg/960px-Ajuria_enea.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Vitoria_2021_-_main_fa%C3%A7ade.jpg/960px-Vitoria_2021_-_main_fa%C3%A7ade.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Retablo_de_Santa_Ana.jpg/960px-Retablo_de_Santa_Ana.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Ajuria_enea.jpg/960px-Ajuria_enea.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Vitoria_2021_-_main_fa%C3%A7ade.jpg/960px-Vitoria_2021_-_main_fa%C3%A7ade.jpg",
     "why": "licence"
    }
   ],
   "ACE": [
    {
     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Lanzarote_Jardin_de_Cactus_Kaktusgarten.jpg/960px-Lanzarote_Jardin_de_Cactus_Kaktusgarten.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Lanzarote_LaGeria.jpg/960px-Lanzarote_LaGeria.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Castillo_de_San_Marcial_de_Rubic%C3%B3n_de_Femes_o_las_Coloradas.jpg/960px-Castillo_de_San_Marcial_de_Rubic%C3%B3n_de_Femes_o_las_Coloradas.jpg",
     "why": "licence"
    }
   ],
@@ -61,9 +487,53 @@
     "why": "not_a_photograph"
    }
   ],
+  "LPA": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Fachada_MPACP.jpg/960px-Fachada_MPACP.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Terraza_del_CAAM.jpg/960px-Terraza_del_CAAM.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Vegueta_D81_6040_Christopher_Columbus_house_%2831541493143%29.jpg/960px-Vegueta_D81_6040_Christopher_Columbus_house_%2831541493143%29.jpg",
+    "why": "licence"
+   }
+  ],
+  "TFS": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Faro_de_Punta_de_Rasca.jpg/960px-Faro_de_Punta_de_Rasca.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Cave_of_Santo_Hermano_Pedro_2020_05.jpg/960px-Cave_of_Santo_Hermano_Pedro_2020_05.jpg",
+    "why": "licence"
+   }
+  ],
   "TFN": [
    {
     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Anaga.jpg/960px-Anaga.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/At_Plaza_de_Espa%C3%B1a%2C_Santa_Cruz_de_Tenerife_2019_009.jpg/960px-At_Plaza_de_Espa%C3%B1a%2C_Santa_Cruz_de_Tenerife_2019_009.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Parque_Garcia_Sanabria.JPG/960px-Parque_Garcia_Sanabria.JPG",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Anaga.jpg/960px-Anaga.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/At_Plaza_de_Espa%C3%B1a%2C_Santa_Cruz_de_Tenerife_2019_009.jpg/960px-At_Plaza_de_Espa%C3%B1a%2C_Santa_Cruz_de_Tenerife_2019_009.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Parque_Garcia_Sanabria.JPG/960px-Parque_Garcia_Sanabria.JPG",
     "why": "licence"
    }
   ],
@@ -71,114 +541,36 @@
    {
     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Roque_de_los_Muchachos_view1.jpg/960px-Roque_de_los_Muchachos_view1.jpg",
     "why": "licence"
-   }
-  ],
-  "CAG": [
+   },
    {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Cagliari_burg_elefantenturm.jpg/500px-Cagliari_burg_elefantenturm.jpg",
-    "why": "licence"
-   }
-  ],
-  "REG": [
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/8/81/Reggio_Calabria_Teatro_Cilea_facciata.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Forest_Los_Tilos_La_Palma.jpg/960px-Forest_Los_Tilos_La_Palma.jpg",
     "why": "licence"
    },
    {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/9/9a/Reggio_calabria_santuario_di_sant%27antonio.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Faro_de_Punta_Cumplida.jpg/960px-Faro_de_Punta_Cumplida.jpg",
     "why": "licence"
    },
    {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/f/f4/Palazzo_Campanella.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Faro_de_Punta_Lava_2014-11.JPG/960px-Faro_de_Punta_Lava_2014-11.JPG",
     "why": "licence"
    },
    {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Reggio_Calabria_Palazzo_Zani_Lungomare.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Roque_de_los_Muchachos_view1.jpg/960px-Roque_de_los_Muchachos_view1.jpg",
     "why": "licence"
    },
    {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Reggio_Calabria_cartolina_Duomo_900.jpg/960px-Reggio_Calabria_cartolina_Duomo_900.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/La_palma_volcano-close.jpg/960px-La_palma_volcano-close.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Wolkenwasserfall_ms1408101.jpg/960px-Wolkenwasserfall_ms1408101.jpg",
     "why": "not_a_photograph"
    }
   ],
-  "LMP": [
+  "OVD": [
    {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Spiaggia-dei-conigli2.jpg/960px-Spiaggia-dei-conigli2.jpg",
-    "why": "not_a_photograph"
-   }
-  ],
-  "PSR": [
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Scorcio_Basilica_dei_sette_dolori_pescara.jpg/500px-Scorcio_Basilica_dei_sette_dolori_pescara.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Museo_Fernando_Alonso_entrance_2017_March.jpg/960px-Museo_Fernando_Alonso_entrance_2017_March.jpg",
     "why": "licence"
-   }
-  ],
-  "CUF": [
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/6/6b/Gelas.jpg",
-    "why": "not_a_photograph"
-   }
-  ],
-  "GOA": [
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Genoa_conference_1922.jpg/960px-Genoa_conference_1922.jpg",
-    "why": "licence"
-   }
-  ],
-  "LMZ": [
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/c/ce/LameziaBastioneDiMalta.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-    "why": "licence"
-   },
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/1/1f/Dracma_Terina_fronte.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-    "why": "licence"
-   },
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/b/b2/PanoramaLamezia.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-    "why": "not_a_photograph"
-   }
-  ],
-  "OPO": [
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/8/8d/Oporto-S-Francisco-IPPAR1.jpg",
-    "why": "licence"
-   },
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Igreja_da_Serra_do_Pilar_por_Rodrigo_Tetsuo_Argenton_%2802%29.jpg/500px-Igreja_da_Serra_do_Pilar_por_Rodrigo_Tetsuo_Argenton_%2802%29.jpg",
-    "why": "licence"
-   }
-  ],
-  "FAO": [
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/EstadioAlgarve.JPG/960px-EstadioAlgarve.JPG",
-    "why": "licence"
-   },
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/GovernoCivilFaro.JPG/500px-GovernoCivilFaro.JPG",
-    "why": "licence"
-   },
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/EstadioAlgarve.JPG/960px-EstadioAlgarve.JPG",
-    "why": "licence"
-   },
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Ilha_da_Culatra_1.JPG/960px-Ilha_da_Culatra_1.JPG",
-    "why": "not_a_photograph"
-   }
-  ],
-  "PDL": [
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Lagoa_do_Fogo.jpg/960px-Lagoa_do_Fogo.jpg",
-    "why": "licence"
-   },
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Lagoa_do_Fogo.jpg/960px-Lagoa_do_Fogo.jpg",
-    "why": "licence"
-   },
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Seven_Cities_Lake_-_Azores_%28220320067%29.jpg/960px-Seven_Cities_Lake_-_Azores_%28220320067%29.jpg",
-    "why": "not_a_photograph"
    }
   ]
  }

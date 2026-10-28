@@ -54,7 +54,9 @@ def reference_path():
     return ROOT / cfg("reference")
 
 
-PARTS = ("significance", "rating")
+# T761 adds nature (nature_tiers.py) and beauty (the frozen gem cutoffs of
+# apply_beauty_layer.py, T754-e); T762 adds taste (place_taste_profile.py).
+PARTS = ("significance", "rating", "nature", "taste", "beauty")
 
 
 def part_version(part):
@@ -79,9 +81,11 @@ def _read_reference():
 def reference(part):
     """One frozen part of the reference, checked against the config version.
 
-    The two parts are measured by different scripts (score_significance.py
-    for "significance", apply_rating_layer.py for "rating"), so each carries
-    its own version and a run refuses a part that does not match the config.
+    Each part is measured by its own script (score_significance.py for
+    "significance", apply_rating_layer.py for "rating", nature_tiers.py for
+    "nature", place_taste_profile.py for "taste", apply_beauty_layer.py for
+    "beauty"), so each carries its own version and a run refuses a part that
+    does not match the config.
     """
     got = _read_reference().get(part)
     if not got:

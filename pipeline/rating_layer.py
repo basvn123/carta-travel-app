@@ -92,7 +92,6 @@ every ranking, rail and top list. Flight search still reads the airport rows.
 
 import json
 import math
-import re
 from pathlib import Path
 
 import appeal_scale
@@ -105,6 +104,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DEST_PV_CACHE = ROOT / "cache" / "dest_pageviews.json"
 CURATED_APPEAL = ROOT / "app_data" / "curated_appeal.json"
 RUBRIC_APPEAL = ROOT / "app_data" / "rubric_appeal.json"
+CURATED_WHY = ROOT / "app_data" / "curated_why_i18n.json"
 GOLDEN_ANCHORS = ROOT / "tests" / "golden_ratings.json"
 ROUTES_ATTACH = ROOT / "data" / "derived" / "routes_attach.json"
 
@@ -127,6 +127,8 @@ WEIGHTS = section("weights")
 FORMULA = cfg("formula")
 WEIGHTS_V5 = section("weights_v5")
 ESTIMATED_CAP = cfg("estimated.cap")
+# The five v5 band words and their lower cutoffs (schema v19 rating.band).
+BANDS = section("bands.cutoffs")
 CURVE_TOP_SHARE = cfg("class_curve.top_share")
 CURVE_TOP_SCORE = cfg("class_curve.top_score")
 
@@ -175,13 +177,14 @@ DEPTH_REACH_KM = _D["reach_km"]
 DEPTH_POI_MATCH_KM = _D["poi_nature_match_km"]
 DEPTH_POI_BY_SIG = _D["poi_weight_by_sig"]
 SIG_MAX = _D["sig_max"]                     # it.sig runs 0-3 (score_significance)
-DEPTH_KIND_CATEGORY = dict(_D["kind_category"])
-DEPTH_DEFAULT_CATEGORY = _D["default_category"]
-DEPTH_NAME_CATEGORY = [(cat, re.compile(pat, re.I)) for cat, pat
-                       in section("depth.name_category").items()]
+# T761 (closes T756-c): depth reads the one POI category set
+# (config poi_categories), the same one the POI labels carry, instead of
+# name patterns.
+POI_KIND_CATEGORY = section("poi_categories.kind_category")
 
-# Acclaim: what membership of each register is worth, 0-1. Mirrors (and must
-# stay in step with) score_place_candidates.DESIGNATION_WEIGHT. A place in two
+# Acclaim: what membership of each register is worth, 0-1. The one table
+# (config recognition.weights); score_place_candidates reads it too (T761,
+# T754-d). A place in two
 # registers gains, but with sharply diminishing returns - three lists do not
 # make somewhere three times as beautiful.
 # T754: geoparks (0.30) and biosphere reserves (0.25) carry their own
@@ -347,14 +350,11 @@ def highlights_map(dests, p99=None):
 
 
 def poi_category(item):
-    """One of the eight depth categories for a POI: a name pattern first (the
-    shipped kinds have no market, food, zoo or nightlife kind), then the kind,
-    then sights."""
-    name = item.get("name") or ""
-    for cat, rx in DEPTH_NAME_CATEGORY:
-        if rx.search(name):
-            return cat
-    return DEPTH_KIND_CATEGORY.get(item.get("kind"), DEPTH_DEFAULT_CATEGORY)
+    """One of the eight categories for a POI: the category poi_labels.py
+    wrote, else its kind through config poi_categories (T761). No name
+    patterns: a kind the table does not map is a config gap that
+    tests/test_poi_labels.py catches."""
+    return item.get("category") or POI_KIND_CATEGORY[item.get("kind")]
 
 
 _ROUTES = None
@@ -956,6 +956,7 @@ def compute_ratings(dests):
               "curated": 0, "modelled": 0, "provisional": 0,
               "rubric": 0, "estimated": 0}
     counts["gateway"] = 0
+    why_en = load_why_en()
     for i, did in enumerate(ids):
         if rep[i] != i:
             dests[did]["gateway_of"] = ids[rep[i]]
@@ -991,7 +992,51 @@ def compute_ratings(dests):
             "fame": int(views_list[i]),
             "components": comps[i],
             "source": RATING_MODEL["version"],
+            # Schema v19 (T762), additive: the five-band word of the score and
+            # the English reason. `tier` keeps the 8.7/7.8/6.9 cutoffs until
+            # the app moves (T763); the other five reason languages are lazy
+            # files (public/app_data/why_i18n/{lang}.json).
+            "band": band_of(score),
+            "why": why_en.get(did),
         }
         counts[tier] += 1
         counts["hidden_gem"] += 1 if hidden else 0
+    # Schema v19 (T762): a city lists the airport rows that stand for it
+    # (gateway_of is the other direction, T755).
+    for did in ids:
+        dests[did].pop("gateways", None)
+    for did in ids:
+        city = dests[did].get("gateway_of")
+        if city in dests:
+            dests[city].setdefault("gateways", []).append(did)
+    for did in ids:
+        if dests[did].get("gateways"):
+            dests[did]["gateways"].sort()
     return counts
+
+
+def band_of(score):
+    """The v5 band word of a place score (config bands.cutoffs), or None
+    under the lowest cutoff."""
+    for band, cut in sorted(BANDS.items(), key=lambda kv: -kv[1]):
+        if score >= cut:
+            return band
+    return None
+
+
+def load_why_en():
+    """{id: English reason}: the hand reason (curated_why_i18n.json, else
+    curated_appeal.json), else the rubric reason (rubric_appeal.json)."""
+    out = {}
+    if RUBRIC_APPEAL.exists():
+        for did, rec in json.loads(RUBRIC_APPEAL.read_text(encoding="utf-8")).items():
+            if (rec.get("why") or {}).get("en"):
+                out[did] = rec["why"]["en"]
+    for did, rec in load_curated_appeal().items():
+        if rec.get("why"):
+            out[did] = rec["why"]
+    if CURATED_WHY.exists():
+        for did, rec in json.loads(CURATED_WHY.read_text(encoding="utf-8")).items():
+            if rec.get("en"):
+                out[did] = rec["en"]
+    return out

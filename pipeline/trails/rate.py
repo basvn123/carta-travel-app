@@ -214,6 +214,21 @@ def fetch(conn, cc):
         return [dict(zip(COLS, r)) for r in cur.fetchall()]
 
 
+# v5 (T761): the rated walks the wire ships, fetched by id across Europe, with
+# the SAC grade nature_tiers.py shows next to the score (never inside it).
+FETCH_IDS_SQL = (FETCH_SQL.split("    WHERE t.country = %s")[0].replace(
+    "           p.score AS popularity,",
+    "           p.score AS popularity, t.grade_parts->>'sac_worst' AS sac_worst,")
+    + "    WHERE t.id = ANY(%s) AND t.category = 'hike'\n")
+COLS_IDS = COLS[:-2] + ("popularity", "sac_worst", "n_photos")
+
+
+def fetch_ids(conn, ids):
+    with conn.cursor() as cur:
+        cur.execute(FETCH_IDS_SQL, (list(ids),))
+        return [dict(zip(COLS_IDS, r)) for r in cur.fetchall()]
+
+
 # ---------------------------------------------------------------------------
 # Raw components, before the within-country percentile
 # ---------------------------------------------------------------------------
@@ -320,6 +335,39 @@ RAW = {
     "variety": variety_raw,
     "surface": surface_raw,
 }
+
+
+# ---------------------------------------------------------------------------
+# v5 (T761): the same parts, Europe-wide
+# ---------------------------------------------------------------------------
+#
+# The published `rating` below ranks each part inside the walk's NUTS 3 region
+# (or country) and then stretches the composite per country, so the best walk
+# in Flanders scored like the best in the Dolomites. Rating v5 places every
+# walk on one ladder with the places (pipeline/nature_tiers.py): it reads the
+# RAW values here, ranks each part across Europe on frozen breakpoints and
+# blends with WEIGHTS, a part nobody measured counting at the median. The old
+# path stays as it is until the app moves to the v5 keys (R4).
+#
+# A part is "measured" when its input exists. The defaults RAW falls back to
+# (no ascent read as 0 m, no surface as 0.5) are not readings, so v5_raw
+# returns None for them. Prominence and photos are always measured: a walk
+# with no wiki tag and no photograph has been looked at and has none.
+V5_MEASURED = {
+    "scenery": lambda r: r.get("highlights") is not None,
+    "relief": lambda r: r.get("ascent_m") is not None,
+    "prominence": lambda r: True,
+    "photos": lambda r: True,
+    "designation": lambda r: bool(r.get("network")),
+    "shape": lambda r: r.get("route_type") is not None or r.get("is_loop") is not None,
+    "variety": lambda r: r.get("highlight_kinds") is not None,
+    "surface": lambda r: (r.get("surface") or {}).get("quality") is not None,
+}
+
+
+def v5_raw(row):
+    """{part: raw value, or None when the part was not measured}."""
+    return {k: (fn(row) if V5_MEASURED[k](row) else None) for k, fn in RAW.items()}
 
 
 # ---------------------------------------------------------------------------

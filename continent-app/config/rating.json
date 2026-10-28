@@ -1,11 +1,14 @@
 {
   "_about": "The one configuration of every number that moves a rating (Carta rating v5, Roadmap/2.10b-rating-v5.md; batch R1, T754). The pipeline reads it through pipeline/rating_config.py; the app will read it in T776. What was measured on the reference catalogue (zlog spread, breakpoints, class scales, curves, fallback coefficients) lives in the frozen reference named below, never here. Changing a number here is a model change: bump version, then rebuild the reference with apply_rating_layer.py --recalibrate --version <new>.",
-  "version": "v5.0-r2",
+  "version": "v5.0-r3",
   "reference": "reports/rating_reference_v5.json",
   "reference_versions": {
-    "_about": "Which version of each part of the frozen reference this config reads. A part is rebuilt only by its own --recalibrate, which must name the version given here; a model change that does not touch a part leaves it at its version (turning depth.live or beauty.live on changes the rating part, not the significance part).",
+    "_about": "Which version of each part of the frozen reference this config reads. A part is rebuilt only by its own --recalibrate, which must name the version given here; a model change that does not touch a part leaves it at its version (turning depth.live or beauty.live on changes the rating part, not the significance part). T761 adds nature (pipeline/nature_tiers.py) and re-measures rating (depth reads the one POI category set); T762 adds taste (pipeline/place_taste_profile.py); beauty holds the frozen gem cutoffs (apply_beauty_layer.py, T754-e).",
     "significance": "v5.0-r1",
-    "rating": "v5.0-r2"
+    "rating": "v5.0-r3",
+    "nature": "v5.0-r3",
+    "taste": "v5.0-r3",
+    "beauty": "v5.0-r3"
   },
 
   "formula": "v5",
@@ -81,7 +84,7 @@
   },
 
   "depth": {
-    "_about": "D, depth (T756), Live from T759 (owner decision 2026-10-27, closes T756-a) under formula v5. How much there is to do. POIs at rate 3 (must_see) and rate 2 (recommended), plus rated nature items (beaches, lakes, peaks, hikes, cycling routes) scored at least nature_min_score between beauty's setting_km and reach_km (about 30 minutes by road: 25 km straight x 1.3 detour at 65 km/h). Sorted into eight categories; within a category the i-th item counts its weight / i, up to per_category_max (a POI's weight is also scaled by its absolute significance sig / 3 when poi_weight_by_sig: rate is a town-relative quota, so every 52-POI metro holds about six rate-3 items whatever they are); each category covered adds category_bonus. The raw sum is read as a percentile on the frozen per-class breakpoints and written to rating.components.highlights (the key is renamed in schema v19, T775). Rate stands in for the POI labels of T774.",
+    "_about": "D, depth (T756), Live from T759 (owner decision 2026-10-27, closes T756-a) under formula v5. How much there is to do. POIs at rate 3 (must_see) and rate 2 (recommended), plus rated nature items (beaches, lakes, peaks, hikes, cycling routes) scored at least nature_min_score between beauty's setting_km and reach_km (about 30 minutes by road: 25 km straight x 1.3 detour at 65 km/h). Sorted into the eight categories of poi_categories; within a category the i-th item counts its weight / i, up to per_category_max (a POI's weight is also scaled by its absolute significance sig / 3 when poi_weight_by_sig: rate is a town-relative quota, so every 52-POI metro holds about six rate-3 items whatever they are); each category covered adds category_bonus. The raw sum is read as a percentile on the frozen per-class breakpoints and written to rating.components.highlights (the key is renamed in schema v19, T775). Rate is derived from the POI label (poi_labels, T761).",
     "live": true,
     "poi_own_km": {"_about": "T759 (owner decision 2026-10-27): a POI counts for a place only within this distance of its centre, by class; the POI lists reach into neighbouring towns (Begunje counted Bled at 10 km). null counts every POI the list holds (an area is a landscape you base yourself in).", "metro": 15.0, "city": 10.0, "town": 5.0, "village": 5.0, "area": null},
     "categories": ["sights", "museums", "nature", "food_drink", "active", "family", "nightlife", "markets"],
@@ -94,24 +97,7 @@
     "reach_km": 25.0,
     "poi_nature_match_km": 0.3,
     "knots": 201,
-    "kind_category": {
-      "Museum": "museums",
-      "Theme park": "family", "Water park": "family", "Ferris wheel": "family",
-      "Swimming": "active", "Skiing": "active", "Climbing": "active", "Diving": "active",
-      "Surfing": "active", "Activity": "active", "Sauna & baths": "active",
-      "Peak": "nature", "Nature reserve": "nature", "Glacier": "nature", "Canyon": "nature",
-      "River": "nature", "Island": "nature", "Geyser": "nature", "Lake": "nature",
-      "Waterfall": "nature", "Cliffs": "nature", "Beach": "nature", "Viewpoint": "nature",
-      "National park": "nature"
-    },
-    "default_category": "sights",
-    "name_category": {
-      "_about": "Name patterns (case-insensitive regex) that override the kind, checked in this order: the shipped POI kinds have no market, food, zoo or nightlife kind.",
-      "markets": "\\b(market|markt|mercado|mercato|marché|bazaa?r|mercat|targ|piac)\\b",
-      "food_drink": "\\b(brewery|brauerei|winery|vineyard|wine|weingut|bodega|cantina|distillery|cellar|food hall|chocolate)\\b",
-      "family": "\\b(zoo|aquarium|aquar|tierpark|dierentuin|safari|legoland|playground)\\b",
-      "nightlife": "\\b(bar|pub|club|nightclub|jazz|cabaret|casino|opera)\\b"
-    }
+    "categories_from": "poi_categories (T761, closes T756-c): the one category set the POI labels carry; the name patterns are gone"
   },
 
   "beauty": {
@@ -182,5 +168,45 @@
     "sample": 100,
     "max_move": 0.05,
     "seed": 754
+  },
+
+  "nature": {
+    "_about": "Nature items on the place ladder (T761, pipeline/nature_tiers.py). Each kind keeps its own parts and weights; a missing part counts at the kind's frozen median and lowers confidence, never renormalised. The blended raw score is placed on a frozen Europe-wide percentile within its kind (breakpoints in the reference's nature part) and read onto the same 0 to 10 cutoffs as places (bands.cutoffs). An item with fewer than min_measured_share of its parts measured gets no score.",
+    "kinds": ["trails", "beaches", "lakes", "mountains", "cycling"],
+    "shares": {"exceptional": 0.03, "excellent": 0.09, "very_good": 0.18, "good": 0.25, "pleasant": 0.25},
+    "ladder": {"_about": "Percentile 0 maps to floor, 1 to ceiling; the band starts (1 minus the shares above it) map to bands.cutoffs. The score is floored to one decimal so it never shows a band above its own.", "floor": 4.0, "ceiling": 9.8},
+    "knots": 201,
+    "min_measured_share": 0.5,
+    "provisional_median": 0.5,
+    "rank_min_items": 5,
+    "rank_region_key": "n2",
+    "rank_units": {"trails": "walks", "beaches": "beaches", "lakes": "lakes", "mountains": "peaks", "cycling": "routes"}
+  },
+
+  "poi_categories": {
+    "_about": "The one POI category set (T761): every shipped POI kind maps to exactly one category. Depth reads it; the day planner moves to it in T766. A kind not listed here fails tests/test_poi_labels.py.",
+    "categories": ["sights", "museums", "nature", "food_drink", "active", "family", "nightlife", "markets"],
+    "kind_category": {
+      "Square": "sights", "Church": "sights", "Cathedral": "sights", "Monastery": "sights", "Synagogue": "sights",
+      "Mosque": "sights", "Castle": "sights", "Palace": "sights", "Tower": "sights", "Bridge": "sights",
+      "Lighthouse": "sights", "Attraction": "sights", "Village": "sights", "Town": "sights",
+      "Museum": "museums",
+      "Peak": "nature", "Nature reserve": "nature", "Glacier": "nature", "Canyon": "nature", "River": "nature",
+      "Island": "nature", "Geyser": "nature", "Lake": "nature", "Waterfall": "nature", "Cliffs": "nature",
+      "Beach": "nature", "Viewpoint": "nature", "National park": "nature",
+      "Swimming": "active", "Skiing": "active", "Climbing": "active", "Diving": "active", "Surfing": "active",
+      "Activity": "active", "Sauna & baths": "active",
+      "Theme park": "family", "Water park": "family", "Ferris wheel": "family",
+      "Theatre": "nightlife"
+    }
+  },
+
+  "poi_labels": {
+    "_about": "Three POI labels in place of scores (T761, pipeline/poi_labels.py). Must-see: the highest significance inside the place with at least national recognition, up to the class cap. Recommended: the next POIs by significance inside the place, up to recommended_factor x the cap. Worth a look: any other POI. Inside the place means within depth.poi_own_km of its centre. rate stays on the wire until R4, derived from the label.",
+    "must_see_cap": {"metro": 8, "city": 5, "town": 3, "village": 2, "area": 3},
+    "default_cap": 3,
+    "recommended_factor": 3,
+    "national_min_wiki_languages": 3,
+    "label_rate": {"must_see": 3, "recommended": 2, "worth_a_look": 1}
   }
 }

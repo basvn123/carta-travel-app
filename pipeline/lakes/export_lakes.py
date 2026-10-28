@@ -88,6 +88,7 @@ from pipeline_io import in_europe  # noqa: E402
 from water_sources import haversine_km, load_cache  # noqa: E402
 from harvest_lakes import COUNTRIES, fold, name_tokens  # noqa: E402
 import lake_index as li  # noqa: E402
+import nature_tiers  # noqa: E402  (v5 parts, T761)
 import lake_images  # noqa: E402
 import seed_lakes  # noqa: E402
 import explore_overlay as xov  # noqa: E402  (T641 harvests: lake water detail)
@@ -711,6 +712,8 @@ def wire_lake(lake, comps, score10, tier, reasons, expected):
         ATTRIBUTION["chelsa"] if swim.get("temps") else None,
     ]
     row["credit"] = [c for c in credits if c]
+    # v5 (T761): the Europe-wide parts, for pipeline/nature_tiers.py.
+    nature_tiers.record("lakes", row["id"], row.get("cc"), lake.get("_v5_parts"))
     return row
 
 
@@ -1503,6 +1506,7 @@ def main():
                     "per_country_cap": TOP_PER_COUNTRY, "lakes": top},
                    ensure_ascii=False, separators=(",", ":")),
         encoding="utf-8")
+    nature_tiers.save_parts("lakes")
     print(f"[lakes] published {total} water bodies across {len(index)} "
           f"countries into {out_dir} (top.json holds {len(top)})")
     if filled:
