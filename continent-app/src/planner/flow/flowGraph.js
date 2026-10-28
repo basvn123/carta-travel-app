@@ -10,7 +10,9 @@
  *   doors     guide me / I know where / a ready trip       (not when stays are
  *             booked: the places are already chosen)
  *   guide     shape, likes, weather, reach, avoid, budget, pick (the explorative
- *             path, only behind "guide me")
+ *             path, only behind "guide me"), then trips: the loader and the
+ *             priced trips the answers lead to (TF2, T797), the one screen
+ *             of the run that is not a question
  *   plan      the planning engine's own steps by name, from wizardSteps
  *             (Where, Trips or Stay, Stays, From, Getting, Finish) without the
  *             Booked and When steps the setup already asked
@@ -26,7 +28,9 @@ export const SETUP = ['tell', 'booked', 'who', 'sleep', 'priority', 'when', 'fro
 /** A trip already under way (T675): where the traveller is now and until
  *  when stand in for When and Where from; the way there is behind them. */
 export const NOW_SETUP = ['tell', 'booked', 'who', 'sleep', 'priority', 'nowWhere', 'nowUntil'];
-export const GUIDE = ['g:shape', 'g:likes', 'g:weather', 'g:reach', 'g:avoid', 'g:budget', 'g:pick'];
+export const GUIDE = ['g:shape', 'g:likes', 'g:weather', 'g:reach', 'g:avoid', 'g:budget', 'g:pick', 'g:trips'];
+/** The help-me-choose screen that answers rather than asks (T797). */
+export const TRIPS_SCREEN = 'g:trips';
 export const RHYTHM_SCREENS = ['r:mornings', 'r:pace', 'r:detail', 'r:goal', 'r:food', 'r:around'];
 export const DOORS = ['guide', 'know', 'ready'];
 
@@ -46,10 +50,15 @@ export function hasDoors(s) {
   return !s.booked.stays;
 }
 
-/** The help-me-choose questions. Reach is moot when flights are booked
- *  (they decide where the trip starts). */
+/** The help-me-choose screens, the questions then the trips. Reach is moot
+ *  when flights are booked (they decide where the trip starts). */
 export function guideScreens(s) {
   return GUIDE.filter((id) => !(id === 'g:reach' && s.booked.flights));
+}
+
+/** The help-me-choose questions alone, for the "3 of 7" position. */
+export function guideQuestions(s) {
+  return guideScreens(s).filter((id) => id !== TRIPS_SCREEN);
 }
 
 /** The planning engine's steps for this trip, prefixed 'p:'. */

@@ -1,0 +1,79 @@
+/*
+ * The trip finder's screens (TF2, T797 to T800): the loader, Trips for you
+ * and the priced trip card, the live receipt and the line pickers. Imported
+ * by the finder's own components (src/planner/finder/), so it loads with
+ * their lazy chunk. Every rule is under a .tff- class: no generic
+ * .card-body or > * selector (the css-routes gotcha). Tokens only.
+ */
+
+/* ---- The loader (T797) ---- */
+.tff-load { cursor: default; }
+.tff-load > .pf-title { margin-bottom: var(--space-1); }
+
+.tff-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.tff-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text-2);
+  font-size: var(--text-label);
+  font-weight: 500;
+  line-height: var(--leading-ui);
+}
+
+.tff-checks {
+  display: grid;
+  gap: var(--space-3);
+  margin: var(--space-4) auto 0;
+  padding: 0;
+  list-style: none;
+  max-width: 420px;
+  width: 100%;
+}
+.tff-check {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-body);
+  line-height: var(--leading-ui);
+  color: var(--text-3);
+  transition: color var(--dur-2) var(--ease-out);
+}
+.tff-check.is-working,
+.tff-check.is-done { color: var(--text); }
+.tff-check-mark {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--border);
+  color: var(--surface);
+  transition: background-color var(--dur-2) var(--ease-out), border-color var(--dur-2) var(--ease-out);
+}
+.tff-check.is-working .tff-check-mark { border-color: var(--text-2); }
+.tff-check.is-done .tff-check-mark { background: var(--text); border-color: var(--text); }
+.tff-check-mark svg { transform: scale(0.6); opacity: 0; transition: transform var(--dur-2) var(--ease-out), opacity var(--dur-2) var(--ease-out); }
+.tff-check.is-done .tff-check-mark svg { transform: none; opacity: 1; }
+
+.tff-skip { display: flex; justify-content: center; margin-top: var(--space-2); }
+.tff-fail { margin: 0; text-align: center; color: var(--text-2); font-size: var(--text-body); }
+
+@media (prefers-reduced-motion: reduce) {
+  .tff-check,
+  .tff-check-mark,
+  .tff-check-mark svg { transition: none; }
+}

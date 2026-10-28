@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { plannerStore } from '../plannerStore.js';
 import { Button, ChoiceRows, IconButton } from '../../components/ui/index.js';
@@ -10,8 +10,12 @@ import { QuestionBody } from './QuestionScreen.jsx';
 import { TripSettingsSheet } from './TripSettingsSheet.jsx';
 import { CartaTrips } from './CartaTrips.jsx';
 import { useBcp47, useMonths, useTripSettings, whenText } from './flowHooks.js';
-import { engineScreens, guideScreens, hasDoors, nextScreen, prevScreen, progressOf } from './flowGraph.js';
+import { TRIPS_SCREEN, engineScreens, guideQuestions, guideScreens, hasDoors, nextScreen, prevScreen, progressOf } from './flowGraph.js';
 import { normalizeSettings, quizAnswers, spendFor } from './tripSettings.js';
+
+// The trip finder (TF2, T797): the loader and the priced trips behind
+// question 7, with lib/recommend, in a chunk of their own.
+const TripFinderScreen = lazy(() => import('../finder/FindingTrips.jsx'));
 
 /**
  * TripFlow (T656), the trip planner before a route exists: the trip's own
@@ -31,6 +35,9 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null }) {
   const [phase, setPhase] = useState('home'); // home | doors | carta | g:* | engine
   const [door, setDoor] = useState('guide');
   const [settingsOpen, setSettingsOpen] = useState(false);
+  // A question reopened from the trips' answers bar (T798) comes straight
+  // back to the trips on Continue, not through the questions after it.
+  const [returnTo, setReturnTo] = useState(null);
   const gearRef = useRef(null);
   const rootRef = useRef(null);
 
@@ -76,12 +83,16 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null }) {
   }, [seed]); // eslint-disable-line react-hooks/exhaustive-deps -- one-shot hand-off per seed; the wizard consumes it and clears it
 
   const guide = useMemo(() => guideScreens(settings), [settings]);
+  const questions = useMemo(() => guideQuestions(settings), [settings]);
   const afterGuide = (id, s) => {
+    if (returnTo) { setReturnTo(null); setPhase(returnTo); return; }
     let k = nextScreen(guide, id);
-    // Skip what the free field already answered.
-    while (k && s.answered.includes(k)) k = nextScreen(guide, k);
+    // Skip what the free field already answered (never the trips).
+    while (k && k !== TRIPS_SCREEN && s.answered.includes(k)) k = nextScreen(guide, k);
     if (k) setPhase(k); else startEngine('guide');
   };
+  /** Reopen one question from the trips, and come back to them after it. */
+  const reopen = (id) => { setReturnTo(TRIPS_SCREEN); setPhase(id); };
   const start = () => (hasDoors(settings) ? setPhase('doors') : startEngine('know'));
 
   if (phase === 'engine') {
@@ -91,7 +102,7 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null }) {
       initialWhereTab: d === 'guide' ? 'help' : 'hand',
       // "I know where" is the picker alone (T752): no Help me choose tab.
       lockWhereTab: d === 'know',
-      onCancel: () => setPhase(d === 'guide' ? guide[guide.length - 1] : (hasDoors(settings) ? 'doors' : 'home')),
+      onCancel: () => setPhase(d === 'guide' ? questions[questions.length - 1] : (hasDoors(settings) ? 'doors' : 'home')),
     });
   }
 
@@ -140,15 +151,28 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null }) {
         </div>
       </div>
     );
+  } else if (phase === TRIPS_SCREEN) {
+    body = (
+      <Suspense fallback={<div className="pf-step" aria-busy="true"><span className="sr-only">{t('state.loading')}</span></div>}>
+        <TripFinderScreen
+          settings={settings}
+          guide={questions}
+          onBack={() => setPhase(questions[questions.length - 1])}
+          onWiden={reopen}
+          onNone={() => startEngine('guide')}
+        />
+      </Suspense>
+    );
   } else {
     const q = QUESTIONS[phase];
-    const pos = progressOf(guide, phase);
+    const pos = progressOf(questions, phase);
+    const back = returnTo || prevScreen(guide, phase) || 'doors';
     body = (
       <div className="pf-step">
         <SheetHead
-          onBack={() => setPhase(prevScreen(guide, phase) || 'doors')}
+          onBack={() => { setReturnTo(null); setPhase(back); }}
           backLabel={t('pf.back')}
-          position={t('pf.position', { x: pos.index + 1, n: guide.length })}
+          position={pos.index >= 0 && questions.includes(phase) ? t('pf.position', { x: pos.index + 1, n: questions.length }) : ''}
         />
         <h2 className="pf-title" tabIndex={-1}>{q ? t(q.titleKey) : ''}</h2>
         <QuestionBody id={phase} settings={settings} commit={(s) => { save(s); afterGuide(phase, s); }} />
@@ -158,7 +182,7 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null }) {
 
   return (
     <div className="pf" ref={rootRef}>
-      <PlanStage bar={bar} sheetLabel={settings.trip.name || t('pf.sheet')} wide={phase === 'g:likes'}>
+      <PlanStage bar={bar} sheetLabel={settings.trip.name || t('pf.sheet')} wide={phase === 'g:likes' || phase === TRIPS_SCREEN}>
         {body}
       </PlanStage>
       {settingsOpen && <TripSettingsSheet anchorRef={gearRef} onClose={() => setSettingsOpen(false)} />}
