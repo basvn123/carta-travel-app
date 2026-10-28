@@ -1,0 +1,12 @@
+{
+  "_about": "Hand-built answer in the /api/flights shape (functions/api/flights.js: checked, link, flights [{price, airline, airlineName, flightNo, dep, arr, stops, min, via}], cheapest first, EUR for one adult) for the trip finder's flight picker test (T795). The airlines and times are invented for the test; no live search was run.",
+  "checked": "2026-10-28T18:00:00Z",
+  "link": "https://www.google.com/travel/flights?q=Flights%20from%20BRU%20to%20LJU%20on%202026-11-21%20one%20way&curr=EUR&hl=en",
+  "flights": [
+    { "price": 96, "airline": "FR", "airlineName": "Ryanair", "flightNo": "FR1234", "dep": "06:30", "arr": "13:15", "stops": 1, "min": 405, "via": ["BGY"] },
+    { "price": 118, "airline": "LH", "airlineName": "Lufthansa", "flightNo": "LH1001", "dep": "13:20", "arr": "17:55", "stops": 1, "min": 275, "via": ["FRA"] },
+    { "price": 131, "airline": "OS", "airlineName": "Austrian", "flightNo": "OS352", "dep": "10:10", "arr": "15:05", "stops": 1, "min": 295, "via": ["VIE"] },
+    { "price": 142, "airline": "SN", "airlineName": "Brussels Airlines", "flightNo": "SN2707", "dep": "07:05", "arr": "08:40", "stops": 0, "min": 95, "via": [] },
+    { "price": 210, "airline": "JU", "airlineName": "Air Serbia", "flightNo": "JU361", "dep": "20:25", "arr": "09:00", "stops": 1, "min": 755, "via": ["BEG"] }
+  ]
+}

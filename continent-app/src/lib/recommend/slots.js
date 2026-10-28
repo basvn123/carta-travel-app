@@ -23,6 +23,7 @@
  * Pure: no React, no i18n.
  */
 import SLOTS from '../../../config/slots.json' with { type: 'json' };
+import { flight } from './adapters/flight.js';
 import { stay } from './adapters/stay.js';
 import { food } from './adapters/food.js';
 import { local } from './adapters/local.js';
@@ -46,7 +47,7 @@ function checkRows(rows) {
 export const SLOT_ROWS = checkRows(SLOTS.slots);
 
 /** The adapters by name. A row naming one that is missing prices as missing. */
-export const ADAPTERS = Object.freeze({ stay, food, local, activities });
+export const ADAPTERS = Object.freeze({ flight, stay, food, local, activities });
 
 /** The slot ids question 7 ticks by default: every pickable slot that is live. */
 export function defaultPick(rows = SLOT_ROWS) {
