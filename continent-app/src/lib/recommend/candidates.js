@@ -163,12 +163,23 @@ export function transportFor(shape, settings) {
 
 const transferMinutes = (d) => (d?.tier === 'airport' ? 0 : d?.transfer?.transfer_minutes_one_way ?? null);
 
+// The catalogue's airport rows, listed once per catalogue.
+const airportRows = new WeakMap();
+function airportsOf(destinations) {
+  let rows = airportRows.get(destinations);
+  if (!rows) {
+    rows = Object.entries(destinations).filter(([, a]) => a?.tier === 'airport' && a.lat != null);
+    airportRows.set(destinations, rows);
+  }
+  return rows;
+}
+
 /** The catalogue's airport rows nearest a place, within config gateway.nearKm, nearest first. */
 function nearAirports(d, destinations) {
   if (d?.lat == null) return [];
   const rows = [];
-  for (const [id, a] of Object.entries(destinations)) {
-    if (a?.tier !== 'airport' || a.lat == null || id === d.id) continue;
+  for (const [id, a] of airportsOf(destinations)) {
+    if (id === d.id) continue;
     const km = kmBetween(d, a);
     if (km <= GATEWAY.nearKm) rows.push({ id, km });
   }
