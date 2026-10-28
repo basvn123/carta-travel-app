@@ -17,6 +17,8 @@
 #     reboot-if-needed.sh is copied to /usr/local/sbin, owned by root, because
 #     a root unit must not execute a file the carta user can edit;
 #   carta-logrotate goes to /etc/logrotate.d/carta;
+#   carta-late-sweep.service (T798) is the flight sweep's late tier, always
+#     on; --disable stops it with the timers;
 #   every unit is checked with systemd-analyze verify before it is enabled.
 # Carriage returns are stripped on the way in, in case the files were copied
 # from a Windows checkout.
@@ -42,8 +44,8 @@ if [ $DRY -eq 0 ] && [ "$(id -u)" -ne 0 ]; then
 fi
 
 if [ "$MODE" = disable ]; then
-  run systemctl disable --now carta-weekly.timer carta-reboot.timer
-  echo "Both timers stopped. A run already in progress continues; stop it with: sudo systemctl stop carta-weekly.service"
+  run systemctl disable --now carta-weekly.timer carta-reboot.timer carta-late-sweep.service
+  echo "Both timers and the late sweep stopped. A run already in progress continues; stop it with: sudo systemctl stop carta-weekly.service"
   exit 0
 fi
 
@@ -56,13 +58,13 @@ put() {  # source, destination, mode
   rm -f "$tmp"
 }
 
-for u in carta-weekly.service carta-weekly.timer carta-reboot.service carta-reboot.timer; do
+for u in carta-weekly.service carta-weekly.timer carta-reboot.service carta-reboot.timer carta-late-sweep.service; do
   [ -f "$HERE/$u" ] || { echo "install.sh: $HERE/$u missing" >&2; exit 1; }
 done
 [ -f "$HERE/../cax11/weekly.sh" ] || { echo "install.sh: weekly.sh missing next to this directory" >&2; exit 1; }
 
 put "$HERE/reboot-if-needed.sh" /usr/local/sbin/carta-reboot-if-needed 0755
-for u in carta-weekly.service carta-weekly.timer carta-reboot.service carta-reboot.timer; do
+for u in carta-weekly.service carta-weekly.timer carta-reboot.service carta-reboot.timer carta-late-sweep.service; do
   put "$HERE/$u" "$UNIT_DIR/$u" 0644
 done
 put "$HERE/carta-logrotate" /etc/logrotate.d/carta 0644
@@ -70,13 +72,16 @@ put "$HERE/carta-logrotate" /etc/logrotate.d/carta 0644
 if [ $DRY -eq 0 ]; then
   echo "+ systemd-analyze verify"
   systemd-analyze verify "$UNIT_DIR/carta-weekly.service" "$UNIT_DIR/carta-weekly.timer" \
-    "$UNIT_DIR/carta-reboot.service" "$UNIT_DIR/carta-reboot.timer"
+    "$UNIT_DIR/carta-reboot.service" "$UNIT_DIR/carta-reboot.timer" "$UNIT_DIR/carta-late-sweep.service"
   echo "+ logrotate --debug /etc/logrotate.d/carta"
   logrotate --debug /etc/logrotate.d/carta >/dev/null
 fi
 
 run systemctl daemon-reload
 run systemctl enable --now carta-weekly.timer carta-reboot.timer
+# T798: restart, not just start, so a new run.mjs is picked up after a code move.
+run systemctl enable carta-late-sweep.service
+run systemctl restart carta-late-sweep.service
 [ $DRY -eq 1 ] || systemctl list-timers 'carta-*' --no-pager
 echo
 echo "Installed. The next Monday 09:00 (Europe/Brussels) runs the weekly cadence."

@@ -11,13 +11,15 @@
  * monthly, from Eurostat), plus routes the find tier discovered (table found).
  * Guard (T780): the first refusal from Google stops that minute and pauses
  * the sweep for an hour, longer when refusals keep coming back (nextPause).
- * GET /status shows the last hour's counts.
+ * GET /status shows the last hour's counts. POST /ingest (T798) takes the
+ * late tier's fares from the Hetzner box (ingest.mjs; secret INGEST_TOKEN).
  *
  * Needs Workers Paid: a search costs 10 to 25 ms of CPU and the free plan
  * allows 10 ms per invocation.
  */
 import { searchDay } from '../../shared/flightSearch.mjs';
-import { flattenRoutes, jobsForMinute, nextPause, DORMANT_AFTER } from './plan.mjs';
+import { flattenRoutes, jobsForMinute, nextPause, DORMANT_AFTER, FAR_WEEKS } from './plan.mjs';
+import { ingestRows, tokenOk } from './ingest.mjs';
 import { buildFile, buildIndex, logoSource, nextBatch, routeMoves, ROUTE_MOVE } from './publish.mjs';
 
 const ROUTES_KEY = 'data/flights/_routes.json';
@@ -241,6 +243,7 @@ export default {
 
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (url.pathname === '/ingest' && request.method === 'POST') return ingest(request, env);
     if (url.pathname !== '/status') return new Response(null, { status: 404 });
     const since = Math.floor(Date.now() / 60000) - 60;
     const hour = await env.DB.prepare(
@@ -256,6 +259,39 @@ export default {
       fares: await env.DB.prepare('SELECT COUNT(*) AS n FROM fares').first('n'),
       found: await env.DB.prepare('SELECT COUNT(*) AS n FROM found').first('n'),
       dormant: await env.DB.prepare('SELECT COUNT(*) AS n FROM misses WHERE n >= ?').bind(DORMANT_AFTER).first('n'),
+      // T798: the late tier's dates (past the far tier's last week), filled from the box.
+      lateFares: await env.DB.prepare('SELECT COUNT(*) AS n FROM fares WHERE date >= ?')
+        .bind(new Date(Date.now() + (14 + 7 * FAR_WEEKS) * 86400000).toISOString().slice(0, 10)).first('n'),
     }, { headers: { 'cache-control': 'no-store' } });
   },
 };
+
+/** POST /ingest (T798): store the box's fares; ingest.mjs says what passes. */
+async function ingest(request, env) {
+  if (!(await tokenOk(request.headers.get('authorization'), env.INGEST_TOKEN))) {
+    return new Response(null, { status: 401 });
+  }
+  let cleaned;
+  try {
+    cleaned = ingestRows(await request.json());
+  } catch (e) {
+    return Response.json({ error: String(e.message || e) }, { status: 400 });
+  }
+  const checked = Math.floor(Date.now() / 1000);
+  const writes = [];
+  for (const r of cleaned.rows) {
+    writes.push(env.DB.prepare(
+      `INSERT INTO fares (origin, dest, date, price, airline, flight_no, dep, arr, stops, checked)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       ON CONFLICT(origin, dest, date) DO UPDATE SET price = excluded.price, airline = excluded.airline,
+         flight_no = excluded.flight_no, dep = excluded.dep, arr = excluded.arr,
+         stops = excluded.stops, checked = excluded.checked`,
+    ).bind(r.o, r.d, r.date, r.price, r.airline, r.flightNo, r.dep, r.arr, r.stops, checked));
+    if (r.airline && r.airlineName) {
+      writes.push(env.DB.prepare(`INSERT INTO airlines (code, name) VALUES (?, ?)
+        ON CONFLICT(code) DO UPDATE SET name = excluded.name`).bind(r.airline, r.airlineName));
+    }
+  }
+  for (let i = 0; i < writes.length; i += 90) await env.DB.batch(writes.slice(i, i + 90));
+  return Response.json({ stored: cleaned.rows.length, dropped: cleaned.dropped });
+}

@@ -7,6 +7,8 @@
  *
  *   near   the next 14 days, every fourth day, each route every 3 days
  *   far    weeks 3 to 26, one day per week, each route every 2 weeks
+ *   late   weeks 27 to 40, the same, each route every 4 weeks; on the
+ *          Hetzner box (T798, workers/late-sweep), sent in through /ingest
  *   find   every pair of Carta airports that no route covers yet, one day
  *          21 days out, direct flights only, each pair once a month
  *
@@ -28,6 +30,11 @@ export const FIND_CYCLE = 129600; // minutes in 90 days; T780, was 30
 export const NEAR_DAYS = [1, 5, 9, 13];
 export const FAR_WEEKS = 24; // weeks 3 to 26
 export const FIND_AHEAD = 21;
+// T798: the late tier, weeks 27 to 40 (about 9 months out), runs on the
+// Hetzner box (workers/late-sweep), not here: each route every 4 weeks, so
+// its fares sit under flights.max_age_days.late.
+export const LATE_CYCLE = 40320; // minutes in 4 weeks
+export const LATE_WEEKS = 14; // weeks 27 to 40, after the far tier's 24
 export const FIND_MIN_KM = 150; // closer than this nobody flies
 export const DORMANT_AFTER = 6;
 
@@ -115,6 +122,26 @@ export function jobsForMinute(list, airports, nowMs, dormant = new Set()) {
     if (o === d || known.has(o + d)) continue;
     if (km(airports[o], airports[d]) < FIND_MIN_KM) continue;
     jobs.push({ o, d, date: isoDay(today + FIND_AHEAD * DAY), tier: 'find' });
+  }
+  return jobs;
+}
+
+/**
+ * The late tier's searches in a given minute (T798): the far tier's weekday
+ * spread carried on for LATE_WEEKS more weeks, so the two tiers meet without
+ * a gap. Dormant routes are not known on the box and are searched anyway.
+ * @returns {Array<{o:string,d:string,date:string,tier:'late'}>}
+ */
+export function lateJobsForMinute(list, nowMs) {
+  const minute = Math.floor(nowMs / 60000);
+  const today = Math.floor(nowMs / DAY) * DAY;
+  const jobs = [];
+  for (const r of routesInMinute(minute, LATE_CYCLE, list.length)) {
+    const [o, d, mask] = list[r];
+    for (let w = FAR_WEEKS; w < FAR_WEEKS + LATE_WEEKS; w++) {
+      const ms = today + (14 + 7 * w + ((r + w) % 7)) * DAY;
+      if (mask & monthBit(ms)) jobs.push({ o, d, date: isoDay(ms), tier: 'late' });
+    }
   }
   return jobs;
 }
