@@ -5,7 +5,8 @@
  *   1. levers   the trade-offs a traveller pulls (TF3 wires them): each
  *               swaps a slot to one of its options, or narrows the
  *               shapes, so a lever is an existing setting, never a new
- *               price rule (config recommend.json levers)
+ *               price rule (config recommend.json levers); the flight
+ *               lever re-ranks by the swept flights (flightPull, T803)
  *   2. fit      a trip qualifies when its strongest chosen like reads at
  *               least rank.mainLikeMin where the profiles measure it, and
  *               no hard conflict stands (config rank, fitFirst)
@@ -23,6 +24,7 @@ import { chooseOption, slotTotals } from './slots.js';
 import { buildTrips } from './trips.js';
 import { tasteFor } from './candidates.js';
 import { tripFit, reasonsFor, catchFor } from './reasons.js';
+import { flightLeverKeys } from './adapters/flight.js';
 
 export const RANK = Object.freeze(RECOMMEND.rank);
 export const LEVERS = Object.freeze(RECOMMEND.levers);
@@ -63,6 +65,43 @@ export function applyLevers(trips, levers) {
   });
 }
 
+/**
+ * The flight lever (TF3, T803, rule a). On swept data a trip has one flight
+ * a day, so the lever cannot swap it (the picker's live options do that);
+ * it re-ranks the trips by their flights instead. Each trip takes its place
+ * in the lever's own order (adapters/flight.js flightLeverKeys: cheapest
+ * flight, or the stops then door to door, or the comfort of the times) and
+ * sinks by up to FLIGHT_PULL for the last place, the same as being EUR 200
+ * over budget, so the fit still leads and the flight decides between near
+ * equals. Equal keys share a place; a trip with no flight facts sits in the
+ * middle, neither helped nor hurt. Returns Map id -> sink.
+ */
+export const FLIGHT_PULL = 2 * RECOMMEND.budget.sinkPer100;
+
+export function flightPull(trips, lever) {
+  const out = new Map();
+  if (!lever || !LEVERS.flight.values[lever] || trips.length < 2) return out;
+  const keys = flightLeverKeys(trips, lever);
+  const cmp = (a, b) => {
+    for (let i = 0; i < Math.max(a.length, b.length); i++) {
+      if (a[i] !== b[i]) return (a[i] ?? Infinity) < (b[i] ?? Infinity) ? -1 : 1;
+    }
+    return 0;
+  };
+  const known = trips.filter((t) => keys.get(t.id)).sort((a, b) => cmp(keys.get(a.id), keys.get(b.id)));
+  const last = trips.length - 1;
+  for (let i = 0; i < known.length;) {
+    let j = i;
+    while (j + 1 < known.length && cmp(keys.get(known[i].id), keys.get(known[j + 1].id)) === 0) j++;
+    // Spread the known trips over the whole list's places, ties sharing one.
+    const place = known.length > 1 ? (((i + j) / 2) / (known.length - 1)) * last : last / 2;
+    for (let k = i; k <= j; k++) out.set(known[k].id, (FLIGHT_PULL * place) / last);
+    i = j + 1;
+  }
+  for (const t of trips) if (!out.has(t.id)) out.set(t.id, FLIGHT_PULL / 2);
+  return out;
+}
+
 // The fit of a trip depends on its places, month and the taste only, all
 // fixed per answer set (trips are memoised per answer set), so it is kept.
 const fits = new WeakMap();
@@ -94,6 +133,7 @@ export function rankTrips(trips, { settings, taste = null, data, levers = null }
   const t = tasteFor(settings, taste);
   const destinations = data?.destinations || {};
   const levered = applyLevers(trips.map((x) => ({ ...x, base: x.base || x })), levers);
+  const pull = flightPull(levered, levers?.flight);
   const ranked = levered.map((trip) => {
     const info = fitOf(trip, t, destinations, settings);
     const budget = budgetRuler(trip, settings);
@@ -105,7 +145,7 @@ export function rankTrips(trips, { settings, taste = null, data, levers = null }
       match: info.F == null ? null : { pct: info.pct, bars: info.bars, conflicts: info.conflicts },
       reasons: reasonsFor(trip, { settings, info }),
       catch: catchFor(trip, { settings, info, budget }),
-      score: base - sink,
+      score: base - sink - (pull.get(trip.id) || 0),
       qualified: RANK.fitFirst ? qualifies(info, settings) : true,
     };
     if (trip.base?.quote) Object.defineProperty(out, 'quote', { value: trip.base.quote, enumerable: false });

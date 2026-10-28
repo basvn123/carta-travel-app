@@ -187,6 +187,54 @@ export async function optionsFor(trip, { fetchDay = fetchLiveDay, lang = 'en' } 
   return out;
 }
 
+/**
+ * The flight lever's order on the swept facts alone (TF3, T803): a key per
+ * trip, lower first, or null when the trip has no flight facts to order by.
+ *
+ *   cheapest  the flight slot's figure a person
+ *   quickest  the stops, then door to door (the outbound flight's minutes
+ *             plus the gateway transfer; unknown sorts after known)
+ *   times     rankFlights' comfort order of the swept legs, both directions:
+ *             a stop and an early or late hour cost, as in the picker
+ *
+ * The swept file holds one flight a day, so the lever cannot swap a trip's
+ * flight here; it orders the trips by what their flights already are.
+ */
+export function flightLeverKeys(trips, lever) {
+  const factsOf = (t) => t.slots.find((s) => s.id === 'flight')?.pick?.facts || null;
+  const keys = new Map();
+  if (lever === 'cheapest') {
+    for (const t of trips) {
+      const eur = t.slots.find((s) => s.id === 'flight')?.eur;
+      keys.set(t.id, eur == null ? null : [eur]);
+    }
+  } else if (lever === 'quickest') {
+    for (const t of trips) {
+      const f = factsOf(t);
+      const stops = f?.stops;
+      if (!Number.isFinite(stops)) { keys.set(t.id, null); continue; }
+      const fly = f.out?.minutes;
+      const transfer = t.gateway?.minutes;
+      keys.set(t.id, [stops, Number.isFinite(fly) && Number.isFinite(transfer) ? fly + transfer : Infinity]);
+    }
+  } else if (lever === 'times') {
+    const legId = (l) => [l.dep, l.arr, l.stops ?? 0, l.price ?? 0].join('|');
+    const pool = new Map();
+    for (const t of trips) {
+      const f = factsOf(t);
+      for (const l of [f?.out, f?.back]) {
+        if (l?.dep && !pool.has(legId(l))) pool.set(legId(l), { price: l.price ?? 0, stops: l.stops ?? 0, dep: l.dep, arr: l.arr });
+      }
+    }
+    const at = new Map(rankFlights([...pool.values()], 'comfort').map((x, i) => [x, i]));
+    for (const t of trips) {
+      const f = factsOf(t);
+      keys.set(t.id, f?.out?.dep && f?.back?.dep ? [at.get(pool.get(legId(f.out))) + at.get(pool.get(legId(f.back)))] : null);
+    }
+  }
+  return keys;
+}
+
 /** The party's figure for one direction of the current pick (optionsFor's own rule). */
 function legGroupOf(facts, party) {
   return facts?.perSeat != null ? facts.perSeat * party.paying + party.babies * BABY_LAP_FEE_LEG : null;
