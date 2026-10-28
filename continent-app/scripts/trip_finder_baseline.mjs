@@ -1,7 +1,9 @@
 // Trip finder baseline (TF1, T792 to T796): the plan's example answers (two
 // people from Brussels, 9 to 16 May, a few towns, hiking plus food and wine,
 // mild, a short flight, avoid crowds, EUR 1,200 each) through the engine,
-// and the four numbers the plan promises to move.
+// and the four numbers the plan promises to move. TF2 (T797 to T801) prints
+// the after column: the steps to a total and the share of shown trips
+// priced with a flight.
 //
 //   node scripts/trip_finder_baseline.mjs [--flights path/to/BRU.json] [--offline]
 //
@@ -49,11 +51,15 @@ const answers = (start, end, shapes = ['towns']) => normalizeSettings({
   guide: { shapes, likes: ['hiking', 'food'], weather: 'mild', reach: 'short', avoid: ['crowds'], budget: { kind: 'total', eur: 1200 } },
 });
 
-/** Screens from the last Help me choose answer to the first whole-trip total (Finish). */
+/** Screens from the last Help me choose answer to the first whole-trip total.
+ *  Before TF2 that total waited for Finish (4 steps). Since TF2 (T797) the
+ *  answer is followed by g:trips, whose loader leads straight to the priced
+ *  trips: no step between the last answer and a total. */
 function stepsToTotal(s) {
   const list = planScreens(s, 'guide');
-  const last = list.filter((id) => id.startsWith('g:')).at(-1);
-  return list.indexOf('p:Finish') - list.indexOf(last);
+  const last = list.filter((id) => id.startsWith('g:') && id !== 'g:trips').at(-1);
+  const total = list.includes('g:trips') ? 'g:trips' : 'p:Finish';
+  return list.indexOf(total) - list.indexOf(last) - (total === 'g:trips' ? 1 : 0);
 }
 
 const pct = (n, d) => (d ? `${Math.round((100 * n) / d)}%` : 'n/a');
@@ -66,7 +72,7 @@ function measure(label, s) {
   const inside = top.filter((t) => t.budget && t.budget.delta <= 0).length;
   console.log(`\n${label}`);
   console.log(`  trips                                   ${trips.length}`);
-  console.log(`  steps from the last answer to a total   ${stepsToTotal(s)} (the screens are wired in TF2)`);
+  console.log(`  steps from the last answer to a total   ${stepsToTotal(s)} (TF1 before: 4; since TF2 the loader leads to the totals)`);
   console.log(`  results whose price includes a flight   ${pct(withFlight, trips.length)} (${withFlight} of ${trips.length})`);
   console.log(`  top 6 inside the EUR 1,200 budget       ${pct(inside, top.length)} (${inside} of ${top.length})`);
   for (const t of top) {

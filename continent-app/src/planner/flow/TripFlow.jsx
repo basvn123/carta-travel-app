@@ -12,10 +12,17 @@ import { CartaTrips } from './CartaTrips.jsx';
 import { useBcp47, useMonths, useTripSettings, whenText } from './flowHooks.js';
 import { TRIPS_SCREEN, engineScreens, guideQuestions, guideScreens, hasDoors, nextScreen, prevScreen, progressOf } from './flowGraph.js';
 import { normalizeSettings, quizAnswers, spendFor } from './tripSettings.js';
+import { draftFor } from '../finder/handoff.js';
+import NotYet from '../../components/NotYet.jsx';
+import { AirlineMark } from '../../components/flights/Flights.jsx';
+import { useAirlines, airlineName } from '../../lib/flights/useAirlines.js';
 
 // The trip finder (TF2, T797): the loader and the priced trips behind
 // question 7, with lib/recommend, in a chunk of their own.
 const TripFinderScreen = lazy(() => import('../finder/FindingTrips.jsx'));
+// The app parts the finder draws, handed down so its lazy chunk does not
+// import them (see FindingTrips).
+const FINDER_UI = { NotYet, AirlineMark, useAirlines, airlineName };
 
 /**
  * TripFlow (T656), the trip planner before a route exists: the trip's own
@@ -38,6 +45,11 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null }) {
   // A question reopened from the trips' answers bar (T798) comes straight
   // back to the trips on Continue, not through the questions after it.
   const [returnTo, setReturnTo] = useState(null);
+  // The trip finder's own state across a visit to the planner (T801): the
+  // receipt's swaps by trip id, and the trip the traveller planned, marked
+  // when they come back.
+  const [finderEdits, setFinderEdits] = useState({});
+  const [markedId, setMarkedId] = useState(null);
   const gearRef = useRef(null);
   const rootRef = useRef(null);
 
@@ -50,9 +62,9 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null }) {
   /** Hand over to the engine: its first step by name, the build mode the
    *  door implies, and (behind Guide me) the quiz answered from the guide, so
    *  its Where step opens on the matches. */
-  const startEngine = (d = door, s = settings) => {
+  const startEngine = (d = door, s = settings, plan = null) => {
     const steps = engineScreens(s, hasDoors(s) ? d : 'know').map((x) => x.slice(2));
-    const wizard = { stepName: steps[0], step: 1, buildMode: d === 'ready' ? 'ready' : 'custom' };
+    const wizard = { stepName: steps[0], step: 1, buildMode: d === 'ready' ? 'ready' : 'custom', finder: null };
     if (d === 'guide') wizard.quiz = { ...quizAnswers(s, spendFor(s)), editing: '' };
     // A flight read from an uploaded booking brings its price: the way there
     // and home start as the traveller's own figures, never overwriting one
@@ -68,6 +80,14 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null }) {
       for (const key of ['out', 'back']) if (!tv[key]?.mode) tv[key] = { ...(tv[key] || {}), mode: 'train' };
     }
     if (Object.keys(tv).length) wizard.travelValues = tv;
+    // T801: "Plan this trip" opens the planner on the finder's trip, every
+    // pick in it (planner/finder/handoff.js draftFor).
+    if (plan) {
+      Object.assign(wizard, draftFor(plan, steps));
+      const p = plan;
+      plannerStore.setTravelDates({ startDate: p.startDate, endDate: p.endDate });
+      plannerStore.setTravelers({ adults: p.party.adults, children: p.party.children, babies: p.party.babies });
+    }
     plannerStore.setWizard(wizard);
     setPhase('engine');
   };
@@ -92,7 +112,7 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null }) {
     if (k) setPhase(k); else startEngine('guide');
   };
   /** Reopen one question from the trips, and come back to them after it. */
-  const reopen = (id) => { setReturnTo(TRIPS_SCREEN); setPhase(id); };
+  const reopen = (id) => { setReturnTo(TRIPS_SCREEN); setFinderEdits({}); setMarkedId(null); setPhase(id); };
   const start = () => (hasDoors(settings) ? setPhase('doors') : startEngine('know'));
 
   if (phase === 'engine') {
@@ -102,7 +122,8 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null }) {
       initialWhereTab: d === 'guide' ? 'help' : 'hand',
       // "I know where" is the picker alone (T752): no Help me choose tab.
       lockWhereTab: d === 'know',
-      onCancel: () => setPhase(d === 'guide' ? questions[questions.length - 1] : (hasDoors(settings) ? 'doors' : 'home')),
+      // Behind Guide me the step before the planner is Trips for you (T801).
+      onCancel: () => setPhase(d === 'guide' ? TRIPS_SCREEN : (hasDoors(settings) ? 'doors' : 'home')),
     });
   }
 
@@ -155,11 +176,15 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null }) {
     body = (
       <Suspense fallback={<div className="pf-step" aria-busy="true"><span className="sr-only">{t('state.loading')}</span></div>}>
         <TripFinderScreen
+          ui={FINDER_UI}
           settings={settings}
           guide={questions}
           onBack={() => setPhase(questions[questions.length - 1])}
           onWiden={reopen}
-          onPlan={() => startEngine('guide')}
+          edits={finderEdits}
+          setEdits={setFinderEdits}
+          markedId={markedId}
+          onPlan={(plan) => { setMarkedId(plan.tripId); startEngine('guide', settings, plan); }}
         />
       </Suspense>
     );

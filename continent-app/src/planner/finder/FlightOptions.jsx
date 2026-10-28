@@ -2,13 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { Tabs } from '../../components/ui/index.js';
 import { ExternalIcon } from '../../components/Icons.jsx';
-import { AirlineMark } from '../../components/flights/Flights.jsx';
-import { useAirlines, airlineName } from '../../lib/flights/useAirlines.js';
 import { bagTier } from '../../lib/flights/bagFees.js';
 import { rule } from '../../lib/price/config.js';
 import { chooseFlight, optionsFor } from '../../lib/recommend/adapters/flight.js';
 import { OptionRow } from './LinePicker.jsx';
 import { checkedText, stopsText, withSlot } from './finderText.js';
+import { useBcp47 } from '../flow/flowHooks.js';
 import { slotTotals } from '../../lib/recommend/slots.js';
 
 const GROUPS = ['cheapest', 'quickest', 'times'];
@@ -32,9 +31,12 @@ const dayText = (iso, lang) => (iso ? new Date(`${iso}T12:00:00Z`).toLocaleDateS
  *
  *   onPending(slot | null)   the flight slot as the picked flights would make it
  */
-export function FlightOptions({ trip, slot, onPending }) {
+export function FlightOptions({ trip, slot, onPending, ui }) {
   const { t, lang } = useI18n();
-  const airlines = useAirlines();
+  const bcp47 = useBcp47();
+  const airlines = ui.useAirlines();
+  const { airlineName } = ui;
+  const { AirlineMark } = ui;
   const [opts, setOpts] = useState(undefined); // undefined loading, null failed, object loaded
   const [tab, setTab] = useState('cheapest');
   const [choice, setChoice] = useState({ out: null, back: null });
@@ -93,9 +95,9 @@ export function FlightOptions({ trip, slot, onPending }) {
     const date = dir === 'out' ? trip.dates?.out : trip.dates?.back;
     const same = (o) => leg && o.facts.flightNo && o.facts.flightNo === leg.flightNo;
     return (
-      <section className="tff-fgroup" key={dir} aria-label={t(`tf.pick.dir.${dir}`, { day: dayText(date, lang), from, to })}>
-        <h4 className="tff-fgroup-head">{t(`tf.pick.dir.${dir}`, { day: dayText(date, lang), from, to })}</h4>
-        <div className="tff-opts" role="radiogroup" aria-label={t(`tf.pick.dir.${dir}`, { day: dayText(date, lang), from, to })}>
+      <section className="tff-fgroup" key={dir} aria-label={t(`tf.pick.dir.${dir}`, { day: dayText(date, bcp47), from, to })}>
+        <h4 className="tff-fgroup-head">{t(`tf.pick.dir.${dir}`, { day: dayText(date, bcp47), from, to })}</h4>
+        <div className="tff-opts" role="radiogroup" aria-label={t(`tf.pick.dir.${dir}`, { day: dayText(date, bcp47), from, to })}>
           {currentRow(dir)}
           {live.filter((o) => !same(o)).map((o) => (
             <OptionRow

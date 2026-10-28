@@ -47,7 +47,7 @@ export function OptionRow({ chosen, selected, onPick, label, sub = '', eur, delt
  *   onApply(slot)   the slot as chosen; the receipt's trip takes it
  *   onBack()        back to the receipt, focus on this row
  */
-export function LinePicker({ trip, slot, onApply, onBack }) {
+export function LinePicker({ trip, slot, onApply, onBack, ui }) {
   const { t, lang } = useI18n();
   const headRef = useRef(null);
   const [pending, setPending] = useState(null); // { id, slot }: the slot as it would be
@@ -83,7 +83,7 @@ export function LinePicker({ trip, slot, onApply, onBack }) {
 
       <div className="tff-pick-body">
         {slot.id === 'flight' ? (
-          <FlightOptions trip={trip} slot={slot} onPending={(s) => setPending(s ? { id: 'flight', slot: s } : null)} />
+          <FlightOptions trip={trip} slot={slot} ui={ui} onPending={(s) => setPending(s ? { id: 'flight', slot: s } : null)} />
         ) : (
           <div className="tff-opts" role="radiogroup" aria-label={lineLabel}>
             {(slot.options || []).map((o) => {

@@ -2,10 +2,8 @@ import React, { useId, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { Button } from '../../components/ui/index.js';
 import { ChevronRightIcon } from '../../components/Icons.jsx';
-import NotYet from '../../components/NotYet.jsx';
 import { ReceiptFigure } from '../../components/ReceiptCard.jsx';
 import { SheetShell } from '../../browse/SheetShell.jsx';
-import { useAirlines, airlineName } from '../../lib/flights/useAirlines.js';
 import { formatMoney } from '../../lib/money.js';
 import { useTotalDelta } from '../planHooks.js';
 import { TripBar, WhyMatch } from './TripCard.jsx';
@@ -30,9 +28,10 @@ const RAMP = ['var(--kind-metro)', 'var(--kind-city)', 'var(--kind-town)', 'var(
  *   onPlan(trip)   "Plan this trip": hand every pick to the planner (T801)
  *   renderLine(slot, back)  the picker view for one slot (T800), or null
  */
-export function TripReceipt({ trip, destinations, onClose, onPlan, renderLine = null }) {
+export function TripReceipt({ trip, destinations, onClose, onPlan, renderLine = null, ui }) {
   const { t, lang } = useI18n();
-  const airlines = useAirlines();
+  const airlines = ui.useAirlines();
+  const { airlineName } = ui;
   const titleId = useId();
   const [why, setWhy] = useState(null); // 'price' | 'match' | null
   const [line, setLine] = useState(null); // the slot id whose picker is open
@@ -44,6 +43,7 @@ export function TripReceipt({ trip, destinations, onClose, onPlan, renderLine = 
   const pct = trip.match?.pct;
   const segIndex = new Map(trip.slots.filter((s) => s.eur != null && s.eur > 0).map((s, i) => [s.id, i]));
   const airline = (code) => airlineName(airlines, code);
+  const { NotYet } = ui;
 
   const openSlot = line ? trip.slots.find((s) => s.id === line) : null;
   const back = () => {

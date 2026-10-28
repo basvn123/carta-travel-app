@@ -11,6 +11,7 @@ import { answerChips, joinList, likeLabel, widenQuestion, withSlot } from './fin
 import { TripsForYou } from './TripsForYou.jsx';
 import { TripReceipt } from './TripReceipt.jsx';
 import { LinePicker } from './LinePicker.jsx';
+import { planOf } from './planOf.js';
 import { slotTotals } from '../../lib/recommend/slots.js';
 import '../../styles/87-trip-finder.css';
 
@@ -113,16 +114,22 @@ export function FindingTrips({ settings, finder, onBack, onWiden, guide, onSkip 
  * for you. TripFlow loads it lazily, with lib/recommend, so the Plan tab's
  * first load does not carry the engine.
  *
+ *   ui              { NotYet, AirlineMark, useAirlines, airlineName }: TripFlow imports these and
+ *                   hands them down. They ship in the Plan tab's chunks
+ *                   already; imported from this lazy chunk, rolldown split
+ *                   each into a chunk of its own, two more preloads on
+ *                   every page (T801 end check).
  *   onBack()        back to question 7
  *   onWiden(id)     reopen one question (the answers bar, an empty result)
- *   onPlan(trip)    "Plan this trip" on a receipt
+ *   edits, setEdits the receipt's swaps by trip id (kept by TripFlow)
+ *   markedId        the trip planned last, marked on the way back
+ *   onPlan(plan)    "Plan this trip": the trip's plan (planOf.js)
  */
-export default function TripFinderScreen({ settings, guide, onBack, onWiden, onPlan }) {
+export default function TripFinderScreen({ ui, settings, guide, edits, setEdits, markedId = null, onBack, onWiden, onPlan }) {
   const finder = useTripFinder(settings);
   const ready = Boolean(finder.trips);
-  const { done, skip } = useLoaderDone(ready);
-  // The receipt's swaps, by trip id: the card and the receipt read the same trip.
-  const [edits, setEdits] = useState({});
+  // Back from the planner the trips are already known: no loader again.
+  const { done, skip } = useLoaderDone(ready, markedId ? 0 : 1200);
   const [openId, setOpenId] = useState(null);
   const cardRefs = useRef(new Map());
   if (!done || !finder.trips.length) {
@@ -137,6 +144,8 @@ export default function TripFinderScreen({ settings, guide, onBack, onWiden, onP
         trips={trips}
         destinations={finder.data?.destinations}
         originName={finder.origin?.name || ''}
+        markedId={markedId}
+        ui={ui}
         onBack={onBack}
         onReopen={onWiden}
         onOpen={(trip) => setOpenId(trip.id)}
@@ -146,12 +155,14 @@ export default function TripFinderScreen({ settings, guide, onBack, onWiden, onP
         <TripReceipt
           trip={open}
           destinations={finder.data?.destinations}
+          ui={ui}
           onClose={() => setOpenId(null)}
-          onPlan={(trip) => { setOpenId(null); onPlan(trip); }}
+          onPlan={(trip) => { setOpenId(null); onPlan(planOf(trip)); }}
           renderLine={(slot, back) => (
             <LinePicker
               trip={open}
               slot={slot}
+              ui={ui}
               onBack={back}
               onApply={(next) => { setEdits((e) => ({ ...e, [open.id]: withSlot(open, next, slotTotals) })); back(); }}
             />

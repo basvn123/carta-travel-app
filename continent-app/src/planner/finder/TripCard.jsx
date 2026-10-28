@@ -3,7 +3,6 @@ import { useI18n } from '../../i18n/index.jsx';
 import { Button } from '../../components/ui/index.js';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { AlertIcon, CheckIcon } from '../../components/Icons.jsx';
-import NotYet from '../../components/NotYet.jsx';
 import { CostBar } from '../../browse/CostBar.jsx';
 import { formatMoney } from '../../lib/money.js';
 import { monthName } from '../../lib/dates.js';
@@ -12,7 +11,8 @@ import {
 } from './finderText.js';
 
 /** A whole-euro figure, or NotYet when the data has none. */
-function Figure({ eur, lang }) {
+function Figure({ eur, lang, ui }) {
+  const { NotYet } = ui;
   return eur == null ? <NotYet /> : <span className="money">{formatMoney(eur, { locale: lang })}</span>;
 }
 
@@ -66,8 +66,9 @@ export function WhyMatch({ trip, t, lang, id }) {
  *
  * Every figure is the trip's own (lib/recommend); nothing here adds up.
  *   onOpen(trip, el)   the receipt (T799), from the total or the card
+ *   ui                 the app parts TripFlow hands down (see FindingTrips)
  */
-export const TripCard = forwardRef(function TripCard({ trip, destinations, marked = false, onOpen }, ref) {
+export const TripCard = forwardRef(function TripCard({ trip, destinations, marked = false, onOpen, ui }, ref) {
   const { t, lang } = useI18n();
   const [whyOpen, setWhyOpen] = useState(false);
   const whyId = useId();
@@ -126,9 +127,9 @@ export const TripCard = forwardRef(function TripCard({ trip, destinations, marke
         </Button>
 
         <dl className="tff-three">
-          <div><dt>{t('tf.card.flight')}</dt><dd><Figure eur={fig.flight} lang={lang} /></dd></div>
-          <div><dt>{t('tf.card.stay')}</dt><dd><Figure eur={fig.stay} lang={lang} /></dd></div>
-          <div><dt>{t('tf.card.days')}</dt><dd><Figure eur={fig.days} lang={lang} /></dd></div>
+          <div><dt>{t('tf.card.flight')}</dt><dd><Figure eur={fig.flight} lang={lang} ui={ui} /></dd></div>
+          <div><dt>{t('tf.card.stay')}</dt><dd><Figure eur={fig.stay} lang={lang} ui={ui} /></dd></div>
+          <div><dt>{t('tf.card.days')}</dt><dd><Figure eur={fig.days} lang={lang} ui={ui} /></dd></div>
         </dl>
 
         <TripBar trip={trip} t={t} lang={lang} />

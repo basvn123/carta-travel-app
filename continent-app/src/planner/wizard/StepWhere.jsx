@@ -217,9 +217,11 @@ export function StepWhere({
           {tab === 'help' ? (
             <div role="tabpanel" id="wpanel-help" aria-labelledby="wtab-help">
               {/* T796: the Help me choose answers are not asked a second time
-                  here; they stay in the trip settings (the gear). */}
+                  here; they stay in the trip settings (the gear). T801 (row
+                  T796-a): the section no longer takes .wq-results, whose
+                  40 px top margin was the space under the quiz that left. */}
               {countryMatches.length > 0 && (
-                <PlannerSection title={t('quiz.recommended')} className="wq-results">
+                <PlannerSection title={t('quiz.recommended')}>
                   <CountryMatchCards
                     costs={countryDayCost}
                     matches={countryMatches}

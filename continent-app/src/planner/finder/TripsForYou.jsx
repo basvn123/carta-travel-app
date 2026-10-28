@@ -17,7 +17,7 @@ import { PAGE, answerChips } from './finderText.js';
  *   onOpen(trip, el)  open its receipt; `el` gets focus back on close
  *   onReopen(id)   reopen one question
  */
-export function TripsForYou({ settings, trips, destinations, originName, markedId = null, onBack, onOpen, onReopen, cardRefs }) {
+export function TripsForYou({ settings, trips, destinations, originName, markedId = null, onBack, onOpen, onReopen, cardRefs, ui }) {
   const { t, lang } = useI18n();
   const months = useMonths();
   const bcp47 = useBcp47();
@@ -57,6 +57,7 @@ export function TripsForYou({ settings, trips, destinations, originName, markedI
               destinations={destinations}
               marked={trip.id === markedId}
               onOpen={onOpen}
+              ui={ui}
               ref={(el) => { if (el) cardRefs.current.set(trip.id, el); else cardRefs.current.delete(trip.id); }}
             />
           </li>

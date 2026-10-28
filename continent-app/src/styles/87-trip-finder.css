@@ -435,3 +435,11 @@
 }
 .tff-pick-total { display: flex; justify-content: space-between; margin: 0; font-size: var(--text-label); color: var(--text-2); }
 .tff-pick-total .money { color: var(--text); font-weight: 700; font-size: var(--text-lead); }
+
+/* The kit Button wraps its children in .btn-label; these rows lay out the children themselves. */
+.tff-opt .btn-label,
+.tff-rc-row .btn-label,
+.tff-total .btn-label { display: contents; }
+/* The cost bar's segments are buttons: no fill of their own around the 8 px bar. */
+.tff-card .costbar-seg,
+.tff-rc .costbar-seg { background: none; }
