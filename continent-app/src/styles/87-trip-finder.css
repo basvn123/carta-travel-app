@@ -535,6 +535,11 @@
 /* A hairline between groups, so three single choices read as three. */
 .tff-lever + .tff-lever { padding-left: var(--space-2); border-left: 1px solid var(--border-soft); }
 .tff-lever .ui-chip { flex: none; white-space: nowrap; }
+/* On the wide plan stage every chip shows: the row wraps instead of scrolling. */
+@media (min-width: 769px) {
+  .tff-levers { flex-wrap: wrap; gap: var(--space-2) var(--space-5); overflow: visible; }
+  .tff-lever + .tff-lever { padding-left: 0; border-left: 0; }
+}
 .tff-lever-miss {
   display: flex;
   flex-wrap: wrap;

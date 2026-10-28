@@ -23,6 +23,18 @@ const ONE_BASE = (t) => t.places.length === 1;
 
 const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
+// The motion tokens, read once and before a change: reading computed style
+// right after the new order is committed forces a whole style pass (about
+// 11 ms a tap at 4x CPU, T803 end check).
+let TIMING = null;
+const motionTiming = () => {
+  if (!TIMING) {
+    const css = getComputedStyle(document.documentElement);
+    TIMING = { duration: parseFloat(css.getPropertyValue('--dur-2')) || 200, easing: css.getPropertyValue('--ease-out').trim() || 'ease-out' };
+  }
+  return TIMING;
+};
+
 /**
  * Cards move to their new place when a lever re-orders the list: the
  * positions before the change are taken on the tap, and after the new
@@ -35,8 +47,7 @@ function useReorderMotion(order, items) {
     const was = before.current;
     before.current = null;
     if (!was || reducedMotion()) return;
-    const css = getComputedStyle(document.documentElement);
-    const timing = { duration: parseFloat(css.getPropertyValue('--dur-2')) || 200, easing: css.getPropertyValue('--ease-out').trim() || 'ease-out' };
+    const timing = motionTiming();
     for (const [id, el] of items.current) {
       const from = was.get(id);
       if (!el.animate) continue;
@@ -52,6 +63,7 @@ function useReorderMotion(order, items) {
     }
   }, [order]); // eslint-disable-line react-hooks/exhaustive-deps -- runs when the order changes
   return () => {
+    motionTiming();
     before.current = new Map([...items.current].map(([id, el]) => [id, el.getBoundingClientRect()]));
   };
 }

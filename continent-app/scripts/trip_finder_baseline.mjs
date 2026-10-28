@@ -3,9 +3,12 @@
 // mild, a short flight, avoid crowds, EUR 1,200 each) through the engine,
 // and the four numbers the plan promises to move. TF2 (T797 to T801) prints
 // the after column: the steps to a total and the share of shown trips
-// priced with a flight.
+// priced with a flight. TF3 (T802, T803) prints its own table: trips side
+// by side, the lever re-rank split, compare cells equal to the trips' own
+// figures, and the Plan tab's first load from two bundle measures.
 //
 //   node scripts/trip_finder_baseline.mjs [--flights path/to/BRU.json] [--offline]
+//     [--bundle-before m.json --bundle-after m.json] [--walk t802-walk.json]
 //
 // The flight file is the sweep's (data/flights/BRU.json on the data host),
 // fetched unless --flights names a local copy; --offline prices with none.
@@ -14,7 +17,8 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { findTrips } from '../src/lib/recommend/rank.js';
+import { findTrips, LEVERS } from '../src/lib/recommend/rank.js';
+import { compareRows, MAX_COMPARE } from '../src/lib/recommend/compare.js';
 import { buildTrips } from '../src/lib/recommend/trips.js';
 import { normalizeSettings } from '../src/planner/flow/tripSettings.js';
 import { planScreens, GUIDE } from '../src/planner/flow/flowGraph.js';
@@ -106,3 +110,48 @@ for (let i = 0; i < 7; i++) {
 }
 const med = (xs) => [...xs].sort((x, y) => x - y)[Math.floor(xs.length / 2)].toFixed(1);
 console.log(`\ntime, ${n} trips, after warm-up: build (memo miss) ${med(build)} ms median; re-rank with a lever ${med(rank)} ms median`);
+
+// TF3 (T802, T803): compare and levers.
+const tf3 = answers('2026-11-21', '2026-11-28', []);
+const tf3Input = { data, countryInsights, layerIndexes, settings: tf3, origin: BRUSSELS, flights, today: '2026-10-28' };
+const listed = findTrips(tf3Input);
+let cells = 0;
+let equal = 0;
+for (let i = 0; i + MAX_COMPARE <= listed.length; i += MAX_COMPARE) {
+  const cols = listed.slice(i, i + MAX_COMPARE);
+  const rows = compareRows(cols, { settings: tf3, destinations: data.destinations });
+  const own = {
+    total: (t) => t.total.perPerson,
+    flight: (t) => t.slots.find((x) => x.id === 'flight').eur,
+    stay: (t) => t.slots.find((x) => x.id === 'stay').eur,
+    budget: (t) => t.budget?.delta ?? null,
+  };
+  for (const r of rows.filter((x) => own[x.key])) {
+    r.cells.forEach((c, k) => { cells += 1; if (c.value === own[r.key](cols[k])) equal += 1; });
+  }
+}
+// The lever re-rank alone (the build is memoised), each value of each lever.
+const perLever = Object.fromEntries(Object.entries(LEVERS).map(([g, def]) => {
+  const xs = [];
+  for (let i = 0; i < 20; i++) {
+    const v = Object.keys(def.values)[i % Object.keys(def.values).length];
+    const a = performance.now();
+    findTrips(tf3Input, { levers: { [g]: v } });
+    xs.push(performance.now() - a);
+  }
+  return [g, med(xs)];
+}));
+const readJson = (k) => { const f = arg(k); return f && existsSync(f) ? JSON.parse(readFileSync(f, 'utf8')) : null; };
+const before = readJson('--bundle-before');
+const after = readJson('--bundle-after');
+const walk = readJson('--walk');
+const tapLine = walk?.timing
+  ? Object.entries(walk.timing).map(([g, v]) => `${g} ${v.median} / ${v.worst} ms`).join('; ')
+  : 'run wt/t802-walk.mjs and pass --walk';
+console.log(`
+TF3 (T802, T803), ${listed.length} trips, any shape, 21 to 28 Nov`);
+console.log(`  trips the traveller can see side by side   before 1 (one receipt at a time), after up to ${MAX_COMPARE}`);
+console.log(`  lever re-rank in node, median ms           ${Object.entries(perLever).map(([g, v]) => `${g} ${v}`).join(', ')} (the build: ${med(build)} ms, memoised)`);
+console.log(`  lever tap to re-ordered list (390 px, 4x)  median / worst: ${tapLine}`);
+console.log(`  compare cells equal to the trip's own      ${equal} of ${cells}`);
+console.log(`  Plan tab first-load JS                     ${before ? before.planTabFirstLoadJs : '?'} -> ${after ? after.planTabFirstLoadJs : '?'} bytes; preloads ${before ? before.modulepreloads : '?'} -> ${after ? after.modulepreloads : '?'}`);

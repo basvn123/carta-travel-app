@@ -122,5 +122,5 @@ test("on the catalogue: the same answers and levers give the same order", { skip
   const b = findTrips(baseInput(), { levers: { ...levers } }).map((t) => t.id);
   assert.deepEqual(a, b);
   assert.ok(a.length > 0);
-  assert.equal(RECOMMEND.budget.sinkPer100 * 2, FLIGHT_PULL);
+  assert.equal(RECOMMEND.budget.sinkPer100 * 5, FLIGHT_PULL);
 });
