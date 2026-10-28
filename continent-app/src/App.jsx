@@ -82,6 +82,7 @@ import { priceDays, priceRequest } from './lib/price/index.js';
 import { loadStaysFor, setLiveBase, useStaysVersion } from './lib/staysData.js';
 import { useLiveStaysVersion } from './lib/liveStays.js';
 import { FirstRunContext } from './lib/firstRunContext.js';
+import { normalizeTaste } from './lib/taste.js';
 import {
   loadInitialState, tabHref, routeFromSearch, placeOf, VIEW_KEYS, countryFromHash, countryHash,
 } from './lib/urlState.js';
@@ -135,6 +136,7 @@ import { usePanelState } from './hooks/usePanelState.js';
 import { useFilterState } from './hooks/useFilterState.js';
 import { useReach } from './lib/reach.js';
 import { resolveWhen, whenMonth, xmFromSearch } from './lib/when.js';
+import { gatewayCity } from './lib/rating.js';
 
 // Once someone picks "continue without an account" on the entry gate, don't
 // ask again on this device, only a fresh sign-in should bring accounts back.
@@ -557,6 +559,8 @@ function TravelApp() {
     price_view: init.price_view === 'total' ? 'total' : 'pp',
     // T695: the items switched off in the opened price (lib/price PRICE_ITEMS).
     price_excluded: Array.isArray(init.price_excluded) ? init.price_excluded : [],
+    // T764: the taste profile (lib/taste.js); null answers are "No preference".
+    taste: normalizeTaste(init.taste),
   });
 
   // Shortlist (favorites) + list controls, also persisted in the URL.
@@ -1363,6 +1367,21 @@ function TravelApp() {
   // once the place's own shard is in, which the effect above asked for.
   const selectedRec = data && selectedId ? data.destinations[selectedId] : null;
   const selectedDest = selectedRec && !selectedRec._lite ? selectedRec : null;
+
+  // T755: a gateway airport (#dest=CIA, a card of flight search) opens its
+  // city (FCO, Rome); the address is rewritten in place, no history step.
+  useEffect(() => {
+    if (!data?.destinations || !selectedId) return;
+    const to = gatewayCity(selectedId, data.destinations);
+    if (to === selectedId) return;
+    try {
+      if (window.location.hash.startsWith('#dest=')) {
+        window.history.replaceState({ ...(window.history.state || {}), cartaDest: to }, '',
+          `${window.location.pathname}${window.location.search}#dest=${encodeURIComponent(to)}`);
+      }
+    } catch { /* sandboxed: the page still opens */ }
+    setSelectedId(to);
+  }, [data, selectedId]);
 
   // The Explore page's two price-level indices, computed once per dataset and
   // shared by the grid and the open destination panel.

@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { saveTrip, fetchUserSettings, saveUserSettings } from '../auth/tripStorage.js';
 import { clampRatingRange, rangeFromMinTier } from '../lib/rating.js';
 import { readFavList, writeFavList } from '../lib/favorites.js';
 import { useI18n } from '../i18n/index.jsx';
 import { mergeVisitedCountries, useVisitedCountries } from '../lib/visitedCountries.js';
+import { mergeAccountChoices, mergeTaste, tasteNeedsWriteBack } from '../lib/taste.js';
 
 /** Keeps a signed-in user's filter/lifestyle preferences synced with their
  *  account: pulls saved settings once right after login (never when a shared
@@ -43,6 +44,13 @@ export function useAccountSync({
   // effect must NOT fire before this, or a debounced save races the pull and
   // overwrites the account's saved preferences with local defaults.
   const hydratedRef = useRef(false);
+  // T764: the taste profile merges on sign-in (lib/taste.js mergeTaste: a
+  // local answer the account does not have is kept, the account wins key by
+  // key) and the merged taste is written back. The tick makes the push run
+  // once hydration is done, whatever order React renders the merge in.
+  const choicesRef = useRef(choices);
+  choicesRef.current = choices;
+  const [writeBack, setWriteBack] = useState(0);
 
   // Pull the signed-in user's saved settings once, right after login (never
   // when a shared link is already driving the view, see cameFromUrl above).
@@ -58,10 +66,20 @@ export function useAccountSync({
     if (cameFromUrl) {
       // A shared link is driving the view; skip the pull (it would fight the
       // link) but treat the account as hydrated so deliberate later edits save.
-      hydratedRef.current = true;
+      // T764: the taste is the traveller's, not the view's, so it still
+      // merges; hydration waits for it so the push cannot overwrite the
+      // account's taste with this device's.
+      fetchUserSettings(user.id).then((settings) => {
+        const accountTaste = settings?.choices?.taste;
+        const localTaste = choicesRef.current?.taste;
+        setChoices((prev) => ({ ...prev, taste: mergeTaste(prev.taste, accountTaste) }));
+        if (tasteNeedsWriteBack(localTaste, accountTaste)) setWriteBack((n) => n + 1);
+      }).catch(() => {}).finally(() => { hydratedRef.current = true; });
       return;
     }
     fetchUserSettings(user.id).then((settings) => {
+      const localTaste = choicesRef.current?.taste;
+      if (tasteNeedsWriteBack(localTaste, settings?.choices?.taste)) setWriteBack((n) => n + 1);
       if (!settings) return;
       if (settings.choices) {
         // The departure airport chosen on THIS device wins over the one in the
@@ -72,7 +90,7 @@ export function useAccountSync({
           delete incoming.origin;
           delete incoming.home;
         }
-        setChoices((prev) => ({ ...prev, ...incoming }));
+        setChoices((prev) => mergeAccountChoices(prev, incoming));
       }
       if (settings.priceMode) setPriceMode(settings.priceMode);
       // Older accounts synced a single country string; normalize to the array shape.
@@ -141,7 +159,8 @@ export function useAccountSync({
       }).catch(() => {});
     }, 1200);
     return () => clearTimeout(t);
-  }, [user, choices, priceMode, countryFilter, tripKinds, ratingRange, gemOnly, unescoOnly, topBeachOnly, sortKey, favorites, lang, visitedCountries]);
+    // writeBack (T764): one push after a sign-in merge that added to the account's taste.
+  }, [user, choices, priceMode, countryFilter, tripKinds, ratingRange, gemOnly, unescoOnly, topBeachOnly, sortKey, favorites, lang, visitedCountries, writeBack]);
 
   const handleSaveTrip = useCallback(async (destination) => {
     if (!user) { setAuthModalOpen(true); throw new Error('Sign in to save trips'); }

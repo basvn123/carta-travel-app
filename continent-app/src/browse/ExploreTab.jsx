@@ -15,7 +15,7 @@ import { kindOf, roleOf, buildNearbyIndex } from '../lib/taxonomy.js';
 import { loadSearchIndex, querySearchIndex } from '../lib/searchIndex.js';
 import { useI18n } from '../i18n/index.jsx';
 import { GuidesStrip } from '../community/GuidesStrip.jsx';
-import { FULL_RATING_RANGE } from '../lib/rating.js';
+import { FULL_RATING_RANGE, bandAtLeast, bandWord } from '../lib/rating.js';
 import {
   FilterIcon,
   ChevronRightIcon, MapPinIcon, ListDayIcon,
@@ -40,6 +40,9 @@ import { LoadingBlock } from '../components/StateBlocks.jsx';
 // by the time they loaded. Loading it here on the first switch to map view
 // takes it (and maplibre-gl.css) off the critical path.
 const loadExploreMap = () => import('./ExploreMap.jsx');
+// T764: the taste profile's sheet and learning question load when asked for.
+const TasteSheet = React.lazy(() => import('./TasteSheet.jsx').then((m) => ({ default: m.TasteSheet })));
+const TasteLearnPrompt = React.lazy(() => import('./TasteSheet.jsx').then((m) => ({ default: m.TasteLearnPrompt })));
 const ExploreMap = React.lazy(
   () => loadExploreMap().then((m) => ({ default: m.ExploreMap })),
 );
@@ -89,8 +92,12 @@ import {
 } from '../components/Icons.jsx';
 // T588: the focused view's toolbar.
 // T585: the start dialog.
-import { StartDialog, shouldOpenStart, markStartSeen } from './StartDialog.jsx';
+import { StartDialog, startMode, markStartSeen } from './StartDialog.jsx';
 import { SortIcon, ShareIcon, BookmarkIcon, CheckIcon } from '../components/Icons.jsx';
+import { useFirstRun } from '../lib/firstRunContext.js';
+import { isEmptyTaste, learnFacet, normalizeTaste, tasteChipText } from '../lib/taste.js';
+import { MATCH } from '../lib/match.js';
+import { MatchMonth } from './WhyItMatches.jsx';
 import { isResizable, srcSetFor, fallbackSrc } from '../lib/heroImage.js';
 import { commonsPageUrl } from '../lib/imageCredit.js';
 import '../styles/84-explore-overview.css';
@@ -504,11 +511,23 @@ export function ExploreTab({
   // the filter is the app's "when" while it is on, so App prices the month
   // in the one request and the destination page behind a card says the same
   // (reported to App by the effect after useSettings below).
+  // T765: the personal match. "For you" is a sort the traveller picks; it is
+  // the default only once config/rating.json match.for_you_default is on
+  // (off while persona gate 7 fails). Strong match (70% and up) is a filter
+  // the traveller sets, never one the match sets by itself.
+  const matchTasteRaw = useFirstRun()?.choices?.taste;
+  const matchTaste = React.useMemo(
+    () => (isEmptyTaste(matchTasteRaw) ? null : normalizeTaste(matchTasteRaw)), [matchTasteRaw]);
+  const matchMonth = dxf.month || travelMonth || null;
+  const [strongOnly, setStrongOnly] = React.useState(false);
+  const catSort = (MATCH.for_you_default && matchTaste && (!sortKey || sortKey === 'beauty') && !xf.vibe && !xf.near)
+    ? 'foryou' : sortKey;
   const { all: catAllRows, rows: catRows, availableCountries, indices: costIndex } = useExploreCatalog({
     data, locationQuery, countryFilter, countryNot, tripKinds,
     ratingRange, gemOnly, unescoOnly, topBeachOnly, bigOnly, topPick,
-    reachHours, reachMinutes, sortKey, showFavOnly, favorites,
+    reachHours, reachMinutes, sortKey: catSort, showFavOnly, favorites,
     indices, searchHits,
+    taste: matchTaste, month: matchMonth, strongOnly,
   });
 
   // How the traveller gets there (T518, T582): under the settings line's
@@ -621,7 +640,7 @@ export function ExploreTab({
   // with what renders.
   const taxRows = React.useMemo(() => rows.filter((p) => {
     if (dxf.kinds.length && !dxf.kinds.includes(kindOf(p))) return false;
-    if (dxf.verdicts.length && !dxf.verdicts.includes(String(p.rating?.tier ?? 0))) return false;
+    if (dxf.verdicts.length && !bandAtLeast(p.rating, minVerdict(dxf.verdicts))) return false;
     if (dxf.roles.length && !dxf.roles.includes(roleFor(p).key)) return false;
     if (dxf.month && !(p.climate?.best || []).includes(dxf.month)) return false;
     if (dxf.nocar && !noCarOk(p)) return false;
@@ -810,7 +829,7 @@ export function ExploreTab({
     // One chip for the rating, "Excellent and up" (T440): the rail asks for
     // a band and every band above it.
     if (xf.verdicts.length) {
-      list.push({ key: 'rating', label: t('filter.ratingAtLeast', { band: t(`score.band${minVerdict(xf.verdicts)}`) }), remove: drop({ verdicts: [] }) });
+      list.push({ key: 'rating', label: t('filter.ratingAtLeast', { band: bandWord(t, minVerdict(xf.verdicts)) }), remove: drop({ verdicts: [] }) });
     }
     if (goodForOf(xf.roles)) list.push({ key: 'role', label: t(`filter.goodFor.${goodForOf(xf.roles)}`), remove: drop({ roles: [] }) });
     if (xf.month) list.push({ key: 'month', label: t('gs.whyMonth', { month: gLabels.monthInline(xf.month) }), remove: drop({ month: null }) });
@@ -1059,12 +1078,36 @@ export function ExploreTab({
     } catch { fail(); }
   };
   // T585: the start dialog, once per device on a wide screen (T595: on the
-  // first visit only; Ask Carta's field took over its door).
-  const [startOpen, setStartOpen] = React.useState(false);
+  // first visit only; Ask Carta's field took over its door). T764: on a
+  // phone a first visit with no taste opens it on the taste questions.
+  const firstRun = useFirstRun();
+  const taste = normalizeTaste(firstRun?.choices?.taste);
+  const tasteRef = React.useRef(taste);
+  tasteRef.current = taste;
+  const [startOpen, setStartOpen] = React.useState(null);
   React.useEffect(() => {
     if (!isActive || pageOver) return;
-    if (shouldOpenStart()) { markStartSeen(); setStartOpen(true); }
+    const mode = startMode({ tasteEmpty: isEmptyTaste(tasteRef.current) });
+    if (mode) { markStartSeen(); setStartOpen(mode); }
   }, [isActive, pageOver]);
+  // T764: the header chip ("For you: hiking, villages, quiet") and its sheet.
+  const tasteBtnRef = React.useRef(null);
+  const [tasteOpen, setTasteOpen] = React.useState(false);
+  // T764: the learning question, only with consent and only after a save:
+  // when the shortlist grows (never on load), the saved places are read for
+  // a facet five of them share that the traveller did not pick and was
+  // never asked about (lib/taste.js learnFacet).
+  const [learn, setLearn] = React.useState(null);
+  const savedCountRef = React.useRef(null);
+  React.useEffect(() => {
+    const n = favorites?.size ?? 0;
+    const before = savedCountRef.current;
+    savedCountRef.current = n;
+    if (before == null || n <= before || !firstRun?.setChoices) return;
+    const records = [...favorites].map((id) => data?.destinations?.[id]).filter(Boolean);
+    const facet = learnFacet(tasteRef.current, records);
+    if (facet) setLearn(facet);
+  }, [favorites, data?.destinations, firstRun?.setChoices]);
   const rails = React.useMemo(() => {
     if (!railsIdle) return [];
     // The month the rails speak about: one set by hand, else the month of
@@ -1076,9 +1119,9 @@ export function ExploreTab({
     const railWhen = resolveWhen({ xm: month });
     const byRating = (a, b) => (b.rating?.score || 0) - (a.rating?.score || 0);
     const q = {
-      top: rows.filter((p) => p.rating?.tier === 3),
+      top: rows.filter((p) => bandAtLeast(p.rating, 'excellent')),
       gems: interleaveByCountry(rows.filter((p) => p.rating?.hidden_gem)),
-      now: interleaveByCountry(rows.filter((p) => inSeason(p) && (p.rating?.tier ?? 0) >= 2).sort(byRating)),
+      now: interleaveByCountry(rows.filter((p) => inSeason(p) && bandAtLeast(p.rating, 'very_good')).sort(byRating)),
       hiking: guided ? interleaveByCountry(rows.filter((p) => vibeOf(guided, p.id, 'hiking') >= 80).sort(byRating)) : [],
       beach: guided ? interleaveByCountry(rows.filter((p) => inSeason(p) && vibeOf(guided, p.id, 'beach') >= 80).sort(byRating)) : [],
       nocar: interleaveByCountry(rows.filter(noCarOk)),
@@ -1087,7 +1130,7 @@ export function ExploreTab({
       saved: favorites && favorites.size ? rows.filter((p) => favorites.has(p.id)) : [],
     };
     // V3 (T383): the page leads with cost (house rule "Rails and cuts",
-    // explore N8). Well-rated places (tier 1 and up) whose best months
+    // explore N8). Well-rated places (Good and up) whose best months
     // include this month, under a ceiling: the traveller's own once the
     // input row sets one (the grid then answers instead of the rails, so in
     // practice the cheapest third of the catalogue), rounded up to the next
@@ -1098,7 +1141,7 @@ export function ExploreTab({
     const third = priced.length ? priced[Math.floor((priced.length - 1) / 3)] : null;
     const ceiling = xf.budget || (third != null ? Math.ceil(third / 5) * 5 : null);
     const costCut = ceiling == null ? [] : rows
-      .filter((p) => (p.rating?.tier ?? 0) >= 1
+      .filter((p) => bandAtLeast(p.rating, 'good')
         && (p.climate?.best || []).includes(month)
         && underOk(ceiling)(p))
       .sort((a, b) => a.cost.dayEur - b.cost.dayEur);
@@ -1116,14 +1159,14 @@ export function ExploreTab({
       { key: 'saved', title: t('rail.shortlist'), rows: q.saved,
         seeAll: () => setShowFavOnly(true) },
       { key: 'now', title: t('rail.bestIn', { month: monthName }), short: t('rail.bestIn', { month: monthName }),
-        rows: q.now, seeAll: () => { patchXf({ month, verdicts: ['2', '3'] }); } },
+        rows: q.now, seeAll: () => { patchXf({ month, verdicts: ['very_good'] }); } },
       { key: 'cost',
         title: t('rail.cost', { eur: ceiling != null ? formatMoney(ceiling) : '', month: monthName }),
         short: t('rail.costShort', { eur: ceiling != null ? formatMoney(ceiling) : '' }),
         rows: [...costLead, ...costRest],
         seeAll: () => { patchXf({ budget: ceiling, month }); setSortKey('cost'); } },
       { key: 'top', title: t('rail.topRated'), short: t('rail.topRated'), rows: q.top,
-        seeAll: () => patchXf({ verdicts: ['3'] }) },
+        seeAll: () => patchXf({ verdicts: ['excellent'] }) },
       { key: 'hiking', title: t('rail.hiking'), short: t('rail.hiking'), rows: q.hiking,
         seeAll: () => patchXf({ vibe: 'hiking' }) },
       { key: 'beach', title: t('rail.beachSeason'), short: t('rail.beachSeason'), rows: q.beach,
@@ -1188,11 +1231,12 @@ export function ExploreTab({
   // order off.
   const sortOptions = (xf.vibe || xf.near)
     ? [{ key: 'beauty', labelKey: 'sort.match' }, { key: 'rating', labelKey: 'sort.rating' }, ...SORTS.slice(1)]
-    : SORTS;
+    // T765: "For you" is offered once the traveller has a taste.
+    : matchTaste ? [{ key: 'foryou', labelKey: 'fit.sort' }, ...SORTS] : SORTS;
   // T588: the sort is a menu behind one pill in the toolbar.
   const sortMenu = (
     <SortMenu t={t} options={sortOptions} onChange={setSortKey}
-      value={sortOptions.some((x) => x.key === sortKey) ? sortKey : 'beauty'} />
+      value={sortOptions.some((x) => x.key === catSort) ? catSort : 'beauty'} />
   );
 
   // T592 (owner, 2026-10-22): one toggle, not a List | Map pair. In the
@@ -1269,6 +1313,7 @@ export function ExploreTab({
 
 
   return (
+    <MatchMonth.Provider value={matchMonth}>
     <div className={`explore-shell${view === 'map' ? ' is-map' : ''}${railsIdle ? ' is-rails is-overview' : ' is-focus'}${paneOpen ? '' : ' is-pane-closed'}${railsIdle && ovPane ? ' is-ov-pane' : ''}`}>
       {askHost}
 
@@ -1310,7 +1355,23 @@ export function ExploreTab({
             filtersRef={filterBtnRef}
             filtersOn={isDesktop ? ovPane : sheetOpen}
             filterCount={chips.length}
-            onAllFilters={() => (isDesktop ? setOvPane((v) => !v) : setSheetOpen(true))} />
+            onAllFilters={() => (isDesktop ? setOvPane((v) => !v) : setSheetOpen(true))}
+            tasteChip={(
+              <Button ref={tasteBtnRef} variant="secondary" size="sm" className="xquick-chip xtaste-chip"
+                iconStart={<SparkIcon size={16} />} aria-haspopup="dialog" aria-expanded={tasteOpen}
+                onClick={() => setTasteOpen(true)}>
+                {tasteChipText(taste, t)}
+              </Button>
+            )}
+            strongChip={matchTaste ? (
+              // T765: Strong match, 70% and up; a filter the traveller sets.
+              <Button variant="secondary" size="sm"
+                className={`xquick-chip xstrong-chip${strongOnly ? ' is-on' : ''}`}
+                title={t('fit.strongHint', { pct: Math.round(MATCH.strong_min * 100) })}
+                aria-pressed={strongOnly} onClick={() => setStrongOnly((v) => !v)}>
+                {t('fit.strong')}
+              </Button>
+            ) : null} />
         )}
         {/* The six categories as one row of tabs (T586, owner decision 7);
             on the overview they sit inside the head block (T595). */}
@@ -1370,6 +1431,13 @@ export function ExploreTab({
               onClick={() => setShowFavOnly(!showFavOnly)}>
               {t('explore.toolSaved')}
             </Button>
+            {matchTaste && (
+              <Button variant="secondary" size="sm" className={`xtool${strongOnly ? ' is-on' : ''}`}
+                title={t('fit.strongHint', { pct: Math.round(MATCH.strong_min * 100) })}
+                aria-pressed={strongOnly} onClick={() => setStrongOnly((v) => !v)}>
+                {t('fit.strong')}
+              </Button>
+            )}
             {!isDesktop && <CountriesButton s={settingsLine} className="xtool" />}
             {viewSwitch('xtool-view')}
           </div>
@@ -1570,7 +1638,13 @@ export function ExploreTab({
           rail already owns both, and the sheet rendering its own country
           dropdown on top of the rail's would be the duplicate control this
           change exists to remove. */}
-      {startOpen && <StartDialog t={t} onClose={() => setStartOpen(false)} />}
+      {startOpen && <StartDialog t={t} mode={startOpen} onClose={() => setStartOpen(null)} />}
+      {(tasteOpen || learn) && (
+        <React.Suspense fallback={null}>
+          {tasteOpen && <TasteSheet anchorRef={tasteBtnRef} onClose={() => setTasteOpen(false)} />}
+          {learn && <TasteLearnPrompt facet={learn} onDone={() => setLearn(null)} />}
+        </React.Suspense>
+      )}
 
       {/* T588: Share's answer, in the bottom slot. */}
       <div className="xtoast-slot" role="status" aria-live="polite">
@@ -1590,6 +1664,7 @@ export function ExploreTab({
         />
       )}
     </div>
+    </MatchMonth.Provider>
   );
 }
 
@@ -1688,7 +1763,8 @@ function useExploreLens({ isActive, railsIdle, focusAll, setFocusAll, clear }) {
  */
 function OverviewHero({
   t, TitleTag, locationQuery, setLocationQuery, onShowAll,
-  viewToggle, quick, countries, filtersRef, filtersOn, filterCount, onAllFilters, photo,
+  viewToggle, quick, countries, filtersRef, filtersOn, filterCount, onAllFilters, photo, tasteChip = null,
+  strongChip = null,
 }) {
   const [where, setWhere] = React.useState(locationQuery || '');
   const { open: askOpen } = useAskChat();
@@ -1768,6 +1844,8 @@ function OverviewHero({
           desktop (a phone has the floating one). */}
       <div className="xov-picks">
         <div className="xov-quick" role="group" aria-label={t('explore.quickAria')}>
+          {tasteChip}
+          {strongChip}
           <Button ref={filtersRef} variant="secondary" size="sm"
             className={`xquick-chip xquick-filters${filtersOn ? ' is-on' : ''}`}
             iconStart={<FilterIcon size={16} />} aria-expanded={filtersOn}

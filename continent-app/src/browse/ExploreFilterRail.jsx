@@ -1,4 +1,5 @@
 import React from 'react';
+import { FILTER_BANDS, bandRank, bandWord, filterBand } from '../lib/rating.js';
 import { Button, Chip, ChipGroup, Segmented, Switch } from '../components/ui/index.js';
 import { TRIP_KINDS } from '../lib/trip_kinds.js';
 import { KIND_ICONS } from './CategoryRail.jsx';
@@ -37,7 +38,9 @@ import { useDayView } from '../hooks/useDayView.js';
  * pane's own head shows only in the desktop side panel (CSS).
  */
 
-const RATING_STEPS = ['1', '2', '3'];
+// The rating filter is by v5 band, "this band and up" (T763). The steps and
+// the legacy tier values of old links ("1" to "3") come from lib/rating.js.
+const RATING_STEPS = FILTER_BANDS;
 /** Budget steps in whole euros a person a day; one more stop past the last is "Any". */
 const BUDGET_STOPS = [0, 20, 40, 60, 80, 100, 130, 160];
 const FLIGHT_HOURS = [2, 3, 4, 6];
@@ -54,15 +57,23 @@ function toggleIn(list, v) {
   return list.includes(v) ? list.filter((x) => x !== v) : [...list, v];
 }
 
-/** The lowest tier the verdict list asks for, or '' when it asks for none. */
+/**
+ * The lowest band the verdict list asks for, or '' when it asks for none.
+ * Old links and saved filters carry v4 tiers ("1" to "3", or "2,3"); each
+ * reads as the v5 band of the same cutoff (rating.js filterBand).
+ */
 export function minVerdict(verdicts) {
-  if (!verdicts?.length) return '';
-  return String(Math.min(...verdicts.map(Number)));
+  let low = '';
+  for (const v of verdicts || []) {
+    const b = filterBand(v);
+    if (b && (!low || bandRank(b) < bandRank(low))) low = b;
+  }
+  return low;
 }
 
-/** "This band and up": the verdict list a minimum tier stands for. */
+/** "This band and up": the verdict list a minimum band stands for. */
 export function verdictsFrom(min) {
-  return min ? RATING_STEPS.filter((k) => Number(k) >= Number(min)) : [];
+  return min && RATING_STEPS.includes(min) ? [min] : [];
 }
 
 /** The "Good for" choice a role list stands for, or '' for any. */
@@ -294,7 +305,7 @@ export function ExploreFilterRail({
             onChange={(v) => patch({ verdicts: verdictsFrom(v) })}
             options={[
               { value: '', label: t('filter.paneAny') },
-              ...RATING_STEPS.map((k) => ({ value: k, label: t(`score.band${k}`) })),
+              ...RATING_STEPS.map((k) => ({ value: k, label: bandWord(t, k) })),
             ]} />
         </section>
       )}
@@ -396,7 +407,7 @@ export function ExploreQuickFilters(props) {
       : ''),
     rating: () => {
       const r = minVerdict(xf.verdicts);
-      return r ? t('explore.qfRatingUp', { band: t(`score.band${r}`) }) : '';
+      return r ? t('explore.qfRatingUp', { band: bandWord(t, r) }) : '';
     },
     flight: () => (xf.fh ? t('explore.qfFlight', { n: xf.fh }) : ''),
   };

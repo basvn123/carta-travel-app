@@ -24,11 +24,13 @@ import { fmtHours } from '../../src/lib/format.js';
 import { foodBreakdown, DEFAULT_PRICE_REQUEST } from '../../src/lib/price/index.js';
 import { cheapestStayMonths } from '../../src/lib/costIndex.js';
 import { seasonCurve } from '../../src/lib/stayPrice.js';
+import { ratingWords } from '../../src/lib/rating.js';
 import * as B from '../../src/lib/beachStory.js';
 import * as L from '../../src/lib/lakeStory.js';
 import * as M from '../../src/lib/mountainStory.js';
 import * as T from '../../src/lib/trailStory.js';
 import * as C from '../../src/lib/cycleStory.js';
+import { trailRating } from '../../src/lib/trailCards.js';
 import { fitTitle, fitDescription, clean } from './html.mjs';
 import * as D from './derived.mjs';
 
@@ -47,6 +49,12 @@ const MON3 = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oc
 const MONTH = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const monthOf = (code) => MONTH[typeof code === 'number' ? code - 1 : MON3.indexOf(String(code).slice(0, 3).toLowerCase())] || null;
 const sentence = (s) => { const c = clean(s); return c && !/[.!?]$/.test(c) ? `${c}.` : c; };
+// The Carta score fact in rating v5's words ("8.9 Exceptional", T763), from
+// lib/rating.js; none for an item listed without a v5 score.
+const scoreFact = (rating) => {
+  const w = ratingWords(rating, t);
+  return w ? { label: 'Carta score', value: w.text, num: true } : null;
+};
 const upFirst = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
 /** 'a' or 'an' before a figure as it is read aloud: an 8 km, an 11 km, an 18 km, a 12 km. */
 const aOf = (fig) => (/^(8|11(?![\d,])|18(?![\d,])|11,|18,)/.test(String(fig)) ? 'an' : 'a');
@@ -133,7 +141,7 @@ export function trailPage(tr, ctx) {
   const climb = T.trailClimb(tr);
   const story = T.trailStory(tr, null, { t });
   const reasons = T.trailReasons(tr.reasons, t, 6, tr).map((r) => sentence(r.text));
-  const rating = isNum(tr.rating) ? tr.rating : null;
+  const rating = trailRating(tr);
   const season = tr.f?.se?.from && tr.f?.se?.to ? `${monthOf(tr.f.se.from)} to ${monthOf(tr.f.se.to)}` : null;
   const paved = isNum(tr.sf?.paved) ? Math.round(tr.sf.paved * 100) : null;
   const hookParts = [
@@ -178,7 +186,7 @@ export function trailPage(tr, ctx) {
       tr.ele?.max ? { label: 'Highest point', value: `${n0(tr.ele.max)} m`, num: true } : null,
       season ? { label: 'Season', value: tr.f.se.est ? `${season}, estimated` : season } : null,
       paved != null ? { label: 'Paved', value: `${paved}%`, num: true } : null,
-      rating != null ? { label: 'Carta score', value: `${d1(rating)} of 10`, num: true } : null,
+      scoreFact(rating),
       tr.f?.ref ? { label: 'Signs to follow', value: clean(tr.f.ref) } : null,
     ].filter(Boolean),
     sections: [
@@ -231,7 +239,7 @@ export function cyclePage(r, ctx) {
       paved != null ? { label: 'Paved', value: `${paved}%`, num: true } : null,
       free != null ? { label: 'Away from motor traffic', value: `${free}%`, num: true } : null,
       r.ref ? { label: 'Signed as', value: clean(r.ref) } : null,
-      rating ? { label: 'Carta score', value: `${d1(rating.score)} of 10`, num: true } : null,
+      scoreFact(rating),
     ].filter(Boolean),
     sections: [
       why.length ? { h2: 'Why ride it', paras: why } : null,
@@ -336,7 +344,7 @@ export function layerPage(kind, row, ctx) {
   const baseRef = row.base?.id ? row.base : (row.near?.dest_id ? { id: row.near.dest_id, city: row.near.city, km: row.near.km } : null);
   const base = baseRef ? ctx.destById(baseRef.id) : null;
   const more = ctx.topLayer(kind, cc, row.rg?.n2, row.id, 8);
-  const facts = [rating ? { label: 'Carta score', value: `${d1(rating.score)} of 10`, num: true } : null];
+  const facts = [scoreFact(rating)];
   const props = [];
   if (kind === 'beach') {
     if (row.water?.class) {

@@ -397,6 +397,8 @@ test("a setting type prefers the place the setting dominates", { skip: !haveData
     layerIndexes: realIndexes,
     answers: { types: ["beach"] },
     month: 9,
+    // T766: the wizard ranks with the trip taste, these likes.
+    taste: { likes: ["beach"] },
   });
   const spain = out.find((x) => x.iso2 === "ES");
   assert.ok(spain, "expected Spain on a September beach list");

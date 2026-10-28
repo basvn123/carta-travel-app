@@ -84,9 +84,9 @@ function useTurn(turn, vocab, ctx) {
   const today = React.useMemo(() => new Date(turn.at), [turn.at]);
   const facts = React.useMemo(
     () => (intent && found !== undefined && !outside
-      ? answerFacts(intent, { rows, byId, guided, today, price, limit: LIMIT, retrieved: found?.retrieved || null })
+      ? answerFacts(intent, { rows, byId, guided, today, price, limit: LIMIT, retrieved: found?.retrieved || null, taste: ctx.taste || null })
       : null),
-    [intent, found, outside, rows, byId, guided, today, price],
+    [intent, found, outside, rows, byId, guided, today, price, ctx.taste],
   );
   const answer = React.useMemo(() => {
     if (!facts) return null;

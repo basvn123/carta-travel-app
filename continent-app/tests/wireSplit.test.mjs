@@ -22,11 +22,11 @@ const core = () => ({
   destinations: {
     BRU: {
       id: "BRU", tier: "airport", city: "Brussels", iso2: "BE", lat: 50.9014, lon: 4.4844,
-      categories: ["city", "unesco"], rating: { tier: 1, hidden_gem: false },
+      categories: ["city", "unesco"], rating: { score: 7.0, hidden_gem: false },
     },
     "gem:be-dinant": {
       id: "gem:be-dinant", tier: "gem", iso2: "BE", lat: 50.26, lon: 4.91,
-      rating: { tier: 2, hidden_gem: true },
+      rating: { score: 7.8, hidden_gem: true },
     },
     ODD: { id: "ODD", tier: "gem", iso2: "Belgium", lat: null, lon: "4.1", rating: {} },
     "gem:fr-x": { id: "not-the-key", tier: "gem", iso2: "FR", lat: 45, lon: 3 },
@@ -51,12 +51,12 @@ test("split then merge rebuilds every record, field for field, in order", () => 
 test("boot rows carry only id, lat, lon, country, flags and rating band", () => {
   const { boot } = roundTrip(core());
   assert.deepEqual(boot.cols, [...BOOT_COLS]);
-  assert.deepEqual(boot.d[0], ["BRU", 50.9014, 4.4844, "BE", FLAG.AIRPORT | FLAG.UNESCO, 1]);
-  assert.deepEqual(boot.d[1], ["gem:be-dinant", 50.26, 4.91, "BE", FLAG.HIDDEN_GEM, 2]);
+  assert.deepEqual(boot.d[0], ["BRU", 50.9014, 4.4844, "BE", FLAG.AIRPORT | FLAG.UNESCO, 2]);
+  assert.deepEqual(boot.d[1], ["gem:be-dinant", 50.26, 4.91, "BE", FLAG.HIDDEN_GEM, 3]);
   const rows = decodeBootIndex(boot);
   assert.equal(rows[0].airport, true);
   assert.equal(rows[1].hiddenGem, true);
-  assert.equal(rows[1].band, 2);
+  assert.equal(rows[1].band, 3);
 });
 
 test("irregular fields stay in the record and still round-trip", () => {

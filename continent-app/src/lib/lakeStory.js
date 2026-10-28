@@ -28,6 +28,7 @@
  * cold shock warning that got trimmed off the end of a paragraph is a warning
  * that was not given.
  */
+import { natureRating } from './rating.js';
 
 const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : '');
 
@@ -306,26 +307,12 @@ export const COMPONENT_ORDER = ['scenery', 'swimming', 'acclaim', 'activity',
 /** The three the page shows as headline figures, above the breakdown. */
 export const SUB_ORDER = ['scenery', 'swimming', 'activity'];
 
-/** Score band, for the colour of the chip. Mirrors the cutoffs the pipeline
- *  published in the wire meta (lake_index.TIER_CUTOFFS); the lake's own
- *  `tier` is authoritative and this is only the fallback. */
-export function lakeTier(lake) {
-  if (lake.tier != null) return lake.tier;
-  const s = lake.score || 0;
-  if (s >= 8.5) return 3;
-  if (s >= 7.5) return 2;
-  if (s >= 6.3) return 1;
-  return 0;
-}
-
-/** The rating shape the app's RatingBadge already speaks. */
+/** The rating ScoreChip reads, from the lake's v5 block (T763): the score,
+ *  band and rank, or { unscored: true }. The band word comes from
+ *  lib/rating.js; `t` stays in the signature for the callers. */
+// eslint-disable-next-line no-unused-vars
 export function lakeRating(lake, t) {
-  const tier = lakeTier(lake);
-  return {
-    score: lake.score,
-    tier,
-    label: t(`lake.band${tier}`),
-  };
+  return natureRating(lake);
 }
 
 /** True for a lake that scores well above what its fame predicts. The

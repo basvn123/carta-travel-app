@@ -32,6 +32,7 @@
  *   the world, and the sentence says whether OpenStreetMap's map or a human
  *   put it there, because neither of them knows whether it is running today.
  */
+import { natureRating, bandKey, bandAtLeast } from './rating.js';
 
 const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : '');
 
@@ -249,26 +250,12 @@ export const COMPONENT_ORDER = ['scenery', 'access', 'acclaim', 'stature',
 /** The three the page shows as headline figures, above the breakdown. */
 export const SUB_ORDER = ['scenery', 'access', 'experience'];
 
-/** Score band, for the colour of the chip. Mirrors the cutoffs the pipeline
- *  published in the wire meta (peak_index.TIER_CUTOFFS); the mountain's own
- *  `tier` is authoritative and this is only the fallback. */
-export function mountainTier(mountain) {
-  if (mountain.tier != null) return mountain.tier;
-  const s = mountain.score || 0;
-  if (s >= 8.5) return 3;
-  if (s >= 7.4) return 2;
-  if (s >= 6.2) return 1;
-  return 0;
-}
-
-/** The rating shape the app's RatingBadge already speaks. */
+/** The rating ScoreChip reads, from the mountain's v5 block (T763): the score,
+ *  band and rank, or { unscored: true }. The band word comes from
+ *  lib/rating.js; `t` stays in the signature for the callers. */
+// eslint-disable-next-line no-unused-vars
 export function mountainRating(mountain, t) {
-  const tier = mountainTier(mountain);
-  return {
-    score: mountain.score,
-    tier,
-    label: t(`mtn.band${tier}`),
-  };
+  return natureRating(mountain);
 }
 
 /** True for a mountain that scores well above what its fame predicts. The
@@ -451,10 +438,11 @@ export const MOUNTAIN_FACETS = [
   {
     key: 'rate',
     labelKey: 'mtn.filterRating',
-    options: [3, 2, 1].map((tier) => ({
-      key: `t${tier}`,
-      labelKey: `mtn.band${tier}`,
-      test: (m) => mountainTier(m) >= tier,
+    // T763: the v5 bands "and up", read off v5.score (lib/rating.js).
+    options: ['excellent', 'very_good', 'good'].map((band) => ({
+      key: `b${band}`,
+      labelKey: bandKey(band),
+      test: (m) => bandAtLeast(m.v5, band),
     })),
   },
   {

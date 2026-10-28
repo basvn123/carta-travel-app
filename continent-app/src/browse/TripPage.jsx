@@ -277,6 +277,15 @@ function tripGroup(detail) {
  * Null when a stop is not a priced destination; the wire's stay figure then
  * stands in, as before.
  */
+/** A stop's rating: the place's own wire rating (v5, so the trip page reads
+ *  the same word as Explore and the destination page, T763), else the
+ *  trip file's copy of the score. */
+function stopRating(stop, destinations) {
+  const r = destinations?.[stop?.dest]?.rating;
+  if (r?.score != null) return r;
+  return stop?.rating != null ? { score: stop.rating } : null;
+}
+
 function tripStays(detail, destinations, req) {
   const stops = detail?.stops || [];
   if (!stops.length || !destinations) return null;
@@ -779,7 +788,7 @@ export function TripPage({
                         <span className="itin-stop-text">
                           <span className="itin-stop-name">
                             {s.city}
-                            <RatingBadge rating={{ score: s.rating }} size="xs" showGem={false} />
+                            <RatingBadge rating={stopRating(s, data?.destinations)} size="xs" showGem={false} />
                           </span>
                           <span className="itin-stop-meta">
                             <CountryFlag country={s.iso2} size={10} />
@@ -902,7 +911,7 @@ export function TripPage({
                       <div className="itin-out-body">
                         <div className="itin-out-head">
                           <span className="itin-out-name">{d.city}</span>
-                          <RatingBadge rating={{ score: d.rating }} size="xs" showGem={false} />
+                          <RatingBadge rating={stopRating(d, data?.destinations)} size="xs" showGem={false} />
                         </div>
                         <div className="itin-out-meta">
                           <Icon size={12} />

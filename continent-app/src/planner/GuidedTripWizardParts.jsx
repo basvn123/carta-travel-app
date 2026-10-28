@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
-import { StarIcon, DiamondIcon, DotIcon, InfoIcon } from '../components/Icons.jsx';
+import { InfoIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
-import { cityImage, flagUrl, isoToFlag, cityTier, cityInsight } from '../lib/tripGuide.js';
+import { cityImage, flagUrl, isoToFlag, cityInsight } from '../lib/tripGuide.js';
 import { knownForFacts } from '../lib/knownFor.js';
 import { haversineKm } from '../lib/runtime_pricing.js';
 import { formatEst } from '../lib/money.js';
@@ -47,21 +47,6 @@ export function CityThumb({ dest, className }) {
   );
 }
 
-/** The worth-a-visit chip: colour-tiered so the genuinely special stops leap
- *  out of a long city list. */
-export function TierChip({ dest }) {
-  const t = cityTier(dest);
-  if (t.key === 'ok') return null;
-  return (
-    <span className={`guide-tier guide-tier-${t.key}`}>
-      {t.key === 'top' && <StarIcon size={9} />}
-      {t.key === 'great' && <DiamondIcon size={9} />}
-      {t.key === 'good' && <DotIcon size={8} />}
-      {t.label}
-    </span>
-  );
-}
-
 /** One stay-city row: photo, name + tier + what it's known for, an info
  *  toggle with structured facts, and the nights stepper. */
 export function StayRow({ id, dest, nights, onNights, anchorDest, isAnchor, companions, nightlyEur = null }) {
@@ -79,7 +64,6 @@ export function StayRow({ id, dest, nights, onNights, anchorDest, isAnchor, comp
           <div className="guide-city-name">
             {dest.city}
             {isAnchor && <span className="guide-anchor-badge"><PlaneIcon size={9} /> {t('wizard.youLandHere')}</span>}
-            <TierChip dest={dest} />
             {dest.rating?.score != null && <ScoreChip rating={dest.rating} size="xs" />}
             {dest.rating?.hidden_gem && <HiddenGemTag />}
             {nightlyEur != null && (

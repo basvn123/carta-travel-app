@@ -1,5 +1,6 @@
 import React from 'react';
 import { ScoreChip } from '../components/RatingBadge.jsx';
+import { natureRating } from '../lib/rating.js';
 import { tileUrl } from '../lib/mapTile.js';
 import { trailClimbUp, gradeLabelKey } from '../lib/trailStory.js';
 import { notYet } from '../components/NotYet.jsx';
@@ -89,7 +90,7 @@ export function summaryOf(around, t) {
 export function AroundHere({ city, nearby, around, t, onOpenFeature, onShowMap }) {
   const picks = React.useMemo(() => LAYER_ORDER
     .flatMap((layer) => ((nearby || {})[layer] || []).slice(0, 3).map((f) => ({ ...f, layer })))
-    .sort((a, b) => (b.tier || 0) - (a.tier || 0) || (b.score || 0) - (a.score || 0)), [nearby]);
+    .sort((a, b) => (b.v5?.score ?? -1) - (a.v5?.score ?? -1)), [nearby]);
   const layers = LAYER_ORDER.filter((l) => (around?.[l] || []).length > 0);
   const tabs = [
     ...(picks.length ? [{ key: 'picks', label: t('dest.aroundPicks'), n: picks.length }] : []),
@@ -145,7 +146,9 @@ export function AroundHere({ city, nearby, around, t, onOpenFeature, onShowMap }
       <ul className="dar-list">
         {shown.map((row) => {
           const Icon = LAYER_ICON[row.layer];
-          const rating = row.score != null ? { score: row.score, tier: row.tier ?? 0 } : null;
+          // Rating v5 (T763): the dossier row's v5 block; a row without one
+          // shows the NotYet slot (the dossier is rebuilt with v5, T754-a).
+          const rating = natureRating(row);
           const meta = rowMeta(row, row.layer, t);
           return (
             <li key={`${row.layer}|${row.id}`}>
@@ -165,7 +168,7 @@ export function AroundHere({ city, nearby, around, t, onOpenFeature, onShowMap }
                   </span>
                 </span>
                 <span className="dar-right">
-                  {rating && <ScoreChip rating={rating} size="sm" />}
+                  <ScoreChip rating={rating} size="sm" />
                   <span className="dar-km mono">{fmtKm(row.km)} {row.bearing || ''}</span>
                 </span>
               </button>

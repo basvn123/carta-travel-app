@@ -240,7 +240,6 @@ function suggestionReason(d) {
   const cats = d.categories || [];
   const evocative = EVOCATIVE_CATEGORIES.find((c) => cats.includes(c));
   if (d.rating?.hidden_gem) return 'Hidden gem';
-  if (d.rating?.tier === 3) return 'Worth the journey';
   if (d.beauty?.unesco && evocative) return `UNESCO ${evocative}`;
   if (d.beauty?.unesco) return 'UNESCO site';
   if (evocative) return evocative.charAt(0).toUpperCase() + evocative.slice(1);

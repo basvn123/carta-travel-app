@@ -255,6 +255,7 @@
 }
 .xov-quick .btn.xquick-chip .btn-icon { color: var(--text-2); }
 .xov-quick .btn.xquick-filters { border-color: var(--border); font-weight: 600; }
+.xov-quick .btn.xstrong-chip[aria-pressed="true"],
 .xov-quick .btn.xquick-filters.is-on {
   background: var(--select-bg);
   border-color: var(--select-border);
@@ -579,6 +580,30 @@
   color: var(--text-2);
 }
 .xstart-foot { display: flex; justify-content: flex-end; margin-top: var(--space-2); }
+
+/* T764: the taste profile's four questions (browse/TasteSheet.jsx), on the
+   start dialog's "Tell Carta what you like" path (.xstart.is-taste) and in
+   the sheet the Explore header chip and Account open. The rows, tiles,
+   Segmented and Switch are the kit's; only the stack is set here. */
+.xstart-taste.btn { min-height: var(--tap); }
+.taste-steps { display: flex; flex-direction: column; gap: var(--space-4); }
+.taste-head { display: flex; flex-direction: column; gap: var(--space-1); padding-right: var(--space-7); }
+.taste-sheet .taste-head { padding-right: 0; }
+.taste-pos { margin: 0; font-size: var(--text-caption); color: var(--text-2); }
+.taste-q { margin: 0; font-size: var(--text-title); font-weight: 600; line-height: var(--leading-tight); color: var(--text); }
+.taste-body { display: flex; flex-direction: column; gap: var(--space-4); }
+.taste-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.taste-help { margin: 0; font-size: var(--text-label); color: var(--text-2); }
+.taste-group { display: flex; flex-direction: column; gap: var(--space-2); }
+.taste-label { margin: 0; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.taste-foot { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding-top: var(--space-2); }
+/* The learning question rides the Undo toast's frame; its sentence wraps. */
+.taste-learn { flex-wrap: wrap; }
+.taste-learn-text { flex: 1 1 12em; min-width: 0; line-height: var(--leading-ui); }
+@media (max-width: 768px) {
+  .xstart-scrim { padding: var(--space-3); }
+  .xstart { padding: var(--space-5) var(--space-4) var(--space-4); max-height: calc(100dvh - var(--space-5)); }
+}
 @media (prefers-reduced-motion: reduce) {
   .xstart-scrim, .xstart { animation: none; }
   .xstart-scrim.is-leaving, .xstart.is-leaving { transition: none; }

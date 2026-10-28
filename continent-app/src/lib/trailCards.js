@@ -16,6 +16,7 @@
  * answers "what does this walk look like" with a confident lie. A hike with no
  * picture of its own now shows its route glyph and says nothing.
  */
+import { natureRating } from './rating.js';
 import { matchesAnyKind } from './trip_kinds.js';
 import { sacBand, durationBands, transitModes } from './routeEffort.js';
 
@@ -64,25 +65,14 @@ export function tripPhoto(tr) {
 }
 
 /**
- * The trail rating in the shape RatingBadge reads: { score, tier }.
- *
- * The wire ships a bare 0-10 number. The badge colours itself from `tier`, and
- * without one every trail would render at rt-0, the greyest chip on the scale,
- * including a country's best walk. These are the catalogue's own cutoffs
- * (pipeline/rating_layer.py TIER_CUTOFFS), reused deliberately so an 8.9 means
- * the same shade of confidence whether it is a town or a trail.
- *
- * A trail rating is scored WITHIN its country though, where a destination
- * rating is scored across Europe. Same scale, different reference class, which
- * is the honest way to rank a Dutch dune walk against Dutch walks.
+ * The trail rating in the shape ScoreChip reads, from the trip's v5 block
+ * (rating v5, T763): { score, band, confidence, rank, facts }, or
+ * { unscored: true } for a trip listed without a v5 score. The band and its
+ * word come from lib/rating.js, Europe-wide within walks; the old per-country
+ * `rating` number is not read for the badge any more.
  */
-const TRAIL_TIER_CUTOFFS = [[8.7, 3], [7.8, 2], [6.9, 1]];
-
 export function trailRating(tr) {
-  const score = tr?.rating;
-  if (typeof score !== 'number') return null;
-  const tier = TRAIL_TIER_CUTOFFS.find(([min]) => score >= min)?.[1] ?? 0;
-  return { score, tier };
+  return natureRating(tr);
 }
 
 /**

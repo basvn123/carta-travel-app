@@ -40,6 +40,32 @@
     "top_share_max": 0.04
   },
 
+  "match": {
+    "_about": "Layer 3, the personal match (T765, lib/match.js). F = sum(w_k p_k) / sum(w_k) x prod(c_j): w is 1 per chosen like and 0.5 each for size and quiet; p is the place's taste value (a frozen percentile) or the size_fit below; each conflict c_j sits between conflict_range. For you = Q + lambda (F - 0.5), Q the month score when a month is set, so the match moves a place by at most lambda / 2 points. The match shows from show_min; strong_min is the Strong match toggle. Tune only lambda (inside lambda_range: owner decision 9, 2026-10-27, caps the move at one point, so never above 2) and the conflict factors on the persona set (tests/personas_v5.json, reports/persona_check_v5.md).",
+    "lambda": 2,
+    "lambda_range": [1, 2],
+    "show_min": 0.55,
+    "strong_min": 0.70,
+    "for_you_default": false,
+    "_for_you_default": "T765: while persona gate 7 fails (reports/persona_check_v5.md) For you is a sort the traveller picks, never the default, and the Picked for you rail stays off. The owner sets this true once the gate passes.",
+    "like_weight": 1,
+    "size_weight": 0.5,
+    "quiet_weight": 0.5,
+    "conflict_range": [0.6, 1],
+    "conflicts": {
+      "busy": 0.8,
+      "car": 0.75,
+      "heat": 0.85
+    },
+    "busy_min_tier": 2,
+    "heat_max_c": 30,
+    "size_fit": {
+      "city": {"metro": 1, "city": 0.85, "town": 0.4, "village": 0.1, "area": 0.1},
+      "town": {"metro": 0.3, "city": 0.7, "town": 1, "village": 0.6, "area": 0.4},
+      "village": {"metro": 0, "city": 0.15, "town": 0.5, "village": 1, "area": 1}
+    }
+  },
+
   "weights": {
     "_about": "Destination score blend of formula v4 (rating_v4 weights). Read only when formula is v4.",
     "appeal": 0.70,

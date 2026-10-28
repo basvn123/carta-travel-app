@@ -1,0 +1,29 @@
+{
+  "_about": "Persona gate 7 (Carta rating v5, Roadmap/2.10b-rating-v5.md, T765). The twelve travellers the plan names, each as a choices.taste (lib/taste.js) and one fixed month. scripts/persona_check_v5.mjs takes each one's top 10 in the app's own For you order (lib/match.js sortForYou over the Explore list: rated, not a gateway) and reports/persona_check_v5.md judges every place against opened pages. Pass: 80% or more sensible over all 120. Hard needs (kids under 3, no car, a budget ceiling) are filters the traveller sets, not weights, so the no-car answer here only adds the car conflict.",
+  "personas": [
+    { "id": "family-toddler", "name": "Family with a toddler", "month": 7,
+      "taste": { "party": "family", "likes": ["beach", "lakes"], "size": "town", "quiet": "quiet" } },
+    { "id": "hiking-couple", "name": "Hiking couple", "month": 9,
+      "taste": { "party": "couple", "likes": ["hiking", "lakes"], "size": "village", "quiet": "quiet" } },
+    { "id": "friends-out", "name": "Friends going out", "month": 6,
+      "taste": { "party": "friends", "likes": ["nightlife", "city", "food"], "size": "city", "quiet": "lively" } },
+    { "id": "slow-culture", "name": "Slow culture", "month": 10,
+      "taste": { "party": "couple", "likes": ["culture", "food"], "size": "town", "quiet": "quiet" } },
+    { "id": "backpacker", "name": "Backpacker", "month": 8,
+      "taste": { "party": "solo", "likes": ["city", "nightlife", "hidden"], "size": "city", "lifestyle": "backpacker", "noCar": true } },
+    { "id": "beach-family", "name": "Beach family", "month": 7,
+      "taste": { "party": "family", "likes": ["beach", "islands"], "size": "town" } },
+    { "id": "cyclist", "name": "Cyclist", "month": 5,
+      "taste": { "party": "couple", "likes": ["cycling"], "size": "village" } },
+    { "id": "foodie", "name": "Foodie", "month": 4,
+      "taste": { "party": "couple", "likes": ["food", "culture", "city"], "size": "city" } },
+    { "id": "skier", "name": "Skier", "month": 2,
+      "taste": { "party": "friends", "likes": ["ski"], "size": "village" } },
+    { "id": "wellness", "name": "Wellness", "month": 11,
+      "taste": { "party": "couple", "likes": ["wellness", "lakes"], "quiet": "quiet" } },
+    { "id": "island-hopper", "name": "Island hopper", "month": 6,
+      "taste": { "party": "couple", "likes": ["islands", "beach"], "size": "mix" } },
+    { "id": "no-car-rail", "name": "No-car rail", "month": 5,
+      "taste": { "party": "solo", "likes": ["city", "culture"], "size": "city", "noCar": true } }
+  ]
+}

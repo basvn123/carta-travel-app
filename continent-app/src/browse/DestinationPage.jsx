@@ -14,13 +14,15 @@ import { monthName } from '../lib/dates.js';
 import { fmtMonthRanges } from './ClimateStrip.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import CreditFold from './CreditFold.jsx';
-import { ScoreChip, HiddenGemTag, bandKey } from '../components/RatingBadge.jsx';
-import { tierForScore } from '../lib/rating.js';
+import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
+import { classRankLine, poiLabel, ratingWords } from '../lib/rating.js';
+import { fetchDestPois } from '../lib/appData.js';
 import { visitLength } from '../lib/nearby.js';
 import { countryName } from '../lib/countryName.js';
 import { usePaywall } from '../hooks/usePaywall.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { useFirstRun } from '../lib/firstRunContext.js';
+import { MatchLine } from './WhyItMatches.jsx';
 import { PhotoGallery } from './PhotoGallery.jsx';
 import { DestPriceCard } from './DestPriceCard.jsx';
 import { PageBar } from './PageBar.jsx';
@@ -313,6 +315,27 @@ export function DestinationPage({
   // Photographs for "Things to do". Must sit above the early return: hooks
   // cannot run conditionally.
   const doPhotos = useDoPhotos(destination?.id);
+  // The POI labels (Must-see, Recommended, Worth a look) of this place's
+  // shard, by name, so a highlight on the page and in the PDF carries its
+  // label and never a number (T763). A duplicate (label null) has none.
+  const [poiLabels, setPoiLabels] = React.useState(null);
+  React.useEffect(() => {
+    const id = destination?.id;
+    setPoiLabels(null);
+    if (!id) return undefined;
+    let live = true;
+    fetchDestPois(id).then((items) => {
+      if (!live) return;
+      const m = new Map();
+      for (const p of items || []) {
+        if (!p?.name) continue;
+        const label = 'label' in p ? (p.label || null) : poiLabel(p);
+        if (label && !m.has(p.name.toLowerCase())) m.set(p.name.toLowerCase(), label);
+      }
+      setPoiLabels(m);
+    });
+    return () => { live = false; };
+  }, [destination?.id]);
 
   if (!destination) return null;
 
@@ -334,13 +357,14 @@ export function DestinationPage({
   const packs = packingList(destination, month);
 
   const intro = d?.intro;
-  const verdictRaw = d?.verdict || destination.rating || null;
-  // The tier drives the Score's star and band word (T437); a dossier verdict
-  // without one takes it from the score against the model's cut-offs.
-  const verdict = verdictRaw && verdictRaw.score != null
-    ? { ...verdictRaw, tier: verdictRaw.tier ?? tierForScore(verdictRaw.score) }
-    : verdictRaw;
-  const verdictBand = verdict && bandKey(verdict.tier) ? t(bandKey(verdict.tier)) : '';
+  // The wire's rating (v5: score, band, why, class_rank, confidence) wins over
+  // the dossier's copy, which may predate a re-score; the dossier keeps what
+  // only it carries (the country rank). lib/rating.js gives the word (T763).
+  const verdict = (d?.verdict || destination.rating)
+    ? { ...(d?.verdict || {}), ...(destination.rating || {}) }
+    : null;
+  const verdictBand = ratingWords(verdict, t)?.word || '';
+  const verdictClassRank = classRankLine(verdict, t);
   // T534: the beds and the 12-month price shape come from the destination's
   // own stays data (live once its country file is in, staysVersion); the
   // dossier keeps the neighbourhood medians.
@@ -358,7 +382,11 @@ export function DestinationPage({
   const water = d?.water || null;
   const stayLen = visitLength(destination);
   const highlights = [...(d?.highlights || [])]
-    .sort((a, b) => (b.rank_score || 0) - (a.rank_score || 0));
+    .sort((a, b) => (b.rank_score || 0) - (a.rank_score || 0))
+    .map((h) => {
+      const label = h.name ? poiLabels?.get(h.name.toLowerCase()) : null;
+      return label ? { ...h, label } : h;
+    });
   const doItems = [...(d?.do || [])]
     .sort((a, b) => (b.evidence?.n_sources ?? -1) - (a.evidence?.n_sources ?? -1));
   const trips = d?.trips || [];
@@ -475,7 +503,7 @@ export function DestinationPage({
       const { downloadDestinationPdf } = await import('../lib/destinationPdf.js');
       await downloadDestinationPdf({
         // The page's own sleep view (T534): live beds and month shape.
-        dossier: { ...d, sleep: sleep || d.sleep }, destination, cost: pdfCost, t, lang,
+        dossier: { ...d, highlights, sleep: sleep || d.sleep }, destination, cost: pdfCost, t, lang,
         lifestyleLabel: lifestyleLine,
         stayDays: stayLen?.n || null,
       });
@@ -651,6 +679,7 @@ export function DestinationPage({
                 </a>
               )}
               {verdict?.hidden_gem && <HiddenGemTag />}
+              {verdictClassRank && <span className="destp-rank destp-classrank">{verdictClassRank}</span>}
               {/* The country, in the reader's language, once: a rank line names it
                   already ("Top of Italy"), so then it stands alone (T446). */}
               <span className="destp-country">
@@ -660,6 +689,8 @@ export function DestinationPage({
                   <span className="destp-rank">{t('card.rankIn', { n: verdict.country_rank, country: countryLabel })}</span>
                 ) : countryLabel}
               </span>
+              {/* T765: the match after the rank lines, never merged into the Score. */}
+              <MatchLine place={destination} month={tripMonth} className="destp-match" />
               {isUnesco && (
                 <Chip kind="status" className="destp-unesco"
                   title={(destination.designations || []).find((g) => g.kind === 'unesco_whc')?.name || ''}>

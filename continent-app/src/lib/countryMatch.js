@@ -27,6 +27,9 @@
  * DOM. The caller loads the five indexes and hands them in.
  */
 import { cityKeyName } from './placeName.js';
+import { isGateway } from './rating.js';
+import { forYou, qualityOf } from './match.js';
+import { hasMatchSignal } from './taste.js';
 
 
 /**
@@ -145,10 +148,6 @@ export const TRIP_TYPE_BY_KEY = new Map(TRIP_TYPES.map((x) => [x.key, x]));
  *  shop window that a mediocre one costs the whole card. */
 const MIN_PLACE_SCORE = 7;
 
-/** Types whose tags describe what a place IS rather than what you do there.
- *  Only for these does "how much of this place is the type" mean anything.
- *  See the topPlaces ranking in matchCountries. */
-const SETTING_TYPES = new Set(['beach', 'islands', 'lakes', 'hiking', 'trailrun', 'ski', 'water', 'hidden', 'wellness']);
 
 /** The four group headings, in the order the quiz shows them. */
 export const TRIP_GROUPS = ['unwind', 'explore', 'active', 'who'];
@@ -417,11 +416,16 @@ function warmFit(rows, month) {
  *                        avoid: string[] }
  * @param month         1..12, the month of travel (from the When step)
  * @param origin        { lat, lon } | null, from the From step
+ * @param taste         the traveller's taste for this trip (lib/taste.js), or
+ *                      null; the places of a country rank by forYou() with it
+ *                      and by quality without it (T766)
+ * @param topN          how many places each country names (3 on the card)
  * @returns [{ iso2, country, score, reasons: [{key, vars}], topPlaces }]
  *          sorted best first. An empty answers.types returns [].
  */
 export function matchCountries({
   destinations, insights = null, layerIndexes = {}, answers = {}, month = null, origin = null,
+  taste = null, topN = 3,
 } = {}) {
   const types = (answers.types || [])
     .map((k) => TRIP_TYPE_BY_KEY.get(k))
@@ -444,7 +448,7 @@ export function matchCountries({
   const byCountry = new Map();
   const seen = new Map(); // country + city key -> the index it was kept at
   for (const [id, d] of Object.entries(destinations || {})) {
-    if (!d?.country || d.lat == null) continue;
+    if (!d?.country || d.lat == null || isGateway(d)) continue;
     let g = byCountry.get(d.country);
     if (!g) {
       g = { country: d.country, iso2: d.iso2 || null, rows: [], ids: [], latSum: 0, lonSum: 0 };
@@ -635,23 +639,21 @@ export function matchCountries({
     // carry more tags because there is more there. So share is used only where
     // it means something.
     //
-    //   dominance   for a type whose tags describe a SETTING, a place is
-    //               evidence when the setting is most of what it is. Menorca
-    //               is beach, coast, island and quiet; Barcelona is those two
-    //               plus city, art, unesco and nightlife.
-    //   rating      how good the place is.
-    //   fame        how likely the traveller is to recognise it, which is what
-    //               separates Berlin from Augsburg when both are equally urban,
-    //               and Madrid from Salamanca.
+    // T766 (rating v5): the order within a country is the one Explore uses,
+    // forYou() (lib/match.js), Q + lambda (F - 0.5), so "Help me choose" and
+    // Explore name the same places for the same taste and month. It replaces
+    // rating x 1.5 + fame x 0.4 + dominance x 0.8: v5's score already holds
+    // recognition, and the traveller's own likes now say which setting counts.
+    // With no taste it is the quality (the month score when a month is set).
+    // A place still has to be rated; without a taste it also has to be
+    // evidence for an asked-for type (with one, the fit weighs the likes,
+    // as it does in Explore, which has no such gate).
+    const byTaste = hasMatchSignal(taste);
     const tagUnion = new Set(types.flatMap((x) => x.tags || []));
-    // A setting type is one a place can BE (a beach, an island, a mountain).
-    // A city break, a food trip or a night out happen IN a place without being
-    // the whole of it, so for those, share of tags says nothing.
-    const settingType = types.some((x) => SETTING_TYPES.has(x.key));
     const scorePlace = (d) => {
       const cats = d.categories || [];
       const hits = cats.filter((c) => tagUnion.has(c)).length;
-      const matched = hits > 0 || types.some((x) => x.match?.(d));
+      const matched = byTaste || hits > 0 || types.some((x) => x.match?.(d));
       if (!matched) return -1;
       const score = d.rating?.score || 0;
       // Quality comes first and is never traded away. Letting dominance
@@ -660,20 +662,13 @@ export function matchCountries({
       // scores a perfect 1.0 on dominance however ordinary it is. A place the
       // catalogue does not rate well is not evidence for anything.
       if (score < MIN_PLACE_SCORE) return -1;
-      const rating = score / 10;
-      // log, because fame spans 0 to 4,500 and a linear term would make it the
-      // only thing that mattered.
-      const fame = Math.min(1, Math.log10(1 + (d.rating?.fame || 0)) / 3.6);
-      const dominance = settingType && cats.length ? hits / Math.max(3, cats.length) : 0;
-      // Dominance TIPS the ranking between places that are already good; it
-      // does not promote a weak one. Hence the weight below rating's span.
-      return rating * 1.5 + fame * 0.4 + dominance * 0.8;
+      return forYou(d, taste, month) ?? qualityOf(d, month) ?? 0;
     };
     const topPlaces = g.ids
       .map((id, i) => ({ id, d: g.rows[i], rank: scorePlace(g.rows[i]) }))
       .filter((x) => x.d.image?.url && x.rank >= 0)
-      .sort((a, b) => b.rank - a.rank)
-      .slice(0, 3)
+      .sort((a, b) => b.rank - a.rank || (qualityOf(b.d, month) ?? 0) - (qualityOf(a.d, month) ?? 0))
+      .slice(0, topN)
       .map((x) => x.id);
 
     out.push({

@@ -5,6 +5,7 @@ import { formatEst } from '../lib/money.js';
 import { Money, CostRow } from '../components/ui/index.js';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { ScoreChip } from '../components/RatingBadge.jsx';
+import { natureRating } from '../lib/rating.js';
 import { Fold } from '../browse/Fold.jsx';
 import { useFolds } from '../browse/useFolds.js';
 import { SheetShell } from '../browse/SheetShell.jsx';
@@ -442,7 +443,7 @@ function ThemeRail({ group, cc, open, t }) {
       if (!rows?.length) return null;
       return rows
         .slice()
-        .sort((a, b) => (b.score || 0) - (a.score || 0))
+        .sort((a, b) => (b.v5?.score ?? -1) - (a.v5?.score ?? -1))
         .slice(0, RAIL_ROWS)
         .map((r) => ({
           key: `${group.key}-${r.id}`,
@@ -454,7 +455,7 @@ function ThemeRail({ group, cc, open, t }) {
               r.ascent_m != null ? t('brief.ascent', { m: Math.round(r.ascent_m) }) : null]
               .filter(Boolean).join(', ')
             : null,
-          rating: r.score != null ? { score: r.score, tier: r.tier ?? 0 } : null,
+          rating: natureRating(r),
         }));
     }
     if (!group.rows?.length) return null;

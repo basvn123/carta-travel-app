@@ -47,7 +47,7 @@ import {
 import { isNum } from '../map/coords.js';
 import { UploadForm } from '../community/UploadForm.jsx';
 import { PhotoGallery } from './PhotoGallery.jsx';
-import { ItemHead, ItemIcon } from './ItemParts.jsx';
+import { ItemHead, ItemIcon, NatureHeadLines } from './ItemParts.jsx';
 import { Button, Chip, Money } from '../components/ui/index.js';
 import { toPhotos } from '../lib/itemPhotos.js';
 import { beforeGoItems } from '../lib/beforeGo.js';
@@ -342,7 +342,8 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
     try { dn = new Intl.DisplayNames([lang], { type: 'region' }); } catch { /* older engines */ }
     return trailPlace(tr, detail, assoc.dest, (cc) => (dn ? dn.of(cc) : cc) || cc);
   }, [tr, detail, assoc.dest, lang]);
-  const rating = trailRating(detail || tr);
+  // Rating v5 (T763): the list row carries the v5 block, the detail file not.
+  const rating = trailRating(tr);
   const baseDay = useBaseDay(assoc.destId || null);
   const view = useDayView();   // T694: per person or the group's total
   const { onPdf, pdfBusy } = useItemPdf('trail', tr, { detail, place, assoc });
@@ -906,6 +907,7 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
               {ref && <Chip kind="status">{ref}</Chip>}
             </>
           )}
+          after={isCityDay ? null : <NatureHeadLines rating={rating} place={place?.country || ''} />}
         />
       )}
       hook={hook}

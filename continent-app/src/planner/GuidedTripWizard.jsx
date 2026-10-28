@@ -19,6 +19,8 @@ import { loadDossier } from '../lib/dossier.js';
 import { TRAVEL_MODE_LABEL } from '../lib/transportLinks.js';
 import { buildCountryBriefs } from '../lib/countryBrief.js';
 import { matchCountries } from '../lib/countryMatch.js';
+import { tripTaste } from '../lib/taste.js';
+import { useTaste } from '../browse/WhyItMatches.jsx';
 import { loadTrailsIndex } from '../lib/trails.js';
 import { loadBeachIndex } from '../lib/beaches.js';
 import { loadLakeIndex } from '../lib/lakes.js';
@@ -57,6 +59,7 @@ import { StepGettingThere } from './wizard/StepGettingThere.jsx';
 import { StepReview } from './wizard/StepReview.jsx';
 import { WizardAside } from './wizard/WizardAside.jsx';
 import { WizardHead, WizardStepsSheet, WizardFoot } from './wizard/WizardChrome.jsx';
+import { isGateway } from '../lib/rating.js';
 
 // Shared empty catalogue for before the data lands: a fresh `{}` per render
 // would invalidate the dozen memos below that read destinations (T192).
@@ -784,6 +787,10 @@ export function GuidedTripWizard({
     return m ? Number(m[1]) : null;
   }, [startDate, flexMonth]);
 
+  // T766: the traveller's taste, with this trip's likes in place of the
+  // profile's (the trip's answers seed the taste for this trip only).
+  const savedTaste = useTaste();
+  const quizTaste = useMemo(() => tripTaste(savedTaste, quiz.types), [savedTaste, quiz.types]);
   const countryMatches = useMemo(() => {
     if (!quiz.types?.length) return [];
     // T657: behind booked flights the trip starts where the flight lands, so
@@ -796,6 +803,7 @@ export function GuidedTripWizard({
       layerIndexes,
       answers: landed ? { ...quiz, distance: 'short' } : quiz,
       month: tripMonth,
+      taste: quizTaste,
       origin: landed
         ? { lat: arrivalDest.lat, lon: arrivalDest.lon }
         : (originPoint ? { lat: originPoint.lat, lon: originPoint.lon } : null),
@@ -810,7 +818,7 @@ export function GuidedTripWizard({
         .filter((x) => x.dest),
     }));
   }, [quiz, destinations, countryInsights, layerIndexes, tripMonth, originPoint,
-    countryCovers, countryBriefs, booked.travel, arrivalDest]);
+    countryCovers, countryBriefs, booked.travel, arrivalDest, quizTaste]);
 
   /** The names the quiz recommended, for the map's dotted outline. */
   const recommendedNames = useMemo(
@@ -1084,6 +1092,8 @@ export function GuidedTripWizard({
     return bed > 0 ? Math.round(bed * groupSize) : null;
   }, [nightBeds, groupSize]);
   const passesStayFilters = useCallback((id, dest) => {
+    // T755: an airport of a multi-airport city is never a stay of its own.
+    if (isGateway(dest)) return false;
     if (stayMinRating > 0 && (dest.rating?.score ?? 0) < stayMinRating) return false;
     if (stayMaxNightly > 0) {
       const n = nightlyFor(id, dest);
@@ -1157,7 +1167,7 @@ export function GuidedTripWizard({
   const cityIndex = useMemo(() => {
     const m = new Map();
     for (const [id, d] of Object.entries(destinations)) {
-      if (!d?.city) continue;
+      if (!d?.city || isGateway(d)) continue;
       m.set(`${String(d.iso2 || '').toUpperCase()}|${cityKeyName(cityLabel(d.city)).toLowerCase()}`, id);
     }
     return m;
@@ -1590,6 +1600,7 @@ export function GuidedTripWizard({
                 <StepStays
                   {...{ titleTag: StepTitle, stopDates, destinations, nights, setCityNights, ownStays, setOwnStay, bedEstimate }}
                   {...{ adults, kids, stayQuery, setStayQuery, pickedStopId }}
+                  taste={quizTaste} month={tripMonth}
                 />
               )}
 

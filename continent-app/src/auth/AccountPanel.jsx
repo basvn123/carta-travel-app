@@ -7,8 +7,13 @@ import {
   ArrowLeftIcon, CheckIcon, ChevronRightIcon, CloseIcon, DownloadIcon,
   FeedbackIcon, FriendsIcon, HomeIcon, InfoIcon, LockIcon, PencilIcon,
   PersonIcon, QuestionIcon, PiggyIcon, ReceiptIcon, ShareIcon, ShieldIcon, SignOutIcon,
-  TrashIcon,
+  SparkIcon, TrashIcon,
 } from '../components/Icons.jsx';
+import { useFirstRun } from '../lib/firstRunContext.js';
+import { tasteListText } from '../lib/taste.js';
+
+// T764: "Your travel style", the taste profile's sheet, loads when opened.
+const TasteSheet = React.lazy(() => import('../browse/TasteSheet.jsx').then((m) => ({ default: m.TasteSheet })));
 
 // The explainer page (scripts/explainer/numbers.mjs), a static page outside
 // the app, built as about/numbers.html and served at this clean path.
@@ -253,6 +258,10 @@ export function AccountPanel({
   // What the lifestyle row states without being opened: the bed and the
   // habits, the two answers that move every price in the app. A comma, never
   // a bullet, because this app has no middot separators.
+  // T764: the taste profile beside it, in the words the Explore chip uses.
+  const firstRun = useFirstRun();
+  const tasteSummary = tasteListText(firstRun?.choices?.taste, t) || t('taste.notSet');
+  const [tasteOpen, setTasteOpen] = useState(false);
   const lifestyleProfile = matchProfile(lifestyle || {});
   const lifestyleSummary = [
     t(`stay.${stayTier || 'home'}`),
@@ -784,7 +793,20 @@ export function AccountPanel({
                   value={lifestyleSummary}
                   onClick={() => { onClose?.(); onOpenLifestyle(); }}
                 />
+                {firstRun?.setChoices && (
+                  <MenuRow
+                    icon={<SparkIcon size={17} />}
+                    label={t('taste.title')}
+                    value={tasteSummary}
+                    onClick={() => setTasteOpen(true)}
+                  />
+                )}
               </div>
+              {tasteOpen && (
+                <React.Suspense fallback={null}>
+                  <TasteSheet onClose={() => setTasteOpen(false)} />
+                </React.Suspense>
+              )}
             </div>
           )}
 

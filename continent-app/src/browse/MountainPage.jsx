@@ -6,7 +6,7 @@ import { MonthStrip } from '../components/MonthStrip.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
 import { DetailPage, PlaceMap } from './DetailSkeleton.jsx';
 import { PhotoGallery } from './PhotoGallery.jsx';
-import { ItemHead, ItemIcon } from './ItemParts.jsx';
+import { ItemHead, ItemIcon, NatureHeadLines } from './ItemParts.jsx';
 import { Button, Money } from '../components/ui/index.js';
 import { toPhotos } from '../lib/itemPhotos.js';
 import { beforeGoItems } from '../lib/beforeGo.js';
@@ -419,6 +419,7 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
           sub={mountain.nameLocal || ''}
           where={[mountain.range, countryName].filter(Boolean).join(', ')}
           rating={rating}
+          after={<NatureHeadLines rating={rating} place={countryName} />}
           gem={isHiddenGem(mountain)}
         />
       )}

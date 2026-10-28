@@ -115,7 +115,7 @@ export function loadListedLakes(country) {
 /** The lakes of several countries at once, flattened and re-ranked. */
 export function loadLakesFor(countries) {
   return Promise.all((countries || []).map((cc) => loadLakes(cc)))
-    .then((lists) => lists.flat().filter(Boolean).sort((a, b) => b.score - a.score));
+    .then((lists) => lists.flat().filter(Boolean).sort((a, b) => (b.v5?.score ?? -1) - (a.v5?.score ?? -1)));
 }
 
 /** A shared lake link, read once at startup: "#lake=si-lake-bled-Q207302&lc=SI".

@@ -11,7 +11,7 @@ import {
   tripHeadline, shapeLabel, transportLabel, seasonLabel, tripTags, cardThumb,
 } from '../lib/tripStory.js';
 import { mountainRating, isLiftServed, liftLabel } from '../lib/mountainStory.js';
-import { trailRating, isListed } from '../lib/trailCards.js';
+import { trailRating } from '../lib/trailCards.js';
 import { bandChip } from '../lib/regions.js';
 import { RouteIcon } from '../components/Icons.jsx';
 import { openShared } from '../lib/sharedElement.js';
@@ -126,14 +126,12 @@ export const TripCard = React.memo(function TripCard({ card, km, onOpen, t, coun
   const { tr, assoc, price } = card;
   const isCityDay = tr.category === 'citytrip';
   const fill = useMemo(() => trailFilling(card, { t, countryName }), [card, t, countryName]);
-  // The walk's own rating, not the nearest town's: scored within its country
-  // from open signals only (pipeline/trails/rate.py). A city day carries its
-  // town's. A listed row says it is not scored rather than showing a number
-  // it never earned.
+  // The walk's own rating, not the nearest town's: rating v5 (T763), one
+  // Europe-wide ladder for walks. A city day carries its town's. A walk
+  // listed without a v5 score shows the NotYet slot in the badge's place
+  // (ScoreChip draws it for { unscored }), never a number it never earned.
   const rating = isCityDay ? assoc.dest?.rating : trailRating(tr);
-  const seal = rating
-    ? <RatingBadge rating={rating} size="sm" showGem={false} />
-    : (!isCityDay && isListed(tr) ? <span className="places-card-unrated">{t('trails.notScored')}</span> : null);
+  const seal = rating ? <RatingBadge rating={rating} size="sm" showGem={false} /> : null;
   // The small facts lead the hook line in the body (T394): nothing but the
   // strip sits on the photograph any more.
   const lead = [
@@ -169,18 +167,18 @@ export const TripCard = React.memo(function TripCard({ card, km, onOpen, t, coun
 /** A ranked or listed cycle route. A listed row has no score, and says so in
  *  the seal's place rather than leaving a gap. */
 export const CycleCard = React.memo(function CycleCard({ r, countryName, onOpen, t }) {
-  const rating = r.score != null ? cycleRating(r, t) : null;
+  // Rating v5 (T763): an unscored route draws the NotYet slot in the seal.
+  const rating = cycleRating(r, t);
+  const listed = !rating || rating.unscored;
   const fill = useMemo(() => cycleFilling(r, { t, countryName }), [r, t, countryName]);
   return (
     <PlaceCard
-      className={`places-bcard cycle-card${rating ? '' : ' cycle-card-listed'}`}
-      testId={rating ? 'cycle-card' : 'cycle-listed-card'}
+      className={`places-bcard cycle-card${listed ? ' cycle-card-listed' : ''}`}
+      testId={listed ? 'cycle-listed-card' : 'cycle-card'}
       onClick={() => onOpen(r)}
       sharedKey={r.id}
       media={okPhoto(r.img) ? <PlaceCardPhoto url={r.img} /> : <PlaceCardNoPhoto />}
-      seal={rating
-        ? <RatingBadge rating={rating} size="sm" showGem={false} />
-        : <span className="cycle-card-unrated">{t('cycle.notScored')}</span>}
+      seal={<RatingBadge rating={rating} size="sm" showGem={false} />}
       strip={<CardStrip kind="cycle" row={r} />}
       fill={fill}
     />

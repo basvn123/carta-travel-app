@@ -6,7 +6,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
 import { DetailPage, PlaceMap } from './DetailSkeleton.jsx';
 import { PhotoGallery } from './PhotoGallery.jsx';
-import { ItemHead, ItemIcon } from './ItemParts.jsx';
+import { ItemHead, ItemIcon, NatureHeadLines } from './ItemParts.jsx';
 import { Button, Money } from '../components/ui/index.js';
 import { toPhotos } from '../lib/itemPhotos.js';
 import { beforeGoItems } from '../lib/beforeGo.js';
@@ -355,6 +355,7 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
           sub={lake.nameLocal || ''}
           where={[lake.region, countryName].filter(Boolean).join(', ')}
           rating={rating}
+          after={<NatureHeadLines rating={rating} place={countryName} />}
           gem={isHiddenGem(lake)}
         />
       )}

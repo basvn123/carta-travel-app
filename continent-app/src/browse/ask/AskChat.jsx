@@ -16,6 +16,7 @@ import {
   loadChats, saveChats, upsertChat, removeChat, groupChats, newId, titleOf, mergeChats,
 } from '../../lib/ask/sessions.js';
 import { AskTurn } from './AskTurn.jsx';
+import { useTaste } from '../WhyItMatches.jsx';
 import { CornerArrow, SendIcon } from './marks.jsx';
 import { useTypedHint } from './useTypedHint.js';
 import '../../styles/75-ask.css';
@@ -271,15 +272,17 @@ export default function AskChat(props) {
   useFocusTrap(panelRef, onClose, { initialFocusRef: titleRef, enabled: isPhone });
   React.useEffect(() => { if (!isPhone) fieldRef.current?.focus(); }, [isPhone]);
 
+  // T766: the traveller's taste, so Ask ranks with the same fit as Explore.
+  const taste = useTaste();
   const ctx = React.useMemo(() => ({
-    t, lang, rows, byId, guided, price, labels, retrieve: RETRIEVE, trip, filteredRows: filters?.rows || null,
+    t, lang, rows, byId, guided, price, labels, retrieve: RETRIEVE, trip, filteredRows: filters?.rows || null, taste,
     favorites, onToggleFav, onWritten, onSubject, onAsk: (q) => ask(q),
     onPick: (place, month) => ask(place.city, { pick: { id: place.id, month: month || null }, subject: { id: place.id, city: place.city } }),
     onNotYet: (month) => ask(t('askChat.notYet'), { notYet: { month: month || null } }),
     onOpen: (id) => { if (isPhone) onClose(); onOpenPlace(id); },
     onApply: onApply ? (facets, keep) => { if (isPhone) onClose(); onApply(facets, keep); } : null,
     onPlan: onPlanTrip ? (route) => { onClose(); onPlanTrip({ transport: 'public', ...route }); } : null,
-  }), [t, lang, rows, byId, guided, price, labels, trip, filters, favorites, onToggleFav, onWritten, onSubject, ask, isPhone, onClose, onOpenPlace, onPlanTrip, onApply]);
+  }), [t, lang, rows, byId, guided, price, labels, trip, filters, taste, favorites, onToggleFav, onWritten, onSubject, ask, isPhone, onClose, onOpenPlace, onPlanTrip, onApply]);
 
   const [moreShown, setMoreShown] = React.useState(false);
   const starts = START.map((k) => t(k));

@@ -19,6 +19,8 @@
  * distance never appears.
  */
 
+import { isGateway } from './rating.js';
+
 const R_KM = 6371;
 
 export function haversineKm(lat1, lon1, lat2, lon2) {
@@ -55,7 +57,7 @@ export function nearbyPlaces(dest, destinations, limit = 4) {
   const self = baseCity(dest.city).toLowerCase();
   const scored = [];
   for (const [id, d] of Object.entries(destinations)) {
-    if (id === dest.id) continue;
+    if (id === dest.id || isGateway(d)) continue;
     const dlat = d.city_lat ?? d.lat;
     const dlon = d.city_lon ?? d.lon;
     if (dlat == null || dlon == null) continue;

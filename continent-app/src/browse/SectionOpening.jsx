@@ -290,7 +290,7 @@ function SectionStoryCard({ layer, row, describe, photo, photos, onOpen, sharedK
     <StoryCard
       photo={<HeroImage url={url} city={d.name} iso2={d.cc} maxWidth={STORY_MAX} sizes={STORY_SIZES} ratio={[4, 5]} />}
       status={status}
-      score={d.rating && d.rating.score != null ? <ScoreChip rating={d.rating} size="sm" /> : null}
+      score={d.rating ? <ScoreChip rating={d.rating} size="sm" /> : null}
       title={d.name}
       onOpen={open}
       meta={where ? (

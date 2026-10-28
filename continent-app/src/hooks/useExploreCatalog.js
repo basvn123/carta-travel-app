@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
 import { matchesAnyKind } from '../lib/trip_kinds.js';
-import { isFullRatingRange } from '../lib/rating.js';
+import { isFullRatingRange, isGateway } from '../lib/rating.js';
+import { fit, sortForYou, strongMatch } from '../lib/match.js';
+import { isEmptyTaste } from '../lib/taste.js';
 import { isBigPlace } from '../lib/placeSize.js';
 import { priceDays, DEFAULT_PRICE_REQUEST } from '../lib/price/index.js';
 import { duplicateHeroes } from '../lib/heroImage.js';
@@ -23,7 +25,7 @@ function baseCity(name) {
 export function dedupeGateways(rows) {
   const out = [];
   for (const p of rows) {
-    if (p.gateway_of) continue;
+    if (isGateway(p)) continue;
     out.push(p.tier === 'airport' ? { ...p, city: baseCity(p.city) } : p);
   }
   return out;
@@ -47,7 +49,13 @@ export function useExploreCatalog({
   reachHours, reachMinutes, sortKey, showFavOnly, favorites,
   indices: providedIndices,
   searchHits = null,
+  // T765: the traveller's taste, the month the list speaks about, and the
+  // Strong match toggle (70% and up, a filter the traveller sets; fit alone
+  // never hides a place).
+  taste = null, month = null, strongOnly = false,
 }) {
+  const hasTaste = !!taste && !isEmptyTaste(taste);
+  const strongActive = hasTaste && strongOnly;
   const rLo = ratingRange?.[0] ?? 0;
   const rHi = ratingRange?.[1] ?? 10;
   const ratingActive = !isFullRatingRange(ratingRange);
@@ -95,6 +103,8 @@ export function useExploreCatalog({
         country_badge: d.country_badge ?? null,
         image: dupHeroes.has(destId) ? null : (d.image?.url || null),
         climate: d.climate || null,
+        // T765: the place taste profile the "For you" sort and the match read.
+        taste: d.taste || null,
         cost: ix,
         // The card's one line is composed from these, not shipped ready-made:
         // most of the catalogue's blurbs are category counts (placeStory.js).
@@ -150,12 +160,13 @@ export function useExploreCatalog({
         const m = reachMinutes.get(p.id);
         if (m == null || m > reachCutoffMin) return false;
       }
+      if (strongActive && !strongMatch(fit(taste, p.taste, month))) return false;
       return true;
     });
     // favorites only re-filters while the shortlist view is on (favDep).
   }, [all, q, searchHits, countryFilter, countryNot, tripKinds, ratingActive, rLo, rHi, gemOnly,
     unescoOnly, topBeachOnly, bigOnly, showFavOnly, favDep,
-    reachActive, reachCutoffMin, reachMinutes]);
+    reachActive, reachCutoffMin, reachMinutes, strongActive, taste, month]);
 
   const rows = useMemo(() => {
     const raw = sortKey || 'beauty';
@@ -175,9 +186,12 @@ export function useExploreCatalog({
       const dayOf = (p) => (p.cost?.dayEur ?? Infinity);
       base.sort((a, b) => dayOf(a) - dayOf(b) || ratingVal(b) - ratingVal(a));
     }
+    // T765: "For you" (lib/match.js), Q + lambda (F - 0.5); with no taste it
+    // is the rating order, so nothing changes for a traveller who set none.
+    else if (key === 'foryou' && hasTaste) return sortForYou(base, taste, month);
     else base.sort((a, b) => ratingVal(b) - ratingVal(a));
     return base;
-  }, [filtered, sortKey, topPick]);
+  }, [filtered, sortKey, topPick, hasTaste, taste, month]);
 
   return { all, rows, availableCountries, indices };
 }

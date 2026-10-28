@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { useBcp47, useMonths, whenText } from './flowHooks.js';
 import { formatMoney } from '../../lib/money.js';
 import { useFirstRun } from '../../lib/firstRunContext.js';
+import { normalizeTaste } from '../../lib/taste.js';
 import { likePhotos } from './guidePhotos.js';
 import { syncParty, syncWhen } from './appSync.js';
 import { QUESTIONS, toggleValue } from './questions.js';
@@ -61,6 +62,11 @@ function Foot({ onContinue, disabled = false, label }) {
 
 const KIND_ICONS = { solo: 'PersonIcon', couple: 'HeartIcon', friends: 'FriendsIcon', family: 'FamilyIcon', group: 'FriendsIcon' };
 
+/** The Who rows' options (T764: shared with the taste profile's first question). */
+export function partyKindOptions(t) {
+  return Object.keys(PARTY_KINDS).map((k) => ({ value: k, icon: KIND_ICONS[k], label: t(`pf.who.${k}`) }));
+}
+
 export function WhoScreen({ settings, commit, doneLabel }) {
   const { t } = useI18n();
   const app = useSettings();
@@ -75,7 +81,7 @@ export function WhoScreen({ settings, commit, doneLabel }) {
     <>
       <ChoiceRows
         label={t('pf.q.who')}
-        options={Object.keys(PARTY_KINDS).map((k) => ({ value: k, icon: KIND_ICONS[k], label: t(`pf.who.${k}`) }))}
+        options={partyKindOptions(t)}
         value={[p.kind]}
         onPick={(k) => setS((cur) => withPartyKind(cur, k))}
       />
@@ -328,12 +334,12 @@ export function NowUntilScreen({ settings, commit, doneLabel }) {
 // ---- What you're up for: photo tiles (after GetYourGuide's rails) ----
 
 /** Up to three kinds of trip, each a real catalogue photograph with its name
- *  under it (never on it). Selected is the brown edge and a tick. */
-export function LikesScreen({ settings, commit, doneLabel }) {
+ *  under it (never on it). Selected is the brown edge and a tick. T764: the
+ *  tiles are LikeTiles, shared with the taste profile's "What do you go for". */
+export function LikeTiles({ picked, onToggle }) {
   const { t } = useI18n();
   const ctx = useFirstRun();
   const q = QUESTIONS['g:likes'];
-  const [picked, setPicked] = useState(settings.guide.likes);
   const keys = q.options.map((o) => o.value);
   const photos = useMemo(() => likePhotos(ctx?.data?.destinations, keys), [ctx?.data?.destinations]); // eslint-disable-line react-hooks/exhaustive-deps -- keys are the fixed option list
   // The layer photographs carry an author and a licence; they are credited
@@ -351,7 +357,8 @@ export function LikesScreen({ settings, commit, doneLabel }) {
               variant="quiet"
               className={`pf-like${on ? ' is-on' : ''}`}
               aria-pressed={on}
-              onClick={() => setPicked((cur) => toggleValue(q, cur, o.value))}
+              data-like={o.value}
+              onClick={() => onToggle(o.value)}
             >
               <span className="pf-like-media">
                 <HeroImage url={ph?.url} city={ph?.city || t(o.labelKey)} iso2={ph?.iso2} className="pf-like-img" ratio={[1, 1]} maxWidth={320} />
@@ -363,6 +370,19 @@ export function LikesScreen({ settings, commit, doneLabel }) {
         })}
       </div>
       {credits && <p className="pf-credit">{t('pf.likes.credit', { list: credits })}</p>}
+    </>
+  );
+}
+
+export function LikesScreen({ settings, commit, doneLabel }) {
+  const q = QUESTIONS['g:likes'];
+  const ctx = useFirstRun();
+  // T766: a trip with no likes yet starts from the traveller's travel style.
+  const [picked, setPicked] = useState(() => (settings.guide.likes.length
+    ? settings.guide.likes : normalizeTaste(ctx?.choices?.taste).likes));
+  return (
+    <>
+      <LikeTiles picked={picked} onToggle={(v) => setPicked((cur) => toggleValue(q, cur, v))} />
       <Foot
         disabled={!picked.length}
         label={doneLabel}

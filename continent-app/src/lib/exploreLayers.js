@@ -16,6 +16,8 @@
  * cycling.
  */
 
+import { bandForScore, inkStep } from './rating.js';
+
 const LAYER_COUNT_KEY = {
   trails: 'trail', beaches: 'beach', lakes: 'lake', mountains: 'mountain', cycling: 'cycling',
 };
@@ -82,9 +84,9 @@ export function mapRowOf(layer, row, { name, cc, country, where = '', score = nu
     iso2: cc || '',
     lat: at.lat,
     lon: at.lon,
-    // The map inks a dot by tier; a score out of ten maps onto the same
-    // three steps the catalogue uses.
-    rating: s == null ? null : { score: s, tier: s >= 8.5 ? 3 : s >= 7.5 ? 2 : s >= 6 ? 1 : 0 },
+    // The map inks a dot by its v5 band's ink step (lib/rating.js, T763);
+    // `score` is the row's v5 score.
+    rating: s == null ? null : { score: s, tier: inkStep(bandForScore(s)) },
     place: { class: 'town' },
     image,
     blurb: where,

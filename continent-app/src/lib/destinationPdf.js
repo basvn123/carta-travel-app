@@ -32,6 +32,7 @@ import { routePageUrlHere } from './routeLinks.js';
 import { destShareUrl } from './dossier.js';
 import { trailClimbUp, gradeLabelKey } from './trailStory.js';
 import { pdfOutdoorRows } from './destOverview.js';
+import { classRankLine, natureRating, poiLabelWord, ratingWhy, ratingWords } from './rating.js';
 import { TOKEN_COLOURS as T } from '../map/tokenColors.js';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -123,6 +124,15 @@ export async function downloadDestinationPdf({
   const MONO = has.Mono ? 'Mono' : 'courier';
 
   const d = dossier;
+  // The rating in v5's words (T763): the wire's rating wins over the
+  // dossier's copy, lib/rating.js gives the word, the class rank and the
+  // reason in the PDF's language. A PDF is shared, so no personal match.
+  const verdict = (d.verdict || destination.rating)
+    ? { ...(d.verdict || {}), ...(destination.rating || {}) }
+    : null;
+  const verdictWords = ratingWords(verdict, t);
+  const verdictRank = classRankLine(verdict, t);
+  const verdictWhy = await ratingWhy(destination.id, verdict, lang);
   const city = clean((destination.city || d.place?.name || '').replace(/\s*\([^)]*\)\s*$/, ''));
   const country = clean(destination.country || d.place?.country || '');
   const today = new Intl.DateTimeFormat(lang === 'en' ? 'en-GB' : lang, { dateStyle: 'long' }).format(new Date());
@@ -251,7 +261,7 @@ export async function downloadDestinationPdf({
 
   // The fact strip.
   const facts = [];
-  if (d.verdict?.score != null) facts.push([T('pdf.rating'), `${d.verdict.score.toFixed(1)} / 10`]);
+  if (verdictWords) facts.push([T('pdf.rating'), clean(verdictWords.text)]);
   if (d.place?.visit_h != null) facts.push([T('pdf.factVisit'), `${Math.round(d.place.visit_h)} h`]);
   if (d.when?.best?.length) facts.push([T('pdf.factBest'), monthList(d.when.best)]);
   if (cost?.dayEur != null) facts.push([T('pdf.factDay'), eurFmt(cost.dayEur)]);
@@ -275,11 +285,12 @@ export async function downloadDestinationPdf({
 
   // ------------------------------------------------------------ at a glance
   const glance = [];
-  if (d.verdict?.score != null) {
-    let v = `${d.verdict.score.toFixed(1)} / 10`;
-    if (d.verdict.label) v += `, ${d.verdict.label}`;
-    if (d.verdict.country_rank === 1) v += `. ${T('card.topOf', { country })}`;
-    else if (d.verdict.country_badge) v += `. ${T('card.rankIn', { n: d.verdict.country_rank, country })}`;
+  if (verdictWords) {
+    let v = clean(verdictWords.text);
+    if (verdictRank) v += `. ${clean(verdictRank)}`;
+    if (verdict.country_rank === 1) v += `. ${T('card.topOf', { country })}`;
+    else if (verdict.country_badge) v += `. ${T('card.rankIn', { n: verdict.country_rank, country })}`;
+    if (verdictWhy) v += `. ${clean(verdictWhy)}`;
     glance.push([T('pdf.rating'), v]);
   }
   if (d.place?.visit_h != null) {
@@ -446,7 +457,10 @@ export async function downloadDestinationPdf({
         font(MONO, 'normal', 7.5, C.mute);
         doc.text(bits.join('  '), M + W - 60, y + 0.4, { baseline: 'top' });
         font(MONO, 'bold', 8, C.soft);
-        doc.text(`${kmFmt(r.km)} ${r.bearing || ''}${r.score != null ? `   ${nf(r.score, 1)}` : ''}`, PAGE_W - M, y + 0.3, { baseline: 'top', align: 'right' });
+        // A nature row's score only from its v5 block, with its word; a row
+        // without one (the dossier's around rows predate v5) prints none.
+        const rw = r.v5 ? ratingWords(natureRating(r), t) : null;
+        doc.text(`${kmFmt(r.km)} ${r.bearing || ''}${rw ? `   ${clean(rw.text)}` : ''}`, PAGE_W - M, y + 0.3, { baseline: 'top', align: 'right' });
         y += lh(9) + 1.2;
       }
       y += 1.5;
@@ -520,7 +534,8 @@ export async function downloadDestinationPdf({
       doc.text(nameL, x + 7, y, { baseline: 'top' });
       let yy = y + nameL.length * lh(10);
       font(MONO, 'normal', 7.5, C.mute);
-      doc.text([h.kind, h.dist_km != null ? kmFmt(h.dist_km) : ''].filter(Boolean).join('   '), x + 7, yy, { baseline: 'top' });
+      // The POI's label (Must-see, Recommended, Worth a look), never a number.
+      doc.text([h.label ? clean(poiLabelWord(t, h.label)) : '', h.kind, h.dist_km != null ? kmFmt(h.dist_km) : ''].filter(Boolean).join('   '), x + 7, yy, { baseline: 'top' });
       yy += lh(7.5);
       if (h.fact) {
         const factL = wrap(h.fact, 8.5, colW - 8);
@@ -558,7 +573,7 @@ export async function downloadDestinationPdf({
       doc.text(clean(tr.name), M, y, { baseline: 'top' });
       if (tr.rating?.score != null) {
         font(MONO, 'bold', 8.5, C.rate);
-        doc.text(`${tr.rating.score.toFixed(1)}${tr.rating.label ? `  ${clean(tr.rating.label)}` : ''}`, PAGE_W - M, y + 0.5, { baseline: 'top', align: 'right' });
+        doc.text(clean(ratingWords(tr.rating, t)?.text || ''), PAGE_W - M, y + 0.5, { baseline: 'top', align: 'right' });
       }
       let yy = y + lh(10);
       font(MONO, 'normal', 7.8, C.mute);
