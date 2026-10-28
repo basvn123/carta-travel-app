@@ -169,7 +169,15 @@
 
 /* On a phone the card lies on its side, photo left and words right, about
    five to a screen. The reason line waits for the place's page. */
+/* T765: the band word (phone) and the match line under the place. */
+.explore-shell .xov--card .xpc-rateline { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--space-2); }
+.explore-shell .xov--card .xpc-rateline:empty { display: none; }
+.explore-shell .xov--card .xpc-rateline .xmatch { display: block; flex-basis: 100%; font-weight: 400; }
+.explore-shell .xov--card .xpc-band { display: none; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+
 @media (max-width: 768px) {
+  .explore-shell .xov--card .xpc-score .score-chip-band { display: none; }
+  .explore-shell .xov--card .xpc-band { display: inline; }
   .explore-shell .xrows.xrows--cards { gap: var(--space-3) 0; }
   .explore-shell .xov--card .xrow-hit.xpc-hit {
     flex-direction: row;

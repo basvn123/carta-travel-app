@@ -115,7 +115,7 @@ export function loadListedBeaches(country) {
  *  the all-Europe view, which is what the tab opens on. */
 export function loadBeachesFor(countries) {
   return Promise.all((countries || []).map((cc) => loadBeaches(cc)))
-    .then((lists) => lists.flat().filter(Boolean).sort((a, b) => b.score - a.score));
+    .then((lists) => lists.flat().filter(Boolean).sort((a, b) => (b.v5?.score ?? -1) - (a.v5?.score ?? -1)));
 }
 
 /** A shared beach link, read once at startup: "#beach=gr-navagio-Q1234&bc=GR".

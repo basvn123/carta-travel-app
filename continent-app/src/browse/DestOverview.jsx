@@ -79,7 +79,7 @@ function OverviewDo({ p }) {
   if (!highlights.length) return null;
   return (
     <Section id="ov-see" title={t('dest.whatToSee')} className="dov-do">
-      <SightList items={highlights.slice(0, OVERVIEW_DO)} lang={lang} />
+      <SightList items={highlights.slice(0, OVERVIEW_DO)} lang={lang} t={t} />
       {highlights.length > OVERVIEW_DO && <SeeAll t={t} onClick={() => goTab('nearby', 'sec-highlights')} />}
     </Section>
   );

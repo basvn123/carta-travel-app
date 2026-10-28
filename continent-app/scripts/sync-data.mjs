@@ -358,9 +358,10 @@ function writeSplit(core) {
     for (const [f, how] of Object.entries(RANK_FIELDS)) {
       if (!(f in a)) { if (f in b) rankBad += 1; continue; }
       const full = a[f];
+      // T765: a field with a `map` (the compact taste) ships what map returns.
       const exp = how === true || full == null || typeof full !== 'object' || Array.isArray(full)
         ? full
-        : Object.fromEntries(Object.entries(full).filter(([k]) => (!how.pick || how.pick.includes(k))
+        : how.map ? how.map(full) : Object.fromEntries(Object.entries(full).filter(([k]) => (!how.pick || how.pick.includes(k))
           && (!how.omit || !how.omit.includes(k))));
       if (JSON.stringify(exp) !== JSON.stringify(b[f])) rankBad += 1;
     }

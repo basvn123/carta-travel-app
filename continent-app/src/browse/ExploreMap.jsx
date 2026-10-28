@@ -1,3 +1,5 @@
+import { bandOf, inkStep, inkStepFromRank, isGateway } from '../lib/rating.js';
+import { MatchLine } from './WhyItMatches.jsx';
 import React, { useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -345,7 +347,8 @@ export function ExploreMap({
         city: p.city,
         country: p.country,
         cc: p.iso2 || '',
-        tier: p.rating?.tier ?? 0,
+        // The pin's ink step from the v5 band (lib/rating.js, T763).
+        tier: inkStep(bandOf(p.rating)),
         score: p.rating?.score ?? null,
         gem: p.rating?.hidden_gem ? 1 : 0,
         r: KIND_RADIUS[kindOf(p)] || 5.5,
@@ -360,14 +363,15 @@ export function ExploreMap({
     const byId = new Map(source.map((p) => [p.id, p]));
     return {
       type: 'FeatureCollection',
-      features: pins.filter(drawable).map((b) => {
+      // T755: a gateway airport is never a pin of its own; its city is.
+      features: pins.filter((b) => drawable(b) && !b.gateway && !isGateway(byId.get(b.id))).map((b) => {
         const p = byId.get(b.id);
         if (p) return drawable(p) ? loaded(p) : loaded({ ...p, lat: b.lat, lon: b.lon });
         return {
           type: 'Feature',
           geometry: { type: 'Point', coordinates: [b.lon, b.lat] },
           properties: {
-            id: b.id, city: '', country: '', tier: b.band, score: null,
+            id: b.id, city: '', country: '', tier: inkStepFromRank(b.band), score: null,
             gem: b.hiddenGem ? 1 : 0, r: 5.5, eur: -1, est: 0, ld: 0,
           },
         };
@@ -966,9 +970,11 @@ export function ExploreMap({
               <div className="xmap-card-body">
                 <div className="xmap-card-head">
                   <span className="xmap-card-name">{peek.city}</span>
-                  <ScoreChip rating={{ score: peek.score, tier: peek.tier }} size="sm" />
+                  <ScoreChip rating={{ score: peek.score }} size="sm" />
                 </div>
                 <p className="xmap-card-sub">{peek.country}</p>
+                {/* T765: the match under the pin's card, from 55% up. */}
+                <MatchLine place={source.find((p) => p.id === peek.id)} />
                 {peek.eur >= 0 && (
                   <p className="xmap-card-eur">
                     <span className="xmap-card-eur-line">

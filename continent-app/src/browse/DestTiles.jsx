@@ -5,7 +5,7 @@ import { BootIcon, CompassIcon, MusicIcon, SwimIcon, SparkIcon, MapPinIcon } fro
 import { FeaturePhoto } from './AroundHere.jsx';
 import { safeUrl } from '../lib/format.js';
 import { activityLink } from '../lib/activityAffiliates.js';
-import { tierForScore } from '../lib/rating.js';
+import { natureRating, poiLabelWord } from '../lib/rating.js';
 import { featureHref, linkOpener } from '../lib/featureHref.js';
 import { cleanName, fmtKm } from './destParts.js';
 import { doFacts } from '../lib/doFacts.js';
@@ -118,7 +118,7 @@ export function DoList({ items, t, monthList, onOpenFeature }) {
 
 /** "What to see": the highlights as a hairline list, for a place with no
  *  things to do (1.4 sketch 4.4). Text, not links: a highlight has no page. */
-export function SightList({ items, lang }) {
+export function SightList({ items, lang, t }) {
   if (!items.length) return null;
   return (
     <ul className="ddo-list dsee-list">
@@ -128,8 +128,10 @@ export function SightList({ items, lang }) {
             <MapPinIcon size={16} className="ddo-list-icon" />
             <span className="ddo-list-main">
               <span className="ddo-list-name">{h.name}</span>
-              {((h.kind && lang === 'en') || h.dist_km != null) && (
+              {((h.kind && lang === 'en') || h.dist_km != null || (h.label && t)) && (
                 <span className="ddo-list-meta">
+                  {/* The POI's label from lib/rating.js, never a number (T763). */}
+                  {h.label && t && <span data-poi-label={h.label}>{poiLabelWord(t, h.label)}</span>}
                   {h.kind && lang === 'en' && <span>{h.kind}</span>}
                   {h.dist_km != null && <span>{fmtKm(h.dist_km)}</span>}
                 </span>
@@ -164,7 +166,7 @@ export function OutdoorTile({ f, t, onOpenFeature }) {
           {f.km_len != null && <span>{t('dest.trackLong', { km: Math.round(f.km_len) })}</span>}
         </span>
       )}
-      rating={f.score != null ? <ScoreChip rating={{ score: f.score, tier: f.tier ?? 0 }} size="sm" /> : null}
+      rating={<ScoreChip rating={natureRating(f)} size="sm" />}
     />
   );
 }
@@ -198,9 +200,7 @@ export function TripTile({ tr, t, onSelect, onOpenItin }) {
           {tr.dist_km != null && <span>{`${tr.dist_km} km`}</span>}
         </span>
       )}
-      rating={tr.rating?.score != null
-        ? <ScoreChip rating={{ score: tr.rating.score, tier: tierForScore(tr.rating.score) }} size="sm" />
-        : null}
+      rating={tr.rating?.score != null ? <ScoreChip rating={tr.rating} size="sm" /> : null}
     />
   );
 }

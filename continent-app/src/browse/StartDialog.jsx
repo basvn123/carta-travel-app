@@ -2,10 +2,14 @@ import React from 'react';
 import { createPortal } from 'react-dom';
 import { Button, Field, IconButton } from '../components/ui/index.js';
 import { CloseIcon, SparkIcon } from '../components/Icons.jsx';
+import { LoadingBlock } from '../components/StateBlocks.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { useDialogExit } from '../lib/motion.js';
 import { openAskChat } from './ask/askChatStore.js';
 import '../styles/84-explore-overview.css';
+
+// T764: the taste profile's four questions load with the path, not with Explore.
+const TasteSteps = React.lazy(() => import('./TasteSheet.jsx').then((m) => ({ default: m.TasteSteps })));
 
 /**
  * The start dialog (T585, owner reference "Tell me what matters most"): the
@@ -15,25 +19,38 @@ import '../styles/84-explore-overview.css';
  * part of the settings line. "Show places" closes it. Since T595 it opens on
  * the first visit only; Ask Carta's field on the overview is the way back in.
  *
- * Shown once per device (localStorage, in try/catch), only from 1024 px, and
- * never when the address already carries a view (a shared link, a filter)
- * or the browser is driven by a script (navigator.webdriver: the verify
- * harnesses and the end check would find a dialog over every screen).
+ * Shown once per device (localStorage, in try/catch), and never when the
+ * address already carries a view (a shared link, a filter) or the browser is
+ * driven by a script (navigator.webdriver: the verify harnesses and the end
+ * check would find a dialog over every screen).
+ *
+ * T764 (rating v5, "Tell Carta what you like"): from 1024 px the dialog
+ * gains a door to the taste profile's four questions. Below 1024 px, where
+ * T585 showed nothing, a first visit with no taste set opens straight on
+ * those questions (mode 'taste'), with Skip one tap on every screen.
  */
 export const START_KEY = 'carta.exploreStart.v1';
 
-export function shouldOpenStart() {
-  if (typeof window === 'undefined') return false;
+const WIDE = '(min-width: 1024px)';
+
+/** 'home' (the T585 dialog), 'taste' (straight to the four questions) or null (no dialog). */
+export function startMode({ tasteEmpty = true } = {}) {
+  if (typeof window === 'undefined') return null;
   try {
-    if (!window.matchMedia('(min-width: 1024px)').matches) return false;
-    if (navigator.webdriver) return false;
+    if (navigator.webdriver) return null;
     const q = new URLSearchParams(window.location.search);
-    for (const k of q.keys()) if (k.startsWith('x')) return false;
-    if (window.location.hash) return false;
-    return window.localStorage.getItem(START_KEY) !== '1';
+    for (const k of q.keys()) if (k.startsWith('x')) return null;
+    if (window.location.hash) return null;
+    if (window.localStorage.getItem(START_KEY) === '1') return null;
+    if (window.matchMedia(WIDE).matches) return 'home';
+    return tasteEmpty ? 'taste' : null;
   } catch {
-    return false;
+    return null;
   }
+}
+
+export function shouldOpenStart(opts) {
+  return startMode(opts) != null;
 }
 
 export function markStartSeen() {
@@ -53,11 +70,12 @@ function partButton(part) {
   return document.querySelector(`.settings-line .settings-part-${part}`);
 }
 
-export function StartDialog({ t, onClose }) {
+export function StartDialog({ t, onClose, mode: firstMode = 'home' }) {
   const panelRef = React.useRef(null);
   const fieldRef = React.useRef(null);
   const after = React.useRef(null);
   const [text, setText] = React.useState('');
+  const [mode, setMode] = React.useState(firstMode);
   const exit = useDialogExit(onClose);
   // Whatever a row or the primary asked for runs once the dialog has gone
   // and the focus trap has handed focus back, so the part's own popover
@@ -66,7 +84,7 @@ export function StartDialog({ t, onClose }) {
     const f = after.current;
     if (f) setTimeout(f, 0);
   }, []);
-  useFocusTrap(panelRef, exit.close, { initialFocusRef: fieldRef });
+  useFocusTrap(panelRef, exit.close, { initialFocusRef: firstMode === 'home' ? fieldRef : null });
   const rows = React.useMemo(() => ROWS.map((r) => {
     const btn = partButton(r.part);
     const value = btn?.querySelector('.settings-part-value')?.textContent?.trim() || '';
@@ -84,34 +102,46 @@ export function StartDialog({ t, onClose }) {
   return createPortal(
     <div className={`xstart-scrim${exit.leaving ? ' is-leaving' : ''}`}
       onMouseDown={(e) => { if (e.target === e.currentTarget) exit.close(); }}>
-      <div className={`xstart${exit.leaving ? ' is-leaving' : ''}`} ref={panelRef}
+      <div className={`xstart${mode === 'taste' ? ' is-taste' : ''}${exit.leaving ? ' is-leaving' : ''}`} ref={panelRef}
         role="dialog" aria-modal="true" aria-labelledby="xstart-title">
         <IconButton className="xstart-close" tone="plain" label={t('a11y.close')} onClick={exit.close}>
           <CloseIcon size={16} />
         </IconButton>
-        <span className="xstart-icon" aria-hidden="true"><SparkIcon size={24} /></span>
-        <h2 className="xstart-title" id="xstart-title">{t('explore.startTitle')}</h2>
-        <Field ref={fieldRef} as="textarea" className="xstart-field" label={t('explore.startField')}
-          value={text} maxLength={500} rows={3} onChange={(e) => setText(e.target.value)} />
-        {rows.length > 0 && (
+        {mode === 'taste' ? (
+          <React.Suspense fallback={<LoadingBlock label={t('state.loading')} rows={4} />}>
+            <TasteSteps mode="start" onFinish={exit.close} titleId="xstart-title" />
+          </React.Suspense>
+        ) : (
           <>
-            <p className="xstart-lead">{t('explore.startDetails')}</p>
-            <div className="xstart-rows">
-              {rows.map((r) => (
-                <Button key={r.part} variant="secondary" block className="xstart-row"
-                  aria-haspopup="dialog"
-                  aria-label={t('settings.changeAria', { label: t(r.labelKey), value: r.value })}
-                  onClick={() => openPart(r.part)}>
-                  <span className="xstart-row-label">{t(r.labelKey)}</span>
-                  <span className="xstart-row-value">{r.value}</span>
-                </Button>
-              ))}
+            <span className="xstart-icon" aria-hidden="true"><SparkIcon size={24} /></span>
+            <h2 className="xstart-title" id="xstart-title">{t('explore.startTitle')}</h2>
+            <Field ref={fieldRef} as="textarea" className="xstart-field" label={t('explore.startField')}
+              value={text} maxLength={500} rows={3} onChange={(e) => setText(e.target.value)} />
+            <Button variant="secondary" block className="xstart-taste" iconStart={<SparkIcon size={20} />}
+              onClick={() => setMode('taste')}>
+              {t('taste.chipEmpty')}
+            </Button>
+            {rows.length > 0 && (
+              <>
+                <p className="xstart-lead">{t('explore.startDetails')}</p>
+                <div className="xstart-rows">
+                  {rows.map((r) => (
+                    <Button key={r.part} variant="secondary" block className="xstart-row"
+                      aria-haspopup="dialog"
+                      aria-label={t('settings.changeAria', { label: t(r.labelKey), value: r.value })}
+                      onClick={() => openPart(r.part)}>
+                      <span className="xstart-row-label">{t(r.labelKey)}</span>
+                      <span className="xstart-row-value">{r.value}</span>
+                    </Button>
+                  ))}
+                </div>
+              </>
+            )}
+            <div className="xstart-foot">
+              <Button variant="primary" onClick={show}>{t('explore.startGo')}</Button>
             </div>
           </>
         )}
-        <div className="xstart-foot">
-          <Button variant="primary" onClick={show}>{t('explore.startGo')}</Button>
-        </div>
       </div>
     </div>,
     document.body,

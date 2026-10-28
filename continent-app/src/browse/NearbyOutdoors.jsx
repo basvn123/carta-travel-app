@@ -22,7 +22,7 @@
 import { useI18n } from '../i18n/index.jsx';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { NB_ORDER, nbDistanceKm, useNeighbours } from '../lib/neighbours.js';
-import { trailRating } from '../lib/trailCards.js';
+import { natureRating } from '../lib/rating.js';
 import { stripDashes } from '../lib/format.js';
 import { NearestLine } from './CoverageEmpty.jsx';
 
@@ -50,13 +50,9 @@ const NB_NOUN = {
 /** The loader layer against the `onOpen` layer name the pages expect. */
 const OPEN_NB = { trail: 'trail', mountain: 'peak', lake: 'lake', beach: 'beach', cycling: 'cycle' };
 
-function ratingOf(layer, row) {
-  if (layer === 'trail') return trailRating(row);
-  if (Number.isFinite(row?.score)) {
-    return { score: row.score, tier: row.tier ?? 0 };
-  }
-  return null;
-}
+// Rating v5 (T763): every layer reads the neighbour's v5 block; one listed
+// without a score gets { unscored }, which ScoreChip draws as NotYet.
+const ratingOf = (layer, row) => natureRating(row);
 
 function kmLabel(km) {
   if (km == null) return null;
@@ -99,9 +95,7 @@ export function NearbyOutdoors({ row, cc, headings, onOpen }) {
                     <button type="button" className="nbx-item" onClick={() => onOpen?.(layer, n)}>
                       <span className="nbx-name">{n.name}</span>
                       <span className="nbx-meta">
-                        {rating
-                          ? <ScoreChip rating={rating} size="sm" />
-                          : <span className="nbx-unscored">{t('nb.unscored')}</span>}
+                        <ScoreChip rating={rating} size="sm" />
                         {km && <small className="mono">{km}</small>}
                       </span>
                     </button>

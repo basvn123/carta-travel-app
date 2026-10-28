@@ -20,6 +20,7 @@
  * AllTrails all forbid reuse of their ratings. Everything here is derived
  * from open data, and it says so.
  */
+import { natureRating } from './rating.js';
 import { DURATION_BANDS, durationBands, cycleShapeKey } from './routeEffort.js';
 
 /** A number the sentence can name, or nothing. Keeps "83 percent" out of the
@@ -340,23 +341,13 @@ export function countryPhrase(n, t) {
 
 /* ------------------------------------------------------------------ cards */
 
-/** Score bands, so a chip can carry a colour and a title the way every other
- *  layer's does. Rated rows start at the 5.4 gate, so the bands sit above it. */
-export function cycleTier(score) {
-  if (score == null) return 0;
-  if (score >= 8) return 3;
-  if (score >= 7) return 2;
-  if (score >= 6) return 1;
-  return 0;
-}
-
-/** The score as the rating OBJECT every card component in the app reads.
- *  RatingBadge and ScoreChip take `{score, tier, label}` and return null for
- *  a bare number, which is how the cycling page showed no score for months. */
+/** The rating ScoreChip reads, from the route's v5 block (T763): the
+ *  score, band and rank, or { unscored: true }. The band word comes from
+ *  lib/rating.js; `t` stays in the signature for the callers. */
+// eslint-disable-next-line no-unused-vars
 export function cycleRating(row, t) {
-  if (!row || row.score == null) return null;
-  const tier = cycleTier(row.score);
-  return { score: row.score, tier, label: t(`cycle.band${tier}`) };
+  if (!row) return null;
+  return natureRating(row);
 }
 
 const NET_KEY = {

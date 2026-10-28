@@ -44,6 +44,7 @@ import { knownForFacts } from '../lib/knownFor.js';
 import { geocodeAddress } from '../lib/geocode.js';
 import { cityLabel } from '../lib/placeName.js';
 import { scrollBehavior } from '../lib/motion.js';
+import { isGateway } from '../lib/rating.js';
 
 // One shared empty catalogue for the moments before data lands. A fresh `{}`
 // per render would hand every memo below a new dependency each time and
@@ -637,7 +638,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   const cityOptions = useMemo(
     () => (pendingCountry
       ? Object.entries(destinations)
-          .filter(([, d]) => d.country === pendingCountry)
+          .filter(([, d]) => d.country === pendingCountry && !isGateway(d))
           .map(([id, d]) => ({ value: id, label: cityLabel(d.city) }))
           .sort((a, b) => a.label.localeCompare(b.label))
       : []),

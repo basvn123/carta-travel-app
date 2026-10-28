@@ -22,6 +22,8 @@
 import {
   matchGuided, noCarOk, underOk, quietOk, monthOk, vibeScore, kmBetween, nbKm, NB_KM,
 } from '../guidedSearch.js';
+import { bandOf } from '../rating.js';
+import { fit, qualityOf } from '../match.js';
 import { budgetSearch, normalizeQuery, priceForBudget } from '../budgetSearch.js';
 import { planRoute } from '../cartaRoute.js';
 import { cheapestStayMonths } from '../costIndex.js';
@@ -35,9 +37,11 @@ export const PICKS = 6;
  *  of 86 with the rules alone, 50 with relevance at 0.1 and 47 at 0.35
  *  (T554 sweep), since the vibe scores already carry facet questions; the
  *  dense half earns its place on free text and in the written answer. */
-export const W = { rel: 0.1, vibe: 0.25, month: 0.1, rating: 0.15, fame: 0.15 };
-/** Fame on a log scale: 10,000 page views and up count in full. */
-const fameOf = (p) => Math.min(1, Math.log10((p.rating?.fame ?? 0) + 1) / 4);
+export const W = { rel: 0.1, vibe: 0.25, month: 0.1, rating: 0.15, fit: 0.15 };
+// T766: fame left the ranking (rating v5 folds recognition into the score);
+// its weight is the traveller's fit (lib/match.js), which counts only when
+// the traveller has a taste, so Ask and Explore order places alike.
+const fitOf = (p, ctx, month) => (ctx.taste ? fit(ctx.taste, p.taste, month) : null);
 
 /** One month of a place, from climate.m: [day high, night low, rain mm, score]. */
 export function monthRow(dest, m) {
@@ -103,10 +107,11 @@ function rankScore(p, intent, ctx, months) {
   const vibe = f.vibe ? vibeScore(ctx.guided, p.id, f.vibe) / 100 : 0;
   const ms = months.length ? months.map((m) => monthRow(p, m)?.score ?? 0) : [];
   const month = ms.length ? Math.max(...ms) / 100 : 0;
-  const rating = (p.rating?.score ?? 0) / 10;
+  const rating = (qualityOf(p) ?? 0) / 10;
+  const fv = fitOf(p, ctx, months[0] || null);
   // A weight with nothing to read is shared out over the others.
   const parts = [[W.rel, rel, !!ctx.retrieved], [W.vibe, vibe, !!f.vibe], [W.month, month, ms.length > 0],
-    [W.rating, rating, true], [W.fame, fameOf(p), true]];
+    [W.rating, rating, true], [W.fit, fv?.F ?? 0, !!fv]];
   const on = parts.filter(([, , live]) => live);
   const sum = on.reduce((s, [w]) => s + w, 0) || 1;
   let s = on.reduce((acc, [w, v]) => acc + (w / sum) * v, 0);
@@ -138,7 +143,7 @@ export function reasonsFor(p, intent, ctx) {
   if (p.cost?.dayEur != null) out.push({ k: 'cost', dayEur: Math.round(p.cost.dayEur), est: p.cost.stayLevel !== 'measured' });
   if (f.quiet && quietOk(p)) out.push({ k: 'quiet' });
   if (f.nocar && noCarOk(p)) out.push({ k: 'nocar', transit: p.local_transport?.transit_quality });
-  if (p.rating?.score != null) out.push({ k: 'rating', score: p.rating.score, label: p.rating.label });
+  if (p.rating?.score != null) out.push({ k: 'rating', score: p.rating.score, band: bandOf(p.rating) });
   return out;
 }
 
@@ -211,7 +216,7 @@ export function budgetFacts(intent, ctx) {
   const originId = b.origin || ctx.price?.origin || null;
   const origin = originId && q.mode !== 'fly' ? ctx.byId.get(originId) : null;
   const key = (r) => (intent.facets.vibe ? vibeScore(ctx.guided, r.id, intent.facets.vibe) / 10 : 0)
-    + (r.score ?? 0) + fameOf(r.dest) * 2 - (origin ? kmBetween(origin, r.dest) / 300 : 0);
+    + (r.score ?? 0) + (fitOf(r.dest, ctx, q.month)?.F ?? 0) * 2 - (origin ? kmBetween(origin, r.dest) / 300 : 0);
   const ranked = [...result.fits, ...result.tight]
     .filter((r) => !origin || r.id !== origin.id)
     .sort((a, b) => (Number(b.inSeason) - Number(a.inSeason)) || (key(b) - key(a)));

@@ -193,7 +193,9 @@ await openFold(page, 'tips');
 check('insider tips render on the deck', await page.locator('.destp-tips .flash-card').count() > 0);
 await openFold(page, 'rating');
 check('rating v2 breakdown renders', await page.locator('#sec-rating .rate-break-v2 .rb-parts .rb-part').count() >= 3);
-check('rating scale has three ticks', await page.locator('#sec-rating .rb-tick').count() === 3);
+// T763 (rating v5): the band word in the head replaces the v4 scale of three tier ticks.
+check('rating head reads a band word, no tier ticks', await page.locator('#sec-rating .rb-tick').count() === 0
+  && (await page.locator('#sec-rating .rb-head .score-chip-band').count()) === 1);
 // T474: one page bar on both sizes, back naming the list, no cross.
 check('desktop back names the list', (await page.locator('.destp .ipage-back').innerText()).trim().length > 0);
 check('desktop has no close cross', (await page.locator('.destp-close').count()) === 0);

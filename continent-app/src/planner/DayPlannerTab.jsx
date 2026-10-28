@@ -8,6 +8,7 @@ import { DayExploreMap } from '../map/DayExploreMap.jsx';
 import { Dropdown } from '../components/Dropdown.jsx';
 import { DateField } from '../components/DateField.jsx';
 import { Button, Chip, IconButton, Card, Money } from '../components/ui/index.js';
+import { gatewayCity, isGateway } from '../lib/rating.js';
 import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { tripDaysBetween, haversineKm, cityCoords, withCityCoords } from '../lib/runtime_pricing.js';
 import { priceDay, atDates } from '../lib/price/index.js';
@@ -584,7 +585,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
       let stay = null;
       let ideaList = [];
       if (daySeed.destId) {
-        const d = destinations[daySeed.destId];
+        const d = destinations[gatewayCity(daySeed.destId, destinations)];
         const c = d ? cityCoords(d) : null;
         if (c && c.lat != null) {
           const name = cityLabel(d.city);
@@ -974,7 +975,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   const visibleDeck = useMemo(() => [...mapDeck, ...zoomDeck], [mapDeck, zoomDeck]);
 
   const passRating = useCallback((item) => mapRating === 'all'
-    || (mapRating === 'must' ? isMustSee(item) : poiRating(item).tier >= 2), [mapRating]);
+    || (mapRating === 'must' ? poiRating(item).label === 'must_see' : poiRating(item).tier >= 2), [mapRating]);
 
 
   const mapPois = useMemo(() => {
@@ -2233,6 +2234,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   // and small gems alike), used by the landing multi-city picker and the
   // in-plan "add another city" picker.
   const allCityOptions = useMemo(() => Object.entries(destinations)
+    .filter(([, d]) => !isGateway(d))
     .map(([id, d]) => {
       const c = cityCoords(d);
       return { value: id, label: `${d.city}, ${d.country}`, lat: c.lat, lon: c.lon };
@@ -2248,6 +2250,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     let best = null;
     let bestKm = Infinity;
     for (const [id, d] of Object.entries(destinations)) {
+      if (isGateway(d)) continue;
       const c = cityCoords(d);
       if (c.lat == null) continue;
       const km = haversineKm(lat, lon, c.lat, c.lon);
@@ -2592,6 +2595,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     if (!newStayPoint || newStayPoint.lat == null) return [];
     const all = Object.entries(destinations)
       .map(([id, d]) => {
+        if (isGateway(d)) return null;
         const c = cityCoords(d);
         if (c.lat == null) return null;
         const km = haversineKm(newStayPoint.lat, newStayPoint.lon, c.lat, c.lon);
@@ -3241,6 +3245,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     if (!newStayPoint || newStayPoint.lat == null) return { ok: false, code: 'too_few' };
     const wide = Object.entries(destinations)
       .map(([id, d]) => {
+        if (isGateway(d)) return null;
         const c = cityCoords(d);
         if (c.lat == null) return null;
         const km = haversineKm(newStayPoint.lat, newStayPoint.lon, c.lat, c.lon);

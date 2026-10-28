@@ -17,7 +17,9 @@
  *   lat   latitude, lon longitude, as the master has them
  *   cc    ISO 3166 alpha-2 (the record's iso2), or null
  *   f     static flags, a bitfield of FLAG below
- *   r     rating band: rating.tier (0 to 3), 0 when unrated
+ *   r     rating band rank: the v5 band of rating.score (lib/rating.js
+ *         bandRank), 5 Exceptional down to 1 Pleasant, 0 when unrated
+ *         or under 6.0 (T763; v4 shipped rating.tier 0 to 3)
  *
  * Rows are arrays rather than objects because at 25,000 destinations every
  * repeated key costs ~100 KB. Row order is the master's order, which the
@@ -58,6 +60,8 @@
  * whose shard has not arrived yet; the shard's record replaces it whole.
  */
 
+import { bandForScore, bandRank } from './rating.js';
+
 export const BOOT_VERSION = 1;
 export const BOOT_COLS = Object.freeze(['id', 'lat', 'lon', 'cc', 'f', 'r']);
 
@@ -66,6 +70,7 @@ export const FLAG = Object.freeze({
   AIRPORT: 1, // tier === 'airport': an anchor airport, not a gem town
   HIDDEN_GEM: 2, // rating.hidden_gem
   UNESCO: 4, // categories include 'unesco'
+  GATEWAY: 8, // gateway_of: another airport of a city, never a place (T755)
 });
 
 /** Country-file key for a record with no usable iso2. ZZ is user-assigned. */
@@ -83,12 +88,12 @@ function flagsOf(rec) {
   if (rec.tier === 'airport') f |= FLAG.AIRPORT;
   if (rec.rating?.hidden_gem === true) f |= FLAG.HIDDEN_GEM;
   if (Array.isArray(rec.categories) && rec.categories.includes('unesco')) f |= FLAG.UNESCO;
+  if (rec.gateway_of) f |= FLAG.GATEWAY;
   return f;
 }
 
 function bandOf(rec) {
-  const t = rec.rating?.tier;
-  return Number.isInteger(t) && t >= 0 && t <= 3 ? t : 0;
+  return bandRank(bandForScore(rec.rating?.score));
 }
 
 /**
@@ -176,6 +181,18 @@ export const RANK_VERSION = 1;
  * from the full one and requires the same answer, so a pricing input left
  * out of this list fails the test, not the traveller.
  */
+/** A taste profile with each like as [p] only (lib/match.js reads v[0]). */
+function compactTaste(taste) {
+  const likes = {};
+  for (const [k, v] of Object.entries(taste.likes || {})) {
+    const p = Array.isArray(v) ? Number(v[0]) : NaN;
+    if (Number.isFinite(p)) likes[k] = [Math.round(p * 100) / 100];
+  }
+  const out = { likes };
+  for (const k of ['size', 'crowd_by_month', 'car_need']) if (taste[k] != null) out[k] = taste[k];
+  return out;
+}
+
 export const RANK_FIELDS = Object.freeze({
   city: true,
   country: true,
@@ -209,10 +226,15 @@ export const RANK_FIELDS = Object.freeze({
   bathing_water: { omit: ['nearest'] },
   image: { pick: ['url', 'w', 'h'] },
   climate: { pick: ['best'] },
+  // T765: the place taste profile without its evidence, so a list can sort
+  // "For you" before the country files land (closes T762-b; the page reads
+  // the full profile, with the facts behind each bar, from the shard).
+  taste: { map: compactTaste },
 });
 
 function projectField(value, how) {
   if (how === true || value == null || typeof value !== 'object' || Array.isArray(value)) return value;
+  if (how.map) return how.map(value);
   const out = {};
   for (const [k, v] of Object.entries(value)) {
     if (how.pick && !how.pick.includes(k)) continue;
@@ -326,6 +348,7 @@ export function decodeBootIndex(boot) {
     airport: !!(f & FLAG.AIRPORT),
     hiddenGem: !!(f & FLAG.HIDDEN_GEM),
     unesco: !!(f & FLAG.UNESCO),
+    gateway: !!(f & FLAG.GATEWAY),
     band: r,
   }));
 }

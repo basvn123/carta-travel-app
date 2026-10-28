@@ -11,6 +11,7 @@ import {
   CloseIcon, DiningIcon, TicketIcon, ReceiptIcon,
 } from '../components/Icons.jsx';
 import { capFirst } from '../lib/detailSkeleton.js';
+import { natureRankLine, natureFacts } from '../lib/rating.js';
 
 /**
  * The small parts the item pages and the trip page share (T430, T431), so
@@ -62,6 +63,31 @@ export function ItemHead({ title, iso2 = null, where = '', rating = null, gem = 
         {chips}
       </div>
       {after}
+    </>
+  );
+}
+
+/**
+ * Rating v5 under a nature item's head (T763): the regional rank line
+ * ("Best walk in the region", "No. 2 of 41 lakes in Austria") and the facts
+ * the plan sets next to the score (difficulty, water quality, climb...),
+ * both from lib/rating.js. A fact the wire leaves null is left out; with
+ * neither line there is nothing. `place` names the country for a country
+ * scope rank. Set in the head's existing sub-line style (`ihead-sub`).
+ */
+export function NatureHeadLines({ rating, place = '' }) {
+  const { t } = useI18n();
+  if (!rating || rating.unscored) {
+    const facts = natureFacts(rating?.facts, t);
+    return facts.length ? <p className="ihead-sub" data-slot="nature-facts">{facts.map((f) => f.text).join(', ')}</p> : null;
+  }
+  const rank = natureRankLine({ rank: rating.rank }, t, { place });
+  const facts = natureFacts(rating.facts, t);
+  if (!rank && !facts.length) return null;
+  return (
+    <>
+      {rank && <p className="ihead-sub" data-slot="nature-rank">{rank}</p>}
+      {facts.length > 0 && <p className="ihead-sub" data-slot="nature-facts">{facts.map((f) => f.text).join(', ')}</p>}
     </>
   );
 }

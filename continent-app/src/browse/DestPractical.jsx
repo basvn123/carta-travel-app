@@ -3,6 +3,8 @@ import { safeUrl } from '../lib/format.js';
 import { monthName } from '../lib/dates.js';
 import { Fold } from './Fold.jsx';
 import { RatingBreakdown } from './RatingBreakdown.jsx';
+import { WhyItMatches, useFit } from './WhyItMatches.jsx';
+import { showMatch } from '../lib/match.js';
 import { Neighbourhoods } from './Neighbourhoods.jsx';
 import { GettingThere } from './GettingThere.jsx';
 import { DestFood } from './DestFood.jsx';
@@ -13,7 +15,7 @@ import { Section } from './DestTiles.jsx';
 import { cleanName, fmtKm, tipText } from './destParts.js';
 import {
   PersonIcon, ParkingIcon, SunIcon, RainIcon, SnowIcon, ShoeIcon, SwimIcon, BootIcon, PlugIcon,
-  BottleIcon, JacketIcon, BackpackIcon, CheckIcon, StarIcon, LinkIcon, BulbIcon, AlertIcon, BedIcon,
+  BottleIcon, JacketIcon, BackpackIcon, CheckIcon, StarIcon, SparkIcon, LinkIcon, BulbIcon, AlertIcon, BedIcon,
 } from '../components/Icons.jsx';
 
 /**
@@ -36,6 +38,8 @@ export function DestPractical({ p }) {
     sleep, tips, packs, month, parking, exits, isOpen, toggle, onOpenLifestyle,
   } = p;
   const hasGetting = !!(getting || rhythm || bookAhead.length > 0);
+  // T765: "Why it matches you", only with a taste and a match of 55% and up.
+  const matchFit = useFit(destination, month);
   const hasSleep = !!(sleep?.neighbourhoods?.length > 0 || sleep?.beds || sleep?.curve);
   const hasPark = !!(parking && (parking.spots?.length > 0 || parking.park_ride || parking.web));
   const sleepNames = (sleep?.neighbourhoods || []).slice(0, 3).map((n) => n.name).filter(Boolean).join(', ');
@@ -81,7 +85,7 @@ export function DestPractical({ p }) {
           >
             <RatingBreakdown
               rating={verdict}
-              meta={data?.meta}
+              destId={destination.id}
               t={t}
               countryLine={verdict.country_rank === 1
                 ? t('card.topOf', { country: destination.country })
@@ -89,6 +93,20 @@ export function DestPractical({ p }) {
                   ? t('card.rankIn', { n: verdict.country_rank, country: destination.country })
                   : null}
             />
+          </Fold>
+        )}
+
+        {/* T765: the personal match, one bar per pick and every conflict. */}
+        {showMatch(matchFit) && (
+          <Fold level={2}
+            id="sec-match"
+            icon={SparkIcon}
+            title={t('fit.title')}
+            summary={t('fit.pct', { pct: matchFit.pct })}
+            open={isOpen('match')}
+            onToggle={() => toggle('match')}
+          >
+            <WhyItMatches place={destination} month={month} />
           </Fold>
         )}
 

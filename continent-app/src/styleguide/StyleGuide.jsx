@@ -59,9 +59,9 @@ const TYPE = [
   ['--text-micro', 'Micro', 'The floor for any functional text', 600],
 ];
 const PLACES = [
-  { city: 'Kotor', country: 'Montenegro', day: 65, bed: 24, url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/20090719_Crkva_Gospa_od_Zdravlja_Kotor_Bay_Montenegro.jpg/960px-20090719_Crkva_Gospa_od_Zdravlja_Kotor_Bay_Montenegro.jpg', rating: { score: 9.1, tier: 3, label: 'Worth the journey' } },
-  { city: 'Hallstatt', country: 'Austria', day: 113, bed: 58, url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Hallstatt_-_Zentrum_.JPG/960px-Hallstatt_-_Zentrum_.JPG', rating: { score: 8.9, tier: 3, label: 'Worth the journey' } },
-  { city: 'Plovdiv', country: 'Bulgaria', day: 49, bed: 18, est: true, url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/%D0%9F%D0%BB%D0%BE%D0%B2%D0%B4%D0%B8%D0%B2.jpg/960px-%D0%9F%D0%BB%D0%BE%D0%B2%D0%B4%D0%B8%D0%B2.jpg', rating: { score: 6.9, tier: 1, label: 'Worth a visit' } },
+  { city: 'Kotor', country: 'Montenegro', day: 65, bed: 24, url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/20090719_Crkva_Gospa_od_Zdravlja_Kotor_Bay_Montenegro.jpg/960px-20090719_Crkva_Gospa_od_Zdravlja_Kotor_Bay_Montenegro.jpg', rating: { score: 9.1 } },
+  { city: 'Hallstatt', country: 'Austria', day: 113, bed: 58, url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Hallstatt_-_Zentrum_.JPG/960px-Hallstatt_-_Zentrum_.JPG', rating: { score: 8.9 } },
+  { city: 'Plovdiv', country: 'Bulgaria', day: 49, bed: 18, est: true, url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/%D0%9F%D0%BB%D0%BE%D0%B2%D0%B4%D0%B8%D0%B2.jpg/960px-%D0%9F%D0%BB%D0%BE%D0%B2%D0%B4%D0%B8%D0%B2.jpg', rating: { score: 6.9 } },
 ];
 
 function lum(hex) {
@@ -263,7 +263,7 @@ export default function StyleGuide() {
               <Chip kind="status">UNESCO World Heritage</Chip>
               <Chip kind="status" tone="best">Best value</Chip>
               <Chip kind="status" tone="gem">Hidden gem</Chip>
-              <Chip kind="status" tone="rate">Worth the journey</Chip>
+              <Chip kind="status" tone="rate">Exceptional</Chip>
               <Chip kind="status" tone="positive">Open now</Chip>
               <Chip kind="status" tone="danger">Closed</Chip>
             </div>

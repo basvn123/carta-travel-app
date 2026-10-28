@@ -3,6 +3,7 @@
  * country/flag grouping, short human "insight" lines for cities, worth-a-visit
  * tiers, city pairings, and Carta's own stay designer.
  */
+import { bandOf } from './rating.js';
 import { gemScore } from './trip_planner_pricing.js';
 import { haversineKm } from './runtime_pricing.js';
 import { knownFor } from './knownFor.js';
@@ -162,24 +163,21 @@ export function interestFitScore(dest, interests) {
   return Math.min(1, 0.65 * best + 0.35 * (sum / n));
 }
 
-/** Worth-a-visit tier for a city, from the same gemScore the recommenders use.
- *  Gives travellers the "is this a headline stop or a maybe" signal at a
- *  glance instead of an opaque number. */
+/** A city's standing as a stop, for the stay picker's map pins: the v5 band
+ *  (lib/rating.js) folded onto four pin looks, or the gemScore where a place
+ *  has no rating yet. Carries no words: a screen prints the Score with its
+ *  band word (ScoreChip), never a second word set (T763 retired "Worth a
+ *  visit / detour / journey"). */
+const PIN_KEY = { exceptional: 'top', excellent: 'top', very_good: 'great', good: 'good', pleasant: 'ok' };
 export function cityTier(dest) {
   const s = gemScore(dest);
-  // Mirror the official v14 rating tiers so the wizard speaks the same
-  // language as the map/list (gemScore still drives the ranking).
-  const t = dest?.rating?.tier;
-  if (t != null) {
-    if (t === 3) return { key: 'top', label: 'Worth the journey', score: s };
-    if (t === 2) return { key: 'great', label: 'Worth a detour', score: s };
-    if (t === 1) return { key: 'good', label: 'Worth a visit', score: s };
-    return { key: 'ok', label: 'If nearby', score: s };
+  if (dest?.rating?.score != null) {
+    return { key: PIN_KEY[bandOf(dest.rating)] || 'ok', score: s };
   }
-  if (s >= 7) return { key: 'top', label: 'Must-visit', score: s };
-  if (s >= 5) return { key: 'great', label: 'Great stop', score: s };
-  if (s >= 3) return { key: 'good', label: 'Worth a look', score: s };
-  return { key: 'ok', label: 'If nearby', score: s };
+  if (s >= 7) return { key: 'top', score: s };
+  if (s >= 5) return { key: 'great', score: s };
+  if (s >= 3) return { key: 'good', score: s };
+  return { key: 'ok', score: s };
 }
 
 /** Cities that combine well with this one: close enough for an easy hop

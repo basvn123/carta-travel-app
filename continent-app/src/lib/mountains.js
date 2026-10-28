@@ -116,7 +116,7 @@ export function loadListedMountains(country) {
 /** The mountains of several countries at once, flattened and re-ranked. */
 export function loadMountainsFor(countries) {
   return Promise.all((countries || []).map((cc) => loadMountains(cc)))
-    .then((lists) => lists.flat().filter(Boolean).sort((a, b) => b.score - a.score));
+    .then((lists) => lists.flat().filter(Boolean).sort((a, b) => (b.v5?.score ?? -1) - (a.v5?.score ?? -1)));
 }
 
 /** A shared mountain link, read once at startup: "#mtn=ch-matterhorn-Q1090&mc=CH".

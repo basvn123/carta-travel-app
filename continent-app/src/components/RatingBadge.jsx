@@ -1,33 +1,30 @@
 import React from 'react';
 import { useI18n } from '../i18n/index.jsx';
+import { bandOf, inkStep, ratingWords } from '../lib/rating.js';
+import NotYet from './NotYet.jsx';
 
 /**
- * The Score (T437, the kit's rating; replaces the filled ochre chip).
+ * The Score (T437, the kit's rating; replaces the filled ochre chip), in
+ * rating v5's words (T763).
  *
- * A drawn star and the figure in ink, tabular, on no fill: the form a
- * traveller already reads from every travel app, and one that can never be
- * mistaken for a button. The star is always filled (owner, 2026-10-14, T447:
- * an outlined star below the second tier read as "not rated"); below the
- * first band it is grey rather than brown (19-guide-ratings.css). Where
- * a page has room (the destination head, a preview), `band` adds the band's
- * word through i18n, never the English label the data carries.
+ * A drawn star, the figure in ink with one decimal and the band word next to
+ * it ("8.9 Exceptional"), tabular, on no fill. The word comes from
+ * lib/rating.js, the only module that turns a score into words, so a card, a
+ * page, the map and the planner read the same word for the same score. The
+ * star is always filled (owner, 2026-10-14, T447); with no band (under 6.0)
+ * it is grey rather than brown (19-guide-ratings.css, `rt-0`).
  *
- *   <ScoreChip rating={dest.rating} size="sm" />        cards and rows
- *   <ScoreChip rating={dest.rating} size="lg" band />   a page head
+ *   <ScoreChip rating={dest.rating} size="sm" />                cards and rows
+ *   <ScoreChip rating={dest.rating} size="sm" band={false} />   a pin label with no room
+ *   <ScoreChip rating={natureRating(row)} />                    a nature row
  *
- * The exports and props of the old chip are kept (ScoreChip, RatingBadge,
- * HiddenGemTag, tierClass), so its twenty-odd callers did not change. Beach,
- * lake and mountain scores pass through the same component; only
- * destinations ask for the band word, because only their tiers map onto it.
+ * A nature row listed without a score (natureRating gives { unscored })
+ * shows the NotYet placeholder in the badge's slot, never a number.
  */
 
+/** The `rt-n` class the star colour reads: the band's ink step, 0 to 3. */
 export function tierClass(rating) {
-  return `rt-${rating?.tier ?? 0}`;
-}
-
-/** The i18n key for a destination tier's band word, or null below tier 1. */
-export function bandKey(tier) {
-  return tier >= 1 && tier <= 3 ? `score.band${tier}` : null;
+  return `rt-${inkStep(bandOf(rating))}`;
 }
 
 function Star({ filled }) {
@@ -44,18 +41,18 @@ function Star({ filled }) {
   );
 }
 
-export function ScoreChip({ rating, size = 'sm', band = false }) {
+export function ScoreChip({ rating, size = 'sm', band = true }) {
   const { t } = useI18n();
-  if (!rating || rating.score == null) return null;
-  const tier = rating.tier ?? 0;
-  const key = band ? bandKey(tier) : null;
-  const word = key ? t(key) : '';
-  const figure = Number(rating.score).toFixed(1);
-  const aria = word ? `${t('score.aria', { n: figure })}, ${word}` : t('score.aria', { n: figure });
+  if (rating?.unscored) return <NotYet className={`score-chip-none ${size}`} />;
+  const w = ratingWords(rating, t);
+  if (!w) return null;
+  const word = band ? w.word : '';
+  const aria = w.word ? `${t('score.aria', { n: w.shown })}, ${w.word}` : t('score.aria', { n: w.shown });
   return (
-    <span className={`score-chip ${tierClass(rating)} ${size}`} role="img" aria-label={aria} title={aria}>
+    <span className={`score-chip ${tierClass(rating)} ${size}`} role="img" aria-label={aria} title={aria}
+      data-band={w.band || ''} data-score={w.figure}>
       <Star filled />
-      <span className="score-chip-n" aria-hidden="true">{figure}</span>
+      <span className="score-chip-n" aria-hidden="true">{w.shown}</span>
       {word && <span className="score-chip-band" aria-hidden="true">{word}</span>}
     </span>
   );
@@ -79,9 +76,9 @@ export function HiddenGemTag({ size = 'sm' }) {
   );
 }
 
-/** The Score, optionally with its band word and the hidden-gem mark. */
-export function RatingBadge({ rating, size = 'sm', showGem = true, showLabel = false }) {
-  if (!rating || rating.score == null) return null;
+/** The Score with its band word, and the hidden-gem mark. */
+export function RatingBadge({ rating, size = 'sm', showGem = true, showLabel = true }) {
+  if (!rating || (rating.score == null && !rating.unscored)) return null;
   return (
     <span className={`rating-badge ${size}`}>
       <ScoreChip rating={rating} size={size} band={showLabel} />

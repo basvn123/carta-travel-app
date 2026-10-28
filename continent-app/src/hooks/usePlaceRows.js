@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { duplicateHeroes } from '../lib/heroImage.js';
 import { dedupeGateways } from './useExploreCatalog.js';
+import { isGateway } from '../lib/rating.js';
 
 /**
  * The catalogue as Explore's rows, for the pages hoisted above the views
@@ -24,6 +25,8 @@ export function usePlaceRows(data, indices, enabled = true) {
     const rows = [];
     for (const [id, d] of Object.entries(data.destinations)) {
       if (d.lat == null || d.lon == null) continue;
+      // T755: an airport of a multi-airport city is not a place of its own.
+      if (isGateway(d)) continue;
       rows.push({
         id,
         tier: d.tier,

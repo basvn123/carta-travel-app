@@ -1,105 +1,88 @@
 import React from 'react';
-import { tierCutoffs } from '../lib/rating.js';
-import { tierClass, ScoreChip } from '../components/RatingBadge.jsx';
+import {
+  PART_WEIGHTS, classRankLine, confidenceKind, loadRatingWhy, ratingPart,
+} from '../lib/rating.js';
+import { ScoreChip } from '../components/RatingBadge.jsx';
+import { useI18n } from '../i18n/index.jsx';
 
 /**
- * Why this place scores what it scores.
+ * Why this place scores what it scores (rating v5, T763; closes T759-c).
  *
- * The catalogue's ratings are tightly packed by design: half of the
- * destinations sit somewhere in the sixes, because half of Europe genuinely
- * is "good, not remarkable". A bare 6.4 tells a reader nothing about what
- * 6.4 means or where it came from, so the panel shows two things:
+ * The head is the Score with its band word ("8.9 Exceptional"), whether the
+ * appeal behind it was measured (a hand or rubric score) or estimated (the
+ * model's guess, which also reads "about 8.1"), the class rank when the place
+ * is in the top tenth of its class ("Top 2% of villages in Europe") and the
+ * one reason sentence in the reader's language.
  *
- *   The scale. One bar in four bands, the three tier thresholds drawn as the
- *   band edges (from meta.rating_model.tier_cutoffs, never invented here),
- *   and this place standing on it with its number.
+ * Then the four parts, appeal, beauty, depth and recognition, each with its
+ * value and a fill bar. The weights come from config/rating.json through
+ * lib/rating.js (PART_WEIGHTS), never from a string. The v4 scale of three
+ * tier bands is gone: the band word in the head says where the score stands.
  *
- *   The parts. rating_v3 is four measurements at published weights; every
- *   destination carries its four values. Four tiles, one per part, each with
- *   the score, its weight and a fill bar, so a village that scores 7.4 on a
- *   perfect old town and no famous sights reads differently from a city that
- *   scores 7.4 the other way round.
- *
- * Nothing here is computed. Every value and weight is read from the wire.
+ * The wire names two parts twice over the schema change: v19 ships
+ * `highlights` and `acclaim`, the slimmer wire `depth` and `recognition`;
+ * ratingPart() reads either.
  */
 
-const ORDER = ['appeal', 'beauty', 'highlights', 'acclaim'];
+const ORDER = ['appeal', 'beauty', 'depth', 'recognition'];
 
-export function RatingBreakdown({ rating, meta, t, countryLine }) {
+/** The reason sentence for `id` in `lang`: the lazy language file through
+ *  lib/rating.js, English until (or unless) it has one. */
+function useRatingWhy(id, rating, lang) {
+  const en = rating?.why || '';
+  const [local, setLocal] = React.useState(null);
+  React.useEffect(() => {
+    setLocal(null);
+    if (!id || !lang || lang === 'en') return undefined;
+    let live = true;
+    loadRatingWhy(lang).then((m) => { if (live) setLocal(m?.[id] || null); });
+    return () => { live = false; };
+  }, [id, lang]);
+  return local || en;
+}
+
+export function RatingBreakdown({ rating, t, countryLine, destId }) {
+  const { lang } = useI18n();
+  const why = useRatingWhy(destId, rating, lang);
   if (!rating || rating.score == null) return null;
 
-  const cuts = tierCutoffs(meta);
-  const model = meta?.rating_model || {};
-  const weights = model.weights || {};
-  const comps = rating.components || {};
-  const rows = ORDER.filter((k) => comps[k] != null && weights[k] != null);
-  const pos = Math.max(0, Math.min(100, (rating.score / 10) * 100));
-  // The band words come from i18n (T437), never the English labels in meta.
-  const tierName = (tier) => t(`score.band${tier}`);
-  const bands = [
-    { from: 0, to: cuts[1], cls: 'rt-0', label: '' },
-    { from: cuts[1], to: cuts[2], cls: 'rt-1', label: tierName(1) },
-    { from: cuts[2], to: cuts[3], cls: 'rt-2', label: tierName(2) },
-    { from: cuts[3], to: 10, cls: 'rt-3', label: tierName(3) },
-  ];
+  const rows = ORDER
+    .map((k) => ({ k, v: ratingPart(rating, k), w: PART_WEIGHTS[k] }))
+    .filter((r) => r.v != null && r.w != null);
+  const conf = confidenceKind(rating);
+  const rank = classRankLine(rating, t);
 
   return (
-    <div className="rate-break rate-break-v2">
+    <div className="rate-break rate-break-v2" data-testid="rating-breakdown">
       <div className="rb-head">
         <ScoreChip rating={rating} size="lg" />
         <span className="rb-head-text">
-          {(rating.tier ?? 0) >= 1 && <span className="rb-label">{tierName(rating.tier)}</span>}
+          {conf && <span className="rb-conf">{t(conf === 'estimated' ? 'rating.estimated' : 'rating.measured')}</span>}
+          {rank && <span className="rb-country">{rank}</span>}
           {countryLine && <span className="rb-country">{countryLine}</span>}
         </span>
       </div>
 
-      {/* Where the score stands, against the thresholds it is judged by. */}
-      <div className="rb-scale" aria-hidden="true">
-        <div className="rb-bands">
-          {bands.map((b) => (
-            <span
-              key={b.cls}
-              className={`rb-band ${b.cls}`}
-              style={{ width: `${((b.to - b.from) / 10) * 100}%` }}
-              title={b.label}
-            />
-          ))}
-          <span className={`rb-me ${tierClass(rating)}`} style={{ left: `${pos}%` }} />
-        </div>
-        <div className="rb-ticks">
-          {[1, 2, 3].map((tier) => (
-            <span key={tier} className="rb-tick" style={{ left: `${(cuts[tier] / 10) * 100}%` }}>
-              <span className="mono">{cuts[tier].toFixed(1)}</span>
-            </span>
-          ))}
-        </div>
-        <div className="rb-legend">
-          {[1, 2, 3].map((tier) => (
-            <span key={tier} className={`rb-leg rt-${tier}`}><span className="rb-leg-swatch" />{tierName(tier)}</span>
-          ))}
-        </div>
-      </div>
+      {why && <p className="rate-break-note rb-why">{why}</p>}
 
-      {/* The four measurements behind it, at the weights the model used. */}
+      {/* The four measurements behind it, at the weights the model uses. */}
       {rows.length > 0 && (
         <ul className="rb-parts">
-          {rows.map((k) => (
+          {rows.map(({ k, v, w }) => (
             <li key={k} className="rb-part">
               <span className="rb-part-top">
                 <span className="rb-part-name">{t(`rating.part.${k}`)}</span>
-                <span className="rb-part-val mono">{(comps[k] * 10).toFixed(1)}</span>
+                <span className="rb-part-val mono">{(v * 10).toFixed(1)}</span>
               </span>
               <span className="rb-part-track">
-                <span className="rb-part-fill" style={{ width: `${Math.max(2, comps[k] * 100)}%` }} />
+                <span className="rb-part-fill" style={{ width: `${Math.max(2, v * 100)}%` }} />
               </span>
-              <span className="rb-part-weight">{t('rating.weight', { pct: Math.round(weights[k] * 100) })}</span>
+              <span className="rb-part-weight">{t('rating.weight', { pct: Math.round(w * 100) })}</span>
             </li>
           ))}
         </ul>
       )}
 
-      {/* The method sentence (rating.method) left with the page's other
-          method lines (T429, owner 2026-10-13); why a gem is a gem stays. */}
       {rating.hidden_gem && <p className="rate-break-note">{t('rating.gemWhy')}</p>}
     </div>
   );

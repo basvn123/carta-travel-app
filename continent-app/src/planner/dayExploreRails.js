@@ -31,6 +31,7 @@ import { fmtDur } from './dayFormat.js';
 // the one place that turns it into the { score, tier } a rating chip reads,
 // so a trail chip is the same shade of confidence here as on the trails tab.
 import { trailRating } from '../lib/trailCards.js';
+import { natureRating } from '../lib/rating.js';
 
 /** How far each layer is worth reaching for, from the stay. A beach 40 km off
  *  is a real day out; a trail 40 km off is somebody else's day, because you
@@ -207,10 +208,10 @@ export function waterRow(b, layer, stay) {
     lon: b.lon,
     km: km == null ? null : Math.round(km),
     photo: b.images?.[0]?.u || '',
-    rating: b.score != null ? { score: b.score, tier: b.tier ?? 0 } : null,
+    rating: natureRating(b),
     sub: '',
     desc: '',
-    score: b.score ?? 0,
+    score: b.v5?.score ?? 0,
     // Nothing to add: a published beach is not a row in a town's POI list, so
     // it opens its own page rather than pretending to be a pick.
     add: null,
@@ -241,7 +242,7 @@ export function trailRow(tr, centre, stay) {
     rating: trailRating(tr),
     sub: '',
     desc: tr.summary || '',
-    score: tr.rating ?? 0,
+    score: tr.v5?.score ?? 0,
     lenKm: Number.isFinite(tr.distance_m) ? Math.round(tr.distance_m / 100) / 10 : null,
     ascentM: Number.isFinite(tr.ascent_m) ? Math.round(tr.ascent_m) : null,
     add: null,
@@ -307,10 +308,10 @@ export function peakRow(m, stay) {
     lon: m.lon,
     km: km == null ? null : Math.round(km),
     photo: m.images?.[0]?.u || m.img || '',
-    rating: m.score != null ? { score: m.score, tier: m.tier ?? 0 } : null,
+    rating: natureRating(m),
     sub: '',
     desc: '',
-    score: m.score ?? 0,
+    score: m.v5?.score ?? 0,
     eleM: Number.isFinite(m.ele) ? Math.round(m.ele) : null,
     lift: Boolean(m.lift),
     add: null,
@@ -332,10 +333,10 @@ export function cycleRow(r, centre, stay) {
     lon: centre.lon,
     km: km == null ? null : Math.round(km),
     photo: typeof r.img === 'string' ? r.img : (r.img?.u || ''),
-    rating: r.score != null ? { score: r.score, tier: r.tier ?? 0 } : null,
+    rating: natureRating(r),
     sub: '',
     desc: r.why || '',
-    score: r.score ?? 0,
+    score: r.v5?.score ?? 0,
     lenKm: Number.isFinite(r.km) ? Math.round(r.km * 10) / 10 : null,
     ascentM: Number.isFinite(r.asc) ? Math.round(r.asc) : null,
     add: null,

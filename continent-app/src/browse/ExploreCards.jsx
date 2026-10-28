@@ -2,6 +2,7 @@ import React from 'react';
 import { openShared } from '../lib/sharedElement.js';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
+import { MatchLine } from './WhyItMatches.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { BookmarkIcon, BusIcon, CarIcon, TrainIcon } from '../components/Icons.jsx';
 import { formatEst } from '../lib/money.js';
@@ -98,11 +99,15 @@ export function PlaceTile({ p, onSelect, fav, onToggleFav, t }) {
         openShared(e.currentTarget.closest('.card'), p.id, () => onSelect(p.id));
       }}
       meta={(
-        <span className="xtile-meta">
-          <CountryFlag country={p.iso2} size={12} />
-          <span>{countryName(p.iso2, p.country)}</span>
-          {p.rating?.hidden_gem && <HiddenGemTag />}
-        </span>
+        <>
+          <span className="xtile-meta">
+            <CountryFlag country={p.iso2} size={12} />
+            <span>{countryName(p.iso2, p.country)}</span>
+            {p.rating?.hidden_gem && <HiddenGemTag />}
+          </span>
+          {/* T765: "86% match: hiking, quiet", from 55% up, beside the Score. */}
+          <MatchLine place={p} />
+        </>
       )}
       price={<DayPrice cost={p.cost} t={t} />}
       rating={<ScoreChip rating={p.rating} size="sm" />}

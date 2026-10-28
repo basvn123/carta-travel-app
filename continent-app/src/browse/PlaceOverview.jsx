@@ -8,6 +8,8 @@ import { DayPrice, SaveButton } from './ExploreCards.jsx';
 import { CalendarIcon } from '../components/Icons.jsx';
 import { useSettings } from '../components/SettingsLine.jsx';
 import { useI18n } from '../i18n/index.jsx';
+import { ratingWords } from '../lib/rating.js';
+import { MatchLine } from './WhyItMatches.jsx';
 import '../styles/79-place-card.css';
 
 /**
@@ -156,6 +158,15 @@ function PlaceCard({
             {swimRelevant(p) && (
               <WaterQualityBadge bathing={p.bathing_water} t={t} showLabel={false} />
             )}
+          </span>
+          {/* T765: the match under the place, from 55% up. On a phone the
+              photo is too narrow for "10.0 Exceptional", so the pill keeps
+              the figure and the band word sits here (79-place-card.css). */}
+          <span className="xpc-rateline">
+            {ratingWords(rating || p.rating, t)?.word && (
+              <span className="xpc-band">{ratingWords(rating || p.rating, t).word}</span>
+            )}
+            <MatchLine place={p} />
           </span>
           {reason && <span className="xrow-why xpc-why">{reason}</span>}
           {dates && (

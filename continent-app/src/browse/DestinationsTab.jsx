@@ -1250,7 +1250,7 @@ export function DestinationsTab({
       } else if (trailSort.key === 'az') {
         out.sort((a, b) => d * a.c.tr.name.localeCompare(b.c.tr.name));
       } else {
-        out.sort((a, b) => d * ((a.c.tr.rating ?? -1) - (b.c.tr.rating ?? -1)));
+        out.sort((a, b) => d * ((a.c.tr.v5?.score ?? -1) - (b.c.tr.v5?.score ?? -1)));
       }
       return out;
     }
@@ -1883,7 +1883,7 @@ export function DestinationsTab({
       } else if (cycleSort.key === 'az') {
         arr.sort((a, b) => d * title(a).localeCompare(title(b), lang));
       } else {
-        arr.sort((a, b) => d * ((a.score || 0) - (b.score || 0)));
+        arr.sort((a, b) => d * ((a.v5?.score || 0) - (b.v5?.score || 0)));
       }
       return arr;
     };
@@ -2541,7 +2541,7 @@ export function DestinationsTab({
         where: countryName(row.cc),
         fact: row.km != null ? km(row.km, 0) : null,
         factLabel: t('card.vLength'),
-        rating: row.score != null ? cycleRating(row, t) : null,
+        rating: cycleRating(row, t),
       };
     }
     if (layer === 'mountain') {
@@ -2694,20 +2694,20 @@ export function DestinationsTab({
       });
       if (m) out.push({ m, layer, row });
     };
-    if (cat === 'beaches') for (const { b } of beachRows || []) push('beaches', b, displayName(b.name), b.cc, placeLine(b.region, countryName(b.cc)), b.score, firstOkImage(b.images)?.u);
-    else if (cat === 'lakes') for (const { b } of lakeRows || []) push('lakes', b, displayName(b.name), b.cc, placeLine(b.region, countryName(b.cc)), b.score, firstOkImage(b.images)?.u);
-    else if (cat === 'mountains') for (const { b } of mountainRows || []) push('mountains', b, displayName(b.name), b.cc, placeLine(b.range || b.region, countryName(b.cc)), b.score, firstOkImage(b.images)?.u);
-    else if (cat === 'trails' && tripRows) for (const { c } of tripRows) push('trails', c, displayName(c.tr.name), c.tr.cc || c.tr.country, countryName(c.tr.cc || c.tr.country), c.tr.rating?.score ?? c.tr.rating, okPhoto(c.assoc?.photoUrl));
+    if (cat === 'beaches') for (const { b } of beachRows || []) push('beaches', b, displayName(b.name), b.cc, placeLine(b.region, countryName(b.cc)), b.v5?.score, firstOkImage(b.images)?.u);
+    else if (cat === 'lakes') for (const { b } of lakeRows || []) push('lakes', b, displayName(b.name), b.cc, placeLine(b.region, countryName(b.cc)), b.v5?.score, firstOkImage(b.images)?.u);
+    else if (cat === 'mountains') for (const { b } of mountainRows || []) push('mountains', b, displayName(b.name), b.cc, placeLine(b.range || b.region, countryName(b.cc)), b.v5?.score, firstOkImage(b.images)?.u);
+    else if (cat === 'trails' && tripRows) for (const { c } of tripRows) push('trails', c, displayName(c.tr.name), c.tr.cc || c.tr.country, countryName(c.tr.cc || c.tr.country), c.tr.v5?.score, okPhoto(c.assoc?.photoUrl));
     // T600: with no country, the Europe-wide best walks (trails/top.json,
     // already loaded for the rails), under the same chips and search text.
     else if (cat === 'trails' && !trailsCountry && topTrails?.length) {
       for (const tr of topTrails) {
         if (q && !norm(tr.name).includes(q)) continue;
         if (!trailPass(tr)) continue;
-        push('trails', { tr }, displayName(tr.name), tr.country, countryName(tr.country), tr.rating?.score ?? tr.rating, okPhoto(tr.img));
+        push('trails', { tr }, displayName(tr.name), tr.country, countryName(tr.country), tr.v5?.score, okPhoto(tr.img));
       }
     }
-    else if (cat === 'cycling') for (const r of cycleRows?.routes || []) push('cycling', r, routeTitle(r, t), r.cc, countryName(r.cc), r.score, okPhoto(r.img));
+    else if (cat === 'cycling') for (const r of cycleRows?.routes || []) push('cycling', r, routeTitle(r, t), r.cc, countryName(r.cc), r.v5?.score, okPhoto(r.img));
     return out;
   }, [outdoorCat, isActive, cat, beachRows, lakeRows, mountainRows, tripRows, cycleRows, bedFood, countryName, t,
     trailsCountry, topTrails, q, trailPass]);

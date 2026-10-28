@@ -8,6 +8,7 @@
 
 import { isFullRatingRange, clampRatingRange, rangeFromMinTier } from './rating.js';
 import { readFavList, writeFavList } from './favorites.js';
+import { decodeTaste, encodeTaste, isEmptyTaste } from './taste.js';
 
 const LS_ORDER = [
   'dinners_per_week', 'lunches_per_week', 'fastfood_per_week', 'drinks_per_week',
@@ -217,6 +218,9 @@ export function encodeState({
   if (Number.isFinite(reachHours) && reachHours > 0) q.set('rh', String(Math.round(reachHours)));
   const ls = packLifestyle(choices?.lifestyle);
   if (ls) q.set('ls', ls);
+  // T764: the taste profile (lib/taste.js), compact, only when something is set.
+  const ty = encodeTaste(choices?.taste);
+  if (ty) q.set('ty', ty);
   return q.toString();
 }
 
@@ -291,6 +295,7 @@ export function decodeState(search) {
   }
   const ls = unpackLifestyle(q.get('ls'));
   if (ls) out.lifestyle = ls;
+  if (has('ty')) out.taste = decodeTaste(q.get('ty'));
   // Planner seeds, the shareable form of the hand-offs out of a destination
   // or feature page (App.openTripForCountry / openDayForDest / openDayForFeature).
   //   tab=trip&cc=BE           the trip wizard's Where step with Belgium picked
@@ -367,17 +372,23 @@ export function tabFromSearch(search, opts) {
 export function loadInitialState() {
   if (typeof window === 'undefined') return {};
   const fromUrl = window.location.search ? decodeState(window.location.search) : {};
-  if (Object.keys(fromUrl).length) return fromUrl;
+  let stored = null;
   try {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (stored) return decodeState(stored);
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (raw) stored = decodeState(raw);
   } catch { /* ignore */ }
-  return {};
+  if (Object.keys(fromUrl).length) {
+    // T764: the taste is the traveller's own, not the view's, so a link that
+    // carries none keeps the one this device stored.
+    if (!fromUrl.taste && stored?.taste && !isEmptyTaste(stored.taste)) return { ...fromUrl, taste: stored.taste };
+    return fromUrl;
+  }
+  return stored || {};
 }
 
 
 // Every key encodeState can write; persistState replaces exactly these.
-const OWN_KEYS = ['b', 'big', 'cat', 'cc', 'cf', 'd', 'dest', 'dh', 'fav', 'favonly', 'feat', 'g', 'gem', 'ls', 'mode', 'o', 'pm', 'pr', 'pv', 'px', 'r', 'rh', 'rr', 'sort', 'st', 't', 'tab', 'tb', 'tk', 'top', 'un'];
+const OWN_KEYS = ['b', 'big', 'cat', 'cc', 'cf', 'd', 'dest', 'dh', 'fav', 'favonly', 'feat', 'g', 'gem', 'ls', 'mode', 'o', 'pm', 'pr', 'pv', 'px', 'r', 'rh', 'rr', 'sort', 'st', 't', 'tab', 'tb', 'tk', 'top', 'ty', 'un'];
 
 /** Push the encoded state into the URL (replaceState) and the localStorage mirror.
  *

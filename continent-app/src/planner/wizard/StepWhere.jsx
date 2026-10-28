@@ -14,6 +14,7 @@ import { PlaneIcon } from '../../components/TransportIcons.jsx';
 import { Flag } from '../GuidedTripWizardParts.jsx';
 import { dayCostText } from './wizardSteps.js';
 import { useI18n } from '../../i18n/index.jsx';
+import { SaveTripTaste } from '../../browse/WhyItMatches.jsx';
 
 // The two ways to answer "where", as a real tablist: keyboard-navigable with
 // the arrow keys, announced as one control with two states.
@@ -230,6 +231,8 @@ export function StepWhere({
                     onToggle={toggleCountry}
                     onBrief={toggleBrief}
                   />
+                  {/* T766: the trip's likes become the travel style only on this tap. */}
+                  <SaveTripTaste likes={quiz.types} />
                 </PlannerSection>
               )}
               {quiz.types?.length > 0 && countryMatches.length === 0 && (

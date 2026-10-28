@@ -6,6 +6,7 @@ import { priceDay, requestKey, DEFAULT_PRICE_REQUEST } from '../lib/price/index.
 import { useFirstRun } from '../lib/firstRunContext.js';
 import { placeExits } from '../lib/detailSkeleton.js';
 import { formatMoney } from '../lib/money.js';
+import { natureRating } from '../lib/rating.js';
 
 /**
  * The data behind slot 9 of the detail-page skeleton (T180): three computed
@@ -125,7 +126,8 @@ export function usePlaceExits({ me, cc, load, centre, level, baseOf = () => null
       row: e.row,
       kind: e.kind,
       photoUrl: firstOkImage(e.row.images)?.u || okPhoto(e.row.img?.u) || okPhoto(e.row.photo) || null,
-      rating: e.row.score != null ? { score: e.row.score, tier: e.row.tier ?? 0 } : null,
+      // Rating v5 (T763): the layer row's v5 block, NotYet when unscored.
+      rating: natureRating(e.row),
       iso2: e.row.cc || null,
     }));
     // baseOf, centre, level, meta and open are stable per page type.

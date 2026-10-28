@@ -35,7 +35,7 @@ import { CycleRouteFacts } from './RouteFacts.jsx';
 import { Instrument, Row, EmptyTrack, SpanAxis } from './Signature.jsx';
 import { kmOf, trafficMix } from '../lib/signature.js';
 import { PhotoGallery } from './PhotoGallery.jsx';
-import { ItemHead, ItemIcon } from './ItemParts.jsx';
+import { ItemHead, ItemIcon, NatureHeadLines } from './ItemParts.jsx';
 import { Button, Chip } from '../components/ui/index.js';
 import { toPhotos } from '../lib/itemPhotos.js';
 import { beforeGoItems } from '../lib/beforeGo.js';
@@ -567,8 +567,9 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
 
   const why = useMemo(() => whyLines(carta.reasons, t), [carta.reasons, t]);
   const rated = Boolean(route && route.t === 'r');
-  const rating = rated && carta.score != null
-    ? cycleRating({ score: carta.score }, t) : null;
+  // Rating v5 (T763): the country-file row carries the v5 block (the
+  // detail file does not); a tour has no score of its own.
+  const rating = !tourSlug && wireRow ? cycleRating(wireRow, t) : null;
   const title = (tour && tour.title) || (route && routeTitle(route, t)) || '…';
   const { onPdf, pdfBusy } = useItemPdf(tour ? 'tour' : 'cycle', tour || route, { title, countryName, carta });
   const cc = (tour && tour.country) || (route && route.country) || country;
@@ -865,6 +866,7 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
           chips={refChip ? <Chip kind="status">{refChip}</Chip> : null}
           after={(
             <>
+              {rating && <NatureHeadLines rating={rating} place={countryName} />}
               {loading && <p className="places-empty" role="status">{t('state.loading')}</p>}
               {/* A route or tour id that resolves to nothing: a gone page, said
                   as one, with the way back to the list. Not a country claim. */}

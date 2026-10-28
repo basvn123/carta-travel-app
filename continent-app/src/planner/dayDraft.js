@@ -15,6 +15,8 @@
  * saved assignments use.
  */
 import { haversineKm, cityCoords } from '../lib/runtime_pricing.js';
+import { poiLabel } from '../lib/rating.js';
+import RATING from '../../config/rating.json' with { type: 'json' };
 
 /** Reorders a day's assigned activity indices to minimize backtracking, a
  *  simple nearest-neighbour walk starting from the first-added stop with
@@ -126,30 +128,54 @@ export function isMustSee(item) {
   return (item.rate ?? 0) >= 3 && poiScore(item) >= 3.5;
 }
 
-// The plain-language buckets a traveller actually filters by, not the 40
-// harvested POI kinds. Nature covers beaches, lakes, parks, gardens, views and
-// the like (whether you visit them or do something active there); food covers
-// markets, breweries and wineries; everything else is a "sight".
-const NATURE_RE = /beach|lido|spiaggia|strand|plage|playa|lake|lago|\bsee\b|meer|park|garden|giardino|jardin|garten|trail|falls|cascat|gorge|cliff|island|isola|\bisle\b|nature|riserva|reserve|\bbay\b|mountain|monte|\bpeak\b|viewpoint|panoram|waterfall|dune|glacier|\bcave\b|grotto|grotta|forest|foresta|valley|valle|meadow|hill/i;
-const FOOD_RE = /market|mercato|marche|markt|brewery|birrificio|winery|vineyard|vigneto|cantina|distillery/i;
+// The plain-language buckets a traveller filters by, not the 40 harvested
+// POI kinds. T766: read from the one category set (T761, config/rating.json
+// poi_categories), on the wire as `category` and, for a live-research POI
+// that has none, from its kind; the four regex buckets are gone. The eight
+// categories fold onto the picker's four chips.
+const KIND_CATEGORY = RATING.poi_categories.kind_category;
+const CHIP_OF = {
+  sights: 'sight', museums: 'sight', family: 'sight', nightlife: 'sight',
+  nature: 'nature', active: 'active', food_drink: 'food', markets: 'food',
+};
+
+/** The T761 category of a POI ('sights', 'museums', 'nature', ...), or null. */
+export function poiCategoryV5(item) {
+  return item?.category || KIND_CATEGORY[item?.kind] || null;
+}
 
 /** Which plain-language category a POI belongs to: 'sight' | 'nature' |
- *  'active' | 'food'. Drives the picker's filter chips. Parenthetical
- *  disambiguators are dropped first, so a villa named "... (Lake Como)" isn't
- *  miscounted as nature on the strength of its location suffix. */
+ *  'active' | 'food'. Drives the picker's filter chips. */
 export function poiCategory(item) {
-  const name = (item.name || '').replace(/\([^)]*\)/g, ' ');
-  // A lounge bar named after the playa it faces is not the playa: commercial
-  // names classify by their harvested kind alone, never by name keywords. And
-  // a commercial "Glacier" is an ice-cream shop, not ice.
-  const commercial = COMMERCIAL_RE.test(name);
-  const t = commercial
-    ? (item.kind === 'Glacier' ? '' : item.kind || '')
-    : `${item.kind || ''} ${name}`;
-  if (NATURE_RE.test(t)) return 'nature';
-  if (item.active) return 'active';
-  if (FOOD_RE.test(t)) return 'food';
-  return 'sight';
+  return CHIP_OF[poiCategoryV5(item)] || 'sight';
+}
+
+// Which T761 categories each of the traveller's likes (lib/taste.js) reads.
+const LIKE_CATEGORIES = {
+  beach: ['nature'], lakes: ['nature'], hiking: ['nature', 'active'], islands: ['nature'],
+  culture: ['sights', 'museums'], city: ['sights', 'museums'], hidden: ['sights', 'nature'],
+  food: ['food_drink', 'markets'], nightlife: ['nightlife'],
+  cycling: ['active'], ski: ['active'], wellness: ['active'],
+};
+const LABEL_RANK = { must_see: 3, recommended: 2, worth_a_look: 1 };
+
+/**
+ * A deck ({ item }[]) ordered within each label (Must-see, Recommended, Worth
+ * a look) by the traveller's likes: a POI in a liked category first, the
+ * deck's own order otherwise. No likes: the deck as it was. Returns a new
+ * array (T766).
+ */
+export function orderByLikes(deck, likes) {
+  if (!Array.isArray(likes) || !likes.length) return deck;
+  const want = new Set(likes.flatMap((k) => LIKE_CATEGORIES[k] || []));
+  return deck
+    .map((x, i) => ({
+      x, i,
+      label: LABEL_RANK[poiLabel(x.item)] || 1,
+      liked: want.has(poiCategoryV5(x.item)) ? 1 : 0,
+    }))
+    .sort((p, q) => (q.label - p.label) || (q.liked - p.liked) || (p.i - q.i))
+    .map((y) => y.x);
 }
 
 /** Which glyph a POI wears on the explore map (the map speaks town/beach/
@@ -167,20 +193,21 @@ export function poiMapCat(item) {
 }
 
 /**
- * A display rating (0-10) for a single POI, read off the SAME composite quality
- * signal the planner ranks by (poiScore: importance rate + heritage listing +
- * Wikipedia presence + real-world fame), just rescaled so the tiers read
- * naturally: a genuine must-see lands ~8.5-9.5, a solid rated place ~7, a
- * modest one ~5.5. Returns { score, tier (1-3), label } - tier drives the same
- * rt-1/2/3 chip colours the rest of the app uses.
+ * A POI's strength for ordering and its label (rating v5, T763). POIs get no
+ * number on screen: the label is Must-see, Recommended or Worth a look, read
+ * from the wire's `label` through lib/rating.js poiLabel (a live-research POI
+ * without one falls back to its rate). `score` is the composite poiScore
+ * rescaled to 4.5 to 9.6 and stays internal: it orders day themes and goes to
+ * the AI day planner's prompt, never to a screen. `tier` is the label's rank
+ * (3 must-see, 2 recommended, 1 worth a look). POI ordering is unchanged
+ * here; T766 moves it to the labels.
  */
+const LABEL_TIER = { must_see: 3, recommended: 2, worth_a_look: 1 };
 export function poiRating(item) {
   const s = poiScore(item);
   const score = Math.max(4.5, Math.min(9.6, 4.8 + s * 0.95));
-  const must = isMustSee(item);
-  const tier = must ? 3 : ((item.rate ?? 0) >= 2 || s >= 2.6) ? 2 : 1;
-  const label = must ? 'Must-see' : tier === 2 ? 'Highly rated' : 'Worth a look';
-  return { score: Math.round(score * 10) / 10, tier, label };
+  const label = poiLabel(item);
+  return { score: Math.round(score * 10) / 10, tier: LABEL_TIER[label] || 1, label };
 }
 
 // Strip a POI name down to a language-neutral core so the same place under

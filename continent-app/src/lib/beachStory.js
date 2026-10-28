@@ -22,6 +22,7 @@
  * water, whether it is protected, how you get there, what is on it, and what
  * it is known for.
  */
+import { natureRating } from './rating.js';
 
 const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : '');
 
@@ -253,26 +254,12 @@ export function facetOptionLabel(group, option, t) {
   return t(`beach.f${cap(group)}${cap(option)}`);
 }
 
-/** Score band, for the colour of the chip. Mirrors the cutoffs the pipeline
- *  published in the wire meta (beauty_index.TIER_CUTOFFS); the beach's own
- *  `tier` is authoritative and this is only the fallback. */
-export function beachTier(beach) {
-  if (beach.tier != null) return beach.tier;
-  const s = beach.score || 0;
-  if (s >= 8.6) return 3;
-  if (s >= 7.6) return 2;
-  if (s >= 6.4) return 1;
-  return 0;
-}
-
-/** The rating shape the app's RatingBadge already speaks. */
+/** The rating ScoreChip reads, from the beach's v5 block (T763): the
+ *  score, band and rank, or { unscored: true }. The band word comes from
+ *  lib/rating.js; `t` is kept in the signature for the callers. */
+// eslint-disable-next-line no-unused-vars
 export function beachRating(beach, t) {
-  const tier = beachTier(beach);
-  return {
-    score: beach.score,
-    tier,
-    label: t(`beach.band${tier}`),
-  };
+  return natureRating(beach);
 }
 
 

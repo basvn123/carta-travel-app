@@ -346,34 +346,6 @@
 
 .pf-home-empty li span:last-child { flex: 1; height: 12px; max-width: 60%; border-radius: var(--radius-pill); background: var(--surface-hover); }
 
-.pf-likes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
-
-@media (min-width: 480px) {
-  .pf-likes { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-}
-
-.pf-like-media { position: relative; display: block; border-radius: var(--radius-card); overflow: hidden; outline: 2px solid transparent; outline-offset: -2px; }
-
-.pf-like.is-on .pf-like-media { outline-color: var(--select-border); }
-
-.pf-like-tick {
-  position: absolute;
-  top: var(--space-2);
-  right: var(--space-2);
-  display: grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  color: var(--select-ink);
-  box-shadow: var(--elev-1);
-}
-
-.pf-like-name { font-size: var(--text-body); font-weight: 600; }
-
-.pf-like.is-on .pf-like-name { color: var(--select-ink); }
-
 .plan-total .plan-total-fig { display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--space-2); margin: 0; }
 
 .plan-total .plan-total-open .plan-total-n {
@@ -446,7 +418,6 @@
 
 .pf-create-photo { object-fit: cover; }
 
-.pf-credit { margin: 0; font-size: var(--text-caption); color: var(--text-3); line-height: var(--leading-body); }
 
 .trip-planner-blank .trip-wizard-modal.wiz-flow .guide-head.pf-ehead {
   display: flex;

@@ -10,6 +10,8 @@ import { BedIcon, CloseIcon } from '../../components/Icons.jsx';
 import { PaidField } from '../PlanTotal.jsx';
 import { Flag, CityThumb } from '../GuidedTripWizardParts.jsx';
 import { useI18n } from '../../i18n/index.jsx';
+import { isGateway } from '../../lib/rating.js';
+import { sortForYou } from '../../lib/match.js';
 
 /**
  * Your stays: the beds are booked, so the traveller types the towns they hold
@@ -19,7 +21,7 @@ import { useI18n } from '../../i18n/index.jsx';
  */
 export function StepStays({
   titleTag, stopDates, destinations, nights, setCityNights, ownStays, setOwnStay, bedEstimate,
-  adults, kids, stayQuery, setStayQuery, pickedStopId = '',
+  adults, kids, stayQuery, setStayQuery, pickedStopId = '', taste = null, month = null,
 }) {
   const { t } = useI18n();
   const StepTitle = titleTag;
@@ -28,12 +30,12 @@ export function StepStays({
   const stayMatches = useMemo(() => {
     const sq = stayQuery.trim().toLowerCase();
     if (!sq) return [];
-    return Object.entries(destinations)
-      .filter(([id, d]) => d && d.lat != null && d.city.toLowerCase().includes(sq) && !(nights[id] > 0))
-      .map(([id, d]) => ({ id, dest: d }))
-      .sort((a, b) => (b.dest.rating?.score || 0) - (a.dest.rating?.score || 0))
-      .slice(0, 8);
-  }, [stayQuery, destinations, nights]);
+    // T766: ordered by the trip's fit (lib/match.js), the rating without a taste.
+    const found = Object.entries(destinations)
+      .filter(([id, d]) => d && d.lat != null && !isGateway(d) && d.city.toLowerCase().includes(sq) && !(nights[id] > 0))
+      .map(([id, d]) => ({ ...d, id }));
+    return sortForYou(found, taste, month).slice(0, 8).map((d) => ({ id: d.id, dest: destinations[d.id] }));
+  }, [stayQuery, destinations, nights, taste, month]);
 
   // A pin tapped on the stops map picks its row here: highlight and bring it into view.
   const listRef = useRef(null);

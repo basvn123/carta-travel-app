@@ -36,6 +36,7 @@ import { bandFor } from './costIndex.js';
 import { DEFAULT_PRICE_REQUEST, priceDays } from './price/index.js';
 import { placeLine, isTemplateBlurb } from './placeStory.js';
 import { omioSlug } from './omio.js';
+import { isGateway } from './rating.js';
 
 /** Middle value of a sorted-in-place copy, or null for an empty set. */
 function median(values) {
@@ -126,7 +127,7 @@ export function buildCountryBriefs(destinations, insights = null, lifestyle = nu
   const days = priceDays(destinations, lifestyle ? { ...DEFAULT_PRICE_REQUEST, lifestyle } : DEFAULT_PRICE_REQUEST);
   const byCountry = new Map();
   for (const [id, d] of Object.entries(destinations || {})) {
-    if (!d?.country) continue;
+    if (!d?.country || isGateway(d)) continue;
     if (!byCountry.has(d.country)) byCountry.set(d.country, []);
     byCountry.get(d.country).push({ id, d });
   }

@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { PoiThumb } from './DayActivityRows.jsx';
-import { isMustSee, poiKind, poiMapCat, poiCategory, poiRating } from './dayDraft.js';
+import { poiKind, poiMapCat, poiCategory, poiRating, orderByLikes } from './dayDraft.js';
+import { useTaste } from '../browse/WhyItMatches.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { safeUrl } from '../lib/format.js';
 import {
@@ -31,9 +32,10 @@ export function placeBlurb(item, t) {
     // "Church in Austria" is technically a description and tells a traveller
     // nothing. When the catalogue line is that thin, say what else is known.
     if (desc.length < 45) {
-      const extra = isMustSee(item)
+      const label = poiRating(item).label;
+      const extra = label === 'must_see'
         ? t('dayws.blurbAddMust')
-        : poiRating(item).tier >= 2 ? t('dayws.blurbAddTop') : '';
+        : label === 'recommended' ? t('dayws.blurbAddTop') : '';
       const stopped = /[.!?]$/.test(desc) ? desc : `${desc}.`;
       return extra ? `${stopped} ${extra}` : stopped;
     }
@@ -46,8 +48,11 @@ export function placeBlurb(item, t) {
   }
   // poiKind is capitalised for a badge ("Castle"); mid-sentence it is not.
   const kind = (poiKind(item) || 'place').toLowerCase();
-  if (isMustSee(item)) return t('dayws.blurbMust', { kind });
-  if (poiRating(item).tier >= 2) return t('dayws.blurbTop', { kind });
+  // The POI's label (Must-see, Recommended, Worth a look) from the wire,
+  // through lib/rating.js; never a number (T763).
+  const label = poiRating(item).label;
+  if (label === 'must_see') return t('dayws.blurbMust', { kind });
+  if (label === 'recommended') return t('dayws.blurbTop', { kind });
   return t('dayws.blurbPlain', { kind });
 }
 
@@ -67,7 +72,7 @@ function PlaceCard({ item, idx, added, focused, note, onToggle, onFocus, t }) {
         <span className="daya-text">
           <span className="daya-name">
             {item.name}
-            {isMustSee(item) && (
+            {poiRating(item).label === 'must_see' && (
               <span className="daya-must"><StarIcon size={9} /> {t('dayws.mustBadge')}</span>
             )}
           </span>
@@ -134,12 +139,14 @@ export function DayAddPanel({
   // on the same screen.
   const suggShown = pick === 'all' && suggestions.length > 0;
   const suggIdx = useMemo(() => new Set(suggestions.map((x) => x.idx)), [suggestions]);
-  const filtered = useMemo(() => deck.filter(({ item, idx }) => {
+  // T766: within each label the traveller's likes come first.
+  const likes = useTaste()?.likes;
+  const filtered = useMemo(() => orderByLikes(deck.filter(({ item, idx }) => {
     if (suggShown && suggIdx.has(idx)) return false;
     if (pick === 'all') return true;
-    if (pick === 'top') return isMustSee(item) || poiRating(item).tier >= 2;
+    if (pick === 'top') return poiRating(item).tier >= 2;
     return poiCategory(item) === pick;
-  }), [deck, pick, suggShown, suggIdx]);
+  }), likes), [deck, pick, suggShown, suggIdx, likes]);
 
   const searching = query.trim().length >= 2;
   const exactHit = searchResults.some(({ item }) => item.name.trim().toLowerCase() === query.trim().toLowerCase());
