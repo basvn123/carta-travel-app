@@ -71,12 +71,12 @@ export function applyLevers(trips, levers) {
  * it re-ranks the trips by their flights instead. Each trip takes its place
  * in the lever's own order (adapters/flight.js flightLeverKeys: cheapest
  * flight, or the stops then door to door, or the comfort of the times) and
- * sinks by up to FLIGHT_PULL for the last place, the same as being EUR 200
+ * sinks by up to FLIGHT_PULL for the last place, the same as being EUR 500
  * over budget, so the fit still leads and the flight decides between near
  * equals. Equal keys share a place; a trip with no flight facts sits in the
  * middle, neither helped nor hurt. Returns Map id -> sink.
  */
-export const FLIGHT_PULL = 2 * RECOMMEND.budget.sinkPer100;
+export const FLIGHT_PULL = 5 * RECOMMEND.budget.sinkPer100;
 
 export function flightPull(trips, lever) {
   const out = new Map();
