@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { Button } from '../../components/ui/index.js';
 import { CheckIcon } from '../../components/Icons.jsx';
@@ -8,6 +8,7 @@ import { SLOT_ROWS } from '../../lib/recommend/slots.js';
 import { stayTierFor } from '../../lib/recommend/adapters/stay.js';
 import { STAGES, useLoaderDone, useTripFinder } from './finderHooks.js';
 import { answerChips, joinList, likeLabel, widenQuestion } from './finderText.js';
+import { TripsForYou } from './TripsForYou.jsx';
 import '../../styles/87-trip-finder.css';
 
 const PARTY_TITLE = { solo: 'solo', couple: 'couple', friends: 'friends', family: 'family', group: 'group' };
@@ -105,20 +106,35 @@ export function FindingTrips({ settings, finder, onBack, onWiden, guide, onSkip 
 }
 
 /**
- * The finder screen behind question 7 (g:trips): the loader, then what it
- * found. TripFlow loads it lazily, with lib/recommend, so the Plan tab's
+ * The finder screen behind question 7 (g:trips): the loader, then Trips
+ * for you. TripFlow loads it lazily, with lib/recommend, so the Plan tab's
  * first load does not carry the engine.
  *
  *   onBack()        back to question 7
  *   onWiden(id)     reopen one question (the answers bar, an empty result)
- *   onNone()        nothing to show here yet: go on to the planner
  */
-export default function TripFinderScreen({ settings, guide, onBack, onWiden, onNone }) {
+export default function TripFinderScreen({ settings, guide, onBack, onWiden }) {
   const finder = useTripFinder(settings);
   const ready = Boolean(finder.trips);
   const { done, skip } = useLoaderDone(ready);
-  useEffect(() => {
-    if (done && finder.trips.length) onNone();
-  }, [done]); // eslint-disable-line react-hooks/exhaustive-deps -- once, when the loader ends
-  return <FindingTrips settings={settings} finder={finder} guide={guide} onBack={onBack} onWiden={onWiden} onSkip={skip} />;
+  // The receipt's swaps, by trip id: the card and the receipt read the same trip.
+  const [edits] = useState({});
+  const [, setOpen] = useState(null);
+  const cardRefs = useRef(new Map());
+  if (!done || !finder.trips.length) {
+    return <FindingTrips settings={settings} finder={finder} guide={guide} onBack={onBack} onWiden={onWiden} onSkip={skip} />;
+  }
+  const trips = finder.trips.map((x) => edits[x.id] || x);
+  return (
+    <TripsForYou
+      settings={settings}
+      trips={trips}
+      destinations={finder.data?.destinations}
+      originName={finder.origin?.name || ''}
+      onBack={onBack}
+      onReopen={onWiden}
+      onOpen={(trip) => setOpen(trip.id)}
+      cardRefs={cardRefs}
+    />
+  );
 }

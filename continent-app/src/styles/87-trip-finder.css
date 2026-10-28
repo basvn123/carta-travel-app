@@ -77,3 +77,209 @@
   .tff-check-mark,
   .tff-check-mark svg { transition: none; }
 }
+
+/* ---- Trips for you (T798) ---- */
+.tff-ansbar {
+  display: flex;
+  gap: var(--space-2);
+  margin: 0 calc(-1 * var(--space-1));
+  padding: var(--space-1);
+  list-style: none;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tff-ansbar::-webkit-scrollbar { display: none; }
+.tff-ansbar > li { flex: none; }
+.tff-ans.btn { border-radius: var(--radius-pill); font-weight: 500; }
+
+.tff-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+@media (min-width: 769px) {
+  .tff-list { grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); }
+}
+.tff-more { display: flex; justify-content: center; }
+
+/* ---- The priced trip card (T798, DESIGN.md "Priced trip card") ---- */
+.tff-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+.tff-card.is-marked { border-color: var(--select-border); outline: 1px solid var(--select-border); outline-offset: -2px; }
+@media (hover: hover) {
+  .tff-card:hover { border-color: var(--neutral-300); }
+  .tff-card.is-marked:hover { border-color: var(--select-border); }
+}
+.tff-card-img { display: block; width: 100%; }
+.tff-card-body {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4) var(--space-4);
+}
+.tff-card-head { display: grid; gap: 2px; }
+.tff-card-name {
+  margin: 0;
+  font-size: var(--text-lead);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  color: var(--text);
+  text-wrap: balance;
+}
+.tff-card-meta { margin: 0; font-size: var(--text-label); color: var(--text-2); }
+.tff-card-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--select-ink);
+}
+
+/* The total opens the receipt; its hit area is the whole card. Controls
+   that do something else sit above that stretch. */
+.tff-total.btn {
+  position: static;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: var(--space-1) var(--space-2);
+  height: auto;
+  min-height: 0;
+  padding: 0;
+  background: none;
+  color: var(--text);
+  text-align: left;
+}
+.tff-total.btn::after { content: ""; position: absolute; inset: 0; border-radius: var(--radius-card); }
+.tff-total.btn:focus-visible { outline: 2px solid transparent; }
+.tff-total.btn:focus-visible::after { outline: 2px solid var(--focus); outline-offset: -2px; }
+.tff-total-eur { font-size: var(--text-title); font-weight: 700; line-height: var(--leading-tight); }
+.tff-total-unit { font-size: var(--text-label); font-weight: 500; color: var(--text-2); }
+@media (hover: hover) { .tff-total.btn:hover { background: none; } }
+
+.tff-match.btn,
+.tff-card .costbar,
+.tff-why { position: relative; z-index: calc(var(--z-base) + 1); }
+.tff-match.btn {
+  justify-self: start;
+  margin: calc(-1 * var(--space-1)) 0 0 calc(-1 * var(--space-2));
+  font-weight: 700;
+  text-decoration: underline dotted var(--border);
+  text-underline-offset: 4px;
+}
+
+.tff-three {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+  margin: 0;
+}
+.tff-three > div { display: grid; gap: 2px; min-width: 0; }
+.tff-three dt { font-size: var(--text-caption); color: var(--text-2); }
+.tff-three dd { margin: 0; font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.tff-three .not-yet { font-size: var(--text-caption); font-weight: 500; }
+.tff-card .costbar { margin: 0; }
+.tff-card .costbar-read:empty { display: none; }
+
+.tff-inc { display: flex; flex-wrap: wrap; gap: var(--space-1); margin: 0; padding: 0; list-style: none; }
+.tff-inc-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 24px;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  color: var(--text-2);
+  font-size: var(--text-micro);
+  font-weight: 600;
+}
+.tff-inc-item svg { color: var(--status-success); }
+.tff-inc-item.is-yours { background: none; border: 1px solid var(--border); }
+.tff-inc-item.is-notYet { background: none; border: 1px dashed var(--border); color: var(--text-3); }
+
+.tff-ruler { display: grid; gap: var(--space-1); font-size: var(--text-caption); color: var(--text-2); }
+.tff-ruler-track {
+  position: relative;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+}
+.tff-ruler-fill {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-pill);
+  background: var(--kind-city);
+  transform-origin: left center;
+}
+.tff-ruler-mark {
+  position: absolute;
+  top: -3px;
+  width: 2px;
+  height: 12px;
+  margin-left: -1px;
+  background: var(--text);
+}
+.tff-ruler.is-over { color: var(--text); }
+
+.tff-reasons {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-caption);
+  color: var(--text-2);
+  line-height: var(--leading-ui);
+}
+.tff-reason { display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: var(--space-2); align-items: start; }
+.tff-reason > svg { margin-top: 2px; color: var(--text-3); }
+.tff-reason.is-catch {
+  margin-top: var(--space-1);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border-soft);
+  color: var(--text);
+}
+.tff-reason.is-catch > svg { color: var(--amber-ink); margin-top: 1px; }
+
+.tff-card-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin: auto 0 0;
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border-soft);
+  font-size: var(--text-label);
+  color: var(--text-2);
+}
+.tff-card-foot .money { color: var(--text); font-weight: 600; }
+
+/* "Why this match": a bar per like on the ink ramp, the figure beside it. */
+.tff-why { display: grid; gap: var(--space-2); padding: var(--space-3); border-radius: var(--radius-control); background: var(--surface-sunken); }
+.tff-bars, .tff-why-against { display: grid; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.tff-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) auto;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-caption);
+  color: var(--text-2);
+}
+.tff-bar-track { position: relative; height: 6px; border-radius: var(--radius-pill); background: var(--surface); overflow: hidden; }
+.tff-bar-fill { position: absolute; inset: 0; background: var(--kind-city); transform-origin: left center; }
+.tff-bar-pct { color: var(--text); font-weight: 600; }
+.tff-why-against li { display: flex; gap: var(--space-2); align-items: start; font-size: var(--text-caption); color: var(--text); }
+.tff-why-against svg { flex: none; margin-top: 1px; color: var(--amber-ink); }
