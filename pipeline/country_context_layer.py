@@ -150,10 +150,25 @@ def compute(dests):
                     if n > 1 else 100)
             for did in slots[si]:
                 out[did]["class_percentile"] = pctl
+                # Schema v19 (T762): the same rank as part of the rating, for
+                # "Top 2% of villages in Europe" (T763 shows it).
+                out[did]["_class_rank"] = {"class": cls, "pct": pctl,
+                                           "scope": "europe"}
     for did, d in dests.items():
         if d.get("gateway_of"):
             out[did] = {f: None for f in FIELDS}
     return out, badged_per_country
+
+
+def put_class_rank(dest, fields):
+    """Move the class rank out of the top-level fields into rating.class_rank
+    (schema v19, T762)."""
+    rank = fields.pop("_class_rank", None)
+    if dest.get("rating") is not None:
+        if rank is None:
+            dest["rating"].pop("class_rank", None)
+        else:
+            dest["rating"]["class_rank"] = rank
 
 
 def main():
@@ -165,6 +180,7 @@ def main():
               for did, d in dests.items()}
     ctx, badged = compute(dests)
     for did, d in dests.items():
+        put_class_rank(d, ctx[did])
         d.update(ctx[did])
     after = {did: (d.get("rating") or {}).get("score")
              for did, d in dests.items()}
@@ -194,6 +210,7 @@ def main():
     n = 0
     for did, d in served.get("destinations", {}).items():
         if did in ctx:
+            put_class_rank(d, ctx[did])
             d.update(ctx[did])
             n += 1
     served["meta"]["country_context_model"] = COUNTRY_CONTEXT_MODEL

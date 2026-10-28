@@ -38,7 +38,7 @@
  * touch is a tripwire that is not attached to anything.
  */
 
-export const EXPECTED_SCHEMA_VERSION = 18;
+export const EXPECTED_SCHEMA_VERSION = 19;
 
 // Top-level keys the boot path reads before it can render a price.
 const REQUIRED_META = [
@@ -152,8 +152,154 @@ export function validateAppData(data, { contract = null, catalogue = false } = {
     }
   }
 
+  problems.push(...checkV19(dests, { catalogue }));
   if (contract) problems.push(...checkKeySet(data, contract, { catalogue }));
 
+  return problems;
+}
+
+// ======================================================================
+// Schema v19 keys, pinned to the second level (T762, gate 8, T082-d)
+// ======================================================================
+//
+// v19 is additive (rating v5, batch R3): every v18 key keeps its value and
+// these arrive beside them. The top-level key set above only notices that a
+// `taste` exists; these checks hold what is inside it, and what is inside the
+// new rating keys, so a layer that ships the right key with the wrong shape
+// fails here rather than on a screen in R4.
+
+export const V19_BANDS = ['exceptional', 'excellent', 'very_good', 'good', 'pleasant'];
+export const V19_CONFIDENCE = ['curated', 'rubric', 'estimated'];
+export const V19_LIKES = ['beach', 'hiking', 'lakes', 'culture', 'city', 'food',
+  'nightlife', 'hidden', 'cycling', 'ski', 'wellness', 'islands'];
+export const V19_CLASSES = ['metro', 'city', 'town', 'village', 'area'];
+export const V19_POI_LABELS = ['must_see', 'recommended', 'worth_a_look'];
+export const V19_POI_CATEGORIES = ['sights', 'museums', 'nature', 'food_drink',
+  'active', 'family', 'nightlife', 'markets'];
+export const V19_NATURE_CONFIDENCE = ['measured', 'partial', 'unscored'];
+
+const isObj = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
+const in01 = (v) => isFiniteNum(v) && v >= 0 && v <= 1;
+
+function checkV19(dests, { catalogue }) {
+  const problems = [];
+  const bad = (m) => problems.push(m);
+  let rated = 0;
+  let withTaste = 0;
+  for (const [key, d] of Object.entries(dests)) {
+    if (!isObj(d)) continue;
+    const where = `destinations.${key}`;
+    const r = d.rating;
+    if (isObj(r)) {
+      rated += 1;
+      if (catalogue || 'band' in r) {
+        if (!('band' in r)) bad(`${where}.rating.band is missing`);
+        else if (r.band !== null && !V19_BANDS.includes(r.band)) {
+          bad(`${where}.rating.band is ${JSON.stringify(r.band)}`);
+        }
+      }
+      if (catalogue || 'why' in r) {
+        if (!('why' in r)) bad(`${where}.rating.why is missing`);
+        else if (r.why !== null && typeof r.why !== 'string') bad(`${where}.rating.why is not a string`);
+      }
+      if (catalogue || 'class_rank' in r) {
+        const c = r.class_rank;
+        if (!isObj(c)) bad(`${where}.rating.class_rank is not an object`);
+        else if (!V19_CLASSES.includes(c.class) || !isFiniteNum(c.pct)
+          || c.pct < 0 || c.pct > 100 || c.scope !== 'europe') {
+          bad(`${where}.rating.class_rank is ${JSON.stringify(c)}`);
+        }
+      }
+      if (catalogue && !V19_CONFIDENCE.includes(r.confidence)) {
+        bad(`${where}.rating.confidence is ${JSON.stringify(r.confidence)}`);
+      }
+    }
+    if ('gateways' in d) {
+      if (!Array.isArray(d.gateways) || !d.gateways.length) {
+        bad(`${where}.gateways is not a non-empty array`);
+      } else {
+        for (const g of d.gateways) {
+          if (typeof g !== 'string' || (catalogue && dests[g]?.gateway_of !== key)) {
+            bad(`${where}.gateways lists ${JSON.stringify(g)}, whose gateway_of is not ${key}`);
+          }
+        }
+      }
+    }
+    if ('gateway_of' in d && typeof d.gateway_of !== 'string') {
+      bad(`${where}.gateway_of is not a string`);
+    }
+    if ('taste' in d) {
+      withTaste += 1;
+      const t = d.taste;
+      if (!isObj(t) || !isObj(t.likes)) {
+        bad(`${where}.taste.likes is not an object`);
+        continue;
+      }
+      for (const like of V19_LIKES) {
+        const v = t.likes[like];
+        if (!Array.isArray(v) || v.length !== 2 || !in01(v[0]) || !isObj(v[1])) {
+          bad(`${where}.taste.likes.${like} is not [value 0..1, fact]: ${JSON.stringify(v)}`);
+        }
+      }
+      if (t.size !== null && !V19_CLASSES.includes(t.size)) bad(`${where}.taste.size is ${JSON.stringify(t.size)}`);
+      if (t.crowd_by_month !== null && !(Array.isArray(t.crowd_by_month)
+        && t.crowd_by_month.length === 12 && t.crowd_by_month.every(Number.isInteger))) {
+        bad(`${where}.taste.crowd_by_month is not 12 integers or null`);
+      }
+      if (t.car_need !== null && typeof t.car_need !== 'boolean') bad(`${where}.taste.car_need is not a boolean or null`);
+      if (t.cost_level !== null && !isFiniteNum(t.cost_level)) bad(`${where}.taste.cost_level is not a number or null`);
+    }
+  }
+  // Pair the walk with a count: a catalogue with no rated or no profiled
+  // destination would pass every check above vacuously.
+  if (catalogue && rated && withTaste < rated) {
+    bad(`taste is on ${withTaste} of ${rated} rated destinations; every rated one carries it`);
+  }
+  return problems;
+}
+
+/** POI shards: label, category and tags on every item (v19). */
+export function validateV19Pois(shards) {
+  const problems = [];
+  for (const [name, items] of Object.entries(shards)) {
+    if (!Array.isArray(items)) continue;
+    items.forEach((it, i) => {
+      const where = `poi/${name}[${i}]`;
+      if (!('label' in it)) problems.push(`${where}.label is missing`);
+      else if (it.label !== null && !V19_POI_LABELS.includes(it.label)) problems.push(`${where}.label is ${JSON.stringify(it.label)}`);
+      if (!V19_POI_CATEGORIES.includes(it.category)) problems.push(`${where}.category is ${JSON.stringify(it.category)}`);
+      if (!isObj(it.tags)) problems.push(`${where}.tags is not an object`);
+    });
+  }
+  return problems;
+}
+
+/** Nature rows ({kind: [row]}): every rated row carries v5 {score, band, rank, facts, confidence}. */
+export function validateNatureWires(byKind) {
+  const problems = [];
+  let n = 0;
+  for (const [kind, rows] of Object.entries(byKind)) {
+    for (const row of rows) {
+      const v = row.v5;
+      const where = `${kind}/${row.id}`;
+      n += 1;
+      if (!isObj(v)) { problems.push(`${where}.v5 is missing`); continue; }
+      if (!V19_NATURE_CONFIDENCE.includes(v.confidence)) problems.push(`${where}.v5.confidence is ${JSON.stringify(v.confidence)}`);
+      if (!isObj(v.facts)) problems.push(`${where}.v5.facts is not an object`);
+      if (v.confidence === 'unscored') {
+        if (v.score !== null || v.band !== null) problems.push(`${where}.v5 is unscored but carries a score`);
+        continue;
+      }
+      if (!isFiniteNum(v.score) || v.score < 0 || v.score > 10) problems.push(`${where}.v5.score is ${JSON.stringify(v.score)}`);
+      if (v.band !== null && !V19_BANDS.includes(v.band)) problems.push(`${where}.v5.band is ${JSON.stringify(v.band)}`);
+      if (v.rank !== null && !(isObj(v.rank) && ['region', 'country'].includes(v.rank.scope)
+        && Number.isInteger(v.rank.rank) && Number.isInteger(v.rank.of)
+        && v.rank.rank >= 1 && v.rank.rank <= v.rank.of && typeof v.rank.unit === 'string')) {
+        problems.push(`${where}.v5.rank is ${JSON.stringify(v.rank)}`);
+      }
+    }
+  }
+  if (!n) problems.push('no rated nature row was read');
   return problems;
 }
 

@@ -260,6 +260,34 @@ writeFileSync(resolve(publicDir, 'app_data.json'), core);
 const n = Object.keys(data.destinations || {}).length;
 console.log(`[sync-data] core dataset -> public/app_data.json (${n} destinations, is_mock=${data.meta?.is_mock}, ${kb(core)})`);
 
+// Schema v19 (T762): the place reasons in the five other languages, one lazy
+// file per language, so the main wire carries English only (rating.why). The
+// hand reasons (curated_why_i18n.json) win over the rubric's
+// (rubric_appeal.json), as they do for the English one. T762 measured inline
+// against lazy; the numbers are in Execution/P7/T761-T762-rating-v5-profile.md.
+{
+  const WHY_LANGS = ['nl', 'de', 'fr', 'es', 'it'];
+  const readIf = (p) => (existsSync(p) ? JSON.parse(readFileSync(p, 'utf8')) : {});
+  const rubric = readIf(resolve(repoRoot, 'app_data', 'rubric_appeal.json'));
+  const curated = readIf(resolve(repoRoot, 'app_data', 'curated_why_i18n.json'));
+  const rated = new Set(Object.entries(data.destinations || {})
+    .filter(([, d]) => d.rating).map(([id]) => id));
+  const whyDir = resolve(publicDir, 'app_data', 'why_i18n');
+  mkdirSync(whyDir, { recursive: true });
+  for (const lang of WHY_LANGS) {
+    const out = {};
+    for (const [id, rec] of Object.entries(rubric)) {
+      if (rated.has(id) && rec?.why?.[lang]) out[id] = stripDashes(rec.why[lang]);
+    }
+    for (const [id, rec] of Object.entries(curated)) {
+      if (rated.has(id) && rec?.[lang]) out[id] = stripDashes(rec[lang]);
+    }
+    const body = JSON.stringify(out);
+    writeFileSync(resolve(whyDir, `${lang}.json`), body);
+    console.log(`[sync-data] reasons (${lang}) -> public/app_data/why_i18n/${lang}.json (${Object.keys(out).length} places, ${kb(body)})`);
+  }
+}
+
 // The boot index and the per-country records (CARTA_CLOUD_ARCHITECTURE.md
 // 5.2, Execution/P3/T054-wire-shards-to-r2.md). The core above grows by
 // ~3.2 KB per destination, ~80 MB at the 25,000 the price map targets, and

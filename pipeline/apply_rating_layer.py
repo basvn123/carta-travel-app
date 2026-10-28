@@ -209,8 +209,10 @@ def main() -> None:
             print(f"    - {p}")
         sys.exit(1)
     data["meta"]["rating_model"] = rating_layer.RATING_MODEL
+    # Schema v19 (T762): rating.band, rating.why, rating.class_rank and
+    # gateways are additive keys; every v18 key keeps its value.
     data["meta"]["schema_version"] = max(
-        data["meta"].get("schema_version", 0), 17)
+        data["meta"].get("schema_version", 0), 19)
     # Atomic: write_text truncates the 100+ MB master before streaming it back,
     # so an interrupted or out-of-space write destroys the dataset every other
     # script reads. A full disk took out a harvest cache this way on
@@ -237,13 +239,17 @@ def main() -> None:
             if "rating" in src:
                 d["rating"] = src["rating"]
                 d.pop("gateway_of", None)
+                if src.get("gateways"):
+                    d["gateways"] = src["gateways"]
+                else:
+                    d.pop("gateways", None)
                 n += 1
             elif src.get("gateway_of"):
                 d["gateway_of"] = src["gateway_of"]
                 d.pop("rating", None)
         served["meta"]["rating_model"] = rating_layer.RATING_MODEL
         served["meta"]["schema_version"] = max(
-            served["meta"].get("schema_version", 0), 17)
+            served["meta"].get("schema_version", 0), 19)
         atomic_write_json(path, served, indent=None, separators=(",", ":"))
         print(f"  {path.name}: mirrored rating onto {n} dests")
 

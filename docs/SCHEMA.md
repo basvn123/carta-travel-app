@@ -1,6 +1,6 @@
 # app_data schema
 
-Live master: `meta.schema_version` = 18. The `Schema vN` sections further down
+Live master: `meta.schema_version` = 19. The `Schema vN` sections further down
 are the additive changelog of layers (their numbering ran ahead of the meta
 field; treat the sections as history, `meta.schema_version` as the contract).
 
@@ -372,32 +372,35 @@ Four layers on top of v13; every one has an `apply_*.py` and is idempotent.
 
 ### 1. Traveller rating, `dest.rating` (rating_layer.py + apply_rating_layer.py)
 
+Rewritten for rating v5 (T762); the section described rating_v2 until then.
+
 ```jsonc
 "rating": {
-  "score": 9.5,                  // 0-10, one decimal, ABSOLUTE (no percentile
-                                 // re-spreading): 8+ genuinely outstanding
-  "tier": 3,                     // 3 "Worth the journey" (>=8.5) | 2 "Worth a
-                                 // detour" (>=7.5) | 1 "Worth a visit" (>=6.8) | 0
-  "label": "Worth the journey",  // Michelin Green Guide idiom
-  "hidden_gem": false,           // highly rated + low fame, or curator-flagged gem
-  "fame": 4029,                  // avg daily Wikipedia pageviews, last 12 months
-  "components": { "beauty": 0.73, "things_to_do": 0.94, "appeal": 0.85 },
-  "source": "rating_v2"
+  "score": 9.6,                  // 0-10, one decimal, absolute
+  "tier": 3,                     // OLD cutoffs 8.7 / 7.8 / 6.9 ("Worth the journey",
+  "label": "Worth the journey",  //   "a detour", "a visit"), kept until the app moves (T763)
+  "hidden_gem": false,           // rated high with low fame for its class, or a curated gem
+  "confidence": "curated",       // curated (hand appeal) | rubric (rubric appeal) | estimated
+  "fame": 4029,                  // avg daily Wikipedia pageviews (hidden_gem only, never the score)
+  "components": { "beauty": 0.53, "highlights": 0.575, "acclaim": 1, "appeal": 1 },
+                                 // highlights holds depth D since T759 (renamed in R4)
+  "source": "v5.0-r3",           // config/rating.json version
+  "band": "exceptional",         // v19: exceptional >= 9.0 | excellent >= 8.3 | very_good >= 7.6
+                                 //   | good >= 6.9 | pleasant >= 6.0 | null
+  "why": "Ancient capital ...",  // v19: the English reason (hand, else rubric); the other
+                                 //   five languages are lazy files, see Schema v19
+  "class_rank": { "class": "metro", "pct": 99, "scope": "europe" }   // v19
 }
 ```
 
-rating_v2 blend (rating_layer.py, replaced v1's 45/20/35 fame-led mix in
-2026-07): curated appeal 70% (`app_data/curated_appeal.json`, a hand-scored
-0-10 traveller-appeal judgement per destination, anchors Rome 10 ...
-Charleroi 2.5) + beauty 15% (the v9 Beauty Index) + things-to-do 15%
-(rate-weighted saturating POI count over `items_full`). Fame (pageviews) no
-longer moves the score at all; it only decides `hidden_gem`. Tier cutoffs
-8.5/7.5/6.8, absolute scale.
-Multi-airport cities are unified and hold ONE slot in the distribution.
-`meta.rating_model` documents everything. The UI (RatingBadge.jsx) shows the
-score chip + 1-3 tier diamonds everywhere the old 1-5 gem row lived; the
-FilterBar's Beauty filter became a min-tier Rating filter (`mt` URL param, old
-`mb` links map across).
+Formula v5 (T759, Roadmap 2.10b rating v5): Q = 0.60 appeal + 0.15 beauty +
+0.15 depth + 0.10 recognition, each 0 to 10, read through a frozen per-class
+curve. Appeal is the hand score (`app_data/curated_appeal.json`), else the
+rubric score (`app_data/rubric_appeal.json`); a place with neither is
+`estimated` and capped at 8.9. Every weight, cutoff and cap lives in
+`continent-app/config/rating.json`; every measured breakpoint in the frozen
+`reports/rating_reference_v5.json`. Fame never moves the score.
+Multi-airport cities hold ONE row; the other airports carry `gateway_of`.
 
 ### 2. Per-country tolls, `dest.driving_toll` (toll_layer.py + apply_toll_layer.py)
 
@@ -990,6 +993,8 @@ here yet.
 | `image` | destination | every | app_data.json block (`hires` stripped on the wire) |
 | `activities` | destination | every | app_data.json block (`items_full` moved to `poi/`) |
 | `rating` | destination | some | Schema v14 section 1; on every record except a gateway (T755), which is rated as its city; `tests/test_one_row_per_city.py` holds "rated or a gateway" |
+| `gateways` | destination | some | Schema v19: on a city row, the ids of the airport rows that stand for it (the reverse of `gateway_of`) |
+| `taste` | destination | some | Schema v19: the place taste profile, on every rated record |
 | `gateway_of` | destination | some | T755: on the other airports of a multi-airport city (CIA, ORY, BVA, STN, LTN, LGW, BGY, LIN, TSF, NYO, BMA, WMI, TRF), the id of the city's row; such a record has no `rating` and ranks nowhere, flight search still reads it |
 | `transfer` | destination | every | not yet described (minutes and euros one way from the anchor airport) |
 | `climate` | destination | every | not yet described (twelve monthly rows and the best months) |
@@ -1187,3 +1192,79 @@ Additive. `local_transport.car_needed`, `car_basis`, `car_useful_for` (string) a
 | `mobility.source` | string | | for example `practical.transit (Trenord) + categories`, or `categories (no transit lines for this place)` |
 
 `crowding.monthly` and `local_transport.mobility` reach the app wire unchanged: `sync-data.mjs` has no strip rule for either block.
+
+## Schema v19 (rating v5 batch R3, T761 and T762, 2026-10-28)
+
+Additive only: every v18 key keeps its value (`rating.tier` and its 8.7 /
+7.8 / 6.9 cutoffs, `rating.components`, POI `rate`, the nature `score`,
+`rating` and `tier`); the app moves to the new keys in R4 (T763 to T766),
+which also removes the old ones. `scripts/ci/contract.mjs` checks every key
+below for presence and type (gate 8, T082-d).
+
+### On a destination (`public/app_data.json`)
+
+- `rating.band`, `rating.why`, `rating.class_rank`: see Schema v14 section 1.
+- `rating.confidence`: `curated | rubric | estimated` since T759.
+- `gateways`: `["ORY", "BVA"]` on the city row, the reverse of `gateway_of`.
+- `taste` (pipeline/place_taste_profile.py), on every rated record:
+
+```jsonc
+"taste": {
+  "likes": {                       // the twelve LIKES of planner/flow/tripSettings.js
+    "lakes":  [0.97, {"n": 6, "best": "Hallstatter See", "band": "exceptional", "minutes": 1}],
+    "culture": [0.91, {"unesco": true, "heritage": 12, "museums": 3}],
+    "hidden": [0.40, {"hidden_gem": false, "fame_pct": 0.62}],
+    ...                            // beach, hiking, city, food, nightlife, cycling, ski,
+  },                               // wellness, islands: [value 0..1, fact]
+  "size": "village",               // place.class
+  "crowd_by_month": [0,1,1,1,2,3,3,3,3,2,0,1],   // crowding.monthly.tier, or null
+  "car_need": true,                // local_transport.car_needed
+  "cost_level": 39.0               // costs.meal_mid_eur (EUR), the place's price figure
+}
+```
+
+Each value is a percentile against the frozen reference set (the `taste`
+part of `reports/rating_reference_v5.json`), so it means the same in every
+country. The fact next to it is what the bar line shows; both come from the
+same numbers.
+
+### Reasons in five more languages (lazy)
+
+`public/app_data/why_i18n/{nl,de,fr,es,it}.json`: `{id: reason}`, written by
+`scripts/sync-data.mjs` from `app_data/curated_why_i18n.json` and
+`app_data/rubric_appeal.json`. They are separate files so the main wire does
+not grow by five languages (T762 measured both options; the numbers are in
+`Execution/P7/T761-T762-rating-v5-profile.md`).
+
+### On a nature row (`public/{trails,beaches,lakes,mountains,cycling}/*.json`)
+
+Every rated row (trails: rated hikes) carries `v5` (pipeline/nature_tiers.py):
+
+```jsonc
+"v5": {
+  "score": 8.4,            // the place ladder: a frozen Europe-wide percentile within
+  "band": "excellent",     //   the kind, read onto the same cutoffs as places; null band
+                           //   under 6.0
+  "rank": {"scope": "region", "rank": 2, "of": 41, "unit": "lakes"},
+                           // smallest scope (NUTS 2 region, then country) with 5+ items
+  "facts": {...},          // next to the score, never in it: trails difficulty (SAC),
+                           //   km, climb_m, hours, loop; beaches water_class, blue_flag,
+                           //   surface, lifeguard; lakes swimming, water_class,
+                           //   shore_access; mountains way_up, difficulty, season;
+                           //   cycling paved_share, traffic_free_share, climb_m, family.
+                           //   null where the data has no value (never estimated)
+  "confidence": "partial"  // measured (every part) | partial | unscored (under half
+}                          //   measured: no score, band or rank)
+```
+
+It sits under `v5` because three kinds already ship a `score` with the old
+meaning; R4 replaces the old keys.
+
+### On a POI (`public/poi/{id}.json`, from `activities.items_full`)
+
+- `label`: `must_see | recommended | worth_a_look` (null on a duplicate), capped
+  per place class (pipeline/poi_labels.py). `rate` is derived from it (3/2/1).
+- `category`: one of the eight of config `poi_categories`.
+- `tags`: practical tags from OpenStreetMap where a harvest answered
+  (`free` from the `fee` tag); a key absent is unknown, never false.
+

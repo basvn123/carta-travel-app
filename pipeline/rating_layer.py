@@ -104,6 +104,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DEST_PV_CACHE = ROOT / "cache" / "dest_pageviews.json"
 CURATED_APPEAL = ROOT / "app_data" / "curated_appeal.json"
 RUBRIC_APPEAL = ROOT / "app_data" / "rubric_appeal.json"
+CURATED_WHY = ROOT / "app_data" / "curated_why_i18n.json"
 GOLDEN_ANCHORS = ROOT / "tests" / "golden_ratings.json"
 ROUTES_ATTACH = ROOT / "data" / "derived" / "routes_attach.json"
 
@@ -126,6 +127,8 @@ WEIGHTS = section("weights")
 FORMULA = cfg("formula")
 WEIGHTS_V5 = section("weights_v5")
 ESTIMATED_CAP = cfg("estimated.cap")
+# The five v5 band words and their lower cutoffs (schema v19 rating.band).
+BANDS = section("bands.cutoffs")
 CURVE_TOP_SHARE = cfg("class_curve.top_share")
 CURVE_TOP_SCORE = cfg("class_curve.top_score")
 
@@ -953,6 +956,7 @@ def compute_ratings(dests):
               "curated": 0, "modelled": 0, "provisional": 0,
               "rubric": 0, "estimated": 0}
     counts["gateway"] = 0
+    why_en = load_why_en()
     for i, did in enumerate(ids):
         if rep[i] != i:
             dests[did]["gateway_of"] = ids[rep[i]]
@@ -988,7 +992,51 @@ def compute_ratings(dests):
             "fame": int(views_list[i]),
             "components": comps[i],
             "source": RATING_MODEL["version"],
+            # Schema v19 (T762), additive: the five-band word of the score and
+            # the English reason. `tier` keeps the 8.7/7.8/6.9 cutoffs until
+            # the app moves (T763); the other five reason languages are lazy
+            # files (public/app_data/why_i18n/{lang}.json).
+            "band": band_of(score),
+            "why": why_en.get(did),
         }
         counts[tier] += 1
         counts["hidden_gem"] += 1 if hidden else 0
+    # Schema v19 (T762): a city lists the airport rows that stand for it
+    # (gateway_of is the other direction, T755).
+    for did in ids:
+        dests[did].pop("gateways", None)
+    for did in ids:
+        city = dests[did].get("gateway_of")
+        if city in dests:
+            dests[city].setdefault("gateways", []).append(did)
+    for did in ids:
+        if dests[did].get("gateways"):
+            dests[did]["gateways"].sort()
     return counts
+
+
+def band_of(score):
+    """The v5 band word of a place score (config bands.cutoffs), or None
+    under the lowest cutoff."""
+    for band, cut in sorted(BANDS.items(), key=lambda kv: -kv[1]):
+        if score >= cut:
+            return band
+    return None
+
+
+def load_why_en():
+    """{id: English reason}: the hand reason (curated_why_i18n.json, else
+    curated_appeal.json), else the rubric reason (rubric_appeal.json)."""
+    out = {}
+    if RUBRIC_APPEAL.exists():
+        for did, rec in json.loads(RUBRIC_APPEAL.read_text(encoding="utf-8")).items():
+            if (rec.get("why") or {}).get("en"):
+                out[did] = rec["why"]["en"]
+    for did, rec in load_curated_appeal().items():
+        if rec.get("why"):
+            out[did] = rec["why"]
+    if CURATED_WHY.exists():
+        for did, rec in json.loads(CURATED_WHY.read_text(encoding="utf-8")).items():
+            if rec.get("en"):
+                out[did] = rec["en"]
+    return out

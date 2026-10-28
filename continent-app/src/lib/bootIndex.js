@@ -202,7 +202,9 @@ export const RANK_FIELDS = Object.freeze({
   place: true,
   crowding: true,
   accommodation: true,
-  rating: { omit: ['components'] },
+  // T762: rating.why (the English reason, ~130 KB gzipped) stays in the
+  // country files; only RatingBreakdown on the destination page reads it.
+  rating: { omit: ['components', 'why'] },
   beauty: { omit: ['components'] },
   bathing_water: { omit: ['nearest'] },
   image: { pick: ['url', 'w', 'h'] },

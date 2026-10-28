@@ -2501,6 +2501,26 @@ TASKS = [
                  "bus stop kinds; T642 difficulty floor (gate.py checks it); cycling rt."),
     },
     {
+        "key": "rating_v5_profile",
+        "title": "Rating v5: nature items on the place ladder, place taste profile",
+        "cadence": "weekly",
+        "writes_app_data": True,
+        "writes_wire": True,
+        "soft": True,
+        "rev": "T762",
+        "cmds": [
+            [PY, "pipeline/nature_tiers.py"],
+            [PY, "pipeline/place_taste_profile.py"],
+        ],
+        "note": ("T761/T762: v5 {score, band, rank, facts, confidence} on every "
+                 "trail, beach, lake, peak and cycle route, read through the frozen "
+                 "nature part of reports/rating_reference_v5.json; then the twelve "
+                 "like values per place (frozen taste part). After every nature "
+                 "scorer and the trails export, so it reads their latest rows. "
+                 "Neither re-measures: recalibration is a deliberate --recalibrate "
+                 "--version run."),
+    },
+    {
         "key": "dossier",
         "title": "Destination dossiers: the per-destination contract for panel + PDF",
         "cadence": "monthly",
