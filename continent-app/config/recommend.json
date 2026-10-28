@@ -20,5 +20,29 @@
   "month": {
     "tmaxByWeather": { "warm": 27, "mild": 21, "snow": 3 },
     "anyWeather": "rating"
+  },
+  "rank": {
+    "fitFirst": true,
+    "mainLikeMin": 0.5,
+    "hardConflicts": ["car"]
+  },
+  "budget": {
+    "sinkPer100": 0.3
+  },
+  "reasons": {
+    "max": 3,
+    "maxLikes": 2,
+    "weatherWithinC": 3,
+    "airportCloseMin": 45
+  },
+  "catch": {
+    "longTransferMin": 120,
+    "longFlightMin": 300,
+    "crowdTier": 2
+  },
+  "levers": {
+    "flight": { "slot": "flight", "setting": "flightRank", "values": { "cheapest": "price", "quickest": "comfort", "times": "balanced" } },
+    "food": { "slot": "food", "setting": "lifestyle", "values": { "cook": "Backpacker", "mix": "Easygoing", "out": "Foodie" } },
+    "bases": { "setting": "guide.shapes", "values": { "one": ["one"], "several": ["towns", "road"] } }
   }
 }
