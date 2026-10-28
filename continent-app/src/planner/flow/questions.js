@@ -107,6 +107,8 @@ export const QUESTIONS = {
     write: (s, values) => ({ guide: { ...s.guide, avoid: values.filter((v) => v !== 'none') } }),
   },
   'g:budget': { titleKey: 'pf.q.budget', custom: true, skippable: true },
+  // T796: what Carta picks for the traveller; the rows come from config/slots.json.
+  'g:pick': { titleKey: 'pf.q.pick', helpKey: 'pf.q.pickHelp', custom: true },
 
   // ---- The days ----
   daysAsk: {

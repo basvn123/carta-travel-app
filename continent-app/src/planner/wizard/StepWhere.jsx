@@ -2,12 +2,10 @@ import React, { useMemo } from 'react';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { CountryPickerMap } from '../../map/CountryPickerMap.jsx';
 import { CountryBrief } from '../CountryBrief.jsx';
-import { WhereQuiz } from '../WhereQuiz.jsx';
 import { CountryMatchCards, DayCostLine } from '../CountryMatchCards.jsx';
 import { PlannerSection } from '../PlannerSection.jsx';
 import { Button, IconButton } from '../../components/ui/index.js';
 import { favDestIds } from '../../lib/favorites.js';
-import { monthName } from '../../lib/dates.js';
 import { googleFlightsExploreLink } from '../../lib/transportLinks.js';
 import { CheckIcon, InfoIcon, StarIcon, CloseIcon, ListDayIcon, MapPinIcon } from '../../components/Icons.jsx';
 import { PlaneIcon } from '../../components/TransportIcons.jsx';
@@ -103,7 +101,7 @@ function CountryCard({ c, on, reading, img, favN, cost, onToggle, onInfo }) {
  */
 export function StepWhere({
   titleTag, allCountries, countries, setCountries, toggleCountry, whereTab, setWhereTab,
-  quiz, answerQuiz, tripMonth, countryMatches, countryDayCost, briefCountry, setBriefCountry, openBrief,
+  quiz, tripMonth, countryMatches, countryDayCost, briefCountry, setBriefCountry, openBrief,
   nearAirports, tripYearMonth, whereView, setWhereView, favorites, destinations, countryCovers,
   recommendedNames, mapAside, data, originCode, windowNights, flexNights, dateMode, startDate, endDate,
   onOpenDest, onOpenCountry, onOpenTrip, onPlanTrip,
@@ -218,11 +216,8 @@ export function StepWhere({
         <div className="guide-where-col">
           {tab === 'help' ? (
             <div role="tabpanel" id="wpanel-help" aria-labelledby="wtab-help">
-              <WhereQuiz
-                answers={quiz}
-                onAnswer={answerQuiz}
-                monthLabel={tripMonth ? monthName(tripMonth, lang) : ''}
-              />
+              {/* T796: the Help me choose answers are not asked a second time
+                  here; they stay in the trip settings (the gear). */}
               {countryMatches.length > 0 && (
                 <PlannerSection title={t('quiz.recommended')} className="wq-results">
                   <CountryMatchCards

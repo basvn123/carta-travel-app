@@ -11,11 +11,12 @@ import { prefillFromText } from './prefill.js';
 import { syncParty, syncWhen } from './appSync.js';
 import { useSettings } from '../../components/SettingsLine.jsx';
 import { plannerStore } from '../plannerStore.js';
-import { WhoScreen, SleepScreen, WhenScreen, FromScreen, LikesScreen, BudgetScreen, NowWhereScreen, NowUntilScreen } from './setupScreens.jsx';
+import { WhoScreen, SleepScreen, WhenScreen, FromScreen, LikesScreen, BudgetScreen, PickScreen, NowWhereScreen, NowUntilScreen } from './setupScreens.jsx';
 
 /** The questions with their own controls (setupScreens.jsx). */
 const CUSTOM = {
   who: WhoScreen, sleep: SleepScreen, when: WhenScreen, from: FromScreen, 'g:likes': LikesScreen, 'g:budget': BudgetScreen,
+  'g:pick': PickScreen,
   nowWhere: NowWhereScreen, nowUntil: NowUntilScreen,
 };
 

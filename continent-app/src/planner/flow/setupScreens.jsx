@@ -18,6 +18,8 @@ import {
 import {
   ArrowLeftIcon, CalendarIcon, CameraIcon, CheckIcon, ChevronRightIcon, CloseIcon, EyeIcon, FriendsIcon, PencilIcon, PlusIcon,
 } from '../../components/Icons.jsx';
+import * as AllIcons from '../../components/Icons.jsx';
+import SLOTS from '../../../config/slots.json' with { type: 'json' };
 import { LifestyleStep } from './LifestyleStep.jsx';
 import { VisibilityChoice } from './VisibilityChoice.jsx';
 import { PartyEditor } from '../PartyEditor.jsx';
@@ -447,6 +449,58 @@ export function BudgetScreen({ settings, commit, doneLabel }) {
         <Button variant="primary" block disabled={!eur} onClick={() => save(eur)}>{doneLabel || t('pf.continue')}</Button>
         <Button variant="quiet" block onClick={() => save(0)}>{t('pf.budget.none')}</Button>
       </div>
+    </>
+  );
+}
+
+// ---- What should Carta pick (question 7, T796) ----
+
+/** A row the traveller cannot change: where to go (always Carta's) or a
+ *  price line that is not measured yet. Drawn as a ChoiceRows row. */
+function FixedPickRow({ icon, label, sub, tag, on }) {
+  const Glyph = icon ? AllIcons[icon] : null;
+  return (
+    <div className={`ui-crow pf-pick-fixed${on ? ' is-on' : ''}${sub ? ' has-sub' : ''}`} role="checkbox" aria-checked={on} aria-disabled="true">
+      <span className="ui-crow-mark is-box" aria-hidden="true" />
+      {Glyph && <span className="ui-crow-icon" aria-hidden="true"><Glyph size={20} /></span>}
+      <span className="ui-crow-text">
+        <span className="ui-crow-label">{label}</span>
+        {sub && <span className="ui-crow-sub">{sub}</span>}
+      </span>
+      <Chip kind="status" className="pf-pick-tag">{tag}</Chip>
+    </div>
+  );
+}
+
+/**
+ * Which price lines Carta picks (T796). Every trip is priced in full either
+ * way: a line left to the traveller still counts at its typical price. The
+ * rows are config/slots.json's pickable slots; a slot not measured yet shows
+ * "Not yet" and cannot be ticked, and where to go is always Carta's.
+ */
+export function PickScreen({ settings, commit, doneLabel }) {
+  const { t } = useI18n();
+  const rows = SLOTS.slots.filter((r) => r.pickable).sort((a, b) => a.order - b.order);
+  const live = rows.filter((r) => r.status === 'live');
+  const [pick, setPick] = useState(settings.guide.pick);
+  const toggle = (id) => setPick((cur) => (cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id]));
+  const save = () => commit(answer(settings, 'g:pick', { guide: { ...settings.guide, pick } }));
+  return (
+    <>
+      <div className="pf-pick">
+        <FixedPickRow icon="MapPinIcon" label={t('tf.slot.where')} sub={t('tf.slot.whereSub')} tag={t('tf.pick.always')} on />
+        <ChoiceRows
+          label={t('pf.q.pick')}
+          multi
+          options={live.map((r) => ({ value: r.id, icon: r.icon, label: t(r.labelKey), sub: r.subKey ? t(r.subKey) : '' }))}
+          value={pick}
+          onPick={toggle}
+        />
+        {rows.filter((r) => r.status === 'notYet').map((r) => (
+          <FixedPickRow key={r.id} icon={r.icon} label={t(r.labelKey)} sub={r.subKey ? t(r.subKey) : ''} tag={t('tf.pick.notYet')} on={false} />
+        ))}
+      </div>
+      <Foot onContinue={save} label={doneLabel} />
     </>
   );
 }

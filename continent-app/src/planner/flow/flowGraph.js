@@ -9,7 +9,7 @@
  *             out when bookings fix them), then create
  *   doors     guide me / I know where / a ready trip       (not when stays are
  *             booked: the places are already chosen)
- *   guide     shape, likes, weather, reach, avoid, budget  (the explorative
+ *   guide     shape, likes, weather, reach, avoid, budget, pick (the explorative
  *             path, only behind "guide me")
  *   plan      the planning engine's own steps by name, from wizardSteps
  *             (Where, Trips or Stay, Stays, From, Getting, Finish) without the
@@ -26,7 +26,7 @@ export const SETUP = ['tell', 'booked', 'who', 'sleep', 'priority', 'when', 'fro
 /** A trip already under way (T675): where the traveller is now and until
  *  when stand in for When and Where from; the way there is behind them. */
 export const NOW_SETUP = ['tell', 'booked', 'who', 'sleep', 'priority', 'nowWhere', 'nowUntil'];
-export const GUIDE = ['g:shape', 'g:likes', 'g:weather', 'g:reach', 'g:avoid', 'g:budget'];
+export const GUIDE = ['g:shape', 'g:likes', 'g:weather', 'g:reach', 'g:avoid', 'g:budget', 'g:pick'];
 export const RHYTHM_SCREENS = ['r:mornings', 'r:pace', 'r:detail', 'r:goal', 'r:food', 'r:around'];
 export const DOORS = ['guide', 'know', 'ready'];
 

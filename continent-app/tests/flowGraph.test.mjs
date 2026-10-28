@@ -14,7 +14,7 @@ test("nothing booked: every setup question, the doors, the guide", () => {
   assert.deepEqual(setupScreens(n), ["tell", "booked", "who", "sleep", "priority", "when", "from"]);
   assert.equal(hasDoors(n), true);
   assert.deepEqual(planScreens(n, "guide"), [
-    "g:shape", "g:likes", "g:weather", "g:reach", "g:avoid", "g:budget",
+    "g:shape", "g:likes", "g:weather", "g:reach", "g:avoid", "g:budget", "g:pick",
     "p:Where", "p:Stay", "p:Getting", "p:Finish",
   ]);
   assert.deepEqual(planScreens(n, "ready"), ["p:Where", "p:Trips", "p:Getting", "p:Finish"]);
@@ -25,7 +25,7 @@ test("flights booked: no When, no From in setup; arrival asked in planning; no r
   const f = s({ booked: { flights: true } });
   assert.deepEqual(setupScreens(f), ["tell", "booked", "who", "sleep", "priority"]);
   assert.deepEqual(planScreens(f, "guide"), [
-    "g:shape", "g:likes", "g:weather", "g:avoid", "g:budget",
+    "g:shape", "g:likes", "g:weather", "g:avoid", "g:budget", "g:pick",
     "p:From", "p:Where", "p:Stay", "p:Getting", "p:Finish",
   ]);
 });
