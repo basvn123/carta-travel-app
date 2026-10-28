@@ -4,7 +4,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
-  sweptDay, sweptCheapest, pickLeg, legCost, fitsHours, cheapestReturn, MAX_AGE_MS,
+  sweptDay, sweptNear, sweptCheapest, pickLeg, legCost, fitsHours, cheapestReturn, MAX_AGE_MS,
 } from "../src/lib/flights/flights.js";
 import { bagFee, bagTier } from "../src/lib/flights/bagFees.js";
 import { existsSync, readFileSync } from "node:fs";
@@ -58,6 +58,17 @@ test("a late date (past day 181, from the box every 4 weeks) may be 32 days old 
   assert.equal(sweptDay(late, "out", "BCN", "2027-06-15", NOW).price, 41, "late, 25 days old");
   assert.equal(sweptDay(late, "out", "BCN", "2027-06-22", NOW), undefined, "late, over 32 days");
   assert.equal(sweptDay(late, "out", "BCN", "2027-04-13", NOW), undefined, "far, 25 days is over 16");
+});
+
+test("a fare at day 300, from the late tier's last weeks, is kept and found near its day (T805)", () => {
+  const age = (d) => Math.floor((NOW - d * 86400000) / 60000);
+  const day300 = new Date(NOW + 300 * 86400000).toISOString().slice(0, 10);
+  assert.equal(day300, "2027-08-17");
+  const file = { v: 1, from: "BRU", to: { BCN: { [day300]: [88, "VY", "07:00", "09:00", 0, age(30)] } }, back: {} };
+  assert.equal(sweptDay(file, "out", "BCN", day300, NOW).price, 88, "day 300, 30 days old");
+  assert.equal(sweptNear(file, "out", "BCN", "2027-08-19", { now: NOW }).date, day300, "two days off");
+  const old = { v: 1, from: "BRU", to: { BCN: { [day300]: [88, "VY", "07:00", "09:00", 0, age(33)] } }, back: {} };
+  assert.equal(sweptDay(old, "out", "BCN", day300, NOW), undefined, "day 300, over 32 days");
 });
 
 test("the cheapest return in a month", () => {
