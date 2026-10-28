@@ -493,7 +493,7 @@
 @media (min-width: 900px) {
   .fsheet.tff-cmp-sheet { max-width: 880px; }
 }
-.tff-cmp-scroll { overscroll-behavior-x: contain; }
+.tff-cmp-scroll { overscroll-behavior-x: contain; background: var(--surface); }
 .tff-cmp-table th, .tff-cmp-table td { padding: var(--space-2); }
 .tff-cmp-table thead th:not(.cmp-rowhead), .tff-cmp-table td { min-width: 128px; }
 @media (min-width: 640px) {
