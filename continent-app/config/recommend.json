@@ -1,0 +1,24 @@
+{
+  "_about": "The trip finder's own numbers (TF1, T793 and T794): how many trips it builds and from what, the trip length and month when the setup gave none, and how the trips are ranked. Prices are not here: every figure comes from the price engine (config/pricing.json).",
+  "version": 1,
+  "candidates": {
+    "max": 24,
+    "min": 6,
+    "countries": 8,
+    "placesPerCountry": 12,
+    "towns": { "minNightsPerPlace": 3, "maxPlaces": 3, "maxKm": 150, "minKm": 30 },
+    "road": { "minNightsPerPlace": 2, "maxKm": 250, "minKm": 40 },
+    "anyShapes": ["one", "towns", "road"],
+    "fallbackShapes": { "countries": "towns", "oneway": "towns" }
+  },
+  "gateway": { "nearKm": 150, "nearMax": 3 },
+  "dates": {
+    "nights": 7,
+    "startWeekday": 6,
+    "lookAheadMonths": 12
+  },
+  "month": {
+    "tmaxByWeather": { "warm": 27, "mild": 21, "snow": 3 },
+    "anyWeather": "rating"
+  }
+}
