@@ -159,6 +159,7 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null }) {
           guide={questions}
           onBack={() => setPhase(questions[questions.length - 1])}
           onWiden={reopen}
+          onPlan={() => startEngine('guide')}
         />
       </Suspense>
     );

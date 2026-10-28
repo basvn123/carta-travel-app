@@ -170,3 +170,72 @@ export function answerChips(settings, { t, lang = 'en', originName = '', when = 
   }
   return out.filter((c) => c.label);
 }
+
+/**
+ * The trip with one slot replaced (a swap on the receipt or a picker): the
+ * total is the slots' own sum again (slots.js slotTotals) and the budget
+ * ruler moves with it. The engine's quote and state stay attached, so the
+ * picker and the hand-off still read them.
+ */
+export function withSlot(trip, next, sumSlots) {
+  const slots = trip.slots.map((s) => (s.id === next.id ? next : s));
+  const total = sumSlots(slots);
+  const out = {
+    ...trip,
+    slots,
+    total,
+    budget: trip.budget ? { eur: trip.budget.eur, delta: total.perPerson - trip.budget.eur } : null,
+  };
+  for (const k of ['quote', 'state', 'base']) {
+    const v = trip[k];
+    if (v !== undefined) Object.defineProperty(out, k, { value: v, enumerable: false });
+  }
+  return out;
+}
+
+/** "Google Flights, checked 14:05" or "... checked 26 Oct": the flight row's own words. */
+export function checkedText(t, checked, lang = 'en', now = Date.now()) {
+  if (!Number.isFinite(checked)) return '';
+  const at = new Date(checked);
+  const today = new Date(now).toDateString() === at.toDateString();
+  return today
+    ? t('flight.checked', { time: at.toLocaleTimeString(lang, { hour: '2-digit', minute: '2-digit' }) })
+    : t('flight.checkedDay', { date: at.toLocaleDateString(lang, { day: 'numeric', month: 'short' }) });
+}
+
+/** A flight's stops in words: "Direct", "1 stop", "2 stops". */
+export const stopsText = (t, n) => (n == null ? '' : n === 0 ? t('flight.direct') : n === 1 ? t('flight.stop1') : t('flight.stops', { n }));
+
+/** Carta's pick on a receipt row, in a few words. */
+export function pickLine(slot, { t, airline = (c) => c }) {
+  if (slot.owner === 'you') return t('tf.rc.yours');
+  const p = slot.pick;
+  if (!p) return '';
+  if (slot.id === 'flight' && p.facts?.out && p.id !== 'yours') {
+    const o = p.facts.out;
+    const name = airline(o.airline);
+    return o.dep && o.arr ? t('tf.rc.flightPick', { airline: name, dep: o.dep, arr: o.arr }) : name || t(p.labelKey);
+  }
+  return t(p.labelKey);
+}
+
+/** "Why this price": one plain line per slot on where its figure comes from. */
+export function whyLine(slot, trip, { t, lang = 'en', destinations = {} }) {
+  if (slot.eur == null) return t(slot.id === 'activities' ? 'tf.why.activities' : 'tf.why.missing');
+  if (slot.owner === 'you') return t('tf.why.typical');
+  const p = slot.pick || {};
+  switch (slot.id) {
+    case 'flight':
+      if (p.id === 'yours') return t('tf.why.flightYours');
+      if (p.id === 'drive') return t('tf.why.drive');
+      return checkedText(t, p.facts?.checked, lang) || t('tf.why.flightSwept');
+    case 'stay':
+      return t('tf.why.stay', { tier: t(p.labelKey), n: trip.nights, places: tripName(trip, destinations, lang) });
+    case 'food':
+      return t(`tf.why.food.${['cook', 'mix', 'out'].includes(p.id) ? p.id : 'custom'}`);
+    case 'local':
+      return t(`tf.why.local.${['public', 'car', 'owncar'].includes(p.id) ? p.id : 'public'}`);
+    default:
+      return '';
+  }
+}

@@ -9,6 +9,7 @@ import { stayTierFor } from '../../lib/recommend/adapters/stay.js';
 import { STAGES, useLoaderDone, useTripFinder } from './finderHooks.js';
 import { answerChips, joinList, likeLabel, widenQuestion } from './finderText.js';
 import { TripsForYou } from './TripsForYou.jsx';
+import { TripReceipt } from './TripReceipt.jsx';
 import '../../styles/87-trip-finder.css';
 
 const PARTY_TITLE = { solo: 'solo', couple: 'couple', friends: 'friends', family: 'family', group: 'group' };
@@ -112,29 +113,41 @@ export function FindingTrips({ settings, finder, onBack, onWiden, guide, onSkip 
  *
  *   onBack()        back to question 7
  *   onWiden(id)     reopen one question (the answers bar, an empty result)
+ *   onPlan(trip)    "Plan this trip" on a receipt
  */
-export default function TripFinderScreen({ settings, guide, onBack, onWiden }) {
+export default function TripFinderScreen({ settings, guide, onBack, onWiden, onPlan }) {
   const finder = useTripFinder(settings);
   const ready = Boolean(finder.trips);
   const { done, skip } = useLoaderDone(ready);
   // The receipt's swaps, by trip id: the card and the receipt read the same trip.
   const [edits] = useState({});
-  const [, setOpen] = useState(null);
+  const [openId, setOpenId] = useState(null);
   const cardRefs = useRef(new Map());
   if (!done || !finder.trips.length) {
     return <FindingTrips settings={settings} finder={finder} guide={guide} onBack={onBack} onWiden={onWiden} onSkip={skip} />;
   }
   const trips = finder.trips.map((x) => edits[x.id] || x);
+  const open = openId ? trips.find((x) => x.id === openId) : null;
   return (
-    <TripsForYou
-      settings={settings}
-      trips={trips}
-      destinations={finder.data?.destinations}
-      originName={finder.origin?.name || ''}
-      onBack={onBack}
-      onReopen={onWiden}
-      onOpen={(trip) => setOpen(trip.id)}
-      cardRefs={cardRefs}
-    />
+    <>
+      <TripsForYou
+        settings={settings}
+        trips={trips}
+        destinations={finder.data?.destinations}
+        originName={finder.origin?.name || ''}
+        onBack={onBack}
+        onReopen={onWiden}
+        onOpen={(trip) => setOpenId(trip.id)}
+        cardRefs={cardRefs}
+      />
+      {open && (
+        <TripReceipt
+          trip={open}
+          destinations={finder.data?.destinations}
+          onClose={() => setOpenId(null)}
+          onPlan={(trip) => { setOpenId(null); onPlan(trip); }}
+        />
+      )}
+    </>
   );
 }
