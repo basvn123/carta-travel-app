@@ -38,7 +38,7 @@ function legFor(leg, { paying, babies, bagKey }) {
 const legFacts = (leg, from, to, cost) => (leg ? {
   date: leg.date, airline: leg.airline || null, flightNo: leg.flightNo || null,
   dep: leg.dep || null, arr: leg.arr || null, stops: leg.stops ?? null,
-  minutes: Number.isFinite(leg.min) ? leg.min : null, checked: leg.checked || null,
+  minutes: Number.isFinite(leg.min) ? leg.min : null, checked: leg.checked || null, price: leg.price ?? null,
   source: leg.source || 'swept', from, to, perSeat: cost?.perSeat ?? null, bags: cost?.bags ?? null, bagsKnown: cost?.bagsKnown ?? null,
 } : null);
 
@@ -185,4 +185,43 @@ export async function optionsFor(trip, { fetchDay = fetchLiveDay, lang = 'en' } 
     };
   });
   return out;
+}
+
+/** The party's figure for one direction of the current pick (optionsFor's own rule). */
+function legGroupOf(facts, party) {
+  return facts?.perSeat != null ? facts.perSeat * party.paying + party.babies * BABY_LAP_FEE_LEG : null;
+}
+
+/**
+ * The flight slot with one live flight taken for its direction (TF2, T800):
+ * the picker's option (optionsFor) replaces that leg, the other leg stays.
+ * The slot's figure moves by the difference between the two legs, the same
+ * rule optionsFor prices an option with, so out then back in any order lands
+ * on the same figure. The pick becomes Google Flights' live flight, with its
+ * facts (airline, times, check time, the fare per seat) for the hand-off.
+ * An option without a figure leaves the slot as it was.
+ */
+export function chooseFlight(trip, option) {
+  const slot = trip?.slots?.find((s) => s.id === 'flight');
+  if (!slot || !option?.facts || option.legGroup == null || slot.eurGroup == null) return slot;
+  const head = Math.max(1, trip.party.head);
+  const party = { paying: head, babies: trip.party.babies || 0 };
+  const facts = slot.pick?.facts || {};
+  const cur = legGroupOf(facts[option.dir], party);
+  if (cur == null) return slot;
+  const eurGroup = Math.round(slot.eurGroup - cur + option.legGroup);
+  const eur = Math.round(eurGroup / head);
+  const legs = { out: facts.out, back: facts.back, [option.dir]: option.facts };
+  const next = {
+    ...facts,
+    ...pickFacts('live', legs.out, legs.back),
+    link: facts.link || null,
+  };
+  return {
+    ...slot,
+    eur,
+    eurGroup,
+    pick: slot.owner === 'carta' ? { id: 'live', labelKey: 'tf.opt.flight.live', facts: next, eurGroup } : null,
+    quality: 'live',
+  };
 }

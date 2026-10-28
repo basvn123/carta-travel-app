@@ -9,7 +9,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import { buildTrips, receiptOf } from "../src/lib/recommend/trips.js";
-import { optionsFor, SOURCE } from "../src/lib/recommend/adapters/flight.js";
+import { optionsFor, chooseFlight, SOURCE } from "../src/lib/recommend/adapters/flight.js";
 import { normalizeSettings } from "../src/planner/flow/tripSettings.js";
 import { legCost } from "../src/lib/flights/flights.js";
 import { BABY_LAP_FEE_LEG } from "../src/lib/party.js";
@@ -172,4 +172,24 @@ test("every slot follows the contract", { skip }, () => {
       if (s.eur == null) assert.equal(s.quality === "missing" || s.id === "activities", true);
     }
   }
+});
+
+test("T800: choosing a live flight moves the slot by that leg, in any order", { skip }, async () => {
+  const t = slovenia(buildTrips(input(settings("2026-11-21", "2026-11-28"))));
+  const live = fixture("tf1-live-BRU-LJU.json");
+  const opts = await optionsFor(t, { fetchDay: async () => live });
+  const out = opts.out.groups.cheapest[0];
+  const back = opts.back.groups.quickest[0];
+  const withSlot = (trip, slot) => ({ ...trip, slots: trip.slots.map((s) => (s.id === slot.id ? slot : s)) });
+  const a = chooseFlight(t, out);
+  assert.equal(a.eur, out.eur, "the slot takes the option's own figure");
+  assert.equal(a.pick.id, "live");
+  assert.equal(a.pick.facts.attribution, SOURCE);
+  assert.equal(a.pick.facts.out.airline, out.facts.airline);
+  assert.equal(a.pick.facts.out.price, live.flights.find((f) => f.flightNo === out.facts.flightNo).price, "the fare per seat travels with the pick");
+  const ab = chooseFlight(withSlot(t, a), back);
+  const ba = chooseFlight(withSlot(t, chooseFlight(t, back)), out);
+  assert.equal(ab.eurGroup, ba.eurGroup, "out then back equals back then out");
+  assert.equal(ab.eurGroup, Math.round(flightOf(t).eurGroup - flightOf(t).pick.facts.out.perSeat * 2 - flightOf(t).pick.facts.back.perSeat * 2 + out.legGroup + back.legGroup));
+  assert.equal(chooseFlight(t, { ...out, legGroup: null }), flightOf(t), "an option without a figure changes nothing");
 });
