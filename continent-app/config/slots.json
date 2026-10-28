@@ -1,0 +1,34 @@
+{
+  "_about": "The price lines of a priced trip (trip finder TF1, T792). One row per slot, in the order the receipt, the cost bar and question 7 show them. `adapter` names the module in src/lib/recommend/adapters/ that prices the slot from the engine; `pickable` says whether question 7 offers it; `status` is live or notYet (a notYet slot is drawn as NotYet, is never in a sum and cannot be ticked). `options` are the choices a slot can swap between, priced by the adapter from the engine: stay tiers are config/pricing.json bands.ref_stay keys, food levels name config/pricing.json lifestyle.profiles, local modes are planner transport choices. Adding a row and its adapter adds the slot to every trip, the receipt and question 7.",
+  "version": 1,
+  "slots": [
+    {
+      "id": "flight", "order": 10, "labelKey": "tf.slot.flight", "subKey": "tf.slot.flightSub", "icon": "PlaneIcon",
+      "adapter": "flight", "pickable": true, "status": "live"
+    },
+    {
+      "id": "stay", "order": 20, "labelKey": "tf.slot.stay", "subKey": "tf.slot.staySub", "icon": "BedIcon",
+      "adapter": "stay", "pickable": true, "status": "live",
+      "options": [{ "id": "private" }, { "id": "room" }, { "id": "hotel3" }],
+      "byPriority": { "price": "private", "balance": "room", "comfort": "hotel3" }
+    },
+    {
+      "id": "food", "order": 30, "labelKey": "tf.slot.food", "subKey": "tf.slot.foodSub", "icon": "DiningIcon",
+      "adapter": "food", "pickable": false, "status": "live",
+      "options": [
+        { "id": "cook", "lifestyle": "Backpacker" },
+        { "id": "mix", "lifestyle": "Easygoing" },
+        { "id": "out", "lifestyle": "Foodie" }
+      ]
+    },
+    {
+      "id": "local", "order": 40, "labelKey": "tf.slot.local", "subKey": "tf.slot.localSub", "icon": "BusIcon",
+      "adapter": "local", "pickable": true, "status": "live",
+      "options": [{ "id": "public", "transport": "auto" }, { "id": "car", "transport": "car" }]
+    },
+    {
+      "id": "activities", "order": 50, "labelKey": "tf.slot.activities", "subKey": "tf.slot.activitiesSub", "icon": "TicketIcon",
+      "adapter": "activities", "pickable": true, "status": "notYet"
+    }
+  ]
+}
