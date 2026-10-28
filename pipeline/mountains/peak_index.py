@@ -293,7 +293,7 @@ LIFT_VALUE = {
 HARD_FACTS = {"climbing", "via_ferrata", "glacier"}
 
 
-def access_component(peak):
+def access_component(peak, v5=False):
     """0..1, how reachable the top is.
 
     A lift or a road at the top is most of the answer. Below that it is a
@@ -321,7 +321,8 @@ def access_component(peak):
         if "hiking" in facts:
             score = max(score, 0.55)
         sac = [k.split("=", 1)[1] for k in tags if k.startswith("sac_scale=")]
-        if sac:
+        # v5 (T761): the SAC grade is difficulty, a fact next to the score.
+        if sac and not v5:
             easy = {"hiking", "mountain_hiking"}
             if any(s in easy for s in sac):
                 score = max(score, 0.5)
@@ -342,7 +343,8 @@ def access_component(peak):
     # the summit: they ride to Gornergrat and look at it. Where a lift or a
     # road puts you on the mountain, the climbing grade is somebody else's
     # problem and this term stops pretending otherwise.
-    if not lift and "road_to_top" not in facts:
+    # v5 (T761): these penalties are difficulty, shown next to the score.
+    if not lift and "road_to_top" not in facts and not v5:
         hard = facts & HARD_FACTS
         if "glacier" in hard:
             score -= 0.16
@@ -993,7 +995,8 @@ def evidence_for(peak):
     """Which components this row has any evidence for at all.
 
     A component with no evidence is EXCLUDED and the remaining weights are
-    renormalised. It is not scored zero, because zero is a claim: it says this
+    renormalised in the old score (v5 counts it at the peak median instead,
+    see v5_components). It is not scored zero, because zero is a claim: it says this
     mountain has nothing at the top, when the truth is that nobody asked.
 
     This is what makes the layer publishable without Overpass, which matters
@@ -1045,12 +1048,50 @@ def score_peak(peak, country_max, global_max, ele_max):
     }
     comps = {k: v for k, v in comps.items() if v is not None}
     comps = {k: v for k, v in comps.items() if k in have}
+    # v5 (T761): this is the OLD score, kept as it was because the wire's
+    # `score`, `tier` and the publish gate read it until the app moves to v5;
+    # T763 deletes it, renormalising and all. The v5 parts never renormalise.
     total_weight = sum(WEIGHTS[k] for k in comps) or 1.0
     base = sum(WEIGHTS[k] * v for k, v in comps.items()) / total_weight
     standout_keys = [k for k in STANDOUT_ON if k in comps]
     standout = max((comps[k] for k in standout_keys), default=0.0)
     total = base + STANDOUT_BONUS * standout
+    peak["_v5_parts"] = v5_components(peak, global_max, have, comps)
     return comps, round(min(10.0, total * 10.0 / (1.0 + STANDOUT_BONUS)), 1)
+
+
+# ---------------------------------------------------------------------------
+# v5 (T761): the same parts, Europe-wide, difficulty taken out
+# ---------------------------------------------------------------------------
+#
+# pipeline/nature_tiers.py places every peak on one Europe-wide ladder with
+# the places. The score above (still the wire's `score` until R4) reads
+# acclaim 60 per cent at home and stature against the country's highest
+# summit, both per-country stretches, and takes the SAC grade and the glacier,
+# climbing and altitude penalties into access, which is difficulty: a fact
+# shown next to the score, never inside it.
+EUROPE_ELE_MAX = 4808.0     # Mont Blanc, in the Wikidata record the layer reads
+
+
+def v5_components(peak, global_max, have, comps=None):
+    """{part: 0..1 or None} on the v5 rules; None means no evidence."""
+    comps = comps or {}
+    raw = fame_raw(peak)
+    seed = peak.get("seed") or {}
+    floor = CURATED_FAME.get(seed.get("why"), 0.0) if seed else 0.0
+    acclaim = max(0.0, min(1.0, round(max(raw / global_max if global_max else 0.0,
+                                          floor), 3)))
+    parts = {
+        # scenery folds in 0.15 x acclaim, so it reads the Europe-wide one
+        "scenery": scenery_component(peak, acclaim),
+        "access": access_component(peak, v5=True),
+        "acclaim": acclaim,
+        "stature": stature_component(peak, EUROPE_ELE_MAX),
+        "experience": comps.get("experience"),
+        "views": comps.get("views"),
+        "photo": comps.get("photo"),
+    }
+    return {k: (v if k in have else None) for k, v in parts.items()}
 
 
 def tier_for(score10, cutoffs=TIER_CUTOFFS):
@@ -1067,7 +1108,8 @@ def quality_of(comps):
     """Everything except fame, renormalised over what was actually scored.
 
     Reads `comps` rather than WEIGHTS, because a row whose access and
-    experience were excluded for want of evidence has no key for them."""
+    experience were excluded for want of evidence has no key for them.
+    v5 (T761): feeds the old wire's gem chip only; T763 deletes it."""
     keys = [k for k in comps if k != "acclaim"]
     weight = sum(WEIGHTS[k] for k in keys) or 1.0
     return sum(WEIGHTS[k] * comps[k] for k in keys) / weight

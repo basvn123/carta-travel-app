@@ -473,7 +473,14 @@ def score_beach(beach, country_max, global_max, water_default=WATER_DEFAULT,
     Norwegian beach with no bathing register, no digitised polygon and no
     beauty-ranked gallery still be scored on the five components it does
     have, instead of being handed three zeroes nobody measured and sinking
-    below every Italian lido."""
+    below every Italian lido.
+
+    v5 (T761): this is the OLD score, kept exactly as it was because the
+    wire's `score`, `tier` and the publish gate read it until the app moves to
+    v5; T763 deletes it with them, renormalising and all. The v5 parts
+    (Europe-wide, facts out, never renormalised) are computed alongside by
+    v5_components and left on the beach as `_v5_parts` for the exporter to
+    hand to nature_tiers.py."""
     comps = {
         "setting": setting_component(beach),
         "acclaim": acclaim_component(beach, country_max, global_max),
@@ -494,7 +501,69 @@ def score_beach(beach, country_max, global_max, water_default=WATER_DEFAULT,
     physical = [present[k] for k in STANDOUT_ON if k in present]
     standout = max(physical) if physical else 0.0
     score01 = min(1.0, base + STANDOUT_BONUS * standout)
+    beach["_v5_parts"] = v5_components(beach, global_max, space_reference, comps)
     return present, round(score01, 4), round(10.0 * score01, 1)
+
+
+# ---------------------------------------------------------------------------
+# v5 (T761): the same parts, Europe-wide, with the facts taken out
+# ---------------------------------------------------------------------------
+#
+# pipeline/nature_tiers.py places every beach on one Europe-wide ladder with
+# the places. Three things in the parts above do not belong on it:
+#   acclaim   60 per cent of it is "how it stands at home", a per-country
+#             stretch: the best-known beach of every country scored like the
+#             best-known in Europe. v5 reads the Europe half only.
+#   facts     Blue Flag (+0.10 in acclaim) and a lifeguard (+0.18 in comfort)
+#             are certifications and services, shown next to the score.
+#   defaults  a beach nobody measured scored the country's water median,
+#             WILDNESS_DEFAULT or COMFORT_DEFAULT; v5 says None and the beach
+#             median of the frozen reference stands in, with lower confidence.
+
+def acclaim_v5(beach, global_max):
+    value = fame_raw(beach) / global_max if global_max > 0 else 0.0
+    if "famous_photo" in _facts(beach):
+        value += 0.12
+    return round(max(0.0, min(1.0, value)), 4)
+
+
+def comfort_v5(beach):
+    if not measured(beach):
+        return None
+    ctx, tags = _ctx(beach), _tags(beach)
+    value = 0.0
+    for key, add in (("parking", 0.24), ("toilets", 0.18), ("shower", 0.14),
+                     ("drinking_water", 0.08)):
+        if ctx.get(key):
+            value += add
+    if any(ctx.get(t) for t in ("cafe", "restaurant", "bar", "ice_cream")):
+        value += 0.18
+    if tags.get("wheelchair") in ("yes", "designated", "limited"):
+        value += 0.14
+    return round(min(1.0, value), 4)
+
+
+def wildness_v5(beach):
+    facts, tags = _facts(beach), _tags(beach)
+    if not measured(beach) and not (facts & {"boat_only", "quiet", "busy"}
+                                    or tags.get("access") == "no"):
+        return None
+    return wildness_component(beach)
+
+
+def v5_components(beach, global_max, space_reference=None, comps=None):
+    """{part: 0..1 or None} on the v5 rules; None means not measured."""
+    comps = comps or {}
+    return {
+        "setting": comps.get("setting", setting_component(beach)),
+        "acclaim": acclaim_v5(beach, global_max),
+        "water": water_component(beach, None),
+        "sand": comps.get("sand", sand_component(beach)),
+        "wildness": wildness_v5(beach),
+        "comfort": comfort_v5(beach),
+        "space": space_component(beach, space_reference),
+        "photo": photo_component(beach),
+    }
 
 
 def tier_for(score10, cutoffs=TIER_CUTOFFS):

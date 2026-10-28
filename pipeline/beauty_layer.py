@@ -606,9 +606,14 @@ def compute_beauty(dest):
     }
 
 
-def assign_gems(beauty_blocks):
+def assign_gems(beauty_blocks, frozen=None):
     """Map score01 -> 1..5 gems by quantile so the catalogue spreads well.
     Mutates each block's `gems`, returns the cutoff list (stored in meta).
+
+    T761 (closes T754-e): the cutoffs are measured once and frozen in the
+    reference's `beauty` part, so adding places no longer moves another
+    place's gems. `frozen` is that part's gem_cutoffs; without it (a
+    deliberate apply_beauty_layer.py --recalibrate) they are measured here.
 
     The cutoffs are dataset quantiles (reproducible, evidence-based on the score
     distribution) tuned for a balanced, *usable* spread rather than a steep
@@ -622,13 +627,16 @@ def assign_gems(beauty_blocks):
     n = len(scores)
     if n == 0:
         return []
-    # cutoffs: indices into the sorted distribution
-    cut = {
-        "g2": scores[int(0.20 * (n - 1))],
-        "g3": scores[int(0.45 * (n - 1))],
-        "g4": scores[int(0.72 * (n - 1))],
-        "g5": scores[int(0.90 * (n - 1))],
-    }
+    if frozen:
+        cut = {k: float(frozen[k]) for k in ("g2", "g3", "g4", "g5")}
+    else:
+        # cutoffs: indices into the sorted distribution
+        cut = {
+            "g2": scores[int(0.20 * (n - 1))],
+            "g3": scores[int(0.45 * (n - 1))],
+            "g4": scores[int(0.72 * (n - 1))],
+            "g5": scores[int(0.90 * (n - 1))],
+        }
     for b in beauty_blocks:
         s = b["score01"]
         if s >= cut["g5"]:

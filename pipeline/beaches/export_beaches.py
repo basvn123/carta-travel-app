@@ -77,6 +77,7 @@ from pipeline_io import in_europe  # noqa: E402
 from sources import haversine_km, load_cache  # noqa: E402
 from harvest_beaches import COUNTRIES, name_tokens  # noqa: E402
 import beauty_index as bi  # noqa: E402
+import nature_tiers  # noqa: E402  (v5 parts, T761)
 import explore_overlay as xov  # noqa: E402  (T641 harvests: sea temperature, walks)
 
 # The lake layer's card-shape helpers, loaded by path the way enrich_beaches
@@ -522,6 +523,8 @@ def wire_beach(beach, comps, score10, tier, reasons):
                ATTRIBUTION["natura"] if row.get("prot") else None,
                ATTRIBUTION["commons"] if row["images"] else None]
     row["credit"] = [c for c in credits if c]
+    # v5 (T761): the Europe-wide parts, for pipeline/nature_tiers.py.
+    nature_tiers.record("beaches", row["id"], row.get("cc"), beach.get("_v5_parts"))
     return row
 
 
@@ -1341,6 +1344,7 @@ def main():
                     "per_country_cap": TOP_PER_COUNTRY, "beaches": top},
                    ensure_ascii=False, separators=(",", ":")),
         encoding="utf-8")
+    nature_tiers.save_parts("beaches")
     print(f"[beaches] published {total} beaches across {len(index)} countries "
           f"into {out_dir} (top.json holds {len(top)})")
     # index.json and top.json are built from THIS run's countries alone, so

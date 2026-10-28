@@ -579,6 +579,15 @@ def main():
             elif url and url in pop and it.get("pop") != int(pop[url]):
                 it["pop"] = int(pop[url])
                 n_pop += 1
+        if not args.sig_only:
+            # v5 (T761): the quota rate above orders a place's POIs; the
+            # labels (must-see, recommended, worth a look, capped per place
+            # class) decide what the traveller sees, and `rate` is derived
+            # from them until the app reads the label (R4).
+            import poi_labels
+            by_class = poi_labels.label_all(data)
+            for cls, c in sorted(by_class.items()):
+                print(f"  labels {cls}: " + ", ".join(f"{k} {c[k]:,}" for k in poi_labels.LABELS))
         atomic_write_json(DATA, data)
         print(f"applied: {n_rate} rates rewritten, {n_pop} pop set, "
               f"{n_sig} sig written -> {DATA}")

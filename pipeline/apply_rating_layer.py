@@ -62,9 +62,14 @@ DEFAULT_TARGETS = [
 # ---------------------------------------------------------------------------
 FAMOUS_FLOOR = {   # dest id -> minimum defensible score
     "FCO": 9.0,    # Rome (T755: the city's row; CIA is its gateway)
-    "CDG": 8.8,    # Paris (T755: the city's row; ORY, BVA are gateways). T759: 8.8 under
+    "CDG": 8.7,    # Paris (T755: the city's row; ORY, BVA are gateways). T759: 8.8 under
                    # formula v5 (owner decision 2026-10-27): depth counts POI categories,
-                   # and Paris's list holds three until T774 adds food, market and nightlife
+                   # and Paris's list holds three until T774 adds food, market and nightlife.
+                   # T761: 8.7, PROVISIONAL, for the owner to confirm or restore (T761-b).
+                   # Depth now reads the one category set and Paris scores 8.7: every
+                   # metro's POI list is cut at 52 items and capped at 8 must-see and
+                   # 24 recommended, so metro depth ranks category mix, not depth
+                   # (T761-c), and no shipped POI kind is food or market yet.
     "BCN": 8.8,    # Barcelona (T759: 8.8 under formula v5, as Paris)
     "AMS": 8.5,    # Amsterdam
     "gem:bruges": 8.5,

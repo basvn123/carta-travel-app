@@ -67,6 +67,7 @@ from collections import defaultdict
 from pathlib import Path
 
 from pipeline_io import atomic_write_json, load_json
+from rating_config import cfg, section
 
 if sys.platform == "win32":
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -112,20 +113,12 @@ WEIGHTS = {
 
 # How much an authoritative designation is worth, 0-1. A most-beautiful-village
 # association is a jury of locals saying "this one"; UNESCO is a global one.
-DESIGNATION_WEIGHT = {
-    "unesco_whc": 1.00,
-    "beautiful_village": 0.95,
-    "heritage_town": 0.75,
-    "spa_town": 0.70,
-    "unesco_tentative": 0.55,
-    "national_park": 0.70,
-    "cittaslow": 0.50,
-    "scenic_route": 0.45,
-    "blue_flag": 0.40,
-    "capital_of_culture": 0.60,
-    "eden": 0.55,
-}
-DESIGNATION_DEFAULT = 0.45
+# T761 (closes T754-d): the register weights are the rating's own
+# (config/rating.json recognition), not a second table that drifted from it
+# (heritage_town .75 against .72, national_park .70 against .62); a geopark or
+# a biosphere reserve no longer falls to the default once re-harvested.
+DESIGNATION_WEIGHT = section("recognition.weights")
+DESIGNATION_DEFAULT = cfg("recognition.default")
 
 # Coverage radius around an existing destination, from ITS population.
 COVER_A = 0.75

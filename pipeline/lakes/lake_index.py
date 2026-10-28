@@ -861,7 +861,60 @@ def score_lake(lake, country_max, global_max, water_default=WATER_DEFAULT,
     base = sum(WEIGHTS[k] * comps[k] for k in WEIGHTS)
     standout = max(comps[k] for k in STANDOUT_ON)
     score01 = min(1.0, base + STANDOUT_BONUS * standout)
+    lake["_v5_parts"] = v5_components(lake, global_max, photo_global_max or 1.0, comps)
     return comps, round(score01, 4), round(10.0 * score01, 1)
+
+
+# ---------------------------------------------------------------------------
+# v5 (T761): the same parts, Europe-wide, unmeasured parts left unmeasured
+# ---------------------------------------------------------------------------
+#
+# pipeline/nature_tiers.py places every lake on one Europe-wide ladder with
+# the places. The score above (still the wire's `score` until R4) has two
+# things that do not belong on it:
+#   per-country  acclaim and photo are 60 per cent "how it stands at home",
+#                so the best-known lake of every country was as acclaimed as
+#                Lake Como; v5 reads the Europe half only.
+#   defaults     a lake nobody swept scored WATER_DEFAULT or the country's
+#                water median, WILDNESS_DEFAULT, SHORE_DEFAULT, PHOTO_DEFAULT
+#                or an activity floor of 0.35. v5 says None: the lake median
+#                of the frozen reference stands in and the confidence drops.
+# Swimming stays a part (the plan's lake ladder reads scenery, swimming,
+# activity, water and wildness); "swimming allowed" is also shown as a fact.
+
+def v5_components(lake, global_max, photo_global_max, comps=None):
+    """{part: 0..1 or None} on the v5 rules; None means not measured."""
+    comps = comps or {}
+    raw = fame_raw(lake)
+    acclaim = raw / global_max if global_max > 0 else 0.0
+    facts = _facts(lake)
+    if "famous_photo" in facts:
+        acclaim += 0.10
+    if "unesco" in facts:
+        acclaim += 0.08
+    if (lake.get("seed") or {}).get("why"):
+        acclaim = max(acclaim, 0.45)
+    photo = photo_raw(lake)
+    if shore_measured(lake):
+        shore = comps.get("shore", shore_component(lake))
+    else:
+        ctx = _ctx(lake)
+        shore = (0.62 if measured(lake) and (ctx.get("beach") or ctx.get("slipway")
+                                             or ctx.get("swimming_area")) else None)
+    wild_evidence = measured(lake) or facts & {"remote", "hike_in", "busy"}
+    water = lake.get("water") or {}
+    return {
+        "scenery": comps.get("scenery", scenery_component(lake)),
+        "swimming": comps.get("swimming", swimming_component(lake)),
+        "activity": comps.get("activity") if measured(lake) else None,
+        "acclaim": round(max(0.0, min(1.0, acclaim)), 4),
+        "water": (comps.get("water") if WATER_VALUE.get(water.get("class")) is not None
+                  else None),
+        "wildness": comps.get("wildness") if wild_evidence else None,
+        "photo": (None if photo is None else
+                  round(max(0.0, min(1.0, photo / photo_global_max)), 4)),
+        "shore": shore,
+    }
 
 
 def tier_for(score10, cutoffs=TIER_CUTOFFS):

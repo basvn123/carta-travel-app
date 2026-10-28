@@ -92,7 +92,6 @@ every ranking, rail and top list. Flight search still reads the airport rows.
 
 import json
 import math
-import re
 from pathlib import Path
 
 import appeal_scale
@@ -175,13 +174,14 @@ DEPTH_REACH_KM = _D["reach_km"]
 DEPTH_POI_MATCH_KM = _D["poi_nature_match_km"]
 DEPTH_POI_BY_SIG = _D["poi_weight_by_sig"]
 SIG_MAX = _D["sig_max"]                     # it.sig runs 0-3 (score_significance)
-DEPTH_KIND_CATEGORY = dict(_D["kind_category"])
-DEPTH_DEFAULT_CATEGORY = _D["default_category"]
-DEPTH_NAME_CATEGORY = [(cat, re.compile(pat, re.I)) for cat, pat
-                       in section("depth.name_category").items()]
+# T761 (closes T756-c): depth reads the one POI category set
+# (config poi_categories), the same one the POI labels carry, instead of
+# name patterns.
+POI_KIND_CATEGORY = section("poi_categories.kind_category")
 
-# Acclaim: what membership of each register is worth, 0-1. Mirrors (and must
-# stay in step with) score_place_candidates.DESIGNATION_WEIGHT. A place in two
+# Acclaim: what membership of each register is worth, 0-1. The one table
+# (config recognition.weights); score_place_candidates reads it too (T761,
+# T754-d). A place in two
 # registers gains, but with sharply diminishing returns - three lists do not
 # make somewhere three times as beautiful.
 # T754: geoparks (0.30) and biosphere reserves (0.25) carry their own
@@ -347,14 +347,11 @@ def highlights_map(dests, p99=None):
 
 
 def poi_category(item):
-    """One of the eight depth categories for a POI: a name pattern first (the
-    shipped kinds have no market, food, zoo or nightlife kind), then the kind,
-    then sights."""
-    name = item.get("name") or ""
-    for cat, rx in DEPTH_NAME_CATEGORY:
-        if rx.search(name):
-            return cat
-    return DEPTH_KIND_CATEGORY.get(item.get("kind"), DEPTH_DEFAULT_CATEGORY)
+    """One of the eight categories for a POI: the category poi_labels.py
+    wrote, else its kind through config poi_categories (T761). No name
+    patterns: a kind the table does not map is a config gap that
+    tests/test_poi_labels.py catches."""
+    return item.get("category") or POI_KIND_CATEGORY[item.get("kind")]
 
 
 _ROUTES = None

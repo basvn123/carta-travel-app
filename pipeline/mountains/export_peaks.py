@@ -71,6 +71,7 @@ from peak_sources import haversine_km, load_cache  # noqa: E402
 from harvest_peaks import (COUNTRIES, COUNTRY_QID, fold,  # noqa: E402
                            name_tokens)
 import peak_index as pi  # noqa: E402
+import nature_tiers  # noqa: E402  (v5 parts, T761)
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import explore_overlay as xov  # noqa: E402  (T641: lift hours)
 
@@ -732,6 +733,8 @@ def wire_peak(peak, comps, score10, tier, reasons, expected, view_band=None,
         row["near"] = peak["near"]
     if wiki_ref(peak, peak["cc"]):
         row["wiki"] = wiki_ref(peak, peak["cc"])
+    # v5 (T761): the Europe-wide parts, for pipeline/nature_tiers.py.
+    nature_tiers.record("mountains", row["id"], row.get("cc"), peak.get("_v5_parts"))
     return row
 
 
@@ -1644,6 +1647,7 @@ def main():
                     "per_country_cap": TOP_PER_COUNTRY, "mountains": top},
                    ensure_ascii=False, separators=(",", ":")),
         encoding="utf-8")
+    nature_tiers.save_parts("mountains")
     print(f"[mountains] published {total} summits across {len(index)} "
           f"countries into {out_dir} (top.json holds {len(top)})")
     if filled:

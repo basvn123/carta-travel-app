@@ -108,6 +108,11 @@ def test_depth_does_not_saturate_the_top():
 
 
 def test_poi_rate_quota_holds():
+    """T761: `rate` is derived from the POI label (must_see 3, recommended 2),
+    and the labels are capped per place class, so the quota share
+    (significance.rate3_share) now only orders a place's POIs before they are
+    labelled. What holds on the wire: rate 3 is exactly the must-see set, and
+    that set is never larger than the old quota."""
     if INPUT != _MASTER:
         return                   # the wire carries no items_full
     n = n3 = 0
@@ -117,9 +122,10 @@ def test_poi_rate_quota_holds():
                 continue
             n += 1
             n3 += (it.get("rate") or 0) == 3
+            assert ((it.get("rate") or 0) == 3) == (it.get("label") == "must_see"), it
     share = n3 / n
     target = rating_config.cfg("significance.rate3_share")
-    assert abs(share - target) <= 0.02, f"rate-3 share {share:.1%}"
+    assert 0 < share <= target + 0.02, f"rate-3 share {share:.1%}"
 
 
 if __name__ == "__main__":
