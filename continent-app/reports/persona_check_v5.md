@@ -8,24 +8,24 @@ Gate 7 asks whether the "For you" top 10 makes sense for real kinds of traveller
 - Method: every one of the 58 distinct places was judged against a page opened with WebFetch (Wikivoyage first; Wikipedia en where Wikivoyage had no page or a disambiguation page). One page per place, reused across personas; a second page was opened only where the first was silent on the persona's main wish (Bled, Altaussee, Lednice-Valtice, St. Moritz, Kitzbuhel). No search snippets were used as sources.
 - "Sensible" = a traveller of that kind told "Carta picked this for you" would agree it meets at least their main wishes and nothing on the page makes it clearly wrong for them in that month.
 
-## Rerun after T786 and T787 (2026-10-28)
+## Rerun after T786 (food rule) and T787 (2026-10-28)
 
-What changed in the data: a like nothing measures (food, nightlife) now ships null and is left out of the match instead of counting as 0 (T786); the monthly crowd series is back, so quiet travellers see busy months; the heat conflict exists for travellers who explicitly avoid heat (no persona does, so it fires on no row). Ranking knobs unchanged (lambda 2, busy 0.8, car 0.75, heat 0.85). Input: `persona_top10.t786.json` (printed by `scripts/persona_check_v5.mjs`).
+What changed in the data: a like nothing measures now ships null and is left out of the match instead of counting as 0 (T786). On the owner's call that food data should count, food follows the app's own food rule: a food, wine or beer tag, or a metro or city with fame 1,200 or more. So Rome, Salzburg, Venice, Barcelona, Amsterdam and Bath read food 0.9 again, while Bruges, Split, Dubrovnik and towns without a tag stay not measured. The monthly crowd series is back, so quiet travellers see busy months; the heat conflict exists for travellers who explicitly avoid heat (no persona does, so it fires on no row). Ranking knobs unchanged (lambda 2, busy 0.8, car 0.75, heat 0.85). Input: `persona_top10.t786b.json` (printed by `scripts/persona_check_v5.mjs`).
 
-Method: the first run's, unchanged. Where a place was judged for the same persona in the first run and the new row shows no different match or conflict that changes the call, the verdict and source are kept. Places new to a persona got a fresh call; pages opened for this rerun: WV/Amsterdam, WV/Kotor, WV/Nesebar, WV/Ohrid (food and culture), WV/Venice (Eat and Drink sections), WV/Dubrovnik (Drink section and prices), WV/Bern (getting around, sights). Borderline rows are called conservatively with the reason in the row.
+Method: the first run's, unchanged. A (persona, place) pair already judged, in the first run or in the T786 round before the food rule, keeps its verdict and source unless the new row shows a match or conflict that changes the call. Places new to a persona got a fresh call; pages opened across both rounds: WV/Amsterdam, WV/Kotor, WV/Nesebar, WV/Ohrid (food and culture), WV/Venice (Eat and Drink sections), WV/Dubrovnik (Drink section and prices), WV/Bern (getting around, sights), WV/Bath (Eat, culture). Borderline rows are called conservatively with the reason in the row.
 
-**85 of 120 sensible (70.8%). FAIL** (needs 96). First run: 87 of 120 (72.5%).
+**85 of 120 sensible (70.8%). FAIL** (needs 96). First run: 87 of 120 (72.5%). The T786 round before the food rule also scored 85.
 
 | Persona | Month | Sensible now | Before |
 |---|---|---|---|
 | Family with a toddler | 7 | 5 / 10 | 5 / 10 |
 | Hiking couple | 9 | 8 / 10 | 8 / 10 |
 | Friends going out | 6 | 6 / 10 | 6 / 10 |
-| Slow culture | 10 | 9 / 10 | 9 / 10 |
+| Slow culture | 10 | 8 / 10 | 9 / 10 |
 | Backpacker (no car) | 8 | 4 / 10 | 5 / 10 |
 | Beach family | 7 | 8 / 10 | 8 / 10 |
 | Cyclist | 5 | 7 / 10 | 7 / 10 |
-| Foodie | 4 | 7 / 10 | 8 / 10 |
+| Foodie | 4 | 8 / 10 | 8 / 10 |
 | Skier | 2 | 8 / 10 | 8 / 10 |
 | Wellness | 11 | 4 / 10 | 4 / 10 |
 | Island hopper | 6 | 9 / 10 | 9 / 10 |
@@ -36,12 +36,20 @@ Seven of the twelve lists are the same ten places in the same order with the sam
 
 ### What moved
 
-- **Friends going out (6 to 6).** Out: Barcelona (yes), San Sebastian (yes), Siena (no). In: Venice (no, very few clubs, bars close about 01:00), Amsterdam (yes), Dubrovnik (yes). Cause, data fix: with food null on most cities, the match now runs on nightlife and city size, so Bruges (68 to 90), Salzburg (67 to 90) and Bern (91) ride their nightlife 95 to 98 values and push the two real going-out cities with food values below them.
-- **Slow culture (9 to 9).** Out: Lednice-Valtice, Bayonne, Vevey, Porto (all yes), Malcesine (no). In: Ohrid, Kotor, Venice, Split (yes), Nesebar (no, Old Town food described as touristy and "not very good quality"). Cause, data fix plus crowd series: dropping food 0 lifted Dubrovnik (58 to 87), Salzburg (53 to 79) and other culture cities, and October quiet values (67 to 100) from the crowd series let them in without a busy conflict.
-- **Backpacker (5 to 4).** Out: Prague (yes). In: Dubrovnik (no, "much more expensive and tourism-centered than other places in Croatia", hot and crowded in August). Cause, data fix: Prague no longer clears the field once food and hidden stop pulling, and Dubrovnik rises on score 9.6 at match 41.
-- **Foodie (8 to 7).** Out: Barcelona, Siena, Carcassonne (all yes). In: Venice (yes), Split (yes), Ohrid (no). Bern and Bergen stay no. Cause, data fix: food is now null for every listed place except Porto and Bern, so the foodie match is culture 91 plus city size for nearly every row and score decides; the three places that were in for their food fell out.
+Against the first run:
+
+- **Friends going out (6 to 6).** Out: Barcelona (yes), San Sebastian (yes), Siena (no). In: Venice (no, very few clubs, bars close about 01:00), Amsterdam (yes), Dubrovnik (yes). Cause, data fix: with food null on the places the food rule does not cover, the match runs on nightlife and city size, so Bruges (68 to 90), Salzburg (67 to 90) and Bern (91) ride their nightlife 95 to 98 values; Barcelona and San Sebastian no longer clear them on score.
+- **Slow culture (9 to 8).** Out: Lednice-Valtice, Bayonne, Vevey, Porto (all yes), Malcesine (no). In: Ohrid, Kotor, Venice (yes), Nesebar (no, Old Town food described as touristy and "not very good quality"), Rome (no, a capital at town 30 flagged busy in October for a quiet town traveller). Cause, data fix plus food rule: dropping food 0 lifted Dubrovnik (58 to 87) and other culture cities, and food 0.9 under the rule lifted Rome from outside the list to rank 8 at match 52.
+- **Backpacker (5 to 4).** Out: Prague (yes). In: Dubrovnik (no, "much more expensive and tourism-centered than other places in Croatia", hot and crowded in August). Cause, data fix: Dubrovnik rises on score 9.6 at match 41.
+- **Foodie (8 to 8).** Out: Barcelona, Siena, Carcassonne (all yes). In: Venice (yes), Split (yes), Bath (yes). Bern and Bergen stay no. Cause, data fix: Bruges, Split, Dubrovnik and Bergen carry no food value, so their foodie match is culture 91 plus city size and score decides; the places that were in for their food fell below them.
 - **No-car rail (10 to 10).** Out: Prague. In: Bern (yes, SBB hub, UNESCO old town). No verdict change.
-- **Crowd series.** It changed no verdict. Busy now shows on Rome for the November wellness traveller and on the July and September rows as before; the October slow culture list shows no busy flag at all, which matches the pages (crowds are a summer issue in Dubrovnik, Cesky Krumlov, Venice).
+- **Crowd series.** It changed no verdict on its own. Busy shows on Rome for the November wellness traveller and on Rome in the October slow culture list; Dubrovnik, Venice and Cesky Krumlov carry no busy flag in October, which matches the pages (crowds are a summer issue).
+
+Against the T786 round before the food rule (85, same total):
+
+- **Slow culture (9 to 8).** Split (yes) left, Rome (no) came in at rank 8 on food 0.9.
+- **Foodie (7 to 8).** Ohrid (no) left, Bath (yes, food 0.9 under the rule) came in at rank 10.
+- Friends going out: same ten, Rome 95 to 94, Venice 82 to 84, Amsterdam 99 to 97, Dubrovnik and Amsterdam swap ranks 9 and 10; no verdict change. Foodie: Venice and Dubrovnik swap ranks 6 and 7. Every other list is unchanged.
 
 ### 1. Family with a toddler (July; beach, lakes; town; quiet), 5 / 10, unchanged
 
@@ -77,31 +85,31 @@ Seven of the twelve lists are the same ten places in the same order with the sam
 
 | # | Place | Score | Match | Sensible | Why | Source |
 |---|---|---|---|---|---|---|
-| 1 | Rome (Fiumicino) | 10 | 95 | yes | San Lorenzo "vibrant nightlife", dining across Old Rome (match up from 71, same call) | WV/Rome |
+| 1 | Rome (Fiumicino) | 10 | 94 | yes | San Lorenzo "vibrant nightlife", dining across Old Rome (match up from 71, same call) | WV/Rome |
 | 2 | Bruges | 9.7 | 90 | no | small museum city; going out means two beer pubs, not a night scene (match up from 68 on nightlife 97, page unchanged) | WV/Bruges |
 | 3 | Salzburg | 9.6 | 90 | no | a few late bars and a student pub; a culture city, not a night out (match up from 67, page unchanged) | WV/Salzburg |
 | 4 | Porto | 9.5 | 85 | yes | "some of the finest restaurants in Portugal", bars, clubs, fado | WV/Porto |
 | 5 | Bergen | 9.5 | 85 | yes | Norway's second city with a "thriving underground/indie music scene" | WV/Bergen |
 | 6 | Split | 9.4 | 88 | yes | clubs on Bacvice beach, cocktail bars, Diocletian's Palace | WV/Split |
-| 7 | Venice (Marco Polo) | 9.4 | 82 | no | new: "very few nightclubs" (go to Mestre or Lido), most bars close around 01:00 | WV/Venice |
+| 7 | Venice (Marco Polo) | 9.4 | 84 | no | new: "very few nightclubs" (go to Mestre or Lido), most bars close around 01:00 | WV/Venice |
 | 8 | Bern | 9.2 | 91 | no | nightlife "not exactly what you might call spectacular", kitchens close 21:45 | WV/Bern |
-| 9 | Amsterdam | 9.0 | 99 | yes | new: nightlife "famously wild", Leidseplein and Rembrandtplein, "vibrant tapestry" of food | WV/Amsterdam |
-| 10 | Dubrovnik | 9.6 | 68 | yes | new: Culture Club Revelin "Dubrovnik's liveliest night spot", Banje beach club, live music bars (a town, not a city; borderline, called yes on the page's night list) | WV/Dubrovnik |
+| 9 | Dubrovnik | 9.6 | 68 | yes | new: Culture Club Revelin "Dubrovnik's liveliest night spot", Banje beach club, live music bars (a town, not a city; borderline, called yes on the page's night list) | WV/Dubrovnik |
+| 10 | Amsterdam | 9.0 | 97 | yes | new: nightlife "famously wild", Leidseplein and Rembrandtplein, "vibrant tapestry" of food | WV/Amsterdam |
 
-### 4. Slow culture (October; culture, food; town; quiet), 9 / 10, before 9
+### 4. Slow culture (October; culture, food; town; quiet), 8 / 10, before 9
 
 | # | Place | Score | Match | Sensible | Why | Source |
 |---|---|---|---|---|---|---|
 | 1 | Dubrovnik | 9.6 | 87 | yes | City Walls and Rector's Palace; top restaurants close only Nov to Mar (match up from 58, same call) | WV/Dubrovnik |
-| 2 | Bergen | 9.5 | 88 | yes | Bryggen UNESCO wharf and Philharmonic (rainy city, food average) | WV/Bergen |
-| 3 | Cesky Krumlov | 9.3 | 95 | yes | UNESCO town, Baroque castle theatre; crowds are a summer issue | WV/%C4%8Cesk%C3%BD_Krumlov |
-| 4 | Salzburg | 9.6 | 79 | yes | Mozart's birthplace, cathedral, Residenzgalerie, Salzburger Nockerl | WV/Salzburg |
+| 2 | Salzburg | 9.6 | 83 | yes | Mozart's birthplace, cathedral, Residenzgalerie, Salzburger Nockerl | WV/Salzburg |
+| 3 | Bergen | 9.5 | 88 | yes | Bryggen UNESCO wharf and Philharmonic (rainy city, food average) | WV/Bergen |
+| 4 | Cesky Krumlov | 9.3 | 95 | yes | UNESCO town, Baroque castle theatre; crowds are a summer issue | WV/%C4%8Cesk%C3%BD_Krumlov |
 | 5 | Ohrid | 9.4 | 87 | yes | new for this persona: UNESCO since 1980, "one of the oldest human settlements in all of Europe", burek and fish soup; beaches "quiet the rest of the year" after summer | WV/Ohrid |
 | 6 | Carcassonne | 9.2 | 94 | yes | UNESCO Cite with 52 towers, cassoulet; crowds are a summer issue | WV/Carcassonne |
-| 7 | Kotor | 9.3 | 85 | yes | new: UNESCO walled Old Town, St. Tryphon's Cathedral, Maritime Museum, seafood; cruise crowds named for high season, low season "cheap and plentiful" (October cruise calls possible, still called yes) | WV/Kotor |
-| 8 | Nesebar | 9.1 | 95 | no | new: UNESCO Old Town full of churches, but Old Town restaurants use touts and are "not very good quality", outline page silent on October in a beach resort; food wish not met, called no conservatively | WV/Nesebar |
-| 9 | Venice (Marco Polo) | 9.4 | 79 | yes | new for this persona: early autumn named a best time (balance of weather and crowds), churches, opera at La Fenice, cicchetti in bacari | WV/Venice |
-| 10 | Split | 9.4 | 79 | yes | new for this persona: Diocletian's Palace, pasticada and the Obrov fish market; crowds are a summer issue | WV/Split |
+| 7 | Venice (Marco Polo) | 9.4 | 83 | yes | new for this persona: early autumn named a best time (balance of weather and crowds), churches, opera at La Fenice, cicchetti in bacari | WV/Venice |
+| 8 | Rome (Fiumicino) | 10 | 52 | no | new for this persona: culture and dining across Old Rome are plain on the page, but a capital at town 30 flagged busy in October is the wrong size and pace for a quiet town traveller; called no conservatively | WV/Rome |
+| 9 | Kotor | 9.3 | 85 | yes | new: UNESCO walled Old Town, St. Tryphon's Cathedral, Maritime Museum, seafood; cruise crowds named for high season, low season "cheap and plentiful" (October cruise calls possible, still called yes) | WV/Kotor |
+| 10 | Nesebar | 9.1 | 95 | no | new: UNESCO Old Town full of churches, but Old Town restaurants use touts and are "not very good quality", outline page silent on October in a beach resort; food wish not met, called no conservatively | WV/Nesebar |
 
 ### 5. Backpacker (August; city, nightlife, hidden; city; no car; backpacker budget), 4 / 10, before 5
 
@@ -148,20 +156,20 @@ Seven of the twelve lists are the same ten places in the same order with the sam
 | 9 | Lake Bohinj | 9.0 | 92 | yes | guided and self-guided cycling tours, e-bike rental | WV/Bohinj |
 | 10 | Altaussee | 9.0 | 92 | yes | lake village in the Salzkammergut biking trails | WP/Altaussee, WV/Salzkammergut |
 
-### 8. Foodie (April; food, culture, city; city), 7 / 10, before 8
+### 8. Foodie (April; food, culture, city; city), 8 / 10, before 8
 
 | # | Place | Score | Match | Sensible | Why | Source |
 |---|---|---|---|---|---|---|
-| 1 | Rome (Fiumicino) | 10 | 95 | yes | laid-back dining across Old Rome, Via Veneto (match up from 68, same call) | WV/Rome |
+| 1 | Rome (Fiumicino) | 10 | 94 | yes | laid-back dining across Old Rome, Via Veneto (match up from 68, same call) | WV/Rome |
 | 2 | Bruges | 9.7 | 87 | yes | chocolate shops and celebrated beer pubs, museums | WV/Bruges |
-| 3 | Salzburg | 9.6 | 87 | yes | Nockerl, Mozartkugeln, Cafe Sacher, strong culture | WV/Salzburg |
+| 3 | Salzburg | 9.6 | 88 | yes | Nockerl, Mozartkugeln, Cafe Sacher, strong culture | WV/Salzburg |
 | 4 | Porto | 9.5 | 89 | yes | francesinha, bacalhau, "finest restaurants in Portugal" | WV/Porto |
 | 5 | Bergen | 9.5 | 87 | no | fish market "touristy" with "OK quality"; a weak food pick | WV/Bergen |
-| 6 | Dubrovnik | 9.6 | 77 | yes | fresh seafood and Dalmatian dishes, walled old town | WV/Dubrovnik |
-| 7 | Venice (Marco Polo) | 9.4 | 87 | yes | new for this persona: cicchetti in bacari, sepe al nero; page warns of "mediocre eateries" with touts but names the good ones; culture strong | WV/Venice |
+| 6 | Venice (Marco Polo) | 9.4 | 88 | yes | new for this persona: cicchetti in bacari, sepe al nero; page warns of "mediocre eateries" with touts but names the good ones; culture strong | WV/Venice |
+| 7 | Dubrovnik | 9.6 | 77 | yes | fresh seafood and Dalmatian dishes, walled old town | WV/Dubrovnik |
 | 8 | Split | 9.4 | 87 | yes | new for this persona: pasticada, risotto, Obrov fish market, Diocletian's Palace | WV/Split |
 | 9 | Bern | 9.2 | 88 | no | food described as pricey Swiss fare, kitchens close 21:45 | WV/Bern |
-| 10 | Ohrid | 9.4 | 77 | no | new for this persona: a lake town, not a city; food named is burek and fish soup, and the page asks visitors not to order the signature Ohrid trout; not a food destination, called no conservatively | WV/Ohrid |
+| 10 | Bath | 9.2 | 88 | yes | new for this persona: "an excellent choice of eateries for any budget and taste", Sally Lunn bun, Walcot Street weekend markets; double UNESCO, Roman Baths | WV/Bath |
 
 ### 9. Skier (February; ski; village), 8 / 10, unchanged
 
@@ -223,9 +231,10 @@ Seven of the twelve lists are the same ten places in the same order with the sam
 | 9 | Ohrid | 9.4 | 77 | yes | UNESCO churches, hourly buses from Skopje | WV/Ohrid |
 | 10 | Bern | 9.2 | 87 | yes | new for this persona: "at the hub of the SBB network", "excellent public transportation", UNESCO old town, Kunstmuseum, Einsteinhaus | WV/Bern |
 
-### Profile values that still look wrong after T786
+### Profile values that still look wrong after T786 (food rule)
 
-- food null on Rome, Bruges, Salzburg, Bergen, Dubrovnik, Venice, Split, Ohrid: the pages name their food (WV/Rome, WV/Bruges, WV/Salzburg, WV/Split, WV/Venice); leaving it out is honest, but the foodie list now ranks on culture and city size alone, which is why Barcelona, Siena and Carcassonne fell out.
+- food null on Bruges, Split, Dubrovnik, Bergen and Ohrid: the pages name their food (chocolate and beer, WV/Bruges; pasticada and the Obrov market, WV/Split; seafood, WV/Dubrovnik). The food rule misses them because they carry no food, wine or beer tag and sit below fame 1,200 or are filed as towns; Bruges's beer is the plainest miss.
+- food 0.9 now lifts Rome into the October slow culture list at match 52 with a busy flag: the rule is right on food, but it lets a metro outrank quieter towns for a quiet town traveller.
 - culture 91 on every culture row in the slow culture, foodie and no-car lists (Rome, Bruges, Bergen, Ohrid, Nesebar alike): one value for all reads as a default, not a measurement.
 - city 84 (size 85) on every city of the friends, backpacker, foodie and no-car lists: same default pattern.
 - Bruges nightlife 97, Bern 98, Salzburg 95, Venice 80: with food gone these now drive the friends list (Bruges and Salzburg at match 90); pages say otherwise (WV/Bern "not exactly spectacular", WV/Venice "very few nightclubs").
