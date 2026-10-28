@@ -1,9 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
-import { Button } from '../../components/ui/index.js';
+import { Button, Chip, ChipGroup } from '../../components/ui/index.js';
 import { SheetHead } from '../flow/PlanStage.jsx';
 import { useBcp47, useMonths, whenText } from '../flow/flowHooks.js';
 import { MAX_COMPARE } from '../../lib/recommend/compare.js';
+import { LEVERS } from '../../lib/recommend/rank.js';
+import { answersOf, useLevers } from './finderHooks.js';
 import { TripCard } from './TripCard.jsx';
 import { TripCompare } from './TripCompare.jsx';
 import { PAGE, answerChips } from './finderText.js';
@@ -13,7 +15,46 @@ import { PAGE, answerChips } from './finderText.js';
 // traveller reopens a question and comes back, and clear when an answer
 // changes. Memory only, never stored.
 const TICKS = new Map();
-const answersKey = (s) => JSON.stringify([s.guide, s.when, s.party, s.priority, s.from]);
+const answersKey = (s) => JSON.stringify([answersOf(s).guide, s.when, s.party, s.priority, s.from]);
+
+// The lever groups (T803), each a single choice, in the plan's order.
+const LEVER_GROUPS = ['flight', 'food', 'bases'].map((id) => ({ id, values: Object.keys(LEVERS[id].values) }));
+const ONE_BASE = (t) => t.places.length === 1;
+
+const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+
+/**
+ * Cards move to their new place when a lever re-orders the list: the
+ * positions before the change are taken on the tap, and after the new
+ * order is laid out each card slides from where it was (transform only,
+ * --dur-2, --ease-out). Under reduced motion they jump.
+ */
+function useReorderMotion(order, items) {
+  const before = useRef(null);
+  useLayoutEffect(() => {
+    const was = before.current;
+    before.current = null;
+    if (!was || reducedMotion()) return;
+    const css = getComputedStyle(document.documentElement);
+    const timing = { duration: parseFloat(css.getPropertyValue('--dur-2')) || 200, easing: css.getPropertyValue('--ease-out').trim() || 'ease-out' };
+    for (const [id, el] of items.current) {
+      const from = was.get(id);
+      if (!el.animate) continue;
+      if (!from) {
+        el.animate([{ opacity: 0 }, { opacity: 1 }], timing);
+        continue;
+      }
+      const to = el.getBoundingClientRect();
+      const dx = from.left - to.left;
+      const dy = from.top - to.top;
+      if (!dx && !dy) continue;
+      el.animate([{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'none' }], timing);
+    }
+  }, [order]); // eslint-disable-line react-hooks/exhaustive-deps -- runs when the order changes
+  return () => {
+    before.current = new Map([...items.current].map(([id, el]) => [id, el.getBoundingClientRect()]));
+  };
+}
 
 function useTicks(settings) {
   const key = answersKey(settings);
@@ -42,6 +83,14 @@ function useTicks(settings) {
  * a tray at the foot opens the compare table (TripCompare); closing it
  * returns focus to the tray.
  *
+ * Levers (T803): one row of choice chips under the answers, flight, food
+ * and bases, each starting from the traveller's own answers. A tap
+ * re-ranks the list in place (useTripFinder applies the levers, so the
+ * card, the receipt and the compare table read the same trips); the
+ * answers bar stays as it is and a ticked trip stays ticked while it is
+ * in the list. A bases choice no trip fits says so in one line and keeps
+ * the whole list.
+ *
  *   trips          the ranked trips, with any swap the receipt made
  *   markedId       the trip the traveller planned last (back from the planner)
  *   onOpen(trip, el)  open its receipt; `el` gets focus back on close
@@ -58,6 +107,19 @@ export function TripsForYou({ settings, trips, destinations, originName, markedI
   const [ticks, setTicks] = useTicks(settings);
   const [refused, setRefused] = useState(null);
   const [comparing, setComparing] = useState(false);
+  const { levers, setLever } = useLevers(settings);
+  const items = useRef(new Map());
+  const order = trips.slice(0, shown).map((x) => x.id).join();
+  const snapshot = useReorderMotion(order, items);
+  const pull = (group, value) => {
+    if (levers[group] === value) return;
+    snapshot();
+    setLever(group, value);
+  };
+  // The bases lever kept the whole list when no trip had that many bases.
+  const basesMiss = levers.bases === 'one' ? trips.some((x) => !ONE_BASE(x))
+    : levers.bases === 'several' ? trips.some(ONE_BASE) : false;
+  const otherBases = levers.bases === 'one' ? 'several' : 'one';
   const when = whenText(t, settings.when, months, bcp47);
   const chips = answerChips(settings, { t, lang, originName, when, trip: trips[0] || null, locale: lang });
   // A ticked trip that is no longer in the list is not compared.
@@ -98,9 +160,33 @@ export function TripsForYou({ settings, trips, destinations, originName, markedI
           ))}
         </ul>
       )}
+      <div className="tff-levers" role="group" aria-label={t('tf.lever.label')}>
+        {LEVER_GROUPS.map((g) => (
+          <ChipGroup key={g.id} label={t(`tf.lever.${g.id}`)} className="tff-lever">
+            {g.values.map((v, i) => (
+              <Chip
+                key={v}
+                kind="choice"
+                selected={levers[g.id] === v}
+                // A group with nothing chosen yet is still reached by Tab.
+                {...(!levers[g.id] && i === 0 ? { tabIndex: 0 } : {})}
+                onClick={() => pull(g.id, v)}
+              >
+                {t(`tf.lever.${g.id}.${v}`)}
+              </Chip>
+            ))}
+          </ChipGroup>
+        ))}
+      </div>
+      {basesMiss && (
+        <p className="tff-lever-miss" role="status">
+          <span>{t(`tf.lever.miss.${levers.bases}`)}</span>
+          <Button variant="quiet" size="sm" onClick={() => pull('bases', otherBases)}>{t(`tf.lever.back.${otherBases}`)}</Button>
+        </p>
+      )}
       <ol className="tff-list">
         {trips.slice(0, shown).map((trip) => (
-          <li key={trip.id}>
+          <li key={trip.id} ref={(el) => { if (el) items.current.set(trip.id, el); else items.current.delete(trip.id); }}>
             <TripCard
               trip={trip}
               destinations={destinations}

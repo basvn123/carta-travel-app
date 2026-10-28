@@ -519,3 +519,28 @@
 .tff-cmp-foot { vertical-align: bottom; }
 .tff-cmp-foot .btn { display: flex; width: 100%; }
 .tff-cmp-foot .btn + .btn { margin-top: var(--space-1); }
+
+/* ---- The trade-off levers (T803): one row of choice chips under the answers ---- */
+.tff-levers {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: var(--space-2) calc(-1 * var(--space-1)) 0;
+  padding: var(--space-1);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tff-levers::-webkit-scrollbar { display: none; }
+.tff-lever { flex: none; display: flex; gap: var(--space-1); }
+/* A hairline between groups, so three single choices read as three. */
+.tff-lever + .tff-lever { padding-left: var(--space-2); border-left: 1px solid var(--border-soft); }
+.tff-lever .ui-chip { flex: none; white-space: nowrap; }
+.tff-lever-miss {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 var(--space-2);
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-label);
+  color: var(--text-2);
+}

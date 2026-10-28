@@ -49,6 +49,17 @@ export const AVOID = ['crowds', 'transfers', 'car', 'heat'];
 /** Question 7 (T796): the price lines Carta may pick, from config/slots.json
  *  (every pickable slot that is live). The default is all of them. */
 export const PICKABLE = SLOTS.slots.filter((r) => r.pickable && r.status === 'live').map((r) => r.id);
+/** The trip finder's trade-off levers (T803), the values of config
+ *  recommend.json `levers` (tests/recommendLevers pins them equal). Read
+ *  here without the config, so the Plan tab's first load does not carry it. */
+export const LEVER_VALUES = Object.freeze({
+  flight: ['cheapest', 'quickest', 'times'],
+  food: (SLOTS.slots.find((r) => r.id === 'food')?.options || []).map((o) => o.id),
+  bases: ['one', 'several'],
+});
+const leversOf = (l) => Object.fromEntries(Object.entries(LEVER_VALUES)
+  .filter(([k, vs]) => l && typeof l === 'object' && vs.includes(l[k]))
+  .map(([k]) => [k, l[k]]));
 
 /** The day rhythm, asked after the trip is planned. */
 export const RHYTHM = {
@@ -157,6 +168,8 @@ export function normalizeSettings(raw) {
       },
       // T796: what Carta picks; a slot left out is the traveller's to choose.
       pick: Array.isArray(g.pick) ? someOf(g.pick, PICKABLE) : [...PICKABLE],
+      // T803: the levers on Trips for you as last set; none set reads the answers.
+      levers: leversOf(g.levers),
     },
     rhythm: {
       mornings: oneOf(r.mornings, RHYTHM.mornings, ''),
