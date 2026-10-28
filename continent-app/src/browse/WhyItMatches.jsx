@@ -116,7 +116,7 @@ function factLine(b, t, lang) {
     parts.push(t('fit.fact.culture', { heritage: Number(f.heritage) || 0, museums: Number(f.museums) || 0 }));
   }
   if (Number(f.venues) > 0) parts.push(t('fit.fact.venues', { n: f.venues }));
-  return parts.join(' · ');
+  return parts.join(', ');
 }
 
 /**

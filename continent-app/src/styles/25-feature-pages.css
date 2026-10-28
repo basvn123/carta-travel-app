@@ -2211,14 +2211,14 @@
 
 /* T765: the personal match (browse/WhyItMatches.jsx): a card's one line, the
    fact under each bar and each conflict, in the breakdown's own type. */
-.xmatch { display: block; font-size: var(--text-caption); font-weight: 600; color: var(--ink-soft); }
-.rb-part-fact { font-size: 12px; color: var(--ink-soft); }
+.xmatch { display: block; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.rb-part-fact { font-size: var(--text-caption); color: var(--text-2); }
 .xwhy .rb-head-text { margin: 0 0 var(--space-2); }
 .xwhy-conflict { margin-top: var(--space-2); }
 /* The match's bars in the selection umber, so they never read as parts of the Score. */
 .xwhy .rb-part-fill { background: var(--select-border); }
 @media (max-width: 420px) { .xwhy .rb-parts { grid-template-columns: 1fr; } }
-.xsave-taste { margin: var(--space-3) 0 0; display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-caption); color: var(--ink-soft); }
+.xsave-taste { margin: var(--space-3) 0 0; display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-caption); color: var(--text-2); }
 .rate-break-v2 .rate-break-note { margin-top: 10px; }
 @media (max-width: 380px) { .rb-parts { grid-template-columns: 1fr; } }
 

@@ -263,7 +263,7 @@ export function natureFacts(facts, t) {
   const push = (key, text) => { if (text) out.push({ key, text }); };
   const word = (k) => { const s = t(k); return s && s !== k ? s : ''; };
   const num = (v) => Number.isFinite(Number(v)) && v !== null && v !== '';
-  if (facts.difficulty) push('difficulty', word(`rating.fact.difficulty.${facts.difficulty}`));
+  if (facts.difficulty) push('difficulty', word(`dest.diff.${facts.difficulty}`));
   if (num(facts.km)) push('km', t('rating.fact.km', { n: Math.round(Number(facts.km) * 10) / 10 }));
   if (num(facts.climb_m)) push('climb', t('rating.fact.climb', { n: Math.round(Number(facts.climb_m)) }));
   if (num(facts.hours)) push('hours', t('rating.fact.hours', { n: Math.round(Number(facts.hours) * 10) / 10 }));
