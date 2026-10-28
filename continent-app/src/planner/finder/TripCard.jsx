@@ -67,11 +67,14 @@ export function WhyMatch({ trip, t, lang, id }) {
  * Every figure is the trip's own (lib/recommend); nothing here adds up.
  *   onOpen(trip, el)   the receipt (T799), from the total or the card
  *   ui                 the app parts TripFlow hands down (see FindingTrips)
+ *   compare            { ticked, refused, onToggle(id) }: the Compare tick
+ *                      (T802); `refused` says the fifth tick was not taken
  */
-export const TripCard = forwardRef(function TripCard({ trip, destinations, marked = false, onOpen, ui }, ref) {
+export const TripCard = forwardRef(function TripCard({ trip, destinations, marked = false, onOpen, ui, compare = null }, ref) {
   const { t, lang } = useI18n();
   const [whyOpen, setWhyOpen] = useState(false);
   const whyId = useId();
+  const tickId = useId();
   const name = tripName(trip, destinations, lang);
   const place = firstPlace(trip, destinations);
   const fig = threeFigures(trip);
@@ -171,6 +174,21 @@ export const TripCard = forwardRef(function TripCard({ trip, destinations, marke
             <span>{t('tf.card.group', { n: trip.party.head + (trip.party.babies || 0) })}</span>
             <span className="money">{formatMoney(trip.total.group, { locale: lang })}</span>
           </p>
+        )}
+
+        {compare && (
+          <div className="tff-tick">
+            <input
+              type="checkbox"
+              id={tickId}
+              checked={compare.ticked}
+              aria-label={t('tf.cmp.tickOne', { name })}
+              aria-describedby={compare.refused ? `${tickId}-full` : undefined}
+              onChange={() => compare.onToggle(trip.id)}
+            />
+            <label htmlFor={tickId}>{t('tf.cmp.tick')}</label>
+            {compare.refused && <p className="tff-tick-full" id={`${tickId}-full`} role="status">{t('tf.cmp.full', { n: 4 })}</p>}
+          </div>
         )}
       </div>
     </article>

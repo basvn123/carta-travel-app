@@ -149,6 +149,7 @@ export default function TripFinderScreen({ ui, settings, guide, edits, setEdits,
         onBack={onBack}
         onReopen={onWiden}
         onOpen={(trip) => setOpenId(trip.id)}
+        onPlan={(trip) => onPlan(planOf(trip))}
         cardRefs={cardRefs}
       />
       {open && (
