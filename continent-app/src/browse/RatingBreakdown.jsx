@@ -29,16 +29,18 @@ const ORDER = ['appeal', 'beauty', 'depth', 'recognition'];
 /** The reason sentence for `id` in `lang`: the lazy language file through
  *  lib/rating.js, English until (or unless) it has one. */
 function useRatingWhy(id, rating, lang) {
-  const en = rating?.why || '';
-  const [local, setLocal] = React.useState(null);
+  const [why, setWhy] = React.useState(rating?.why || '');
   React.useEffect(() => {
-    setLocal(null);
-    if (!id || !lang || lang === 'en') return undefined;
+    setWhy(rating?.why || '');
+    if (!id) return undefined;
     let live = true;
-    loadRatingWhy(lang).then((m) => { if (live) setLocal(m?.[id] || null); });
+    // T789: English is a lazy file like the others; the language's own
+    // reason wins, English stands in where it has none.
+    Promise.all([loadRatingWhy('en'), lang && lang !== 'en' ? loadRatingWhy(lang) : null])
+      .then(([en, local]) => { if (live) setWhy(local?.[id] || en?.[id] || rating?.why || ''); });
     return () => { live = false; };
-  }, [id, lang]);
-  return local || en;
+  }, [id, lang, rating?.why]);
+  return why;
 }
 
 export function RatingBreakdown({ rating, t, countryLine, destId }) {

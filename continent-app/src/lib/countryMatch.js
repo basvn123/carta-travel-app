@@ -662,7 +662,8 @@ export function matchCountries({
       // scores a perfect 1.0 on dominance however ordinary it is. A place the
       // catalogue does not rate well is not evidence for anything.
       if (score < MIN_PLACE_SCORE) return -1;
-      return forYou(d, taste, month) ?? qualityOf(d, month) ?? 0;
+      // T787: an "avoid heat" answer adds the heat conflict for a hot month.
+      return forYou(d, taste, month, { avoidHeat: avoid.has('heat') }) ?? qualityOf(d, month) ?? 0;
     };
     const topPlaces = g.ids
       .map((id, i) => ({ id, d: g.rows[i], rank: scorePlace(g.rows[i]) }))

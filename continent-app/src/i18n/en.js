@@ -988,7 +988,7 @@ export const en = {
   "day.tripFrom": "your trip, from {date}",
   "day.recentStarts": "You started here before",
   "day.wholeTown": "Whole town",
-  "day.worthDetour": "Worth the detour",
+  "day.worthDetour": "Further out",
   "day.yourDayPlans": "Your day plans",
   "day.yourPick": "{mode}, your pick",
   "day.yourPicks": "Your picks",

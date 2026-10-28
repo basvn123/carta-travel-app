@@ -167,11 +167,15 @@ const DEAD_WIRE_FIELDS = [
   ['costs', ['premium_base', 'tourist_premium', 'drivers', 'n_rcpt', 'city']],
   ['rating', ['inputs_present']],
 ];
+// T789: the English place reasons leave the wire for a lazy file, like the
+// other five languages (written with them below); only RatingBreakdown on the
+// destination page reads one.
+const WHY_EN = {};
 {
   let before = 0;
   let after = 0;
   let climatePeriod = null;
-  for (const d of Object.values(data.destinations || {})) {
+  for (const [destId, d] of Object.entries(data.destinations || {})) {
     // Wikivoyage guide -> { text: blurb, url }
     if (d.guide !== undefined) {
       before += JSON.stringify(d.guide).length;
@@ -213,6 +217,55 @@ const DEAD_WIRE_FIELDS = [
     // models work in, kept in the master for calibration and provenance. The
     // app reads the OUTPUT (per_person_night_eur, the costs block) and has
     // never read any of these. ~320 KB shipped to every visitor for nothing.
+    // T785 (rating v5): the v4 keys no screen reads any more (rating.tier and
+    // its "Worth the journey" label) stay in the master and leave the wire;
+    // the parts ship under their v5 names (lib/rating.js ratingPart reads
+    // either, so an older wire still draws).
+    if (d.rating) {
+      const r = d.rating;
+      for (const k of ['tier', 'label']) {
+        if (r[k] === undefined) continue;
+        before += JSON.stringify(r[k]).length;
+        delete r[k];
+      }
+      if (typeof r.why === 'string') {
+        WHY_EN[destId] = r.why;
+        before += JSON.stringify(r.why).length;
+        delete r.why;
+      }
+      const c = r.components;
+      if (c && typeof c === 'object') {
+        for (const [from, to] of [['highlights', 'depth'], ['acclaim', 'recognition']]) {
+          if (c[from] !== undefined && c[to] === undefined) { c[to] = c[from]; delete c[from]; }
+        }
+      }
+    }
+    // T789: the monthly crowd series ships what crowdMonth.js reads (the
+    // twelve shares, rounded, and the twelve tiers); its provenance stays in
+    // the master.
+    const mo = d.crowding?.monthly;
+    if (mo && typeof mo === 'object') {
+      before += JSON.stringify(mo).length;
+      d.crowding.monthly = {
+        share: Array.isArray(mo.share) ? mo.share.map((x) => (x == null ? null : Math.round(x * 1000) / 1000)) : mo.share,
+        tier: mo.tier,
+      };
+      after += JSON.stringify(d.crowding.monthly).length;
+    }
+    // T789: a like's facts ship only where the like scored, and without its
+    // empty fields: the page reads them for the bars a traveller picked,
+    // and a 0 or a not-measured like draws no fact line.
+    if (d.taste?.likes) {
+      before += JSON.stringify(d.taste.likes).length;
+      for (const [k, v] of Object.entries(d.taste.likes)) {
+        if (!Array.isArray(v)) continue;
+        const [p, f] = v;
+        const kept = p == null || p === 0 || !f || typeof f !== 'object' ? null
+          : Object.fromEntries(Object.entries(f).filter(([, x]) => x !== null && x !== 0 && x !== false && x !== ''));
+        d.taste.likes[k] = kept && Object.keys(kept).length ? [p, kept] : [p];
+      }
+      after += JSON.stringify(d.taste.likes).length;
+    }
     for (const [block, fields] of DEAD_WIRE_FIELDS) {
       const b = d[block];
       if (!b) continue;
@@ -267,6 +320,11 @@ console.log(`[sync-data] core dataset -> public/app_data.json (${n} destinations
 // against lazy; the numbers are in Execution/P7/T761-T762-rating-v5-profile.md.
 {
   const WHY_LANGS = ['nl', 'de', 'fr', 'es', 'it'];
+  {
+    const body = JSON.stringify(WHY_EN);
+    writeFileSync(resolve(publicDir, 'app_data', 'why_i18n', 'en.json'), body);
+    console.log(`[sync-data] reasons (en) -> public/app_data/why_i18n/en.json (${Object.keys(WHY_EN).length} places, ${kb(body)})`);
+  }
   const readIf = (p) => (existsSync(p) ? JSON.parse(readFileSync(p, 'utf8')) : {});
   const rubric = readIf(resolve(repoRoot, 'app_data', 'rubric_appeal.json'));
   const curated = readIf(resolve(repoRoot, 'app_data', 'curated_why_i18n.json'));
@@ -390,7 +448,14 @@ rmSync(resolve(publicDir, 'activities_full.json'), { force: true });
   for (const [id, items] of Object.entries(activitiesFull)) {
     const name = shardName(id);
     if (!name) { skipped += 1; continue; }
-    writeFileSync(resolve(poiDir, `${name}.json`), JSON.stringify(items ?? []));
+    // T785: `rate` (3/2/1) is the label's rank, so the shard ships the label
+    // only and lib/appData.js fetchDestPois derives rate on load.
+    const lean = (items ?? []).map((it) => {
+      if (!it || typeof it !== 'object' || !('label' in it)) return it;
+      const { rate: _rate, ...rest } = it;
+      return rest;
+    });
+    writeFileSync(resolve(poiDir, `${name}.json`), JSON.stringify(lean));
     shards += 1;
   }
   console.log(`[sync-data] per-destination POI shards -> public/poi/ (${shards} files`

@@ -336,7 +336,7 @@ export function gatewayCity(id, destinations) {
 // index (app_data is not a data-host path).
 const whyFiles = new Map();
 export function loadRatingWhy(lang) {
-  if (!lang || lang === 'en' || typeof fetch !== 'function') return Promise.resolve({});
+  if (!lang || typeof fetch !== 'function') return Promise.resolve({});
   if (!whyFiles.has(lang)) {
     whyFiles.set(lang, fetch(`/app_data/why_i18n/${encodeURIComponent(lang)}.json`)
       .then((r) => (r.ok ? r.json() : {}))
@@ -345,10 +345,13 @@ export function loadRatingWhy(lang) {
   return whyFiles.get(lang);
 }
 
-/** The reason for place `id` in `lang`, English when the file lacks it. */
+/** The reason for place `id` in `lang`, English when the file lacks it.
+ *  T789: English is a lazy file too; `rating.why` is read where a wire
+ *  still carries it. */
 export async function ratingWhy(id, rating, lang) {
-  const en = rating?.why || '';
-  if (!id || !lang || lang === 'en') return en;
+  if (!id) return rating?.why || '';
+  const en = rating?.why || (await loadRatingWhy('en'))?.[id] || '';
+  if (!lang || lang === 'en') return en;
   const m = await loadRatingWhy(lang);
   return m?.[id] || en;
 }

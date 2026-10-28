@@ -177,6 +177,7 @@ export const V19_POI_LABELS = ['must_see', 'recommended', 'worth_a_look'];
 export const V19_POI_CATEGORIES = ['sights', 'museums', 'nature', 'food_drink',
   'active', 'family', 'nightlife', 'markets'];
 export const V19_NATURE_CONFIDENCE = ['measured', 'partial', 'unscored'];
+export const V19_UNMEASURED = ['food', 'nightlife'];
 
 const isObj = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
 const in01 = (v) => isFiniteNum(v) && v >= 0 && v <= 1;
@@ -198,9 +199,10 @@ function checkV19(dests, { catalogue }) {
           bad(`${where}.rating.band is ${JSON.stringify(r.band)}`);
         }
       }
-      if (catalogue || 'why' in r) {
-        if (!('why' in r)) bad(`${where}.rating.why is missing`);
-        else if (r.why !== null && typeof r.why !== 'string') bad(`${where}.rating.why is not a string`);
+      // T789: the English reason left the wire for why_i18n/en.json; where a
+      // record still carries one it is a string.
+      if ('why' in r) {
+        if (r.why !== null && typeof r.why !== 'string') bad(`${where}.rating.why is not a string`);
       }
       if (catalogue || 'class_rank' in r) {
         const c = r.class_rank;
@@ -235,11 +237,20 @@ function checkV19(dests, { catalogue }) {
         bad(`${where}.taste.likes is not an object`);
         continue;
       }
+      // T785/T786/T789: [value, fact], or [value] on the wire where the like
+      // scored 0 or was not measured; the value is null only for a like
+      // nothing measures (food, nightlife).
       for (const like of V19_LIKES) {
         const v = t.likes[like];
-        if (!Array.isArray(v) || v.length !== 2 || !in01(v[0]) || !isObj(v[1])) {
-          bad(`${where}.taste.likes.${like} is not [value 0..1, fact]: ${JSON.stringify(v)}`);
+        const okValue = Array.isArray(v) && (in01(v[0]) || (v[0] === null && V19_UNMEASURED.includes(like)));
+        const okFact = Array.isArray(v) && (v.length === 2 ? isObj(v[1]) : v.length === 1);
+        if (!okValue || !okFact) {
+          bad(`${where}.taste.likes.${like} is not [value 0..1 or null, fact]: ${JSON.stringify(v)}`);
         }
+      }
+      if (t.tmax_by_month != null && !(Array.isArray(t.tmax_by_month) && t.tmax_by_month.length === 12
+        && t.tmax_by_month.every((x) => x === null || isFiniteNum(x)))) {
+        bad(`${where}.taste.tmax_by_month is not 12 numbers or null`);
       }
       if (t.size !== null && !V19_CLASSES.includes(t.size)) bad(`${where}.taste.size is ${JSON.stringify(t.size)}`);
       if (t.crowd_by_month !== null && !(Array.isArray(t.crowd_by_month)

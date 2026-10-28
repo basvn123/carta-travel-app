@@ -94,6 +94,20 @@ GOOD_PLUS = ("exceptional", "excellent", "very_good")
 # Likes whose fact source is empty catalogue-wide: the vibe is not capped,
 # because the absence is ours, not the place's.
 NO_FACT_SOURCE = {"food"}
+# T786: a like with no vibe and no venue behind it is not measured, so it
+# ships as null and the match leaves it out (lib/match.js) instead of reading
+# a 0 as "nothing here". Food had only the guided vibe (Rome, Bruges and
+# Salzburg read 0); nightlife had only the size class (any city read high).
+UNMEASURED_WITHOUT = {"food": ("food", "markets", "known"), "nightlife": ("venues",)}
+# T786 (owner, 2026-10-28: "food is logged in the app"): the app's own rule
+# for a food place, Help me choose's food type (lib/countryMatch.js): a food,
+# wine or beer tag, or a big place (metro or city) people know (fame 1,200 or
+# more). The profile reads the same rule, so Explore and Help me choose agree:
+# a tag counts as a full food vibe, a big known place as 0.6 (about where
+# Barcelona's guided vibe, 59, sits). The guided vibe wins where it is higher.
+FOOD_TAGS = {"food", "wine", "beer"}
+FOOD_FAME = 1200
+FOOD_BIG_VIBE = 0.6
 
 
 def minutes(km):
@@ -226,8 +240,12 @@ def raw_values(did, dest, vibes, grids, fame_knots):
                         {"unesco": "unesco_whc" in designations,
                          "heritage": heritage, "museums": cats["museums"]})
     facts["city"] = (CLASS_CITY.get(cls, 0.0), {"size": cls})
+    tagged = bool(FOOD_TAGS & set(dest.get("categories") or []))
+    big_known = (cls in ("metro", "city")
+                 and ((dest.get("rating") or {}).get("fame") or 0) >= FOOD_FAME)
+    known = "tag" if tagged else "big_city" if big_known else None
     facts["food"] = (0.5 * min(cats["food_drink"], 5) / 5 + 0.5 * min(cats["markets"], 3) / 3,
-                     {"food": cats["food_drink"], "markets": cats["markets"]})
+                     {"food": cats["food_drink"], "markets": cats["markets"], "known": known})
     # A night out needs a town big enough to have one; a village theatre is
     # not nightlife.
     # Venues count on their own too: Ibiza is filed as an area.
@@ -263,6 +281,15 @@ def raw_values(did, dest, vibes, grids, fame_knots):
         names = VIBES[like]
         vibe = max((v.get(n, 0) for n in names), default=None) if names else None
         vibe = None if vibe is None else vibe / 100.0
+        has_vibe = any(n in v for n in names)
+        if like == "food" and fact.get("known"):
+            app_vibe = 1.0 if fact["known"] == "tag" else FOOD_BIG_VIBE
+            vibe = max(vibe if has_vibe else 0.0, app_vibe)
+            has_vibe = True
+        counts = UNMEASURED_WITHOUT.get(like)
+        if counts and not has_vibe and not any(fact.get(k) for k in counts):
+            out[like] = (None, fact)           # not measured (T786)
+            continue
         if (like not in NO_FACT_SOURCE and fact_value < WEAK_FACT
                 and (vibe is None or vibe < 0.5)):
             fact_value = 0.0                   # too thin to be evidence
@@ -295,11 +322,16 @@ def pct(x, knots):
 
 def carried(dest):
     monthly = (dest.get("crowding") or {}).get("monthly") or {}
+    months = (dest.get("climate") or {}).get("months") or []
+    highs = [m.get("t_high") for m in months] if len(months) == 12 else []
     return {
         "size": (dest.get("place") or {}).get("class"),
         "crowd_by_month": monthly.get("tier"),
         "car_need": (dest.get("local_transport") or {}).get("car_needed"),
         "cost_level": (dest.get("costs") or {}).get("meal_mid_eur"),
+        # T787: the mean day high per month, for the heat conflict.
+        "tmax_by_month": ([None if h is None else round(h) for h in highs]
+                          if highs and any(h is not None for h in highs) else None),
     }
 
 
@@ -317,11 +349,13 @@ def compute(data, frozen=None):
                                          if d["rating"].get("fame") is not None], KNOTS))
     raw = {did: raw_values(did, d, vibes, grids, fame_knots) for did, d in rated.items()}
     knots = (frozen["knots"] if frozen else
-             {like: nature_tiers.knots_of([r[like][0] for r in raw.values()], KNOTS)
+             {like: nature_tiers.knots_of([r[like][0] for r in raw.values()
+                                           if r[like][0] is not None], KNOTS)
               for like in LIKES})
     out = {}
     for did, r in raw.items():
-        likes = {like: [round(pct(r[like][0], knots[like]), 3), r[like][1]] for like in LIKES}
+        likes = {like: [None if r[like][0] is None else round(pct(r[like][0], knots[like]), 3),
+                        r[like][1]] for like in LIKES}
         out[did] = dict({"likes": likes}, **carried(rated[did]))
     return out, {"knots": knots, "fame_knots": fame_knots}
 

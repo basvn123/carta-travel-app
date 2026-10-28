@@ -30,7 +30,12 @@ def test_self_test_passes():
 def test_the_set_is_ten_styles_with_truth():
     gset = S.load_set()
     assert len(gset["trips"]) == 10
-    assert {t["style"] for t in gset["trips"]} == {s for _, _, s in T.C.TRIP_TYPES}
+    # Ten trips across ten styles (spec K8). T431 added five styles after the
+    # set was blessed, so the set covers ten distinct styles that all still
+    # exist, not every style there is (T790).
+    styles = [t["style"] for t in gset["trips"]]
+    assert len(set(styles)) == 10
+    assert set(styles) <= {s for _, _, s in T.C.TRIP_TYPES}
     master = json.loads((DATASET / "data" / "trips.master.json").read_text(encoding="utf-8"))["trips"]
     by_id = {t["id"]: t for t in master}
     for t in gset["trips"]:

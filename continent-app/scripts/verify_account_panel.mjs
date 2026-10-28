@@ -19,7 +19,7 @@
 //   5. Passwords revealable, measured live, floor at 8.
 //   6. Forgot password reaches the reset mail.
 //   7. Sign out sits clear of the delete button; deletion is red and gated.
-//   8. FAQ spoke (T461): fifteen questions in four groups, a search that
+//   8. FAQ spoke (T461): sixteen questions in four groups, a search that
 //      filters them, answers open on tap, figures interpolated from
 //      pricing.js, no catalogue counts and no retired fare copy.
 //   9. Feedback spoke: the send button stays off until there is a message.
@@ -237,12 +237,19 @@ try {
   // two apart.
   const menuLabels = await page.locator('.account-nav:visible').allInnerTexts();
   const menuRows = menuLabels.length;
-  // T461: "Where the numbers come from" is gone at the owner's call; the
+  // T461 took "Where the numbers come from" off the hub as a credits row; the
   // credits the licences ask for are printed in the Imprint (checked in 8b).
+  // T503 (roadmap 1.3e) brought the label back as a different thing: a link
+  // out to the method page, /about/numbers. So the row must be that link,
+  // never an in-panel spoke that lists credits again.
   for (const label of ['Send feedback', 'Common questions', 'Share Carta', 'Privacy']) {
     if (!menuLabels.some((l) => l.includes(label))) fail(`the panel has no "${label}" row`);
   }
-  if (menuLabels.some((l) => l.includes('Where the numbers come from'))) fail('the retired credits row is back');
+  const numbersRow = page.locator('a.account-nav:visible', { hasText: 'Where the numbers come from' });
+  if ((await numbersRow.count()) !== 1
+    || !/\/about\/numbers$/.test((await numbersRow.first().getAttribute('href')) || '')) {
+    fail('"Where the numbers come from" is not one link out to /about/numbers');
+  }
   // Reversed by T390 (brief V3-7): on a phone Friends had no door on the hub,
   // only a 38 px icon in the top bar, so the hub now carries a Friends row in
   // the phone-only block (hidden on desktop, where the rail has the row).
@@ -618,7 +625,9 @@ try {
   ok('the panel returns to the hub');
   await goTo(page, 'Common questions');
   const faqItems = await page.locator('.account-faq-item').count();
-  if (faqItems !== 15) fail(`expected 15 FAQ entries, found ${faqItems}`);
+  // Sixteen since the FAQ list in src/auth/account/FaqView.jsx grew a
+  // question (5 planning, 4 prices, 4 passes, 3 account); keep in step with it.
+  if (faqItems !== 16) fail(`expected 16 FAQ entries, found ${faqItems}`);
   const groups = await page.locator('.account-faq-group h2').allInnerTexts();
   if (groups.length !== 4) fail(`expected 4 FAQ group headings, found ${groups.length}`);
   if (await page.locator('.account-faq-item[open]').count()) fail('an answer is open before anything was tapped');

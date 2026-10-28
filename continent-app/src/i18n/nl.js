@@ -5585,7 +5585,7 @@ export const nl = {
   "day.walkLeg": "{min} min lopen, {km} km",
   "day.walkUnknown": "loopafstand onbekend (van een van deze stops ontbreken coördinaten)",
   "day.wholeTown": "Hele plaats",
-  "day.worthDetour": "Een omweg waard",
+  "day.worthDetour": "Verder weg",
   "day.yourDayPlans": "Je dagplannen",
   "day.yourPick": "{mode}, jouw keuze",
   "day.yourPicks": "Jouw keuzes",

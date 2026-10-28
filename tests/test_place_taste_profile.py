@@ -170,7 +170,9 @@ def _id(name):
 
 
 def _values(like):
-    return [d["taste"]["likes"][like][0] for d in RATED.values()]
+    """The measured values of a like (T786: food and nightlife may be null)."""
+    return [d["taste"]["likes"][like][0] for d in RATED.values()
+            if d["taste"]["likes"][like][0] is not None]
 
 
 def test_like_keys_match_the_app():
@@ -183,8 +185,13 @@ def test_every_rated_place_has_twelve_values_with_facts():
         assert t, f"{did} has no taste profile"
         assert set(t["likes"]) == set(tp.LIKES), did
         for like, (value, fact) in t["likes"].items():
-            assert 0.0 <= value <= 1.0 and isinstance(fact, dict) and fact, (did, like)
-        for key in ("size", "crowd_by_month", "car_need", "cost_level"):
+            assert isinstance(fact, dict) and fact, (did, like)
+            # T786: null means not measured, and only where nothing measures it.
+            if value is None:
+                assert like in tp.UNMEASURED_WITHOUT, (did, like)
+            else:
+                assert 0.0 <= value <= 1.0, (did, like)
+        for key in ("size", "crowd_by_month", "car_need", "cost_level", "tmax_by_month"):
             assert key in t, (did, key)
 
 
@@ -200,6 +207,9 @@ def test_sanity_top_ten_percent():
         vals = _values(like)
         for name in names:
             v = RATED[_id(name)]["taste"]["likes"][like][0]
+            if v is None:
+                bad.append(f"{like}: {name} not measured")
+                continue
             above = sum(1 for x in vals if x > v) / len(vals)
             if above >= 0.10:
                 bad.append(f"{like}: {name} {v} ({above:.0%} above)")
@@ -213,7 +223,7 @@ def test_sanity_bottom_half():
         median = vals[len(vals) // 2]
         for name in names:
             v = RATED[_id(name)]["taste"]["likes"][like][0]
-            if v > median:
+            if v is not None and v > median:
                 bad.append(f"{like}: {name} {v} (median {median})")
     assert not bad, bad
 

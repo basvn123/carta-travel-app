@@ -1263,8 +1263,29 @@ meaning; R4 replaces the old keys.
 ### On a POI (`public/poi/{id}.json`, from `activities.items_full`)
 
 - `label`: `must_see | recommended | worth_a_look` (null on a duplicate), capped
-  per place class (pipeline/poi_labels.py). `rate` is derived from it (3/2/1).
+  per place class (pipeline/poi_labels.py). `rate` is derived from it (3/2/1,
+  1 for a null label). Since T785 the shards ship `label` only and
+  `lib/appData.js` `fetchDestPois` derives `rate` on load; the master keeps both.
 - `category`: one of the eight of config `poi_categories`.
 - `tags`: practical tags from OpenStreetMap where a harvest answered
   (`free` from the `fee` tag); a key absent is unknown, never false.
 
+### T785 to T789: the wire after rating v5 (no schema bump)
+
+The master is unchanged in shape; `sync-data` ships less of it.
+
+- `rating.tier` and `rating.label` (the v4 tiers and their "Worth the journey"
+  words) stay in the master and leave the wire; no screen reads them since T763.
+- `rating.components` ships under the v5 part names: `highlights` as `depth`,
+  `acclaim` as `recognition` (`lib/rating.js` `ratingPart` reads either).
+- POI `rate` leaves the shards (see "On a POI").
+- `rating.why` (English) leaves the wire for `public/app_data/why_i18n/en.json`,
+  beside the five other languages; RatingBreakdown loads it (T789).
+- `crowding.monthly` ships `{share, tier}` only, shares rounded to three
+  decimals; `geo`, `years`, `source` and `rule` stay in the master (T789).
+- `taste.likes.<like>` is `[value, fact]`, or `[value]` on the wire where the
+  like scored 0 or was not measured. `value` is null only for `food` and
+  `nightlife`, where neither a guided vibe nor a venue measures the place
+  (T786); the match leaves a null like out.
+- `taste.tmax_by_month`: twelve rounded mean day highs (NASA POWER, the
+  climate layer), or null; the heat conflict reads it (T787).
