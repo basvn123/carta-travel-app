@@ -119,7 +119,8 @@ export function reasonsFor(trip, { settings, info }) {
   const fl = flightFacts(trip);
   if (fl && fl.stops === 0 && Number.isFinite(fl.minutes)) {
     out.push({ key: 'tf.reason.direct', facts: { minutes: fl.minutes, airline: fl.airline || null } });
-  } else if (trip.gateway && Number.isFinite(trip.gateway.minutes) && trip.gateway.minutes <= R.airportCloseMin) {
+  } else if (trip.gateway && Number.isFinite(trip.gateway.minutes) && trip.gateway.minutes > 0 && trip.gateway.minutes <= R.airportCloseMin) {
+    // A gateway 0 min away is the place's own airport row, not a reason (TF2 end check: "0 min from PRG airport").
     out.push({ key: 'tf.reason.closeAirport', facts: { minutes: trip.gateway.minutes, iata: trip.gateway.iata } });
   }
   for (const b of strong.slice(R.maxLikes)) out.push(likeReason(b));
