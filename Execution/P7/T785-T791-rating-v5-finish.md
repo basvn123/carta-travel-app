@@ -87,6 +87,12 @@ The day planner's far places read "Further out" in place of "Worth the detour" (
 - **T788-c.** The FAQ still asks about the "est." mark that left on 2026-10-24; rewrite or remove it in six languages.
 - **T787-a (owner).** Explore's taste has no "avoid heat" answer, so the heat conflict only works in Help me choose. Add the question to the four taste screens, or leave it to the planner.
 
+## Deploy (2026-10-28, owner: deploy everything)
+
+Merged into root `main` (`d7ce438e5`, pushed) and app `master` (`3841e81`), then: `npm run build:pages` (266 files, under the Pages ceiling), `node scripts/r2/push-data.mjs --live` (phase 1: copy only, deletes nothing), `node scripts/r2/verify-data.mjs` (PASS, every checked file served as staged; the live rank tier is byte-identical to the build), `npx wrangler pages deploy dist --project-name carta-app --branch main` (deployment `f08a1a5d`). Live probe: www.carta-europetravel.com serves the built entry chunk `index-D2C97rC4.js`, and `verify_rating_words.mjs` passes on production (15 places, 177 chips). The fee harvest's results go out with a later deploy (T761-a).
+
+Phase 2 (`push-data.mjs --live --prune`) was refused by the session's safety check for mass deletes in cloud storage. A dry run shows 29 objects it would remove, all old country tile files of the previous wire (the slimmer wire is cut into 250 files, was 260); the new site references none of them, so leaving them costs only storage (T785-a).
+
 ## Rollback procedure
 
-Revert the batch's commits on `p7-rating-v5-finish` (or the merge commits on `main` and `master`). The wire diet's keys are all still in the master, so an older app reads a rebuilt wire. The shared master is not in git: the profile change is undone by reverting `pipeline/place_taste_profile.py` and rerunning it.
+Revert the batch's commits on `p7-rating-v5-finish` (or the merge commits on `main` and `master`), rebuild and redeploy; the data host still holds the previous wire's tiles until the prune runs. The wire diet's keys are all still in the master, so an older app reads a rebuilt wire. The shared master is not in git: the profile change is undone by reverting `pipeline/place_taste_profile.py` and rerunning it.
