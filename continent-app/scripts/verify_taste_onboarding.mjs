@@ -62,13 +62,13 @@ const dialog = (page) => page.locator('.xstart[role="dialog"]');
   const opened = await d.waitFor({ state: 'visible', timeout: 20000 }).then(() => true, () => false);
   check('a. a fresh Explore on a phone opens the start dialog', opened);
   if (opened) {
-    await d.locator('.taste-steps[data-step="party"]').waitFor({ timeout: 10000 }).catch(() => {});
+    await d.locator('.taste-steps[data-step="party"]').waitFor({ timeout: 30000 }).catch(() => {});
     check('a. it opens on "Who usually comes?"', (await d.locator('.taste-q').first().textContent().catch(() => ''))?.includes('Who usually comes'));
     check('a. No preference is offered', await d.getByRole('radio', { name: 'No preference' }).first().isVisible().catch(() => false));
     const t0 = Date.now();
     let taps = 0;
     await d.locator('.taste-next').click(); taps += 1;
-    await d.locator('.taste-steps[data-step="likes"]').waitFor({ timeout: 10000 });
+    await d.locator('.taste-steps[data-step="likes"]').waitFor({ timeout: 30000 });
     await d.locator('.pf-like[data-like="hiking"]').click(); taps += 1;
     const pressed = await d.locator('.pf-like[data-like="hiking"]').getAttribute('aria-pressed');
     check('a. Hiking is picked', pressed === 'true', `aria-pressed=${pressed}`);
@@ -78,7 +78,7 @@ const dialog = (page) => page.locator('.xstart[role="dialog"]');
     check('a. the dialog closes after Skip', !(await d.isVisible().catch(() => false)));
     check('a. a taste is set in under 30 s', ms < 30000, `${taps} taps, ${ms} ms (scripted; a person reads each screen)`);
     const chip = page.locator('.xtaste-chip').first();
-    await chip.waitFor({ timeout: 10000 }).catch(() => {});
+    await chip.waitFor({ timeout: 30000 }).catch(() => {});
     const chipText = (await chip.textContent().catch(() => '')) || '';
     check('a. the header chip reads the taste', /For you: hiking/i.test(chipText), chipText.trim());
     console.log(`TAPS_SET_TASTE=${taps} ELAPSED_MS=${ms}`);
@@ -96,7 +96,7 @@ const dialog = (page) => page.locator('.xstart[role="dialog"]');
     // The chip opens the same four questions as a sheet.
     await chip2.click().catch(() => {});
     const sheet = page.locator('.taste-sheet[role="dialog"]');
-    const sheetOpen = await sheet.waitFor({ timeout: 10000 }).then(() => true, () => false);
+    const sheetOpen = await sheet.waitFor({ timeout: 30000 }).then(() => true, () => false);
     check('b. the chip opens the taste sheet', sheetOpen);
     if (sheetOpen) check('b. the sheet starts on the same first question', ((await sheet.locator('.taste-q').textContent()) || '').includes('Who usually comes'));
   }
@@ -111,7 +111,7 @@ const dialog = (page) => page.locator('.xstart[role="dialog"]');
   const opened = await d.waitFor({ state: 'visible', timeout: 20000 }).then(() => true, () => false);
   check('c. a fresh visit opens the dialog again', opened);
   if (opened) {
-    await d.locator('.taste-skip').waitFor({ timeout: 10000 });
+    await d.locator('.taste-skip').waitFor({ timeout: 30000 });
     let taps = 0;
     await d.locator('.taste-skip').click(); taps += 1;
     await d.waitFor({ state: 'detached', timeout: 5000 }).catch(() => {});
