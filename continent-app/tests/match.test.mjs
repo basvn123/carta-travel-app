@@ -77,3 +77,23 @@ test("sortForYou never drops a place", () => {
   assert.equal(out[0], list[1], "9.0 at 10% lakes = 8.2 beats 7.0 at 90% = 7.8");
   assert.equal(sortForYou(list, null).length, 4);
 });
+
+// T786: a like the profile could not measure (null) is left out, never read as 0.
+test("a null like is not measured: left out of F and of the bars", () => {
+  const prof = profile({ hiking: 0.9 });
+  prof.likes.food = [null, { food: 0, markets: 0 }];
+  const f = fit({ likes: ["hiking", "food"] }, prof);
+  assert.equal(f.bars.length, 1);
+  assert.equal(f.F, 0.9);
+});
+
+// T787: the heat conflict needs an "avoid heat" answer and a month over 30 degrees.
+test("heat: only with avoidHeat and a hot month from the profile", () => {
+  const prof = profile({ beach: 0.9 }, { tmax_by_month: [12, 13, 16, 20, 24, 28, 33, 32, 28, 23, 17, 13] });
+  const t = { likes: ["beach"] };
+  assert.equal(fit(t, prof, 7).conflicts.length, 0);
+  const hot = fit(t, prof, 7, { avoidHeat: true });
+  assert.deepEqual(hot.conflicts.map((c) => c.key), ["heat"]);
+  assert.ok(Math.abs(hot.F - 0.9 * MATCH.conflicts.heat) < 1e-9);
+  assert.equal(fit(t, prof, 5, { avoidHeat: true }).conflicts.length, 0);
+});

@@ -5585,7 +5585,7 @@ export const it = {
   "day.walkLeg": "{min} min a piedi, {km} km",
   "day.walkUnknown": "tempo a piedi sconosciuto (mancano le coordinate di una di queste tappe)",
   "day.wholeTown": "Tutta la località",
-  "day.worthDetour": "Vale la deviazione",
+  "day.worthDetour": "Un po' più lontano",
   "day.yourDayPlans": "I tuoi piani del giorno",
   "day.yourPick": "{mode}, la tua scelta",
   "day.yourPicks": "La tua selezione",

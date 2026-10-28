@@ -139,12 +139,21 @@ const poiShardPromises = new Map();
  * shards are written by sync-data.mjs and average 8.6 KB. Resolves to [] on
  * failure, so a caller can render without it.
  */
+// T785: the shards ship a POI's label, not its rate; rate (3 must-see,
+// 2 recommended, 1 otherwise, the pipeline's own mapping) is derived here,
+// once, for the day planner and the cards that still order by it.
+const LABEL_RATE = { must_see: 3, recommended: 2, worth_a_look: 1 };
+export function withRate(it) {
+  if (!it || typeof it !== 'object' || it.rate != null) return it;
+  return { ...it, rate: LABEL_RATE[it.label] || 1 };
+}
+
 export function fetchDestPois(destId) {
   const name = shardName(destId);
   if (!name) return Promise.resolve([]);
   if (!poiShardPromises.has(name)) {
     poiShardPromises.set(name, fetchJson(`/poi/${name}.json`)
-      .then((j) => (Array.isArray(j) ? j : []))
+      .then((j) => (Array.isArray(j) ? j.map(withRate) : []))
       .catch(() => {
         // Do not cache a failure: forget the entry so a later call (the
         // chat's "Try again") fetches the shard afresh.

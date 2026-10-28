@@ -22,9 +22,11 @@ import { normalizeTaste, hasMatchSignal } from './taste.js';
 export const MATCH = Object.freeze({ ...RATING.match });
 
 const clamp01 = (x) => Math.max(0, Math.min(1, x));
+// T786: a like the profile could not measure ships as null and is left out
+// of F (a 0 would read as "nothing here").
 const likeValue = (profile, k) => {
   const v = profile?.likes?.[k];
-  return Array.isArray(v) && Number.isFinite(Number(v[0])) ? clamp01(Number(v[0])) : null;
+  return Array.isArray(v) && v[0] != null && Number.isFinite(Number(v[0])) ? clamp01(Number(v[0])) : null;
 };
 const likeFact = (profile, k) => {
   const v = profile?.likes?.[k];
@@ -49,8 +51,10 @@ function crowdIn(profile, month) {
  *   conflicts  [{ key: 'busy' | 'car' | 'heat', c, month? }]
  *   top        the picks that fit best, strongest first (the card's reason)
  *
- * `opts.avoidHeat` and `opts.tmax` (the month's mean high, degrees) add the
- * heat conflict where the caller knows both.
+ * `opts.avoidHeat` (the traveller asked to avoid heat: Help me choose's
+ * "avoid heat" answer) adds the heat conflict when the month's mean high is
+ * over heat_max_c; the high is `opts.tmax` or the profile's tmax_by_month
+ * (T787). The taste itself has no heat answer, so Explore never adds it.
  */
 export function fit(taste, profile, month = null, opts = {}) {
   if (!hasMatchSignal(taste) || !profile) return null;
@@ -92,7 +96,8 @@ export function fit(taste, profile, month = null, opts = {}) {
     if (crowd != null && crowd >= MATCH.busy_min_tier) conflicts.push({ key: 'busy', c: MATCH.conflicts.busy, month: m });
   }
   if (t.noCar && profile.car_need === true) conflicts.push({ key: 'car', c: MATCH.conflicts.car });
-  if (opts.avoidHeat && Number(opts.tmax) > MATCH.heat_max_c) {
+  const tmax = opts.tmax ?? (m >= 1 && m <= 12 ? profile.tmax_by_month?.[m - 1] : null);
+  if (opts.avoidHeat && tmax != null && Number(tmax) > MATCH.heat_max_c) {
     conflicts.push({ key: 'heat', c: MATCH.conflicts.heat, month: m || null });
   }
 

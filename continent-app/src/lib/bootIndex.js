@@ -185,11 +185,11 @@ export const RANK_VERSION = 1;
 function compactTaste(taste) {
   const likes = {};
   for (const [k, v] of Object.entries(taste.likes || {})) {
-    const p = Array.isArray(v) ? Number(v[0]) : NaN;
+    const p = Array.isArray(v) && v[0] != null ? Number(v[0]) : NaN;
     if (Number.isFinite(p)) likes[k] = [Math.round(p * 100) / 100];
   }
   const out = { likes };
-  for (const k of ['size', 'crowd_by_month', 'car_need']) if (taste[k] != null) out[k] = taste[k];
+  for (const k of ['size', 'crowd_by_month', 'car_need', 'tmax_by_month']) if (taste[k] != null) out[k] = taste[k];
   return out;
 }
 
