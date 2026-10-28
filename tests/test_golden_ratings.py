@@ -1,6 +1,6 @@
 """Golden-set order harness - the rating model's non-negotiables (step E1).
 
-tests/golden_ratings.json holds 120 hand-picked pairwise orderings that are
+tests/golden_ratings.json holds 200 hand-picked pairwise orderings (120 until T759) that are
 not seriously disputable - Rome above Turin, Bruges above Charleroi, Hallstatt
 above Linz - spread across all five place kinds and 34 countries. A pair
 passes when the winner's rating.score is STRICTLY greater than the loser's;
@@ -37,6 +37,11 @@ _WIRE = ROOT / "continent-app" / "public" / "app_data.json"
 DEFAULT_INPUT = _MASTER if _MASTER.exists() else _WIRE
 
 
+def _formula(app_data_path=DEFAULT_INPUT):
+    data = json.loads(Path(app_data_path).read_text(encoding="utf-8"))
+    return (data["meta"].get("rating_model") or {}).get("formula", "v4")
+
+
 def evaluate(app_data_path=DEFAULT_INPUT):
     """Returns (model_version, results) - one dict per pair with a `passed`."""
     golden = json.loads(GOLDEN.read_text(encoding="utf-8"))
@@ -63,11 +68,27 @@ def evaluate(app_data_path=DEFAULT_INPUT):
     return model, golden, results
 
 
+V5_MIN_SHARE = 0.95
+
+
 def test_golden_pairs():
     model, golden, results = evaluate()
     baseline = golden["v3_baseline"]
     passed = sum(1 for r in results if r["passed"])
     failed = [r for r in results if not r["passed"]]
+
+    # T759, formula v5: the plan's gate 2. 200 pairs, the 120 above plus 80
+    # that test the v5 claims (a village beats a plain city, a landscape a
+    # plain town); at least 95% must hold. v5 judges every place from its
+    # own rubric score instead of a fitted curve clamped to these pairs, so
+    # "no v3 pass may fail" no longer holds by construction; every failing
+    # pair is printed (standalone run) and reported.
+    if _formula() == "v5":
+        assert passed >= V5_MIN_SHARE * len(results), (
+            f"{model} passes {passed}/{len(results)} golden pairs, under "
+            f"{V5_MIN_SHARE:.0%}: " + "; ".join(
+                f"{r['note']} ({r['winner_score']} vs {r['loser_score']})" for r in failed))
+        return
     baseline_failing = {(p["winner"], p["loser"])
                        for p in baseline["failing_pairs"]}
 
@@ -93,6 +114,7 @@ def test_golden_pairs():
 
 
 if __name__ == "__main__":
+    sys.stdout.reconfigure(encoding="utf-8")    # place names in the printout
     path = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_INPUT
     model, golden, results = evaluate(path)
     passed = sum(1 for r in results if r["passed"])

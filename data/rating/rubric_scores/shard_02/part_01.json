@@ -1,0 +1,930 @@
+[
+ {
+  "id": "gem:clermont-ferrand",
+  "appeal": 6.4,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 6,
+   "sights": 6,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Cathedral city with the Puy de Dôme volcano within 10 km; the centre holds about a day of sights.",
+   "nl": "Kathedraalstad met de vulkaan Puy de Dôme op 10 km; het centrum heeft ongeveer een dag aan bezienswaardigheden.",
+   "de": "Kathedralenstadt mit dem Vulkan Puy de Dôme in 10 km Entfernung; das Zentrum füllt etwa einen Tag.",
+   "fr": "Ville de cathédrale avec le volcan du Puy de Dôme à 10 km ; le centre se visite en une journée environ.",
+   "es": "Ciudad catedralicia con el volcán Puy de Dôme a 10 km; el centro da para un día de visitas.",
+   "it": "Città della cattedrale con il vulcano Puy de Dôme a 10 km; il centro offre circa una giornata di visite."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:salies-de-bearn",
+  "appeal": 6.1,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 5,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Small Béarn spa town listed as a Petite Cité de Caractère; the thermal baths are the main draw, little else for long.",
+   "nl": "Klein kuurstadje in Béarn, een Petite Cité de Caractère; de thermen zijn de trekpleister, verder weinig voor lang.",
+   "de": "Kleiner Kurort im Béarn, eine Petite Cité de Caractère; die Thermen sind der Anziehungspunkt, sonst wenig für lange.",
+   "fr": "Petite ville thermale du Béarn classée Petite Cité de Caractère ; les thermes sont l'attrait principal, peu d'autre pour s'attarder.",
+   "es": "Pequeña villa termal del Béarn, Petite Cité de Caractère; las termas son el reclamo, poco más para quedarse.",
+   "it": "Piccola cittadina termale del Béarn, Petite Cité de Caractère; le terme sono l'attrattiva, poco altro per fermarsi a lungo."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:aalen",
+  "appeal": 5.3,
+  "band": "none",
+  "criteria": {
+   "setting": 4,
+   "character": 5,
+   "sights": 5,
+   "atmosphere": 5,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Swabian town with a Limes museum on the Roman frontier; the rest is ordinary and not a reason to come.",
+   "nl": "Zwabische stad met een Limesmuseum over de Romeinse grens; de rest is gewoon en geen reden om te komen.",
+   "de": "Schwäbische Stadt mit dem Limesmuseum zur römischen Grenze; der Rest ist gewöhnlich und kein Grund für die Reise.",
+   "fr": "Ville souabe avec un musée du Limes sur la frontière romaine ; le reste est ordinaire et ne justifie pas le détour.",
+   "es": "Ciudad suaba con un museo del Limes sobre la frontera romana; el resto es corriente y no justifica el viaje.",
+   "it": "Città sveva con un museo del Limes sul confine romano; il resto è ordinario e non giustifica il viaggio."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:snezne",
+  "appeal": 5.2,
+  "band": "none",
+  "criteria": {
+   "setting": 6,
+   "character": 4,
+   "sights": 3,
+   "atmosphere": 6,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Quiet upland village with rock outcrops and ponds nearby; the card shows nothing of its own to plan a visit around.",
+   "nl": "Rustig hooglanddorp met rotsen en vijvers in de buurt; de gegevens tonen niets eigens om een bezoek omheen te plannen.",
+   "de": "Ruhiges Hochlanddorf mit Felsen und Teichen in der Nähe; Eigenes, um einen Besuch zu planen, ist nicht erkennbar.",
+   "fr": "Village tranquille des hauteurs, rochers et étangs aux alentours ; rien de propre ne justifie d'y organiser une visite.",
+   "es": "Pueblo tranquilo de meseta con rocas y estanques cerca; no muestra nada propio para planear una visita.",
+   "it": "Paese tranquillo d'altopiano con rocce e stagni vicini; non mostra nulla di proprio attorno a cui pianificare una visita."
+  },
+  "confidence": "low",
+  "flags": [
+   "thin_card"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:hexham",
+  "appeal": 6.6,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 6,
+   "sights": 6,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Market town around Hexham Abbey, 7 km from Hadrian's Wall; a good base, but the town itself fills half a day.",
+   "nl": "Marktstad rond Hexham Abbey, 7 km van de Muur van Hadrianus; een goede uitvalsbasis, maar de stad zelf vult een halve dag.",
+   "de": "Marktstadt um die Hexham Abbey, 7 km vom Hadrianswall; gute Basis, doch die Stadt selbst füllt einen halben Tag.",
+   "fr": "Bourg de marché autour de l'abbaye de Hexham, à 7 km du mur d'Hadrien ; bonne base, mais la ville occupe une demi-journée.",
+   "es": "Villa de mercado en torno a la abadía de Hexham, a 7 km del Muro de Adriano; buena base, pero el pueblo llena medio día.",
+   "it": "Cittadina di mercato attorno all'abbazia di Hexham, a 7 km dal Vallo di Adriano; buona base, ma il paese occupa mezza giornata."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:olney",
+  "appeal": 5.4,
+  "band": "none",
+  "criteria": {
+   "setting": 4,
+   "character": 6,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Historic market town with country houses within 8 km; pleasant streets but nothing of its own that justifies the trip.",
+   "nl": "Historisch marktstadje met landhuizen binnen 8 km; aangename straten, maar niets eigens dat de reis rechtvaardigt.",
+   "de": "Historisches Marktstädtchen mit Landsitzen im Umkreis von 8 km; nette Straßen, aber nichts Eigenes, das die Reise lohnt.",
+   "fr": "Bourg de marché historique, manoirs à moins de 8 km ; rues agréables, mais rien en propre qui justifie le voyage.",
+   "es": "Villa de mercado histórica con casas señoriales a menos de 8 km; calles agradables, pero nada propio que justifique el viaje.",
+   "it": "Storica cittadina di mercato con dimore di campagna entro 8 km; vie piacevoli, ma nulla di proprio che giustifichi il viaggio."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:la-perriere",
+  "appeal": 5.6,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 6,
+   "sights": 3,
+   "atmosphere": 6,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Tiny Petite Cité de Caractère in the Orne countryside; its sights are two manors, little to hold more than an hour.",
+   "nl": "Piepkleine Petite Cité de Caractère op het platteland van de Orne; twee landhuizen, weinig voor meer dan een uur.",
+   "de": "Winzige Petite Cité de Caractère im Land der Orne; zwei Herrenhäuser, wenig für mehr als eine Stunde.",
+   "fr": "Minuscule Petite Cité de Caractère dans la campagne ornaise ; deux manoirs, peu pour retenir plus d'une heure.",
+   "es": "Diminuta Petite Cité de Caractère en el campo del Orne; dos casas solariegas, poco para más de una hora.",
+   "it": "Minuscola Petite Cité de Caractère nella campagna dell'Orne; due manieri, poco per trattenersi più di un'ora."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:ventimiglia",
+  "appeal": 6.0,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 5,
+   "sights": 6,
+   "atmosphere": 5,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Border town with a Roman theatre, near the Hanbury Gardens and Balzi Rossi caves; the town itself is workaday.",
+   "nl": "Grensstad met een Romeins theater, vlak bij de Hanbury-tuinen en de grotten van Balzi Rossi; de stad zelf is alledaags.",
+   "de": "Grenzstadt mit römischem Theater, nahe den Hanbury-Gärten und den Höhlen von Balzi Rossi; die Stadt selbst ist nüchtern.",
+   "fr": "Ville frontière avec un théâtre romain, près des jardins Hanbury et des grottes de Balzi Rossi ; la ville elle-même est banale.",
+   "es": "Ciudad fronteriza con teatro romano, cerca de los jardines Hanbury y las cuevas de Balzi Rossi; la ciudad en sí es corriente.",
+   "it": "Città di confine con un teatro romano, vicino ai Giardini Hanbury e ai Balzi Rossi; la città in sé è ordinaria."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:njegusi",
+  "appeal": 6.4,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Highland village at 900 m between Lovćen National Park and the Bay of Kotor; a stop on the road rather than a stay.",
+   "nl": "Hooglanddorp op 900 m tussen Nationaal Park Lovćen en de Baai van Kotor; eerder een stop onderweg dan een verblijf.",
+   "de": "Hochlanddorf auf 900 m zwischen dem Lovćen-Nationalpark und der Bucht von Kotor; eher ein Halt unterwegs als ein Ziel.",
+   "fr": "Village d'altitude à 900 m entre le parc national du Lovćen et les bouches de Kotor ; une halte plutôt qu'un séjour.",
+   "es": "Aldea de montaña a 900 m entre el Parque Nacional de Lovćen y la bahía de Kotor; una parada en ruta más que una estancia.",
+   "it": "Villaggio d'altura a 900 m tra il Parco nazionale del Lovćen e le Bocche di Cattaro; una sosta più che un soggiorno."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:preci",
+  "appeal": 6.0,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 6,
+   "sights": 4,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Borgo più bello in the Valnerina valley with mountain walks around; few sights of its own beyond an hour's stroll.",
+   "nl": "Een van Italiës mooiste dorpen in de Valnerina, met bergwandelingen rondom; weinig eigen bezienswaardigheden na een uurtje.",
+   "de": "Eines der schönsten Dörfer Italiens im Valnerina-Tal, mit Bergwanderungen ringsum; nach einer Stunde wenig Eigenes.",
+   "fr": "Un des plus beaux villages d'Italie, dans la Valnerina, entouré de randonnées ; peu à voir au-delà d'une heure de flânerie.",
+   "es": "Uno de los pueblos más bellos de Italia, en la Valnerina, con rutas de montaña; poco propio más allá de una hora de paseo.",
+   "it": "Borgo più bello d'Italia in Valnerina, con sentieri di montagna attorno; poco di proprio oltre un'ora di passeggiata."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:sliven",
+  "appeal": 5.2,
+  "band": "none",
+  "criteria": {
+   "setting": 6,
+   "character": 4,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Bulgarian city below the Karandila heights with a regional museum; the card names no sight worth a trip.",
+   "nl": "Bulgaarse stad onder de hoogten van Karandila met een regionaal museum; geen bezienswaardigheid die een reis waard is.",
+   "de": "Bulgarische Stadt unter den Höhen von Karandila mit Regionalmuseum; keine genannte Sehenswürdigkeit lohnt die Reise.",
+   "fr": "Ville bulgare au pied des hauteurs de Karandila, avec un musée régional ; aucun site cité ne vaut le voyage.",
+   "es": "Ciudad búlgara bajo las alturas de Karandila con un museo regional; ningún lugar citado justifica el viaje.",
+   "it": "Città bulgara sotto le alture di Karandila con un museo regionale; nessun luogo citato vale il viaggio."
+  },
+  "confidence": "low",
+  "flags": [
+   "thin_card"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:santa-teresa-gallura",
+  "appeal": 6.8,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 8,
+   "character": 5,
+   "sights": 6,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Sardinian port by Rena Bianca beach and the granite of Capo Testa, facing the Maddalena islands; a resort town, thin on character.",
+   "nl": "Sardijnse haven bij het strand Rena Bianca en het graniet van Capo Testa, tegenover de Maddalena-eilanden; een badplaats met weinig karakter.",
+   "de": "Sardischer Hafenort am Strand Rena Bianca und am Granit von Capo Testa, gegenüber dem Maddalena-Archipel; ein Ferienort mit wenig Eigenart.",
+   "fr": "Port sarde près de la plage de Rena Bianca et du Capo Testa, face à La Maddalena ; station balnéaire sans grand caractère.",
+   "es": "Puerto sardo junto a la playa Rena Bianca y el granito del Capo Testa, frente al archipiélago de La Maddalena; pueblo turístico con poco carácter.",
+   "it": "Porto sardo vicino alla spiaggia di Rena Bianca e ai graniti di Capo Testa, di fronte all'arcipelago della Maddalena; località balneare con poco carattere."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:dartmouth-devon",
+  "appeal": 7.2,
+  "band": "good",
+  "criteria": {
+   "setting": 8,
+   "character": 7,
+   "sights": 6,
+   "atmosphere": 7,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Twin castles guard the wooded Dart estuary below medieval merchant streets; small, a rewarding day more than a long stay.",
+   "nl": "Twee kastelen bewaken de beboste monding van de Dart onder middeleeuwse koopmansstraten; klein, eerder een mooie dag dan een lang verblijf.",
+   "de": "Zwei Burgen bewachen die bewaldete Dart-Mündung unter mittelalterlichen Kaufmannsgassen; klein, eher ein lohnender Tag als ein langer Aufenthalt.",
+   "fr": "Deux châteaux gardent l'estuaire boisé de la Dart sous des rues marchandes médiévales ; petit, une belle journée plutôt qu'un long séjour.",
+   "es": "Dos castillos guardan el estuario boscoso del Dart bajo calles mercantes medievales; pequeño, un buen día más que una larga estancia.",
+   "it": "Due castelli sorvegliano l'estuario boscoso del Dart sotto vie mercantili medievali; piccolo, più una bella giornata che un lungo soggiorno."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:choirokoitia",
+  "appeal": 6.2,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 5,
+   "character": 4,
+   "sights": 7,
+   "atmosphere": 5,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "UNESCO-listed Neolithic settlement on a hillside; one site that takes an hour or two, the village adds little.",
+   "nl": "Neolithische nederzetting op een helling, op de UNESCO-lijst; één site van een uur of twee, het dorp voegt weinig toe.",
+   "de": "Jungsteinzeitliche Siedlung am Hang, UNESCO-Welterbe; eine Stätte für ein, zwei Stunden, das Dorf bietet wenig mehr.",
+   "fr": "Site néolithique à flanc de colline inscrit à l'UNESCO ; un seul site pour une heure ou deux, le village ajoute peu.",
+   "es": "Asentamiento neolítico en una ladera, Patrimonio de la UNESCO; un solo sitio para una o dos horas, el pueblo aporta poco.",
+   "it": "Insediamento neolitico su un pendio, patrimonio UNESCO; un unico sito per un'ora o due, il paese aggiunge poco."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:staines-upon-thames",
+  "appeal": 5.0,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 4,
+   "sights": 3,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Thames-side commuter town; the sights listed are around Windsor, 6 to 9 km away, not in the town.",
+   "nl": "Forenzenstad aan de Theems; de genoemde bezienswaardigheden liggen rond Windsor, 6 tot 9 km verderop, niet in de stad.",
+   "de": "Pendlerstadt an der Themse; die genannten Sehenswürdigkeiten liegen um Windsor, 6 bis 9 km entfernt, nicht im Ort.",
+   "fr": "Ville-dortoir au bord de la Tamise ; les sites cités sont autour de Windsor, à 6 à 9 km, pas dans la ville.",
+   "es": "Ciudad dormitorio junto al Támesis; los lugares citados están en torno a Windsor, a 6 o 9 km, no en la ciudad.",
+   "it": "Città dormitorio sul Tamigi; i luoghi citati sono attorno a Windsor, a 6-9 km, non in città."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:moss",
+  "appeal": 5.0,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 4,
+   "sights": 4,
+   "atmosphere": 4,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Fjord-side town where the 1814 Convention of Moss was signed; one historic house, otherwise an ordinary industrial town.",
+   "nl": "Fjordstad waar in 1814 de Conventie van Moss werd getekend; één historisch huis, verder een gewone industriestad.",
+   "de": "Stadt am Fjord, in der 1814 die Konvention von Moss unterzeichnet wurde; ein historisches Haus, sonst gewöhnliche Industriestadt.",
+   "fr": "Ville sur le fjord où fut signée la convention de Moss en 1814 ; une maison historique, sinon une ville industrielle ordinaire.",
+   "es": "Ciudad junto al fiordo donde se firmó la Convención de Moss en 1814; una casa histórica, por lo demás una ciudad industrial corriente.",
+   "it": "Città sul fiordo dove nel 1814 fu firmata la Convenzione di Moss; una casa storica, per il resto una comune città industriale."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:sundsvall",
+  "appeal": 5.6,
+  "band": "none",
+  "criteria": {
+   "setting": 6,
+   "character": 5,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Coastal city on the Gulf of Bothnia with lake beaches close by; the listed sights are mostly village churches outside town.",
+   "nl": "Kuststad aan de Botnische Golf met meerstranden dichtbij; de genoemde bezienswaardigheden zijn vooral dorpskerken buiten de stad.",
+   "de": "Küstenstadt am Bottnischen Meerbusen mit Badeseen in der Nähe; die genannten Ziele sind meist Dorfkirchen außerhalb.",
+   "fr": "Ville côtière sur le golfe de Botnie, plages lacustres à proximité ; les sites cités sont surtout des églises de village hors de la ville.",
+   "es": "Ciudad costera del golfo de Botnia con playas de lago cerca; los lugares citados son sobre todo iglesias rurales fuera de la ciudad.",
+   "it": "Città costiera sul golfo di Botnia con spiagge lacustri vicine; i luoghi citati sono perlopiù chiese di paese fuori città."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:llandudno",
+  "appeal": 6.7,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 6,
+   "sights": 6,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Seaside resort below the Great Orme headland with a pier, 5 km from walled Conwy; a good base, dated resort fabric.",
+   "nl": "Badplaats onder de kaap Great Orme met een pier, 5 km van ommuurd Conwy; een goede basis, met gedateerde badplaatsbebouwing.",
+   "de": "Seebad unter der Landzunge Great Orme mit Seebrücke, 5 km vom ummauerten Conwy; gute Basis, etwas angestaubter Badeort.",
+   "fr": "Station balnéaire au pied du Great Orme, avec jetée, à 5 km de Conwy et ses remparts ; bonne base, cadre un peu daté.",
+   "es": "Balneario bajo el cabo del Great Orme, con muelle, a 5 km de la amurallada Conwy; buena base, aunque algo anticuado.",
+   "it": "Località balneare sotto il promontorio del Great Orme, con pontile, a 5 km dalla murata Conwy; buona base, un po' datata."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:wattwiller",
+  "appeal": 5.7,
+  "band": "none",
+  "criteria": {
+   "setting": 6,
+   "character": 5,
+   "sights": 5,
+   "atmosphere": 5,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Vosges foothill village below the Hartmannswillerkopf battlefield memorial; a base for walks, little to see in the village itself.",
+   "nl": "Dorp aan de voet van de Vogezen onder het slagveldmonument van de Hartmannswillerkopf; basis voor wandelingen, weinig in het dorp zelf.",
+   "de": "Vogesendorf unter der Gedenkstätte am Hartmannswillerkopf; Ausgangspunkt für Wanderungen, im Ort selbst wenig zu sehen.",
+   "fr": "Village du piémont vosgien sous le mémorial du Hartmannswillerkopf ; base de randonnées, peu à voir dans le village même.",
+   "es": "Pueblo al pie de los Vosgos bajo el memorial del Hartmannswillerkopf; base para caminatas, poco que ver en el pueblo.",
+   "it": "Paese ai piedi dei Vosgi sotto il memoriale dell'Hartmannswillerkopf; base per escursioni, poco da vedere nel paese stesso."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:bromyard",
+  "appeal": 5.1,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 5,
+   "sights": 3,
+   "atmosphere": 5,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Small Herefordshire market town in farm country; a few churches and halls nearby, nothing to plan a trip around.",
+   "nl": "Klein marktstadje in Herefordshire tussen boerenland; een paar kerken en landhuizen in de buurt, niets om een reis omheen te plannen.",
+   "de": "Kleine Marktstadt in Herefordshire im Bauernland; einige Kirchen und Herrenhäuser nahebei, nichts für eine eigene Reise.",
+   "fr": "Petit bourg de marché du Herefordshire en pleine campagne ; quelques églises et manoirs autour, rien pour justifier un voyage.",
+   "es": "Pequeña villa de mercado de Herefordshire entre granjas; algunas iglesias y mansiones cerca, nada para planear un viaje.",
+   "it": "Piccola cittadina di mercato dell'Herefordshire tra le campagne; qualche chiesa e dimora vicina, nulla per organizzare un viaggio."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:bendorf",
+  "appeal": 5.2,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 4,
+   "sights": 4,
+   "atmosphere": 4,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Rhine town with Burg Sayn; the big sights listed belong to Koblenz, 7 to 8 km away, so it works only as a cheap base.",
+   "nl": "Rijnstad met Burg Sayn; de grote bezienswaardigheden horen bij Koblenz, 7 tot 8 km verder, dus vooral een goedkope uitvalsbasis.",
+   "de": "Rheinstadt mit Burg Sayn; die großen genannten Ziele gehören zu Koblenz, 7 bis 8 km entfernt, also eher günstige Basis.",
+   "fr": "Ville rhénane avec le Burg Sayn ; les grands sites cités sont à Coblence, à 7 ou 8 km, surtout une base bon marché.",
+   "es": "Ciudad del Rin con el Burg Sayn; los grandes lugares citados son de Coblenza, a 7 u 8 km, sirve sobre todo como base barata.",
+   "it": "Cittadina sul Reno con il Burg Sayn; i grandi luoghi citati sono di Coblenza, a 7-8 km, utile soprattutto come base economica."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:roermond",
+  "appeal": 6.2,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 6,
+   "sights": 6,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Maas town with the Munsterkerk, a cathedral and the Maasplassen lakes nearby; a pleasant day, not much more.",
+   "nl": "Maasstad met de Munsterkerk, een kathedraal en de Maasplassen vlakbij; een prettige dag, niet veel meer.",
+   "de": "Maasstadt mit Munsterkerk, Kathedrale und den Maasplassen in der Nähe; ein angenehmer Tag, nicht viel mehr.",
+   "fr": "Ville de la Meuse avec la Munsterkerk, une cathédrale et les lacs des Maasplassen tout près ; une journée agréable, guère plus.",
+   "es": "Ciudad del Mosa con la Munsterkerk, una catedral y los lagos Maasplassen cerca; un día agradable, poco más.",
+   "it": "Città sulla Mosa con la Munsterkerk, una cattedrale e i laghi Maasplassen vicini; una giornata piacevole, non molto di più."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:cervo",
+  "appeal": 6.9,
+  "band": "good",
+  "criteria": {
+   "setting": 7,
+   "character": 8,
+   "sights": 5,
+   "atmosphere": 7,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Borgo più bello climbing to its castle above the Ligurian sea; lovely lanes, but a couple of hours sees it all.",
+   "nl": "Een van Italiës mooiste dorpen, klimmend naar zijn kasteel boven de Ligurische zee; mooie steegjes, maar in een paar uur gezien.",
+   "de": "Eines der schönsten Dörfer Italiens, das zur Burg über dem Ligurischen Meer ansteigt; schöne Gassen, in zwei Stunden gesehen.",
+   "fr": "Un des plus beaux villages d'Italie, grimpant vers son château au-dessus de la mer Ligure ; belles ruelles, vues en deux heures.",
+   "es": "Uno de los pueblos más bellos de Italia, subiendo a su castillo sobre el mar de Liguria; callejas bonitas, se ve en dos horas.",
+   "it": "Borgo più bello d'Italia che sale al castello sopra il mar Ligure; bei carruggi, ma in un paio d'ore si vede tutto."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:brugnato-it",
+  "appeal": 5.8,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 6,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Small Val di Vara village with a co-cathedral and diocesan museum, 12 km from the Cinque Terre coast; little to hold a day.",
+   "nl": "Klein dorp in de Val di Vara met een co-kathedraal en diocesaan museum, 12 km van de kust van Cinque Terre; weinig voor een dag.",
+   "de": "Kleines Dorf im Val di Vara mit Konkathedrale und Diözesanmuseum, 12 km von der Küste der Cinque Terre; wenig für einen Tag.",
+   "fr": "Petit village du Val di Vara avec une cocathédrale et un musée diocésain, à 12 km des Cinque Terre ; peu pour une journée.",
+   "es": "Pequeño pueblo del Val di Vara con concatedral y museo diocesano, a 12 km de las Cinque Terre; poco para llenar un día.",
+   "it": "Piccolo borgo della Val di Vara con concattedrale e museo diocesano, a 12 km dalle Cinque Terre; poco per riempire una giornata."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:nieuw-bergen",
+  "appeal": 4.8,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 4,
+   "sights": 3,
+   "atmosphere": 5,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Maas valley village among woods and castles 3 to 9 km away; nothing of its own that makes it a destination.",
+   "nl": "Dorp in het Maasdal tussen bossen en kastelen op 3 tot 9 km; niets eigens dat er een bestemming van maakt.",
+   "de": "Dorf im Maastal zwischen Wäldern und Burgen in 3 bis 9 km; nichts Eigenes, das es zum Ziel macht.",
+   "fr": "Village de la vallée de la Meuse entre bois et châteaux à 3 à 9 km ; rien en propre qui en fasse une destination.",
+   "es": "Pueblo del valle del Mosa entre bosques y castillos a 3 a 9 km; nada propio que lo convierta en destino.",
+   "it": "Paese della valle della Mosa tra boschi e castelli a 3-9 km; nulla di proprio che lo renda una meta."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:zabrze",
+  "appeal": 5.2,
+  "band": "none",
+  "criteria": {
+   "setting": 3,
+   "character": 4,
+   "sights": 6,
+   "atmosphere": 4,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Silesian mining city with the Guido coal mine museum underground; industrial heritage only, the townscape is plain.",
+   "nl": "Silezische mijnstad met het ondergrondse mijnmuseum Guido; alleen industrieel erfgoed, het stadsbeeld is kaal.",
+   "de": "Schlesische Bergbaustadt mit dem Untertage-Museum Grube Guido; nur Industrieerbe, das Stadtbild ist schlicht.",
+   "fr": "Ville minière de Silésie avec le musée souterrain de la mine Guido ; patrimoine industriel seulement, la ville est sans attrait.",
+   "es": "Ciudad minera de Silesia con el museo subterráneo de la mina Guido; solo patrimonio industrial, la ciudad es anodina.",
+   "it": "Città mineraria della Slesia con il museo sotterraneo della miniera Guido; solo archeologia industriale, la città è anonima."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:agira",
+  "appeal": 6.0,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 6,
+   "sights": 4,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Hilltop Sicilian borgo at 650 m above the Pozzillo lake, with a Canadian war cemetery nearby; few sights to hold more than a stop.",
+   "nl": "Siciliaans heuveldorp op 650 m boven het meer van Pozzillo, met een Canadese oorlogsbegraafplaats; weinig voor meer dan een stop.",
+   "de": "Sizilianisches Bergdorf auf 650 m über dem Pozzillo-See, mit kanadischem Soldatenfriedhof; wenig für mehr als einen Halt.",
+   "fr": "Bourg sicilien perché à 650 m au-dessus du lac de Pozzillo, avec un cimetière militaire canadien ; peu pour plus qu'une halte.",
+   "es": "Pueblo siciliano en lo alto, a 650 m sobre el lago Pozzillo, con un cementerio de guerra canadiense; poco para más que una parada.",
+   "it": "Borgo siciliano in collina a 650 m sopra il lago di Pozzillo, con un cimitero di guerra canadese; poco oltre una sosta."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:fiumaretta-di-ameglia",
+  "appeal": 6.0,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 4,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Beach hamlet at the mouth of the Magra near Montemarcello and the Luni ruins; a summer base, the old borgo is up the hill.",
+   "nl": "Strandgehucht aan de monding van de Magra, bij Montemarcello en de ruïnes van Luni; een zomerbasis, het oude dorp ligt hogerop.",
+   "de": "Badeweiler an der Magra-Mündung nahe Montemarcello und den Ruinen von Luni; eine Sommerbasis, der alte Ort liegt am Hang.",
+   "fr": "Hameau balnéaire à l'embouchure de la Magra, près de Montemarcello et des ruines de Luni ; base d'été, le vieux bourg est sur la colline.",
+   "es": "Aldea de playa en la desembocadura del Magra, cerca de Montemarcello y Luni; base de verano, el casco viejo está en la colina.",
+   "it": "Frazione balneare alla foce del Magra, vicino a Montemarcello e agli scavi di Luni; base estiva, il borgo antico è sulla collina."
+  },
+  "confidence": "medium",
+  "flags": [
+   "name_ambiguous"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:ehenbichl",
+  "appeal": 6.2,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 5,
+   "sights": 6,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Lech valley village below Ehrenberg Castle, with the Alpsee 10 km away; a practical Tyrol base, little life of its own.",
+   "nl": "Dorp in het Lechdal onder de burcht Ehrenberg, met de Alpsee op 10 km; een praktische basis in Tirol, weinig eigen leven.",
+   "de": "Dorf im Lechtal unter der Burgruine Ehrenberg, der Alpsee 10 km entfernt; praktische Tiroler Basis, wenig eigenes Leben.",
+   "fr": "Village de la vallée du Lech sous le château d'Ehrenberg, l'Alpsee à 10 km ; base pratique au Tyrol, peu de vie propre.",
+   "es": "Pueblo del valle del Lech bajo el castillo de Ehrenberg, con el Alpsee a 10 km; base práctica en el Tirol, poca vida propia.",
+   "it": "Paese della valle del Lech sotto il castello di Ehrenberg, con l'Alpsee a 10 km; base pratica in Tirolo, poca vita propria."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:leiden",
+  "appeal": 7.3,
+  "band": "good",
+  "criteria": {
+   "setting": 6,
+   "character": 8,
+   "sights": 7,
+   "atmosphere": 8,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Canal-laced university town with the Rijksmuseum van Oudheden and Naturalis; full of life, though two days covers it.",
+   "nl": "Universiteitsstad vol grachten met het Rijksmuseum van Oudheden en Naturalis; levendig, al heb je het in twee dagen gezien.",
+   "de": "Universitätsstadt voller Grachten mit dem Rijksmuseum van Oudheden und Naturalis; lebendig, doch zwei Tage reichen.",
+   "fr": "Ville universitaire sillonnée de canaux, avec le Rijksmuseum van Oudheden et Naturalis ; très vivante, mais deux jours suffisent.",
+   "es": "Ciudad universitaria de canales con el Rijksmuseum van Oudheden y Naturalis; llena de vida, aunque dos días bastan.",
+   "it": "Città universitaria di canali con il Rijksmuseum van Oudheden e il Naturalis; vivace, anche se due giorni bastano."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:noia",
+  "appeal": 6.2,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 6,
+   "sights": 6,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Galician estuary town with the Gothic Santa María a Nova and medieval walls; a good half day, beaches a short drive away.",
+   "nl": "Galicisch stadje aan een ría met de gotische Santa María a Nova en middeleeuwse muren; een goede halve dag, stranden vlakbij.",
+   "de": "Galicische Stadt an einer Ría mit der gotischen Santa María a Nova und mittelalterlichen Mauern; ein guter halber Tag, Strände nahe.",
+   "fr": "Ville galicienne sur une ría, avec l'église gothique Santa María a Nova et ses murailles ; une bonne demi-journée, plages proches.",
+   "es": "Villa gallega de ría con la gótica Santa María a Nova y su muralla medieval; buena media jornada, con playas cerca.",
+   "it": "Cittadina galiziana su una ría con la gotica Santa María a Nova e mura medievali; una buona mezza giornata, spiagge vicine."
+  },
+  "confidence": "medium",
+  "flags": [
+   "class_mismatch"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:reggio-nell-emilia",
+  "appeal": 5.8,
+  "band": "none",
+  "criteria": {
+   "setting": 4,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Emilian city of piazzas, a cathedral and the San Prospero basilica; pleasant streets, but outshone by its neighbours.",
+   "nl": "Emiliaanse stad met piazza's, een kathedraal en de basiliek van San Prospero; aangename straten, maar overtroffen door de buren.",
+   "de": "Emilianische Stadt mit Plätzen, Dom und der Basilika San Prospero; nette Straßen, aber von den Nachbarstädten überstrahlt.",
+   "fr": "Ville d'Émilie aux places, avec cathédrale et basilique San Prospero ; rues agréables, mais éclipsée par ses voisines.",
+   "es": "Ciudad emiliana de plazas, catedral y basílica de San Prospero; calles agradables, pero eclipsada por sus vecinas.",
+   "it": "Città emiliana di piazze, con il Duomo e la basilica di San Prospero; vie piacevoli, ma oscurata dalle vicine."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:saffron-walden",
+  "appeal": 6.5,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 5,
+   "character": 7,
+   "sights": 7,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Essex market town with Audley End House and Bridge End Gardens; a pleasant day out rather than a stay.",
+   "nl": "Marktstad in Essex met Audley End House en de Bridge End Gardens; een prettig dagje uit eerder dan een verblijf.",
+   "de": "Marktstadt in Essex mit Audley End House und den Bridge End Gardens; ein netter Tagesausflug, kein Ort für mehrere Nächte.",
+   "fr": "Bourg de marché de l'Essex avec Audley End House et les Bridge End Gardens ; une jolie sortie d'un jour plutôt qu'un séjour.",
+   "es": "Villa de mercado de Essex con Audley End House y los Bridge End Gardens; una buena excursión de un día más que una estancia.",
+   "it": "Cittadina di mercato dell'Essex con Audley End House e i Bridge End Gardens; una piacevole gita più che un soggiorno."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:long-sutton",
+  "appeal": 4.6,
+  "band": "none",
+  "criteria": {
+   "setting": 3,
+   "character": 4,
+   "sights": 3,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Fenland market village with St Mary's church; flat farmland around and nothing that justifies the journey.",
+   "nl": "Marktdorp in de Fens met de St Mary's-kerk; vlak akkerland rondom en niets dat de reis rechtvaardigt.",
+   "de": "Marktdorf in den Fens mit der Kirche St Mary's; flaches Ackerland ringsum, nichts rechtfertigt die Reise.",
+   "fr": "Village de marché des Fens avec l'église St Mary's ; terres agricoles plates autour, rien ne justifie le voyage.",
+   "es": "Pueblo de mercado de los Fens con la iglesia de St Mary's; llanura agrícola alrededor y nada que justifique el viaje.",
+   "it": "Paese di mercato dei Fens con la chiesa di St Mary's; pianura agricola attorno e nulla che giustifichi il viaggio."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:breda",
+  "appeal": 6.4,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 5,
+   "character": 7,
+   "sights": 6,
+   "atmosphere": 7,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Brabant city with the Grote Kerk, a castle and a béguinage; a lively centre for a day, little to fill a second.",
+   "nl": "Brabantse stad met de Grote Kerk, een kasteel en een begijnhof; een levendig centrum voor een dag, weinig voor een tweede.",
+   "de": "Brabanter Stadt mit Grote Kerk, Schloss und Beginenhof; lebendiges Zentrum für einen Tag, wenig für einen zweiten.",
+   "fr": "Ville brabançonne avec la Grote Kerk, un château et un béguinage ; centre animé pour une journée, peu pour une deuxième.",
+   "es": "Ciudad brabanzona con la Grote Kerk, un castillo y un beaterio; centro animado para un día, poco para un segundo.",
+   "it": "Città del Brabante con la Grote Kerk, un castello e un beghinaggio; centro vivace per un giorno, poco per un secondo."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:ilminster",
+  "appeal": 5.0,
+  "band": "none",
+  "criteria": {
+   "setting": 4,
+   "character": 5,
+   "sights": 4,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Somerset market town near Barrington Court; the sights are country houses around it, the town itself is unremarkable.",
+   "nl": "Marktstad in Somerset bij Barrington Court; de bezienswaardigheden zijn landhuizen eromheen, de stad zelf is onopvallend.",
+   "de": "Marktstadt in Somerset nahe Barrington Court; die Ziele sind Landsitze ringsum, der Ort selbst ist unauffällig.",
+   "fr": "Bourg de marché du Somerset près de Barrington Court ; les sites sont des manoirs alentour, la ville elle-même est quelconque.",
+   "es": "Villa de mercado de Somerset cerca de Barrington Court; lo que ver son mansiones alrededor, el pueblo en sí es anodino.",
+   "it": "Cittadina di mercato del Somerset vicino a Barrington Court; i luoghi sono dimore nei dintorni, il paese è anonimo."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:riverie",
+  "appeal": 5.5,
+  "band": "none",
+  "criteria": {
+   "setting": 6,
+   "character": 6,
+   "sights": 3,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Small hilltop Petite Cité de Caractère in the Lyonnais hills; its listed sights are all 7 to 9 km away, little to hold an hour.",
+   "nl": "Klein heuveldorp in de Lyonnais, een Petite Cité de Caractère; alle genoemde bezienswaardigheden liggen 7 tot 9 km verder.",
+   "de": "Kleines Hügeldorf im Lyonnais, eine Petite Cité de Caractère; alle genannten Ziele liegen 7 bis 9 km entfernt.",
+   "fr": "Petit village perché des monts du Lyonnais, Petite Cité de Caractère ; les sites cités sont à 7 à 9 km, peu pour une heure.",
+   "es": "Pequeño pueblo en lo alto de los montes del Lyonnais, Petite Cité de Caractère; todo lo citado queda a 7 a 9 km.",
+   "it": "Piccolo borgo in collina nei monti del Lionese, Petite Cité de Caractère; tutti i luoghi citati sono a 7-9 km."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:compiano",
+  "appeal": 6.4,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 7,
+   "sights": 6,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Walled borgo più bello crowned by the Castello di Compiano in the Taro valley; a fine hour or two, not a full day.",
+   "nl": "Ommuurd mooi dorp met het Castello di Compiano erboven, in het Tarodal; een mooi uur of twee, geen volle dag.",
+   "de": "Ummauertes schönes Dorf unter dem Castello di Compiano im Tarotal; ein schönes, kurzes Ziel, kein ganzer Tag.",
+   "fr": "Bourg fortifié parmi les plus beaux d'Italie, couronné par son château, dans la vallée du Taro ; une ou deux heures, pas une journée.",
+   "es": "Pueblo amurallado entre los más bellos de Italia, coronado por su castillo, en el valle del Taro; una o dos horas, no un día.",
+   "it": "Borgo murato tra i più belli d'Italia, coronato dal Castello di Compiano in Val Taro; un'ora o due, non una giornata."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:odder",
+  "appeal": 4.8,
+  "band": "none",
+  "criteria": {
+   "setting": 4,
+   "character": 4,
+   "sights": 3,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "East Jutland town with a local museum and the Rathlousdal estate; beaches 15 km off, nothing that makes it a destination.",
+   "nl": "Oost-Jutlandse stad met een lokaal museum en landgoed Rathlousdal; stranden op 15 km, niets dat er een bestemming van maakt.",
+   "de": "Ostjütländische Stadt mit Heimatmuseum und Gut Rathlousdal; Strände 15 km entfernt, nichts, das sie zum Ziel macht.",
+   "fr": "Ville du Jutland oriental avec un musée local et le domaine de Rathlousdal ; plages à 15 km, rien qui en fasse une destination.",
+   "es": "Ciudad del este de Jutlandia con un museo local y la finca Rathlousdal; playas a 15 km, nada que la haga destino.",
+   "it": "Cittadina dello Jutland orientale con un museo locale e la tenuta di Rathlousdal; spiagge a 15 km, nulla che la renda una meta."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:sonntag",
+  "appeal": 6.2,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 7,
+   "sights": 5,
+   "atmosphere": 7,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Mountain farming area in the Grosses Walsertal biosphere reserve, below the Rote Wand; quiet walking, few named sights.",
+   "nl": "Bergboerengebied in het biosfeerreservaat Grosses Walsertal, onder de Rote Wand; rustig wandelen, weinig bekende bezienswaardigheden.",
+   "de": "Bergbauerngebiet im Biosphärenpark Großes Walsertal unter der Roten Wand; ruhiges Wandern, wenige bekannte Ziele.",
+   "fr": "Zone de montagne agricole dans la réserve de biosphère du Grosses Walsertal, sous la Rote Wand ; randonnée paisible, peu de sites connus.",
+   "es": "Zona de montaña agrícola en la reserva de la biosfera del Grosses Walsertal, bajo la Rote Wand; senderismo tranquilo, pocos lugares célebres.",
+   "it": "Zona di montagna agricola nella riserva della biosfera del Grosses Walsertal, sotto la Rote Wand; escursioni tranquille, pochi luoghi noti."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ }
+]

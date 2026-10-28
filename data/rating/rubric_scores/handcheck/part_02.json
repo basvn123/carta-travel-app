@@ -1,0 +1,933 @@
+[
+ {
+  "id": "gem:camara-de-lobos",
+  "appeal": 6.8,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 8,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Fishing bay below the Cabo Girão cliff, a short ride from Funchal and the high peaks; a pleasant stop rather than a full day.",
+   "nl": "Vissersbaai onder de klif van Cabo Girão, dicht bij Funchal en de hoge toppen; een prettige stop, geen volle dag.",
+   "de": "Fischerbucht unter der Klippe von Cabo Girão, nah an Funchal und den Gipfeln; ein netter Halt, kein ganzer Tag.",
+   "fr": "Baie de pêcheurs sous la falaise du Cabo Girão, près de Funchal et des sommets ; une halte agréable plutôt qu'une journée.",
+   "es": "Bahía pesquera bajo el acantilado de Cabo Girão, cerca de Funchal y las cumbres; una parada agradable más que un día entero.",
+   "it": "Baia di pescatori sotto la scogliera di Cabo Girão, vicino a Funchal e alle vette; una sosta piacevole più che una giornata."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:camogli",
+  "appeal": 7.5,
+  "band": "good",
+  "criteria": {
+   "setting": 8,
+   "character": 8,
+   "sights": 6,
+   "atmosphere": 7,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "Tall painted houses on a fishing harbour at the foot of Monte di Portofino, San Fruttuoso by boat or trail; small and busy in summer.",
+   "nl": "Hoge geschilderde huizen aan een vissershaven aan de voet van de Monte di Portofino, San Fruttuoso per boot of pad; klein en zomers druk.",
+   "de": "Hohe bemalte Häuser am Fischerhafen unter dem Monte di Portofino, San Fruttuoso per Boot oder Pfad; klein und im Sommer voll.",
+   "fr": "Hautes maisons peintes sur un port de pêche sous le Monte di Portofino, San Fruttuoso en bateau ; petit et bondé l'été.",
+   "es": "Altas casas pintadas sobre un puerto pesquero al pie del Monte di Portofino, San Fruttuoso en barco o a pie; pequeño y lleno en verano.",
+   "it": "Alte case dipinte su un porto di pescatori ai piedi del Monte di Portofino, San Fruttuoso in barca o a piedi; piccolo e affollato d'estate."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:cap-corse",
+  "appeal": 7.5,
+  "band": "good",
+  "criteria": {
+   "setting": 9,
+   "character": 7,
+   "sights": 6,
+   "atmosphere": 8,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "Wild Corsican peninsula with cliff villages such as Nonza, Genoese towers and empty coves on a corniche loop; slow, winding roads.",
+   "nl": "Wild Corsicaans schiereiland met klifdorpen als Nonza, Genuese torens en lege baaien langs een kustweg; trage, bochtige wegen.",
+   "de": "Wilde korsische Halbinsel mit Klippendörfern wie Nonza, Genueserturmen und leeren Buchten an einer Küstenstraße; langsame Kurvenstraßen.",
+   "fr": "Péninsule corse sauvage, villages perchés comme Nonza, tours génoises et criques désertes sur une corniche ; routes lentes et sinueuses.",
+   "es": "Península corsa salvaje con pueblos en acantilados como Nonza, torres genovesas y calas vacías en una cornisa; carreteras lentas y sinuosas.",
+   "it": "Penisola corsa selvaggia con borghi a picco come Nonza, torri genovesi e calette deserte su una litoranea; strade lente e tortuose."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:cape-sounion",
+  "appeal": 7.0,
+  "band": "good",
+  "criteria": {
+   "setting": 8,
+   "character": 3,
+   "sights": 8,
+   "atmosphere": 6,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "The Temple of Poseidon on a sheer cape over the Aegean, a sunset classic from Athens; one site, done in a couple of hours.",
+   "nl": "De Tempel van Poseidon op een steile kaap boven de Egeïsche Zee, een zonsondergangklassieker vanuit Athene; één plek, in een paar uur gezien.",
+   "de": "Der Poseidontempel auf einem steilen Kap über der Ägäis, ein Sonnenuntergangsklassiker ab Athen; ein Ort, in zwei Stunden gesehen.",
+   "fr": "Le temple de Poséidon, sur un cap abrupt face à l'Égée, classique du couchant depuis Athènes ; un seul site, vu en deux heures.",
+   "es": "El templo de Poseidón sobre un cabo escarpado del Egeo, clásico del atardecer desde Atenas; un solo lugar, visto en un par de horas.",
+   "it": "Il tempio di Poseidone su un capo a picco sull'Egeo, classico del tramonto da Atene; un solo sito, visto in un paio d'ore."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:carmona",
+  "appeal": 7.0,
+  "band": "good",
+  "criteria": {
+   "setting": 6,
+   "character": 8,
+   "sights": 6,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Listed hill town of ochre palaces, a Roman necropolis and a Moorish alcázar above the plain; a half day from Seville.",
+   "nl": "Beschermde heuvelstad van okerkleurige paleizen, een Romeinse necropool en een Moors alcázar boven de vlakte; een halve dag vanuit Sevilla.",
+   "de": "Geschützte Hügelstadt mit ockerfarbenen Palästen, römischer Nekropole und maurischem Alcázar über der Ebene; ein halber Tag ab Sevilla.",
+   "fr": "Ville perchée protégée, palais ocre, nécropole romaine et alcazar maure au-dessus de la plaine ; une demi-journée depuis Séville.",
+   "es": "Ciudad en alto protegida, de palacios ocres, necrópolis romana y alcázar andalusí sobre la vega; media jornada desde Sevilla.",
+   "it": "Città collinare tutelata di palazzi ocra, necropoli romana e alcázar moresco sulla pianura; mezza giornata da Siviglia."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:castelo-rodrigo",
+  "appeal": 6.8,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 7,
+   "sights": 5,
+   "atmosphere": 7,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Restored hilltop village around a ruined castle, looking over almond country to the Spanish meseta; very quiet, an hour is enough.",
+   "nl": "Gerestaureerd heuveldorp rond een kasteelruïne, met uitzicht over amandelland naar de Spaanse meseta; heel stil, een uur volstaat.",
+   "de": "Restauriertes Hügeldorf um eine Burgruine, mit Blick über Mandelland zur spanischen Meseta; sehr still, eine Stunde reicht.",
+   "fr": "Village perché restauré autour d'un château en ruine, face aux amandiers et à la meseta espagnole ; très calme, une heure suffit.",
+   "es": "Aldea restaurada en lo alto en torno a un castillo en ruinas, sobre almendros y la meseta española; muy tranquila, basta una hora.",
+   "it": "Borgo restaurato in collina attorno a un castello in rovina, sopra i mandorleti e la meseta spagnola; molto quieto, basta un'ora."
+  },
+  "confidence": "medium",
+  "flags": [
+   "class_mismatch"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:celje",
+  "appeal": 5.8,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 6,
+   "sights": 6,
+   "atmosphere": 5,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Riverside old town under the large castle of the Counts of Celje; a few hours' visit, little to hold a night.",
+   "nl": "Oude stad aan de rivier onder de grote burcht van de graven van Celje; een bezoek van een paar uur, weinig voor een nacht.",
+   "de": "Altstadt am Fluss unter der großen Burg der Grafen von Cilli; ein paar Stunden, wenig für eine Nacht.",
+   "fr": "Vieille ville au bord de la rivière sous le grand château des comtes de Celje ; quelques heures, peu pour une nuit.",
+   "es": "Casco antiguo junto al río bajo el gran castillo de los condes de Celje; unas horas de visita, poco para una noche.",
+   "it": "Centro storico sul fiume sotto il grande castello dei conti di Celje; qualche ora di visita, poco per una notte."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:cesis",
+  "appeal": 6.3,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 7,
+   "sights": 6,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Medieval castle ruins and a cobbled old town in Gauja National Park, with sandstone cliffs nearby; quiet and soon seen.",
+   "nl": "Middeleeuwse burchtruïne en een geplaveide oude stad in het Nationaal Park Gauja, met zandsteenkliffen vlakbij; rustig en snel gezien.",
+   "de": "Mittelalterliche Burgruine und gepflasterte Altstadt im Gauja-Nationalpark, Sandsteinfelsen nah; ruhig und rasch gesehen.",
+   "fr": "Ruines de château médiéval et vieille ville pavée dans le parc national de la Gauja, falaises de grès proches ; calme et vite vu.",
+   "es": "Ruinas de un castillo medieval y casco empedrado en el parque nacional del Gauja, con acantilados de arenisca cerca; tranquilo y pronto visto.",
+   "it": "Rovine di un castello medievale e centro acciottolato nel parco nazionale della Gauja, falesie di arenaria vicine; tranquillo e presto visto."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:ceske-budejovice",
+  "appeal": 6.2,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 5,
+   "character": 7,
+   "sights": 6,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Vast arcaded square, the Black Tower and the Budweiser brewery, with Hluboká Castle close by; a good stop, not a long stay.",
+   "nl": "Groot plein met arcaden, de Zwarte Toren en de Budweiser-brouwerij, met kasteel Hluboká vlakbij; een goede stop, geen lang verblijf.",
+   "de": "Riesiger Laubenplatz, Schwarzer Turm und Budweiser-Brauerei, Schloss Hluboká in der Nähe; ein guter Halt, kein langer Aufenthalt.",
+   "fr": "Immense place à arcades, Tour noire et brasserie Budweiser, château de Hluboká tout près ; une bonne étape, pas un long séjour.",
+   "es": "Enorme plaza porticada, la Torre Negra y la cervecera Budweiser, con el castillo de Hluboká cerca; buena parada, no una estancia larga.",
+   "it": "Vasta piazza porticata, la Torre Nera e il birrificio Budweiser, con il castello di Hluboká vicino; una buona sosta, non un lungo soggiorno."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:clonmacnoise",
+  "appeal": 6.8,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 6,
+   "sights": 7,
+   "atmosphere": 7,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "High crosses and round towers of an early monastic city on a bend of the Shannon; a single site with no town around it.",
+   "nl": "Hoogkruisen en ronde torens van een vroegmiddeleeuwse kloosterstad aan een bocht van de Shannon; één plek zonder stad eromheen.",
+   "de": "Hochkreuze und Rundtürme einer frühen Klosterstadt an einer Shannon-Schleife; ein einzelner Ort ohne Stadt drumherum.",
+   "fr": "Hautes croix et tours rondes d'une cité monastique ancienne sur un méandre du Shannon ; un site isolé sans ville autour.",
+   "es": "Cruces altas y torres redondas de una antigua ciudad monástica en un meandro del Shannon; un solo lugar sin pueblo alrededor.",
+   "it": "Croci celtiche e torri rotonde di un'antica città monastica su un'ansa dello Shannon; un sito isolato senza paese intorno."
+  },
+  "confidence": "medium",
+  "flags": [
+   "class_mismatch",
+   "data_conflict"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:colmar",
+  "appeal": 8.0,
+  "band": "very_good",
+  "criteria": {
+   "setting": 6,
+   "character": 9,
+   "sights": 8,
+   "atmosphere": 8,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "Intact half-timbered old town with Maison Pfister and the Isenheim Altarpiece; compact and crowded with visitors.",
+   "nl": "Gaaf vakwerkcentrum met het Maison Pfister en het Isenheimer altaar; compact en druk met bezoekers.",
+   "de": "Intakte Fachwerkaltstadt mit Maison Pfister und dem Isenheimer Altar; kompakt und voller Besucher.",
+   "fr": "Vieille ville à colombages intacte avec la maison Pfister et le retable d'Issenheim ; compacte et très fréquentée.",
+   "es": "Casco de entramado intacto con la Maison Pfister y el retablo de Isenheim; compacto y lleno de visitantes.",
+   "it": "Centro a graticcio intatto con la Maison Pfister e la pala di Isenheim; compatto e affollato di visitatori."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:comporta",
+  "appeal": 6.5,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 6,
+   "sights": 4,
+   "atmosphere": 7,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Rice paddies, umbrella pines and long empty Atlantic beaches in the Sado estuary reserve; a beach stay, with little to see in the village.",
+   "nl": "Rijstvelden, parasoldennen en lange lege Atlantische stranden in het natuurreservaat van de Sado; een strandverblijf, weinig te zien in het dorp.",
+   "de": "Reisfelder, Schirmpinien und lange leere Atlantikstrände im Sado-Mündungsreservat; ein Strandaufenthalt, im Dorf wenig zu sehen.",
+   "fr": "Rizières, pins parasols et longues plages atlantiques désertes dans la réserve de l'estuaire du Sado ; séjour plage, peu à voir au village.",
+   "es": "Arrozales, pinos piñoneros y largas playas atlánticas vacías en la reserva del estuario del Sado; para playa, poco que ver en el pueblo.",
+   "it": "Risaie, pini a ombrello e lunghe spiagge atlantiche deserte nella riserva dell'estuario del Sado; soggiorno di mare, poco da vedere in paese."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:corvin-castle",
+  "appeal": 6.8,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 5,
+   "character": 4,
+   "sights": 9,
+   "atmosphere": 5,
+   "uniqueness": 8
+  },
+  "why": {
+   "en": "Vast Gothic Corvin Castle of drawbridges, spires and towers; the steel town around it gives no reason to linger.",
+   "nl": "Het enorme gotische Corvin-kasteel met ophaalbruggen, spitsen en torens; de staalstad eromheen geeft geen reden om te blijven.",
+   "de": "Die riesige gotische Burg Corvin mit Zugbrücken, Spitzen und Türmen; die Stahlstadt ringsum lädt nicht zum Bleiben ein.",
+   "fr": "L'immense château gothique de Corvin, ponts-levis, flèches et tours ; la ville sidérurgique autour n'incite pas à rester.",
+   "es": "El enorme castillo gótico de Corvin, con puentes levadizos, agujas y torres; la ciudad siderúrgica que lo rodea no invita a quedarse.",
+   "it": "L'enorme castello gotico dei Corvino con ponti levatoi, guglie e torri; la città dell'acciaio intorno non invita a restare."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:crooked-forest",
+  "appeal": 5.5,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 3,
+   "sights": 6,
+   "atmosphere": 4,
+   "uniqueness": 8
+  },
+  "why": {
+   "en": "A grove of about 400 pines bent into identical J-curves near Gryfino; an odd single sight that takes under an hour.",
+   "nl": "Een bosje van zo'n 400 dennen, allemaal in dezelfde J-bocht gegroeid, bij Gryfino; één vreemde bezienswaardigheid, binnen het uur gezien.",
+   "de": "Ein Hain von rund 400 gleich J-förmig gekrümmten Kiefern bei Gryfino; ein seltsames Einzelziel, in unter einer Stunde gesehen.",
+   "fr": "Un bosquet d'environ 400 pins tous courbés en J près de Gryfino ; une curiosité isolée, vue en moins d'une heure.",
+   "es": "Un bosquecillo de unos 400 pinos curvados en J idéntica cerca de Gryfino; una rareza aislada que se ve en menos de una hora.",
+   "it": "Un boschetto di circa 400 pini piegati tutti a J vicino a Gryfino; una curiosità isolata, vista in meno di un'ora."
+  },
+  "confidence": "medium",
+  "flags": [
+   "class_mismatch"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:cuenca",
+  "appeal": 7.9,
+  "band": "very_good",
+  "criteria": {
+   "setting": 8,
+   "character": 8,
+   "sights": 8,
+   "atmosphere": 6,
+   "uniqueness": 9
+  },
+  "why": {
+   "en": "UNESCO-listed old town with the Casas Colgadas hanging over a gorge and a Gothic cathedral; quiet, and short on evening life.",
+   "nl": "Oude stad op de UNESCO-lijst met de Casas Colgadas boven een kloof en een gotische kathedraal; rustig, met weinig avondleven.",
+   "de": "UNESCO-Altstadt mit den über einer Schlucht hängenden Casas Colgadas und gotischer Kathedrale; ruhig, wenig Abendleben.",
+   "fr": "Vieille ville classée à l'UNESCO, Casas Colgadas suspendues au-dessus d'une gorge et cathédrale gothique ; calme, peu de vie le soir.",
+   "es": "Casco antiguo Patrimonio de la UNESCO con las Casas Colgadas sobre la hoz y una catedral gótica; tranquilo y con poca vida nocturna.",
+   "it": "Città vecchia UNESCO con le Casas Colgadas sospese sulla gola e una cattedrale gotica; tranquilla, con poca vita serale."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:cuilcagh",
+  "appeal": 6.8,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 8,
+   "character": 5,
+   "sights": 7,
+   "atmosphere": 6,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "Boardwalk stair over blanket bog to a summit rim above Fermanagh's lakes, Marble Arch Caves close by; a half-day walk.",
+   "nl": "Vlonderpad over hoogveen naar een toprand boven de meren van Fermanagh, de Marble Arch Caves vlakbij; een wandeling van een halve dag.",
+   "de": "Bohlenweg über Deckenmoor zum Gipfelrand über Fermanaghs Seen, die Marble Arch Caves nah; eine halbtägige Wanderung.",
+   "fr": "Escalier de caillebotis sur la tourbière jusqu'à un rebord sommital au-dessus des lacs du Fermanagh, grottes de Marble Arch proches ; une demi-journée.",
+   "es": "Pasarela sobre turbera hasta un borde de cumbre sobre los lagos de Fermanagh, las cuevas de Marble Arch cerca; una caminata de media jornada.",
+   "it": "Passerella sulla torbiera fino al bordo della vetta sopra i laghi del Fermanagh, grotte di Marble Arch vicine; un'escursione di mezza giornata."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:czestochowa",
+  "appeal": 5.6,
+  "band": "none",
+  "criteria": {
+   "setting": 3,
+   "character": 4,
+   "sights": 7,
+   "atmosphere": 5,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Jasna Góra monastery with the Black Madonna, Poland's great pilgrimage shrine; the industrial city around it holds little else.",
+   "nl": "Klooster Jasna Góra met de Zwarte Madonna, het grote bedevaartsoord van Polen; de industriestad eromheen biedt weinig meer.",
+   "de": "Kloster Jasna Góra mit der Schwarzen Madonna, Polens großer Wallfahrtsort; die Industriestadt ringsum bietet kaum mehr.",
+   "fr": "Monastère de Jasna Góra et sa Vierge noire, grand sanctuaire de pèlerinage polonais ; la ville industrielle autour offre peu d'autre.",
+   "es": "Monasterio de Jasna Góra con la Virgen Negra, gran santuario de peregrinación de Polonia; la ciudad industrial ofrece poco más.",
+   "it": "Monastero di Jasna Góra con la Madonna Nera, grande santuario di pellegrinaggio polacco; la città industriale intorno offre poco altro."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:danube-delta",
+  "appeal": 7.8,
+  "band": "very_good",
+  "criteria": {
+   "setting": 8,
+   "character": 7,
+   "sights": 6,
+   "atmosphere": 8,
+   "uniqueness": 9
+  },
+  "why": {
+   "en": "UNESCO-listed wetland of reed channels, pelican colonies and fishing villages; reached by boat, and slow and basic to explore.",
+   "nl": "Wetland op de UNESCO-lijst met rietkanalen, pelikaankolonies en vissersdorpen; alleen per boot, traag en eenvoudig te verkennen.",
+   "de": "Feuchtgebiet mit UNESCO-Titel aus Schilfkanälen, Pelikankolonien und Fischerdörfern; per Boot, langsam und einfach zu erkunden.",
+   "fr": "Zone humide classée à l'UNESCO, chenaux de roseaux, colonies de pélicans et villages de pêcheurs ; en bateau, lente et rustique à explorer.",
+   "es": "Humedal Patrimonio de la UNESCO de canales de juncos, colonias de pelícanos y aldeas pesqueras; en barco, lento y básico de recorrer.",
+   "it": "Zona umida UNESCO di canali di canne, colonie di pellicani e villaggi di pescatori; in barca, lenta e spartana da esplorare."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:dimitsana",
+  "appeal": 7.0,
+  "band": "good",
+  "criteria": {
+   "setting": 8,
+   "character": 7,
+   "sights": 6,
+   "atmosphere": 7,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Stone tower-house village above the Lousios gorge, with cliff-hung monasteries on the Menalon Trail; best for walkers, little else.",
+   "nl": "Dorp van stenen torenhuizen boven de Lousioskloof, met kloosters tegen de rotswand langs het Menalonpad; vooral voor wandelaars.",
+   "de": "Dorf aus steinernen Turmhäusern über der Lousios-Schlucht, Felsklöster am Menalon-Pfad; vor allem für Wanderer.",
+   "fr": "Village de maisons-tours en pierre au-dessus des gorges du Lousios, monastères accrochés à la falaise sur le sentier Ménalon ; surtout pour marcheurs.",
+   "es": "Pueblo de casas torre de piedra sobre la garganta del Lousios, con monasterios colgados en el sendero Ménalon; sobre todo para caminantes.",
+   "it": "Paese di case-torri in pietra sopra la gola del Lousios, monasteri a strapiombo sul sentiero Menalon; soprattutto per escursionisti."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:dresden-saxon",
+  "appeal": 7.8,
+  "band": "very_good",
+  "criteria": {
+   "setting": 9,
+   "character": 6,
+   "sights": 8,
+   "atmosphere": 7,
+   "uniqueness": 8
+  },
+  "why": {
+   "en": "Sandstone towers and the Bastei bridge above the Elbe, Lilienstein and dozens of climbs around; the small villages are only a base.",
+   "nl": "Zandsteentorens en de Basteibrug boven de Elbe, de Lilienstein en tientallen klimrotsen; de kleine dorpen zijn slechts een uitvalsbasis.",
+   "de": "Sandsteintürme und die Basteibrücke über der Elbe, Lilienstein und Dutzende Kletterfelsen; die kleinen Dörfer sind nur Basis.",
+   "fr": "Tours de grès et pont de la Bastei au-dessus de l'Elbe, Lilienstein et des dizaines de rochers ; les petits villages ne sont qu'une base.",
+   "es": "Torres de arenisca y el puente de Bastei sobre el Elba, el Lilienstein y decenas de rocas; los pueblos pequeños solo sirven de base.",
+   "it": "Torri di arenaria e il ponte della Bastei sopra l'Elba, il Lilienstein e decine di falesie; i piccoli paesi sono solo una base."
+  },
+  "confidence": "high",
+  "flags": [
+   "class_mismatch"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:dunnottar-castle",
+  "appeal": 7.0,
+  "band": "good",
+  "criteria": {
+   "setting": 8,
+   "character": 5,
+   "sights": 8,
+   "atmosphere": 5,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "Ruined Dunnottar Castle on a sheer sea stack, a clifftop walk from Stonehaven harbour; the town itself is modest.",
+   "nl": "Ruïne van Dunnottar Castle op een steile rots in zee, een klifwandeling vanaf de haven van Stonehaven; de stad zelf is bescheiden.",
+   "de": "Burgruine Dunnottar auf einem steilen Brandungsfelsen, ein Klippenweg ab Stonehavens Hafen; der Ort selbst ist bescheiden.",
+   "fr": "Ruines du château de Dunnottar sur un piton marin abrupt, à une marche de falaise du port de Stonehaven ; la ville est modeste.",
+   "es": "Ruinas del castillo de Dunnottar sobre un farallón marino, a un paseo por el acantilado del puerto de Stonehaven; el pueblo es modesto.",
+   "it": "Rovine del castello di Dunnottar su uno scoglio a picco, a una passeggiata sulla scogliera dal porto di Stonehaven; il paese è modesto."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:eguisheim",
+  "appeal": 7.4,
+  "band": "good",
+  "criteria": {
+   "setting": 6,
+   "character": 9,
+   "sights": 5,
+   "atmosphere": 7,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "Flower-decked lanes coil in rings round a castle in this listed Alsace wine village, Colmar 5 km away; small and coach-busy.",
+   "nl": "Met bloemen versierde straatjes draaien in ringen om een burcht in dit erkende Elzasser wijndorp, Colmar op 5 km; klein en druk met bussen.",
+   "de": "Blumengeschmückte Gassen ziehen sich in Ringen um eine Burg in diesem ausgezeichneten Elsässer Weindorf, Colmar 5 km entfernt; klein und busvoll.",
+   "fr": "Ruelles fleuries en anneaux autour d'un château dans ce village viticole alsacien classé, Colmar à 5 km ; petit et envahi de cars.",
+   "es": "Callejas floridas en anillos alrededor de un castillo en este pueblo vinícola alsaciano distinguido, Colmar a 5 km; pequeño y lleno de autocares.",
+   "it": "Vicoli fioriti ad anelli attorno a un castello in questo borgo vinicolo alsaziano premiato, Colmar a 5 km; piccolo e pieno di pullman."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:elounda-spinalonga",
+  "appeal": 7.0,
+  "band": "good",
+  "criteria": {
+   "setting": 8,
+   "character": 5,
+   "sights": 7,
+   "atmosphere": 6,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "Gulf resort facing Spinalonga, the Venetian fortress islet and former leper colony; the resort itself is mostly hotels.",
+   "nl": "Badplaats aan de golf tegenover Spinalonga, het Venetiaanse vestingeiland en voormalige leprakolonie; het oord zelf is vooral hotels.",
+   "de": "Badeort am Golf gegenüber Spinalonga, der venezianischen Festungsinsel und früheren Leprakolonie; der Ort selbst ist vor allem Hotels.",
+   "fr": "Station du golfe face à Spinalonga, îlot-forteresse vénitien et ancienne léproserie ; la station elle-même est surtout hôtelière.",
+   "es": "Balneario del golfo frente a Spinalonga, islote fortaleza veneciano y antigua leprosería; el pueblo es sobre todo hoteles.",
+   "it": "Località sul golfo di fronte a Spinalonga, isolotto fortezza veneziano ed ex lebbrosario; il paese è soprattutto alberghi."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:etretat",
+  "appeal": 7.5,
+  "band": "good",
+  "criteria": {
+   "setting": 9,
+   "character": 6,
+   "sights": 7,
+   "atmosphere": 6,
+   "uniqueness": 8
+  },
+  "why": {
+   "en": "Towering chalk cliffs of Normandy that Monet painted, with walks along the top; the small village fills with day visitors.",
+   "nl": "Torenhoge krijtkliffen van Normandië die Monet schilderde, met wandelingen bovenlangs; het dorpje loopt vol dagjesmensen.",
+   "de": "Hoch aufragende Kreideklippen der Normandie, die Monet malte, mit Wegen oben entlang; das Dörfchen füllt sich mit Tagesgästen.",
+   "fr": "Hautes falaises de craie normandes peintes par Monet, sentiers au sommet ; le petit village se remplit d'excursionnistes.",
+   "es": "Altos acantilados de creta normandos que pintó Monet, con paseos por lo alto; el pueblo se llena de excursionistas.",
+   "it": "Alte scogliere di gesso normanne dipinte da Monet, con sentieri in cima; il paesino si riempie di gitanti."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:faaborg",
+  "appeal": 6.4,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 7,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Hollyhock-lined lanes and pastel houses on the South Funen coast, with the Faaborg Museum and archipelago ferries; quiet and soon seen.",
+   "nl": "Straatjes met stokrozen en pastelkleurige huizen aan de kust van Zuid-Funen, met het Faaborg Museum en veerboten naar de eilanden; rustig en snel gezien.",
+   "de": "Gassen mit Stockrosen und Pastellhäusern an der Küste Südfünens, mit Faaborg Museum und Fähren ins Inselmeer; ruhig und rasch gesehen.",
+   "fr": "Ruelles bordées de roses trémières et maisons pastel sur la côte sud de Fionie, musée de Faaborg, ferries vers l'archipel ; calme, vite vu.",
+   "es": "Callejas con malvarrosas y casas pastel en la costa sur de Fionia, con el Museo de Faaborg y ferris al archipiélago; tranquila y pronto vista.",
+   "it": "Vicoli con malvoni e case pastello sulla costa sud di Fionia, il Museo di Faaborg e i traghetti per l'arcipelago; tranquilla e presto vista."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:fano",
+  "appeal": 6.3,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 7,
+   "sights": 4,
+   "atmosphere": 7,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Wadden Sea island a short ferry from Esbjerg, with thatched Sønderho lanes and vast beaches; few sights of its own.",
+   "nl": "Waddeneiland op een korte veerovertocht van Esbjerg, met rieten daken in Sønderho en enorme stranden; weinig eigen bezienswaardigheden.",
+   "de": "Wattenmeerinsel eine kurze Fähre von Esbjerg, mit reetgedeckten Gassen in Sønderho und riesigen Stränden; wenig eigene Ziele.",
+   "fr": "Île de la mer des Wadden à courte traversée d'Esbjerg, ruelles à toits de chaume à Sønderho et vastes plages ; peu de sites propres.",
+   "es": "Isla del mar de Frisia a un corto ferri de Esbjerg, con callejas de tejados de paja en Sønderho y playas enormes; pocos atractivos propios.",
+   "it": "Isola del mare dei Wadden a breve traghetto da Esbjerg, vicoli con tetti di paglia a Sønderho e spiagge immense; poche attrazioni proprie."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:garmisch",
+  "appeal": 7.8,
+  "band": "very_good",
+  "criteria": {
+   "setting": 10,
+   "character": 6,
+   "sights": 8,
+   "atmosphere": 7,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "Alpine resort at the foot of the Zugspitze, with the Partnach Gorge, Eibsee and Alpspitze around; the town itself is busy and spread out.",
+   "nl": "Alpenoord aan de voet van de Zugspitze, met de Partnachklamm, de Eibsee en de Alpspitze rondom; het dorp zelf is druk en verspreid.",
+   "de": "Alpenort am Fuß der Zugspitze, mit Partnachklamm, Eibsee und Alpspitze ringsum; der Ort selbst ist voll und zersiedelt.",
+   "fr": "Station alpine au pied de la Zugspitze, avec les gorges de la Partnach, l'Eibsee et l'Alpspitze ; la ville est animée et étalée.",
+   "es": "Estación alpina al pie del Zugspitze, con la garganta de Partnach, el Eibsee y el Alpspitze alrededor; el pueblo es concurrido y disperso.",
+   "it": "Località alpina ai piedi dello Zugspitze, con la gola della Partnach, l'Eibsee e l'Alpspitze intorno; il paese è affollato e sparso."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:glastonbury",
+  "appeal": 6.5,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 6,
+   "sights": 7,
+   "atmosphere": 6,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "Glastonbury Tor and the Chalice Well wrapped in Arthurian legend, Wells Cathedral 9 km away; a small market town, done in a day.",
+   "nl": "Glastonbury Tor en de Chalice Well, gehuld in Arthurlegendes, Wells Cathedral op 9 km; een klein marktstadje, in een dag gezien.",
+   "de": "Glastonbury Tor und Chalice Well im Bann der Artussage, die Kathedrale von Wells 9 km entfernt; eine kleine Marktstadt, in einem Tag gesehen.",
+   "fr": "Glastonbury Tor et le Chalice Well, baignés de légende arthurienne, cathédrale de Wells à 9 km ; petite ville de marché, vue en un jour.",
+   "es": "Glastonbury Tor y el Chalice Well, de leyenda artúrica, la catedral de Wells a 9 km; pequeña villa de mercado, se ve en un día.",
+   "it": "Glastonbury Tor e il Chalice Well avvolti nella leggenda arturiana, la cattedrale di Wells a 9 km; piccola cittadina di mercato, vista in un giorno."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:golden-circle",
+  "appeal": 8.0,
+  "band": "very_good",
+  "criteria": {
+   "setting": 9,
+   "character": 4,
+   "sights": 9,
+   "atmosphere": 6,
+   "uniqueness": 8
+  },
+  "why": {
+   "en": "Þingvellir's continental rift, Geysir's eruptions and the double falls of Gullfoss in one loop; a day out rather than a stay.",
+   "nl": "De continentale breuk van Þingvellir, de uitbarstingen van Geysir en de dubbele waterval Gullfoss in één rondrit; een dagtocht, geen verblijf.",
+   "de": "Die Kontinentalspalte von Þingvellir, die Ausbrüche des Geysir und der doppelte Gullfoss in einer Runde; ein Tagesausflug, kein Aufenthalt.",
+   "fr": "Le rift de Þingvellir, les éruptions du Geysir et la double chute de Gullfoss en une boucle ; une excursion d'un jour plutôt qu'un séjour.",
+   "es": "La falla continental de Þingvellir, las erupciones del Geysir y la doble cascada de Gullfoss en un circuito; excursión de un día, no estancia.",
+   "it": "La faglia continentale di Þingvellir, le eruzioni del Geysir e la doppia cascata di Gullfoss in un anello; gita di un giorno, non soggiorno."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:gorges-du-verdon",
+  "appeal": 8.5,
+  "band": "excellent",
+  "criteria": {
+   "setting": 10,
+   "character": 5,
+   "sights": 9,
+   "atmosphere": 7,
+   "uniqueness": 9
+  },
+  "why": {
+   "en": "A 700 m deep limestone canyon over turquoise water, with the Route des Crêtes and Lake Sainte-Croix; crowded and hot in high summer.",
+   "nl": "Een 700 m diepe kalksteenkloof boven turquoise water, met de Route des Crêtes en het meer van Sainte-Croix; hartje zomer druk en heet.",
+   "de": "Eine 700 m tiefe Kalkschlucht über türkisem Wasser, mit Route des Crêtes und Lac de Sainte-Croix; im Hochsommer voll und heiß.",
+   "fr": "Canyon calcaire de 700 m au-dessus d'une eau turquoise, route des Crêtes et lac de Sainte-Croix ; bondé et chaud en plein été.",
+   "es": "Cañón calizo de 700 m sobre agua turquesa, con la Route des Crêtes y el lago de Sainte-Croix; abarrotado y caluroso en pleno verano.",
+   "it": "Canyon calcareo profondo 700 m su acque turchesi, con la Route des Crêtes e il lago di Sainte-Croix; affollato e caldo in piena estate."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:gorlitz",
+  "appeal": 7.3,
+  "band": "good",
+  "criteria": {
+   "setting": 5,
+   "character": 9,
+   "sights": 6,
+   "atmosphere": 7,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "Old town that came through the war intact, on the Neisse facing Poland; quiet, with few major sights beyond its streets.",
+   "nl": "Oude stad die de oorlog ongeschonden doorkwam, aan de Neisse tegenover Polen; rustig, met weinig grote bezienswaardigheden buiten de straten.",
+   "de": "Altstadt, die den Krieg unversehrt überstand, an der Neiße gegenüber Polen; ruhig, mit wenigen großen Zielen jenseits der Gassen.",
+   "fr": "Vieille ville sortie intacte de la guerre, sur la Neisse face à la Pologne ; calme, peu de grands sites hors de ses rues.",
+   "es": "Casco antiguo que salió intacto de la guerra, junto al Neisse frente a Polonia; tranquilo, con pocos grandes monumentos más allá de sus calles.",
+   "it": "Centro storico uscito intatto dalla guerra, sulla Neisse di fronte alla Polonia; tranquillo, con poche grandi attrazioni oltre le sue vie."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:gosau",
+  "appeal": 7.5,
+  "band": "good",
+  "criteria": {
+   "setting": 10,
+   "character": 6,
+   "sights": 6,
+   "atmosphere": 8,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "Gosausee mirrors the Dachstein glacier one ridge from Hallstatt, with the Hallstätter See close by; the village itself is scattered.",
+   "nl": "De Gosausee weerspiegelt de Dachsteingletsjer, één bergkam van Hallstatt, de Hallstätter See vlakbij; het dorp zelf ligt verspreid.",
+   "de": "Der Gosausee spiegelt den Dachsteingletscher, einen Grat von Hallstatt entfernt, der Hallstätter See nah; das Dorf selbst ist zerstreut.",
+   "fr": "Le Gosausee reflète le glacier du Dachstein, à une crête de Hallstatt, le lac de Hallstatt tout près ; le village est dispersé.",
+   "es": "El Gosausee refleja el glaciar del Dachstein a una cresta de Hallstatt, con el Hallstätter See cerca; el pueblo está disperso.",
+   "it": "Il Gosausee riflette il ghiacciaio del Dachstein a una cresta da Hallstatt, con l'Hallstätter See vicino; il paese è sparso."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:grasse",
+  "appeal": 6.4,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 6,
+   "sights": 6,
+   "atmosphere": 6,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "Perfume town in the hills behind Cannes, with ochre lanes, a cathedral and the International Perfume Museum; worn in places, a half day.",
+   "nl": "Parfumstad in de heuvels achter Cannes, met okerkleurige straatjes, een kathedraal en het Internationaal Parfummuseum; plaatselijk vervallen, een halve dag.",
+   "de": "Parfümstadt in den Hügeln hinter Cannes, mit ockerfarbenen Gassen, Kathedrale und Internationalem Parfümmuseum; stellenweise verwohnt, ein halber Tag.",
+   "fr": "Ville du parfum dans les collines derrière Cannes, ruelles ocre, cathédrale et Musée international de la parfumerie ; défraîchie par endroits, une demi-journée.",
+   "es": "Ciudad del perfume en las colinas tras Cannes, con callejas ocres, catedral y Museo Internacional del Perfume; algo ajada, media jornada.",
+   "it": "Città del profumo sulle colline dietro Cannes, vicoli ocra, cattedrale e Museo internazionale della profumeria; un po' trascurata, mezza giornata."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:grazalema",
+  "appeal": 7.3,
+  "band": "good",
+  "criteria": {
+   "setting": 8,
+   "character": 8,
+   "sights": 5,
+   "atmosphere": 7,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "Listed whitewashed village high in a green biosphere-reserve sierra, a hub for griffon-cliff hikes; few sights beyond the walks.",
+   "nl": "Beschermd wit dorp hoog in een groene sierra met biosfeerstatus, uitvalsbasis voor wandelingen langs gierenkliffen; weinig meer dan de tochten.",
+   "de": "Geschütztes weißes Dorf hoch in einer grünen Biosphären-Sierra, Ausgangspunkt für Wanderungen an Geierfelsen; wenig jenseits der Touren.",
+   "fr": "Village blanc protégé, haut perché dans une sierra verte réserve de biosphère, base de randonnées aux falaises à vautours ; peu au-delà.",
+   "es": "Pueblo blanco protegido en lo alto de una sierra verde, reserva de la biosfera, base de rutas entre buitreras; poco más que las rutas.",
+   "it": "Borgo bianco tutelato in alto in una sierra verde riserva della biosfera, base per escursioni tra le pareti dei grifoni; poco altro."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:helsingor",
+  "appeal": 7.2,
+  "band": "good",
+  "criteria": {
+   "setting": 6,
+   "character": 7,
+   "sights": 8,
+   "atmosphere": 6,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "UNESCO-listed Kronborg Castle guards the Sound beside a half-timbered old town, Louisiana museum 8 km away; a day trip more than a stay.",
+   "nl": "Kronborg op de UNESCO-lijst bewaakt de Sont naast een oude stad met vakwerk, het Louisiana-museum op 8 km; eerder een dagtocht dan een verblijf.",
+   "de": "Das UNESCO-Schloss Kronborg bewacht den Öresund neben einer Fachwerkaltstadt, das Louisiana 8 km entfernt; eher Tagesausflug als Aufenthalt.",
+   "fr": "Le château de Kronborg, classé à l'UNESCO, garde l'Øresund près d'une vieille ville à colombages, Louisiana à 8 km ; excursion plus que séjour.",
+   "es": "El castillo de Kronborg, de la UNESCO, vigila el Sund junto a un casco de entramado, el Louisiana a 8 km; más excursión que estancia.",
+   "it": "Il castello di Kronborg, patrimonio UNESCO, sorveglia l'Øresund accanto a un centro a graticcio, Louisiana a 8 km; più gita che soggiorno."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:hoddevik",
+  "appeal": 6.6,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 8,
+   "character": 4,
+   "sights": 5,
+   "atmosphere": 7,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Green cliff-backed sandy bay on the Stad peninsula, known for cold-water surfing; remote, with almost nothing beyond the beach.",
+   "nl": "Groene zandbaai tussen kliffen op het schiereiland Stad, bekend om surfen in koud water; afgelegen, met bijna niets naast het strand.",
+   "de": "Grüne, von Klippen gesäumte Sandbucht auf der Halbinsel Stad, bekannt fürs Kaltwassersurfen; abgelegen, kaum etwas außer dem Strand.",
+   "fr": "Baie de sable verte entre falaises, péninsule de Stad, réputée pour le surf en eau froide ; isolée, rien d'autre que la plage.",
+   "es": "Bahía de arena verde entre acantilados en la península de Stad, conocida por el surf en agua fría; remota, casi nada más que la playa.",
+   "it": "Baia sabbiosa verde tra scogliere sulla penisola di Stad, nota per il surf in acqua fredda; isolata, quasi nulla oltre la spiaggia."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:honfleur",
+  "appeal": 7.8,
+  "band": "very_good",
+  "criteria": {
+   "setting": 7,
+   "character": 9,
+   "sights": 6,
+   "atmosphere": 7,
+   "uniqueness": 8
+  },
+  "why": {
+   "en": "Slate-hung houses around a 17th-century harbour that drew the Impressionists, with the church of Saint-Étienne; small and very busy.",
+   "nl": "Leistenen gevels rond een 17e-eeuwse haven die de impressionisten trok, met de kerk Saint-Étienne; klein en erg druk.",
+   "de": "Schieferverkleidete Häuser um einen Hafen aus dem 17. Jahrhundert, der die Impressionisten anzog, mit der Kirche Saint-Étienne; klein und sehr voll.",
+   "fr": "Maisons d'ardoise autour d'un port du XVIIe siècle qui attira les impressionnistes, avec l'église Saint-Étienne ; petite et très fréquentée.",
+   "es": "Casas de pizarra en torno a un puerto del siglo XVII que atrajo a los impresionistas, con la iglesia de Saint-Étienne; pequeña y muy concurrida.",
+   "it": "Case rivestite d'ardesia attorno a un porto del Seicento che attirò gli impressionisti, con la chiesa di Saint-Étienne; piccola e molto affollata."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:hvar",
+  "appeal": 7.6,
+  "band": "very_good",
+  "criteria": {
+   "setting": 8,
+   "character": 8,
+   "sights": 6,
+   "atmosphere": 7,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "Fortress above a harbour town of grey stone and orange roofs on a lavender island; crowded and loud in the party season.",
+   "nl": "Vesting boven een havenstad van grijze steen en oranje daken op een lavendeleiland; vol en luid in het feestseizoen.",
+   "de": "Festung über einer Hafenstadt aus grauem Stein und orangen Dächern auf einer Lavendelinsel; in der Partysaison voll und laut.",
+   "fr": "Forteresse au-dessus d'un port de pierre grise et de toits orange sur une île à lavande ; bondé et bruyant en saison des fêtes.",
+   "es": "Fortaleza sobre un puerto de piedra gris y tejados naranjas en una isla de lavanda; abarrotado y ruidoso en temporada de fiesta.",
+   "it": "Fortezza sopra un porto di pietra grigia e tetti arancioni su un'isola di lavanda; affollato e rumoroso nella stagione delle feste."
+  },
+  "confidence": "high",
+  "flags": [
+   "data_conflict"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:ile-de-re",
+  "appeal": 7.3,
+  "band": "good",
+  "criteria": {
+   "setting": 7,
+   "character": 8,
+   "sights": 5,
+   "atmosphere": 7,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Whitewashed villages, salt pans and bike paths on a flat Atlantic isle, with fortified Saint-Martin; crowded in summer, few big sights.",
+   "nl": "Witte dorpjes, zoutpannen en fietspaden op een vlak Atlantisch eiland, met vestingstadje Saint-Martin; zomers druk, weinig grote bezienswaardigheden.",
+   "de": "Weiße Dörfer, Salzgärten und Radwege auf einer flachen Atlantikinsel, mit befestigtem Saint-Martin; im Sommer voll, wenige große Ziele.",
+   "fr": "Villages blancs, marais salants et pistes cyclables sur une île plate de l'Atlantique, avec Saint-Martin fortifié ; bondée l'été, peu de grands sites.",
+   "es": "Pueblos blancos, salinas y carriles bici en una isla atlántica llana, con Saint-Martin fortificado; llena en verano, pocos grandes atractivos.",
+   "it": "Villaggi bianchi, saline e piste ciclabili su un'isola atlantica piatta, con Saint-Martin fortificata; affollata d'estate, poche grandi attrazioni."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:ios",
+  "appeal": 6.5,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Cycladic party island with a hilltop Chora and the long Mylopotas beach; the nights are loud and the sights are few.",
+   "nl": "Cycladisch feesteiland met een Chora op de heuvel en het lange strand van Mylopotas; de nachten zijn luid en de bezienswaardigheden schaars.",
+   "de": "Kykladische Partyinsel mit Chora auf dem Hügel und dem langen Strand von Mylopotas; laute Nächte und wenige Sehenswürdigkeiten.",
+   "fr": "Île cycladique de la fête avec sa Chora perchée et la longue plage de Mylopotas ; nuits bruyantes et peu de sites.",
+   "es": "Isla cicládica de fiesta con una Chora en lo alto y la larga playa de Mylopotas; noches ruidosas y pocos monumentos.",
+   "it": "Isola cicladica della festa con la Chora in collina e la lunga spiaggia di Mylopotas; notti rumorose e poche attrazioni."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ }
+]

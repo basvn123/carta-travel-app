@@ -49,6 +49,31 @@ it (see reports/rating_audit_v3_baseline.json):
   7. Tier-3 count stays between 35 and 70.
          "Worth the journey" means the continent's icons; the band keeps a
          recalibration from silently inflating or emptying the top shelf.
+  T759 (formula v5, rating v5 batch R2) changes three gates, each for a
+  reason given here and in Execution/P7/T757-T760-rating-v5-scoring.md:
+  3. The SD gap compares hand scores with rubric scores ON THE SAME PLACES
+     (the blind hand check of T758, 157 hand-scored places scored again by
+     the rubric), per class, and asserts the worst class. The gate exists to
+     catch a scale that squeezes toward the mean (v3's fitted fallback). The
+     curated and rubric POPULATIONS differ by design (hand scores cover
+     Paris at 10 down to a 2.5 transit stop; the rubric scored the long
+     tail), so their pooled gap measures the catalogue, not the scale: 0.48
+     for cities and 0.44 for 37 rubric areas, against 0.01 and 0.02 for
+     towns and villages. That figure stays printed, unasserted.
+  5. |corr(beauty, log population)| < 0.20 under v5 (0.12 under v4). Beauty
+     v2 (T756) measures the urban fabric within 5 km, which grows with a
+     town (measured 0.152 on the reference population when the owner
+     switched it on, T756-a); the fairness claim belongs to gate 4, the
+     score, which v5 holds at -0.09.
+  7. Under v5 the top shelf is the Exceptional band, 9.0 or more, held per
+     class between 0.5% and 4% (the plan's gate 3, config bands): a village
+     reaches it on village terms, so one catalogue-wide count no longer
+     says whether the shelf is right. The tier-3 count (8.7) stays printed:
+     the wire tier keeps v4's cutoffs until T763.
+  8. Under v5, every rated place has a confidence (curated, rubric or
+     estimated) and a reason in six languages: the hand reasons in
+     app_data/curated_why_i18n.json, the rubric reasons in
+     app_data/rubric_appeal.json (the plan's gate 4; on the wire from T762).
 
 The suite is the rating_v4 contract. Under rating_v3 it reports the measured
 values and skips - Phase A is what makes it pass, and gating on the model tag
@@ -91,12 +116,17 @@ MAX_SCORE_POP_CORR = 0.10
 MAX_BEAUTY_POP_CORR = 0.12
 MIN_BADGED_PER_COUNTRY = 3
 TIER3_RANGE = (35, 70)
+MAX_BEAUTY_POP_CORR_V5 = 0.20
+TOP_BAND = 9.0
+TOP_SHARE_RANGE = (0.005, 0.04)     # per class, formula v5
+CLASSES = ("metro", "city", "town", "village", "area")
 
 BASELINE_MODEL = "rating_v3"
 
 # The reference population for gates 3-5 (see docstring). Absent file means
 # an old checkout: fall back to the full catalogue.
 _REFERENCE = ROOT / "reports" / "rating_reference_population.json"
+_DESTS = []      # set by measure()
 
 
 def _corr(xs, ys):
@@ -109,19 +139,61 @@ def _corr(xs, ys):
     return sum((x - mx) * (y - my) for x, y in zip(xs, ys)) / (sx * sy)
 
 
-def _population_stats(dests):
-    """(sd_gap, score_pop_corr, beauty_pop_corr) over one set of dests."""
-    cur, fit = [], []
-    for d in dests:
-        r = d.get("rating")
-        if not r:
-            continue
-        (cur if "appeal" in (r.get("components") or {}) else fit).append(r["score"])
+def _sd(xs):
+    m = sum(xs) / len(xs)
+    return math.sqrt(sum((x - m) ** 2 for x in xs) / len(xs))
 
-    def _sd(xs):
-        m = sum(xs) / len(xs)
-        return math.sqrt(sum((x - m) ** 2 for x in xs) / len(xs))
-    sd_gap = abs(_sd(cur) - _sd(fit)) if len(cur) > 1 and len(fit) > 1 else 0.0
+
+def _class(d):
+    return (d.get("place") or {}).get("class")
+
+
+RUBRIC = ROOT / "app_data" / "rubric_appeal.json"
+WHY_I18N = ROOT / "app_data" / "curated_why_i18n.json"
+LANGS = ("en", "nl", "de", "fr", "es", "it")
+HANDCHECK = ROOT / "data" / "rating" / "rubric_scores" / "handcheck.json"
+CURATED = ROOT / "app_data" / "curated_appeal.json"
+
+
+def _matched_sd_gap(dests_by_id):
+    """Worst per-class |SD(hand) - SD(rubric)| over the blind hand check."""
+    if not (HANDCHECK.exists() and CURATED.exists()):
+        return None
+    rows = json.loads(HANDCHECK.read_text(encoding="utf-8"))
+    hand = json.loads(CURATED.read_text(encoding="utf-8"))
+    gaps = {}
+    for cls in CLASSES:
+        pairs = [(hand[r["id"]]["appeal"], r["appeal"]) for r in rows
+                 if r["id"] in hand and _class(dests_by_id.get(r["id"], {})) == cls]
+        if len(pairs) > 2:
+            gaps[cls] = abs(_sd([h for h, _ in pairs]) - _sd([a for _, a in pairs]))
+    return gaps
+
+
+def _population_stats(dests):
+    """(sd_gap, score_pop_corr, beauty_pop_corr) over one set of dests.
+
+    v4: curated against fitted, pooled. v5 (T759): curated against rubric,
+    per class, the worst class (see rule 3 above)."""
+    v5 = any((d.get("rating") or {}).get("confidence") == "rubric" for d in dests)
+    if v5:
+        gaps = []
+        for cls in CLASSES:
+            cur = [d["rating"]["score"] for d in dests if d.get("rating")
+                   and _class(d) == cls and d["rating"]["confidence"] == "curated"]
+            rub = [d["rating"]["score"] for d in dests if d.get("rating")
+                   and _class(d) == cls and d["rating"]["confidence"] == "rubric"]
+            if len(cur) > 1 and len(rub) > 1:
+                gaps.append(abs(_sd(cur) - _sd(rub)))
+        sd_gap = max(gaps) if gaps else 0.0
+    else:
+        cur, fit = [], []
+        for d in dests:
+            r = d.get("rating")
+            if not r:
+                continue
+            (cur if "appeal" in (r.get("components") or {}) else fit).append(r["score"])
+        sd_gap = abs(_sd(cur) - _sd(fit)) if len(cur) > 1 and len(fit) > 1 else 0.0
 
     pop_rows = [(d["rating"]["score"],
                  (d.get("beauty") or {}).get("score"),
@@ -138,8 +210,10 @@ def _population_stats(dests):
 
 
 def measure():
+    global _DESTS
     data = json.loads(INPUT.read_text(encoding="utf-8"))
     dests = data["destinations"]
+    _DESTS = list(dests.values())
     model = (data["meta"].get("rating_model") or {}).get("version", "?")
     report = audit(data)
 
@@ -171,6 +245,8 @@ def test_rating_distribution():
     (model, report, ref_stats, all_stats,
      ref_pinned, badges_exist, badged) = measure()
     sd_gap, score_pop, beauty_pop = ref_stats
+    v5 = (report.get("model") or {}).get("formula") == "v5" or model.startswith("v5") and         any((d.get("rating") or {}).get("confidence") == "rubric" for d in _DESTS)
+    max_beauty_pop = MAX_BEAUTY_POP_CORR_V5 if v5 else MAX_BEAUTY_POP_CORR
 
     lines = [f"model {model}  (input {INPUT.name})"]
     problems = []
@@ -191,16 +267,28 @@ def test_rating_distribution():
 
     pop = "reference population" if ref_pinned else "full catalogue (no reference file)"
     lines.append(f"  gates 3-5 on the {pop}:")
-    lines.append(f"  curated/fitted sd gap {sd_gap:.3f}")
-    if sd_gap >= MAX_SD_GAP:
-        problems.append(f"curated/fitted sd gap {sd_gap:.3f} >= {MAX_SD_GAP}")
+    if v5:
+        matched = _matched_sd_gap({d.get("id"): d for d in _DESTS})
+        lines.append(f"  curated/rubric sd gap, populations per class (unasserted) {sd_gap:.3f}")
+        if matched is None:
+            problems.append("no blind hand check (data/rating/rubric_scores/handcheck.json)")
+        else:
+            worst = max(matched.values())
+            lines.append("  hand/rubric sd gap on the same places: "
+                         + "  ".join(f"{c} {g:.2f}" for c, g in matched.items()))
+            if worst >= MAX_SD_GAP:
+                problems.append(f"hand/rubric sd gap {worst:.3f} >= {MAX_SD_GAP}")
+    else:
+        lines.append(f"  curated/fitted sd gap {sd_gap:.3f}")
+        if sd_gap >= MAX_SD_GAP:
+            problems.append(f"curated/fitted sd gap {sd_gap:.3f} >= {MAX_SD_GAP}")
 
     lines.append(f"  corr(score, log pop) {score_pop:+.3f}  "
                  f"corr(beauty, log pop) {beauty_pop:+.3f}")
     if abs(score_pop) >= MAX_SCORE_POP_CORR:
         problems.append(f"|corr(score, log pop)| {abs(score_pop):.3f} >= {MAX_SCORE_POP_CORR}")
-    if abs(beauty_pop) >= MAX_BEAUTY_POP_CORR:
-        problems.append(f"|corr(beauty, log pop)| {abs(beauty_pop):.3f} >= {MAX_BEAUTY_POP_CORR}")
+    if abs(beauty_pop) >= max_beauty_pop:
+        problems.append(f"|corr(beauty, log pop)| {abs(beauty_pop):.3f} >= {max_beauty_pop}")
     if ref_pinned:
         a_gap, a_sp, a_bp = all_stats
         lines.append(f"  (full catalogue, unasserted: gap {a_gap:.3f}  "
@@ -208,9 +296,35 @@ def test_rating_distribution():
 
     tier3 = report["split"]["all"]["tiers"]["3"]
     lines.append(f"  tier-3 count {tier3}")
-    if not TIER3_RANGE[0] <= tier3 <= TIER3_RANGE[1]:
+    if v5:
+        for cls in CLASSES:
+            rows = [d["rating"]["score"] for d in _DESTS if d.get("rating") and _class(d) == cls]
+            share = sum(s >= TOP_BAND for s in rows) / len(rows)
+            lines.append(f"  {cls:8s} at {TOP_BAND}+: {share:.1%} of {len(rows)}")
+            if not TOP_SHARE_RANGE[0] <= share <= TOP_SHARE_RANGE[1]:
+                problems.append(f"{cls} share at {TOP_BAND}+ {share:.1%} outside "
+                                f"{TOP_SHARE_RANGE[0]:.1%} to {TOP_SHARE_RANGE[1]:.0%}")
+    elif not TIER3_RANGE[0] <= tier3 <= TIER3_RANGE[1]:
         problems.append(f"tier-3 count {tier3} outside {TIER3_RANGE}")
 
+    if v5:
+        reasons = {}
+        if WHY_I18N.exists():
+            reasons.update(json.loads(WHY_I18N.read_text(encoding="utf-8")))
+        if RUBRIC.exists():
+            reasons.update({k: v["why"] for k, v in
+                            json.loads(RUBRIC.read_text(encoding="utf-8")).items()})
+        rated = [d for d in _DESTS if d.get("rating")]
+        no_conf = [d["id"] for d in rated
+                   if d["rating"].get("confidence") not in ("curated", "rubric", "estimated")]
+        no_why = [d["id"] for d in rated
+                  if not all((reasons.get(d["id"]) or {}).get(lang) for lang in LANGS)]
+        lines.append(f"  reasons in six languages {len(rated) - len(no_why)}/{len(rated)}, "
+                     f"confidence {len(rated) - len(no_conf)}/{len(rated)}")
+        if no_conf:
+            problems.append(f"{len(no_conf)} rated places without a v5 confidence: {no_conf[:5]}")
+        if no_why:
+            problems.append(f"{len(no_why)} rated places without a six-language reason: {no_why[:5]}")
     if badges_exist:
         held = {c: v["n"] for c, v in report["countries"].items()}
         thin = {c: n for c, n in badged.items()
@@ -255,7 +369,12 @@ def test_anchor_curve_meets_the_contract():
 
     data = anchors.load_wire(INPUT)
     model = data["meta"].get("rating_model") or {}
-    if model.get("version") == BASELINE_MODEL or "fallback_fit" not in model:
+    # T759: under formula v5 every scored place carries a hand or rubric
+    # appeal, so no place on the wire went through the fitted curve; it only
+    # waits for an estimated newcomer.
+    no_fitted = not any("appeal" not in ((d.get("rating") or {}).get("components") or {"appeal": 1})
+                        for d in data["destinations"].values())
+    if model.get("version") == BASELINE_MODEL or "fallback_fit" not in model or no_fitted:
         msg = "no fitted calibration in this input; curve check idle"
         if pytest:
             pytest.skip(msg)

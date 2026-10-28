@@ -1,0 +1,923 @@
+[
+ {
+  "id": "gem:poros",
+  "appeal": 6.6,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 8,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Island town on Poros with a monastery, the Burtzi fortress and Askeli beach 1.5 km away; the Kalaureia site lies 3 km off.",
+   "nl": "Eilandstad op Poros met een klooster, het fort Burtzi en het strand Askeli op 1,5 km; de site Kalaureia ligt 3 km verder.",
+   "de": "Inselstadt auf Poros mit Kloster, der Festung Burtzi und dem Strand Askeli in 1,5 km; die Stätte Kalaureia liegt 3 km entfernt.",
+   "fr": "Ville insulaire de Poros avec un monastère, le fort Burtzi et la plage d'Askeli à 1,5 km; le site de Kalaureia est à 3 km.",
+   "es": "Ciudad insular de Poros con un monasterio, el fuerte Burtzi y la playa de Askeli a 1,5 km; Kalaureia, a 3 km.",
+   "it": "Cittadina insulare di Poros con un monastero, il forte Burtzi e la spiaggia di Askeli a 1,5 km; Kalaureia è a 3 km."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:de-panne",
+  "appeal": 6.0,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 5,
+   "sights": 4,
+   "atmosphere": 6,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Belgian beach resort at the French border with Oostduinkerke and Nieuwpoort beaches near; Veurne's market square lies 6 km off.",
+   "nl": "Belgische badplaats aan de Franse grens met de stranden van Oostduinkerke en Nieuwpoort dichtbij; de Grote Markt van Veurne ligt 6 km weg.",
+   "de": "Belgischer Badeort an der französischen Grenze, die Strände von Oostduinkerke und Nieuwpoort sind nah; Veurnes Grote Markt liegt 6 km entfernt.",
+   "fr": "Station balnéaire belge à la frontière française, avec les plages d'Oostduinkerke et de Nieuport proches; la Grand-Place de Furnes est à 6 km.",
+   "es": "Localidad de playa belga en la frontera francesa con las playas de Oostduinkerke y Nieuwpoort cerca; la Grote Markt de Veurne, a 6 km.",
+   "it": "Località balneare belga al confine francese con le spiagge di Oostduinkerke e Nieuwpoort vicine; la Grote Markt di Veurne è a 6 km."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:pomorie",
+  "appeal": 5.9,
+  "band": "none",
+  "criteria": {
+   "setting": 6,
+   "character": 5,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Bulgarian Black Sea town beside Pomorie Lake with a monastery of St. George; Sunny Beach lies 15 km off, sights are few.",
+   "nl": "Bulgaarse stad aan de Zwarte Zee naast het Meer van Pomorie met een Sint-Joriskloster; Sunny Beach ligt 15 km weg, weinig bezienswaardigheden.",
+   "de": "Bulgarische Schwarzmeerstadt am Pomorie-See mit Georgskloster; Sunny Beach liegt 15 km entfernt, wenige Sehenswürdigkeiten.",
+   "fr": "Ville bulgare de la mer Noire au bord du lac de Pomorie, avec un monastère Saint-Georges; Sunny Beach est à 15 km, peu de sites.",
+   "es": "Ciudad búlgara del mar Negro junto al lago de Pomorie con un monasterio de San Jorge; Sunny Beach está a 15 km, pocos atractivos.",
+   "it": "Cittadina bulgara sul Mar Nero accanto al lago di Pomorie con un monastero di San Giorgio; Sunny Beach è a 15 km, poche attrazioni."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:manfredonia",
+  "appeal": 5.9,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 5,
+   "sights": 5,
+   "atmosphere": 4,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Apulian port city at the Gargano; the archaeological museum is in town, while Monte Sant'Angelo lies 9 km away.",
+   "nl": "Havenstad in Apulië aan de Gargano; het archeologisch museum ligt in de stad, Monte Sant'Angelo ligt 9 km weg.",
+   "de": "Hafenstadt in Apulien am Gargano; das archäologische Museum liegt in der Stadt, Monte Sant'Angelo ist 9 km entfernt.",
+   "fr": "Ville portuaire des Pouilles au pied du Gargano; le musée archéologique est en ville, Monte Sant'Angelo est à 9 km.",
+   "es": "Ciudad portuaria de Apulia en el Gargano; el museo arqueológico está en la ciudad, Monte Sant'Angelo está a 9 km.",
+   "it": "Città portuale pugliese sul Gargano; il museo archeologico è in città, Monte Sant'Angelo è a 9 km."
+  },
+  "confidence": "low",
+  "flags": [
+   "thin_card"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:anversa-degli-abruzzi",
+  "appeal": 7.0,
+  "band": "good",
+  "criteria": {
+   "setting": 8,
+   "character": 7,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "Abruzzo village of 347 people in the Borghi più belli list, 3 km from the Sagittario gorges; San Domenico hermitage 6 km off.",
+   "nl": "Dorp in de Abruzzen met 347 inwoners bij de Borghi più belli, 3 km van de Sagittario-kloven; kluis van San Domenico op 6 km.",
+   "de": "Dorf in den Abruzzen mit 347 Einwohnern bei den Borghi più belli, 3 km von den Sagittario-Schluchten; die Einsiedelei San Domenico liegt 6 km entfernt.",
+   "fr": "Village des Abruzzes de 347 habitants classé Borghi più belli, à 3 km des gorges du Sagittario; l'ermitage de San Domenico est à 6 km.",
+   "es": "Pueblo de los Abruzos, 347 habitantes, entre los Borghi più belli, a 3 km de las gargantas del Sagittario; ermita de San Domenico a 6.",
+   "it": "Borgo d'Abruzzo di 347 abitanti tra i Borghi più belli, a 3 km dalle gole del Sagittario; l'eremo di San Domenico è a 6 km."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:chudenice",
+  "appeal": 5.6,
+  "band": "none",
+  "criteria": {
+   "setting": 6,
+   "character": 5,
+   "sights": 4,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Small Czech village with a château and a viewpoint rated well on the card; Švihov Castle lies 8 km off, little else.",
+   "nl": "Klein Tsjechisch dorp met een kasteel en een uitzichtpunt dat op de kaart goed scoort; Švihov Castle ligt 8 km weg, verder weinig.",
+   "de": "Kleines tschechisches Dorf mit Schloss und einem auf der Karte gut bewerteten Aussichtspunkt; Burg Švihov liegt 8 km entfernt, sonst wenig.",
+   "fr": "Petit village tchèque avec un château et un belvédère bien noté sur la fiche; le château de Švihov est à 8 km, peu d'autre.",
+   "es": "Pequeño pueblo checo con un castillo y un mirador bien valorado en la ficha; el castillo de Švihov está a 8 km, poco más.",
+   "it": "Piccolo paese ceco con un castello e un belvedere ben valutato nella scheda; il castello di Švihov è a 8 km, poco altro."
+  },
+  "confidence": "low",
+  "flags": [
+   "thin_card"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:mulhouse",
+  "appeal": 6.4,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 4,
+   "character": 5,
+   "sights": 7,
+   "atmosphere": 5,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Alsace city known for the Cité du train and Cité de l'Automobile museums; the centre is ordinary, Grand Ballon lies 24 km off.",
+   "nl": "Stad in de Elzas bekend om de musea Cité du train en Cité de l'Automobile; het centrum is gewoon, Grand Ballon op 24 km.",
+   "de": "Stadt im Elsass, bekannt für die Museen Cité du train und Cité de l'Automobile; das Zentrum ist gewöhnlich, der Grand Ballon liegt 24 km entfernt.",
+   "fr": "Ville alsacienne connue pour la Cité du train et la Cité de l'Automobile; le centre est ordinaire, le Grand Ballon est à 24 km.",
+   "es": "Ciudad alsaciana conocida por la Cité du train y la Cité de l'Automobile; el centro es corriente, el Grand Ballon está a 24 km.",
+   "it": "Città alsaziana nota per la Cité du train e la Cité de l'Automobile; il centro è ordinario, il Grand Ballon è a 24 km."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:godalming",
+  "appeal": 5.8,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 6,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Surrey market town in the Surrey Hills with the Watts Gallery 4 km away; Guildford's cathedral and castle lie 6 km off.",
+   "nl": "Marktstad in Surrey in de Surrey Hills met de Watts Gallery op 4 km; de kathedraal en het kasteel van Guildford liggen 6 km weg.",
+   "de": "Marktstadt in Surrey in den Surrey Hills mit der Watts Gallery in 4 km; Kathedrale und Burg von Guildford liegen 6 km entfernt.",
+   "fr": "Ville-marché du Surrey dans les Surrey Hills, la Watts Gallery à 4 km; la cathédrale et le château de Guildford sont à 6 km.",
+   "es": "Ciudad de mercado de Surrey en los Surrey Hills con la Watts Gallery a 4 km; catedral y castillo de Guildford, a 6 km.",
+   "it": "Cittadina di mercato del Surrey nei Surrey Hills con la Watts Gallery a 4 km; cattedrale e castello di Guildford sono a 6 km."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:saint-jean-de-cole",
+  "appeal": 7.0,
+  "band": "good",
+  "criteria": {
+   "setting": 6,
+   "character": 8,
+   "sights": 6,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Dordogne village in the Plus Beaux Villages list with its own château; Bruzac, Puyguilhem and the Villars cave lie 5 to 7 km off.",
+   "nl": "Dorp in de Dordogne bij Les Plus Beaux Villages met een eigen kasteel; Bruzac, Puyguilhem en de grot van Villars op 5 tot 7 km.",
+   "de": "Dorf in der Dordogne bei den Plus Beaux Villages mit eigenem Schloss; Bruzac, Puyguilhem und die Höhle von Villars liegen 5 bis 7 km entfernt.",
+   "fr": "Village de Dordogne classé Plus Beaux Villages avec son château; Bruzac, Puyguilhem et la grotte de Villars sont à 5 à 7 km.",
+   "es": "Pueblo del Dordoña entre Les Plus Beaux Villages con su propio castillo; Bruzac, Puyguilhem y la cueva de Villars, a 5 o 7 km.",
+   "it": "Villaggio della Dordogna tra Les Plus Beaux Villages con un proprio castello; Bruzac, Puyguilhem e la grotta di Villars sono a 5 o 7 km."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:highbridge",
+  "appeal": 5.0,
+  "band": "none",
+  "criteria": {
+   "setting": 3,
+   "character": 4,
+   "sights": 3,
+   "atmosphere": 3,
+   "uniqueness": 2
+  },
+  "why": {
+   "en": "Somerset lowland town with little of its own; the Burnham-on-Sea lighthouses and Brent Knoll Camp lie 4 km away.",
+   "nl": "Stad in de laagvlakte van Somerset met zelf weinig; de vuurtorens van Burnham-on-Sea en Brent Knoll Camp liggen 4 km weg.",
+   "de": "Ort im Tiefland von Somerset mit wenig Eigenem; die Leuchttürme von Burnham-on-Sea und Brent Knoll Camp liegen 4 km entfernt.",
+   "fr": "Bourg de la plaine du Somerset avec peu de choses propres; les phares de Burnham-on-Sea et Brent Knoll Camp sont à 4 km.",
+   "es": "Localidad llana de Somerset con poco propio; los faros de Burnham-on-Sea y Brent Knoll Camp están a 4 km.",
+   "it": "Località pianeggiante del Somerset con poco di proprio; i fari di Burnham-on-Sea e Brent Knoll Camp sono a 4 km."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:harlosa",
+  "appeal": 5.0,
+  "band": "none",
+  "criteria": {
+   "setting": 4,
+   "character": 4,
+   "sights": 3,
+   "atmosphere": 3,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Scanian farm village whose card lists only parish churches, some 4 to 8 km away; little to see in the village.",
+   "nl": "Dorp in Schonen waarvan de kaart alleen parochiekerken noemt, op 4 tot 8 km afstand; in het dorp weinig te zien.",
+   "de": "Dorf in Schonen, dessen Karte nur Pfarrkirchen nennt, rund 4 bis 8 km entfernt; im Dorf wenig zu sehen.",
+   "fr": "Village de Scanie dont la fiche ne cite que des églises paroissiales, à 4 à 8 km; peu à voir au village.",
+   "es": "Pueblo de Escania cuya ficha solo cita iglesias parroquiales, a 4 u 8 km; poco que ver en el pueblo.",
+   "it": "Paese della Scania la cui scheda cita solo chiese parrocchiali, a 4 o 8 km; poco da vedere nel paese."
+  },
+  "confidence": "low",
+  "flags": [
+   "thin_card"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:johvi",
+  "appeal": 5.4,
+  "band": "none",
+  "criteria": {
+   "setting": 4,
+   "character": 4,
+   "sights": 4,
+   "atmosphere": 4,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Estonian town with a church and the Baltic Klint on its list; Kukruse manor lies 5 km away, and the card is thin.",
+   "nl": "Estse stad met een kerk en de Baltische Klint in de lijst; het landhuis van Kukruse ligt 5 km weg, en de kaart is mager.",
+   "de": "Estnische Stadt mit Kirche und dem Baltischen Glint auf der Liste; das Gutshaus Kukruse liegt 5 km entfernt, die Karte ist dünn.",
+   "fr": "Ville estonienne avec une église et le Glint balte sur sa liste; le manoir de Kukruse est à 5 km, la fiche est mince.",
+   "es": "Ciudad estonia con una iglesia y el Glint báltico en su lista; la mansión de Kukruse está a 5 km, la ficha es escasa.",
+   "it": "Cittadina estone con una chiesa e il Klint baltico in elenco; il maniero di Kukruse è a 5 km, la scheda è scarsa."
+  },
+  "confidence": "low",
+  "flags": [
+   "thin_card"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:castellar-de-la-frontera",
+  "appeal": 6.9,
+  "band": "good",
+  "criteria": {
+   "setting": 7,
+   "character": 8,
+   "sights": 5,
+   "atmosphere": 5,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Hill village in a protected historic grouping, with the castle and the old Castellar Viejo; small, with few other sights.",
+   "nl": "Heuveldorp in een beschermd historisch geheel, met het kasteel en het oude Castellar Viejo; klein, met weinig andere bezienswaardigheden.",
+   "de": "Hügeldorf in einem geschützten historischen Ensemble, mit Burg und dem alten Castellar Viejo; klein, mit wenigen weiteren Sehenswürdigkeiten.",
+   "fr": "Village perché dans un ensemble historique protégé, avec le château et le vieux Castellar Viejo; petit, peu d'autres sites.",
+   "es": "Pueblo de colina en un conjunto histórico protegido, con el castillo y el viejo Castellar Viejo; pequeño, con pocos más atractivos.",
+   "it": "Borgo collinare in un insieme storico protetto, con il castello e l'antico Castellar Viejo; piccolo, con poche altre attrazioni."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:ars-en-re",
+  "appeal": 7.0,
+  "band": "good",
+  "criteria": {
+   "setting": 8,
+   "character": 8,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Island village on Ré in the Plus Beaux Villages list, with the Phare des Baleines 5 km away and a nature reserve nearby.",
+   "nl": "Eilanddorp op Ré bij Les Plus Beaux Villages de France, met de Phare des Baleines op 5 km en een natuurreservaat dichtbij.",
+   "de": "Inseldorf auf Ré bei den Plus Beaux Villages de France, der Phare des Baleines liegt 5 km entfernt, ein Naturreservat ist nah.",
+   "fr": "Village insulaire de l'île de Ré classé Plus Beaux Villages de France, le phare des Baleines à 5 km et une réserve naturelle proche.",
+   "es": "Pueblo isleño de Ré entre Les Plus Beaux Villages de France, con el faro de las Ballenas a 5 km y una reserva natural cerca.",
+   "it": "Villaggio insulare di Ré tra Les Plus Beaux Villages de France, con il faro delle Balene a 5 km e una riserva naturale vicina."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:tournemire",
+  "appeal": 6.5,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 7,
+   "sights": 5,
+   "atmosphere": 5,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Cantal village at 772 m in the Plus Beaux Villages list with its church and nearby châteaux; the Plomb du Cantal lies 22 km off.",
+   "nl": "Dorp in de Cantal op 772 m bij Les Plus Beaux Villages met kerk en kastelen in de buurt; Plomb du Cantal op 22 km.",
+   "de": "Dorf im Cantal auf 772 m bei den Plus Beaux Villages mit Kirche und Schlössern in der Nähe; der Plomb du Cantal in 22 km.",
+   "fr": "Village du Cantal à 772 m classé Plus Beaux Villages, avec son église et des châteaux proches; le Plomb du Cantal est à 22 km.",
+   "es": "Pueblo del Cantal a 772 m entre Les Plus Beaux Villages con su iglesia y castillos cercanos; el Plomb du Cantal está a 22 km.",
+   "it": "Villaggio del Cantal a 772 m tra Les Plus Beaux Villages con una chiesa e castelli vicini; il Plomb du Cantal è a 22 km."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:chatillon-sur-seine",
+  "appeal": 6.0,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 5,
+   "character": 7,
+   "sights": 5,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Burgundy town in the Plus Beaux Détours list with Saint-Vorles church and a regional museum; the card names no standout.",
+   "nl": "Stad in Bourgondië bij Les Plus Beaux Détours met de kerk Saint-Vorles en een streekmuseum; de kaart noemt geen blikvanger.",
+   "de": "Stadt im Burgund bei den Plus Beaux Détours mit der Kirche Saint-Vorles und einem Regionalmuseum; die Karte nennt keinen Höhepunkt.",
+   "fr": "Ville bourguignonne classée Plus Beaux Détours avec l'église Saint-Vorles et un musée régional; la fiche ne cite aucun site phare.",
+   "es": "Ciudad borgoñona entre Les Plus Beaux Détours con la iglesia de Saint-Vorles y un museo regional; la ficha no cita ningún gran reclamo.",
+   "it": "Cittadina borgognona tra Les Plus Beaux Détours con la chiesa di Saint-Vorles e un museo regionale; la scheda non cita attrazioni di rilievo."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:bleggio-superiore",
+  "appeal": 6.5,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 5,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Trentino village in the Borghi più belli list; Stenico Castle and the Fiavè pile-dwelling site lie 4 km away, lakes beyond.",
+   "nl": "Dorp in Trentino bij de Borghi più belli; Kasteel Stenico en de paalwoningsite van Fiavè liggen 4 km weg, meren daarachter.",
+   "de": "Dorf im Trentino bei den Borghi più belli; Burg Stenico und die Pfahlbausiedlung von Fiavè liegen 4 km entfernt, dahinter Seen.",
+   "fr": "Village du Trentin classé Borghi più belli; le château de Stenico et le site palafittique de Fiavè sont à 4 km, des lacs au-delà.",
+   "es": "Pueblo del Trentino entre los Borghi più belli; el castillo de Stenico y el yacimiento palafítico de Fiavè están a 4 km, lagos más allá.",
+   "it": "Borgo trentino tra i Borghi più belli; il castello di Stenico e il sito palafitticolo di Fiavè sono a 4 km, laghi più oltre."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:kungsbacka",
+  "appeal": 5.6,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 5,
+   "sights": 3,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Swedish coastal town whose card lists only parish areas and Kungsbacka church; Rådasjön lake lies 20 km off.",
+   "nl": "Zweedse kuststad waarvan de kaart alleen parochiegebieden en de Kungsbackakerk noemt; het meer Rådasjön ligt 20 km weg.",
+   "de": "Schwedische Küstenstadt, deren Karte nur Gemeindebezirke und die Kungsbacka-Kirche nennt; der See Rådasjön liegt 20 km entfernt.",
+   "fr": "Ville côtière suédoise dont la fiche ne cite que des paroisses et l'église de Kungsbacka; le lac Rådasjön est à 20 km.",
+   "es": "Ciudad costera sueca cuya ficha solo cita parroquias y la iglesia de Kungsbacka; el lago Rådasjön está a 20 km.",
+   "it": "Città costiera svedese la cui scheda cita solo parrocchie e la chiesa di Kungsbacka; il lago Rådasjön è a 20 km."
+  },
+  "confidence": "low",
+  "flags": [
+   "thin_card"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:jerica",
+  "appeal": 6.0,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 5,
+   "character": 7,
+   "sights": 4,
+   "atmosphere": 4,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Small Valencian hill village in a protected historic grouping with a Mudejar tower; Segorbe cathedral lies 10 km away.",
+   "nl": "Klein Valenciaans heuveldorp in een beschermd historisch geheel met een mudéjartoren; de kathedraal van Segorbe ligt 10 km weg.",
+   "de": "Kleines valencianisches Hügeldorf in einem geschützten historischen Ensemble mit Mudéjar-Turm; die Kathedrale von Segorbe liegt 10 km entfernt.",
+   "fr": "Petit village valencien dans un ensemble historique protégé avec une tour mudéjare; la cathédrale de Segorbe est à 10 km.",
+   "es": "Pequeño pueblo de colina valenciano en un conjunto histórico protegido con una torre mudéjar; la catedral de Segorbe está a 10 km.",
+   "it": "Piccolo borgo collinare valenciano in un insieme storico protetto con una torre mudejar; la cattedrale di Segorbe è a 10 km."
+  },
+  "confidence": "low",
+  "flags": [
+   "thin_card"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:lappi",
+  "appeal": 5.8,
+  "band": "none",
+  "criteria": {
+   "setting": 4,
+   "character": 5,
+   "sights": 6,
+   "atmosphere": 3,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Finnish parish village near the UNESCO-listed Sammallahdenmäki site, 4 km away; the church is its other sight.",
+   "nl": "Fins parochiedorp bij de UNESCO-site Sammallahdenmäki, 4 km weg; de kerk is de andere bezienswaardigheid.",
+   "de": "Finnisches Kirchdorf bei der UNESCO-Stätte Sammallahdenmäki, 4 km entfernt; die Kirche ist die zweite Sehenswürdigkeit.",
+   "fr": "Village paroissial finlandais près du site UNESCO de Sammallahdenmäki, à 4 km; l'église est l'autre site.",
+   "es": "Pueblo parroquial finlandés cerca del sitio UNESCO de Sammallahdenmäki, a 4 km; la iglesia es el otro atractivo.",
+   "it": "Villaggio parrocchiale finlandese vicino al sito UNESCO di Sammallahdenmäki, a 4 km; l'altra attrazione è la chiesa."
+  },
+  "confidence": "low",
+  "flags": [
+   "thin_card",
+   "name_ambiguous"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:sperlinga",
+  "appeal": 6.5,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 4,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Sicilian hill village of 600 in the Borghi più belli list at 750 m; its cathedral and municipal sights are in Nicosia, 5 km off.",
+   "nl": "Siciliaans heuveldorp van 600 inwoners bij de Borghi più belli op 750 m; kathedraal en gemeentelijke bezienswaardigheden liggen in Nicosia, 5 km weg.",
+   "de": "Sizilianisches Hügeldorf mit 600 Einwohnern bei den Borghi più belli auf 750 m; Kathedrale und Rathaus liegen in Nicosia, 5 km entfernt.",
+   "fr": "Village sicilien perché de 600 habitants classé Borghi più belli à 750 m; la cathédrale et la mairie sont à Nicosia, à 5 km.",
+   "es": "Pueblo siciliano de colina de 600 habitantes entre los Borghi più belli a 750 m; catedral y ayuntamiento en Nicosia, a 5 km.",
+   "it": "Borgo collinare siciliano di 600 abitanti tra i Borghi più belli a 750 m; cattedrale e municipio sono a Nicosia, a 5 km."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:podgorzyn",
+  "appeal": 6.9,
+  "band": "good",
+  "criteria": {
+   "setting": 8,
+   "character": 5,
+   "sights": 6,
+   "atmosphere": 5,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Sudeten village below Chojnik Castle, with Śnieżka summit 11.5 km away and a national park around; a walking base.",
+   "nl": "Dorp in de Sudeten onder Kasteel Chojnik, met de top van de Śnieżka op 11,5 km en een nationaal park eromheen; een wandelbasis.",
+   "de": "Dorf in den Sudeten unterhalb der Burg Chojnik, der Gipfel der Schneekoppe liegt 11,5 km entfernt, ein Nationalpark ringsum; Wanderbasis.",
+   "fr": "Village des Sudètes sous le château de Chojnik, avec le sommet de la Śnieżka à 11,5 km et un parc national autour; base de randonnée.",
+   "es": "Pueblo de los Sudetes bajo el castillo de Chojnik, con la cumbre de Śnieżka a 11,5 km y un parque nacional alrededor; base de senderismo.",
+   "it": "Paese dei Sudeti sotto il castello di Chojnik, con la vetta della Śnieżka a 11,5 km e un parco nazionale intorno; base escursionistica."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:domme",
+  "appeal": 7.3,
+  "band": "good",
+  "criteria": {
+   "setting": 8,
+   "character": 8,
+   "sights": 6,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Dordogne bastide village in the Plus Beaux Villages list, with a rock-cut chapel at Caudon; Castelnaud lies 5 km away.",
+   "nl": "Bastidedorp in de Dordogne bij Les Plus Beaux Villages, met een in rots uitgehouwen kapel bij Caudon; Castelnaud ligt 5 km weg.",
+   "de": "Bastidendorf in der Dordogne bei den Plus Beaux Villages, mit in den Fels gehauener Kapelle bei Caudon; Castelnaud liegt 5 km entfernt.",
+   "fr": "Village de bastide en Dordogne classé Plus Beaux Villages, avec une chapelle monolithe à Caudon; Castelnaud est à 5 km.",
+   "es": "Pueblo bastida del Dordoña entre Les Plus Beaux Villages, con una capilla monolítica en Caudon; Castelnaud está a 5 km.",
+   "it": "Villaggio bastide della Dordogna tra Les Plus Beaux Villages, con una cappella monolitica a Caudon; Castelnaud è a 5 km."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:rochefort-en-terre",
+  "appeal": 7.5,
+  "band": "good",
+  "criteria": {
+   "setting": 7,
+   "character": 9,
+   "sights": 5,
+   "atmosphere": 7,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "Geranium-dressed stone village in both Plus Beaux Villages and Petites Cités de Caractère; compact and busy in season.",
+   "nl": "Stenen dorp vol geraniums bij zowel Les Plus Beaux Villages als de Petites Cités de Caractère; compact en druk in het seizoen.",
+   "de": "Steindorf voller Geranien, sowohl bei den Plus Beaux Villages als auch den Petites Cités de Caractère; kompakt und im Sommer voll.",
+   "fr": "Village de pierre fleuri de géraniums, classé Plus Beaux Villages et Petites Cités de Caractère; compact et fréquenté en saison.",
+   "es": "Pueblo de piedra lleno de geranios, en Les Plus Beaux Villages y las Petites Cités de Caractère; compacto y concurrido en temporada.",
+   "it": "Villaggio di pietra ricco di gerani, tra Les Plus Beaux Villages e le Petites Cités de Caractère; compatto e affollato in stagione."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:vaasa",
+  "appeal": 6.0,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 5,
+   "character": 5,
+   "sights": 5,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Finnish coastal city with the Pohjanmaa museum, churches and a Tropiclandia water park; Korsholm Castle lies 6 km off.",
+   "nl": "Finse kuststad met het Pohjanmaan Museo, kerken en het waterpark Tropiclandia; Korsholm Castle ligt 6 km weg.",
+   "de": "Finnische Küstenstadt mit Pohjanmaan Museo, Kirchen und dem Wasserpark Tropiclandia; Schloss Korsholm liegt 6 km entfernt.",
+   "fr": "Ville côtière finlandaise avec le musée de Pohjanmaa, des églises et le parc aquatique Tropiclandia; le château de Korsholm est à 6 km.",
+   "es": "Ciudad costera finlandesa con el museo Pohjanmaa, iglesias y el parque acuático Tropiclandia; el castillo de Korsholm está a 6 km.",
+   "it": "Città costiera finlandese con il museo Pohjanmaa, chiese e il parco acquatico Tropiclandia; il castello di Korsholm è a 6 km."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:fabriano",
+  "appeal": 6.6,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 7,
+   "sights": 6,
+   "atmosphere": 5,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Marche town named a UNESCO Creative City, with a paper museum and the Frasassi caves 8 km away; a modest centre.",
+   "nl": "Stad in de Marche, UNESCO Creatieve Stad, met een papiermuseum en de grotten van Frasassi op 8 km; een bescheiden centrum.",
+   "de": "Stadt in den Marken, UNESCO-Kreativstadt, mit Papiermuseum und den Frasassi-Grotten in 8 km; ein bescheidenes Zentrum.",
+   "fr": "Ville des Marches, Ville créative de l'UNESCO, avec un musée du papier et les grottes de Frasassi à 8 km; centre modeste.",
+   "es": "Ciudad de las Marcas, Ciudad Creativa de la UNESCO, con un museo del papel y las cuevas de Frasassi a 8 km; centro modesto.",
+   "it": "Città marchigiana, Città Creativa UNESCO, con un museo della carta e le grotte di Frasassi a 8 km; centro modesto."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:casole-d-elsa",
+  "appeal": 6.3,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 7,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Tuscan hill village awarded the Touring Club's Orange Flag, with a collegiate church and civic museum; the card names little else.",
+   "nl": "Toscaans heuveldorp met de Oranje Vlag van de Touring Club, een collegiale kerk en een stedelijk museum; de kaart noemt verder weinig.",
+   "de": "Toskanisches Hügeldorf mit der Orangen Flagge des Touring Club, Stiftskirche und Stadtmuseum; die Karte nennt sonst wenig.",
+   "fr": "Village toscan perché distingué par le Drapeau orange du Touring Club, avec une collégiale et un musée civique; la fiche cite peu d'autre.",
+   "es": "Pueblo toscano de colina con la Bandera Naranja del Touring Club, una colegiata y un museo cívico; la ficha cita poco más.",
+   "it": "Borgo collinare toscano con la Bandiera Arancione del Touring Club, una collegiata e un museo civico; la scheda cita poco altro."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:tivoli",
+  "appeal": 8.2,
+  "band": "very_good",
+  "criteria": {
+   "setting": 7,
+   "character": 7,
+   "sights": 10,
+   "atmosphere": 6,
+   "uniqueness": 9
+  },
+  "why": {
+   "en": "Villa d'Este and Hadrian's Villa, two UNESCO sites in one town, each worth a long journey; crowded and best as a day trip.",
+   "nl": "Villa d'Este en Hadrianus' villa, twee UNESCO-sites in één stad, elk een lange reis waard; druk en het best als dagtrip.",
+   "de": "Villa d'Este und Hadrians Villa, zwei UNESCO-Stätten in einer Stadt, jede eine lange Reise wert; voll und am besten als Tagesausflug.",
+   "fr": "Villa d'Este et la villa d'Hadrien, deux sites UNESCO dans une ville, chacun valant un long trajet; fréquenté, idéal en excursion.",
+   "es": "Villa d'Este y la Villa Adriana, dos sitios UNESCO en una ciudad, cada uno digno de un largo viaje; concurrido y mejor como excursión.",
+   "it": "Villa d'Este e Villa Adriana, due siti UNESCO in una città, ciascuno degno di un lungo viaggio; affollato e meglio come gita."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:buzau",
+  "appeal": 5.2,
+  "band": "none",
+  "criteria": {
+   "setting": 4,
+   "character": 4,
+   "sights": 3,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Romanian city with a communal palace, an ethnographic house collection and a church; the card holds few named sights.",
+   "nl": "Roemeense stad met een gemeentepaleis, een etnografische huiscollectie en een kerk; de kaart noemt weinig bezienswaardigheden.",
+   "de": "Rumänische Stadt mit Gemeindepalast, ethnografischer Hausausstellung und einer Kirche; die Karte nennt wenige Sehenswürdigkeiten.",
+   "fr": "Ville roumaine avec un palais communal, une maison-collection ethnographique et une église; la fiche cite peu de sites.",
+   "es": "Ciudad rumana con un palacio comunal, una casa-colección etnográfica y una iglesia; la ficha cita pocos atractivos.",
+   "it": "Città rumena con un palazzo comunale, una casa-collezione etnografica e una chiesa; la scheda cita poche attrazioni."
+  },
+  "confidence": "low",
+  "flags": [
+   "thin_card"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:bakewell",
+  "appeal": 7.0,
+  "band": "good",
+  "criteria": {
+   "setting": 8,
+   "character": 7,
+   "sights": 7,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Peak District market town with Haddon Hall and the Old House Museum; Chatsworth House lies 5 km away.",
+   "nl": "Marktstad in het Peak District met Haddon Hall en het Old House Museum; Chatsworth House ligt 5 km weg.",
+   "de": "Marktstadt im Peak District mit Haddon Hall und dem Old House Museum; Chatsworth House liegt 5 km entfernt.",
+   "fr": "Ville-marché du Peak District avec Haddon Hall et l'Old House Museum; Chatsworth House est à 5 km.",
+   "es": "Ciudad de mercado del Peak District con Haddon Hall y el Old House Museum; Chatsworth House está a 5 km.",
+   "it": "Cittadina di mercato del Peak District con Haddon Hall e l'Old House Museum; Chatsworth House è a 5 km."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:zuzemberk",
+  "appeal": 6.2,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 4,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Slovenian village with a castle on the Krka; Stara Soteska castle lies 9 km away, and the village itself is small.",
+   "nl": "Sloveens dorp met een kasteel aan de Krka; kasteel Stara Soteska ligt 9 km weg, en het dorp zelf is klein.",
+   "de": "Slowenisches Dorf mit einer Burg an der Krka; Schloss Stara Soteska liegt 9 km entfernt, der Ort selbst ist klein.",
+   "fr": "Village slovène avec un château sur la Krka; le château de Stara Soteska est à 9 km, et le village est petit.",
+   "es": "Pueblo esloveno con un castillo junto al Krka; el castillo de Stara Soteska está a 9 km, y el pueblo es pequeño.",
+   "it": "Paese sloveno con un castello sul Krka; il castello di Stara Soteska è a 9 km, e il paese è piccolo."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:katerini",
+  "appeal": 5.8,
+  "band": "none",
+  "criteria": {
+   "setting": 6,
+   "character": 4,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Greek city at the foot of Mount Olympus, listed 25 km away, with a folklore museum; the beaches are 7 km off.",
+   "nl": "Griekse stad aan de voet van de Olympus, vermeld op 25 km, met een volkenkundig museum; de stranden liggen 7 km weg.",
+   "de": "Griechische Stadt am Fuß des Olymp, auf der Karte in 25 km Entfernung, mit Volkskundemuseum; die Strände liegen 7 km entfernt.",
+   "fr": "Ville grecque au pied de l'Olympe, cité à 25 km, avec un musée folklorique; les plages sont à 7 km.",
+   "es": "Ciudad griega al pie del Olimpo, citado a 25 km, con un museo folclórico; las playas están a 7 km.",
+   "it": "Città greca ai piedi dell'Olimpo, citato a 25 km, con un museo folcloristico; le spiagge sono a 7 km."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:asbyrgi",
+  "appeal": 7.2,
+  "band": "good",
+  "criteria": {
+   "setting": 9,
+   "character": 6,
+   "sights": 7,
+   "atmosphere": 8,
+   "uniqueness": 8
+  },
+  "why": {
+   "en": "Horseshoe canyon with 100 m walls and birch woods in a quiet corner of north Iceland; remote, so a day or two at most.",
+   "nl": "Hoefijzervormige kloof met 100 m hoge wanden en berkenbos in een stille hoek van Noord-IJsland; afgelegen, dus hooguit een dag of twee.",
+   "de": "Hufeisenförmige Schlucht mit 100 m hohen Wänden und Birkenwald in einer stillen Ecke Nordislands; abgelegen, daher höchstens ein bis zwei Tage.",
+   "fr": "Canyon en fer à cheval, parois de 100 m et bouleaux, dans un coin calme du nord de l'Islande; isolé, un jour ou deux.",
+   "es": "Cañón en herradura, paredes de 100 m y abedules, en un rincón tranquilo del norte de Islandia; aislado, uno o dos días.",
+   "it": "Canyon a ferro di cavallo, pareti di 100 m e betulle, in un angolo tranquillo dell'Islanda del nord; isolato, uno o due giorni."
+  },
+  "confidence": "medium",
+  "flags": [
+   "data_conflict",
+   "class_mismatch"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:saldus",
+  "appeal": 5.2,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 4,
+   "sights": 3,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Latvian town with St. John's Church, Kalnmuiža manor and a lake 1.5 km away; the card names few sights.",
+   "nl": "Letse stad met de Sint-Janskerk, het landhuis Kalnmuiža en een meer op 1,5 km; de kaart noemt weinig bezienswaardigheden.",
+   "de": "Lettische Stadt mit der Johanniskirche, dem Gutshaus Kalnmuiža und einem See in 1,5 km; die Karte nennt wenige Sehenswürdigkeiten.",
+   "fr": "Ville lettone avec l'église Saint-Jean, le manoir de Kalnmuiža et un lac à 1,5 km; la fiche cite peu de sites.",
+   "es": "Ciudad letona con la iglesia de San Juan, la mansión de Kalnmuiža y un lago a 1,5 km; la ficha cita pocos atractivos.",
+   "it": "Cittadina lettone con la chiesa di San Giovanni, il maniero di Kalnmuiža e un lago a 1,5 km; la scheda cita poche attrazioni."
+  },
+  "confidence": "low",
+  "flags": [
+   "thin_card"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:hoogeveen",
+  "appeal": 5.4,
+  "band": "none",
+  "criteria": {
+   "setting": 3,
+   "character": 5,
+   "sights": 3,
+   "atmosphere": 4,
+   "uniqueness": 2
+  },
+  "why": {
+   "en": "Drenthe town with a Grote Kerk and the Museum de 5000 Morgen; the card names little else, and the setting is flat.",
+   "nl": "Stad in Drenthe met een Grote Kerk en het Museum de 5000 Morgen; de kaart noemt verder weinig en het landschap is vlak.",
+   "de": "Stadt in Drenthe mit Grote Kerk und dem Museum de 5000 Morgen; die Karte nennt sonst wenig, die Umgebung ist flach.",
+   "fr": "Ville de Drenthe avec une Grote Kerk et le Museum de 5000 Morgen; la fiche cite peu d'autre, le cadre est plat.",
+   "es": "Ciudad de Drenthe con una Grote Kerk y el Museum de 5000 Morgen; la ficha cita poco más, el entorno es llano.",
+   "it": "Cittadina del Drenthe con una Grote Kerk e il Museum de 5000 Morgen; la scheda cita poco altro, il paesaggio è piatto."
+  },
+  "confidence": "low",
+  "flags": [
+   "thin_card"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:morro-d-alba",
+  "appeal": 6.0,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 7,
+   "sights": 3,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Marche hill village in the Borghi più belli list with a utensil museum and a shrine 5 km away; little else.",
+   "nl": "Heuveldorp in de Marche bij de Borghi più belli met een gebruiksvoorwerpenmuseum en een heiligdom op 5 km; verder weinig.",
+   "de": "Hügeldorf in den Marken bei den Borghi più belli mit Gerätemuseum und einem Heiligtum in 5 km; sonst wenig.",
+   "fr": "Village des Marches classé Borghi più belli avec un musée des ustensiles et un sanctuaire à 5 km; peu d'autre.",
+   "es": "Pueblo de las Marcas entre los Borghi più belli con un museo de utensilios y un santuario a 5 km; poco más.",
+   "it": "Borgo marchigiano tra i Borghi più belli con un museo degli utensili e un santuario a 5 km; poco altro."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:san-giovanni-di-fassa",
+  "appeal": 7.4,
+  "band": "good",
+  "criteria": {
+   "setting": 9,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "Dolomite village at 1,325 m in the Borghi più belli list, with the Vajolet Towers 6 km off; a small Ladin museum.",
+   "nl": "Dorp in de Dolomieten op 1.325 m bij de Borghi più belli, met de Vajolet-torens op 6 km; een klein Ladinisch museum.",
+   "de": "Dolomitendorf auf 1.325 m bei den Borghi più belli, die Vajolet-Türme liegen 6 km entfernt; ein kleines ladinisches Museum.",
+   "fr": "Village des Dolomites à 1 325 m classé Borghi più belli, avec les tours du Vajolet à 6 km; un petit musée ladin.",
+   "es": "Pueblo de los Dolomitas a 1.325 m entre los Borghi più belli, con las Torres del Vajolet a 6 km; un pequeño museo ladino.",
+   "it": "Paese dolomitico a 1.325 m tra i Borghi più belli, con le Torri del Vajolet a 6 km; un piccolo museo ladino."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:dannewerk",
+  "appeal": 6.8,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 5,
+   "character": 5,
+   "sights": 7,
+   "atmosphere": 4,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "Village by the Viking Danevirke and Haithabu, a UNESCO site; Schleswig's Gottorf Castle and cathedral lie 4 to 5 km off.",
+   "nl": "Dorp bij het Vikingtijdse Danevirke en Haithabu, een UNESCO-site; Slot Gottorf en de dom van Schleswig liggen 4 tot 5 km weg.",
+   "de": "Dorf beim wikingerzeitlichen Danewerk und Haithabu, einer UNESCO-Stätte; Schloss Gottorf und der Dom von Schleswig liegen 4 bis 5 km entfernt.",
+   "fr": "Village près du Danevirke viking et de Haithabu, site UNESCO; le château de Gottorf et la cathédrale de Schleswig sont à 4 à 5 km.",
+   "es": "Pueblo junto al Danevirke vikingo y Haithabu, sitio de la UNESCO; el castillo de Gottorf y la catedral de Schleswig, a 4 o 5 km.",
+   "it": "Paese presso il Danevirke vichingo e Haithabu, sito UNESCO; il castello di Gottorf e il duomo di Schleswig sono a 4 o 5 km."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:panicale",
+  "appeal": 6.8,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 7,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Umbrian hill village in the Borghi più belli list with a theatre; Lake Trasimeno lies 12 km away.",
+   "nl": "Umbrisch heuveldorp bij de Borghi più belli met een theater; het Trasimeense meer ligt 12 km weg.",
+   "de": "Umbrisches Hügeldorf bei den Borghi più belli mit Theater; der Trasimenische See liegt 12 km entfernt.",
+   "fr": "Village ombrien perché classé Borghi più belli avec un théâtre; le lac Trasimène est à 12 km.",
+   "es": "Pueblo umbro de colina entre los Borghi più belli con un teatro; el lago Trasimeno está a 12 km.",
+   "it": "Borgo collinare umbro tra i Borghi più belli con un teatro; il lago Trasimeno è a 12 km."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ }
+]

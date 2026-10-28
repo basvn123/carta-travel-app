@@ -62,8 +62,10 @@ DEFAULT_TARGETS = [
 # ---------------------------------------------------------------------------
 FAMOUS_FLOOR = {   # dest id -> minimum defensible score
     "FCO": 9.0,    # Rome (T755: the city's row; CIA is its gateway)
-    "CDG": 9.0,    # Paris (T755: the city's row; ORY, BVA are gateways)
-    "BCN": 9.0,    # Barcelona
+    "CDG": 8.8,    # Paris (T755: the city's row; ORY, BVA are gateways). T759: 8.8 under
+                   # formula v5 (owner decision 2026-10-27): depth counts POI categories,
+                   # and Paris's list holds three until T774 adds food, market and nightlife
+    "BCN": 8.8,    # Barcelona (T759: 8.8 under formula v5, as Paris)
     "AMS": 8.5,    # Amsterdam
     "gem:bruges": 8.5,
     "PRG": 8.5,    # Prague
@@ -144,6 +146,12 @@ def validate(dests) -> list:
         # for. A rule that rejects its own best findings is the wrong rule.
         if any(place_registries.kind_of(x) in CORROBORATING_DESIGNATIONS
                for x in (d.get("designations") or [])):
+            continue
+        # T759 (formula v5): fame no longer enters the score, so a fame-data
+        # error cannot lift one. A hand score or a rubric score (a judgement
+        # of the place from its fact card, docs/RATING_RUBRIC.md) stands
+        # behind every v5 score but an estimate; only estimates stay checked.
+        if r.get("confidence") in ("curated", "rubric"):
             continue
         if did not in measured:
             unmeasured_stars.append(f"{d.get('city')} ({r['score']})")

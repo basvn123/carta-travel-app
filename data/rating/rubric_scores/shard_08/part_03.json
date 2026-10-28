@@ -1,0 +1,909 @@
+[
+ {
+  "id": "gem:wincanton",
+  "appeal": 5.7,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 5,
+   "sights": 4,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Somerset market town; Stourhead and King Alfred's Tower lie 9 km away, and the town itself gives little to see.",
+   "nl": "Marktstad in Somerset; Stourhead en King Alfred's Tower liggen 9 km weg, de stad zelf geeft weinig te zien.",
+   "de": "Marktstadt in Somerset; Stourhead und King Alfred's Tower liegen 9 km entfernt, der Ort selbst bietet wenig.",
+   "fr": "Ville-marché du Somerset; Stourhead et King Alfred's Tower sont à 9 km, la ville elle-même offre peu à voir.",
+   "es": "Ciudad de mercado de Somerset; Stourhead y King Alfred's Tower están a 9 km, la ciudad ofrece poco que ver.",
+   "it": "Cittadina di mercato del Somerset; Stourhead e King Alfred's Tower sono a 9 km, la città offre poco da vedere."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:vignory",
+  "appeal": 5.9,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 6,
+   "sights": 4,
+   "atmosphere": 4,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Small Haute-Marne village in the Petites Cités de Caractère with a Saint-Étienne church and a château; a short stop.",
+   "nl": "Klein dorp in de Haute-Marne bij de Petites Cités de Caractère met een kerk Saint-Étienne en een kasteel; een korte stop.",
+   "de": "Kleines Dorf in der Haute-Marne bei den Petites Cités de Caractère mit Kirche Saint-Étienne und Schloss; ein kurzer Halt.",
+   "fr": "Petit village de Haute-Marne des Petites Cités de Caractère avec l'église Saint-Étienne et un château; une courte halte.",
+   "es": "Pequeño pueblo del Alto Marne de las Petites Cités de Caractère con la iglesia de Saint-Étienne y un castillo; parada corta.",
+   "it": "Piccolo paese dell'Alta Marna tra le Petites Cités de Caractère con la chiesa di Saint-Étienne e un castello; breve sosta."
+  },
+  "confidence": "low",
+  "flags": [
+   "thin_card"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:shtip",
+  "appeal": 5.6,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 5,
+   "sights": 5,
+   "atmosphere": 4,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "North Macedonian town with a Fatih mosque, a clock tower and a bedesten; the card lists no major sight.",
+   "nl": "Noord-Macedonische stad met een Fatih-moskee, een klokkentoren en een bedesten; de kaart noemt geen grote bezienswaardigheid.",
+   "de": "Nordmazedonische Stadt mit Fatih-Moschee, Uhrturm und Bedesten; die Karte nennt keine große Sehenswürdigkeit.",
+   "fr": "Ville nord-macédonienne avec une mosquée Fatih, une tour de l'horloge et un bedesten; la fiche ne cite aucun site majeur.",
+   "es": "Ciudad norte macedonia con una mezquita Fatih, una torre del reloj y un bedesten; la ficha no cita ningún atractivo mayor.",
+   "it": "Città nordmacedone con una moschea Fatih, una torre dell'orologio e un bedesten; la scheda non cita attrazioni maggiori."
+  },
+  "confidence": "low",
+  "flags": [
+   "thin_card"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:zafra",
+  "appeal": 6.5,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 5,
+   "character": 7,
+   "sights": 5,
+   "atmosphere": 5,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Extremaduran town with a protected historic core and the Ducal Palace of Feria; compact, with a short list of sights.",
+   "nl": "Stad in Extremadura met een beschermde historische kern en het hertogelijk paleis van Feria; compact, met een korte lijst bezienswaardigheden.",
+   "de": "Stadt in der Extremadura mit geschütztem historischem Kern und dem Herzogspalast von Feria; kompakt, mit kurzer Sehenswürdigkeitenliste.",
+   "fr": "Ville d'Estrémadure avec un centre historique protégé et le palais des ducs de Feria; compacte, avec peu de sites.",
+   "es": "Ciudad extremeña con un casco histórico protegido y el Palacio de los Duques de Feria; compacta, con pocos atractivos.",
+   "it": "Città estremena con un centro storico protetto e il Palazzo dei Duchi di Feria; compatta, con poche attrazioni."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:thale",
+  "appeal": 6.8,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 5,
+   "sights": 6,
+   "atmosphere": 5,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Harz town below the Hexentanzplatz and Teufelsmauer rock wall, 3 km away; Quedlinburg lies 8 km off, the town itself is plain.",
+   "nl": "Stad in de Harz onder de Hexentanzplatz en de rotswand Teufelsmauer, 3 km weg; Quedlinburg ligt 8 km verder, de stad zelf is gewoon.",
+   "de": "Harzstadt unterhalb von Hexentanzplatz und Teufelsmauer, 3 km entfernt; Quedlinburg liegt 8 km weit, der Ort selbst ist schlicht.",
+   "fr": "Ville du Harz sous la Hexentanzplatz et le mur rocheux de la Teufelsmauer, à 3 km; Quedlinburg est à 8 km, la ville est simple.",
+   "es": "Ciudad del Harz bajo la Hexentanzplatz y el muro rocoso Teufelsmauer, a 3 km; Quedlinburg está a 8 km, la ciudad es sencilla.",
+   "it": "Città dell'Harz sotto la Hexentanzplatz e il muro roccioso Teufelsmauer, a 3 km; Quedlinburg è a 8 km, la città è semplice."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:aranjuez",
+  "appeal": 7.5,
+  "band": "good",
+  "criteria": {
+   "setting": 6,
+   "character": 7,
+   "sights": 8,
+   "atmosphere": 6,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "UNESCO cultural landscape of royal palace and gardens, the Jardín del Rey and Casa del Labrador; a calm town, a long day trip.",
+   "nl": "UNESCO-cultuurlandschap met koninklijk paleis en tuinen, de Jardín del Rey en Casa del Labrador; een rustige stad, een lange dagtrip.",
+   "de": "UNESCO-Kulturlandschaft mit Königspalast und Gärten, Jardín del Rey und Casa del Labrador; eine ruhige Stadt, ein langer Tagesausflug.",
+   "fr": "Paysage culturel UNESCO de palais royal et de jardins, avec le Jardín del Rey et la Casa del Labrador; ville calme, longue excursion.",
+   "es": "Paisaje cultural de la UNESCO de palacio real y jardines, con el Jardín del Rey y la Casa del Labrador; ciudad tranquila, excursión larga.",
+   "it": "Paesaggio culturale UNESCO di palazzo reale e giardini, con il Jardín del Rey e la Casa del Labrador; città calma, lunga gita."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:kassiopi",
+  "appeal": 6.5,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 8,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "North Corfu harbour village with a fortress and Kalamionas beach; Mount Pantokrator lies 6 km off, and the village is small.",
+   "nl": "Havendorp in het noorden van Corfu met een vesting en het strand Kalamionas; de Pantokrator ligt 6 km weg, het dorp is klein.",
+   "de": "Hafendorf im Norden von Korfu mit Festung und Kalamionas-Strand; der Pantokrator liegt 6 km entfernt, das Dorf ist klein.",
+   "fr": "Village portuaire du nord de Corfou avec une forteresse et la plage de Kalamionas; le Pantokrator est à 6 km, le village est petit.",
+   "es": "Pueblo portuario del norte de Corfú con una fortaleza y la playa de Kalamionas; el Pantokrator está a 6 km, el pueblo es pequeño.",
+   "it": "Villaggio portuale del nord di Corfù con una fortezza e la spiaggia di Kalamionas; il Pantocratore è a 6 km, il paese è piccolo."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:torgiano",
+  "appeal": 6.2,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 5,
+   "character": 7,
+   "sights": 5,
+   "atmosphere": 5,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Umbrian village in the Borghi più belli list known on the card for wine and olive-oil museums; small, with little else.",
+   "nl": "Umbrisch dorp bij de Borghi più belli, op de kaart bekend om wijn- en olijfolie-musea; klein, met verder weinig.",
+   "de": "Umbrisches Dorf bei den Borghi più belli, auf der Karte durch Wein- und Olivenölmuseen belegt; klein, sonst wenig.",
+   "fr": "Village ombrien classé Borghi più belli, connu sur la fiche pour ses musées du vin et de l'huile d'olive; petit, peu d'autre.",
+   "es": "Pueblo umbro entre los Borghi più belli, con museos del vino y del aceite de oliva según la ficha; pequeño, poco más.",
+   "it": "Borgo umbro tra i Borghi più belli, con musei del vino e dell'olio d'oliva secondo la scheda; piccolo, poco altro."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:l-aquila",
+  "appeal": 6.8,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 6,
+   "sights": 7,
+   "atmosphere": 5,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Abruzzo mountain town with a cathedral, the Collemaggio basilica and a Spanish fort; a worn but sizeable historic centre.",
+   "nl": "Bergstad in de Abruzzen met een kathedraal, de basiliek van Collemaggio en een Spaans fort; een gehavend maar flink historisch centrum.",
+   "de": "Bergstadt in den Abruzzen mit Kathedrale, der Basilika Collemaggio und spanischem Fort; ein gezeichnetes, aber ansehnliches historisches Zentrum.",
+   "fr": "Ville de montagne des Abruzzes avec cathédrale, basilique de Collemaggio et fort espagnol; un centre historique marqué mais étendu.",
+   "es": "Ciudad de montaña de los Abruzos con catedral, la basílica de Collemaggio y un fuerte español; un casco histórico marcado pero amplio.",
+   "it": "Città di montagna d'Abruzzo con cattedrale, la basilica di Collemaggio e un forte spagnolo; un centro storico provato ma ampio."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:montegridolfo",
+  "appeal": 6.4,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 8,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Walled hill village of 154 people in the Borghi più belli list, with north and south walls; tiny, a short walk.",
+   "nl": "Ommuurd heuveldorp van 154 inwoners bij de Borghi più belli, met noordelijke en zuidelijke muren; piepklein, een korte wandeling.",
+   "de": "Ummauertes Hügeldorf mit 154 Einwohnern bei den Borghi più belli, mit Nord- und Südmauer; winzig, ein kurzer Spaziergang.",
+   "fr": "Village perché fortifié de 154 habitants classé Borghi più belli, avec ses remparts nord et sud; minuscule, une courte balade.",
+   "es": "Pueblo amurallado de colina de 154 habitantes entre los Borghi più belli, con murallas norte y sur; diminuto, un paseo corto.",
+   "it": "Borgo collinare murato di 154 abitanti tra i Borghi più belli, con mura nord e sud; minuscolo, una breve passeggiata."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:ellesmere",
+  "appeal": 5.7,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 5,
+   "sights": 4,
+   "atmosphere": 4,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Shropshire market town beside a mere; Whittington Castle and Hanmer Mere lie 7 to 8 km away, with little else.",
+   "nl": "Marktstad in Shropshire naast een meertje; Whittington Castle en Hanmer Mere liggen 7 tot 8 km weg, verder weinig.",
+   "de": "Marktstadt in Shropshire neben einem See; Whittington Castle und Hanmer Mere liegen 7 bis 8 km entfernt, sonst wenig.",
+   "fr": "Ville-marché du Shropshire près d'un lac; Whittington Castle et Hanmer Mere sont à 7 à 8 km, peu d'autre.",
+   "es": "Ciudad de mercado de Shropshire junto a un lago; Whittington Castle y Hanmer Mere están a 7 u 8 km, poco más.",
+   "it": "Cittadina di mercato dello Shropshire accanto a un lago; Whittington Castle e Hanmer Mere sono a 7 o 8 km, poco altro."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:montesarchio",
+  "appeal": 6.2,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 5,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Campanian town in the Borghi più belli list with its castle and the national archaeological museum of Sannio Caudino.",
+   "nl": "Stad in Campanië bij de Borghi più belli met een kasteel en het nationaal archeologisch museum van Sannio Caudino.",
+   "de": "Stadt in Kampanien bei den Borghi più belli mit Burg und dem archäologischen Nationalmuseum des Sannio Caudino.",
+   "fr": "Ville de Campanie classée Borghi più belli avec son château et le musée archéologique national du Sannio Caudino.",
+   "es": "Ciudad de Campania entre los Borghi più belli con su castillo y el museo arqueológico nacional del Sannio Caudino.",
+   "it": "Cittadina campana tra i Borghi più belli con il suo castello e il Museo Archeologico Nazionale del Sannio Caudino."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:loch-ness",
+  "appeal": 7.3,
+  "band": "good",
+  "criteria": {
+   "setting": 8,
+   "character": 5,
+   "sights": 7,
+   "atmosphere": 5,
+   "uniqueness": 8
+  },
+  "why": {
+   "en": "Deep loch under the ruins of Urquhart Castle; the Falls of Divach lie 3 km off, and the draw is mostly the legend.",
+   "nl": "Diep meer onder de ruïne van Urquhart Castle; de Falls of Divach liggen 3 km weg, en de aantrekkingskracht is vooral de legende.",
+   "de": "Tiefer See unterhalb der Ruine von Urquhart Castle; die Falls of Divach liegen 3 km entfernt, der Reiz liegt vor allem in der Legende.",
+   "fr": "Loch profond sous les ruines d'Urquhart Castle; les Falls of Divach sont à 3 km, et l'attrait tient surtout à la légende.",
+   "es": "Lago profundo bajo las ruinas de Urquhart Castle; las Falls of Divach están a 3 km, y el atractivo es sobre todo la leyenda.",
+   "it": "Lago profondo sotto le rovine di Urquhart Castle; le Falls of Divach sono a 3 km, e il richiamo è soprattutto la leggenda."
+  },
+  "confidence": "medium",
+  "flags": [
+   "class_mismatch"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:ingria",
+  "appeal": 6.2,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 8,
+   "character": 6,
+   "sights": 3,
+   "atmosphere": 5,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Tiny Piedmont mountain hamlet of 11 people at 816 m in the Borghi più belli list; peaks and shrines lie 4 to 8 km away.",
+   "nl": "Piepklein berghamlet in Piëmont met 11 inwoners op 816 m bij de Borghi più belli; toppen en heiligdommen liggen 4 tot 8 km weg.",
+   "de": "Winziger Bergweiler im Piemont mit 11 Einwohnern auf 816 m bei den Borghi più belli; Gipfel und Heiligtümer liegen 4 bis 8 km entfernt.",
+   "fr": "Minuscule hameau de montagne piémontais de 11 habitants à 816 m, classé Borghi più belli; sommets et sanctuaires à 4 à 8 km.",
+   "es": "Diminuta aldea de montaña piamontesa de 11 habitantes a 816 m entre los Borghi più belli; cumbres y santuarios a 4 u 8 km.",
+   "it": "Minuscolo borgo di montagna piemontese di 11 abitanti a 816 m tra i Borghi più belli; cime e santuari a 4 o 8 km."
+  },
+  "confidence": "medium",
+  "flags": [
+   "data_conflict"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:stokesley",
+  "appeal": 5.7,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 6,
+   "sights": 4,
+   "atmosphere": 4,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "North Yorkshire market town; Whorlton Castle and Ormesby Hall lie 8 km off, and the town offers little for a visit.",
+   "nl": "Marktstad in North Yorkshire; Whorlton Castle en Ormesby Hall liggen 8 km weg, en de stad biedt weinig voor een bezoek.",
+   "de": "Marktstadt in North Yorkshire; Whorlton Castle und Ormesby Hall liegen 8 km entfernt, der Ort bietet wenig für einen Besuch.",
+   "fr": "Ville-marché du North Yorkshire; Whorlton Castle et Ormesby Hall sont à 8 km, et la ville offre peu pour une visite.",
+   "es": "Ciudad de mercado de North Yorkshire; Whorlton Castle y Ormesby Hall están a 8 km, y la ciudad ofrece poco para una visita.",
+   "it": "Cittadina di mercato del North Yorkshire; Whorlton Castle e Ormesby Hall sono a 8 km, e la città offre poco per una visita."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:forte-dei-marmi",
+  "appeal": 6.2,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 5,
+   "sights": 4,
+   "atmosphere": 6,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Tuscan beach resort with a fort and Villa Bertelli, and dunes protected locally; Massa and Seravezza villas lie 6 to 9 km off.",
+   "nl": "Toscaanse badplaats met een fort en Villa Bertelli, en lokaal beschermde duinen; Massa en de villa van Seravezza liggen 6 tot 9 km weg.",
+   "de": "Toskanischer Badeort mit Fort und Villa Bertelli, lokal geschützten Dünen; Massa und die Villa von Seravezza liegen 6 bis 9 km entfernt.",
+   "fr": "Station balnéaire toscane avec un fort et la Villa Bertelli, des dunes protégées localement; Massa et la villa de Seravezza à 6 à 9 km.",
+   "es": "Localidad de playa toscana con un fuerte y la Villa Bertelli, y dunas protegidas; Massa y la villa de Seravezza, a 6 o 9 km.",
+   "it": "Località balneare toscana con un forte e Villa Bertelli, e dune protette; Massa e la villa di Seravezza sono a 6 o 9 km."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:chard",
+  "appeal": 5.6,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 5,
+   "sights": 4,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Somerset market town with a small museum; Forde Abbey lies 5 km away, and the coast beaches are 16 km off.",
+   "nl": "Marktstad in Somerset met een klein museum; Forde Abbey ligt 5 km weg, en de kuststranden liggen op 16 km.",
+   "de": "Marktstadt in Somerset mit kleinem Museum; Forde Abbey liegt 5 km entfernt, die Küstenstrände 16 km weit.",
+   "fr": "Ville-marché du Somerset avec un petit musée; Forde Abbey est à 5 km, et les plages de la côte à 16 km.",
+   "es": "Ciudad de mercado de Somerset con un pequeño museo; Forde Abbey está a 5 km, y las playas de la costa a 16 km.",
+   "it": "Cittadina di mercato del Somerset con un piccolo museo; Forde Abbey è a 5 km, e le spiagge della costa a 16 km."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:mondolfo",
+  "appeal": 5.9,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 6,
+   "sights": 3,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Marche hill village in the Borghi più belli list with a town hall and Marotta beach 4 km away; few named sights.",
+   "nl": "Heuveldorp in de Marche bij de Borghi più belli met een gemeentehuis en het strand van Marotta op 4 km; weinig genoemde bezienswaardigheden.",
+   "de": "Hügeldorf in den Marken bei den Borghi più belli mit Rathaus und dem Strand von Marotta in 4 km; wenige genannte Sehenswürdigkeiten.",
+   "fr": "Village des Marches classé Borghi più belli avec une mairie et la plage de Marotta à 4 km; peu de sites cités.",
+   "es": "Pueblo de las Marcas entre los Borghi più belli con un ayuntamiento y la playa de Marotta a 4 km; pocos lugares citados.",
+   "it": "Borgo marchigiano tra i Borghi più belli con un municipio e la spiaggia di Marotta a 4 km; poche attrazioni citate."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:wakefield",
+  "appeal": 5.6,
+  "band": "none",
+  "criteria": {
+   "setting": 4,
+   "character": 5,
+   "sights": 5,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "West Yorkshire city with a cathedral, a theatre and Sandal Castle; Nostell Priory lies 8 km off, the centre is ordinary.",
+   "nl": "Stad in West Yorkshire met een kathedraal, een theater en Sandal Castle; Nostell Priory ligt 8 km weg, het centrum is gewoon.",
+   "de": "Stadt in West Yorkshire mit Kathedrale, Theater und Sandal Castle; Nostell Priory liegt 8 km entfernt, das Zentrum ist gewöhnlich.",
+   "fr": "Ville du West Yorkshire avec cathédrale, théâtre et Sandal Castle; Nostell Priory est à 8 km, le centre est ordinaire.",
+   "es": "Ciudad de West Yorkshire con catedral, teatro y Sandal Castle; Nostell Priory está a 8 km, el centro es corriente.",
+   "it": "Città del West Yorkshire con cattedrale, teatro e Sandal Castle; Nostell Priory è a 8 km, il centro è ordinario."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:malinska",
+  "appeal": 6.0,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 5,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Island resort village on Krk with beaches; Biserujka cave lies 10 km away, little else to see.",
+   "nl": "Badplaats op het eiland Krk met stranden; de grot Biserujka ligt 10 km weg, verder weinig te zien.",
+   "de": "Ferienort auf der Insel Krk mit Stränden; die Höhle Biserujka liegt 10 km entfernt, sonst wenig zu sehen.",
+   "fr": "Station balnéaire sur l'île de Krk avec des plages; la grotte de Biserujka est à 10 km, peu d'autre à voir.",
+   "es": "Localidad turística de la isla de Krk con playas; la cueva de Biserujka está a 10 km, poco más que ver.",
+   "it": "Località turistica sull'isola di Krk con spiagge; la grotta di Biserujka è a 10 km, poco altro da vedere."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:varese",
+  "appeal": 6.8,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 6,
+   "sights": 6,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Lombard city with the Sacro Monte 5 km away; Lake Varese lies 7 km off, with lakes and peaks all around.",
+   "nl": "Stad in Lombardije met de Sacro Monte op 5 km; het Meer van Varese ligt 7 km weg, met meren en bergen rondom.",
+   "de": "Stadt in der Lombardei mit dem Sacro Monte in 5 km; der Lago di Varese liegt 7 km entfernt, ringsum Seen und Berge.",
+   "fr": "Ville lombarde avec le Sacro Monte à 5 km; le lac de Varèse est à 7 km, lacs et sommets alentour.",
+   "es": "Ciudad lombarda con el Sacro Monte a 5 km; el lago de Varese está a 7 km, con lagos y cumbres alrededor.",
+   "it": "Città lombarda con il Sacro Monte a 5 km; il lago di Varese è a 7 km, con laghi e cime tutt'intorno."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:katwijk",
+  "appeal": 6.4,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 5,
+   "sights": 4,
+   "atmosphere": 6,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Dutch beach town with dunes at Berkheide; the Leiden museums listed lie 6 to 7 km away, not in the town.",
+   "nl": "Nederlandse badplaats met duinen bij Berkheide; de genoemde Leidse musea liggen 6 tot 7 km weg, niet in het dorp.",
+   "de": "Niederländischer Badeort mit Dünen bei Berkheide; die genannten Leidener Museen liegen 6 bis 7 km entfernt, nicht im Ort.",
+   "fr": "Station balnéaire néerlandaise avec des dunes à Berkheide; les musées de Leyde cités sont à 6 à 7 km, pas dans la ville.",
+   "es": "Localidad de playa neerlandesa con dunas en Berkheide; los museos de Leiden citados están a 6 o 7 km, no en el pueblo.",
+   "it": "Località balneare olandese con dune a Berkheide; i musei di Leida citati sono a 6 o 7 km, non nel paese."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:san-millan-de-la-cogolla",
+  "appeal": 7.2,
+  "band": "good",
+  "criteria": {
+   "setting": 7,
+   "character": 7,
+   "sights": 7,
+   "atmosphere": 5,
+   "uniqueness": 8
+  },
+  "why": {
+   "en": "Two UNESCO monasteries, Suso and Yuso, in a hamlet of 303 people; the site is the draw, little else to do.",
+   "nl": "Twee UNESCO-kloosters, Suso en Yuso, in een gehucht van 303 inwoners; de site is de trekker, verder weinig te doen.",
+   "de": "Zwei UNESCO-Klöster, Suso und Yuso, in einem Weiler mit 303 Einwohnern; die Stätte ist der Anlass, sonst wenig zu tun.",
+   "fr": "Deux monastères UNESCO, Suso et Yuso, dans un hameau de 303 habitants; le site est l'attrait, peu d'autre à faire.",
+   "es": "Dos monasterios de la UNESCO, Suso y Yuso, en una aldea de 303 habitantes; el conjunto es el reclamo, poco más que hacer.",
+   "it": "Due monasteri UNESCO, Suso e Yuso, in un borgo di 303 abitanti; il sito è il richiamo, poco altro da fare."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:remscheid",
+  "appeal": 5.6,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 4,
+   "sights": 5,
+   "atmosphere": 4,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Bergisches Land city whose main sight is the Müngsten Bridge 4 km away; Burg Castle lies 5 km off, the centre is plain.",
+   "nl": "Stad in het Bergische Land met als hoofdattractie de Müngstenbrug op 4 km; Burg Castle ligt 5 km weg, het centrum is gewoon.",
+   "de": "Stadt im Bergischen Land, deren Hauptsehenswürdigkeit die Müngstener Brücke in 4 km ist; Schloss Burg liegt 5 km weit, das Zentrum ist schlicht.",
+   "fr": "Ville du Bergisches Land dont l'attrait est le pont de Müngsten à 4 km; le château de Burg à 5 km, le centre est simple.",
+   "es": "Ciudad del Bergisches Land con el puente de Müngsten a 4 km; el castillo de Burg, a 5 km; el centro es sencillo.",
+   "it": "Città del Bergisches Land con il ponte di Müngsten a 4 km; il castello di Burg a 5 km, il centro è semplice."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:market-drayton",
+  "appeal": 5.5,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 6,
+   "sights": 3,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Shropshire market town with a memorial cross; Styche Hall and the Blore Heath battlefield lie 3 to 4 km out.",
+   "nl": "Marktstad in Shropshire met een gedenkkruis; Styche Hall en het slagveld van Blore Heath liggen 3 tot 4 km buiten.",
+   "de": "Marktstadt in Shropshire mit Gedenkkreuz; Styche Hall und das Schlachtfeld von Blore Heath liegen 3 bis 4 km entfernt.",
+   "fr": "Ville-marché du Shropshire avec une croix commémorative; Styche Hall et le champ de bataille de Blore Heath sont à 3 à 4 km.",
+   "es": "Ciudad de mercado de Shropshire con una cruz conmemorativa; Styche Hall y el campo de batalla de Blore Heath están a 3 o 4 km.",
+   "it": "Cittadina di mercato dello Shropshire con una croce commemorativa; Styche Hall e il campo di battaglia di Blore Heath sono a 3 o 4 km."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:gottingen",
+  "appeal": 6.8,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 4,
+   "character": 7,
+   "sights": 6,
+   "atmosphere": 7,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "University city with a historic observatory, St. Michael's Church and an academy of sciences; a lively but modest old core.",
+   "nl": "Universiteitsstad met een historische sterrenwacht, de St. Michaelskerk en een academie van wetenschappen; een levendige maar bescheiden oude kern.",
+   "de": "Universitätsstadt mit historischer Sternwarte, St.-Michaelis-Kirche und Akademie der Wissenschaften; ein lebendiger, aber bescheidener Altstadtkern.",
+   "fr": "Ville universitaire avec un observatoire historique, l'église Saint-Michel et une académie des sciences; vieux centre animé mais modeste.",
+   "es": "Ciudad universitaria con un observatorio histórico, la iglesia de San Miguel y una academia de ciencias; casco antiguo animado pero modesto.",
+   "it": "Città universitaria con un osservatorio storico, la chiesa di San Michele e un'accademia delle scienze; centro vivace ma modesto."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:pezenas",
+  "appeal": 6.8,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 5,
+   "character": 8,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Hérault town in the Plus Beaux Détours list with a collegiate church organ and the Pénitents Blancs sacristy; a compact old core.",
+   "nl": "Stad bij Les Plus Beaux Détours met het orgel van de collegiale kerk en de sacristie van de Pénitents Blancs; compacte oude kern.",
+   "de": "Stadt im Hérault bei den Plus Beaux Détours mit Orgel der Stiftskirche und der Sakristei der Pénitents Blancs; kompakter Altstadtkern.",
+   "fr": "Ville de l'Hérault classée Plus Beaux Détours avec l'orgue de la collégiale et la sacristie des Pénitents Blancs; vieux cœur compact.",
+   "es": "Ciudad del Hérault entre Les Plus Beaux Détours con el órgano de la colegiata y la sacristía de los Pénitents Blancs; casco antiguo compacto.",
+   "it": "Cittadina dell'Hérault tra Les Plus Beaux Détours con l'organo della collegiata e la sacrestia dei Pénitents Blancs; centro antico compatto."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:gliwice",
+  "appeal": 5.8,
+  "band": "none",
+  "criteria": {
+   "setting": 4,
+   "character": 5,
+   "sights": 5,
+   "atmosphere": 4,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Silesian city with the Radio Tower, a cathedral and a castle; the Guido mine lies 8 km off, the centre is ordinary.",
+   "nl": "Stad in Silezië met de Radiotoren, een kathedraal en een kasteel; de Guido-mijn ligt 8 km weg, het centrum is gewoon.",
+   "de": "Stadt in Schlesien mit dem Sender Gleiwitz, einer Kathedrale und einem Schloss; die Grube Guido liegt 8 km entfernt, das Zentrum ist gewöhnlich.",
+   "fr": "Ville de Silésie avec la tour radio, une cathédrale et un château; la mine Guido est à 8 km, le centre est ordinaire.",
+   "es": "Ciudad de Silesia con la torre de radio, una catedral y un castillo; la mina Guido está a 8 km, el centro es corriente.",
+   "it": "Città della Slesia con la torre radio, una cattedrale e un castello; la miniera Guido è a 8 km, il centro è ordinario."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:swanage",
+  "appeal": 6.8,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 8,
+   "character": 6,
+   "sights": 6,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Dorset seaside town with its pier; Old Harry Rocks lie 4 km away and Corfe Castle 8 km, so it works as a base.",
+   "nl": "Badplaats in Dorset met een pier; Old Harry Rocks liggen 4 km weg en Corfe Castle 8 km, dus het werkt als uitvalsbasis.",
+   "de": "Seebad in Dorset mit Pier; Old Harry Rocks liegen 4 km entfernt und Corfe Castle 8 km, daher als Standort geeignet.",
+   "fr": "Station balnéaire du Dorset avec sa jetée; Old Harry Rocks est à 4 km et Corfe Castle à 8 km, une bonne base.",
+   "es": "Localidad costera de Dorset con su muelle; Old Harry Rocks está a 4 km y Corfe Castle a 8 km, útil como base.",
+   "it": "Località balneare del Dorset con il suo molo; Old Harry Rocks è a 4 km e Corfe Castle a 8 km, utile come base."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:kingston-upon-thames",
+  "appeal": 6.4,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 5,
+   "sights": 7,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Thames-side market town where Hampton Court Palace and Kew Gardens are the draws, and the town centre is secondary.",
+   "nl": "Marktstad aan de Theems waar Hampton Court Palace en Kew Gardens de trekkers zijn en het stadscentrum bijzaak is.",
+   "de": "Marktstadt an der Themse, in der Hampton Court Palace und Kew Gardens die Anziehungspunkte sind, das Zentrum ist zweitrangig.",
+   "fr": "Ville-marché au bord de la Tamise où Hampton Court Palace et Kew Gardens sont les attraits, le centre-ville étant secondaire.",
+   "es": "Ciudad de mercado junto al Támesis donde Hampton Court Palace y Kew Gardens son el reclamo, y el centro es secundario.",
+   "it": "Cittadina di mercato sul Tamigi dove Hampton Court Palace e Kew Gardens sono il richiamo, e il centro è secondario."
+  },
+  "confidence": "medium",
+  "flags": [
+   "data_conflict"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:dereham",
+  "appeal": 5.4,
+  "band": "none",
+  "criteria": {
+   "setting": 4,
+   "character": 5,
+   "sights": 3,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Norfolk market town with a windmill and Bonner's Cottage Museum; the halls listed lie 7 to 8 km out, little else.",
+   "nl": "Marktstad in Norfolk met een windmolen en het Bonner's Cottage Museum; de genoemde landhuizen liggen 7 tot 8 km buiten, verder weinig.",
+   "de": "Marktstadt in Norfolk mit Windmühle und Bonner's Cottage Museum; die genannten Herrenhäuser liegen 7 bis 8 km entfernt, sonst wenig.",
+   "fr": "Ville-marché du Norfolk avec un moulin à vent et le Bonner's Cottage Museum; les demeures citées sont à 7 à 8 km, peu d'autre.",
+   "es": "Ciudad de mercado de Norfolk con un molino y el Bonner's Cottage Museum; las mansiones citadas están a 7 u 8 km, poco más.",
+   "it": "Cittadina di mercato del Norfolk con un mulino e il Bonner's Cottage Museum; le dimore citate a 7 o 8 km, poco altro."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:moigrad-porolissum",
+  "appeal": 6.2,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 5,
+   "character": 4,
+   "sights": 7,
+   "atmosphere": 3,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Hamlet of 516 around the Roman fort of Porolissum, a UNESCO-listed site; the visit is the ruins, with little else nearby.",
+   "nl": "Gehucht van 516 inwoners bij het Romeinse fort Porolissum, een UNESCO-site; het bezoek zijn de ruïnes, verder weinig in de buurt.",
+   "de": "Weiler mit 516 Einwohnern beim römischen Kastell Porolissum, einer UNESCO-Stätte; der Besuch gilt den Ruinen, sonst wenig in der Nähe.",
+   "fr": "Hameau de 516 habitants près du fort romain de Porolissum, site UNESCO; la visite se résume aux ruines, peu d'autre aux alentours.",
+   "es": "Aldea de 516 habitantes junto al fuerte romano de Porolissum, sitio de la UNESCO; la visita son las ruinas, poco más cerca.",
+   "it": "Borgo di 516 abitanti presso il forte romano di Porolissum, sito UNESCO; la visita sono le rovine, poco altro nei dintorni."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:castellane",
+  "appeal": 6.8,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 8,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 5,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Alpine village at 727 m with a square tower and a clock tower; Lac de Castillon lies 6 km away.",
+   "nl": "Alpendorp op 727 m met een vierkante toren en een klokkentoren; het meer van Castillon ligt 6 km weg.",
+   "de": "Alpendorf auf 727 m mit quadratischem Turm und Uhrturm; der Lac de Castillon liegt 6 km entfernt.",
+   "fr": "Village alpin à 727 m avec une tour carrée et une tour de l'horloge; le lac de Castillon est à 6 km.",
+   "es": "Pueblo alpino a 727 m con una torre cuadrada y una torre del reloj; el lago de Castillon está a 6 km.",
+   "it": "Paese alpino a 727 m con una torre quadrata e una torre dell'orologio; il lago di Castillon è a 6 km."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:usti-nad-labem",
+  "appeal": 5.8,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 4,
+   "sights": 5,
+   "atmosphere": 4,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Elbe city with Střekov Castle, a zoo and an opera theatre; Milešovka mountain lies 14 km away, and the fabric is mixed.",
+   "nl": "Stad aan de Elbe met Burcht Střekov, een dierentuin en een operatheater; de berg Milešovka ligt 14 km weg en de bebouwing is gemengd.",
+   "de": "Stadt an der Elbe mit Burg Střekov, Zoo und Opernhaus; der Berg Milešovka liegt 14 km entfernt, das Stadtbild ist gemischt.",
+   "fr": "Ville de l'Elbe avec le château de Střekov, un zoo et un opéra; le mont Milešovka est à 14 km, le tissu est mêlé.",
+   "es": "Ciudad del Elba con el castillo de Střekov, un zoo y un teatro de ópera; el monte Milešovka, a 14 km; tejido mixto.",
+   "it": "Città sull'Elba con il castello di Střekov, uno zoo e un teatro dell'opera; il monte Milešovka è a 14 km, il tessuto è misto."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:sant-antoni-de-portmany",
+  "appeal": 6.5,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 8,
+   "character": 5,
+   "sights": 4,
+   "atmosphere": 7,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Ibiza bay town in a protected historic grouping, with Cala Salada 3 km and Cala Comte 7.5 km away; a busy resort feel.",
+   "nl": "Baaistad op Ibiza met een beschermde historische kern, Cala Salada op 3 km en Cala Comte op 7,5 km; een drukke badplaatssfeer.",
+   "de": "Buchtstadt auf Ibiza mit geschütztem historischem Ensemble, Cala Salada in 3 km und Cala Comte in 7,5 km; ein belebter Ferienort.",
+   "fr": "Ville de baie d'Ibiza avec un ensemble historique protégé, Cala Salada à 3 km et Cala Comte à 7,5 km; une ambiance de station animée.",
+   "es": "Ciudad de bahía de Ibiza con un conjunto histórico protegido, Cala Salada a 3 km y Cala Comte a 7,5 km; ambiente de resort animado.",
+   "it": "Città di baia a Ibiza con un insieme storico protetto, Cala Salada a 3 km e Cala Comte a 7,5 km; atmosfera da località animata."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:lourmarin",
+  "appeal": 7.4,
+  "band": "good",
+  "criteria": {
+   "setting": 7,
+   "character": 8,
+   "sights": 6,
+   "atmosphere": 7,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Luberon village in the Plus Beaux Villages list with its Renaissance château; Silvacane Abbey lies 6 km away.",
+   "nl": "Dorp in de Luberon bij Les Plus Beaux Villages de France met zijn renaissancekasteel; de abdij van Silvacane ligt 6 km weg.",
+   "de": "Dorf im Luberon bei den Plus Beaux Villages de France mit seinem Renaissanceschloss; die Abtei Silvacane liegt 6 km entfernt.",
+   "fr": "Village du Luberon classé Plus Beaux Villages de France avec son château Renaissance; l'abbaye de Silvacane est à 6 km.",
+   "es": "Pueblo del Luberon entre Les Plus Beaux Villages de France con su castillo renacentista; la abadía de Silvacane está a 6 km.",
+   "it": "Villaggio del Luberon tra Les Plus Beaux Villages de France con il suo castello rinascimentale; l'abbazia di Silvacane è a 6 km."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:munster",
+  "appeal": 7.2,
+  "band": "good",
+  "criteria": {
+   "setting": 6,
+   "character": 8,
+   "sights": 7,
+   "atmosphere": 8,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Westphalian city with St.-Paulus-Dom and its astronomical clock, the palace and the historic town hall; a lively, rebuilt core.",
+   "nl": "Westfaalse stad met de St.-Paulus-Dom en zijn astronomische klok, het slot en het historische stadhuis; een levendige, herbouwde kern.",
+   "de": "Westfälische Stadt mit St.-Paulus-Dom und astronomischer Uhr, Schloss und historischem Rathaus; ein lebendiger, wiederaufgebauter Kern.",
+   "fr": "Ville westphalienne avec la cathédrale Saint-Paul et son horloge astronomique, le château et l'hôtel de ville historique; cœur vivant et reconstruit.",
+   "es": "Ciudad de Westfalia con la catedral de San Pablo y su reloj astronómico, el palacio y el ayuntamiento histórico; centro vivo y reconstruido.",
+   "it": "Città della Vestfalia con il duomo di San Paolo e il suo orologio astronomico, il castello e il municipio storico; centro vivace e ricostruito."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:pontevedra",
+  "appeal": 6.9,
+  "band": "good",
+  "criteria": {
+   "setting": 6,
+   "character": 8,
+   "sights": 6,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Galician city in a protected historic grouping, with a walled old town, the Santa María basilica and a museum.",
+   "nl": "Galicische stad met een beschermde historische kern, een ommuurde oude stad, de basiliek Santa María en een museum.",
+   "de": "Galicische Stadt mit geschütztem historischem Ensemble, ummauerter Altstadt, der Basilika Santa María und einem Museum.",
+   "fr": "Ville galicienne dans un ensemble historique protégé, avec vieille ville ceinte, la basilique Santa María et un musée.",
+   "es": "Ciudad gallega en un conjunto histórico protegido, con casco viejo amurallado, la basílica de Santa María y un museo.",
+   "it": "Città galiziana in un insieme storico protetto, con centro storico murato, la basilica di Santa María e un museo."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:melle",
+  "appeal": 6.4,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 5,
+   "character": 7,
+   "sights": 5,
+   "atmosphere": 5,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Poitou town in the Petites Cités de Caractère with three churches, Saint-Hilaire among them; small, a short stop.",
+   "nl": "Stad in de Poitou bij de Petites Cités de Caractère met drie kerken, waaronder Saint-Hilaire; klein, een korte stop.",
+   "de": "Stadt im Poitou bei den Petites Cités de Caractère mit drei Kirchen, darunter Saint-Hilaire; klein, ein kurzer Halt.",
+   "fr": "Bourg du Poitou des Petites Cités de Caractère avec trois églises dont Saint-Hilaire; petit, une courte halte.",
+   "es": "Villa del Poitou de las Petites Cités de Caractère con tres iglesias, entre ellas Saint-Hilaire; pequeña, parada corta.",
+   "it": "Cittadina del Poitou tra le Petites Cités de Caractère con tre chiese, tra cui Saint-Hilaire; piccola, breve sosta."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ }
+]

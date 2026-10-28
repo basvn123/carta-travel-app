@@ -1,0 +1,922 @@
+[
+ {
+  "id": "gem:sandefjord",
+  "appeal": 5.5,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 4,
+   "sights": 5,
+   "atmosphere": 5,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Former whaling town with a whaling museum and the Gokstad Viking mound; a few hours of interest, otherwise ordinary.",
+   "nl": "Voormalige walvisvaartstad met een walvisvaartmuseum en de Vikingheuvel van Gokstad; een paar uur interessant, verder gewoon.",
+   "de": "Ehemalige Walfangstadt mit Walfangmuseum und dem Wikingerhügel Gokstad; einige Stunden interessant, sonst gewöhnlich.",
+   "fr": "Ancien port baleinier avec un musée de la chasse à la baleine et le tertre viking de Gokstad ; quelques heures, sinon ordinaire.",
+   "es": "Antiguo puerto ballenero con museo ballenero y el túmulo vikingo de Gokstad; unas horas de interés, por lo demás corriente.",
+   "it": "Ex città baleniera con un museo della caccia alla balena e il tumulo vichingo di Gokstad; qualche ora, per il resto ordinaria."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:farnham",
+  "appeal": 5.8,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Surrey market town with Farnham Castle and Waverley Abbey ruins 3 km away; agreeable, but not a reason to travel.",
+   "nl": "Marktstad in Surrey met Farnham Castle en de ruïne van Waverley Abbey op 3 km; aangenaam, maar geen reden om te reizen.",
+   "de": "Marktstadt in Surrey mit Farnham Castle und der Ruine von Waverley Abbey in 3 km; angenehm, aber kein Reisegrund.",
+   "fr": "Bourg de marché du Surrey avec le château de Farnham et les ruines de Waverley Abbey à 3 km ; agréable, sans justifier le voyage.",
+   "es": "Villa de mercado de Surrey con el castillo de Farnham y las ruinas de Waverley Abbey a 3 km; agradable, pero no motivo de viaje.",
+   "it": "Cittadina del Surrey con il castello di Farnham e le rovine di Waverley Abbey a 3 km; gradevole, ma non un motivo per partire."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:santa-margherita-ligure",
+  "appeal": 7.1,
+  "band": "good",
+  "criteria": {
+   "setting": 8,
+   "character": 7,
+   "sights": 6,
+   "atmosphere": 7,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Riviera harbour town at the foot of the Portofino promontory, near San Fruttuoso; a fine base, its own sights are modest.",
+   "nl": "Havenstadje aan de Rivièra aan de voet van het schiereiland van Portofino, bij San Fruttuoso; een fijne basis, met bescheiden eigen bezienswaardigheden.",
+   "de": "Hafenstadt an der Riviera am Fuß des Portofino-Vorgebirges, nahe San Fruttuoso; schöne Basis, eigene Sehenswürdigkeiten bescheiden.",
+   "fr": "Port de la Riviera au pied du promontoire de Portofino, près de San Fruttuoso ; belle base, aux sites propres modestes.",
+   "es": "Puerto de la Riviera al pie del promontorio de Portofino, cerca de San Fruttuoso; buena base, con atractivos propios modestos.",
+   "it": "Cittadina portuale della Riviera ai piedi del promontorio di Portofino, vicino a San Fruttuoso; ottima base, attrattive proprie modeste."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:anzio",
+  "appeal": 5.5,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 5,
+   "sights": 5,
+   "atmosphere": 5,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Seaside town known for the 1944 landings, with Allied war cemeteries 3 km away; a sober visit, little else to hold you.",
+   "nl": "Badstad bekend van de landing van 1944, met geallieerde oorlogsbegraafplaatsen op 3 km; een sober bezoek, verder weinig.",
+   "de": "Küstenstadt, bekannt für die Landung 1944, mit alliierten Soldatenfriedhöfen in 3 km; ein ernster Besuch, sonst wenig.",
+   "fr": "Ville balnéaire connue pour le débarquement de 1944, avec des cimetières alliés à 3 km ; une visite grave, peu d'autre.",
+   "es": "Ciudad costera conocida por el desembarco de 1944, con cementerios aliados a 3 km; una visita sobria, poco más.",
+   "it": "Cittadina di mare nota per lo sbarco del 1944, con cimiteri alleati a 3 km; una visita sobria, poco altro."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:plasencia",
+  "appeal": 6.5,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 5,
+   "character": 7,
+   "sights": 7,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Walled Extremadura town with an old and a new cathedral side by side; a rewarding few hours, quiet beyond the centre.",
+   "nl": "Ommuurde stad in Extremadura met een oude en een nieuwe kathedraal naast elkaar; een paar lonende uren, stil buiten het centrum.",
+   "de": "Ummauerte Stadt in der Extremadura mit alter und neuer Kathedrale nebeneinander; lohnende Stunden, ruhig jenseits des Zentrums.",
+   "fr": "Ville fortifiée d'Estrémadure aux deux cathédrales, l'ancienne et la nouvelle, côte à côte ; quelques heures riches, calme au-delà.",
+   "es": "Ciudad amurallada extremeña con las catedrales vieja y nueva unidas; unas horas que merecen la pena, tranquila fuera del centro.",
+   "it": "Città murata dell'Estremadura con la cattedrale vecchia e quella nuova affiancate; qualche ora piacevole, quieta fuori dal centro."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:montone",
+  "appeal": 6.3,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 7,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Umbrian hill borgo, among Italy's most beautiful villages, with a civic museum in San Francesco; an hour or two of lanes.",
+   "nl": "Umbrisch heuveldorp, een van Italiës mooiste dorpen, met een stedelijk museum in San Francesco; een uur of twee straatjes.",
+   "de": "Umbrisches Hügeldorf, eines der schönsten Dörfer Italiens, mit Stadtmuseum in San Francesco; ein, zwei Stunden Gassen.",
+   "fr": "Bourg perché d'Ombrie, parmi les plus beaux villages d'Italie, avec un musée civique à San Francesco ; une heure ou deux de ruelles.",
+   "es": "Pueblo umbro en lo alto, entre los más bellos de Italia, con museo cívico en San Francesco; una o dos horas de callejuelas.",
+   "it": "Borgo umbro in collina, tra i più belli d'Italia, con il Museo civico di San Francesco; un'ora o due di vicoli."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:xanten",
+  "appeal": 6.7,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 5,
+   "character": 6,
+   "sights": 8,
+   "atmosphere": 6,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "Lower Rhine town on the UNESCO Lower German Limes, with the Colonia Ulpia Traiana Roman site and St Viktor cathedral; a full day, not more.",
+   "nl": "Stad aan de Nederrijn op de UNESCO-Neder-Germaanse Limes, met de Romeinse Colonia Ulpia Traiana en de Sint-Victordom; een volle dag, niet meer.",
+   "de": "Niederrheinstadt am UNESCO-Niedergermanischen Limes, mit der Colonia Ulpia Traiana und dem Dom St. Viktor; ein voller Tag, nicht mehr.",
+   "fr": "Ville du Bas-Rhin sur le limes de Germanie inférieure (UNESCO), avec la Colonia Ulpia Traiana et la cathédrale Saint-Victor ; une journée, guère plus.",
+   "es": "Ciudad del Bajo Rin en el Limes germánico (UNESCO), con la Colonia Ulpia Traiana y la catedral de San Víctor; un día, no más.",
+   "it": "Città del Basso Reno sul Limes germanico (UNESCO), con la Colonia Ulpia Traiana e il duomo di San Vittore; una giornata, non di più."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:greve-in-chianti",
+  "appeal": 6.6,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 7,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Chianti market village with Verrazzano castle and Passignano abbey within 6 km; a good wine-country base, little to see in town.",
+   "nl": "Marktdorp in de Chianti met kasteel Verrazzano en de abdij van Passignano binnen 6 km; een goede wijnbasis, weinig in het dorp zelf.",
+   "de": "Marktdorf im Chianti mit Castello di Verrazzano und der Abtei Passignano im Umkreis von 6 km; gute Weinbasis, im Ort wenig.",
+   "fr": "Bourg du Chianti avec le château de Verrazzano et l'abbaye de Passignano à moins de 6 km ; bonne base viticole, peu sur place.",
+   "es": "Pueblo del Chianti con el castillo de Verrazzano y la abadía de Passignano a menos de 6 km; buena base vinícola, poco en el pueblo.",
+   "it": "Borgo mercato del Chianti con il Castello di Verrazzano e la Badia a Passignano entro 6 km; buona base tra i vigneti, poco in paese."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:sheffield",
+  "appeal": 5.7,
+  "band": "none",
+  "criteria": {
+   "setting": 6,
+   "character": 4,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Former steel city with the Crucible theatre, a cathedral and Park Hill; green edges, but an uneven centre that rarely holds visitors.",
+   "nl": "Voormalige staalstad met het Crucible-theater, een kathedraal en Park Hill; groene randen, maar een rommelig centrum.",
+   "de": "Ehemalige Stahlstadt mit dem Crucible-Theater, Kathedrale und Park Hill; grüne Ränder, doch ein uneinheitliches Zentrum.",
+   "fr": "Ancienne ville de l'acier avec le théâtre du Crucible, une cathédrale et Park Hill ; abords verts, mais centre inégal.",
+   "es": "Antigua ciudad del acero con el teatro Crucible, una catedral y Park Hill; alrededores verdes, pero un centro desigual.",
+   "it": "Ex città dell'acciaio con il teatro Crucible, una cattedrale e Park Hill; dintorni verdi, ma un centro disomogeneo."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:estepona",
+  "appeal": 5.8,
+  "band": "none",
+  "criteria": {
+   "setting": 6,
+   "character": 5,
+   "sights": 4,
+   "atmosphere": 6,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Costa del Sol town with a small castle and watchtowers along the shore; a beach stay, one resort among many.",
+   "nl": "Stad aan de Costa del Sol met een klein kasteel en wachttorens langs de kust; een strandverblijf, een van vele badplaatsen.",
+   "de": "Stadt an der Costa del Sol mit kleiner Burg und Wachtürmen an der Küste; ein Strandaufenthalt, ein Ferienort unter vielen.",
+   "fr": "Ville de la Costa del Sol avec un petit château et des tours de guet ; un séjour plage, une station parmi d'autres.",
+   "es": "Ciudad de la Costa del Sol con un pequeño castillo y torres vigía en la costa; para playa, un destino más entre muchos.",
+   "it": "Città della Costa del Sol con un piccolo castello e torri di avvistamento sulla costa; un soggiorno di mare, una località tra tante."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:wiesbaden",
+  "appeal": 6.2,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 5,
+   "character": 7,
+   "sights": 6,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Elegant spa city with the Nerobergbahn, the Marktkirche and Museum Wiesbaden; polished, but a day covers it.",
+   "nl": "Elegante kuurstad met de Nerobergbahn, de Marktkirche en Museum Wiesbaden; verzorgd, maar in een dag gezien.",
+   "de": "Elegante Kurstadt mit Nerobergbahn, Marktkirche und Museum Wiesbaden; gepflegt, doch ein Tag genügt.",
+   "fr": "Élégante ville thermale avec le funiculaire du Neroberg, la Marktkirche et le musée de Wiesbaden ; soignée, mais une journée suffit.",
+   "es": "Elegante ciudad balneario con el funicular del Neroberg, la Marktkirche y el Museo de Wiesbaden; cuidada, pero basta un día.",
+   "it": "Elegante città termale con la funicolare del Neroberg, la Marktkirche e il Museo di Wiesbaden; curata, ma basta un giorno."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:sisteron",
+  "appeal": 6.9,
+  "band": "good",
+  "criteria": {
+   "setting": 8,
+   "character": 7,
+   "sights": 7,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Citadel and town walls above the Durance, with a Romanesque cathedral below; a rewarding half day on the road south.",
+   "nl": "Citadel en stadsmuren boven de Durance, met een romaanse kathedraal eronder; een lonende halve dag op weg naar het zuiden.",
+   "de": "Zitadelle und Stadtmauern über der Durance, darunter eine romanische Kathedrale; ein lohnender halber Tag auf dem Weg nach Süden.",
+   "fr": "Citadelle et remparts au-dessus de la Durance, cathédrale romane en contrebas ; une belle demi-journée sur la route du Sud.",
+   "es": "Ciudadela y murallas sobre el Durance, con una catedral románica abajo; media jornada que merece la pena camino del sur.",
+   "it": "Cittadella e mura sopra la Durance, con una cattedrale romanica sotto; una bella mezza giornata sulla strada verso sud."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:fussen",
+  "appeal": 7.3,
+  "band": "good",
+  "criteria": {
+   "setting": 8,
+   "character": 7,
+   "sights": 7,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Old Allgäu town at 800 m with St. Mang's Abbey, 4 km from Neuschwanstein and the Alpsee; a strong base, crowded in season.",
+   "nl": "Oud Allgäu-stadje op 800 m met de abdij St. Mang, 4 km van Neuschwanstein en de Alpsee; een sterke basis, druk in het seizoen.",
+   "de": "Alte Allgäuer Stadt auf 800 m mit Kloster St. Mang, 4 km von Neuschwanstein und dem Alpsee; starke Basis, in der Saison voll.",
+   "fr": "Vieille ville de l'Allgäu à 800 m avec l'abbaye Saint-Mang, à 4 km de Neuschwanstein et de l'Alpsee ; base solide, bondée en saison.",
+   "es": "Ciudad del Allgäu a 800 m con la abadía de San Mang, a 4 km de Neuschwanstein y el Alpsee; gran base, llena en temporada.",
+   "it": "Antica città dell'Allgäu a 800 m con l'abbazia di San Magno, a 4 km da Neuschwanstein e dall'Alpsee; ottima base, affollata in stagione."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:norre-vorupor",
+  "appeal": 6.3,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 6,
+   "sights": 4,
+   "atmosphere": 7,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "North Sea fishing village on the edge of Thy National Park, dunes and open beach; bracing and quiet, little to see.",
+   "nl": "Vissersdorp aan de Noordzee aan de rand van Nationaal Park Thy, duinen en open strand; fris en stil, weinig te zien.",
+   "de": "Fischerdorf an der Nordsee am Rand des Nationalparks Thy, Dünen und weiter Strand; rau und ruhig, wenig zu sehen.",
+   "fr": "Village de pêcheurs sur la mer du Nord au bord du parc national de Thy, dunes et plage ; vivifiant et calme, peu à voir.",
+   "es": "Pueblo pesquero del mar del Norte junto al Parque Nacional de Thy, dunas y playa abierta; tonificante y tranquilo, poco que ver.",
+   "it": "Villaggio di pescatori sul Mare del Nord ai margini del Parco nazionale di Thy, dune e spiaggia aperta; quieto e ventoso, poco da vedere."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:villanovafranca",
+  "appeal": 5.3,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 4,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Small Marmilla farming village 7 km from the Su Nuraxi nuraghe; the sight lies elsewhere, the village offers little.",
+   "nl": "Klein boerendorp in de Marmilla, 7 km van de nuraghe Su Nuraxi; de bezienswaardigheid ligt elders, het dorp biedt weinig.",
+   "de": "Kleines Bauerndorf in der Marmilla, 7 km vom Nuraghen Su Nuraxi; die Sehenswürdigkeit liegt anderswo, der Ort bietet wenig.",
+   "fr": "Petit village agricole de la Marmilla, à 7 km du nuraghe Su Nuraxi ; le site est ailleurs, le village offre peu.",
+   "es": "Pequeño pueblo agrícola de la Marmilla, a 7 km del nuraghe Su Nuraxi; lo notable está fuera, el pueblo ofrece poco.",
+   "it": "Piccolo paese agricolo della Marmilla, a 7 km dal nuraghe Su Nuraxi; il sito è altrove, il paese offre poco."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:revfulop",
+  "appeal": 6.0,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 5,
+   "sights": 4,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "North-shore Lake Balaton resort village near Badacsony hill; swimming and wine in summer, little of its own to see.",
+   "nl": "Badplaatsje aan de noordoever van het Balatonmeer bij de Badacsony; zwemmen en wijn in de zomer, weinig eigens te zien.",
+   "de": "Ferienort am Nordufer des Balaton nahe dem Badacsony; Baden und Wein im Sommer, wenig Eigenes zu sehen.",
+   "fr": "Village de villégiature sur la rive nord du Balaton, près du mont Badacsony ; baignade et vin l'été, peu à voir en propre.",
+   "es": "Pueblo de veraneo en la orilla norte del Balaton, cerca del Badacsony; baño y vino en verano, poco propio que ver.",
+   "it": "Paese di villeggiatura sulla riva nord del Balaton, vicino al Badacsony; bagni e vino d'estate, poco di proprio da vedere."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:pico",
+  "appeal": 5.6,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 6,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Hill borgo in southern Lazio, 8 km from the Pastena caves; a short stop, the village itself holds little.",
+   "nl": "Heuveldorp in Zuid-Lazio, 8 km van de grotten van Pastena; een korte stop, het dorp zelf biedt weinig.",
+   "de": "Hügeldorf im südlichen Latium, 8 km von den Grotten von Pastena; ein kurzer Halt, der Ort selbst bietet wenig.",
+   "fr": "Bourg perché du sud du Latium, à 8 km des grottes de Pastena ; une courte halte, le village offre peu.",
+   "es": "Pueblo en lo alto del sur del Lacio, a 8 km de las cuevas de Pastena; una parada corta, el pueblo ofrece poco.",
+   "it": "Borgo collinare del basso Lazio, a 8 km dalle Grotte di Pastena; una breve sosta, il paese offre poco."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:castell-arquato",
+  "appeal": 6.9,
+  "band": "good",
+  "criteria": {
+   "setting": 6,
+   "character": 8,
+   "sights": 6,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Medieval hill borgo with its Rocca Viscontea and collegiate church around one square; intact, but a couple of hours sees it.",
+   "nl": "Middeleeuws heuveldorp met de Rocca Viscontea en de collegiale kerk rond één plein; gaaf, maar in een paar uur gezien.",
+   "de": "Mittelalterliches Hügeldorf mit Rocca Viscontea und Stiftskirche um einen Platz; intakt, doch in zwei Stunden gesehen.",
+   "fr": "Bourg médiéval perché, Rocca Viscontea et collégiale autour d'une place ; intact, mais vu en deux heures.",
+   "es": "Pueblo medieval en lo alto, con la Rocca Viscontea y la colegiata en torno a una plaza; intacto, se ve en dos horas.",
+   "it": "Borgo medievale in collina con la Rocca Viscontea e la Collegiata attorno a una piazza; integro, ma bastano un paio d'ore."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:wadhurst",
+  "appeal": 5.3,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 5,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Wealden village 6 km from Scotney Castle; pleasant countryside, but nothing in the village to travel for.",
+   "nl": "Dorp in de Weald, 6 km van Scotney Castle; aangenaam platteland, maar niets in het dorp om voor te reizen.",
+   "de": "Dorf im Weald, 6 km von Scotney Castle; hübsche Landschaft, aber nichts im Ort, wofür sich die Reise lohnt.",
+   "fr": "Village du Weald à 6 km du château de Scotney ; campagne agréable, rien dans le village qui justifie le voyage.",
+   "es": "Pueblo del Weald a 6 km del castillo de Scotney; campiña agradable, pero nada en el pueblo por lo que viajar.",
+   "it": "Paese del Weald a 6 km dal castello di Scotney; campagna gradevole, ma nulla in paese per cui partire."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:drachten",
+  "appeal": 4.8,
+  "band": "none",
+  "criteria": {
+   "setting": 4,
+   "character": 4,
+   "sights": 3,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Modern Frisian town with a local museum and a park; the lakes and estates are outside, not a destination.",
+   "nl": "Moderne Friese stad met een lokaal museum en een park; meren en states liggen erbuiten, geen bestemming.",
+   "de": "Moderne friesische Stadt mit Heimatmuseum und Park; Seen und Landsitze liegen außerhalb, kein Reiseziel.",
+   "fr": "Ville frisonne moderne avec un musée local et un parc ; lacs et manoirs sont en dehors, pas une destination.",
+   "es": "Ciudad frisona moderna con un museo local y un parque; lagos y mansiones quedan fuera, no es un destino.",
+   "it": "Moderna città frisone con un museo locale e un parco; laghi e dimore sono fuori, non è una meta."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:mytikas",
+  "appeal": 5.6,
+  "band": "none",
+  "criteria": {
+   "setting": 6,
+   "character": 4,
+   "sights": 5,
+   "atmosphere": 5,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Beach village by Monolithi beach, a few km from the Roman ruins of Nikopolis; a quiet seaside stop, the village itself is plain.",
+   "nl": "Strandvillage bij het strand Monolithi, enkele km van de Romeinse ruïnes van Nikopolis; een rustige stop, het dorp zelf is eenvoudig.",
+   "de": "Strandort am Monolithi-Strand, wenige km von den römischen Ruinen von Nikopolis; ruhiger Halt am Meer, der Ort selbst schlicht.",
+   "fr": "Village de plage près de Monolithi, à quelques km des ruines romaines de Nikopolis ; halte balnéaire calme, village sans attrait.",
+   "es": "Pueblo playero junto a Monolithi, a pocos km de las ruinas romanas de Nicópolis; parada tranquila, el pueblo es sencillo.",
+   "it": "Paese di mare presso la spiaggia di Monolithi, a pochi km dalle rovine romane di Nicopoli; sosta tranquilla, paese semplice."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:bridport",
+  "appeal": 6.2,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 7,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Dorset market town with a local museum, a short way from the West Bay coast and Mapperton House; pleasant, not a destination itself.",
+   "nl": "Marktstad in Dorset met een lokaal museum, vlak bij de kust van West Bay en Mapperton House; aangenaam, geen bestemming op zich.",
+   "de": "Marktstadt in Dorset mit Heimatmuseum, nahe der Küste bei West Bay und Mapperton House; angenehm, aber kein eigenes Ziel.",
+   "fr": "Bourg de marché du Dorset avec un musée local, près de West Bay et de Mapperton House ; agréable, sans être une destination.",
+   "es": "Villa de mercado de Dorset con museo local, cerca de la costa de West Bay y de Mapperton House; agradable, no un destino en sí.",
+   "it": "Cittadina di mercato del Dorset con museo locale, vicino alla costa di West Bay e a Mapperton House; gradevole, non una meta in sé."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:balassagyarmat",
+  "appeal": 5.0,
+  "band": "none",
+  "criteria": {
+   "setting": 4,
+   "character": 5,
+   "sights": 5,
+   "atmosphere": 4,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Border town on the Ipoly with the Palóc Museum of folk culture; worth an hour for the museum, otherwise ordinary.",
+   "nl": "Grensstad aan de Ipoly met het Palócmuseum over volkscultuur; een uur waard voor het museum, verder gewoon.",
+   "de": "Grenzstadt an der Eipel mit dem Palócen-Museum zur Volkskultur; eine Stunde für das Museum, sonst gewöhnlich.",
+   "fr": "Ville frontière sur l'Ipoly avec le musée palóc des arts populaires ; une heure pour le musée, sinon ordinaire.",
+   "es": "Ciudad fronteriza sobre el Ipoly con el Museo Palóc de cultura popular; una hora para el museo, por lo demás corriente.",
+   "it": "Città di confine sull'Ipoly con il Museo Palóc di cultura popolare; un'ora per il museo, per il resto ordinaria."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:charroux-fr",
+  "appeal": 5.8,
+  "band": "none",
+  "criteria": {
+   "setting": 4,
+   "character": 6,
+   "sights": 6,
+   "atmosphere": 5,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Poitou village around the ruined Charroux Abbey and its old market hall; an hour's stop, little else nearby.",
+   "nl": "Dorp in de Poitou rond de ruïne van de abdij van Charroux en de oude markthal; een stop van een uur, verder weinig.",
+   "de": "Dorf im Poitou um die Ruine der Abtei Charroux und die alte Markthalle; ein Halt von einer Stunde, sonst wenig.",
+   "fr": "Village poitevin autour des ruines de l'abbaye de Charroux et de ses halles ; une halte d'une heure, peu d'autre alentour.",
+   "es": "Pueblo del Poitou en torno a las ruinas de la abadía de Charroux y su mercado cubierto; una hora de parada, poco más.",
+   "it": "Paese del Poitou attorno alle rovine dell'abbazia di Charroux e al vecchio mercato coperto; una sosta di un'ora, poco altro."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:ravensburg",
+  "appeal": 6.4,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 5,
+   "character": 7,
+   "sights": 6,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Swabian town of medieval towers below the Veitsburg, with the Ravensburger museum; a good day, Lake Constance 20 km off.",
+   "nl": "Zwabische stad met middeleeuwse torens onder de Veitsburg, met het Ravensburger-museum; een goede dag, het Bodenmeer op 20 km.",
+   "de": "Schwäbische Türmestadt unter der Veitsburg, mit dem Museum Ravensburger; ein guter Tag, der Bodensee 20 km entfernt.",
+   "fr": "Ville souabe aux tours médiévales sous la Veitsburg, avec le musée Ravensburger ; une bonne journée, le lac de Constance à 20 km.",
+   "es": "Ciudad suaba de torres medievales bajo el Veitsburg, con el museo Ravensburger; un buen día, el lago de Constanza a 20 km.",
+   "it": "Città sveva di torri medievali sotto la Veitsburg, con il museo Ravensburger; una buona giornata, il lago di Costanza a 20 km."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:coningsby",
+  "appeal": 5.5,
+  "band": "none",
+  "criteria": {
+   "setting": 3,
+   "character": 4,
+   "sights": 6,
+   "atmosphere": 4,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Lincolnshire village beside Tattershall Castle's brick keep; one sight for an hour or two, flat country around.",
+   "nl": "Dorp in Lincolnshire naast de bakstenen donjon van Tattershall Castle; één bezienswaardigheid voor een uur of twee, vlak land rondom.",
+   "de": "Dorf in Lincolnshire neben dem Backsteinturm von Tattershall Castle; ein Ziel für ein, zwei Stunden, flaches Land ringsum.",
+   "fr": "Village du Lincolnshire près du donjon de brique de Tattershall Castle ; un site pour une heure ou deux, pays plat alentour.",
+   "es": "Pueblo de Lincolnshire junto a la torre de ladrillo de Tattershall Castle; un solo lugar para una o dos horas, llanura alrededor.",
+   "it": "Paese del Lincolnshire accanto al mastio in mattoni di Tattershall Castle; un solo luogo per un'ora o due, pianura attorno."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:noirmoutier-en-l-ile",
+  "appeal": 6.5,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 7,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Island town on Noirmoutier with its castle and the Müllembourg salt-marsh reserve; relaxed holiday base, few sights of note.",
+   "nl": "Eilandstadje op Noirmoutier met zijn kasteel en het zoutmoerasreservaat Müllembourg; ontspannen vakantiebasis, weinig opvallende bezienswaardigheden.",
+   "de": "Inselstädtchen auf Noirmoutier mit Burg und dem Salzwiesen-Reservat Müllembourg; entspannte Ferienbasis, wenige große Ziele.",
+   "fr": "Bourg insulaire de Noirmoutier avec son château et la réserve des marais de Müllembourg ; base de vacances paisible, peu de grands sites.",
+   "es": "Villa isleña de Noirmoutier con su castillo y la reserva de marismas de Müllembourg; base de vacaciones tranquila, pocos lugares destacados.",
+   "it": "Cittadina sull'isola di Noirmoutier con il castello e la riserva delle saline di Müllembourg; base di vacanza rilassata, pochi luoghi notevoli."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:montecchio",
+  "appeal": 5.6,
+  "band": "none",
+  "criteria": {
+   "setting": 6,
+   "character": 6,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Small Umbrian hill borgo with an Umbrian-Etruscan necropolis, 7 km from Lake Corbara; quiet, little to fill more than an hour.",
+   "nl": "Klein Umbrisch heuveldorp met een Umbrisch-Etruskische necropool, 7 km van het meer van Corbara; stil, weinig voor meer dan een uur.",
+   "de": "Kleines umbrisches Hügeldorf mit umbrisch-etruskischer Nekropole, 7 km vom Corbara-See; ruhig, wenig für mehr als eine Stunde.",
+   "fr": "Petit bourg perché d'Ombrie avec une nécropole ombro-étrusque, à 7 km du lac de Corbara ; calme, peu pour plus d'une heure.",
+   "es": "Pequeño pueblo umbro en lo alto con una necrópolis umbro-etrusca, a 7 km del lago de Corbara; tranquilo, poco para más de una hora.",
+   "it": "Piccolo borgo umbro in collina con una necropoli umbro-etrusca, a 7 km dal lago di Corbara; quieto, poco oltre un'ora."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:shifnal",
+  "appeal": 5.4,
+  "band": "none",
+  "criteria": {
+   "setting": 4,
+   "character": 5,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Shropshire market town 7 to 9 km from the Ironbridge Gorge museums; a possible base, nothing of its own to see.",
+   "nl": "Marktstad in Shropshire, 7 tot 9 km van de musea van Ironbridge Gorge; een mogelijke basis, niets eigens te zien.",
+   "de": "Marktstadt in Shropshire, 7 bis 9 km von den Museen der Ironbridge Gorge; mögliche Basis, nichts Eigenes zu sehen.",
+   "fr": "Bourg de marché du Shropshire à 7 à 9 km des musées d'Ironbridge Gorge ; une base possible, rien à voir en propre.",
+   "es": "Villa de mercado de Shropshire a 7 a 9 km de los museos de Ironbridge Gorge; posible base, nada propio que ver.",
+   "it": "Cittadina di mercato dello Shropshire a 7-9 km dai musei di Ironbridge Gorge; possibile base, nulla di proprio da vedere."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:tsagkarada-pelion",
+  "appeal": 7.0,
+  "band": "good",
+  "criteria": {
+   "setting": 8,
+   "character": 7,
+   "sights": 5,
+   "atmosphere": 7,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Chestnut-forest village on east Pelion with a 1000-year-old plane tree above Mylopotamos cove; scattered, with few sights to tour.",
+   "nl": "Dorp in kastanjebossen op Oost-Pelion met een plataan van 1000 jaar boven de baai van Mylopotamos; verspreid, met weinig te bezoeken.",
+   "de": "Dorf im Kastanienwald am Ost-Pelion mit 1000-jähriger Platane über der Bucht von Mylopotamos; weit verstreut, wenig zu besichtigen.",
+   "fr": "Village dans les châtaigniers de l'est du Pélion, platane millénaire au-dessus de la crique de Mylopotamos ; épars, peu à visiter.",
+   "es": "Pueblo entre castaños en el este del Pelión, con un plátano milenario sobre la cala de Mylopotamos; disperso, con poco que visitar.",
+   "it": "Villaggio tra i castagni del Pelio orientale, con un platano millenario sopra la caletta di Mylopotamos; sparso, con poco da visitare."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:oldenburg",
+  "appeal": 5.6,
+  "band": "none",
+  "criteria": {
+   "setting": 4,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "North German city with a palace, the Lappan tower and the Prinzenpalais gallery; a pleasant centre, but no reason to make the trip.",
+   "nl": "Noord-Duitse stad met een slot, de Lappan-toren en het Prinzenpalais; een aangenaam centrum, maar geen reden voor de reis.",
+   "de": "Norddeutsche Stadt mit Schloss, Lappan und Prinzenpalais; ein angenehmes Zentrum, aber kein Grund für die Reise.",
+   "fr": "Ville d'Allemagne du Nord avec un château, la tour du Lappan et le Prinzenpalais ; centre agréable, mais pas de quoi faire le voyage.",
+   "es": "Ciudad del norte de Alemania con palacio, la torre Lappan y el Prinzenpalais; centro agradable, pero no motivo de viaje.",
+   "it": "Città della Germania del nord con il castello, la torre Lappan e il Prinzenpalais; centro gradevole, ma non un motivo di viaggio."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:falmouth",
+  "appeal": 6.8,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 6,
+   "sights": 6,
+   "atmosphere": 7,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Maritime town with Pendennis Castle, town beaches and boat trips up the Fal's wooded creeks; a good base, not a showpiece.",
+   "nl": "Havenstad met Pendennis Castle, stadsstranden en boottochten over de beboste kreken van de Fal; een goede basis, geen pronkstuk.",
+   "de": "Hafenstadt mit Pendennis Castle, Stadtstränden und Bootsfahrten in die bewaldeten Buchten des Fal; gute Basis, kein Glanzstück.",
+   "fr": "Ville maritime avec Pendennis Castle, plages urbaines et balades en bateau dans les criques boisées de la Fal ; bonne base, sans éclat.",
+   "es": "Ciudad marinera con Pendennis Castle, playas urbanas y paseos en barco por los esteros boscosos del Fal; buena base, sin ser una joya.",
+   "it": "Città marinara con Pendennis Castle, spiagge urbane e gite in barca nelle insenature boscose del Fal; buona base, non un gioiello."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:joensuu",
+  "appeal": 4.8,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 4,
+   "sights": 3,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "University town in North Karelia with a provincial museum and lakes 20 km off; practical stop, little to see.",
+   "nl": "Universiteitsstad in Noord-Karelië met een provinciaal museum en meren op 20 km; een praktische stop, weinig te zien.",
+   "de": "Universitätsstadt in Nordkarelien mit Landesmuseum und Seen in 20 km; praktischer Halt, wenig zu sehen.",
+   "fr": "Ville universitaire de Carélie du Nord avec un musée régional et des lacs à 20 km ; étape pratique, peu à voir.",
+   "es": "Ciudad universitaria de Carelia del Norte con un museo regional y lagos a 20 km; parada práctica, poco que ver.",
+   "it": "Città universitaria della Carelia settentrionale con un museo regionale e laghi a 20 km; tappa pratica, poco da vedere."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:jaujac",
+  "appeal": 6.1,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 6,
+   "sights": 4,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Ardèche village in a UNESCO Global Geopark, below volcanic hills; good for walks, few sights of its own.",
+   "nl": "Ardèche-dorp in een UNESCO Global Geopark, onder vulkanische heuvels; goed om te wandelen, weinig eigen bezienswaardigheden.",
+   "de": "Ardèche-Dorf in einem UNESCO-Global-Geopark unter vulkanischen Hügeln; gut zum Wandern, wenig Eigenes zu sehen.",
+   "fr": "Village ardéchois dans un géoparc mondial UNESCO, au pied de reliefs volcaniques ; idéal pour marcher, peu de sites propres.",
+   "es": "Pueblo del Ardèche en un Geoparque Mundial de la UNESCO, bajo colinas volcánicas; bueno para caminar, poco propio que ver.",
+   "it": "Paese dell'Ardèche in un Geoparco mondiale UNESCO, sotto colline vulcaniche; buono per camminare, pochi luoghi propri."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:montsoreau",
+  "appeal": 7.0,
+  "band": "good",
+  "criteria": {
+   "setting": 7,
+   "character": 8,
+   "sights": 7,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Loire village in the UNESCO valley with its riverside château, 4 km from Fontevraud Abbey; a rewarding half day, small.",
+   "nl": "Loiredorp in de UNESCO-vallei met zijn kasteel aan de rivier, 4 km van de abdij van Fontevraud; een lonende halve dag, klein.",
+   "de": "Loiredorf im UNESCO-Tal mit Schloss am Fluss, 4 km von der Abtei Fontevraud; ein lohnender halber Tag, klein.",
+   "fr": "Village de la vallée de la Loire (UNESCO) avec son château au bord du fleuve, à 4 km de Fontevraud ; petit, une belle demi-journée.",
+   "es": "Pueblo del valle del Loira (UNESCO) con su castillo junto al río, a 4 km de Fontevraud; pequeño, una buena media jornada.",
+   "it": "Paese della valle della Loira (UNESCO) con il castello sul fiume, a 4 km dall'abbazia di Fontevraud; piccolo, una mezza giornata ben spesa."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:vevey",
+  "appeal": 6.9,
+  "band": "good",
+  "criteria": {
+   "setting": 8,
+   "character": 6,
+   "sights": 6,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Lake Geneva town below Mont Pèlerin, 8 km from the Lavaux vineyard terraces; a fine base, the town itself is quiet and polished.",
+   "nl": "Stadje aan het Meer van Genève onder de Mont Pèlerin, 8 km van de wijnterrassen van Lavaux; een fijne basis, zelf rustig en verzorgd.",
+   "de": "Stadt am Genfersee unter dem Mont Pèlerin, 8 km von den Weinterrassen des Lavaux; schöne Basis, die Stadt selbst ruhig und gepflegt.",
+   "fr": "Ville du Léman au pied du mont Pèlerin, à 8 km des terrasses de Lavaux ; belle base, la ville elle-même est calme et soignée.",
+   "es": "Ciudad del lago Lemán bajo el Mont Pèlerin, a 8 km de las terrazas de Lavaux; buena base, en sí tranquila y pulcra.",
+   "it": "Cittadina sul Lemano sotto il Mont Pèlerin, a 8 km dai terrazzamenti del Lavaux; bella base, la città è quieta e curata."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:bedworth",
+  "appeal": 4.5,
+  "band": "none",
+  "criteria": {
+   "setting": 3,
+   "character": 3,
+   "sights": 3,
+   "atmosphere": 4,
+   "uniqueness": 2
+  },
+  "why": {
+   "en": "Warwickshire former mining town; the sights listed are in Coventry, 8 km away, and the town offers no reason to stop.",
+   "nl": "Voormalige mijnstad in Warwickshire; de genoemde bezienswaardigheden liggen in Coventry, 8 km verder, de stad biedt geen reden om te stoppen.",
+   "de": "Ehemalige Bergbaustadt in Warwickshire; die genannten Ziele liegen in Coventry, 8 km entfernt, der Ort selbst bietet keinen Grund.",
+   "fr": "Ancienne ville minière du Warwickshire ; les sites cités sont à Coventry, à 8 km, la ville n'offre aucune raison de s'arrêter.",
+   "es": "Antigua ciudad minera de Warwickshire; los lugares citados están en Coventry, a 8 km, y la ciudad no ofrece motivo para parar.",
+   "it": "Ex città mineraria del Warwickshire; i luoghi citati sono a Coventry, a 8 km, e la città non offre motivi per fermarsi."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:burriana",
+  "appeal": 5.0,
+  "band": "none",
+  "criteria": {
+   "setting": 4,
+   "character": 5,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Orange-growing town on the Castellón coast with a listed historic core; the named sights lie in neighbouring towns, little to keep you.",
+   "nl": "Sinaasappelstad aan de kust van Castellón met een beschermde kern; de genoemde bezienswaardigheden liggen in buurplaatsen, weinig om te blijven.",
+   "de": "Orangenstadt an der Küste von Castellón mit geschütztem Kern; die genannten Ziele liegen in Nachbarorten, wenig, das hält.",
+   "fr": "Ville des oranges sur la côte de Castellón au centre protégé ; les sites cités sont dans les villes voisines, peu pour rester.",
+   "es": "Ciudad naranjera de la costa de Castellón con conjunto histórico; lo citado está en pueblos vecinos, poco para quedarse.",
+   "it": "Città degli agrumi sulla costa di Castellón con un centro storico tutelato; i luoghi citati sono nei paesi vicini, poco per restare."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:tongeren",
+  "appeal": 6.4,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 4,
+   "character": 6,
+   "sights": 7,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Limburg town of Roman roots, with the Gallo-Roman Museum and the Onze-Lieve-Vrouwebasiliek; a good day, quiet after.",
+   "nl": "Tongeren met Romeinse wortels, het Gallo-Romeins Museum en de Onze-Lieve-Vrouwebasiliek; een goede dag, daarna rustig.",
+   "de": "Römisch geprägte Stadt mit Gallo-Römischem Museum und Liebfrauenbasilika; ein guter Tag, danach ruhig.",
+   "fr": "Tongres aux racines romaines, avec le musée gallo-romain et la basilique Notre-Dame ; une bonne journée, calme ensuite.",
+   "es": "Tongeren, de raíces romanas, con el Museo Galorromano y la basílica de Nuestra Señora; un buen día, tranquila después.",
+   "it": "Tongeren, dalle radici romane, con il Museo gallo-romano e la basilica di Nostra Signora; una bella giornata, poi quieta."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:figueira-da-foz",
+  "appeal": 5.8,
+  "band": "none",
+  "criteria": {
+   "setting": 6,
+   "character": 5,
+   "sights": 4,
+   "atmosphere": 6,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Atlantic beach resort with a casino and the Buarcos fort; broad sands for a summer stay, little to see beyond them.",
+   "nl": "Badplaats aan de Atlantische Oceaan met een casino en het fort van Buarcos; brede stranden voor de zomer, verder weinig.",
+   "de": "Atlantik-Badeort mit Kasino und dem Fort von Buarcos; breite Strände für den Sommer, darüber hinaus wenig.",
+   "fr": "Station atlantique avec un casino et le fort de Buarcos ; larges plages pour l'été, peu à voir au-delà.",
+   "es": "Playa atlántica con casino y el fuerte de Buarcos; amplios arenales para el verano, poco más que ver.",
+   "it": "Località balneare atlantica con un casinò e il forte di Buarcos; ampie spiagge per l'estate, poco altro da vedere."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ }
+]

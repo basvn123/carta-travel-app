@@ -1,0 +1,1190 @@
+{
+  "version": "v5.0-r2",
+  "created": "2026-10-27",
+  "task": "T757",
+  "rule": "Four hand-scored places per class and band, taken from app_data/curated_appeal.json, whose hand appeal sits in the band and whose why fits its test. A rubric score is placed against the anchors of its own class: first the band whose test fits, then the position inside the band. appeal is the hand scale (0 to 10, before appeal_scale.py), the same scale the rubric writes.",
+  "bands": [
+    {
+      "band": "Exceptional",
+      "min": 9.0
+    },
+    {
+      "band": "Excellent",
+      "min": 8.3
+    },
+    {
+      "band": "Very good",
+      "min": 7.6
+    },
+    {
+      "band": "Good",
+      "min": 6.9
+    },
+    {
+      "band": "Pleasant",
+      "min": 6.0
+    }
+  ],
+  "shortfalls": [
+    "city Exceptional: 2 anchors (only Venice and Bruges are hand-scored 9.0 or more among rated city rows)",
+    "town Exceptional: 2 anchors (only Pompeii and Dubrovnik)",
+    "village Exceptional: the only 4 hand scores at 9.0 or more; Meteora and Sognefjord are landscapes filed as villages by population"
+  ],
+  "anchors": [
+    {
+      "id": "CDG",
+      "name": "Paris (CDG)",
+      "country": "France",
+      "class": "metro",
+      "band": "Exceptional",
+      "appeal": 10.0,
+      "why": "Paris: inexhaustible world icon"
+    },
+    {
+      "id": "AMS",
+      "name": "Amsterdam",
+      "country": "Netherlands",
+      "class": "metro",
+      "band": "Exceptional",
+      "appeal": 9.5,
+      "why": "Canal-ring masterpiece, world-class museums, atmosphere"
+    },
+    {
+      "id": "PRG",
+      "name": "Prague",
+      "country": "Czechia",
+      "class": "metro",
+      "band": "Exceptional",
+      "appeal": 9.0,
+      "why": "Anchor: intact fairytale capital, immense depth"
+    },
+    {
+      "id": "EDI",
+      "name": "Edinburgh",
+      "country": "United Kingdom",
+      "class": "metro",
+      "band": "Exceptional",
+      "appeal": 9.0,
+      "why": "Castle skyline, medieval Old Town, festivals, Arthur's Seat"
+    },
+    {
+      "id": "MAD",
+      "name": "Madrid",
+      "country": "Spain",
+      "class": "metro",
+      "band": "Excellent",
+      "appeal": 8.7,
+      "why": "Prado triangle, Retiro, tapas, roaring nightlife"
+    },
+    {
+      "id": "CPH",
+      "name": "Copenhagen",
+      "country": "Denmark",
+      "class": "metro",
+      "band": "Excellent",
+      "appeal": 8.5,
+      "why": "Design, Nyhavn, Tivoli, world-class food"
+    },
+    {
+      "id": "BER",
+      "name": "Berlin",
+      "country": "Germany",
+      "class": "metro",
+      "band": "Excellent",
+      "appeal": 8.5,
+      "why": "History, museums, nightlife; not classically pretty"
+    },
+    {
+      "id": "PMO",
+      "name": "Palermo",
+      "country": "Italy",
+      "class": "metro",
+      "band": "Excellent",
+      "appeal": 8.3,
+      "why": "Norman-Arab splendour, markets, Monreale mosaics"
+    },
+    {
+      "id": "TLL",
+      "name": "Tallinn",
+      "country": "Estonia",
+      "class": "metro",
+      "band": "Very good",
+      "appeal": 8.0,
+      "why": "Best-preserved medieval old town, walls intact"
+    },
+    {
+      "id": "NCE",
+      "name": "Nice",
+      "country": "France",
+      "class": "metro",
+      "band": "Very good",
+      "appeal": 8.0,
+      "why": "Promenade, old town, perfect Riviera base"
+    },
+    {
+      "id": "gem:utrecht",
+      "name": "Utrecht",
+      "country": "Netherlands",
+      "class": "metro",
+      "band": "Very good",
+      "appeal": 7.8,
+      "why": "Wharf-cellar canals, Dom tower, Amsterdam without crowds"
+    },
+    {
+      "id": "DRS",
+      "name": "Dresden",
+      "country": "Germany",
+      "class": "metro",
+      "band": "Very good",
+      "appeal": 7.8,
+      "why": "Rebuilt baroque splendour on the Elbe"
+    },
+    {
+      "id": "SJJ",
+      "name": "Sarajevo",
+      "country": "Bosnia and Herzegovina",
+      "class": "metro",
+      "band": "Good",
+      "appeal": 7.5,
+      "why": "Bascarsija, layered history, atmosphere, great food"
+    },
+    {
+      "id": "GRZ",
+      "name": "Graz",
+      "country": "Austria",
+      "class": "metro",
+      "band": "Good",
+      "appeal": 7.3,
+      "why": "UNESCO old town, Schlossberg, fine food scene"
+    },
+    {
+      "id": "ZRH",
+      "name": "Zurich",
+      "country": "Switzerland",
+      "class": "metro",
+      "band": "Good",
+      "appeal": 7.0,
+      "why": "Lakeside polish, fine old town, staid"
+    },
+    {
+      "id": "DUB",
+      "name": "Dublin",
+      "country": "Ireland",
+      "class": "metro",
+      "band": "Good",
+      "appeal": 7.0,
+      "why": "Georgian squares, Trinity, pub culture; scruffy fabric"
+    },
+    {
+      "id": "ZAG",
+      "name": "Zagreb",
+      "country": "Croatia",
+      "class": "metro",
+      "band": "Pleasant",
+      "appeal": 6.5,
+      "why": "Lively Habsburg upper town; uneven overall"
+    },
+    {
+      "id": "LEJ",
+      "name": "Leipzig",
+      "country": "Germany",
+      "class": "metro",
+      "band": "Pleasant",
+      "appeal": 6.5,
+      "why": "Bach heritage, lively arts, handsome passages"
+    },
+    {
+      "id": "SOF",
+      "name": "Sofia",
+      "country": "Bulgaria",
+      "class": "metro",
+      "band": "Pleasant",
+      "appeal": 6.0,
+      "why": "Nevsky cathedral, Vitosha near; uneven fabric"
+    },
+    {
+      "id": "BEG",
+      "name": "Belgrade",
+      "country": "Serbia",
+      "class": "metro",
+      "band": "Pleasant",
+      "appeal": 6.0,
+      "why": "Kalemegdan, gritty energy, nightlife; unlovely fabric"
+    },
+    {
+      "id": "VCE",
+      "name": "Venice (Marco Polo)",
+      "country": "Italy",
+      "class": "city",
+      "band": "Exceptional",
+      "appeal": 9.5,
+      "why": "Unrepeatable amphibious masterpiece, crowds notwithstanding"
+    },
+    {
+      "id": "gem:bruges",
+      "name": "Bruges",
+      "country": "Belgium",
+      "class": "city",
+      "band": "Exceptional",
+      "appeal": 9.0,
+      "why": "Canal-laced medieval perfection, heavy crowds"
+    },
+    {
+      "id": "gem:granada",
+      "name": "Granada",
+      "country": "Spain",
+      "class": "city",
+      "band": "Excellent",
+      "appeal": 8.7,
+      "why": "Alhambra plus Albaicín, Sierra Nevada backdrop"
+    },
+    {
+      "id": "gem:syracuse",
+      "name": "Syracuse (Ortigia)",
+      "country": "Italy",
+      "class": "city",
+      "band": "Excellent",
+      "appeal": 8.6,
+      "why": "Ortigia's baroque seafront and Greek splendour"
+    },
+    {
+      "id": "SPU",
+      "name": "Split",
+      "country": "Croatia",
+      "class": "city",
+      "band": "Excellent",
+      "appeal": 8.5,
+      "why": "Living Roman palace, Riva, island springboard"
+    },
+    {
+      "id": "BGO",
+      "name": "Bergen",
+      "country": "Norway",
+      "class": "city",
+      "band": "Excellent",
+      "appeal": 8.5,
+      "why": "Bryggen plus doorstep fjords, superb base"
+    },
+    {
+      "id": "gem:ragusa",
+      "name": "Ragusa",
+      "country": "Italy",
+      "class": "city",
+      "band": "Very good",
+      "appeal": 8.0,
+      "why": "Ibla's baroque labyrinth draped over ridge"
+    },
+    {
+      "id": "INN",
+      "name": "Innsbruck",
+      "country": "Austria",
+      "class": "city",
+      "band": "Very good",
+      "appeal": 8.0,
+      "why": "Nordkette rises straight from old town"
+    },
+    {
+      "id": "SCQ",
+      "name": "Santiago de Compostela",
+      "country": "Spain",
+      "class": "city",
+      "band": "Very good",
+      "appeal": 7.8,
+      "why": "Pilgrim cathedral, granite lanes, Galician feasting"
+    },
+    {
+      "id": "gem:canterbury",
+      "name": "Canterbury",
+      "country": "United Kingdom",
+      "class": "city",
+      "band": "Very good",
+      "appeal": 7.6,
+      "why": "Great cathedral, medieval lanes, tourist-thronged"
+    },
+    {
+      "id": "gem:mostar-ba",
+      "name": "Mostar",
+      "country": "Bosnia and Herzegovina",
+      "class": "city",
+      "band": "Good",
+      "appeal": 7.5,
+      "why": "Iconic bridge and bazaar, but compact"
+    },
+    {
+      "id": "gem:freiburg",
+      "name": "Freiburg im Breisgau",
+      "country": "Germany",
+      "class": "city",
+      "band": "Good",
+      "appeal": 7.4,
+      "why": "Sunny minster town, Black Forest doorstep"
+    },
+    {
+      "id": "gem:trento",
+      "name": "Trento",
+      "country": "Italy",
+      "class": "city",
+      "band": "Good",
+      "appeal": 7.0,
+      "why": "Alpine cathedral city, frescoed palazzi"
+    },
+    {
+      "id": "SVG",
+      "name": "Stavanger",
+      "country": "Norway",
+      "class": "city",
+      "band": "Good",
+      "appeal": 7.0,
+      "why": "White old town, Preikestolen and Lysefjord"
+    },
+    {
+      "id": "gem:coimbra",
+      "name": "Coimbra",
+      "country": "Portugal",
+      "class": "city",
+      "band": "Pleasant",
+      "appeal": 6.8,
+      "why": "Hilltop university, Joanina library, student fado"
+    },
+    {
+      "id": "gem:leuven",
+      "name": "Leuven",
+      "country": "Belgium",
+      "class": "city",
+      "band": "Pleasant",
+      "appeal": 6.5,
+      "why": "Ornate town hall, beguinage, beer culture"
+    },
+    {
+      "id": "gem:trencin",
+      "name": "Trencin",
+      "country": "Slovakia",
+      "class": "city",
+      "band": "Pleasant",
+      "appeal": 6.3,
+      "why": "Brooding castle above modest river town"
+    },
+    {
+      "id": "VIT",
+      "name": "Vitoria-Gasteiz",
+      "country": "Spain",
+      "class": "city",
+      "band": "Pleasant",
+      "appeal": 6.0,
+      "why": "Almond-shaped medieval core, green, low-key pintxos"
+    },
+    {
+      "id": "gem:pompeii",
+      "name": "Pompeii",
+      "country": "Italy",
+      "class": "town",
+      "band": "Exceptional",
+      "appeal": 9.2,
+      "why": "The world's most famous archaeological site: a complete Roman city under Vesuvius. Worth the journey by any measure; anchor-comparable with Santorini."
+    },
+    {
+      "id": "DBV",
+      "name": "Dubrovnik",
+      "country": "Croatia",
+      "class": "town",
+      "band": "Exceptional",
+      "appeal": 9.0,
+      "why": "Peerless walled city; crowds are the price"
+    },
+    {
+      "id": "gem:agrigento-valle-dei-templi",
+      "name": "Agrigento (Valley of the Temples)",
+      "country": "Italy",
+      "class": "town",
+      "band": "Excellent",
+      "appeal": 8.7,
+      "why": "UNESCO Valley of the Temples: the finest Greek temple ensemble outside Greece, floodlit over the almond groves."
+    },
+    {
+      "id": "gem:chamonix",
+      "name": "Chamonix",
+      "country": "France",
+      "class": "town",
+      "band": "Excellent",
+      "appeal": 8.5,
+      "why": "Mont Blanc drama, world-class alpine"
+    },
+    {
+      "id": "gem:annecy",
+      "name": "Annecy",
+      "country": "France",
+      "class": "town",
+      "band": "Excellent",
+      "appeal": 8.5,
+      "why": "Turquoise lake, canals, alpine backdrop"
+    },
+    {
+      "id": "gem:sintra",
+      "name": "Sintra",
+      "country": "Portugal",
+      "class": "town",
+      "band": "Excellent",
+      "appeal": 8.3,
+      "why": "Pena palace, misty forests, romantic follies"
+    },
+    {
+      "id": "gem:noto",
+      "name": "Noto",
+      "country": "Italy",
+      "class": "town",
+      "band": "Very good",
+      "appeal": 8.0,
+      "why": "Golden baroque stage-set town, glorious ensemble"
+    },
+    {
+      "id": "gem:ronda",
+      "name": "Ronda",
+      "country": "Spain",
+      "class": "town",
+      "band": "Very good",
+      "appeal": 7.8,
+      "why": "Puente Nuevo gorge, breathtaking clifftop drama"
+    },
+    {
+      "id": "gem:gura-humorului",
+      "name": "Gura Humorului",
+      "country": "Romania",
+      "class": "town",
+      "band": "Very good",
+      "appeal": 7.8,
+      "why": "Painted Bucovina monasteries, extraordinary frescoed churches"
+    },
+    {
+      "id": "gem:quedlinburg",
+      "name": "Quedlinburg",
+      "country": "Germany",
+      "class": "town",
+      "band": "Very good",
+      "appeal": 7.6,
+      "why": "Half-timbered UNESCO town, barely touristed Harz"
+    },
+    {
+      "id": "gem:malbork",
+      "name": "Malbork",
+      "country": "Poland",
+      "class": "town",
+      "band": "Good",
+      "appeal": 7.5,
+      "why": "World's largest brick castle, UNESCO"
+    },
+    {
+      "id": "gem:bayeux",
+      "name": "Bayeux",
+      "country": "France",
+      "class": "town",
+      "band": "Good",
+      "appeal": 7.3,
+      "why": "The Tapestry, cathedral, D-Day beaches base"
+    },
+    {
+      "id": "gem:spoleto",
+      "name": "Spoleto",
+      "country": "Italy",
+      "class": "town",
+      "band": "Good",
+      "appeal": 7.0,
+      "why": "Ponte delle Torri, festival town"
+    },
+    {
+      "id": "gem:banska-stiavnica",
+      "name": "Banská Štiavnica",
+      "country": "Slovakia",
+      "class": "town",
+      "band": "Good",
+      "appeal": 7.0,
+      "why": "Enchanting UNESCO mining town in hills"
+    },
+    {
+      "id": "gem:herceg-novi",
+      "name": "Herceg Novi",
+      "country": "Montenegro",
+      "class": "town",
+      "band": "Pleasant",
+      "appeal": 6.8,
+      "why": "Fortress town at bay mouth"
+    },
+    {
+      "id": "gem:skofja-loka",
+      "name": "Škofja Loka",
+      "country": "Slovenia",
+      "class": "town",
+      "band": "Pleasant",
+      "appeal": 6.5,
+      "why": "Perfect medieval town minutes from LJU"
+    },
+    {
+      "id": "gem:meissen",
+      "name": "Meissen",
+      "country": "Germany",
+      "class": "town",
+      "band": "Pleasant",
+      "appeal": 6.4,
+      "why": "Porcelain cradle, castle skyline"
+    },
+    {
+      "id": "gem:stratford",
+      "name": "Stratford-upon-Avon",
+      "country": "United Kingdom",
+      "class": "town",
+      "band": "Pleasant",
+      "appeal": 6.0,
+      "why": "Shakespeare pilgrimage, pretty but heavily commercialised"
+    },
+    {
+      "id": "gem:zermatt",
+      "name": "Zermatt",
+      "country": "Switzerland",
+      "class": "village",
+      "band": "Exceptional",
+      "appeal": 9.0,
+      "why": "Matterhorn theatre, car-free, Gornergrat views"
+    },
+    {
+      "id": "gem:meteora",
+      "name": "Meteora",
+      "country": "Greece",
+      "class": "village",
+      "band": "Exceptional",
+      "appeal": 9.0,
+      "why": "Monasteries on rock pinnacles; genuinely otherworldly"
+    },
+    {
+      "id": "gem:lauterbrunnen",
+      "name": "Lauterbrunnen",
+      "country": "Switzerland",
+      "class": "village",
+      "band": "Exceptional",
+      "appeal": 9.0,
+      "why": "Waterfall valley of staggering beauty"
+    },
+    {
+      "id": "gem:bergen-nearby",
+      "name": "Sognefjord",
+      "country": "Norway",
+      "class": "village",
+      "band": "Exceptional",
+      "appeal": 9.0,
+      "why": "Naeroyfjord, Flam, Norway's grandest fjord"
+    },
+    {
+      "id": "gem:grindelwald",
+      "name": "Grindelwald",
+      "country": "Switzerland",
+      "class": "village",
+      "band": "Excellent",
+      "appeal": 8.8,
+      "why": "Under the Eiger, glorious trails everywhere"
+    },
+    {
+      "id": "gem:bonifacio",
+      "name": "Bonifacio",
+      "country": "France",
+      "class": "village",
+      "band": "Excellent",
+      "appeal": 8.5,
+      "why": "Citadel atop white cliffs, breathtaking"
+    },
+    {
+      "id": "gem:papingo",
+      "name": "Papingo (Zagori)",
+      "country": "Greece",
+      "class": "village",
+      "band": "Excellent",
+      "appeal": 8.4,
+      "why": "Stone villages, Vikos Gorge, Zagori grandeur"
+    },
+    {
+      "id": "gem:hallstatt",
+      "name": "Hallstatt",
+      "country": "Austria",
+      "class": "village",
+      "band": "Excellent",
+      "appeal": 8.3,
+      "why": "Postcard lake village, overtouristed but sublime"
+    },
+    {
+      "id": "gem:monemvasia",
+      "name": "Monemvasia",
+      "country": "Greece",
+      "class": "village",
+      "band": "Very good",
+      "appeal": 8.0,
+      "why": "Byzantine rock-fortress town, magically preserved"
+    },
+    {
+      "id": "gem:rocamadour",
+      "name": "Rocamadour",
+      "country": "France",
+      "class": "village",
+      "band": "Very good",
+      "appeal": 7.9,
+      "why": "Cliff-stacked sanctuary, jaw-dropping vertical setting"
+    },
+    {
+      "id": "gem:piran",
+      "name": "Piran",
+      "country": "Slovenia",
+      "class": "village",
+      "band": "Very good",
+      "appeal": 7.8,
+      "why": "Venetian jewel on Adriatic point, Tartini square"
+    },
+    {
+      "id": "gem:albarracin",
+      "name": "Albarracín",
+      "country": "Spain",
+      "class": "village",
+      "band": "Very good",
+      "appeal": 7.6,
+      "why": "Spain's most beautiful village, ochre medieval maze"
+    },
+    {
+      "id": "gem:fjallbacka",
+      "name": "Fjallbacka",
+      "country": "Sweden",
+      "class": "village",
+      "band": "Good",
+      "appeal": 7.5,
+      "why": "Granite skerries, postcard Bohuslan harbour"
+    },
+    {
+      "id": "gem:westport",
+      "name": "Westport",
+      "country": "Ireland",
+      "class": "village",
+      "band": "Good",
+      "appeal": 7.2,
+      "why": "Georgian streets, Croagh Patrick, Clew Bay"
+    },
+    {
+      "id": "gem:st-wolfgang",
+      "name": "St. Wolfgang",
+      "country": "Austria",
+      "class": "village",
+      "band": "Good",
+      "appeal": 7.0,
+      "why": "Lovely lakeside village, Schafberg steam railway"
+    },
+    {
+      "id": "gem:cochem",
+      "name": "Cochem",
+      "country": "Germany",
+      "class": "village",
+      "band": "Good",
+      "appeal": 7.0,
+      "why": "Fairytale castle over Mosel, coach-tour busy"
+    },
+    {
+      "id": "gem:la-roche-en-ardenne",
+      "name": "La Roche-en-Ardenne",
+      "country": "Belgium",
+      "class": "village",
+      "band": "Pleasant",
+      "appeal": 6.8,
+      "why": "Castle, river loop, Ardennes scenery"
+    },
+    {
+      "id": "gem:aljezur",
+      "name": "Aljezur (Arrifana)",
+      "country": "Portugal",
+      "class": "village",
+      "band": "Pleasant",
+      "appeal": 6.6,
+      "why": "Castle village, wild surf coast"
+    },
+    {
+      "id": "gem:bourtange",
+      "name": "Bourtange",
+      "country": "Netherlands",
+      "class": "village",
+      "band": "Pleasant",
+      "appeal": 6.5,
+      "why": "Atlas Obscura star fort, fully restored"
+    },
+    {
+      "id": "gem:shaftesbury",
+      "name": "Shaftesbury",
+      "country": "United Kingdom",
+      "class": "village",
+      "band": "Pleasant",
+      "appeal": 6.0,
+      "why": "Iconic Gold Hill view"
+    },
+    {
+      "id": "JTR",
+      "name": "Santorini",
+      "country": "Greece",
+      "class": "area",
+      "band": "Exceptional",
+      "appeal": 9.5,
+      "why": "Caldera villages; a world icon, deservedly"
+    },
+    {
+      "id": "gem:dolomites",
+      "name": "Dolomites (Cortina)",
+      "country": "Italy",
+      "class": "area",
+      "band": "Exceptional",
+      "appeal": 9.4,
+      "why": "Pale peaks without equal in Europe"
+    },
+    {
+      "id": "gem:geiranger",
+      "name": "Geirangerfjord",
+      "country": "Norway",
+      "class": "area",
+      "band": "Exceptional",
+      "appeal": 9.0,
+      "why": "UNESCO fjord, waterfalls, jaw-dropping viewpoints"
+    },
+    {
+      "id": "gem:cinque-terre",
+      "name": "Cinque Terre",
+      "country": "Italy",
+      "class": "area",
+      "band": "Exceptional",
+      "appeal": 9.0,
+      "why": "Five villages on impossible cliff terraces"
+    },
+    {
+      "id": "gem:isle-of-skye",
+      "name": "Isle of Skye",
+      "country": "United Kingdom",
+      "class": "area",
+      "band": "Excellent",
+      "appeal": 8.7,
+      "why": "Cuillin drama, Quiraing, fairy pools; now famous"
+    },
+    {
+      "id": "gem:skaftafell",
+      "name": "Skaftafell / Vatnajökull",
+      "country": "Iceland",
+      "class": "area",
+      "band": "Excellent",
+      "appeal": 8.5,
+      "why": "Glacier tongues, Svartifoss, Europe's largest icecap"
+    },
+    {
+      "id": "gem:bled",
+      "name": "Lake Bled",
+      "country": "Slovenia",
+      "class": "area",
+      "band": "Excellent",
+      "appeal": 8.5,
+      "why": "Island church, cliff castle, alpine lake perfection"
+    },
+    {
+      "id": "gem:flam",
+      "name": "Flam",
+      "country": "Norway",
+      "class": "area",
+      "band": "Excellent",
+      "appeal": 8.3,
+      "why": "Aurlandsfjord and famous railway, cruise-swamped"
+    },
+    {
+      "id": "PDL",
+      "name": "Ponta Delgada (Azores)",
+      "country": "Portugal",
+      "class": "area",
+      "band": "Very good",
+      "appeal": 8.2,
+      "why": "Sete Cidades craters, Furnas hot springs, whales"
+    },
+    {
+      "id": "gem:jotunheimen",
+      "name": "Jotunheimen",
+      "country": "Norway",
+      "class": "area",
+      "band": "Very good",
+      "appeal": 8.0,
+      "why": "Scandinavia's highest peaks, Besseggen"
+    },
+    {
+      "id": "gem:procida",
+      "name": "Procida",
+      "country": "Italy",
+      "class": "area",
+      "band": "Very good",
+      "appeal": 7.8,
+      "why": "Pastel harbours, Capri charm without crowds"
+    },
+    {
+      "id": "gem:porquerolles",
+      "name": "Porquerolles",
+      "country": "France",
+      "class": "area",
+      "band": "Very good",
+      "appeal": 7.6,
+      "why": "Car-free island, France's finest beaches"
+    },
+    {
+      "id": "gem:ischia",
+      "name": "Ischia",
+      "country": "Italy",
+      "class": "area",
+      "band": "Good",
+      "appeal": 7.5,
+      "why": "Thermal island, calmer than Capri"
+    },
+    {
+      "id": "gem:aran-islands",
+      "name": "Aran Islands (Inishmore)",
+      "country": "Ireland",
+      "class": "area",
+      "band": "Good",
+      "appeal": 7.3,
+      "why": "Stark limestone, Dun Aonghasa clifftop fort, cycling"
+    },
+    {
+      "id": "gem:las-medulas",
+      "name": "Las Medulas",
+      "country": "Spain",
+      "class": "area",
+      "band": "Good",
+      "appeal": 7.2,
+      "why": "Surreal red Roman mining landscape"
+    },
+    {
+      "id": "gem:yorkshire-dales",
+      "name": "Yorkshire Dales",
+      "country": "United Kingdom",
+      "class": "area",
+      "band": "Good",
+      "appeal": 7.0,
+      "why": "Green dales, limestone scars, waterfalls"
+    },
+    {
+      "id": "gem:texel",
+      "name": "Texel",
+      "country": "Netherlands",
+      "class": "area",
+      "band": "Pleasant",
+      "appeal": 6.8,
+      "why": "Wadden dunes, broad beaches, seals, cycling"
+    },
+    {
+      "id": "gem:achensee",
+      "name": "Achensee",
+      "country": "Austria",
+      "class": "area",
+      "band": "Pleasant",
+      "appeal": 6.6,
+      "why": "Fjord scenery an hour from Innsbruck"
+    },
+    {
+      "id": "gem:beara-peninsula",
+      "name": "Beara Peninsula",
+      "country": "Ireland",
+      "class": "area",
+      "band": "Pleasant",
+      "appeal": 6.5,
+      "why": "Ring of Kerry without crowds"
+    },
+    {
+      "id": "gem:saaremaa",
+      "name": "Saaremaa",
+      "country": "Estonia",
+      "class": "area",
+      "band": "Pleasant",
+      "appeal": 6.0,
+      "why": "Windmills, castle, meteorite crater, slow island"
+    }
+  ],
+  "calibration_about": "T758: 30 well-known hand-scored places in the Good and Pleasant range, two per class and range, the most visited first. Added after the first three shards scored their hidden controls 0.4 to 1.4 above the hand scale: the hand scale is strict for famous places that are pleasant rather than compelling. Not anchors, not controls, not in the blind hand check. Six places under 6.0 added after shard 06: the hand scale uses the whole no-badge range (3.0 for a plain industrial city), and scorers had bunched weak places at 5.0 to 5.8.",
+  "calibration": [
+    {
+      "id": "MAN",
+      "name": "Manchester",
+      "country": "United Kingdom",
+      "class": "metro",
+      "appeal": 6.0,
+      "why": "Music, food halls, industrial heritage; little beauty"
+    },
+    {
+      "id": "OTP",
+      "name": "Bucharest (Otopeni)",
+      "country": "Romania",
+      "class": "metro",
+      "appeal": 6.0,
+      "why": "Belle-epoque pockets, nightlife; brutal concrete swathes"
+    },
+    {
+      "id": "MXP",
+      "name": "Milan (Malpensa)",
+      "country": "Italy",
+      "class": "metro",
+      "appeal": 7.0,
+      "why": "Duomo, Last Supper; uneven business city"
+    },
+    {
+      "id": "gem:the-hague",
+      "name": "The Hague",
+      "country": "Netherlands",
+      "class": "metro",
+      "appeal": 7.0,
+      "why": "Mauritshuis and beach, stately not charming"
+    },
+    {
+      "id": "GOA",
+      "name": "Genoa",
+      "country": "Italy",
+      "class": "metro",
+      "appeal": 7.4,
+      "why": "Rolli palaces, vast medieval maze, underrated"
+    },
+    {
+      "id": "VLC",
+      "name": "Valencia",
+      "country": "Spain",
+      "class": "metro",
+      "appeal": 7.5,
+      "why": "Ciudad de las Artes, old town, paella, beach"
+    },
+    {
+      "id": "GVA",
+      "name": "Geneva",
+      "country": "Switzerland",
+      "class": "city",
+      "appeal": 6.3,
+      "why": "Grand lake setting, polished but sterile"
+    },
+    {
+      "id": "ORK",
+      "name": "Cork",
+      "country": "Ireland",
+      "class": "city",
+      "appeal": 6.0,
+      "why": "English Market, food scene; pleasant not memorable"
+    },
+    {
+      "id": "LUX",
+      "name": "Luxembourg",
+      "country": "Luxembourg",
+      "class": "city",
+      "appeal": 7.0,
+      "why": "Dramatic gorge-top old town, casemates"
+    },
+    {
+      "id": "TRS",
+      "name": "Trieste",
+      "country": "Italy",
+      "class": "city",
+      "appeal": 7.0,
+      "why": "Habsburg cafes, Miramare, singular border mood"
+    },
+    {
+      "id": "TFN",
+      "name": "Tenerife North",
+      "country": "Spain",
+      "class": "city",
+      "appeal": 7.7,
+      "why": "Teide, Anaga cloud forest, UNESCO La Laguna"
+    },
+    {
+      "id": "LJU",
+      "name": "Ljubljana",
+      "country": "Slovenia",
+      "class": "city",
+      "appeal": 7.5,
+      "why": "Riverside charm, Plecnik architecture, relaxed cafe life"
+    },
+    {
+      "id": "gem:monaco-mc",
+      "name": "Monaco",
+      "country": "Monaco",
+      "class": "town",
+      "appeal": 6.0,
+      "why": "Glittering spectacle, little soul or depth"
+    },
+    {
+      "id": "gem:fatima",
+      "name": "Fatima",
+      "country": "Portugal",
+      "class": "town",
+      "appeal": 6.4,
+      "why": "World pilgrimage site"
+    },
+    {
+      "id": "gem:windsor",
+      "name": "Windsor",
+      "country": "United Kingdom",
+      "class": "town",
+      "appeal": 7.0,
+      "why": "World's oldest lived-in castle"
+    },
+    {
+      "id": "CGN",
+      "name": "Cologne-Bonn",
+      "country": "Germany",
+      "class": "town",
+      "appeal": 6.5,
+      "why": "Mighty cathedral, Rhine, uneven postwar fabric"
+    },
+    {
+      "id": "gem:lagos-pt",
+      "name": "Lagos",
+      "country": "Portugal",
+      "class": "town",
+      "appeal": 7.5,
+      "why": "Ponta da Piedade cliffs, golden coves, lively"
+    },
+    {
+      "id": "CCF",
+      "name": "Carcassonne",
+      "country": "France",
+      "class": "town",
+      "appeal": 7.5,
+      "why": "Storybook walled cite, dull lower town"
+    },
+    {
+      "id": "gem:san-marino",
+      "name": "San Marino",
+      "country": "San Marino",
+      "class": "village",
+      "appeal": 6.0,
+      "why": "Dramatic towers, trinket-shop old town"
+    },
+    {
+      "id": "gem:ayia-napa",
+      "name": "Ayia Napa & Cape Greco",
+      "country": "Cyprus",
+      "class": "village",
+      "appeal": 6.0,
+      "why": "Cape Greco sea caves offset tacky strip"
+    },
+    {
+      "id": "gem:guadalupe",
+      "name": "Guadalupe",
+      "country": "Spain",
+      "class": "village",
+      "appeal": 7.0,
+      "why": "UNESCO monastery village"
+    },
+    {
+      "id": "gem:mycenae",
+      "name": "Mycenae",
+      "country": "Greece",
+      "class": "village",
+      "appeal": 7.1,
+      "why": "Homeric citadel, cornerstone of European prehistory"
+    },
+    {
+      "id": "gem:delphi",
+      "name": "Delphi",
+      "country": "Greece",
+      "class": "village",
+      "appeal": 7.5,
+      "why": "Sublime sanctuary setting; essentially one grand site"
+    },
+    {
+      "id": "gem:saint-tropez",
+      "name": "Saint-Tropez",
+      "country": "France",
+      "class": "village",
+      "appeal": 7.5,
+      "why": "Legendary Riviera port plus Pampelonne"
+    },
+    {
+      "id": "gem:sommaroy",
+      "name": "Sommarøy",
+      "country": "Norway",
+      "class": "area",
+      "appeal": 6.4,
+      "why": "Caribbean-look beaches above the circle"
+    },
+    {
+      "id": "gem:kea",
+      "name": "Kea (Tzia)",
+      "country": "Greece",
+      "class": "area",
+      "appeal": 6.4,
+      "why": "Trail network and Britannic wreck, weekender secret"
+    },
+    {
+      "id": "JER",
+      "name": "Jersey",
+      "country": "United Kingdom",
+      "class": "area",
+      "appeal": 6.8,
+      "why": "Big beaches, cliff walks, wartime history, mild"
+    },
+    {
+      "id": "TFS",
+      "name": "Tenerife South",
+      "country": "Spain",
+      "class": "area",
+      "appeal": 7.0,
+      "why": "Great beaches and Teide access, resort strip"
+    },
+    {
+      "id": "AHO",
+      "name": "Alghero",
+      "country": "Italy",
+      "class": "area",
+      "appeal": 7.2,
+      "why": "Catalan old town, grottoes, fine beaches"
+    },
+    {
+      "id": "gem:hadrians-wall",
+      "name": "Hadrian's Wall (Housesteads)",
+      "country": "United Kingdom",
+      "class": "area",
+      "appeal": 7.5,
+      "why": "UNESCO Roman frontier"
+    },
+    {
+      "id": "HHN",
+      "name": "Frankfurt-Hahn",
+      "country": "Germany",
+      "class": "village",
+      "appeal": 2.5,
+      "why": "Remote Hunsrueck airfield, no town appeal"
+    },
+    {
+      "id": "TGD",
+      "name": "Podgorica",
+      "country": "Montenegro",
+      "class": "city",
+      "appeal": 3.5,
+      "why": "Transit capital, almost no leisure draw"
+    },
+    {
+      "id": "BHX",
+      "name": "Birmingham",
+      "country": "United Kingdom",
+      "class": "metro",
+      "appeal": 4.5,
+      "why": "Canals and balti, but visually unrewarding sprawl"
+    },
+    {
+      "id": "SKP",
+      "name": "Skopje",
+      "country": "North Macedonia",
+      "class": "metro",
+      "appeal": 4.5,
+      "why": "Kitsch statues; decent old bazaar"
+    },
+    {
+      "id": "TIA",
+      "name": "Tirana",
+      "country": "Albania",
+      "class": "metro",
+      "appeal": 5.5,
+      "why": "Lively, colourful, quirky; little conventional beauty"
+    },
+    {
+      "id": "MMX",
+      "name": "Malmö",
+      "country": "Sweden",
+      "class": "metro",
+      "appeal": 5.0,
+      "why": "Pleasant squares, Turning Torso; quickly done"
+    }
+  ]
+}

@@ -1,0 +1,884 @@
+[
+ {
+  "id": "gem:viterbo",
+  "appeal": 6.9,
+  "band": "good",
+  "criteria": {
+   "setting": 5,
+   "character": 8,
+   "sights": 7,
+   "atmosphere": 5,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Walled Lazio town around the Palazzo dei Papi and San Lorenzo, with Villa Lante 4 km away; solid heritage, quiet evenings.",
+   "nl": "Ommuurde stad in Lazio rond het Palazzo dei Papi en San Lorenzo, met Villa Lante op 4 km; stevig erfgoed, rustige avonden.",
+   "de": "Ummauerte Stadt in Latium um den Palazzo dei Papi und San Lorenzo, mit Villa Lante in 4 km; solides Erbe, ruhige Abende.",
+   "fr": "Ville fortifiée du Latium autour du Palazzo dei Papi et de San Lorenzo, avec la villa Lante à 4 km; beau patrimoine, soirées calmes.",
+   "es": "Ciudad amurallada del Lacio en torno al Palazzo dei Papi y San Lorenzo, con Villa Lante a 4 km; buen patrimonio, noches tranquilas.",
+   "it": "Città murata del Lazio attorno al Palazzo dei Papi e a San Lorenzo, con Villa Lante a 4 km; solido patrimonio, serate quiete."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:jawor",
+  "appeal": 6.5,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 4,
+   "character": 6,
+   "sights": 7,
+   "atmosphere": 4,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "Silesian town known for its UNESCO-listed Peace Church, a rare timber church; a good short stop, little else to hold a day.",
+   "nl": "Silezisch stadje bekend om de UNESCO-Vredeskerk, een zeldzame houten kerk; een goede korte stop, verder weinig voor een dag.",
+   "de": "Schlesisches Städtchen mit der UNESCO-Friedenskirche, einer seltenen Holzkirche; ein guter kurzer Halt, sonst wenig für einen Tag.",
+   "fr": "Ville de Silésie connue pour son église de la Paix classée à l'UNESCO, rare église en bois; bonne halte courte, peu d'autre.",
+   "es": "Ciudad de Silesia conocida por su Iglesia de la Paz, Patrimonio UNESCO, una rara iglesia de madera; buena parada corta, poco más.",
+   "it": "Città della Slesia nota per la Chiesa della Pace, patrimonio UNESCO, una rara chiesa di legno; buona sosta breve, poco altro."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:monzambano",
+  "appeal": 6.3,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 6,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Listed Mincio village with Castellaro Lagusello 5 km away and Lake Garda close; quiet, little of its own.",
+   "nl": "Beschermd dorp aan de Mincio met Castellaro Lagusello op 5 km en het Gardameer dichtbij; rustig, zelf weinig.",
+   "de": "Gelistetes Dorf am Mincio mit Castellaro Lagusello in 5 km und dem Gardasee in der Nähe; ruhig, selbst wenig.",
+   "fr": "Village classé sur le Mincio avec Castellaro Lagusello à 5 km et le lac de Garde proche; calme, peu de choses en propre.",
+   "es": "Pueblo catalogado sobre el Mincio con Castellaro Lagusello a 5 km y el lago de Garda cerca; tranquilo, poco propio.",
+   "it": "Borgo riconosciuto sul Mincio con Castellaro Lagusello a 5 km e il Garda vicino; quieto, poco di proprio."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:pershore",
+  "appeal": 6.0,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 5,
+   "character": 7,
+   "sights": 4,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Worcestershire market town built round its abbey, with Croome Court 6 km away; a quiet, tidy stop.",
+   "nl": "Marktstadje in Worcestershire rond de abdij, met Croome Court op 6 km; een rustige, verzorgde stop.",
+   "de": "Marktstadt in Worcestershire rund um die Abtei, mit Croome Court in 6 km; ein ruhiger, gepflegter Halt.",
+   "fr": "Bourg de marché du Worcestershire bâti autour de son abbatiale, avec Croome Court à 6 km; une halte calme et soignée.",
+   "es": "Localidad de mercado de Worcestershire en torno a su abadía, con Croome Court a 6 km; una parada tranquila y cuidada.",
+   "it": "Cittadina di mercato del Worcestershire attorno alla sua abbazia, con Croome Court a 6 km; una sosta quieta e curata."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:spindleruv-mlyn",
+  "appeal": 6.9,
+  "band": "good",
+  "criteria": {
+   "setting": 8,
+   "character": 5,
+   "sights": 6,
+   "atmosphere": 5,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Giant Mountains resort with the Pančava waterfall, Elbe spring and Sněžka 9 km away; best for walking and skiing.",
+   "nl": "Wintersportdorp in het Reuzengebergte met de Pančava-waterval, de Elbebron en de Sněžka op 9 km; vooral goed voor wandelen en skiën.",
+   "de": "Wintersportort im Riesengebirge mit dem Pančava-Wasserfall, der Elbquelle und der Schneekoppe in 9 km; vor allem für Wandern und Skifahren.",
+   "fr": "Station des Monts des Géants, cascade de Pančava, source de l'Elbe et Sněžka à 9 km; surtout marche et ski.",
+   "es": "Estación de los Montes Gigantes con la cascada de Pančava, el nacimiento del Elba y la Sněžka a 9 km; ideal para caminar y esquiar.",
+   "it": "Stazione dei Monti dei Giganti con la cascata di Pančava, la sorgente dell'Elba e la Sněžka a 9 km; ideale per camminare e sciare."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:zonnebeke",
+  "appeal": 6.3,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 4,
+   "character": 5,
+   "sights": 6,
+   "atmosphere": 3,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Flanders town at the heart of the Third Battle of Ypres, with cemeteries, memorials and a theme park nearby; sober history stop.",
+   "nl": "Stad in Vlaanderen in het hart van de Derde Slag bij Ieper, met begraafplaatsen, gedenktekens en een pretpark vlakbij; een sobere geschiedenisstop.",
+   "de": "Stadt in Flandern im Zentrum der dritten Flandernschlacht, mit Friedhöfen, Denkmälern und einem Freizeitpark in der Nähe; nüchterner Geschichtshalt.",
+   "fr": "Ville flamande au cœur de la troisième bataille d'Ypres, avec cimetières, mémoriaux et un parc d'attractions proche; une halte d'histoire sobre.",
+   "es": "Ciudad flamenca en el centro de la Tercera Batalla de Ypres, con cementerios, memoriales y un parque cercano; una parada de historia sobria.",
+   "it": "Città fiamminga nel cuore della terza battaglia di Ypres, con cimiteri, memoriali e un parco divertimenti vicino; una sosta di storia sobria."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:siano",
+  "appeal": 5.4,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 4,
+   "sights": 3,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Small Calabrian hill village; the card lists only sights of nearby Catanzaro, so little of its own is shown.",
+   "nl": "Klein heuveldorp in Calabrië; de gegevens noemen alleen bezienswaardigheden van het nabije Catanzaro, zelf weinig.",
+   "de": "Kleines Hügeldorf in Kalabrien; die Angaben nennen nur Sehenswürdigkeiten des nahen Catanzaro, selbst wenig.",
+   "fr": "Petit village perché de Calabre; les données ne citent que des sites de Catanzaro voisine, peu en propre.",
+   "es": "Pequeño pueblo de colina en Calabria; los datos solo citan atractivos de la cercana Catanzaro, poco propio.",
+   "it": "Piccolo paese collinare calabrese; i dati citano solo attrazioni della vicina Catanzaro, poco di proprio."
+  },
+  "confidence": "low",
+  "flags": [
+   "thin_card"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:wageningen",
+  "appeal": 5.6,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 4,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Dutch university town on the Rhine with Doorwerth Castle 8 km away; student life, but a plain centre.",
+   "nl": "Nederlandse universiteitsstad aan de Rijn met kasteel Doorwerth op 8 km; studentenleven, maar een eenvoudig centrum.",
+   "de": "Niederländische Universitätsstadt am Rhein mit Schloss Doorwerth in 8 km; Studentenleben, aber ein schlichtes Zentrum.",
+   "fr": "Ville universitaire néerlandaise sur le Rhin avec le château de Doorwerth à 8 km; vie étudiante, mais centre sobre.",
+   "es": "Ciudad universitaria neerlandesa junto al Rin con el castillo de Doorwerth a 8 km; vida estudiantil, pero centro sencillo.",
+   "it": "Città universitaria olandese sul Reno con il castello di Doorwerth a 8 km; vita studentesca, ma centro semplice."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:portoferraio",
+  "appeal": 7.0,
+  "band": "good",
+  "criteria": {
+   "setting": 8,
+   "character": 7,
+   "sights": 7,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Fortified harbour town on Elba with Napoleon's villas and museums, a Roman villa and national park trails; busy in summer.",
+   "nl": "Versterkte havenstad op Elba met Napoleons villa's en musea, een Romeinse villa en wandelpaden in het nationaal park; zomers druk.",
+   "de": "Befestigte Hafenstadt auf Elba mit Napoleons Villen und Museen, einer römischen Villa und Wanderwegen im Nationalpark; im Sommer voll.",
+   "fr": "Port fortifié de l'île d'Elbe avec les villas et musées de Napoléon, une villa romaine et des sentiers du parc national; bondé l'été.",
+   "es": "Puerto fortificado de Elba con las villas y museos de Napoleón, una villa romana y senderos del parque nacional; concurrido en verano.",
+   "it": "Porto fortificato dell'Elba con ville e musei napoleonici, una villa romana e sentieri del parco nazionale; affollato d'estate."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:neoi-poroi",
+  "appeal": 5.7,
+  "band": "none",
+  "criteria": {
+   "setting": 6,
+   "character": 4,
+   "sights": 4,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Small Pierian beach village with Platamon Castle 5 km away and Mount Ossa behind; a summer stop, thin otherwise.",
+   "nl": "Klein stranddorp in Pieria met kasteel Platamon op 5 km en de Ossa erachter; een zomerstop, verder dun.",
+   "de": "Kleines Stranddorf in Pierien mit der Burg Platamonas in 5 km und dem Ossa dahinter; ein Sommerhalt, sonst dünn.",
+   "fr": "Petit village balnéaire de Piérie avec le château de Platamon à 5 km et le mont Ossa derrière; une halte estivale, mince sinon.",
+   "es": "Pequeño pueblo playero de Pieria con el castillo de Platamon a 5 km y el monte Osa detrás; una parada estival, escasa por lo demás.",
+   "it": "Piccolo paese balneare della Pieria con il castello di Platamonas a 5 km e il monte Ossa alle spalle; una sosta estiva, scarno altrimenti."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:montecosaro",
+  "appeal": 6.2,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 7,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Listed Marche hill village with churches and a civic art gallery 4 km away in Civitanova; quiet and small.",
+   "nl": "Beschermd heuveldorp in de Marche met kerken en een stedelijke kunstgalerie op 4 km in Civitanova; rustig en klein.",
+   "de": "Gelistetes Hügeldorf in den Marken mit Kirchen und einer städtischen Kunstgalerie in 4 km in Civitanova; ruhig und klein.",
+   "fr": "Village perché classé des Marches avec des églises et une galerie d'art municipale à 4 km à Civitanova; calme et petit.",
+   "es": "Pueblo de colina catalogado de las Marcas con iglesias y una galería de arte municipal a 4 km en Civitanova; tranquilo y pequeño.",
+   "it": "Borgo collinare riconosciuto delle Marche con chiese e una pinacoteca civica a 4 km a Civitanova; quieto e piccolo."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:gunzenhausen",
+  "appeal": 6.2,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 5,
+   "sights": 5,
+   "atmosphere": 4,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Franconian town on the Altmühlsee lake, part of the UNESCO Roman frontier, with a Roman fort 7 km away; modest in scale.",
+   "nl": "Frankisch stadje aan de Altmühlsee, onderdeel van de UNESCO-Romeinse grens, met een Romeins fort op 7 km; bescheiden van omvang.",
+   "de": "Fränkisches Städtchen am Altmühlsee, Teil des UNESCO-Limes, mit einem römischen Kastell in 7 km; bescheiden im Umfang.",
+   "fr": "Petite ville franconienne sur l'Altmühlsee, partie du limes classé à l'UNESCO, avec un fort romain à 7 km; de taille modeste.",
+   "es": "Ciudad de Franconia junto al lago Altmühlsee, parte del limes Patrimonio UNESCO, con un fuerte romano a 7 km; de escala modesta.",
+   "it": "Cittadina della Franconia sul lago Altmühlsee, parte del limes UNESCO, con un forte romano a 7 km; di dimensioni modeste."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:balatonfured",
+  "appeal": 6.7,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 8,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Lake Balaton resort town with a promenade and the Tihany peninsula and abbey 6 km away; summer-led, quiet in winter.",
+   "nl": "Badplaats aan het Balatonmeer met een boulevard en het schiereiland en de abdij van Tihany op 6 km; zomers gericht, 's winters rustig.",
+   "de": "Badeort am Plattensee mit Promenade und der Halbinsel und Abtei Tihany in 6 km; sommerlastig, im Winter ruhig.",
+   "fr": "Station du lac Balaton avec une promenade et la péninsule et l'abbaye de Tihany à 6 km; estivale, calme l'hiver.",
+   "es": "Localidad turística del lago Balatón con paseo marítimo y la península y abadía de Tihany a 6 km; estival, tranquila en invierno.",
+   "it": "Località del lago Balaton con lungolago e la penisola e l'abbazia di Tihany a 6 km; estiva, quieta in inverno."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:bar-sur-seine",
+  "appeal": 5.8,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 6,
+   "sights": 4,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Small Champagne-region town of character with a half-timbered house, a castle and Lac d'Orient 18 km away; quiet.",
+   "nl": "Klein stadje met karakter in de Champagnestreek, met een vakwerkhuis, een kasteel en het Lac d'Orient op 18 km; rustig.",
+   "de": "Kleines Städtchen mit Charakter in der Champagne, mit Fachwerkhaus, Schloss und dem Lac d'Orient in 18 km; ruhig.",
+   "fr": "Petite cité de caractère de Champagne avec une maison à pans de bois, un château et le lac d'Orient à 18 km; calme.",
+   "es": "Pequeña localidad con carácter de la Champaña con una casa de entramado, un castillo y el lago de Orient a 18 km; tranquila.",
+   "it": "Piccola cittadina di carattere della Champagne con una casa a graticcio, un castello e il lago d'Orient a 18 km; quieta."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:tenno",
+  "appeal": 7.2,
+  "band": "good",
+  "criteria": {
+   "setting": 9,
+   "character": 7,
+   "sights": 6,
+   "atmosphere": 5,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Listed hill village above the green Lago di Tenno, with the Varone waterfall and Lake Ledro within reach; small and quiet.",
+   "nl": "Beschermd heuveldorp boven het groene Lago di Tenno, met de Varone-waterval en het Ledromeer binnen bereik; klein en rustig.",
+   "de": "Gelistetes Hügeldorf über dem grünen Tennosee, mit dem Varone-Wasserfall und dem Ledrosee in Reichweite; klein und ruhig.",
+   "fr": "Village perché classé au-dessus du lac vert de Tenno, avec la cascade du Varone et le lac de Ledro à portée; petit et calme.",
+   "es": "Pueblo de colina catalogado sobre el verde lago de Tenno, con la cascada del Varone y el lago de Ledro al alcance; pequeño y tranquilo.",
+   "it": "Borgo collinare riconosciuto sopra il verde lago di Tenno, con la cascata del Varone e il lago di Ledro a portata; piccolo e quieto."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:witten",
+  "appeal": 5.5,
+  "band": "none",
+  "criteria": {
+   "setting": 4,
+   "character": 4,
+   "sights": 4,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Ruhr university city with a church, a museum and the Nachtigall industrial museum 3 km away; plain, little to hold a visit.",
+   "nl": "Universiteitsstad in het Ruhrgebied met een kerk, een museum en het industriemuseum Nachtigall op 3 km; eenvoudig, weinig dat een bezoek draagt.",
+   "de": "Ruhrgebiets-Universitätsstadt mit Kirche, Museum und dem Industriemuseum Nachtigall in 3 km; schlicht, wenig, das einen Besuch trägt.",
+   "fr": "Ville universitaire de la Ruhr avec une église, un musée et le musée industriel Nachtigall à 3 km; sobre, peu de quoi retenir.",
+   "es": "Ciudad universitaria del Ruhr con una iglesia, un museo y el museo industrial Nachtigall a 3 km; sencilla, poco que retenga.",
+   "it": "Città universitaria della Ruhr con una chiesa, un museo e il museo industriale Nachtigall a 3 km; semplice, poco che trattenga."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:gualtieri",
+  "appeal": 5.9,
+  "band": "none",
+  "criteria": {
+   "setting": 4,
+   "character": 6,
+   "sights": 4,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Listed Po plain village with a municipal theatre and churches; the card shows little else to hold a stop.",
+   "nl": "Beschermd dorp in de Povlakte met een stadsschouwburg en kerken; de gegevens tonen verder weinig dat een stop rechtvaardigt.",
+   "de": "Gelistetes Dorf in der Poebene mit Stadttheater und Kirchen; die Angaben zeigen sonst wenig, das einen Halt trägt.",
+   "fr": "Village classé de la plaine du Pô avec un théâtre municipal et des églises; les données montrent peu d'autre.",
+   "es": "Pueblo catalogado de la llanura del Po con un teatro municipal e iglesias; los datos muestran poco más que justifique una parada.",
+   "it": "Borgo riconosciuto della pianura padana con un teatro comunale e chiese; i dati mostrano poco altro che giustifichi una sosta."
+  },
+  "confidence": "low",
+  "flags": [
+   "thin_card"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:fuengirola",
+  "appeal": 5.3,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 3,
+   "sights": 3,
+   "atmosphere": 5,
+   "uniqueness": 2
+  },
+  "why": {
+   "en": "Costa del Sol resort city with Sohail Castle and a long beach; busy and built-up, with few sights beyond the coast.",
+   "nl": "Badplaats-stad aan de Costa del Sol met kasteel Sohail en een lang strand; druk en volgebouwd, weinig bezienswaardigheden buiten de kust.",
+   "de": "Badeort-Stadt an der Costa del Sol mit Burg Sohail und langem Strand; belebt und bebaut, wenig Sehenswertes jenseits der Küste.",
+   "fr": "Ville balnéaire de la Costa del Sol avec le château de Sohail et une longue plage; animée et bétonnée, peu de sites hors du littoral.",
+   "es": "Ciudad turística de la Costa del Sol con el castillo de Sohail y una larga playa; concurrida, con pocos atractivos fuera de la costa.",
+   "it": "Città balneare della Costa del Sol con il castello di Sohail e una lunga spiaggia; affollata e costruita, poche attrazioni oltre la costa."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:san-donato-in-poggio",
+  "appeal": 6.5,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 7,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Listed Chianti hill village of old stone houses and small churches; Tavarnelle's sacred art museum is close, and the pace is slow.",
+   "nl": "Beschermd heuveldorp in de Chianti met oude stenen huizen en kleine kerken; het museum voor religieuze kunst van Tavarnelle is dichtbij, tempo laag.",
+   "de": "Gelistetes Hügeldorf im Chianti mit alten Steinhäusern und kleinen Kirchen; das Museum für sakrale Kunst in Tavarnelle ist nah, das Tempo gemächlich.",
+   "fr": "Village perché classé du Chianti, de vieilles maisons de pierre et de petites églises; le musée d'art sacré de Tavarnelle est proche, rythme lent.",
+   "es": "Pueblo de colina catalogado del Chianti, de casas de piedra y pequeñas iglesias; el museo de arte sacro de Tavarnelle está cerca, ritmo lento.",
+   "it": "Borgo collinare riconosciuto del Chianti, di vecchie case di pietra e piccole chiese; il museo d'arte sacra di Tavarnelle è vicino, ritmo lento."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:wendover",
+  "appeal": 5.5,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 5,
+   "sights": 3,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Buckinghamshire market town below the Chilterns with Chequers 4 km away and Tring museum 6 km off; quiet, little to see.",
+   "nl": "Marktstadje in Buckinghamshire onder de Chilterns met Chequers op 4 km en het museum van Tring op 6 km; rustig, weinig te zien.",
+   "de": "Marktstadt in Buckinghamshire unter den Chilterns mit Chequers in 4 km und dem Tring-Museum in 6 km; ruhig, wenig zu sehen.",
+   "fr": "Bourg de marché du Buckinghamshire au pied des Chilterns, Chequers à 4 km et le musée de Tring à 6 km; calme, peu à voir.",
+   "es": "Localidad de mercado de Buckinghamshire bajo los Chilterns con Chequers a 4 km y el museo de Tring a 6 km; tranquila, poco que ver.",
+   "it": "Cittadina di mercato del Buckinghamshire sotto i Chilterns con Chequers a 4 km e il museo di Tring a 6 km; quieta, poco da vedere."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:slagelse",
+  "appeal": 5.9,
+  "band": "none",
+  "criteria": {
+   "setting": 4,
+   "character": 5,
+   "sights": 5,
+   "atmosphere": 4,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Zealand town with the Viking ring fortress of Trelleborg 6 km away and nearby dolmens; the town itself is plain.",
+   "nl": "Stad op Seeland met de Vikingringburcht Trelleborg op 6 km en dolmens vlakbij; de stad zelf is eenvoudig.",
+   "de": "Stadt auf Seeland mit der Wikinger-Ringburg Trelleborg in 6 km und Dolmen in der Nähe; die Stadt selbst ist schlicht.",
+   "fr": "Ville du Seeland avec la forteresse circulaire viking de Trelleborg à 6 km et des dolmens proches; la ville est sobre.",
+   "es": "Ciudad de Selandia con la fortaleza circular vikinga de Trelleborg a 6 km y dólmenes cerca; la ciudad es sencilla.",
+   "it": "Città della Selandia con la fortezza circolare vichinga di Trelleborg a 6 km e dolmen vicini; la città è semplice."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:guildford",
+  "appeal": 6.5,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 7,
+   "sights": 6,
+   "atmosphere": 6,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Surrey city with a castle, a modern cathedral and Abbot's Hospital, and the Surrey Hills 6 km away; handsome and commuter-busy.",
+   "nl": "Stad in Surrey met een kasteel, een moderne kathedraal en Abbot's Hospital, en de Surrey Hills op 6 km; fraai en druk met forensen.",
+   "de": "Stadt in Surrey mit Burg, moderner Kathedrale und Abbot's Hospital, den Surrey Hills in 6 km; ansehnlich und pendlerbelebt.",
+   "fr": "Ville du Surrey avec un château, une cathédrale moderne et Abbot's Hospital, et les Surrey Hills à 6 km; belle et animée de navetteurs.",
+   "es": "Ciudad de Surrey con un castillo, una catedral moderna y Abbot's Hospital, y las Surrey Hills a 6 km; vistosa y llena de viajeros diarios.",
+   "it": "Città del Surrey con un castello, una cattedrale moderna e Abbot's Hospital, e le Surrey Hills a 6 km; bella e piena di pendolari."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:hudiksvall",
+  "appeal": 5.7,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 5,
+   "sights": 3,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Swedish coastal town with a regional museum and parish churches nearby; the card shows little to hold a visit.",
+   "nl": "Zweeds kuststadje met een streekmuseum en parochiekerken vlakbij; de gegevens tonen weinig dat een bezoek draagt.",
+   "de": "Schwedische Küstenstadt mit Regionalmuseum und Pfarrkirchen in der Nähe; die Angaben zeigen wenig, das einen Besuch trägt.",
+   "fr": "Ville côtière suédoise avec un musée régional et des églises paroissiales proches; les données montrent peu de quoi retenir.",
+   "es": "Ciudad costera sueca con un museo regional e iglesias parroquiales cerca; los datos muestran poco que retenga al visitante.",
+   "it": "Città costiera svedese con un museo regionale e chiese parrocchiali vicine; i dati mostrano poco che trattenga."
+  },
+  "confidence": "low",
+  "flags": [
+   "thin_card"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:sutomore",
+  "appeal": 5.8,
+  "band": "none",
+  "criteria": {
+   "setting": 6,
+   "character": 4,
+   "sights": 4,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Montenegrin beach village with Ratac Abbey and King Nikola's Palace 6 km away, Lake Skadar farther; a summer-led stop.",
+   "nl": "Montenegrijns strandplaatsje met abdij Ratac en het paleis van koning Nikola op 6 km, het Skadarmeer verder weg; een zomerse stop.",
+   "de": "Montenegrinischer Strandort mit Kloster Ratac und König Nikolas Palast in 6 km, der Skutarisee weiter weg; ein Sommerhalt.",
+   "fr": "Village balnéaire monténégrin avec l'abbaye de Ratac et le palais du roi Nikola à 6 km, le lac de Skadar plus loin; une halte estivale.",
+   "es": "Pueblo playero montenegrino con la abadía de Ratac y el palacio del rey Nikola a 6 km, el lago Skadar más lejos; una parada estival.",
+   "it": "Paese balneare montenegrino con l'abbazia di Ratac e il palazzo di re Nikola a 6 km, il lago di Scutari più lontano; una sosta estiva."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:huntingdon",
+  "appeal": 5.7,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 5,
+   "sights": 4,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Cambridgeshire market town with a Cromwell museum and Houghton Mill 4 km away; pleasant, modest, little to hold a day.",
+   "nl": "Marktstadje in Cambridgeshire met een Cromwell-museum en Houghton Mill op 4 km; prettig, bescheiden, weinig voor een dag.",
+   "de": "Marktstadt in Cambridgeshire mit Cromwell-Museum und Houghton Mill in 4 km; angenehm, bescheiden, wenig für einen Tag.",
+   "fr": "Bourg de marché du Cambridgeshire avec un musée Cromwell et Houghton Mill à 4 km; agréable, modeste, peu pour un jour.",
+   "es": "Localidad de mercado de Cambridgeshire con un museo de Cromwell y Houghton Mill a 4 km; agradable, modesta, poco para un día.",
+   "it": "Cittadina di mercato del Cambridgeshire con un museo di Cromwell e Houghton Mill a 4 km; piacevole, modesta, poco per un giorno."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:buitrago-del-lozoya",
+  "appeal": 6.9,
+  "band": "good",
+  "criteria": {
+   "setting": 7,
+   "character": 8,
+   "sights": 6,
+   "atmosphere": 5,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Walled Madrid-sierra town with a castle, a historic quarter and the Picasso museum of his barber; on a reservoir, small and quiet.",
+   "nl": "Ommuurd stadje in de Madrileense sierra met een kasteel, een historische wijk en het Picasso-museum van zijn kapper; aan een stuwmeer, klein en rustig.",
+   "de": "Ummauertes Städtchen in der Sierra von Madrid mit Burg, historischem Viertel und dem Picasso-Museum seines Friseurs; am Stausee, klein und ruhig.",
+   "fr": "Petite ville fortifiée de la sierra de Madrid avec un château, un quartier historique et le musée Picasso de son coiffeur; sur un réservoir, calme.",
+   "es": "Villa amurallada de la sierra de Madrid con castillo, casco histórico y el museo Picasso de su barbero; junto a un embalse, pequeña.",
+   "it": "Cittadina murata della sierra di Madrid con un castello, un centro storico e il museo Picasso del suo barbiere; su un bacino, piccola e quieta."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:hradec-kralove",
+  "appeal": 6.4,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 5,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "East Bohemian city with a Gothic cathedral, the White Tower and a modern art gallery; tidy and calm, with few big sights.",
+   "nl": "Stad in Oost-Bohemen met een gotische kathedraal, de Witte Toren en een galerie voor moderne kunst; verzorgd en rustig, weinig grote bezienswaardigheden.",
+   "de": "Stadt in Ostböhmen mit gotischer Kathedrale, dem Weißen Turm und einer Galerie moderner Kunst; gepflegt und ruhig, wenige große Sehenswürdigkeiten.",
+   "fr": "Ville de Bohême orientale avec cathédrale gothique, Tour blanche et galerie d'art moderne; soignée et calme, peu de grands sites.",
+   "es": "Ciudad de Bohemia oriental con catedral gótica, la Torre Blanca y una galería de arte moderno; cuidada y tranquila, con pocos grandes atractivos.",
+   "it": "Città della Boemia orientale con cattedrale gotica, la Torre Bianca e una galleria d'arte moderna; curata e calma, poche grandi attrazioni."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:schmallenberg",
+  "appeal": 5.6,
+  "band": "none",
+  "criteria": {
+   "setting": 6,
+   "character": 4,
+   "sights": 3,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Sauerland town with a monastery at Grafschaft and viewing tower 3 km away; green hills, but little in the town.",
+   "nl": "Stadje in het Sauerland met een klooster in Grafschaft en een uitkijktoren op 3 km; groene heuvels, maar weinig in het stadje.",
+   "de": "Städtchen im Sauerland mit Kloster Grafschaft und Aussichtsturm in 3 km; grüne Hügel, aber im Ort wenig.",
+   "fr": "Petite ville du Sauerland avec le monastère de Grafschaft et une tour panoramique à 3 km; collines vertes, mais peu en ville.",
+   "es": "Localidad del Sauerland con el monasterio de Grafschaft y una torre mirador a 3 km; colinas verdes, pero poco en el pueblo.",
+   "it": "Cittadina del Sauerland con il monastero di Grafschaft e una torre panoramica a 3 km; colline verdi, ma poco in paese."
+  },
+  "confidence": "low",
+  "flags": [
+   "thin_card"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:coleford",
+  "appeal": 6.3,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 5,
+   "sights": 5,
+   "atmosphere": 4,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Forest of Dean town with Puzzlewood, Clearwell Castle 3 km away and Wye Valley walks; the forest is the draw, not the town.",
+   "nl": "Stad in het Forest of Dean met Puzzlewood, Clearwell Castle op 3 km en wandelingen in de Wye-vallei; het bos trekt, niet de stad.",
+   "de": "Stadt im Forest of Dean mit Puzzlewood, Clearwell Castle in 3 km und Wanderungen im Wye-Tal; der Wald zieht an, nicht die Stadt.",
+   "fr": "Ville de la forêt de Dean: Puzzlewood, Clearwell Castle à 3 km, vallée de la Wye; la forêt attire, pas la ville.",
+   "es": "Ciudad del Forest of Dean con Puzzlewood, Clearwell Castle a 3 km y rutas por el valle del Wye; atrae el bosque, no la ciudad.",
+   "it": "Città del Forest of Dean con Puzzlewood, Clearwell Castle a 3 km e passeggiate nella valle del Wye; attira il bosco, non la città."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:petersfield",
+  "appeal": 5.9,
+  "band": "none",
+  "criteria": {
+   "setting": 6,
+   "character": 5,
+   "sights": 4,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Hampshire market town with South Downs walking 6 km away and Uppark House close; pleasant, with little in the town.",
+   "nl": "Marktstadje in Hampshire met wandelen in de South Downs op 6 km en Uppark House dichtbij; prettig, in de stad weinig.",
+   "de": "Marktstadt in Hampshire mit Wanderungen in den South Downs in 6 km und Uppark House in der Nähe; angenehm, im Ort wenig.",
+   "fr": "Bourg de marché du Hampshire avec des marches dans les South Downs à 6 km et Uppark House tout près; agréable, peu en ville.",
+   "es": "Localidad de mercado de Hampshire con rutas por las South Downs a 6 km y Uppark House cerca; agradable, poco en el pueblo.",
+   "it": "Cittadina di mercato dell'Hampshire con passeggiate nelle South Downs a 6 km e Uppark House vicino; piacevole, poco in paese."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:tomelilla",
+  "appeal": 5.5,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 4,
+   "sights": 3,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Scanian village among small churches and Bollerup Castle 8 km away; quiet farmland, little to hold a visit.",
+   "nl": "Dorp in Skåne tussen kleine kerken, met kasteel Bollerup op 8 km; rustig boerenland, weinig dat een bezoek draagt.",
+   "de": "Dorf in Schonen zwischen kleinen Kirchen, mit Schloss Bollerup in 8 km; ruhiges Ackerland, wenig, das einen Besuch trägt.",
+   "fr": "Village de Scanie entouré de petites églises, avec le château de Bollerup à 8 km; campagne calme, peu de quoi retenir.",
+   "es": "Pueblo de Escania entre pequeñas iglesias, con el castillo de Bollerup a 8 km; campo tranquilo, poco que retenga.",
+   "it": "Paese della Scania tra piccole chiese, con il castello di Bollerup a 8 km; campagna quieta, poco che trattenga."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:santana-madeira",
+  "appeal": 7.4,
+  "band": "good",
+  "criteria": {
+   "setting": 9,
+   "character": 7,
+   "sights": 6,
+   "atmosphere": 5,
+   "uniqueness": 8
+  },
+  "why": {
+   "en": "Madeiran town of triangular thatched cottages, gateway to the laurel forest, Pico Ruivo 8 km and Pico do Arieiro 9 km away; crowded.",
+   "nl": "Stad op Madeira met driehoekige rieten huisjes, toegang tot het laurierbos, Pico Ruivo op 8 km en Pico do Arieiro op 9 km; druk.",
+   "de": "Ort auf Madeira mit dreieckigen Strohhäuschen, Tor zum Lorbeerwald, Pico Ruivo in 8 km und Pico do Arieiro in 9 km; stark besucht.",
+   "fr": "Bourg de Madère aux chaumières triangulaires, porte de la laurisylve, Pico Ruivo à 8 km, Pico do Arieiro à 9 km; très fréquenté.",
+   "es": "Localidad de Madeira de casitas triangulares de paja, puerta de la laurisilva, Pico Ruivo a 8 km, Pico do Arieiro a 9; concurrida.",
+   "it": "Paese di Madeira con casette triangolari di paglia, porta della foresta di laurisilva, Pico Ruivo a 8 km e Pico do Arieiro a 9; affollato."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:genzano-di-roma",
+  "appeal": 6.8,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 8,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 5,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Castelli Romani town above Lake Nemi, 1.4 km away, with Lake Albano 5 km off and the Nemi ships museum; a leafy base near Rome.",
+   "nl": "Stad in de Castelli Romani bij het Nemimeer (1,4 km) en het Albanomeer (5 km), met het scheepsmuseum van Nemi; groene basis bij Rome.",
+   "de": "Ort in den Castelli Romani am Nemisee, 1,4 km entfernt, mit Albanersee in 5 km und Nemi-Schiffsmuseum; grüner Standort bei Rom.",
+   "fr": "Ville des Castelli Romani près des lacs de Nemi (1,4 km) et d'Albano (5 km), avec le musée des navires; base verte près de Rome.",
+   "es": "Localidad de los Castelli Romani junto a los lagos Nemi (1,4 km) y Albano (5 km), con museo de barcos; base verde cerca de Roma.",
+   "it": "Cittadina dei Castelli Romani presso i laghi di Nemi (1,4 km) e Albano (5 km), con museo delle navi; base verde vicino a Roma."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:kolobrzeg",
+  "appeal": 6.3,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 4,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Baltic spa resort with a wide beach, a lighthouse, fortifications and brine baths; summer-crowded, with a modest old core.",
+   "nl": "Kuuroord aan de Oostzee met een breed strand, een vuurtoren, vestingwerken en pekelbaden; zomers druk, met een bescheiden oude kern.",
+   "de": "Ostsee-Kurort mit breitem Strand, Leuchtturm, Befestigungen und Solebädern; im Sommer voll, mit bescheidenem Altstadtkern.",
+   "fr": "Station thermale de la Baltique avec une large plage, un phare, des fortifications et des bains de saumure; bondée l'été, vieux centre modeste.",
+   "es": "Balneario del Báltico con una playa ancha, un faro, fortificaciones y baños de salmuera; abarrotado en verano, con un casco antiguo modesto.",
+   "it": "Stazione termale del Baltico con una spiaggia ampia, un faro, fortificazioni e bagni di salamoia; affollata d'estate, con un centro antico modesto."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:savona",
+  "appeal": 6.3,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 6,
+   "sights": 6,
+   "atmosphere": 5,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Ligurian port city with the Priamar fortress, Palazzo Della Rovere and a cathedral; handsome in parts, overshadowed by Genoa.",
+   "nl": "Ligurische havenstad met de Priamar-vesting, Palazzo Della Rovere en een kathedraal; deels fraai, overschaduwd door Genua.",
+   "de": "Ligurische Hafenstadt mit der Festung Priamar, dem Palazzo Della Rovere und einem Dom; teils ansehnlich, von Genua überschattet.",
+   "fr": "Ville portuaire ligure avec la forteresse du Priamar, le palais Della Rovere et une cathédrale; belle par endroits, éclipsée par Gênes.",
+   "es": "Ciudad portuaria ligur con la fortaleza del Priamar, el palacio Della Rovere y una catedral; vistosa por zonas, eclipsada por Génova.",
+   "it": "Città portuale ligure con la fortezza del Priamar, Palazzo Della Rovere e un duomo; bella in parte, oscurata da Genova."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:apsley",
+  "appeal": 5.2,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 3,
+   "sights": 3,
+   "atmosphere": 3,
+   "uniqueness": 2
+  },
+  "why": {
+   "en": "Hertfordshire commuter village with St Albans Cathedral 9 km and Berkhamsted Castle 7 km away; nothing much in the village.",
+   "nl": "Forensendorp in Hertfordshire met de kathedraal van St Albans op 9 km en Berkhamsted Castle op 7 km; in het dorp zelf niet veel.",
+   "de": "Pendlerdorf in Hertfordshire mit der Kathedrale von St Albans in 9 km und Berkhamsted Castle in 7 km; im Dorf selbst nicht viel.",
+   "fr": "Village de banlieusards du Hertfordshire avec la cathédrale de St Albans à 9 km et Berkhamsted Castle à 7 km; peu de choses au village.",
+   "es": "Pueblo dormitorio de Hertfordshire con la catedral de St Albans a 9 km y Berkhamsted Castle a 7 km; poco en el propio pueblo.",
+   "it": "Paese di pendolari dell'Hertfordshire con la cattedrale di St Albans a 9 km e Berkhamsted Castle a 7 km; poco in paese."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:trelleborg",
+  "appeal": 5.4,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 4,
+   "sights": 3,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Swedish port town on the south coast with scattered churches and an art hall; beaches nearby, but little to see.",
+   "nl": "Zweedse havenstad aan de zuidkust met verspreide kerken en een kunsthal; stranden vlakbij, maar weinig te zien.",
+   "de": "Schwedische Hafenstadt an der Südküste mit verstreuten Kirchen und einer Kunsthalle; Strände in der Nähe, aber wenig zu sehen.",
+   "fr": "Ville portuaire suédoise de la côte sud avec des églises dispersées et une halle d'art; plages proches, mais peu à voir.",
+   "es": "Ciudad portuaria sueca de la costa sur con iglesias dispersas y una sala de arte; playas cerca, pero poco que ver.",
+   "it": "Città portuale svedese della costa meridionale con chiese sparse e una sala d'arte; spiagge vicine, ma poco da vedere."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:ootmarsum",
+  "appeal": 6.4,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 7,
+   "sights": 5,
+   "atmosphere": 5,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Small Twente village with Singraven watermill 6 km and a megalithic tomb 7 km away; quiet, with little for a second day.",
+   "nl": "Klein dorp in Twente met de watermolen Singraven op 6 km en een hunebed op 7 km; rustig, weinig voor een tweede dag.",
+   "de": "Kleines Dorf in Twente mit der Wassermühle Singraven in 6 km und einem Hünengrab in 7 km; ruhig, für einen zweiten Tag wenig.",
+   "fr": "Petit village du Twente, moulin à eau de Singraven à 6 km et dolmen à 7 km; calme, peu pour un second jour.",
+   "es": "Pequeño pueblo de Twente, molino de agua de Singraven a 6 km y dolmen a 7 km; tranquilo, poco para un segundo día.",
+   "it": "Piccolo paese del Twente, mulino ad acqua di Singraven a 6 km e dolmen a 7 km; quieto, poco per un secondo giorno."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ }
+]

@@ -1,0 +1,1570 @@
+[
+ {
+  "id": "AES",
+  "en": "Art Nouveau town amid island-studded fjords"
+ },
+ {
+  "id": "AJA",
+  "en": "Modest port, superb Corsican coast gateway"
+ },
+ {
+  "id": "ARN",
+  "en": "Gamla Stan, waterways, museums, archipelago"
+ },
+ {
+  "id": "BDS",
+  "en": "Ferry port with modest Roman remains"
+ },
+ {
+  "id": "BFS",
+  "en": "Titanic quarter, murals, Causeway coast gateway"
+ },
+ {
+  "id": "BIA",
+  "en": "Authentic Corsican port, gritty charm"
+ },
+ {
+  "id": "BLL",
+  "en": "Legoland for families; town itself nothing"
+ },
+ {
+  "id": "BOD",
+  "en": "Grand 18th-century core, world wine capital"
+ },
+ {
+  "id": "BRE",
+  "en": "Charming Schnoor and Boettcherstrasse, half-day city"
+ },
+ {
+  "id": "BRS",
+  "en": "Street art, harbourside, Clifton bridge; creative energy"
+ },
+ {
+  "id": "BUD",
+  "en": "Danube panorama, baths, nightlife, grandeur"
+ },
+ {
+  "id": "BZR",
+  "en": "Hilltop cathedral, Canal du Midi, scruffy"
+ },
+ {
+  "id": "CFU",
+  "en": "UNESCO Venetian town, lush island, fine beaches"
+ },
+ {
+  "id": "CLJ",
+  "en": "Lively student city, modest old core"
+ },
+ {
+  "id": "CRA",
+  "en": "Little beyond a spruced-up centre"
+ },
+ {
+  "id": "CUF",
+  "en": "Elegant arcades, Maritime Alps gateway only"
+ },
+ {
+  "id": "DRS",
+  "en": "Rebuilt baroque splendour on the Elbe"
+ },
+ {
+  "id": "EFL",
+  "en": "Myrtos, Melissani, Fiskardo; dramatic Ionian scenery"
+ },
+ {
+  "id": "EXT",
+  "en": "Fine cathedral, Devon gateway; city itself modest"
+ },
+ {
+  "id": "FDH",
+  "en": "Lake Constance promenade, Zeppelin museum, gateway"
+ },
+ {
+  "id": "FNC",
+  "en": "Levada walks, dramatic peaks, year-round gardens"
+ },
+ {
+  "id": "GCI",
+  "en": "Pretty St Peter Port, cliff paths, quiet coves"
+ },
+ {
+  "id": "GOT",
+  "en": "Archipelago, Haga, strong seafood scene"
+ },
+ {
+  "id": "GVA",
+  "en": "Grand lake setting, polished but sterile"
+ },
+ {
+  "id": "HHN",
+  "en": "Remote Hunsrueck airfield, no town appeal"
+ },
+ {
+  "id": "INN",
+  "en": "Nordkette rises straight from old town"
+ },
+ {
+  "id": "JMK",
+  "en": "Gorgeous Cycladic town, beaches; crowded, overpriced scene"
+ },
+ {
+  "id": "KIR",
+  "en": "Ring of Kerry coast and mountains, iconic"
+ },
+ {
+  "id": "KOW",
+  "en": "Pilgrimage shrine only; Mayo scenery lies beyond"
+ },
+ {
+  "id": "KUN",
+  "en": "Modernist architecture, decent old town"
+ },
+ {
+  "id": "LCG",
+  "en": "Breezy seafront, glass galleries, great seafood"
+ },
+ {
+  "id": "LGW",
+  "en": "World-city museums, theatre, royal icons, endless neighbourhoods"
+ },
+ {
+  "id": "LIS",
+  "en": "Hills, azulejos, fado, light; inexhaustible"
+ },
+ {
+  "id": "LNZ",
+  "en": "Danube setting, Ars Electronica, limited pull"
+ },
+ {
+  "id": "LTN",
+  "en": "World-city museums, theatre, royal icons, endless neighbourhoods"
+ },
+ {
+  "id": "MAD",
+  "en": "Prado triangle, Retiro, tapas, roaring nightlife"
+ },
+ {
+  "id": "MJT",
+  "en": "Molyvos, ouzo culture; understated, slow-burn island"
+ },
+ {
+  "id": "MPL",
+  "en": "Lively student city, handsome squares"
+ },
+ {
+  "id": "MXP",
+  "en": "Duomo, Last Supper; uneven business city"
+ },
+ {
+  "id": "NIM",
+  "en": "Superb Roman arena, Pont du Gard near"
+ },
+ {
+  "id": "NYO",
+  "en": "Stockholm itself; superb, airport far out"
+ },
+ {
+  "id": "OPO",
+  "en": "Ribeira, port lodges, azulejo churches, Douro"
+ },
+ {
+  "id": "OSL",
+  "en": "Opera, Munch, Vigeland, fjordside polish"
+ },
+ {
+  "id": "PDL",
+  "en": "Sete Cidades craters, Furnas hot springs, whales"
+ },
+ {
+  "id": "PGF",
+  "en": "Catalan flavour, palace, rough edges"
+ },
+ {
+  "id": "PNA",
+  "en": "Handsome old town, mostly Sanfermines fame"
+ },
+ {
+  "id": "PRN",
+  "en": "Quirky energy, scant conventional sights"
+ },
+ {
+  "id": "PVK",
+  "en": "Modest town; gateway to Parga and Lefkada"
+ },
+ {
+  "id": "REU",
+  "en": "Gaudí's birthplace, modest Modernisme, package beaches"
+ },
+ {
+  "id": "RMI",
+  "en": "Package beaches plus surprising Malatesta temple"
+ },
+ {
+  "id": "SBZ",
+  "en": "Saxon squares, eyelid roofs, mountain hinterland"
+ },
+ {
+  "id": "SKG",
+  "en": "Byzantine churches, superb food; scruffy urban fabric"
+ },
+ {
+  "id": "SOF",
+  "en": "Nevsky cathedral, Vitosha near; uneven fabric"
+ },
+ {
+  "id": "STR",
+  "en": "Car museums, vineyards; workmanlike city"
+ },
+ {
+  "id": "SZG",
+  "en": "Baroque perfection, fortress, Mozart, alpine backdrop"
+ },
+ {
+  "id": "TFS",
+  "en": "Great beaches and Teide access, resort strip"
+ },
+ {
+  "id": "TIV",
+  "en": "Glossy marina, little beyond Porto Montenegro"
+ },
+ {
+  "id": "TMP",
+  "en": "Industrial-chic saunas between lakes"
+ },
+ {
+  "id": "TRF",
+  "en": "Same Oslo: strong museums, sober beauty"
+ },
+ {
+  "id": "TSR",
+  "en": "Grand restored plazas, Habsburg flavour"
+ },
+ {
+  "id": "VDE",
+  "en": "Wild volcanic edge-of-world isle, niche appeal"
+ },
+ {
+  "id": "VLL",
+  "en": "Sculpture museum aside, workaday Castilian city"
+ },
+ {
+  "id": "WAW",
+  "en": "Rebuilt old town, museums, sprawling whole"
+ },
+ {
+  "id": "ZAD",
+  "en": "Roman forum, sea organ, famous sunsets"
+ },
+ {
+  "id": "ZTH",
+  "en": "Shipwreck beach and cliffs; heavy package tourism"
+ },
+ {
+  "id": "gem:acheron-springs",
+  "en": "Mythic river wading, easy family adventure"
+ },
+ {
+  "id": "gem:adrspach-teplice-rocks",
+  "en": "Spectacular rock labyrinth, unique in Central Europe"
+ },
+ {
+  "id": "gem:agrigento-valle-dei-templi",
+  "en": "UNESCO Valley of the Temples: the finest Greek temple ensemble outside Greece, floodlit over the almond groves."
+ },
+ {
+  "id": "gem:aix",
+  "en": "Elegant fountains and markets, limited sights"
+ },
+ {
+  "id": "gem:alberobello",
+  "en": "Striking trulli, but one-street coach-tour stop"
+ },
+ {
+  "id": "gem:alcoutim",
+  "en": "Border river idyll, zipline to Spain"
+ },
+ {
+  "id": "gem:alkmaar",
+  "en": "Iconic cheese market, fine old centre"
+ },
+ {
+  "id": "gem:alonissos",
+  "en": "Marine-park snorkelling and real seclusion"
+ },
+ {
+  "id": "gem:alquezar",
+  "en": "Canyon village, top canyoning in Spain"
+ },
+ {
+  "id": "gem:amalfi-coast",
+  "en": "Europe's most dramatic coastline, sublime villages"
+ },
+ {
+  "id": "gem:amorgos",
+  "en": "Hozoviotissa cliff monastery is unforgettable"
+ },
+ {
+  "id": "gem:andros",
+  "en": "Best hiking network in the Cyclades"
+ },
+ {
+  "id": "gem:antibes",
+  "en": "Walled old town, Picasso, sandy bays"
+ },
+ {
+  "id": "gem:apollonia",
+  "en": "Great ancient site, no crowds"
+ },
+ {
+  "id": "gem:aracena",
+  "en": "Best show cave plus iberico ham"
+ },
+ {
+  "id": "gem:are-sweden",
+  "en": "Scandinavia's top ski resort"
+ },
+ {
+  "id": "gem:arrabida",
+  "en": "Turquoise coves rival the Med"
+ },
+ {
+  "id": "gem:ascona",
+  "en": "Mediterranean lakefront promenade, Swiss polish"
+ },
+ {
+  "id": "gem:atlantic-ocean-road",
+  "en": "Iconic engineering drive over the ocean"
+ },
+ {
+  "id": "gem:aveiro",
+  "en": "Canals, moliceiros, striped Costa Nova; half-day"
+ },
+ {
+  "id": "gem:azenhas-do-mar",
+  "en": "Clifftop village postcard"
+ },
+ {
+  "id": "gem:bad-gastein",
+  "en": "Belle Epoque hotels around thundering waterfall"
+ },
+ {
+  "id": "gem:baile-herculane",
+  "en": "Grand decaying spa, superb gorge setting"
+ },
+ {
+  "id": "gem:bamberg",
+  "en": "Intact UNESCO old town, smoked-beer culture"
+ },
+ {
+  "id": "gem:bansko",
+  "en": "Solid ski base, old quarter, Pirin"
+ },
+ {
+  "id": "gem:barsana",
+  "en": "Iconic wooden monastery, UNESCO church"
+ },
+ {
+  "id": "gem:baume-les-messieurs",
+  "en": "The Jura's amphitheatre abbey valley"
+ },
+ {
+  "id": "gem:begur",
+  "en": "Castle views plus turquoise coves"
+ },
+ {
+  "id": "gem:belogradchik",
+  "en": "Fortress woven through surreal red rocks"
+ },
+ {
+  "id": "gem:berchtesgaden",
+  "en": "Konigssee fjord-lake, Watzmann, alpine drama"
+ },
+ {
+  "id": "gem:bernkastel-kues",
+  "en": "Mosel wine town at its most scenic"
+ },
+ {
+  "id": "gem:biarritz-coast",
+  "en": "Lovely Basque bay town, gentle charm"
+ },
+ {
+  "id": "gem:bihac-una",
+  "en": "Emerald Una waterfalls, rafting, unspoilt"
+ },
+ {
+  "id": "gem:blautopf",
+  "en": "Surreal blue spring, monastery"
+ },
+ {
+  "id": "gem:bohemian-paradise",
+  "en": "Rock cities and castle ruins, classic Czech hiking"
+ },
+ {
+  "id": "gem:bol-brac",
+  "en": "Zlatni Rat, Croatia's signature beach"
+ },
+ {
+  "id": "gem:borsh",
+  "en": "Longest wildest riviera beach"
+ },
+ {
+  "id": "gem:bourtange",
+  "en": "Atlas Obscura star fort, fully restored"
+ },
+ {
+  "id": "gem:brasov",
+  "en": "Medieval square, Bran castle, Carpathian backdrop"
+ },
+ {
+  "id": "gem:breuil-cervinia",
+  "en": "Matterhorn views without Swiss prices"
+ },
+ {
+  "id": "gem:brijuni",
+  "en": "NP islands, Roman ruins, safari"
+ },
+ {
+  "id": "gem:bruges",
+  "en": "Canal-laced medieval perfection, heavy crowds"
+ },
+ {
+  "id": "gem:burgos",
+  "en": "Gothic cathedral masterpiece, UNESCO"
+ },
+ {
+  "id": "gem:caceres",
+  "en": "Flawless UNESCO medieval quarter, storks, few crowds"
+ },
+ {
+  "id": "gem:cahors",
+  "en": "Pont Valentre plus Malbec cellars"
+ },
+ {
+  "id": "gem:calella-de-palafrugell",
+  "en": "Costa Brava's prettiest cove village"
+ },
+ {
+  "id": "gem:camargue",
+  "en": "Flamingos, white horses, delta wilderness"
+ },
+ {
+  "id": "gem:camogli",
+  "en": "Tall painted harbourfront, San Fruttuoso boat trips"
+ },
+ {
+  "id": "gem:cangas-de-onis",
+  "en": "Picos de Europa gateway, Covadonga lakes"
+ },
+ {
+  "id": "gem:cap-de-formentor",
+  "en": "Mallorca's most dramatic viewpoint"
+ },
+ {
+  "id": "gem:capri",
+  "en": "Ravishing cliffs and grottoes despite crowds"
+ },
+ {
+  "id": "gem:carrapateira",
+  "en": "Untamed dune beaches, no crowds"
+ },
+ {
+  "id": "gem:cascata-delle-marmore",
+  "en": "Tallest man-made waterfall in Europe"
+ },
+ {
+  "id": "gem:castelmezzano",
+  "en": "Volo dell'Angelo, rock-spire borgo"
+ },
+ {
+  "id": "gem:cauterets",
+  "en": "Waterfall gateway to the high Pyrenees"
+ },
+ {
+  "id": "gem:central-balkan",
+  "en": "UNESCO-listed forests, top waterfall hike"
+ },
+ {
+  "id": "gem:cetinje",
+  "en": "Royal capital heritage"
+ },
+ {
+  "id": "gem:cheddar-gorge",
+  "en": "England's biggest gorge"
+ },
+ {
+  "id": "gem:chia",
+  "en": "South Sardinia's dream beaches"
+ },
+ {
+  "id": "gem:cicmany",
+  "en": "Painted log village, folk-art one-off"
+ },
+ {
+  "id": "gem:cividale-del-friuli",
+  "en": "UNESCO Lombard town, Devil's Bridge"
+ },
+ {
+  "id": "gem:clonmacnoise",
+  "en": "Ireland's great monastic site"
+ },
+ {
+  "id": "gem:cogne-gran-paradiso",
+  "en": "Gran Paradiso base, wildlife and calm"
+ },
+ {
+  "id": "gem:colmar",
+  "en": "Fairy-tale half-timber, Alsace wine route"
+ },
+ {
+  "id": "gem:comporta",
+  "en": "Empty Atlantic sand, rice fields, pine"
+ },
+ {
+  "id": "gem:conques",
+  "en": "Romanesque abbey masterpiece in hidden valley"
+ },
+ {
+  "id": "gem:cordoba",
+  "en": "Mezquita alone is world-class; flower patios"
+ },
+ {
+  "id": "gem:corvin-castle",
+  "en": "One of Europe's great Gothic castles"
+ },
+ {
+  "id": "gem:cres-lubenice",
+  "en": "Clifftop village, griffon vultures"
+ },
+ {
+  "id": "gem:crozon",
+  "en": "Brittany's wildest turquoise coves"
+ },
+ {
+  "id": "gem:culross",
+  "en": "Time-capsule Fife burgh"
+ },
+ {
+  "id": "gem:dalarna",
+  "en": "Lake Siljan, red cottages, folk heartland"
+ },
+ {
+  "id": "gem:daugavpils",
+  "en": "Rothko centre in a huge fortress"
+ },
+ {
+  "id": "gem:delft",
+  "en": "Vermeer's canals, market square, blue pottery"
+ },
+ {
+  "id": "gem:dettifoss",
+  "en": "Most powerful falls in Europe"
+ },
+ {
+  "id": "gem:dhermi",
+  "en": "Turquoise Riviera beaches beneath Ceraunian mountains"
+ },
+ {
+  "id": "gem:dinant",
+  "en": "Dramatic citadel-and-Meuse setting, half day"
+ },
+ {
+  "id": "gem:djavolja-varos",
+  "en": "Unique earth-pyramid badlands"
+ },
+ {
+  "id": "gem:doolin",
+  "en": "Trad music pubs, cliffs nearby; tiny village"
+ },
+ {
+  "id": "gem:dresden-saxon",
+  "en": "Bastei sandstone pinnacles, superb Elbe hiking"
+ },
+ {
+  "id": "gem:dunfanaghy",
+  "en": "Best Donegal base, huge beaches"
+ },
+ {
+  "id": "gem:durmitor",
+  "en": "Tara canyon, Black Lake, dramatic peaks"
+ },
+ {
+  "id": "gem:echternach",
+  "en": "Abbey town plus Mullerthal rock gorges"
+ },
+ {
+  "id": "gem:eger",
+  "en": "Baroque streets, castle, Bull's Blood cellars"
+ },
+ {
+  "id": "gem:el-escorial",
+  "en": "Spain's grandest royal complex"
+ },
+ {
+  "id": "gem:elan-valley",
+  "en": "Wales' lake district of dams"
+ },
+ {
+  "id": "gem:elvas",
+  "en": "Star fortifications and aqueduct, sleepy otherwise"
+ },
+ {
+  "id": "gem:epidaurus",
+  "en": "Finest surviving Greek theatre, UNESCO"
+ },
+ {
+  "id": "gem:es-trenc",
+  "en": "The island's best natural beach"
+ },
+ {
+  "id": "gem:eszterhaza",
+  "en": "Hungary's grandest rococo palace, Haydn's home"
+ },
+ {
+  "id": "gem:externsteine",
+  "en": "Mystical rock pillars, ancient cult site"
+ },
+ {
+  "id": "gem:falasarna",
+  "en": "Top-rated Cretan sunset beach plus ruins"
+ },
+ {
+  "id": "gem:fanal-madeira",
+  "en": "Mist-forest straight from a myth"
+ },
+ {
+  "id": "gem:favignana",
+  "en": "Cala Rossa, easy island escape"
+ },
+ {
+  "id": "gem:fischland-darss",
+  "en": "Wild national-park beach, no resorts"
+ },
+ {
+  "id": "gem:flamborough-head",
+  "en": "Puffin-packed chalk cliffs"
+ },
+ {
+  "id": "gem:formentera",
+  "en": "Caribbean-clear beaches, carfree bohemian calm"
+ },
+ {
+  "id": "gem:frasassi-caves",
+  "en": "Italy's grandest show caves"
+ },
+ {
+  "id": "gem:frombork",
+  "en": "Copernicus cathedral on the lagoon"
+ },
+ {
+  "id": "gem:gallipoli-puglia",
+  "en": "Baroque island town ringed by Ionian beaches"
+ },
+ {
+  "id": "gem:garmisch",
+  "en": "Zugspitze, Partnach Gorge, classic alpine base"
+ },
+ {
+  "id": "gem:gerace",
+  "en": "Calabria's best medieval borgo"
+ },
+ {
+  "id": "gem:giethoorn",
+  "en": "Car-free canal village, pretty, honeypot crowds"
+ },
+ {
+  "id": "gem:gjogv",
+  "en": "Turf-roofed village above dramatic sea gorge"
+ },
+ {
+  "id": "gem:glendalough",
+  "en": "Monastic round tower between glacial lakes"
+ },
+ {
+  "id": "gem:godollo",
+  "en": "Sisi's palace, easy Budapest day trip"
+ },
+ {
+  "id": "gem:gorges-du-verdon",
+  "en": "Europe's grand canyon: 700 m turquoise-river limestone gorge, the continent's most dramatic road-and-kayak scenery."
+ },
+ {
+  "id": "gem:goslar",
+  "en": "UNESCO old town, imperial history"
+ },
+ {
+  "id": "gem:graciosa-azores",
+  "en": "Volcanic cave lake, zero crowds"
+ },
+ {
+  "id": "gem:grimentz",
+  "en": "Prettiest Valais timber village"
+ },
+ {
+  "id": "gem:gruner-see",
+  "en": "Surreal seasonal underwater park"
+ },
+ {
+  "id": "gem:gubbio",
+  "en": "Umbria's most dramatic medieval town"
+ },
+ {
+  "id": "gem:gura-humorului",
+  "en": "Painted Bucovina monasteries, extraordinary frescoed churches"
+ },
+ {
+  "id": "gem:hadrians-wall",
+  "en": "UNESCO Roman frontier"
+ },
+ {
+  "id": "gem:hallstatt",
+  "en": "Postcard lake village, overtouristed but sublime"
+ },
+ {
+  "id": "gem:haut-koenigsbourg",
+  "en": "Alsace's great sky castle"
+ },
+ {
+  "id": "gem:heligoland",
+  "en": "Unique offshore rock, seal beaches"
+ },
+ {
+  "id": "gem:heviz",
+  "en": "Swimmable thermal lake, spa-town monoculture"
+ },
+ {
+  "id": "gem:hiiumaa",
+  "en": "Lighthouses and empty island calm"
+ },
+ {
+  "id": "gem:hluboka-castle",
+  "en": "Czechia's prettiest romantic chateau"
+ },
+ {
+  "id": "gem:holloko",
+  "en": "Preserved Paloc village, an hour's wander"
+ },
+ {
+  "id": "gem:horezu",
+  "en": "UNESCO monastery plus craft-pottery town"
+ },
+ {
+  "id": "gem:hum-istria",
+  "en": "World's smallest town novelty"
+ },
+ {
+  "id": "gem:hydra",
+  "en": "Car-free elegance, amphitheatre harbour, artistic soul"
+ },
+ {
+  "id": "gem:imotski",
+  "en": "Two dramatic sinkhole lakes"
+ },
+ {
+  "id": "gem:ioannina",
+  "en": "Lake island, Ali Pasha history, Zagori gateway"
+ },
+ {
+  "id": "gem:ischia",
+  "en": "Thermal island, calmer than Capri"
+ },
+ {
+  "id": "gem:isle-of-skye",
+  "en": "Cuillin drama, Quiraing, fairy pools; now famous"
+ },
+ {
+  "id": "gem:jajce",
+  "en": "Town-centre waterfall, citadel, Pliva lakes"
+ },
+ {
+  "id": "gem:jokulsarlon",
+  "en": "Icebergs drifting to diamond beach; unforgettable sight"
+ },
+ {
+  "id": "gem:kalavryta",
+  "en": "One of Europe's great little mountain train rides"
+ },
+ {
+  "id": "gem:kalymnos",
+  "en": "Europe's top sport-climbing island, easy hop from Kos"
+ },
+ {
+  "id": "gem:karlskrona",
+  "en": "UNESCO naval city on islands"
+ },
+ {
+  "id": "gem:karpathos",
+  "en": "Apella beach and time-capsule Olympos village"
+ },
+ {
+  "id": "gem:kazimierz-dolny",
+  "en": "Artsy Renaissance townlet above the Vistula"
+ },
+ {
+  "id": "gem:kernave",
+  "en": "Atmospheric mounds, modest beyond that"
+ },
+ {
+  "id": "gem:kilkenny",
+  "en": "Castle and medieval mile, best inland town"
+ },
+ {
+  "id": "gem:kiruna",
+  "en": "Abisko auroras, Icehotel, Arctic wilderness"
+ },
+ {
+  "id": "gem:klaksvik",
+  "en": "Base for Kalsoy's staggering Faroese scenery"
+ },
+ {
+  "id": "gem:kolobrzeg",
+  "en": "Major spa resort, wide beaches"
+ },
+ {
+  "id": "gem:koprivshtitsa",
+  "en": "Colourful Revival museum town, sleepy charm"
+ },
+ {
+  "id": "gem:koster-islands",
+  "en": "Marine national park island idyll"
+ },
+ {
+  "id": "gem:kourion",
+  "en": "Cyprus' best ancient site, dramatic sea setting"
+ },
+ {
+  "id": "gem:kravice-falls",
+  "en": "Herzegovina's showpiece waterfall"
+ },
+ {
+  "id": "gem:krk-baska",
+  "en": "Easy island: walled town, top beach"
+ },
+ {
+  "id": "gem:kruje",
+  "en": "Castle, bazaar, Skanderbeg lore; half day"
+ },
+ {
+  "id": "gem:ksiaz-castle",
+  "en": "Monumental castle above a gorge"
+ },
+ {
+  "id": "gem:kyrenia",
+  "en": "Loveliest harbour on Cyprus, castle and abbey"
+ },
+ {
+  "id": "gem:la-gomera",
+  "en": "UNESCO laurisilva, unspoilt island"
+ },
+ {
+  "id": "gem:la-roche-en-ardenne",
+  "en": "Castle, river loop, Ardennes scenery"
+ },
+ {
+  "id": "gem:lago-maggiore",
+  "en": "Borromean islands, belle-epoque lakeside grace"
+ },
+ {
+  "id": "gem:lake-cerknica",
+  "en": "Europe's famous vanishing lake, birdlife haven"
+ },
+ {
+  "id": "gem:lake-piva",
+  "en": "Canyon lake, vertigo drives"
+ },
+ {
+  "id": "gem:lancut",
+  "en": "Top Polish palace interiors"
+ },
+ {
+  "id": "gem:lastovo",
+  "en": "Remote unspoiled island, dark-sky park"
+ },
+ {
+  "id": "gem:le-castella",
+  "en": "Castle-in-the-sea photo icon"
+ },
+ {
+  "id": "gem:lednice-valtice",
+  "en": "UNESCO chateau landscape, Europe's largest designed park"
+ },
+ {
+  "id": "gem:leon",
+  "en": "Finest stained glass in Europe"
+ },
+ {
+  "id": "gem:leuven",
+  "en": "Ornate town hall, beguinage, beer culture"
+ },
+ {
+  "id": "gem:liepaja",
+  "en": "White beach, eerie Karosta, patchy"
+ },
+ {
+  "id": "gem:lillehammer",
+  "en": "Olympic heritage plus Maihaugen"
+ },
+ {
+  "id": "gem:lipari-aeolian",
+  "en": "UNESCO Aeolian archipelago hub"
+ },
+ {
+  "id": "gem:llangollen",
+  "en": "UNESCO aqueduct + Dee valley"
+ },
+ {
+  "id": "gem:locorotondo",
+  "en": "Valle d'Itria's whitest borgo"
+ },
+ {
+  "id": "gem:logar-valley",
+  "en": "Slovenia's most beautiful alpine valley"
+ },
+ {
+  "id": "gem:loop-head",
+  "en": "Crowd-free Moher-grade cliffs"
+ },
+ {
+  "id": "gem:lovcen",
+  "en": "Mausoleum with epic panorama"
+ },
+ {
+  "id": "gem:lucca",
+  "en": "Walkable walls, towers, piazzas, Tuscan grace"
+ },
+ {
+  "id": "gem:lugo",
+  "en": "Only intact Roman city wall"
+ },
+ {
+  "id": "gem:lyngen-alps",
+  "en": "Fjord-to-summit Arctic alpine scenery"
+ },
+ {
+  "id": "gem:madriu-valley",
+  "en": "UNESCO valley without roads"
+ },
+ {
+  "id": "gem:mala-fatra",
+  "en": "Ridge hikes and waterfall gorges, few tourists"
+ },
+ {
+  "id": "gem:manasija",
+  "en": "Fortress monastery, frescoes"
+ },
+ {
+  "id": "gem:marbella",
+  "en": "Pretty old town inside resort sprawl"
+ },
+ {
+  "id": "gem:marstrand",
+  "en": "Island fortress, sailing, carfree summer idyll"
+ },
+ {
+  "id": "gem:masuria",
+  "en": "Lovely lakeland sailing, gentle not dramatic"
+ },
+ {
+  "id": "gem:maulbronn",
+  "en": "Complete UNESCO Cistercian complex"
+ },
+ {
+  "id": "gem:mechelen",
+  "en": "Fine towers and quiet Flemish quality"
+ },
+ {
+  "id": "gem:melk",
+  "en": "Spectacular abbey, small town, Wachau gateway"
+ },
+ {
+  "id": "gem:merida",
+  "en": "Superb Roman theatre, plain modern town"
+ },
+ {
+  "id": "gem:metsovo",
+  "en": "Alpine Greece with its own cheese and wine"
+ },
+ {
+  "id": "gem:milestii-mici",
+  "en": "World-record underground wine city"
+ },
+ {
+  "id": "gem:miranda-do-douro",
+  "en": "Douro canyon, unique culture"
+ },
+ {
+  "id": "gem:mljet",
+  "en": "Forested island, saltwater lakes, blissfully quiet"
+ },
+ {
+  "id": "gem:mojacar",
+  "en": "Hilltop pueblo above desert coast"
+ },
+ {
+  "id": "gem:monasterio-de-piedra",
+  "en": "Waterfall garden around a monastery"
+ },
+ {
+  "id": "gem:monopoli",
+  "en": "Authentic port town beside Polignano"
+ },
+ {
+  "id": "gem:monsaraz",
+  "en": "Whitewashed hilltop over Alqueva lake, tiny"
+ },
+ {
+  "id": "gem:monte-isola",
+  "en": "Car-free island idyll near Franciacorta"
+ },
+ {
+  "id": "gem:moravian-karst",
+  "en": "Underground river boat and huge sinkhole"
+ },
+ {
+  "id": "gem:mostar-ba",
+  "en": "Iconic bridge and bazaar, but compact"
+ },
+ {
+  "id": "gem:mourne-mountains",
+  "en": "Highest NI peaks meet the sea"
+ },
+ {
+  "id": "gem:mykines",
+  "en": "Puffin colonies on knife-edge Atlantic cliff walks"
+ },
+ {
+  "id": "gem:naarden",
+  "en": "Europe's best preserved star fort"
+ },
+ {
+  "id": "gem:najac",
+  "en": "Ridge village with a fortress finale"
+ },
+ {
+  "id": "gem:naxos",
+  "en": "Best Cycladic beaches plus real mountain villages"
+ },
+ {
+  "id": "gem:neuschwanstein",
+  "en": "Fairytale icon, stunning setting, crowded one-sight"
+ },
+ {
+  "id": "gem:nin",
+  "en": "Historic royal town, lagoon beaches"
+ },
+ {
+  "id": "gem:nordlingen",
+  "en": "Intact walls, meteor crater setting"
+ },
+ {
+  "id": "gem:novi-sad",
+  "en": "Petrovaradin fortress, easygoing Danube centre"
+ },
+ {
+  "id": "gem:oberammergau",
+  "en": "Painted village, palace nearby"
+ },
+ {
+  "id": "gem:odeceixe",
+  "en": "River-meets-ocean wonder beach"
+ },
+ {
+  "id": "gem:oland",
+  "en": "UNESCO alvar plain and beach coast"
+ },
+ {
+  "id": "gem:opatija",
+  "en": "Grand Austro-Hungarian riviera"
+ },
+ {
+  "id": "gem:orheiul-vechi",
+  "en": "Cave monastery above sweeping limestone gorge"
+ },
+ {
+  "id": "gem:orvieto",
+  "en": "Cliff-top duomo among Italy's finest"
+ },
+ {
+  "id": "gem:osum-canyon",
+  "en": "Dramatic slot canyon"
+ },
+ {
+  "id": "gem:oxford",
+  "en": "Dreaming spires, superb colleges and museums"
+ },
+ {
+  "id": "gem:pag-island",
+  "en": "Famous party beach + lunar karst island"
+ },
+ {
+  "id": "gem:papingo",
+  "en": "Stone villages, Vikos Gorge, Zagori grandeur"
+ },
+ {
+  "id": "gem:paros",
+  "en": "Naoussa charm, good beaches; increasingly fashionable"
+ },
+ {
+  "id": "gem:paxos-antipaxos",
+  "en": "Voutoumi water and Gaios harbour charm"
+ },
+ {
+  "id": "gem:peja",
+  "en": "Rugova canyon, frescoed patriarchate, raw Alps"
+ },
+ {
+  "id": "gem:peniscola",
+  "en": "Walled papal sea castle ringed by sand"
+ },
+ {
+  "id": "gem:pernstejn",
+  "en": "Best-preserved Gothic castle in Moravia"
+ },
+ {
+  "id": "gem:peyrepertuse",
+  "en": "Most dramatic of the Cathar sky-castles"
+ },
+ {
+  "id": "gem:pico-azores",
+  "en": "Volcano summit, lava vineyards"
+ },
+ {
+  "id": "gem:pitigliano",
+  "en": "Tufa-cliff town, Etruscan sunken roads"
+ },
+ {
+  "id": "gem:plockton",
+  "en": "Prettiest Highland village"
+ },
+ {
+  "id": "gem:pocitelj",
+  "en": "Gorgeous stone hamlet, an hour's wander"
+ },
+ {
+  "id": "gem:polperro",
+  "en": "Postcard smugglers' harbour"
+ },
+ {
+  "id": "gem:ponte-de-lima",
+  "en": "Roman bridge, oldest town charm"
+ },
+ {
+  "id": "gem:port-isaac",
+  "en": "Iconic Cornish fishing village"
+ },
+ {
+  "id": "gem:porto-moniz",
+  "en": "Lava pools in the open ocean"
+ },
+ {
+  "id": "gem:portovenere",
+  "en": "Cinque Terre's UNESCO twin, Byron's cave"
+ },
+ {
+  "id": "gem:potsdam",
+  "en": "Frederick the Great's Sanssouci palaces, UNESCO"
+ },
+ {
+  "id": "gem:primosten",
+  "en": "Postcard islet town, vineyards"
+ },
+ {
+  "id": "gem:prokosko-lake",
+  "en": "Idyllic mountain tarn"
+ },
+ {
+  "id": "gem:ptuj",
+  "en": "Slovenia's oldest town, castle, carnival tradition"
+ },
+ {
+  "id": "gem:puy-mary",
+  "en": "Grand Site summit of the Cantal"
+ },
+ {
+  "id": "gem:rabacal-25-fontes",
+  "en": "Definitive levada experience"
+ },
+ {
+  "id": "gem:rastoke",
+  "en": "Waterfall watermill hamlet"
+ },
+ {
+  "id": "gem:regensburg",
+  "en": "Intact medieval Danube city, underrated internationally"
+ },
+ {
+  "id": "gem:retezat",
+  "en": "Spectacular glacial lakes, few foreign visitors"
+ },
+ {
+  "id": "gem:ribadesella",
+  "en": "Lively river-mouth beach town"
+ },
+ {
+  "id": "gem:rila",
+  "en": "Breathtaking frescoed monastery in forested mountains"
+ },
+ {
+  "id": "gem:rjukan",
+  "en": "UNESCO heritage and Gaustatoppen views"
+ },
+ {
+  "id": "gem:rock-of-cashel",
+  "en": "Ireland's iconic medieval rock"
+ },
+ {
+  "id": "gem:roskilde",
+  "en": "UNESCO cathedral, Viking ship museum"
+ },
+ {
+  "id": "gem:rovinj",
+  "en": "Ravishing Venetian peninsula town, Istria's showpiece"
+ },
+ {
+  "id": "gem:rummu-quarry",
+  "en": "Swim over a sunken prison"
+ },
+ {
+  "id": "gem:ruse",
+  "en": "Grand Danube architecture, rock churches"
+ },
+ {
+  "id": "gem:saaremaa",
+  "en": "Windmills, castle, meteorite crater, slow island"
+ },
+ {
+  "id": "gem:saharna",
+  "en": "Monastery, waterfalls, Dniester scenery"
+ },
+ {
+  "id": "gem:saint-guilhem-le-desert",
+  "en": "Abbey village in a swimmable gorge"
+ },
+ {
+  "id": "gem:saint-tropez",
+  "en": "Legendary Riviera port plus Pampelonne"
+ },
+ {
+  "id": "gem:salers",
+  "en": "Turreted lava-stone cheese village"
+ },
+ {
+  "id": "gem:samothrace",
+  "en": "Waterfall pools and ancient sanctuary, adventurers only"
+ },
+ {
+  "id": "gem:san-marino",
+  "en": "Dramatic towers, trinket-shop old town"
+ },
+ {
+  "id": "gem:san-vito-lo-capo",
+  "en": "Sicily's best sand beach"
+ },
+ {
+  "id": "gem:sankt-goar",
+  "en": "Loreley legend plus biggest Rhine ruin"
+ },
+ {
+  "id": "gem:santana-madeira",
+  "en": "Thatched houses, laurisilva walks"
+ },
+ {
+  "id": "gem:sapanta-merry-cemetery",
+  "en": "World-famous folk-art cemetery"
+ },
+ {
+  "id": "gem:sarospatak",
+  "en": "Finest Renaissance castle in Hungary"
+ },
+ {
+  "id": "gem:scanno",
+  "en": "Heart-shaped lake, borgo charm"
+ },
+ {
+  "id": "gem:scilla",
+  "en": "Chianalea, Calabria's Venice"
+ },
+ {
+  "id": "gem:serra-da-estrela",
+  "en": "Glacial valleys, highest peaks"
+ },
+ {
+  "id": "gem:sete-cidades",
+  "en": "Twin crater lakes, wonder of PT"
+ },
+ {
+  "id": "gem:seven-sisters",
+  "en": "Classic white chalk cliffs"
+ },
+ {
+  "id": "gem:shkoder",
+  "en": "Rozafa castle, lake, pleasant cafe streets"
+ },
+ {
+  "id": "gem:sighisoara",
+  "en": "Perfect walled citadel, but tiny"
+ },
+ {
+  "id": "gem:silkeborg",
+  "en": "Lakeland cruises, hills, bog bodies"
+ },
+ {
+  "id": "gem:sintra",
+  "en": "Pena palace, misty forests, romantic follies"
+ },
+ {
+  "id": "gem:siurana",
+  "en": "Clifftop village, world-class crag"
+ },
+ {
+  "id": "gem:skellig-michael",
+  "en": "UNESCO monastic sea crag"
+ },
+ {
+  "id": "gem:skopelos",
+  "en": "Film-famous chapel, greenest island in Greece"
+ },
+ {
+  "id": "gem:slovak-paradise",
+  "en": "Ladder-and-gorge hikes, adventurous fun"
+ },
+ {
+  "id": "gem:snowdonia",
+  "en": "Wales's finest mountains, Snowdon, glacial lakes"
+ },
+ {
+  "id": "gem:soldeu",
+  "en": "Best ski base, prettiest valley"
+ },
+ {
+  "id": "gem:sopot",
+  "en": "Classic resort, grand pier and nightlife"
+ },
+ {
+  "id": "gem:sortelha",
+  "en": "Best-preserved medieval village"
+ },
+ {
+  "id": "gem:spello",
+  "en": "Umbria's prettiest flower village"
+ },
+ {
+  "id": "gem:spoleto",
+  "en": "Ponte delle Torri, festival town"
+ },
+ {
+  "id": "gem:st-andrews",
+  "en": "Cathedral ruins, golf shrine, sweeping beach"
+ },
+ {
+  "id": "gem:st-ives",
+  "en": "Turquoise Cornish beaches, art scene, crowded summers"
+ },
+ {
+  "id": "gem:stari-bar",
+  "en": "Evocative ruined citadel"
+ },
+ {
+  "id": "gem:stintino-la-pelosa",
+  "en": "One of Europe's finest beaches"
+ },
+ {
+  "id": "gem:stoos",
+  "en": "Steepest funicular, ridge panorama"
+ },
+ {
+  "id": "gem:stratford",
+  "en": "Shakespeare pilgrimage, pretty but heavily commercialised"
+ },
+ {
+  "id": "gem:studlagil",
+  "en": "Basalt canyon only revealed in 2009"
+ },
+ {
+  "id": "gem:suduroy",
+  "en": "Dramatic cliffs, almost no tourists"
+ },
+ {
+  "id": "gem:sutjeska",
+  "en": "Primeval forest, highest peaks"
+ },
+ {
+  "id": "gem:sylt",
+  "en": "Iconic German island, huge dune beaches"
+ },
+ {
+  "id": "gem:syros-ermoupoli",
+  "en": "Grandest town in the Cyclades, year-round life"
+ },
+ {
+  "id": "gem:szentendre",
+  "en": "Artsy riverside lanes, souvenir-heavy"
+ },
+ {
+  "id": "gem:tarifa",
+  "en": "Two seas, kite mecca, wild Atlantic beaches"
+ },
+ {
+  "id": "gem:tavira",
+  "en": "Algarve's prettiest town, castle, island beach"
+ },
+ {
+  "id": "gem:teruel",
+  "en": "UNESCO Mudejar ensemble, no crowds"
+ },
+ {
+  "id": "gem:the-hague",
+  "en": "Mauritshuis and beach, stately not charming"
+ },
+ {
+  "id": "gem:tinos",
+  "en": "Volax and Pyrgos villages, superb food, few foreigners"
+ },
+ {
+  "id": "gem:tiraspol",
+  "en": "One-of-a-kind Soviet time-capsule state"
+ },
+ {
+  "id": "gem:tokaj",
+  "en": "Legendary wines, sleepy little town"
+ },
+ {
+  "id": "gem:torshavn",
+  "en": "Turf-roofed Tinganes, cosy harbour; small capital"
+ },
+ {
+  "id": "gem:trakai",
+  "en": "Island castle on lake, Karaite quarter"
+ },
+ {
+  "id": "gem:transfagarasan",
+  "en": "Spectacular alpine road of hairpins"
+ },
+ {
+  "id": "gem:trebinje",
+  "en": "Plane-shaded old town, wine, Ottoman bridge"
+ },
+ {
+  "id": "gem:trento",
+  "en": "Alpine cathedral city, frescoed palazzi"
+ },
+ {
+  "id": "gem:trigrad",
+  "en": "Marble canyon, underground waterfall"
+ },
+ {
+  "id": "gem:tropea",
+  "en": "Cliff town, jewel beaches, Calabria unnoticed"
+ },
+ {
+  "id": "gem:tsagkarada-pelion",
+  "en": "Forest village plus Mylopotamos beach combo"
+ },
+ {
+  "id": "gem:tyulenovo",
+  "en": "Sea arches and cliff jumping, uncrowded"
+ },
+ {
+  "id": "gem:ulm",
+  "en": "Tallest spire, charming old quarter"
+ },
+ {
+  "id": "gem:utrecht",
+  "en": "Wharf-cellar canals, Dom tower, Amsterdam without crowds"
+ },
+ {
+  "id": "gem:vaduz",
+  "en": "Castle viewpoint, alpine backdrop, thin sights"
+ },
+ {
+  "id": "gem:valbona",
+  "en": "Spectacular Albanian Alps valley"
+ },
+ {
+  "id": "gem:valldemossa",
+  "en": "Mallorca's loveliest mountain town"
+ },
+ {
+  "id": "gem:vatheia-mani",
+  "en": "Iconic tower-house village, edge-of-Europe feel"
+ },
+ {
+  "id": "gem:velika-planina",
+  "en": "Living herders' plateau, unique hut village"
+ },
+ {
+  "id": "gem:vergina",
+  "en": "UNESCO royal Macedonian tombs, stunning museum"
+ },
+ {
+  "id": "gem:vestmannaeyjar",
+  "en": "Volcanic archipelago, puffin cliffs, raw drama"
+ },
+ {
+  "id": "gem:vianden",
+  "en": "Storybook castle above Our valley"
+ },
+ {
+  "id": "gem:vik",
+  "en": "Black beaches, basalt stacks, waterfall-studded coast"
+ },
+ {
+  "id": "gem:viljandi",
+  "en": "Castle ruins, lake views, folk festival"
+ },
+ {
+  "id": "gem:vipava-valley",
+  "en": "Rising wine region, unspoilt villages"
+ },
+ {
+  "id": "gem:viscri",
+  "en": "Authentic Saxon village, fortified church, dirt lanes"
+ },
+ {
+  "id": "gem:visoki-decani",
+  "en": "UNESCO frescoed monastery"
+ },
+ {
+  "id": "gem:volterra",
+  "en": "Brooding Etruscan hilltown, refreshingly authentic"
+ },
+ {
+  "id": "gem:waterford",
+  "en": "Ireland's oldest Viking city"
+ },
+ {
+  "id": "gem:wells-next-the-sea",
+  "en": "Norfolk's finest sands"
+ },
+ {
+  "id": "gem:westfjords",
+  "en": "Dynjandi and Latrabjarg, no crowds"
+ },
+ {
+  "id": "gem:wigry",
+  "en": "Lakeside monastery, clear lakes"
+ },
+ {
+  "id": "gem:woolacombe",
+  "en": "Multi-award-winning surf beach"
+ },
+ {
+  "id": "gem:yorkshire-dales",
+  "en": "Green dales, limestone scars, waterfalls"
+ },
+ {
+  "id": "gem:zaanse-schans",
+  "en": "Photogenic windmill ensemble, open-air-museum feel"
+ },
+ {
+  "id": "gem:zambujeira-do-mar",
+  "en": "Clifftop village, dramatic coast"
+ },
+ {
+  "id": "gem:zemaitija",
+  "en": "Lake, forest and missile silo museum"
+ },
+ {
+  "id": "gem:znojmo",
+  "en": "Gorge-top wine town with vast underground"
+ }
+]

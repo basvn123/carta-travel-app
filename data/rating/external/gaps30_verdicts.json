@@ -1,0 +1,278 @@
+[
+ {
+  "id": "gem:ikaria",
+  "verdict": "keep",
+  "proposed_appeal": null,
+  "reason": "7.0 fits a quiet Blue Zone island with Faros and Armenistis beaches and sea hot springs; the low Q comes from depth 0.02 and recognition 0, a POI coverage gap rather than an appeal error, and the LP mention is a value-for-money list.",
+  "urls": [
+   "https://en.wikivoyage.org/wiki/Ikaria"
+  ]
+ },
+ {
+  "id": "BEG",
+  "verdict": "adjust",
+  "proposed_appeal": 6.3,
+  "reason": "Kalemegdan at the Sava and Danube confluence, Knez Mihailova, Saint Sava and Zemun give it more than Monaco (6.0); on a par with Geneva, still below Milan's 7.0 because of the sprawl and traffic Wikivoyage notes.",
+  "urls": [
+   "https://en.wikivoyage.org/wiki/Belgrade"
+  ]
+ },
+ {
+  "id": "gem:dessau",
+  "verdict": "keep",
+  "proposed_appeal": null,
+  "reason": "Two UNESCO sites (Bauhaus Dessau, the Woerlitz Garden Realm), but the town was almost completely destroyed in 1945 and rebuilt in GDR slab; 6.3 is right for a specialist architecture stop, and Woerlitz lies outside the town.",
+  "urls": [
+   "https://en.wikipedia.org/wiki/Dessau"
+  ]
+ },
+ {
+  "id": "MAN",
+  "verdict": "keep",
+  "proposed_appeal": null,
+  "reason": "Strong museums, the John Rylands Library, the Town Hall and football lift it well above Birmingham (4.5), while the post-industrial fabric keeps it below Milan; 6.0 holds, and the LP 'learn' list is thematic.",
+  "urls": [
+   "https://en.wikivoyage.org/wiki/Manchester"
+  ]
+ },
+ {
+  "id": "TLS",
+  "verdict": "adjust",
+  "proposed_appeal": 6.8,
+  "reason": "A compact, walkable pink-brick centre with the Capitole, Saint-Sernin and the Canal du Midi is a notch above Belgrade or Manchester and close to Milan; 6.5 slightly undersells it.",
+  "urls": [
+   "https://en.wikivoyage.org/wiki/Toulouse"
+  ]
+ },
+ {
+  "id": "HER",
+  "verdict": "keep",
+  "proposed_appeal": null,
+  "reason": "Knossos and the Archaeological Museum are world class, but Wikivoyage calls many of the city's developments ugly and ill-planned; 7.0 is right. Catalogue note: the Tripadvisor rank is for Crete the island, which this city row inherits.",
+  "urls": [
+   "https://en.wikivoyage.org/wiki/Heraklion"
+  ]
+ },
+ {
+  "id": "GLA",
+  "verdict": "keep",
+  "proposed_appeal": null,
+  "reason": "The Victorian red-sandstone grid, free Kelvingrove, Mackintosh and the Necropolis put it above Manchester, but closures (the School of Art) and grey edges keep it below Milan; 6.5 holds.",
+  "urls": [
+   "https://en.wikivoyage.org/wiki/Glasgow"
+  ]
+ },
+ {
+  "id": "DRS",
+  "verdict": "keep",
+  "proposed_appeal": null,
+  "reason": "The Frauenkirche, the Zwinger with the Sistine Madonna and the Green Vault on the Elbe justify 7.8; the low Q comes from beauty 0.28 and recognition 0 (the Elbe Valley lost its UNESCO status in 2009), not from appeal.",
+  "urls": [
+   "https://en.wikivoyage.org/wiki/Dresden"
+  ]
+ },
+ {
+  "id": "gem:leon",
+  "verdict": "keep",
+  "proposed_appeal": null,
+  "reason": "The Gothic cathedral with exceptional stained glass, San Isidoro, Casa Botines and a free-tapas old town sit just below Carcassonne's 7.5; 7.2 holds.",
+  "urls": [
+   "https://en.wikivoyage.org/wiki/Le%C3%B3n_(Spain)"
+  ]
+ },
+ {
+  "id": "gem:bansko",
+  "verdict": "keep",
+  "proposed_appeal": null,
+  "reason": "A small stone old town with Pirin NP access, but Wikivoyage stresses heavy overdevelopment and a beginner-level ski area; 6.0 holds, and the Q of 7.0 already gives a Good band.",
+  "urls": [
+   "https://en.wikivoyage.org/wiki/Bansko"
+  ]
+ },
+ {
+  "id": "MRS",
+  "verdict": "adjust",
+  "proposed_appeal": 6.8,
+  "reason": "Vieux-Port, Notre-Dame de la Garde, MuCEM, Le Panier and the Calanques inside the city limits give it more than Glasgow; 6.8 keeps it below Milan given the uneven whole.",
+  "urls": [
+   "https://en.wikivoyage.org/wiki/Marseille"
+  ]
+ },
+ {
+  "id": "MXP",
+  "verdict": "keep",
+  "proposed_appeal": null,
+  "reason": "7.0 matches the Milan anchor on the hand scale. Catalogue problem: the row is keyed and named for Malpensa airport, 49 km from Milan in Ferno (Varese); it should be the city of Milan.",
+  "urls": [
+   "https://en.wikipedia.org/wiki/Milan_Malpensa_Airport",
+   "https://en.wikivoyage.org/wiki/Milan"
+  ]
+ },
+ {
+  "id": "BRS",
+  "verdict": "keep",
+  "proposed_appeal": null,
+  "reason": "Harbourside, the SS Great Britain, Clifton and the gorge bridge offset post-war blight that Wikivoyage calls horrible; 6.8 holds, level with Toulouse and Marseille.",
+  "urls": [
+   "https://en.wikivoyage.org/wiki/Bristol"
+  ]
+ },
+ {
+  "id": "gem:mostar-ba",
+  "verdict": "keep",
+  "proposed_appeal": null,
+  "reason": "The UNESCO Stari Most, the bazaar and day trips to Blagaj, Pocitelj and Kravica justify 7.5 for a compact old town; Q 7.7 (Very good) is already consistent with the LP listing.",
+  "urls": [
+   "https://en.wikivoyage.org/wiki/Mostar"
+  ]
+ },
+ {
+  "id": "PMI",
+  "verdict": "keep",
+  "proposed_appeal": null,
+  "reason": "Q 7.9 is not really low. Catalogue note: the appeal reason credits the Tramuntana and the calas, which belong to the island; the city alone (cathedral, Almudaina, Bellver) would sit nearer 7.3, so this row stands in for Mallorca.",
+  "urls": [
+   "https://en.wikivoyage.org/wiki/Palma_de_Mallorca"
+  ]
+ },
+ {
+  "id": "gem:orta-san-giulio",
+  "verdict": "keep",
+  "proposed_appeal": null,
+  "reason": "A Borghi piu belli village with Isola San Giulio and the UNESCO Sacro Monte di Orta, below Hallstatt (8.3); 7.5 is right. The UNESCO Sacro Monte does support it, so 'none' is a matcher gap; Q 9.4 is lifted by depth 0.99 and recognition 0.95.",
+  "urls": [
+   "https://en.wikipedia.org/wiki/Orta_San_Giulio"
+  ]
+ },
+ {
+  "id": "gem:castel-gandolfo",
+  "verdict": "adjust",
+  "proposed_appeal": 6.8,
+  "reason": "The papal palace museum, the Bernini church and Lake Albano views make a pleasant half day from Rome, but it is a smaller draw than Windsor (7.0); its Q 9.2 rests on depth and recognition.",
+  "urls": [
+   "https://en.wikipedia.org/wiki/Castel_Gandolfo"
+  ]
+ },
+ {
+  "id": "gem:ortisei",
+  "verdict": "adjust",
+  "proposed_appeal": 8.0,
+  "reason": "The reason credits Seceda and the Alpe di Siusi, which belong to Val Gardena; the village itself is fairy-tale pretty but should not outrank Hallstatt (8.3). Catalogue note: a valley named after one town, and Wikivoyage does have the guide (St. Ulrich), so 'none' is a matcher gap.",
+  "urls": [
+   "https://en.wikivoyage.org/wiki/Ortisei"
+  ]
+ },
+ {
+  "id": "KEF",
+  "verdict": "adjust",
+  "proposed_appeal": 7.3,
+  "reason": "Wikivoyage frames Reykjavik as a small, charming base with sprawling suburbs and puts Iceland's nature as the bigger draw; 8.0 counts the excursions. Catalogue problem: the row is keyed to Keflavik airport, about 50 km from the city.",
+  "urls": [
+   "https://en.wikivoyage.org/wiki/Reykjav%C3%ADk"
+  ]
+ },
+ {
+  "id": "gem:dolomites",
+  "verdict": "keep",
+  "proposed_appeal": null,
+  "reason": "UNESCO-listed and called some of the most dramatic mountain scenery on the planet; 9.4 is right for the area. Catalogue note: a region labelled with one town (Cortina), and both UNESCO and Wikivoyage support it, so 'none' is a matcher gap.",
+  "urls": [
+   "https://en.wikivoyage.org/wiki/Dolomites",
+   "https://en.wikivoyage.org/wiki/Cortina_d%27Ampezzo"
+  ]
+ },
+ {
+  "id": "gem:malcesine",
+  "verdict": "keep",
+  "proposed_appeal": null,
+  "reason": "Charming lanes, the Scaliger castle and the Monte Baldo cable car fit 7.2 among Garda villages; Wikivoyage has the guide, so 'none' is a matcher gap.",
+  "urls": [
+   "https://en.wikivoyage.org/wiki/Malcesine"
+  ]
+ },
+ {
+  "id": "gem:montserrat",
+  "verdict": "keep",
+  "proposed_appeal": null,
+  "reason": "The monastery, the Black Madonna and the rock spires are among Catalonia's top sights, so 8.0 holds as a site. Catalogue problem: Wikivoyage describes a mountain and natural park, not a village, so the class should be area; the guide exists, so 'none' is a matcher gap.",
+  "urls": [
+   "https://en.wikivoyage.org/wiki/Montserrat_(Spain)"
+  ]
+ },
+ {
+  "id": "gem:tenno",
+  "verdict": "adjust",
+  "proposed_appeal": 6.8,
+  "reason": "Canale di Tenno (Borghi piu belli), the lake and the Varone falls are pretty but minor, with no Wikivoyage guide and no mention on Riva's page; it belongs below Malcesine and Orta. The listed borgo is the hamlet of Canale, not the comune.",
+  "urls": [
+   "https://en.wikipedia.org/wiki/Tenno,_Trentino",
+   "https://en.wikivoyage.org/wiki/Riva_del_Garda"
+  ]
+ },
+ {
+  "id": "gem:cala-gonone",
+  "verdict": "adjust",
+  "proposed_appeal": 7.4,
+  "reason": "A modern frazione of Dorgali founded in the 20th century; the appeal is the Golfo di Orosei coast (Cala Luna, Bue Marino), reached by boat. Catalogue note: a coast named after one village.",
+  "urls": [
+   "https://en.wikipedia.org/wiki/Cala_Gonone"
+  ]
+ },
+ {
+  "id": "gem:fort-william",
+  "verdict": "adjust",
+  "proposed_appeal": 7.2,
+  "reason": "Our own reason calls the town drab and Wikivoyage calls it a transport and commercial hub; Ben Nevis, the Jacobite train and Glencoe (further south on the A82) make it a strong base, but 8.2 scores the Highlands, not the town. Catalogue note: a region named after one town.",
+  "urls": [
+   "https://en.wikivoyage.org/wiki/Fort_William",
+   "https://en.wikivoyage.org/wiki/Glen_Coe"
+  ]
+ },
+ {
+  "id": "gem:lago-maggiore",
+  "verdict": "keep",
+  "proposed_appeal": null,
+  "reason": "Isola Bella, Isola Madre and Isola dei Pescatori justify 7.9. Catalogue note: a lake named after one town, and Stresa (about 5,000 people) is a town rather than a village; Wikivoyage covers Stresa, so 'none' is a matcher gap.",
+  "urls": [
+   "https://en.wikivoyage.org/wiki/Stresa"
+  ]
+ },
+ {
+  "id": "gem:lagos-pt",
+  "verdict": "keep",
+  "proposed_appeal": null,
+  "reason": "Ponta da Piedade, Meia Praia and a colourful old town with a harbour fort fit 7.5, tempered by party crowds; Wikivoyage has the guide, so 'none' is a matcher gap.",
+  "urls": [
+   "https://en.wikivoyage.org/wiki/Lagos_(Portugal)"
+  ]
+ },
+ {
+  "id": "gem:morskie-oko",
+  "verdict": "keep",
+  "proposed_appeal": null,
+  "reason": "The largest Tatra lake, under Rysy, is Poland's top mountain sight, so 8.0 holds as a sight despite crowds of over 50,000 in season. Catalogue problem: it is a lake about two hours' walk from the nearest road, not a village; the class should be area or sight.",
+  "urls": [
+   "https://en.wikipedia.org/wiki/Morskie_Oko",
+   "https://en.wikivoyage.org/wiki/Zakopane"
+  ]
+ },
+ {
+  "id": "gem:portoferraio",
+  "verdict": "keep",
+  "proposed_appeal": null,
+  "reason": "Medici forts, Napoleon's exile house and a hill-wrapped harbour make a solid Elba base town at 7.0, level with Windsor; its Q 9.0 comes from depth 0.91, not appeal.",
+  "urls": [
+   "https://en.wikipedia.org/wiki/Portoferraio"
+  ]
+ },
+ {
+  "id": "gem:schonau-am-konigssee",
+  "verdict": "keep",
+  "proposed_appeal": null,
+  "reason": "It holds the Koenigssee, St. Bartholomae and part of Berchtesgaden NP; Wikivoyage calls the lake the deepest in the Alps, under walls of about 2,000 m. 7.8 fits, with the village itself a small resort.",
+  "urls": [
+   "https://en.wikipedia.org/wiki/Sch%C3%B6nau_am_K%C3%B6nigssee",
+   "https://en.wikivoyage.org/wiki/Berchtesgaden"
+  ]
+ }
+]

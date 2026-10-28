@@ -1,0 +1,934 @@
+[
+ {
+  "id": "BFS",
+  "appeal": 5.8,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 4,
+   "sights": 6,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Titanic Belfast and the City Hall give a solid day of history; the wider city fabric is plain.",
+   "nl": "Titanic Belfast en het stadhuis vullen een goede dag geschiedenis; de rest van de stad oogt gewoon.",
+   "de": "Titanic Belfast und die City Hall füllen einen guten Tag Geschichte; das übrige Stadtbild ist schlicht.",
+   "fr": "Titanic Belfast et l'hôtel de ville remplissent une bonne journée d'histoire ; le reste de la ville est banal.",
+   "es": "Titanic Belfast y el ayuntamiento llenan un buen día de historia; el resto de la ciudad es anodino.",
+   "it": "Titanic Belfast e il municipio riempiono una buona giornata di storia; il resto della città è anonimo."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "BJZ",
+  "appeal": 4.6,
+  "band": "none",
+  "criteria": {
+   "setting": 3,
+   "character": 5,
+   "sights": 4,
+   "atmosphere": 4,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Border city with a cathedral, the Puente Real and a fine arts museum; little to hold a traveller beyond an afternoon.",
+   "nl": "Grensstad met een kathedraal, de Puente Real en een kunstmuseum; weinig om een reiziger langer dan een middag te houden.",
+   "de": "Grenzstadt mit Kathedrale, Puente Real und Kunstmuseum; wenig, was Reisende länger als einen Nachmittag hält.",
+   "fr": "Ville frontière avec cathédrale, Puente Real et musée des beaux-arts ; peu pour retenir au-delà d'un après-midi.",
+   "es": "Ciudad fronteriza con catedral, Puente Real y museo de bellas artes; poco que retenga al viajero más de una tarde.",
+   "it": "Città di confine con cattedrale, Puente Real e museo di belle arti; poco che trattenga oltre un pomeriggio."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "BSL",
+  "appeal": 6.8,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 7,
+   "sights": 8,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Medieval old town on the Rhine with the Minster and the Kunstmuseum, Beyeler close by; polished but rarely stirring.",
+   "nl": "Middeleeuwse binnenstad aan de Rijn met de Münster en het Kunstmuseum, Beyeler vlakbij; verzorgd maar zelden meeslepend.",
+   "de": "Mittelalterliche Altstadt am Rhein mit Münster und Kunstmuseum, die Fondation Beyeler nah; gepflegt, doch selten mitreißend.",
+   "fr": "Vieille ville médiévale sur le Rhin avec la cathédrale et le Kunstmuseum, Beyeler tout près ; soignée mais rarement exaltante.",
+   "es": "Casco medieval junto al Rin con la catedral y el Kunstmuseum, Beyeler cerca; cuidada pero rara vez emocionante.",
+   "it": "Centro medievale sul Reno con la cattedrale e il Kunstmuseum, Beyeler vicino; curata ma raramente travolgente."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "BTS",
+  "appeal": 6.2,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 5,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Compact old town and castle on the Danube, fine for a day or a night; the core is small and the rest uneven.",
+   "nl": "Compacte oude stad en burcht aan de Donau, goed voor een dag of een nacht; de kern is klein en de rest wisselend.",
+   "de": "Kompakte Altstadt und Burg an der Donau, gut für einen Tag oder eine Nacht; der Kern ist klein, der Rest uneinheitlich.",
+   "fr": "Vieille ville compacte et château sur le Danube, bien pour un jour ou une nuit ; le centre est petit, le reste inégal.",
+   "es": "Casco antiguo compacto y castillo junto al Danubio, bien para un día o una noche; el centro es pequeño y el resto desigual.",
+   "it": "Centro storico compatto e castello sul Danubio, adatto a un giorno o una notte; il nucleo è piccolo e il resto disomogeneo."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "CWL",
+  "appeal": 5.5,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 5,
+   "sights": 6,
+   "atmosphere": 6,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "National Museum Cardiff and the bay's Millennium Centre make a lively day; the city itself is mostly modern and plain.",
+   "nl": "Het National Museum Cardiff en het Millennium Centre aan de baai vullen een levendige dag; de stad zelf is vooral modern en gewoon.",
+   "de": "National Museum Cardiff und das Millennium Centre an der Bucht füllen einen lebhaften Tag; die Stadt selbst ist meist modern und schlicht.",
+   "fr": "Le National Museum Cardiff et le Millennium Centre de la baie font une journée animée ; la ville est surtout moderne et banale.",
+   "es": "El National Museum Cardiff y el Millennium Centre de la bahía dan un día animado; la ciudad es sobre todo moderna y sencilla.",
+   "it": "Il National Museum Cardiff e il Millennium Centre sulla baia offrono una giornata vivace; la città è per lo più moderna e anonima."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "EFL",
+  "appeal": 7.6,
+  "band": "very_good",
+  "criteria": {
+   "setting": 9,
+   "character": 5,
+   "sights": 7,
+   "atmosphere": 6,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "Mountainous Ionian island with Myrtos Beach and clear coves, a good base for several days; Argostoli itself has little old fabric.",
+   "nl": "Bergachtig Ionisch eiland met Myrtos Beach en heldere baaien, goede uitvalsbasis voor meerdere dagen; Argostoli zelf heeft weinig oude bebouwing.",
+   "de": "Gebirgige Ionische Insel mit Myrtos Beach und klaren Buchten, gut für mehrere Tage; Argostoli selbst hat wenig alte Bausubstanz.",
+   "fr": "Île ionienne montagneuse avec la plage de Myrtos et des criques limpides, bonne base pour plusieurs jours ; Argostoli a peu de bâti ancien.",
+   "es": "Isla jónica montañosa con la playa de Myrtos y calas claras, buena base para varios días; Argostoli apenas conserva casco antiguo.",
+   "it": "Isola ionica montuosa con la spiaggia di Myrtos e calette limpide, buona base per più giorni; Argostoli ha poco tessuto antico."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "EXT",
+  "appeal": 6.0,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 5,
+   "character": 6,
+   "sights": 7,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Cathedral city with a fine Gothic cathedral and the Royal Albert Memorial Museum; a pleasant day, rarely more.",
+   "nl": "Kathedraalstad met een fraaie gotische kathedraal en het Royal Albert Memorial Museum; een prettige dag, zelden meer.",
+   "de": "Bischofsstadt mit schöner gotischer Kathedrale und dem Royal Albert Memorial Museum; ein angenehmer Tag, selten mehr.",
+   "fr": "Ville épiscopale avec une belle cathédrale gothique et le Royal Albert Memorial Museum ; une journée agréable, rarement plus.",
+   "es": "Ciudad catedralicia con una bella catedral gótica y el Royal Albert Memorial Museum; un día agradable, rara vez más.",
+   "it": "Città con una bella cattedrale gotica e il Royal Albert Memorial Museum; una giornata piacevole, raramente di più."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "GRO",
+  "appeal": 7.4,
+  "band": "good",
+  "criteria": {
+   "setting": 6,
+   "character": 8,
+   "sights": 7,
+   "atmosphere": 7,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "Listed medieval core with the cathedral steps, the coloured houses on the Onyar and the Jewish quarter; a two-day place, not more.",
+   "nl": "Beschermde middeleeuwse kern met de kathedraaltrappen, de gekleurde huizen aan de Onyar en de Joodse wijk; goed voor twee dagen, niet meer.",
+   "de": "Geschützter mittelalterlicher Kern mit Kathedralentreppe, bunten Häusern am Onyar und jüdischem Viertel; gut für zwei Tage, nicht mehr.",
+   "fr": "Centre médiéval protégé avec l'escalier de la cathédrale, les maisons colorées de l'Onyar et le quartier juif ; deux jours, pas plus.",
+   "es": "Casco medieval protegido con la escalinata de la catedral, las casas de colores del Onyar y el barrio judío; dos días, no más.",
+   "it": "Nucleo medievale tutelato con la scalinata del duomo, le case colorate sull'Onyar e il quartiere ebraico; due giorni, non di più."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "IAS",
+  "appeal": 5.0,
+  "band": "none",
+  "criteria": {
+   "setting": 4,
+   "character": 5,
+   "sights": 5,
+   "atmosphere": 5,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "University city with Roznovanu Palace, Copou Park and old monasteries; the historic buildings are scattered between large modern districts.",
+   "nl": "Universiteitsstad met het Roznovanu-paleis, het Copou-park en oude kloosters; de historische gebouwen liggen verspreid tussen grote moderne wijken.",
+   "de": "Universitätsstadt mit Roznovanu-Palast, Copou-Park und alten Klöstern; die historischen Bauten liegen verstreut zwischen großen Neubauvierteln.",
+   "fr": "Ville universitaire avec le palais Roznovanu, le parc Copou et d'anciens monastères ; les monuments sont dispersés entre de vastes quartiers modernes.",
+   "es": "Ciudad universitaria con el palacio Roznovanu, el parque Copou y viejos monasterios; los monumentos quedan dispersos entre grandes barrios modernos.",
+   "it": "Città universitaria con il palazzo Roznovanu, il parco Copou e antichi monasteri; i monumenti sono sparsi tra grandi quartieri moderni."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "IOM",
+  "appeal": 6.2,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Green Irish Sea island with Douglas Head, Tynwald and the Manx Museum; quiet and pleasant, with few sights that draw from afar.",
+   "nl": "Groen eiland in de Ierse Zee met Douglas Head, Tynwald en het Manx Museum; rustig en prettig, maar met weinig trekpleisters.",
+   "de": "Grüne Insel in der Irischen See mit Douglas Head, Tynwald und dem Manx Museum; ruhig und angenehm, mit wenig großen Zielen.",
+   "fr": "Île verte de la mer d'Irlande avec Douglas Head, Tynwald et le Manx Museum ; calme et agréable, avec peu de sites marquants.",
+   "es": "Isla verde del mar de Irlanda con Douglas Head, Tynwald y el Manx Museum; tranquila y agradable, con pocos reclamos.",
+   "it": "Isola verde nel mare d'Irlanda con Douglas Head, Tynwald e il Manx Museum; tranquilla e piacevole, con poche attrazioni forti."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "JMK",
+  "appeal": 7.2,
+  "band": "good",
+  "criteria": {
+   "setting": 7,
+   "character": 7,
+   "sights": 6,
+   "atmosphere": 7,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "Whitewashed Cycladic town with Paraportiani, beaches and the boat to Delos; crowded, and much of it now built for parties.",
+   "nl": "Witgekalkt Cycladisch stadje met Paraportiani, stranden en de boot naar Delos; druk, en veel ervan draait om feesten.",
+   "de": "Weiß gekalkte Kykladenstadt mit Paraportiani, Stränden und dem Boot nach Delos; überlaufen und vielerorts auf Partys ausgerichtet.",
+   "fr": "Bourg cycladique blanchi à la chaux avec Paraportiani, des plages et le bateau pour Délos ; bondé, et souvent tourné vers la fête.",
+   "es": "Pueblo cicládico encalado con Paraportiani, playas y el barco a Delos; abarrotado y en gran parte pensado para la fiesta.",
+   "it": "Paese cicladico imbiancato con Paraportiani, spiagge e la barca per Delo; affollato e in gran parte votato alla festa."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "KIR",
+  "appeal": 6.0,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 3,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Small place near Lough Leane, a fair base for the lakes; the card names no sight of its own.",
+   "nl": "Klein plaatsje bij Lough Leane, een redelijke uitvalsbasis voor de meren; de kaart noemt geen eigen bezienswaardigheid.",
+   "de": "Kleiner Ort nahe Lough Leane, ein brauchbarer Ausgangspunkt für die Seen; eigene Sehenswürdigkeiten nennt die Karte nicht.",
+   "fr": "Petite localité près du Lough Leane, base correcte pour les lacs ; la fiche ne cite aucun site propre.",
+   "es": "Pequeña localidad cerca de Lough Leane, base aceptable para los lagos; la ficha no cita ningún atractivo propio.",
+   "it": "Piccola località vicino a Lough Leane, base discreta per i laghi; la scheda non cita nessuna attrazione propria."
+  },
+  "confidence": "low",
+  "flags": [
+   "thin_card",
+   "name_ambiguous",
+   "class_mismatch"
+  ],
+  "sources": []
+ },
+ {
+  "id": "LCA",
+  "appeal": 5.5,
+  "band": "none",
+  "criteria": {
+   "setting": 6,
+   "character": 4,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 4
+  },
+  "why": {
+   "en": "Seafront city with the Agios Lazaros church, the salt lake and Hala Sultan Tekke nearby; a convenient stop rather than a reason to come.",
+   "nl": "Kuststad met de Agios Lazaroskerk, het zoutmeer en Hala Sultan Tekke vlakbij; handig als tussenstop, geen reden om te komen.",
+   "de": "Küstenstadt mit Agios-Lazaros-Kirche, Salzsee und Hala Sultan Tekke in der Nähe; ein bequemer Halt, kein Grund für die Reise.",
+   "fr": "Ville côtière avec l'église Agios Lazaros, le lac salé et Hala Sultan Tekke tout près ; une étape pratique plutôt qu'un but.",
+   "es": "Ciudad costera con la iglesia de Agios Lazaros, el lago salado y Hala Sultan Tekke cerca; parada cómoda más que destino.",
+   "it": "Città costiera con la chiesa di Agios Lazaros, il lago salato e Hala Sultan Tekke vicino; una tappa comoda più che una meta."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "MJT",
+  "appeal": 6.0,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Harbour town of Lesbos with a castle, an ancient theatre and the Theophilos Museum; pleasant for a night, short on standout sights.",
+   "nl": "Havenstad van Lesbos met een burcht, een antiek theater en het Theophilos-museum; prettig voor een nacht, weinig hoogtepunten.",
+   "de": "Hafenstadt auf Lesbos mit Burg, antikem Theater und Theophilos-Museum; angenehm für eine Nacht, arm an Höhepunkten.",
+   "fr": "Port de Lesbos avec château, théâtre antique et musée Théophilos ; agréable pour une nuit, peu de sites marquants.",
+   "es": "Ciudad portuaria de Lesbos con castillo, teatro antiguo y museo Teófilos; agradable para una noche, con pocos imprescindibles.",
+   "it": "Città portuale di Lesbo con castello, teatro antico e museo Teofilos; piacevole per una notte, con poche attrazioni di spicco."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "NAP",
+  "appeal": 8.3,
+  "band": "excellent",
+  "criteria": {
+   "setting": 8,
+   "character": 8,
+   "sights": 10,
+   "atmosphere": 9,
+   "uniqueness": 9
+  },
+  "why": {
+   "en": "UNESCO historic centre, the Archaeological Museum and Capodimonte under Vesuvius; intense street life, but chaotic and scruffy in places.",
+   "nl": "UNESCO-centrum, het Archeologisch Museum en Capodimonte onder de Vesuvius; intens straatleven, maar plaatselijk chaotisch en rommelig.",
+   "de": "UNESCO-Altstadt, Archäologisches Museum und Capodimonte unter dem Vesuv; intensives Straßenleben, stellenweise aber chaotisch und schmuddelig.",
+   "fr": "Centre historique UNESCO, Musée archéologique et Capodimonte sous le Vésuve ; vie de rue intense, mais chaotique et décrépie par endroits.",
+   "es": "Centro histórico UNESCO, el Museo Arqueológico y Capodimonte bajo el Vesubio; vida callejera intensa, aunque caótica y descuidada a ratos.",
+   "it": "Centro storico UNESCO, Museo Archeologico e Capodimonte sotto il Vesuvio; vita di strada intensa, ma caotica e trasandata in alcuni punti."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "NUE",
+  "appeal": 7.3,
+  "band": "good",
+  "criteria": {
+   "setting": 5,
+   "character": 8,
+   "sights": 8,
+   "atmosphere": 7,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "Rebuilt walled old town under the Imperial Castle, with the Germanisches Nationalmuseum and Dürer's House; much of the fabric is postwar.",
+   "nl": "Herbouwde ommuurde binnenstad onder de Kaiserburg, met het Germanisches Nationalmuseum en het Dürerhuis; veel is naoorlogs.",
+   "de": "Wiederaufgebaute ummauerte Altstadt unter der Kaiserburg, mit Germanischem Nationalmuseum und Dürer-Haus; vieles stammt aus der Nachkriegszeit.",
+   "fr": "Vieille ville fortifiée reconstruite sous le château impérial, avec le Germanisches Nationalmuseum et la maison de Dürer ; beaucoup date d'après-guerre.",
+   "es": "Casco amurallado reconstruido bajo el castillo imperial, con el Germanisches Nationalmuseum y la casa de Durero; buena parte es de posguerra.",
+   "it": "Città vecchia murata ricostruita sotto il castello imperiale, con il Germanisches Nationalmuseum e la casa di Dürer; molto è del dopoguerra."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "PEG",
+  "appeal": 7.3,
+  "band": "good",
+  "criteria": {
+   "setting": 7,
+   "character": 8,
+   "sights": 7,
+   "atmosphere": 7,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Hilltop Etruscan and medieval centre with the Palazzo dei Priori and the National Gallery of Umbria; modern outskirts below.",
+   "nl": "Etruskisch en middeleeuws centrum op een heuvel met het Palazzo dei Priori en de Galleria Nazionale dell'Umbria; moderne buitenwijken eronder.",
+   "de": "Etruskisch-mittelalterliches Zentrum auf dem Hügel mit Palazzo dei Priori und Nationalgalerie Umbriens; unten moderne Vororte.",
+   "fr": "Centre étrusque et médiéval perché avec le Palazzo dei Priori et la Galerie nationale de l'Ombrie ; banlieue moderne en contrebas.",
+   "es": "Centro etrusco y medieval en lo alto con el Palazzo dei Priori y la Galería Nacional de Umbría; periferia moderna abajo.",
+   "it": "Centro etrusco e medievale in collina con il Palazzo dei Priori e la Galleria Nazionale dell'Umbria; periferia moderna più in basso."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "PFO",
+  "appeal": 6.6,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 6,
+   "character": 4,
+   "sights": 7,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "UNESCO-listed ancient sites, the Odeon and the harbour fort; the town around them is a sprawl of resort hotels.",
+   "nl": "Antieke resten op de UNESCO-lijst, het Odeon en het havenfort; de stad eromheen is een uitgestrekte hotelzone.",
+   "de": "Antike Stätten mit UNESCO-Titel, das Odeon und das Hafenkastell; die Stadt drumherum ist ein ausufernder Hotelstreifen.",
+   "fr": "Sites antiques classés à l'UNESCO, l'Odéon et le fort du port ; la ville autour s'étale en hôtels balnéaires.",
+   "es": "Restos antiguos Patrimonio de la UNESCO, el Odeón y el fuerte del puerto; alrededor, una extensión de hoteles turísticos.",
+   "it": "Siti antichi patrimonio UNESCO, l'Odeon e il forte del porto; intorno si allarga una distesa di hotel turistici."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "RMI",
+  "appeal": 5.8,
+  "band": "none",
+  "criteria": {
+   "setting": 5,
+   "character": 5,
+   "sights": 6,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Roman Arch of Augustus, Tiberius Bridge and the Tempio Malatestiano behind a long beach strip; the resort side is mass tourism.",
+   "nl": "Romeinse Boog van Augustus, de Tiberiusbrug en de Tempio Malatestiano achter een lange strandstrook; de badplaats is massatoerisme.",
+   "de": "Augustusbogen, Tiberiusbrücke und Tempio Malatestiano hinter einem langen Strandstreifen; die Badeseite ist Massentourismus.",
+   "fr": "Arc d'Auguste, pont de Tibère et Tempio Malatestiano derrière un long front de mer ; le côté balnéaire est du tourisme de masse.",
+   "es": "Arco de Augusto, puente de Tiberio y Tempio Malatestiano tras una larga franja de playa; la parte balnearia es turismo de masas.",
+   "it": "Arco d'Augusto, ponte di Tiberio e Tempio Malatestiano dietro una lunga striscia di spiaggia; il lato balneare è turismo di massa."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "RZE",
+  "appeal": 4.2,
+  "band": "none",
+  "criteria": {
+   "setting": 3,
+   "character": 4,
+   "sights": 4,
+   "atmosphere": 5,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Regional capital with the Lubomirski castle and a tidy market square; little that would bring a traveller here.",
+   "nl": "Regionale hoofdstad met het Lubomirski-kasteel en een verzorgd marktplein; weinig dat een reiziger hierheen haalt.",
+   "de": "Regionalhauptstadt mit Lubomirski-Schloss und gepflegtem Marktplatz; wenig, was Reisende hierher führt.",
+   "fr": "Capitale régionale avec le château Lubomirski et une place du marché soignée ; peu de raisons d'y venir.",
+   "es": "Capital regional con el castillo Lubomirski y una plaza mayor cuidada; poco que atraiga al viajero.",
+   "it": "Capoluogo regionale con il castello Lubomirski e una piazza ordinata; poco che porti qui un viaggiatore."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "SMI",
+  "appeal": 6.6,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 6,
+   "sights": 6,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Green Aegean island with the Tunnel of Eupalinos and Pythagoreion within reach; Vathy itself is a plain port town.",
+   "nl": "Groen Egeïsch eiland met de Tunnel van Eupalinos en Pythagoreion binnen bereik; Vathy zelf is een gewone havenstad.",
+   "de": "Grüne Ägäisinsel mit dem Tunnel des Eupalinos und Pythagorio in Reichweite; Vathy selbst ist eine schlichte Hafenstadt.",
+   "fr": "Île verte de l'Égée avec le tunnel d'Eupalinos et Pythagorion à portée ; Vathy n'est qu'un port ordinaire.",
+   "es": "Isla verde del Egeo con el túnel de Eupalinos y Pitagorio al alcance; Vathy es un puerto sencillo.",
+   "it": "Isola verde dell'Egeo con il tunnel di Eupalino e Pitagorio a portata; Vathy è un porto senza pretese."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "SNN",
+  "appeal": 4.0,
+  "band": "none",
+  "criteria": {
+   "setting": 4,
+   "character": 2,
+   "sights": 4,
+   "atmosphere": 3,
+   "uniqueness": 3
+  },
+  "why": {
+   "en": "Airport new town with Bunratty Castle a short drive away; an industrial zone with no centre of its own to explore.",
+   "nl": "Nieuwe stad bij het vliegveld met Bunratty Castle op korte afstand; een industriezone zonder eigen centrum.",
+   "de": "Flughafenstadt mit Bunratty Castle in kurzer Fahrt; ein Gewerbegebiet ohne eigenes Zentrum.",
+   "fr": "Ville nouvelle d'aéroport avec le château de Bunratty à deux pas ; une zone industrielle sans centre à découvrir.",
+   "es": "Ciudad nueva junto al aeropuerto con el castillo de Bunratty cerca; una zona industrial sin centro propio.",
+   "it": "Città nuova dell'aeroporto con il castello di Bunratty a breve distanza; una zona industriale senza un centro da scoprire."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "SPC",
+  "appeal": 7.3,
+  "band": "good",
+  "criteria": {
+   "setting": 9,
+   "character": 6,
+   "sights": 6,
+   "atmosphere": 7,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "Steep biosphere-reserve island rising to Roque de los Muchachos, with a listed old capital; quieter and harder to reach than the big Canaries.",
+   "nl": "Steil biosfeereiland dat oprijst tot de Roque de los Muchachos, met een beschermde oude hoofdstad; rustiger en lastiger bereikbaar dan de grote Canarische eilanden.",
+   "de": "Steile Biosphäreninsel bis zum Roque de los Muchachos, mit geschützter alter Hauptstadt; ruhiger und schwerer erreichbar als die großen Kanaren.",
+   "fr": "Île escarpée classée réserve de biosphère jusqu'au Roque de los Muchachos, avec une vieille capitale protégée ; plus calme et moins accessible.",
+   "es": "Isla abrupta, reserva de la biosfera, que sube al Roque de los Muchachos, con capital histórica protegida; más tranquila y peor comunicada.",
+   "it": "Isola ripida, riserva della biosfera, che sale al Roque de los Muchachos, con capitale storica tutelata; più quieta e meno raggiungibile."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "SVQ",
+  "appeal": 8.6,
+  "band": "excellent",
+  "criteria": {
+   "setting": 6,
+   "character": 9,
+   "sights": 9,
+   "atmosphere": 9,
+   "uniqueness": 9
+  },
+  "why": {
+   "en": "UNESCO cathedral with La Giralda, the Archive of the Indies and Casa de Pilatos, plus flamenco life; the old centre is busy with visitors.",
+   "nl": "UNESCO-kathedraal met La Giralda, het Archivo de Indias en Casa de Pilatos, plus flamencoleven; het oude centrum is druk met bezoekers.",
+   "de": "UNESCO-Kathedrale mit La Giralda, Indienarchiv und Casa de Pilatos, dazu Flamencoleben; die Altstadt ist voller Besucher.",
+   "fr": "Cathédrale UNESCO avec la Giralda, les Archives des Indes et la Casa de Pilatos, plus le flamenco ; le vieux centre est très fréquenté.",
+   "es": "Catedral UNESCO con la Giralda, el Archivo de Indias y la Casa de Pilatos, más el flamenco; el centro histórico va lleno de visitantes.",
+   "it": "Cattedrale UNESCO con la Giralda, l'Archivio delle Indie e Casa de Pilatos, più il flamenco; il centro storico è pieno di visitatori."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:antwerp",
+  "appeal": 7.4,
+  "band": "good",
+  "criteria": {
+   "setting": 6,
+   "character": 7,
+   "sights": 9,
+   "atmosphere": 8,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "Rubens House, the UNESCO-listed Plantin-Moretus and the fine arts museum on the Scheldt; the old core is surrounded by a big port city.",
+   "nl": "Rubenshuis, het UNESCO-erfgoed Plantin-Moretus en het KMSKA aan de Schelde; de oude kern ligt in een grote havenstad.",
+   "de": "Rubenshaus, das UNESCO-Erbe Plantin-Moretus und das Kunstmuseum an der Schelde; der alte Kern liegt in einer großen Hafenstadt.",
+   "fr": "Maison de Rubens, Plantin-Moretus classé à l'UNESCO et musée des beaux-arts sur l'Escaut ; le vieux centre est cerné par une grande ville portuaire.",
+   "es": "Casa de Rubens, Plantin-Moretus (UNESCO) y el museo de bellas artes junto al Escalda; el casco viejo queda dentro de un gran puerto.",
+   "it": "Casa di Rubens, il Plantin-Moretus patrimonio UNESCO e il museo di belle arti sulla Schelda; il nucleo antico è circondato da una grande città portuale."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:as-catedrais",
+  "appeal": 7.3,
+  "band": "good",
+  "criteria": {
+   "setting": 8,
+   "character": 3,
+   "sights": 8,
+   "atmosphere": 5,
+   "uniqueness": 8
+  },
+  "why": {
+   "en": "Rock arches about 30 m high stand on the sand at low tide; a single beach sight, timed to the tide and busy.",
+   "nl": "Rotsbogen van zo'n 30 m hoog staan bij eb op het zand; één strandbezienswaardigheid, afhankelijk van het getij en druk.",
+   "de": "Rund 30 m hohe Felsbögen stehen bei Ebbe im Sand; ein einzelnes Strandziel, an die Gezeiten gebunden und gut besucht.",
+   "fr": "Des arches rocheuses d'environ 30 m dominent le sable à marée basse ; un seul site, lié à la marée et fréquenté.",
+   "es": "Arcos de roca de unos 30 m se alzan sobre la arena en bajamar; un único atractivo de playa, sujeto a la marea y concurrido.",
+   "it": "Archi di roccia alti circa 30 m sulla sabbia con la bassa marea; un'unica attrazione di spiaggia, legata alla marea e affollata."
+  },
+  "confidence": "high",
+  "flags": [
+   "class_mismatch"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:asolo",
+  "appeal": 6.9,
+  "band": "good",
+  "criteria": {
+   "setting": 7,
+   "character": 8,
+   "sights": 6,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Walled hilltop borgo with its Rocca above cypress hills, Palladio's Villa di Maser and Tomba Brion nearby; a quiet half day.",
+   "nl": "Ommuurd heuvelstadje met de Rocca boven cipressenheuvels, de Villa di Maser van Palladio en Tomba Brion vlakbij; een rustige halve dag.",
+   "de": "Ummauertes Hügelstädtchen mit Rocca über Zypressenhügeln, Palladios Villa di Maser und Tomba Brion nah; ein ruhiger halber Tag.",
+   "fr": "Bourg perché et fortifié avec sa Rocca au-dessus des collines de cyprès, la Villa di Maser et la Tomba Brion proches ; une calme demi-journée.",
+   "es": "Pueblo amurallado en lo alto con su Rocca sobre colinas de cipreses, la Villa di Maser y la Tomba Brion cerca; media jornada tranquila.",
+   "it": "Borgo murato in collina con la Rocca sopra i colli di cipressi, Villa di Maser e Tomba Brion vicine; una mezza giornata tranquilla."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:aveiro",
+  "appeal": 6.6,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Lagoon city of canals, moliceiro boats and art nouveau, with the Costa Nova beaches near; a pleasant day, small centre.",
+   "nl": "Lagunestad van grachten, moliceiro-boten en art nouveau, met de stranden van Costa Nova vlakbij; een prettige dag, klein centrum.",
+   "de": "Lagunenstadt mit Kanälen, Moliceiro-Booten und Jugendstil, die Strände von Costa Nova nah; ein netter Tag, kleines Zentrum.",
+   "fr": "Ville de lagune aux canaux, bateaux moliceiros et Art nouveau, plages de Costa Nova à côté ; une journée agréable, petit centre.",
+   "es": "Ciudad de laguna con canales, barcos moliceiros y modernismo, playas de Costa Nova cerca; un día agradable, centro pequeño.",
+   "it": "Città di laguna con canali, barche moliceiro e liberty, spiagge di Costa Nova vicine; una giornata piacevole, centro piccolo."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:babia-gora",
+  "appeal": 6.7,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 8,
+   "character": 5,
+   "sights": 6,
+   "atmosphere": 7,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Lone 1725 m summit of the Beskids with wide panoramas and a national park; one big hike, with little else in the villages.",
+   "nl": "Alleenstaande top van 1725 m in de Beskiden met wijde panorama's en een nationaal park; één grote wandeling, verder weinig in de dorpen.",
+   "de": "Einzelner 1725 m hoher Beskiden-Gipfel mit weitem Panorama und Nationalpark; eine große Wanderung, sonst wenig in den Dörfern.",
+   "fr": "Sommet isolé de 1725 m dans les Beskides, larges panoramas et parc national ; une grande randonnée, peu d'autre dans les villages.",
+   "es": "Cumbre aislada de 1725 m en los Beskides con amplias vistas y parque nacional; una gran ruta, poco más en los pueblos.",
+   "it": "Vetta isolata di 1725 m dei Beschidi con ampi panorami e parco nazionale; una grande escursione, poco altro nei villaggi."
+  },
+  "confidence": "medium",
+  "flags": [
+   "class_mismatch"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:bamberg",
+  "appeal": 8.0,
+  "band": "very_good",
+  "criteria": {
+   "setting": 6,
+   "character": 9,
+   "sights": 7,
+   "atmosphere": 8,
+   "uniqueness": 8
+  },
+  "why": {
+   "en": "Whole old town on the UNESCO list, with the Altes Rathaus and a long beer tradition; compact and coach-busy.",
+   "nl": "De hele oude stad staat op de UNESCO-lijst, met het Altes Rathaus en een lange biertraditie; compact en druk met bussen.",
+   "de": "Die ganze Altstadt ist UNESCO-Welterbe, mit dem Alten Rathaus und langer Biertradition; kompakt und busvoll.",
+   "fr": "Toute la vieille ville classée à l'UNESCO, avec l'Altes Rathaus et une longue tradition brassicole ; compacte et envahie de cars.",
+   "es": "Todo el casco antiguo es Patrimonio de la UNESCO, con el Altes Rathaus y una larga tradición cervecera; compacto y lleno de autocares.",
+   "it": "Tutta la città vecchia è patrimonio UNESCO, con l'Altes Rathaus e una lunga tradizione birraria; compatta e piena di pullman."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:bansko",
+  "appeal": 6.3,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 8,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Stone-house old town under the Pirin peaks and Vihren, a budget ski base; the resort sprawl has outgrown the old core.",
+   "nl": "Oud centrum van stenen huizen onder de Pirin en de Vihren, een voordelig skioord; de nieuwbouw heeft de oude kern overwoekerd.",
+   "de": "Altstadt aus Steinhäusern unter Pirin und Vihren, günstiger Skiort; die Ferienbebauung hat den alten Kern überwuchert.",
+   "fr": "Vieille ville de maisons de pierre sous le Pirin et le Vihren, station de ski bon marché ; l'étalement touristique a débordé le centre.",
+   "es": "Casco de casas de piedra bajo el Pirin y el Vihren, estación de esquí económica; la expansión turística ha desbordado el núcleo.",
+   "it": "Centro di case in pietra sotto il Pirin e il Vihren, stazione sciistica economica; l'espansione turistica ha sommerso il nucleo."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:bernkastel-kues",
+  "appeal": 7.0,
+  "band": "good",
+  "criteria": {
+   "setting": 7,
+   "character": 8,
+   "sights": 5,
+   "atmosphere": 7,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Crooked gabled houses and a ruined castle above steep Mosel vineyards, wine taverns everywhere; a half day, busy in season.",
+   "nl": "Scheve vakwerkgevels en een burchtruïne boven steile Moezelwijngaarden, overal wijnlokalen; een halve dag, druk in het seizoen.",
+   "de": "Schiefe Giebelhäuser und eine Burgruine über steilen Moselweinbergen, überall Weinstuben; ein halber Tag, in der Saison voll.",
+   "fr": "Maisons à pignons penchées et château en ruine au-dessus des vignes raides de la Moselle, tavernes partout ; une demi-journée, bondé en saison.",
+   "es": "Casas de gablete torcidas y un castillo en ruinas sobre los empinados viñedos del Mosela, tabernas por doquier; media jornada, concurrido en temporada.",
+   "it": "Case a capanna storte e un castello in rovina sopra i ripidi vigneti della Mosella, enoteche ovunque; mezza giornata, affollata in stagione."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:biertan",
+  "appeal": 7.1,
+  "band": "good",
+  "criteria": {
+   "setting": 7,
+   "character": 8,
+   "sights": 7,
+   "atmosphere": 8,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "Saxon village whose mighty fortified church towers over vineyard hills, with more fortified churches nearby; little to do after a few hours.",
+   "nl": "Saksisch dorp met een machtige weerkerk boven wijnheuvels en meer weerkerken in de buurt; na een paar uur weinig te doen.",
+   "de": "Sächsisches Dorf mit mächtiger Kirchenburg über Weinhügeln, weitere Kirchenburgen in der Nähe; nach ein paar Stunden wenig zu tun.",
+   "fr": "Village saxon dont l'imposante église fortifiée domine des collines de vignes, d'autres églises fortifiées autour ; peu à faire après quelques heures.",
+   "es": "Pueblo sajón cuya iglesia fortificada domina colinas de viñedos, con más iglesias fortificadas cerca; poco que hacer tras unas horas.",
+   "it": "Villaggio sassone con una possente chiesa fortificata sopra colline di vigneti e altre vicine; poco da fare dopo qualche ora."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:bihac-una",
+  "appeal": 6.5,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 5,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Base for the emerald Una rapids and the Štrbački buk cascades, with an Ottoman mosque in town; the town itself is plain.",
+   "nl": "Uitvalsbasis voor de smaragdgroene Una en de watervallen van Štrbački buk, met een Ottomaanse moskee; de stad zelf is gewoon.",
+   "de": "Ausgangspunkt für die smaragdgrüne Una und die Kaskaden des Štrbački buk, mit osmanischer Moschee; die Stadt selbst ist schlicht.",
+   "fr": "Base pour les rapides émeraude de l'Una et les cascades de Štrbački buk, avec une mosquée ottomane ; la ville est quelconque.",
+   "es": "Base para los rápidos esmeralda del Una y las cascadas de Štrbački buk, con una mezquita otomana; la ciudad es sencilla.",
+   "it": "Base per le rapide smeraldo dell'Una e le cascate di Štrbački buk, con una moschea ottomana; la città in sé è anonima."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:biogradska-gora",
+  "appeal": 7.0,
+  "band": "good",
+  "criteria": {
+   "setting": 8,
+   "character": 5,
+   "sights": 7,
+   "atmosphere": 8,
+   "uniqueness": 7
+  },
+  "why": {
+   "en": "Primeval forest around glacial Biograd Lake in a national park under Bjelasica; a half-day walk rather than a place to stay.",
+   "nl": "Oerbos rond het gletsjermeer Biograd in een nationaal park onder de Bjelasica; een wandeling van een halve dag, geen verblijfplaats.",
+   "de": "Urwald um den Gletschersee Biograd im Nationalpark unter der Bjelasica; eine halbtägige Wanderung, kein Ort zum Bleiben.",
+   "fr": "Forêt primaire autour du lac glaciaire de Biograd, parc national sous la Bjelasica ; une balade d'une demi-journée plutôt qu'un séjour.",
+   "es": "Bosque primario en torno al lago glaciar Biograd, parque nacional bajo el Bjelasica; un paseo de media jornada más que un lugar de estancia.",
+   "it": "Foresta primaria attorno al lago glaciale Biograd, parco nazionale sotto la Bjelasica; una passeggiata di mezza giornata più che un soggiorno."
+  },
+  "confidence": "high",
+  "flags": [
+   "class_mismatch"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:bouillon",
+  "appeal": 6.8,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 7,
+   "sights": 7,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Godfrey's crusader castle above a horseshoe bend of the Semois; the small town is done in half a day.",
+   "nl": "Kruisvaardersburcht van Godfried boven een hoefijzerbocht van de Semois; het stadje is in een halve dag gezien.",
+   "de": "Gottfrieds Kreuzfahrerburg über einer Hufeisenschleife der Semois; das Städtchen ist in einem halben Tag gesehen.",
+   "fr": "Château croisé de Godefroy au-dessus d'un méandre de la Semois ; la petite ville se visite en une demi-journée.",
+   "es": "Castillo cruzado de Godofredo sobre un meandro en herradura del Semois; el pueblo se ve en media jornada.",
+   "it": "Castello crociato di Goffredo sopra un'ansa a ferro di cavallo della Semois; il borgo si vede in mezza giornata."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:budva",
+  "appeal": 6.4,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 6,
+   "sights": 5,
+   "atmosphere": 6,
+   "uniqueness": 5
+  },
+  "why": {
+   "en": "Walled Stari grad on the sea with Jaz Beach and Sveti Stefan close; the busiest resort in Montenegro, with nightlife sprawl around.",
+   "nl": "Ommuurde Stari grad aan zee met Jaz Beach en Sveti Stefan vlakbij; de drukste badplaats van Montenegro, met uitgaanswijken eromheen.",
+   "de": "Ummauerte Altstadt am Meer, Jaz Beach und Sveti Stefan nah; Montenegros vollster Badeort, ringsum Nachtleben und Bebauung.",
+   "fr": "Vieille ville fortifiée sur la mer, plage de Jaz et Sveti Stefan proches ; la station la plus fréquentée du Monténégro, cernée de fêtes.",
+   "es": "Ciudad vieja amurallada junto al mar, playa de Jaz y Sveti Stefan cerca; el balneario más concurrido de Montenegro, con ocio nocturno alrededor.",
+   "it": "Città vecchia murata sul mare, spiaggia di Jaz e Sveti Stefan vicine; la località più affollata del Montenegro, con movida tutt'intorno."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:buzludzha",
+  "appeal": 6.2,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 3,
+   "sights": 7,
+   "atmosphere": 4,
+   "uniqueness": 9
+  },
+  "why": {
+   "en": "Abandoned UFO-shaped communist monument on a Balkan summit, with Shipka and Thracian tombs near; one striking sight, nothing to stay for.",
+   "nl": "Verlaten communistisch monument in UFO-vorm op een Balkantop, met Sjipka en Thracische graven vlakbij; één opvallend beeld, niets om te blijven.",
+   "de": "Verlassenes kommunistisches Denkmal in UFO-Form auf einem Balkangipfel, Schipka und thrakische Gräber nah; ein starkes Bild, nichts zum Bleiben.",
+   "fr": "Monument communiste abandonné en forme d'ovni sur un sommet des Balkans, Chipka et tombes thraces proches ; un seul site, rien pour rester.",
+   "es": "Monumento comunista abandonado con forma de ovni en una cima balcánica, Shipka y tumbas tracias cerca; una sola imagen, nada para quedarse.",
+   "it": "Monumento comunista abbandonato a forma di UFO su una vetta balcanica, Shipka e tombe tracie vicine; un'unica visione, nulla per fermarsi."
+  },
+  "confidence": "medium",
+  "flags": [
+   "class_mismatch"
+  ],
+  "sources": []
+ },
+ {
+  "id": "gem:caceres",
+  "appeal": 7.8,
+  "band": "very_good",
+  "criteria": {
+   "setting": 5,
+   "character": 9,
+   "sights": 7,
+   "atmosphere": 7,
+   "uniqueness": 8
+  },
+  "why": {
+   "en": "UNESCO-listed old town of Renaissance palaces and towers with storks on every roof; quiet at night and short on other sights.",
+   "nl": "Oude stad op de UNESCO-lijst met renaissancepaleizen en torens, ooievaars op elk dak; 's avonds stil en verder weinig te zien.",
+   "de": "UNESCO-Altstadt aus Renaissancepalästen und Türmen, Störche auf jedem Dach; abends ruhig und sonst arm an Zielen.",
+   "fr": "Vieille ville classée à l'UNESCO, palais Renaissance et tours, cigognes sur chaque toit ; calme le soir et peu d'autres sites.",
+   "es": "Casco antiguo Patrimonio de la UNESCO con palacios renacentistas y torres, cigüeñas en cada tejado; tranquilo de noche y con pocos más atractivos.",
+   "it": "Centro storico UNESCO di palazzi rinascimentali e torri, cicogne su ogni tetto; tranquillo la sera e con poche altre attrazioni."
+  },
+  "confidence": "high",
+  "flags": [],
+  "sources": []
+ },
+ {
+  "id": "gem:cahors",
+  "appeal": 6.8,
+  "band": "pleasant",
+  "criteria": {
+   "setting": 7,
+   "character": 7,
+   "sights": 7,
+   "atmosphere": 6,
+   "uniqueness": 6
+  },
+  "why": {
+   "en": "Malbec town in a loop of the Lot with the fortified Pont Valentré and its cathedral; a half day, little more.",
+   "nl": "Malbecstad in een lus van de Lot met de versterkte Pont Valentré en de kathedraal; een halve dag, weinig meer.",
+   "de": "Malbec-Stadt in einer Lot-Schleife mit der befestigten Pont Valentré und der Kathedrale; ein halber Tag, kaum mehr.",
+   "fr": "Ville du malbec dans une boucle du Lot, avec le pont Valentré fortifié et la cathédrale ; une demi-journée, guère plus.",
+   "es": "Ciudad del malbec en un meandro del Lot con el puente fortificado de Valentré y la catedral; media jornada, poco más.",
+   "it": "Città del malbec in un'ansa del Lot con il ponte fortificato Valentré e la cattedrale; mezza giornata, poco di più."
+  },
+  "confidence": "medium",
+  "flags": [],
+  "sources": []
+ }
+]
