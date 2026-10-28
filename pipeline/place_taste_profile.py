@@ -98,7 +98,16 @@ NO_FACT_SOURCE = {"food"}
 # ships as null and the match leaves it out (lib/match.js) instead of reading
 # a 0 as "nothing here". Food had only the guided vibe (Rome, Bruges and
 # Salzburg read 0); nightlife had only the size class (any city read high).
-UNMEASURED_WITHOUT = {"food": ("food", "markets"), "nightlife": ("venues",)}
+UNMEASURED_WITHOUT = {"food": ("food", "markets", "known"), "nightlife": ("venues",)}
+# T786 (owner, 2026-10-28: "food is logged in the app"): the app's own rule
+# for a food place, Help me choose's food type (lib/countryMatch.js): a food,
+# wine or beer tag, or a big place (metro or city) people know (fame 1,200 or
+# more). The profile reads the same rule, so Explore and Help me choose agree:
+# a tag counts as a full food vibe, a big known place as 0.6 (about where
+# Barcelona's guided vibe, 59, sits). The guided vibe wins where it is higher.
+FOOD_TAGS = {"food", "wine", "beer"}
+FOOD_FAME = 1200
+FOOD_BIG_VIBE = 0.6
 
 
 def minutes(km):
@@ -231,8 +240,12 @@ def raw_values(did, dest, vibes, grids, fame_knots):
                         {"unesco": "unesco_whc" in designations,
                          "heritage": heritage, "museums": cats["museums"]})
     facts["city"] = (CLASS_CITY.get(cls, 0.0), {"size": cls})
+    tagged = bool(FOOD_TAGS & set(dest.get("categories") or []))
+    big_known = (cls in ("metro", "city")
+                 and ((dest.get("rating") or {}).get("fame") or 0) >= FOOD_FAME)
+    known = "tag" if tagged else "big_city" if big_known else None
     facts["food"] = (0.5 * min(cats["food_drink"], 5) / 5 + 0.5 * min(cats["markets"], 3) / 3,
-                     {"food": cats["food_drink"], "markets": cats["markets"]})
+                     {"food": cats["food_drink"], "markets": cats["markets"], "known": known})
     # A night out needs a town big enough to have one; a village theatre is
     # not nightlife.
     # Venues count on their own too: Ibiza is filed as an area.
@@ -268,8 +281,13 @@ def raw_values(did, dest, vibes, grids, fame_knots):
         names = VIBES[like]
         vibe = max((v.get(n, 0) for n in names), default=None) if names else None
         vibe = None if vibe is None else vibe / 100.0
+        has_vibe = any(n in v for n in names)
+        if like == "food" and fact.get("known"):
+            app_vibe = 1.0 if fact["known"] == "tag" else FOOD_BIG_VIBE
+            vibe = max(vibe if has_vibe else 0.0, app_vibe)
+            has_vibe = True
         counts = UNMEASURED_WITHOUT.get(like)
-        if counts and not any(n in v for n in names) and not any(fact.get(k) for k in counts):
+        if counts and not has_vibe and not any(fact.get(k) for k in counts):
             out[like] = (None, fact)           # not measured (T786)
             continue
         if (like not in NO_FACT_SOURCE and fact_value < WEAK_FACT
