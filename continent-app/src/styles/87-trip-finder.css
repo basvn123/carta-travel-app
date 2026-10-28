@@ -360,3 +360,78 @@
 @media (prefers-reduced-motion: reduce) {
   .tff-delta { animation: none; }
 }
+
+/* ---- The line pickers (T800): a view inside the receipt's sheet ---- */
+.tff-pick { display: flex; flex-direction: column; min-height: 100%; }
+.tff-pick-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--border-soft);
+}
+.tff-pick-title { margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); }
+.tff-pick-title:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.tff-pick-body { display: grid; gap: var(--space-4); padding: var(--space-4); }
+
+.tff-opts { display: grid; gap: var(--space-2); }
+.tff-opt.btn {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  height: auto;
+  min-height: var(--tap);
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 400;
+  text-align: left;
+}
+.tff-opt.btn:has(.flt-mark) { grid-template-columns: auto minmax(0, 1fr) auto; }
+@media (hover: hover) { .tff-opt.btn:hover { background: var(--surface-hover); border-color: var(--neutral-300); } }
+.tff-opt.btn.is-selected { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
+.tff-opt-what { display: grid; gap: 2px; min-width: 0; }
+.tff-opt-label { font-size: var(--text-body); font-weight: 600; }
+.tff-opt-sub { font-size: var(--text-caption); color: var(--text-2); }
+.tff-opt.is-selected .tff-opt-sub { color: var(--select-ink); }
+.tff-opt-fig { display: grid; justify-items: end; gap: 2px; }
+.tff-opt-fig .money { font-size: var(--text-body); font-weight: 700; }
+.tff-opt-delta { font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.tff-opt.is-selected .tff-opt-delta { color: var(--select-ink); }
+.tff-opt-tick {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--select-border);
+  background: var(--surface);
+  color: var(--select-ink);
+}
+
+.tff-flights { display: grid; gap: var(--space-4); }
+.tff-fgroup { display: grid; gap: var(--space-2); }
+.tff-fgroup-head { margin: 0; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.tff-flights-note { margin: 0; font-size: var(--text-body); color: var(--text-2); }
+.tff-gf { margin: 0; font-size: var(--text-caption); color: var(--text-2); line-height: var(--leading-body); }
+.tff-gf a { display: inline-flex; align-items: center; gap: var(--space-1); color: var(--action); font-weight: 600; text-underline-offset: 3px; }
+
+.tff-pick-foot {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: auto;
+  padding: var(--space-4);
+  padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--border-soft);
+  background: var(--surface);
+}
+.tff-pick-total { display: flex; justify-content: space-between; margin: 0; font-size: var(--text-label); color: var(--text-2); }
+.tff-pick-total .money { color: var(--text); font-weight: 700; font-size: var(--text-lead); }

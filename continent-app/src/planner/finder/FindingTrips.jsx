@@ -7,9 +7,11 @@ import { useBcp47, useMonths, whenText } from '../flow/flowHooks.js';
 import { SLOT_ROWS } from '../../lib/recommend/slots.js';
 import { stayTierFor } from '../../lib/recommend/adapters/stay.js';
 import { STAGES, useLoaderDone, useTripFinder } from './finderHooks.js';
-import { answerChips, joinList, likeLabel, widenQuestion } from './finderText.js';
+import { answerChips, joinList, likeLabel, widenQuestion, withSlot } from './finderText.js';
 import { TripsForYou } from './TripsForYou.jsx';
 import { TripReceipt } from './TripReceipt.jsx';
+import { LinePicker } from './LinePicker.jsx';
+import { slotTotals } from '../../lib/recommend/slots.js';
 import '../../styles/87-trip-finder.css';
 
 const PARTY_TITLE = { solo: 'solo', couple: 'couple', friends: 'friends', family: 'family', group: 'group' };
@@ -120,7 +122,7 @@ export default function TripFinderScreen({ settings, guide, onBack, onWiden, onP
   const ready = Boolean(finder.trips);
   const { done, skip } = useLoaderDone(ready);
   // The receipt's swaps, by trip id: the card and the receipt read the same trip.
-  const [edits] = useState({});
+  const [edits, setEdits] = useState({});
   const [openId, setOpenId] = useState(null);
   const cardRefs = useRef(new Map());
   if (!done || !finder.trips.length) {
@@ -146,6 +148,14 @@ export default function TripFinderScreen({ settings, guide, onBack, onWiden, onP
           destinations={finder.data?.destinations}
           onClose={() => setOpenId(null)}
           onPlan={(trip) => { setOpenId(null); onPlan(trip); }}
+          renderLine={(slot, back) => (
+            <LinePicker
+              trip={open}
+              slot={slot}
+              onBack={back}
+              onApply={(next) => { setEdits((e) => ({ ...e, [open.id]: withSlot(open, next, slotTotals) })); back(); }}
+            />
+          )}
         />
       )}
     </>
