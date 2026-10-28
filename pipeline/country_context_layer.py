@@ -70,9 +70,15 @@ COUNTRY_CONTEXT_MODEL = {
 
 
 def slot_groups(dests):
-    """[(slot_key, [dest ids])] - one slot per city, airports unified."""
+    """[(slot_key, [dest ids])] - one slot per city, airports unified.
+
+    T755: a gateway row (gateway_of, no rating) is not a slot at all; its
+    city's own row holds the rank.
+    """
     groups = {}
     for did, d in dests.items():
+        if d.get("gateway_of"):
+            continue
         if d.get("tier") == "airport":
             key = ("air", d.get("iso2"), beauty_layer._base_city(d.get("city")))
         else:
@@ -144,6 +150,9 @@ def compute(dests):
                     if n > 1 else 100)
             for did in slots[si]:
                 out[did]["class_percentile"] = pctl
+    for did, d in dests.items():
+        if d.get("gateway_of"):
+            out[did] = {f: None for f in FIELDS}
     return out, badged_per_country
 
 
@@ -152,11 +161,13 @@ def main():
     data = json.loads(master.read_text(encoding="utf-8"))
     dests = data["destinations"]
 
-    before = {did: d["rating"]["score"] for did, d in dests.items()}
+    before = {did: (d.get("rating") or {}).get("score")
+              for did, d in dests.items()}
     ctx, badged = compute(dests)
     for did, d in dests.items():
         d.update(ctx[did])
-    after = {did: d["rating"]["score"] for did, d in dests.items()}
+    after = {did: (d.get("rating") or {}).get("score")
+             for did, d in dests.items()}
     moved = [did for did in before if before[did] != after[did]]
     if moved:
         raise SystemExit(f"ABSOLUTE SCORES MOVED ({len(moved)}): {moved[:5]} "

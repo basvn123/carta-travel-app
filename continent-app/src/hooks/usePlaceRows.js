@@ -27,6 +27,7 @@ export function usePlaceRows(data, indices, enabled = true) {
       rows.push({
         id,
         tier: d.tier,
+        gateway_of: d.gateway_of || null,
         city: d.city,
         country: d.country,
         iso2: d.iso2,

@@ -15,34 +15,18 @@ function baseCity(name) {
   return (name || '').replace(/\s*\([^)]*\)\s*$/, '').trim();
 }
 
-/** Multi-airport cities (Rome, Paris, London) collapse to one card. Without a
- *  fare to arbitrate, the group's representative is the gateway that knows the
- *  place best: highest fame, image as tiebreak. Non-airport rows never merge. */
+/** Multi-airport cities (Rome, Paris, London) are one card. Since T755 the
+ *  pipeline decides which row is the city: the other airports carry
+ *  `gateway_of` (the city row's id) and no rating, so they drop out here and
+ *  the city row is relabelled to the plain city ("Rome (Fiumicino)" ->
+ *  "Rome"). Flight search keeps its own cheapest-gateway choice. */
 export function dedupeGateways(rows) {
-  const winners = new Map();
-  const order = [];
-  const better = (a, b) => {
-    const fa = a.rating?.fame ?? 0;
-    const fb = b.rating?.fame ?? 0;
-    if (fa !== fb) return fa > fb;
-    return !!a.image && !b.image;
-  };
+  const out = [];
   for (const p of rows) {
-    if (p.tier !== 'airport') {
-      winners.set(p.id, p);
-      order.push(p.id);
-      continue;
-    }
-    const key = `${baseCity(p.city)}|${p.iso2}`;
-    const seen = winners.get(key);
-    if (!seen) {
-      winners.set(key, { ...p, city: baseCity(p.city) });
-      order.push(key);
-    } else if (better(p, seen)) {
-      winners.set(key, { ...p, city: baseCity(p.city) });
-    }
+    if (p.gateway_of) continue;
+    out.push(p.tier === 'airport' ? { ...p, city: baseCity(p.city) } : p);
   }
-  return order.map((k) => winners.get(k));
+  return out;
 }
 
 /**
@@ -93,6 +77,7 @@ export function useExploreCatalog({
       rows.push({
         id: destId,
         tier: d.tier,
+        gateway_of: d.gateway_of || null,
         city: d.city,
         country: d.country,
         iso2: d.iso2,

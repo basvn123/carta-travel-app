@@ -157,10 +157,13 @@ PLACE_REGISTRIES = [
          qid="Q46169", prop="P31", modelled=True,
          name="National park",
          note="matched to nearby settlements, never promoted as a place itself"),
-    dict(id="unesco_geopark", kind="national_park", countries=["*"],
+    # T754: geoparks and biosphere reserves are their own registers with their
+    # own (lower) recognition weights. Until then they were filed as national
+    # parks, which handed Bochum and Witten a national park's 0.62.
+    dict(id="unesco_geopark", kind="unesco_geopark", countries=["*"],
          qid="Q1324355", prop="P31", modelled=True,
          name="UNESCO Global Geopark"),
-    dict(id="biosphere_reserve", kind="national_park", countries=["*"],
+    dict(id="biosphere_reserve", kind="biosphere_reserve", countries=["*"],
          qid="Q158454", prop="P31", modelled=True,
          name="UNESCO Man and the Biosphere reserve"),
 ]
@@ -188,6 +191,19 @@ MONUMENT_REGISTRIES = [
     dict(id="fi_rky", countries=["FI"], qid="Q29966257", prop="P1435",
          members=1288, name="RKY built cultural environments"),
 ]
+
+
+# Registers whose kind changed after members were harvested: a stored
+# designation row keeps its old kind until apply_designations runs again, so
+# readers resolve the kind through kind_of() rather than trusting the row.
+KIND_BY_REGISTRY = {r["id"]: r["kind"] for r in PLACE_REGISTRIES
+                    if r["id"] in ("unesco_geopark", "biosphere_reserve")}
+
+
+def kind_of(designation):
+    """The register kind of one stored dest.designations row."""
+    return (KIND_BY_REGISTRY.get(designation.get("registry"))
+            or designation.get("kind"))
 
 
 def modelled_registries():

@@ -68,19 +68,15 @@ the second tier to 66%, with Hallstatt, Zermatt, Meteora, Lauterbrunnen, Kotor
 and Taormina joining the places worth the journey.
 """
 
-import json
 import math
+
+from rating_config import cfg, reference
 
 # The score the very best member of each class should be able to reach.
 # Read these as "an exceptional X is worth this much of a journey".
-CLASS_CEILING = {
-    "metro": 10.0,     # Rome, Paris. Unchanged: these set the original scale.
-    "city": 9.7,       # Venice, Bruges
-    "area": 9.7,       # Santorini, the Dolomites
-    "town": 9.6,       # Dubrovnik, Rothenburg, Annecy
-    "village": 9.6,    # Hallstatt, Riquewihr, Zermatt
-}
-DEFAULT_CEILING = 9.6
+# T754: the ceilings live in continent-app/config/rating.json (appeal_scale).
+CLASS_CEILING = cfg("appeal_scale.class_ceiling")
+DEFAULT_CEILING = cfg("appeal_scale.default_ceiling")
 
 # "The top of the class" is its highest curated score, and the ceiling is what
 # that score becomes. Anchoring on a percentile instead was tried and was
@@ -88,7 +84,7 @@ DEFAULT_CEILING = 9.6
 # at 10, so five villages and five towns all landed on 10.00 and Annecy came
 # out level with Rome. Anchoring on the max makes the ceiling an actual
 # ceiling, reached by exactly the best member of the class and by nothing else.
-MIN_CLASS_N = 20        # below this a class cannot be calibrated, so it is not
+MIN_CLASS_N = cfg("appeal_scale.min_class_n")  # below this a class cannot be calibrated, so it is not
 
 # How the lift is spread through the upper range. A straight line puts almost
 # all of it on the single best member, but the compression it corrects is not
@@ -113,7 +109,7 @@ MIN_CLASS_N = 20        # below this a class cannot be calibrated, so it is not
 # music, architecture at scale. Some of the remaining +0.55 is real. Closing
 # all of it would assert that a lovely village is the equal of Rome in every
 # respect, which is not the claim being made and is not true.
-GAMMA = 0.7
+GAMMA = cfg("appeal_scale.gamma")
 
 # Named checkpoints, verified by eye after each change. Not inputs to the map:
 # these are what the map is CHECKED against, so a bad ceiling shows up as a
@@ -191,8 +187,21 @@ def class_of(dest):
         return None
 
 
+def frozen_scales():
+    """The per-class maps measured on the reference catalogue (T754).
+
+    scales_for() below measures them from whatever catalogue it is given, so
+    dropping or adding curated places moved every class median and every
+    score above it. Scoring reads these frozen values instead; scales_for()
+    is called only by a recalibration.
+    """
+    return {cls: tuple(v) for cls, v in
+            reference("rating")["appeal_scales"].items()}
+
+
 def scales_for(dests, appeal):
-    """Build the per-class maps from a catalogue and its curated appeal file."""
+    """Build the per-class maps from a catalogue and its curated appeal file.
+    Cohort-relative: used only to recalibrate, never to score."""
     by = {}
     for did, d in dests.items():
         a = (appeal.get(did) or {}).get("appeal")
@@ -235,13 +244,13 @@ APPEAL_SCALE_MODEL = {
 # curated maximum, only near it.
 # --------------------------------------------------------------------------- #
 
-CALIBRATION_SHRINK = 0.12
+CALIBRATION_SHRINK = cfg("appeal_scale.calibration_shrink")
 # The map's target is capped at the curated class p95, not its maximum
 # (checkpoint-2 decision, 2026-09-03): mapping the fitted p99 onto the
 # curated p99 handed the regression's top guess the class's top score -
 # Koeln arrived at 9.5, Rome's number, on three-feature evidence. A modelled
 # score may reach the curated distribution's upper range, never its crown.
-CALIBRATION_P95_CAP = 0.95
+CALIBRATION_P95_CAP = cfg("appeal_scale.calibration_p95_cap")
 
 
 def _quantile(sorted_vals, q):
@@ -272,12 +281,14 @@ def _quantile(sorted_vals, q):
 # New arrivals get rated against the same curve every existing place was, and
 # no existing score moves when the catalogue grows.
 #
-# Re-freezing is a deliberate model revision (delete the file and re-run),
-# never a side effect of an ingest.
+# Re-freezing is a deliberate model revision, never a side effect of an
+# ingest. Since T754 the curves live in the "rating" part of the frozen v5
+# reference and are rebuilt only by apply_rating_layer.py --recalibrate,
+# which demands a version bump.
 # --------------------------------------------------------------------------- #
 
-ANCHOR_FILE = "reports/rating_calibration_anchors.json"
-ANCHOR_KNOTS = 241        # dense enough that replay error stays under 0.05
+ANCHOR_FILE = cfg("reference")
+ANCHOR_KNOTS = cfg("appeal_scale.anchor_knots")  # replay error stays under 0.05
 
 
 def _interp(knots, x):

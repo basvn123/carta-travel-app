@@ -29,9 +29,12 @@ cutoffs are stored in meta so the mapping is reproducible.
 Everything here is ASCII-clean (no emoji/dingbats) per project convention.
 """
 
+import glob
 import json
 import math
 import os
+
+from rating_config import cfg, section
 
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 UNESCO_CACHE = os.path.join(HERE, "cache", "unesco_whc.json")
@@ -356,6 +359,188 @@ def _urban_component(dest_id):
     return min(1.0, 0.30 * ped + 0.40 * her + 0.30 * ensemble + walls)
 
 
+# ---------------------------------------------------------------------------
+# Beauty v2 (T756, rating v5 batch R1): what you SEE within 5 km, measured per
+# place. Every number is in continent-app/config/rating.json (beauty).
+#
+#   urban    0.35  built fabric, method unchanged (A3)
+#   nature   0.35  natural setting: the scenic tags OR the best rated peak
+#                  within 5 km (mountains layer)
+#   beach    0.20  water: the place's own rated beaches and lakes within 5 km
+#                  (beaches and lakes layers). Replaces the country Blue Flag
+#                  count, which gave every Spanish coastal town one value. The
+#                  wire key stays "beach" until schema v19 (T775).
+#   iconic   0.10  the curated list of famous views only: no tags, no fame,
+#                  no beautiful-village membership (that is recognition)
+#   heritage 0     UNESCO proximity is still measured for the culture match
+#                  and the UNESCO filter, but it is counted in recognition (R),
+#                  so it no longer moves beauty: it was counted twice.
+#
+# The standout bonus stays, so a one-dimension stunner still scores high.
+# Items within 5 km are beauty's; beyond that and within 30 minutes they are
+# depth's (rating_layer.depth_items), so no item feeds two components.
+#
+# NOT LIVE (T756): switched on by beauty.live in config/rating.json. Measured
+# on the shipped catalogue it fails two gates the rating must keep - beauty
+# vs log population +0.152 (gate 0.12: urban at 0.35 favours large places)
+# and the tier-3 population (30, gate 35 to 70) - plus one golden pair, so it
+# waits for an owner decision (Execution/_OPEN.md T756-a). compute_beauty()
+# below stays v1 until then; compute_beauty_v2() is what the decision turns on.
+# ---------------------------------------------------------------------------
+BEAUTY_LIVE = cfg("beauty.live")
+_B = section("beauty")
+WEIGHTS_V2 = dict(_B["weights"])
+STANDOUT_BONUS_V2 = _B["standout_bonus"]
+STANDOUT_EXCLUDES_V2 = set(_B["standout_excludes"])
+SETTING_KM = _B["setting_km"]
+ITEM_FLOOR = _B["item_floor"]          # an item scored here is worth 0
+ITEM_SPAN = _B["item_span"]            # ...and ITEM_FLOOR + ITEM_SPAN is worth 1
+SECOND_ITEM_SHARE = _B["second_item_share"]
+NATURE_TAGS_SATURATE = _B["nature_tags_saturate"]
+SCORE_FLOOR = _B["score_floor"]
+# Tags that restate a register membership (a national park, World Heritage):
+# recognition counts the register, so the setting does not read the tag.
+REGISTER_TAGS = set(_B["register_tags"])
+
+# The rated nature items the app ships, one file per country.
+NATURE_DIR = os.path.join(HERE, "continent-app", "public")
+NATURE_KINDS = ("beaches", "lakes", "mountains")
+_NATURE = None
+
+
+class _Grid:
+    """Points in 0.5 degree buckets; near() returns [(km, row)] by distance."""
+
+    def __init__(self):
+        self.cells = {}
+
+    def add(self, lat, lon, row):
+        key = (int(math.floor(lat * 2)), int(math.floor(lon * 2)))
+        self.cells.setdefault(key, []).append((lat, lon, row))
+
+    def near(self, lat, lon, km):
+        cy, cx = int(math.floor(lat * 2)), int(math.floor(lon * 2))
+        reach = int(math.ceil(km / 25.0)) + 1   # a half degree is >= ~25 km
+        out = []
+        for y in range(cy - reach, cy + reach + 1):
+            for x in range(cx - reach, cx + reach + 1):
+                for plat, plon, row in self.cells.get((y, x), ()):
+                    d = _haversine_km(lat, lon, plat, plon)
+                    if d <= km:
+                        out.append((d, row))
+        out.sort(key=lambda t: t[0])
+        return out
+
+
+def nature_index():
+    """{kind: _Grid} of the RATED beaches, lakes and peaks (t == "r")."""
+    global _NATURE
+    if _NATURE is None:
+        _NATURE = {}
+        for kind in NATURE_KINDS:
+            grid = _Grid()
+            for path in glob.glob(os.path.join(NATURE_DIR, kind, "??.json")):
+                with open(path, encoding="utf-8") as f:
+                    rows = json.load(f).get(kind) or []
+                for r in rows:
+                    if (r.get("t") == "r" and r.get("score") is not None
+                            and r.get("lat") is not None):
+                        grid.add(r["lat"], r["lon"], {
+                            "key": f"{kind}:{r['id']}", "kind": kind,
+                            "score": float(r["score"]), "name": r.get("name"),
+                            "lat": r["lat"], "lon": r["lon"]})
+            _NATURE[kind] = grid
+    return _NATURE
+
+
+def centre(dest):
+    """Measure from the CITY, not the airport (see compute_beauty)."""
+    lat = dest.get("city_lat") if dest.get("city_lat") is not None else dest.get("lat")
+    lon = dest.get("city_lon") if dest.get("city_lon") is not None else dest.get("lon")
+    return lat, lon
+
+
+def _item01(score):
+    return min(1.0, max(0.0, (score - ITEM_FLOOR) / ITEM_SPAN))
+
+
+def _best_two(items):
+    """Best item in full, the second closes SECOND_ITEM_SHARE of the gap."""
+    vals = sorted((_item01(it["score"]) for it in items), reverse=True)
+    if not vals:
+        return 0.0
+    v = vals[0]
+    if len(vals) > 1:
+        v += (1.0 - v) * SECOND_ITEM_SHARE * vals[1]
+    return min(1.0, v)
+
+
+def setting_items(dest):
+    """The rated items within SETTING_KM that beauty reads: {kind: [item]}."""
+    lat, lon = centre(dest)
+    if lat is None or lon is None:
+        return {k: [] for k in NATURE_KINDS}
+    idx = nature_index()
+    return {k: [row for _d, row in idx[k].near(lat, lon, SETTING_KM)]
+            for k in NATURE_KINDS}
+
+
+def _setting_component(categories, items):
+    tags = min(1.0, sum(NATURE_TAG_WEIGHTS.get(c, 0.0) for c in categories
+                        if c not in REGISTER_TAGS) / NATURE_TAGS_SATURATE)
+    peaks = _best_two(items["mountains"])
+    return 1.0 - (1.0 - tags) * (1.0 - peaks)
+
+
+def _water_component(items):
+    return _best_two(items["beaches"] + items["lakes"])
+
+
+def _iconic_view(city):
+    key = (city or "").strip().lower()
+    best = 0.0
+    if len(key) >= 4:
+        for name, w in ICONIC_CURATED.items():
+            if name in key or key in name:
+                best = max(best, w)
+    return best
+
+
+def compute_beauty_v2(dest):
+    """Beauty v2's `beauty` block for one destination (see the note above)."""
+    lat, lon = centre(dest)
+    cats = dest.get("categories") or []
+    iso2 = dest.get("iso2")
+    city = dest.get("city")
+
+    heritage, unesco_count, has_unesco = _heritage_component(lat, lon, cats)
+    _old_beach, bf_count, top_beach = _beach_component(iso2, cats, city)
+    items = setting_items(dest)
+    comps = {
+        "heritage": heritage,                      # measured, weight 0 (R)
+        "nature": _setting_component(cats, items),
+        "iconic": _iconic_view(city),
+        "beach": _water_component(items),          # water (T756)
+        "urban": _urban_component(dest.get("id")),
+    }
+    base = sum(WEIGHTS_V2[k] * comps[k] for k in WEIGHTS_V2)
+    standout = max(v for k, v in comps.items() if k not in STANDOUT_EXCLUDES_V2)
+    score01 = min(1.0, max(SCORE_FLOOR, base + STANDOUT_BONUS_V2 * standout))
+    score10 = round(10.0 * score01, 1)
+
+    return {
+        "score": score10,                       # 0-10 composite (display)
+        "score01": round(score01, 4),           # internal, for gem quantiles
+        "gems": None,                           # filled by assign_gems()
+        "unesco_count": unesco_count,           # WHS within ~60 km
+        "unesco": bool(has_unesco),             # powers the UNESCO filter button
+        "blue_flag_country": bf_count,          # national Blue Flag beach count
+        "top_beach": bool(top_beach),           # powers the Top-beaches button
+        "components": {k: round(v, 3) for k, v in comps.items()},
+        "source": "composite_v3",
+    }
+
+
 # Composite weights (sum to 1.0) + a standout bonus rewarding one big dimension.
 # A3 (2026-09): urban enters at 0.20, paid for mostly by nature (0.27 ->
 # 0.21) and beach (0.15 -> 0.08), with iconic and heritage each giving up a
@@ -378,7 +563,10 @@ STANDOUT_EXCLUDES = {"urban"}
 
 def compute_beauty(dest):
     """Return the `beauty` block for one destination record (no gems yet -
-    gems are assigned dataset-wide by assign_gems once all scores are known)."""
+    gems are assigned dataset-wide by assign_gems once all scores are known).
+    Beauty v2 (T756) when config beauty.live is on, else v1 below."""
+    if BEAUTY_LIVE:
+        return compute_beauty_v2(dest)
     # Measure from the CITY, not the airport: for airport-tier destinations
     # lat/lon is the tarmac, up to 30 km from the place being scored. The old
     # 60 km UNESCO ring hid that error; the graded 10/25/50 credit (A3) makes
@@ -477,3 +665,34 @@ BEAUTY_MODEL = {
         "most_beautiful_villages": "https://lpbvt.org/",
     },
 }
+
+BEAUTY_MODEL_V2 = {
+    "version": "beauty_v2 (T756)",
+    "weights": WEIGHTS_V2,
+    "standout_bonus": STANDOUT_BONUS_V2,
+    "standout_excludes": sorted(STANDOUT_EXCLUDES_V2),
+    "components": {
+        "heritage": ("UNESCO WHS, graded credit: full within 10 km, half to "
+                     "25 km, quarter to 50 km (unesco_count still reports the "
+                     "~60 km ring for display); weight 0 since T756, counted "
+                     "in recognition instead"),
+        "urban": ("built-fabric measurement from OSM within 1 km of centre: "
+                  "pedestrian-core length, listed/historic density, named "
+                  "principal square, canal network, bridges, city walls"),
+        "beach": ("water: the place's own rated beaches and lakes within "
+                  f"{SETTING_KM:g} km, best in full, second closing part of "
+                  "the gap (key renamed to water in schema v19)"),
+        "nature": ("natural setting: weighted scenic categories OR the best "
+                   f"rated peaks within {SETTING_KM:g} km"),
+        "iconic": "the curated list of famous views only",
+    },
+    "scale": "score 0-10; gems 1-5 by dataset quantiles (cutoffs in gem_cutoffs)",
+    "sources": {
+        "unesco": "https://data.unesco.org/explore/dataset/whc001/ (1247 sites, cached)",
+        "blue_flag": "https://www.blueflag.global/ + en.wikipedia.org/wiki/Blue_Flag_beach (2024/25)",
+        "most_beautiful_villages": "https://lpbvt.org/",
+    },
+}
+
+if BEAUTY_LIVE:
+    BEAUTY_MODEL = BEAUTY_MODEL_V2

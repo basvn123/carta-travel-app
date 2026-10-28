@@ -100,7 +100,9 @@ export function useDestinationSearch({
         lon: d.lon,
         categories: d.categories || [],
         beauty: d.beauty || null,
-        rating: d.rating || null,
+        // T755: a gateway airport (CIA for Rome) has no rating of its own; its
+        // card shows the city's, so the cheapest gateway still reads as Rome.
+        rating: d.rating || (d.gateway_of && data.destinations[d.gateway_of]?.rating) || null,
         // What size of place this is (place_layer.py). The Destinations tab
         // filters on it, so it has to survive the projection: without it every
         // size chip counts zero and the whole rail greys out.

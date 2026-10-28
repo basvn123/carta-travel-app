@@ -23,12 +23,27 @@ Pipeline order (per project convention):
 Usage:
     python apply_rating_layer.py          # patches master + served copy
     python apply_rating_layer.py a.json   # explicit targets (first = source)
+    python apply_rating_layer.py --recalibrate --version v5.x
+                                          # T754: measure the "rating" part of
+                                          # the frozen reference on the master
+                                          # (class scales, depth p99, fallback
+                                          # fit, curves, fame breakpoints),
+                                          # then score. Refuses unless
+                                          # continent-app/config/rating.json
+                                          # already names the new version.
+
+A normal run refits nothing: every calibration is read from the frozen
+reference (reports/rating_reference_v5.json), so adding places moves no
+existing score.
 """
 
+import argparse
 import json
 import sys
 from pathlib import Path
 
+import place_registries
+import rating_config
 import rating_layer
 from pipeline_io import atomic_write_json
 
@@ -46,8 +61,8 @@ DEFAULT_TARGETS = [
 # unless the curators explicitly said so.
 # ---------------------------------------------------------------------------
 FAMOUS_FLOOR = {   # dest id -> minimum defensible score
-    "CIA": 9.0,    # Rome
-    "BVA": 9.0,    # Paris
+    "FCO": 9.0,    # Rome (T755: the city's row; CIA is its gateway)
+    "CDG": 9.0,    # Paris (T755: the city's row; ORY, BVA are gateways)
     "BCN": 9.0,    # Barcelona
     "AMS": 8.5,    # Amsterdam
     "gem:bruges": 8.5,
@@ -59,11 +74,9 @@ AIRPORT_TOWN_CEILING = {"CRL": 5.0, "HHN": 5.0, "TZL": 5.0}
 OBSCURE_STAR_MIN_FAME = 30   # views/day under which a 8.5+ needs corroboration
 # ...and what counts as corroboration besides a curator's gem flag. These are
 # the registers whose members were picked by a jury against published criteria,
-# so membership is an independent second opinion on the place.
-CORROBORATING_DESIGNATIONS = {
-    "unesco_whc", "beautiful_village", "heritage_town", "spa_town",
-    "national_park",
-}
+# so membership is an independent second opinion on the place. Read through
+# place_registries.kind_of, so a geopark no longer passes as a national park.
+CORROBORATING_DESIGNATIONS = set(rating_config.cfg("recognition.corroborating"))
 
 
 def validate(dests) -> list:
@@ -75,7 +88,7 @@ def validate(dests) -> list:
     # reach, so a mis-set ceiling fails the run instead of shipping.
     import appeal_scale
     appeal_file = rating_layer.load_curated_appeal()
-    scales = appeal_scale.scales_for(dests, appeal_file)
+    scales = appeal_scale.frozen_scales()
     for did, cls, floor in appeal_scale.EXPECTED:
         d = dests.get(did)
         if not d:
@@ -115,6 +128,8 @@ def validate(dests) -> list:
     for did, d in dests.items():
         r = d.get("rating")
         if not r:
+            if d.get("gateway_of") in dests:
+                continue            # T755: a gateway is rated as its city
             problems.append(f"{did} has no rating block")
             continue
         if r["score"] < 8.5 or (appeal.get(did) or {}).get("gem"):
@@ -127,7 +142,7 @@ def validate(dests) -> list:
         # Heritage landscape, 24 views a day) data errors, when they are
         # precisely the high-quality low-fame places the catalogue went looking
         # for. A rule that rejects its own best findings is the wrong rule.
-        if any(x.get("kind") in CORROBORATING_DESIGNATIONS
+        if any(place_registries.kind_of(x) in CORROBORATING_DESIGNATIONS
                for x in (d.get("designations") or [])):
             continue
         if did not in measured:
@@ -146,12 +161,32 @@ def validate(dests) -> list:
 
 
 def main() -> None:
-    targets = [Path(a) for a in sys.argv[1:]] or DEFAULT_TARGETS
-    print("Applying rating layer (schema v17):")
+    ap = argparse.ArgumentParser()
+    ap.add_argument("targets", nargs="*", help="app_data files, first = source")
+    ap.add_argument("--recalibrate", action="store_true",
+                    help="measure the frozen rating reference first")
+    ap.add_argument("--version",
+                    help="with --recalibrate: the new version, already in "
+                         "continent-app/config/rating.json")
+    args = ap.parse_args()
+    targets = [Path(a) for a in args.targets] or DEFAULT_TARGETS
+    print(f"Applying rating layer ({rating_config.version()}):")
 
     master_path = targets[0]
     data = json.loads(master_path.read_text(encoding="utf-8"))
     dests = data.get("destinations", {})
+    if args.recalibrate:
+        if not args.version:
+            sys.exit("REFUSED: --recalibrate needs --version")
+        # The significance part must already be at this version: sig feeds
+        # highlights, which every rating curve below is measured on.
+        rating_config.reference("significance")
+        payload = rating_layer.build_reference(dests)
+        path = rating_config.write_part("rating", payload, args.version)
+        print(f"  rating reference {args.version}: "
+              f"{payload['n_curated']} curated, {payload['n_fitted']} fitted, "
+              f"depth classes {len(payload['depth_knots'])}, fallback "
+              f"{payload['fallback']['coefficients']} -> {path}")
     counts = rating_layer.compute_ratings(dests)
 
     problems = validate(dests)
@@ -171,7 +206,8 @@ def main() -> None:
     atomic_write_json(master_path, data)
     print(f"  {master_path.name}: {len(dests)} dests | "
           f"3-star {counts[3]} | 2-star {counts[2]} | 1-star {counts[1]} | "
-          f"unrated {counts[0]} | hidden gems {counts['hidden_gem']}")
+          f"unrated {counts[0]} | hidden gems {counts['hidden_gem']} | "
+          f"gateways {counts['gateway']}")
 
     # Mirror rating blocks onto the other targets by destination id.
     for path in targets[1:]:
@@ -183,9 +219,15 @@ def main() -> None:
         n = 0
         for did, d in sdests.items():
             src = dests.get(did)
-            if src and "rating" in src:
+            if not src:
+                continue
+            if "rating" in src:
                 d["rating"] = src["rating"]
+                d.pop("gateway_of", None)
                 n += 1
+            elif src.get("gateway_of"):
+                d["gateway_of"] = src["gateway_of"]
+                d.pop("rating", None)
         served["meta"]["rating_model"] = rating_layer.RATING_MODEL
         served["meta"]["schema_version"] = max(
             served["meta"].get("schema_version", 0), 17)
