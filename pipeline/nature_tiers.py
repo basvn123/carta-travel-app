@@ -267,14 +267,58 @@ def scorer(kind):
     return mod
 
 
+LAB_CACHE = ROOT / "cache" / "nature"
+
+
+def _plain(v):
+    """A lab value as JSON can keep it: Decimal to float, a date to ISO."""
+    if v is None or isinstance(v, (bool, int, float, str)):
+        return v
+    if isinstance(v, (list, tuple)):
+        return [_plain(x) for x in v]
+    if isinstance(v, dict):
+        return {k: _plain(x) for k, x in v.items()}
+    if hasattr(v, "isoformat"):
+        return v.isoformat()
+    try:
+        return float(v)
+    except (TypeError, ValueError):
+        return str(v)
+
+
 def lab_rows(kind, ids):
-    """{id: lab row} for trails and cycling, fetched by the ids on the wire."""
+    """{id: lab row} for trails and cycling, fetched by the ids on the wire.
+
+    T784: the rating chain must not need the trails lab (PostGIS in Docker on
+    the laptop, owner decision D5 moves it to a worker). Every read from the
+    lab is kept in cache/nature/<kind>_lab_rows.json; when the lab cannot be
+    reached, the rows come from that file, as long as it holds every id asked
+    for, and the run says so. A missing or short cache still fails loudly.
+    """
+    import psycopg
     sys.path.insert(0, str(HERE / "trails"))
     from db import connect
     mod = scorer(kind)
-    with connect() as conn:
-        rows = mod.fetch_ids(conn, sorted(ids))
-    return {r["id"]: r for r in rows}
+    cache = LAB_CACHE / f"{kind}_lab_rows.json"
+    try:
+        with connect() as conn:
+            rows = mod.fetch_ids(conn, sorted(ids))
+    except psycopg.OperationalError as exc:
+        if not cache.exists():
+            raise SystemExit(f"{kind}: the trails lab is not reachable ({exc.__class__.__name__}) "
+                             f"and {cache} does not exist yet; run once with the lab up")
+        kept = json.loads(cache.read_text(encoding="utf-8"))
+        missing = [i for i in ids if str(i) not in kept]
+        if missing:
+            raise SystemExit(f"{kind}: the trails lab is not reachable and {cache} lacks "
+                             f"{len(missing)} of {len(ids)} ids; run once with the lab up")
+        print(f"{kind}: trails lab not reachable, {len(ids)} rows read from {cache.name}")
+        by_str = {str(i): i for i in ids}
+        return {by_str[k]: v for k, v in kept.items() if k in by_str}
+    out = {r["id"]: r for r in rows}
+    LAB_CACHE.mkdir(parents=True, exist_ok=True)
+    cache.write_text(json.dumps({str(k): _plain(dict(v)) for k, v in out.items()}), encoding="utf-8")
+    return out
 
 
 def raw_parts(kind, rows):

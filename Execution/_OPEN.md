@@ -2262,3 +2262,4 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T765-e | T765 | Not built: nature lists ordered by facts for a taste, match lines on rail photo cards, other rails sorting by fit (held with the For you flag) | next task | open | after T765-b |
 | T766-a | T766 | Likes order POIs in the day picker only; day themes and the AI day plan keep their own order | next task | open |  |
 | T766-b | T766 | Design call without a written rule: "Save as my travel style" sits under Help me choose's recommended countries as a secondary small button | user | open |  |
+| T784-a | T784 | The trails lab still runs in Docker on the laptop; pipeline/trails/ scripts that build or validate trails need it; move it to a worker (owner decision D5, 2026-10-22, after stage 8); the rating chain reads cache/nature/*_lab_rows.json when it is down (Execution/P7/T784-nature-lab-cache.md) | user | open | after stage 8 |
