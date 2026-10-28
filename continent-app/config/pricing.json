@@ -1017,12 +1017,14 @@
       "value": {
         "near": 5,
         "far": 16,
-        "far_after_days": 14
+        "far_after_days": 14,
+        "late": 32,
+        "late_after_days": 181
       },
       "unit": "days",
       "kind": "sourced",
-      "source": "The sweep checks dates within 14 days every 3 days and later ones every 2 weeks (workers/flight-sweep/src/plan.mjs, T780), each age a cycle plus a day or two for a pause; owner 2026-10-27: a price may be a few days old. Before: near 3, far 8 (T692)",
-      "date": "2026-10-27",
+      "source": "The sweep checks dates within 14 days every 3 days and later ones every 2 weeks (workers/flight-sweep/src/plan.mjs, T780), each age a cycle plus a day or two for a pause; owner 2026-10-27: a price may be a few days old. Before: near 3, far 8 (T692). T798: dates past the far tier's last week (day 181) come from the box's late tier, each route every 4 weeks, so 32 days; owner 2026-10-28",
+      "date": "2026-10-28",
       "review": "2027-04-24",
       "test": "tests/flights.test.mjs"
     },

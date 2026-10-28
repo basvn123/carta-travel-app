@@ -48,6 +48,18 @@ test("a price older than its sweep cycle is never shown: 5 days near, 16 days fa
   assert.equal(sweptCheapest(file, "out", "BCN", "2026-11", NOW).price, 64);
 });
 
+test("a late date (past day 181, from the box every 4 weeks) may be 32 days old (T798)", () => {
+  const age = (d) => Math.floor((NOW - d * 86400000) / 60000);
+  const late = { v: 1, from: "BRU", to: { BCN: {
+    "2027-06-15": [41, "VY", "07:00", "09:00", 0, age(25)],
+    "2027-06-22": [45, "VY", "07:00", "09:00", 0, age(33)],
+    "2027-04-13": [50, "VY", "07:00", "09:00", 0, age(25)],
+  } }, back: {} };
+  assert.equal(sweptDay(late, "out", "BCN", "2027-06-15", NOW).price, 41, "late, 25 days old");
+  assert.equal(sweptDay(late, "out", "BCN", "2027-06-22", NOW), undefined, "late, over 32 days");
+  assert.equal(sweptDay(late, "out", "BCN", "2027-04-13", NOW), undefined, "far, 25 days is over 16");
+});
+
 test("the cheapest return in a month", () => {
   const r = cheapestReturn(file, "BCN", "2026-11", NOW);
   assert.equal(r.perSeat, 64 + 70);

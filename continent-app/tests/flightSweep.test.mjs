@@ -5,9 +5,10 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import {
   flattenRoutes, jobsForMinute, nextPause, routesInMinute, NEAR_CYCLE, FAR_CYCLE, FIND_CYCLE, NEAR_DAYS, FAR_WEEKS, km,
-  PAUSE_BASE_MS, PAUSE_MAX_MS,
+  PAUSE_BASE_MS, PAUSE_MAX_MS, lateJobsForMinute, LATE_CYCLE, LATE_WEEKS,
 } from "../workers/flight-sweep/src/plan.mjs";
 import { buildFile, buildIndex, nextBatch, priceOk, routeMoves } from "../workers/flight-sweep/src/publish.mjs";
+import { ingestRows, tokenOk, MAX_ROWS } from "../workers/flight-sweep/src/ingest.mjs";
 
 const ALL_YEAR = 4095;
 const routes = {
@@ -184,4 +185,69 @@ test("each route has exactly one minute a cycle, spread evenly when there are fe
     assert.ok(seen.every((c) => c === 1), `cycle ${cycle}, ${n} routes`);
     assert.ok(most <= Math.ceil(n / cycle), `cycle ${cycle}: at most ${Math.ceil(n / cycle)} a minute`);
   }
+});
+
+test("the late tier picks up where the far tier stops, weeks 27 to 40, each route once in 4 weeks (T798)", () => {
+  const list = flattenRoutes(routes);
+  const DAY = 86400000;
+  const aheadOf = (j, at) => (Date.parse(j.date) - Math.floor(at / DAY) * DAY) / DAY;
+  let farMost = 0;
+  let lateLeast = Infinity;
+  const lateDays = new Map();
+  for (let m = 0; m < LATE_CYCLE; m++) {
+    const at = NOW + m * 60000;
+    if (m < FAR_CYCLE) {
+      for (const j of jobsForMinute(list, airports, at)) if (j.tier === "far") farMost = Math.max(farMost, aheadOf(j, at));
+    }
+    for (const j of lateJobsForMinute(list, at)) {
+      const key = j.o + j.d;
+      lateDays.set(key, (lateDays.get(key) || 0) + 1);
+      const ahead = aheadOf(j, at);
+      lateLeast = Math.min(lateLeast, ahead);
+      assert.ok(ahead < 14 + 7 * (FAR_WEEKS + LATE_WEEKS), `${j.date} is ${ahead} days out`);
+    }
+  }
+  // On any day, the far tier's last date comes before the late tier's first.
+  assert.ok(farMost < lateLeast, `far up to ${farMost}, late from ${lateLeast}`);
+  assert.equal(lateLeast, 14 + 7 * FAR_WEEKS);
+  // All-year routes get every one of their LATE_WEEKS days once; FAO flies April to July only.
+  assert.equal(lateDays.get("BRUBCN"), LATE_WEEKS);
+  assert.ok(lateDays.get("BRUFAO") > 0 && lateDays.get("BRUFAO") < LATE_WEEKS);
+});
+
+test("the late cycle stays inside the app's late fare age, which starts where the far tier ends (T798)", () => {
+  const age = JSON.parse(readFileSync(new URL("../config/pricing.json", import.meta.url)))
+    .rules["flights.max_age_days"].value;
+  assert.ok(LATE_CYCLE * 60000 < age.late * 86400000);
+  assert.equal(age.late_after_days, 14 + 7 * FAR_WEEKS - 1);
+});
+
+test("ingest keeps fares that look like fares and drops the rest (T798)", () => {
+  const now = Date.UTC(2026, 9, 28, 12);
+  const good = { o: "BRU", d: "BCN", date: "2027-06-15", price: 41, airline: "VY", airlineName: "Vueling",
+    flightNo: "VY8481", dep: "07:00", arr: "09:05", stops: 0 };
+  const { rows, dropped } = ingestRows({ rows: [
+    good,
+    { o: "BRU", d: "BCN", date: "2027-06-22", price: null },
+    { ...good, o: "bru" },
+    { ...good, d: "BRU" },
+    { ...good, date: "2026-10-01" },
+    { ...good, date: "2029-01-01" },
+    { ...good, price: 41.5 },
+    { ...good, price: "41" },
+  ] }, now);
+  assert.equal(rows.length, 2);
+  assert.equal(dropped, 6);
+  assert.deepEqual(rows[0], good);
+  assert.equal(rows[1].airline, null, "no flight: no airline");
+  assert.throws(() => ingestRows({}, now));
+  assert.throws(() => ingestRows({ rows: new Array(MAX_ROWS + 1).fill(good) }, now));
+});
+
+test("ingest needs the exact bearer token (T798)", async () => {
+  assert.equal(await tokenOk("Bearer s3cret", "s3cret"), true);
+  assert.equal(await tokenOk("Bearer s3cre", "s3cret"), false);
+  assert.equal(await tokenOk("s3cret", "s3cret"), false);
+  assert.equal(await tokenOk("Bearer ", ""), false, "no secret set: nobody gets in");
+  assert.equal(await tokenOk(null, "s3cret"), false);
 });

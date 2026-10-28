@@ -29,13 +29,15 @@ const DEFAULT_BAG = rule('request.default_bag');
  * (plan 6.1, config flights.max_age_days): the age follows the sweep's
  * cadence. T780 slowed the sweep after Google refused it: the next two weeks
  * are checked every 3 days and later dates every 2 weeks, so a near fare may
- * be 5 days old and a far one 16 (were 3 and 8).
+ * be 5 days old and a far one 16 (were 3 and 8). T798: dates about 6 to 9
+ * months out come from the box every 4 weeks, so a late one may be 32.
  */
 const AGE = rule('flights.max_age_days');
 const DAY_MS = 86400000;
 export const MAX_AGE_MS = AGE.near * DAY_MS;
 export function maxAgeMs(date, now = Date.now()) {
   const ahead = (Date.parse(`${date}T00:00:00Z`) - now) / DAY_MS;
+  if (ahead > AGE.late_after_days) return AGE.late * DAY_MS;
   return (ahead > AGE.far_after_days ? AGE.far : AGE.near) * DAY_MS;
 }
 

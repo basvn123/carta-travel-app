@@ -1,0 +1,28 @@
+# Carta flight sweep, late tier (T798): fares 6 to 9 months out, searched
+# slowly from this box and sent to the flight-sweep Worker's POST /ingest.
+# Always on; it paces itself (about 205 searches an hour) and pauses when
+# Google refuses. infra/hetzner/cron/install.sh installs and enables it.
+# Task report: Execution/P11/T798-late-flights.md.
+[Unit]
+Description=Carta flight sweep, late tier (weeks 27 to 40, T798)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=carta
+Group=carta
+WorkingDirectory=/home/carta/carta
+# dep/arr come from Date.getHours(); the Worker runs in UTC, so this does too.
+Environment=TZ=UTC
+Environment=LANG=C.UTF-8
+# The token is CARTA_SWEEP_INGEST_TOKEN in ~/.config/carta/env (load-env.sh).
+ExecStart=/bin/bash -c '. infra/hetzner/cax11/load-env.sh && exec node continent-app/workers/late-sweep/run.mjs'
+Restart=always
+RestartSec=60
+Nice=10
+IOSchedulingClass=idle
+MemoryMax=512M
+
+[Install]
+WantedBy=multi-user.target
