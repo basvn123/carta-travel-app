@@ -96,7 +96,7 @@ test("on the catalogue: the food lever prices what a fresh build at that Lifesty
       const food = (x) => x.slots.find((s) => s.id === "food").eur;
       if (!f || food(f) == null) continue;
       assert.equal(food(t), food(f), `${lever} ${t.id}: the food line, to the euro`);
-      assert.equal(t.total.perPerson, t.slots.reduce((sum, s) => sum + (s.eur ?? 0), 0), "the total is the slots");
+      assert.ok(Math.abs(t.total.perPerson - t.slots.reduce((sum, s) => sum + (s.eur ?? 0), 0)) < 0.005, "the total is the slots, to the cent");
       n++;
     }
     assert.ok(n >= 10, `${lever}: compared ${n} trips`);

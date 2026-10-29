@@ -131,7 +131,8 @@ test("on the real catalogue the three figures and things to do add up to the car
   assert.ok(trips.length >= 6);
   for (const x of trips) {
     const f = threeFigures(x);
-    const sum = (f.flight || 0) + (f.stay || 0) + (f.days || 0);
+    // T818: the figures are cents now; added up, to the cent.
+    const sum = Math.round(((f.flight || 0) + (f.stay || 0) + (f.days || 0)) * 100) / 100;
     assert.equal(sum, x.total.perPerson, `${x.id}: three figures ${sum} against total ${x.total.perPerson}`);
     assert.ok(x.match?.pct == null || x.match.pct >= 55, "the match shows from 55% up");
   }

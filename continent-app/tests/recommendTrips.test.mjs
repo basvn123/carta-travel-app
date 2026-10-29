@@ -176,7 +176,8 @@ test("a new slot row and adapter reach every trip with no other change", { skip 
   assert.equal(more.length, base.length);
   more.forEach((t, i) => {
     assert.equal(t.slots.at(-1).id, "insurance");
-    assert.equal(slotTotals(t.slots).perPerson, base[i].total.perPerson + 20);
+    // T818: to the cent, and a new line may move the rounding cent.
+    assert.ok(Math.abs(slotTotals(t.slots).perPerson - (base[i].total.perPerson + 20)) <= 0.01);
   });
 });
 

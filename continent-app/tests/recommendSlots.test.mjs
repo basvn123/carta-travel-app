@@ -67,7 +67,8 @@ test("stay, food and getting around add up to the engine's own parts", { skip },
   assert.ok(Math.abs(sum - engine) <= 2, `${sum} against ${engine} (whole-euro rounding only)`);
   for (const id of ["stay", "food", "local"]) {
     const s = slot(slots, id);
-    assert.equal(s.eur, Math.round(s.eurGroup / 2), `${id} is per person`);
+    // T818: to the cent; the rounding cent may sit on the largest line.
+    assert.ok(Math.abs(s.eur - s.eurGroup / 2) <= 0.01, `${id} is per person`);
     assert.ok(s.eur > 0, `${id} has a price`);
   }
 });
@@ -138,6 +139,6 @@ test("a new row and its adapter add a slot with no other change", { skip }, () =
   const slots = buildSlots({ trip: null, quote: base.quote, state: base.state, ctx: base.ctx }, { rows, adapters });
   assert.equal(slots.length, SLOT_ROWS.length + 1);
   assert.equal(slot(slots, "insurance").eur, 25);
-  assert.equal(slotTotals(slots).perPerson, slotTotals(base.slots).perPerson + 25);
+  assert.ok(Math.abs(slotTotals(slots).perPerson - (slotTotals(base.slots).perPerson + 25)) <= 0.01);
   assert.ok(defaultPick(rows).includes("insurance"));
 });
