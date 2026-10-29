@@ -24,6 +24,7 @@ import { LifestyleStep } from './LifestyleStep.jsx';
 import { VisibilityChoice } from './VisibilityChoice.jsx';
 import { PartyEditor } from '../PartyEditor.jsx';
 import { answer, markAnswered, normalizeSettings, withPartyKind, PARTY_KINDS } from './tripSettings.js';
+import { MAX_TRIP_NIGHTS, addDaysUTC, nightsBetween, windowFromStart } from '../../lib/tripDates.js';
 
 /*
  * The setup questions that need their own controls (T655), and the Create
@@ -35,17 +36,11 @@ import { answer, markAnswered, normalizeSettings, withPartyKind, PARTY_KINDS } f
  * answer and moves on. QuestionScreen.jsx maps the question ids to them.
  */
 
-const MAX_NIGHTS = 60;
-
-function addDaysISO(iso, n) {
-  const d = new Date(`${iso}T12:00:00`);
-  d.setDate(d.getDate() + n);
-  return d.toISOString().slice(0, 10);
-}
-function nightsBetween(a, b) {
-  if (!a || !b) return 0;
-  return Math.max(0, Math.round((new Date(`${b}T12:00:00`) - new Date(`${a}T12:00:00`)) / 86400000));
-}
+// T815: the trip's date rules live in lib/tripDates.js, shared with the
+// wizard's When and the trip settings (the local-noon addDaysISO here was a
+// day early east of UTC+12, and the wizard allowed 21 nights to this 60).
+const MAX_NIGHTS = MAX_TRIP_NIGHTS;
+const addDaysISO = addDaysUTC;
 function todayISO() {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -161,8 +156,10 @@ export function WhenScreen({ settings, commit, doneLabel }) {
 
   const pickDate = (iso) => {
     if (pickEnd === 'start') {
-      const keep = nightsBetween(w.start, w.end) || w.nights || 7;
-      set({ start: iso, end: addDaysISO(iso, keep), nights: keep });
+      // The end keeps the trip's length and stays inside the last day that
+      // may be planned (T815: a start near the end of the window gave an end
+      // past it).
+      set(windowFromStart(iso, nightsBetween(w.start, w.end) || w.nights || 7, max));
       setPickEnd('end');
     } else if (w.start && iso > w.start) {
       set({ end: iso, nights: nightsBetween(w.start, iso) });

@@ -26,7 +26,8 @@ import {
 import { CheapTipsSection } from './CheapTipsSection.jsx';
 import { fmtHours, eurExact } from '../lib/format.js';
 import { formatApprox, formatEst } from '../lib/money.js';
-import { fmtDate, laterISO, useToday, planningHorizon, addDays } from '../lib/dates.js';
+import { fmtDate, laterISO, useToday, planningHorizon } from '../lib/dates.js';
+import { addDaysUTC, movedWindow } from '../lib/tripDates.js';
 import { fetchDrivingRoute } from '../lib/routing.js';
 import { useTripPlanner } from '../hooks/useTripPlanner.js';
 import { MAX_PARTY } from '../lib/tripTotal.js';
@@ -1078,7 +1079,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
               <span className="trip-dates-arrow" aria-hidden="true">→</span>
               <label className="trip-field">
                 <span className="trip-field-label">{t('trip.end')}</span>
-                <DateField value={tp.tripEnd} min={tp.tripStart || dateMin} max={dateMax} onChange={tp.setTripEnd} placeholder={t('trip.endDate')} />
+                <DateField value={tp.tripEnd} min={tp.tripStart ? addDaysUTC(tp.tripStart, 1) : dateMin} max={dateMax} onChange={tp.setTripEnd} placeholder={t('trip.endDate')} />
               </label>
             </div>
           </div>
@@ -1378,10 +1379,14 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
       return { text: t('pf.set.nFrom', { name: fromName }) };
     }
     if (JSON.stringify(s.when) !== JSON.stringify(prev.when)) {
-      if (s.when.mode === 'exact' && s.when.start && s.when.start !== tp.tripStart) {
-        tp.setTripStart(s.when.start);
-        if (tp.plannedNights > 0) tp.setTripEnd(addDays(s.when.start, tp.plannedNights));
-        return { text: t('pf.set.nMoved', { date: fmtDate(s.when.start, true) }) };
+      // T815: a new end moves the trip too (it was ignored when the start
+      // stayed), and the end is the settings' own, so the trip, the sheet
+      // and Explore say the same dates (movedWindow, lib/tripDates.js).
+      const moved = movedWindow(s.when, tp.tripStart, tp.tripEnd, tp.plannedNights);
+      if (moved) {
+        tp.setTripStart(moved.start);
+        tp.setTripEnd(moved.end);
+        return { text: t('pf.set.nMoved', { date: fmtDate(moved.start, true) }) };
       }
       return { text: t('pf.set.nWhenKept') };
     }
@@ -1409,7 +1414,11 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
         {[
           hasDates ? t('plan.dateRange', { a: fmtDate(tp.tripStart, true), b: fmtDate(tp.tripEnd, true) }) : '',
           tp.stopDetails.length ? t(tp.stopDetails.length === 1 ? 'trip.stopsOne' : 'trip.stopsMany', { n: tp.stopDetails.length }) : '',
-          tp.plannedNights > 0 ? t(tp.plannedNights === 1 ? 'plan.nightsOne' : 'plan.nightsMany', { n: tp.plannedNights }) : '',
+          // T815: when the stops hold fewer or more nights than the dates,
+          // the line says both ("5 of 7 nights planned"), not the stops alone.
+          tp.plannedNights > 0 && hasDates && tp.plannedNights !== tp.windowNights
+            ? t('pf.home.nightsPlanned', { x: tp.plannedNights, n: tp.windowNights })
+            : tp.plannedNights > 0 ? t(tp.plannedNights === 1 ? 'plan.nightsOne' : 'plan.nightsMany', { n: tp.plannedNights }) : '',
         ].filter(Boolean).join(', ')}
       </p>
     </div>
