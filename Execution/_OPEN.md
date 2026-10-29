@@ -2343,13 +2343,19 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T834-a | T834 | Mark the trip page v4 board (Keep, Change or Drop per panel, https://claude.ai/artifact/DkrztyyjBAdUd4AEnS69C4) before Batch A starts (Execution/P15/T834-trip-page-v4-board.md) | user | closed by T835 | 1 |
 | T834-b | T834 | Answer D1 to D4 on the board: Undo and Redo, stay type per stop, pace per day, day trips (Execution/P15/_PLAN-trip-page-v4.md section 6) | user | closed by T835 | 1 |
 | T835-a | T835 | The Lifestyle chip opens the app-wide Lifestyle panel, which is not in the trip page's Undo history; decide whether a Lifestyle change from the trip page is a step (Execution/P15/T835-T839-trip-page-v4-a.md) | next task | open |  |
-| T837-a | T837 | Board panel 6: Change flight as a sheet with the airline mark and preferences (only direct, between these hours), with a cleaner Change flight control on the route (panel 4); trip page v4 Batch B | next task | open |  |
-| T837-b | T837 | Board panel 7: Swap city as a choosing flow, pick it yourself or let Carta guide you with questions, keeping the dates; Batch B | next task | open |  |
-| T837-c | T837 | Owner D2: a stay type per stop (an entire place here, a B&B there) in the price engine, the tiles still adding up to grandTotal to the cent; Batch B | next task | open |  |
-| T837-d | T837 | Owner D4: day trips from a base without a night there (Salzburg to Berchtesgaden and back); Batch B | next task | open |  |
+| T837-a | T837 | Board panel 6: Change flight as a sheet with the airline mark and preferences (only direct, between these hours), with a cleaner Change flight control on the route (panel 4); trip page v4 Batch B | next task | closed by T840 |  |
+| T837-b | T837 | Board panel 7: Swap city as a choosing flow, pick it yourself or let Carta guide you with questions, keeping the dates; Batch B | next task | closed by T841 |  |
+| T837-c | T837 | Owner D2: a stay type per stop (an entire place here, a B&B there) in the price engine, the tiles still adding up to grandTotal to the cent; Batch B | next task | closed by T842 |  |
+| T837-d | T837 | Owner D4: day trips from a base without a night there (Salzburg to Berchtesgaden and back); Batch B | next task | closed by T843 |  |
 | T838-a | T838 | Strings left unused by the removed editor (tp.editing, trip.doneEditing, trip.sum.edit, trip.tripNeedsDates, trip.onToGettingThere, trip.whenTitle, trip.whereFromTitle, trip.nightsOfWindow, trip.overWindow, trip.deviceOnlyNote, trip.flightNotPriced, plan.readiness, tp.aDay); remove from all six languages | next task | open |  |
 | T838-b | T838 | The old stop editor's CSS (.trip-stops, .trip-stop*, .nights-ring*, .trip-nights-summary, .trip-leg*) looks unused since T838; prove it with css-routes and remove | next task | open |  |
 | T839-a | T839 | Board panel 3 asked for "a way to really put in the price"; T839 reads it as Add what you paid opening the route's own fields; confirm or say where it should go | user | open |  |
 | T839-b | T839 | Board panel 8 wants distinct colours in Costs, against carta-design's cost bar (the ink ramp, no colour, no legend); decide before Batch C | user | open |  |
 | T839-c | T839 | Board panel 8: Costs as the editable receipt with the route (BRU to FUE) in place of Getting there in every line; trip page v4 Batch C | next task | open |  |
 | T839-d | T839 | Board panel 9 and D3: Days with your own ideas, planning by hand, a day as detailed or as high level as wanted, pace per day, no "a person" figure; trip page v4 Batch D | next task | open |  |
+| T840-a | T840 | The route's flight card still shows "Google Flights, checked {date}" and View on Google Flights; the owner's mark named the Change flight sheet: remove it on the card too, or keep it (Execution/P15/T840-T843-trip-page-v4-b.md) | user | open |  |
+| T840-b | T840 | Change flight offers the trip's own days and airports; another airport near the first or last stop, home from a different airport (open jaw) and a day earlier or later are not in it yet | next task | open |  |
+| T840-c | T840 | flightHours (the old When to fly bands) still filters the flight pick but has no control on the trip page since T840; fold it into flightPrefs | next task | open |  |
+| T841-a | T841 | Swap city measures distance as the crow flies, not travel time; a place across a mountain range can read near | next task | open |  |
+| T843-a | T843 | A day out shows on Days, but Plan this day plans the base, not the place visited; wire the day planner's day-trip mode to a trip's day | next task | open |  |
+| T843-b | T843 | From 1024 px the Itinerary, Costs and Days tabs show no total while things change; Batch C's budget card in the rail (board panel 3) | next task | open |  |
