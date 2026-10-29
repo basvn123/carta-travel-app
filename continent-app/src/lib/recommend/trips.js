@@ -19,6 +19,7 @@ import { wizardPlannerState } from '../tripTotal.js';
 import { flightRanking, partySize } from '../../planner/flow/tripSettings.js';
 import { buildCandidates } from './candidates.js';
 import { SLOT_ROWS, ADAPTERS, buildSlots, prepareState, slotTotals } from './slots.js';
+import { planOf, finderState } from '../../planner/finder/planOf.js';
 
 /** A short stable hash (FNV-1a, base 36) of a string. */
 export function stableHash(s) {
@@ -127,7 +128,63 @@ export function priceCandidate(c, input, qdata = quoteData(input), registry = {}
   trip.total = slotTotals(trip.slots);
   Object.defineProperty(trip, 'quote', { value: quote, enumerable: false });
   Object.defineProperty(trip, 'state', { value: state, enumerable: false });
+  // What repriceTrip needs to quote the trip again after a swap.
+  Object.defineProperty(trip, 'ctx', { value: { ...ctx, reg }, enumerable: false });
   return trip;
+}
+
+/** The hidden fields a trip carries beside its slots, kept on a copy. */
+export function keepHidden(from, to) {
+  for (const k of ['quote', 'state', 'base', 'ctx']) {
+    const v = Object.getOwnPropertyDescriptor(from, k)?.value ?? from[k];
+    if (v !== undefined && !Object.prototype.hasOwnProperty.call(to, k)) Object.defineProperty(to, k, { value: v, enumerable: false });
+  }
+  return to;
+}
+
+/**
+ * One trip priced again as it stands after a swap (a stay tier, a food
+ * level, a way of getting around, a live flight; T819). The swaps become
+ * the plan the planner receives (planOf), and one quoteTrip prices it from
+ * the finder's own request with those settings, the way the planner prices
+ * the hand-over (handoff.js planState). Every slot is then rebuilt from
+ * that one quote, so the slots, the total and Finish agree to the cent:
+ * pricing a swap one slot at a time missed how the lines move together.
+ * A trip without its pricing context comes back with its sum only.
+ */
+export function repriceTrip(trip) {
+  const base = trip.base || trip;
+  const ctx = trip.ctx || base.ctx;
+  const st = finderState(trip);
+  if (!ctx || !st) return keepHidden(trip, { ...trip, total: slotTotals(trip.slots) });
+  const plan = planOf(trip);
+  const live = new Map([...(st.liveFlights || []), ...plan.liveFlights]);
+  const state = {
+    ...st,
+    stayTier: plan.stayTier || st.stayTier,
+    lifestyle: plan.lifestyle || st.lifestyle,
+    transportPref: plan.transport || st.transportPref,
+    ...(live.size ? { liveFlights: live } : {}),
+  };
+  const quote = quoteTrip(state, { data: ctx.data, countryInsights: ctx.countryInsights });
+  const slots = buildSlots({ trip, quote, state, ctx: { ...ctx, stayTier: state.stayTier } }, ctx.reg);
+  // A 'you' line keeps the owner the traveller gave it.
+  const owned = slots.map((s) => {
+    const was = trip.slots.find((x) => x.id === s.id);
+    return was && was.owner !== s.owner ? { ...s, owner: was.owner } : s;
+  });
+  const total = slotTotals(owned);
+  const out = {
+    ...trip,
+    slots: owned,
+    total,
+    budget: trip.budget ? { eur: trip.budget.eur, delta: total.perPerson - trip.budget.eur } : trip.budget,
+  };
+  Object.defineProperty(out, 'quote', { value: quote, enumerable: false });
+  Object.defineProperty(out, 'state', { value: state, enumerable: false });
+  // The trip as the finder priced it stays the base planOf measures swaps from.
+  if (!trip.base) Object.defineProperty(out, 'base', { value: trip, enumerable: false });
+  return keepHidden(trip, out);
 }
 
 const memo = new WeakMap(); // data -> Map(answerKey -> trips)

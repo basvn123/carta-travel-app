@@ -20,8 +20,8 @@
  * changed, every call returns new ones.
  */
 import RECOMMEND from '../../../config/recommend.json' with { type: 'json' };
-import { chooseOption, slotTotals } from './slots.js';
-import { buildTrips } from './trips.js';
+import { chooseOption } from './slots.js';
+import { buildTrips, keepHidden, repriceTrip } from './trips.js';
 import { tasteFor } from './candidates.js';
 import { tripFit, reasonsFor, catchFor } from './reasons.js';
 import { flightLeverKeys } from './adapters/flight.js';
@@ -56,14 +56,29 @@ export function applyLevers(trips, levers) {
     .filter((k) => levers[k] && LEVERS[k].values[levers[k]] != null)
     .map((k) => ({ slot: LEVERS[k].slot, option: levers[k] }));
   if (!swaps.length) return out;
+  const key = JSON.stringify(swaps);
   return out.map((t) => {
-    const slots = t.slots.map((s) => {
-      const sw = swaps.find((x) => x.slot === s.id);
-      return sw ? chooseOption(s, sw.option) : s;
-    });
-    return { ...t, slots, total: slotTotals(slots) };
+    // A levered trip is priced again as a whole (T819, repriceTrip), once
+    // per trip and lever setting: the list, the preview and Finish then
+    // read the same figure.
+    const base = t.base || t;
+    let byKey = levered.get(base);
+    if (!byKey) levered.set(base, (byKey = new Map()));
+    if (!byKey.has(key)) {
+      const slots = t.slots.map((s) => {
+        const sw = swaps.find((x) => x.slot === s.id);
+        return sw ? chooseOption(s, sw.option) : s;
+      });
+      const changed = slots.some((s, i) => s !== t.slots[i]);
+      byKey.set(key, changed ? repriceTrip(keepHidden(t, { ...t, slots })) : null);
+    }
+    const priced = byKey.get(key);
+    return priced ? keepHidden(priced, { ...t, slots: priced.slots, total: priced.total }) : t;
   });
 }
+
+// Levered trips by their base trip and lever setting (applyLevers).
+const levered = new WeakMap();
 
 /**
  * The flight lever (TF3, T803, rule a). On swept data a trip has one flight
@@ -148,9 +163,10 @@ export function rankTrips(trips, { settings, taste = null, data, levers = null }
       score: base - sink - (pull.get(trip.id) || 0),
       qualified: RANK.fitFirst ? qualifies(info, settings) : true,
     };
-    if (trip.base?.quote) Object.defineProperty(out, 'quote', { value: trip.base.quote, enumerable: false });
     Object.defineProperty(out, 'base', { value: trip.base, enumerable: false });
-    return out;
+    // A levered trip keeps its own quote and state (T819); else the base's.
+    const own = trip.quote ? trip : trip.base;
+    return own ? keepHidden(own, out) : out;
   });
   return ranked.sort((a, b) => (Number(b.qualified) - Number(a.qualified)) || (b.score - a.score) || a.id.localeCompare(b.id));
 }

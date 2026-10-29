@@ -84,12 +84,13 @@ for (const [label, s] of [["May, past the sweep", ["2027-05-09", "2027-05-16"]],
       // The planner prices the same request the finder priced: the same
       // grand total, to the cent.
       assert.equal(q.grandTotal, t.quote.grandTotal, `${t.country} ${t.id}: Finish ${q.grandTotal} against the finder's ${t.quote.grandTotal}`);
-      // The receipt is that total cut into slots of whole euros (slots.js);
-      // each slot rounds once, so the sum sits within half a euro a slot.
-      const priced = t.slots.filter((x) => x.eur != null).length;
-      assert.ok(Math.abs(rc.group - q.grandTotal) <= 0.5 * priced, `${t.id}: group ${rc.group} against ${q.grandTotal}`);
-      assert.ok(Math.abs(rc.perPerson - q.perPerson) <= 0.5 * priced, `${t.id}: a person ${rc.perPerson} against ${q.perPerson}`);
-      results.push({ label, id: t.id, receipt: rc.perPerson, finish: Math.round(q.perPerson) });
+      // T818: the receipt is that total cut into slots to the cent, so its
+      // sum is Finish to the cent (whole-euro slots sat up to half a euro a
+      // slot away).
+      assert.ok(Math.abs(rc.group - q.grandTotal) <= 0.01, `${t.id}: group ${rc.group} against ${q.grandTotal}`);
+      assert.ok(Math.abs(rc.perPerson - q.perPerson) <= 0.01, `${t.id}: a person ${rc.perPerson} against ${q.perPerson}`);
+      assert.equal(t.total.perPerson, rc.perPerson, `${t.id}: the card's total is the receipt's`);
+      results.push({ label, id: t.id, receipt: rc.perPerson, finish: q.perPerson });
     }
   });
 }
@@ -109,15 +110,46 @@ test("T801: swaps carry over: stay tier, food level, getting around and a live f
   assert.ok(plan.liveFlights.length <= 2);
   const rc = receiptOf(t).total;
   const { q } = finishTotal(t);
-  const priced = t.slots.filter((x) => x.eur != null).length;
-  assert.ok(Math.abs(rc.group - q.grandTotal) <= 0.5 * priced, `swapped trip: group ${rc.group} against Finish ${q.grandTotal}`);
+  // T819: a swapped trip is priced again as a whole (repriceTrip), so it is
+  // Finish to the cent too (one slot at a time, it sat euros away).
+  assert.ok(Math.abs(rc.group - q.grandTotal) <= 0.01, `swapped trip: group ${rc.group} against Finish ${q.grandTotal}`);
+  assert.ok(Math.abs(t.total.perPerson - q.perPerson) <= 0.01, `swapped trip: a person ${t.total.perPerson} against Finish ${q.perPerson}`);
 });
 
-test("T801: the measured gap, receipt against Finish, whole euros a person", { skip }, () => {
-  // Printed for the report: how many of the 12 agree to the euro.
-  const same = results.filter((x) => x.receipt === x.finish).length;
-  console.log(`receipt equals Finish to the euro: ${same} of ${results.length}; largest gap ${Math.max(0, ...results.map((x) => Math.abs(x.receipt - x.finish)))}`);
+test("T819: every stay and food swap of the top 6 is Finish to the cent", { skip }, () => {
+  let n = 0;
+  for (const t0 of trips(answers("2026-11-21", "2026-11-28")).slice(0, 6)) {
+    const stay = t0.slots.find((x) => x.id === "stay");
+    const food = t0.slots.find((x) => x.id === "food");
+    for (const so of stay?.options || []) {
+      for (const fo of food?.options || []) {
+        let t = t0;
+        if (so.id !== t.slots.find((x) => x.id === "stay").pick?.id) t = withSlot(t, chooseOption(t.slots.find((x) => x.id === "stay"), so.id), slotTotals);
+        if (fo.id !== t.slots.find((x) => x.id === "food").pick?.id) t = withSlot(t, chooseOption(t.slots.find((x) => x.id === "food"), fo.id), slotTotals);
+        const { q } = finishTotal(t);
+        assert.ok(Math.abs(t.total.perPerson - q.perPerson) <= 0.01, `${t0.id} ${so.id}+${fo.id}: ${t.total.perPerson} against Finish ${q.perPerson}`);
+        n += 1;
+      }
+    }
+  }
+  assert.ok(n >= 24, `${n} swaps checked`);
+});
+
+test("T819: a food lever reprices every trip in the list, Finish to the cent", { skip }, () => {
+  const levered = findTrips({ data, countryInsights, layerIndexes, settings: answers("2026-11-21", "2026-11-28"), origin: BRU, flights, today: "2026-10-28" }, { levers: { food: "out" } }).slice(0, 6);
+  assert.ok(levered.some((t) => t.slots.find((x) => x.id === "food")?.pick?.id === "out"), "the lever took");
+  for (const t of levered) {
+    const { q } = finishTotal(t);
+    assert.ok(Math.abs(t.total.perPerson - q.perPerson) <= 0.01, `${t.id} eat out: ${t.total.perPerson} against Finish ${q.perPerson}`);
+  }
+});
+
+test("T801: the measured gap, receipt against Finish, to the cent a person", { skip }, () => {
+  // Printed for the report: how many of the 12 agree to the cent.
+  const same = results.filter((x) => Math.abs(x.receipt - x.finish) <= 0.01).length;
+  console.log(`receipt equals Finish to the cent: ${same} of ${results.length}; largest gap ${Math.max(0, ...results.map((x) => Math.abs(x.receipt - x.finish)))}`);
   assert.equal(results.length, 12);
+  assert.equal(same, 12);
 });
 
 test("T801: the plan keeps the finder's order, skips Where and Stay, and lets a 'you' stay be asked", { skip }, () => {

@@ -10,8 +10,10 @@
  *
  *   { id, order, labelKey, owner, eur, eurGroup, pick, options, because, quality }
  *
- *   eur       whole-trip euros for one person, whole euros; null = not
- *             measured (drawn as NotYet, out of every sum, never 0)
+ *   eur       whole-trip euros for one person, to the cent (T818: whole
+ *             euros put the total up to half a euro a slot from the
+ *             planner's); null = not measured (drawn as NotYet, out of
+ *             every sum, never 0)
  *   eurGroup  the same for the whole party (the foot's group total)
  *   owner     'carta' when question 7 left it to Carta, 'you' when the
  *             traveller chooses it; a 'you' slot still counts at its
@@ -64,11 +66,14 @@ export function ownerOf(row, pick = defaultPick()) {
 
 const MISSING = Object.freeze({ eurGroup: null, pick: null, options: null, because: null, quality: 'missing' });
 
-/** Whole euros a person from a party figure. */
-export const perHead = (eurGroup, head) => (eurGroup == null ? null : Math.round(eurGroup / Math.max(1, head)));
+/** Euros to the cent, the way the planner rounds (lib/price round2). */
+export const cents = (v) => (v == null ? null : Math.round(v * 100) / 100);
+
+/** Euros a person from a party figure, to the cent. */
+export const perHead = (eurGroup, head) => (eurGroup == null ? null : cents(eurGroup / Math.max(1, head)));
 
 const priced = (o, head) => ({
-  ...o, eur: perHead(o.eurGroup, head), eurGroup: o.eurGroup == null ? null : Math.round(o.eurGroup),
+  ...o, eur: perHead(o.eurGroup, head), eurGroup: cents(o.eurGroup),
 });
 const withDeltas = (options, eur) => (options
   ? options.map((o) => ({ ...o, delta: o.eur != null && eur != null ? o.eur - eur : null }))
@@ -84,7 +89,7 @@ function toSlot(row, out, head, owner) {
     labelKey: row.labelKey,
     owner,
     eur,
-    eurGroup: out.eurGroup == null ? null : Math.round(out.eurGroup),
+    eurGroup: cents(out.eurGroup),
     pick: owner === 'carta' && out.pick ? priced(out.pick, head) : null,
     options: withDeltas(options, eur),
     because: out.because ?? null,
@@ -113,11 +118,28 @@ export function buildSlots(input, { rows = SLOT_ROWS, adapters = ADAPTERS } = {}
   const { quote, ctx = {} } = input;
   const head = Math.max(1, quote?.groupSize || 1);
   const pick = Array.isArray(ctx.pick) ? ctx.pick : defaultPick(rows);
-  return rows.map((row) => {
+  const slots = rows.map((row) => {
     const a = adapters[row.adapter];
     const out = row.status === 'notYet' || !a?.price || !quote ? MISSING : (a.price({ ...input, row }) || MISSING);
     return toSlot(row, out, head, ownerOf(row, pick));
   });
+  return balanced(slots, head);
+}
+
+/**
+ * The lines a person, made to add up to the total a person to the cent
+ * (T818): each line is its group figure divided by the head count, and the
+ * cent those divisions lose or gain goes to the largest line, so the lines
+ * a traveller reads add up to the total under them.
+ */
+function balanced(slots, head) {
+  const priced = slots.filter((s) => s.eur != null);
+  if (!priced.length) return slots;
+  const want = perHead(priced.reduce((n, s) => n + s.eurGroup, 0), head);
+  const diff = cents(want - priced.reduce((n, s) => n + s.eur, 0));
+  if (!diff) return slots;
+  const big = priced.reduce((a, s) => (s.eur > a.eur ? s : a));
+  return slots.map((s) => (s === big ? { ...s, eur: cents(s.eur + diff) } : s));
 }
 
 /**
@@ -131,13 +153,17 @@ export function chooseOption(slot, optionId) {
   return {
     ...slot,
     eur: o.eur,
-    eurGroup: Math.round(o.eurGroup),
+    eurGroup: cents(o.eurGroup),
     pick: slot.owner === 'carta' ? { id: o.id, labelKey: o.labelKey, facts: o.facts, eur: o.eur, eurGroup: o.eurGroup } : null,
     options: withDeltas(slot.options, o.eur),
   };
 }
 
-/** The trip total: every slot with a figure, whoever owns it. */
+/**
+ * The trip total: every slot with a figure, whoever owns it, to the cent
+ * (T818). Slots from buildSlots add up to the group total divided by the
+ * head count, the way the planner divides, so the two agree to the cent.
+ */
 export function slotTotals(slots) {
   let perPerson = 0;
   let group = 0;
@@ -146,5 +172,5 @@ export function slotTotals(slots) {
     perPerson += s.eur;
     group += s.eurGroup;
   }
-  return { perPerson, group };
+  return { perPerson: cents(perPerson), group: cents(group) };
 }

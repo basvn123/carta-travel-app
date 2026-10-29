@@ -11,6 +11,8 @@ import { formatMoney } from '../../lib/money.js';
 import { monthName } from '../../lib/dates.js';
 import { cityLabel } from '../../lib/placeName.js';
 import { QUESTIONS } from '../flow/questions.js';
+import { slotTotals } from '../../lib/recommend/slots.js';
+import { keepHidden, repriceTrip } from '../../lib/recommend/trips.js';
 
 /** How many trips before "Show more trips" (the CountryMatchCards page). */
 export const PAGE = 6;
@@ -116,7 +118,8 @@ export function topSights(pois, n = 4) {
 export function budgetBadge(trip, { locale } = {}) {
   const b = trip.budget;
   if (!b?.eur || !Number.isFinite(b.delta)) return null;
-  if (b.delta === 0) return { key: 'tf.budget.on', vars: { eur: formatMoney(b.eur, { locale }) }, over: false };
+  // Totals carry cents (T818): within half a euro is on budget, never "0 under".
+  if (Math.round(b.delta) === 0) return { key: 'tf.budget.on', vars: { eur: formatMoney(b.eur, { locale }) }, over: false };
   return { key: b.delta < 0 ? 'tf.card.under' : 'tf.card.over', vars: { eur: formatMoney(Math.abs(b.delta), { locale }) }, over: b.delta > 0 };
 }
 
@@ -206,25 +209,22 @@ export function answerChips(settings, { t, lang = 'en', originName = '', when = 
 }
 
 /**
- * The trip with one slot replaced (a swap on the receipt or a picker): the
- * total is the slots' own sum again (slots.js slotTotals) and the budget
- * ruler moves with it. The engine's quote and state stay attached, so the
- * picker and the hand-off still read them.
+ * The trip with one slot replaced (a swap in the preview or a picker), then
+ * priced again as a whole (T819, trips.js repriceTrip): one quote of the
+ * trip with every swap in it, so its lines and total are the planner's to
+ * the cent and the budget badge moves with them. `sumSlots` is what a trip
+ * without its pricing context falls back to.
  */
-export function withSlot(trip, next, sumSlots) {
+export function withSlot(trip, next, sumSlots = slotTotals) {
   const slots = trip.slots.map((s) => (s.id === next.id ? next : s));
+  const swapped = keepHidden(trip, { ...trip, slots });
+  if (trip.ctx || trip.base?.ctx) return repriceTrip(swapped);
   const total = sumSlots(slots);
-  const out = {
-    ...trip,
-    slots,
+  return keepHidden(trip, {
+    ...swapped,
     total,
     budget: trip.budget ? { eur: trip.budget.eur, delta: total.perPerson - trip.budget.eur } : null,
-  };
-  for (const k of ['quote', 'state', 'base']) {
-    const v = trip[k];
-    if (v !== undefined) Object.defineProperty(out, k, { value: v, enumerable: false });
-  }
-  return out;
+  });
 }
 
 /** "Google Flights, checked 14:05" or "... checked 26 Oct": the flight row's own words. */
