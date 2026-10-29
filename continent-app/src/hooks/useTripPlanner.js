@@ -15,6 +15,7 @@ import { loadRestorableDraft, persistTripDraft, clearTripDraft } from '../planne
 import { usePlannerStore } from '../planner/plannerStore.js';
 import { fromDraft, flightRanking } from '../planner/flow/tripSettings.js';
 import { pickedLive } from '../planner/wizard/flightChoices.js';
+import { fitsPrefs, NO_FLIGHT_PREFS } from '../lib/flights/flights.js';
 
 
 const DEFAULT_STOP_NIGHTS = 2;
@@ -69,6 +70,28 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
   // so the planned trip prices the flight the traveller chose, not its own
   // ranking's. Keyed by day: a moved trip no longer reads a stale pick.
   const [flightPicks, setFlightPicks] = useState(draft?.flightPicks || null);
+  // The trip's flight preferences (T840): only direct flights, leaving
+  // between two hours. Kept on the trip; Carta prices the cheapest flight
+  // that fits them, each way.
+  const [flightPrefs, setFlightPrefsRaw] = useState(draft?.flightPrefs || NO_FLIGHT_PREFS);
+  // New preferences drop a picked flight that no longer fits them, so the
+  // trip prices the cheapest one that does.
+  const setFlightPrefs = useCallback((next) => {
+    const p = { ...NO_FLIGHT_PREFS, ...next };
+    setFlightPrefsRaw(p);
+    setFlightPicks((prev) => {
+      if (!prev) return prev;
+      const keep = { out: prev.out && fitsPrefs(prev.out, p) ? prev.out : null, back: prev.back && fitsPrefs(prev.back, p) ? prev.back : null };
+      return keep.out || keep.back ? keep : null;
+    });
+  }, []);
+  // One flight picked on Change flight (T840), or null for Carta's pick.
+  const setFlightPick = useCallback((dir, f) => {
+    setFlightPicks((prev) => {
+      const next = { out: prev?.out || null, back: prev?.back || null, [dir]: f || null };
+      return next.out || next.back ? next : null;
+    });
+  }, []);
   // How the traveller gets from the plane to where they sleep, one choice per
   // DIRECTION ({ in, out }): 'auto' lets Carta pick (the rental car they
   // collect at the airport if the trip has one, else public transport),
@@ -163,11 +186,11 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     persistTripDraft({
       tripStart, tripEnd, stops, groupSize, transportPref, legModes, ownLegs, transferMode, pace,
       baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, planId, planLabel, planned,
-      stayTier, ownStays, children, babies, deviceKey, flightHours, flightPicks, tripLifestyle,
+      stayTier, ownStays, children, babies, deviceKey, flightHours, flightPicks, flightPrefs, tripLifestyle,
     });
   }, [children, babies, tripStart, tripEnd, stops, groupSize, transportPref, legModes, ownLegs, transferMode, pace,
       flightHours, baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, planId, planLabel, planned,
-      stayTier, ownStays, deviceKey, flightPicks, tripLifestyle]);
+      stayTier, ownStays, deviceKey, flightPicks, flightPrefs, tripLifestyle]);
 
   // Each stop with its chained dates (the same chain quoteTrip prices).
   const stopDetails = useMemo(
@@ -236,6 +259,41 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     setOwnLegs({});
   }, []);
 
+  // A stop's own stay type (T842, owner D2): a STAY_TIERS id, or null for
+  // the trip's own (the Lifestyle's).
+  const setStopStay = useCallback((index, tier) => {
+    setStops((prev) => prev.map((s, i) => {
+      if (i !== index) return s;
+      const { stayTier: _old, ...rest } = s;
+      return tier ? { ...rest, stayTier: tier } : rest;
+    }));
+  }, []);
+
+  // A stop's day trips (T843, owner D4): [{ destinationId, day }], a day of
+  // the stay out and back the same evening; an empty list clears them.
+  const setStopDayTrips = useCallback((index, list) => {
+    setStops((prev) => prev.map((s, i) => {
+      if (i !== index) return s;
+      const { dayTrips: _old, ...rest } = s;
+      return list?.length ? { ...rest, dayTrips: list } : rest;
+    }));
+  }, []);
+
+  // Swap a stop for another place (T841): its nights and its place in the
+  // route stay; its activities and day trips go with the old town, and the
+  // hops on either side are new journeys, so their answers are dropped.
+  const swapStop = useCallback((index, destinationId) => {
+    setStops((prev) => prev.map((s, i) => (i === index ? { ...s, destinationId, activities: [], dayTrips: [] } : s)));
+    const drop = (m) => {
+      const n = { ...m };
+      delete n[index - 1];
+      delete n[index];
+      return n;
+    };
+    setLegModes(drop);
+    setOwnLegs(drop);
+  }, []);
+
   // Move the stop at `from` to sit at position `to` (drag-and-drop reorder).
   const reorderStop = useCallback((from, to) => {
     setStops((prev) => {
@@ -279,6 +337,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
 
   // Wipe the whole draft so the traveller can start over from scratch.
   const clearPlan = useCallback(() => {
+    setFlightPrefsRaw(NO_FLIGHT_PREFS);
     setStops([]);
     setTripStart('');
     setTripEnd('');
@@ -336,6 +395,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     setOwnLegs(wizardOwnLegs || {});
     setOwnStays(wizardOwnStays || {});
     setFlightPicks(wizardFlightPicks?.out || wizardFlightPicks?.back ? wizardFlightPicks : null);
+    setFlightPrefsRaw(NO_FLIGHT_PREFS);
     // The stay and the eating habits the wizard priced (T816, row T801-f):
     // Review's total and the planned trip's are one figure.
     if (wizardStayTier) setStayTier(wizardStayTier);
@@ -382,7 +442,8 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
   const tripState = useMemo(() => ({
     stops, tripStart, tripEnd, groupSize, children, babies, transportPref, legModes, ownLegs, ownStays, transferMode,
     baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, stayTier, lifestyle, flightHours, flightRank,
-  }), [stops, tripStart, tripEnd, groupSize, children, babies, transportPref, legModes, ownLegs,
+    flightPrefs,
+  }), [flightPrefs, stops, tripStart, tripEnd, groupSize, children, babies, transportPref, legModes, ownLegs,
     ownStays, transferMode, baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, stayTier,
     lifestyle, flightHours, flightRank]);
   // T559: each dated stop asks for tonight's prices on its own nights; a live
@@ -520,6 +581,8 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
       destinationId: s.destination_id,
       nights: tripDaysBetween(s.arrive_date, s.depart_date) || DEFAULT_STOP_NIGHTS,
       activities: Array.isArray(s.choices?.activities) ? s.choices.activities : [],
+      ...(s.choices?.stayTier ? { stayTier: s.choices.stayTier } : {}),
+      ...(Array.isArray(s.choices?.dayTrips) && s.choices.dayTrips.length ? { dayTrips: s.choices.dayTrips } : {}),
     })));
     setAnchorId(sorted[0]?.choices?.anchorId || null);
     setAnchorOrigin(sorted[0]?.choices?.anchorOrigin || null);
@@ -569,6 +632,8 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
             nights: s.nights,
             groupSize,
             activities: s.activities || [],
+            ...(s.stayTier ? { stayTier: s.stayTier } : {}),
+            ...(s.dayTrips?.length ? { dayTrips: s.dayTrips } : {}),
             ...(i === 0 ? { baggage, transportPref, transferMode, pace, ...(anchorId ? { anchorId } : {}), ...(anchorOrigin ? { anchorOrigin } : {}), ...(returnAnchorId ? { returnAnchorId } : {}), ...(ownFlight ? { ownFlight } : {}), ...(carHome ? { carHome } : {}), ...(Object.keys(legModes).length ? { legModes } : {}), ...(Object.keys(ownLegs).length ? { ownLegs } : {}), ...(Object.keys(ownStays).length ? { ownStays } : {}), ...(children ? { children } : {}), ...(babies ? { babies } : {}), priceRequest: { stay: stayTier, lifestyle } } : {}),
           },
         };
@@ -612,8 +677,8 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
   const snapshot = useMemo(() => ({
     tripStart, tripEnd, stops, groupSize, transportPref, legModes, ownLegs, transferMode, pace,
     baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, planLabel, planned,
-    stayTier, ownStays, children, babies, flightHours,
-  }), [tripStart, tripEnd, stops, groupSize, transportPref, legModes, ownLegs, transferMode, pace, flightHours,
+    stayTier, ownStays, children, babies, flightHours, flightPrefs,
+  }), [flightPrefs, tripStart, tripEnd, stops, groupSize, transportPref, legModes, ownLegs, transferMode, pace, flightHours,
     baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, planLabel, planned,
     stayTier, ownStays, children, babies]);
 
@@ -622,9 +687,9 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
   // the flights picked on Getting there.
   const editState = useMemo(() => ({
     tripStart, tripEnd, stops, groupSize, children, babies, transportPref, legModes, ownLegs, transferMode, pace,
-    baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, ownStays, flightHours, flightPicks,
+    baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, ownStays, flightHours, flightPicks, flightPrefs,
   }), [tripStart, tripEnd, stops, groupSize, children, babies, transportPref, legModes, ownLegs, transferMode, pace,
-    baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, ownStays, flightHours, flightPicks]);
+    baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, ownStays, flightHours, flightPicks, flightPrefs]);
 
   // Put an editState back (an Undo or a Redo): the same fields, the trip's
   // id, device key, name and mode untouched.
@@ -650,6 +715,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     setCarHome(d.carHome || null);
     setOwnStays(d.ownStays || {});
     setFlightPicks(d.flightPicks || null);
+    setFlightPrefsRaw(d.flightPrefs || NO_FLIGHT_PREFS);
   }, []);
 
   // Put a kept trip back on the planner (a device trip, T500).
@@ -669,6 +735,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     if (d.stayTier) setStayTier(d.stayTier);
     setBaggage(d.baggage || PLANNER_BAG);
     setFlightHoursRaw(d.flightHours || { out: 'any', back: 'any' });
+    setFlightPrefsRaw(d.flightPrefs || NO_FLIGHT_PREFS);
     setAnchorId(d.anchorId || null);
     setAnchorOrigin(d.anchorOrigin || null);
     setReturnAnchorId(d.returnAnchorId || null);
@@ -691,12 +758,15 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     anchorId, anchorOrigin, setAnchorOrigin, returnAnchorId, legModes, ownLegs, ownStays, setOwnStay,
     priced, lifestyle,
     cheaperOrder, applyCheaperOrder,
-    addStop, removeStop, setStopNights, setStopActivities, moveStop, reorderStop,
+    addStop, removeStop, setStopNights, setStopActivities, moveStop, reorderStop, swapStop, setStopStay, setStopDayTrips,
     optimizeRoute, clearPlan, loadFromWizard,
     nextStopSuggestions, flight, legs, anchorLegs, flightTransfer, driveLegs, stayCosts, grandTotal, dayPlan,
     vignettes, tripHasCar,
     baggage, setBaggage,
     flightHours, setFlightHours,
+    // T840: the trip's flight preferences, a picked flight each way, and the
+    // live answers for the trip's days (Change flight lists them).
+    flightPrefs, setFlightPrefs, flightPicks, setFlightPick, liveAnswers,
     stayTier, setStayTier,
     ownFlight, setOwnFlight,
     carHome, setCarHome,

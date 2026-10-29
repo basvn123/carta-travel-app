@@ -456,3 +456,101 @@ button.ct-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: 2
 @media (max-width: 480px) {
   .itin-stop-acts .btn { padding-inline: var(--space-2); }
 }
+
+/* ---- T840: Change flight ----
+   The flight row's head carries the route and one secondary Change flight.
+   The sheet: the way, the trip's preferences, then the day's flights as
+   radio rows (airline mark, times, stops and duration, what the party pays
+   and what it does to the total). The selected flight is the one selected
+   state: the tint and a brown edge. */
+.itin-end-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-2); }
+.tpf { display: flex; flex-direction: column; gap: var(--space-4); }
+.tpf-prefs { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-3); border-radius: var(--radius-control); background: var(--surface-sunken); }
+.tpf-h { margin: 0; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.tpf-hours { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+.tpf-way { margin: 0; font-size: var(--text-lead); color: var(--text); }
+.tpf-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.tpf-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: var(--tap);
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
+}
+@media (hover: hover) { .tpf-row:hover { background: var(--surface-hover); } }
+.tpf-row:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.tpf-row.is-on { background: var(--select-bg); border-color: var(--select-border); }
+.tpf-main { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.tpf-times { font-size: var(--text-lead); font-weight: 600; font-variant-numeric: tabular-nums; }
+.tpf-sub { font-size: var(--text-caption); color: var(--text-2); }
+.tpf-fig { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.tpf-delta { font-size: var(--text-caption); font-weight: 400; color: var(--text-2); white-space: nowrap; }
+.tpf-row.is-on .tpf-delta { color: var(--select-ink); }
+.tpf-note { margin: 0; font-size: var(--text-body); color: var(--text-2); }
+.tpf-own.btn { align-self: flex-start; }
+@media (prefers-reduced-motion: reduce) { .tpf-row { transition: none; } }
+
+/* ---- T841: Swap city ----
+   Two doors as one Segmented, then the search field or the three
+   questions (chips, then two short Segmented controls), then the places as
+   rows: a square photo, the name, where it is and how far, and what the
+   swap does to the total. */
+.tps { display: flex; flex-direction: column; gap: var(--space-4); }
+.tps-qs { display: flex; flex-direction: column; gap: var(--space-4); }
+.tps-q { display: flex; flex-direction: column; gap: var(--space-2); }
+.tps-h { margin: 0; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.tps-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.tps-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.tps-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: var(--tap);
+  padding: var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+@media (hover: hover) { .tps-row:hover { background: var(--surface-hover); } }
+.tps-row:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.tps-thumb { width: 56px; height: 56px; flex: none; border-radius: var(--radius-control); overflow: hidden; background: var(--surface-sunken); }
+.tps-thumb .tps-img, .tps-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.tps-main { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.tps-name { font-size: var(--text-lead); font-weight: 600; }
+.tps-sub { font-size: var(--text-caption); color: var(--text-2); }
+.tps-delta { flex: none; max-width: 40%; font-size: var(--text-caption); color: var(--text-2); text-align: right; font-variant-numeric: tabular-nums; }
+.tps-note { margin: 0; font-size: var(--text-body); color: var(--text-2); }
+@media (prefers-reduced-motion: reduce) { .tps-row { transition: none; } }
+
+/* ---- T842: a stop's own stay type, a select above its bed line ---- */
+.itin-stay { padding: 0 var(--space-4) var(--space-3); max-width: 420px; }
+
+/* ---- T843: a stop's day trips ----
+   A list of label-over-value rows under the bed (the day and the place,
+   the way and how long; the cost there and back on the right), a hairline
+   between rows, then the quiet "Add a day trip". */
+.itin-daytrips { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-2) var(--space-4) var(--space-3); border-top: 1px solid var(--border-soft); }
+.itin-daytrips > .btn { align-self: flex-start; margin-left: calc(-1 * var(--space-2)); }
+.itin-daytrip-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.itin-daytrip { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2) 0; border-bottom: 1px solid var(--border-soft); }
+.itin-daytrip:last-child { border-bottom: 0; }
+.itin-daytrip-main { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.itin-daytrip-main b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.itin-daytrip-main small { font-size: var(--text-caption); color: var(--text-2); }
+.itin-daytrip-fig { display: flex; flex-direction: column; align-items: flex-end; font-weight: 600; font-variant-numeric: tabular-nums; }
+.itin-daytrip-fig small { font-size: var(--text-caption); font-weight: 400; color: var(--text-2); }

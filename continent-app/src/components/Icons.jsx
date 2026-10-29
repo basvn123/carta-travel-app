@@ -1366,3 +1366,14 @@ export function GripIcon({ size = 16, className = '' }) {
     </svg>
   );
 }
+
+// Swap a stop for another place (T841): two arrows passing each other.
+export function SwapIcon({ size = 18, className = '' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"
+      strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true" focusable="false">
+      <path d="M4 8h14l-3.5-3.5" />
+      <path d="M20 16H6l3.5 3.5" />
+    </svg>
+  );
+}

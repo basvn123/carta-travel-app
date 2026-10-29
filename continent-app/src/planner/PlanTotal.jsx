@@ -65,6 +65,7 @@ const LINE_KEY = {
   transfers: 'plan.lineTransfers',
   between: 'plan.lineBetween',
   car: 'plan.lineCar',
+  daytrips: 'plan.lineDaytrips',
   beds: 'plan.lineBeds',
   days: 'plan.lineDays',
 };

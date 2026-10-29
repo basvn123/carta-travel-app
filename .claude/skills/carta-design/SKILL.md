@@ -322,8 +322,10 @@ in the kit. Two screens can never write the same figure two ways.
   word after a figure, no source footers. Never a flight figure presented as Carta's own, never a bookable
   claim, never a stored figure shown as current. Every external booking link warns that prices may have changed.
 - **Flights** (T511 to T518, 2026-10-21). A flight figure is Google Flights' price, not Carta's estimate,
-  It always travels with the airline mark, the departure and
-  arrival times, when it was checked and the link out to Google Flights with "prices may have changed".
+  It always travels with the airline mark and the departure and arrival times. Owner decision
+  2026-10-29 (T840): the "Google Flights, checked {time}" line is no longer required on screen, and
+  Change flight shows none; where a link out to Google Flights is offered it still says "prices may
+  have changed".
   The airline mark is the airline's own logo in a white square, never recoloured, tinted or redrawn. A
   fare the traveller typed in replaces it and is labelled as theirs. A swept price older than its sweep
   cycle is not shown (5 days for the next two weeks, 16 days beyond, T780; config `flights.max_age_days`). Bag fees (10 kg cabin, 20 kg
@@ -635,8 +637,8 @@ The voice did not change with the look. Carta sounds like an instrument, not a b
 - Empty states are an invitation, not an apology: name the space and give the action.
 - A hand-over names the thing and the app: "Open Day 2 in Google Maps", "Open this ride in Google Maps".
   Never "Navigate", "Start route" or "Directions", because Carta does not navigate.
-- Honest in the product's own voice. A flight price is named as Google Flights', with when it was
-  checked; a fare the traveller typed is labelled as theirs. When the AI is off, say it is off. An empty result says so in one line.
+- Honest in the product's own voice. A flight price is never presented as Carta's own estimate (the
+  checked line is optional since T840); a fare the traveller typed is labelled as theirs. When the AI is off, say it is off. An empty result says so in one line.
 - Strings go through i18n keys in all six languages, never concatenation; test labels at the longest
   translation (usually German).
 

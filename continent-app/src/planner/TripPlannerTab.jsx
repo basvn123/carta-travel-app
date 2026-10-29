@@ -21,6 +21,11 @@ import { useMedia } from '../browse/home/useHome.js';
 import { useEditHistory } from './trip/useEditHistory.js';
 import { TripUndoToast } from './trip/TripUndoToast.jsx';
 import { ChipEditor } from './trip/ChipEditor.jsx';
+import { ChangeFlight } from './trip/ChangeFlight.jsx';
+import { SwapCity } from './trip/SwapCity.jsx';
+import { DayTripPicker } from './trip/DayTripPicker.jsx';
+import { offeredStayTiers } from '../lib/runtime_pricing.js';
+import { offeredSleepGroups, optionsFor } from '../lib/sleepGroups.js';
 import { TripSummary } from './TripSummary.jsx';
 import { PlanStage } from './flow/PlanStage.jsx';
 import { DaysPrompt } from './flow/DaysPrompt.jsx';
@@ -451,6 +456,12 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   // trip settings at once, so the chip, the settings sheet and Explore say
   // the same, and Undo takes both back in one step.
   const [chipOpen, setChipOpen] = useState(null);
+  // T840: Change flight, open on one way ('out' | 'back') or closed.
+  const [flightSheet, setFlightSheet] = useState(null);
+  // T841: Swap city, open on one stop's index or closed.
+  const [swapAt, setSwapAt] = useState(null);
+  // T843: Add a day trip, open on one stop's index or closed.
+  const [dayTripAt, setDayTripAt] = useState(null);
   const saveChip = (kind, v) => {
     const cur = fromDraft(plannerStore.getState());
     if (kind === 'dates') {
@@ -929,6 +940,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   const renderItinerary = (sections = null, grouped = false) => (
     <TripItinerary
               stopEdit={tp.planned && sections?.includes('route') ? stopEdit : null}
+              onChangeFlight={tp.planned && sections?.includes('route') ? setFlightSheet : null}
               routeExtra={tp.planned && sections?.includes('route') && (betweenBlock || cheaperBlock) ? <>{betweenBlock}{cheaperBlock}</> : null}
               addStopSlot={tp.planned && sections?.includes('route') ? addStopBlock : null}
       sections={sections}
@@ -947,7 +959,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
               onOwnLeg={(i, mode, n) => tp.setOwnLeg(i, mode, n)}
               onOwnStay={tp.setOwnStay}
               flightHours={tp.flightHours}
-              onFlightHours={tp.setFlightHours}
+              onFlightHours={tp.planned ? null : tp.setFlightHours}
               baggage={tp.baggage}
               receiptId={RECEIPT_ID}
               receiptOpenKey={receiptKey}
@@ -1035,6 +1047,12 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     </>
   );
 
+  const stayOptions = offeredSleepGroups(offeredStayTiers(data?.meta)).flatMap((g) => {
+    const opts = optionsFor(g);
+    return (opts.length ? opts : g.offered.map((tier) => ({ tier, labelKey: g.labelKey })))
+      .map((o) => ({ tier: o.tier, label: opts.length ? `${t(g.labelKey)}: ${t(o.labelKey)}` : t(g.labelKey) }));
+  });
+
   // The stops' own controls on the trip page (T837): every change is the
   // planner's own setter, so each one is a step of the page's Undo.
   const stopEdit = {
@@ -1049,6 +1067,13 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     move: tp.moveStop,
     reorder: tp.reorderStop,
     remove: (i) => { setSelectedStop(null); tp.removeStop(i); },
+    swap: (i) => setSwapAt(i),
+    // T842: the ways a stop can sleep, as "Hotel: 3 star", the dataset's own.
+    stayOptions: stayOptions,
+    tripStayLabel: t(`stay.${tp.stayTier || 'home'}`),
+    setStay: tp.setStopStay,
+    addDayTrip: (i) => setDayTripAt(i),
+    setDayTrips: tp.setStopDayTrips,
     quoteDelta: tp.quoteDelta,
   };
 
@@ -1194,6 +1219,55 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
           quoteDelta={tp.quoteDelta}
           onSave={(v) => saveChip(chipOpen.kind, v)}
           onClose={() => { const el = chipOpen.ref?.current; setChipOpen(null); el?.focus?.(); }}
+        />
+      )}
+
+      {dayTripAt != null && tp.stopDetails[dayTripAt] && (
+        <DayTripPicker
+          stop={tp.stopDetails[dayTripAt]}
+          destinations={data?.destinations || NO_DESTINATIONS}
+          cost={(id, day) => tp.quoteDelta({
+            stops: tp.stops.map((s, j) => (j === dayTripAt ? { ...s, dayTrips: [...(s.dayTrips || []), { destinationId: id, day }] } : s)),
+          })}
+          onPick={(id, day) => {
+            const s = tp.stops[dayTripAt];
+            tp.setStopDayTrips(dayTripAt, [...(s.dayTrips || []), { destinationId: id, day }]);
+            setDayTripAt(null);
+          }}
+          onClose={() => setDayTripAt(null)}
+        />
+      )}
+
+      {swapAt != null && tp.stopDetails[swapAt] && (
+        <SwapCity
+          stop={tp.stopDetails[swapAt]}
+          destinations={data?.destinations || NO_DESTINATIONS}
+          exclude={tp.stops.map((s) => s.destinationId)}
+          delta={(id) => tp.quoteDelta({ stops: tp.stops.map((s, j) => (j === swapAt ? { ...s, destinationId: id } : s)) })}
+          onPick={(id) => { tp.swapStop(swapAt, id); setSelectedStop(null); setSwapAt(null); }}
+          onClose={() => setSwapAt(null)}
+        />
+      )}
+
+      {flightSheet && (
+        <ChangeFlight
+          dir={flightSheet}
+          cartaFlight={tp.priced?.cartaFlight}
+          answers={tp.liveAnswers}
+          prefs={tp.flightPrefs}
+          onPrefs={tp.setFlightPrefs}
+          onPick={tp.setFlightPick}
+          party={{ paying: tp.groupSize + tp.children, babies: tp.babies, bagKey: tp.baggage }}
+          onOwnFare={(dir) => {
+            setFlightSheet(null);
+            setTripTab('itinerary');
+            window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
+              const el = document.getElementById(dir === 'back' ? 'paid-back' : 'paid-out');
+              el?.scrollIntoView({ behavior: scrollBehavior(), block: 'center' });
+              el?.focus?.({ preventScroll: true });
+            }));
+          }}
+          onClose={() => setFlightSheet(null)}
         />
       )}
 

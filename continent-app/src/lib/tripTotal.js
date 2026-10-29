@@ -60,6 +60,7 @@ export function tripLines(priced) {
     lines.push({ key: 'between', eur: parts.between, kind: allOwn ? 'yours' : 'est', mixed: someOwn && !allOwn });
   }
   if (parts.car > 0) lines.push({ key: 'car', eur: parts.car, kind: 'est' });
+  if (parts.daytrips > 0) lines.push({ key: 'daytrips', eur: parts.daytrips, kind: 'est' });
   const bedRows = stayCosts.filter(Boolean);
   const bedsOwn = bedRows.length > 0 && bedRows.every((s) => s.ownAccom);
   lines.push({ key: 'beds', eur: parts.beds, kind: bedsOwn ? 'yours' : 'est', mixed: !bedsOwn && bedRows.some((s) => s.ownAccom) });

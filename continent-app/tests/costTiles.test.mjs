@@ -7,7 +7,7 @@ import assert from "node:assert/strict";
 import { costTiles, tileOfLine } from "../src/lib/price/tiles.js";
 
 const base = (over = {}) => ({
-  parts: { travel: 0, flights: 0, transfers: 0, drive: 0, between: 0, car: 0, beds: 0, days: 0, ...over.parts },
+  parts: { travel: 0, flights: 0, transfers: 0, drive: 0, between: 0, car: 0, daytrips: 0, beds: 0, days: 0, ...over.parts },
   flight: over.flight ?? { combinable: true },
   cartaFlight: over.cartaFlight ?? { out: { cost: { total: 1 } }, back: { cost: { total: 1 } } },
   travelSplit: over.travelSplit ?? { legacy: false, out: 0, back: 0 },
@@ -22,6 +22,7 @@ const SHAPES = {
   "drive trip with car hire": { flight: { driving: true }, cartaFlight: {}, parts: { drive: 182.37, car: 64.1, between: 12.5, beds: 640, days: 320.01 } },
   "three stops with hops": { parts: { flights: 233.33, transfers: 41, between: 87.65, beds: 1501.11, days: 702.29 } },
   "four people with children, cents everywhere": { parts: { flights: 999.99, transfers: 0.01, between: 33.33, car: 0, beds: 2222.22, days: 1111.11 } },
+  "a stop with day trips (T843)": { parts: { flights: 412.4, transfers: 38.2, between: 16.26, daytrips: 48.6, beds: 1197, days: 571.76 } },
 };
 
 for (const [name, shape] of Object.entries(SHAPES)) {
@@ -34,7 +35,7 @@ for (const [name, shape] of Object.entries(SHAPES)) {
     // Every part is in exactly one tile.
     const seen = tiles.flatMap((t) => t.parts);
     assert.equal(new Set(seen).size, seen.length);
-    assert.equal(seen.length, 8);
+    assert.equal(seen.length, 9);
   });
 }
 

@@ -12,12 +12,12 @@ import { tripIcs, downloadIcs } from '../lib/icsExport.js';
 import { buildTripShareUrl } from '../lib/shareLink.js';
 import { groundLinkFor } from '../lib/groundLinks.js';
 import { useI18n } from '../i18n/index.jsx';
-import { Button, Money, CostRow } from '../components/ui/index.js';
+import { Button, Money, CostRow, Field, IconButton } from '../components/ui/index.js';
 import { cityLabel } from '../lib/placeName.js';
 import { PlanTotal, PaidField } from './PlanTotal.jsx';
 import { scrollBehavior } from '../lib/motion.js';
 import { usePaywall } from '../hooks/usePaywall.jsx';
-import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon, MapPinIcon, RouteIcon, CalendarIcon, LinkIcon, ChevronDownIcon, CloseIcon, TicketIcon, LuggageIcon, PencilIcon, ExternalIcon, PlusIcon, GripIcon } from '../components/Icons.jsx';
+import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon, MapPinIcon, RouteIcon, CalendarIcon, LinkIcon, ChevronDownIcon, CloseIcon, TicketIcon, LuggageIcon, PencilIcon, ExternalIcon, PlusIcon, GripIcon, SwapIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { TRAVEL_MODE_LABEL, legLinks, stayDatesLink } from '../lib/transportLinks.js';
 import { SheetShell } from '../browse/SheetShell.jsx';
@@ -377,6 +377,45 @@ function ItinDriveRow({ leg, labelKey, city, from }) {
   );
 }
 
+/** A stop's day trips (T843, owner D4): each a day of the stay out and back,
+ *  with how long the way takes and what it costs there and back, and
+ *  "Add a day trip" for another. */
+function StopDayTrips({ i, s, trips, edit }) {
+  const { t } = useI18n();
+  const city = cityLabel(s.dest?.city || '') || t('itin.unknown');
+  const own = s.dayTrips || [];
+  const remove = (k) => edit.setDayTrips(i, own.filter((_, j) => j !== k));
+  return (
+    <div className="itin-daytrips">
+      {trips.length > 0 && (
+        <ul className="itin-daytrip-list" aria-label={t('tp.dt.list', { city })}>
+          {trips.map((d, k) => (
+            <li key={`${d.destinationId}-${d.day}-${k}`} className="itin-daytrip">
+              <span className="itin-daytrip-main">
+                <b>{t('tp.dt.row', { n: d.day, city: cityLabel(d.dest?.city || '') })}</b>
+                <small>
+                  {d.no_road
+                    ? t('tp.dt.noRoad')
+                    : [d.mode ? t(MODE_LABEL_KEY[d.mode] || 'trip.modeTrain') : '', d.hours ? fmtHours(d.hours) : ''].filter(Boolean).join(', ')}
+                </small>
+              </span>
+              {!d.no_road && d.eur_total > 0 && (
+                <span className="itin-daytrip-fig"><Money value={d.eur_total} est precision="cents" /><small>{t('tp.dt.both')}</small></span>
+              )}
+              <IconButton tone="plain" label={t('tp.dt.remove', { city: cityLabel(d.dest?.city || '') })} onClick={() => remove(k)}>
+                <CloseIcon size={16} />
+              </IconButton>
+            </li>
+          ))}
+        </ul>
+      )}
+      <Button variant="quiet" size="sm" iconStart={<PlusIcon size={16} />} onClick={() => edit.addDayTrip(i)}>
+        {t('tp.dt.add')}
+      </Button>
+    </div>
+  );
+}
+
 /** A stop's arrive and leave days as two tiles (Airbnb's check-in and
  *  check-out, owner board panel 4): the weekday over the day, the month. */
 function StayDays({ arrive, depart }) {
@@ -412,7 +451,9 @@ function StayDays({ arrive, depart }) {
  * until Apply.
  *
  *   edit   { stops, tripStart, tripEnd, setNights(i, n), applyNights(stops, end),
- *            move(i, dir), reorder(from, to), remove(i), quoteDelta(patch) }
+ *            move(i, dir), reorder(from, to), remove(i), swap(i), quoteDelta(patch),
+ *            stayOptions [{ tier, label }], tripStayLabel, setStay(i, tier|null),
+ *            addDayTrip(i), setDayTrips(i, list) }
  */
 function StopNights({ i, s, stopDetails, edit }) {
   const { t } = useI18n();
@@ -496,6 +537,8 @@ export function TripItinerary({
   // Move down, Remove) and the add-a-stop block; absent, the route only
   // shows the stops.
   stopEdit = null, addStopSlot = null,
+  // T840: Change flight for a way ('out' | 'back'), on the flight's row.
+  onChangeFlight = null,
   // T838: how the trip gets between its stops and a cheaper order, from the
   // old editor, under the route.
   routeExtra = null,
@@ -778,7 +821,12 @@ export function TripItinerary({
               <li className="itin-end" id="itin-fare-out">
                 <span className="itin-end-icon"><OwnTravelIcon mode={travelMode} size={16} /></span>
                 <div className="itin-end-main">
-                  <b>{outCodes ? <RouteCodes from={outCodes[0]} to={outCodes[1]} icon={false} /> : t('itin.secGetThere')}</b>
+                  <span className="itin-end-head">
+                    <b>{outCodes ? <RouteCodes from={outCodes[0]} to={outCodes[1]} icon={false} /> : t('itin.secGetThere')}</b>
+                    {onChangeFlight && showFlight('out') && (
+                      <Button variant="secondary" size="sm" className="itin-change-flight" onClick={() => onChangeFlight('out')}>{t('tp.fl.change')}</Button>
+                    )}
+                  </span>
                   <small>{thereText}</small>
                   {showFlight('out') && (
                     <ItinFlight
@@ -860,6 +908,20 @@ export function TripItinerary({
                         {stopEdit && <StopNights i={i} s={s} stopDetails={stopDetails} edit={stopEdit} />}
                       </div>
                       {stopEdit && <StayDays arrive={s.arriveDate} depart={s.departDate} />}
+                      {sc && stopEdit?.stayOptions?.length > 1 && (
+                        // T842 (owner D2): this stop sleeps its own way, or the trip's.
+                        <div className="itin-stay">
+                          <Field
+                            as="select"
+                            label={t('tp.stay.label', { city: cityLabel(s.dest?.city || '') })}
+                            value={s.stayTier || ''}
+                            onChange={(e) => stopEdit.setStay(i, e.target.value || null)}
+                          >
+                            <option value="">{t('tp.stay.trip', { stay: stopEdit.tripStayLabel })}</option>
+                            {stopEdit.stayOptions.map((o) => <option key={o.tier} value={o.tier}>{o.label}</option>)}
+                          </Field>
+                        </div>
+                      )}
                       {sc && (
                         <div className="itin-bed">
                           <dl className="costrows itin-bed-cost">
@@ -897,6 +959,9 @@ export function TripItinerary({
                           </span>
                         </div>
                       )}
+                      {stopEdit && stopEdit.addDayTrip && (
+                        <StopDayTrips i={i} s={s} edit={stopEdit} trips={(priced?.dayTrips || []).filter((d) => d.stopIndex === i)} />
+                      )}
                       {stopEdit && (
                         <div className="itin-stop-acts" role="group" aria-label={t('tp.stop.tools', { city: cityLabel(s.dest?.city || '') })}>
                           <Button variant="secondary" size="sm" className="itin-move is-up" iconStart={<ChevronDownIcon size={16} />} disabled={i === 0} onClick={() => stopEdit.move(i, -1)}>
@@ -905,6 +970,11 @@ export function TripItinerary({
                           <Button variant="secondary" size="sm" className="itin-move" iconStart={<ChevronDownIcon size={16} />} disabled={i === stopDetails.length - 1} onClick={() => stopEdit.move(i, 1)}>
                             {t('trip.moveDown')}
                           </Button>
+                          {stopEdit.swap && (
+                            <Button variant="secondary" size="sm" className="itin-swap" iconStart={<SwapIcon size={16} />} onClick={() => stopEdit.swap(i)}>
+                              {t('tp.sw.button')}
+                            </Button>
+                          )}
                           <span className="itin-stop-acts-gap" />
                           {stopDetails.length > 1 && (
                             <Button variant="quiet" size="sm" className="itin-stop-remove" iconStart={<CloseIcon size={14} />} onClick={() => stopEdit.remove(i)}>
@@ -981,7 +1051,12 @@ export function TripItinerary({
               <li className="itin-end">
                 <span className="itin-end-icon"><OwnTravelIcon mode={travelMode} size={16} /></span>
                 <div className="itin-end-main">
-                  <b>{backCodes ? <RouteCodes from={backCodes[0]} to={backCodes[1]} icon={false} /> : t('itin.secGetHome')}</b>
+                  <span className="itin-end-head">
+                    <b>{backCodes ? <RouteCodes from={backCodes[0]} to={backCodes[1]} icon={false} /> : t('itin.secGetHome')}</b>
+                    {onChangeFlight && showFlight('back') && (
+                      <Button variant="secondary" size="sm" className="itin-change-flight" onClick={() => onChangeFlight('back')}>{t('tp.fl.change')}</Button>
+                    )}
+                  </span>
                   <small>{homeText}</small>
                   {showFlight('back') && (
                     <ItinFlight
@@ -1032,7 +1107,13 @@ export function TripItinerary({
                       aria-label={t('itin.showDayOnMap', { n: d.dayNum, city: d.stop.dest?.city || '' })}>
                       <span className="itin-day-row-num">{t('itin.dayN', { n: d.dayNum })}</span>
                       <span className="itin-day-row-meta">
-                        <b>{d.stop.dest?.city}</b>
+                        {(() => {
+                          // T843: a day out names its place, from where.
+                          const out = (priced?.dayTrips || []).find((x) => x.stopIndex === d.stopIndex && x.day === d.dayOfStay);
+                          return out
+                            ? <b>{t('tp.dt.dayTo', { to: cityLabel(out.dest?.city || ''), from: cityLabel(d.stop.dest?.city || '') })}</b>
+                            : <b>{d.stop.dest?.city}</b>;
+                        })()}
                         {d.date ? <small>{fmtLong(d.date)}</small> : null}
                       </span>
                     </Button>
