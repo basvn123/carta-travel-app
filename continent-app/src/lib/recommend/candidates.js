@@ -55,11 +55,18 @@ export function splitNights(total, n) {
   });
 }
 
-/** The traveller's own month (1 to 12) from the setup, or null. */
-export function setupMonth(settings) {
+/**
+ * The traveller's own month (1 to 12) from the setup, or null. Of several
+ * months the one that comes round first from today (T815: November and
+ * January picked in October is November, as the planner reads it).
+ */
+export function setupMonth(settings, today) {
   const w = settings.when;
   if (w.mode === 'exact' && w.start) return Number(w.start.slice(5, 7));
-  if (w.mode === 'months' && w.months.length) return w.months[0];
+  if (w.mode === 'months' && w.months.length) {
+    const now = Number(todayIso(today).slice(5, 7));
+    return [...w.months].sort((a, b) => ((a - now + 12) % 12) - ((b - now + 12) % 12))[0];
+  }
   return null;
 }
 
@@ -254,7 +261,7 @@ export function buildCandidates(input) {
   const { data, countryInsights = null, layerIndexes = {}, settings, taste = null, origin = null, flights = null, getting = null, today } = input;
   const destinations = data?.destinations || {};
   const answers = quizAnswers(settings, spendFor(settings));
-  const fixedMonth = setupMonth(settings);
+  const fixedMonth = setupMonth(settings, today);
   const countries = matchCountries({
     destinations,
     insights: countryInsights,
