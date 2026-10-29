@@ -14,7 +14,10 @@ import { TripItinerary, TransferModePicker } from './TripItinerary.jsx';
 import { GuidedTripWizard } from './GuidedTripWizard.jsx';
 import { TripFlow } from './flow/TripFlow.jsx';
 import { TripSettingsSheet } from './flow/TripSettingsSheet.jsx';
-import { plannerStore } from './plannerStore.js';
+import { usePlannerStore } from './plannerStore.js';
+import { fromDraft } from './flow/tripSettings.js';
+import { TripSummary } from './TripSummary.jsx';
+import { PlanStage } from './flow/PlanStage.jsx';
 import { DaysPrompt } from './flow/DaysPrompt.jsx';
 import { PlanTotal } from './PlanTotal.jsx';
 import { TripTotalBar } from './TripTotalBar.jsx';
@@ -37,7 +40,7 @@ import { usePaywall } from '../hooks/usePaywall.jsx';
 import { fetchTripPlans } from '../auth/tripPlanStorage.js';
 import { useI18n } from '../i18n/index.jsx';
 import { loadAssignments, TRIP_DRAFT_PLAN_ID } from './dayPlanStore.js';
-import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BulbIcon, InfoIcon, CloseIcon, ChevronDownIcon, ExternalIcon, SettingsIcon } from '../components/Icons.jsx';
+import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BulbIcon, InfoIcon, CloseIcon, ChevronDownIcon, ExternalIcon, SettingsIcon, ArrowLeftIcon, BookmarkIcon } from '../components/Icons.jsx';
 import { IconButton, Money, Chip, ChipGroup } from '../components/ui/index.js';
 import { Stepper as KitStepper } from '../components/FilterControls.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
@@ -450,7 +453,7 @@ function KeepTripChoice({ device, account, onKeepDevice, onKeepAccount, onClose 
   );
 }
 
-export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, origin, onChangeOrigin, onPlanDay, openSharedTrip, onSharedTripConsumed, tripSeed = null, onTripSeedConsumed = null, stayTier = 'home', lifestyle = null, favorites = null, onOpenDest = null, onOpenCountry = null, onOpenTrip = null, onOpenJourney = null }) {
+export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, origin, onChangeOrigin, onPlanDay, openSharedTrip, onSharedTripConsumed, tripSeed = null, onTripSeedConsumed = null, stayTier = 'home', lifestyle = null, favorites = null, onOpenDest = null, onOpenCountry = null, onOpenTrip = null, onOpenJourney = null, onPlanHome = null }) {
   const { t, lang } = useI18n();
   const paywall = usePaywall();
   const countryInsights = useCountryInsights();
@@ -522,10 +525,18 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     setWizardOpen(false);
     setSelectedStop(null);
     setDrawer('half');
-    // T658: a trip the new flow made is asked about its days once.
-    if (onPlanDay && plannerStore.getState().settings?.trip?.created) setAskDays(true);
+    // T814 (owner 2026-10-29): Finish lands on the trip's summary, with no
+    // sheet over it; Plan your days is one of its buttons (T658 asked here).
+    setView('summary');
   };
   const [askDays, setAskDays] = useState(false);
+  // T814: a planned trip opens on its summary (photos, dates, the route, the
+  // total) and the full trip page is one button away. `editFrom` is where
+  // Done editing goes back to: the page the editor was opened from.
+  const [view, setView] = useState('summary');
+  const [editFrom, setEditFrom] = useState('full');
+  const draft = usePlannerStore();
+  const tripOrigin = fromDraft(draft).from?.name || '';
 
   const handleStartOver = () => {
     if (!window.confirm(t('trip.confirmStartOver'))) return;
@@ -548,7 +559,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     // The trip kept on this device, opened from My trips (T503, T500-a).
     if (typeof openPlanId === 'object' && openPlanId.device) {
       const stored = loadDeviceTrip();
-      if (stored) { tp.loadSnapshot(stored.trip, stored.key); setSelectedStop(null); setDeviceTrip(stored); }
+      if (stored) { tp.loadSnapshot(stored.trip, stored.key); setSelectedStop(null); setDeviceTrip(stored); setView('summary'); }
       onOpenPlanConsumed && onOpenPlanConsumed();
       return;
     }
@@ -557,6 +568,8 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     tp.loadPlan(planId).then(() => {
       tp.setPlanned(!editMode);
       setSelectedStop(null);
+      setView('summary');
+      setEditFrom('full');
     }).catch(() => {
       // A failed fetch used to leave the tab silently stuck; surface it instead.
       setSaveError(t('trip.openFailed'));
@@ -600,6 +613,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
       // window and gates the rest of itself on having one. A shared trip that
       // DOES carry dates is a finished plan and opens planned, as before.
       tp.setPlanned(!!d.tripStart);
+      setView('summary');
       setAwaitingDates(!d.tripStart);
       setSelectedStop(null);
     }
@@ -924,7 +938,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
       </Button>
       <MoreMenu
         items={[
-          { key: 'edit', className: 'trip-edit-btn', label: t('trip.editStops'), title: t('trip.editStopsTitle'), onClick: () => tp.setPlanned(false) },
+          { key: 'edit', className: 'trip-edit-btn', label: t('trip.editStops'), title: t('trip.editStopsTitle'), onClick: () => { setEditFrom('full'); tp.setPlanned(false); } },
           tp.stopDetails.length >= 3 && { key: 'replan', className: 'trip-plan-again-btn', label: t('trip.replanRoute'), title: t('trip.replanTitle'), onClick: () => tp.optimizeRoute() },
           { key: 'over', className: 'trip-startover-btn', label: t('trip.startOver'), title: t('trip.startOverTitle'), danger: true, onClick: handleStartOver },
         ]}
@@ -1400,6 +1414,13 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   const head = (
     <div className="trip-topcard">
       <h1 className="sr-only tab-h1">{tp.planLabel || t('trip.planYourTrip')}</h1>
+      {/* T814: the way back to the trip's summary. */}
+      {tp.planned && (
+        <Button variant="quiet" size="sm" className="trip-topcard-back" onClick={() => setView('summary')}
+          iconStart={<ArrowLeftIcon size={18} />}>
+          {t('trip.sum.summary')}
+        </Button>
+      )}
       <IconButton ref={settingsGearRef} tone="surface" className="trip-topcard-gear" label={t('pf.settings')} onClick={() => setSettingsOpen(true)}>
         <SettingsIcon size={18} />
       </IconButton>
@@ -1458,7 +1479,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
         <Button variant="secondary" className="trip-save-btn" onClick={handleSave} disabled={tp.saveState === 'saving'}>
           {tp.saveState === 'saving' ? t('trip.saving') : tp.saveState === 'saved' || keptHere ? t('trip.savedTick') : tp.planId ? t('trip.updateTrip') : t('trip.saveTrip')}
         </Button>
-        <Button variant="primary" className="trip-edit-done" onClick={() => { setAwaitingDates(false); tp.setPlanned(true); setSelectedStop(null); }}>
+        <Button variant="primary" className="trip-edit-done" onClick={() => { setAwaitingDates(false); tp.setPlanned(true); setSelectedStop(null); setView(editFrom); }}>
           {t('trip.doneEditing')}
         </Button>
       </div>
@@ -1471,6 +1492,92 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
       {listBody}
     </>
   );
+
+  // What lies over either view: the save notice, the trip settings, the day
+  // questions and the device-or-account choice.
+  const overlays = (
+    <>
+      {saveNotice && (
+        <div className="trip-save-toast" role="status">{saveNotice}</div>
+      )}
+
+      {settingsOpen && (
+        <TripSettingsSheet anchorRef={settingsGearRef} onClose={() => setSettingsOpen(false)} onSaved={applySettings} planned />
+      )}
+
+      {askDays && (
+        <DaysPrompt
+          skipAsk
+          onClose={() => setAskDays(false)}
+          onPlan={(how) => {
+            setAskDays(false);
+            // T674: Carta plans: the first day opens with the plan at work;
+            // planning yourself: the days overview with the ideas.
+            onPlanDay(how === 'carta'
+              ? { planId: tp.planId, stopIndex: 0, dayIndex: 0, autoFill: true }
+              : { planId: tp.planId, stopIndex: 0, dayIndex: 0, overview: true });
+          }}
+        />
+      )}
+
+      {keepChoice && (
+        <KeepTripChoice
+          device={keepChoice.stored}
+          account={keepChoice.account}
+          onKeepDevice={keepDeviceTrip}
+          onKeepAccount={keepAccountTrip}
+          onClose={() => setKeepChoice(null)}
+        />
+      )}
+    </>
+  );
+
+  // T814: the trip's summary, the page a planned trip lands on. The same
+  // card on the warm paper as the trip page before a route (TripHome).
+  if (tp.planned && view === 'summary' && tp.stopDetails.length > 0) {
+    const saved = tp.saveState === 'saved' || keptHere;
+    return (
+      <div className="trip-planner-screen trip-planner-blank">
+        <div className="pf is-trip">
+          <PlanStage sheetLabel={tp.planLabel || t('trip.planYourTrip')}>
+            {saveError && <ErrorBlock className="trip-footer-error" message={saveError} />}
+            <TripSummary
+              name={tp.planLabel}
+              tripStart={tp.tripStart}
+              tripEnd={tp.tripEnd}
+              party={{ adults: tp.groupSize, children: tp.children, babies: tp.babies }}
+              stopDetails={tp.stopDetails}
+              stayCosts={tp.stayCosts}
+              stayTier={tp.stayTier}
+              priced={tp.priced}
+              flight={tp.flight}
+              ownFlight={tp.ownFlight}
+              driveLegs={tp.driveLegs}
+              origin={tripOrigin}
+              onPlanHome={onPlanHome}
+              onDetails={() => { setView('full'); setSelectedStop(null); }}
+              onPlanDays={onPlanDay ? () => setAskDays(true) : null}
+              onEdit={() => { setEditFrom('summary'); setView('full'); tp.setPlanned(false); }}
+              bar={(
+                <>
+                  <IconButton tone="surface" className="ts-save" pressed={saved}
+                    label={tp.saveState === 'saving' ? t('trip.saving') : saved ? t('trip.savedTick') : tp.planId ? t('trip.updateTrip') : t('trip.saveTrip')}
+                    disabled={tp.saveState === 'saving'} onClick={handleSave}>
+                    <BookmarkIcon size={20} />
+                  </IconButton>
+                  <IconButton ref={settingsGearRef} tone="surface" label={t('pf.settings')} onClick={() => setSettingsOpen(true)}>
+                    <SettingsIcon size={20} />
+                  </IconButton>
+                </>
+              )}
+            />
+            {saveStatus}
+          </PlanStage>
+        </div>
+        {overlays}
+      </div>
+    );
+  }
 
   return (
     <div className={`trip-planner-screen plan-ws ${tp.planned ? 'is-planned' : 'is-editing'} ${isDesk ? 'is-desk' : 'is-phone'}`}>
@@ -1519,37 +1626,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
         </>
       )}
 
-      {saveNotice && (
-        <div className="trip-save-toast" role="status">{saveNotice}</div>
-      )}
-
-      {settingsOpen && (
-        <TripSettingsSheet anchorRef={settingsGearRef} onClose={() => setSettingsOpen(false)} onSaved={applySettings} planned />
-      )}
-
-      {askDays && (
-        <DaysPrompt
-          onClose={() => setAskDays(false)}
-          onPlan={(how) => {
-            setAskDays(false);
-            // T674: Carta plans: the first day opens with the plan at work;
-            // planning yourself: the days overview with the ideas.
-            onPlanDay(how === 'carta'
-              ? { planId: tp.planId, stopIndex: 0, dayIndex: 0, autoFill: true }
-              : { planId: tp.planId, stopIndex: 0, dayIndex: 0, overview: true });
-          }}
-        />
-      )}
-
-      {keepChoice && (
-        <KeepTripChoice
-          device={keepChoice.stored}
-          account={keepChoice.account}
-          onKeepDevice={keepDeviceTrip}
-          onKeepAccount={keepAccountTrip}
-          onClose={() => setKeepChoice(null)}
-        />
-      )}
+      {overlays}
 
       {wizardOpen && (
         <GuidedTripWizard data={data} stayTier={tp.stayTier} lifestyle={lifestyle} favorites={favorites} onOpenDest={onOpenDest} onOpenCountry={onOpenCountry} onOpenTrip={onOpenTrip} onCancel={() => setWizardOpen(false)} onComplete={handleWizardComplete} seed={tripSeed} onSeedConsumed={onTripSeedConsumed} />
