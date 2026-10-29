@@ -417,6 +417,16 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     grandTotal, tripHasCar,
   } = priced;
 
+  // What a change would do to the total (T836, T837): the trip priced with
+  // `patch` (stops, tripStart, tripEnd) against the same trip as it is, both
+  // on the swept fares, so new dates without a live answer yet compare like
+  // with like. Null when either has no total.
+  const quoteDelta = useCallback((patch) => {
+    const now = quoteTrip(tripState, { data, countryInsights })?.grandTotal;
+    const then = quoteTrip({ ...tripState, ...patch }, { data, countryInsights })?.grandTotal;
+    return Number.isFinite(now) && Number.isFinite(then) ? then - now : null;
+  }, [tripState, data, countryInsights]);
+
   const setLegMode = useCallback((index, mode) => {
     setLegModes((prev) => ({ ...prev, [index]: mode }));
   }, []);
@@ -607,6 +617,41 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, planLabel, planned,
     stayTier, ownStays, children, babies]);
 
+  // What the traveller can change on the trip page, for its Undo and Redo
+  // (T835): the snapshot's fields without the trip's identity and mode, plus
+  // the flights picked on Getting there.
+  const editState = useMemo(() => ({
+    tripStart, tripEnd, stops, groupSize, children, babies, transportPref, legModes, ownLegs, transferMode, pace,
+    baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, ownStays, flightHours, flightPicks,
+  }), [tripStart, tripEnd, stops, groupSize, children, babies, transportPref, legModes, ownLegs, transferMode, pace,
+    baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, ownStays, flightHours, flightPicks]);
+
+  // Put an editState back (an Undo or a Redo): the same fields, the trip's
+  // id, device key, name and mode untouched.
+  const restoreEdit = useCallback((d) => {
+    if (!d || !Array.isArray(d.stops)) return;
+    setTripStart(d.tripStart || '');
+    setTripEnd(d.tripEnd || '');
+    setStops(d.stops);
+    setGroupSize(d.groupSize || 2);
+    setChildren(d.children || 0);
+    setBabies(d.babies || 0);
+    setTransportPref(d.transportPref || 'auto');
+    setLegModes(d.legModes || {});
+    setOwnLegs(d.ownLegs || {});
+    setTransferModeRaw(normalizeTransferMode(d.transferMode));
+    setPace(d.pace || 'balanced');
+    setBaggage(d.baggage || PLANNER_BAG);
+    setFlightHoursRaw(d.flightHours || { out: 'any', back: 'any' });
+    setAnchorId(d.anchorId || null);
+    setAnchorOrigin(d.anchorOrigin || null);
+    setReturnAnchorId(d.returnAnchorId || null);
+    setOwnFlight(d.ownFlight || null);
+    setCarHome(d.carHome || null);
+    setOwnStays(d.ownStays || {});
+    setFlightPicks(d.flightPicks || null);
+  }, []);
+
   // Put a kept trip back on the planner (a device trip, T500).
   const loadSnapshot = useCallback((d, key = null) => {
     if (!d || !Array.isArray(d.stops)) return;
@@ -637,7 +682,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
   }, []);
 
   return {
-    snapshot, loadSnapshot, deviceKey, setDeviceKey,
+    snapshot, loadSnapshot, deviceKey, setDeviceKey, editState, restoreEdit, quoteDelta,
     tripStart, setTripStart, tripEnd, setTripEnd,
     stops, stopDetails, plannedNights, windowNights,
     groupSize, setGroupSize, children, babies, setParty,

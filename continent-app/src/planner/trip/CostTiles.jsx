@@ -5,11 +5,11 @@ import NotYet from '../../components/NotYet.jsx';
 import { BedIcon, CarIcon, DiningIcon, RouteIcon } from '../../components/Icons.jsx';
 import { PlaneIcon } from '../../components/TransportIcons.jsx';
 import { useAirlines, airlineName } from '../../lib/flights/useAirlines.js';
+import { AirlineMark } from '../../components/flights/Flights.jsx';
 import { costTiles } from '../../lib/price/tiles.js';
 import { formatMoney } from '../../lib/money.js';
 
 const LABEL = { travel: 'tp.tile.flights', around: 'tp.tile.around', stay: 'tp.tile.stay', food: 'tp.tile.food' };
-const PART_LABEL = { transfers: 'plan.lineTransfers', drive: 'plan.lineDrive', between: 'plan.lineBetween', car: 'plan.lineCar' };
 
 /**
  * The trip's cost in four tiles (T820, owner 2026-10-29): Flights (Driving on
@@ -18,12 +18,16 @@ const PART_LABEL = { transfers: 'plan.lineTransfers', drive: 'plan.lineDrive', b
  * one person. A tile is a button when onOpen is given: it opens that group
  * of the receipt (the Costs tab).
  *
+ * T839 (owner board panel 3, 2026-10-29: small and simple, icons, no
+ * sub-lines): a tile is its icon, its word and its figure; the flights tile
+ * adds the airlines' own marks, named for screen readers.
+ *
  *   priced   quoteTrip() output
  *   per      'group' | 'person'
  *   people   head count the person figure divides by
  *   nights   the trip's nights (a night and a day figure)
  */
-export function CostTiles({ priced, per = 'group', people = 1, nights = 0, onOpen = null, className = '' }) {
+export function CostTiles({ priced, per = 'group', people = 1, onOpen = null, className = '' }) {
   const { t, lang } = useI18n();
   const airlines = useAirlines();
   const tiles = costTiles(priced);
@@ -31,27 +35,9 @@ export function CostTiles({ priced, per = 'group', people = 1, nights = 0, onOpe
   const div = per === 'person' ? Math.max(1, people) : 1;
   const money = (v, p = 'whole') => formatMoney(v, { precision: p, locale: lang });
 
-  const sub = (tile) => {
-    if (tile.missing) return null;
-    if (tile.empty) return '';
-    if (tile.key === 'travel') {
-      if (tile.driving) return t('plan.lineDrive');
-      const cf = priced.cartaFlight || {};
-      const names = [...new Set(['out', 'back'].map((d) => cf[d]?.airline).filter(Boolean).map((c) => airlineName(airlines, c) || c))];
-      if (names.length) return names.join(', ');
-      return t('trip.sum.yourOwn');
-    }
-    if (tile.key === 'around') {
-      return tile.parts.filter((k) => (priced.parts[k] || 0) > 0).map((k) => t(PART_LABEL[k])).join(', ');
-    }
-    if (tile.key === 'stay') {
-      return nights > 0 ? t('tp.tile.nightsAt', { n: nights, price: money(tile.eur / nights / div) }) : '';
-    }
-    if (tile.key === 'food') {
-      return nights > 0 ? t('tp.tile.aDay', { price: money(tile.eur / nights / div) }) : '';
-    }
-    return '';
-  };
+  // The airlines on the trip's flights, each once (T839).
+  const cf = priced?.cartaFlight || {};
+  const carriers = [...new Set(['out', 'back'].map((d) => cf[d]?.airline).filter(Boolean))];
 
   const Icon = { travel: tiles[0].driving ? CarIcon : PlaneIcon, around: RouteIcon, stay: BedIcon, food: DiningIcon };
 
@@ -66,7 +52,12 @@ export function CostTiles({ priced, per = 'group', people = 1, nights = 0, onOpe
             <span className="ct-fig">
               {tile.missing ? <NotYet /> : tile.empty ? <span className="ct-none">{t('tp.tile.notNeeded')}</span> : <Money value={tile.eur / div} est precision="whole" />}
             </span>
-            <span className="ct-sub">{sub(tile)}</span>
+            {tile.key === 'travel' && !tile.driving && !tile.missing && carriers.length > 0 && (
+              <span className="ct-marks">
+                {carriers.map((c) => <AirlineMark key={c} code={c} size="sm" />)}
+                <span className="sr-only">{carriers.map((c) => airlineName(airlines, c) || c).join(', ')}</span>
+              </span>
+            )}
           </>
         );
         return (

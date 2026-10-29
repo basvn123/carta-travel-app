@@ -6,7 +6,7 @@ import { PartyEditor } from './PartyEditor.jsx';
 import { partyText } from '../lib/party.js';
 import { useSettledFigure } from '../lib/figureChange.js';
 import { formatMoney, formatEst } from '../lib/money.js';
-import { tripLines, tripReadiness } from '../lib/tripTotal.js';
+import { tripLines } from '../lib/tripTotal.js';
 import { costTiles, tileOfLine } from '../lib/price/tiles.js';
 import { useLifestyleLabel, useTotalDelta } from './planHooks.js';
 import { ChevronDownIcon, ChevronRightIcon, PlusIcon } from '../components/Icons.jsx';
@@ -110,7 +110,6 @@ export function PlanTotal({
   const figRef = useRef(null);
   useSettledFigure(figRef, total);
   const lines = tripLines(priced);
-  const ready = tripReadiness(priced);
   const partyObj = partyIn || priced?.party || { adults: priced?.groupSize || 1, children: 0, babies: 0 };
   const party = Math.max(1, (partyObj.adults || 0) + (partyObj.children || 0) + (partyObj.babies || 0));
   const hasTrip = Boolean(priced && priced.stopDetails.length);
@@ -201,14 +200,13 @@ export function PlanTotal({
         )}
       </dl>
 
-      {hasTrip && (ready.of > 0 || budget) && (
+      {/* T839: the budget line only; "N of M prices are your own" was a
+          method line (carta-design, Numbers and money). */}
+      {hasTrip && budget && (
         <p className="plan-total-note">
-          {ready.of > 0 && <span>{t('plan.readiness', { n: ready.yours, of: ready.of })}</span>}
-          {budget && (
-            <span className={budget.over ? 'is-over' : ''}>
-              {t(budget.over ? 'plan.budgetOver' : 'plan.budgetUnder', { price: formatEst(budget.gap, t('money.est'), { precision: 'whole', locale: lang }) })}
-            </span>
-          )}
+          <span className={budget.over ? 'is-over' : ''}>
+            {t(budget.over ? 'plan.budgetOver' : 'plan.budgetUnder', { price: formatEst(budget.gap, t('money.est'), { precision: 'whole', locale: lang }) })}
+          </span>
         </p>
       )}
 

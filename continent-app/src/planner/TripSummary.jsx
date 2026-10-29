@@ -1,4 +1,4 @@
-import React, { useState, useId } from 'react';
+import React, { useState, useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import './TripSummary.css';
 import { useI18n } from '../i18n/index.jsx';
@@ -6,7 +6,7 @@ import { Button, IconButton, Money, Segmented, Tabs } from '../components/ui/ind
 import {
   ArrowLeftIcon, BedIcon, CalendarIcon, CarIcon, FerryIcon, HomeIcon, MoonIcon, PersonIcon, PencilIcon,
   TrainIcon, BusIcon, SparkIcon, ChevronRightIcon, MapPinIcon, LifestyleIcon, SettingsIcon, ShareIcon,
-  ExpandIcon, ShrinkIcon,
+  ExpandIcon, ShrinkIcon, UndoIcon, RedoIcon,
 } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
@@ -22,6 +22,7 @@ import { cityLabel } from '../lib/placeName.js';
 import { useMedia } from '../browse/home/useHome.js';
 import { RecordMapDialog } from '../auth/mytrips/parts.jsx';
 import { CostTiles } from './trip/CostTiles.jsx';
+import { RouteCodes } from './trip/RouteCodes.jsx';
 import { useSettings } from '../components/SettingsLine.jsx';
 import { useLifestyleLabel } from './planHooks.js';
 
@@ -97,7 +98,7 @@ function OverviewRoute({ tripStart, tripEnd, stopDetails, stayCosts, stayTier, p
     const leg = priced?.cartaFlight?.[dir] || null;
     if (leg && !(paid[dir] > 0)) {
       return {
-        Icon: PlaneIcon, label, mark: leg.airline,
+        Icon: PlaneIcon, label, mark: leg.airline, from: leg.from, to: leg.to,
         line: airlineName(airlines, leg.airline) || t('trip.modeFly'),
         sub: [t('flight.times', { dep: leg.dep, arr: leg.arr }), fmtDate(leg.date || date, true)],
         eur: leg.cost?.total ?? null,
@@ -112,7 +113,9 @@ function OverviewRoute({ tripStart, tripEnd, stopDetails, stayCosts, stayTier, p
         eur: paid[dir] > 0 ? paid[dir] : (dir === 'out' && !split ? (flight?.cost_total || null) : null),
       };
     }
-    return { Icon: PlaneIcon, label, line: t('trip.modeFly'), notYet: true, sub: [date ? fmtDate(date, true) : ''], eur: null };
+    // A planned route without a fare yet still names its airports (T839).
+    const ends = flight?.combinable ? (dir === 'out' ? [flight.origin, flight.into_anchor] : [flight.out_anchor, flight.origin]) : [];
+    return { Icon: PlaneIcon, label, from: ends[0], to: ends[1], line: t('trip.modeFly'), notYet: true, sub: [date ? fmtDate(date, true) : ''], eur: null };
   };
   const fig = (eur) => (Number.isFinite(eur) && eur > 0 ? <Money value={eur / div} est precision="whole" /> : null);
 
@@ -132,12 +135,12 @@ function OverviewRoute({ tripStart, tripEnd, stopDetails, stayCosts, stayTier, p
       <li className="ts-node is-way">
         <span className="ts-mark" aria-hidden="true"><Icon size={18} /></span>
         <div className="ts-node-main">
-          <span className="ts-node-label">{w.label}</span>
+          <span className="ts-node-label">{w.from && w.to ? <RouteCodes from={w.from} to={w.to} icon={false} /> : w.label}</span>
           <span className="ts-node-title">
             {w.mark && <AirlineMark code={w.mark} size="sm" />}
             {w.line}
           </span>
-          <span className="ts-node-sub">{w.notYet ? <NotYet /> : w.sub.filter(Boolean).join(' · ')}</span>
+          <span className="ts-node-sub">{w.notYet ? <NotYet /> : w.sub.filter(Boolean).join(', ')}</span>
         </div>
         <span className="ts-node-fig">{w.notYet ? null : fig(w.eur)}</span>
       </li>
@@ -217,10 +220,15 @@ function MapCard({ map, mapFull, title }) {
  *   map, mapFull         the map for the card, and for full size
  *   onPlanHome()         All trips
  *   onPlanDays()         the day questions; absent hides Plan your days
- *   onEdit()             the stop editor
  *   onSettings()         the trip settings (dates, people, from); settingsRef anchors it
+ *   onChip(key, ref)     T836: a chip's own editor ('dates', 'people', 'from'),
+ *                        hung from the chip; absent, those chips open the settings
+ *   onRename(name)       the name in place (T836): a tap on it or its pencil
  *   onLifestyle()        the Lifestyle sheet; absent hides the chip
  *   onExport()           Share and export (the Itinerary's export block)
+ *   history              { canUndo, canRedo, undo, redo } (T835): from 1024 px
+ *                        Undo and Redo at the end of the tab row
+ *   onAddPaid()          T839: put in what was paid (the route's own fields)
  *   bar                  round buttons on the top row (save)
  *   footer               the saved line under the page
  */
@@ -228,14 +236,12 @@ export function TripSummary({
   name, tripStart, tripEnd, party, stopDetails, stayCosts = [], stayTier = 'home',
   priced, flight = null, ownFlight = null, driveLegs = null, origin = '',
   tab = 'overview', onTab, panels = {}, map = null, mapFull = null,
-  onPlanDays = null, onEdit, onPlanHome = null, onSettings = null, settingsRef = null,
-  onExport = null, bar = null, footer = null,
-  // T830: Edit trip in the same page. mode 'edit' puts the editor where the
-  // tabs' body goes, an Editing bar with Done where the tabs were, the name
-  // as a field, and keeps the photos, the chips and the map.
-  mode = 'view', editBody = null, onDone = null, onRename = null,
+  onPlanDays = null, onPlanHome = null, onSettings = null, settingsRef = null,
+  onExport = null, bar = null, footer = null, history = null, onChip = null, onAddPaid = null,
+  // T838: no edit mode. Every fact is changed where it is shown (the chips,
+  // the name, the route's stops), so the page has one layout.
+  onRename = null,
 }) {
-  const editing = mode === 'edit';
   const { t, lang } = useI18n();
   // The Lifestyle sets what the days cost (one .lifestyle-btn door): a chip
   // with the trip's own, opening the same sheet as everywhere else.
@@ -254,6 +260,15 @@ export function TripSummary({
   const planned = stopDetails.reduce((x, s) => x + (s.nights || 0), 0);
   const windowN = nightsBetween(tripStart, tripEnd);
   const nightsNote = windowN > 0 && planned !== windowN ? t('pf.home.nightsPlanned', { x: planned, n: windowN }) : '';
+  // T836: the chips' own editors hang from the chip that opened them.
+  const chipEls = useRef({});
+  const openChip = (key) => (onChip ? () => onChip(key, { current: chipEls.current[key] }) : onSettings);
+  // The name in place (T836): a field while it is being renamed.
+  const [naming, setNaming] = useState(null);
+  const commitName = () => {
+    if (naming != null && naming.trim() && naming.trim() !== name) onRename?.(naming.trim());
+    setNaming(null);
+  };
   const photos = stopDetails
     .filter((s) => s.dest?.image?.url)
     .map((s) => ({ url: s.dest.image.url, city: cityLabel(s.dest.city) }))
@@ -282,9 +297,9 @@ export function TripSummary({
 
   const chips = [
     { key: 'places', Icon: MapPinIcon, text: places.join(', ') || t('itin.unknown'), onClick: () => go('itinerary'), aria: t('tp.tab.itinerary') },
-    { key: 'dates', Icon: CalendarIcon, text: [dates || t('pf.when.unsure'), nightsNote].filter(Boolean).join(' · '), onClick: onSettings, aria: t('wizard.summaryDates') },
-    { key: 'people', Icon: PersonIcon, text: people, onClick: onSettings, aria: t('settings.party') },
-    origin && { key: 'from', Icon: HomeIcon, text: origin, onClick: onSettings, aria: t('pf.settings') },
+    { key: 'dates', Icon: CalendarIcon, text: [dates || t('pf.when.unsure'), nightsNote].filter(Boolean).join(', '), onClick: openChip('dates'), aria: t('wizard.summaryDates') },
+    { key: 'people', Icon: PersonIcon, text: people, onClick: openChip('people'), aria: t('settings.party') },
+    origin && { key: 'from', Icon: HomeIcon, text: origin, onClick: openChip('from'), aria: t('tp.ed.fromTitle') },
     onLifestyle && lifestyle && { key: 'lifestyle', Icon: LifestyleIcon, text: lifestyle, onClick: onLifestyle, aria: t('settings.lifestyle') },
   ].filter(Boolean);
 
@@ -295,9 +310,6 @@ export function TripSummary({
           {t('trip.planYourDays')}
         </Button>
       )}
-      <Button variant="secondary" className="tpg-tool" iconStart={<PencilIcon size={18} />} onClick={onEdit}>
-        {t('trip.sum.edit')}
-      </Button>
       {onSettings && (
         <Button variant="secondary" className="tpg-tool" iconStart={<SettingsIcon size={18} />} onClick={onSettings}>
           {t('pf.settings')}
@@ -326,14 +338,6 @@ export function TripSummary({
             <span className="tpg-band-n" data-total={Number.isFinite(total) ? String(total) : ''}>
               {Number.isFinite(shown) ? <Money value={shown} est precision="cents" /> : <NotYet />}
             </span>
-            {Number.isFinite(total) && (
-              <span className="tpg-band-sub">
-                {[
-                  n > 1 && per === 'group' && Number.isFinite(perPerson) ? t('plan.aPerson', { price: formatMoney(perPerson, { precision: 'cents', locale: lang }) }) : '',
-                  planned > 0 ? t('tp.aDay', { price: formatMoney(shown / planned, { precision: 'whole', locale: lang }) }) : '',
-                ].filter(Boolean).join(' · ')}
-              </span>
-            )}
           </div>
           {n > 1 && (
             <Segmented
@@ -345,10 +349,17 @@ export function TripSummary({
             />
           )}
         </div>
-        <CostTiles priced={priced} per={per} people={n} nights={planned} onOpen={(k) => go('costs', `tp-cost-${k}`)} />
-        <Button variant="quiet" size="sm" className="tpg-band-more" iconEnd={<ChevronRightIcon size={16} />} onClick={() => go('costs')}>
-          {t('tp.breakdown')}
-        </Button>
+        <CostTiles priced={priced} per={per} people={n} onOpen={(k) => go('costs', `tp-cost-${k}`)} />
+        <div className="tpg-band-acts">
+          <Button variant="quiet" size="sm" className="tpg-band-more" iconEnd={<ChevronRightIcon size={16} />} onClick={() => go('costs')}>
+            {t('tp.breakdown')}
+          </Button>
+          {onAddPaid && (
+            <Button variant="quiet" size="sm" className="tpg-band-paid" iconStart={<PencilIcon size={16} />} onClick={onAddPaid}>
+              {t('tp.addPaid')}
+            </Button>
+          )}
+        </div>
       </section>
 
       {!wide && mapCard}
@@ -365,12 +376,10 @@ export function TripSummary({
     </div>
   );
 
-  // Editing on a phone: the map card over the editor, so a stop added or
-  // moved shows on the route at once.
-  const body = editing ? <>{!wide && mapCard}{editBody}</> : tab === 'overview' ? overview : (panels[tab] || null);
+  const body = tab === 'overview' ? overview : (panels[tab] || null);
 
   return (
-    <div className={`tpg is-${editing ? 'edit' : tab}${wide ? '' : ' has-dock'}`}>
+    <div className={`tpg is-${tab}${wide ? '' : ' has-dock'}`}>
       <div className="tpg-top">
         {onPlanHome ? (
           <Button variant="quiet" size="sm" className="ts-back" iconStart={<ArrowLeftIcon size={18} />} onClick={onPlanHome}>
@@ -397,25 +406,39 @@ export function TripSummary({
       )}
 
       <header className="tpg-head">
-        {editing && onRename ? (
+        {naming != null ? (
           <>
             <h1 className="sr-only">{name || t('itin.myTrip')}</h1>
             <input
               className="tpg-name tpg-name-input"
-              value={name}
-              onChange={(e) => onRename(e.target.value)}
-              placeholder={t('trip.namePlaceholder')}
+              value={naming}
+              autoFocus
+              maxLength={80}
+              onChange={(e) => setNaming(e.target.value)}
+              onBlur={commitName}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') { e.preventDefault(); commitName(); }
+                if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); setNaming(null); }
+              }}
               aria-label={t('trip.nameAria')}
             />
           </>
         ) : (
-          <h1 className="pf-title tpg-name" tabIndex={-1}>{name || t('itin.myTrip')}</h1>
+          <div className="tpg-name-row">
+            <h1 className="pf-title tpg-name" tabIndex={-1}>{name || t('itin.myTrip')}</h1>
+            {onRename && (
+              <IconButton tone="plain" className="tpg-rename" label={t('tp.rename')} onClick={() => setNaming(name || '')}>
+                <PencilIcon size={18} />
+              </IconButton>
+            )}
+          </div>
         )}
         <ul className="tpg-chips" aria-label={t('tp.tripFacts')}>
           {chips.map(({ key, Icon, text, onClick, aria }) => (
             <li key={key}>
               {onClick ? (
-                <button type="button" className="tpg-chip" onClick={onClick} aria-label={`${aria}: ${text}`} data-chip={key}>
+                <button type="button" className="tpg-chip" onClick={onClick} aria-label={`${aria}: ${text}`} data-chip={key}
+                  ref={(el) => { chipEls.current[key] = el; }} aria-haspopup={['dates', 'people', 'from'].includes(key) && onChip ? 'dialog' : undefined}>
                   <Icon size={16} aria-hidden="true" /><span>{text}</span>
                 </button>
               ) : (
@@ -426,38 +449,29 @@ export function TripSummary({
         </ul>
       </header>
 
-      {editing ? (
-        <div className="tpg-editbar" id={`${uid}-tabs`}>
-          <span className="tpg-editbar-lbl"><PencilIcon size={16} aria-hidden="true" />{t('tp.editing')}</span>
-          {onDone && wide && (
-            <Button variant="primary" size="sm" className="tpg-done trip-edit-done" onClick={onDone}>{t('trip.doneEditing')}</Button>
-          )}
-        </div>
-      ) : (
-        <div className="tpg-tabs" id={`${uid}-tabs`}>
-          <Tabs label={t('tp.tabsLabel')} tabs={tabs} value={tab} onChange={(id) => onTab?.(id)} panelId={`${uid}-panel`} />
-        </div>
-      )}
+      <div className="tpg-tabs" id={`${uid}-tabs`}>
+        <Tabs label={t('tp.tabsLabel')} tabs={tabs} value={tab} onChange={(id) => onTab?.(id)} panelId={`${uid}-panel`} />
+        {history && wide && (
+          <span className="tpg-history">
+            <IconButton tone="plain" label={t('tp.undo.undoAria')} disabled={!history.canUndo} onClick={history.undo} data-testid="tpg-undo">
+              <UndoIcon size={20} />
+            </IconButton>
+            <IconButton tone="plain" label={t('tp.undo.redoAria')} disabled={!history.canRedo} onClick={history.redo} data-testid="tpg-redo">
+              <RedoIcon size={20} />
+            </IconButton>
+          </span>
+        )}
+      </div>
 
       <div className="tpg-body">
-        <div className="tpg-main" role={editing ? undefined : 'tabpanel'} id={`${uid}-panel`} aria-label={editing ? t('tp.editing') : tabs.find((x) => x.id === tab)?.label}>
+        <div className="tpg-main" role="tabpanel" id={`${uid}-panel`} aria-label={tabs.find((x) => x.id === tab)?.label}>
           {body}
           {footer}
         </div>
         {wide && (
           <aside className="tpg-side" aria-label={t('tp.sideLabel')}>
             {mapCard}
-            {editing ? (
-              <div className="tpg-side-total" data-testid="ts-total">
-                <span className="tpg-band-lbl">{t('receipt.total', { people: n === 1 ? t('receipt.onePerson') : t('receipt.nPeople', { n }) })}</span>
-                <span className="tpg-band-n" data-total={Number.isFinite(total) ? String(total) : ''}>
-                  {Number.isFinite(total) ? <Money value={total} est precision="cents" /> : <NotYet />}
-                </span>
-                {n > 1 && Number.isFinite(perPerson) && (
-                  <span className="tpg-band-sub">{t('plan.aPerson', { price: formatMoney(perPerson, { precision: 'cents', locale: lang }) })}</span>
-                )}
-              </div>
-            ) : tools}
+            {tools}
           </aside>
         )}
       </div>
@@ -475,17 +489,9 @@ export function TripSummary({
               {per === 'person' ? t('tp.totalAPerson') : t('receipt.total', { people: n === 1 ? t('receipt.onePerson') : t('receipt.nPeople', { n }) })}
             </span>
           </button>
-          {editing && onDone ? (
-            <Button variant="primary" className="tpg-dock-go trip-edit-done" onClick={onDone}>
-              {t('trip.doneEditing')}
-            </Button>
-          ) : onPlanDays ? (
+          {onPlanDays && (
             <Button variant="primary" className="tpg-dock-go" iconStart={<SparkIcon size={16} />} onClick={onPlanDays}>
               {t('trip.planYourDays')}
-            </Button>
-          ) : (
-            <Button variant="primary" className="tpg-dock-go" iconStart={<PencilIcon size={16} />} onClick={onEdit}>
-              {t('trip.sum.edit')}
             </Button>
           )}
         </div>

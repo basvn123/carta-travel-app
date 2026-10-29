@@ -118,6 +118,19 @@
 
 .tpg-tabs { scroll-margin-top: var(--space-4); }
 .tpg-tabs .ui-tabs { overflow-x: auto; scrollbar-width: none; }
+/* T835: Undo and Redo at the end of the tab row from 1024 px, on the tabs'
+   own hairline. Below that they are in the top row's More menu. */
+.tpg-tabs:has(.tpg-history) { display: flex; align-items: flex-end; gap: var(--space-3); }
+.tpg-tabs:has(.tpg-history) .ui-tabs { flex: 1; min-width: 0; }
+.tpg-history { display: flex; gap: var(--space-1); flex: none; padding-bottom: var(--space-1); }
+
+/* T835: the Undo message clears the dock (a tap high, with its padding and
+   its rule) under 1024 px, where the dock sits over the bottom nav. */
+@media (max-width: 1023px) {
+  body:has(.tpg-dock) .bottom-slot {
+    bottom: calc(var(--bottom-nav-h) + var(--tap) + 2 * var(--space-2) + 1px + var(--space-3));
+  }
+}
 
 /* ---- The body: one column, then the side column from 1024 px ---- */
 .tpg-body { display: flex; flex-direction: column; gap: var(--space-5); min-width: 0; }
@@ -160,7 +173,7 @@
   font-variant-numeric: tabular-nums;
 }
 .tpg-band-sub { font-size: var(--text-label); color: var(--text-2); font-variant-numeric: tabular-nums; }
-.tpg-band-more.btn { align-self: flex-start; margin-left: calc(-1 * var(--space-2)); }
+.tpg-band-acts { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); margin-left: calc(-1 * var(--space-2)); }
 
 /* The four tiles (concept C): 4 across, 2 by 2 on a phone. */
 .ct {
@@ -179,7 +192,7 @@
   align-items: flex-start;
   gap: 2px;
   width: 100%;
-  min-height: 96px;
+  min-height: 84px;
   padding: var(--space-3);
   border: 1px solid var(--border-soft);
   border-radius: var(--radius-control);
@@ -195,13 +208,8 @@ button.ct-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: 2
 .ct-label svg { flex: none; color: var(--text-3); }
 .ct-fig { margin-top: var(--space-1); font-size: var(--text-lead); font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
 .ct-none { font-size: var(--text-label); font-weight: 500; color: var(--text-3); }
-.ct-sub {
-  font-size: var(--text-caption);
-  color: var(--text-2);
-  line-height: 1.35;
-  overflow-wrap: anywhere;
-  font-variant-numeric: tabular-nums;
-}
+/* T839: the flights tile shows the airlines' marks instead of a sub-line. */
+.ct-marks { display: inline-flex; align-items: center; gap: var(--space-1); margin-top: var(--space-1); }
 .ct-tile.is-empty .ct-label svg { opacity: 0.6; }
 
 /* ---- The route: one grammar for every row ---- */
@@ -335,21 +343,7 @@ button.ct-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: 2
 .tpg-dock-lbl { font-size: var(--text-caption); color: var(--text-2); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--border); }
 .tpg-dock-go.btn { flex: none; }
 
-/* ---- T830: Edit trip in the same page ----
-   The Editing bar sits where the tabs were, on the same hairline; the
-   editor's blocks take the body's column without a gutter of their own (the
-   page has one); the side column holds the map and the total. */
-.tpg-editbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  min-height: 48px;
-  border-bottom: 1px solid var(--border);
-  scroll-margin-top: var(--space-4);
-}
-.tpg-editbar-lbl { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--text-body); font-weight: 600; color: var(--text); }
-.tpg-editbar-lbl svg { color: var(--action); }
+/* ---- The name as a field (T830; T836 renames in place) ---- */
 .tpg-name-input {
   width: 100%;
   min-height: var(--tap);
@@ -362,22 +356,103 @@ button.ct-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: 2
   font-weight: 700;
 }
 .tpg-name-input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-color: var(--action); }
-.tpg-side-total {
+/* T838: the old editor's between-stops and cheaper-order blocks under the route. */
+.itin-route-extra { display: flex; flex-direction: column; gap: var(--space-3); margin-top: var(--space-4); }
+.itin-route-extra .trip-block { margin: 0; }
+
+/* ---- T836: the name in place and the chips' own editors ----
+   The name keeps the heading's size; its pencil is a plain icon button on
+   the name's line. An editor is a column of its controls with the one
+   primary under the last; the balance rows sit under a short question. */
+/* A chip's editor opens with the chip near the top, so it has room under it. */
+.tpg-chip { scroll-margin-top: calc(var(--space-8) + var(--space-5)); }
+.tpg-name-row { display: flex; align-items: center; gap: var(--space-1); min-width: 0; }
+.tpg-name-row .tpg-name { min-width: 0; }
+.tpg-rename { flex: none; }
+.tpe { display: flex; flex-direction: column; gap: var(--space-4); }
+.tpe .pf-from { max-height: min(52vh, 420px); overflow: auto; }
+.tpb { display: flex; flex-direction: column; gap: var(--space-2); }
+.tpb-q { margin: 0; font-size: var(--text-body); color: var(--text-2); line-height: var(--leading-body); }
+
+/* ---- T837: a stop's own controls on the route ----
+   The stop is one bordered object: its head (grip on a pointer, the stop,
+   the nights stepper), the arrive and leave tiles, the bed, then Move up,
+   Move down and Remove. Nothing here needs a drag: the grip only repeats
+   Move up and Move down for a mouse. */
+.itin-stopcard.is-editable {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding: var(--space-4);
+  border: 1px solid var(--border);
   border-radius: var(--radius-card);
   background: var(--surface);
-  border: 1px solid var(--border-soft);
+  overflow: hidden;
 }
-.tpg.is-edit .tpg-main > .trip-block,
-.tpg.is-edit .tpg-main > .trip-nights-summary,
-.tpg.is-edit .tpg-main > .trip-stops,
-.tpg.is-edit .tpg-main > * { padding-inline: 0; margin-inline: 0; }
-.tpg.is-edit .tpg-main .trip-block:first-child { margin-top: 0; }
-.tpg.is-edit .tpg-main .trip-suggest-row { margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter); scroll-padding-inline: var(--gutter); scroll-snap-type: x mandatory; }
-@media (min-width: 1024px) {
-  .tpg.is-edit .tpg-main .trip-suggest-row { margin-inline: 0; padding-inline: 0; scroll-padding-inline: 0; }
+.itin-stopcard.is-editable.active { border-color: var(--select-border); }
+.itin-stopcard.is-dragging { opacity: 0.5; }
+/* The stop keeps room for its name: on a phone the stepper wraps under it. */
+.itin-stopcard.is-editable .itin-stop { border: 0; background: none; flex: 1 1 200px; min-width: 0; padding: 0; }
+.itin-stop-top > .itin-nights { margin-left: auto; }
+.itin-stop-top {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
 }
-.tpg.is-edit .tpg-main .trip-suggest-row > * { scroll-snap-align: start; }
+.itin-grip { display: none; }
+@media (hover: hover) and (pointer: fine) {
+  .itin-grip { display: grid; place-items: center; width: 20px; color: var(--text-3); cursor: grab; }
+  .itin-grip:active { cursor: grabbing; }
+}
+.itin-nights { display: inline-flex; align-items: center; gap: var(--space-2); flex: none; }
+.itin-nights-lbl { font-size: var(--text-label); color: var(--text-2); }
+.itin-ios {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  padding: 0 var(--space-4) var(--space-3);
+}
+.itin-io {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-control);
+  background: var(--surface-sunken);
+}
+.itin-io-day { display: flex; flex-direction: column; align-items: center; line-height: 1.1; font-size: var(--text-micro); color: var(--text-2); }
+.itin-io-day b { font-size: var(--text-lead); color: var(--text); font-variant-numeric: tabular-nums; }
+.itin-io-text { display: flex; flex-direction: column; min-width: 0; font-size: var(--text-caption); color: var(--text-2); }
+.itin-io-text b { font-size: var(--text-label); font-weight: 600; color: var(--text); }
+.itin-balance {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3);
+  border-radius: var(--radius-control);
+  background: var(--surface-sunken);
+}
+.itin-balance-acts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.itin-stop-acts {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--border-soft);
+}
+.itin-stop-acts-gap { flex: 1; }
+.itin-move.is-up svg { transform: rotate(180deg); }
+.itin-stop-remove.btn { color: var(--danger); }
+.itin-add { display: flex; flex-direction: column; gap: var(--space-3); }
+.itin-add-body { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-card); background: var(--surface); }
+.itin-add-body > .btn { align-self: flex-start; }
+.itin-add > .btn { align-self: flex-start; }
+/* The route named by its airports (owner board panel 8). */
+.rcodes { display: inline-flex; align-items: center; gap: var(--space-1); font-weight: 600; letter-spacing: 0; }
+.rcodes svg { color: var(--text-2); }
+@media (max-width: 480px) {
+  .itin-stop-acts .btn { padding-inline: var(--space-2); }
+}

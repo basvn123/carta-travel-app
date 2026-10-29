@@ -17,13 +17,18 @@ import { cityLabel } from '../lib/placeName.js';
 import { PlanTotal, PaidField } from './PlanTotal.jsx';
 import { scrollBehavior } from '../lib/motion.js';
 import { usePaywall } from '../hooks/usePaywall.jsx';
-import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon, MapPinIcon, RouteIcon, CalendarIcon, LinkIcon, ChevronDownIcon, CloseIcon, TicketIcon, LuggageIcon, PencilIcon, ExternalIcon } from '../components/Icons.jsx';
+import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon, MapPinIcon, RouteIcon, CalendarIcon, LinkIcon, ChevronDownIcon, CloseIcon, TicketIcon, LuggageIcon, PencilIcon, ExternalIcon, PlusIcon, GripIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { TRAVEL_MODE_LABEL, legLinks, stayDatesLink } from '../lib/transportLinks.js';
 import { SheetShell } from '../browse/SheetShell.jsx';
 import { FlightRow, HoursFilter } from '../components/flights/Flights.jsx';
 import { useAirlines, airlineName } from '../lib/flights/useAirlines.js';
 import { useLiveFlights, liveKey } from '../lib/flights/useLiveFlights.js';
+import { Stepper as KitStepper } from '../components/FilterControls.jsx';
+import { useBcp47 } from './flow/flowHooks.js';
+import { nightsOptions, applyNights } from '../lib/tripBalance.js';
+import { Balance } from './trip/Balance.jsx';
+import { RouteCodes } from './trip/RouteCodes.jsx';
 
 // How the traveller told us they get there and home. Carta prices none of it,
 // so these two helpers exist to say what THEY said rather than assume a plane:
@@ -372,6 +377,100 @@ function ItinDriveRow({ leg, labelKey, city, from }) {
   );
 }
 
+/** A stop's arrive and leave days as two tiles (Airbnb's check-in and
+ *  check-out, owner board panel 4): the weekday over the day, the month. */
+function StayDays({ arrive, depart }) {
+  const { t } = useI18n();
+  const bcp47 = useBcp47();
+  if (!arrive || !depart) return null;
+  const part = (iso, opt) => new Intl.DateTimeFormat(bcp47, { ...opt, timeZone: 'UTC' }).format(new Date(`${iso}T00:00:00Z`));
+  const tile = (iso, label) => (
+    <div className="itin-io">
+      <span className="itin-io-day" aria-hidden="true">
+        <span>{part(iso, { weekday: 'short' })}</span>
+        <b>{part(iso, { day: 'numeric' })}</b>
+      </span>
+      <span className="itin-io-text" aria-hidden="true">
+        <b>{label}</b>
+        <span>{part(iso, { month: 'short' })}</span>
+      </span>
+      <span className="sr-only">{`${label}: ${fmtLong(iso)}`}</span>
+    </div>
+  );
+  return (
+    <div className="itin-ios">
+      {tile(arrive, t('tp.stop.arrive'))}
+      {tile(depart, t('tp.stop.leave'))}
+    </div>
+  );
+}
+
+/**
+ * A stop's nights on the trip page (T837, owner board panels 4 and 5): the
+ * stepper, and inside fixed dates the question of where a changed night
+ * comes from, each choice with what it does to the total. Nothing moves
+ * until Apply.
+ *
+ *   edit   { stops, tripStart, tripEnd, setNights(i, n), applyNights(stops, end),
+ *            move(i, dir), reorder(from, to), remove(i), quoteDelta(patch) }
+ */
+function StopNights({ i, s, stopDetails, edit }) {
+  const { t } = useI18n();
+  const [pending, setPending] = useState(null);
+  const [choice, setChoice] = useState(0);
+  const city = cityLabel(s.dest?.city || '') || t('itin.unknown');
+  const options = pending == null ? [] : nightsOptions(edit.stops, i, pending, edit.tripStart, edit.tripEnd);
+  const onChange = (n) => {
+    if (!edit.tripStart || !edit.tripEnd) { edit.setNights(i, n); return; }
+    setPending(n === s.nights ? null : n);
+    setChoice(0);
+  };
+  const apply = () => {
+    const o = options[choice];
+    edit.applyNights(applyNights(edit.stops, o, { index: i, nights: pending }), o?.kind === 'end' ? o.end : null);
+    setPending(null);
+  };
+  const deltaOf = (o) => edit.quoteDelta?.({
+    stops: applyNights(edit.stops, o, { index: i, nights: pending }),
+    ...(o.kind === 'end' ? { tripEnd: o.end } : {}),
+  });
+  const shown = pending ?? s.nights;
+  const nights = (n) => t(n === 1 ? 'plan.nightsOne' : 'plan.nightsMany', { n });
+  return (
+    <>
+      <span className="itin-nights">
+        <KitStepper
+          value={shown}
+          min={1}
+          max={60}
+          onChange={onChange}
+          ariaLabel={t('tp.stop.nightsAria', { city, nights: nights(shown) })}
+          decLabel={t('tp.stop.fewer', { city })}
+          incLabel={t('tp.stop.more', { city })}
+        />
+        <span className="itin-nights-lbl" aria-hidden="true">{t(shown === 1 ? 'tp.stop.night' : 'tp.stop.nights')}</span>
+      </span>
+      {pending != null && options.length > 0 && (
+        <div className="itin-balance">
+          <Balance
+            question={t(pending > s.nights ? 'tp.bal.moreQ' : 'tp.bal.lessQ', { city, nights: nights(pending) })}
+            options={options}
+            more={pending > s.nights}
+            stops={stopDetails}
+            value={choice}
+            onPick={setChoice}
+            delta={edit.quoteDelta ? deltaOf : null}
+          />
+          <div className="itin-balance-acts">
+            <Button variant="primary" size="sm" onClick={apply}>{t('tp.bal.apply')}</Button>
+            <Button variant="quiet" size="sm" onClick={() => setPending(null)}>{t('tp.bal.cancel')}</Button>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 export function TripItinerary({
   dayPlan, stopDetails, grandTotal, groupSize, flight, label = '',
   legs = [], setLegMode = null, anchorLegs = null, flightTransfer = null,
@@ -393,7 +492,16 @@ export function TripItinerary({
   // The trip page's tabs (T821) each show a part: 'receipt', 'route',
   // 'days', 'tools', 'export', 'before'. Absent shows every part.
   sections = null, receiptGrouped = false,
+  // T837: the stops' own controls on the trip page (StopNights, Move up,
+  // Move down, Remove) and the add-a-stop block; absent, the route only
+  // shows the stops.
+  stopEdit = null, addStopSlot = null,
+  // T838: how the trip gets between its stops and a cheaper order, from the
+  // old editor, under the route.
+  routeExtra = null,
 }) {
+  const [adding, setAdding] = useState(false);
+  const [dragFrom, setDragFrom] = useState(null);
   const show = (k) => !sections || sections.includes(k);
   // Whether a day already has Day-planner picks (drives "Plan" vs "Modify").
   const dayPlanned = (d) => Boolean(isDayPlanned && isDayPlanned(d.stopIndex, d.dayOfStay));
@@ -568,19 +676,29 @@ export function TripItinerary({
   const outIata = flightTransfer ? stopDetails[stopDetails.length - 1]?.dest?.anchor_airport : null;
   const flyIn = inIata ? t('plan.howTo', { how: ownTravelHow(flight, t), place: inIata }) : '';
   const flyOut = outIata ? t('plan.howFrom', { how: ownTravelHow(flight, t), place: outIata }) : '';
+  // The airports each way (owner board panel 8: the route names the flight,
+  // BRU to SZG, everywhere): Carta's own flight, else the planned route.
+  const codes = (dir) => {
+    const leg = showFlight(dir) ? cartaFlight?.[dir] : null;
+    if (leg?.from && leg?.to) return [leg.from, leg.to];
+    if (!flight?.driving && flight?.combinable) return dir === 'out' ? [flight.origin, flight.into_anchor] : [flight.out_anchor, flight.origin];
+    return null;
+  };
+  const outCodes = codes('out');
+  const backCodes = codes('back');
   const thereText = showFlight('out') && cartaFlight.out
     ? legText(cartaFlight.out)
     : flight?.driving
     ? [driveLegs?.from, driveLegs?.out ? t('trip.driveSub', { km: driveLegs.out.road_km, hours: fmtHours(driveLegs.out.hours) }) : ''].filter(Boolean).join(', ')
     : flight?.combinable
-      ? `${t('itin.fromTo', { a: flight.origin, b: flight.into_anchor })}, ${fmtLong(stopDetails[0]?.arriveDate)}`
+      ? fmtLong(stopDetails[0]?.arriveDate)
       : [flyIn || ownTravelHow(flight, t), flyIn ? '' : firstCity, fmtLong(flight?.out_date || stopDetails[0]?.arriveDate)].filter(Boolean).join(', ');
   const homeText = showFlight('back') && cartaFlight.back
     ? legText(cartaFlight.back)
     : flight?.driving
     ? (driveLegs?.home ? t('trip.driveSub', { km: driveLegs.home.road_km, hours: fmtHours(driveLegs.home.hours) }) : '')
     : flight?.combinable
-      ? `${t('itin.fromTo', { a: flight.out_anchor, b: flight.origin })}, ${fmtLong(stopDetails[stopDetails.length - 1]?.departDate)}`
+      ? fmtLong(stopDetails[stopDetails.length - 1]?.departDate)
       : [flyOut || ownTravelHow(flight, t), flyOut ? '' : lastCity, fmtLong(flight?.ret_date || stopDetails[stopDetails.length - 1]?.departDate)].filter(Boolean).join(', ');
   const datesText = stopDetails[0]?.arriveDate
     ? t('plan.dateRange', { a: fmtLong(stopDetails[0].arriveDate), b: fmtLong(stopDetails[stopDetails.length - 1]?.departDate) })
@@ -660,7 +778,7 @@ export function TripItinerary({
               <li className="itin-end" id="itin-fare-out">
                 <span className="itin-end-icon"><OwnTravelIcon mode={travelMode} size={16} /></span>
                 <div className="itin-end-main">
-                  <b>{t('itin.secGetThere')}</b>
+                  <b>{outCodes ? <RouteCodes from={outCodes[0]} to={outCodes[1]} icon={false} /> : t('itin.secGetThere')}</b>
                   <small>{thereText}</small>
                   {showFlight('out') && (
                     <ItinFlight
@@ -700,23 +818,48 @@ export function TripItinerary({
                 const legOwn = leg?.modes?.[leg?.mode]?.own;
                 return (
                   <React.Fragment key={`stop-${i}`}>
-                    <li className={`itin-stopcard ${activeStopIndex === i ? 'active' : ''}`}>
-                      <Button variant="quiet" className="itin-stop" onClick={() => onSelectStop?.(i)}>
-                        <span className="itin-stop-idx">{i + 1}</span>
-                        <span
-                          className="itin-stop-thumb"
-                          style={s.dest?.image?.url ? { backgroundImage: `url(${s.dest.image.url})` } : undefined}
-                        >
-                          {!s.dest?.image?.url && <span className="itin-stop-thumb-fallback">{s.dest?.city?.slice(0, 1) || '?'}</span>}
-                        </span>
-                        <span className="itin-stop-main">
-                          <span className="itin-stop-city">{s.dest?.city || t('itin.unknown')}</span>
-                          <span className="itin-stop-sub">
-                            {t(s.nights === 1 ? 'plan.nightsOne' : 'plan.nightsMany', { n: s.nights })}
-                            {s.arriveDate ? `, ${fmtLong(s.arriveDate)}` : ''}
+                    <li
+                      className={`itin-stopcard ${activeStopIndex === i ? 'active' : ''}${stopEdit ? ' is-editable' : ''}${dragFrom === i ? ' is-dragging' : ''}`}
+                      onDragOver={stopEdit ? (e) => { if (dragFrom != null) e.preventDefault(); } : undefined}
+                      onDrop={stopEdit ? (e) => {
+                        e.preventDefault();
+                        if (dragFrom != null && dragFrom !== i) stopEdit.reorder(dragFrom, i);
+                        setDragFrom(null);
+                      } : undefined}
+                    >
+                      <div className="itin-stop-top">
+                        {stopEdit && stopDetails.length > 1 && (
+                          // A pointer shortcut only: Move up and Move down do the same (T837).
+                          <span
+                            className="itin-grip"
+                            draggable
+                            aria-hidden="true"
+                            title={t('trip.dragReorder')}
+                            onDragStart={(e) => { setDragFrom(i); e.dataTransfer.effectAllowed = 'move'; }}
+                            onDragEnd={() => setDragFrom(null)}
+                          ><GripIcon size={16} /></span>
+                        )}
+                        <Button variant="quiet" className="itin-stop" onClick={() => onSelectStop?.(i)}>
+                          <span className="itin-stop-idx">{i + 1}</span>
+                          <span
+                            className="itin-stop-thumb"
+                            style={s.dest?.image?.url ? { backgroundImage: `url(${s.dest.image.url})` } : undefined}
+                          >
+                            {!s.dest?.image?.url && <span className="itin-stop-thumb-fallback">{s.dest?.city?.slice(0, 1) || '?'}</span>}
                           </span>
-                        </span>
-                      </Button>
+                          <span className="itin-stop-main">
+                            <span className="itin-stop-city">{s.dest?.city || t('itin.unknown')}</span>
+                            {!stopEdit && (
+                              <span className="itin-stop-sub">
+                                {t(s.nights === 1 ? 'plan.nightsOne' : 'plan.nightsMany', { n: s.nights })}
+                                {s.arriveDate ? `, ${fmtLong(s.arriveDate)}` : ''}
+                              </span>
+                            )}
+                          </span>
+                        </Button>
+                        {stopEdit && <StopNights i={i} s={s} stopDetails={stopDetails} edit={stopEdit} />}
+                      </div>
+                      {stopEdit && <StayDays arrive={s.arriveDate} depart={s.departDate} />}
                       {sc && (
                         <div className="itin-bed">
                           <dl className="costrows itin-bed-cost">
@@ -752,6 +895,22 @@ export function TripItinerary({
                               />
                             )}
                           </span>
+                        </div>
+                      )}
+                      {stopEdit && (
+                        <div className="itin-stop-acts" role="group" aria-label={t('tp.stop.tools', { city: cityLabel(s.dest?.city || '') })}>
+                          <Button variant="secondary" size="sm" className="itin-move is-up" iconStart={<ChevronDownIcon size={16} />} disabled={i === 0} onClick={() => stopEdit.move(i, -1)}>
+                            {t('trip.moveUp')}
+                          </Button>
+                          <Button variant="secondary" size="sm" className="itin-move" iconStart={<ChevronDownIcon size={16} />} disabled={i === stopDetails.length - 1} onClick={() => stopEdit.move(i, 1)}>
+                            {t('trip.moveDown')}
+                          </Button>
+                          <span className="itin-stop-acts-gap" />
+                          {stopDetails.length > 1 && (
+                            <Button variant="quiet" size="sm" className="itin-stop-remove" iconStart={<CloseIcon size={14} />} onClick={() => stopEdit.remove(i)}>
+                              {t('tp.stop.remove')}
+                            </Button>
+                          )}
                         </div>
                       )}
                     </li>
@@ -790,6 +949,18 @@ export function TripItinerary({
                   </React.Fragment>
                 );
               })}
+              {stopEdit && addStopSlot && (
+                <li className="itin-add">
+                  {adding ? (
+                    <div className="itin-add-body">
+                      {addStopSlot}
+                      <Button variant="quiet" size="sm" onClick={() => setAdding(false)}>{t('tp.stop.addDone')}</Button>
+                    </div>
+                  ) : (
+                    <Button variant="secondary" iconStart={<PlusIcon size={18} />} onClick={() => setAdding(true)}>{t('tp.stop.add')}</Button>
+                  )}
+                </li>
+              )}
               {anchorOut && (
                 <li className="itin-hop">
                   <AnchorTransferLeg
@@ -810,7 +981,7 @@ export function TripItinerary({
               <li className="itin-end">
                 <span className="itin-end-icon"><OwnTravelIcon mode={travelMode} size={16} /></span>
                 <div className="itin-end-main">
-                  <b>{t('itin.secGetHome')}</b>
+                  <b>{backCodes ? <RouteCodes from={backCodes[0]} to={backCodes[1]} icon={false} /> : t('itin.secGetHome')}</b>
                   <small>{homeText}</small>
                   {showFlight('back') && (
                     <ItinFlight
@@ -828,6 +999,7 @@ export function TripItinerary({
                 {onTravelPaid && !showFlight('back') && backFare}
               </li>
             </ol>
+            {routeExtra && <div className="itin-route-extra">{routeExtra}</div>}
             <TransferModePicker
               flightTransfer={flightTransfer}
               anchorIn={anchorIn}
