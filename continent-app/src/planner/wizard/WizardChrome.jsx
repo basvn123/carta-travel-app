@@ -2,157 +2,134 @@ import React from 'react';
 import { SheetShell } from '../../browse/SheetShell.jsx';
 import { Button } from '../../components/Button.jsx';
 import { TripTotalBar } from '../TripTotalBar.jsx';
-import { ArrowLeftIcon, CheckIcon, ChevronRightIcon, CloseIcon } from '../../components/Icons.jsx';
-import { IconButton, StepRail } from '../../components/ui/index.js';
+import { ArrowLeftIcon, CheckIcon, ChevronDownIcon, CloseIcon } from '../../components/Icons.jsx';
+import { IconButton, StepList } from '../../components/ui/index.js';
+import '../../styles/planners/88-pf2-wizard.css';
 import { cityLabel } from '../../lib/placeName.js';
 import { STEP_LABEL_KEYS } from './wizardSteps.js';
 import { useI18n } from '../../i18n/index.jsx';
 
 /**
- * The wizard's head: the step's name, and where the traveller is in the
- * list. On a phone the rail is the count, a progress bar in --text (it does
- * not act, so it is not brown) and a button that opens the list as a sheet;
- * from 769 px every step is named, done ones tappable.
+ * The wizard's head (T812): one row, the way back, the step's name and one
+ * stepper, nothing else. From 769 px the steps stand inline after the name
+ * (a number or a tick, the word), the current one in the selected tint, the
+ * done ones a tap back. On a phone the name is a button that opens the step
+ * list ("3 of 4", "Getting there"), so Where and Stay stay one tap away, and
+ * one thin line under the row is the only progress drawn.
  */
 export function WizardHead({ inline, onClose, steps, step, isDesktop, stepsOpen, setStepsOpen, goStep, flowBack = null }) {
   const { t } = useI18n();
-  // T667: inside the trip planner flow the head is the flow's sheet head: a
-  // round back control, the step's name in the middle with where it sits
-  // ("2 of 5"), and a thin progress line; done steps stay one tap away on a
-  // desktop through the rail under it.
-  if (flowBack) {
-    return (
-      <div className="guide-head pf-ehead">
-        <div className="pf-ehead-row">
-          <IconButton tone="surface" className="pf-round" label={t('pf.back')} onClick={flowBack}>
+  const name = steps[step - 1] ? t(STEP_LABEL_KEYS[steps[step - 1]]) : t('wizard.planYourTrip');
+  const multi = steps.length > 1;
+  return (
+    <div className={`guide-head wz-head ${isDesktop ? 'is-wide' : 'is-phone'}`}>
+      <div className="wz-head-row">
+        {flowBack ? (
+          <IconButton tone="surface" className="wz-head-back" label={t('pf.back')} onClick={flowBack}>
             <ArrowLeftIcon size={18} />
           </IconButton>
-          <span className="pf-ehead-mid">
-            <span className="pf-ehead-title">{steps[step - 1] ? t(STEP_LABEL_KEYS[steps[step - 1]]) : t('wizard.planYourTrip')}</span>
-            {steps.length > 1 && <span className="pf-ehead-pos">{t('pf.position', { x: step, n: steps.length })}</span>}
-          </span>
-          <span className="pf-ehead-end" aria-hidden="true" />
-        </div>
-        <span className="pf-ehead-bar" aria-hidden="true">
-          <span style={{ transform: `scaleX(${Math.min(1, step / Math.max(1, steps.length))})` }} />
-        </span>
-        {steps.length > 1 && isDesktop && (
-          <div className="pf-ehead-rail">
-            <StepRail
-              label={t('wizard.stepsTitle')}
-              steps={steps.map((label) => ({ key: label, label: t(STEP_LABEL_KEYS[label]) }))}
-              at={step - 1}
-              onGo={(i) => goStep(i + 1)}
-            />
-          </div>
-        )}
-      </div>
-    );
-  }
-  return (
-    <div className="guide-head">
-      {!inline && <button className="guide-close" onClick={onClose} aria-label={t('wizard.close')}><CloseIcon size={16} /></button>}
-      <div className="guide-head-inner">
-        <div className="shape-head-title">
-          {steps[step - 1] ? t(STEP_LABEL_KEYS[steps[step - 1]]) : t('wizard.planYourTrip')}
-          {steps.length > 1 && isDesktop && (
-            <span className="shape-head-step">{t('wizard.stepOf', { x: step, n: steps.length })}</span>
-          )}
-        </div>
-        {steps.length > 1 && !isDesktop && (
-          <button
-            type="button"
-            className="wiz-mini"
+        ) : <span className="wz-head-gap" aria-hidden="true" />}
+        {multi && !isDesktop ? (
+          <Button
+            variant="quiet"
+            className="wz-head-menu"
             onClick={() => setStepsOpen(true)}
             aria-haspopup="dialog"
             aria-expanded={stepsOpen}
+            aria-label={`${name}, ${t('pf.position', { x: step, n: steps.length })}. ${t('wizard.stepsTitle')}`}
           >
-            <span className="wiz-mini-line">
-              <span className="wiz-mini-now">{t('wizard.stepOf', { x: step, n: steps.length })}</span>
-              <ChevronRightIcon size={13} />
+            <span className="wz-head-pos">{t('pf.position', { x: step, n: steps.length })}</span>
+            <span className="wz-head-name">
+              {name}
+              <ChevronDownIcon size={16} className="wz-head-chev" />
             </span>
-            <span className="wiz-mini-bar" aria-hidden="true">
-              <span style={{ width: `${Math.round((step / steps.length) * 100)}%` }} />
-            </span>
-          </button>
+          </Button>
+        ) : (
+          <span className="wz-head-name is-plain">{name}</span>
         )}
-        {steps.length > 1 && isDesktop && (
-          <ol className="wiz-steps">
+        {multi && isDesktop && (
+          <ol className="wz-stepper" aria-label={t('wizard.stepsTitle')}>
             {steps.map((label, i) => {
               const n = i + 1;
               const state = n < step ? 'done' : n === step ? 'now' : 'todo';
+              const mark = <span className="wz-stepper-mark" aria-hidden="true">{state === 'done' ? <CheckIcon size={12} /> : n}</span>;
               return (
-                <li key={label} className={`wiz-step ${state}`}>
-                  <button
-                    type="button"
-                    className="wiz-step-btn"
-                    disabled={state !== 'done'}
-                    onClick={() => goStep(n)}
-                    aria-current={state === 'now' ? 'step' : undefined}
-                  >
-                    <span className="wiz-step-mark">{state === 'done' ? <CheckIcon size={10} /> : n}</span>
-                    <span className="wiz-step-name">{t(STEP_LABEL_KEYS[label])}</span>
-                  </button>
+                <li key={label} className={`wz-stepper-step is-${state}`}>
+                  {state === 'done' ? (
+                    <Button variant="quiet" size="sm" className="wz-stepper-btn" onClick={() => goStep(n)}>
+                      {mark}
+                      {t(STEP_LABEL_KEYS[label])}
+                    </Button>
+                  ) : (
+                    <span className="wz-stepper-btn" aria-current={state === 'now' ? 'step' : undefined}>
+                      {mark}
+                      {t(STEP_LABEL_KEYS[label])}
+                    </span>
+                  )}
                 </li>
               );
             })}
           </ol>
         )}
+        {!inline && !flowBack ? (
+          <IconButton className="wz-head-close" label={t('wizard.close')} onClick={onClose}>
+            <CloseIcon size={16} />
+          </IconButton>
+        ) : !isDesktop && <span className="wz-head-gap" aria-hidden="true" />}
       </div>
+      {multi && !isDesktop && (
+        <span
+          className="wz-progress"
+          role="progressbar"
+          aria-label={t('wizard.stepsTitle')}
+          aria-valuemin={1}
+          aria-valuemax={steps.length}
+          aria-valuenow={step}
+        >
+          <span style={{ transform: `scaleX(${Math.min(1, step / Math.max(1, steps.length))})` }} />
+        </span>
+      )}
     </div>
   );
 }
 
 /**
- * The phone's step list, opened from the one-line rail. Done steps are
- * tappable; the ones still to come are named but inert. Start over lives here
- * on a phone (T388), which keeps the footer to one row.
+ * The phone's step list, opened from the head. Done steps are tappable;
+ * the ones still to come are named but inert. Start over lives here on a
+ * phone (T388), which keeps the footer to one row.
  */
 export function WizardStepsSheet({ steps, step, goStep, onClose, hasProgress, startOver }) {
   const { t } = useI18n();
   return (
     <SheetShell title={t('wizard.stepsTitle')} onClose={onClose} className="wiz-steps-sheet" labelId="wiz-steps-title">
-      <ol className="wiz-sheet-list">
-        {steps.map((label, i) => {
-          const n = i + 1;
-          const state = n < step ? 'done' : n === step ? 'now' : 'todo';
-          return (
-            <li key={label} className={`wiz-sheet-step ${state}`}>
-              <button
-                type="button"
-                disabled={state !== 'done'}
-                onClick={() => goStep(n)}
-                aria-current={state === 'now' ? 'step' : undefined}
-              >
-                <span className="wiz-step-mark">{state === 'done' ? <CheckIcon size={11} /> : n}</span>
-                <span className="wiz-sheet-name">{t(STEP_LABEL_KEYS[label])}</span>
-                {state === 'done' && <span className="wiz-sheet-edit">{t('wizard.editStep')}</span>}
-              </button>
-            </li>
-          );
-        })}
-      </ol>
+      <StepList
+        steps={steps.map((label) => ({ key: label, label: t(STEP_LABEL_KEYS[label]) }))}
+        at={step - 1}
+        onGo={(i) => goStep(i + 1)}
+        editLabel={t('wizard.editStep')}
+      />
       {hasProgress && (
-        <button
-          type="button"
-          className="guide-startover wiz-sheet-startover"
+        <Button
+          variant="quiet"
+          className="wz-startover wiz-sheet-startover"
           onClick={() => { onClose(); startOver(); }}
           title={t('wizard.startOverTitle')}
         >
           {t('wizard.startOver')}
-        </button>
+        </Button>
       )}
     </SheetShell>
   );
 }
 
 /**
- * The footer: where the traveller has got to, and the way on. Under 1024 px
- * the trip's total bar opens the receipt sheet; from 1024 px the total sits
- * at the foot of the right column. Back and Next are --tap-main.
+ * The footer: where the traveller has got to, and the way on. T812: one
+ * row at every width, Start over as a quiet link (on a phone it is in the
+ * step list), the trip's running total (a tap opens the receipt) with its
+ * size under it, and Next. Back and Next are --tap-main.
  */
 export function WizardFoot({
-  railOn, priced, onOpenTotal, hasProgress, isDesktop, startOver, stepName, tripPick, pickFreeNights,
+  priced, onOpenTotal, hasProgress, isDesktop, startOver, stepName, tripPick, pickFreeNights,
   windowNights, totalNights, includedIds, step, steps, goStep, canNext, finish,
   onBackOut = null,
 }) {
@@ -185,20 +162,20 @@ export function WizardFoot({
         {t(totalNights > windowNights ? 'wizard.nightsPlannedOver' : 'wizard.nightsPlanned', { n: totalNights, of: windowNights })}
       </span>
     );
-  } else if (railOn && includedIds.length > 0) {
+  } else if (includedIds.length > 0) {
     note = t(includedIds.length === 1 ? 'wizard.footSummaryOne' : 'wizard.footSummary', { cities: includedIds.length, nights: totalNights });
   }
   return (
-    <div className="guide-foot">
+    <div className="guide-foot wz-foot">
       <div className="guide-foot-inner">
-        <div className="guide-foot-summary">
-          {!railOn && <TripTotalBar priced={priced} layout="foot" onOpen={onOpenTotal} className="wiz-foot-total" />}
-          {hasProgress && isDesktop && (
-            <button className="guide-startover" onClick={startOver} title={t('wizard.startOverTitle')}>
-              {t('wizard.startOver')}
-            </button>
-          )}
-          {note}
+        {hasProgress && isDesktop && (
+          <Button variant="quiet" size="sm" className="wz-startover" onClick={startOver} title={t('wizard.startOverTitle')}>
+            {t('wizard.startOver')}
+          </Button>
+        )}
+        <div className="guide-foot-summary wz-foot-sum">
+          <TripTotalBar priced={priced} layout="foot" onOpen={onOpenTotal} className="wiz-foot-total" />
+          {note && <span className="wz-foot-note">{note}</span>}
         </div>
         <div className="guide-foot-actions">
           {/* In the trip planner flow (T656, T667) Back is the head's round
