@@ -14,7 +14,7 @@ test("nothing booked: every setup question, the doors, the guide", () => {
   assert.deepEqual(setupScreens(n), ["tell", "booked", "who", "sleep", "priority", "when", "from"]);
   assert.equal(hasDoors(n), true);
   assert.deepEqual(planScreens(n, "guide"), [
-    "g:shape", "g:likes", "g:weather", "g:reach", "g:avoid", "g:budget",
+    "g:shape", "g:likes", "g:weather", "g:reach", "g:avoid", "g:budget", "g:pick", "g:trips",
     "p:Where", "p:Stay", "p:Getting", "p:Finish",
   ]);
   assert.deepEqual(planScreens(n, "ready"), ["p:Where", "p:Trips", "p:Getting", "p:Finish"]);
@@ -25,7 +25,7 @@ test("flights booked: no When, no From in setup; arrival asked in planning; no r
   const f = s({ booked: { flights: true } });
   assert.deepEqual(setupScreens(f), ["tell", "booked", "who", "sleep", "priority"]);
   assert.deepEqual(planScreens(f, "guide"), [
-    "g:shape", "g:likes", "g:weather", "g:avoid", "g:budget",
+    "g:shape", "g:likes", "g:weather", "g:avoid", "g:budget", "g:pick", "g:trips",
     "p:From", "p:Where", "p:Stay", "p:Getting", "p:Finish",
   ]);
 });
@@ -65,7 +65,7 @@ test("next, prev and the first open setup question", () => {
 });
 
 test("every screen in every flow has a question or a known page", () => {
-  const pages = new Set(["create", "tripHome", "doors"]);
+  const pages = new Set(["create", "tripHome", "doors", "g:trips"]);
   for (const booked of [{}, { flights: true }, { stays: true }, { flights: true, stays: true }]) {
     for (const door of ["guide", "know", "ready"]) {
       for (const id of fullFlow(s({ booked }), door)) {
@@ -102,4 +102,15 @@ test("a trip under way asks where you are and until when, not When and From", ()
   assert.deepEqual(setupScreens(s), ["tell", "booked", "who", "sleep", "priority", "nowWhere", "nowUntil"]);
   assert.equal(normalizeSettings({ kind: "later" }).kind, "new");
   assert.deepEqual(normalizeSettings({ now: { name: "Porto", lat: 41.1, lon: -8.6, countryCode: "PT" } }).now, { name: "Porto", lat: 41.1, lng: -8.6, countryCode: "PT" });
+});
+
+test("T797: the trips come after question 7 and are not a question", async () => {
+  const { guideQuestions, guideScreens, TRIPS_SCREEN } = await import("../src/planner/flow/flowGraph.js");
+  const n = s({});
+  assert.equal(guideScreens(n).at(-1), TRIPS_SCREEN);
+  assert.equal(guideQuestions(n).at(-1), "g:pick");
+  assert.ok(!guideQuestions(n).includes(TRIPS_SCREEN));
+  assert.equal(guideQuestions(n).length, 7);
+  assert.equal(nextScreen(planScreens(n, "guide"), "g:pick"), "g:trips");
+  assert.equal(nextScreen(planScreens(n, "guide"), "g:trips"), "p:Where");
 });

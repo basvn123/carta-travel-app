@@ -5,7 +5,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   defaultSettings, normalizeSettings, answer, withPartyKind, fromDraft, draftPatch,
-  nextMonthKey, quizAnswers, dayPrefs, flightRanking, nothingBooked, partySize,
+  nextMonthKey, quizAnswers, dayPrefs, flightRanking, nothingBooked, partySize, PICKABLE,
 } from "../src/planner/flow/tripSettings.js";
 
 test("defaults: nothing booked, nothing answered", () => {
@@ -205,4 +205,17 @@ test("the engine's date and head count edits reach the settings", async () => {
   assert.equal(withEngineEdits(s, { dateMode: "flex", flexMonth: "", nights: 5, adults: 2, kids: 2 }).when.mode, "any");
   // An exact trip waiting for its second date keeps the answer it had.
   assert.equal(withEngineEdits(s, { dateMode: "exact", startDate: "2027-08-02", endDate: "", nights: 0, adults: 2, kids: 2, babies: 0 }), s);
+});
+
+// T796: question 7, what Carta picks. Its rows are config/slots.json's
+// pickable live slots; the default is every one of them.
+test("question 7: Carta picks every pickable slot by default; unknown ids drop out", () => {
+  assert.deepEqual(PICKABLE, ["flight", "stay", "local"]);
+  assert.deepEqual(defaultSettings().guide.pick, PICKABLE);
+  assert.deepEqual(normalizeSettings({}).guide.pick, PICKABLE);
+  assert.deepEqual(normalizeSettings({ guide: { pick: ["flight", "activities", "castle"] } }).guide.pick, ["flight"]);
+  assert.deepEqual(normalizeSettings({ guide: { pick: [] } }).guide.pick, [], "only where to go is a real answer");
+  const s = answer(defaultSettings(), "g:pick", { guide: { ...defaultSettings().guide, pick: ["flight"] } });
+  assert.ok(s.answered.includes("g:pick"));
+  assert.deepEqual(s.guide.pick, ["flight"]);
 });

@@ -326,7 +326,7 @@ in the kit. Two screens can never write the same figure two ways.
   arrival times, when it was checked and the link out to Google Flights with "prices may have changed".
   The airline mark is the airline's own logo in a white square, never recoloured, tinted or redrawn. A
   fare the traveller typed in replaces it and is labelled as theirs. A swept price older than its sweep
-  cycle is not shown (3 days for the next two weeks, 8 days beyond, T692). Bag fees (10 kg cabin, 20 kg
+  cycle is not shown (5 days for the next two weeks, 16 days beyond, T780; config `flights.max_age_days`). Bag fees (10 kg cabin, 20 kg
   checked) are Carta's estimates; the traveller's bag is priced on every flight (T691).
   Cents on receipts, whole euros on cards, like every other figure.
 - **One day-cost basis.** The traveller's Lifestyle prices the day everywhere: the card, the pin and the

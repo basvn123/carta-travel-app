@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { plannerStore } from '../plannerStore.js';
 import { Button, ChoiceRows, IconButton } from '../../components/ui/index.js';
@@ -10,8 +10,20 @@ import { QuestionBody } from './QuestionScreen.jsx';
 import { TripSettingsSheet } from './TripSettingsSheet.jsx';
 import { CartaTrips } from './CartaTrips.jsx';
 import { useBcp47, useMonths, useTripSettings, whenText } from './flowHooks.js';
-import { engineScreens, guideScreens, hasDoors, nextScreen, prevScreen, progressOf } from './flowGraph.js';
+import { TRIPS_SCREEN, engineScreens, guideQuestions, guideScreens, hasDoors, nextScreen, prevScreen, progressOf } from './flowGraph.js';
 import { normalizeSettings, quizAnswers, spendFor } from './tripSettings.js';
+import { draftFor } from '../finder/handoff.js';
+import { takePlan } from '../../lib/recommend/keptStore.js';
+import NotYet from '../../components/NotYet.jsx';
+import { AirlineMark } from '../../components/flights/Flights.jsx';
+import { useAirlines, airlineName } from '../../lib/flights/useAirlines.js';
+
+// The trip finder (TF2, T797): the loader and the priced trips behind
+// question 7, with lib/recommend, in a chunk of their own.
+const TripFinderScreen = lazy(() => import('../finder/FindingTrips.jsx'));
+// The app parts the finder draws, handed down so its lazy chunk does not
+// import them (see FindingTrips).
+const FINDER_UI = { NotYet, AirlineMark, useAirlines, airlineName };
 
 /**
  * TripFlow (T656), the trip planner before a route exists: the trip's own
@@ -31,6 +43,14 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null }) {
   const [phase, setPhase] = useState('home'); // home | doors | carta | g:* | engine
   const [door, setDoor] = useState('guide');
   const [settingsOpen, setSettingsOpen] = useState(false);
+  // A question reopened from the trips' answers bar (T798) comes straight
+  // back to the trips on Continue, not through the questions after it.
+  const [returnTo, setReturnTo] = useState(null);
+  // The trip finder's own state across a visit to the planner (T801): the
+  // receipt's swaps by trip id, and the trip the traveller planned, marked
+  // when they come back.
+  const [finderEdits, setFinderEdits] = useState({});
+  const [markedId, setMarkedId] = useState(null);
   const gearRef = useRef(null);
   const rootRef = useRef(null);
 
@@ -43,9 +63,9 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null }) {
   /** Hand over to the engine: its first step by name, the build mode the
    *  door implies, and (behind Guide me) the quiz answered from the guide, so
    *  its Where step opens on the matches. */
-  const startEngine = (d = door, s = settings) => {
+  const startEngine = (d = door, s = settings, plan = null) => {
     const steps = engineScreens(s, hasDoors(s) ? d : 'know').map((x) => x.slice(2));
-    const wizard = { stepName: steps[0], step: 1, buildMode: d === 'ready' ? 'ready' : 'custom' };
+    const wizard = { stepName: steps[0], step: 1, buildMode: d === 'ready' ? 'ready' : 'custom', finder: null };
     if (d === 'guide') wizard.quiz = { ...quizAnswers(s, spendFor(s)), editing: '' };
     // A flight read from an uploaded booking brings its price: the way there
     // and home start as the traveller's own figures, never overwriting one
@@ -61,6 +81,14 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null }) {
       for (const key of ['out', 'back']) if (!tv[key]?.mode) tv[key] = { ...(tv[key] || {}), mode: 'train' };
     }
     if (Object.keys(tv).length) wizard.travelValues = tv;
+    // T801: "Plan this trip" opens the planner on the finder's trip, every
+    // pick in it (planner/finder/handoff.js draftFor).
+    if (plan) {
+      Object.assign(wizard, draftFor(plan, steps));
+      const p = plan;
+      plannerStore.setTravelDates({ startDate: p.startDate, endDate: p.endDate });
+      plannerStore.setTravelers({ adults: p.party.adults, children: p.party.children, babies: p.party.babies });
+    }
     plannerStore.setWizard(wizard);
     setPhase('engine');
   };
@@ -75,13 +103,27 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null }) {
     startEngine('know', normalizeSettings(next));
   }, [seed]); // eslint-disable-line react-hooks/exhaustive-deps -- one-shot hand-off per seed; the wizard consumes it and clears it
 
+  // T806: a kept trip planned from My trips (keptStore holdPlan) opens the
+  // planner on it, the same hand-off as the finder's "Plan this trip".
+  useEffect(() => {
+    const plan = takePlan();
+    if (!plan) return;
+    setDoor('guide');
+    setMarkedId(plan.tripId);
+    startEngine('guide', settings, plan);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps -- read once, on arrival
+
   const guide = useMemo(() => guideScreens(settings), [settings]);
+  const questions = useMemo(() => guideQuestions(settings), [settings]);
   const afterGuide = (id, s) => {
+    if (returnTo) { setReturnTo(null); setPhase(returnTo); return; }
     let k = nextScreen(guide, id);
-    // Skip what the free field already answered.
-    while (k && s.answered.includes(k)) k = nextScreen(guide, k);
+    // Skip what the free field already answered (never the trips).
+    while (k && k !== TRIPS_SCREEN && s.answered.includes(k)) k = nextScreen(guide, k);
     if (k) setPhase(k); else startEngine('guide');
   };
+  /** Reopen one question from the trips, and come back to them after it. */
+  const reopen = (id) => { setReturnTo(TRIPS_SCREEN); setFinderEdits({}); setMarkedId(null); setPhase(id); };
   const start = () => (hasDoors(settings) ? setPhase('doors') : startEngine('know'));
 
   if (phase === 'engine') {
@@ -91,7 +133,8 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null }) {
       initialWhereTab: d === 'guide' ? 'help' : 'hand',
       // "I know where" is the picker alone (T752): no Help me choose tab.
       lockWhereTab: d === 'know',
-      onCancel: () => setPhase(d === 'guide' ? guide[guide.length - 1] : (hasDoors(settings) ? 'doors' : 'home')),
+      // Behind Guide me the step before the planner is Trips for you (T801).
+      onCancel: () => setPhase(d === 'guide' ? TRIPS_SCREEN : (hasDoors(settings) ? 'doors' : 'home')),
     });
   }
 
@@ -140,15 +183,32 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null }) {
         </div>
       </div>
     );
+  } else if (phase === TRIPS_SCREEN) {
+    body = (
+      <Suspense fallback={<div className="pf-step" aria-busy="true"><span className="sr-only">{t('state.loading')}</span></div>}>
+        <TripFinderScreen
+          ui={FINDER_UI}
+          settings={settings}
+          guide={questions}
+          onBack={() => setPhase(questions[questions.length - 1])}
+          onWiden={reopen}
+          edits={finderEdits}
+          setEdits={setFinderEdits}
+          markedId={markedId}
+          onPlan={(plan) => { setMarkedId(plan.tripId); startEngine('guide', settings, plan); }}
+        />
+      </Suspense>
+    );
   } else {
     const q = QUESTIONS[phase];
-    const pos = progressOf(guide, phase);
+    const pos = progressOf(questions, phase);
+    const back = returnTo || prevScreen(guide, phase) || 'doors';
     body = (
       <div className="pf-step">
         <SheetHead
-          onBack={() => setPhase(prevScreen(guide, phase) || 'doors')}
+          onBack={() => { setReturnTo(null); setPhase(back); }}
           backLabel={t('pf.back')}
-          position={t('pf.position', { x: pos.index + 1, n: guide.length })}
+          position={pos.index >= 0 && questions.includes(phase) ? t('pf.position', { x: pos.index + 1, n: questions.length }) : ''}
         />
         <h2 className="pf-title" tabIndex={-1}>{q ? t(q.titleKey) : ''}</h2>
         <QuestionBody id={phase} settings={settings} commit={(s) => { save(s); afterGuide(phase, s); }} />
@@ -158,7 +218,7 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null }) {
 
   return (
     <div className="pf" ref={rootRef}>
-      <PlanStage bar={bar} sheetLabel={settings.trip.name || t('pf.sheet')} wide={phase === 'g:likes'}>
+      <PlanStage bar={bar} sheetLabel={settings.trip.name || t('pf.sheet')} wide={phase === 'g:likes' || phase === TRIPS_SCREEN}>
         {body}
       </PlanStage>
       {settingsOpen && <TripSettingsSheet anchorRef={gearRef} onClose={() => setSettingsOpen(false)} />}

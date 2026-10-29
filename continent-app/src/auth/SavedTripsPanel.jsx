@@ -35,6 +35,8 @@ import { E2E_SEAMS } from '../lib/e2eSeams.js';
 import { DayPrice } from '../browse/ExploreCards.jsx';
 import '../styles/70-mytrips.css';
 import { InstallHint } from './InstallHint.jsx';
+import { KeptTrips } from './mytrips/KeptTrips.jsx';
+import { holdPlan, useKept } from '../lib/recommend/keptStore.js';
 import {
   localToday, addDaysIso, classifyTrips, whenParts, dayPlanEndDate, orderedUnique,
   nightsBetween, tripFigure, visitedRecord, yearOf, deviceTripAsPlan,
@@ -122,6 +124,7 @@ export function SavedTripsPanel({
   const destinations = useMemo(() => data?.destinations || {}, [data]);
   const todayIso = localToday();
 
+  const keptCount = useKept().length;
   const [tab, setTab] = useState(() => readStored(TAB_KEY, ['favorites', 'planned', 'visited'], 'planned'));
   const pickedRef = useRef(false);
   const pickTab = (v) => { pickedRef.current = true; setTab(v); writeStored(TAB_KEY, v); };
@@ -915,6 +918,11 @@ export function SavedTripsPanel({
             />
           )}
           {tab === 'favorites' && (
+            /* Kept trips from the trip finder (T806): planning one hands its
+               plan to the Plan tab, which opens the planner on it. */
+            <KeptTrips onPlan={(r) => { holdPlan(r.plan); onGoToTab?.('trip'); }} />
+          )}
+          {tab === 'favorites' && (keptCount === 0 || shownShort.length > 0 || shortlist.loading) && (
             <ShortlistTab
               rows={shownShort}
               showKind={kinds.length > 1 && kindNow === 'all'}

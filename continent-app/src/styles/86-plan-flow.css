@@ -116,6 +116,9 @@
 
 .pf-open-resume:hover { box-shadow: var(--elev-2); }
 
+/* A kept trip that got cheaper (T807): the resume card, its label in green. */
+.pf-open-drop .pf-open-resume-label { color: var(--good-ink); }
+
 .pf-open-resume-icon {
   display: grid;
   place-items: center;
@@ -834,3 +837,14 @@
 }
 
 /* Wanderlog's day head: the two whole-day moves as links (T673). */
+
+/* Question 7, what Carta picks (T796): the ChoiceRows rows plus two kinds
+   the traveller cannot change, drawn as the same rows: where to go
+   (always Carta's, selected) and a price line not measured yet. */
+.pf-pick { display: flex; flex-direction: column; gap: var(--space-2); }
+.ui-crow.pf-pick-fixed { cursor: default; }
+.ui-crow.pf-pick-fixed:hover { background: var(--surface); }
+.ui-crow.pf-pick-fixed.is-on:hover { background: var(--select-bg); }
+.ui-crow.pf-pick-fixed:not(.is-on) .ui-crow-label,
+.ui-crow.pf-pick-fixed:not(.is-on) .ui-crow-icon { color: var(--text-3); }
+.pf-pick-tag { margin-left: auto; flex: none; }

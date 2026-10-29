@@ -12,6 +12,7 @@ import { useTripSettings } from './flowHooks.js';
 import { CreateScreen } from './setupScreens.jsx';
 import { TripSettingsSheet } from './TripSettingsSheet.jsx';
 import { PlanHome } from './PlanHome.jsx';
+import { showKeptNext } from '../../lib/recommend/keptStore.js';
 import { CartaTrips } from './CartaTrips.jsx';
 
 /**
@@ -76,6 +77,7 @@ export function PlanFlow({ onNavigate, onCreated, onAddPast = null, onOpenJourne
           onStart={() => go('kind')}
           onContinue={() => onNavigate('trip')}
           onOpenTrips={() => go('carta')}
+          onOpenKept={() => { showKeptNext(); onNavigate('trips'); }}
         />
       </div>
     );

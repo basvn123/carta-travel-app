@@ -121,6 +121,7 @@ import { AccountPanel } from './auth/AccountPanel.jsx';
 // My trips is its own chunk with its own stylesheet (T434): nothing of it is
 // needed before the traveller opens it.
 const SavedTripsPanel = lazy(() => import('./auth/SavedTripsPanel.jsx').then((m) => ({ default: m.SavedTripsPanel })));
+const TogetherSheet = lazy(() => import('./planner/finder/FindingTrips.jsx').then((m) => ({ default: m.TogetherSheet })));
 import { PaywallProvider } from './hooks/usePaywall.jsx';
 import { LegalFromUrl } from './components/LegalFromUrl.jsx';
 import { originHome, nearestOrigin } from './lib/origins.js';
@@ -292,6 +293,21 @@ function TravelApp() {
     const id = setTimeout(() => setCoplanNote(''), 8000);
     return () => clearTimeout(id);
   }, [coplanNote]);
+
+  // A shortlist to decide on together (#together=<code>, T808,
+  // lib/recommend/together.js TOGETHER_HASH): read once at startup, stripped
+  // from the bar, opened as a sheet over whatever tab shows. No account: the
+  // whole shortlist is in the code. Read here by hand so the first load does
+  // not carry the shortlist code.
+  const [togetherCode, setTogetherCode] = useState(() => {
+    const h = typeof window === 'undefined' ? '' : window.location.hash || '';
+    return h.startsWith('#together=') ? h.slice('#together='.length) : null;
+  });
+  useEffect(() => {
+    if (togetherCode && window.location.hash.startsWith('#together=')) {
+      window.history.replaceState(window.history.state, '', window.location.pathname + window.location.search);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps -- once, at startup
 
   // The published guides gallery, and a direct link to one of them
   // (#guide=<id>). Same rule as every other hash this app answers: read once
@@ -2028,6 +2044,13 @@ function TravelApp() {
 
       {authConfigured && authModalOpen && (
         <AuthModal initialMode={authModalMode} onClose={() => setAuthModalOpen(false)} />
+      )}
+      {togetherCode && (
+        <div onClick={(e) => e.stopPropagation()}>
+          <Suspense fallback={null}>
+            <TogetherSheet code={togetherCode} onClose={() => setTogetherCode(null)} />
+          </Suspense>
+        </div>
       )}
       {savedTripsOpen && (
         <div onClick={(e) => e.stopPropagation()}>

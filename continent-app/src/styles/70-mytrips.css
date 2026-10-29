@@ -483,3 +483,28 @@
 @media (prefers-reduced-motion: reduce) {
   .mt-bar > span { transition: none; }
 }
+
+/* Kept trips from the trip finder (T806 to T808), above the shortlist: the
+   photo, the name, the facts and the price, the actions on their own row so
+   a phone never runs out of width. */
+.mt-kept { display: grid; gap: var(--space-2); margin-bottom: var(--space-4); min-width: 0; }
+.mt-kept-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.mt-kept-title { margin: 0; font-size: var(--text-lead); font-weight: 700; color: var(--text); }
+.mt-kept-sent { margin: 0; font-size: var(--text-label); color: var(--text-2); }
+.mt-kept-row {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.mt-kept-img { width: 72px; height: 72px; border-radius: var(--radius-control); overflow: hidden; }
+.mt-kept-body { display: grid; gap: 2px; min-width: 0; align-content: start; }
+.mt-kept-name { margin: 0; overflow: hidden; font-size: var(--text-body); font-weight: 600; color: var(--text); white-space: nowrap; text-overflow: ellipsis; }
+.mt-kept-body .mt-row-meta { margin: 0; }
+.mt-kept-price { margin: 0; font-size: var(--text-label); color: var(--text-3); }
+.mt-kept-price .money { font-size: var(--text-body); font-weight: 700; color: var(--text); }
+.mt-kept-drop { margin: 0; font-size: var(--text-caption); font-weight: 600; color: var(--good-ink); }
+.mt-kept-acts { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: var(--space-1); justify-content: flex-end; }

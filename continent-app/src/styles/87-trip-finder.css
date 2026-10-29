@@ -1,0 +1,609 @@
+/*
+ * The trip finder's screens (TF2, T797 to T800): the loader, Trips for you
+ * and the priced trip card, the live receipt and the line pickers. Imported
+ * by the finder's own components (src/planner/finder/), so it loads with
+ * their lazy chunk. Every rule is under a .tff- class: no generic
+ * .card-body or > * selector (the css-routes gotcha). Tokens only.
+ */
+
+/* ---- The loader (T797) ---- */
+.tff-load { cursor: default; }
+.tff-load > .pf-title { margin-bottom: var(--space-1); }
+
+.tff-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.tff-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text-2);
+  font-size: var(--text-label);
+  font-weight: 500;
+  line-height: var(--leading-ui);
+}
+
+.tff-checks {
+  display: grid;
+  gap: var(--space-3);
+  margin: var(--space-4) auto 0;
+  padding: 0;
+  list-style: none;
+  max-width: 420px;
+  width: 100%;
+}
+.tff-check {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-body);
+  line-height: var(--leading-ui);
+  color: var(--text-3);
+  transition: color var(--dur-2) var(--ease-out);
+}
+.tff-check.is-working,
+.tff-check.is-done { color: var(--text); }
+.tff-check-mark {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--border);
+  color: var(--surface);
+  transition: background-color var(--dur-2) var(--ease-out), border-color var(--dur-2) var(--ease-out);
+}
+.tff-check.is-working .tff-check-mark { border-color: var(--text-2); }
+.tff-check.is-done .tff-check-mark { background: var(--text); border-color: var(--text); }
+.tff-check-mark svg { transform: scale(0.6); opacity: 0; transition: transform var(--dur-2) var(--ease-out), opacity var(--dur-2) var(--ease-out); }
+.tff-check.is-done .tff-check-mark svg { transform: none; opacity: 1; }
+
+.tff-skip { display: flex; justify-content: center; margin-top: var(--space-2); }
+.tff-fail { margin: 0; text-align: center; color: var(--text-2); font-size: var(--text-body); }
+
+@media (prefers-reduced-motion: reduce) {
+  .tff-check,
+  .tff-check-mark,
+  .tff-check-mark svg { transition: none; }
+}
+
+/* ---- Trips for you (T798) ---- */
+.tff-ansbar {
+  display: flex;
+  gap: var(--space-2);
+  margin: 0 calc(-1 * var(--space-1));
+  padding: var(--space-1);
+  list-style: none;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tff-ansbar::-webkit-scrollbar { display: none; }
+.tff-ansbar > li { flex: none; }
+.tff-ans.btn { border-radius: var(--radius-pill); font-weight: 500; }
+
+.tff-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+@media (min-width: 769px) {
+  .tff-list { grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); }
+}
+.tff-more { display: flex; justify-content: center; }
+
+/* ---- The priced trip card (T798, DESIGN.md "Priced trip card") ---- */
+.tff-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+.tff-card.is-marked { border-color: var(--select-border); outline: 1px solid var(--select-border); outline-offset: -2px; }
+@media (hover: hover) {
+  .tff-card:hover { border-color: var(--neutral-300); }
+  .tff-card.is-marked:hover { border-color: var(--select-border); }
+}
+.tff-card-img { display: block; width: 100%; }
+.tff-card-body {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4) var(--space-4);
+}
+.tff-card-head { display: grid; gap: 2px; }
+.tff-card-name {
+  margin: 0;
+  font-size: var(--text-lead);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  color: var(--text);
+  text-wrap: balance;
+}
+.tff-card-meta { margin: 0; font-size: var(--text-label); color: var(--text-2); }
+.tff-card-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--select-ink);
+}
+
+/* The total opens the receipt; its hit area is the whole card. Controls
+   that do something else sit above that stretch. */
+.tff-total.btn {
+  position: static;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: var(--space-1) var(--space-2);
+  height: auto;
+  min-height: 0;
+  padding: 0;
+  background: none;
+  color: var(--text);
+  text-align: left;
+}
+.tff-total.btn::after { content: ""; position: absolute; inset: 0; border-radius: var(--radius-card); }
+.tff-total.btn:focus-visible { outline: 2px solid transparent; }
+.tff-total.btn:focus-visible::after { outline: 2px solid var(--focus); outline-offset: -2px; }
+.tff-total-eur { font-size: var(--text-title); font-weight: 700; line-height: var(--leading-tight); }
+.tff-total-unit { font-size: var(--text-label); font-weight: 500; color: var(--text-2); }
+@media (hover: hover) { .tff-total.btn:hover { background: none; } }
+
+.tff-match.btn,
+.tff-card .costbar,
+.tff-why { position: relative; z-index: calc(var(--z-base) + 1); }
+.tff-match.btn {
+  justify-self: start;
+  margin: calc(-1 * var(--space-1)) 0 0 calc(-1 * var(--space-2));
+  font-weight: 700;
+  text-decoration: underline dotted var(--border);
+  text-underline-offset: 4px;
+}
+
+.tff-three {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+  margin: 0;
+}
+.tff-three > div { display: grid; gap: 2px; min-width: 0; }
+.tff-three dt { font-size: var(--text-caption); color: var(--text-2); }
+.tff-three dd { margin: 0; font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.tff-three .not-yet { font-size: var(--text-caption); font-weight: 500; }
+.tff-card .costbar { margin: 0; }
+.tff-card .costbar-read:empty { display: none; }
+
+.tff-inc { display: flex; flex-wrap: wrap; gap: var(--space-1); margin: 0; padding: 0; list-style: none; }
+.tff-inc-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 24px;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  color: var(--text-2);
+  font-size: var(--text-micro);
+  font-weight: 600;
+}
+.tff-inc-item svg { color: var(--status-success); }
+.tff-inc-item.is-yours { background: none; border: 1px solid var(--border); }
+.tff-inc-item.is-notYet { background: none; border: 1px dashed var(--border); color: var(--text-3); }
+
+.tff-ruler { display: grid; gap: var(--space-1); font-size: var(--text-caption); color: var(--text-2); }
+.tff-ruler-track {
+  position: relative;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+}
+.tff-ruler-fill {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-pill);
+  background: var(--kind-city);
+  transform-origin: left center;
+}
+.tff-ruler-mark {
+  position: absolute;
+  top: -3px;
+  width: 2px;
+  height: 12px;
+  margin-left: -1px;
+  background: var(--text);
+}
+.tff-ruler.is-over { color: var(--text); }
+
+.tff-reasons {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-caption);
+  color: var(--text-2);
+  line-height: var(--leading-ui);
+}
+.tff-reason { display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: var(--space-2); align-items: start; }
+.tff-reason > svg { margin-top: 2px; color: var(--text-3); }
+.tff-reason.is-catch {
+  margin-top: var(--space-1);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border-soft);
+  color: var(--text);
+}
+.tff-reason.is-catch > svg { color: var(--amber-ink); margin-top: 1px; }
+
+.tff-card-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin: auto 0 0;
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border-soft);
+  font-size: var(--text-label);
+  color: var(--text-2);
+}
+.tff-card-foot .money { color: var(--text); font-weight: 600; }
+
+/* "Why this match": a bar per like on the ink ramp, the figure beside it. */
+.tff-why { display: grid; gap: var(--space-2); padding: var(--space-3); border-radius: var(--radius-control); background: var(--surface-sunken); }
+.tff-bars, .tff-why-against { display: grid; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.tff-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) auto;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-caption);
+  color: var(--text-2);
+}
+.tff-bar-track { position: relative; height: 6px; border-radius: var(--radius-pill); background: var(--surface); overflow: hidden; }
+.tff-bar-fill { position: absolute; inset: 0; background: var(--kind-city); transform-origin: left center; }
+.tff-bar-pct { color: var(--text); font-weight: 600; }
+.tff-why-against li { display: flex; gap: var(--space-2); align-items: start; font-size: var(--text-caption); color: var(--text); }
+.tff-why-against svg { flex: none; margin-top: 1px; color: var(--amber-ink); }
+
+/* ---- The live receipt (T799): the planner's sheet, full screen on a phone ---- */
+@media (max-width: 768px) {
+  .fsheet.tff-rc-sheet { height: 100dvh; max-height: 100dvh; max-width: none; border-radius: 0; }
+}
+.tff-rc-sheet .fsheet-body { padding: 0; }
+.tff-rc { display: flex; flex-direction: column; min-height: 100%; }
+.tff-rc-head {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--surface-sunken);
+}
+.tff-rc-total { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-2); margin: 0; }
+.tff-rc-eur { font-size: var(--text-title); font-weight: 700; color: var(--text); }
+.tff-rc-unit { font-size: var(--text-label); color: var(--text-2); }
+.tff-delta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: var(--text-caption);
+  font-weight: 700;
+  animation: tff-fade var(--dur-2) var(--ease-out);
+}
+@keyframes tff-fade { from { opacity: 0; } to { opacity: 1; } }
+.tff-rc-head .costbar { margin: 0; }
+.tff-rc-whys { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: calc(-1 * var(--space-1)) 0 0 calc(-1 * var(--space-2)); }
+.tff-rc-head .tff-why { background: var(--surface); }
+
+.tff-rc-rows { margin: 0; padding: 0; list-style: none; }
+.tff-rc-row-wrap + .tff-rc-row-wrap { border-top: 1px solid var(--border-soft); }
+.tff-rc-row.btn,
+.tff-rc-row.is-static {
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr) auto 16px;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  height: auto;
+  min-height: var(--tap);
+  padding: var(--space-3) var(--space-4);
+  border-radius: 0;
+  color: var(--text);
+  font-weight: 400;
+  text-align: left;
+}
+.tff-rc-row.is-static { grid-template-columns: 10px minmax(0, 1fr) auto; padding-right: calc(var(--space-4) + 16px + var(--space-3)); }
+@media (hover: hover) { .tff-rc-row.btn:hover { background: var(--surface-hover); } }
+.tff-rc-sw { width: 10px; height: 10px; border-radius: var(--radius-sm); background: none; }
+.tff-rc-what { display: grid; gap: 2px; min-width: 0; }
+.tff-rc-label { font-size: var(--text-body); font-weight: 600; }
+.tff-rc-pick { font-size: var(--text-caption); color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tff-rc-why { font-size: var(--text-caption); color: var(--text-3); }
+.tff-rc-fig { font-size: var(--text-body); font-weight: 600; text-align: right; }
+.tff-rc-fig .not-yet { font-size: var(--text-caption); font-weight: 500; }
+.tff-rc-chev { color: var(--text-3); }
+
+.tff-rc-foot {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: auto;
+  padding: var(--space-4);
+  padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+  border-top: 2px solid var(--text);
+  background: var(--surface);
+}
+.tff-rc-group { display: flex; justify-content: space-between; margin: 0; font-size: var(--text-label); color: var(--text-2); }
+.tff-rc-group .money { color: var(--text); font-weight: 600; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tff-delta { animation: none; }
+}
+
+/* ---- The line pickers (T800): a view inside the receipt's sheet ---- */
+.tff-pick { display: flex; flex-direction: column; min-height: 100%; }
+.tff-pick-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--border-soft);
+}
+.tff-pick-title { margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); }
+.tff-pick-title:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.tff-pick-body { display: grid; gap: var(--space-4); padding: var(--space-4); }
+
+.tff-opts { display: grid; gap: var(--space-2); }
+.tff-opt.btn {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  height: auto;
+  min-height: var(--tap);
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 400;
+  text-align: left;
+}
+.tff-opt.btn:has(.flt-mark) { grid-template-columns: auto minmax(0, 1fr) auto; }
+@media (hover: hover) { .tff-opt.btn:hover { background: var(--surface-hover); border-color: var(--neutral-300); } }
+.tff-opt.btn.is-selected { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
+.tff-opt-what { display: grid; gap: 2px; min-width: 0; }
+.tff-opt-label { font-size: var(--text-body); font-weight: 600; }
+.tff-opt-sub { font-size: var(--text-caption); color: var(--text-2); }
+.tff-opt.is-selected .tff-opt-sub { color: var(--select-ink); }
+.tff-opt-fig { display: grid; justify-items: end; gap: 2px; }
+.tff-opt-fig .money { font-size: var(--text-body); font-weight: 700; }
+.tff-opt-delta { font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.tff-opt.is-selected .tff-opt-delta { color: var(--select-ink); }
+.tff-opt-tick {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--select-border);
+  background: var(--surface);
+  color: var(--select-ink);
+}
+
+.tff-flights { display: grid; gap: var(--space-4); }
+.tff-fgroup { display: grid; gap: var(--space-2); }
+.tff-fgroup-head { margin: 0; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.tff-flights-note { margin: 0; font-size: var(--text-body); color: var(--text-2); }
+.tff-gf { margin: 0; font-size: var(--text-caption); color: var(--text-2); line-height: var(--leading-body); }
+.tff-gf a { display: inline-flex; align-items: center; gap: var(--space-1); color: var(--action); font-weight: 600; text-underline-offset: 3px; }
+
+.tff-pick-foot {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: auto;
+  padding: var(--space-4);
+  padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--border-soft);
+  background: var(--surface);
+}
+.tff-pick-total { display: flex; justify-content: space-between; margin: 0; font-size: var(--text-label); color: var(--text-2); }
+.tff-pick-total .money { color: var(--text); font-weight: 700; font-size: var(--text-lead); }
+
+/* The kit Button wraps its children in .btn-label; these rows lay out the children themselves. */
+.tff-opt .btn-label,
+.tff-rc-row .btn-label,
+.tff-total .btn-label { display: contents; }
+/* The cost bar's segments are buttons: no fill of their own around the 8 px bar. */
+.tff-card .costbar-seg,
+.tff-rc .costbar-seg { background: none; }
+
+/* ---- Compare (T802): the tick, the tray and the table ---- */
+.tff-tick {
+  position: relative;
+  z-index: calc(var(--z-base) + 1);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 var(--space-2);
+  margin-top: calc(-1 * var(--space-2));
+}
+.tff-tick input { flex: none; width: 20px; height: 20px; margin: 0; accent-color: var(--action); cursor: pointer; }
+.tff-tick label {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+}
+.tff-tick-full { flex-basis: 100%; margin: 0; font-size: var(--text-caption); color: var(--text-2); }
+
+/* The tray floats at the foot of the list, clear of the bottom nav and the
+   phone's safe area; on a desktop it is a slim bar, not a band. */
+.tff-tray {
+  position: sticky;
+  bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
+  z-index: var(--z-tray);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--elev-2);
+}
+.tff-tray-text { margin: 0; font-size: var(--text-body); font-weight: 600; color: var(--text); }
+@media (min-width: 769px) {
+  .tff-tray { width: min(100%, 440px); margin-inline: auto; }
+}
+
+@media (max-width: 768px) {
+  .fsheet.tff-cmp-sheet { height: 100dvh; max-height: 100dvh; max-width: none; border-radius: 0; }
+}
+@media (min-width: 900px) {
+  .fsheet.tff-cmp-sheet { max-width: 880px; }
+}
+.tff-cmp-scroll { overscroll-behavior-x: contain; background: var(--surface); }
+.tff-cmp-table th, .tff-cmp-table td { padding: var(--space-2); }
+.tff-cmp-table thead th:not(.cmp-rowhead), .tff-cmp-table td { min-width: 128px; }
+@media (min-width: 640px) {
+  .tff-cmp-table thead th:not(.cmp-rowhead), .tff-cmp-table td { min-width: 168px; }
+}
+/* The row labels stay put while three or four trips scroll sideways. */
+.tff-cmp-table .cmp-rowhead {
+  position: sticky;
+  left: 0;
+  z-index: calc(var(--z-base) + 1);
+  min-width: 72px;
+  max-width: 96px;
+  white-space: normal;
+  background: var(--surface);
+}
+.tff-cmp-table thead .cmp-rowhead { z-index: calc(var(--z-sticky) + 1); }
+.tff-cmp-img { width: 96px; margin-bottom: var(--space-2); border-radius: var(--radius-sm); overflow: hidden; }
+.tff-cmp-name { display: block; font-size: var(--text-label); font-weight: 600; line-height: var(--leading-tight); color: var(--text); }
+.tff-cmp-table td.is-best { background: var(--sun-100); }
+.tff-cmp-table .money, .tff-cmp-table .cmp-fig { font-variant-numeric: tabular-nums; }
+.tff-cmp-over { color: var(--amber-ink); }
+.tff-cmp-table tfoot th, .tff-cmp-table tfoot td { border-top: 1px solid var(--border-soft); border-bottom: 0; }
+.tff-cmp-foot { vertical-align: bottom; }
+.tff-cmp-foot .btn { display: flex; width: 100%; }
+.tff-cmp-foot .btn + .btn { margin-top: var(--space-1); }
+
+/* ---- The trade-off levers (T803): one row of choice chips under the answers ---- */
+.tff-levers {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: var(--space-2) calc(-1 * var(--space-1)) 0;
+  padding: var(--space-1);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tff-levers::-webkit-scrollbar { display: none; }
+.tff-lever { flex: none; display: flex; gap: var(--space-1); }
+/* A hairline between groups, so three single choices read as three. */
+.tff-lever + .tff-lever { padding-left: var(--space-2); border-left: 1px solid var(--border-soft); }
+.tff-lever .ui-chip { flex: none; white-space: nowrap; }
+/* On the wide plan stage every chip shows: the row wraps instead of scrolling. */
+@media (min-width: 769px) {
+  .tff-levers { flex-wrap: wrap; gap: var(--space-2) var(--space-5); overflow: visible; }
+  .tff-lever + .tff-lever { padding-left: 0; border-left: 0; }
+}
+.tff-lever-miss {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 var(--space-2);
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-label);
+  color: var(--text-2);
+}
+
+/* ---- Keep and skip (T806) ---- */
+/* The card's last row: Keep, Skip and the Compare tick, above the card's
+   whole-card button (.tff-total::after), so each is its own tap. */
+.tff-acts {
+  position: relative;
+  z-index: calc(var(--z-base) + 1);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 var(--space-1);
+  margin-top: calc(-1 * var(--space-2));
+}
+.tff-acts .tff-tick { margin: 0 0 0 auto; }
+
+/* Kept is a selection: brown (the select tokens), the heart filled. */
+.tff-keep.is-kept { color: var(--select-ink); }
+.tff-keep.is-kept svg { fill: currentColor; }
+.tff-skip-one { color: var(--text-2); }
+.tff-skip-one.is-skipped { color: var(--select-ink); }
+
+.tff-hidden {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0 var(--space-2);
+  margin: 0;
+  font-size: var(--text-label);
+  color: var(--text-2);
+}
+
+/* ---- Decide together (T808) ---- */
+.tff-tog { display: grid; gap: var(--space-3); }
+.tff-tog-lede { margin: 0; font-size: var(--text-body); color: var(--text); }
+.tff-tog-who { margin: 0; font-size: var(--text-label); color: var(--text-2); }
+.tff-tog-list { display: grid; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.tff-tog-row {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-2);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.tff-tog-row.is-all { border-color: var(--select-border); }
+.tff-tog-img { width: 64px; height: 64px; border-radius: var(--radius-control); overflow: hidden; }
+.tff-tog-body { display: grid; gap: 2px; min-width: 0; }
+.tff-tog-name { margin: 0; font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.tff-tog-meta, .tff-tog-price { margin: 0; font-size: var(--text-label); color: var(--text-2); }
+.tff-tog-price .money { font-weight: 600; color: var(--text); }
+.tff-tog-state { display: inline-flex; align-items: center; gap: var(--space-1); margin: 0; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.tff-tog-state.is-all { color: var(--good-ink); }
+.tff-tog-acts { grid-column: 1 / -1; display: flex; gap: var(--space-1); justify-content: flex-end; }
+.tff-tog-foot { display: grid; gap: var(--space-2); }
+.tff-tog-hint, .tff-tog-sent { margin: 0; font-size: var(--text-label); color: var(--text-2); }
+.tff-tog-sent input, .mt-kept-sent input { width: 100%; margin-top: var(--space-1); font: inherit; }
