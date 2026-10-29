@@ -7130,7 +7130,7 @@ export const de = {
   "pf.home.continuePlan": "Weiterplanen",
   "pf.home.yourTrip": "Deine Reise",
   "pf.home.cheaper": "Günstiger, seit du sie gemerkt hast",
-  "pf.home.cheaperBy": "{name}, {price} weniger pro Person",
+  "pf.home.cheaperBy": "{price} weniger pro Person: {name}",
   "pf.kind.title": "Was möchtest du planen?",
   "pf.kind.help": "Du kannst das später jederzeit ändern.",
   "pf.kind.new": "Eine neue Reise",

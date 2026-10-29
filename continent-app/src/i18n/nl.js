@@ -7130,7 +7130,7 @@ export const nl = {
   "pf.home.continuePlan": "Verder plannen",
   "pf.home.yourTrip": "Je reis",
   "pf.home.cheaper": "Goedkoper sinds je hem bewaarde",
-  "pf.home.cheaperBy": "{name}, {price} minder per persoon",
+  "pf.home.cheaperBy": "{price} minder per persoon: {name}",
   "pf.kind.title": "Wat wil je plannen?",
   "pf.kind.help": "Je kunt dit later altijd nog aanpassen.",
   "pf.kind.new": "Een nieuwe reis",
