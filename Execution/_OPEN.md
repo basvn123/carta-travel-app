@@ -2359,5 +2359,5 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T841-a | T841 | Swap city measures distance as the crow flies, not travel time; a place across a mountain range can read near | next task | open |  |
 | T843-a | T843 | A day out shows on Days, but Plan this day plans the base, not the place visited; wire the day planner's day-trip mode to a trip's day | next task | open |  |
 | T843-b | T843 | From 1024 px the Itinerary, Costs and Days tabs show no total while things change; Batch C's budget card in the rail (board panel 3) | next task | closed by T846 |  |
-| T845-a | T845 | The Costs head still reads "a person" and "a person a day" under the total, a line board panel 3 removed from the Overview band; keep it on the receipt or remove it there too (Execution/P15/T845-T847-trip-page-v4-c.md) | user | open |  |
+| T845-a | T845 | The Costs head still reads "a person" and "a person a day" under the total, a line board panel 3 removed from the Overview band; keep it on the receipt or remove it there too (Execution/P15/T845-T847-trip-page-v4-c.md) | user | closed by T848 |  |
 | T847-a | T847 | Share this trip's Calendar and maps leads to the route's export block; move the ICS and KML handlers out of TripItinerary so the sheet runs them itself | next task | open |  |

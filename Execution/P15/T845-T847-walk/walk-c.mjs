@@ -83,6 +83,8 @@ for (const W of (process.env.WIDTHS || '390,1024,1440').split(',').map(Number)) 
     ok(W, 'four groups, each with its dot', await page.locator('.plan-total-group .plan-total-dot').count() === 4);
     ok(W, 'no People and Lifestyle box on Costs', await page.locator('.tpg-main .plan-total-inputs').count() === 0);
     ok(W, 'the total is a figure, not a button', await page.locator('.tpg-main .plan-total-open').count() === 0);
+    // T848: the head is the total for the party only.
+    ok(W, 'no a person line on the Costs head', !/a person/.test(await txt(page, '.tpg-main .plan-total-head')), await txt(page, '.tpg-main .plan-total-head'));
     ok(W, 'a flight line is named by its airports', await page.locator('.plan-total-group.is-travel .rcodes').count() >= 1);
     ok(W, 'no "Getting there" left on Costs', !/Getting there|Getting home/.test(await txt(page, '.tpg-main')));
     ok(W, 'no sideways scroll on Costs', await noSideways(page));

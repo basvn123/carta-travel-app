@@ -175,13 +175,15 @@ export function PlanTotal({
             </p>
             <p className="plan-total-pp">
               {t('receipt.total', { people: party === 1 ? t('receipt.onePerson') : t('receipt.nPeople', { n: party }) })}
-              {party > 1 && (
+              {/* T848 (owner, T845-a): on the Costs tab the head is the total
+                  for the party only, like the Overview band (board panel 3). */}
+              {!grouped && party > 1 && (
                 <>
                   {', '}
                   <span className="plan-total-ppfig">{t('plan.aPerson', { price: formatEst(priced.perPerson, t('money.est'), { precision: 'cents', locale: lang }) })}</span>
                 </>
               )}
-              {nights > 0 && (
+              {!grouped && nights > 0 && (
                 <>
                   {', '}
                   <span className="plan-total-ppfig">{t('plan.aPersonADay', { price: formatEst(priced.perPerson / nights, t('money.est'), { precision: 'whole', locale: lang }) })}</span>
