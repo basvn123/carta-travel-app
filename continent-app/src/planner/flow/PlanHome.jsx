@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { tabHref } from '../../lib/urlState.js';
 import { loadJourneyIndex, splitAround } from '../../lib/journeys.js';
-import Logo from '../../components/Logo.jsx';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { Button, Chip, IconButton } from '../../components/ui/index.js';
 import {
@@ -60,7 +59,6 @@ function TripCollection({ fan, onOpen }) {
         ))}
       </span>
       <span className="pf-coll-foot">
-        <Logo size={32} className="pf-coll-mark" />
         <span className="pf-coll-title">{t('pf.promo.title')}</span>
         <span className="pf-coll-go">
           {t('pf.promo.link')}

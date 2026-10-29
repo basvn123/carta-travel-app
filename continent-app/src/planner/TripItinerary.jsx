@@ -390,7 +390,11 @@ export function TripItinerary({
   // Carta's flight there and home (T518): the hours wanted each way and the
   // trip's bag, both from useTripPlanner.
   flightHours = null, onFlightHours = null, baggage = 'cabin',
+  // The trip page's tabs (T821) each show a part: 'receipt', 'route',
+  // 'days', 'tools', 'export', 'before'. Absent shows every part.
+  sections = null, receiptGrouped = false,
 }) {
+  const show = (k) => !sections || sections.includes(k);
   // Whether a day already has Day-planner picks (drives "Plan" vs "Modify").
   const dayPlanned = (d) => Boolean(isDayPlanned && isDayPlanned(d.stopIndex, d.dayOfStay));
   const { t } = useI18n();
@@ -627,7 +631,8 @@ export function TripItinerary({
   return (
     <div className="itin">
       <div className="itin-overview">
-          <PlanTotal
+          {show('receipt') && <PlanTotal
+            grouped={receiptGrouped}
             id={receiptId}
             openKey={receiptOpenKey}
             priced={priced}
@@ -643,13 +648,13 @@ export function TripItinerary({
                 <b><Money value={oneMoreNight} est precision="cents" /></b>
               </p>
             ) : null}
-          />
+          />}
 
 
           {/* The route as one timeline (T432): the way there, every bed and
               every hop, the way home. Each part carries its figure, and the
               place to put what was paid sits on the part it paid for. */}
-          <section className="itin-route" aria-labelledby="itin-route-h">
+          {show('route') && <section className="itin-route" aria-labelledby="itin-route-h">
             <h2 className="itin-h" id="itin-route-h">{t('plan.yourRoute')}</h2>
             <ol className="itin-steps">
               <li className="itin-end" id="itin-fare-out">
@@ -839,11 +844,11 @@ export function TripItinerary({
                 )}
               </dl>
             )}
-          </section>
+          </section>}
 
           {/* Every day, one row: the day, where, and the way into the Day
               planner. A day with nothing planned says nothing more. */}
-          <section className="itin-days-list" aria-labelledby="itin-days-h">
+          {show('days') && <section className="itin-days-list" aria-labelledby="itin-days-h">
             <h2 className="itin-h" id="itin-days-h">{t('itin.yourDays')}</h2>
             <ol className="itin-day-rows">
               {dayPlan.map((d) => {
@@ -895,11 +900,11 @@ export function TripItinerary({
                 );
               })}
             </ol>
-          </section>
+          </section>}
 
           {/* The trip's tools, one tap each (T458), after the days (T500): first
               what decides the trip, then the tools to carry it out. */}
-          <section className="itin-tools" aria-labelledby="itin-tools-h">
+          {show('tools') && <section className="itin-tools" aria-labelledby="itin-tools-h">
             <h2 className="itin-h" id="itin-tools-h">{t('plan.toolsTitle')}</h2>
             <div className="itin-tool-grid">
               {tools.map((tool) => (
@@ -911,11 +916,11 @@ export function TripItinerary({
                 </Button>
               ))}
             </div>
-          </section>
+          </section>}
 
           {/* Take the trip with you: the PDF first, then the rest, all in
               view as one grid of equal buttons (T432). */}
-          <section className="itin-export" aria-labelledby="itin-export-h">
+          {show('export') && <section className="itin-export" aria-labelledby="itin-export-h">
             <h2 className="itin-h" id="itin-export-h">{t('export.exportAndShare')}</h2>
             <div className="itin-export-grid">
               <Button
@@ -973,9 +978,9 @@ export function TripItinerary({
               </div>
             )}
             {shareState && <p className="itin-export-note" role="status">{shareState}</p>}
-          </section>
+          </section>}
 
-          {beforeSlot}
+          {show('before') && beforeSlot}
       </div>
 
       {openTool && (

@@ -1832,7 +1832,6 @@
 }
 .plan-input dd { margin: 0; font-size: var(--text-body); color: var(--text); text-align: right; }
 .wrev-fact dd { margin: 2px 0 0; display: flex; flex-direction: column; align-items: flex-start; gap: 0; font-size: var(--text-body); font-weight: 600; color: var(--text); }
-.plan-ws .plan-ws-actions .btn { min-height: var(--tap-main); }
 .trip-device-signin.btn { padding: 0 var(--space-1); }
 .trip-total-bar.btn {
   justify-content: stretch;
@@ -1923,7 +1922,8 @@
   html:has(.map-drawer.is-full:not(.tab-keep-hidden .map-drawer):not([inert] .map-drawer)) .bottom-nav { display: none; }
 }
 .trip-keep-btn.btn { margin-top: var(--space-3); min-height: var(--tap-main); }
-.plan-ws .itin-day-plan-btn.btn { min-height: var(--tap-main); }
+/* The way into a day is a main action on the trip page's Days tab (T832, was .plan-ws). */
+.tpg .itin-day-plan-btn.btn { min-height: var(--tap-main); }
 .dayp-empty { text-align: center; padding: 26px 4px 8px; }
 @media (hover: hover) {
   .daya-add.on:hover { border-color: var(--danger); color: var(--danger); }

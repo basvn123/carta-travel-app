@@ -1,0 +1,55 @@
+/* "Let Carta plan them" at work (T823): one bar floating over the day
+   planner, above the bottom nav on a phone, centred on a desktop. The
+   progress line under the text fills as the days land. Tokens only. */
+.autoplan {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--bottom-nav-h, 64px) + var(--space-3) + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  z-index: calc(var(--z-float, 40) + 5);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  width: min(560px, calc(100% - 2 * var(--gutter)));
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-4);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 24px rgba(31, 42, 51, 0.14);
+  color: var(--text);
+}
+@media (min-width: 769px) { .autoplan { bottom: var(--space-5); } }
+.autoplan-icon { display: grid; place-items: center; width: 32px; height: 32px; border-radius: var(--radius-pill); background: var(--action-tint); color: var(--action); }
+.autoplan.is-done .autoplan-icon { background: var(--surface-sunken); color: var(--good-ink, var(--text)); }
+.autoplan.is-fail .autoplan-icon { background: var(--surface-sunken); color: var(--amber-ink, var(--text)); }
+.autoplan-text { font-size: var(--text-label); line-height: 1.4; min-width: 0; overflow-wrap: anywhere; }
+.autoplan-acts { display: flex; align-items: center; gap: var(--space-2); }
+.autoplan-meter {
+  grid-column: 2 / 4;
+  grid-row: 2;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--surface-sunken);
+  overflow: hidden;
+}
+.autoplan-meter > span { display: block; height: 100%; background: var(--action); transition: width 0.4s var(--ease-out, ease-out); }
+.autoplan-close {
+  display: grid;
+  place-items: center;
+  width: var(--tap);
+  height: var(--tap);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-2);
+  cursor: pointer;
+}
+.autoplan-close:hover { background: var(--surface-hover); }
+.autoplan-close:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+@media (max-width: 480px) {
+  .autoplan { grid-template-columns: auto minmax(0, 1fr); }
+  .autoplan-acts { grid-column: 1 / -1; justify-content: flex-end; }
+  .autoplan-meter { grid-column: 1 / -1; grid-row: 2; }
+}
+@media (prefers-reduced-motion: reduce) { .autoplan-meter > span { transition: none; } }

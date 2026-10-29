@@ -7,6 +7,7 @@ import { partyText } from '../lib/party.js';
 import { useSettledFigure } from '../lib/figureChange.js';
 import { formatMoney, formatEst } from '../lib/money.js';
 import { tripLines, tripReadiness } from '../lib/tripTotal.js';
+import { costTiles, tileOfLine } from '../lib/price/tiles.js';
 import { useLifestyleLabel, useTotalDelta } from './planHooks.js';
 import { ChevronDownIcon, ChevronRightIcon, PlusIcon } from '../components/Icons.jsx';
 import { AirlineMark } from '../components/flights/Flights.jsx';
@@ -93,12 +94,15 @@ export function PlanTotal({
   variant = 'rail', title = null, defaultOpen = false, footer = null, className = '',
   // The total bar opens this receipt (T500): a new openKey opens the lines.
   id = undefined, openKey = 0,
+  // The trip page's Costs tab (T821): the lines always open, under the four
+  // tiles' headings (Flights, Getting around, Stay, Food), each with its sum.
+  grouped = false,
 }) {
   const { t, lang } = useI18n();
   const settings = useSettings();
   const lifestyle = useLifestyleLabel();
   const uid = useId();
-  const [open, setOpen] = useState(defaultOpen);
+  const [open, setOpen] = useState(defaultOpen || grouped);
   useEffect(() => { if (openKey) setOpen(true); }, [openKey]);
   const [editParty, setEditParty] = useState(false);
   const total = priced ? priced.grandTotal : null;
@@ -208,7 +212,37 @@ export function PlanTotal({
         </p>
       )}
 
-      {hasTrip && (
+      {hasTrip && grouped && (
+        <div className="plan-total-groups" id={`${uid}-lines`}>
+          {costTiles(priced).map((tile) => {
+            const mine = lines.filter((l) => tileOfLine(l.key, tile.driving) === tile.key);
+            const head = tile.key === 'travel' && tile.driving ? 'tp.tile.driving' : `tp.tile.${{ travel: 'flights', around: 'around', stay: 'stay', food: 'food' }[tile.key]}`;
+            return (
+              <section className="plan-total-group" key={tile.key} id={`tp-cost-${tile.key}`} tabIndex={-1} aria-labelledby={`${uid}-g-${tile.key}`}>
+                <h3 className="plan-total-group-h" id={`${uid}-g-${tile.key}`}>
+                  <span>{t(head)}</span>
+                  <span className="plan-total-group-n">{tile.empty ? t('tp.tile.notNeeded') : <Money value={tile.eur} est precision="cents" />}</span>
+                </h3>
+                {mine.length > 0 && (
+                  <dl className="plan-lines costrows">
+                    {mine.map((l) => (
+                      <CostRow
+                        key={l.key}
+                        kind={l.key}
+                        label={t(LINE_KEY[l.key])}
+                        tone={l.kind === 'missing' ? 'missing' : l.kind === 'yours' ? 'yours' : null}
+                        mark={l.kind === 'flight' && l.leg?.airline ? <AirlineMark code={l.leg.airline} size="sm" /> : null}
+                        value={<LineValue line={l} lang={lang} t={t} onAddFare={onAddFare} />}
+                      />
+                    ))}
+                  </dl>
+                )}
+              </section>
+            );
+          })}
+        </div>
+      )}
+      {hasTrip && !grouped && (
         <div className="plan-total-more" id={`${uid}-lines`} hidden={!open}>
           <CostBar lines={lines} />
           <dl className="plan-lines costrows">

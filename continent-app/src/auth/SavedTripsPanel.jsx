@@ -36,6 +36,8 @@ import { DayPrice } from '../browse/ExploreCards.jsx';
 import '../styles/70-mytrips.css';
 import { InstallHint } from './InstallHint.jsx';
 import { KeptTrips } from './mytrips/KeptTrips.jsx';
+import { SavedJourneys } from './mytrips/SavedJourneys.jsx';
+import { useSavedJourneys } from '../lib/journeySaves.js';
 import { holdPlan, useKept } from '../lib/recommend/keptStore.js';
 import {
   localToday, addDaysIso, classifyTrips, whenParts, dayPlanEndDate, orderedUnique,
@@ -125,6 +127,8 @@ export function SavedTripsPanel({
   const todayIso = localToday();
 
   const keptCount = useKept().length;
+  // T831: Carta's own trips saved from their page count as something kept.
+  const savedWeeks = useSavedJourneys().length;
   const [tab, setTab] = useState(() => readStored(TAB_KEY, ['favorites', 'planned', 'visited'], 'planned'));
   const pickedRef = useRef(false);
   const pickTab = (v) => { pickedRef.current = true; setTab(v); writeStored(TAB_KEY, v); };
@@ -831,7 +835,7 @@ export function SavedTripsPanel({
 
   const TABS = [
     { key: 'planned', Icon: CalendarIcon, label: t('saved.tabTrips'), n: plannedCount },
-    { key: 'favorites', Icon: BookmarkIcon, label: t('saved.tabFavorites'), n: shortRows.length },
+    { key: 'favorites', Icon: BookmarkIcon, label: t('saved.tabFavorites'), n: shortRows.length + savedWeeks },
     { key: 'visited', Icon: CheckIcon, label: t('saved.tabVisited'), n: pastCount },
   ];
   const renderTabs = (cls) => (
@@ -922,7 +926,10 @@ export function SavedTripsPanel({
                plan to the Plan tab, which opens the planner on it. */
             <KeptTrips onPlan={(r) => { holdPlan(r.plan); onGoToTab?.('trip'); }} />
           )}
-          {tab === 'favorites' && (keptCount === 0 || shownShort.length > 0 || shortlist.loading) && (
+          {tab === 'favorites' && onOpenFeature && (
+            <SavedJourneys onOpen={(id) => onOpenFeature('journey', { id })} />
+          )}
+          {tab === 'favorites' && ((keptCount === 0 && savedWeeks === 0) || shownShort.length > 0 || shortlist.loading) && (
             <ShortlistTab
               rows={shownShort}
               showKind={kinds.length > 1 && kindNow === 'all'}

@@ -321,8 +321,8 @@ try {
   if (await useBtn.isVisible().catch(() => false)) {
     await useBtn.click();
     await page.waitForTimeout(2500);
-    // T502: the planned trip is the .plan-ws workspace; .trip-sheet is gone (T496-T501).
-    const sheetText = (await page.locator('.plan-ws').first().innerText()).replace(/\s+/g, ' ');
+    // T832: the planned trip is the trip page (.tpg); the .plan-ws workspace is gone.
+    const sheetText = (await page.locator('.tpg').first().innerText()).replace(/\s+/g, ' ');
     check('T8.5 an undated published trip lands on the travel window',
       /when/i.test(sheetText), sheetText.slice(0, 90));
     check('T8.5 and says why it is asking',

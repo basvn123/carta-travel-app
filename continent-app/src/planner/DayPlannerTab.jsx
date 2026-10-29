@@ -34,11 +34,12 @@ import {
   canonicalPoiIndices, poiIdentityKeys, DAY_STYLES,
 } from './dayDraft.js';
 import { AiDayPlanModal } from './AiDayPlanModal.jsx';
+import { AutoPlanBar } from './days/AutoPlanBar.jsx';
 import { TripDaysOverview } from './days/TripDaysOverview.jsx';
 import { DayTownGuide } from './days/DayTownGuide.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
 import { CartaChatPlanner } from './CartaChatPlanner.jsx';
-import {
+import { AI_PLAN_MOCK,
   buildAiCandidates, requestAiDayPlan, splitAiPlan, decorateAiStops,
 } from './aiDayPlan.js';
 import { buildCityCandidates, requestCitySuggestion } from './aiCitySuggest.js';
@@ -63,6 +64,8 @@ import { DayCostBar, DayStrip, DayReceiptSheet } from './DayCost.jsx';
 import { MapDrawer } from '../components/MapDrawer.jsx';
 import { PageBar } from '../browse/PageBar.jsx';
 import { quoteTrip } from '../lib/tripTotal.js';
+import { draftQuoteState } from '../lib/price/draftState.js';
+import { useLiveFlights } from '../lib/flights/useLiveFlights.js';
 import { plannerStateFromPlan } from '../lib/myTrips.js';
 import { formatSteps, kmToSteps, stepsToKm } from '../lib/steps.js';
 import { fetchForecast } from '../lib/weather.js';
@@ -87,7 +90,7 @@ import {
 } from './dayPlanStore.js';
 import { loadTripDraft } from './tripDraftStore.js';
 import { plannerStore } from './plannerStore.js';
-import { fromDraft, dayAiPreset, dayPrefs } from './flow/tripSettings.js';
+import { fromDraft, dayAiPreset, dayPrefs, flightRanking } from './flow/tripSettings.js';
 
 const OPEN_DAY_KEY = 'carta.dayOpen.v1'; // T507: the day open when the page was left
 import {
@@ -272,6 +275,10 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   // live in prefs.aiPlans keyed "stopIdx:dayIdx", so they survive reloads and
   // ride the same per-plan cloud sync as every other answer.
   const [aiOpen, setAiOpen] = useState(false);
+  // T823: "Let Carta plan them" plans the whole trip: { phase: init | run |
+  // done | stopped | fail, list: [[stop, day]], i, planned, code, preset }.
+  const [autoQueue, setAutoQueue] = useState(null);
+  const autoBusy = useRef(false);
   // T672: the trip's days overview instead of one day.
   const [overview, setOverview] = useState(false);
   // Carta keeps the walking order optimal on every add ('auto'); manual
@@ -518,7 +525,12 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
           persistPrefs(planKey, merged);
           if (rhythm.detail) setDetailState(rhythm.detail);
           // "Let Carta plan the days": the first day opens with Carta at work.
-          if (autoFill) {
+          // T823 (owner 2026-10-29): Carta plans every day, one by one; the
+          // queue below walks the trip's days. A guest sees the bot's form,
+          // which says it needs an account.
+          if (autoFill && ((user && authConfigured) || AI_PLAN_MOCK != null)) {
+            setAutoQueue({ phase: 'init', planKey, preset: dayAiPreset(tripSettings), list: [], i: 0, planned: 0, code: '' });
+          } else if (autoFill) {
             setBotPreset({ ...dayAiPreset(tripSettings), autoRun: true });
             setAiOpen(true);
           }
@@ -790,19 +802,33 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
    * every caller reads the POIs in the same turn it asks for them (the
    * drafters below are `async` and use the return value directly).
    */
+  // T828: a town whose shard is already on its way is waited for, not
+  // answered with what is here. The day planner asks for the town as soon as
+  // it opens; Carta's first day asked again a moment later and got the short
+  // placeholder list (8 places, no candidates), so a day right after a
+  // reload said "too few places" in a town of 52.
+  const poiPendingRef = useRef(new Map());
   const ensurePois = React.useCallback(async (ids) => {
     const want = [...new Set((ids || []).filter(Boolean))];
+    const pending = want.map((id) => poiPendingRef.current.get(id)).filter(Boolean);
     const missing = want.filter((id) => !poiAskedRef.current.has(id));
-    if (!missing.length) return actFullRef.current || {};
+    if (!missing.length) {
+      if (pending.length) await Promise.all(pending);
+      return actFullRef.current || {};
+    }
     missing.forEach((id) => poiAskedRef.current.add(id));
-    const fetched = await fetchDestPoiMap(missing);
-    // A town that came back empty (a failed fetch resolves to []) is not
-    // remembered as asked, so the next call can try its shard again.
-    missing.forEach((id) => { if (!fetched[id]?.length) poiAskedRef.current.delete(id); });
-    const merged = { ...(actFullRef.current || {}), ...fetched };
-    actFullRef.current = merged;
-    setActFull(merged);
-    return merged;
+    const job = fetchDestPoiMap(missing).then((fetched) => {
+      // A town that came back empty (a failed fetch resolves to []) is not
+      // remembered as asked, so the next call can try its shard again.
+      missing.forEach((id) => { if (!fetched[id]?.length) poiAskedRef.current.delete(id); });
+      const merged = { ...(actFullRef.current || {}), ...fetched };
+      actFullRef.current = merged;
+      setActFull(merged);
+      return merged;
+    }).finally(() => { missing.forEach((id) => poiPendingRef.current.delete(id)); });
+    missing.forEach((id) => poiPendingRef.current.set(id, job));
+    await Promise.all([job, ...pending]);
+    return actFullRef.current || {};
   }, []);
 
   // The town being planned, loaded as soon as it is known.
@@ -1272,6 +1298,61 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     persistPrefs(plan?.id, saved);
     setAiOpen(false);
   };
+
+  // T823: the queue that plans every day. It moves the planner to each day
+  // in turn (so the day's own closures, places and stay are the ones used),
+  // asks the bot through the same runAi the form uses, puts the answer on
+  // the map with applyAiResult, and goes on. A day that already has places
+  // is left as it is. A failure stops the queue and says how far it got.
+  useEffect(() => {
+    if (!autoQueue) return;
+    if (autoQueue.phase === 'init') {
+      if (!stops.length) return;
+      const have = loadAssignments(autoQueue.planKey) || {};
+      const list = [];
+      stops.forEach((st, si) => {
+        for (let di = 0; di < st.nights; di++) {
+          if (!(have?.[si]?.[di]?.length > 0)) list.push([si, di]);
+        }
+      });
+      setOverview(false);
+      setAutoQueue((q) => ({ ...q, phase: list.length ? 'run' : 'done', list, total: stops.reduce((n, st) => n + st.nights, 0) }));
+      return;
+    }
+    if (autoQueue.phase !== 'run' || autoBusy.current) return;
+    const target = autoQueue.list[autoQueue.i];
+    if (!target) { setAutoQueue((q) => ({ ...q, phase: 'done' })); setOverview(true); return; }
+    const [si, di] = target;
+    if (stopIdx !== si || dayIdx !== di) {
+      if (stopIdx !== si) setStopIdx(si);
+      if (dayIdx !== di) setDayIdx(di);
+      return;
+    }
+    if (!stop?.dest) return;
+    autoBusy.current = true;
+    const p = autoQueue.preset || {};
+    (async () => {
+      let res;
+      try {
+        res = await runAi({
+          vibe: p.vibe || 'mix', pace: p.pace || 'balanced', avoidHills: false, freeText: p.freeText || '',
+          date: days[di] || null, groupSize: aiGroupSize(), wantEvents: false,
+        });
+      } catch {
+        res = { ok: false, code: 'network' };
+      }
+      autoBusy.current = false;
+      entitlement?.refresh?.();
+      setAutoQueue((q) => {
+        if (!q || q.phase !== 'run') return q;
+        if (res.ok) return { ...q, i: q.i + 1, planned: q.planned + 1 };
+        // Too few places in one town is that day's matter, not the trip's.
+        if (res.code === 'too_few') return { ...q, i: q.i + 1, skipped: (q.skipped || 0) + 1 };
+        return { ...q, phase: 'fail', code: res.code || 'ai_error' };
+      });
+      if (res.ok) applyAiResult(res.plan);
+    })();
+  }, [autoQueue, stops, stopIdx, dayIdx, stop]); // eslint-disable-line react-hooks/exhaustive-deps -- runAi and applyAiResult are rebuilt every render; the queue reads them on the render that lands on its day
 
   // Every AI failure path lands here: the deterministic built-in draft, fed
   // with the same answers, so the button always ends in a planned day.
@@ -2027,20 +2108,30 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   // The trip around a day (T501, owner T492-f): what the whole trip costs,
   // from the one pricing function the trip planner and My trips read, so the
   // day's cost bar can put the trip first. Null for a day on its own.
-  const tripPriced = useMemo(() => {
+  // T827 (row T826-a): the draft prices the way the trip planner prices it,
+  // its own stay and eating habits, the flight ranking and the flights picked
+  // in Getting there, then the live answers, so the days screen and the
+  // trip page say one figure.
+  const flightRank = useMemo(() => flightRanking(fromDraft(plannerStore.getState())).sort, []);
+  const tripState = useMemo(() => {
     if (!plan || plan.standalone || !data?.destinations) return null;
-    try {
-      if (plan.tripDraft) {
-        const d = loadTripDraft();
-        if (!d?.stops?.length) return null;
-        return quoteTrip({ ...d, stayTier, lifestyle: lifestyle || d.lifestyle }, { data });
-      }
-      const st = plannerStateFromPlan(plan, { stayTier, lifestyle });
-      return st ? quoteTrip(st, { data }) : null;
-    } catch {
-      return null;
+    if (plan.tripDraft) {
+      const d = loadTripDraft();
+      return d?.stops?.length ? draftQuoteState(d, { stayTier, appLifestyle: lifestyle, flightRank }) : null;
     }
-  }, [plan, data, stayTier, lifestyle]);
+    return plannerStateFromPlan(plan, { stayTier, lifestyle });
+  }, [plan, data, stayTier, lifestyle, flightRank]);
+  const tripBase = useMemo(() => {
+    try { return tripState ? quoteTrip(tripState, { data }) : null; } catch { return null; }
+  }, [tripState, data]);
+  const tripLive = useLiveFlights(tripBase?.cartaFlight?.queries);
+  const tripPriced = useMemo(() => {
+    if (!tripBase || !tripLive?.size) return tripBase;
+    try {
+      const merged = new Map([...tripLive, ...(tripState.liveFlights || [])]);
+      return quoteTrip({ ...tripState, liveFlights: merged }, { data });
+    } catch { return tripBase; }
+  }, [tripBase, tripLive, tripState, data]);
 
   // Open-time ideas: the strongest unpicked walkable places whose visit still
   // fits in the leftover. One tap adds them; in auto mode the walking order
@@ -4205,6 +4296,16 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     <div className={`trip-planner-screen day-ws ${isDesk ? 'is-desk' : 'is-drawer'}${isNarrow ? ' is-page' : ''}`}>
       {saveToast && <div className="trip-save-toast" role="status">{saveToast}</div>}
       <UndoToast pending={undoPending} onUndo={doUndo} />
+      {autoQueue && autoQueue.phase !== 'init' && (
+        <AutoPlanBar
+          queue={autoQueue}
+          city={stop?.dest?.city || ''}
+          onStop={() => setAutoQueue((q) => (q ? { ...q, phase: 'stopped' } : q))}
+          onResume={() => setAutoQueue((q) => (q ? { ...q, phase: 'run', code: '' } : q))}
+          onPass={() => paywall.require('plans')}
+          onClose={() => setAutoQueue(null)}
+        />
+      )}
       {aiOpen && stop && (
         <AiDayPlanModal
           city={stop.dest?.city || ''}

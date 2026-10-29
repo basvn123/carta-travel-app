@@ -11,7 +11,7 @@ import { addDays, fmtDate } from '../../lib/dates.js';
 import { cityLabel } from '../../lib/placeName.js';
 import { usePlannerStore } from '../plannerStore.js';
 import { fromDraft } from '../flow/tripSettings.js';
-import { buildIdeaSections, poiRowsFor, savedKeys, toggleSaved, placeIdea, dayOfIdea } from './dayIdeas.js';
+import { plainRow, buildIdeaSections, poiRowsFor, savedKeys, toggleSaved, placeIdea, dayOfIdea } from './dayIdeas.js';
 import { costOverview } from './tripCost.js';
 import { useStopIdeas } from './useStopIdeas.js';
 
@@ -77,7 +77,7 @@ export function TripDaysOverview({
     party: { kids: settings.party.kids, slowWalkers: settings.party.slowWalkers },
   })), [raw, pois, dest, destId, stay?.lat, stay?.lon, stopDates, settings]);
   const kept = savedKeys(prefs, destId);
-  const keptRows = prefs?.savedIdeas?.[destId] || [];
+  const keptRows = (prefs?.savedIdeas?.[destId] || []).map(plainRow);
 
   const keep = (row) => onChange({ assignments, prefs: toggleSaved(prefs, destId, row) });
   const put = (row, di) => {
