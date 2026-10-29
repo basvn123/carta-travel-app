@@ -116,6 +116,9 @@
 
 .pf-open-resume:hover { box-shadow: var(--elev-2); }
 
+/* A kept trip that got cheaper (T807): the resume card, its label in green. */
+.pf-open-drop .pf-open-resume-label { color: var(--good-ink); }
+
 .pf-open-resume-icon {
   display: grid;
   place-items: center;

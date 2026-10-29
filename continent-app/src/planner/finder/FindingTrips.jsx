@@ -15,6 +15,12 @@ import { planOf } from './planOf.js';
 import { slotTotals } from '../../lib/recommend/slots.js';
 import '../../styles/87-trip-finder.css';
 
+// Decide together (T808) rides in this chunk: App opens it from a link. Its
+// own chunk made the bundler split SheetShell out, one more preload a page.
+export { default as TogetherSheet } from './TogetherSheet.jsx';
+// The kept trips' price since (T807), for the Plan home and My trips.
+export { dropsFor } from '../../lib/recommend/kept.js';
+
 const PARTY_TITLE = { solo: 'solo', couple: 'couple', friends: 'friends', family: 'family', group: 'group' };
 
 /** The four lines of real work, in the traveller's words. */
@@ -151,6 +157,7 @@ export default function TripFinderScreen({ ui, settings, guide, edits, setEdits,
         onOpen={(trip) => setOpenId(trip.id)}
         onPlan={(trip) => onPlan(planOf(trip))}
         cardRefs={cardRefs}
+        keepWith={{ origin: finder.origin?.iata || null, file: finder.input?.flights || null }}
       />
       {open && (
         <TripReceipt

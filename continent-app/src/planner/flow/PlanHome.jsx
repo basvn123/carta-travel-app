@@ -5,7 +5,10 @@ import { loadJourneyIndex, splitAround } from '../../lib/journeys.js';
 import Logo from '../../components/Logo.jsx';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { Button } from '../../components/ui/index.js';
-import { ArrowRightIcon, CalendarIcon, ChevronRightIcon, RouteIcon } from '../../components/Icons.jsx';
+import { ArrowRightIcon, CalendarIcon, ChevronRightIcon, HeartIcon, RouteIcon } from '../../components/Icons.jsx';
+import { useKept, useKeptDrops } from '../../lib/recommend/keptStore.js';
+import { formatMoney } from '../../lib/money.js';
+import { loadFlightFile } from '../../lib/flights/flightData.js';
 
 /** A plain click stays in the app; a modified click opens the address. */
 function door(go) {
@@ -74,9 +77,16 @@ function TripCollection({ fan, onOpen }) {
  *   onStart()            the trip-kind sheet
  *   onContinue()         the trip in progress, in the trip planner
  *   onOpenTrips()        Carta's own trips (T752)
+ *   onOpenKept()         My trips on the kept trips (T807)
+ *
+ * A trip kept from the trip finder whose flight got cheaper since (T807)
+ * shows as one line under the actions, the biggest drop only.
  */
-export function PlanHome({ titleTag = 'h1', hasTrip, tripName, onStart, onContinue, onOpenTrips }) {
-  const { t } = useI18n();
+export function PlanHome({ titleTag = 'h1', hasTrip, tripName, onStart, onContinue, onOpenTrips, onOpenKept = null }) {
+  const { t, lang } = useI18n();
+  const kept = useKept();
+  const drops = useKeptDrops(kept, loadFlightFile);
+  const dropped = kept.filter((r) => drops[r.id]).sort((a, b) => drops[b.id].perPerson - drops[a.id].perPerson)[0] || null;
   const Title = titleTag;
   const [fan, setFan] = useState(undefined);
 
@@ -110,6 +120,18 @@ export function PlanHome({ titleTag = 'h1', hasTrip, tripName, onStart, onContin
             <span className="pf-open-resume-text">
               <span className="pf-open-resume-label">{t('pf.home.continuePlan')}</span>
               <span className="pf-open-resume-name">{tripName || t('pf.home.yourTrip')}</span>
+            </span>
+            <ChevronRightIcon size={18} />
+          </a>
+        )}
+        {dropped && onOpenKept && (
+          <a className="pf-open-resume pf-open-drop" href={tabHref('trips')} onClick={door(onOpenKept)}>
+            <span className="pf-open-resume-icon" aria-hidden="true"><HeartIcon size={18} /></span>
+            <span className="pf-open-resume-text">
+              <span className="pf-open-resume-label">{t('pf.home.cheaper')}</span>
+              <span className="pf-open-resume-name">
+                {t('pf.home.cheaperBy', { name: dropped.name || dropped.country, price: formatMoney(drops[dropped.id].perPerson, { locale: lang }) })}
+              </span>
             </span>
             <ChevronRightIcon size={18} />
           </a>
