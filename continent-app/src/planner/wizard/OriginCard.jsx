@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useId, useState } from 'react';
 import { geocodeAddress } from '../../lib/geocode.js';
 import { MapPinIcon } from '../../components/Icons.jsx';
+import { PlaneIcon } from '../../components/TransportIcons.jsx';
 import { Button } from '../../components/Button.jsx';
 import { Chip, ChipGroup } from '../../components/ui/index.js';
 import { useI18n } from '../../i18n/index.jsx';
@@ -12,12 +13,18 @@ import { useI18n } from '../../i18n/index.jsx';
  *
  * A typed address is geocoded on an explicit search only (Nominatim fair
  * use). The state lives in the wizard, so Start over clears it.
+ *
+ * T812: once the trip knows where it leaves from, the card is one line,
+ * "From Brussels (BRU)" with Change, which opens the search and the airports.
  */
 export function OriginCard({
   originPlace, setOriginPlace, originQuery, setOriginQuery, originResults, setOriginResults,
-  originBusy, setOriginBusy, nearAirports, depIataOk, setDepIata,
+  originBusy, setOriginBusy, nearAirports, depIataOk, setDepIata, homeCity = '',
 }) {
   const { t } = useI18n();
+  const [open, setOpen] = useState(!homeCity);
+  const bodyId = useId();
+  const iata = depIataOk || nearAirports[0]?.iata || '';
   const searchOrigin = async () => {
     const q = originQuery.trim();
     if (q.length < 3 || originBusy) return;
@@ -25,9 +32,22 @@ export function OriginCard({
     setOriginResults(await geocodeAddress(q));
     setOriginBusy(false);
   };
+  const line = homeCity && (
+    <div className="wz-from">
+      <PlaneIcon size={20} className="wz-from-icon" />
+      <span className="wz-from-txt">
+        {iata ? t('wizard.gtFromAir', { place: homeCity, iata }) : t('wizard.gtFrom', { place: homeCity })}
+      </span>
+      <Button variant="quiet" size="sm" aria-expanded={open} aria-controls={bodyId} onClick={() => setOpen((v) => !v)}>
+        {open ? t('wizard.gtDone') : t('wizard.change')}
+      </Button>
+    </div>
+  );
+  if (homeCity && !open) return <section className="worigin is-line" aria-label={t('plan.leaveFrom')}>{line}</section>;
   return (
-    <section className="worigin" aria-labelledby="worigin-h">
-      <h2 className="worigin-h" id="worigin-h">{t('plan.leaveFrom')}</h2>
+    <section className={`worigin ${homeCity ? 'is-open' : ''}`} aria-labelledby={homeCity ? undefined : 'worigin-h'} aria-label={homeCity ? t('plan.leaveFrom') : undefined}>
+      {line || <h2 className="worigin-h" id="worigin-h">{t('plan.leaveFrom')}</h2>}
+      <div id={bodyId} className="worigin-body">
       {originPlace ? (
         <div className="worigin-picked">
           <MapPinIcon size={20} />
@@ -93,6 +113,7 @@ export function OriginCard({
           </ChipGroup>
         </div>
       )}
+      </div>
     </section>
   );
 }

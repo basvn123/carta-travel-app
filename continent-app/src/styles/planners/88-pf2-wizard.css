@@ -1,0 +1,441 @@
+/* The trip wizard's chrome, Getting there and Review (T812, T813, Plan flow v2).
+   Imported by planner/wizard/WizardChrome.jsx, so it loads with the wizard's
+   chunk. Every rule is scoped under .trip-wizard-modal and the new wz-
+   classes, so it wins over the older planner sheets without !important. */
+
+/* ---- The head: back, the step's name, one stepper ---------------------- */
+.trip-wizard-modal .guide-head.wz-head {
+  position: relative;
+  display: block;
+  padding: var(--space-2) var(--gutter);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-soft);
+}
+.trip-wizard-modal .wz-head-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--tap);
+}
+.trip-wizard-modal .wz-head.is-phone .wz-head-row {
+  display: grid;
+  grid-template-columns: var(--tap) minmax(0, 1fr) var(--tap);
+}
+.trip-wizard-modal .wz-head-gap { width: var(--tap); height: var(--tap); }
+.trip-wizard-modal .wz-head.is-wide .wz-head-gap { display: none; }
+.trip-wizard-modal .wz-head-name {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 0;
+  font-size: var(--text-lead);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.trip-wizard-modal .wz-head.is-wide .wz-head-name { font-size: var(--text-title); }
+.trip-wizard-modal .wz-head.is-phone .wz-head-name.is-plain { justify-self: center; }
+.trip-wizard-modal .btn.wz-head-menu {
+  justify-self: center;
+  max-width: 100%;
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  color: var(--text);
+}
+.trip-wizard-modal .wz-head-menu .btn-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+.trip-wizard-modal .wz-head-pos { font-size: var(--text-caption); font-weight: 400; color: var(--text-3); line-height: var(--leading-ui); }
+.trip-wizard-modal .wz-head-chev { flex: none; color: var(--action); }
+
+/* The phone's one progress line, on the head's bottom edge. */
+.trip-wizard-modal .wz-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--surface-sunken);
+}
+.trip-wizard-modal .wz-progress > span {
+  display: block;
+  height: 100%;
+  background: var(--text);
+  transform-origin: left center;
+  transition: transform var(--dur-3) var(--ease-out);
+}
+
+/* The desktop stepper: the steps inline after the name. */
+.trip-wizard-modal .wz-stepper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin: 0 0 0 auto;
+  padding: 0;
+  list-style: none;
+}
+.trip-wizard-modal .wz-stepper-step { display: flex; align-items: center; gap: var(--space-1); }
+.trip-wizard-modal .wz-stepper-step + .wz-stepper-step::before {
+  content: '';
+  width: var(--space-5);
+  height: 1px;
+  background: var(--border);
+}
+.trip-wizard-modal .wz-stepper-btn,
+.trip-wizard-modal .wz-stepper-btn .btn-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.trip-wizard-modal .wz-stepper-btn {
+  min-height: 36px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-label);
+  font-weight: 500;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+.trip-wizard-modal .btn.wz-stepper-btn { color: var(--text-2); border-radius: var(--radius-pill); }
+.trip-wizard-modal .is-now .wz-stepper-btn { background: var(--select-bg); color: var(--select-ink); font-weight: 600; }
+.trip-wizard-modal .wz-stepper-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-micro);
+  font-weight: 600;
+}
+.trip-wizard-modal .is-done .wz-stepper-mark { border-color: var(--text-2); color: var(--text); }
+.trip-wizard-modal .is-now .wz-stepper-mark { border-color: var(--select-border); background: var(--surface); }
+
+@media (min-width: 769px) {
+  .trip-wizard-modal .guide-head.wz-head { padding-inline: var(--space-6); }
+}
+
+/* ---- The foot: Start over, the running total, Next --------------------- */
+.trip-wizard-modal .guide-foot.wz-foot .guide-foot-inner { gap: var(--space-4); }
+.trip-wizard-modal .guide-foot .guide-foot-summary.wz-foot-sum {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  min-width: 0;
+  margin-inline-end: auto;
+}
+.trip-wizard-modal .wz-foot-note {
+  padding-inline: var(--space-1);
+  font-size: var(--text-caption);
+  color: var(--text-2);
+  white-space: nowrap;
+}
+.trip-wizard-modal .btn.wz-startover {
+  color: var(--text-2);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ---- Getting there and Review stand on the page ground ---------------- */
+.trip-planner-blank .trip-wizard-modal.wiz-flow.wz-plain .wiz-main .guide-canvas {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: var(--space-4) var(--gutter) var(--space-7);
+  margin-top: 0;
+}
+@media (min-width: 769px) {
+  .trip-planner-blank .trip-wizard-modal.wiz-flow.wz-plain .wiz-main .guide-canvas { padding: 0 0 var(--space-7); }
+}
+.trip-wizard-modal .wz-gt,
+.trip-wizard-modal .wz-rev { display: flex; flex-direction: column; gap: var(--space-4); }
+.trip-wizard-modal .wz-gt > .guide-title,
+.trip-wizard-modal .wz-rev > .guide-title { margin: 0; }
+
+/* Where from: one line, Change opens the search and the airports. */
+.trip-wizard-modal .wz-gt .worigin { margin: 0; padding: 0; border: 0; background: none; }
+.trip-wizard-modal .wz-gt .worigin.is-open {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4) var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+}
+.trip-wizard-modal .wz-gt .worigin-body { display: flex; flex-direction: column; gap: var(--space-3); }
+.trip-wizard-modal .wz-from { display: flex; align-items: center; gap: var(--space-3); min-height: var(--tap); }
+.trip-wizard-modal .wz-from-icon,
+.trip-wizard-modal .wz-dates-icon { flex: none; color: var(--text-2); }
+.trip-wizard-modal .wz-from-txt,
+.trip-wizard-modal .wz-dates-txt {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: var(--text-lead);
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* The dates, and the whole trip a day earlier or later. */
+.trip-wizard-modal .wz-legs { display: flex; flex-direction: column; gap: var(--space-3); }
+.trip-wizard-modal .wz-dates {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border-soft);
+}
+.trip-wizard-modal .wz-dates-ctl { display: flex; flex: none; }
+.trip-wizard-modal .wz-flip { transform: scaleX(-1); }
+.trip-wizard-modal .wz-legs-h {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+/* One card a leg. */
+.trip-wizard-modal .wz-leg {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+}
+.trip-wizard-modal .wz-leg-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.trip-wizard-modal .wz-leg-id { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.trip-wizard-modal .wz-leg-when { display: flex; gap: var(--space-2); font-size: var(--text-caption); color: var(--text-2); }
+.trip-wizard-modal .wz-leg-when b { font-weight: 600; color: var(--text); }
+.trip-wizard-modal .wz-leg-route {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: var(--text-lead);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  color: var(--text);
+}
+.trip-wizard-modal .wz-leg-arrow { flex: none; color: var(--text-3); }
+.trip-wizard-modal .wz-leg-pub,
+.trip-wizard-modal .wz-leg-note,
+.trip-wizard-modal .wz-leg-none,
+.trip-wizard-modal .wz-fls-src {
+  margin: 0;
+  font-size: var(--text-caption);
+  line-height: var(--leading-ui);
+  color: var(--text-2);
+}
+.trip-wizard-modal .wz-leg-none { font-size: var(--text-body); line-height: var(--leading-body); }
+.trip-wizard-modal .wz-leg-booked { display: inline-flex; align-items: center; gap: var(--space-1); font-size: var(--text-label); color: var(--text-2); }
+.trip-wizard-modal .wz-leg-est {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin: 0;
+  font-size: var(--text-body);
+  color: var(--text-2);
+}
+.trip-wizard-modal .wz-leg-est .money { font-weight: 600; color: var(--text); }
+.trip-wizard-modal .wz-modes .seg-item { padding: 0 var(--space-3); }
+
+/* The day's flights: up to three rows, the one the trip is priced on picked. */
+.trip-wizard-modal .wz-fls { display: flex; flex-direction: column; gap: var(--space-2); }
+.trip-wizard-modal .wz-fls-list { display: flex; flex-direction: column; gap: var(--space-1); }
+.trip-wizard-modal .btn.wz-fl {
+  display: flex;
+  width: 100%;
+  min-height: 60px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-control);
+  color: var(--text);
+  text-align: start;
+  white-space: normal;
+}
+.trip-wizard-modal .wz-fl .btn-label {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto 20px;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+}
+.trip-wizard-modal .btn.wz-fl.is-selected { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
+.trip-wizard-modal .wz-fl-what { display: flex; flex-direction: column; min-width: 0; }
+.trip-wizard-modal .wz-fl-times { font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.trip-wizard-modal .wz-fl-plus { margin-inline-start: 2px; font-size: var(--text-micro); color: var(--text-2); }
+.trip-wizard-modal .wz-fl-sub { font-size: var(--text-caption); font-weight: 400; color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.trip-wizard-modal .wz-fl-fig { font-size: var(--text-body); font-weight: 600; color: var(--text); white-space: nowrap; }
+.trip-wizard-modal .wz-fl-tick { display: inline-grid; place-items: center; color: var(--select-ink); }
+.trip-wizard-modal .wz-fls-link { margin: 0; }
+
+/* The actions under a leg, and what they open. */
+.trip-wizard-modal .wz-leg-acts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--space-1) var(--space-2);
+  margin-inline-start: calc(-1 * var(--space-3));
+}
+.trip-wizard-modal .wz-fold.is-open { flex-basis: 100%; }
+.trip-wizard-modal .wz-fold-btn .btn-label { display: inline-flex; align-items: center; gap: var(--space-1); }
+.trip-wizard-modal .wz-fold-chev { transition: transform var(--dur-2) var(--ease-out); }
+.trip-wizard-modal .is-open > .wz-fold-btn .wz-fold-chev,
+.trip-wizard-modal [aria-expanded='true'] .wz-fold-chev { transform: rotate(180deg); }
+.trip-wizard-modal .wz-fold-body { padding: var(--space-1) var(--space-3) 0; }
+.trip-wizard-modal .wz-links { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-4); margin: 0 0 var(--space-2); padding: 0; list-style: none; }
+.trip-wizard-modal .wz-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--tap);
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--action);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.trip-wizard-modal .wz-link:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.trip-wizard-modal .wz-own { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-3); }
+.trip-wizard-modal .wz-own .plan-paid { flex: 1 1 180px; }
+/* A typed fare for a flight goes back to the suggested flights through
+   the leg's own button, so the field's own reset stays out of the way. */
+.trip-wizard-modal .wz-own.is-fly .plan-paid-reset { display: none; }
+.trip-wizard-modal .wz-own-who { display: flex; flex-direction: column; gap: var(--space-1); flex: 1 1 180px; }
+.trip-wizard-modal .wz-own-lbl { font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.trip-wizard-modal .wz-own-input {
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  font: inherit;
+  font-size: var(--text-lead);
+  color: var(--text);
+}
+.trip-wizard-modal .wz-own-input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-color: var(--action); }
+
+/* ---- Review --------------------------------------------------------- */
+.trip-wizard-modal .wz-rev-photos {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.trip-wizard-modal .wz-rev-photos::-webkit-scrollbar { display: none; }
+.trip-wizard-modal .wz-rev-photo { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; scroll-snap-align: start; }
+.trip-wizard-modal .wz-rev-photo img,
+.trip-wizard-modal .wz-rev-photo-blank {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-card);
+  background: var(--surface-sunken);
+}
+.trip-wizard-modal .wz-rev-photo-blank { display: grid; place-items: center; font-size: var(--text-title); font-weight: 600; color: var(--text-3); }
+.trip-wizard-modal .wz-rev-cap { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); }
+.trip-wizard-modal .wz-rev-cap b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.trip-wizard-modal .wz-rev-cap span { font-size: var(--text-caption); color: var(--text-2); white-space: nowrap; }
+.trip-wizard-modal .wz-rev-credit { font-size: var(--text-micro); font-weight: 400; color: var(--text-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 768px) {
+  .trip-wizard-modal .wz-rev-photos { grid-auto-columns: 78%; }
+  .trip-wizard-modal .wz-rev-photos:has(> li:only-child) { grid-auto-columns: 100%; }
+}
+
+.trip-wizard-modal .wz-rev-sec {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+}
+.trip-wizard-modal .wz-rev-sec.wz-rev-trip { padding: 0; background: none; border: 0; gap: var(--space-1); }
+.trip-wizard-modal .wz-rev-sechead { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.trip-wizard-modal .wz-rev-h { margin: 0; font-size: var(--text-title); font-weight: 600; line-height: var(--leading-tight); color: var(--text); }
+.trip-wizard-modal .btn.wz-rev-edit { margin-inline-end: calc(-1 * var(--space-3)); }
+.trip-wizard-modal .wz-rev-facts { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-4); margin: 0; font-size: var(--text-body); color: var(--text-2); }
+.trip-wizard-modal .wz-rev-facts span { display: inline-flex; align-items: center; gap: var(--space-2); }
+
+/* The route as a timeline: an icon a line, joined by a hairline. */
+.trip-wizard-modal .wz-tl { margin: 0; padding: 0; list-style: none; }
+.trip-wizard-modal .wz-tl-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-3);
+  padding-bottom: var(--space-4);
+}
+.trip-wizard-modal .wz-tl-item:last-child { padding-bottom: 0; }
+.trip-wizard-modal .wz-tl-item:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  top: 40px;
+  bottom: 4px;
+  left: 17.5px;
+  width: 1px;
+  background: var(--border);
+}
+.trip-wizard-modal .wz-tl-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  color: var(--text-2);
+}
+.trip-wizard-modal .wz-tl-main { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-width: 0; padding-top: var(--space-1); }
+.trip-wizard-modal .wz-tl-title { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-1); font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.trip-wizard-modal .wz-tl-item.is-stop .wz-tl-title { font-size: var(--text-lead); }
+.trip-wizard-modal .wz-tl-sub { font-size: var(--text-caption); color: var(--text-2); }
+.trip-wizard-modal .wz-tl-fig { padding-top: var(--space-1); font-size: var(--text-body); font-weight: 600; color: var(--text); white-space: nowrap; }
+.trip-wizard-modal .btn.wz-tl-more { margin-inline-start: calc(-1 * var(--space-3)); }
+.trip-wizard-modal .wz-tl-more .btn-label { display: inline-flex; align-items: center; gap: var(--space-1); }
+.trip-wizard-modal .wz-tl-stay { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); width: 100%; }
+.trip-wizard-modal .wz-rev-lines { margin: 0; }
+.trip-wizard-modal .btn.wz-rev-more { align-self: flex-start; margin-inline-start: calc(-1 * var(--space-3)); }
+.trip-wizard-modal .wz-rev-car {
+  display: flex;
+  gap: var(--space-3);
+  color: var(--text-2);
+  font-size: var(--text-caption);
+  line-height: var(--leading-ui);
+}
+.trip-wizard-modal .wz-rev-car svg { flex: none; margin-top: 2px; }
+.trip-wizard-modal .wz-rev-car > span { display: flex; flex-direction: column; gap: 2px; }
+.trip-wizard-modal .wz-rev-car b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
+
+@media (prefers-reduced-motion: reduce) {
+  .trip-wizard-modal .wz-progress > span,
+  .trip-wizard-modal .wz-fold-chev { transition: none; }
+}

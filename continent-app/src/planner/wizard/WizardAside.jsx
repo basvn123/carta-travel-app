@@ -2,7 +2,6 @@ import React from 'react';
 import { CountryPickerMap } from '../../map/CountryPickerMap.jsx';
 import { CityPickerMap } from '../../map/CityPickerMap.jsx';
 import { PlanTotal } from '../PlanTotal.jsx';
-import { TripTotalBar } from '../TripTotalBar.jsx';
 
 const BEFORE_WHERE = new Set(['Booked', 'From', 'When']);
 const noop = () => {};
@@ -11,11 +10,12 @@ const noop = () => {};
  * The wizard's right column from 1024 px (T500, roadmap 1.3c section 1): the
  * price card until there is a place, then the step's map (Where: the country
  * map, picked countries in the selected tint; Stay: the city picker that sat
- * in the step; Your stays, Trips, Getting there and Review: the picked stops),
- * and at its foot the total bar, one tap from the receipt.
+ * in the step; Your stays, Trips, Getting there and Review: the picked stops).
+ * T812: the running total lives in the wizard's foot at every width, so
+ * the column no longer repeats it.
  */
 export function WizardAside({
-  stepName, priced, summaryDates, party, setParty, gotoGetting, onOpenTotal,
+  stepName, priced, summaryDates, party, setParty, gotoGetting,
   allCountries, countries, toggleCountry, recommendedNames, countryCovers, onBrief,
   mapCities, toggleCity, setFocusedId, setPickedStopId, anchorDest, includedIds,
 }) {
@@ -66,7 +66,6 @@ export function WizardAside({
   return (
     <aside className="wiz-rail wiz-aside">
       <div className="wiz-aside-body">{body}</div>
-      <TripTotalBar priced={priced} layout="bar" onOpen={onOpenTotal} className="wiz-aside-total" />
     </aside>
   );
 }
