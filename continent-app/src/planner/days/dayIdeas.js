@@ -85,11 +85,21 @@ export function buildIdeaSections({
   // ones, marked empty: the overview shows the shared "Not available yet"
   // line there (owner 2026-10-24: leave placeholders where the data does not
   // support a section yet), rather than hiding that it exists.
-  const all = order.map((key) => ({ key, rows: (sections[key] || []).slice(0, SECTION_MAX) }));
+  const all = order.map((key) => ({ key, rows: (sections[key] || []).slice(0, SECTION_MAX).map(plainRow) }));
   return [
     ...all.filter((s) => s.rows.length > 0).map((s) => ({ ...s, empty: false })),
     ...all.filter((s) => s.rows.length === 0).map((s) => ({ ...s, empty: true })),
   ];
+}
+
+// A row's words are drawn as text. Some layers hand a structured value where
+// a sentence goes (a trail's summary as { ref, code }, phrased elsewhere);
+// drawn as a child it crashed the days overview and, with it, the app
+// (T823: "Plan your days" stopped working on Hallstatt). Anything that is
+// not text is left out rather than shown.
+const asText = (v) => (typeof v === 'string' ? v : typeof v === 'number' ? String(v) : '');
+export function plainRow(r) {
+  return { ...r, name: asText(r.name), sub: asText(r.sub), desc: asText(r.desc) };
 }
 
 // ---- Keeping an idea ----

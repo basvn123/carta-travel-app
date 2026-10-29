@@ -12,6 +12,7 @@
  * turns into the deterministic built-in planner as a fallback.
  */
 import { getSupabase } from '../lib/supabaseClient.js';
+import { E2E_SEAMS } from '../lib/e2eSeams.js';
 import { reportEdgeFailure } from './edgeFailure.js';
 import { trackAiCall } from '../lib/launchEvents.js';
 import {
@@ -77,7 +78,31 @@ export function buildAiCandidates({ items, walkable, excludeIdx, interests, limi
  * global_cap, no_ai, too_few, ai_busy, ai_error, ai_timeout, ai_bad_output,
  * network.
  */
+/* The verify seam (T823), same precedent as ?savedmock and ?coplanmock:
+ * ?aiplanmock answers plan-day from the day's own candidates, so "Let Carta
+ * plan them" can be walked headlessly without an account or a model call.
+ * ?aiplanmock=busy3 fails the third call with ai_busy. Compiled out of any
+ * build without VITE_E2E_SEAMS. */
+export const AI_PLAN_MOCK = E2E_SEAMS && typeof window !== 'undefined'
+  ? new URLSearchParams(window.location.search).get('aiplanmock')
+  : null;
+let mockCalls = 0;
+function mockAiDayPlan(payload) {
+  mockCalls += 1;
+  const failAt = Number((AI_PLAN_MOCK || '').match(/busy(\d+)/)?.[1] || 0);
+  return new Promise((resolve) => setTimeout(() => {
+    if (failAt && mockCalls === failAt) { resolve({ ok: false, code: 'ai_busy' }); return; }
+    const picks = (payload.candidates || []).slice(0, 4);
+    resolve({ ok: true, plan: {
+      summary: `A mock day in ${payload.dest?.city || ''}.`,
+      stops: picks.map((c, i) => ({ id: c.id, name: c.name || `Stop ${i + 1}`, arrive: `${9 + i * 2}:00`, dwellMin: 60, why: '' })),
+      totals: null, meta: { mock: true },
+    } });
+  }, 350));
+}
+
 export async function requestAiDayPlan(payload) {
+  if (AI_PLAN_MOCK != null) return mockAiDayPlan(payload);
   // The client loads on first use; a chunk that fails to arrive is the
   // network failing, and reads as one.
   const supabase = await getSupabase().catch(() => false);

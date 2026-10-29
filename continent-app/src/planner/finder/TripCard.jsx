@@ -1,9 +1,9 @@
-import React, { forwardRef, useId, useRef } from 'react';
+import React, { forwardRef, useId, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { Button, IconButton } from '../../components/ui/index.js';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { CountryFlag } from '../../components/CountryFlag.jsx';
-import { AlertIcon, BedIcon, CheckIcon, DiningIcon, HeartIcon, MapPinIcon, MoonIcon, PlaneIcon } from '../../components/Icons.jsx';
+import { AlertIcon, BedIcon, CheckIcon, ChevronDownIcon, ChevronRightIcon, DiningIcon, HeartIcon, MapPinIcon, MoonIcon, PlaneIcon } from '../../components/Icons.jsx';
 import { formatMoney } from '../../lib/money.js';
 import { budgetBadge, factText, threeFigures, totalLeavesOut, tripName, tripPhotos } from './finderText.js';
 
@@ -64,6 +64,10 @@ export const TripCard = forwardRef(function TripCard({ trip, destinations, marke
   const pct = trip.match?.pct;
   const bases = trip.places.length;
   const reason = trip.reasons[0] || null;
+  const [costOpen, setCostOpen] = useState(false);
+  const costId = useId();
+  const group = trip.total?.group;
+  const people = trip.party ? Math.max(1, (trip.party.adults || 0) + (trip.party.kids || trip.party.children || 0)) : null;
 
   const setRefs = (el) => {
     openRef.current = el;
@@ -125,30 +129,6 @@ export const TripCard = forwardRef(function TripCard({ trip, destinations, marke
         </p>
         {marked && <p className="tff-card-mark"><CheckIcon size={14} />{t('tf.card.planned')}</p>}
 
-        <div className="tff-card-price">
-          <p className="tff-total">
-            <span className="tff-total-eur money">{total}</span>
-            <span className="tff-total-unit">{t('tf.card.person')}</span>
-            <span className="tff-total-note">{t(partial ? 'tf.card.noFlight' : 'tf.card.allIn')}</span>
-          </p>
-          {badge && <span className={`tff-budget${badge.over ? ' is-over' : ''}`}>{t(badge.key, badge.vars)}</span>}
-        </div>
-
-        <dl className="tff-three">
-          <div title={t('tf.card.flight')}>
-            <dt><PlaneIcon size={16} /><span className="sr-only">{t('tf.card.flight')}</span></dt>
-            <dd><Figure eur={fig.flight} lang={lang} ui={ui} /></dd>
-          </div>
-          <div title={t('tf.card.stay')}>
-            <dt><BedIcon size={16} /><span className="sr-only">{t('tf.card.stay')}</span></dt>
-            <dd><Figure eur={fig.stay} lang={lang} ui={ui} /></dd>
-          </div>
-          <div title={t('tf.card.daysLong')}>
-            <dt><DiningIcon size={16} /><span className="sr-only">{t('tf.card.daysLong')}</span></dt>
-            <dd><Figure eur={fig.days} lang={lang} ui={ui} /></dd>
-          </div>
-        </dl>
-
         {(reason || trip.catch) && (
           <ul className="tff-reasons">
             {reason && <li className="tff-reason"><CheckIcon size={12} /><span>{factText(reason, { t, lang })}</span></li>}
@@ -156,6 +136,45 @@ export const TripCard = forwardRef(function TripCard({ trip, destinations, marke
           </ul>
         )}
       </div>
+
+      {/* The price, Booking's way (T825, owner 2026-10-29): what the figure
+          covers, the total a person large, the group's under it, the budget
+          note, then the full cost on request and the one way in. */}
+      <aside className="tff-card-price">
+        <p className="tff-price-for">
+          {[t('tf.keep.nights', { n: trip.nights }), people ? t(people === 1 ? 'receipt.onePerson' : 'receipt.nPeople', { n: people }) : ''].filter(Boolean).join(', ')}
+        </p>
+        <p className="tff-total">
+          <span className="tff-total-eur money">{total}</span>
+          <span className="tff-total-unit">{t('tf.card.person')}, {t(partial ? 'tf.card.noFlight' : 'tf.card.allIn')}</span>
+        </p>
+        {people > 1 && Number.isFinite(group) && (
+          <p className="tff-total-group">{t('tf.card.group', { n: people })}: <span className="money">{formatMoney(group, { locale: lang })}</span></p>
+        )}
+        {badge && <span className={`tff-budget${badge.over ? ' is-over' : ''}`}>{t(badge.key, badge.vars)}</span>}
+        <Button variant="quiet" size="sm" className="tff-cost-toggle" aria-expanded={costOpen} aria-controls={costId}
+          onClick={() => setCostOpen((v) => !v)}
+          iconEnd={<ChevronDownIcon size={16} className={costOpen ? 'plan-chev is-open' : 'plan-chev'} />}>
+          {t('tf.card.fullCost')}
+        </Button>
+        <dl className="tff-three" id={costId} hidden={!costOpen}>
+          <div>
+            <dt><PlaneIcon size={16} /><span>{t('tf.card.flight')}</span></dt>
+            <dd><Figure eur={fig.flight} lang={lang} ui={ui} /></dd>
+          </div>
+          <div>
+            <dt><BedIcon size={16} /><span>{t('tf.card.stay')}</span></dt>
+            <dd><Figure eur={fig.stay} lang={lang} ui={ui} /></dd>
+          </div>
+          <div>
+            <dt><DiningIcon size={16} /><span>{t('tf.card.daysLong')}</span></dt>
+            <dd><Figure eur={fig.days} lang={lang} ui={ui} /></dd>
+          </div>
+        </dl>
+        <Button variant="primary" size="sm" className="tff-card-see" iconEnd={<ChevronRightIcon size={16} />} onClick={open}>
+          {t('tf.card.see')}
+        </Button>
+      </aside>
 
       {(keep || compare) && (
         <div className="tff-card-foot">

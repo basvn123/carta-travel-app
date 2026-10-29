@@ -44,7 +44,7 @@ function withMoney(text, money) {
 }
 
 /** "From {eur} a person a day" with the estimate mark, or null when there is no figure. */
-function DayFrom({ value, t }) {
+export function DayFrom({ value, t }) {
   if (!Number.isFinite(value)) return null;
   return <span className="jcap-fig">{withMoney(t('journey.fromPpDay', { eur: SLOT }), <Money value={value} est />)}</span>;
 }
@@ -82,7 +82,9 @@ export function StyleCard({ type, perDay = null, flight = null, onPick, t, sizes
 
 /** The card's return flight a person: out on the app's leaving day, home
  *  after the card's nights at the list's length, cheapest gateway. */
-function useCardFlight(card, length) {
+// Shared with TripPlaceCard (T824).
+// eslint-disable-next-line react-refresh/only-export-components
+export function useCardFlight(card, length) {
   const ctx = useFirstRun();
   const fl = homeFlightSetup(ctx);
   const days = cardTotal(card, length)?.days || card.days || 7;
@@ -94,7 +96,9 @@ function useCardFlight(card, length) {
 }
 
 /** "Jun to Sep" for a run of months, "Apr, May, Sep" otherwise. */
-function monthsLine(months, lang, t) {
+// Shared with TripPlaceCard (T824).
+// eslint-disable-next-line react-refresh/only-export-components
+export function monthsLine(months, lang, t) {
   const m = (months || []).filter((x) => x >= 1 && x <= 12).sort((a, b) => a - b);
   if (!m.length) return '';
   // Each run of three or more months reads "Mar to Jun" (T502: a season

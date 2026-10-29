@@ -2325,3 +2325,14 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T818-a | T818 | A trip without its pricing context (rebuilt from storage, e.g. Kept trips) still sums its slots on a swap instead of being repriced with one quote (Execution/P15/T818-finder-total-to-the-cent.md) | next task | open |  |
 | T798-a | T798 | The box's late tier does not know dormant routes or the find tier's discoveries, so it searches about 170 dormant routes every cycle and misses found ones; a Worker GET of both lists would fix it (Execution/P11/T798-late-flights.md) | next task | open |  |
 | T798-b | T798 | Watch the late tier's first cycle (ends about 2026-11-26): no refusals in journalctl -u carta-late-sweep, /status lateFares growing toward about 100,000, a May to July 2027 date priced in the app | next task | open |  |
+| T819-a | T819 | The trip page's tab is not in the address, so Back and a reload return to Overview; put it in #trip=...&tab= (Execution/P15/T819-T826-trip-page-v3.md) | next task | open |  |
+| T819-b | T819 | No sticky phone bar with the total and Plan your days on the trip page; it has to sit above the bottom nav without covering it | next task | open |  |
+| T821-a | T821 | The old planned-trip workspace (plan-ws is-planned, plannedActionButtons) is reached only with zero stops now; remove it in a cleanup task | next task | open |  |
+| T822-a | T822 | Edit trip is still its own workspace with the half-screen map, not inside the trip page's shell (tabs hidden, Editing bar); only the gutter and footer were fixed | next task | open |  |
+| T823-a | T823 | Walk "Let Carta plan them" once with a real signed-in account on the live plan-day function (only the ?aiplanmock seam was walked); a 7-day trip now spends up to 7 AI plans | user | open |  |
+| T823-b | T823 | Find which layer hands a structured {ref, code} into the days overview's idea rows (now guarded by plainRow in dayIdeas.js) and phrase it there | next task | open |  |
+| T824-a | T824 | Saved Carta trips (carta.savedJourneys.v1) live on this device only and show only behind the Saved filter, not in My trips or the account | next task | open |  |
+| T824-b | T824 | .tpc mirrors Explore's .xov--card rules instead of sharing one class; share them once Explore can be checked pixel for pixel | next task | open |  |
+| T825-a | T825 | Trips for you's Full cost shows the finder's three figures (flight, stay, days), not the trip page's four tiles; finder trips carry no quoteTrip parts | next task | open |  |
+| T826-a | T826 | After picking another flight in Getting there, the day planner's Your days total (1,939.20) differs from the trip page (1,931.20): the day planner prices without the wizard's flightPicks | next task | open | 1 |
+| T826-b | T826 | Review batch p15-trip-page-v3 (app and root), then merge to continent-app master and root main and deploy to Pages | user | open | 2 |

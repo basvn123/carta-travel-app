@@ -48,7 +48,13 @@ import { knownForFacts } from '../lib/knownFor.js';
 import { geocodeAddress } from '../lib/geocode.js';
 import { cityLabel } from '../lib/placeName.js';
 import { scrollBehavior } from '../lib/motion.js';
+import { originLabel } from '../lib/origins.js';
 import { isGateway } from '../lib/rating.js';
+
+// The trip page's map card and its full-size view (T819): room above each
+// pin, which is drawn about 38 px over its point (tripmap-embed gotchas).
+const CARD_MAP_PAD = { top: 64, left: 40, right: 150, bottom: 36 };
+const FULL_MAP_PAD = { top: 110, left: 80, right: 200, bottom: 80 };
 
 // One shared empty catalogue for the moments before data lands. A fresh `{}`
 // per render would hand every memo below a new dependency each time and
@@ -533,11 +539,15 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   // T814: a planned trip opens on its summary (photos, dates, the route, the
   // total) and the full trip page is one button away. `editFrom` is where
   // Done editing goes back to: the page the editor was opened from.
-  const [view, setView] = useState('summary');
+  const [, setView] = useState('summary');
+  // The trip page's tab (T819): Overview, Itinerary, Costs, Days.
+  const [tripTab, setTripTab] = useState('overview');
   const [editFrom, setEditFrom] = useState('full');
   const draft = usePlannerStore();
   const tripSet = fromDraft(draft);
-  const tripOrigin = tripSet.from?.name || '';
+  // T819: the trip page names where it starts even when the settings hold no
+  // From name (an origin picked on the map or in the address), from the code.
+  const tripOrigin = tripSet.from?.name || originLabel(data, tp.anchorOrigin || data?.meta?.selected_origin) || '';
   // The name the traveller gave the trip wins over the route's own label (end check).
   const tripName = tripSet.trip?.name || tp.planLabel;
 
@@ -995,12 +1005,12 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     );
   }
 
-  // The list: the planned trip, or the stop editor (T500: the same place).
-  const listBody = (
-    <>
-          {tp.planned ? (
-            <>
-            <TripItinerary
+  // The planned trip's detail, whole or a part of it (T821: the trip page's
+  // Itinerary, Costs and Days tabs each show their part).
+  const renderItinerary = (sections = null, grouped = false) => (
+    <TripItinerary
+      sections={sections}
+      receiptGrouped={grouped}
               dayPlan={tp.dayPlan}
               label={tp.planLabel}
               stopDetails={tp.stopDetails}
@@ -1067,6 +1077,14 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                 dayIndex: day.dayOfStay - 1,
               }) : null}
             />
+  );
+
+  // The list: the planned trip, or the stop editor (T500: the same place).
+  const listBody = (
+    <>
+          {tp.planned ? (
+            <>
+            {renderItinerary()}
             </>
           ) : hasTrip ? (
           <>
@@ -1535,47 +1553,74 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     </>
   );
 
-  // T814: the trip's summary, the page a planned trip lands on. The same
-  // card on the warm paper as the trip page before a route (TripHome).
-  if (tp.planned && view === 'summary' && tp.stopDetails.length > 0) {
+  // T819-T821: a planned trip is one page in tabs, the page it lands on
+  // after Finish and whenever it is opened from Plan: Overview (what it
+  // costs, the route), Itinerary (the planner's detail), Costs (the receipt)
+  // and Days. See trip details is the Itinerary tab; Edit trip is the stop
+  // editor (the workspace below), and Done comes back here.
+  if (tp.planned && tp.stopDetails.length > 0) {
     const saved = tp.saveState === 'saved' || keptHere;
+    const cardMap = (
+      <TripMap
+        {...routeProps}
+        onSelectStop={undefined}
+        selectedIndex={null}
+        padBottom={24}
+        fitPadding={CARD_MAP_PAD}
+        scrollZoom={false}
+        easeToSelected={false}
+        cooperativeGestures={false}
+      />
+    );
+    const fullMap = (
+      <TripMap {...routeProps} onSelectStop={undefined} selectedIndex={null} padBottom={24} fitPadding={FULL_MAP_PAD} fitMaxZoom={9} />
+    );
     return (
       <div className="trip-planner-screen trip-planner-blank">
-        <div className="pf is-trip">
-          <PlanStage sheetLabel={tp.planLabel || t('trip.planYourTrip')}>
-            {saveError && <ErrorBlock className="trip-footer-error" message={saveError} />}
-            <TripSummary
-              name={tripName}
-              tripStart={tp.tripStart}
-              tripEnd={tp.tripEnd}
-              party={{ adults: tp.groupSize, children: tp.children, babies: tp.babies }}
-              stopDetails={tp.stopDetails}
-              stayCosts={tp.stayCosts}
-              stayTier={tp.stayTier}
-              priced={tp.priced}
-              flight={tp.flight}
-              ownFlight={tp.ownFlight}
-              driveLegs={tp.driveLegs}
-              origin={tripOrigin}
-              onPlanHome={onPlanHome}
-              onDetails={() => { setView('full'); setSelectedStop(null); }}
-              onPlanDays={onPlanDay ? () => setAskDays(true) : null}
-              onEdit={() => { setEditFrom('summary'); setView('full'); tp.setPlanned(false); }}
-              bar={(
-                <>
-                  <IconButton tone="surface" className="ts-save" pressed={saved}
-                    label={tp.saveState === 'saving' ? t('trip.saving') : saved ? t('trip.savedTick') : tp.planId ? t('trip.updateTrip') : t('trip.saveTrip')}
-                    disabled={tp.saveState === 'saving'} onClick={handleSave}>
-                    <BookmarkIcon size={20} />
-                  </IconButton>
-                  <IconButton ref={settingsGearRef} tone="surface" label={t('pf.settings')} onClick={() => setSettingsOpen(true)}>
-                    <SettingsIcon size={20} />
-                  </IconButton>
-                </>
-              )}
-            />
-            {saveStatus}
-          </PlanStage>
+        <div className="pf is-trip is-trip-page">
+          {saveError && <ErrorBlock className="trip-footer-error" message={saveError} />}
+          <TripSummary
+            name={tripName}
+            tripStart={tp.tripStart}
+            tripEnd={tp.tripEnd}
+            party={{ adults: tp.groupSize, children: tp.children, babies: tp.babies }}
+            stopDetails={tp.stopDetails}
+            stayCosts={tp.stayCosts}
+            stayTier={tp.stayTier}
+            priced={tp.priced}
+            flight={tp.flight}
+            ownFlight={tp.ownFlight}
+            driveLegs={tp.driveLegs}
+            origin={tripOrigin}
+            tab={tripTab}
+            onTab={setTripTab}
+            panels={{
+              itinerary: renderItinerary(['route', 'tools', 'export', 'before']),
+              costs: renderItinerary(['receipt'], true),
+              days: renderItinerary(['days']),
+            }}
+            map={cardMap}
+            mapFull={fullMap}
+            onPlanHome={onPlanHome}
+            onPlanDays={onPlanDay ? () => setAskDays(true) : null}
+            onEdit={() => { setEditFrom('summary'); setView('full'); tp.setPlanned(false); }}
+            onSettings={() => setSettingsOpen(true)}
+            settingsRef={settingsGearRef}
+            onExport={() => {
+              setTripTab('itinerary');
+              window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
+                document.getElementById('itin-export-h')?.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
+              }));
+            }}
+            bar={(
+              <IconButton tone="surface" className="ts-save" pressed={saved}
+                label={tp.saveState === 'saving' ? t('trip.saving') : saved ? t('trip.savedTick') : tp.planId ? t('trip.updateTrip') : t('trip.saveTrip')}
+                disabled={tp.saveState === 'saving'} onClick={handleSave}>
+                <BookmarkIcon size={20} />
+              </IconButton>
+            )}
+            footer={saveStatus}
+          />
         </div>
         {overlays}
       </div>

@@ -560,24 +560,27 @@
 
 .pf-ccard-info.icon-btn { border-radius: var(--radius-pill); }
 
-/* ---- Carta's own trips (T752) ----
-   One page for the Plan opening and the trip's third door: Carta's mark and
-   the title, what every trip includes as four quiet tiles, the styles as one
-   row of chips, the weeks in season as a band to swipe, then every week as
-   the library's own trip cards. */
+/* ---- Carta's own trips (T752, T824) ----
+   Laid out like Explore (owner 2026-10-29): the title and one line of what
+   every trip holds, no mark; one row with the Filters button and the
+   filters that are on, the count at its end; the weeks in season as a band
+   to swipe; then every week as Explore's card in a grid that fills the
+   width (about 260 px a card: three at 1024, four at 1280, five at 1440).
+   A phone lists the cards on their side, photo left, as Explore does. */
 .pf-carta {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-5);
   width: 100%;
-  max-width: 1200px;
+  max-width: 1440px;
   margin: 0 auto;
-  padding: var(--space-3) var(--gutter) var(--space-8);
+  padding: var(--space-2) var(--gutter) var(--space-8);
 }
 
-.pf-carta-top { display: flex; }
+.pf-carta-top { display: flex; min-height: var(--tap); align-items: center; }
+.pf-carta-top .pf-carta-back.btn { margin-left: calc(-1 * var(--space-2)); }
 
-.pf-carta-hero { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-4); }
+.pf-carta-hero { display: flex; flex-direction: column; gap: var(--space-2); max-width: 46rem; }
 
 .pf-carta-title {
   margin: 0;
@@ -586,63 +589,32 @@
   line-height: 1.08;
   letter-spacing: var(--tracking-plan);
   color: var(--text);
+  text-wrap: balance;
 }
 
-.pf-carta-incl {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-2);
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
+.pf-carta-lede { margin: 0; font-size: var(--text-body); line-height: 1.5; color: var(--text-2); max-width: 60ch; }
 
-.pf-carta-incl li {
+.pf-carta-bar {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  min-height: var(--tap-main);
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-card);
-  background: var(--surface);
-  box-shadow: var(--elev-1);
-  font-size: var(--text-label);
-  font-weight: 600;
-  color: var(--text);
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-width: 0;
 }
-
-.pf-carta-incl-icon {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-pill);
-  background: var(--action-tint);
-  color: var(--select-ink);
-}
-
-.pf-carta-styles.ui-chip-group,
-.pf-carta-styles {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: var(--space-2);
-  margin: calc(-1 * var(--space-2)) calc(-1 * var(--gutter)) 0;
-  padding: var(--space-1) var(--gutter);
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.pf-carta-styles::-webkit-scrollbar { display: none; }
+.pf-carta-bar > :first-child { min-width: 0; flex: 1 1 auto; }
+.pf-carta-bar .xchips { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin: 0; }
+.pf-carta-bar .xchips-lead { display: flex; flex: none; }
+.pf-carta-bar .pf-carta-filters.btn { border-radius: var(--radius-pill); min-height: var(--tap); }
+.pf-carta-bar .pf-carta-filters .xfilters-n { margin-left: var(--space-1); }
+.pf-carta-count { flex: none; font-size: var(--text-label); color: var(--text-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
 
 .pf-carta-h { margin: 0 0 var(--space-3); font-size: var(--text-title); font-weight: 700; color: var(--text); }
 
 .pf-carta-rail {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: 84%;
-  gap: var(--space-3);
+  grid-auto-columns: 72%;
+  gap: var(--space-4);
   margin: 0 calc(-1 * var(--gutter));
   padding: var(--space-1) var(--gutter) var(--space-2);
   overflow-x: auto;
@@ -651,32 +623,82 @@
   scroll-padding-inline: var(--gutter);
   scrollbar-width: none;
 }
-
 .pf-carta-rail::-webkit-scrollbar { display: none; }
+.pf-carta-rail > .tpc { scroll-snap-align: start; }
 
-.pf-carta-rail .jcard { scroll-snap-align: start; }
+.pf-carta-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-3); }
+.pf-carta-ghost { height: 104px; border-radius: var(--radius-card); background: var(--surface-sunken); }
 
-.pf-carta-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
+.pf-carta-empty { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); }
+.pf-carta-empty p { margin: 0; font-size: var(--text-body); color: var(--text-2); }
 
-.pf-carta-empty { margin: 0; font-size: var(--text-body); color: var(--text-2); }
-
-.pf-carta-more.btn { display: flex; margin: var(--space-5) auto 0; }
-
-@media (min-width: 600px) {
-  .pf-carta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
+.pf-carta-more.btn { display: flex; margin: var(--space-6) auto 0; }
 
 @media (min-width: 769px) {
-  .pf-carta { gap: var(--space-7); padding: var(--space-5) var(--space-6) var(--space-8); }
-  .pf-carta-incl { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .pf-carta-styles.ui-chip-group,
-  .pf-carta-styles { flex-wrap: wrap; margin: calc(-1 * var(--space-3)) 0 0; padding: 0; overflow: visible; }
-  .pf-carta-rail { grid-auto-columns: calc((100% - 2 * var(--space-3)) / 2.3); margin: 0; padding: var(--space-1) 0 var(--space-2); scroll-padding-inline: 0; }
+  .pf-carta { gap: var(--space-6); padding: var(--space-4) var(--space-6) var(--space-8); }
+  .pf-carta-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--space-6) var(--space-5); }
+  .pf-carta-ghost { height: auto; aspect-ratio: 3 / 2.6; }
+  .pf-carta-rail { grid-auto-columns: minmax(260px, calc((100% - 3 * var(--space-4)) / 4)); margin: 0; padding: var(--space-1) 0 var(--space-2); scroll-padding-inline: 0; }
 }
 
-@media (min-width: 1024px) {
-  .pf-carta-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5) var(--space-4); }
-  .pf-carta-rail { grid-auto-columns: calc((100% - 2 * var(--space-3)) / 3); }
+/* ---- One of Carta's trips as Explore's card (T824) ----
+   The same measures as .xov--card (79-place-card.css): 3:2 photo in the
+   card radius, one solid pill on it top left, the bookmark top right, the
+   words straight on the ground, lifted 4 px on hover. */
+.tpc { position: relative; min-width: 0; border-radius: var(--radius-card); transition: transform var(--dur-2) var(--ease-out); content-visibility: auto; contain-intrinsic-size: auto 320px; }
+.tpc-hit {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  color: inherit;
+  text-decoration: none;
+  border-radius: var(--radius-card);
+}
+.tpc-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: var(--space-1); }
+.tpc-media {
+  position: relative;
+  display: block;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--surface-sunken);
+}
+.tpc-img,
+.tpc-media .hero-blank { display: block; width: 100%; height: 100%; object-fit: cover; aspect-ratio: auto; }
+.tpc-badge {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--text);
+}
+.tpc-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.tpc-name { font-size: var(--text-lead); font-weight: 600; line-height: var(--leading-tight); color: var(--text); overflow-wrap: anywhere; }
+.tpc-where { display: flex; align-items: center; gap: var(--space-1); margin-top: 2px; font-size: var(--text-label); color: var(--text-2); min-width: 0; }
+.tpc-where > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tpc-flag { flex: none; }
+.tpc-facts { font-size: var(--text-label); color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tpc-price { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); margin-top: var(--space-1); font-size: var(--text-label); color: var(--text); }
+.tpc-price .jcap-fig { font-weight: 600; }
+.tpc-save { position: absolute; top: var(--space-2); right: var(--space-2); z-index: 1; margin: 0; }
+@media (hover: hover) { .tpc:hover { transform: translateY(-4px); } }
+@media (prefers-reduced-motion: reduce) { .tpc { transition: none; } .tpc:hover { transform: none; } }
+
+@media (max-width: 768px) {
+  .pf-carta-grid .tpc-hit { flex-direction: row; gap: var(--space-3); min-height: 104px; }
+  .pf-carta-grid .tpc-media { flex: none; width: 112px; aspect-ratio: auto; align-self: stretch; }
+  .pf-carta-grid .tpc-badge { top: var(--space-1); left: var(--space-1); min-height: 20px; padding: 0 6px; font-size: var(--text-micro, 11px); }
+  .pf-carta-grid .tpc-body { justify-content: center; padding: var(--space-1) 0; }
+  .pf-carta-grid .tpc-name { padding-right: var(--tap); }
+  .pf-carta-grid .tpc-save { top: var(--space-1); right: 0; background: transparent; box-shadow: none; }
 }
 
 /* ---- The budget (T753): one figure for the whole trip ----

@@ -764,3 +764,65 @@
 .tff-tog-foot { display: grid; gap: var(--space-2); }
 .tff-tog-hint, .tff-tog-sent { margin: 0; font-size: var(--text-label); color: var(--text-2); }
 .tff-tog-sent input, .mt-kept-sent input { width: 100%; margin-top: var(--space-1); font: inherit; }
+
+/* ---- T825: Trips for you as Booking's result list (owner 2026-10-29) ----
+   One column on every width, up to 960 px. A card is a row from 769 px:
+   the photos left (about 280 px), what the trip is in the middle (name,
+   where and how long, the strongest reason and the catch, Compare and
+   Skip), and the price on the right: what it covers, the total a person,
+   the group's, the budget note, the full cost on request and See the trip.
+   A phone stacks the three, the photo on top. */
+.tff-list { grid-template-columns: minmax(0, 1fr); max-width: 960px; margin-inline: auto; gap: var(--space-4); }
+@media (min-width: 600px) { .tff-list { grid-template-columns: minmax(0, 1fr); } }
+@media (min-width: 1100px) { .tff-list { grid-template-columns: minmax(0, 1fr); } }
+
+.tff-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "media" "body" "price" "foot";
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  height: auto;
+}
+.tff-card-media { grid-area: media; }
+.tff-card-body { grid-area: body; align-content: start; padding: 0; }
+.tff-card-price { grid-area: price; display: flex; flex-direction: column; align-items: stretch; gap: var(--space-1); }
+.tff-card-foot { grid-area: foot; padding: 0; }
+.tff-price-for { margin: 0; font-size: var(--text-caption); color: var(--text-2); }
+.tff-total { align-items: baseline; }
+.tff-total-unit { font-size: var(--text-caption); color: var(--text-2); }
+.tff-total-group { margin: 0; font-size: var(--text-label); color: var(--text-2); font-variant-numeric: tabular-nums; }
+.tff-card-price .tff-budget { align-self: flex-start; }
+.tff-cost-toggle.btn { align-self: flex-start; margin-left: calc(-1 * var(--space-2)); }
+.tff-card-price .tff-three { grid-template-columns: minmax(0, 1fr); gap: var(--space-1); padding: var(--space-2) 0; border-top: 1px solid var(--border-soft); }
+.tff-card-price .tff-three[hidden] { display: none; }
+.tff-card-price .tff-three > div { justify-content: space-between; gap: var(--space-2); }
+.tff-card-price .tff-three dt { display: inline-flex; align-items: center; gap: var(--space-1); font-size: var(--text-caption); color: var(--text-2); min-width: 0; }
+.tff-card-price .tff-three dd { font-size: var(--text-label); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tff-card-see.btn { margin-top: var(--space-1); }
+
+@media (min-width: 769px) {
+  .tff-card {
+    grid-template-columns: 280px minmax(0, 1fr) minmax(190px, 220px);
+    grid-template-areas: "media body price" "media foot price";
+    grid-template-rows: 1fr auto;
+    gap: var(--space-2) var(--space-5);
+    padding: var(--space-3);
+  }
+  .tff-card-media .tff-photos { aspect-ratio: auto; height: 100%; min-height: 200px; }
+  .tff-card-price {
+    align-items: flex-end;
+    text-align: right;
+    padding-left: var(--space-4);
+    border-left: 1px solid var(--border-soft);
+  }
+  .tff-card-price .tff-total { justify-content: flex-end; }
+  .tff-card-price .tff-budget,
+  .tff-cost-toggle.btn { align-self: flex-end; margin-left: 0; margin-right: calc(-1 * var(--space-2)); }
+  .tff-card-price .tff-three { width: 100%; text-align: left; }
+  .tff-card-see.btn { align-self: stretch; margin-top: auto; }
+}
+@media (hover: hover) { .tff-card:hover { border-color: var(--border); } }

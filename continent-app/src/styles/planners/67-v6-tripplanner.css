@@ -1233,3 +1233,30 @@
 .trip-keep-line { font-size: var(--text-label); color: var(--text-2); }
 
 /* The day rows: the way into a day is a main action, 48 px (T472-f). */
+
+/* T822: Edit trip on one left edge. The stop editor's blocks were straight
+   children of the list with no side padding, so "When are you travelling",
+   the start date, the stop cards and the suggestion rail ran into the panel's
+   edge. Every block now sits inside the page gutter (24 px from 769 px), the
+   rail scrolls inside it, and the trip's head keeps its own padding. */
+.plan-ws.is-editing .plan-ws-scroll > :not(.trip-topcard),
+.plan-ws.is-editing .map-drawer-scroll > :not(.trip-topcard) {
+  padding-inline: var(--gutter);
+}
+@media (min-width: 769px) {
+  .plan-ws.is-editing .plan-ws-scroll > :not(.trip-topcard) { padding-inline: var(--space-5); }
+  .plan-ws.is-editing .trip-topcard { padding-inline: var(--space-5); }
+}
+.plan-ws.is-editing .trip-suggest-row { scroll-padding-inline: var(--gutter); scroll-snap-type: x mandatory; }
+.plan-ws.is-editing .trip-suggest-row > * { scroll-snap-align: start; }
+.plan-ws.is-editing .trip-block + .trip-block,
+.plan-ws.is-editing .trip-nights-summary { margin-top: var(--space-5); }
+/* One primary in the footer: Done. Saving is the quiet second. */
+.trip-edit-footer .trip-save-btn.btn {
+  flex: 0 1 auto;
+  min-width: 9em;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--action);
+}
+.trip-edit-footer .trip-save-btn.btn:hover:not(:disabled) { background: var(--surface-hover); opacity: 1; }
