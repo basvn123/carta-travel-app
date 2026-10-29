@@ -134,16 +134,36 @@ export function jobsForMinute(list, airports, nowMs, dormant = new Set()) {
  */
 export function lateJobsForMinute(list, nowMs) {
   const minute = Math.floor(nowMs / 60000);
+  return routesInMinute(minute, LATE_CYCLE, list.length).flatMap((r) => lateJobsForRoute(list, r, nowMs));
+}
+
+/** One route's late searches on the day of nowMs (T819: the fill asks route by route). */
+export function lateJobsForRoute(list, r, nowMs) {
   const today = Math.floor(nowMs / DAY) * DAY;
+  const [o, d, mask] = list[r];
   const jobs = [];
-  for (const r of routesInMinute(minute, LATE_CYCLE, list.length)) {
-    const [o, d, mask] = list[r];
-    for (let w = FAR_WEEKS; w < FAR_WEEKS + LATE_WEEKS; w++) {
-      const ms = today + (14 + 7 * w + ((r + w) % 7)) * DAY;
-      if (mask & monthBit(ms)) jobs.push({ o, d, date: isoDay(ms), tier: 'late' });
-    }
+  for (let w = FAR_WEEKS; w < FAR_WEEKS + LATE_WEEKS; w++) {
+    const ms = today + (14 + 7 * w + ((r + w) % 7)) * DAY;
+    if (mask & monthBit(ms)) jobs.push({ o, d, date: isoDay(ms), tier: 'late' });
   }
   return jobs;
+}
+
+/**
+ * The fill's route order (T819): every route the late cycle will not reach
+ * within `spanMin` minutes of nowMs, starting with the one it reaches next
+ * after that and wrapping round to the one it reaches now. Run once over
+ * `spanMin`, it gives every route a late fare by then; each filled route still
+ * gets its normal turn within one LATE_CYCLE, so no fare outlives the age.
+ */
+export function lateFillOrder(n, nowMs, spanMin) {
+  const minute = Math.floor(nowMs / 60000);
+  const first = (m) => Math.ceil(((((m % LATE_CYCLE) + LATE_CYCLE) % LATE_CYCLE) * n) / LATE_CYCLE) % n;
+  const from = first(minute + spanMin);
+  const to = first(minute);
+  const out = [];
+  for (let r = from; r !== to; r = (r + 1) % n) out.push(r);
+  return out;
 }
 
 /**

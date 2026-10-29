@@ -1,0 +1,27 @@
+# Carta flight sweep, the late tier's one-time fill (T819): every route the
+# 4-week cycle (carta-late-sweep.service) does not reach in the next 7 days
+# gets its first late fare within them, then this exits and stays done
+# (~/.local/state/carta/late-fill.json). Enabled, so a reboot mid-fill resumes;
+# once done it only logs that. infra/hetzner/cron/install.sh installs it.
+# Task report: Execution/P11/T819-late-fill.md.
+[Unit]
+Description=Carta flight sweep, late tier one-time fill (T819)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=carta
+Group=carta
+WorkingDirectory=/home/carta/carta
+Environment=TZ=UTC
+Environment=LANG=C.UTF-8
+ExecStart=/bin/bash -c '. infra/hetzner/cax11/load-env.sh && exec node continent-app/workers/late-sweep/run.mjs --fill'
+Restart=on-failure
+RestartSec=60
+Nice=10
+IOSchedulingClass=idle
+MemoryMax=512M
+
+[Install]
+WantedBy=multi-user.target

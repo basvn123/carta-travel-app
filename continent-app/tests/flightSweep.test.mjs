@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import {
   flattenRoutes, jobsForMinute, nextPause, routesInMinute, NEAR_CYCLE, FAR_CYCLE, FIND_CYCLE, NEAR_DAYS, FAR_WEEKS, km,
-  PAUSE_BASE_MS, PAUSE_MAX_MS, lateJobsForMinute, LATE_CYCLE, LATE_WEEKS,
+  PAUSE_BASE_MS, PAUSE_MAX_MS, lateJobsForMinute, lateJobsForRoute, lateFillOrder, LATE_CYCLE, LATE_WEEKS,
 } from "../workers/flight-sweep/src/plan.mjs";
 import { buildFile, buildIndex, nextBatch, priceOk, routeMoves } from "../workers/flight-sweep/src/publish.mjs";
 import { ingestRows, tokenOk, MAX_ROWS } from "../workers/flight-sweep/src/ingest.mjs";
@@ -250,4 +250,28 @@ test("ingest needs the exact bearer token (T798)", async () => {
   assert.equal(await tokenOk("s3cret", "s3cret"), false);
   assert.equal(await tokenOk("Bearer ", ""), false, "no secret set: nobody gets in");
   assert.equal(await tokenOk(null, "s3cret"), false);
+});
+
+test("the fill takes exactly the routes the late cycle does not reach in its span, and each still gets its turn within a cycle (T819)", () => {
+  for (const [n, span] of [[10094, 7 * 1440], [10094, 3 * 1440], [7, 7 * 1440]]) {
+    for (const at of [NOW, NOW + 12345 * 60000, NOW + 39000 * 60000]) {
+      const fill = new Set(lateFillOrder(n, at, span));
+      const cycle = new Set();
+      const m0 = Math.floor(at / 60000);
+      for (let m = m0; m < m0 + span; m++) for (const r of routesInMinute(m, LATE_CYCLE, n)) cycle.add(r);
+      for (let r = 0; r < n; r++) assert.ok(fill.has(r) !== cycle.has(r), `n ${n}: route ${r} in exactly one`);
+    }
+  }
+  // Every route's next turn after the fill window comes within one cycle.
+  assert.equal(lateFillOrder(10094, NOW, LATE_CYCLE).length, 0, "a span of a whole cycle leaves nothing to fill");
+});
+
+test("a route's late jobs are the ones its minute would give (T819)", () => {
+  const list = flattenRoutes(routes);
+  for (let m = 0; m < LATE_CYCLE; m++) {
+    const rs = routesInMinute(Math.floor(NOW / 60000) + m, LATE_CYCLE, list.length);
+    if (!rs.length) continue;
+    const at = NOW + m * 60000;
+    assert.deepEqual(lateJobsForMinute(list, at), rs.flatMap((r) => lateJobsForRoute(list, r, at)));
+  }
 });
