@@ -2340,3 +2340,5 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T831-a | T831 | Saved Carta trips (carta.savedJourneys.v1) are on this device only; sync them to the account like the shortlist | next task | open |  |
 | T832-a | T832 | Walk Plan a trip here on a country page while a trip already exists: the wizard now opens over the trip page instead of the removed workspace (Execution/P15/T832-remove-old-edit-workspace.md) | next task | open |  |
 | T833-a | T833 | css-routes --check names planners/88-pf2-wizard.css with no global sheet of that name in src/styles.css (from T809); the one problem left in the route proof (Execution/P15/T833-merge-push-deploy-trip-page-v3.md) | next task | open |  |
+| T834-a | T834 | Mark the trip page v4 board (Keep, Change or Drop per panel, https://claude.ai/artifact/DkrztyyjBAdUd4AEnS69C4) before Batch A starts (Execution/P15/T834-trip-page-v4-board.md) | user | open | 1 |
+| T834-b | T834 | Answer D1 to D4 on the board: Undo and Redo, stay type per stop, pace per day, day trips (Execution/P15/_PLAN-trip-page-v4.md section 6) | user | open | 1 |
