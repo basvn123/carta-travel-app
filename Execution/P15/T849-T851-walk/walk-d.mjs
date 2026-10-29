@@ -109,7 +109,9 @@ for (const W of (process.env.WIDTHS || '390,1024,1440').split(',').map(Number)) 
   });
 
   await step(W, 'kept after a reload', async () => {
-    await page.reload({ waitUntil: 'domcontentloaded' }); await page.waitForTimeout(3000);
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    // The trip page comes back from the stored draft; give it time before any fallback.
+    await page.locator('.tpg').first().waitFor({ timeout: 20000 }).catch(() => {});
     if (!(await page.locator('.tpg').count())) {
       await nav(/Plan/).click(); await page.waitForTimeout(2000);
       if (!(await page.locator('.tpg').count())) { await page.locator(':is(a,button):visible').filter({ hasText: 'Slovenia' }).first().click(); await page.waitForTimeout(3000); }

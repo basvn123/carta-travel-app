@@ -1,0 +1,293 @@
+{
+  "results": [
+    {
+      "w": 390,
+      "label": "the trip page opens",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "a card for each of the 7 days",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "day 1 lists its planned places by name",
+      "ok": true,
+      "note": "Ljubljanica | Ljubljana Castle | Ljubljana Cathedral"
+    },
+    {
+      "w": 390,
+      "label": "an empty day says so",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "no price on the days",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "each day can be planned by hand",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "Let Carta plan the days is offered",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "no sideways scroll on Days",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "the idea is kept for later",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "put on day 5, it shows on that day",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "the few words show on the day",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "a day with words is not \"Nothing planned yet\"",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "day 3 is Packed",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "day 4 keeps the trip's pace",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "the pace is kept where the day planner reads it",
+      "ok": true,
+      "note": "{\"0-2\":\"packed\"}"
+    },
+    {
+      "w": 390,
+      "label": "the idea, the words and the pace are still there",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "the trip page opens",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "a card for each of the 7 days",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "day 1 lists its planned places by name",
+      "ok": true,
+      "note": "Ljubljanica | Ljubljana Castle | Ljubljana Cathedral"
+    },
+    {
+      "w": 1024,
+      "label": "an empty day says so",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "no price on the days",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "each day can be planned by hand",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "Let Carta plan the days is offered",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "no sideways scroll on Days",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "the idea is kept for later",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "put on day 5, it shows on that day",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "the few words show on the day",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "a day with words is not \"Nothing planned yet\"",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "day 3 is Packed",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "day 4 keeps the trip's pace",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "the pace is kept where the day planner reads it",
+      "ok": true,
+      "note": "{\"0-2\":\"packed\"}"
+    },
+    {
+      "w": 1024,
+      "label": "the idea, the words and the pace are still there",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "the trip page opens",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "a card for each of the 7 days",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "day 1 lists its planned places by name",
+      "ok": true,
+      "note": "Ljubljanica | Ljubljana Castle | Ljubljana Cathedral"
+    },
+    {
+      "w": 1440,
+      "label": "an empty day says so",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "no price on the days",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "each day can be planned by hand",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "Let Carta plan the days is offered",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "no sideways scroll on Days",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "the idea is kept for later",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "put on day 5, it shows on that day",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "the few words show on the day",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "a day with words is not \"Nothing planned yet\"",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "day 3 is Packed",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "day 4 keeps the trip's pace",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "the pace is kept where the day planner reads it",
+      "ok": true,
+      "note": "{\"0-2\":\"packed\"}"
+    },
+    {
+      "w": 1440,
+      "label": "the idea, the words and the pace are still there",
+      "ok": true,
+      "note": ""
+    }
+  ],
+  "errors": []
+}
