@@ -18,6 +18,9 @@
  */
 
 import SLOTS from '../../../config/slots.json' with { type: 'json' };
+import { exactWindow, monthsByNext } from '../../lib/tripDates.js';
+
+const wholeWhen = (w) => (w.mode === 'exact' ? exactWindow(w) : w);
 
 export const SETTINGS_VERSION = 1;
 
@@ -143,13 +146,15 @@ export function normalizeSettings(raw) {
       slowWalkers: Boolean(p.slowWalkers),
     },
     priority: oneOf(raw.priority, PRIORITIES, d.priority),
-    when: {
+    // T815: two dates are made whole (an end on or before the start is
+    // dropped, the nights follow the dates).
+    when: wholeWhen({
       mode: oneOf(w.mode, WHEN_MODES, d.when.mode),
       start: isDate(w.start) ? w.start : '',
       end: isDate(w.end) ? w.end : '',
       months: Array.isArray(w.months) ? [...new Set(w.months.map(Number).filter((m) => m >= 1 && m <= 12))].sort((a, x) => a - x) : [],
       nights: clampInt(w.nights, 1, 60, d.when.nights),
-    },
+    }),
     from: placeOf(raw.from),
     kind: raw.kind === 'now' ? 'now' : 'new',
     now: placeOf(raw.now),
@@ -231,6 +236,8 @@ export function fromImports(s, list) {
   if (kinds.has('activity')) booked.tickets = true;
   const dates = items.map((b) => b.date).filter(Boolean).sort();
   const when = !s.answered.includes('when') && dates.length
+    // T815: one booked date keeps the old end only when it still comes
+    // after it; the nights follow the dates (exactWindow in normalize).
     ? { ...s.when, mode: 'exact', start: dates[0], end: dates.length > 1 ? dates[dates.length - 1] : s.when.end }
     : s.when;
   return normalizeSettings({ ...s, booked, when, imports: [...s.imports, ...items].slice(0, 20) });
@@ -367,10 +374,12 @@ export function fromDraft(draft) {
 
 /** The parts of a plannerStore draft the planning engine reads on mount,
  *  written from the settings. Merged into the draft by the caller. */
-export function draftPatch(s, draft = {}) {
+export function draftPatch(s, draft = {}, today = new Date()) {
   const wz = draft.wizard || {};
   const flex = s.when.mode !== 'exact';
-  const m = s.when.months[0];
+  // T815: the next picked month to come, as Explore reads it (appSync), not
+  // the first in calendar order.
+  const m = monthsByNext(s.when.months, today)[0];
   return {
     settings: s,
     origin: s.from || draft.origin || null,
@@ -386,7 +395,7 @@ export function draftPatch(s, draft = {}) {
       startDate: flex ? '' : s.when.start,
       endDate: flex ? '' : s.when.end,
       durationNights: s.when.nights,
-      flexibleMonths: flex ? s.when.months.map((x) => nextMonthKey(x)) : [],
+      flexibleMonths: flex ? monthsByNext(s.when.months, today).map((x) => nextMonthKey(x, today)) : [],
     },
     wizard: {
       ...wz,
@@ -394,7 +403,7 @@ export function draftPatch(s, draft = {}) {
       dateMode: flex ? 'flex' : 'exact',
       // The wizard keys a flexible month as "YYYY-MM"; the next time it
       // comes round. Empty means any month.
-      flexMonth: m ? nextMonthKey(m) : '',
+      flexMonth: m ? nextMonthKey(m, today) : '',
       flexNights: s.when.nights,
     },
   };

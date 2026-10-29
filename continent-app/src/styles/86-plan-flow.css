@@ -21,7 +21,9 @@
 }
 
 /* ---- The opening (T743 to T747, owner 2026-10-27) ----
-   The Plan place with nothing open: one screen on warm paper, no scroll.
+   The Plan place's first page: one screen on warm paper, no scroll while
+   there is no trip yet (with trips, T809, "Your trips" follows and the page
+   scrolls).
    The headline and the two actions that matter, large; under them, down at
    the bottom (from 1024 px: beside them), Carta's own recommended trips: a
    fan of trip-style photographs, the mark, a title and one button.
@@ -143,6 +145,142 @@
 }
 
 .pf-open-resume > svg { flex: none; color: var(--text-3); }
+
+/* ---- Your trips (T809, owner 2026-10-29) ----
+   Every trip on this device and, signed in, in the account. On a phone a
+   column of compact rows under the actions (a 64 px photo, the name, the
+   dates, nights and stops with their icons, the status pill, a chevron and
+   the More menu); from 1024 px a grid of photo cards under the whole
+   opening. The page scrolls once it holds trips. */
+.pf-open.has-trips { height: auto; }
+.pf-open.has-trips .pf-open-text { flex: none; }
+
+.pf-trips { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
+
+.pf-trips-title {
+  margin: 0;
+  font-size: var(--text-title);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  color: var(--text);
+}
+
+.pf-trips-list { display: flex; flex-direction: column; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+
+.pf-trip {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+  transition: box-shadow var(--dur-2) var(--ease-out);
+}
+
+.pf-trip-link {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  min-height: var(--tap-main);
+  padding: var(--space-2);
+  border-radius: var(--radius-card);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.pf-trip-link:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+.pf-trip-media {
+  flex: none;
+  width: 64px;
+  height: 64px;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--surface-sunken);
+}
+
+.pf-trip-img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+.pf-trip-blank { display: grid; place-items: center; width: 100%; height: 100%; color: var(--text-3); }
+
+.pf-trip-body { display: flex; flex: 1; flex-direction: column; gap: 2px; min-width: 0; }
+
+.pf-trip-name { display: flex; align-items: center; gap: var(--space-1); min-width: 0; }
+
+.pf-trip-name-text {
+  overflow: hidden;
+  font-size: var(--text-lead);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.pf-trip-cloud { display: inline-flex; flex: none; color: var(--text-2); }
+
+.pf-trip-when { overflow: hidden; font-size: var(--text-label); color: var(--text-2); white-space: nowrap; text-overflow: ellipsis; }
+
+.pf-trip-facts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-3);
+  margin-top: 2px;
+  font-size: var(--text-caption);
+  color: var(--text-2);
+}
+
+.pf-trip-fact { display: inline-flex; align-items: center; gap: var(--space-1); white-space: nowrap; }
+
+.pf-trip-go { display: inline-flex; flex: none; color: var(--text-3); }
+
+.pf-trip-more { position: relative; flex: none; margin-right: var(--space-1); }
+
+/* Beside the row on a phone the More button sits on the card's white: no disc. */
+.pf-trip-more .icon-btn-photo { box-shadow: none; }
+
+.pf-trip-pop {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: var(--z-overlay);
+  display: flex;
+  flex-direction: column;
+  min-width: 220px;
+  padding: var(--space-1);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  box-shadow: var(--elev-2);
+}
+
+.pf-trip-pop .pf-trip-item.btn {
+  justify-content: flex-start;
+  width: 100%;
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-body);
+  font-weight: 500;
+}
+
+.pf-trip-pop .pf-trip-item.is-danger,
+.pf-trip-pop .pf-trip-item.is-danger svg { color: var(--danger); }
+
+.pf-trip-item:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+
+.pf-trip-ask { gap: var(--space-3); width: 260px; padding: var(--space-3); }
+
+.pf-trip-ask-text { margin: 0; font-size: var(--text-body); line-height: var(--leading-body); color: var(--text); }
+
+.pf-trip-ask-row { display: flex; justify-content: flex-end; gap: var(--space-2); }
+
+@media (hover: hover) {
+  .pf-trip:hover { box-shadow: var(--elev-2); }
+  .pf-trip:hover .pf-trip-go { color: var(--text-2); }
+  .pf-trip-item:hover { background: var(--surface-hover); }
+}
 
 /* The stage: Carta's own trips, down at the bottom on a phone. */
 .pf-open-stage {
@@ -267,12 +405,27 @@
   }
   .pf-open.is-bare { grid-template-columns: minmax(0, 1fr); }
   .pf-open-stage { justify-content: center; }
+  /* T809: the opening keeps its two columns; Your trips runs under both as
+     a grid of photo cards, three or four across. */
+  .pf-open.has-trips { min-height: 0; }
+  .pf-open-text { grid-column: 1; grid-row: 1; }
+  .pf-open-stage { grid-column: 2; grid-row: 1; }
+  .pf-trips { grid-column: 1 / -1; grid-row: 2; gap: var(--space-4); }
+  .pf-trips-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--space-4); }
+  .pf-trip { flex-direction: column; align-items: stretch; }
+  .pf-trip-link { flex-direction: column; align-items: stretch; gap: 0; padding: 0; }
+  .pf-trip-media { width: 100%; height: auto; aspect-ratio: 3 / 2; border-radius: var(--radius-card) var(--radius-card) 0 0; }
+  .pf-trip-body { gap: var(--space-1); padding: var(--space-3) var(--space-8) var(--space-4) var(--space-4); }
+  .pf-trip-go { position: absolute; right: var(--space-3); bottom: var(--space-4); }
+  .pf-trip-more { position: absolute; top: var(--space-2); right: var(--space-2); margin: 0; }
+  .pf-trip-more .icon-btn-photo { box-shadow: var(--elev-1); }
   .pf-coll { --pw: 21%; --step: 74%; padding: var(--space-6) var(--space-5) var(--space-4); }
   .pf-coll:hover { --step: 80%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .pf-open-start .btn-icon,
+  .pf-trip,
   .pf-coll-photo,
   .pf-coll-go svg { transition: none; }
   .pf-coll-photo { animation: none; }

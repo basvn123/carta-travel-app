@@ -36,6 +36,7 @@ import { PROFILES } from '../../lib/lifestyleProfiles.js';
 import { flightRanking } from '../flow/tripSettings.js';
 import { useTripSettings } from '../flow/flowHooks.js';
 import { keptRecord } from '../../lib/recommend/kept.js';
+import { keep, unkeep, useKept } from '../../lib/recommend/keptStore.js';
 import { planOf } from './planOf.js';
 import { firstPlace, tripName } from './finderText.js';
 
@@ -118,6 +119,20 @@ export function keepRecordOf(trip, { destinations, lang, origin = null, file = n
     plan: planOf(trip),
     file,
   });
+}
+
+/**
+ * The heart, for the card and the preview alike (T810, T811): whether a
+ * trip is kept, and a toggle that keeps it (keepRecordOf) or lets it go.
+ */
+export function useKeepTrip({ destinations, lang, keepWith = null }) {
+  const kept = useKept();
+  const isKept = (id) => kept.some((r) => r.id === id);
+  const toggle = (trip) => {
+    if (isKept(trip.id)) unkeep(trip.id);
+    else keep(keepRecordOf(trip, { destinations, lang, ...(keepWith || {}) }));
+  };
+  return { isKept, toggle };
 }
 
 /** Yield to the browser so a finished stage is painted before the next one runs. */

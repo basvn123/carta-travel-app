@@ -8,7 +8,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import {
-  splitNights, shapesFor, datesFor, startIn, bestMonth, transportFor, tasteFor, CANDIDATES,
+  splitNights, shapesFor, datesFor, startIn, bestMonth, setupMonth, transportFor, tasteFor, CANDIDATES,
 } from "../src/lib/recommend/candidates.js";
 import { buildTrips, tripId, stableHash, receiptOf } from "../src/lib/recommend/trips.js";
 import { SLOT_ROWS, ADAPTERS, slotTotals } from "../src/lib/recommend/slots.js";
@@ -178,4 +178,15 @@ test("a new slot row and adapter reach every trip with no other change", { skip 
     assert.equal(t.slots.at(-1).id, "insurance");
     assert.equal(slotTotals(t.slots).perPerson, base[i].total.perPerson + 20);
   });
+});
+
+// T815: of several months the traveller picked, the one that comes round
+// first from today, not the first in calendar order.
+test("setupMonth takes the next month to come", () => {
+  const when = (months) => ({ when: { mode: "months", months } });
+  assert.equal(setupMonth(when([1, 11]), "2026-10-29"), 11);
+  assert.equal(setupMonth(when([11, 1]), "2026-10-29"), 11);
+  assert.equal(setupMonth(when([3, 9]), "2026-10-29"), 3);
+  assert.equal(setupMonth(when([10, 11]), "2026-10-29"), 10);
+  assert.equal(setupMonth({ when: { mode: "exact", start: "2027-07-03" } }, "2026-10-29"), 7);
 });

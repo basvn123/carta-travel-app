@@ -53,22 +53,71 @@ export function threeFigures(trip) {
   };
 }
 
-/** The cost bar's segments: every slot with a figure, in slot order. */
-export function barSegments(trip) {
-  return trip.slots.filter((s) => s.eur != null && s.eur > 0).map((s) => ({ id: s.id, labelKey: s.labelKey, eur: s.eur }));
+/**
+ * The trip's photos (T810): each place's own photo in trip order, then,
+ * when no place has one, the best known place of the same country that
+ * does, so a card never stands without a picture. Each is { url, city,
+ * iso2, credit, id }; [] only when the country has no photo at all.
+ */
+const COUNTRY_PHOTO = new WeakMap();
+function countryPhoto(destinations, iso2) {
+  if (!destinations || !iso2) return null;
+  let byCountry = COUNTRY_PHOTO.get(destinations);
+  if (!byCountry) {
+    byCountry = new Map();
+    for (const d of Object.values(destinations)) {
+      if (!d?.image?.url || !d.iso2) continue;
+      const was = byCountry.get(d.iso2);
+      if (!was || (d.rating?.fame || 0) > (was.rating?.fame || 0)) byCountry.set(d.iso2, d);
+    }
+    COUNTRY_PHOTO.set(destinations, byCountry);
+  }
+  return byCountry.get(iso2) || null;
+}
+const photoOf = (d, id) => ({ url: d.image.url, city: d.city || '', iso2: d.iso2 || null, credit: d.image.credit || null, id });
+
+export function tripPhotos(trip, destinations) {
+  const out = [];
+  const seen = new Set();
+  for (const p of trip.places) {
+    const d = destinations?.[p.id];
+    if (!d?.image?.url || seen.has(d.image.url)) continue;
+    seen.add(d.image.url);
+    out.push(photoOf(d, p.id));
+  }
+  if (!out.length) {
+    const d = countryPhoto(destinations, trip.iso2 || firstPlace(trip, destinations)?.iso2);
+    if (d) out.push(photoOf(d, d.id || null));
+  }
+  return out;
 }
 
+// A POI's weight: must-see, then recommended, then the rest (appData's rate).
+const RATE = { must_see: 3, recommended: 2, worth_a_look: 1 };
+
 /**
- * The inclusions line, from the slots: each slot is in (Carta's pick with a
- * figure), yours (the traveller chooses it; its typical price is in the
- * total) or notYet (no figure: out of the sum).
+ * What to see and do at one place (T811): the place's POIs (public/poi
+ * shards) that have a photo, the best first (its label, then its
+ * significance), one per name, at most `n`. Each is { name, kind, img,
+ * desc, category }.
  */
-export function inclusions(trip) {
-  return trip.slots.map((s) => ({
-    id: s.id,
-    labelKey: s.labelKey,
-    state: s.eur == null ? 'notYet' : s.owner === 'you' ? 'yours' : 'in',
-  }));
+export function topSights(pois, n = 4) {
+  const seen = new Set();
+  return (pois || [])
+    .filter((x) => x?.img && x.name)
+    .map((x, i) => ({ x, i, rate: x.rate ?? RATE[x.label] ?? 1, sig: Number.isFinite(x.sig) ? x.sig : 0 }))
+    .sort((a, b) => b.rate - a.rate || b.sig - a.sig || a.i - b.i)
+    .filter(({ x }) => (seen.has(x.name) ? false : (seen.add(x.name), true)))
+    .slice(0, n)
+    .map(({ x }) => ({ name: x.name, kind: x.kind || '', img: x.img, desc: x.desc || '', category: x.category || '' }));
+}
+
+/** The budget as a badge on the card (T810): "231 under budget" with the money formatter's symbol, or over in the warning tone; null without a budget. */
+export function budgetBadge(trip, { locale } = {}) {
+  const b = trip.budget;
+  if (!b?.eur || !Number.isFinite(b.delta)) return null;
+  if (b.delta === 0) return { key: 'tf.budget.on', vars: { eur: formatMoney(b.eur, { locale }) }, over: false };
+  return { key: b.delta < 0 ? 'tf.card.under' : 'tf.card.over', vars: { eur: formatMoney(Math.abs(b.delta), { locale }) }, over: b.delta > 0 };
 }
 
 /** Does the trip's total leave a line out (a slot with no figure, things to do aside)? */
@@ -81,21 +130,6 @@ export function signedMoney(delta, { precision = 'whole', locale } = {}) {
   if (!Number.isFinite(delta)) return '';
   const abs = formatMoney(Math.abs(delta), { precision, locale });
   return `${delta < 0 ? '-' : '+'}${abs}`;
-}
-
-/** The budget ruler as one sentence's key and figures, or null with no budget. */
-export function budgetLine(trip, { locale } = {}) {
-  const b = trip.budget;
-  if (!b?.eur) return null;
-  const eur = formatMoney(b.eur, { locale });
-  if (b.delta === 0) return { key: 'tf.budget.on', vars: { eur } };
-  return {
-    key: b.delta < 0 ? 'tf.budget.under' : 'tf.budget.over',
-    vars: { delta: formatMoney(Math.abs(b.delta), { locale }), eur },
-    over: b.delta > 0,
-    // Where the trip's total sits on the ruler, 0 to 1, the budget at 1 when under.
-    fill: Math.max(0, Math.min(1, trip.total.perPerson / Math.max(b.eur, trip.total.perPerson))),
-  };
 }
 
 /** A like's own label, the one question 2 shows. */

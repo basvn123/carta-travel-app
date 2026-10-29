@@ -49,6 +49,8 @@ import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { wizardSteps, restoreStep, STEP_LABEL_KEYS, nightsText, cheapestDay } from './wizard/wizardSteps.js';
 import { appliesTo, landingStep, planState, withPlan } from './finder/handoff.js';
+import { pickedLive } from './wizard/flightChoices.js';
+import { useLiveFlights } from '../lib/flights/useLiveFlights.js';
 import { OriginCard } from './wizard/OriginCard.jsx';
 import { StepBookedWho } from './wizard/StepBookedWho.jsx';
 import { StepFrom } from './wizard/StepFrom.jsx';
@@ -1011,7 +1013,11 @@ export function GuidedTripWizard({
       activities: [],
     }));
     const start = tripStartDate;
-    const end = start && totalNights ? addDays(start, totalNights) : null;
+    // The end follows the stops as handed over (each at least one night), so
+    // a stop left at 0 nights never ends the trip a day short (T812, from the
+    // T815 date audit).
+    const handedNights = stops.reduce((n, x) => n + x.nights, 0);
+    const end = start && handedNights ? addDays(start, handedNights) : null;
     const stopCountries = [...new Set(orderedIds.map((id) => destinations[id]?.country).filter(Boolean))];
     const label = readyTrip
       ? tripHeadline(readyTrip, t)
@@ -1070,12 +1076,22 @@ export function GuidedTripWizard({
       label,
       stops,
     };
-  }, [readyTrip, includedIds, orderedIncludedIds, nights, tripStartDate, totalNights, destinations,
+  }, [readyTrip, includedIds, orderedIncludedIds, nights, tripStartDate, destinations,
     selectedCountries, travelValues, travelLegs, ownStays, adults, kids, babies, effectiveStayTier, ownCarChosen,
     pace, booked.travel, arrivalId, originPlace, t]);
 
   const finish = () => {
-    onComplete(planned);
+    // The flight Review priced, each way, goes with the trip: the one picked
+    // on Getting there, else the one the trip came with (the trip finder's,
+    // T816), so the planned trip prices the same flight and the same total
+    // instead of ranking its own.
+    onComplete({
+      ...planned,
+      flightPicks: { out: flightPickOut || pricedFlight('out'), back: flightPickBack || pricedFlight('back') },
+      // A seeded trip's eating habits (the finder's Food choice) go with it;
+      // otherwise the planner reads the app's Lifestyle, as the wizard did.
+      lifestyle: seedOn ? seedPlan.lifestyle || null : null,
+    });
     // The launch metric "priced-trip completions" (migration 048, T215-b).
     trackLaunch('trip_priced', '', readyTrip ? 'ready' : 'built');
   };
@@ -1123,14 +1139,21 @@ export function GuidedTripWizard({
   // T801: a seeded trip prices the request the trip finder priced.
   const seedOn = Boolean(seedPlan && appliesTo(seedPlan, handOver.stops.map((x) => x.destinationId)));
   const planned = useMemo(() => (seedOn ? withPlan(handOver, seedPlan) : handOver), [handOver, seedOn, seedPlan]);
-  const priced = useMemo(() => (planned.stops.length
-    ? priceWholeTrip(
-      seedOn
-        ? planState(planned, { ...seedPlan, lifestyle: seedPlan.lifestyle || dailyLifestyle })
-        : { ...wizardPlannerState(planned, { stayTier: effectiveStayTier, lifestyle: dailyLifestyle }), flightRank },
-      { data, countryInsights },
-    )
-    : null), [planned, seedOn, seedPlan, effectiveStayTier, dailyLifestyle, data, countryInsights, flightRank]);
+  // T812: a flight picked on Getting there prices the trip on that flight
+  // (one live answer per way, keyed by its day, so a moved trip drops it).
+  const flightPickOut = travelValues.out?.pick || null;
+  const flightPickBack = travelValues.back?.pick || null;
+  const picked = useMemo(() => pickedLive({ out: flightPickOut, back: flightPickBack }), [flightPickOut, flightPickBack]);
+  const priced = useMemo(() => {
+    if (!planned.stops.length) return null;
+    const state = seedOn
+      ? planState(planned, { ...seedPlan, lifestyle: seedPlan.lifestyle || dailyLifestyle })
+      : { ...wizardPlannerState(planned, { stayTier: effectiveStayTier, lifestyle: dailyLifestyle }), flightRank };
+    const withPicks = picked.length
+      ? { ...state, liveFlights: new Map([...(state.liveFlights || []), ...picked]) }
+      : state;
+    return priceWholeTrip(withPicks, { data, countryInsights });
+  }, [planned, seedOn, seedPlan, effectiveStayTier, dailyLifestyle, data, countryInsights, flightRank, picked]);
   // Carta's figure for each leg the traveller has not priced, keyed the way
   // the Getting there rows are, so a row shows the estimate its own figure
   // replaces.
@@ -1145,6 +1168,35 @@ export function GuidedTripWizard({
     if (priced.driveLegs?.home?.ground_total) out.back = priced.driveLegs.home.ground_total;
     return out;
   }, [priced]);
+  // The mode each hop between the stops is priced with, for its card's icons (T812).
+  const pricedModes = useMemo(() => {
+    const out = {};
+    (priced?.legs || []).forEach((l, i) => { if (l?.mode) out[`leg${i}`] = l.mode; });
+    return out;
+  }, [priced]);
+  // The day's flights, both ways, for Getting there's rows and the review
+  // (T812; useLiveFlights shares answers with the planned trip for ten minutes).
+  const flightQueries = (stepName === 'Getting' || stepName === 'Finish') ? priced?.cartaFlight?.queries || null : null;
+  const liveAnswers = useLiveFlights(flightQueries);
+  const flightWaiting = useMemo(() => {
+    const q = flightQueries || [];
+    const has = (x) => Boolean(x && liveAnswers.has(`${x.o}-${x.d}-${x.date}`));
+    return { out: Boolean(q[0]) && !has(q[0]), back: Boolean(q[1]) && !has(q[1]) };
+  }, [flightQueries, liveAnswers]);
+  const flightParty = useMemo(() => (priced
+    ? { paying: priced.groupSize, babies: priced.party?.babies || 0, bagKey: PLANNER_BAG }
+    : null), [priced]);
+  const onPickFlight = (dir, pick) => setTravelLeg(dir, { pick, mode: 'fly' });
+  // The flight the running total is priced on for one way, as a pick
+  // (pickedLive's shape), or null when that way is not flown by Carta.
+  const pricedFlight = (dir) => {
+    const cf = priced?.cartaFlight;
+    const leg = cf?.[dir];
+    const q = cf?.queries?.[dir === 'out' ? 0 : 1];
+    if (!leg || !q || !Number.isFinite(leg.price)) return null;
+    const { cost, ...flight } = leg; // eslint-disable-line no-unused-vars -- the planner prices the cost itself
+    return { ...flight, date: q.date, from: q.o, to: q.d };
+  };
   // Carta's bed estimate per stay, for the field that replaces it.
   const bedEstimate = (id) => {
     const i = priced ? priced.stopDetails.findIndex((sd) => sd.destinationId === id) : -1;
@@ -1486,6 +1538,7 @@ export function GuidedTripWizard({
     <OriginCard
       {...{ originPlace, setOriginPlace, originQuery, setOriginQuery, originResults, setOriginResults }}
       {...{ originBusy, setOriginBusy, nearAirports, depIataOk, setDepIata }}
+      homeCity={homePoint.city || ''}
     />
   );
 
@@ -1512,7 +1565,7 @@ export function GuidedTripWizard({
       <div
         ref={modalRef}
         {...(inline ? {} : { role: 'dialog', 'aria-modal': 'true', 'aria-label': t('wizard.planYourTrip') })}
-        className={`guide-modal trip-wizard-modal wiz-${layout} ${inline ? 'wiz-inline' : ''} ${flowSteps?.length ? 'wiz-flow' : ''} ${stepName === 'When' ? 'wiz-when' : ''} ${stepName === 'Stays' ? 'wiz-top' : ''} ${stepDir === 'back' ? 'wiz-back' : ''}`}
+        className={`guide-modal trip-wizard-modal wiz-${layout} ${inline ? 'wiz-inline' : ''} ${flowSteps?.length ? 'wiz-flow' : ''} ${stepName === 'When' ? 'wiz-when' : ''} ${stepName === 'Stays' ? 'wiz-top' : ''} ${stepDir === 'back' ? 'wiz-back' : ''} ${stepName === 'Getting' || stepName === 'Finish' ? 'wz-plain' : ''}`}
         onClick={(e) => e.stopPropagation()}
       >
         <WizardHead
@@ -1525,7 +1578,7 @@ export function GuidedTripWizard({
           {/* What Carta is planning around, on a phone only and scrolling with
               the step: from 1024 px the right column shows the same answers
               (roadmap 1.3c section 1), so the desktop band is gone. */}
-          {recapChips.length > 0 && !railOn && (
+          {recapChips.length > 0 && !railOn && !flowSteps?.length && (
             <div className="guide-recap wiz-recap-inbody">
               <div className="guide-recap-inner">
                 <span className="guide-recap-label"><CheckIcon size={10} /> {t('wizard.planningAround')}</span>
@@ -1605,7 +1658,9 @@ export function GuidedTripWizard({
                 <StepGettingThere
                   {...{ titleTag: StepTitle, booked, originCard, tripPick, stopDates, destinations, tripLoading, tripFailed }}
                   {...{ tripDetail, tripMissing, gettingLegs, travelValues, setTravelLeg, adults, tripStartDate }}
-                  {...{ dateMin, dateMax, jawHint, legEstimates, groupSize }}
+                  {...{ dateMin, dateMax, jawHint, legEstimates, pricedModes, groupSize }}
+                  {...{ liveAnswers, flightParty, flightWaiting, onPickFlight }}
+                  tripEndDate={tripStartDate && totalNights ? addDays(tripStartDate, totalNights) : ''}
                   cartaFlight={priced?.cartaFlight || null}
                   onPickAnother={() => { setTripPick(null); goStep(step - 1); }}
                   onRetryTrip={() => setTripTry((n) => n + 1)}
@@ -1637,9 +1692,10 @@ export function GuidedTripWizard({
 
               {stepName === 'Finish' && (
                 <StepReview
-                  {...{ titleTag: StepTitle, handOver: planned, summaryTitle, summaryDates, party, setParty, steps, goStep, priced, bedEstimate }}
-                  {...{ ownStays, setOwnStay, adults, kids, gettingLegs, travelValues, legEstimates, gotoGetting, ownCarChosen }}
-                  {...{ selectedCountries, includedIds, destinations, groupSize, countryInsights, railOn }}
+                  {...{ titleTag: StepTitle, handOver: planned, summaryTitle, summaryDates, party, steps, goStep, priced, bedEstimate }}
+                  {...{ ownStays, setOwnStay, adults, kids, gettingLegs, travelValues, gotoGetting, ownCarChosen }}
+                  {...{ selectedCountries, includedIds, destinations, groupSize, countryInsights }}
+                  onOpenTotal={openTotal}
                 />
               )}
             </div>
@@ -1651,7 +1707,6 @@ export function GuidedTripWizard({
                 {...{ stepName, priced, summaryDates, party, setParty, gotoGetting }}
                 {...{ allCountries, countries, toggleCountry, recommendedNames, countryCovers }}
                 {...{ mapCities, toggleCity, setFocusedId, setPickedStopId, anchorDest, includedIds }}
-                onOpenTotal={openTotal}
                 onBrief={(name) => setBriefCountry(briefCountry === name ? '' : name)}
               />
             )}

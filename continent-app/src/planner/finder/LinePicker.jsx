@@ -41,11 +41,11 @@ export function OptionRow({ chosen, selected, onPick, label, sub = '', eur, delt
  * config/slots.json gives options gets this shell with no new code; the
  * flight slot fills it with the live day (FlightOptions).
  *
- * It is a view inside the receipt's sheet, never a sheet of its own. Escape
- * and the back arrow return to the receipt row it came from.
+ * It is a view inside the trip preview (T811), never a sheet of its own. Escape
+ * and the back arrow return to the Cost row it came from.
  *
- *   onApply(slot)   the slot as chosen; the receipt's trip takes it
- *   onBack()        back to the receipt, focus on this row
+ *   onApply(slot)   the slot as chosen; the preview's trip takes it
+ *   onBack()        back to the Cost tab, focus on this row
  */
 export function LinePicker({ trip, slot, onApply, onBack, ui }) {
   const { t, lang } = useI18n();
@@ -57,7 +57,7 @@ export function LinePicker({ trip, slot, onApply, onBack, ui }) {
   const lineLabel = t(slot.labelKey);
 
   useEffect(() => { headRef.current?.focus({ preventScroll: true }); }, []);
-  // Escape closes the picker, not the receipt: a window capture listener
+  // Escape closes the picker, not the preview: a window capture listener
   // runs before the sheet's own trap on the document (escape-stack gotcha).
   useEffect(() => {
     const onKey = (e) => {

@@ -3,7 +3,8 @@ import { useI18n } from '../../i18n/index.jsx';
 import { plannerStore } from '../plannerStore.js';
 import { Button, ChoiceRows, IconButton } from '../../components/ui/index.js';
 import { HomeIcon, MapPinIcon, PlusIcon, SettingsIcon } from '../../components/Icons.jsx';
-import { HeroImage } from '../../components/HeroImage.jsx';
+import { TripHead } from '../TripSummary.jsx';
+import { partyText } from '../../lib/party.js';
 import { PlanStage, SheetHead } from './PlanStage.jsx';
 import { QUESTIONS } from './questions.js';
 import { QuestionBody } from './QuestionScreen.jsx';
@@ -156,7 +157,7 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null }) {
 
   let body;
   if (phase === 'home') {
-    body = <TripHome settings={settings} onStart={start} />;
+    body = <TripHome settings={settings} onStart={start} actions={bar} />;
   } else if (phase === 'doors') {
     body = (
       <div className="pf-step">
@@ -217,8 +218,8 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null }) {
   }
 
   return (
-    <div className="pf" ref={rootRef}>
-      <PlanStage bar={bar} sheetLabel={settings.trip.name || t('pf.sheet')} wide={phase === 'g:likes' || phase === TRIPS_SCREEN}>
+    <div className={`pf${phase === 'home' ? ' is-trip' : ''}`} ref={rootRef}>
+      <PlanStage bar={phase === 'home' ? null : bar} sheetLabel={settings.trip.name || t('pf.sheet')} wide={phase === 'g:likes' || phase === TRIPS_SCREEN}>
         {body}
       </PlanStage>
       {settingsOpen && <TripSettingsSheet anchorRef={gearRef} onClose={() => setSettingsOpen(false)} />}
@@ -228,11 +229,13 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null }) {
 
 /**
  * The trip's page with no route yet (after the Polarsteps trip view): the
- * trip's name, when it starts, how many of its nights are planned, one
- * dashed slot where the first stop will go (T751: three grey rows read as
- * a page still loading), and Start planning.
+ * trip's head (T814: the same head as the planned trip's summary, so both
+ * read as one trip page: the photo, the name, the dates with a calendar,
+ * the people), then where it starts, how many of its nights are planned,
+ * one dashed slot where the first stop will go (T751: three grey rows read
+ * as a page still loading), and Start planning.
  */
-function TripHome({ settings, onStart }) {
+function TripHome({ settings, onStart, actions = null }) {
   const { t } = useI18n();
   const months = useMonths();
   const bcp47 = useBcp47();
@@ -240,16 +243,21 @@ function TripHome({ settings, onStart }) {
   const nights = settings.when.mode === 'exact' && settings.when.start && settings.when.end
     ? Math.max(1, Math.round((new Date(`${settings.when.end}T12:00:00`) - new Date(`${settings.when.start}T12:00:00`)) / 86400000))
     : settings.when.nights;
+  const p = settings.party;
+  const dates = w.start && w.end ? t('plan.dateRange', { a: w.start, b: w.end }) : w.start;
   return (
     <div className="pf-home">
-      {settings.trip.cover && (
-        <HeroImage url={settings.trip.cover} city={settings.trip.name} className="pf-home-cover" ratio={[16, 9]} maxWidth={720} />
-      )}
-      <h1 className="pf-title pf-home-name" tabIndex={-1}>{settings.trip.name || t('pf.create.defaultName')}</h1>
+      <TripHead
+        name={settings.trip.name || t('pf.create.defaultName')}
+        photos={settings.trip.cover ? [{ url: settings.trip.cover, city: settings.trip.name }] : []}
+        dates={dates}
+        people={partyText(t, { adults: p.adults, children: p.kids, babies: p.babies })}
+        actions={actions}
+      />
       <div className="pf-home-start">
         <span className="pf-home-dot" aria-hidden="true"><HomeIcon size={18} /></span>
         <span className="pf-home-when">
-          <span className="pf-home-label">{t('pf.home.starts')}</span>
+          <span className="pf-home-label">{settings.from?.name || t('pf.home.starts')}</span>
           <span className="pf-home-date">{w.start || t('pf.when.unsure')}</span>
         </span>
         <span className="pf-home-nights">{t('pf.home.nightsPlanned', { x: 0, n: nights })}</span>

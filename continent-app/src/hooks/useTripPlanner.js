@@ -14,6 +14,7 @@ import { assignmentsKey, prefsKey, extrasKey, persistAssignments, persistPrefs, 
 import { loadRestorableDraft, persistTripDraft, clearTripDraft } from '../planner/tripDraftStore.js';
 import { usePlannerStore } from '../planner/plannerStore.js';
 import { fromDraft, flightRanking } from '../planner/flow/tripSettings.js';
+import { pickedLive } from '../planner/wizard/flightChoices.js';
 
 
 const DEFAULT_STOP_NIGHTS = 2;
@@ -64,6 +65,10 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
   // one it carries the price they typed, keyed the same way as legModes:
   // { [legIndex]: { mode: 'fly'|'ferry', eur } } where eur is the party total.
   const [ownLegs, setOwnLegs] = useState(draft?.ownLegs || {});
+  // The flights picked on Getting there ({ out, back }, T812), handed over
+  // so the planned trip prices the flight the traveller chose, not its own
+  // ranking's. Keyed by day: a moved trip no longer reads a stale pick.
+  const [flightPicks, setFlightPicks] = useState(draft?.flightPicks || null);
   // How the traveller gets from the plane to where they sleep, one choice per
   // DIRECTION ({ in, out }): 'auto' lets Carta pick (the rental car they
   // collect at the airport if the trip has one, else public transport),
@@ -134,7 +139,15 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
   // How the days are priced: the app's own Lifestyle, live (T432). A trip
   // used to freeze the eating habits it was handed at, so changing them in
   // the Lifestyle panel moved every price in the app except this one.
-  const lifestyle = appLifestyle || DEFAULT_LIFESTYLE;
+  // A trip handed over with its own eating habits (the trip finder's Food
+  // choice, T816) keeps them until the traveller changes the Lifestyle:
+  // `base` is the app's Lifestyle at the hand-over, and once it moves the
+  // app's own wins again, as above.
+  const [tripLifestyle, setTripLifestyle] = useState(draft?.tripLifestyle || null);
+  const appLifestyleKey = JSON.stringify(appLifestyle || null);
+  const lifestyle = tripLifestyle?.profile && tripLifestyle.base === appLifestyleKey
+    ? tripLifestyle.profile
+    : (appLifestyle || DEFAULT_LIFESTYLE);
   // Beds the traveller has booked and typed in, keyed by destination id so a
   // reorder keeps them on the right town: { [destinationId]: eurTotal }.
   const [ownStays, setOwnStays] = useState(draft?.ownStays || {});
@@ -150,11 +163,11 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     persistTripDraft({
       tripStart, tripEnd, stops, groupSize, transportPref, legModes, ownLegs, transferMode, pace,
       baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, planId, planLabel, planned,
-      stayTier, ownStays, children, babies, deviceKey, flightHours,
+      stayTier, ownStays, children, babies, deviceKey, flightHours, flightPicks, tripLifestyle,
     });
   }, [children, babies, tripStart, tripEnd, stops, groupSize, transportPref, legModes, ownLegs, transferMode, pace,
       flightHours, baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, planId, planLabel, planned,
-      stayTier, ownStays, deviceKey]);
+      stayTier, ownStays, deviceKey, flightPicks, tripLifestyle]);
 
   // Each stop with its chained dates (the same chain quoteTrip prices).
   const stopDetails = useMemo(
@@ -271,6 +284,8 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     setTripEnd('');
     setLegModes({});
     setOwnLegs({});
+    setFlightPicks(null);
+    setTripLifestyle(null);
     setTransferMode('auto');
     setAnchorId(null);
     setAnchorOrigin(null);
@@ -288,7 +303,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
   // ordered list of { destinationId, nights, activities }, an optional name,
   // plus how they want to travel (transport) and how full their days should
   // feel (pace), everything stays editable in the planner afterwards.
-  const loadFromWizard = useCallback(({ startDate, stops: wizardStops, label, groupSize: gs, transport, pace: wizardPace, baggage: wizardBaggage, anchorId: wizardAnchor, anchorOrigin: wizardAnchorOrigin, returnAnchorId: wizardReturnAnchor, ownFlight: wizardOwnFlight, carHome: wizardCarHome, legModes: wizardLegModes, ownLegs: wizardOwnLegs, ownStays: wizardOwnStays, children: wizardChildren, babies: wizardBabies }) => {
+  const loadFromWizard = useCallback(({ startDate, stops: wizardStops, label, groupSize: gs, transport, pace: wizardPace, baggage: wizardBaggage, anchorId: wizardAnchor, anchorOrigin: wizardAnchorOrigin, returnAnchorId: wizardReturnAnchor, ownFlight: wizardOwnFlight, carHome: wizardCarHome, legModes: wizardLegModes, ownLegs: wizardOwnLegs, ownStays: wizardOwnStays, children: wizardChildren, babies: wizardBabies, flightPicks: wizardFlightPicks, stayTier: wizardStayTier, lifestyle: wizardLifestyle }) => {
     // Every field here mirrors lib/tripTotal.js wizardPlannerState(), the
     // transform the wizard prices its running estimate through (T432): a
     // field set here and not there would move the total at the hand-over.
@@ -320,6 +335,11 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     setLegModes(wizardLegModes || {});
     setOwnLegs(wizardOwnLegs || {});
     setOwnStays(wizardOwnStays || {});
+    setFlightPicks(wizardFlightPicks?.out || wizardFlightPicks?.back ? wizardFlightPicks : null);
+    // The stay and the eating habits the wizard priced (T816, row T801-f):
+    // Review's total and the planned trip's are one figure.
+    if (wizardStayTier) setStayTier(wizardStayTier);
+    setTripLifestyle(wizardLifestyle ? { profile: wizardLifestyle, base: appLifestyleKey } : null);
     // A fresh wizard trip must not inherit the previous draft's airport
     // transfer choice (a leftover "taxi" would silently reprice this one).
     setTransferMode('auto');
@@ -333,7 +353,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     persistAssignments(TRIP_DRAFT_PLAN_ID, {});
     persistPrefs(TRIP_DRAFT_PLAN_ID, {});
     persistTripExtras(TRIP_DRAFT_PLAN_ID, {});
-  }, [setTransferMode]);
+  }, [setTransferMode, appLifestyleKey]);
 
   // Candidate next stops from wherever the itinerary currently ends, ranked to
   // surface the most beautiful/characterful places (see suggestNextStops).
@@ -384,7 +404,11 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
       loadLiveStay(id, date, Number(nights), people);
     }
   }, [liveAsks, tripState.groupSize, tripState.children, staysVersion]);
-  const liveFlights = useLiveFlights(pricedSwept.cartaFlight?.queries);
+  const liveAnswers = useLiveFlights(pricedSwept.cartaFlight?.queries);
+  const liveFlights = useMemo(() => {
+    const picks = pickedLive(flightPicks);
+    return picks.length ? new Map([...liveAnswers, ...picks]) : liveAnswers;
+  }, [liveAnswers, flightPicks]);
   const priced = useMemo(() => (liveFlights.size
     ? quoteTrip({ ...tripState, liveFlights }, { data, countryInsights })
     : pricedSwept), [liveFlights, pricedSwept, tripState, data, countryInsights]);
