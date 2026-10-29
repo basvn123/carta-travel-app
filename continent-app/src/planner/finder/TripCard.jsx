@@ -2,7 +2,7 @@ import React, { forwardRef, useId, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { Button } from '../../components/ui/index.js';
 import { HeroImage } from '../../components/HeroImage.jsx';
-import { AlertIcon, CheckIcon } from '../../components/Icons.jsx';
+import { AlertIcon, CheckIcon, HeartIcon } from '../../components/Icons.jsx';
 import { CostBar } from '../../browse/CostBar.jsx';
 import { formatMoney } from '../../lib/money.js';
 import { monthName } from '../../lib/dates.js';
@@ -69,8 +69,11 @@ export function WhyMatch({ trip, t, lang, id }) {
  *   ui                 the app parts TripFlow hands down (see FindingTrips)
  *   compare            { ticked, refused, onToggle(id) }: the Compare tick
  *                      (T802); `refused` says the fifth tick was not taken
+ *   keep               { kept, onKeep(trip), onSkip(trip) }: the heart that
+ *                      keeps the trip in My trips, and Skip, which hides it
+ *                      for these answers (T806)
  */
-export const TripCard = forwardRef(function TripCard({ trip, destinations, marked = false, onOpen, ui, compare = null }, ref) {
+export const TripCard = forwardRef(function TripCard({ trip, destinations, marked = false, onOpen, ui, compare = null, keep = null }, ref) {
   const { t, lang } = useI18n();
   const [whyOpen, setWhyOpen] = useState(false);
   const whyId = useId();
@@ -176,18 +179,40 @@ export const TripCard = forwardRef(function TripCard({ trip, destinations, marke
           </p>
         )}
 
-        {compare && (
-          <div className="tff-tick">
-            <input
-              type="checkbox"
-              id={tickId}
-              checked={compare.ticked}
-              aria-label={t('tf.cmp.tickOne', { name })}
-              aria-describedby={compare.refused ? `${tickId}-full` : undefined}
-              onChange={() => compare.onToggle(trip.id)}
-            />
-            <label htmlFor={tickId}>{t('tf.cmp.tick')}</label>
-            {compare.refused && <p className="tff-tick-full" id={`${tickId}-full`} role="status">{t('tf.cmp.full', { n: 4 })}</p>}
+        {(keep || compare) && (
+          <div className="tff-acts">
+            {keep && (
+              <Button
+                variant="quiet"
+                size="sm"
+                className={`tff-keep${keep.kept ? ' is-kept' : ''}`}
+                aria-pressed={keep.kept}
+                aria-label={t('tf.keep.one', { name })}
+                iconStart={<HeartIcon size={18} />}
+                onClick={() => keep.onKeep(trip)}
+              >
+                {t(keep.kept ? 'tf.keep.kept' : 'tf.keep.keep')}
+              </Button>
+            )}
+            {keep && (
+              <Button variant="quiet" size="sm" className="tff-skip-one" aria-label={t('tf.keep.skipOne', { name })} onClick={() => keep.onSkip(trip)}>
+                {t('tf.keep.skip')}
+              </Button>
+            )}
+            {compare && (
+              <div className="tff-tick">
+                <input
+                  type="checkbox"
+                  id={tickId}
+                  checked={compare.ticked}
+                  aria-label={t('tf.cmp.tickOne', { name })}
+                  aria-describedby={compare.refused ? `${tickId}-full` : undefined}
+                  onChange={() => compare.onToggle(trip.id)}
+                />
+                <label htmlFor={tickId}>{t('tf.cmp.tick')}</label>
+                {compare.refused && <p className="tff-tick-full" id={`${tickId}-full`} role="status">{t('tf.cmp.full', { n: 4 })}</p>}
+              </div>
+            )}
           </div>
         )}
       </div>

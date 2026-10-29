@@ -5,7 +5,8 @@ import { SheetHead } from '../flow/PlanStage.jsx';
 import { useBcp47, useMonths, whenText } from '../flow/flowHooks.js';
 import { MAX_COMPARE } from '../../lib/recommend/compare.js';
 import { LEVERS } from '../../lib/recommend/rank.js';
-import { answersOf, useLevers } from './finderHooks.js';
+import { keepRecordOf, answersOf, useLevers } from './finderHooks.js';
+import { keep, readSkips, unkeep, useKept, writeSkips } from '../../lib/recommend/keptStore.js';
 import { TripCard } from './TripCard.jsx';
 import { TripCompare } from './TripCompare.jsx';
 import { PAGE, answerChips } from './finderText.js';
@@ -68,6 +69,19 @@ function useReorderMotion(order, items) {
   };
 }
 
+/**
+ * The trips skipped for this answer set (T806): stored on the device, so a
+ * skipped trip stays away when the same answers come back, and the list
+ * says how many are hidden with a way to bring them back.
+ */
+function useSkips(settings) {
+  const key = answersKey(settings);
+  const [state, setState] = useState(() => ({ key, ids: readSkips(key) }));
+  const ids = state.key === key ? state.ids : readSkips(key);
+  const set = (next) => { writeSkips(key, next); setState({ key, ids: next }); };
+  return [ids, set];
+}
+
 function useTicks(settings) {
   const key = answersKey(settings);
   const [ticks, setState] = useState(() => TICKS.get(key) || []);
@@ -108,9 +122,20 @@ function useTicks(settings) {
  *   onOpen(trip, el)  open its receipt; `el` gets focus back on close
  *   onReopen(id)   reopen one question
  *   onPlan(trip)   "Plan this trip" from the compare table (T801's hand-off)
+ *   keepWith       { origin, file }: the home airport and the swept file the
+ *                  trips were priced with, kept with a kept trip (T807)
+ *
+ * Keep and skip (T806): a heart on each card keeps the trip in My trips
+ * (keptStore), Skip hides it for these answers; the hidden ones are counted
+ * under the list with "Show them again".
  */
-export function TripsForYou({ settings, trips, destinations, originName, markedId = null, onBack, onOpen, onReopen, onPlan, cardRefs, ui }) {
+export function TripsForYou({ settings, trips: found, destinations, originName, markedId = null, onBack, onOpen, onReopen, onPlan, cardRefs, ui, keepWith = null }) {
   const { t, lang } = useI18n();
+  const kept = useKept();
+  const [skips, setSkips] = useSkips(settings);
+  const trips = skips.length ? found.filter((x) => !skips.includes(x.id)) : found;
+  const hidden = found.length - trips.length;
+  const focusNext = useRef(null);
   const months = useMonths();
   const bcp47 = useBcp47();
   const titleRef = useRef(null);
@@ -143,6 +168,25 @@ export function TripsForYou({ settings, trips, destinations, originName, markedI
     (card || titleRef.current)?.focus({ preventScroll: !card });
     if (card) card.scrollIntoView?.({ block: 'center' });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps -- once, on arrival
+
+  useEffect(() => {
+    // After a skip, focus moves to the next trip's total (or the heading).
+    if (!focusNext.current) return;
+    const id = focusNext.current;
+    focusNext.current = null;
+    (cardRefs.current.get(id) || titleRef.current)?.focus();
+  });
+
+  const keepOne = (trip) => {
+    if (kept.some((r) => r.id === trip.id)) unkeep(trip.id);
+    else keep(keepRecordOf(trip, { destinations, lang, ...(keepWith || {}) }));
+  };
+  const skipOne = (trip) => {
+    const at = trips.findIndex((x) => x.id === trip.id);
+    focusNext.current = (trips[at + 1] || trips[at - 1])?.id || '__title';
+    setTicks(ticks.filter((x) => x !== trip.id));
+    setSkips([...skips, trip.id]);
+  };
 
   const toggle = (id) => {
     const live = ticked.map((x) => x.id);
@@ -206,11 +250,18 @@ export function TripsForYou({ settings, trips, destinations, originName, markedI
               onOpen={onOpen}
               ui={ui}
               compare={{ ticked: ticks.includes(trip.id), refused: refused === trip.id, onToggle: toggle }}
+              keep={{ kept: kept.some((r) => r.id === trip.id), onKeep: keepOne, onSkip: skipOne }}
               ref={(el) => { if (el) cardRefs.current.set(trip.id, el); else cardRefs.current.delete(trip.id); }}
             />
           </li>
         ))}
       </ol>
+      {hidden > 0 && (
+        <p className="tff-hidden" role="status">
+          <span>{t('tf.keep.hidden', { n: hidden })}</span>
+          <Button variant="quiet" size="sm" onClick={() => setSkips([])}>{t('tf.keep.unhide')}</Button>
+        </p>
+      )}
       {trips.length > shown && (
         <div className="tff-more">
           <Button variant="quiet" onClick={() => setShown(shown + PAGE)}>{t('tf.list.more')}</Button>

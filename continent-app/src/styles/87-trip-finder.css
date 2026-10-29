@@ -549,3 +549,61 @@
   font-size: var(--text-label);
   color: var(--text-2);
 }
+
+/* ---- Keep and skip (T806) ---- */
+/* The card's last row: Keep, Skip and the Compare tick, above the card's
+   whole-card button (.tff-total::after), so each is its own tap. */
+.tff-acts {
+  position: relative;
+  z-index: calc(var(--z-base) + 1);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 var(--space-1);
+  margin-top: calc(-1 * var(--space-2));
+}
+.tff-acts .tff-tick { margin: 0 0 0 auto; }
+
+/* Kept is a selection: brown (the select tokens), the heart filled. */
+.tff-keep.is-kept { color: var(--select-ink); }
+.tff-keep.is-kept svg { fill: currentColor; }
+.tff-skip-one { color: var(--text-2); }
+.tff-skip-one.is-skipped { color: var(--select-ink); }
+
+.tff-hidden {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0 var(--space-2);
+  margin: 0;
+  font-size: var(--text-label);
+  color: var(--text-2);
+}
+
+/* ---- Decide together (T808) ---- */
+.tff-tog { display: grid; gap: var(--space-3); }
+.tff-tog-lede { margin: 0; font-size: var(--text-body); color: var(--text); }
+.tff-tog-who { margin: 0; font-size: var(--text-label); color: var(--text-2); }
+.tff-tog-list { display: grid; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.tff-tog-row {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-2);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.tff-tog-row.is-all { border-color: var(--select-border); }
+.tff-tog-img { width: 64px; height: 64px; border-radius: var(--radius-control); overflow: hidden; }
+.tff-tog-body { display: grid; gap: 2px; min-width: 0; }
+.tff-tog-name { margin: 0; font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.tff-tog-meta, .tff-tog-price { margin: 0; font-size: var(--text-label); color: var(--text-2); }
+.tff-tog-price .money { font-weight: 600; color: var(--text); }
+.tff-tog-state { display: inline-flex; align-items: center; gap: var(--space-1); margin: 0; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.tff-tog-state.is-all { color: var(--good-ink); }
+.tff-tog-acts { grid-column: 1 / -1; display: flex; gap: var(--space-1); justify-content: flex-end; }
+.tff-tog-foot { display: grid; gap: var(--space-2); }
+.tff-tog-hint, .tff-tog-sent { margin: 0; font-size: var(--text-label); color: var(--text-2); }
+.tff-tog-sent input, .mt-kept-sent input { width: 100%; margin-top: var(--space-1); font: inherit; }

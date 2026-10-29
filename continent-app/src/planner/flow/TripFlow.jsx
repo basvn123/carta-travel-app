@@ -13,6 +13,7 @@ import { useBcp47, useMonths, useTripSettings, whenText } from './flowHooks.js';
 import { TRIPS_SCREEN, engineScreens, guideQuestions, guideScreens, hasDoors, nextScreen, prevScreen, progressOf } from './flowGraph.js';
 import { normalizeSettings, quizAnswers, spendFor } from './tripSettings.js';
 import { draftFor } from '../finder/handoff.js';
+import { takePlan } from '../../lib/recommend/keptStore.js';
 import NotYet from '../../components/NotYet.jsx';
 import { AirlineMark } from '../../components/flights/Flights.jsx';
 import { useAirlines, airlineName } from '../../lib/flights/useAirlines.js';
@@ -101,6 +102,16 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null }) {
     setDoor('know');
     startEngine('know', normalizeSettings(next));
   }, [seed]); // eslint-disable-line react-hooks/exhaustive-deps -- one-shot hand-off per seed; the wizard consumes it and clears it
+
+  // T806: a kept trip planned from My trips (keptStore holdPlan) opens the
+  // planner on it, the same hand-off as the finder's "Plan this trip".
+  useEffect(() => {
+    const plan = takePlan();
+    if (!plan) return;
+    setDoor('guide');
+    setMarkedId(plan.tripId);
+    startEngine('guide', settings, plan);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps -- read once, on arrival
 
   const guide = useMemo(() => guideScreens(settings), [settings]);
   const questions = useMemo(() => guideQuestions(settings), [settings]);

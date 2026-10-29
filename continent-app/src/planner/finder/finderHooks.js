@@ -35,6 +35,9 @@ import { SLOT_ROWS } from '../../lib/recommend/slots.js';
 import { PROFILES } from '../../lib/lifestyleProfiles.js';
 import { flightRanking } from '../flow/tripSettings.js';
 import { useTripSettings } from '../flow/flowHooks.js';
+import { keptRecord } from '../../lib/recommend/kept.js';
+import { planOf } from './planOf.js';
+import { firstPlace, tripName } from './finderText.js';
 
 export const STAGES = ['flights', 'stays', 'food', 'likes'];
 
@@ -100,6 +103,21 @@ export function useLevers(settings) {
     save({ ...settings, guide: { ...settings.guide, levers: { ...(moved || {}), [group]: value } } });
   }, [save, settings, moved]);
   return { levers, setLever };
+}
+
+/**
+ * The record a heart keeps (T806): the card's name and photo as they read
+ * now, the plan "Plan this trip" would hand over, and the flight looked up
+ * in the same swept file the trip was priced with (kept.js).
+ */
+export function keepRecordOf(trip, { destinations, lang, origin = null, file = null }) {
+  return keptRecord(trip, {
+    name: tripName(trip, destinations, lang),
+    image: firstPlace(trip, destinations)?.image?.url || null,
+    origin,
+    plan: planOf(trip),
+    file,
+  });
 }
 
 /** Yield to the browser so a finished stage is painted before the next one runs. */

@@ -483,3 +483,14 @@
 @media (prefers-reduced-motion: reduce) {
   .mt-bar > span { transition: none; }
 }
+
+/* Kept trips from the trip finder (T806 to T808), above the shortlist. */
+.mt-kept { display: grid; gap: var(--space-2); margin-bottom: var(--space-4); }
+.mt-kept-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.mt-kept-title { margin: 0; font-size: var(--text-lead); font-weight: 700; color: var(--text); }
+.mt-kept-sent { margin: 0; font-size: var(--text-label); color: var(--text-2); }
+.mt-kept-price { display: grid; justify-items: end; gap: 0; text-align: end; }
+.mt-kept-price .money { font-weight: 700; color: var(--text); }
+.mt-kept-unit { font-size: var(--text-caption); color: var(--text-3); }
+.mt-kept-drop { font-size: var(--text-caption); font-weight: 600; color: var(--good-ink); }
+.mt-kept-acts { display: flex; flex-wrap: wrap; gap: var(--space-1); justify-content: flex-end; }

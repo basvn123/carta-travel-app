@@ -44,5 +44,6 @@
     "flight": { "slot": "flight", "setting": "flightRank", "values": { "cheapest": "price", "quickest": "comfort", "times": "balanced" } },
     "food": { "slot": "food", "setting": "lifestyle", "values": { "cook": "Backpacker", "mix": "Easygoing", "out": "Foodie" } },
     "bases": { "setting": "guide.shapes", "values": { "one": ["one"], "several": ["towns", "road"] } }
-  }
+  },
+  "kept": { "dropMin": 10 }
 }
