@@ -7,8 +7,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import {
-  threeFigures, barSegments, inclusions, totalLeavesOut, budgetLine, signedMoney, factText, matchBars,
-  widenQuestion, answerChips, tripName, joinList,
+  threeFigures, totalLeavesOut, budgetBadge, signedMoney, factText, matchBars,
+  widenQuestion, answerChips, tripName, joinList, tripPhotos, topSights,
 } from "../src/planner/finder/finderText.js";
 import { findTrips } from "../src/lib/recommend/rank.js";
 import { normalizeSettings } from "../src/planner/flow/tripSettings.js";
@@ -37,26 +37,40 @@ test("the three figures: flight, stay, days (food plus getting around)", () => {
   assert.equal(totalLeavesOut(trip()), false, "things to do alone does not make the total partial");
 });
 
-test("the cost bar: slots with a figure, in slot order", () => {
-  assert.deepEqual(barSegments(trip()).map((s) => s.id), ["flight", "stay", "food", "local"]);
-});
-
-test("the inclusions line: in, yours, not yet", () => {
-  const t1 = trip({ slots: [slot("flight", 142), slot("stay", 322, "you"), slot("food", 582), slot("local", 38), slot("activities", null, "you")] });
-  assert.deepEqual(inclusions(t1).map((x) => x.state), ["in", "yours", "in", "in", "notYet"]);
-});
-
-test("the budget ruler: under, over, on, none", () => {
-  const under = budgetLine(trip(), { locale: "en" });
-  assert.equal(under.key, "tf.budget.under");
-  assert.equal(under.vars.delta, "€116");
-  assert.equal(under.vars.eur, "€1,200");
-  const over = budgetLine(trip({ budget: { eur: 1000, delta: 84 }, total: { perPerson: 1084, group: 2168 } }), { locale: "en" });
-  assert.equal(over.key, "tf.budget.over");
+test("the budget badge (T810): under, over, on, none", () => {
+  assert.deepEqual(budgetBadge(trip(), { locale: "en" }), { key: "tf.card.under", vars: { eur: "€116" }, over: false });
+  const over = budgetBadge(trip({ budget: { eur: 1000, delta: 84 } }), { locale: "en" });
+  assert.equal(over.key, "tf.card.over");
   assert.equal(over.over, true);
-  assert.equal(over.fill, 1);
-  assert.equal(budgetLine(trip({ budget: { eur: 1084, delta: 0 } })).key, "tf.budget.on");
-  assert.equal(budgetLine(trip({ budget: null })), null);
+  assert.equal(budgetBadge(trip({ budget: { eur: 1084, delta: 0 } })).key, "tf.budget.on");
+  assert.equal(budgetBadge(trip({ budget: null })), null);
+});
+
+test("the card's photos (T810): each place's own, else the country's best known, never blank", () => {
+  const img = (u) => ({ url: u, credit: "x" });
+  const dests = {
+    a: { id: "a", city: "Bled", iso2: "SI", image: img("u/bled.jpg") },
+    b: { id: "b", city: "Piran", iso2: "SI", image: img("u/piran.jpg") },
+    c: { id: "c", city: "Kranj", iso2: "SI" },
+    d: { id: "d", city: "Ljubljana", iso2: "SI", image: img("u/lju.jpg"), rating: { fame: 900 } },
+    e: { id: "e", city: "Ptuj", iso2: "SI", image: img("u/ptuj.jpg"), rating: { fame: 50 } },
+  };
+  assert.deepEqual(tripPhotos(trip(), dests).map((p) => p.url), ["u/bled.jpg", "u/piran.jpg"]);
+  const bare = trip({ places: [{ id: "c", nights: 7 }] });
+  assert.deepEqual(tripPhotos(bare, dests).map((p) => p.url), ["u/lju.jpg"], "no photo of its own: the country's best known");
+  assert.deepEqual(tripPhotos(trip({ iso2: "XX", places: [{ id: "zz", nights: 7 }] }), dests), []);
+});
+
+test("what to see (T811): POIs with a photo, must-see first, one per name", () => {
+  const pois = [
+    { name: "Lake", img: "l.jpg", label: "worth_a_look", sig: 3 },
+    { name: "Castle", img: "c.jpg", label: "must_see", sig: 1 },
+    { name: "Castle", img: "c2.jpg", label: "must_see", sig: 0.5 },
+    { name: "Gorge", img: null, label: "must_see", sig: 9 },
+    { name: "Church", img: "ch.jpg", label: "recommended", sig: 2 },
+  ];
+  assert.deepEqual(topSights(pois, 4).map((x) => x.name), ["Castle", "Church", "Lake"]);
+  assert.deepEqual(topSights(null), []);
 });
 
 test("signed money: the plan total's plus and minus", () => {

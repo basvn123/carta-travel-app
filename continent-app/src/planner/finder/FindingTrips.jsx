@@ -7,12 +7,10 @@ import { useBcp47, useMonths, whenText } from '../flow/flowHooks.js';
 import { SLOT_ROWS } from '../../lib/recommend/slots.js';
 import { stayTierFor } from '../../lib/recommend/adapters/stay.js';
 import { STAGES, useLoaderDone, useTripFinder } from './finderHooks.js';
-import { answerChips, joinList, likeLabel, widenQuestion, withSlot } from './finderText.js';
+import { answerChips, joinList, likeLabel, widenQuestion } from './finderText.js';
 import { TripsForYou } from './TripsForYou.jsx';
-import { TripReceipt } from './TripReceipt.jsx';
-import { LinePicker } from './LinePicker.jsx';
+import { TripPreview } from './TripPreview.jsx';
 import { planOf } from './planOf.js';
-import { slotTotals } from '../../lib/recommend/slots.js';
 import '../../styles/87-trip-finder.css';
 
 // Decide together (T808) rides in this chunk: App opens it from a link. Its
@@ -127,7 +125,7 @@ export function FindingTrips({ settings, finder, onBack, onWiden, guide, onSkip 
  *                   every page (T801 end check).
  *   onBack()        back to question 7
  *   onWiden(id)     reopen one question (the answers bar, an empty result)
- *   edits, setEdits the receipt's swaps by trip id (kept by TripFlow)
+ *   edits, setEdits the preview's swaps by trip id (kept by TripFlow)
  *   markedId        the trip planned last, marked on the way back
  *   onPlan(plan)    "Plan this trip": the trip's plan (planOf.js)
  */
@@ -143,6 +141,7 @@ export default function TripFinderScreen({ ui, settings, guide, edits, setEdits,
   }
   const trips = finder.trips.map((x) => edits[x.id] || x);
   const open = openId ? trips.find((x) => x.id === openId) : null;
+  const keepWith = { origin: finder.origin?.iata || null, file: finder.input?.flights || null };
   return (
     <>
       <TripsForYou
@@ -157,24 +156,18 @@ export default function TripFinderScreen({ ui, settings, guide, edits, setEdits,
         onOpen={(trip) => setOpenId(trip.id)}
         onPlan={(trip) => onPlan(planOf(trip))}
         cardRefs={cardRefs}
-        keepWith={{ origin: finder.origin?.iata || null, file: finder.input?.flights || null }}
+        keepWith={keepWith}
       />
       {open && (
-        <TripReceipt
+        <TripPreview
           trip={open}
+          settings={settings}
           destinations={finder.data?.destinations}
           ui={ui}
+          keepWith={keepWith}
           onClose={() => setOpenId(null)}
           onPlan={(trip) => { setOpenId(null); onPlan(planOf(trip)); }}
-          renderLine={(slot, back) => (
-            <LinePicker
-              trip={open}
-              slot={slot}
-              ui={ui}
-              onBack={back}
-              onApply={(next) => { setEdits((e) => ({ ...e, [open.id]: withSlot(open, next, slotTotals) })); back(); }}
-            />
-          )}
+          onEdit={(next) => setEdits((e) => ({ ...e, [open.id]: next }))}
         />
       )}
     </>
