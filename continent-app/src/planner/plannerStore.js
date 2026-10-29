@@ -41,6 +41,7 @@
  * @property {string[]} [recommendedPlaces]
  */
 import { useSyncExternalStore } from 'react';
+import { onTripSwitch } from './tripsStore.js';
 
 const STORE_KEY = 'carta.plannerDraft.v1';
 
@@ -218,7 +219,16 @@ export const plannerStore = {
     state = { ...DEFAULT_STATE, wizard: { ...DEFAULT_STATE.wizard }, savedAt: Date.now() };
     emit();
   },
+  /** Read the draft from storage again (T809): another trip was opened from
+   *  the Plan home's list and its keys written back. Nothing is persisted. */
+  reload() {
+    state = load();
+    for (const l of listeners) l();
+  },
 };
+
+// T809: another trip opened from the Plan home writes its draft back.
+onTripSwitch(() => plannerStore.reload());
 
 /** The store in React: re-renders on every store change. */
 export function usePlannerStore() {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo, Suspense, lazy } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo, useSyncExternalStore, Suspense, lazy } from 'react';
 import { AppHeader } from './components/AppHeader.jsx';
 import { BottomNav } from './components/BottomNav.jsx';
 import { setFooterNavigate } from './components/SiteFooter.jsx';
@@ -110,6 +110,9 @@ import { readMountainFromUrl } from './lib/mountains.js';
 import { readCycleFromUrl } from './lib/cycling.js';
 import { readTripFromUrl } from './lib/trips.js';
 import { loadTripDraft } from './planner/tripDraftStore.js';
+import { tripsStore } from './planner/tripsStore.js';
+import { loadDeviceTrip } from './planner/deviceTripStore.js';
+import { PLAN_ONCE_KEY } from './lib/recommend/keptStore.js';
 import { bindDayPlanCloud } from './planner/dayPlanSync.js';
 import { AuthProvider, useAuth } from './auth/AuthContext.jsx';
 import { I18nProvider, useI18n } from './i18n/index.jsx';
@@ -161,6 +164,11 @@ function hasPlanOpen() {
     const raw = window.localStorage.getItem('carta.plannerDraft.v1');
     return Boolean(raw && JSON.parse(raw)?.settings?.trip?.created);
   } catch { return false; }
+}
+
+// A trip held by Kept trips' "Plan this trip" (keptStore holdPlan, T806).
+function heldPlanWaiting() {
+  try { return Boolean(window.sessionStorage.getItem(PLAN_ONCE_KEY)); } catch { return false; }
 }
 
 // The pass picker used to be mounted here, in the account panel and in the
@@ -496,13 +504,25 @@ function TravelApp() {
     // Once, at boot: bootRoute never changes.
   }, [bootRoute, setAccountOpen, setSavedTripsOpen]);
 
-  // Plan remembers which of its views was last on screen (the start page,
-  // the trip or the day), so the Plan door returns to it; with none yet it
-  // opens the plan in progress, else the start page (T496, owner T490-a).
-  const lastPlanViewRef = useRef(null);
-  useEffect(() => {
-    if (placeOf(activeTab) === 'plan') lastPlanViewRef.current = activeTab;
-  }, [activeTab]);
+  // T809 (owner 2026-10-29): the Plan door from another place always opens
+  // the Plan home, which lists every trip on this device; pressed inside
+  // Plan it keeps the view on screen. (It used to return to the last Plan
+  // view or the plan in progress, T496.)
+  // The trip open in the planner, from the device's list of trips: the two
+  // planner tabs remount when it changes, since they read their draft once.
+  const activeTripId = useSyncExternalStore(tripsStore.subscribe, tripsStore.getActiveId);
+  /** Load an account plan (or the device's kept trip) into the list: its own
+   *  entry when it has one, else a new trip, never over another trip. */
+  const openPlanInList = useCallback((planId) => {
+    if (planId && typeof planId === 'object' && planId.device) {
+      const key = loadDeviceTrip()?.key;
+      tripsStore.openOrStart((m) => Boolean(key) && m.deviceKey === key);
+    } else if (planId) {
+      tripsStore.openOrStart((m) => m.planId === planId);
+    }
+    setPendingTripPlanId(planId);
+    goToTab('trip');
+  }, [goToTab]);
 
   // The one door for a place or a view, whatever pressed it: the header, the
   // bottom nav, the logo, Account's "How Carta works" and the home page.
@@ -519,7 +539,7 @@ function TravelApp() {
     if (key === 'plan') {
       const cur = activeTabRef.current;
       if (placeOf(cur) === 'plan') { goToTab(cur); return; }
-      goToTab(lastPlanViewRef.current || (hasPlanOpen() ? 'trip' : 'planstart'));
+      goToTab('planstart');
       return;
     }
     goToTab(key);
@@ -1862,6 +1882,7 @@ function TravelApp() {
             {/* The planners read every place in full, so a tab opened while
                 the catalogue is still partial (T271) waits for the rest. */}
             {partial ? <TabFallback /> : <TripPlannerTab
+              key={activeTripId}
               data={data}
               user={user}
               authConfigured={authConfigured}
@@ -1883,6 +1904,7 @@ function TravelApp() {
               onOpenTrip={openTripPage}
               onOpenJourney={openJourneyPage}
               onOpenLifestyle={openLifestyle}
+              onPlanHome={() => goToTab('planstart')}
             />}
           </Suspense>
         </div>
@@ -1891,6 +1913,7 @@ function TravelApp() {
         <div className={activeTab === 'day' ? undefined : 'tab-keep-hidden'} inert={behindPanel}>
           <Suspense fallback={<TabFallback />}>
             {partial ? <TabFallback /> : <DayPlannerTab
+              key={activeTripId}
               data={data}
               user={user}
               authConfigured={authConfigured}
@@ -1929,6 +1952,8 @@ function TravelApp() {
               onCreated={() => goTo('trip')}
               onAddPast={() => { setPastAtOpen(true); goTo('trips'); }}
               onOpenJourney={(id) => openFeature('journey', { id })}
+              onOpenPlan={openPlanInList}
+              destinations={data?.destinations}
             />
           </Suspense>
         </div>
@@ -2078,21 +2103,21 @@ function TravelApp() {
             onOpenFriends={() => openAccountAt('friends')}
             /* An empty shelf offers the tab that fills it, so "nothing here
                yet" comes with somewhere to go. */
-            onGoToTab={goToTab}
+            onGoToTab={(key, opts) => {
+              // T809 (row T806-b): "Plan this trip" from Kept trips starts a
+              // new trip in the list when one with stops is open, so the held
+              // plan lands instead of being dropped behind the open trip.
+              if (key === 'trip' && heldPlanWaiting() && loadTripDraft()) tripsStore.startNew();
+              goToTab(key, opts);
+            }}
             onOpenDayPlan={(id) => {
               setPendingDayPlanId(id);
               goToTab('day');
             }}
-            onLoadTripPlan={(id) => {
-              setPendingTripPlanId(id);
-              goToTab('trip');
-            }}
+            onLoadTripPlan={openPlanInList}
             /* The trip kept on this device (T503, T500-a) opens in Plan through
                the same hand-off, marked so the planner reads the device. */
-            onOpenDeviceTrip={() => {
-              setPendingTripPlanId({ device: true });
-              goToTab('trip');
-            }}
+            onOpenDeviceTrip={() => openPlanInList({ device: true })}
             /* The shortlist, which the Favorites tab now shows alongside the
                account's own saved destinations. Opening a row is the same
                door every other surface uses, so a starred trail lands on the

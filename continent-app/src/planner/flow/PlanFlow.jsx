@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import '../../styles/planners.css';
 import { useI18n } from '../../i18n/index.jsx';
 import { loadTripDraft } from '../tripDraftStore.js';
@@ -14,6 +14,8 @@ import { TripSettingsSheet } from './TripSettingsSheet.jsx';
 import { PlanHome } from './PlanHome.jsx';
 import { showKeptNext } from '../../lib/recommend/keptStore.js';
 import { CartaTrips } from './CartaTrips.jsx';
+import { tripsStore } from '../tripsStore.js';
+import { useAuth } from '../../auth/AuthContext.jsx';
 
 /**
  * PlanFlow (T654, T655), the Plan place with nothing open yet: the opening
@@ -25,9 +27,17 @@ import { CartaTrips } from './CartaTrips.jsx';
  *   onCreated()        the trip exists: open it in the trip planner
  *   onAddPast()        My trips' past-trip form (T659)
  *   onOpenJourney(id)  one of Carta's own trips, its whole week (T752)
+ *   onOpenPlan(id)     an account trip, through App's open-saved-trip path
+ *   destinations       the catalogue by id, for a trip's first photo and towns
+ *
+ * T809: the opening lists every trip on this device (tripsStore) and, signed
+ * in, the account's trips; Start planning always starts a new one.
  */
-export function PlanFlow({ onNavigate, onCreated, onAddPast = null, onOpenJourney = null, pageOver = false }) {
+export function PlanFlow({
+  onNavigate, onCreated, onAddPast = null, onOpenJourney = null, onOpenPlan = null, destinations = null, pageOver = false,
+}) {
   const { t } = useI18n();
+  const trips = useHomeTrips(destinations);
   const [settings, save] = useTripSettings();
   const [screen, setScreen] = useState('home');
   const [kind, setKind] = useState('new');
@@ -72,10 +82,19 @@ export function PlanFlow({ onNavigate, onCreated, onAddPast = null, onOpenJourne
       <div className="pf is-opening" ref={sheetRef}>
         <PlanHome
           titleTag={Title}
-          hasTrip={hasTrip}
-          tripName={settings.trip.name}
-          onStart={() => go('kind')}
-          onContinue={() => onNavigate('trip')}
+          trips={trips}
+          onStart={() => {
+            // A new trip every time; the one open stays in the list.
+            if (trips.some((x) => x.active)) tripsStore.startNew();
+            setKind('new');
+            go('kind');
+          }}
+          onOpenTrip={(trip) => {
+            if (trip.device) tripsStore.open(trip.id);
+            if (trip.planId && onOpenPlan) { onOpenPlan(trip.planId); return; }
+            onNavigate('trip');
+          }}
+          onDeleteTrip={(trip) => tripsStore.remove(trip.id)}
           onOpenTrips={() => go('carta')}
           onOpenKept={() => { showKeptNext(); onNavigate('trips'); }}
         />
@@ -165,6 +184,75 @@ export function PlanFlow({ onNavigate, onCreated, onAddPast = null, onOpenJourne
       )}
     </div>
   );
+}
+
+const NO_TRIPS = [];
+
+/**
+ * The Plan home's trips (T809), ready to draw: the device's list, latest
+ * first, then the account's trips that no device trip already carries.
+ * Re-read whenever the list changes (open, new, delete).
+ */
+function useHomeTrips(destinations) {
+  const { t } = useI18n();
+  const { user } = useAuth() || {};
+  const tick = useSyncExternalStore(tripsStore.subscribe, tripsStore.getActiveId);
+  const [bump, setBump] = useState(0);
+  useEffect(() => tripsStore.subscribe(() => setBump((n) => n + 1)), []);
+  const [plans, setPlans] = useState(NO_TRIPS);
+  useEffect(() => {
+    if (!user?.id) { setPlans(NO_TRIPS); return undefined; }
+    let live = true;
+    import('../../auth/tripPlanStorage.js')
+      .then((m) => m.fetchTripPlans(user.id))
+      .then((rows) => { if (live) setPlans(rows || NO_TRIPS); })
+      .catch(() => { if (live) setPlans(NO_TRIPS); });
+    return () => { live = false; };
+  }, [user?.id]);
+
+  return useMemo(() => {
+    const dest = destinations || {};
+    const photo = (ids) => {
+      for (const id of ids) { const u = dest[id]?.image?.url; if (u) return u; }
+      return '';
+    };
+    const towns = (ids) => [...new Set(ids.map((id) => dest[id]?.city).filter(Boolean))].slice(0, 2).join(', ');
+    const device = tripsStore.list().map((x) => ({
+      id: x.id,
+      device: true,
+      active: x.active,
+      planId: x.meta.planId,
+      name: x.meta.name || towns(x.meta.stops) || t('pf.home.yourTrip'),
+      cover: x.meta.cover || photo(x.meta.stops),
+      start: x.meta.start,
+      end: x.meta.end,
+      months: x.meta.months,
+      nights: x.meta.nights,
+      stopCount: x.meta.stops.length,
+      status: x.meta.status,
+      account: Boolean(x.meta.planId),
+    }));
+    const carried = new Set(device.map((x) => x.planId).filter(Boolean));
+    const account = plans.filter((p) => p?.id && !carried.has(p.id)).map((p) => {
+      const ids = p.destination_ids || [];
+      const nights = p.start_date && p.end_date
+        ? Math.round((Date.parse(p.end_date) - Date.parse(p.start_date)) / 86400000) : null;
+      return {
+        id: `plan-${p.id}`,
+        planId: p.id,
+        name: p.label || (p.cities || []).slice(0, 2).join(', ') || t('pf.home.yourTrip'),
+        cover: photo(ids),
+        start: p.start_date || '',
+        end: p.end_date || '',
+        months: [],
+        nights: nights > 0 ? nights : null,
+        stopCount: ids.length,
+        status: ids.length ? 'planned' : 'planning',
+        account: true,
+      };
+    });
+    return [...device, ...account];
+  }, [destinations, plans, tick, bump, t]); // eslint-disable-line react-hooks/exhaustive-deps -- tick and bump re-read the device list
 }
 
 /**
