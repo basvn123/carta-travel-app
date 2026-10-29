@@ -31,6 +31,11 @@
  * once, every route the cycle will not reach in the next FILL_SPAN, at a pace
  * that ends within it, beside the cycle; then it exits and stays done. Each
  * filled route still gets its normal turn within 4 weeks (lateFillOrder).
+ *
+ * Both run from this box's one address, so they share one pause (PAUSE_FILE):
+ * a refusal to either stops both. The fill also goes at half speed from 23:00
+ * to 05:00 UTC, the hours the Worker was refused in, and each refusal makes
+ * it 1.5 times slower for the rest of its run, at most 4 times.
  */
 import { mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
@@ -49,11 +54,15 @@ const STATE = process.env.CARTA_LATE_STATE || `${homedir()}/.local/state/carta/l
 // A search takes about half a second; 4 to 9 s between them is at most about
 // 500 an hour while catching up, and about 200 an hour once caught up.
 const GAP_MS = [4000, 9000];
-// T819: the fill, about 680 searches an hour beside the cycle's 205, so its
-// roughly 103,000 searches end in about 6.3 days of the 7.
+// T819: the fill, about 686 searches an hour by day and half that from 23:00
+// to 05:00 UTC, beside the cycle's 205: its roughly 103,000 searches end in
+// about 7 days.
 const FILL_STATE = process.env.CARTA_LATE_FILL_STATE || `${homedir()}/.local/state/carta/late-fill.json`;
 const FILL_GAP_MS = [3000, 6500];
 const FILL_SPAN_MIN = 7 * 1440;
+const FILL_NIGHT_UTC = [23, 5]; // half speed from 23:00 to 05:00 UTC
+const FILL_SLOWEST = 4;
+const PAUSE_FILE = process.env.CARTA_LATE_PAUSE || `${homedir()}/.local/state/carta/late-pause.json`;
 const ROUTES_TTL_MS = 6 * 3600000;
 const SEND_EVERY = 40; // rows per POST, well under ingest.mjs MAX_ROWS
 const RETRY_MS = 5 * 60000;
@@ -68,6 +77,16 @@ function writeState(s, path = STATE) {
   mkdirSync(dirname(path), { recursive: true });
   writeFileSync(`${path}.tmp`, JSON.stringify(s));
   renameSync(`${path}.tmp`, path);
+}
+
+/** The box's shared pause (T819): when it ends, 0 if none. */
+const pausedUntil = () => readState(PAUSE_FILE).until || 0;
+/** Google refused one of us: pause both, longer while refusals keep coming back. */
+function pauseAfterRefusal(who, reason) {
+  const last = readState(PAUSE_FILE);
+  const p = nextPause(Date.now(), last.until || 0, last.level || 0);
+  writeState({ until: p.until, level: p.level, by: who, reason }, PAUSE_FILE);
+  log(`${who}: Google refused (${reason}), both pause ${Math.round((p.until - Date.now()) / 60000)} minutes`);
 }
 
 let routes = null; // { at, list }
@@ -90,12 +109,17 @@ async function send(rows) {
   }
 }
 
-/** Search these jobs, a gap after each, and send. Returns { blocked, counts }. */
+/**
+ * Search these jobs, a gap after each, and send. Stops early when the other
+ * process paused the box. Returns { blocked, stopped, counts }.
+ */
 async function runJobs(jobs, gap) {
   const rows = [];
   const counts = { jobs: jobs.length, ok: 0, empty: 0, failed: 0 };
   let blocked = null;
+  let stopped = false;
   for (const j of jobs) {
+    if (pausedUntil() > Date.now()) { stopped = true; break; }
     const r = await searchDay({ from: j.o, to: j.d, date: j.date });
     if (r.blocked) { blocked = r.reason; break; }
     if (!r.ok) counts.failed++;
@@ -109,7 +133,7 @@ async function runJobs(jobs, gap) {
   }
   // What was found before a refusal is kept; the jobs run again after the pause.
   if (rows.length) await send(rows);
-  return { blocked, counts };
+  return { blocked, stopped, counts };
 }
 
 async function main() {
@@ -127,7 +151,7 @@ async function main() {
   log(`late-sweep: start, at minute ${s.minute ?? 'none'}`);
   for (;;) {
     const now = Date.now();
-    if ((s.pauseUntil || 0) > now) { await sleep(Math.min(s.pauseUntil - now, 600000)); continue; }
+    if (pausedUntil() > now) { await sleep(Math.min(pausedUntil() - now, 600000)); continue; }
     const nowMin = Math.floor(now / 60000);
     // First start, or off for more than a cycle: begin at now, nothing to catch up.
     if (!Number.isInteger(s.minute) || nowMin - s.minute > LATE_CYCLE) s.minute = nowMin - 1;
@@ -142,13 +166,9 @@ async function main() {
       continue;
     }
     if (out.counts.jobs) log(`minute ${minute}: ${JSON.stringify(out.counts)}${out.blocked ? ` refused (${out.blocked})` : ''}`);
-    if (out.blocked) {
-      const p = nextPause(Date.now(), s.pauseUntil || 0, s.pauseLevel || 0);
-      Object.assign(s, { pauseUntil: p.until, pauseLevel: p.level });
-      log(`late-sweep: Google refused, pausing ${Math.round((p.until - Date.now()) / 60000)} minutes`);
-    } else {
-      s.minute = minute;
-    }
+    // Refused or paused by the fill: this minute runs again after the pause.
+    if (out.blocked) pauseAfterRefusal('late-sweep', out.blocked);
+    else if (!out.stopped) s.minute = minute;
     writeState(s);
   }
 }
@@ -171,23 +191,27 @@ async function fill() {
   log(`late-fill: ${s.count} routes from route ${s.from}, at ${s.at}`);
   while (s.at < s.count) {
     const now = Date.now();
-    if ((s.pauseUntil || 0) > now) { await sleep(Math.min(s.pauseUntil - now, 600000)); continue; }
+    if (pausedUntil() > now) { await sleep(Math.min(pausedUntil() - now, 600000)); continue; }
+    const hour = new Date(now).getUTCHours();
+    const night = hour >= FILL_NIGHT_UTC[0] || hour < FILL_NIGHT_UTC[1];
+    const scale = (s.slow || 1) * (night ? 2 : 1);
+    const gap = FILL_GAP_MS.map((g) => g * scale);
     const r = (s.from + s.at) % s.n;
     let out = { counts: { jobs: 0 } };
     try {
       const routesNow = await routeList();
       // The route list is rebuilt monthly; a route past its end is skipped.
-      if (r < routesNow.length) out = await runJobs(lateJobsForRoute(routesNow, r, now), FILL_GAP_MS);
+      if (r < routesNow.length) out = await runJobs(lateJobsForRoute(routesNow, r, now), gap);
     } catch (e) {
       log(`late-fill: route ${r} failed (${e.message}); again in 5 minutes`);
       await sleep(RETRY_MS);
       continue;
     }
     if (out.blocked) {
-      const p = nextPause(Date.now(), s.pauseUntil || 0, s.pauseLevel || 0);
-      Object.assign(s, { pauseUntil: p.until, pauseLevel: p.level });
-      log(`late-fill: Google refused at route ${r}, pausing ${Math.round((p.until - Date.now()) / 60000)} minutes`);
-    } else {
+      s.slow = Math.min(FILL_SLOWEST, (s.slow || 1) * 1.5);
+      pauseAfterRefusal('late-fill', out.blocked);
+      log(`late-fill: route ${r} again after the pause, now ${s.slow.toFixed(2)} times slower`);
+    } else if (!out.stopped) {
       s.at++;
       if (s.at % 50 === 0) log(`late-fill: ${s.at} of ${s.count} routes; last ${JSON.stringify(out.counts)}`);
     }
