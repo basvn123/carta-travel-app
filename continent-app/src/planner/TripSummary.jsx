@@ -230,7 +230,12 @@ export function TripSummary({
   tab = 'overview', onTab, panels = {}, map = null, mapFull = null,
   onPlanDays = null, onEdit, onPlanHome = null, onSettings = null, settingsRef = null,
   onExport = null, bar = null, footer = null,
+  // T830: Edit trip in the same page. mode 'edit' puts the editor where the
+  // tabs' body goes, an Editing bar with Done where the tabs were, the name
+  // as a field, and keeps the photos, the chips and the map.
+  mode = 'view', editBody = null, onDone = null, onRename = null,
 }) {
+  const editing = mode === 'edit';
   const { t, lang } = useI18n();
   // The Lifestyle sets what the days cost (one .lifestyle-btn door): a chip
   // with the trip's own, opening the same sheet as everywhere else.
@@ -285,7 +290,7 @@ export function TripSummary({
 
   const tools = (
     <div className="tpg-tools" role="group" aria-label={t('plan.toolsTitle')}>
-      {onPlanDays && (
+      {onPlanDays && wide && (
         <Button variant="primary" className="tpg-tool is-primary" iconStart={<SparkIcon size={18} />} onClick={onPlanDays}>
           {t('trip.planYourDays')}
         </Button>
@@ -360,10 +365,12 @@ export function TripSummary({
     </div>
   );
 
-  const body = tab === 'overview' ? overview : (panels[tab] || null);
+  // Editing on a phone: the map card over the editor, so a stop added or
+  // moved shows on the route at once.
+  const body = editing ? <>{!wide && mapCard}{editBody}</> : tab === 'overview' ? overview : (panels[tab] || null);
 
   return (
-    <div className={`tpg is-${tab}`}>
+    <div className={`tpg is-${editing ? 'edit' : tab}${wide ? '' : ' has-dock'}`}>
       <div className="tpg-top">
         {onPlanHome ? (
           <Button variant="quiet" size="sm" className="ts-back" iconStart={<ArrowLeftIcon size={18} />} onClick={onPlanHome}>
@@ -390,7 +397,20 @@ export function TripSummary({
       )}
 
       <header className="tpg-head">
-        <h1 className="pf-title tpg-name" tabIndex={-1}>{name || t('itin.myTrip')}</h1>
+        {editing && onRename ? (
+          <>
+            <h1 className="sr-only">{name || t('itin.myTrip')}</h1>
+            <input
+              className="tpg-name tpg-name-input"
+              value={name}
+              onChange={(e) => onRename(e.target.value)}
+              placeholder={t('trip.namePlaceholder')}
+              aria-label={t('trip.nameAria')}
+            />
+          </>
+        ) : (
+          <h1 className="pf-title tpg-name" tabIndex={-1}>{name || t('itin.myTrip')}</h1>
+        )}
         <ul className="tpg-chips" aria-label={t('tp.tripFacts')}>
           {chips.map(({ key, Icon, text, onClick, aria }) => (
             <li key={key}>
@@ -406,22 +426,70 @@ export function TripSummary({
         </ul>
       </header>
 
-      <div className="tpg-tabs" id={`${uid}-tabs`}>
-        <Tabs label={t('tp.tabsLabel')} tabs={tabs} value={tab} onChange={(id) => onTab?.(id)} panelId={`${uid}-panel`} />
-      </div>
+      {editing ? (
+        <div className="tpg-editbar" id={`${uid}-tabs`}>
+          <span className="tpg-editbar-lbl"><PencilIcon size={16} aria-hidden="true" />{t('tp.editing')}</span>
+          {onDone && wide && (
+            <Button variant="primary" size="sm" className="tpg-done trip-edit-done" onClick={onDone}>{t('trip.doneEditing')}</Button>
+          )}
+        </div>
+      ) : (
+        <div className="tpg-tabs" id={`${uid}-tabs`}>
+          <Tabs label={t('tp.tabsLabel')} tabs={tabs} value={tab} onChange={(id) => onTab?.(id)} panelId={`${uid}-panel`} />
+        </div>
+      )}
 
       <div className="tpg-body">
-        <div className="tpg-main" role="tabpanel" id={`${uid}-panel`} aria-label={tabs.find((x) => x.id === tab)?.label}>
+        <div className="tpg-main" role={editing ? undefined : 'tabpanel'} id={`${uid}-panel`} aria-label={editing ? t('tp.editing') : tabs.find((x) => x.id === tab)?.label}>
           {body}
           {footer}
         </div>
         {wide && (
           <aside className="tpg-side" aria-label={t('tp.sideLabel')}>
             {mapCard}
-            {tools}
+            {editing ? (
+              <div className="tpg-side-total" data-testid="ts-total">
+                <span className="tpg-band-lbl">{t('receipt.total', { people: n === 1 ? t('receipt.onePerson') : t('receipt.nPeople', { n }) })}</span>
+                <span className="tpg-band-n" data-total={Number.isFinite(total) ? String(total) : ''}>
+                  {Number.isFinite(total) ? <Money value={total} est precision="cents" /> : <NotYet />}
+                </span>
+                {n > 1 && Number.isFinite(perPerson) && (
+                  <span className="tpg-band-sub">{t('plan.aPerson', { price: formatMoney(perPerson, { precision: 'cents', locale: lang }) })}</span>
+                )}
+              </div>
+            ) : tools}
           </aside>
         )}
       </div>
+
+      {/* T829: below 1024 px the total and the next step stay in view, in a
+          bar over the bottom nav (Expedia's summary bar on a phone). The
+          figure follows the Group / Per person switch; tapping it opens the
+          Costs tab. */}
+      {!wide && (
+        <div className="tpg-dock" data-testid="tpg-dock">
+          <button type="button" className="tpg-dock-total" onClick={() => go('costs')}
+            aria-label={`${per === 'person' ? t('tp.totalAPerson') : t('receipt.total', { people: n === 1 ? t('receipt.onePerson') : t('receipt.nPeople', { n }) })}: ${Number.isFinite(shown) ? formatMoney(shown, { precision: 'cents', locale: lang }) : t('data.notYet')}. ${t('tp.breakdown')}`}>
+            <span className="tpg-dock-n">{Number.isFinite(shown) ? <Money value={shown} est precision="cents" /> : <NotYet />}</span>
+            <span className="tpg-dock-lbl">
+              {per === 'person' ? t('tp.totalAPerson') : t('receipt.total', { people: n === 1 ? t('receipt.onePerson') : t('receipt.nPeople', { n }) })}
+            </span>
+          </button>
+          {editing && onDone ? (
+            <Button variant="primary" className="tpg-dock-go trip-edit-done" onClick={onDone}>
+              {t('trip.doneEditing')}
+            </Button>
+          ) : onPlanDays ? (
+            <Button variant="primary" className="tpg-dock-go" iconStart={<SparkIcon size={16} />} onClick={onPlanDays}>
+              {t('trip.planYourDays')}
+            </Button>
+          ) : (
+            <Button variant="primary" className="tpg-dock-go" iconStart={<PencilIcon size={16} />} onClick={onEdit}>
+              {t('trip.sum.edit')}
+            </Button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

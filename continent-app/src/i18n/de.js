@@ -7985,4 +7985,10 @@ export const de = {
   // T825: Trips for you in Booking's layout
   "tf.card.fullCost": "Alle Kosten",
   "tf.card.see": "Reise ansehen",
+  // T830: Edit trip in the trip page
+  "tp.editing": "Reise bearbeiten",
+  // T831: saved Carta trips in My trips
+  "tp.saved.title": "Gespeichert aus Cartas Reisen",
+  "tp.saved.open": "Öffnen",
+  "tp.saved.removeOne": "{name} aus gespeicherten Reisen entfernen",
 };

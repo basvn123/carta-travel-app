@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 // The rules only this route renders load with its chunk (T474, CSS per route;
 // scripts/css-routes.mjs).
 import '../styles/planners.css';
@@ -60,6 +60,9 @@ const FULL_MAP_PAD = { top: 110, left: 80, right: 200, bottom: 80 };
 // per render would hand every memo below a new dependency each time and
 // rebuild the country and city lists on every render (T192).
 const NO_DESTINATIONS = Object.freeze({});
+
+// The trip page's tabs, in order (T819); the address carries one (T828).
+const TRIP_TABS = ['overview', 'itinerary', 'costs', 'days'];
 
 // Small circular progress ring for "planned vs available nights".
 function NightsRing({ planned, total }) {
@@ -540,8 +543,24 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   // total) and the full trip page is one button away. `editFrom` is where
   // Done editing goes back to: the page the editor was opened from.
   const [, setView] = useState('summary');
-  // The trip page's tab (T819): Overview, Itinerary, Costs, Days.
-  const [tripTab, setTripTab] = useState('overview');
+  // The trip page's tab (T819): Overview, Itinerary, Costs, Days. T828: it
+  // rides in the address (?tt=costs), so a reload or a copied link opens
+  // the same tab; Overview, the default, leaves the address clean.
+  const [tripTab, setTripTabState] = useState(() => {
+    try {
+      const v = new URLSearchParams(window.location.search).get('tt');
+      return TRIP_TABS.includes(v) ? v : 'overview';
+    } catch { return 'overview'; }
+  });
+  const setTripTab = useCallback((v) => {
+    const next = TRIP_TABS.includes(v) ? v : 'overview';
+    setTripTabState(next);
+    try {
+      const url = new URL(window.location.href);
+      if (next === 'overview') url.searchParams.delete('tt'); else url.searchParams.set('tt', next);
+      if (url.href !== window.location.href) window.history.replaceState(window.history.state, '', url);
+    } catch { /* sandboxed: the tab still works, the address just does not follow */ }
+  }, []);
   const [editFrom, setEditFrom] = useState('full');
   const draft = usePlannerStore();
   const tripSet = fromDraft(draft);
@@ -1558,7 +1577,10 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   // costs, the route), Itinerary (the planner's detail), Costs (the receipt)
   // and Days. See trip details is the Itinerary tab; Edit trip is the stop
   // editor (the workspace below), and Done comes back here.
-  if (tp.planned && tp.stopDetails.length > 0) {
+  // T830: Edit trip is the same page in edit mode, the editor where the
+  // tabs' body goes, so the trip never jumps to a second layout.
+  const editInPage = !tp.planned && tp.stopDetails.length > 0 && !wizardOpen;
+  if ((tp.planned || editInPage) && tp.stopDetails.length > 0) {
     const saved = tp.saveState === 'saved' || keptHere;
     const cardMap = (
       <TripMap
@@ -1580,7 +1602,11 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
         <div className="pf is-trip is-trip-page">
           {saveError && <ErrorBlock className="trip-footer-error" message={saveError} />}
           <TripSummary
-            name={tripName}
+            mode={tp.planned ? 'view' : 'edit'}
+            editBody={tp.planned ? null : listBody}
+            onRename={tp.setPlanLabel}
+            onDone={() => { setAwaitingDates(false); tp.setPlanned(true); setSelectedStop(null); setView(editFrom); }}
+            name={tp.planned ? tripName : tp.planLabel}
             tripStart={tp.tripStart}
             tripEnd={tp.tripEnd}
             party={{ adults: tp.groupSize, children: tp.children, babies: tp.babies }}
@@ -1619,7 +1645,12 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                 <BookmarkIcon size={20} />
               </IconButton>
             )}
-            footer={saveStatus}
+            footer={(
+              <>
+                {saveStatus}
+                {editInPage && saveError && <ErrorBlock className="trip-footer-error" message={saveError} />}
+              </>
+            )}
           />
         </div>
         {overlays}

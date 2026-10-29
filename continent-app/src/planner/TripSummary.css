@@ -293,3 +293,91 @@ button.ct-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: 2
 
 /* The way back from the full trip page to its summary (T814). */
 .trip-topcard .trip-topcard-back.btn { margin: 0 0 var(--space-1) calc(-1 * var(--space-2)); }
+
+/* ---- T829: the total and the next step in view on a phone and a tablet ----
+   Fixed over the bottom nav (its height includes the home-bar inset), the
+   page's gutter on both sides, under every sheet and the message slot. The
+   page keeps room under its last line for it. */
+.tpg.has-dock { padding-bottom: calc(var(--space-8) + 72px); }
+.tpg-dock {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: var(--bottom-nav-h);
+  /* Under the My trips and Account pages (z 56) and every sheet. */
+  z-index: calc(var(--z-shell) - 1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) max(var(--gutter), env(safe-area-inset-right, 0px)) var(--space-2) max(var(--gutter), env(safe-area-inset-left, 0px));
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -4px 16px rgba(31, 42, 51, 0.08);
+}
+.tpg-dock-total {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  min-height: var(--tap);
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.tpg-dock-total:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-control); }
+.tpg-dock-n { font-size: var(--text-lead); font-weight: 700; line-height: 1.15; font-variant-numeric: tabular-nums; }
+.tpg-dock-lbl { font-size: var(--text-caption); color: var(--text-2); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--border); }
+.tpg-dock-go.btn { flex: none; }
+
+/* ---- T830: Edit trip in the same page ----
+   The Editing bar sits where the tabs were, on the same hairline; the
+   editor's blocks take the body's column without a gutter of their own (the
+   page has one); the side column holds the map and the total. */
+.tpg-editbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: 48px;
+  border-bottom: 1px solid var(--border);
+  scroll-margin-top: var(--space-4);
+}
+.tpg-editbar-lbl { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.tpg-editbar-lbl svg { color: var(--action); }
+.tpg-name-input {
+  width: 100%;
+  min-height: var(--tap);
+  margin-left: calc(-1 * var(--space-2));
+  padding: 0 var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  font: inherit;
+  font-weight: 700;
+}
+.tpg-name-input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-color: var(--action); }
+.tpg-side-total {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-4);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+}
+.tpg.is-edit .tpg-main > .trip-block,
+.tpg.is-edit .tpg-main > .trip-nights-summary,
+.tpg.is-edit .tpg-main > .trip-stops,
+.tpg.is-edit .tpg-main > * { padding-inline: 0; margin-inline: 0; }
+.tpg.is-edit .tpg-main .trip-block:first-child { margin-top: 0; }
+.tpg.is-edit .tpg-main .trip-suggest-row { margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter); scroll-padding-inline: var(--gutter); scroll-snap-type: x mandatory; }
+@media (min-width: 1024px) {
+  .tpg.is-edit .tpg-main .trip-suggest-row { margin-inline: 0; padding-inline: 0; scroll-padding-inline: 0; }
+}
+.tpg.is-edit .tpg-main .trip-suggest-row > * { scroll-snap-align: start; }

@@ -8593,4 +8593,10 @@ export const en = {
   // T825: Trips for you in Booking's layout
   "tf.card.fullCost": "Full cost",
   "tf.card.see": "See the trip",
+  // T830: Edit trip in the trip page
+  "tp.editing": "Editing your trip",
+  // T831: saved Carta trips in My trips
+  "tp.saved.title": "Saved from Carta's trips",
+  "tp.saved.open": "Open",
+  "tp.saved.removeOne": "Remove {name} from saved trips",
 };
