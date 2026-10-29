@@ -2352,7 +2352,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T839-a | T839 | Board panel 3 asked for "a way to really put in the price"; T839 reads it as Add what you paid opening the route's own fields; confirm or say where it should go | user | open |  |
 | T839-b | T839 | Board panel 8 wants distinct colours in Costs, against carta-design's cost bar (the ink ramp, no colour, no legend); decide before Batch C | user | closed by T845 |  |
 | T839-c | T839 | Board panel 8: Costs as the editable receipt with the route (BRU to FUE) in place of Getting there in every line; trip page v4 Batch C | next task | closed by T845 |  |
-| T839-d | T839 | Board panel 9 and D3: Days with your own ideas, planning by hand, a day as detailed or as high level as wanted, pace per day, no "a person" figure; trip page v4 Batch D | next task | open |  |
+| T839-d | T839 | Board panel 9 and D3: Days with your own ideas, planning by hand, a day as detailed or as high level as wanted, pace per day, no "a person" figure; trip page v4 Batch D | next task | closed by T851 |  |
 | T840-a | T840 | The route's flight card still shows "Google Flights, checked {date}" and View on Google Flights; the owner's mark named the Change flight sheet: remove it on the card too, or keep it (Execution/P15/T840-T843-trip-page-v4-b.md) | user | closed by T844 |  |
 | T840-b | T840 | Change flight offers the trip's own days and airports; another airport near the first or last stop, home from a different airport (open jaw) and a day earlier or later are not in it yet | next task | open |  |
 | T840-c | T840 | flightHours (the old When to fly bands) still filters the flight pick but has no control on the trip page since T840; fold it into flightPrefs | next task | open |  |
@@ -2361,3 +2361,6 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T843-b | T843 | From 1024 px the Itinerary, Costs and Days tabs show no total while things change; Batch C's budget card in the rail (board panel 3) | next task | closed by T846 |  |
 | T845-a | T845 | The Costs head still reads "a person" and "a person a day" under the total, a line board panel 3 removed from the Overview band; keep it on the receipt or remove it there too (Execution/P15/T845-T847-trip-page-v4-c.md) | user | closed by T848 |  |
 | T847-a | T847 | Share this trip's Calendar and maps leads to the route's export block; move the ICS and KML handlers out of TripItinerary so the sheet runs them itself | next task | open |  |
+| T849-a | T849 | The Days cards show a booked activity routed to a day (dayExtras) but cannot remove it, as the old Days list could (Execution/P15/T849-T851-trip-page-v4-d.md) | next task | open |  |
+| T849-b | T849 | Ideas kept from Carta's idea sections (prefs.savedIdeas) do not show on the Days tab, and Let Carta plan works on all empty days, not one chosen day | next task | open |  |
+| T851-a | T851 | The day planner's own pace setting inside a day still writes the trip-wide pace; it should write that day's dayPace | next task | open |  |
