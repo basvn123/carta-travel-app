@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
-import { Button, Card } from '../../components/ui/index.js';
+import { Button } from '../../components/ui/index.js';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { CountryFlag } from '../../components/CountryFlag.jsx';
 import { FriendsIcon, RouteIcon } from '../../components/Icons.jsx';
@@ -51,44 +51,37 @@ export function KeptTrips({ onPlan }) {
             : t(sent.how === 'copied' ? 'tf.tog.copied' : 'tf.tog.shared')}
         </p>
       )}
-      <div className="mt-rows">
+      <div className="mt-rows mt-kept-list">
         {kept.map((r) => {
           const drop = drops[r.id];
           const meta = [r.country, t('tf.keep.nights', { n: r.nights }), r.month ? monthName(r.month, lang) : ''].filter(Boolean).join(', ');
           return (
-            <Card
-              key={r.id}
-              layout="row"
-              as="div"
-              className="mt-row mt-kept-row"
-              media={<HeroImage url={r.image} city={r.name || r.country} iso2={r.iso2} className="mt-row-img" maxWidth={330} ratio={[1, 1]} sizes="72px" />}
-              title={r.name || r.country}
-              meta={(
-                <span className="mt-row-meta">
+            <article key={r.id} className="mt-kept-row" aria-label={r.name || r.country}>
+              <HeroImage url={r.image} city={r.name || r.country} iso2={r.iso2} className="mt-kept-img" maxWidth={330} ratio={[1, 1]} sizes="72px" />
+              <div className="mt-kept-body">
+                <h4 className="mt-kept-name">{r.name || r.country}</h4>
+                <p className="mt-row-meta">
                   {r.iso2 && <CountryFlag country={r.iso2} size={14} />}
                   <span>{meta}</span>
-                </span>
-              )}
-              price={(
-                <span className="mt-kept-price">
+                </p>
+                <p className="mt-kept-price">
                   <span className="money">{formatMoney(drop ? drop.total : r.total.perPerson, { locale: lang })}</span>
+                  {' '}
                   <span className="mt-kept-unit">{t('tf.keep.unit')}</span>
-                  {drop && <span className="mt-kept-drop">{t('tf.keep.drop', { price: formatMoney(drop.perPerson, { locale: lang }) })}</span>}
-                </span>
-              )}
-              actions={(
-                <span className="mt-kept-acts">
-                  {r.plan && (
-                    <Button size="sm" variant="primary" iconStart={<RouteIcon size={16} />} onClick={() => onPlan(r)}>
-                      {t('tf.keep.plan')}
-                    </Button>
-                  )}
-                  <Button size="sm" variant="quiet" aria-label={t('tf.keep.removeOne', { name: r.name || r.country })} onClick={() => unkeep(r.id)}>
-                    {t('tf.keep.remove')}
+                </p>
+                {drop && <p className="mt-kept-drop">{t('tf.keep.drop', { price: formatMoney(drop.perPerson, { locale: lang }) })}</p>}
+              </div>
+              <div className="mt-kept-acts">
+                {r.plan && (
+                  <Button size="sm" variant="primary" iconStart={<RouteIcon size={16} />} onClick={() => onPlan(r)}>
+                    {t('tf.keep.plan')}
                   </Button>
-                </span>
-              )}
-            />
+                )}
+                <Button size="sm" variant="quiet" aria-label={t('tf.keep.removeOne', { name: r.name || r.country })} onClick={() => unkeep(r.id)}>
+                  {t('tf.keep.remove')}
+                </Button>
+              </div>
+            </article>
           );
         })}
       </div>
