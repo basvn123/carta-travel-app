@@ -521,7 +521,6 @@
 .trip-planner-screen .trip-stop-city { font-size: var(--text-lead); font-weight: 600; color: var(--text); }
 .trip-planner-screen .trip-stop-when { font-size: var(--text-caption); color: var(--text-2); }
 .trip-planner-screen .trip-stop .trip-stepper .fstepper { gap: var(--space-2); }
-.trip-step-suffix { font-size: var(--text-body); color: var(--text-2); }
 .trip-planner-screen .trip-stop-tools { display: contents; }
 .trip-planner-screen .trip-stop-tools .trip-stop-move { grid-area: down; }
 .trip-planner-screen .trip-stop-tools .trip-stop-move.is-up { grid-area: up; }
@@ -755,26 +754,11 @@
 .trip-total-bar .ttb-lbl { font-size: var(--text-label); font-weight: 400; color: var(--text-2); }
 .trip-total-bar .ttb-sub { font-size: var(--text-caption); font-weight: 400; color: var(--text-2); }
 .trip-total-bar .ttb-empty { font-size: var(--text-label); font-weight: 400; color: var(--text-2); }
-.trip-total-bar.is-bar {
-  flex: none;
-  width: 100%;
-  min-height: calc(var(--tap-main) + 2 * var(--space-3));
-  padding: var(--space-3) var(--space-4);
-  border-top: 1px solid var(--border);
-}
 .trip-total-bar.is-bar.btn { padding: var(--space-3) var(--space-4); border-top: 1px solid var(--border); }
-.trip-total-bar.is-strip {
-  flex: 1 1 auto;
-  align-self: stretch;
-  min-width: 0;
-  background: transparent;
-}
 .trip-total-bar.is-strip.btn { padding: 0 var(--space-2) 0 var(--space-4); }
 .trip-total-bar.is-strip .ttb-body,
 .trip-total-bar.is-strip.is-empty .ttb-body { padding-left: 0; }
-.trip-total-bar.is-strip:not(.btn) { padding: 0 var(--space-2) 0 var(--space-4); }
 .trip-total-bar.is-strip .ttb-text { display: flex; flex-direction: column; min-width: 0; }
-.trip-total-bar.is-foot { background: transparent; }
 .trip-total-bar.is-foot.btn { padding: 0 var(--space-1); border-radius: var(--radius-control); }
 .trip-total-bar.is-foot .ttb-lbl { font-size: var(--text-micro); font-weight: 600; }
 .trip-total-bar.is-foot.is-empty { max-width: 14em; }

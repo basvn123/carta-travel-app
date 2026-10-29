@@ -1,0 +1,419 @@
+{
+  "results": [
+    {
+      "w": 390,
+      "label": "the trip page opens",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "each tile carries its group's dot",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "the four dots are four colours",
+      "ok": true,
+      "note": "rgb(11, 116, 128) rgb(78, 105, 168) rgb(138, 79, 125) rgb(108, 134, 54)"
+    },
+    {
+      "w": 390,
+      "label": "the budget card shows the total",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "the bar has a coloured segment per group",
+      "ok": true,
+      "note": "rgb(11, 116, 128) rgb(78, 105, 168) rgb(138, 79, 125) rgb(108, 134, 54)"
+    },
+    {
+      "w": 390,
+      "label": "four groups, each with its dot",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "no People and Lifestyle box on Costs",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "the total is a figure, not a button",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "no a person line on the Costs head",
+      "ok": true,
+      "note": "Your trip costs\n\n€2,097.65 in total\n\nTotal for 2 people"
+    },
+    {
+      "w": 390,
+      "label": "a flight line is named by its airports",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "no \"Getting there\" left on Costs",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "no sideways scroll on Costs",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "a group folds",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "a flight line's Change opens Change flight",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "the stay line's Change opens the route",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "the budget card is in view on this tab",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "the budget shows as a bar and a line",
+      "ok": true,
+      "note": "€1,048.83 a person of €1,054\n€5 under your budget"
+    },
+    {
+      "w": 390,
+      "label": "going over the budget says so on the Undo message",
+      "ok": true,
+      "note": "Now €171 over your budget\nUndo"
+    },
+    {
+      "w": 390,
+      "label": "Share opens",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "who can see it, three choices",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "Copy link says it copied",
+      "ok": true,
+      "note": "Link copied. Anyone who opens it gets this trip in their planner."
+    },
+    {
+      "w": 390,
+      "label": "Trip settings opens",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "Trip settings no longer asks who can see it",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "the trip page opens",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "each tile carries its group's dot",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "the four dots are four colours",
+      "ok": true,
+      "note": "rgb(11, 116, 128) rgb(78, 105, 168) rgb(138, 79, 125) rgb(108, 134, 54)"
+    },
+    {
+      "w": 1024,
+      "label": "the budget card shows the total",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "the bar has a coloured segment per group",
+      "ok": true,
+      "note": "rgb(11, 116, 128) rgb(78, 105, 168) rgb(138, 79, 125) rgb(108, 134, 54)"
+    },
+    {
+      "w": 1024,
+      "label": "four groups, each with its dot",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "no People and Lifestyle box on Costs",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "the total is a figure, not a button",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "no a person line on the Costs head",
+      "ok": true,
+      "note": "Your trip costs\n\n€2,097.65 in total\n\nTotal for 2 people"
+    },
+    {
+      "w": 1024,
+      "label": "a flight line is named by its airports",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "no \"Getting there\" left on Costs",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "no sideways scroll on Costs",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "a group folds",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "a flight line's Change opens Change flight",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "the stay line's Change opens the route",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "the budget card is in view on this tab",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "the budget shows as a bar and a line",
+      "ok": true,
+      "note": "€1,048.83 a person of €1,054\n€5 under your budget"
+    },
+    {
+      "w": 1024,
+      "label": "going over the budget says so on the Undo message",
+      "ok": true,
+      "note": "Now €171 over your budget\nUndo"
+    },
+    {
+      "w": 1024,
+      "label": "Share opens",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "who can see it, three choices",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "Copy link says it copied",
+      "ok": true,
+      "note": "Link copied. Anyone who opens it gets this trip in their planner."
+    },
+    {
+      "w": 1024,
+      "label": "Trip settings opens",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "Trip settings no longer asks who can see it",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "the trip page opens",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "each tile carries its group's dot",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "the four dots are four colours",
+      "ok": true,
+      "note": "rgb(11, 116, 128) rgb(78, 105, 168) rgb(138, 79, 125) rgb(108, 134, 54)"
+    },
+    {
+      "w": 1440,
+      "label": "the budget card shows the total",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "the bar has a coloured segment per group",
+      "ok": true,
+      "note": "rgb(11, 116, 128) rgb(78, 105, 168) rgb(138, 79, 125) rgb(108, 134, 54)"
+    },
+    {
+      "w": 1440,
+      "label": "four groups, each with its dot",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "no People and Lifestyle box on Costs",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "the total is a figure, not a button",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "no a person line on the Costs head",
+      "ok": true,
+      "note": "Your trip costs\n\n€2,097.65 in total\n\nTotal for 2 people"
+    },
+    {
+      "w": 1440,
+      "label": "a flight line is named by its airports",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "no \"Getting there\" left on Costs",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "no sideways scroll on Costs",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "a group folds",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "a flight line's Change opens Change flight",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "the stay line's Change opens the route",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "the budget card is in view on this tab",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "the budget shows as a bar and a line",
+      "ok": true,
+      "note": "€1,048.83 a person of €1,054\n€5 under your budget"
+    },
+    {
+      "w": 1440,
+      "label": "going over the budget says so on the Undo message",
+      "ok": true,
+      "note": "Now €171 over your budget\nUndo"
+    },
+    {
+      "w": 1440,
+      "label": "Share opens",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "who can see it, three choices",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "Copy link says it copied",
+      "ok": true,
+      "note": "Link copied. Anyone who opens it gets this trip in their planner."
+    },
+    {
+      "w": 1440,
+      "label": "Trip settings opens",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "Trip settings no longer asks who can see it",
+      "ok": true,
+      "note": ""
+    }
+  ],
+  "errors": []
+}

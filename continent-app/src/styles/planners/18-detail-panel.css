@@ -28,12 +28,6 @@
 }
 .cintel-sight-why { display: block; color: var(--ink-soft); }
 .cintel-insights { margin: 0; padding-left: 16px; }
-.trip-leg-rich { padding: 0; }
-@media (hover: hover) {
-  .trip-leg-main:hover { color: var(--ink-soft); }
-}
-.trip-leg-caret { float: right; }
-.trip-leg-detail { padding: 4px 8px 10px; }
 .trip-leg-modes { display: flex; gap: 6px; margin-bottom: 6px; }
 .trip-leg-note { font-size: 11.5px; color: var(--ink-soft); line-height: 1.45; margin: 4px 0; }
 .transfer-picker { margin: 6px 0 2px; }
@@ -44,7 +38,6 @@
 .transfer-picker-modes { display: flex; gap: 6px; }
 .transfer-mode-lbl { display: flex; align-items: center; gap: 4px; }
 .trip-leg-links { display: flex; flex-wrap: wrap; gap: 10px; margin: 4px 0; }
-.trip-leg-disclaimer { font-family: var(--mono); font-size: var(--text-micro); color: var(--ink-mute); margin: 4px 0 0; }
 .trip-saving-row {
   display: flex;
   align-items: center;
