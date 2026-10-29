@@ -454,6 +454,17 @@ Place kind is an ink-density ramp, not a rainbow: `--text` mixed over `--surface
 | `--kind-town` | `#71777c` | Town |
 | `--kind-village` | `#959a9c` | Village |
 | `--kind-area` | `#8b9093` | Area |
+
+### Cost groups
+
+Owner decision 2026-10-29 (T845): the four cost groups each have their own colour, so a total reads at a glance. They appear on the cost bar's segments and as a dot before a group's name (the Costs tab's groups, the overview's tiles), never on text, a fill behind text, an action or anything else.
+
+| Token | Value | Only for |
+|---|---|---|
+| `--cost-travel` | `var(--lagoon-600)` (`#0b7480`) | Flights, or driving there and home |
+| `--cost-around` | `#4e69a8` | Getting around (transfers, between stops, car, day trips) |
+| `--cost-stay` | `#8a4f7d` | Stay |
+| `--cost-food` | `#6c8636` | Food and drink |
 | `--verdict-3` | `var(--rate)` | Filled verdict ribbon |
 | `--verdict-2` | `var(--rate)` | Outline verdict ribbon |
 | `--verdict-1` | `var(--ink-mute)` | Text-only verdict |

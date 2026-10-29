@@ -230,6 +230,15 @@
   --kind-town:    #71777c;
   --kind-village: #959a9c;
   --kind-area:    #8b9093;
+  /* The four cost groups (T845, owner decision 2026-10-29: "the colours
+     must be distinct"): one colour each for Flights, Getting around, Stay
+     and Food and drink, on the cost bar's segments and a dot before each
+     group's name. Clear of the action brown, best value's yellow and the
+     danger red; each 3:1 or more on --surface. Nothing else uses them. */
+  --cost-travel:  var(--lagoon-600); /* #0b7480 flights, or driving */
+  --cost-around:  #4e69a8;           /* getting around */
+  --cost-stay:    #8a4f7d;           /* where you sleep */
+  --cost-food:    #6c8636;           /* food and drink */
   --verdict-3:    var(--rate);       /* filled ribbon */
   --verdict-2:    var(--rate);       /* outline ribbon */
   --verdict-1:    var(--ink-mute);   /* text only */

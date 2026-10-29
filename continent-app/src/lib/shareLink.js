@@ -17,6 +17,7 @@
  * whitelisted and clamped on decode: a tampered link can at worst open a
  * harmless trip, never inject markup or oversized state.
  */
+import { STAY_TIERS } from './stayPrice.js';
 import { rule } from './price/config.js';
 import { PLANNER_BAG } from './price/request.js';
 
@@ -106,6 +107,13 @@ function sanitizeShared(d) {
     activities: Array.isArray(s?.activities)
       ? s.activities.slice(0, 20).map((a) => String(a).slice(0, 80))
       : [],
+    // T842, T843: a stop's own stay type and its day trips ride along.
+    ...(STAY_TIERS.includes(s?.stayTier) ? { stayTier: s.stayTier } : {}),
+    ...(Array.isArray(s?.dayTrips) && s.dayTrips.length ? {
+      dayTrips: s.dayTrips.slice(0, 10)
+        .map((x) => ({ destinationId: safeId(x?.destinationId), day: clampInt(x?.day, 1, 30, 1) }))
+        .filter((x) => x.destinationId),
+    } : {}),
   })).filter((s) => s.destinationId);
   if (!stops.length) return null;
 

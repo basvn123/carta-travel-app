@@ -48,6 +48,24 @@ export const HOURS = Object.freeze({
   evening: [17, 24],
 });
 
+/**
+ * The trip's flight preferences (T840, owner 2026-10-29: kept on the trip
+ * and steering which flight is priced): { direct, after, before }, `direct`
+ * only flights with no stop, `after` and `before` whole hours 0 to 24 the
+ * departure falls in. Missing or default preferences let every flight in.
+ */
+export const NO_FLIGHT_PREFS = Object.freeze({ direct: false, after: 0, before: 24 });
+export function fitsPrefs(f, prefs = null) {
+  if (!prefs) return true;
+  if (prefs.direct && (Number(f?.stops) || 0) > 0) return false;
+  const after = Number.isFinite(prefs.after) ? prefs.after : 0;
+  const before = Number.isFinite(prefs.before) ? prefs.before : 24;
+  if (after <= 0 && before >= 24) return true;
+  if (!f?.dep) return false;
+  const h = Number(f.dep.slice(0, 2)) + Number(f.dep.slice(3, 5)) / 60;
+  return h >= after && h < before;
+}
+
 export function fitsHours(dep, band = 'any') {
   const [from, to] = HOURS[band] || HOURS.any;
   if (!dep) return band === 'any';
@@ -117,9 +135,9 @@ export function rankFlights(flights, rank = 'price') {
  * price comes first), else the swept one if it fits those hours.
  * live: the /api/flights answer for that day ({checked, flights}) or null.
  */
-export function pickLeg({ file, live, dir, airport, date, hours = 'any', rank = 'price', now = Date.now() }) {
+export function pickLeg({ file, live, dir, airport, date, hours = 'any', rank = 'price', prefs = null, now = Date.now() }) {
   if (live && Array.isArray(live.flights)) {
-    const f = rankFlights(live.flights, rank).find((x) => fitsHours(x.dep, hours));
+    const f = rankFlights(live.flights, rank).find((x) => fitsHours(x.dep, hours) && fitsPrefs(x, prefs));
     if (f) {
       return {
         date, price: f.price, airline: f.airline, dep: f.dep, arr: f.arr, stops: f.stops,
@@ -130,7 +148,7 @@ export function pickLeg({ file, live, dir, airport, date, hours = 'any', rank = 
   }
   const swept = sweptDay(file, dir, airport, date, now);
   if (swept === null) return null;
-  if (swept && fitsHours(swept.dep, hours)) return swept;
+  if (swept && fitsHours(swept.dep, hours) && fitsPrefs(swept, prefs)) return swept;
   return undefined;
 }
 

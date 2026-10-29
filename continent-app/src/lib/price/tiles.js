@@ -27,7 +27,8 @@ export function costTiles(priced) {
     return true;
   };
   const travelParts = driving ? ['travel', 'drive', 'flights'] : ['travel', 'flights'];
-  const aroundParts = driving ? ['transfers', 'between', 'car'] : ['transfers', 'drive', 'between', 'car'];
+  // T843: day trips from a base are getting around too.
+  const aroundParts = driving ? ['transfers', 'between', 'car', 'daytrips'] : ['transfers', 'drive', 'between', 'car', 'daytrips'];
   const sum = (keys) => r2(keys.reduce((n, k) => n + (p[k] || 0), 0));
   const tile = (key, keys, extra = {}) => {
     const eur = sum(keys);

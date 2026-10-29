@@ -3,32 +3,45 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 // scripts/css-routes.mjs).
 import '../styles/planners.css';
 import { Dropdown } from '../components/Dropdown.jsx';
-import { DateField } from '../components/DateField.jsx';
-import { OriginPicker } from '../components/OriginPicker.jsx';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { favDestIds } from '../lib/favorites.js';
 import { Button } from '../components/Button.jsx';
 import { ErrorBlock } from '../components/StateBlocks.jsx';
 import { TripMap } from '../map/TripMap.jsx';
-import { TripItinerary, TransferModePicker } from './TripItinerary.jsx';
+import { TripItinerary } from './TripItinerary.jsx';
 import { GuidedTripWizard } from './GuidedTripWizard.jsx';
 import { TripFlow } from './flow/TripFlow.jsx';
 import { TripSettingsSheet } from './flow/TripSettingsSheet.jsx';
-import { usePlannerStore } from './plannerStore.js';
+import { usePlannerStore, plannerStore } from './plannerStore.js';
 import { fromDraft } from './flow/tripSettings.js';
+import { useTripSettings } from './flow/flowHooks.js';
+import { syncParty, syncWhen } from './flow/appSync.js';
+import { useSettings } from '../components/SettingsLine.jsx';
+import { useMedia } from '../browse/home/useHome.js';
+import { useEditHistory } from './trip/useEditHistory.js';
+import { TripUndoToast } from './trip/TripUndoToast.jsx';
+import { ChipEditor } from './trip/ChipEditor.jsx';
+import { ChangeFlight } from './trip/ChangeFlight.jsx';
+import { SwapCity } from './trip/SwapCity.jsx';
+import { DayTripPicker } from './trip/DayTripPicker.jsx';
+import { BudgetCard } from './trip/BudgetCard.jsx';
+import { ShareSheet } from './trip/ShareSheet.jsx';
+import { TripDays } from './trip/TripDays.jsx';
+import { budgetCheck } from './flow/budget.js';
+import { offeredStayTiers } from '../lib/runtime_pricing.js';
+import { offeredSleepGroups, optionsFor } from '../lib/sleepGroups.js';
 import { TripSummary } from './TripSummary.jsx';
 import { PlanStage } from './flow/PlanStage.jsx';
 import { DaysPrompt } from './flow/DaysPrompt.jsx';
-import { PlanTotal } from './PlanTotal.jsx';
 import { SheetShell } from '../browse/SheetShell.jsx';
 import {
   loadDeviceTrip, saveDeviceTrip, clearDeviceTrip, newDeviceKey, deviceSaveDecision, deviceMeetsAccount,
 } from './deviceTripStore.js';
 import { CheapTipsSection } from './CheapTipsSection.jsx';
-import { fmtHours, eurExact } from '../lib/format.js';
-import { formatApprox, formatEst } from '../lib/money.js';
-import { fmtDate, laterISO, useToday, planningHorizon } from '../lib/dates.js';
-import { addDaysUTC, movedWindow } from '../lib/tripDates.js';
+import { eurExact } from '../lib/format.js';
+import { formatMoney } from '../lib/money.js';
+import { fmtDate } from '../lib/dates.js';
+import { movedWindow, nightsBetween } from '../lib/tripDates.js';
 import { fetchDrivingRoute } from '../lib/routing.js';
 import { useTripPlanner } from '../hooks/useTripPlanner.js';
 import { MAX_PARTY } from '../lib/tripTotal.js';
@@ -38,11 +51,8 @@ import { usePaywall } from '../hooks/usePaywall.jsx';
 import { fetchTripPlans } from '../auth/tripPlanStorage.js';
 import { useI18n } from '../i18n/index.jsx';
 import { loadAssignments, TRIP_DRAFT_PLAN_ID } from './dayPlanStore.js';
-import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BulbIcon, InfoIcon, CloseIcon, ChevronDownIcon, ExternalIcon, BookmarkIcon, MoreIcon } from '../components/Icons.jsx';
+import { SparkIcon, TrainIcon, CarIcon, BulbIcon, BookmarkIcon, MoreIcon } from '../components/Icons.jsx';
 import { IconButton, Chip, ChipGroup } from '../components/ui/index.js';
-import { Stepper as KitStepper } from '../components/FilterControls.jsx';
-import { PlaneIcon } from '../components/TransportIcons.jsx';
-import { knownForFacts } from '../lib/knownFor.js';
 import { geocodeAddress } from '../lib/geocode.js';
 import { cityLabel } from '../lib/placeName.js';
 import { scrollBehavior } from '../lib/motion.js';
@@ -62,50 +72,6 @@ const NO_DESTINATIONS = Object.freeze({});
 // The trip page's tabs, in order (T819); the address carries one (T828).
 const TRIP_TABS = ['overview', 'itinerary', 'costs', 'days'];
 
-// Small circular progress ring for "planned vs available nights".
-function NightsRing({ planned, total }) {
-  const pct = total > 0 ? Math.min(1, planned / total) : 0;
-  const r = 15;
-  const c = 2 * Math.PI * r;
-  const over = total > 0 && planned > total;
-  return (
-    <svg className="nights-ring" width="40" height="40" viewBox="0 0 40 40" aria-hidden="true">
-      <circle cx="20" cy="20" r={r} className="nights-ring-track" fill="none" strokeWidth="3" />
-      <circle
-        cx="20" cy="20" r={r} fill="none" strokeWidth="3" strokeLinecap="round"
-        className={`nights-ring-arc ${over ? 'over' : ''}`}
-        strokeDasharray={c}
-        strokeDashoffset={c * (1 - pct)}
-        transform="rotate(-90 20 20)"
-      />
-    </svg>
-  );
-}
-
-// The editor's stepper is the kit's (T458), with the unit beside the figure.
-function Stepper({ value, onChange, min = 0, max = 60, suffix }) {
-  const { t } = useI18n();
-  return (
-    <div className="trip-stepper">
-      <KitStepper value={value} min={min} max={max} onChange={onChange} decLabel={t('trip.fewer')} incLabel={t('trip.more')} />
-      {suffix && <span className="trip-step-suffix">{suffix(value)}</span>}
-    </div>
-  );
-}
-
-// `label` is an i18n key, render it through t().
-const MODE_META = {
-  train: { Icon: TrainIcon, label: 'trip.modeTrain' },
-  bus: { Icon: BusIcon, label: 'trip.modeBus' },
-  car: { Icon: CarIcon, label: 'trip.modeCar' },
-  // Hops Carta prices from what the traveller paid, not from its own data.
-  fly: { Icon: PlaneIcon, label: 'trip.modeFly' },
-  ferry: { Icon: FerryIcon, label: 'trip.modeFerry' },
-};
-const ModeIcon = ({ mode, size = 13 }) => {
-  const I = MODE_META[mode]?.Icon;
-  return I ? <I size={size} className="trip-mode-icon" /> : null;
-};
 
 /**
  * The planned view's "More" menu (carta-design "More" menu rule, T388): the
@@ -189,59 +155,6 @@ function MoreMenu({ items, round = false }) {
               {it.label}
             </button>
           ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-/** One overland leg between two stops: the chosen mode inline, expandable to
- *  compare all three (train/bus/car), switch mode, and jump to booking links. */
-function LegRow({ leg, onMode }) {
-  const { t } = useI18n();
-  const [open, setOpen] = useState(false);
-  if (!leg) return <div className="trip-leg">↳ {t('trip.routeUnknown')}</div>;
-  if (leg.no_road || !leg.mode) return <div className="trip-leg">↳ {leg.note || t('trip.noOverland')}</div>;
-  const chosen = leg.modes[leg.mode];
-  // A ground fare from the calibration or the prior is an estimate (groundFares.js).
-  const legEst = Boolean(chosen.est || leg.est);
-  return (
-    <div className="trip-leg trip-leg-rich">
-      <button className="trip-leg-main" onClick={() => setOpen(!open)} aria-expanded={open}>
-        ↳ <ModeIcon mode={leg.mode} /> {chosen.own
-          ? (chosen.eur_total > 0
-            ? t('trip.legBookedSummary', { mode: t(MODE_META[leg.mode].label), price: eurExact(chosen.eur_total) })
-            : `${t(MODE_META[leg.mode].label)}, ${t('trip.legBookedNoPrice')}`)
-          : t('trip.legSummary', { mode: t(MODE_META[leg.mode].label), km: leg.road_km, price: legEst ? formatApprox(chosen.eur_pp, { precision: 'cents' }) : eurExact(chosen.eur_pp), hours: fmtHours(chosen.hours) })}
-        {leg.long_haul && !chosen.own ? `, ${t('trip.longLeg')}` : ''}
-        {!chosen.own && legEst && (
-          <span className="sr-only">{` ${t('prov.estTitle')}`}</span>
-        )}
-        <span className="trip-leg-caret">{open ? '−' : '+'}</span>
-      </button>
-      {open && (
-        <div className="trip-leg-detail">
-          <div className="trip-leg-modes">
-            {Object.entries(leg.modes).map(([m, o]) => (
-              <button
-                key={m}
-                className={`trip-leg-mode ${leg.mode === m ? 'on' : ''}`}
-                onClick={() => onMode(m)}
-                title={leg.recommended === m ? t('trip.cartaPick') : undefined}
-              >
-                <span><ModeIcon mode={m} /> {t(MODE_META[m].label)}{leg.recommended === m && !o.own && <span className="guide-reco-mark"><SparkIcon size={10} /></span>}</span>
-                <b>{o.own && !(o.eur_total > 0) ? '-' : t('trip.perPersonShort', { price: !o.own && o.est ? formatEst(o.eur_pp, t('money.est'), { precision: 'cents' }) : eurExact(o.eur_pp) })}</b>
-                <small>{o.own ? t('trip.legBooked') : `~${fmtHours(o.hours)}`}</small>
-              </button>
-            ))}
-          </div>
-          {chosen.note && <p className="trip-leg-note">{chosen.note}</p>}
-          <div className="trip-leg-links">
-            {chosen.links.map((l, j) => (
-              <a key={j} href={l.url} target="_blank" rel="noreferrer">{l.label} <ExternalIcon size={12} className="link-ext" /></a>
-            ))}
-          </div>
-          {!chosen.own && <p className="trip-leg-disclaimer">{t('trip.legDisclaimer')}</p>}
         </div>
       )}
     </div>
@@ -428,7 +341,7 @@ function KeepTripChoice({ device, account, onKeepDevice, onKeepAccount, onClose 
   );
 }
 
-export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, origin, onChangeOrigin, onPlanDay, openSharedTrip, onSharedTripConsumed, tripSeed = null, onTripSeedConsumed = null, stayTier = 'home', lifestyle = null, favorites = null, onOpenDest = null, onOpenCountry = null, onOpenTrip = null, onOpenJourney = null, onPlanHome = null }) {
+export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, onPlanDay, openSharedTrip, onSharedTripConsumed, tripSeed = null, onTripSeedConsumed = null, stayTier = 'home', lifestyle = null, favorites = null, onOpenDest = null, onOpenCountry = null, onOpenTrip = null, onOpenJourney = null, onPlanHome = null }) {
   const { t, lang } = useI18n();
   const paywall = usePaywall();
   const countryInsights = useCountryInsights();
@@ -441,24 +354,12 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   // No offer opens when a trip is finished (T488-c): the pass appears only
   // when something paid is tapped.
   const destinations = data?.destinations || NO_DESTINATIONS;
-  // Trip dates start today at the earliest, never at the fare window's
-  // harvest date (see useToday).
-  const today = useToday();
-  const dateMin = laterISO(data?.meta?.start_date, today);
-  const dateMax = planningHorizon(data?.meta?.end_date, today);
 
   const [pendingCountry, setPendingCountry] = useState('');
   const [pendingDestId, setPendingDestId] = useState('');
-  // Which stop's "what is this city known for" facts are expanded (index|null).
-  const [stopInfoIdx, setStopInfoIdx] = useState(null);
   const [saveError, setSaveError] = useState('');
   const [saveNotice, setSaveNotice] = useState('');
   const [selectedStop, setSelectedStop] = useState(null);
-  // A published trip opened from Destinations arrives with stops but no dates,
-  // so the editor opens on the window with a line saying why it is asking and
-  // what happens once it has an answer. Cleared the moment a window exists.
-  const [awaitingDates, setAwaitingDates] = useState(false);
-  const [dragIdx, setDragIdx] = useState(null);
   const [wizardOpen, setWizardOpen] = useState(false);
   // The receipt's lines open on a new key (T432).
   const [receiptKey] = useState(0);
@@ -509,7 +410,6 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
       if (url.href !== window.location.href) window.history.replaceState(window.history.state, '', url);
     } catch { /* sandboxed: the tab still works, the address just does not follow */ }
   }, []);
-  const [editFrom, setEditFrom] = useState('full');
   const draft = usePlannerStore();
   const tripSet = fromDraft(draft);
   // T819: the trip page names where it starts even when the settings hold no
@@ -517,6 +417,140 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   const tripOrigin = tripSet.from?.name || originLabel(data, tp.anchorOrigin || data?.meta?.selected_origin) || '';
   // The name the traveller gave the trip wins over the route's own label (end check).
   const tripName = tripSet.trip?.name || tp.planLabel;
+
+  // T835 (owner D1): Undo and Redo on the trip page. A step holds the
+  // planner's fields and the trip's own settings (dates, people, from,
+  // name), so a chip, a stepper or a typed price all go back the same way.
+  const app = useSettings();
+  const [, saveTripSet] = useTripSettings();
+  const wideTrip = useMedia('(min-width: 1024px)');
+  const histState = {
+    ...tp.editState,
+    set: { when: tripSet.when, party: tripSet.party, from: tripSet.from || null, name: tripSet.trip?.name || '', budget: tripSet.guide?.budget || null },
+  };
+  const restoreEdit = tp.restoreEdit;
+  const restoreHist = useCallback((st) => {
+    restoreEdit(st);
+    const cur = fromDraft(plannerStore.getState());
+    const fromMoved = JSON.stringify(cur.from || null) !== JSON.stringify(st.set.from || null);
+    saveTripSet({
+      ...cur, when: st.set.when, party: st.set.party, from: st.set.from, trip: { ...cur.trip, name: st.set.name },
+      guide: st.set.budget ? { ...cur.guide, budget: st.set.budget } : cur.guide,
+    });
+    syncWhen(app, st.set.when);
+    syncParty(app, st.set.party);
+    if (fromMoved && st.set.from) app?.setFrom?.({ name: st.set.from.name, lat: st.set.from.lat, lon: st.set.from.lng });
+  }, [restoreEdit, saveTripSet, app]);
+  const hist = useEditHistory({
+    state: histState,
+    restore: restoreHist,
+    enabled: tp.planned && tp.stops.length > 0 && !wizardOpen,
+    resetKey: tp.planId || tp.deviceKey || 'draft',
+  });
+  // The Undo message for the newest step (not for a name being typed), or a
+  // note on what a changed setting did.
+  const [toast, setToast] = useState(null);
+  // A chip's note on what its change did (From: "Flights are now priced
+  // from Ghent."), shown with that change's Undo.
+  const noteRef = useRef(null);
+  // T846: a change that takes the trip over its budget says so on its Undo
+  // message ("€120 over your budget"), so it can be taken back at once.
+  const headCount = Math.max(1, tp.groupSize + tp.children + tp.babies);
+  const budgetNow = tp.stops.length ? budgetCheck(tp.priced, tripSet.guide?.budget, { party: headCount, nights: tp.plannedNights }) : null;
+  const overRef = useRef(null);
+  useEffect(() => {
+    const was = overRef.current;
+    overRef.current = budgetNow ? budgetNow.over : null;
+    if (!hist.last || hist.last.kind === 'name') return;
+    const crossed = budgetNow?.over && was === false;
+    const note = crossed
+      ? t('tp.bud.nowOver', { price: formatMoney(budgetNow.gap, { precision: 'whole', locale: lang }) })
+      : noteRef.current && noteRef.current.kind === hist.last.kind ? noteRef.current.text : '';
+    noteRef.current = null;
+    setToast({ change: hist.last, note });
+  }, [hist.last?.seq, hist.last?.at]); // eslint-disable-line react-hooks/exhaustive-deps -- a new step, not a new object
+  useEffect(() => {
+    if (overRef.current == null && budgetNow) overRef.current = budgetNow.over;
+  });
+
+  // T845: a Costs line's "Change" goes where that line is set: a flight to
+  // Change flight, food and drink to the Lifestyle, everything else to its
+  // place on the route (a stay's type, a hop, the transfers, a day trip).
+  const ROUTE_SPOT = {
+    out: '#paid-out, #itin-fare-out', back: '#paid-back, .itin-end:last-of-type', travel: '#paid-out, #itin-fare-out',
+    drive: '#itin-fare-out', beds: '.itin-stay select, .itin-bed', between: '.itin-hop', transfers: '.transfer-picker, .itin-hop',
+    car: '.itin-route-extra, .itin-extras', daytrips: '.itin-daytrips',
+  };
+  const onReceiptLine = (key) => {
+    if ((key === 'out' || key === 'back') && tp.priced?.cartaFlight?.[key]) { setFlightSheet(key); return; }
+    if (key === 'days' && app?.openLifestyle) { app.openLifestyle(); return; }
+    setTripTab('itinerary');
+    window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
+      const el = document.querySelector(ROUTE_SPOT[key] || '#itin-route-h');
+      el?.scrollIntoView({ behavior: scrollBehavior(), block: 'center' });
+      if (el?.matches?.('input, select, button')) el.focus({ preventScroll: true });
+    }));
+  };
+
+  // T836: the chips' own editors. Each answer goes to the planner and to the
+  // trip settings at once, so the chip, the settings sheet and Explore say
+  // the same, and Undo takes both back in one step.
+  const [chipOpen, setChipOpen] = useState(null);
+  // T840: Change flight, open on one way ('out' | 'back') or closed.
+  const [flightSheet, setFlightSheet] = useState(null);
+  // T841: Swap city, open on one stop's index or closed.
+  const [swapAt, setSwapAt] = useState(null);
+  // T843: Add a day trip, open on one stop's index or closed.
+  const [dayTripAt, setDayTripAt] = useState(null);
+  // T847: Share this trip, open or closed (with the control it hangs from).
+  const [shareOpen, setShareOpen] = useState(null);
+  const saveChip = (kind, v) => {
+    const cur = fromDraft(plannerStore.getState());
+    if (kind === 'dates') {
+      const end = v.option?.kind === 'keep' ? v.option.end : v.end;
+      if (v.option?.kind === 'stop') tp.setStopNights(v.option.index, v.option.nights);
+      tp.setTripStart(v.start);
+      tp.setTripEnd(end);
+      const when = { ...cur.when, mode: 'exact', start: v.start, end, nights: nightsBetween(v.start, end) };
+      saveTripSet({ ...cur, when });
+      syncWhen(app, when);
+    } else if (kind === 'people') {
+      const kidAges = [...(cur.party.kidAges || []), ...Array(Math.max(0, v.children - (cur.party.kidAges || []).length)).fill(7)].slice(0, v.children);
+      const party = { ...cur.party, adults: v.adults, kids: v.children, babies: v.babies, kidAges };
+      tp.setParty(v);
+      saveTripSet({ ...cur, party });
+      syncParty(app, party);
+    } else if (kind === 'from' && v) {
+      noteRef.current = { kind: 'from', text: t('pf.set.nFrom', { name: v.name }) };
+      app?.setFrom?.({ name: v.name, lat: v.lat, lon: v.lon });
+      saveTripSet({ ...cur, from: { name: v.name, lat: v.lat, lng: v.lon, countryCode: v.iso2 || '' } });
+      tp.setAnchorOrigin(null);
+    }
+  };
+  // The name in place: the trip settings' name (what the page shows) and the
+  // plan's label (what an account keeps).
+  const renameTrip = (name) => {
+    const cur = fromDraft(plannerStore.getState());
+    saveTripSet({ ...cur, trip: { ...cur.trip, name } });
+    tp.setPlanLabel(name);
+  };
+  const closeToast = useCallback(() => setToast(null), []);
+  const cityOf = (id) => cityLabel(data?.destinations?.[id]?.city || '');
+  // Ctrl or Cmd with Z (and Shift, or Y) on a keyboard, outside a field.
+  const { undo: histUndo, redo: histRedo } = hist;
+  useEffect(() => {
+    if (!tp.planned) return undefined;
+    const onKey = (e) => {
+      if (!(e.ctrlKey || e.metaKey) || e.altKey) return;
+      const el = e.target;
+      if (el && (el.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName))) return;
+      const k = e.key.toLowerCase();
+      if (k === 'z' && !e.shiftKey) { e.preventDefault(); histUndo(); setToast(null); }
+      else if ((k === 'z' && e.shiftKey) || k === 'y') { e.preventDefault(); histRedo(); setToast(null); }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [tp.planned, histUndo, histRedo]);
 
   const handleStartOver = () => {
     if (!window.confirm(t('trip.confirmStartOver'))) return;
@@ -546,10 +580,11 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     const planId = typeof openPlanId === 'object' ? openPlanId.id : openPlanId;
     const editMode = typeof openPlanId === 'object' && openPlanId.edit;
     tp.loadPlan(planId).then(() => {
-      tp.setPlanned(!editMode);
+      // T838: one page, no edit mode; My trips' Edit opens the route.
+      tp.setPlanned(true);
+      if (editMode) setTripTab('itinerary');
       setSelectedStop(null);
       setView('summary');
-      setEditFrom('full');
     }).catch(() => {
       // A failed fetch used to leave the tab silently stuck; surface it instead.
       setSaveError(t('trip.openFailed'));
@@ -592,9 +627,11 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
       // arrives without dates lands in the editor, which opens on the travel
       // window and gates the rest of itself on having one. A shared trip that
       // DOES carry dates is a finished plan and opens planned, as before.
-      tp.setPlanned(!!d.tripStart);
+      // T838: it opens on the trip page; one without dates (a published
+      // itinerary) opens with the Dates editor up, the one thing it lacks.
+      tp.setPlanned(true);
       setView('summary');
-      setAwaitingDates(!d.tripStart);
+      if (!d.tripStart) setChipOpen({ kind: 'dates', ref: null });
       setSelectedStop(null);
     }
     onSharedTripConsumed && onSharedTripConsumed();
@@ -640,7 +677,6 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     [destinations, pendingCountry],
   );
 
-  const hasDates = tp.tripStart && tp.tripEnd && tp.windowNights > 0;
   // Know before you go: the countries' rules and this trip's savings, as one
   // track (planner/CheapTipsSection.jsx, T432).
   const beforeYouGo = tp.stopDetails.length > 0 ? (() => {
@@ -666,9 +702,6 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     const costBack = dir === 'back' ? n : (split ? Number(base.costBack) || 0 : 0);
     tp.setOwnFlight({ ...base, costOut, costBack, costTotal: Math.round((costOut + costBack) * 100) / 100 });
   };
-  // The inline builder is now only an editor for a trip that already exists,   // opened from Saved trips' "Edit", or "Edit stops" on a planned trip. A fresh
-  // trip planner shows only the guide launcher; new trips are built by the wizard.
-  const hasTrip = tp.stopDetails.length > 0;
   // The map's stops, held by value rather than rebuilt per render. TripMap
   // clears its pins and refits the camera whenever `stops` changes identity,
   // so a fresh array here replayed that whole redraw (and a 700 ms camera
@@ -896,6 +929,13 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   // there is a trip to draw.
   // T832: a trip with no stops (planned or not) has nothing to show but the
   // way in, so it opens on the question.
+  // T838: a trip with stops is always shown planned; a draft kept from the
+  // old editor (planned false) opens on its page too.
+  const { planned: isPlanned, setPlanned: setIsPlanned } = tp;
+  const stopCount = tp.stops.length;
+  useEffect(() => {
+    if (stopCount > 0 && !isPlanned && !wizardOpen) setIsPlanned(true);
+  }, [stopCount, isPlanned, wizardOpen, setIsPlanned]);
   const emptyPlanner = tp.stopDetails.length === 0;
   const renderWizard = ({ flowSteps = null, initialWhereTab = null, lockWhereTab = false, onCancel = null } = {}) => (
     <GuidedTripWizard
@@ -937,10 +977,43 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     );
   }
 
+  // The trip as a share link carries it, and its PDF (T847: the route's
+  // export block and the Share sheet use the same two).
+  const sharePayload = tp.stops.length ? {
+                tripStart: tp.tripStart,
+                stops: tp.stops,
+                groupSize: tp.groupSize,
+                transportPref: tp.transportPref,
+                legModes: tp.legModes,
+                ownLegs: tp.ownLegs,
+                ownStays: tp.ownStays,
+                children: tp.children,
+                babies: tp.babies,
+                pace: tp.pace,
+                baggage: tp.baggage,
+                anchorId: tp.anchorId,
+                anchorOrigin: tp.anchorOrigin,
+                returnAnchorId: tp.returnAnchorId,
+                ownFlight: tp.ownFlight,
+                label: tp.planLabel,
+              } : null;
+  const downloadPdf = async () => {
+    const { downloadPlanPdf } = await import('../lib/planPdf.js');
+    await downloadPlanPdf({
+      label: tp.planLabel, priced: tp.priced, dayPlan: tp.dayPlan,
+      lifestyle: lifestyleLabel, t, lang, transportPref: tp.transportPref,
+    });
+  };
+
   // The planned trip's detail, whole or a part of it (T821: the trip page's
   // Itinerary, Costs and Days tabs each show their part).
   const renderItinerary = (sections = null, grouped = false) => (
     <TripItinerary
+              stopEdit={tp.planned && sections?.includes('route') ? stopEdit : null}
+              onChangeFlight={tp.planned && sections?.includes('route') ? setFlightSheet : null}
+              onReceiptLine={tp.planned && sections?.includes('receipt') ? onReceiptLine : null}
+              routeExtra={tp.planned && sections?.includes('route') && (betweenBlock || cheaperBlock) ? <>{betweenBlock}{cheaperBlock}</> : null}
+              addStopSlot={tp.planned && sections?.includes('route') ? addStopBlock : null}
       sections={sections}
       receiptGrouped={grouped}
               dayPlan={tp.dayPlan}
@@ -957,17 +1030,11 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
               onOwnLeg={(i, mode, n) => tp.setOwnLeg(i, mode, n)}
               onOwnStay={tp.setOwnStay}
               flightHours={tp.flightHours}
-              onFlightHours={tp.setFlightHours}
+              onFlightHours={tp.planned ? null : tp.setFlightHours}
               baggage={tp.baggage}
               receiptId={RECEIPT_ID}
               receiptOpenKey={receiptKey}
-              onPdf={async () => {
-                const { downloadPlanPdf } = await import('../lib/planPdf.js');
-                await downloadPlanPdf({
-                  label: tp.planLabel, priced: tp.priced, dayPlan: tp.dayPlan,
-                  lifestyle: lifestyleLabel, t, lang, transportPref: tp.transportPref,
-                });
-              }}
+              onPdf={downloadPdf}
               beforeSlot={beforeYouGo}
               flight={tp.flight}
               legs={tp.legs}
@@ -985,24 +1052,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
               onSelectStop={setSelectedStop}
               isDayPlanned={isDayPlanned}
               extrasPlanId={tp.planId || TRIP_DRAFT_PLAN_ID}
-              sharePayload={tp.stops.length ? {
-                tripStart: tp.tripStart,
-                stops: tp.stops,
-                groupSize: tp.groupSize,
-                transportPref: tp.transportPref,
-                legModes: tp.legModes,
-                ownLegs: tp.ownLegs,
-                ownStays: tp.ownStays,
-                children: tp.children,
-                babies: tp.babies,
-                pace: tp.pace,
-                baggage: tp.baggage,
-                anchorId: tp.anchorId,
-                anchorOrigin: tp.anchorOrigin,
-                returnAnchorId: tp.returnAnchorId,
-                ownFlight: tp.ownFlight,
-                label: tp.planLabel,
-              } : null}
+              sharePayload={sharePayload}
               onPlanDay={onPlanDay ? (day) => onPlanDay({
                 planId: tp.planId,
                 stopIndex: day.stopIndex,
@@ -1012,273 +1062,110 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   );
 
   // The list: the planned trip, or the stop editor (T500: the same place).
-  const listBody = (
+  // Adding a stop (T837): your own wishes first, then Carta's suggestions,
+  // then any town by country. The same block in the first-stops editor and
+  // on the trip page's route.
+  const addStopBlock = (
     <>
-          {tp.planned ? (
-            <>
-            {renderItinerary()}
-            </>
-          ) : hasTrip ? (
-          <>
-          {/* Step 1 - travel window */}
-          <div className="trip-block">
-            <div className="trip-block-title">{t('trip.whenTitle')}</div>
-            {awaitingDates && !hasDates && (
-              <p className="trip-awaiting-dates">{t('trip.tripNeedsDates', { trip: tp.planLabel || t('trip.thisTrip') })}</p>
-            )}
-            {/* The window is answered, so the only thing left on a published
-                trip is how they reach it. One button, straight to the overview
-                where the legs are, instead of scrolling past every stop to
-                find out the editor has no way out. */}
-            {awaitingDates && hasDates && (
-              <button
-                className="trip-to-legs-btn"
-                onClick={() => { setAwaitingDates(false); tp.setPlanned(true); setSelectedStop(null); }}
-              >
-                {t('trip.onToGettingThere')} <span aria-hidden="true">&rarr;</span>
-              </button>
-            )}
-            <div className="trip-dates-row">
-              <label className="trip-field">
-                <span className="trip-field-label">{t('trip.start')}</span>
-                <DateField value={tp.tripStart} min={dateMin} max={tp.tripEnd || dateMax} onChange={tp.setTripStart} placeholder={t('trip.startDate')} />
-              </label>
-              <span className="trip-dates-arrow" aria-hidden="true">→</span>
-              <label className="trip-field">
-                <span className="trip-field-label">{t('trip.end')}</span>
-                <DateField value={tp.tripEnd} min={tp.tripStart ? addDaysUTC(tp.tripStart, 1) : dateMin} max={dateMax} onChange={tp.setTripEnd} placeholder={t('trip.endDate')} />
-              </label>
-            </div>
-          </div>
-
-          {/* Step 2 - where the trip starts from. Dates first, then this, then
-              the stops - the same order a traveller actually decides things. */}
-          {hasDates && onChangeOrigin && (
-            <div className="trip-block">
-              <div className="trip-block-title">{t('trip.whereFromTitle')}</div>
-              <div className="trip-origin-row">
-                <OriginPicker data={data} origin={origin} onChangeOrigin={onChangeOrigin} />
-              </div>
-            </div>
-          )}
-
-          {hasDates && (
-            <>
-              {/* Planned-nights indicator */}
-              <div className="trip-nights-summary">
-                <NightsRing planned={tp.plannedNights} total={tp.windowNights} />
-                <div className="trip-nights-text">
-                  {t('trip.nightsOfWindow', { n: tp.plannedNights, of: tp.windowNights })}
-                  {tp.plannedNights > tp.windowNights && <span className="trip-nights-warn"> {t('trip.overWindow')}</span>}
-                </div>
-              </div>
-
-              {/* Stops list */}
-              {tp.stopDetails.length > 0 && (
-                <div className="trip-stops">
-                  {tp.stopDetails.map((s, i) => (
-                    <React.Fragment key={i}>
-                      <div className="trip-stop-wrap">
-                        <div
-                          className={`trip-stop ${selectedStop === i ? 'active' : ''} ${dragIdx === i ? 'dragging' : ''}`}
-                          ref={(el) => { stopRefs.current[i] = el; }}
-                          onClick={() => setSelectedStop(i)}
-                          // The row has no button of its own to pick it with,
-                          // so focus reaching any control inside the row
-                          // picks it, the way a click on the row does (T190).
-                          onFocus={() => setSelectedStop(i)}
-                          onDragOver={(e) => { if (dragIdx != null) e.preventDefault(); }}
-                          onDrop={(e) => {
-                            e.preventDefault();
-                            if (dragIdx != null && dragIdx !== i) tp.reorderStop(dragIdx, i);
-                            setDragIdx(null);
-                          }}
-                        >
-                          <div
-                            className="trip-stop-idx"
-                            draggable
-                            onDragStart={(e) => { setDragIdx(i); e.dataTransfer.effectAllowed = 'move'; }}
-                            onDragEnd={() => setDragIdx(null)}
-                            title={t('trip.dragReorder')}
-                          >{i + 1}</div>
-                          <div className="trip-stop-body">
-                            <div className="trip-stop-city">
-                              {s.dest ? cityLabel(s.dest.city) : t('trip.unknown')}
-                              {s.dest && (
-                                <button
-                                  className={`guide-city-info-btn ${stopInfoIdx === i ? 'open' : ''}`}
-                                  onClick={(e) => { e.stopPropagation(); setStopInfoIdx(stopInfoIdx === i ? null : i); }}
-                                  aria-expanded={stopInfoIdx === i}
-                                  title={t('trip.aboutCity', { city: cityLabel(s.dest.city) })}
-                                ><InfoIcon size={12} /></button>
-                              )}
-                            </div>
-                            <div className="trip-stop-when">
-                              {s.arriveDate ? t('plan.dateRange', { a: fmtDate(s.arriveDate, true), b: fmtDate(s.departDate, true) }) : t('trip.setDates')}
-                            </div>
-                          </div>
-                          <Stepper
-                            value={s.nights}
-                            onChange={(n) => tp.setStopNights(i, n)}
-                            suffix={(n) => (n === 1 ? t('trip.nightOne') : t('trip.nightMany'))}
-                          />
-                          <div className="trip-stop-tools" onClick={(e) => e.stopPropagation()}>
-                            {i > 0 && (
-                              <IconButton className="trip-stop-move is-up" label={t('trip.moveUp')} onClick={() => tp.moveStop(i, -1)}>
-                                <ChevronDownIcon size={18} />
-                              </IconButton>
-                            )}
-                            {i < tp.stopDetails.length - 1 && (
-                              <IconButton className="trip-stop-move" label={t('trip.moveDown')} onClick={() => tp.moveStop(i, 1)}>
-                                <ChevronDownIcon size={18} />
-                              </IconButton>
-                            )}
-                            <IconButton className="trip-stop-remove" label={t('trip.removeStopAria')} onClick={() => tp.removeStop(i)}>
-                              <CloseIcon size={16} />
-                            </IconButton>
-                          </div>
-                        </div>
-                        {/* Full width of the row (not squeezed into the narrow
-                            body column alongside the stepper and tools), so
-                            long facts read as normal sentences instead of
-                            wrapping one word per line. */}
-                        {stopInfoIdx === i && s.dest && (
-                          <div className="guide-city-facts" onClick={(e) => e.stopPropagation()}>
-                            {knownForFacts(s.dest).map(([label, value]) => (
-                              <div className={`guide-city-fact ${label === 'Known for' ? 'guide-city-fact-known' : ''}`} key={label}>
-                                <span className="guide-city-fact-label">{label}</span>
-                                <span className="guide-city-fact-value">{value}</span>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                      {i < tp.legs.length && (
-                        <LegRow leg={tp.legs[i]} onMode={(m) => tp.setLegMode(i, m)} />
-                      )}
-                    </React.Fragment>
-                  ))}
-                </div>
-              )}
-
-              {/* How to travel between the stops */}
-              {tp.stopDetails.length > 1 && (
-                <div className="trip-block">
-                  <div className="trip-block-title">{t('trip.betweenTitle')}</div>
-                  <ChipGroup label={t('trip.betweenTitle')} className="trip-transport-chips">
-                    {[
-                      ['auto', SparkIcon, 'trip.cartaPicks'],
-                      ['public', TrainIcon, 'trip.trainBus'],
-                      ['car', CarIcon, 'trip.rentalCarOpt'],
-                      ['owncar', CarIcon, 'trip.ownCarOpt'],
-                    ].map(([k, ModeIco, lbl]) => (
-                      <Chip key={k} kind="choice" selected={tp.transportPref === k} onClick={() => tp.setTransportPref(k)}>
-                        {React.createElement(ModeIco, { size: 16 })} {t(lbl)}
-                      </Chip>
-                    ))}
-                  </ChipGroup>
-                  {tp.transportPref === 'car' && tp.carRental && (
-                    <p className="trip-note">
-                      {t('trip.carRentalNote', { total: eurExact(tp.carRental.eur_total), days: tp.carRental.days, perDay: eurExact(tp.carRental.eur_per_day), group: tp.groupSize })}
-                    </p>
-                  )}
-                  {tp.transportPref === 'owncar' && (
-                    <>
-                      <p className="trip-note">{t('trip.ownCarNote')}</p>
-                      <OwnCarFromEditor carHome={tp.carHome} setCarHome={tp.setCarHome} />
-                    </>
-                  )}
-                </div>
-              )}
-
-              {/* Cheaper order. The cheaper-dates rows ranked start dates by
-                  frozen flight fares and went with T273: Carta does not price
-                  flights. */}
-              {tp.stopDetails.length > 0 && tp.cheaperOrder && (
-                <div className="trip-block trip-savings">
-                  <div className="trip-block-title"><BulbIcon size={13} /> {t('trip.cheaperTitle')}</div>
-                  <div className="trip-saving-row">
-                    <span>{t('trip.cheaperOrder', { amount: eurExact(tp.cheaperOrder.saving_eur) })}</span>
-                    <button onClick={tp.applyCheaperOrder}>{t('trip.reorder')}</button>
-                  </div>
-                </div>
-              )}
-
-              {/* Your own wishes first, then the app's recommendations. */}
-              <ShortlistStops rows={shortlistStops} onPick={(s) => tp.addStop(s.id)} />
-
-              {/* Recommendations */}
-              <Suggestions suggestions={tp.nextStopSuggestions} onPick={(s) => tp.addStop(s.id)} />
-
-              {/* Add stop */}
-              <div className="trip-block">
-                <div className="trip-block-title">{tp.stopDetails.length === 0 ? t('trip.addFirstStop') : t('trip.addAnotherStop')}</div>
-                <div className="trip-add-row">
-                  <Dropdown
-                    className="trip-add-country"
-                    value={pendingCountry}
-                    onChange={handlePendingCountry}
-                    options={countryOptions}
-                    placeholder={t('trip.country')}
-                    searchPlaceholder={t('trip.searchCountries')}
-                  />
-                  <Dropdown
-                    className="trip-add-city"
-                    value={pendingDestId}
-                    onChange={setPendingDestId}
-                    options={cityOptions}
-                    placeholder={pendingCountry ? t('trip.city') : t('trip.pickCountryFirst')}
-                    searchPlaceholder={t('trip.searchCities')}
-                    disabled={!pendingCountry}
-                  />
-                  <button className="trip-add-btn" onClick={addPending} disabled={!pendingDestId}>{t('trip.add')}</button>
-                </div>
-              </div>
-
-              {/* The editor prices through the one receipt (T490-j): every
-                  line from tripLines(), no sum of its own. */}
-              {tp.stopDetails.length > 0 && (
-                <>
-                  <PlanTotal
-                    id={RECEIPT_ID}
-                    openKey={receiptKey}
-                    priced={tp.priced}
-                    party={{ adults: tp.groupSize, children: tp.children, babies: tp.babies }}
-                    onParty={tp.setParty}
-                    variant="card"
-                    title={t('plan.tripTotal')}
-                  />
-                  {/* Not when Carta has a flight on the receipt (T518). */}
-                  {tp.flight?.combinable && !tp.flight?.own && !tp.priced?.cartaFlight?.out && !tp.priced?.cartaFlight?.back && (
-                    <div className="trip-saving-row trip-flight-own-door">
-                      <span>{t('trip.flightNotPriced')}</span>
-                      <button onClick={() => tp.setOwnFlight({ airline: '', costTotal: 0, mode: 'fly' })}>{t('trip.addOwnFare')}</button>
-                    </div>
-                  )}
-                  <TransferModePicker
-                    flightTransfer={tp.flightTransfer}
-                    anchorIn={tp.anchorLegs?.in}
-                    anchorOut={tp.anchorLegs?.out}
-                    setTransferMode={tp.setTransferMode}
-                  />
-                  {!authConfigured && <p className="trip-note">{t('trip.deviceOnlyNote')}</p>}
-                </>
-              )}
-            </>
-          )}
-
-          </>
-          ) : null}
-          {/* The guide call to action that stood here could never render: an
-              empty planner returns the inline wizard above (T388 removed it). */}
-
-          {/* Know before you go: the country intel and the money tips as ONE
-              fold, closed until asked for (T388, brief item 6). Outside the
-              planned/edit branches so it shows on both; the stop-count guard
-              hides it pre-trip. */}
-          {!tp.planned && beforeYouGo}
+      <ShortlistStops rows={shortlistStops} onPick={(s) => tp.addStop(s.id)} />
+      <Suggestions suggestions={tp.nextStopSuggestions} onPick={(s) => tp.addStop(s.id)} />
+      <div className="trip-block">
+        <div className="trip-block-title">{tp.stopDetails.length === 0 ? t('trip.addFirstStop') : t('trip.addAnotherStop')}</div>
+        <div className="trip-add-row">
+          <Dropdown
+            className="trip-add-country"
+            value={pendingCountry}
+            onChange={handlePendingCountry}
+            options={countryOptions}
+            placeholder={t('trip.country')}
+            searchPlaceholder={t('trip.searchCountries')}
+          />
+          <Dropdown
+            className="trip-add-city"
+            value={pendingDestId}
+            onChange={setPendingDestId}
+            options={cityOptions}
+            placeholder={pendingCountry ? t('trip.city') : t('trip.pickCountryFirst')}
+            searchPlaceholder={t('trip.searchCities')}
+            disabled={!pendingCountry}
+          />
+          <Button variant="secondary" className="trip-add-btn" onClick={addPending} disabled={!pendingDestId}>{t('trip.add')}</Button>
+        </div>
+      </div>
     </>
   );
+
+  const stayOptions = offeredSleepGroups(offeredStayTiers(data?.meta)).flatMap((g) => {
+    const opts = optionsFor(g);
+    return (opts.length ? opts : g.offered.map((tier) => ({ tier, labelKey: g.labelKey })))
+      .map((o) => ({ tier: o.tier, label: opts.length ? `${t(g.labelKey)}: ${t(o.labelKey)}` : t(g.labelKey) }));
+  });
+
+  // The stops' own controls on the trip page (T837): every change is the
+  // planner's own setter, so each one is a step of the page's Undo.
+  const stopEdit = {
+    stops: tp.stops,
+    tripStart: tp.tripStart,
+    tripEnd: tp.tripEnd,
+    setNights: tp.setStopNights,
+    applyNights: (stops, end) => {
+      stops.forEach((st, i) => { if (st.nights !== tp.stops[i]?.nights) tp.setStopNights(i, st.nights); });
+      if (end) tp.setTripEnd(end);
+    },
+    move: tp.moveStop,
+    reorder: tp.reorderStop,
+    remove: (i) => { setSelectedStop(null); tp.removeStop(i); },
+    swap: (i) => setSwapAt(i),
+    // T842: the ways a stop can sleep, as "Hotel: 3 star", the dataset's own.
+    stayOptions: stayOptions,
+    tripStayLabel: t(`stay.${tp.stayTier || 'home'}`),
+    setStay: tp.setStopStay,
+    addDayTrip: (i) => setDayTripAt(i),
+    setDayTrips: tp.setStopDayTrips,
+    quoteDelta: tp.quoteDelta,
+  };
+
+  // T838: the old stop editor is gone (every fact is changed where it is
+  // shown). Two of its parts had no other home, so they move to the route on
+  // the Itinerary tab: how the trip gets between its stops (own car
+  // included), and a cheaper order of the stops when there is one.
+  const betweenBlock = tp.stopDetails.length > 1 ? (
+    <div className="trip-block">
+      <div className="trip-block-title">{t('trip.betweenTitle')}</div>
+      <ChipGroup label={t('trip.betweenTitle')} className="trip-transport-chips">
+        {[
+          ['auto', SparkIcon, 'trip.cartaPicks'],
+          ['public', TrainIcon, 'trip.trainBus'],
+          ['car', CarIcon, 'trip.rentalCarOpt'],
+          ['owncar', CarIcon, 'trip.ownCarOpt'],
+        ].map(([k, ModeIco, lbl]) => (
+          <Chip key={k} kind="choice" selected={tp.transportPref === k} onClick={() => tp.setTransportPref(k)}>
+            {React.createElement(ModeIco, { size: 16 })} {t(lbl)}
+          </Chip>
+        ))}
+      </ChipGroup>
+      {tp.transportPref === 'car' && tp.carRental && (
+        <p className="trip-note">
+          {t('trip.carRentalNote', { total: eurExact(tp.carRental.eur_total), days: tp.carRental.days, perDay: eurExact(tp.carRental.eur_per_day), group: tp.groupSize })}
+        </p>
+      )}
+      {tp.transportPref === 'owncar' && (
+        <>
+          <p className="trip-note">{t('trip.ownCarNote')}</p>
+          <OwnCarFromEditor carHome={tp.carHome} setCarHome={tp.setCarHome} />
+        </>
+      )}
+    </div>
+  ) : null;
+  const cheaperBlock = tp.stopDetails.length > 0 && tp.cheaperOrder ? (
+    <div className="trip-block trip-savings">
+      <div className="trip-block-title"><BulbIcon size={13} /> {t('trip.cheaperTitle')}</div>
+      <div className="trip-saving-row">
+        <span>{t('trip.cheaperOrder', { amount: eurExact(tp.cheaperOrder.saving_eur) })}</span>
+        <Button variant="secondary" size="sm" onClick={tp.applyCheaperOrder}>{t('trip.reorder')}</Button>
+      </div>
+    </div>
+  ) : null;
 
   const routeProps = {
     stops: pinStops,
@@ -1369,6 +1256,100 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
         <div className="trip-save-toast" role="status">{saveNotice}</div>
       )}
 
+      {chipOpen && (
+        <ChipEditor
+          kind={chipOpen.kind}
+          anchorRef={chipOpen.ref}
+          trip={{
+            tripStart: tp.tripStart, tripEnd: tp.tripEnd, stops: tp.stops, stopDetails: tp.stopDetails,
+            plannedNights: tp.plannedNights, party: { adults: tp.groupSize, children: tp.children, babies: tp.babies },
+          }}
+          quoteDelta={tp.quoteDelta}
+          onSave={(v) => saveChip(chipOpen.kind, v)}
+          onClose={() => { const el = chipOpen.ref?.current; setChipOpen(null); el?.focus?.(); }}
+        />
+      )}
+
+      {shareOpen && (
+        <ShareSheet
+          anchorRef={shareOpen.ref}
+          title={tripName || t('itin.myTrip')}
+          visibility={tripSet.trip?.visibility || 'private'}
+          onVisibility={(v) => {
+            const cur = fromDraft(plannerStore.getState());
+            saveTripSet({ ...cur, trip: { ...cur.trip, visibility: v } });
+          }}
+          sharePayload={sharePayload}
+          onPdf={downloadPdf}
+          onMore={() => {
+            setTripTab('itinerary');
+            window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
+              document.getElementById('itin-export-h')?.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
+            }));
+          }}
+          onClose={() => { const el = shareOpen.ref?.current; setShareOpen(null); el?.focus?.(); }}
+        />
+      )}
+
+      {dayTripAt != null && tp.stopDetails[dayTripAt] && (
+        <DayTripPicker
+          stop={tp.stopDetails[dayTripAt]}
+          destinations={data?.destinations || NO_DESTINATIONS}
+          cost={(id, day) => tp.quoteDelta({
+            stops: tp.stops.map((s, j) => (j === dayTripAt ? { ...s, dayTrips: [...(s.dayTrips || []), { destinationId: id, day }] } : s)),
+          })}
+          onPick={(id, day) => {
+            const s = tp.stops[dayTripAt];
+            tp.setStopDayTrips(dayTripAt, [...(s.dayTrips || []), { destinationId: id, day }]);
+            setDayTripAt(null);
+          }}
+          onClose={() => setDayTripAt(null)}
+        />
+      )}
+
+      {swapAt != null && tp.stopDetails[swapAt] && (
+        <SwapCity
+          stop={tp.stopDetails[swapAt]}
+          destinations={data?.destinations || NO_DESTINATIONS}
+          exclude={tp.stops.map((s) => s.destinationId)}
+          delta={(id) => tp.quoteDelta({ stops: tp.stops.map((s, j) => (j === swapAt ? { ...s, destinationId: id } : s)) })}
+          onPick={(id) => { tp.swapStop(swapAt, id); setSelectedStop(null); setSwapAt(null); }}
+          onClose={() => setSwapAt(null)}
+        />
+      )}
+
+      {flightSheet && (
+        <ChangeFlight
+          dir={flightSheet}
+          cartaFlight={tp.priced?.cartaFlight}
+          answers={tp.liveAnswers}
+          prefs={tp.flightPrefs}
+          onPrefs={tp.setFlightPrefs}
+          onPick={tp.setFlightPick}
+          party={{ paying: tp.groupSize + tp.children, babies: tp.babies, bagKey: tp.baggage }}
+          onOwnFare={(dir) => {
+            setFlightSheet(null);
+            setTripTab('itinerary');
+            window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
+              const el = document.getElementById(dir === 'back' ? 'paid-back' : 'paid-out');
+              el?.scrollIntoView({ behavior: scrollBehavior(), block: 'center' });
+              el?.focus?.({ preventScroll: true });
+            }));
+          }}
+          onClose={() => setFlightSheet(null)}
+        />
+      )}
+
+      {toast && (
+        <TripUndoToast
+          change={toast.change}
+          note={toast.note}
+          cityOf={cityOf}
+          onUndo={hist.canUndo ? () => { hist.undo(); setToast(null); } : null}
+          onClose={closeToast}
+        />
+      )}
+
       {settingsOpen && (
         <TripSettingsSheet anchorRef={settingsGearRef} onClose={() => setSettingsOpen(false)} onSaved={applySettings} planned />
       )}
@@ -1409,7 +1390,6 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   // tabs' body goes, so the trip never jumps to a second layout.
   // T832: this is the only layout of a trip with stops; the old half-screen
   // map workspace is gone, and the wizard opens over this page as a sheet.
-  const editInPage = !tp.planned;
   {
     const saved = tp.saveState === 'saved' || keptHere;
     const cardMap = (
@@ -1432,11 +1412,36 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
         <div className="pf is-trip is-trip-page">
           {saveError && <ErrorBlock className="trip-footer-error" message={saveError} />}
           <TripSummary
-            mode={tp.planned ? 'view' : 'edit'}
-            editBody={tp.planned ? null : listBody}
-            onRename={tp.setPlanLabel}
-            onDone={() => { setAwaitingDates(false); tp.setPlanned(true); setSelectedStop(null); setView(editFrom); }}
-            name={tp.planned ? tripName : tp.planLabel}
+            onRename={renameTrip}
+            onChip={(kind, ref) => {
+              // The chip rises near the top first, so the editor hung from it
+              // has the screen under it (T836).
+              const el = ref?.current;
+              if (el && el.getBoundingClientRect().top > window.innerHeight * 0.4) el.scrollIntoView({ block: 'start' });
+              setChipOpen({ kind, ref });
+            }}
+            budgetCard={(
+              <BudgetCard
+                priced={tp.priced}
+                party={headCount}
+                nights={tp.plannedNights}
+                budget={tripSet.guide?.budget}
+                onSave={(b) => {
+                  const cur = fromDraft(plannerStore.getState());
+                  saveTripSet({ ...cur, guide: { ...cur.guide, budget: b } });
+                }}
+              />
+            )}
+            onAddPaid={() => {
+              // T839: what was paid goes in on the route, where each part is.
+              setTripTab('itinerary');
+              window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
+                const el = document.getElementById('paid-out') || document.querySelector('#itin-fare-out button, .itin-bed .plan-paid button');
+                el?.scrollIntoView({ behavior: scrollBehavior(), block: 'center' });
+                el?.focus?.({ preventScroll: true });
+              }));
+            }}
+            name={tripName}
             tripStart={tp.tripStart}
             tripEnd={tp.tripEnd}
             party={{ adults: tp.groupSize, children: tp.children, babies: tp.babies }}
@@ -1450,24 +1455,28 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
             origin={tripOrigin}
             tab={tripTab}
             onTab={setTripTab}
+            history={tp.planned ? { canUndo: hist.canUndo, canRedo: hist.canRedo, undo: () => { hist.undo(); setToast(null); }, redo: () => { hist.redo(); setToast(null); } } : null}
             panels={{
               itinerary: renderItinerary(['route', 'tools', 'export', 'before']),
               costs: renderItinerary(['receipt'], true),
-              days: renderItinerary(['days']),
+              // T849-T851: the Days tab, each day as a card of what it holds.
+              days: (
+                <TripDays
+                  dayPlan={tp.dayPlan}
+                  dayTrips={tp.priced?.dayTrips || []}
+                  planKey={tp.planId || TRIP_DRAFT_PLAN_ID}
+                  onPlanDay={onPlanDay ? (day) => onPlanDay({ planId: tp.planId, stopIndex: day.stopIndex, dayIndex: day.dayOfStay - 1 }) : null}
+                  onCartaPlan={onPlanDay ? () => onPlanDay({ planId: tp.planId, stopIndex: 0, dayIndex: 0, autoFill: true }) : null}
+                />
+              ),
             }}
             map={cardMap}
             mapFull={fullMap}
             onPlanHome={onPlanHome}
             onPlanDays={onPlanDay ? () => setAskDays(true) : null}
-            onEdit={() => { setEditFrom('summary'); setView('full'); tp.setPlanned(false); }}
             onSettings={() => setSettingsOpen(true)}
             settingsRef={settingsGearRef}
-            onExport={() => {
-              setTripTab('itinerary');
-              window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
-                document.getElementById('itin-export-h')?.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
-              }));
-            }}
+            onExport={(ref) => setShareOpen({ ref: ref || null })}
             bar={(
               <>
                 <IconButton tone="surface" className="ts-save" pressed={saved}
@@ -1480,6 +1489,10 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                 <MoreMenu
                   round
                   items={[
+                    // T835: on a phone and a tablet Undo and Redo live here;
+                    // from 1024 px they sit at the end of the tab row.
+                    !wideTrip && hist.canUndo && { key: 'undo', className: 'trip-undo-item', label: t('saved.undo'), onClick: () => { hist.undo(); setToast(null); } },
+                    !wideTrip && hist.canRedo && { key: 'redo', className: 'trip-redo-item', label: t('tp.undo.redo'), onClick: () => { hist.redo(); setToast(null); } },
                     tp.stopDetails.length >= 3 && { key: 'replan', className: 'trip-plan-again-btn', label: t('trip.replanRoute'), title: t('trip.replanTitle'), onClick: () => tp.optimizeRoute() },
                     { key: 'over', className: 'trip-startover-btn', label: t('trip.startOver'), title: t('trip.startOverTitle'), danger: true, onClick: handleStartOver },
                   ]}
@@ -1489,7 +1502,6 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
             footer={(
               <>
                 {saveStatus}
-                {editInPage && saveError && <ErrorBlock className="trip-footer-error" message={saveError} />}
               </>
             )}
           />

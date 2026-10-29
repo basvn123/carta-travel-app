@@ -6,7 +6,7 @@ import { PartyEditor } from './PartyEditor.jsx';
 import { partyText } from '../lib/party.js';
 import { useSettledFigure } from '../lib/figureChange.js';
 import { formatMoney, formatEst } from '../lib/money.js';
-import { tripLines, tripReadiness } from '../lib/tripTotal.js';
+import { tripLines } from '../lib/tripTotal.js';
 import { costTiles, tileOfLine } from '../lib/price/tiles.js';
 import { useLifestyleLabel, useTotalDelta } from './planHooks.js';
 import { ChevronDownIcon, ChevronRightIcon, PlusIcon } from '../components/Icons.jsx';
@@ -14,6 +14,7 @@ import { AirlineMark } from '../components/flights/Flights.jsx';
 import { usePlannerStore } from './plannerStore.js';
 import { fromDraft } from './flow/tripSettings.js';
 import { budgetCheck } from './flow/budget.js';
+import { RouteCodes } from './trip/RouteCodes.jsx';
 
 /**
  * The trip's one price card (T432). The wizard holds it in a sticky side
@@ -57,6 +58,22 @@ function CostBar({ lines }) {
   );
 }
 
+/**
+ * The grouped receipt's bar (T845, owner 2026-10-29: distinct colours): one
+ * segment per cost group in its own colour, the same colour as the dot
+ * before the group's name below it, so the colour never stands alone.
+ */
+function GroupBar({ tiles }) {
+  const parts = tiles.filter((x) => x.eur > 0);
+  const sum = parts.reduce((n, x) => n + x.eur, 0);
+  if (parts.length < 2 || !(sum > 0)) return null;
+  return (
+    <span className="plan-costbar is-groups" aria-hidden="true">
+      {parts.map((x) => <span key={x.key} className={`is-${x.key}`} style={{ flexGrow: x.eur / sum }} />)}
+    </span>
+  );
+}
+
 const LINE_KEY = {
   out: 'itin.secGetThere',
   back: 'itin.secGetHome',
@@ -65,6 +82,7 @@ const LINE_KEY = {
   transfers: 'plan.lineTransfers',
   between: 'plan.lineBetween',
   car: 'plan.lineCar',
+  daytrips: 'plan.lineDaytrips',
   beds: 'plan.lineBeds',
   days: 'plan.lineDays',
 };
@@ -97,6 +115,9 @@ export function PlanTotal({
   // The trip page's Costs tab (T821): the lines always open, under the four
   // tiles' headings (Flights, Getting around, Stay, Food), each with its sum.
   grouped = false,
+  // T845: each line's own change ('out', 'back', 'beds', 'days' ...), the
+  // Costs tab's "Change" beside a line.
+  onLine = null,
 }) {
   const { t, lang } = useI18n();
   const settings = useSettings();
@@ -105,12 +126,13 @@ export function PlanTotal({
   const [open, setOpen] = useState(defaultOpen || grouped);
   useEffect(() => { if (openKey) setOpen(true); }, [openKey]);
   const [editParty, setEditParty] = useState(false);
+  // T845: the Costs tab's groups fold; all open to start.
+  const [folded, setFolded] = useState({});
   const total = priced ? priced.grandTotal : null;
   const delta = useTotalDelta(total);
   const figRef = useRef(null);
   useSettledFigure(figRef, total);
   const lines = tripLines(priced);
-  const ready = tripReadiness(priced);
   const partyObj = partyIn || priced?.party || { adults: priced?.groupSize || 1, children: 0, babies: 0 };
   const party = Math.max(1, (partyObj.adults || 0) + (partyObj.children || 0) + (partyObj.babies || 0));
   const hasTrip = Boolean(priced && priced.stopDetails.length);
@@ -126,17 +148,25 @@ export function PlanTotal({
         {hasTrip ? (
           <>
             <p className="plan-total-fig">
-              <Button
-                variant="quiet"
-                className="plan-total-open"
-                aria-expanded={open}
-                aria-controls={`${uid}-lines`}
-                onClick={() => setOpen((v) => !v)}
-              >
+              {grouped ? (
+                // T845: on the Costs tab the lines are always there, so the
+                // total is a figure, not a button that looked like a link.
                 <span ref={figRef} className="plan-total-n">
                   {t('plan.inTotal', { price: formatEst(total, t('money.est'), { precision: 'cents', locale: lang }) })}
                 </span>
-              </Button>
+              ) : (
+                <Button
+                  variant="quiet"
+                  className="plan-total-open"
+                  aria-expanded={open}
+                  aria-controls={`${uid}-lines`}
+                  onClick={() => setOpen((v) => !v)}
+                >
+                  <span ref={figRef} className="plan-total-n">
+                    {t('plan.inTotal', { price: formatEst(total, t('money.est'), { precision: 'cents', locale: lang }) })}
+                  </span>
+                </Button>
+              )}
               {delta != null && (
                 <span className={`plan-total-delta ${delta < 0 ? 'is-down' : 'is-up'}`} aria-live="polite">
                   {delta < 0 ? '-' : '+'}{formatMoney(Math.abs(delta), { precision: 'cents', locale: lang })}
@@ -145,13 +175,15 @@ export function PlanTotal({
             </p>
             <p className="plan-total-pp">
               {t('receipt.total', { people: party === 1 ? t('receipt.onePerson') : t('receipt.nPeople', { n: party }) })}
-              {party > 1 && (
+              {/* T848 (owner, T845-a): on the Costs tab the head is the total
+                  for the party only, like the Overview band (board panel 3). */}
+              {!grouped && party > 1 && (
                 <>
                   {', '}
                   <span className="plan-total-ppfig">{t('plan.aPerson', { price: formatEst(priced.perPerson, t('money.est'), { precision: 'cents', locale: lang }) })}</span>
                 </>
               )}
-              {nights > 0 && (
+              {!grouped && nights > 0 && (
                 <>
                   {', '}
                   <span className="plan-total-ppfig">{t('plan.aPersonADay', { price: formatEst(priced.perPerson / nights, t('money.est'), { precision: 'whole', locale: lang }) })}</span>
@@ -164,7 +196,7 @@ export function PlanTotal({
         )}
       </header>
 
-      <dl className="plan-total-inputs">
+      {!grouped && <dl className="plan-total-inputs">
         {dates && (
           <div className="plan-input">
             <dt>{t('wizard.summaryDates')}</dt>
@@ -199,49 +231,75 @@ export function PlanTotal({
             </dd>
           </div>
         )}
-      </dl>
+      </dl>}
 
-      {hasTrip && (ready.of > 0 || budget) && (
+      {/* T839: the budget line only; "N of M prices are your own" was a
+          method line (carta-design, Numbers and money). */}
+      {hasTrip && budget && (
         <p className="plan-total-note">
-          {ready.of > 0 && <span>{t('plan.readiness', { n: ready.yours, of: ready.of })}</span>}
-          {budget && (
-            <span className={budget.over ? 'is-over' : ''}>
-              {t(budget.over ? 'plan.budgetOver' : 'plan.budgetUnder', { price: formatEst(budget.gap, t('money.est'), { precision: 'whole', locale: lang }) })}
-            </span>
-          )}
+          <span className={budget.over ? 'is-over' : ''}>
+            {t(budget.over ? 'plan.budgetOver' : 'plan.budgetUnder', { price: formatEst(budget.gap, t('money.est'), { precision: 'whole', locale: lang }) })}
+          </span>
         </p>
       )}
 
-      {hasTrip && grouped && (
-        <div className="plan-total-groups" id={`${uid}-lines`}>
-          {costTiles(priced).map((tile) => {
-            const mine = lines.filter((l) => tileOfLine(l.key, tile.driving) === tile.key);
-            const head = tile.key === 'travel' && tile.driving ? 'tp.tile.driving' : `tp.tile.${{ travel: 'flights', around: 'around', stay: 'stay', food: 'food' }[tile.key]}`;
-            return (
-              <section className="plan-total-group" key={tile.key} id={`tp-cost-${tile.key}`} tabIndex={-1} aria-labelledby={`${uid}-g-${tile.key}`}>
-                <h3 className="plan-total-group-h" id={`${uid}-g-${tile.key}`}>
-                  <span>{t(head)}</span>
-                  <span className="plan-total-group-n">{tile.empty ? t('tp.tile.notNeeded') : <Money value={tile.eur} est precision="cents" />}</span>
-                </h3>
-                {mine.length > 0 && (
-                  <dl className="plan-lines costrows">
-                    {mine.map((l) => (
-                      <CostRow
-                        key={l.key}
-                        kind={l.key}
-                        label={t(LINE_KEY[l.key])}
-                        tone={l.kind === 'missing' ? 'missing' : l.kind === 'yours' ? 'yours' : null}
-                        mark={l.kind === 'flight' && l.leg?.airline ? <AirlineMark code={l.leg.airline} size="sm" /> : null}
-                        value={<LineValue line={l} lang={lang} t={t} onAddFare={onAddFare} />}
-                      />
-                    ))}
-                  </dl>
-                )}
-              </section>
-            );
-          })}
-        </div>
-      )}
+      {hasTrip && grouped && (() => {
+        const tiles = costTiles(priced);
+        return (
+          <div className="plan-total-groups" id={`${uid}-lines`}>
+            <GroupBar tiles={tiles} />
+            {tiles.map((tile) => {
+              const mine = lines.filter((l) => tileOfLine(l.key, tile.driving) === tile.key);
+              const head = tile.key === 'travel' && tile.driving ? 'tp.tile.driving' : `tp.tile.${{ travel: 'flights', around: 'around', stay: 'stay', food: 'food' }[tile.key]}`;
+              const isOpen = !folded[tile.key];
+              return (
+                <section className={`plan-total-group is-${tile.key}`} key={tile.key} id={`tp-cost-${tile.key}`} tabIndex={-1} aria-labelledby={`${uid}-g-${tile.key}`}>
+                  <h3 className="plan-total-group-h" id={`${uid}-g-${tile.key}`}>
+                    <button
+                      type="button"
+                      className="plan-total-group-btn"
+                      aria-expanded={isOpen}
+                      aria-controls={`${uid}-gl-${tile.key}`}
+                      onClick={() => setFolded((f) => ({ ...f, [tile.key]: isOpen }))}
+                    >
+                      <span className="plan-total-dot" aria-hidden="true" />
+                      <span className="plan-total-group-name">{t(head)}</span>
+                      <span className="plan-total-group-n">{tile.empty ? t('tp.tile.notNeeded') : <Money value={tile.eur} est precision="cents" />}</span>
+                      <ChevronDownIcon size={16} className={isOpen ? 'plan-chev is-open' : 'plan-chev'} />
+                    </button>
+                  </h3>
+                  {mine.length > 0 && isOpen && (
+                    <dl className="plan-lines costrows" id={`${uid}-gl-${tile.key}`}>
+                      {mine.map((l) => (
+                        <CostRow
+                          key={l.key}
+                          kind={l.key}
+                          label={(l.key === 'out' || l.key === 'back') && l.leg?.from && l.leg?.to
+                            ? <RouteCodes from={l.leg.from} to={l.leg.to} icon={false} />
+                            : t(LINE_KEY[l.key])}
+                          tone={l.kind === 'missing' ? 'missing' : l.kind === 'yours' ? 'yours' : null}
+                          mark={l.kind === 'flight' && l.leg?.airline ? <AirlineMark code={l.leg.airline} size="sm" /> : null}
+                          value={(
+                            <>
+                              <LineValue line={l} lang={lang} t={t} onAddFare={onAddFare} />
+                              {onLine && l.kind !== 'missing' && (
+                                <Button variant="quiet" size="sm" className="plan-line-edit" onClick={() => onLine(l.key)}
+                                  aria-label={t('tp.cost.changeAria', { what: (l.key === 'out' || l.key === 'back') && l.leg?.from ? `${l.leg.from} ${l.leg.to}` : t(LINE_KEY[l.key]) })}>
+                                  {t('tp.cost.change')}
+                                </Button>
+                              )}
+                            </>
+                          )}
+                        />
+                      ))}
+                    </dl>
+                  )}
+                </section>
+              );
+            })}
+          </div>
+        );
+      })()}
       {hasTrip && !grouped && (
         <div className="plan-total-more" id={`${uid}-lines`} hidden={!open}>
           <CostBar lines={lines} />

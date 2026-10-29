@@ -1,0 +1,659 @@
+{
+  "results": [
+    {
+      "w": 390,
+      "label": "the trip page opens",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "no Edit trip and no Editing bar",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "cost band has no sub-line",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "tiles have no sub-lines",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "four tiles",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "Add what you paid is offered",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "no sideways scroll on Overview",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "the name turns into a field",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "Enter keeps the new name",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "Dates opens its own editor",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "the editor asks where the night goes",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "the dates chip changed",
+      "ok": true,
+      "note": "Sat 21 Nov to Sun 29 Nov"
+    },
+    {
+      "w": 390,
+      "label": "an Undo message shows",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "Undo puts the dates back",
+      "ok": true,
+      "note": "Sat 21 Nov to Sat 28 Nov"
+    },
+    {
+      "w": 390,
+      "label": "People opens its own editor",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "People now 3 adults",
+      "ok": true,
+      "note": "3 adults"
+    },
+    {
+      "w": 390,
+      "label": "Undo takes the party back",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "From opens its own editor",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "Escape closes it",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "two stops with their own controls",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "arrive and leave tiles",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "flights named by their airports",
+      "ok": true,
+      "note": "2"
+    },
+    {
+      "w": 390,
+      "label": "between stops moved under the route",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "no sideways scroll on Itinerary",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "one more night asks where it comes from",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "Hallstatt 5 and Salzburg 2 after Apply",
+      "ok": true,
+      "note": "5/2"
+    },
+    {
+      "w": 390,
+      "label": "Undo restores 4 and 3",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "Remove takes the stop off at once",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "the Undo message names the stop",
+      "ok": true,
+      "note": "Removed Salzburg\nUndo"
+    },
+    {
+      "w": 390,
+      "label": "Undo brings Salzburg back",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "Add a stop opens the add block",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "the More menu holds Redo or Undo",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "no \"prices are your own\" line",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "no sideways scroll on Costs",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "Add what you paid opens the Itinerary",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "the trip page opens",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "no Edit trip and no Editing bar",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "cost band has no sub-line",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "tiles have no sub-lines",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "four tiles",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "Add what you paid is offered",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "no sideways scroll on Overview",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "the name turns into a field",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "Enter keeps the new name",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "Dates opens its own editor",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "the editor hangs from the chip",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "the editor asks where the night goes",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "the dates chip changed",
+      "ok": true,
+      "note": "Sat 21 Nov to Sun 29 Nov"
+    },
+    {
+      "w": 1024,
+      "label": "an Undo message shows",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "Undo puts the dates back",
+      "ok": true,
+      "note": "Sat 21 Nov to Sat 28 Nov"
+    },
+    {
+      "w": 1024,
+      "label": "Redo is ready after Undo",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "Redo brings the change back",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "People opens its own editor",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "People now 3 adults",
+      "ok": true,
+      "note": "3 adults"
+    },
+    {
+      "w": 1024,
+      "label": "Undo takes the party back",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "From opens its own editor",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "Escape closes it",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "two stops with their own controls",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "arrive and leave tiles",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "flights named by their airports",
+      "ok": true,
+      "note": "2"
+    },
+    {
+      "w": 1024,
+      "label": "between stops moved under the route",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "no sideways scroll on Itinerary",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "one more night asks where it comes from",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "Hallstatt 5 and Salzburg 2 after Apply",
+      "ok": true,
+      "note": "5/2"
+    },
+    {
+      "w": 1024,
+      "label": "Undo restores 4 and 3",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "Remove takes the stop off at once",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "the Undo message names the stop",
+      "ok": true,
+      "note": "Removed Salzburg\nUndo"
+    },
+    {
+      "w": 1024,
+      "label": "Undo brings Salzburg back",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "Add a stop opens the add block",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "no \"prices are your own\" line",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "no sideways scroll on Costs",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "Add what you paid opens the Itinerary",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "the trip page opens",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "no Edit trip and no Editing bar",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "cost band has no sub-line",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "tiles have no sub-lines",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "four tiles",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "Add what you paid is offered",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "no sideways scroll on Overview",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "the name turns into a field",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "Enter keeps the new name",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "Dates opens its own editor",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "the editor hangs from the chip",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "the editor asks where the night goes",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "the dates chip changed",
+      "ok": true,
+      "note": "Sat 21 Nov to Sun 29 Nov"
+    },
+    {
+      "w": 1440,
+      "label": "an Undo message shows",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "Undo puts the dates back",
+      "ok": true,
+      "note": "Sat 21 Nov to Sat 28 Nov"
+    },
+    {
+      "w": 1440,
+      "label": "Redo is ready after Undo",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "Redo brings the change back",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "People opens its own editor",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "People now 3 adults",
+      "ok": true,
+      "note": "3 adults"
+    },
+    {
+      "w": 1440,
+      "label": "Undo takes the party back",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "From opens its own editor",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "Escape closes it",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "two stops with their own controls",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "arrive and leave tiles",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "flights named by their airports",
+      "ok": true,
+      "note": "2"
+    },
+    {
+      "w": 1440,
+      "label": "between stops moved under the route",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "no sideways scroll on Itinerary",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "one more night asks where it comes from",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "Hallstatt 5 and Salzburg 2 after Apply",
+      "ok": true,
+      "note": "5/2"
+    },
+    {
+      "w": 1440,
+      "label": "Undo restores 4 and 3",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "Remove takes the stop off at once",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "the Undo message names the stop",
+      "ok": true,
+      "note": "Removed Salzburg\nUndo"
+    },
+    {
+      "w": 1440,
+      "label": "Undo brings Salzburg back",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "Add a stop opens the add block",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "no \"prices are your own\" line",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "no sideways scroll on Costs",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "Add what you paid opens the Itinerary",
+      "ok": true,
+      "note": ""
+    }
+  ],
+  "errors": []
+}

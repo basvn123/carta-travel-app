@@ -322,8 +322,10 @@ in the kit. Two screens can never write the same figure two ways.
   word after a figure, no source footers. Never a flight figure presented as Carta's own, never a bookable
   claim, never a stored figure shown as current. Every external booking link warns that prices may have changed.
 - **Flights** (T511 to T518, 2026-10-21). A flight figure is Google Flights' price, not Carta's estimate,
-  It always travels with the airline mark, the departure and
-  arrival times, when it was checked and the link out to Google Flights with "prices may have changed".
+  It always travels with the airline mark and the departure and arrival times. Owner decision
+  2026-10-29 (T840): the "Google Flights, checked {time}" line is no longer required on screen, and
+  Change flight shows none; where a link out to Google Flights is offered it still says "prices may
+  have changed".
   The airline mark is the airline's own logo in a white square, never recoloured, tinted or redrawn. A
   fare the traveller typed in replaces it and is labelled as theirs. A swept price older than its sweep
   cycle is not shown (5 days for the next two weeks, 16 days beyond, T780; config `flights.max_age_days`). Bag fees (10 kg cabin, 20 kg
@@ -456,7 +458,7 @@ reasoning in `docs/design-v6/DIRECTION.md` part 9), restated in Lagoon terms and
 
 **Budget search (T506, roadmap 1.19).** One bordered band at the top of Explore (not on Home; the owner places Home): "How much do you have?" first, the only required field, whole euros; under it one sentence states every other input ("2 people, 5 days in October, from Brussels by train or bus") with one quiet Change that opens Who, How long, When, From where and how, and Buffer in place. The search button is a secondary (the one primary belongs in the lower half). Every figure comes from `priceTrip()` through `lib/budgetSearch.js`; no second formula. The answer is "Places that fit {price}", then two groups only, Fits (the total with the buffer is within the budget) and Tight (it fits only by spending the buffer), as compact rows: the total for the group as the headline price, the day price a person under it (bed plus food, no buffer, the card's own basis), then what is left; too dear is one sentence ("3 places are a little over. With {price} more, they fit."), never a list, and no counts beside the headings. Its receipt is the receipt above in whole euros (owner 1.8): Bed, Food and drink, "Buffer, 10%" as its own line (on by default, T475-d), the total, then a "Not in the total yet" head with getting there (named by the chosen way), local transport and tickets, each reading "Not priced yet" in `--text-2` with no amount, tilde or dash, never summed. Inline under its row on a phone, a sticky column beside the list from 1024 px.
 
-**The cost bar.** At most one stacked bar above a receipt's lines, never instead of them: 8 px, full width, one segment per line in receipt order in the `--kind-*` ramp, 1 px `--surface` gaps, no brown, no legend, no percentages.
+**The cost bar.** At most one stacked bar above a receipt's lines, never instead of them: 8 px, full width, 1 px `--surface` gaps, no brown, no legend, no percentages. Owner decision 2026-10-29 (T845, "the colours must be distinct"): where the receipt is grouped (the trip page's four cost groups), the bar has one segment per group in its own colour, `--cost-travel`, `--cost-around`, `--cost-stay` and `--cost-food`, and each group's name carries a matching 8 px dot (the overview's tiles too), so the colour never stands alone. Those four colours are for the cost groups and nothing else. An ungrouped receipt keeps one segment per line in the `--kind-*` ramp.
 
 **Cost on cards and pages.** A card or page that offers a place or a trip carries one price line: the day cost per person at the traveller's Lifestyle ("From {price} a person" with its length on a collection card, from the cheapest member, never an average; in a trip list whose length control already states the days, the card carries no length, owner 2026-10-15), read from `src/lib/costIndex.js` so it agrees with Explore and the receipt. It carries nothing about its source (T438; the estimate mark left on 2026-10-24). No figure when the data is too thin. A page shows one per person per day figure and every other mention on the page is that value.
 
@@ -635,8 +637,8 @@ The voice did not change with the look. Carta sounds like an instrument, not a b
 - Empty states are an invitation, not an apology: name the space and give the action.
 - A hand-over names the thing and the app: "Open Day 2 in Google Maps", "Open this ride in Google Maps".
   Never "Navigate", "Start route" or "Directions", because Carta does not navigate.
-- Honest in the product's own voice. A flight price is named as Google Flights', with when it was
-  checked; a fare the traveller typed is labelled as theirs. When the AI is off, say it is off. An empty result says so in one line.
+- Honest in the product's own voice. A flight price is never presented as Carta's own estimate (the
+  checked line is optional since T840); a fare the traveller typed is labelled as theirs. When the AI is off, say it is off. An empty result says so in one line.
 - Strings go through i18n keys in all six languages, never concatenation; test labels at the longest
   translation (usually German).
 

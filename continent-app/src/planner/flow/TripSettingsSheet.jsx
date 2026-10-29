@@ -120,11 +120,18 @@ export function TripSettingsSheet({ onClose, anchorRef, onSaved = null, planned 
             maxLength={80}
             onChange={(e) => save(normalizeSettings({ ...s, trip: { ...s.trip, name: e.target.value } }))}
           />
-          <span className="pf-label">{t('pf.create.visibility')}</span>
-          <VisibilityChoice
-            value={s.trip.visibility}
-            onChange={(v) => save(normalizeSettings({ ...s, trip: { ...s.trip, visibility: v } }))}
-          />
+          {/* T847: who can see the trip lives in Share this trip on the
+              trip page; the settings hold what the trip is made of. Before
+              a trip exists (no page yet) it stays here. */}
+          {!planned && (
+            <>
+              <span className="pf-label">{t('pf.create.visibility')}</span>
+              <VisibilityChoice
+                value={s.trip.visibility}
+                onChange={(v) => save(normalizeSettings({ ...s, trip: { ...s.trip, visibility: v } }))}
+              />
+            </>
+          )}
         </div>
         {groups.map((g) => (
           <section className="pf-set-group" key={g.key} aria-labelledby={`pf-set-${g.key}`}>

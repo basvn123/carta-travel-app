@@ -80,7 +80,9 @@ export function FlightLink({ from, to, date, back = null, className = '' }) {
  * 'unknown' (no answer for that day yet, T733) or 'none' (a known empty day)
  * renders the row without a flight.
  */
-export function FlightRow({ leg, cost, dir = 'out', bagKey = 'small', state = null, wantedDate = null, linkOut = true, children = null }) {
+// showChecked: the "Google Flights, checked" line; off on the trip page's route
+// (owner 2026-10-29, T844: carta-design no longer requires it).
+export function FlightRow({ leg, cost, dir = 'out', bagKey = 'small', state = null, wantedDate = null, linkOut = true, showChecked = true, children = null }) {
   const { t } = useI18n();
   const airlines = useAirlines();
   const label = dir === 'back' ? t('flight.back') : t('flight.out');
@@ -122,9 +124,11 @@ export function FlightRow({ leg, cost, dir = 'out', bagKey = 'small', state = nu
           <Money value={cost.perSeat - leg.price} precision="cents" est />
         </div>
       )}
-      <div className="flt-foot">
-        <span>{checkedLabel(t, leg.checked)}</span>
-      </div>
+      {showChecked && (
+        <div className="flt-foot">
+          <span>{checkedLabel(t, leg.checked)}</span>
+        </div>
+      )}
       {linkOut && <FlightLink from={leg.from} to={leg.to} date={leg.date} className="flt-row-link" />}
       {cost && !cost.bagsKnown && <div className="flt-note">{t('flight.bagsExtra')}</div>}
       {children}

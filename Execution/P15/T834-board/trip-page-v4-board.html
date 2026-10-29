@@ -1,0 +1,486 @@
+<title>Trip Page v4 Board</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one reading column (1040px). Each panel shows the same screen twice, a phone frame (390) and a desktop frame (scaled 1440), then a mark bar. The board chrome follows the viewer's theme; the app frames are Carta's single light theme. */
+:root{
+  /* board chrome */
+  --page:#f6f5f2; --card:#ffffff; --sunken:#efeeea; --ink:#1f2a33; --ink-2:#44515c; --ink-3:#5c6873;
+  --rule:#dcdfdd; --rule-soft:#e9eae7; --act:#8c5a2b; --act-hover:#744820; --tint:#f6e7d3; --tint-ink:#744820;
+  --keep:#1f6b47; --keep-bg:#e2f0e6; --chg-bg:#fdefc0; --drop:#b3372a; --drop-bg:#f8e4de;
+  /* Carta app tokens, light only (the app has one theme) */
+  --c-page:#f6f5f2; --c-surface:#ffffff; --c-sunken:#efeeea; --c-hover:#eeede9;
+  --c-text:#1f2a33; --c-text-2:#44515c; --c-text-3:#5c6873;
+  --c-border:#dcdfdd; --c-border-soft:#e9eae7;
+  --c-action:#8c5a2b; --c-action-hover:#744820; --c-select-bg:#f6e7d3; --c-select-ink:#744820;
+  --c-best-bg:#fdefc0; --c-danger:#b3372a; --c-ok:#10b981;
+  --c-k1:#1f2a33; --c-k2:#4f575d; --c-k3:#71777c; --c-k4:#959a9c;
+  --c-photo-a:#6f8a7a; --c-photo-b:#8a9ba3; --c-photo-c:#a39b86; --c-map:#ece9e2; --c-map-line:#d8d3c8;
+  --elev-1:0 1px 2px rgba(31,42,51,.06),0 2px 8px rgba(31,42,51,.05);
+  --elev-2:0 4px 12px rgba(31,42,51,.10),0 12px 28px rgba(31,42,51,.08);
+  --elev-3:0 12px 32px rgba(31,42,51,.16),0 2px 6px rgba(31,42,51,.08);
+  --f:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --page:#151b20; --card:#1d252c; --sunken:#252e36; --ink:#eef0f1; --ink-2:#c3cad0; --ink-3:#9aa5ae;
+  --rule:#34404a; --rule-soft:#2b353e; --act:#d4a06a; --act-hover:#e2b585; --tint:#3a2b1d; --tint-ink:#e2b585;
+  --keep:#5cc495; --keep-bg:#1d3329; --chg-bg:#3a3018; --drop:#ef8a73; --drop-bg:#3a231e; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --page:#151b20; --card:#1d252c; --sunken:#252e36; --ink:#eef0f1; --ink-2:#c3cad0; --ink-3:#9aa5ae;
+  --rule:#34404a; --rule-soft:#2b353e; --act:#d4a06a; --act-hover:#e2b585; --tint:#3a2b1d; --tint-ink:#e2b585;
+  --keep:#5cc495; --keep-bg:#1d3329; --chg-bg:#3a3018; --drop:#ef8a73; --drop-bg:#3a231e; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--page);color:var(--ink);font-family:var(--f);font-size:15px;line-height:1.5;font-variant-numeric:tabular-nums;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:40px 96px}
+.wrap{max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:48px}
+h1,h2,h3{margin:0;line-height:1.2;text-wrap:balance}
+h1{font-size:clamp(28px,4.5vw,40px);font-weight:700;letter-spacing:-.02em}
+h2{font-size:22px;font-weight:700}
+h3{font-size:17px;font-weight:600}
+p{margin:0}
+.lede{color:var(--ink-2);max-width:66ch;font-size:16px}
+.mute{color:var(--ink-3)}
+:focus-visible{outline:2px solid var(--act);outline-offset:2px}
+.intro{display:flex;flex-direction:column;gap:14px}
+.howto{display:flex;flex-wrap:wrap;gap:8px 20px;color:var(--ink-2);font-size:14px}
+.tally{display:flex;gap:8px;flex-wrap:wrap}
+.pillc{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--sunken);font-size:13px;color:var(--ink-2)}
+.save-state{font-size:13px;color:var(--ink-3)}
+.toc{display:flex;flex-wrap:wrap;gap:8px}
+.toc a{font-size:13px;color:var(--act);text-decoration:none;padding:6px 12px;border:1px solid var(--rule);border-radius:999px;background:var(--card)}
+.toc a:hover{background:var(--tint)}
+
+/* panels */
+.panel{background:var(--card);border:1px solid var(--rule-soft);border-radius:16px;overflow:hidden;scroll-margin-top:16px}
+.p-head{padding:20px 20px 0;display:flex;flex-direction:column;gap:6px}
+.p-head .what{color:var(--ink-2);font-size:14px;max-width:72ch}
+.p-head ul{margin:4px 0 0;padding-left:18px;color:var(--ink-2);font-size:14px;display:flex;flex-direction:column;gap:2px}
+.p-head li::marker{color:var(--act)}
+.views{display:flex;flex-direction:column;gap:20px;padding:20px}
+.prow2{display:grid;grid-template-columns:auto minmax(0,1fr);gap:24px;align-items:start}
+.prow2 ul{margin:0;padding-left:18px;color:var(--ink-2);font-size:14px;display:flex;flex-direction:column;gap:6px}
+.prow2 li::marker{color:var(--act)}
+.dfit{overflow-x:auto;border-radius:12px}
+.vlabel{font-size:12px;font-weight:600;color:var(--ink-3);margin-bottom:6px}
+.dscroll{overflow-x:auto;border-radius:12px}
+.verdict{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px 20px;border-top:1px solid var(--rule-soft);background:var(--sunken)}
+.vbtn{font:inherit;font-size:13px;font-weight:600;min-height:44px;padding:0 14px;border-radius:999px;border:1px solid var(--rule);background:var(--card);color:var(--ink-2);cursor:pointer}
+.vbtn:hover{border-color:var(--ink-3)}
+.vbtn[aria-pressed="true"][data-v="keep"]{background:var(--keep-bg);border-color:var(--keep);color:var(--keep)}
+.vbtn[aria-pressed="true"][data-v="change"]{background:var(--chg-bg);border-color:var(--ink-3);color:var(--ink)}
+.vbtn[aria-pressed="true"][data-v="drop"]{background:var(--drop-bg);border-color:var(--drop);color:var(--drop)}
+.vbtn[aria-pressed="true"][data-v^="o"]{background:var(--tint);border-color:var(--act);color:var(--tint-ink)}
+.vbtn[aria-pressed="true"]::before{content:"\2713  "}
+.note{flex:1 1 240px;min-width:0;min-height:44px;font:inherit;font-size:14px;border:1px solid var(--rule);border-radius:10px;background:var(--card);color:var(--ink);padding:10px 12px}
+.note::placeholder{color:var(--ink-3)}
+textarea.note{width:100%;min-height:110px;resize:vertical}
+.decisions{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.dec{background:var(--card);border:1px solid var(--rule-soft);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.dec .p-head{padding-bottom:12px}
+.dec .verdict{margin-top:auto}
+
+/* ---------- Carta app frames ---------- */
+.app{font-family:var(--f);color:var(--c-text);background:var(--c-page);font-size:14px;line-height:1.35;font-variant-numeric:tabular-nums;text-align:left}
+.app *{box-sizing:border-box}
+.phone{width:320px;border:8px solid #1f2a33;border-radius:36px;overflow:hidden;position:relative;height:640px;display:flex;flex-direction:column}
+.phone .scr{flex:1;overflow:hidden;position:relative;padding:12px 14px 0;display:flex;flex-direction:column;gap:12px}
+.desk{width:960px;border:1px solid var(--c-border);border-radius:12px;overflow:hidden;position:relative}
+.desk .bar{height:44px;background:var(--c-surface);border-bottom:1px solid var(--c-border-soft);display:flex;align-items:center;gap:18px;padding:0 24px;font-size:13px;color:var(--c-text-2)}
+.desk .bar b{color:var(--c-text);font-size:15px}
+.desk .bar .on{background:var(--c-select-bg);color:var(--c-select-ink);padding:5px 10px;border-radius:10px}
+.desk .scr{padding:18px 40px 24px;display:flex;flex-direction:column;gap:14px;position:relative}
+.row{display:flex;align-items:center;gap:8px}
+.col{display:flex;flex-direction:column;gap:4px}
+.sp{flex:1}
+.ph{border-radius:16px;background:var(--c-photo-a)}
+.ph.b{background:var(--c-photo-b)}.ph.c{background:var(--c-photo-c)}
+.ibtn{width:32px;height:32px;border-radius:999px;border:1px solid var(--c-border);background:var(--c-surface);display:grid;place-items:center;color:var(--c-text-2);flex:none}
+.ibtn svg{width:16px;height:16px}
+.back{color:var(--c-action);font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px}
+.name{font-size:28px;font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+.phone .name{font-size:22px}
+.name .pen{color:var(--c-text-3);width:16px;height:16px}
+.name.editing{border:1.5px solid var(--c-action);border-radius:10px;padding:2px 8px;background:var(--c-surface)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.phone .chips{flex-wrap:nowrap;overflow:hidden;margin-right:-14px}
+.chip{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 13px;border-radius:999px;border:1px solid var(--c-border);background:var(--c-surface);font-size:13px;font-weight:500;color:var(--c-text);white-space:nowrap;flex:none}
+.chip svg{width:15px;height:15px;color:var(--c-text-2)}
+.chip.on{background:var(--c-select-bg);border-color:var(--c-action);color:var(--c-select-ink)}
+.chip.on svg{color:var(--c-select-ink)}
+.tabs{display:flex;gap:22px;border-bottom:1px solid var(--c-border-soft);font-size:14px;color:var(--c-text-2);align-items:flex-end}
+.tabs span{padding:8px 0}
+.tabs .on{color:var(--c-text);font-weight:600;box-shadow:inset 0 -2px 0 var(--c-action)}
+.tabs .tools{margin-left:auto;display:flex;gap:6px;padding-bottom:6px}
+.card{background:var(--c-surface);border:1px solid var(--c-border-soft);border-radius:16px;padding:14px}
+.lbl{font-size:12px;color:var(--c-text-2)}
+.lbl6{font-size:12px;font-weight:600;color:var(--c-text-2)}
+.big{font-size:26px;font-weight:700;letter-spacing:-.01em}
+.sub{font-size:13px;color:var(--c-text-2)}
+.cap{font-size:12px;color:var(--c-text-3)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:36px;padding:0 14px;border-radius:10px;font-size:13px;font-weight:600;border:1px solid var(--c-border);background:var(--c-surface);color:var(--c-text);white-space:nowrap}
+.btn.pri{background:var(--c-action);border-color:var(--c-action);color:#fff}
+.btn.quiet{border-color:transparent;background:none;color:var(--c-action);padding:0 6px}
+.btn.sm{height:30px;font-size:12px;padding:0 10px}
+.btn svg{width:15px;height:15px}
+.link{color:var(--c-action);font-weight:600;font-size:13px}
+.seg{display:inline-flex;background:var(--c-sunken);border-radius:10px;padding:3px;font-size:12px;font-weight:600;color:var(--c-text-2)}
+.seg span{padding:5px 10px;border-radius:8px}
+.seg .on{background:var(--c-surface);color:var(--c-text);box-shadow:var(--elev-1)}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.phone .tiles{grid-template-columns:1fr 1fr}
+.tile{background:var(--c-sunken);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:2px;position:relative}
+.tile .t{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--c-text-2)}
+.tile .t svg{width:14px;height:14px}
+.tile b{font-size:17px}
+.tile small{font-size:12px;color:var(--c-text-3)}
+.tile .ed{position:absolute;top:8px;right:8px;width:14px;height:14px;color:var(--c-text-3)}
+.thin{display:flex;height:8px;gap:1px;border-radius:4px;overflow:hidden;background:var(--c-surface)}
+.thin i{display:block;height:100%}
+.map{background:var(--c-map);border-radius:16px;position:relative;overflow:hidden;border:1px solid var(--c-border-soft)}
+.map svg.route{position:absolute;inset:0;width:100%;height:100%}
+.pin{position:absolute;display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:var(--c-text)}
+.pin i{width:20px;height:20px;border-radius:50%;background:var(--c-action);color:#fff;display:grid;place-items:center;font-style:normal;font-size:11px}
+.pin span{background:var(--c-surface);border-radius:6px;padding:2px 6px;box-shadow:var(--elev-1);white-space:nowrap}
+.day .cap,.seg span{white-space:nowrap}
+.body2{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:20px;align-items:start}
+.rail{display:flex;flex-direction:column;gap:10px;position:relative}
+.budget .thin{background:var(--c-sunken)}
+.pop{position:absolute;background:var(--c-surface);border-radius:10px;box-shadow:var(--elev-2);padding:14px;z-index:3;display:flex;flex-direction:column;gap:10px}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--c-surface);border-radius:20px 20px 0 0;box-shadow:var(--elev-3);padding:8px 16px 16px;display:flex;flex-direction:column;gap:10px;z-index:4}
+.sheet .grab{width:36px;height:4px;border-radius:2px;background:var(--c-border);align-self:center;margin-bottom:2px}
+.scrim{position:absolute;inset:0;background:rgba(31,42,51,.28);z-index:3}
+.sheet h4,.pop h4{margin:0;font-size:16px;font-weight:600;display:flex;align-items:center}
+.sheet h4 .x,.pop h4 .x{margin-left:auto;width:16px;height:16px;color:var(--c-text-2)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;font-size:12px;text-align:center}
+.cal span{padding:6px 0;border-radius:8px}
+.cal .h{color:var(--c-text-3);font-size:11px}
+.cal .in{background:var(--c-select-bg);border-radius:0}
+.cal .a{background:var(--c-action);color:#fff;border-radius:8px 0 0 8px}
+.cal .z{background:var(--c-action);color:#fff;border-radius:0 8px 8px 0}
+.cal .m{color:var(--c-text-3)}
+.choice{display:flex;flex-direction:column;gap:6px}
+.opt{border:1px solid var(--c-border);border-radius:10px;padding:9px 11px;display:flex;align-items:center;gap:10px;font-size:13px}
+.opt.on{border-color:var(--c-action);background:var(--c-select-bg)}
+.opt .r{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--c-text-3);flex:none}
+.opt.on .r{border:5px solid var(--c-action);background:#fff}
+.step{display:flex;align-items:center;gap:10px}
+.step .sb{width:32px;height:32px;border-radius:999px;border:1px solid var(--c-border);display:grid;place-items:center;font-size:17px;color:var(--c-text);background:var(--c-surface)}
+.step b{min-width:16px;text-align:center}
+.hl{border-top:1px solid var(--c-border-soft)}
+.prow{display:flex;align-items:center;gap:10px;padding:8px 0}
+.stop{background:var(--c-surface);border:1px solid var(--c-border-soft);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.stop.sel{border-color:var(--c-action)}
+.stop .top{display:flex;gap:12px;align-items:flex-start}
+.stop .thumb{width:64px;height:64px;border-radius:12px;flex:none}
+.phone .stop .thumb{width:52px;height:52px}
+.stop .nm{font-size:16px;font-weight:600}
+.inout{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.io{background:var(--c-sunken);border-radius:10px;padding:7px 10px;display:flex;gap:8px;align-items:center}
+.io .d{display:flex;flex-direction:column;align-items:center;font-size:11px;color:var(--c-text-3);line-height:1.1}
+.io .d b{font-size:15px;color:var(--c-text)}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
+.hop{display:flex;align-items:center;gap:10px;padding:2px 4px 2px 34px;position:relative;font-size:13px;color:var(--c-text-2)}
+.hop::before{content:"";position:absolute;left:18px;top:-10px;bottom:-10px;border-left:2px dotted var(--c-border)}
+.hop svg{width:16px;height:16px;color:var(--c-text-2)}
+.flt{display:flex;flex-direction:column;gap:8px}
+.alogo{width:30px;height:30px;border-radius:6px;background:#fff;border:1px solid var(--c-border);display:grid;place-items:center;font-size:9px;font-weight:700;color:#073590;flex:none}
+.times{font-size:17px;font-weight:600}
+.switch{width:34px;height:20px;border-radius:999px;border:1.5px solid var(--c-text-3);position:relative;flex:none}
+.switch::after{content:"";position:absolute;top:2px;left:2px;width:13px;height:13px;border-radius:50%;background:var(--c-text-2)}
+.switch.on{background:var(--c-action);border-color:var(--c-action)}
+.switch.on::after{left:16px;background:#fff}
+.grp{border:1px solid var(--c-border-soft);border-radius:12px;background:var(--c-surface)}
+.grp .gh{display:flex;align-items:center;gap:10px;padding:11px 12px;font-weight:600}
+.grp .gh svg{width:16px;height:16px;color:var(--c-text-2)}
+.grp .gh .ch{color:var(--c-text-3)}
+.grp .ln{display:flex;align-items:center;gap:10px;padding:8px 12px;border-top:1px solid var(--c-border-soft);font-size:13px}
+.grp .ln .v{margin-left:auto;font-weight:600}
+.grp .ln .e{color:var(--c-action);font-size:12px;font-weight:600}
+.sumrule{border-top:2px solid var(--c-text);padding-top:8px;display:flex;align-items:baseline}
+.day{background:var(--c-surface);border:1px solid var(--c-border-soft);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.day .dh{display:flex;align-items:center;gap:8px}
+.day ol{margin:0;padding-left:18px;font-size:13px;color:var(--c-text-2);display:flex;flex-direction:column;gap:2px}
+.lock{width:16px;height:16px;color:var(--c-text-3)}
+.lock.on{color:var(--c-select-ink)}
+.idea{flex:none;width:150px;background:var(--c-surface);border:1px solid var(--c-border-soft);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+.idea .ph{height:64px;border-radius:0}
+.idea .ib{padding:8px;display:flex;flex-direction:column;gap:4px;font-size:12px}
+.ideas{display:flex;gap:8px;overflow:hidden}
+.toast{position:absolute;left:50%;transform:translateX(-50%);bottom:16px;background:var(--c-surface);box-shadow:var(--elev-2);border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:12px;font-size:13px;z-index:5;white-space:nowrap}
+.dock{background:var(--c-surface);border-top:1px solid var(--c-border-soft);padding:10px 14px;display:flex;align-items:center;gap:10px;box-shadow:var(--elev-2);position:relative;z-index:2}
+.nav{background:var(--c-surface);border-top:1px solid var(--c-border-soft);height:52px;display:grid;grid-template-columns:repeat(4,1fr);font-size:10px;color:var(--c-text-3);text-align:center;align-items:center;flex:none}
+.nav .on{color:var(--c-action);font-weight:600}
+.dot6{width:6px;height:6px;border-radius:50%;background:var(--c-ok);display:inline-block}
+.ann{position:absolute;z-index:6;background:#1f2a33;color:#fff;font-size:11px;font-weight:600;border-radius:999px;width:20px;height:20px;display:grid;place-items:center;box-shadow:0 0 0 2px #fff}
+
+@media (max-width:900px){.decisions{grid-template-columns:1fr}}
+@media (max-width:720px){.prow2{grid-template-columns:1fr}}
+@media (max-width:420px){.phone{transform:scale(.9);transform-origin:top left;margin-bottom:-64px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+<header class="intro">
+  <h1>Mark the trip page v4 board</h1>
+  <p class="lede">Every screen of the plan, drawn twice: on a phone at 390 px and on a desktop at 1440 px, in Carta's own colours, type and kit. The figures are your Austria trip from the screenshots, used as examples. Mark each panel, say what to change, and answer the four questions at the end. Nothing gets built before you've marked it.</p>
+  <div class="howto"><span><b>Keep</b> build it like this</span><span><b>Change</b> build it, with your note</span><span><b>Drop</b> leave it out</span></div>
+  <div class="tally" id="tally" aria-live="polite"></div>
+  <p class="save-state" id="saveState">Loading your marks</p>
+  <nav class="toc" aria-label="Panels" id="toc"></nav>
+</header>
+<div id="panels" style="display:flex;flex-direction:column;gap:28px"></div>
+
+<section style="display:flex;flex-direction:column;gap:16px">
+  <h2 id="decisions">Answer four questions</h2>
+  <p class="lede">These change the model or one of Carta's design rules, so they're yours to decide.</p>
+  <div class="decisions" id="decs"></div>
+</section>
+
+<section style="display:flex;flex-direction:column;gap:10px">
+  <h3>Anything else for the build</h3>
+  <textarea class="note" id="general" placeholder="Must-haves, things you dislike, a screen you want added"></textarea>
+</section>
+</div>
+
+<script>
+(function(){
+// ---------- icons (line, 1.5 stroke) ----------
+const I={
+ pin:'<path d="M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/>',
+ cal:'<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>',
+ user:'<circle cx="12" cy="8" r="3.5"/><path d="M5 20c1.2-3.6 4-5 7-5s5.8 1.4 7 5"/>',
+ home:'<path d="M4 11l8-6 8 6v9H4z"/><path d="M10 20v-5h4v5"/>',
+ life:'<circle cx="12" cy="12" r="8"/><path d="M8 13c1 1.5 2.4 2 4 2s3-.5 4-2"/><path d="M9 9.5h.01M15 9.5h.01"/>',
+ plane:'<path d="M3 13l18-7-5 14-4-6-6-1z"/>',
+ train:'<rect x="6" y="3" width="12" height="14" rx="3"/><path d="M6 11h12M9 21l1.5-4M15 21l-1.5-4"/>',
+ bed:'<path d="M3 18V8M3 14h18v4M21 14v-3a3 3 0 0 0-3-3h-7v6"/>',
+ food:'<path d="M7 3v8a2 2 0 0 0 2 2v8M5 3v5M9 3v5M16 21V3c2 0 3 2 3 6s-1 4-3 4"/>',
+ pen:'<path d="M4 20l4-1 11-11-3-3L5 16z"/>',
+ gear:'<circle cx="12" cy="12" r="3"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"/>',
+ share:'<path d="M12 15V4M8 8l4-4 4 4M5 13v6h14v-6"/>',
+ save:'<path d="M7 4h10v17l-5-4-5 4z"/>',
+ x:'<path d="M6 6l12 12M18 6L6 18"/>',
+ up:'<path d="M12 19V5M6 11l6-6 6 6"/>',
+ down:'<path d="M12 5v14M6 13l6 6 6-6"/>',
+ swap:'<path d="M7 7h12l-3-3M17 17H5l3 3"/>',
+ grip:'<circle cx="9" cy="7" r="1"/><circle cx="15" cy="7" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="17" r="1"/><circle cx="15" cy="17" r="1"/>',
+ lock:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+ undo:'<path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/>',
+ redo:'<path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/>',
+ spark:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6"/>',
+ ext:'<path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/>',
+ chev:'<path d="M6 9l6 6 6-6"/>',
+ chevr:'<path d="M9 6l6 6-6 6"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+ more:'<circle cx="6" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="18" cy="12" r="1"/>',
+ bus:'<rect x="5" y="4" width="14" height="13" rx="2"/><path d="M5 11h14M8 20v-3M16 20v-3"/>',
+ car:'<path d="M5 16V12l2-5h10l2 5v4z"/><path d="M5 12h14"/><circle cx="8" cy="16" r="1.5"/><circle cx="16" cy="16" r="1.5"/>',
+};
+const ic=(n,s='')=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" ${s}>${I[n]}</svg>`;
+const ann=(n,x,y)=>`<span class="ann" style="left:${x}px;top:${y}px" aria-hidden="true">${n}</span>`;
+
+// ---------- shared pieces ----------
+const topRow=(phone)=>`<div class="row"><span class="back">${ic('up','style="width:14px;height:14px;transform:rotate(-90deg)"')}All trips</span><span class="sp"></span>
+  <span class="ibtn">${ic('save')}</span><span class="ibtn">${ic('share')}</span><span class="ibtn">${ic('gear')}</span></div>`;
+const photos=(h)=>`<div class="row" style="gap:4px;height:${h}px"><div class="ph" style="flex:2;height:100%;border-radius:16px 0 0 16px"></div><div class="ph b" style="flex:1;height:100%;border-radius:0 16px 16px 0"></div></div>`;
+const chipRow=(on='')=>`<div class="chips">
+  ${[['places','pin','Hallstatt, Salzburg'],['dates','cal','Sat 21 Nov to Sat 28 Nov'],['people','user','2 adults'],['from','home','Brussels'],['life','life','Entire place, Easygoing']]
+   .map(([k,i,t])=>`<span class="chip ${on===k?'on':''}">${ic(i)}${t}</span>`).join('')}</div>`;
+const tabs=(on,phone)=>`<div class="tabs">${['Overview','Itinerary','Costs','Days'].map(t=>`<span class="${t===on?'on':''}">${t}</span>`).join('')}
+  ${phone?'':`<span class="tools"><span class="ibtn">${ic('undo')}</span><span class="ibtn" style="opacity:.45">${ic('redo')}</span></span>`}</div>`;
+const mapCard=(h)=>`<div class="map" style="height:${h}px"><svg class="route" viewBox="0 0 300 200" preserveAspectRatio="none"><path d="M40 40 C120 30 90 90 150 100 S230 120 260 90" fill="none" stroke="var(--c-map-line)" stroke-width="10"/><path d="M60 70 C110 80 140 120 180 130 S220 140 240 150" fill="none" stroke="var(--c-action)" stroke-width="3"/></svg>
+  <span class="pin" style="left:22%;top:26%"><i>2</i><span>Salzburg, 3 nights</span></span><span class="pin" style="left:62%;top:66%"><i>1</i><span>Hallstatt, 4 nights</span></span></div>`;
+const tilesHtml=(ed)=>`<div class="tiles">
+  ${[['plane','Flights','€494','Ryanair, KLM'],['train','Getting around','€61','Transfers, between stops'],['bed','Stay','€491','7 nights, €70 a night'],['food','Food and drink','€885','€126 a day']]
+   .map(([i,t,v,s])=>`<div class="tile"><span class="t">${ic(i)}${t}</span><b>${v}</b><small>${s}</small>${ed?ic('pen','class="ed"'):''}</div>`).join('')}</div>`;
+const band=(phone)=>`<div class="card col" style="gap:10px"><div class="row" style="align-items:flex-start"><div class="col" style="gap:0"><span class="lbl">Total for 2 people</span><span class="big">€1,931.20</span><span class="sub">€965.60 a person, €276 a day</span></div><span class="sp"></span><span class="seg"><span class="on">Group</span><span>Per person</span></span></div>${tilesHtml(true)}<span class="link">View breakdown</span></div>`;
+const budgetCard=`<div class="card budget col" style="gap:8px"><div class="row"><span class="lbl6">Your budget</span><span class="sp"></span><span class="link" style="font-size:12px">Edit budget</span></div>
+  <div class="row" style="align-items:baseline"><b style="font-size:20px">€1,931.20</b><span class="sp"></span><span class="cap">of €2,200.00</span></div>
+  <div class="thin"><i style="flex:88;background:var(--c-k1)"></i><i style="flex:12;background:var(--c-sunken)"></i></div>
+  <span class="sub"><span class="dot6"></span> €268.80 under your budget</span></div>`;
+const railTools=`<span class="btn pri" style="height:42px">${ic('spark')}Plan your days</span>`;
+const phoneFrame=(inner,{dock=true,overlay=''}={})=>`<div class="app phone"><div class="scr">${inner}</div>${overlay}${dock?`<div class="dock"><div class="col" style="gap:0"><span class="cap">Total for 2</span><b>€1,931.20</b></div><span class="sp"></span><span class="btn pri">Plan your days</span></div>`:''}<div class="nav"><span>Explore</span><span class="on">Plan</span><span>My trips</span><span>Account</span></div></div>`;
+const deskFrame=(inner,h)=>`<div class="app desk" style="${h?`height:${h}px`:''}"><div class="bar"><b>Carta</b><span>Explore</span><span class="on">Plan</span><span>My trips</span></div><div class="scr">${inner}</div></div>`;
+const head=(phone,{chipOn='',editing=false}={})=>`${topRow(phone)}${photos(phone?120:150)}
+  <div class="name ${editing?'editing':''}">Austria ${editing?'<span style="width:1.5px;height:22px;background:var(--c-text)"></span><span class="sp"></span><span class="cap">Enter to save</span>':ic('pen','class="pen"')}</div>${chipRow(chipOn)}`;
+
+// ---------- the panels ----------
+const P=[];
+
+P.push({id:'head',name:'1. The head: every chip edits its own fact',
+ what:'The name, the photos and five chips. Each chip opens its own editor where it stands: a popover under it on a desktop, a sheet on a phone. Prices settle in place. There is no Edit trip button any more.',
+ bullets:['Places opens the route in Itinerary; Dates, People and From open their own editor; Lifestyle opens the one Lifestyle panel','The name turns into a field when tapped: Enter saves, Escape restores','On a phone the chips scroll sideways; on a desktop they wrap'],
+ phone:phoneFrame(`${head(true,{chipOn:'dates'})}`,{dock:false,overlay:`<div class="scrim"></div><div class="sheet"><span class="grab"></span><h4>When are you travelling?${ic('x','class="x"')}</h4>
+   <div class="cal">${['M','T','W','T','F','S','S'].map(d=>`<span class="h">${d}</span>`).join('')}${calCells()}</div>
+   <div class="card" style="padding:10px;background:var(--c-sunken);border:0;font-size:13px">Your stops add up to 7 nights, and these dates hold 8.</div>
+   <div class="choice"><span class="opt on"><span class="r"></span>Add the night to Salzburg</span><span class="opt"><span class="r"></span>Add it to Hallstatt</span><span class="opt"><span class="r"></span>Keep 7 nights, end on Sat 28 Nov</span></div>
+   <span class="btn pri" style="height:44px">Save dates</span></div>`}),
+ desk:deskFrame(`${head(false,{chipOn:'dates'})}
+   <div class="pop" style="left:178px;top:318px;width:320px"><h4>When are you travelling?${ic('x','class="x"')}</h4>
+   <div class="cal">${['M','T','W','T','F','S','S'].map(d=>`<span class="h">${d}</span>`).join('')}${calCells()}</div>
+   <div class="choice"><span class="opt on"><span class="r"></span>Add the night to Salzburg</span><span class="opt"><span class="r"></span>Keep 7 nights</span></div>
+   <span class="btn pri">Save dates</span></div>
+   ${tabs('Overview')}<div style="height:180px"></div>`,720)});
+
+P.push({id:'chips2',name:'2. People, From and the name in place',
+ what:'The two other chip editors and the name field. People is the settings line\'s three rows with steppers; From is the town search Carta already uses.',
+ bullets:['People: Adults, Children (2 to 11), Babies (under 2), each with a stepper and nothing else','From: one search field, "Use my location", recent towns','The name field keeps the heading\'s size, with a brown edge while it is open'],
+ phone:phoneFrame(`${head(true,{chipOn:'people',editing:true})}`,{dock:false,overlay:`<div class="scrim"></div><div class="sheet"><span class="grab"></span><h4>Who is going?${ic('x','class="x"')}</h4>
+   ${[['Adults','',2],['Children','2 to 11',0],['Babies','Under 2',0]].map(([a,b,n])=>`<div class="prow hl"><div class="col" style="gap:0"><b style="font-weight:600">${a}</b>${b?`<span class="cap">${b}</span>`:''}</div><span class="sp"></span><span class="step"><span class="sb">−</span><b>${n}</b><span class="sb">+</span></span></div>`).join('')}
+   <span class="btn pri" style="height:44px">Save</span></div>`}),
+ desk:deskFrame(`${head(false,{chipOn:'from',editing:true})}
+   <div class="pop" style="left:500px;top:330px;width:300px"><h4>Where do you leave from?${ic('x','class="x"')}</h4>
+   <div style="border:1px solid var(--c-action);border-radius:10px;padding:9px 11px;font-size:14px">Brussels</div>
+   <span class="link">Use my location</span>
+   <div class="col" style="gap:0">${['Brussels, Belgium','Antwerp, Belgium','Ghent, Belgium'].map(t=>`<div class="prow hl" style="font-size:13px">${ic('pin','style="width:14px;height:14px;color:var(--c-text-2)"')}${t}</div>`).join('')}</div></div>
+   ${tabs('Overview')}<div style="height:150px"></div>`,600)});
+
+P.push({id:'overview',name:'3. Overview: the cost band, the rail and the dock',
+ what:'What the trip costs leads. Each tile carries a small pencil and opens its group in Costs. On a desktop a sticky rail holds the map, a budget card and Plan your days, the page\'s one primary. On a phone the map sits under the band and a dock keeps the total and Plan your days in reach.',
+ bullets:['Budget card: total against your budget as a thin ink bar, "€268.80 under your budget", Edit budget','No method lines: "0 of 3 prices are your own" goes','The total shows once per screen'],
+ phone:phoneFrame(`${head(true)}${tabs('Overview',true)}${band(true)}`),
+ desk:deskFrame(`${head(false)}${tabs('Overview')}<div class="body2"><div class="col" style="gap:12px">${band(false)}<div class="card col"><h3 style="font-size:16px">Before you go</h3>
+   ${[['Vignette for motorways','From €12.80 for 10 days, bought online'],['Winter tyres','Required in wintry conditions, 1 Nov to 15 Apr'],['FlixBus and Postbus','Cheap links between towns and into valleys']].map(([a,b])=>`<div class="prow hl"><div class="col" style="gap:0"><b style="font-weight:600;font-size:13px">${a}</b><span class="cap">${b}</span></div></div>`).join('')}<span class="link">Show all 8</span></div></div>
+   <div class="rail">${mapCard(220)}${budgetCard}${railTools}</div></div>`)});
+
+P.push({id:'itin',name:'4. Itinerary: the route you can shape',
+ what:'Getting there, each stop, the hop between stops and getting home, in the order you travel. Every part has its own change control.',
+ bullets:['A stop: check-in and check-out days (Airbnb), a nights stepper, Move up and Move down, Swap city, Remove (with Undo); a drag handle on a desktop only','The stay inside the stop: "I already have a place", and links to Booking, Airbnb and Google Hotels with dates and guests filled in','A hop: mode, time and price, with Change','"Add a stop here" between stops'],
+ phone:phoneFrame(`${tabs('Itinerary',true)}${flightCard(true)}${stopCard(true,'Hallstatt','4','Sat 21 Nov','Wed 25 Nov',true)}<div class="hop">${ic('train')}Train and bus, 2 h 10 min, €16 <span class="sp"></span><span class="link">Change</span></div>${stopCard(true,'Salzburg','3','Wed 25 Nov','Sat 28 Nov')}`),
+ desk:deskFrame(`${tabs('Itinerary')}<div class="body2"><div class="col" style="gap:10px">${flightCard(false)}${stopCard(false,'Hallstatt','4','Sat 21 Nov','Wed 25 Nov',true)}<div class="hop">${ic('train')}Train and bus, 2 h 10 min, €16.26 <span class="sp"></span><span class="link">Change</span></div>${stopCard(false,'Salzburg','3','Wed 25 Nov','Sat 28 Nov')}
+   <span class="btn" style="align-self:flex-start">${ic('plus')}Add a stop</span></div><div class="rail">${mapCard(260)}${budgetCard}${railTools}</div></div>`)});
+
+P.push({id:'nights',name:'5. Changing nights balances the trip',
+ what:'Adding a night in one stop asks, in one line under the stepper, where it comes from. Nothing moves until you pick.',
+ bullets:['"Move the end to Sun 29 Nov" or "Take a night from Salzburg"','The price change shows on each choice','On a phone it is the same line inside the card, not a dialog'],
+ phone:phoneFrame(`${tabs('Itinerary',true)}<div class="stop sel"><div class="top"><div class="ph thumb"></div><div class="col" style="flex:1"><span class="nm">Hallstatt</span><span class="step"><span class="sb">−</span><b>5</b><span class="sb">+</span><span class="cap">nights</span></span></div></div>
+   <div class="card" style="background:var(--c-sunken);border:0;padding:10px;display:flex;flex-direction:column;gap:8px"><span style="font-size:13px">One more night in Hallstatt. Where does it come from?</span>
+   <span class="opt on"><span class="r"></span><span class="col" style="gap:0">Move the end to Sun 29 Nov<span class="cap">+€170.40 for the trip</span></span></span>
+   <span class="opt"><span class="r"></span><span class="col" style="gap:0">Take a night from Salzburg<span class="cap">+€12.10 for the trip</span></span></span>
+   <div class="row"><span class="btn pri sm">Apply</span><span class="btn quiet sm">Keep 4 nights</span></div></div></div>`),
+ desk:deskFrame(`${tabs('Itinerary')}<div class="body2"><div class="col"><div class="stop sel"><div class="top"><div class="ph thumb"></div><div class="col" style="flex:1"><span class="nm">Hallstatt</span><span class="cap">Sat 21 Nov to Thu 26 Nov</span></div><span class="step"><span class="sb">−</span><b>5</b><span class="sb">+</span><span class="cap">nights</span></span></div>
+   <div class="row" style="background:var(--c-sunken);border-radius:10px;padding:10px;gap:10px;flex-wrap:wrap"><span style="font-size:13px">One more night in Hallstatt.</span><span class="opt on"><span class="r"></span>Move the end to Sun 29 Nov, +€170.40</span><span class="opt"><span class="r"></span>Take a night from Salzburg, +€12.10</span><span class="btn pri sm">Apply</span></div></div></div>
+   <div class="rail">${budgetCard}</div></div>`,330)});
+
+P.push({id:'flight',name:'6. Change flight',
+ what:'A sheet with the options the price data really holds. Each is Google Flights\' price with the airline, the times and when it was checked. Your own fare stays one row away.',
+ bullets:['Cheapest on your dates, best times, another airport near your first or last stop, home from a different airport, a day earlier or later','Each shows what it does to the trip total','An option the data does not hold is not shown, never guessed'],
+ phone:phoneFrame(`${tabs('Itinerary',true)}${flightCard(true)}`,{dock:false,overlay:`<div class="scrim"></div><div class="sheet" style="top:70px"><span class="grab"></span><h4>Change your flight${ic('x','class="x"')}</h4>${flightOpts(true)}</div>`}),
+ desk:deskFrame(`${tabs('Itinerary')}<div class="body2"><div class="col">${flightCard(false)}<div class="card col" style="gap:8px;box-shadow:var(--elev-2);border:0"><h4 style="margin:0;font-size:16px">Change your flight</h4>${flightOpts(false)}</div></div><div class="rail">${mapCard(220)}${budgetCard}</div></div>`)});
+
+P.push({id:'swap',name:'7. Swap a city, keep the dates',
+ what:'Swap city offers nearby places ranked like Explore, with what the trip would cost. Picking one keeps the nights and the dates and is one Undo step.',
+ bullets:['Five places within reach of the route, each with the Score, the day price and the new trip total','"Search all places" for anything else','Phone: a sheet. Desktop: a popover beside the stop'],
+ phone:phoneFrame(`${tabs('Itinerary',true)}${stopCard(true,'Hallstatt','4','Sat 21 Nov','Wed 25 Nov')}`,{dock:false,overlay:`<div class="scrim"></div><div class="sheet" style="top:120px"><span class="grab"></span><h4>Instead of Hallstatt${ic('x','class="x"')}</h4>${swapOpts()}<span class="link">Search all places</span></div>`}),
+ desk:deskFrame(`${tabs('Itinerary')}<div class="body2"><div class="col" style="position:relative">${stopCard(false,'Hallstatt','4','Sat 21 Nov','Wed 25 Nov')}<div class="pop" style="right:-40px;top:60px;width:360px"><h4>Instead of Hallstatt${ic('x','class="x"')}</h4>${swapOpts()}<span class="link">Search all places</span></div><div style="height:200px"></div></div><div class="rail">${mapCard(240)}</div></div>`)});
+
+P.push({id:'costs',name:'8. Costs: the receipt you edit line by line',
+ what:'Four groups that fold open, each line in cents with its own change control. Booking\'s receipt clarity, Carta\'s rules: one amount, no badges, no method lines.',
+ bullets:['Flights opens Change flight, a hop opens Change, a stay opens its stay, food opens Lifestyle','"I paid" on any line puts in your own price','The budget line closes the receipt, with Edit budget'],
+ phone:phoneFrame(`${tabs('Costs',true)}<div class="row"><span class="seg"><span class="on">Group</span><span>Per person</span></span></div>${receipt(true)}`),
+ desk:deskFrame(`${tabs('Costs')}<div class="body2"><div class="col">${receipt(false)}</div><div class="rail">${budgetCard}${railTools}</div></div>`)});
+
+P.push({id:'days',name:'9. Days: what each day holds, and Ideas',
+ what:'Each day shows its base, the first things planned, its cost a person and its pace. A lock keeps a day as it is when Carta plans the rest. Ideas holds places kept for this trip that are not on a day yet.',
+ bullets:['Pace per day: Relaxed, Balanced, Packed (question D3)','"Add to Day 2" on each idea; drag is a desktop shortcut','"Add a free day" between days; Best route asks first'],
+ phone:phoneFrame(`${tabs('Days',true)}<div class="row"><b>Ideas</b><span class="cap">4 not on a day</span></div><div class="ideas">${ideas()}</div>${dayCard(1,'Sat 21 Nov','Hallstatt',['Arrive, check in','Lakeside walk to the Marktplatz','Dinner in town'],'€118',true)}`),
+ desk:deskFrame(`${tabs('Days')}<div class="body2"><div class="col" style="gap:12px"><div class="row"><b>Ideas</b><span class="cap">4 not on a day</span></div><div class="ideas">${ideas()}</div>
+   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">${dayCard(1,'Sat 21 Nov','Hallstatt',['Arrive, check in','Lakeside walk','Dinner in town'],'€118',true)}${dayCard(2,'Sun 22 Nov','Hallstatt',['Salt mine tour','Skywalk viewpoint','Boat to Obertraun'],'€164')}</div>
+   <div class="row" style="justify-content:center"><span class="btn">${ic('plus')}Add a free day</span><span class="btn quiet">${ic('spark')}Plan the rest with Carta</span></div></div><div class="rail">${mapCard(240)}${railTools}</div></div>`)});
+
+P.push({id:'share',name:'10. Share, apart from the trip\'s settings',
+ what:'Who can see the trip moves to a Share sheet with Copy link and the exports. Trip settings keeps only what the trip is made of.',
+ bullets:['Share: Only me, Friends, Anyone with the link (kit Segmented), Copy link, PDF, calendar, Google Maps','Settings: name, what matters most, sleep and spend, budget, as label-over-value rows','Save, Share and Settings sit in the top row'],
+ phone:phoneFrame(`${head(true)}`,{dock:false,overlay:`<div class="scrim"></div><div class="sheet"><span class="grab"></span><h4>Share this trip${ic('x','class="x"')}</h4><span class="lbl6">Who can see it</span><span class="seg" style="align-self:flex-start"><span class="on">Only me</span><span>Friends</span><span>Link</span></span>
+   <span class="btn" style="height:44px">${ic('link')}Copy link</span><div class="hl"></div>${['Download PDF','Add to calendar','Open in Google Maps'].map(t=>`<div class="prow" style="font-size:14px">${t}<span class="sp"></span>${ic('chevr','style="width:16px;height:16px;color:var(--c-text-3)"')}</div>`).join('')}</div>`}),
+ desk:deskFrame(`${head(false)}<div class="pop" style="right:40px;top:58px;width:320px"><h4>Share this trip${ic('x','class="x"')}</h4><span class="lbl6">Who can see it</span><span class="seg" style="align-self:flex-start"><span class="on">Only me</span><span>Friends</span><span>Anyone with the link</span></span>
+   <span class="btn">${ic('link')}Copy link</span><div class="hl"></div>${['Download PDF','Add to calendar','Open in Google Maps'].map(t=>`<div class="prow" style="font-size:13px">${t}<span class="sp"></span>${ic('chevr','style="width:16px;height:16px;color:var(--c-text-3)"')}</div>`).join('')}</div>${tabs('Overview')}<div style="height:120px"></div>`,600)});
+
+P.push({id:'undo',name:'11. Every change can be undone',
+ what:'A removed stop, a swapped city or a changed flight runs at once, and a message offers Undo for six seconds. Question D1 decides whether Undo and Redo also stay beside the tabs on a desktop.',
+ bullets:['Toast: "Removed Salzburg" with Undo, above the bottom nav on a phone, bottom centre on a desktop','The button that removed it is red; there is no confirm dialog','With D1 yes: Undo and Redo icons at the end of the tab row (drawn in panel 1)'],
+ phone:phoneFrame(`${tabs('Itinerary',true)}${stopCard(true,'Hallstatt','7','Sat 21 Nov','Sat 28 Nov')}`,{dock:false,overlay:`<div class="toast" style="bottom:64px">Removed Salzburg<span class="btn sm">Undo</span></div>`}),
+ desk:deskFrame(`${tabs('Itinerary')}<div class="body2"><div class="col">${stopCard(false,'Hallstatt','7','Sat 21 Nov','Sat 28 Nov')}</div><div class="rail">${mapCard(180)}</div></div><div class="toast">Removed Salzburg. The trip is €58.40 less.<span class="btn sm">Undo</span></div>`,360)});
+
+function calCells(){let s='';const lead=5;for(let i=0;i<lead;i++)s+=`<span class="m">${27+i>30?27+i-30:27+i}</span>`;
+ for(let d=1;d<=30;d++){let c='';if(d===21)c='a';else if(d===29)c='z';else if(d>21&&d<29)c='in';s+=`<span class="${c}">${d}</span>`}return s}
+function flightCard(phone){return `<div class="card flt"><div class="row"><b style="font-size:15px">Getting there</b><span class="sp"></span><span class="link">Change flight</span></div>
+ <div class="row" style="gap:10px;align-items:flex-start"><span class="alogo">RYR</span><div class="col" style="gap:0;flex:1"><span class="cap">Sat 21 Nov</span><span class="times">06:30 to 13:15</span><span class="sub">Ryanair, 1 stop</span></div><div class="col" style="gap:0;align-items:flex-end"><b>€96.00</b><span class="cap">a person</span></div></div>
+ <span class="cap">Google Flights, checked 28 Oct. Prices may have changed.</span></div>`}
+function stopCard(phone,nm,n,a,b,stay){return `<div class="stop"><div class="top">${phone?'':`<span style="color:var(--c-text-3);align-self:center">${ic('grip','style="width:16px;height:16px"')}</span>`}<div class="ph thumb ${nm==='Salzburg'?'b':''}"></div>
+ <div class="col" style="flex:1;gap:6px"><div class="row"><span class="nm">${nm}</span><span class="sp"></span><span class="step"><span class="sb">−</span><b>${n}</b><span class="sb">+</span></span></div>
+ <div class="inout"><div class="io"><span class="d">${a.split(' ')[0]}<b>${a.split(' ')[1]}</b></span><span class="col" style="gap:0;font-size:12px"><b style="font-weight:600">Arrive</b><span class="cap">${a.split(' ')[2]}</span></span></div><div class="io"><span class="d">${b.split(' ')[0]}<b>${b.split(' ')[1]}</b></span><span class="col" style="gap:0;font-size:12px"><b style="font-weight:600">Leave</b><span class="cap">${b.split(' ')[2]}</span></span></div></div></div></div>
+ ${stay?`<div class="row hl" style="padding-top:8px;gap:10px;flex-wrap:wrap"><span class="row" style="gap:6px;font-size:13px">${ic('bed','style="width:16px;height:16px;color:var(--c-text-2)"')}Entire place, €70 a night</span><span class="sp"></span><span class="row" style="gap:6px;font-size:12px;color:var(--c-text-2)"><span class="switch"></span>I already have a place</span></div>
+ <div class="row" style="gap:12px;flex-wrap:wrap;font-size:12px"><span class="link" style="font-size:12px">Booking ${ic('ext','style="width:12px;height:12px"')}</span><span class="link" style="font-size:12px">Airbnb ${ic('ext','style="width:12px;height:12px"')}</span><span class="link" style="font-size:12px">Google Hotels ${ic('ext','style="width:12px;height:12px"')}</span><span class="cap">Dates and 2 guests filled in</span></div>`:''}
+ <div class="acts"><span class="btn sm">${ic('up')}${phone?'':'Move up'}</span><span class="btn sm">${ic('down')}${phone?'':'Move down'}</span><span class="btn sm">${ic('swap')}Swap city</span><span class="sp"></span><span class="btn sm" style="color:var(--c-danger)">${ic('x')}Remove</span></div></div>`}
+function flightOpts(phone){return [['Cheapest on your dates','RYR','Ryanair, 06:30 to 13:15, 1 stop','Now',true],['Best times','KLM','KLM, 09:10 to 12:40, direct','+€90.00'],['Fly into Munich instead','LH','Lufthansa, 07:05 to 08:20, then train 2 h 30 min','+€38.00'],['Home from Vienna','OS','Austrian, Sat 28 Nov 18:20, open jaw','+€24.00'],['A day earlier, Fri 20 Nov','RYR','Ryanair, 06:30 to 13:15','−€22.00']]
+ .map(([h,c,s,d,on])=>`<div class="opt ${on?'on':''}" style="align-items:flex-start"><span class="alogo">${c}</span><span class="col" style="gap:0;flex:1"><b style="font-weight:600">${h}</b><span class="cap">${s}</span></span><b style="font-size:13px">${d}</b></div>`).join('')+`<span class="cap">Google Flights, checked 28 Oct. Example figures.</span><span class="link">Add your own fare</span>`}
+function swapOpts(){return [['Bad Ischl','4.6','€61 a day','−€42.00','b'],['St. Wolfgang','4.5','€74 a day','+€16.00','c'],['Gosau','4.4','€58 a day','−€54.00',''],['Obertraun','4.3','€55 a day','−€66.00','b']]
+ .map(([n,s,d,t,c])=>`<div class="row hl" style="padding:8px 0;gap:10px"><div class="ph ${c}" style="width:44px;height:44px;border-radius:10px;flex:none"></div><div class="col" style="gap:0;flex:1"><b style="font-weight:600;font-size:14px">${n}</b><span class="cap"><span style="color:var(--c-select-ink)">★</span> ${s}, ${d}</span></div><div class="col" style="gap:0;align-items:flex-end"><b style="font-size:13px">${t}</b><span class="cap">for the trip</span></div></div>`).join('')}
+function receipt(phone){const g=(i,t,v,lines,open)=>`<div class="grp"><div class="gh">${ic(i)}${t}<span class="sp"></span>${v}<span class="ch">${ic(open?'chev':'chevr','style="width:16px;height:16px"')}</span></div>${open?lines.map(([a,b,e])=>`<div class="ln"><span class="col" style="gap:0">${a}${b?`<span class="cap">${b}</span>`:''}</span><span class="v">${e}</span><span class="e">Change</span></div>`).join(''):''}</div>`;
+ return `<div class="col" style="gap:8px"><div class="thin"><i style="flex:494;background:var(--c-k1)"></i><i style="flex:61;background:var(--c-k2)"></i><i style="flex:491;background:var(--c-k3)"></i><i style="flex:885;background:var(--c-k4)"></i></div>
+ ${g('plane','Flights','€494.00',[['Getting there','Ryanair, Sat 21 Nov','€232.00'],['Getting home','KLM, Sat 28 Nov','€262.00']],true)}
+ ${g('train','Getting around','€60.94',[['Airport transfers','Salzburg airport','€44.68'],['Between your stops','Train and bus','€16.26']],!phone)}
+ ${g('bed','Stay','€491.30',[['Hallstatt, 4 nights','Entire place','€280.80'],['Salzburg, 3 nights','Entire place','€210.50']],!phone)}
+ ${g('food','Food and drink','€884.96',[],false)}
+ <div class="sumrule"><b>Total for 2 people</b><span class="sp"></span><b style="font-size:18px">€1,931.20</b></div>
+ <div class="row" style="background:var(--c-sunken);border-radius:10px;padding:9px 12px;font-size:13px"><span class="dot6"></span>&nbsp;€268.80 under your budget of €2,200.00<span class="sp"></span><span class="link" style="font-size:12px">Edit budget</span></div></div>`}
+function ideas(){return [['Salt mine tour','Hallstatt',''],['Mirabell Gardens','Salzburg','b'],['Five Fingers','Obertraun','c'],['Café Tomaselli','Salzburg','b']].map(([n,w,c])=>`<div class="idea"><div class="ph ${c}"></div><div class="ib"><b style="font-weight:600">${n}</b><span class="cap">${w}</span><span class="link" style="font-size:12px">Add to Day 2</span></div></div>`).join('')}
+function dayCard(n,d,base,items,cost,locked){return `<div class="day"><div class="dh"><b>Day ${n}</b><span class="cap">${d}, ${base}</span><span class="sp"></span>${ic('lock',`class="lock ${locked?'on':''}"`)}</div>
+ <ol>${items.map(x=>`<li>${x}</li>`).join('')}</ol><div class="row"><span class="seg"><span>Relaxed</span><span class="on">Balanced</span><span>Packed</span></span><span class="sp"></span><span class="cap">${cost} a person</span></div>
+ <div class="row"><span class="btn sm">Open day</span><span class="btn quiet sm">${ic('spark')}Plan this day</span></div></div>`}
+
+// ---------- decisions ----------
+const D=[
+ {id:'D1',name:'D1. Undo and Redo',what:'Carta\'s rule today is the six-second Undo message. Mindtrip also keeps Undo and Redo beside the tabs, for every change.',opts:['Both: toast and buttons','Toast only, as now']},
+ {id:'D2',name:'D2. A stay type per stop',what:'An entire place in Salzburg, a B&B in Hallstatt. This changes the price engine (stay.js reads a type per stop, falling back to your Lifestyle).',opts:['Yes, per stop','No, one for the trip']},
+ {id:'D3',name:'D3. Pace per day',what:'Today pace is one setting for the whole trip. Per day lets a travel day be Relaxed and a city day Packed.',opts:['Per day','One for the trip']},
+ {id:'D4',name:'D4. Day trips from a base',what:'Salzburg to Berchtesgaden and back, without a night there. It fits Batch B or gets its own batch later.',opts:['In Batch B','Its own batch later']},
+];
+
+// ---------- render ----------
+const bar=(id,opts)=>`<div class="verdict" data-id="${id}">${opts?opts.map((o,i)=>`<button class="vbtn" type="button" data-v="o${i}" aria-pressed="false">${o}</button>`).join(''):
+ `<button class="vbtn" type="button" data-v="keep" aria-pressed="false">Keep</button><button class="vbtn" type="button" data-v="change" aria-pressed="false">Change</button><button class="vbtn" type="button" data-v="drop" aria-pressed="false">Drop</button>`}
+ <input class="note" type="text" id="note-${id}" placeholder="${opts?'Why, or another answer':'What to change, or why'}" aria-label="Note for ${id}"></div>`;
+document.getElementById('toc').innerHTML=P.map(p=>`<a href="#${p.id}">${p.name.split('. ')[0]}. ${p.name.split('. ')[1].split(':')[0]}</a>`).join('')+'<a href="#decisions">Questions</a>';
+document.getElementById('panels').innerHTML=P.map(p=>`<article class="panel" id="${p.id}"><div class="p-head"><h2>${p.name}</h2><p class="what">${p.what}</p></div>
+ <div class="views"><div style="min-width:0"><div class="vlabel">Desktop, 1440 px (scaled to fit)</div><div class="dfit">${p.desk}</div></div><div class="prow2"><div><div class="vlabel">Phone, 390 px</div>${p.phone}</div><div><div class="vlabel">What changes</div><ul>${p.bullets.map(b=>`<li>${b}</li>`).join('')}</ul></div></div></div>${bar(p.id)}</article>`).join('');
+document.getElementById('decs').innerHTML=D.map(d=>`<article class="dec"><div class="p-head"><h3>${d.name}</h3><p class="what">${d.what}</p></div>${bar(d.id,d.opts)}</article>`).join('');
+
+// ---------- fit each desktop frame to its column (never below half size; narrower columns scroll) ----------
+function fit(){document.querySelectorAll('.dfit').forEach(w=>{const d=w.querySelector('.desk');if(!d)return;const z=Math.max(.5,Math.min(1,w.clientWidth/962));d.style.zoom=z})}
+fit();addEventListener('resize',fit);
+
+// ---------- marks: db when available, browser storage as fallback ----------
+let db=null;const saveState=document.getElementById('saveState');
+const local={get(k){try{return JSON.parse(localStorage.getItem('tp4:'+k)||'null')}catch(e){return null}},set(k,v){try{localStorage.setItem('tp4:'+k,JSON.stringify(v))}catch(e){}}};
+const marks={};const ALL=[...P.map(p=>p.id),...D.map(d=>d.id)];
+function paint(id){const b=document.querySelector(`.verdict[data-id="${id}"]`);if(!b)return;const m=marks[id]||{};
+ b.querySelectorAll('.vbtn').forEach(x=>x.setAttribute('aria-pressed',m.verdict===x.dataset.v));const inp=b.querySelector('.note');if(document.activeElement!==inp)inp.value=m.note||''}
+function tally(){const c={keep:0,change:0,drop:0};let ans=0;P.forEach(p=>{const v=(marks[p.id]||{}).verdict;if(c[v]!==undefined)c[v]++});D.forEach(d=>{if((marks[d.id]||{}).verdict)ans++});
+ const open=P.length-c.keep-c.change-c.drop;
+ document.getElementById('tally').innerHTML=`<span class="pillc">Keep <b>${c.keep}</b></span><span class="pillc">Change <b>${c.change}</b></span><span class="pillc">Drop <b>${c.drop}</b></span><span class="pillc">Not marked <b>${open}</b></span><span class="pillc">Questions answered <b>${ans} of ${D.length}</b></span>`}
+const timers={};
+function save(id){const m=marks[id]||{};
+ if(db){clearTimeout(timers[id]);timers[id]=setTimeout(()=>{db.doc('marks/'+id).set({verdict:m.verdict||null,note:m.note||'',at:new Date().toISOString()})
+  .then(()=>{saveState.textContent='Saved. Claude can read these marks.'}).catch(e=>{saveState.textContent='Could not save ('+((e&&e.code)||'error')+'). Your marks are kept in this browser.';local.set('marks',marks)})},400)}
+ else local.set('marks',marks);tally()}
+document.addEventListener('click',e=>{const b=e.target.closest('.vbtn');if(!b)return;const id=b.closest('.verdict').dataset.id;const m=marks[id]=marks[id]||{};
+ m.verdict=m.verdict===b.dataset.v?null:b.dataset.v;paint(id);save(id)});
+document.addEventListener('input',e=>{if(e.target.matches('.verdict .note')){const id=e.target.closest('.verdict').dataset.id;(marks[id]=marks[id]||{}).note=e.target.value;save(id)}});
+const gen=document.getElementById('general');let gt;
+gen.addEventListener('input',()=>{clearTimeout(gt);gt=setTimeout(()=>{if(db)db.doc('notes/general').set({text:gen.value,at:new Date().toISOString()}).catch(()=>local.set('general',gen.value));else local.set('general',gen.value)},500)});
+
+const lm=local.get('marks');if(lm)Object.assign(marks,lm);const lg=local.get('general');if(lg)gen.value=lg;
+ALL.forEach(paint);tally();saveState.textContent='Your marks are kept in this browser until the page connects.';
+if(window.claude&&window.claude.use){claude.use('db').then(d=>{
+ if(!d){saveState.textContent='Signed out: marks stay in this browser only. Sign in on claude.ai so Claude can read them.';return}
+ db=d;saveState.textContent='Connected. Marks save as you make them.';
+ db.collection('marks').onSnapshot(s=>{s.docs.forEach(doc=>{const v=doc.data();if(v)marks[doc.id]={verdict:v.verdict||null,note:v.note||''}});ALL.forEach(paint);tally()},()=>{});
+ db.doc('notes/general').onSnapshot(s=>{const v=s.data&&s.data();if(v&&document.activeElement!==gen)gen.value=v.text||''},()=>{});
+})}
+})();
+</script>

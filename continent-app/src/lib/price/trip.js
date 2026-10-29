@@ -229,6 +229,7 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
         file, live: live?.get?.(`${from}-${to}-${date}`) || null, dir,
         airport: dir === 'out' ? to : from, date, hours: hours[dir] || 'any',
         rank: state?.flightRank || 'price',
+        prefs: state?.flightPrefs || null,
       });
       // T713: babies fly on a lap for a fee a leg (party.baby_lap_fee_leg),
       // the same fee Explore's way there adds (party.js flightPerSeat).
@@ -284,6 +285,37 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
       own: Boolean(chosen.own),
     });
   }
+
+  // ---- Day trips from a base (T843, owner D4 2026-10-29) ----------------
+  // A day out from a stop and back the same evening, with no night there:
+  // the way there and back by the hop engine's own options (the same mode
+  // pick as a hop between stops), for the party. A place with no ground
+  // route prices nothing and says so (no_road).
+  const dayTrips = [];
+  stopDetails.forEach((s, i) => {
+    for (const dt of s.dayTrips || []) {
+      const to = destinations[dt.destinationId];
+      if (!s.dest || !to) continue;
+      const opts = legTransportOptions(s.dest, to, groupSize, { carModel, countryInsights, hasCar: tripHasCar });
+      const base = { stopIndex: i, destinationId: dt.destinationId, day: dt.day || 1, dest: to };
+      if (!opts || opts.no_road || !opts.recommended) {
+        dayTrips.push({ ...base, no_road: true, mode: null, hours: null, eur_total: 0 });
+        continue;
+      }
+      const modes = scaleModes(opts.modes);
+      const mode = (modes[dt.mode] && dt.mode) || pickLegMode(opts, { transportPref, hasCar: tripHasCar }) || opts.recommended;
+      const chosen = modes[mode] || modes[opts.recommended];
+      dayTrips.push({
+        ...base,
+        no_road: false,
+        mode,
+        road_km: opts.road_km ?? null,
+        hours: chosen?.hours ?? null,
+        // There and back.
+        eur_total: round2(2 * (chosen?.eur_total || 0)),
+      });
+    }
+  });
 
   // ---- Airport (or arrival point) to the first bed, and back -------------
   let anchorLegs = { in: null, out: null, anchor: null };
@@ -430,10 +462,13 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
   // engine row Explore and the destination page show, times the seats and
   // the nights. A bed the traveller has booked and typed in replaces Carta's
   // estimate for that stay; the days there stay Carta's.
+  // A stop may sleep its own way (T842, owner D2 2026-10-29): its stayTier
+  // prices that stop's beds; every other stop keeps the trip's.
   const request = tripRequest(state);
   const stayCosts = stopDetails.map((s) => {
     if (!s.dest) return null;
-    const est = quoteStay(s.dest, s.nights, s.arriveDate, request, destinations);
+    const req = s.stayTier ? { ...request, stay: s.stayTier } : request;
+    const est = quoteStay(s.dest, s.nights, s.arriveDate, req, destinations);
     const own = paidEur(ownStays?.[s.destinationId]);
     if (!est || !own) return est ? { ...est, ownAccom: false } : est;
     return {
@@ -460,6 +495,7 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
     drive: round2((ownOut ? 0 : (driveLegs?.out?.ground_total || 0)) + (ownBack ? 0 : (driveLegs?.home?.ground_total || 0))),
     between: round2(legs.reduce((n, l) => n + (l?.ground_total || 0), 0)),
     car: round2((carRental?.eur_total || 0) + (vignettes?.eur_total || 0)),
+    daytrips: round2(dayTrips.reduce((n, d) => n + (d.eur_total || 0), 0)),
     beds: round2(stayCosts.reduce((n, s) => n + (s?.accomTotal || 0), 0)),
     days: round2(stayCosts.reduce((n, s) => n + (s?.groundTotal || 0), 0)),
   };
@@ -478,7 +514,7 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
   return {
     stopDetails, plannedNights, windowNights: tripDaysBetween(state?.tripStart, state?.tripEnd),
     routedFlight, flight, cartaFlight, legs, anchorLegs, flightTransfer, driveLegs, carRental, vignettes,
-    stayCosts, tripHasCar, groupSize, parts, grandTotal, travelSplit,
+    stayCosts, tripHasCar, groupSize, parts, grandTotal, travelSplit, dayTrips,
     party: { adults, children, babies, head: groupSize, seats, weight },
     request,
     perPerson: round2(grandTotal / groupSize),

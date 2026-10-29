@@ -118,6 +118,19 @@
 
 .tpg-tabs { scroll-margin-top: var(--space-4); }
 .tpg-tabs .ui-tabs { overflow-x: auto; scrollbar-width: none; }
+/* T835: Undo and Redo at the end of the tab row from 1024 px, on the tabs'
+   own hairline. Below that they are in the top row's More menu. */
+.tpg-tabs:has(.tpg-history) { display: flex; align-items: flex-end; gap: var(--space-3); }
+.tpg-tabs:has(.tpg-history) .ui-tabs { flex: 1; min-width: 0; }
+.tpg-history { display: flex; gap: var(--space-1); flex: none; padding-bottom: var(--space-1); }
+
+/* T835: the Undo message clears the dock (a tap high, with its padding and
+   its rule) under 1024 px, where the dock sits over the bottom nav. */
+@media (max-width: 1023px) {
+  body:has(.tpg-dock) .bottom-slot {
+    bottom: calc(var(--bottom-nav-h) + var(--tap) + 2 * var(--space-2) + 1px + var(--space-3));
+  }
+}
 
 /* ---- The body: one column, then the side column from 1024 px ---- */
 .tpg-body { display: flex; flex-direction: column; gap: var(--space-5); min-width: 0; }
@@ -160,7 +173,7 @@
   font-variant-numeric: tabular-nums;
 }
 .tpg-band-sub { font-size: var(--text-label); color: var(--text-2); font-variant-numeric: tabular-nums; }
-.tpg-band-more.btn { align-self: flex-start; margin-left: calc(-1 * var(--space-2)); }
+.tpg-band-acts { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); margin-left: calc(-1 * var(--space-2)); }
 
 /* The four tiles (concept C): 4 across, 2 by 2 on a phone. */
 .ct {
@@ -179,7 +192,7 @@
   align-items: flex-start;
   gap: 2px;
   width: 100%;
-  min-height: 96px;
+  min-height: 84px;
   padding: var(--space-3);
   border: 1px solid var(--border-soft);
   border-radius: var(--radius-control);
@@ -195,13 +208,8 @@ button.ct-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: 2
 .ct-label svg { flex: none; color: var(--text-3); }
 .ct-fig { margin-top: var(--space-1); font-size: var(--text-lead); font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
 .ct-none { font-size: var(--text-label); font-weight: 500; color: var(--text-3); }
-.ct-sub {
-  font-size: var(--text-caption);
-  color: var(--text-2);
-  line-height: 1.35;
-  overflow-wrap: anywhere;
-  font-variant-numeric: tabular-nums;
-}
+/* T839: the flights tile shows the airlines' marks instead of a sub-line. */
+.ct-marks { display: inline-flex; align-items: center; gap: var(--space-1); margin-top: var(--space-1); }
 .ct-tile.is-empty .ct-label svg { opacity: 0.6; }
 
 /* ---- The route: one grammar for every row ---- */
@@ -335,21 +343,7 @@ button.ct-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: 2
 .tpg-dock-lbl { font-size: var(--text-caption); color: var(--text-2); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--border); }
 .tpg-dock-go.btn { flex: none; }
 
-/* ---- T830: Edit trip in the same page ----
-   The Editing bar sits where the tabs were, on the same hairline; the
-   editor's blocks take the body's column without a gutter of their own (the
-   page has one); the side column holds the map and the total. */
-.tpg-editbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  min-height: 48px;
-  border-bottom: 1px solid var(--border);
-  scroll-margin-top: var(--space-4);
-}
-.tpg-editbar-lbl { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--text-body); font-weight: 600; color: var(--text); }
-.tpg-editbar-lbl svg { color: var(--action); }
+/* ---- The name as a field (T830; T836 renames in place) ---- */
 .tpg-name-input {
   width: 100%;
   min-height: var(--tap);
@@ -362,22 +356,317 @@ button.ct-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: 2
   font-weight: 700;
 }
 .tpg-name-input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-color: var(--action); }
-.tpg-side-total {
+/* T838: the old editor's between-stops and cheaper-order blocks under the route. */
+.itin-route-extra { display: flex; flex-direction: column; gap: var(--space-3); margin-top: var(--space-4); }
+.itin-route-extra .trip-block { margin: 0; }
+
+/* ---- T836: the name in place and the chips' own editors ----
+   The name keeps the heading's size; its pencil is a plain icon button on
+   the name's line. An editor is a column of its controls with the one
+   primary under the last; the balance rows sit under a short question. */
+/* A chip's editor opens with the chip near the top, so it has room under it. */
+.tpg-chip { scroll-margin-top: calc(var(--space-8) + var(--space-5)); }
+.tpg-name-row { display: flex; align-items: center; gap: var(--space-1); min-width: 0; }
+.tpg-name-row .tpg-name { min-width: 0; }
+.tpg-rename { flex: none; }
+.tpe { display: flex; flex-direction: column; gap: var(--space-4); }
+.tpe .pf-from { max-height: min(52vh, 420px); overflow: auto; }
+.tpb { display: flex; flex-direction: column; gap: var(--space-2); }
+.tpb-q { margin: 0; font-size: var(--text-body); color: var(--text-2); line-height: var(--leading-body); }
+
+/* ---- T837: a stop's own controls on the route ----
+   The stop is one bordered object: its head (grip on a pointer, the stop,
+   the nights stepper), the arrive and leave tiles, the bed, then Move up,
+   Move down and Remove. Nothing here needs a drag: the grip only repeats
+   Move up and Move down for a mouse. */
+.itin-stopcard.is-editable {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding: var(--space-4);
+  border: 1px solid var(--border);
   border-radius: var(--radius-card);
   background: var(--surface);
-  border: 1px solid var(--border-soft);
+  overflow: hidden;
 }
-.tpg.is-edit .tpg-main > .trip-block,
-.tpg.is-edit .tpg-main > .trip-nights-summary,
-.tpg.is-edit .tpg-main > .trip-stops,
-.tpg.is-edit .tpg-main > * { padding-inline: 0; margin-inline: 0; }
-.tpg.is-edit .tpg-main .trip-block:first-child { margin-top: 0; }
-.tpg.is-edit .tpg-main .trip-suggest-row { margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter); scroll-padding-inline: var(--gutter); scroll-snap-type: x mandatory; }
-@media (min-width: 1024px) {
-  .tpg.is-edit .tpg-main .trip-suggest-row { margin-inline: 0; padding-inline: 0; scroll-padding-inline: 0; }
+.itin-stopcard.is-editable.active { border-color: var(--select-border); }
+.itin-stopcard.is-dragging { opacity: 0.5; }
+/* The stop keeps room for its name: on a phone the stepper wraps under it. */
+.itin-stopcard.is-editable .itin-stop { border: 0; background: none; flex: 1 1 200px; min-width: 0; padding: 0; }
+.itin-stop-top > .itin-nights { margin-left: auto; }
+.itin-stop-top {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
 }
-.tpg.is-edit .tpg-main .trip-suggest-row > * { scroll-snap-align: start; }
+.itin-grip { display: none; }
+@media (hover: hover) and (pointer: fine) {
+  .itin-grip { display: grid; place-items: center; width: 20px; color: var(--text-3); cursor: grab; }
+  .itin-grip:active { cursor: grabbing; }
+}
+.itin-nights { display: inline-flex; align-items: center; gap: var(--space-2); flex: none; }
+.itin-nights-lbl { font-size: var(--text-label); color: var(--text-2); }
+.itin-ios {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  padding: 0 var(--space-4) var(--space-3);
+}
+.itin-io {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-control);
+  background: var(--surface-sunken);
+}
+.itin-io-day { display: flex; flex-direction: column; align-items: center; line-height: 1.1; font-size: var(--text-micro); color: var(--text-2); }
+.itin-io-day b { font-size: var(--text-lead); color: var(--text); font-variant-numeric: tabular-nums; }
+.itin-io-text { display: flex; flex-direction: column; min-width: 0; font-size: var(--text-caption); color: var(--text-2); }
+.itin-io-text b { font-size: var(--text-label); font-weight: 600; color: var(--text); }
+.itin-balance {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3);
+  border-radius: var(--radius-control);
+  background: var(--surface-sunken);
+}
+.itin-balance-acts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.itin-stop-acts {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--border-soft);
+}
+.itin-stop-acts-gap { flex: 1; }
+.itin-move.is-up svg { transform: rotate(180deg); }
+.itin-stop-remove.btn { color: var(--danger); }
+.itin-add { display: flex; flex-direction: column; gap: var(--space-3); }
+.itin-add-body { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-card); background: var(--surface); }
+.itin-add-body > .btn { align-self: flex-start; }
+.itin-add > .btn { align-self: flex-start; }
+/* The route named by its airports (owner board panel 8). */
+.rcodes { display: inline-flex; align-items: center; gap: var(--space-1); font-weight: 600; letter-spacing: 0; }
+.rcodes svg { color: var(--text-2); }
+@media (max-width: 480px) {
+  .itin-stop-acts .btn { padding-inline: var(--space-2); }
+}
+
+/* ---- T840: Change flight ----
+   The flight row's head carries the route and one secondary Change flight.
+   The sheet: the way, the trip's preferences, then the day's flights as
+   radio rows (airline mark, times, stops and duration, what the party pays
+   and what it does to the total). The selected flight is the one selected
+   state: the tint and a brown edge. */
+.itin-end-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-2); }
+.tpf { display: flex; flex-direction: column; gap: var(--space-4); }
+.tpf-prefs { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-3); border-radius: var(--radius-control); background: var(--surface-sunken); }
+.tpf-h { margin: 0; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.tpf-hours { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+.tpf-way { margin: 0; font-size: var(--text-lead); color: var(--text); }
+.tpf-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.tpf-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: var(--tap);
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
+}
+@media (hover: hover) { .tpf-row:hover { background: var(--surface-hover); } }
+.tpf-row:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.tpf-row.is-on { background: var(--select-bg); border-color: var(--select-border); }
+.tpf-main { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.tpf-times { font-size: var(--text-lead); font-weight: 600; font-variant-numeric: tabular-nums; }
+.tpf-sub { font-size: var(--text-caption); color: var(--text-2); }
+.tpf-fig { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.tpf-delta { font-size: var(--text-caption); font-weight: 400; color: var(--text-2); white-space: nowrap; }
+.tpf-row.is-on .tpf-delta { color: var(--select-ink); }
+.tpf-note { margin: 0; font-size: var(--text-body); color: var(--text-2); }
+.tpf-own.btn { align-self: flex-start; }
+@media (prefers-reduced-motion: reduce) { .tpf-row { transition: none; } }
+
+/* ---- T841: Swap city ----
+   Two doors as one Segmented, then the search field or the three
+   questions (chips, then two short Segmented controls), then the places as
+   rows: a square photo, the name, where it is and how far, and what the
+   swap does to the total. */
+.tps { display: flex; flex-direction: column; gap: var(--space-4); }
+.tps-qs { display: flex; flex-direction: column; gap: var(--space-4); }
+.tps-q { display: flex; flex-direction: column; gap: var(--space-2); }
+.tps-h { margin: 0; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.tps-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.tps-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.tps-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: var(--tap);
+  padding: var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+@media (hover: hover) { .tps-row:hover { background: var(--surface-hover); } }
+.tps-row:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.tps-thumb { width: 56px; height: 56px; flex: none; border-radius: var(--radius-control); overflow: hidden; background: var(--surface-sunken); }
+.tps-thumb .tps-img, .tps-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.tps-main { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.tps-name { font-size: var(--text-lead); font-weight: 600; }
+.tps-sub { font-size: var(--text-caption); color: var(--text-2); }
+.tps-delta { flex: none; max-width: 40%; font-size: var(--text-caption); color: var(--text-2); text-align: right; font-variant-numeric: tabular-nums; }
+.tps-note { margin: 0; font-size: var(--text-body); color: var(--text-2); }
+@media (prefers-reduced-motion: reduce) { .tps-row { transition: none; } }
+
+/* ---- T842: a stop's own stay type, a select above its bed line ---- */
+.itin-stay { padding: 0 var(--space-4) var(--space-3); max-width: 420px; }
+
+/* ---- T843: a stop's day trips ----
+   A list of label-over-value rows under the bed (the day and the place,
+   the way and how long; the cost there and back on the right), a hairline
+   between rows, then the quiet "Add a day trip". */
+.itin-daytrips { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-2) var(--space-4) var(--space-3); border-top: 1px solid var(--border-soft); }
+.itin-daytrips > .btn { align-self: flex-start; margin-left: calc(-1 * var(--space-2)); }
+.itin-daytrip-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.itin-daytrip { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2) 0; border-bottom: 1px solid var(--border-soft); }
+.itin-daytrip:last-child { border-bottom: 0; }
+.itin-daytrip-main { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.itin-daytrip-main b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.itin-daytrip-main small { font-size: var(--text-caption); color: var(--text-2); }
+.itin-daytrip-fig { display: flex; flex-direction: column; align-items: flex-end; font-weight: 600; font-variant-numeric: tabular-nums; }
+.itin-daytrip-fig small { font-size: var(--text-caption); font-weight: 400; color: var(--text-2); }
+
+/* ---- T845: Costs as a coloured, editable receipt ----
+   Owner 2026-10-29: the four cost groups each have their own colour
+   (--cost-*), on the bar's segments and as an 8 px dot before the group's
+   name, never on text. A group's head is a button that folds its lines;
+   each line ends in a quiet Change that goes where the line is set. */
+.plan-costbar.is-groups { display: flex; gap: 1px; height: 8px; margin: var(--space-2) 0 var(--space-3); border-radius: 4px; overflow: hidden; background: var(--surface); }
+.plan-costbar.is-groups > span { display: block; height: 100%; min-width: 4px; }
+.plan-costbar.is-groups > .is-travel, .is-travel > .plan-total-group-h .plan-total-dot, .ct-tile.is-travel .ct-dot { background: var(--cost-travel); }
+.plan-costbar.is-groups > .is-around, .is-around > .plan-total-group-h .plan-total-dot, .ct-tile.is-around .ct-dot { background: var(--cost-around); }
+.plan-costbar.is-groups > .is-stay, .is-stay > .plan-total-group-h .plan-total-dot, .ct-tile.is-stay .ct-dot { background: var(--cost-stay); }
+.plan-costbar.is-groups > .is-food, .is-food > .plan-total-group-h .plan-total-dot, .ct-tile.is-food .ct-dot { background: var(--cost-food); }
+.plan-total-dot, .ct-dot { display: inline-block; width: 8px; height: 8px; flex: none; border-radius: var(--radius-pill); }
+.plan-total-group { border-top: 1px solid var(--border-soft); }
+.plan-total-group-h { margin: 0; }
+.plan-total-group-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: var(--tap);
+  padding: var(--space-2) 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-lead);
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+.plan-total-group-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-control); }
+.plan-total-group-name { flex: 1; min-width: 0; }
+.plan-total-group-btn .plan-total-group-n { font-variant-numeric: tabular-nums; }
+.plan-total-group-btn .plan-chev { color: var(--text-3); transition: transform var(--dur-2) var(--ease-out); }
+.plan-total-group-btn .plan-chev.is-open { transform: rotate(180deg); }
+.plan-line-edit.btn { margin-left: var(--space-2); }
+.plan-total-group .costrow dd { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: var(--space-1); }
+@media (prefers-reduced-motion: reduce) { .plan-total-group-btn .plan-chev { transition: none; } }
+
+/* ---- T846: the budget card ----
+   A bordered object on --surface: its title and Edit budget, the total for
+   the party, then (with a budget) a thin ink bar of what one person spends
+   against it and one line, the gap after a status word. Over the budget the
+   bar and the gap turn the warning rust, never red. */
+.tpbud { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-card); background: var(--surface); }
+.tpbud-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.tpbud-h { margin: 0; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.tpbud-edit.btn { margin-right: calc(-1 * var(--space-2)); }
+.tpbud-total { display: flex; flex-direction: column; margin: 0; }
+.tpbud-n { font-size: var(--text-title); font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+.tpbud-for { font-size: var(--text-caption); color: var(--text-2); }
+.tpbud-bar { height: 8px; border-radius: 4px; background: var(--surface-sunken); overflow: hidden; }
+.tpbud-bar > span { display: block; height: 100%; background: var(--text); border-radius: 4px; }
+.tpbud-bar > span.is-over { background: var(--amber-ink); }
+.tpbud-line { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-1) var(--space-3); margin: 0; font-size: var(--text-caption); color: var(--text-2); font-variant-numeric: tabular-nums; }
+.tpbud-gap { color: var(--text); font-weight: 600; }
+.tpbud-gap.is-over { color: var(--amber-ink); }
+.tpbud-form { display: flex; flex-direction: column; gap: var(--space-3); }
+.tpbud-acts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+
+/* ---- T847: Share this trip ---- */
+.tpsh { display: flex; flex-direction: column; gap: var(--space-4); }
+.tpsh-sec { display: flex; flex-direction: column; gap: var(--space-2); }
+.tpsh-h { margin: 0; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.tpsh-note { margin: 0; font-size: var(--text-body); color: var(--text-2); }
+.tpsh-rows { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; border-top: 1px solid var(--border-soft); }
+.tpsh-rows li { border-bottom: 1px solid var(--border-soft); }
+.tpsh-row.btn { width: 100%; justify-content: flex-start; color: var(--text); }
+.tpsh-row.btn .btn-label { flex: 1; text-align: left; }
+
+/* ---- T849: the Days tab, a card a day ----
+   Each day is one bordered object: Day N and where (the base or the day
+   out) with its date, then what it holds as a short list (the first four
+   places by name, "and 3 more"), then its one action. One column on a
+   phone, two from 769 px. */
+.tpd { display: flex; flex-direction: column; gap: var(--space-4); }
+.tpd-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-2); }
+.tpd-head .itin-h { margin: 0; }
+.tpd-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: var(--space-3); }
+@media (min-width: 769px) { .tpd-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.tpd-day { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-card); background: var(--surface); min-width: 0; }
+.tpd-day-head { display: flex; align-items: baseline; gap: var(--space-3); }
+.tpd-day-n { flex: none; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
+.tpd-day-meta { display: flex; flex-direction: column; min-width: 0; }
+.tpd-day-meta b { font-size: var(--text-lead); font-weight: 600; color: var(--text); }
+.tpd-day-meta small { font-size: var(--text-caption); color: var(--text-2); }
+.tpd-places { margin: 0; padding-left: var(--space-5); display: flex; flex-direction: column; gap: 2px; font-size: var(--text-body); color: var(--text); }
+.tpd-more { list-style: none; margin-left: calc(-1 * var(--space-5)); color: var(--text-2); font-size: var(--text-caption); }
+.tpd-empty { margin: 0; font-size: var(--text-body); color: var(--text-2); }
+.tpd-acts { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: auto; }
+.tpd-acts .btn:first-child { margin-left: 0; }
+
+/* ---- T850: Your ideas ----
+   A field and Add on one line (stacked on a phone), then each idea as a
+   row: its words, its day (For later first), remove. A placed idea is
+   quiet: it also shows on its day. */
+.tpi { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-4); border-radius: var(--radius-card); background: var(--surface-sunken); }
+.tpi-h { margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); }
+.tpi-add { display: flex; align-items: flex-end; flex-wrap: wrap; gap: var(--space-2); }
+.tpi-add > :first-child { flex: 1 1 240px; min-width: 0; }
+.tpi-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.tpi-item { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); padding: var(--space-2) 0; border-bottom: 1px solid var(--border-soft); }
+.tpi-item:last-child { border-bottom: 0; }
+.tpi-text { flex: 1 1 180px; min-width: 0; font-size: var(--text-body); color: var(--text); }
+.tpi-item.is-placed .tpi-text { color: var(--text-2); }
+.tpi-day select { min-height: var(--tap); padding: 0 var(--space-3); border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--surface); color: var(--text); font: inherit; font-size: var(--text-body); }
+.tpi-day select:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+/* ---- T851: a day in a few words, and its own pace ---- */
+.tpd-note { display: flex; align-items: flex-start; gap: var(--space-2); }
+.tpd-note p { flex: 1; min-width: 0; margin: 0; font-size: var(--text-body); line-height: var(--leading-body); color: var(--text); }
+.tpd-note-add.btn { align-self: flex-start; margin-left: calc(-1 * var(--space-2)); }
+.tpd-note-form { display: flex; flex-direction: column; gap: var(--space-2); }
+.tpd-note-acts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.tpd-pace { min-width: 0; overflow-x: auto; }
