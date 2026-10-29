@@ -20,8 +20,6 @@ import { TripSummary } from './TripSummary.jsx';
 import { PlanStage } from './flow/PlanStage.jsx';
 import { DaysPrompt } from './flow/DaysPrompt.jsx';
 import { PlanTotal } from './PlanTotal.jsx';
-import { TripTotalBar } from './TripTotalBar.jsx';
-import { MapDrawer } from '../components/MapDrawer.jsx';
 import { SheetShell } from '../browse/SheetShell.jsx';
 import {
   loadDeviceTrip, saveDeviceTrip, clearDeviceTrip, newDeviceKey, deviceSaveDecision, deviceMeetsAccount,
@@ -40,8 +38,8 @@ import { usePaywall } from '../hooks/usePaywall.jsx';
 import { fetchTripPlans } from '../auth/tripPlanStorage.js';
 import { useI18n } from '../i18n/index.jsx';
 import { loadAssignments, TRIP_DRAFT_PLAN_ID } from './dayPlanStore.js';
-import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BulbIcon, InfoIcon, CloseIcon, ChevronDownIcon, ExternalIcon, SettingsIcon, ArrowLeftIcon, BookmarkIcon } from '../components/Icons.jsx';
-import { IconButton, Money, Chip, ChipGroup } from '../components/ui/index.js';
+import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BulbIcon, InfoIcon, CloseIcon, ChevronDownIcon, ExternalIcon, BookmarkIcon, MoreIcon } from '../components/Icons.jsx';
+import { IconButton, Chip, ChipGroup } from '../components/ui/index.js';
 import { Stepper as KitStepper } from '../components/FilterControls.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { knownForFacts } from '../lib/knownFor.js';
@@ -116,7 +114,9 @@ const ModeIcon = ({ mode, size = 13 }) => {
  * close it and focus returns to the button; the arrow keys move between the
  * items. A destructive item is drawn in --danger text and keeps its confirm.
  */
-function MoreMenu({ items }) {
+// T832: `round` draws the button as the trip page's round icon button and
+// opens the menu downward (it sits on the page's top row now, not a footer).
+function MoreMenu({ items, round = false }) {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const wrapRef = useRef(null);
@@ -151,16 +151,30 @@ function MoreMenu({ items }) {
   const shown = items.filter(Boolean);
   if (!shown.length) return null;
   return (
-    <div className="trip-more" ref={wrapRef}>
-      <Button
-        ref={btnRef}
-        className="trip-more-btn"
-        aria-haspopup="menu"
-        aria-expanded={open}
-        onClick={() => setOpen((v) => !v)}
-      >
-        {t('trip.moreActions')}
-      </Button>
+    <div className={`trip-more${round ? ' is-down' : ''}`} ref={wrapRef}>
+      {round ? (
+        <IconButton
+          ref={btnRef}
+          tone="surface"
+          className="trip-more-btn"
+          label={t('trip.moreActionsAria')}
+          aria-haspopup="menu"
+          aria-expanded={open}
+          onClick={() => setOpen((v) => !v)}
+        >
+          <MoreIcon size={20} />
+        </IconButton>
+      ) : (
+        <Button
+          ref={btnRef}
+          className="trip-more-btn"
+          aria-haspopup="menu"
+          aria-expanded={open}
+          onClick={() => setOpen((v) => !v)}
+        >
+          {t('trip.moreActions')}
+        </Button>
+      )}
       {open && (
         <div className="trip-more-menu" role="menu" aria-label={t('trip.moreActionsAria')}>
           {shown.map((it) => (
@@ -367,54 +381,6 @@ function ShortlistStops({ rows, onPick }) {
   );
 }
 
-/**
- * The stop a pin was tapped for, on the map itself (T432): where, when, how
- * many nights (changeable here), what its bed costs, and the way to the
- * place's own page. The map answers "what is this stop" without the list.
- */
-function StopPeek({ stop, index, stayCost, onNights, onOpen, onClose }) {
-  const { t } = useI18n();
-  if (!stop?.dest) return null;
-  const city = cityLabel(stop.dest.city);
-  return (
-    <div className="trip-peek" role="group" aria-label={city}>
-      <span
-        className="trip-peek-photo"
-        style={stop.dest.image?.url ? { backgroundImage: `url(${stop.dest.image.url})` } : undefined}
-        aria-hidden="true"
-      />
-      <div className="trip-peek-main">
-        <p className="trip-peek-city"><span className="trip-peek-i">{index + 1}</span>{city}</p>
-        <p className="trip-peek-when">
-          {stop.arriveDate ? t('plan.dateRange', { a: fmtDate(stop.arriveDate, true), b: fmtDate(stop.departDate, true) }) : ''}
-        </p>
-        {stayCost && (
-          <p className="trip-peek-bed">
-            {t('plan.lineBeds')}{' '}
-            {stayCost.ownAccom ? <Money value={stayCost.accomTotal} precision="cents" /> : <Money value={stayCost.accomTotal} est precision="cents" />}
-          </p>
-        )}
-        <div className="trip-peek-row">
-          <KitStepper
-            value={stop.nights}
-            min={1}
-            max={30}
-            onChange={onNights}
-            ariaLabel={t(stop.nights === 1 ? 'plan.nightsOne' : 'plan.nightsMany', { n: stop.nights })}
-            decLabel={t('trip.fewer')}
-            incLabel={t('trip.more')}
-          />
-          <span className="trip-peek-nights">{t(stop.nights === 1 ? 'plan.nightOneWord' : 'plan.nightManyWord')}</span>
-          {onOpen && (
-            <Button size="sm" variant="quiet" onClick={() => onOpen(stop.destinationId)}>{t('plan.openPlace')}</Button>
-          )}
-        </div>
-      </div>
-      <IconButton label={t('wizard.close')} onClick={onClose} className="trip-peek-close"><CloseIcon size={16} /></IconButton>
-    </div>
-  );
-}
-
 // The receipt the total bar opens (one per planner view).
 const RECEIPT_ID = 'trip-receipt';
 
@@ -494,17 +460,8 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   const [awaitingDates, setAwaitingDates] = useState(false);
   const [dragIdx, setDragIdx] = useState(null);
   const [wizardOpen, setWizardOpen] = useState(false);
-  // The workspace (T500, roadmap 1.3c section 3 and 1.17): from 1024 px the
-  // list on the left and the map on the right with the total bar under it;
-  // below that the map fills the screen and the trip lies over it in the
-  // shared three-state drawer (T490-h, T490-k). The map card page and the
-  // drag sheet are gone.
-  const [isDesk, setIsDesk] = useState(
-    () => typeof window !== 'undefined' && window.matchMedia('(min-width: 1024px)').matches,
-  );
-  const [drawer, setDrawer] = useState('half');
-  // A new key opens the receipt's lines (the total bar's one job).
-  const [receiptKey, setReceiptKey] = useState(0);
+  // The receipt's lines open on a new key (T432).
+  const [receiptKey] = useState(0);
   // The trip kept on this device without an account (T500, 2.19).
   const [deviceTrip, setDeviceTrip] = useState(() => loadDeviceTrip());
   const [deviceError, setDeviceError] = useState(false);
@@ -517,14 +474,6 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   const migrating = useRef(false);
   const stopRefs = useRef({});
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return undefined;
-    const mq = window.matchMedia('(min-width: 1024px)');
-    const onChange = (e) => setIsDesk(e.matches);
-    mq.addEventListener('change', onChange);
-    return () => mq.removeEventListener('change', onChange);
-  }, []);
-
   // The wizard hands over a trip Carta already arranged (routed from the
   // fly-in, days filled from the interests), show it planned right away, with
   // the route on the map. Edit / Replan / Start over stay one tap away.
@@ -533,7 +482,6 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     tp.setPlanned(true);
     setWizardOpen(false);
     setSelectedStop(null);
-    setDrawer('half');
     // T814 (owner 2026-10-29): Finish lands on the trip's summary, with no
     // sheet over it; Plan your days is one of its buttons (T658 asked here).
     setView('summary');
@@ -940,50 +888,15 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     return Array.isArray(picks) && picks.length > 0;
   };
 
-  // Planned-view actions, pinned at the BOTTOM of the sheet on every layout,
-  // in ONE row (T388, brief item 7): the primary, Save trip as the secondary,
-  // and everything else behind "More" (Edit stops, Replan route, Start over).
-  const plannedActionButtons = (
-    <>
-      {/* Arranging the trip settles the cities, the nights and the legs, and
-          leaves the days empty. That next step had no door here: the traveller
-          had to find the Day planner tab and pick their own trip out of it. */}
-      {/* One primary: planning the days is the step forward when there is
-          a door to it; otherwise saving is. Everything else is the shared
-          secondary Button (T193). */}
-      {onPlanDay && tp.stopDetails.length > 0 && (
-        <Button
-          variant="primary"
-          className="trip-planday-btn"
-          onClick={() => onPlanDay({ planId: tp.planId, stopIndex: 0, dayIndex: 0, overview: true })}
-        >
-          <SparkIcon size={14} /> {t('trip.planYourDays')}
-        </Button>
-      )}
-      <Button
-        variant={onPlanDay && tp.stopDetails.length > 0 ? 'secondary' : 'primary'}
-        className="trip-save-planned-btn"
-        onClick={handleSave}
-        disabled={tp.saveState === 'saving'}
-      >
-        {tp.saveState === 'saving' ? t('trip.saving') : tp.saveState === 'saved' || keptHere ? t('trip.savedTick') : tp.planId ? t('trip.updateTrip') : t('trip.saveTrip')}
-      </Button>
-      <MoreMenu
-        items={[
-          { key: 'edit', className: 'trip-edit-btn', label: t('trip.editStops'), title: t('trip.editStopsTitle'), onClick: () => { setEditFrom('full'); tp.setPlanned(false); } },
-          tp.stopDetails.length >= 3 && { key: 'replan', className: 'trip-plan-again-btn', label: t('trip.replanRoute'), title: t('trip.replanTitle'), onClick: () => tp.optimizeRoute() },
-          { key: 'over', className: 'trip-startover-btn', label: t('trip.startOver'), title: t('trip.startOverTitle'), danger: true, onClick: handleStartOver },
-        ]}
-      />
-    </>
-  );
 
   // An empty planner has nothing to put on a map: no stops, no route, no
   // prices. So the tab opens on the question instead of on a locator map of
   // Europe, and the guide runs as the page itself, under the app header,
   // rather than as a modal that covers it. The map layout returns the moment
   // there is a trip to draw.
-  const emptyPlanner = !tp.planned && tp.stopDetails.length === 0;
+  // T832: a trip with no stops (planned or not) has nothing to show but the
+  // way in, so it opens on the question.
+  const emptyPlanner = tp.stopDetails.length === 0;
   const renderWizard = ({ flowSteps = null, initialWhereTab = null, lockWhereTab = false, onCancel = null } = {}) => (
     <GuidedTripWizard
       inline
@@ -1367,16 +1280,6 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     </>
   );
 
-  const peek = selectedStop != null && tp.stopDetails[selectedStop] ? (
-    <StopPeek
-      stop={tp.stopDetails[selectedStop]}
-      index={selectedStop}
-      stayCost={tp.stayCosts[selectedStop]}
-      onNights={(n) => tp.setStopNights(selectedStop, n)}
-      onOpen={onOpenDest}
-      onClose={() => setSelectedStop(null)}
-    />
-  ) : null;
   const routeProps = {
     stops: pinStops,
     onSelectStop: (i) => { const s = toStop(i); if (s != null) setSelectedStop(s); },
@@ -1385,18 +1288,6 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     routeSegments: tripRouteOk ? tripRoute.segments : null,
   };
 
-  // The total bar opens the receipt: its lines open, and the list (desktop)
-  // or the drawer (phone) brings it into view.
-  const openReceipt = () => {
-    setReceiptKey((k) => k + 1);
-    if (!isDesk && drawer === 'strip') setDrawer('half');
-    window.requestAnimationFrame(() => {
-      const el = document.getElementById(RECEIPT_ID);
-      if (!el) return;
-      el.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
-      el.focus({ preventScroll: true });
-    });
-  };
 
   // T675: a saved trip setting moves the planned trip too, which keeps its
   // own party and dates: the people, and a new start date (the nights stay,
@@ -1448,42 +1339,6 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     return null;
   };
 
-  // The trip's name and its one line (the name is a field, so the view's h1
-  // carries the same words for assistive tech, T193). T675: the gear opens
-  // the trip settings from the planned trip, as it does before the route.
-  const head = (
-    <div className="trip-topcard">
-      <h1 className="sr-only tab-h1">{tp.planLabel || t('trip.planYourTrip')}</h1>
-      {/* T814: the way back to the trip's summary. */}
-      {tp.planned && (
-        <Button variant="quiet" size="sm" className="trip-topcard-back" onClick={() => setView('summary')}
-          iconStart={<ArrowLeftIcon size={18} />}>
-          {t('trip.sum.summary')}
-        </Button>
-      )}
-      <IconButton ref={settingsGearRef} tone="surface" className="trip-topcard-gear" label={t('pf.settings')} onClick={() => setSettingsOpen(true)}>
-        <SettingsIcon size={18} />
-      </IconButton>
-      <input
-        className="trip-topcard-name"
-        value={tp.planLabel}
-        onChange={(e) => tp.setPlanLabel(e.target.value)}
-        placeholder={t('trip.namePlaceholder')}
-        aria-label={t('trip.nameAria')}
-      />
-      <p className="trip-topcard-sub">
-        {[
-          hasDates ? t('plan.dateRange', { a: fmtDate(tp.tripStart, true), b: fmtDate(tp.tripEnd, true) }) : '',
-          tp.stopDetails.length ? t(tp.stopDetails.length === 1 ? 'trip.stopsOne' : 'trip.stopsMany', { n: tp.stopDetails.length }) : '',
-          // T815: when the stops hold fewer or more nights than the dates,
-          // the line says both ("5 of 7 nights planned"), not the stops alone.
-          tp.plannedNights > 0 && hasDates && tp.plannedNights !== tp.windowNights
-            ? t('pf.home.nightsPlanned', { x: tp.plannedNights, n: tp.windowNights })
-            : tp.plannedNights > 0 ? t(tp.plannedNights === 1 ? 'plan.nightsOne' : 'plan.nightsMany', { n: tp.plannedNights }) : '',
-        ].filter(Boolean).join(', ')}
-      </p>
-    </div>
-  );
 
   // Saved, and where (T500). Without an account: "Saved on this device" and a
   // quiet way to have it on another device; a browser that kept nothing says
@@ -1504,34 +1359,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     </p>
   ) : null;
 
-  const footer = tp.planned ? (
-    <div className="trip-sheet-footer plan-ws-actions">
-      {saveError && <ErrorBlock className="trip-footer-error" message={saveError} />}
-      {saveStatus}
-      <div className="trip-sheet-footer-row">{plannedActionButtons}</div>
-    </div>
-  ) : tp.stopDetails.length > 0 && !wizardOpen ? (
-    // Editing the stops always has a way back to the trip (T458).
-    <div className="trip-sheet-footer trip-edit-footer plan-ws-actions">
-      {saveError && <ErrorBlock className="trip-footer-error" message={saveError} />}
-      {saveStatus}
-      <div className="trip-sheet-footer-row">
-        <Button variant="secondary" className="trip-save-btn" onClick={handleSave} disabled={tp.saveState === 'saving'}>
-          {tp.saveState === 'saving' ? t('trip.saving') : tp.saveState === 'saved' || keptHere ? t('trip.savedTick') : tp.planId ? t('trip.updateTrip') : t('trip.saveTrip')}
-        </Button>
-        <Button variant="primary" className="trip-edit-done" onClick={() => { setAwaitingDates(false); tp.setPlanned(true); setSelectedStop(null); setView(editFrom); }}>
-          {t('trip.doneEditing')}
-        </Button>
-      </div>
-    </div>
-  ) : null;
 
-  const body = (
-    <>
-      {head}
-      {listBody}
-    </>
-  );
 
   // What lies over either view: the save notice, the trip settings, the day
   // questions and the device-or-account choice.
@@ -1579,8 +1407,10 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   // editor (the workspace below), and Done comes back here.
   // T830: Edit trip is the same page in edit mode, the editor where the
   // tabs' body goes, so the trip never jumps to a second layout.
-  const editInPage = !tp.planned && tp.stopDetails.length > 0 && !wizardOpen;
-  if ((tp.planned || editInPage) && tp.stopDetails.length > 0) {
+  // T832: this is the only layout of a trip with stops; the old half-screen
+  // map workspace is gone, and the wizard opens over this page as a sheet.
+  const editInPage = !tp.planned;
+  {
     const saved = tp.saveState === 'saved' || keptHere;
     const cardMap = (
       <TripMap
@@ -1639,11 +1469,22 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
               }));
             }}
             bar={(
-              <IconButton tone="surface" className="ts-save" pressed={saved}
-                label={tp.saveState === 'saving' ? t('trip.saving') : saved ? t('trip.savedTick') : tp.planId ? t('trip.updateTrip') : t('trip.saveTrip')}
-                disabled={tp.saveState === 'saving'} onClick={handleSave}>
-                <BookmarkIcon size={20} />
-              </IconButton>
+              <>
+                <IconButton tone="surface" className="ts-save" pressed={saved}
+                  label={tp.saveState === 'saving' ? t('trip.saving') : saved ? t('trip.savedTick') : tp.planId ? t('trip.updateTrip') : t('trip.saveTrip')}
+                  disabled={tp.saveState === 'saving'} onClick={handleSave}>
+                  <BookmarkIcon size={20} />
+                </IconButton>
+                {/* T832: what the old workspace's More held (Replan route,
+                    Start over) lives on the trip page's top row now. */}
+                <MoreMenu
+                  round
+                  items={[
+                    tp.stopDetails.length >= 3 && { key: 'replan', className: 'trip-plan-again-btn', label: t('trip.replanRoute'), title: t('trip.replanTitle'), onClick: () => tp.optimizeRoute() },
+                    { key: 'over', className: 'trip-startover-btn', label: t('trip.startOver'), title: t('trip.startOverTitle'), danger: true, onClick: handleStartOver },
+                  ]}
+                />
+              </>
             )}
             footer={(
               <>
@@ -1654,62 +1495,10 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
           />
         </div>
         {overlays}
+        {wizardOpen && (
+          <GuidedTripWizard data={data} stayTier={tp.stayTier} lifestyle={lifestyle} favorites={favorites} onOpenDest={onOpenDest} onOpenCountry={onOpenCountry} onOpenTrip={onOpenTrip} onCancel={() => setWizardOpen(false)} onComplete={handleWizardComplete} seed={tripSeed} onSeedConsumed={onTripSeedConsumed} />
+        )}
       </div>
     );
   }
-
-  return (
-    <div className={`trip-planner-screen plan-ws ${tp.planned ? 'is-planned' : 'is-editing'} ${isDesk ? 'is-desk' : 'is-phone'}`}>
-      {isDesk ? (
-        <>
-          <div className="plan-ws-list" onClick={(e) => e.stopPropagation()}>
-            <div className="plan-ws-scroll">{body}</div>
-            {footer}
-          </div>
-          <div className="plan-ws-side">
-            <div className="plan-ws-map">
-              <TripMap
-                {...routeProps}
-                padBottom={48}
-                // The planned trip's route draws itself once, leg by leg, when
-                // the planned view first opens (T398, "Route reveal").
-                revealRoute={Boolean(tp.planned)}
-              />
-              {peek && <div className="trip-peek-slot">{peek}</div>}
-            </div>
-            <TripTotalBar priced={tp.priced} layout="bar" onOpen={openReceipt} controls={RECEIPT_ID} />
-          </div>
-        </>
-      ) : (
-        <>
-          <div className="plan-ws-map is-under">
-            <TripMap
-              {...routeProps}
-              padBottom={drawer === 'strip' ? 96 : Math.round((typeof window !== 'undefined' ? window.innerHeight : 700) * 0.45)}
-              revealRoute={Boolean(tp.planned)}
-              cooperativeGestures={false}
-            />
-            {peek && drawer !== 'full' && <div className="trip-peek-slot is-top">{peek}</div>}
-          </div>
-          <MapDrawer
-            className="plan-ws-drawer"
-            state={drawer}
-            onStateChange={setDrawer}
-            ariaLabel={tp.planLabel || t('trip.planYourTrip')}
-            labels={{ strip: t('drawer.tripStrip'), half: t('drawer.tripHalf'), full: t('drawer.tripFull') }}
-            strip={<TripTotalBar priced={tp.priced} layout="strip" onOpen={openReceipt} controls={RECEIPT_ID} />}
-            footer={footer}
-          >
-            {body}
-          </MapDrawer>
-        </>
-      )}
-
-      {overlays}
-
-      {wizardOpen && (
-        <GuidedTripWizard data={data} stayTier={tp.stayTier} lifestyle={lifestyle} favorites={favorites} onOpenDest={onOpenDest} onOpenCountry={onOpenCountry} onOpenTrip={onOpenTrip} onCancel={() => setWizardOpen(false)} onComplete={handleWizardComplete} seed={tripSeed} onSeedConsumed={onTripSeedConsumed} />
-      )}
-    </div>
-  );
 });
