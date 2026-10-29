@@ -1,0 +1,491 @@
+{
+  "results": [
+    {
+      "w": 390,
+      "label": "the trip page opens",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "no \"Google Flights, checked\" line on the route",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "the route still links out to Google Flights",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "a Change flight button on the flight rows",
+      "ok": true,
+      "note": "2"
+    },
+    {
+      "w": 390,
+      "label": "Change flight opens",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "the day's flights are listed",
+      "ok": true,
+      "note": "5"
+    },
+    {
+      "w": 390,
+      "label": "no \"Google Flights, checked\" line in the sheet",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "Direct flights only leaves only direct flights",
+      "ok": true,
+      "note": "Brussels Airlines, Direct, 1 h 35"
+    },
+    {
+      "w": 390,
+      "label": "picking a flight makes it the trip's flight",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "the total follows the picked flight",
+      "ok": true,
+      "note": "2097.65 to 2045.65"
+    },
+    {
+      "w": 390,
+      "label": "Undo restores the flight and the total",
+      "ok": true,
+      "note": "2097.65"
+    },
+    {
+      "w": 390,
+      "label": "Swap city opens",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "I know where lists the nearest places",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "search finds Piran",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "Help me choose lists Carta's picks",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "the stop is swapped",
+      "ok": true,
+      "note": "Lake Bled to Hallstatt"
+    },
+    {
+      "w": 390,
+      "label": "the Undo message names the swap",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "Undo brings the stop back",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "each stop offers its own stay type",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "a stop's own stay type changes the total",
+      "ok": true,
+      "note": "2097.65 to 1808.21 (dorm)"
+    },
+    {
+      "w": 390,
+      "label": "Add a day trip opens",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "places within a day out are listed",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "the day trip shows on its stop",
+      "ok": true,
+      "note": "Day 2: Polhov Gradec\nBus, 46 min\n€12.00\nthere and back"
+    },
+    {
+      "w": 390,
+      "label": "the day trip adds to the total",
+      "ok": true,
+      "note": "1808.21 to 1820.21"
+    },
+    {
+      "w": 390,
+      "label": "no sideways scroll on Itinerary",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "Costs has a Day trips line",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 390,
+      "label": "Days names the day out",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "the trip page opens",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "no \"Google Flights, checked\" line on the route",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "the route still links out to Google Flights",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "a Change flight button on the flight rows",
+      "ok": true,
+      "note": "2"
+    },
+    {
+      "w": 1024,
+      "label": "Change flight opens",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "the day's flights are listed",
+      "ok": true,
+      "note": "5"
+    },
+    {
+      "w": 1024,
+      "label": "no \"Google Flights, checked\" line in the sheet",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "Direct flights only leaves only direct flights",
+      "ok": true,
+      "note": "Brussels Airlines, Direct, 1 h 35"
+    },
+    {
+      "w": 1024,
+      "label": "picking a flight makes it the trip's flight",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "the total follows the picked flight",
+      "ok": true,
+      "note": "2097.65 to 2045.65"
+    },
+    {
+      "w": 1024,
+      "label": "Undo restores the flight and the total",
+      "ok": true,
+      "note": "2097.65"
+    },
+    {
+      "w": 1024,
+      "label": "Swap city opens",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "I know where lists the nearest places",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "search finds Piran",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "Help me choose lists Carta's picks",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "the stop is swapped",
+      "ok": true,
+      "note": "Lake Bled to Hallstatt"
+    },
+    {
+      "w": 1024,
+      "label": "the Undo message names the swap",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "Undo brings the stop back",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "each stop offers its own stay type",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "a stop's own stay type changes the total",
+      "ok": true,
+      "note": "2097.65 to 1808.21 (dorm)"
+    },
+    {
+      "w": 1024,
+      "label": "Add a day trip opens",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "places within a day out are listed",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "the day trip shows on its stop",
+      "ok": true,
+      "note": "Day 2: Polhov Gradec\nBus, 46 min\n€12.00\nthere and back"
+    },
+    {
+      "w": 1024,
+      "label": "the day trip adds to the total",
+      "ok": true,
+      "note": "1808.21 to 1820.21"
+    },
+    {
+      "w": 1024,
+      "label": "no sideways scroll on Itinerary",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "Costs has a Day trips line",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1024,
+      "label": "Days names the day out",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "the trip page opens",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "no \"Google Flights, checked\" line on the route",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "the route still links out to Google Flights",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "a Change flight button on the flight rows",
+      "ok": true,
+      "note": "2"
+    },
+    {
+      "w": 1440,
+      "label": "Change flight opens",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "the day's flights are listed",
+      "ok": true,
+      "note": "5"
+    },
+    {
+      "w": 1440,
+      "label": "no \"Google Flights, checked\" line in the sheet",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "Direct flights only leaves only direct flights",
+      "ok": true,
+      "note": "Brussels Airlines, Direct, 1 h 35"
+    },
+    {
+      "w": 1440,
+      "label": "picking a flight makes it the trip's flight",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "the total follows the picked flight",
+      "ok": true,
+      "note": "2097.65 to 2045.65"
+    },
+    {
+      "w": 1440,
+      "label": "Undo restores the flight and the total",
+      "ok": true,
+      "note": "2097.65"
+    },
+    {
+      "w": 1440,
+      "label": "Swap city opens",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "I know where lists the nearest places",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "search finds Piran",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "Help me choose lists Carta's picks",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "the stop is swapped",
+      "ok": true,
+      "note": "Lake Bled to Hallstatt"
+    },
+    {
+      "w": 1440,
+      "label": "the Undo message names the swap",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "Undo brings the stop back",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "each stop offers its own stay type",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "a stop's own stay type changes the total",
+      "ok": true,
+      "note": "2097.65 to 1808.21 (dorm)"
+    },
+    {
+      "w": 1440,
+      "label": "Add a day trip opens",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "places within a day out are listed",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "the day trip shows on its stop",
+      "ok": true,
+      "note": "Day 2: Polhov Gradec\nBus, 46 min\n€12.00\nthere and back"
+    },
+    {
+      "w": 1440,
+      "label": "the day trip adds to the total",
+      "ok": true,
+      "note": "1808.21 to 1820.21"
+    },
+    {
+      "w": 1440,
+      "label": "no sideways scroll on Itinerary",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "Costs has a Day trips line",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "w": 1440,
+      "label": "Days names the day out",
+      "ok": true,
+      "note": ""
+    }
+  ],
+  "errors": []
+}
