@@ -67,6 +67,9 @@ for (const W of (process.env.WIDTHS || '390,1024,1440').split(',').map(Number)) 
   ok(W, 'the trip page opens', await page.locator('.tpg').count() === 1);
   await page.locator('.tpg-tabs [role="tab"]').filter({ hasText: 'Itinerary' }).click(); await page.waitForTimeout(2500);
 
+  // T844: the route's flight cards carry no "Google Flights, checked" line.
+  ok(W, 'no "Google Flights, checked" line on the route', !/Google Flights, checked/.test(await txt(page, '.tpg-main')));
+  ok(W, 'the route still links out to Google Flights', await page.locator('.itin-route .flt-row-link, .itin-route a[href*="google"]').count() >= 1);
   await step(W, 'change flight', async () => {
     ok(W, 'a Change flight button on the flight rows', await page.locator('.itin-change-flight').count() >= 1, String(await page.locator('.itin-change-flight').count()));
     const before = await total(page);

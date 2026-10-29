@@ -93,7 +93,7 @@ function ItinFlight({ dir, leg, waiting, query, baggage, hours, onHours, fareFie
   const state = leg ? null : (leg === undefined ? (waiting ? 'loading' : 'unknown') : 'none');
   return (
     <div className="itin-flight">
-      <FlightRow leg={leg || null} cost={leg?.cost} dir={dir} bagKey={baggage} state={state} wantedDate={query?.date || null}>
+      <FlightRow leg={leg || null} cost={leg?.cost} dir={dir} bagKey={baggage} state={state} wantedDate={query?.date || null} showChecked={false}>
         {fareField}
       </FlightRow>
       {onHours && (

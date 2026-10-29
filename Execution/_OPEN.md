@@ -2353,7 +2353,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T839-b | T839 | Board panel 8 wants distinct colours in Costs, against carta-design's cost bar (the ink ramp, no colour, no legend); decide before Batch C | user | open |  |
 | T839-c | T839 | Board panel 8: Costs as the editable receipt with the route (BRU to FUE) in place of Getting there in every line; trip page v4 Batch C | next task | open |  |
 | T839-d | T839 | Board panel 9 and D3: Days with your own ideas, planning by hand, a day as detailed or as high level as wanted, pace per day, no "a person" figure; trip page v4 Batch D | next task | open |  |
-| T840-a | T840 | The route's flight card still shows "Google Flights, checked {date}" and View on Google Flights; the owner's mark named the Change flight sheet: remove it on the card too, or keep it (Execution/P15/T840-T843-trip-page-v4-b.md) | user | open |  |
+| T840-a | T840 | The route's flight card still shows "Google Flights, checked {date}" and View on Google Flights; the owner's mark named the Change flight sheet: remove it on the card too, or keep it (Execution/P15/T840-T843-trip-page-v4-b.md) | user | closed by T844 |  |
 | T840-b | T840 | Change flight offers the trip's own days and airports; another airport near the first or last stop, home from a different airport (open jaw) and a day earlier or later are not in it yet | next task | open |  |
 | T840-c | T840 | flightHours (the old When to fly bands) still filters the flight pick but has no control on the trip page since T840; fold it into flightPrefs | next task | open |  |
 | T841-a | T841 | Swap city measures distance as the crow flies, not travel time; a place across a mountain range can read near | next task | open |  |
