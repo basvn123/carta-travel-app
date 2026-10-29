@@ -26,6 +26,7 @@ import { SwapCity } from './trip/SwapCity.jsx';
 import { DayTripPicker } from './trip/DayTripPicker.jsx';
 import { BudgetCard } from './trip/BudgetCard.jsx';
 import { ShareSheet } from './trip/ShareSheet.jsx';
+import { TripDays } from './trip/TripDays.jsx';
 import { budgetCheck } from './flow/budget.js';
 import { offeredStayTiers } from '../lib/runtime_pricing.js';
 import { offeredSleepGroups, optionsFor } from '../lib/sleepGroups.js';
@@ -1458,7 +1459,16 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
             panels={{
               itinerary: renderItinerary(['route', 'tools', 'export', 'before']),
               costs: renderItinerary(['receipt'], true),
-              days: renderItinerary(['days']),
+              // T849-T851: the Days tab, each day as a card of what it holds.
+              days: (
+                <TripDays
+                  dayPlan={tp.dayPlan}
+                  dayTrips={tp.priced?.dayTrips || []}
+                  planKey={tp.planId || TRIP_DRAFT_PLAN_ID}
+                  onPlanDay={onPlanDay ? (day) => onPlanDay({ planId: tp.planId, stopIndex: day.stopIndex, dayIndex: day.dayOfStay - 1 }) : null}
+                  onCartaPlan={onPlanDay ? () => onPlanDay({ planId: tp.planId, stopIndex: 0, dayIndex: 0, autoFill: true }) : null}
+                />
+              ),
             }}
             map={cardMap}
             mapFull={fullMap}

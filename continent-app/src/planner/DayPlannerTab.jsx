@@ -1335,7 +1335,8 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
       let res;
       try {
         res = await runAi({
-          vibe: p.vibe || 'mix', pace: p.pace || 'balanced', avoidHills: false, freeText: p.freeText || '',
+          // T851: the day's own pace (Days tab) before the trip's preset.
+          vibe: p.vibe || 'mix', pace: (loadPrefs(autoQueue.planKey) || {}).dayPace?.[`${si}-${di}`] || p.pace || 'balanced', avoidHills: false, freeText: p.freeText || '',
           date: days[di] || null, groupSize: aiGroupSize(), wantEvents: false,
         });
       } catch {
@@ -1916,7 +1917,9 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   // it is drawn (lib/dayRoute.js). A leg OSRM could not walk, or walks far
   // round a river, is shown as the ride it is, never as a walk; a leg not yet
   // checked (still loading, or offline) says it is an estimate.
-  const dayPace = prefs?.pace || 'balanced';
+  // T851 (owner D3): a day may have its own pace, set on the trip page's
+  // Days tab (prefs.dayPace, keyed stop-day); else the trip's.
+  const dayPace = prefs?.dayPace?.[`${stopIdx}-${dayIdx}`] || prefs?.pace || 'balanced';
   const dayStepFree = !!prefs?.stepFree;
   const dayGroup = prefs?.groupSize || aiGroupSize();
   const startsAtStart = Boolean(stayAnchor) && !stayLegRide;

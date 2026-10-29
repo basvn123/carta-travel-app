@@ -624,3 +624,49 @@ button.ct-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: 2
 .tpsh-rows li { border-bottom: 1px solid var(--border-soft); }
 .tpsh-row.btn { width: 100%; justify-content: flex-start; color: var(--text); }
 .tpsh-row.btn .btn-label { flex: 1; text-align: left; }
+
+/* ---- T849: the Days tab, a card a day ----
+   Each day is one bordered object: Day N and where (the base or the day
+   out) with its date, then what it holds as a short list (the first four
+   places by name, "and 3 more"), then its one action. One column on a
+   phone, two from 769 px. */
+.tpd { display: flex; flex-direction: column; gap: var(--space-4); }
+.tpd-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-2); }
+.tpd-head .itin-h { margin: 0; }
+.tpd-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: var(--space-3); }
+@media (min-width: 769px) { .tpd-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.tpd-day { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-card); background: var(--surface); min-width: 0; }
+.tpd-day-head { display: flex; align-items: baseline; gap: var(--space-3); }
+.tpd-day-n { flex: none; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
+.tpd-day-meta { display: flex; flex-direction: column; min-width: 0; }
+.tpd-day-meta b { font-size: var(--text-lead); font-weight: 600; color: var(--text); }
+.tpd-day-meta small { font-size: var(--text-caption); color: var(--text-2); }
+.tpd-places { margin: 0; padding-left: var(--space-5); display: flex; flex-direction: column; gap: 2px; font-size: var(--text-body); color: var(--text); }
+.tpd-more { list-style: none; margin-left: calc(-1 * var(--space-5)); color: var(--text-2); font-size: var(--text-caption); }
+.tpd-empty { margin: 0; font-size: var(--text-body); color: var(--text-2); }
+.tpd-acts { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: auto; }
+.tpd-acts .btn:first-child { margin-left: 0; }
+
+/* ---- T850: Your ideas ----
+   A field and Add on one line (stacked on a phone), then each idea as a
+   row: its words, its day (For later first), remove. A placed idea is
+   quiet: it also shows on its day. */
+.tpi { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-4); border-radius: var(--radius-card); background: var(--surface-sunken); }
+.tpi-h { margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); }
+.tpi-add { display: flex; align-items: flex-end; flex-wrap: wrap; gap: var(--space-2); }
+.tpi-add > :first-child { flex: 1 1 240px; min-width: 0; }
+.tpi-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.tpi-item { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); padding: var(--space-2) 0; border-bottom: 1px solid var(--border-soft); }
+.tpi-item:last-child { border-bottom: 0; }
+.tpi-text { flex: 1 1 180px; min-width: 0; font-size: var(--text-body); color: var(--text); }
+.tpi-item.is-placed .tpi-text { color: var(--text-2); }
+.tpi-day select { min-height: var(--tap); padding: 0 var(--space-3); border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--surface); color: var(--text); font: inherit; font-size: var(--text-body); }
+.tpi-day select:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+/* ---- T851: a day in a few words, and its own pace ---- */
+.tpd-note { display: flex; align-items: flex-start; gap: var(--space-2); }
+.tpd-note p { flex: 1; min-width: 0; margin: 0; font-size: var(--text-body); line-height: var(--leading-body); color: var(--text); }
+.tpd-note-add.btn { align-self: flex-start; margin-left: calc(-1 * var(--space-2)); }
+.tpd-note-form { display: flex; flex-direction: column; gap: var(--space-2); }
+.tpd-note-acts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.tpd-pace { min-width: 0; overflow-x: auto; }

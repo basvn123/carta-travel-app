@@ -206,6 +206,11 @@ const EMPTY_EXTRAS = {
   // `inbox` until the traveller routes each one to a trip day; the routed ones
   // live in `dayExtras`, keyed by trip day number.
   inbox: [], dayExtras: {},
+  // The trip page's Days tab (T850, T851): the traveller's own ideas, in
+  // their own words, each kept for later or put on a trip day
+  // ([{ id, text, day }], day null while it waits), and a day's plan in a
+  // few words ({ [dayNum]: text }), the high-level way to plan a day.
+  ideas: [], dayNotes: {},
   // A trip that already happened, told by hand: who came, how you travelled,
   // what it cost, how it was, the photographs (see auth/pastTripMemory.js).
   // Null on every trip the app itself planned.
@@ -227,6 +232,8 @@ export function loadTripExtras(planId) {
       people: Array.isArray(raw.people) ? raw.people : [],
       inbox: Array.isArray(raw.inbox) ? raw.inbox : [],
       dayExtras: raw.dayExtras && typeof raw.dayExtras === 'object' ? raw.dayExtras : {},
+      ideas: Array.isArray(raw.ideas) ? raw.ideas.filter((x) => x && typeof x.text === 'string') : [],
+      dayNotes: raw.dayNotes && typeof raw.dayNotes === 'object' ? raw.dayNotes : {},
       memory: raw.memory && typeof raw.memory === 'object' ? raw.memory : null,
     };
   } catch {
