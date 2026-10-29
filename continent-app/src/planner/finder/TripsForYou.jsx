@@ -1,12 +1,14 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
-import { Button, Chip, ChipGroup } from '../../components/ui/index.js';
+import { Button, Segmented } from '../../components/ui/index.js';
+import { ChevronDownIcon, FilterIcon } from '../../components/Icons.jsx';
+import { SheetShell } from '../../browse/SheetShell.jsx';
 import { SheetHead } from '../flow/PlanStage.jsx';
 import { useBcp47, useMonths, whenText } from '../flow/flowHooks.js';
 import { MAX_COMPARE } from '../../lib/recommend/compare.js';
 import { LEVERS } from '../../lib/recommend/rank.js';
-import { keepRecordOf, answersOf, useLevers } from './finderHooks.js';
-import { keep, readSkips, unkeep, useKept, writeSkips } from '../../lib/recommend/keptStore.js';
+import { answersOf, useKeepTrip, useLevers } from './finderHooks.js';
+import { readSkips, writeSkips } from '../../lib/recommend/keptStore.js';
 import { TripCard } from './TripCard.jsx';
 import { TripCompare } from './TripCompare.jsx';
 import { PAGE, answerChips } from './finderText.js';
@@ -20,6 +22,32 @@ const answersKey = (s) => JSON.stringify([answersOf(s).guide, s.when, s.party, s
 
 // The lever groups (T803), each a single choice, in the plan's order.
 const LEVER_GROUPS = ['flight', 'food', 'bases'].map((id) => ({ id, values: Object.keys(LEVERS[id].values) }));
+
+/**
+ * One lever as a labelled Segmented control (T810). A group the answers
+ * left unset has no chosen segment, and the kit's Segmented then has no
+ * tab stop: the first segment takes it until one is chosen.
+ */
+function LeverControl({ group, value, onPick, t }) {
+  const ref = useRef(null);
+  useLayoutEffect(() => {
+    const items = [...(ref.current?.querySelectorAll('.seg-item') || [])];
+    items.forEach((el, i) => { el.tabIndex = value ? (el.getAttribute('aria-checked') === 'true' ? 0 : -1) : (i === 0 ? 0 : -1); });
+  });
+  return (
+    <div className="tff-lever" ref={ref}>
+      <span className="tff-lever-label" aria-hidden="true">{t(`tf.lever.${group.id}`)}</span>
+      <Segmented
+        label={t(`tf.lever.${group.id}`)}
+        size="sm"
+        block
+        value={value}
+        onChange={(v) => onPick(group.id, v)}
+        options={group.values.map((v) => ({ value: v, label: t(`tf.lever.short.${group.id}.${v}`) }))}
+      />
+    </div>
+  );
+}
 const ONE_BASE = (t) => t.places.length === 1;
 
 const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
@@ -100,17 +128,21 @@ function useTicks(settings) {
 }
 
 /**
- * Trips for you (T798): the answers as chips (a tap reopens that question,
- * and Continue there comes straight back), then the priced trips, six at a
- * time with "Show more trips" for the rest. One column on a phone; on a
- * desktop a grid of equal cards across the plan stage's width.
+ * Trips for you (T798): the answers, then the priced trips, six at a time
+ * with "Show more trips" for the rest.
+ *
+ * The toolbar (T810, owner 2026-10-29: "not structured, not aligned"): the
+ * answers as one line with Edit answers, which lists each answer to reopen
+ * (Continue there comes straight back), and the three levers as labelled
+ * Segmented controls on one row from 769 px; a phone shows one Adjust
+ * button that opens them in a sheet. One column on a phone, two on a
+ * tablet, three across the wide stage on a desktop (up to 1200 px).
  *
  * Compare (T802): each card has a Compare tick, up to four. From two ticks
  * a tray at the foot opens the compare table (TripCompare); closing it
  * returns focus to the tray.
  *
- * Levers (T803): one row of choice chips under the answers, flight, food
- * and bases, each starting from the traveller's own answers. A tap
+ * Levers (T803): flight, food and bases, each starting from the traveller's own answers. A tap
  * re-ranks the list in place (useTripFinder applies the levers, so the
  * card, the receipt and the compare table read the same trips); the
  * answers bar stays as it is and a ticked trip stays ticked while it is
@@ -131,7 +163,10 @@ function useTicks(settings) {
  */
 export function TripsForYou({ settings, trips: found, destinations, originName, markedId = null, onBack, onOpen, onReopen, onPlan, cardRefs, ui, keepWith = null }) {
   const { t, lang } = useI18n();
-  const kept = useKept();
+  const keeper = useKeepTrip({ destinations, lang, keepWith });
+  const [editing, setEditing] = useState(false);
+  const [adjusting, setAdjusting] = useState(false);
+  const adjustRef = useRef(null);
   const [skips, setSkips] = useSkips(settings);
   const trips = skips.length ? found.filter((x) => !skips.includes(x.id)) : found;
   const hidden = found.length - trips.length;
@@ -139,6 +174,7 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
   const months = useMonths();
   const bcp47 = useBcp47();
   const titleRef = useRef(null);
+  const listId = useId();
   const markedAt = markedId ? trips.findIndex((x) => x.id === markedId) : -1;
   const [shown, setShown] = useState(() => Math.max(PAGE, markedAt + 1));
   const [ticks, setTicks] = useTicks(settings);
@@ -177,10 +213,6 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
     (cardRefs.current.get(id) || titleRef.current)?.focus();
   });
 
-  const keepOne = (trip) => {
-    if (kept.some((r) => r.id === trip.id)) unkeep(trip.id);
-    else keep(keepRecordOf(trip, { destinations, lang, ...(keepWith || {}) }));
-  };
   const skipOne = (trip) => {
     const at = trips.findIndex((x) => x.id === trip.id);
     focusNext.current = (trips[at + 1] || trips[at - 1])?.id || '__title';
@@ -201,39 +233,78 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
     }
   };
 
+  // The answers in one line (T810): where from, when and the likes; the
+  // rest are counted and listed under Edit answers.
+  const lead = chips.filter((c) => c.id === 'from' || c.id === 'when' || c.id.startsWith('like:'));
+  const summary = lead.map((c) => c.label);
+  const rest = chips.length - lead.length;
+  const levers3 = LEVER_GROUPS.map((g) => (
+    <LeverControl key={g.id} group={g} value={levers[g.id] || null} onPick={pull} t={t} />
+  ));
+
   return (
     <div className="pf-step tff-trips">
       <SheetHead onBack={onBack} backLabel={t('pf.back')} />
-      <h2 className="pf-title" tabIndex={-1} ref={titleRef}>{t('tf.list.title')}</h2>
-      {chips.length > 0 && (
-        <ul className="tff-ansbar" aria-label={t('tf.chip.change')}>
-          {chips.map((c) => (
-            <li key={c.id}>
-              <Button size="sm" className="tff-ans" aria-label={t('tf.chip.changeOne', { answer: c.label })} onClick={() => onReopen(c.q)}>
-                {c.label}
-              </Button>
-            </li>
-          ))}
-        </ul>
-      )}
-      <div className="tff-levers" role="group" aria-label={t('tf.lever.label')}>
-        {LEVER_GROUPS.map((g) => (
-          <ChipGroup key={g.id} label={t(`tf.lever.${g.id}`)} className="tff-lever">
-            {g.values.map((v, i) => (
-              <Chip
-                key={v}
-                kind="choice"
-                selected={levers[g.id] === v}
-                // A group with nothing chosen yet is still reached by Tab.
-                {...(!levers[g.id] && i === 0 ? { tabIndex: 0 } : {})}
-                onClick={() => pull(g.id, v)}
-              >
-                {t(`tf.lever.${g.id}.${v}`)}
-              </Chip>
-            ))}
-          </ChipGroup>
-        ))}
+      <div className="tff-head">
+        <h2 className="pf-title tff-title" tabIndex={-1} ref={titleRef}>{t('tf.list.title')}</h2>
+        <p className="tff-count" aria-live="polite">{t('tf.list.count', { n: trips.length })}</p>
       </div>
+
+      <div className="tff-toolbar">
+        {chips.length > 0 && (
+          <div className="tff-answers">
+            <p className="tff-summary">
+              {summary.join(', ')}
+              {rest > 0 && <span className="tff-summary-more">{t('tf.bar.more', { n: rest })}</span>}
+            </p>
+            <Button
+              variant="secondary"
+              size="sm"
+              className="tff-edit"
+              aria-expanded={editing}
+              aria-controls={`${listId}-answers`}
+              iconEnd={<ChevronDownIcon size={14} />}
+              onClick={() => setEditing((v) => !v)}
+            >
+              {t('tf.bar.edit')}
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              className="tff-adjust"
+              ref={adjustRef}
+              iconStart={<FilterIcon size={16} />}
+              onClick={() => setAdjusting(true)}
+            >
+              {t('tf.lever.adjust')}
+            </Button>
+          </div>
+        )}
+        {editing && (
+          <ul className="tff-ansbar" id={`${listId}-answers`} aria-label={t('tf.chip.change')}>
+            {chips.map((c) => (
+              <li key={c.id}>
+                <Button size="sm" variant="secondary" className="tff-ans" aria-label={t('tf.chip.changeOne', { answer: c.label })} onClick={() => onReopen(c.q)}>
+                  {c.label}
+                </Button>
+              </li>
+            ))}
+          </ul>
+        )}
+        <div className="tff-levers" role="group" aria-label={t('tf.lever.label')}>
+          {levers3}
+        </div>
+      </div>
+      {adjusting && (
+        <SheetShell title={t('tf.lever.sheet')} onClose={() => setAdjusting(false)} className="tff-adjust-sheet" labelId={`${listId}-adjust`} closeLabel={t('tf.lever.done')}>
+          <div className="tff-adjust-body" role="group" aria-label={t('tf.lever.label')}>
+            {levers3}
+            <Button variant="primary" block onClick={() => setAdjusting(false)}>
+              {t('tf.lever.show', { n: trips.length })}
+            </Button>
+          </div>
+        </SheetShell>
+      )}
       {basesMiss && (
         <p className="tff-lever-miss" role="status">
           <span>{t(`tf.lever.miss.${levers.bases}`)}</span>
@@ -250,7 +321,7 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
               onOpen={onOpen}
               ui={ui}
               compare={{ ticked: ticks.includes(trip.id), refused: refused === trip.id, onToggle: toggle }}
-              keep={{ kept: kept.some((r) => r.id === trip.id), onKeep: keepOne, onSkip: skipOne }}
+              keep={{ kept: keeper.isKept(trip.id), onKeep: keeper.toggle, onSkip: skipOne }}
               ref={(el) => { if (el) cardRefs.current.set(trip.id, el); else cardRefs.current.delete(trip.id); }}
             />
           </li>

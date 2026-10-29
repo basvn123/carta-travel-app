@@ -53,18 +53,18 @@ function CellText({ row, c, t, lang, ui }) {
 
 /**
  * Compare trips (T802): two to four ticked trips side by side, on the
- * receipt's sheet (SheetShell). The trips are the columns, each headed by
+ * planner's sheet (SheetShell). The trips are the columns, each headed by
  * its name and a small photo; one row per figure (lib/recommend/compare.js),
  * the row labels sticky; two columns fit a phone, three or four scroll
  * sideways inside the sheet. The best value of each decidable row carries
  * the best-value mark in sun yellow, once a row.
  *
- * Each column's foot opens the trip's receipt or plans it. Only the column
+ * Each column's foot opens the trip's preview or plans it. Only the column
  * in focus shows "Plan this trip" as the primary; the others are quiet.
  *
  *   trips              the ticked trips, as the cards show them
  *   onRemove(id)       untick one (offered while more than two are left)
- *   onOpen(trip, el)   its receipt, over this sheet; closing it comes back here
+ *   onOpen(trip, el)   its preview (T811), over this sheet; closing it comes back here
  *   onPlan(trip)       "Plan this trip" (T801)
  */
 export function TripCompare({ trips, settings, destinations, ui, onClose, onRemove, onOpen, onPlan }) {
