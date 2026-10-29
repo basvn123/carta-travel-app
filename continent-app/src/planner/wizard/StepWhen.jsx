@@ -2,7 +2,8 @@ import React from 'react';
 import { DateField } from '../../components/DateField.jsx';
 import { Stepper } from '../../components/FilterControls.jsx';
 import { CalendarIcon } from '../../components/Icons.jsx';
-import { Segmented, Chip, ChipGroup } from '../../components/ui/index.js';
+import { Button, Segmented, Chip, ChipGroup } from '../../components/ui/index.js';
+import { MAX_TRIP_NIGHTS } from '../../lib/tripDates.js';
 import { fmtDate } from '../../lib/dates.js';
 import { nightsText } from './wizardSteps.js';
 import { useI18n } from '../../i18n/index.jsx';
@@ -10,7 +11,9 @@ import { useI18n } from '../../i18n/index.jsx';
 /**
  * When: exact dates on one inline two-month calendar, or a number of nights
  * in a month. Every date control sits on one card: floating single-line
- * inputs across a wide screen read as unrelated fragments.
+ * inputs across a wide screen read as unrelated fragments. T815: the kit's
+ * quiet buttons for Clear and Change dates, and the flow's night limit (60,
+ * not 21, so a 30-night trip from the When question opens in range).
  */
 export function StepWhen({
   titleTag, dateMode, setDateMode, startDate, setStartDate, endDate, setEndDate, calOpen, setCalOpen,
@@ -52,10 +55,12 @@ export function StepWhen({
                 <span className="guide-when-nights">{nightsText(t, windowNights)}</span>
               )}
               {(startDate || endDate) && (
-                <button
+                <Button
+                  variant="quiet"
+                  size="sm"
                   className="guide-stay-filter-clear"
                   onClick={() => { setStartDate(''); setEndDate(''); setCalOpen(true); }}
-                >{t('wizard.stayFilterClear')}</button>
+                >{t('wizard.stayFilterClear')}</Button>
               )}
             </div>
             {/* Two months of calendar is 600px of screen saying what the
@@ -73,9 +78,9 @@ export function StepWhen({
                 onChange={pickTripDate}
               />
             ) : (
-              <button className="guide-when-reopen" onClick={() => setCalOpen(true)}>
-                <CalendarIcon size={12} /> {t('wizard.changeDates')}
-              </button>
+              <Button variant="quiet" size="sm" className="guide-when-reopen" iconStart={<CalendarIcon size={16} />} onClick={() => setCalOpen(true)}>
+                {t('wizard.changeDates')}
+              </Button>
             )}
           </div>
         ) : (
@@ -86,7 +91,7 @@ export function StepWhen({
                 <Stepper
                   value={flexNights}
                   min={1}
-                  max={21}
+                  max={MAX_TRIP_NIGHTS}
                   onChange={setFlexNights}
                   ariaLabel={t('wizard.howLong')}
                   decLabel={t('wizard.fewerNights')}

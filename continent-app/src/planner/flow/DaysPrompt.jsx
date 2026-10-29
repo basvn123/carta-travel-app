@@ -16,12 +16,14 @@ import { normalizeSettings } from './tripSettings.js';
  * answers land in the trip settings, which the day planner reads.
  *
  *   onPlan(how)   'carta' | 'self': open the trip's first day
+ *   skipAsk       start past "Plan your days?" (T814: the trip summary's
+ *                 Plan your days button already said yes)
  */
-export function DaysPrompt({ onClose, onPlan }) {
+export function DaysPrompt({ onClose, onPlan, skipAsk = false }) {
   const { t } = useI18n();
   const [settings, save] = useTripSettings();
   const [list] = useState(() => dayScreens(settings));
-  const [id, setId] = useState(list[0]);
+  const [id, setId] = useState(() => (skipAsk && list[0] === 'daysAsk' && list.length > 1 ? list[1] : list[0]));
   const [pick, setPick] = useState('');
   const q = QUESTIONS[id];
   const pos = progressOf(list, id);
