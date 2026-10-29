@@ -2335,7 +2335,8 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T824-b | T824 | .tpc mirrors Explore's .xov--card rules instead of sharing one class; share them once Explore can be checked pixel for pixel | next task | open |  |
 | T825-a | T825 | Trips for you's Full cost shows the finder's three figures (flight, stay, days), not the trip page's four tiles; finder trips carry no quoteTrip parts | next task | open |  |
 | T826-a | T826 | After picking another flight in Getting there, the day planner's Your days total (1,939.20) differs from the trip page (1,931.20): the day planner prices without the wizard's flightPicks | next task | closed by T827 | 1 |
-| T826-b | T826 | Review batch p15-trip-page-v3 (app and root), then merge to continent-app master and root main and deploy to Pages | user | open | 2 |
+| T826-b | T826 | Review batch p15-trip-page-v3 (app and root), then merge to continent-app master and root main and deploy to Pages | user | closed by T833 | 2 |
 | T830-a | T830 | The old plan-ws edit workspace (half-screen map, edit footer) is still in TripPlannerTab for the wizard path only; remove it once the wizard no longer needs it (Execution/P15/T827-T831-trip-page-v3-fixes.md) | next task | closed by T832 |  |
 | T831-a | T831 | Saved Carta trips (carta.savedJourneys.v1) are on this device only; sync them to the account like the shortlist | next task | open |  |
 | T832-a | T832 | Walk Plan a trip here on a country page while a trip already exists: the wizard now opens over the trip page instead of the removed workspace (Execution/P15/T832-remove-old-edit-workspace.md) | next task | open |  |
+| T833-a | T833 | css-routes --check names planners/88-pf2-wizard.css with no global sheet of that name in src/styles.css (from T809); the one problem left in the route proof (Execution/P15/T833-merge-push-deploy-trip-page-v3.md) | next task | open |  |
