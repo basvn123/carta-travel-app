@@ -536,7 +536,10 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   const [view, setView] = useState('summary');
   const [editFrom, setEditFrom] = useState('full');
   const draft = usePlannerStore();
-  const tripOrigin = fromDraft(draft).from?.name || '';
+  const tripSet = fromDraft(draft);
+  const tripOrigin = tripSet.from?.name || '';
+  // The name the traveller gave the trip wins over the route's own label (end check).
+  const tripName = tripSet.trip?.name || tp.planLabel;
 
   const handleStartOver = () => {
     if (!window.confirm(t('trip.confirmStartOver'))) return;
@@ -1542,7 +1545,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
           <PlanStage sheetLabel={tp.planLabel || t('trip.planYourTrip')}>
             {saveError && <ErrorBlock className="trip-footer-error" message={saveError} />}
             <TripSummary
-              name={tp.planLabel}
+              name={tripName}
               tripStart={tp.tripStart}
               tripEnd={tp.tripEnd}
               party={{ adults: tp.groupSize, children: tp.children, babies: tp.babies }}

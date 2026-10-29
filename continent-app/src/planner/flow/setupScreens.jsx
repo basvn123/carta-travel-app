@@ -542,7 +542,9 @@ export function CreateScreen({ settings, save, onBack, onDone, onEditWhen }) {
   const create = () => {
     const trip = {
       ...settings.trip,
-      name: name.trim() || t('pf.create.defaultName'),
+      // Blank stays blank: the trip then goes by its route (the Plan home,
+      // the summary) and only reads "My trip" where nothing else names it.
+      name: name.trim(),
       cover,
       visibility,
       buddies,
