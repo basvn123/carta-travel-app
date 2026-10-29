@@ -29,3 +29,8 @@
 }
 .cycle-surface { white-space: nowrap; }
 .cycle-bike { white-space: nowrap; }
+.bpage-fact:last-child { border-bottom: 1px solid var(--rule-soft); }
+.jends .bpage-fact dd { line-height: 1.5; }
+.bpage-fact dd.mono small { font-family: var(--ui); }
+.sig .mstrip-cells { max-width: none; }
+.dsk-page .jpage-lrow-body > .dsk-sub:first-child { margin-top: 0; }

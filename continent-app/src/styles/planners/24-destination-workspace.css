@@ -3,24 +3,6 @@
    of the two, so edit it where it is. This sheet loads with the route's
    chunk, after the main sheet, and holds only rules nothing later in the
    cascade could override; scripts/css-routes.mjs --check proves it on a build. */
-.guide-ccard-pick {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-  text-align: left;
-  border-radius: inherit;
-  overflow: hidden;
-}
-.guide-ccard-pick:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-@media (hover: hover) {
-  .guide-ccard-info:hover {
-    background: rgba(31, 42, 51, 0.86);
-    color: var(--on-fill);
-  }
-}
-.guide-ccard-info:focus-visible { outline: 2px solid var(--on-fill); outline-offset: 1px; }
 .guide-picked-row {
   display: flex;
   flex-wrap: wrap;
@@ -256,28 +238,6 @@
 @media (hover: hover) {
   .wready-own-card:hover { border-color: var(--accent); }
 }
-.wpicked-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.wpicked-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--ink-soft);
-}
-.wpicked-stops { display: flex; flex-wrap: wrap; gap: 7px; margin: 12px 0 4px; }
-.wpicked-i {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 17px; height: 17px;
-  border-radius: 50%;
-  background: var(--ink);
-  color: var(--paper);
-  font-family: var(--mono);
-  font-size: 10px;
-}
-.wpicked-date { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); }
 .wroute-head { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
 .wroute-label {
   display: inline-flex;
@@ -299,102 +259,7 @@
 @media (hover: hover) {
   .wroute-apply:hover { background: var(--accent); color: var(--on-fill); }
 }
-.tlegs-jaw {
-  display: flex;
-  align-items: flex-start;
-  gap: 7px;
-  margin-bottom: var(--space-3);
-  padding: var(--space-2) var(--space-3);
-  border-radius: 10px;
-  background: var(--accent-bg);
-  font-size: 12.5px;
-  line-height: 1.5;
-  color: var(--ink-soft);
-}
-.tlegs-shift-label { font-size: 12px; font-weight: 600; }
-.tlegs-shift-ctl { display: inline-flex; align-items: center; gap: 4px; }
-.tlegs-list { display: grid; gap: 10px; }
-.tleg.answered { border-color: var(--rule); }
-.tleg-head {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  flex-wrap: wrap;
-  width: 100%;
-  min-height: var(--tap);
-  background: none;
-  text-align: left;
-}
-.tleg-head:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-.tleg-head-meta {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  flex-wrap: wrap;
-  margin-left: auto;
-}
-.tleg.open .tleg-chev { transform: rotate(180deg); }
-.tleg-tag.is-booked { border-color: var(--accent); color: var(--accent); }
-.tleg-tag.is-paid { font-family: var(--mono); font-variant-numeric: tabular-nums; }
-.tleg-booked {
-  display: flex;
-  align-items: flex-start;
-  gap: 7px;
-  font-size: 12.5px;
-  line-height: 1.5;
-  color: var(--ink-soft);
-}
-.tleg-airports-label { font-size: 11.5px; color: var(--ink-mute); }
-.tleg-route { display: inline-flex; align-items: baseline; gap: 7px; flex-wrap: wrap; font-size: 14px; }
-.tleg-arrow { color: var(--ink-mute); }
-.tleg-date {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-family: var(--mono);
-  font-size: 11.5px;
-  color: var(--ink-mute);
-  font-variant-numeric: tabular-nums;
-}
-.tleg-field { display: block; }
-.tleg-field-label { display: block; font-size: 11px; color: var(--ink-mute); margin-bottom: 3px; }
-.tleg-text:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 .guide-booked-card .guide-note { margin-top: 10px; }
-@media (hover: hover) {
-  .guide-when-reopen:hover { border-color: var(--accent); color: var(--accent); }
-}
-.guide-ccard-info {
-  position: absolute;
-  right: 7px;
-  bottom: 7px;
-  z-index: 2;
-  width: 36px;
-  height: 36px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: rgba(31, 42, 51, 0.52);
-  color: rgba(255, 255, 255, 0.95);
-  line-height: 1;
-  transition: background .15s, color .15s;
-}
-.guide-ccard-info::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: var(--tap);
-  height: var(--tap);
-  transform: translate(-50%, -50%);
-}
-@media (hover: hover) {
-  .guide-ccard-pick:hover ~ .guide-ccard-info {
-    background: rgba(31, 42, 51, 0.86);
-    color: var(--on-fill);
-  }
-}
-.guide-ccard.reading .guide-ccard-info { background: var(--accent); }
 .cbrief-flag {
   width: 22px; height: 15px;
   object-fit: cover;
@@ -466,7 +331,6 @@
 }
 .wtrip-acts { display: flex; gap: var(--space-2); margin-top: auto; padding-top: var(--space-1); }
 .wtrip.on .wtrip-choose { background: var(--accent-bg); color: var(--accent); }
-.wpicked-name { flex: 1; min-width: 0; font-family: var(--display); font-size: 17px; font-weight: 600; }
 .wroute-line { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; }
 .wroute-foot {
   display: flex;
@@ -477,30 +341,4 @@
   font-size: 11.5px;
   color: var(--ink-mute);
 }
-.tlegs { margin-top: var(--space-2); }
-.tlegs-sec { min-width: 0; }
-.tlegs-shift-date {
-  min-width: 92px;
-  text-align: center;
-  font-family: var(--mono);
-  font-size: 13px;
-  font-variant-numeric: tabular-nums;
-}
-.tleg-measured {
-  margin-top: 4px;
-  font-size: 11.5px;
-  color: var(--ink-mute);
-}
-.tleg-body { margin-top: var(--space-2); }
-.tleg-airports {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-2);
-  margin-top: var(--space-2);
-}
 .tleg-modes { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
-.tsum-route { display: inline-flex; align-items: baseline; gap: 6px; flex-wrap: wrap; min-width: 0; }
-@media (prefers-reduced-motion: reduce) {
-  .guide-ccard-info { transition: none; }
-}

@@ -46,7 +46,7 @@ export function TripPlaceCard({ card, length, month, saved = false, onToggleSave
           <span className="tpc-name">{card.title}</span>
           <span className="tpc-where">
             <CountryFlag country={card.cc} size={14} className="tpc-flag" />
-            <span>{[where, stops > 0 ? t(stops === 1 ? 'tp.card.placesOne' : 'tp.card.places', { n: stops }) : ''].filter(Boolean).join(' · ')}</span>
+            <span className="tpc-where-text">{[where, stops > 0 ? t(stops === 1 ? 'tp.card.placesOne' : 'tp.card.places', { n: stops }) : ''].filter(Boolean).join(' · ')}</span>
           </span>
           <span className="tpc-facts">{[typeLabel(card.type, t, card.type), months].filter(Boolean).join(' · ')}</span>
           <span className="tpc-price">

@@ -50,7 +50,6 @@
   -webkit-box-orient: vertical;
   line-height: 1.35;
 }
-.dsk-page .jpage-lrow-body > .dsk-sub:first-child,
 .dsk-page .jpage-lrow-body > :first-child > .dsk-sub:first-child { margin-top: 0; }
 .dsk-page .dsk-part + .dsk-part,
 .dsk-page .tpage-part + .tpage-part { margin-top: var(--space-2); }

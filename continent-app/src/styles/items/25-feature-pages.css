@@ -78,4 +78,3 @@
 .pack-cell.is-on { color: var(--ink); border-bottom-color: var(--ink); }
 .pack-cell:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .pack-label { font-size: 12px; line-height: 1.25; text-align: center; }
-.jends .bpage-fact dd { line-height: 1.5; }

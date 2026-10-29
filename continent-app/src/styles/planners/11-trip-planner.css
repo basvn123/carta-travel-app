@@ -9,16 +9,7 @@
   left: 0; right: 0; bottom: var(--bottom-nav-h);
   overflow: hidden;
 }
-.trip-topcard {
-  position: relative;
-  flex-shrink: 0;
-  padding: 6px 20px 12px;
-  border-bottom: 1px solid var(--rule);
-}
-.trip-topcard-name:focus { outline: none; }
 /* T675: the trip settings gear, top right of the trip's name. */
-.trip-topcard > .icon-btn.trip-topcard-gear { position: absolute; top: 6px; right: 12px; }
-.trip-topcard:has(.trip-topcard-gear) .trip-topcard-name { padding-right: 48px; }
 .trip-block:first-child { margin-top: 6px; }
 .trip-block-title {
   font-family: var(--display);
@@ -121,9 +112,6 @@
   .trip-add-row { display: grid; grid-template-columns: 1fr 1fr; }
 }
 .trip-ownflight-input:focus { outline: none; border-color: var(--accent); }
-@media (min-width: 769px) {
-  .trip-topcard { padding-top: 16px; }
-}
 .daytrip-hint { color: var(--good-ink-soft); }
 .daytrip-hint.warn { color: var(--warn-ink); }
 .daytrip-here { display: flex; gap: 6px; align-items: baseline; }
@@ -132,20 +120,7 @@
 }
 .daytrip-mode-btn span svg:last-child:not(:first-child) { color: var(--accent); }
 .daytrip-pick-note { font-family: var(--mono); font-size: var(--text-micro); color: var(--ink-mute); }
-.trip-sheet-footer-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
 .trip-origin-row { display: flex; }
-.trip-topcard-name::placeholder { color: var(--ink-mute); }
-.trip-topcard-sub {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--ink-soft);
-  margin-top: 3px;
-  letter-spacing: 0.02em;
-}
 .trip-block { margin-top: 18px; }
 .trip-field {
   display: flex;
@@ -188,9 +163,3 @@
 .daytrip-reco-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .daytrip-reco-main b svg { color: var(--accent); }
 .daytrip-modes { margin-top: 10px; }
-.trip-sheet-footer {
-  flex: none;
-  padding: 10px 14px 12px;
-  border-top: 1px solid var(--rule);
-  background: var(--paper);
-}

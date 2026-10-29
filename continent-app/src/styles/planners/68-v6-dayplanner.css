@@ -731,7 +731,6 @@
 .days-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
 .day-ws.is-page .days-cost.btn { margin: 0; padding-inline: 0; }
 .day-ws.is-page .days-cost .btn-label { flex-direction: row; align-items: baseline; gap: var(--space-2); }
-.day-ws.is-page .days-time > b { font-size: var(--text-title); }
 .dayp { display: flex; flex-direction: column; gap: var(--space-4); }
 .dayp-summary { display: flex; gap: var(--space-2); margin: 0; padding: var(--space-3) var(--space-4); border-radius: var(--radius-card); background: var(--surface-sunken); font-size: var(--text-body); color: var(--text-2); }
 .dayt { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
@@ -1168,7 +1167,6 @@
 .day-wizard .day-ideas-input::placeholder { color: var(--text-2); }
 .day-wizard .day-ideas-row .day-thumb { width: 48px; height: 48px; border-radius: var(--radius-sm); flex: none; }
 .day-wizard .day-ideas-row-text { flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0; }
-.day-wizard .day-ideas-row-text b { font-size: var(--text-body); font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .day-wizard .day-ideas-row-mark {
   flex: none;
   display: inline-flex;
@@ -1182,7 +1180,6 @@
 }
 .day-wizard .day-ideas-chip .day-thumb { width: 40px; height: 40px; border-radius: var(--radius-sm); flex: none; }
 .day-wizard .day-ideas-chip-text { flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0; }
-.day-wizard .day-ideas-chip-text b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
 .day-ideas-when-select {
   flex: none;
   min-height: var(--tap);
@@ -1198,7 +1195,6 @@
 .dayw-manual .dayex-chips::-webkit-scrollbar { display: none; }
 .dayws-head .day-save-status { flex: none; display: inline-flex; align-items: center; gap: var(--space-1); min-height: var(--tap); font-size: var(--text-label); color: var(--text-2); }
 .days-time { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
-.days-route.is-checked svg { color: var(--status-success); }
 .dayt-rail::before {
   content: '';
   position: absolute;
@@ -1209,7 +1205,6 @@
   z-index: 0;
 }
 .dayt-rail > svg { position: relative; z-index: 1; padding: 3px; box-sizing: content-box; background: var(--surface-page); border-radius: 50%; }
-.dayt-rail.is-end > svg { color: var(--text); }
 .dayt-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; padding-block: var(--space-2); }
 .dayt-no {
   position: absolute;
@@ -1269,7 +1264,6 @@
     padding-inline: 0;
   }
 }
-.dayw-manual .dayex-card-name b { font-size: var(--text-body); font-weight: 600; line-height: var(--leading-tight); color: var(--text); }
 .day-wizard .dayw-when {
   gap: 0;
   border: 1px solid var(--border-soft);

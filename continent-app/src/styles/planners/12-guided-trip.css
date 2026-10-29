@@ -9,17 +9,6 @@
   border-bottom: 1px solid var(--rule);
   flex-shrink: 0;
 }
-.guide-close {
-  position: absolute;
-  top: 12px; right: 12px;
-  width: 30px; height: 30px;
-  border-radius: 50%;
-  font-size: 20px; line-height: 1;
-  color: var(--ink-mute);
-}
-@media (hover: hover) {
-  .guide-close:hover { color: var(--accent); }
-}
 .guide-sub { color: var(--ink-soft); font-size: 13px; margin: 4px 0 16px; }
 .guide-country-block { margin-bottom: 20px; }
 .guide-block-head {

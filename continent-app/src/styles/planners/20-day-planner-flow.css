@@ -31,9 +31,6 @@
   margin: 8px 0 4px;
 }
 .guide-stay-filter { display: flex; align-items: center; gap: 6px; }
-@media (hover: hover) {
-  .guide-stay-filter-clear:hover { color: var(--ink); border-color: var(--ink); }
-}
 .guide-stay-price {
   font-family: var(--mono); font-size: var(--text-micro);
   color: var(--ink-soft);

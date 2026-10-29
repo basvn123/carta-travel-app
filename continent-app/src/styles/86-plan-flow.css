@@ -601,7 +601,7 @@
   gap: var(--space-3);
   min-width: 0;
 }
-.pf-carta-bar > :first-child { min-width: 0; flex: 1 1 auto; }
+.pf-carta-bar > .xchips { min-width: 0; flex: 1 1 auto; }
 .pf-carta-bar .xchips { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin: 0; }
 .pf-carta-bar .xchips-lead { display: flex; flex: none; }
 .pf-carta-bar .pf-carta-filters.btn { border-radius: var(--radius-pill); min-height: var(--tap); }
@@ -683,7 +683,7 @@
 .tpc-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .tpc-name { font-size: var(--text-lead); font-weight: 600; line-height: var(--leading-tight); color: var(--text); overflow-wrap: anywhere; }
 .tpc-where { display: flex; align-items: center; gap: var(--space-1); margin-top: 2px; font-size: var(--text-label); color: var(--text-2); min-width: 0; }
-.tpc-where > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tpc-where-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .tpc-flag { flex: none; }
 .tpc-facts { font-size: var(--text-label); color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .tpc-price { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); margin-top: var(--space-1); font-size: var(--text-label); color: var(--text); }
