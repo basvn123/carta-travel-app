@@ -1081,7 +1081,8 @@ export function GuidedTripWizard({
     pace, booked.travel, arrivalId, originPlace, t]);
 
   const finish = () => {
-    onComplete(planned);
+    // The flights picked on Getting there go with the trip (end check).
+    onComplete({ ...planned, flightPicks: { out: flightPickOut, back: flightPickBack } });
     // The launch metric "priced-trip completions" (migration 048, T215-b).
     trackLaunch('trip_priced', '', readyTrip ? 'ready' : 'built');
   };
