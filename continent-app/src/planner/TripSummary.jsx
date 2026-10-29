@@ -229,6 +229,8 @@ function MapCard({ map, mapFull, title }) {
  *   history              { canUndo, canRedo, undo, redo } (T835): from 1024 px
  *                        Undo and Redo at the end of the tab row
  *   onAddPaid()          T839: put in what was paid (the route's own fields)
+ *   budgetCard           T846: the total against the budget; the side column
+ *                        from 1024 px (every tab), under the band below it
  *   bar                  round buttons on the top row (save)
  *   footer               the saved line under the page
  */
@@ -237,7 +239,7 @@ export function TripSummary({
   priced, flight = null, ownFlight = null, driveLegs = null, origin = '',
   tab = 'overview', onTab, panels = {}, map = null, mapFull = null,
   onPlanDays = null, onPlanHome = null, onSettings = null, settingsRef = null,
-  onExport = null, bar = null, footer = null, history = null, onChip = null, onAddPaid = null,
+  onExport = null, bar = null, footer = null, history = null, onChip = null, onAddPaid = null, budgetCard = null,
   // T838: no edit mode. Every fact is changed where it is shown (the chips,
   // the name, the route's stops), so the page has one layout.
   onRename = null,
@@ -262,6 +264,7 @@ export function TripSummary({
   const nightsNote = windowN > 0 && planned !== windowN ? t('pf.home.nightsPlanned', { x: planned, n: windowN }) : '';
   // T836: the chips' own editors hang from the chip that opened them.
   const chipEls = useRef({});
+  const shareRef = useRef(null);
   const openChip = (key) => (onChip ? () => onChip(key, { current: chipEls.current[key] }) : onSettings);
   // The name in place (T836): a field while it is being renamed.
   const [naming, setNaming] = useState(null);
@@ -316,7 +319,7 @@ export function TripSummary({
         </Button>
       )}
       {onExport && (
-        <Button variant="secondary" className="tpg-tool" iconStart={<ShareIcon size={18} />} onClick={onExport}>
+        <Button variant="secondary" className="tpg-tool" iconStart={<ShareIcon size={18} />} onClick={() => onExport(null)}>
           {t('export.exportAndShare')}
         </Button>
       )}
@@ -362,6 +365,7 @@ export function TripSummary({
         </div>
       </section>
 
+      {!wide && budgetCard}
       {!wide && mapCard}
 
       <section className="tpg-route" aria-labelledby={`${uid}-route`}>
@@ -388,6 +392,12 @@ export function TripSummary({
         ) : <span />}
         <span className="tpg-bar">
           {bar}
+          {onExport && (
+            // T847: Share this trip, beside Save and the settings.
+            <IconButton ref={shareRef} tone="surface" label={t('tp.sh.title')} onClick={() => onExport(shareRef)} data-testid="tpg-share">
+              <ShareIcon size={20} />
+            </IconButton>
+          )}
           {onSettings && (
             <IconButton ref={settingsRef} tone="surface" label={t('pf.settings')} onClick={onSettings}>
               <SettingsIcon size={20} />
@@ -471,6 +481,7 @@ export function TripSummary({
         {wide && (
           <aside className="tpg-side" aria-label={t('tp.sideLabel')}>
             {mapCard}
+            {budgetCard}
             {tools}
           </aside>
         )}

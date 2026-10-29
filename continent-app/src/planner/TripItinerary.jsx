@@ -539,6 +539,8 @@ export function TripItinerary({
   stopEdit = null, addStopSlot = null,
   // T840: Change flight for a way ('out' | 'back'), on the flight's row.
   onChangeFlight = null,
+  // T845: a receipt line's own change on the Costs tab.
+  onReceiptLine = null,
   // T838: how the trip gets between its stops and a cheaper order, from the
   // old editor, under the route.
   routeExtra = null,
@@ -801,6 +803,7 @@ export function TripItinerary({
             party={party}
             onParty={onSetParty}
             onAddFare={onTravelPaid ? jumpToFare : null}
+            onLine={receiptGrouped ? onReceiptLine : null}
             variant="card"
             title={t('plan.tripTotal')}
             footer={oneMoreNight > 0 ? (

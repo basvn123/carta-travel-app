@@ -85,12 +85,24 @@ const MARKS = [
   ['--rate', '--surface', 'rating star on a card'],
   ['--text-3', '--surface', 'switch track, off'],
   ['--action', '--surface', 'switch track, on'],
+  // T845: the four cost groups' colours, on the cost bar and as dots.
+  ['--cost-travel', '--surface', 'flights on the cost bar'],
+  ['--cost-around', '--surface', 'getting around on the cost bar'],
+  ['--cost-stay', '--surface', 'stay on the cost bar'],
+  ['--cost-food', '--surface', 'food on the cost bar'],
 ];
 
 // Colours that must not be mistaken for each other (T438): CIE76 delta E.
 const DISTINCT = [
   ['--action', '--amber-ink', 15, 'a link against a warning'],
   ['--action', '--danger', 15, 'a link against a destructive action'],
+  // T845: the cost groups stay apart from each other and from the brown.
+  ['--cost-travel', '--cost-around', 15, 'flights against getting around'],
+  ['--cost-around', '--cost-stay', 15, 'getting around against stay'],
+  ['--cost-stay', '--cost-food', 15, 'stay against food'],
+  ['--cost-travel', '--cost-food', 15, 'flights against food'],
+  ['--cost-stay', '--action', 15, 'stay against the action brown'],
+  ['--cost-food', '--action', 15, 'food against the action brown'],
   ['--select-bg', '--best-bg', 8, 'selected against best value'],
   ['--select-bg', '--rate-bg', 8, 'selected against a quiet band'],
   ['--select-bg', '--gem-bg', 8, 'selected against a gem badge'],

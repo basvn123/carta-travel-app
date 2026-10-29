@@ -554,3 +554,73 @@ button.ct-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: 2
 .itin-daytrip-main small { font-size: var(--text-caption); color: var(--text-2); }
 .itin-daytrip-fig { display: flex; flex-direction: column; align-items: flex-end; font-weight: 600; font-variant-numeric: tabular-nums; }
 .itin-daytrip-fig small { font-size: var(--text-caption); font-weight: 400; color: var(--text-2); }
+
+/* ---- T845: Costs as a coloured, editable receipt ----
+   Owner 2026-10-29: the four cost groups each have their own colour
+   (--cost-*), on the bar's segments and as an 8 px dot before the group's
+   name, never on text. A group's head is a button that folds its lines;
+   each line ends in a quiet Change that goes where the line is set. */
+.plan-costbar.is-groups { display: flex; gap: 1px; height: 8px; margin: var(--space-2) 0 var(--space-3); border-radius: 4px; overflow: hidden; background: var(--surface); }
+.plan-costbar.is-groups > span { display: block; height: 100%; min-width: 4px; }
+.plan-costbar.is-groups > .is-travel, .is-travel > .plan-total-group-h .plan-total-dot, .ct-tile.is-travel .ct-dot { background: var(--cost-travel); }
+.plan-costbar.is-groups > .is-around, .is-around > .plan-total-group-h .plan-total-dot, .ct-tile.is-around .ct-dot { background: var(--cost-around); }
+.plan-costbar.is-groups > .is-stay, .is-stay > .plan-total-group-h .plan-total-dot, .ct-tile.is-stay .ct-dot { background: var(--cost-stay); }
+.plan-costbar.is-groups > .is-food, .is-food > .plan-total-group-h .plan-total-dot, .ct-tile.is-food .ct-dot { background: var(--cost-food); }
+.plan-total-dot, .ct-dot { display: inline-block; width: 8px; height: 8px; flex: none; border-radius: var(--radius-pill); }
+.plan-total-group { border-top: 1px solid var(--border-soft); }
+.plan-total-group-h { margin: 0; }
+.plan-total-group-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: var(--tap);
+  padding: var(--space-2) 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-lead);
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+.plan-total-group-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-control); }
+.plan-total-group-name { flex: 1; min-width: 0; }
+.plan-total-group-btn .plan-total-group-n { font-variant-numeric: tabular-nums; }
+.plan-total-group-btn .plan-chev { color: var(--text-3); transition: transform var(--dur-2) var(--ease-out); }
+.plan-total-group-btn .plan-chev.is-open { transform: rotate(180deg); }
+.plan-line-edit.btn { margin-left: var(--space-2); }
+.plan-total-group .costrow dd { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: var(--space-1); }
+@media (prefers-reduced-motion: reduce) { .plan-total-group-btn .plan-chev { transition: none; } }
+
+/* ---- T846: the budget card ----
+   A bordered object on --surface: its title and Edit budget, the total for
+   the party, then (with a budget) a thin ink bar of what one person spends
+   against it and one line, the gap after a status word. Over the budget the
+   bar and the gap turn the warning rust, never red. */
+.tpbud { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-card); background: var(--surface); }
+.tpbud-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.tpbud-h { margin: 0; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.tpbud-edit.btn { margin-right: calc(-1 * var(--space-2)); }
+.tpbud-total { display: flex; flex-direction: column; margin: 0; }
+.tpbud-n { font-size: var(--text-title); font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+.tpbud-for { font-size: var(--text-caption); color: var(--text-2); }
+.tpbud-bar { height: 8px; border-radius: 4px; background: var(--surface-sunken); overflow: hidden; }
+.tpbud-bar > span { display: block; height: 100%; background: var(--text); border-radius: 4px; }
+.tpbud-bar > span.is-over { background: var(--amber-ink); }
+.tpbud-line { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-1) var(--space-3); margin: 0; font-size: var(--text-caption); color: var(--text-2); font-variant-numeric: tabular-nums; }
+.tpbud-gap { color: var(--text); font-weight: 600; }
+.tpbud-gap.is-over { color: var(--amber-ink); }
+.tpbud-form { display: flex; flex-direction: column; gap: var(--space-3); }
+.tpbud-acts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+
+/* ---- T847: Share this trip ---- */
+.tpsh { display: flex; flex-direction: column; gap: var(--space-4); }
+.tpsh-sec { display: flex; flex-direction: column; gap: var(--space-2); }
+.tpsh-h { margin: 0; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.tpsh-note { margin: 0; font-size: var(--text-body); color: var(--text-2); }
+.tpsh-rows { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; border-top: 1px solid var(--border-soft); }
+.tpsh-rows li { border-bottom: 1px solid var(--border-soft); }
+.tpsh-row.btn { width: 100%; justify-content: flex-start; color: var(--text); }
+.tpsh-row.btn .btn-label { flex: 1; text-align: left; }

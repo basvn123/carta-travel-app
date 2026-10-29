@@ -48,7 +48,7 @@ export function CostTiles({ priced, per = 'group', people = 1, onOpen = null, cl
         const label = tile.key === 'travel' && tile.driving ? t('tp.tile.driving') : t(LABEL[tile.key]);
         const body = (
           <>
-            <span className="ct-label"><I size={16} aria-hidden="true" />{label}</span>
+            <span className="ct-label"><span className="ct-dot" aria-hidden="true" /><I size={16} aria-hidden="true" />{label}</span>
             <span className="ct-fig">
               {tile.missing ? <NotYet /> : tile.empty ? <span className="ct-none">{t('tp.tile.notNeeded')}</span> : <Money value={tile.eur / div} est precision="whole" />}
             </span>
