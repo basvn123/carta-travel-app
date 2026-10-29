@@ -1081,8 +1081,17 @@ export function GuidedTripWizard({
     pace, booked.travel, arrivalId, originPlace, t]);
 
   const finish = () => {
-    // The flights picked on Getting there go with the trip (end check).
-    onComplete({ ...planned, flightPicks: { out: flightPickOut, back: flightPickBack } });
+    // The flight Review priced, each way, goes with the trip: the one picked
+    // on Getting there, else the one the trip came with (the trip finder's,
+    // T816), so the planned trip prices the same flight and the same total
+    // instead of ranking its own.
+    onComplete({
+      ...planned,
+      flightPicks: { out: flightPickOut || pricedFlight('out'), back: flightPickBack || pricedFlight('back') },
+      // A seeded trip's eating habits (the finder's Food choice) go with it;
+      // otherwise the planner reads the app's Lifestyle, as the wizard did.
+      lifestyle: seedOn ? seedPlan.lifestyle || null : null,
+    });
     // The launch metric "priced-trip completions" (migration 048, T215-b).
     trackLaunch('trip_priced', '', readyTrip ? 'ready' : 'built');
   };
@@ -1178,6 +1187,16 @@ export function GuidedTripWizard({
     ? { paying: priced.groupSize, babies: priced.party?.babies || 0, bagKey: PLANNER_BAG }
     : null), [priced]);
   const onPickFlight = (dir, pick) => setTravelLeg(dir, { pick, mode: 'fly' });
+  // The flight the running total is priced on for one way, as a pick
+  // (pickedLive's shape), or null when that way is not flown by Carta.
+  const pricedFlight = (dir) => {
+    const cf = priced?.cartaFlight;
+    const leg = cf?.[dir];
+    const q = cf?.queries?.[dir === 'out' ? 0 : 1];
+    if (!leg || !q || !Number.isFinite(leg.price)) return null;
+    const { cost, ...flight } = leg; // eslint-disable-line no-unused-vars -- the planner prices the cost itself
+    return { ...flight, date: q.date, from: q.o, to: q.d };
+  };
   // Carta's bed estimate per stay, for the field that replaces it.
   const bedEstimate = (id) => {
     const i = priced ? priced.stopDetails.findIndex((sd) => sd.destinationId === id) : -1;
