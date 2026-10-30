@@ -208,6 +208,38 @@ rules are amended in place where they are restated.
   chips (chevron last, 500) share one 36 px height.
 - **No count on the map panel** (T603).
 
+### Trips for you v2, the free direction (owner 2026-10-30, T879 to T884)
+
+The owner reviewed the plan flow's results and trip page and decided that
+Trips for you does not have to follow every rule below ("you don't
+necessarily have to follow those constraints of carta"), then asked that its
+colours stay subtle and "fit in the carta colour choices of the other tabs".
+On Trips for you and its trip page only (`src/planner/finder/`), these win
+over the rules below; everywhere else the rules below still hold.
+
+- **Words on the photo.** A trip card's photo (4:5, the top pick a whole
+  row) carries the name and the country in white over one ink fade
+  (`--text` at 82% to clear, the lower 60%); on a phone the trip page's head
+  lies on the first photo the same way. Pills and the heart on a photo are
+  solid `--surface` with `--elev-1`, never glass.
+- **The match ring.** The match is an SVG ring, an umber arc to the score
+  (600 from 85, 500 from 70, 300 below) on a white disc; it is the trip
+  finder's ranked score (T884), never a quality rating.
+- **Colour stays Carta's.** Ink, the umber ramp and its tints, rust
+  (`--amber-ink`) only for a warning (over budget, Overvol, a missed like),
+  sun yellow only for best value, the four cost colours only in the cost
+  card. No new green or red, no traffic-light scale.
+- **Tiles behind icons** are allowed here: the trip page's facts on
+  `--umber-50`, the cost lines on their cost colour at 11%.
+- **The phone's primary may stick.** Under 1024 px a bar pinned above the
+  nav holds the total and Plan this trip, and the price card's own button
+  hides, so one primary shows at a time.
+- **Wat het kost** is compact by default: the total, the price a person,
+  the cost bar and the budget line, with one Breakdown (Opbouw) button at
+  its top that folds the lines open.
+- **The trips map** draws photo pins and curved lines from the home airport
+  with the time there; the picked trip is the brown one.
+
 ## Colour
 
 Single theme, light only: no `prefers-color-scheme` or `data-theme` blocks, `theme-color` is the page
