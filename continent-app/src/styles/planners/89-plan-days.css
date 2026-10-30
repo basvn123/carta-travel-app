@@ -1,0 +1,22 @@
+/* ---- Plan your days (T895 to T900, the owner's plan days board 2026-10-30) ---- */
+
+/* T895: the breadcrumb bar of a day inside a trip: Plan / the trip / the day,
+   then previous and next day and Share. The trip's name gives way first. */
+.dayc { display: flex; align-items: center; min-height: 52px; }
+.dayc-path { flex: 1; min-width: 0; }
+.dayc-path ol { display: flex; align-items: center; min-width: 0; margin: 0; padding: 0 var(--space-2); list-style: none; }
+.dayc-path li { display: flex; align-items: center; min-width: 0; white-space: nowrap; }
+.dayc-path li + li::before { content: "/"; margin: 0 var(--space-2); color: var(--text-3); }
+.dayc-path .dayc-trip { flex: 0 1 auto; overflow: hidden; }
+.btn.dayc-link {
+  min-width: 0;
+  max-width: 100%;
+  min-height: 36px;
+  padding: 0 var(--space-1);
+  color: var(--action);
+  font-size: var(--text-label);
+  font-weight: 600;
+}
+.dayc-link .btn-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dayc-here { font-size: var(--text-label); font-weight: 700; color: var(--text); }
+.dayc-acts { display: flex; align-items: center; gap: var(--space-1); }

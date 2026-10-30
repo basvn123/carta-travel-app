@@ -63,6 +63,7 @@ import { ticketOf, dayTicketTotals } from '../lib/dayTickets.js';
 import { DayCostBar, DayStrip, DayReceiptSheet } from './DayCost.jsx';
 import { MapDrawer } from '../components/MapDrawer.jsx';
 import { PageBar } from '../browse/PageBar.jsx';
+import { DayCrumbs } from './days/DayCrumbs.jsx';
 import { quoteTrip } from '../lib/tripTotal.js';
 import { draftQuoteState } from '../lib/price/draftState.js';
 import { useLiveFlights } from '../lib/flights/useLiveFlights.js';
@@ -210,6 +211,8 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   // "Back to trip" on a plan that came out of a saved trip: App reopens
   // that trip in the planner. Null id means the unsaved draft.
   onOpenTrip = null,
+  // T895: the Plan overview, the breadcrumb's first step.
+  onPlanHome = null,
   // T433: Explore's cost map (App computes it once) for the day's one
   // per-person figure, and the Lifestyle panel that moves it.
   costs = null, onOpenLifestyle = null,
@@ -4057,7 +4060,20 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
 
   // The one page bar (carta-design "Navigation", PageBar, T474): inside a
   // trip it names the trip it returns to (T501, roadmap 1.3d state 5).
-  const pageBar = (
+  // T895: inside a trip the bar is the breadcrumb (Plan, the trip, the
+  // day) with the previous and next day.
+  const pageBar = tripName && onPlanHome ? (
+    <DayCrumbs
+      tripName={tripName}
+      onPlan={onPlanHome}
+      onTrip={backToTrip || (() => setOverview(true))}
+      dayLabel={overviewOn ? t('days.allDays') : t('dayws.crumbDay', { n: dayNumber })}
+      onPrev={!overviewOn && dayNumber > 1 ? () => goToPlanDay(dayNumber - 2) : null}
+      onNext={!overviewOn && dayNumber < planDays.length ? () => goToPlanDay(dayNumber) : null}
+      onShare={shareDayLink}
+      copied={shareState === 'linked'}
+    />
+  ) : (
     <PageBar
       t={t}
       className="dayws-pagebar"

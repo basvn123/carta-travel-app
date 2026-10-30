@@ -538,12 +538,9 @@ function TravelApp() {
       return;
     }
     if (key === 'explore') { goToTab('map'); return; }
-    if (key === 'plan') {
-      const cur = activeTabRef.current;
-      if (placeOf(cur) === 'plan') { goToTab(cur); return; }
-      goToTab('planstart');
-      return;
-    }
+    // T895 (owner, plan days board 2026-10-30): Plan always opens the Plan
+    // overview, from inside a trip or a day too, so it is never a dead end.
+    if (key === 'plan') { goToTab('planstart'); return; }
     goToTab(key);
   };
   // The site footer's links (T594) go through this same door: a place or view
@@ -1963,6 +1960,7 @@ function TravelApp() {
               daySeed={pendingDaySeed}
               onDaySeedConsumed={clearPendingDaySeed}
               onOpenTrip={openTripFromDay}
+              onPlanHome={() => goToTab('planstart')}
               onOpenLifestyle={openLifestyle}
               costs={exploreIndices}
               priceRequest={request}
