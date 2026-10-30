@@ -7,6 +7,9 @@
  * arr, stops }] }, at most MAX_ROWS. price null means searched, no flight.
  * A row that does not look like a fare is dropped, not stored; the answer
  * says how many were.
+ *
+ * T915: the body may also carry found: [[o, d], ...], routes the box's gap
+ * search saw a direct flight on, which join the sweep like the find tier's.
  */
 
 export const MAX_ROWS = 200;
@@ -25,7 +28,7 @@ const whole = (v, lo, hi) => (Number.isInteger(v) && v >= lo && v <= hi ? v : nu
  * @returns {{rows:Array<object>, dropped:number}}
  */
 export function ingestRows(body, now = Date.now()) {
-  const list = body && body.rows;
+  const list = body && (body.rows ?? (Array.isArray(body.found) ? [] : undefined));
   if (!Array.isArray(list)) throw new Error('rows must be a list');
   if (list.length > MAX_ROWS) throw new Error(`at most ${MAX_ROWS} rows`);
   const today = Math.floor(now / DAY) * DAY;
@@ -47,6 +50,27 @@ export function ingestRows(body, now = Date.now()) {
     });
   }
   return { rows, dropped: list.length - rows.length };
+}
+
+/**
+ * The found routes worth storing (T915): distinct [o, d] pairs of IATA codes.
+ * Throws on a found that is not a list or is too long.
+ * @returns {Array<[string,string]>}
+ */
+export function ingestFound(body) {
+  const list = body && body.found;
+  if (list == null) return [];
+  if (!Array.isArray(list)) throw new Error('found must be a list');
+  if (list.length > MAX_ROWS) throw new Error(`at most ${MAX_ROWS} found`);
+  const seen = new Set();
+  const out = [];
+  for (const p of list) {
+    if (!Array.isArray(p) || !IATA.test(p[0]) || !IATA.test(p[1]) || p[0] === p[1]) continue;
+    if (seen.has(p[0] + p[1])) continue;
+    seen.add(p[0] + p[1]);
+    out.push([p[0], p[1]]);
+  }
+  return out;
 }
 
 /** Constant-time compare of the bearer token with the INGEST_TOKEN secret. */

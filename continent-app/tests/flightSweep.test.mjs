@@ -5,10 +5,11 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import {
   flattenRoutes, jobsForMinute, nextPause, routesInMinute, NEAR_CYCLE, FAR_CYCLE, FIND_CYCLE, NEAR_DAYS, FAR_WEEKS, km,
-  PAUSE_BASE_MS, PAUSE_MAX_MS, lateJobsForMinute, lateJobsForRoute, lateFillOrder, LATE_CYCLE, LATE_WEEKS,
+  PAUSE_BASE_MS, PAUSE_MAX_MS, lateJobsForMinute, lateJobsForRoute, lateFillOrder, LATE_CYCLE, LATE_WEEKS, farJobsInWindow,
 } from "../workers/flight-sweep/src/plan.mjs";
 import { buildFile, buildIndex, nextBatch, priceOk, routeMoves } from "../workers/flight-sweep/src/publish.mjs";
-import { ingestRows, tokenOk, MAX_ROWS } from "../workers/flight-sweep/src/ingest.mjs";
+import { ingestFound, ingestRows, tokenOk, MAX_ROWS } from "../workers/flight-sweep/src/ingest.mjs";
+import { airportCountries, gapPairs } from "../workers/late-sweep/gaps.mjs";
 
 const ALL_YEAR = 4095;
 const routes = {
@@ -274,4 +275,48 @@ test("a route's late jobs are the ones its minute would give (T819)", () => {
     const at = NOW + m * 60000;
     assert.deepEqual(lateJobsForMinute(list, at), rs.flatMap((r) => lateJobsForRoute(list, r, at)));
   }
+});
+
+test("ingest takes found routes alone or beside fares, and drops what is not a pair of codes (T915)", () => {
+  assert.deepEqual(ingestFound({ found: [["LHR", "PRG"], ["PRG", "LHR"], ["LHR", "PRG"], ["LHR", "LHR"], ["lhr", "PRG"], "LHRPRG"] }),
+    [["LHR", "PRG"], ["PRG", "LHR"]]);
+  assert.deepEqual(ingestFound({ rows: [] }), []);
+  assert.deepEqual(ingestRows({ found: [["LHR", "PRG"]] }).rows, [], "a found-only body is not a bad body");
+  assert.throws(() => ingestFound({ found: "LHRPRG" }));
+  assert.throws(() => ingestFound({ found: new Array(MAX_ROWS + 1).fill(["LHR", "PRG"]) }));
+});
+
+test("the far fill asks a route for the far tier's own days inside its window (T917)", () => {
+  const list = flattenRoutes(routes);
+  const from = "2027-01-01";
+  const to = "2027-02-28";
+  for (let r = 0; r < list.length; r++) {
+    // The minute the Worker's far tier runs route r today.
+    let m = Math.floor(NOW / 60000);
+    while (!routesInMinute(m, FAR_CYCLE, list.length).includes(r)) m++;
+    const want = jobsForMinute(list, airports, m * 60000)
+      .filter((j) => j.tier === "far" && j.o === list[r][0] && j.d === list[r][1] && j.date >= from && j.date <= to);
+    const day0 = Math.floor((m * 60000) / 86400000) * 86400000;
+    assert.deepEqual(farJobsInWindow(list, r, day0, from, to).map((j) => j.date), want.map((j) => j.date), `route ${r}`);
+  }
+  const fao = list.findIndex(([o, d]) => o === "BRU" && d === "FAO");
+  assert.deepEqual(farJobsInWindow(list, fao, NOW, from, to), [], "FAO flies April to July only");
+});
+
+test("the gap search takes pairs between countries that do not report, far enough apart, with no route yet (T915)", () => {
+  const csv = [
+    "id,ident,type,name,iso_country,iata_code",
+    '1,EGLL,large,"London Heathrow, UK",GB,LHR', "2,EGKK,large,Gatwick,GB,LGW", "3,EGPH,large,Edinburgh,GB,EDI",
+    '4,LKPR,large,"Prague ""Vaclav Havel""",CZ,PRG', "5,EBBR,large,Brussels,BE,BRU", "6,LGAV,large,Athens,GR,ATH",
+  ].join("\n");
+  const countries = airportCountries(csv);
+  assert.deepEqual(countries, { LHR: "GB", LGW: "GB", EDI: "GB", PRG: "CZ", BRU: "BE", ATH: "GR" });
+  const json = {
+    reporters: ["be", "el"],
+    airports: { LHR: [51.47, -0.45], LGW: [51.15, -0.19], EDI: [55.95, -3.37], PRG: [50.1, 14.26], BRU: [50.9, 4.48], ATH: [37.94, 23.94] },
+    routes: { BRU: { LHR: 4095, PRG: 4095 } },
+  };
+  const list = flattenRoutes(json.routes, [["EDI", "PRG"]]);
+  // LHR-LGW is under 150 km; EDI-PRG is a found route already; BRU and ATH report.
+  assert.deepEqual(gapPairs(json, countries, list), [["EDI", "LGW"], ["EDI", "LHR"], ["LGW", "PRG"], ["LHR", "PRG"]]);
 });
