@@ -36,9 +36,21 @@ export const FLY_KM = 700;
  * the real route, not from a straight line, and pipeline/trips only publishes
  * a mode its estimator agreed exists.
  */
-export function prefillMode(leg, { quiz = null, published = '', drivingOwnCar = false } = {}) {
+export function prefillMode(leg, { quiz = null, published = '', drivingOwnCar = false, way = '', flown = false } = {}) {
   if (published) return published;
   if (drivingOwnCar) return 'car';
+  const ends = leg?.kind === 'out' || leg?.kind === 'back';
+  // T856: a trip priced on a flight there and home (the trip finder's card)
+  // flies those two legs, so the planner prices the card's flight.
+  if (flown && ends) return 'fly';
+  // T856: the way of travel the traveller chose (choices.transport_mode, the
+  // settings line and Lifestyle) answers every leg it fits: a plane for the
+  // legs there and home, a train, a coach or the car for all of them. A
+  // train where there is no railway falls through to the rules below.
+  const want = wayLegMode(way);
+  if (want === 'fly' && ends) return 'fly';
+  if (want === 'car' || want === 'bus') return want;
+  if (want === 'train' && !NO_RAIL.has(leg?.from?.iso2 || '') && !NO_RAIL.has(leg?.to?.iso2 || '')) return 'train';
   const wantsCar = quiz?.around === 'car' || (quiz?.types || []).includes('roadtrip');
   if (wantsCar) return 'car';
   const km = legKm(leg);
@@ -46,6 +58,11 @@ export function prefillMode(leg, { quiz = null, published = '', drivingOwnCar = 
   const noRail = NO_RAIL.has(leg?.from?.iso2 || '') || NO_RAIL.has(leg?.to?.iso2 || '');
   if (noRail) return km != null && km > 300 ? 'fly' : 'bus';
   return 'train';
+}
+
+/** The leg mode for a way of travel ('plane', 'train', 'bus', 'car'), or '' for any way (lib/travelWay.js TRAVEL_MODES). */
+export function wayLegMode(way) {
+  return { plane: 'fly', train: 'train', bus: 'bus', car: 'car' }[way] || '';
 }
 
 /** The straight-line distance of a leg, or null when an end has no coordinates. */

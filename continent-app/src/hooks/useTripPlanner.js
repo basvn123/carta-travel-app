@@ -443,7 +443,10 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     stops, tripStart, tripEnd, groupSize, children, babies, transportPref, legModes, ownLegs, ownStays, transferMode,
     baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, stayTier, lifestyle, flightHours, flightRank,
     flightPrefs,
-  }), [flightPrefs, stops, tripStart, tripEnd, groupSize, children, babies, transportPref, legModes, ownLegs,
+    // T855: the picked flights price their direction as held legs (quoteTrip
+    // heldLeg), so a flight on another day or airport than the routed one holds.
+    flightPicks,
+  }), [flightPrefs, flightPicks, stops, tripStart, tripEnd, groupSize, children, babies, transportPref, legModes, ownLegs,
     ownStays, transferMode, baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, stayTier,
     lifestyle, flightHours, flightRank]);
   // T559: each dated stop asks for tonight's prices on its own nights; a live

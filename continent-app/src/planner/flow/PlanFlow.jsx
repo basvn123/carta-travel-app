@@ -84,8 +84,10 @@ export function PlanFlow({
           titleTag={Title}
           trips={trips}
           onStart={() => {
-            // A new trip every time; the one open stays in the list.
-            if (trips.some((x) => x.active)) tripsStore.startNew();
+            // A new trip every time; the one open stays in the list. T856:
+            // always, so an open draft too empty to be listed (answers with
+            // no trip made yet) never hands its old answers to the new plan.
+            tripsStore.startNew();
             setKind('new');
             go('kind');
           }}

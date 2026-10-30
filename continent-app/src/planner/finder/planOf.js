@@ -31,6 +31,33 @@ function liveFlightsOf(trip) {
 }
 
 /**
+ * Every flight the card priced, each way (T855), in the shape the planner
+ * holds a picked flight in (quoteTrip heldLeg): from, to, date (the trip's
+ * day the leg stands for), flightDate (its own day when the finder priced
+ * the swept day nearest the trip's), the fare a seat, airline, times,
+ * stops, check time and source. A live leg, an exact swept day and a
+ * nearest swept day all go, so the planner prices the card's flight rather
+ * than looking the day up again and finding none. A fare the traveller
+ * typed or a drive goes as its own line, not here.
+ */
+function flightsOf(trip) {
+  const facts = slotOf(trip, 'flight')?.pick?.facts;
+  if (!facts || (facts.source !== 'swept' && facts.source !== 'live')) return null;
+  const leg = (l, day) => {
+    if (!l || !Number.isFinite(l.price) || !l.from || !l.to || !day) return null;
+    return {
+      from: l.from, to: l.to, date: day, ...(l.date && l.date !== day ? { flightDate: l.date } : {}),
+      price: l.price, airline: l.airline || null, flightNo: l.flightNo || null, dep: l.dep || null, arr: l.arr || null,
+      stops: l.stops ?? 0, min: l.minutes ?? null, via: l.via || null,
+      checked: Number.isFinite(l.checked) ? l.checked : null, source: l.source || 'swept', link: facts.link || null,
+    };
+  };
+  const out = leg(facts.out, trip.dates?.out);
+  const back = leg(facts.back, trip.dates?.back);
+  return out || back ? { out, back } : null;
+}
+
+/**
  * The plan for one trip as it stands on the receipt. A slot the traveller
  * swapped carries its option's setting; one they left keeps the finder's.
  */
@@ -62,6 +89,7 @@ export function planOf(trip) {
     lifestyle: foodOpt && PROFILES[foodOpt.lifestyle] ? PROFILES[foodOpt.lifestyle] : (st.lifestyle || null),
     flightRank: st.flightRank || 'price',
     liveFlights: liveFlightsOf(trip),
+    flights: flightsOf(trip),
     // The traveller's own lines, asked in their step (question 7).
     yours: trip.slots.filter((s) => s.owner === 'you' && s.eur != null).map((s) => s.id),
   };

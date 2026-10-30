@@ -16,15 +16,17 @@ import { useI18n } from '../../i18n/index.jsx';
  *
  * T812: once the trip knows where it leaves from, the card is one line,
  * "From Brussels (BRU)" with Change, which opens the search and the airports.
+ * T856: the line names the airport the trip is priced from (homeIata) until
+ * another is picked, so a town the setup already gave is not asked again.
  */
 export function OriginCard({
   originPlace, setOriginPlace, originQuery, setOriginQuery, originResults, setOriginResults,
-  originBusy, setOriginBusy, nearAirports, depIataOk, setDepIata, homeCity = '',
+  originBusy, setOriginBusy, nearAirports, depIataOk, setDepIata, homeCity = '', homeIata = '',
 }) {
   const { t } = useI18n();
   const [open, setOpen] = useState(!homeCity);
   const bodyId = useId();
-  const iata = depIataOk || nearAirports[0]?.iata || '';
+  const iata = depIataOk || homeIata || nearAirports[0]?.iata || '';
   const searchOrigin = async () => {
     const q = originQuery.trim();
     if (q.length < 3 || originBusy) return;
@@ -100,11 +102,11 @@ export function OriginCard({
         <div className="worigin-air">
           <span className="worigin-air-lbl" id="worigin-air">{t('plan.flyFrom')}</span>
           <ChipGroup label={t('plan.flyFrom')} className="worigin-chips" aria-labelledby="worigin-air">
-            {nearAirports.map((a, i) => (
+            {nearAirports.map((a) => (
               <Chip
                 key={a.iata}
                 kind="choice"
-                selected={(depIataOk || nearAirports[0]?.iata) === a.iata && (depIataOk ? true : i === 0)}
+                selected={iata === a.iata}
                 onClick={() => setDepIata(a.iata)}
               >
                 <b>{a.iata}</b> {a.city || a.name} <small>{a.km} km</small>

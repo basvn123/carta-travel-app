@@ -7,7 +7,7 @@ import { Button, ChoiceRows } from '../../components/ui/index.js';
 import { UploadIcon } from '../../components/Icons.jsx';
 import { QUESTIONS, toggleValue } from './questions.js';
 import { answer, markAnswered, normalizeSettings, fromImports } from './tripSettings.js';
-import { prefillFromText } from './prefill.js';
+import { prefillFromText, screenAnswered } from './prefill.js';
 import { syncParty, syncWhen } from './appSync.js';
 import { useSettings } from '../../components/SettingsLine.jsx';
 import { plannerStore } from '../plannerStore.js';
@@ -110,9 +110,11 @@ function TellBody({ settings, commit }) {
   const go = () => {
     let s = { ...read, note: text.trim() };
     const { patch, answered: ids, countries: named } = prefillFromText(text, { countries });
-    // The words never overwrite an answer already given on a screen.
+    // The words never overwrite an answer already given on a screen; the
+    // earlier words' own answers are theirs to replace (T856).
     const FIELD = { who: 'party', when: 'when', priority: 'priority', booked: 'booked' };
-    for (const id of ids) if (read.answered.includes(id)) delete patch[FIELD[id]];
+    const kept = screenAnswered(read, { countries });
+    for (const id of ids) if (kept.includes(id)) delete patch[FIELD[id]];
     s = normalizeSettings({ ...s, ...patch, guide: { ...s.guide, ...(patch.guide || {}) } });
     for (const id of ids) s = markAnswered(s, id);
     // T676: the countries the words name are the ones picked on Where (up to

@@ -145,3 +145,14 @@ export function prefillFromText(text, { countries = [] } = {}) {
   const named = countries.filter((c) => c && has(tx, String(c).toLowerCase()));
   return { patch, answered, countries: named };
 }
+
+/**
+ * The answers a screen gave (T856): the settings' answered questions less
+ * the ones the trip's own words (settings.note) gave. The words never
+ * overwrite an answer given on a screen, but words typed again replace the
+ * answers the earlier words gave.
+ */
+export function screenAnswered(s, { countries = [] } = {}) {
+  const words = new Set(prefillFromText(s?.note || '', { countries }).answered);
+  return (s?.answered || []).filter((id) => !words.has(id));
+}

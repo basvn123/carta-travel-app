@@ -53,9 +53,12 @@ function checkedText(t, checked) {
 }
 
 /** One flight a row: the airline's mark, the times, the stops and the length, the price for the party. */
-function FlightChoice({ row, selected, onPick, t, airlines }) {
+function FlightChoice({ row, selected, onPick, t, airlines, day = '' }) {
   const { leg } = row;
-  const sub = [leg.airlineName || airlineName(airlines, leg.airline), stopsText(t, leg.stops ?? 0), durationText(t, leg.min)]
+  // T855: a flight on another day than the leg's (the swept day nearest it,
+  // which the trip finder priced) names its own day.
+  const own = leg.date && day && leg.date !== day ? fmtDate(leg.date, true) : '';
+  const sub = [own, leg.airlineName || airlineName(airlines, leg.airline), stopsText(t, leg.stops ?? 0), durationText(t, leg.min)]
     .filter(Boolean).join(', ');
   return (
     <Button
@@ -209,6 +212,7 @@ function LegCard({ leg, value, onChange, adults, estimate, pricedMode, t, lang, 
                 airlines={airlines}
                 selected={sameFlight(r.leg, current)}
                 onPick={() => pick(r)}
+                day={q?.date || leg.date}
               />
             ))}
           </div>
@@ -216,7 +220,7 @@ function LegCard({ leg, value, onChange, adults, estimate, pricedMode, t, lang, 
             {t('wizard.gtFlightsFor', { people: partyText })}
             {current?.checked ? `. ${checkedText(t, current.checked)}` : ''}
           </p>
-          <FlightLink from={q?.o} to={q?.d} date={q?.date} className="wz-fls-link" />
+          <FlightLink from={q?.o} to={q?.d} date={current?.date || q?.date} className="wz-fls-link" />
         </div>
       ) : flying && !paid ? (
         <p className="wz-leg-none">

@@ -179,7 +179,8 @@ export function StepReview({
             <ArrowRightIcon size={14} className="wz-leg-arrow" />
             {cityLabel(leg.to.city) || leg.to.name}
           </span>
-          <span className="wz-tl-sub">{[leg.date && fmtDate(leg.date, true), how].filter(Boolean).join(', ')}</span>
+          {/* T855: a flight on the swept day nearest the leg's names its own day. */}
+          <span className="wz-tl-sub">{[(cf?.date || leg.date) && fmtDate(cf?.date || leg.date, true), how].filter(Boolean).join(', ')}</span>
         </span>
       </li>
     );

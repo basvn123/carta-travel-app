@@ -52,6 +52,8 @@ export function planState(handOver, plan) {
     ...wizardPlannerState(handOver, { stayTier: plan.stayTier || handOver.stayTier, lifestyle: plan.lifestyle }),
     flightRank: plan.flightRank,
     ...(plan.liveFlights.length ? { liveFlights: new Map(plan.liveFlights) } : {}),
+    // T855: the card's flight each way, on its own day and airport (planOf flightsOf).
+    ...(plan.flights ? { handedFlights: plan.flights } : {}),
   };
 }
 

@@ -15,6 +15,7 @@ const TripPage = lazy(() => import('../browse/TripPage.jsx').then((m) => ({ defa
 import { PlanTotal } from './PlanTotal.jsx';
 import { quoteTrip as priceWholeTrip, wizardPlannerState, paidEur, PLANNER_BAG } from '../lib/tripTotal.js';
 import { prefillMode, openJaw, publishedLeg } from '../lib/gettingThere.js';
+import { useSettings } from '../components/SettingsLine.jsx';
 import { loadDossier } from '../lib/dossier.js';
 import { TRAVEL_MODE_LABEL } from '../lib/transportLinks.js';
 import { buildCountryBriefs } from '../lib/countryBrief.js';
@@ -610,14 +611,18 @@ export function GuidedTripWizard({
   // flight links on every leg start there.
   const [depIata, setDepIata] = useState(() => savedDraft.depIata || '');
   const depIataOk = depIata && nearAirports.some((a) => a.iata === depIata) ? depIata : '';
+  // T856: until the traveller picks one, the airport the trip is priced from
+  // (the app's origin, which the setup's From set), not the one nearest the
+  // town: the line on Getting there says what the prices already say.
+  const homeIata = originCode && nearAirports.some((a) => a.iata === originCode) ? originCode : (nearAirports[0]?.iata || '');
   const homePoint = useMemo(() => ({
     city: originPlace?.name || originCity,
     country: null,
     iso2: originPlace?.iso2 || originRec?.iso2 || null,
     lat: originPoint?.lat ?? null,
     lon: originPoint?.lon ?? null,
-    iata: depIataOk || nearAirports[0]?.iata || originCode || null,
-  }), [originPlace, originCity, originRec, originPoint?.lat, originPoint?.lon, nearAirports, originCode, depIataOk]);
+    iata: depIataOk || homeIata || originCode || null,
+  }), [originPlace, originCity, originRec, originPoint?.lat, originPoint?.lon, homeIata, originCode, depIataOk]);
 
   const pointOf = useCallback((id) => {
     const d = destinations[id];
@@ -730,20 +735,28 @@ export function GuidedTripWizard({
   // Every leg opens already answered. The guess is written into the same state
   // the traveller edits, once per leg, so it flows into finish() unchanged and
   // an answer already given is never overwritten.
+  // T856: the way of travel the traveller chose (choices.transport_mode)
+  // answers every leg it fits, and a trip-finder trip priced on a flight
+  // flies there and home, as its card did.
+  const wayOfTravel = useSettings()?.transportMode || 'any';
+  const seedFlown = Boolean(seedPlan?.flights?.out && seedPlan?.flights?.back && appliesTo(seedPlan, includedIds));
   useEffect(() => {
     if (!gettingLegs.length) return;
     setTravelValues((prev) => {
       let next = prev;
       for (const leg of gettingLegs) {
-        if (prev[leg.key]?.mode) continue;
+        // A guess is not an answer: an older draft's guess is made again.
+        if (prev[leg.key]?.mode && !prev[leg.key].guessed) continue;
         const mode = prefillMode(leg, {
           quiz,
+          way: wayOfTravel,
+          flown: seedFlown,
           published: leg.published?.mode || '',
           // drivingThere, not the ownCarChosen alias below: that is declared
           // further down the component and this effect runs before it.
           drivingOwnCar: drivingThere,
         });
-        if (!mode) continue;
+        if (!mode || mode === prev[leg.key]?.mode) continue;
         if (next === prev) next = { ...prev };
         // Marked as Carta's guess (T388): the draft and the recap only repeat
         // back what the traveller said, and a guess is not that.
@@ -1149,11 +1162,12 @@ export function GuidedTripWizard({
     const state = seedOn
       ? planState(planned, { ...seedPlan, lifestyle: seedPlan.lifestyle || dailyLifestyle })
       : { ...wizardPlannerState(planned, { stayTier: effectiveStayTier, lifestyle: dailyLifestyle }), flightRank };
+    // T855: a pick also holds its direction ahead of the finder's handed leg.
     const withPicks = picked.length
-      ? { ...state, liveFlights: new Map([...(state.liveFlights || []), ...picked]) }
+      ? { ...state, liveFlights: new Map([...(state.liveFlights || []), ...picked]), flightPicks: { out: flightPickOut, back: flightPickBack } }
       : state;
     return priceWholeTrip(withPicks, { data, countryInsights });
-  }, [planned, seedOn, seedPlan, effectiveStayTier, dailyLifestyle, data, countryInsights, flightRank, picked]);
+  }, [planned, seedOn, seedPlan, effectiveStayTier, dailyLifestyle, data, countryInsights, flightRank, picked, flightPickOut, flightPickBack]);
   // Carta's figure for each leg the traveller has not priced, keyed the way
   // the Getting there rows are, so a row shows the estimate its own figure
   // replaces.
@@ -1195,7 +1209,9 @@ export function GuidedTripWizard({
     const q = cf?.queries?.[dir === 'out' ? 0 : 1];
     if (!leg || !q || !Number.isFinite(leg.price)) return null;
     const { cost, ...flight } = leg; // eslint-disable-line no-unused-vars -- the planner prices the cost itself
-    return { ...flight, date: q.date, from: q.o, to: q.d };
+    // T855: keyed by the trip's day; a leg on the nearest swept day keeps its own.
+    const own = flight.flightDate || flight.date;
+    return { ...flight, date: q.date, ...(own && own !== q.date ? { flightDate: own } : {}), from: q.o, to: q.d };
   };
   // Carta's bed estimate per stay, for the field that replaces it.
   const bedEstimate = (id) => {
@@ -1537,7 +1553,7 @@ export function GuidedTripWizard({
   const originCard = (
     <OriginCard
       {...{ originPlace, setOriginPlace, originQuery, setOriginQuery, originResults, setOriginResults }}
-      {...{ originBusy, setOriginBusy, nearAirports, depIataOk, setDepIata }}
+      {...{ originBusy, setOriginBusy, nearAirports, depIataOk, setDepIata, homeIata }}
       homeCity={homePoint.city || ''}
     />
   );

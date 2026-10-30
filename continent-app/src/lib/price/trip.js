@@ -24,7 +24,7 @@ import { tripDaysBetween, drivingEstimate } from '../runtime_pricing.js';
 import { combineTripLegs, ownFlightTransfers, pickLegMode } from '../trip_planner_pricing.js';
 import { legTransportOptions, airportTransferOptions, transferModesFromKm } from '../transport.js';
 import { originHome, destAnchor } from '../origins.js';
-import { pickLeg, legCost } from '../flights/flights.js';
+import { pickLeg, legCost, fitsHours, fitsPrefs } from '../flights/flights.js';
 import { addDays } from '../dates.js';
 import { round2 } from '../math.js';
 import { ticketShare, BABY_LAP_FEE_LEG } from '../party.js';
@@ -92,10 +92,39 @@ const hasRoutes = (d) => d && Object.keys(d.routes || {}).length > 0;
  *          flightHours: { out, back } ('any' | 'morning' | 'midday' | 'evening'),
  *          flightRank: 'price' | 'balanced' | 'comfort' (T657, the trip settings'
  *                      what matters most; the order live flights are picked in),
- *          liveFlights: Map from useLiveFlights() }
+ *          liveFlights: Map from useLiveFlights(),
+ *          flightPicks / handedFlights: { out, back } flights the trip holds
+ *                      (heldLeg below; T855) }
  * ctx.data.flights is the home airport's swept flight file (T517).
  * ctx:   { data, countryInsights }
  */
+/**
+ * The flight a trip already holds for one direction (T855), or null: the
+ * traveller's pick (state.flightPicks, what the planned trip carries) else
+ * the trip finder's priced leg (state.handedFlights, planOf). Both have one
+ * shape: from, to, date (the trip's day it stands for), flightDate (its own
+ * day when that is another, a swept day nearest the trip's), the fare a
+ * seat, airline, times, stops, check time and source. It holds while the
+ * trip's day and home airport are the ones it was priced for.
+ */
+function heldLeg(state, dir, home, day) {
+  for (const h of [state?.flightPicks?.[dir], state?.handedFlights?.[dir]]) {
+    if (!h || !Number.isFinite(h.price) || !h.from || !h.to || h.date !== day) continue;
+    if ((dir === 'out' ? h.from : h.to) === home) return h;
+  }
+  return null;
+}
+
+/** A held flight as pickLeg's leg: its own day, its check time in ms. */
+function heldAsLeg(h) {
+  const checked = Number.isFinite(h.checked) ? h.checked : (Date.parse(h.checked) || null);
+  return {
+    date: h.flightDate || h.date, price: h.price, airline: h.airline || null, dep: h.dep || null, arr: h.arr || null,
+    stops: h.stops ?? 0, flightNo: h.flightNo || null, min: h.min ?? null, via: h.via || null,
+    checked, source: h.source || 'live', link: h.link || null,
+  };
+}
+
 export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
   const destinations = data?.destinations || NO_DESTINATIONS;
   const carModel = data?.meta?.car_model || null;
@@ -216,8 +245,16 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
     const routed = routedFlight;
     if (!flies || !routed || !first?.arriveDate || !last?.departDate) return null;
     const home = anchorOrigin || data?.meta?.selected_origin || null;
-    const inAirport = destAnchor(destinations[routed.in_from_id]);
-    const outAirport = destAnchor(destinations[routed.out_from_id]);
+    // T855: a flight the trip already holds for a direction (the trip
+    // finder's priced leg, handed over by planOf, or the pick the planned
+    // trip carries) prices that direction before the exact-day lookup. It
+    // keeps its own day (the finder may have priced the swept day nearest
+    // the trip's) and its own airport: the finder flies to the gateway's
+    // airport, which can differ from the routed anchor's.
+    const heldOut = heldLeg(state, 'out', home, first.arriveDate);
+    const heldBack = heldLeg(state, 'back', home, last.departDate);
+    const inAirport = heldOut?.to || destAnchor(destinations[routed.in_from_id]);
+    const outAirport = heldBack?.from || destAnchor(destinations[routed.out_from_id]);
     if (!home || !inAirport || !outAirport) return null;
     const file = data?.flights?.from === home ? data.flights : null;
     const live = state?.liveFlights;
@@ -225,7 +262,9 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
     const paying = groupSize;
     const bagKey = state?.baggage || rule('request.default_bag');
     const side = (dir, from, to, date) => {
-      const leg = pickLeg({
+      const held = dir === 'out' ? heldOut : heldBack;
+      const fits = held && fitsHours(held.dep, hours[dir] || 'any') && fitsPrefs(held, state?.flightPrefs || null);
+      const leg = fits ? heldAsLeg(held) : pickLeg({
         file, live: live?.get?.(`${from}-${to}-${date}`) || null, dir,
         airport: dir === 'out' ? to : from, date, hours: hours[dir] || 'any',
         rank: state?.flightRank || 'price',
