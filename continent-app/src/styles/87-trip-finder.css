@@ -288,17 +288,10 @@
   .tff-brief-dot { transition: none; }
 }
 
-/* The head: "21 trips for you", the answers in one line under it, Edit
-   answers on the right. */
-.tff-trips { gap: var(--space-4); }
-.tff-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-2) var(--space-4);
-}
-.tff-head-text { display: grid; gap: var(--space-1); flex: 1 1 280px; min-width: 0; }
+/* The head (T880): "21 trips for you", then every answer as a chip in one
+   row that scrolls sideways on a phone and wraps on a desktop. */
+.tff-trips { gap: var(--space-3); }
+.tff-head { display: flex; align-items: center; gap: var(--space-3); }
 .tff-title {
   margin: 0;
   font-size: var(--text-title);
@@ -308,41 +301,116 @@
   text-wrap: balance;
 }
 @media (min-width: 769px) { .tff-title { font-size: var(--text-headline); letter-spacing: -0.01em; } }
-.tff-summary {
-  margin: 0;
-  font-size: var(--text-body);
-  line-height: var(--leading-ui);
-  color: var(--text-2);
-}
-.tff-summary-more { margin-left: var(--space-2); white-space: nowrap; }
-.tff-edit.btn { flex: none; }
-.tff-edit[aria-expanded="true"] .btn-icon { transform: rotate(180deg); }
-.tff-ansbar {
+.tff-answers {
   display: flex;
-  flex-wrap: wrap;
   gap: var(--space-2);
-  margin: 0;
-  padding: 0;
+  margin: 0 calc(-1 * var(--gutter));
+  padding: 0 var(--gutter);
   list-style: none;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
-.tff-ans.btn { border-radius: var(--radius-pill); font-weight: 500; }
+.tff-answers::-webkit-scrollbar { display: none; }
+.tff-answers li { flex: none; }
+.tff-answer.btn {
+  min-height: 32px;
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  color: var(--text-2);
+  font: 500 var(--text-caption) / 1 var(--font);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+}
+@media (hover: hover) { .tff-answer.btn:hover { background: var(--surface-hover); color: var(--text); } }
+.tff-answer:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+@media (pointer: coarse) { .tff-answer.btn { min-height: var(--tap); } }
+@media (min-width: 769px) { .tff-answers { flex-wrap: wrap; overflow: visible; margin: 0; padding: 0; } }
 
-/* One row: the sort, then Compare (from two ticks) and the view toggle.
-   On a phone the sort takes its own row and wraps its words inside the box. */
+/* One toolbar (T880): Sort as a menu, Compare, the quick filters, and from
+   1024 px Hide map at the end. It scrolls sideways on a phone. */
 .tff-toolbar {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2) var(--space-3);
+  gap: var(--space-2);
+  margin: 0 calc(-1 * var(--gutter));
+  padding: 2px var(--gutter);
+  overflow-x: auto;
+  scrollbar-width: none;
 }
-.tff-sort.seg { display: flex; flex: 1 1 100%; }
-.tff-sort .seg-item { flex: 1 1 0; min-width: 0; padding: var(--space-1) var(--space-2); white-space: normal; text-align: center; line-height: var(--leading-tight); }
-.tff-tools { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-left: auto; }
-@media (min-width: 769px) {
-  .tff-sort.seg { display: inline-flex; flex: 0 1 auto; }
-  .tff-sort .seg-item { flex: none; padding: 0 var(--space-3); white-space: nowrap; }
+.tff-toolbar::-webkit-scrollbar { display: none; }
+.tff-toolbar > * { flex: none; }
+.tff-toolbar .btn { border-radius: var(--radius-pill); }
+.tff-sortbtn.btn { font-weight: 600; }
+.tff-quick.btn { font-weight: 500; }
+.tff-quick.is-on.btn { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
+.tff-view.btn { margin-left: auto; }
+@media (min-width: 769px) { .tff-toolbar { flex-wrap: wrap; overflow: visible; margin: 0; padding: 0; } }
+
+/* Sort's menu: Explore's popover (84-explore-overview .xsort-menu), copied
+   because the planner does not load Explore's stylesheet. */
+.tff-sortmenu {
+  position: fixed;
+  z-index: var(--z-menu);
+  display: flex;
+  flex-direction: column;
+  width: 220px;
+  padding: var(--space-1);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  box-shadow: var(--elev-2);
 }
+.tff-sortmenu .tff-sortitem { justify-content: space-between; width: 100%; min-height: var(--tap); color: var(--text); font-weight: 500; }
+.tff-sortmenu .tff-sortitem.is-on { font-weight: 600; }
+.tff-sortmenu .tff-sortitem .btn-label { flex: 1; text-align: left; }
+
+/* No trip passes the quick filters: one line and the way back. */
+.tff-none { display: grid; justify-items: start; gap: var(--space-2); padding: var(--space-4); border-radius: var(--radius-card); background: var(--surface); }
+.tff-none p { margin: 0; color: var(--text-2); }
+
+/* The phone's map switch (T880): one dark pill floating above the nav. */
+.tff-fab-slot {
+  position: sticky;
+  bottom: calc(var(--bottom-nav-h) + var(--space-3));
+  z-index: var(--z-sticky);
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+.tff-fab.btn {
+  pointer-events: auto;
+  min-height: 40px;
+  padding: 0 var(--space-4);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--text);
+  color: var(--surface);
+  font-weight: 600;
+  box-shadow: var(--elev-2);
+}
+@media (hover: hover) { .tff-fab.btn:hover { background: var(--neutral-800); } }
+
+/* From 1024 px (T880): the gallery and the map side by side, the map
+   following the scroll, the picked trip floating on its lower left. */
+.tff-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(340px, 42%); gap: var(--space-5); align-items: start; }
+.tff-split .tff-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 1440px) { .tff-split .tff-list { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.tff-split-map { position: sticky; top: var(--space-4); }
+.tff-split-map .tff-map { height: calc(100dvh - 2 * var(--space-4) - var(--header-h, 64px)); min-height: 420px; border-radius: var(--radius-sheet); }
+.tff-mapcard.is-float {
+  position: absolute;
+  left: var(--space-3);
+  bottom: var(--space-3);
+  z-index: 2;
+  width: min(300px, calc(100% - 2 * var(--space-3)));
+  padding: var(--space-2);
+  border-radius: var(--radius-sheet);
+  background: var(--surface);
+  box-shadow: var(--elev-3);
+}
+.tff-mapcard.is-float .tff-card .tff-photos { aspect-ratio: 16 / 9; }
 
 /* The gallery (T879): two trips a row on a phone, three on a tablet, three
    from 1024 px; the top pick takes a whole row. Each card's price block
