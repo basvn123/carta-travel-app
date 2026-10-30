@@ -27,7 +27,7 @@
 import RECOMMEND from '../../../config/recommend.json' with { type: 'json' };
 import { matchCountries } from '../countryMatch.js';
 import { forYou, qualityOf } from '../match.js';
-import { personaPool, personaReach, personaShapes, weighs } from './persona.js';
+import { personaOf, personaPool, personaReach, personaShapes, weighs } from './persona.js';
 import { isGateway } from '../rating.js';
 import { pickAirport } from '../airportPick.js';
 import { destAnchor } from '../origins.js';
@@ -133,7 +133,7 @@ export function shapesFor(settings) {
   // No answer to What kind of trip: the persona's own shapes, else any.
   const asked = settings.guide.shapes.length
     ? settings.guide.shapes
-    : personaShapes(settings.guide.persona) || CANDIDATES.anyShapes;
+    : personaShapes(personaOf(settings.guide)) || CANDIDATES.anyShapes;
   const noCar = wantsNoCar(settings);
   const gaps = asked.filter((s) => CANDIDATES.fallbackShapes[s]);
   const shapes = [...new Set(asked.map((s) => CANDIDATES.fallbackShapes[s] || s))]
@@ -324,7 +324,7 @@ export function buildCandidates(input) {
     const month = fixedMonth ?? bestMonth(dests, settings.guide.weather, today);
     const dates = datesFor(settings, month, today);
     const n = placesFor(shape, dates.nights);
-    const placeIds = n == null ? null : placesNear(ids, n, shape, destinations, personaReach(settings.guide.persona));
+    const placeIds = n == null ? null : placesNear(ids, n, shape, destinations, personaReach(personaOf(settings.guide)));
     if (!placeIds) return null;
     const nights = splitNights(dates.nights, n);
     return {
@@ -356,7 +356,7 @@ export function buildCandidates(input) {
   // The persona (owner, plan flow walk): a country's places ordered by the
   // same key plus the persona's shift, from all its rated places, so a
   // small place near a hub can lead where the country match named the hub.
-  const persona = settings.guide.persona;
+  const persona = personaOf(settings.guide);
   let poolFor = null;
   if (weighs(persona)) {
     const t = tasteFor(settings, taste);

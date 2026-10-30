@@ -25,6 +25,14 @@
  *   P = sum(w_f x f) / sum(w_f), the weights per persona in config
  *       recommend.json persona.profiles ("mix" has none: no persona term)
  *
+ * T891 (owner, plan flow studio 2026-10-30): a traveller picks up to three
+ * personas, one maybe marked "most you". A place's P is then the best of
+ * the picks, each weighed (1 for the one most you, or for every pick when
+ * none is marked; config persona.otherW for the rest), so a lake town
+ * scores for someone who picked a big city and the lakes, and a trip's P
+ * (its places by nights) rewards a mix. Every function here takes one id
+ * (as before), a list of ids, or { ids, most } (personaOf(guide)).
+ *
  * The trip finder adds weight x (P - 0.5) to a place's pool key
  * (candidates.js) and to a trip's score (rank.js); the rating, the personal
  * match (lib/match.js) and Explore never read it. Pure and node-runnable.
@@ -44,8 +52,30 @@ const like = (d, k) => {
 };
 const classOf = (d) => d?.place?.class || d?.taste?.size || null;
 
-/** True when `p` is a persona that weighs places ("mix" and none do not). */
-export const weighs = (p) => Boolean(p && PERSONA.profiles[p]);
+/**
+ * The picks of a persona answer, each { id, w }: one id, a list of ids or
+ * { ids, most }, the "most you" first. "mix" and unknown ids weigh nothing
+ * and drop out.
+ */
+export function picksOf(spec) {
+  const ids = typeof spec === 'string' ? [spec] : Array.isArray(spec) ? spec : Array.isArray(spec?.ids) ? spec.ids : [];
+  const most = spec && typeof spec === 'object' && !Array.isArray(spec) && ids.includes(spec.most) ? spec.most : null;
+  const other = PERSONA.otherW ?? 0.85;
+  const out = [...new Set(ids)].filter((p) => p && PERSONA.profiles[p])
+    .map((id) => ({ id, w: !most || id === most ? 1 : other }));
+  return most ? [...out.filter((x) => x.id === most), ...out.filter((x) => x.id !== most)] : out;
+}
+
+/** The persona answer of a trip's guide settings: { ids, most } (T891), from
+ *  guide.personas and guide.personaMost, or the one guide.persona of a trip
+ *  saved before. */
+export function personaOf(guide) {
+  const ids = Array.isArray(guide?.personas) && guide.personas.length ? guide.personas : (guide?.persona ? [guide.persona] : []);
+  return { ids, most: ids.includes(guide?.personaMost) ? guide.personaMost : null };
+}
+
+/** True when the answer holds a persona that weighs places ("mix" and none do not). */
+export const weighs = (p) => picksOf(p).length > 0;
 
 /**
  * Where each place stands among the others: the nearest metro (its id and
@@ -128,21 +158,34 @@ export function personaFeatures(id, d, destinations, month = null) {
   };
 }
 
-/** The persona fit P (0..1) of one place, or null for "mix" and none. */
-export function personaFit(persona, id, destinations, month = null) {
-  if (!weighs(persona)) return null;
-  const d = destinations?.[id];
-  if (!d) return null;
-  const f = personaFeatures(id, d, destinations, month);
-  const w = PERSONA.profiles[persona];
+/** One persona's fit of a place's features, or null. */
+function fitOne(persona, f) {
   let s = 0;
   let n = 0;
-  for (const [k, wk] of Object.entries(w)) {
+  for (const [k, wk] of Object.entries(PERSONA.profiles[persona])) {
     if (!Number.isFinite(f[k])) continue;
     s += wk * f[k];
     n += wk;
   }
   return n ? s / n : null;
+}
+
+/**
+ * The persona fit P (0..1) of one place, or null for "mix" and none: the
+ * best of the picks, each times its weight (T891); one id reads as before.
+ */
+export function personaFit(persona, id, destinations, month = null) {
+  const picks = picksOf(persona);
+  if (!picks.length) return null;
+  const d = destinations?.[id];
+  if (!d) return null;
+  const f = personaFeatures(id, d, destinations, month);
+  let best = null;
+  for (const { id: p, w } of picks) {
+    const v = fitOne(p, f);
+    if (v != null && (best == null || w * v > best)) best = w * v;
+  }
+  return best;
 }
 
 /** The persona's move on a key: weight x (P - 0.5), 0 without a persona fit. */
@@ -189,6 +232,20 @@ export function tripPersona(trip, persona, destinations) {
 export function personaReason(trip, persona, destinations) {
   const p = tripPersona(trip, persona, destinations);
   if (p == null || p < PERSONA.reasonMin) return null;
+  // T891: several picks speak through the one the trip fits best that has
+  // something true to say.
+  const picks = picksOf(persona);
+  if (picks.length > 1) {
+    const order = picks
+      .map((x) => ({ id: x.id, p: tripPersona(trip, x.id, destinations) ?? 0 }))
+      .sort((a, b) => b.p - a.p);
+    for (const x of order) {
+      const r = personaReason(trip, x.id, destinations);
+      if (r) return r;
+    }
+    return null;
+  }
+  persona = picks[0].id;
   const first = trip.places?.[0]?.id;
   const d = destinations?.[first];
   if (!d) return null;
@@ -226,8 +283,65 @@ export function personaReason(trip, persona, destinations) {
   }
 }
 
-/** The shapes a persona builds when What kind of trip has no answer, or null. */
-export const personaShapes = (persona) => (weighs(persona) ? PERSONA.shapes[persona] || null : null);
+/** The shapes the picks build when What kind of trip has no answer (their
+ *  union, the most you first), or null. */
+export function personaShapes(persona) {
+  const out = [...new Set(picksOf(persona).flatMap((x) => PERSONA.shapes[x.id] || []))];
+  return out.length ? out : null;
+}
 
-/** A persona's own reach between a trip's places ({ maxKm, minKm }), or null. */
-export const personaReach = (persona) => PERSONA.towns?.[persona] || null;
+/** The picks' own reach between a trip's places ({ maxKm, minKm }), or null:
+ *  the first pick that has one. */
+export function personaReach(persona) {
+  const hit = picksOf(persona).find((x) => PERSONA.towns?.[x.id]);
+  return hit ? PERSONA.towns[hit.id] : null;
+}
+
+/**
+ * The places that fit the picks (T891), for the plan flow's side panel: the
+ * rated places with a photograph (persona minScore and up, no gateway) whose
+ * P reaches config persona.reasonMin, best first. `count` is how many there
+ * are, `top` the first n.
+ */
+export function personaMatches(persona, destinations, { month = null, n = 3 } = {}) {
+  if (!weighs(persona)) return null;
+  const rows = [];
+  for (const [id, d] of Object.entries(destinations || {})) {
+    if (!d || !Number.isFinite(d.lat) || d.gateway_of || !d.image?.url || (d.rating?.score || 0) < PERSONA.minScore) continue;
+    const p = personaFit(persona, id, destinations, month);
+    if (p != null && p >= PERSONA.reasonMin) rows.push({ id, p });
+  }
+  rows.sort((a, b) => b.p - a.p || (destinations[b.id].rating?.score || 0) - (destinations[a.id].rating?.score || 0) || a.id.localeCompare(b.id));
+  return { count: rows.length, top: rows.slice(0, n) };
+}
+
+/**
+ * One photograph for each persona (T892), from the catalogue: the
+ * best-known place among those that fit that persona best (the rated
+ * places, photo, no gateway), never one photo twice, so the card shows a
+ * real place of that kind with its Commons credit. "mix" takes the best
+ * known place left. { [persona]: { url, city, iso2, id } }.
+ */
+export function personaPhotos(destinations, ids = PERSONAS) {
+  const rows = Object.entries(destinations || {})
+    .filter(([, d]) => d?.image?.url && d.city && Number.isFinite(d.lat) && !d.gateway_of && (d.rating?.score || 0) >= 7.5);
+  const used = new Set();
+  const out = {};
+  const fame = (d) => d.rating?.fame || 0;
+  for (const p of ids.filter((x) => PERSONA.profiles[x])) {
+    const fits = rows.map(([id, d]) => ({ id, d, v: personaFit(p, id, destinations) ?? 0 }))
+      .sort((a, b) => b.v - a.v);
+    // Among the 24 best fits, the best known one not shown yet.
+    const hit = fits.slice(0, 24).filter((x) => !used.has(x.d.image.url)).sort((a, b) => fame(b.d) - fame(a.d))[0];
+    if (!hit) continue;
+    used.add(hit.d.image.url);
+    out[p] = { url: hit.d.image.url, city: hit.d.city, iso2: hit.d.iso2 || null, id: hit.id };
+  }
+  for (const p of ids.filter((x) => !PERSONA.profiles[x])) {
+    const hit = [...rows].sort((a, b) => fame(b[1]) - fame(a[1])).find(([, d]) => !used.has(d.image.url));
+    if (!hit) continue;
+    used.add(hit[1].image.url);
+    out[p] = { url: hit[1].image.url, city: hit[1].city, iso2: hit[1].iso2 || null, id: hit[0] };
+  }
+  return out;
+}

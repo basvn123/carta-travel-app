@@ -127,3 +127,53 @@ test("by the sea and one base, slow days: the seaside town and the calm base", (
   assert.equal(personaReason({ month: 7, places: [{ id: "gem:sea", nights: 4 }, { id: "gem:far", nights: 3 }] }, "slow", sea), null, "two bases are not one slow base");
   assert.deepEqual(personaShapes("slow"), ["one"]);
 });
+
+// T891: up to three personas, one maybe "most you".
+test("several picks: a place scores by the pick it fits best, the most you counting fully", async () => {
+  const { picksOf, personaOf, personaMatches } = await import("../src/lib/recommend/persona.js");
+  const far = personaFit("nature", "gem:far", coast, 7);
+  const nice = personaFit("cities", "NCE", coast, 7);
+  // Both picks equal: each place keeps its own best fit.
+  assert.equal(personaFit(["cities", "nature"], "gem:far", coast, 7), Math.max(far, personaFit("cities", "gem:far", coast, 7)));
+  assert.equal(personaFit(["cities", "nature"], "NCE", coast, 7), Math.max(nice, personaFit("nature", "NCE", coast, 7)));
+  // Most you: the other pick counts otherW.
+  const most = personaFit({ ids: ["cities", "nature"], most: "cities" }, "gem:far", coast, 7);
+  assert.ok(most < far && most >= far * PERSONA.otherW - 1e-9);
+  // mix and unknown ids drop out; one id reads as before.
+  assert.deepEqual(picksOf(["mix", "x", "coast"]).map((x) => x.id), ["coast"]);
+  assert.equal(personaFit(["coast"], "NCE", coast, 7), personaFit("coast", "NCE", coast, 7));
+  assert.deepEqual(picksOf({ ids: ["coast", "slow"], most: "slow" }).map((x) => x.id), ["slow", "coast"]);
+  // A trip saved before (one persona) and a new one read the same way.
+  assert.deepEqual(personaOf({ persona: "towns" }), { ids: ["towns"], most: null });
+  assert.deepEqual(personaOf({ persona: "towns", personas: ["towns", "coast"], personaMost: "coast" }), { ids: ["towns", "coast"], most: "coast" });
+  // A city and the mountains: a trip of both fits both picks better than either alone fits the other half.
+  const mixTrip = { month: 7, places: [{ id: "NCE", nights: 4 }, { id: "gem:far", nights: 4 }] };
+  assert.ok(tripPersona(mixTrip, ["cities", "nature"], coast) > tripPersona(mixTrip, "cities", coast));
+  assert.ok(tripPersona(mixTrip, ["cities", "nature"], coast) > tripPersona(mixTrip, "nature", coast));
+  // Shapes: the union, most you first.
+  assert.deepEqual(personaShapes({ ids: ["towns", "slow"], most: "slow" }), ["one", "towns", "road"]);
+  assert.equal(personaShapes(["mix"]), null);
+  // The side panel's count and best places.
+  const m = personaMatches(["nature"], coast, { month: 7 });
+  assert.equal(m.top[0].id, "gem:far");
+  assert.equal(personaMatches(["mix"], coast), null);
+});
+
+test("several picks survive normalising: up to three, mix only alone, most you one of them", () => {
+  const s = normalizeSettings({ guide: { personas: ["towns", "mix", "coast", "slow", "lively"], personaMost: "lively" } });
+  assert.deepEqual(s.guide.personas, ["towns", "coast", "slow"]);
+  assert.equal(s.guide.personaMost, "");
+  assert.equal(s.guide.persona, "towns");
+  const old = normalizeSettings({ guide: { persona: "nature" } });
+  assert.deepEqual(old.guide.personas, ["nature"]);
+  assert.equal(old.guide.persona, "nature");
+  const m = normalizeSettings({ guide: { personas: ["towns", "coast"], personaMost: "coast" } });
+  assert.equal(m.guide.persona, "coast");
+  assert.deepEqual(normalizeSettings({ guide: { personas: ["mix"] } }).guide.personas, ["mix"]);
+});
+
+test("a reason from several picks names a pick the trip truly fits", () => {
+  const trip = { month: 7, places: [{ id: "gem:antibes", nights: 7 }] };
+  const r = personaReason(trip, ["lively", "outside"], coast);
+  assert.ok(r && r.key === "tf.reason.persona.outside", JSON.stringify(r));
+});

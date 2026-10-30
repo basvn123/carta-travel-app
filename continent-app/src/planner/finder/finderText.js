@@ -202,7 +202,10 @@ export function answerChips(settings, { t, lang = 'en', originName = '', when = 
   } else if (trip?.nights && trip?.month) {
     out.push({ id: 'when', q: 'when', label: t('tf.chip.nightsIn', { n: trip.nights, month: monthName(trip.month, lang) }) });
   }
-  if (g.persona && g.persona !== 'mix') out.push({ id: 'persona', q: 'g:persona', label: optionLabel(t, 'g:persona', g.persona) });
+  // T891: one chip a persona picked.
+  for (const v of (g.personas?.length ? g.personas : g.persona ? [g.persona] : [])) {
+    if (v !== 'mix') out.push({ id: `persona:${v}`, q: 'g:persona', label: optionLabel(t, 'g:persona', v) });
+  }
   for (const v of g.shapes || []) out.push({ id: `shape:${v}`, q: 'g:shape', label: optionLabel(t, 'g:shape', v) });
   for (const v of g.likes || []) out.push({ id: `like:${v}`, q: 'g:likes', label: likeLabel(t, v) });
   if (g.weather && g.weather !== 'any') out.push({ id: 'weather', q: 'g:weather', label: optionLabel(t, 'g:weather', g.weather) });

@@ -27,7 +27,7 @@ import { buildTrips, keepHidden, repriceTrip } from './trips.js';
 import { tasteFor } from './candidates.js';
 import { tripFit, reasonsFor, catchFor } from './reasons.js';
 import { flightLeverKeys } from './adapters/flight.js';
-import { personaReason, tripPersona } from './persona.js';
+import { personaOf, picksOf, personaReason, tripPersona } from './persona.js';
 
 export const RANK = Object.freeze(RECOMMEND.rank);
 export const LEVERS = Object.freeze(RECOMMEND.levers);
@@ -177,7 +177,7 @@ export function rankTrips(trips, { settings, taste = null, data, levers = null }
     // The persona (owner, plan flow walk): P the trip's places' persona fit
     // by nights (persona.js), part of the answers in the blend; its reason
     // leads the card.
-    const persona = settings.guide.persona;
+    const persona = personaOf(settings.guide);
     const p = tripPersona(trip, persona, destinations);
     const said = personaReason(trip, persona, destinations);
     const quality = info.Q ?? trip.signals?.countryScore ?? null;
@@ -188,7 +188,7 @@ export function rankTrips(trips, { settings, taste = null, data, levers = null }
       // pct is the ranked score (T884), shown while the fit itself reads
       // show_min or more; fit is the answers alone, for the trip page.
       match: info.F == null ? null : { pct: info.pct == null ? null : matchPct(score), fit: info.pct, bars: info.bars, conflicts: info.conflicts },
-      persona: p == null ? null : { id: persona, p },
+      persona: p == null ? null : { id: picksOf(persona)[0]?.id || null, p },
       reasons: said ? [said, ...reasonsFor(trip, { settings, info })].slice(0, RECOMMEND.reasons.max) : reasonsFor(trip, { settings, info }),
       catch: catchFor(trip, { settings, info, budget }),
       score,
