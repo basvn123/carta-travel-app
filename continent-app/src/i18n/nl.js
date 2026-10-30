@@ -3898,6 +3898,7 @@ export const nl = {
   'cycle.townsTitle': "Onderweg",
   'cycle.atKm': "km {km}",
   'cycle.townBeds': "{n} slaapplekken",
+  'cycle.townBed': '1 slaapplek',
   'cycle.townShop': "een winkel",
   'cycle.townWater': "drinkwater",
   'cycle.townStation': "een station",

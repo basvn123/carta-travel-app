@@ -223,7 +223,9 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1px;
-  background: var(--border-soft);
+  /* End check: the surface, not the hairline colour, so an odd last row
+     leaves white, not a grey hole; the cells draw the hairlines. */
+  background: var(--surface);
   border: 1px solid var(--border-soft);
   border-radius: var(--radius-card);
   overflow: hidden;
@@ -231,6 +233,7 @@
 @media (min-width: 700px) { .ox-facil { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .ox-facil li {
   background: var(--surface);
+  outline: 1px solid var(--border-soft);
   padding: var(--space-2) var(--space-3);
   display: grid;
   grid-template-columns: 20px minmax(0, 1fr);

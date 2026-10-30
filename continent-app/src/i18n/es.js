@@ -3898,6 +3898,7 @@ export const es = {
   'cycle.townsTitle': "Por el camino",
   'cycle.atKm': "km {km}",
   'cycle.townBeds': "{n} alojamientos",
+  'cycle.townBed': '1 lugar para dormir',
   'cycle.townShop': "una tienda",
   'cycle.townWater': "agua potable",
   'cycle.townStation': "una estación",

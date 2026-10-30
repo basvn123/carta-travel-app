@@ -229,7 +229,7 @@ function Towns({ services, t }) {
     <ul className="cycle-towns" data-testid="cycle-towns">
       {shown.map((s) => {
         const has = [
-          (s.sleep || 0) > 0 && t('cycle.townBeds', { n: s.sleep }),
+          (s.sleep || 0) > 0 && t(s.sleep === 1 ? 'cycle.townBed' : 'cycle.townBeds', { n: s.sleep }),
           s.camp && t('cycle.townCamp'),
           (s.shop || 0) > 0 && t('cycle.townShop'),
           (s.water || 0) > 0 && t('cycle.townWater'),

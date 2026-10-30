@@ -4807,6 +4807,7 @@ export const en = {
   'cycle.townsTitle': "Along the way",
   'cycle.atKm': "km {km}",
   'cycle.townBeds': "{n} places to sleep",
+  'cycle.townBed': '1 place to sleep',
   'cycle.townShop': "a shop",
   'cycle.townWater': "drinking water",
   'cycle.townStation': "a station",
