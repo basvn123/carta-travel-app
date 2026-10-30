@@ -2,7 +2,6 @@ import React from 'react';
 import { ArrowLeftIcon, ChevronRightIcon } from '../components/Icons.jsx';
 import { Button, Card, IconButton } from '../components/ui/index.js';
 import { prefersReducedMotion, scrollBehavior } from '../lib/motion.js';
-import { HeroImage } from '../components/HeroImage.jsx';
 import '../styles/80-story-rail.css';
 
 /**
@@ -98,83 +97,19 @@ function useStripPosition(ref, count) {
   return pos;
 }
 
-/** The rail's own card, filled top to bottom (T599): the heading (and a
- *  short line where one helps), a fanned stack of the first three places'
- *  photographs so the card previews what the rail holds, the rail's one
- *  strong figure set large (the cheapest day), the other facts small with
- *  their icons, and "See all" as the card's one action. The photographs are
- *  decorative: the stack is hidden from screen readers and the images keep
- *  their empty alt. */
-function LeadCard({ id, title, line, facts, photos, onSeeAll, headingLevel, t }) {
-  const H = headingLevel === 3 ? 'h3' : 'h2';
-  const all = (facts || []).filter((f) => f && f.text);
-  const figure = all.find((f) => f.figure) || null;
-  const shown = all.filter((f) => f !== figure).slice(0, figure ? 2 : 3);
-  // End check: the stack draws only photographs that exist (a placeholder
-  // tile in a fan read as three blank cards), loaded at once and small.
-  const stack = (photos || []).filter((ph) => ph && ph.url).slice(0, 3);
-  return (
-    <div className={`storyr-lead card${onSeeAll ? ' is-interactive' : ''}`}>
-      <div className="storyr-lead-head">
-        <H className="storyr-lead-title" id={id}>{title}</H>
-        {line && <p className="storyr-lead-line">{line}</p>}
-      </div>
-      {stack.length > 0 && (
-        <div className="storyr-stack" data-n={stack.length} aria-hidden="true">
-          {stack.map((photo, i) => (
-            <span key={i} className="storyr-stack-photo" style={{ '--s': i }}>
-              <HeroImage url={photo.url} city={photo.city} maxWidth={500} sizes="300px" ratio={[4, 5]} eager />
-            </span>
-          ))}
-        </div>
-      )}
-      <div className="storyr-lead-foot">
-        {figure && (
-          <p className={`storyr-figure${typeof figure.text === 'string' ? ' is-plain' : ''}`}>{figure.text}</p>
-        )}
-        {shown.length > 0 && (
-          <ul className="storyr-facts">
-            {shown.map((f, i) => {
-              const Icon = f.icon;
-              return (
-                <li key={f.key || i} className="storyr-fact">
-                  {Icon && <Icon size={16} className="storyr-fact-icon" />}
-                  <span>{f.text}</span>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-        {onSeeAll && (
-          // The card's one action, stretched over it like the kit Card's link.
-          // The kit Button, its own box let go (80-story-rail.css) so the
-          // stretch covers the card.
-          <Button variant="quiet" size="sm" className="card-open storyr-lead-open" onClick={onSeeAll}
-            aria-describedby={id} iconEnd={<ArrowLeftIcon size={20} className="storyr-lead-arrow" />}>
-            {t('rail.seeAllPlain')}
-          </Button>
-        )}
-      </div>
-    </div>
-  );
-}
-
 /**
  * One rail. `children` are the photo cards (StoryCard), one per place; each
  * is wrapped in the strip's list item here.
  */
 export function StoryRail({
   id, title, line = null, facts = [], onSeeAll = null, t, headingLevel = 2, className = '', children,
-  stack = null,
+  stack: _stack = null,
 }) {
   const sectionRef = React.useRef(null);
   const stripRef = React.useRef(null);
   const items = React.Children.toArray(children).filter(Boolean);
-  const count = items.length + 1;
-  // The lead card's stack: the photographs of the rail's first three cards.
-  // `stack` is the callers' list of { url, city }; the cards' own <img>
-  // elements are not reused (wrapped cards carry no photo prop).
-  const photos = stack || [];
+  const count = items.length;
+  // `stack` (the lead card's photographs) is accepted and unused since T908.
   const pos = useStripPosition(stripRef, count);
   const arrival = useArrival(sectionRef);
 
@@ -197,34 +132,45 @@ export function StoryRail({
     next.closest('.storyr-item')?.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: scrollBehavior() });
   };
 
+  // T908 (owner, Explore board 2026-10-30): the rail opens on a header, not
+  // a lead card: the title, one line of its facts and See all, the arrows
+  // beside them on a fine pointer; no position dots (Smashing Magazine:
+  // dots alone move no one through a carousel). The cards that follow are
+  // whole: two on a phone, three, then four.
+  const H = headingLevel === 3 ? 'h3' : 'h2';
+  const factLine = [line, ...(facts || []).filter((f) => f && f.text).map((f) => f.text)].filter(Boolean).slice(0, 3);
   return (
     <section ref={sectionRef} className={`storyr ${className}`.trim()} aria-labelledby={id} data-arrival={arrival}>
+      <div className="storyr-head">
+        <div className="storyr-head-txt">
+          <H className="storyr-title" id={id}>{title}</H>
+          {factLine.length > 0 && (
+            <p className="storyr-line">
+              {factLine.map((f, i) => <span key={i} className="storyr-line-part">{f}</span>)}
+            </p>
+          )}
+        </div>
+        <div className="storyr-head-acts">
+          {onSeeAll && (
+            <Button variant="quiet" size="sm" className="storyr-all" onClick={onSeeAll}>{t('rail.seeAllPlain')}</Button>
+          )}
+          <span className="storyr-nav">
+            <IconButton tone="surface" label={t('explore.railPrev')} onClick={() => page(-1)}
+              disabled={pos.atStart} className="storyr-arrow storyr-arrow--prev">
+              <ChevronRightIcon size={16} />
+            </IconButton>
+            <IconButton tone="surface" label={t('explore.railNext')} onClick={() => page(1)}
+              disabled={pos.atEnd} className="storyr-arrow">
+              <ChevronRightIcon size={16} />
+            </IconButton>
+          </span>
+        </div>
+      </div>
       <ul className="storyr-strip" ref={stripRef} onKeyDown={onKeyDown} aria-label={typeof title === 'string' ? title : undefined}>
-        <li className="storyr-item storyr-item--lead" style={{ '--i': 0 }}>
-          <LeadCard id={id} title={title} line={line} facts={facts} photos={photos} onSeeAll={onSeeAll}
-            headingLevel={headingLevel} t={t} />
-        </li>
         {items.map((child, i) => (
-          <li key={child.key ?? i} className="storyr-item" style={{ '--i': i + 1 }}>{child}</li>
+          <li key={child.key ?? i} className="storyr-item" style={{ '--i': i }}>{child}</li>
         ))}
       </ul>
-      <div className="storyr-foot">
-        <span className="storyr-dots" aria-hidden="true">
-          {Array.from({ length: count }, (_, i) => (
-            <span key={i} className={`storyr-dot${i === pos.at ? ' is-current' : ''}`} />
-          ))}
-        </span>
-        <span className="storyr-nav">
-          <IconButton tone="surface" label={t('explore.railPrev')} onClick={() => page(-1)}
-            disabled={pos.atStart} className="storyr-arrow storyr-arrow--prev">
-            <ChevronRightIcon size={16} />
-          </IconButton>
-          <IconButton tone="surface" label={t('explore.railNext')} onClick={() => page(1)}
-            disabled={pos.atEnd} className="storyr-arrow">
-            <ChevronRightIcon size={16} />
-          </IconButton>
-        </span>
-      </div>
     </section>
   );
 }

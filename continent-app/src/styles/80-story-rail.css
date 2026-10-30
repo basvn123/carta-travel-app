@@ -357,3 +357,37 @@
   .storyr .storyr-lead:has(.card-open:focus-visible) { transform: rotate(-2deg); }
   .storyr[data-arrival] .storyr-item { opacity: 1; animation: none; }
 }
+
+
+/* ---- T908 (owner, Explore board 2026-10-30) -----------------------------
+   The rail opens on a header (title, one fact line, See all, the arrows on
+   a fine pointer) instead of a lead card, and drops the dots. The cards are
+   whole and line up with the page's edge: two across on a phone, three from
+   560 px, four from 860 px; the next ones a swipe or an arrow away. */
+.storyr { display: flex; flex-direction: column; gap: var(--space-3); }
+.storyr .storyr-head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--space-3); min-width: 0; }
+.storyr .storyr-head-txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.storyr .storyr-title { margin: 0; font-size: var(--text-title); font-weight: 700; letter-spacing: -0.01em; color: var(--text); text-wrap: balance; }
+.storyr .storyr-line { display: flex; flex-wrap: wrap; margin: 0; font-size: var(--text-label); color: var(--text-3); }
+.storyr .storyr-line-part + .storyr-line-part::before { content: ","; margin-right: 0.3em; }
+.storyr .storyr-line .storyr-num { font-weight: 700; color: var(--text-2); }
+.storyr .storyr-head-acts { display: flex; flex: none; align-items: center; gap: var(--space-2); }
+.storyr .btn.storyr-all { color: var(--action); }
+.storyr .storyr-strip {
+  --storyr-gap: var(--space-3);
+  --storyr-w: calc((100% - var(--storyr-gap)) / 2);
+  margin: 0;
+  padding: var(--space-1) 0 var(--space-2);
+  scroll-padding-inline: 0;
+}
+@container (min-width: 560px) {
+  .storyr .storyr-strip { --storyr-gap: var(--space-4); --storyr-w: calc((100% - 2 * var(--storyr-gap)) / 3); }
+}
+@container (min-width: 860px) {
+  .storyr .storyr-strip { --storyr-w: calc((100% - 3 * var(--storyr-gap)) / 4); }
+}
+@container (min-width: 1320px) {
+  .storyr .storyr-strip { --storyr-w: calc((100% - 3 * var(--storyr-gap)) / 4); }
+}
+.storyr .storyr-card .card-title { font-size: var(--text-body); }
+@container (min-width: 560px) { .storyr .storyr-card .card-title { font-size: var(--text-lead); } }
