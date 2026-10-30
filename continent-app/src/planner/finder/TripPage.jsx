@@ -1,10 +1,10 @@
-import React, { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react';
+import React, { Suspense, lazy, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { Button, IconButton } from '../../components/ui/index.js';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { CountryFlag } from '../../components/CountryFlag.jsx';
 import {
-  AlertIcon, ArrowLeftIcon, ArrowRightIcon, BeachIcon, BikeIcon, BootIcon, BusIcon, CalendarIcon, CheckIcon, ChevronRightIcon,
+  AlertIcon, ArrowLeftIcon, ArrowRightIcon, BeachIcon, BedIcon, BikeIcon, BootIcon, BusIcon, CalendarIcon, CarIcon, CheckIcon, ChevronDownIcon, ChevronRightIcon,
   CityIcon, ClockIcon, DiamondIcon, DiningIcon, FriendsIcon, HeartIcon, LakeIcon, LotusIcon, MapPinIcon, MoonIcon, MuseumIcon,
   MusicIcon, PalmIcon, PlaneIcon, SnowIcon, SparkIcon, SunIcon, SwimIcon,
 } from '../../components/Icons.jsx';
@@ -24,7 +24,7 @@ import { LinePicker } from './LinePicker.jsx';
 import { MatchRing, TripCard } from './TripCard.jsx';
 import { whoFor } from './whoFor.js';
 import {
-  countryLabel, factText, groupHead, likeLabel, matchBars, pickLine, signedMoney, thereMinutes, topSights, totalLeavesOut, tripName, tripPhotos, withSlot,
+  budgetBadge, countryLabel, factText, groupHead, likeLabel, matchBars, pickLine, signedMoney, thereMinutes, topSights, totalLeavesOut, tripName, tripPhotos, withSlot,
 } from './finderText.js';
 
 // The route map rides in the map's own chunk (TripsMap.jsx), so maplibre
@@ -190,15 +190,24 @@ function FactBand({ trip, destinations, t, lang }) {
   );
 }
 
+/** The icon of each cost group's line (T882). */
+const GROUP_ICON = { travel: PlaneIcon, around: BusIcon, stay: BedIcon, food: DiningIcon };
+
 /**
- * The price card: the total for the group, the cost bar in the four cost
- * colours with a dot before each group's name (the trip page v4's own
- * grammar), the four lines (a line with choices opens its picker), then
- * save and Plan this trip, the page's one primary. Sticky beside the page
- * from 1024 px.
+ * The price card (T882, the owner's "Wat het kost" review 2026-10-30):
+ * compact by default, the total for the group, the price a person, the
+ * cost bar in the four cost colours and the budget line; one Breakdown
+ * button at its top opens the four lines, each with its icon on its cost
+ * colour, a line with choices opening its picker. Public transport that
+ * finds no fare shows NotYet, never a zero (the opened price rule). Then
+ * save and Plan this trip, the page's one primary, which on a phone lives
+ * in the bar pinned above the nav (PlanDock) instead. Sticky beside the
+ * page from 1024 px.
  */
 function PriceCard({ trip, t, lang, onLine, onPlan, keeper, name, ui, delta = null }) {
   const { NotYet } = ui;
+  const [open, setOpen] = useState(false);
+  const bodyId = useId();
   const airlines = ui.useAirlines();
   const airline = (code) => ui.airlineName(airlines, code);
   const head = groupHead(trip);
@@ -211,45 +220,64 @@ function PriceCard({ trip, t, lang, onLine, onPlan, keeper, name, ui, delta = nu
   const flight = trip.slots.find((s) => s.id === 'flight');
   const driving = flight?.pick?.id === 'drive';
   const codes = !driving && trip.origin && trip.gateway?.iata ? t('tf.tp.codes', { from: trip.origin, to: trip.gateway.iata }) : '';
+  const pp = head > 1 && Number.isFinite(trip.total?.perPerson) ? formatMoney(trip.total.perPerson, { locale: lang }) : null;
+  const badge = budgetBadge(trip, { locale: lang });
+  const unpriced = (s) => s.eurGroup == null || (s.id === 'local' && s.pick?.id === 'public' && s.eurGroup === 0);
   return (
     <section className="tff-tp-price" aria-labelledby="tff-tp-price-h">
-      <h2 className="tff-tp-price-h" id="tff-tp-price-h">{t('tf.tp.price')}</h2>
+      <div className="tff-cost-top">
+        <h2 className="tff-tp-price-h" id="tff-tp-price-h">{t('tf.tp.price')}</h2>
+        <Button variant="secondary" size="sm" className="tff-cost-tog" aria-expanded={open} aria-controls={bodyId}
+          iconEnd={<ChevronDownIcon size={16} />} onClick={() => setOpen((v) => !v)}>
+          {t(open ? 'tf.cost.close' : 'tf.cost.open')}
+        </Button>
+      </div>
       <p className="tff-tp-total">
-        <span className="tff-tp-eur money">{Number.isFinite(group) ? money(group) : t('money.onRequest')}</span>
+        <span className="tff-tp-eur money">{Number.isFinite(group) ? formatMoney(group, { locale: lang }) : t('money.onRequest')}</span>
         <span className="tff-tp-unit">{t(`tf.card.${head === 1 ? 'forYou' : 'forN'}${partial ? 'Partial' : ''}`, { n: head })}</span>
         {/* What the last swap did to the total, for three seconds (useTotalDelta). */}
         {delta != null && Math.abs(delta) >= 1 && <span className="tff-delta" role="status">{signedMoney(delta, { locale: lang })}</span>}
       </p>
+      {pp && <p className="tff-cost-pp">{t(partial ? 'tf.card.ppPartial' : 'tf.card.ppAll', { eur: pp })}</p>}
       {parts.length > 1 && sum > 0 && (
         <span className="tff-tp-costbar" aria-hidden="true">
           {parts.map((s) => <span key={s.id} className={`is-${GROUP_OF[s.id]}`} style={{ flexGrow: s.eurGroup / sum }} />)}
         </span>
       )}
-      <ul className="tff-tp-lines">
-        {lines.map((s) => {
-          const g = GROUP_OF[s.id];
-          const label = g === 'travel' && driving ? t('tp.tile.driving') : t(GROUP_LABEL[g]);
-          const opens = s.eur != null && (s.options?.length || s.id === 'flight');
-          const sub = s.id === 'flight' && codes ? [codes, s.eur != null ? pickLine(s, { t, airline }) : ''].filter(Boolean).join(', ') : (s.eur != null ? pickLine(s, { t, airline }) : '');
-          const body = (
-            <>
-              <span className={`tff-tp-line-name is-${g}`}><span className="plan-total-dot" aria-hidden="true" />{label}</span>
-              <span className="tff-tp-line-fig">{s.eurGroup == null ? <NotYet /> : <span className="money">{money(s.eurGroup)}</span>}</span>
-              {sub && <span className="tff-tp-line-sub">{sub}</span>}
-            </>
-          );
-          return (
-            <li key={s.id} className={`tff-tp-line is-${g}`}>
-              {opens ? (
-                <Button variant="quiet" className="tff-tp-line-btn" iconEnd={<ChevronRightIcon size={16} />}
-                  aria-label={t('tf.rc.openLine', { line: label, price: money(s.eurGroup ?? s.eur) })} onClick={() => onLine(s.id)}>
-                  {body}
-                </Button>
-              ) : <div className="tff-tp-line-btn is-static">{body}</div>}
-            </li>
-          );
-        })}
-      </ul>
+      <div className={`tff-cost-body${open ? ' is-open' : ''}`} id={bodyId} inert={open ? undefined : ''}>
+        <ul className="tff-tp-lines" aria-label={t('tf.cost.lines')}>
+          {lines.map((s) => {
+            const g = GROUP_OF[s.id];
+            const Icon = g === 'travel' && driving ? CarIcon : GROUP_ICON[g];
+            const label = g === 'travel' && driving ? t('tp.tile.driving') : t(GROUP_LABEL[g]);
+            const none = unpriced(s);
+            const opens = !none && (s.options?.length || s.id === 'flight');
+            const sub = s.id === 'flight' && codes ? [codes, s.eur != null ? pickLine(s, { t, airline }) : ''].filter(Boolean).join(', ') : (s.eur != null ? pickLine(s, { t, airline }) : '');
+            const body = (
+              <>
+                <span className={`tff-cost-ic is-${g}`} aria-hidden="true"><Icon size={18} /></span>
+                <span className="tff-cost-name"><b>{label}</b>{sub && <small>{sub}</small>}</span>
+                <span className="tff-tp-line-fig">{none ? <NotYet /> : <span className="money">{money(s.eurGroup)}</span>}</span>
+              </>
+            );
+            return (
+              <li key={s.id} className={`tff-tp-line is-${g}`}>
+                {opens ? (
+                  <Button variant="quiet" className="tff-tp-line-btn" iconEnd={<ChevronRightIcon size={16} />}
+                    aria-label={t('tf.rc.openLine', { line: label, price: money(s.eurGroup ?? s.eur) })} onClick={() => onLine(s.id)}>
+                    {body}
+                  </Button>
+                ) : <div className="tff-tp-line-btn is-static">{body}</div>}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+      {badge && (
+        <p className={`tff-cost-fit${badge.over ? ' is-over' : ''}`}>
+          {badge.over ? <AlertIcon size={14} /> : <CheckIcon size={14} />}{t(badge.key, badge.vars)}
+        </p>
+      )}
       <div className="tff-tp-acts">
         <IconButton
           tone="surface"
@@ -263,6 +291,26 @@ function PriceCard({ trip, t, lang, onLine, onPlan, keeper, name, ui, delta = nu
         <Button variant="primary" className="tff-tp-plan" onClick={() => onPlan(trip)}>{t('tf.rc.plan')}</Button>
       </div>
     </section>
+  );
+}
+
+/**
+ * The phone's pinned bar (T882): the total and Plan this trip above the
+ * nav, so the decision is one tap away while reading; under 1024 px only,
+ * where the price card's own button hides (one primary at a time).
+ */
+function PlanDock({ trip, t, lang, onPlan }) {
+  const head = groupHead(trip);
+  const partial = totalLeavesOut(trip);
+  const group = Number.isFinite(trip.total?.group) ? trip.total.group : trip.total?.perPerson;
+  return (
+    <div className="tff-tp-dock">
+      <p className="tff-dock-total">
+        <span className="money">{Number.isFinite(group) ? formatMoney(group, { locale: lang }) : t('money.onRequest')}</span>
+        <span>{t(`tf.card.${head === 1 ? 'forYou' : 'forN'}${partial ? 'Partial' : ''}`, { n: head })}</span>
+      </p>
+      <Button variant="primary" className="tff-dock-plan" onClick={() => onPlan(trip)}>{t('tf.rc.plan')}</Button>
+    </div>
   );
 }
 
@@ -557,6 +605,7 @@ export function TripPage({ trip, settings, destinations, ui, others = [], keepWi
           )}
         </div>
       </div>
+      <PlanDock trip={trip} t={t} lang={lang} onPlan={onPlan} />
     </article>
   );
 }

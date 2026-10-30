@@ -1196,3 +1196,67 @@
 .tff-when-l { font-size: var(--text-micro); color: var(--text-3); }
 .tff-when-key { margin: 0; font-size: var(--text-caption); color: var(--text-3); }
 
+/* ---- The price card, T882: compact, Breakdown opens the lines ---- */
+.tff-tp-price { gap: var(--space-2); border: 0; border-radius: var(--radius-sheet); box-shadow: var(--elev-1); }
+@media (min-width: 1024px) { .tff-tp-side .tff-tp-price { box-shadow: var(--elev-2); } }
+.tff-cost-top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.tff-cost-tog.btn { border-radius: var(--radius-pill); font-weight: 600; }
+.tff-cost-tog .btn-icon { transition: transform var(--dur-3) var(--ease-out); }
+.tff-cost-tog[aria-expanded="true"].btn { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
+.tff-cost-tog[aria-expanded="true"] .btn-icon { transform: rotate(180deg); }
+.tff-tp-eur { font-weight: 800; letter-spacing: -0.02em; }
+.tff-cost-pp { margin: calc(-1 * var(--space-1)) 0 0; font-size: var(--text-label); color: var(--text-2); }
+.tff-tp-price .tff-tp-costbar { gap: 2px; height: 6px; margin: var(--space-1) 0; background: none; }
+.tff-tp-price .tff-tp-costbar > span { border-radius: var(--radius-pill); }
+/* The lines fold open: the row grows from nothing, the content fades in. */
+.tff-cost-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--dur-3) var(--ease-out); }
+.tff-cost-body.is-open { grid-template-rows: 1fr; }
+.tff-cost-body > .tff-tp-lines { min-height: 0; overflow: hidden; opacity: 0; transition: opacity var(--dur-2) var(--ease-out); }
+.tff-cost-body.is-open > .tff-tp-lines { opacity: 1; }
+.tff-tp-price .tff-tp-line, .tff-tp-price .tff-tp-line:first-child { border: 0; }
+.tff-tp-price .tff-tp-line-btn.btn, .tff-tp-price .tff-tp-line-btn.is-static {
+  grid-template-columns: 34px minmax(0, 1fr) auto auto;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-radius: var(--radius-control);
+}
+.tff-tp-price .tff-tp-line-btn.is-static { grid-template-columns: 34px minmax(0, 1fr) auto; }
+.tff-tp-price .tff-tp-line-btn .btn-icon { grid-column: 4; }
+.tff-cost-ic { display: grid; place-items: center; width: 34px; height: 34px; border-radius: var(--radius-control); }
+.tff-cost-ic.is-travel { color: var(--cost-travel); background: color-mix(in srgb, var(--cost-travel) 11%, var(--surface)); }
+.tff-cost-ic.is-around { color: var(--cost-around); background: color-mix(in srgb, var(--cost-around) 11%, var(--surface)); }
+.tff-cost-ic.is-stay { color: var(--cost-stay); background: color-mix(in srgb, var(--cost-stay) 11%, var(--surface)); }
+.tff-cost-ic.is-food { color: var(--cost-food); background: color-mix(in srgb, var(--cost-food) 11%, var(--surface)); }
+.tff-cost-name { display: grid; min-width: 0; line-height: var(--leading-ui); }
+.tff-cost-name b { font-size: var(--text-body); font-weight: 600; }
+.tff-cost-name small { font-size: var(--text-caption); color: var(--text-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tff-cost-fit { display: flex; align-items: center; gap: var(--space-1); margin: 0; font-size: var(--text-label); color: var(--text-2); }
+.tff-cost-fit svg { flex: none; color: var(--umber-600); }
+.tff-cost-fit.is-over { color: var(--amber-ink); font-weight: 600; }
+.tff-cost-fit.is-over svg { color: var(--amber-ink); }
+
+/* The pinned bar under 1024 px: the total and the one primary, above the
+   nav on a phone; the card's own button hides there. */
+.tff-tp-dock {
+  position: sticky;
+  bottom: 0;
+  z-index: var(--z-sticky);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0 calc(-1 * var(--gutter));
+  padding: var(--space-2) var(--gutter);
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+@media (max-width: 768px) { .tff-tp-dock { bottom: var(--bottom-nav-h); } }
+.tff-dock-total { display: grid; flex: 1; min-width: 0; margin: 0; line-height: var(--leading-tight); }
+.tff-dock-total .money { font-size: var(--text-title); font-weight: 800; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+.tff-dock-total span:last-child { font-size: var(--text-caption); color: var(--text-3); }
+.tff-dock-plan.btn { flex: none; }
+@media (max-width: 1023px) { .tff-tp-plan.btn { display: none; } .tff-tp-acts { justify-content: flex-start; } }
+@media (min-width: 1024px) { .tff-tp-dock { display: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .tff-cost-body, .tff-cost-body > .tff-tp-lines, .tff-cost-tog .btn-icon { transition: none; }
+}
+
