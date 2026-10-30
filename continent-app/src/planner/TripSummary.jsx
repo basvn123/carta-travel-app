@@ -294,8 +294,8 @@ function MapCard({ map, mapFull, title }) {
  * map and the trip's tools sit in a column beside the tabs, in view while
  * the page scrolls; narrower, the map is a card in the Overview.
  *
- *   tab, onTab           'overview' | 'itinerary' | 'costs' | 'days'
- *   panels               { itinerary, costs, days }: the other tabs' bodies
+ *   tab, onTab           'overview' | 'itinerary' | 'costs' | 'days' | 'notes' (T889)
+ *   panels               { itinerary, costs, days, notes }: the other tabs' bodies
  *   map, mapFull         the map for the card, and for full size
  *   onPlanHome()         All trips
  *   onPlanDays()         the day questions; absent hides Plan your days
@@ -388,7 +388,9 @@ export function TripSummary({
     { id: 'itinerary', label: t('tp.tab.itinerary') },
     { id: 'costs', label: t('tp.tab.costs') },
     { id: 'days', label: t('tp.tab.days') },
-  ];
+    // T889: the bookings, notes and packing list, in their own tab.
+    panels.notes && { id: 'notes', label: t('tp.tab.notes') },
+  ].filter(Boolean);
 
   // T885: the trip bar, every input of the price as a label over its value,
   // one tap each to its own editor (T836's chip editors, the Lifestyle sheet).

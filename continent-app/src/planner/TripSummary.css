@@ -798,3 +798,7 @@ button.ct-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: 2
 .tpx-impact dd.is-more { color: var(--amber-ink); }
 .tpx-warn { margin: 0; font-size: var(--text-caption); color: var(--amber-ink); }
 .tpx-foot { display: flex; justify-content: flex-end; gap: var(--space-2); }
+
+/* ---- The Notes tab (T889): the trip extras inline ---- */
+.itin-extras { display: grid; gap: var(--space-3); }
+.itin-extras-lead { margin: 0; max-width: var(--measure); font-size: var(--text-body); color: var(--text-2); }

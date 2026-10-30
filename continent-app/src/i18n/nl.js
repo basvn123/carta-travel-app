@@ -8187,6 +8187,8 @@ export const nl = {
   "tp.tab.itinerary": "Reisplan",
   "tp.tab.costs": "Kosten",
   "tp.tab.days": "Dagen",
+  "tp.tab.notes": "Notities",
+  "tp.notes.lead": "Je boekingen, notities en paklijst voor deze reis. Carta leest een boeking als je die hier neerzet.",
   "tp.cd.in": "Nog {n} dagen",
   "tp.cd.tomorrow": "Morgen",
   "tp.cd.day": "Dag {n} van {of}",

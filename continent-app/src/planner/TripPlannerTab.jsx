@@ -1510,6 +1510,8 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
             panels={{
               itinerary: renderItinerary(['route', 'tools', 'export', 'before']),
               costs: renderItinerary(['receipt'], true),
+              // T889: the Notes tab, the trip extras inline.
+              notes: renderItinerary(['extras']),
               // T849-T851: the Days tab, each day as a card of what it holds.
               days: (
                 <TripDays

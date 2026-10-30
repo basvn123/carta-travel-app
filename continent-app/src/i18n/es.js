@@ -8187,6 +8187,8 @@ export const es = {
   "tp.tab.itinerary": "Itinerario",
   "tp.tab.costs": "Costes",
   "tp.tab.days": "Días",
+  "tp.tab.notes": "Notas",
+  "tp.notes.lead": "Tus reservas, notas y lista de equipaje para este viaje. Carta lee una reserva que dejes aquí.",
   "tp.cd.in": "Faltan {n} días",
   "tp.cd.tomorrow": "Mañana",
   "tp.cd.day": "Día {n} de {of}",
