@@ -1,0 +1,9 @@
+{
+ "_about": "T911 placeholder, filled by a later harvest. Per destination id: {steep: true|false, note?: one short lowercase word for the help on the slope, e.g. funicular, lift, escalator}. build_dossier.py writes the dossier's access block when a row exists. Porto is the worked example.",
+ "dests": {
+  "OPO": {
+   "steep": true,
+   "note": "funicular"
+  }
+ }
+}

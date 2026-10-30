@@ -1,0 +1,14 @@
+{
+ "_about": "T911 placeholder, filled by a later harvest. Per destination id: {neighbourhood name as in sleep.neighbourhoods[].name: [codes]}, codes from central, nightlife, quiet, families, food, budget. build_dossier.py merges them as sleep.neighbourhoods[i].suits, matching names with accents and case folded. Porto is the worked example (Bonfim borders the centre and has a growing food scene; Lordelo do Ouro e Massarelos is the residential riverside west by the Crystal Palace gardens).",
+ "dests": {
+  "OPO": {
+   "Bonfim": [
+    "central",
+    "food"
+   ],
+   "Lordelo do Ouro e Massarelos": [
+    "quiet"
+   ]
+  }
+ }
+}
