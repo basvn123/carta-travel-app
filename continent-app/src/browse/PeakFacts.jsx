@@ -1,5 +1,4 @@
 import React from 'react';
-import NotYet from '../components/NotYet.jsx';
 import { doPriceOf } from '../lib/price/doPrice.js';
 import { formatMoney } from '../lib/money.js';
 import { DestForecast } from './DestForecast.jsx';
@@ -9,11 +8,14 @@ import {
 } from '../lib/routeEffort.js';
 
 /**
- * The peak facts a climber sizes a day by that the key facts band does not
- * carry (T630): regional rank, the slope warning, the lift's price and hours,
- * the huts on the flanks and the forecast at the height of the summit. Every
- * field keeps its slot: a value the wire has is printed, one it does not has
- * the shared placeholder (components/NotYet.jsx).
+ * The peak facts a climber sizes a day by that the facts row does not carry
+ * (T630; on the outdoor template since T918): the rank in its range, the
+ * slope warning, the lift's price and hours, the huts on the flanks and the
+ * forecast at the height of the summit.
+ *
+ * Since T918 a fact the wire does not have is left out, as on the place
+ * page: these builders return null (or an empty list) without data, and the
+ * mountain page draws only what comes back.
  *
  * Wire keys (docs/SCHEMA.md, T630): `rangeRank` {n, h, p}, `slopeDeg`,
  * `huts[]`, `lift.fare`, `lift.hours`. The summit forecast is live: MET
@@ -22,110 +24,67 @@ import {
 
 const isNum = (v) => typeof v === 'number' && Number.isFinite(v);
 
-function Slot({ label, children, testId, warn = false }) {
-  return (
-    <div className={`bpage-fact${warn ? ' is-warn' : ''}`} data-testid={testId}>
-      <dt>{label}</dt>
-      <dd>{children}</dd>
-    </div>
-  );
+/** "1 of 16 by height in Triglav Group, 1 of 16 by prominence", or ''. */
+export function rangeRankLine(mountain, t) {
+  const parts = rangeRankParts(mountain?.rangeRank);
+  const range = mountain?.range;
+  if (!parts || !range) return '';
+  return [
+    parts.height != null ? t('mtn.rankHeight', { rank: parts.height, n: parts.n, range }) : '',
+    parts.prominence != null ? t('mtn.rankProm', { rank: parts.prominence, n: parts.n }) : '',
+  ].filter(Boolean).join(', ');
 }
 
-function RangeRank({ mountain, t }) {
-  const parts = rangeRankParts(mountain.rangeRank);
-  const range = mountain.range;
-  if (!parts || !range) return <NotYet />;
-  return (
-    <>
-      {parts.height != null && (
-        <span className="mono">{t('mtn.rankHeight', { rank: parts.height, n: parts.n, range })}</span>
-      )}
-      {parts.height != null && parts.prominence != null && ', '}
-      {parts.prominence != null && (
-        <span className="mono">{t('mtn.rankProm', { rank: parts.prominence, n: parts.n })}</span>
-      )}
-    </>
-  );
+/** The slope on the gentlest side as { title, text, warn }, or null. */
+export function slopeFact(mountain, t) {
+  const slope = isNum(mountain?.slopeDeg) ? mountain.slopeDeg : null;
+  const state = slopeState(slope);
+  if (slope == null) return null;
+  return {
+    title: `${t('mtn.slope')}: ${t('mtn.slopeDeg', { deg: Math.round(slope) })}`,
+    text: state === 'warn' ? t('mtn.slopeWarn', { deg: SLOPE_WARN_DEG }) : t('mtn.slopeOk', { deg: SLOPE_WARN_DEG }),
+    warn: state === 'warn',
+  };
 }
 
-function Huts({ mountain, t, lang }) {
-  const huts = (Array.isArray(mountain.huts) ? mountain.huts : []).map(hutParts).filter(Boolean);
-  if (!huts.length) return <NotYet />;
+/** The lift's ticket and hours as one line, or ''. */
+export function liftFareLine(mountain, t) {
+  const lift = mountain?.lift || null;
+  const fare = doPriceOf(lift?.fare, 'lift');
+  return [
+    fare ? `${t('mtn.liftPrice')}: ${formatMoney(fare.eur, { precision: Number.isInteger(fare.eur) ? 'whole' : 'cents' })}` : '',
+    lift?.hours ? `${t('mtn.liftHours')}: ${String(lift.hours)}` : '',
+  ].filter(Boolean).join('. ');
+}
+
+/** The huts on the flanks (OSM), each with what is known of it. */
+export function flankHuts(mountain, t, lang) {
   const nf = (n) => n.toLocaleString(lang);
-  return (
-    <ul className="bpage-huts">
-      {huts.map((h) => (
-        <li key={`${h.name}-${h.m}`} className="bpage-hut" data-testid="peak-hut">
-          <strong>{h.name}</strong>
-          {h.m != null && <span className="mono">{` ${t('mtn.hutAway', { m: nf(h.m) })}`}</span>}
-          <span>{` ${t('mtn.hutBeds')}: `}{h.beds != null ? nf(h.beds) : <NotYet />}</span>
-          <span>{` ${t('mtn.hutOpen')}: `}{h.open || <NotYet />}</span>
-          <span>
-            {` ${t('mtn.hutContact')}: `}
-            {h.phone || h.email || h.web ? (
-              <>
-                {[h.phone, h.email].filter(Boolean).join(', ')}
-                {h.web && (
-                  <>
-                    {(h.phone || h.email) ? ', ' : ''}
-                    <a href={h.web} target="_blank" rel="noopener noreferrer">{t('mtn.hutWeb')}</a>
-                  </>
-                )}
-              </>
-            ) : <NotYet />}
-          </span>
-        </li>
-      ))}
-    </ul>
-  );
+  return (Array.isArray(mountain?.huts) ? mountain.huts : []).map(hutParts).filter(Boolean).map((h) => ({
+    key: `${h.name}-${h.m}`,
+    name: h.name,
+    text: [
+      h.m != null ? t('mtn.hutAway', { m: nf(h.m) }) : '',
+      h.beds != null ? `${t('mtn.hutBeds')}: ${nf(h.beds)}` : '',
+      h.open ? `${t('mtn.hutOpen')}: ${h.open}` : '',
+      [h.phone, h.email].filter(Boolean).join(', '),
+    ].filter(Boolean).join(', '),
+    web: h.web,
+  }));
 }
 
-function SummitForecast({ mountain, t, lang }) {
+/** The week's forecast at the height of the summit; nothing without one. */
+export function SummitForecast({ mountain, t, lang }) {
   const ele = isNum(mountain.ele) ? mountain.ele : null;
   const hasPoint = isNum(mountain.lat) && isNum(mountain.lon) && ele != null;
   const forecast = useForecast(mountain.lat, mountain.lon, hasPoint, ele);
-  if (!hasPoint || forecast === null) return <NotYet />;
+  if (!hasPoint || !forecast) return null;
   return (
-    <div data-testid="peak-forecast">
-      <p className="bpage-note">{t('mtn.summitForecastAt', { m: Math.round(ele).toLocaleString(lang) })}</p>
+    <div className="pt-block" data-testid="peak-forecast">
+      <h3 className="pt-block-title">{t('mtn.summitForecast')}</h3>
+      <p className="pt-muted">{t('mtn.summitForecastAt', { m: Math.round(ele).toLocaleString(lang) })}</p>
       <DestForecast forecast={forecast} t={t} lang={lang} headingId="h-summit-week" />
-      <p className="bpage-note">{t('mtn.summitForecastCredit')}</p>
-    </div>
-  );
-}
-
-export function PeakFacts({ mountain, t, lang }) {
-  const slope = isNum(mountain.slopeDeg) ? mountain.slopeDeg : null;
-  const state = slopeState(slope);
-  const lift = mountain.lift || null;
-  // The lift's fare record (harvest_lift_hours.py `fare`, T701); a zero or an
-  // unknown fare keeps the placeholder.
-  const liftFare = doPriceOf(lift?.fare, 'lift');
-  return (
-    <div className="bpage-facts bpage-peakfacts" data-testid="peak-facts">
-      <dl>
-        <Slot label={t('mtn.rangeRank')} testId="pf-rank"><RangeRank mountain={mountain} t={t} /></Slot>
-        <Slot label={t('mtn.slope')} testId="pf-slope" warn={state === 'warn'}>
-          {slope == null ? <NotYet /> : (
-            <>
-              <span className="mono">{t('mtn.slopeDeg', { deg: Math.round(slope) })}</span>
-              <small>
-                {state === 'warn' ? t('mtn.slopeWarn', { deg: SLOPE_WARN_DEG }) : t('mtn.slopeOk', { deg: SLOPE_WARN_DEG })}
-              </small>
-            </>
-          )}
-        </Slot>
-        <Slot label={t('mtn.liftPrice')} testId="pf-lift-price">
-          {liftFare ? formatMoney(liftFare.eur, { precision: Number.isInteger(liftFare.eur) ? 'whole' : 'cents' }) : <NotYet />}
-        </Slot>
-        <Slot label={t('mtn.liftHours')} testId="pf-lift-hours">
-          {lift?.hours ? String(lift.hours) : <NotYet />}
-        </Slot>
-        <Slot label={t('mtn.huts')} testId="pf-huts"><Huts mountain={mountain} t={t} lang={lang} /></Slot>
-        <Slot label={t('mtn.summitForecast')} testId="pf-forecast">
-          <SummitForecast mountain={mountain} t={t} lang={lang} />
-        </Slot>
-      </dl>
+      <p className="pt-muted">{t('mtn.summitForecastCredit')}</p>
     </div>
   );
 }
