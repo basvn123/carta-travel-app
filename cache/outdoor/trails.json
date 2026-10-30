@@ -1,0 +1,8 @@
+{
+ "_about": "T915 placeholder, filled by a later harvest. Per trail id (the trails wire id, as a string): {dogs?: \"yes\"|\"leash\"|\"no\", permit?: one short plain English sentence (a permit or fee the walk needs), huts?: {hut name exactly as in the detail file's huts[]: {season?: [fromMonth, toMonth], booking?: true|false}}, access?: {parking?: {name?, lat, lon, m, fee?: true|false, eur_day?}, transit?: [{name, mode: \"bus\"|\"train\"|\"tram\"|\"ferry\", lat, lon, m}]}, start?: {name?, lat?, lon?, ele?}}. A value here wins over the derived one, field by field. Keys starting with _ are notes and are never published. pipeline/outdoor/derive_outdoor_pages.py writes the detail file's keys. Mount Korab (63433, AL) is the worked example: no fact about dogs or a permit is checked yet, so it carries only a note.",
+ "items": {
+  "63433": {
+   "_note": "Mount Korab from Radomire. Fill dogs and permit when a source states them; the walk has no hut on the way, so huts stays empty."
+  }
+ }
+}
