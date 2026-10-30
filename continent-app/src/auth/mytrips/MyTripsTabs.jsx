@@ -1,26 +1,28 @@
-import React, { Suspense, lazy, useMemo } from 'react';
-import { createPortal } from 'react-dom';
+import React, { useMemo } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
-import { Button, Card, Chip, ChipGroup, IconButton, Segmented } from '../../components/ui/index.js';
-import { HeroImage } from '../../components/HeroImage.jsx';
+import { Button, Chip, Tabs } from '../../components/ui/index.js';
 import { CountryFlag, COUNTRY_ISO2 } from '../../components/CountryFlag.jsx';
 import { LoadingBlock, ErrorBlock } from '../../components/StateBlocks.jsx';
 import { SheetShell } from '../../browse/SheetShell.jsx';
-import { DayPrice, SaveButton } from '../../browse/ExploreCards.jsx';
-import { ExpandIcon, ShrinkIcon, PlusIcon, RouteIcon, PencilIcon, ChevronRightIcon } from '../../components/Icons.jsx';
-import { FAV_KIND_LABEL } from '../../lib/favorites.js';
+import { PlusIcon, UploadIcon, ChevronRightIcon } from '../../components/Icons.jsx';
 import { countryName } from '../../lib/countryName.js';
-import { TripHeroCard, TripRow } from './TripCards.jsx';
-import { RecordMapDialog } from './parts.jsx';
+import { tabHref } from '../../lib/urlState.js';
+import { NextTripCard, TripRow } from './TripCards.jsx';
 import { FaceStack } from '../FriendFaces.jsx';
 
-const FULL_PAD = { top: 84, left: 28, right: 28, bottom: 56 };
-const TripMap = lazy(() => import('../../map/TripMap.jsx').then((m) => ({ default: m.TripMap })));
+/** A plain click stays in the app; a modified click opens the address. */
+export function door(go) {
+  return (e) => {
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    go();
+  };
+}
 
 /** A section of one tab: a heading with an optional count and action. */
-export function Section({ title, count, action, children, id }) {
+export function Section({ title, count, action, children, id, className = '' }) {
   return (
-    <section className="mt-section" aria-labelledby={id}>
+    <section className={`mt-section ${className}`.trim()} aria-labelledby={id}>
       <div className="mt-section-head">
         <h3 className="mt-section-title" id={id}>{title}</h3>
         {count > 0 && <Chip kind="count">{count}</Chip>}
@@ -32,28 +34,63 @@ export function Section({ title, count, action, children, id }) {
 }
 
 /** An empty tab: the space named, one way forward, no apology. */
-export function Empty({ title, action, secondary }) {
+export function Empty({ title, line, action }) {
   return (
     <div className="mt-empty">
       <p className="mt-empty-title">{title}</p>
-      {(action || secondary) && <div className="mt-empty-actions">{action}{secondary}</div>}
+      {line && <p className="mt-empty-line">{line}</p>}
+      {action && <div className="mt-empty-actions">{action}</div>}
     </div>
+  );
+}
+
+export const MT_TABS = ['trips', 'saved', 'europe'];
+
+/**
+ * The page head (T923): "My trips", Add a booking and New trip from 700 px,
+ * then the three underline tabs with their counts, sticky under the app
+ * header, in the style of Explore's category tabs.
+ */
+export function MyTripsHead({ tab, onTab, counts = {}, onAddBooking, onNewTrip }) {
+  const { t } = useI18n();
+  const tabs = [
+    { id: 'trips', label: t('mt.tabTrips'), count: counts.trips || null },
+    { id: 'saved', label: t('mt.tabSaved'), count: counts.saved || null },
+    { id: 'europe', label: t('mt.tabEurope'), count: counts.europe || null },
+  ];
+  return (
+    <>
+      <div className="mt-head">
+        <h1 className="mt-title">{t('saved.title')}</h1>
+        <div className="mt-head-acts">
+          {onAddBooking && (
+            <Button size="sm" iconStart={<UploadIcon size={16} />} onClick={onAddBooking}>{t('mt.addBooking')}</Button>
+          )}
+          {onNewTrip && (
+            <Button size="sm" iconStart={<PlusIcon size={16} />} onClick={onNewTrip}>{t('mt.newTrip')}</Button>
+          )}
+        </div>
+      </div>
+      <div className="mt-tabs">
+        <Tabs label={t('saved.title')} tabs={tabs} value={tab} onChange={onTab} panelId="mytrips-panel" className="mt-tabs-row" />
+      </div>
+    </>
   );
 }
 
 /* ───────────────────────── Trips ───────────────────────── */
 
 /**
- * Trips: the next one as the focal card, every later one and every draft as a
- * row, day plans that belong to no trip under their own heading (only when
- * there are some), and friends' shared trips as one line.
+ * Trips (T923): Today while a trip runs (T924), else the next trip as the
+ * focal card; then Coming up and Being planned (drafts, with All in Plan),
+ * day plans that belong to no trip, and friends' shared trips as one line.
  */
 export function TripsTab({
-  authed, configured, loading, error, onRetry, next, later, dayPlans,
-  friendsShared, friendFaces = [], onOpenFriends, onPlanTrip, onSignIn, todayIso, signInLine = true,
+  authed, configured, loading, error, onRetry, today = null, next, coming = [], planning = [], dayPlans = [],
+  friendsShared, friendFaces = [], onOpenFriends, onPlanTrip, onAllInPlan, onSignIn, signInLine = true,
 }) {
   const { t } = useI18n();
-  const nothing = !next && !later.length && !dayPlans.length;
+  const nothing = !today && !next && !coming.length && !planning.length && !dayPlans.length;
   return (
     <>
       {loading && authed ? (
@@ -63,23 +100,43 @@ export function TripsTab({
       ) : nothing ? (
         <Empty
           title={t('saved.noTripsYet')}
+          line={t('mt.emptyTripsLine')}
           action={<Button variant="primary" onClick={onPlanTrip}>{t('saved.planTrip')}</Button>}
-          secondary={!authed && configured ? <Button onClick={onSignIn}>{t('saved.signIn')}</Button> : null}
         />
       ) : (
         <>
+          {today}
           {next && (
             <div className="mt-next">
-              <TripHeroCard {...next} todayIso={todayIso} />
+              <NextTripCard {...next} />
               {next.below}
             </div>
           )}
-          {later.length > 0 && (
-            <Section id="mt-later" title={t(next ? 'saved.laterTrips' : 'saved.yourTrips')} count={later.length}>
-              <div className="mt-rows">
-                {later.map((r) => <TripRow key={r.id} {...r}>{r.below}</TripRow>)}
-              </div>
-            </Section>
+          {(coming.length > 0 || planning.length > 0) && (
+            <div className="mt-two">
+              {coming.length > 0 && (
+                <Section id="mt-coming" title={t('mt.comingUp')}>
+                  <div className="mt-rows">
+                    {coming.map((r) => <TripRow key={r.id} {...r}>{r.below}</TripRow>)}
+                  </div>
+                </Section>
+              )}
+              {planning.length > 0 && (
+                <Section
+                  id="mt-planning"
+                  title={t('mt.beingPlanned')}
+                  action={(
+                    <a className="mt-link" href={tabHref('planstart')} onClick={door(onAllInPlan)}>
+                      {t('mt.allInPlan')}<ChevronRightIcon size={16} />
+                    </a>
+                  )}
+                >
+                  <div className="mt-rows">
+                    {planning.map((r) => <TripRow key={r.id} {...r}>{r.below}</TripRow>)}
+                  </div>
+                </Section>
+              )}
+            </div>
           )}
           {dayPlans.length > 0 && (
             <Section id="mt-days" title={t('saved.dayPlans')} count={dayPlans.length}>
@@ -105,112 +162,6 @@ export function TripsTab({
         </Button>
       )}
     </>
-  );
-}
-
-/* ───────────────────────── Shortlist ───────────────────────── */
-
-/**
- * Everything starred anywhere, as one list of compact rows, priced as Explore
- * prices them and saved with Explore's bookmark. The kind and the order are
- * filters, drawn in the side panel on desktop and above the list on a phone.
- */
-export function ShortlistTab({ rows, showKind = true, costs, onOpen, onRemove, onPlanTrip, planCountryName, onBrowse, loading }) {
-  const { t } = useI18n();
-  if (!rows.length && !loading) {
-    return (
-      <Empty
-        title={t('saved.shortlistEmpty')}
-        action={<Button onClick={onBrowse}>{t('saved.browseDestinations')}</Button>}
-      />
-    );
-  }
-  return (
-    <>
-      {onPlanTrip && planCountryName && (
-        <div className="mt-plan-these">
-          <Button variant="primary" iconStart={<RouteIcon size={18} />} onClick={onPlanTrip}>
-            {t('saved.planWithShortlist', { country: planCountryName })}
-          </Button>
-        </div>
-      )}
-      <div className="mt-rows">
-        {rows.map((row) => (
-          <Card
-            key={row.key}
-            layout="row"
-            as="div"
-            className={`mt-row${row.missing ? ' is-missing' : ''}`}
-            media={<HeroImage url={row.img} city={row.name || row.id} iso2={row.cc} className="mt-row-img" maxWidth={330} ratio={[1, 1]} sizes="72px" />}
-            title={row.missing ? t('fav.missing') : (row.name || '…')}
-            onOpen={row.missing ? undefined : () => onOpen(row)}
-            meta={!row.missing && (
-              <span className="mt-row-meta">
-                {row.cc && <CountryFlag country={row.cc} size={14} />}
-                <span>{[row.sub, showKind && FAV_KIND_LABEL[row.kind] ? t(FAV_KIND_LABEL[row.kind]) : ''].filter(Boolean).join(', ')}</span>
-              </span>
-            )}
-            price={row.kind === 'dest' && costs?.get(row.id) ? <DayPrice cost={costs.get(row.id)} t={t} /> : null}
-            actions={<SaveButton fav onToggle={() => onRemove(row)} t={t} name={row.name} />}
-          />
-        ))}
-      </div>
-    </>
-  );
-}
-
-/** The shortlist's two filters, as the side panel or the phone's refine row. */
-export function ShortlistFilters({ kinds, kind, onKind, sort, onSort, compact = false }) {
-  const { t } = useI18n();
-  if (kinds.length < 2 && !compact) {
-    return (
-      <div className="mt-filter">
-        <span className="mt-filter-label">{t('saved.sortLabel')}</span>
-        <Segmented label={t('saved.sortLabel')} size="sm" value={sort} onChange={onSort}
-          options={[{ value: 'recent', label: t('saved.sortRecent') }, { value: 'cheap', label: t('saved.sortCheap') }]} />
-      </div>
-    );
-  }
-  return (
-    <div className={`mt-filters${compact ? ' is-compact' : ''}`}>
-      {kinds.length > 1 && (
-        <div className="mt-filter">
-          {!compact && <span className="mt-filter-label">{t('saved.kindLabel')}</span>}
-          <ChipGroup label={t('saved.kindLabel')} className="mt-chips">
-            {['all', ...kinds].map((k) => (
-              <Chip key={k} kind="choice" selected={kind === k} onClick={() => onKind(k)}>
-                {k === 'all' ? t('saved.kindAll') : t(FAV_KIND_LABEL[k])}
-              </Chip>
-            ))}
-          </ChipGroup>
-        </div>
-      )}
-      <div className="mt-filter">
-        {!compact && <span className="mt-filter-label">{t('saved.sortLabel')}</span>}
-        <Segmented label={t('saved.sortLabel')} size="sm" value={sort} onChange={onSort}
-          options={[{ value: 'recent', label: t('saved.sortRecent') }, { value: 'cheap', label: t('saved.sortCheap') }]} />
-      </div>
-    </div>
-  );
-}
-
-/* ───────────────────────── Visited ───────────────────────── */
-
-/** The year filter, as the side panel or the phone's refine row. */
-export function YearFilter({ years, year, onYear, compact = false }) {
-  const { t } = useI18n();
-  if (years.length < 2) return null;
-  return (
-    <div className="mt-filter">
-      {!compact && <span className="mt-filter-label">{t('saved.yearLabel')}</span>}
-      <ChipGroup label={t('saved.yearLabel')} className="mt-chips">
-        {['all', ...years].map((y) => (
-          <Chip key={y} kind="choice" selected={year === y} onClick={() => onYear(y)}>
-            {y === 'all' ? t('saved.yearAll') : String(y)}
-          </Chip>
-        ))}
-      </ChipGroup>
-    </div>
   );
 }
 
@@ -250,125 +201,5 @@ export function VisitedCountriesSheet({ fromTrips, manual, onToggle, onClose }) 
         <Button variant="primary" onClick={onClose}>{t('saved.done')}</Button>
       </div>
     </SheetShell>
-  );
-}
-
-/**
- * Visited: the map of the record first (a third of the phone screen), the
- * figures it adds up to as one fact band that carries the countries and their
- * edit (T503, T467-b), then the trips by year.
- */
-export function VisitedTab({
-  record, mapProps, hasMap, mapFull, onMapFull, groups, onAddPast, pastForm, error,
-  onEditCountries, countriesRef,
-}) {
-  const { t } = useI18n();
-  const hasAny = record.countries.length > 0 || groups.length > 0;
-  return (
-    <>
-      {hasMap && (
-        <div className="mt-map">
-          {!mapFull && (
-            <Suspense fallback={<div className="mt-map-wait" aria-hidden="true" />}>
-              <TripMap {...mapProps} />
-            </Suspense>
-          )}
-          {/* On a touch screen the map in the page stays still until it is
-              opened full size (carta-design "3D terrain map", maps never ask
-              for Ctrl): a tap anywhere on it opens it. */}
-          <div className="mt-map-shield" aria-hidden="true" onClick={() => onMapFull(true)} />
-          <IconButton tone="surface" className="mt-map-expand" label={t('saved.mapExpand')} onClick={() => onMapFull(true)}>
-            <ExpandIcon size={18} />
-          </IconButton>
-        </div>
-      )}
-      {hasMap && mapFull && createPortal(
-        <RecordMapDialog title={t('saved.mapFullTitle')} onClose={() => onMapFull(false)}>
-          <div className="savedmap-full-map">
-            <Suspense fallback={<div className="mt-map-wait" aria-hidden="true" />}>
-              <TripMap {...mapProps} fitMaxZoom={9} fitPadding={FULL_PAD} />
-            </Suspense>
-          </div>
-          <div className="savedmap-full-bar">
-            <span className="savedmap-full-title">{t('saved.mapFullTitle')}</span>
-            <Button size="sm" iconStart={<ShrinkIcon size={16} />} onClick={() => onMapFull(false)}>{t('saved.mapShrink')}</Button>
-          </div>
-        </RecordMapDialog>,
-        document.body,
-      )}
-
-      {/* T467: the countries lead, large, with their flags (the hero figure
-          the travel-stats apps open on); cities, trips and nights follow as
-          the supporting three. No denominator: a share of Carta's catalogue
-          would be a catalogue count. T503 (owner T467-b): the countries
-          section is folded in here, its Edit or Add sits in the hero cell and
-          the names are read out from a list, so there is one list of
-          countries, not two. With nothing on the record the band is only
-          that cell and its Add: an invitation, not a row of zeros. */}
-      <dl className={`mt-band${hasAny ? '' : ' is-empty'}`} aria-label={t('saved.recordFacts')}>
-        <div className="mt-band-cell mt-band-hero">
-          <dt>{t('saved.factCountries')}</dt>
-          <dd>
-            {record.countries.length > 0 && (
-              <>
-                <span className="mt-band-fig">{record.countries.length}</span>
-                <span
-                  className="mt-band-flags"
-                  aria-hidden="true"
-                  data-more={record.countries.length > 8 ? `+${record.countries.length - 8}` : undefined}
-                >
-                  {record.countries.slice(0, 8).map((c) => <CountryFlag key={c} country={c} size={18} />)}
-                </span>
-                <ul className="sr-only mt-flags">
-                  {record.countries.map((c) => <li key={c} className="mt-flag">{countryName(COUNTRY_ISO2[c], c)}</li>)}
-                </ul>
-              </>
-            )}
-            <Button
-              ref={countriesRef}
-              size="sm"
-              variant="quiet"
-              className="mt-band-edit"
-              iconStart={record.countries.length ? <PencilIcon size={16} /> : <PlusIcon size={16} />}
-              onClick={onEditCountries}
-              aria-label={record.countries.length ? t('saved.editCountriesLabel') : undefined}
-            >
-              {t(record.countries.length ? 'saved.editCountries' : 'saved.addCountries')}
-            </Button>
-          </dd>
-        </div>
-        {hasAny && (
-          <>
-            <div className="mt-band-cell"><dt>{t('saved.factCities')}</dt><dd>{record.cities.length}</dd></div>
-            <div className="mt-band-cell"><dt>{t('saved.factTrips')}</dt><dd>{record.trips}</dd></div>
-            <div className="mt-band-cell"><dt>{t('saved.factNights')}</dt><dd>{record.nights}</dd></div>
-          </>
-        )}
-      </dl>
-
-      <Section
-        id="mt-record"
-        title={t('saved.travelRecord')}
-        action={!pastForm && (
-          <Button size="sm" variant="quiet" iconStart={<PlusIcon size={16} />} onClick={onAddPast}>{t('saved.addPastTrip')}</Button>
-        )}
-      >
-        {pastForm}
-        {error ? (
-          <p className="mt-error" role="alert">{error}</p>
-        ) : groups.length === 0 && !pastForm ? (
-          <Empty title={t('saved.pastEmptyShort')} />
-        ) : (
-          groups.map((g) => (
-            <div className="mt-year" key={g.year}>
-              <h4 className="mt-year-title">{g.year}</h4>
-              <div className="mt-rows">
-                {g.rows.map((r) => <TripRow key={r.id} {...r}>{r.below}</TripRow>)}
-              </div>
-            </div>
-          ))
-        )}
-      </Section>
-    </>
   );
 }

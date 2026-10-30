@@ -4,10 +4,11 @@ import { fetchSavedTrips, deleteTrip } from './tripStorage.js';
 import { fetchTripPlans, deleteTripPlan } from './tripPlanStorage.js';
 import {
   loadStandalonePlans, deleteStandalonePlan, loadAssignments, subscribeDayPlanStore,
-  loadTripExtras, persistTripExtras,
+  loadTripExtras, persistTripExtras, hasTripExtras,
 } from '../planner/dayPlanStore.js';
-import { CalendarIcon, BookmarkIcon, CheckIcon, RouteIcon, LinkIcon } from '../components/Icons.jsx';
-import { TileGroup, Tile, Chip, Button } from '../components/ui/index.js';
+import { tripsStore } from '../planner/tripsStore.js';
+import { CalendarIcon, RouteIcon, LinkIcon, PencilIcon } from '../components/Icons.jsx';
+import { Button, Chip } from '../components/ui/index.js';
 import { loadDeviceTrip, clearDeviceTrip } from '../planner/deviceTripStore.js';
 import { PastTripForm } from './PastTripForm.jsx';
 import { TripMemoryView } from './TripMemoryView.jsx';
@@ -40,40 +41,27 @@ import { SavedJourneys } from './mytrips/SavedJourneys.jsx';
 import { useSavedJourneys } from '../lib/journeySaves.js';
 import { holdPlan, useKept } from '../lib/recommend/keptStore.js';
 import {
-  localToday, addDaysIso, classifyTrips, whenParts, dayPlanEndDate, orderedUnique,
-  nightsBetween, tripFigure, visitedRecord, yearOf, deviceTripAsPlan,
+  localToday, addDaysIso, classifyTrips, whenParts, dayPlanEndDate, orderedUnique, daysUntil,
+  nightsBetween, tripFigure, visitedRecord, yearOf, deviceTripAsPlan, readinessSteps, tripStops,
 } from '../lib/myTrips.js';
 import { useVisitedCountries, toggleVisitedCountry } from '../lib/visitedCountries.js';
 import { UNDO_MS, UndoToast, CrewBar, TripPrice, whenText } from './mytrips/parts.jsx';
 import { SiteFooter } from '../components/SiteFooter.jsx';
-import {
-  TripsTab, ShortlistTab, ShortlistFilters, VisitedTab, YearFilter, VisitedCountriesSheet,
-} from './mytrips/MyTripsTabs.jsx';
+import { MyTripsHead, TripsTab, VisitedCountriesSheet, MT_TABS } from './mytrips/MyTripsTabs.jsx';
+import { ShortlistTab, ShortlistFilters, YearFilter, VisitedTab } from './mytrips/LegacyTabs.jsx';
 
 /**
- * My trips (T434). Three tabs, one page:
- *   Trips      the next trip as the focal card with what it costs the party
- *              now, the weather, the days planned and who is going; later
- *              trips, drafts and day plans as rows.
- *   Shortlist  everything starred anywhere, priced as Explore prices it, with
- *              a kind and an order filter and "Plan a trip" from it.
- *   Visited    the record: a map, the figures it adds up to, the countries
- *              (with the ones marked by hand), the trips by year.
+ * My trips (T434, rebuilt as Concept A by T923 to T927). One header with
+ * three underline tabs:
+ *   Trips        the next trip as the focal card with how ready it is, Today
+ *                while a trip runs, Coming up and Being planned.
+ *   Saved        everything saved, in the traveller's own lists.
+ *   Your Europe  the record: the countries, the money, the past trips.
  *
  * This file keeps the state, the data and the undo; the tabs and cards are
  * drawn in ./mytrips/. Dates decide what is upcoming and what is past
  * (lib/myTrips.js); nobody files anything.
  */
-
-// How many individual days of a trip plan have Day planner picks on this
-// device (assignments = { stopIdx: { dayIdx: [activityIdx...] } }).
-function countPlannedDays(planId) {
-  const a = loadAssignments(planId);
-  return Object.values(a || {}).reduce(
-    (n, days) => n + Object.values(days || {}).filter((l) => Array.isArray(l) && l.length).length,
-    0,
-  );
-}
 
 // ?savedmock verify seam: fixture rows stand in for the Supabase tables so
 // the account-only shapes render in headless checks. Never on in production.
@@ -101,11 +89,47 @@ const MOCK_PLANS = [
   { id: 'mp3', label: null, cities: ['Salzburg'], countries: ['Austria'], start_date: addDaysIso(-380), end_date: addDaysIso(-377), destination_ids: ['SZG'] },
   { id: 'mp4', label: null, cities: ['Munich'], countries: ['Germany'], start_date: addDaysIso(-9), end_date: addDaysIso(-7), destination_ids: ['MUC'] },
   { id: 'mp5', label: null, cities: ['Ljubljana'], countries: ['Slovenia'], start_date: addDaysIso(75), end_date: addDaysIso(79), destination_ids: [] },
+  // T923: two drafts, no dates yet, for Being planned.
+  { id: 'mp7', label: 'Alps hut tour', cities: ['Innsbruck'], countries: ['Austria'], start_date: null, end_date: null, destination_ids: ['INN'], stops: [{ destination_id: 'INN', nights: 6 }] },
+  { id: 'mp8', label: 'Lake weekend', cities: ['Ljubljana'], countries: ['Slovenia'], start_date: null, end_date: null, destination_ids: ['LJU'] },
 ];
 
-const MAP_PAD = { top: 24, left: 24, right: 24, bottom: 24 };
+/** The seam's own trip state, written once into this browser so the cards
+ *  read it through the same stores a real trip uses (dev only). */
+function seedMock() {
+  if (!SAVED_MOCK || hasTripExtras('mp1')) return;
+  persistTripExtras('mp1', {
+    ...loadTripExtras('mp1'),
+    people: [{ id: 'p0', name: 'Sam', userId: null }],
+    bookings: { 'flight-out': { ref: 'TP1342', price: '312' }, 'stay-0': { ref: 'BK7781', price: '318' } },
+  });
+  try {
+    localStorage.setItem(BED_BASE_KEY, JSON.stringify({ mp1: { beds: null, at: addDaysIso(-12), mockLower: 42 } }));
+  } catch { /* private mode */ }
+}
+
+// How many euros the beds of a trip must have fallen, for the whole party,
+// before the card says so: a price model that moved by small change is not
+// news (T923 price nudge).
+const NUDGE_MIN_EUR = 5;
+const NUDGE_MIN_SHARE = 0.03;
+// The beds' price for the whole party the first time My trips priced a
+// trip, by plan id: { beds, at }. The nudge compares today's price for the
+// same dates against it and names the day it was first priced.
+const BED_BASE_KEY = 'carta.mytrips.bedBase.v1';
+const readBedBase = () => { try { return JSON.parse(localStorage.getItem(BED_BASE_KEY) || '{}') || {}; } catch { return {}; } };
+const writeBedBase = (v) => { try { localStorage.setItem(BED_BASE_KEY, JSON.stringify(v)); } catch { /* private mode */ } };
+
 const TAB_KEY = 'carta.savedTripsTab';
 const SORT_KEY = 'carta.mytrips.sort';
+// T923: the tabs were renamed; a stored choice of the old names still lands.
+const OLD_TABS = { planned: 'trips', favorites: 'saved', visited: 'europe' };
+const readTab = () => {
+  try {
+    const v = localStorage.getItem(TAB_KEY);
+    return MT_TABS.includes(v) ? v : (OLD_TABS[v] || 'trips');
+  } catch { return 'trips'; }
+};
 const readStored = (key, allowed, fallback) => {
   try { const v = localStorage.getItem(key); return allowed.includes(v) ? v : fallback; } catch { return fallback; }
 };
@@ -125,11 +149,12 @@ export function SavedTripsPanel({
   const { t, lang } = useI18n();
   const destinations = useMemo(() => data?.destinations || {}, [data]);
   const todayIso = localToday();
+  useState(seedMock);
 
   const keptCount = useKept().length;
   // T831: Carta's own trips saved from their page count as something kept.
   const savedWeeks = useSavedJourneys().length;
-  const [tab, setTab] = useState(() => readStored(TAB_KEY, ['favorites', 'planned', 'visited'], 'planned'));
+  const [tab, setTab] = useState(readTab);
   const pickedRef = useRef(false);
   const pickTab = (v) => { pickedRef.current = true; setTab(v); writeStored(TAB_KEY, v); };
 
@@ -146,8 +171,16 @@ export function SavedTripsPanel({
   // deviceTrip.v1), read once per opening of My trips (T503, owner T500-a).
   const [deviceStored, setDeviceStored] = useState(() => (SAVED_MOCK ? null : loadDeviceTrip()));
   const devicePlan = useMemo(() => deviceTripAsPlan(deviceStored, destinations), [deviceStored, destinations]);
+  // T923: the trips the Plan home lists on this device; the undated ones are
+  // drafts, listed under Being planned with a link back to Plan.
+  const [deviceDrafts, setDeviceDrafts] = useState(() => (SAVED_MOCK ? [] : safeList()));
+  useEffect(() => tripsStore.subscribe(() => setDeviceDrafts(safeList())), []);
+  // Any write to a trip's extras or day plans (the planner, the sync, the
+  // booking sheet) re-reads what the cards show.
+  const [storeTick, setStoreTick] = useState(0);
   useEffect(() => subscribeDayPlanStore(({ remote }) => {
     if (remote) setDayPlans(loadStandalonePlans());
+    setStoreTick((n) => n + 1);
   }), []);
 
   const loadTrips = () => {
@@ -263,8 +296,8 @@ export function SavedTripsPanel({
   const openPastForm = (initial) => { setPastError(''); setPastEdit(initial || null); setPastOpen(true); };
   useEffect(() => {
     if (!startWithPast) return;
-    // The form lives on the Visited tab.
-    pickTab('visited');
+    // The form lives on Your Europe.
+    pickTab('europe');
     openPastForm(null);
     onPastStarted && onPastStarted();
   }, [startWithPast]); // eslint-disable-line react-hooks/exhaustive-deps -- a one-shot hand-off from Plan
@@ -331,6 +364,9 @@ export function SavedTripsPanel({
     () => classifyTrips({ plans: shownPlans, dayPlans: shownDayPlans, todayIso }),
     [shownPlans, shownDayPlans, todayIso],
   );
+  // Dated trips ahead, and the drafts (no dates yet) apart from them.
+  const datedPlans = useMemo(() => upcomingPlans.filter((p) => p.start_date), [upcomingPlans]);
+  const draftPlans = useMemo(() => upcomingPlans.filter((p) => !p.start_date), [upcomingPlans]);
 
   const memories = useMemo(() => {
     const out = {};
@@ -483,28 +519,84 @@ export function SavedTripsPanel({
   const priceFor = useCallback((p) => tripFigure(p, { data, stayTier, lifestyle }), [data, stayTier, lifestyle]);
   const isoFor = (countries) => COUNTRY_ISO2[countries?.[0]] || '';
 
-  // Browser storage is read once per plan list and per edit, never per render
-  // (T434 audit, P1-2): days planned on this device and who is coming.
+  // Browser storage is read once per plan list and per store change, never
+  // per render (T434 audit, P1-2): who is coming and how ready each trip is.
   const planLocal = useMemo(() => {
     const out = {};
-    upcomingPlans.forEach((p) => {
+    datedPlans.forEach((p) => {
+      const extras = loadTripExtras(p.id);
+      const crew = readCrew(extras, { memory: extras.memory });
       out[p.id] = {
-        planned: countPlannedDays(p.id),
-        crew: crewInitials(crewFor(p.id), MAX_CREW).map((c) => ({ id: c.id, name: c.name, initials: c.initials })),
+        crew: crewInitials(crew, MAX_CREW).map((c) => ({ id: c.id, name: c.name, initials: c.initials })),
+        crewLine: crewLabel(crew, lang, 3),
+        readiness: readinessSteps(p, { assignments: loadAssignments(p.id), extras }),
       };
     });
     return out;
-  }, [upcomingPlans, memTick]); // eslint-disable-line react-hooks/exhaustive-deps -- memTick re-reads storage after an edit
+  }, [datedPlans, memTick, storeTick, lang]); // eslint-disable-line react-hooks/exhaustive-deps -- the ticks re-read storage after an edit
   const figures = useMemo(() => {
     const out = {};
-    upcomingPlans.forEach((p) => { out[p.id] = priceFor(p); });
+    datedPlans.forEach((p) => { out[p.id] = priceFor(p); });
     return out;
-  }, [upcomingPlans, priceFor]);
+  }, [datedPlans, priceFor]);
 
-  const planModel = (p, i) => {
+  // The price nudge (T923): the beds for the trip's own dates, priced by
+  // Carta's model today, against the same beds the first time My trips
+  // priced the trip. Only a fall is news, and only before the beds are booked.
+  const [bedBase, setBedBase] = useState(readBedBase);
+  useEffect(() => {
+    const base = readBedBase();
+    let changed = false;
+    Object.entries(figures).forEach(([id, f]) => {
+      if (!f || !Number.isFinite(f.beds) || f.beds <= 0) return;
+      const cur = base[id];
+      if (cur && Number.isFinite(cur.beds)) return;
+      // The seam marks its trip's first price a little higher, so the nudge renders.
+      base[id] = { beds: cur?.mockLower ? f.beds + cur.mockLower : f.beds, at: cur?.at || todayIso };
+      changed = true;
+    });
+    if (changed) { writeBedBase(base); setBedBase(base); }
+  }, [figures, todayIso]);
+  const nudgeFor = (p, figure, readiness) => {
+    const base = bedBase[p.id];
+    if (!figure || !base || !Number.isFinite(base.beds) || !Number.isFinite(figure.beds)) return null;
+    if (readiness?.steps?.find((s) => s.key === 'beds')?.done) return null;
+    const fall = base.beds - figure.beds;
+    if (fall < NUDGE_MIN_EUR || fall < base.beds * NUDGE_MIN_SHARE) return null;
+    return { eur: fall, since: fmtDate(base.at) };
+  };
+
+  // The trip's first town, where the countdown counts to.
+  const firstTown = (p) => {
+    const id = tripStops(p)[0]?.id || (p.destination_ids || [])[0];
+    return destinations[id]?.city || (p.cities || [])[0] || '';
+  };
+
+  // The next missing step as the card's secondary: dates open the trip, a
+  // booking opens the trip page where Ready to book lists where to book.
+  const nextStepFor = (p, readiness) => {
+    const step = readiness?.next;
+    if (!step || step === 'days' || p.device) return null;
+    const open = () => onLoadTripPlan?.(p.id);
+    if (step === 'dates') return { label: t('mt.nextDates'), onClick: () => onLoadTripPlan?.({ id: p.id, edit: true }) };
+    if (step === 'travel') return { label: t('mt.nextTravel'), onClick: open };
+    const stops = tripStops(p);
+    const extras = loadTripExtras(p.id);
+    const i = stops.findIndex((s, k) => !(extras.bookings?.[`stay-${k}`]?.ref || extras.bookings?.[`stay-${k}`]?.price));
+    const city = destinations[stops[Math.max(0, i)]?.id]?.city || '';
+    return { label: city ? t('mt.nextBedIn', { city }) : t('mt.nextBed'), onClick: open };
+  };
+
+  const planMenu = (p, parts, device) => (device ? [] : [
+    { key: 'edit', label: t('mt.editTrip'), icon: <PencilIcon size={16} />, onClick: () => onLoadTripPlan?.({ id: p.id, edit: true }) },
+    { key: 'days', label: t('saved.planDays'), icon: <CalendarIcon size={16} />, onClick: () => onOpenDayPlan?.({ planId: p.id, stopIndex: 0, dayIndex: 0 }) },
+    ...(p.coplan ? [] : [{ key: 'share', label: t('saved.shareInvite'), icon: <LinkIcon size={16} />, onClick: () => toggleShare(p.id) }]),
+  ]);
+
+  const planModel = (p, focal) => {
     const parts = journeyParts(p);
     const nights = nightsBetween(p.start_date, p.end_date);
-    const { planned, crew } = planLocal[p.id] || { planned: 0, crew: [] };
+    const local = planLocal[p.id] || { crew: [], crewLine: '', readiness: null };
     const when = whenParts(p.start_date, p.end_date, todayIso);
     const figure = figures[p.id] || null;
     const removeLabel = t('saved.removeItem', { name: parts.title });
@@ -532,38 +624,63 @@ export function SavedTripsPanel({
       removeLabel,
       below,
     };
-    if (i === 0) {
+    if (focal) {
+      const n = p.start_date ? daysUntil(p.start_date, todayIso) : null;
       return {
         ...common,
-        sub: parts.sub,
         countries: parts.countries,
+        countdown: n != null && n > 0 ? { n, place: firstTown(p) } : null,
         when,
         dates: fmtRange(p.start_date, p.end_date),
         nights,
         figure,
-        dest: destinations[(p.destination_ids || [])[0]] || null,
-        start: p.start_date,
-        planned,
-        // A trip of six nights is seven days to plan.
-        days: Math.max(nights + 1, planned),
-        people: crew,
+        people: local.crew,
+        crewLine: local.crewLine,
         party: figure?.party || null,
+        readiness: local.readiness,
+        nudge: nudgeFor(p, figure, local.readiness),
+        nextStep: nextStepFor(p, local.readiness),
         coplanBy: p.coplan ? (p.ownerName || '') : '',
         // A day plan and a share link belong to a trip in an account; the
         // device trip opens in Plan, where its days begin.
         onPlanDays: device ? null : () => onOpenDayPlan?.({ planId: p.id, stopIndex: 0, dayIndex: 0 }),
-        onInvite: p.coplan || device ? null : () => toggleShare(p.id),
-        inviteOpen: openShare === p.id,
+        menuActions: planMenu(p, parts, device),
       };
     }
     return {
       ...common,
       meta: [whenText(t, when), fmtRange(p.start_date, p.end_date)].filter(Boolean).join(', '),
       figure: figure ? <TripPrice figure={figure} /> : <span className="mt-muted">{t('saved.factNoPrice')}</span>,
-      menuActions: device ? [] : [
-        { key: 'days', label: t('saved.planDays'), icon: <CalendarIcon size={16} />, onClick: () => onOpenDayPlan?.({ planId: p.id, stopIndex: 0, dayIndex: 0 }) },
-        ...(p.coplan ? [] : [{ key: 'share', label: t('saved.shareInvite'), icon: <LinkIcon size={16} />, onClick: () => toggleShare(p.id) }]),
-      ],
+      menuActions: planMenu(p, parts, device),
+    };
+  };
+
+  // A draft: no dates yet. It lives in Plan; My trips lists it and opens it there.
+  const draftModel = (p) => {
+    const parts = journeyParts(p);
+    const nights = tripStops(p).reduce((n, s) => n + s.nights, 0);
+    return {
+      id: `draft-${p.id}`,
+      title: parts.title,
+      img: resolveImage({ ids: p.destination_ids || [], cities: planCities(p), countries: parts.countries }),
+      iso2: isoFor(parts.countries),
+      meta: [t('saved.noDatesYet'), nights > 0 ? t(nights === 1 ? 'saved.nights1' : 'saved.nightsN', { n: nights }) : ''].filter(Boolean).join(', '),
+      chip: <Chip kind="status" tone="neutral">{t('mt.draft')}</Chip>,
+      onOpen: p.device ? () => onOpenDeviceTrip?.() : () => onLoadTripPlan?.(p.id),
+    };
+  };
+  const deviceDraftModel = (x) => {
+    const ids = x.meta.stops || [];
+    const towns = orderedUnique(ids.map((id) => destinations[id]?.city)).slice(0, 2).join(', ');
+    const nights = Number(x.meta.nights) || 0;
+    return {
+      id: `dev-${x.id}`,
+      title: x.meta.name || towns || t('pf.home.newTripName'),
+      img: x.meta.cover || resolveImage({ ids }),
+      iso2: destinations[ids[0]]?.iso2 || '',
+      meta: [t('saved.noDatesYet'), nights > 0 ? t(nights === 1 ? 'saved.nights1' : 'saved.nightsN', { n: nights }) : ''].filter(Boolean).join(', '),
+      chip: <Chip kind="status" tone="neutral">{t('mt.draft')}</Chip>,
+      onOpen: () => { tripsStore.open(x.id); onGoToTab?.('trip'); },
     };
   };
 
@@ -592,8 +709,19 @@ export function SavedTripsPanel({
     };
   };
 
-  const nextModel = upcomingPlans.length ? planModel(upcomingPlans[0], 0) : null;
-  const laterModels = upcomingPlans.slice(1).map((p, i) => planModel(p, i + 1));
+  const nextModel = datedPlans.length ? planModel(datedPlans[0], true) : null;
+  const comingModels = datedPlans.slice(1).map((p) => planModel(p, false));
+  // Drafts the device's Plan home lists that no account plan or the device
+  // trip already carries.
+  const carried = useMemo(() => new Set(tripPlans.map((p) => p.id)), [tripPlans]);
+  const planningModels = [
+    ...draftPlans.map(draftModel),
+    ...deviceDrafts
+      .filter((x) => !x.meta.start && (x.meta.stops?.length || x.meta.name)
+        && !(x.meta.planId && carried.has(x.meta.planId))
+        && !(devicePlan && x.meta.deviceKey && x.meta.deviceKey === devicePlan.deviceKey))
+      .map(deviceDraftModel),
+  ];
   const dayModels = upcomingDayPlans.map(dayPlanModel);
 
   // ── Shortlist: the starred things and the account's saved places, one list. ──
@@ -668,7 +796,7 @@ export function SavedTripsPanel({
   const years = useMemo(() => {
     const ys = new Set([...pastPlans.map(pastYear), ...pastDayPlans.map(dayYear)].filter(Boolean));
     return [...ys].sort((a, b) => b - a);
-  }, [pastPlans, pastDayPlans]); // eslint-disable-line react-hooks/exhaustive-deps -- the year helpers are pure
+  }, [pastPlans, pastDayPlans]);
   const yearNow = years.includes(year) ? year : 'all';
   const inYear = (y) => yearNow === 'all' || y === yearNow;
   const yPlans = useMemo(() => pastPlans.filter((p) => inYear(pastYear(p))), [pastPlans, yearNow]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -729,7 +857,7 @@ export function SavedTripsPanel({
     easeToSelected: false,
     padBottom: 0,
     fitMaxZoom: 7,
-    fitPadding: MAP_PAD,
+    fitPadding: { top: 24, left: 24, right: 24, bottom: 24 },
     onSelectStop: (i) => { setMapFull(false); visitedItems[i]?.open(); },
   }), [visitedItems, visitedIso, mapLocale]);
 
@@ -825,46 +953,16 @@ export function SavedTripsPanel({
   };
   const groups = recordGroups.map((g) => ({ year: g.year, rows: g.items.map(recordRow) }));
 
-  const plannedCount = upcomingPlans.length + upcomingDayPlans.length;
-  const pastCount = pastPlans.length + pastDayPlans.length;
+  const tripsCount = datedPlans.length + upcomingDayPlans.length;
 
   // Land on Trips once a trip ahead is known, unless a tab was picked this visit.
   useEffect(() => {
-    if (!pickedRef.current && plannedCount > 0 && tab !== 'planned') setTab('planned');
-  }, [plannedCount]); // eslint-disable-line react-hooks/exhaustive-deps -- runs when the plans arrive
-
-  const TABS = [
-    { key: 'planned', Icon: CalendarIcon, label: t('saved.tabTrips'), n: plannedCount },
-    { key: 'favorites', Icon: BookmarkIcon, label: t('saved.tabFavorites'), n: shortRows.length + savedWeeks },
-    { key: 'visited', Icon: CheckIcon, label: t('saved.tabVisited'), n: pastCount },
-  ];
-  const renderTabs = (cls) => (
-    <TileGroup label={t('saved.title')} kind="tabs" columns={1} className={cls}>
-      {TABS.map(({ key, Icon, label, n }) => (
-        <Tile
-          key={key}
-          kind="tab"
-          selected={tab === key}
-          icon={<Icon size={20} />}
-          aria-controls="mytrips-panel"
-          onClick={() => pickTab(key)}
-        >
-          {label}
-          {n > 0 && <Chip kind="count" className="mt-tab-n">{n}</Chip>}
-        </Tile>
-      ))}
-    </TileGroup>
-  );
+    if (!pickedRef.current && tripsCount > 0 && tab !== 'trips') setTab('trips');
+  }, [tripsCount]); // eslint-disable-line react-hooks/exhaustive-deps -- runs when the plans arrive
 
   const shortFilters = (compact) => (
     <ShortlistFilters kinds={kinds} kind={kindNow} onKind={setKind} sort={sort} onSort={pickSort} compact={compact} />
   );
-  const yearFilter = (compact) => <YearFilter years={years} year={yearNow} onYear={setYear} compact={compact} />;
-  const sideFilters = tab === 'favorites' && shortRows.length > 0 ? shortFilters(false)
-    : tab === 'visited' ? yearFilter(false) : null;
-  const phoneFilters = tab === 'favorites' && shortRows.length > 1 ? shortFilters(true)
-    : tab === 'visited' && years.length > 1 ? yearFilter(true) : null;
-
   const pastForm = pastOpen ? (
     <PastTripForm
       friends={friends}
@@ -881,28 +979,27 @@ export function SavedTripsPanel({
 
   return (
     <div className="saved-shell mytrips">
-      <aside className="side-panel saved-side" aria-label={t('saved.title')}>
-        <div className="side-block">
-          <span className="mt-filter-label">{t('saved.showLabel')}</span>
-          {renderTabs('mt-tiles is-side')}
-        </div>
-        {sideFilters && <div className="side-block mt-side-filters">{sideFilters}</div>}
-      </aside>
-
       <div className="panel open account-panel saved-trips-panel">
-        <div className="panel-header saved-panel-header">
-          <h1 className="saved-title">{t('saved.title')}</h1>
-          {renderTabs('mt-tiles is-top')}
-          {phoneFilters && <div className="mt-refine">{phoneFilters}</div>}
-        </div>
+        <header className="panel-header saved-panel-header mt-header">
+          <MyTripsHead
+            tab={tab}
+            onTab={pickTab}
+            counts={{
+              trips: tripsCount,
+              saved: shortRows.length + savedWeeks + keptCount,
+              europe: allRecord.countries.length + manualCountries.filter((c) => !allRecord.fromTrips.has(c)).length,
+            }}
+            onNewTrip={() => onGoToTab?.('planstart')}
+          />
+        </header>
 
         <InstallHint hasSavedTrip={trips.length > 0 || tripPlans.length > 0 || dayPlans.length > 0 || !!devicePlan} />
 
-        <div className="mt-panel" id="mytrips-panel" role="tabpanel" aria-labelledby="mytrips-panel-title">
+        <div className={`mt-panel is-${tab}`} id="mytrips-panel" role="tabpanel" aria-labelledby="mytrips-panel-title">
           {/* The section's name as the page's h2, for the heading outline; the
-              tile above already shows it. */}
-          <h2 className="sr-only" id="mytrips-panel-title">{TABS.find((x) => x.key === tab)?.label}</h2>
-          {tab === 'planned' && (
+              tab above already shows it. */}
+          <h2 className="sr-only" id="mytrips-panel-title">{t(tab === 'trips' ? 'mt.tabTrips' : tab === 'saved' ? 'mt.tabSaved' : 'mt.tabEurope')}</h2>
+          {tab === 'trips' && (
             <TripsTab
               authed={authed}
               configured={configured}
@@ -910,26 +1007,28 @@ export function SavedTripsPanel({
               error={tripPlansError}
               onRetry={loadTripPlans}
               next={nextModel}
-              later={laterModels}
+              coming={comingModels}
+              planning={planningModels}
               dayPlans={dayModels}
               friendsShared={friendTrips.length}
               friendFaces={ownersOf(friendTrips)}
               onOpenFriends={onOpenFriends}
-              onPlanTrip={() => onGoToTab?.('trip')}
+              onPlanTrip={() => onGoToTab?.('planstart')}
+              onAllInPlan={() => onGoToTab?.('planstart')}
               onSignIn={onOpenAuth}
               signInLine={!devicePlan}
-              todayIso={todayIso}
             />
           )}
-          {tab === 'favorites' && (
+          {tab === 'saved' && (
             /* Kept trips from the trip finder (T806): planning one hands its
                plan to the Plan tab, which opens the planner on it. */
             <KeptTrips onPlan={(r) => { holdPlan(r.plan); onGoToTab?.('trip'); }} />
           )}
-          {tab === 'favorites' && onOpenFeature && (
+          {tab === 'saved' && onOpenFeature && (
             <SavedJourneys onOpen={(id) => onOpenFeature('journey', { id })} />
           )}
-          {tab === 'favorites' && ((keptCount === 0 && savedWeeks === 0) || shownShort.length > 0 || shortlist.loading) && (
+          {tab === 'saved' && shortRows.length > 1 && <div className="mt-refine">{shortFilters(true)}</div>}
+          {tab === 'saved' && ((keptCount === 0 && savedWeeks === 0) || shownShort.length > 0 || shortlist.loading) && (
             <ShortlistTab
               rows={shownShort}
               showKind={kinds.length > 1 && kindNow === 'all'}
@@ -942,7 +1041,10 @@ export function SavedTripsPanel({
               onBrowse={() => onGoToTab?.('places')}
             />
           )}
-          {tab === 'visited' && (
+          {tab === 'europe' && years.length > 1 && (
+            <div className="mt-refine"><YearFilter years={years} year={yearNow} onYear={setYear} compact /></div>
+          )}
+          {tab === 'europe' && (
             <VisitedTab
               record={record}
               mapProps={mapProps}
@@ -972,4 +1074,9 @@ export function SavedTripsPanel({
       </div>
     </div>
   );
+}
+
+/** The Plan home's trips on this device, never throwing (private mode). */
+function safeList() {
+  try { return tripsStore.list(); } catch { return []; }
 }
