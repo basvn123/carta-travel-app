@@ -19,8 +19,9 @@
 #   carta-logrotate goes to /etc/logrotate.d/carta;
 #   carta-late-sweep.service (T798) is the flight sweep's late tier, always
 #     on; --disable stops it with the timers;
-#   carta-late-fill.service (T819) is that tier's one-time fill; it exits
-#     when done and a later start only logs that;
+#   carta-late-fill.service (T819) runs the box's one-time fills (T915 gap
+#     search, T917 January and February, T819 late tier); it exits when done
+#     and a later start only logs that; restarted like the sweep (T915);
 #   every unit is checked with systemd-analyze verify before it is enabled.
 # Carriage returns are stripped on the way in, in case the files were copied
 # from a Windows checkout.
@@ -86,7 +87,8 @@ run systemctl enable --now carta-weekly.timer carta-reboot.timer
 run systemctl enable carta-late-sweep.service
 run systemctl restart carta-late-sweep.service
 run systemctl enable carta-late-fill.service
-run systemctl start carta-late-fill.service
+# T915: restart, so a running fill picks up new code; it resumes where it was.
+run systemctl restart carta-late-fill.service
 [ $DRY -eq 1 ] || systemctl list-timers 'carta-*' --no-pager
 echo
 echo "Installed. The next Monday 09:00 (Europe/Brussels) runs the weekly cadence."

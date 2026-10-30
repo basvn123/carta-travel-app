@@ -1314,7 +1314,7 @@ Journeys (`continent-app/public/journeys/journey/{id}.json`, `build_wire.py`):
 |---|---|---|---|
 | `fit` | `{good: [string], less: [string]}`, short plain English phrases, an empty side left out | `Trips/carta-unified/carta-unified/data/fit.json`, `{journeys: {id: {good, less}}}` | placeholder (pt-culinary-douro-valley filled) |
 
-## Outdoor page keys (T915, added 2026-10-30)
+## Outdoor page keys (T918, added 2026-10-30)
 
 Additive only; no wire version changes. The redesigned trail, beach, lake,
 mountain and cycling pages read these. Every key is optional and absent, not

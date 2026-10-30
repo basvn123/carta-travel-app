@@ -36,7 +36,7 @@ import {
 /**
  * The lake page: one published water body, and the argument for going there.
  *
- * Since T917 it stands on the place page's template (OutdoorParts.jsx, the
+ * Since T920 it stands on the place page's template (OutdoorParts.jsx, the
  * owner's approved spec of 2026-10-30). Swimming leads, because it is the
  * one field on this page that can hurt somebody: the verdict is the first
  * fact and the first row of the first section, never folded. Then the head,

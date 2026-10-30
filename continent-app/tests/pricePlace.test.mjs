@@ -57,7 +57,7 @@ test("V12: place pages carry the town price only in the button to the base", () 
     const src = read(`src/browse/${p}.jsx`);
     assert.doesNotMatch(src, /costLine=/, `${p} passes no cost line`);
   }
-  // T916 to T919 (the approved outdoor spec): the base town is a priced
+  // T919 to T922 (the approved outdoor spec): the base town is a priced
   // "Stay nearby" line in the side card, one shared part priced through the
   // day view, never a figure of the page's own.
   for (const p of ["LakePage", "BeachPage", "MountainPage"]) {

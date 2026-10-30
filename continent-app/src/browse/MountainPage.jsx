@@ -38,7 +38,7 @@ import { scrollToSection } from './PageTemplate.jsx';
 /**
  * The mountain page: one published summit, and how people climb it.
  *
- * Since T918 it stands on the place page's template (OutdoorParts.jsx, the
+ * Since T921 it stands on the place page's template (OutdoorParts.jsx, the
  * owner's approved spec of 2026-10-30). The head (the name, the Score with
  * the rank in the region, the range), the facts (height, prominence, the
  * way up, the season, the hut), a jump bar, then: Routes to the top first

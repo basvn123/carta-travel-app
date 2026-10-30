@@ -3,7 +3,9 @@
 # gets its first late fare within them, then this exits and stays done
 # (~/.local/state/carta/late-fill.json). Enabled, so a reboot mid-fill resumes;
 # once done it only logs that. infra/hetzner/cron/install.sh installs it.
-# Task report: Execution/P11/T819-late-fill.md.
+# T915-T917: before the late fill it runs the gap search and the January and
+# February fill, each once (workers/late-sweep/run.mjs --fill).
+# Task reports: Execution/P11/T819-late-fill.md, Execution/P11/T915-T917-sweep-gaps.md.
 [Unit]
 Description=Carta flight sweep, late tier one-time fill (T819)
 Wants=network-online.target

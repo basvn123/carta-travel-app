@@ -14,6 +14,9 @@
  * keep coming back, at most a day) and that minute is tried again afterwards.
  * Its place is kept in a small state file, so a restart resumes.
  *
+ * T915: the route list is the Worker's own, found routes included in the same
+ * order (GET /extra), and dormant routes are skipped, as the Worker does.
+ *
  * Runs as carta-late-sweep.service (infra/hetzner/cron). Environment:
  *   CARTA_SWEEP_INGEST_TOKEN   the Worker's INGEST_TOKEN secret (required)
  *   CARTA_SWEEP_INGEST_URL     default the workers.dev /ingest
@@ -24,51 +27,73 @@
  *
  *   node workers/late-sweep/run.mjs            run for ever
  *   node workers/late-sweep/run.mjs --dry      plan only: searches a cycle, no network
- *   node workers/late-sweep/run.mjs --fill     the one-time fill (T819), then exit
+ *   node workers/late-sweep/run.mjs --fill     the one-time fills (T819, T915, T917), then exit
  *
- * The fill (carta-late-fill.service, T819): the 4-week cycle alone gives the
- * last routes their first late fare only after 4 weeks. The fill searches,
- * once, every route the cycle will not reach in the next FILL_SPAN, at a pace
- * that ends within it, beside the cycle; then it exits and stays done. Each
- * filled route still gets its normal turn within 4 weeks (lateFillOrder).
+ * The fills (carta-late-fill.service) run one after the other, each once,
+ * each with its own state file so a restart resumes and a finished one only
+ * logs that it is done:
+ *   gaps (T915)  the pairs no country reports to Eurostat (gaps.mjs), once,
+ *                direct flights only; a pair with a flight becomes a found
+ *                route the Worker then sweeps.
+ *   far (T917)   the routes with no fare yet in FAR_FILL (January and
+ *                February 2027), on the far tier's own days, the routes the
+ *                Worker reaches last first; skips any it reached meanwhile.
+ *   late (T819)  every route the 4-week cycle does not reach in the 7 days
+ *                after the fill began; each still gets its normal turn within
+ *                4 weeks (lateFillOrder).
  *
- * Both run from this box's one address, so they share one pause (PAUSE_FILE):
- * a refusal to either stops both. The fill also goes at half speed from 23:00
- * to 05:00 UTC, the hours the Worker was refused in, and each refusal makes
- * it 1.5 times slower for the rest of its run, at most 4 times.
+ * Both services run from this box's one address, so they share one pause
+ * (PAUSE_FILE): a refusal to either stops both. The fills also go at half
+ * speed from 23:00 to 05:00 UTC, the hours the Worker was refused in, and each
+ * refusal makes them 1.5 times slower for the rest of the run, at most 4 times.
  */
 import { mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { homedir } from 'node:os';
 import { searchDay } from '../shared/flightSearch.mjs';
 import {
-  flattenRoutes, lateFillOrder, lateJobsForMinute, lateJobsForRoute, nextPause, LATE_CYCLE,
+  farJobsInWindow, flattenRoutes, lateFillOrder, lateJobsForMinute, lateJobsForRoute, nextPause,
+  FAR_CYCLE, LATE_CYCLE,
 } from '../flight-sweep/src/plan.mjs';
+import { airportCountries, gapPairs, AIRPORTS_CSV } from './gaps.mjs';
 
 const ROUTES_URL = process.env.CARTA_ROUTES_URL
   || 'https://data.carta-europetravel.com/data/flights/_routes.json';
 const INGEST_URL = process.env.CARTA_SWEEP_INGEST_URL
   || 'https://flight-sweep.bas-vannieuwenhuyse123.workers.dev/ingest';
+const WORKER_URL = INGEST_URL.replace(/\/ingest$/, '');
 const TOKEN = process.env.CARTA_SWEEP_INGEST_TOKEN;
-const STATE = process.env.CARTA_LATE_STATE || `${homedir()}/.local/state/carta/late-sweep.json`;
+const STATE_DIR = `${homedir()}/.local/state/carta`;
+const STATE = process.env.CARTA_LATE_STATE || `${STATE_DIR}/late-sweep.json`;
 // A search takes about half a second; 4 to 9 s between them is at most about
 // 500 an hour while catching up, and about 200 an hour once caught up.
 const GAP_MS = [4000, 9000];
-// T819: the fill, about 686 searches an hour by day and half that from 23:00
-// to 05:00 UTC, beside the cycle's 205: its roughly 103,000 searches end in
-// about 7 days.
-const FILL_STATE = process.env.CARTA_LATE_FILL_STATE || `${homedir()}/.local/state/carta/late-fill.json`;
-const FILL_GAP_MS = [3000, 6500];
+// T819: the fill beside the cycle's 205 an hour. T916: 2 to 4.5 s, was 3 to
+// 6.5 (about 960 searches an hour by day, was about 690), half that from
+// 23:00 to 05:00 UTC.
+const FILL_STATE = process.env.CARTA_LATE_FILL_STATE || `${STATE_DIR}/late-fill.json`;
+const GAPS_STATE = `${STATE_DIR}/gap-fill.json`;
+const FAR_STATE = `${STATE_DIR}/far-fill.json`;
+const FILL_GAP_MS = [2000, 4500];
 const FILL_SPAN_MIN = 7 * 1440;
 const FILL_NIGHT_UTC = [23, 5]; // half speed from 23:00 to 05:00 UTC
 const FILL_SLOWEST = 4;
-const PAUSE_FILE = process.env.CARTA_LATE_PAUSE || `${homedir()}/.local/state/carta/late-pause.json`;
+// T917: the window the far fill completes (owner, 2026-10-30: all fares to
+// the end of February).
+const FAR_FILL = { from: '2027-01-01', to: '2027-02-28' };
+const FAR_RECHECK = 100; // routes between two looks at what the Worker reached
+// T915: two days for the two directions, so a route flown twice a week is
+// more likely seen; as the Worker's find tier, three weeks out.
+const GAP_AHEAD_DAYS = [21, 24];
+const PAUSE_FILE = process.env.CARTA_LATE_PAUSE || `${STATE_DIR}/late-pause.json`;
 const ROUTES_TTL_MS = 6 * 3600000;
 const SEND_EVERY = 40; // rows per POST, well under ingest.mjs MAX_ROWS
 const RETRY_MS = 5 * 60000;
+const DAY = 86400000;
 
 const sleep = (ms) => new Promise((ok) => setTimeout(ok, ms));
 const log = (...a) => console.log(new Date().toISOString().slice(0, 19), ...a);
+const isoDay = (ms) => new Date(ms).toISOString().slice(0, 10);
 
 function readState(path = STATE) {
   try { return JSON.parse(readFileSync(path, 'utf8')); } catch { return {}; }
@@ -89,21 +114,36 @@ function pauseAfterRefusal(who, reason) {
   log(`${who}: Google refused (${reason}), both pause ${Math.round((p.until - Date.now()) / 60000)} minutes`);
 }
 
-let routes = null; // { at, list }
-async function routeList() {
-  if (routes && Date.now() - routes.at < ROUTES_TTL_MS) return routes.list;
-  const res = await fetch(ROUTES_URL);
-  if (!res.ok) throw new Error(`${ROUTES_URL}: ${res.status}`);
-  routes = { at: Date.now(), list: flattenRoutes((await res.json()).routes) };
-  return routes.list;
+/** A read from the Worker behind the ingest token (T915). */
+async function workerGet(path) {
+  const res = await fetch(`${WORKER_URL}${path}`, { headers: { authorization: `Bearer ${TOKEN}` } });
+  if (!res.ok) throw new Error(`${path}: ${res.status}`);
+  return res.json();
 }
 
-async function send(rows) {
-  for (let i = 0; i < rows.length; i += SEND_EVERY) {
+let routes = null; // { at, json, list, dormant }
+async function routeData() {
+  if (routes && Date.now() - routes.at < ROUTES_TTL_MS) return routes;
+  const res = await fetch(ROUTES_URL);
+  if (!res.ok) throw new Error(`${ROUTES_URL}: ${res.status}`);
+  const json = await res.json();
+  const extra = TOKEN ? await workerGet('/extra') : { found: [], dormant: [] };
+  routes = {
+    at: Date.now(),
+    json,
+    list: flattenRoutes(json.routes, extra.found),
+    dormant: new Set(extra.dormant.map(([o, d]) => o + d)),
+  };
+  return routes;
+}
+const routeList = async () => (await routeData()).list;
+
+async function send(rows, found = []) {
+  for (let i = 0; i < Math.max(rows.length, found.length); i += SEND_EVERY) {
     const res = await fetch(INGEST_URL, {
       method: 'POST',
       headers: { authorization: `Bearer ${TOKEN}`, 'content-type': 'application/json' },
-      body: JSON.stringify({ rows: rows.slice(i, i + SEND_EVERY) }),
+      body: JSON.stringify({ rows: rows.slice(i, i + SEND_EVERY), found: found.slice(i, i + SEND_EVERY) }),
     });
     if (!res.ok) throw new Error(`ingest ${res.status} ${await res.text()}`);
   }
@@ -111,29 +151,35 @@ async function send(rows) {
 
 /**
  * Search these jobs, a gap after each, and send. Stops early when the other
- * process paused the box. Returns { blocked, stopped, counts }.
+ * process paused the box. Jobs with direct: true only look for a direct
+ * flight and send no fare (the gap search). Returns { blocked, stopped,
+ * counts, direct } where direct lists the jobs that had a direct flight.
  */
 async function runJobs(jobs, gap) {
   const rows = [];
+  const direct = [];
   const counts = { jobs: jobs.length, ok: 0, empty: 0, failed: 0 };
   let blocked = null;
   let stopped = false;
   for (const j of jobs) {
     if (pausedUntil() > Date.now()) { stopped = true; break; }
-    const r = await searchDay({ from: j.o, to: j.d, date: j.date });
+    const r = await searchDay({ from: j.o, to: j.d, date: j.date, directOnly: !!j.direct });
     if (r.blocked) { blocked = r.reason; break; }
     if (!r.ok) counts.failed++;
     else {
       const f = r.flights[0];
       if (f) counts.ok++; else counts.empty++;
-      rows.push({ o: j.o, d: j.d, date: j.date, price: f ? f.price : null, airline: f?.airline,
-        airlineName: f?.airlineName, flightNo: f?.flightNo, dep: f?.dep, arr: f?.arr, stops: f?.stops });
+      if (j.direct) { if (r.flights.some((x) => x.stops === 0)) direct.push(j); }
+      else {
+        rows.push({ o: j.o, d: j.d, date: j.date, price: f ? f.price : null, airline: f?.airline,
+          airlineName: f?.airlineName, flightNo: f?.flightNo, dep: f?.dep, arr: f?.arr, stops: f?.stops });
+      }
     }
     await sleep(gap[0] + Math.random() * (gap[1] - gap[0]));
   }
   // What was found before a refusal is kept; the jobs run again after the pause.
   if (rows.length) await send(rows);
-  return { blocked, stopped, counts };
+  return { blocked, stopped, counts, direct };
 }
 
 async function main() {
@@ -159,7 +205,9 @@ async function main() {
     const minute = s.minute + 1;
     let out;
     try {
-      out = await runJobs(lateJobsForMinute(await routeList(), minute * 60000), GAP_MS);
+      const { list, dormant } = await routeData();
+      const jobs = lateJobsForMinute(list, minute * 60000).filter((j) => !dormant.has(j.o + j.d));
+      out = await runJobs(jobs, GAP_MS);
     } catch (e) {
       log(`late-sweep: minute ${minute} failed (${e.message}); again in 5 minutes`);
       await sleep(RETRY_MS);
@@ -173,12 +221,126 @@ async function main() {
   }
 }
 
-/**
- * The one-time fill (T819). Its route order is fixed at the first start
- * (from, count over n routes) and its place kept, so a restart resumes and a
- * finished fill only logs that it is done.
- */
+/** The fills in order (T915, T917, T819); each skips itself once done. */
 async function fill() {
+  const slow = { by: 1 }; // shared, so a refusal in one fill keeps the next slower too
+  await gapFill(slow);
+  await farFill(slow);
+  await lateFill(slow);
+}
+
+/**
+ * Walk a fill's steps, `s.at` of `s.count`, with the shared pause, the night
+ * half speed and the slow-down after a refusal. step(i, gap) runs step i and
+ * returns runJobs' answer (or null to skip it); after(i, out) sees each step
+ * that finished.
+ */
+async function walk(name, path, s, slow, step, after = () => {}) {
+  slow.by = Math.max(slow.by, s.slow || 1);
+  while (s.at < s.count) {
+    const now = Date.now();
+    if (pausedUntil() > now) { await sleep(Math.min(pausedUntil() - now, 600000)); continue; }
+    const hour = new Date(now).getUTCHours();
+    const night = hour >= FILL_NIGHT_UTC[0] || hour < FILL_NIGHT_UTC[1];
+    const gap = FILL_GAP_MS.map((g) => g * slow.by * (night ? 2 : 1));
+    let out;
+    try {
+      out = (await step(s.at, gap)) || { counts: { jobs: 0 }, direct: [] };
+      if (!out.blocked && !out.stopped) await after(s.at, out);
+    } catch (e) {
+      log(`${name}: step ${s.at} failed (${e.message}); again in 5 minutes`);
+      await sleep(RETRY_MS);
+      continue;
+    }
+    if (out.blocked) {
+      slow.by = Math.min(FILL_SLOWEST, slow.by * 1.5);
+      s.slow = slow.by;
+      pauseAfterRefusal(name, out.blocked);
+      log(`${name}: step ${s.at} again after the pause, now ${slow.by.toFixed(2)} times slower`);
+    } else if (!out.stopped) {
+      s.at++;
+      if (s.at % 50 === 0) log(`${name}: ${s.at} of ${s.count}; last ${JSON.stringify(out.counts)}`);
+    }
+    writeState(s, path);
+  }
+  s.done = new Date().toISOString();
+  writeState(s, path);
+  log(`${name}: done, ${s.count} since ${s.started}`);
+}
+
+/** T915: the pairs no country reports, once each, both ways, direct only. */
+async function gapFill(slow) {
+  const s = readState(GAPS_STATE);
+  if (s.done) { log(`gap-fill: done on ${s.done}; nothing to do`); return; }
+  if (!Array.isArray(s.pairs)) {
+    const { json, list } = await routeData();
+    const res = await fetch(AIRPORTS_CSV);
+    if (!res.ok) throw new Error(`${AIRPORTS_CSV}: ${res.status}`);
+    const pairs = gapPairs(json, airportCountries(await res.text()), list);
+    Object.assign(s, { pairs, count: pairs.length, at: 0, found: 0, started: new Date().toISOString() });
+    writeState(s, GAPS_STATE);
+  }
+  log(`gap-fill: ${s.count} pairs, at ${s.at}, ${s.found} with a direct flight so far`);
+  await walk('gap-fill', GAPS_STATE, s, slow, (i, gap) => {
+    const [a, b] = s.pairs[i];
+    const now = Date.now();
+    return runJobs([
+      { o: a, d: b, date: isoDay(now + GAP_AHEAD_DAYS[0] * DAY), direct: true },
+      { o: b, d: a, date: isoDay(now + GAP_AHEAD_DAYS[1] * DAY), direct: true },
+    ], gap);
+  }, async (i, out) => {
+    // A direct flight either way: both directions become routes.
+    if (!out.direct.length) return;
+    const [a, b] = s.pairs[i];
+    await send([], [[a, b], [b, a]]);
+    s.found++;
+    log(`gap-fill: ${a}-${b} has a direct flight (${s.found} so far)`);
+  });
+}
+
+/**
+ * T917: the routes with no fare yet in FAR_FILL, the ones the Worker's far
+ * tier reaches last first, so the two meet with little overlap.
+ */
+async function farFill(slow) {
+  const s = readState(FAR_STATE);
+  if (s.done) { log(`far-fill: done on ${s.done}; nothing to do`); return; }
+  const have = async () => new Set((await workerGet(`/have?from=${FAR_FILL.from}&to=${FAR_FILL.to}`)).routes);
+  if (!Array.isArray(s.todo)) {
+    const { list, dormant } = await routeData();
+    const got = await have();
+    const now = Date.now();
+    // The Worker's far tier is at this route now and walks upwards; start
+    // just behind it and walk down.
+    const cur = Math.ceil(((Math.floor(now / 60000) % FAR_CYCLE) * list.length) / FAR_CYCLE);
+    const todo = [];
+    for (let k = 1; k <= list.length; k++) {
+      const r = (((cur - k) % list.length) + list.length) % list.length;
+      const [o, d] = list[r];
+      if (got.has(o + d) || dormant.has(o + d)) continue;
+      if (farJobsInWindow(list, r, now, FAR_FILL.from, FAR_FILL.to).length) todo.push(r);
+    }
+    Object.assign(s, { todo, count: todo.length, at: 0, skipped: 0, started: new Date().toISOString() });
+    writeState(s, FAR_STATE);
+  }
+  log(`far-fill: ${s.count} routes without a fare from ${FAR_FILL.from} to ${FAR_FILL.to}, at ${s.at}`);
+  let got = await have();
+  await walk('far-fill', FAR_STATE, s, slow, async (i, gap) => {
+    if (i % FAR_RECHECK === 0) got = await have();
+    const list = await routeList();
+    const r = s.todo[i];
+    // The route list is rebuilt monthly; a route past its end is skipped, and
+    // one the Worker reached since is left to it.
+    if (r >= list.length || got.has(list[r][0] + list[r][1])) { s.skipped++; return null; }
+    return runJobs(farJobsInWindow(list, r, Date.now(), FAR_FILL.from, FAR_FILL.to), gap);
+  });
+}
+
+/**
+ * T819: the late tier's fill. Its route order is fixed at the first start
+ * (from, count over n routes) and its place kept.
+ */
+async function lateFill(slow) {
   const s = readState(FILL_STATE);
   if (s.done) { log(`late-fill: done on ${s.done}; nothing to do`); return; }
   const list = await routeList();
@@ -189,37 +351,13 @@ async function fill() {
     writeState(s, FILL_STATE);
   }
   log(`late-fill: ${s.count} routes from route ${s.from}, at ${s.at}`);
-  while (s.at < s.count) {
-    const now = Date.now();
-    if (pausedUntil() > now) { await sleep(Math.min(pausedUntil() - now, 600000)); continue; }
-    const hour = new Date(now).getUTCHours();
-    const night = hour >= FILL_NIGHT_UTC[0] || hour < FILL_NIGHT_UTC[1];
-    const scale = (s.slow || 1) * (night ? 2 : 1);
-    const gap = FILL_GAP_MS.map((g) => g * scale);
-    const r = (s.from + s.at) % s.n;
-    let out = { counts: { jobs: 0 } };
-    try {
-      const routesNow = await routeList();
-      // The route list is rebuilt monthly; a route past its end is skipped.
-      if (r < routesNow.length) out = await runJobs(lateJobsForRoute(routesNow, r, now), gap);
-    } catch (e) {
-      log(`late-fill: route ${r} failed (${e.message}); again in 5 minutes`);
-      await sleep(RETRY_MS);
-      continue;
-    }
-    if (out.blocked) {
-      s.slow = Math.min(FILL_SLOWEST, (s.slow || 1) * 1.5);
-      pauseAfterRefusal('late-fill', out.blocked);
-      log(`late-fill: route ${r} again after the pause, now ${s.slow.toFixed(2)} times slower`);
-    } else if (!out.stopped) {
-      s.at++;
-      if (s.at % 50 === 0) log(`late-fill: ${s.at} of ${s.count} routes; last ${JSON.stringify(out.counts)}`);
-    }
-    writeState(s, FILL_STATE);
-  }
-  s.done = new Date().toISOString();
-  writeState(s, FILL_STATE);
-  log(`late-fill: done, ${s.count} routes since ${s.started}`);
+  await walk('late-fill', FILL_STATE, s, slow, async (i, gap) => {
+    const r = (s.from + i) % s.n;
+    const { list: now, dormant } = await routeData();
+    // The route list is rebuilt monthly; a route past its end is skipped.
+    if (r >= now.length || dormant.has(now[r][0] + now[r][1])) return null;
+    return runJobs(lateJobsForRoute(now, r, Date.now()), gap);
+  });
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });

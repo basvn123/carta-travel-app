@@ -22,7 +22,7 @@ import { JumpBar, PSection, scrollToSection, useWide } from './PageTemplate.jsx'
 import '../styles/89-outdoor-page.css';
 
 /**
- * The outdoor pages on the place page's template (T916 to T919, the owner's
+ * The outdoor pages on the place page's template (T919 to T922, the owner's
  * approved spec of 2026-10-30, "Outdoor pages: the place page's template,
  * with each kind's own facts").
  *

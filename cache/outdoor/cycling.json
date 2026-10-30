@@ -1,5 +1,5 @@
 {
- "_about": "T915 placeholder, filled by a later harvest. Per route id (the cycling wire id, as a string): {bike_trains?: one short plain English sentence, rental?: [{name, eur_day?}], services?: {water?: number of taps, repair?: [town or shop names], cafes?: number}, stations?: {start?: {name, m}, end?: {name, m}}, stages?: {prev?: {id, name, km}, next?: {id, name, km}}}. A value here wins over the derived one, field by field. EuroVelo 1 part Portugal 30 (57332, PT) is the worked example.",
+ "_about": "T918 placeholder, filled by a later harvest. Per route id (the cycling wire id, as a string): {bike_trains?: one short plain English sentence, rental?: [{name, eur_day?}], services?: {water?: number of taps, repair?: [town or shop names], cafes?: number}, stations?: {start?: {name, m}, end?: {name, m}}, stages?: {prev?: {id, name, km}, next?: {id, name, km}}}. A value here wins over the derived one, field by field. EuroVelo 1 part Portugal 30 (57332, PT) is the worked example.",
  "items": {
   "57332": {
    "bike_trains": "CP regional trains on the Minho line carry bicycles free of charge, space permitting.",

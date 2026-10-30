@@ -1,5 +1,5 @@
 {
- "_about": "T915 placeholder, filled by a later harvest. Per peak id (the mountains wire id): {lift_info?: {name, season?: [fromMonth, toMonth], return_eur?, top_ele?}, hut_info?: {name, ele?, season?: [fromMonth, toMonth], booking?: true|false}}. Only the lift or hut a visitor would use for this summit. Triglav (si-triglav-Q1024) is the worked example: no lift serves the summit, so lift_info is left out.",
+ "_about": "T918 placeholder, filled by a later harvest. Per peak id (the mountains wire id): {lift_info?: {name, season?: [fromMonth, toMonth], return_eur?, top_ele?}, hut_info?: {name, ele?, season?: [fromMonth, toMonth], booking?: true|false}}. Only the lift or hut a visitor would use for this summit. Triglav (si-triglav-Q1024) is the worked example: no lift serves the summit, so lift_info is left out.",
  "items": {
   "si-triglav-Q1024": {
    "hut_info": {

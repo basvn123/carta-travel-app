@@ -150,6 +150,24 @@ export function lateJobsForRoute(list, r, nowMs) {
 }
 
 /**
+ * One route's far-tier searches whose day falls between fromIso and toIso
+ * (T917: the box fills a window the Worker has not reached yet). The same
+ * days the Worker's far tier picks for the route on the day of nowMs.
+ * @returns {Array<{o:string,d:string,date:string,tier:'far'}>}
+ */
+export function farJobsInWindow(list, r, nowMs, fromIso, toIso) {
+  const today = Math.floor(nowMs / DAY) * DAY;
+  const [o, d, mask] = list[r];
+  const jobs = [];
+  for (let w = 0; w < FAR_WEEKS; w++) {
+    const ms = today + (14 + 7 * w + ((r + w) % 7)) * DAY;
+    const date = isoDay(ms);
+    if (date >= fromIso && date <= toIso && (mask & monthBit(ms))) jobs.push({ o, d, date, tier: 'far' });
+  }
+  return jobs;
+}
+
+/**
  * The fill's route order (T819): every route the late cycle will not reach
  * within `spanMin` minutes of nowMs, starting with the one it reaches next
  * after that and wrapping round to the one it reaches now. Run once over
