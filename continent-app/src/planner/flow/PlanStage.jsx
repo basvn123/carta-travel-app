@@ -26,8 +26,13 @@ export function PlanStage({ bar = null, wide = false, sheetLabel, children }) {
  * The head of a step on the sheet: a round back control on the left, the
  * position in the middle, a close on the right (Polarsteps' question sheet).
  * Either side may be absent; the middle stays centred.
+ *
+ * `marks` (T858): one mark a question, [{ key, done, now }], drawn over the
+ * position: a question the words or a screen already answered shows ticked,
+ * so a skipped question reads as done instead of the count jumping. The
+ * position text stays the spoken one.
  */
-export function SheetHead({ onBack, backLabel, onClose, closeLabel, position = '' }) {
+export function SheetHead({ onBack, backLabel, onClose, closeLabel, position = '', marks = null }) {
   return (
     <div className="pf-head">
       <span className="pf-head-side">
@@ -37,7 +42,21 @@ export function SheetHead({ onBack, backLabel, onClose, closeLabel, position = '
           </IconButton>
         )}
       </span>
-      <span className="pf-head-pos">{position}</span>
+      <span className="pf-head-pos">
+        {marks?.length > 1 && (
+          <span className="pf-marks" aria-hidden="true">
+            {marks.map((m) => (
+              <span key={m.key} className={`pf-mark${m.now ? ' is-now' : m.done ? ' is-done' : ''}`}>
+                {m.done && !m.now && (
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"
+                    strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
+                )}
+              </span>
+            ))}
+          </span>
+        )}
+        {position}
+      </span>
       <span className="pf-head-side is-end">
         {onClose && (
           <IconButton tone="surface" label={closeLabel} onClick={onClose} className="pf-round">

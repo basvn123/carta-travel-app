@@ -16,12 +16,18 @@
  *   4. dates       the setup dates, else config recommend.json: its nights
  *                  in the best month of the trip's places for the weather
  *                  answer
+ *   5. named       T859: the places the traveller named (settings.places,
+ *                  Tell Carta's words) are the only places it builds from:
+ *                  each named town starts a trip of its own, a named country
+ *                  gives its best places, so two or more names are a
+ *                  shortlist the trips are chosen from
  *
  * Every number lives in config/recommend.json. Pure and node-runnable.
  */
 import RECOMMEND from '../../../config/recommend.json' with { type: 'json' };
 import { matchCountries } from '../countryMatch.js';
 import { qualityOf } from '../match.js';
+import { isGateway } from '../rating.js';
 import { pickAirport } from '../airportPick.js';
 import { destAnchor } from '../origins.js';
 import { haversineKm } from '../runtime_pricing.js';
@@ -262,7 +268,7 @@ export function buildCandidates(input) {
   const destinations = data?.destinations || {};
   const answers = quizAnswers(settings, spendFor(settings));
   const fixedMonth = setupMonth(settings, today);
-  const countries = matchCountries({
+  const matched = matchCountries({
     destinations,
     insights: countryInsights,
     layerIndexes,
@@ -271,7 +277,8 @@ export function buildCandidates(input) {
     origin: origin?.lat != null ? { lat: origin.lat, lon: origin.lon } : null,
     taste: tasteFor(settings, taste),
     topN: CANDIDATES.placesPerCountry,
-  }).slice(0, CANDIDATES.countries);
+  });
+  const countries = matched.slice(0, CANDIDATES.countries);
 
   const { shapes, gaps } = shapesFor(settings);
   const flies = settings.guide.reach !== 'overland';
@@ -309,6 +316,19 @@ export function buildCandidates(input) {
     seen.add(key);
     out.push(cand);
   };
+  // T859: named places are the trips' only places, best first as named.
+  const named = namedPool(settings.places, { destinations, matched, month: fixedMonth });
+  if (named) {
+    for (const { c, ids, town } of named) {
+      for (const shape of shapes) push(build(c, shape, ids));
+      if (town) push(build(c, 'one', [ids[0]]));
+    }
+    for (const { c, ids, town } of named) {
+      if (out.length >= CANDIDATES.min) break;
+      if (!town && ids.length > 1) push(build(c, 'one', ids.slice(1)));
+    }
+    return out;
+  }
   for (const c of countries) {
     for (const shape of shapes) push(build(c, shape, c.topPlaces));
   }
@@ -318,4 +338,54 @@ export function buildCandidates(input) {
     if (c.topPlaces.length > 1) push(build(c, 'one', c.topPlaces.slice(1)));
   }
   return out;
+}
+
+/**
+ * The named places as the pool the trips are built from (T859), or null
+ * when none are named: each named town first, the other named towns of its
+ * country after it, then that country's best places (so a few-towns trip
+ * can start from it); then each named country with its best places. A
+ * country the Help me choose match did not rank (no likes, or nothing
+ * tagged) takes its best rated places with a photograph.
+ *
+ *   -> [{ c: { country, iso2, score, reasons, topType, bestMonth, topPlaces }, ids, town }]
+ */
+export function namedPool(places, { destinations, matched = [], month = null }) {
+  const list = Array.isArray(places) ? places : [];
+  if (!list.length) return null;
+  const up = (x) => String(x || '').toUpperCase();
+  const byIso = new Map(matched.map((c) => [up(c.iso2), c]));
+  const best = new Map();
+  const bestOf = (iso2) => {
+    if (!best.has(iso2)) {
+      best.set(iso2, Object.entries(destinations)
+        .filter(([, d]) => d && up(d.iso2) === iso2 && d.lat != null && !isGateway(d) && d.image?.url)
+        .map(([id, d]) => ({ id, q: qualityOf(d, month) ?? d.rating?.score ?? 0 }))
+        .sort((a, b) => b.q - a.q)
+        .slice(0, CANDIDATES.placesPerCountry)
+        .map((r) => r.id));
+    }
+    return best.get(iso2);
+  };
+  const countryOf = (iso2, name) => {
+    const m = byIso.get(iso2);
+    return m
+      ? { ...m, topPlaces: [...new Set([...(m.topPlaces || []), ...bestOf(iso2)])] }
+      : { country: name, iso2, score: 0, reasons: [], topType: null, bestMonth: null, topPlaces: bestOf(iso2) };
+  };
+  const towns = list.filter((p) => p.kind === 'place' && destinations[p.id]);
+  const out = [];
+  for (const p of towns) {
+    const d = destinations[p.id];
+    const iso2 = up(d.iso2);
+    const c = countryOf(iso2, d.country);
+    const mates = towns.filter((x) => x.id !== p.id && up(destinations[x.id].iso2) === iso2).map((x) => x.id);
+    out.push({ c, ids: [...new Set([p.id, ...mates, ...c.topPlaces])], town: true });
+  }
+  for (const p of list.filter((x) => x.kind === 'country')) {
+    const iso2 = up(p.iso2 || p.id);
+    const c = countryOf(iso2, p.country || p.name);
+    if (c.topPlaces.length) out.push({ c, ids: c.topPlaces, town: false });
+  }
+  return out.length ? out : null;
 }

@@ -85,7 +85,7 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null }) {
     // T801: "Plan this trip" opens the planner on the finder's trip, every
     // pick in it (planner/finder/handoff.js draftFor).
     if (plan) {
-      Object.assign(wizard, draftFor(plan, steps));
+      Object.assign(wizard, draftFor(plan, steps, plannerStore.getState().wizard?.countries));
       const p = plan;
       plannerStore.setTravelDates({ startDate: p.startDate, endDate: p.endDate });
       plannerStore.setTravelers({ adults: p.party.adults, children: p.party.children, babies: p.party.babies });
@@ -210,6 +210,7 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null }) {
           onBack={() => { setReturnTo(null); setPhase(back); }}
           backLabel={t('pf.back')}
           position={pos.index >= 0 && questions.includes(phase) ? t('pf.position', { x: pos.index + 1, n: questions.length }) : ''}
+          marks={questions.includes(phase) ? questions.map((id) => ({ key: id, now: id === phase, done: settings.answered.includes(id) })) : null}
         />
         <h2 className="pf-title" tabIndex={-1}>{q ? t(q.titleKey) : ''}</h2>
         <QuestionBody id={phase} settings={settings} commit={(s) => { save(s); afterGuide(phase, s); }} />

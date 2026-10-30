@@ -50,10 +50,23 @@ export function hasDoors(s) {
   return !s.booked.stays;
 }
 
-/** The help-me-choose screens, the questions then the trips. Reach is moot
- *  when flights are booked (they decide where the trip starts). */
+/**
+ * The help-me-choose screens, the questions then the trips. Reach is moot
+ * when flights are booked (they decide where the trip starts). T859: with
+ * places named, the questions that choose where are moot too: the weather
+ * and how far, and with a town named also what they like (the towns are
+ * chosen). How the trip moves, what to avoid and the budget stay.
+ */
+export const WHERE_QUESTIONS = ['g:weather', 'g:reach'];
 export function guideScreens(s) {
-  return GUIDE.filter((id) => !(id === 'g:reach' && s.booked.flights));
+  const places = Array.isArray(s.places) ? s.places : [];
+  const town = places.some((p) => p.kind === 'place');
+  return GUIDE.filter((id) => {
+    if (id === 'g:reach' && s.booked.flights) return false;
+    if (places.length && WHERE_QUESTIONS.includes(id)) return false;
+    if (town && id === 'g:likes') return false;
+    return true;
+  });
 }
 
 /** The help-me-choose questions alone, for the "3 of 7" position. */

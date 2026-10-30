@@ -1,4 +1,6 @@
 // T654: the planner's first free field fills the questions it answers.
+// T857: prefill.js is a thin wrapper over lib/plan/parseTrip.js; likes said
+// in the words now answer the likes question too.
 // Run: npm test (from continent-app/)
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -12,7 +14,7 @@ test("an English sentence", () => {
   assert.equal(r.patch.when.nights, 7);
   assert.deepEqual(r.patch.guide.likes, ["beach", "food"]);
   assert.deepEqual(r.countries, ["Portugal"]);
-  assert.deepEqual(r.answered.sort(), ["priority", "when", "who"]);
+  assert.deepEqual(r.answered.sort(), ["g:likes", "priority", "when", "who"]);
 });
 
 test("a Dutch sentence with a family and booked flights", () => {

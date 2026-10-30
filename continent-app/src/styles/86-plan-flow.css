@@ -1023,3 +1023,45 @@
 .ui-crow.pf-pick-fixed:not(.is-on) .ui-crow-label,
 .ui-crow.pf-pick-fixed:not(.is-on) .ui-crow-icon { color: var(--text-3); }
 .pf-pick-tag { margin-left: auto; flex: none; }
+
+/* Tell Carta's chips (T858): what the words said, under the field. Each
+   answer is the one selected state (the kit chip's tint and tick); each
+   question still open is a dashed chip with a plus, quieter than an answer.
+   A chip arrives once, in --dur-2, as the words that name it are typed. */
+.pf-read { display: flex; flex-direction: column; gap: var(--space-2); margin-top: var(--space-3); }
+.pf-read-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.pf-read-chips > li { display: flex; max-width: 100%; }
+.pf-read-chip { max-width: 100%; }
+.pf-read-chip .ui-chip-label { overflow: hidden; text-overflow: ellipsis; }
+.ui-chip.pf-read-chip.is-missing { border-style: dashed; background: transparent; color: var(--text-2); }
+.ui-chip.pf-read-chip.is-missing .ui-chip-icon { color: var(--text-2); }
+@media (hover: hover) {
+  .ui-chip.pf-read-chip.is-missing:hover { color: var(--text); }
+}
+.pf-read-left { margin: 0; font-size: var(--text-label); color: var(--text-2); }
+@keyframes pf-read-in {
+  from { opacity: 0; transform: translateY(2px); }
+  to { opacity: 1; transform: none; }
+}
+.pf-read-chips > li { animation: pf-read-in var(--dur-2) var(--ease-out); }
+
+/* The step marks in a step's head (T858): one mark a question, a tick in the
+   selected tint for each one answered (by the words or a screen), the brown
+   ring on the one asked now, so a skipped question shows as done rather
+   than the count jumping. */
+.pf-marks { display: flex; justify-content: center; gap: var(--space-1); margin: 0 0 var(--space-1); padding: 0; list-style: none; }
+.pf-mark {
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--select-ink);
+}
+.pf-mark.is-done { border-color: var(--select-border); background: var(--select-bg); }
+.pf-mark.is-now { border: 2px solid var(--select-border); }
+@media (prefers-reduced-motion: reduce) {
+  .pf-read-chips > li { animation: none; }
+}

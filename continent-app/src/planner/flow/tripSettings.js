@@ -107,6 +107,27 @@ export function defaultSettings() {
     // traveller is and until when, instead of When and Where from.
     kind: 'new',
     now: null,
+    // T859: the places the traveller named (Tell Carta's words), countries
+    // and towns: [{ kind: 'country' | 'place', id, name, iso2, country }].
+    places: [],
+    // T857 (row T856-c): where each answer came from, by question id:
+    // 'words' (Tell Carta's sentence) or 'screen'. An id with no entry was
+    // given on its screen, as every answer was before T857.
+    sources: {},
+  };
+}
+
+const SOURCES = ['words', 'screen'];
+const PLACE_KINDS = ['country', 'place'];
+/** A named place made safe, or null. */
+function namedPlace(p) {
+  if (!p || typeof p !== 'object' || !PLACE_KINDS.includes(p.kind) || !p.id) return null;
+  return {
+    kind: p.kind,
+    id: String(p.id).slice(0, 80),
+    name: String(p.name || '').slice(0, 80),
+    iso2: String(p.iso2 || (p.kind === 'country' ? p.id : '')).slice(0, 2).toUpperCase(),
+    country: String(p.country || '').slice(0, 80),
   };
 }
 
@@ -199,6 +220,12 @@ export function normalizeSettings(raw) {
     note: String(raw.note || '').slice(0, 600),
     daysHow: oneOf(raw.daysHow, ['carta', 'self'], ''),
     imports: Array.isArray(raw.imports) ? raw.imports.slice(0, 20).map(normalizeImport).filter(Boolean) : [],
+    places: Array.isArray(raw.places)
+      ? raw.places.map(namedPlace).filter(Boolean).filter((p, i, a) => a.findIndex((x) => x.kind === p.kind && x.id === p.id) === i).slice(0, 6)
+      : [],
+    sources: raw.sources && typeof raw.sources === 'object'
+      ? Object.fromEntries(Object.entries(raw.sources).filter(([k, v]) => typeof k === 'string' && SOURCES.includes(v)))
+      : {},
   };
 }
 
@@ -253,9 +280,23 @@ export const datesFromBookings = (s) => s.booked.flights || s.booked.stays;
 /** The party size that prices are multiplied by (babies travel free). */
 export const partySize = (s) => s.party.adults + s.party.kids;
 
-/** Mark a question as answered (returns a new settings object). */
-export function markAnswered(s, id) {
-  return s.answered.includes(id) ? s : { ...s, answered: [...s.answered, id] };
+/**
+ * Mark a question as answered (returns a new settings object), and where the
+ * answer came from: 'screen' (its own screen, the default) or 'words' (Tell
+ * Carta's sentence, T857). Returns `s` itself when nothing changes.
+ */
+export function markAnswered(s, id, from = 'screen') {
+  const has = s.answered.includes(id);
+  const was = s.sources?.[id] || 'screen';
+  if (has && was === from) return s;
+  const sources = { ...(s.sources || {}) };
+  if (from === 'screen') delete sources[id]; else sources[id] = from;
+  return { ...s, answered: has ? s.answered : [...s.answered, id], sources };
+}
+
+/** The answers the traveller gave on a screen, not through the words. */
+export function screenGiven(s) {
+  return (s?.answered || []).filter((id) => (s.sources?.[id] || 'screen') === 'screen');
 }
 
 /** Apply a patch, normalize, and mark the question answered. */

@@ -57,13 +57,18 @@ export function planState(handOver, plan) {
   };
 }
 
-/** The wizard draft that opens the planner on this trip (plannerStore.setWizard). */
-export function draftFor(plan, steps) {
+/**
+ * The wizard draft that opens the planner on this trip (plannerStore.setWizard).
+ * T859: the countries already picked (the places Tell Carta's words named)
+ * are kept after the trip's own, not overwritten, at most three (the
+ * compare limit).
+ */
+export function draftFor(plan, steps, kept = []) {
   const stepName = landingStep(plan, steps);
   return {
     stepName,
     step: steps.indexOf(stepName) + 1,
-    countries: [plan.country],
+    countries: [...new Set([plan.country, ...(Array.isArray(kept) ? kept : [])].filter(Boolean))].slice(0, 3),
     buildMode: 'custom',
     tripPickId: null,
     booked: { travel: false, stays: false },

@@ -165,6 +165,7 @@ export function PlanFlow({
           onClose={() => go('home')}
           closeLabel={t('pf.close')}
           position={t('pf.position', { x: pos.index + 1, n: list.length })}
+          marks={list.map((id) => ({ key: id, now: id === screen, done: settings.answered.includes(id) }))}
         />
         <h2 className="pf-title" tabIndex={-1}>{q ? t(q.titleKey) : ''}</h2>
         <QuestionBody

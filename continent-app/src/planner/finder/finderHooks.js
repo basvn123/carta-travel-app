@@ -162,7 +162,7 @@ export function useTripFinder(settings) {
   // The answer set this run is for; a new one restarts the stages. The
   // levers are left out: they re-rank the built trips below.
   const answers = answersOf(settings);
-  const key = useMemo(() => JSON.stringify([answers.guide, settings.when, settings.party, settings.priority, origin?.iata, stayTier, lifestyle, taste]),
+  const key = useMemo(() => JSON.stringify([answers.guide, settings.when, settings.party, settings.priority, settings.places, origin?.iata, stayTier, lifestyle, taste]),
     [settings, origin, stayTier, lifestyle, taste]); // eslint-disable-line react-hooks/exhaustive-deps -- answers is settings without the levers
   const { levers } = useLevers(settings);
   const leverKey = JSON.stringify(levers);
