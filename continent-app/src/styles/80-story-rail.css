@@ -368,8 +368,9 @@
 .storyr .storyr-head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--space-3); min-width: 0; }
 .storyr .storyr-head-txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .storyr .storyr-title { margin: 0; font-size: var(--text-title); font-weight: 700; letter-spacing: -0.01em; color: var(--text); text-wrap: balance; }
-.storyr .storyr-line { display: flex; flex-wrap: wrap; margin: 0; font-size: var(--text-label); color: var(--text-3); }
-.storyr .storyr-line-part + .storyr-line-part::before { content: ","; margin-right: 0.3em; }
+.storyr .storyr-line { display: flex; flex-wrap: wrap; row-gap: 2px; margin: 0; font-size: var(--text-label); color: var(--text-3); }
+.storyr .storyr-line-part { white-space: nowrap; }
+.storyr .storyr-line-part + .storyr-line-part { margin-left: var(--space-2); padding-left: var(--space-2); border-left: 1px solid var(--border); }
 .storyr .storyr-line .storyr-num { font-weight: 700; color: var(--text-2); }
 .storyr .storyr-head-acts { display: flex; flex: none; align-items: center; gap: var(--space-2); }
 .storyr .btn.storyr-all { color: var(--action); }
@@ -400,3 +401,5 @@
 @container (min-width: 860px) {
   .storyr .storyr-card .pparts-list { display: flex; color: var(--text-3); font-size: var(--text-caption); }
 }
+/* A phone keeps the rail's first fact only, so the line never wraps. */
+@container (max-width: 559px) { .storyr .storyr-line-part:nth-child(n+2) { display: none; } }
