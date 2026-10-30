@@ -125,8 +125,9 @@
   transition: background-color var(--dur-1) var(--ease-out);
 }
 .tpg-cell:nth-child(-n+2) { border-top: 0; }
+.tpg-cell:last-child:nth-child(odd) { grid-column: 1 / -1; }
 .tpg-cell:nth-child(even) { border-left: 1px solid var(--border-soft); }
-@media (min-width: 600px) { .tpg-cell { border-top: 0; } .tpg-cell + .tpg-cell { border-left: 1px solid var(--border-soft); } }
+@media (min-width: 600px) { .tpg-cell { border-top: 0; } .tpg-cell + .tpg-cell { border-left: 1px solid var(--border-soft); } .tpg-cell:last-child:nth-child(odd) { grid-column: auto; } }
 .tpg-cell .btn-label { display: contents; }
 @media (hover: hover) { .tpg-cell.btn:hover { background: var(--surface-hover); } }
 .tpg-cell:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }

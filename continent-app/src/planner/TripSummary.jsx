@@ -374,6 +374,10 @@ export function TripSummary({
     .slice(0, 3);
   const places = [...new Set(stopDetails.map((s) => cityLabel(s.dest?.city || '')).filter(Boolean))];
   const lead = stopDetails.find((s) => s.dest)?.dest || null;
+  // The country in the reader's language ("Griekenland", not the wire's "Greece").
+  const leadCountry = (() => {
+    try { return lead?.iso2 ? new Intl.DisplayNames([lang], { type: 'region' }).of(lead.iso2.toUpperCase()) : lead?.country; } catch { return lead?.country; }
+  })();
 
   const go = (id, anchor = null) => {
     onTab?.(id);
@@ -552,7 +556,7 @@ export function TripSummary({
           )}
           <Button variant="quiet" size="sm" className="tpg-where" onClick={() => go('itinerary')} aria-label={`${t('tp.tab.itinerary')}: ${places.join(', ')}`}>
             {lead?.iso2 && <CountryFlag country={lead.iso2} size={13} />}
-            <span>{[lead?.country, t(places.length === 1 ? 'tp.places1' : 'tp.placesN', { n: places.length })].filter(Boolean).join(', ')}</span>
+            <span>{[leadCountry, t(places.length === 1 ? 'tp.places1' : 'tp.placesN', { n: places.length })].filter(Boolean).join(', ')}</span>
           </Button>
         </div>
       </header>
