@@ -13,10 +13,16 @@
  *   lines     a route and a climb profile as vectors, flat (the 3D rule
  *             keeps charts flat)
  *   copy      no em dash, en dash or middot (stripDashes), sentence case
+ *   cover     the parts both guides open with (T914): the wordmark, the
+ *             title block, the price, the facts and a QR code back to the
+ *             live page (qrcode-generator, MIT, loaded with the first PDF)
+ *   drawings  thin bars, the twelve-month strip and a pin map (numbered
+ *             pins placed by latitude and longitude in a plain frame, no
+ *             tiles), all in ink so a page prints in black and white
  *
  * jsPDF arrives with the first PDF; nothing here loads before that.
  */
-import { stripDashes } from './format.js';
+import { stripDashes, formatRange } from './format.js';
 import { TOKEN_COLOURS } from '../map/tokenColors.js';
 
 export const PAGE_W = 210;
@@ -36,6 +42,7 @@ const FALLBACK = {
   '--select-bg': TOKEN_COLOURS['--accent-bg'],
   '--amber-ink': TOKEN_COLOURS['--amber-ink'],
   '--status-success': TOKEN_COLOURS['--status-success'],
+  '--rate': TOKEN_COLOURS['--rate'],
 };
 
 /** A token as [r, g, b]: the live value (hex or rgb()), else the mirror. */
@@ -99,6 +106,21 @@ export function photoData(url, maxW = 1400) {
 }
 
 export const clean = (s) => stripDashes(String(s ?? '')).replace(/\*\*/g, '').replace(/\s*[\u00b7\u2022]\s*/g, ', ').replace(/\s+/g, ' ').trim();
+/** Months as runs in the reader's language: "June to August",
+ *  "April to June, September to October". `ms` holds 1 to 12. */
+export function monthSpan(ms, loc = 'en-GB') {
+  let f;
+  try { f = new Intl.DateTimeFormat(loc, { month: 'long' }); } catch { f = new Intl.DateTimeFormat('en-GB', { month: 'long' }); }
+  const name = (m) => f.format(new Date(2026, m - 1, 1));
+  const list = [...new Set((ms || []).filter((m) => m >= 1 && m <= 12))].sort((a, b) => a - b);
+  const runs = [];
+  for (const m of list) {
+    const last = runs[runs.length - 1];
+    if (last && m === last[1] + 1) last[1] = m;
+    else runs.push([m, m]);
+  }
+  return runs.map(([a, b]) => formatRange(a, b, name)).join(', ');
+}
 export const fileSlug = (s) => clean(s).toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/[^\w]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60);
 
 /**
@@ -120,6 +142,7 @@ export async function createPdf({ footerLabel = 'Carta', pageLabel = (n, of) => 
     text: rgb('--text'), text2: rgb('--text-2'), text3: rgb('--text-3'), border: rgb('--border'),
     soft: rgb('--border-soft'), sunken: rgb('--surface-sunken'), action: rgb('--action'),
     select: rgb('--select-bg'), warn: rgb('--amber-ink'), ok: rgb('--status-success'),
+    rate: rgb('--rate'), white: [255, 255, 255],
   };
   const state = { y: M, page: 1 };
   const TOTAL = '{total_pages}';
@@ -364,6 +387,252 @@ export async function createPdf({ footerLabel = 'Carta', pageLabel = (n, of) => 
     state.y += 5.5;
   };
 
+  // ── Shared cover parts and drawings (T914) ──
+
+  /** The Carta wordmark at (x, y), top left: a small brown tile and the name. */
+  const wordmark = (x = M, y = state.y, size = 13) => {
+    const s = size * 0.3528 * 0.9;
+    doc.setFillColor(...C.action);
+    doc.roundedRect(x, y, s, s, s * 0.28, s * 0.28, 'F');
+    font('bold', size);
+    doc.text('carta', x + s + 1.8, y + s / 2, { baseline: 'middle' });
+    return s;
+  };
+
+  /** The Score's star, filled, centred on (cx, cy). */
+  const star = (cx, cy, r, color = C.rate) => {
+    const pts = [];
+    for (let i = 0; i < 10; i += 1) {
+      const a = -Math.PI / 2 + (i * Math.PI) / 5;
+      const rr = i % 2 ? r * 0.45 : r;
+      pts.push([cx + rr * Math.cos(a), cy + rr * Math.sin(a)]);
+    }
+    doc.setFillColor(...color);
+    doc.lines(pts.slice(1).map((p, i) => [p[0] - pts[i][0], p[1] - pts[i][1]]), pts[0][0], pts[0][1], [1, 1], 'F', true);
+  };
+
+  /** A QR code for `url`, `size` mm square at (x, y), in ink, and live as a
+   *  link too. False when the encoder cannot load: the caller prints the
+   *  short link alone. */
+  const qr = async (url, x, y, size) => {
+    if (!url) return false;
+    let make;
+    try { make = (await import('qrcode-generator')).default; } catch { return false; }
+    const code = make(0, 'M');
+    code.addData(url);
+    code.make();
+    const n = code.getModuleCount();
+    const cell = size / n;
+    doc.setFillColor(...C.text);
+    for (let r = 0; r < n; r += 1) {
+      let c = 0;
+      while (c < n) {
+        if (!code.isDark(r, c)) { c += 1; continue; }
+        let e = c;
+        while (e < n && code.isDark(r, e)) e += 1;
+        // A hair of overlap so no white seam shows between modules.
+        doc.rect(x + c * cell, y + r * cell, (e - c) * cell + 0.03, cell + 0.03, 'F');
+        c = e;
+      }
+    }
+    doc.link(x, y, size, size, { url });
+    return true;
+  };
+
+  /** A new page for a section, unless this one is still empty. */
+  const startPage = (title) => {
+    if (state.y > M + 1) newPage();
+    if (title) h1(title);
+  };
+
+  /**
+   * The cover both guides open with: the wordmark, a photograph with its
+   * credit under it, the title, the lines under it (one may carry the Score:
+   * `{ score, text }`), the price with its unit, the facts two across, and
+   * a QR code back to the live page at the foot.
+   */
+  const cover = async ({ photo: ph, title, lines: sub = [], price, facts: cells = [], qr: q } = {}) => {
+    wordmark(M, state.y);
+    state.y += 9;
+    if (ph?.url) await photo(ph, { ratio: 16 / 9, maxH: 98 });
+    const tl = lines(title, 30, W, 'bold');
+    font('bold', 30);
+    doc.text(tl, M, state.y, { baseline: 'top', lineHeightFactor: 1.1 });
+    state.y += tl.length * lh(30, 1.1) + 1.5;
+    for (const s of sub) {
+      if (!s) continue;
+      if (typeof s === 'object' && s.score) {
+        const size = 11.5;
+        star(M + 1.9, state.y + 2, 1.9);
+        font('bold', size);
+        doc.text(clean(s.score), M + 5, state.y, { baseline: 'top' });
+        const sx = M + 5 + doc.getTextWidth(clean(s.score)) + 1.5;
+        const rest = lines(s.text || '', size, PAGE_W - M - sx);
+        font('normal', size, C.text2);
+        doc.text(rest, sx, state.y, { baseline: 'top', lineHeightFactor: 1.35 });
+        state.y += rest.length * lh(size, 1.35) + 1;
+      } else {
+        para(s, { size: 11.5, color: C.text2, after: 1 });
+      }
+    }
+    if (price?.value) {
+      state.y += 3;
+      font('bold', 22);
+      const pv = clean(price.value);
+      doc.text(pv, M, state.y, { baseline: 'top' });
+      const px = M + doc.getTextWidth(pv) + 2;
+      font('normal', 11.5, C.text2);
+      doc.text(clean(price.unit || ''), px, state.y + 3.4, { baseline: 'top' });
+      state.y += lh(22, 1.2) + 3;
+    }
+    facts(cells, 2);
+    if (q?.url) {
+      const size = 26;
+      const qy = Math.max(state.y + 4, PAGE_H - FOOT - 6 - size);
+      if (qy + size <= PAGE_H - FOOT - 3) {
+        const drawn = await qr(q.url, M, qy, size);
+        const tx = drawn ? M + size + 6 : M;
+        let ty = qy + 3;
+        font('semibold', 11.5);
+        doc.text(clean(q.head || ''), tx, ty, { baseline: 'top' });
+        ty += lh(11.5) + 0.5;
+        if (q.note) {
+          font('normal', 9.5, C.text2);
+          doc.text(lines(q.note, 9.5, PAGE_W - M - tx), tx, ty, { baseline: 'top' });
+          ty += lh(9.5) + 0.5;
+        }
+        font('normal', 9, C.action);
+        const short = clean(q.url.replace(/^https?:\/\/(www\.)?/, ''));
+        doc.textWithLink(doc.splitTextToSize(short, PAGE_W - M - tx)[0], tx, ty, { url: q.url, baseline: 'top' });
+        state.y = qy + size;
+      }
+    }
+  };
+
+  /** Thin bars, one a row: the label, an ink bar on a sunken track scaled
+   *  to `of` (the whole), the figure right. Rows without a figure drop out. */
+  const bars = (rows, { of = null, labelW = 48, valueW = 24 } = {}) => {
+    const list = (rows || []).filter((r) => r && Number.isFinite(r.value) && r.value > 0);
+    if (!list.length) return;
+    const whole = of || Math.max(...list.map((r) => r.value));
+    const trackW = W - labelW - valueW;
+    for (const r of list) {
+      ensure(8);
+      font('normal', 10.5);
+      doc.text(clean(r.label), M, state.y, { baseline: 'top' });
+      const by = state.y + 1.4;
+      doc.setFillColor(...C.sunken);
+      doc.roundedRect(M + labelW, by, trackW, 2.4, 1.2, 1.2, 'F');
+      doc.setFillColor(...C.text);
+      doc.roundedRect(M + labelW, by, Math.max(2.4, trackW * Math.min(1, r.value / whole)), 2.4, 1.2, 1.2, 'F');
+      font('semibold', 10.5);
+      doc.text(clean(r.text), PAGE_W - M, state.y, { baseline: 'top', align: 'right' });
+      state.y += 7.5;
+    }
+    state.y += 1;
+  };
+
+  /** The twelve-month strip: the good months filled in ink with white
+   *  letters, the rest outlined; the words under it say the same. */
+  const monthStrip = (best, labels, { h = 9 } = {}) => {
+    const on = new Set(best || []);
+    ensure(h + 4);
+    const cw = W / 12;
+    labels.forEach((l, i) => {
+      const x = M + i * cw;
+      const good = on.has(i + 1);
+      if (good) {
+        doc.setFillColor(...C.text);
+        doc.roundedRect(x + 0.6, state.y, cw - 1.2, h, 1.4, 1.4, 'F');
+      } else {
+        doc.setDrawColor(...C.border);
+        doc.setLineWidth(0.25);
+        doc.roundedRect(x + 0.6, state.y, cw - 1.2, h, 1.4, 1.4, 'S');
+      }
+      font(good ? 'bold' : 'normal', 9, good ? C.white : C.text2);
+      doc.text(clean(l), x + cw / 2, state.y + h / 2, { align: 'center', baseline: 'middle' });
+    });
+    state.y += h + 3;
+  };
+
+  /**
+   * A plain map: numbered pins placed by latitude and longitude in a sunken
+   * frame, no tiles. `pins` is [{ lat, lon, n }], `centre` the place itself
+   * (a ring), `scaleLabel(km)` writes the scale bar's distance.
+   */
+  const pinMap = (pins, { h = 110, centre = null, scaleLabel = (km) => `${km} km` } = {}) => {
+    const pts = (pins || []).filter((p) => Number.isFinite(p?.lat) && Number.isFinite(p?.lon));
+    if (!pts.length) return;
+    ensure(h + 4);
+    const top = state.y;
+    const all = centre && Number.isFinite(centre.lat) && Number.isFinite(centre.lon) ? [...pts, centre] : pts;
+    const lat0 = all.reduce((a, p) => a + p.lat, 0) / all.length;
+    const kx = Math.cos((lat0 * Math.PI) / 180);
+    const xs = all.map((p) => p.lon * kx);
+    const ys = all.map((p) => p.lat);
+    const [minX, maxX, minY, maxY] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
+    const pad = 10;
+    const s = Math.min((W - 2 * pad) / Math.max(1e-4, maxX - minX), (h - 2 * pad) / Math.max(1e-4, maxY - minY));
+    const ox = M + (W - (maxX - minX) * s) / 2;
+    const oy = top + (h - (maxY - minY) * s) / 2;
+    const P = (p) => [ox + (p.lon * kx - minX) * s, oy + (maxY - p.lat) * s];
+    doc.setFillColor(...C.sunken);
+    doc.roundedRect(M, top, W, h, 3, 3, 'F');
+    if (all.length > pts.length) {
+      const [cx, cy] = P(centre);
+      doc.setDrawColor(...C.text2);
+      doc.setLineWidth(0.4);
+      doc.circle(cx, cy, 3.4, 'S');
+      doc.setFillColor(...C.text2);
+      doc.circle(cx, cy, 0.8, 'F');
+    }
+    // Pins that would cover each other step aside a little, then the first
+    // pin is drawn last, so it sits on top.
+    const placed = [];
+    for (const p of pts) {
+      let [x, y] = P(p);
+      for (let k = 0; k < 8 && placed.some(([a, b]) => Math.hypot(a - x, b - y) < 5.2); k += 1) {
+        const ang = (k * Math.PI) / 4;
+        x += Math.cos(ang) * 3.2;
+        y += Math.sin(ang) * 3.2;
+      }
+      placed.push([x, y, p.n]);
+    }
+    for (const [x, y, n] of [...placed].reverse()) {
+      doc.setFillColor(...C.text);
+      doc.setDrawColor(...C.white);
+      doc.setLineWidth(0.5);
+      doc.circle(x, y, 2.8, 'FD');
+      font('bold', 7.5, C.white);
+      doc.text(String(n), x, y + 0.1, { align: 'center', baseline: 'middle' });
+    }
+    // A scale bar, bottom left: one degree of latitude is 111.32 km.
+    const mmPerKm = s / 111.32;
+    const nice = [0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200].find((k) => k * mmPerKm >= 14) || 200;
+    const len = nice * mmPerKm;
+    if (len <= W / 2) {
+      const bx = M + 5;
+      const by = top + h - 5;
+      doc.setDrawColor(...C.text2);
+      doc.setLineWidth(0.4);
+      doc.line(bx, by, bx + len, by);
+      doc.line(bx, by - 1.2, bx, by);
+      doc.line(bx + len, by - 1.2, bx + len, by);
+      font('normal', 7.5, C.text2);
+      doc.text(clean(scaleLabel(nice)), bx + len + 2, by, { baseline: 'middle' });
+    }
+    // North, top right.
+    const nx = PAGE_W - M - 6;
+    font('bold', 8, C.text2);
+    doc.text('N', nx, top + 4, { align: 'center', baseline: 'top' });
+    doc.setDrawColor(...C.text2);
+    doc.setLineWidth(0.4);
+    doc.line(nx, top + 8.2, nx, top + 12.5);
+    doc.line(nx - 1, top + 9.4, nx, top + 8.2);
+    doc.line(nx + 1, top + 9.4, nx, top + 8.2);
+    state.y = top + h + 4;
+  };
+
   const save = (filename) => {
     footer();
     if (typeof doc.putTotalPages === 'function') doc.putTotalPages(TOTAL);
@@ -373,5 +642,6 @@ export async function createPdf({ footerLabel = 'Carta', pageLabel = (n, of) => 
   return {
     doc, C, state, font, lh, lines, para, h1, h2, h3, rule, gap, ensure, newPage,
     facts, tickRow, moneyRow, photo, photoPair, route, profile, link, save,
+    wordmark, star, qr, startPage, cover, bars, monthStrip, pinMap,
   };
 }
