@@ -1394,10 +1394,7 @@
 .pf-rail-h { margin: 0; padding: 0 var(--space-3) var(--space-1); font-size: var(--text-caption); font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-3); }
 .pf-rail-list { display: flex; flex-direction: column; gap: 2px; margin: 0; padding: 0; list-style: none; }
 .btn.pf-rail-step {
-  display: grid;
-  grid-template-columns: 22px minmax(0, 1fr);
-  align-items: start;
-  gap: var(--space-3);
+  display: flex;
   width: 100%;
   height: auto;
   min-height: 0;
@@ -1408,6 +1405,7 @@
   text-align: left;
   justify-content: stretch;
 }
+.pf-rail-step .btn-label { display: grid; grid-template-columns: 22px minmax(0, 1fr); align-items: start; gap: var(--space-3); width: 100%; min-width: 0; }
 .btn.pf-rail-step:disabled { opacity: 1; color: var(--text-3); cursor: default; }
 .btn.pf-rail-step.is-now { background: var(--action-tint); color: var(--text); }
 .btn.pf-rail-step:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
@@ -1498,6 +1496,7 @@
   border-radius: var(--radius-card);
   text-align: left;
 }
+.pf-fold-btn .btn-label { display: flex; flex: 1; align-items: baseline; min-width: 0; }
 .pf-fold-t { font-size: var(--text-label); font-weight: 700; color: var(--text); }
 .pf-fold-s { flex: 1; min-width: 0; margin-left: var(--space-2); overflow: hidden; font-size: var(--text-caption); font-weight: 500; color: var(--text-3); white-space: nowrap; text-overflow: ellipsis; }
 .pf-fold-btn[aria-expanded="true"] .btn-icon { transform: rotate(180deg); }
