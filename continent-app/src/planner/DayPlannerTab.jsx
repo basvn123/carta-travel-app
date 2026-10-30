@@ -4168,6 +4168,20 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
       tripPriced={tripPriced}
       onChange={applyOverviewChange}
       onOpenDay={(k) => { goToPlanDay(k); setOverview(false); setAdding(null); }}
+      // T897: fill one empty day with the bot, or every empty day in turn.
+      onFillDay={(k) => {
+        goToPlanDay(k); setOverview(false); setAdding(null);
+        setBotPreset({ ...dayAiPreset(fromDraft(plannerStore.getState())), autoRun: true }); setAiOpen(true);
+      }}
+      onFillEmpty={() => {
+        setOverview(false);
+        const tripSettings = fromDraft(plannerStore.getState());
+        if ((user && authConfigured) || AI_PLAN_MOCK != null) {
+          setAutoQueue({ phase: 'init', planKey: plan?.id || TRIP_DRAFT_PLAN_ID, preset: dayAiPreset(tripSettings), list: [], i: 0, planned: 0, code: '' });
+        } else {
+          setBotPreset({ ...dayAiPreset(tripSettings), autoRun: true }); setAiOpen(true);
+        }
+      }}
     />
   ) : null;
 

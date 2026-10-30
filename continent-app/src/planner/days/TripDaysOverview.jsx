@@ -16,6 +16,8 @@ import { costOverview } from './tripCost.js';
 import { useStopIdeas } from './useStopIdeas.js';
 
 const BAR_SHADES = ['--kind-metro', '--kind-city', '--kind-town', '--kind-village'];
+// T897: one colour a day, the edge of its row (the cost colours, muted).
+const DAY_SHADES = ['--action', '--cost-travel', '--cost-around', '--cost-stay', '--cost-food'];
 
 /**
  * Your days (T672), the trip's days at a glance and what they can be made of:
@@ -26,10 +28,15 @@ const BAR_SHADES = ['--kind-metro', '--kind-city', '--kind-town', '--kind-villag
  * each one kept with a tap and put on a day with one more. Kept ideas wait in
  * their own row until they have a day. Sections the data cannot fill yet keep
  * their place with the shared placeholder.
+ *
+ * T897 (the owner's plan days board 2026-10-30): the days lead. The head
+ * names the trip and, while days are empty, offers to fill them all; every
+ * day is a row with its own colour, its date and town, its stops and
+ * whether it is planned; the money and the ideas follow.
  */
 export function TripDaysOverview({
   tripName, stops, planDays, assignments, prefs, itemsForStop, ensurePois, destinations,
-  tripPriced, onChange, onOpenDay, onFillDay = null,
+  tripPriced, onChange, onOpenDay, onFillDay = null, onFillEmpty = null,
 }) {
   const { t, lang } = useI18n();
   const draft = usePlannerStore();
@@ -97,6 +104,8 @@ export function TripDaysOverview({
     return { k, si: d.si, di: d.di, n: list.length, photos, iso, city: cityLabel(s?.dest?.city || '') };
   });
 
+  const emptyN = dayCards.filter((d) => !d.n).length;
+
   const metaOf = (r) => {
     const parts = [];
     if (r.kind === 'trail' || r.kind === 'cycle') {
@@ -156,9 +165,45 @@ export function TripDaysOverview({
   return (
     <div className="tdo">
       <header className="tdo-head">
-        <h1 className="tdo-title">{t('days.title')}</h1>
-        {tripName && <p className="tdo-sub">{tripName}</p>}
+        <div className="tdo-head-txt">
+          <h1 className="tdo-title">{tripName || t('days.title')}</h1>
+          <p className="tdo-sub">{t('days.headSub', { n: planDays.length, planned: dayCards.filter((d) => d.n).length })}</p>
+        </div>
+        {onFillEmpty && emptyN > 0 && (
+          <Button variant="primary" size="sm" iconStart={<SparkIcon size={16} />} onClick={onFillEmpty}>
+            {t(emptyN === 1 ? 'days.fillEmptyOne' : 'days.fillEmpty', { n: emptyN })}
+          </Button>
+        )}
       </header>
+
+      <section className="tdo-days" aria-labelledby="tdo-days-h">
+        <h2 className="tdo-h2" id="tdo-days-h">{t('days.yourDays')}</h2>
+        <ol className="tdo-daylist">
+          {dayCards.map((d) => (
+            <li key={d.k} className="tdo-dayrow" style={{ '--tdo-c': `var(${DAY_SHADES[d.k % DAY_SHADES.length]})` }}>
+              <Button variant="quiet" className="tdo-day" onClick={() => onOpenDay(d.k)} iconEnd={<ChevronRightIcon size={18} className="pf-ico" />}>
+                <span className="tdo-day-num">{t('itin.dayN', { n: d.k + 1 })}</span>
+                <span className="tdo-day-text">
+                  <span className="tdo-day-when">{[d.iso ? fmtDate(d.iso, true) : '', d.city].filter(Boolean).join(', ')}</span>
+                  <span className={`tdo-day-n${d.n ? '' : ' is-empty'}`}>
+                    {d.n ? t(d.n === 1 ? 'day.statStop' : 'day.statStops', { n: d.n }) : t('days.empty')}
+                  </span>
+                </span>
+                {d.photos.length > 0 && (
+                  <span className="tdo-day-photos" aria-hidden="true">
+                    {d.photos.map((u) => <img key={u} src={u} alt="" loading="lazy" />)}
+                  </span>
+                )}
+              </Button>
+              {!d.n && onFillDay && (
+                <Button variant="quiet" size="sm" className="tdo-fill" iconStart={<SparkIcon size={14} />} onClick={() => onFillDay(d.k)}>
+                  {t('days.fill')}
+                </Button>
+              )}
+            </li>
+          ))}
+        </ol>
+      </section>
 
       {money && (
         <section className="tdo-money" aria-labelledby="tdo-money-h">
@@ -198,35 +243,6 @@ export function TripDaysOverview({
           {money.missing > 0 && <p className="tdo-note">{t('days.missing', { n: money.missing })}</p>}
         </section>
       )}
-
-      <section className="tdo-days" aria-labelledby="tdo-days-h">
-        <h2 className="tdo-h2" id="tdo-days-h">{t('days.yourDays')}</h2>
-        <ol className="tdo-daylist">
-          {dayCards.map((d) => (
-            <li key={d.k}>
-              <Button variant="quiet" className="tdo-day" onClick={() => onOpenDay(d.k)} iconEnd={<ChevronRightIcon size={18} className="pf-ico" />}>
-                <span className="tdo-day-num">{t('itin.dayN', { n: d.k + 1 })}</span>
-                <span className="tdo-day-text">
-                  <span className="tdo-day-when">{[d.iso ? fmtDate(d.iso, true) : '', d.city].filter(Boolean).join(', ')}</span>
-                  <span className={`tdo-day-n${d.n ? '' : ' is-empty'}`}>
-                    {d.n ? t(d.n === 1 ? 'day.statStop' : 'day.statStops', { n: d.n }) : t('days.empty')}
-                  </span>
-                </span>
-                {d.photos.length > 0 && (
-                  <span className="tdo-day-photos" aria-hidden="true">
-                    {d.photos.map((u) => <img key={u} src={u} alt="" loading="lazy" />)}
-                  </span>
-                )}
-              </Button>
-              {!d.n && onFillDay && (
-                <Button variant="quiet" size="sm" className="tdo-fill" iconStart={<SparkIcon size={14} />} onClick={() => onFillDay(d.k)}>
-                  {t('days.fill')}
-                </Button>
-              )}
-            </li>
-          ))}
-        </ol>
-      </section>
 
       <section className="tdo-ideas" aria-labelledby="tdo-ideas-h">
         <h2 className="tdo-h2" id="tdo-ideas-h">{t('days.ideasFor', { city: cityLabel(dest?.city || '') })}</h2>
