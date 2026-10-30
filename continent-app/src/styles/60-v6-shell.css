@@ -1070,3 +1070,27 @@ html.kbd-open .settings-done { display: none; }
   line-height: var(--leading-ui);
   color: var(--text-2);
 }
+
+/* T905 (owner 2026-10-30, the Plan home board's phone frame): on a phone the
+   header comes back as one slim row, the logo on the left and the account
+   door on the right, on every place; the places themselves stay in the
+   bottom nav, which drops its Account slot (Explore, Plan, My trips). The
+   top bar is measured into --filter-h, so every page below moves with it. */
+@media (max-width: 768px) {
+  .app-header {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    min-height: 56px;
+    padding: 0 max(var(--space-4), env(safe-area-inset-right, 0px)) 0 max(var(--space-4), env(safe-area-inset-left, 0px));
+    background: var(--surface);
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .app-header .header-nav,
+  .app-header .header-search-slot { display: none; }
+  .app-header .app-header-brand .brand-mark { width: 28px; height: 28px; }
+  .app-header .app-header-brand .brand-name { font-size: var(--text-title); }
+  .app-header .app-header-account { height: auto; min-height: 0; margin-left: auto; }
+}

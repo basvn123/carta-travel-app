@@ -677,7 +677,7 @@
   bottom: 0; left: 0; right: 0;
   z-index: var(--z-nav);
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr)); /* T905: Explore, Plan, My trips */
   align-items: center;
   /* 64 px plus the home-indicator inset (--bottom-nav-h carries both): the
      slots keep --tap-main on a notched phone, where the old 86 px box with

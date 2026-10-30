@@ -1,16 +1,16 @@
 import React, { useRef } from 'react';
-import { PersonIcon } from './Icons.jsx';
 import { useI18n } from '../i18n/index.jsx';
-import { SectionLink, NavCount, PLACE_ITEMS, accountInitial } from './AppHeader.jsx';
+import { SectionLink, NavCount, PLACE_ITEMS } from './AppHeader.jsx';
 import { useNavMarker } from '../lib/motion.js';
 
 // Bottom navigation, PHONE only (hidden by CSS from 769 px, where the same
-// places live in AppHeader). Four equal slots of --tap-main (T496, roadmap
-// 1.3a T1 and 1.15): Explore, Plan, My trips and Account. No plus and no
+// places live in AppHeader). Equal slots of --tap-main (T496, roadmap 1.3a T1
+// and 1.15): Explore, Plan and My trips. T905 (owner 2026-10-30): Account
+// moved to the phone's slim header, at the right of the logo's row, as on a
+// desktop. No plus and no
 // chooser: Plan is the way in, and with nothing in progress it opens its own
 // "Plan something new" page. Every slot is a link to its place's address.
 export function BottomNav({
-  user,
   // The place on screen; it carries the selected pill and aria-current.
   place,
   onNavigate,
@@ -50,22 +50,6 @@ export function BottomNav({
           </SectionLink>
         );
       })}
-      <SectionLink
-        tab="account"
-        className={`bottom-nav-item ${place === 'account' ? 'active' : ''}`}
-        current={place === 'account'}
-        onNavigate={onNavigate}
-      >
-        <span className="bottom-nav-icon">
-          {/* Signed in, the initial in a 24 px disc; a guest, the person
-              glyph. No extra mark for signed out: saving works without an
-              account (T473). */}
-          {user
-            ? <span className="bottom-nav-initial" aria-hidden="true">{accountInitial(user)}</span>
-            : <PersonIcon size={22} />}
-        </span>
-        <span className="bottom-nav-label">{t('nav.account')}</span>
-      </SectionLink>
     </nav>
   );
 }
