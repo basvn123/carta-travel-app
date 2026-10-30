@@ -41,7 +41,7 @@ export function DayStart({ leaveMin = null, first = null, highC = null, tickets 
       <div className="dst-top">
         <h2 className="dst-h" id="dst-h">{t('dst.title')}</h2>
         {leaveMin != null && (
-          <Chip kind="status" tone="best" icon={<ClockIcon size={12} />}>{t('dst.leave', { time: fmtClockLoose(leaveMin) })}</Chip>
+          <Chip kind="status" tone="neutral" icon={<ClockIcon size={12} />}>{t('dst.leave', { time: fmtClockLoose(leaveMin) })}</Chip>
         )}
       </div>
       <dl className="dst-facts">
