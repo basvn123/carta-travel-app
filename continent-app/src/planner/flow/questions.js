@@ -55,6 +55,17 @@ export const QUESTIONS = {
   nowUntil: { titleKey: 'pf.q.nowUntil', helpKey: 'pf.q.nowUntilHelp', custom: true },
 
   // ---- Help me choose ----
+  // How they like to travel, the persona (owner, plan flow walk 2026-10-30):
+  // the first help-me-choose question. Its own screen (PersonaScreen) draws
+  // these as photo rows; the trip finder weighs places by it
+  // (lib/recommend/persona.js).
+  'g:persona': {
+    titleKey: 'pf.q.persona', custom: true,
+    options: ['cities', 'hubtrips', 'outside', 'towns', 'nature', 'hidden', 'lively', 'mix']
+      .map((k) => opt(k, null, { labelKey: `pf.persona.${k}`, subKey: `pf.persona.${k}Sub` })),
+    read: (s) => (s.guide.persona ? [s.guide.persona] : []),
+    write: (s, [v]) => ({ guide: { ...s.guide, persona: v } }),
+  },
   // T753: as many shapes as fit, or no preference.
   'g:shape': {
     titleKey: 'pf.q.shape', multi: true, none: 'any',

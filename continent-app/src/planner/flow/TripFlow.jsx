@@ -235,7 +235,7 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
 
   return (
     <div className={`pf${phase === 'home' ? ' is-trip' : ''}`} ref={rootRef}>
-      <PlanStage bar={phase === 'home' || inHead ? null : bar}sheetLabel={settings.trip.name || t('pf.sheet')} wide={phase === 'g:likes' || phase === TRIPS_SCREEN || phase === 'ff'}>
+      <PlanStage bar={phase === 'home' || inHead ? null : bar}sheetLabel={settings.trip.name || t('pf.sheet')} wide={phase === 'g:likes' || phase === 'g:persona' ||phase === TRIPS_SCREEN || phase === 'ff'}>
         {body}
       </PlanStage>
       {settingsOpen && <TripSettingsSheet anchorRef={gearRef} onClose={() => setSettingsOpen(false)} />}

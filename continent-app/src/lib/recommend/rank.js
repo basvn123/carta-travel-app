@@ -11,7 +11,8 @@
  *               least rank.mainLikeMin where the profiles measure it, and
  *               no hard conflict stands (config rank, fitFirst)
  *   3. order    by forYou (the places' quality plus the match, as Explore
- *               orders places), trips over the typed budget sinking by
+ *               orders places) plus the persona's move (persona.js, config
+ *               persona.weight), trips over the typed budget sinking by
  *               budget.sinkPer100 a hundred euros over
  *
  * The match shows on Help me choose even while persona gate 7 fails
@@ -25,6 +26,7 @@ import { buildTrips, keepHidden, repriceTrip } from './trips.js';
 import { tasteFor } from './candidates.js';
 import { tripFit, reasonsFor, catchFor } from './reasons.js';
 import { flightLeverKeys } from './adapters/flight.js';
+import { personaReason, personaShift, tripPersona } from './persona.js';
 
 export const RANK = Object.freeze(RECOMMEND.rank);
 export const LEVERS = Object.freeze(RECOMMEND.levers);
@@ -154,13 +156,19 @@ export function rankTrips(trips, { settings, taste = null, data, levers = null }
     const budget = budgetRuler(trip, settings);
     const sink = budget && budget.delta > 0 ? (RECOMMEND.budget.sinkPer100 * budget.delta) / 100 : 0;
     const base = info.forYou ?? info.Q ?? trip.signals?.countryScore ?? 0;
+    // The persona (owner, plan flow walk): weight x (P - 0.5), P the trip's
+    // places' persona fit by nights (persona.js); its reason leads the card.
+    const persona = settings.guide.persona;
+    const p = tripPersona(trip, persona, destinations);
+    const said = personaReason(trip, persona, destinations);
     const out = {
       ...trip,
       budget,
       match: info.F == null ? null : { pct: info.pct, bars: info.bars, conflicts: info.conflicts },
-      reasons: reasonsFor(trip, { settings, info }),
+      persona: p == null ? null : { id: persona, p },
+      reasons: said ? [said, ...reasonsFor(trip, { settings, info })].slice(0, RECOMMEND.reasons.max) : reasonsFor(trip, { settings, info }),
       catch: catchFor(trip, { settings, info, budget }),
-      score: base - sink - (pull.get(trip.id) || 0),
+      score: base + personaShift(p) - sink - (pull.get(trip.id) || 0),
       qualified: RANK.fitFirst ? qualifies(info, settings) : true,
     };
     Object.defineProperty(out, 'base', { value: trip.base, enumerable: false });

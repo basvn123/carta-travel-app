@@ -8,7 +8,9 @@
  *   setup     tell (free text and files, skippable), booked, who, sleep, priority, when, from, way, airports
  *             (when, from and the way there drop out when bookings fix them; airports
  *             only when the way there may fly, T860), then create
- *   guide     shape, likes, weather, reach, around (how they get around on
+ *   guide     persona (how they like to travel; it weighs the trip
+ *             finder's places, lib/recommend/persona.js), shape, likes,
+ *             weather, reach, around (how they get around on
  *             the trip; not with their own car or a booked rental), avoid,
  *             budget, pick, then how
  *             (owner, plan flow walk 2026-10-30, in place of T863's four
@@ -33,7 +35,7 @@ export const FLYING_WAYS = ['', 'any', 'plane'];
 /** A trip already under way (T675): where the traveller is now and until
  *  when stand in for When and Where from; the way there is behind them. */
 export const NOW_SETUP = ['tell', 'booked', 'who', 'sleep', 'priority', 'nowWhere', 'nowUntil'];
-export const GUIDE = ['g:shape', 'g:likes', 'g:weather', 'g:reach', 'g:around', 'g:avoid', 'g:budget', 'g:pick', 'g:how', 'g:trips'];
+export const GUIDE = ['g:persona', 'g:shape', 'g:likes', 'g:weather', 'g:reach', 'g:around', 'g:avoid', 'g:budget', 'g:pick', 'g:how', 'g:trips'];
 /** The help-me-choose screen that answers rather than asks (T797). */
 export const TRIPS_SCREEN = 'g:trips';
 export const RHYTHM_SCREENS = ['r:mornings', 'r:pace', 'r:detail', 'r:goal', 'r:food', 'r:around'];

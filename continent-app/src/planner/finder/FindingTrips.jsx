@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { Button } from '../../components/ui/index.js';
 import {
-  BanIcon, BusIcon, CalendarIcon, CheckIcon, FriendsIcon, HeartIcon, HomeIcon, MapPinIcon, PiggyIcon, PlaneIcon, RouteIcon, SunIcon,
+  BanIcon, BusIcon, CalendarIcon, CheckIcon, CompassIcon, FriendsIcon, HeartIcon, HomeIcon, MapPinIcon, PiggyIcon, PlaneIcon, RouteIcon, SunIcon,
 } from '../../components/Icons.jsx';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { SheetHead } from '../flow/PlanStage.jsx';
@@ -39,13 +39,13 @@ const BRIEF_MAX_STEP_MS = 420;
 // One icon per answer in the brief, by the answer chip's id.
 const BRIEF_ICONS = {
   place: MapPinIcon, from: HomeIcon, when: CalendarIcon, who: FriendsIcon, like: HeartIcon, shape: RouteIcon,
-  weather: SunIcon, reach: PlaneIcon, around: BusIcon, avoid: BanIcon, budget: PiggyIcon,
+  weather: SunIcon, reach: PlaneIcon, around: BusIcon, avoid: BanIcon, budget: PiggyIcon, persona: CompassIcon,
 };
 // The stage of real work that applies each answer, so its tick is earned.
 const BRIEF_STAGE = {
   from: 'flights', when: 'flights', reach: 'flights',
   who: 'stays', around: 'stays', budget: 'stays', avoid: 'stays',
-  place: 'likes', like: 'likes', shape: 'likes', weather: 'likes',
+  place: 'likes', like: 'likes', shape: 'likes', weather: 'likes', persona: 'likes',
 };
 const headOf = (chip) => chip.id.split(':')[0];
 

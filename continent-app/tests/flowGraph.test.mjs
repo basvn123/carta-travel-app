@@ -14,7 +14,7 @@ test("nothing booked: every setup question, then the guide", () => {
   assert.deepEqual(setupScreens(n), ["tell", "booked", "who", "sleep", "priority", "when", "from", "way", "airports"]);
   assert.equal(hasDoors(n), true);
   assert.deepEqual(planScreens(n, "guide"), [
-    "g:shape", "g:likes", "g:weather", "g:reach", "g:around", "g:avoid", "g:budget", "g:pick", "g:how", "g:trips",
+    "g:persona", "g:shape", "g:likes", "g:weather", "g:reach", "g:around", "g:avoid", "g:budget", "g:pick", "g:how", "g:trips",
     "p:Where", "p:Stay", "p:Getting", "p:Finish",
   ]);
   assert.deepEqual(planScreens(n, "ready"), ["p:Where", "p:Trips", "p:Getting", "p:Finish"]);
@@ -25,7 +25,7 @@ test("flights booked: no When, no From in setup; arrival asked in planning; no r
   const f = s({ booked: { flights: true } });
   assert.deepEqual(setupScreens(f), ["tell", "booked", "who", "sleep", "priority"]);
   assert.deepEqual(planScreens(f, "guide"), [
-    "g:shape", "g:likes", "g:weather", "g:around", "g:avoid", "g:budget", "g:pick", "g:how", "g:trips",
+    "g:persona", "g:shape", "g:likes", "g:weather", "g:around", "g:avoid", "g:budget", "g:pick", "g:how", "g:trips",
     "p:From", "p:Where", "p:Stay", "p:Getting", "p:Finish",
   ]);
 });
@@ -65,7 +65,7 @@ test("next, prev and the first open setup question", () => {
   assert.equal(nextScreen(list, "from"), "way");
   assert.equal(nextScreen(list, "airports"), "create");
   assert.equal(nextScreen(list, "create"), "tripHome");
-  assert.equal(nextScreen(list, "tripHome"), "g:shape");
+  assert.equal(nextScreen(list, "tripHome"), "g:persona");
   assert.equal(prevScreen(list, "tell"), null);
   assert.equal(prevScreen(list, "booked"), "tell");
   assert.equal(nextScreen(list, "daysHow"), null);
@@ -120,7 +120,7 @@ test("T797: the trips come after question 7 and are not a question", async () =>
   assert.equal(guideScreens(n).at(-1), TRIPS_SCREEN);
   assert.equal(guideQuestions(n).at(-1), "g:how");
   assert.ok(!guideQuestions(n).includes(TRIPS_SCREEN));
-  assert.equal(guideQuestions(n).length, 9);
+  assert.equal(guideQuestions(n).length, 10);
   assert.equal(nextScreen(planScreens(n, "guide"), "g:pick"), "g:how");
   assert.equal(nextScreen(planScreens(n, "guide"), "g:how"), "g:trips");
   assert.equal(nextScreen(planScreens(n, "guide"), "g:trips"), "p:Where");

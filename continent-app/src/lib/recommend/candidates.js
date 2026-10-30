@@ -26,7 +26,8 @@
  */
 import RECOMMEND from '../../../config/recommend.json' with { type: 'json' };
 import { matchCountries } from '../countryMatch.js';
-import { qualityOf } from '../match.js';
+import { forYou, qualityOf } from '../match.js';
+import { personaPool, personaReach, personaShapes, weighs } from './persona.js';
 import { isGateway } from '../rating.js';
 import { pickAirport } from '../airportPick.js';
 import { destAnchor } from '../origins.js';
@@ -129,7 +130,10 @@ export function datesFor(settings, month, today) {
 
 /** The trip shapes to build, with the shapes this batch cannot build yet. */
 export function shapesFor(settings) {
-  const asked = settings.guide.shapes.length ? settings.guide.shapes : CANDIDATES.anyShapes;
+  // No answer to What kind of trip: the persona's own shapes, else any.
+  const asked = settings.guide.shapes.length
+    ? settings.guide.shapes
+    : personaShapes(settings.guide.persona) || CANDIDATES.anyShapes;
   const noCar = wantsNoCar(settings);
   const gaps = asked.filter((s) => CANDIDATES.fallbackShapes[s]);
   const shapes = [...new Set(asked.map((s) => CANDIDATES.fallbackShapes[s] || s))]
@@ -153,8 +157,10 @@ const kmBetween = (a, b) => haversineKm(a.lat, a.lon, b.lat, b.lon);
  * of one already taken (minKm, so the Lake District and Keswick are one
  * stop). Null when fewer than `n` fit.
  */
-export function placesNear(ids, n, shape, destinations) {
-  const lim = shape === 'road' ? CANDIDATES.road : CANDIDATES.towns;
+export function placesNear(ids, n, shape, destinations, reach = null) {
+  // A persona may reach further between a few towns (big cities a train
+  // ride apart, config persona.towns); a road trip keeps its own limits.
+  const lim = shape === 'road' ? CANDIDATES.road : { ...CANDIDATES.towns, ...(reach || {}) };
   const taken = [];
   for (const id of ids) {
     const d = destinations[id];
@@ -318,7 +324,7 @@ export function buildCandidates(input) {
     const month = fixedMonth ?? bestMonth(dests, settings.guide.weather, today);
     const dates = datesFor(settings, month, today);
     const n = placesFor(shape, dates.nights);
-    const placeIds = n == null ? null : placesNear(ids, n, shape, destinations);
+    const placeIds = n == null ? null : placesNear(ids, n, shape, destinations, personaReach(settings.guide.persona));
     if (!placeIds) return null;
     const nights = splitNights(dates.nights, n);
     return {
@@ -347,8 +353,21 @@ export function buildCandidates(input) {
     seen.add(key);
     out.push(cand);
   };
+  // The persona (owner, plan flow walk): a country's places ordered by the
+  // same key plus the persona's shift, from all its rated places, so a
+  // small place near a hub can lead where the country match named the hub.
+  const persona = settings.guide.persona;
+  let poolFor = null;
+  if (weighs(persona)) {
+    const t = tasteFor(settings, taste);
+    const avoidHeat = settings.guide.avoid.includes('heat');
+    poolFor = (iso2) => personaPool(persona, iso2, destinations, {
+      month: fixedMonth,
+      keyOf: (d) => forYou(d, t, fixedMonth, { avoidHeat }),
+    });
+  }
   // T859: named places are the trips' only places, best first as named.
-  const named = namedPool(settings.places, { destinations, matched, month: fixedMonth });
+  const named = namedPool(settings.places, { destinations, matched, month: fixedMonth, pool: poolFor });
   if (named) {
     for (const { c, ids, town } of named) {
       for (const shape of shapes) push(build(c, shape, ids));
@@ -360,11 +379,17 @@ export function buildCandidates(input) {
     }
     return out;
   }
-  for (const c of countries) {
+  const pooled = poolFor
+    ? countries.map((c) => {
+      const pool = poolFor(c.iso2);
+      return pool.length ? { ...c, topPlaces: pool } : c;
+    })
+    : countries;
+  for (const c of pooled) {
     for (const shape of shapes) push(build(c, shape, c.topPlaces));
   }
   // Too few trips: the second-best place of each country, on its own.
-  for (const c of countries) {
+  for (const c of pooled) {
     if (out.length >= CANDIDATES.min) break;
     if (c.topPlaces.length > 1) push(build(c, 'one', c.topPlaces.slice(1)));
   }
@@ -381,7 +406,7 @@ export function buildCandidates(input) {
  *
  *   -> [{ c: { country, iso2, score, reasons, topType, bestMonth, topPlaces }, ids, town }]
  */
-export function namedPool(places, { destinations, matched = [], month = null }) {
+export function namedPool(places, { destinations, matched = [], month = null, pool = null }) {
   const list = Array.isArray(places) ? places : [];
   if (!list.length) return null;
   const up = (x) => String(x || '').toUpperCase();
@@ -400,6 +425,11 @@ export function namedPool(places, { destinations, matched = [], month = null }) 
   };
   const countryOf = (iso2, name) => {
     const m = byIso.get(iso2);
+    // A persona orders the named country's places its own way (persona.js).
+    const own = pool ? pool(iso2) : null;
+    if (own?.length) {
+      return m ? { ...m, topPlaces: own } : { country: name, iso2, score: 0, reasons: [], topType: null, bestMonth: null, topPlaces: own };
+    }
     return m
       ? { ...m, topPlaces: [...new Set([...(m.topPlaces || []), ...bestOf(iso2)])] }
       : { country: name, iso2, score: 0, reasons: [], topType: null, bestMonth: null, topPlaces: bestOf(iso2) };

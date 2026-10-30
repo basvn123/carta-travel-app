@@ -18,6 +18,7 @@
  */
 
 import SLOTS from '../../../config/slots.json' with { type: 'json' };
+import RECOMMEND from '../../../config/recommend.json' with { type: 'json' };
 import { exactWindow, monthsByNext } from '../../lib/tripDates.js';
 
 const wholeWhen = (w) => (w.mode === 'exact' ? exactWindow(w) : w);
@@ -56,6 +57,9 @@ export const AVOID = ['crowds', 'transfers', 'car', 'heat'];
  * and the pricing (lib/recommend/candidates.js transportFor).
  */
 export const AROUND = ['public', 'taxi', 'car', 'mix'];
+/** How the traveller likes to travel, the persona (owner, 2026-10-30;
+ *  config recommend.json persona, lib/recommend/persona.js). */
+export const PERSONA_IDS = [...RECOMMEND.persona.ids];
 /** T860: how they want to get there (the app's transport modes the question offers). */
 export const WAYS = ['any', 'plane', 'train', 'car'];
 /** T863: how much Carta plans, the four doors: the whole trip, the flight
@@ -98,7 +102,7 @@ export function defaultSettings() {
     when: { mode: 'exact', start: '', end: '', months: [], nights: 7 },
     from: null,
     way: '',
-    guide: { shapes: [], shape: '', likes: [], weather: '', reach: '', around: '', avoid: [], budget: { kind: 'total', per: 'person', eur: 0 }, pick: [...PICKABLE] },
+    guide: { shapes: [], shape: '', likes: [], weather: '', reach: '', around: '', persona: '', avoid: [], budget: { kind: 'total', per: 'person', eur: 0 }, pick: [...PICKABLE] },
     rhythm: { mornings: '', pace: '', detail: '', goal: '', food: '', around: '', steps: 0 },
     trip: { name: '', visibility: 'private', cover: '', created: 0, buddies: [] },
     note: '',
@@ -209,6 +213,7 @@ export function normalizeSettings(raw) {
       weather: oneOf(g.weather, WEATHER, ''),
       reach: oneOf(g.reach, REACH, ''),
       around: oneOf(g.around, AROUND, ''),
+      persona: oneOf(g.persona, PERSONA_IDS, ''),
       avoid: someOf(g.avoid, AVOID),
       budget: budgetOfRaw(g.budget, adults + kids),
       // T796: what Carta picks; a slot left out is the traveller's to choose.

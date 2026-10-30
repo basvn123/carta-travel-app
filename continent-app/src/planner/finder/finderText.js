@@ -154,6 +154,9 @@ export function factText(item, { t, lang = 'en' }) {
   if (f.month) vars.month = monthName(f.month, lang);
   if (f.place) vars.place = cityLabel(f.place);
   if (f.best) vars.best = cityLabel(f.best);
+  if (f.hub) vars.hub = cityLabel(f.hub);
+  // A persona reason names the trip's places as one list (persona.js).
+  if (Array.isArray(f.places)) vars.places = joinList(f.places.map(cityLabel), lang);
   if (Number.isFinite(f.over)) vars.over = formatMoney(f.over, { locale: lang });
   if (Number.isFinite(f.eur)) vars.eur = formatMoney(f.eur, { locale: lang });
   return t(item.key, vars);
@@ -199,6 +202,7 @@ export function answerChips(settings, { t, lang = 'en', originName = '', when = 
   } else if (trip?.nights && trip?.month) {
     out.push({ id: 'when', q: 'when', label: t('tf.chip.nightsIn', { n: trip.nights, month: monthName(trip.month, lang) }) });
   }
+  if (g.persona && g.persona !== 'mix') out.push({ id: 'persona', q: 'g:persona', label: optionLabel(t, 'g:persona', g.persona) });
   for (const v of g.shapes || []) out.push({ id: `shape:${v}`, q: 'g:shape', label: optionLabel(t, 'g:shape', v) });
   for (const v of g.likes || []) out.push({ id: `like:${v}`, q: 'g:likes', label: likeLabel(t, v) });
   if (g.weather && g.weather !== 'any') out.push({ id: 'weather', q: 'g:weather', label: optionLabel(t, 'g:weather', g.weather) });

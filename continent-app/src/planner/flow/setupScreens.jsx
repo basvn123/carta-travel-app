@@ -24,6 +24,7 @@ import {
 } from '../../components/Icons.jsx';
 import * as AllIcons from '../../components/Icons.jsx';
 import SLOTS from '../../../config/slots.json' with { type: 'json' };
+import RECOMMEND from '../../../config/recommend.json' with { type: 'json' };
 import { LifestyleStep } from './LifestyleStep.jsx';
 import { StayTypes } from './StayTypes.jsx';
 import { VisibilityChoice } from './VisibilityChoice.jsx';
@@ -483,6 +484,57 @@ export function LikeTiles({ picked, onToggle }) {
           {showCredits && <p className="pf-credit" id="pf-credit-list">{t('pf.likes.credit', { list: credits })}</p>}
         </div>
       )}
+    </>
+  );
+}
+
+// ---- How you like to travel: the persona (owner, plan flow walk 2026-10-30) ----
+
+/**
+ * What kind of traveller: eight rows, each a real place's photograph (the
+ * catalogue place config persona.photos names, so the picture is the
+ * example the line gives), the persona's name and one example line. One
+ * choice; selected is the tint, the brown edge and a tick. Two across from
+ * 769 px. The trip finder weighs places by it (lib/recommend/persona.js).
+ */
+export function PersonaScreen({ settings, commit, doneLabel }) {
+  const { t } = useI18n();
+  const ctx = useFirstRun();
+  const q = QUESTIONS['g:persona'];
+  const destinations = ctx?.data?.destinations;
+  const [picked, setPicked] = useState(settings.guide.persona || '');
+  return (
+    <>
+      <div className="pf-persona" role="radiogroup" aria-label={t(q.titleKey)}>
+        {q.options.map((o) => {
+          const on = picked === o.value;
+          const d = destinations?.[RECOMMEND.persona.photos[o.value]];
+          return (
+            <Button
+              key={o.value}
+              variant="quiet"
+              role="radio"
+              aria-checked={on}
+              className={`pf-persona-row${on ? ' is-on' : ''}`}
+              onClick={() => setPicked(o.value)}
+            >
+              <span className="pf-persona-media">
+                <HeroImage url={d?.image?.url} city={d?.city || t(o.labelKey)} iso2={d?.iso2} className="pf-persona-img" ratio={[1, 1]} maxWidth={160} />
+              </span>
+              <span className="pf-persona-text">
+                <span className="pf-persona-name">{t(o.labelKey)}</span>
+                <span className="pf-persona-sub">{t(o.subKey)}</span>
+              </span>
+              <span className="pf-persona-tick" aria-hidden="true">{on && <CheckIcon size={14} />}</span>
+            </Button>
+          );
+        })}
+      </div>
+      <Foot
+        disabled={!picked}
+        label={doneLabel}
+        onContinue={() => commit(answer(settings, 'g:persona', { guide: { ...settings.guide, persona: picked } }))}
+      />
     </>
   );
 }
