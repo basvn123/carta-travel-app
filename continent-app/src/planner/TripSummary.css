@@ -752,7 +752,7 @@ button.ct-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: 2
 .tpg-next-bar i.is-on { background: var(--text-2); }
 .tpg-next-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--space-3); }
 .tpg-next-main { display: grid; gap: 2px; min-width: 0; }
-.tpg-next-go.btn { flex: none; }
+.tpg-next-go.btn { flex: none; text-decoration: none; }
 
 /* ---- Change your trip (T888): one sheet for every input of the price ---- */
 .tpg-change.btn { border-radius: var(--radius-pill); }
