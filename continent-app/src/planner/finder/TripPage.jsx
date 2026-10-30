@@ -15,15 +15,16 @@ import { formatMoney } from '../../lib/money.js';
 import { monthName } from '../../lib/dates.js';
 import { cityLabel } from '../../lib/placeName.js';
 import { CROWD_KEYS, crowdTier, dayHighs } from '../../lib/recommend/compare.js';
+import { useIsDesktop } from '../../hooks/useIsDesktop.js';
 import { slotTotals } from '../../lib/recommend/slots.js';
 import { useBcp47, useMonths, whenText } from '../flow/flowHooks.js';
 import { useKeepTrip } from './finderHooks.js';
 import { useTotalDelta } from '../planHooks.js';
 import { LinePicker } from './LinePicker.jsx';
-import { TripCard } from './TripCard.jsx';
+import { MatchRing, TripCard } from './TripCard.jsx';
 import { whoFor } from './whoFor.js';
 import {
-  factText, groupHead, likeLabel, matchBars, pickLine, signedMoney, thereMinutes, topSights, totalLeavesOut, tripName, tripPhotos, withSlot,
+  countryLabel, factText, groupHead, likeLabel, matchBars, pickLine, signedMoney, thereMinutes, topSights, totalLeavesOut, tripName, tripPhotos, withSlot,
 } from './finderText.js';
 
 // The route map rides in the map's own chunk (TripsMap.jsx), so maplibre
@@ -83,9 +84,11 @@ function Credit({ url, t }) {
 /**
  * The gallery across the width: one photo a screen on a phone, a large one
  * and two beside it from 769 px, swiped or stepped; the place's name, the
- * position and the photo's credit on the caption line under it.
+ * position and the photo's credit on the caption line under it. On a phone
+ * the page's head lies on the first photo over an ink fade (`children`,
+ * T881), so the name is the first thing read.
  */
-function Gallery({ photos, name, t }) {
+function Gallery({ photos, name, t, children = null }) {
   const track = useRef(null);
   const [at, setAt] = useState(0);
   const step = () => {
@@ -109,6 +112,7 @@ function Gallery({ photos, name, t }) {
   const cur = photos[at] || photos[0];
   return (
     <div className="tff-gal tff-tp-gal">
+      {children && <div className="tff-gal-ov">{children}</div>}
       <div className="tff-gal-track" ref={track} onScroll={onScroll} onKeyDown={onKeyDown} tabIndex={0} role="region" aria-label={t('tf.pv.gallery', { name })}>
         {photos.map((p, i) => (
           <div className="tff-gal-slide" key={p.url}>
@@ -148,8 +152,8 @@ function durationText(t, min) {
 
 /**
  * The fact band: door to door, the weather that month, the sea, the
- * crowds, getting around and the airport, as label-over-value rows with an
- * icon each. A fact the data does not hold is left out (carta-design,
+ * crowds, getting around and the airport, as tiles (T881): an icon on a
+ * light umber ground, the label over the value. A fact the data does not hold is left out (carta-design,
  * detail page grammar), never "Not recorded".
  */
 function FactBand({ trip, destinations, t, lang }) {
@@ -178,7 +182,7 @@ function FactBand({ trip, destinations, t, lang }) {
     <dl className="tff-tp-facts" aria-label={t('tf.tp.factsLabel')}>
       {facts.map(({ key, Icon, label, value }) => (
         <div key={key} className="tff-tp-fact" data-fact={key}>
-          <dt><Icon size={16} />{label}</dt>
+          <dt><span className="tff-tp-fact-ic" aria-hidden="true"><Icon size={18} /></span>{label}</dt>
           <dd>{value}</dd>
         </div>
       ))}
@@ -262,7 +266,11 @@ function PriceCard({ trip, t, lang, onLine, onPlan, keeper, name, ui, delta = nu
   );
 }
 
-/** Why it fits (a bar a like on the ink ramp, then the reasons) and the catch, side by side from 769 px. */
+/**
+ * Why it fits (T881): what is for the trip and what is against it as two
+ * cards side by side, then a bar a like on the ink ramp. A like the trip
+ * barely holds says so in words under its bar instead of a bare low figure.
+ */
 function FitAndCatch({ trip, t, lang }) {
   const against = (trip.match?.conflicts || []).filter((c) => ['busy', 'car', 'heat'].includes(c.key));
   const againstText = (c) => (c.key === 'heat'
@@ -273,39 +281,86 @@ function FitAndCatch({ trip, t, lang }) {
   const bars = matchBars(trip);
   if (!reasons.length && !catches.length && !bars.length) return null;
   return (
-    <div className="tff-tp-two">
-      {(reasons.length > 0 || bars.length > 0) && (
-        <section className="tff-sec" aria-labelledby="tff-tp-fits">
-          <h2 className="tff-tp-h" id="tff-tp-fits">{t('tf.pv.why')}</h2>
-          {bars.length > 0 && (
-            <ul className="tff-fit-bars">
-              {bars.map((b) => {
-                const Icon = LIKE_ICON[b.key] || SparkIcon;
-                return (
-                  <li key={b.key} className="tff-fit-bar">
-                    <Icon size={18} />
-                    <span className="tff-fit-label">{likeLabel(t, b.key)}</span>
-                    <span className="tff-fit-track" aria-hidden="true"><span className="tff-fit-fill" style={{ transform: `scaleX(${b.pct / 100})` }} /></span>
-                    <span className="tff-fit-pct">{t('tf.why.pct', { pct: b.pct })}</span>
-                  </li>
-                );
-              })}
-            </ul>
+    <section className="tff-sec tff-why" aria-labelledby="tff-tp-fits">
+      <h2 className="tff-tp-h" id="tff-tp-fits">{t('tf.pv.why')}</h2>
+      {(reasons.length > 0 || catches.length > 0) && (
+        <div className="tff-why-pc">
+          {reasons.length > 0 && (
+            <div className="tff-why-col is-pro">
+              <h3 className="tff-why-h">{t('tf.why.for')}</h3>
+              <ul className="tff-fit-lines">
+                {reasons.map((x) => <li key={x}><CheckIcon size={14} /><span>{x}</span></li>)}
+              </ul>
+            </div>
           )}
-          <ul className="tff-fit-lines">
-            {reasons.map((x) => <li key={x}><CheckIcon size={14} /><span>{x}</span></li>)}
-          </ul>
-        </section>
+          {catches.length > 0 && (
+            <div className="tff-why-col is-con">
+              <h3 className="tff-why-h">{t('tf.why.against')}</h3>
+              <ul className="tff-fit-lines">
+                {catches.map((x) => <li key={x} className="is-catch"><AlertIcon size={14} /><span>{x}</span></li>)}
+              </ul>
+            </div>
+          )}
+        </div>
       )}
-      {catches.length > 0 && (
-        <section className="tff-sec" aria-labelledby="tff-tp-catch">
-          <h2 className="tff-tp-h" id="tff-tp-catch">{t('tf.tp.catch')}</h2>
-          <ul className="tff-fit-lines">
-            {catches.map((x) => <li key={x} className="is-catch"><AlertIcon size={14} /><span>{x}</span></li>)}
-          </ul>
-        </section>
+      {bars.length > 0 && (
+        <ul className="tff-fit-bars">
+          {bars.map((b) => {
+            const Icon = LIKE_ICON[b.key] || SparkIcon;
+            return (
+              <li key={b.key} className={`tff-fit-bar${b.pct < 20 ? ' is-miss' : ''}`}>
+                <Icon size={18} />
+                <span className="tff-fit-label">{likeLabel(t, b.key)}</span>
+                <span className="tff-fit-track" aria-hidden="true"><span className="tff-fit-fill" style={{ transform: `scaleX(${b.pct / 100})` }} /></span>
+                <span className="tff-fit-pct">{t('tf.why.pct', { pct: b.pct })}</span>
+                {b.pct < 20 && <span className="tff-fit-miss">{t('tf.why.miss')}</span>}
+              </li>
+            );
+          })}
+        </ul>
       )}
-    </div>
+    </section>
+  );
+}
+
+/**
+ * When to go (T881): the daytime highs of each month as bars and how busy
+ * each month gets as a dot under it, over the trip's places (the hottest
+ * high, the busiest tier), the trip's month marked. A screen reader hears
+ * one sentence a month. Left out when the places carry no month data.
+ */
+function WhenStrip({ trip, destinations, t, lang }) {
+  const months = Array.from({ length: 12 }, (_, i) => {
+    const highs = trip.places.map((p) => destinations?.[p.id]?.taste?.tmax_by_month?.[i]).filter(Number.isFinite);
+    const crowds = trip.places.map((p) => destinations?.[p.id]?.taste?.crowd_by_month?.[i]).filter(Number.isFinite);
+    return { m: i + 1, high: highs.length ? Math.round(Math.max(...highs)) : null, crowd: crowds.length ? Math.max(...crowds) : null };
+  });
+  const known = months.filter((x) => x.high != null);
+  if (known.length < 12) return null;
+  const lo = Math.min(...known.map((x) => x.high));
+  const hi = Math.max(...known.map((x) => x.high));
+  const span = Math.max(1, hi - lo);
+  return (
+    <section className="tff-sec tff-when" aria-labelledby="tff-tp-when">
+      <h2 className="tff-tp-h" id="tff-tp-when">{t('tf.when.title')}</h2>
+      <ol className="tff-when-strip" aria-label={t('tf.when.label')}>
+        {months.map((x) => {
+          const name = monthName(x.m, lang);
+          const level = x.crowd != null && CROWD_KEYS[x.crowd] ? t(CROWD_KEYS[x.crowd]) : '';
+          const on = x.m === trip.month;
+          return (
+            <li key={x.m} className={`tff-when-m${on ? ' is-on' : ''}${x.crowd >= 3 ? ' is-hot' : ''}`}
+              aria-label={[t('tf.when.month', { month: name, c: x.high, level }), on ? t('tf.when.yours') : ''].filter(Boolean).join(', ')}>
+              <span className="tff-when-c" aria-hidden="true">{x.high}°</span>
+              <span className="tff-when-bar" aria-hidden="true"><i style={{ height: `${30 + ((x.high - lo) / span) * 70}%` }} /></span>
+              <span className="tff-when-dot" data-tier={x.crowd ?? ''} aria-hidden="true" />
+              <span className="tff-when-l" aria-hidden="true">{monthName(x.m, lang, false)}</span>
+            </li>
+          );
+        })}
+      </ol>
+      <p className="tff-when-key">{t('tf.when.key')}</p>
+    </section>
   );
 }
 
@@ -344,6 +399,7 @@ export function TripPage({ trip, settings, destinations, ui, others = [], keepWi
   const name = tripName(trip, destinations, lang);
   const pct = trip.match?.pct;
   const bases = trip.places.length;
+  const desk = useIsDesktop();
   const when = settings ? whenText(t, settings.when, months, bcp47) : null;
   const dates = settings?.when?.mode === 'exact' && when?.start ? (when.end ? t('tf.chip.dates', { start: when.start, end: when.end }) : when.start) : monthName(trip.month, lang);
   const placeIds = useMemo(() => trip.places.map((p) => p.id), [trip.places]);
@@ -397,28 +453,38 @@ export function TripPage({ trip, settings, destinations, ui, others = [], keepWi
         </Button>
       </div>
 
-      <Gallery photos={photos} name={name} t={t} />
-
-      <header className="tff-tp-head">
-        <h1 className="pf-title tff-tp-title" id="tff-tp-title" tabIndex={-1} ref={titleRef}>{name}</h1>
-        <p className="tff-pv-meta">
-          <span className="tff-meta-item">{trip.iso2 && <CountryFlag country={trip.iso2} size={13} />}{trip.country}</span>
-          <span className="tff-meta-item"><CalendarIcon size={14} />{dates}</span>
-          <span className="tff-meta-item"><MoonIcon size={14} />{t('tf.keep.nights', { n: trip.nights })}</span>
-          <span className="tff-meta-item"><MapPinIcon size={14} />{t(bases === 1 ? 'tf.card.base1' : 'tf.card.bases', { n: bases })}</span>
-          {pct != null && <span className="tff-pv-match">{t('tf.card.match', { pct })}</span>}
-        </p>
-      </header>
+      {(() => {
+        // The head (T881): on a phone it lies on the first photo; from 769 px
+        // it follows the gallery. Rendered once, so the page keeps one h1.
+        const head = (
+          <header className="tff-tp-head">
+            <div className="tff-tp-titlerow">
+              {pct != null && <MatchRing pct={pct} label={t('tf.card.match', { pct })} className="is-head" />}
+              <h1 className="pf-title tff-tp-title" id="tff-tp-title" tabIndex={-1} ref={titleRef}>{name}</h1>
+            </div>
+            <p className="tff-pv-meta">
+              <span className="tff-meta-item">{trip.iso2 && <CountryFlag country={trip.iso2} size={13} />}{countryLabel(trip, lang)}</span>
+              <span className="tff-meta-item"><CalendarIcon size={14} />{dates}</span>
+              <span className="tff-meta-item"><MoonIcon size={14} />{t('tf.keep.nights', { n: trip.nights })}</span>
+              <span className="tff-meta-item"><MapPinIcon size={14} />{t(bases === 1 ? 'tf.card.base1' : 'tf.card.bases', { n: bases })}</span>
+            </p>
+          </header>
+        );
+        const onPhoto = !desk && photos.length > 0;
+        return (
+          <>
+            <Gallery photos={photos} name={name} t={t}>{onPhoto ? head : null}</Gallery>
+            {!onPhoto && head}
+          </>
+        );
+      })()}
 
       <div className="tff-tp-grid">
         <div className="tff-tp-lead">
-          {who && (
-            <section className="tff-tp-who" aria-labelledby="tff-tp-who">
-              <h2 className="tff-tp-h" id="tff-tp-who">{t('tf.tp.whoTitle')}</h2>
-              <p className="tff-tp-prose">{who}</p>
-            </section>
-          )}
+          {who && <p className="tff-tp-prose tff-tp-lede">{who}</p>}
           <FactBand trip={trip} destinations={destinations} t={t} lang={lang} />
+          <FitAndCatch trip={trip} t={t} lang={lang} />
+          <WhenStrip trip={trip} destinations={destinations} t={t} lang={lang} />
         </div>
 
         <aside className="tff-tp-side">
@@ -470,8 +536,6 @@ export function TripPage({ trip, settings, destinations, ui, others = [], keepWi
               );
             })}
           </section>
-
-          <FitAndCatch trip={trip} t={t} lang={lang} />
 
           {alts.length > 0 && (
             <section className="tff-sec" aria-labelledby="tff-tp-alts">
