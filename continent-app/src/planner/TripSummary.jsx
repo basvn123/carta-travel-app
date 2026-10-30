@@ -10,6 +10,7 @@ import {
 } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
+import { CountryFlag } from '../components/CountryFlag.jsx';
 import NotYet from '../components/NotYet.jsx';
 import { AirlineMark } from '../components/flights/Flights.jsx';
 import { useAirlines, airlineName } from '../lib/flights/useAirlines.js';
@@ -26,6 +27,7 @@ import { RouteCodes } from './trip/RouteCodes.jsx';
 import { ReadyToBook } from './trip/ReadyToBook.jsx';
 import { useSettings } from '../components/SettingsLine.jsx';
 import { useLifestyleLabel } from './planHooks.js';
+import { bookedCount, countdownText, shownTripName } from './trip/tripHead.js';
 
 const WAY_ICON = { fly: PlaneIcon, train: TrainIcon, bus: BusIcon, car: CarIcon, ferry: FerryIcon };
 
@@ -242,7 +244,7 @@ function MapCard({ map, mapFull, title }) {
  *   map, mapFull         the map for the card, and for full size
  *   onPlanHome()         All trips
  *   onPlanDays()         the day questions; absent hides Plan your days
- *   onSettings()         the trip settings (dates, people, from); settingsRef anchors it
+ *   onSettings()         the trip settings (dates, people, from), from the More menu (T885)
  *   onChip(key, ref)     T836: a chip's own editor ('dates', 'people', 'from'),
  *                        hung from the chip; absent, those chips open the settings
  *   onRename(name)       the name in place (T836): a tap on it or its pencil
@@ -265,7 +267,7 @@ export function TripSummary({
   name, tripStart, tripEnd, party, stopDetails, stayCosts = [], stayTier = 'home',
   priced, flight = null, ownFlight = null, driveLegs = null, origin = '',
   tab = 'overview', onTab, panels = {}, map = null, mapFull = null,
-  onPlanDays = null, onPlanHome = null, onSettings = null, settingsRef = null,
+  onPlanDays = null, onPlanHome = null, onSettings = null,
   onExport = null, bar = null, footer = null, history = null, onChip = null, onAddPaid = null, budgetCard = null,
   onPlanRest = null, booked = null, book = null, carTip = null,
   // T838: no edit mode. Every fact is changed where it is shown (the chips,
@@ -273,6 +275,9 @@ export function TripSummary({
   onRename = null,
 }) {
   const { t, lang } = useI18n();
+  const title = shownTripName(name, stopDetails, lang) || t('itin.myTrip');
+  const countdown = countdownText(t, tripStart, tripEnd);
+  const bookedNow = bookedCount({ flight, priced, ownFlight, stopDetails, stayCosts, booked });
   // The Lifestyle sets what the days cost (one .lifestyle-btn door): a chip
   // with the trip's own, opening the same sheet as everywhere else.
   const settings = useSettings();
@@ -306,6 +311,7 @@ export function TripSummary({
     .filter((p, i, a) => a.findIndex((q) => q.url === p.url) === i)
     .slice(0, 3);
   const places = [...new Set(stopDetails.map((s) => cityLabel(s.dest?.city || '')).filter(Boolean))];
+  const lead = stopDetails.find((s) => s.dest)?.dest || null;
 
   const total = priced?.grandTotal;
   const perPerson = priced?.perPerson;
@@ -326,12 +332,13 @@ export function TripSummary({
     { id: 'days', label: t('tp.tab.days') },
   ];
 
-  const chips = [
-    { key: 'places', Icon: MapPinIcon, text: places.join(', ') || t('itin.unknown'), onClick: () => go('itinerary'), aria: t('tp.tab.itinerary') },
-    { key: 'dates', Icon: CalendarIcon, text: [dates || t('pf.when.unsure'), nightsNote].filter(Boolean).join(', '), onClick: openChip('dates'), aria: t('wizard.summaryDates') },
-    { key: 'people', Icon: PersonIcon, text: people, onClick: openChip('people'), aria: t('settings.party') },
-    origin && { key: 'from', Icon: HomeIcon, text: origin, onClick: openChip('from'), aria: t('tp.ed.fromTitle') },
-    onLifestyle && lifestyle && { key: 'lifestyle', Icon: LifestyleIcon, text: lifestyle, onClick: onLifestyle, aria: t('settings.lifestyle') },
+  // T885: the trip bar, every input of the price as a label over its value,
+  // one tap each to its own editor (T836's chip editors, the Lifestyle sheet).
+  const cells = [
+    { key: 'dates', label: t('tp.bar.when'), text: [dates || t('pf.when.unsure'), nightsNote].filter(Boolean).join(', '), onClick: openChip('dates'), dialog: Boolean(onChip) },
+    { key: 'people', label: t('tp.bar.who'), text: people, onClick: openChip('people'), dialog: Boolean(onChip) },
+    origin && { key: 'from', label: t('tp.bar.from'), text: origin, onClick: openChip('from'), dialog: Boolean(onChip) },
+    onLifestyle && lifestyle && { key: 'lifestyle', label: t('tp.bar.stay'), text: lifestyle, onClick: onLifestyle, dialog: true },
   ].filter(Boolean);
 
   const tools = (
@@ -439,66 +446,68 @@ export function TripSummary({
               <ShareIcon size={20} />
             </IconButton>
           )}
-          {onSettings && (
-            <IconButton ref={settingsRef} tone="surface" label={t('pf.settings')} onClick={onSettings}>
-              <SettingsIcon size={20} />
-            </IconButton>
-          )}
         </span>
       </div>
 
-      {photos.length > 0 && (
-        <div className={`tpg-hero is-${photos.length}`}>
-          {photos.map((p, i) => (
-            <HeroImage key={`${p.url}-${i}`} url={p.url} city={p.city} className="tpg-hero-img"
-              ratio={i === 0 ? [3, 2] : [1, 1]} maxWidth={i === 0 ? 1600 : 640} eager={i === 0} />
-          ))}
-        </div>
-      )}
-
-      <header className="tpg-head">
-        {naming != null ? (
-          <>
-            <h1 className="sr-only">{name || t('itin.myTrip')}</h1>
-            <input
-              className="tpg-name tpg-name-input"
-              value={naming}
-              autoFocus
-              maxLength={80}
-              onChange={(e) => setNaming(e.target.value)}
-              onBlur={commitName}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') { e.preventDefault(); commitName(); }
-                if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); setNaming(null); }
-              }}
-              aria-label={t('trip.nameAria')}
-            />
-          </>
-        ) : (
-          <div className="tpg-name-row">
-            <h1 className="pf-title tpg-name" tabIndex={-1}>{name || t('itin.myTrip')}</h1>
-            {onRename && (
-              <IconButton tone="plain" className="tpg-rename" label={t('tp.rename')} onClick={() => setNaming(name || '')}>
-                <PencilIcon size={18} />
-              </IconButton>
-            )}
-          </div>
+      {/* T885: one photo carries the trip's name, its places and where it
+          stands (the countdown, what is booked); without a photo the same
+          head stands on the page. */}
+      <header className={`tpg-head${photos.length ? ' has-photo' : ''}`}>
+        {photos.length > 0 && (
+          <HeroImage url={photos[0].url} city={photos[0].city} className="tpg-photo-img" ratio={[3, 2]} maxWidth={1600} eager />
         )}
-        <ul className="tpg-chips" aria-label={t('tp.tripFacts')}>
-          {chips.map(({ key, Icon, text, onClick, aria }) => (
-            <li key={key}>
-              {onClick ? (
-                <button type="button" className="tpg-chip" onClick={onClick} aria-label={`${aria}: ${text}`} data-chip={key}
-                  ref={(el) => { chipEls.current[key] = el; }} aria-haspopup={['dates', 'people', 'from'].includes(key) && onChip ? 'dialog' : undefined}>
-                  <Icon size={16} aria-hidden="true" /><span>{text}</span>
-                </button>
-              ) : (
-                <span className="tpg-chip is-static" data-chip={key}><Icon size={16} aria-hidden="true" /><span>{text}</span></span>
+        {(countdown || bookedNow.of > 0) && (
+          <p className="tpg-pills">
+            {countdown && <span className="tpg-pill">{countdown}</span>}
+            {bookedNow.of > 0 && <span className={`tpg-pill${bookedNow.n ? ' is-some' : ''}`}><span className="tpg-pill-dot" aria-hidden="true" />{t('tp.bookedOf', { n: bookedNow.n, of: bookedNow.of })}</span>}
+          </p>
+        )}
+        <div className="tpg-ov">
+          {naming != null ? (
+            <>
+              <h1 className="sr-only">{title}</h1>
+              <input
+                className="tpg-name tpg-name-input"
+                value={naming}
+                autoFocus
+                maxLength={80}
+                onChange={(e) => setNaming(e.target.value)}
+                onBlur={commitName}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') { e.preventDefault(); commitName(); }
+                  if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); setNaming(null); }
+                }}
+                aria-label={t('trip.nameAria')}
+              />
+            </>
+          ) : (
+            <div className="tpg-name-row">
+              <h1 className="pf-title tpg-name" tabIndex={-1}>{title}</h1>
+              {onRename && (
+                <IconButton tone={photos.length ? 'photo' : 'plain'} className="tpg-rename" label={t('tp.rename')} onClick={() => setNaming(shownTripName(name, stopDetails, lang))}>
+                  <PencilIcon size={16} />
+                </IconButton>
               )}
-            </li>
-          ))}
-        </ul>
+            </div>
+          )}
+          <Button variant="quiet" size="sm" className="tpg-where" onClick={() => go('itinerary')} aria-label={`${t('tp.tab.itinerary')}: ${places.join(', ')}`}>
+            {lead?.iso2 && <CountryFlag country={lead.iso2} size={13} />}
+            <span>{[lead?.country, t(places.length === 1 ? 'tp.places1' : 'tp.placesN', { n: places.length })].filter(Boolean).join(', ')}</span>
+          </Button>
+        </div>
       </header>
+
+      <div className="tpg-tripbar" role="group" aria-label={t('tp.bar.label')}>
+        {cells.map(({ key, label, text, onClick, dialog }) => (
+          <Button key={key} variant="quiet" className="tpg-cell" onClick={onClick} data-chip={key}
+            aria-label={t('tp.bar.edit', { what: label, value: text })} aria-haspopup={dialog ? 'dialog' : undefined}
+            ref={(el) => { chipEls.current[key] = el; }}>
+            <span className="tpg-cell-k">{label}</span>
+            <span className="tpg-cell-v">{text}</span>
+            <PencilIcon size={14} className="tpg-cell-pen" aria-hidden="true" />
+          </Button>
+        ))}
+      </div>
 
       <div className="tpg-tabs" id={`${uid}-tabs`}>
         <Tabs label={t('tp.tabsLabel')} tabs={tabs} value={tab} onChange={(id) => onTab?.(id)} panelId={`${uid}-panel`} />

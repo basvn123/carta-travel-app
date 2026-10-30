@@ -1529,6 +1529,8 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                     // from 1024 px they sit at the end of the tab row.
                     !wideTrip && hist.canUndo && { key: 'undo', className: 'trip-undo-item', label: t('saved.undo'), onClick: () => { hist.undo(); setToast(null); } },
                     !wideTrip && hist.canRedo && { key: 'redo', className: 'trip-redo-item', label: t('tp.undo.redo'), onClick: () => { hist.redo(); setToast(null); } },
+                    // T885: Trip settings left the top row's gear for here.
+                    { key: 'settings', className: 'trip-settings-item', label: t('pf.settings'), onClick: () => setSettingsOpen(true) },
                     tp.stopDetails.length >= 3 && { key: 'replan', className: 'trip-plan-again-btn', label: t('trip.replanRoute'), title: t('trip.replanTitle'), onClick: () => tp.optimizeRoute() },
                     { key: 'over', className: 'trip-startover-btn', label: t('trip.startOver'), title: t('trip.startOverTitle'), danger: true, onClick: handleStartOver },
                   ]}
