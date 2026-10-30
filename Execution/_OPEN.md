@@ -2461,3 +2461,11 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T893-b | T893 | The research's keyboard pattern for desktop questions (number keys pick, Enter continues) is not built (Execution/P15/T891-T894-plan-flow-studio.md) | next task | open |  |
 | T894-a | T894 | The places-that-fit count follows the travellers only; weather, reach and budget do not move it yet (Execution/P15/T891-T894-plan-flow-studio.md) | next task | open |  |
 | T894-b | T894 | Deploy the merged batch T891 to T894 (Cloudflare credentials are the owner's) (Execution/P15/T891-T894-plan-flow-studio.md) | user | open |  |
+| T895-a | T895 | The trip page (TripPlannerTab) has no breadcrumb of its own (Plan / the trip) yet (Execution/P15/T895-T900-plan-days.md) | next task | open |  |
+| T896-a | T896 | The trip settings gear still edits the old rhythm questions; it should show Plan your days' goals, pace, start and Keep in mind (Execution/P15/T895-T900-plan-days.md) | next task | open |  |
+| T897-a | T897 | All days has no map coloured by day yet; TripMap needs a colour per stop (Execution/P15/T895-T900-plan-days.md) | next task | open |  |
+| T898-a | T898 | Start your day has no "what to bring" line; it needs data (weather, beach, tickets in cash) before it can say anything true (Execution/P15/T895-T900-plan-days.md) | next task | open |  |
+| T898-b | T898 | The artifact's day toolbar (Notes, Share) was not built; the day kit and exports keep their place under the timeline (Execution/P15/T895-T900-plan-days.md) | next task | open |  |
+| T899-a | T899 | The day page, All days and the Carta bot chat were checked only on components in a harness; walk them once with app data, a real trip and the plan-day planner (Execution/P15/T895-T900-plan-days.md) | next task | open |  |
+| T899-b | T899 | AiDayPlanModal is unused by the app but still used by scripts/ai and verify_day_workspace; the standalone day planner's CartaChatPlanner is not on DayBotChat yet (Execution/P15/T895-T900-plan-days.md) | next task | open |  |
+| T899-c | T899 | Deploy the merged batch T895 to T900 (Cloudflare credentials are the owner's) (Execution/P15/T895-T900-plan-days.md) | user | open |  |
