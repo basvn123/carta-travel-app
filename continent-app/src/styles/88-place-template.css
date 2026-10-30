@@ -487,7 +487,7 @@ a.pt-trip-name:focus-visible { outline: 2px solid var(--focus); outline-offset: 
 .pt-sim-why { font-size: var(--text-caption); color: var(--text-3); }
 
 /* ── The price card ── */
-.pt-card.dprice {
+.pt-page .pt-card {
   display: grid;
   gap: var(--space-4);
   padding: var(--space-5);
@@ -495,7 +495,7 @@ a.pt-trip-name:focus-visible { outline: 2px solid var(--focus); outline-offset: 
   border: 1px solid var(--border-soft);
   border-radius: var(--radius-sheet);
 }
-.pt-side .pt-card.dprice { border-color: transparent; box-shadow: var(--elev-2); }
+.pt-page .pt-side .pt-card { border-color: transparent; box-shadow: var(--elev-2); }
 .pt-pr { margin: 0; display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--space-2); }
 .pt-pr-fig { font-size: var(--text-headline); font-weight: 700; letter-spacing: -0.02em; color: var(--text); font-variant-numeric: tabular-nums; }
 .pt-pr-unit { font-size: var(--text-body); color: var(--text-2); }
@@ -563,7 +563,7 @@ a.pt-trip-name:focus-visible { outline: 2px solid var(--focus); outline-offset: 
 .pt-dock-fig { font-size: var(--text-lead); font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
 .pt-dock-unit { font-size: var(--text-label); color: var(--text-2); }
 .btn.pt-dock-inputs {
-  min-height: 28px;
+  min-height: var(--tap);
   padding: 0;
   max-width: 100%;
   color: var(--text);
@@ -583,3 +583,89 @@ a.pt-trip-name:focus-visible { outline: 2px solid var(--focus); outline-offset: 
 @media (max-width: 768px) {
   body:has(.pt-page[aria-modal="true"]) .bottom-nav { visibility: hidden; }
 }
+@media (pointer: fine) { .btn.pt-dock-inputs { min-height: 28px; } }
+
+/* ── T913: the trip page's own parts on the same template. ── */
+.pt-page.jpage-v2 { background: var(--surface-page); }
+.pt-tip-text { margin: 0; }
+.pt-tips li.is-lead { padding: var(--space-3); background: var(--umber-50); border-radius: var(--radius-card); }
+.pt-tips li.is-lead .pt-tip-icon { background: var(--surface); }
+.pt-fit { display: grid; gap: var(--space-2); }
+@media (min-width: 700px) { .pt-fit { grid-template-columns: 1fr 1fr; } }
+.pt-fit > div { display: grid; gap: var(--space-2); align-content: start; padding: var(--space-3) var(--space-4); background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-card); }
+.pt-fit b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.pt-fit ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-1); font-size: var(--text-body); color: var(--text-2); }
+.pt-fit li { display: grid; grid-template-columns: 18px 1fr; gap: var(--space-2); align-items: start; }
+.pt-fit li svg { color: var(--action); margin-top: 3px; }
+.pt-fit .is-less li svg { color: var(--text-3); }
+
+/* Route: the legs beside the map */
+.pt-legs { list-style: none; margin: 0; padding: 0; display: grid; }
+.pt-legs li { display: grid; grid-template-columns: 24px 1fr auto; gap: var(--space-3); align-items: center; padding: var(--space-2) 0; border-top: 1px solid var(--border-soft); }
+.pt-legs li:first-child { border-top: 0; padding-top: 0; }
+.pt-leg-main { display: grid; gap: 2px; min-width: 0; }
+.pt-leg-main b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.pt-leg-main small { font-size: var(--text-caption); color: var(--text-3); }
+.pt-leg-mode { display: inline-flex; align-items: center; gap: var(--space-1); font-size: var(--text-label); color: var(--text-2); text-align: right; }
+.pt-leg-mode svg { flex: none; }
+
+/* Day by day: an accordion */
+.pt-days { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+.pt-day { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-card); overflow: hidden; }
+.btn.pt-day-btn {
+  display: grid;
+  grid-template-columns: 52px 1fr 20px;
+  gap: var(--space-3);
+  align-items: center;
+  min-height: 64px;
+  padding: var(--space-3) var(--space-4);
+  border-radius: 0;
+  text-align: left;
+  color: var(--text);
+}
+.btn.pt-day-btn .btn-label { display: contents; }
+.btn.pt-day-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+@media (hover: hover) { .btn.pt-day-btn:hover { background: var(--surface-hover); } }
+.pt-day-n { display: grid; justify-items: center; padding: var(--space-2) 0; border-radius: var(--radius-control); background: var(--umber-50); color: var(--text); }
+.pt-day-n-l { font-size: var(--text-micro); font-weight: 600; }
+.pt-day-n b { font-size: var(--text-title); font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+.pt-day-t { display: grid; gap: 2px; min-width: 0; }
+.pt-day-t b { font-size: var(--text-body); font-weight: 600; white-space: normal; }
+.pt-day-t small { display: flex; align-items: center; gap: var(--space-1); font-size: var(--text-label); font-weight: 400; color: var(--text-2); white-space: normal; }
+.pt-day-chev { color: var(--text-3); transition: transform var(--dur-2) var(--ease-out); }
+.pt-day.is-open .pt-day-chev { transform: rotate(180deg); }
+@media (prefers-reduced-motion: reduce) { .pt-day-chev { transition: none; } }
+.pt-day-body { display: grid; gap: var(--space-3); padding: 0 var(--space-4) var(--space-4) calc(var(--space-4) + 52px + var(--space-3)); }
+.pt-day-body[hidden] { display: none; }
+@media (max-width: 699px) { .pt-day-body { padding-left: var(--space-4); } }
+.pt-part { display: grid; grid-template-columns: 96px 1fr; gap: var(--space-3); font-size: var(--text-body); color: var(--text-2); line-height: var(--leading-body); }
+.pt-part small { font-size: var(--text-caption); font-weight: 600; color: var(--text-3); line-height: var(--leading-body); }
+.pt-part-text { margin: 0; }
+@media (max-width: 499px) { .pt-part { grid-template-columns: 1fr; gap: 2px; } }
+.pt-daychips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-1); }
+.pt-daychips li { padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); background: var(--surface-sunken); font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+
+/* Costs: the four ranges as bars, then the total */
+.pt-ranges { display: grid; gap: var(--space-3); padding: var(--space-4); background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-card); }
+.pt-rg { display: grid; grid-template-columns: 140px 1fr auto; gap: var(--space-3); align-items: center; font-size: var(--text-body); color: var(--text); }
+.pt-rg-name { display: inline-flex; align-items: center; gap: var(--space-1); min-width: 0; }
+.pt-rg-track { position: relative; height: 8px; border-radius: var(--radius-pill); background: var(--surface-sunken); }
+.pt-rg-track i { position: absolute; top: 0; bottom: 0; border-radius: var(--radius-pill); background: var(--umber-300); }
+.pt-rg-fig { font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; text-align: right; }
+@media (max-width: 499px) {
+  .pt-rg { grid-template-columns: 1fr auto; }
+  .pt-rg-track { grid-column: 1 / -1; grid-row: 2; }
+}
+.pt-rg-total { display: flex; justify-content: space-between; gap: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--border-soft); font-size: var(--text-lead); font-weight: 700; color: var(--text); }
+.pt-rg-total b { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* Where you sleep */
+.pt-stays { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+@media (min-width: 700px) { .pt-stays { grid-template-columns: 1fr 1fr; } }
+.pt-stay { display: grid; gap: 2px; align-content: start; padding: var(--space-3) var(--space-4); background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-card); }
+.pt-stay b { font-size: var(--text-lead); font-weight: 600; color: var(--text); }
+.pt-stay-style { font-size: var(--text-label); color: var(--text-2); }
+
+/* Getting there and back, Practical */
+ul.pt-cells { list-style: none; margin: 0; padding: 0; }
+.pt-cell.is-risk .pt-cell-icon { color: var(--amber-ink); }
