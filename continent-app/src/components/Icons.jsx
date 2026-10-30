@@ -764,6 +764,16 @@ export function SettingsIcon({ size = 15, className = '', labelled = false }) {
   );
 }
 
+/* T899: copy an answer of the Carta bot: two sheets, one over the other. */
+export function CopyIcon({ size = 15, className = '', labelled = false }) {
+  return (
+    <Glyph size={size} className={className} labelled={labelled} label="Copy">
+      <rect x="9" y="9" width="11" height="11" rx="2" />
+      <path d="M5 15V5a1 1 0 0 1 1-1h9" />
+    </Glyph>
+  );
+}
+
 export function LinkIcon({ size = 15, className = '', labelled = false }) {
   return (
     <Glyph size={size} className={className} labelled={labelled} label="Link">

@@ -33,7 +33,7 @@ import {
   poiRating, isTransportInfraPoi, isCommercialNoisePoi, duplicatePoiIndices,
   canonicalPoiIndices, poiIdentityKeys, DAY_STYLES,
 } from './dayDraft.js';
-import { AiDayPlanModal } from './AiDayPlanModal.jsx';
+import { DayBotChat } from './days/DayBotChat.jsx';
 import { AutoPlanBar } from './days/AutoPlanBar.jsx';
 import { TripDaysOverview } from './days/TripDaysOverview.jsx';
 import { DayTownGuide } from './days/DayTownGuide.jsx';
@@ -1274,7 +1274,8 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   // own), discoveries become spark pins, and the schedule card is kept in
   // prefs. Route mode flips to manual so the AI's deliberate chronology
   // (indoor stops in the hot hours) is not instantly reshuffled.
-  const applyAiResult = (result) => {
+  // T899: the chat stays open beside the day on a desktop after Add.
+  const applyAiResult = (result, { keepOpen = false } = {}) => {
     const { orderedIdx } = splitAiPlan(result, activities.items);
     if (orderedIdx.length) {
       const next = {
@@ -1301,7 +1302,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     };
     setPrefs(saved);
     persistPrefs(plan?.id, saved);
-    setAiOpen(false);
+    if (!keepOpen) setAiOpen(false);
   };
 
   // T823: the queue that plans every day. It moves the planner to each day
@@ -4052,6 +4053,31 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     />
   );
 
+  // T899: the Carta bot, a chat beside the day (DayBotChat), in place of
+  // the AiDayPlanModal form.
+  const botOn = aiOpen && Boolean(stop);
+  const botChat = botOn ? (
+    <DayBotChat
+      key={`${stopIdx}-${dayIdx}`}
+      city={cityLabel(stop.dest?.city || '')}
+      dayNumber={dayNumber}
+      dateLabel={days[dayIdx] ? fmtDateFull(days[dayIdx], true) : ''}
+      dateISO={days[dayIdx] || prefs?.aiDate || ''}
+      stopsCount={assignedItems.length}
+      groupSize={prefs?.aiGroupSize || aiGroupSize()}
+      signedIn={!!user && authConfigured}
+      onSignIn={onRequestAuth}
+      preset={botPreset}
+      onRun={runAi}
+      onApply={(r) => applyAiResult(r, { keepOpen: isDesk })}
+      onFallback={fallbackAi}
+      onClose={() => { setAiOpen(false); setBotPreset(null); }}
+      entitlement={entitlement}
+      onOpenPass={(reason) => paywall.require(reason || 'browse')}
+      docked={isDesk}
+    />
+  ) : null;
+
   const receiptId = 'day-receipt';
   const openReceipt = () => setReceiptOpen(true);
   const ADD_TITLE_KEYS = { morning: 'dayws.addTitleMorning', afternoon: 'dayws.addTitleAfternoon', evening: 'dayws.addTitleEvening' };
@@ -4315,7 +4341,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   );
 
   return (
-    <div className={`trip-planner-screen day-ws ${isDesk ? 'is-desk' : 'is-drawer'}${isNarrow ? ' is-page' : ''}`}>
+    <div className={`trip-planner-screen day-ws ${isDesk ? 'is-desk' : 'is-drawer'}${isNarrow ? ' is-page' : ''}${botOn && isDesk ? ' has-bot' : ''}`}>
       {saveToast && <div className="trip-save-toast" role="status">{saveToast}</div>}
       <UndoToast pending={undoPending} onUndo={doUndo} />
       {autoQueue && autoQueue.phase !== 'init' && (
@@ -4326,22 +4352,6 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
           onResume={() => setAutoQueue((q) => (q ? { ...q, phase: 'run', code: '' } : q))}
           onPass={() => paywall.require('plans')}
           onClose={() => setAutoQueue(null)}
-        />
-      )}
-      {aiOpen && stop && (
-        <AiDayPlanModal
-          city={stop.dest?.city || ''}
-          dayNumber={dayNumber}
-          dateISO={days[dayIdx] || prefs?.aiDate || ''}
-          groupSize={prefs?.aiGroupSize || aiGroupSize()}
-          signedIn={!!user && authConfigured}
-          preset={botPreset}
-          onRun={runAi}
-          onApply={applyAiResult}
-          onFallback={fallbackAi}
-          onClose={() => { setAiOpen(false); setBotPreset(null); }}
-          entitlement={entitlement}
-          onOpenPass={(reason) => paywall.require(reason || 'browse')}
         />
       )}
       {receiptOpen && (
@@ -4377,6 +4387,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
           <div className="dayws-map">
             {mapNode({ fitPadding: deskFitPadding })}
           </div>
+          {botOn && botChat}
         </>
       ) : (
         <>
@@ -4396,6 +4407,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
               <div className="dayws-drawer-body">{overviewBody || dayBody}</div>
             </MapDrawer>
           </div>
+          {botOn && botChat}
         </>
       )}
     </div>
