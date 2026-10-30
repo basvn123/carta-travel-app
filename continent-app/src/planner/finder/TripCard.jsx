@@ -5,7 +5,7 @@ import { HeroImage } from '../../components/HeroImage.jsx';
 import { CountryFlag } from '../../components/CountryFlag.jsx';
 import { CheckIcon, HeartIcon, MapPinIcon, MoonIcon, MoreIcon, ScaleIcon } from '../../components/Icons.jsx';
 import { formatMoney } from '../../lib/money.js';
-import { cardLine, groupHead, totalLeavesOut, tripName, tripPhotos } from './finderText.js';
+import { budgetBadge, cardLine, groupHead, totalLeavesOut, tripName, tripPhotos } from './finderText.js';
 
 /**
  * The trip's photo on a card (T810, one photo since T869): the first
@@ -123,6 +123,10 @@ export const TripCard = forwardRef(function TripCard({ trip, destinations, marke
   const pct = trip.match?.pct;
   const bases = trip.places.length;
   const { reason, caught } = cardLine(trip, { t, lang });
+  // Over the budget is one quiet line, only when it is over and the catch
+  // does not say so already (a busy month or the heat can take the catch).
+  const badge = budgetBadge(trip, { locale: lang });
+  const over = badge?.over && trip.catch?.key !== 'tf.catch.budget' ? t(badge.key, badge.vars) : '';
 
   const setRefs = (el) => {
     openRef.current = el;
@@ -203,6 +207,7 @@ export const TripCard = forwardRef(function TripCard({ trip, destinations, marke
           {total ? <span className="tff-total-eur money">{total}</span> : <span className="tff-total-eur">{t('money.onRequest')}</span>}
           <span className="tff-total-unit">{unit}</span>
         </p>
+        {over && <p className="tff-card-over">{over}</p>}
         {(marked || ticked) && (
           <p className="tff-card-marks">
             {marked && <span className="tff-card-mark"><CheckIcon size={14} />{t('tf.card.planned')}</span>}
