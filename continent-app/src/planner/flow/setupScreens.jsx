@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { useBcp47, useMonths, whenText } from './flowHooks.js';
 import { formatMoney } from '../../lib/money.js';
 import { useFirstRun } from '../../lib/firstRunContext.js';
@@ -17,6 +17,7 @@ import { DateField } from '../../components/DateField.jsx';
 import { Stepper } from '../../components/FilterControls.jsx';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { personaPhotos } from '../../lib/recommend/persona.js';
+import { PersonaDraft } from './FlowSide.jsx';
 import { creditFor, creditLine } from '../../lib/imageCredit.js';
 import {
   Button, Chip, ChipGroup, ChoiceRows, Field, IconButton, Segmented, Switch,
@@ -527,6 +528,9 @@ export function PersonaScreen({ settings, commit, doneLabel }) {
   const [most, setMost] = useState(settings.guide.personaMost || '');
   const real = picked.filter((v) => v !== 'mix');
   const mostOn = real.length > 1 && real.includes(most) ? most : '';
+  // T894: Your trip so far counts the places that fit while ticking.
+  const report = useContext(PersonaDraft);
+  useEffect(() => { report?.(personasOfRaw({ personas: picked, personaMost: mostOn })); }, [picked, mostOn]); // eslint-disable-line react-hooks/exhaustive-deps -- report is a state setter
   const toggle = (v) => setPicked((cur) => {
     if (cur.includes(v)) return cur.filter((x) => x !== v);
     if (v === 'mix') return ['mix'];

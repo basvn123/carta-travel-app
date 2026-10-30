@@ -1431,3 +1431,77 @@
 @media (hover: hover) {
   .btn.pf-rail-step:not(:disabled):not(.is-now):hover { background: var(--surface-hover); color: var(--text); }
 }
+
+/* ---- Your trip so far (T894) ----
+   The right column from 1100 px: the answers on hairlines, each a way back
+   to its step, then how many places fit the travellers picked and the
+   three that fit best, on a sunken band. Below 1100 px the same column
+   sits behind one button under the step's head (.pf-fold). */
+.pf-side-in {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-height: calc(100dvh - var(--filter-h, 0px) - var(--bottom-nav-h, 0px));
+  overflow-y: auto;
+  padding: var(--space-6) var(--space-5);
+  scrollbar-width: thin;
+}
+.pf-side-h { margin: 0; font-size: var(--text-title); font-weight: 700; letter-spacing: -0.01em; color: var(--text); }
+.pf-side-rows { display: flex; flex-direction: column; margin: 0; }
+.pf-side-row {
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--space-2);
+  padding: var(--space-1) 0;
+  border-top: 1px solid var(--border-soft);
+}
+.pf-side-row:first-child { border-top: 0; }
+.pf-side-row dt { font-size: var(--text-caption); color: var(--text-3); }
+.pf-side-row dd { min-width: 0; margin: 0; }
+.pf-side-val { font-size: var(--text-label); font-weight: 600; color: var(--text); overflow-wrap: anywhere; }
+.btn.pf-side-val {
+  justify-content: flex-start;
+  width: 100%;
+  height: auto;
+  min-height: 32px;
+  margin-left: calc(-1 * var(--space-2));
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  text-align: left;
+  white-space: normal;
+}
+.pf-side-val.is-none { font-weight: 400; color: var(--text-3); }
+.pf-side-row.is-now .pf-side-val { color: var(--select-ink); }
+@media (hover: hover) { .btn.pf-side-val:hover { background: var(--surface-hover); } }
+.pf-fit { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-4); border-radius: var(--radius-card); background: var(--surface-sunken); }
+.pf-fit-n { display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--space-2); margin: 0; color: var(--text-2); font-size: var(--text-label); }
+.pf-fit-n b { font-size: var(--text-headline); font-weight: 800; line-height: 1; letter-spacing: -0.02em; color: var(--text); font-variant-numeric: tabular-nums; }
+.pf-fit-h { margin: 0; font-size: var(--text-caption); font-weight: 700; color: var(--text-2); }
+.pf-fit-top { display: flex; flex-direction: column; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.pf-fit-place { display: grid; grid-template-columns: 44px minmax(0, 1fr); align-items: center; gap: var(--space-3); animation: pf-fit-in var(--dur-3) var(--ease-out) both; }
+.pf-fit-place .pf-fit-img { display: block; width: 44px; height: 44px; border-radius: var(--radius-control); object-fit: cover; }
+.pf-fit-txt { display: flex; flex-direction: column; min-width: 0; }
+.pf-fit-txt b { font-size: var(--text-label); font-weight: 600; color: var(--text); }
+.pf-fit-txt small { overflow: hidden; font-size: var(--text-caption); color: var(--text-3); white-space: nowrap; text-overflow: ellipsis; }
+@keyframes pf-fit-in { from { opacity: 0.3; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+.pf-fold { display: flex; flex-direction: column; gap: var(--space-2); }
+.btn.pf-fold-btn {
+  justify-content: space-between;
+  width: 100%;
+  height: auto;
+  min-height: 48px;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-card);
+  text-align: left;
+}
+.pf-fold-t { font-size: var(--text-label); font-weight: 700; color: var(--text); }
+.pf-fold-s { flex: 1; min-width: 0; margin-left: var(--space-2); overflow: hidden; font-size: var(--text-caption); font-weight: 500; color: var(--text-3); white-space: nowrap; text-overflow: ellipsis; }
+.pf-fold-btn[aria-expanded="true"] .btn-icon { transform: rotate(180deg); }
+.pf-fold-body { padding: var(--space-3) var(--space-4); border-radius: var(--radius-card); background: var(--surface); box-shadow: var(--elev-1); }
+.pf-fold-body .pf-side-in { position: static; max-height: none; padding: 0; overflow: visible; }
+@media (min-width: 1100px) { .pf-fold { display: none; } }
+@media (prefers-reduced-motion: reduce) { .pf-fit-place { animation: none; } }
