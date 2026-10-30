@@ -495,7 +495,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     if (!openPlanId) return;
     (async () => {
       if (typeof openPlanId === 'object') {
-        const { planId: targetPlanId, stopIndex, dayIndex, overview: wantOverview, autoFill } = openPlanId;
+        const { planId: targetPlanId, stopIndex, dayIndex, overview: wantOverview, autoFill, bot: wantBot } = openPlanId;
         let opened = false;
         if (targetPlanId) {
           try { await openPlan(targetPlanId); opened = true; } catch { /* plan gone */ }
@@ -537,8 +537,10 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
             setBotPreset({ ...dayAiPreset(tripSettings), autoRun: true });
             setAiOpen(true);
           }
+          // T896: Plan with the Carta bot opens the first day with the bot.
+          if (wantBot) { setBotPreset({ ...dayAiPreset(tripSettings), autoRun: false }); setAiOpen(true); }
           // An empty day opens on its places, unless Carta is about to fill it.
-          setAdding(onDay.length || wantOverview || autoFill ? null : 'end');
+          setAdding(onDay.length || wantOverview || autoFill || wantBot ? null : 'end');
           setDrawer('half');
         }
       } else {
@@ -1339,8 +1341,9 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
       try {
         res = await runAi({
           // T851: the day's own pace (Days tab) before the trip's preset.
-          vibe: p.vibe || 'mix', pace: (loadPrefs(autoQueue.planKey) || {}).dayPace?.[`${si}-${di}`] || p.pace || 'balanced', avoidHills: false, freeText: p.freeText || '',
-          date: days[di] || null, groupSize: aiGroupSize(), wantEvents: false,
+          vibe: p.vibe || 'mix', pace: (loadPrefs(autoQueue.planKey) || {}).dayPace?.[`${si}-${di}`] || p.pace || 'balanced', avoidHills: !!p.avoidHills, freeText: p.freeText || '',
+          // T896: Plan your days' Keep in mind (events, short walks) reach every day.
+          date: days[di] || null, groupSize: aiGroupSize(), wantEvents: !!p.wantEvents,
         });
       } catch {
         res = { ok: false, code: 'network' };

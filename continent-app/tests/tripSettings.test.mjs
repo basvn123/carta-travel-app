@@ -219,3 +219,19 @@ test("question 7: Carta picks every pickable slot by default; unknown ids drop o
   assert.ok(s.answered.includes("g:pick"));
   assert.deepEqual(s.guide.pick, ["flight"]);
 });
+
+// T896: Plan your days' one screen: goals are the plan-day moods, Keep in mind shapes the profile.
+test("Plan your days: goals become moods, keep in mind shapes the plan", async () => {
+  const { normalizeSettings: norm, dayAiPreset } = await import("../src/planner/flow/tripSettings.js");
+  const s = norm({ rhythm: { goals: ["beach", "food", "x", "museums", "nature"], keep: ["walk", "events", "rest"], pace: "slow" }, daysHow: "bot" });
+  assert.deepEqual(s.rhythm.goals, ["beach", "food", "museums", "nature"]);
+  assert.equal(s.daysHow, "bot");
+  const p = dayAiPreset(s);
+  assert.deepEqual(p.profile.moods, ["beach", "food", "museums"]);
+  assert.equal(p.wantEvents, true);
+  assert.equal(p.avoidHills, true);
+  assert.ok(p.profile.steps <= 8000);
+  assert.match(p.freeText, /rest after lunch/);
+  assert.equal(p.pace, "relaxed");
+  assert.equal(p.autoRun, true);
+});

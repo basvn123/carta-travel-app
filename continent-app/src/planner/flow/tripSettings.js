@@ -88,6 +88,10 @@ export const RHYTHM = {
   food: ['street', 'local', 'fine', 'cook'],
   around: ['walk', 'transit', 'taxi', 'car'],
   steps: [5000, 10000, 15000, 20000],
+  // T896: what the days should hold more of (the plan-day moods) and what to
+  // keep in mind, on the one Plan your days screen.
+  goals: ['sights', 'beach', 'nature', 'food', 'museums', 'nightlife', 'shopping'],
+  keep: ['walk', 'rest', 'cheap', 'events'],
 };
 
 export const VISIBILITY = ['private', 'friends', 'link'];
@@ -114,7 +118,7 @@ export function defaultSettings() {
     from: null,
     way: '',
     guide: { shapes: [], shape: '', likes: [], weather: '', reach: '', around: '', persona: '', personas: [], personaMost: '', avoid: [], budget: { kind: 'total', per: 'person', eur: 0 }, pick: [...PICKABLE] },
-    rhythm: { mornings: '', pace: '', detail: '', goal: '', food: '', around: '', steps: 0 },
+    rhythm: { mornings: '', pace: '', detail: '', goal: '', food: '', around: '', steps: 0, goals: [], keep: [] },
     trip: { name: '', visibility: 'private', cover: '', created: 0, buddies: [] },
     note: '',
     imports: [],
@@ -242,6 +246,8 @@ export function normalizeSettings(raw) {
       food: oneOf(r.food, RHYTHM.food, ''),
       around: oneOf(r.around, RHYTHM.around, ''),
       steps: RHYTHM.steps.includes(Number(r.steps)) ? Number(r.steps) : 0,
+      goals: someOf(r.goals, RHYTHM.goals),
+      keep: someOf(r.keep, RHYTHM.keep),
     },
     trip: {
       name: String(tr.name || '').slice(0, 80),
@@ -255,7 +261,7 @@ export function normalizeSettings(raw) {
         : [],
     },
     note: String(raw.note || '').slice(0, 600),
-    daysHow: oneOf(raw.daysHow, ['carta', 'self'], ''),
+    daysHow: oneOf(raw.daysHow, ['carta', 'bot', 'self'], ''),
     imports: Array.isArray(raw.imports) ? raw.imports.slice(0, 20).map(normalizeImport).filter(Boolean) : [],
     places: Array.isArray(raw.places)
       ? raw.places.map(namedPlace).filter(Boolean).filter((p, i, a) => a.findIndex((x) => x.kind === p.kind && x.id === p.id) === i).slice(0, 6)
@@ -510,16 +516,27 @@ export function dayAiPreset(s) {
   const startTime = { early: '08:00', onthego: '09:30', slow: '11:00' }[r.mornings] || null;
   const steps = r.steps || ({ walk: 15000, transit: 10000, taxi: 5000, car: 5000 }[r.around]) || null;
   const food = { street: 'quick', local: 'sit', fine: 'sit', cook: 'picnic' }[r.food] || null;
-  const moods = { culture: ['museums', 'sights'], relax: ['beach', 'views'], outdoors: ['nature', 'active'], food: ['food', 'local'] }[r.goal] || [];
+  // T896: the goals picked on Plan your days are the plan-day moods
+  // themselves (up to three); the older one goal still maps.
+  const moods = r.goals?.length
+    ? r.goals.slice(0, 3)
+    : { culture: ['museums', 'sights'], relax: ['beach', 'views'], outdoors: ['nature', 'active'], food: ['food', 'local'] }[r.goal] || [];
+  const keep = r.keep || [];
+  // Keep in mind: short walks cap the steps and the hills; a rest and a low
+  // spend go to the planner as words; events turn its events search on.
+  const asks = [keep.includes('rest') && 'Leave a rest after lunch.', keep.includes('cheap') && 'Keep the day cheap: free sights and simple food.'].filter(Boolean);
   return {
     vibe: { culture: 'culture', outdoors: 'active', food: 'foodie' }[r.goal] || 'mix',
     pace: { packed: 'packed', balanced: 'balanced', slow: 'relaxed' }[r.pace] || 'balanced',
-    autoRun: Boolean(r.pace && r.goal),
+    autoRun: Boolean(r.pace && (r.goal || r.goals?.length)),
+    freeText: asks.join(' '),
+    wantEvents: keep.includes('events'),
+    avoidHills: keep.includes('walk'),
     profile: {
       companions,
       startTime,
-      steps,
-      food,
+      steps: keep.includes('walk') ? Math.min(steps || 8000, 8000) : steps,
+      food: keep.includes('cheap') ? 'quick' : food,
       stepFree: Boolean(s.party.slowWalkers),
       moods,
     },

@@ -1378,15 +1378,17 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
 
       {askDays && (
         <DaysPrompt
-          skipAsk
           onClose={() => setAskDays(false)}
           onPlan={(how) => {
             setAskDays(false);
             // T674: Carta plans: the first day opens with the plan at work;
-            // planning yourself: the days overview with the ideas.
+            // planning yourself: the days overview with the ideas. T896: the
+            // Carta bot: the first day with the bot open beside it.
             onPlanDay(how === 'carta'
               ? { planId: tp.planId, stopIndex: 0, dayIndex: 0, autoFill: true }
-              : { planId: tp.planId, stopIndex: 0, dayIndex: 0, overview: true });
+              : how === 'bot'
+                ? { planId: tp.planId, stopIndex: 0, dayIndex: 0, bot: true }
+                : { planId: tp.planId, stopIndex: 0, dayIndex: 0, overview: true });
           }}
         />
       )}
