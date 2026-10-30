@@ -49,7 +49,7 @@ import { scrollToSection } from './PageTemplate.jsx';
 /**
  * The cycling page: one route, or one tour composed over routes.
  *
- * Since T919 it stands on the place page's template (OutdoorParts.jsx, the
+ * Since T922 it stands on the place page's template (OutdoorParts.jsx, the
  * owner's approved spec of 2026-10-30): the photographs, the head (the name,
  * the Score with the rank in the region, the ref as a badge), six facts
  * (length, time, climb, bike, traffic-free share, route type), a jump bar,
@@ -608,7 +608,7 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
     if (how !== 'shared') setToast(t('trails.savedGpx'));
   };
 
-  /* ── The page (T919) ──────────────────────────────────────────────── */
+  /* ── The page (T922) ──────────────────────────────────────────────── */
 
   const sf = carta.surface;
   const pavedKnown = sf && Number.isFinite(sf.paved_share) && (sf.surface_known_share ?? 1) >= 0.25;

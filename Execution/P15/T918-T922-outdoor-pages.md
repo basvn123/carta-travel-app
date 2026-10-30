@@ -1,8 +1,8 @@
-# T915 to T919: the five outdoor pages on the place template, and their data
+# T918 to T922: the five outdoor pages on the place template, and their data
 
 ## Task ID
 
-T915 to T919, one batch (CLAUDE.md "Batches"), branch `p15-outdoor-pages`.
+T918 to T922, one batch (renumbered at merge: another session had taken T915 to T917 on main while this batch ran; the commits on the batch branch still carry T915 to T919, in that order, so T915 here is T918, T916 is T919, T917 is T920, T918 is T921 and T919 is T922). CLAUDE.md "Batches", branch `p15-outdoor-pages`.
 
 ## Date
 
@@ -23,7 +23,7 @@ The research and the artifact "Outdoor Place Pages" (https://claude.ai/artifact/
 - The map is a full-width Route block in the page.
 - "Stay nearby" is a priced line in the side card.
 
-Two tasks ran in parallel worktrees: T915 (pipeline) and T916 to T919 (pages, in sequence). They were merged into the batch branch, followed by one end check and one fix commit.
+Two tasks ran in parallel worktrees: T918 (pipeline) and T919 to T922 (pages, in sequence). They were merged into the batch branch, followed by one end check and one fix commit.
 
 **How it was checked.**
 
@@ -37,13 +37,13 @@ Two tasks ran in parallel worktrees: T915 (pipeline) and T916 to T919 (pages, in
   - EuroVelo 1 part 30 (`#cycle=57332&cc=PT`)
 - **Not loadable here:** Wikimedia photos were routed to the film stills; map tiles do not load in this session. No overflow and no page errors were found beyond the blocked tiles.
 
-**Deploy.** Not done. This session has no Cloudflare token or account id, and `api.cloudflare.com` is not allowed in its network settings (T915-c).
+**Deploy.** Not done. This session has no Cloudflare token or account id, and `api.cloudflare.com` is not allowed in its network settings (T918-c).
 
-## T915: the outdoor page keys in the pipeline
+## T918: the outdoor page keys in the pipeline
 
 ### What changed
 
-New pass `pipeline/outdoor/derive_outdoor_pages.py`, run as the `outdoor_pages` task in `run_pipeline.py` behind the publish gate, after the nature exports. It adds keys to the committed wires and is idempotent. Placeholder sources are `cache/outdoor/{trails,beaches,lakes,mountains,cycling}.json` (`{"_about", "items": {id: {...}}}`); a placeholder value wins over a derived one, field by field. The contract is in `docs/SCHEMA.md`, section "Outdoor page keys (T915)".
+New pass `pipeline/outdoor/derive_outdoor_pages.py`, run as the `outdoor_pages` task in `run_pipeline.py` behind the publish gate, after the nature exports. It adds keys to the committed wires and is idempotent. Placeholder sources are `cache/outdoor/{trails,beaches,lakes,mountains,cycling}.json` (`{"_about", "items": {id: {...}}}`); a placeholder value wins over a derived one, field by field. The contract is in `docs/SCHEMA.md`, section "Outdoor page keys (T918)".
 
 | Layer | Key | Rows | Source |
 |---|---|---|---|
@@ -96,17 +96,17 @@ Beaches (9 rows) and lakes (369 rows) already had an older string `access` ("roa
 
 ### What is still open
 
-- Bus, train and tram stops near a start (`access.transit`) are empty in every layer: there is no offline stops source (T915-a).
-- `sea_temp` waits for `cache/sea_temp_beaches.json`, the output of `pipeline/harvest_sea_temp.py` (T915-b).
-- The placeholder files need a harvest: dogs, permit, hut season, sunbeds, lifeguard season, waves, entry fee, rentals, lift, bike trains, rental (T911-a's sibling; this register row is T915-d).
+- Bus, train and tram stops near a start (`access.transit`) are empty in every layer: there is no offline stops source (T918-a).
+- `sea_temp` waits for `cache/sea_temp_beaches.json`, the output of `pipeline/harvest_sea_temp.py` (T918-b).
+- The placeholder files need a harvest: dogs, permit, hut season, sunbeds, lifeguard season, waves, entry fee, rentals, lift, bike trains, rental (T918-d).
 - Parking only covers places within about 1.5 km of a Carta destination, so no parking means not known.
-- The deploy (T915-c).
+- The deploy (T918-c).
 
 ### Rollback procedure
 
 `git revert fe67786f35 e5d733cfcc 323bf501f1`. The keys are additive and the pages skip them when absent.
 
-## T916: shared outdoor parts and the trail page
+## T919: shared outdoor parts and the trail page
 
 ### What changed
 
@@ -140,13 +140,13 @@ Nothing at merge.
 
 ### What is still open
 
-The helper exports in `OutdoorParts.jsx` and `PeakFacts.jsx` raise react-refresh lint warnings; move them to a lib file (T916-a).
+The helper exports in `OutdoorParts.jsx` and `PeakFacts.jsx` raise react-refresh lint warnings; move them to a lib file (T919-a).
 
 ### Rollback procedure
 
-`git revert 5c50ce1fe6`, together with T917 to T919, which use its parts.
+`git revert 5c50ce1fe6`, together with T920 to T922, which use its parts.
 
-## T917: the beach and lake pages
+## T920: the beach and lake pages
 
 ### What changed
 
@@ -166,13 +166,13 @@ The end check, `cb14a0899e`:
 
 ### What is still open
 
-Nothing beyond the T915 placeholders.
+Nothing beyond the T918 placeholders.
 
 ### Rollback procedure
 
 `git revert cb14a0899e f9d58bc9bc`.
 
-## T918: the mountain page
+## T921: the mountain page
 
 ### What changed
 
@@ -190,13 +190,13 @@ Sections:
 
 ### What is still open
 
-The storm and crowd cells render only once `season.storm` or `crowds` exist in the data (T918-a).
+The storm and crowd cells render only once `season.storm` or `crowds` exist in the data (T921-a).
 
 ### Rollback procedure
 
 `git revert e3bd548f67`.
 
-## T919: the cycling page
+## T922: the cycling page
 
 ### What changed
 
@@ -217,7 +217,7 @@ Sections:
 
 ### What is still open
 
-Cycling pages have no "Stay nearby": route rows carry no base town (T919-a).
+Cycling pages have no "Stay nearby": route rows carry no base town (T922-a).
 
 ### Rollback procedure
 

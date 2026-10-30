@@ -55,7 +55,7 @@ import {
  * The trail page: a published hike or city day as a page of its own, opened
  * from a card in the Explore tab or from a shared #trail= link.
  *
- * Since T916 it stands on the place page's template (OutdoorParts.jsx, the
+ * Since T919 it stands on the place page's template (OutdoorParts.jsx, the
  * owner's approved spec of 2026-10-30): the photographs, the head (the name
  * without the OSM route number, which moves to a badge; the Score, the rank
  * in the region, the flag and the region, one lead line), six facts (grade,

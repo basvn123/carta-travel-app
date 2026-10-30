@@ -2527,13 +2527,13 @@ TASKS = [
         "writes_app_data": False,
         "writes_wire": True,
         "soft": True,
-        "rev": "T915",
+        "rev": "T918",
         "cmds": [
             [PY, PUBLISH, "--layer", "trails", "--layer", "beaches", "--layer", "lakes",
              "--layer", "peaks", "--layer", "cycling", "--",
              PY, "pipeline/outdoor/derive_outdoor_pages.py"],
         ],
-        "note": ("T915: a post-pass over the five nature wires (detail files for "
+        "note": ("T918: a post-pass over the five nature wires (detail files for "
                  "trails and cycling, country rows for beaches, lakes and peaks). "
                  "After every nature export, because each export rewrites its files "
                  "without these keys. Reads cache/parking_osm.json, "

@@ -9,11 +9,11 @@ import {
 
 /**
  * The peak facts a climber sizes a day by that the facts row does not carry
- * (T630; on the outdoor template since T918): the rank in its range, the
+ * (T630; on the outdoor template since T921): the rank in its range, the
  * slope warning, the lift's price and hours, the huts on the flanks and the
  * forecast at the height of the summit.
  *
- * Since T918 a fact the wire does not have is left out, as on the place
+ * Since T921 a fact the wire does not have is left out, as on the place
  * page: these builders return null (or an empty list) without data, and the
  * mountain page draws only what comes back.
  *

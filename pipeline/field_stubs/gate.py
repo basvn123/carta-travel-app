@@ -81,7 +81,7 @@ RANGES = {
     "sst": (0, 32, True), "sun_h": (0, 24 * 31, True),
     "elev_m": (-450, 8900, True),
     "slope_deg": (0, 90, True), "slopeDeg": (0, 90, True),
-    # T915 outdoor page keys (pipeline/outdoor/derive_outdoor_pages.py).
+    # T918 outdoor page keys (pipeline/outdoor/derive_outdoor_pages.py).
     "sea_temp": (0, 32, True), "alt_m": (-450, 5000, True),
     "entry_eur": (0, 500, True), "eur_day": (0, 1000, False),
     "eur_hour": (0, 500, False), "return_eur": (0, 500, False),

@@ -37,7 +37,7 @@ import {
 /**
  * The beach page: one published beach, and the argument for going there.
  *
- * Since T917 it stands on the place page's template (OutdoorParts.jsx, the
+ * Since T920 it stands on the place page's template (OutdoorParts.jsx, the
  * owner's approved spec of 2026-10-30): the photographs, the head (the name,
  * the Score with the rank in the region, the region), the facts that decide
  * (the EU water class, what is underfoot, a lifeguard, the length, which way

@@ -1,4 +1,4 @@
-"""T915: the outdoor detail page redesign's new wire keys.
+"""T918: the outdoor detail page redesign's new wire keys.
 
 Tier: Scheduled (run_pipeline task outdoor_pages, after every nature export)
 
@@ -16,7 +16,7 @@ layer's own id, and a value there wins over a derived one, so filling a file
 later needs no code change. Keys starting with "_" inside an item are notes
 and are never published.
 
-Keys, per layer (shapes in docs/SCHEMA.md, "Outdoor page keys (T915)"):
+Keys, per layer (shapes in docs/SCHEMA.md, "Outdoor page keys (T918)"):
 
   trails    detail file public/trails/trip/{id}.json
             start {name?, lat, lon, ele?}       derived: first vertex of the
@@ -122,7 +122,7 @@ SERVICE_OFF_M = 2000     # a service town counts for "along the way" this close
 REPAIR_MAX = 5
 
 # Keys this pass owns, per layer. Removed before every write so a rerun is
-# exact. `access` is only removed when it is the T915 object: beaches and
+# exact. `access` is only removed when it is the T918 object: beaches and
 # lakes carry an older string `access` ("road", "steps", "hike") on some rows,
 # which this pass leaves alone (see SCHEMA.md).
 OWNED = {
