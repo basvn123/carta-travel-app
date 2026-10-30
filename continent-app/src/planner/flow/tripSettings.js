@@ -51,6 +51,9 @@ export const REACH = ['short', 'any', 'overland'];
 export const AVOID = ['crowds', 'transfers', 'car', 'heat'];
 /** T860: how they want to get there (the app's transport modes the question offers). */
 export const WAYS = ['any', 'plane', 'train', 'car'];
+/** T863: how much Carta plans, the four doors: the whole trip, the flight
+ *  first, a place the traveller knows, or around what they booked. */
+export const TRIP_DOORS = ['guide', 'flight', 'know', 'booked'];
 /** Question 7 (T796): the price lines Carta may pick, from config/slots.json
  *  (every pickable slot that is live). The default is all of them. */
 export const PICKABLE = SLOTS.slots.filter((r) => r.pickable && r.status === 'live').map((r) => r.id);
@@ -117,6 +120,8 @@ export function defaultSettings() {
     // 'words' (Tell Carta's sentence) or 'screen'. An id with no entry was
     // given on its screen, as every answer was before T857.
     sources: {},
+    // T863: the door this trip was planned through ('' until one is chosen).
+    door: '',
   };
 }
 
@@ -230,6 +235,7 @@ export function normalizeSettings(raw) {
     sources: raw.sources && typeof raw.sources === 'object'
       ? Object.fromEntries(Object.entries(raw.sources).filter(([k, v]) => typeof k === 'string' && SOURCES.includes(v)))
       : {},
+    door: oneOf(raw.door, TRIP_DOORS, ''),
   };
 }
 

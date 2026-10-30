@@ -2,11 +2,11 @@ import React, { useState, useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import './TripSummary.css';
 import { useI18n } from '../i18n/index.jsx';
-import { Button, IconButton, Money, Segmented, Tabs } from '../components/ui/index.js';
+import { Button, Chip, IconButton, Money, Segmented, Tabs } from '../components/ui/index.js';
 import {
   ArrowLeftIcon, BedIcon, CalendarIcon, CarIcon, FerryIcon, HomeIcon, MoonIcon, PersonIcon, PencilIcon,
   TrainIcon, BusIcon, SparkIcon, ChevronRightIcon, MapPinIcon, LifestyleIcon, SettingsIcon, ShareIcon,
-  ExpandIcon, ShrinkIcon, UndoIcon, RedoIcon,
+  ExpandIcon, ShrinkIcon, UndoIcon, RedoIcon, RouteIcon,
 } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
@@ -80,8 +80,11 @@ export function TripHead({ name, photos = [], dates = '', people = '', nights = 
  * line of detail, a figure on the right), so every row starts on one edge.
  * The figures are the receipt's own: a way's fare, a stop's bed and days.
  */
-function OverviewRoute({ tripStart, tripEnd, stopDetails, stayCosts, stayTier, priced, flight, ownFlight, driveLegs, origin, div }) {
+function OverviewRoute({ tripStart, tripEnd, stopDetails, stayCosts, stayTier, priced, flight, ownFlight, driveLegs, origin, div, booked = null }) {
   const { t } = useI18n();
+  // T866: the parts the traveller booked carry the word, beside their own figure.
+  const bookedMark = <Chip kind="status" tone="positive" className="ts-booked">{t('pf.doors.bookedMark')}</Chip>;
+  const bookedStays = new Set(booked?.stays || []);
   const airlines = useAirlines();
   const split = ownFlight && (ownFlight.costOut != null || ownFlight.costBack != null);
   const paid = {
@@ -111,6 +114,7 @@ function OverviewRoute({ tripStart, tripEnd, stopDetails, stayCosts, stayTier, p
         Icon: WAY_ICON[mode] || PlaneIcon, label, line: who || t(TRAVEL_MODE_LABEL[mode] || 'trip.modeFly'),
         sub: [t('trip.sum.yourOwn'), date ? fmtDate(date, true) : ''],
         eur: paid[dir] > 0 ? paid[dir] : (dir === 'out' && !split ? (flight?.cost_total || null) : null),
+        booked: Boolean(booked?.flights),
       };
     }
     // A planned route without a fare yet still names its airports (T839).
@@ -141,6 +145,7 @@ function OverviewRoute({ tripStart, tripEnd, stopDetails, stayCosts, stayTier, p
             {w.line}
           </span>
           <span className="ts-node-sub">{w.notYet ? <NotYet /> : w.sub.filter(Boolean).join(', ')}</span>
+          {w.booked && bookedMark}
         </div>
         <span className="ts-node-fig">{w.notYet ? null : fig(w.eur)}</span>
       </li>
@@ -168,6 +173,7 @@ function OverviewRoute({ tripStart, tripEnd, stopDetails, stayCosts, stayTier, p
                 )}
                 <span><BedIcon size={14} /> {sc?.ownAccom ? t('trip.sum.ownStay') : t(`stay.${stayTier || 'home'}`)}</span>
               </span>
+              {bookedStays.has(s.destinationId) && bookedMark}
             </div>
             <span className="ts-node-fig">{fig(sc?.total)}</span>
           </li>
@@ -229,6 +235,8 @@ function MapCard({ map, mapFull, title }) {
  *   history              { canUndo, canRedo, undo, redo } (T835): from 1024 px
  *                        Undo and Redo at the end of the tab row
  *   onAddPaid()          T839: put in what was paid (the route's own fields)
+ *   onPlanRest()         T863: a flight-first or booked trip's "Plan the rest"
+ *   booked               T866: { flights, stays: [destinationId] } marked Booked on the route
  *   budgetCard           T846: the total against the budget; the side column
  *                        from 1024 px (every tab), under the band below it
  *   bar                  round buttons on the top row (save)
@@ -240,6 +248,7 @@ export function TripSummary({
   tab = 'overview', onTab, panels = {}, map = null, mapFull = null,
   onPlanDays = null, onPlanHome = null, onSettings = null, settingsRef = null,
   onExport = null, bar = null, footer = null, history = null, onChip = null, onAddPaid = null, budgetCard = null,
+  onPlanRest = null, booked = null,
   // T838: no edit mode. Every fact is changed where it is shown (the chips,
   // the name, the route's stops), so the page has one layout.
   onRename = null,
@@ -313,6 +322,11 @@ export function TripSummary({
           {t('trip.planYourDays')}
         </Button>
       )}
+      {onPlanRest && (
+        <Button variant="secondary" className="tpg-tool tpg-rest" iconStart={<RouteIcon size={18} />} onClick={onPlanRest}>
+          {t('pf.doors.rest')}
+        </Button>
+      )}
       {onSettings && (
         <Button variant="secondary" className="tpg-tool" iconStart={<SettingsIcon size={18} />} onClick={onSettings}>
           {t('pf.settings')}
@@ -372,7 +386,7 @@ export function TripSummary({
         <h2 className="tpg-h" id={`${uid}-route`}>{t('plan.yourRoute')}</h2>
         <OverviewRoute
           tripStart={tripStart} tripEnd={tripEnd} stopDetails={stopDetails} stayCosts={stayCosts} stayTier={stayTier}
-          priced={priced} flight={flight} ownFlight={ownFlight} driveLegs={driveLegs} origin={origin} div={div}
+          priced={priced} flight={flight} ownFlight={ownFlight} driveLegs={driveLegs} origin={origin} div={div} booked={booked}
         />
       </section>
 

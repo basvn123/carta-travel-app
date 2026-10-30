@@ -683,3 +683,6 @@ button.ct-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: 2
   color: var(--text-2);
 }
 .itin-air-text { min-width: 0; }
+
+/* T866: a part the traveller booked carries the word under its line. */
+.ts-node-main .ts-booked { align-self: flex-start; margin-top: var(--space-1); }

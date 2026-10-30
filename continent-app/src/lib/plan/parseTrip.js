@@ -160,6 +160,14 @@ const NO_FLY = ['no flying', 'no flights', 'not fly', 'don t want to fly', 'with
   'ohne fliegen', 'sans avion', 'pas en avion', 'sin volar', 'sin avion', 'senza aereo', 'senza volare', 'train only', 'only by train'];
 const NO_CAR = ['no car', 'without a car', 'without car', 'car free', 'zonder auto', 'geen auto', 'ohne auto', 'kein auto', 'sans voiture',
   'pas de voiture', 'sin coche', 'sin auto', 'senza auto', 'senza macchina'];
+// T863: the flight first, as the words say it ("just a cheap flight", "eerst de vlucht").
+const FLIGHT_FIRST = ['flight first', 'the flight first', 'just a flight', 'just the flight', 'only a flight', 'only the flight', 'flight only',
+  'cheap flight', 'cheap flights', 'a cheap flight', 'cheapest flight', 'cheapest flights', 'find me a flight', 'find a flight',
+  'eerst de vlucht', 'alleen een vlucht', 'alleen de vlucht', 'alleen vlucht', 'goedkope vlucht', 'goedkope vluchten', 'goedkoopste vlucht',
+  'nur einen flug', 'nur den flug', 'nur flug', 'billigflug', 'billigfluge', 'gunstiger flug', 'gunstige fluge', 'zuerst den flug',
+  'juste un vol', 'juste le vol', 'seulement le vol', 'seulement un vol', 'vol pas cher', 'vols pas chers', 'd abord le vol',
+  'solo el vuelo', 'solo un vuelo', 'vuelo barato', 'vuelos baratos', 'primero el vuelo',
+  'solo il volo', 'solo un volo', 'volo economico', 'voli economici', 'prima il volo'];
 const ROAD = ['road trip', 'roadtrip', 'rondreis', 'rundreise', 'road trip en voiture', 'circuit', 'ruta en coche', 'viaggio on the road'];
 
 const ORIGIN = ['from', 'leaving from', 'starting from', 'starting in', 'departing from', 'flying from', 'flying out of', 'out of', 'we live in',
@@ -238,7 +246,7 @@ const L = {
   bookVerb: new Set(BOOK_VERB.map(f)), bookStrong: new Set(BOOK_STRONG.map(f)),
   bookObj: Object.entries(BOOK_OBJECT).map(([k, v]) => [k, fold(v)]), nothingBooked: fold(NOTHING_BOOKED),
   stay: STAY.map(([k, v]) => [k, fold(v)]), stars: new Set(STARS.map(f)),
-  way: Object.entries(WAY).map(([k, v]) => [k, fold(v)]), noFly: fold(NO_FLY), noCar: fold(NO_CAR), road: fold(ROAD),
+  way: Object.entries(WAY).map(([k, v]) => [k, fold(v)]), noFly: fold(NO_FLY), noCar: fold(NO_CAR), road: fold(ROAD), flightFirst: fold(FLIGHT_FIRST),
   budgetCue: fold(BUDGET_CUE), origin: fold(ORIGIN), anyTime: fold(ANY_TIME), rangeTo: fold(RANGE_TO),
   perPerson: fold(PER_PERSON), perGroup: fold(PER_GROUP), perDay: fold(PER_DAY), nextMonth: fold(NEXT_MONTH),
   seasons: SEASONS.map(([m, v]) => [m, fold(v)]),
@@ -463,6 +471,14 @@ export function parseTrip(text, ctx = {}) {
     }
   }
   if (bookSpans.length) set('booked', booked, bookSpans);
+
+  // -- T863: the flight first ("just a cheap flight", "solo el vuelo"), read
+  // after what is booked (a booked flight is not the door) and before who
+  // goes and the way, so "solo" is not a party and "flight" not a way.
+  for (let i = 0; i < toks.length; i++) {
+    const n = matchAt(toks, i, L.flightFirst, used);
+    if (n) { set('door', 'flight', [[i, n]]); take(i, n); break; }
+  }
 
   // -- Dates: "3 to 10 July", "July 3 to 10", "du 3 au 10 juillet", "3 July to 2 August", an ISO day.
   const monthAt = (i) => {
@@ -891,6 +907,8 @@ export function applyTrip(s, parsed, { keep = [] } = {}) {
   if (F.stay && free('sleep')) { choices.stay_tier = F.stay.value; answered.push('sleep'); }
   // T860: the way there is its own question now (way); the app's choice follows it.
   if (F.way && free('way')) { choices.transport_mode = F.way.value; patch.way = WAY_ANSWER[F.way.value] || 'any'; answered.push('way'); }
+  // T863: the words may choose the door ("just a cheap flight").
+  if (F.door && free('doors')) { patch.door = F.door.value; answered.push('doors'); }
   return { patch, answered, choices };
 }
 

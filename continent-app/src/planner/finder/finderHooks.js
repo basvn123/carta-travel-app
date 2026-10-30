@@ -30,6 +30,7 @@ import { loadMountainIndex } from '../../lib/mountains.js';
 import { loadCyclingIndex } from '../../lib/cycling.js';
 import { todayISO } from '../../lib/dates.js';
 import { buildTrips } from '../../lib/recommend/trips.js';
+import { flightRows, knowTrip } from '../../lib/recommend/doorTrips.js';
 import { LEVERS, findTrips, rankTrips } from '../../lib/recommend/rank.js';
 import { SLOT_ROWS } from '../../lib/recommend/slots.js';
 import { PROFILES } from '../../lib/lifestyleProfiles.js';
@@ -214,6 +215,61 @@ export function useTripFinder(settings) {
     input: fresh ? run.input : null,
     data,
     origin,
+  };
+}
+
+/**
+ * A door's own run (T864, T865): the same inputs the finder reads (the home
+ * airport's swept file, the layer indexes, the catalogue, the choices),
+ * then Find my flight first's rows (`kind` 'flight', lib/recommend
+ * doorTrips flightRows) or I know where's one trip ('know', knowTrip).
+ * Stages tick on real work: 'flights' when the files are in, 'priced' when
+ * the trips are priced.
+ *
+ *   -> { stages: { flights, priced }, result (rows | trip | null), error, origin, data }
+ */
+export function useDoorRun(settings, kind) {
+  const firstRun = useFirstRun();
+  const data = firstRun?.data || null;
+  const choices = firstRun?.choices || {};
+  const countryInsights = useCountryInsights();
+  const taste = useTaste();
+  const origin = useMemo(() => originOf(data), [data]);
+  const lifestyle = choices.lifestyle || data?.meta?.defaults?.lifestyle || null;
+  const stayTier = choices.stay_tier || null;
+  const [run, setRun] = useState({ key: null, stages: { flights: false, priced: false }, result: undefined, error: null });
+  const key = JSON.stringify([kind, settings.guide, settings.when, settings.party, settings.priority, settings.places, origin?.iata,
+    stayTier, lifestyle, (data?.meta?.home_airports || []).map((a) => a.iata), Object.keys(data?.flightsBy || {})]);
+  useEffect(() => {
+    if (!data?.destinations || countryInsights == null) return undefined;
+    let alive = true;
+    setRun({ key, stages: { flights: false, priced: false }, result: undefined, error: null });
+    (async () => {
+      try {
+        const [flights, layerIndexes] = await Promise.all([
+          origin ? loadFlightFile(origin.iata).catch(() => null) : null,
+          loadLayers(),
+        ]);
+        if (!alive) return;
+        setRun((r) => ({ ...r, stages: { ...r.stages, flights: true } }));
+        await nextFrame();
+        if (!alive) return;
+        const input = { data, countryInsights, layerIndexes, settings: answersOf(settings), taste, origin, flights, lifestyle, stayTier, today: todayISO() };
+        const result = kind === 'flight' ? flightRows(input) : knowTrip(input);
+        setRun((r) => ({ ...r, result, stages: { flights: true, priced: true } }));
+      } catch (error) {
+        if (alive) setRun((r) => ({ ...r, result: null, error }));
+      }
+    })();
+    return () => { alive = false; };
+  }, [key, data, countryInsights]); // eslint-disable-line react-hooks/exhaustive-deps -- `key` stands for the answers, origin, choices and airports
+  const fresh = run.key === key;
+  return {
+    stages: fresh ? run.stages : { flights: false, priced: false },
+    result: fresh ? run.result : undefined,
+    error: fresh ? run.error : null,
+    origin,
+    data,
   };
 }
 

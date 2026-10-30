@@ -39,11 +39,11 @@ test("T860: the airports in reach are asked only for a way there that may fly", 
   assert.equal(s({ way: "boat" }).way, "");
 });
 
-test("stays booked: no doors, straight to the stays", () => {
+test("stays booked: the engine goes straight to the stays; the doors still show (T863)", () => {
   const st = s({ booked: { stays: true } });
   assert.equal(hasDoors(st), false);
   assert.deepEqual(planScreens(st, "guide"), ["p:Stays", "p:Getting", "p:Finish"]);
-  assert.ok(!fullFlow(st).includes("doors"));
+  assert.ok(fullFlow(st).includes("doors"));
 });
 
 test("both booked: stays then review", () => {

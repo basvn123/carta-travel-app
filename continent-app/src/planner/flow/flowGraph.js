@@ -8,8 +8,10 @@
  *   setup     tell (free text and files, skippable), booked, who, sleep, priority, when, from, way, airports
  *             (when, from and the way there drop out when bookings fix them; airports
  *             only when the way there may fly, T860), then create
- *   doors     guide me / I know where / a ready trip       (not when stays are
- *             booked: the places are already chosen)
+ *   doors     T863: the whole trip / the flight first / I know where / I've
+ *             booked part of it, always shown (booked stays preselect the
+ *             last); the engine's own steps still skip Where when stays are
+ *             booked (hasDoors)
  *   guide     shape, likes, weather, reach, avoid, budget, pick (the explorative
  *             path, only behind "guide me"), then trips: the loader and the
  *             priced trips the answers lead to (TF2, T797), the one screen
@@ -35,7 +37,8 @@ export const GUIDE = ['g:shape', 'g:likes', 'g:weather', 'g:reach', 'g:avoid', '
 /** The help-me-choose screen that answers rather than asks (T797). */
 export const TRIPS_SCREEN = 'g:trips';
 export const RHYTHM_SCREENS = ['r:mornings', 'r:pace', 'r:detail', 'r:goal', 'r:food', 'r:around'];
-export const DOORS = ['guide', 'know', 'ready'];
+/** T863: the four doors (how much Carta plans), the trip settings' TRIP_DOORS. */
+export const DOORS = ['guide', 'flight', 'know', 'booked'];
 
 /** The setup questions this trip is asked, in order. */
 export function setupScreens(s) {
@@ -48,8 +51,8 @@ export function setupScreens(s) {
   });
 }
 
-/** Whether the "how do you want to choose?" doors are shown. With stays
- *  booked the places are known, so planning goes straight to the stays. */
+/** Whether the engine's steps follow the door. With stays booked the places
+ *  are known, so the engine goes straight to the stays whatever the door. */
 export function hasDoors(s) {
   return !s.booked.stays;
 }
@@ -101,7 +104,7 @@ export function dayScreens(s, { all = false } = {}) {
 
 /** The whole run for one trip and door, start to finish. */
 export function fullFlow(s, door = 'know') {
-  return [...setupScreens(s), 'create', 'tripHome', ...(hasDoors(s) ? ['doors'] : []), ...planScreens(s, door), ...dayScreens(s)];
+  return [...setupScreens(s), 'create', 'tripHome', 'doors', ...planScreens(s, door), ...dayScreens(s)];
 }
 
 /** The screen after `id` in `list`, or null at the end. */

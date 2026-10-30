@@ -18,6 +18,8 @@ import '../../styles/87-trip-finder.css';
 export { default as TogetherSheet } from './TogetherSheet.jsx';
 // The kept trips' price since (T807), for the Plan home and My trips.
 export { dropsFor } from '../../lib/recommend/kept.js';
+// T864, T865: two doors' screens ride in this chunk with the engine they run.
+export { FlightFirstScreen, KnowBuildScreen } from './DoorScreens.jsx';
 
 const PARTY_TITLE = { solo: 'solo', couple: 'couple', friends: 'friends', family: 'family', group: 'group' };
 

@@ -27,11 +27,12 @@ const OWN = {
   priority: (o) => ({ priority: o.priority }),
   places: (o) => ({ places: o.places }),
   way: (o) => ({ way: o.way }),
+  doors: (o) => ({ door: o.door }),
 };
 const OWN_GUIDE = { 'g:likes': 'likes', 'g:budget': 'budget', 'g:weather': 'weather' };
 
 /** The answers the words gave that the words may take back when they change. */
-const WORD_IDS = ['who', 'when', 'from', 'booked', 'priority', 'g:likes', 'g:budget', 'g:weather', 'sleep', 'places', 'way'];
+const WORD_IDS = ['who', 'when', 'from', 'booked', 'priority', 'g:likes', 'g:budget', 'g:weather', 'sleep', 'places', 'way', 'doors'];
 
 /**
  * The trip settings the field stands for right now: `base` (the settings
@@ -55,7 +56,8 @@ export function tellSettings(base, parsed, overrides = {}) {
   if (stale.length) {
     const sources = { ...s.sources };
     for (const id of stale) delete sources[id];
-    s = { ...s, answered: s.answered.filter((id) => !stale.includes(id)), sources, places: stale.includes('places') ? [] : s.places };
+    s = { ...s, answered: s.answered.filter((id) => !stale.includes(id)), sources, places: stale.includes('places') ? [] : s.places,
+      door: stale.includes('doors') ? '' : s.door };
   }
   for (const id of answered) s = markAnswered(s, id, 'words');
   s = withOverrides(s, overrides);

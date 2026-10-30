@@ -242,7 +242,9 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
   const cartaFlight = (() => {
     // An older record holds one typed total for both ways: it covers both.
     const typedPair = ownFlight && !split && ownFlight.costTotal > 0;
-    const flies = transportPref !== 'owncar' && !typedPair && (!ownFlight || (ownFlight.mode || 'fly') === 'fly');
+    // T866: a flight the traveller booked is theirs, priced or not: Carta
+    // does not put Google Flights' fare in its place.
+    const flies = transportPref !== 'owncar' && !typedPair && !ownFlight?.booked && (!ownFlight || (ownFlight.mode || 'fly') === 'fly');
     const routed = routedFlight;
     if (!flies || !routed || !first?.arriveDate || !last?.departDate) return null;
     // T861: every home airport the traveller ticked is priced door to door

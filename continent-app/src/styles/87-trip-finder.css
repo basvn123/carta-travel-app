@@ -826,3 +826,41 @@
   .tff-card-see.btn { align-self: stretch; margin-top: auto; }
 }
 @media (hover: hover) { .tff-card:hover { border-color: var(--border); } }
+
+/* ---- T864: Find my flight first, one compact row a place (DoorScreens). A
+   72 px photo, the name and country, the flight there and home with the
+   airline's own mark, the fare for the group on the right. Hairlines
+   between rows; the whole row picks it. ---- */
+.ffl { margin: 0; padding: 0; list-style: none; }
+.ffl > li + li { border-top: 1px solid var(--border-soft); }
+.card.ffl-card { align-items: flex-start; border: 0; border-radius: var(--radius-control); background: transparent; padding: var(--space-3) var(--space-1); }
+@media (hover: hover) { .card.ffl-card:hover { background: var(--surface-hover); } }
+.ffl-card .card-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: var(--space-3);
+  row-gap: var(--space-1);
+  flex: 1;
+  min-width: 0;
+}
+.ffl-card .card-title { grid-column: 1; margin: 0; font-size: var(--text-lead); font-weight: 600; line-height: var(--leading-tight); }
+.ffl-card .card-meta { grid-column: 1; display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
+.ffl-card .card-figures { grid-column: 2; grid-row: 1 / span 2; align-self: start; }
+.ffl-where { display: inline-flex; align-items: center; gap: var(--space-1); font-size: var(--text-label); color: var(--text-2); }
+.ffl-leg { display: flex; align-items: center; gap: var(--space-2); min-width: 0; }
+.ffl-leg-text { display: flex; flex-wrap: wrap; column-gap: var(--space-2); min-width: 0; font-size: var(--text-label); line-height: var(--leading-ui); }
+.ffl-times { color: var(--text); font-weight: 500; font-variant-numeric: tabular-nums; }
+.ffl-leg-sub { color: var(--text-2); }
+.ffl-fare { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; text-align: right; }
+.ffl-fare-n { font-size: var(--text-lead); font-weight: 600; font-variant-numeric: tabular-nums; }
+.ffl-fare-lbl { font-size: var(--text-caption); color: var(--text-2); white-space: nowrap; }
+.ffl-more { display: flex; justify-content: center; }
+.ffl-note { margin: 0; font-size: var(--text-caption); color: var(--text-3); text-align: center; }
+/* From 1024 px the flight results take a wider sheet (as Trips for you
+   does) and the list runs two across. */
+@media (min-width: 1024px) {
+  .pf-stage.is-wide .pf-sheet:has(.ffl) { width: min(1040px, 100%); padding: var(--space-5) var(--space-6) var(--space-6); }
+  .ffl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--space-6); }
+  .ffl > li + li { border-top: 0; }
+  .ffl > li { border-bottom: 1px solid var(--border-soft); }
+}

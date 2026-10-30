@@ -1109,3 +1109,108 @@
 .pf-stay-price { font-size: var(--text-label); font-weight: 400; color: var(--text-2); line-height: var(--leading-ui); }
 .ui-tile.is-selected .pf-stay-price { color: var(--select-ink); }
 .pf-stay-price { min-height: calc(var(--text-label) * 1.35); }
+
+/* ---- T863: how much Carta plans, four doors (TripFlow). Kit Tiles made
+   large: the line icon over one title, left aligned, the tick in the corner
+   (the one selected state). Two across on every width. ---- */
+.pf-doors { gap: var(--space-3); }
+.ui-tile.pf-door {
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: 128px;
+  padding: var(--space-4);
+  border-radius: var(--radius-card);
+  text-align: left;
+}
+.pf-door .ui-tile-icon svg { width: 24px; height: 24px; }
+.pf-door .ui-tile-label {
+  font-size: var(--text-lead);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  text-align: left;
+  overflow-wrap: normal;
+  hyphens: auto;
+}
+.pf-door .ui-tile-tick { top: var(--space-3); right: var(--space-3); }
+@media (max-width: 400px) {
+  .ui-tile.pf-door { min-height: 112px; padding: var(--space-3); }
+  .pf-door .ui-tile-label { font-size: var(--text-body); }
+}
+
+/* ---- T865, T866: a town or country search (KnowDoor PlaceSearch). ---- */
+.pf-place-search { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
+.pf-place-field {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--text-2);
+}
+/* The field draws the focus ring round the icon and the input together. */
+.pf-place-field:focus-within { border-color: var(--action); outline: 2px solid var(--focus); outline-offset: 2px; }
+.pf-place-input:focus-visible { outline: 2px solid transparent; }
+.pf-place-input {
+  flex: 1;
+  min-width: 0;
+  min-height: calc(var(--tap) - 2px);
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-lead);
+  font-weight: 400;
+}
+.pf-place-hits { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.pf-place-hits > li + li { border-top: 1px solid var(--border-soft); }
+.btn.pf-place-hit {
+  justify-content: flex-start;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  padding: var(--space-2) var(--space-1);
+  border-radius: 0;
+  color: var(--text-2);
+  text-align: left;
+}
+.pf-place-hit-name { color: var(--text); font-size: var(--text-body); font-weight: 600; }
+.pf-place-hit-sub { color: var(--text-2); font-size: var(--text-label); font-weight: 400; }
+.pf-know-picked { display: flex; flex-direction: column; gap: var(--space-2); }
+.pf-know-chip .ui-chip-label { display: inline-flex; align-items: center; gap: var(--space-1); }
+
+/* ---- T866: what is booked (BookedDoor). A list of hairline rows, the
+   ways to add one, and the typed form. ---- */
+.pf-booked { display: flex; flex-direction: column; gap: var(--space-2); }
+.pf-booked-list { margin: 0; padding: 0; list-style: none; }
+.pf-booked-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+}
+.pf-booked-row + .pf-booked-row { border-top: 1px solid var(--border-soft); }
+.pf-booked-icon { display: inline-flex; color: var(--text-2); }
+.pf-booked-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.pf-booked-name { font-size: var(--text-body); font-weight: 600; color: var(--text); overflow-wrap: anywhere; }
+.pf-booked-sub { font-size: var(--text-label); color: var(--text-2); }
+.pf-booked-warn { font-size: var(--text-caption); color: var(--amber-ink); }
+.pf-booked-fig { font-size: var(--text-body); font-variant-numeric: tabular-nums; color: var(--text); }
+.pf-booked-add { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.pf-booked-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.pf-booked-town { display: flex; flex-direction: column; gap: var(--space-1); }
+.pf-booked-town-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.pf-booked-form-foot { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+
+.pf-doors-carta { align-self: center; }

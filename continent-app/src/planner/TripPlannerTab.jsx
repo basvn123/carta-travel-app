@@ -14,6 +14,8 @@ import { TripFlow } from './flow/TripFlow.jsx';
 import { TripSettingsSheet } from './flow/TripSettingsSheet.jsx';
 import { usePlannerStore, plannerStore } from './plannerStore.js';
 import { fromDraft } from './flow/tripSettings.js';
+import { staysFromImports } from './flow/importStays.js';
+import { PARTIAL_DOORS } from '../lib/plan/doors.js';
 import { useTripSettings } from './flow/flowHooks.js';
 import { syncParty, syncWhen } from './flow/appSync.js';
 import { useSettings } from '../components/SettingsLine.jsx';
@@ -962,7 +964,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
         {/* T656: the trip's page before a route (TripFlow), which hands the
             wizard only its planning steps. T675: a "Plan a trip here" seed
             enters there too, on the I know where door. */}
-        <TripFlow renderEngine={renderWizard} seed={tripSeed} onOpenJourney={onOpenJourney} />
+        <TripFlow renderEngine={renderWizard} seed={tripSeed} onOpenJourney={onOpenJourney} onLand={handleWizardComplete} />
         {saveNotice && <div className="trip-save-toast" role="status">{saveNotice}</div>}
         {keepChoice && (
           <KeepTripChoice
@@ -1435,6 +1437,23 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                 }}
               />
             )}
+            // T863: a trip from Find my flight first or I've booked part of it
+            // offers the rest: the Itinerary's Add a stop, opened.
+            onPlanRest={PARTIAL_DOORS.includes(tripSet.door) ? () => {
+              setTripTab('itinerary');
+              window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
+                const li = document.querySelector('.itin-add');
+                const open = li?.querySelector(':scope > button');
+                if (open) open.click();
+                li?.scrollIntoView({ behavior: scrollBehavior(), block: 'center' });
+                window.requestAnimationFrame(() => li?.querySelector('button, input, [tabindex]')?.focus?.({ preventScroll: true }));
+              }));
+            } : null}
+            // T866: what the traveller booked is marked as booked on the route.
+            booked={{
+              flights: Boolean(tp.ownFlight?.booked),
+              stays: tripSet.booked?.stays ? staysFromImports(tripSet.imports, data?.destinations || {}, tripSet.when).map((r) => r.id) : [],
+            }}
             onAddPaid={() => {
               // T839: what was paid goes in on the route, where each part is.
               setTripTab('itinerary');
