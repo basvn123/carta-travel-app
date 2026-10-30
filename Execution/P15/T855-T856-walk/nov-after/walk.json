@@ -1,0 +1,71 @@
+{
+ "results": [
+  {
+   "w": 1440,
+   "label": "no sideways scroll (results)",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "no sideways scroll (Getting there)",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "no sideways scroll (Review)",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "no sideways scroll (trip page)",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "trip 1 Hallstatt and Salzburg: Review total is the card's (whole euros)",
+   "ok": true,
+   "note": "Review 1939.2, card 970 a person"
+  },
+  {
+   "w": 1440,
+   "label": "trip 1 Hallstatt and Salzburg: trip page total is the card's",
+   "ok": true,
+   "note": "trip page 1939.2"
+  },
+  {
+   "w": 1440,
+   "label": "trip 1 Hallstatt and Salzburg: Review has no Add your fare",
+   "ok": true,
+   "note": "0"
+  },
+  {
+   "w": 1440,
+   "label": "trip 1 Hallstatt and Salzburg: Getting there flies out",
+   "ok": true,
+   "note": "Flight, 1 rows"
+  }
+ ],
+ "rows": [
+  {
+   "w": 1440,
+   "build": "nov-after",
+   "i": 1,
+   "name": "Hallstatt and Salzburg",
+   "cardFlight": true,
+   "cardPp": 970,
+   "cardGroup": 1940,
+   "reviewGroup": 1939.2,
+   "reviewAdd": 0,
+   "tripGroup": 1939.2,
+   "pageAdd": 2,
+   "outMode": "Flight",
+   "getAdd": 0,
+   "flightRows": 1
+  }
+ ],
+ "errors": []
+}

@@ -1,0 +1,341 @@
+{
+ "results": [
+  {
+   "w": 1440,
+   "label": "no sideways scroll (results)",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "no sideways scroll (Getting there)",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "no sideways scroll (Review)",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "no sideways scroll (trip page)",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "trip 1 Český Krumlov and Prague: Review total is the card's (whole euros)",
+   "ok": false,
+   "note": "Review 1452.22, card 951 a person"
+  },
+  {
+   "w": 1440,
+   "label": "trip 1 Český Krumlov and Prague: trip page total is the card's",
+   "ok": false,
+   "note": "trip page 1452.22"
+  },
+  {
+   "w": 1440,
+   "label": "trip 1 Český Krumlov and Prague: Review has no Add your fare",
+   "ok": false,
+   "note": "2"
+  },
+  {
+   "w": 1440,
+   "label": "trip 1 Český Krumlov and Prague: Getting there flies out",
+   "ok": false,
+   "note": "Flight, 0 rows"
+  },
+  {
+   "w": 1440,
+   "label": "trip 2 Lake District and Ripon: priced with no flight, recorded only",
+   "ok": true,
+   "note": "Review 1728.68, card 863 a person"
+  },
+  {
+   "w": 1440,
+   "label": "trip 3 Lake Bled and Ljubljana: Review total is the card's (whole euros)",
+   "ok": false,
+   "note": "Review 1593.72, card 1017 a person"
+  },
+  {
+   "w": 1440,
+   "label": "trip 3 Lake Bled and Ljubljana: trip page total is the card's",
+   "ok": false,
+   "note": "trip page 1593.72"
+  },
+  {
+   "w": 1440,
+   "label": "trip 3 Lake Bled and Ljubljana: Review has no Add your fare",
+   "ok": false,
+   "note": "2"
+  },
+  {
+   "w": 1440,
+   "label": "trip 3 Lake Bled and Ljubljana: Getting there flies out",
+   "ok": false,
+   "note": "Flight, 0 rows"
+  },
+  {
+   "w": 1440,
+   "label": "trip 4 Hallstatt and Salzburg: Review total is the card's (whole euros)",
+   "ok": false,
+   "note": "Review 1571.6, card 1032 a person"
+  },
+  {
+   "w": 1440,
+   "label": "trip 4 Hallstatt and Salzburg: trip page total is the card's",
+   "ok": false,
+   "note": "trip page 1571.6"
+  },
+  {
+   "w": 1440,
+   "label": "trip 4 Hallstatt and Salzburg: Review has no Add your fare",
+   "ok": false,
+   "note": "2"
+  },
+  {
+   "w": 1440,
+   "label": "trip 4 Hallstatt and Salzburg: Getting there flies out",
+   "ok": false,
+   "note": "Flight, 0 rows"
+  },
+  {
+   "w": 1440,
+   "label": "trip 5 Lauterbrunnen and Bern: priced with no flight, recorded only",
+   "ok": true,
+   "note": "Review 2994.64, card 1487 a person"
+  },
+  {
+   "w": 1440,
+   "label": "after the words, the next screen is not Who (the words answered it)",
+   "ok": true,
+   "note": "Where do you leave from?"
+  },
+  {
+   "w": 1440,
+   "label": "the new plan carries the words: a family with children",
+   "ok": false,
+   "note": "My trip Dates: July to 7 nights People: 2 adults Brussels July 0 of 7 nights planned No stops yet Start planning to add "
+  },
+  {
+   "w": 1440,
+   "label": "with the way set to train, the finder trip still flies out and home",
+   "ok": true,
+   "note": "{\"leg-out\":\"Flight\",\"leg-leg0\":\"Train\",\"leg-back\":\"Flight\"}"
+  },
+  {
+   "w": 1440,
+   "label": "with the way set to train, the hop between stops is a train",
+   "ok": true,
+   "note": "Train"
+  },
+  {
+   "w": 1440,
+   "label": "the origin the setup gave is a line on Getting there naming the priced airport (no search field)",
+   "ok": false,
+   "note": "From Ghent (ANR) Change"
+  },
+  {
+   "w": 375,
+   "label": "no sideways scroll (results)",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "no sideways scroll (Getting there)",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "no sideways scroll (Review)",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "no sideways scroll (trip page)",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "trip 1 Český Krumlov and Prague: Review total is the card's (whole euros)",
+   "ok": false,
+   "note": "Review 1452.22, card 951 a person"
+  },
+  {
+   "w": 375,
+   "label": "trip 1 Český Krumlov and Prague: trip page total is the card's",
+   "ok": false,
+   "note": "trip page 1452.22"
+  },
+  {
+   "w": 375,
+   "label": "trip 1 Český Krumlov and Prague: Review has no Add your fare",
+   "ok": false,
+   "note": "2"
+  },
+  {
+   "w": 375,
+   "label": "trip 1 Český Krumlov and Prague: Getting there flies out",
+   "ok": false,
+   "note": "Flight, 0 rows"
+  },
+  {
+   "w": 375,
+   "label": "trip 2 Lake District and Ripon: priced with no flight, recorded only",
+   "ok": true,
+   "note": "Review 1728.68, card 863 a person"
+  },
+  {
+   "w": 375,
+   "label": "after the words, the next screen is not Who (the words answered it)",
+   "ok": true,
+   "note": "Where do you leave from?"
+  },
+  {
+   "w": 375,
+   "label": "the new plan carries the words: a family with children",
+   "ok": false,
+   "note": "My trip Dates: July to 7 nights People: 2 adults Brussels July 0 of 7 nights planned No stops yet Start planning to add "
+  },
+  {
+   "w": 375,
+   "label": "with the way set to train, the finder trip still flies out and home",
+   "ok": true,
+   "note": "{\"leg-out\":\"Flight\",\"leg-leg0\":\"Train\",\"leg-back\":\"Flight\"}"
+  },
+  {
+   "w": 375,
+   "label": "with the way set to train, the hop between stops is a train",
+   "ok": true,
+   "note": "Train"
+  },
+  {
+   "w": 375,
+   "label": "the origin the setup gave is a line on Getting there naming the priced airport (no search field)",
+   "ok": false,
+   "note": "From Ghent (ANR) Change"
+  }
+ ],
+ "rows": [
+  {
+   "w": 1440,
+   "build": "before",
+   "i": 1,
+   "name": "Český Krumlov and Prague",
+   "cardFlight": true,
+   "cardPp": 951,
+   "cardGroup": 1902,
+   "reviewGroup": 1452.22,
+   "reviewAdd": 2,
+   "tripGroup": 1452.22,
+   "pageAdd": 2,
+   "outMode": "Flight",
+   "getAdd": 0,
+   "flightRows": 0
+  },
+  {
+   "w": 1440,
+   "build": "before",
+   "i": 2,
+   "name": "Lake District and Ripon",
+   "cardFlight": false,
+   "cardPp": 863,
+   "cardGroup": 1726,
+   "reviewGroup": 1728.68,
+   "reviewAdd": 2,
+   "tripGroup": 1728.68,
+   "pageAdd": 2,
+   "outMode": "Train",
+   "getAdd": 0,
+   "flightRows": 0
+  },
+  {
+   "w": 1440,
+   "build": "before",
+   "i": 3,
+   "name": "Lake Bled and Ljubljana",
+   "cardFlight": true,
+   "cardPp": 1017,
+   "cardGroup": 2034,
+   "reviewGroup": 1593.72,
+   "reviewAdd": 2,
+   "tripGroup": 1593.72,
+   "pageAdd": 2,
+   "outMode": "Flight",
+   "getAdd": 0,
+   "flightRows": 0
+  },
+  {
+   "w": 1440,
+   "build": "before",
+   "i": 4,
+   "name": "Hallstatt and Salzburg",
+   "cardFlight": true,
+   "cardPp": 1032,
+   "cardGroup": 2064,
+   "reviewGroup": 1571.6,
+   "reviewAdd": 2,
+   "tripGroup": 1571.6,
+   "pageAdd": 2,
+   "outMode": "Flight",
+   "getAdd": 0,
+   "flightRows": 0
+  },
+  {
+   "w": 1440,
+   "build": "before",
+   "i": 5,
+   "name": "Lauterbrunnen and Bern",
+   "cardFlight": false,
+   "cardPp": 1487,
+   "cardGroup": 2974,
+   "reviewGroup": 2994.64,
+   "reviewAdd": 2,
+   "tripGroup": 2994.64,
+   "pageAdd": 2,
+   "outMode": "Train",
+   "getAdd": 0,
+   "flightRows": 0
+  },
+  {
+   "w": 375,
+   "build": "before",
+   "i": 1,
+   "name": "Český Krumlov and Prague",
+   "cardFlight": true,
+   "cardPp": 951,
+   "cardGroup": 1902,
+   "reviewGroup": 1452.22,
+   "reviewAdd": 2,
+   "tripGroup": 1452.22,
+   "pageAdd": 2,
+   "outMode": "Flight",
+   "getAdd": 0,
+   "flightRows": 0
+  },
+  {
+   "w": 375,
+   "build": "before",
+   "i": 2,
+   "name": "Lake District and Ripon",
+   "cardFlight": false,
+   "cardPp": 863,
+   "cardGroup": 1726,
+   "reviewGroup": 1728.68,
+   "reviewAdd": 2,
+   "tripGroup": 1728.68,
+   "pageAdd": 2,
+   "outMode": "Train",
+   "getAdd": 0,
+   "flightRows": 0
+  }
+ ],
+ "errors": []
+}
