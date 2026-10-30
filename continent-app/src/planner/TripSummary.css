@@ -783,8 +783,8 @@ button.ct-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: 2
 .tpx-hist-h { font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
 .tpx-hist-acts { display: flex; gap: var(--space-2); }
 .tpx-note { margin: 0; font-size: var(--text-label); color: var(--text-2); }
-.tpx-days { display: grid; grid-template-columns: repeat(auto-fit, minmax(54px, 1fr)); gap: var(--space-1); }
-.tpx-day.btn { display: grid; justify-items: center; gap: 2px; height: auto; min-height: 56px; padding: var(--space-2) 2px; border-radius: var(--radius-control); font-weight: 600; }
+.tpx-days { display: grid; grid-template-columns: repeat(auto-fit, minmax(42px, 1fr)); gap: 4px; }
+.tpx-day.btn { display: grid; justify-items: center; gap: 2px; height: auto; min-height: 56px; min-width: 0; padding: var(--space-2) 0; border-radius: var(--radius-control); font-weight: 600; }
 .tpx-day .btn-label { display: contents; }
 .tpx-day-d { font-size: var(--text-caption); color: var(--text-2); }
 .tpx-day-x { font-size: var(--text-caption); font-variant-numeric: tabular-nums; }
