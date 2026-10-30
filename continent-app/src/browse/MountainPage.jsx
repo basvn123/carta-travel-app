@@ -2,72 +2,53 @@ import React, { useEffect, useMemo, useState } from 'react';
 import '../styles/items.css';
 import { ReportProblem } from '../components/ReportProblem.jsx';
 import { useI18n } from '../i18n/index.jsx';
-import { MonthStrip } from '../components/MonthStrip.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
-import { DetailPage, PlaceMap } from './DetailSkeleton.jsx';
-import { PhotoGallery } from './PhotoGallery.jsx';
-import { ItemHead, ItemIcon, NatureHeadLines } from './ItemParts.jsx';
-import { Button, Money } from '../components/ui/index.js';
+import { PlaceMap } from './DetailSkeleton.jsx';
+import { ItemIcon } from './ItemParts.jsx';
+import { Button } from '../components/ui/index.js';
+import { formatMoney } from '../lib/money.js';
 import { toPhotos } from '../lib/itemPhotos.js';
 import { beforeGoItems } from '../lib/beforeGo.js';
-import { useBaseDay } from '../hooks/useBaseDay.js';
 import { useItemPdf } from '../hooks/useItemPdf.js';
 import { usePlaceExits } from '../hooks/usePlaceExits.js';
-import {
-  previewWords, previewNotHook, keyFactCells, pointCentre, MOUNTAIN_LEVEL,
-} from '../lib/detailSkeleton.js';
+import { keyFactCells, pointCentre, MOUNTAIN_LEVEL, capFirst } from '../lib/detailSkeleton.js';
 import { notForLines } from '../lib/notFor.js';
+import { natureRankLine } from '../lib/rating.js';
+import { featureHref, linkOpener } from '../lib/featureHref.js';
+import { loadTrails } from '../lib/trails.js';
 import {
-  mountainHeadline, mountainWhy, mountainTags, mountainHazards, mountainSeason,
+  mountainHeadline, mountainWhy, mountainTags, mountainHazards,
   bestForLabel, componentLabel, liftLabel, isLiftServed, isHiddenGem,
   mountainRating, COMPONENT_ORDER, SUB_ORDER,
-  difficultyLabel, viewBandLabel, bestMonthsLine, accessLabels, mountainHighlights,
+  difficultyLabel, accessLabels, mountainHighlights,
 } from '../lib/mountainStory.js';
 import { mountainShareUrl, loadMountains } from '../lib/mountains.js';
 import { trailheadDirectionsUrl, shareTrailLink } from '../lib/trailExport.js';
 import {
-  MapPinIcon, ChevronRightIcon,
-  BulbIcon, InfoIcon, StarIcon,
-  SunIcon,
+  MapPinIcon, DownloadIcon, BedIcon, GondolaIcon, RouteIcon, ChevronRightIcon, SnowIcon,
+  StormIcon, FriendsIcon, MountainIcon, ParkingIcon,
 } from '../components/Icons.jsx';
-
-import { MountainSignature } from './Signature.jsx';
-import { InfoDot } from '../components/InfoDot.jsx';
-import { numberSentence } from '../lib/numberSentences.js';
-import { PeakFacts } from './PeakFacts.jsx';
-import { notYet } from '../components/NotYet.jsx';
-import { useDayView } from '../hooks/useDayView.js';
+import { rangeRankLine, slopeFact, liftFareLine, flankHuts, SummitForecast } from './PeakFacts.jsx';
+import {
+  OutdoorPage, PSection, StayLine, RouteBlock, CheckRows, MonthStrip, SafetyBlock,
+  OtherNearby, OxLinkButton, outdoorPdfModel, monthIndex, useMonthWords, pointRow, SAC_STEP,
+} from './OutdoorParts.jsx';
+import { scrollToSection } from './PageTemplate.jsx';
 
 /**
- * The mountain page: one published summit, and the argument for going there.
+ * The mountain page: one published summit, and how people climb it.
  *
- * It answers five things, and the first one is not the score.
- *
- *   how do I get up    the way up, in its own banner, at the top, with the
- *                      evidence that produced it named. For most people
- *                      reading this app that is the whole question: a cable
- *                      car to 3,883 m and a glaciated rope route are both
- *                      "a mountain" and only one of them is an afternoon.
- *                      The banner says which, and says where the claim came
- *                      from, because neither a map nor a shortlist knows
- *                      whether the lift is running today.
- *   where is it        a pin, the range, the country, the coordinates, and
- *                      one link that opens the summit in a maps app.
- *   what does it look  up to six photographs, each credited to the person
- *   like               who took it and the licence they released it under.
- *   why this one       the composed explanation, every sentence of it mapped
- *                      to a field in the data (lib/mountainStory.js), then
- *                      the hazards in their own block underneath.
- *   is the number      three sub scores on their own, then the five weighted
- *   honest             components, so the ranking can be checked rather than
- *                      believed.
- *
- * Since T180 the page draws through the shared detail skeleton
- * (DetailSkeleton.jsx). The way up is the page's "Getting there", never
- * folded; the hazards sit in the alert slot, which never folds either. The
- * map is a lazy chunk (PointMap.jsx). The signature slot (Signature.jsx,
- * T181) holds the height and prominence bar, the horizon row (empty until a
- * skyline is computed from the DEM) and the season strip.
+ * Since T918 it stands on the place page's template (OutdoorParts.jsx, the
+ * owner's approved spec of 2026-10-30). The head (the name, the Score with
+ * the rank in the region, the range), the facts (height, prominence, the
+ * way up, the season, the hut), a jump bar, then: Routes to the top first
+ * (each a card that opens its trail page, because that is how people climb
+ * it), Huts and lifts (the hut and the lift with their seasons and prices,
+ * the way up and the ways in), When to go (the season months, the summit's
+ * modelled temperature by month, snow, storms and crowds where the data has
+ * them, the summit forecast), Before you go (the hazards, the slope, the
+ * safety block), and Other peaks. The side card holds the one primary, "Add
+ * to a day plan", with the routes, Directions and a priced "Stay nearby".
  *
  * Nothing on this page is a route description. The pipeline never generates
  * one, this page never asks for one, and the hazard block says to check
@@ -75,63 +56,32 @@ import { useDayView } from '../hooks/useDayView.js';
  * kind of wrong sentence in this app that can hurt somebody.
  */
 
-/**
- * The way up, above the photograph.
- *
- * Two lines and a source. The first says what the way up is, the second says
- * who says so: OpenStreetMap's map of the mountain, or this app's own
- * shortlist. Neither of them knows the operating season, so the page says
- * that out loud rather than implying a lift runs in February.
- */
-// Where the claim came from, spelled out. Three sources, three sentences: the
-// map, the hand-kept list, and a mention in the article. The third is the
-// weakest and says so, because "the article mentions a cable car" is not
-// "there is a cable car to the top".
-const SRC_KEY = {
-  osm: 'mtn.liftSrcOsm',
-  curated: 'mtn.liftSrcCurated',
-  wiki: 'mtn.liftSrcWiki',
+// Where the lift claim came from, spelled out (T180).
+const SRC_KEY = { osm: 'mtn.liftSrcOsm', curated: 'mtn.liftSrcCurated', wiki: 'mtn.liftSrcWiki' };
+const GRADE_KEY = {
+  easy: 'trails.gradeEasy', moderate: 'trails.gradeModerate', hard: 'trails.gradeHard',
+  very_hard: 'trails.gradeVeryHard', alpine: 'trails.gradeAlpine',
 };
 
 /** The way up as a level on the strip's five squares. */
 const mountainLevel = (m) => MOUNTAIN_LEVEL[m?.diff?.k] || 0;
 
-function WayUp({ mountain, t }) {
-  const lift = mountain.lift;
-  const ride = isLiftServed(mountain);
-  const tone = ride ? 'ride' : lift ? 'near' : 'foot';
-  const srcKey = lift ? (SRC_KEY[lift.src] || '') : '';
-  const srcLine = srcKey ? t(srcKey) : '';
-  const season = bestMonthsLine(mountain, t) || mountainSeason(mountain, t);
-  // Every way in, not just the lift: parking at the start and a station
-  // within two kilometres are the two facts that decide whether a person
-  // without a car can go, and v1 had no field for either.
-  const ways = accessLabels(mountain, t);
-  return (
-    <div className={`mpage-way mpage-way-${tone}`} role="note">
-      <span className="mpage-way-word">{liftLabel(mountain, t)}</span>
-      {lift?.name && <span className="mpage-way-name">{lift.name}</span>}
-      {srcLine && srcLine !== srcKey && (
-        <span className="mpage-way-src">
-          {srcLine}
-          {lift?.m != null && (
-            <span className="mono">{' '}{t('mtn.liftMetres', { m: lift.m })}</span>
-          )}
-        </span>
-      )}
-      {ride && <span className="mpage-way-note">{t('mtn.liftSeasonNote')}</span>}
-      {season && <span className="mpage-way-note">{season}</span>}
-      {ways.length > 0 && (
-        <span className="mpage-way-ways">
-          {ways.map((w) => <span key={w.code}>{w.label}</span>)}
-        </span>
-      )}
-    </div>
-  );
+/** A run of months (1 to 12) as one from-to pair, wrapping over the new
+ *  year; null when the months are not one run. */
+function monthRun(list) {
+  const on = new Set(list);
+  if (!on.size || on.size >= 12) return null;
+  const start = [...on].find((m) => !on.has(m === 1 ? 12 : m - 1));
+  if (start == null) return null;
+  let end = start;
+  let n = 1;
+  while (on.has(end === 12 ? 1 : end + 1) && n < 12) { end = end === 12 ? 1 : end + 1; n += 1; }
+  return n === on.size ? { from: start, to: end } : null;
 }
 
 export function MountainPage({ mountain, countryName, onClose, onSelectDest, onOpenNeighbour, fav = false, onFav = null, onAddToDay = null, backLabel = '' }) {
   const { t, lang } = useI18n();
+  const months = useMonthWords();
   const [toast, setToast] = useState(null);
 
   useEffect(() => {
@@ -151,6 +101,26 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
     open: (row) => onOpenNeighbour?.('peak', row),
   });
 
+  // The routes to the top open their trail pages in place: their rows come
+  // from the country's trail list (cached), else the link's own address.
+  const routes = useMemo(() => (Array.isArray(mountain?.routes) ? mountain.routes : [])
+    .filter((r) => r && r.id != null && r.name), [mountain]);
+  const routeCcs = [...new Set(routes.map((r) => r.cc || mountain?.cc).filter(Boolean))].join('|');
+  const [trailRows, setTrailRows] = useState(null);
+  useEffect(() => {
+    let live = true;
+    setTrailRows(null);
+    if (!routeCcs) return undefined;
+    Promise.all(routeCcs.split('|').map((cc) => Promise.resolve(loadTrails(cc)).catch(() => [])))
+      .then((lists) => {
+        if (!live) return;
+        const m = new Map();
+        for (const list of lists) for (const r of (Array.isArray(list) ? list : [])) m.set(String(r.id), r);
+        setTrailRows(m);
+      });
+    return () => { live = false; };
+  }, [routeCcs]);
+
   const images = useMemo(() => mountain?.images || [], [mountain]);
   const why = useMemo(() => (mountain ? mountainWhy(mountain, t) : []), [mountain, t]);
   const tags = useMemo(() => (mountain ? mountainTags(mountain, t, 4) : []), [mountain, t]);
@@ -160,216 +130,240 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
     () => (mountain ? mountainHeadline(mountain, t, countryName) : ''),
     [mountain, t, countryName],
   );
-
   const highlights = useMemo(() => (mountain ? mountainHighlights(mountain, t) : []), [mountain, t]);
   const photos = useMemo(() => toPhotos(images, { fallbackCaption: mountain?.name || '' }), [images, mountain?.name]);
-  const baseDay = useBaseDay(mountain?.near?.dest_id || null);
-  const view = useDayView();   // T694: per person or the group's total
   const { onPdf, pdfBusy } = useItemPdf('mountain', mountain, { countryName });
 
   if (!mountain) return null;
 
+  const nf = (v) => Math.round(v).toLocaleString(lang);
   const mapsUrl = trailheadDirectionsUrl(mountain.lat, mountain.lon);
   const onShare = async () => {
     const how = await shareTrailLink(mountain.name, mountainShareUrl(mountain));
     if (how === 'copied') setToast(t('trip.linkCopied'));
   };
 
-  // The climatology's months, as the shared strip. Good months are the ones the
-  // season sweep named; avoid months are the ones with snow cover of 75 percent
-  // or more that are not good. A row without months keeps the v1 facts line.
-  const monthsGood = mountain.season?.months || [];
-  const hasMonths = monthsGood.length > 0;
-  const monthsAvoid = hasMonths && Array.isArray(mountain.season.snow)
-    ? mountain.season.snow.map((p, i) => (p >= 75 ? i + 1 : 0))
-      .filter((m) => m && !monthsGood.includes(m))
-    : [];
+  /* The season: the climatology's months, else the from-to of the row. */
+  const season = mountain.season || null;
+  const goodMonths = Array.isArray(season?.months) ? season.months.filter((m) => m >= 1 && m <= 12) : [];
+  const run = goodMonths.length ? monthRun(goodMonths) : null;
+  const sFrom = run?.from || monthIndex(season?.from);
+  const sTo = run?.to || monthIndex(season?.to);
+  const seasonText = season?.n >= 12 ? t('detail.seasonAllYear')
+    : sFrom && sTo ? t('detail.monthRange', { from: months.short(sFrom), to: months.short(sTo) }) : '';
 
-  const say = (metric, value) => numberSentence(metric, value, { t, lang });
-  const facts = [
-    mountain.ele != null && {
-      key: 'ele',
-      sentence: say('height', mountain.ele),
-      label: t('mtn.factHeight'),
-      value: `${Math.round(mountain.ele).toLocaleString(lang)} m`,
-      mono: true,
-    },
+  /* The hut and the lift: the contract's records first, the why codes after. */
+  const hutInfo = mountain.hut_info && mountain.hut_info.name ? mountain.hut_info : null;
+  const hutWhy = (mountain.why || []).find((w) => w.k === 'hut' && w.name);
+  const hutName = hutInfo?.name || hutWhy?.name || '';
+  const hutFact = hutName ? (Number.isFinite(hutInfo?.ele) ? `${hutName}, ${nf(hutInfo.ele)} m` : hutName) : '';
+  const liftInfo = mountain.lift_info && mountain.lift_info.name ? mountain.lift_info : null;
+  const lift = mountain.lift || null;
+  const ride = isLiftServed(mountain);
+  const wayUp = ride ? liftLabel(mountain, t) : difficultyLabel(mountain, t);
+  const liftReturn = Number(liftInfo?.return_eur);
+
+  const keyFacts = keyFactCells([
+    { key: 'ele', label: t('mtn.factHeight'), value: mountain.ele != null ? `${nf(mountain.ele)} m` : '' },
     mountain.prom != null && {
       key: 'prom',
-      term: 'prominence',
-      sentence: say('prominence', mountain.prom),
       label: t('mtn.factProminence'),
-      // A computed prominence says so, and a computed one the search window
-      // could only bound from below says THAT: "at least 2,312 m" is a
-      // different claim from "2,312 m" and the reader is owed the difference.
-      value: `${mountain.promSrc === 'dem_min' ? '≥ ' : ''}`
-        + `${Math.round(mountain.prom).toLocaleString(lang)} m`,
-      note: mountain.promSrc === 'dem_min' ? t('mtn.factProminenceDemMin')
-        : mountain.promSrc === 'dem' ? t('mtn.factProminenceDem')
-          : mountain.promSrc === 'insular' ? t('mtn.factProminenceInsular')
-            : t('mtn.factProminenceNote'),
-      mono: true,
+      value: `${mountain.promSrc === 'dem_min' ? t('ox.atLeast', { v: nf(mountain.prom) }) : nf(mountain.prom)} m`,
     },
-    mountain.diff && {
-      key: 'diff',
-      sentence: say('difficulty', mountain.diff.k),
-      label: t('mtn.factDifficulty'),
-      value: difficultyLabel(mountain, t),
-    },
-    mountain.view && {
-      key: 'view',
-      sentence: say('viewArea', mountain.view.km2),
-      label: t('mtn.factView'),
-      value: [viewBandLabel(mountain, t),
-        `${Math.round(mountain.view.km2).toLocaleString(lang)} km²`]
+    { key: 'way', label: t('detail.factWayUp'), value: wayUp },
+    seasonText && { key: 'season', label: t('detail.factSeason'), value: seasonText, note: season?.est || season?.months ? t('ox.estimated') : null },
+    hutFact && { key: 'sleep', label: t('ox.fact.hut'), value: hutFact },
+    mountain.isoKm != null && { key: 'iso', label: t('mtn.factIsolation'), value: `${mountain.isoKm.toLocaleString(lang)} km`, fallback: true },
+  ], t);
+
+  /* Routes to the top. */
+  const gradeWord = (g) => {
+    if (g == null || g === '') return '';
+    const s = String(g);
+    const tm = s.match(/^T([1-6])$/i);
+    if (tm) return t('ox.gradeShort', { n: tm[1], word: t(`ox.grade.t${tm[1]}`) });
+    if (SAC_STEP[s]) return t('ox.gradeShort', { n: SAC_STEP[s], word: t(`ox.grade.t${SAC_STEP[s]}`) });
+    return GRADE_KEY[s] ? t(GRADE_KEY[s]) : capFirst(s);
+  };
+  const dur = (min) => {
+    const r = Math.max(5, Math.round(min / 5) * 5);
+    const h = Math.floor(r / 60);
+    const m = r % 60;
+    return h ? (m ? `${h} h ${m} min` : `${h} h`) : `${m} min`;
+  };
+  const routeCards = routes.slice(0, 6).map((r) => {
+    const cc = r.cc || mountain.cc;
+    const row = trailRows?.get(String(r.id)) || null;
+    return {
+      key: String(r.id),
+      name: r.name,
+      grade: gradeWord(r.grade),
+      meta: [
+        Number.isFinite(r.ascent_m) ? t('ox.metresUp', { m: nf(r.ascent_m) }) : '',
+        Number.isFinite(r.duration_min) ? dur(r.duration_min) : '',
+        Number.isFinite(r.km) ? `${r.km.toLocaleString(lang, { maximumFractionDigits: 1 })} km` : '',
+      ].filter(Boolean),
+      href: featureHref('trail', { id: r.id, cc }),
+      onOpen: row && onOpenNeighbour ? () => onOpenNeighbour('trail', row) : null,
+    };
+  });
+
+  /* Huts and lifts. */
+  const hutSeason = Array.isArray(hutInfo?.season) && monthIndex(hutInfo.season[0]) && monthIndex(hutInfo.season[1])
+    ? t('ox.hutOpen', { from: months.short(monthIndex(hutInfo.season[0])), to: months.short(monthIndex(hutInfo.season[1])) })
+    : (typeof hutInfo?.season === 'string' ? hutInfo.season : '');
+  const isUrl = (s) => /^https?:\/\//i.test(String(s || ''));
+  const liftSrc = lift && SRC_KEY[lift.src] ? t(SRC_KEY[lift.src]) : '';
+  const fareLine = liftFareLine(mountain, t);
+  const ways = accessLabels(mountain, t);
+  const hutRows = [
+    hutName && {
+      key: 'hut',
+      icon: <BedIcon size={16} />,
+      title: hutFact,
+      text: [hutInfo ? '' : t('ox.hutOnRoute'), hutSeason, hutInfo?.booking && !isUrl(hutInfo.booking) ? String(hutInfo.booking) : '']
         .filter(Boolean).join(', '),
-      note: t('mtn.factViewNote'),
+      link: isUrl(hutInfo?.booking) ? <a href={hutInfo.booking} target="_blank" rel="noopener noreferrer">{t('ox.hutBook')}</a> : null,
     },
-    mountain.isoKm != null && {
-      key: 'iso',
-      term: 'isolation',
-      sentence: say('isolation', mountain.isoKm),
-      label: t('mtn.factIsolation'),
-      value: `${mountain.isoKm.toLocaleString(lang)} km`,
-      note: t('mtn.factIsolationNote'),
-      mono: true,
+    ...flankHuts(mountain, t, lang).filter((h) => h.name !== hutName).slice(0, 3).map((h) => ({
+      key: `fh-${h.key}`,
+      icon: <BedIcon size={16} />,
+      title: h.name,
+      text: h.text,
+      link: h.web ? <a href={h.web} target="_blank" rel="noopener noreferrer">{t('mtn.hutWeb')}</a> : null,
+    })),
+    liftInfo ? {
+      key: 'lift',
+      icon: <GondolaIcon size={16} />,
+      title: liftInfo.name,
+      text: [
+        liftInfo.season ? (Array.isArray(liftInfo.season) && monthIndex(liftInfo.season[0]) && monthIndex(liftInfo.season[1])
+          ? t('ox.hutOpen', { from: months.short(monthIndex(liftInfo.season[0])), to: months.short(monthIndex(liftInfo.season[1])) })
+          : String(liftInfo.season)) : '',
+        Number.isFinite(liftInfo.top_ele) ? t('ox.liftTop', { m: nf(liftInfo.top_ele) }) : '',
+        Number.isFinite(liftReturn) ? t('ox.liftReturn', { price: formatMoney(liftReturn) }) : '',
+      ].filter(Boolean).join(', '),
+    } : lift && {
+      key: 'lift',
+      icon: <GondolaIcon size={16} />,
+      title: lift.name ? `${liftLabel(mountain, t)}: ${lift.name}` : liftLabel(mountain, t),
+      text: [liftSrc, lift.m != null ? t('mtn.liftMetres', { m: lift.m }) : '', ride ? t('mtn.liftSeasonNote') : '', fareLine]
+        .filter(Boolean).join('. '),
     },
-    {
-      key: 'range',
-      label: t('mtn.factRange'),
-      // T630: the slot stays; the placeholder where the wire has no range.
-      value: mountain.range || notYet(t),
+    !ride && !liftInfo && {
+      key: 'way',
+      icon: <MountainIcon size={16} />,
+      title: t('ox.onFoot', { word: difficultyLabel(mountain, t) }),
+      text: '',
     },
-    mountain.highpointOf && {
-      key: 'highpoint',
-      label: t('mtn.factHighpoint'),
-      value: mountain.highpointOf,
+    ways.length > 0 && {
+      key: 'ways',
+      icon: <ParkingIcon size={16} />,
+      title: t('ox.waysIn'),
+      text: ways.map((w) => w.label).join(', '),
     },
-    mountain.season && !hasMonths && {
-      key: 'season',
-      label: t('mtn.factSeason'),
-      // The climatology's own sentence where there is one, which names the
-      // months and says outright when the answer is "the warmest, not the
-      // walkable". The v1 line stays as the fallback for a row the season
-      // sweep has not reached.
-      value: bestMonthsLine(mountain, t) || mountainSeason(mountain, t)
-        || t('mtn.seasonAllYear'),
-      note: mountain.season.months ? t('mtn.seasonEstNote')
-        : t('mtn.factSeasonNote'),
+    pointRow(mountain.lat, mountain.lon, t, mapsUrl),
+  ];
+
+  /* When to go: the summit by month, snow, storms, crowds. */
+  const temps = Array.isArray(season?.t) && season.t.length === 12 && season.t.every((v) => Number.isFinite(Number(v)))
+    ? season.t.map(Number) : null;
+  const snowMonths = Array.isArray(season?.snow) && season.snow.length === 12
+    ? season.snow.map((p, i) => (Number(p) >= 75 ? i + 1 : 0)).filter(Boolean) : [];
+  const snowRun = monthRun(snowMonths);
+  const stormMonths = Array.isArray(season?.storm) && season.storm.length === 12
+    ? season.storm.map((p, i) => (Number(p) >= 30 ? i + 1 : 0)).filter(Boolean) : [];
+  const stormRun = monthRun(stormMonths);
+  const whenCells = [
+    snowRun && {
+      key: 'snow', icon: <SnowIcon size={16} />, label: t('ox.snow'),
+      value: t('detail.monthRange', { from: months.short(snowRun.from), to: months.short(snowRun.to) }),
+      text: t('ox.snowText'),
+    },
+    stormRun && {
+      key: 'storm', icon: <StormIcon size={16} />, label: t('ox.storms'),
+      value: t('detail.monthRange', { from: months.short(stormRun.from), to: months.short(stormRun.to) }),
+      text: t('ox.stormText'),
+    },
+    typeof mountain.crowds === 'string' && mountain.crowds && {
+      key: 'crowd', icon: <FriendsIcon size={16} />, label: t('ox.crowds'), value: mountain.crowds, text: '',
     },
   ].filter(Boolean);
 
+  /* Before you go: the hazards, the slope, the safety block. */
+  const before = beforeGoItems({
+    hazards: mountain.hazards || [],
+    lines: notForLines('mountain', mountain, { word: difficultyLabel(mountain, t), shownHazards: hazards.map((h) => h.code) }),
+  });
+  const slope = slopeFact(mountain, t);
+  const beforeRows = [
+    ...before.map((it) => ({
+      key: it.key,
+      icon: <ItemIcon name={it.icon} size={16} />,
+      title: t(it.titleKey, { ...it.params, word: it.params?.word ? capFirst(it.params.word) : it.params?.word }),
+      text: t(it.subKey, it.params),
+      warn: Boolean(it.safety),
+    })),
+    slope && { key: 'slope', icon: <MountainIcon size={16} />, title: slope.title, text: slope.text, warn: slope.warn },
+  ];
+  const parkWhy = (mountain.why || []).find((w) => w.k === 'park' && w.name);
+
+  const sources = [
+    { label: 'OpenStreetMap', href: `https://www.openstreetmap.org/#map=14/${mountain.lat}/${mountain.lon}` },
+    mountain.wiki && { label: 'Wikipedia', href: mountain.wiki },
+    mountain.wd && { label: 'Wikidata', href: `https://www.wikidata.org/wiki/${mountain.wd}` },
+    ...(mountain.credit || []).map((c) => ({ label: c })),
+  ].filter(Boolean);
+
+  const where = [countryName, mountain.range].filter(Boolean).join(', ');
+  const hook = highlights[0]?.line || headline;
+  const rankLine = rating && !rating.unscored ? natureRankLine({ rank: rating.rank }, t, { place: countryName }) : '';
+  const onAdd = onAddToDay
+    ? () => onAddToDay({ id: mountain.id, cc: mountain.cc, name: mountain.name, lat: mountain.lat, lon: mountain.lon }) : null;
+  const pdfModel = () => outdoorPdfModel({
+    name: mountain.name, hook, facts: keyFacts, why: highlights.slice(1).filter((h) => h.title), before, sources, t,
+    extra: { photos, where, url: mountainShareUrl(mountain) },
+  });
   const subs = SUB_ORDER.filter((key) => mountain.sub?.[key] != null);
+  const comps = COMPONENT_ORDER.filter((key) => mountain.comp?.[key] != null);
+  const rangeRank = rangeRankLine(mountain, t);
+  const easiest = routeCards.find((r) => r.grade) || null;
 
-  // The key facts band (T386): height, prominence, the way up in a word and
-  // the season. The way up's long form stays in Getting there (WayUp), the
-  // one place it is told; the "How you get up" row went with T386.
-  const MONTH_CODES = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
-  let monthShort = (code) => code;
-  try {
-    const fmt = new Intl.DateTimeFormat(lang, { month: 'short' });
-    monthShort = (code) => {
-      const i = MONTH_CODES.indexOf(String(code || '').toLowerCase());
-      return i < 0 ? '' : fmt.format(new Date(Date.UTC(2026, i, 15)));
-    };
-  } catch { /* older engines keep the code */ }
-  const season = mountain.season;
-  const seasonValue = !season ? ''
-    : season.n >= 12 ? t('detail.seasonAllYear')
-      : (monthShort(season.from) && monthShort(season.to)
-        ? t('detail.monthRange', { from: monthShort(season.from), to: monthShort(season.to) }) : '');
-  const keyFacts = keyFactCells([
-    { key: 'ele', label: t('mtn.factHeight'), value: mountain.ele != null ? `${Math.round(mountain.ele).toLocaleString(lang)} m` : '', mono: true },
-    mountain.prom != null && {
-      key: 'prom',
-      label: t('mtn.factProminence'),
-      value: `${mountain.promSrc === 'dem_min' ? '≥ ' : ''}${Math.round(mountain.prom).toLocaleString(lang)} m`,
-      mono: true,
-    },
-    { key: 'way', label: t('detail.factWayUp'), value: isLiftServed(mountain) ? liftLabel(mountain, t) : difficultyLabel(mountain, t) },
-    seasonValue && {
-      key: 'season',
-      label: t('detail.factSeason'),
-      value: seasonValue,
-      mono: season.n < 12,
-      note: season.months ? t('prov.est') : null,
-    },
-    mountain.isoKm != null && { key: 'iso', label: t('mtn.factIsolation'), value: `${mountain.isoKm.toLocaleString(lang)} km`, mono: true, fallback: true },
-  ], t);
+  const jumps = [
+    { key: 'routes', id: 'ox-routes', label: t('ox.jump.routes') },
+    { key: 'lifts', id: 'ox-lifts', label: t('ox.jump.lifts') },
+    { key: 'when', id: 'ox-when', label: t('ox.jump.when') },
+    { key: 'before', id: 'ox-before', label: t('go.head') },
+    { key: 'near', id: 'ox-near', label: t('ox.jump.nearby') },
+  ];
 
-  // The rows (T386): at most five. Why, every measurement, the score and
-  // the photographs.
-  const rows = [
-    (why.length > 0 || subs.length > 0 || mountain.bestFor?.length > 0 || tags.length > 0) && {
-      key: 'why',
-      icon: BulbIcon,
-      label: t('mtn.whyHead'),
-      summary: previewNotHook(why, headline),
-      body: (
-        <div className="bpage-why">
-          {/* The three sub scores, side by side, because choosing between a
-              beautiful summit you cannot reach and an ordinary one with a
-              cable car is the actual decision and one blended number hides it. */}
-          {subs.length > 0 && (
-            <ul className="lpage-subs">
-              {subs.map((key) => (
-                <li key={key}>
-                  <span className="lpage-sub-n">{Math.round(mountain.sub[key] * 10)}</span>
-                  <span className="lpage-sub-label">{componentLabel(key, t)}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-          {why.length > 0 && <p className="bpage-prose">{why.join(' ')}</p>}
-          {mountain.bestFor?.length > 0 && (
-            <p className="bpage-for">
-              <b>{t('mtn.bestFor')}</b>
-              {' '}
-              {mountain.bestFor.map((code) => bestForLabel(code, t)).join(', ')}
-            </p>
-          )}
-          {tags.length > 0 && (
-            <ul className="bpage-tags">
-              {tags.map((tag) => <li key={tag.code}>{tag.label}</li>)}
-            </ul>
-          )}
-        </div>
-      ),
-    },
-    facts.length > 0 && {
-      key: 'facts',
-      icon: InfoIcon,
-      label: t('mtn.factsHead'),
-      summary: previewWords(facts.slice(0, 3).map((f) => f.value).join(', ')),
-      body: (
-        <>
-          <div className="bpage-facts">
-            <dl>
-              {facts.map((fact) => (
-                <div key={fact.key} className="bpage-fact">
-                  <dt>{fact.label}{fact.term && <InfoDot term={fact.term} />}</dt>
-                  <dd className={fact.mono ? 'mono' : ''}>
-                    {fact.value}
-                    {fact.note && <small>{fact.note}</small>}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-          <PeakFacts mountain={mountain} t={t} lang={lang} />
-        </>
-      ),
-    },
-    COMPONENT_ORDER.some((key) => mountain.comp?.[key] != null) && {
-      key: 'score',
-      icon: StarIcon,
-      label: t('mtn.scoreHead'),
-      summary: previewWords(t('mtn.scoreNote')),
-      body: (
+  const map = Number.isFinite(mountain.lat) && Number.isFinite(mountain.lon)
+    ? <PlaceMap lat={mountain.lat} lon={mountain.lon} label={t('detail.mapOf', { name: mountain.name })} name={mountain.name} relief zoom={12} />
+    : null;
+
+  const whyRates = comps.length > 0 || why.length > 0 || rangeRank ? (
+    <>
+      {subs.length > 0 && (
+        <ul className="lpage-subs">
+          {subs.map((key) => (
+            <li key={key}>
+              <span className="lpage-sub-n">{Math.round(mountain.sub[key] * 10)}</span>
+              <span className="lpage-sub-label">{componentLabel(key, t)}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+      {rangeRank && <p className="pt-muted">{rangeRank}</p>}
+      {why.length > 0 && <p className="pt-muted">{why.join(' ')}</p>}
+      {mountain.bestFor?.length > 0 && (
+        <p className="pt-muted"><b>{t('mtn.bestFor')}</b> {mountain.bestFor.map((code) => bestForLabel(code, t)).join(', ')}</p>
+      )}
+      {tags.length > 0 && <p className="pt-muted">{tags.map((tag) => tag.label).join(', ')}</p>}
+      {comps.length > 0 && (
         <div className="bpage-score">
           <p className="bpage-note">{t('mtn.scoreNote')}</p>
           <ul className="bpage-bars">
-            {COMPONENT_ORDER.filter((key) => mountain.comp?.[key] != null).map((key) => (
+            {comps.map((key) => (
               <li key={key}>
                 <span className="bpage-bar-label">{componentLabel(key, t)}</span>
                 <span className="bpage-bar-track" aria-hidden="true">
@@ -380,27 +374,14 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
             ))}
           </ul>
         </div>
-      ),
-    },
-  ].filter(Boolean);
-
-  const hasTransit = (mountain.acc || []).includes('transit');
-
-  const before = beforeGoItems({
-    hazards: mountain.hazards || [],
-    lines: notForLines('mountain', mountain, { word: difficultyLabel(mountain, t), shownHazards: hazards.map((h) => h.code) }),
-  });
-  const sources = [
-    { label: 'OpenStreetMap', href: `https://www.openstreetmap.org/#map=14/${mountain.lat}/${mountain.lon}` },
-    mountain.wiki && { label: 'Wikipedia', href: mountain.wiki },
-    mountain.wd && { label: 'Wikidata', href: `https://www.wikidata.org/wiki/${mountain.wd}` },
-    ...(mountain.credit || []).map((c) => ({ label: c })),
-  ].filter(Boolean);
+      )}
+    </>
+  ) : null;
 
   return (
-    <DetailPage
+    <OutdoorPage
       name={mountain.name}
-      className="bpage lpage mpage"
+      className="mpage-v2"
       backLabel={backLabel || t('mtn.back')}
       onClose={onClose}
       fav={fav}
@@ -408,94 +389,127 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
       onShare={onShare}
       resetKey={mountain.id}
       toast={toast}
-      gallery={(
-        <PhotoGallery photos={photos} label={mountain.name} claimKey={mountain.id}
-          fallback={{ city: mountain.name, iso2: mountain.cc }} />
-      )}
-      head={(
-        <ItemHead
-          title={mountain.name}
-          iso2={mountain.cc}
-          sub={mountain.nameLocal || ''}
-          where={[mountain.range, countryName].filter(Boolean).join(', ')}
-          rating={rating}
-          after={<NatureHeadLines rating={rating} place={countryName} />}
-          gem={isHiddenGem(mountain)}
-        />
-      )}
-      hook={highlights[0]?.line || headline}
-      keyFacts={keyFacts}
-      whyGo={highlights.slice(1).filter((h) => h.title)}
-      before={before}
-      primary={mountain.near?.dest_id ? (
-        <Button variant="primary" iconEnd={<ChevronRightIcon size={20} />} onClick={() => onSelectDest?.(mountain.near.dest_id)}>
-          {(baseDay && view.stayIn(mountain.near.city, baseDay.dayEur)) || t('mtn.basedOn', { city: mountain.near.city })}
-        </Button>
-      ) : null}
-      actions={[
-        <a key="dir" className="btn btn-secondary" href={mapsUrl} target="_blank" rel="noopener noreferrer">
-          <span className="btn-icon" aria-hidden="true"><MapPinIcon size={20} /></span>
-          <span className="btn-label">{t('detail.directions')}</span>
-        </a>,
-        onAddToDay && (
-          <Button key="day" variant="secondary" iconStart={<SunIcon size={20} />}
-            onClick={() => onAddToDay({ id: mountain.id, cc: mountain.cc, name: mountain.name, lat: mountain.lat, lon: mountain.lon })}>
-            {t('feat.addToDay')}
-          </Button>
-        ),
-      ]}
-      onPdf={onPdf}
-      pdf={{ photos, where: [mountain.range, countryName].filter(Boolean).join(', '), url: mountainShareUrl(mountain) }}
-      pdfBusy={pdfBusy}
-      map={Number.isFinite(mountain.lat) && Number.isFinite(mountain.lon)
-        ? <PlaceMap lat={mountain.lat} lon={mountain.lon} label={t('detail.mapOf', { name: mountain.name })} name={mountain.name} relief zoom={12} />
-        : null}
-      signature={(
-        <MountainSignature
-          mountain={mountain}
-          season={hasMonths ? (
-            <MonthStrip
-              good={monthsGood}
-              avoid={monthsAvoid}
-              info={<p>{bestMonthsLine(mountain, t)}</p>}
-            />
-          ) : null}
-        />
-      )}
-      rows={rows}
-      gettingThere={(mountain.near?.city || mountain.lift || mountain.acc?.length) ? (
-        <>
-          {mountain.near?.city && (
-            <ul className="igo-list">
-              <li className="igo-row">
-                <ItemIcon name="bed" />
-                <span className="igo-main">
-                  <span>{mountain.near.city}</span>
-                  <span className="igo-sub">{t('mtn.basedKm', { km: Math.round(mountain.near.km) })}</span>
-                </span>
-              </li>
-              {hasTransit && (
-                <li className="igo-row">
-                  <ItemIcon name="bus" />
-                  <span className="igo-main"><span>{t('mtn.accTransit')}</span></span>
-                </li>
-              )}
-            </ul>
-          )}
-          <WayUp mountain={mountain} t={t} />
-        </>
-      ) : null}
-      exits={exits}
-      nearby={(
-        <NearbyOutdoors
-          row={mountain}
-          cc={mountain.cc}
-          headings={{ trail: 'nb.mtn.trail', peak: 'nb.mtn.peak', lake: 'nb.mtn.lake' }}
-          onOpen={onOpenNeighbour}
-        />
-      )}
+      photos={photos}
+      photoFallback={{ city: mountain.name, iso2: mountain.cc }}
+      head={{
+        title: mountain.name,
+        sub: mountain.nameLocal || '',
+        iso2: mountain.cc,
+        where,
+        rating,
+        gem: isHiddenGem(mountain),
+        rank: rankLine,
+        badges: [parkWhy?.name || null, mountain.highpointOf ? t('ox.highestIn', { place: mountain.highpointOf }) : null],
+        lead: hook,
+      }}
+      facts={keyFacts}
+      jumps={jumps}
+      whyRates={whyRates}
+      card={{
+        title: t('ox.card.mountain'),
+        rows: [
+          { key: 'h', label: t('mtn.factHeight'), value: mountain.ele != null ? `${nf(mountain.ele)} m` : '' },
+          easiest && { key: 'r', label: t('ox.easiestRoute'), value: easiest.grade },
+          { key: 'w', label: t('detail.factWayUp'), value: wayUp },
+          seasonText && { key: 's', label: t('detail.factSeason'), value: seasonText },
+          Number.isFinite(liftReturn) && { key: 'l', label: t('ox.liftReturnShort'), value: formatMoney(liftReturn) },
+        ].filter(Boolean),
+        onAdd,
+        secondary: [
+          routeCards.length > 0 ? (
+            <Button key="routes" variant="secondary" size="sm" iconStart={<RouteIcon size={16} />}
+              onClick={() => scrollToSection(document.querySelector('.oxp .pt-scroll'), 'ox-routes')}>
+              {t('ox.seeRoutes')}
+            </Button>
+          ) : null,
+          <OxLinkButton key="dir" href={mapsUrl} icon={<MapPinIcon size={16} />}>{t('ox.directions')}</OxLinkButton>,
+          <Button key="pdf" variant="secondary" size="sm" loading={pdfBusy} iconStart={<DownloadIcon size={16} />}
+            onClick={() => onPdf(pdfModel())}>
+            {t('ox.pdf')}
+          </Button>,
+        ],
+        stay: mountain.near?.dest_id && mountain.near.city ? (
+          <StayLine destId={mountain.near.dest_id} city={mountain.near.city} km={mountain.near.km} onOpen={onSelectDest} />
+        ) : null,
+      }}
+      dock={{
+        fig: mountain.ele != null ? `${nf(mountain.ele)} m` : mountain.name,
+        note: wayUp ? wayUp.toLocaleLowerCase(lang) : '',
+        sub: [seasonText, hutName ? t('ox.hutShort', { name: hutName }) : ''].filter(Boolean).join(', '),
+      }}
       sources={sources}
       sourcesExtra={<ReportProblem item={{ layer: 'mountain', id: mountain.id, cc: mountain.cc, name: mountain.name }} />}
-    />
+    >
+      {routeCards.length > 0 && (
+        <PSection id="ox-routes" title={t('ox.jump.routes')}>
+          <ul className="ox-rtc">
+            {routeCards.map((r) => (
+              <li key={r.key}>
+                <a className="ox-rc" href={r.href || undefined} onClick={r.onOpen ? linkOpener(r.onOpen) : undefined}>
+                  <b>{r.name}</b>
+                  <ChevronRightIcon size={20} className="ox-rc-go" />
+                  {(r.grade || r.meta.length > 0) && (
+                    <span className="ox-rc-meta">
+                      {r.grade && <span>{r.grade}</span>}
+                      {r.meta.map((m) => <span key={m}>{m}</span>)}
+                    </span>
+                  )}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </PSection>
+      )}
+
+      <PSection id="ox-lifts" title={t('ox.jump.lifts')}>
+        <RouteBlock map={map} />
+        <CheckRows rows={hutRows} />
+      </PSection>
+
+      {(temps || seasonText || whenCells.length > 0) && (
+        <PSection id="ox-when" title={t('ox.jump.when')}>
+          {temps && (
+            <div className="pt-block">
+              <MonthStrip values={temps} best={goodMonths.map((m) => m - 1)} now={new Date().getMonth()}
+                label={t('ox.summitByMonth')} monthLetter={months.letter} />
+              <p className="ox-legend">
+                {seasonText && <span><i aria-hidden="true" />{t('ox.seasonIs', { months: seasonText })}</span>}
+                <span>{t('ox.summitUnit')}</span>
+              </p>
+            </div>
+          )}
+          {!temps && seasonText && <p className="pt-muted">{t('ox.seasonIs', { months: seasonText })}</p>}
+          {whenCells.length > 0 && (
+            <ul className="ox-cells">
+              {whenCells.map((c) => (
+                <li key={c.key}>
+                  <small>{c.label}</small>
+                  <b>{c.value}</b>
+                  {c.text && <span>{c.text}</span>}
+                </li>
+              ))}
+            </ul>
+          )}
+          <SummitForecast mountain={mountain} t={t} lang={lang} />
+        </PSection>
+      )}
+
+      <PSection id="ox-before" title={t('go.head')}>
+        <CheckRows rows={beforeRows} />
+        <SafetyBlock extra={[parkWhy && { key: 'park', label: t('ox.park'), value: parkWhy.name }]} />
+      </PSection>
+
+      {(exits.length > 0 || mountain.nb) && (
+        <PSection id="ox-near" title={t('ox.otherPeaks')}>
+          <OtherNearby exits={exits} hrefOf={(r) => featureHref('mountain', { id: r.id, cc: r.cc })} />
+          <NearbyOutdoors
+            row={mountain}
+            cc={mountain.cc}
+            headings={{ trail: 'nb.mtn.trail', lake: 'nb.mtn.lake' }}
+            onOpen={onOpenNeighbour}
+          />
+        </PSection>
+      )}
+    </OutdoorPage>
   );
 }

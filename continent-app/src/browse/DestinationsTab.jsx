@@ -4070,6 +4070,8 @@ export function DestinationsTab({
             routeId={pageCycle.routeId}
             backLabel={returnTo?.label || ''}
             {...favProps('cycle', pageCycle.routeId ?? pageCycle.tourSlug, pageCycle.country)}
+            onAddToDay={onAddToDay ? (f) => onAddToDay('cycle', f) : null}
+            onSelectDest={(id) => { setPageCycle(null); onSelectDest(id); }}
             onOpenNeighbour={openNeighbour}
             tourSlug={pageCycle.tourSlug}
             country={pageCycle.country}

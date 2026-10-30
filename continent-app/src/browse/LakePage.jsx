@@ -4,82 +4,62 @@ import { displayName } from '../lib/format.js';
 import { ReportProblem } from '../components/ReportProblem.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
-import { DetailPage, PlaceMap } from './DetailSkeleton.jsx';
-import { PhotoGallery } from './PhotoGallery.jsx';
-import { ItemHead, ItemIcon, NatureHeadLines } from './ItemParts.jsx';
-import { Button, Money } from '../components/ui/index.js';
+import { PlaceMap } from './DetailSkeleton.jsx';
+import { ItemIcon } from './ItemParts.jsx';
+import { formatMoney } from '../lib/money.js';
 import { toPhotos } from '../lib/itemPhotos.js';
 import { beforeGoItems } from '../lib/beforeGo.js';
-import { useBaseDay } from '../hooks/useBaseDay.js';
 import { useItemPdf } from '../hooks/useItemPdf.js';
 import { usePlaceExits } from '../hooks/usePlaceExits.js';
-import {
-  previewWords, previewNotHook, keyFactCells, pointCentre, ACCESS_LEVEL,
-} from '../lib/detailSkeleton.js';
+import { keyFactCells, pointCentre, ACCESS_LEVEL, capFirst } from '../lib/detailSkeleton.js';
 import { notForLines } from '../lib/notFor.js';
+import { natureRankLine } from '../lib/rating.js';
+import { featureHref } from '../lib/featureHref.js';
 import {
-  lakeHeadline, lakeWhy, lakeTags, lakeSwim, lakeSeason, lakeHazards,
+  lakeHeadline, lakeWhy, lakeTags, lakeSwim, lakeHazards,
   bestForLabel, componentLabel, serviceLabel, accessLabel,
   COMPONENT_ORDER, SUB_ORDER, lakeRating, isHiddenGem, lakeHighlights,
 } from '../lib/lakeStory.js';
 import { lakeShareUrl, loadLakes } from '../lib/lakes.js';
 import { trailheadDirectionsUrl, shareTrailLink } from '../lib/trailExport.js';
 import {
-  MapPinIcon, ChevronRightIcon,
-  BootIcon, BulbIcon, InfoIcon, StarIcon,
-  SunIcon,
+  MapPinIcon, DownloadIcon, ParkingIcon, DiningIcon, BedIcon, ShieldIcon, SwimIcon, BootIcon,
+  BeachIcon, TicketIcon, FerryIcon, RouteIcon, CheckIcon, AlertIcon,
 } from '../components/Icons.jsx';
-import { lakeShore, shoreSummary } from '../lib/derivedModules.js';
-import { LakeShore } from './DerivedModules.jsx';
-import { BaseClimate, LakeWater } from './WaterSheet.jsx';
-import { notYet } from '../components/NotYet.jsx';
-
-import { LakeSignature } from './Signature.jsx';
-import { useDayView } from '../hooks/useDayView.js';
+import { lakeShore } from '../lib/derivedModules.js';
+import { Button } from '../components/ui/index.js';
+import {
+  OutdoorPage, PSection, StayLine, RouteBlock, CheckRows, Facilities, WaterClass, MonthStrip,
+  OtherNearby, OxLinkButton, outdoorPdfModel, monthIndex, useMonthWords, accessRows, pointRow,
+} from './OutdoorParts.jsx';
 
 /**
  * The lake page: one published water body, and the argument for going there.
  *
- * It answers five things, and the first one is not the score.
+ * Since T917 it stands on the place page's template (OutdoorParts.jsx, the
+ * owner's approved spec of 2026-10-30). Swimming leads, because it is the
+ * one field on this page that can hurt somebody: the verdict is the first
+ * fact and the first row of the first section, never folded. Then the head,
+ * the facts (swimming, the EU water class, the warm months, the shore path,
+ * the altitude), a jump bar and the sections: Swimming (the verdict and its
+ * source, the lifeguard season, the water class as four named steps, the
+ * modelled water by month, the hazards), Around the shore (the path, a beach
+ * on the shore, what is there, rentals and entry with their prices), Getting
+ * there (the map, the way in, parking, transit) and Other lakes. The side
+ * card holds the one primary, "Add to a day plan".
  *
- *   can I swim here    the verdict, in its own banner, at the top, coloured,
- *                      with the evidence that produced it named. Everything
- *                      else on this page is a recommendation; this is the one
- *                      field that can hurt somebody, so it is the one thing
- *                      that cannot be scrolled past. A lake where swimming is
- *                      forbidden says so above its own photograph.
- *   where is it        a pin, the region, the country, the coordinates, and
- *                      one link that opens the spot in a maps app.
- *   what does it look  up to five photographs, each credited to the person
- *   like               who took it and the licence they released it under.
- *   why this one       the composed explanation, every sentence of it mapped
- *                      to a field in the data (lib/lakeStory.js), then the
- *                      hazards in their own block underneath.
- *   is the number      three sub scores on their own, then the six weighted
- *   honest             components, so the ranking can be checked rather than
- *                      believed.
- *
- * Since T180 the page draws through the shared detail skeleton
- * (DetailSkeleton.jsx). The swim verdict and the hazards sit in its alert
- * slot, the one place that never folds, for the reason above. The map is a
- * lazy chunk (PointMap.jsx). The signature slot holds the lake's own figure
- * (Signature.jsx, T181): the water temperature by month as twelve bars, and
- * the depth-versus-area wedge.
- *
- * The month strip is an ESTIMATE and says so in its own subtitle. There is no
- * free per lake water temperature series for Europe, so the pipeline models it
- * from CHELSA air normals with a documented correction. Presenting that as
- * a measurement would be the dishonest half of a useful feature.
+ * The month strip is an ESTIMATE and says so: there is no free per lake water
+ * temperature series for Europe, so the pipeline models it from air normals.
  */
 
-const MONTH_CODES = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug',
-  'sep', 'oct', 'nov', 'dec'];
-
 /** The way in as a level: only the access field says anything about it. */
-const lakeLevel = (l) => ACCESS_LEVEL[l?.access] || 0;
+const lakeLevel = (l) => (typeof l?.access === 'string' ? ACCESS_LEVEL[l.access] || 0 : 0);
+const SVC_ICON = { parking: ParkingIcon, food: DiningIcon, camping: BedIcon, lido: SwimIcon, ferry: FerryIcon, boatRental: FerryIcon };
+const RENT_KINDS = ['boat', 'pedalo', 'sup', 'kayak', 'canoe', 'rowboat'];
 
-export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18, onOpenNeighbour, fav = false, onFav = null, onAddToDay = null, backLabel = '' }) {
+export function LakePage({ lake, countryName, onClose, onSelectDest, onOpenNeighbour, fav = false, onFav = null, onAddToDay = null, backLabel = '' }) {
   const { t, lang } = useI18n();
+  const months = useMonthWords();
   const [toast, setToast] = useState(null);
 
   useEffect(() => {
@@ -109,15 +89,13 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
     () => (lake ? lakeHeadline(lake, t, countryName) : ''),
     [lake, t, countryName],
   );
-
   const highlights = useMemo(() => (lake ? lakeHighlights(lake, t) : []), [lake, t]);
   const photos = useMemo(() => toPhotos(images, { fallbackCaption: lake?.name || '' }), [images, lake?.name]);
-  const baseDay = useBaseDay(lake?.base?.id || null);
-  const view = useDayView();   // T694: per person or the group's total
   const { onPdf, pdfBusy } = useItemPdf('lake', lake, { countryName });
 
   if (!lake) return null;
 
+  const nf = (v) => Math.round(v).toLocaleString(lang);
   const mapsUrl = trailheadDirectionsUrl(lake.lat, lake.lon);
   const onShare = async () => {
     const how = await shareTrailLink(lake.name, lakeShareUrl(lake));
@@ -125,189 +103,157 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
   };
 
   const size = lake.size || {};
-  const seasonLine = lakeSeason(lake, t);
-  const facts = [
-    // T631: area and depth keep their slot at every lake; the 7% without an
-    // area and the 67% without a depth show the shared placeholder.
-    {
-      key: 'area',
-      label: t('lake.factArea'),
-      value: size.areaKm2 ? `${size.areaKm2.toLocaleString(lang)} km²` : notYet(t),
-      mono: Boolean(size.areaKm2),
-      empty: !size.areaKm2,
-    },
-    {
-      key: 'depth',
-      label: t('lake.factDepth'),
-      value: size.depthM ? `${size.depthM.toLocaleString(lang)} m` : notYet(t),
-      mono: Boolean(size.depthM),
-      empty: !size.depthM,
-    },
-    size.elevM != null && {
-      key: 'elev',
-      label: t('lake.factElevation'),
-      value: `${size.elevM.toLocaleString(lang)} m`,
-      mono: true,
-    },
-    {
-      key: 'water',
-      label: t('lake.factWater'),
-      value: lake.water ? t(`lake.water${lake.water.class}`) : notYet(t),
-      empty: !lake.water,
-      note: lake.water && (lake.water.sites > 0
-        ? t('lake.factSites', { n: lake.water.sites })
-        : (displayName(lake.water.site) || '')),
-    },
-    lake.access && {
-      key: 'access',
-      label: t('lake.factAccess'),
-      value: accessLabel(lake.access, t),
-    },
-    lake.protected && {
-      key: 'protected',
-      label: t('lake.factProtected'),
-      value: lake.protected.name,
-      note: lake.protected.np ? t('lake.nationalPark') : lake.protected.kind,
-    },
-    lake.services?.length && {
-      key: 'services',
-      label: t('lake.factServices'),
-      value: lake.services.map((s) => serviceLabel(s, t)).filter(Boolean).join(', '),
-    },
-    lake.shared?.length > 1 && {
-      key: 'shared',
-      label: t('lake.factShared'),
-      value: lake.shared.join(', '),
-    },
-  ].filter(Boolean);
-
-  const subs = SUB_ORDER.filter((key) => lake.sub?.[key] != null);
-
-  // The derived module (T182): how much path runs along the water, from the
-  // shore sweep's figure on the wire. Always rendered inside About this lake;
-  // an unswept shore says so.
+  const altM = Number.isFinite(lake.alt_m) ? lake.alt_m : (Number.isFinite(size.elevM) ? size.elevM : null);
+  const water = lake.water || null;
+  const waterWord = water ? t(`lake.water${water.class}`) : '';
+  const season = lake.swim?.season || null;
+  const sFrom = monthIndex(season?.from);
+  const sTo = monthIndex(season?.to);
+  const warmText = sFrom && sTo ? t('detail.monthRange', { from: months.short(sFrom), to: months.short(sTo) }) : '';
+  const peakC = Number(season?.peak);
   const shore = lakeShore(lake);
+  const shoreKm = shore.state === 'path' ? shore.km : null;
+  const shoreText = shoreKm != null ? `${shoreKm.toLocaleString(lang, { maximumFractionDigits: 1 })} km` : '';
+  const canSwim = swim.rule === 'yes' || swim.rule === 'limited';
 
-  // The key facts band (T386). The swim verdict leads it in its own words,
-  // never folded and never a cell among others (see the file header); the
-  // cells carry the size, the warmest month's modelled water and the EU
-  // bathing class. The peak temperature is a model, so it says "est.".
-  const peakC = lake.swim?.season?.peak;
+  // The lifeguard season, where the data has one.
+  const lgFrom = monthIndex(lake.lifeguard_season?.[0]);
+  const lgTo = monthIndex(lake.lifeguard_season?.[1]);
+  const lgSeason = lgFrom && lgTo ? t('detail.monthRange', { from: months.short(lgFrom), to: months.short(lgTo) }) : '';
+
+  // The facts that decide (the spec): swimming, water, the warm months, the
+  // shore path, the altitude; the surface when a cell is spare.
   const keyFacts = keyFactCells([
-    { key: 'area', label: t('lake.factArea'), value: size.areaKm2 ? `${size.areaKm2.toLocaleString(lang)} km²` : '', mono: true },
-    { key: 'depth', label: t('lake.factDepth'), value: size.depthM ? `${size.depthM.toLocaleString(lang)} m` : '', mono: true },
-    Number.isFinite(peakC) && { key: 'peak', label: t('detail.factWaterPeak'), value: `~${Math.round(peakC)} °C`, mono: true, note: t('prov.est') },
-    lake.water && { key: 'water', label: t('lake.factWater'), value: t(`lake.water${lake.water.class}`) },
-    size.elevM != null && { key: 'elev', label: t('lake.factElevation'), value: `${size.elevM.toLocaleString(lang)} m`, mono: true, fallback: true },
+    { key: 'swim', label: t('ox.fact.swim'), value: swim.label },
+    water && { key: 'water', label: t('lake.factWater'), value: waterWord, note: water.year ? String(water.year) : null },
+    warmText && { key: 'season', label: t('ox.fact.warm'), value: warmText, note: Number.isFinite(peakC) ? t('ox.peakC', { c: nf(peakC) }) : null },
+    shoreText && { key: 'walk', icon: 'way', label: t('ox.shorePath'), value: shoreText },
+    altM != null && { key: 'elev', label: t('lake.factElevation'), value: `${nf(altM)} m` },
+    size.areaKm2 && { key: 'area', label: t('lake.factArea'), value: `${size.areaKm2.toLocaleString(lang)} km²`, fallback: true },
   ], t);
 
-  // The rows (T386): at most five. About this lake holds the argument, the
-  // shore and the walks; then every measurement, the score and the photographs.
-  const aboutTexts = [...why, shoreSummary(shore, t, lang)];
-  const rows = [
+  /* Swimming: the verdict, the lifeguard, the class, the water by month. */
+  const temps = Array.isArray(lake.swim?.temps) && lake.swim.temps.length === 12
+    && lake.swim.temps.every((v) => Number.isFinite(Number(v))) ? lake.swim.temps.map(Number) : null;
+  const warmMonths = temps && sFrom && sTo
+    ? [...Array(12).keys()].filter((i) => (sFrom <= sTo ? i + 1 >= sFrom && i + 1 <= sTo : i + 1 >= sFrom || i + 1 <= sTo))
+    : [];
+  const swimRows = [
     {
-      key: 'about',
-      icon: BulbIcon,
-      label: t('detail.aboutLake'),
-      summary: previewNotHook(aboutTexts, headline),
-      body: (
-        <>
-          {(why.length > 0 || subs.length > 0 || lake.bestFor?.length > 0 || tags.length > 0) && (
-            <div className="bpage-why">
-              <h3 className="dsk-sub">{t('lake.whyHead')}</h3>
-              {/* The three sub scores, side by side, because choosing between a
-                  cold beautiful lake and a warm ordinary one is the actual
-                  decision and one blended number hides it. */}
-              {subs.length > 0 && (
-                <ul className="lpage-subs">
-                  {subs.map((key) => (
-                    <li key={key}>
-                      <span className="lpage-sub-n">{Math.round(lake.sub[key] * 10)}</span>
-                      <span className="lpage-sub-label">{componentLabel(key, t)}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-              {why.length > 0 && <p className="bpage-prose">{why.join(' ')}</p>}
-              {lake.bestFor?.length > 0 && (
-                <p className="bpage-for">
-                  <b>{t('lake.bestFor')}</b>
-                  {' '}
-                  {lake.bestFor.map((code) => bestForLabel(code, t)).join(', ')}
-                </p>
-              )}
-              {tags.length > 0 && (
-                <ul className="bpage-tags">
-                  {tags.map((tag) => <li key={tag.code}>{tag.label}</li>)}
-                </ul>
-              )}
-            </div>
-          )}
-          <div className="dsk-part">
-            <h3 className="dsk-sub">{t('derived.shoreHead')}</h3>
-            <LakeShore shore={shore} t={t} lang={lang} />
-          </div>
-          <BaseClimate
-            base={lake.base}
-            kind="lake"
-            water={{ temps: lake.swim?.temps || null, est: Boolean(lake.swim?.est) }}
-            placeM={Number.isFinite(size.elevM) ? size.elevM : null}
-            placeName={lake.name}
-          />
-          {lake.walks?.length > 0 && (
-            <div className="lpage-walks">
-              <h3 className="dsk-sub">{t('lake.walksHead')}</h3>
-              <ul>
-                {lake.walks.map((walk) => (
-                  <li key={walk.id}>
-                    <BootIcon size={13} />
-                    <span>{walk.name}</span>
-                    {walk.km > 0 && <small className="mono">{walk.km} km</small>}
-                  </li>
-                ))}
-              </ul>
-              {lake.nWalks > lake.walks.length && (
-                <p className="bpage-note">
-                  {t('lake.walksMore', { n: lake.nWalks - lake.walks.length })}
-                </p>
-              )}
-            </div>
-          )}
-        </>
-      ),
+      key: 'swim',
+      icon: <SwimIcon size={16} />,
+      title: swim.label,
+      text: swim.source ? t('ox.swimFrom', { src: swim.source }) : '',
+      warn: swim.rule === 'no' || swim.rule === 'limited',
     },
-    {
-      key: 'facts',
-      icon: InfoIcon,
-      label: t('lake.factsHead'),
-      summary: previewWords(facts.filter((f) => !f.empty).slice(0, 3).map((f) => f.value).join(', ')),
-      body: (
-        <div className="bpage-facts">
-          <dl>
-            {facts.map((fact) => (
-              <div key={fact.key} className={`bpage-fact${fact.empty ? ' bpage-fact-empty' : ''}`}>
-                <dt>{fact.label}</dt>
-                <dd className={fact.mono ? 'mono' : ''}>
-                  {fact.value}
-                  {fact.note && <small>{fact.note}</small>}
-                </dd>
-              </div>
-            ))}
-          </dl>
-          <LakeWater lake={lake} />
-        </div>
-      ),
+    lgSeason && { key: 'lg', icon: <ShieldIcon size={16} />, title: t('beach.factLifeguard'), text: lgSeason },
+    ...hazards.map((h) => ({ key: `haz-${h.code}`, icon: <AlertIcon size={16} />, title: h.line, text: '', warn: true })),
+  ];
+
+  /* Around the shore: the path, a beach, what is there, rentals, entry. */
+  const shoreBeach = Array.isArray(lake.beaches) && lake.beaches.length ? lake.beaches[0] : null;
+  const rentals = (Array.isArray(lake.rentals) ? lake.rentals : []).filter((r) => r && r.kind);
+  const entry = Number(lake.entry_eur);
+  const facil = [
+    shoreText && { key: 'path', icon: <BootIcon size={16} />, label: t('ox.shorePath'), note: shoreText },
+    shoreBeach && { key: 'beach', icon: <BeachIcon size={16} />, label: t('ox.shoreBeach'), note: shoreBeach.n && shoreBeach.n !== lake.name ? shoreBeach.n : '' },
+    ...(lake.services || []).map((s) => {
+      const word = serviceLabel(s, t);
+      if (!word) return null;
+      const Icon = SVC_ICON[s] || CheckIcon;
+      return { key: `svc-${s}`, icon: <Icon size={16} />, label: capFirst(word) };
+    }),
+    ...rentals.map((r, i) => ({
+      key: `rent-${i}`,
+      icon: <FerryIcon size={16} />,
+      label: RENT_KINDS.includes(r.kind) ? t(`ox.rent.${r.kind}`) : capFirst(String(r.kind)),
+      note: Number.isFinite(Number(r.eur_hour)) ? t('ox.perHour', { price: formatMoney(Number(r.eur_hour)) }) : '',
+    })),
+    lake.entry_eur != null && Number.isFinite(entry) && {
+      key: 'entry', icon: <TicketIcon size={16} />, label: t('ox.entry'),
+      note: entry === 0 ? t('ox.free') : formatMoney(entry),
     },
-    COMPONENT_ORDER.some((key) => lake.comp?.[key] != null) && {
-      key: 'score',
-      icon: StarIcon,
-      label: t('lake.scoreHead'),
-      summary: previewWords(t('lake.scoreNote')),
-      body: (
+  ].filter(Boolean);
+  const walks = (lake.walks || []).filter((w) => w && w.name).slice(0, 4).map((w) => ({
+    key: `walk-${w.id}`,
+    icon: <BootIcon size={16} />,
+    title: w.name,
+    text: w.km > 0 ? `${w.km} km` : '',
+  }));
+
+  /* Getting there: the way in, parking, transit, the point on the map. */
+  const services = lake.services || [];
+  const accessObj = lake.access && typeof lake.access === 'object' ? lake.access : null;
+  const gettingRows = [
+    typeof lake.access === 'string' && { key: 'way', icon: <RouteIcon size={16} />, title: accessLabel(lake.access, t), text: '' },
+    ...accessRows(accessObj, t, lang),
+    !accessObj?.parking && services.includes('parking') && { key: 'park', icon: <ParkingIcon size={16} />, title: t('ox.parking'), text: t('ox.parkMapped') },
+    pointRow(lake.lat, lake.lon, t, mapsUrl),
+  ].filter(Boolean);
+
+  const before = beforeGoItems({
+    hazards: (lake.hazards || []),
+    lines: notForLines('lake', lake, { shownHazards: hazards.map((h) => h.code) }),
+  });
+  const notForRows = before.filter((it) => !String(it.key).startsWith('haz-')).map((it) => ({
+    key: it.key,
+    icon: <ItemIcon name={it.icon} size={16} />,
+    title: t(it.titleKey, { ...it.params, word: it.params?.word ? capFirst(it.params.word) : it.params?.word }),
+    text: t(it.subKey, it.params),
+  }));
+  const sources = [
+    lake.osm && { label: 'OpenStreetMap', href: `https://www.openstreetmap.org/${lake.osm}` },
+    lake.wiki && { label: 'Wikipedia', href: lake.wiki },
+    lake.wd && { label: 'Wikidata', href: `https://www.wikidata.org/wiki/${lake.wd}` },
+    ...(lake.credit || []).map((c) => ({ label: c })),
+  ].filter(Boolean);
+
+  const where = [lake.region, countryName].filter(Boolean).join(', ');
+  const hook = highlights[0]?.line || headline;
+  const rankLine = rating && !rating.unscored ? natureRankLine({ rank: rating.rank }, t, { place: countryName }) : '';
+  const onAdd = onAddToDay
+    ? () => onAddToDay({ id: lake.id, cc: lake.cc, name: lake.name, lat: lake.lat, lon: lake.lon }) : null;
+  const pdfModel = () => outdoorPdfModel({
+    name: lake.name, hook, facts: keyFacts, why: highlights.slice(1).filter((h) => h.title), before, sources, t,
+    extra: { photos, where, url: lakeShareUrl(lake) },
+  });
+  const peakMonth = temps ? temps.indexOf(Math.max(...temps)) + 1 : null;
+  const subs = SUB_ORDER.filter((key) => lake.sub?.[key] != null);
+  const comps = COMPONENT_ORDER.filter((key) => lake.comp?.[key] != null);
+
+  const jumps = [
+    { key: 'swim', id: 'ox-swim', label: t('ox.jump.swim') },
+    { key: 'shore', id: 'ox-shore', label: t('ox.jump.shore') },
+    { key: 'getting', id: 'ox-getting', label: t('detail.gettingThere') },
+    { key: 'near', id: 'ox-near', label: t('ox.jump.nearby') },
+  ];
+
+  const map = Number.isFinite(lake.lat) && Number.isFinite(lake.lon)
+    ? <PlaceMap lat={lake.lat} lon={lake.lon} label={t('detail.mapOf', { name: lake.name })} name={lake.name} />
+    : null;
+
+  const whyRates = comps.length > 0 || why.length > 0 ? (
+    <>
+      {subs.length > 0 && (
+        <ul className="lpage-subs">
+          {subs.map((key) => (
+            <li key={key}>
+              <span className="lpage-sub-n">{Math.round(lake.sub[key] * 10)}</span>
+              <span className="lpage-sub-label">{componentLabel(key, t)}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+      {why.length > 0 && <p className="pt-muted">{why.join(' ')}</p>}
+      {lake.bestFor?.length > 0 && (
+        <p className="pt-muted"><b>{t('lake.bestFor')}</b> {lake.bestFor.map((code) => bestForLabel(code, t)).join(', ')}</p>
+      )}
+      {tags.length > 0 && <p className="pt-muted">{tags.map((tag) => tag.label).join(', ')}</p>}
+      {comps.length > 0 && (
         <div className="bpage-score">
           <p className="bpage-note">{t('lake.scoreNote')}</p>
           <ul className="bpage-bars">
-            {COMPONENT_ORDER.filter((key) => lake.comp?.[key] != null).map((key) => (
+            {comps.map((key) => (
               <li key={key}>
                 <span className="bpage-bar-label">{componentLabel(key, t)}</span>
                 <span className="bpage-bar-track" aria-hidden="true">
@@ -318,25 +264,14 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
             ))}
           </ul>
         </div>
-      ),
-    },
-  ].filter(Boolean);
-
-  const before = beforeGoItems({
-    hazards: (lake.hazards || []),
-    lines: notForLines('lake', lake, { shownHazards: hazards.map((h) => h.code) }),
-  });
-  const sources = [
-    lake.osm && { label: 'OpenStreetMap', href: `https://www.openstreetmap.org/${lake.osm}` },
-    lake.wiki && { label: 'Wikipedia', href: lake.wiki },
-    lake.wd && { label: 'Wikidata', href: `https://www.wikidata.org/wiki/${lake.wd}` },
-    ...(lake.credit || []).map((c) => ({ label: c })),
-  ].filter(Boolean);
+      )}
+    </>
+  ) : null;
 
   return (
-    <DetailPage
+    <OutdoorPage
       name={lake.name}
-      className="bpage lpage"
+      className="lpage-v2"
       backLabel={backLabel || t('lake.back')}
       onClose={onClose}
       fav={fav}
@@ -344,79 +279,98 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
       onShare={onShare}
       resetKey={lake.id}
       toast={toast}
-      gallery={(
-        <PhotoGallery photos={photos} label={lake.name} claimKey={lake.id}
-          fallback={{ city: lake.name, iso2: lake.cc }} />
-      )}
-      head={(
-        <ItemHead
-          title={lake.name}
-          iso2={lake.cc}
-          sub={lake.nameLocal || ''}
-          where={[lake.region, countryName].filter(Boolean).join(', ')}
-          rating={rating}
-          after={<NatureHeadLines rating={rating} place={countryName} />}
-          gem={isHiddenGem(lake)}
-        />
-      )}
-      hook={highlights[0]?.line || headline}
-      keyFactsLead={(
-        /* The verdict never folds. See the file header. */
-        <p className={`lpage-swim lpage-swim-${swim.tone}`} role="note">
-          <span className="lpage-swim-word">{swim.label}</span>
-          {seasonLine && <span className="lpage-swim-season">{seasonLine}</span>}
-        </p>
-      )}
-      keyFacts={keyFacts}
-      whyGo={highlights.slice(1).filter((h) => h.title)}
-      before={before}
-      primary={lake.base ? (
-        <Button variant="primary" iconEnd={<ChevronRightIcon size={20} />} onClick={() => onSelectDest?.(lake.base.id)}>
-          {(baseDay && view.stayIn(lake.base.city, baseDay.dayEur)) || t('lake.basedOn', { city: lake.base.city })}
-        </Button>
-      ) : null}
-      actions={[
-        <a key="dir" className="btn btn-secondary" href={mapsUrl} target="_blank" rel="noopener noreferrer">
-          <span className="btn-icon" aria-hidden="true"><MapPinIcon size={20} /></span>
-          <span className="btn-label">{t('detail.directions')}</span>
-        </a>,
-        onAddToDay && (
-          <Button key="day" variant="secondary" iconStart={<SunIcon size={20} />}
-            onClick={() => onAddToDay({ id: lake.id, cc: lake.cc, name: lake.name, lat: lake.lat, lon: lake.lon })}>
-            {t('feat.addToDay')}
-          </Button>
-        ),
-      ]}
-      onPdf={onPdf}
-      pdf={{ photos, where: [lake.region, countryName].filter(Boolean).join(', '), url: lakeShareUrl(lake) }}
-      pdfBusy={pdfBusy}
-      map={Number.isFinite(lake.lat) && Number.isFinite(lake.lon)
-        ? <PlaceMap lat={lake.lat} lon={lake.lon} label={t('detail.mapOf', { name: lake.name })} name={lake.name} />
-        : null}
-      signature={<LakeSignature lake={lake} warmC={warmC} />}
-      rows={rows}
-      gettingThere={lake.base ? (
-        <ul className="igo-list">
-          <li className="igo-row">
-            <ItemIcon name="bed" />
-            <span className="igo-main">
-              <span>{lake.base.city}</span>
-              <span className="igo-sub">{t('lake.basedKm', { km: Math.round(lake.base.km) })}</span>
-            </span>
-          </li>
-        </ul>
-      ) : null}
-      exits={exits}
-      nearby={(
-        <NearbyOutdoors
-          row={lake}
-          cc={lake.cc}
-          headings={{ trail: 'nb.lake.trail', peak: 'nb.lake.peak' }}
-          onOpen={onOpenNeighbour}
-        />
-      )}
+      photos={photos}
+      photoFallback={{ city: lake.name, iso2: lake.cc }}
+      head={{
+        title: lake.name,
+        sub: lake.nameLocal || '',
+        iso2: lake.cc,
+        where,
+        rating,
+        gem: isHiddenGem(lake),
+        rank: rankLine,
+        badges: [lake.protected?.name || null],
+        lead: hook,
+      }}
+      facts={keyFacts}
+      jumps={jumps}
+      whyRates={whyRates}
+      card={{
+        title: t('ox.card.lake'),
+        rows: [
+          { key: 's', label: t('ox.fact.swim'), value: swim.label },
+          water && { key: 'w', label: t('lake.factWater'), value: waterWord },
+          peakMonth && Number.isFinite(peakC) && { key: 'pk', label: t('ox.warmestIn', { month: months.long(peakMonth) }), value: `${nf(peakC)}°` },
+          lake.entry_eur != null && Number.isFinite(entry) && { key: 'e', label: t('ox.entry'), value: entry === 0 ? t('ox.free') : formatMoney(entry) },
+        ].filter(Boolean),
+        onAdd,
+        secondary: [
+          <OxLinkButton key="dir" href={mapsUrl} icon={<MapPinIcon size={16} />}>{t('ox.directions')}</OxLinkButton>,
+          <Button key="pdf" variant="secondary" size="sm" loading={pdfBusy} iconStart={<DownloadIcon size={16} />}
+            onClick={() => onPdf(pdfModel())}>
+            {t('ox.pdf')}
+          </Button>,
+        ],
+        stay: lake.base?.id && lake.base.city ? (
+          <StayLine destId={lake.base.id} city={lake.base.city} km={lake.base.km} onOpen={onSelectDest} />
+        ) : null,
+      }}
+      dock={{
+        fig: canSwim && warmText ? t('ox.swimMonths', { months: warmText }) : swim.label,
+        note: canSwim && Number.isFinite(peakC) ? `${nf(peakC)}°` : '',
+        sub: [waterWord ? t('ox.dockWater', { word: waterWord }) : '', shoreText ? t('ox.shoreShort', { km: shoreText }) : '']
+          .filter(Boolean).join(', '),
+      }}
       sources={sources}
       sourcesExtra={<ReportProblem item={{ layer: 'lake', id: lake.id, cc: lake.cc, name: lake.name }} />}
-    />
+    >
+      <PSection id="ox-swim" title={t('ox.jump.swim')}>
+        <CheckRows rows={swimRows} />
+        {water && <WaterClass cls={water.class} year={water.year || null} site={displayName(water.site) || null} />}
+        {temps && (
+          <div className="pt-block">
+            <h3 className="pt-block-title">{t('ox.lakeByMonth')}</h3>
+            <MonthStrip values={temps} best={warmMonths} now={new Date().getMonth()} label={t('ox.lakeByMonth')}
+              monthLetter={months.letter} />
+            <p className="ox-legend">
+              {warmText && <span><i aria-hidden="true" />{t('ox.warmEnough', { months: warmText })}</span>}
+              <span>{t('ox.lakeUnit')}</span>
+            </p>
+          </div>
+        )}
+        <CheckRows rows={notForRows} />
+      </PSection>
+
+      {(facil.length > 0 || walks.length > 0) && (
+        <PSection id="ox-shore" title={t('ox.jump.shore')}>
+          <Facilities items={facil} />
+          {walks.length > 0 && (
+            <div className="pt-block">
+              <h3 className="pt-block-title">{t('lake.walksHead')}</h3>
+              <CheckRows rows={walks} />
+            </div>
+          )}
+        </PSection>
+      )}
+
+      {(map || gettingRows.length > 0) && (
+        <PSection id="ox-getting" title={t('detail.gettingThere')}>
+          <RouteBlock map={map} />
+          <CheckRows rows={gettingRows} />
+        </PSection>
+      )}
+
+      {(exits.length > 0 || lake.nb) && (
+        <PSection id="ox-near" title={t('ox.otherLakes')}>
+          <OtherNearby exits={exits} hrefOf={(r) => featureHref('lake', { id: r.id, cc: r.cc })} />
+          <NearbyOutdoors
+            row={lake}
+            cc={lake.cc}
+            headings={{ trail: 'nb.lake.trail', peak: 'nb.lake.peak' }}
+            onOpen={onOpenNeighbour}
+          />
+        </PSection>
+      )}
+    </OutdoorPage>
   );
 }

@@ -2521,6 +2521,26 @@ TASKS = [
                  "--version run."),
     },
     {
+        "key": "outdoor_pages",
+        "title": "Outdoor detail pages: start, access, routes to the top, stations, stages",
+        "cadence": "weekly",
+        "writes_app_data": False,
+        "writes_wire": True,
+        "soft": True,
+        "rev": "T915",
+        "cmds": [
+            [PY, PUBLISH, "--layer", "trails", "--layer", "beaches", "--layer", "lakes",
+             "--layer", "peaks", "--layer", "cycling", "--",
+             PY, "pipeline/outdoor/derive_outdoor_pages.py"],
+        ],
+        "note": ("T915: a post-pass over the five nature wires (detail files for "
+                 "trails and cycling, country rows for beaches, lakes and peaks). "
+                 "After every nature export, because each export rewrites its files "
+                 "without these keys. Reads cache/parking_osm.json, "
+                 "cache/osm_settlements.json, cache/sea_temp_beaches.json when present, "
+                 "and the placeholder files cache/outdoor/{layer}.json. Idempotent."),
+    },
+    {
         "key": "dossier",
         "title": "Destination dossiers: the per-destination contract for panel + PDF",
         "cadence": "monthly",

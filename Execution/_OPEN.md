@@ -2491,3 +2491,10 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T914-a | T914 | Look at the place guide and trip booklet PDFs once with real photos in a browser (Execution/P15/T911-T914-place-pages.md) | next task | open |  |
 | T914-b | T914 | public/fonts PlusJakartaSans and JetBrainsMono may be unused after the place guide moved to Figtree; check and remove (Execution/P15/T911-T914-place-pages.md) | next task | open |  |
 | T914-c | T914 | Deploy the merged batch T911 to T914 (Cloudflare credentials are the owner's) (Execution/P15/T911-T914-place-pages.md) | user | open |  |
+| T915-a | T915 | Bus, train and tram stops near a trail start, beach or lake (access.transit) are empty: no offline stops source in the checkout (Execution/P15/T915-T919-outdoor-pages.md) | next task | open |  |
+| T915-b | T915 | Beach sea temperature by month waits for cache/sea_temp_beaches.json from pipeline/harvest_sea_temp.py (Execution/P15/T915-T919-outdoor-pages.md) | next task | open |  |
+| T915-c | T915 | Deploy the merged batches; this session has no CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID or network access to api.cloudflare.com; add them in the environment settings (Execution/P15/T915-T919-outdoor-pages.md) | user | open |  |
+| T915-d | T915 | Harvest the outdoor placeholders in cache/outdoor/*.json (dogs, permit, hut season, sunbeds, lifeguard season, waves, entry fee, rentals, lifts, bike trains, rental) (Execution/P15/T915-T919-outdoor-pages.md) | next task | open |  |
+| T916-a | T916 | Move the helper exports out of OutdoorParts.jsx and PeakFacts.jsx into a lib file (react-refresh warnings) (Execution/P15/T915-T919-outdoor-pages.md) | next task | open |  |
+| T918-a | T918 | Mountain storm and crowd cells need season.storm or crowds in the data (Execution/P15/T915-T919-outdoor-pages.md) | next task | open |  |
+| T919-a | T919 | Cycling pages have no Stay nearby because route rows carry no base town; add base {id, city, km} in the cycling build (Execution/P15/T915-T919-outdoor-pages.md) | next task | open |  |
