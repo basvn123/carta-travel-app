@@ -8,10 +8,10 @@ import { personaFit, personaMatches, picksOf } from '../../lib/recommend/persona
 
 /**
  * Your trip so far (T894, the owner's plan flow studio board 2026-10-30):
- * every answer of the trip in one column beside the question from 1100 px,
- * each a way back to its step, and once travellers are picked how many
- * places fit them with the three that fit best, moving as they are ticked
- * (Kayak's live map, Zillow's count on the button). Below 1100 px the same
+ * once travellers are picked, how many places fit them and the three that
+ * fit best on top, then every answer of the trip, each a way back to its
+ * step, in one column beside the question from 1100 px. The places move
+ * as travellers are ticked (Kayak's live map, Zillow's count on the button). Below 1100 px the same
  * column folds behind one button over the question (SideFold).
  *
  * The persona screen reports its picks before Continue through
@@ -48,22 +48,6 @@ export function FlowSide({ rows, fit = null, heading = true }) {
   return (
     <div className="pf-side-in">
       {heading && <h2 className="pf-side-h">{t('pf.side.title')}</h2>}
-      <dl className="pf-side-rows">
-        {rows.map((r) => (
-          <div key={r.id} className={`pf-side-row${r.now ? ' is-now' : ''}`}>
-            <dt>{r.label}</dt>
-            <dd>
-              {r.onClick ? (
-                <Button variant="quiet" size="sm" className={`pf-side-val${r.answer ? '' : ' is-none'}`} onClick={r.onClick}>
-                  {r.answer || t('pf.side.notYet')}
-                </Button>
-              ) : (
-                <span className={`pf-side-val${r.answer ? '' : ' is-none'}`}>{r.answer || t('pf.side.notYet')}</span>
-              )}
-            </dd>
-          </div>
-        ))}
-      </dl>
       {fit && (
         <div className="pf-fit" aria-live="polite">
           <p className="pf-fit-n"><b>{nf.format(fit.count)}</b> <span>{t('pf.side.fitUnit')}</span></p>
@@ -85,6 +69,22 @@ export function FlowSide({ rows, fit = null, heading = true }) {
           )}
         </div>
       )}
+      <dl className="pf-side-rows">
+        {rows.map((r) => (
+          <div key={r.id} className={`pf-side-row${r.now ? ' is-now' : ''}`}>
+            <dt>{r.label}</dt>
+            <dd>
+              {r.onClick ? (
+                <Button variant="quiet" size="sm" className={`pf-side-val${r.answer ? '' : ' is-none'}`} onClick={r.onClick}>
+                  {r.answer || t('pf.side.notYet')}
+                </Button>
+              ) : (
+                <span className={`pf-side-val${r.answer ? '' : ' is-none'}`}>{r.answer || t('pf.side.notYet')}</span>
+              )}
+            </dd>
+          </div>
+        ))}
+      </dl>
     </div>
   );
 }

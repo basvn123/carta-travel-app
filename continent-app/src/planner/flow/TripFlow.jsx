@@ -153,7 +153,7 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
   const studio = !!QUESTIONS[phase] && questions.includes(phase);
   const whenWords = whenText(t, settings.when, months, bcp47);
   const answerOf = (id) => stepAnswer(t, id, settings, { when: whenWords, locale: lang });
-  const tripSteps = ['from', 'when', 'who'].map((id) => ({ id, label: t(`pf.step.${id}`), answer: answerOf(id), done: true, onClick: () => setSettingsOpen(true) }));
+  const tripSteps = ['from', 'when', 'who'].map((id) => ({ id, label: t(`pf.step.${id}`), answer: answerOf(id), done: Boolean(answerOf(id)), onClick: () => setSettingsOpen(true) }));
   const firstOpen = questions.find((id) => !settings.answered.includes(id));
   const stepItems = (ids) => ids.map((id) => {
     const done = settings.answered.includes(id);
