@@ -218,12 +218,18 @@ function useHomeTrips(destinations) {
       return '';
     };
     const towns = (ids) => [...new Set(ids.map((id) => dest[id]?.city).filter(Boolean))].slice(0, 2).join(', ');
+    // T890: a name that is only the country a finder trip landed with
+    // ("Italy" for a week in Rome) reads as its places, as on the trip page.
+    const named = (name, ids) => {
+      const own = (name || '').trim();
+      return own && !ids.some((id) => (dest[id]?.country || '').trim().toLowerCase() === own.toLowerCase()) ? own : '';
+    };
     const device = tripsStore.list().map((x) => ({
       id: x.id,
       device: true,
       active: x.active,
       planId: x.meta.planId,
-      name: x.meta.name || towns(x.meta.stops) || t('pf.home.yourTrip'),
+      name: named(x.meta.name, x.meta.stops) || towns(x.meta.stops) || t('pf.home.yourTrip'),
       cover: x.meta.cover || photo(x.meta.stops),
       start: x.meta.start,
       end: x.meta.end,
@@ -241,7 +247,7 @@ function useHomeTrips(destinations) {
       return {
         id: `plan-${p.id}`,
         planId: p.id,
-        name: p.label || (p.cities || []).slice(0, 2).join(', ') || t('pf.home.yourTrip'),
+        name: named(p.label, ids) || towns(ids) || (p.cities || []).slice(0, 2).join(', ') || t('pf.home.yourTrip'),
         cover: photo(ids),
         start: p.start_date || '',
         end: p.end_date || '',

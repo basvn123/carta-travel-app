@@ -4,6 +4,7 @@ import { tabHref } from '../../lib/urlState.js';
 import { loadJourneyIndex, splitAround } from '../../lib/journeys.js';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { Button, Chip, IconButton } from '../../components/ui/index.js';
+import { countdownText } from '../trip/tripHead.js';
 import {
   ArrowRightIcon, CalendarIcon, ChevronRightIcon, CloudIcon, HeartIcon, MapPinIcon, MoonIcon, MoreIcon, RouteIcon, TrashIcon,
 } from '../../components/Icons.jsx';
@@ -180,11 +181,14 @@ function TripCard({ trip, onOpen, onDelete }) {
             {trip.stopCount > 0 && (
               <span className="pf-trip-fact">
                 <MapPinIcon size={16} />
-                {t(trip.stopCount === 1 ? 'pf.home.stopsOne' : 'pf.home.stopsMany', { n: trip.stopCount })}
+                {t(trip.stopCount === 1 ? 'tp.places1' : 'tp.placesN', { n: trip.stopCount })}
               </span>
             )}
+            {/* T890: a planned trip with dates says how far it is (In 218
+                days, Day 3 of 8, Done), as its page does; else its state. */}
             <Chip kind="status" tone={trip.status === 'planned' ? 'positive' : 'neutral'} className="pf-trip-status">
-              {t(trip.status === 'planned' ? 'pf.home.planned' : 'pf.home.planning')}
+              {(trip.status === 'planned' && countdownText(t, trip.start, trip.end))
+                || t(trip.status === 'planned' ? 'pf.home.planned' : 'pf.home.planning')}
             </Chip>
           </span>
         </span>
