@@ -43,12 +43,14 @@ import { holdPlan, useKept } from '../lib/recommend/keptStore.js';
 import {
   localToday, addDaysIso, classifyTrips, whenParts, dayPlanEndDate, orderedUnique, daysUntil,
   nightsBetween, tripFigure, visitedRecord, yearOf, deviceTripAsPlan, readinessSteps, tripStops,
+  isHappening, tripToday,
 } from '../lib/myTrips.js';
 import { useVisitedCountries, toggleVisitedCountry } from '../lib/visitedCountries.js';
 import { UNDO_MS, UndoToast, CrewBar, TripPrice, whenText } from './mytrips/parts.jsx';
 import { SiteFooter } from '../components/SiteFooter.jsx';
 import { MyTripsHead, TripsTab, VisitedCountriesSheet, MT_TABS } from './mytrips/MyTripsTabs.jsx';
 import { ShortlistTab, ShortlistFilters, YearFilter, VisitedTab } from './mytrips/LegacyTabs.jsx';
+import { TodayCard } from './mytrips/TodayCard.jsx';
 
 /**
  * My trips (T434, rebuilt as Concept A by T923 to T927). One header with
@@ -92,12 +94,33 @@ const MOCK_PLANS = [
   // T923: two drafts, no dates yet, for Being planned.
   { id: 'mp7', label: 'Alps hut tour', cities: ['Innsbruck'], countries: ['Austria'], start_date: null, end_date: null, destination_ids: ['INN'], stops: [{ destination_id: 'INN', nights: 6 }] },
   { id: 'mp8', label: 'Lake weekend', cities: ['Ljubljana'], countries: ['Slovenia'], start_date: null, end_date: null, destination_ids: ['LJU'] },
+  // T924: a trip happening today, on its third day.
+  { id: 'mp6', label: 'Rome and Naples', cities: ['Rome', 'Naples'], countries: ['Italy'], start_date: addDaysIso(-2), end_date: addDaysIso(3), destination_ids: ['FCO', 'NAP'], stops: mockStops([['FCO', -2, 2], ['NAP', 2, 3]]), choices: { groupSize: 2 } },
 ];
 
 /** The seam's own trip state, written once into this browser so the cards
  *  read it through the same stores a real trip uses (dev only). */
 function seedMock() {
-  if (!SAVED_MOCK || hasTripExtras('mp1')) return;
+  if (!SAVED_MOCK) return;
+  if (!hasTripExtras('mp6')) {
+    const at = (h) => { const d = new Date(); d.setHours(h, 0, 0, 0); return `${d.getTime()}`; };
+    persistTripExtras('mp6', {
+      ...loadTripExtras('mp6'),
+      people: [{ id: 'p0', name: 'Sam', userId: null }],
+      bookings: { 'flight-out': { ref: 'AZ611', price: '264' }, 'stay-0': { ref: 'RM2231', price: '420' }, 'stay-1': { ref: 'NP0912', price: '96' } },
+      dayNotes: { 3: 'Trastevere and the river' },
+      ideas: [{ id: 'i1', text: 'Breakfast at the market in Campo de Fiori', day: 3 }, { id: 'i2', text: 'Walk up the Gianicolo for the view', day: 3 }],
+      dayExtras: { 3: [{ id: 'b1', name: 'Villa Farnesina', eur: 24, day: 3 }], 4: [{ id: 'b2', name: 'Train to Naples', eur: 39, day: 4 }] },
+      expenses: [
+        { id: at(9), desc: 'Coffee and cornetti', amount: 9.6, currency: 'EUR', paidBy: 0, sharers: null, date: addDaysIso(0), cat: 'food' },
+        { id: at(11), desc: 'Bus passes', amount: 14, currency: 'EUR', paidBy: 0, sharers: null, date: addDaysIso(0), cat: 'transport' },
+        { id: at(13), desc: 'Lunch', amount: 31.5, currency: 'EUR', paidBy: 0, sharers: null, date: addDaysIso(0), cat: 'food' },
+        { id: at(12), desc: 'Dinner', amount: 58, currency: 'EUR', paidBy: 0, sharers: null, date: addDaysIso(-1), cat: 'food' },
+      ],
+    });
+    try { localStorage.setItem('carta.mytrips.done.v1', JSON.stringify({ mp6: { 3: ['i:i1'] } })); } catch { /* private mode */ }
+  }
+  if (hasTripExtras('mp1')) return;
   persistTripExtras('mp1', {
     ...loadTripExtras('mp1'),
     people: [{ id: 'p0', name: 'Sam', userId: null }],
@@ -709,8 +732,33 @@ export function SavedTripsPanel({
     };
   };
 
-  const nextModel = datedPlans.length ? planModel(datedPlans[0], true) : null;
-  const comingModels = datedPlans.slice(1).map((p) => planModel(p, false));
+  // T924: a trip happening today opens the tab on Today; every other trip
+  // ahead is then a row under Coming up.
+  const happening = datedPlans.find((p) => !p.device && isHappening(p, todayIso)) || null;
+  const todayAt = happening ? tripToday(happening, todayIso) : null;
+  const ahead = happening ? datedPlans.filter((p) => p !== happening) : datedPlans;
+  const nextModel = !todayAt && ahead.length ? planModel(ahead[0], true) : null;
+  const comingModels = (todayAt ? ahead : ahead.slice(1)).map((p) => planModel(p, false));
+  const todayNode = todayAt ? (
+    <div className="mt-next">
+      <TodayCard
+        key={happening.id}
+        plan={happening}
+        today={todayAt}
+        destinations={destinations}
+        figure={figures[happening.id] || null}
+        todayIso={todayIso}
+        crewNames={planLocal[happening.id]?.crewLine || ''}
+        spendLabels={spendLabels}
+        onPlanDay={(stopIndex, dayIndex) => onOpenDayPlan?.({ planId: happening.id, stopIndex, dayIndex })}
+        onOpenTrip={() => onLoadTripPlan?.(happening.id)}
+        onCrew={() => toggleShare(happening.id)}
+        onPhotoAdded={() => setMemTick((n) => n + 1)}
+      />
+      {statementFor(happening.id)}
+      {sharePanelFor(happening.id, journeyParts(happening).title)}
+    </div>
+  ) : null;
   // Drafts the device's Plan home lists that no account plan or the device
   // trip already carries.
   const carried = useMemo(() => new Set(tripPlans.map((p) => p.id)), [tripPlans]);
@@ -1006,6 +1054,7 @@ export function SavedTripsPanel({
               loading={tripPlansLoading}
               error={tripPlansError}
               onRetry={loadTripPlans}
+              today={todayNode}
               next={nextModel}
               coming={comingModels}
               planning={planningModels}

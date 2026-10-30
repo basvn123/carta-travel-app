@@ -3,7 +3,9 @@
 // Run: npm test (continent-app/).
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readinessSteps, plannedDayNumbers, tripStops } from '../src/lib/myTrips.js';
+import {
+  readinessSteps, plannedDayNumbers, tripStops, tripToday, spendOnDay, expenseDay, isHappening,
+} from '../src/lib/myTrips.js';
 
 const PLAN = {
   id: 'p1',
@@ -56,4 +58,30 @@ test('readinessSteps: no dates, no dates step', () => {
   const r = readinessSteps({ ...PLAN, start_date: null, end_date: null }, {});
   assert.equal(r.steps[0].done, false);
   assert.equal(r.next, 'dates');
+});
+
+// T924: Today.
+test('tripToday: day 4 of 6 is the first day in Porto; tomorrow stays', () => {
+  const d = tripToday(PLAN, '2026-11-23');
+  assert.deepEqual([d.dayNum, d.of, d.stopIndex, d.dayIndex], [4, 6, 1, 0]);
+  assert.equal(d.tomorrow.moves, false);
+  const before = tripToday(PLAN, '2026-11-22');
+  assert.equal(before.tomorrow.moves, true);
+  assert.equal(tripToday(PLAN, '2026-11-19'), null);
+  assert.equal(isHappening(PLAN, '2026-11-26'), true);
+  assert.equal(tripToday(PLAN, '2026-11-26').dayNum, 6);
+});
+
+test('spendOnDay: dated rows and rows minted today count; memory rows never', () => {
+  const noon = new Date(2026, 10, 23, 12).getTime();
+  const rows = [
+    { id: '1', date: '2026-11-23', amount: 10, currency: 'EUR', cat: 'food' },
+    { id: String(noon), amount: 5, currency: 'EUR' },
+    { id: '3', date: '2026-11-22', amount: 99, cat: 'food' },
+    { id: 'memory:food', src: 'memory', amount: 400, date: '2026-11-23' },
+  ];
+  assert.equal(expenseDay(rows[1]), '2026-11-23');
+  const s = spendOnDay(rows, '2026-11-23');
+  assert.equal(s.total, 15);
+  assert.deepEqual(s.byCat, { food: 10, other: 5 });
 });
