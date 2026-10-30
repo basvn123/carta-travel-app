@@ -159,7 +159,7 @@ export function keepHidden(from, to) {
  * level, a way of getting around, a live flight; T819). The swaps become
  * the plan the planner receives (planOf), and one quoteTrip prices it from
  * the finder's own request with those settings, the way the planner prices
- * the hand-over (handoff.js planState). Every slot is then rebuilt from
+ * the hand-over (lib/plan/doors.js selectionOfPlan). Every slot is then rebuilt from
  * that one quote, so the slots, the total and Finish agree to the cent:
  * pricing a swap one slot at a time missed how the lines move together.
  * A trip without its pricing context comes back with its sum only.

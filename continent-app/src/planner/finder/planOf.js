@@ -1,7 +1,7 @@
 /**
  * The plan "Plan this trip" hands the planner (TF2, T801), made from one
  * priced trip as it stands on the receipt. Lives in the finder's lazy chunk;
- * the wizard reads the plan through handoff.js.
+ * the planner takes it through lib/plan/doors.js selectionOfPlan.
  */
 import { SLOT_ROWS } from '../../lib/recommend/slots.js';
 import { PROFILES } from '../../lib/lifestyleProfiles.js';

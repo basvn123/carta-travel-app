@@ -96,6 +96,8 @@ export const QUESTIONS = {
       opt('any', 'GlobeIcon', { labelKey: 'pf.o.reachAny' }),
       opt('overland', 'TrainIcon', { labelKey: 'pf.o.reachOverland', subKey: 'pf.o.reachOverlandSub' }),
     ],
+    // T874: with Fly as the way there, "No flying" is not offered again.
+    offered: (s, v) => !(v === 'overland' && s.way === 'plane'),
     read: (s) => (s.guide.reach ? [s.guide.reach] : []),
     write: (s, [v]) => ({ guide: { ...s.guide, reach: v } }),
   },

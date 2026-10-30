@@ -725,14 +725,17 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   // it as a pin of its own, and the road to it is part of the drawn route.
   const flying = Boolean(tp.planned && tp.flight && !tp.flight.driving
     && (tp.flight.combinable || (tp.flight.own && (tp.flight.mode || 'fly') === 'fly')));
-  const airportOf = (dest) => {
-    const iata = dest?.anchor_airport || null;
+  // T874 (row T864-c): the airport the priced flight lands at or leaves from
+  // (the finder's held leg can use another airport than the stop's anchor:
+  // Lake Como flies into Malpensa, its anchor is Bergamo), else the anchor.
+  const airportOf = (dest, flown = null) => {
+    const iata = (flown && data?.meta?.origins?.[flown] ? flown : null) || dest?.anchor_airport || null;
     const o = iata ? data?.meta?.origins?.[iata] : null;
     return o && o.lat != null ? { lat: o.lat, lon: o.lon, city: `${cityLabel(o.city || iata)} ${iata}`, tag: t('plan.pinAirport'), plain: true, airport: true } : null;
   };
   const geoStops = tp.stopDetails.filter((s) => s.dest && s.dest.lat != null && s.dest.lon != null);
-  const airIn = flying ? airportOf(geoStops[0]?.dest) : null;
-  const airOut = flying ? airportOf(geoStops[geoStops.length - 1]?.dest) : null;
+  const airIn = flying ? airportOf(geoStops[0]?.dest, tp.priced?.cartaFlight?.inAirport) : null;
+  const airOut = flying ? airportOf(geoStops[geoStops.length - 1]?.dest, tp.priced?.cartaFlight?.outAirport) : null;
   const mapStopsKey = [
     airIn ? `${airIn.lat},${airIn.lon}` : '',
     ...geoStops.map((s) => `${s.dest.lat},${s.dest.lon},${cityLabel(s.dest.city)},${pinTag(s)}`),

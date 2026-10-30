@@ -60,7 +60,7 @@ export function QuestionBody({ id, settings, commit, doneLabel, showHelp = true 
           <ChoiceRows
             label={t(q.titleKey)}
             multi={!!q.multi}
-            options={q.options.map((o) => ({ value: o.value, icon: o.icon, label: t(o.labelKey), sub: o.subKey ? t(o.subKey) : '' }))}
+            options={q.options.filter((o) => !q.offered || q.offered(settings, o.value)).map((o) => ({ value: o.value, icon: o.icon, label: t(o.labelKey), sub: o.subKey ? t(o.subKey) : '' }))}
             value={picked}
             onPick={(v) => setPicked((cur) => toggleValue(q, cur, v))}
           />

@@ -31,6 +31,7 @@ import { loadLakeIndex } from '../../lib/lakes.js';
 import { loadMountainIndex } from '../../lib/mountains.js';
 import { loadCyclingIndex } from '../../lib/cycling.js';
 import { todayISO } from '../../lib/dates.js';
+import { engineOriginCode } from '../../lib/airportReach.js';
 import { EARLY, priceInSlices } from './priceSlices.js';
 import { flightRows, knowTrip } from '../../lib/recommend/doorTrips.js';
 import { rankTrips } from '../../lib/recommend/rank.js';
@@ -45,7 +46,8 @@ const NO_STAGES = Object.freeze({ flights: false, stays: false, likes: false });
 
 /** The home airport the catalogue is priced from, as the engine's origin. */
 export function originOf(data) {
-  const code = data?.meta?.selected_origin || null;
+  // T874: a ticked airport when the traveller ticked any (airportReach.js).
+  const code = engineOriginCode(data);
   const rec = code ? data?.meta?.origins?.[code] : null;
   if (!code) return null;
   return { iata: code, lat: rec?.lat ?? null, lon: rec?.lon ?? null, name: rec?.city || code };
@@ -124,7 +126,7 @@ export function useTripFinder(settings) {
   const stayTier = choices.stay_tier || null;
   // The answer set this run is for; a new one restarts the stages.
   const answers = answersOf(settings);
-  const key = useMemo(() => JSON.stringify([answers.guide, settings.when, settings.party, settings.priority, settings.places, origin?.iata, stayTier, lifestyle, taste,
+  const key = useMemo(() => JSON.stringify([answers.guide, settings.when, settings.party, settings.priority, settings.places, settings.way, origin?.iata, stayTier, lifestyle, taste,
     (data?.meta?.home_airports || []).map((a) => a.iata)]),
   [settings, origin, stayTier, lifestyle, taste, data]); // eslint-disable-line react-hooks/exhaustive-deps -- answers is settings without old levers
 
@@ -200,7 +202,7 @@ export function useDoorRun(settings, kind) {
   const lifestyle = choices.lifestyle || data?.meta?.defaults?.lifestyle || null;
   const stayTier = choices.stay_tier || null;
   const [run, setRun] = useState({ key: null, stages: { flights: false, priced: false }, result: undefined, error: null });
-  const key = JSON.stringify([kind, settings.guide, settings.when, settings.party, settings.priority, settings.places, origin?.iata,
+  const key = JSON.stringify([kind, settings.guide, settings.when, settings.party, settings.priority, settings.places, settings.way, origin?.iata,
     stayTier, lifestyle, (data?.meta?.home_airports || []).map((a) => a.iata), Object.keys(data?.flightsBy || {})]);
   useEffect(() => {
     if (!data?.destinations || countryInsights == null) return undefined;

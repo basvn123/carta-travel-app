@@ -12,9 +12,18 @@ import { findTrips } from "../src/lib/recommend/rank.js";
 import { quoteTrip, tripLines, PLANNER_BAG } from "../src/lib/tripTotal.js";
 import { costTiles } from "../src/lib/price/tiles.js";
 import { normalizeSettings } from "../src/planner/flow/tripSettings.js";
-import { withPlan, planState } from "../src/planner/finder/handoff.js";
+import { selectionOfPlan } from "../src/lib/plan/doors.js";
+import { wizardPlannerState } from "../src/lib/tripTotal.js";
 import { planOf } from "../src/planner/finder/planOf.js";
 import { homeAirports, homeCandidates, accessCost } from "../src/lib/airportReach.js";
+
+/** T874 (row T872-b): the live path. Plan this trip hands the planner
+ *  selectionOfPlan(plan) (TripFlow landPlan, useTripPlanner loadFromWizard);
+ *  the planner prices that hand-over with its held flights as picks. */
+function livePlanState(plan) {
+  const sel = selectionOfPlan(plan);
+  return { ...wizardPlannerState(sel, { stayTier: sel.stayTier || "home", lifestyle: sel.lifestyle }), flightPicks: sel.flightPicks, flightRank: plan.flightRank };
+}
 
 const fixture = (name) => JSON.parse(readFileSync(new URL(`./fixtures/${name}`, import.meta.url), "utf8"));
 const pub = (p) => new URL(`../public/${p}`, import.meta.url);
@@ -59,15 +68,7 @@ const find = (d) => findTrips({ data: d, countryInsights, layerIndexes: {}, sett
 const flightOf = (t) => t.slots.find((s) => s.id === "flight");
 
 function reviewState(plan) {
-  const stops = plan.order.map((id) => ({ destinationId: id, nights: plan.nights[id], activities: [] }));
-  const hand = {
-    startDate: plan.startDate, groupSize: plan.party.adults, children: plan.party.children, babies: plan.party.babies,
-    stayTier: "home", transport: "auto", pace: "balanced", baggage: PLANNER_BAG,
-    anchorId: null, anchorOrigin: null, returnAnchorId: null,
-    ownFlight: { airline: "", mode: "fly", costTotal: 0, costOut: 0, costBack: 0, outDate: plan.startDate, retDate: plan.endDate },
-    carHome: null, legModes: {}, ownLegs: {}, ownStays: {}, label: plan.country, stops,
-  };
-  return planState(withPlan(hand, plan), plan);
+  return livePlanState(plan);
 }
 
 test("the candidates: the ticked airports with their files, a pinned one added, else the one origin", () => {

@@ -292,7 +292,7 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
       const access = ticked && row ? accessCost(row, { adults, children, babies, nights }) : null;
       const fare = (out?.cost?.total || 0) + (back?.cost?.total || 0);
       return {
-        home, inAirport, outAirport, out, back, access,
+        home, inAirport, outAirport, out, back, access, swept: Boolean(file),
         priced: Boolean((ownOut || out?.cost) && (ownBack || back?.cost)),
         total: round2(fare + (access?.eur || 0)),
         queries: [
@@ -305,6 +305,9 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
     if (!options.length) return null;
     const pick = (anchorOrigin && options.find((o) => o.home === anchorOrigin))
       || options.filter((o) => o.priced).sort((a, b) => a.total - b.total)[0]
+      // T874: with no fare anywhere, the first airport the sweep covers (it
+      // names the flight the traveller will look for), else the nearest.
+      || options.find((o) => o.swept)
       || options[0];
     // The airports beside it, for the trip's flight line: the nearest drive
     // and what each costs door to door (a swap is one tap).
@@ -561,7 +564,10 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
     flights: round2((cartaFlight?.out?.cost?.total || 0) + (cartaFlight?.back?.cost?.total || 0)),
     // T861: home to the airport and back (the drive and parking, or the
     // train), once the traveller has said which airports are in reach.
-    airport: round2(cartaFlight?.access?.eur || 0),
+    // T874: only for a trip that flies a priced or typed leg; with no fare
+    // yet the trip is "without the flight" (as the finder's card says), and
+    // the way to an airport is not counted either.
+    airport: round2(cartaFlight && (cartaFlight.out?.cost || cartaFlight.back?.cost || ownOut || ownBack) ? (cartaFlight.access?.eur || 0) : 0),
     // Runway to bed and bed to runway, plus a named arrival to the first stop.
     transfers: round2(
       ((flight?.combinable || flight?.own) ? (flightTransfer ? flightTransfer.ground_total : (flight.ground_total || 0)) : 0)

@@ -49,7 +49,6 @@ import { CheckIcon, RouteIcon, BedIcon, MapPinIcon, CalendarIcon, PersonIcon, Ca
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { wizardSteps, restoreStep, STEP_LABEL_KEYS, nightsText, cheapestDay } from './wizard/wizardSteps.js';
-import { appliesTo, landingStep, planState, withPlan } from './finder/handoff.js';
 import { pickedLive } from './wizard/flightChoices.js';
 import { useLiveFlights } from '../lib/flights/useLiveFlights.js';
 import { OriginCard } from './wizard/OriginCard.jsx';
@@ -166,14 +165,9 @@ export function GuidedTripWizard({
   // the step list and a restored step number means nothing without them
   // (T388, row T377-e).
   const savedDraft = useRef(plannerStore.getState().wizard || {}).current;
-  // T801: a trip from the trip finder ("Plan this trip"). Its plan rides in
-  // the draft (planner/finder/handoff.js draftFor): the places in the
-  // finder's order, the gateway, the stay tier, the Lifestyle, the way
-  // around and any flight taken in the picker. They hold while the places
-  // stay as picked, so the Finish total is the receipt's; the steps Carta
-  // answered (Where, and Stay unless the traveller chooses the stay) are
-  // behind the step it lands on.
-  const seedPlan = flowSteps?.length && savedDraft.finder?.order?.length ? savedDraft.finder : null;
+  // T874 (row T872-b): a trip from the trip finder no longer opens the
+  // wizard (Plan this trip lands on the trip page, T872), so the finder's
+  // seeded plan (draftFor, withPlan, planState) is gone from here.
   const [booked, setBooked] = useState(() => ({
     travel: Boolean(savedDraft.booked?.travel),
     stays: Boolean(savedDraft.booked?.stays),
@@ -479,8 +473,6 @@ export function GuidedTripWizard({
     () => (flowSteps?.length ? flowSteps : wizardSteps(booked, buildMode)),
     [flowSteps, booked, buildMode],
   );
-  // T801: back from the step a finder trip lands on returns to its trips.
-  const seedFloor = seedPlan ? Math.max(1, steps.indexOf(landingStep(seedPlan, steps)) + 1) : 1;
 
   // A step number past the end (a path that got shorter) lands on the last
   // real step instead of rendering under a "7 of 6" rail.
@@ -537,14 +529,13 @@ export function GuidedTripWizard({
     // has booked their beds has sequenced it themselves. Both are somebody
     // else's decision and Carta does not overrule either.
     if (readyTrip || booked.stays) return includedIds;
-    if (seedPlan && appliesTo(seedPlan, includedIds)) return seedPlan.order;
     return routeOrder(includedIds, destinations, {
       start: anchorDest && anchorDest.lat != null
         ? { lat: anchorDest.lat, lon: anchorDest.lon }
         : (originPoint ? { lat: originPoint.lat, lon: originPoint.lon } : null),
       fixFirst: Boolean(anchorId && includedIds[0] === anchorId),
     });
-  }, [readyTrip, booked.stays, seedPlan, includedIds, destinations, anchorDest, anchorId,
+  }, [readyTrip, booked.stays, includedIds, destinations, anchorDest, anchorId,
     originPoint]);
 
   // ---- A published trip, taken off the shelf ------------------------------
@@ -736,10 +727,8 @@ export function GuidedTripWizard({
   // the traveller edits, once per leg, so it flows into finish() unchanged and
   // an answer already given is never overwritten.
   // T856: the way of travel the traveller chose (choices.transport_mode)
-  // answers every leg it fits, and a trip-finder trip priced on a flight
-  // flies there and home, as its card did.
+  // answers every leg it fits.
   const wayOfTravel = useSettings()?.transportMode || 'any';
-  const seedFlown = Boolean(seedPlan?.flights?.out && seedPlan?.flights?.back && appliesTo(seedPlan, includedIds));
   useEffect(() => {
     if (!gettingLegs.length) return;
     setTravelValues((prev) => {
@@ -750,7 +739,6 @@ export function GuidedTripWizard({
         const mode = prefillMode(leg, {
           quiz,
           way: wayOfTravel,
-          flown: seedFlown,
           published: leg.published?.mode || '',
           // drivingThere, not the ownCarChosen alias below: that is declared
           // further down the component and this effect runs before it.
@@ -1097,13 +1085,11 @@ export function GuidedTripWizard({
     // The flight Review priced, each way, goes with the trip: the one picked
     // on Getting there, else the one the trip came with (the trip finder's,
     // T816), so the planned trip prices the same flight and the same total
-    // instead of ranking its own.
+    // instead of ranking its own. The planner reads the app's Lifestyle.
     onComplete({
       ...planned,
       flightPicks: { out: flightPickOut || pricedFlight('out'), back: flightPickBack || pricedFlight('back') },
-      // A seeded trip's eating habits (the finder's Food choice) go with it;
-      // otherwise the planner reads the app's Lifestyle, as the wizard did.
-      lifestyle: seedOn ? seedPlan.lifestyle || null : null,
+      lifestyle: null,
     });
     // The launch metric "priced-trip completions" (migration 048, T215-b).
     trackLaunch('trip_priced', '', readyTrip ? 'ready' : 'built');
@@ -1149,9 +1135,7 @@ export function GuidedTripWizard({
   // T657: the trip settings' "what matters most" orders the live flights.
   const plannerDraft = usePlannerStore();
   const flightRank = useMemo(() => flightRanking(fromDraft(plannerDraft)).sort, [plannerDraft]);
-  // T801: a seeded trip prices the request the trip finder priced.
-  const seedOn = Boolean(seedPlan && appliesTo(seedPlan, handOver.stops.map((x) => x.destinationId)));
-  const planned = useMemo(() => (seedOn ? withPlan(handOver, seedPlan) : handOver), [handOver, seedOn, seedPlan]);
+  const planned = handOver;
   // T812: a flight picked on Getting there prices the trip on that flight
   // (one live answer per way, keyed by its day, so a moved trip drops it).
   const flightPickOut = travelValues.out?.pick || null;
@@ -1159,15 +1143,13 @@ export function GuidedTripWizard({
   const picked = useMemo(() => pickedLive({ out: flightPickOut, back: flightPickBack }), [flightPickOut, flightPickBack]);
   const priced = useMemo(() => {
     if (!planned.stops.length) return null;
-    const state = seedOn
-      ? planState(planned, { ...seedPlan, lifestyle: seedPlan.lifestyle || dailyLifestyle })
-      : { ...wizardPlannerState(planned, { stayTier: effectiveStayTier, lifestyle: dailyLifestyle }), flightRank };
-    // T855: a pick also holds its direction ahead of the finder's handed leg.
+    const state = { ...wizardPlannerState(planned, { stayTier: effectiveStayTier, lifestyle: dailyLifestyle }), flightRank };
+    // T855: a pick holds its direction.
     const withPicks = picked.length
       ? { ...state, liveFlights: new Map([...(state.liveFlights || []), ...picked]), flightPicks: { out: flightPickOut, back: flightPickBack } }
       : state;
     return priceWholeTrip(withPicks, { data, countryInsights });
-  }, [planned, seedOn, seedPlan, effectiveStayTier, dailyLifestyle, data, countryInsights, flightRank, picked, flightPickOut, flightPickBack]);
+  }, [planned, effectiveStayTier, dailyLifestyle, data, countryInsights, flightRank, picked, flightPickOut, flightPickBack]);
   // Carta's figure for each leg the traveller has not priced, keyed the way
   // the Getting there rows are, so a row shows the estimate its own figure
   // replaces.
@@ -1590,7 +1572,7 @@ export function GuidedTripWizard({
         <WizardHead
           {...{ inline, steps, step, isDesktop, stepsOpen, setStepsOpen, goStep }}
           onClose={handleCancel}
-          flowBack={flowSteps?.length ? () => (step > seedFloor ? goStep(step - 1) : onCancel()) : null}
+          flowBack={flowSteps?.length ? () => (step > 1 ? goStep(step - 1) : onCancel()) : null}
         />
 
         <div className="guide-body" ref={bodyRef}>

@@ -7,7 +7,7 @@ import { Button, Field, IconButton, Money, Segmented } from '../../components/ui
 import { BedIcon, CloseIcon, PencilIcon, PlaneIcon, UploadIcon } from '../../components/Icons.jsx';
 import { fromImports, markAnswered, normalizeSettings } from './tripSettings.js';
 import { arrivalFromImports, staysFromImports } from './importStays.js';
-import { bookedTrip } from '../../lib/plan/doors.js';
+import { bookedTrip, saidFlight } from '../../lib/plan/doors.js';
 import { SheetHead } from './PlanStage.jsx';
 import { useBcp47 } from './flowHooks.js';
 import { PlaceSearch } from './KnowDoor.jsx';
@@ -45,8 +45,18 @@ export function BookedDoor({ settings, save, onBack, onGo }) {
   const fileRef = useRef(null);
   const [state, setState] = useState({ phase: 'idle' });
   const [typing, setTyping] = useState(false);
-  const [form, setForm] = useState({ kind: 'flight_out', city: '', date: '', eur: '' });
   const imports = settings.imports || [];
+  // T874: what the words already said ("we booked our flights to Prague,
+  // 21 to 28 November") fills the typed form, so the town and the days are
+  // not typed a second time: the one town named and the trip's own days.
+  const said = saidFlight(settings);
+  const formFor = (kind) => ({
+    kind,
+    city: kind === 'stay' ? '' : said.city,
+    date: kind === 'flight_out' ? said.out : kind === 'flight_home' ? said.back : '',
+    eur: '',
+  });
+  const [form, setForm] = useState(() => formFor(imports.some((b) => b.kind === 'flight_out' || b.kind === 'flight') ? 'flight_home' : 'flight_out'));
   const trip = useMemo(() => bookedTrip(settings, destinations || {}), [settings, destinations]);
 
   const keep = (next) => save(markAnswered(normalizeSettings(next), 'booked'));
@@ -66,7 +76,7 @@ export function BookedDoor({ settings, save, onBack, onGo }) {
     const eur = Number(String(form.eur).replace(',', '.'));
     const b = { kind: form.kind, title: form.city, city: form.city, date: form.date, eur: Number.isFinite(eur) && eur > 0 ? eur : null };
     keep(fromImports(settings, [b]));
-    setForm({ kind: form.kind === 'flight_out' ? 'flight_home' : form.kind, city: form.kind === 'flight_out' ? '' : form.city, date: '', eur: '' });
+    setForm(form.kind === 'flight_out' ? formFor('flight_home') : { kind: form.kind, city: form.city, date: '', eur: '' });
     setTyping(false);
   };
   const remove = (i) => {
@@ -139,7 +149,7 @@ export function BookedDoor({ settings, save, onBack, onGo }) {
             label={t('bk.kind')}
             className="pf-fill-seg"
             value={form.kind}
-            onChange={(kind) => setForm((f) => ({ ...f, kind }))}
+            onChange={(kind) => setForm((f) => ({ ...formFor(kind), eur: f.eur }))}
             options={TYPED_KINDS.map((k) => ({ value: k, label: t(`bk.kind.${k}`) }))}
           />
           {form.city ? (

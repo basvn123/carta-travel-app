@@ -1,15 +1,14 @@
 // T859: the places Tell Carta's words name carry through. They are the trip
 // finder's only places (lib/recommend/candidates.js namedPool), they skip
 // Help me choose's where questions (flowGraph guideScreens), two or more are
-// a shortlist the trips come from, and the finder's hand-over keeps them
-// (finder/handoff.js draftFor).
+// a shortlist the trips come from. (The wizard's hand-over test, draftFor,
+// went with the wizard's finder branch in T874.)
 // Run: npm test (continent-app/). The catalogue tests skip without public/.
 import test from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import { buildCandidates, namedPool } from "../src/lib/recommend/candidates.js";
 import { guideScreens } from "../src/planner/flow/flowGraph.js";
-import { draftFor } from "../src/planner/finder/handoff.js";
 import { normalizeSettings } from "../src/planner/flow/tripSettings.js";
 
 const pub = (p) => new URL(`../public/${p}`, import.meta.url);
@@ -38,14 +37,6 @@ test("named places skip the where questions; a town skips what they like too", (
   const lis = guideScreens(normalizeSettings({ places: [{ kind: "place", id: "LIS", name: "Lisbon", country: "Portugal" }] }));
   assert.ok(!lis.includes("g:likes") && !lis.includes("g:weather"));
   assert.ok(lis.includes("g:avoid") && lis.includes("g:pick"));
-});
-
-test("draftFor keeps the countries already picked, the trip's own first, three at most", () => {
-  const plan = { country: "Spain", nights: 7, order: ["BCN"], yours: [] };
-  const d = draftFor(plan, ["Getting", "Finish"], ["Portugal", "Spain", "France", "Italy"]);
-  assert.deepEqual(d.countries, ["Spain", "Portugal", "France"]);
-  assert.deepEqual(draftFor(plan, ["Getting", "Finish"]).countries, ["Spain"]);
-  assert.equal(draftFor(plan, ["Getting", "Finish"]).finder, plan);
 });
 
 test("no places named: the pool is null and the finder ranks countries as before", () => {

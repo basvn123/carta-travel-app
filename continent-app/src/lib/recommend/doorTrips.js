@@ -26,7 +26,7 @@ import { qualityOf } from '../match.js';
 import { isGateway } from '../rating.js';
 import { quizAnswers, spendFor } from '../../planner/flow/tripSettings.js';
 import {
-  bestMonth, datesFor, gatewayFor, namedPool, setupMonth, splitNights, tasteFor, transportFor,
+  bestMonth, datesFor, fliesThere, gatewayFor, namedPool, setupMonth, splitNights, tasteFor, transportFor,
 } from './candidates.js';
 import { priceCandidate } from './trips.js';
 import { rankTrips, budgetOf } from './rank.js';
@@ -185,7 +185,7 @@ export function knowTrip(input) {
     const ids = towns.slice(0, Math.max(1, dates.nights));
     const nights = splitNights(dates.nights, ids.length);
     const shape = ids.length > 1 ? 'towns' : 'one';
-    const flies = settings.guide.reach !== 'overland';
+    const flies = fliesThere(settings);
     const first = destinations[ids[0]];
     const c = {
       country: first.country,

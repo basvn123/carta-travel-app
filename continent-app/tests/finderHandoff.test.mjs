@@ -1,9 +1,10 @@
 // T801: "Plan this trip" hands the whole trip to the planner, and the
 // planner's Finish total is the receipt's total, to the euro. The planner
 // prices what the wizard hands over (GuidedTripWizard handOver, then
-// lib/tripTotal.js quoteTrip); a seeded trip goes through
-// planner/finder/handoff.js (withPlan, planState). This test builds the
-// hand-over the way the wizard does for a trip with nothing typed in, and
+// lib/tripTotal.js quoteTrip); since T872 Plan this trip lands on the trip
+// page through lib/plan/doors.js selectionOfPlan (T874 moved this test onto
+// that path when the wizard's seeded branch went). This test builds that
+// hand-over for a trip with nothing typed in, and
 // checks the top 6 trips of two answer sets: the plan's example (May, past
 // the sweep) and the same answers inside the sweep. The flight data is the
 // fixed T795 fixture, so no live flight can move between the two reads.
@@ -17,9 +18,18 @@ import { chooseOption, slotTotals } from "../src/lib/recommend/slots.js";
 import { chooseFlight, optionsFor } from "../src/lib/recommend/adapters/flight.js";
 import { quoteTrip, PLANNER_BAG } from "../src/lib/tripTotal.js";
 import { normalizeSettings } from "../src/planner/flow/tripSettings.js";
-import { withPlan, planState, appliesTo, landingStep, draftFor } from "../src/planner/finder/handoff.js";
+import { selectionOfPlan } from "../src/lib/plan/doors.js";
+import { wizardPlannerState } from "../src/lib/tripTotal.js";
 import { planOf } from "../src/planner/finder/planOf.js";
 import { withSlot } from "../src/planner/finder/finderText.js";
+
+/** T874 (row T872-b): the live path. Plan this trip hands the planner
+ *  selectionOfPlan(plan) (TripFlow landPlan, useTripPlanner loadFromWizard);
+ *  the planner prices that hand-over with its held flights as picks. */
+function livePlanState(plan) {
+  const sel = selectionOfPlan(plan);
+  return { ...wizardPlannerState(sel, { stayTier: sel.stayTier || "home", lifestyle: sel.lifestyle }), flightPicks: sel.flightPicks, flightRank: plan.flightRank };
+}
 
 const fixture = (name) => JSON.parse(readFileSync(new URL(`./fixtures/${name}`, import.meta.url), "utf8"));
 const pub = (p) => new URL(`../public/${p}`, import.meta.url);
@@ -53,23 +63,10 @@ const answers = (start, end) => normalizeSettings({
 });
 const trips = (s) => findTrips({ data, countryInsights, layerIndexes, settings: s, origin: BRU, flights, today: "2026-10-28" });
 
-/** The wizard's hand-over for a built trip with nothing typed (GuidedTripWizard handOver). */
-function wizardHandOver(plan, { stayTier = "home" } = {}) {
-  const stops = plan.order.map((id) => ({ destinationId: id, nights: plan.nights[id], activities: [] }));
-  return {
-    startDate: plan.startDate, groupSize: plan.party.adults, children: plan.party.children, babies: plan.party.babies,
-    stayTier, transport: "auto", pace: "balanced", baggage: PLANNER_BAG,
-    anchorId: null, anchorOrigin: null, returnAnchorId: null,
-    ownFlight: { airline: "", mode: "fly", costTotal: 0, costOut: 0, costBack: 0, outDate: plan.startDate, retDate: plan.endDate },
-    carHome: null, legModes: {}, ownLegs: {}, ownStays: {}, label: plan.country, stops,
-  };
-}
-
 /** The Finish total a person, whole euros, for a seeded trip. */
 function finishTotal(trip) {
   const plan = planOf(trip);
-  const handOver = withPlan(wizardHandOver(plan), plan);
-  const q = quoteTrip(planState(handOver, plan), { data: appData, countryInsights });
+  const q = quoteTrip(livePlanState(plan), { data: appData, countryInsights });
   return { perPerson: Math.round(q.perPerson), q };
 }
 
@@ -152,19 +149,12 @@ test("T801: the measured gap, receipt against Finish, to the cent a person", { s
   assert.equal(same, 12);
 });
 
-test("T801: the plan keeps the finder's order, skips Where and Stay, and lets a 'you' stay be asked", { skip }, () => {
+test("T801: the plan keeps the finder's order; the planner's hand-over holds it and the card's flight", { skip }, () => {
   const [t] = trips(answers("2026-11-21", "2026-11-28"));
   const plan = planOf(t);
   assert.deepEqual(plan.order, t.places.map((p) => p.id));
-  assert.equal(appliesTo(plan, [...plan.order].reverse()), true, "the same places in any order");
-  assert.equal(appliesTo(plan, plan.order.slice(1)), plan.order.length === 1 ? false : false, "a place removed drops the plan");
-  const steps = ["Where", "Stay", "Getting", "Finish"];
-  assert.equal(landingStep(plan, steps), "Getting");
-  assert.equal(landingStep({ ...plan, yours: ["stay"] }, steps), "Stay");
-  const d = draftFor(plan, steps);
-  assert.equal(d.stepName, "Getting");
-  assert.equal(d.step, 3);
-  assert.deepEqual(d.countries, [t.country]);
-  assert.equal(d.finder.tripId, t.id);
-  assert.deepEqual(JSON.parse(JSON.stringify(d)).finder.liveFlights, d.finder.liveFlights, "the draft survives JSON (plannerStore)");
+  const sel = selectionOfPlan(plan);
+  assert.deepEqual(sel.stops.map((x) => x.destinationId), plan.order);
+  assert.equal(sel.startDate, plan.startDate);
+  assert.deepEqual(JSON.parse(JSON.stringify(sel)), sel, "the hand-over survives JSON (plannerStore)");
 });

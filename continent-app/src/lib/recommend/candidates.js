@@ -170,8 +170,16 @@ export function placesNear(ids, n, shape, destinations) {
 /** How the trip gets there and around, from its shape and the reach answer. */
 export function transportFor(shape, settings) {
   const noCar = settings.guide.avoid.includes('car');
+  // T874: the way there the setup asked (Train, Car) is the answer too.
+  if (settings.way === 'train') return 'train';
+  if (settings.way === 'car') return noCar ? 'train' : 'owncar';
   if (settings.guide.reach === 'overland') return noCar ? 'train' : 'owncar';
   return shape === 'road' ? 'car' : 'auto';
+}
+
+/** T874: whether the trip flies there: not when "No flying" or a train or car way was said. */
+export function fliesThere(settings) {
+  return settings.guide.reach !== 'overland' && settings.way !== 'train' && settings.way !== 'car';
 }
 
 const transferMinutes = (d) => (d?.tier === 'airport' ? 0 : d?.transfer?.transfer_minutes_one_way ?? null);
@@ -284,7 +292,7 @@ export function buildCandidates(input) {
   const countries = matched.slice(0, CANDIDATES.countries);
 
   const { shapes, gaps } = shapesFor(settings);
-  const flies = settings.guide.reach !== 'overland';
+  const flies = fliesThere(settings);
   // T861: every ticked home airport's file, the origin's first.
   const homeFiles = [flights, ...Object.values(data?.flightsBy || {})]
     .filter((f, i, all) => f && all.findIndex((g) => g?.from === f.from) === i);

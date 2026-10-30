@@ -65,11 +65,16 @@ export function hasDoors(s) {
  * chosen). How the trip moves, what to avoid and the budget stay.
  */
 export const WHERE_QUESTIONS = ['g:weather', 'g:reach'];
+/** T874: the ways there that answer "how far" already (no flying). */
+export const OVERLAND_WAYS = ['train', 'car'];
 export function guideScreens(s) {
   const places = Array.isArray(s.places) ? s.places : [];
   const town = places.some((p) => p.kind === 'place');
   return GUIDE.filter((id) => {
     if (id === 'g:reach' && s.booked.flights) return false;
+    // T874: a train or car way there has said "no flying"; asking how far
+    // to fly would ask it twice (and could contradict it).
+    if (id === 'g:reach' && OVERLAND_WAYS.includes(s.way || '')) return false;
     if (places.length && WHERE_QUESTIONS.includes(id)) return false;
     if (town && id === 'g:likes') return false;
     return true;

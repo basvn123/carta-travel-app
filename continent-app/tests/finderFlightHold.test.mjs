@@ -16,9 +16,18 @@ import { slotTotals } from "../src/lib/recommend/slots.js";
 import { chooseFlight, optionsFor } from "../src/lib/recommend/adapters/flight.js";
 import { quoteTrip, PLANNER_BAG } from "../src/lib/tripTotal.js";
 import { normalizeSettings } from "../src/planner/flow/tripSettings.js";
-import { withPlan, planState } from "../src/planner/finder/handoff.js";
+import { selectionOfPlan } from "../src/lib/plan/doors.js";
+import { wizardPlannerState } from "../src/lib/tripTotal.js";
 import { planOf } from "../src/planner/finder/planOf.js";
 import { withSlot } from "../src/planner/finder/finderText.js";
+
+/** T874 (row T872-b): the live path. Plan this trip hands the planner
+ *  selectionOfPlan(plan) (TripFlow landPlan, useTripPlanner loadFromWizard);
+ *  the planner prices that hand-over with its held flights as picks. */
+function livePlanState(plan) {
+  const sel = selectionOfPlan(plan);
+  return { ...wizardPlannerState(sel, { stayTier: sel.stayTier || "home", lifestyle: sel.lifestyle }), flightPicks: sel.flightPicks, flightRank: plan.flightRank };
+}
 
 const fixture = (name) => JSON.parse(readFileSync(new URL(`./fixtures/${name}`, import.meta.url), "utf8"));
 const pub = (p) => new URL(`../public/${p}`, import.meta.url);
@@ -51,21 +60,10 @@ const answers = (start, end) => normalizeSettings({
 });
 const trips = (s) => findTrips({ data, countryInsights, layerIndexes, settings: s, origin: BRU, flights, today: "2026-10-28" });
 
-function wizardHandOver(plan) {
-  const stops = plan.order.map((id) => ({ destinationId: id, nights: plan.nights[id], activities: [] }));
-  return {
-    startDate: plan.startDate, groupSize: plan.party.adults, children: plan.party.children, babies: plan.party.babies,
-    stayTier: "home", transport: "auto", pace: "balanced", baggage: PLANNER_BAG,
-    anchorId: null, anchorOrigin: null, returnAnchorId: null,
-    ownFlight: { airline: "", mode: "fly", costTotal: 0, costOut: 0, costBack: 0, outDate: plan.startDate, retDate: plan.endDate },
-    carHome: null, legModes: {}, ownLegs: {}, ownStays: {}, label: plan.country, stops,
-  };
-}
-
 /** The wizard's Review quote for a seeded trip, and its request. */
 function review(trip, planEdit = (p) => p) {
   const plan = planEdit(planOf(trip));
-  const state = planState(withPlan(wizardHandOver(plan), plan), plan);
+  const state = livePlanState(plan);
   return { plan, state, q: quoteTrip(state, { data: appData, countryInsights }) };
 }
 

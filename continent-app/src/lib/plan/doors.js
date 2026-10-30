@@ -152,3 +152,15 @@ export function bookedTrip(s, destinations, { label = '' } = {}) {
     booked: { flights: flightsBooked, stays: stays.map((r) => r.id) },
   };
 }
+
+/** T874: the flight the words said is booked: the one town named and the trip's exact days, else blanks. */
+export function saidFlight(s) {
+  const towns = (s?.places || []).filter((p) => p.kind === 'place' && p.name);
+  const exact = s?.when?.mode === 'exact';
+  const on = Boolean(s?.booked?.flights);
+  return {
+    city: on && towns.length === 1 ? towns[0].name : '',
+    out: on && exact && s.when.start ? s.when.start : '',
+    back: on && exact && s.when.end ? s.when.end : '',
+  };
+}

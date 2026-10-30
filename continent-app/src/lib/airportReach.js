@@ -156,3 +156,15 @@ export function homeCandidates(data, pinned = null) {
     ticked: rows.length > 0,
   };
 }
+
+/**
+ * T874: the one home airport an engine prices from when it needs one (the
+ * trip finder's origin): with airports ticked, a ticked one (the first, the
+ * airport the planner flies from when no fare is found), so the finder never
+ * names a nearest airport the sweep does not cover; else the selected origin.
+ */
+export function engineOriginCode(data) {
+  const ticked = (Array.isArray(data?.meta?.home_airports) ? data.meta.home_airports : []).map((a) => a.iata);
+  const one = data?.meta?.selected_origin || null;
+  return ticked.length && !ticked.includes(one) ? ticked[0] : one;
+}
