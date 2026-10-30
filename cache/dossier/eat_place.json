@@ -1,0 +1,38 @@
+{
+ "_about": "T911 placeholder, filled by a later harvest. Per destination id (app_data destinations key, e.g. OPO or gem:montagnana): {dishes: [{name, kind: dish|drink|sweet, wiki?}]}, at most 8. build_dossier.py writes the dossier's eat block from this with source place; without a row the country table pipeline/dossier/eat_country.json is used (source country). Porto is the worked example.",
+ "dests": {
+  "OPO": {
+   "dishes": [
+    {
+     "name": "Francesinha",
+     "kind": "dish",
+     "wiki": "https://en.wikipedia.org/wiki/Francesinha"
+    },
+    {
+     "name": "Bacalhau",
+     "kind": "dish",
+     "wiki": "https://en.wikipedia.org/wiki/Bacalhau"
+    },
+    {
+     "name": "Tripas à moda do Porto",
+     "kind": "dish"
+    },
+    {
+     "name": "Pastel de nata",
+     "kind": "sweet",
+     "wiki": "https://en.wikipedia.org/wiki/Pastel_de_nata"
+    },
+    {
+     "name": "Port",
+     "kind": "drink",
+     "wiki": "https://en.wikipedia.org/wiki/Port_wine"
+    },
+    {
+     "name": "Vinho verde",
+     "kind": "drink",
+     "wiki": "https://en.wikipedia.org/wiki/Vinho_Verde"
+    }
+   ]
+  }
+ }
+}

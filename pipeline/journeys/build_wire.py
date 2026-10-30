@@ -30,6 +30,9 @@ stripDashes): no em/en dashes; numeric ranges and tight joins become a plain
 hyphen, spaced prose dashes a comma. Inline [VERIFY: ...] markers are lifted
 out of display prose (they already live in verifyFlags[]).
 
+T911: journey/{id}.json carries fit {good: [...], less: [...]} when
+Trips/carta-unified/carta-unified/data/fit.json has a row for the trip.
+
 Run from the repo root:  python pipeline/journeys/build_wire.py
 Offline re-export:       python pipeline/journeys/build_wire.py --no-fetch
 """
@@ -48,6 +51,10 @@ ROOT = Path(__file__).resolve().parents[2]
 SRC = ROOT / "Trips" / "carta-unified" / "carta-unified" / "data" / "trips.master.json"
 OUT = ROOT / "continent-app" / "public" / "journeys"
 CACHE_PATH = ROOT / "cache" / "journey_images.json"
+# T911: who a trip suits, {journeys: {id: {good: [...], less: [...]}}}, kept
+# next to the dataset and filled by hand or a later pass; a trip with no row
+# gets no fit key.
+FIT_PATH = SRC.parent / "fit.json"
 
 API = "https://en.wikipedia.org/w/api.php"
 UA = "CartaTravelApp/1.0 (https://carta-europetravel.com; hero image harvest)"
@@ -129,6 +136,26 @@ BED_WORDS = {
     "camp": re.compile(r"\b(campsites?|camping|campground|glamping)\b", re.I),
 }
 NOT_A_HOSTEL_RE = re.compile(r"hostellerie|superbude", re.I)
+
+
+def load_fit():
+    """{id: {good, less}} with empty lists dropped; {} when the file is absent."""
+    if not FIT_PATH.exists():
+        return {}
+    try:
+        raw = json.loads(FIT_PATH.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    out = {}
+    for tid, row in (raw.get("journeys") or {}).items():
+        if not isinstance(row, dict):
+            continue
+        fit = {k: [strip_dashes(str(x)) for x in row.get(k) or [] if x]
+               for k in ("good", "less")}
+        fit = {k: v for k, v in fit.items() if v}
+        if fit:
+            out[tid] = fit
+    return out
 
 
 def bed_kinds(trip):
@@ -940,6 +967,7 @@ def main():
     (OUT / "journey").mkdir(parents=True, exist_ok=True)
 
     generated = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    fits = load_fit()
     index_types = []
     for slug in TYPE_ORDER:
         rows = by_type.get(slug, [])
@@ -971,6 +999,9 @@ def main():
                 detail["gatewaysPartial"] = partial
             # T089: snapshot is never read and adds dead weight to the JSON.
             detail.pop("snapshot", None)
+            # T911: who the trip suits and who it suits less.
+            if fits.get(t["id"]):
+                detail["fit"] = fits[t["id"]]
             (OUT / "journey" / f"{t['id']}.json").write_text(
                 json.dumps(detail, ensure_ascii=False), encoding="utf-8")
 

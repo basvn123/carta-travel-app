@@ -22,6 +22,14 @@ Stages (all offline; network fills live in sibling scripts):
   S7 parking             re-rank cache/parking_osm.json spots + nav deeplinks
   S8 compose_tips        rule codes + args, rendered through t() in the app
   S9 assemble + gate     licence gate refuses unprintable images, writes wire
+  S10 place page (T911)  derive_place_page.py: essentials (country table, the
+                         harvested emergency number wins), eat (per place from
+                         cache/dossier/eat_place.json, else eat_country.json),
+                         walk (top sights within 2.5 km in walking order),
+                         similar (same or adjacent class, 100 km plus away),
+                         access (cache/dossier/access.json) and
+                         sleep.neighbourhoods[].suits
+                         (cache/dossier/neighbourhood_suits.json)
 
 Usage (from repo root):
   python pipeline/dossier/build_dossier.py --cc AL          one country
@@ -54,6 +62,7 @@ from common import (  # noqa: E402
 )
 from derive_do import derive  # noqa: E402
 import derive_practical  # noqa: E402  (T641: emergency, transit, swim bans)
+import derive_place_page  # noqa: E402  (T911: essentials, eat, walk, similar)
 
 SCHEMA = "dossier_v2"
 OUT_DIR = os.path.join(PUB, "dossier")
@@ -1520,6 +1529,7 @@ def load_context():
         "destinfo": destinfo, "trips_by_cc": trips_by_cc,
         "dest_index": dest_index, "layer_index": layer_index,
         "routes_attach": load_routes_attach(),
+        "similar": derive_place_page.Similar(dests),
         "trip_model": _load_trip_model(), "tasl": TaslStore(),
         "meta": app.get("meta", {}),
     }
@@ -1687,6 +1697,9 @@ def build_one(dest, ctx, refusal_log):
             ac["neighbourhoods"],
             key=lambda n: n.get("night_eur") if n.get("night_eur") is not None else 1e9,
         )[:8]
+        # T911: what each one suits, from the placeholder harvest file.
+        sleep["neighbourhoods"] = derive_place_page.neighbourhood_suits(
+            did, sleep["neighbourhoods"])
     for k in ("beds", "q", "captured"):
         if ac.get(k):
             sleep[k] = ac[k]
@@ -1716,6 +1729,13 @@ def build_one(dest, ctx, refusal_log):
         "parking": parking,
         "practical": compose_practical(dest),
     }
+    # T911: the redesigned place page's blocks, each absent without data.
+    sections["essentials"] = derive_place_page.essentials(
+        dest, (sections["practical"] or {}).get("emergency"))
+    sections["eat"] = derive_place_page.eat(dest)
+    sections["walk"] = derive_place_page.walk(dest, highlights)
+    sections["similar"] = ctx["similar"].of(dest) if ctx.get("similar") else None
+    sections["access"] = derive_place_page.access(did)
     tips = compose_tips(dest, sections)
     if tips:
         sections["tips"] = tips
@@ -1761,6 +1781,11 @@ def build_one(dest, ctx, refusal_log):
         "do": len(do or []),
         "trips": len(trips or []) if trips else 0,
         "nearby": sum(len(v) for v in (nearby or {}).values()),
+        "essentials": int("essentials" in body),
+        "eat": int("eat" in body),
+        "walk": int("walk" in body),
+        "similar": int("similar" in body),
+        "access": int("access" in body),
     }
     return body, stats
 
@@ -1826,6 +1851,8 @@ def main():
         "merged_duplicates": agg["merged"],
         "avg_do": round(agg["do"] / max(agg["n"], 1), 2),
         "n_with_licence_refusals": len(refusal_log),
+        "n_place_page": {k: agg[k] for k in ("essentials", "eat", "walk",
+                                             "similar", "access")},
         "refusals_sample": dict(list(refusal_log.items())[:20]),
     }, indent=1)
     print(f"done: {agg['n']} built, {agg['written']} written, "

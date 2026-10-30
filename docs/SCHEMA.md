@@ -1289,3 +1289,27 @@ The master is unchanged in shape; `sync-data` ships less of it.
   (T786); the match leaves a null like out.
 - `taste.tmax_by_month`: twelve rounded mean day highs (NASA POWER, the
   climate layer), or null; the heat conflict reads it (T787).
+
+## Place page and trip page redesign keys (T911, added 2026-10-30)
+
+Additive only; `SCHEMA = "dossier_v2"` is unchanged. Every key is optional and
+absent, not null, when there is no data ("Sections are independently absent").
+Built by `pipeline/dossier/derive_place_page.py`, called from
+`build_dossier.py` (stage S10). A placeholder file has the shape
+`{"_about": "...", "dests": {id: ...}}`, keyed by the app_data destination id
+(`OPO`, `gem:montagnana`), so a later harvest fills it with no code change.
+
+| Key (dossier) | Shape | Source | Status |
+|---|---|---|---|
+| `essentials` | `{languages: [ISO 639-1], currency: ISO 4217, tipping: "round"\|"5-10"\|"10-15"\|"included"\|"none", plugs: ["C", "F"], volts: 230, tap_water: "safe"\|"bottled"\|"varies", emergency: "112", source: "country"}`; a field that is not certain for a country is left out | `COUNTRY_ESSENTIALS` in `derive_place_page.py`; `emergency` prefers `practical.emergency.general` (T641 harvest) | derived, every country in app_data |
+| `eat` | `{dishes: [{name, kind: "dish"\|"drink"\|"sweet", wiki?}] (at most 8), source: "place"\|"country"}` | `cache/dossier/eat_place.json` per place (placeholder, Porto filled), else `pipeline/dossier/eat_country.json` (curated, 4 to 8 per country; FO, XK, AD, LI, SM, MC have none) | country table live, per place placeholder |
+| `walk` | `{stops: [{id, name, lat, lon, min}], km, walk_min, visit_h}` | the dossier's own `highlights`: best `rank_score` within 2.5 km of the centre, up to 7, a stop more than 1.5 km from every other dropped, shortest open path (Held-Karp); `min` = leg km x 1.3 at 4.5 km/h, 0 for the first stop; `visit_h` = max(`place.visit_h`, walk time), else walk time plus 0.5 h a stop, to the half hour. Only with 3 stops or more, never for class `area` | derived |
+| `similar` | `[{id, name, country, iso2, score, dist_km, why: ["cheaper"\|"quieter"\|"same_class"\|"same_style"]}]`, at most 6, at most 3 per country | app_data destinations: same or adjacent class (village, town, city, metro; area only with area), score at most 1.5 below, 100 km or more away, category Jaccard (class words left out) at least 0.34 or taste cosine at least 0.9; ranked by 0.6 Jaccard + 0.4 cosine, a small pull to higher scores and to nearer places. `cheaper`: a three star night, two meals and two coffees at most 85 percent of this place's; `quieter`: lower `crowding.tier`; `same_style`: Jaccard at least 0.4 or cosine at least 0.9. The app prices by id at runtime | derived |
+| `access` | `{steep: bool, note?: "funicular"}` | `cache/dossier/access.json` | placeholder (Porto filled) |
+| `sleep.neighbourhoods[].suits` | `["central"\|"nightlife"\|"quiet"\|"families"\|"food"\|"budget"]` | `cache/dossier/neighbourhood_suits.json`, `{id: {neighbourhood name: [codes]}}`, names matched folded | placeholder (two Porto rows) |
+
+Journeys (`continent-app/public/journeys/journey/{id}.json`, `build_wire.py`):
+
+| Key | Shape | Source | Status |
+|---|---|---|---|
+| `fit` | `{good: [string], less: [string]}`, short plain English phrases, an empty side left out | `Trips/carta-unified/carta-unified/data/fit.json`, `{journeys: {id: {good, less}}}` | placeholder (pt-culinary-douro-valley filled) |
