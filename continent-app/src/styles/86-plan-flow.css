@@ -1370,6 +1370,8 @@
     margin: var(--space-6) 0 var(--space-8);
     padding: var(--space-5) var(--space-6) var(--space-6);
   }
+  /* The persona's wide card (is-wide, 640 px) takes the studio's width too. */
+  .pf-stage.is-studio.is-wide > .pf-sheet { width: min(820px, calc(100% - 2 * var(--space-6))); }
   .pf-stage.is-studio > .pf-bar { right: calc(340px + var(--space-4)); }
   /* The list says where you are; the marks over the head would say it twice. */
   .pf-stage.is-studio .pf-marks { display: none; }
