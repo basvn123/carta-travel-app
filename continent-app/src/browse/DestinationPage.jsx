@@ -139,7 +139,9 @@ function destSleep(destination, d, version) {
     ? { beds, curve, neighbourhoods: hoods, q: destination?.accommodation?.q || null } : null;
 }
 
-const SIMILAR_WHY = ['cheaper', 'quieter', 'same_class', 'same_style'];
+// Only the reasons that tell one card from the next (end check): every
+// card is "like this", so same kind and same style say nothing on their own.
+const SIMILAR_WHY = ['cheaper', 'quieter'];
 
 /** Places like this (d.similar): a card a place, its runtime day price looked
  *  up by id; two whole cards a row on a phone (the owner's standing rule). */
@@ -401,7 +403,9 @@ export function DestinationPage({
     bestMonths?.length > 0 && { key: 'best', label: t('dest.keyBest'), value: monthList(bestMonths) },
     crowdText && { key: 'crowds', label: t('dest.keyCrowds'), value: crowdText },
     Number.isFinite(visitH) && visitH > 0 && { key: 'sights', label: t('destx.fact.sights'), value: t('destx.fact.sightsValue', { n: n1(Math.round(visitH)) }) },
-    aroundStat?.value && { key: 'around', label: t('dest.keyAround'), value: aroundStat.value },
+    aroundStat?.value ? { key: 'around', label: t('dest.keyAround'), value: aroundStat.value }
+      // No mobility record: the dossier's car rule still answers (end check).
+      : getting?.car_needed === false && { key: 'around', label: t('dest.keyAround'), value: t('filter.noCar') },
     airportPick && { key: 'airport', label: t('destx.fact.fly'), value: airportPick.iata },
   ].filter(Boolean);
 

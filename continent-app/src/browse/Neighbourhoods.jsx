@@ -2,8 +2,7 @@ import React from 'react';
 import { BedIcon } from '../components/Icons.jsx';
 import { MONTHS_SHORT } from './ClimateStrip.jsx';
 import { monthName } from '../lib/dates.js';
-import { eurExact } from '../lib/format.js';
-import { formatEst } from '../lib/money.js';
+import { formatEst, formatMoney } from '../lib/money.js';
 
 /**
  * Where to sleep (PLAN.md D3): the neighbourhood prices the wire always
@@ -27,8 +26,10 @@ export function Neighbourhoods({ sleep, t }) {
   const seasonality = sleep.curve || null;
   const beds = sleep.beds || null;
   // A bed not measured in this town is a stand-in: the tilde and the word.
-  const bedEur = (v) => (sleep.q === 'measured' ? eurExact(v)
-    : formatEst(v, t('money.est'), { precision: 'cents' }));
+  // Neighbourhoods and room types are compared, so whole euros (DESIGN.md
+  // "Cents on receipts and totals" keeps cents for the receipt only).
+  const bedEur = (v) => (sleep.q === 'measured' ? formatMoney(v)
+    : formatEst(v, t('money.est'), { precision: 'whole' }));
   const sMin = seasonality ? Math.min(...seasonality) : 0;
   const sMax = seasonality ? Math.max(...seasonality) : 1;
   const cheapMonth = seasonality ? seasonality.indexOf(sMin) : -1;
