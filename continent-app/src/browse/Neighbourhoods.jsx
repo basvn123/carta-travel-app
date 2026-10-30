@@ -15,6 +15,8 @@ import { formatEst } from '../lib/money.js';
  * Airbnb medians); absent entirely when there is none of it, never an empty
  * shell.
  */
+const SUITS = ['central', 'nightlife', 'quiet', 'families', 'food', 'budget'];
+
 export function Neighbourhoods({ sleep, t }) {
   const hoods = sleep?.neighbourhoods || [];
   // 397 destinations carry neighbourhood rows (the Inside Airbnb anchor
@@ -38,7 +40,15 @@ export function Neighbourhoods({ sleep, t }) {
       <ul className="destp-hoods">
         {hoods.map((n) => (
           <li key={n.name} className="destp-hood">
-            <span className="destp-hood-name">{n.name}</span>
+            <span className="destp-hood-name">
+              {n.name}
+              {/* T912: who the area suits, as small words, when the dossier says. */}
+              {Array.isArray(n.suits) && n.suits.some((k) => SUITS.includes(k)) && (
+                <span className="destp-hood-suits">
+                  {n.suits.filter((k) => SUITS.includes(k)).map((k) => t(`destx.suits.${k}`)).join(', ')}
+                </span>
+              )}
+            </span>
             <span className="destp-hood-bar" aria-hidden="true">
               <span style={{ width: `${Math.max(6, ((n.night_eur || 0) / max) * 100)}%` }} />
             </span>

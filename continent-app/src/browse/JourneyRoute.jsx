@@ -1,99 +1,113 @@
 import React, { useMemo } from 'react';
-import { WeekProfile, MixBar, TrafficBar } from './RouteFigures.jsx';
-import {
-  weekRelief, surfaceMix, trafficSplit, SURFACE_TYPES,
-} from '../lib/routeFigures.js';
-import { count } from '../lib/format.js';
+import { TrainIcon, CarIcon, BusIcon, FerryIcon, BikeIcon, BootIcon, RouteIcon } from '../components/Icons.jsx';
+import { PlaneIcon } from '../components/TransportIcons.jsx';
+import { stripDashes } from '../lib/format.js';
+import { WeekClimb } from './TripWeek.jsx';
+import { PSection } from './PageTemplate.jsx';
+
+const TripDayMap = React.lazy(() => import('./TripDayMap.jsx'));
 
 /**
- * The route figures of a written week (T174, trips spec E3 and E4): the
- * climb and descent of every day as one profile on hiking, trail running and
- * cycling weeks, and on cycling weeks the surface split as a bar with the
- * traffic exposure beside it.
+ * The trip page's Route section (T913, the place and trip template of the
+ * owner's approved spec, 2026-10-30; this file held the week's climb and
+ * surface figures, T174, which no page drew any more).
  *
- * Drawn with the same components as the trail and cycling pages
- * (RouteFigures.jsx), read by lib/routeFigures.js from the trip as written.
- * Renders nothing on any other style, or when the week states too little to
- * draw: the data sheet keeps the authored surface sentence either way.
+ *   the map    one numbered pin a night from the trip's dayPlaces
+ *              (TripDayMap), the chosen day the brown one
+ *   the legs   each move from one base to the next, with its day and, when
+ *              the day's written figures name it, the way and the time
+ *              ("Train 2 h", from itinerary[].dayStats); nothing is made up
+ *   the climb  the week's climb chart on walking, running and riding weeks
  *
- * T387 (v6 trips brief, V3.6): a block of the page's The week group under an
- * h3, no longer a fold of its own; its inner headings are h4.
+ * With none of the three the section is not drawn, and the jump bar's Route
+ * link goes with it.
  */
 
-function reliefSentences(relief, t) {
-  const { days, top } = relief;
+const MODE_WORDS = [
+  [/^(train|rail|linha|railway)/i, TrainIcon],
+  [/^(car|drive|driver|taxi|rental)/i, CarIcon],
+  [/^(bus|coach)/i, BusIcon],
+  [/^(ferry|boat|rabelo|catamaran)/i, FerryIcon],
+  [/^(flight|fly|plane)/i, PlaneIcon],
+  [/^(bike|cycle|ride)/i, BikeIcon],
+  [/^(walk|hike|on foot|trek)/i, BootIcon],
+];
+
+/** The bases in order: consecutive nights in one place are one stop. */
+export function routeStops(places) {
   const out = [];
-  if (top?.up > 0) {
-    out.push(t('journey.reliefSum', {
-      up: count(relief.up), n: days.length, day: top.day, top: count(top.up),
-    }));
+  for (const p of places || []) {
+    if (!p?.name) continue;
+    const last = out[out.length - 1];
+    if (last && last.name === p.name) { last.days.push(p.day); continue; }
+    out.push({ name: p.name, lat: p.lat, lon: p.lon, days: [p.day] });
   }
-  if (relief.downDays === 0) out.push(t('journey.reliefDownNone'));
-  else if (relief.downDays === relief.moving) out.push(t('journey.reliefDownAll', { down: count(relief.down) }));
-  else out.push(t('journey.reliefDown', { down: count(relief.down), k: relief.downDays, n: relief.moving }));
-  if (relief.upMissing > 0) out.push(t('journey.reliefGaps', { k: relief.upMissing, n: relief.moving }));
-  return out.join(' ');
+  return out;
 }
 
-// sel is the day number in view on the day track (T397, brief V4.1): one
-// --accent marker slides to its column of the climb profile, the profile's
-// scrub marker of rule "Data drawings", shared with the track.
-export function JourneyRoute({ trip, t, sel = null }) {
-  const relief = useMemo(() => weekRelief(trip), [trip]);
-  const mix = useMemo(
-    () => (SURFACE_TYPES.has(trip?.tripTypeSlug) ? surfaceMix(trip?.typeSpecific?.surface) : null),
-    [trip],
-  );
-  const traffic = useMemo(() => trafficSplit(mix), [mix]);
-  if (!relief.show && !mix) return null;
-  // Below one half placed, a bar would be mostly a question mark.
-  const showTraffic = traffic && traffic.known >= 0.5;
-  const selCol = relief.show && sel != null ? relief.days.findIndex((d) => d.day === sel) : -1;
+/** The way a day moves, from its written figures ("Train, 2 h" before its price):
+ *  the first part when it names a way, without its price. */
+function dayMove(day) {
+  const first = String(day?.dayStats || '').split(/\s\/\s/)[0]?.trim() || '';
+  const hit = MODE_WORDS.find(([re]) => re.test(first));
+  if (!hit) return null;
+  const text = stripDashes(first)
+    .replace(/[\u20AC$\u00A3]\s?[\d.,]+(\s*to\s*[\u20AC$\u00A3]?\s?[\d.,]+)?/g, '')
+    .replace(/\s+,/g, ',').replace(/,\s*,/g, ',').replace(/\s{2,}/g, ' ')
+    .replace(/^[\s,]+|[\s,]+$/g, '');
+  return text ? { Icon: hit[1], text } : null;
+}
 
-  const title = relief.show
-    ? t(mix ? 'journey.routeHeadRide' : 'journey.routeHeadClimb')
-    : t('journey.routeHeadSurface');
+export function JourneyRoute({
+  trip, t, itinerary, stats, sel = null, onPick, chart = false, map = true, relief = false,
+}) {
+  const stops = useMemo(() => routeStops(trip?.dayPlaces), [trip]);
+  const legs = useMemo(() => stops.slice(1).map((to, i) => {
+    const from = stops[i];
+    const day = (itinerary || []).find((d) => d.day === to.days[0]) || null;
+    return { key: `${i}:${to.name}`, n: i + 1, from: from.name, to: to.name, day: to.days[0], move: dayMove(day) };
+  }), [stops, itinerary]);
+  const hasMap = map && stops.some((s) => Number.isFinite(s.lat) && Number.isFinite(s.lon));
+  const hasChart = chart && (stats?.days || []).some((d) => d && (d.up > 0 || d.km > 0));
+  if (!hasMap && !legs.length && !hasChart) return null;
   return (
-    <div className="jblock jpage-route" id="jb-route">
-      <h3 className="jblock-h">{title}</h3>
-      {relief.show && (
-        <>
-          <p className="bpage-prose">{reliefSentences(relief, t)}</p>
-          <div className="jroute-prof" style={{ '--jroute-n': relief.days.length }}>
-            <WeekProfile relief={relief} t={t} />
-            {selCol >= 0 && (
-              <span className="jroute-sel" style={{ '--jroute-i': selCol }} aria-hidden="true" />
-            )}
-          </div>
-          <p className="bpage-note">{t('journey.reliefNote')}</p>
-        </>
-      )}
-      {mix && (
-        <>
-          <h4 className="jroute-h">{t('route.surfaceTitle')}</h4>
-          <MixBar
-            testId="journey-surface"
-            parts={mix.map((s) => ({
-              key: s.key, tone: s.tone, share: s.share,
-              label: s.label || t('journey.surfNotSplit'),
-            }))}
-          />
-          <h4 className="jroute-h">
-            {t('journey.trafficHead')}
-            {showTraffic && (
-              <sup className="jpage-est mono" aria-label={t('journey.trafficEstAria')} title={t('journey.trafficEstAria')}>
-                {t('journey.estMark')}
-              </sup>
-            )}
-          </h4>
-          {showTraffic ? (
-            <TrafficBar split={traffic} t={t} testId="journey-traffic" />
-          ) : (
-            <p className="bpage-prose">{t('journey.trafficUnstated')}</p>
+    <PSection id="pt-route" title={t('jx.jump.route')}
+      note={stops.length > 1 ? t('jx.routeStops', { n: stops.length }) : null}>
+      {(hasMap || legs.length > 0) && (
+        <div className={`pt-see${hasMap ? ' has-map' : ''}`}>
+          {hasMap && (
+            <div className="pt-mapbox">
+              <React.Suspense fallback={<div className="dsk-map-frame" />}>
+                <TripDayMap places={trip.dayPlaces} sel={sel} onPick={onPick} relief={relief}
+                  label={t('journey.mapAria', { name: trip.title })} />
+              </React.Suspense>
+            </div>
           )}
-          <p className="bpage-note">{t('journey.trafficNote')}</p>
-        </>
+          {legs.length > 0 && (
+            <ol className="pt-legs">
+              {legs.map((l) => {
+                const Icon = l.move?.Icon || RouteIcon;
+                return (
+                  <li key={l.key}>
+                    <span className="pt-num" aria-hidden="true">{l.n}</span>
+                    <span className="pt-leg-main">
+                      <b>{t('jx.legFromTo', { from: l.from, to: l.to })}</b>
+                      <small>{t('journey.dayN', { n: l.day })}</small>
+                    </span>
+                    {l.move && (
+                      <span className="pt-leg-mode">
+                        <Icon size={14} />
+                        <span>{l.move.text}</span>
+                      </span>
+                    )}
+                  </li>
+                );
+              })}
+            </ol>
+          )}
+        </div>
       )}
-    </div>
+      {hasChart && <WeekClimb days={stats.days} sel={sel} onPick={onPick} />}
+    </PSection>
   );
 }

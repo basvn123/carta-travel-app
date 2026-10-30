@@ -7,18 +7,16 @@ import { addDays } from '../lib/dates.js';
 import { quoteNights } from '../lib/price/nights.js';
 import { useSettledFigure } from '../lib/figureChange.js';
 import { Button, Money, Segmented } from '../components/ui/index.js';
-import { formatEst, formatMoney } from '../lib/money.js';
+import { formatMoney } from '../lib/money.js';
 import { doPriceOf } from '../lib/price/doPrice.js';
 import { Switch } from '../components/ui/Switch.jsx';
 import '../styles/86-price-items.css';
 import { Stepper } from '../components/FilterControls.jsx';
 import { DateField } from '../components/DateField.jsx';
-import { ReceiptLine, ReceiptSum, useSettleChanged } from '../components/ReceiptCard.jsx';
+import { useSettleChanged } from '../components/ReceiptCard.jsx';
 import { FlightSheet } from '../components/FlightSheet.jsx';
 import { ReportProblem } from '../components/ReportProblem.jsx';
-import { ChevronDownIcon, ChevronRightIcon, RouteIcon, SunIcon } from '../components/Icons.jsx';
-import { InfoDot } from '../components/InfoDot.jsx';
-import { dayIncludesText } from '../lib/dayIncludes.js';
+import { RouteIcon, BedIcon, DiningIcon, TicketIcon, BusIcon } from '../components/Icons.jsx';
 import { matchProfile, PROFILE_LABEL_KEYS } from './LifestylePanel.jsx';
 import { legCost } from '../lib/flights/flights.js';
 import { flightLegs, flightQuote } from '../lib/price/flight.js';
@@ -30,7 +28,6 @@ import { loadLiveStay } from '../lib/liveStays.js';
 import { rule } from '../lib/price/config.js';
 import { useDayView } from '../hooks/useDayView.js';
 import { PriceItems } from '../components/PriceItems.jsx';
-import { includedParts } from '../lib/price/display.js';
 
 /**
  * The destination page's price card (T429): what a day here costs at the
@@ -40,38 +37,57 @@ import { includedParts } from '../lib/price/display.js';
  * day figure is the computeCosts row the Explore card and the map pin print,
  * and the total is that day times the nights and the party (lib/price/nights.js).
  * The card says no more than that: no orientation sentence, no method rows
- * under the lines, no "what a different stay would cost" footer, and one
- * line naming what the total leaves out (owner, T429 brief).
+ * under the lines, no "what a different stay would cost" footer. Since T912
+ * (the owner's approved spec, 2026-10-30) it reads top to bottom: the price
+ * a person a day, the fields (dates, travellers, stay), the split of the day
+ * with thin bars, the stay for the party, the way there and the total for
+ * the party in bold, then ONE primary (Plan a trip here) with "Or plan one
+ * day here" as a quiet link under it. The "Not included" line is gone.
  *
  * Its inputs are the app's own (FirstRunContext), so a change here moves
  * every card and pin behind the page, as the settings line does:
  *   Dates   an in-card calendar (the settings line's own picker logic; its
  *           popover is fixed under the shell's top bar and cannot open here)
- *   People  the shared Stepper
+ *   People  the shared Stepper, behind a Travellers field
  *   Stay    opens the one Lifestyle panel (carta-design "Lifestyle control":
  *           a surface opens it and never builds a second one)
  *
- * On a phone the card sits in the page after the key facts, never sticky;
- * from 1024 px the page's grid holds it in a sticky side column.
+ * Below 1024 px the card sits in the page (What a day costs) and the page's
+ * foot bar carries the primary, so the card's own hides; from 1024 px it is
+ * the sticky right column. `openSignal` lets the foot bar open the dates.
  */
 const MAX_PARTY = rule('party.limits').max_seats;   // T691: one cap
 
 export function DestPriceCard({
-  dest, city, onOpenLifestyle, onPlanTrip, onPlanDay, reportItem, carDayEur = null, doItems = null,
+  dest, city, onOpenLifestyle, onPlanTrip, onPlanDay, reportItem, doItems = null,
+  // T912: a number the page bumps when its foot bar asks for the inputs;
+  // the card then opens its dates and takes the focus.
+  openSignal = 0,
 }) {
   const { t, lang, languages } = useI18n();
   const ctx = useFirstRun();
   const view = useDayView();   // T694: per person or the group's total
   const flightOff = !!view.request.excluded?.includes('flight');
+  const excluded = new Set(view.request.excluded || []);
   const uid = React.useId();
   const receiptKey = `dest:${dest.id}`;
   const [fare, setFare] = React.useState(() => readOwnFare(receiptKey));
   const [sheetOpen, setSheetOpen] = React.useState(false);
   const [datesOpen, setDatesOpen] = React.useState(false);
   const [pickEnd, setPickEnd] = React.useState('start');
+  const [partyOpen, setPartyOpen] = React.useState(false);
+  const datesBtnRef = React.useRef(null);
+  React.useEffect(() => {
+    if (!openSignal) return;
+    setPickEnd('start');
+    setDatesOpen(true);
+    setPartyOpen(false);
+    requestAnimationFrame(() => datesBtnRef.current?.focus?.({ preventScroll: true }));
+  }, [openSignal]);
   React.useEffect(() => {
     setFare(readOwnFare(receiptKey));
     setDatesOpen(false);
+    setPartyOpen(false);
   }, [receiptKey]);
 
   const choices = ctx?.choices;
@@ -189,97 +205,105 @@ export function DestPriceCard({
     : line.key === 'transport' ? t('price.item.transport')
     : line.key === 'activities' ? t('price.item.activities') : t('receipt.ground'));
   const cartaLine = price.lines.find((l) => l.key === 'flight' && l.carta) || null;
-  const stayLine = price.lines.find((l) => l.key === 'stay');
-  const foodLine = price.lines.find((l) => l.key === 'ground');
-  const share = (l) => (price.total > 0 ? `${(l.eur / price.total) * 100}%` : '0');
+  const flightLine = price.lines.find((l) => l.key === 'flight') || null;
+  const stayTotal = Math.round(price.lines.filter((l) => l.key !== 'flight').reduce((sum, l) => sum + l.eur, 0) * 100) / 100;
+
+  // The split of the day a person (T912): the engine's own lines that carry
+  // an amount, bed, food and drink, sights, getting around; a part the data
+  // does not price is left out, never a zero.
+  const lineEur = (key) => (costRow?.lines || []).find((l) => l.key === key && l.status === 'included' && l.eur != null)?.eur;
+  const split = [
+    { key: 'bed', Icon: BedIcon, label: t('destx.split.bed'), eur: excluded.has('bed') ? null : costRow?.stayEur },
+    { key: 'food', Icon: DiningIcon, label: t('destx.split.food'), eur: excluded.has('food') ? null : costRow?.foodEur },
+    { key: 'activities', Icon: TicketIcon, label: t('destx.split.sights'), eur: lineEur('activities') },
+    { key: 'transport', Icon: BusIcon, label: t('destx.split.around'), eur: lineEur('transport') },
+  ].filter((r) => Number.isFinite(Number(r.eur)) && Number(r.eur) > 0);
+  const splitMax = Math.max(1, ...split.map((r) => Number(r.eur)));
+  const datesText = from && to ? t('settings.datesRange', { start: shortDate(from), end: shortDate(to) }) : '';
 
   return (
-    <section className="dprice" aria-labelledby={`${uid}-h`}>
-      <header className="dprice-head">
-        <h2 className="dprice-title" id={`${uid}-h`}>{t('dest.priceTitle', { nights: nightsText, city })}</h2>
-        <p className="dprice-day">
-          {/* Plan rule 2 (2026-10-24): the amount and its unit, no estimate
-              mark and no dot explaining one. */}
-          <span className="dprice-fig">
-            <span ref={dayRef}>
-              <PriceItems cost={costRow} way={carta?.perSeat > 0 ? { mode: 'plane', perPerson: carta.perSeat } : null}>
-                <Money value={view.day(price.dayEur)} />
-              </PriceItems>
-            </span>
-          </span>
-          <span className="dprice-day-unit">{view.unit}</span>
-        </p>
-        {/* What the day includes (T499, owner answer T491-h). From 1024 px
-            the card is where the first screen reads it; on a phone the head
-            carries it and this line hides (64-v6-destination.css). */}
-        <p className="dprice-incl">{dayIncludesText(t, includedParts(costRow))}</p>
-      </header>
+    <section className="dprice pt-card" aria-labelledby={`${uid}-h`}>
+      <h3 className="sr-only" id={`${uid}-h`}>{t('dest.priceTitle', { nights: nightsText, city })}</h3>
+      <p className="pt-pr">
+        {/* Plan rule 2 (2026-10-24): the amount and its unit, no estimate
+            mark. A tap opens the items in it (T695). */}
+        <span className="pt-pr-fig" ref={dayRef}>
+          <PriceItems cost={costRow} way={carta?.perSeat > 0 ? { mode: 'plane', perPerson: carta.perSeat } : null}>
+            <Money value={view.day(price.dayEur)} />
+          </PriceItems>
+        </span>
+        <span className="pt-pr-unit">{view.unit}</span>
+      </p>
 
-      <div className="dprice-inputs" role="group" aria-label={t('receipt.stripAria')}>
-        <div className={`dprice-row${datesOpen ? ' is-open' : ''}`}>
-          <Button
-            variant="quiet"
-            block
-            className="dprice-input"
-            aria-expanded={datesOpen}
-            aria-controls={`${uid}-dates`}
-            iconEnd={<ChevronDownIcon size={14} className="dprice-chev" />}
-            onClick={() => { setPickEnd('start'); setDatesOpen((v) => !v); }}
-          >
-            <span className="dprice-input-label">{t('settings.dates')}</span>
-            <span className="dprice-input-value">
-              {from && to ? t('settings.datesRange', { start: shortDate(from), end: shortDate(to) }) : ''}
-            </span>
+      {/* The inputs the price depends on, as fields (the owner's spec): the
+          dates open the in-card calendar, the travellers a stepper, the stay
+          the one Lifestyle panel. */}
+      <div className="pt-fields" role="group" aria-label={t('receipt.stripAria')}>
+        <Button variant="quiet" className="pt-field" aria-expanded={datesOpen} aria-controls={`${uid}-dates`}
+          ref={datesBtnRef}
+          onClick={() => { setPickEnd('start'); setDatesOpen((v) => !v); setPartyOpen(false); }}>
+          <span className="pt-field-label">{t('settings.dates')}</span>
+          <span className="pt-field-value">{datesText}</span>
+        </Button>
+        <Button variant="quiet" className="pt-field" aria-expanded={partyOpen} aria-controls={`${uid}-party`}
+          onClick={() => { setPartyOpen((v) => !v); setDatesOpen(false); }}>
+          <span className="pt-field-label">{t('destx.travellers')}</span>
+          <span className="pt-field-value">{peopleText}</span>
+        </Button>
+        {onOpenLifestyle && (
+          <Button variant="quiet" className="pt-field is-wide" aria-haspopup="dialog" onClick={onOpenLifestyle}>
+            <span className="pt-field-label">{t('receipt.stripStay')}</span>
+            <span className="pt-field-value">{`${t(`stay.${tier}`)}, ${vibe}`}</span>
           </Button>
-          {datesOpen && (
-            <div className="dprice-dates" id={`${uid}-dates`}>
-              <Segmented
-                block
-                className="dprice-ends"
-                label={t('settings.dates')}
-                value={pickEnd}
-                onChange={setPickEnd}
-                options={['start', 'end'].map((end) => ({
-                  value: end,
-                  label: (
-                    <span className="dprice-end">
-                      <span className="dprice-end-label">{t(end === 'start' ? 'settings.leave' : 'settings.return')}</span>
-                      <span>{shortDate(end === 'start' ? from : to)}</span>
-                    </span>
-                  ),
-                }))}
-              />
-              <DateField
-                inline
-                value={pickEnd === 'start' ? from : to}
-                rangeStart={from}
-                rangeEnd={to}
-                min={pickEnd === 'end' ? (from || ctx.dateBounds?.min) : ctx.dateBounds?.min}
-                max={ctx.dateBounds?.max}
-                onChange={pickDate}
-              />
-              {datesOwn && defaults && (
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => {
-                    acted();
-                    ctx.setDepartDate(defaults.start);
-                    ctx.setReturnDate(defaults.end);
-                    setDatesOpen(false);
-                  }}
-                >
-                  {t('settings.useCartaDates')}
-                </Button>
-              )}
-            </div>
+        )}
+      </div>
+
+      {datesOpen && (
+        <div className="dprice-dates" id={`${uid}-dates`}>
+          <Segmented
+            block
+            className="dprice-ends"
+            label={t('settings.dates')}
+            value={pickEnd}
+            onChange={setPickEnd}
+            options={['start', 'end'].map((end) => ({
+              value: end,
+              label: (
+                <span className="dprice-end">
+                  <span className="dprice-end-label">{t(end === 'start' ? 'settings.leave' : 'settings.return')}</span>
+                  <span>{shortDate(end === 'start' ? from : to)}</span>
+                </span>
+              ),
+            }))}
+          />
+          <DateField
+            inline
+            value={pickEnd === 'start' ? from : to}
+            rangeStart={from}
+            rangeEnd={to}
+            min={pickEnd === 'end' ? (from || ctx.dateBounds?.min) : ctx.dateBounds?.min}
+            max={ctx.dateBounds?.max}
+            onChange={pickDate}
+          />
+          {datesOwn && defaults && (
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => {
+                acted();
+                ctx.setDepartDate(defaults.start);
+                ctx.setReturnDate(defaults.end);
+                setDatesOpen(false);
+              }}
+            >
+              {t('settings.useCartaDates')}
+            </Button>
           )}
         </div>
-
-        <div className="dprice-row">
-          <span className="dprice-input is-static">
-            <span className="dprice-input-label" id={`${uid}-party`}>{t('settings.party')}</span>
-          </span>
+      )}
+      {partyOpen && (
+        <div className="pt-party" id={`${uid}-party`}>
+          <span className="pt-field-label">{t('settings.party')}</span>
           <Stepper
             value={people}
             min={1}
@@ -290,64 +314,23 @@ export function DestPriceCard({
             incLabel={t('settings.partyInc')}
           />
         </div>
-
-        {onOpenLifestyle && (
-          <div className="dprice-row">
-            <Button
-              variant="quiet"
-              block
-              className="dprice-input"
-              aria-haspopup="dialog"
-              iconEnd={<ChevronRightIcon size={14} className="dprice-chev" />}
-              onClick={onOpenLifestyle}
-            >
-              <span className="dprice-input-label">{t('receipt.stripStay')}</span>
-              <span className="dprice-input-value">{`${t(`stay.${tier}`)}, ${vibe}`}</span>
-            </Button>
-          </div>
-        )}
-      </div>
-
-      {/* The one primary under the inputs, before the receipt (a booking
-          card's order), so it is in view at 1280 x 720 without a scroll. */}
-      <div className="dprice-actions">
-        {onPlanTrip && (
-          <Button variant="primary" block className="destp-plan-btn" iconStart={<RouteIcon size={18} />} onClick={onPlanTrip}>
-            {t('dest.planTrip')}
-          </Button>
-        )}
-        {onPlanDay && (
-          <Button variant="secondary" block className="destp-plan-btn is-day" iconStart={<SunIcon size={18} />} onClick={onPlanDay}>
-            {t('dest.planDay')}
-          </Button>
-        )}
-      </div>
-
-      {/* The split of the total, drawn once: bed and food on the ink ramp,
-          the figures beside it in the lines below (carta-design "Data
-          drawings": the drawing reads the same when removed). */}
-      {stayLine && foodLine && (
-        <div className="dprice-bar" aria-hidden="true">
-          <span className="dprice-bar-stay" style={{ width: share(stayLine) }} />
-          <span className="dprice-bar-food" style={{ width: share(foodLine) }} />
-        </div>
       )}
 
-      <dl className="frr-lines costrows dprice-lines" ref={linesRef}>
-        {price.lines.map((line) => (
-          <ReceiptLine key={line.key} t={t} line={{
-            key: line.key, label: label(line), eur: line.eur, est: line.est,
-          }} />
-        ))}
-        <ReceiptSum
-          sumLabel={t('receipt.total', { people: peopleText })}
-          total={price.total}
-          est={price.est}
-          each={price.each}
-          eachText={(eur) => t('receipt.each', { eur })}
-          t={t}
-        />
-      </dl>
+      {split.length > 0 && (
+        <ul className="pt-split" aria-label={t('destx.splitAria')}>
+          {split.map(({ key, Icon, label: name, eur }) => (
+            <li key={key}>
+              <Icon size={16} className="pt-split-icon" />
+              <span>{name}</span>
+              <b><Money value={view.day(Number(eur))} /></b>
+              <span className="pt-split-bar" aria-hidden="true">
+                <i style={{ width: `${Math.round((Number(eur) / splitMax) * 100)}%` }} />
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+
       {pricedDo.length > 0 && (
         <ul className="pitems-list dprice-acts" aria-label={t('price.item.activities')}>
           {pricedDo.map((a) => (
@@ -360,31 +343,48 @@ export function DestPriceCard({
         </ul>
       )}
 
-      {/* The flight the line prices, there and home, each with its airline,
-          times, when Google Flights was checked and the link to book. */}
+      <dl className="pt-tot" ref={linesRef}>
+        <div>
+          <dt>{t('destx.stayFor', { nights: nightsText, people: peopleText })}</dt>
+          <dd><Money value={stayTotal} precision="cents" /></dd>
+        </div>
+        {flightLine && (
+          <div>
+            <dt>{label(flightLine)}</dt>
+            <dd><Money value={flightLine.eur} precision="cents" /></dd>
+          </div>
+        )}
+        <div className="is-big">
+          <dt>{t('destx.totalFor', { people: peopleText })}</dt>
+          <dd><Money value={price.total} precision="cents" /></dd>
+        </div>
+      </dl>
+
+      {/* The flight the line prices, there and home, each with its airline
+          and times, and the link to book it. */}
       {cartaLine && (
         <div className="dprice-flights">
           <FlightRow leg={withEnds(carta.out, home, airport)} cost={legCost(carta.out, { paying: people, bagKey })}
             dir="out" bagKey={bagKey} wantedDate={from} linkOut={false} />
           <FlightRow leg={withEnds(carta.back, airport, home)} cost={legCost(carta.back, { paying: people, bagKey })}
             dir="back" bagKey={bagKey} wantedDate={to} linkOut={false} />
-          {/* One way out to this return on Google Flights, not two one-way searches. */}
           <FlightLink from={home} to={airport} date={carta.out?.date} back={carta.back?.date} />
         </div>
       )}
 
-      <div className="dprice-foot">
-        <p className="dprice-excludes">
-          {/* With a flight in the total, typed or Carta's, getting there is
-              no longer left out. */}
-          {t(fare || cartaLine ? 'dest.priceExcludesFare' : 'dest.priceExcludes')}
-          {/* Where the page says a car is needed, its hire is the largest
-              cost the day figure leaves out: said once, as a figure (T446). */}
-          {Number.isFinite(carDayEur) && carDayEur > 0 && (
-            <> {t('dest.priceCarHire', { eur: formatEst(carDayEur, t('money.est'), { locale: lang }) })}</>
-          )}
-        </p>
-        <Button variant="quiet" size="sm" className="dprice-fare" onClick={() => setSheetOpen(true)}>
+      {/* The page's one primary; one day is a quiet link under it. */}
+      {onPlanTrip && (
+        <Button variant="primary" block className="destp-plan-btn" iconStart={<RouteIcon size={18} />} onClick={onPlanTrip}>
+          {t('dest.planTrip')}
+        </Button>
+      )}
+      <div className="pt-alts">
+        {onPlanDay && (
+          <Button variant="quiet" size="sm" className="pt-alt" onClick={onPlanDay}>
+            {t('destx.planOneDay')}
+          </Button>
+        )}
+        <Button variant="quiet" size="sm" className="dprice-fare pt-alt" onClick={() => setSheetOpen(true)}>
           {fare ? t('receipt.changeFare') : t('trip.addOwnFare')}
         </Button>
       </div>

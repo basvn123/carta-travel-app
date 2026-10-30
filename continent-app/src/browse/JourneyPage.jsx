@@ -18,55 +18,55 @@ import { packCells, resolvePackCell } from '../lib/packGrid.js';
 import { railAlternative } from '../lib/railAlternative.js';
 import { parseGateway } from '../lib/gateway.js';
 import { formatMoney } from '../lib/money.js';
+import { SLOTS } from '../lib/tripPrice.js';
 import { Button, Chip, Money } from '../components/ui/index.js';
 import { InfoDot } from '../components/InfoDot.jsx';
-import { MonthStrip } from '../components/MonthStrip.jsx';
+import { CountryFlag } from '../components/CountryFlag.jsx';
 import { ErrorBlock } from '../components/StateBlocks.jsx';
+import { useSettings } from '../components/SettingsLine.jsx';
 import { PageBar } from './PageBar.jsx';
-import { SectionRail } from './SectionRail.jsx';
 import { PhotoGallery } from './PhotoGallery.jsx';
 import { KeyFacts } from './KeyFacts.jsx';
 import { Track } from './Track.jsx';
-import { ItemHead, HighlightCard, AlternativeCard, SourcesLine } from './ItemParts.jsx';
+import { HighlightCard, AlternativeCard } from './ItemParts.jsx';
 import { TripPriceCard, TripLengthChoice } from './TripPriceCard.jsx';
 import { useFirstRun } from '../lib/firstRunContext.js';
-import { roundTripNear } from '../lib/flights/flights.js';
-import { FlightChip } from '../components/flights/Flights.jsx';
-import { homeFlightSetup, journeyAirports, backDate } from './cartaFlight.js';
-import { WeekClimb, DayCard } from './TripWeek.jsx';
+import { homeFlightSetup, journeyAirports } from './cartaFlight.js';
 import { BookingOrder } from './BookingOrder.jsx';
 import { PackGrid } from './PackGrid.jsx';
+import { JourneyRoute, routeStops } from './JourneyRoute.jsx';
+import { fmtMonthRanges } from './ClimateStrip.jsx';
+import { waysThere } from './placeWays.js';
+import { homePoint, partyOf, groundReturn, GROUND_MODES } from '../lib/travelWay.js';
 import { useItemPdf } from '../hooks/useItemPdf.js';
+import { JumpBar, PSection, PBlock, PriceDock, scrollToSection, useWide } from './PageTemplate.jsx';
 import {
-  AlertIcon, CalendarIcon, CarIcon, ChevronRightIcon, CloudIcon,
-  FamilyIcon, FriendsIcon, HeartIcon, InfoIcon, PiggyIcon, PlugIcon, ShieldIcon, TicketIcon,
-  TrainIcon, BulbIcon, LuggageIcon,
+  AlertIcon, BedIcon, BulbIcon, BusIcon, CarIcon, CheckIcon, ChevronDownIcon, ChevronRightIcon,
+  CloseIcon, CloudIcon, FamilyIcon, FriendsIcon, HeartIcon, InfoIcon, LuggageIcon, PiggyIcon,
+  PlugIcon, RouteIcon, ShieldIcon, TicketIcon, TrainIcon,
 } from '../components/Icons.jsx';
-
-const TripDayMap = React.lazy(() => import('./TripDayMap.jsx'));
+import { PlaneIcon } from '../components/TransportIcons.jsx';
 
 /**
- * The trip page (T431, rebuilt on the item pages' system of T430; owner
- * decisions of 2026-10-15 in carta-design "Detail page grammar").
+ * Carta's trip page, v2 (T913, on the place and trip template of the owner's
+ * approved spec of 2026-10-30; v1 was T431 on the item pages' system).
  *
- * Show first what makes the traveller want to go, then what decides it:
+ * The same family as the place page (DestinationPage.jsx): the photographs
+ * (PhotoGallery's mosaic), the head (the title, its subtitle after a colon,
+ * the flag and the region, the style, the difficulty and the best months as
+ * badges, the hook), the facts row, then one long page under the same
+ * sticky jump bar: Overview (good to know, who it suits, why this trip),
+ * Route (the map with numbered stops and the legs), Day by day (an
+ * accordion, day 1 open, Open all), Costs (the four ranges as bars and the
+ * total), Where you sleep, Getting there and back (from the traveller's home
+ * by the same travel models as the place page), Practical (the risks, the
+ * logistics, the tips, the booking order, the packing grid, the sources).
+ * Not quite right? (easier, cheaper or nearby weeks) closes the page.
  *
- *   gallery       every photograph the trip carries, named and credited
- *   head          the full title, where, the style, the difficulty with a
- *                 dot that explains it with this week's own hours and climbs,
- *                 and one line that sells the week (lib/journeys.js hookLine)
- *   fact band     days, distance, climb, high point, the beds, the start
- *   Why this trip the trip's highlights as photo cards, or its named places
- *   price card    the week at the traveller's choices (TripPriceCard), a
- *                 sticky side column from 1024 px
- *   Is this week for you   the months, who it suits, the car, children
- *   Not quite right?       easier, cheaper or nearby weeks as photo cards
- *   the week      the climb chart, the day map, the day cards with tonight
- *   getting there the gateways as rows, the train instead, the start town's
- *                 day prices only when the trip starts within 30 km of it
- *   before you go the risks first, then good to know, the tips, the booking
- *                 order and the packing grid, as cards that swipe
- *   one line of sources
+ * The price card is the place page's shell: the range a person, the start,
+ * the travellers and the stay level, the four cost ranges, "Total for N",
+ * ONE primary (Plan this trip) and Save and PDF as two secondaries; a sticky
+ * right column from 1024 px, inline below it with the same foot bar.
  *
  * The page keeps its address (#journey=<id>, pushed so Back closes it), its
  * save and share, and the length choice shared with the list.
@@ -75,16 +75,6 @@ const TripDayMap = React.lazy(() => import('./TripDayMap.jsx'));
 const START_KM = 30;
 // The styles whose days are walked, run, ridden or skied.
 const OUTDOOR = new Set(['hiking', 'trail-running', 'nature-escape', 'cycling', 'pilgrim', 'winter-sports']);
-
-/** The rail's stops: the section ids in page order and their labels. */
-const RAIL = [
-  ['why', 'sec-why', 'journey.railWhy'],
-  ['budget', 'sec-budget', 'journey.railPrice'],
-  ['fit', 'sec-fit', 'journey.railForYou'],
-  ['itin', 'sec-itin', 'journey.railWeek'],
-  ['ends', 'sec-ends', 'detail.gettingThere'],
-  ['prep', 'sec-prep', 'go.head'],
-];
 
 // logistics slot -> label key and icon, in reading order.
 const LOG_SLOTS = [
@@ -96,6 +86,14 @@ const LOG_SLOTS = [
   ['health', 'journey.logHealth', HeartIcon],
   ['emergency', 'journey.logEmergency', AlertIcon],
 ];
+
+const LINE_KEY = {
+  accommodation: 'journey.bAccommodation',
+  food: 'journey.bFood',
+  transport: 'journey.bTransport',
+  activities: 'journey.bActivities',
+};
+const WAY_ICON = { plane: PlaneIcon, train: TrainIcon, bus: BusIcon, car: CarIcon };
 
 /** Authored prose with its **bold** honoured and no dashes, never as HTML. */
 function Prose({ text, className = 'tprose' }) {
@@ -109,29 +107,8 @@ function Prose({ text, className = 'tprose' }) {
   );
 }
 
-/** One card of a before-you-go track: an icon, a short title and the words,
- *  three lines until "More" opens the rest. */
-function GoCard({ icon = InfoIcon, title, text, tone = '' }) {
-  const { t } = useI18n();
-  const [open, setOpen] = useState(false);
-  const long = String(text || '').length > 150;
-  return (
-    <article className={`gocard${tone ? ` is-${tone}` : ''}`}>
-      <span className="gocard-icon" aria-hidden="true">{React.createElement(icon || InfoIcon, { size: 20 })}</span>
-      {title && <h3 className="gocard-title">{title}</h3>}
-      <div className={`gocard-text${long && !open ? ' is-clamped' : ''}`}><Prose text={text} className="tprose" /></div>
-      {long && (
-        <Button variant="quiet" size="sm" className="gocard-more" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
-          {open ? t('detail.showLess') : t('item.railMore')}
-        </Button>
-      )}
-    </article>
-  );
-}
-
 /** The difficulty as the five squares and the word, with a dot that says
- *  what it means for this week: the hours a day, the hardest climb, the high
- *  point and the writer's own note. */
+ *  what it means for this week. */
 function DifficultyChip({ profile, stats }) {
   const { t, lang } = useI18n();
   const level = Math.max(0, Math.min(5, Math.round(Number(profile?.difficulty) || 0)));
@@ -164,12 +141,62 @@ function DifficultyChip({ profile, stats }) {
 /** Still blocks at the final size of the page head (rule "Loading"). */
 function PageSkeleton({ t }) {
   return (
-    <div className="ipage-wrap tskel" role="status" aria-busy="true">
+    <div className="pt-wrap tskel" role="status" aria-busy="true">
       <span className="sr-only">{t('journey.loadingWeek')}</span>
       <span className="tskel-photo" aria-hidden="true" />
       <span className="tskel-line is-title" aria-hidden="true" />
       <span className="tskel-line" aria-hidden="true" />
     </div>
+  );
+}
+
+/** One day of the accordion: the number tile, the title and tonight's bed
+ *  on the button; the morning, afternoon and evening and the day's figures
+ *  inside. */
+function DayRow({ day, open, onToggle, stats, t, lang }) {
+  const bodyId = `pt-day-${day.day}-body`;
+  const parts = [['morning', day.morning], ['afternoon', day.afternoon], ['evening', day.evening]].filter(([, x]) => x);
+  const n0 = (v) => Number(v).toLocaleString(lang, { maximumFractionDigits: 1 });
+  const chips = [
+    stats?.km != null ? `${n0(stats.km)} km` : null,
+    stats?.up ? t('journey.chartUp', { m: n0(stats.up) }) : null,
+    stats?.minutes != null ? minutesText(stats.minutes) : null,
+    ...String(day.dayStats || '').split(/\s\/\s/).map((s) => stripDashes(s.trim())),
+  ].filter(Boolean);
+  return (
+    <li className={`pt-day${open ? ' is-open' : ''}`} id={`jday-${day.day}`}>
+      <Button variant="quiet" block className="pt-day-btn" aria-expanded={open} aria-controls={bodyId} onClick={onToggle}>
+        <span className="pt-day-n" aria-hidden="true">
+          <span className="pt-day-n-l">{t('jx.dayShort')}</span>
+          <b>{day.day}</b>
+        </span>
+        <span className="pt-day-t">
+          <span className="sr-only">{t('journey.dayN', { n: day.day })}: </span>
+          <b>{stripDashes(day.title || '')}</b>
+          {day.sleep && (
+            <small><BedIcon size={13} /> {stripDashes(day.sleep)}</small>
+          )}
+        </span>
+        <ChevronDownIcon size={18} className="pt-day-chev" />
+      </Button>
+      <div className="pt-day-body" id={bodyId} hidden={!open}>
+        {open && (
+          <>
+            {parts.map(([when, text]) => (
+              <div className="pt-part" key={when}>
+                <small>{t(`journey.${when}`)}</small>
+                <Prose text={text} className="pt-part-text" />
+              </div>
+            ))}
+            {chips.length > 0 && (
+              <ul className="pt-daychips">
+                {chips.map((c, i) => <li key={`${i}:${c}`}>{c}</li>)}
+              </ul>
+            )}
+          </>
+        )}
+      </div>
+    </li>
   );
 }
 
@@ -181,8 +208,11 @@ export function JourneyPage({
   // T504 (row T498-c): opened from a country or region page, the back
   // names that page instead of the trip's own list.
   backLabel = '',
+  // T913: the page's one primary. Without a host handler it opens the trip
+  // planner on the trip's country (the address the planner reads).
+  onPlanTrip = null,
 }) {
-  const { t, lang } = useI18n();
+  const { t, lang, languages } = useI18n();
   // undefined = loading, null = not published, 'failed' = the load failed.
   const [trip, setTrip] = useState(undefined);
   const [tries, setTries] = useState(0);
@@ -190,16 +220,19 @@ export function JourneyPage({
   const pageRef = useRef(null);
   const backRef = useRef(null);
   const headEl = useRef(null);
-  const galleryEl = useRef(null);
   const [titleGone, setTitleGone] = useState(false);
   const [library, setLibrary] = useState(null);
   const [copied, setCopied] = useState(false);
   const [selDay, setSelDay] = useState(1);
+  const [openDays, setOpenDays] = useState(() => new Set([1]));
+  const [cardSignal, setCardSignal] = useState(0);
+  const wide = useWide();
 
   useEffect(() => {
     let live = true;
     setTrip(undefined);
     setSelDay(1);
+    setOpenDays(new Set([1]));
     loadJourney(id)
       .then((row) => { if (live) setTrip(row); })
       .catch(() => { if (live) setTrip('failed'); });
@@ -251,17 +284,13 @@ export function JourneyPage({
     go();
   }, []);
 
-  // Arrival focus follows the one page rule (hooks/usePageArrival.js, rule
-  // "Navigation", T474). The trip arrives after the trap focused the bar on
-  // the loading view, so the hook moves focus to its title once it is there.
+  // Arrival focus follows the one page rule (hooks/usePageArrival.js, T474).
   const readyId = trip && trip !== 'failed' ? trip.id : null;
   const arrivalRef = usePageArrival(pageRef, readyId);
   useFocusTrap(pageRef, close, { initialFocusRef: arrivalRef });
   useEffect(() => { scrollEl.current?.scrollTo?.(0, 0); }, [id]);
 
   const tripReady = trip && trip !== 'failed' ? trip : null;
-  const [railReady, setRailReady] = useState(null);
-  useEffect(() => { setRailReady(tripReady ? tripReady.id : null); }, [tripReady]);
 
   useEffect(() => {
     const el = headEl.current;
@@ -281,7 +310,7 @@ export function JourneyPage({
   // Trip length (T101): the whole trip or its short version, remembered per
   // viewer and shared with the list (lib/tripLength.js).
   const [length, setLength] = useState(() => pageLength(readTripLength()));
-  const pickLength = (next) => { setLength(next); writeTripLength(next); setSelDay(1); };
+  const pickLength = (next) => { setLength(next); writeTripLength(next); setSelDay(1); setOpenDays(new Set([1])); };
   const lengths = useMemo(() => (tripReady ? tripLengths(tripReady) : null), [tripReady]);
   const isShort = length === SHORT && !!lengths && lengths.short.days < lengths.week.days;
   const view = lengths ? (isShort ? lengths.short : lengths.week) : null;
@@ -298,28 +327,15 @@ export function JourneyPage({
 
   const stats = useMemo(() => weekStats(viewTrip), [viewTrip]);
   const hook = useMemo(() => hookLine(tripReady), [tripReady]);
-  // The hook is the first highlight's line when the trip has highlights, so
-  // Why this trip starts at the second and never says it twice.
   const highlights = useMemo(() => {
     const all = tripHighlights(tripReady);
     return hook?.source === 'highlight' && all.length > 2 ? all.slice(1) : all;
   }, [tripReady, hook]);
   const gallery = useMemo(() => tripGallery(tripReady), [tripReady]);
   const rail = useMemo(() => railAlternative(railFrom, tripReady), [railFrom, tripReady]);
-  // The flight from the home airport to each gateway (T518): the return a
-  // person near the app's dates, at the length on screen, when the sweep
-  // has one; a gateway without one shows no flight.
-  const fl = homeFlightSetup(useFirstRun());
-  const gateBack = backDate(fl.from, viewDays - 1);
-  const gateFlights = useMemo(() => {
-    const out = {};
-    for (const code of journeyAirports(tripReady)) {
-      const rt = roundTripNear(fl.file, code, fl.from, gateBack, { paying: 1, bagKey: fl.bagKey });
-      if (rt) out[code] = rt;
-    }
-    return out;
-  }, [fl.file, tripReady, fl.from, gateBack, fl.bagKey]);
-  const railItems = useMemo(() => RAIL.map(([key, sid, label]) => ({ key, id: sid, label: t(label) })), [t]);
+  const firstRun = useFirstRun();
+  const settings = useSettings();
+  const fl = homeFlightSetup(firstRun);
   const { onPdf: download, pdfBusy } = useItemPdf('trip', tripReady, { viewTrip, stats });
 
   const exits = useMemo(() => {
@@ -358,17 +374,17 @@ export function JourneyPage({
     />
   );
   const shell = (label, body) => (
-    <div className="tpage dsk-page ipage jpage" role="dialog" aria-modal="true" aria-label={label} ref={pageRef}
+    <div className="tpage jpage jpage-v2 pt-page" role="dialog" aria-modal="true" aria-label={label} ref={pageRef}
       data-testid="journey-page">
       {bar(label)}
-      <div className="tpage-scroll" ref={scrollEl}>{body}</div>
+      <div className="tpage-scroll pt-scroll" ref={scrollEl}>{body}</div>
     </div>
   );
 
   if (trip === undefined) return shell(t('journey.backStyles'), <PageSkeleton t={t} />);
   if (trip === 'failed') {
     return shell(t('journey.backStyles'), (
-      <div className="ipage-wrap tpage-pad">
+      <div className="pt-wrap tpage-pad">
         <ErrorBlock message={t('journey.pageFailed')} onRetry={() => setTries((n) => n + 1)} retryLabel={t('layer.retry')} />
       </div>
     ));
@@ -383,49 +399,59 @@ export function JourneyPage({
   }
 
   const n1 = (v) => Number(v).toLocaleString(lang, { maximumFractionDigits: 1 });
+  // A title with a colon is a name and a subtitle ("Douro Field Blends:
+  // Quintas, Tawnies and the Pocinho Line").
+  const fullTitle = stripDashes(trip.title || '');
+  const colon = fullTitle.indexOf(': ');
+  const title = colon > 0 ? fullTitle.slice(0, colon) : fullTitle;
+  const subtitle = colon > 0 ? fullTitle.slice(colon + 2) : '';
   const where = [trip.subRegion, ...(trip.countries?.length ? trip.countries.map((c) => c.name) : [trip.country])]
     .filter(Boolean).filter((x, i, a) => a.indexOf(x) === i).join(', ');
   const stays = trip.accommodationStrategy || [];
   const bedWord = stays[0]?.style ? capFirst(stripDashes(stays[0].style)) : '';
   const firstPlace = (trip.dayPlaces || [])[0]?.name || null;
+  const profile = trip.profile || {};
+  const best = trip.bestPeriod || {};
+  const bestText = best.months?.length ? fmtMonthRanges(best.months, t) : '';
+  const stops = routeStops(trip.dayPlaces);
+  const bases = [...new Set([
+    ...stops.map((s) => s.name),
+    ...stays.map((s) => s.location).filter(Boolean),
+  ])].slice(0, 3);
+  const gateRows = Array.isArray(trip.gateways) && trip.gateways.length
+    ? trip.gateways
+    : parseGateway(trip.gatewayAirport).rows.map((r) => ({ ...r, transferMin: null }));
+  const gateCodes = journeyAirports(trip);
 
-  // The fact band: what the week asks of you and where it starts. Distance
-  // and climb are effort on a walking or riding week and the length of the
-  // line on a rail journey; on a beach, island, city or hostel week they are
-  // bus and ferry kilometres, which say nothing about the week, so they hide.
+  // The facts row: the length, the bases, the best time, the effort on a
+  // moving week, the airport. A missing fact is left out.
   const moving = OUTDOOR.has(trip.tripTypeSlug) || trip.tripTypeSlug === 'rail';
   const climbing = OUTDOOR.has(trip.tripTypeSlug);
   const facts = keyFactCells([
     { key: 'days', label: t('journey.fDays'), value: t('journey.nDays', { n: viewDays }) },
+    { key: 'bases', label: t('jx.fBases'), value: bases.join(', ') || bedWord || firstPlace || '' },
+    { key: 'best', label: t('journey.fBest'), value: bestText },
     { key: 'km', label: t('trails.factDistance'), value: moving && stats.km != null ? `${n1(Math.round(stats.km))} km` : '' },
     { key: 'climb', label: t('journey.fClimb'), value: climbing && stats.up != null && stats.up > 0 ? `${n1(Math.round(stats.up))} m` : '' },
-    { key: 'high', label: t('trails.factHigh'), value: climbing && stats.high != null ? `${n1(stats.high)} m` : '' },
-    { key: 'sleep', label: t('journey.fSleep'), value: bedWord },
-    { key: 'start', label: t('journey.fStart'), value: firstPlace || '' },
-  ], t);
+    { key: 'fly', label: t('destx.fact.fly'), value: gateCodes.join(', ') },
+  ], t).slice(0, 5);
 
-  // Getting there: the gateways as rows.
-  const gateRows = Array.isArray(trip.gateways) && trip.gateways.length
-    ? trip.gateways
-    : parseGateway(trip.gatewayAirport).rows.map((r) => ({ ...r, transferMin: null }));
-  const startPoint = (trip.dayPlaces || [])[0] || (trip.coordinates?.precision === 'source' || trip.coordinates?.precision === 'city' ? trip.coordinates : null);
-  const townNear = gatewayDest && startPoint && Number.isFinite(gatewayDest.lat) && Number.isFinite(startPoint.lat)
-    && haversineKm(startPoint.lat, startPoint.lon, gatewayDest.lat, gatewayDest.lon) <= START_KM;
-
-  // Is this week for you: the months, then who it suits, the car, children.
-  const profile = trip.profile || {};
-  const best = trip.bestPeriod || {};
-  const fitRows = [
-    trip.typeSpecific?.audience && { key: 'suits', icon: FriendsIcon, text: t('journey.fitSuits', { who: stripDashes(trip.typeSpecific.audience) }) },
-    profile.carRequired === true && { key: 'car', icon: CarIcon, text: t('journey.fitCarYes') },
-    profile.carRequired === false && { key: 'car', icon: TrainIcon, text: t('journey.fitCarNo') },
-    profile.familyFriendly === true && { key: 'kids', icon: FamilyIcon, text: t('journey.fitKids') },
-    profile.familyFriendly === false && { key: 'kids', icon: FamilyIcon, text: t('journey.fitNoKids') },
-    profile.crowdLevel && { key: 'crowd', icon: FriendsIcon, text: `${t('journey.fCrowds')}: ${t(`journey.crowd${profile.crowdLevel}`).toLocaleLowerCase(lang)}` },
+  // Good to know: the first pro tip as the lead, the months to avoid, then
+  // who the week suits, the car and children.
+  const tipsAll = (trip.proTips || []).filter(Boolean);
+  const goodRows = [
+    tipsAll[0] && { key: 'tip', Icon: BulbIcon, text: tipsAll[0], lead: true },
+    best.avoid && { key: 'avoid', Icon: AlertIcon, title: t('jx.avoid'), text: best.avoid },
+    trip.typeSpecific?.audience && { key: 'suits', Icon: FriendsIcon, text: t('journey.fitSuits', { who: stripDashes(trip.typeSpecific.audience) }) },
+    profile.carRequired === true && { key: 'car', Icon: CarIcon, text: t('journey.fitCarYes') },
+    profile.carRequired === false && { key: 'car', Icon: TrainIcon, text: t('journey.fitCarNo') },
+    profile.familyFriendly === true && { key: 'kids', Icon: FamilyIcon, text: t('journey.fitKids') },
+    profile.familyFriendly === false && { key: 'kids', Icon: FamilyIcon, text: t('journey.fitNoKids') },
   ].filter(Boolean);
+  const fitGood = (trip.fit?.good || []).filter((x) => typeof x === 'string' && x);
+  const fitLess = (trip.fit?.less || []).filter((x) => typeof x === 'string' && x);
 
-  // Before you go: the risks first (never folded away), then good to know,
-  // the tips, the booking order and the packing grid.
+  // Practical: the risks first, then the logistics, the other tips.
   const risks = (trip.whatCouldGoWrong || []).map((item, i) => ({
     key: `risk-${i}`, text: riskText(item, (text) => t('journey.wrongDo', { text })),
   }));
@@ -436,23 +462,23 @@ export function JourneyPage({
     .filter(Boolean)
     .concat((trip.logistics?.other || []).filter((r) => r?.text)
       .map((r, i) => ({ key: `other-${i}`, title: r.label || '', text: r.text, icon: InfoIcon })));
-  const tips = (trip.proTips || []).map((text, i) => ({ key: `tip-${i}`, text }));
+  const tips = tipsAll.slice(1).map((text, i) => ({ key: `tip-${i}`, text }));
+  const packing = packCells(trip).length > 0;
 
   const sources = [
     ...(Array.isArray(trip.sources) ? trip.sources : [])
       .map((s) => (typeof s === 'string' ? { label: s.replace(/^https?:\/\/(www\.)?/, '').split('/')[0], href: safeUrl(s) } : (s?.url ? { label: s.title || s.url.replace(/^https?:\/\/(www\.)?/, '').split('/')[0], href: safeUrl(s.url) } : null)))
       .filter(Boolean).slice(0, 6),
-    { label: 'Wikimedia Commons', href: 'https://commons.wikimedia.org' },
   ];
+  const photoCredits = gallery.filter((g) => g.author || g.licence);
 
-  // The booklet (lib/tripPdf.js) prints what this page shows, in its order
-  // and its words; the price card adds its own figures at the tap.
-  const n0 = (v) => Number(v).toLocaleString(lang, { maximumFractionDigits: 1 });
+  // The booklet (lib/tripPdf.js) prints what this page shows, in its order.
+  const fitRowsText = goodRows.filter((r) => r.key !== 'tip' && r.key !== 'avoid').map((r) => r.text);
   const dayFacts = (st) => [
-    st?.km != null ? `${n0(st.km)} km` : '',
-    st?.up ? t('journey.chartUp', { m: n0(st.up) }) : '',
-    st?.down ? t('journey.chartDown', { m: n0(st.down) }) : '',
-    st?.high != null ? t('journey.chartHigh', { m: n0(st.high) }) : '',
+    st?.km != null ? `${n1(st.km)} km` : '',
+    st?.up ? t('journey.chartUp', { m: n1(st.up) }) : '',
+    st?.down ? t('journey.chartDown', { m: n1(st.down) }) : '',
+    st?.high != null ? t('journey.chartHigh', { m: n1(st.high) }) : '',
     st?.minutes != null ? minutesText(st.minutes) : '',
   ].filter(Boolean).join(', ');
   const pdfModel = (price) => ({
@@ -466,7 +492,7 @@ export function JourneyPage({
     price,
     fit: [
       best.months?.length ? `${t('journey.fBest')}: ${best.months.map((mo) => new Intl.DateTimeFormat(lang, { month: 'long' }).format(new Date(2026, mo - 1, 1))).join(', ')}` : '',
-      ...fitRows.map((r) => r.text),
+      ...fitRowsText,
     ].filter(Boolean),
     days: viewTrip.itinerary.map((d, k) => {
       const stay = stays.find((x) => x.rank === d.sleepRef) || null;
@@ -493,241 +519,474 @@ export function JourneyPage({
     url: journeyShareUrl(trip.id),
   });
 
-  const dayMap = (trip.dayPlaces || []).length > 0 && !isShort;
   const outdoor = OUTDOOR.has(trip.tripTypeSlug);
-  const dayIndex = Math.max(0, viewTrip.itinerary.findIndex((d) => d.day === selDay));
+  const startPoint = (trip.dayPlaces || [])[0] || (trip.coordinates?.precision === 'source' || trip.coordinates?.precision === 'city' ? trip.coordinates : null);
+  const lastPoint = stops.length > 1 ? stops[stops.length - 1] : null;
+  const townNear = gatewayDest && startPoint && Number.isFinite(gatewayDest.lat) && Number.isFinite(startPoint.lat)
+    && haversineKm(startPoint.lat, startPoint.lon, gatewayDest.lat, gatewayDest.lon) <= START_KM;
+
+  // Getting there and back, from the traveller's home, by the place page's
+  // travel models: the return flight to the cheapest gateway with one, the
+  // train, coach and car to where the week starts; and, when the week ends
+  // far from where it starts, the ground way home from its last stop.
+  const homeChoices = settings
+    ? { drive_home: settings.fromPlace, origin: settings.origin }
+    : { drive_home: firstRun?.choices?.drive_home, origin: firstRun?.choices?.origin };
+  const party = partyOf(settings
+    ? { group_size: settings.party, children: settings.children, babies: settings.babies }
+    : firstRun?.choices);
+  const home = homePoint(homeChoices, firstRun?.data || null);
+  const request = settings?.priceRequest || firstRun?.priceRequest || null;
+  const bagKey = request?.baggage || fl.bagKey;
+  const startDest = startPoint && Number.isFinite(startPoint.lat)
+    ? { lat: startPoint.lat, lon: startPoint.lon, city_lat: startPoint.lat, city_lon: startPoint.lon, iso2: trip.countryCode, country: trip.country }
+    : null;
+  let ways = null;
+  for (const code of gateCodes.length ? gateCodes : [null]) {
+    const w = waysThere({ dest: startDest || { iso2: trip.countryCode }, anchor: code, home: startDest ? home : null, party, flights: fl.file, request, bagKey });
+    const plane = w?.rows.find((r) => r.mode === 'plane');
+    const bestPlane = ways?.rows.find((r) => r.mode === 'plane');
+    if (w && (!ways || (plane && (!bestPlane || plane.perPerson < bestPlane.perPerson)))) ways = w;
+  }
+  const backWays = lastPoint && startPoint && Number.isFinite(lastPoint.lat) && home
+    && haversineKm(lastPoint.lat, lastPoint.lon, startPoint.lat, startPoint.lon) > START_KM
+    ? GROUND_MODES.map((mode) => {
+      const r = groundReturn({ lat: lastPoint.lat, lon: lastPoint.lon, city_lat: lastPoint.lat, city_lon: lastPoint.lon, iso2: trip.countryCode, country: trip.country }, home, mode, party);
+      return r && r.perPerson > 0 ? { mode, oneWay: r.perPerson / 2, hours: r.hours } : null;
+    }).filter(Boolean)
+    : [];
+
+  const planTrip = onPlanTrip || (trip.countryCode ? () => {
+    const url = `${window.location.pathname}?tab=trip&cc=${encodeURIComponent(trip.countryCode)}`;
+    leaveTo(() => window.location.assign(url));
+  } : null);
+
+  const priceCard = (
+    <TripPriceCard
+      trip={trip}
+      budget={viewTrip.budget}
+      days={viewDays}
+      lengthControl={<TripLengthChoice lengths={lengths} value={isShort ? SHORT : WEEK} onChange={pickLength} />}
+      onPdf={download ? (price) => download(pdfModel(price)) : null}
+      pdfBusy={pdfBusy}
+      onPlan={planTrip}
+      fav={fav}
+      onFav={onFav}
+      openSignal={cardSignal}
+    />
+  );
+
+  const ranges = SLOTS.map((slot) => {
+    const row = viewTrip.budget?.breakdown?.[slot];
+    return row && Number.isFinite(row.lowEur) && Number.isFinite(row.highEur)
+      ? { slot, low: row.lowEur, high: row.highEur, note: row.note || '' } : null;
+  }).filter(Boolean);
+  const rangeMax = Math.max(1, ...ranges.map((r) => r.high));
+  const total = viewTrip.budget?.totalEur || null;
+
+  const jumps = [
+    ['overview', 'pt-overview'], ['route', 'pt-route'], ['days', 'pt-days'], ['costs', 'pt-costs'],
+    ['sleep', 'pt-sleep'], ['getting', 'pt-getting'], ['practical', 'pt-practical'],
+  ].map(([key, sid]) => ({ key, id: sid, label: t(`jx.jump.${key}`) }));
+
+  const allOpen = viewTrip.itinerary.every((d) => openDays.has(d.day));
+  const toggleDay = (n) => {
+    setSelDay(n);
+    setOpenDays((s) => { const next = new Set(s); if (next.has(n)) next.delete(n); else next.add(n); return next; });
+  };
+
+  const bcp47 = languages?.find?.((l) => l.code === lang)?.bcp47 || 'en-GB';
+  const shortDate = (iso) => {
+    try {
+      return new Intl.DateTimeFormat(bcp47, { day: 'numeric', month: 'short', timeZone: 'UTC' })
+        .format(new Date(`${iso}T00:00:00Z`));
+    } catch { return iso; }
+  };
+  const people = Math.max(1, Math.round(firstRun?.choices?.group_size || 1));
+  const peopleText = people === 1 ? t('receipt.onePerson') : t('receipt.nPeople', { n: people });
+  const dockInputs = fl.from
+    ? t('jx.dockInputs', { n: viewDays, date: shortDate(fl.from), people: peopleText })
+    : peopleText;
+  const openCard = () => {
+    scrollToSection(scrollEl.current, 'pt-cost');
+    setCardSignal((n) => n + 1);
+  };
+  const wayUnit = t('card.unitReturn');
 
   return (
-    <div className="tpage dsk-page ipage jpage" role="dialog" aria-modal="true" aria-label={trip.title} ref={pageRef}
+    <div className="tpage jpage jpage-v2 pt-page" role="dialog" aria-modal="true" aria-label={trip.title} ref={pageRef}
       data-testid="journey-page" data-sample={trip.sample ? 'true' : undefined}>
       {bar(backLabel || typeLabel(trip.tripTypeSlug, t, trip.tripType))}
 
-      <div className="tpage-scroll" ref={scrollEl}>
-        <SectionRail items={railItems} scrollRef={scrollEl} heroRef={galleryEl} ready={railReady}
-          ariaLabel={t('journey.railAria')} />
-        <div className="dsk ipage-wrap">
-          <div className="ipage-gallery" data-slot="hero" ref={galleryEl}>
-            <PhotoGallery photos={gallery} label={trip.title} claimKey={trip.id}
-              fallback={{ city: trip.title, iso2: trip.countryCode }} />
-          </div>
+      <div className="tpage-scroll pt-scroll" ref={scrollEl}>
+        <div className="pt-wrap">
+          <PhotoGallery layout="mosaic" photos={gallery} label={trip.title} claimKey={trip.id}
+            fallback={{ city: trip.title, iso2: trip.countryCode }} />
 
-          <div className="dsk-grid ipage-grid has-side jpage-grid">
-            <header className="dsk-head ipage-head" data-slot="head" ref={headEl}>
-              <ItemHead
-                title={trip.title}
-                iso2={trip.countryCode}
-                where={where}
-                chips={(
-                  <>
-                    <Chip kind="status" className="tstyle-chip">{typeLabel(trip.tripTypeSlug, t, trip.tripType)}</Chip>
-                    <DifficultyChip profile={profile} stats={stats} />
-                  </>
+          <div className="pt-body">
+            <div className="pt-main">
+              <header className="pt-head" ref={headEl}>
+                <h1 className="pt-title" tabIndex={-1}>{title}</h1>
+                {subtitle && <p className="pt-subtitle">{subtitle}</p>}
+                {where && (
+                  <p className="pt-where">
+                    {trip.countryCode && <CountryFlag country={trip.countryCode} size={15} />}
+                    <span>{where}</span>
+                  </p>
                 )}
-              />
-              {hook && (
-                <p className="dsk-hook ipage-hook" data-slot="hook">
-                  {hook.built ? t('journey.hookBuilt', hook.built) : stripDashes(hook.line)}
-                </p>
+                <div className="pt-badges">
+                  <Chip kind="status" className="pt-badge">{typeLabel(trip.tripTypeSlug, t, trip.tripType)}</Chip>
+                  <DifficultyChip profile={profile} stats={stats} />
+                  {bestText && <Chip kind="status" className="pt-badge">{t('jx.bestIn', { months: bestText })}</Chip>}
+                </div>
+                {hook && (
+                  <p className="pt-lead">{hook.built ? t('journey.hookBuilt', hook.built) : stripDashes(hook.line)}</p>
+                )}
+              </header>
+
+              <KeyFacts cells={facts} className="pt-facts" />
+
+              <JumpBar items={jumps} scrollRef={scrollEl} ready={`${trip.id}:${length}`} label={t('journey.railAria')} />
+
+              {(goodRows.length > 0 || fitGood.length > 0 || fitLess.length > 0 || highlights.length > 0) && (
+                <div className="pt-group" id="pt-overview">
+                  {(goodRows.length > 0 || fitGood.length > 0 || fitLess.length > 0) && (
+                    <PSection id="pt-good" title={t('destx.goodToKnow')}>
+                      {goodRows.length > 0 && (
+                        <ul className="pt-tips">
+                          {goodRows.map(({ key, Icon, title: head, text, lead }) => (
+                            <li key={key} className={lead ? 'is-lead' : undefined}>
+                              <span className="pt-tip-icon" aria-hidden="true"><Icon size={16} /></span>
+                              <span>
+                                {head && <b>{head}</b>}
+                                <Prose text={text} className="pt-tip-text" />
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                      {(fitGood.length > 0 || fitLess.length > 0) && (
+                        <div className="pt-fit">
+                          {fitGood.length > 0 && (
+                            <div>
+                              <b>{t('jx.goodFor')}</b>
+                              <ul>
+                                {fitGood.map((x) => <li key={x}><CheckIcon size={14} /><span>{stripDashes(x)}</span></li>)}
+                              </ul>
+                            </div>
+                          )}
+                          {fitLess.length > 0 && (
+                            <div className="is-less">
+                              <b>{t('jx.lessGood')}</b>
+                              <ul>
+                                {fitLess.map((x) => <li key={x}><CloseIcon size={14} /><span>{stripDashes(x)}</span></li>)}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </PSection>
+                  )}
+                  {highlights.length > 0 && (
+                    <PSection id="pt-why" title={t('journey.whyTrip')}>
+                      {highlights.some((h) => h.photo) ? (
+                        <Track label={t('journey.whyTrip')} size="third">
+                          {highlights.map((h) => (
+                            <HighlightCard key={h.key} photo={tripPhoto(h.photo)} title={h.title} line={h.line}
+                              meta={h.day ? t('journey.dayN', { n: h.day }) : ''} iso2={trip.countryCode} />
+                          ))}
+                        </Track>
+                      ) : (
+                        <ul className="iwhy">
+                          {highlights.map((h) => (
+                            <li key={h.key} className="iwhy-row">
+                              <span className="iwhy-t">{h.title}</span>
+                              <span className="iwhy-s">{h.day ? `${t('journey.dayN', { n: h.day })}: ${h.line}` : h.line}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </PSection>
+                  )}
+                </div>
               )}
-            </header>
 
-            <KeyFacts cells={facts} />
+              {!wide && (
+                <PSection id="pt-cost" title={t('jx.whatItCosts')} className="pt-inlinecost">
+                  {priceCard}
+                </PSection>
+              )}
 
-            {highlights.length > 0 && (
-              <section className="ipage-why" id="sec-why" data-slot="why" aria-labelledby="jwhy-h">
-                {highlights.some((h) => h.photo) ? (
-                  <Track title={t('journey.whyTrip')} headingId="jwhy-h" size="third">
-                    {highlights.map((h) => (
-                      <HighlightCard key={h.key} photo={tripPhoto(h.photo)} title={h.title} line={h.line}
-                        meta={h.day ? t('journey.dayN', { n: h.day }) : ''} iso2={trip.countryCode} />
+              <JourneyRoute trip={trip} t={t} itinerary={viewTrip.itinerary} stats={stats} sel={selDay}
+                onPick={(n) => { setSelDay(n); setOpenDays((s) => new Set([...s, n])); }}
+                chart={climbing || moving} map={!isShort} relief={outdoor} />
+
+              {viewTrip.itinerary?.length > 0 && (
+                <PSection id="pt-days" title={t('jx.jump.days')}
+                  note={viewTrip.itinerary.length > 1 ? (
+                    <Button variant="quiet" size="sm" onClick={() => setOpenDays(allOpen ? new Set() : new Set(viewTrip.itinerary.map((d) => d.day)))}>
+                      {allOpen ? t('jx.closeAll') : t('jx.openAll')}
+                    </Button>
+                  ) : null}>
+                  <ol className="pt-days">
+                    {viewTrip.itinerary.map((day, k) => (
+                      <DayRow key={`${length}-${day.day}`} day={day} open={openDays.has(day.day)}
+                        onToggle={() => toggleDay(day.day)} stats={stats.days[k]} t={t} lang={lang} />
                     ))}
-                  </Track>
-                ) : (
-                  <>
-                    <h2 id="jwhy-h">{t('journey.whyTrip')}</h2>
-                    <ul className="iwhy">
-                      {highlights.map((h) => (
-                        <li key={h.key} className="iwhy-row">
-                          <span className="iwhy-t">{h.title}</span>
-                          <span className="iwhy-s">{h.day ? `${t('journey.dayN', { n: h.day })}: ${h.line}` : h.line}</span>
+                  </ol>
+                </PSection>
+              )}
+
+              {ranges.length > 0 && (
+                <PSection id="pt-costs" title={t('jx.jump.costs')} note={t('jx.costsNote', { n: viewDays })}>
+                  <div className="pt-ranges">
+                    {ranges.map((r) => (
+                      <div className="pt-rg" key={r.slot}>
+                        <span className="pt-rg-name">
+                          {t(LINE_KEY[r.slot])}
+                          {r.note && (
+                            <InfoDot title={t(LINE_KEY[r.slot])}>
+                              <Prose text={r.note} className="infodot-text" />
+                            </InfoDot>
+                          )}
+                        </span>
+                        <span className="pt-rg-track" aria-hidden="true">
+                          <i style={{ left: `${(r.low / rangeMax) * 100}%`, right: `${100 - (r.high / rangeMax) * 100}%` }} />
+                        </span>
+                        <b className="pt-rg-fig"><Money low={r.low} high={r.high} /></b>
+                      </div>
+                    ))}
+                    {total && Number.isFinite(total.low) && Number.isFinite(total.high) && (
+                      <div className="pt-rg-total">
+                        <span>{t('jx.costsTotal', { n: viewDays })}</span>
+                        <b><Money low={total.low} high={total.high} /></b>
+                      </div>
+                    )}
+                  </div>
+                </PSection>
+              )}
+
+              {stays.length > 0 && (
+                <PSection id="pt-sleep" title={t('jx.jump.sleep')}>
+                  <ul className="pt-stays">
+                    {stays.map((s, i) => (
+                      <li key={`${s.rank ?? i}:${s.name}`} className="pt-stay">
+                        {s.location && <small className="pt-cell-label">{stripDashes(s.location)}</small>}
+                        <b>{stripDashes(s.name || '')}</b>
+                        {s.style && <span className="pt-stay-style">{capFirst(stripDashes(s.style))}</span>}
+                        {s.description && <Prose text={s.description} className="pt-cell-text" />}
+                      </li>
+                    ))}
+                  </ul>
+                </PSection>
+              )}
+
+              {(ways?.rows?.length > 0 || backWays.length > 0 || gateRows.length > 0 || rail || townNear || trip.logistics?.gettingThere) && (
+                <PSection id="pt-getting" title={ways?.from ? t('jx.gettingFrom', { place: ways.from }) : t('jx.jump.getting')}
+                  note={ways?.rows?.length ? t('jx.gettingNote') : null}>
+                  {ways?.rows?.length > 0 && (
+                    <ul className="pt-ways">
+                      {ways.rows.map((w) => {
+                        const Icon = WAY_ICON[w.mode];
+                        const cheapest = ways.rows.length > 1 && w.mode === ways.cheapest;
+                        const sub = w.mode === 'plane'
+                          ? [w.dep && w.arr ? t('destx.flightTimes', { dep: w.dep, arr: w.arr }) : null, Number.isFinite(w.minutes) ? minutesText(w.minutes) : null].filter(Boolean).join(', ')
+                          : (Number.isFinite(w.hours) ? t('destx.aboutTime', { time: minutesText(Math.round(w.hours * 60)) }) : '');
+                        return (
+                          <li key={w.mode} className="pt-way">
+                            <span className="pt-way-icon" aria-hidden="true"><Icon size={18} /></span>
+                            <span className="pt-way-main">
+                              <span className="pt-way-name">
+                                {w.mode === 'plane' ? t('destx.flyToIata', { iata: w.iata }) : t(`way.${w.mode}`)}
+                                {cheapest && <span className="pt-best">{t('destx.cheapest')}</span>}
+                              </span>
+                              {sub && <small>{sub}</small>}
+                            </span>
+                            <span className="pt-way-fig">
+                              <b>{formatMoney(w.perPerson, { precision: 'whole', locale: lang })}</b>
+                              <small>{wayUnit}</small>
+                            </span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                  {backWays.length > 0 && (
+                    <PBlock title={t('jx.homeFrom', { place: lastPoint.name })}>
+                      <ul className="pt-ways">
+                        {backWays.map((w) => {
+                          const Icon = WAY_ICON[w.mode];
+                          return (
+                            <li key={w.mode} className="pt-way">
+                              <span className="pt-way-icon" aria-hidden="true"><Icon size={18} /></span>
+                              <span className="pt-way-main">
+                                <span className="pt-way-name">{t(`way.${w.mode}`)}</span>
+                                {Number.isFinite(w.hours) && <small>{t('destx.aboutTime', { time: minutesText(Math.round(w.hours * 60)) })}</small>}
+                              </span>
+                              <span className="pt-way-fig">
+                                <b>{formatMoney(w.oneWay, { precision: 'whole', locale: lang })}</b>
+                                <small>{t('jx.oneWay')}</small>
+                              </span>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </PBlock>
+                  )}
+                  {(gateRows.length > 0 || rail) && (
+                    <ul className="pt-cells is-icons pt-gates">
+                      {gateRows.slice(0, 3).map((g) => (
+                        <li key={`${g.code}-${g.name}`} className="pt-cell">
+                          <span className="pt-cell-icon" aria-hidden="true"><LuggageIcon size={16} /></span>
+                          <b className="pt-cell-title">{[g.name, g.code].filter(Boolean).join(', ')}</b>
+                          {(Number.isFinite(g.transferMin) && g.transferTo) ? (
+                            <p className="pt-cell-text">{t('journey.gatewayTransfer', { time: minutesText(g.transferMin), place: g.transferTo })}</p>
+                          ) : g.note ? <p className="pt-cell-text">{stripDashes(g.note)}</p> : null}
+                        </li>
+                      ))}
+                      {rail && (
+                        <li className="pt-cell">
+                          <span className="pt-cell-icon" aria-hidden="true"><TrainIcon size={16} /></span>
+                          <b className="pt-cell-title">{t('journey.railLabel')}</b>
+                          <p className="pt-cell-text">
+                            {t('journey.railLine', {
+                              eur: formatMoney(rail.eurPp, { precision: 'whole', locale: lang }),
+                              time: minutesText(Math.round(rail.hours * 60)),
+                              from: rail.from,
+                            })}
+                          </p>
+                        </li>
+                      )}
+                    </ul>
+                  )}
+                  {trip.logistics?.gettingThere && <Prose text={trip.logistics.gettingThere} className="tprose tgo-note" />}
+                  {townNear && (
+                    <Button variant="secondary" className="tgo-town" onClick={() => leaveTo(() => onSelectDest?.(gatewayDest.id))}
+                      iconEnd={<ChevronRightIcon size={20} />}>
+                      {t('journey.ctaPricesIn', { city: gatewayDest.city })}
+                    </Button>
+                  )}
+                </PSection>
+              )}
+
+              <PSection id="pt-practical" title={t('jx.jump.practical')}>
+                {risks.length > 0 && (
+                  <PBlock title={t('journey.wrongHead')}>
+                    <ul className="pt-cells is-icons">
+                      {risks.map((r) => (
+                        <li key={r.key} className="pt-cell is-risk">
+                          <span className="pt-cell-icon" aria-hidden="true"><AlertIcon size={16} /></span>
+                          <Prose text={r.text} className="pt-cell-text" />
                         </li>
                       ))}
                     </ul>
-                  </>
+                  </PBlock>
                 )}
-              </section>
-            )}
-
-            <div className="ipage-side jpage-side" data-slot="side">
-              <TripPriceCard
-                trip={trip}
-                budget={viewTrip.budget}
-                days={viewDays}
-                lengthControl={<TripLengthChoice lengths={lengths} value={isShort ? SHORT : WEEK} onChange={pickLength} />}
-                onPdf={download ? (price) => download(pdfModel(price)) : null}
-                pdfBusy={pdfBusy}
-              />
-            </div>
-
-            <section className="tfit" id="sec-fit" data-slot="fit" aria-labelledby="jfit-h">
-              <h2 id="jfit-h">{t('journey.fitHead')}</h2>
-              {(best.months?.length > 0) && (
-                <div className="tfit-months">
-                  <span className="tfit-label"><CalendarIcon size={16} aria-hidden="true" /> {t('journey.fBest')}</span>
-                  <MonthStrip good={best.months || []} avoid={best.avoidMonths || []} />
-                </div>
-              )}
-              {fitRows.length > 0 && (
-                <ul className="ibyg-list tfit-rows">
-                  {fitRows.map((r) => (
-                    <li key={r.key} className="ibyg-row">
-                      <span className="iicon" aria-hidden="true"><r.icon size={20} /></span>
-                      <span className="ibyg-text"><span className="ibyg-t">{r.text}</span></span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </section>
-
-            {exits.length > 0 && (
-              <section className="ipage-alts" aria-labelledby="jalts-h">
-                <Track title={t('item.notQuite')} headingId="jalts-h" size="third">
-                  {exits.map(({ kind, card }) => {
-                    const myMid = trip.budget?.totalEur ? (trip.budget.totalEur.low + trip.budget.totalEur.high) / 2 : null;
-                    const theirMid = card.eur ? ((card.eur.low ?? card.eur.high) + (card.eur.high ?? card.eur.low)) / 2 : null;
-                    const less = myMid && theirMid && myMid - theirMid >= 50 ? Math.round((myMid - theirMid) / 10) * 10 : null;
-                    const fact = kind === 'easier' && card.diffLabel ? diffLabel(card.diffLabel, t)
-                      : kind === 'cheaper' && less ? t('journey.lessPp', { eur: `~${formatMoney(less, { locale: lang })}` })
-                        : (card.visits || []).slice(0, 2).join(', ');
-                    return (
-                      <AlternativeCard
-                        key={card.id}
-                        kind={kind === 'easier' ? t('journey.exitEasier') : kind === 'cheaper' ? t('journey.exitCheaper') : t('journey.exitNearby')}
-                        title={card.title}
-                        photoUrl={card.hero?.url || null}
-                        iso2={card.cc}
-                        where={card.country || ''}
-                        fact={fact}
-                        price={card.eur ? (
-                          <span className="jcap-fig">
-                            <Money low={card.eur.low} high={card.eur.high} est />
-                            {' '}
-                            {t('journey.pricePp')}
-                          </span>
-                        ) : null}
-                        onOpen={() => onOpenJourney?.(card)}
-                      />
-                    );
-                  })}
-                </Track>
-              </section>
-            )}
-
-            {viewTrip.itinerary?.length > 0 && (
-              <section className="tweek" id="sec-itin" data-slot="week" aria-labelledby="jweek-h">
-                <h2 id="jweek-h">{t('journey.grpWeek')}</h2>
-                {(climbing || moving) && <WeekClimb days={stats.days} sel={selDay} onPick={setSelDay} />}
-                {dayMap && (
-                  <div className="tweek-map">
-                    <React.Suspense fallback={<div className="dsk-map-frame" />}>
-                      <TripDayMap places={trip.dayPlaces} sel={selDay} onPick={setSelDay} relief={outdoor}
-                        label={t('journey.mapAria', { name: trip.title })} />
-                    </React.Suspense>
+                {logRows.length > 0 && (
+                  <ul className="pt-cells is-icons">
+                    {logRows.map((r) => (
+                      <li key={r.key} className="pt-cell">
+                        <span className="pt-cell-icon" aria-hidden="true"><r.icon size={16} /></span>
+                        {r.title && <b className="pt-cell-title">{r.title}</b>}
+                        <Prose text={r.text} className="pt-cell-text" />
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {tips.length > 0 && (
+                  <PBlock title={t('journey.tipsHead')}>
+                    <ul className="pt-tips">
+                      {tips.map((r) => (
+                        <li key={r.key}>
+                          <span className="pt-tip-icon" aria-hidden="true"><BulbIcon size={16} /></span>
+                          <Prose text={r.text} className="pt-tip-text" />
+                        </li>
+                      ))}
+                    </ul>
+                  </PBlock>
+                )}
+                {bookSteps && (
+                  <div className="tprep-book">
+                    <BookingOrder tripId={trip.id} source={bookSource} bestMonths={trip.bestPeriod?.months} notes={false} />
                   </div>
                 )}
-                <Track label={t('journey.trackAria')} size="half" index={dayIndex}
-                  onSelect={(i) => setSelDay(viewTrip.itinerary[i]?.day ?? i + 1)} className="tweek-days">
-                  {viewTrip.itinerary.map((day, k) => {
-                    const stay = stays.find((s) => s.rank === day.sleepRef) || null;
-                    const photo = tripPhoto(day.photo)
-                      || tripPhoto((trip.highlights || []).find((h) => h.day === day.day && h.photo)?.photo);
-                    return (
-                      <DayCard key={`${length}-${day.day}`} day={day} stats={stats.days[k]} stay={stay} photo={photo} />
-                    );
-                  })}
-                </Track>
-              </section>
-            )}
-
-            {(gateRows.length > 0 || rail || townNear) && (
-              <section className="dsk-sec tgo" id="sec-ends" data-slot="getting-there" aria-labelledby="jends-h">
-                <h2 id="jends-h">{t('detail.gettingThere')}</h2>
-                <ul className="igo-list">
-                  {gateRows.slice(0, 3).map((g) => (
-                    <li key={`${g.code}-${g.name}`} className="igo-row">
-                      <span className="iicon" aria-hidden="true"><LuggageIcon size={20} /></span>
-                      <span className="igo-main">
-                        <span className="igo-name">{[g.name, g.code].filter(Boolean).join(', ')}</span>
-                        {Number.isFinite(g.transferMin) && g.transferTo && (
-                          <span className="igo-sub">{t('journey.gatewayTransfer', { time: minutesText(g.transferMin), place: g.transferTo })}</span>
-                        )}
-                        {gateFlights[g.code] && (
-                          <span className="igo-sub">
-                            <FlightChip perSeat={gateFlights[g.code].perSeat} airline={gateFlights[g.code].out.airline} />
-                          </span>
-                        )}
-                      </span>
-                    </li>
-                  ))}
-                  {rail && (
-                    <li className="igo-row">
-                      <span className="iicon" aria-hidden="true"><TrainIcon size={20} /></span>
-                      <span className="igo-main">
-                        <span className="igo-name">{t('journey.railLabel')}</span>
-                        <span className="igo-sub">
-                          {t('journey.railLine', {
-                            eur: formatMoney(rail.eurPp, { precision: 'whole', locale: lang }),
-                            time: minutesText(Math.round(rail.hours * 60)),
-                            from: rail.from,
-                          })}
-                        </span>
-                      </span>
-                    </li>
-                  )}
-                </ul>
-                {trip.logistics?.gettingThere && <Prose text={trip.logistics.gettingThere} className="tprose tgo-note" />}
-                {townNear && (
-                  <Button variant="secondary" className="tgo-town" onClick={() => leaveTo(() => onSelectDest?.(gatewayDest.id))}
-                    iconEnd={<ChevronRightIcon size={20} />}>
-                    {t('journey.ctaPricesIn', { city: gatewayDest.city })}
-                  </Button>
+                {packing && (
+                  <PBlock title={t('journey.packHead')} className="tprep-pack">
+                    <PackGrid trip={trip} />
+                  </PBlock>
                 )}
-              </section>
-            )}
+                {(sources.length > 0 || photoCredits.length > 0) && (
+                  <details className="pt-fold">
+                    <summary>{t('destx.sources')}</summary>
+                    <ul>
+                      {photoCredits.map((g) => {
+                        const href = safeUrl(g.page);
+                        const text = [g.caption, [g.author, g.licence].filter(Boolean).join(', ')].filter(Boolean).join(': ');
+                        return <li key={g.url}>{href ? <a href={href} target="_blank" rel="noreferrer">{text}</a> : text}</li>;
+                      })}
+                      {sources.map((s) => (
+                        <li key={s.label}>{s.href ? <a href={s.href} target="_blank" rel="noreferrer">{s.label}</a> : s.label}</li>
+                      ))}
+                      <li><a href="https://commons.wikimedia.org" target="_blank" rel="noreferrer">Wikimedia Commons</a></li>
+                    </ul>
+                  </details>
+                )}
+              </PSection>
 
-            <section className="tprep" id="sec-prep" data-slot="beforego" aria-labelledby="jprep-h">
-              <h2 id="jprep-h">{t('go.head')}</h2>
-              {risks.length > 0 && (
-                <Track title={t('journey.wrongHead')} headingId="jrisk-h" size="third" className="tprep-risks" showAll>
-                  {risks.map((r) => <GoCard key={r.key} icon={AlertIcon} text={r.text} tone="risk" />)}
-                </Track>
+              {exits.length > 0 && (
+                <PSection id="pt-alts" title={t('item.notQuite')}>
+                  <Track label={t('item.notQuite')} size="third">
+                    {exits.map(({ kind, card }) => {
+                      const myMid = trip.budget?.totalEur ? (trip.budget.totalEur.low + trip.budget.totalEur.high) / 2 : null;
+                      const theirMid = card.eur ? ((card.eur.low ?? card.eur.high) + (card.eur.high ?? card.eur.low)) / 2 : null;
+                      const less = myMid && theirMid && myMid - theirMid >= 50 ? Math.round((myMid - theirMid) / 10) * 10 : null;
+                      const fact = kind === 'easier' && card.diffLabel ? diffLabel(card.diffLabel, t)
+                        : kind === 'cheaper' && less ? t('journey.lessPp', { eur: formatMoney(less, { locale: lang }) })
+                          : (card.visits || []).slice(0, 2).join(', ');
+                      return (
+                        <AlternativeCard
+                          key={card.id}
+                          kind={kind === 'easier' ? t('journey.exitEasier') : kind === 'cheaper' ? t('journey.exitCheaper') : t('journey.exitNearby')}
+                          title={card.title}
+                          photoUrl={card.hero?.url || null}
+                          iso2={card.cc}
+                          where={card.country || ''}
+                          fact={fact}
+                          price={card.eur ? (
+                            <span className="jcap-fig">
+                              <Money low={card.eur.low} high={card.eur.high} />
+                              {' '}
+                              {t('journey.pricePp')}
+                            </span>
+                          ) : null}
+                          onOpen={() => onOpenJourney?.(card)}
+                        />
+                      );
+                    })}
+                  </Track>
+                </PSection>
               )}
-              {logRows.length > 0 && (
-                <Track title={t('journey.logHead')} headingId="jlog-h" size="third" showAll>
-                  {logRows.map((r) => <GoCard key={r.key} icon={r.icon} title={r.title} text={r.text} />)}
-                </Track>
-              )}
-              {tips.length > 0 && (
-                <Track title={t('journey.tipsHead')} headingId="jtips-h" size="third" showAll>
-                  {tips.map((r) => <GoCard key={r.key} icon={BulbIcon} text={r.text} />)}
-                </Track>
-              )}
-              {bookSteps && (
-                <div className="tprep-book">
-                  <BookingOrder tripId={trip.id} source={bookSource} bestMonths={trip.bestPeriod?.months} notes={false} />
-                </div>
-              )}
-              <div className="tprep-pack">
-                <h3 className="itrack-title">{t('journey.packHead')}</h3>
-                <PackGrid trip={trip} />
-              </div>
-            </section>
-
-            <SourcesLine items={sources} />
+            </div>
+            {wide && <aside className="pt-side" aria-label={t('jx.whatItCosts')}>{priceCard}</aside>}
           </div>
         </div>
       </div>
+
+      {!wide && (
+        <PriceDock
+          price={total && Number.isFinite(total.low) && Number.isFinite(total.high)
+            ? <Money low={total.low} high={total.high} /> : null}
+          unit={t('journey.pricePp')}
+          inputs={dockInputs}
+          inputsLabel={t('destx.dockInputs', { what: dockInputs })}
+          onInputs={openCard}
+          primary={planTrip ? (
+            <Button variant="primary" className="pt-dock-cta" iconStart={<RouteIcon size={18} />} onClick={planTrip}>
+              {t('brief.planThisTrip')}
+            </Button>
+          ) : null}
+        />
+      )}
     </div>
   );
 }
-
