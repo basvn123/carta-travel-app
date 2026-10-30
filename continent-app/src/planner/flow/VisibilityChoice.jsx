@@ -17,10 +17,13 @@ export function VisibilityChoice({ value, onChange, className = '' }) {
     <ChipGroup label={t('pf.create.visibility')} className={`pf-vis ${className}`.trim()}>
       {VISIBILITY.map((v) => {
         const Icon = ICONS[v];
+        // The three stand on one line (owner, plan flow walk): the link chip
+        // reads "Link" and keeps its whole name for a screen reader.
+        const short = v === 'link';
         return (
           <Chip key={v} kind="choice" selected={value === v} icon={Icon ? <Icon size={16} /> : null}
-            onClick={() => onChange(v)}>
-            {t(`pf.vis.${v}`)}
+            aria-label={short ? t('pf.vis.link') : undefined} onClick={() => onChange(v)}>
+            {t(short ? 'pf.vis.linkShort' : `pf.vis.${v}`)}
           </Chip>
         );
       })}

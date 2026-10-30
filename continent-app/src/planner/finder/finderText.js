@@ -203,10 +203,15 @@ export function answerChips(settings, { t, lang = 'en', originName = '', when = 
   for (const v of g.likes || []) out.push({ id: `like:${v}`, q: 'g:likes', label: likeLabel(t, v) });
   if (g.weather && g.weather !== 'any') out.push({ id: 'weather', q: 'g:weather', label: optionLabel(t, 'g:weather', g.weather) });
   if (g.reach && g.reach !== 'any' && !settings.booked.flights) out.push({ id: 'reach', q: 'g:reach', label: optionLabel(t, 'g:reach', g.reach) });
+  if (g.around && g.around !== 'mix' && settings.way !== 'car' && !settings.booked.car) out.push({ id: 'around', q: 'g:around', label: optionLabel(t, 'g:around', g.around) });
   for (const v of g.avoid || []) out.push({ id: `avoid:${v}`, q: 'g:avoid', label: optionLabel(t, 'g:avoid', v) });
   if (g.budget?.eur > 0) {
-    const eur = formatMoney(g.budget.eur, { locale });
-    out.push({ id: 'budget', q: 'g:budget', label: t(g.budget.kind === 'day' ? 'tf.chip.budgetDay' : 'tf.chip.budget', { eur }) });
+    const people = settings.party.adults + settings.party.kids;
+    // A group budget reads back as the group's own total (plan flow walk).
+    const label = g.budget.per === 'group' && g.budget.groupEur > 0 && people > 1
+      ? t('pf.chip.budgetGroup', { eur: formatMoney(g.budget.groupEur, { locale }), n: people })
+      : t(g.budget.kind === 'day' ? 'tf.chip.budgetDay' : 'tf.chip.budget', { eur: formatMoney(g.budget.eur, { locale }) });
+    out.push({ id: 'budget', q: 'g:budget', label });
   }
   return out.filter((c) => c.label);
 }

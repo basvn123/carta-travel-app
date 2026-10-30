@@ -31,8 +31,12 @@ export function PlanStage({ bar = null, wide = false, sheetLabel, children }) {
  * position: a question the words or a screen already answered shows ticked,
  * so a skipped question reads as done instead of the count jumping. The
  * position text stays the spoken one.
+ *
+ * `end` puts another round control (the trip's settings gear) where the
+ * close would stand, so it lines up with the back control (owner, plan flow
+ * walk) instead of floating in a bar above the step.
  */
-export function SheetHead({ onBack, backLabel, onClose, closeLabel, position = '', marks = null }) {
+export function SheetHead({ onBack, backLabel, onClose, closeLabel, position = '', marks = null, end = null }) {
   return (
     <div className="pf-head">
       <span className="pf-head-side">
@@ -58,7 +62,8 @@ export function SheetHead({ onBack, backLabel, onClose, closeLabel, position = '
         {position}
       </span>
       <span className="pf-head-side is-end">
-        {onClose && (
+        {end}
+        {!end && onClose && (
           <IconButton tone="surface" label={closeLabel} onClick={onClose} className="pf-round">
             <CloseIcon size={16} />
           </IconButton>

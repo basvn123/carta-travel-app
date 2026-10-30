@@ -13,9 +13,9 @@ import { RHYTHM, LIKES } from './tripSettings.js';
 const opt = (value, icon, extra = {}) => ({ value, icon, labelKey: null, ...extra });
 
 export const QUESTIONS = {
-  tell: { titleKey: 'pf.q.tell', helpKey: 'pf.q.tellHelp', custom: true, skippable: true },
+  tell: { titleKey: 'pf.q.tell', custom: true, skippable: true },
   booked: {
-    titleKey: 'pf.q.booked', helpKey: 'pf.q.bookedHelp', multi: true, none: 'nothing',
+    titleKey: 'pf.q.booked', multi: true, none: 'nothing',
     options: [
       opt('nothing', 'SparkIcon', { labelKey: 'pf.o.nothing' }),
       opt('flights', 'PlaneIcon', { labelKey: 'pf.o.flights' }),
@@ -33,7 +33,7 @@ export const QUESTIONS = {
     },
   },
   who: { titleKey: 'pf.q.who', custom: true },
-  sleep: { titleKey: 'pf.q.sleep', helpKey: 'pf.q.sleepHelp', custom: true },
+  sleep: { titleKey: 'pf.q.sleep', custom: true },
   // T862: where to sleep alone (Tell Carta's stay chip); it answers sleep.
   stay: { titleKey: 'pf.q.stay', custom: true },
   priority: {
@@ -47,10 +47,10 @@ export const QUESTIONS = {
     write: (s, [v]) => ({ priority: v }),
   },
   when: { titleKey: 'pf.q.when', custom: true },
-  from: { titleKey: 'pf.q.from', helpKey: 'pf.q.fromHelp', custom: true },
+  from: { titleKey: 'pf.q.from', custom: true },
   // T860: the way there, then (when it may fly) the airports in reach.
   way: { titleKey: 'pf.q.way', custom: true },
-  airports: { titleKey: 'pf.q.airports', helpKey: 'pf.q.airportsHelp', custom: true },
+  airports: { titleKey: 'pf.q.airports', custom: true },
   nowWhere: { titleKey: 'pf.q.nowWhere', helpKey: 'pf.q.nowWhereHelp', custom: true },
   nowUntil: { titleKey: 'pf.q.nowUntil', helpKey: 'pf.q.nowUntilHelp', custom: true },
 
@@ -63,7 +63,9 @@ export const QUESTIONS = {
       opt('towns', 'RouteIcon', { labelKey: 'pf.o.shapeTowns' }),
       opt('road', 'CarIcon', { labelKey: 'pf.o.shapeRoad' }),
       opt('countries', 'GlobeIcon', { labelKey: 'pf.o.shapeCountries' }),
-      opt('oneway', 'RoadIcon', { labelKey: 'pf.o.shapeOneway' }),
+      // 'oneway' left the list (owner, plan flow walk 2026-10-30): it read as
+      // "one place" and the finder only built it as towns (config
+      // recommend.json fallbackShapes); a trip saved with it still loads.
       opt('any', 'SparkIcon', { labelKey: 'pf.o.shapeAny' }),
     ],
     read: (s) => (s.guide.shapes.length ? s.guide.shapes : ['any']),
@@ -101,8 +103,24 @@ export const QUESTIONS = {
     read: (s) => (s.guide.reach ? [s.guide.reach] : []),
     write: (s, [v]) => ({ guide: { ...s.guide, reach: v } }),
   },
+  // How they get around on the trip (owner, plan flow walk 2026-10-30): it
+  // moves the matches (no car marks down places that need one) and the
+  // prices (a hire car or public transport), lib/recommend/candidates.js.
+  'g:around': {
+    titleKey: 'pf.q.aroundTrip',
+    options: [
+      opt('public', 'BusIcon', { labelKey: 'pf.o.transit' }),
+      opt('taxi', 'CarIcon', { labelKey: 'pf.o.taxi' }),
+      opt('car', 'RoadIcon', { labelKey: 'pf.o.aroundCar' }),
+      opt('mix', 'SparkIcon', { labelKey: 'pf.o.aroundMix' }),
+    ],
+    read: (s) => (s.guide.around ? [s.guide.around] : []),
+    write: (s, [v]) => ({ guide: { ...s.guide, around: v } }),
+  },
   'g:avoid': {
     titleKey: 'pf.q.avoid', multi: true, none: 'none', skippable: true,
+    // "A car" is answered by How you get around now; an older answer still counts.
+    offered: (s, v) => v !== 'car',
     options: [
       opt('none', 'CheckIcon', { labelKey: 'pf.o.avoidNone' }),
       opt('crowds', 'FriendsIcon', { labelKey: 'pf.o.avoidCrowds' }),
@@ -115,7 +133,19 @@ export const QUESTIONS = {
   },
   'g:budget': { titleKey: 'pf.q.budget', custom: true, skippable: true },
   // T796: what Carta picks for the traveller; the rows come from config/slots.json.
-  'g:pick': { titleKey: 'pf.q.pick', helpKey: 'pf.q.pickHelp', custom: true },
+  'g:pick': { titleKey: 'pf.q.pick', custom: true },
+  // The last help-me-choose question (owner, plan flow walk 2026-10-30, in
+  // place of the four doors): the whole trip at once (the trips for you) or
+  // the flights decided first (the flight-first screen). It is the trip's door.
+  'g:how': {
+    titleKey: 'pf.q.how',
+    options: [
+      opt('guide', 'RouteIcon', { labelKey: 'pf.o.howWhole' }),
+      opt('flight', 'PlaneIcon', { labelKey: 'pf.o.howFlight' }),
+    ],
+    read: (s) => [s.door === 'flight' ? 'flight' : 'guide'],
+    write: (s, [v]) => ({ door: v === 'flight' ? 'flight' : 'guide' }),
+  },
 
   // ---- The days ----
   daysAsk: {

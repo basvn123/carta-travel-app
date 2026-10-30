@@ -1,13 +1,16 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { Button } from '../../components/ui/index.js';
-import { CheckIcon } from '../../components/Icons.jsx';
+import {
+  BanIcon, BusIcon, CalendarIcon, CheckIcon, FriendsIcon, HeartIcon, HomeIcon, MapPinIcon, PiggyIcon, PlaneIcon, RouteIcon, SunIcon,
+} from '../../components/Icons.jsx';
+import { HeroImage } from '../../components/HeroImage.jsx';
 import { SheetHead } from '../flow/PlanStage.jsx';
 import { useBcp47, useMonths, whenText } from '../flow/flowHooks.js';
 import { useKeepTrip, useTripFinder } from './finderHooks.js';
-import { stageLines, widenQuestion } from './finderText.js';
+import { answersLine, stageLines, tripName, tripPhotos, widenQuestion } from './finderText.js';
+import { durationMs, prefersReducedMotion } from '../../lib/motion.js';
 import { TripsForYou } from './TripsForYou.jsx';
-import { TripCard } from './TripCard.jsx';
 import { TripPage } from './TripPage.jsx';
 import { planOf } from './planOf.js';
 import '../../styles/87-trip-finder.css';
@@ -21,16 +24,43 @@ export { dropsFor } from '../../lib/recommend/kept.js';
 export { FlightFirstScreen, KnowBuildScreen } from './DoorScreens.jsx';
 
 const PARTY_TITLE = { solo: 'solo', couple: 'couple', friends: 'friends', family: 'family', group: 'group' };
+
+/** The least time the search stands, from its first frame (owner, plan flow
+ *  walk 2026-10-30: "at least 4 seconds ... all the requirements get
+ *  placed"), and the beat "8 trips found" holds before the list. A run
+ *  already done when the screen opens (back from a trip) skips both. */
+const MIN_STAND_MS = 4000;
+const FOUND_BEAT_MS = 700;
+// The brief's lines share this span (the last lands near 3.1 s, "found"
+// after it, the list at 4 s); a short brief keeps a calm step.
+const BRIEF_SPAN_MS = 2800;
+const BRIEF_MAX_STEP_MS = 420;
+
+// One icon per answer in the brief, by the answer chip's id.
+const BRIEF_ICONS = {
+  place: MapPinIcon, from: HomeIcon, when: CalendarIcon, who: FriendsIcon, like: HeartIcon, shape: RouteIcon,
+  weather: SunIcon, reach: PlaneIcon, around: BusIcon, avoid: BanIcon, budget: PiggyIcon,
+};
+// The stage of real work that applies each answer, so its tick is earned.
+const BRIEF_STAGE = {
+  from: 'flights', when: 'flights', reach: 'flights',
+  who: 'stays', around: 'stays', budget: 'stays', avoid: 'stays',
+  place: 'likes', like: 'likes', shape: 'likes', weather: 'likes',
+};
+const headOf = (chip) => chip.id.split(':')[0];
+
 /**
- * Searching (T797, rebuilt in T867): "Finding trips for the two of you",
- * then the stages of real work, each named from the answers, ticking as
- * the engine finishes it (useTripFinder); the working one carries a live
- * dot. The best trips priced so far show under the stages as cards, so the
- * wait turns into the list. It stands exactly as long as the work: no
- * minimum, no made-up delay. Under reduced motion nothing moves; the
- * stages still tick.
+ * Searching (T797, T867; rebuilt on the owner's plan flow walk): the
+ * traveller's own answers assemble into the trip's brief, Carta's receipt
+ * grammar: each answer lands as a line with its icon, one after another,
+ * and takes a tick once the stage of real work that applies it is done
+ * (flights for from and when, the stays for who and the budget, the
+ * matching for the likes). Under a rule, one live line names the work in
+ * hand and ends on "8 trips found". Above it the first trips the engine
+ * prices fan in as their own photographs, the names under them. Nothing
+ * loops; under reduced motion everything stands and the ticks still come.
  */
-export function FindingTrips({ settings, finder, onBack, onWiden, guide, ui, onOpen, cardRefs, keeper }) {
+export function FindingTrips({ settings, finder, onBack, onWiden, guide, headEnd = null }) {
   const { t, lang } = useI18n();
   const months = useMonths();
   const bcp47 = useBcp47();
@@ -40,8 +70,24 @@ export function FindingTrips({ settings, finder, onBack, onWiden, guide, ui, onO
     () => stageLines(settings, { t, lang, when, data: finder.data, origin: finder.origin, stayTier: finder.stayTier }),
     [settings, finder.data, finder.origin, finder.stayTier, t, lang, when.start, when.end], // eslint-disable-line react-hooks/exhaustive-deps -- when is rebuilt each render from its parts
   );
+  const brief = useMemo(
+    () => answersLine(settings, { t, lang, originName: settings.from?.name || finder.origin?.name || '', when }).chips,
+    [settings, finder.origin, t, lang, when.start, when.end], // eslint-disable-line react-hooks/exhaustive-deps -- when is rebuilt each render from its parts
+  );
   const failed = finder.trips && finder.trips.length === 0;
   const kind = PARTY_TITLE[settings.party.kind] || 'solo';
+  // The pace: the lines share BRIEF_SPAN_MS whatever their number, each
+  // tick follows its own line, and "found" waits for the last line.
+  const reduced = useMemo(() => prefersReducedMotion(), []);
+  const mountAt = useRef(Date.now());
+  const step = reduced ? 0 : Math.round(Math.min(BRIEF_MAX_STEP_MS, BRIEF_SPAN_MS / Math.max(1, brief.length)));
+  const arrive = (i) => (reduced ? 0 : i * step + durationMs('--dur-3'));
+  const [placed, setPlaced] = useState(reduced);
+  useEffect(() => {
+    if (placed) return undefined;
+    const id = setTimeout(() => setPlaced(true), Math.max(0, arrive(brief.length) - (Date.now() - mountAt.current)));
+    return () => clearTimeout(id);
+  }, [placed, brief.length]); // eslint-disable-line react-hooks/exhaustive-deps -- arrive reads the step of this render
 
   useEffect(() => { titleRef.current?.focus({ preventScroll: true }); }, []);
 
@@ -49,7 +95,7 @@ export function FindingTrips({ settings, finder, onBack, onWiden, guide, ui, onO
     const q = widenQuestion(settings, guide);
     return (
       <div className="pf-step tff-load">
-        <SheetHead onBack={onBack} backLabel={t('pf.back')} />
+        <SheetHead onBack={onBack} backLabel={t('pf.back')} end={headEnd} />
         <h2 className="pf-title" tabIndex={-1} ref={titleRef}>{t('tf.load.failedTitle')}</h2>
         <p className="tff-fail" role="status">{t(finder.error ? 'tf.load.error' : 'tf.load.none')}</p>
         <div className="pf-foot">
@@ -61,41 +107,83 @@ export function FindingTrips({ settings, finder, onBack, onWiden, guide, ui, onO
     );
   }
 
+  const found = finder.trips?.length || 0;
   const working = lines.find((l) => !finder.stages[l.key]);
-  const early = finder.early || [];
+  const stageKeys = new Set(lines.map((l) => l.key));
+  // An answer is ticked when its stage is done; one whose stage this trip
+  // does not run (no flights to check) waits for the whole search.
+  const applied = (chip) => {
+    const stage = BRIEF_STAGE[headOf(chip)];
+    return stage && stageKeys.has(stage) ? Boolean(finder.stages[stage]) : found > 0;
+  };
+  const live = found && placed
+    ? t(found === 1 ? 'tf.load.foundOne' : 'tf.load.foundN', { n: found })
+    : (working || lines[lines.length - 1])?.text || '';
+  const destinations = finder.data?.destinations;
+  // Three trips with three different photographs (two trips may open in
+  // the same town); their names under the fan, one comma apart, since a
+  // trip's own name may hold an "and".
+  // Each trip's lead photo first, then the trips' other places, until three.
+  const shots = [];
+  const urls = new Set();
+  const found3 = finder.early?.length ? finder.early : finder.trips || [];
+  for (const pass of [0, 1]) {
+    for (const trip of found3) {
+      const photos = tripPhotos(trip, destinations).filter((p) => p?.url);
+      for (const photo of pass === 0 ? photos.slice(0, 1) : photos.slice(1)) {
+        if (shots.length === 3 || urls.has(photo.url)) continue;
+        urls.add(photo.url);
+        shots.push({ trip, photo });
+      }
+    }
+  }
+  const names = [...new Set(shots.map((s) => tripName(s.trip, destinations, lang)).filter(Boolean))];
+  const tickDelay = (i) => `${Math.max(0, arrive(i) - (Date.now() - mountAt.current))}ms`;
   return (
     <div className="pf-step tff-load">
-      <SheetHead onBack={onBack} backLabel={t('pf.back')} />
+      <SheetHead onBack={onBack} backLabel={t('pf.back')} end={headEnd} />
       <h2 className="pf-title" tabIndex={-1} ref={titleRef}>{t(`tf.load.title.${kind}`)}</h2>
-      <ol className="tff-checks" aria-live="polite">
-        {lines.map((l) => {
-          const done = finder.stages[l.key];
-          const state = done ? 'is-done' : l === working ? 'is-working' : 'is-waiting';
-          return (
-            <li key={l.key} className={`tff-check ${state}`}>
-              <span className="tff-check-mark" aria-hidden="true">{done && <CheckIcon size={12} />}</span>
-              <span>{l.text}</span>
-              {done && <span className="sr-only">{t('tf.load.done')}</span>}
-            </li>
-          );
-        })}
-      </ol>
-      {early.length > 0 && (
-        <ol className="tff-list tff-early" aria-label={t('tf.load.first')}>
-          {early.map((trip) => (
-            <li key={trip.id}>
-              <TripCard
-                trip={trip}
-                destinations={finder.data?.destinations}
-                onOpen={onOpen}
-                ui={ui}
-                keep={{ kept: keeper.isKept(trip.id), onKeep: keeper.toggle }}
-                ref={(el) => { if (el) cardRefs.current.set(trip.id, el); else cardRefs.current.delete(trip.id); }}
-              />
-            </li>
-          ))}
-        </ol>
-      )}
+      <div className="tff-brief-stage">
+        <div className="tff-fan">
+          <div className="tff-fan-deck" aria-hidden="true">
+            {[0, 1, 2].map((i) => {
+              const shot = shots[i];
+              return (
+                <span key={shot ? shot.photo.url : `slot${i}`} className={`tff-fan-card is-${i}${shot ? ' is-in' : ''}`}>
+                  {shot && (
+                    <HeroImage url={shot.photo.url} city={shot.photo.city || shot.trip.country} iso2={shot.photo.iso2 || shot.trip.iso2}
+                      className="tff-fan-img" maxWidth={320} ratio={[4, 5]} />
+                  )}
+                </span>
+              );
+            })}
+          </div>
+          <p className="tff-fan-names">{names.length ? names.join(', ') : ' '}</p>
+        </div>
+        <section className="tff-brief" aria-labelledby="tff-brief-h" style={{ '--brief-step': `${step}ms` }}>
+          <h3 className="tff-brief-h" id="tff-brief-h">{t('tf.load.brief')}</h3>
+          <ul className="tff-brief-lines">
+            {brief.map((chip, i) => {
+              const Icon = BRIEF_ICONS[headOf(chip)] || CheckIcon;
+              const on = applied(chip);
+              return (
+                <li key={chip.id} className={`tff-brief-line${on ? ' is-on' : ''}`} style={{ '--i': i }}>
+                  <span className="tff-brief-icon" aria-hidden="true"><Icon size={18} /></span>
+                  <span className="tff-brief-text">{chip.label}</span>
+                  <span className="tff-brief-tick" aria-hidden="true" style={on ? { animationDelay: tickDelay(i) } : undefined}>
+                    <CheckIcon size={14} />
+                  </span>
+                  {on && <span className="sr-only">{t('tf.load.done')}</span>}
+                </li>
+              );
+            })}
+          </ul>
+          <p className={`tff-brief-live${found && placed ? ' is-found' : ''}`} style={{ '--i': 0 }} aria-live="polite">
+            <span className="tff-brief-dot" aria-hidden="true">{found > 0 && placed && <CheckIcon size={12} />}</span>
+            <span key={live} className="tff-brief-live-text">{live}</span>
+          </p>
+        </section>
+      </div>
     </div>
   );
 }
@@ -143,7 +231,7 @@ function scrollerOf(el) {
  * The list shows the moment the trips are ranked: back from the planner
  * the run is memoised, so it is there at once (T867: no minimum stand).
  */
-export default function TripFinderScreen({ ui, settings, guide, edits, setEdits, markedId = null, openId: arriveId = null, onBack, onWiden, onPlan }) {
+export default function TripFinderScreen({ ui, settings, guide, edits, setEdits, markedId = null, openId: arriveId = null, onBack, onWiden, onPlan, headEnd = null }) {
   const { lang } = useI18n();
   const finder = useTripFinder(settings);
   const [openId, setOpenId] = useState(arriveId);
@@ -155,7 +243,21 @@ export default function TripFinderScreen({ ui, settings, guide, edits, setEdits,
   const keeper = useKeepTrip({ destinations: finder.data?.destinations, lang, keepWith });
   const all = (finder.trips || finder.early || []).map((x) => edits[x.id] || x);
   const open = openId ? all.find((x) => x.id === openId) : null;
-  const ready = Boolean(finder.trips && finder.trips.length);
+  const done = Boolean(finder.trips && finder.trips.length);
+  // The search stands at least MIN_STAND_MS, then holds "8 trips found" for
+  // FOUND_BEAT_MS (owner, plan flow walk). A run already done on arrival
+  // (back from a trip, the memoised run) or a trip's own address skips it.
+  const holdFrom = useRef(done || arriveId ? null : Date.now());
+  const [released, setReleased] = useState(!holdFrom.current);
+  useEffect(() => {
+    if (released || !done) return undefined;
+    const wait = Math.max(MIN_STAND_MS - (Date.now() - holdFrom.current), FOUND_BEAT_MS);
+    const id = setTimeout(() => setReleased(true), wait);
+    return () => clearTimeout(id);
+  }, [done, released]);
+  // A reopened question leaves this screen, so a new answer set mounts it
+  // again and stands again.
+  const ready = done && released;
 
   // An address that names a trip the answers no longer give: back to the list.
   useEffect(() => {
@@ -226,6 +328,7 @@ export default function TripFinderScreen({ ui, settings, guide, edits, setEdits,
             markedId={markedId}
             ui={ui}
             onBack={onBack}
+            headEnd={headEnd}
             onReopen={onWiden}
             onOpen={openTrip}
             onPlan={planTrip}
@@ -238,11 +341,8 @@ export default function TripFinderScreen({ ui, settings, guide, edits, setEdits,
             finder={finder}
             guide={guide}
             onBack={onBack}
+            headEnd={headEnd}
             onWiden={onWiden}
-            ui={ui}
-            onOpen={openTrip}
-            cardRefs={cardRefs}
-            keeper={keeper}
           />
         )}
       </div>

@@ -83,7 +83,10 @@ export async function geocodeAddress(query, opts = {}) {
   // addressdetails gives the country as its own field. Reading it off the end
   // of display_name instead yields "Belgie / Belgique / Belgien", which is not
   // a country any later lookup can match.
-  const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=${limit}&q=${encodeURIComponent(q)}`;
+  // opts.countryCode (ISO2) keeps the hits inside one country, for the From
+  // picker's "your town or address" once a country is picked.
+  const cc = /^[A-Za-z]{2}$/.test(opts.countryCode || '') ? `&countrycodes=${opts.countryCode.toLowerCase()}` : '';
+  const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=${limit}${cc}&q=${encodeURIComponent(q)}`;
   try {
     const r = await fetch(url, { headers: { Accept: 'application/json' }, signal: opts.signal });
     if (!r.ok) return [];

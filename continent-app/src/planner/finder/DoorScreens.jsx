@@ -81,7 +81,7 @@ function Leg({ leg, dir, ui, lang, showHome }) {
  *   onBack()       the doors
  *   onChange()     the setup's answers (the trip settings)
  */
-export function FlightFirstScreen({ ui, settings, onBack, onPick, onChange }) {
+export function FlightFirstScreen({ ui, settings, onBack, onPick, onChange, headEnd = null }) {
   const { t, lang } = useI18n();
   const bcp47 = useBcp47();
   const titleRef = useRef(null);
@@ -102,7 +102,7 @@ export function FlightFirstScreen({ ui, settings, onBack, onPick, onChange }) {
 
   const head = (
     <>
-      <SheetHead onBack={onBack} backLabel={t('pf.back')} />
+      <SheetHead onBack={onBack} backLabel={t('pf.back')} end={headEnd} />
       <h2 className="pf-title" tabIndex={-1} ref={titleRef}>{t(done ? 'ff.title' : 'ff.load.title')}</h2>
       {chips.length > 0 && (
         <ul className="tff-chips" aria-label={t('tf.chip.label')}>

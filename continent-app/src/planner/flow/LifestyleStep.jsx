@@ -25,15 +25,15 @@ const COUNTS = [
 
 /**
  * The planner's "How do you like to travel?" step (T750): everything the
- * Lifestyle panel holds, in the order it holds it. Where you sleep (T862:
- * the space, the four stay types with a typical night, the stars for a
- * hotel; StayTypes.jsx), how you spend, and the seven counts behind the spend behind
- * one Fine tune button. Getting there is its own question since T860 (the
+ * Lifestyle panel holds, in the order it holds it. Where you sleep (three
+ * stay types, the stars for a hotel; StayTypes.jsx), how you spend, and the
+ * seven counts behind the spend behind one Fine tune button at the right of
+ * the spend heading. Getting there is its own question since T860 (the
  * way screen). Not a second setting: it reads and writes the same
  * choices.stay_tier and choices.lifestyle the panel does, so every price in
  * the app moves with it. One quiet line says it can all be changed later.
  */
-export function LifestyleStep({ party = null, countries = null, nights = 7 } = {}) {
+export function LifestyleStep() {
   const { t } = useI18n();
   const ctx = useFirstRun();
   const choices = ctx?.choices || {};
@@ -55,11 +55,18 @@ export function LifestyleStep({ party = null, countries = null, nights = 7 } = {
     <div className="pf-ls">
       <section className="pf-ls-q" aria-labelledby="pf-ls-sleep">
         <h3 className="pf-ls-h" id="pf-ls-sleep">{t('lifestyle.stay')}</h3>
-        <StayTypes party={party} countries={countries} nights={nights} />
+        <StayTypes />
       </section>
 
       <section className="pf-ls-q" aria-labelledby="pf-ls-spend">
-        <h3 className="pf-ls-h" id="pf-ls-spend">{t('journey.spendLabel')}</h3>
+        <div className="pf-ls-hrow">
+          <h3 className="pf-ls-h" id="pf-ls-spend">{t('journey.spendLabel')}</h3>
+          <Button variant="ghost" size="sm" className={`pf-ls-tune${tuning ? ' is-open' : ''}`} aria-expanded={tuning}
+            aria-controls="pf-ls-counts" iconEnd={<ChevronDownIcon size={16} className="pf-ls-chev" />}
+            onClick={() => setTuning(!tuning)}>
+            {t('lifestyle.fineTune')}
+          </Button>
+        </div>
         <TileGroup label={t('journey.spendLabel')} kind="choice" columns={3} className="pf-ls-tiles is-spend">
           {Object.keys(PROFILES).map((name) => {
             const Icon = PROFILE_ICONS[name];
@@ -72,14 +79,6 @@ export function LifestyleStep({ party = null, countries = null, nights = 7 } = {
           })}
         </TileGroup>
         {!activeProfile && <p className="pf-ls-note">{t('lifestyle.customNote')}</p>}
-      </section>
-
-      <section className="pf-ls-q">
-        <Button variant="secondary" size="sm" className={`pf-ls-tune${tuning ? ' is-open' : ''}`} aria-expanded={tuning}
-          aria-controls="pf-ls-counts" iconEnd={<ChevronDownIcon size={16} className="pf-ls-chev" />}
-          onClick={() => setTuning(!tuning)}>
-          {t('lifestyle.fineTune')}
-        </Button>
         {tuning && (
           <div className="pf-ls-counts" id="pf-ls-counts">
             <Segmented

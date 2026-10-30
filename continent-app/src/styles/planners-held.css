@@ -2895,7 +2895,9 @@
   font-weight: 600;
   color: var(--text);
 }
-.pf-dates-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--space-2); }
+/* Two equal halves that never grow past their share (owner, plan flow walk:
+   four months under When pushed How long off the card); a long value wraps. */
+.pf-dates-row { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: var(--space-2); }
 .pf-dates-cell.is-end.btn { align-items: flex-end; text-align: right; }
 .pf-dates-label { font-size: var(--text-caption); color: var(--text-2); font-weight: 400; }
 .pf-dates-value { font-size: var(--text-lead); font-weight: 600; color: var(--action); }

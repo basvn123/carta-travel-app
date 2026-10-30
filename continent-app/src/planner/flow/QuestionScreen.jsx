@@ -148,7 +148,6 @@ function TellBody({ settings, commit }) {
     choices: now.choices,
     airports: app?.airportHours ? app.airports : null,
   }), [now, parsed, t, months, dayFmt, stayTier, app?.airportHours, app?.airports]);
-  const left = chips.filter((c) => c.missing).length;
 
   const onFiles = async (fileList) => {
     if (!fileList?.length || state.phase === 'busy') return;
@@ -223,11 +222,10 @@ function TellBody({ settings, commit }) {
         <textarea
           id="pf-tell"
           className="pf-prompt-field"
-          rows={4}
+          rows={3}
           value={text}
           maxLength={600}
           placeholder={t('pf.tell.placeholder')}
-          aria-describedby="pf-read-left"
           onChange={(e) => setText(e.target.value)}
         />
         <div className="pf-prompt-row">
@@ -270,9 +268,6 @@ function TellBody({ settings, commit }) {
             </li>
           ))}
         </ul>
-        <p className="pf-read-left" id="pf-read-left" aria-live="polite">
-          {left === 0 ? t('pf.tell.leftNone') : t(left === 1 ? 'pf.tell.leftOne' : 'pf.tell.leftMany', { n: left })}
-        </p>
       </div>
       <p className="pf-note" role="status">
         {state.phase === 'busy' && t('pf.tell.reading')}

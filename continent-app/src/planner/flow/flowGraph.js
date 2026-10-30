@@ -8,14 +8,14 @@
  *   setup     tell (free text and files, skippable), booked, who, sleep, priority, when, from, way, airports
  *             (when, from and the way there drop out when bookings fix them; airports
  *             only when the way there may fly, T860), then create
- *   doors     T863: the whole trip / the flight first / I know where / I've
- *             booked part of it, always shown (booked stays preselect the
- *             last); the engine's own steps still skip Where when stays are
- *             booked (hasDoors)
- *   guide     shape, likes, weather, reach, avoid, budget, pick (the explorative
- *             path, only behind "guide me"), then trips: the loader and the
- *             priced trips the answers lead to (TF2, T797), the one screen
- *             of the run that is not a question
+ *   guide     shape, likes, weather, reach, around (how they get around on
+ *             the trip; not with their own car or a booked rental), avoid,
+ *             budget, pick, then how
+ *             (owner, plan flow walk 2026-10-30, in place of T863's four
+ *             doors: the whole trip at once or the flights first), then
+ *             trips: the loader and the priced trips the answers lead to
+ *             (TF2, T797), the one screen of the run that is not a question.
+ *             The flights first leave the run for their own screen.
  *   plan      the planning engine's own steps by name, from wizardSteps
  *             (Where, Trips or Stay, Stays, From, Getting, Finish) without the
  *             Booked and When steps the setup already asked
@@ -33,7 +33,7 @@ export const FLYING_WAYS = ['', 'any', 'plane'];
 /** A trip already under way (T675): where the traveller is now and until
  *  when stand in for When and Where from; the way there is behind them. */
 export const NOW_SETUP = ['tell', 'booked', 'who', 'sleep', 'priority', 'nowWhere', 'nowUntil'];
-export const GUIDE = ['g:shape', 'g:likes', 'g:weather', 'g:reach', 'g:avoid', 'g:budget', 'g:pick', 'g:trips'];
+export const GUIDE = ['g:shape', 'g:likes', 'g:weather', 'g:reach', 'g:around', 'g:avoid', 'g:budget', 'g:pick', 'g:how', 'g:trips'];
 /** The help-me-choose screen that answers rather than asks (T797). */
 export const TRIPS_SCREEN = 'g:trips';
 export const RHYTHM_SCREENS = ['r:mornings', 'r:pace', 'r:detail', 'r:goal', 'r:food', 'r:around'];
@@ -67,10 +67,25 @@ export function hasDoors(s) {
 export const WHERE_QUESTIONS = ['g:weather', 'g:reach'];
 /** T874: the ways there that answer "how far" already (no flying). */
 export const OVERLAND_WAYS = ['train', 'car'];
+/**
+ * No flying on this trip (owner, plan flow walk 2026-10-30: "travel by car,
+ * then no questions with flights"): the way there is the train or the car,
+ * or How far was answered "No flying". Every flight question and flight row
+ * asks this one door.
+ */
+export function noFlying(s) {
+  return OVERLAND_WAYS.includes(s.way || '') || s.guide?.reach === 'overland';
+}
+
 export function guideScreens(s) {
   const places = Array.isArray(s.places) ? s.places : [];
   const town = places.some((p) => p.kind === 'place');
   return GUIDE.filter((id) => {
+    // Whole trip or flights first is moot without flying: the whole trip.
+    if (id === 'g:how' && noFlying(s)) return false;
+    // Getting around is answered by driving their own car there, or a
+    // rental car already booked.
+    if (id === 'g:around' && (s.way === 'car' || s.booked.car)) return false;
     if (id === 'g:reach' && s.booked.flights) return false;
     // T874: a train or car way there has said "no flying"; asking how far
     // to fly would ask it twice (and could contradict it).
@@ -109,7 +124,21 @@ export function dayScreens(s, { all = false } = {}) {
 
 /** The whole run for one trip and door, start to finish. */
 export function fullFlow(s, door = 'know') {
-  return [...setupScreens(s), 'create', 'tripHome', 'doors', ...planScreens(s, door), ...dayScreens(s)];
+  return [...setupScreens(s), 'create', 'tripHome', ...planScreens(s, door), ...dayScreens(s)];
+}
+
+/**
+ * The screen Continue goes to after `id` (owner, plan flow walk 2026-10-30:
+ * "Continue always goes to the next question"). Only a question the Tell
+ * sentence answered, and not yet seen on its own screen, is passed over; a
+ * question the traveller answered on its screen is never jumped, so going
+ * back and on walks the questions in order. `stop` ends the walk early (the
+ * create screen, the trips) even when it carries an answer.
+ */
+export function continueTo(list, id, s, stop = null) {
+  let k = nextScreen(list, id);
+  while (k && k !== stop && s.answered.includes(k) && s.sources?.[k] === 'words') k = nextScreen(list, k);
+  return k;
 }
 
 /** The screen after `id` in `list`, or null at the end. */

@@ -8,9 +8,11 @@ import { syncParty, syncWhen } from './appSync.js';
 import { QUESTIONS, toggleValue } from './questions.js';
 import { useI18n } from '../../i18n/index.jsx';
 import { useSettings } from '../../components/SettingsLine.jsx';
-import { FromPanel, fromPoint } from '../../components/FromPicker.jsx';
+import { FromCountryPanel, FromPanel, fromName, fromPoint } from '../../components/FromPicker.jsx';
 import { AirportReach } from '../../components/AirportReach.jsx';
 import { airportsNear, originsWithin, DEFAULT_REACH } from '../../lib/airportReach.js';
+import { nearestOrigin } from '../../lib/origins.js';
+import { noFlying } from './flowGraph.js';
 import { DateField } from '../../components/DateField.jsx';
 import { Stepper } from '../../components/FilterControls.jsx';
 import { HeroImage } from '../../components/HeroImage.jsx';
@@ -132,18 +134,13 @@ export function WhoScreen({ settings, commit, doneLabel }) {
 // ---- Where you sleep and how you spend ----
 
 /** The named places' countries (iso2), for a stay's typical night (T862). */
-function placeIsos(settings) {
-  const isos = [...new Set((settings.places || []).map((p) => p.iso2).filter(Boolean))];
-  return isos.length ? isos : null;
-}
-
 /** The whole Lifestyle (T750: where you sleep, how you spend and the
  *  counts). They are app-wide choices, so there is nothing to keep here but
  *  "answered". */
 export function SleepScreen({ settings, commit, doneLabel }) {
   return (
     <>
-      <LifestyleStep party={settings.party} countries={placeIsos(settings)} nights={settings.when.nights} />
+      <LifestyleStep />
       <Foot onContinue={() => commit(markAnswered(settings, 'sleep'))} label={doneLabel} />
     </>
   );
@@ -154,7 +151,7 @@ export function SleepScreen({ settings, commit, doneLabel }) {
 export function StayScreen({ settings, commit, doneLabel }) {
   return (
     <>
-      <StayTypes party={settings.party} countries={placeIsos(settings)} nights={settings.when.nights} />
+      <StayTypes />
       <Foot onContinue={() => commit(markAnswered(settings, 'sleep'))} label={doneLabel} />
     </>
   );
@@ -271,7 +268,7 @@ export function WhenScreen({ settings, commit, doneLabel }) {
 export function FromScreen({ settings, commit, doneLabel }) {
   const app = useSettings();
   const [picked, setPicked] = useState(settings.from);
-  const current = picked ? { name: picked.name, lat: picked.lat, lon: picked.lng } : fromPoint(app);
+  const current = picked ? { name: picked.name, lat: picked.lat, lon: picked.lng, iso2: picked.countryCode } : fromPoint(app);
   const go = () => {
     const pt = picked || (current ? { name: current.name, lat: current.lat, lng: current.lon, countryCode: '' } : null);
     if (picked) app?.setFrom?.({ name: picked.name, lat: picked.lat, lon: picked.lng });
@@ -280,10 +277,10 @@ export function FromScreen({ settings, commit, doneLabel }) {
   return (
     <>
       <div className="pf-from">
-        <FromPanel
+        <FromCountryPanel
           data={app?.data}
           current={current}
-          autoFocus={false}
+          resume={!!settings.from}
           onPick={(pt) => setPicked({ name: pt.name, lat: pt.lat, lng: pt.lon, countryCode: pt.iso2 || '' })}
         />
       </div>
@@ -332,9 +329,19 @@ export function WayScreen({ settings, commit, doneLabel }) {
  *  airports, from the town the traveller leaves from. Stored app-wide
  *  (choices.origins), shared with the settings line's From. */
 export function AirportsScreen({ settings, commit, doneLabel }) {
+  const { t } = useI18n();
   const app = useSettings();
   const point = settings.from ? { lat: settings.from.lat, lon: settings.from.lng } : fromPoint(app);
   const meta = app?.data?.meta;
+  // The start the drives are measured from, the Where from answer (owner,
+  // plan flow walk): the times below change with it.
+  const fromLabel = settings.from?.name || fromName(app);
+  // A country picked without a town stands for a town near its capital:
+  // say which, so "0 min by car" to that town's airport reads right.
+  const origins = meta?.origins || {};
+  const isCountry = !!fromLabel && Object.values(origins).some((o) => o.country === fromLabel);
+  const viaCode = isCountry ? nearestOrigin(app?.data, point) : null;
+  const via = viaCode ? (origins[viaCode].city || origins[viaCode].name) : '';
   const covered = app?.sweptOrigins || null;
   const [hours, setHours] = useState(() => app?.airportHours || null);
   const [codes, setCodes] = useState(() => (app?.airportHours ? app.airports || [] : []));
@@ -346,6 +353,15 @@ export function AirportsScreen({ settings, commit, doneLabel }) {
   };
   return (
     <>
+      {fromLabel && (
+        <p className="pf-reach-from">
+          <AllIcons.MapPinIcon size={16} />
+          <span>
+            {t('pf.chip.from', { town: fromLabel })}
+            {via && <span className="pf-reach-via">, {t('pf.reach.via', { town: via })}</span>}
+          </span>
+        </p>
+      )}
       <AirportReach
         meta={meta}
         point={point}
@@ -431,6 +447,9 @@ export function LikeTiles({ picked, onToggle }) {
   // The layer photographs carry an author and a licence; they are credited
   // in one line under the grid (carta-design: a credit is text, under the photo).
   const credits = Object.values(photos).filter((p) => p.by).map((p) => `${p.city}, ${p.by}, ${p.lic}`).join('; ');
+  // Owner, plan flow walk: the line folds behind one small "Photo credits"
+  // text button (the licences still need the credit where the photo shows).
+  const [showCredits, setShowCredits] = useState(false);
   return (
     <>
       <div className="pf-likes" role="group" aria-label={t(q.titleKey)}>
@@ -455,7 +474,15 @@ export function LikeTiles({ picked, onToggle }) {
           );
         })}
       </div>
-      {credits && <p className="pf-credit">{t('pf.likes.credit', { list: credits })}</p>}
+      {credits && (
+        <div className="pf-credits">
+          <Button variant="quiet" size="sm" className="pf-credits-btn" aria-expanded={showCredits} aria-controls="pf-credit-list"
+            onClick={() => setShowCredits((v) => !v)}>
+            {t('pf.likes.creditsBtn')}
+          </Button>
+          {showCredits && <p className="pf-credit" id="pf-credit-list">{t('pf.likes.credit', { list: credits })}</p>}
+        </div>
+      )}
     </>
   );
 }
@@ -484,30 +511,74 @@ export function LikesScreen({ settings, commit, doneLabel }) {
 const TRIP_STEPS = [500, 800, 1200, 1800, 2500, 4000];
 const BUDGET_MAX = 100000;
 
-/** An optional budget, a person a day or for the whole trip. Places that fit
- *  it are marked, and the trip's cost card says how far under or over it is. */
 /**
- * The budget (T753): one figure for the whole trip, a person, typed or taken
- * from six quick amounts. A day budget is no longer asked (an older one
- * opens empty); the whole trip is the figure people actually hold.
+ * The budget (T753): one figure for the whole trip, typed or taken from six
+ * quick amounts. Owner, plan flow walk 2026-10-30 ("a family wants the
+ * total, students per person"): with more than one traveller a Segmented
+ * asks per person or the group's total first (a family starts on the total),
+ * the quick amounts follow it, and one quiet line under the field gives the
+ * other reading ("About {price} per person"). The settings keep both
+ * (tripSettings budgetOfRaw).
  */
 export function BudgetScreen({ settings, commit, doneLabel }) {
   const { t } = useI18n();
   const bcp47 = useBcp47();
   const start = settings.guide.budget;
-  const [eur, setEur] = useState(start.kind === 'total' ? start.eur : 0);
+  const people = Math.max(1, settings.party.adults + settings.party.kids);
+  const answered = start.kind === 'total' && start.eur > 0;
+  const [per, setPer] = useState(() => {
+    if (people < 2) return 'person';
+    if (answered) return start.per === 'group' ? 'group' : 'person';
+    return settings.party.kids > 0 || settings.party.kind === 'family' ? 'group' : 'person';
+  });
+  const [eur, setEur] = useState(() => {
+    if (!answered) return 0;
+    if (per === 'group') return start.per === 'group' && start.groupEur ? start.groupEur : start.eur * people;
+    return start.eur;
+  });
+  const group = per === 'group';
   const grouped = (n) => n.toLocaleString(bcp47);
   // The currency sign as the one money formatter writes it, not a literal.
   const sign = formatMoney(0).replace(/[\d\s.,]/g, '');
-  const save = (n) => commit(answer(settings, 'g:budget', { guide: { ...settings.guide, budget: { kind: 'total', eur: n } } }));
+  // The quick amounts: a person's, or the same times the party (to 100).
+  const steps = group ? TRIP_STEPS.map((n) => Math.round((n * people) / 100) * 100) : TRIP_STEPS;
+  const max = group ? BUDGET_MAX * people : BUDGET_MAX;
+  const switchPer = (next) => {
+    if (next === per) return;
+    // The figure carries over in the other reading, so nothing is lost.
+    if (eur) setEur(next === 'group' ? eur * people : Math.round(eur / people));
+    setPer(next);
+  };
+  const save = (n) => {
+    const budget = n && group
+      ? { kind: 'total', per: 'group', groupEur: n, eur: Math.round(n / people) }
+      : { kind: 'total', per: 'person', eur: n };
+    commit(answer(settings, 'g:budget', { guide: { ...settings.guide, budget } }));
+  };
   const onType = (e) => {
     const n = Number(String(e.target.value).replace(/\D/g, '')) || 0;
-    setEur(Math.min(BUDGET_MAX, n));
+    setEur(Math.min(max, n));
   };
+  const other = eur > 0 && people > 1
+    ? (group ? t('pf.budget.isPerson', { eur: formatMoney(Math.round(eur / people)) }) : t('pf.budget.isGroup', { eur: formatMoney(eur * people), n: people }))
+    : '';
   return (
     <>
       <div className="pf-budget">
-        <label className="pf-budget-label" htmlFor="pf-budget-eur">{t('pf.budget.label')}</label>
+        {people > 1 && (
+          <Segmented
+            block
+            label={t('pf.budget.trip')}
+            className="pf-fill-seg pf-budget-per"
+            value={per}
+            onChange={switchPer}
+            options={[
+              { value: 'person', label: t('pf.budget.perPerson') },
+              { value: 'group', label: t('pf.budget.perGroup', { n: people }) },
+            ]}
+          />
+        )}
+        <label className="pf-budget-label" htmlFor="pf-budget-eur">{t('pf.budget.trip')}</label>
         <div className="pf-budget-field">
           <span className="pf-budget-cur" aria-hidden="true">{sign}</span>
           <input
@@ -515,14 +586,16 @@ export function BudgetScreen({ settings, commit, doneLabel }) {
             className="pf-budget-input"
             inputMode="numeric"
             autoComplete="off"
-            placeholder={grouped(1500)}
+            placeholder={grouped(group ? Math.round((1500 * people) / 100) * 100 : 1500)}
             value={eur ? grouped(eur) : ''}
+            aria-describedby="pf-budget-other"
             onChange={onType}
             onKeyDown={(e) => { if (e.key === 'Enter' && eur) save(eur); }}
           />
         </div>
+        <p className="pf-budget-other" id="pf-budget-other" aria-live="polite">{other}</p>
         <ChipGroup label={t('pf.budget.quick')} className="pf-budget-steps">
-          {TRIP_STEPS.map((n) => (
+          {steps.map((n) => (
             <Chip key={n} kind="choice" selected={eur === n} onClick={() => setEur(n)}>
               {formatMoney(n)}
             </Chip>
@@ -564,11 +637,13 @@ function FixedPickRow({ icon, label, sub, tag, on }) {
  */
 export function PickScreen({ settings, commit, doneLabel }) {
   const { t } = useI18n();
-  const rows = SLOTS.slots.filter((r) => r.pickable).sort((a, b) => a.order - b.order);
+  // No flying (the train or the car): the flight row is not offered.
+  const ground = noFlying(settings);
+  const rows = SLOTS.slots.filter((r) => r.pickable && !(ground && r.id === 'flight')).sort((a, b) => a.order - b.order);
   const live = rows.filter((r) => r.status === 'live');
   const [pick, setPick] = useState(settings.guide.pick);
   const toggle = (id) => setPick((cur) => (cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id]));
-  const save = () => commit(answer(settings, 'g:pick', { guide: { ...settings.guide, pick } }));
+  const save = () => commit(answer(settings, 'g:pick', { guide: { ...settings.guide, pick: ground ? pick.filter((x) => x !== 'flight') : pick } }));
   return (
     <>
       <div className="pf-pick">
@@ -576,12 +651,14 @@ export function PickScreen({ settings, commit, doneLabel }) {
         <ChoiceRows
           label={t('pf.q.pick')}
           multi
-          options={live.map((r) => ({ value: r.id, icon: r.icon, label: t(r.labelKey), sub: r.subKey ? t(r.subKey) : '' }))}
+          // Owner, plan flow walk: the price lines stand on their names
+          // alone; only Where to go keeps its line.
+          options={live.map((r) => ({ value: r.id, icon: r.icon, label: t(r.labelKey) }))}
           value={pick}
           onPick={toggle}
         />
         {rows.filter((r) => r.status === 'notYet').map((r) => (
-          <FixedPickRow key={r.id} icon={r.icon} label={t(r.labelKey)} sub={r.subKey ? t(r.subKey) : ''} tag={t('tf.pick.notYet')} on={false} />
+          <FixedPickRow key={r.id} icon={r.icon} label={t(r.labelKey)} tag={t('tf.pick.notYet')} on={false} />
         ))}
       </div>
       <Foot onContinue={save} label={doneLabel} />

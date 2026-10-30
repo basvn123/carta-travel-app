@@ -298,7 +298,7 @@ test("applyTrip writes what the words gave, never a kept screen's answer", () =>
   assert.deepEqual(all.patch.when.months, [7]);
   assert.equal(all.patch.priority, "price");
   // 2000 for a group of four is 500 a person, the figure the budget question holds.
-  assert.deepEqual(all.patch.guide.budget, { kind: "total", eur: 500 });
+  assert.deepEqual(all.patch.guide.budget, { kind: "total", per: "group", groupEur: 2000, eur: 500 });
   assert.equal(all.choices.stay_tier, "dorm");
   assert.deepEqual(all.answered.sort(), ["g:budget", "priority", "sleep", "when", "who"].sort());
   const kept = applyTrip(s, parsed, { keep: ["who", "sleep"] });

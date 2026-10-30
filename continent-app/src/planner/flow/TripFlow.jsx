@@ -1,21 +1,17 @@
 import React, { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { plannerStore } from '../plannerStore.js';
-import { Button, IconButton, Tile, TileGroup } from '../../components/ui/index.js';
-import { HomeIcon, MapPinIcon, PlaneIcon, PlusIcon, RouteIcon, SettingsIcon, TicketIcon } from '../../components/Icons.jsx';
+import { Button, IconButton } from '../../components/ui/index.js';
+import { HomeIcon, MapPinIcon, PlusIcon, SettingsIcon } from '../../components/Icons.jsx';
 import { TripHead } from '../TripSummary.jsx';
 import { partyText } from '../../lib/party.js';
 import { PlanStage, SheetHead } from './PlanStage.jsx';
 import { QUESTIONS } from './questions.js';
 import { QuestionBody } from './QuestionScreen.jsx';
 import { TripSettingsSheet } from './TripSettingsSheet.jsx';
-import { CartaTrips } from './CartaTrips.jsx';
-import { KnowDoor } from './KnowDoor.jsx';
-import { BookedDoor } from './BookedDoor.jsx';
-import { bookedTrip, selectionOfPlan, suggestDoor } from '../../lib/plan/doors.js';
-import { useFirstRun } from '../../lib/firstRunContext.js';
+import { selectionOfPlan } from '../../lib/plan/doors.js';
 import { useBcp47, useMonths, useTripSettings, whenText } from './flowHooks.js';
-import { TRIPS_SCREEN, engineScreens, guideQuestions, guideScreens, hasDoors, nextScreen, prevScreen, progressOf } from './flowGraph.js';
+import { TRIPS_SCREEN, continueTo, engineScreens, guideQuestions, guideScreens, hasDoors, prevScreen, progressOf } from './flowGraph.js';
 import { normalizeSettings, quizAnswers, spendFor } from './tripSettings.js';
 import { takePlan } from '../../lib/recommend/keptStore.js';
 import NotYet from '../../components/NotYet.jsx';
@@ -25,10 +21,9 @@ import { useAirlines, airlineName } from '../../lib/flights/useAirlines.js';
 // The trip finder (TF2, T797): the loader and the priced trips behind
 // question 7, with lib/recommend, in a chunk of their own.
 const TripFinderScreen = lazy(() => import('../finder/FindingTrips.jsx'));
-// T864, T865: Find my flight first and I know where's route, in the same
-// chunk as the finder (they run its engine), so no preload is added.
+// T864: the flights first, in the same chunk as the finder (it runs its
+// engine), so no preload is added.
 const FlightFirstScreen = lazy(() => import('../finder/FindingTrips.jsx').then((m) => ({ default: m.FlightFirstScreen })));
-const KnowBuildScreen = lazy(() => import('../finder/FindingTrips.jsx').then((m) => ({ default: m.KnowBuildScreen })));
 /** The trip page's id in the address (#tf=<id>, the finder's TRIP_HASH), or null. */
 function readTripHash() {
   try {
@@ -43,27 +38,26 @@ const FINDER_UI = { NotYet, AirlineMark, useAirlines, airlineName };
 /**
  * TripFlow (T656), the trip planner before a route exists: the trip's own
  * page after the Polarsteps trip view (the map on top, the sheet with when it
- * starts, the nights planned and Start planning), then how the traveller
- * wants to choose where (the doors), the help-me-choose questions behind
- * "Guide me", and then the planning engine itself, the wizard's planning
- * steps, rendered by the caller through `renderEngine`.
+ * starts, the nights planned and Start planning), then the help-me-choose
+ * questions, the last of them how to plan (the whole trip: the trips for
+ * you; the flights first: their screen), and, for a country page's "Plan a
+ * trip here", the planning engine itself, the wizard's planning steps,
+ * rendered by the caller through `renderEngine`.
  *
  *   renderEngine({ flowSteps, initialWhereTab, lockWhereTab, onCancel })
  *      the caller's GuidedTripWizard mount with those props
- *   onOpenJourney(id)   one of Carta's own trips, its whole week (T752)
  *   onLand(selection)   T863 to T866: a trip a door made, straight onto the
  *                       trip page (the planner's loadFromWizard hand-over)
  */
-export function TripFlow({ renderEngine, seed = null, onOpenJourney = null, onLand = null }) {
+export function TripFlow({ renderEngine, seed = null, onLand = null }) {
   const { t } = useI18n();
-  const ctx = useFirstRun();
   const [settings, save] = useTripSettings();
   // T870: an address with a trip page on it (#tf=<id>) opens on the trips,
   // with that trip's page open (the hash is read here, not imported from the
   // finder's lazy chunk).
   const arriveTrip = useRef(readTripHash());
-  const [phase, setPhase] = useState(() => (arriveTrip.current ? TRIPS_SCREEN : 'home')); // home | doors | carta | g:* | ff | kw | kw:build | bk | engine
-  const [door, setDoor] = useState(() => suggestDoor(settings));
+  const [phase, setPhase] = useState(() => (arriveTrip.current ? TRIPS_SCREEN : 'home')); // home | g:* | ff | engine
+  const [door, setDoor] = useState(() => settings.door || 'guide');
   const [settingsOpen, setSettingsOpen] = useState(false);
   // A question reopened from the trips' answers bar (T798) comes straight
   // back to the trips on Continue, not through the questions after it.
@@ -149,15 +143,19 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null, onLa
   const questions = useMemo(() => guideQuestions(settings), [settings]);
   const afterGuide = (id, s) => {
     if (returnTo) { setReturnTo(null); setPhase(returnTo); return; }
-    let k = nextScreen(guide, id);
-    // Skip what the free field already answered (never the trips).
-    while (k && k !== TRIPS_SCREEN && s.answered.includes(k)) k = nextScreen(guide, k);
-    if (k) setPhase(k); else setPhase(TRIPS_SCREEN);
+    // How do you want to plan: the flights first opens their screen.
+    if (id === 'g:how') { setDoor(s.door || 'guide'); setPhase(s.door === 'flight' ? 'ff' : TRIPS_SCREEN); return; }
+    // Skip only what the Tell sentence answered (never the trips).
+    const k = continueTo(guideScreens(s), id, s, TRIPS_SCREEN);
+    setPhase(k || TRIPS_SCREEN);
   };
   /** Reopen one question from the trips, and come back to them after it. */
   const reopen = (id) => { setReturnTo(TRIPS_SCREEN); setFinderEdits({}); setMarkedId(null); setPhase(id); };
-  // T863: the doors always show; the words (and what is booked) preselect one.
-  const start = () => { setDoor(suggestDoor(settings)); setPhase('doors'); };
+  // Owner, plan flow walk 2026-10-30: the four doors repeated what the Plan
+  // opening already asked, so Start planning goes straight into the
+  // help-me-choose questions; the last of them (g:how) asks whole trip or
+  // flights first.
+  const start = () => { setDoor('guide'); setPhase(guide[0]); };
 
   if (phase === 'engine') {
     const d = hasDoors(settings) ? door : 'know';
@@ -167,106 +165,34 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null, onLa
       // "I know where" is the picker alone (T752): no Help me choose tab.
       lockWhereTab: d === 'know',
       // Behind Guide me the step before the planner is Trips for you (T801).
-      onCancel: () => setPhase(d === 'guide' ? TRIPS_SCREEN : 'doors'),
+      onCancel: () => setPhase(d === 'guide' ? TRIPS_SCREEN : 'home'),
     });
   }
 
   const bar = (
-    <IconButton ref={gearRef} tone="surface" label={t('pf.settings')} onClick={() => setSettingsOpen(true)}>
-      <SettingsIcon size={20} />
+    <IconButton ref={gearRef} tone="surface" label={t('pf.settings')} onClick={() => setSettingsOpen(true)} className="pf-round">
+      <SettingsIcon size={18} />
     </IconButton>
   );
-
-  // Carta's own trips (T752): the same page the Plan opening opens, a full
-  // page rather than a step on the card. T863: no longer a door of its own
-  // (the four doors are how much Carta plans); a quiet link under them.
-  if (phase === 'carta') {
-    return (
-      <div className="pf is-carta" ref={rootRef}>
-        <CartaTrips titleTag="h2" onBack={() => setPhase('doors')} onOpenJourney={(id) => onOpenJourney?.(id)} />
-      </div>
-    );
-  }
+  // Every step carries the gear in its own head, level with the back
+  // control (owner, plan flow walk), instead of a bar floating above it.
+  const inHead = !!QUESTIONS[phase] || phase === 'ff' || phase === TRIPS_SCREEN;
 
   let body;
   if (phase === 'home') {
     body = <TripHome settings={settings} onStart={start} actions={bar} />;
-  } else if (phase === 'doors') {
-    // T863 (owner: "more modern, icons, no subtext; each title clear on its
-    // own"): four large tiles, one line icon and one title each.
-    const doors = [
-      { value: 'guide', icon: <RouteIcon size={24} /> },
-      { value: 'flight', icon: <PlaneIcon size={24} /> },
-      { value: 'know', icon: <MapPinIcon size={24} /> },
-      { value: 'booked', icon: <TicketIcon size={24} /> },
-    ];
-    const go = () => {
-      save({ ...settings, door });
-      if (door === 'guide') setPhase(guide[0]);
-      else if (door === 'flight') setPhase('ff');
-      else if (door === 'know') setPhase('kw');
-      else setPhase('bk');
-    };
+  } else if (phase === 'ff') {
     body = (
-      <div className="pf-step">
-        <SheetHead onBack={() => setPhase('home')} backLabel={t('pf.back')} />
-        <h2 className="pf-title" tabIndex={-1}>{t('pf.doors.title')}</h2>
-        <TileGroup label={t('pf.doors.title')} kind="choice" columns={2} className="pf-doors">
-          {doors.map(({ value, icon }) => (
-            <Tile key={value} kind="choice" className="pf-door" data-door={value} selected={door === value}
-              icon={icon} onClick={() => setDoor(value)}>
-              {t(`pf.doors.${value}`)}
-            </Tile>
-          ))}
-        </TileGroup>
-        <div className="pf-foot">
-          <Button variant="primary" block onClick={go}>{t('pf.continue')}</Button>
-          <Button variant="quiet" size="sm" className="pf-doors-carta" onClick={() => setPhase('carta')}>{t('pf.carta.title')}</Button>
-        </div>
-      </div>
-    );
-  } else if (phase === 'ff' || phase === 'kw:build') {
-    const loading = <div className="pf-step" aria-busy="true"><span className="sr-only">{t('state.loading')}</span></div>;
-    body = (
-      <Suspense fallback={loading}>
-        {phase === 'ff' ? (
-          <FlightFirstScreen
-            ui={FINDER_UI}
-            settings={settings}
-            onBack={() => setPhase('doors')}
-            onChange={() => setSettingsOpen(true)}
-            onPick={(plan) => landPlan(plan, 'flight')}
-          />
-        ) : (
-          <KnowBuildScreen settings={settings} onBack={() => setPhase('kw')} onLand={(plan) => landPlan(plan, 'know')} />
-        )}
+      <Suspense fallback={<div className="pf-step" aria-busy="true"><span className="sr-only">{t('state.loading')}</span></div>}>
+        <FlightFirstScreen
+          ui={FINDER_UI}
+          settings={settings}
+          onBack={() => setPhase('g:how')}
+          headEnd={bar}
+          onChange={() => setSettingsOpen(true)}
+          onPick={(plan) => landPlan(plan, 'flight')}
+        />
       </Suspense>
-    );
-  } else if (phase === 'kw') {
-    body = (
-      <KnowDoor
-        settings={settings}
-        onBack={() => setPhase('doors')}
-        onGo={(places) => {
-          // The places are the trip's named places (the finder's pool, T859)
-          // and the Where step's countries, as Tell Carta's words set them.
-          save({ ...settings, places, door: 'know' });
-          plannerStore.setWizard({ countries: [...new Set(places.map((p) => p.country).filter(Boolean))].slice(0, 3) });
-          setPhase('kw:build');
-        }}
-      />
-    );
-  } else if (phase === 'bk') {
-    body = (
-      <BookedDoor
-        settings={settings}
-        save={save}
-        onBack={() => setPhase('doors')}
-        onGo={(s) => {
-          const made = bookedTrip(s, ctx?.data?.destinations || {}, { label: s.trip.name || '' });
-          if (made) land(made.selection, 'booked', s);
-        }}
-      />
     );
   } else if (phase === TRIPS_SCREEN) {
     body = (
@@ -276,6 +202,7 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null, onLa
           settings={settings}
           guide={questions}
           onBack={() => setPhase(questions[questions.length - 1])}
+          headEnd={bar}
           onWiden={reopen}
           edits={finderEdits}
           setEdits={setFinderEdits}
@@ -290,7 +217,7 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null, onLa
   } else {
     const q = QUESTIONS[phase];
     const pos = progressOf(questions, phase);
-    const back = returnTo || prevScreen(guide, phase) || 'doors';
+    const back = returnTo || prevScreen(guide, phase) || 'home';
     body = (
       <div className="pf-step">
         <SheetHead
@@ -298,6 +225,7 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null, onLa
           backLabel={t('pf.back')}
           position={pos.index >= 0 && questions.includes(phase) ? t('pf.position', { x: pos.index + 1, n: questions.length }) : ''}
           marks={questions.includes(phase) ? questions.map((id) => ({ key: id, now: id === phase, done: settings.answered.includes(id) })) : null}
+          end={bar}
         />
         <h2 className="pf-title" tabIndex={-1}>{q ? t(q.titleKey) : ''}</h2>
         <QuestionBody id={phase} settings={settings} commit={(s) => { save(s); afterGuide(phase, s); }} />
@@ -307,7 +235,7 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null, onLa
 
   return (
     <div className={`pf${phase === 'home' ? ' is-trip' : ''}`} ref={rootRef}>
-      <PlanStage bar={phase === 'home' ? null : bar} sheetLabel={settings.trip.name || t('pf.sheet')} wide={phase === 'g:likes' || phase === TRIPS_SCREEN || phase === 'ff'}>
+      <PlanStage bar={phase === 'home' || inHead ? null : bar}sheetLabel={settings.trip.name || t('pf.sheet')} wide={phase === 'g:likes' || phase === TRIPS_SCREEN || phase === 'ff'}>
         {body}
       </PlanStage>
       {settingsOpen && <TripSettingsSheet anchorRef={gearRef} onClose={() => setSettingsOpen(false)} />}

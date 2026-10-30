@@ -26,7 +26,7 @@ test("the words fill the answers they give; the rest stay open as dashed chips",
   assert.deepEqual(filled, ["when", "nights", "who", "budget", "way"]);
   // 2000 for a family of four: the chip says what was said, the answer holds 500 a person.
   assert.equal(chips.find((c) => c.key === "budget").text, 'pf.chip.budgetGroup{"eur":"E2000","n":4}');
-  assert.deepEqual(settings.guide.budget, { kind: "total", eur: 500 });
+  assert.deepEqual(settings.guide.budget, { kind: "total", per: "group", groupEur: 2000, eur: 500 });
   const missing = chips.filter((c) => c.missing).map((c) => c.screen);
   assert.deepEqual(missing, ["booked", "sleep", "priority", "from"]);
   assert.deepEqual(missing, openSetup(settings));
@@ -82,5 +82,5 @@ test("a budget for the group is split over the party a popover set", () => {
   const p = read("with my wife in July, 1500 euro for all of us");
   const family = { ...defaultSettings(), party: { kind: "family", adults: 2, kids: 2, kidAges: [7, 7], babies: 0, slowWalkers: false } };
   const { settings } = tellSettings(defaultSettings(), p, { who: family });
-  assert.deepEqual(settings.guide.budget, { kind: "total", eur: 375 });
+  assert.deepEqual(settings.guide.budget, { kind: "total", per: "group", groupEur: 1500, eur: 375 });
 });

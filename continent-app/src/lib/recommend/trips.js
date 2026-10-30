@@ -17,7 +17,7 @@
 import { quoteTrip } from '../price/trip.js';
 import { wizardPlannerState } from '../tripTotal.js';
 import { flightRanking, partySize } from '../../planner/flow/tripSettings.js';
-import { buildCandidates } from './candidates.js';
+import { buildCandidates, wantsNoCar } from './candidates.js';
 import { SLOT_ROWS, ADAPTERS, buildSlots, prepareState, slotTotals } from './slots.js';
 import { planOf, finderState } from '../../planner/finder/planOf.js';
 
@@ -102,7 +102,7 @@ export function priceCandidate(c, input, qdata = quoteData(input), registry = {}
     pick: s.guide.pick,
     priority: s.priority,
     stayTier: input.stayTier || null,
-    noCar: s.guide.avoid.includes('car'),
+    noCar: wantsNoCar(s),
     ownFlight: input.ownFlight || null,
     settings: s,
   };

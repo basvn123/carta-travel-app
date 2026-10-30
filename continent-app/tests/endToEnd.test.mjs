@@ -120,3 +120,27 @@ test("T874: with no fare anywhere the trip names a swept airport, not the neares
   assert.equal(q.cartaFlight.home, "BRU");
   assert.equal(q.parts.airport, 0);
 });
+
+test("plan flow walk: getting around moves the pricing and the scoring", async () => {
+  const { wantsNoCar, tasteFor, shapesFor } = await import("../src/lib/recommend/candidates.js");
+  const around = (v, extra = {}) => settings({ way: "plane", ...extra, guide: { around: v, ...(extra.guide || {}) } });
+  // Public transport and taxis: no car anywhere, car-needing places marked down.
+  for (const v of ["public", "taxi"]) {
+    assert.ok(wantsNoCar(around(v)), v);
+    assert.equal(transportFor("road", around(v)), "auto", `${v}: a road trip is not priced with a car`);
+    assert.equal(tasteFor(around(v)).noCar, true, `${v}: the taste says no car`);
+    assert.ok(!shapesFor(around(v, { guide: { shapes: ["road", "towns"] } })).shapes.includes("road"), `${v}: no road trip`);
+  }
+  // A hire car prices every shape with one; whatever fits keeps today's rule.
+  assert.equal(transportFor("towns", around("car")), "car");
+  assert.equal(transportFor("towns", around("mix")), "auto");
+  assert.equal(transportFor("road", around("mix")), "car");
+  assert.ok(!wantsNoCar(around("car")) && !wantsNoCar(around("mix")));
+  // The question is not asked when they drive their own car or booked a rental.
+  assert.ok(guideScreens(settings({ way: "plane" })).includes("g:around"));
+  assert.ok(!guideScreens(settings({ way: "car" })).includes("g:around"));
+  assert.ok(!guideScreens(settings({ way: "plane", booked: { car: true } })).includes("g:around"));
+  // "Avoid a car" left the avoid question; an older answer still counts.
+  assert.ok(!QUESTIONS["g:avoid"].offered(settings({}), "car"));
+  assert.ok(wantsNoCar(settings({ guide: { avoid: ["car"] } })));
+});

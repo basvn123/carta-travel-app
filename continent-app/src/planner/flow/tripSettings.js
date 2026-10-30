@@ -49,6 +49,13 @@ export const LIKES = ['beach', 'hiking', 'lakes', 'culture', 'city', 'food', 'ni
 export const WEATHER = ['warm', 'mild', 'snow', 'any'];
 export const REACH = ['short', 'any', 'overland'];
 export const AVOID = ['crowds', 'transfers', 'car', 'heat'];
+/**
+ * How the traveller gets around on the trip itself (owner, plan flow walk
+ * 2026-10-30): public transport, taxis, a hire car, or whatever fits. It
+ * reaches the scoring (no car marks down places that need one, lib/match.js)
+ * and the pricing (lib/recommend/candidates.js transportFor).
+ */
+export const AROUND = ['public', 'taxi', 'car', 'mix'];
 /** T860: how they want to get there (the app's transport modes the question offers). */
 export const WAYS = ['any', 'plane', 'train', 'car'];
 /** T863: how much Carta plans, the four doors: the whole trip, the flight
@@ -91,7 +98,7 @@ export function defaultSettings() {
     when: { mode: 'exact', start: '', end: '', months: [], nights: 7 },
     from: null,
     way: '',
-    guide: { shapes: [], shape: '', likes: [], weather: '', reach: '', avoid: [], budget: { kind: 'total', eur: 0 }, pick: [...PICKABLE] },
+    guide: { shapes: [], shape: '', likes: [], weather: '', reach: '', around: '', avoid: [], budget: { kind: 'total', per: 'person', eur: 0 }, pick: [...PICKABLE] },
     rhythm: { mornings: '', pace: '', detail: '', goal: '', food: '', around: '', steps: 0 },
     trip: { name: '', visibility: 'private', cover: '', created: 0, buddies: [] },
     note: '',
@@ -132,6 +139,23 @@ function placeOf(p) {
   return p && typeof p === 'object' && Number.isFinite(Number(p.lat))
     ? { name: String(p.name || ''), lat: Number(p.lat), lng: Number(p.lng ?? p.lon), countryCode: String(p.countryCode || '') }
     : null;
+}
+
+/**
+ * The budget made safe (owner, plan flow walk 2026-10-30: "a family wants
+ * the total, students per person"). `eur` stays the figure a person, the
+ * one every check compares (budgetCheck, rank.budgetOf); `per` says how the
+ * traveller gave it, and for the group `groupEur` keeps their own total, so
+ * `eur` follows the party when it changes and the total reads back as typed.
+ */
+function budgetOfRaw(b, people) {
+  const kind = b?.kind === 'total' ? 'total' : 'day';
+  const per = kind === 'total' && b?.per === 'group' ? 'group' : 'person';
+  const groupEur = per === 'group' ? clampInt(b?.groupEur, 0, 100000 * 20, 0) : 0;
+  if (per === 'group' && groupEur > 0) {
+    return { kind, per, groupEur, eur: Math.round(groupEur / Math.max(1, people)) };
+  }
+  return { kind, per: 'person', eur: clampInt(b?.eur, 0, 100000, 0) };
 }
 
 /** Any stored object made safe: unknown keys dropped, every value checked. */
@@ -184,11 +208,9 @@ export function normalizeSettings(raw) {
       likes: someOf(g.likes, LIKES).slice(0, 3),
       weather: oneOf(g.weather, WEATHER, ''),
       reach: oneOf(g.reach, REACH, ''),
+      around: oneOf(g.around, AROUND, ''),
       avoid: someOf(g.avoid, AVOID),
-      budget: {
-        kind: g.budget?.kind === 'total' ? 'total' : 'day',
-        eur: clampInt(g.budget?.eur, 0, 100000, 0),
-      },
+      budget: budgetOfRaw(g.budget, adults + kids),
       // T796: what Carta picks; a slot left out is the traveller's to choose.
       pick: Array.isArray(g.pick) ? someOf(g.pick, PICKABLE) : [...PICKABLE],
       // T868: the T803 levers are gone; a saved settings.guide.levers is dropped here.

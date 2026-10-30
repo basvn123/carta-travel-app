@@ -6,7 +6,7 @@ import { Button, ChoiceRows, IconButton } from '../../components/ui/index.js';
 import { ClockIcon, SettingsIcon } from '../../components/Icons.jsx';
 import { PlanStage, SheetHead } from './PlanStage.jsx';
 import { QUESTIONS } from './questions.js';
-import { setupScreens, nextScreen, prevScreen, progressOf } from './flowGraph.js';
+import { setupScreens, continueTo, prevScreen, progressOf } from './flowGraph.js';
 import { QuestionBody } from './QuestionScreen.jsx';
 import { useTripSettings } from './flowHooks.js';
 import { CreateScreen } from './setupScreens.jsx';
@@ -59,11 +59,9 @@ export function PlanFlow({
   const go = (id) => setScreen(id);
   const next = (id, s) => {
     const l = [...setupScreens(s), 'create'];
-    // Skip what an earlier answer (the free text, a booking) already gave,
-    // so the traveller only meets the questions still open.
-    let k = nextScreen(l, id);
-    while (k && k !== 'create' && s.answered.includes(k)) k = nextScreen(l, k);
-    go(k || 'create');
+    // Skip only what the Tell sentence answered; a question answered on its
+    // own screen is the next stop again (continueTo).
+    go(continueTo(l, id, s, 'create') || 'create');
   };
   const back = () => go(prevScreen(list, screen) || 'kind');
 
@@ -293,14 +291,13 @@ function OnTripSheet({ onBack, onPick }) {
 function KindSheet({ value, onPick, onClose, onContinue, onPast }) {
   const { t } = useI18n();
   const options = [
-    { value: 'new', icon: 'CalendarIcon', label: t('pf.kind.new'), sub: t('pf.kind.newSub') },
-    { value: 'now', icon: 'ShoeIcon', label: t('pf.kind.now'), sub: t('pf.kind.nowSub') },
+    { value: 'new', icon: 'CalendarIcon', label: t('pf.kind.new') },
+    { value: 'now', icon: 'ShoeIcon', label: t('pf.kind.now') },
   ];
   return (
     <div className="pf-step">
       <SheetHead onClose={onClose} closeLabel={t('pf.close')} />
       <h2 className="pf-title" tabIndex={-1}>{t('pf.kind.title')}</h2>
-      <p className="pf-help">{t('pf.kind.help')}</p>
       <ChoiceRows label={t('pf.kind.title')} options={options} value={[value]} onPick={onPick} />
       <div className="pf-foot">
         <Button variant="primary" block onClick={onContinue}>{t('pf.continue')}</Button>

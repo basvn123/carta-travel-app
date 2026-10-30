@@ -105,6 +105,189 @@
   .tff-check, .tff-early > li { animation: none; }
 }
 
+/* ---- Searching, the brief (owner, plan flow walk 2026-10-30) ----
+   One authored moment of about four seconds: the first trips' photographs
+   fan in, the answers land one by one as the lines of the trip's brief (the
+   receipt grammar: hairlines, a 2 px ink rule above the live line), each
+   ticked once its stage of real work is done. Transform, opacity and
+   clip-path only, motion tokens, no loop; the live dot stays still (T867).
+   --brief-step spaces the lines so they fill the owner's four seconds. */
+.tff-brief-stage {
+  display: grid;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 920px;
+  margin: var(--space-2) auto 0;
+}
+
+.tff-fan { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); }
+.tff-fan-deck { position: relative; width: 100%; max-width: 320px; height: 168px; }
+.tff-fan-card {
+  --fan: rotate(0deg);
+  position: absolute;
+  top: var(--space-2);
+  left: 50%;
+  width: 116px;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border: 3px solid var(--surface);
+  border-radius: var(--radius-card);
+  background: var(--surface-sunken);
+  transform: translateX(-50%) var(--fan);
+  animation: tff-fan-in var(--dur-3) var(--ease-out) both;
+}
+.tff-fan-card.is-0 { --fan: translateX(-74px) rotate(-7deg); z-index: 1; }
+.tff-fan-card.is-1 { --fan: translateY(calc(-1 * var(--space-2))); z-index: 2; animation-delay: var(--dur-1); }
+.tff-fan-card.is-2 { --fan: translateX(74px) rotate(7deg); z-index: 1; animation-delay: var(--dur-2); }
+.tff-fan-img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.tff-fan-card.is-in .tff-fan-img { animation: tff-photo-in var(--dur-4) var(--ease-out) both; }
+.tff-fan-names {
+  min-height: calc(var(--text-label) * 1.35);
+  margin: 0;
+  text-align: center;
+  font-size: var(--text-label);
+  font-weight: 500;
+  color: var(--text-2);
+  text-wrap: balance;
+}
+@keyframes tff-fan-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(var(--space-4)) rotate(0deg); }
+  to { opacity: 1; transform: translateX(-50%) var(--fan); }
+}
+@keyframes tff-photo-in { from { opacity: 0; transform: scale(1.06); } to { opacity: 1; transform: none; } }
+
+.tff-brief {
+  --brief-step: 240ms;
+  padding: var(--space-3) var(--space-4) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.tff-brief-h { margin: 0 0 var(--space-1); font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.tff-brief-lines { margin: 0; padding: 0; list-style: none; }
+.tff-brief-line {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) 16px;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 38px;
+  font-size: var(--text-body);
+  line-height: var(--leading-ui);
+  position: relative;
+  color: var(--text);
+}
+.tff-brief-line + .tff-brief-line { border-top: 1px solid var(--border-soft); }
+/* A blank form first: every line stands from the first frame as a still
+   sunken bar on its hairline (the loading rule), and its answer writes
+   itself over the bar in turn. */
+.tff-brief-line::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: calc(20px + var(--space-3));
+  width: 44%;
+  height: 10px;
+  margin-top: -5px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  animation: tff-bar-out var(--dur-2) var(--ease-out) both;
+  animation-delay: calc(var(--i) * var(--brief-step) + var(--dur-1));
+  pointer-events: none;
+}
+.tff-brief-icon,
+.tff-brief-text {
+  animation: tff-line-in var(--dur-3) var(--ease-out) both;
+  animation-delay: calc(var(--i) * var(--brief-step));
+}
+@keyframes tff-bar-out { from { opacity: 1; } to { opacity: 0; } }
+.tff-brief-icon { display: grid; place-items: center; color: var(--text-2); }
+.tff-brief-text { overflow-wrap: anywhere; }
+/* The tick follows its own line (the delay is set per line from its
+   arrival), or its stage of work when that ends later. */
+.tff-brief-tick { display: grid; place-items: center; color: var(--text-2); opacity: 0; }
+.tff-brief-line.is-on .tff-brief-tick { animation: tff-tick var(--dur-2) var(--ease-out) both; }
+@keyframes tff-tick { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: none; } }
+@keyframes tff-line-in {
+  from { opacity: 0; clip-path: inset(0 100% 0 0); transform: translateY(4px); }
+  to { opacity: 1; clip-path: inset(0 0 0 0); transform: none; }
+}
+
+.tff-brief-live {
+  position: relative;
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-3);
+  margin: var(--space-2) 0 0;
+  padding-top: var(--space-3);
+  font-size: var(--text-body);
+  font-weight: 600;
+  line-height: var(--leading-ui);
+  color: var(--text);
+  animation: tff-in var(--dur-2) var(--ease-out) both;
+  animation-delay: calc(var(--i) * var(--brief-step));
+}
+.tff-brief-live::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--text);
+  transform-origin: left center;
+  animation: tff-rule var(--dur-4) var(--ease-out) both;
+  animation-delay: inherit;
+}
+@keyframes tff-rule { from { transform: scaleX(0); } to { transform: none; } }
+.tff-brief-dot {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-pill);
+  color: var(--surface);
+  transition: background-color var(--dur-2) var(--ease-out);
+}
+/* Live while working: the one still brown dot. Found: an ink tick. */
+.tff-brief-live:not(.is-found) .tff-brief-dot::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--action);
+}
+.tff-brief-live.is-found .tff-brief-dot { background: var(--text); }
+.tff-brief-live-text { animation: tff-in var(--dur-2) var(--ease-out) both; }
+
+@media (min-width: 769px) {
+  .tff-brief-stage {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    align-items: center;
+    gap: var(--space-7);
+    margin-top: var(--space-5);
+  }
+  .tff-fan-deck { max-width: 420px; height: 280px; }
+  .tff-fan-card { width: 180px; }
+  .tff-fan-card.is-0 { --fan: translateX(-112px) rotate(-7deg); }
+  .tff-fan-card.is-2 { --fan: translateX(112px) rotate(7deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tff-fan-card,
+  .tff-fan-card.is-in .tff-fan-img,
+  .tff-brief-icon,
+  .tff-brief-text,
+  .tff-brief-line::after,
+  .tff-brief-live,
+  .tff-brief-live::before,
+  .tff-brief-live-text,
+  .tff-brief-line.is-on .tff-brief-tick { animation: none; }
+  .tff-brief-line.is-on .tff-brief-tick { opacity: 1; }
+  .tff-brief-line::after { display: none; }
+  .tff-brief-dot { transition: none; }
+}
+
 /* The head: "21 trips for you", the answers in one line under it, Edit
    answers on the right. */
 .tff-trips { gap: var(--space-4); }

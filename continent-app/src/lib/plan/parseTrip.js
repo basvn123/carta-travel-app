@@ -888,7 +888,10 @@ export function applyTrip(s, parsed, { keep = [] } = {}) {
     const b = F.budget.value;
     const people = Math.max(1, (party.adults || 1) + (party.kids || 0));
     const eur = b.per === 'group' ? Math.round(b.eur / people) : b.eur;
-    guide.budget = { kind: b.unit === 'day' ? 'day' : 'total', eur };
+    // A group's whole-trip figure keeps its total (tripSettings budgetOfRaw).
+    guide.budget = b.per === 'group' && b.unit !== 'day'
+      ? { kind: 'total', per: 'group', groupEur: b.eur, eur }
+      : { kind: b.unit === 'day' ? 'day' : 'total', per: 'person', eur };
     guideTouched = true;
     answered.push('g:budget');
   }

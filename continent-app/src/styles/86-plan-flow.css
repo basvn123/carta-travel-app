@@ -467,7 +467,9 @@
 
 .pf-ls-way { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 
-.pf-ls-tune.btn { align-self: flex-start; }
+/* Fine tune sits at the right end of the spend heading (owner, plan flow walk). */
+.pf-ls-hrow { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.pf-ls-tune.btn { flex: none; margin-right: calc(-1 * var(--space-2)); }
 
 .pf-ls-chev { transition: transform var(--dur-2) var(--ease-out); }
 
@@ -707,7 +709,20 @@
    across on a phone, six from 769 px), each the same width. */
 .pf-budget { display: flex; flex-direction: column; gap: var(--space-3); }
 
-.pf-budget-label { text-align: center; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
+/* Owner, plan flow walk: per person or the group's total first, then the
+   field under a small label, then one quiet line with the other reading.
+   The line holds its height so nothing moves as the figure is typed. */
+.pf-budget-per { margin-bottom: var(--space-2); }
+
+.pf-budget-label { margin-bottom: calc(-1 * var(--space-1)); font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
+
+.pf-budget-other {
+  min-height: calc(var(--text-label) * 1.4);
+  margin: calc(-1 * var(--space-1)) 0 0;
+  font-size: var(--text-label);
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
 
 .pf-budget-field {
   display: flex;
@@ -789,7 +804,8 @@
 .pf-cover-img { border-radius: var(--radius-card); overflow: hidden; outline: 2px solid transparent; outline-offset: -2px; }
 .pf-cover.is-on .pf-cover-img { outline-color: var(--select-border); }
 .pf-dates-arrow { color: var(--text-2); }
-.pf-dates-cell.btn { display: flex; flex-direction: column; align-items: flex-start; height: auto; min-height: var(--tap-main); padding: var(--space-2) var(--space-1); }
+.pf-dates-cell.btn { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; height: auto; min-height: var(--tap-main); padding: var(--space-2) var(--space-1); white-space: normal; text-align: left; }
+.pf-dates-cell .pf-dates-value { max-width: 100%; overflow-wrap: break-word; text-wrap: balance; }
 .pf-dates-cell .btn-label { display: contents; } /* the row's brown edge is the focus mark */
 
 .pf-link-row.btn {
@@ -872,7 +888,8 @@
 
 .pf-vis-head svg { flex: none; color: var(--text-2); }
 
-.pf-vis { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.pf-vis { display: flex; flex-wrap: nowrap; gap: var(--space-2); }
+.pf-vis .ui-chip { flex: 1 1 auto; justify-content: center; min-width: 0; }
 
 /* ---- What you're up for: photo tiles (T656) ---- */
 .pf-like.btn {
@@ -917,6 +934,22 @@
 
 .pf-like.is-on .pf-like-name { color: var(--select-ink); }
 .pf-credit { margin: 0; font-size: var(--text-caption); color: var(--text-3); line-height: var(--leading-body); }
+/* The credits folded behind one small text button (owner, plan flow walk);
+   the tap area stays 24 px high though the word is caption size. */
+.pf-credits { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-1); }
+.btn.pf-credits-btn {
+  min-height: 24px;
+  height: auto;
+  padding: 0;
+  background: none;
+  font-size: var(--text-caption);
+  font-weight: 400;
+  color: var(--text-3);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.btn.pf-credits-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
+@media (hover: hover) { .btn.pf-credits-btn:hover { background: none; color: var(--text-2); } }
 
 /* ---- The trip's price card, after Airbnb's price box (T658) ---- */
 .plan-total .plan-total-open.btn {
@@ -1028,7 +1061,7 @@
    answer is the one selected state (the kit chip's tint and tick); each
    question still open is a dashed chip with a plus, quieter than an answer.
    A chip arrives once, in --dur-2, as the words that name it are typed. */
-.pf-read { display: flex; flex-direction: column; gap: var(--space-2); margin-top: var(--space-3); }
+.pf-read { display: flex; flex-direction: column; gap: var(--space-2); }
 .pf-read-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
 .pf-read-chips > li { display: flex; max-width: 100%; }
 .pf-read-chip { max-width: 100%; }
@@ -1068,6 +1101,11 @@
 
 /* ---- T860: the airports in reach (components/AirportReach.jsx), here and in the From popover. ---- */
 .pf-reach { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
+/* The start the drive times are measured from (AirportsScreen). */
+.pf-reach-from { display: flex; align-items: center; gap: var(--space-2); margin: 0; font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.pf-reach-from svg { flex: none; color: var(--action); }
+.pf-reach-from { flex-wrap: wrap; }
+.pf-reach-via { font-weight: 400; color: var(--text-2); }
 .pf-reach .ui-crow:disabled { cursor: not-allowed; background: var(--surface-sunken); color: var(--text-2); }
 .pf-reach .ui-crow:disabled .ui-crow-mark { border-style: dashed; }
 @media (hover: hover) {
@@ -1087,28 +1125,14 @@
   hyphens: auto;
 }
 
-/* ---- T862: where to sleep, the space then the four stay types (StayTypes.jsx). ---- */
+/* ---- T862: where to sleep, three stay types (StayTypes.jsx); the owner's
+   walk took out the space row and the prices, so the tiles stand as the kit
+   draws them, the icon over its word, three across. ---- */
 .pf-stay { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
-.pf-stay-tiles .ui-tile {
-  flex-direction: row;
-  justify-content: flex-start;
-  gap: var(--space-3);
-  min-height: 64px;
-  padding: var(--space-2) var(--space-6) var(--space-2) var(--space-3);
-}
+.pf-stay-tiles .ui-tile { min-height: 88px; padding: var(--space-3) var(--space-2); }
 .pf-stay-tiles .ui-tile-icon svg { width: 20px; height: 20px; }
-.pf-stay-tiles .ui-tile-label {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-  text-align: left;
-  overflow-wrap: normal;
-}
+.pf-stay-tiles .ui-tile-label { text-align: center; overflow-wrap: normal; }
 .pf-stay-name { font-size: var(--text-body); font-weight: 600; line-height: var(--leading-tight); }
-.pf-stay-price { font-size: var(--text-label); font-weight: 400; color: var(--text-2); line-height: var(--leading-ui); }
-.ui-tile.is-selected .pf-stay-price { color: var(--select-ink); }
-.pf-stay-price { min-height: calc(var(--text-label) * 1.35); }
 
 /* ---- T863: how much Carta plans, four doors (TripFlow). Kit Tiles made
    large: the line icon over one title, left aligned, the tick in the corner

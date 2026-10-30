@@ -10,6 +10,17 @@
    page and the buttons stand in its top right corner. */
 
 .pf-note { margin: 0; min-height: 1.35em; font-size: var(--text-label); color: var(--text-2); }
+/* Tell fits a phone without a scroll (owner, plan flow walk): the booking
+   status line leaves the flow while it has nothing to say, but stays in the
+   tree so its live region still speaks when a booking is read. */
+.pf-read ~ .pf-note:empty {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  min-height: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
 
 .pf-prompt {
   display: flex;
@@ -24,8 +35,8 @@
 
 .pf-prompt-field {
   width: 100%;
-  min-height: 112px;
-  padding: var(--space-4) var(--space-4) var(--space-2);
+  min-height: 88px;
+  padding: var(--space-3) var(--space-4) var(--space-2);
   border: 0;
   border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
   background: transparent;
@@ -45,7 +56,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-2);
-  padding: var(--space-2) var(--space-3) var(--space-3);
+  padding: var(--space-2) var(--space-3);
 }
 
 .pf-set { display: flex; flex-direction: column; gap: var(--space-5); }

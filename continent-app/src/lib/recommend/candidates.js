@@ -130,7 +130,7 @@ export function datesFor(settings, month, today) {
 /** The trip shapes to build, with the shapes this batch cannot build yet. */
 export function shapesFor(settings) {
   const asked = settings.guide.shapes.length ? settings.guide.shapes : CANDIDATES.anyShapes;
-  const noCar = settings.guide.avoid.includes('car');
+  const noCar = wantsNoCar(settings);
   const gaps = asked.filter((s) => CANDIDATES.fallbackShapes[s]);
   const shapes = [...new Set(asked.map((s) => CANDIDATES.fallbackShapes[s] || s))]
     .filter((s) => !(s === 'road' && noCar));
@@ -167,13 +167,29 @@ export function placesNear(ids, n, shape, destinations) {
   return null;
 }
 
-/** How the trip gets there and around, from its shape and the reach answer. */
+/**
+ * No car on the trip (owner, plan flow walk 2026-10-30): an older "avoid a
+ * car" answer, or getting around by public transport or taxis. The one door
+ * the shapes, the pricing, the taste and the getting-around slot ask.
+ */
+export function wantsNoCar(settings) {
+  const around = settings.guide.around;
+  return settings.guide.avoid.includes('car') || around === 'public' || around === 'taxi';
+}
+
+/** How the trip gets there and around, from its shape, the reach answer
+ *  and how the traveller gets around on the trip. */
 export function transportFor(shape, settings) {
-  const noCar = settings.guide.avoid.includes('car');
+  const noCar = wantsNoCar(settings);
   // T874: the way there the setup asked (Train, Car) is the answer too.
   if (settings.way === 'train') return 'train';
   if (settings.way === 'car') return noCar ? 'train' : 'owncar';
   if (settings.guide.reach === 'overland') return noCar ? 'train' : 'owncar';
+  // Getting around: a hire car (or one booked) prices every shape with it;
+  // public transport and taxis price none (taxi fares are not measured, so
+  // the public transport figure stands in and the slot says so).
+  if (!noCar && (settings.guide.around === 'car' || settings.booked?.car)) return 'car';
+  if (noCar) return 'auto';
   return shape === 'road' ? 'car' : 'auto';
 }
 
@@ -261,7 +277,8 @@ export function tasteFor(settings, saved = null) {
   return normalizeTaste({
     ...t,
     quiet: avoid.includes('crowds') ? 'quiet' : t.quiet,
-    noCar: avoid.includes('car') ? true : t.noCar,
+    // Public transport or taxis: a place that needs a car is marked down.
+    noCar: wantsNoCar(settings) ? true : t.noCar,
   });
 }
 

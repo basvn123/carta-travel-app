@@ -140,7 +140,7 @@ function useVisit(store, settings, fallback) {
  * (keptStore), Skip in its menu hides it for these answers; the hidden ones
  * are counted under the list with "Show them again".
  */
-export function TripsForYou({ settings, trips: found, destinations, originName, markedId = null, onBack, onOpen, onReopen, onPlan, cardRefs, keeper, ui }) {
+export function TripsForYou({ settings, trips: found, destinations, originName, markedId = null, onBack, onOpen, onReopen, onPlan, cardRefs, keeper, ui, headEnd = null }) {
   const { t, lang } = useI18n();
   const [editing, setEditing] = useState(false);
   const [skips, setSkips] = useSkips(settings);
@@ -225,7 +225,7 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
 
   return (
     <div className="pf-step tff-trips">
-      <SheetHead onBack={onBack} backLabel={t('pf.back')} />
+      <SheetHead onBack={onBack} backLabel={t('pf.back')} end={headEnd} />
       <div className="tff-head">
         <div className="tff-head-text">
           <h2 className="pf-title tff-title" tabIndex={-1} ref={titleRef} aria-live="polite">

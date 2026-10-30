@@ -127,9 +127,8 @@ export function tellChips(s, parsed, opts) {
   if (done.has('from') && s.from?.name) add('from', 'from', t('pf.chip.from', { town: s.from.name }));
   if (done.has('g:budget') && s.guide.budget.eur > 0) {
     const b = s.guide.budget;
-    const said = s.sources?.['g:budget'] === 'words' ? F.budget?.value : null;
     const people = s.party.adults + s.party.kids;
-    if (said && said.per === 'group' && said.unit === 'trip' && people > 1) add('budget', 'g:budget', t('pf.chip.budgetGroup', { eur: money(said.eur), n: people }));
+    if (b.per === 'group' && b.groupEur > 0 && people > 1) add('budget', 'g:budget', t('pf.chip.budgetGroup', { eur: money(b.groupEur), n: people }));
     else add('budget', 'g:budget', t(b.kind === 'day' ? 'pf.chip.budgetDay' : 'pf.chip.budgetPerson', { eur: money(b.eur) }));
   }
   const tier = choices.stay_tier || (done.has('sleep') ? stayTier : '');
@@ -141,7 +140,9 @@ export function tellChips(s, parsed, opts) {
     const mode = choices.transport_mode || (s.way === 'plane' || s.way === 'train' || s.way === 'car' ? s.way : 'any');
     add('way', 'way', t(`way.${mode}`));
   }
-  if (done.has('airports') && opts.airports?.length) {
+  // An airports answer from before the way became the train or the car no
+  // longer shows: the question is not asked for those (setupScreens).
+  if (done.has('airports') && opts.airports?.length && setupScreens(s).includes('airports')) {
     add('airports', 'airports', opts.airports.length === 1 ? t('pf.chip.airportOne', { code: opts.airports[0] }) : t('pf.chip.airportsMany', { n: opts.airports.length }));
   }
   if (done.has('booked')) {

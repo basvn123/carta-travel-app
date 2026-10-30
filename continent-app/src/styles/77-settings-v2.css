@@ -131,6 +131,12 @@
   line-height: var(--leading-ui);
   color: var(--text-2);
 }
+/* The planner's From, country first (FromCountryPanel): the picked country
+   with Change beside it, then the optional town or address. */
+.from-picked { display: flex; align-items: center; gap: var(--space-2); }
+.from-picked .from-row { flex: 1 1 auto; min-width: 0; }
+.btn.from-change { flex: none; }
+.from-exact-label { margin: var(--space-1) 0 0; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
 .ctry-mode { margin-bottom: var(--space-1); }
 .ctry-foot {
   display: flex;
