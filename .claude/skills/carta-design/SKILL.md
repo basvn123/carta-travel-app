@@ -240,6 +240,20 @@ over the rules below; everywhere else the rules below still hold.
 - **The trips map** draws photo pins and curved lines from the home airport
   with the time there; the picked trip is the brown one.
 
+### The trip page v5 (owner 2026-10-30, T885 to T890)
+
+The planned trip's page (`TripSummary.jsx`) follows the same free direction
+in Carta's colours. One photo carries the name (the places, never a bare
+country), the country and two white pills: the countdown and "1 of 3
+booked". Under it the trip bar holds every input of the price as label over
+value with a pencil. The total shows once, in the compact cost card (side
+column from 1024 px, Overview on a phone), with the budget line inside it
+and Breakdown at its top. The route is the one booking list: each part says
+Booked or To book (neutral chip, never best-value yellow) with its link.
+Change your trip is one sheet; a change shows old total, new total and the
+difference before Apply. The phone dock holds Change your trip and Plan
+your days, never a figure.
+
 ## Colour
 
 Single theme, light only: no `prefers-color-scheme` or `data-theme` blocks, `theme-color` is the page
