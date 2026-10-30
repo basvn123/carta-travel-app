@@ -10,14 +10,20 @@ import { ArrowLeftIcon, CloseIcon } from '../../components/Icons.jsx';
  *
  *   bar       round buttons, top right (settings, share)
  *   wide      a wider card on desktop, for steps that hold a list of places
+ *   rail      T893: the step list (FlowRail), left of the question from
+ *             1100 px; with it the stage is three columns (the studio)
+ *   side      T894: Your trip so far (FlowSide), right of the question
  */
-export function PlanStage({ bar = null, wide = false, sheetLabel, children }) {
+export function PlanStage({ bar = null, wide = false, rail = null, side = null, sheetLabel, children }) {
+  const studio = Boolean(rail || side);
   return (
-    <div className={`pf-stage${wide ? ' is-wide' : ''}`}>
+    <div className={`pf-stage${wide ? ' is-wide' : ''}${studio ? ' is-studio' : ''}`}>
       {bar && <div className="pf-bar">{bar}</div>}
+      {rail && <aside className="pf-rail">{rail}</aside>}
       <section className="pf-sheet" aria-label={sheetLabel}>
         {children}
       </section>
+      {side && <aside className="pf-side" aria-label={sheetLabel}>{side}</aside>}
     </div>
   );
 }

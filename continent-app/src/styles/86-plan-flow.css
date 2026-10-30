@@ -1336,3 +1336,98 @@
 .pf-booked-form-foot { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 
 .pf-doors-carta { align-self: center; }
+
+/* ---- The studio (T893, the owner's plan flow studio board 2026-10-30) ----
+   From 1100 px a question stands in the middle of three columns: the step
+   list on the left (named groups, a tick and the answer under each step
+   done), the question on its white card, wider than the 520 px sheet, and
+   Your trip so far on the right (T894). The two side columns are white
+   bands the height of the page, their contents held in view while the
+   question scrolls. Below 1100 px the stage is the sheet as before. */
+.pf-rail, .pf-side { display: none; }
+@media (min-width: 1100px) {
+  .pf-stage.is-studio {
+    display: grid;
+    grid-template-columns: 248px minmax(0, 1fr) 340px;
+    align-items: start;
+    min-height: 100%;
+    padding: 0;
+  }
+  .pf-stage.is-studio > .pf-rail,
+  .pf-stage.is-studio > .pf-side {
+    display: block;
+    align-self: stretch;
+    min-width: 0;
+    background: var(--surface);
+  }
+  .pf-stage.is-studio > .pf-rail { grid-column: 1; grid-row: 1; border-right: 1px solid var(--border-soft); }
+  .pf-stage.is-studio > .pf-side { grid-column: 3; grid-row: 1; border-left: 1px solid var(--border-soft); }
+  .pf-stage.is-studio > .pf-sheet {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: center;
+    width: min(820px, calc(100% - 2 * var(--space-6)));
+    margin: var(--space-6) 0 var(--space-8);
+    padding: var(--space-5) var(--space-6) var(--space-6);
+  }
+  .pf-stage.is-studio > .pf-bar { right: calc(340px + var(--space-4)); }
+  /* The list says where you are; the marks over the head would say it twice. */
+  .pf-stage.is-studio .pf-marks { display: none; }
+}
+/* No side column (the setup questions): the question takes its room. */
+@media (min-width: 1100px) {
+  .pf-stage.is-studio:not(:has(> .pf-side)) { grid-template-columns: 248px minmax(0, 1fr); }
+}
+
+.pf-rail-in {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  max-height: calc(100dvh - var(--filter-h, 0px) - var(--bottom-nav-h, 0px));
+  overflow-y: auto;
+  padding: var(--space-6) var(--space-3);
+  scrollbar-width: thin;
+}
+.pf-rail-g { display: flex; flex-direction: column; gap: 2px; }
+.pf-rail-h { margin: 0; padding: 0 var(--space-3) var(--space-1); font-size: var(--text-caption); font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-3); }
+.pf-rail-list { display: flex; flex-direction: column; gap: 2px; margin: 0; padding: 0; list-style: none; }
+.btn.pf-rail-step {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  align-items: start;
+  gap: var(--space-3);
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-control);
+  color: var(--text-2);
+  font-weight: 500;
+  text-align: left;
+  justify-content: stretch;
+}
+.btn.pf-rail-step:disabled { opacity: 1; color: var(--text-3); cursor: default; }
+.btn.pf-rail-step.is-now { background: var(--action-tint); color: var(--text); }
+.btn.pf-rail-step:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+.pf-rail-dot {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  font-size: var(--text-caption);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.pf-rail-step.is-done .pf-rail-dot { border-color: transparent; background: var(--action-tint); color: var(--select-ink); }
+.pf-rail-step.is-now .pf-rail-dot { border-color: var(--select-border); background: var(--select-border); color: var(--surface); }
+.pf-rail-txt { display: flex; flex-direction: column; min-width: 0; }
+.pf-rail-name { font-size: var(--text-label); font-weight: 600; line-height: var(--leading-ui); }
+.pf-rail-ans { overflow: hidden; font-size: var(--text-caption); font-weight: 400; line-height: var(--leading-ui); color: var(--text-3); white-space: nowrap; text-overflow: ellipsis; }
+@media (hover: hover) {
+  .btn.pf-rail-step:not(:disabled):not(.is-now):hover { background: var(--surface-hover); color: var(--text); }
+}

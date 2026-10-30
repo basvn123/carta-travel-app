@@ -8,7 +8,9 @@ import { PlanStage, SheetHead } from './PlanStage.jsx';
 import { QUESTIONS } from './questions.js';
 import { setupScreens, continueTo, prevScreen, progressOf } from './flowGraph.js';
 import { QuestionBody } from './QuestionScreen.jsx';
-import { useTripSettings } from './flowHooks.js';
+import { useBcp47, useMonths, useTripSettings, whenText } from './flowHooks.js';
+import { FlowRail } from './FlowRail.jsx';
+import { stepAnswer } from './stepText.js';
 import { CreateScreen } from './setupScreens.jsx';
 import { TripSettingsSheet } from './TripSettingsSheet.jsx';
 import { PlanHome } from './PlanHome.jsx';
@@ -36,7 +38,9 @@ import { useAuth } from '../../auth/AuthContext.jsx';
 export function PlanFlow({
   onNavigate, onCreated, onAddPast = null, onOpenJourney = null, onOpenPlan = null, destinations = null, pageOver = false,
 }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const months = useMonths();
+  const bcp47 = useBcp47();
   const trips = useHomeTrips(destinations);
   const [settings, save] = useTripSettings();
   const [screen, setScreen] = useState('home');
@@ -116,6 +120,7 @@ export function PlanFlow({
   }
 
   let body;
+  let rail = null;
   if (screen === 'kind') {
     body = (
       <KindSheet
@@ -155,6 +160,30 @@ export function PlanFlow({
   } else {
     const q = QUESTIONS[screen];
     const pos = progressOf(list, screen);
+    // T893: from 1100 px the setup questions stand beside their step list.
+    const whenWords = whenText(t, settings.when, months, bcp47);
+    const steps = list.filter((id) => id !== 'create');
+    rail = (
+      <FlowRail
+        label={t('pf.groups')}
+        groups={[{
+          key: 'trip',
+          label: t('pf.group.trip'),
+          items: steps.map((id, i) => {
+            const done = settings.answered.includes(id);
+            return {
+              id,
+              n: i + 1,
+              label: t(`pf.step.${id}`),
+              answer: done ? stepAnswer(t, id, settings, { when: whenWords, locale: lang }) : '',
+              done,
+              now: id === screen,
+              onClick: done && id !== screen ? () => go(id) : null,
+            };
+          }),
+        }]}
+      />
+    );
     body = (
       <div className="pf-step">
         <SheetHead
@@ -177,7 +206,7 @@ export function PlanFlow({
 
   return (
     <div className="pf" ref={sheetRef}>
-      <PlanStage bar={bar} sheetLabel={t('pf.sheet')}>
+      <PlanStage bar={bar} rail={rail} sheetLabel={t('pf.sheet')}>
         {body}
       </PlanStage>
       {settingsOpen && (

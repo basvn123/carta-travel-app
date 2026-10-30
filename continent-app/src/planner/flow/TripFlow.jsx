@@ -8,6 +8,8 @@ import { partyText } from '../../lib/party.js';
 import { PlanStage, SheetHead } from './PlanStage.jsx';
 import { QUESTIONS } from './questions.js';
 import { QuestionBody } from './QuestionScreen.jsx';
+import { FlowRail } from './FlowRail.jsx';
+import { groupsOf, stepAnswer } from './stepText.js';
 import { TripSettingsSheet } from './TripSettingsSheet.jsx';
 import { selectionOfPlan } from '../../lib/plan/doors.js';
 import { useBcp47, useMonths, useTripSettings, whenText } from './flowHooks.js';
@@ -50,7 +52,7 @@ const FINDER_UI = { NotYet, AirlineMark, useAirlines, airlineName };
  *                       trip page (the planner's loadFromWizard hand-over)
  */
 export function TripFlow({ renderEngine, seed = null, onLand = null }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const [settings, save] = useTripSettings();
   // T870: an address with a trip page on it (#tf=<id>) opens on the trips,
   // with that trip's page open (the hash is read here, not imported from the
@@ -141,6 +143,37 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
 
   const guide = useMemo(() => guideScreens(settings), [settings]);
   const questions = useMemo(() => guideQuestions(settings), [settings]);
+  const months = useMonths();
+  const bcp47 = useBcp47();
+  // T893: from 1100 px a question stands between the step list and Your
+  // trip so far (the studio); the trip's own answers lead the list, each
+  // opening the trip settings.
+  const studio = !!QUESTIONS[phase] && questions.includes(phase);
+  const whenWords = whenText(t, settings.when, months, bcp47);
+  const answerOf = (id) => stepAnswer(t, id, settings, { when: whenWords, locale: lang });
+  const tripSteps = ['from', 'when', 'who'].map((id) => ({ id, label: t(`pf.step.${id}`), answer: answerOf(id), done: true, onClick: () => setSettingsOpen(true) }));
+  const firstOpen = questions.find((id) => !settings.answered.includes(id));
+  const stepItems = (ids) => ids.map((id) => {
+    const done = settings.answered.includes(id);
+    return {
+      id,
+      n: questions.indexOf(id) + 1,
+      label: t(`pf.step.${id}`),
+      answer: done ? answerOf(id) : '',
+      done,
+      now: id === phase,
+      onClick: id !== phase && (done || id === firstOpen) ? () => { setReturnTo(null); setPhase(id); } : null,
+    };
+  });
+  const rail = studio ? (
+    <FlowRail
+      label={t('pf.groups')}
+      groups={[
+        { key: 'trip', label: t('pf.group.trip'), items: tripSteps },
+        ...groupsOf(questions).map((g) => ({ key: g.key, label: t(`pf.group.${g.key}`), items: stepItems(g.ids) })),
+      ]}
+    />
+  ) : null;
   const afterGuide = (id, s) => {
     if (returnTo) { setReturnTo(null); setPhase(returnTo); return; }
     // How do you want to plan: the flights first opens their screen.
@@ -235,7 +268,7 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
 
   return (
     <div className={`pf${phase === 'home' ? ' is-trip' : ''}`} ref={rootRef}>
-      <PlanStage bar={phase === 'home' || inHead ? null : bar}sheetLabel={settings.trip.name || t('pf.sheet')} wide={phase === 'g:likes' || phase === 'g:persona' ||phase === TRIPS_SCREEN || phase === 'ff'}>
+      <PlanStage bar={phase === 'home' || inHead ? null : bar} rail={rail} sheetLabel={settings.trip.name || t('pf.sheet')} wide={phase === 'g:likes' || phase === 'g:persona' ||phase === TRIPS_SCREEN || phase === 'ff'}>
         {body}
       </PlanStage>
       {settingsOpen && <TripSettingsSheet anchorRef={gearRef} onClose={() => setSettingsOpen(false)} />}
