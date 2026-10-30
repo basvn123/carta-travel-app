@@ -2475,3 +2475,9 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T903-b | T903 | Up next has no Plan your days button; the home has no door into the days of a trip that is not open (Execution/P15/T901-T904-plan-home.md) | next task | open |  |
 | T903-c | T903 | Deploy the merged batch T901 to T904 (Cloudflare credentials are the owner's) (Execution/P15/T901-T904-plan-home.md) | user | open |  |
 | T905-a | T905 | The phone header row (logo, account) is checked only in a harness; walk Explore's map, the Plan flow, the day planner's drawer and the full-screen pages on a phone with app data (Execution/P15/T905-phone-header.md) | next task | open |  |
+| T906-a | T906 | Fold the settings into the search: the phone settings summary into the search pill, and From, When, Who into the desktop bar, with the settings line folded away (Execution/P15/T906-T910-explore-refined.md) | next task | open |  |
+| T906-b | T906 | The Explore hero (field on the photo's edge, 300 to 420 px, the phone pill) was not seen running; look once with app data at 390 and 1440 (Execution/P15/T906-T910-explore-refined.md) | next task | open |  |
+| T907-a | T907 | People asks no child ages; Booking asks them and they drive the cost (Execution/P15/T906-T910-explore-refined.md) | next task | open |  |
+| T907-b | T907 | "Tell Carta what you like" stays in the chip row because it is the personal match's only door; decide whether it moves into Filters or Account (Execution/P15/T906-T910-explore-refined.md) | user | open |  |
+| T908-a | T908 | The .storyr-lead and .storyr-stack rules in styles/80-story-rail.css are unused since the lead card left; remove them (Execution/P15/T906-T910-explore-refined.md) | next task | open |  |
+| T910-a | T910 | Deploy the merged batch T906 to T910 (Cloudflare credentials are the owner's) (Execution/P15/T906-T910-explore-refined.md) | user | open |  |
