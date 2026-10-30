@@ -49,6 +49,8 @@ export const LIKES = ['beach', 'hiking', 'lakes', 'culture', 'city', 'food', 'ni
 export const WEATHER = ['warm', 'mild', 'snow', 'any'];
 export const REACH = ['short', 'any', 'overland'];
 export const AVOID = ['crowds', 'transfers', 'car', 'heat'];
+/** T860: how they want to get there (the app's transport modes the question offers). */
+export const WAYS = ['any', 'plane', 'train', 'car'];
 /** Question 7 (T796): the price lines Carta may pick, from config/slots.json
  *  (every pickable slot that is live). The default is all of them. */
 export const PICKABLE = SLOTS.slots.filter((r) => r.pickable && r.status === 'live').map((r) => r.id);
@@ -97,6 +99,7 @@ export function defaultSettings() {
     priority: 'balance',
     when: { mode: 'exact', start: '', end: '', months: [], nights: 7 },
     from: null,
+    way: '',
     guide: { shapes: [], shape: '', likes: [], weather: '', reach: '', avoid: [], budget: { kind: 'total', eur: 0 }, pick: [...PICKABLE] },
     rhythm: { mornings: '', pace: '', detail: '', goal: '', food: '', around: '', steps: 0 },
     trip: { name: '', visibility: 'private', cover: '', created: 0, buddies: [] },
@@ -177,6 +180,7 @@ export function normalizeSettings(raw) {
       nights: clampInt(w.nights, 1, 60, d.when.nights),
     }),
     from: placeOf(raw.from),
+    way: oneOf(raw.way, WAYS, ''),
     kind: raw.kind === 'now' ? 'now' : 'new',
     now: placeOf(raw.now),
     guide: {

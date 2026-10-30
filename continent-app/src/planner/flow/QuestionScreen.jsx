@@ -17,14 +17,18 @@ import { useBcp47, useMonths } from './flowHooks.js';
 import { syncParty, syncWhen } from './appSync.js';
 import { useSettings } from '../../components/SettingsLine.jsx';
 import { plannerStore } from '../plannerStore.js';
-import { WhoScreen, SleepScreen, WhenScreen, FromScreen, LikesScreen, BudgetScreen, PickScreen, NowWhereScreen, NowUntilScreen } from './setupScreens.jsx';
+import {
+  WhoScreen, SleepScreen, StayScreen, WhenScreen, FromScreen, WayScreen, AirportsScreen, LikesScreen, BudgetScreen, PickScreen,
+  NowWhereScreen, NowUntilScreen,
+} from './setupScreens.jsx';
 
 /** How long after the last key the words are read again. */
 const PARSE_DELAY_MS = 250;
 
 /** The questions with their own controls (setupScreens.jsx). */
 const CUSTOM = {
-  who: WhoScreen, sleep: SleepScreen, when: WhenScreen, from: FromScreen, 'g:likes': LikesScreen, 'g:budget': BudgetScreen,
+  who: WhoScreen, sleep: SleepScreen, stay: StayScreen, when: WhenScreen, from: FromScreen, way: WayScreen, airports: AirportsScreen,
+  'g:likes': LikesScreen, 'g:budget': BudgetScreen,
   'g:pick': PickScreen,
   nowWhere: NowWhereScreen, nowUntil: NowUntilScreen,
 };
@@ -101,6 +105,9 @@ function TellBody({ settings, commit }) {
   // What a popover saved, by question id: the traveller's own, kept over the words.
   const [overrides, setOverrides] = useState({});
   const [open, setOpen] = useState('');
+  // The body the popover shows: the question itself, or (T862, row T858-b)
+  // the stay types alone for the stay chip, which still answers Where to sleep.
+  const [popBody, setPopBody] = useState('');
   // The chip a popover hangs from on a pointer screen.
   const anchorRef = useRef(null);
   const fileRef = useRef(null);
@@ -139,7 +146,8 @@ function TellBody({ settings, commit }) {
     money: (eur) => formatMoney(eur),
     stayTier,
     choices: now.choices,
-  }), [now, parsed, t, months, dayFmt, stayTier]);
+    airports: app?.airportHours ? app.airports : null,
+  }), [now, parsed, t, months, dayFmt, stayTier, app?.airportHours, app?.airports]);
   const left = chips.filter((c) => c.missing).length;
 
   const onFiles = async (fileList) => {
@@ -164,10 +172,11 @@ function TellBody({ settings, commit }) {
     ctx.setChoices((prev) => ({ ...prev, ...choices }));
   };
 
-  const openChip = (screen, el) => {
+  const openChip = (screen, el, key = '') => {
     anchorRef.current = el;
-    // The Lifestyle reads the app's choices: let it show what the words said.
-    if (screen === 'sleep') writeChoices(now.choices);
+    // The Lifestyle and the way read the app's choices: let them show what the words said.
+    if (screen === 'sleep' || screen === 'way') writeChoices(now.choices);
+    setPopBody(key === 'stay' ? 'stay' : screen);
     setOpen(screen);
   };
   const savePopover = (screen, next) => {
@@ -205,7 +214,7 @@ function TellBody({ settings, commit }) {
   };
 
   const anchor = open ? anchorRef : null;
-  const q = open && open !== 'places' ? QUESTIONS[open] : null;
+  const q = open && open !== 'places' ? QUESTIONS[popBody || open] : null;
 
   return (
     <>
@@ -254,7 +263,7 @@ function TellBody({ settings, commit }) {
                 aria-expanded={open === c.screen}
                 className={c.missing ? 'pf-read-chip is-missing' : 'pf-read-chip'}
                 icon={c.missing ? <PlusIcon size={14} /> : null}
-                onClick={(e) => openChip(c.screen, e.currentTarget)}
+                onClick={(e) => openChip(c.screen, e.currentTarget, c.key)}
               >
                 {c.text}
               </Chip>
@@ -286,7 +295,7 @@ function TellBody({ settings, commit }) {
               <PlacesBody places={now.settings.places} onSave={(places) => savePopover('places', { ...now.settings, places })} />
             ) : (
               <QuestionBody
-                id={open}
+                id={popBody || open}
                 settings={now.settings}
                 doneLabel={t('pf.set.save')}
                 commit={(next) => savePopover(open, next)}

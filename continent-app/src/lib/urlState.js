@@ -181,6 +181,10 @@ export function encodeState({
   if (choices?.price_view === 'total') q.set('pv', 't');   // T694: the group's total
   if (choices?.price_excluded?.length) q.set('px', choices.price_excluded.join('.'));   // T695
   if (choices?.origin) q.set('o', choices.origin);
+  // T860: the home airports in reach ("oa", codes joined by '.') and the
+  // reach that ticked them ("ah", hours, or "p" for picked by hand).
+  if (Array.isArray(choices?.origins) && choices.origins.length) q.set('oa', choices.origins.join('.'));
+  if (choices?.airport_hours) q.set('ah', choices.airport_hours === 'pick' ? 'p' : String(choices.airport_hours));
   // Where a drive starts, packed as "lat,lon,name". The name is free text and
   // can hold commas of its own, so the decoder splits on the first two only.
   const dh = choices?.drive_home;
@@ -247,6 +251,11 @@ export function decodeState(search) {
   if (has('pv')) out.price_view = q.get('pv') === 't' ? 'total' : 'pp';
   if (has('px')) out.price_excluded = q.get('px').split('.').filter((k) => /^[a-z]{2,12}$/.test(k)).slice(0, 8);
   if (has('o')) out.origin = q.get('o');
+  if (has('oa')) out.origins = q.get('oa').split('.').filter((c) => /^[A-Z]{3}$/.test(c)).slice(0, 12);
+  if (has('ah')) {
+    const h = q.get('ah');
+    out.airport_hours = h === 'p' ? 'pick' : ([1, 2, 3].includes(Number(h)) ? Number(h) : null);
+  }
   if (has('dh')) {
     const raw = q.get('dh');
     const cut = raw.indexOf(',');
@@ -388,7 +397,7 @@ export function loadInitialState() {
 
 
 // Every key encodeState can write; persistState replaces exactly these.
-const OWN_KEYS = ['b', 'big', 'cat', 'cc', 'cf', 'd', 'dest', 'dh', 'fav', 'favonly', 'feat', 'g', 'gem', 'ls', 'mode', 'o', 'pm', 'pr', 'pv', 'px', 'r', 'rh', 'rr', 'sort', 'st', 't', 'tab', 'tb', 'tk', 'top', 'ty', 'un'];
+const OWN_KEYS = ['ah', 'b', 'big', 'cat', 'cc', 'cf', 'd', 'dest', 'dh', 'fav', 'favonly', 'feat', 'g', 'gem', 'ls', 'mode', 'o', 'oa', 'pm', 'pr', 'pv', 'px', 'r', 'rh', 'rr', 'sort', 'st', 't', 'tab', 'tb', 'tk', 'top', 'ty', 'un'];
 
 /** Push the encoded state into the URL (replaceState) and the localStorage mirror.
  *

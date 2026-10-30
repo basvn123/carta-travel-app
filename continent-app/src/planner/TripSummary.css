@@ -670,3 +670,16 @@ button.ct-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: 2
 .tpd-note-form { display: flex; flex-direction: column; gap: var(--space-2); }
 .tpd-note-acts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .tpd-pace { min-width: 0; overflow-x: auto; }
+
+/* T861: the home airport on the flight line, what it saves door to door, one quiet swap. */
+.itin-air {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-label);
+  line-height: var(--leading-ui);
+  color: var(--text-2);
+}
+.itin-air-text { min-width: 0; }

@@ -12,6 +12,7 @@ import { useIsDesktop } from '../hooks/useIsDesktop.js';
 import { BedIcon, BusIcon, CalendarIcon, CarIcon, ChevronDownIcon, MapPinIcon, RouteIcon, TrainIcon } from './Icons.jsx';
 import { PlaneIcon } from './TransportIcons.jsx';
 import { FromPanel, fromName, fromPoint } from './FromPicker.jsx';
+import { AirportReach } from './AirportReach.jsx';
 import { CountriesPanel, countriesValue } from './CountriesControl.jsx';
 import { partyText } from '../lib/party.js';
 import { nextMode, TRAVEL_MODES } from '../lib/travelWay.js';
@@ -455,6 +456,23 @@ export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children,
   const countryList = s.countryFilter || [];
   const countriesText = countriesValue(t, countryList, s.countryNot, names);
   const pickFrom = (p, then) => { s.setFrom(p); then?.(); };
+  // T860: the home airports in reach, the same choice the planner's reach
+  // question sets; shown once a town is set and the way there may fly.
+  const mayFly = !['train', 'bus', 'car'].includes(s.transportMode);
+  const airports = s.setAirports && s.fromPlace && mayFly ? (
+    <section className="settings-airports" aria-labelledby={`${baseId}-airports`}>
+      <h3 className="settings-sheet-h" id={`${baseId}-airports`}>{t('pf.q.airports')}</h3>
+      <AirportReach
+        meta={s.data?.meta}
+        point={s.fromPlace}
+        covered={s.sweptOrigins}
+        hours={s.airportHours}
+        codes={s.airports}
+        labelId={`${baseId}-airports-list`}
+        onChange={(codes, hours) => s.setAirports(codes, hours)}
+      />
+    </section>
+  ) : null;
 
   // The phone face (T622, owner 2026-10-23: "the when part is cut off,
   // just show when, from, type, transport ... use icons, but no full on
@@ -552,6 +570,7 @@ export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children,
                   <FromPanel data={s.data} current={fromPoint(s)} autoFocus={false}
                     onPick={(p) => pickFrom(p, () => setSheetFrom(false))} />
                 )}
+                {airports}
               </section>
             )}
             {show('dates') && (
@@ -595,6 +614,7 @@ export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children,
               <SettingsPop id={`${baseId}-from`} label={t('settings.from')} anchorRef={fromRef} onClose={close} className="settings-pop-list">
                 <FromPanel data={s.data} current={fromPoint(s)}
                   onPick={(p) => pickFrom(p, () => { close(); fromRef.current?.focus(); })} />
+                {airports}
               </SettingsPop>
             )}
           </div>

@@ -348,6 +348,40 @@ export function stayDatesLink({ city, country, checkin = '', checkout = '', adul
   return `https://www.booking.com/searchresults.html?${q.toString()}`;
 }
 
+/**
+ * The book links for one stay by its type (T862, plan flow v3): an
+ * apartment or holiday home on Booking.com's apartments filter and on
+ * Airbnb as an entire place, a room in a home on Airbnb as a private room, a
+ * hostel on Hostelworld, a hotel on Booking.com as before (stayDatesLink).
+ * Each with the town, the nights and the party.
+ *
+ *   -> [{ provider, href }]
+ */
+export function stayBookLinks({ tier = 'home', city, country, checkin = '', checkout = '', adults = 2, children = 0 }) {
+  const where = [city, country].filter(Boolean).join(', ');
+  if (!where) return [];
+  const guests = Math.max(1, Math.min(20, Math.round(adults) || 1)) + Math.max(0, Math.min(19, Math.round(children) || 0));
+  const dated = /^\d{4}-\d{2}-\d{2}$/.test(checkin) && /^\d{4}-\d{2}-\d{2}$/.test(checkout);
+  const booking = stayDatesLink({ city, country, checkin, checkout, adults, children });
+  const airbnb = (room) => {
+    const q = new URLSearchParams({ adults: String(guests) });
+    if (dated) { q.set('checkin', checkin); q.set('checkout', checkout); }
+    q.append('room_types[]', room ? 'Private room' : 'Entire home/apt');
+    return `https://www.airbnb.com/s/${encodeURIComponent(where)}/homes?${q.toString()}`;
+  };
+  if (tier === 'dorm' || tier === 'private') {
+    const q = new URLSearchParams({ search_keywords: where, number_of_guests: String(guests) });
+    if (dated) { q.set('date_from', checkin); q.set('date_to', checkout); }
+    return [{ provider: 'Hostelworld', href: `https://www.hostelworld.com/search?${q.toString()}` }];
+  }
+  if (tier === 'room') return [{ provider: 'Airbnb', href: airbnb(true) }];
+  if (tier === 'home' || tier === 'apt') {
+    // Booking.com's property type 201 is apartments.
+    return [{ provider: 'Booking.com', href: `${booking}&nflt=${encodeURIComponent('ht_id=201')}` }, { provider: 'Airbnb', href: airbnb(false) }];
+  }
+  return [{ provider: 'Booking.com', href: booking }];
+}
+
 /** Booking.com's plain search for a town, which takes a written place name. */
 export function staySearchLink({ city, country }) {
   const where = [city, country].filter(Boolean).join(', ');

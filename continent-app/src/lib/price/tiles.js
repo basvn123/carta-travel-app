@@ -26,7 +26,8 @@ export function costTiles(priced) {
     if (priced.flight?.own && (priced.flight.cost_total || 0) > 0) return false;
     return true;
   };
-  const travelParts = driving ? ['travel', 'drive', 'flights'] : ['travel', 'flights'];
+  // T861: the way to the home airport is part of getting there.
+  const travelParts = driving ? ['travel', 'drive', 'flights', 'airport'] : ['travel', 'flights', 'airport'];
   // T843: day trips from a base are getting around too.
   const aroundParts = driving ? ['transfers', 'between', 'car', 'daytrips'] : ['transfers', 'drive', 'between', 'car', 'daytrips'];
   const sum = (keys) => r2(keys.reduce((n, k) => n + (p[k] || 0), 0));
@@ -47,7 +48,7 @@ export function costTiles(priced) {
 
 /** Which tile a receipt line (tripLines' key) belongs to. */
 export function tileOfLine(lineKey, driving = false) {
-  if (lineKey === 'out' || lineKey === 'back' || lineKey === 'travel') return 'travel';
+  if (lineKey === 'out' || lineKey === 'back' || lineKey === 'travel' || lineKey === 'airport') return 'travel';
   if (lineKey === 'drive') return driving ? 'travel' : 'around';
   if (lineKey === 'beds') return 'stay';
   if (lineKey === 'days') return 'food';

@@ -9,7 +9,8 @@ import * as Icons from '../Icons.jsx';
  * the selected ink and the brown edge, with the mark filled, so it never
  * rests on colour alone.
  *
- *   options   [{ value, icon (Icons.jsx name) | null, label, sub? }]
+ *   options   [{ value, icon (Icons.jsx name) | null, label, sub?, disabled? }]
+ *             (T860: a disabled row stays in the list, read but not picked)
  *   value     the selected values (an array, one item for a single pick)
  *   multi     several may be on (checkbox semantics) or one (radio)
  *   onPick(v) the tapped value; the caller decides the next selection
@@ -49,6 +50,7 @@ export function ChoiceRows({ label, options, value = [], multi = false, onPick, 
             role={role}
             aria-checked={on}
             tabIndex={tabIndex}
+            disabled={o.disabled || undefined}
             className={`ui-crow${on ? ' is-on' : ''}${o.sub ? ' has-sub' : ''}`}
             onClick={() => onPick(o.value)}
           >

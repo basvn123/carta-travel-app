@@ -5,8 +5,9 @@
  * itself, then an optional run about the days. Which screens a trip gets
  * depends on its answers, mostly on what is already booked:
  *
- *   setup     tell (free text and files, skippable), booked, who, sleep, priority, when, from     (when and from drop
- *             out when bookings fix them), then create
+ *   setup     tell (free text and files, skippable), booked, who, sleep, priority, when, from, way, airports
+ *             (when, from and the way there drop out when bookings fix them; airports
+ *             only when the way there may fly, T860), then create
  *   doors     guide me / I know where / a ready trip       (not when stays are
  *             booked: the places are already chosen)
  *   guide     shape, likes, weather, reach, avoid, budget, pick (the explorative
@@ -24,7 +25,9 @@
 import { wizardSteps } from '../wizard/wizardSteps.js';
 import { datesFromBookings } from './tripSettings.js';
 
-export const SETUP = ['tell', 'booked', 'who', 'sleep', 'priority', 'when', 'from'];
+export const SETUP = ['tell', 'booked', 'who', 'sleep', 'priority', 'when', 'from', 'way', 'airports'];
+/** T860: the ways there that may fly, so the airports in reach are asked. */
+export const FLYING_WAYS = ['', 'any', 'plane'];
 /** A trip already under way (T675): where the traveller is now and until
  *  when stand in for When and Where from; the way there is behind them. */
 export const NOW_SETUP = ['tell', 'booked', 'who', 'sleep', 'priority', 'nowWhere', 'nowUntil'];
@@ -39,7 +42,8 @@ export function setupScreens(s) {
   if (s.kind === 'now') return NOW_SETUP;
   return SETUP.filter((id) => {
     if (id === 'when') return !datesFromBookings(s);
-    if (id === 'from') return !s.booked.flights;
+    if (id === 'from' || id === 'way') return !s.booked.flights;
+    if (id === 'airports') return !s.booked.flights && FLYING_WAYS.includes(s.way || '');
     return true;
   });
 }

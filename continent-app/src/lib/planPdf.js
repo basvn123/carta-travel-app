@@ -28,6 +28,7 @@ const LINE_KEY = {
   back: 'itin.secGetHome',
   travel: 'plan.lineTravel',
   drive: 'plan.lineDrive',
+  airport: 'plan.lineAirport',
   transfers: 'plan.lineTransfers',
   between: 'plan.lineBetween',
   car: 'plan.lineCar',

@@ -9,6 +9,8 @@ import { QUESTIONS, toggleValue } from './questions.js';
 import { useI18n } from '../../i18n/index.jsx';
 import { useSettings } from '../../components/SettingsLine.jsx';
 import { FromPanel, fromPoint } from '../../components/FromPicker.jsx';
+import { AirportReach } from '../../components/AirportReach.jsx';
+import { airportsNear, originsWithin, DEFAULT_REACH } from '../../lib/airportReach.js';
 import { DateField } from '../../components/DateField.jsx';
 import { Stepper } from '../../components/FilterControls.jsx';
 import { HeroImage } from '../../components/HeroImage.jsx';
@@ -21,9 +23,10 @@ import {
 import * as AllIcons from '../../components/Icons.jsx';
 import SLOTS from '../../../config/slots.json' with { type: 'json' };
 import { LifestyleStep } from './LifestyleStep.jsx';
+import { StayTypes } from './StayTypes.jsx';
 import { VisibilityChoice } from './VisibilityChoice.jsx';
 import { PartyEditor } from '../PartyEditor.jsx';
-import { answer, markAnswered, normalizeSettings, withPartyKind, PARTY_KINDS } from './tripSettings.js';
+import { answer, markAnswered, normalizeSettings, withPartyKind, PARTY_KINDS, WAYS } from './tripSettings.js';
 import { MAX_TRIP_NIGHTS, addDaysUTC, nightsBetween, windowFromStart } from '../../lib/tripDates.js';
 
 /*
@@ -128,13 +131,30 @@ export function WhoScreen({ settings, commit, doneLabel }) {
 
 // ---- Where you sleep and how you spend ----
 
-/** The whole Lifestyle (T750: where you sleep, how you spend, getting there
- *  and the counts). They are app-wide choices, so there is nothing to keep
- *  here but "answered". */
+/** The named places' countries (iso2), for a stay's typical night (T862). */
+function placeIsos(settings) {
+  const isos = [...new Set((settings.places || []).map((p) => p.iso2).filter(Boolean))];
+  return isos.length ? isos : null;
+}
+
+/** The whole Lifestyle (T750: where you sleep, how you spend and the
+ *  counts). They are app-wide choices, so there is nothing to keep here but
+ *  "answered". */
 export function SleepScreen({ settings, commit, doneLabel }) {
   return (
     <>
-      <LifestyleStep />
+      <LifestyleStep party={settings.party} countries={placeIsos(settings)} nights={settings.when.nights} />
+      <Foot onContinue={() => commit(markAnswered(settings, 'sleep'))} label={doneLabel} />
+    </>
+  );
+}
+
+/** Where to sleep alone (T862, row T858-b): the stay types, from Tell
+ *  Carta's stay chip. It answers the same question as the whole Lifestyle. */
+export function StayScreen({ settings, commit, doneLabel }) {
+  return (
+    <>
+      <StayTypes party={settings.party} countries={placeIsos(settings)} nights={settings.when.nights} />
       <Foot onContinue={() => commit(markAnswered(settings, 'sleep'))} label={doneLabel} />
     </>
   );
@@ -268,6 +288,73 @@ export function FromScreen({ settings, commit, doneLabel }) {
         />
       </div>
       <Foot onContinue={go} disabled={!current} label={doneLabel} />
+    </>
+  );
+}
+
+// ---- How they get there, and the airports in reach (T860) ----
+
+const WAY_ROW_ICONS = { any: 'MapPinIcon', plane: 'PlaneIcon', train: 'TrainIcon', car: 'CarIcon' };
+
+/** The way there the app holds, as one of the question's four answers (a coach is the train's row). */
+function wayOfMode(mode) {
+  if (mode === 'bus') return 'train';
+  return WAYS.includes(mode) ? mode : 'any';
+}
+
+/** "How do you want to get there?": Any way, Fly, Train or Car. It is the
+ *  app's own way of travel (choices.transport_mode), so Explore's prices
+ *  follow; the trip keeps the answer to know whether to ask for airports. */
+export function WayScreen({ settings, commit, doneLabel }) {
+  const { t } = useI18n();
+  const app = useSettings();
+  const [picked, setPicked] = useState(() => settings.way || wayOfMode(app?.transportMode));
+  const go = () => {
+    // A coach said in the words stays a coach while the row is the train's.
+    const keep = picked === 'train' && app?.transportMode === 'bus';
+    if (!keep) app?.setTransportMode?.(picked);
+    commit(answer(settings, 'way', { way: picked }));
+  };
+  return (
+    <>
+      <ChoiceRows
+        label={t('pf.q.way')}
+        options={WAYS.map((w) => ({ value: w, icon: WAY_ROW_ICONS[w], label: t(`pf.way.${w}`) }))}
+        value={[picked]}
+        onPick={setPicked}
+      />
+      <Foot onContinue={go} label={doneLabel} />
+    </>
+  );
+}
+
+/** "How far would you go to an airport?": a reach in hours or picked
+ *  airports, from the town the traveller leaves from. Stored app-wide
+ *  (choices.origins), shared with the settings line's From. */
+export function AirportsScreen({ settings, commit, doneLabel }) {
+  const app = useSettings();
+  const point = settings.from ? { lat: settings.from.lat, lon: settings.from.lng } : fromPoint(app);
+  const meta = app?.data?.meta;
+  const covered = app?.sweptOrigins || null;
+  const [hours, setHours] = useState(() => app?.airportHours || null);
+  const [codes, setCodes] = useState(() => (app?.airportHours ? app.airports || [] : []));
+  const go = () => {
+    const h = hours || DEFAULT_REACH;
+    const ticked = hours ? codes : originsWithin(airportsNear(meta, point, { covered }), h);
+    app?.setAirports?.(ticked, h);
+    commit(markAnswered(settings, 'airports'));
+  };
+  return (
+    <>
+      <AirportReach
+        meta={meta}
+        point={point}
+        covered={covered}
+        hours={hours}
+        codes={codes}
+        onChange={(c, h) => { setCodes(c); setHours(h); }}
+      />
+      <Foot onContinue={go} label={doneLabel} />
     </>
   );
 }

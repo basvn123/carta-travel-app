@@ -43,12 +43,23 @@ export function loadFlightFile(origin) {
   return files.get(origin);
 }
 
-/** code -> { name, logo } for every airline the sweep has seen ({} until it loads). */
-export function loadAirlines() {
+/** The sweep's index (_index.json), once; null when it cannot be read. */
+function loadIndex() {
   if (!index) {
     index = getJson(`${FLIGHT_HOST}/flights/_index.json`)
-      .then((j) => j?.airlines || {})
-      .catch(() => { index = null; return {}; });
+      .catch(() => { index = null; return null; });
   }
   return index;
+}
+
+/** code -> { name, logo } for every airline the sweep has seen ({} until it loads). */
+export function loadAirlines() {
+  return loadIndex().then((j) => j?.airlines || {});
+}
+
+/** T860: the home airports the sweep publishes a file for, IATA -> priced
+ *  days ({} until it loads, null when the index cannot be read). An airport
+ *  missing here has no prices yet. */
+export function loadSweptOrigins() {
+  return loadIndex().then((j) => (j ? j.origins || {} : null));
 }

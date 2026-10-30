@@ -34,6 +34,8 @@ export const QUESTIONS = {
   },
   who: { titleKey: 'pf.q.who', custom: true },
   sleep: { titleKey: 'pf.q.sleep', helpKey: 'pf.q.sleepHelp', custom: true },
+  // T862: where to sleep alone (Tell Carta's stay chip); it answers sleep.
+  stay: { titleKey: 'pf.q.stay', custom: true },
   priority: {
     titleKey: 'pf.q.priority', helpKey: 'pf.q.priorityHelp',
     options: [
@@ -46,6 +48,9 @@ export const QUESTIONS = {
   },
   when: { titleKey: 'pf.q.when', custom: true },
   from: { titleKey: 'pf.q.from', helpKey: 'pf.q.fromHelp', custom: true },
+  // T860: the way there, then (when it may fly) the airports in reach.
+  way: { titleKey: 'pf.q.way', custom: true },
+  airports: { titleKey: 'pf.q.airports', helpKey: 'pf.q.airportsHelp', custom: true },
   nowWhere: { titleKey: 'pf.q.nowWhere', helpKey: 'pf.q.nowWhereHelp', custom: true },
   nowUntil: { titleKey: 'pf.q.nowUntil', helpKey: 'pf.q.nowUntilHelp', custom: true },
 

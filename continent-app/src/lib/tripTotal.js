@@ -52,6 +52,8 @@ export function tripLines(priced) {
       else lines.push({ key: dir, eur: 0, kind: 'missing' });
     }
   }
+  // T861: the way to the home airport and back, an estimate.
+  if (parts.airport > 0) lines.push({ key: 'airport', eur: parts.airport, kind: 'est', access: cartaFlight?.access || null });
   if (parts.transfers > 0) lines.push({ key: 'transfers', eur: parts.transfers, kind: 'est' });
   if (parts.between > 0 || legs.some(Boolean)) {
     const legRows = legs.filter((l) => l && l.ground_total != null);

@@ -1553,7 +1553,10 @@ export function GuidedTripWizard({
   const originCard = (
     <OriginCard
       {...{ originPlace, setOriginPlace, originQuery, setOriginQuery, originResults, setOriginResults }}
-      {...{ originBusy, setOriginBusy, nearAirports, depIataOk, setDepIata, homeIata }}
+      {...{ originBusy, setOriginBusy, nearAirports, depIataOk, setDepIata }}
+      // T861: the home airport the trip is priced from door to door (the
+      // cheapest of the airports in reach), else the app's origin.
+      homeIata={priced?.cartaFlight?.home || homeIata}
       homeCity={homePoint.city || ''}
     />
   );

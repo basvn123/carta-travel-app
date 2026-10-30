@@ -1065,3 +1065,47 @@
 @media (prefers-reduced-motion: reduce) {
   .pf-read-chips > li { animation: none; }
 }
+
+/* ---- T860: the airports in reach (components/AirportReach.jsx), here and in the From popover. ---- */
+.pf-reach { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
+.pf-reach .ui-crow:disabled { cursor: not-allowed; background: var(--surface-sunken); color: var(--text-2); }
+.pf-reach .ui-crow:disabled .ui-crow-mark { border-style: dashed; }
+@media (hover: hover) {
+  .pf-reach .ui-crow:disabled:hover { background: var(--surface-sunken); }
+}
+/* A Segmented that fills its box (owner, plan flow v3: "Either" and "Treat"
+   spilled): every segment shares the width and a long word wraps inside it. */
+.seg.pf-fill-seg { display: flex; width: 100%; }
+.seg.pf-fill-seg .seg-item {
+  flex: 1 1 0;
+  min-width: 0;
+  padding-inline: var(--space-2);
+  white-space: normal;
+  text-align: center;
+  line-height: var(--leading-ui);
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+/* ---- T862: where to sleep, the space then the four stay types (StayTypes.jsx). ---- */
+.pf-stay { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
+.pf-stay-tiles .ui-tile {
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: var(--space-3);
+  min-height: 64px;
+  padding: var(--space-2) var(--space-6) var(--space-2) var(--space-3);
+}
+.pf-stay-tiles .ui-tile-icon svg { width: 20px; height: 20px; }
+.pf-stay-tiles .ui-tile-label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  text-align: left;
+  overflow-wrap: normal;
+}
+.pf-stay-name { font-size: var(--text-body); font-weight: 600; line-height: var(--leading-tight); }
+.pf-stay-price { font-size: var(--text-label); font-weight: 400; color: var(--text-2); line-height: var(--leading-ui); }
+.ui-tile.is-selected .pf-stay-price { color: var(--select-ink); }
+.pf-stay-price { min-height: calc(var(--text-label) * 1.35); }

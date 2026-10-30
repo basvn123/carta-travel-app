@@ -53,6 +53,9 @@ export function TripSettingsSheet({ onClose, anchorRef, onSaved = null, planned 
         { id: 'priority', label: t('pf.set.priority'), value: optLabel('priority', s.priority) },
         { id: 'when', label: t('pf.set.when'), value: [w.start, w.end].filter(Boolean).join(', ') || t('pf.when.unsure') },
         { id: 'from', label: t('pf.set.from'), value: s.from?.name || fromName(app) || t('pf.set.notSet') },
+        // T860: the way there and the home airports in reach (the app's own choices).
+        { id: 'way', label: t('pf.set.way'), value: t(`pf.way.${s.way || (app?.transportMode === 'bus' ? 'train' : ['plane', 'train', 'car'].includes(app?.transportMode) ? app.transportMode : 'any')}`) },
+        { id: 'airports', label: t('pf.set.airports'), value: app?.airports?.length ? app.airports.join(', ') : t('pf.set.notSet') },
       ],
     },
     {

@@ -35,7 +35,7 @@ for (const [name, shape] of Object.entries(SHAPES)) {
     // Every part is in exactly one tile.
     const seen = tiles.flatMap((t) => t.parts);
     assert.equal(new Set(seen).size, seen.length);
-    assert.equal(seen.length, 9);
+    assert.equal(seen.length, 10); // T861: the way to the home airport is a part
   });
 }
 

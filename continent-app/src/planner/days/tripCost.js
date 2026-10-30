@@ -9,7 +9,7 @@ import { tripLines } from '../../lib/tripTotal.js';
 
 /** Receipt lines folded into the parts a traveller budgets by. */
 const PART_OF = {
-  out: 'getting', back: 'getting', travel: 'getting', drive: 'getting', transfers: 'getting',
+  out: 'getting', back: 'getting', travel: 'getting', drive: 'getting', airport: 'getting', transfers: 'getting',
   between: 'around', car: 'around',
   beds: 'stays',
   days: 'food',

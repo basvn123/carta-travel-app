@@ -26,11 +26,12 @@ const OWN = {
   booked: (o) => ({ booked: o.booked }),
   priority: (o) => ({ priority: o.priority }),
   places: (o) => ({ places: o.places }),
+  way: (o) => ({ way: o.way }),
 };
 const OWN_GUIDE = { 'g:likes': 'likes', 'g:budget': 'budget', 'g:weather': 'weather' };
 
 /** The answers the words gave that the words may take back when they change. */
-const WORD_IDS = ['who', 'when', 'from', 'booked', 'priority', 'g:likes', 'g:budget', 'g:weather', 'sleep', 'places'];
+const WORD_IDS = ['who', 'when', 'from', 'booked', 'priority', 'g:likes', 'g:budget', 'g:weather', 'sleep', 'places', 'way'];
 
 /**
  * The trip settings the field stands for right now: `base` (the settings
@@ -60,7 +61,8 @@ export function tellSettings(base, parsed, overrides = {}) {
   s = withOverrides(s, overrides);
   // A popover's Lifestyle is saved app-wide as it is changed; the words' stay and way stand down.
   const out = { ...choices };
-  if (overrides.sleep) { delete out.stay_tier; delete out.transport_mode; }
+  if (overrides.sleep) delete out.stay_tier;
+  if (overrides.way) delete out.transport_mode;
   return { settings: s, words: answered.filter((id) => !overrides[id]), choices: out };
 }
 
@@ -81,7 +83,8 @@ export function openSetup(s) {
   return setupScreens(s).filter((id) => id !== 'tell' && !s.answered.includes(id));
 }
 
-const STAY_KEY = { dorm: 'stay.dorm', private: 'stay.private', room: 'stay.room', home: 'stay.home' };
+// T862: a stay chip names the stay type (lib/sleepGroups.js STAY_TYPES), a hotel its stars.
+const STAY_KEY = { dorm: 'stay.type.hostel', private: 'stay.type.hostel', room: 'stay.type.room', home: 'stay.type.apartment', apt: 'stay.type.apartment' };
 
 /**
  * The chips, in the order a trip is told: where, when, how long, who, what
@@ -89,7 +92,7 @@ const STAY_KEY = { dorm: 'stay.dorm', private: 'stay.private', room: 'stay.room'
  * what matters most; then the questions still open, dashed.
  *
  *   opts: { t, monthName(m), day(iso), money(eur), stayTier (the app's),
- *           way (the app's transport mode), choices (the words' stay and way) }
+ *           choices (the words' stay and way), airports (the ticked home airports, T860) }
  */
 export function tellChips(s, parsed, opts) {
   const { t, monthName = String, day = String, money = String, stayTier = '', choices = {} } = opts;
@@ -130,8 +133,15 @@ export function tellChips(s, parsed, opts) {
   const tier = choices.stay_tier || (done.has('sleep') ? stayTier : '');
   if (tier) add('stay', 'sleep', /^hotel[2-5]$/.test(tier) && tier !== 'hotel3'
     ? t('pf.chip.hotel', { stars: t(`stay.stars${tier.slice(5)}`) })
-    : t(STAY_KEY[tier] || 'stay.hotel'));
-  if (choices.transport_mode && choices.transport_mode !== 'any') add('way', 'sleep', t(`way.${choices.transport_mode}`));
+    : t(STAY_KEY[tier] || 'stay.type.hotel'));
+  // T860: the way there is its own question; the words' way names its mode (a coach stays a coach).
+  if (done.has('way')) {
+    const mode = choices.transport_mode || (s.way === 'plane' || s.way === 'train' || s.way === 'car' ? s.way : 'any');
+    add('way', 'way', t(`way.${mode}`));
+  }
+  if (done.has('airports') && opts.airports?.length) {
+    add('airports', 'airports', opts.airports.length === 1 ? t('pf.chip.airportOne', { code: opts.airports[0] }) : t('pf.chip.airportsMany', { n: opts.airports.length }));
+  }
   if (done.has('booked')) {
     const on = ['flights', 'stays', 'car', 'tickets'].filter((k) => s.booked[k]);
     if (!on.length) add('booked', 'booked', t('pf.chip.bookedNone'));

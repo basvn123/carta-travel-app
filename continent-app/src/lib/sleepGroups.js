@@ -66,3 +66,54 @@ export function sleepGroupOf(tier) {
   const t = tier === 'hotel' ? 'hotel3' : tier;
   return SLEEP_GROUPS.find((g) => g.tiers.includes(t))?.key || 'home';
 }
+
+// ---- The stay types (T862, plan flow v3 Batch C) ---------------------------
+//
+// The planner's "Where to sleep" asks first for the space (a whole place, a
+// room, or either) and then offers the four types the stay data serves
+// (pipeline/stays/build_stays.py, checked 2026-10-29), each with a typical
+// night: an apartment or holiday home, a hotel (its stars as the comfort row),
+// a room in a home, a hostel. Each type prices one or more stay tiers
+// (lib/stayPrice.js STAY_TIERS), in preference order:
+//
+//   apartment  'home' (the wire's bnb_home, an entire place). The pipeline's
+//              own apartments kind ('apt', Booking.com apartments, studios,
+//              holiday homes, villas and houses) only feeds bnb_home where
+//              Inside Airbnb has none; it does not reach the wire, so the
+//              type prices bnb_home until it does (register T862-a).
+//   hotel      hotel3, then hotel2, hotel4, hotel5
+//   room       'room' (bnb_room, a private room in a home)
+//   hostel     'dorm', then 'private' (a hostel's or a guesthouse's room)
+
+export const STAY_SPACES = ['whole', 'room', 'either'];
+
+export const STAY_TYPES = [
+  { key: 'apartment', space: 'whole', labelKey: 'stay.type.apartment', tiers: ['home'] },
+  { key: 'hotel', space: 'room', labelKey: 'stay.type.hotel', tiers: ['hotel3', 'hotel2', 'hotel4', 'hotel5'], comfort: true },
+  { key: 'room', space: 'room', labelKey: 'stay.type.room', tiers: ['room'] },
+  { key: 'hostel', space: 'room', labelKey: 'stay.type.hostel', tiers: ['dorm', 'private'] },
+];
+
+/** The stay types a dataset can price, each with the tiers it offers. */
+export function offeredStayTypes(stayTiers) {
+  const have = Array.isArray(stayTiers) ? stayTiers : [];
+  return STAY_TYPES
+    .map((ty) => ({ ...ty, offered: ty.tiers.filter((k) => have.includes(k)) }))
+    .filter((ty) => ty.offered.length > 0);
+}
+
+/** The types a space shows: a whole place, a room, or all of them. */
+export function typesForSpace(types, space) {
+  return space === 'whole' || space === 'room' ? types.filter((ty) => ty.space === space) : types;
+}
+
+/** Which type a stored tier belongs to; anything unknown is the apartment, as sleepGroupOf lands on the home. */
+export function stayTypeOf(tier) {
+  const t = tier === 'hotel' ? 'hotel3' : tier === 'bnb_home' ? 'home' : tier === 'bnb_room' ? 'room' : tier;
+  return STAY_TYPES.find((ty) => ty.tiers.includes(t))?.key || 'apartment';
+}
+
+/** The tier a pick of type `ty` lands on: the current tier when it belongs to it, else its first. */
+export function tierForType(ty, current) {
+  return ty.offered.includes(current) ? current : ty.offered[0];
+}

@@ -43,10 +43,15 @@ export function answerKey(input) {
     s.guide, s.when, s.party, s.priority, input.origin?.iata || null, input.origin?.lat ?? null, input.origin?.lon ?? null,
     input.lifestyle || null, input.stayTier || null, input.ownFlight || null, input.flights?.checked || null,
     input.taste || null, Boolean(input.countryInsights),
+    // T861: the home airports in reach and when each one's file was checked.
+    homeAirportsOf(input).map((a) => `${a.iata}:${input.data?.flightsBy?.[a.iata]?.checked || ''}`),
     Object.keys(input.layerIndexes || {}).filter((k) => input.layerIndexes[k]).sort(),
     input.today ? String(input.today).slice(0, 10) : null,
   ]));
 }
+
+/** The ticked home airports (T861), from the catalogue the engine prices with. */
+const homeAirportsOf = (input) => (Array.isArray(input.data?.meta?.home_airports) ? input.data.meta.home_airports : []);
 
 /** The planner state of one candidate, before the slots set their own settings. */
 function plannerState(c, input) {
@@ -65,7 +70,9 @@ function plannerState(c, input) {
     pace: 'balanced',
     anchorId: at,
     returnAnchorId: at,
-    anchorOrigin: input.origin?.iata || null,
+    // T861: with the airports in reach answered, quoteTrip flies from the
+    // cheapest of them door to door; else from the one origin, as before.
+    anchorOrigin: homeAirportsOf(input).length ? null : (input.origin?.iata || null),
     ownFlight: input.ownFlight || null,
     carHome: c.transport === 'owncar' && input.origin?.lat != null
       ? { name: input.origin.name || '', lat: input.origin.lat, lon: input.origin.lon } : null,
@@ -108,7 +115,8 @@ export function priceCandidate(c, input, qdata = quoteData(input), registry = {}
     iso2: c.iso2,
     places: c.places,
     gateway: c.gateway ? { iata: c.gateway.iata, minutes: c.gateway.minutes, mode: c.gateway.mode, placeId: c.gateway.placeId, swept: c.gateway.swept } : null,
-    origin: input.origin?.iata || null,
+    // T861: the home airport the trip flies from (the cheapest door to door).
+    origin: quote.cartaFlight?.home || input.origin?.iata || null,
     month: c.month,
     dates: c.dates,
     nights: c.nights,
@@ -125,6 +133,10 @@ export function priceCandidate(c, input, qdata = quoteData(input), registry = {}
     signals: c.signals,
   };
   trip.slots = buildSlots({ trip, quote, state, ctx }, reg);
+  // T861: the flight slot may fly from another ticked airport (the nearest
+  // swept days were cheaper from there): the trip flies from where it does.
+  const flownFrom = trip.slots.find((s) => s.id === 'flight')?.pick?.facts?.home;
+  if (flownFrom) trip.origin = flownFrom;
   trip.total = slotTotals(trip.slots);
   Object.defineProperty(trip, 'quote', { value: quote, enumerable: false });
   Object.defineProperty(trip, 'state', { value: state, enumerable: false });

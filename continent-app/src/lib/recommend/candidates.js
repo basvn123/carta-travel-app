@@ -206,10 +206,13 @@ function nearAirports(d, destinations) {
  * known), else its own anchor; a place with neither (a ground-only gem)
  * tries the catalogue's nearest airports, and the engine prices the
  * transfer from there. With no fare anywhere, the first place's airport,
- * marked unswept. Null when the trip does not fly.
+ * marked unswept. Null when the trip does not fly. T861: `flights` may be
+ * several files (every ticked home airport's); a fare in any one counts.
  */
 export function gatewayFor(placeIds, { destinations, flights, getting, out, origin }) {
   const ym = out ? out.slice(0, 7) : null;
+  const files = (Array.isArray(flights) ? flights : [flights]).filter(Boolean);
+  const homes = new Set([origin, ...files.map((f) => f.from)].filter(Boolean));
   let first = null;
   // First every place's own airports, then the airports near each place.
   const tries = [false, true].flatMap((near) => placeIds.map((id) => ({ id, near })));
@@ -217,10 +220,10 @@ export function gatewayFor(placeIds, { destinations, flights, getting, out, orig
     const d = destinations[id];
     const pick = getting ? pickAirport(getting(id)) : null;
     const own = [pick?.iata, destAnchor(d)].filter(Boolean);
-    if (near && !flights) break;
+    if (near && !files.length) break;
     const airports = near ? nearAirports(d, destinations).filter((a) => !own.includes(a)) : own;
     for (const iata of airports) {
-      if (iata === origin) continue;
+      if (homes.has(iata)) continue;
       const named = pick?.iata === iata;
       const anchored = destAnchor(d) === iata;
       const via = {
@@ -230,7 +233,7 @@ export function gatewayFor(placeIds, { destinations, flights, getting, out, orig
         placeId: id,
       };
       if (!first) first = via;
-      if (flights && (sweptNear(flights, 'out', iata, out) || sweptCheapest(flights, 'out', iata, ym))) {
+      if (files.some((f) => sweptNear(f, 'out', iata, out) || sweptCheapest(f, 'out', iata, ym))) {
         return { ...via, swept: true };
       }
     }
@@ -282,6 +285,9 @@ export function buildCandidates(input) {
 
   const { shapes, gaps } = shapesFor(settings);
   const flies = settings.guide.reach !== 'overland';
+  // T861: every ticked home airport's file, the origin's first.
+  const homeFiles = [flights, ...Object.values(data?.flightsBy || {})]
+    .filter((f, i, all) => f && all.findIndex((g) => g?.from === f.from) === i);
   const build = (c, shape, ids) => {
     const dests = ids.map((id) => destinations[id]);
     const month = fixedMonth ?? bestMonth(dests, settings.guide.weather, today);
@@ -297,7 +303,7 @@ export function buildCandidates(input) {
       transport: transportFor(shape, settings),
       places: placeIds.map((id, i) => ({ id, nights: nights[i] })),
       gateway: flies
-        ? gatewayFor(placeIds, { destinations, flights, getting, out: dates.out, origin: origin?.iata || null })
+        ? gatewayFor(placeIds, { destinations, flights: homeFiles, getting, out: dates.out, origin: origin?.iata || null })
         : null,
       month,
       dates: dates.out ? { out: dates.out, back: dates.back } : null,

@@ -24,6 +24,7 @@ import { tripDaysBetween, drivingEstimate } from '../runtime_pricing.js';
 import { combineTripLegs, ownFlightTransfers, pickLegMode } from '../trip_planner_pricing.js';
 import { legTransportOptions, airportTransferOptions, transferModesFromKm } from '../transport.js';
 import { originHome, destAnchor } from '../origins.js';
+import { accessCost, homeCandidates } from '../airportReach.js';
 import { pickLeg, legCost, fitsHours, fitsPrefs } from '../flights/flights.js';
 import { addDays } from '../dates.js';
 import { round2 } from '../math.js';
@@ -244,48 +245,79 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
     const flies = transportPref !== 'owncar' && !typedPair && (!ownFlight || (ownFlight.mode || 'fly') === 'fly');
     const routed = routedFlight;
     if (!flies || !routed || !first?.arriveDate || !last?.departDate) return null;
-    const home = anchorOrigin || data?.meta?.selected_origin || null;
-    // T855: a flight the trip already holds for a direction (the trip
-    // finder's priced leg, handed over by planOf, or the pick the planned
-    // trip carries) prices that direction before the exact-day lookup. It
-    // keeps its own day (the finder may have priced the swept day nearest
-    // the trip's) and its own airport: the finder flies to the gateway's
-    // airport, which can differ from the routed anchor's.
-    const heldOut = heldLeg(state, 'out', home, first.arriveDate);
-    const heldBack = heldLeg(state, 'back', home, last.departDate);
-    const inAirport = heldOut?.to || destAnchor(destinations[routed.in_from_id]);
-    const outAirport = heldBack?.from || destAnchor(destinations[routed.out_from_id]);
-    if (!home || !inAirport || !outAirport) return null;
-    const file = data?.flights?.from === home ? data.flights : null;
+    // T861: every home airport the traveller ticked is priced door to door
+    // (the fare, plus the drive or train to it and back with parking,
+    // airportReach.accessCost) and the cheapest whole is flown from; an
+    // airport the traveller swapped to (anchorOrigin) is kept. Without a
+    // reach answer the one origin flies, as before, and no way to the
+    // airport is added.
+    const { homes, ticked } = homeCandidates(data, anchorOrigin);
+    if (!homes.length) return null;
     const live = state?.liveFlights;
     const hours = state?.flightHours || {};
     const paying = groupSize;
     const bagKey = state?.baggage || rule('request.default_bag');
-    const side = (dir, from, to, date) => {
-      const held = dir === 'out' ? heldOut : heldBack;
-      const fits = held && fitsHours(held.dep, hours[dir] || 'any') && fitsPrefs(held, state?.flightPrefs || null);
-      const leg = fits ? heldAsLeg(held) : pickLeg({
-        file, live: live?.get?.(`${from}-${to}-${date}`) || null, dir,
-        airport: dir === 'out' ? to : from, date, hours: hours[dir] || 'any',
-        rank: state?.flightRank || 'price',
-        prefs: state?.flightPrefs || null,
-      });
-      // T713: babies fly on a lap for a fee a leg (party.baby_lap_fee_leg),
-      // the same fee Explore's way there adds (party.js flightPerSeat).
-      const cost = leg ? legCost(leg, { paying, bagKey }) : null;
-      const lap = babies * BABY_LAP_FEE_LEG;
-      return leg ? { ...leg, from, to, cost: lap > 0 ? { ...cost, lap, total: cost.total + lap } : cost } : leg;
+    const nights = plannedNights;
+    const option = ({ iata: home, file, row }) => {
+      // T855: a flight the trip already holds for a direction (the trip
+      // finder's priced leg, handed over by planOf, or the pick the planned
+      // trip carries) prices that direction before the exact-day lookup. It
+      // keeps its own day (the finder may have priced the swept day nearest
+      // the trip's) and its own airport: the finder flies to the gateway's
+      // airport, which can differ from the routed anchor's.
+      const heldOut = heldLeg(state, 'out', home, first.arriveDate);
+      const heldBack = heldLeg(state, 'back', home, last.departDate);
+      const inAirport = heldOut?.to || destAnchor(destinations[routed.in_from_id]);
+      const outAirport = heldBack?.from || destAnchor(destinations[routed.out_from_id]);
+      if (!home || !inAirport || !outAirport) return null;
+      const side = (dir, from, to, date) => {
+        const held = dir === 'out' ? heldOut : heldBack;
+        const fits = held && fitsHours(held.dep, hours[dir] || 'any') && fitsPrefs(held, state?.flightPrefs || null);
+        const leg = fits ? heldAsLeg(held) : pickLeg({
+          file, live: live?.get?.(`${from}-${to}-${date}`) || null, dir,
+          airport: dir === 'out' ? to : from, date, hours: hours[dir] || 'any',
+          rank: state?.flightRank || 'price',
+          prefs: state?.flightPrefs || null,
+        });
+        // T713: babies fly on a lap for a fee a leg (party.baby_lap_fee_leg),
+        // the same fee Explore's way there adds (party.js flightPerSeat).
+        const cost = leg ? legCost(leg, { paying, bagKey }) : null;
+        const lap = babies * BABY_LAP_FEE_LEG;
+        return leg ? { ...leg, from, to, cost: lap > 0 ? { ...cost, lap, total: cost.total + lap } : cost } : leg;
+      };
+      const out = ownOut ? null : side('out', home, inAirport, first.arriveDate);
+      const back = ownBack ? null : side('back', outAirport, home, last.departDate);
+      const access = ticked && row ? accessCost(row, { adults, children, babies, nights }) : null;
+      const fare = (out?.cost?.total || 0) + (back?.cost?.total || 0);
+      return {
+        home, inAirport, outAirport, out, back, access,
+        priced: Boolean((ownOut || out?.cost) && (ownBack || back?.cost)),
+        total: round2(fare + (access?.eur || 0)),
+        queries: [
+          { o: home, d: inAirport, date: first.arriveDate },
+          { o: outAirport, d: home, date: last.departDate },
+        ],
+      };
     };
+    const options = homes.map(option).filter(Boolean);
+    if (!options.length) return null;
+    const pick = (anchorOrigin && options.find((o) => o.home === anchorOrigin))
+      || options.filter((o) => o.priced).sort((a, b) => a.total - b.total)[0]
+      || options[0];
+    // The airports beside it, for the trip's flight line: the nearest drive
+    // and what each costs door to door (a swap is one tap).
+    const airports = ticked ? options.map((o) => ({ iata: o.home, total: o.total, priced: o.priced, access: o.access })) : null;
     return {
-      home,
-      inAirport,
-      outAirport,
-      out: ownOut ? null : side('out', home, inAirport, first.arriveDate),
-      back: ownBack ? null : side('back', outAirport, home, last.departDate),
-      queries: [
-        { o: home, d: inAirport, date: first.arriveDate },
-        { o: outAirport, d: home, date: last.departDate },
-      ],
+      home: pick.home,
+      inAirport: pick.inAirport,
+      outAirport: pick.outAirport,
+      out: pick.out,
+      back: pick.back,
+      access: pick.access,
+      airports,
+      nearest: ticked ? homes[0].iata : null,
+      pinned: Boolean(anchorOrigin && pick.home === anchorOrigin),
+      queries: pick.queries,
     };
   })();
 
@@ -525,6 +557,9 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
     travel: round2(flight?.own || flight?.driving ? (flight.cost_total || 0) : 0),
     // Carta's flight for each way they did not type, bags included (T517).
     flights: round2((cartaFlight?.out?.cost?.total || 0) + (cartaFlight?.back?.cost?.total || 0)),
+    // T861: home to the airport and back (the drive and parking, or the
+    // train), once the traveller has said which airports are in reach.
+    airport: round2(cartaFlight?.access?.eur || 0),
     // Runway to bed and bed to runway, plus a named arrival to the first stop.
     transfers: round2(
       ((flight?.combinable || flight?.own) ? (flightTransfer ? flightTransfer.ground_total : (flight.ground_total || 0)) : 0)

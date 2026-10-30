@@ -128,15 +128,20 @@ const BOOK_OBJECT = {
 const NOTHING_BOOKED = ['nothing booked', 'nothing is booked', 'not booked anything', 'haven t booked anything', 'nothing yet', 'niets geboekt',
   'nog niets geboekt', 'nichts gebucht', 'noch nichts gebucht', 'rien reserve', 'rien de reserve', 'nada reservado', 'nulla prenotato', 'niente prenotato'];
 
+// T862: the words for the four stay types (lib/sleepGroups.js STAY_TYPES):
+// a hostel (dorm, a hostel's private room), a room in a home, an apartment
+// or holiday home (the entire place, 'home'), a hotel with its stars.
 const STAY = [
   ['private', ['private room in a hostel', 'hostel private room', 'private room']],
   ['dorm', ['hostel', 'hostels', 'dorm', 'dorms', 'youth hostel', 'jeugdherberg', 'jugendherberge', 'auberge de jeunesse', 'auberges de jeunesse',
     'albergue', 'albergue juvenil', 'ostello', 'ostelli']],
   ['room', ['room in a home', 'a room in a home', 'b b', 'b and b', 'bed and breakfast', 'guesthouse', 'guest house', 'gastenkamer', 'gastenverblijf',
-    'pension', 'gastezimmer', 'chambre d hote', 'chambres d hotes', 'chambre d hotes', 'casa de huespedes', 'habitacion en casa', 'affittacamere']],
+    'pension', 'gastezimmer', 'chambre d hote', 'chambres d hotes', 'chambre d hotes', 'casa de huespedes', 'habitacion en casa', 'affittacamere',
+    'kamer in een woning', 'zimmer in einer wohnung', 'chambre chez l habitant', 'habitacion en una casa', 'camera in una casa']],
   ['home', ['apartment', 'apartments', 'airbnb', 'holiday home', 'holiday house', 'holiday let', 'cottage', 'villa', 'chalet',
     'appartement', 'vakantiehuis', 'vakantiewoning', 'huisje', 'ferienwohnung', 'ferienhaus', 'gite', 'maison de vacances', 'location de vacances',
-    'apartamento', 'casa rural', 'casa de vacaciones', 'appartamento', 'casa vacanze', 'casa vacanza']],
+    'apartamento', 'casa rural', 'casa de vacaciones', 'appartamento', 'casa vacanze', 'casa vacanza',
+    'flat', 'entire place', 'whole place', 'entire home', 'hele woning', 'ganze unterkunft', 'logement entier', 'alojamiento entero', 'alloggio intero']],
   ['hotel', ['hotel', 'hotels', 'albergo', 'alberghi']],
 ];
 const STARS = ['star', 'stars', 'ster', 'sterren', 'sterne', 'stern', 'etoile', 'etoiles', 'estrella', 'estrellas', 'stella', 'stelle'];
@@ -812,8 +817,11 @@ export function parseTrip(text, ctx = {}) {
 /** The question each field answers (the screen it lets the planner skip). */
 export const FIELD_SCREEN = {
   places: 'places', when: 'when', party: 'who', from: 'from', booked: 'booked', priority: 'priority',
-  likes: 'g:likes', budget: 'g:budget', stay: 'sleep', weather: 'g:weather',
+  likes: 'g:likes', budget: 'g:budget', stay: 'sleep', weather: 'g:weather', way: 'way',
 };
+
+/** T860: the way-there question's answer for a way the words said (a coach is the train's row). */
+const WAY_ANSWER = { plane: 'plane', train: 'train', bus: 'train', car: 'car' };
 
 /** The screen ids a parse answers. */
 export function answeredBy(parsed) {
@@ -881,7 +889,8 @@ export function applyTrip(s, parsed, { keep = [] } = {}) {
   if (guideTouched) patch.guide = guide;
   if (F.places && free('places')) { patch.places = F.places.value.map(({ kind, id, name, iso2, country }) => ({ kind, id, name, iso2: iso2 || (kind === 'country' ? id : ''), country })); answered.push('places'); }
   if (F.stay && free('sleep')) { choices.stay_tier = F.stay.value; answered.push('sleep'); }
-  if (F.way && free('sleep')) choices.transport_mode = F.way.value;
+  // T860: the way there is its own question now (way); the app's choice follows it.
+  if (F.way && free('way')) { choices.transport_mode = F.way.value; patch.way = WAY_ANSWER[F.way.value] || 'any'; answered.push('way'); }
   return { patch, answered, choices };
 }
 

@@ -128,6 +128,8 @@ const TogetherSheet = lazy(() => import('./planner/finder/FindingTrips.jsx').the
 import { PaywallProvider } from './hooks/usePaywall.jsx';
 import { LegalFromUrl } from './components/LegalFromUrl.jsx';
 import { originHome, nearestOrigin } from './lib/origins.js';
+import { airportsNear, originsWithin, DEFAULT_REACH } from './lib/airportReach.js';
+import { loadSweptOrigins } from './lib/flights/flightData.js';
 import { useAppData } from './hooks/useAppData.js';
 import { Button } from './components/Button.jsx';
 import { CATALOGUE_MODE, loadFullCatalogue } from './lib/appData.js';
@@ -590,6 +592,12 @@ function TravelApp() {
     // mode prices nothing until this is set, so a road trip is never quietly
     // costed from the departure airport (see needsDriveHome).
     drive_home: init.drive_home ?? null,
+    // T860: the home airports the traveller would fly from (IATA codes the
+    // sweep covers), and how they were chosen: a reach in hours (1, 2, 3)
+    // or 'pick'. Empty until the reach question is answered; the flight
+    // then leaves from `origin` alone, as before.
+    origins: Array.isArray(init.origins) ? init.origins : [],
+    airport_hours: init.airport_hours ?? null,
     lifestyle: { ...DEFAULT_LIFESTYLE, ...(init.lifestyle || {}) },
     // T694: every price per person ('pp') or for the whole group ('total').
     price_view: init.price_view === 'total' ? 'total' : 'pp',
@@ -1169,7 +1177,15 @@ function TravelApp() {
   // fare-date bounds used to default/clamp the depart & return pickers.
   const {
     data, error, dateBounds, needRecords, defaultDates,
-  } = useAppData(init, setChoices, departDate, setDepartDate, returnDate, setReturnDate, choices.origin);
+  } = useAppData(init, setChoices, departDate, setDepartDate, returnDate, setReturnDate, choices.origin,
+    choices.origins?.length ? choices.origins : null, choices.drive_home);
+  // T860: which home airports the sweep has prices for (IATA -> priced days).
+  const [sweptOrigins, setSweptOrigins] = useState(null);
+  useEffect(() => {
+    let alive = true;
+    loadSweptOrigins().then((o) => { if (alive) setSweptOrigins(o); });
+    return () => { alive = false; };
+  }, []);
 
   // 'viewport' catalogue mode (T059, lib/catalogue.js): only the Explore
   // tab can work from the countries it has on screen, because its map lists
@@ -1221,13 +1237,28 @@ function TravelApp() {
       return { ...prev, drive_home: null };
     }
     const code = nearestOrigin(data, placePt) || prev.origin;
+    // T860: a new town ticks its own airports at the reach already chosen
+    // (a hand-picked list belonged to the old town: the default reach).
+    const hours = prev.airport_hours === 'pick' ? DEFAULT_REACH : prev.airport_hours;
+    const origins = hours
+      ? originsWithin(airportsNear(data?.meta, placePt, { covered: sweptOrigins }), hours)
+      : prev.origins;
     return {
       ...prev,
       origin: code,
       home: { lat: placePt.lat, lon: placePt.lon },
       drive_home: { name: placePt.name || '', lat: placePt.lat, lon: placePt.lon, iso2: placePt.iso2 || null, country: placePt.country || '' },
+      origins: origins || [],
+      airport_hours: hours || null,
     };
-  }), [data]);
+  }), [data, sweptOrigins]);
+  // T860: the airports in reach, as the reach question and the settings
+  // line's From set them: a reach in hours or 'pick', and the ticked codes.
+  const setAirports = useCallback((codes, hours) => setChoices((prev) => ({
+    ...prev,
+    origins: Array.isArray(codes) ? [...new Set(codes)] : [],
+    airport_hours: hours ?? prev.airport_hours ?? null,
+  })), []);
 
   // Stable callback props for the two planner tabs. Both are memoized and both
   // stay mounted behind display:none, so a fresh arrow here re-rendered two
@@ -1501,6 +1532,11 @@ function TravelApp() {
     // null and the line names the home airport's town.
     fromPlace: choices.drive_home || null,
     setFrom,
+    // T860: the home airports in reach and how they were chosen.
+    airports: choices.origins || [],
+    airportHours: choices.airport_hours ?? null,
+    setAirports,
+    sweptOrigins,
     departDate, returnDate, setDepartDate, setReturnDate,
     defaultDates, dateBounds,
     ownDates,
@@ -1525,7 +1561,7 @@ function TravelApp() {
     stayTier: choices.stay_tier || 'home',
     lifestyle: choices.lifestyle,
     openLifestyle,
-  }), [data, choices.origin, setOrigin, choices.drive_home, setFrom, departDate, returnDate, defaultDates, dateBounds,
+  }), [data, choices.origin, setOrigin, choices.drive_home, setFrom, choices.origins, choices.airport_hours, setAirports, sweptOrigins, departDate, returnDate, defaultDates, dateBounds,
     ownDates, dateFlex, travelMonth, when, request, exploreMonth, choices.group_size, choices.children, choices.babies, setParty, setPartyParts,
     choices.transport_mode, setTransportMode, choices.price_view, setPriceView, choices.price_excluded, setPriceExcluded, countryFilter, setCountryFilter, countryNot, setCountryNot,
     availableCountries, choices.stay_tier, choices.lifestyle, openLifestyle]);

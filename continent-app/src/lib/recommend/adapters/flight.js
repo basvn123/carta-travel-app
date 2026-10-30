@@ -23,6 +23,7 @@
 import { sweptNear, legCost, rankFlights, googleFlightsLink } from '../../flights/flights.js';
 import { BABY_LAP_FEE_LEG } from '../../party.js';
 import { rule } from '../../price/config.js';
+import { accessCost, homeCandidates } from '../../airportReach.js';
 
 export const SOURCE = 'google_flights';
 const DEFAULT_BAG = rule('request.default_bag');
@@ -42,8 +43,9 @@ const legFacts = (leg, from, to, cost) => (leg ? {
   source: leg.source || 'swept', from, to, perSeat: cost?.perSeat ?? null, bags: cost?.bags ?? null, bagsKnown: cost?.bagsKnown ?? null,
 } : null);
 
-/** The pick's facts: both legs, the trip-level summary, the source and its link. */
-function pickFacts(id, out, back, lang = 'en') {
+/** The pick's facts: both legs, the trip-level summary, the source and its link;
+ *  T861: the home airport and the way to it and back when the reach was answered. */
+function pickFacts(id, out, back, lang = 'en', access = null) {
   const legs = [out, back].filter(Boolean);
   const checked = legs.length ? Math.min(...legs.map((l) => l.checked || Infinity)) : null;
   const first = out || back;
@@ -56,20 +58,40 @@ function pickFacts(id, out, back, lang = 'en') {
     minutes: out?.minutes ?? null,
     checked: Number.isFinite(checked) ? checked : null,
     link: out && back ? googleFlightsLink(out.from, out.to, out.date, { back: back.date, lang }) : null,
+    home: out?.from || back?.to || null,
+    access: access || null,
   };
 }
 
-/** The swept legs nearest the trip's days, when the quote found none for the exact days. */
+/**
+ * The swept legs nearest the trip's days, when the quote found none for the
+ * exact days. T861: from every ticked home airport with a file, the
+ * cheapest door to door (the fares plus the way to the airport and back).
+ */
 function nearLegs(trip, state, ctx, home) {
-  const file = ctx.flights;
   const iata = trip?.gateway?.iata;
-  if (!file || !iata || !trip.dates || file.from !== home) return null;
-  const out = sweptNear(file, 'out', iata, trip.dates.out);
-  const back = sweptNear(file, 'back', iata, trip.dates.back);
-  if (!out || !back) return null;
+  if (!iata || !trip.dates) return null;
+  const { homes, ticked } = homeCandidates(ctx.data, ticked0(ctx) ? null : home);
   const party = { paying: trip.party.head, babies: trip.party.babies, bagKey: state.baggage || DEFAULT_BAG };
-  return { out: { ...out, cost: legFor(out, party) }, back: { ...back, cost: legFor(back, party) }, iata };
+  const files = homes
+    .filter((h) => ticked || h.iata === home)
+    .map((h) => ({ ...h, file: h.file || (ctx.flights?.from === h.iata ? ctx.flights : null) }));
+  let best = null;
+  for (const h of files) {
+    if (!h.file || h.file.from !== h.iata) continue;
+    const out = sweptNear(h.file, 'out', iata, trip.dates.out);
+    const back = sweptNear(h.file, 'back', iata, trip.dates.back);
+    if (!out || !back) continue;
+    const access = ticked && h.row ? accessCost(h.row, { adults: trip.party.adults, children: trip.party.children, babies: trip.party.babies, nights: trip.nights }) : null;
+    const o = { out: { ...out, cost: legFor(out, party) }, back: { ...back, cost: legFor(back, party) }, iata, home: h.iata, access };
+    o.total = o.out.cost.total + o.back.cost.total + (access?.eur || 0);
+    if (!best || o.total < best.total) best = o;
+  }
+  return best;
 }
+
+/** Whether the traveller answered the reach (the finder then flies from any ticked airport). */
+const ticked0 = (ctx) => Array.isArray(ctx?.data?.meta?.home_airports) && ctx.data.meta.home_airports.length > 0;
 
 export const flight = {
   price({ trip, quote, state, ctx }) {
@@ -91,9 +113,9 @@ export const flight = {
     const typed = parts.travel > 0;
     const quoted = cf && (cf.out?.cost || cf.back?.cost);
     const bothQuoted = cf?.out?.cost && cf?.back?.cost;
-    const mk = (id, out, back, eurGroup, quality) => ({
+    const mk = (id, out, back, eurGroup, quality, access = null) => ({
       eurGroup,
-      pick: { id, labelKey: `tf.opt.flight.${id}`, facts: pickFacts(id, out, back, ctx.lang), eurGroup },
+      pick: { id, labelKey: `tf.opt.flight.${id}`, facts: pickFacts(id, out, back, ctx.lang, access), eurGroup },
       options: null,
       because: `flightRank:${state.flightRank || 'price'}`,
       quality,
@@ -103,14 +125,15 @@ export const flight = {
       const out = legFacts(cf.out, cf.home, cf.inAirport, cf.out?.cost);
       const back = legFacts(cf.back, cf.outAirport, cf.home, cf.back?.cost);
       const live = [cf.out, cf.back].some((l) => l?.source === 'live');
-      return mk(typed ? 'yours' : live ? 'live' : 'swept', out, back, parts.flights + parts.travel, live ? 'live' : 'measured');
+      // T861: door to door, the way to the home airport and back included.
+      return mk(typed ? 'yours' : live ? 'live' : 'swept', out, back, parts.flights + parts.travel + (parts.airport || 0), live ? 'live' : 'measured', cf.access);
     }
     // No fare for the exact days: the nearest swept days (each keeps its date).
     const near = nearLegs(trip, state, ctx, home);
     if (!near) return null;
-    const out = legFacts(near.out, home, near.iata, near.out.cost);
-    const back = legFacts(near.back, near.iata, home, near.back.cost);
-    return mk('swept', out, back, near.out.cost.total + near.back.cost.total, 'measured');
+    const out = legFacts(near.out, near.home, near.iata, near.out.cost);
+    const back = legFacts(near.back, near.iata, near.home, near.back.cost);
+    return mk('swept', out, back, near.total, 'measured', near.access);
   },
 };
 

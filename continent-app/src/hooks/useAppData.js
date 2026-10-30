@@ -6,6 +6,7 @@ import {
 } from '../lib/appData.js';
 import { withOriginRoutes, defaultOrigin, originHome } from '../lib/origins.js';
 import { loadFlightFile, loadAirlines } from '../lib/flights/flightData.js';
+import { homeAirports } from '../lib/airportReach.js';
 import { addDays, todayISO } from '../lib/dates.js';
 import { calendarDefaultWindow } from '../lib/firstRun.js';
 
@@ -27,8 +28,14 @@ const FIRST_PAINT_KM = 300;
  *  returned `data` is always priced from it. Until choices.origin is set (first
  *  paint), we fall back to the data's own default origin so the app never renders
  *  without routes.
+ *
+ *  T861: `airports` are the home airports the traveller ticked
+ *  (choices.origins) and `fromPt` the town they leave from: each ticked
+ *  airport's flight file is loaded into `data.flightsBy`, and
+ *  `data.meta.home_airports` lists them with their drive, so the trip price
+ *  can fly from the cheapest door to door.
  */
-export function useAppData(init, setChoices, departDate, setDepartDate, returnDate, setReturnDate, origin) {
+export function useAppData(init, setChoices, departDate, setDepartDate, returnDate, setReturnDate, origin, airports = null, fromPt = null) {
   const [raw, setRaw] = useState(null);
   const [error, setError] = useState(null);
 
@@ -137,6 +144,20 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
   // reads it reprices when it lands, the same way an origin change does.
   const [flights, setFlights] = useState({ origin: null, file: null });
   const [airlines, setAirlines] = useState(null);
+  // T861: every ticked home airport's file, by IATA (null when it has none).
+  const airportKey = Array.isArray(airports) ? airports.join('.') : '';
+  const [extraFiles, setExtraFiles] = useState({});
+  useEffect(() => {
+    let alive = true;
+    for (const code of airportKey ? airportKey.split('.') : []) {
+      loadFlightFile(code).then((file) => {
+        if (alive) setExtraFiles((prev) => (prev[code] === file ? prev : { ...prev, [code]: file }));
+      });
+    }
+    return () => { alive = false; };
+  }, [airportKey]);
+  const fromLat = fromPt?.lat ?? null;
+  const fromLon = fromPt?.lon ?? null;
   useEffect(() => {
     if (!effectiveOrigin) return undefined;
     let alive = true;
@@ -148,13 +169,20 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
     loadAirlines().then((a) => { if (alive) setAirlines(a); });
     return () => { alive = false; };
   }, []);
-  const data = useMemo(() => (routed
-    ? {
-      ...routed,
-      flights: flights.origin === effectiveOrigin ? flights.file : null,
-      airlines: airlines || {},
+  const data = useMemo(() => {
+    if (!routed) return null;
+    const file = flights.origin === effectiveOrigin ? flights.file : null;
+    const out = { ...routed, flights: file, airlines: airlines || {} };
+    if (!airportKey) return out;
+    const codes = airportKey.split('.');
+    const pt = fromLat != null && fromLon != null ? { lat: fromLat, lon: fromLon } : null;
+    const flightsBy = {};
+    for (const code of codes) {
+      const f = code === effectiveOrigin ? file : extraFiles[code];
+      if (f) flightsBy[code] = f;
     }
-    : null), [routed, flights, airlines, effectiveOrigin]);
+    return { ...out, flightsBy, meta: { ...routed.meta, home_airports: homeAirports(routed.meta, pt, codes) } };
+  }, [routed, flights, airlines, effectiveOrigin, airportKey, extraFiles, fromLat, fromLon]);
 
   // The date-picker bounds: tomorrow to a year out. Until T511 they came from
   // the fare window of the chosen origin's fare file (`__window`); with the

@@ -19,7 +19,8 @@ import { scrollBehavior } from '../lib/motion.js';
 import { usePaywall } from '../hooks/usePaywall.jsx';
 import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon, MapPinIcon, RouteIcon, CalendarIcon, LinkIcon, ChevronDownIcon, CloseIcon, TicketIcon, LuggageIcon, PencilIcon, ExternalIcon, PlusIcon, GripIcon, SwapIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
-import { TRAVEL_MODE_LABEL, legLinks, stayDatesLink } from '../lib/transportLinks.js';
+import { TRAVEL_MODE_LABEL, legLinks, stayBookLinks } from '../lib/transportLinks.js';
+import { AirportLine } from './trip/AirportLine.jsx';
 import { SheetShell } from '../browse/SheetShell.jsx';
 import { FlightRow, HoursFilter } from '../components/flights/Flights.jsx';
 import { useAirlines, airlineName } from '../lib/flights/useAirlines.js';
@@ -539,6 +540,10 @@ export function TripItinerary({
   stopEdit = null, addStopSlot = null,
   // T840: Change flight for a way ('out' | 'back'), on the flight's row.
   onChangeFlight = null,
+  // T861: the home airport on the flight line, and its one-tap swap (iata).
+  onSwapAirport = null, airportOrigins = null,
+  // T862: the trip's stay tier, for each stay's book links (a stop may sleep its own way).
+  tripStayTier = 'home',
   // T845: a receipt line's own change on the Costs tab.
   onReceiptLine = null,
   // T838: how the trip gets between its stops and a cheaper order, from the
@@ -582,10 +587,10 @@ export function TripItinerary({
     if (!s.dest) return;
     bookingRows.push({
       key: `stay-${i}`, label: t('extras.stayIn', { city: s.dest.city }), estimate: stayCosts[i]?.accomTotal ?? null,
-      findUrl: stayDatesLink({
-        city: s.dest.city, country: s.dest.country, checkin: s.arriveDate, checkout: s.departDate,
+      findUrl: stayBookLinks({
+        tier: s.stayTier || tripStayTier, city: s.dest.city, country: s.dest.country, checkin: s.arriveDate, checkout: s.departDate,
         adults: party?.adults || groupSize, children: party?.children || 0,
-      }),
+      })[0]?.href || null,
       findLabel: t('plan.findStay'),
     });
     // The hop to the next stop is a booking too: a train or a bus ticket.
@@ -843,6 +848,7 @@ export function TripItinerary({
                       fareField={onTravelPaid ? outFare : null}
                     />
                   )}
+                  {showFlight('out') && <AirportLine cartaFlight={cartaFlight} origins={airportOrigins || {}} onSwap={onSwapAirport} />}
                 </div>
                 {onTravelPaid && !showFlight('out') && outFare}
               </li>
@@ -934,19 +940,23 @@ export function TripItinerary({
                                 : <Money value={sc.accomTotal} est precision="cents" />} />
                           </dl>
                           <span className="itin-bed-acts">
-                            {!sc.ownAccom && (
+                            {/* T862: the book links of the stay's type (Booking.com
+                                apartments and Airbnb, Airbnb rooms, Hostelworld, or
+                                the hotel search as before). */}
+                            {!sc.ownAccom && stayBookLinks({
+                              tier: s.stayTier || tripStayTier, city: s.dest.city, country: s.dest.country, checkin: s.arriveDate, checkout: s.departDate,
+                              adults: party?.adults || groupSize, children: party?.children || 0,
+                            }).map((l, _k, all) => (
                               <a
+                                key={l.provider}
                                 className="btn btn-quiet btn-sm itin-find"
-                                href={stayDatesLink({
-                                  city: s.dest.city, country: s.dest.country, checkin: s.arriveDate, checkout: s.departDate,
-                                  adults: party?.adults || groupSize, children: party?.children || 0,
-                                })}
+                                href={l.href}
                                 target="_blank"
                                 rel="noreferrer noopener"
                               >
-                                <span className="btn-label">{t('plan.findStay')}</span>
+                                <span className="btn-label">{all.length > 1 || /^(dorm|private|room)$/.test(s.stayTier || tripStayTier) ? t('plan.findOn', { provider: l.provider }) : t('plan.findStay')}</span>
                               </a>
-                            )}
+                            ))}
                             {onOwnStay && (
                               <PaidField
                                 id={`paid-bed-${i}`}

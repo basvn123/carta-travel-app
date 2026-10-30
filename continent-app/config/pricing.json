@@ -1037,6 +1037,21 @@
       "review": "2027-04-24",
       "test": "tests/priceGolden.test.mjs"
     },
+    "origins.airport_access": {
+      "value": {
+        "road_factor": 1.3,
+        "drive_kmh": 85,
+        "parking_eur_per_day": 12,
+        "hours": [1, 2, 3],
+        "default_hours": 2
+      },
+      "unit": "road km per straight km, km/h, EUR a car a day, hours",
+      "kind": "estimate",
+      "source": "T860 estimate, not measured: the drive to a home airport is the straight line times road_factor (the car model's own detour) at drive_kmh, motorway with the town ends; parking is a typical long-stay airport car park a day; the train to the airport is ground.transfer_public; the reach question offers hours, default_hours preselected",
+      "date": "2026-10-30",
+      "review": "2027-04-30",
+      "test": "tests/airportReach.test.mjs"
+    },
     "flights.bag_fees": {
       "value": {
         "airlines": {

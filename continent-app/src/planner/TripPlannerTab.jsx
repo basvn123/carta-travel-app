@@ -1011,6 +1011,9 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     <TripItinerary
               stopEdit={tp.planned && sections?.includes('route') ? stopEdit : null}
               onChangeFlight={tp.planned && sections?.includes('route') ? setFlightSheet : null}
+              onSwapAirport={tp.planned && sections?.includes('route') ? tp.setAnchorOrigin : null}
+              airportOrigins={data?.meta?.origins}
+              tripStayTier={tp.stayTier}
               onReceiptLine={tp.planned && sections?.includes('receipt') ? onReceiptLine : null}
               routeExtra={tp.planned && sections?.includes('route') && (betweenBlock || cheaperBlock) ? <>{betweenBlock}{cheaperBlock}</> : null}
               addStopSlot={tp.planned && sections?.includes('route') ? addStopBlock : null}

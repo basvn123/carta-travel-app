@@ -16,7 +16,9 @@ const chipsOf = (s, p, extra = {}) => tellChips(s, p, { t, monthName: (m) => `m$
 test("the words fill the answers they give; the rest stay open as dashed chips", () => {
   const p = read("a week in July with my wife and two kids, around 2000 euro, by train");
   const { settings, words, choices } = tellSettings(defaultSettings(), p);
-  assert.deepEqual(words.sort(), ["g:budget", "when", "who"].sort());
+  // T860: "by train" answers the way-there question, and a train trip asks no airports.
+  assert.deepEqual(words.sort(), ["g:budget", "when", "who", "way"].sort());
+  assert.equal(settings.way, "train");
   assert.equal(settings.sources.who, "words");
   assert.equal(choices.transport_mode, "train");
   const chips = chipsOf(settings, p, { choices });
@@ -57,7 +59,7 @@ test("Continue asks only the questions still open", () => {
   const asked = [];
   let k = nextScreen(list, "tell");
   while (k && k !== "create") { if (!settings.answered.includes(k)) asked.push(k); k = nextScreen(list, k); }
-  assert.deepEqual(asked, ["from"]);
+  assert.deepEqual(asked, ["from", "way", "airports"]);
 });
 
 test("named places become chips that open one popover", () => {
@@ -73,7 +75,7 @@ test("a hotel's stars read in the chip, a 3 star hotel is a hotel", () => {
   const four = tellSettings(defaultSettings(), read("4 star hotel"));
   assert.equal(chipsOf(four.settings, read("4 star hotel"), { choices: four.choices }).find((c) => c.key === "stay").text, 'pf.chip.hotel{"stars":"stay.stars4"}');
   const three = tellSettings(defaultSettings(), read("a hotel"));
-  assert.equal(chipsOf(three.settings, read("a hotel"), { choices: three.choices }).find((c) => c.key === "stay").text, "stay.hotel");
+  assert.equal(chipsOf(three.settings, read("a hotel"), { choices: three.choices }).find((c) => c.key === "stay").text, "stay.type.hotel");
 });
 
 test("a budget for the group is split over the party a popover set", () => {

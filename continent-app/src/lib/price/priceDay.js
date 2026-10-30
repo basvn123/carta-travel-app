@@ -182,3 +182,37 @@ export function foodBreakdown(dest, req = DEFAULT_PRICE_REQUEST, days = 1) {
   for (const [k, v] of Object.entries(g)) out[k] = typeof v === 'number' ? v * share : v;
   return out;
 }
+
+const median = (xs) => {
+  if (!xs.length) return null;
+  const s = [...xs].sort((a, b) => a - b);
+  const m = Math.floor(s.length / 2);
+  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+};
+
+/**
+ * A typical night of one stay tier for the party (T862, for the stay types
+ * of lib/sleepGroups.js): the median, over the places (the trip's named
+ * countries when given, else the catalogue), of the engine's bed a person a
+ * night (priceDay's stayEur, any time of year, for the party and the
+ * nights), a person and for the group. Places that cannot price the tier
+ * itself (the engine falls back to another) are left out. Null when none can.
+ *
+ *   -> { perPerson, perNight, n }
+ */
+export function typicalNight(destinations, tier, { adults = 2, children = 0, nights = 7, countries = null } = {}) {
+  const want = Array.isArray(countries) && countries.length ? new Set(countries) : null;
+  const req = { ...DEFAULT_PRICE_REQUEST, stay: tier, nights: Math.max(1, Math.round(nights || 7)), group: { adults: Math.max(1, adults), children: Math.max(0, children), babies: 0 } };
+  const seats = seatsOf(req);
+  const pp = [];
+  for (const d of Object.values(destinations || {})) {
+    if (!d?.accommodation?.beds) continue;
+    if (want && !want.has(d.iso2) && !want.has(d.country)) continue;
+    const day = priceDay(d, req, destinations);
+    if (!day || day.tierFallback || !(day.stayEur > 0)) continue;
+    pp.push(day.stayEur);
+  }
+  const night = median(pp);
+  if (night == null) return null;
+  return { perPerson: cents(night), perNight: cents(night * seats), n: pp.length };
+}

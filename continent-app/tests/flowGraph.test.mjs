@@ -11,7 +11,7 @@ const s = (patch) => normalizeSettings(patch);
 
 test("nothing booked: every setup question, the doors, the guide", () => {
   const n = s({});
-  assert.deepEqual(setupScreens(n), ["tell", "booked", "who", "sleep", "priority", "when", "from"]);
+  assert.deepEqual(setupScreens(n), ["tell", "booked", "who", "sleep", "priority", "when", "from", "way", "airports"]);
   assert.equal(hasDoors(n), true);
   assert.deepEqual(planScreens(n, "guide"), [
     "g:shape", "g:likes", "g:weather", "g:reach", "g:avoid", "g:budget", "g:pick", "g:trips",
@@ -28,6 +28,15 @@ test("flights booked: no When, no From in setup; arrival asked in planning; no r
     "g:shape", "g:likes", "g:weather", "g:avoid", "g:budget", "g:pick", "g:trips",
     "p:From", "p:Where", "p:Stay", "p:Getting", "p:Finish",
   ]);
+});
+
+test("T860: the airports in reach are asked only for a way there that may fly", () => {
+  for (const way of ["", "any", "plane"]) assert.ok(setupScreens(s({ way })).includes("airports"), way);
+  for (const way of ["train", "car"]) {
+    const list = setupScreens(s({ way }));
+    assert.ok(list.includes("way") && !list.includes("airports"), way);
+  }
+  assert.equal(s({ way: "boat" }).way, "");
 });
 
 test("stays booked: no doors, straight to the stays", () => {
@@ -53,7 +62,8 @@ test("day screens skip answered rhythm unless asked for all", () => {
 
 test("next, prev and the first open setup question", () => {
   const list = fullFlow(s({}), "guide");
-  assert.equal(nextScreen(list, "from"), "create");
+  assert.equal(nextScreen(list, "from"), "way");
+  assert.equal(nextScreen(list, "airports"), "create");
   assert.equal(nextScreen(list, "create"), "tripHome");
   assert.equal(nextScreen(list, "doors"), "g:shape");
   assert.equal(prevScreen(list, "tell"), null);

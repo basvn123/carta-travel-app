@@ -82,7 +82,9 @@ export function planOf(trip) {
     party: { adults: trip.party.adults, children: trip.party.children || 0, babies: trip.party.babies || 0 },
     anchorId: st.anchorId || null,
     returnAnchorId: st.returnAnchorId || null,
-    anchorOrigin: st.anchorOrigin || null,
+    // T861: the home airport the card flies from, so the planner prices the
+    // same airport (the trip page offers the others in one tap).
+    anchorOrigin: st.anchorOrigin || slotOf(trip, 'flight')?.pick?.facts?.home || null,
     carHome: st.carHome || null,
     transport: localOpt?.transport || st.transportPref || 'auto',
     stayTier: stay?.pick?.id || st.stayTier || null,
