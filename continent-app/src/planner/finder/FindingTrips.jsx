@@ -325,6 +325,7 @@ export default function TripFinderScreen({ ui, settings, guide, edits, setEdits,
             trips={all}
             destinations={finder.data?.destinations}
             originName={settings.from?.name || finder.origin?.name || ''}
+            home={finder.origin}
             markedId={markedId}
             ui={ui}
             onBack={onBack}

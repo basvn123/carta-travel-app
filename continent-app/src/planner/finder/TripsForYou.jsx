@@ -157,7 +157,7 @@ function useVisit(store, settings, fallback) {
  * (keptStore), Skip in its menu hides it for these answers; the hidden ones
  * are counted under the list with "Show them again".
  */
-export function TripsForYou({ settings, trips: found, destinations, originName, markedId = null, onBack, onOpen, onReopen, onPlan, cardRefs, keeper, ui, headEnd = null }) {
+export function TripsForYou({ settings, trips: found, destinations, originName, home = null, markedId = null, onBack, onOpen, onReopen, onPlan, cardRefs, keeper, ui, headEnd = null }) {
   const { t, lang } = useI18n();
   const [skips, setSkips] = useSkips(settings);
   const [sort, setSortState] = useVisit(VIEW, settings, { sort: 'match', map: false, side: true, quick: [] });
@@ -176,6 +176,8 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
   const [refused, setRefused] = useState(null);
   const [comparing, setComparing] = useState(false);
   const [pickedId, setPickedId] = useState(null);
+  // The trip under the pointer, shared by the gallery and the map (T883).
+  const [hotId, setHotId] = useState(null);
   const items = useRef(new Map());
   const order = trips.slice(0, shown).map((x) => x.id).join();
   const snapshot = useReorderMotion(order, items);
@@ -305,7 +307,9 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
         const list = (
           <ol className="tff-list">
             {trips.slice(0, shown).map((trip) => (
-              <li key={trip.id} className={trip.id === featId ? 'is-feat' : undefined} ref={(el) => { if (el) items.current.set(trip.id, el); else items.current.delete(trip.id); }}>
+              <li key={trip.id} className={[trip.id === featId ? 'is-feat' : '', trip.id === hotId ? 'is-hot' : ''].filter(Boolean).join(' ') || undefined}
+                onMouseEnter={side ? () => setHotId(trip.id) : undefined} onMouseLeave={side ? () => setHotId(null) : undefined}
+                ref={(el) => { if (el) items.current.set(trip.id, el); else items.current.delete(trip.id); }}>
                 {card(trip, { feat: trip.id === featId })}
               </li>
             ))}
@@ -313,7 +317,8 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
         );
         const map = (
           <Suspense fallback={<div className="tff-map is-loading" aria-busy="true"><span className="sr-only">{t('state.loading')}</span></div>}>
-            <TripsMap trips={trips} destinations={destinations} pickedId={picked?.id || null} cheapestId={cheapestId} onPick={setPickedId} label={t('tf.map.label')} />
+            <TripsMap trips={trips} destinations={destinations} pickedId={picked?.id || null} cheapestId={cheapestId} onPick={setPickedId} label={t('tf.map.label')}
+              home={home} hotId={hotId} onHot={setHotId} />
           </Suspense>
         );
         if (side) {

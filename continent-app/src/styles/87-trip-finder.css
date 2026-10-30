@@ -1260,3 +1260,36 @@
   .tff-cost-body, .tff-cost-body > .tff-tp-lines, .tff-cost-tog .btn-icon { transition: none; }
 }
 
+/* ---- The trips map, T883: photo pins, the lines from home ---- */
+.tff-map .tff-pin {
+  align-items: center;
+  gap: var(--space-1);
+  padding: 3px var(--space-2) 3px 3px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  box-shadow: var(--elev-2);
+  font-size: var(--text-caption);
+  transition: transform var(--dur-1) var(--ease-out);
+}
+.tff-map .tff-pin:not(:has(.tff-pin-photo)) { padding-left: var(--space-2); }
+.tff-pin-photo { display: block; width: 26px; height: 26px; flex: none; border-radius: 50%; object-fit: cover; background: var(--surface-sunken); }
+.tff-map .tff-pin-eur { font-weight: 700; }
+.tff-map .tff-pin-name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.tff-map .tff-pin.is-cheapest { background: var(--best); }
+.tff-map .tff-pin.is-picked { background: var(--action); color: var(--action-text); outline: 2px solid var(--surface); outline-offset: 0; transform: scale(1.08); }
+.tff-map .tff-pin.is-hot { outline: 2px solid var(--text); outline-offset: 1px; transform: scale(1.06); }
+.tff-home { width: 18px; height: 18px; border: 3px solid var(--surface); border-radius: 50%; background: var(--text); box-shadow: var(--elev-1); }
+.tff-arc-time {
+  padding: 2px 6px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  color: var(--text-2);
+  font-size: var(--text-micro);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+/* The card under the pointer, while the map is beside the list. */
+.tff-split .tff-list > li.is-hot .tff-card-media { outline: 2px solid var(--text); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .tff-map .tff-pin { transition: none; } }
+
