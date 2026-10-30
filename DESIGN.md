@@ -287,6 +287,8 @@ The world refuses two things, both confirmed by the owner in the direction contr
 - Borders at rest, shadows only on what floats.
 - Every control is 44 px on touch, with a 2 px brown focus ring.
 
+**Design freedom (owner, 2026-10-30, T878).** The characteristics above and the "only for" columns below describe the default system, not a cage. Where a screen needs more to be modern and visually top notch, it may add colour worlds, gradients, illustration and diagrams, richer motion and new screen-scoped tokens; a new value used across screens still lands in `01-tokens.css` and here. Contrast, 44 px touch targets, reduced motion, honest numbers and the copy rules still bind. The carta-design skill's "Owner decision 2026-10-30: design freedom" holds the details; the persona question (`g:persona`, a colour world per persona) is the first screen built this way.
+
 T425 rewrote the carta-design skill for Lagoon (closes register row T419-c): this file holds the values, the skill holds the judgement on top of them. If the two ever disagree on a value, the stylesheet ships, this file records it, and the skill is the one to fix.
 
 ## Where to adjust the style

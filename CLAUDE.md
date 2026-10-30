@@ -57,6 +57,8 @@ Two files at the repo root are the durable context every session reads before to
 
 The [carta-design skill](https://github.com/anthropics/claude-code/skills/carta-design) documents Carta's visual language: the colour palette, typography, layout, components, copy rules, and the ten things never to do.
 
+Since 2026-10-30 (owner, T878) its look rules are defaults, not bans: a screen may go further (colour, gradients, illustration, richer motion) where that makes it modern and visually top notch. Accessibility, honest numbers, the copy rules and licensed photography still bind. The skill's first section, "Owner decision 2026-10-30: design freedom", holds the details.
+
 When a design question arises and another source (a layout sketch, a browser screenshot, a wireframe) gives a different answer, carta-design wins. If carta-design does not explicitly cover a case, the question belongs in the next phase or a separate task: do not make a design call without a written rule.
 
 Before shipping any visual change, answer the seven questions at the end of the carta-design brief.

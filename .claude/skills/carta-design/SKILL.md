@@ -27,6 +27,28 @@ Updated 2026-10-13 (T438) after the owner reviewed Explore: the lagoon teal beca
 (umber), a rating became a star and an ink figure (the Score, T437), provenance on the page became the
 estimate mark alone, and catalogue counts left the page furniture.
 
+## Owner decision 2026-10-30: design freedom (read this first)
+
+The owner, during the plan flow walk (T878): "Ignore carta constraints. The page responsible for
+design needs to enable more freedom." The look rules below (the two base colours, brown only for
+action and selection, no gradients, no illustration, the motion limits, the one quiet style) are
+now **defaults, not bans**. Where a screen needs more to be modern, clean and visually top notch,
+design it that way: colour worlds per item, gradients, authored illustration and diagrams,
+richer motion (still with a reduced-motion branch), larger and bolder type, more depth. Take the
+brief and the impeccable skill as the guide, and say in the task report what departed from the
+defaults below and why.
+
+What still binds, because it protects the traveller rather than the look:
+- Accessibility: text contrast 4.5:1 (3:1 for large text), 44 px touch targets on a coarse
+  pointer, visible focus, `prefers-reduced-motion: reduce` honoured, colour never the only carrier.
+- Honest numbers: every euro from `formatMoney()`, no fabricated figures or social proof, a
+  missing figure is `NotYet`, the flight price is never presented as Carta's own.
+- Copy: no em or en dashes, the six languages through i18n keys, plain words.
+- Licensed photography with its credit; no AI-generated photographs of places.
+
+The first screen built under this decision is the persona question (`g:persona`): a colour
+world per persona with a drawn diagram of how that traveller moves (`PersonaMark.jsx`).
+
 ## Where the truth lives, and what wins
 
 - `PRODUCT.md` (repo root): who Carta is for, the voice, accessibility, the visual brand commitment.
@@ -685,7 +707,10 @@ let its sections arrive once and play its film and its recorded clips; see Inter
 
 ## Before you ship
 
-Read the diff and answer these seven questions (DESIGN.md carries the same seven):
+Read the diff and answer these seven questions (DESIGN.md carries the same seven). Since the
+owner's design-freedom decision (2026-10-30, first section) questions 2, 3, 5 and 7 are prompts to
+think, not gates: a gradient, a colour world or a second expressive element is fine when it serves
+the screen; name it in the report. Questions 4 and 6 (figures, money, copy) and contrast still gate.
 
 1. Any hex value outside `src/styles/01-tokens.css` (and the token mirror)? `design-lint.mjs` checks this.
 2. Any gradient, any colour not in DESIGN.md, any saturated hue beside `--action` outside its one job?
