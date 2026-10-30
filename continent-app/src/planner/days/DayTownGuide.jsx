@@ -22,8 +22,13 @@ const ICON = { vibe: SparkIcon, sleep: BedIcon, when: CalendarIcon, getting: Pla
  * time, how to get there, good to know, what is on, an insider tip). A
  * question the data cannot answer yet keeps its row with the placeholder.
  * `showHead` is the first day in a town; later days keep only the guide.
+ *
+ * `folded` (T898, the owner's plan days board): the guide is about the town,
+ * not the day, so on a day it closes into one "About {town}" block at the
+ * end, without the photograph, and the questions the data cannot answer
+ * yet are left out instead of saying "Not available yet".
  */
-export function DayTownGuide({ dest, destId, month = null, showHead = true }) {
+export function DayTownGuide({ dest, destId, month = null, showHead = true, folded = false }) {
   const { t, lang } = useI18n();
   const [dossier, setDossier] = useState(undefined);
   useEffect(() => {
@@ -107,6 +112,27 @@ export function DayTownGuide({ dest, destId, month = null, showHead = true }) {
     }
     return <NotYet line as="p" className="dtg-notyet" />;
   };
+
+  if (folded) {
+    const known = dossier ? rows.filter((r) => r.items.length) : [];
+    if (!known.length) return null;
+    return (
+      <details className="dtg dtg-fold">
+        <summary className="dtg-fold-sum">
+          <span>{t('dtg.about', { city })}</span>
+          <ChevronDownIcon size={16} className="dtg-q-chev" />
+        </summary>
+        <dl className="dtg-fold-rows">
+          {known.map((r) => (
+            <div key={r.key} className="dtg-fold-row">
+              <dt>{t(`dtg.q.${r.key}`)}</dt>
+              <dd>{body(r.key, r.items)}</dd>
+            </div>
+          ))}
+        </dl>
+      </details>
+    );
+  }
 
   return (
     <section className="dtg" aria-label={t('dtg.label', { city })}>

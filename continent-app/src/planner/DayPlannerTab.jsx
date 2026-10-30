@@ -34,6 +34,7 @@ import {
   canonicalPoiIndices, poiIdentityKeys, DAY_STYLES,
 } from './dayDraft.js';
 import { DayBotChat } from './days/DayBotChat.jsx';
+import { DayPills, DayStart } from './days/DayStart.jsx';
 import { AutoPlanBar } from './days/AutoPlanBar.jsx';
 import { TripDaysOverview } from './days/TripDaysOverview.jsx';
 import { DayTownGuide } from './days/DayTownGuide.jsx';
@@ -3955,6 +3956,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     : null;
   const dayTicketRows = assignedItems.map(ticketOf);
   const dayCity = cityLabel(stop?.dest?.city || '') || t('day.thisCity');
+  const dayMonth = days[dayIdx] ? Number(days[dayIdx].slice(5, 7)) : null;
   const dayTitle = t('dayws.stripTitle', { city: dayCity, n: dayNumber });
   const daySpan = schedule && assignedItems.length
     ? t('dayws.timeSpan', { from: fmtClockLoose(Number.isFinite(prefs?.dayStartMin) ? prefs.dayStartMin : DAY_START_MIN), to: fmtClockLoose(schedule.endMin) })
@@ -4183,13 +4185,18 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
         )}
       </div>
 
-      {!plan.standalone && (
-        <Button variant="quiet" size="sm" className="dayws-alldays" iconStart={<ListDayIcon size={16} />} onClick={() => setOverview(true)}>
-          {t('days.allDays')}
-        </Button>
+      {/* T898: the days as chips, All days first inside a trip; a lone
+          standalone plan keeps the switcher with its menu. */}
+      {stop && !plan.standalone && planDays.length > 0 && (
+        <DayPills
+          days={planDays.map((d, k) => ({ k, label: t('dayws.crumbDay', { n: k + 1 }), empty: !(assignments?.[d.si]?.[d.di] || []).length }))}
+          current={dayNumber - 1}
+          onPick={goToPlanDay}
+          onAll={() => setOverview(true)}
+        />
       )}
 
-      {stop && planDays.length > 0 && (
+      {stop && plan.standalone && planDays.length > 0 && (
         <DaySwitcher
           index={dayNumber - 1}
           total={planDays.length}
@@ -4201,22 +4208,18 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
         />
       )}
 
-      {/* From the trip: the city, the date and the bed are the trip's, said
-          once and not asked again (roadmap 1.3d state 5). */}
-      {stop?.dest && (
-        <DayTownGuide
-          dest={stop.dest}
-          destId={stop.destination_id}
-          month={days[dayIdx] ? Number(days[dayIdx].slice(5, 7)) : null}
-          showHead={dayIdx === 0}
+      {/* T898: Start your day, what is needed before leaving, on top. */}
+      {stop && !adding && (
+        <DayStart
+          leaveMin={scheduleShown && assignedItems.length ? scheduleShown.startMin : null}
+          first={assignedItems[0] ? { name: assignedItems[0].name, arriveMin: scheduleShown?.rows?.[0]?.arriveMin ?? null } : null}
+          highC={dayMonth ? (data?.destinations?.[stop.destination_id]?.taste?.tmax_by_month?.[dayMonth - 1] ?? stop.dest?.taste?.tmax_by_month?.[dayMonth - 1] ?? null) : null}
+          tickets={dayTickets}
+          dayCost={dayCost}
+          stayLabel={stayLabel}
+          onPlan={() => { setBotPreset(plan.standalone ? { autoRun: true } : { ...dayAiPreset(fromDraft(plannerStore.getState())), autoRun: true }); setAiOpen(true); }}
+          onAdd={() => openAdd('end')}
         />
-      )}
-
-      {!plan.standalone && stop && (
-        <p className="dayws-fromtrip">
-          {t('dayws.fromTrip', { city: dayCity, name: tripName })}
-          {stayLabel ? ` ${t('dayws.fromTripBed', { place: stayLabel })}` : ''}
-        </p>
       )}
 
       {stop && (stops.length > 1 || cityAddOpen) && (
@@ -4326,6 +4329,17 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
           />
 
           <DayKit tools={kitTools} />
+
+          {/* T898: the town's guide is about the town, not the day: one
+              closed block after the day, without the empty questions. */}
+          {stop?.dest && (
+            <DayTownGuide
+              dest={stop.dest}
+              destId={stop.destination_id}
+              month={dayMonth}
+              folded
+            />
+          )}
 
           <DayExports
             onPdf={downloadPdf}

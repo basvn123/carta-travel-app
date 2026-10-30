@@ -1810,6 +1810,20 @@ export const en = {
   "bot.foot": "Plans from Carta's own places. Check opening times before you go.",
   "bot.signedOut": "The Carta bot needs a free account.",
   "bot.signIn": "Sign in",
+  "dst.title": "Start your day",
+  "dst.leave": "Leave {time}",
+  "dst.first": "First stop",
+  "dst.firstAt": "{name}, {time}",
+  "dst.high": "Usual high",
+  "dst.highC": "{n}°",
+  "dst.tickets": "Tickets today",
+  "dst.ticketsN": "{n} with a ticket",
+  "dst.cost": "Your day, a person",
+  "dst.bed": "Back to",
+  "dst.empty": "Nothing planned yet",
+  "dst.plan": "Let Carta plan this day",
+  "dst.add": "Add a place",
+  "dtg.about": "About {city}",
 
   // Passes. Both paid tiers are one-off payments, and the copy leans on that
   // rather than hiding it: not having to cancel anything is part of the offer.

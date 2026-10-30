@@ -124,3 +124,40 @@
 .dbot-foot { margin: var(--space-1) 0 0; font-size: var(--text-caption); color: var(--text-3); text-align: center; }
 .dbot-out { display: flex; flex-direction: column; gap: var(--space-2); font-size: var(--text-label); }
 .dbot-out p { margin: 0; color: var(--text-2); }
+
+/* T898: one day. The days as chips, Start your day on top, the town's
+   guide folded at the end. */
+.dpl { margin: 0 calc(-1 * var(--space-1)); }
+.dpl-row { display: flex; gap: var(--space-2); margin: 0; padding: var(--space-1); overflow-x: auto; list-style: none; scrollbar-width: none; }
+.dpl-row::-webkit-scrollbar { display: none; }
+.dpl-row li { flex: none; }
+.btn.dpl-pill { min-height: 40px; padding: var(--space-1) var(--space-3); border-radius: var(--radius-control); }
+.dpl-pill .btn-label { display: inline-flex; align-items: center; gap: var(--space-1); }
+.dpl-day { font-weight: 600; }
+.dpl-date { font-size: var(--text-caption); font-weight: 500; color: var(--text-3); }
+.btn.dpl-pill.is-now { border-color: var(--text); background: var(--text); color: var(--surface); }
+.btn.dpl-pill.is-now .dpl-date { color: var(--border-soft); }
+.dpl-pill.is-empty .dpl-day::after { content: ""; display: inline-block; width: 6px; height: 6px; margin-left: var(--space-1); border: 1.5px solid currentColor; border-radius: var(--radius-pill); opacity: 0.5; vertical-align: middle; }
+.btn.dpl-pill.is-all { color: var(--action); }
+
+.dst { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-card); background: var(--surface); }
+.dst-top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.dst-h { margin: 0; font-size: var(--text-lead); font-weight: 700; }
+.dst-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3) var(--space-4); margin: 0; }
+.dst-fact { display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: var(--space-2); align-items: start; }
+.dst-ic { display: grid; place-items: center; width: 32px; height: 32px; border-radius: var(--radius-control); background: var(--surface-sunken); color: var(--text-2); }
+.dst-txt { min-width: 0; }
+.dst-txt dt { font-size: var(--text-caption); font-weight: 600; color: var(--text-3); }
+.dst-txt dd { margin: 0; font-size: var(--text-label); font-weight: 600; color: var(--text); overflow-wrap: anywhere; }
+.dst.is-empty { align-items: flex-start; }
+.dst-acts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+@media (min-width: 1280px) { .day-ws:not(.has-bot) .dst-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+.dtg-fold { border: 1px solid var(--border); border-radius: var(--radius-card); background: var(--surface); }
+.dtg-fold-sum { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); min-height: 48px; padding: var(--space-3) var(--space-4); font-weight: 700; list-style: none; cursor: pointer; }
+.dtg-fold-sum::-webkit-details-marker { display: none; }
+.dtg-fold-sum:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; border-radius: var(--radius-card); }
+.dtg-fold[open] .dtg-q-chev { transform: rotate(180deg); }
+.dtg-fold-rows { display: flex; flex-direction: column; gap: var(--space-3); margin: 0; padding: 0 var(--space-4) var(--space-4); }
+.dtg-fold-row dt { font-size: var(--text-caption); font-weight: 600; color: var(--text-3); }
+.dtg-fold-row dd { margin: 0; font-size: var(--text-label); }
