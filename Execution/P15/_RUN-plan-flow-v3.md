@@ -75,3 +75,4 @@ Bases: root `main` d392962b9, app `master` d195640. Each branch stacks on the on
 1. App first: `git -C continent-app checkout master` then `git -C continent-app merge --ff-only p15-plan-flow-v3-g` (master is still d195640, so it fast-forwards to a0001d2).
 2. Then the root: `git checkout main` then `git merge --ff-only p15-plan-flow-v3-g` (main is still d392962b9). The root mirror of `continent-app/` then equals app master at a0001d2.
 3. Run `npm test` (1109 of 1109) and a full build with `public/` before any deploy; the owner rows above are calls to read before shipping.
+- T875 deploy: app master 8af8923, root main 7cece0092 pushed; Pages 8c452891 live (index-DdQJtM0h.js); walk-g 88 of 88 on preview and production; css-routes hold 3 rules (back to 1, T833-a).
