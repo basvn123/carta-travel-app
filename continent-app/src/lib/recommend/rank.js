@@ -10,7 +10,7 @@
  *   2. fit      a trip qualifies when its strongest chosen like reads at
  *               least rank.mainLikeMin where the profiles measure it, and
  *               no hard conflict stands (config rank, fitFirst)
- *   3. order    by the blend (T878, owner 2026-10-30): the answers (the
+ *   3. order    by the blend (T884, owner 2026-10-30): the answers (the
  *               fit F with the persona's fit P) lead and the places' quality
  *               follows, config rank.blend; trips over the typed budget sink
  *               by budget.sinkPer100 points (of 10) a hundred euros over.
@@ -185,7 +185,7 @@ export function rankTrips(trips, { settings, taste = null, data, levers = null }
     const out = {
       ...trip,
       budget,
-      // pct is the ranked score (T878), shown while the fit itself reads
+      // pct is the ranked score (T884), shown while the fit itself reads
       // show_min or more; fit is the answers alone, for the trip page.
       match: info.F == null ? null : { pct: info.pct == null ? null : matchPct(score), fit: info.pct, bars: info.bars, conflicts: info.conflicts },
       persona: p == null ? null : { id: persona, p },

@@ -74,7 +74,7 @@ test("the budget ruler: under is negative, over positive, none is null", () => {
 });
 
 test("the budget ranks: a trip over it sinks by the configured amount", () => {
-  // Echo fits better and rates higher, so only the budget can sink it (T878: answers lead).
+  // Echo fits better and rates higher, so only the budget can sink it (T884: answers lead).
   const trips = [fakeTrip("over", "e", 1400), fakeTrip("under", "a", 900)];
   const none = rankTrips(trips, { settings: settings({ budget: { kind: "total", eur: 0 } }), data: FAKE });
   assert.equal(none[0].id, "over", "without a budget the better place leads");
@@ -82,7 +82,7 @@ test("the budget ranks: a trip over it sinks by the configured amount", () => {
   assert.equal(withBudget[0].id, "under", "over budget, it sinks");
   const o1 = none.find((t) => t.id === "over");
   const o2 = withBudget.find((t) => t.id === "over");
-  // 0.3 points (of 10) a hundred euros over, on the blend's 0..1 scale (T878).
+  // 0.3 points (of 10) a hundred euros over, on the blend's 0..1 scale (T884).
   assert.ok(Math.abs((o1.score - o2.score) - ((400 / 100) * 0.3) / 10) < 1e-9);
 });
 
@@ -220,7 +220,7 @@ test("time to build and rank 24 trips (target under 50 ms after warm-up)", { ski
   assert.ok(med(rank) < 50, "a lever re-ranks in under 50 ms");
 });
 
-test("the badge is the ranked score: the order follows the number shown (T878)", () => {
+test("the badge is the ranked score: the order follows the number shown (T884)", () => {
   // A strong fit in an average place outranks a weak fit in the best rated one.
   const s = settings({ budget: { kind: "total", eur: 0 } });
   const trips = [fakeTrip("famous", "c", 800), fakeTrip("fits", "a", 800)];
