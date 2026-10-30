@@ -23,6 +23,7 @@ import { useMedia } from '../browse/home/useHome.js';
 import { RecordMapDialog } from '../auth/mytrips/parts.jsx';
 import { CostTiles } from './trip/CostTiles.jsx';
 import { RouteCodes } from './trip/RouteCodes.jsx';
+import { ReadyToBook } from './trip/ReadyToBook.jsx';
 import { useSettings } from '../components/SettingsLine.jsx';
 import { useLifestyleLabel } from './planHooks.js';
 
@@ -80,7 +81,7 @@ export function TripHead({ name, photos = [], dates = '', people = '', nights = 
  * line of detail, a figure on the right), so every row starts on one edge.
  * The figures are the receipt's own: a way's fare, a stop's bed and days.
  */
-function OverviewRoute({ tripStart, tripEnd, stopDetails, stayCosts, stayTier, priced, flight, ownFlight, driveLegs, origin, div, booked = null }) {
+function OverviewRoute({ tripStart, tripEnd, stopDetails, stayCosts, stayTier, priced, flight, ownFlight, driveLegs, origin, div, booked = null, carTip = null }) {
   const { t } = useI18n();
   // T866: the parts the traveller booked carry the word, beside their own figure.
   const bookedMark = <Chip kind="status" tone="positive" className="ts-booked">{t('pf.doors.bookedMark')}</Chip>;
@@ -179,6 +180,21 @@ function OverviewRoute({ tripStart, tripEnd, stopDetails, stayCosts, stayTier, p
           </li>
         );
       })}
+      {/* T873: the car advice is one quiet row on the route (it was a
+          block under Review's receipt): only when a car is worth it and the
+          trip does not drive already. */}
+      {carTip && carTip.verdict !== 'no' && !flight?.driving && (
+        <li className="ts-node is-car" data-testid="ts-car">
+          <span className="ts-mark" aria-hidden="true"><CarIcon size={18} /></span>
+          <div className="ts-node-main">
+            <span className="ts-node-title">{t(carTip.verdict === 'yes' ? 'wizard.carAdviceYes' : 'wizard.carAdviceMaybe')}</span>
+            {carTip.carStops?.length > 0 && (
+              <span className="ts-node-sub">{t('tp.car.where', { places: carTip.carStops.map((c) => cityLabel(c)).join(', ') })}</span>
+            )}
+          </div>
+          <span className="ts-node-fig" />
+        </li>
+      )}
       <Way dir="back" />
       <Home date={tripEnd} end />
     </ol>
@@ -237,6 +253,9 @@ function MapCard({ map, mapFull, title }) {
  *   onAddPaid()          T839: put in what was paid (the route's own fields)
  *   onPlanRest()         T863: a flight-first or booked trip's "Plan the rest"
  *   booked               T866: { flights, stays: [destinationId] } marked Booked on the route
+ *   book                 T873: Ready to book's Add what you paid handlers
+ *                        { onTravelPaid, onOwnStay, onOwnLeg }; absent hides the list
+ *   carTip               T873: lib/transport.js carAdvice for the route's one car row
  *   budgetCard           T846: the total against the budget; the side column
  *                        from 1024 px (every tab), under the band below it
  *   bar                  round buttons on the top row (save)
@@ -248,7 +267,7 @@ export function TripSummary({
   tab = 'overview', onTab, panels = {}, map = null, mapFull = null,
   onPlanDays = null, onPlanHome = null, onSettings = null, settingsRef = null,
   onExport = null, bar = null, footer = null, history = null, onChip = null, onAddPaid = null, budgetCard = null,
-  onPlanRest = null, booked = null,
+  onPlanRest = null, booked = null, book = null, carTip = null,
   // T838: no edit mode. Every fact is changed where it is shown (the chips,
   // the name, the route's stops), so the page has one layout.
   onRename = null,
@@ -387,8 +406,16 @@ export function TripSummary({
         <OverviewRoute
           tripStart={tripStart} tripEnd={tripEnd} stopDetails={stopDetails} stayCosts={stayCosts} stayTier={stayTier}
           priced={priced} flight={flight} ownFlight={ownFlight} driveLegs={driveLegs} origin={origin} div={div} booked={booked}
+          carTip={carTip}
         />
       </section>
+
+      {book && (
+        <ReadyToBook
+          tripStart={tripStart} tripEnd={tripEnd} stopDetails={stopDetails} stayCosts={stayCosts} stayTier={stayTier}
+          priced={priced} flight={flight} ownFlight={ownFlight} party={party} booked={booked} book={book}
+        />
+      )}
 
       {!wide && tools}
     </div>

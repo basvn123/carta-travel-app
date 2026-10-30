@@ -99,7 +99,7 @@ function CardMenu({ name, compare, onSkip }) {
  * heart on it; the name; one line of country, nights and bases; the
  * strongest reason and the catch in one line; the trip's total for the
  * group in whole euros. The cost split, the budget ruler and the receipt
- * are the trip's own page (today TripPreview, Batch F's page next).
+ * are the trip's own page (TripPage, T870).
  *
  * The whole card opens the trip: a click anywhere that is not one of its
  * own controls, and the name's button for a keyboard and a screen reader
@@ -170,15 +170,21 @@ export const TripCard = forwardRef(function TripCard({ trip, destinations, marke
       <div className="tff-card-body">
         <div className="tff-card-top">
           <h3 className="tff-card-name">
-            <Button
-              variant="quiet"
-              className="tff-card-open"
+            {/* T870: the trip's page has its own address, so the name is a
+                link to it (a new tab opens the page from the address). */}
+            <a
+              className="btn btn-quiet tff-card-open"
+              href={`#tf=${encodeURIComponent(trip.id)}`}
               ref={setRefs}
               aria-label={t('tf.card.openTrip', { name, price: total || t('money.onRequest'), unit })}
-              onClick={open}
+              onClick={(e) => {
+                if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+                e.preventDefault();
+                open();
+              }}
             >
-              {name}
-            </Button>
+              <span className="btn-label">{name}</span>
+            </a>
           </h3>
           {(compare || keep?.onSkip) && (
             <CardMenu

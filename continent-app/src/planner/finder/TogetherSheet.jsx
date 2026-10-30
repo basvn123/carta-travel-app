@@ -30,7 +30,7 @@ export default function TogetherSheet({ code, onClose }) {
 
   if (!list) {
     return (
-      <SheetShell title={t('tf.tog.title')} onClose={onClose} className="tff-tog-sheet" labelId={titleId} closeLabel={t('tf.rc.close')}>
+      <SheetShell title={t('tf.tog.title')} onClose={onClose} className="tff-tog-sheet" labelId={titleId} closeLabel={t('tf.tog.close')}>
         <div className="tff-tog">
           <p className="tff-tog-lede" role="status">{t('tf.tog.broken')}</p>
         </div>
@@ -54,7 +54,7 @@ export default function TogetherSheet({ code, onClose }) {
   };
 
   return (
-    <SheetShell title={t('tf.tog.title')} onClose={onClose} className="tff-tog-sheet" labelId={titleId} closeLabel={t('tf.rc.close')}>
+    <SheetShell title={t('tf.tog.title')} onClose={onClose} className="tff-tog-sheet" labelId={titleId} closeLabel={t('tf.tog.close')}>
       <div className="tff-tog">
         <p className="tff-tog-lede">{t('tf.tog.lede')}</p>
         <p className="tff-tog-who">

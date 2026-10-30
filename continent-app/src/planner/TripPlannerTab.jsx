@@ -9,6 +9,7 @@ import { Button } from '../components/Button.jsx';
 import { ErrorBlock } from '../components/StateBlocks.jsx';
 import { TripMap } from '../map/TripMap.jsx';
 import { TripItinerary } from './TripItinerary.jsx';
+import { carAdvice } from '../lib/transport.js';
 import { GuidedTripWizard } from './GuidedTripWizard.jsx';
 import { TripFlow } from './flow/TripFlow.jsx';
 import { TripSettingsSheet } from './flow/TripSettingsSheet.jsx';
@@ -458,6 +459,13 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   // T846: a change that takes the trip over its budget says so on its Undo
   // message ("€120 over your budget"), so it can be taken back at once.
   const headCount = Math.max(1, tp.groupSize + tp.children + tp.babies);
+  // T873: the car advice, one row on the trip page's route (Review's block before).
+  const carDests = tp.stopDetails.map((x) => x.dest).filter(Boolean);
+  const carKey = carDests.map((d) => d.id).join('|');
+  const carTip = useMemo(
+    () => (tp.tripHasCar || tp.transportPref === 'owncar' ? null : carAdvice(carDests, headCount, countryInsights)),
+    [carKey, headCount, countryInsights, tp.tripHasCar, tp.transportPref], // eslint-disable-line react-hooks/exhaustive-deps -- carKey stands for the stops
+  );
   const budgetNow = tp.stops.length ? budgetCheck(tp.priced, tripSet.guide?.budget, { party: headCount, nights: tp.plannedNights }) : null;
   const overRef = useRef(null);
   useEffect(() => {
@@ -1454,6 +1462,9 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
               flights: Boolean(tp.ownFlight?.booked),
               stays: tripSet.booked?.stays ? staysFromImports(tripSet.imports, data?.destinations || {}, tripSet.when).map((r) => r.id) : [],
             }}
+            // T873: Ready to book writes the same fields as the Itinerary.
+            book={{ onTravelPaid: setTravelPaid, onOwnStay: tp.setOwnStay, onOwnLeg: (i, mode, n) => tp.setOwnLeg(i, mode, n) }}
+            carTip={carTip}
             onAddPaid={() => {
               // T839: what was paid goes in on the route, where each part is.
               setTripTab('itinerary');

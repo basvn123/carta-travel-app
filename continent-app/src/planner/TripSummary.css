@@ -686,3 +686,28 @@ button.ct-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: 2
 
 /* T866: a part the traveller booked carries the word under its line. */
 .ts-node-main .ts-booked { align-self: flex-start; margin-top: var(--space-1); }
+
+/* ---- T873: Ready to book ----
+   The trip's bookable parts as the route's own rows (a 40 px marker, the
+   part, when and what, the figure on the right), hairlines between them,
+   each with its one link out and Add what you paid under the words. No
+   timeline line: this is a list to work through, not the route. */
+.tpg-book { display: flex; flex-direction: column; gap: var(--space-2); }
+.tpg-book-list { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.tpg-book-row {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+.tpg-book-row:first-child { border-top: 1px solid var(--border-soft); }
+.tpg-book-row .ts-mark { box-shadow: none; }
+.tpg-book-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.tpg-book-main .ts-booked { align-self: flex-start; margin-top: var(--space-1); }
+.tpg-book-acts { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); margin: var(--space-1) 0 0 calc(-1 * var(--space-2)); }
+.tpg-book-acts .plan-paid { margin-left: var(--space-2); }
+.tpg-book-row .ts-node-fig { padding-top: 10px; }
+.tpg-book-note { margin: 0; font-size: var(--text-caption); color: var(--text-3); }
+.ts-node.is-car .ts-node-title { font-weight: 500; }

@@ -425,9 +425,9 @@ export function persistState(state) {
   // week stays open across a reload, so this writer keeps that one hash
   // rather than dropping it (T391, row T387-a). An open place's is too
   // (#dest=, T444), with the history step that opened it (its state), so
-  // Back still closes the place. Every other hash is read once at startup
-  // and is meant to go.
-  const hash = /(?:^#|&)(?:journey|dest)=/.test(window.location.hash || '') ? window.location.hash : '';
+  // Back still closes the place. A finder trip's page (#tf=, T870) is kept the
+  // same way. Every other hash is read once at startup and is meant to go.
+  const hash = /(?:^#|&)(?:journey|dest|tf)=/.test(window.location.hash || '') ? window.location.hash : '';
   const url = (ms ? `${window.location.pathname}?${ms}` : window.location.pathname) + hash;
   try { window.history.replaceState(window.history.state, '', url); } catch { /* ignore */ }
   try { window.localStorage.setItem(STORAGE_KEY, qs); } catch { /* ignore */ }

@@ -17,7 +17,6 @@ import { useFirstRun } from '../../lib/firstRunContext.js';
 import { useBcp47, useMonths, useTripSettings, whenText } from './flowHooks.js';
 import { TRIPS_SCREEN, engineScreens, guideQuestions, guideScreens, hasDoors, nextScreen, prevScreen, progressOf } from './flowGraph.js';
 import { normalizeSettings, quizAnswers, spendFor } from './tripSettings.js';
-import { draftFor } from '../finder/handoff.js';
 import { takePlan } from '../../lib/recommend/keptStore.js';
 import NotYet from '../../components/NotYet.jsx';
 import { AirlineMark } from '../../components/flights/Flights.jsx';
@@ -30,6 +29,13 @@ const TripFinderScreen = lazy(() => import('../finder/FindingTrips.jsx'));
 // chunk as the finder (they run its engine), so no preload is added.
 const FlightFirstScreen = lazy(() => import('../finder/FindingTrips.jsx').then((m) => ({ default: m.FlightFirstScreen })));
 const KnowBuildScreen = lazy(() => import('../finder/FindingTrips.jsx').then((m) => ({ default: m.KnowBuildScreen })));
+/** The trip page's id in the address (#tf=<id>, the finder's TRIP_HASH), or null. */
+function readTripHash() {
+  try {
+    const h = typeof window !== 'undefined' ? window.location.hash || '' : '';
+    return h.startsWith('#tf=') ? decodeURIComponent(h.slice(4)) || null : null;
+  } catch { return null; }
+}
 // The app parts the finder draws, handed down so its lazy chunk does not
 // import them (see FindingTrips).
 const FINDER_UI = { NotYet, AirlineMark, useAirlines, airlineName };
@@ -52,7 +58,11 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null, onLa
   const { t } = useI18n();
   const ctx = useFirstRun();
   const [settings, save] = useTripSettings();
-  const [phase, setPhase] = useState('home'); // home | doors | carta | g:* | ff | kw | kw:build | bk | engine
+  // T870: an address with a trip page on it (#tf=<id>) opens on the trips,
+  // with that trip's page open (the hash is read here, not imported from the
+  // finder's lazy chunk).
+  const arriveTrip = useRef(readTripHash());
+  const [phase, setPhase] = useState(() => (arriveTrip.current ? TRIPS_SCREEN : 'home')); // home | doors | carta | g:* | ff | kw | kw:build | bk | engine
   const [door, setDoor] = useState(() => suggestDoor(settings));
   const [settingsOpen, setSettingsOpen] = useState(false);
   // A question reopened from the trips' answers bar (T798) comes straight
@@ -74,8 +84,10 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null, onLa
 
   /** Hand over to the engine: its first step by name, the build mode the
    *  door implies, and (behind Guide me) the quiz answered from the guide, so
-   *  its Where step opens on the matches. */
-  const startEngine = (d = door, s = settings, plan = null) => {
+   *  its Where step opens on the matches. T872: only the paths with no
+   *  picked trip reach it now (a country page's Plan a trip here); a picked
+   *  trip lands on the trip page. */
+  const startEngine = (d = door, s = settings) => {
     const steps = engineScreens(s, hasDoors(s) ? d : 'know').map((x) => x.slice(2));
     const wizard = { stepName: steps[0], step: 1, buildMode: d === 'ready' ? 'ready' : 'custom', finder: null };
     if (d === 'guide') wizard.quiz = { ...quizAnswers(s, spendFor(s)), editing: '' };
@@ -93,14 +105,6 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null, onLa
       for (const key of ['out', 'back']) if (!tv[key]?.mode) tv[key] = { ...(tv[key] || {}), mode: 'train' };
     }
     if (Object.keys(tv).length) wizard.travelValues = tv;
-    // T801: "Plan this trip" opens the planner on the finder's trip, every
-    // pick in it (planner/finder/handoff.js draftFor).
-    if (plan) {
-      Object.assign(wizard, draftFor(plan, steps, plannerStore.getState().wizard?.countries));
-      const p = plan;
-      plannerStore.setTravelDates({ startDate: p.startDate, endDate: p.endDate });
-      plannerStore.setTravelers({ adults: p.party.adults, children: p.party.children, babies: p.party.babies });
-    }
     plannerStore.setWizard(wizard);
     setPhase('engine');
   };
@@ -131,13 +135,14 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null, onLa
   }, [seed]); // eslint-disable-line react-hooks/exhaustive-deps -- one-shot hand-off per seed; the wizard consumes it and clears it
 
   // T806: a kept trip planned from My trips (keptStore holdPlan) opens the
-  // planner on it, the same hand-off as the finder's "Plan this trip".
+  // planner on it, the same hand-off as the finder's "Plan this trip"
+  // (T872: straight onto the trip page, no wizard).
   useEffect(() => {
     const plan = takePlan();
     if (!plan) return;
     setDoor('guide');
     setMarkedId(plan.tripId);
-    startEngine('guide', settings, plan);
+    landPlan(plan, 'guide');
   }, []); // eslint-disable-line react-hooks/exhaustive-deps -- read once, on arrival
 
   const guide = useMemo(() => guideScreens(settings), [settings]);
@@ -147,7 +152,7 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null, onLa
     let k = nextScreen(guide, id);
     // Skip what the free field already answered (never the trips).
     while (k && k !== TRIPS_SCREEN && s.answered.includes(k)) k = nextScreen(guide, k);
-    if (k) setPhase(k); else startEngine('guide');
+    if (k) setPhase(k); else setPhase(TRIPS_SCREEN);
   };
   /** Reopen one question from the trips, and come back to them after it. */
   const reopen = (id) => { setReturnTo(TRIPS_SCREEN); setFinderEdits({}); setMarkedId(null); setPhase(id); };
@@ -275,7 +280,10 @@ export function TripFlow({ renderEngine, seed = null, onOpenJourney = null, onLa
           edits={finderEdits}
           setEdits={setFinderEdits}
           markedId={markedId}
-          onPlan={(plan) => { setMarkedId(plan.tripId); startEngine('guide', settings, plan); }}
+          openId={arriveTrip.current}
+          // T872 (owner: "Retire the wizard after a pick", Go): Plan this
+          // trip lands on the trip page, as every other door does.
+          onPlan={(plan) => { arriveTrip.current = null; setMarkedId(plan.tripId); landPlan(plan, 'guide'); }}
         />
       </Suspense>
     );
