@@ -9,15 +9,6 @@
    step's own close; from 769 px the step is a white card centred on the
    page and the buttons stand in its top right corner. */
 
-.pf-help {
-  margin: calc(-1 * var(--space-1)) auto var(--space-2);
-  max-width: 36ch;
-  text-align: center;
-  font-size: var(--text-body);
-  line-height: var(--leading-body);
-  color: var(--text-2);
-}
-
 .pf-note { margin: 0; min-height: 1.35em; font-size: var(--text-label); color: var(--text-2); }
 
 .pf-prompt {
@@ -66,8 +57,6 @@
 .pf-set-group { display: flex; flex-direction: column; gap: var(--space-1); }
 
 .pf-set-rows { list-style: none; margin: 0; padding: 0; }
-
-.pf-set-rows li + li { border-top: 1px solid var(--border-soft); }
 
 .pf-set-text { display: flex; flex-direction: column; align-items: flex-start; text-align: left; min-width: 0; }
 
@@ -475,8 +464,6 @@
 }
 
 .dtg-rows { list-style: none; margin: 0; padding: 0; border: 1px solid var(--border); border-radius: var(--radius-card); background: var(--surface); }
-
-.dtg-rows > li + li { border-top: 1px solid var(--border-soft); }
 
 .dtg-q > summary::-webkit-details-marker { display: none; }
 

@@ -3071,3 +3071,15 @@
 }
 .trip-total-bar.is-strip:not(.btn) { padding: 0 var(--space-2) 0 var(--space-4); }
 .trip-total-bar.is-foot { background: transparent; }
+.pf-help {
+  margin: calc(-1 * var(--space-1)) auto var(--space-2);
+  max-width: 36ch;
+  text-align: center;
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--text-2);
+}
+
+.pf-set-rows li + li { border-top: 1px solid var(--border-soft); }
+
+.dtg-rows > li + li { border-top: 1px solid var(--border-soft); }
