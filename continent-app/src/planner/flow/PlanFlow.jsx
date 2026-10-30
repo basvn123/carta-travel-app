@@ -254,12 +254,16 @@ function useHomeTrips(destinations) {
       const own = (name || '').trim();
       return own && !ids.some((id) => (dest[id]?.country || '').trim().toLowerCase() === own.toLowerCase()) ? own : '';
     };
+    // T904: a trip with no places reads as a new trip of its length, never
+    // "Your trip" four times over.
+    const untitled = (nights) => (nights > 0 ? t('pf.home.newTripNights', { n: nights }) : t('pf.home.newTripName'));
     const device = tripsStore.list().map((x) => ({
       id: x.id,
       device: true,
       active: x.active,
       planId: x.meta.planId,
-      name: named(x.meta.name, x.meta.stops) || towns(x.meta.stops) || t('pf.home.yourTrip'),
+      name: named(x.meta.name, x.meta.stops) || towns(x.meta.stops) || untitled(x.meta.nights),
+      updatedAt: x.updatedAt || 0,
       cover: x.meta.cover || photo(x.meta.stops),
       start: x.meta.start,
       end: x.meta.end,
@@ -277,7 +281,8 @@ function useHomeTrips(destinations) {
       return {
         id: `plan-${p.id}`,
         planId: p.id,
-        name: named(p.label, ids) || towns(ids) || (p.cities || []).slice(0, 2).join(', ') || t('pf.home.yourTrip'),
+        name: named(p.label, ids) || towns(ids) || (p.cities || []).slice(0, 2).join(', ') || untitled(nights),
+        updatedAt: Date.parse(p.updated_at || p.created_at || '') || 0,
         cover: photo(ids),
         start: p.start_date || '',
         end: p.end_date || '',

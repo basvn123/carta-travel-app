@@ -286,6 +286,32 @@ function useSeasonCards(n) {
 const TABS = ['upcoming', 'planning', 'past'];
 
 /**
+ * T904: the drafts with nothing in them (no places, no dates, on this
+ * device) can go in one step, asked once in place.
+ */
+function ClearEmpty({ trips, onDelete }) {
+  const { t } = useI18n();
+  const [asking, setAsking] = useState(false);
+  if (!trips.length) return null;
+  const n = trips.length;
+  return (
+    <div className="pfh-clear">
+      {asking ? (
+        <>
+          <span>{t(n === 1 ? 'pf.home.clearAskOne' : 'pf.home.clearAsk', { n })}</span>
+          <Button variant="secondary" size="sm" onClick={() => setAsking(false)}>{t('pf.cancel')}</Button>
+          <Button variant="danger" size="sm" onClick={() => { setAsking(false); trips.forEach(onDelete); }}>{t('pf.home.delete')}</Button>
+        </>
+      ) : (
+        <Button variant="quiet" size="sm" className="pfh-clear-btn" iconStart={<TrashIcon size={16} />} onClick={() => setAsking(true)}>
+          {t(n === 1 ? 'pf.home.clearOne' : 'pf.home.clear', { n })}
+        </Button>
+      )}
+    </div>
+  );
+}
+
+/**
  * PlanHome (T743 to T747, T809), the Plan place's first page, every time
  * the Plan door is pressed from another place. The headline and the two
  * actions that matter, Start planning and Carta's own trips; under them
@@ -386,9 +412,12 @@ export function PlanHome({ titleTag = 'h1', trips = [], onStart, onOpenTrip, onD
               {list.length === 0 ? (
                 <p className="pfh-none">{t(`pf.home.none.${tab}`)}</p>
               ) : tab === 'planning' ? (
-                <ul className="pfh-rows">
-                  {list.map((trip) => <DraftRow key={trip.id} trip={trip} onOpen={() => onOpenTrip(trip)} onDelete={del(trip)} />)}
-                </ul>
+                <>
+                  <ul className="pfh-rows">
+                    {list.map((trip) => <DraftRow key={trip.id} trip={trip} onOpen={() => onOpenTrip(trip)} onDelete={del(trip)} />)}
+                  </ul>
+                  <ClearEmpty trips={list.filter((x) => !x.account && !x.stopCount && !x.start)} onDelete={onDeleteTrip} />
+                </>
               ) : (
                 <ul className="pfh-cards">
                   {list.map((trip) => <OwnCard key={trip.id} trip={trip} onOpen={() => onOpenTrip(trip)} onDelete={del(trip)} />)}
