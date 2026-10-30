@@ -2,8 +2,7 @@ import React from 'react';
 import { BedIcon } from '../components/Icons.jsx';
 import { MONTHS_SHORT } from './ClimateStrip.jsx';
 import { monthName } from '../lib/dates.js';
-import { eurExact } from '../lib/format.js';
-import { formatEst } from '../lib/money.js';
+import { formatEst, formatMoney } from '../lib/money.js';
 
 /**
  * Where to sleep (PLAN.md D3): the neighbourhood prices the wire always
@@ -15,6 +14,8 @@ import { formatEst } from '../lib/money.js';
  * Airbnb medians); absent entirely when there is none of it, never an empty
  * shell.
  */
+const SUITS = ['central', 'nightlife', 'quiet', 'families', 'food', 'budget'];
+
 export function Neighbourhoods({ sleep, t }) {
   const hoods = sleep?.neighbourhoods || [];
   // 397 destinations carry neighbourhood rows (the Inside Airbnb anchor
@@ -25,8 +26,10 @@ export function Neighbourhoods({ sleep, t }) {
   const seasonality = sleep.curve || null;
   const beds = sleep.beds || null;
   // A bed not measured in this town is a stand-in: the tilde and the word.
-  const bedEur = (v) => (sleep.q === 'measured' ? eurExact(v)
-    : formatEst(v, t('money.est'), { precision: 'cents' }));
+  // Neighbourhoods and room types are compared, so whole euros (DESIGN.md
+  // "Cents on receipts and totals" keeps cents for the receipt only).
+  const bedEur = (v) => (sleep.q === 'measured' ? formatMoney(v)
+    : formatEst(v, t('money.est'), { precision: 'whole' }));
   const sMin = seasonality ? Math.min(...seasonality) : 0;
   const sMax = seasonality ? Math.max(...seasonality) : 1;
   const cheapMonth = seasonality ? seasonality.indexOf(sMin) : -1;
@@ -38,7 +41,15 @@ export function Neighbourhoods({ sleep, t }) {
       <ul className="destp-hoods">
         {hoods.map((n) => (
           <li key={n.name} className="destp-hood">
-            <span className="destp-hood-name">{n.name}</span>
+            <span className="destp-hood-name">
+              {n.name}
+              {/* T912: who the area suits, as small words, when the dossier says. */}
+              {Array.isArray(n.suits) && n.suits.some((k) => SUITS.includes(k)) && (
+                <span className="destp-hood-suits">
+                  {n.suits.filter((k) => SUITS.includes(k)).map((k) => t(`destx.suits.${k}`)).join(', ')}
+                </span>
+              )}
+            </span>
             <span className="destp-hood-bar" aria-hidden="true">
               <span style={{ width: `${Math.max(6, ((n.night_eur || 0) / max) * 100)}%` }} />
             </span>

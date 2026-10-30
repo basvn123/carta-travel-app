@@ -2481,3 +2481,13 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T907-b | T907 | "Tell Carta what you like" stays in the chip row because it is the personal match's only door; decide whether it moves into Filters or Account (Execution/P15/T906-T910-explore-refined.md) | user | open |  |
 | T908-a | T908 | The .storyr-lead and .storyr-stack rules in styles/80-story-rail.css are unused since the lead card left; remove them (Execution/P15/T906-T910-explore-refined.md) | next task | open |  |
 | T910-a | T910 | Deploy the merged batch T906 to T910 (Cloudflare credentials are the owner's) (Execution/P15/T906-T910-explore-refined.md) | user | open |  |
+| T911-a | T911 | Harvest the four placeholder sources (a place's own dishes, steep streets, neighbourhood suits, trip fit); the files and their shape are in docs/SCHEMA.md (Execution/P15/T911-T914-place-pages.md) | next task | open |  |
+| T911-b | T911 | pytest is not installed in the session, so tests/test_parking_fold.py did not run after the dossier build change (Execution/P15/T911-T914-place-pages.md) | next task | open |  |
+| T912-a | T912 | Getting there showed only the train for Porto because the flight sweep host is unreachable here; look once where fares load (Execution/P15/T911-T914-place-pages.md) | next task | open |  |
+| T912-b | T912 | Porto's intro says ten hours covers the sights, its facts say 7.2; intros should not repeat numbers from another source (Execution/P15/T911-T914-place-pages.md) | next task | open |  |
+| T912-c | T912 | The day split on the place price card shows bed and food only; the cost model has no sights or getting-around figure (Execution/P15/T911-T914-place-pages.md) | next task | open |  |
+| T912-d | T912 | scripts/verify_destination_page.mjs still expects the old tabs (Execution/P15/T911-T914-place-pages.md) | next task | open |  |
+| T913-a | T913 | DestinationsTab does not pass onPlanTrip to the trip page, so Plan this trip falls back to a full reload (Execution/P15/T911-T914-place-pages.md) | next task | open |  |
+| T914-a | T914 | Look at the place guide and trip booklet PDFs once with real photos in a browser (Execution/P15/T911-T914-place-pages.md) | next task | open |  |
+| T914-b | T914 | public/fonts PlusJakartaSans and JetBrainsMono may be unused after the place guide moved to Figtree; check and remove (Execution/P15/T911-T914-place-pages.md) | next task | open |  |
+| T914-c | T914 | Deploy the merged batch T911 to T914 (Cloudflare credentials are the owner's) (Execution/P15/T911-T914-place-pages.md) | user | open |  |

@@ -1,13 +1,20 @@
 {
- "generated_at": "2026-10-28T16:20:42Z",
+ "generated_at": "2026-10-30T21:34:05Z",
  "built": 3868,
- "written": 1045,
+ "written": 3868,
  "avg_gallery": 5.14,
  "avg_gallery_print": 5.14,
  "avg_highlights": 4.96,
  "merged_duplicates": 125,
  "avg_do": 2.47,
  "n_with_licence_refusals": 1721,
+ "n_place_page": {
+  "essentials": 3868,
+  "eat": 3843,
+  "walk": 444,
+  "similar": 3854,
+  "access": 1
+ },
  "refusals_sample": {
   "BRU": [
    {

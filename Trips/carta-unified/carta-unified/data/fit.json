@@ -1,0 +1,16 @@
+{
+ "_about": "T911 placeholder, filled later. Per journey id (trips.master.json id): {good: [short phrases], less: [short phrases]}, plain English, no dashes. pipeline/journeys/build_wire.py writes it as the journey file's fit key when a row exists. The Douro journey is the worked example.",
+ "journeys": {
+  "pt-culinary-douro-valley": {
+   "good": [
+    "Wine and port lovers",
+    "Travelling by train",
+    "Couples and friends"
+   ],
+   "less": [
+    "Anyone who does not drink",
+    "Small children: long tastings, steep terraces"
+   ]
+  }
+ }
+}
