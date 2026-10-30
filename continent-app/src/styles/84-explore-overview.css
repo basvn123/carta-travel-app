@@ -692,7 +692,7 @@
     font-size: var(--text-display);
     font-weight: 800;
     text-align: center;
-    text-shadow: 0 2px 18px color-mix(in srgb, var(--text) 45%, transparent);
+    text-shadow: var(--elev-3);
     pointer-events: none;
   }
   .xov-hero.has-photo .xov-panel {

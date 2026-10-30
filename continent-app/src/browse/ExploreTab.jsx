@@ -1873,7 +1873,7 @@ function OverviewHero({
 function isQuestion(q) {
   const s = String(q || '').trim();
   if (!s) return false;
-  return /\?$/.test(s) || /\d|€/.test(s) || s.split(/\s+/).length >= 4;
+  return /\?$/.test(s) || /\d|\u20ac/.test(s) || s.split(/\s+/).length >= 4;
 }
 
 /** The overview photograph's candidates (T622): places whose catalogue
