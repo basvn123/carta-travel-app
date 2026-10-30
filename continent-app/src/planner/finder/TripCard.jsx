@@ -3,9 +3,11 @@ import { useI18n } from '../../i18n/index.jsx';
 import { Button, IconButton } from '../../components/ui/index.js';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { CountryFlag } from '../../components/CountryFlag.jsx';
-import { CheckIcon, HeartIcon, MapPinIcon, MoonIcon, MoreIcon, ScaleIcon } from '../../components/Icons.jsx';
+import { CarIcon, CheckIcon, HeartIcon, MoreIcon, PlaneIcon, ScaleIcon, SunIcon } from '../../components/Icons.jsx';
 import { formatMoney } from '../../lib/money.js';
-import { budgetBadge, cardLine, groupHead, totalLeavesOut, tripName, tripPhotos } from './finderText.js';
+import { CROWD_KEYS } from '../../lib/recommend/compare.js';
+import { monthName } from '../../lib/dates.js';
+import { budgetBadge, cardFacts, countryLabel, factText, groupHead, shortDuration, stopsText, totalLeavesOut, tripName, tripPhotos } from './finderText.js';
 
 /**
  * The trip's photo on a card (T810, one photo since T869): the first
@@ -93,25 +95,38 @@ function CardMenu({ name, compare, onSkip }) {
   );
 }
 
+/** The crowd level as four rising bars, the level's own filled (T879); the word beside it carries the meaning. */
+function CrowdMeter({ tier }) {
+  return (
+    <span className={`tff-meter${tier >= 3 ? ' is-high' : ''}`} aria-hidden="true">
+      {[0, 1, 2, 3].map((i) => <i key={i} className={i <= tier ? 'is-on' : ''} />)}
+    </span>
+  );
+}
+
 /**
- * The priced trip card (T798, photo first in T810, the gallery card in
- * T869, owner's layout A 2026-10-29): the photo with the match and the
- * heart on it; the name; one line of country, nights and bases; the
- * strongest reason and the catch in one line; the trip's total for the
- * group in whole euros. The cost split, the budget ruler and the receipt
- * are the trip's own page (TripPage, T870).
+ * The priced trip card (T879, the free direction the owner chose on
+ * 2026-10-30, over T869's layout A): the photo carries the name and the
+ * country over a dark fade, the match as a ring and the heart; under it
+ * the four facts that echo the answers (the month's highs, the time there
+ * and its stops, the crowds), then the total for the group with the price
+ * a person, and the budget as a thin bar. The top pick (`feat`) takes a
+ * whole row and names up to two reasons on its photo; `best` marks the
+ * cheapest whole total in the list. The reasons and the catch in full are
+ * the trip's page.
  *
  * The whole card opens the trip: a click anywhere that is not one of its
- * own controls, and the name's button for a keyboard and a screen reader
+ * own controls, and the name's link for a keyboard and a screen reader
  * (one accessible name). The heart and the small menu (Compare, Skip) do
  * their own thing and never open it.
  *
- *   onOpen(trip, el)   the trip; `el` (the name's button) gets focus back
- *   ui                 the app parts TripFlow hands down (see FindingTrips)
+ *   onOpen(trip, el)   the trip; `el` (the name's link) gets focus back
  *   compare            { ticked, refused, full, onToggle(id) }: the Compare tick (T802)
  *   keep               { kept, onKeep(trip), onSkip(trip) }: the heart and Skip (T806)
+ *   feat               the top pick: a whole row and its reasons on the photo
+ *   best               the cheapest whole total in the list
  */
-export const TripCard = forwardRef(function TripCard({ trip, destinations, marked = false, onOpen, compare = null, keep = null }, ref) {
+export const TripCard = forwardRef(function TripCard({ trip, destinations, marked = false, onOpen, compare = null, keep = null, feat = false, best = false }, ref) {
   const { t, lang } = useI18n();
   const openRef = useRef(null);
   const name = tripName(trip, destinations, lang);
@@ -119,14 +134,19 @@ export const TripCard = forwardRef(function TripCard({ trip, destinations, marke
   const head = groupHead(trip);
   const group = Number.isFinite(trip.total?.group) ? trip.total.group : trip.total?.perPerson;
   const total = Number.isFinite(group) ? formatMoney(group, { locale: lang }) : null;
-  const unit = t(`tf.card.${head === 1 ? 'forYou' : 'forN'}${partial ? 'Partial' : ''}`, { n: head });
+  const pp = Number.isFinite(trip.total?.perPerson) ? formatMoney(trip.total.perPerson, { locale: lang }) : null;
+  const unit = head > 1 && pp
+    ? t(partial ? 'tf.card.ppPartial' : 'tf.card.ppAll', { eur: pp })
+    : t(`tf.card.forYou${partial ? 'Partial' : ''}`);
   const pct = trip.match?.pct;
   const bases = trip.places.length;
-  const { reason, caught } = cardLine(trip, { t, lang });
-  // Over the budget is one quiet line, only when it is over and the catch
-  // does not say so already (a busy month or the heat can take the catch).
+  const country = countryLabel(trip, lang);
+  const month = monthName(trip.month, lang);
+  const f = cardFacts(trip, destinations);
+  const time = shortDuration(t, f.minutes);
   const badge = budgetBadge(trip, { locale: lang });
-  const over = badge?.over && trip.catch?.key !== 'tf.catch.budget' ? t(badge.key, badge.vars) : '';
+  const used = trip.budget?.eur ? (trip.budget.eur + trip.budget.delta) / trip.budget.eur : null;
+  const reasons = feat ? (trip.reasons || []).slice(0, 2).map((r) => factText(r, { t, lang })).filter(Boolean) : [];
 
   const setRefs = (el) => {
     openRef.current = el;
@@ -140,20 +160,30 @@ export const TripCard = forwardRef(function TripCard({ trip, destinations, marke
     onOpen(trip, el);
   };
   // A click on the card opens it, unless it landed on a control (the
-  // name's own button opens it through its onClick).
+  // name's own link opens it through its onClick).
   const onCardClick = (e) => {
     if (e.target.closest('button, a, input, label, [role="menu"]')) return;
     open();
   };
   const ticked = Boolean(compare?.ticked);
+  const band = pct >= 85 ? 'hi' : pct >= 70 ? 'mid' : 'lo';
 
   return (
-    // The click is the pointer's way in; the name's button is the
-    // keyboard's and the screen reader's, so the article is no control.
-    <article className={`tff-card${marked ? ' is-marked' : ''}${ticked ? ' is-ticked' : ''}`} onClick={onCardClick}>
+    // The click is the pointer's way in; the name's link is the keyboard's
+    // and the screen reader's, so the article is no control.
+    <article className={`tff-card${feat ? ' is-feat' : ''}${marked ? ' is-marked' : ''}${ticked ? ' is-ticked' : ''}`} onClick={onCardClick}>
       <div className="tff-card-media">
-        <TripPhotos trip={trip} destinations={destinations} />
-        {pct != null && <span className="tff-card-pill">{t('tf.card.match', { pct })}</span>}
+        <TripPhotos trip={trip} destinations={destinations} sizes={feat ? '(max-width: 599px) 92vw, (max-width: 1023px) 92vw, 640px' : '(max-width: 599px) 46vw, (max-width: 1023px) 31vw, 320px'} />
+        {pct != null && (
+          <span className={`tff-ring is-${band}`} role="img" aria-label={t('tf.card.match', { pct })}>
+            <svg className="tff-ring-arc" viewBox="0 0 42 42" aria-hidden="true">
+              <circle className="is-track" cx="21" cy="21" r="19" />
+              <circle className="is-arc" cx="21" cy="21" r="19" pathLength="100" strokeDasharray={`${pct} 100`} />
+            </svg>
+            <b aria-hidden="true">{pct}<small>%</small></b>
+          </span>
+        )}
+        {feat && <span className="tff-card-toplbl">{t('tf.card.top')}</span>}
         {keep && (
           <IconButton
             tone="photo"
@@ -165,15 +195,12 @@ export const TripCard = forwardRef(function TripCard({ trip, destinations, marke
             <HeartIcon size={18} />
           </IconButton>
         )}
-      </div>
-
-      <div className="tff-card-body">
-        <div className="tff-card-top">
+        <div className="tff-card-ov">
           <h3 className="tff-card-name">
             {/* T870: the trip's page has its own address, so the name is a
                 link to it (a new tab opens the page from the address). */}
             <a
-              className="btn btn-quiet tff-card-open"
+              className="tff-card-open"
               href={`#tf=${encodeURIComponent(trip.id)}`}
               ref={setRefs}
               aria-label={t('tf.card.openTrip', { name, price: total || t('money.onRequest'), unit })}
@@ -183,9 +210,44 @@ export const TripCard = forwardRef(function TripCard({ trip, destinations, marke
                 open();
               }}
             >
-              <span className="btn-label">{name}</span>
+              {name}
             </a>
           </h3>
+          <p className="tff-card-where">
+            {trip.iso2 && <CountryFlag country={trip.iso2} size={13} />}
+            <span>{bases > 1 ? `${country}, ${t('tf.card.bases', { n: bases })}` : country}</span>
+          </p>
+          {reasons.length > 0 && (
+            <ul className="tff-card-why">
+              {reasons.map((r) => <li key={r}>{r}</li>)}
+            </ul>
+          )}
+        </div>
+      </div>
+
+      <div className="tff-card-body">
+        <ul className="tff-card-facts" aria-label={t('tf.card.facts')}>
+          {f.high != null && month && (
+            <li aria-label={t('tf.card.highs', { c: f.high, month })}><SunIcon size={14} className="is-sun" /><span aria-hidden="true">{f.high}°</span></li>
+          )}
+          {time && (
+            <li aria-label={[t('tf.card.way', { time }), f.stops > 0 ? stopsText(t, f.stops) : ''].filter(Boolean).join(', ')}>
+              {f.way === 'car' ? <CarIcon size={14} /> : <PlaneIcon size={14} />}
+              <span aria-hidden="true">{time}{f.stops > 0 ? `, ${stopsText(t, f.stops)}` : ''}</span>
+            </li>
+          )}
+          {f.crowd != null && CROWD_KEYS[f.crowd] && month && (
+            <li className={f.crowd >= 3 ? 'is-warn' : ''} aria-label={t('tf.card.crowd', { month, level: t(CROWD_KEYS[f.crowd]) })}>
+              <CrowdMeter tier={f.crowd} /><span aria-hidden="true">{t(CROWD_KEYS[f.crowd])}</span>
+            </li>
+          )}
+        </ul>
+        {best && <p className="tff-card-tags"><span className="tff-card-best">{t('tf.card.best')}</span></p>}
+        <div className="tff-card-price">
+          <p className="tff-card-total">
+            {total ? <span className="tff-total-eur money">{total}</span> : <span className="tff-total-eur">{t('money.onRequest')}</span>}
+            <span className="tff-total-unit">{unit}</span>
+          </p>
           {(compare || keep?.onSkip) && (
             <CardMenu
               name={name}
@@ -194,26 +256,14 @@ export const TripCard = forwardRef(function TripCard({ trip, destinations, marke
             />
           )}
         </div>
-        <p className="tff-card-meta">
-          <span className="tff-meta-item">
-            {trip.iso2 && <CountryFlag country={trip.iso2} size={13} />}
-            {trip.country}
-          </span>
-          <span className="tff-meta-item"><MoonIcon size={14} />{t('tf.keep.nights', { n: trip.nights })}</span>
-          <span className="tff-meta-item"><MapPinIcon size={14} />{t(bases === 1 ? 'tf.card.base1' : 'tf.card.bases', { n: bases })}</span>
-        </p>
-        {(reason || caught) && (
-          <p className="tff-card-line">
-            {reason && <span className="tff-card-reason">{t('tf.card.sentence', { text: reason })}</span>}
-            {reason && caught && ' '}
-            {caught && <span className="tff-card-catch">{t('tf.card.sentence', { text: caught })}</span>}
-          </p>
+        {badge && Number.isFinite(used) && (
+          <div className={`tff-card-budget${badge.over ? ' is-over' : ''}`}>
+            <span className="tff-card-bar" role="img" aria-label={t('tf.card.budget', { pct: Math.round(used * 100) })}>
+              <i style={{ width: `${Math.min(100, Math.max(2, used * 100))}%` }} />
+            </span>
+            <span className="tff-card-budl">{t(badge.key, badge.vars)}</span>
+          </div>
         )}
-        <p className="tff-card-total">
-          {total ? <span className="tff-total-eur money">{total}</span> : <span className="tff-total-eur">{t('money.onRequest')}</span>}
-          <span className="tff-total-unit">{unit}</span>
-        </p>
-        {over && <p className="tff-card-over">{over}</p>}
         {(marked || ticked) && (
           <p className="tff-card-marks">
             {marked && <span className="tff-card-mark"><CheckIcon size={14} />{t('tf.card.planned')}</span>}

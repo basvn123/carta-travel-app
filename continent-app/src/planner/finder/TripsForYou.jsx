@@ -211,10 +211,15 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
     }
   };
 
-  const card = (trip) => (
+  const cheapestId = cheapestOf(trips);
+  // The top pick takes a whole row while the list is in the engine's order (T879).
+  const featId = sort.sort === 'match' && trips.length > 2 ? trips[0].id : null;
+  const card = (trip, { feat = false } = {}) => (
     <TripCard
       trip={trip}
       destinations={destinations}
+      feat={feat}
+      best={trip.id === cheapestId}
       marked={trip.id === markedId}
       onOpen={onOpen}
       compare={{ ticked: ticks.includes(trip.id), refused: refused === trip.id, full: ticked.length >= MAX_COMPARE, onToggle: toggle }}
@@ -292,15 +297,15 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
       {onMap ? (
         <div className="tff-mapview">
           <Suspense fallback={<div className="tff-map is-loading" aria-busy="true"><span className="sr-only">{t('state.loading')}</span></div>}>
-            <TripsMap trips={trips} destinations={destinations} pickedId={picked?.id || null} cheapestId={cheapestOf(trips)} onPick={setPickedId} label={t('tf.map.label')} />
+            <TripsMap trips={trips} destinations={destinations} pickedId={picked?.id || null} cheapestId={cheapestId} onPick={setPickedId} label={t('tf.map.label')} />
           </Suspense>
           {picked && <div className="tff-mapcard">{card(picked)}</div>}
         </div>
       ) : (
         <ol className="tff-list">
           {trips.slice(0, shown).map((trip) => (
-            <li key={trip.id} ref={(el) => { if (el) items.current.set(trip.id, el); else items.current.delete(trip.id); }}>
-              {card(trip)}
+            <li key={trip.id} className={trip.id === featId ? 'is-feat' : undefined} ref={(el) => { if (el) items.current.set(trip.id, el); else items.current.delete(trip.id); }}>
+              {card(trip, { feat: trip.id === featId })}
             </li>
           ))}
         </ol>
