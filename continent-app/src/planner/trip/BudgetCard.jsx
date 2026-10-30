@@ -22,8 +22,10 @@ import { budgetCheck } from '../flow/budget.js';
  *   party     head count;  nights   the trip's nights
  *   budget    { kind: 'total' | 'day', eur }
  *   onSave(budget)
+ *   compact  T886: inside the cost card, so no title and no second total;
+ *            the bar, the line and Edit budget (or Set a budget) only
  */
-export function BudgetCard({ priced, party = 1, nights = 0, budget, onSave }) {
+export function BudgetCard({ priced, party = 1, nights = 0, budget, onSave, compact = false }) {
   const { t, lang } = useI18n();
   const [editing, setEditing] = useState(false);
   // A first budget is for the whole trip (the card's own figure); a set one keeps its kind.
@@ -44,19 +46,23 @@ export function BudgetCard({ priced, party = 1, nights = 0, budget, onSave }) {
   };
 
   return (
-    <section className="tpbud" aria-labelledby="tpbud-h" data-testid="tp-budget">
-      <div className="tpbud-head">
-        <h2 className="tpbud-h" id="tpbud-h">{t(has ? 'tp.bud.title' : 'tp.bud.total')}</h2>
-        {!editing && (
-          <Button variant="quiet" size="sm" className="tpbud-edit" onClick={() => setEditing(true)}>
-            {t(has ? 'tp.bud.edit' : 'tp.bud.set')}
-          </Button>
-        )}
-      </div>
-      <p className="tpbud-total">
-        <span className="tpbud-n">{Number.isFinite(total) ? <Money value={total} est precision="cents" /> : <NotYet />}</span>
-        <span className="tpbud-for">{t('receipt.total', { people: party === 1 ? t('receipt.onePerson') : t('receipt.nPeople', { n: party }) })}</span>
-      </p>
+    <section className={`tpbud${compact ? ' is-compact' : ''}`} aria-labelledby={compact ? undefined : 'tpbud-h'} aria-label={compact ? t('tp.bud.title') : undefined} data-testid="tp-budget">
+      {!compact && (
+        <div className="tpbud-head">
+          <h2 className="tpbud-h" id="tpbud-h">{t(has ? 'tp.bud.title' : 'tp.bud.total')}</h2>
+          {!editing && (
+            <Button variant="quiet" size="sm" className="tpbud-edit" onClick={() => setEditing(true)}>
+              {t(has ? 'tp.bud.edit' : 'tp.bud.set')}
+            </Button>
+          )}
+        </div>
+      )}
+      {!compact && (
+        <p className="tpbud-total">
+          <span className="tpbud-n">{Number.isFinite(total) ? <Money value={total} est precision="cents" /> : <NotYet />}</span>
+          <span className="tpbud-for">{t('receipt.total', { people: party === 1 ? t('receipt.onePerson') : t('receipt.nPeople', { n: party }) })}</span>
+        </p>
+      )}
       {has && check && !editing && (
         <>
           <div className="tpbud-bar" role="img" aria-label={t('tp.bud.barAria', { spent: money(spent), budget: money(budget.eur, 'whole') })}>
@@ -69,6 +75,11 @@ export function BudgetCard({ priced, party = 1, nights = 0, budget, onSave }) {
             </span>
           </p>
         </>
+      )}
+      {compact && !editing && (
+        <Button variant="quiet" size="sm" className="tpbud-edit" onClick={() => setEditing(true)}>
+          {t(has ? 'tp.bud.edit' : 'tp.bud.set')}
+        </Button>
       )}
       {editing && (
         <div className="tpbud-form">

@@ -8200,6 +8200,7 @@ export const es = {
   "tp.bar.from": "Desde",
   "tp.bar.stay": "Estancia",
   "tp.bar.edit": "Cambiar {what}: {value}",
+  "tp.change": "Cambiar el viaje",
   "tp.tabsLabel": "Tu viaje",
   "tp.sideLabel": "Mapa y herramientas",
   "tp.tripFacts": "Datos del viaje",

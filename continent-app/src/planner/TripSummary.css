@@ -170,28 +170,50 @@
 /* ---- The cost band (direction 2: what it costs comes first) ---- */
 .tpg-overview { display: flex; flex-direction: column; gap: var(--space-6); min-width: 0; }
 
-.tpg-band {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  padding: var(--space-5);
-  border-radius: var(--radius-card);
-  background: var(--surface);
-  border: 1px solid var(--border-soft);
-}
-.tpg-band-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
-.tpg-band-total { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.tpg-band-lbl { margin: 0; font-size: var(--text-label); font-weight: 500; color: var(--text-2); }
-.tpg-band-n {
-  font-size: var(--text-headline);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-  color: var(--text);
-  font-variant-numeric: tabular-nums;
-}
-.tpg-band-sub { font-size: var(--text-label); color: var(--text-2); font-variant-numeric: tabular-nums; }
-.tpg-band-acts { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); margin-left: calc(-1 * var(--space-2)); }
+/* ---- What it costs, once (T886): the compact cost card ---- */
+.tpc { display: grid; gap: var(--space-2); padding: var(--space-4); border-radius: var(--radius-sheet); background: var(--surface); box-shadow: var(--elev-1); }
+@media (min-width: 1024px) { .tpg-side .tpc { padding: var(--space-5); box-shadow: var(--elev-2); } }
+.tpc-top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
+.tpc-h { margin: 0; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
+.tpc-sum { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--space-2); margin: 0; }
+.tpc-n { font-size: var(--text-headline); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; color: var(--text); font-variant-numeric: tabular-nums; }
+.tpc-unit { font-size: var(--text-label); color: var(--text-3); }
+.tpc-bar { display: flex; gap: 2px; height: 6px; margin: var(--space-1) 0; }
+.tpc-bar > span { display: block; min-width: 4px; border-radius: var(--radius-pill); }
+.tpc-bar > .is-travel { background: var(--cost-travel); }
+.tpc-bar > .is-around { background: var(--cost-around); }
+.tpc-bar > .is-stay { background: var(--cost-stay); }
+.tpc-bar > .is-food { background: var(--cost-food); }
+.tpc-acts { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.tpc-tog.btn { border-radius: var(--radius-pill); font-weight: 600; }
+.tpc-tog .btn-icon { transition: transform var(--dur-3) var(--ease-out); }
+.tpc-tog[aria-expanded="true"].btn { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
+.tpc-tog[aria-expanded="true"] .btn-icon { transform: rotate(180deg); }
+.tpc-paid.btn { margin-right: calc(-1 * var(--space-2)); }
+.tpc-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--dur-3) var(--ease-out); }
+.tpc-body.is-open { grid-template-rows: 1fr; }
+.tpc-in { display: grid; gap: var(--space-1); min-height: 0; overflow: hidden; opacity: 0; transition: opacity var(--dur-2) var(--ease-out); }
+.tpc-body.is-open .tpc-in { opacity: 1; }
+.tpc-all.btn { justify-self: start; margin-left: calc(-1 * var(--space-2)); }
+/* The four groups as rows inside the card: an icon on its cost colour, the
+   word, the figure at the right. */
+.ct.is-rows { display: grid; grid-template-columns: 1fr; gap: 0; padding-top: var(--space-2); }
+.ct.is-rows .ct-hit { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: var(--space-1) var(--space-3); min-height: var(--tap); padding: var(--space-1) var(--space-1); border: 0; border-radius: var(--radius-control); background: none; box-shadow: none; }
+.ct.is-rows .ct-label { gap: var(--space-3); font-size: var(--text-body); color: var(--text); }
+.ct.is-rows .ct-label .ct-dot { display: none; }
+.ct.is-rows .ct-label svg { box-sizing: content-box; width: 18px; height: 18px; padding: 8px; border-radius: var(--radius-control); }
+.ct.is-rows .is-travel .ct-label svg { color: var(--cost-travel); background: color-mix(in srgb, var(--cost-travel) 11%, var(--surface)); }
+.ct.is-rows .is-around .ct-label svg { color: var(--cost-around); background: color-mix(in srgb, var(--cost-around) 11%, var(--surface)); }
+.ct.is-rows .is-stay .ct-label svg { color: var(--cost-stay); background: color-mix(in srgb, var(--cost-stay) 11%, var(--surface)); }
+.ct.is-rows .is-food .ct-label svg { color: var(--cost-food); background: color-mix(in srgb, var(--cost-food) 11%, var(--surface)); }
+.ct.is-rows .ct-fig { margin: 0; font-size: var(--text-body); font-weight: 600; text-align: right; }
+.ct.is-rows .ct-marks { grid-column: 1; margin: 0 0 0 calc(34px + var(--space-3)); }
+/* The budget inside the cost card: the bar, its line and Edit budget only. */
+.tpbud.is-compact { padding: 0; border: 0; background: none; box-shadow: none; gap: var(--space-1); }
+.tpbud.is-compact .tpbud-bar { height: 4px; }
+.tpbud.is-compact .tpbud-line { font-size: var(--text-caption); }
+.tpbud.is-compact > .tpbud-edit.btn { justify-self: start; margin-left: calc(-1 * var(--space-2)); }
+@media (prefers-reduced-motion: reduce) { .tpc-body, .tpc-in, .tpc-tog .btn-icon { transition: none; } }
 
 /* The four tiles (concept C): 4 across, 2 by 2 on a phone. */
 .ct {
@@ -341,25 +363,8 @@ button.ct-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: 2
   border-top: 1px solid var(--border);
   box-shadow: 0 -4px 16px rgba(31, 42, 51, 0.08);
 }
-.tpg-dock-total {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  min-width: 0;
-  min-height: var(--tap);
-  justify-content: center;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--text);
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-.tpg-dock-total:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-control); }
-.tpg-dock-n { font-size: var(--text-lead); font-weight: 700; line-height: 1.15; font-variant-numeric: tabular-nums; }
-.tpg-dock-lbl { font-size: var(--text-caption); color: var(--text-2); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--border); }
-.tpg-dock-go.btn { flex: none; }
+.tpg-dock-change.btn { flex: none; }
+.tpg-dock-go.btn { flex: 1; }
 
 /* ---- The name as a field (T830; T836 renames in place) ---- */
 .tpg-name-input {

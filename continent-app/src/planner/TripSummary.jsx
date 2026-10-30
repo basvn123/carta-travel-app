@@ -2,10 +2,10 @@ import React, { useState, useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import './TripSummary.css';
 import { useI18n } from '../i18n/index.jsx';
-import { Button, Chip, IconButton, Money, Segmented, Tabs } from '../components/ui/index.js';
+import { Button, Chip, IconButton, Money, Tabs } from '../components/ui/index.js';
 import {
   ArrowLeftIcon, BedIcon, CalendarIcon, CarIcon, FerryIcon, HomeIcon, MoonIcon, PersonIcon, PencilIcon,
-  TrainIcon, BusIcon, SparkIcon, ChevronRightIcon, MapPinIcon, LifestyleIcon, SettingsIcon, ShareIcon,
+  TrainIcon, BusIcon, SparkIcon, ShareIcon,
   ExpandIcon, ShrinkIcon, UndoIcon, RedoIcon, RouteIcon,
 } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
@@ -16,13 +16,12 @@ import { AirlineMark } from '../components/flights/Flights.jsx';
 import { useAirlines, airlineName } from '../lib/flights/useAirlines.js';
 import { TRAVEL_MODE_LABEL } from '../lib/transportLinks.js';
 import { fmtDate } from '../lib/dates.js';
-import { formatMoney } from '../lib/money.js';
 import { nightsBetween } from '../lib/tripDates.js';
 import { partyText } from '../lib/party.js';
 import { cityLabel } from '../lib/placeName.js';
 import { useMedia } from '../browse/home/useHome.js';
 import { RecordMapDialog } from '../auth/mytrips/parts.jsx';
-import { CostTiles } from './trip/CostTiles.jsx';
+import { CostCard } from './trip/CostCard.jsx';
 import { RouteCodes } from './trip/RouteCodes.jsx';
 import { ReadyToBook } from './trip/ReadyToBook.jsx';
 import { useSettings } from '../components/SettingsLine.jsx';
@@ -258,8 +257,8 @@ function MapCard({ map, mapFull, title }) {
  *   book                 T873: Ready to book's Add what you paid handlers
  *                        { onTravelPaid, onOwnStay, onOwnLeg }; absent hides the list
  *   carTip               T873: lib/transport.js carAdvice for the route's one car row
- *   budgetCard           T846: the total against the budget; the side column
- *                        from 1024 px (every tab), under the band below it
+ *   budgetCard           T846: the total against the budget, inside the
+ *                        cost card since T886 (BudgetCard compact)
  *   bar                  round buttons on the top row (save)
  *   footer               the saved line under the page
  */
@@ -273,6 +272,8 @@ export function TripSummary({
   // T838: no edit mode. Every fact is changed where it is shown (the chips,
   // the name, the route's stops), so the page has one layout.
   onRename = null,
+  // T886: Change your trip (the T888 sheet); absent, the trip settings.
+  onChange = null,
 }) {
   const { t, lang } = useI18n();
   const title = shownTripName(name, stopDetails, lang) || t('itin.myTrip');
@@ -313,10 +314,6 @@ export function TripSummary({
   const places = [...new Set(stopDetails.map((s) => cityLabel(s.dest?.city || '')).filter(Boolean))];
   const lead = stopDetails.find((s) => s.dest)?.dest || null;
 
-  const total = priced?.grandTotal;
-  const perPerson = priced?.perPerson;
-  const shown = per === 'person' ? perPerson : total;
-
   const go = (id, anchor = null) => {
     onTab?.(id);
     window.requestAnimationFrame(() => {
@@ -341,6 +338,9 @@ export function TripSummary({
     onLifestyle && lifestyle && { key: 'lifestyle', label: t('tp.bar.stay'), text: lifestyle, onClick: onLifestyle, dialog: true },
   ].filter(Boolean);
 
+  // T886: one primary, then the trip's two doors: Change your trip (every
+  // input of the price, onChange; the trip settings until then) and Share.
+  const change = onChange || onSettings;
   const tools = (
     <div className="tpg-tools" role="group" aria-label={t('plan.toolsTitle')}>
       {onPlanDays && wide && (
@@ -353,9 +353,9 @@ export function TripSummary({
           {t('pf.doors.rest')}
         </Button>
       )}
-      {onSettings && (
-        <Button variant="secondary" className="tpg-tool" iconStart={<SettingsIcon size={18} />} onClick={onSettings}>
-          {t('pf.settings')}
+      {change && (
+        <Button variant="secondary" className="tpg-tool" iconStart={<PencilIcon size={18} />} onClick={() => change()}>
+          {t('tp.change')}
         </Button>
       )}
       {onExport && (
@@ -366,46 +366,18 @@ export function TripSummary({
     </div>
   );
 
-  const mapCard = <MapCard map={map} mapFull={mapFull} title={name || t('itin.myTrip')} />;
+  const mapCard = <MapCard map={map} mapFull={mapFull} title={title} />;
+
+  // T886: what the trip costs, once: the side column from 1024 px (every
+  // tab), the Overview on a phone. The budget lives inside it.
+  const costCard = (
+    <CostCard priced={priced} people={n} per={per} onPer={setPer} budget={budgetCard}
+      onOpen={(k) => go('costs', `tp-cost-${k}`)} onAll={() => go('costs')} onAddPaid={onAddPaid} />
+  );
 
   const overview = (
     <div className="tpg-overview">
-      <section className="tpg-band" aria-labelledby={`${uid}-cost`} data-testid="ts-total">
-        <div className="tpg-band-head">
-          <div className="tpg-band-total">
-            <h2 className="tpg-band-lbl" id={`${uid}-cost`}>
-              {per === 'person'
-                ? t('tp.totalAPerson')
-                : t('receipt.total', { people: n === 1 ? t('receipt.onePerson') : t('receipt.nPeople', { n }) })}
-            </h2>
-            <span className="tpg-band-n" data-total={Number.isFinite(total) ? String(total) : ''}>
-              {Number.isFinite(shown) ? <Money value={shown} est precision="cents" /> : <NotYet />}
-            </span>
-          </div>
-          {n > 1 && (
-            <Segmented
-              size="sm"
-              label={t('tp.showFor')}
-              value={per}
-              onChange={setPer}
-              options={[{ value: 'group', label: t('tp.forGroup') }, { value: 'person', label: t('tp.forPerson') }]}
-            />
-          )}
-        </div>
-        <CostTiles priced={priced} per={per} people={n} onOpen={(k) => go('costs', `tp-cost-${k}`)} />
-        <div className="tpg-band-acts">
-          <Button variant="quiet" size="sm" className="tpg-band-more" iconEnd={<ChevronRightIcon size={16} />} onClick={() => go('costs')}>
-            {t('tp.breakdown')}
-          </Button>
-          {onAddPaid && (
-            <Button variant="quiet" size="sm" className="tpg-band-paid" iconStart={<PencilIcon size={16} />} onClick={onAddPaid}>
-              {t('tp.addPaid')}
-            </Button>
-          )}
-        </div>
-      </section>
-
-      {!wide && budgetCard}
+      {!wide && costCard}
       {!wide && mapCard}
 
       <section className="tpg-route" aria-labelledby={`${uid}-route`}>
@@ -531,25 +503,22 @@ export function TripSummary({
         {wide && (
           <aside className="tpg-side" aria-label={t('tp.sideLabel')}>
             {mapCard}
-            {budgetCard}
+            {costCard}
             {tools}
           </aside>
         )}
       </div>
 
-      {/* T829: below 1024 px the total and the next step stay in view, in a
-          bar over the bottom nav (Expedia's summary bar on a phone). The
-          figure follows the Group / Per person switch; tapping it opens the
-          Costs tab. */}
+      {/* T829, T886: below 1024 px the next steps stay in view in a bar over
+          the bottom nav: Change your trip and Plan your days. The total is
+          the cost card's alone, so the page says it once. */}
       {!wide && (
         <div className="tpg-dock" data-testid="tpg-dock">
-          <button type="button" className="tpg-dock-total" onClick={() => go('costs')}
-            aria-label={`${per === 'person' ? t('tp.totalAPerson') : t('receipt.total', { people: n === 1 ? t('receipt.onePerson') : t('receipt.nPeople', { n }) })}: ${Number.isFinite(shown) ? formatMoney(shown, { precision: 'cents', locale: lang }) : t('data.notYet')}. ${t('tp.breakdown')}`}>
-            <span className="tpg-dock-n">{Number.isFinite(shown) ? <Money value={shown} est precision="cents" /> : <NotYet />}</span>
-            <span className="tpg-dock-lbl">
-              {per === 'person' ? t('tp.totalAPerson') : t('receipt.total', { people: n === 1 ? t('receipt.onePerson') : t('receipt.nPeople', { n }) })}
-            </span>
-          </button>
+          {change && (
+            <Button variant="secondary" className="tpg-dock-change" iconStart={<PencilIcon size={16} />} onClick={() => change()}>
+              {t('tp.change')}
+            </Button>
+          )}
           {onPlanDays && (
             <Button variant="primary" className="tpg-dock-go" iconStart={<SparkIcon size={16} />} onClick={onPlanDays}>
               {t('trip.planYourDays')}

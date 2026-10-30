@@ -1442,6 +1442,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                 party={headCount}
                 nights={tp.plannedNights}
                 budget={tripSet.guide?.budget}
+                compact
                 onSave={(b) => {
                   const cur = fromDraft(plannerStore.getState());
                   saveTripSet({ ...cur, guide: { ...cur.guide, budget: b } });

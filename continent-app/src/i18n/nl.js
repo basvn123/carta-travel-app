@@ -8200,6 +8200,7 @@ export const nl = {
   "tp.bar.from": "Vanuit",
   "tp.bar.stay": "Verblijf",
   "tp.bar.edit": "{what} wijzigen: {value}",
+  "tp.change": "Wijzig je reis",
   "tp.tabsLabel": "Je reis",
   "tp.sideLabel": "Kaart en hulpmiddelen",
   "tp.tripFacts": "Reisgegevens",

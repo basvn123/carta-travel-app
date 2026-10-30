@@ -8808,6 +8808,7 @@ export const en = {
   "tp.bar.from": "From",
   "tp.bar.stay": "Stay",
   "tp.bar.edit": "Change {what}: {value}",
+  "tp.change": "Change your trip",
   "tp.tabsLabel": "Your trip",
   "tp.sideLabel": "Map and tools",
   "tp.tripFacts": "Trip details",
