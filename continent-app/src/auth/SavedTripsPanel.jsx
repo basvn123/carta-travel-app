@@ -31,7 +31,7 @@ import { countryName } from '../lib/countryName.js';
 import { useI18n } from '../i18n/index.jsx';
 import { activeLocale } from '../lib/localeState.js';
 import { useFavoriteItems } from '../hooks/useFavoriteItems.js';
-import { FAV_KINDS, parseFavKey } from '../lib/favorites.js';
+import { parseFavKey } from '../lib/favorites.js';
 import { E2E_SEAMS } from '../lib/e2eSeams.js';
 import { DayPrice } from '../browse/ExploreCards.jsx';
 import '../styles/70-mytrips.css';
@@ -49,7 +49,9 @@ import { useVisitedCountries, toggleVisitedCountry } from '../lib/visitedCountri
 import { UNDO_MS, UndoToast, CrewBar, TripPrice, whenText } from './mytrips/parts.jsx';
 import { SiteFooter } from '../components/SiteFooter.jsx';
 import { MyTripsHead, TripsTab, VisitedCountriesSheet, MT_TABS } from './mytrips/MyTripsTabs.jsx';
-import { ShortlistTab, ShortlistFilters, YearFilter, VisitedTab } from './mytrips/LegacyTabs.jsx';
+import { YearFilter, VisitedTab } from './mytrips/LegacyTabs.jsx';
+import { SavedTab } from './mytrips/SavedTab.jsx';
+import { useSavedLists, loadSavedLists, noteSaved, createList, setNote } from '../lib/savedLists.js';
 import { TodayCard } from './mytrips/TodayCard.jsx';
 
 /**
@@ -74,6 +76,10 @@ const MOCK_FAVS = [
   { id: 'mf2', destination_id: 'OPO', city: 'Porto', country: 'Portugal', depart_date: addDaysIso(62), return_date: addDaysIso(65), created_at: addDaysIso(-30) },
   { id: 'mf3', destination_id: 'gem:bruges', city: 'Bruges', country: 'Belgium', created_at: addDaysIso(-45) },
 ];
+// T925: saved places the seam adds to this browser's own shortlist, with the
+// price each was saved at a little off today's so the moves render.
+const MOCK_FAV_KEYS = ['dest:BCN', 'dest:SPU', 'dest:LJU', 'dest:NAP'];
+const MOCK_SAVED_AT = { 'dest:BCN': 6, 'dest:SPU': -3, 'dest:LIS': 11 };
 const MOCK_FRIEND_TRIPS = [
   { ownerId: 'u-sofie', ownerHandle: 'sofie_v', ownerName: 'Sofie Vermeulen', tripPlanId: 'ft1', label: 'Two weeks in Portugal', startDate: addDaysIso(-90), endDate: addDaysIso(-80), cities: ['Lisbon', 'Porto'], countries: ['Portugal'], destinationIds: ['LIS', 'OPO'] },
   { ownerId: 'u-sofie', ownerHandle: 'sofie_v', ownerName: 'Sofie Vermeulen', tripPlanId: 'ft2', label: 'Alpine summer', startDate: addDaysIso(-200), endDate: addDaysIso(-193), cities: ['Innsbruck'], countries: ['Austria'], destinationIds: ['INN'] },
@@ -144,7 +150,6 @@ const readBedBase = () => { try { return JSON.parse(localStorage.getItem(BED_BAS
 const writeBedBase = (v) => { try { localStorage.setItem(BED_BASE_KEY, JSON.stringify(v)); } catch { /* private mode */ } };
 
 const TAB_KEY = 'carta.savedTripsTab';
-const SORT_KEY = 'carta.mytrips.sort';
 // T923: the tabs were renamed; a stored choice of the old names still lands.
 const OLD_TABS = { planned: 'trips', favorites: 'saved', visited: 'europe' };
 const readTab = () => {
@@ -152,9 +157,6 @@ const readTab = () => {
     const v = localStorage.getItem(TAB_KEY);
     return MT_TABS.includes(v) ? v : (OLD_TABS[v] || 'trips');
   } catch { return 'trips'; }
-};
-const readStored = (key, allowed, fallback) => {
-  try { const v = localStorage.getItem(key); return allowed.includes(v) ? v : fallback; } catch { return fallback; }
 };
 const writeStored = (key, v) => { try { localStorage.setItem(key, v); } catch { /* private mode */ } };
 
@@ -164,7 +166,7 @@ export function SavedTripsPanel({
   // The day-cost map Explore prints from, and the Lifestyle the trip planner
   // prices with, so every figure here is the figure there.
   costs = null, stayTier = 'home', lifestyle = null,
-  onOpenFriends = null, onPlanTripCountry = null, onOpenDeviceTrip = null,
+  onOpenFriends = null, onOpenDeviceTrip = null, onPlanStops = null,
   // T659: Plan's "Add a past trip" opens My trips on the past-trip form.
   startWithPast = false, onPastStarted = null,
 }) {
@@ -250,9 +252,6 @@ export function SavedTripsPanel({
   const [friendTrips, setFriendTrips] = useState(SAVED_MOCK ? MOCK_FRIEND_TRIPS : []);
   const [visById, setVisById] = useState({});
   const [mapFull, setMapFull] = useState(false);
-  const [kind, setKind] = useState('all');
-  const [sort, setSort] = useState(() => readStored(SORT_KEY, ['recent', 'cheap'], 'recent'));
-  const pickSort = (v) => { setSort(v); writeStored(SORT_KEY, v); };
   const [year, setYear] = useState('all');
   const [countriesOpen, setCountriesOpen] = useState(false);
   const countriesRef = useRef(null);
@@ -772,13 +771,18 @@ export function SavedTripsPanel({
   ];
   const dayModels = upcomingDayPlans.map(dayPlanModel);
 
-  // ── Shortlist: the starred things and the account's saved places, one list. ──
-  const shortlist = useFavoriteItems(favorites, destinations);
+  // ── Saved (T925): the starred things and the account's saved places, one list. ──
+  const shownFavs = useMemo(
+    () => (SAVED_MOCK ? new Set([...MOCK_FAV_KEYS, ...(favorites || [])]) : favorites),
+    [favorites],
+  );
+  const shortlist = useFavoriteItems(shownFavs, destinations);
+  const savedLists = useSavedLists();
   const favOrder = useMemo(() => {
     const m = new Map();
-    [...(favorites || [])].forEach((k, i) => m.set(k, i));
+    [...(shownFavs || [])].forEach((k, i) => m.set(k, i));
     return m;
-  }, [favorites]);
+  }, [shownFavs]);
   const shortRows = useMemo(() => {
     const rows = shortlist.sections.flatMap((s) => s.rows)
       .filter((r) => `star:${r.key}` !== heldKey)
@@ -795,34 +799,25 @@ export function SavedTripsPanel({
         });
       });
     }
-    return rows;
+    // Newest save first.
+    return rows.sort((a, b) => b.order - a.order);
   }, [shortlist.sections, favOrder, heldKey, authed, shownTrips, destinations, resolveImage]);
-  const kinds = useMemo(() => FAV_KINDS.filter((k) => shortRows.some((r) => r.kind === k)), [shortRows]);
-  const kindNow = kinds.includes(kind) ? kind : 'all';
-  const shownShort = useMemo(() => {
-    const list = shortRows.filter((r) => kindNow === 'all' || r.kind === kindNow);
-    const dayEur = (r) => (r.kind === 'dest' ? costs?.get?.(r.id)?.dayEur : null);
-    return list.sort((a, b) => {
-      if (sort === 'cheap') {
-        const x = dayEur(a); const y = dayEur(b);
-        if (x != null || y != null) return (x ?? Infinity) - (y ?? Infinity);
-      }
-      return b.order - a.order;
+
+  // The seam's saves get a price at save time and two lists, once (dev only).
+  useEffect(() => {
+    if (!SAVED_MOCK || !costs) return;
+    const cur = loadSavedLists();
+    Object.entries(MOCK_SAVED_AT).forEach(([k, off]) => {
+      const now = costs.get?.(k.slice(5))?.dayEur;
+      if (Number.isFinite(now) && !Number.isFinite(cur.meta[k]?.eur)) noteSaved(k, now + off, Date.now() - 27 * 864e5);
     });
-  }, [shortRows, kindNow, sort, costs]);
-  // "Plan a trip" from the shortlist: the country holding the most starred
-  // places, handed to the trip wizard's Where step (the same seed a
-  // destination page's "Plan a trip here" uses).
-  const planCountry = useMemo(() => {
-    const by = new Map();
-    shortRows.filter((r) => r.kind === 'dest' && r.cc).forEach((r) => by.set(r.cc, (by.get(r.cc) || 0) + 1));
-    let best = null;
-    by.forEach((n, cc) => { if (!best || n > best.n) best = { cc, n }; });
-    return best;
-  }, [shortRows]);
-  const planCountryName = planCountry
-    ? (Object.entries(COUNTRY_ISO2).find(([, iso]) => iso === planCountry.cc)?.[0] || '')
-    : '';
+    if (!cur.lists.length) {
+      createList('Summer 2027', ['dest:BCN', 'dest:SPU', 'dest:LIS']);
+      createList('City weekends', ['dest:LIS', 'dest:OPO', 'dest:LJU']);
+      setNote('dest:LIS', 'For the birthday weekend');
+    }
+  }, [costs]);
+
   const openShortlisted = (row) => {
     if (row.kind === 'dest') { onOpenDest?.(row.id); return; }
     onOpenFeature?.(row.kind, { id: row.id, cc: row.cc });
@@ -1008,9 +1003,6 @@ export function SavedTripsPanel({
     if (!pickedRef.current && tripsCount > 0 && tab !== 'trips') setTab('trips');
   }, [tripsCount]); // eslint-disable-line react-hooks/exhaustive-deps -- runs when the plans arrive
 
-  const shortFilters = (compact) => (
-    <ShortlistFilters kinds={kinds} kind={kindNow} onKind={setKind} sort={sort} onSort={pickSort} compact={compact} />
-  );
   const pastForm = pastOpen ? (
     <PastTripForm
       friends={friends}
@@ -1069,25 +1061,26 @@ export function SavedTripsPanel({
             />
           )}
           {tab === 'saved' && (
-            /* Kept trips from the trip finder (T806): planning one hands its
-               plan to the Plan tab, which opens the planner on it. */
-            <KeptTrips onPlan={(r) => { holdPlan(r.plan); onGoToTab?.('trip'); }} />
-          )}
-          {tab === 'saved' && onOpenFeature && (
-            <SavedJourneys onOpen={(id) => onOpenFeature('journey', { id })} />
-          )}
-          {tab === 'saved' && shortRows.length > 1 && <div className="mt-refine">{shortFilters(true)}</div>}
-          {tab === 'saved' && ((keptCount === 0 && savedWeeks === 0) || shownShort.length > 0 || shortlist.loading) && (
-            <ShortlistTab
-              rows={shownShort}
-              showKind={kinds.length > 1 && kindNow === 'all'}
+            <SavedTab
+              rows={shortRows}
+              saved={savedLists}
               costs={costs}
+              destinations={destinations}
               loading={shortlist.loading || (authed && loading)}
               onOpen={openShortlisted}
               onRemove={dropShortlisted}
-              planCountryName={planCountryName}
-              onPlanTrip={onPlanTripCountry && planCountry ? () => onPlanTripCountry(planCountry.cc) : null}
+              onPlan={(ids) => onPlanStops?.(ids.map((dest) => ({ dest, nights: 2 })))}
               onBrowse={() => onGoToTab?.('places')}
+              onUndo={removeWithUndo}
+              mapLocale={mapLocale}
+              top={(
+                <>
+                  {/* Kept trips from the trip finder (T806): planning one hands
+                      its plan to the Plan tab, which opens the planner on it. */}
+                  <KeptTrips onPlan={(r) => { holdPlan(r.plan); onGoToTab?.('trip'); }} />
+                  {onOpenFeature && <SavedJourneys onOpen={(id) => onOpenFeature('journey', { id })} />}
+                </>
+              )}
             />
           )}
           {tab === 'europe' && years.length > 1 && (

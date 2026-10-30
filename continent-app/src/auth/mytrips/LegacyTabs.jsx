@@ -1,109 +1,19 @@
 import React, { Suspense, lazy } from 'react';
 import { createPortal } from 'react-dom';
 import { useI18n } from '../../i18n/index.jsx';
-import { Button, Card, ChipGroup, Chip, IconButton, Segmented } from '../../components/ui/index.js';
-import { HeroImage } from '../../components/HeroImage.jsx';
+import { Button, ChipGroup, Chip, IconButton } from '../../components/ui/index.js';
 import { CountryFlag, COUNTRY_ISO2 } from '../../components/CountryFlag.jsx';
-import { DayPrice, SaveButton } from '../../browse/ExploreCards.jsx';
-import { ExpandIcon, ShrinkIcon, PlusIcon, RouteIcon, PencilIcon } from '../../components/Icons.jsx';
-import { FAV_KIND_LABEL } from '../../lib/favorites.js';
+import { ExpandIcon, ShrinkIcon, PlusIcon, PencilIcon } from '../../components/Icons.jsx';
 import { countryName } from '../../lib/countryName.js';
 import { TripRow } from './TripCards.jsx';
 import { RecordMapDialog } from './parts.jsx';
 import { Section, Empty } from './MyTripsTabs.jsx';
 
-/* The Shortlist and Visited tabs as they were before T923, kept here until
-   Saved (T925) and Your Europe (T926) replace them. */
+/* The Visited tab as it was before T923, kept here until Your Europe (T926)
+   replaces it. */
 
 const FULL_PAD = { top: 84, left: 28, right: 28, bottom: 56 };
 const TripMap = lazy(() => import('../../map/TripMap.jsx').then((m) => ({ default: m.TripMap })));
-
-/* ───────────────────────── Shortlist ───────────────────────── */
-
-/**
- * Everything starred anywhere, as one list of compact rows, priced as Explore
- * prices them and saved with Explore's bookmark. The kind and the order are
- * filters, drawn in the side panel on desktop and above the list on a phone.
- */
-export function ShortlistTab({ rows, showKind = true, costs, onOpen, onRemove, onPlanTrip, planCountryName, onBrowse, loading }) {
-  const { t } = useI18n();
-  if (!rows.length && !loading) {
-    return (
-      <Empty
-        title={t('saved.shortlistEmpty')}
-        action={<Button onClick={onBrowse}>{t('saved.browseDestinations')}</Button>}
-      />
-    );
-  }
-  return (
-    <>
-      {onPlanTrip && planCountryName && (
-        <div className="mt-plan-these">
-          <Button variant="primary" iconStart={<RouteIcon size={18} />} onClick={onPlanTrip}>
-            {t('saved.planWithShortlist', { country: planCountryName })}
-          </Button>
-        </div>
-      )}
-      <div className="mt-rows">
-        {rows.map((row) => (
-          <Card
-            key={row.key}
-            layout="row"
-            as="div"
-            className={`mt-row${row.missing ? ' is-missing' : ''}`}
-            media={<HeroImage url={row.img} city={row.name || row.id} iso2={row.cc} className="mt-row-img" maxWidth={330} ratio={[1, 1]} sizes="72px" />}
-            title={row.missing ? t('fav.missing') : (row.name || '…')}
-            onOpen={row.missing ? undefined : () => onOpen(row)}
-            meta={!row.missing && (
-              <span className="mt-row-meta">
-                {row.cc && <CountryFlag country={row.cc} size={14} />}
-                <span>{[row.sub, showKind && FAV_KIND_LABEL[row.kind] ? t(FAV_KIND_LABEL[row.kind]) : ''].filter(Boolean).join(', ')}</span>
-              </span>
-            )}
-            price={row.kind === 'dest' && costs?.get(row.id) ? <DayPrice cost={costs.get(row.id)} t={t} /> : null}
-            actions={<SaveButton fav onToggle={() => onRemove(row)} t={t} name={row.name} />}
-          />
-        ))}
-      </div>
-    </>
-  );
-}
-
-/** The shortlist's two filters, as the side panel or the phone's refine row. */
-export function ShortlistFilters({ kinds, kind, onKind, sort, onSort, compact = false }) {
-  const { t } = useI18n();
-  if (kinds.length < 2 && !compact) {
-    return (
-      <div className="mt-filter">
-        <span className="mt-filter-label">{t('saved.sortLabel')}</span>
-        <Segmented label={t('saved.sortLabel')} size="sm" value={sort} onChange={onSort}
-          options={[{ value: 'recent', label: t('saved.sortRecent') }, { value: 'cheap', label: t('saved.sortCheap') }]} />
-      </div>
-    );
-  }
-  return (
-    <div className={`mt-filters${compact ? ' is-compact' : ''}`}>
-      {kinds.length > 1 && (
-        <div className="mt-filter">
-          {!compact && <span className="mt-filter-label">{t('saved.kindLabel')}</span>}
-          <ChipGroup label={t('saved.kindLabel')} className="mt-chips">
-            {['all', ...kinds].map((k) => (
-              <Chip key={k} kind="choice" selected={kind === k} onClick={() => onKind(k)}>
-                {k === 'all' ? t('saved.kindAll') : t(FAV_KIND_LABEL[k])}
-              </Chip>
-            ))}
-          </ChipGroup>
-        </div>
-      )}
-      <div className="mt-filter">
-        {!compact && <span className="mt-filter-label">{t('saved.sortLabel')}</span>}
-        <Segmented label={t('saved.sortLabel')} size="sm" value={sort} onChange={onSort}
-          options={[{ value: 'recent', label: t('saved.sortRecent') }, { value: 'cheap', label: t('saved.sortCheap') }]} />
-      </div>
-    </div>
-  );
-}
-/* ───────────────────────── Visited ───────────────────────── */
 
 /** The year filter, as the side panel or the phone's refine row. */
 export function YearFilter({ years, year, onYear, compact = false }) {

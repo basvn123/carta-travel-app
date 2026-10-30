@@ -570,6 +570,131 @@
   .mt-today { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); padding: var(--space-5); gap: var(--space-6); }
 }
 
+/* ── Saved (T925) ── */
+.mt-saved { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+/* The lists as cards: a 2 x 2 photo cover, the name, the count. They scroll
+   sideways on a phone and wrap from 769 px. */
+.mt-lists {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 148px;
+  gap: var(--space-3);
+  margin: 0 calc(-1 * var(--gutter));
+  padding: 2px var(--gutter) var(--space-1);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.mt-lists::-webkit-scrollbar { display: none; }
+.btn.mt-lcard {
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 0;
+  height: auto;
+  min-height: 0;
+  padding: var(--space-2);
+  border-radius: var(--radius-card);
+  white-space: normal;
+  text-align: left;
+}
+.btn.mt-lcard .btn-label { display: flex; flex-direction: column; align-items: stretch; gap: 2px; width: 100%; }
+.btn.mt-lcard[aria-pressed='true'] { background: var(--select-bg); border-color: var(--select-border); }
+.btn.mt-lcard[aria-pressed='true'] .mt-lcard-name { color: var(--select-ink); }
+.mt-lcard-name { margin-top: var(--space-2); overflow: hidden; font-size: var(--text-body); font-weight: 600; color: var(--text); white-space: nowrap; text-overflow: ellipsis; }
+.mt-lcard-n { font-size: var(--text-caption); font-weight: 400; color: var(--text-2); }
+.mt-mosaic {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 2px;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: var(--radius-control);
+  background: var(--surface-sunken);
+}
+.mt-mosaic .mt-mosaic-img, .mt-mosaic .hero-blank { display: block; width: 100%; height: 100%; object-fit: cover; }
+.mt-mosaic.is-1 > * { grid-column: 1 / -1; grid-row: 1 / -1; }
+.mt-mosaic.is-2 > * { grid-row: 1 / -1; }
+.mt-mosaic.is-3 > :first-child { grid-row: 1 / -1; }
+.mt-mosaic-none, .mt-mosaic.is-new { display: flex; align-items: center; justify-content: center; grid-column: 1 / -1; grid-row: 1 / -1; color: var(--text-2); }
+.mt-mosaic.is-new { border: 1.5px dashed var(--border); background: transparent; }
+.mt-name-form, .mt-note-form { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-2); }
+.mt-name-form .field, .mt-note-form .field { flex: 1 1 200px; }
+.mt-list-bar { display: flex; align-items: center; gap: var(--space-2); }
+.mt-list-title { flex: 1; margin: 0; font-size: var(--text-title); font-weight: 700; color: var(--text); }
+.mt-saved-filters { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+
+/* The saved things: rows with a select box, the photo, the facts, a menu. */
+.mt-items { display: flex; flex-direction: column; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.mt-item {
+  display: grid;
+  grid-template-columns: auto 88px minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-2) var(--space-2) 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+.mt-item.is-selected { border-color: var(--select-border); }
+.mt-item.is-active { outline: 2px solid var(--text); outline-offset: -2px; }
+.mt-item-check { display: flex; align-items: center; justify-content: center; width: var(--tap); height: 88px; }
+.mt-item-check input { width: 20px; height: 20px; margin: 0; accent-color: var(--action); cursor: pointer; }
+.mt-item-check input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.mt-item-media { display: block; width: 88px; height: 88px; overflow: hidden; border-radius: var(--radius-control); cursor: pointer; }
+.mt-item-img, .mt-item-media .hero-blank { display: block; width: 100%; height: 100%; object-fit: cover; }
+.mt-item-body { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-width: 0; padding-top: 2px; }
+.mt-item-kind { display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-caption); color: var(--text-2); }
+.btn.mt-item-name {
+  min-height: 0;
+  padding: 0;
+  font-size: var(--text-lead);
+  font-weight: 600;
+  color: var(--text);
+  text-align: left;
+  white-space: normal;
+}
+@media (hover: hover) { .btn.mt-item-name:hover { background: none; text-decoration: underline; } }
+.mt-item-name.is-missing { font-size: var(--text-lead); color: var(--text-3); }
+.mt-item-price { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); }
+.mt-item-meta { font-size: var(--text-caption); color: var(--text-2); }
+.btn.mt-item-note { min-height: 32px; padding: 0; font-weight: 500; white-space: normal; text-align: left; }
+.mt-pick-lists { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-2); }
+
+/* List and map: the map beside the list from 1024 px; below it one of the
+   two, by the List or Map pill. */
+.mt-split { display: grid; gap: var(--space-4); }
+.mt-split.is-list .mt-split-map, .mt-split.is-map .mt-split-list { display: none; }
+.mt-map.is-saved { height: min(62vh, 520px); }
+.mt-selbar {
+  position: sticky;
+  bottom: calc(var(--space-3) + env(safe-area-inset-bottom));
+  z-index: 4;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--elev-2);
+}
+.mt-selbar-text { flex: 1 1 160px; display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--text-body); font-weight: 600; color: var(--text); }
+@media (min-width: 769px) {
+  .mt-lists { grid-auto-flow: row; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); margin: 0; padding: 2px 0; overflow: visible; }
+}
+@media (min-width: 1024px) {
+  .mt-view-toggle { display: none; }
+  .mt-split, .mt-split.is-map { grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr); align-items: start; }
+  .mt-split.is-list .mt-split-map, .mt-split.is-map .mt-split-list { display: block; }
+  .mt-split-map { position: sticky; top: calc(var(--tap) + var(--space-4)); }
+}
+@media (max-width: 480px) {
+  .mt-item { grid-template-columns: auto 64px minmax(0, 1fr) auto; gap: var(--space-2); }
+  .mt-item-media { width: 64px; height: 64px; }
+  .mt-item-check { height: 64px; }
+}
+
 /* The lazy chunk's own placeholder while it loads. */
 .mt-loading { position: fixed; inset: 0; z-index: var(--z-shell); background: var(--surface-page); }
 
