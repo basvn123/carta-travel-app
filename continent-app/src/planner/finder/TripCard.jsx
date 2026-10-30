@@ -95,6 +95,24 @@ function CardMenu({ name, compare, onSkip }) {
   );
 }
 
+/**
+ * The match as a ring (T879): an umber arc to the score on a white disc,
+ * deep from 85, lighter below 70; the figure inside, the whole read as
+ * "89% match" by a screen reader. Shared by the card and the trip page.
+ */
+export function MatchRing({ pct, label, className = '' }) {
+  const band = pct >= 85 ? 'hi' : pct >= 70 ? 'mid' : 'lo';
+  return (
+    <span className={`tff-ring is-${band} ${className}`.trim()} role="img" aria-label={label}>
+      <svg className="tff-ring-arc" viewBox="0 0 42 42" aria-hidden="true">
+        <circle className="is-track" cx="21" cy="21" r="19" />
+        <circle className="is-arc" cx="21" cy="21" r="19" pathLength="100" strokeDasharray={`${pct} 100`} />
+      </svg>
+      <b aria-hidden="true">{pct}<small>%</small></b>
+    </span>
+  );
+}
+
 /** The crowd level as four rising bars, the level's own filled (T879); the word beside it carries the meaning. */
 function CrowdMeter({ tier }) {
   return (
@@ -166,7 +184,6 @@ export const TripCard = forwardRef(function TripCard({ trip, destinations, marke
     open();
   };
   const ticked = Boolean(compare?.ticked);
-  const band = pct >= 85 ? 'hi' : pct >= 70 ? 'mid' : 'lo';
 
   return (
     // The click is the pointer's way in; the name's link is the keyboard's
@@ -174,15 +191,7 @@ export const TripCard = forwardRef(function TripCard({ trip, destinations, marke
     <article className={`tff-card${feat ? ' is-feat' : ''}${marked ? ' is-marked' : ''}${ticked ? ' is-ticked' : ''}`} onClick={onCardClick}>
       <div className="tff-card-media">
         <TripPhotos trip={trip} destinations={destinations} sizes={feat ? '(max-width: 599px) 92vw, (max-width: 1023px) 92vw, 640px' : '(max-width: 599px) 46vw, (max-width: 1023px) 31vw, 320px'} />
-        {pct != null && (
-          <span className={`tff-ring is-${band}`} role="img" aria-label={t('tf.card.match', { pct })}>
-            <svg className="tff-ring-arc" viewBox="0 0 42 42" aria-hidden="true">
-              <circle className="is-track" cx="21" cy="21" r="19" />
-              <circle className="is-arc" cx="21" cy="21" r="19" pathLength="100" strokeDasharray={`${pct} 100`} />
-            </svg>
-            <b aria-hidden="true">{pct}<small>%</small></b>
-          </span>
-        )}
+        {pct != null && <MatchRing pct={pct} label={t('tf.card.match', { pct })} />}
         {feat && <span className="tff-card-toplbl">{t('tf.card.top')}</span>}
         {keep && (
           <IconButton

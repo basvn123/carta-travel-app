@@ -1015,20 +1015,6 @@
 .tff-tp-prose { margin: 0; max-width: var(--measure); font-size: var(--text-lead); font-weight: 400; line-height: var(--leading-body); color: var(--text); }
 
 /* The fact band: label over value, an icon each, no card and no colour. */
-.tff-tp-facts {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(124px, 1fr));
-  gap: var(--space-4) var(--space-5);
-  margin: 0;
-  padding: var(--space-4) 0;
-  border-top: 1px solid var(--border-soft);
-  border-bottom: 1px solid var(--border-soft);
-}
-/* A label that wraps keeps its value on the row's baseline with the others. */
-.tff-tp-fact { display: grid; grid-template-rows: 1fr auto; align-items: end; gap: 2px; min-width: 0; }
-.tff-tp-fact dt { align-self: start; }
-.tff-tp-fact dt { display: inline-flex; align-items: center; gap: var(--space-1); font-size: var(--text-caption); color: var(--text-2); }
-.tff-tp-fact dt svg { flex: none; color: var(--text-2); }
 .tff-tp-fact dd { margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
 
 /* The price card: the trip's one bordered object and its one primary. */
@@ -1115,3 +1101,98 @@
 }
 @keyframes tff-fade { from { opacity: 0; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .tff-delta { animation: none; } }
+
+/* ---- The trip page, T881: the head on the photo, tiles, for and against, when to go ---- */
+/* On a phone the head lies on the first photo over an ink fade. */
+.tff-gal-ov {
+  position: absolute;
+  inset: 0 0 auto 0;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  height: 320px;
+  padding: var(--space-4);
+  border-radius: var(--radius-card);
+  background: linear-gradient(to top, color-mix(in srgb, var(--text) 82%, transparent), transparent 62%);
+  color: var(--surface);
+  pointer-events: none;
+}
+@media (max-width: 768px) { .tff-tp-gal .tff-gal-slide { height: 320px; } }
+.tff-gal-ov .tff-tp-title.pf-title { color: var(--surface); font-size: var(--text-display); font-weight: 800; letter-spacing: -0.02em; }
+.tff-gal-ov .tff-pv-meta, .tff-gal-ov .tff-meta-item svg { color: var(--surface); }
+.tff-gal-ov .tff-tp-head { gap: var(--space-1); }
+.tff-gal-ov .tff-tp-title:focus-visible { outline: 2px solid var(--surface); outline-offset: 2px; }
+.tff-tp-titlerow { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
+.tff-ring.is-head { position: relative; inset: auto; flex: none; }
+.tff-tp-lede { font-size: var(--text-body); color: var(--text-2); }
+
+/* The facts as tiles: an icon on a light umber ground, the label over the value. */
+.tff-tp-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); margin: 0; padding: 0; border: 0; }
+@media (min-width: 600px) { .tff-tp-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.tff-tp-fact {
+  position: relative;
+  display: grid;
+  align-content: center;
+  gap: 2px;
+  min-width: 0;
+  min-height: 64px;
+  padding: var(--space-3) var(--space-3) var(--space-3) 56px;
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+}
+.tff-tp-fact dt { display: block; font-size: var(--text-caption); color: var(--text-3); }
+.tff-tp-fact-ic {
+  position: absolute;
+  left: var(--space-3);
+  top: 50%;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin-top: -17px;
+  border-radius: var(--radius-control);
+  background: var(--umber-50);
+  color: var(--umber-700);
+}
+.tff-tp-fact dd { font-size: var(--text-lead); font-weight: 700; }
+
+/* Why it fits: for and against as two cards, then the bars. */
+.tff-why { display: grid; gap: var(--space-3); }
+.tff-why-pc { display: grid; gap: var(--space-2); }
+@media (min-width: 600px) { .tff-why-pc { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.tff-why-col { display: grid; gap: var(--space-2); align-content: start; padding: var(--space-3) var(--space-4); border-radius: var(--radius-card); background: var(--surface); box-shadow: var(--elev-1); }
+.tff-why-h { margin: 0; font-size: var(--text-caption); font-weight: 700; color: var(--text); }
+.tff-why-col .tff-fit-lines li { font-size: var(--text-label); color: var(--text); }
+.tff-why-col.is-pro .tff-fit-lines svg { color: var(--umber-600); }
+.tff-fit-fill { background: var(--text-2); }
+.tff-fit-miss { grid-column: 2 / -1; font-size: var(--text-caption); color: var(--amber-ink); }
+.tff-fit-bar.is-miss .tff-fit-pct { color: var(--text-3); }
+
+/* When to go: twelve months, the highs as bars, the crowds as dots. */
+.tff-when { display: grid; gap: var(--space-3); }
+.tff-when-strip {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--space-1);
+  margin: 0;
+  padding: var(--space-3);
+  list-style: none;
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+}
+.tff-when-m { display: grid; grid-template-rows: auto 72px 12px auto; justify-items: center; gap: 4px; min-width: 0; }
+.tff-when-c { font-size: var(--text-micro); font-weight: 600; color: var(--text-2); font-variant-numeric: tabular-nums; }
+.tff-when-bar { display: flex; align-items: flex-end; width: 100%; height: 100%; }
+.tff-when-bar i { display: block; width: 100%; border-radius: var(--radius-sm); background: var(--neutral-150); }
+.tff-when-m.is-on .tff-when-bar i { background: var(--action); }
+.tff-when-m.is-on .tff-when-c, .tff-when-m.is-on .tff-when-l { color: var(--action); font-weight: 700; }
+.tff-when-dot { align-self: center; width: 4px; height: 4px; border-radius: 50%; background: var(--text-3); }
+.tff-when-dot[data-tier="1"] { width: 6px; height: 6px; }
+.tff-when-dot[data-tier="2"] { width: 8px; height: 8px; background: var(--text-2); }
+.tff-when-dot[data-tier="3"] { width: 10px; height: 10px; background: var(--amber-ink); }
+.tff-when-dot[data-tier=""] { visibility: hidden; }
+.tff-when-l { font-size: var(--text-micro); color: var(--text-3); }
+.tff-when-key { margin: 0; font-size: var(--text-caption); color: var(--text-3); }
+
