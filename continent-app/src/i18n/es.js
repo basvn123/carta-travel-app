@@ -5923,6 +5923,7 @@ export const es = {
   "mapPanel.whyGo": "Por qué ir",
   "mapPanel.sights": "Qué ver",
   "explore.heroTitle": "¿Adónde vamos ahora?",
+  "explore.askOrSearch": "¿Adónde? Pregunta a Carta o busca un lugar",
   "explore.heroSearchAria": "Buscar en Explorar",
   "explore.heroWhat": "Qué",
   "explore.heroWhere": "Dónde",

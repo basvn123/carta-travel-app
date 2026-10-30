@@ -6623,6 +6623,7 @@ export const en = {
   "mapPanel.whyGo": "Why go",
   "mapPanel.sights": "Sights",
   "explore.heroTitle": "Where to next?",
+  "explore.askOrSearch": "Where to? Ask Carta or search a place",
   "explore.heroSearchAria": "Search Explore",
   "explore.heroWhat": "What",
   "explore.heroWhere": "Where",

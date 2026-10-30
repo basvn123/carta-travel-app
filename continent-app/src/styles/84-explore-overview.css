@@ -667,3 +667,44 @@
 @media (pointer: coarse) {
   .explore-shell.is-focus .xtools .btn { min-height: var(--tap); }
 }
+
+/* ---- T906 (owner, Explore board 2026-10-30) ----
+   One field for a place and for Ask Carta. On a phone no photograph: the
+   field alone, a round search pill. On a desktop the photograph at a height
+   that shows it (300 to 420 px, about 40 percent of the screen), the
+   headline on it, and the field on its lower edge so the middle of the
+   photo is never covered. */
+.xov-panel { gap: 0; }
+.xov-field { border-radius: var(--radius-pill); box-shadow: var(--elev-1); }
+.xov-field .btn.xov-go { border-radius: var(--radius-pill); }
+@media (min-width: 769px) {
+  .xov-hero.has-photo { margin-bottom: calc(var(--space-6) + 36px); }
+  .xov-hero.has-photo .xov-photo { height: clamp(300px, 40vh, 420px); }
+  .xov-hero.has-photo .xov-photo-img { object-position: center 45%; }
+  .xov-title.xov-title--photo {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    z-index: 1;
+    max-width: calc(100% - 2 * var(--space-8));
+    transform: translate(-50%, -50%);
+    color: var(--surface);
+    font-size: var(--text-display);
+    font-weight: 800;
+    text-align: center;
+    text-shadow: 0 2px 18px color-mix(in srgb, var(--text) 45%, transparent);
+    pointer-events: none;
+  }
+  .xov-hero.has-photo .xov-panel {
+    top: auto;
+    bottom: 0;
+    width: min(760px, calc(100% - var(--space-8) * 2));
+    padding: var(--space-2);
+    border-radius: var(--radius-pill);
+    transform: translate(-50%, 50%);
+    box-shadow: var(--elev-3);
+  }
+  .xov-hero.has-photo .xov-field { border-color: transparent; box-shadow: none; }
+  .xov-hero.has-photo .xov-credit { margin-top: calc(36px + var(--space-3)); }
+  .xov-hero:not(.has-photo) .xov-panel { padding: 0; background: none; box-shadow: none; }
+}

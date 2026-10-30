@@ -74,7 +74,7 @@ import { MapDrawer } from '../components/MapDrawer.jsx';
 import { MapPlacePanel } from './MapPlacePanel.jsx';
 import { useGuidedData, vibeOf } from '../lib/guidedData.js';
 import { AskChatHost } from './ask/AskChatButton.jsx';
-import { openAskChat, closeAskChat, useAskChat } from './ask/askChatStore.js';
+import { openAskChat } from './ask/askChatStore.js';
 import { CountriesButton } from '../components/CountriesControl.jsx';
 import {
   noCarOk, underOk, quietOk, matchGuided, guidedComparator, whyFacts, makeLabels,
@@ -1767,11 +1767,15 @@ function OverviewHero({
   strongChip = null,
 }) {
   const [where, setWhere] = React.useState(locationQuery || '');
-  const { open: askOpen } = useAskChat();
+  // T906 (owner, Explore board 2026-10-30): one field for a place and for
+  // Ask Carta (Kayak's AI Mode, Booking's Smart Filter): a question, or
+  // anything longer than a name, opens the chat with it; a name searches.
   const submit = (e) => {
     e.preventDefault();
     const q = where.trim();
-    if (q) setLocationQuery(q); else onShowAll();
+    if (!q) { onShowAll(); return; }
+    if (isQuestion(q)) openAskChat(e.currentTarget, { text: q });
+    else setLocationQuery(q);
   };
   const whereId = React.useId();
   // T601: the photograph fades in once it has arrived, never from a blank
@@ -1798,26 +1802,18 @@ function OverviewHero({
               onLoad={() => setShown(photo.url)} />
           </div>
         )}
+        {/* T906: the headline on the photograph; without one (a phone) it
+            is the page's name for a screen reader only. */}
+        <TitleTag className={photo ? 'xov-title xov-title--photo' : 'xov-title sr-only'} id="xov-title">{t('explore.heroTitle')}</TitleTag>
         <div className="xov-panel">
-          <div className="xov-head">
-            <TitleTag className="xov-title" id="xov-title">{t('explore.heroTitle')}</TitleTag>
-            {/* Ask Carta, the chat's one door (T622: "bring it more to the
-                front"): a pill beside the headline, its spark brown because
-                it acts. */}
-            <Button variant="secondary" className="xov-ask" aria-expanded={askOpen}
-              iconStart={<SparkIcon size={18} />}
-              onClick={(e) => (askOpen ? closeAskChat() : openAskChat(e.currentTarget))}>
-              {t('askChat.open')}
-            </Button>
-          </div>
           <form className="xov-bar" role="search" aria-label={t('explore.heroSearchAria')} onSubmit={submit}>
             {/* One joined control, Where | Search (T622: What left; the
                 category tabs above choose the kind). Where names itself by
                 its label, with no placeholder. */}
             <div className="xov-field">
               <div className="xov-seg xov-seg-where">
-                <MapPinIcon size={20} className="xov-where-icon" />
-                <label className="xov-seg-cap" htmlFor={whereId}>{t('explore.heroWhere')}</label>
+                <SparkIcon size={20} className="xov-where-icon" />
+                <label className="xov-seg-cap" htmlFor={whereId}>{t('explore.askOrSearch')}</label>
                 {/* A blank placeholder, only so CSS can tell an empty field
                     (:placeholder-shown) and rest the label where the value goes. */}
                 <input id={whereId} type="search" className="xov-where-input" value={where}
@@ -1870,6 +1866,14 @@ function OverviewHero({
       </div>
     </section>
   );
+}
+
+/** A question for Ask Carta rather than a place's name (T906): it asks, or
+ *  it is longer than a name, or it carries a figure. */
+function isQuestion(q) {
+  const s = String(q || '').trim();
+  if (!s) return false;
+  return /\?$/.test(s) || /\d|€/.test(s) || s.split(/\s+/).length >= 4;
 }
 
 /** The overview photograph's candidates (T622): places whose catalogue
