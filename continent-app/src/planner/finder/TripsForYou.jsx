@@ -318,7 +318,8 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
         const map = (
           <Suspense fallback={<div className="tff-map is-loading" aria-busy="true"><span className="sr-only">{t('state.loading')}</span></div>}>
             <TripsMap trips={trips} destinations={destinations} pickedId={picked?.id || null} cheapestId={cheapestId} onPick={setPickedId} label={t('tf.map.label')}
-              home={home} hotId={hotId} onHot={setHotId} />
+              home={home} hotId={hotId} onHot={setHotId}
+              pad={side ? { top: 72, right: 64, bottom: 320, left: 64 } : 56} />
           </Suspense>
         );
         if (side) {

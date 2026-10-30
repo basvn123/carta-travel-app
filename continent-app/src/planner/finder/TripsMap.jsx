@@ -30,6 +30,7 @@ import { shortDuration, thereMinutes, tripPhotos } from './finderText.js';
  *   onPick(id)
  *   home       { lat, lon, name } the home airport, or null (no lines)
  *   hotId      the trip under the pointer in the list; onHot(id | null) the reverse
+ *   pad        the camera's padding, room kept for what floats on the map
  */
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
@@ -58,7 +59,7 @@ function arcPoints(a, b, n = 32) {
 
 const ARCS = 'tff-arcs';
 
-export default function TripsMap({ trips, destinations, pickedId, cheapestId = null, onPick, label, home = null, hotId = null, onHot = null }) {
+export default function TripsMap({ trips, destinations, pickedId, cheapestId = null, onPick, label, home = null, hotId = null, onHot = null, pad = 56 }) {
   const { t, lang } = useI18n();
   const el = useRef(null);
   const mapRef = useRef(null);
@@ -183,7 +184,7 @@ export default function TripsMap({ trips, destinations, pickedId, cheapestId = n
     if (map.isStyleLoaded()) draw(); else map.once('load', draw);
     if (!fitted.current && !bounds.isEmpty()) {
       fitted.current = true;
-      map.fitBounds(bounds, { padding: 56, maxZoom: 7, duration: 0 });
+      map.fitBounds(bounds, { padding: pad, maxZoom: 7, duration: 0 });
     }
   }, [ids, destinations, lang, cheapestId, home?.lat, home?.lon]); // eslint-disable-line react-hooks/exhaustive-deps -- ids stands for the trips
 

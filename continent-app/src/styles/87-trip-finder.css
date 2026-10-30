@@ -648,6 +648,10 @@
   background: var(--surface-sunken);
 }
 .tff-map-frame { position: absolute; inset: 0; }
+/* maplibre-gl.css arrives later with the map's chunk and sets the container
+   to position: relative, which collapsed the frame to 0 px high (T884 end
+   check); the doubled class keeps it filling the box. */
+.tff-map-frame.maplibregl-map { position: absolute; }
 .tff-map-frame canvas { opacity: 0; transition: opacity var(--dur-3) var(--ease-out); }
 .tff-map-frame.is-live canvas { opacity: 1; }
 .tff-map-failed {
