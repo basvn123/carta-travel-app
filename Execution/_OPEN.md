@@ -2456,3 +2456,8 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T889-b | T889 | Documents on the trip: the device-only file store (dayFileStore) belongs to the day planner; give the trip page's Notes a documents section on the same store (Execution/P15/T885-T890-trip-page-v5.md) | next task | open |  |
 | T889-c | T889 | A personal address to forward booking emails to (as TripIt, Kayak and Tripsy have) needs an inbound mail route; decide later or never (Execution/P15/T885-T890-trip-page-v5.md) | user | open |  |
 | T890-a | T890 | The Plan home's trip cards carry no total and no booked count, because the device and account trip records do not hold them (Execution/P15/T885-T890-trip-page-v5.md) | next task | open |  |
+| T891-a | T891 | The persona photos (personaPhotos), the places-that-fit count and the photo credits were checked on a synthetic catalogue only; look at all ten with the real catalogue and the Commons credits file (Execution/P15/T891-T894-plan-flow-studio.md) | next task | open |  |
+| T893-a | T893 | The setup questions (PlanFlow) have the step list but no right column on desktop yet; decide what Your trip so far shows there (Execution/P15/T891-T894-plan-flow-studio.md) | next task | open |  |
+| T893-b | T893 | The research's keyboard pattern for desktop questions (number keys pick, Enter continues) is not built (Execution/P15/T891-T894-plan-flow-studio.md) | next task | open |  |
+| T894-a | T894 | The places-that-fit count follows the travellers only; weather, reach and budget do not move it yet (Execution/P15/T891-T894-plan-flow-studio.md) | next task | open |  |
+| T894-b | T894 | Deploy the merged batch T891 to T894 (Cloudflare credentials are the owner's) (Execution/P15/T891-T894-plan-flow-studio.md) | user | open |  |
