@@ -27,7 +27,7 @@ const LABEL = { travel: 'tp.tile.flights', around: 'tp.tile.around', stay: 'tp.t
  *   people   head count the person figure divides by
  *   nights   the trip's nights (a night and a day figure)
  */
-export function CostTiles({ priced, per = 'group', people = 1, onOpen = null, className = '' }) {
+export function CostTiles({ priced, per = 'group', people = 1, onOpen = null, className = '', aroundNote = '' }) {
   const { t, lang } = useI18n();
   const airlines = useAirlines();
   const tiles = costTiles(priced);
@@ -50,7 +50,7 @@ export function CostTiles({ priced, per = 'group', people = 1, onOpen = null, cl
           <>
             <span className="ct-label"><span className="ct-dot" aria-hidden="true" /><I size={16} aria-hidden="true" />{label}</span>
             <span className="ct-fig">
-              {tile.missing ? <NotYet /> : tile.empty ? <span className="ct-none">{t('tp.tile.notNeeded')}</span> : <Money value={tile.eur / div} est precision="whole" />}
+              {tile.missing ? <NotYet /> : tile.empty ? <span className="ct-none">{tile.key === 'around' && aroundNote ? aroundNote : t('tp.tile.notNeeded')}</span> : <Money value={tile.eur / div} est precision="whole" />}
             </span>
             {tile.key === 'travel' && !tile.driving && !tile.missing && carriers.length > 0 && (
               <span className="ct-marks">

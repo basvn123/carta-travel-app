@@ -27,15 +27,19 @@ const LEG_MODES = Object.keys(LEG_ICON);
  *
  *   book   { onTravelPaid(dir, n), onOwnStay(destinationId, n), onOwnLeg(i, mode, n) }
  */
-export function ReadyToBook({
+/**
+ * The trip's bookable parts as rows (T887): what ReadyToBook lists and the
+ * trip page's route carries on each of its nodes, keyed flight-out, stay-i,
+ * leg-i and flight-back. Each row: icon, title, sub, eur, yours, booked,
+ * link { href, label } and the paid field. Pure but for the PaidField
+ * elements it builds.
+ */
+export function bookRows({
   tripStart, tripEnd, stopDetails, stayCosts = [], stayTier = 'home', priced, flight = null, ownFlight = null,
   party, booked = null, book = null,
-}) {
-  const { t, lang } = useI18n();
-  const airlines = useAirlines();
+}, { t, lang, airlines }) {
   const legs = priced?.legs || [];
   const bookedStays = new Set(booked?.stays || []);
-  const bookedMark = <Chip kind="status" tone="positive" className="ts-booked">{t('pf.doors.bookedMark')}</Chip>;
   const split = ownFlight && (ownFlight.costOut != null || ownFlight.costBack != null);
   const paid = {
     out: ownFlight ? (split ? Number(ownFlight.costOut) || 0 : Number(ownFlight.costTotal) || 0) : 0,
@@ -122,6 +126,14 @@ export function ReadyToBook({
     });
   });
   flightRow('back');
+  return rows;
+}
+
+export function ReadyToBook(props) {
+  const { t, lang } = useI18n();
+  const airlines = useAirlines();
+  const bookedMark = <Chip kind="status" tone="positive" className="ts-booked">{t('pf.doors.bookedMark')}</Chip>;
+  const rows = bookRows(props, { t, lang, airlines });
 
   if (!rows.length) return null;
   return (

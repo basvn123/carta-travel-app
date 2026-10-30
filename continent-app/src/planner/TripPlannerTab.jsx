@@ -466,6 +466,12 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     () => (tp.tripHasCar || tp.transportPref === 'owncar' ? null : carAdvice(carDests, headCount, countryInsights)),
     [carKey, headCount, countryInsights, tp.tripHasCar, tp.transportPref], // eslint-disable-line react-hooks/exhaustive-deps -- carKey stands for the stops
   );
+  // T887: what the advised hire car does to the total (two quotes, so memoised).
+  const quoteDelta = tp.quoteDelta;
+  const carDelta = useMemo(
+    () => (carTip && carTip.verdict !== 'no' ? quoteDelta?.({ transportPref: 'car' }) ?? null : null),
+    [carTip, quoteDelta],
+  );
   const budgetNow = tp.stops.length ? budgetCheck(tp.priced, tripSet.guide?.budget, { party: headCount, nights: tp.plannedNights }) : null;
   const overRef = useRef(null);
   useEffect(() => {
@@ -1469,6 +1475,9 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
             // T873: Ready to book writes the same fields as the Itinerary.
             book={{ onTravelPaid: setTravelPaid, onOwnStay: tp.setOwnStay, onOwnLeg: (i, mode, n) => tp.setOwnLeg(i, mode, n) }}
             carTip={carTip}
+            // T887: the car the advice names, added with what it does to the total.
+            onCar={carTip && carTip.verdict !== 'no' ? () => tp.setTransportPref('car') : null}
+            carDelta={carDelta}
             onAddPaid={() => {
               // T839: what was paid goes in on the route, where each part is.
               setTripTab('itinerary');

@@ -23,8 +23,9 @@ import { CostTiles } from './CostTiles.jsx';
  *   onOpen(k)  a group's rows in the Costs tab (k: travel | around | stay | food)
  *   onAll()    the Costs tab
  *   onAddPaid  put in what was paid; absent hides it
+ *   aroundNote what an empty Getting around says instead of Not needed (T887)
  */
-export function CostCard({ priced, people = 1, per = 'group', onPer, budget = null, onOpen = null, onAll = null, onAddPaid = null }) {
+export function CostCard({ priced, people = 1, per = 'group', onPer, budget = null, onOpen = null, onAll = null, onAddPaid = null, aroundNote = '' }) {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const bodyId = useId();
@@ -69,7 +70,7 @@ export function CostCard({ priced, people = 1, per = 'group', onPer, budget = nu
       </div>
       <div className={`tpc-body${open ? ' is-open' : ''}`} id={bodyId} inert={open ? undefined : ''}>
         <div className="tpc-in">
-          <CostTiles priced={priced} per={per} people={people} onOpen={onOpen} className="is-rows" />
+          <CostTiles priced={priced} per={per} people={people} onOpen={onOpen} className="is-rows" aroundNote={aroundNote} />
           {onAll && (
             <Button variant="quiet" size="sm" className="tpc-all" iconEnd={<ChevronRightIcon size={16} />} onClick={onAll}>
               {t('tp.tab.costs')}

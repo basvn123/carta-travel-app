@@ -734,3 +734,21 @@ button.ct-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: 2
 .tpg-book-row .ts-node-fig { padding-top: 10px; }
 .tpg-book-note { margin: 0; font-size: var(--text-caption); color: var(--text-3); }
 .ts-node.is-car .ts-node-title { font-weight: 500; }
+
+/* ---- T887: the route carries its bookings; what is still to book ---- */
+.ts-node-book { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); margin-top: var(--space-1); }
+.ts-node-book .ts-booked { margin: 0; }
+.ts-book-link.btn { margin-left: calc(-1 * var(--space-1)); }
+.ts-node-fig { display: grid; justify-items: end; align-content: start; }
+.ts-node-fig small { font-size: var(--text-caption); font-weight: 500; color: var(--text-3); }
+.ts-node.is-hop .ts-mark { background: var(--surface-sunken); }
+.tpg-next { display: grid; gap: var(--space-2); padding: var(--space-4); border-radius: var(--radius-card); background: var(--surface); box-shadow: var(--elev-1); }
+.tpg-next-top { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); flex-wrap: wrap; }
+.tpg-next-h { margin: 0; font-size: var(--text-lead); font-weight: 700; }
+.tpg-next-n { font-size: var(--text-caption); color: var(--text-3); }
+.tpg-next-bar { display: flex; gap: 4px; }
+.tpg-next-bar i { flex: 1; height: 6px; border-radius: var(--radius-pill); background: var(--surface-sunken); }
+.tpg-next-bar i.is-on { background: var(--text-2); }
+.tpg-next-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--space-3); }
+.tpg-next-main { display: grid; gap: 2px; min-width: 0; }
+.tpg-next-go.btn { flex: none; }

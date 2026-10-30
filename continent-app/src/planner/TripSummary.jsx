@@ -16,6 +16,7 @@ import { AirlineMark } from '../components/flights/Flights.jsx';
 import { useAirlines, airlineName } from '../lib/flights/useAirlines.js';
 import { TRAVEL_MODE_LABEL } from '../lib/transportLinks.js';
 import { fmtDate } from '../lib/dates.js';
+import { formatMoney } from '../lib/money.js';
 import { nightsBetween } from '../lib/tripDates.js';
 import { partyText } from '../lib/party.js';
 import { cityLabel } from '../lib/placeName.js';
@@ -23,7 +24,7 @@ import { useMedia } from '../browse/home/useHome.js';
 import { RecordMapDialog } from '../auth/mytrips/parts.jsx';
 import { CostCard } from './trip/CostCard.jsx';
 import { RouteCodes } from './trip/RouteCodes.jsx';
-import { ReadyToBook } from './trip/ReadyToBook.jsx';
+import { bookRows } from './trip/ReadyToBook.jsx';
 import { useSettings } from '../components/SettingsLine.jsx';
 import { useLifestyleLabel } from './planHooks.js';
 import { bookedCount, countdownText, shownTripName } from './trip/tripHead.js';
@@ -80,14 +81,37 @@ export function TripHead({ name, photos = [], dates = '', people = '', nights = 
  * The route as one timeline (T820): home, the way there, every stop, the way
  * home, home. Every row has the same grammar (a 40 px marker, a title, one
  * line of detail, a figure on the right), so every row starts on one edge.
- * The figures are the receipt's own: a way's fare, a stop's bed and days.
+ * The figures are the receipt's own: a way's fare, a stop's bed.
+ *
+ * T887 (trip page v5): Ready to book folds in. Each part carries where it
+ * stands (Booked, or To book with its link out) and Add what you paid
+ * (`rows`, bookRows() keyed flight-out, stay-i, leg-i, flight-back), and a
+ * hop between stops that can be booked is a node of its own. An overnight
+ * flight names its arrival day. The car advice offers the car with what it
+ * does to the total (`onCar`, `carDelta`).
  */
-function OverviewRoute({ tripStart, tripEnd, stopDetails, stayCosts, stayTier, priced, flight, ownFlight, driveLegs, origin, div, booked = null, carTip = null }) {
+function OverviewRoute({ tripStart, tripEnd, stopDetails, stayCosts, stayTier, priced, flight, ownFlight, driveLegs, origin, div, carTip = null, rows = [], onCar = null, carDelta = null }) {
   const { t } = useI18n();
-  // T866: the parts the traveller booked carry the word, beside their own figure.
-  const bookedMark = <Chip kind="status" tone="positive" className="ts-booked">{t('pf.doors.bookedMark')}</Chip>;
-  const bookedStays = new Set(booked?.stays || []);
+  const { lang } = useI18n();
   const airlines = useAirlines();
+  const byKey = new Map(rows.map((r) => [r.key, r]));
+  // Where a part stands, its link out and what was paid (T866, T873, T887).
+  const Book = ({ row }) => {
+    if (!row) return null;
+    return (
+      <span className="ts-node-book">
+        {row.booked
+          ? <Chip kind="status" tone="positive" className="ts-booked">{t('pf.doors.bookedMark')}</Chip>
+          : row.link && <Chip kind="status" tone="neutral" className="ts-tobook">{t('tp.toBook')}</Chip>}
+        {!row.booked && row.link && (
+          <a className="btn btn-quiet btn-sm ts-book-link" href={row.link.href} target="_blank" rel="noreferrer noopener">
+            <span className="btn-label">{row.link.label}</span>
+          </a>
+        )}
+        {row.paid}
+      </span>
+    );
+  };
   const split = ownFlight && (ownFlight.costOut != null || ownFlight.costBack != null);
   const paid = {
     out: ownFlight ? (split ? Number(ownFlight.costOut) || 0 : Number(ownFlight.costTotal) || 0) : 0,
@@ -102,10 +126,16 @@ function OverviewRoute({ tripStart, tripEnd, stopDetails, stayCosts, stayTier, p
     }
     const leg = priced?.cartaFlight?.[dir] || null;
     if (leg && !(paid[dir] > 0)) {
+      // T887: an arrival before the departure's clock time is the next day.
+      const clock = (x) => { const m = /^(\d{1,2}):(\d{2})/.exec(String(x || '')); return m ? Number(m[1]) * 60 + Number(m[2]) : null; };
+      const day = leg.date || date;
+      const overnight = clock(leg.arr) != null && clock(leg.dep) != null && clock(leg.arr) < clock(leg.dep) && day;
+      const next = overnight ? new Date(Date.parse(`${day}T12:00:00Z`) + 86400000).toISOString().slice(0, 10) : null;
+      const arr = overnight ? t('tp.arrNext', { time: leg.arr, day: fmtDate(next, true) }) : leg.arr;
       return {
         Icon: PlaneIcon, label, mark: leg.airline, from: leg.from, to: leg.to,
         line: airlineName(airlines, leg.airline) || t('trip.modeFly'),
-        sub: [t('flight.times', { dep: leg.dep, arr: leg.arr }), fmtDate(leg.date || date, true)],
+        sub: [t('flight.times', { dep: leg.dep, arr }), overnight ? '' : fmtDate(day, true), leg.stops > 0 ? (leg.stops === 1 ? t('flight.stop1') : t('flight.stops', { n: leg.stops })) : ''],
         eur: leg.cost?.total ?? null,
       };
     }
@@ -116,7 +146,6 @@ function OverviewRoute({ tripStart, tripEnd, stopDetails, stayCosts, stayTier, p
         Icon: WAY_ICON[mode] || PlaneIcon, label, line: who || t(TRAVEL_MODE_LABEL[mode] || 'trip.modeFly'),
         sub: [t('trip.sum.yourOwn'), date ? fmtDate(date, true) : ''],
         eur: paid[dir] > 0 ? paid[dir] : (dir === 'out' && !split ? (flight?.cost_total || null) : null),
-        booked: Boolean(booked?.flights),
       };
     }
     // A planned route without a fare yet still names its airports (T839).
@@ -147,7 +176,7 @@ function OverviewRoute({ tripStart, tripEnd, stopDetails, stayCosts, stayTier, p
             {w.line}
           </span>
           <span className="ts-node-sub">{w.notYet ? <NotYet /> : w.sub.filter(Boolean).join(', ')}</span>
-          {w.booked && bookedMark}
+          <Book row={byKey.get(`flight-${dir}`)} />
         </div>
         <span className="ts-node-fig">{w.notYet ? null : fig(w.eur)}</span>
       </li>
@@ -161,8 +190,10 @@ function OverviewRoute({ tripStart, tripEnd, stopDetails, stayCosts, stayTier, p
       {stopDetails.map((s, i) => {
         const city = cityLabel(s.dest?.city || '') || t('itin.unknown');
         const sc = stayCosts[i];
+        const hop = byKey.get(`leg-${i}`);
         return (
-          <li className="ts-node is-stop" key={`${s.destinationId}-${i}`}>
+          <React.Fragment key={`${s.destinationId}-${i}`}>
+          <li className="ts-node is-stop">
             <span className="ts-mark is-photo" aria-hidden="true">
               <HeroImage url={s.dest?.image?.url} city={city} iso2={s.dest?.iso2} className="ts-mark-img" ratio={[1, 1]} maxWidth={160} />
             </span>
@@ -175,10 +206,25 @@ function OverviewRoute({ tripStart, tripEnd, stopDetails, stayCosts, stayTier, p
                 )}
                 <span><BedIcon size={14} /> {sc?.ownAccom ? t('trip.sum.ownStay') : t(`stay.${stayTier || 'home'}`)}</span>
               </span>
-              {bookedStays.has(s.destinationId) && bookedMark}
+              <Book row={byKey.get(`stay-${i}`)} />
             </div>
-            <span className="ts-node-fig">{fig(sc?.total)}</span>
+            <span className="ts-node-fig">
+              {fig(sc?.accomTotal ?? sc?.total)}
+              {Number.isFinite(sc?.accomTotal ?? sc?.total) && <small>{t('tp.fig.stay')}</small>}
+            </span>
           </li>
+          {hop && (
+            <li className="ts-node is-hop">
+              <span className="ts-mark" aria-hidden="true">{hop.icon}</span>
+              <div className="ts-node-main">
+                <span className="ts-node-title">{hop.title}</span>
+                {hop.sub && <span className="ts-node-sub">{hop.sub}</span>}
+                <Book row={hop} />
+              </div>
+              <span className="ts-node-fig">{fig(hop.eur)}</span>
+            </li>
+          )}
+          </React.Fragment>
         );
       })}
       {/* T873: the car advice is one quiet row on the route (it was a
@@ -191,6 +237,15 @@ function OverviewRoute({ tripStart, tripEnd, stopDetails, stayCosts, stayTier, p
             <span className="ts-node-title">{t(carTip.verdict === 'yes' ? 'wizard.carAdviceYes' : 'wizard.carAdviceMaybe')}</span>
             {carTip.carStops?.length > 0 && (
               <span className="ts-node-sub">{t('tp.car.where', { places: carTip.carStops.map((c) => cityLabel(c)).join(', ') })}</span>
+            )}
+            {onCar && (
+              <span className="ts-node-book">
+                <Button variant="secondary" size="sm" className="ts-car-add" onClick={onCar}>
+                  {Number.isFinite(carDelta) && Math.abs(carDelta) >= 1
+                    ? t('tp.car.addFor', { delta: `${carDelta > 0 ? '+' : '-'}${formatMoney(Math.abs(carDelta), { precision: 'whole', locale: lang })}` })
+                    : t('tp.car.add')}
+                </Button>
+              </span>
             )}
           </div>
           <span className="ts-node-fig" />
@@ -274,11 +329,16 @@ export function TripSummary({
   onRename = null,
   // T886: Change your trip (the T888 sheet); absent, the trip settings.
   onChange = null,
+  // T887: add the hire car the advice names, and what it does to the total.
+  onCar = null, carDelta = null,
 }) {
   const { t, lang } = useI18n();
   const title = shownTripName(name, stopDetails, lang) || t('itin.myTrip');
   const countdown = countdownText(t, tripStart, tripEnd);
   const bookedNow = bookedCount({ flight, priced, ownFlight, stopDetails, stayCosts, booked });
+  const airlinesAll = useAirlines();
+  const rows = bookRows({ tripStart, tripEnd, stopDetails, stayCosts, stayTier, priced, flight, ownFlight, party, booked, book }, { t, lang, airlines: airlinesAll });
+  const nextRow = rows.find((r) => !r.booked && r.link) || null;
   // The Lifestyle sets what the days cost (one .lifestyle-btn door): a chip
   // with the trip's own, opening the same sheet as everywhere else.
   const settings = useSettings();
@@ -372,11 +432,36 @@ export function TripSummary({
   // tab), the Overview on a phone. The budget lives inside it.
   const costCard = (
     <CostCard priced={priced} people={n} per={per} onPer={setPer} budget={budgetCard}
+      aroundNote={carTip && carTip.verdict === 'yes' && !flight?.driving ? t('tp.tile.carAdvised') : ''}
       onOpen={(k) => go('costs', `tp-cost-${k}`)} onAll={() => go('costs')} onAddPaid={onAddPaid} />
   );
 
   const overview = (
     <div className="tpg-overview">
+      {bookedNow.of > 0 && (
+        <section className="tpg-next" aria-labelledby={`${uid}-next`}>
+          <div className="tpg-next-top">
+            <h2 className="tpg-next-h" id={`${uid}-next`}>{t(nextRow ? 'tp.next.title' : 'tp.next.done')}</h2>
+            <span className="tpg-next-n">{t('tp.bookedOf', { n: bookedNow.n, of: bookedNow.of })}</span>
+          </div>
+          <span className="tpg-next-bar" aria-hidden="true">
+            {Array.from({ length: bookedNow.of }, (_, i) => <i key={i} className={i < bookedNow.n ? 'is-on' : ''} />)}
+          </span>
+          {nextRow && (
+            <div className="tpg-next-row">
+              <span className="ts-mark" aria-hidden="true">{nextRow.icon}</span>
+              <span className="tpg-next-main">
+                <span className="ts-node-title">{nextRow.title}</span>
+                <span className="ts-node-sub">{[nextRow.sub, Number.isFinite(nextRow.eur) && nextRow.eur > 0 ? formatMoney(nextRow.eur, { precision: 'whole', locale: lang }) : ''].filter(Boolean).join(', ')}</span>
+              </span>
+              <a className="btn btn-secondary btn-sm tpg-next-go" href={nextRow.link.href} target="_blank" rel="noreferrer noopener" aria-label={nextRow.link.label}>
+                <span className="btn-label">{t('tp.book')}</span>
+              </a>
+            </div>
+          )}
+        </section>
+      )}
+
       {!wide && costCard}
       {!wide && mapCard}
 
@@ -384,17 +469,11 @@ export function TripSummary({
         <h2 className="tpg-h" id={`${uid}-route`}>{t('plan.yourRoute')}</h2>
         <OverviewRoute
           tripStart={tripStart} tripEnd={tripEnd} stopDetails={stopDetails} stayCosts={stayCosts} stayTier={stayTier}
-          priced={priced} flight={flight} ownFlight={ownFlight} driveLegs={driveLegs} origin={origin} div={div} booked={booked}
-          carTip={carTip}
+          priced={priced} flight={flight} ownFlight={ownFlight} driveLegs={driveLegs} origin={origin} div={div}
+          carTip={carTip} rows={rows} onCar={onCar} carDelta={carDelta}
         />
+        {rows.some((r) => r.link) && <p className="tpg-book-note">{t('prov.bookingNote')}</p>}
       </section>
-
-      {book && (
-        <ReadyToBook
-          tripStart={tripStart} tripEnd={tripEnd} stopDetails={stopDetails} stayCosts={stayCosts} stayTier={stayTier}
-          priced={priced} flight={flight} ownFlight={ownFlight} party={party} booked={booked} book={book}
-        />
-      )}
 
       {!wide && tools}
     </div>
