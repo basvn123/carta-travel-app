@@ -441,6 +441,11 @@
 .tff-card-media { position: relative; border-radius: var(--radius-card); overflow: hidden; background: var(--surface-sunken); }
 .tff-card .tff-photos { aspect-ratio: 4 / 5; border-radius: 0; }
 .tff-card.is-feat .tff-photos { aspect-ratio: 16 / 12; }
+/* No photo at all: the flag-and-name placeholder, centred above the name the
+   photo already carries (so its initials stay out). */
+.tff-card .hero-blank.tff-photo { display: flex; align-items: center; justify-content: center; padding-bottom: 30%; }
+.tff-card .hero-blank-mark { display: none; }
+.tff-card .hero-blank .country-flag, .tff-card .hero-blank img, .tff-card .hero-blank svg { transform: scale(2.4); }
 @media (min-width: 600px) { .tff-card.is-feat .tff-photos { aspect-ratio: 21 / 9; } }
 .tff-photos { aspect-ratio: 3 / 2; border-radius: var(--radius-card); overflow: hidden; background: var(--surface-sunken); }
 /* HeroImage sets width and height attributes for the ratio; without an
