@@ -391,3 +391,12 @@
 }
 .storyr .storyr-card .card-title { font-size: var(--text-body); }
 @container (min-width: 560px) { .storyr .storyr-card .card-title { font-size: var(--text-lead); } }
+
+/* T909 (owner, Explore board 2026-10-30): one price on a rail card, a person
+   a day. The bed, food and way-there split (PriceParts' list) stays one
+   muted line where the card is wide enough to read it, from 860 px; on a
+   phone and a tablet the price alone, the split a tap on it away. */
+.storyr .storyr-card .pparts-list { display: none; }
+@container (min-width: 860px) {
+  .storyr .storyr-card .pparts-list { display: flex; color: var(--text-3); font-size: var(--text-caption); }
+}
