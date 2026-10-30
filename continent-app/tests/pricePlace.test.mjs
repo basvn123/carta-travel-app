@@ -57,9 +57,16 @@ test("V12: place pages carry the town price only in the button to the base", () 
     const src = read(`src/browse/${p}.jsx`);
     assert.doesNotMatch(src, /costLine=/, `${p} passes no cost line`);
   }
-  for (const p of ["LakePage", "BeachPage", "MountainPage"]) {
-    assert.match(read(`src/browse/${p}.jsx`), /view\.stayIn\(/, `${p} prices its base button`);
+  // T916 to T919 (the approved outdoor spec): the base town is a priced
+  // "Stay nearby" line in the side card, one shared part priced through the
+  // day view, never a figure of the page's own.
+  for (const p of ["LakePage", "BeachPage"]) {
+    assert.match(read(`src/browse/${p}.jsx`), /<StayLine\b/, `${p} prices its base in the stay line`);
   }
+  assert.match(read("src/browse/MountainPage.jsx"), /view\.stayIn\(|<StayLine\b/, "MountainPage prices its base");
+  const parts = read("src/browse/OutdoorParts.jsx");
+  assert.match(parts, /useBaseDay\(/, "the stay line reads the base day price");
+  assert.match(parts, /view\.day\(/, "the stay line prices through the day view");
 });
 
 test("V12: outdoor cards and rail tiles carry no town price", () => {

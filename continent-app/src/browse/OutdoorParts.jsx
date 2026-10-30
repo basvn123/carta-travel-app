@@ -7,7 +7,9 @@ import { useDayView } from '../hooks/useDayView.js';
 import { Button, Chip } from '../components/ui/index.js';
 import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
-import { PlusIcon, ChevronRightIcon, CheckIcon, CloseIcon } from '../components/Icons.jsx';
+import {
+  PlusIcon, ChevronRightIcon, CheckIcon, CloseIcon, ParkingIcon, BusIcon, TrainIcon, FerryIcon, MapPinIcon,
+} from '../components/Icons.jsx';
 import { formatMoney } from '../lib/money.js';
 import { featureHref, linkOpener } from '../lib/featureHref.js';
 import { capFirst } from '../lib/detailSkeleton.js';
@@ -79,6 +81,81 @@ export function plainName(name, ref = null) {
   // Only a number-like ref leaves the name; "(Lake Bled)" stays.
   if (!/\d/.test(inner) || inner.length > 12) return { name: s, ref: ref || null };
   return { name: m[1], ref: ref || inner };
+}
+
+const MONTH_CODES = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+
+/** A month as 1 to 12, from a number or a code ("jun", "June"); null else. */
+export function monthIndex(v) {
+  if (typeof v === 'number') return v >= 1 && v <= 12 ? Math.round(v) : null;
+  const n = MONTH_CODES.indexOf(String(v || '').slice(0, 3).toLowerCase()) + 1;
+  return n || null;
+}
+
+/** Month names in the reader's language: short(m) and letter(i0). */
+export function useMonthWords() {
+  const { lang } = useI18n();
+  return React.useMemo(() => {
+    const fmt = (style) => {
+      try { return new Intl.DateTimeFormat(lang, { month: style, timeZone: 'UTC' }); } catch { return null; }
+    };
+    const s = fmt('short');
+    const l = fmt('narrow');
+    const long = fmt('long');
+    const at = (m) => new Date(Date.UTC(2026, m - 1, 15));
+    return {
+      short: (m) => (s ? s.format(at(m)) : String(m)),
+      long: (m) => (long ? long.format(at(m)) : String(m)),
+      letter: (i0) => (l ? l.format(at(i0 + 1)) : String(i0 + 1)),
+    };
+  }, [lang]);
+}
+
+const TRANSIT_ICONS = { bus: BusIcon, train: TrainIcon, tram: TrainIcon, ferry: FerryIcon };
+
+/**
+ * The access block of the data contract as check rows: parking (its name,
+ * how far from the place, free or its price a day) and up to three stops
+ * (bus, train, tram or ferry, how far on foot). Absent data, no rows.
+ */
+export function accessRows(access, t, lang) {
+  if (!access) return [];
+  const dist = (m) => (m >= 1000
+    ? `${(m / 1000).toLocaleString(lang, { maximumFractionDigits: 1 })} km` : `${Math.round(m)} m`);
+  const p = access.parking || null;
+  const fee = p ? (Number.isFinite(p.eur_day) ? t('ox.parkDay', { price: formatMoney(p.eur_day) })
+    : p.fee === false ? t('ox.parkFree') : p.fee === true ? t('ox.parkPaid') : '') : '';
+  const stops = (Array.isArray(access.transit) ? access.transit : []).filter((s) => s && s.name).slice(0, 3);
+  return [
+    p && {
+      key: 'park',
+      icon: <ParkingIcon size={16} />,
+      title: p.name ? t('ox.parkNamed', { name: p.name }) : t('ox.parking'),
+      text: [Number.isFinite(p.m) ? t('ox.mAway', { d: dist(p.m) }) : '', fee].filter(Boolean).join(', '),
+    },
+    ...stops.map((s, i) => {
+      const mode = TRANSIT_ICONS[s.mode] ? s.mode : 'bus';
+      const Icon = TRANSIT_ICONS[mode];
+      return {
+        key: `tr-${i}`,
+        icon: <Icon size={16} />,
+        title: t(`ox.transit.${mode}`, { name: s.name }),
+        text: Number.isFinite(s.m) ? t('ox.mWalk', { d: dist(s.m) }) : '',
+      };
+    }),
+  ].filter(Boolean);
+}
+
+/** The place's point with the hand-off to the traveller's maps app. */
+export function pointRow(lat, lon, t, href) {
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+  return {
+    key: 'pt',
+    icon: <MapPinIcon size={16} />,
+    title: t('ox.onMap'),
+    text: `${lat.toFixed(5)}, ${lon.toFixed(5)}`,
+    link: href ? <a href={href} target="_blank" rel="noopener noreferrer">{t('ox.directions')}</a> : null,
+  };
 }
 
 /* ── The side card and the foot bar ──────────────────────────────────── */

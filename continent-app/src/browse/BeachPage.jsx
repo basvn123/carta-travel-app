@@ -4,19 +4,17 @@ import { displayName } from '../lib/format.js';
 import { ReportProblem } from '../components/ReportProblem.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
-import { DetailPage, PlaceMap } from './DetailSkeleton.jsx';
-import { PhotoGallery } from './PhotoGallery.jsx';
-import { ItemHead, ItemIcon, NatureHeadLines } from './ItemParts.jsx';
-import { Button, Money } from '../components/ui/index.js';
+import { PlaceMap } from './DetailSkeleton.jsx';
+import { ItemIcon } from './ItemParts.jsx';
+import { formatMoney } from '../lib/money.js';
 import { toPhotos } from '../lib/itemPhotos.js';
 import { beforeGoItems } from '../lib/beforeGo.js';
-import { useBaseDay } from '../hooks/useBaseDay.js';
 import { useItemPdf } from '../hooks/useItemPdf.js';
 import { usePlaceExits } from '../hooks/usePlaceExits.js';
-import {
-  previewWords, previewNotHook, keyFactCells, pointCentre, ACCESS_LEVEL,
-} from '../lib/detailSkeleton.js';
+import { keyFactCells, pointCentre, ACCESS_LEVEL, capFirst } from '../lib/detailSkeleton.js';
 import { notForLines } from '../lib/notFor.js';
+import { natureRankLine } from '../lib/rating.js';
+import { featureHref } from '../lib/featureHref.js';
 import {
   beachHeadline, beachWhy, beachTags, bestForLabel, componentLabel,
   COMPONENT_ORDER, beachRating, componentWeights, beachHighlights,
@@ -24,55 +22,46 @@ import {
 import { beachShareUrl, loadBeaches } from '../lib/beaches.js';
 import { trailheadDirectionsUrl, shareTrailLink } from '../lib/trailExport.js';
 import {
-  MapPinIcon, ChevronRightIcon,
-  BulbIcon, InfoIcon, StarIcon,
-  SunIcon,
+  MapPinIcon, DownloadIcon, ParkingIcon, BottleIcon, DiningIcon, BedIcon, ShieldIcon,
+  TreeIcon, SunIcon, BeachIcon, RouteIcon, CheckIcon,
 } from '../components/Icons.jsx';
-import {
-  beachFacing, beachWalkIn, facingSummary, walkInSummary,
-} from '../lib/derivedModules.js';
-import { BeachFacing, BeachWalkIn } from './DerivedModules.jsx';
-import { BaseClimate, BeachFacilities } from './WaterSheet.jsx';
-import { notYet } from '../components/NotYet.jsx';
-
-import { BeachSignature, CompassRosette } from './Signature.jsx';
+import { beachFacing } from '../lib/derivedModules.js';
+import { CompassRosette } from './Signature.jsx';
 import { compassPoint } from '../lib/signature.js';
-import { useDayView } from '../hooks/useDayView.js';
+import { Button } from '../components/ui/index.js';
+import {
+  OutdoorPage, PSection, StayLine, RouteBlock, CheckRows, Facilities, WaterClass, MonthStrip,
+  OtherNearby, OxLinkButton, outdoorPdfModel, monthIndex, useMonthWords, accessRows, pointRow,
+} from './OutdoorParts.jsx';
 
 /**
  * The beach page: one published beach, and the argument for going there.
  *
- * It answers four things and deliberately nothing else:
- *   where is it        a pin, the region, the country, the coordinates, and
- *                      one link that opens the spot in a maps app. No route,
- *                      no GPX, no elevation profile: a beach is a place you
- *                      arrive at, not a line you follow, and the export
- *                      chrome the trail page needs is noise here.
- *   what does it look  three or four photographs, each credited to the person
- *   like               who took it and the licence they released it under.
- *   why this one       the composed explanation, every sentence of it mapped
- *                      to a field in the data (lib/beachStory.js).
- *   is the number      the six components of the beauty index with their
- *   honest             weights, so the score can be checked rather than
- *                      believed.
+ * Since T917 it stands on the place page's template (OutdoorParts.jsx, the
+ * owner's approved spec of 2026-10-30): the photographs, the head (the name,
+ * the Score with the rank in the region, the region), the facts that decide
+ * (the EU water class, what is underfoot, a lifeguard, the length, which way
+ * it faces), a jump bar, then The water (the class as four named steps with
+ * its sampling site and year, the sea by month, the waves, the aspect, the
+ * lifeguard season), On the beach (what is there, and what is known not to
+ * be), Getting there (the map with the way the shore faces, parking and
+ * transit), and Other beaches. The side card holds the one primary, "Add to
+ * a day plan", with Directions, the PDF and a priced "Stay nearby".
  *
- * Since T180 the page draws through the shared detail skeleton
- * (DetailSkeleton.jsx): hero and strip, hook, who it is not for, the map,
- * collapsed rows, getting there, taking it with you, three ways out and the
- * sources. The map is a lazy chunk (PointMap.jsx), so it costs nothing until
- * a beach is open. The signature slot holds the beach's three month rows
- * (Signature.jsx, T181), and the map carries a compass rosette for the way
- * the shore faces.
+ * A beach is a place you arrive at, not a line you follow: no route, no GPX,
+ * no profile. Every row, cell and section without data is left out; the
+ * fields of the data contract (sea_temp, access, shade, step_free, sunbeds,
+ * lifeguard_season, waves) show when the data brings them.
  */
 
 /** The way down as a level: only the access field says anything about it. */
-const beachLevel = (b) => ACCESS_LEVEL[b?.access] || 0;
+const beachLevel = (b) => (typeof b?.access === 'string' ? ACCESS_LEVEL[b.access] || 0 : 0);
+const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : '');
+const SVC_ICON = { parking: ParkingIcon, water: BottleIcon, food: DiningIcon, camping: BedIcon };
 
 export function BeachPage({ beach, countryName, onClose, onSelectDest, model, onOpenNeighbour, fav = false, onFav = null, onAddToDay = null, backLabel = '' }) {
   const { t, lang } = useI18n();
-  // The score breakdown has one door since T386: the "How the score is
-  // built" row, which carries each part's weight beside its bar. The chip in
-  // the head is a measure, not a button.
+  const months = useMonthWords();
   const [toast, setToast] = useState(null);
 
   useEffect(() => {
@@ -100,18 +89,20 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
     () => (beach ? beachHeadline(beach, t, countryName) : ''),
     [beach, t, countryName],
   );
-
   const highlights = useMemo(() => (beach ? beachHighlights(beach, t) : []), [beach, t]);
   const photos = useMemo(() => toPhotos(images, { fallbackCaption: beach?.name || '' }), [images, beach?.name]);
-  const baseDay = useBaseDay(beach?.base?.id || null);
-  const view = useDayView();   // T694: per person or the group's total
   const { onPdf, pdfBusy } = useItemPdf('beach', beach, { countryName });
 
   if (!beach) return null;
 
-  // A component the pipeline could not measure is absent from `comp` rather
-  // than zero, so the breakdown renders what was actually read and a beach in
-  // a country with no bathing water register simply has no water bar.
+  const nf = (v) => Math.round(v).toLocaleString(lang);
+  const mapsUrl = trailheadDirectionsUrl(beach.lat, beach.lon);
+  const onShare = async () => {
+    const how = await shareTrailLink(beach.name, beachShareUrl(beach));
+    if (how === 'copied') setToast(t('trip.linkCopied'));
+  };
+
+  // The score with its weights, for the one fold near the sources.
   const weights = componentWeights(model);
   const parts = COMPONENT_ORDER
     .filter((key) => beach.comp?.[key] != null)
@@ -122,178 +113,144 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
       weight: weights?.[key] != null ? Math.round(weights[key] * 100) : null,
     }));
 
-  const mapsUrl = trailheadDirectionsUrl(beach.lat, beach.lon);
-  const onShare = async () => {
-    const how = await shareTrailLink(beach.name, beachShareUrl(beach));
-    if (how === 'copied') setToast(t('trip.linkCopied'));
-  };
+  const surfaceWord = beach.surface ? t(`beach.surfaceWord${cap(beach.surface)}`) : '';
+  const facing = beachFacing(beach);
+  const point = compassPoint(beach.aspect);
+  const facesWord = point ? capFirst(t(`sig.dir${point}`)) : '';
+  const water = beach.water || null;
+  const waterWord = water ? t(`beach.water${water.class}`) : '';
+  const waterSite = displayName(water?.site) || '';
+  const lengthText = beach.lengthM ? `${beach.lengthM.toLocaleString(lang)} m` : '';
 
-  const facts = [
-    beach.water && {
-      key: 'water',
-      label: t('beach.factWater'),
-      value: t(`beach.water${beach.water.class}`),
-      note: displayName(beach.water.site) || '',
+  // The lifeguard: mapped, and its season where the data has one.
+  const lgFrom = monthIndex(beach.lifeguard_season?.[0]);
+  const lgTo = monthIndex(beach.lifeguard_season?.[1]);
+  const lgSeason = lgFrom && lgTo ? t('detail.monthRange', { from: months.short(lgFrom), to: months.short(lgTo) }) : '';
+  const hasLifeguard = Boolean(beach.lifeguard || lgSeason);
+
+  // The sea by month (sea_temp, twelve figures): the three warmest stand out.
+  const sea = Array.isArray(beach.sea_temp) && beach.sea_temp.length === 12
+    && beach.sea_temp.every((v) => Number.isFinite(Number(v))) ? beach.sea_temp.map(Number) : null;
+  const warmest = sea ? [...sea.keys()].sort((a, b) => sea[b] - sea[a]).slice(0, 3) : [];
+  const peakI = sea ? warmest[0] : null;
+
+  // The facts that decide (the spec): water, underfoot, lifeguard, length,
+  // which way it faces, and the way in where it is mapped.
+  const keyFacts = keyFactCells([
+    { key: 'water', label: t('beach.factWater'), value: waterWord, note: water?.year ? String(water.year) : (waterSite || null) },
+    { key: 'surface', icon: 'sand', label: t('beach.factSurface'), value: capFirst(surfaceWord) },
+    hasLifeguard && { key: 'lifeguard', label: t('beach.factLifeguard'), value: lgSeason || t('beach.yes') },
+    { key: 'length', label: t('beach.factLength'), value: lengthText },
+    point && { key: 'faces', label: t('derived.facingHead'), value: facesWord },
+    typeof beach.access === 'string' && { key: 'access', label: t('beach.factAccess'), value: t(`beach.access${cap(beach.access)}`) },
+  ], t);
+
+  /* The water: class, the sea by month, waves, aspect, lifeguard. */
+  const waterCells = [
+    ['calm', 'moderate', 'surf'].includes(beach.waves) && {
+      key: 'waves', label: t('ox.waves'), value: t(`ox.waves.${beach.waves}`),
     },
-    // T631: the surface keeps its slot; the 42% of beaches with none mapped
-    // show the shared placeholder.
-    {
-      key: 'surface',
-      label: t('beach.factSurface'),
-      value: beach.surface
-        ? t(`beach.surfaceWord${beach.surface.charAt(0).toUpperCase()}${beach.surface.slice(1)}`)
-        : notYet(t),
-      empty: !beach.surface,
+    point && {
+      key: 'faces',
+      label: t('derived.facingHead'),
+      value: facesWord,
+      text: facing?.sun ? capFirst(t(`derived.sunShort${cap(facing.sun)}`)) : '',
     },
-    beach.access && {
-      key: 'access',
-      label: t('beach.factAccess'),
-      value: t(`beach.access${beach.access.charAt(0).toUpperCase()}${beach.access.slice(1)}`),
-    },
-    beach.lengthM && {
-      key: 'length',
-      label: t('beach.factLength'),
-      value: `${beach.lengthM.toLocaleString(lang)} m`,
-      mono: true,
-    },
-    beach.protected && {
-      key: 'protected',
-      label: t('beach.factProtected'),
-      value: beach.protected.name,
-      note: beach.protected.np ? t('beach.nationalPark') : beach.protected.kind,
-    },
-    // Proved from a polygon rather than inferred from a centroid, so this row
-    // says "inside" and means it.
-    beach.prot && {
-      key: 'prot',
-      label: t('beach.factProtected'),
-      value: displayName(beach.prot.name),
-      note: t(beach.prot.net === 'natura2000'
-        ? 'beach.fProtectedNatura2000' : 'beach.fProtectedEmerald'),
-    },
-    beach.size && {
-      key: 'size',
-      label: t('beach.facetSize'),
-      value: t(`beach.fSize${beach.size.charAt(0).toUpperCase()}${beach.size.slice(1)}`),
-    },
-    beach.sunset && {
-      key: 'sunset', label: t('beach.facetBestfor'),
-      value: t('beach.fBestforSunset'),
-    },
-    beach.services?.length && {
-      key: 'services',
-      label: t('beach.factServices'),
-      value: beach.services.map((s) => t(`beach.svc${s.charAt(0).toUpperCase()}${s.slice(1)}`)).join(', '),
-    },
-    beach.lifeguard && {
-      key: 'lifeguard', label: t('beach.factLifeguard'), value: t('beach.yes'),
-    },
-    beach.nudism && {
-      key: 'nudism', label: t('beach.factNudism'), value: t('beach.yes'),
-    },
-    beach.wheelchair && {
-      key: 'wheelchair', label: t('beach.factWheelchair'), value: t('beach.yes'),
+    hasLifeguard && {
+      key: 'lg', label: t('beach.factLifeguard'), value: lgSeason ? t('ox.lgSeason', { months: lgSeason }) : t('ox.lgMapped'),
     },
   ].filter(Boolean);
 
-  const surfaceWord = beach.surface
-    ? t(`beach.surfaceWord${beach.surface.charAt(0).toUpperCase()}${beach.surface.slice(1)}`) : '';
-  // The derived modules (T182): which way the sand faces and how you get
-  // down to it, computed from fields the wire already carries. Both always
-  // render inside About this beach; where the data cannot answer, the block
-  // says so.
-  const facing = beachFacing(beach);
-  const walkIn = beachWalkIn(beach);
-  const point = compassPoint(beach.aspect);
+  /* On the beach: what is there, and what is known not to be. */
+  const dogs = beach.dogs ?? beach.dog;
+  const services = (beach.services || []).filter((s) => t(`beach.svc${cap(s)}`) !== `beach.svc${cap(s)}`);
+  const sunbedEur = Number(beach.sunbeds?.eur_day);
+  const stepFree = beach.step_free === true || beach.wheelchair === true ? true
+    : beach.step_free === false ? false : null;
+  const facil = [
+    surfaceWord && { key: 'surface', icon: <BeachIcon size={16} />, label: capFirst(surfaceWord), note: lengthText ? t('ox.longM', { len: lengthText }) : '' },
+    hasLifeguard && { key: 'lg', icon: <ShieldIcon size={16} />, label: t('beach.factLifeguard'), note: lgSeason },
+    ...services.map((s) => {
+      const Icon = SVC_ICON[s] || CheckIcon;
+      return { key: `svc-${s}`, icon: <Icon size={16} />, label: capFirst(t(`beach.svc${cap(s)}`)) };
+    }),
+    beach.sunbeds && { key: 'sunbeds', icon: <SunIcon size={16} />, label: t('ox.sunbeds'), note: Number.isFinite(sunbedEur) ? t('ox.parkDay', { price: formatMoney(sunbedEur) }) : '' },
+    beach.shade === true && { key: 'shade', icon: <TreeIcon size={16} />, label: t('ox.shade') },
+    beach.shade === false && { key: 'shade', no: true, label: t('ox.shade') },
+    stepFree === true && { key: 'step', label: t('ox.stepFree') },
+    stepFree === false && { key: 'step', no: true, label: t('ox.stepFree') },
+    ['yes', 'leash'].includes(dogs) && { key: 'dogs', label: t(`ox.dogs.${dogs}`) },
+    dogs === 'no' && { key: 'dogs', no: true, label: t('ox.dogsShort') },
+    beach.nudism && { key: 'nudism', label: t('ox.naturist') },
+  ].filter(Boolean);
 
-  // The key facts band (T386): what a family decides on. The EU bathing
-  // water class with its sampling site, the way in where it is mapped, a
-  // lifeguard where one is mapped (never a "no": an unmapped lifeguard is not
-  // an absent one), the ground underfoot, the length and which way it faces.
-  const capWord = (s) => (s ? s.charAt(0).toLocaleUpperCase(lang) + s.slice(1) : '');
-  const keyFacts = keyFactCells([
-    { key: 'water', label: t('beach.factWater'), value: beach.water ? t(`beach.water${beach.water.class}`) : '', note: displayName(beach.water?.site) || null },
-    beach.access && { key: 'access', label: t('beach.factAccess'), value: t(`beach.access${beach.access.charAt(0).toUpperCase()}${beach.access.slice(1)}`) },
-    beach.lifeguard && { key: 'lifeguard', label: t('beach.factLifeguard'), value: t('beach.yes') },
-    { key: 'surface', label: t('beach.factSurface'), value: surfaceWord },
-    { key: 'length', label: t('beach.factLength'), value: beach.lengthM ? `${beach.lengthM.toLocaleString(lang)} m` : '', mono: true },
-    point && { key: 'faces', label: t('derived.facingHead'), value: capWord(t(`sig.dir${point}`)), note: `${Math.round(beach.aspect)}°` },
-  ], t);
+  /* Getting there: the way in, parking, transit, the point on the map. */
+  const parkingFromServices = !beach.access?.parking && services.includes('parking');
+  const accessRow = typeof beach.access === 'string' ? {
+    key: 'way', icon: <RouteIcon size={16} />, title: t(`beach.access${cap(beach.access)}`), text: '',
+  } : null;
+  const gettingRows = [
+    accessRow,
+    ...accessRows(typeof beach.access === 'object' ? beach.access : null, t, lang),
+    parkingFromServices && { key: 'park', icon: <ParkingIcon size={16} />, title: t('ox.parking'), text: t('ox.parkMapped') },
+    pointRow(beach.lat, beach.lon, t, mapsUrl),
+  ].filter(Boolean);
 
-  // The rows (T386): at most five. About this beach holds the argument and
-  // the two derived blocks; then every measurement, the score with its
-  // weights (the one door to the breakdown), and the photographs.
-  const aboutTexts = [...why, facingSummary(facing, t), walkInSummary(walkIn, t)];
-  const rows = [
-    {
-      key: 'about',
-      icon: BulbIcon,
-      label: t('detail.aboutBeach'),
-      summary: previewNotHook(aboutTexts, headline),
-      body: (
-        <>
-          {(why.length > 0 || beach.bestFor?.length > 0 || tags.length > 0) && (
-            <div className="bpage-why">
-              <h3 className="dsk-sub">{t('beach.whyHead')}</h3>
-              {why.length > 0 && <p className="bpage-prose">{why.join(' ')}</p>}
-              {beach.bestFor?.length > 0 && (
-                <p className="bpage-for">
-                  <b>{t('beach.bestFor')}</b>
-                  {' '}
-                  {beach.bestFor.map((code) => bestForLabel(code, t)).join(', ')}
-                </p>
-              )}
-              {tags.length > 0 && (
-                <ul className="bpage-tags">
-                  {tags.map((tag) => <li key={tag.code}>{tag.label}</li>)}
-                </ul>
-              )}
-            </div>
-          )}
-          <div className="dsk-part">
-            <h3 className="dsk-sub">{t('derived.facingHead')}</h3>
-            <BeachFacing facing={facing} t={t} />
-          </div>
-          <div className="dsk-part">
-            <h3 className="dsk-sub">{t('derived.walkinHead')}</h3>
-            <BeachWalkIn walkIn={walkIn} t={t} />
-          </div>
-          <BaseClimate
-            base={beach.base}
-            kind="beach"
-            water={beach.sst ? { temps: beach.sst, est: true } : null}
-          />
-        </>
-      ),
-    },
-    {
-      key: 'facts',
-      icon: InfoIcon,
-      label: t('beach.factsHead'),
-      summary: previewWords(facts.filter((f) => !f.empty).slice(0, 3).map((f) => f.value).join(', ')),
-      body: (
-        <div className="bpage-facts">
-          <dl>
-            {facts.map((fact) => (
-              <div key={fact.key} className={`bpage-fact${fact.empty ? ' bpage-fact-empty' : ''}`}>
-                <dt>{fact.label}</dt>
-                <dd className={fact.mono ? 'mono' : ''}>
-                  {fact.value}
-                  {fact.note && <small>{fact.note}</small>}
-                </dd>
-              </div>
-            ))}
-          </dl>
-          <BeachFacilities beach={beach} />
-        </div>
-      ),
-    },
-    parts.length > 0 && {
-      key: 'score',
-      icon: StarIcon,
-      label: t('beach.scoreHead'),
-      summary: previewWords(t('beach.scoreNote')),
-      body: (
+  const before = beforeGoItems({ lines: notForLines('beach', beach, { word: surfaceWord }) });
+  const beforeRows = before.map((it) => ({
+    key: it.key,
+    icon: <ItemIcon name={it.icon} size={16} />,
+    title: t(it.titleKey, { ...it.params, word: it.params?.word ? capFirst(it.params.word) : it.params?.word }),
+    text: t(it.subKey, it.params),
+    warn: Boolean(it.safety),
+  }));
+  const sources = [
+    beach.osm && { label: 'OpenStreetMap', href: `https://www.openstreetmap.org/${beach.osm}` },
+    beach.wiki && { label: 'Wikipedia', href: beach.wiki },
+    beach.wd && { label: 'Wikidata', href: `https://www.wikidata.org/wiki/${beach.wd}` },
+    ...(beach.credit || []).map((c) => ({ label: c })),
+  ].filter(Boolean);
+
+  const where = [beach.region, countryName].filter(Boolean).join(', ');
+  const hook = highlights[0]?.line || headline;
+  const protName = beach.prot?.name ? displayName(beach.prot.name) : (beach.protected?.name || '');
+  const rankLine = rating && !rating.unscored ? natureRankLine({ rank: rating.rank }, t, { place: countryName }) : '';
+  const onAdd = onAddToDay
+    ? () => onAddToDay({ id: beach.id, cc: beach.cc, name: beach.name, lat: beach.lat, lon: beach.lon }) : null;
+  const pdfModel = () => outdoorPdfModel({
+    name: beach.name, hook, facts: keyFacts, why: highlights.slice(1).filter((h) => h.title), before, sources, t,
+    extra: { photos, where, url: beachShareUrl(beach) },
+  });
+  const parkingEur = Number(beach.access?.parking?.eur_day);
+
+  const jumps = [
+    { key: 'water', id: 'ox-water', label: t('ox.jump.water') },
+    { key: 'on', id: 'ox-on', label: t('ox.jump.onBeach') },
+    { key: 'getting', id: 'ox-getting', label: t('detail.gettingThere') },
+    { key: 'near', id: 'ox-near', label: t('ox.jump.nearby') },
+  ];
+
+  const hasPoint = Number.isFinite(beach.lat) && Number.isFinite(beach.lon);
+  const map = hasPoint ? (
+    <div className="sig-mapwrap">
+      <PlaceMap lat={beach.lat} lon={beach.lon} label={t('detail.mapOf', { name: beach.name })} name={beach.name} />
+      {point && (
+        <CompassRosette
+          deg={beach.aspect}
+          label={t('sig.rosette', { dir: t(`sig.dir${point}`), deg: Math.round(beach.aspect) })}
+        />
+      )}
+    </div>
+  ) : null;
+
+  const whyRates = parts.length > 0 || why.length > 0 ? (
+    <>
+      {why.length > 0 && <p className="pt-muted">{why.join(' ')}</p>}
+      {beach.bestFor?.length > 0 && (
+        <p className="pt-muted"><b>{t('beach.bestFor')}</b> {beach.bestFor.map((code) => bestForLabel(code, t)).join(', ')}</p>
+      )}
+      {tags.length > 0 && <p className="pt-muted">{tags.map((tag) => tag.label).join(', ')}</p>}
+      {parts.length > 0 && (
         <div className="bpage-score">
           <p className="bpage-note">{t('beach.scoreNote')}</p>
           <ul className="bpage-bars">
@@ -304,31 +261,19 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
                   <span className="bpage-bar-fill" style={{ width: `${part.pct}%` }} />
                 </span>
                 <span className="bpage-bar-n">{part.pct}</span>
-                {part.weight != null && (
-                  <small className="bpage-part-w">
-                    {t('beach.scoreWeight', { pct: part.weight })}
-                  </small>
-                )}
+                {part.weight != null && <small className="bpage-part-w">{t('beach.scoreWeight', { pct: part.weight })}</small>}
               </li>
             ))}
           </ul>
         </div>
-      ),
-    },
-  ].filter(Boolean);
-
-  const before = beforeGoItems({ lines: notForLines('beach', beach, { word: surfaceWord }) });
-  const sources = [
-    beach.osm && { label: 'OpenStreetMap', href: `https://www.openstreetmap.org/${beach.osm}` },
-    beach.wiki && { label: 'Wikipedia', href: beach.wiki },
-    beach.wd && { label: 'Wikidata', href: `https://www.wikidata.org/wiki/${beach.wd}` },
-    ...(beach.credit || []).map((c) => ({ label: c })),
-  ].filter(Boolean);
+      )}
+    </>
+  ) : null;
 
   return (
-    <DetailPage
+    <OutdoorPage
       name={beach.name}
-      className="bpage"
+      className="bpage-v2"
       backLabel={backLabel || t('beach.back')}
       onClose={onClose}
       fav={fav}
@@ -336,79 +281,100 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
       onShare={onShare}
       resetKey={beach.id}
       toast={toast}
-      gallery={(
-        <PhotoGallery photos={photos} label={beach.name} claimKey={beach.id}
-          fallback={{ city: beach.name, iso2: beach.cc }} />
-      )}
-      head={(
-        <ItemHead
-          title={beach.name}
-          iso2={beach.cc}
-          sub={beach.nameLocal || ''}
-          where={[beach.region, countryName].filter(Boolean).join(', ')}
-          rating={rating}
-          after={<NatureHeadLines rating={rating} place={countryName} />}
-        />
-      )}
-      hook={highlights[0]?.line || headline}
-      keyFacts={keyFacts}
-      whyGo={highlights.slice(1).filter((h) => h.title)}
-      before={before}
-      primary={beach.base ? (
-        <Button variant="primary" iconEnd={<ChevronRightIcon size={20} />} onClick={() => onSelectDest?.(beach.base.id)}>
-          {(baseDay && view.stayIn(beach.base.city, baseDay.dayEur)) || t('beach.basedOn', { city: beach.base.city })}
-        </Button>
-      ) : null}
-      actions={[
-        <a key="dir" className="btn btn-secondary" href={mapsUrl} target="_blank" rel="noopener noreferrer">
-          <span className="btn-icon" aria-hidden="true"><MapPinIcon size={20} /></span>
-          <span className="btn-label">{t('detail.directions')}</span>
-        </a>,
-        onAddToDay && (
-          <Button key="day" variant="secondary" iconStart={<SunIcon size={20} />}
-            onClick={() => onAddToDay({ id: beach.id, cc: beach.cc, name: beach.name, lat: beach.lat, lon: beach.lon })}>
-            {t('feat.addToDay')}
-          </Button>
-        ),
-      ]}
-      onPdf={onPdf}
-      pdf={{ photos, where: [beach.region, countryName].filter(Boolean).join(', '), url: beachShareUrl(beach) }}
-      pdfBusy={pdfBusy}
-      map={Number.isFinite(beach.lat) && Number.isFinite(beach.lon) ? (
-        <div className="sig-mapwrap">
-          <PlaceMap lat={beach.lat} lon={beach.lon} label={t('detail.mapOf', { name: beach.name })} name={beach.name} />
-          {point && (
-            <CompassRosette
-              deg={beach.aspect}
-              label={t('sig.rosette', { dir: t(`sig.dir${point}`), deg: Math.round(beach.aspect) })}
-            />
-          )}
-        </div>
-      ) : null}
-      signature={<BeachSignature beach={beach} />}
-      rows={rows}
-      gettingThere={beach.base ? (
-        <ul className="igo-list">
-          <li className="igo-row">
-            <ItemIcon name="bed" />
-            <span className="igo-main">
-              <span>{beach.base.city}</span>
-              <span className="igo-sub">{t('beach.basedKm', { km: Math.round(beach.base.km) })}</span>
-            </span>
-          </li>
-        </ul>
-      ) : null}
-      exits={exits}
-      nearby={(
-        <NearbyOutdoors
-          row={beach}
-          cc={beach.cc}
-          headings={{ trail: 'nb.beach.trail', beach: 'nb.beach.beach', cycle: 'nb.beach.cycle' }}
-          onOpen={onOpenNeighbour}
-        />
-      )}
+      photos={photos}
+      photoFallback={{ city: beach.name, iso2: beach.cc }}
+      head={{
+        title: beach.name,
+        sub: beach.nameLocal || '',
+        iso2: beach.cc,
+        where,
+        rating,
+        rank: rankLine,
+        badges: [protName || null],
+        lead: hook,
+      }}
+      facts={keyFacts}
+      jumps={jumps}
+      whyRates={whyRates}
+      card={{
+        title: t('ox.card.beach'),
+        rows: [
+          { key: 'w', label: t('beach.factWater'), value: waterWord },
+          { key: 's', label: t('beach.factSurface'), value: capFirst(surfaceWord) },
+          sea && { key: 'sea', label: t('ox.seaIn', { month: months.long(peakI + 1) }), value: `${nf(sea[peakI])}°` },
+          Number.isFinite(parkingEur) && { key: 'p', label: t('ox.parking'), value: t('ox.parkDay', { price: formatMoney(parkingEur) }) },
+        ].filter(Boolean),
+        onAdd,
+        secondary: [
+          <OxLinkButton key="dir" href={mapsUrl} icon={<MapPinIcon size={16} />}>{t('ox.directions')}</OxLinkButton>,
+          <Button key="pdf" variant="secondary" size="sm" loading={pdfBusy} iconStart={<DownloadIcon size={16} />}
+            onClick={() => onPdf(pdfModel())}>
+            {t('ox.pdf')}
+          </Button>,
+        ],
+        stay: beach.base?.id && beach.base.city ? (
+          <StayLine destId={beach.base.id} city={beach.base.city} km={beach.base.km} onOpen={onSelectDest} />
+        ) : null,
+      }}
+      dock={{
+        fig: waterWord ? t('ox.dockWater', { word: waterWord }) : (capFirst(surfaceWord) || beach.name),
+        note: waterWord ? surfaceWord : '',
+        sub: [sea ? t('ox.seaShort', { c: nf(sea[peakI]), month: months.long(peakI + 1) }) : lengthText,
+          hasLifeguard ? t('ox.lgShort') : ''].filter(Boolean).join(', '),
+      }}
       sources={sources}
       sourcesExtra={<ReportProblem item={{ layer: 'beach', id: beach.id, cc: beach.cc, name: beach.name }} />}
-    />
+    >
+      {(water || sea || waterCells.length > 0) && (
+        <PSection id="ox-water" title={t('ox.jump.water')}>
+          {water && <WaterClass cls={water.class} year={water.year || null} site={waterSite || null} />}
+          {sea && (
+            <div className="pt-block">
+              <h3 className="pt-block-title">{t('ox.seaByMonth')}</h3>
+              <MonthStrip values={sea} best={warmest} now={new Date().getMonth()} label={t('ox.seaByMonth')}
+                monthLetter={months.letter} />
+              <p className="ox-legend"><span><i aria-hidden="true" />{t('ox.warmest')}</span><span>{t('ox.seaUnit')}</span></p>
+            </div>
+          )}
+          {waterCells.length > 0 && (
+            <ul className="ox-cells">
+              {waterCells.map((c) => (
+                <li key={c.key}>
+                  <small>{c.label}</small>
+                  <b>{c.value}</b>
+                  {c.text && <span>{c.text}</span>}
+                </li>
+              ))}
+            </ul>
+          )}
+        </PSection>
+      )}
+
+      {(facil.length > 0 || beforeRows.length > 0) && (
+        <PSection id="ox-on" title={t('ox.jump.onBeach')}>
+          <Facilities items={facil} />
+          <CheckRows rows={beforeRows} />
+        </PSection>
+      )}
+
+      {(map || gettingRows.length > 0) && (
+        <PSection id="ox-getting" title={t('detail.gettingThere')}>
+          <RouteBlock map={map} />
+          <CheckRows rows={gettingRows} />
+        </PSection>
+      )}
+
+      {(exits.length > 0 || beach.nb) && (
+        <PSection id="ox-near" title={t('ox.otherBeaches')}>
+          <OtherNearby exits={exits} hrefOf={(r) => featureHref('beach', { id: r.id, cc: r.cc })} />
+          <NearbyOutdoors
+            row={beach}
+            cc={beach.cc}
+            headings={{ trail: 'nb.beach.trail', cycle: 'nb.beach.cycle' }}
+            onOpen={onOpenNeighbour}
+          />
+        </PSection>
+      )}
+    </OutdoorPage>
   );
 }
