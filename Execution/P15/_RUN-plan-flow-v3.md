@@ -17,3 +17,6 @@ Three lines per batch: branch shas, tests and end check, user rows raised.
 - Batch E (T867 to T869), branch p15-plan-flow-v3-e: app bfc7a0c (from ebda863), root syncs 0c781f5b0 and 0045729e1 plus the report commit (from 560ecf686).
 - npm test 1096 of 1096; end check walk-e.mjs on the NOPUBLIC build at 1440, 800 and 375 plus the sort in five languages at 375: 102 of 102, no console errors; preloads 36; closed T803-a, T803-b, T803-d, T803-e, T811-b, T859-b (by T868) and T810-b (by T869).
 - User rows raised: T867-a (no minimum stand on searching), T868-a (Best match without the flight pull, sort and map per visit, Compare in the toolbar, who and places in Edit answers), T869-a (group total on the card, budget said once, ticked photo edge).
+- Batch F (T870 to T873), branch p15-plan-flow-v3-f: app 7a57107 (from bfc7a0c), root sync 5d30b78d1 plus the report commit (from 0edd7b8c4).
+- npm test 1101 of 1101; end check walk-f.mjs on the NOPUBLIC build at 1440 and 375 plus Dutch at 1440: 85 of 85, no console errors; preloads 36; closed T811-a, T811-c, T825-a, T861-a, T868-d (by T870), T802-e, T811-d (by T871), T812-c (by T872).
+- User rows raised: T870-a (pickers kept, gallery sights, alternatives' order, cents, no share), T871-b (the paragraph's words and thresholds), T872-a (Plan this trip does not press Save), T873-a (Ready to book built unmarked).

@@ -1,0 +1,515 @@
+{
+ "results": [
+  {
+   "w": 1440,
+   "label": "T870 card: the name is a link to the trip page",
+   "ok": true,
+   "note": "#tf=tf_111srqt"
+  },
+  {
+   "w": 1440,
+   "label": "T870 a card opens the trip page, not a dialog",
+   "ok": true,
+   "note": "Hallstatt and Salzburg"
+  },
+  {
+   "w": 1440,
+   "label": "T870 the page has its own address (#tf=)",
+   "ok": true,
+   "note": "#tf=tf_111srqt"
+  },
+  {
+   "w": 1440,
+   "label": "T870 the list is hidden under the page",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "T870 the heading is the trip name and takes focus",
+   "ok": true,
+   "note": "Hallstatt and Salzburg"
+  },
+  {
+   "w": 1440,
+   "label": "T870 the bar goes back to Trips for you",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "T870 the gallery has photos",
+   "ok": true,
+   "note": "6"
+  },
+  {
+   "w": 1440,
+   "label": "T871 a photo credit links the file page (T811-c)",
+   "ok": true,
+   "note": "Photo: C.Stadler/Bwag, CC BY-SA 4.0"
+  },
+  {
+   "w": 1440,
+   "label": "T870 the head names country, dates, nights, bases",
+   "ok": true,
+   "note": "Austria 21 Nov 2026 to 28 Nov 2026 7 nights 2 bases 90% match"
+  },
+  {
+   "w": 1440,
+   "label": "T870 the price card total is the card total for the group",
+   "ok": true,
+   "note": "198300 vs 1983"
+  },
+  {
+   "w": 1440,
+   "label": "T870 the price card says for 2",
+   "ok": true,
+   "note": "for 2, all in"
+  },
+  {
+   "w": 1440,
+   "label": "T870 the cost bar has a segment a group in its own colour",
+   "ok": true,
+   "note": "[\"is-travel\",\"is-stay\",\"is-food\",\"is-around\"]"
+  },
+  {
+   "w": 1440,
+   "label": "T870 four lines: travel, around, stay, food, each with its dot",
+   "ok": true,
+   "note": "is-travel,is-stay,is-food,is-around"
+  },
+  {
+   "w": 1440,
+   "label": "T870 one primary on the page: Plan this trip",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "T870 save sits beside it",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "T870 the price card is a sticky side column from 1024 px",
+   "ok": true,
+   "note": "sticky at 950"
+  },
+  {
+   "w": 1440,
+   "label": "T870 the page caps at 1180 px",
+   "ok": true,
+   "note": "1180"
+  },
+  {
+   "w": 1440,
+   "label": "T871 who it is for: a paragraph with no dash and no empty slot",
+   "ok": true,
+   "note": "For two people who like walking and good food. You start with 4 nights in Hallstatt, then go on to Salzburg by train for 3 nights. In November it is cool there, with highs of 8 to 10 °C. There are visitors, but rarely a crowd. Some of the best spots are hard to reach without a car."
+  },
+  {
+   "w": 1440,
+   "label": "T871 the paragraph names the trip's first place",
+   "ok": true,
+   "note": "For two people who like walking and good food. You start with 4 nights in Hallst"
+  },
+  {
+   "w": 1440,
+   "label": "T871 the fact band: door to door, weather, crowds, getting around, airport",
+   "ok": true,
+   "note": "Door to door 4 h 20 min Weather in November 8 to 10 °C Crowds in November Moderate Getting around Public transport Airport Munich (MUC)"
+  },
+  {
+   "w": 1440,
+   "label": "T871 the route: a map and a stop a place",
+   "ok": true,
+   "note": "2"
+  },
+  {
+   "w": 1440,
+   "label": "T871 why it fits, and the catch where the card names one",
+   "ok": true,
+   "note": "catch on card false, on page false"
+  },
+  {
+   "w": 1440,
+   "label": "T871 not quite right: up to three alternatives",
+   "ok": true,
+   "note": "3"
+  },
+  {
+   "w": 1440,
+   "label": "T870 no sideways scroll",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "T870 Back returns to the list, focus on the card",
+   "ok": true,
+   "note": "{\"hash\":\"\",\"list\":true,\"focus\":true,\"y\":260}"
+  },
+  {
+   "w": 1440,
+   "label": "T870 the list is where it was",
+   "ok": true,
+   "note": "260 vs 260"
+  },
+  {
+   "w": 1440,
+   "label": "T870 Forward opens the trip again",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "T870 the page's back control returns to the list",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "T870 a line opens its picker in the page",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "T870 Escape leaves the picker for the page",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "T871 an alternative opens in its place",
+   "ok": true,
+   "note": "Lake Como"
+  },
+  {
+   "w": 1440,
+   "label": "T870 a reload on #tf= opens that trip's page",
+   "ok": true,
+   "note": "Lake Como"
+  },
+  {
+   "w": 1440,
+   "label": "T872 Plan this trip lands on the trip page",
+   "ok": true,
+   "note": "{\"tpg\":true,\"wizard\":0,\"hash\":\"\",\"name\":\"Winter week\",\"total\":\"2262.4\"}"
+  },
+  {
+   "w": 1440,
+   "label": "T872 the trip page address leaves with the plan",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "T872 the trip page total is the finder page total",
+   "ok": true,
+   "note": "2262.4 vs 2262.4"
+  },
+  {
+   "w": 1440,
+   "label": "T873 Ready to book is on the trip page",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "T873 the flight there, each stay, the flight home",
+   "ok": true,
+   "note": "flight-out,stay-0,flight-back"
+  },
+  {
+   "w": 1440,
+   "label": "T873 every row links out in a new tab and offers Add what you paid",
+   "ok": true,
+   "note": "[[\"flight-out\",true,true],[\"stay-0\",true,true],[\"flight-back\",true,true]]"
+  },
+  {
+   "w": 1440,
+   "label": "T873 the flight links to Google Flights, a stay to its book site",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "T873 one line says prices may have changed",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "T873 a price typed there is the traveller's own",
+   "ok": true,
+   "note": "€321.00 yours"
+  },
+  {
+   "w": 1440,
+   "label": "T873 no sideways scroll on the trip page",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "T870 card: the name is a link to the trip page",
+   "ok": true,
+   "note": "#tf=tf_111srqt"
+  },
+  {
+   "w": 375,
+   "label": "T870 a card opens the trip page, not a dialog",
+   "ok": true,
+   "note": "Hallstatt and Salzburg"
+  },
+  {
+   "w": 375,
+   "label": "T870 the page has its own address (#tf=)",
+   "ok": true,
+   "note": "#tf=tf_111srqt"
+  },
+  {
+   "w": 375,
+   "label": "T870 the list is hidden under the page",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "T870 the heading is the trip name and takes focus",
+   "ok": true,
+   "note": "Hallstatt and Salzburg"
+  },
+  {
+   "w": 375,
+   "label": "T870 the bar goes back to Trips for you",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "T870 the gallery has photos",
+   "ok": true,
+   "note": "6"
+  },
+  {
+   "w": 375,
+   "label": "T871 a photo credit links the file page (T811-c)",
+   "ok": true,
+   "note": "Photo: C.Stadler/Bwag, CC BY-SA 4.0"
+  },
+  {
+   "w": 375,
+   "label": "T870 the head names country, dates, nights, bases",
+   "ok": true,
+   "note": "Austria 21 Nov 2026 to 28 Nov 2026 7 nights 2 bases 90% match"
+  },
+  {
+   "w": 375,
+   "label": "T870 the price card total is the card total for the group",
+   "ok": true,
+   "note": "198300 vs 1983"
+  },
+  {
+   "w": 375,
+   "label": "T870 the price card says for 2",
+   "ok": true,
+   "note": "for 2, all in"
+  },
+  {
+   "w": 375,
+   "label": "T870 the cost bar has a segment a group in its own colour",
+   "ok": true,
+   "note": "[\"is-travel\",\"is-stay\",\"is-food\",\"is-around\"]"
+  },
+  {
+   "w": 375,
+   "label": "T870 four lines: travel, around, stay, food, each with its dot",
+   "ok": true,
+   "note": "is-travel,is-stay,is-food,is-around"
+  },
+  {
+   "w": 375,
+   "label": "T870 one primary on the page: Plan this trip",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "T870 save sits beside it",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "T870 on a phone the price card follows the fact band, in the content",
+   "ok": true,
+   "note": "897 > 667"
+  },
+  {
+   "w": 375,
+   "label": "T871 who it is for: a paragraph with no dash and no empty slot",
+   "ok": true,
+   "note": "For two people who like walking and good food. You start with 4 nights in Hallstatt, then go on to Salzburg by train for 3 nights. In November it is cool there, with highs of 8 to 10 °C. There are visitors, but rarely a crowd. Some of the best spots are hard to reach without a car."
+  },
+  {
+   "w": 375,
+   "label": "T871 the paragraph names the trip's first place",
+   "ok": true,
+   "note": "For two people who like walking and good food. You start with 4 nights in Hallst"
+  },
+  {
+   "w": 375,
+   "label": "T871 the fact band: door to door, weather, crowds, getting around, airport",
+   "ok": true,
+   "note": "Door to door 4 h 20 min Weather in November 8 to 10 °C Crowds in November Moderate Getting around Public transport Airport Munich (MUC)"
+  },
+  {
+   "w": 375,
+   "label": "T871 the route: a map and a stop a place",
+   "ok": true,
+   "note": "2"
+  },
+  {
+   "w": 375,
+   "label": "T871 why it fits, and the catch where the card names one",
+   "ok": true,
+   "note": "catch on card false, on page false"
+  },
+  {
+   "w": 375,
+   "label": "T871 not quite right: up to three alternatives",
+   "ok": true,
+   "note": "3"
+  },
+  {
+   "w": 375,
+   "label": "T870 no sideways scroll",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "T870 Back returns to the list, focus on the card",
+   "ok": true,
+   "note": "{\"hash\":\"\",\"list\":true,\"focus\":true,\"y\":260}"
+  },
+  {
+   "w": 375,
+   "label": "T870 the list is where it was",
+   "ok": true,
+   "note": "260 vs 260"
+  },
+  {
+   "w": 375,
+   "label": "T870 Forward opens the trip again",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "T870 the page's back control returns to the list",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "T870 a line opens its picker in the page",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "T870 Escape leaves the picker for the page",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "T871 an alternative opens in its place",
+   "ok": true,
+   "note": "Lake Como"
+  },
+  {
+   "w": 375,
+   "label": "T870 a reload on #tf= opens that trip's page",
+   "ok": true,
+   "note": "Lake Como"
+  },
+  {
+   "w": 375,
+   "label": "T872 Plan this trip lands on the trip page",
+   "ok": true,
+   "note": "{\"tpg\":true,\"wizard\":0,\"hash\":\"\",\"name\":\"Winter week\",\"total\":\"2262.4\"}"
+  },
+  {
+   "w": 375,
+   "label": "T872 the trip page address leaves with the plan",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "T872 the trip page total is the finder page total",
+   "ok": true,
+   "note": "2262.4 vs 2262.4"
+  },
+  {
+   "w": 375,
+   "label": "T873 Ready to book is on the trip page",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "T873 the flight there, each stay, the flight home",
+   "ok": true,
+   "note": "flight-out,stay-0,flight-back"
+  },
+  {
+   "w": 375,
+   "label": "T873 every row links out in a new tab and offers Add what you paid",
+   "ok": true,
+   "note": "[[\"flight-out\",true,true],[\"stay-0\",true,true],[\"flight-back\",true,true]]"
+  },
+  {
+   "w": 375,
+   "label": "T873 the flight links to Google Flights, a stay to its book site",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "T873 one line says prices may have changed",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "T873 a price typed there is the traveller's own",
+   "ok": true,
+   "note": "€321.00 yours"
+  },
+  {
+   "w": 375,
+   "label": "T873 no sideways scroll on the trip page",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": "nl",
+   "label": "T871 the paragraph in Dutch, every slot filled",
+   "ok": true,
+   "note": "Voor twee mensen die houden van wandelen en goed eten. Je begint met 4 nachten in Hallstatt en gaat dan met de trein door naar Salzburg voor 3 nachten. In november is het er fris, met maxima van 8 tot 10 °C. Er zijn bezoekers, maar zelden drukte. Sommige van de mooiste plekken haal je lastig zonder auto."
+  },
+  {
+   "w": "nl",
+   "label": "T870 the page in Dutch",
+   "ok": true,
+   "note": "Reizen voor jou Plan deze reis"
+  }
+ ],
+ "errors": []
+}
