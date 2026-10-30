@@ -1,0 +1,9 @@
+{
+ "_about": "T915 placeholder, filled by a later harvest. Per lake id (the lakes wire id): {entry_eur?: number (0 for free), rentals?: [{kind: \"boat\"|\"sup\"|\"pedalo\"|\"kayak\", eur_hour?}], lifeguard_season?: [fromMonth, toMonth], alt_m?: metres (wins over the derived height), access?: {parking?, transit?} as on beaches}. A value here wins over the derived one. Praia Fluvial de Cinco Reis (pt-praia-fluvial-de-cinco-reis-w821133685) is the worked example.",
+ "items": {
+  "pt-praia-fluvial-de-cinco-reis-w821133685": {
+   "entry_eur": 0,
+   "_note": "A public river beach; Portuguese bathing beaches are free to enter. Rentals and lifeguard dates not checked yet."
+  }
+ }
+}
