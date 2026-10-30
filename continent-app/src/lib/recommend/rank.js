@@ -10,14 +10,15 @@
  *   2. fit      a trip qualifies when its strongest chosen like reads at
  *               least rank.mainLikeMin where the profiles measure it, and
  *               no hard conflict stands (config rank, fitFirst)
- *   3. order    by forYou (the places' quality plus the match, as Explore
- *               orders places) plus the persona's move (persona.js, config
- *               persona.weight), trips over the typed budget sinking by
- *               budget.sinkPer100 a hundred euros over
+ *   3. order    by the blend (T878, owner 2026-10-30): the answers (the
+ *               fit F with the persona's fit P) lead and the places' quality
+ *               follows, config rank.blend; trips over the typed budget sink
+ *               by budget.sinkPer100 points (of 10) a hundred euros over.
+ *               The match badge is the same number, so the sort follows it
  *
  * The match shows on Help me choose even while persona gate 7 fails
- * (owner, 2026-10-28), from match.show_min up; Explore keeps For you a
- * sort. One amount, no bands (price rule 2). Pure; the trips are not
+ * (owner, 2026-10-28), while the fit reads match.show_min or more; Explore
+ * keeps For you (Q + lambda (F - 0.5)) as its sort. One amount, no bands (price rule 2). Pure; the trips are not
  * changed, every call returns new ones.
  */
 import RECOMMEND from '../../../config/recommend.json' with { type: 'json' };
@@ -26,10 +27,28 @@ import { buildTrips, keepHidden, repriceTrip } from './trips.js';
 import { tasteFor } from './candidates.js';
 import { tripFit, reasonsFor, catchFor } from './reasons.js';
 import { flightLeverKeys } from './adapters/flight.js';
-import { personaReason, personaShift, tripPersona } from './persona.js';
+import { personaReason, tripPersona } from './persona.js';
 
 export const RANK = Object.freeze(RECOMMEND.rank);
 export const LEVERS = Object.freeze(RECOMMEND.levers);
+const BLEND = RANK.blend;
+
+/**
+ * The trip's blended score in 0..1 before the budget and the flight lever:
+ * the answers (F, mixed with the persona's P when there is one) weighed
+ * against the places' quality (Q, on the 0..10 rating scale). Either side
+ * alone when the other is missing; null when both are.
+ */
+export function blendOf(F, P, Q) {
+  const answers = F == null ? P : P == null ? F : (1 - BLEND.persona_w) * F + BLEND.persona_w * P;
+  const quality = Q == null ? null : Q / 10;
+  if (answers == null) return quality;
+  if (quality == null) return answers;
+  return BLEND.answers_w * answers + BLEND.quality_w * quality;
+}
+
+/** The badge's figure for a score in 0..1: a whole percent, never 100. */
+export const matchPct = (score) => Math.max(0, Math.min(99, Math.round(score * 100)));
 
 /** The traveller's budget for one trip, a person: the whole-trip figure, or a day figure times the nights. */
 export function budgetOf(settings, nights) {
@@ -155,20 +174,24 @@ export function rankTrips(trips, { settings, taste = null, data, levers = null }
     const info = fitOf(trip, t, destinations, settings);
     const budget = budgetRuler(trip, settings);
     const sink = budget && budget.delta > 0 ? (RECOMMEND.budget.sinkPer100 * budget.delta) / 100 : 0;
-    const base = info.forYou ?? info.Q ?? trip.signals?.countryScore ?? 0;
-    // The persona (owner, plan flow walk): weight x (P - 0.5), P the trip's
-    // places' persona fit by nights (persona.js); its reason leads the card.
+    // The persona (owner, plan flow walk): P the trip's places' persona fit
+    // by nights (persona.js), part of the answers in the blend; its reason
+    // leads the card.
     const persona = settings.guide.persona;
     const p = tripPersona(trip, persona, destinations);
     const said = personaReason(trip, persona, destinations);
+    const quality = info.Q ?? trip.signals?.countryScore ?? null;
+    const score = (blendOf(info.F, p, quality) ?? 0) - sink / 10 - (pull.get(trip.id) || 0) / 10;
     const out = {
       ...trip,
       budget,
-      match: info.F == null ? null : { pct: info.pct, bars: info.bars, conflicts: info.conflicts },
+      // pct is the ranked score (T878), shown while the fit itself reads
+      // show_min or more; fit is the answers alone, for the trip page.
+      match: info.F == null ? null : { pct: info.pct == null ? null : matchPct(score), fit: info.pct, bars: info.bars, conflicts: info.conflicts },
       persona: p == null ? null : { id: persona, p },
       reasons: said ? [said, ...reasonsFor(trip, { settings, info })].slice(0, RECOMMEND.reasons.max) : reasonsFor(trip, { settings, info }),
       catch: catchFor(trip, { settings, info, budget }),
-      score: base + personaShift(p) - sink - (pull.get(trip.id) || 0),
+      score,
       qualified: RANK.fitFirst ? qualifies(info, settings) : true,
     };
     Object.defineProperty(out, 'base', { value: trip.base, enumerable: false });
