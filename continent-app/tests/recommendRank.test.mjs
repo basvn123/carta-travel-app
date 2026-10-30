@@ -7,7 +7,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import {
-  rankTrips, findTrips, budgetRuler, budgetOf, applyLevers, qualifies, LEVERS, RANK,
+  rankTrips, findTrips, budgetRuler, budgetOf, applyLevers, qualifies, LEVERS, RANK, blendOf, matchPct,
 } from "../src/lib/recommend/rank.js";
 import { tripFit, reasonsFor, catchFor } from "../src/lib/recommend/reasons.js";
 import { SLOT_ROWS, slotTotals } from "../src/lib/recommend/slots.js";
@@ -52,6 +52,7 @@ const DESTS = {
   b: place("Bravo", 0.8, { score: 9 }),
   c: place("Charlie", 0.2, { score: 9.5 }),
   d: place("Delta", 0.9, { tier: 3 }),
+  e: place("Echo", 0.95, { score: 9 }),
 };
 const FAKE = { destinations: DESTS };
 const slotRow = (id, eur, extra = {}) => ({ id, labelKey: `tf.slot.${id}`, owner: "carta", eur, eurGroup: eur == null ? null : eur * 2, pick: null, options: null, because: null, quality: "modelled", ...extra });
@@ -73,14 +74,16 @@ test("the budget ruler: under is negative, over positive, none is null", () => {
 });
 
 test("the budget ranks: a trip over it sinks by the configured amount", () => {
-  const trips = [fakeTrip("over", "b", 1400), fakeTrip("under", "a", 900)];
+  // Echo fits better and rates higher, so only the budget can sink it (T878: answers lead).
+  const trips = [fakeTrip("over", "e", 1400), fakeTrip("under", "a", 900)];
   const none = rankTrips(trips, { settings: settings({ budget: { kind: "total", eur: 0 } }), data: FAKE });
   assert.equal(none[0].id, "over", "without a budget the better place leads");
   const withBudget = rankTrips(trips, { settings: settings(), data: FAKE });
   assert.equal(withBudget[0].id, "under", "over budget, it sinks");
   const o1 = none.find((t) => t.id === "over");
   const o2 = withBudget.find((t) => t.id === "over");
-  assert.ok(Math.abs((o1.score - o2.score) - (400 / 100) * 0.3) < 1e-9);
+  // 0.3 points (of 10) a hundred euros over, on the blend's 0..1 scale (T878).
+  assert.ok(Math.abs((o1.score - o2.score) - ((400 / 100) * 0.3) / 10) < 1e-9);
 });
 
 test("fit first: a trip whose main like reads under the minimum ranks below", () => {
@@ -182,7 +185,8 @@ test("the example answers: every trip carries a match or null, up to 3 reasons a
   const trips = findTrips(input(example()));
   assert.ok(trips.length >= 6);
   for (const t of trips) {
-    assert.ok(t.match === null || t.match.pct === null || t.match.pct >= MATCH.show_min * 100);
+    assert.ok(t.match === null || t.match.pct === null || t.match.fit >= MATCH.show_min * 100);
+    if (t.match?.pct != null) assert.equal(t.match.pct, matchPct(t.score), "the badge is the ranked score");
     assert.ok(t.reasons.length <= 3);
     for (const r of t.reasons) assert.ok(r.key.startsWith("tf.reason."), r.key);
     assert.ok(t.catch && t.catch.key.startsWith("tf.catch."), `${t.country} has a catch`);
@@ -214,4 +218,18 @@ test("time to build and rank 24 trips (target under 50 ms after warm-up)", { ski
   const med = (xs) => [...xs].sort((x, y) => x - y)[Math.floor(xs.length / 2)];
   t.diagnostic(`build 24 trips (memo miss) median ${med(build).toFixed(1)} ms; re-rank with a lever median ${med(rank).toFixed(2)} ms`);
   assert.ok(med(rank) < 50, "a lever re-ranks in under 50 ms");
+});
+
+test("the badge is the ranked score: the order follows the number shown (T878)", () => {
+  // A strong fit in an average place outranks a weak fit in the best rated one.
+  const s = settings({ budget: { kind: "total", eur: 0 } });
+  const trips = [fakeTrip("famous", "c", 800), fakeTrip("fits", "a", 800)];
+  const ranked = rankTrips(trips, { settings: s, data: FAKE });
+  for (const t of ranked) if (t.match?.pct != null) assert.equal(t.match.pct, matchPct(t.score));
+  const shown = ranked.filter((t) => t.match?.pct != null).map((t) => t.match.pct);
+  assert.deepEqual(shown, [...shown].sort((a, b) => b - a), "the shown figures fall down the list");
+  assert.equal(blendOf(0.8, null, 6), 0.6 * 0.8 + 0.4 * 0.6);
+  assert.equal(blendOf(0.8, 0.4, null), 0.75 * 0.8 + 0.25 * 0.4);
+  assert.equal(blendOf(null, null, 7), 0.7);
+  assert.equal(matchPct(1.2), 99);
 });

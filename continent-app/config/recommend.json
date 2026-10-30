@@ -22,6 +22,8 @@
     "anyWeather": "rating"
   },
   "rank": {
+    "_blend": "Trips for you only (owner, 2026-10-30, T878): the order and the match badge are one number, blend = answers x answers_w + quality / 10 x quality_w, where answers is the trip's fit F mixed with its persona fit P (persona_w of it, when a persona is chosen) and quality the places' month score. The budget sink and the flight lever move it by their points / 10. The badge shows round(blend x 100), capped at 99, while F reads at least match.show_min. Explore's For you keeps Q + lambda (F - 0.5).",
+    "blend": { "answers_w": 0.6, "quality_w": 0.4, "persona_w": 0.25 },
     "fitFirst": true,
     "mainLikeMin": 0.5,
     "hardConflicts": ["car"]
