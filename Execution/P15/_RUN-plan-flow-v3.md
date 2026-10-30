@@ -11,3 +11,6 @@ Three lines per batch: branch shas, tests and end check, user rows raised.
 - Batch C (T860 to T862), branch p15-plan-flow-v3-c: app af96e17 (from 5dffb44), root sync f2a408976 plus the report commit (from 20dd4fc97).
 - npm test 1082 of 1082; end check walk-c.mjs on the NOPUBLIC build at 1440 and 375: 70 of 70, no console errors; preloads 36; T858-b closed by T862.
 - User rows raised: T860-a (drive estimate values, 2 hour reach, re-tick on a new town, car or train to the airport), T861-b (finder trip pinned to the card's airport), T862-c (typical night median a person, Either first, hostel private room under Hostel).
+- Batch D (T863 to T866), branch p15-plan-flow-v3-d: app ebda863 (from af96e17), root sync 3ece322a5 plus the report commit (from 0c4ba3a0e).
+- npm test 1090 of 1090; end check walk-d.mjs on the NOPUBLIC build at 1440 and 375: 86 of 86, no console errors; doors-lang.mjs 10 of 10; preloads 36; no earlier row closed (T859-b half done, stays open).
+- User rows raised: T863-a (Carta's own trips a link, not a door), T863-b (Plan the rest opens Add a stop), T863-c (preselect order), T864-a (one base priced from the start, over budget left out), T866-b (a booked flight with no price shows no figure).
