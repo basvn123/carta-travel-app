@@ -2,7 +2,8 @@
  * How the traveller likes to travel (owner, plan flow walk 2026-10-30): the
  * persona. Some stay in the big cities and hop between them; some stay just
  * outside the hubs (Antibes, not Nice) and see the region from there; some
- * want small towns, nature, places few tourists find, or nights out.
+ * want small towns, the sea, nature, places few tourists find, one base
+ * for the week, or nights out.
  *
  * Each place gets a persona fit P in 0..1 from its own features, every one
  * in 0..1 too:
@@ -13,6 +14,7 @@
  *   hubNear   a metro close by: 1 within hubKm[0], 0 past hubKm[1]
  *   around    good places within aroundKm (rated aroundMin and up), full
  *             at aroundCap: what there is to see on day trips from it
+ *   coast     the stronger of its beach and islands values, or tagged coast
  *   nature    the strongest of its hiking, lakes and ski values
  *   hidden    its hidden value, a catalogue hidden gem, or tagged quiet
  *   quiet     1 - its crowd tier in the month / 3
@@ -105,6 +107,7 @@ export function personaFeatures(id, d, destinations, month = null) {
     return vals.length ? vals.reduce((s, v) => s + v, 0) / vals.length : null;
   })();
   const nature = Math.max(like(d, 'hiking') ?? 0, like(d, 'lakes') ?? 0, like(d, 'ski') ?? 0);
+  const coast = Math.max(like(d, 'beach') ?? 0, like(d, 'islands') ?? 0, (d?.categories || []).includes('coast') ? 0.8 : 0);
   const hidden = Math.max(like(d, 'hidden') ?? 0, d?.rating?.hidden_gem === true ? 1 : 0, (d?.categories || []).includes('quiet') ? 0.6 : 0);
   return {
     big: PERSONA.size.big[cls] ?? 0.3,
@@ -112,6 +115,7 @@ export function personaFeatures(id, d, destinations, month = null) {
     notMetro: cls === 'metro' ? 0 : 1,
     hubNear: hubKm == null ? 0 : clamp01((far - hubKm) / (far - near)),
     around: clamp01(at.around / PERSONA.aroundCap),
+    coast,
     nature,
     hidden,
     quiet: crowd == null ? 0.5 : clamp01(1 - crowd / 3),
@@ -207,8 +211,12 @@ export function personaReason(trip, persona, destinations) {
     case 'towns':
       // "Close together" needs two places at least.
       return places.length > 1 && classes.every((c) => c === 'town' || c === 'village' || c === 'area') ? { key, facts: { places } } : null;
+    case 'coast':
+      return f.coast >= R.coast ? { key, facts: { place: d.city } } : null;
     case 'nature':
       return f.nature >= R.nature ? { key, facts: { place: d.city } } : null;
+    case 'slow':
+      return rows.length === 1 && f.base >= R.base ? { key, facts: { place: d.city } } : null;
     case 'hidden':
       return f.hidden >= R.hidden || f.quiet >= R.quiet ? { key, facts: { place: d.city } } : null;
     case 'lively':

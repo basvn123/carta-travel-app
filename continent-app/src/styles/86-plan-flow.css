@@ -891,42 +891,136 @@
 .pf-vis { display: flex; flex-wrap: nowrap; gap: var(--space-2); }
 .pf-vis .ui-chip { flex: 1 1 auto; justify-content: center; min-width: 0; }
 
-/* ---- How you like to travel: the persona rows (owner, plan flow walk) ----
-   One row a persona: a real place's photograph, the name and one example
-   line, a bordered white row; selected is the tint, the brown edge and a
-   tick. One column on a phone, two from 769 px. */
-.pf-persona { display: grid; gap: var(--space-2); }
-.pf-persona-row.btn {
-  display: grid;
-  grid-template-columns: 64px minmax(0, 1fr) 20px;
-  align-items: center;
-  gap: var(--space-3);
-  height: auto;
-  min-height: 80px;
-  padding: var(--space-2) var(--space-3) var(--space-2) var(--space-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  background: var(--surface);
-  color: var(--text);
-  text-align: left;
-  font-weight: 400;
-  white-space: normal;
+/* ---- How you like to travel: the persona (owner, plan flow walk; T878
+   design freedom, carta-design "Owner decision 2026-10-30") ----
+   Ten tiles, two across on a phone and five from 769 px, each in its own
+   colour world: a soft gradient in the persona's tint, its mark
+   (PersonaMark.jsx, how that traveller moves, the filled dot where they
+   stay) drawn in the deep shade, the name, a short tagline, and Details,
+   which opens the whole persona in a sheet. Chosen: a ring and a check
+   badge in the persona's own ink, and the mark drawing its lines once.
+   The deep inks hold 4.5:1 on their tints, so Details reads as text. */
+[data-p] { --p-tint: #ececee; --p-tint2: #f6f6f7; --p-ink: #4a4f5c; }
+[data-p="cities"] { --p-tint: #e6ebf6; --p-tint2: #f4f6fc; --p-ink: #34497f; }
+[data-p="hubtrips"] { --p-tint: #f6e8df; --p-tint2: #fcf5f0; --p-ink: #9a4724; }
+[data-p="outside"] { --p-tint: #e4efe8; --p-tint2: #f3f8f5; --p-ink: #2a6248; }
+[data-p="towns"] { --p-tint: #f4ecd6; --p-tint2: #fbf7ec; --p-ink: #715511; }
+[data-p="coast"] { --p-tint: #ddeff3; --p-tint2: #eff8fa; --p-ink: #1b6271; }
+[data-p="nature"] { --p-tint: #e1eedf; --p-tint2: #f1f7f0; --p-ink: #2a6131; }
+[data-p="hidden"] { --p-tint: #ede5f3; --p-tint2: #f7f3fa; --p-ink: #613c7e; }
+[data-p="slow"] { --p-tint: #f2eae0; --p-tint2: #faf6f1; --p-ink: #6f5136; }
+[data-p="lively"] { --p-tint: #fbe5e3; --p-tint2: #fdf3f2; --p-ink: #a83443; }
+[data-p="mix"] { --p-tint: #ebebee; --p-tint2: #f6f6f8; --p-ink: #464b58; }
+
+.pf-persona { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+.pf-persona-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border-radius: var(--radius-sheet);
+  background: linear-gradient(160deg, var(--p-tint) 0%, var(--p-tint2) 100%);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--p-ink) 12%, transparent);
+  transition: transform var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
 }
-.pf-persona-row .btn-label { display: contents; }
 @media (hover: hover) {
-  .pf-persona-row.btn:hover { background: var(--surface-hover); }
+  .pf-persona-item:hover {
+    transform: translateY(-2px);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--p-ink) 22%, transparent), 0 10px 24px -14px color-mix(in srgb, var(--p-ink) 55%, transparent);
+  }
 }
-.pf-persona-row.btn.is-on { border-color: var(--select-border); background: var(--select-bg); }
-.pf-persona-media { display: block; width: 64px; height: 64px; overflow: hidden; border-radius: var(--radius-control); background: var(--surface-sunken); }
-.pf-persona-img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.pf-persona-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.pf-persona-name { font-size: var(--text-lead); font-weight: 600; line-height: var(--leading-tight); }
-.pf-persona-sub { font-size: var(--text-label); color: var(--text-2); line-height: var(--leading-ui); }
-.pf-persona-row.is-on .pf-persona-name,
-.pf-persona-row.is-on .pf-persona-sub { color: var(--select-ink); }
-.pf-persona-tick { display: grid; place-items: center; color: var(--select-ink); }
+.pf-persona-item.is-on {
+  box-shadow: inset 0 0 0 2px var(--p-ink), 0 12px 28px -16px color-mix(in srgb, var(--p-ink) 60%, transparent);
+}
+.pf-persona-pick {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+  padding: var(--space-4) var(--space-4) var(--space-2);
+  border: 0;
+  border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.pf-persona-pick:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.pf-persona-pick .pf-pmark { width: 96px; height: 64px; margin: 0 0 var(--space-3) -4px; color: var(--p-ink); }
+.pf-persona-name { font-size: var(--text-lead); font-weight: 700; line-height: var(--leading-tight); letter-spacing: -0.01em; color: var(--text); }
+.pf-persona-sub { font-size: var(--text-label); line-height: var(--leading-ui); color: var(--text-2); }
+.pf-persona-tick {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-pill);
+  color: #fff;
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity var(--dur-2) var(--ease-out), transform var(--dur-2) var(--ease-out);
+}
+.pf-persona-item.is-on .pf-persona-tick { opacity: 1; transform: none; background: var(--p-ink); }
+.btn.pf-persona-more {
+  align-self: flex-start;
+  min-height: 36px;
+  margin: 0 var(--space-2) var(--space-2);
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--p-ink);
+  font-size: var(--text-caption);
+  font-weight: 700;
+}
+@media (hover: hover) {
+  .btn.pf-persona-more:hover { background: color-mix(in srgb, var(--p-ink) 10%, transparent); color: var(--p-ink); }
+}
+
+/* The mark: thin lines in the persona's ink, the base a filled dot; a chosen
+   tile draws its lines once and lands its base. */
+.pf-pmark { display: block; overflow: visible; }
+.pf-pmark .pf-pmark-soft { opacity: 0.5; }
+.pf-persona-item.is-on .pf-pmark-line { stroke-dasharray: 1; animation: pf-pmark-draw var(--dur-4) var(--ease-out) both; }
+.pf-persona-item.is-on .pf-pmark-base { animation: pf-pmark-base var(--dur-3) var(--ease-out) both; animation-delay: var(--dur-2); transform-box: fill-box; transform-origin: center; }
+@keyframes pf-pmark-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes pf-pmark-base { from { opacity: 0.3; transform: scale(0.5); } to { opacity: 1; transform: none; } }
+
 @media (min-width: 769px) {
-  .pf-persona { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+  .pf-persona { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .pf-persona-pick { padding-top: var(--space-5); }
+  .pf-persona-name { font-size: var(--text-body); }
+  .pf-persona-pick .pf-pmark { width: 84px; height: 56px; }
+}
+
+/* The whole persona, in its sheet: its colour world as a hero with the
+   mark large, the statement, then where you stay, what you visit, how you
+   move and a few places on hairlines, then Choose this style. */
+.pf-persona-profile { display: flex; flex-direction: column; gap: var(--space-4); }
+.pf-pmark.is-hero {
+  box-sizing: content-box;
+  width: calc(100% - 2 * var(--space-5));
+  height: 104px;
+  padding: var(--space-5);
+  border-radius: var(--radius-sheet);
+  background: linear-gradient(160deg, var(--p-tint) 0%, var(--p-tint2) 100%);
+  color: var(--p-ink);
+}
+.pf-persona-lede { margin: 0; font-size: var(--text-title); font-weight: 600; line-height: var(--leading-tight); letter-spacing: -0.01em; color: var(--text); text-wrap: balance; }
+.pf-persona-facts { margin: 0; }
+.pf-persona-fact { padding: var(--space-3) 0; }
+.pf-persona-fact + .pf-persona-fact { border-top: 1px solid var(--border-soft); }
+.pf-persona-fact dt { display: flex; align-items: center; gap: var(--space-2); margin: 0 0 var(--space-1); font-size: var(--text-caption); font-weight: 700; color: var(--p-ink); }
+.pf-persona-fact dd { margin: 0; font-size: var(--text-body); line-height: var(--leading-body); color: var(--text); }
+@media (prefers-reduced-motion: reduce) {
+  .pf-persona-item, .pf-persona-tick { transition: none; }
+  .pf-persona-item:hover { transform: none; }
+  .pf-persona-item.is-on .pf-pmark-line,
+  .pf-persona-item.is-on .pf-pmark-base { animation: none; stroke-dasharray: none; }
 }
 
 /* ---- What you're up for: photo tiles (T656) ---- */

@@ -47,13 +47,13 @@
   },
   "kept": { "dropMin": 10 },
   "persona": {
-    "_about": "How the traveller likes to travel (owner, 2026-10-30): eight personas, one chosen in Help me choose (g:persona). Each place gets a persona fit P in 0..1 from its own features (lib/recommend/persona.js), weighted per persona below; the trip finder adds weight x (P - 0.5) to the country's place pool key and to each trip's score, so the persona moves a place by up to weight / 2 points. The trip finder only: the rating and Explore never read it. hubKm: a metro within the first figure counts fully as near, past the second not at all. around: good places (score at least aroundMin) within aroundKm, full at aroundCap. reasonMin: a trip names its persona from this fit, and reasonFacts are the facts each reason needs (a place count, a feature value) before it is said. shapes: the shapes a persona builds when What kind of trip has no answer. towns: a persona's own reach between a trip's places. photos: the catalogue place each persona's tile shows.",
-    "ids": ["cities", "hubtrips", "outside", "towns", "nature", "hidden", "lively", "mix"],
+    "_about": "How the traveller likes to travel (owner, 2026-10-30): ten personas, one chosen in Help me choose (g:persona). Each place gets a persona fit P in 0..1 from its own features (lib/recommend/persona.js), weighted per persona below; the trip finder adds weight x (P - 0.5) to the country's place pool key and to each trip's score, so the persona moves a place by up to weight / 2 points. The trip finder only: the rating and Explore never read it. hubKm: a metro within the first figure counts fully as near, past the second not at all. around: good places (score at least aroundMin) within aroundKm, full at aroundCap. reasonMin: a trip names its persona from this fit, and reasonFacts are the facts each reason needs (a place count, a feature value) before it is said. shapes: the shapes a persona builds when What kind of trip has no answer. towns: a persona's own reach between a trip's places. The question shows each persona as a line icon and one statement, with its whole profile one tap away; no photographs (owner, 2026-10-30).",
+    "ids": ["cities", "hubtrips", "outside", "towns", "coast", "nature", "hidden", "slow", "lively", "mix"],
     "weight": 3,
     "minScore": 6.5,
     "pool": 12,
     "reasonMin": 0.55,
-    "reasonFacts": { "aroundN": 3, "nature": 0.7, "hidden": 0.6, "quiet": 0.67, "nightlife": 0.7 },
+    "reasonFacts": { "aroundN": 3, "nature": 0.7, "hidden": 0.6, "quiet": 0.67, "nightlife": 0.7, "coast": 0.7, "base": 0.6 },
     "hubKm": [10, 60],
     "aroundKm": 45,
     "aroundMin": 7.5,
@@ -67,12 +67,13 @@
       "hubtrips": { "big": 0.3, "around": 0.35, "base": 0.2, "culture": 0.15 },
       "outside": { "hubNear": 0.35, "notMetro": 0.2, "townish": 0.15, "base": 0.2, "quiet": 0.1 },
       "towns": { "townish": 0.4, "around": 0.2, "base": 0.2, "culture": 0.1, "quiet": 0.1 },
+      "coast": { "coast": 0.55, "base": 0.2, "townish": 0.15, "quiet": 0.1 },
       "nature": { "nature": 0.6, "townish": 0.2, "quiet": 0.1, "notMetro": 0.1 },
       "hidden": { "hidden": 0.4, "quiet": 0.3, "townish": 0.3 },
+      "slow": { "base": 0.35, "quiet": 0.3, "townish": 0.2, "culture": 0.15 },
       "lively": { "nightlife": 0.5, "big": 0.35, "culture": 0.15 }
     },
-    "shapes": { "cities": ["towns", "one"], "hubtrips": ["one"], "outside": ["one", "towns"], "towns": ["towns", "road"], "nature": ["one", "road"], "hidden": ["towns", "one"], "lively": ["one", "towns"] },
-    "towns": { "cities": { "maxKm": 350, "minKm": 60 } },
-    "photos": { "cities": "CDG", "hubtrips": "LIS", "outside": "gem:antibes", "towns": "gem:pienza", "nature": "gem:hallstatt", "hidden": "gem:albarracin", "lively": "BCN", "mix": "gem:rovinj" }
+    "shapes": { "cities": ["towns", "one"], "hubtrips": ["one"], "outside": ["one", "towns"], "towns": ["towns", "road"], "coast": ["one", "towns"], "nature": ["one", "road"], "hidden": ["towns", "one"], "slow": ["one"], "lively": ["one", "towns"] },
+    "towns": { "cities": { "maxKm": 350, "minKm": 60 } }
   }
 }

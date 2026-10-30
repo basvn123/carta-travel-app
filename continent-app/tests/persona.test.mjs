@@ -27,8 +27,8 @@ const coast = {
   "gem:far": place("town", 44.40, 6.20, { city: "Far town", score: 8.4, likes: { hiking: [0.9] }, crowd: 0 }),
 };
 
-test("eight personas; mix weighs nothing", () => {
-  assert.deepEqual(PERSONAS, ["cities", "hubtrips", "outside", "towns", "nature", "hidden", "lively", "mix"]);
+test("ten personas; mix weighs nothing", () => {
+  assert.deepEqual(PERSONAS, ["cities", "hubtrips", "outside", "towns", "coast", "nature", "hidden", "slow", "lively", "mix"]);
   assert.equal(weighs("mix"), false);
   assert.equal(weighs(""), false);
   assert.equal(personaFit("mix", "NCE", coast), null);
@@ -116,4 +116,14 @@ test("the catalogue: Antibes over Nice for near the hubs, and each persona leads
   // The leading three differ between most personas: the distinction is real.
   const keys = Object.values(fr).map((ids) => ids.join(","));
   assert.ok(new Set(keys).size >= 6, `distinct leads: ${new Set(keys).size} of ${keys.length}`);
+});
+
+test("by the sea and one base, slow days: the seaside town and the calm base", () => {
+  const sea = { ...coast, "gem:sea": place("town", 43.10, 6.00, { city: "Seaside", score: 8.2, base: 0.7, likes: { beach: [0.95] }, cats: ["coast"], crowd: 1 }) };
+  assert.equal(personaPool("coast", "FR", sea, { month: 7 })[0], "gem:sea");
+  assert.deepEqual(personaReason({ month: 7, places: [{ id: "gem:sea", nights: 7 }] }, "coast", sea), { key: "tf.reason.persona.coast", facts: { place: "Seaside" } });
+  const slow = personaReason({ month: 7, places: [{ id: "gem:sea", nights: 7 }] }, "slow", sea);
+  assert.deepEqual(slow, { key: "tf.reason.persona.slow", facts: { place: "Seaside" } });
+  assert.equal(personaReason({ month: 7, places: [{ id: "gem:sea", nights: 4 }, { id: "gem:far", nights: 3 }] }, "slow", sea), null, "two bases are not one slow base");
+  assert.deepEqual(personaShapes("slow"), ["one"]);
 });

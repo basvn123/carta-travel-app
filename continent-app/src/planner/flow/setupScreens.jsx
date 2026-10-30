@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { useBcp47, useMonths, whenText } from './flowHooks.js';
 import { formatMoney } from '../../lib/money.js';
 import { useFirstRun } from '../../lib/firstRunContext.js';
@@ -16,6 +16,8 @@ import { noFlying } from './flowGraph.js';
 import { DateField } from '../../components/DateField.jsx';
 import { Stepper } from '../../components/FilterControls.jsx';
 import { HeroImage } from '../../components/HeroImage.jsx';
+import { SheetShell } from '../../browse/SheetShell.jsx';
+import { PersonaMark } from './PersonaMark.jsx';
 import {
   Button, Chip, ChipGroup, ChoiceRows, Field, IconButton, Segmented, Switch,
 } from '../../components/ui/index.js';
@@ -24,7 +26,6 @@ import {
 } from '../../components/Icons.jsx';
 import * as AllIcons from '../../components/Icons.jsx';
 import SLOTS from '../../../config/slots.json' with { type: 'json' };
-import RECOMMEND from '../../../config/recommend.json' with { type: 'json' };
 import { LifestyleStep } from './LifestyleStep.jsx';
 import { StayTypes } from './StayTypes.jsx';
 import { VisibilityChoice } from './VisibilityChoice.jsx';
@@ -490,43 +491,85 @@ export function LikeTiles({ picked, onToggle }) {
 
 // ---- How you like to travel: the persona (owner, plan flow walk 2026-10-30) ----
 
+/** The persona's own profile, one sheet: where you stay, what you visit,
+ *  how you move between places, and a few places as words. */
+function PersonaSheet({ option, anchorRef, onClose, onChoose }) {
+  const { t } = useI18n();
+  const name = t(option.labelKey);
+  const id = option.value;
+  const rows = [
+    ['stay', 'BedIcon'],
+    ['visit', 'CameraIcon'],
+    ['move', 'RouteIcon'],
+    ...(id === 'mix' ? [] : [['eg', 'MapPinIcon']]),
+  ];
+  return (
+    <SheetShell title={name} onClose={onClose} anchorRef={anchorRef} width={440} className="pf-persona-sheet" closeLabel={t('pf.close')}>
+      <div className="pf-persona-profile" data-p={id}>
+        <PersonaMark id={id} className="is-hero" />
+        <p className="pf-persona-lede">{t(option.subKey)}</p>
+        <dl className="pf-persona-facts">
+          {rows.map(([k, icon]) => {
+            const Icon = AllIcons[icon];
+            return (
+              <div key={k} className="pf-persona-fact">
+                <dt>{Icon && <Icon size={16} />}{t(`pf.persona.label.${k}`)}</dt>
+                <dd>{t(`pf.persona.${id}.${k}`)}</dd>
+              </div>
+            );
+          })}
+        </dl>
+        <Button variant="primary" block onClick={onChoose}>{t('pf.persona.label.choose')}</Button>
+      </div>
+    </SheetShell>
+  );
+}
+
 /**
- * What kind of traveller: eight rows, each a real place's photograph (the
- * catalogue place config persona.photos names, so the picture is the
- * example the line gives), the persona's name and one example line. One
- * choice; selected is the tint, the brown edge and a tick. Two across from
- * 769 px. The trip finder weighs places by it (lib/recommend/persona.js).
+ * What kind of traveller (owner, plan flow walk: "first a general statement
+ * of that persona, then a button where you see that entire persona; no
+ * picture of the place"; then "more modern, visually top notch"): ten
+ * tiles, each the persona's mark (PersonaMark: how that traveller moves,
+ * the filled dot where they stay), its name and one statement, and at its
+ * foot Details, which opens the whole persona (PersonaSheet). The tile
+ * chooses, Details explains: two sibling controls, nothing nested.
+ * Selected is the tint, the brown edge, a tick, and the mark drawing itself
+ * once. Two across on a phone, five from 769 px. The trip finder weighs places by it
+ * (lib/recommend/persona.js).
  */
 export function PersonaScreen({ settings, commit, doneLabel }) {
   const { t } = useI18n();
-  const ctx = useFirstRun();
   const q = QUESTIONS['g:persona'];
-  const destinations = ctx?.data?.destinations;
   const [picked, setPicked] = useState(settings.guide.persona || '');
+  const [about, setAbout] = useState(null);
+  const aboutRef = useRef(null);
+  const open = about ? q.options.find((o) => o.value === about) : null;
   return (
     <>
       <div className="pf-persona" role="radiogroup" aria-label={t(q.titleKey)}>
         {q.options.map((o) => {
           const on = picked === o.value;
-          const d = destinations?.[RECOMMEND.persona.photos[o.value]];
+          const name = t(o.labelKey);
           return (
-            <Button
-              key={o.value}
-              variant="quiet"
-              role="radio"
-              aria-checked={on}
-              className={`pf-persona-row${on ? ' is-on' : ''}`}
-              onClick={() => setPicked(o.value)}
-            >
-              <span className="pf-persona-media">
-                <HeroImage url={d?.image?.url} city={d?.city || t(o.labelKey)} iso2={d?.iso2} className="pf-persona-img" ratio={[1, 1]} maxWidth={160} />
-              </span>
-              <span className="pf-persona-text">
-                <span className="pf-persona-name">{t(o.labelKey)}</span>
-                <span className="pf-persona-sub">{t(o.subKey)}</span>
-              </span>
-              <span className="pf-persona-tick" aria-hidden="true">{on && <CheckIcon size={14} />}</span>
-            </Button>
+            <div key={o.value} className={`pf-persona-item${on ? ' is-on' : ''}`} data-p={o.value}>
+              <button type="button" role="radio" aria-checked={on} className="pf-persona-pick" onClick={() => setPicked(o.value)}>
+                <PersonaMark id={o.value} />
+                <span className="pf-persona-name">{name}</span>
+                <span className="pf-persona-sub">{t(`pf.persona.${o.value}Tag`)}</span>
+                <span className="pf-persona-tick" aria-hidden="true">{on && <CheckIcon size={14} />}</span>
+              </button>
+              <Button
+                variant="quiet"
+                size="sm"
+                className="pf-persona-more"
+                aria-haspopup="dialog"
+                aria-label={t('pf.persona.label.about', { name })}
+                iconEnd={<AllIcons.ChevronRightIcon size={14} />}
+                onClick={(e) => { aboutRef.current = e.currentTarget; setAbout(o.value); }}
+              >
+                {t('pf.persona.label.details')}
+              </Button>
+            </div>
           );
         })}
       </div>
@@ -535,6 +578,14 @@ export function PersonaScreen({ settings, commit, doneLabel }) {
         label={doneLabel}
         onContinue={() => commit(answer(settings, 'g:persona', { guide: { ...settings.guide, persona: picked } }))}
       />
+      {open && (
+        <PersonaSheet
+          option={open}
+          anchorRef={aboutRef}
+          onClose={() => setAbout(null)}
+          onChoose={() => { setPicked(open.value); setAbout(null); }}
+        />
+      )}
     </>
   );
 }
