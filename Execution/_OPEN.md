@@ -2474,3 +2474,4 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T903-a | T903 | Up next on the Plan home has no days-planned bar or next steps; the home's trip records carry no booking state or planned days (Execution/P15/T901-T904-plan-home.md) | next task | open |  |
 | T903-b | T903 | Up next has no Plan your days button; the home has no door into the days of a trip that is not open (Execution/P15/T901-T904-plan-home.md) | next task | open |  |
 | T903-c | T903 | Deploy the merged batch T901 to T904 (Cloudflare credentials are the owner's) (Execution/P15/T901-T904-plan-home.md) | user | open |  |
+| T905-a | T905 | The phone header row (logo, account) is checked only in a harness; walk Explore's map, the Plan flow, the day planner's drawer and the full-screen pages on a phone with app data (Execution/P15/T905-phone-header.md) | next task | open |  |
