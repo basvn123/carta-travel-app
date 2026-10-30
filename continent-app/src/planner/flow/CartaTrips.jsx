@@ -13,15 +13,24 @@ import { TripPlaceCard } from '../../browse/TripPlaceCard.jsx';
 import { FilterChips } from '../../browse/FilterChips.jsx';
 import { PlacesFilterSheet } from '../../browse/PlacesFilterSheet.jsx';
 import { Button, Chip } from '../../components/ui/index.js';
-import { ArrowLeftIcon, FilterIcon } from '../../components/Icons.jsx';
+import {
+  BikeIcon, BunkIcon, CarIcon, CityIcon, DiningIcon, FilterIcon, LakeIcon, LeafIcon, MountainIcon, PalmIcon,
+  RouteIcon, ShoeIcon, SnowIcon, SparkIcon, TrainIcon, VillageIcon,
+} from '../../components/Icons.jsx';
 
 // Cards per page of the grid; More adds the next page.
 const PAGE = 24;
 // The in-season band at the top while no filter is on.
 const FEATURED = 8;
 // Grid cards: one column of side cards on a phone, then about 260 px each.
-const GRID_SIZES = '(max-width: 768px) 112px, (max-width: 1279px) 33vw, 300px';
-const RAIL_SIZES = '(max-width: 768px) 72vw, 300px';
+const GRID_SIZES = '(max-width: 768px) 46vw, (max-width: 1279px) 33vw, 300px';
+const RAIL_SIZES = '(max-width: 768px) 46vw, 300px';
+// T902: an icon for each style tab (Explore's category row).
+const STYLE_ICON = {
+  city: CityIcon, hiking: MountainIcon, rail: TrainIcon, 'beach-week': PalmIcon, culinary: DiningIcon, cycling: BikeIcon,
+  hostel: BunkIcon, 'cozy-towns': VillageIcon, 'road-trip': CarIcon, 'winter-sports': SnowIcon, 'nature-escape': LeafIcon,
+  'water-sports': LakeIcon, 'trail-running': ShoeIcon, pilgrim: RouteIcon, 'island-hopping': PalmIcon,
+};
 // The filters a reload keeps (this visit only).
 const KEEP = 'carta.cartaTrips.filters.v1';
 
@@ -172,6 +181,12 @@ export function CartaTrips({ titleTag = 'h1', onBack, onOpenJourney }) {
     () => (active === 0 ? all.filter((c) => (c.months || []).includes(month)).slice(0, FEATURED) : []),
     [all, active, month],
   );
+  // T902: the cheapest weeks a person a day, the second row while nothing is filtered.
+  const cheapest = useMemo(() => {
+    if (active > 0) return [];
+    const at = (c) => cardPerDay(c, WEEK);
+    return all.filter((c) => Number.isFinite(at(c))).sort((a, b) => at(a) - at(b)).slice(0, FEATURED);
+  }, [all, active]);
   const open = (card) => onOpenJourney(card.id);
   const card = (c, sizes) => (
     <TripPlaceCard key={c.id} card={c} length={WEEK} month={month} saved={savedSet.has(c.id)}
@@ -196,23 +211,48 @@ export function CartaTrips({ titleTag = 'h1', onBack, onOpenJourney }) {
 
   return (
     <div className="pf-carta">
-      <div className="pf-carta-top">
-        <Button variant="quiet" size="sm" className="pf-carta-back" iconStart={<ArrowLeftIcon size={18} />} onClick={onBack}>
-          {t('pf.back')}
-        </Button>
-      </div>
+      {/* T902 (owner, Plan home board 2026-10-30): where the page sits,
+          Plan / Carta's own trips, in place of a bare Back. */}
+      <nav className="pf-carta-crumbs" aria-label={t('dayws.crumbsAria')}>
+        <Button variant="quiet" size="sm" className="dayc-link" onClick={onBack}>{t('dayws.crumbPlan')}</Button>
+        <span className="pf-carta-sep" aria-hidden="true">/</span>
+        <span className="pf-carta-here" aria-current="page">{t('pf.carta.title')}</span>
+      </nav>
 
       <header className="pf-carta-hero">
         <Title className="pf-title pf-carta-title" tabIndex={-1}>{t('pf.carta.title')}</Title>
-        <p className="pf-carta-lede">{t('tp.carta.lede')}</p>
       </header>
 
+      {/* The styles as Explore's category row: All, then each style. */}
+      {types.length > 0 && (
+        <div className="pf-carta-styles" role="group" aria-label={t('pf.carta.styles')}>
+          {[{ slug: null }, ...types].map((tp) => {
+            const Icon = tp.slug ? STYLE_ICON[tp.slug] || SparkIcon : SparkIcon;
+            const on = style === tp.slug;
+            return (
+              <Button key={tp.slug || 'all'} variant="quiet" className={`pf-carta-style${on ? ' is-on' : ''}`} aria-pressed={on}
+                disabled={Boolean(tp.slug) && !on && !(styleCounts[tp.slug] > 0)} onClick={() => setStyle(tp.slug)}>
+                <span className="pf-carta-style-ic" aria-hidden="true"><Icon size={22} /></span>
+                <span className="pf-carta-style-name">{tp.slug ? styleName(tp.slug) : t('pf.carta.all')}</span>
+              </Button>
+            );
+          })}
+        </div>
+      )}
+
       <div className="pf-carta-bar">
-        {chips.length > 0
-          ? <FilterChips t={t} chips={chips} onClearAll={clearAll} lead={filtersButton} />
-          : <div className="xchips" role="group" aria-label={t('journey.fltAria')}><span className="xchips-lead">{filtersButton}</span></div>}
+        <div className="pf-carta-quick" role="group" aria-label={t('journey.fltAria')}>
+          <Chip kind="filter" selected={fMonth === month}
+            onClick={() => setFMonth(fMonth === month ? null : month)}>{t('tp.card.inSeason')}</Chip>
+          {saved.length > 0 && (
+            <Chip kind="filter" selected={savedOnly}
+              onClick={() => setSavedOnly(!savedOnly)}>{t('tp.flt.savedChip')}</Chip>
+          )}
+          {filtersButton}
+        </div>
         {cards && <span className="pf-carta-count" aria-live="polite">{t(rows.length === 1 ? 'tp.carta.countOne' : 'tp.carta.count', { n: rows.length })}</span>}
       </div>
+      {chips.length > 0 && <FilterChips t={t} chips={chips} onClearAll={clearAll} />}
 
       {sheetOpen && (
         <PlacesFilterSheet
@@ -231,6 +271,13 @@ export function CartaTrips({ titleTag = 'h1', onBack, onOpenJourney }) {
         <section className="pf-carta-sec" aria-labelledby="pf-carta-season">
           <h2 className="pf-carta-h" id="pf-carta-season">{t('pf.carta.inSeason')}</h2>
           <div className="pf-carta-rail">{featured.map((c) => card(c, RAIL_SIZES))}</div>
+        </section>
+      )}
+
+      {cheapest.length > 0 && (
+        <section className="pf-carta-sec" aria-labelledby="pf-carta-cheap">
+          <h2 className="pf-carta-h" id="pf-carta-cheap">{t('pf.carta.cheapest')}</h2>
+          <div className="pf-carta-rail">{cheapest.map((c) => card(c, RAIL_SIZES))}</div>
         </section>
       )}
 

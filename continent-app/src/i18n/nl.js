@@ -7417,6 +7417,7 @@ export const nl = {
   "pf.carta.styles": "Reisstijlen",
   "pf.carta.all": "Alle",
   "pf.carta.inSeason": "Nu in seizoen",
+  "pf.carta.cheapest": "De goedkoopste weken",
   "pf.carta.allTrips": "Alle reizen",
   "pf.carta.empty": "Nog geen reizen in deze stijl.",
   "pf.carta.more": "Meer reizen tonen",

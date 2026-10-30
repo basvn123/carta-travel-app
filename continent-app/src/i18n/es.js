@@ -7417,6 +7417,7 @@ export const es = {
   "pf.carta.styles": "Estilos de viaje",
   "pf.carta.all": "Todos",
   "pf.carta.inSeason": "De temporada ahora",
+  "pf.carta.cheapest": "Las semanas más baratas",
   "pf.carta.allTrips": "Todos los viajes",
   "pf.carta.empty": "Aún no hay viajes de este estilo.",
   "pf.carta.more": "Ver más viajes",

@@ -8025,6 +8025,7 @@ export const en = {
   "pf.carta.styles": "Trip styles",
   "pf.carta.all": "All",
   "pf.carta.inSeason": "In season now",
+  "pf.carta.cheapest": "The cheapest weeks",
   "pf.carta.allTrips": "All trips",
   "pf.carta.empty": "No trips in this style yet.",
   "pf.carta.more": "Show more trips",
