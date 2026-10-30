@@ -2469,3 +2469,8 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T899-a | T899 | The day page, All days and the Carta bot chat were checked only on components in a harness; walk them once with app data, a real trip and the plan-day planner (Execution/P15/T895-T900-plan-days.md) | next task | open |  |
 | T899-b | T899 | AiDayPlanModal is unused by the app but still used by scripts/ai and verify_day_workspace; the standalone day planner's CartaChatPlanner is not on DayBotChat yet (Execution/P15/T895-T900-plan-days.md) | next task | open |  |
 | T899-c | T899 | Deploy the merged batch T895 to T900 (Cloudflare credentials are the owner's) (Execution/P15/T895-T900-plan-days.md) | user | open |  |
+| T901-a | T901 | The old .tpc-* rules of Carta's trip card in styles/86-plan-flow.css are unused since the card became .ctc; remove them (keep the trip page's own .tpc cost card rules) (Execution/P15/T901-T904-plan-home.md) | next task | open |  |
+| T902-a | T902 | Carta's own trips has In season and Saved as quick filters; the artifact's "Under €50 a day" and "7 nights" chips were not built (the sheet's budget bands are relative thirds) (Execution/P15/T901-T904-plan-home.md) | next task | open |  |
+| T903-a | T903 | Up next on the Plan home has no days-planned bar or next steps; the home's trip records carry no booking state or planned days (Execution/P15/T901-T904-plan-home.md) | next task | open |  |
+| T903-b | T903 | Up next has no Plan your days button; the home has no door into the days of a trip that is not open (Execution/P15/T901-T904-plan-home.md) | next task | open |  |
+| T903-c | T903 | Deploy the merged batch T901 to T904 (Cloudflare credentials are the owner's) (Execution/P15/T901-T904-plan-home.md) | user | open |  |
