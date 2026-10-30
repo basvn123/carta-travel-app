@@ -1,0 +1,56 @@
+/* ---- Plan home and Carta's own trips (T901 to T904, the owner's Plan home
+   board 2026-10-30) ---- */
+
+/* T901: one of Carta's trips, the card of Trips for you. The photo carries
+   the badge, the bookmark and, on an ink fade, the countries and the name
+   (two lines at most); under it the flag with places and nights, then one
+   price line, so cards in a row end level. */
+.ctc { position: relative; display: flex; flex-direction: column; min-width: 0; }
+.ctc-hit { display: flex; flex-direction: column; gap: var(--space-2); color: var(--text); text-decoration: none; }
+.ctc-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: var(--space-1); border-radius: var(--radius-card); }
+.ctc-media { position: relative; display: block; aspect-ratio: 4 / 5; overflow: hidden; border-radius: var(--radius-card); background: var(--surface-sunken); }
+.ctc-media .ctc-img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; }
+.ctc-media::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 62%;
+  background: linear-gradient(to top, color-mix(in srgb, var(--text) 82%, transparent), transparent);
+  pointer-events: none;
+}
+.ctc-badge {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: 1;
+  padding: 3px var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text);
+  font-size: var(--text-caption);
+  font-weight: 700;
+}
+.ctc-over { position: absolute; inset: auto var(--space-3) var(--space-3); z-index: 1; display: flex; flex-direction: column; gap: 2px; color: var(--surface); }
+.ctc-where { overflow: hidden; font-size: var(--text-caption); font-weight: 600; white-space: nowrap; text-overflow: ellipsis; opacity: 0.92; }
+.ctc-name {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: var(--text-body);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.01em;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-wrap: balance;
+}
+.ctc-meta { display: flex; align-items: center; gap: var(--space-2); min-width: 0; font-size: var(--text-caption); color: var(--text-2); }
+.ctc-flag { flex: none; }
+.ctc-facts { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.ctc-price { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--space-1) var(--space-2); font-size: var(--text-label); }
+.ctc .ctc-save { position: absolute; top: var(--space-2); right: var(--space-2); z-index: 2; }
+@media (min-width: 600px) { .ctc-name { font-size: var(--text-lead); } .ctc-over { inset: auto var(--space-4) var(--space-4); } }
+@media (hover: hover) {
+  .ctc-media .ctc-img { transition: transform var(--dur-3) var(--ease-out); }
+  .ctc-hit:hover .ctc-img { transform: scale(1.04); }
+}
+@media (prefers-reduced-motion: reduce) { .ctc-media .ctc-img { transition: none; } }
