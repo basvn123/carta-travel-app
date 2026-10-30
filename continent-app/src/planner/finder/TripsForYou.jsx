@@ -1,54 +1,33 @@
-import React, { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
+import React, { Suspense, lazy, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { Button, Segmented } from '../../components/ui/index.js';
-import { ChevronDownIcon, FilterIcon } from '../../components/Icons.jsx';
-import { SheetShell } from '../../browse/SheetShell.jsx';
+import { ChevronDownIcon, ListDayIcon, MapPinIcon, ScaleIcon } from '../../components/Icons.jsx';
 import { SheetHead } from '../flow/PlanStage.jsx';
 import { useBcp47, useMonths, whenText } from '../flow/flowHooks.js';
 import { MAX_COMPARE } from '../../lib/recommend/compare.js';
-import { LEVERS } from '../../lib/recommend/rank.js';
-import { answersOf, useKeepTrip, useLevers } from './finderHooks.js';
+import { answersOf } from './finderHooks.js';
 import { readSkips, writeSkips } from '../../lib/recommend/keptStore.js';
 import { TripCard } from './TripCard.jsx';
 import { TripCompare } from './TripCompare.jsx';
-import { PAGE, answerChips } from './finderText.js';
+import { PAGE, SORTS, answersLine, sortTrips, totalLeavesOut } from './finderText.js';
+
+/** The cheapest whole total in the list (the best-value pin), when two or more have one. */
+const cheapestOf = (trips) => {
+  const whole = sortTrips(trips, 'cheapest').filter((x) => !totalLeavesOut(x) && Number.isFinite(x.total?.group ?? x.total?.perPerson));
+  return whole.length > 1 ? whole[0].id : null;
+};
+
+// maplibre arrives only when the traveller asks for the map (T868).
+const TripsMap = lazy(() => import('./TripsMap.jsx'));
 
 // The Compare ticks for this visit (T802), per answer set: the same answers
 // find the same trips with the same ids, so the ticks hold while the
 // traveller reopens a question and comes back, and clear when an answer
-// changes. Memory only, never stored.
+// changes. Memory only, never stored. The sort and the view keep the same
+// way (T868).
 const TICKS = new Map();
-const answersKey = (s) => JSON.stringify([answersOf(s).guide, s.when, s.party, s.priority, s.from]);
-
-// The lever groups (T803), each a single choice, in the plan's order.
-const LEVER_GROUPS = ['flight', 'food', 'bases'].map((id) => ({ id, values: Object.keys(LEVERS[id].values) }));
-
-/**
- * One lever as a labelled Segmented control (T810). A group the answers
- * left unset has no chosen segment, and the kit's Segmented then has no
- * tab stop: the first segment takes it until one is chosen.
- */
-function LeverControl({ group, value, onPick, t }) {
-  const ref = useRef(null);
-  useLayoutEffect(() => {
-    const items = [...(ref.current?.querySelectorAll('.seg-item') || [])];
-    items.forEach((el, i) => { el.tabIndex = value ? (el.getAttribute('aria-checked') === 'true' ? 0 : -1) : (i === 0 ? 0 : -1); });
-  });
-  return (
-    <div className="tff-lever" ref={ref}>
-      <span className="tff-lever-label" aria-hidden="true">{t(`tf.lever.${group.id}`)}</span>
-      <Segmented
-        label={t(`tf.lever.${group.id}`)}
-        size="sm"
-        block
-        value={value}
-        onChange={(v) => onPick(group.id, v)}
-        options={group.values.map((v) => ({ value: v, label: t(`tf.lever.short.${group.id}.${v}`) }))}
-      />
-    </div>
-  );
-}
-const ONE_BASE = (t) => t.places.length === 1;
+const VIEW = new Map();
+const answersKey = (s) => JSON.stringify([answersOf(s).guide, s.when, s.party, s.priority, s.from, s.places]);
 
 const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
@@ -65,7 +44,7 @@ const motionTiming = () => {
 };
 
 /**
- * Cards move to their new place when a lever re-orders the list: the
+ * Cards move to their new place when a sort re-orders the list: the
  * positions before the change are taken on the tap, and after the new
  * order is laid out each card slides from where it was (transform only,
  * --dur-2, --ease-out). Under reduced motion they jump.
@@ -110,66 +89,65 @@ function useSkips(settings) {
   return [ids, set];
 }
 
-function useTicks(settings) {
+/** A value kept per answer set for this visit (the ticks, the sort, the view). */
+function useVisit(store, settings, fallback) {
   const key = answersKey(settings);
-  const [ticks, setState] = useState(() => TICKS.get(key) || []);
+  const [value, setState] = useState(() => (store.has(key) ? store.get(key) : fallback));
   const seen = useRef(key);
   useEffect(() => {
     if (seen.current === key) return;
     seen.current = key;
-    setState([]);
-  }, [key]);
+    setState(fallback);
+  }, [key]); // eslint-disable-line react-hooks/exhaustive-deps -- the fallback is a constant
   const set = (next) => {
-    TICKS.clear();
-    TICKS.set(key, next);
+    if (store === TICKS) store.clear();
+    store.set(key, next);
     setState(next);
   };
-  return [ticks, set];
+  return [value, set];
 }
 
 /**
- * Trips for you (T798): the answers, then the priced trips, six at a time
- * with "Show more trips" for the rest.
+ * Trips for you, layout A (T798, rebuilt as the gallery in T868, owner's
+ * marks 2026-10-29: "Results layout A, the gallery"; "Remove the levers").
  *
- * The toolbar (T810, owner 2026-10-29: "not structured, not aligned"): the
- * answers as one line with Edit answers, which lists each answer to reopen
- * (Continue there comes straight back), and the three levers as labelled
- * Segmented controls on one row from 769 px; a phone shows one Adjust
- * button that opens them in a sheet. One column on a phone, two on a
- * tablet, three across the wide stage on a desktop (up to 1200 px).
+ * The head: "21 trips for you" with the answers in one line under it (the
+ * places named first, row T859-b; then from, when, who, the likes, and
+ * "+3 more") and Edit answers, which lists every answer to reopen
+ * (Continue there comes straight back, and the search runs again). Then
+ * one row: Sort (Best match, Cheapest, Shortest trip there), Compare once
+ * two trips are ticked, and the Map toggle naming where it goes. The trips
+ * as a photo gallery across the full width: three across from 1024 px,
+ * two on a tablet, one on a phone; six at a time with "Show more trips".
+ * The Flight, Food and Bases levers are gone: the answers decide, and an
+ * answer changed reruns the search instead of a second set of controls.
  *
- * Compare (T802): each card has a Compare tick, up to four. From two ticks
- * a tray at the foot opens the compare table (TripCompare); closing it
- * returns focus to the tray.
+ * Map: the same trips as price pins (TripsMap); a pin picks a trip and its
+ * card shows beside the map (under it on a phone); the card opens it.
  *
- * Levers (T803): flight, food and bases, each starting from the traveller's own answers. A tap
- * re-ranks the list in place (useTripFinder applies the levers, so the
- * card, the receipt and the compare table read the same trips); the
- * answers bar stays as it is and a ticked trip stays ticked while it is
- * in the list. A bases choice no trip fits says so in one line and keeps
- * the whole list.
+ * Compare (T802): each card's small menu ticks it, up to four; from two
+ * ticks Compare in the row opens the compare table (TripCompare).
  *
- *   trips          the ranked trips, with any swap the receipt made
+ *   trips          the ranked trips, with any swap the preview made
  *   markedId       the trip the traveller planned last (back from the planner)
- *   onOpen(trip, el)  open its receipt; `el` gets focus back on close
+ *   onOpen(trip, el)  open the trip; `el` gets focus back on close
  *   onReopen(id)   reopen one question
  *   onPlan(trip)   "Plan this trip" from the compare table (T801's hand-off)
- *   keepWith       { origin, file }: the home airport and the swept file the
- *                  trips were priced with, kept with a kept trip (T807)
+ *   keeper         the heart (useKeepTrip), shared with the searching screen
+ *   ui             the app parts TripFlow hands down (see FindingTrips)
  *
  * Keep and skip (T806): a heart on each card keeps the trip in My trips
- * (keptStore), Skip hides it for these answers; the hidden ones are counted
- * under the list with "Show them again".
+ * (keptStore), Skip in its menu hides it for these answers; the hidden ones
+ * are counted under the list with "Show them again".
  */
-export function TripsForYou({ settings, trips: found, destinations, originName, markedId = null, onBack, onOpen, onReopen, onPlan, cardRefs, ui, keepWith = null }) {
+export function TripsForYou({ settings, trips: found, destinations, originName, markedId = null, onBack, onOpen, onReopen, onPlan, cardRefs, keeper, ui }) {
   const { t, lang } = useI18n();
-  const keeper = useKeepTrip({ destinations, lang, keepWith });
   const [editing, setEditing] = useState(false);
-  const [adjusting, setAdjusting] = useState(false);
-  const adjustRef = useRef(null);
   const [skips, setSkips] = useSkips(settings);
-  const trips = skips.length ? found.filter((x) => !skips.includes(x.id)) : found;
-  const hidden = found.length - trips.length;
+  const [sort, setSortState] = useVisit(VIEW, settings, { sort: 'match', map: false });
+  const kept = skips.length ? found.filter((x) => !skips.includes(x.id)) : found;
+  const trips = sortTrips(kept, sort.sort);
+  const hidden = found.length - kept.length;
   const focusNext = useRef(null);
   const months = useMonths();
   const bcp47 = useBcp47();
@@ -177,26 +155,26 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
   const listId = useId();
   const markedAt = markedId ? trips.findIndex((x) => x.id === markedId) : -1;
   const [shown, setShown] = useState(() => Math.max(PAGE, markedAt + 1));
-  const [ticks, setTicks] = useTicks(settings);
+  const [ticks, setTicks] = useVisit(TICKS, settings, []);
   const [refused, setRefused] = useState(null);
   const [comparing, setComparing] = useState(false);
-  const { levers, setLever } = useLevers(settings);
+  const [pickedId, setPickedId] = useState(null);
   const items = useRef(new Map());
   const order = trips.slice(0, shown).map((x) => x.id).join();
   const snapshot = useReorderMotion(order, items);
-  const pull = (group, value) => {
-    if (levers[group] === value) return;
-    snapshot();
-    setLever(group, value);
-  };
-  // The bases lever kept the whole list when no trip had that many bases.
-  const basesMiss = levers.bases === 'one' ? trips.some((x) => !ONE_BASE(x))
-    : levers.bases === 'several' ? trips.some(ONE_BASE) : false;
-  const otherBases = levers.bases === 'one' ? 'several' : 'one';
   const when = whenText(t, settings.when, months, bcp47);
-  const chips = answerChips(settings, { t, lang, originName, when, trip: trips[0] || null, locale: lang });
+  const answers = answersLine(settings, { t, lang, originName, when, trip: trips[0] || null, locale: lang });
   // A ticked trip that is no longer in the list is not compared.
   const ticked = ticks.map((id) => trips.find((x) => x.id === id)).filter(Boolean);
+  const onMap = sort.map;
+  const picked = (pickedId && trips.find((x) => x.id === pickedId)) || trips[0] || null;
+
+  const setSort = (value) => {
+    if (value === sort.sort) return;
+    snapshot();
+    setSortState({ ...sort, sort: value });
+  };
+  const setMap = (on) => setSortState({ ...sort, map: on });
 
   useEffect(() => {
     // Back from the planner: focus the trip they planned; else the heading.
@@ -206,7 +184,7 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
   }, []); // eslint-disable-line react-hooks/exhaustive-deps -- once, on arrival
 
   useEffect(() => {
-    // After a skip, focus moves to the next trip's total (or the heading).
+    // After a skip, focus moves to the next trip's name (or the heading).
     if (!focusNext.current) return;
     const id = focusNext.current;
     focusNext.current = null;
@@ -233,115 +211,109 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
     }
   };
 
-  // The answers in one line (T810): where from, when and the likes; the
-  // rest are counted and listed under Edit answers.
-  const lead = chips.filter((c) => c.id === 'from' || c.id === 'when' || c.id.startsWith('like:'));
-  const summary = lead.map((c) => c.label);
-  const rest = chips.length - lead.length;
-  const levers3 = LEVER_GROUPS.map((g) => (
-    <LeverControl key={g.id} group={g} value={levers[g.id] || null} onPick={pull} t={t} />
-  ));
+  const card = (trip) => (
+    <TripCard
+      trip={trip}
+      destinations={destinations}
+      marked={trip.id === markedId}
+      onOpen={onOpen}
+      compare={{ ticked: ticks.includes(trip.id), refused: refused === trip.id, full: ticked.length >= MAX_COMPARE, onToggle: toggle }}
+      keep={{ kept: keeper.isKept(trip.id), onKeep: keeper.toggle, onSkip: skipOne }}
+      ref={(el) => { if (el) cardRefs.current.set(trip.id, el); else cardRefs.current.delete(trip.id); }}
+    />
+  );
 
   return (
     <div className="pf-step tff-trips">
       <SheetHead onBack={onBack} backLabel={t('pf.back')} />
       <div className="tff-head">
-        <h2 className="pf-title tff-title" tabIndex={-1} ref={titleRef}>{t('tf.list.title')}</h2>
-        <p className="tff-count" aria-live="polite">{t('tf.list.count', { n: trips.length })}</p>
+        <div className="tff-head-text">
+          <h2 className="pf-title tff-title" tabIndex={-1} ref={titleRef} aria-live="polite">
+            {t(trips.length === 1 ? 'tf.list.titleOne' : 'tf.list.titleN', { n: trips.length })}
+          </h2>
+          {answers.line && (
+            <p className="tff-summary">
+              {answers.line}
+              {answers.rest > 0 && <span className="tff-summary-more">{t('tf.bar.more', { n: answers.rest })}</span>}
+            </p>
+          )}
+        </div>
+        <Button
+          variant="secondary"
+          size="sm"
+          className="tff-edit"
+          aria-expanded={editing}
+          aria-controls={`${listId}-answers`}
+          iconEnd={<ChevronDownIcon size={14} />}
+          onClick={() => setEditing((v) => !v)}
+        >
+          {t('tf.bar.edit')}
+        </Button>
       </div>
+      {editing && (
+        <ul className="tff-ansbar" id={`${listId}-answers`} aria-label={t('tf.chip.change')}>
+          {answers.chips.map((c) => (
+            <li key={c.id}>
+              <Button size="sm" variant="secondary" className="tff-ans" aria-label={t('tf.chip.changeOne', { answer: c.label })} onClick={() => onReopen(c.q)}>
+                {c.label}
+              </Button>
+            </li>
+          ))}
+        </ul>
+      )}
 
       <div className="tff-toolbar">
-        {chips.length > 0 && (
-          <div className="tff-answers">
-            <p className="tff-summary">
-              {summary.join(', ')}
-              {rest > 0 && <span className="tff-summary-more">{t('tf.bar.more', { n: rest })}</span>}
-            </p>
-            <Button
-              variant="secondary"
-              size="sm"
-              className="tff-edit"
-              aria-expanded={editing}
-              aria-controls={`${listId}-answers`}
-              iconEnd={<ChevronDownIcon size={14} />}
-              onClick={() => setEditing((v) => !v)}
-            >
-              {t('tf.bar.edit')}
+        <Segmented
+          label={t('tf.sort.label')}
+          size="sm"
+          className="tff-sort"
+          value={sort.sort}
+          onChange={setSort}
+          options={SORTS.map((v) => ({ value: v, label: t(`tf.sort.${v}`) }))}
+        />
+        <div className="tff-tools">
+          {ticked.length >= 2 && (
+            <Button variant="secondary" size="sm" className="tff-cmp-open" iconStart={<ScaleIcon size={16} />} onClick={() => setComparing(true)}>
+              {t('tf.cmp.openN', { n: ticked.length })}
             </Button>
-            <Button
-              variant="secondary"
-              size="sm"
-              className="tff-adjust"
-              ref={adjustRef}
-              iconStart={<FilterIcon size={16} />}
-              onClick={() => setAdjusting(true)}
-            >
-              {t('tf.lever.adjust')}
-            </Button>
-          </div>
-        )}
-        {editing && (
-          <ul className="tff-ansbar" id={`${listId}-answers`} aria-label={t('tf.chip.change')}>
-            {chips.map((c) => (
-              <li key={c.id}>
-                <Button size="sm" variant="secondary" className="tff-ans" aria-label={t('tf.chip.changeOne', { answer: c.label })} onClick={() => onReopen(c.q)}>
-                  {c.label}
-                </Button>
-              </li>
-            ))}
-          </ul>
-        )}
-        <div className="tff-levers" role="group" aria-label={t('tf.lever.label')}>
-          {levers3}
+          )}
+          <Button
+            variant="secondary"
+            size="sm"
+            className="tff-view"
+            iconStart={onMap ? <ListDayIcon size={16} /> : <MapPinIcon size={16} />}
+            onClick={() => setMap(!onMap)}
+          >
+            {t(onMap ? 'explore.viewList' : 'explore.viewMap')}
+          </Button>
         </div>
       </div>
-      {adjusting && (
-        <SheetShell title={t('tf.lever.sheet')} onClose={() => setAdjusting(false)} className="tff-adjust-sheet" labelId={`${listId}-adjust`} closeLabel={t('tf.lever.done')}>
-          <div className="tff-adjust-body" role="group" aria-label={t('tf.lever.label')}>
-            {levers3}
-            <Button variant="primary" block onClick={() => setAdjusting(false)}>
-              {t('tf.lever.show', { n: trips.length })}
-            </Button>
-          </div>
-        </SheetShell>
+
+      {onMap ? (
+        <div className="tff-mapview">
+          <Suspense fallback={<div className="tff-map is-loading" aria-busy="true"><span className="sr-only">{t('state.loading')}</span></div>}>
+            <TripsMap trips={trips} destinations={destinations} pickedId={picked?.id || null} cheapestId={cheapestOf(trips)} onPick={setPickedId} label={t('tf.map.label')} />
+          </Suspense>
+          {picked && <div className="tff-mapcard">{card(picked)}</div>}
+        </div>
+      ) : (
+        <ol className="tff-list">
+          {trips.slice(0, shown).map((trip) => (
+            <li key={trip.id} ref={(el) => { if (el) items.current.set(trip.id, el); else items.current.delete(trip.id); }}>
+              {card(trip)}
+            </li>
+          ))}
+        </ol>
       )}
-      {basesMiss && (
-        <p className="tff-lever-miss" role="status">
-          <span>{t(`tf.lever.miss.${levers.bases}`)}</span>
-          <Button variant="quiet" size="sm" onClick={() => pull('bases', otherBases)}>{t(`tf.lever.back.${otherBases}`)}</Button>
-        </p>
-      )}
-      <ol className="tff-list">
-        {trips.slice(0, shown).map((trip) => (
-          <li key={trip.id} ref={(el) => { if (el) items.current.set(trip.id, el); else items.current.delete(trip.id); }}>
-            <TripCard
-              trip={trip}
-              destinations={destinations}
-              marked={trip.id === markedId}
-              onOpen={onOpen}
-              ui={ui}
-              compare={{ ticked: ticks.includes(trip.id), refused: refused === trip.id, onToggle: toggle }}
-              keep={{ kept: keeper.isKept(trip.id), onKeep: keeper.toggle, onSkip: skipOne }}
-              ref={(el) => { if (el) cardRefs.current.set(trip.id, el); else cardRefs.current.delete(trip.id); }}
-            />
-          </li>
-        ))}
-      </ol>
       {hidden > 0 && (
         <p className="tff-hidden" role="status">
           <span>{t('tf.keep.hidden', { n: hidden })}</span>
           <Button variant="quiet" size="sm" onClick={() => setSkips([])}>{t('tf.keep.unhide')}</Button>
         </p>
       )}
-      {trips.length > shown && (
+      {!onMap && trips.length > shown && (
         <div className="tff-more">
           <Button variant="quiet" onClick={() => setShown(shown + PAGE)}>{t('tf.list.more')}</Button>
-        </div>
-      )}
-      {ticked.length >= 2 && (
-        <div className="tff-tray" role="region" aria-label={t('tf.cmp.tray')}>
-          <p className="tff-tray-text" aria-live="polite">{t('tf.cmp.count', { n: ticked.length })}</p>
-          <Button variant="primary" size="sm" onClick={() => setComparing(true)}>{t('tf.cmp.open')}</Button>
         </div>
       )}
       {comparing && ticked.length >= 2 && (

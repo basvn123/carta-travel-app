@@ -11,8 +11,11 @@ import { formatMoney } from '../../lib/money.js';
 import { monthName } from '../../lib/dates.js';
 import { cityLabel } from '../../lib/placeName.js';
 import { QUESTIONS } from '../flow/questions.js';
-import { slotTotals } from '../../lib/recommend/slots.js';
+import { SLOT_ROWS, slotTotals } from '../../lib/recommend/slots.js';
+import { stayTierFor } from '../../lib/recommend/adapters/stay.js';
 import { keepHidden, repriceTrip } from '../../lib/recommend/trips.js';
+import { doorMinutes } from '../../lib/recommend/compare.js';
+import { partyText } from '../../lib/party.js';
 
 /** How many trips before "Show more trips" (the CountryMatchCards page). */
 export const PAGE = 6;
@@ -273,3 +276,164 @@ export function whyLine(slot, trip, { t, lang = 'en', destinations = {} }) {
       return '';
   }
 }
+
+/**
+ * The towns of the home airports a search flies from (T867): every ticked
+ * airport in reach (data.meta.home_airports, nearest first), else the one
+ * origin, each town once ("Brussels, Charleroi and Lille" with joinList).
+ */
+export function airportTowns(data, origin = null) {
+  const rows = Array.isArray(data?.meta?.home_airports) ? data.meta.home_airports : [];
+  const towns = (rows.length ? rows.map((a) => a.city || a.iata) : [origin?.name || origin?.iata]).filter(Boolean);
+  return [...new Set(towns)];
+}
+
+/** The places the traveller named (T859), as chips that reopen Tell Carta. */
+export function placeChips(settings) {
+  return (settings.places || [])
+    .map((p) => ({ id: `place:${p.kind}:${p.id}`, q: 'tell', label: p.kind === 'place' ? cityLabel(p.name) : p.name }))
+    .filter((c) => c.label);
+}
+
+/** Who goes ("2 adults, 1 child") as a chip that reopens Who is going. */
+export function partyChip(settings, t) {
+  const p = settings.party || {};
+  return { id: 'who', q: 'who', label: partyText(t, { adults: p.adults || 1, children: p.kids || 0, babies: p.babies || 0 }) };
+}
+
+/**
+ * The answers in one line on Trips for you (T868, rows T859-b): the named
+ * places first, then from, when, who and the likes; the other answers are
+ * counted ("+3 more") and listed under Edit answers.
+ *   -> { line: string, rest: number, chips: every chip, in the line's order first }
+ */
+export function answersLine(settings, { t, lang = 'en', originName = '', when = null, trip = null, locale } = {}) {
+  const places = placeChips(settings);
+  const base = answerChips(settings, { t, lang, originName, when, trip, locale });
+  const pick = (id) => base.find((c) => c.id === id);
+  const likes = base.filter((c) => c.id.startsWith('like:'));
+  const lead = [pick('from'), pick('when'), partyChip(settings, t)].filter(Boolean);
+  const parts = [
+    places.length ? joinList(places.map((c) => c.label), lang) : '',
+    ...lead.map((c) => c.label),
+    // Each like its own part: a like's label may hold an "and" itself
+    // ("Food and wine"), so joining them as a list read "hiking and food and wine".
+    ...likes.map((c) => (lang === 'de' ? c.label : c.label.toLocaleLowerCase(lang))),
+  ].filter(Boolean);
+  const shown = new Set([...lead, ...likes].map((c) => c.id));
+  const others = base.filter((c) => !shown.has(c.id));
+  return { line: parts.join(', '), rest: others.length, chips: [...places, ...lead, ...likes, ...others] };
+}
+
+/** A clock time "06:15" in minutes after midnight, or null. */
+const clock = (hhmm) => {
+  const m = /^(\d{1,2}):(\d{2})/.exec(String(hhmm || ''));
+  return m ? Number(m[1]) * 60 + Number(m[2]) : null;
+};
+
+/**
+ * How long the way there takes, in minutes, for "Shortest trip there"
+ * (T868): door to door where the flight carries its minutes
+ * (compare.js doorMinutes), else the flight's clock times plus the
+ * gateway transfer (local times, so a time zone crossed reads an hour
+ * off), else the transfer alone for a trip with no flight (by train or
+ * car); null when nothing is known.
+ */
+export function thereMinutes(trip) {
+  const door = doorMinutes(trip);
+  if (door != null) return door;
+  const flight = trip.slots?.find((s) => s.id === 'flight');
+  const out = flight?.pick?.facts?.out;
+  const transfer = Number.isFinite(trip.gateway?.minutes) ? trip.gateway.minutes : null;
+  const dep = clock(out?.dep);
+  const arr = clock(out?.arr);
+  if (dep != null && arr != null) return ((arr - dep + 1440) % 1440) + (transfer || 0);
+  if (!out && flight?.pick?.id === 'drive' && transfer != null) return transfer;
+  return null;
+}
+
+/** The sorts on Trips for you (T868): the engine's own order first. */
+export const SORTS = Object.freeze(['match', 'cheapest', 'shortest']);
+
+/**
+ * The trips in one sort, a new array: 'match' keeps the ranked order;
+ * 'cheapest' by the group's total (a trip whose total leaves a line out
+ * after the ones that do not); 'shortest' by thereMinutes, the unknown
+ * last. Ties keep the ranked order.
+ */
+export function sortTrips(trips, sort = 'match') {
+  if (sort !== 'cheapest' && sort !== 'shortest') return trips.slice();
+  const at = new Map(trips.map((x, i) => [x.id, i]));
+  const keyOf = sort === 'cheapest'
+    ? (x) => [totalLeavesOut(x) ? 1 : 0, Number.isFinite(x.total?.group) ? x.total.group : Number.isFinite(x.total?.perPerson) ? x.total.perPerson : Infinity]
+    : (x) => { const m = thereMinutes(x); return [m == null ? 1 : 0, m ?? Infinity]; };
+  const keys = new Map(trips.map((x) => [x.id, keyOf(x)]));
+  return trips.slice().sort((a, b) => {
+    const ka = keys.get(a.id);
+    const kb = keys.get(b.id);
+    return (ka[0] - kb[0]) || (ka[1] - kb[1]) || (at.get(a.id) - at.get(b.id));
+  });
+}
+
+/** How many people the group total is for: every seat and every baby (the preview's count). */
+export const groupHead = (trip) => Math.max(1, (trip.party?.head ?? ((trip.party?.adults || 0) + (trip.party?.children || 0))) + (trip.party?.babies || 0));
+
+/**
+ * The card's one line (T869): the strongest reason, then the catch, each
+ * as its sentence ("Beach 2 min away. Busy in July."). Either may be
+ * missing; '' when both are.
+ */
+export function cardLine(trip, { t, lang = 'en' }) {
+  const reason = trip.reasons?.[0] ? factText(trip.reasons[0], { t, lang }) : '';
+  const caught = trip.catch ? factText(trip.catch, { t, lang }) : '';
+  return { reason, caught };
+}
+
+const STAY_LINES = new Set(['home', 'dorm', 'private', 'room', 'hotel', 'hotel2', 'hotel3', 'hotel4', 'hotel5']);
+
+/** The trip's nights from the setup: the dates' own length, else the nights asked. */
+const nightsOf = (w) => (w.mode === 'exact' && w.start && w.end
+  ? Math.max(1, Math.round((Date.parse(`${w.end}T12:00:00Z`) - Date.parse(`${w.start}T12:00:00Z`)) / 86400000))
+  : w.nights);
+
+/**
+ * The stages of real work in the traveller's words (T867): the flights
+ * from the towns of the airports in reach and when ("Flights from
+ * Brussels and Eindhoven in December"), the stays for who goes and how
+ * long ("Hotels for 2 adults, 7 nights"), then matching the places to what
+ * they like. A stage with nothing to do has no line: with no home airport
+ * there is no flight line.
+ *
+ *   -> [{ key: 'flights' | 'stays' | 'likes', text }]
+ */
+export function stageLines(settings, { t, lang = 'en', when, data = null, origin = null, stayTier = null }) {
+  const g = settings.guide;
+  const out = [];
+  const towns = airportTowns(data, origin);
+  if (g.reach === 'overland') {
+    const from = settings.from?.name || origin?.name || '';
+    if (from) out.push({ key: 'flights', text: t('tf.load.overland', { city: from }) });
+  } else if (towns.length) {
+    const city = joinList(towns, lang);
+    const w = settings.when;
+    let text = t('tf.load.flightsAny', { city });
+    if (w.mode === 'exact' && when?.start) {
+      text = t('tf.load.flights', { city, dates: when.end ? t('tf.chip.dates', { start: when.start, end: when.end }) : when.start });
+    } else if (w.mode === 'months' && when?.start) {
+      text = t('tf.stage.flightsIn', { city, months: when.start });
+    }
+    out.push({ key: 'flights', text });
+  }
+  const stayRow = SLOT_ROWS.find((r) => r.id === 'stay');
+  const tier = stayTierFor({ stayTier: stayTier || null, priority: settings.priority }, stayRow);
+  const p = settings.party || {};
+  const who = partyText(t, { adults: p.adults || 1, children: p.kids || 0, babies: p.babies || 0 });
+  out.push({ key: 'stays', text: t(`tf.stage.stay.${STAY_LINES.has(tier) ? tier : 'home'}`, { who, n: nightsOf(settings.when) }) });
+  const likes = g.likes.map((k) => likeLabel(t, k)).map((x) => (lang === 'de' ? x : x.toLocaleLowerCase(lang)));
+  // A like whose label is words of its own ("Food and wine") joins with a
+  // comma, so the line never reads "hiking and food and wine".
+  const joined = likes.some((x) => /\s/.test(x)) ? likes.join(', ') : joinList(likes, lang);
+  out.push({ key: 'likes', text: likes.length ? t('tf.load.likes', { likes: joined }) : t('tf.load.likesAny') });
+  return out;
+}
+

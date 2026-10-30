@@ -78,42 +78,61 @@
   .tff-check-mark svg { transition: none; }
 }
 
-/* ---- Trips for you (T798, rebuilt in T810) ---- */
-/* The wide stage: this screen alone takes up to 1200 px on a desktop
-   (PlanStage's is-wide is 640 px for the likes question too). */
+/* ---- Searching and Trips for you, full width (T867, T868) ---- */
+/* From 769 px both take the whole width of the Plan page: the white sheet
+   runs from gutter to gutter (layout A, owner 2026-10-29), so the cards
+   the search finds first sit where the list will be. */
 @media (min-width: 769px) {
-  .pf-stage.is-wide .pf-sheet:has(.tff-trips) { width: min(1200px, 100%); padding: var(--space-5) var(--space-6) var(--space-6); }
+  .pf-stage.is-wide:has(.tff-trips, .tff-load) { padding: var(--space-5) var(--space-5) var(--space-8); }
+  .pf-stage.is-wide .pf-sheet:has(.tff-trips, .tff-load) { width: 100%; padding: var(--space-5) var(--space-6) var(--space-6); }
 }
 
-.tff-trips { gap: var(--space-4); }
-.tff-head { display: grid; gap: var(--space-1); justify-items: center; text-align: center; }
-.tff-head .pf-title { margin: 0; }
-.tff-count { margin: 0; font-size: var(--text-label); color: var(--text-2); }
+/* Searching: the working stage has one still brown dot because it is live;
+   done stages take an ink tick. No pulse: a loop belongs to Ask Carta and
+   the home page only. Each stage fades in once. */
+.tff-check.is-working .tff-check-mark::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--action);
+}
+.tff-check { animation: tff-in var(--dur-2) var(--ease-out) both; }
+@keyframes tff-in { from { opacity: 0; } to { opacity: 1; } }
+.tff-early { margin-top: var(--space-5); }
+.tff-early > li { animation: tff-in var(--dur-2) var(--ease-out) both; }
+@media (prefers-reduced-motion: reduce) {
+  .tff-check, .tff-early > li { animation: none; }
+}
 
-/* The toolbar: the answers as one line with Edit answers (and Adjust on a
-   phone), then the three levers, labelled, on one row from 769 px. */
-.tff-toolbar { display: grid; gap: var(--space-3); }
-.tff-answers {
+/* The head: "21 trips for you", the answers in one line under it, Edit
+   answers on the right. */
+.tff-trips { gap: var(--space-4); }
+.tff-head {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-2) var(--space-3);
-  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  background: var(--surface);
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
 }
+.tff-head-text { display: grid; gap: var(--space-1); flex: 1 1 280px; min-width: 0; }
+.tff-title {
+  margin: 0;
+  font-size: var(--text-title);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  color: var(--text);
+  text-wrap: balance;
+}
+@media (min-width: 769px) { .tff-title { font-size: var(--text-headline); letter-spacing: -0.01em; } }
 .tff-summary {
-  flex: 1 1 220px;
-  min-width: 0;
   margin: 0;
   font-size: var(--text-body);
-  font-weight: 500;
   line-height: var(--leading-ui);
-  color: var(--text);
+  color: var(--text-2);
 }
-.tff-summary-more { margin-left: var(--space-2); color: var(--text-2); white-space: nowrap; }
-.tff-edit.btn, .tff-adjust.btn { flex: none; }
+.tff-summary-more { margin-left: var(--space-2); white-space: nowrap; }
+.tff-edit.btn { flex: none; }
 .tff-edit[aria-expanded="true"] .btn-icon { transform: rotate(180deg); }
 .tff-ansbar {
   display: flex;
@@ -125,38 +144,37 @@
 }
 .tff-ans.btn { border-radius: var(--radius-pill); font-weight: 500; }
 
-.tff-levers { display: none; }
-.tff-lever { display: grid; gap: var(--space-1); min-width: 0; }
-.tff-lever-label { font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
-.tff-lever .seg-item { white-space: nowrap; }
-@media (min-width: 769px) {
-  .tff-adjust.btn { display: none; }
-  .tff-levers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); }
-}
-.tff-adjust-body { display: grid; gap: var(--space-4); padding: var(--space-4); }
-.tff-lever-miss {
+/* One row: the sort, then Compare (from two ticks) and the view toggle.
+   On a phone the sort takes its own row and wraps its words inside the box. */
+.tff-toolbar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0 var(--space-2);
-  margin: 0;
-  font-size: var(--text-label);
-  color: var(--text-2);
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-3);
+}
+.tff-sort.seg { display: flex; flex: 1 1 100%; }
+.tff-sort .seg-item { flex: 1 1 0; min-width: 0; padding: var(--space-1) var(--space-2); white-space: normal; text-align: center; line-height: var(--leading-tight); }
+.tff-tools { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-left: auto; }
+@media (min-width: 769px) {
+  .tff-sort.seg { display: inline-flex; flex: 0 1 auto; }
+  .tff-sort .seg-item { flex: none; padding: 0 var(--space-3); white-space: nowrap; }
 }
 
+/* The gallery: one card on a phone, two on a tablet, three from 1024 px. */
 .tff-list {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-5) var(--space-4);
+  gap: var(--space-6) var(--space-5);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 @media (min-width: 600px) { .tff-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (min-width: 1100px) { .tff-list { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 1024px) { .tff-list { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .tff-more { display: flex; justify-content: center; }
 
-/* ---- The trip card (T810): photo first, the Airbnb way ---- */
+/* ---- The trip card (T869): the photo, then the words on the sheet ---- */
 /* The card blends with the page: the photo carries the corners, the text
    sits under it on the sheet's white, no box and no border. */
 .tff-card {
@@ -169,19 +187,16 @@
 }
 .tff-card-media { position: relative; }
 .tff-photos {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 2px;
   aspect-ratio: 3 / 2;
   border-radius: var(--radius-card);
   overflow: hidden;
   background: var(--surface-sunken);
 }
-.tff-photos.is-2 { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
 /* HeroImage sets width and height attributes for the ratio; without an
    explicit height the 3 x 2 attributes drew a 2 px strip (T809 audit). */
 .tff-photo { display: block; width: 100%; height: 100%; min-height: 0; object-fit: cover; }
-.tff-card.is-marked .tff-photos { outline: 2px solid var(--select-border); outline-offset: 2px; }
+.tff-card.is-marked .tff-photos,
+.tff-card.is-ticked .tff-photos { outline: 2px solid var(--select-border); outline-offset: 2px; }
 @media (hover: hover) {
   .tff-card .tff-photo { transition: transform var(--dur-2) var(--ease-out); }
   .tff-card:hover .tff-photo { transform: scale(1.03); }
@@ -208,8 +223,9 @@
 .tff-card-heart.icon-btn { position: absolute; top: var(--space-2); right: var(--space-2); }
 .tff-card-heart.is-kept svg, .tff-pv-heart.is-kept svg { fill: currentColor; }
 
-.tff-card-body { display: grid; gap: var(--space-2); padding: 0 var(--space-1); }
-.tff-card-name { margin: 0; font-size: var(--text-lead); font-weight: 600; line-height: var(--leading-tight); }
+.tff-card-body { display: grid; gap: var(--space-1); padding: 0 var(--space-1); }
+.tff-card-top { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: var(--space-2); }
+.tff-card-name { margin: 0; padding-top: var(--space-2); font-size: var(--text-lead); font-weight: 600; line-height: var(--leading-tight); }
 .tff-card-open.btn {
   display: inline;
   height: auto;
@@ -223,6 +239,39 @@
 }
 @media (hover: hover) { .tff-card-open.btn:hover { background: none; text-decoration: underline; text-underline-offset: 3px; } }
 .tff-card-open .btn-label { display: inline; }
+.tff-card-more { position: relative; margin: calc(-1 * var(--space-1)) calc(-1 * var(--space-2)) 0 0; }
+.tff-card-more .icon-btn { color: var(--text-2); }
+.tff-card-pop {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: var(--z-popover);
+  display: flex;
+  flex-direction: column;
+  min-width: 220px;
+  padding: var(--space-1);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  box-shadow: var(--elev-2);
+  cursor: default;
+}
+.tff-card-pop .tff-card-item.btn {
+  justify-content: flex-start;
+  width: 100%;
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: var(--text-body);
+  font-weight: 500;
+}
+.tff-card-pop .tff-card-item .btn-icon { color: var(--text-2); }
+.tff-card-pop .tff-card-item[aria-checked="true"] { background: var(--select-bg); color: var(--select-ink); }
+.tff-card-pop .tff-card-item[aria-checked="true"] .btn-icon { color: var(--select-ink); }
+.tff-card-pop .tff-card-item .btn-label { flex: 1; text-align: left; }
+.tff-card-item:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+@media (hover: hover) { .tff-card-pop .tff-card-item.btn:hover { background: var(--surface-hover); } }
+.tff-card-full { margin: 0; padding: var(--space-1) var(--space-3) var(--space-2); font-size: var(--text-caption); color: var(--text-2); }
 
 .tff-card-meta, .tff-pv-meta {
   display: flex;
@@ -235,71 +284,22 @@
 }
 .tff-meta-item { display: inline-flex; align-items: center; gap: var(--space-1); }
 .tff-meta-item svg { flex: none; color: var(--text-3); }
+/* The reason and the catch: one line of two short sentences. */
+.tff-card-line { margin: 0; font-size: var(--text-label); line-height: var(--leading-ui); color: var(--text-2); }
+.tff-card-catch { color: var(--text); }
+.tff-card-total { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--space-1); margin: var(--space-1) 0 0; }
+.tff-total-eur { font-size: var(--text-lead); font-weight: 700; line-height: var(--leading-tight); color: var(--text); font-variant-numeric: tabular-nums; }
+.tff-total-unit { font-size: var(--text-label); color: var(--text-2); }
+.tff-card-marks { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); margin: 0; }
 .tff-card-mark {
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
-  margin: 0;
   font-size: var(--text-caption);
   font-weight: 600;
   color: var(--select-ink);
 }
-
-.tff-card-price { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-1) var(--space-2); }
-.tff-total { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--space-1); margin: 0; }
-.tff-total-eur { font-size: var(--text-title); font-weight: 700; line-height: var(--leading-tight); color: var(--text); }
-.tff-total-unit { font-size: var(--text-label); color: var(--text); }
-.tff-total-note { font-size: var(--text-caption); color: var(--text-2); }
-.tff-budget {
-  display: inline-flex;
-  align-items: center;
-  min-height: 24px;
-  padding: 0 var(--space-2);
-  border-radius: var(--radius-sm);
-  background: var(--surface-sunken);
-  color: var(--text-2);
-  font-size: var(--text-caption);
-  font-weight: 600;
-}
-.tff-budget.is-over { color: var(--amber-ink); }
-
-.tff-three {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-2);
-  margin: 0;
-}
-.tff-three > div { display: flex; align-items: center; gap: var(--space-1); min-width: 0; }
-.tff-three dt { display: inline-flex; color: var(--text-2); }
-.tff-three dd { margin: 0; min-width: 0; font-size: var(--text-body); font-weight: 600; color: var(--text); }
-.tff-three .not-yet { font-size: var(--text-caption); font-weight: 500; color: var(--text-3); }
-
-.tff-reasons {
-  display: grid;
-  gap: var(--space-1);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  font-size: var(--text-caption);
-  color: var(--text-2);
-  line-height: var(--leading-ui);
-}
-.tff-reason { display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: var(--space-2); align-items: start; }
-.tff-reason > svg { margin-top: 2px; color: var(--text-3); }
-.tff-reason > span { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.tff-reason.is-catch { color: var(--text); }
-.tff-reason.is-catch > svg { color: var(--amber-ink); margin-top: 1px; }
-
-/* The foot: Compare and Skip, quiet, on one line. */
-.tff-card-foot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2);
-  margin-top: auto;
-  padding: 0 0 0 var(--space-1);
-  cursor: default;
-}
+/* TogetherSheet's Skip keeps the quiet ink label. */
 .tff-skip-one.btn { color: var(--text-2); font-weight: 500; }
 
 .tff-hidden {
@@ -317,6 +317,71 @@
   .tff-card .tff-photo { transition: none; }
   .tff-card:hover .tff-photo { transform: none; }
 }
+
+/* ---- The Map view (T868): the price pins, the picked trip beside them ---- */
+.tff-mapview { display: grid; gap: var(--space-4); }
+.tff-map {
+  position: relative;
+  height: min(60dvh, 520px);
+  min-height: 320px;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  background: var(--surface-sunken);
+}
+.tff-map-frame { position: absolute; inset: 0; }
+.tff-map-frame canvas { opacity: 0; transition: opacity var(--dur-3) var(--ease-out); }
+.tff-map-frame.is-live canvas { opacity: 1; }
+.tff-map-failed {
+  position: absolute;
+  inset: auto var(--space-3) var(--space-3);
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  font-size: var(--text-label);
+  color: var(--text-2);
+}
+@media (min-width: 1024px) {
+  .tff-mapview { grid-template-columns: minmax(300px, 360px) minmax(0, 1fr); align-items: start; }
+  .tff-mapview .tff-map { order: 2; height: min(70dvh, 640px); }
+  .tff-mapcard { order: 1; }
+}
+/* Price pins (the house rule): the figure semibold first, the name after it,
+   on the surface with a border edge; a 44 px hit box whatever the drawn
+   size; the cheapest in the list takes the best-value marker; the picked
+   one is the one selected state. */
+.tff-pin {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  line-height: var(--leading-tight);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.tff-pin::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--tap);
+  height: var(--tap);
+  transform: translate(-50%, -50%);
+}
+.tff-pin-eur { font-weight: 600; font-variant-numeric: tabular-nums; }
+.tff-pin:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.tff-pin.is-cheapest { border-color: var(--best); background: var(--best); }
+.tff-pin.is-picked { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); outline: 1px solid var(--select-border); }
+@media (hover: hover) { .tff-pin:hover { border-color: var(--text-3); } }
+@media (prefers-reduced-motion: reduce) { .tff-map-frame canvas { transition: none; } }
 
 /* ---- The trip preview (T811): a wide dialog on a desktop, a sheet that opens half way on a phone ---- */
 .tff-pv-scrim {
@@ -663,48 +728,7 @@
 /* The kit Button wraps its children in .btn-label; these rows lay out the children themselves. */
 .tff-opt .btn-label { display: contents; }
 
-/* ---- Compare (T802): the tick, the tray and the table ---- */
-.tff-tick {
-  position: relative;
-  z-index: calc(var(--z-base) + 1);
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0 var(--space-2);
-}
-.tff-tick input { flex: none; width: 20px; height: 20px; margin: 0; accent-color: var(--action); cursor: pointer; }
-.tff-tick label {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--tap);
-  font-size: var(--text-label);
-  font-weight: 600;
-  color: var(--text);
-  cursor: pointer;
-}
-.tff-tick-full { flex-basis: 100%; margin: 0; font-size: var(--text-caption); color: var(--text-2); }
-
-/* The tray floats at the foot of the list, clear of the bottom nav and the
-   phone's safe area; on a desktop it is a slim bar, not a band. */
-.tff-tray {
-  position: sticky;
-  bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
-  z-index: var(--z-tray);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  margin-top: var(--space-4);
-  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
-  background: var(--surface);
-  border-radius: var(--radius-card);
-  box-shadow: var(--elev-2);
-}
-.tff-tray-text { margin: 0; font-size: var(--text-body); font-weight: 600; color: var(--text); }
-@media (min-width: 769px) {
-  .tff-tray { width: min(100%, 440px); margin-inline: auto; }
-}
-
+/* ---- Compare (T802): the table (the tick is in the card's menu since T869) ---- */
 @media (max-width: 768px) {
   .fsheet.tff-cmp-sheet { height: 100dvh; max-height: 100dvh; max-width: none; border-radius: 0; }
 }
@@ -764,68 +788,6 @@
 .tff-tog-foot { display: grid; gap: var(--space-2); }
 .tff-tog-hint, .tff-tog-sent { margin: 0; font-size: var(--text-label); color: var(--text-2); }
 .tff-tog-sent input, .mt-kept-sent input { width: 100%; margin-top: var(--space-1); font: inherit; }
-
-/* ---- T825: Trips for you as Booking's result list (owner 2026-10-29) ----
-   One column on every width, up to 960 px. A card is a row from 769 px:
-   the photos left (about 280 px), what the trip is in the middle (name,
-   where and how long, the strongest reason and the catch, Compare and
-   Skip), and the price on the right: what it covers, the total a person,
-   the group's, the budget note, the full cost on request and See the trip.
-   A phone stacks the three, the photo on top. */
-.tff-list { grid-template-columns: minmax(0, 1fr); max-width: 960px; margin-inline: auto; gap: var(--space-4); }
-@media (min-width: 600px) { .tff-list { grid-template-columns: minmax(0, 1fr); } }
-@media (min-width: 1100px) { .tff-list { grid-template-columns: minmax(0, 1fr); } }
-
-.tff-card {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  grid-template-areas: "media" "body" "price" "foot";
-  gap: var(--space-3);
-  padding: var(--space-3);
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius-card);
-  background: var(--surface);
-  height: auto;
-}
-.tff-card-media { grid-area: media; }
-.tff-card-body { grid-area: body; align-content: start; padding: 0; }
-.tff-card-price { grid-area: price; display: flex; flex-direction: column; align-items: stretch; gap: var(--space-1); }
-.tff-card-foot { grid-area: foot; padding: 0; }
-.tff-price-for { margin: 0; font-size: var(--text-caption); color: var(--text-2); }
-.tff-total { align-items: baseline; }
-.tff-total-unit { font-size: var(--text-caption); color: var(--text-2); }
-.tff-total-group { margin: 0; font-size: var(--text-label); color: var(--text-2); font-variant-numeric: tabular-nums; }
-.tff-card-price .tff-budget { align-self: flex-start; }
-.tff-cost-toggle.btn { align-self: flex-start; margin-left: calc(-1 * var(--space-2)); }
-.tff-card-price .tff-three { grid-template-columns: minmax(0, 1fr); gap: var(--space-1); padding: var(--space-2) 0; border-top: 1px solid var(--border-soft); }
-.tff-card-price .tff-three[hidden] { display: none; }
-.tff-card-price .tff-three > div { justify-content: space-between; gap: var(--space-2); }
-.tff-card-price .tff-three dt { display: inline-flex; align-items: center; gap: var(--space-1); font-size: var(--text-caption); color: var(--text-2); min-width: 0; }
-.tff-card-price .tff-three dd { font-size: var(--text-label); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.tff-card-see.btn { margin-top: var(--space-1); }
-
-@media (min-width: 769px) {
-  .tff-card {
-    grid-template-columns: 280px minmax(0, 1fr) minmax(190px, 220px);
-    grid-template-areas: "media body price" "media foot price";
-    grid-template-rows: 1fr auto;
-    gap: var(--space-2) var(--space-5);
-    padding: var(--space-3);
-  }
-  .tff-card-media .tff-photos { aspect-ratio: auto; height: 100%; min-height: 200px; }
-  .tff-card-price {
-    align-items: flex-end;
-    text-align: right;
-    padding-left: var(--space-4);
-    border-left: 1px solid var(--border-soft);
-  }
-  .tff-card-price .tff-total { justify-content: flex-end; }
-  .tff-card-price .tff-budget,
-  .tff-cost-toggle.btn { align-self: flex-end; margin-left: 0; margin-right: calc(-1 * var(--space-2)); }
-  .tff-card-price .tff-three { width: 100%; text-align: left; }
-  .tff-card-see.btn { align-self: stretch; margin-top: auto; }
-}
-@media (hover: hover) { .tff-card:hover { border-color: var(--border); } }
 
 /* ---- T864: Find my flight first, one compact row a place (DoorScreens). A
    72 px photo, the name and country, the flight there and home with the

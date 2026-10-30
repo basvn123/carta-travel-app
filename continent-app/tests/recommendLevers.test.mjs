@@ -12,7 +12,7 @@ import RECOMMEND from "../config/recommend.json" with { type: "json" };
 import { LEVERS, applyLevers, findTrips, flightPull, FLIGHT_PULL } from "../src/lib/recommend/rank.js";
 import { buildTrips } from "../src/lib/recommend/trips.js";
 import { PROFILES } from "../src/lib/lifestyleProfiles.js";
-import { normalizeSettings, LEVER_VALUES } from "../src/planner/flow/tripSettings.js";
+import { normalizeSettings } from "../src/planner/flow/tripSettings.js";
 
 test("each lever value maps to its setting", () => {
   assert.deepEqual(LEVERS.flight.values, { cheapest: "price", quickest: "comfort", times: "balanced" });
@@ -24,13 +24,13 @@ test("each lever value maps to its setting", () => {
   assert.equal(LEVERS.bases.setting, "guide.shapes");
 });
 
-test("the settings keep the levers, and only known values", () => {
-  const s = normalizeSettings({ guide: { levers: { flight: "quickest", food: "nope", bases: "one", extra: "x" } } });
-  assert.deepEqual(s.guide.levers, { flight: "quickest", bases: "one" });
-  assert.deepEqual(normalizeSettings({}).guide.levers, {});
-  for (const [k, def] of Object.entries(LEVERS)) {
-    assert.deepEqual(LEVER_VALUES[k], Object.keys(def.values), `the settings know every ${k} value`);
-  }
+// T868: Trips for you has no levers any more; settings saved with them still
+// load, and the levers are dropped (the engine's own levers stay for tests).
+test("settings saved with the old levers load, without them", () => {
+  const s = normalizeSettings({ guide: { likes: ["food"], levers: { flight: "quickest", food: "cook", bases: "one" } } });
+  assert.equal(s.guide.levers, undefined);
+  assert.deepEqual(s.guide.likes, ["food"]);
+  assert.equal(normalizeSettings({}).guide.levers, undefined);
 });
 
 const slot = (id, eur, facts = null) => ({ id, eur, eurGroup: eur == null ? null : eur * 2, owner: "carta", pick: facts ? { facts } : null, options: null });

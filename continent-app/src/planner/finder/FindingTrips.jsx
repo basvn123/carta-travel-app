@@ -4,11 +4,10 @@ import { Button } from '../../components/ui/index.js';
 import { CheckIcon } from '../../components/Icons.jsx';
 import { SheetHead } from '../flow/PlanStage.jsx';
 import { useBcp47, useMonths, whenText } from '../flow/flowHooks.js';
-import { SLOT_ROWS } from '../../lib/recommend/slots.js';
-import { stayTierFor } from '../../lib/recommend/adapters/stay.js';
-import { STAGES, useLoaderDone, useTripFinder } from './finderHooks.js';
-import { answerChips, joinList, likeLabel, widenQuestion } from './finderText.js';
+import { useKeepTrip, useTripFinder } from './finderHooks.js';
+import { stageLines, widenQuestion } from './finderText.js';
 import { TripsForYou } from './TripsForYou.jsx';
+import { TripCard } from './TripCard.jsx';
 import { TripPreview } from './TripPreview.jsx';
 import { planOf } from './planOf.js';
 import '../../styles/87-trip-finder.css';
@@ -22,45 +21,25 @@ export { dropsFor } from '../../lib/recommend/kept.js';
 export { FlightFirstScreen, KnowBuildScreen } from './DoorScreens.jsx';
 
 const PARTY_TITLE = { solo: 'solo', couple: 'couple', friends: 'friends', family: 'family', group: 'group' };
-
-/** The four lines of real work, in the traveller's words. */
-function checkLines(settings, { t, lang, when, originName }) {
-  const g = settings.guide;
-  const dates = when.start && when.end ? t('tf.chip.dates', { start: when.start, end: when.end }) : when.start;
-  const flights = g.reach === 'overland'
-    ? t('tf.load.overland', { city: originName })
-    : dates ? t('tf.load.flights', { city: originName, dates }) : t('tf.load.flightsAny', { city: originName });
-  const stayRow = SLOT_ROWS.find((r) => r.id === 'stay');
-  const tier = stayTierFor({ stayTier: settings.stayTier || null, priority: settings.priority }, stayRow);
-  const nights = settings.when.mode === 'exact' && settings.when.start && settings.when.end
-    ? Math.max(1, Math.round((Date.parse(`${settings.when.end}T12:00:00Z`) - Date.parse(`${settings.when.start}T12:00:00Z`)) / 86400000))
-    : settings.when.nights;
-  const likes = g.likes.map((k) => likeLabel(t, k)).map((x) => (lang === 'de' ? x : x.toLocaleLowerCase(lang)));
-  return {
-    flights,
-    stays: t(`tf.load.stays.${tier}`, { n: nights }),
-    food: t('tf.load.food'),
-    likes: likes.length ? t('tf.load.likes', { likes: joinList(likes, lang) }) : t('tf.load.likesAny'),
-  };
-}
-
 /**
- * The loader (T797): the answers echoed back as chips, then four checks
- * that tick as the engine finishes each stage. It stands as long as the
- * work, and at least 1.2 s so it can be read; a tap anywhere skips to the
- * trips once they exist. Under reduced motion nothing moves; the checks
- * still tick.
+ * Searching (T797, rebuilt in T867): "Finding trips for the two of you",
+ * then the stages of real work, each named from the answers, ticking as
+ * the engine finishes it (useTripFinder); the working one carries a live
+ * dot. The best trips priced so far show under the stages as cards, so the
+ * wait turns into the list. It stands exactly as long as the work: no
+ * minimum, no made-up delay. Under reduced motion nothing moves; the
+ * stages still tick.
  */
-export function FindingTrips({ settings, finder, onBack, onWiden, guide, onSkip }) {
+export function FindingTrips({ settings, finder, onBack, onWiden, guide, ui, onOpen, cardRefs, keeper }) {
   const { t, lang } = useI18n();
   const months = useMonths();
   const bcp47 = useBcp47();
   const titleRef = useRef(null);
   const when = whenText(t, settings.when, months, bcp47);
-  const originName = finder.origin?.name || '';
-  const lines = useMemo(() => checkLines({ ...settings, stayTier: finder.input?.stayTier }, { t, lang, when, originName }),
-    [settings, finder.input, t, lang, when.start, when.end, originName]); // eslint-disable-line react-hooks/exhaustive-deps -- when is rebuilt each render from its parts
-  const chips = answerChips(settings, { t, lang, originName, when, locale: lang });
+  const lines = useMemo(
+    () => stageLines(settings, { t, lang, when, data: finder.data, origin: finder.origin, stayTier: finder.stayTier }),
+    [settings, finder.data, finder.origin, finder.stayTier, t, lang, when.start, when.end], // eslint-disable-line react-hooks/exhaustive-deps -- when is rebuilt each render from its parts
+  );
   const failed = finder.trips && finder.trips.length === 0;
   const kind = PARTY_TITLE[settings.party.kind] || 'solo';
 
@@ -82,41 +61,47 @@ export function FindingTrips({ settings, finder, onBack, onWiden, guide, onSkip 
     );
   }
 
-  const working = STAGES.find((s) => !finder.stages[s]);
+  const working = lines.find((l) => !finder.stages[l.key]);
+  const early = finder.early || [];
   return (
-    // A tap anywhere skips once the trips exist; the button below is the
-    // same skip for a keyboard.
-    <div className="pf-step tff-load" onClick={onSkip}>
+    <div className="pf-step tff-load">
       <SheetHead onBack={onBack} backLabel={t('pf.back')} />
       <h2 className="pf-title" tabIndex={-1} ref={titleRef}>{t(`tf.load.title.${kind}`)}</h2>
-      {chips.length > 0 && (
-        <ul className="tff-chips" aria-label={t('tf.chip.label')}>
-          {chips.map((c) => <li key={c.id} className="tff-chip">{c.label}</li>)}
-        </ul>
-      )}
       <ol className="tff-checks" aria-live="polite">
-        {STAGES.map((s) => {
-          const state = finder.stages[s] ? 'is-done' : s === working ? 'is-working' : 'is-waiting';
+        {lines.map((l) => {
+          const done = finder.stages[l.key];
+          const state = done ? 'is-done' : l === working ? 'is-working' : 'is-waiting';
           return (
-            <li key={s} className={`tff-check ${state}`}>
-              <span className="tff-check-mark" aria-hidden="true">{finder.stages[s] && <CheckIcon size={12} />}</span>
-              <span>{lines[s]}</span>
-              {finder.stages[s] && <span className="sr-only">{t('tf.load.done')}</span>}
+            <li key={l.key} className={`tff-check ${state}`}>
+              <span className="tff-check-mark" aria-hidden="true">{done && <CheckIcon size={12} />}</span>
+              <span>{l.text}</span>
+              {done && <span className="sr-only">{t('tf.load.done')}</span>}
             </li>
           );
         })}
       </ol>
-      {finder.trips && (
-        <div className="tff-skip">
-          <Button variant="quiet" size="sm" onClick={onSkip}>{t('tf.load.show')}</Button>
-        </div>
+      {early.length > 0 && (
+        <ol className="tff-list tff-early" aria-label={t('tf.load.first')}>
+          {early.map((trip) => (
+            <li key={trip.id}>
+              <TripCard
+                trip={trip}
+                destinations={finder.data?.destinations}
+                onOpen={onOpen}
+                ui={ui}
+                keep={{ kept: keeper.isKept(trip.id), onKeep: keeper.toggle }}
+                ref={(el) => { if (el) cardRefs.current.set(trip.id, el); else cardRefs.current.delete(trip.id); }}
+              />
+            </li>
+          ))}
+        </ol>
       )}
     </div>
   );
 }
 
 /**
- * The finder screen behind question 7 (g:trips): the loader, then Trips
+ * The finder screen behind question 7 (g:trips): searching, then Trips
  * for you. TripFlow loads it lazily, with lib/recommend, so the Plan tab's
  * first load does not carry the engine.
  *
@@ -126,40 +111,54 @@ export function FindingTrips({ settings, finder, onBack, onWiden, guide, onSkip 
  *                   each into a chunk of its own, two more preloads on
  *                   every page (T801 end check).
  *   onBack()        back to question 7
- *   onWiden(id)     reopen one question (the answers bar, an empty result)
+ *   onWiden(id)     reopen one question (the answers line, an empty result)
  *   edits, setEdits the preview's swaps by trip id (kept by TripFlow)
  *   markedId        the trip planned last, marked on the way back
  *   onPlan(plan)    "Plan this trip": the trip's plan (planOf.js)
+ *
+ * The list shows the moment the trips are ranked: back from the planner
+ * the run is memoised, so it is there at once (T867: no minimum stand).
  */
 export default function TripFinderScreen({ ui, settings, guide, edits, setEdits, markedId = null, onBack, onWiden, onPlan }) {
+  const { lang } = useI18n();
   const finder = useTripFinder(settings);
-  const ready = Boolean(finder.trips);
-  // Back from the planner the trips are already known: no loader again.
-  const { done, skip } = useLoaderDone(ready, markedId ? 0 : 1200);
   const [openId, setOpenId] = useState(null);
   const cardRefs = useRef(new Map());
-  if (!done || !finder.trips.length) {
-    return <FindingTrips settings={settings} finder={finder} guide={guide} onBack={onBack} onWiden={onWiden} onSkip={skip} />;
-  }
-  const trips = finder.trips.map((x) => edits[x.id] || x);
-  const open = openId ? trips.find((x) => x.id === openId) : null;
   const keepWith = { origin: finder.origin?.iata || null, file: finder.input?.flights || null };
+  const keeper = useKeepTrip({ destinations: finder.data?.destinations, lang, keepWith });
+  const all = (finder.trips || finder.early || []).map((x) => edits[x.id] || x);
+  const open = openId ? all.find((x) => x.id === openId) : null;
+  const ready = Boolean(finder.trips && finder.trips.length);
   return (
     <>
-      <TripsForYou
-        settings={settings}
-        trips={trips}
-        destinations={finder.data?.destinations}
-        originName={finder.origin?.name || ''}
-        markedId={markedId}
-        ui={ui}
-        onBack={onBack}
-        onReopen={onWiden}
-        onOpen={(trip) => setOpenId(trip.id)}
-        onPlan={(trip) => onPlan(planOf(trip))}
-        cardRefs={cardRefs}
-        keepWith={keepWith}
-      />
+      {ready ? (
+        <TripsForYou
+          settings={settings}
+          trips={all}
+          destinations={finder.data?.destinations}
+          originName={settings.from?.name || finder.origin?.name || ''}
+          markedId={markedId}
+          ui={ui}
+          onBack={onBack}
+          onReopen={onWiden}
+          onOpen={(trip) => setOpenId(trip.id)}
+          onPlan={(trip) => onPlan(planOf(trip))}
+          cardRefs={cardRefs}
+          keeper={keeper}
+        />
+      ) : (
+        <FindingTrips
+          settings={settings}
+          finder={finder}
+          guide={guide}
+          onBack={onBack}
+          onWiden={onWiden}
+          ui={ui}
+          onOpen={(trip) => setOpenId(trip.id)}
+          cardRefs={cardRefs}
+          keeper={keeper}
+        />
+      )}
       {open && (
         <TripPreview
           trip={open}
