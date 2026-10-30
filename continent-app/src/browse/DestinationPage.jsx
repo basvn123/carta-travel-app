@@ -5,16 +5,14 @@ import { matchProfile, PROFILE_LABEL_KEYS } from './LifestylePanel.jsx';
 import { safeUrl } from '../lib/format.js';
 import { useDossier, destShareUrl } from '../lib/dossier.js';
 import { activityLink } from '../lib/activityAffiliates.js';
-import { useForecast } from '../lib/weather.js';
 import { packingList, packMonth } from '../lib/packing.js';
-import { cheapestStayMonths } from '../lib/costIndex.js';
 import { useStaysVersion } from '../lib/staysData.js';
 import { seasonCurve } from '../lib/stayPrice.js';
-import { monthName } from '../lib/dates.js';
 import { fmtMonthRanges } from './ClimateStrip.jsx';
 import { useI18n } from '../i18n/index.jsx';
-import CreditFold from './CreditFold.jsx';
 import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
+import { CountryFlag } from '../components/CountryFlag.jsx';
+import { HeroImage } from '../components/HeroImage.jsx';
 import { classRankLine, poiLabel, ratingWords } from '../lib/rating.js';
 import { fetchDestPois } from '../lib/appData.js';
 import { visitLength } from '../lib/nearby.js';
@@ -26,53 +24,61 @@ import { MatchLine } from './WhyItMatches.jsx';
 import { PhotoGallery } from './PhotoGallery.jsx';
 import { DestPriceCard } from './DestPriceCard.jsx';
 import { PageBar } from './PageBar.jsx';
+import { KeyFacts } from './KeyFacts.jsx';
 import { usePageArrival } from '../hooks/usePageArrival.js';
-import { Button, Chip, Money, Tabs } from '../components/ui/index.js';
-import { isNational } from '../components/CostSummary.jsx';
-import { BedIcon, CompassIcon } from '../components/Icons.jsx';
+import { Button, Chip, Money } from '../components/ui/index.js';
+import { BedIcon, CompassIcon, RouteIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
-import { scrollBehavior } from '../lib/motion.js';
 import { FriendsWentHere } from '../components/FriendsWentHere.jsx';
-import { dayIncludesText } from '../lib/dayIncludes.js';
-import {
-  DEST_TABS, tabFromHash, hashWithTab, aroundCategories, defaultAroundKey, emptyOutdoorKinds,
-} from '../lib/destOverview.js';
+import { tabFromHash, aroundCategories, defaultAroundKey } from '../lib/destOverview.js';
+import { featureHref, linkOpener } from '../lib/featureHref.js';
 import {
   baseCity, monthOf, photoMatcher, thumb500, NOT_A_VIEW, isArea, useDoPhotos,
 } from './destParts.js';
 import { DestOverview } from './DestOverview.jsx';
-import { DestNearby } from './DestNearby.jsx';
-import { DestWhen } from './DestWhen.jsx';
-import { DestPractical } from './DestPractical.jsx';
-import { notYet } from '../components/NotYet.jsx';
+import { DestSee, DestAround } from './DestNearby.jsx';
+import { DestWhen, monthDayCosts } from './DestWhen.jsx';
+import { DestStay, DestGetting, DestPractical } from './DestPractical.jsx';
 import { useSettings } from '../components/SettingsLine.jsx';
 import { resolveWhen, whenMonth, xmFromSearch } from '../lib/when.js';
 import { crowdFor, CROWD_TIER_KEYS } from '../lib/crowdMonth.js';
 import { mobilityStat } from '../lib/mobility.js';
 import { pickAirport, airportLine } from '../lib/airportPick.js';
 import { useDayView } from '../hooks/useDayView.js';
-import { includedParts } from '../lib/price/display.js';
+import { homePoint, partyOf } from '../lib/travelWay.js';
+import { destAnchor } from '../lib/origins.js';
+import { homeFlightSetup } from './cartaFlight.js';
+import { waysThere } from './placeWays.js';
+import { JumpBar, PSection, PriceDock, scrollToSection, useWide } from './PageTemplate.jsx';
 
 /**
- * The full-screen destination page, v4 (T499, roadmap 1.4, owner answers
- * T491-a to T491-i; v3 was T429 and T446).
+ * The full-screen destination page, v5 (T912, the owner's approved spec of
+ * 2026-10-30, "Place and trip pages: one long page, one price, one button";
+ * v4 was T499 with four tabs).
  *
  * Renders from the dossier contract (public/dossier/{id}.json, built by
  * pipeline/dossier/build_dossier.py). The PDF export renders from the SAME
  * file (lib/destinationPdf.js): one contract, two renderers, zero drift.
  *
- * Top to bottom, the same on every tab: the page bar, the photo gallery and
- * the head (the place, its Score, the country, the day figure and what it
- * includes). Then four tabs, always the same four: Overview, Nearby, When to
- * go, Practical (DestOverview.jsx, DestNearby.jsx, DestWhen.jsx,
- * DestPractical.jsx). The tab bar sticks under the page bar once the head
- * has gone (the sticky-rail rule, owner answer T491-c), and a tab changes
- * the address without a history step (T491-b), so Back still leaves the
- * page. Under every panel: the sources line and Report a problem.
+ * Top to bottom: the page bar (back, save, share); the photographs (a swipe
+ * carousel on a phone, a 1 + 4 mosaic from 700 px); the head (the name, the
+ * flag and the country, the Score with its rank, UNESCO and hidden gem as
+ * badges, the match, the intro); the facts row (best time, crowds, the hours
+ * of sights, getting around, the airport); then ONE long page under a sticky
+ * jump bar: Overview (Good to know, Eat and drink), What to see, Around, When
+ * to go, Where to stay, Getting there, Practical, and Places like this at
+ * the foot. The tabs are gone; a link or an address that named a tab
+ * (#dest=OPO&tab=when, the Score's #sec-rating) scrolls to its section.
  *
- * The price card with the page's one primary is the sticky side column from
- * 1024 px, on every tab; on a phone it sits in the Overview after the year
- * (T491-g), and the head carries the day figure on the first screen.
+ * The price card holds the page's one primary ("Plan a trip here"): a sticky
+ * right column from 1024 px; below that it sits in the page ("What a day
+ * costs") and a fixed bar at the foot carries the price, the dates and the
+ * party, and the primary. That bar stands where the phone's bottom nav
+ * stands, since the page covers the app while it is open.
+ *
+ * A section, a row or a cell without data is not drawn, and its jump link
+ * goes with it: no "Not available yet" and no "nothing within 20 km" lines
+ * on this page (the owner, 2026-10-30).
  */
 
 /** The address the app booted on (#dest=FCO&tab=nearby). The app's boot
@@ -81,35 +87,18 @@ import { includedParts } from '../lib/price/display.js';
 const BOOT_HASH = typeof window !== 'undefined' ? window.location.hash || '' : '';
 let bootTabSpent = false;
 function initialTab(id) {
-  if (!id || typeof window === 'undefined') return 'overview';
+  if (!id || typeof window === 'undefined') return null;
   return tabFromHash(window.location.hash, id)
     || (!bootTabSpent && tabFromHash(BOOT_HASH, id))
-    || 'overview';
+    || null;
 }
-
-/** From 1024 px the price card is a side column; below it, an Overview
- *  block. Where a node lives is a DOM decision, so it is a hook. */
-const WIDE = '(min-width: 1024px)';
-function useWide() {
-  const [wide, setWide] = React.useState(
-    () => typeof window !== 'undefined' && !!window.matchMedia?.(WIDE).matches,
-  );
-  React.useEffect(() => {
-    const mq = window.matchMedia?.(WIDE);
-    if (!mq) return undefined;
-    const on = (e) => setWide(e.matches);
-    mq.addEventListener('change', on);
-    return () => mq.removeEventListener('change', on);
-  }, []);
-  return wide;
-}
+/** The section an old tab id (an address, a caller) now scrolls to. */
+const TAB_SECTION = { overview: 'pt-overview', nearby: 'pt-see', when: 'pt-when', practical: 'pt-practical' };
 
 /**
  * Remembered folds (carta-design "Remembered state", T385): the folds a
  * traveller opened on a destination come back when they return to it in the
- * same session, never across sessions. Since v3 every fold starts closed and
- * the open sections need no memory; the key moved to v2 so a set saved by
- * the old page (where the month block was a fold) is not read back.
+ * same session, never across sessions.
  */
 const FOLD_STORE = 'carta.destFolds.v2';
 function readFolds(id) {
@@ -128,29 +117,70 @@ function writeFolds(id, set) {
   } catch { /* storage unavailable: the defaults still hold */ }
 }
 
-function GalleryStrip({ gallery, city, iso2, fallbackUrl, destId, final = true }) {
-  // A caption that is the record's own name ("Rome (Fiumicino)") names the
-  // town, not its airport (T385, brief V3-10); any other caption is kept.
-  // The strip itself is the shared PhotoGallery (T430), so the item pages and
-  // the trip page open on the same gallery as this page.
+/** The page's photographs: the shared PhotoGallery in its mosaic layout, the
+ *  one the trip page opens on too. A caption that is the record's own name
+ *  ("Rome (Fiumicino)") names the town, not its airport (T385). */
+function GalleryStrip({ gallery, city, iso2, fallbackUrl, destId }) {
   const capOf = (cap) => (cap && baseCity(cap) === city ? city : (cap || ''));
   const photos = (gallery?.length ? gallery : (fallbackUrl ? [{ url: fallbackUrl }] : []))
     .map((g) => ({ ...g, caption: capOf(g.caption) || city }));
   return (
-    <PhotoGallery photos={photos} label={city} claimKey={destId} final={final}
-      fallback={{ city, iso2 }} />
+    <PhotoGallery layout="mosaic" photos={photos} label={city} claimKey={destId} fallback={{ city, iso2 }} />
   );
 }
 
-/** The Where to sleep data (T534): beds, the measured month shape and the
- *  neighbourhood medians, or null when there is none of it. `version` is
- *  staysVersion: a new country file means a new curve. */
+/** The Where to stay data (T534): beds, the measured month shape and the
+ *  neighbourhood medians, or null when there is none of it. */
 function destSleep(destination, d, version) {
   const beds = destination?.accommodation?.beds || null;
   const curve = version >= 0 ? seasonCurve(destination) : null;
   const hoods = d?.sleep?.neighbourhoods || destination?.accommodation?.neighbourhoods || null;
   return beds || curve || hoods?.length
     ? { beds, curve, neighbourhoods: hoods, q: destination?.accommodation?.q || null } : null;
+}
+
+const SIMILAR_WHY = ['cheaper', 'quieter', 'same_class', 'same_style'];
+
+/** Places like this (d.similar): a card a place, its runtime day price looked
+ *  up by id; two whole cards a row on a phone (the owner's standing rule). */
+function Similar({ rows, data, indices, t, view, onSelect }) {
+  const cards = (rows || []).filter((r) => r?.id && r.name).slice(0, 6);
+  if (!cards.length) return null;
+  return (
+    <PSection id="pt-similar" title={t('destx.similar')}>
+      <ul className="pt-similar">
+        {cards.map((r) => {
+          const rec = data?.destinations?.[r.id] || null;
+          const cost = indices?.get?.(r.id) || null;
+          const href = featureHref('dest', { id: r.id });
+          const why = (r.why || []).filter((w) => SIMILAR_WHY.includes(w)).map((w) => t(`destx.why.${w}`));
+          return (
+            <li key={r.id} className="pt-sim">
+              <a className="pt-sim-link" href={href} onClick={linkOpener(() => onSelect?.(r.id))}>
+                <span className="pt-sim-photo">
+                  <HeroImage url={rec?.image?.url || null} city={r.name} iso2={r.iso2 || rec?.iso2} maxWidth={500}
+                    sizes="(max-width: 700px) 45vw, 240px" ratio={[4, 3]} />
+                </span>
+                <span className="pt-sim-name">{r.name}</span>
+              </a>
+              <span className="pt-sim-meta">
+                {(r.iso2 || rec?.iso2) && <CountryFlag country={r.iso2 || rec?.iso2} size={13} />}
+                <span>{countryName(r.iso2 || rec?.iso2, r.country || rec?.country)}</span>
+                {r.score != null && <ScoreChip rating={{ score: r.score }} size="sm" />}
+              </span>
+              {Number.isFinite(cost?.dayEur) && (
+                <span className="pt-sim-price">
+                  <Money value={view.day(cost.dayEur)} />
+                  <span className="pt-sim-unit"> {view.unit}</span>
+                </span>
+              )}
+              {why.length > 0 && <span className="pt-sim-why">{why.join(', ')}</span>}
+            </li>
+          );
+        })}
+      </ul>
+    </PSection>
+  );
 }
 
 export function DestinationPage({
@@ -161,35 +191,26 @@ export function DestinationPage({
   // What the back control names: the tab the page closes back to (T474).
   backLabel = '',
 }) {
-  const { t, lang } = useI18n();
+  const { t, lang, languages } = useI18n();
   const paywall = usePaywall();
   const pageRef = React.useRef(null);
   const scrollRef = React.useRef(null);
-  const bodyRef = React.useRef(null);
-  const tabsRef = React.useRef(null);
   const [stuck, setStuck] = React.useState(false);
   const [copied, setCopied] = React.useState(false);
   const [pdfBusy, setPdfBusy] = React.useState(false);
-  // One-line status for a failed PDF or a blocked clipboard (T405): what
-  // happened and what to do, in a polite live region.
+  // One-line status for a failed PDF or a blocked clipboard (T405).
   const [notice, setNotice] = React.useState(null);
   const [open, setOpen] = React.useState(() => readFolds(destination?.id) || new Set());
-  // The chosen Around chip; null until the traveller picks, so the default
-  // follows the dossier (owner answer T491-e).
+  // The chosen Around chip; null until the traveller picks.
   const [aroundPick, setAroundPick] = React.useState(null);
-  // A jump queued for after the next render: the tab to show has to mount
-  // before its anchor can be scrolled to.
-  const [pendingJump, setPendingJump] = React.useState(null);
-  const destId = destination?.id ?? null;
-  const [tabFor, setTabFor] = React.useState(() => ({ id: destId, tab: initialTab(destId) }));
-  let tab = tabFor.tab;
-  if (tabFor.id !== destId) {
-    // A new place opens on the tab its address names, else on Overview.
-    tab = initialTab(destId);
-    setTabFor({ id: destId, tab });
-  }
+  // A section to scroll to once the page has drawn it: the tab an address
+  // named, or a jump asked before the dossier answered.
+  const [pendingJump, setPendingJump] = React.useState(() => {
+    const tab = initialTab(destination?.id);
+    return tab && tab !== 'overview' ? { id: TAB_SECTION[tab] } : null;
+  });
+  const [cardSignal, setCardSignal] = React.useState(0);
   const wide = useWide();
-  const headRef = React.useRef(null);
   const firstRun = useFirstRun();
   const view = useDayView();   // T694: per person or the group's total
   const tripMonth = monthOf(firstRun?.departDate || firstRun?.defaultDates?.start || null);
@@ -197,12 +218,8 @@ export function DestinationPage({
   const datesOwn = !!(defaults && firstRun?.departDate
     && (firstRun.departDate !== defaults.start || (firstRun.returnDate && firstRun.returnDate !== defaults.end)));
 
-  // T649: the traveller's when (exact, month or any), read once by lib/when.js
-  // for every stat on this page; outside the shell it is built from the
-  // first-run dates.
+  // T649: the traveller's when (exact, month or any), read once by lib/when.js.
   const settingsCtx = useSettings();
-  // The Explore month filter (xm in the URL) wins over the settings line, as
-  // when.js documents; ExploreTab does the same for its own cards.
   const xm = xmFromSearch(typeof window === 'undefined' ? '' : window.location.search);
   const tripWhen = xm ? resolveWhen({ xm })
     : (settingsCtx?.when
@@ -211,8 +228,7 @@ export function DestinationPage({
 
   const dossier = useDossier(destination?.id);
   const staysVersion = useStaysVersion();
-  // D7: a member search lands here with ?dm=<name>; that member is the
-  // reason the reader arrived, so it gets the focus.
+  // D7: a member search lands here with ?dm=<name>.
   const memberFocus = React.useMemo(() => {
     try {
       return new URLSearchParams(window.location.search).get('dm') || null;
@@ -228,79 +244,40 @@ export function DestinationPage({
   });
 
   React.useEffect(() => {
-    // The tab a boot address named is honoured once, by the first place
-    // this page shows.
     if (destination) bootTabSpent = true;
   }, [destination]);
 
+  const destId = destination?.id ?? null;
+  const lastId = React.useRef(destId);
   React.useEffect(() => {
+    if (lastId.current === destId) return;
+    lastId.current = destId;
     setStuck(false);
     setCopied(false);
     setNotice(null);
     setAroundPick(null);
-    setPendingJump(null);
-    setOpen(readFolds(destination?.id) || new Set());
+    const tab = initialTab(destId);
+    setPendingJump(tab && tab !== 'overview' ? { id: TAB_SECTION[tab] } : null);
+    setOpen(readFolds(destId) || new Set());
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
-  }, [destination?.id]);
-
-  React.useEffect(() => {
-    writeFolds(destination?.id, open);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- writes on a fold change only: a destination change restores its own set first, and that restore is the next change
-  }, [open]);
-
-  /** Show a tab: the address names it without a history step (T491-b), the
-   *  panel starts just under the bar, and an anchor (a See all, the Score)
-   *  is scrolled to once its tab has drawn. */
-  const goTab = React.useCallback((next, anchor = null) => {
-    if (!DEST_TABS.includes(next)) return;
-    setTabFor({ id: destId, tab: next });
-    setPendingJump({ tab: next, anchor, n: Date.now() });
-    try {
-      const hash = hashWithTab(window.location.hash, destId, next);
-      if (hash && hash !== window.location.hash) {
-        window.history.replaceState(window.history.state, '', `${window.location.pathname}${window.location.search}${hash}`);
-      }
-    } catch { /* sandboxed: the tab still shows */ }
   }, [destId]);
 
   React.useEffect(() => {
-    if (!pendingJump || pendingJump.tab !== tab) return;
-    const sc = scrollRef.current;
-    const body = bodyRef.current;
-    setPendingJump(null);
-    if (!sc || !body) return;
-    const target = pendingJump.anchor ? sc.querySelector(`#${pendingJump.anchor}`) : null;
-    if (target) {
-      target.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
-      return;
-    }
-    // The panel starts just under the bar: once the bar has stuck, a new
-    // tab opens at its top, not halfway down.
-    const top = body.getBoundingClientRect().top - sc.getBoundingClientRect().top + sc.scrollTop;
-    if (sc.scrollTop > top) sc.scrollTop = top;
-  }, [pendingJump, tab]);
+    writeFolds(destination?.id, open);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- writes on a fold change only
+  }, [open]);
 
-  // The chosen tab scrolls into the bar's view where the bar runs sideways
-  // (German at 360 px, 1.4 sketch 4.6).
-  React.useEffect(() => {
-    const bar = tabsRef.current?.querySelector('.ui-tabs');
-    const on = bar?.querySelector('[aria-selected="true"]');
-    if (!bar || !on) return;
-    const l = on.offsetLeft - bar.offsetLeft;
-    if (l < bar.scrollLeft || l + on.offsetWidth > bar.scrollLeft + bar.clientWidth) {
-      bar.scrollLeft = Math.max(0, l - 16);
-    }
-  }, [tab]);
+  /** A jump within the page: what used to show a tab (a caller, an address,
+   *  a See all) now scrolls to that tab's section, or to `anchor`. */
+  const goTab = React.useCallback((next, anchor = null) => {
+    setPendingJump({ id: anchor || TAB_SECTION[next] || null, n: Date.now() });
+  }, []);
 
-  // Escape closes it, capture phase, so the app-level stack never double-fires,
-  // and the same hook gives the dialog the focus management its aria-modal
-  // has always promised. An open dropdown keeps its own Escape.
+  // Escape closes it, capture phase; the same hook gives the dialog its
+  // focus management. An open dropdown keeps its own Escape.
   const backRef = React.useRef(null);
   const skipEscape = React.useCallback(
     () => !!pageRef.current?.querySelector('.dropdown-menu'), []);
-  // Where focus lands on open: the one page rule (hooks/usePageArrival.js,
-  // carta-design "Navigation", T474): the heading by pointer, touch or a
-  // link; the back control from the keyboard, so the next key acts.
   const titleRef = React.useRef(null);
   const arrivalRef = usePageArrival(pageRef, destination?.id ?? null);
   useFocusTrap(pageRef, onClose, {
@@ -309,15 +286,9 @@ export function DestinationPage({
     enabled: !!destination,
   });
 
-  const lat = destination?.city_lat ?? destination?.lat;
-  const lon = destination?.city_lon ?? destination?.lon;
-  const forecast = useForecast(lat, lon, !!destination);
-  // Photographs for "Things to do". Must sit above the early return: hooks
-  // cannot run conditionally.
+  // Photographs for the things to do.
   const doPhotos = useDoPhotos(destination?.id);
-  // The POI labels (Must-see, Recommended, Worth a look) of this place's
-  // shard, by name, so a highlight on the page and in the PDF carries its
-  // label and never a number (T763). A duplicate (label null) has none.
+  // The POI labels (Must-see, Recommended, Worth a look) by name (T763).
   const [poiLabels, setPoiLabels] = React.useState(null);
   React.useEffect(() => {
     const id = destination?.id;
@@ -337,40 +308,35 @@ export function DestinationPage({
     return () => { live = false; };
   }, [destination?.id]);
 
+  const loading = dossier === undefined;
+  const settled = !loading;
+
+  // A queued jump runs once its section is on the page.
+  React.useEffect(() => {
+    if (!pendingJump?.id || !settled) return;
+    const sc = scrollRef.current;
+    if (!sc) return;
+    const id = pendingJump.id;
+    setPendingJump(null);
+    requestAnimationFrame(() => { scrollToSection(sc, id); });
+  }, [pendingJump, settled]);
+
   if (!destination) return null;
 
   const city = baseCity(destination.city);
   const DEST_REPORT = { layer: 'dest', id: destination.id, cc: destination.iso2, name: city };
   const d = dossier || null;
-  const loading = dossier === undefined;
-  // Everything below the head waits for the dossier to answer (a file or a
-  // null), and then appears in its final shape. Drawn early from the record
-  // alone, the intro grew and the facts gained lines, which pushed the page
-  // 45 px down on a phone: a layout shift of 0.30 (T011, T271). Content that
-  // appears moves nothing.
-  const settled = !loading;
   const kf = knownFor(destination);
-  const cheapMonths = cheapestStayMonths(destination);
-  // Pack for the month the page prices (the traveller's arrive month); the
-  // next good month only when no dates exist at all.
   const month = tripMonth || packMonth(destination);
   const packs = packingList(destination, month);
 
   const intro = d?.intro;
-  // The wire's rating (v5: score, band, why, class_rank, confidence) wins over
-  // the dossier's copy, which may predate a re-score; the dossier keeps what
-  // only it carries (the country rank). lib/rating.js gives the word (T763).
   const verdict = (d?.verdict || destination.rating)
     ? { ...(d?.verdict || {}), ...(destination.rating || {}) }
     : null;
   const verdictBand = ratingWords(verdict, t)?.word || '';
   const verdictClassRank = classRankLine(verdict, t);
-  // T534: the beds and the 12-month price shape come from the destination's
-  // own stays data (live once its country file is in, staysVersion); the
-  // dossier keeps the neighbourhood medians.
   const sleep = destSleep(destination, d, staysVersion);
-  // T651: the wire's airports[] (every airport with its options) joins the
-  // dossier's getting-there record when the dossier lacks it.
   const gettingRaw = d?.practical?.getting_there || null;
   const getting = destination.airports?.length && !gettingRaw?.airports
     ? { ...(gettingRaw || {}), airport: gettingRaw?.airport || destination.airports[0].iata, airports: destination.airports }
@@ -381,14 +347,25 @@ export function DestinationPage({
   const members = d?.members || null;
   const water = d?.water || null;
   const stayLen = visitLength(destination);
+  const hlPhoto = photoMatcher([
+    ...(d?.highlights || []).filter((h) => h.image?.url && !NOT_A_VIEW.test(h.image.url))
+      .map((h) => ({ name: h.name, img: thumb500(h.image.url) })),
+    ...(d?.gallery || []).filter((g) => g.caption && baseCity(g.caption) !== city && !NOT_A_VIEW.test(g.url))
+      .map((g) => ({ name: g.caption, img: g.thumb || thumb500(g.url) })),
+  ]);
   const highlights = [...(d?.highlights || [])]
     .sort((a, b) => (b.rank_score || 0) - (a.rank_score || 0))
     .map((h) => {
       const label = h.name ? poiLabels?.get(h.name.toLowerCase()) : null;
-      return label ? { ...h, label } : h;
+      const photo = h.image?.url ? null : hlPhoto(h.name);
+      return { ...h, ...(label ? { label } : {}), ...(photo ? { photo } : {}) };
     });
   const doItems = [...(d?.do || [])]
     .sort((a, b) => (b.evidence?.n_sources ?? -1) - (a.evidence?.n_sources ?? -1));
+  const doRows = doItems.slice(0, 16).map((item, i) => {
+    const poi = doPhotos(item.name);
+    return { ...item, key: `${i}:${item.name}`, photo: hlPhoto(item.name) || (poi ? thumb500(poi) : null) };
+  });
   const trips = d?.trips || [];
   const nearby = d?.nearby || {};
   const around = d?.around || null;
@@ -396,82 +373,43 @@ export function DestinationPage({
   const parking = d?.parking;
   const festivals = d?.festivals || [];
   const links = d?.practical?.links || {};
-  const when = d?.when || null;
-  // ROUTES.md R6: measured to the nearest point on the line, in the lab, and
-  // named for the path rather than for whichever stage of it passes.
   const routeRows = d?.routes || {};
-  const nearbyForMap = ['trails', 'beaches', 'lakes', 'mountains']
-    .flatMap((layer) => (nearby[layer] || []).slice(0, 3).map((f) => ({ ...f, layer })))
-    .filter((f) => f.lat != null);
-  const aroundForMap = around
-    ? ['trails', 'cycling', 'mountains', 'lakes', 'beaches']
-      .flatMap((layer) => (around[layer] || []).slice(0, 12).map((f) => ({ ...f, layer })))
-      .filter((f) => f.lat != null)
-    : [];
-  const tripsForMap = trips.filter((x) => x.lat != null);
   const shortIntro = intro?.short || intro?.lead || kf || '';
   const guideUrl = safeUrl(intro?.grounding?.[0]?.url || destination.guide?.url);
   const isUnesco = (destination.designations || []).some((g) => g.kind === 'unesco_whc');
-  // Same range wording as the climate strip ("Apr to May"), in the reader's language.
   const monthList = (ms) => fmtMonthRanges(ms, t);
   const countryLabel = countryName(destination.iso2, destination.country);
-  // A score in the reader's own number format (7,7 in German), so a screen
-  // reader does not voice it as a date or a version.
   const fmtScore = (n) => {
     try { return new Intl.NumberFormat(lang, { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(n); } catch { return Number(n).toFixed(1); }
   };
+  const n1 = (v) => Number(v).toLocaleString(lang, { maximumFractionDigits: 1 });
 
-  // The key facts (carta-design "Detail page grammar"): four to six measured
-  // facts, label over value. The day cost is not among them: the head and
-  // the price card carry it. A missing fact is left out, never "Not
-  // recorded" (Zungoli shows three).
-  // T649: the Crowds stat follows the traveller's when (one month's tier, the
-  // yearly pattern for any time); no data for the question is the placeholder.
+  // The facts row (the owner's spec): best time, crowds, the hours of
+  // sights, getting around, the airport. A missing fact is left out.
   const aroundStat = mobilityStat(destination, t, lang);
   const airportPick = pickAirport(getting);
+  const airportText = airportPick ? (airportPick.minutes != null && (airportPick.road || airportPick.mode)
+    ? airportLine(airportPick, t, '') : airportPick.iata) : null;
   const crowd = crowdFor(destination.crowding, tripWhen);
-  const crowdMonth = crowd?.month ?? statMonth;
-  const crowdValue = !crowd ? notYet(t)
+  const crowdText = !crowd ? null
     : crowd.kind === 'tier' ? t(CROWD_TIER_KEYS[crowd.tier])
     : crowd.kind === 'pattern' ? t('dest.crowdPattern', { quiet: monthList(crowd.quiet), busy: monthList(crowd.busy) })
     : t('dest.crowdFlat', { label: t(CROWD_TIER_KEYS[crowd.tier]) });
-  const climateMonth = statMonth ? destination.climate?.m?.[statMonth - 1] : null;
+  const visitH = Number(d?.place?.visit_h ?? intro?.facts?.visit_h);
+  const bestMonths = d?.when?.best?.length ? d.when.best : destination.climate?.best;
   const keyFacts = [
-    when?.best?.length > 0 && { k: 'best', label: t('dest.keyBest'), value: monthList(when.best) },
-    // A month fact only once the traveller has a month (carta-design "Month").
-    climateMonth?.[0] != null && {
-      k: 'month',
-      label: t('dest.keyMonth', { month: monthName(statMonth, lang, true) }),
-      value: t('dest.keyMonthValue', { hi: Math.round(climateMonth[0]), mm: Math.round(climateMonth[2] ?? 0) }),
-    },
-    {
-      k: 'crowds',
-      label: crowdMonth && tripWhen.kind !== 'any'
-        ? t('dest.keyCrowdsIn', { month: monthName(crowdMonth, lang, true) })
-        : t('dest.keyCrowds'),
-      value: crowdValue,
-    },
-    airportPick && {
-      k: 'airport',
-      label: t('dest.keyAirport'),
-      // T651: the best airport only (shortest public transport, else the
-      // shortest road estimate); Getting there keeps the full list.
-      value: airportLine(airportPick, t, notYet(t)),
-    },
-    // T650: Getting around, from local_transport.mobility; the placeholder
-    // until the data has it (car_needed stays in the data for the price card).
-    { k: 'around', label: t('dest.keyAround'), value: aroundStat?.value ?? notYet(t), note: aroundStat?.note || null },
-    // "Time here" left the facts (T446): a rule of thumb from the sights'
-    // hours, it contradicted the intro ("three or four days") and the card's
-    // stay on the same screen.
-  ].filter(Boolean).slice(0, 6);
+    bestMonths?.length > 0 && { key: 'best', label: t('dest.keyBest'), value: monthList(bestMonths) },
+    crowdText && { key: 'crowds', label: t('dest.keyCrowds'), value: crowdText },
+    Number.isFinite(visitH) && visitH > 0 && { key: 'sights', label: t('destx.fact.sights'), value: t('destx.fact.sightsValue', { n: n1(Math.round(visitH)) }) },
+    aroundStat?.value && { key: 'around', label: t('dest.keyAround'), value: aroundStat.value },
+    airportPick && { key: 'airport', label: t('destx.fact.fly'), value: airportPick.iata },
+  ].filter(Boolean);
 
   const share = async () => {
     const url = destShareUrl(destination.id);
     try {
       if (navigator.share) { await navigator.share({ title: city, url }); return; }
     } catch (e) {
-      // A dismissed share sheet is an answer, not a failure: copy nothing.
       if (e?.name === 'AbortError') return;
     }
     try {
@@ -479,21 +417,17 @@ export function DestinationPage({
       setCopied(true);
       setTimeout(() => setCopied(false), 1800);
     } catch {
-      // The clipboard is blocked (an embedded view, a denied permission): show
-      // the link itself so the traveller can copy it by hand.
       setNotice({ key: 'dest.shareBlocked', url });
     }
   };
 
   // The PDF still prints the day at the traveller's Lifestyle and its basis.
-  const pdfCost = firstRun?.indices?.get?.(destination.id) || null;
+  const costRow = firstRun?.indices?.get?.(destination.id) || null;
   const profileKey = matchProfile(choices?.lifestyle || {});
   const lifestyleLine = t('cost.atLifestyle', {
     profile: profileKey ? t(PROFILE_LABEL_KEYS[profileKey]) : t('lifestyle.custom'),
-    stay: t(`stay.${pdfCost?.stayTier || choices?.stay_tier || 'home'}`).toLowerCase(),
+    stay: t(`stay.${costRow?.stayTier || choices?.stay_tier || 'home'}`).toLowerCase(),
   });
-  // A PDF needs a Trip Pass: the existing gate opens the pass sheet on tap
-  // (usePaywall 'export'; T497 owns the sheet).
   const exportPdf = async () => {
     if (pdfBusy || !d) return;
     if (!paywall.require('export')) return;
@@ -502,8 +436,7 @@ export function DestinationPage({
     try {
       const { downloadDestinationPdf } = await import('../lib/destinationPdf.js');
       await downloadDestinationPdf({
-        // The page's own sleep view (T534): live beds and month shape.
-        dossier: { ...d, highlights, sleep: sleep || d.sleep }, destination, cost: pdfCost, t, lang,
+        dossier: { ...d, highlights, sleep: sleep || d.sleep }, destination, cost: costRow, t, lang,
         lifestyleLabel: lifestyleLine,
         stayDays: stayLen?.n || null,
       });
@@ -515,63 +448,26 @@ export function DestinationPage({
     }
   };
 
-  // When MET last ran the model, in the reader's own clock (T483).
-  const fmtUpdated = (iso) => {
-    try {
-      return new Intl.DateTimeFormat(lang === 'en' ? 'en-GB' : lang, { hour: '2-digit', minute: '2-digit' }).format(new Date(iso));
-    } catch { return ''; }
-  };
-
   const onScroll = (e) => {
     const next = e.currentTarget.scrollTop > 160;
     setStuck((cur) => (cur === next ? cur : next));
   };
 
-  // Things to do: the photograph of a highlight or a gallery photograph the
-  // item names (gallery captions are place names too: "Colosseum"), else
-  // one from the POI shard.
-  const hlPhoto = photoMatcher([
-    ...highlights.filter((h) => h.image?.url && !NOT_A_VIEW.test(h.image.url))
-      .map((h) => ({ name: h.name, img: thumb500(h.image.url) })),
-    ...(d?.gallery || []).filter((g) => g.caption && baseCity(g.caption) !== city && !NOT_A_VIEW.test(g.url))
-      .map((g) => ({ name: g.caption, img: g.thumb || thumb500(g.url) })),
-  ]);
-  const doRows = doItems.slice(0, 16).map((item, i) => {
-    const poi = doPhotos(item.name);
-    return { ...item, key: `${i}:${item.name}`, photo: hlPhoto(item.name) || (poi ? thumb500(poi) : null) };
-  });
-  // The items with a photograph are the track; the rest follow it as a
-  // hairline list (T446). With fewer than two photographs there is no track
-  // and the list holds everything: a strip of grey boxes reads as broken.
-  const doPhotoRows = doRows.filter((r) => r.photo);
-  const doTrack = doPhotoRows.length >= 2 ? doPhotoRows : [];
-  const doList = doTrack.length ? doRows.filter((r) => !r.photo) : doRows;
-
   // Day trips: the dossier's trips, then the places it pairs with that are
-  // not already among them, each a real catalogue page.
+  // not already among them, never the place itself.
   const tripRows = (() => {
     const seen = new Set(trips.map((tr) => tr.id));
-    const paired = pairs.filter((pr) => pr.id && !seen.has(pr.id)).map((pr) => {
-      const rec = data?.destinations?.[pr.id];
-      return {
-        kind: 'destination', id: pr.id, name: pr.name, dist_km: pr.km,
-        rating: pr.score != null ? { score: pr.score } : null,
-        image: rec?.image?.url ? { url: rec.image.url } : null,
-        lat: rec?.lat, lon: rec?.lon,
-      };
-    });
+    const paired = pairs.filter((pr) => pr.id && !seen.has(pr.id)).map((pr) => ({
+      kind: 'destination', id: pr.id, name: pr.name, dist_km: pr.km,
+      rating: pr.score != null ? { score: pr.score } : null,
+    }));
     return [...trips, ...paired].filter((tr) => tr.id !== destination.id)
       .map((tr, i) => ({ ...tr, key: `${i}:${tr.id}` }));
   })();
-
-  // Around {city}: every kind of outdoor place in reach from the dossier's
-  // three readings (around, nearby, routes), plus the day trips.
   const cats = aroundCategories({ around, nearby, routes: routeRows, trips: tripRows });
-  const emptyKinds = d ? emptyOutdoorKinds(cats) : [];
-  const aroundKey = aroundPick || defaultAroundKey(cats);
+  const aroundKey = aroundPick || defaultAroundKey(cats.filter((c) => c.key !== 'trips'));
   const hasRoutes = (routeRows.hiking?.length || 0) + (routeRows.cycling?.length || 0) > 0
     || !!routeRows.node_network?.km;
-  const weatherOn = forecast !== null && forecast !== undefined;
 
   const exits = [
     links.booking && { key: 'bk', href: links.booking, label: t('dest.linkBooking'), Icon: BedIcon },
@@ -582,52 +478,87 @@ export function DestinationPage({
     links.skyscanner && { key: 'sky', href: links.skyscanner, label: t('dest.linkSkyscanner'), Icon: PlaneIcon },
   ].filter(Boolean);
 
+  // Getting there from the traveller's home, by the app's own travel models.
+  const homeChoices = settingsCtx
+    ? { drive_home: settingsCtx.fromPlace, origin: settingsCtx.origin }
+    : { drive_home: firstRun?.choices?.drive_home, origin: firstRun?.choices?.origin };
+  const partyChoices = settingsCtx
+    ? { group_size: settingsCtx.party, children: settingsCtx.children, babies: settingsCtx.babies }
+    : firstRun?.choices;
+  const request = settingsCtx?.priceRequest || firstRun?.priceRequest || null;
+  const fl = homeFlightSetup(firstRun);
+  const ways = settled ? waysThere({
+    dest: destination,
+    anchor: destAnchor(destination),
+    home: homePoint(homeChoices, data),
+    party: partyOf(partyChoices),
+    flights: fl.file,
+    request,
+    bagKey: request?.baggage || fl.bagKey,
+  }) : null;
+
+  // What a day costs by month: the measured bed curve on the card's own row.
+  const monthCosts = monthDayCosts(sleep?.curve, costRow, tripMonth, statMonth);
+
   const priceCard = settled ? (
-    <>
-      <DestPriceCard
-        dest={destination}
-        city={city}
-        onOpenLifestyle={onOpenLifestyle}
-        onPlanTrip={onPlanTrip}
-        onPlanDay={onPlanDay}
-        carDayEur={getting?.car_needed ? getting.rental_eur_day ?? null : null}
-        doItems={doItems}
-      />
-      {/* Friends showing you a trip that stops here (T466); nothing at all
-          for a guest or when no friend trip stops here. */}
-      <FriendsWentHere destId={destination?.id} destinations={data?.destinations} />
-    </>
+    <DestPriceCard
+      dest={destination}
+      city={city}
+      onOpenLifestyle={onOpenLifestyle}
+      onPlanTrip={onPlanTrip}
+      onPlanDay={onPlanDay}
+      doItems={doItems}
+      openSignal={cardSignal}
+    />
   ) : null;
 
-  // The page's one reading of the dossier, handed to every tab.
+  // The page's one reading of the dossier, handed to every section.
   const p = {
-    t, lang, city, destination, data, d, lat, lon, scrollRef,
-    keyFacts, highlights, doRows, doTrack, doList, monthList, fmtScore,
-    cats, aroundKey, setAroundKey: setAroundPick, emptyKinds,
-    aroundKm: around?.radius_km || 20, area: isArea(d),
-    tripsForMap, nearbyForMap, aroundForMap, routeRows, hasRoutes, members, memberFocus,
-    forecast, monthPick: statMonth, cheapMonths, water, festivals,
+    t, lang, city, destination, data, d, lat: destination.city_lat ?? destination.lat,
+    lon: destination.city_lon ?? destination.lon, scrollRef, view,
+    highlights, doRows, monthList, fmtScore,
+    cats, aroundKey, setAroundKey: setAroundPick, aroundKm: around?.radius_km || 20,
+    area: isArea(d), routeRows, hasRoutes, members, memberFocus,
+    monthPick: statMonth, water, festivals, crowdText, monthCosts,
     getting, rhythm, bookAhead, verdict, verdictBand, sleep, tips, packs, month, parking, exits,
-    isOpen, toggle, onOpenLifestyle,
-    onOpenFeature, onSelect, onOpenItin, goTab,
-    exportPdf, pdfBusy, pdfReady: !!d,
-    priceCard: wide ? null : priceCard,
+    isOpen, toggle, onOpenLifestyle, onOpenFeature, onSelect, onOpenItin, goTab,
+    exportPdf, pdfBusy, pdfReady: !!d, ways, aroundStat, airportText, guideUrl,
+    carDayEur: getting?.car_needed ? getting.rental_eur_day ?? null : null,
   };
-  const tabs = DEST_TABS.map((id) => ({ id, label: t(`dest.tab.${id}`) }));
-  const Panel = { overview: DestOverview, nearby: DestNearby, when: DestWhen, practical: DestPractical }[tab]
-    || DestOverview;
+
+  const jumps = [
+    ['overview', 'pt-overview'], ['see', 'pt-see'], ['around', 'pt-around'], ['when', 'pt-when'],
+    ['stay', 'pt-stay'], ['getting', 'pt-getting'], ['practical', 'pt-practical'],
+  ].map(([key, id]) => ({ key, id, label: t(`destx.jump.${key}`) }));
+
+  // The foot bar's line: the dates and the party, as the card's fields say it.
+  const bcp47 = languages?.find?.((l) => l.code === lang)?.bcp47 || 'en-GB';
+  const shortDate = (iso) => {
+    try {
+      return new Intl.DateTimeFormat(bcp47, { day: 'numeric', month: 'short', timeZone: 'UTC' })
+        .format(new Date(`${iso}T00:00:00Z`));
+    } catch { return iso; }
+  };
+  const fromIso = firstRun?.departDate || defaults?.start || null;
+  const toIso = firstRun?.returnDate || defaults?.end || null;
+  const people = Math.max(1, Math.round(firstRun?.choices?.group_size || 2));
+  const dockInputs = [
+    fromIso && toIso ? t('settings.datesRange', { start: shortDate(fromIso), end: shortDate(toIso) }) : null,
+    people === 1 ? t('receipt.onePerson') : t('receipt.nPeople', { n: people }),
+  ].filter(Boolean).join(', ');
+  const openCard = () => {
+    scrollToSection(scrollRef.current, 'pt-cost');
+    setCardSignal((n) => n + 1);
+  };
 
   return (
     <div
       ref={pageRef}
-      className="destp destp-v2 destp-v3 destp-v4"
+      className="destp destp-v5 pt-page"
       role="dialog"
       aria-modal="true"
       aria-label={city}
     >
-      {/* The one page bar (PageBar, T474, row T435-e): back naming the list
-          on a phone and a desktop alike, the name once the heading has
-          scrolled away, save and share (carta-design "Navigation"). */}
       <PageBar
         t={t}
         backLabel={backLabel || t('detail.backToList')}
@@ -651,122 +582,110 @@ export function DestinationPage({
         </p>
       )}
 
-      <div className="destp-scroll" ref={scrollRef} onScroll={onScroll}>
-        <GalleryStrip
-          gallery={d?.gallery}
-          final={settled}
-          city={city}
-          iso2={destination.iso2}
-          fallbackUrl={destination.image?.url}
-          destId={destination.id}
-        />
+      <div className="destp-scroll pt-scroll" ref={scrollRef} onScroll={onScroll}>
+        <div className="pt-wrap">
+          <GalleryStrip
+            gallery={d?.gallery}
+            city={city}
+            iso2={destination.iso2}
+            fallbackUrl={destination.image?.url}
+            destId={destination.id}
+          />
 
-        <div className="destp-grid">
-          <div className="destp-head" ref={headRef}>
-            <h1 className="destp-city" ref={titleRef} tabIndex={-1}>{city}</h1>
-            <div className="destp-meta">
-              {verdict?.score != null && (
-                // A jump within the page, so a link to the section (carta-design
-                // "Navigation"); it shows Practical and opens Why it rates.
-                <a className="destp-score" href="#sec-rating"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setOpen((s) => new Set([...s, 'rating']));
-                    goTab('practical', 'sec-rating');
-                  }}
-                  aria-label={t('dest.ratingTitle', { score: fmtScore(verdict.score) })}>
-                  <ScoreChip rating={verdict} size="lg" band />
-                </a>
-              )}
-              {verdict?.hidden_gem && <HiddenGemTag />}
-              {verdictClassRank && <span className="destp-rank destp-classrank">{verdictClassRank}</span>}
-              {/* The country, in the reader's language, once: a rank line names it
-                  already ("Top of Italy"), so then it stands alone (T446). */}
-              <span className="destp-country">
-                {verdict?.country_rank === 1 ? (
-                  <span className="destp-rank">{t('card.topOf', { country: countryLabel })}</span>
-                ) : verdict?.country_badge ? (
-                  <span className="destp-rank">{t('card.rankIn', { n: verdict.country_rank, country: countryLabel })}</span>
-                ) : countryLabel}
-              </span>
-              {/* T765: the match after the rank lines, never merged into the Score. */}
-              <MatchLine place={destination} month={tripMonth} className="destp-match" />
-              {isUnesco && (
-                <Chip kind="status" className="destp-unesco"
-                  title={(destination.designations || []).find((g) => g.kind === 'unesco_whc')?.name || ''}>
-                  {t('dest.unesco')}
-                </Chip>
-              )}
-            </div>
-            {/* The day line under the name (T446), with what it includes
-                (T486, built from its parts, owner answer T491-h): Carta's one
-                line, what a day here costs, on the first screen of a phone.
-                From 1024 px the sticky card beside the head carries both. */}
-            {pdfCost?.dayEur != null && (
-              <div className="destp-day">
-                <p className="destp-dayline">
-                  <Money value={view.day(pdfCost.dayEur)} est={isNational(pdfCost)} />
-                  <span className="destp-dayline-unit">{view.unit}</span>
+          <div className="pt-body">
+            <div className="pt-main">
+              <header className="pt-head">
+                <h1 className="pt-title" ref={titleRef} tabIndex={-1}>{city}</h1>
+                <p className="pt-where">
+                  <CountryFlag country={destination.iso2} size={15} />
+                  <span>{countryLabel}</span>
                 </p>
-                <p className="destp-dayline-incl">{dayIncludesText(t, includedParts(pdfCost))}</p>
-              </div>
-            )}
-            {/* What this place is: two or three sentences from our own
-                facts, one opening line after Wikivoyage. Never the article.
-                The intro is written in English; in another language the head
-                shows nothing rather than an English paragraph (T446). The
-                guide link lives in the sources line under the tabs, so the
-                head never sends a traveller away before the planner. */}
-            {settled && shortIntro && lang === 'en' && (
-              <p className="destp-short">{shortIntro}</p>
-            )}
-          </div>
+                <div className="pt-badges">
+                  {verdict?.score != null && (
+                    // A jump within the page: it opens Why it rates in Practical.
+                    <a className="pt-score" href="#sec-rating"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setOpen((s) => new Set([...s, 'rating']));
+                        goTab('practical', 'sec-rating');
+                      }}
+                      aria-label={t('dest.ratingTitle', { score: fmtScore(verdict.score) })}>
+                      <ScoreChip rating={verdict} size="lg" band />
+                    </a>
+                  )}
+                  {verdict?.hidden_gem && <HiddenGemTag />}
+                  {verdictClassRank && <Chip kind="status" className="pt-badge">{verdictClassRank}</Chip>}
+                  {verdict?.country_rank === 1 ? (
+                    <Chip kind="status" className="pt-badge">{t('card.topOf', { country: countryLabel })}</Chip>
+                  ) : verdict?.country_badge ? (
+                    <Chip kind="status" className="pt-badge">{t('card.rankIn', { n: verdict.country_rank, country: countryLabel })}</Chip>
+                  ) : null}
+                  {isUnesco && (
+                    <Chip kind="status" className="pt-badge"
+                      title={(destination.designations || []).find((g) => g.kind === 'unesco_whc')?.name || ''}>
+                      {t('dest.unesco')}
+                    </Chip>
+                  )}
+                </div>
+                {/* T765: the match after the rank lines, never merged into the Score. */}
+                <MatchLine place={destination} month={tripMonth} className="destp-match" />
+                {/* The intro is written in English; in another language the
+                    head shows nothing rather than an English paragraph (T446). */}
+                {settled && shortIntro && lang === 'en' && <p className="pt-lead">{shortIntro}</p>}
+              </header>
 
-          {/* While the dossier answers, one still block holds the place of
-              the card and the tabs (carta-design "Loading"): no shimmer, no
-              spinner, "Loading" for screen readers only. */}
-          {!settled && (
-            <div className="destp-wait" aria-busy="true">
-              <span className="sr-only">{t('state.loading')}</span>
-            </div>
-          )}
+              {settled && <KeyFacts cells={keyFacts} className="pt-facts" />}
 
-          {settled && wide && <div className="destp-side">{priceCard}</div>}
-
-          {settled && (
-            <div className="destp-body" ref={bodyRef}>
-              {/* The four tabs (owner answer T491-a), sticky under the page
-                  bar once the head has gone: one band, --surface, a --border
-                  bottom edge, no shadow (the sticky-rail rule, T491-c). */}
-              <div className="destp-tabs" ref={tabsRef}>
-                <Tabs label={t('dest.subnavAria')} tabs={tabs} value={tab} onChange={(id) => goTab(id)}
-                  panelId="destp-panel" />
-              </div>
-              <div className="destp-panel" id="destp-panel" role="tabpanel" aria-label={t(`dest.tab.${tab}`)}>
-                <Panel p={p} />
-              </div>
-
-              {/* The sources the page owes, in one line before the utility row
-                  (T446): the route data's licence, the live forecast and the
-                  Wikivoyage guide the intro line comes from. */}
-              {(hasRoutes || weatherOn || guideUrl) && (
-                <div className="destp-sources">
-                  <p>
-                    {[hasRoutes && t('dest.routesCredit'), weatherOn && t('explore.weatherCredit', { time: fmtUpdated(forecast[0]?.updated) })].filter(Boolean).join(' ')}
-                    {guideUrl && (
-                      <>{(hasRoutes || weatherOn) && ' '}<a className="destp-short-src" href={guideUrl} target="_blank" rel="noreferrer">{t('detail.readGuide')}</a></>
-                    )}
-                  </p>
-                  {hasRoutes && <CreditFold t={t} licenceKeys={['credit.licence.routes']} />}
+              {!settled && (
+                <div className="destp-wait" aria-busy="true">
+                  <span className="sr-only">{t('state.loading')}</span>
                 </div>
               )}
-              <div className="destp-utility">
-                <ReportProblem item={DEST_REPORT} />
-              </div>
+
+              {settled && (
+                <>
+                  <JumpBar items={jumps} scrollRef={scrollRef} ready={`${destination.id}:${!!d}`}
+                    label={t('dest.subnavAria')} />
+                  <DestOverview p={p} />
+                  {!wide && priceCard && (
+                    <PSection id="pt-cost" title={t('destx.dayCosts')} className="pt-inlinecost">
+                      {priceCard}
+                    </PSection>
+                  )}
+                  <DestSee p={p} />
+                  <DestAround p={p} />
+                  <DestWhen p={p} />
+                  <DestStay p={p} />
+                  <DestGetting p={p} />
+                  <DestPractical p={p} />
+                  <Similar rows={d?.similar} data={data} indices={firstRun?.indices} t={t} view={view} onSelect={onSelect} />
+                  {/* Friends showing you a trip that stops here (T466). */}
+                  <FriendsWentHere destId={destination?.id} destinations={data?.destinations} />
+                  <div className="destp-utility">
+                    <ReportProblem item={DEST_REPORT} />
+                  </div>
+                </>
+              )}
             </div>
-          )}
+            {settled && wide && <aside className="pt-side" aria-label={t('destx.dayCosts')}>{priceCard}</aside>}
+          </div>
         </div>
       </div>
+
+      {settled && !wide && (
+        <PriceDock
+          price={Number.isFinite(costRow?.dayEur) ? <Money value={view.day(costRow.dayEur)} /> : null}
+          unit={view.unit}
+          inputs={dockInputs}
+          inputsLabel={t('destx.dockInputs', { what: dockInputs })}
+          onInputs={openCard}
+          primary={onPlanTrip ? (
+            <Button variant="primary" className="pt-dock-cta" iconStart={<RouteIcon size={18} />} onClick={onPlanTrip}>
+              {t('dest.planTrip')}
+            </Button>
+          ) : null}
+        />
+      )}
     </div>
   );
 }

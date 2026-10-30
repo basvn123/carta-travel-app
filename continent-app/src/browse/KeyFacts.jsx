@@ -3,7 +3,7 @@ import { useI18n } from '../i18n/index.jsx';
 import {
   ClockIcon, RouteIcon, MountainIcon, BootIcon, SunIcon, SwimIcon, ShieldIcon, RoadIcon,
   BikeIcon, CalendarIcon, LakeIcon, CompassIcon, MapPinIcon, BusIcon, ListDayIcon, BedIcon,
-  BeachIcon, GondolaIcon, LoopIcon, TrainIcon,
+  BeachIcon, GondolaIcon, LoopIcon, TrainIcon, FriendsIcon, PlaneIcon,
 } from '../components/Icons.jsx';
 
 /**
@@ -44,14 +44,17 @@ export const FACT_ICONS = {
   beach: BeachIcon, sand: BeachIcon,
   lift: GondolaIcon,
   loop: LoopIcon,
+  // T912, T913: the place and trip pages' facts row.
+  crowds: FriendsIcon, sights: ClockIcon, around: BusIcon, airport: PlaneIcon, fly: PlaneIcon,
+  bases: MapPinIcon, best: SunIcon,
 };
 
-export function KeyFacts({ cells, lead = null, foot = null }) {
+export function KeyFacts({ cells, lead = null, foot = null, className = '' }) {
   const { t } = useI18n();
   const hasCells = Array.isArray(cells) && cells.length > 0;
   if (!hasCells && !lead) return null;
   return (
-    <section className="dsk-keyfacts" id="dsk-sec-facts" data-slot="keyfacts" aria-label={t('detail.keyFacts')}>
+    <section className={`dsk-keyfacts ${className}`.trim()} id="dsk-sec-facts" data-slot="keyfacts" aria-label={t('detail.keyFacts')}>
       {lead}
       {hasCells && (
         <dl className="dsk-kf-list">

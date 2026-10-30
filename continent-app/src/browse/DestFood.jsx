@@ -39,7 +39,13 @@ const ITEMS = ['meal_mid_eur', 'meal_cheap_eur', 'fastfood_eur', 'drink_out_eur'
 
 const round2 = (v) => Math.round(v * 100) / 100;
 
-export function DestFood({ t, city, destination, isOpen, toggle, onOpenLifestyle }) {
+/** The item prices this place has (a coffee, a meal), in their order. */
+export function foodPriceKeys(destination) {
+  const costs = destination?.costs;
+  return costs ? ITEMS.filter((k) => costs[k] > 0) : [];
+}
+
+export function DestFood({ t, city, destination, isOpen, toggle, onOpenLifestyle, inline = false }) {
   const ctx = useFirstRun();
   const costs = destination?.costs;
   const lifestyle = ctx?.choices?.lifestyle || DEFAULT_LIFESTYLE;
@@ -63,6 +69,23 @@ export function DestFood({ t, city, destination, isOpen, toggle, onOpenLifestyle
 
   const linesRef = React.useRef(null);
   useSettleChanged(linesRef, day ? `${day.lines.map((l) => `${l.key}:${l.eur}`).join('|')}|${day.total}` : '');
+
+  // T912: the place page's Eat and drink shows what things cost here, open,
+  // beside the dishes; the day's spending lives in the price card's split.
+  if (inline) {
+    const prices = foodPriceKeys(destination);
+    if (!prices.length) return null;
+    return (
+      <dl className="dfood-prices dfood-menu">
+        {prices.map((k) => (
+          <div className="dfood-price" key={k}>
+            <dt>{t(`food.item.${k}`)}</dt>
+            <dd><Money value={costs[k]} precision="cents" est={est} /></dd>
+          </div>
+        ))}
+      </dl>
+    );
+  }
 
   if (!costs || !day || day.total <= 0) return null;
   const profileKey = matchProfile(lifestyle);
