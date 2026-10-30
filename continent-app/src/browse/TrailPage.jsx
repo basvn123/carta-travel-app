@@ -7,8 +7,7 @@ import { RouteRainWarning } from './RouteRainWarning.jsx';
 import { loadTrail, loadTrails } from '../lib/trails.js';
 import {
   haversineKm, stopNameFromRef, trailRating,
-  tripGrade, gradeIsDerived, tripHighlights,
-  tripSuitability, suitabilityIsDerived, HIGHLIGHTS, SUITABILITY, ROUTE_TYPES,
+  tripGrade, gradeIsDerived, tripHighlights, ROUTE_TYPES, tripRouteType,
   trailWaymarked, trailSeason,
 } from '../lib/trailCards.js';
 import { trailStory, trailReasons, trailPlace } from '../lib/trailStory.js';
@@ -17,62 +16,65 @@ import {
   hikeTimeMin, isLoopRoute, basesAlong,
 } from '../lib/trailGeo.js';
 import { SurfaceBar, Stages, Bases } from './RouteParts.jsx';
-import { SlopeProfile } from './RouteFigures.jsx';
-import { TrailRouteFacts } from './RouteFacts.jsx';
-import NotYet from '../components/NotYet.jsx';
 import { pointAlong } from '../lib/signature.js';
-import { Instrument, Row as SigRow } from './Signature.jsx';
 import {
-  trailGpx, trailKml, trailFileBase, trailShareUrl, trailheadDirectionsUrl,
-  shareOrDownloadFile, shareTrailLink, stopNamesOf, downloadTextFile,
+  trailGpx, trailFileBase, trailShareUrl, trailheadDirectionsUrl,
+  shareOrDownloadFile, shareTrailLink, stopNamesOf,
 } from '../lib/trailExport.js';
 import { tokenColour as token } from '../map/tokenColors.js';
 import { useI18n } from '../i18n/index.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
-import { DetailPage, MapSketch } from './DetailSkeleton.jsx';
+import { MapSketch } from './DetailSkeleton.jsx';
 import { usePlaceExits } from '../hooks/usePlaceExits.js';
-import {
-  previewWords, previewNotHook, keyFactCells, bboxCentre, markMapLive,
-  TRAIL_LEVEL, TRAIL_EFFORT_LEVEL,
-} from '../lib/detailSkeleton.js';
+import { keyFactCells, bboxCentre, markMapLive, TRAIL_LEVEL, TRAIL_EFFORT_LEVEL } from '../lib/detailSkeleton.js';
 import { haversineKm as kmBetween } from '../lib/nearby.js';
 import { notForLines } from '../lib/notFor.js';
+import { natureRankLine } from '../lib/rating.js';
+import { featureHref } from '../lib/featureHref.js';
 import {
-  DownloadIcon, CompassIcon, RouteIcon, BootIcon, InfoIcon, BulbIcon,
-  ClockIcon, MountainIcon, MapPinIcon, CheckIcon, ListDayIcon, CloseIcon,
-  ChevronRightIcon, EyeIcon, SwimIcon, BeachIcon, CastleIcon,
-  BedIcon, BottleIcon, LoopIcon, StarIcon, CameraIcon,
-  SunIcon,
+  DownloadIcon, CompassIcon, RouteIcon, MountainIcon, MapPinIcon, CloseIcon,
+  CalendarIcon, BootIcon, BottleIcon, BedIcon, ParkingIcon, BusIcon, TrainIcon,
+  FerryIcon, LoopIcon, TicketIcon, InfoIcon, ArrowRightIcon,
 } from '../components/Icons.jsx';
 import { isNum } from '../map/coords.js';
 import { UploadForm } from '../community/UploadForm.jsx';
-import { PhotoGallery } from './PhotoGallery.jsx';
-import { ItemHead, ItemIcon, NatureHeadLines } from './ItemParts.jsx';
-import { Button, Chip, Money } from '../components/ui/index.js';
+import { ItemIcon } from './ItemParts.jsx';
+import { Button } from '../components/ui/index.js';
+import { formatMoney } from '../lib/money.js';
 import { toPhotos } from '../lib/itemPhotos.js';
 import { beforeGoItems } from '../lib/beforeGo.js';
-import { useBaseDay } from '../hooks/useBaseDay.js';
 import { useItemPdf } from '../hooks/useItemPdf.js';
 import { installMapGestures } from '../lib/mapGestures.js';
 import { MapShell } from './MapShell.jsx';
-import { useDayView } from '../hooks/useDayView.js';
+import {
+  OutdoorPage, PSection, StayLine, RouteBlock, HeightProfile, GradeCard, CheckRows,
+  SafetyBlock, AlongCards, OtherNearby, OxLinkButton, SAC_STEP, plainName, outdoorPdfModel,
+} from './OutdoorParts.jsx';
 
 /**
  * The trail page: a published hike or city day as a page of its own, opened
- * from a card in the Destinations tab or from a shared #trail= link.
+ * from a card in the Explore tab or from a shared #trail= link.
  *
- * It answers the four things a walker asks, in this order:
+ * Since T916 it stands on the place page's template (OutdoorParts.jsx, the
+ * owner's approved spec of 2026-10-30): the photographs, the head (the name
+ * without the OSM route number, which moves to a badge; the Score, the rank
+ * in the region, the flag and the region, one lead line), six facts (grade,
+ * length, time, climb, high point, route type), a jump bar, then one long
+ * page: Route (the map with 2D / 3D and full screen, the height profile, the
+ * hand-offs), Before you go (the grade card, season, waymarks, water, huts,
+ * dogs, permits, the hazards and the safety block), Getting there (the
+ * start, parking, transit, one way or loop), Along the way (the sights, the
+ * stages and the towns on the way), and Nearby. The side card holds the one
+ * primary, "Add to a day plan", with "Stay nearby" priced in it.
+ *
+ * It still answers the four things a walker asks:
  *   where does it go        the route on a real map, elevation under it
  *   what is it like         composed lines, not the pipeline's boilerplate
  *                           (lib/trailStory.js)
  *   can I follow it here    yes: live GPS against the line, progress, remaining
  *                           climb, an off-route warning, the screen kept awake
- *   can I take it with me   GPX for hiking apps, KML for Google My Maps, a
- *                           link for anyone (lib/trailExport.js)
+ *   can I take it with me   GPX for hiking apps, a link for anyone, the PDF
  *
- * Since T180 the page draws through the shared detail skeleton
- * (DetailSkeleton.jsx): the route map is its sticky map slot, the elevation
- * profile its signature slot, the descriptive blocks its collapsed rows.
  * The profile is shaded by steepness and scrubbable (T181): dragging along
  * it puts a marker at the same point on the map, through highlightAt.
  * Following still takes the whole page: the map leaves the column and
@@ -91,29 +93,20 @@ const hoursText = (min) => {
   return h >= 10 ? String(Math.round(h)) : h.toFixed(1);
 };
 const km1 = (m) => (m / 1000).toFixed(1).replace(/\.0$/, '');
-
-// Code to label key, built from the shared filter model rather than written
-// out again, so a value added to trailCards.js cannot go missing on the page.
-const GRADE_LABEL = {
-  easy: 'trails.gradeEasy', moderate: 'trails.gradeModerate',
-  hard: 'trails.gradeHard', very_hard: 'trails.gradeVeryHard',
-  alpine: 'trails.gradeAlpine',
+/** A walking time to the nearest five minutes: "7 h", "2 h 35 min". */
+const duration = (min) => {
+  const r = Math.max(5, Math.round(min / 5) * 5);
+  const h = Math.floor(r / 60);
+  const m = r % 60;
+  if (!h) return `${m} min`;
+  return m ? `${h} h ${m} min` : `${h} h`;
 };
-const ROUTE_LABEL = Object.fromEntries(
-  ROUTE_TYPES.map(({ key, labelKey }) => [key, labelKey]));
-const HIGHLIGHT_LABEL = Object.fromEntries(
-  HIGHLIGHTS.map(({ key, labelKey }) => [key, labelKey]));
-const SUIT_LABEL = Object.fromEntries(
-  SUITABILITY.map(({ key, labelKey }) => [key, labelKey]));
 
-const STORY_ICONS = {
-  route: RouteIcon, boot: BootIcon, clock: ClockIcon, mountain: MountainIcon,
-  compass: CompassIcon, pin: MapPinIcon, check: CheckIcon, list: ListDayIcon,
-  // Added for the reason codes (lib/trailStory.js trailReasons).
-  eye: EyeIcon, water: SwimIcon, coast: BeachIcon, castle: CastleIcon,
-  hut: BedIcon, spring: BottleIcon, loop: LoopIcon, star: StarIcon,
-  camera: CameraIcon,
-};
+const ROUTE_LABEL = Object.fromEntries(ROUTE_TYPES.map(({ key, labelKey }) => [key, labelKey]));
+/** Carta's grade where no mapper tagged an SAC scale: its T step, estimated. */
+const GRADE_STEP = { easy: 1, moderate: 2, hard: 3, very_hard: 4, alpine: 5 };
+const MONTH_CODES = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+const TRANSIT_ICON = { bus: BusIcon, train: TrainIcon, tram: TrainIcon, ferry: FerryIcon };
 
 /** The trail grade as a level on the strip's five squares. */
 const trailLevel = (r) => TRAIL_LEVEL[tripGrade(r)] || TRAIL_EFFORT_LEVEL[r?.difficulty] || 0;
@@ -195,17 +188,6 @@ function useLiveFix(active) {
   }, [active]);
 
   return { fix, err };
-}
-
-/** One fact in the strip: the value over a small label. Measured numbers are
- *  mono; a word (the difficulty) is not a measurement and stays in the sans. */
-function Fact({ label, value, word = false, title }) {
-  return (
-    <div className="tpage-fact" title={title}>
-      <span className={`tpage-fact-val ${word ? 'is-word' : ''}`}>{value}</span>
-      <span className="tpage-fact-label">{label}</span>
-    </div>
-  );
 }
 
 /** A route thinned to about 400 points for the PDF's vector line. */
@@ -344,8 +326,6 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
   }, [tr, detail, assoc.dest, lang]);
   // Rating v5 (T763): the list row carries the v5 block, the detail file not.
   const rating = trailRating(tr);
-  const baseDay = useBaseDay(assoc.destId || null);
-  const view = useDayView();   // T694: per person or the group's total
   const { onPdf, pdfBusy } = useItemPdf('trail', tr, { detail, place, assoc });
 
   const { fix, err: fixErr } = useLiveFix(follow);
@@ -550,22 +530,10 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
 
   const shareUrl = useMemo(() => trailShareUrl(tr), [tr]);
   const stopNames = useMemo(() => stopNamesOf(detail), [detail]);
-  const factLine = [
-    isNum(totalM) ? `${km1(totalM)} km` : '',
-    isNum(src.duration_min) ? `${hoursText(src.duration_min)} h` : '',
-    isNum(src.ascent_m) ? `+${Math.round(src.ascent_m)} m` : '',
-  ].filter(Boolean).join(', ');
-
   const onGpx = async () => {
     const gpx = trailGpx(tr, detail, { link: shareUrl, stopNames });
     const how = await shareOrDownloadFile(trailFileBase(tr), gpx, 'gpx', tr.name);
     setToast(how === 'shared' ? null : t('trails.savedGpx'));
-  };
-
-  const onKml = () => {
-    const kml = trailKml(tr, detail, { link: shareUrl, stopNames, factLine });
-    downloadTextFile(trailFileBase(tr), kml, 'kml');
-    setToast(t('trails.savedKml'));
   };
 
   const onShare = async () => {
@@ -583,268 +551,64 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
 
   /* ── Render ──────────────────────────────────────────────────────────── */
 
-  // The published five-value grade when attributes.py has reached this route,
-  // validate.py's three-value effort class otherwise. Never both: a page that
-  // said "Moderate" beside a chip that found it under "Hard" is the drift the
-  // grade exists to end.
   const grade = tripGrade(src) || tripGrade(tr);
-  const diffKey = grade ? GRADE_LABEL[grade]
-    : tr.difficulty === 'easy' ? 'places.diffEasy'
-      : tr.difficulty === 'moderate' ? 'places.diffModerate'
-        : tr.difficulty === 'hard' ? 'places.diffHard' : null;
   const derivedGrade = gradeIsDerived(src) || gradeIsDerived(tr);
-  const highlightCodes = tripHighlights(src).length
-    ? tripHighlights(src) : tripHighlights(tr);
-  const suits = tripSuitability(src).length
-    ? tripSuitability(src) : tripSuitability(tr);
+  const highlightCodes = tripHighlights(src).length ? tripHighlights(src) : tripHighlights(tr);
   const family = detail?.family || tr.fam || null;
   const stops = detail?.stops;
   const ascent = detail?.ascent_m ?? tr.ascent_m;
+  const descentM = detail?.descent_m ?? tr.descent_m;
+  const highM = detail?.elevation?.ele_max_m;
   const dirUrl = start ? trailheadDirectionsUrl(start.lat, start.lon) : '';
+  const nf = (v) => Math.round(v).toLocaleString(lang);
 
   const why1 = why[0]?.text || '';
   const hook = why1 || story.points[0]?.text || '';
-  const ref = tr.f?.ref || null;
+  // The name without its OSM route number; the number becomes a badge.
+  const named = plainName(tr.name, tr.f?.ref || detail?.waymark_ref || null);
 
-  // The key facts band (T386): what a walker decides on, open under the
-  // head: distance first (T430: the strip that carried it is retired), then
-  // time, climb, descent, high point, waymarks and season. A city day has
-  // its own three. Waymarked appears only where a mapper tagged it, never as
-  // a "no"; a season the climatology modelled says "est.".
+  // The grade as a T step: the mapper's SAC tag when the route carries one,
+  // Carta's own grade otherwise (then marked as estimated).
+  const sacTag = SAC_STEP[src.sac_scale] || SAC_STEP[tr.sac_scale] || 0;
+  const gradeStep = isCityDay ? 0 : (sacTag || GRADE_STEP[grade] || 0);
+  const gradeEst = !sacTag && (derivedGrade || !grade);
+  const gradeWord = gradeStep ? t('ox.gradeShort', { n: gradeStep, word: t(`ox.grade.t${gradeStep}`) }) : '';
+
+  // One way, a loop or there and back: the wire's shape, else the loop test.
+  const rt = tripRouteType(src) || tripRouteType(tr);
+  const shapeKey = rt && ROUTE_LABEL[rt] ? ROUTE_LABEL[rt]
+    : loop === true ? 'trails.shapeLoop' : loop === false ? 'trails.shapePoint' : null;
+  const shapeWord = shapeKey ? t(shapeKey) : '';
+  const isLoopShape = rt === 'loop' || rt === 'figure8' || (!rt && loop === true);
+
+  const lengthText = isNum(totalM) ? `${km1(totalM)} km` : '';
+  const timeText = isNum(src.duration_min) ? duration(src.duration_min) : '';
+  const climbText = isNum(ascent) ? `${nf(ascent)} m` : '';
   const waymarked = trailWaymarked(src) || trailWaymarked(tr);
   const season = trailSeason(src) || trailSeason(tr);
-  const descentM = detail?.descent_m ?? tr.descent_m;
+
+  // The six facts (the spec): grade, length, time, climb, high point, route
+  // type. A city day has its own three.
   const keyFacts = keyFactCells(isCityDay ? [
-    { key: 'time', label: t('trails.factDay'), value: isNum(src.duration_min) ? `${hoursText(src.duration_min)} h` : '', mono: true },
-    { key: 'stops', label: t('trails.factStops'), value: isNum(tr.n_stops) ? String(tr.n_stops) : '', mono: true },
-    { key: 'dist', label: t('trails.factDistance'), value: isNum(totalM) ? `${km1(totalM)} km` : '', mono: true },
+    { key: 'time', label: t('trails.factDay'), value: isNum(src.duration_min) ? `${hoursText(src.duration_min)} h` : '' },
+    { key: 'stops', label: t('trails.factStops'), value: isNum(tr.n_stops) ? String(tr.n_stops) : '' },
+    { key: 'dist', label: t('trails.factDistance'), value: lengthText },
   ] : [
-    { key: 'dist', label: t('trails.factDistance'), value: isNum(totalM) ? `${km1(totalM)} km` : '', mono: true },
-    { key: 'time', label: t('trails.factTime'), value: isNum(src.duration_min) ? `${hoursText(src.duration_min)} h` : '', mono: true },
-    { key: 'ascent', label: t('trails.factAscent'), value: isNum(ascent) ? `${Math.round(ascent).toLocaleString(lang)} m` : '', mono: true },
-    { key: 'descent', label: t('trails.factDescent'), value: isNum(descentM) ? `${Math.round(descentM).toLocaleString(lang)} m` : '', mono: true },
-    { key: 'high', label: t('trails.factHigh'), value: isNum(detail?.elevation?.ele_max_m) ? `${Math.round(detail.elevation.ele_max_m).toLocaleString(lang)} m` : '', mono: true },
-    waymarked && { key: 'way', label: t('detail.factWaymarked'), value: t('detail.waymarkedYes') },
-    season && {
-      key: 'season',
-      label: t('detail.factSeason'),
-      value: season.allYear ? t('detail.seasonAllYear')
-        : t('detail.monthRange', { from: monthShort(season.from), to: monthShort(season.to) }),
-      mono: !season.allYear,
-      note: season.est ? t('prov.est') : null,
+    { key: 'diff', label: t('ox.fact.grade'), value: gradeWord },
+    { key: 'dist', icon: 'km', label: t('ox.fact.length'), value: lengthText },
+    { key: 'time', label: t('ox.fact.time'), value: timeText },
+    {
+      key: 'climb',
+      label: t('ox.fact.climb'),
+      value: climbText ? (isNum(descentM) ? t('ox.climbUpDown', { up: nf(ascent), down: nf(descentM) }) : climbText) : '',
     },
+    { key: 'high', label: t('ox.fact.high'), value: isNum(highM) ? `${nf(highM)} m` : '' },
+    { key: 'route', icon: isLoopShape ? 'loop' : 'start', label: t('ox.fact.route'), value: shapeWord },
   ], t);
 
-  // The rows (T386): at most five, grouped. About this walk holds the
-  // argument and the description (why, what you walk past, what to expect),
-  // the route holds its parts (stages, bases, stops, the family), then the
-  // photographs and every measurement. The surface bar left the rows for the
-  // signature, where it shares the profile's kilometre axis.
-  const aboutTexts = [
-    ...why.map((w) => w.text),
-    ...(story.points || []).map((p) => p.text),
-    ...(story.prose || []),
-  ];
-  const hasWhy = why.length > 0;
-  const hasSee = Array.isArray(detail?.highlights) && detail.highlights.length > 0;
-  const hasExpect = story.points.length > 0 || story.prose?.length > 0;
-  const hasStops = Array.isArray(stops) && stops.length > 0;
-  const hasFamily = Boolean(family && family.size > 1);
-  const hasRoute = hasStages || bases.length > 0 || hasStops || hasFamily;
-  const onlyStops = hasStops && !hasStages && !bases.length && !hasFamily;
-  const routeNames = [
-    ...(detail?.stages || []).map((st) => st.name),
-    ...bases.map((b) => b.city || b.name),
-    ...(hasStops ? stops.slice(0, 3).map((st) => stopNameFromRef(st.poi_ref)) : []),
-  ].filter(Boolean);
-
-  const rows = [
-    (hasWhy || hasSee || hasExpect) && {
-      key: 'about',
-      icon: BulbIcon,
-      label: t(isCityDay ? 'detail.aboutDay' : 'detail.aboutWalk'),
-      summary: previewNotHook(aboutTexts, hook),
-      body: (
-        <>
-          {hasWhy && (
-            <div className="tpage-why">
-              <h3 className="dsk-sub">{t('trails.whyTitle')}</h3>
-              <ul className="tpage-story">
-                {why.map((p) => {
-                  const Icon = STORY_ICONS[p.icon] || CheckIcon;
-                  return (
-                    <li key={p.key}>
-                      <span className="tpage-story-icon"><Icon size={14} /></span>
-                      <span>{p.text}</span>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          )}
-          {hasSee && (
-            <div className="tpage-see">
-              <h3 className="dsk-sub">{t('trails.seeTitle')}</h3>
-              <ol className="tpage-highlights">
-                {detail.highlights.map((h, i) => (
-                  <li key={`${h.name}-${i}`}>
-                    <span className="tpage-hl-name">{h.name}</span>
-                    <span className="tpage-hl-facts">
-                      <span>{t(`trails.kind_${h.kind}`)}</span>
-                      {isNum(h.ele_m) && <span>{Math.round(h.ele_m)} m</span>}
-                      {isNum(h.along_m) && <span>{t('trails.atKm', { km: km1(h.along_m) })}</span>}
-                    </span>
-                  </li>
-                ))}
-              </ol>
-            </div>
-          )}
-          {hasExpect && (
-            <div className="tpage-expect">
-              {/* Same list styling as the why block, its own class: one is
-                  the argument for the walk and one is the description of it,
-                  and a reader of the DOM (or a harness) has to be able to
-                  tell which is which. */}
-              <h3 className="dsk-sub">{t('trails.expectTitle')}</h3>
-              {story.points.length > 0 && (
-                <ul className="tpage-story">
-                  {story.points.map((p) => {
-                    const Icon = STORY_ICONS[p.icon] || RouteIcon;
-                    return (
-                      <li key={p.key}>
-                        <span className="tpage-story-icon"><Icon size={14} /></span>
-                        <span>{p.text}</span>
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-              {story.prose?.length > 0 && (
-                <div className="tpage-prose">
-                  {story.prose.map((p, i) => <p key={i}>{p}</p>)}
-                </div>
-              )}
-            </div>
-          )}
-        </>
-      ),
-    },
-    hasRoute && {
-      key: 'route',
-      icon: onlyStops ? MapPinIcon : ListDayIcon,
-      label: t(onlyStops ? 'trails.stopsTitle' : 'detail.theRoute'),
-      summary: previewWords(routeNames.slice(0, 3).join(', ')),
-      body: (
-        <>
-          {hasStages && (
-            <div className="tpage-part">
-              <h3 className="dsk-sub">{t('route.stagesTitle')}</h3>
-              <Stages
-                stages={detail.stages}
-                t={t}
-                canOpen={(id) => stageRowById.has(String(id))}
-                onOpenRoute={onOpenNeighbour
-                  ? (id) => { const row = stageRowById.get(String(id)); if (row) onOpenNeighbour('trail', row); }
-                  : null}
-              />
-            </div>
-          )}
-          {bases.length > 0 && (
-            <div className="tpage-part">
-              <h3 className="dsk-sub">{t('route.basesTitle')}</h3>
-              <Bases bases={bases} t={t} onSelectDest={onSelectDest} />
-            </div>
-          )}
-          {hasStops && (
-            <ol className="tpage-stops">
-              {stops.map((st) => (
-                <li key={st.seq}>
-                  <span className="tpage-stop-name">{stopNameFromRef(st.poi_ref)}</span>
-                  <span className="tpage-stop-facts">
-                    {st.dwell_min != null && <span>{t('trails.dwell', { min: st.dwell_min })}</span>}
-                    {st.leg_duration_min != null && st.seq > 1 && (
-                      <span>{t(st.leg_mode === 'transit' ? 'trails.legTransit' : 'trails.legWalk', { min: st.leg_duration_min })}</span>
-                    )}
-                  </span>
-                </li>
-              ))}
-            </ol>
-          )}
-          {hasFamily && (
-            <p className="tpage-family-n">
-              {t('trails.familyPart', { name: family.n || family.k })}
-              {', '}
-              {t('trails.familyStages', { n: family.size })}
-            </p>
-          )}
-        </>
-      ),
-    },
-    {
-      key: 'facts',
-      icon: InfoIcon,
-      label: t('detail.factsHead'),
-      summary: factLine,
-      body: (
-        <>
-          <div className="tpage-facts">
-            {/* T630: every fact keeps its slot, the placeholder where the wire has no value. */}
-            <Fact label={t('trails.factDistance')} value={isNum(totalM) ? `${km1(totalM)} km` : <NotYet />} />
-            <Fact label={t(isCityDay ? 'trails.factDay' : 'trails.factTime')} value={isNum(src.duration_min) ? `${hoursText(src.duration_min)} h` : <NotYet />} />
-            <Fact label={t('trails.factAscent')} value={isNum(ascent) ? `${Math.round(ascent)} m` : <NotYet />} />
-            <Fact label={t('trails.factDescent')} value={isNum(detail?.descent_m ?? tr.descent_m) ? `${Math.round(detail?.descent_m ?? tr.descent_m)} m` : <NotYet />} />
-            <Fact label={t('trails.factHigh')} value={isNum(detail?.elevation?.ele_max_m) ? `${Math.round(detail.elevation.ele_max_m)} m` : <NotYet />} />
-            {isCityDay && isNum(tr.n_stops) && <Fact label={t('trails.factStops')} value={String(tr.n_stops)} />}
-            {diffKey && (
-              <Fact
-                label={t('trails.factDifficulty')}
-                value={t(diffKey) + (derivedGrade ? ' ~' : '')}
-                title={derivedGrade ? t('trails.gradeDerived') : t('trails.gradeFrom')}
-                word
-              />
-            )}
-          </div>
-          <TrailRouteFacts row={tr} detail={detail} t={t} lang={lang} isCityDay={isCityDay} />
-          {/* What the walk goes past and who it suits, as chips rather than
-              as prose. Two rows, and the second one says which claims came
-              off the map and which are ours: "a mapper recorded that dogs are
-              allowed here" and "this looked gentle to us" are not the same
-              promise, and a chip that blurs them is worse than no chip. */}
-          {(highlightCodes.length > 0 || suits.length > 0) && (
-            <div className="tpage-chips">
-              {highlightCodes.map((code) => (
-                <span key={code} className="tpage-chip tpage-chip-hl">
-                  {t(HIGHLIGHT_LABEL[code] || 'trails.hlSummit')}
-                </span>
-              ))}
-              {suits.map((code) => {
-                const est = suitabilityIsDerived(src.f ? src : tr, code);
-                return (
-                  <span
-                    key={code}
-                    className={`tpage-chip tpage-chip-suit${est ? ' est' : ''}`}
-                    title={t(est ? 'trails.suitEstimated' : 'trails.suitTagged')}
-                  >
-                    {t(SUIT_LABEL[code] || code)}
-                    {est ? <i aria-hidden="true">~</i> : null}
-                  </span>
-                );
-              })}
-            </div>
-          )}
-          {!isCityDay && (
-            <Button variant="quiet" size="sm" className="tpage-kml" iconStart={<MapPinIcon size={16} />} onClick={onKml}>
-              {t('trails.kml')}
-            </Button>
-          )}
-        </>
-      ),
-    },
-  ].filter(Boolean);
-
-  // T430: the sights along the way as the "Why go" track, each with the
-  // photograph taken nearest to it on the route where there is one.
-  const shots = toPhotos(detail?.images, { fallbackCaption: tr.name }).map((p) => ({
+  // T430: the sights along the way, each with the photograph taken nearest
+  // to it on the route where there is one.
+  const shots = toPhotos(detail?.images, { fallbackCaption: named.name }).map((p) => ({
     ...p,
     caption: [p.caption, isNum(p.alongM) ? t('trails.viewAt', { km: km1(p.alongM) }) : ''].filter(Boolean).join(', '),
   }));
@@ -858,19 +622,17 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
     }
     return best ? best.p : null;
   };
+  const kindWord = (k) => { const w = t(`trails.kind_${k}`); return w.startsWith('trails.kind_') ? '' : w; };
   const sights = (detail?.highlights || []).slice(0, 6).map((h, i) => ({
     key: `${h.name}-${i}`,
     title: h.name,
-    line: [t(`trails.kind_${h.kind}`), isNum(h.ele_m) ? `${Math.round(h.ele_m).toLocaleString(lang)} m` : '']
-      .filter((x) => x && !x.startsWith('trails.kind_')).join(', '),
-    meta: isNum(h.along_m) ? t('trails.atKm', { km: km1(h.along_m) }) : '',
+    line: [kindWord(h.kind), isNum(h.ele_m) ? `${nf(h.ele_m)} m` : '',
+      isNum(h.along_m) ? t('trails.atKm', { km: km1(h.along_m) }) : ''].filter(Boolean).join(', '),
     photo: nearestShot(h.along_m),
   }));
-  const reasonsList = why.slice(1).map((w) => ({ key: w.key, title: '', line: w.text }));
-  const whyGo = sights.length ? sights : reasonsList;
   const galleryPhotos = shots.length ? shots
-    : (tr.img?.u ? toPhotos([{ u: tr.img.u, w: tr.img.w, h: tr.img.h }], { fallbackCaption: tr.name })
-      : (assoc.photoUrl ? toPhotos([assoc.photoUrl], { caption: assoc.photoOf ? t('detail.photoNear', { place: assoc.photoOf }) : tr.name }) : []));
+    : (tr.img?.u ? toPhotos([{ u: tr.img.u, w: tr.img.w, h: tr.img.h }], { fallbackCaption: named.name })
+      : (assoc.photoUrl ? toPhotos([assoc.photoUrl], { caption: assoc.photoOf ? t('detail.photoNear', { place: assoc.photoOf }) : named.name }) : []));
   const before = beforeGoItems({
     lines: notForLines('trail', tr, { reasons: detail?.reasons || tr.reasons, grade, ascent, totalM }),
   });
@@ -878,209 +640,393 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
     { label: detail?.attribution_text || tr.attribution_text || 'OpenStreetMap' },
   ];
 
+  /* Before you go: season, waymarks, water, huts, dogs, permit, hazards. */
+  const monthName = (v) => {
+    const n = typeof v === 'number' ? v : MONTH_CODES.indexOf(String(v || '').slice(0, 3).toLowerCase()) + 1;
+    return n >= 1 && n <= 12 ? monthShort(n) : '';
+  };
+  const atKm = (m) => (isNum(m) ? t('trails.atKm', { km: km1(m) }) : '');
+  const waterPts = (detail?.water_points || []).filter((w) => w && (w.name || isNum(w.along_m)));
+  const huts = (detail?.huts || []).filter((h) => h && h.name);
+  const isUrl = (s) => /^https?:\/\//i.test(String(s || ''));
+  const beforeRows = [
+    season && {
+      key: 'season',
+      icon: <CalendarIcon size={16} />,
+      title: season.allYear ? t('detail.seasonAllYear')
+        : t('detail.monthRange', { from: monthShort(season.from), to: monthShort(season.to) }),
+      text: season.est ? t('ox.seasonEst') : t('ox.seasonText'),
+    },
+    waymarked && {
+      key: 'way',
+      icon: <BootIcon size={16} />,
+      title: t('ox.waymarked'),
+      text: named.ref ? t('ox.waymarkedRef', { ref: named.ref }) : t('ox.waymarkedText'),
+    },
+    waterPts.length > 0 && {
+      key: 'water',
+      icon: <BottleIcon size={16} />,
+      title: t('ox.water'),
+      text: [waterPts.slice(0, 3).map((w) => [w.name || t('ox.waterPoint'), atKm(w.along_m)].filter(Boolean).join(' ')).join('; '),
+        t('ox.waterNote')].join('. '),
+    },
+    ...huts.slice(0, 3).map((h, i) => {
+      const bits = [atKm(h.along_m), isNum(h.ele_m) ? `${nf(h.ele_m)} m` : ''].filter(Boolean).join(', ');
+      const open = Array.isArray(h.season) && h.season.length === 2 && monthName(h.season[0]) && monthName(h.season[1])
+        ? t('ox.hutOpen', { from: monthName(h.season[0]), to: monthName(h.season[1]) }) : '';
+      const book = h.booking && !isUrl(h.booking) ? String(h.booking) : '';
+      return {
+        key: `hut-${i}`,
+        icon: <BedIcon size={16} />,
+        title: h.name,
+        text: [t('ox.hut'), bits, open, book].filter(Boolean).join(', '),
+        link: isUrl(h.booking) ? <a href={h.booking} target="_blank" rel="noopener noreferrer">{t('ox.hutBook')}</a> : null,
+      };
+    }),
+    ['yes', 'leash', 'no'].includes(detail?.dogs) && {
+      key: 'dogs',
+      icon: <InfoIcon size={16} />,
+      title: t(`ox.dogs.${detail.dogs}`),
+      text: '',
+    },
+    detail?.permit && {
+      key: 'permit',
+      icon: <TicketIcon size={16} />,
+      title: t('ox.permit'),
+      text: String(detail.permit),
+    },
+    ...before.map((it) => ({
+      key: it.key,
+      icon: <ItemIcon name={it.icon} size={16} />,
+      title: t(it.titleKey, it.params),
+      text: t(it.subKey, it.params),
+      warn: Boolean(it.safety),
+    })),
+  ];
+
+  /* Getting there: the start, parking, transit, one way or a loop. */
+  const access = detail?.access || tr.access || null;
+  const startInfo = detail?.start || null;
+  const startName = startInfo?.name || null;
+  const startEle = isNum(startInfo?.ele) ? startInfo.ele : (pts[0] && isNum(pts[0].ele) ? pts[0].ele : null);
+  const nearLine = start && assoc.dest && startKm != null
+    ? (startKm >= 2 ? t('trails.startNear', { km: Math.round(startKm), city: assoc.dest.city }) : t('trails.startIn', { city: assoc.dest.city }))
+    : '';
+  const mText = (m) => (m >= 1000 ? `${km1(m)} km` : `${Math.round(m)} m`);
+  const parking = access?.parking || null;
+  const parkFee = parking
+    ? (isNum(parking.eur_day) ? t('ox.parkDay', { price: formatMoney(parking.eur_day) })
+      : parking.fee === false ? t('ox.parkFree') : parking.fee === true ? t('ox.parkPaid') : '')
+    : '';
+  const transit = (Array.isArray(access?.transit) ? access.transit : []).filter((s) => s && s.name).slice(0, 3);
+  const gettingRows = start ? [
+    {
+      key: 'start',
+      icon: <MapPinIcon size={16} />,
+      title: startName
+        ? (isNum(startEle) ? t('ox.startNamedEle', { name: startName, ele: nf(startEle) }) : t('ox.startNamed', { name: startName }))
+        : (isNum(startEle) ? t('ox.startEle', { ele: nf(startEle) }) : t('ox.start')),
+      text: [nearLine, `${start.lat.toFixed(5)}, ${start.lon.toFixed(5)}`].filter(Boolean).join('. '),
+      link: dirUrl ? <a href={dirUrl} target="_blank" rel="noopener noreferrer">{t('ox.directions')}</a> : null,
+    },
+    parking && {
+      key: 'park',
+      icon: <ParkingIcon size={16} />,
+      title: parking.name ? t('ox.parkNamed', { name: parking.name }) : t('ox.parkStart'),
+      text: [isNum(parking.m) ? t('ox.mFromStart', { d: mText(parking.m) }) : '', parkFee].filter(Boolean).join(', '),
+    },
+    ...transit.map((s, i) => {
+      const Icon = TRANSIT_ICON[s.mode] || BusIcon;
+      return {
+        key: `tr-${i}`,
+        icon: <Icon size={16} />,
+        title: t(`ox.transit.${TRANSIT_ICON[s.mode] ? s.mode : 'bus'}`, { name: s.name }),
+        text: isNum(s.m) ? t('ox.mWalk', { d: mText(s.m) }) : '',
+      };
+    }),
+    !isCityDay && shapeKey && {
+      key: 'shape',
+      icon: isLoopShape ? <LoopIcon size={16} /> : <ArrowRightIcon size={16} />,
+      title: shapeWord,
+      text: t(isLoopShape ? 'ox.shapeLoop' : rt === 'out_back' ? 'ox.shapeBack' : 'ox.shapeOneWay'),
+    },
+  ] : [];
+
+  /* The stages, the towns on the way, a city day's stops. */
+  const hasStops = Array.isArray(stops) && stops.length > 0;
+  const hasFamily = Boolean(family && family.size > 1);
+
+  const onAdd = onAddToDay ? () => onAddToDay({
+    id: tr.id, cc: tr.country || tr.cc, name: named.name,
+    lat: start ? start.lat : (tr.bbox ? (tr.bbox[1] + tr.bbox[3]) / 2 : tr.lat),
+    lon: start ? start.lon : (tr.bbox ? (tr.bbox[0] + tr.bbox[2]) / 2 : tr.lon),
+  }) : null;
+
+  const pdfModel = () => outdoorPdfModel({
+    name: named.name,
+    hook,
+    facts: keyFacts,
+    why: sights.length ? sights : why.slice(1).map((w) => ({ title: '', line: w.text })),
+    before,
+    sources,
+    t,
+    extra: {
+      photos: galleryPhotos,
+      where: place ? [place.city, place.country].filter(Boolean).join(', ') : '',
+      route: pdfLine(pts).map((p) => [p.lon, p.lat]),
+      profile: pdfLine(pts).filter((p) => Number.isFinite(p.ele)).map((p) => [p.m / 1000, p.ele]),
+      url: shareUrl,
+    },
+  });
+
+  const gpxLabel = t(canShareFiles ? 'trails.sendToApp' : 'trails.gpx');
+  const sfKnown = detail?.sf ? 1 - (Number(detail.sf.unknown) || 0) : 0;
+  const rankLine = !isCityDay && rating && !rating.unscored
+    ? natureRankLine({ rank: rating.rank }, t, { place: place?.country || '' }) : '';
+
+  const mapNode = (
+    <MapShell getMap={getMap} relief beneath={['trail-casing']}>
+      <div className="tpage-hero">
+        <div className="tpage-map" ref={mapEl}>
+          {/* The card's simplified line in ink while maplibre loads; the
+              canvas crossfades over it (T396). */}
+          <MapSketch lines={sketchLines} label={named.name} />
+        </div>
+        {follow && (
+          <div className="tpage-hud">
+            <button type="button" className="tpage-hud-close" onClick={() => setFollow(false)} aria-label={t('trails.stopFollow')}>
+              <CloseIcon size={15} />
+            </button>
+            {!centred && (
+              <button type="button" className="tpage-recentre" onClick={() => setCentred(true)}>
+                <CompassIcon size={14} />
+                <span>{t('trails.recentre')}</span>
+              </button>
+            )}
+            <div className="tpage-hud-card">
+              {fixErr && (
+                <p className="tpage-hud-err">
+                  {t(fixErr === 'denied' ? 'trails.geoDenied'
+                    : fixErr === 'unsupported' ? 'trails.geoUnsupported' : 'trails.geoUnavailable')}
+                </p>
+              )}
+              {!fixErr && !fix && <p className="tpage-hud-wait">{t('trails.findingYou')}</p>}
+              {fix && (
+                <>
+                  {offRoute && (
+                    <p className="tpage-hud-off">{t('trails.offRoute', { m: Math.round(onRoute.offM) })}</p>
+                  )}
+                  <div className="tpage-hud-top">
+                    <span className="tpage-hud-done">{km1(doneM)}</span>
+                    <span className="tpage-hud-of">{t('trails.hudOf', { total: km1(totalM) })}</span>
+                  </div>
+                  <div className="tpage-hud-track" aria-hidden="true">
+                    <span className="tpage-hud-fill" style={{ width: `${Math.min(100, (doneM / Math.max(1, totalM)) * 100).toFixed(1)}%` }} />
+                  </div>
+                  <div className="tpage-hud-row">
+                    <span>{t('trails.hudLeft', { km: km1(leftM) })}</span>
+                    {relief?.up ? <span>{t('trails.hudClimbLeft', { m: relief.up })}</span> : null}
+                    {timeLeft != null && <span>{t('trails.hudTimeLeft', { h: hoursText(timeLeft) })}</span>}
+                    {fix.accM != null && <span className="tpage-hud-acc">{t('trails.hudAccuracy', { m: Math.round(fix.accM) })}</span>}
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </MapShell>
+  );
+
+  const profileNode = !isCityDay && (detail?.elevation || sfKnown >= 0.5) ? (
+    <>
+      {detail?.elevation && (
+        <HeightProfile
+          elevation={detail.elevation}
+          atM={follow && onRoute ? onRoute.m : null}
+          onScrub={highlightAt}
+          markM={markM}
+        />
+      )}
+      {/* What is underfoot, on the same route, where enough of it is known. */}
+      {sfKnown >= 0.5 && (
+        <div className="ox-surface">
+          <p className="pt-muted">{t('route.surfaceTitle')}</p>
+          <SurfaceBar sf={detail.sf} t={t} />
+        </div>
+      )}
+    </>
+  ) : null;
+
+  const jumps = [
+    { key: 'route', id: 'ox-route', label: t('ox.jump.route') },
+    { key: 'before', id: 'ox-before', label: t('go.head') },
+    { key: 'getting', id: 'ox-getting', label: t('detail.gettingThere') },
+    { key: 'along', id: 'ox-along', label: t('ox.jump.along') },
+    { key: 'near', id: 'ox-near', label: t('ox.jump.nearby') },
+  ];
+
+  const hasAlong = sights.length > 0 || hasStages || bases.length > 0 || hasStops || hasFamily;
+  const climbLine = isNum(ascent) ? t('ox.climbM', { m: nf(ascent) }) : '';
+
   return (
-    <DetailPage
-      name={tr.name}
-      className={follow ? 'following' : ''}
+    <OutdoorPage
+      name={named.name}
+      className="tpage-v2"
       backLabel={backLabel || t('detail.backTrails')}
       onClose={onClose}
       onEscape={escapeClose}
       fav={fav}
       onFav={onFav}
       onShare={onShare}
-      barTitleOn={follow}
       resetKey={tr.id}
       toast={toast}
-      gallery={galleryPhotos.length ? (
-        <PhotoGallery photos={galleryPhotos} label={tr.name} claimKey={tr.id}
-          fallback={{ city: tr.name, iso2: tr.country || tr.cc }} />
-      ) : null}
-      head={(
-        <ItemHead
-          title={tr.name}
-          iso2={tr.country || tr.cc}
-          where={place ? [place.city, place.country].filter(Boolean).join(', ') : ''}
-          rating={isCityDay ? (assoc.dest?.rating || null) : (rating || null)}
-          chips={(
-            <>
-              {!isCityDay && loop && <Chip kind="status" icon={<LoopIcon size={16} />}>{t('trails.loop')}</Chip>}
-              {ref && <Chip kind="status">{ref}</Chip>}
-            </>
-          )}
-          after={isCityDay ? null : <NatureHeadLines rating={rating} place={place?.country || ''} />}
-        />
-      )}
-      hook={hook}
-      keyFacts={keyFacts}
-      keyFactsLead={<RouteRainWarning lat={start?.lat} lon={start?.lon} sac={src.sac_scale} highlights={highlightCodes} />}
-      keyFactsFoot={diffKey && derivedGrade ? `~ ${t('trails.gradeDerived')}` : null}
-      whyGo={whyGo}
-      whyGoTitle={sights.length ? t('trails.seeTitle') : null}
-      before={before}
-      map={(
-        <MapShell getMap={getMap} relief beneath={['trail-casing']}>
-        <div className="tpage-hero">
-          <div className="tpage-map" ref={mapEl}>
-            {/* The card's simplified line in ink while maplibre loads; the
-                canvas crossfades over it (T396). */}
-            <MapSketch lines={sketchLines} label={tr.name} />
-          </div>
-          {follow && (
-            <div className="tpage-hud">
-              <button type="button" className="tpage-hud-close" onClick={() => setFollow(false)} aria-label={t('trails.stopFollow')}>
-                <CloseIcon size={15} />
-              </button>
-              {!centred && (
-                <button type="button" className="tpage-recentre" onClick={() => setCentred(true)}>
-                  <CompassIcon size={14} />
-                  <span>{t('trails.recentre')}</span>
-                </button>
-              )}
-              <div className="tpage-hud-card">
-                {fixErr && (
-                  <p className="tpage-hud-err">
-                    {t(fixErr === 'denied' ? 'trails.geoDenied'
-                      : fixErr === 'unsupported' ? 'trails.geoUnsupported' : 'trails.geoUnavailable')}
-                  </p>
-                )}
-                {!fixErr && !fix && <p className="tpage-hud-wait">{t('trails.findingYou')}</p>}
-                {fix && (
-                  <>
-                    {offRoute && (
-                      <p className="tpage-hud-off">{t('trails.offRoute', { m: Math.round(onRoute.offM) })}</p>
-                    )}
-                    <div className="tpage-hud-top">
-                      <span className="tpage-hud-done">{km1(doneM)}</span>
-                      <span className="tpage-hud-of">{t('trails.hudOf', { total: km1(totalM) })}</span>
-                    </div>
-                    <div className="tpage-hud-track" aria-hidden="true">
-                      <span className="tpage-hud-fill" style={{ width: `${Math.min(100, (doneM / Math.max(1, totalM)) * 100).toFixed(1)}%` }} />
-                    </div>
-                    <div className="tpage-hud-row">
-                      <span>{t('trails.hudLeft', { km: km1(leftM) })}</span>
-                      {relief?.up ? <span>{t('trails.hudClimbLeft', { m: relief.up })}</span> : null}
-                      {timeLeft != null && <span>{t('trails.hudTimeLeft', { h: hoursText(timeLeft) })}</span>}
-                      {fix.accM != null && <span className="tpage-hud-acc">{t('trails.hudAccuracy', { m: Math.round(fix.accM) })}</span>}
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-        </MapShell>
-      )}
-      signature={!isCityDay && (detail?.elevation || detail?.sf) ? (
-        <Instrument
-          kind="trail"
-          title={t('sig.trailHead')}
-        >
-          {detail?.elevation && (
-            <SlopeProfile
-              elevation={detail.elevation}
-              atM={follow && onRoute ? onRoute.m : null}
-              onScrub={highlightAt}
-              markM={markM}
-              labels={{
-                row: t('sig.rowEle'),
-                aria: t('sig.scrubAria'),
-                at: (v) => t('sig.eleAt', v),
-                range: (v) => t('sig.eleRange', v),
-                under: t('sig.slopeUnder'),
-                mid: t('sig.slopeMid'),
-                over: t('sig.slopeOver'),
-              }}
-            />
-          )}
-          {/* What is underfoot, as the profile's second track (T386): the
-              same route, one share per surface, so the steep stretch and
-              the loose stretch can be read together. */}
-          {detail?.sf && (
-            <SigRow label={t('route.surfaceTitle')} className="sig-row-gap">
-              <SurfaceBar sf={detail.sf} t={t} />
-            </SigRow>
-          )}
-        </Instrument>
-      ) : null}
-      rows={rows}
-      primary={follow ? null : (isCityDay && assoc.destId ? (
-        <Button variant="primary" iconEnd={<ChevronRightIcon size={20} />} onClick={() => onSelectDest(assoc.destId)}>
-          {(baseDay && view.stayIn(assoc.dest?.city, baseDay.dayEur)) || t('trails.openDest', { city: assoc.dest?.city || '' })}
-        </Button>
-      ) : (
-        /* Taking it into the app you already walk with is the primary action,
-           because that is what this page is for (AllTrails and Komoot lead
-           with the same door); following it here is a secondary that
-           promises only what a browser tab can deliver. */
-        <Button variant="primary" className="tpage-primary" iconStart={<DownloadIcon size={20} />} onClick={onGpx}>
-          {t(canShareFiles ? 'trails.sendToApp' : 'trails.gpx')}
-        </Button>
-      ))}
-      actions={follow ? [] : [
-        start && dirUrl && (
-          <a key="dir" className="btn btn-secondary" href={dirUrl} target="_blank" rel="noopener noreferrer">
-            <span className="btn-icon" aria-hidden="true"><RouteIcon size={20} /></span>
-            <span className="btn-label">{t('trails.startDirections')}</span>
-          </a>
-        ),
-        isCityDay && assoc.destId && (
-          <Button key="gpx" variant="secondary" iconStart={<DownloadIcon size={20} />} onClick={onGpx}>
-            {t(canShareFiles ? 'trails.sendToApp' : 'trails.gpx')}
-          </Button>
-        ),
-        <Button key="follow" variant="secondary" className="tpage-follow" iconStart={<CompassIcon size={20} />} onClick={startFollow}>
-          {t('trails.follow')}
-        </Button>,
-        onAddToDay && (
-          <Button key="day" variant="secondary" className="feat-dayplan" iconStart={<SunIcon size={20} />}
-            onClick={() => onAddToDay({ id: tr.id, cc: tr.country || tr.cc, name: tr.name, lat: start ? start.lat : (tr.bbox ? (tr.bbox[1] + tr.bbox[3]) / 2 : tr.lat), lon: start ? start.lon : (tr.bbox ? (tr.bbox[0] + tr.bbox[2]) / 2 : tr.lon) })}>
-            {t('feat.addToDay')}
-          </Button>
-        ),
-      ]}
-      onPdf={follow ? null : onPdf}
-      pdf={{
-        photos: galleryPhotos,
-        where: place ? [place.city, place.country].filter(Boolean).join(', ') : '',
-        route: pdfLine(pts).map((p) => [p.lon, p.lat]),
-        profile: pdfLine(pts).filter((p) => Number.isFinite(p.ele)).map((p) => [p.m / 1000, p.ele]),
-        url: shareUrl,
+      following={follow}
+      photos={galleryPhotos}
+      photoFallback={{ city: named.name, iso2: tr.country || tr.cc }}
+      head={{
+        title: named.name,
+        iso2: tr.country || tr.cc,
+        where: place ? [place.country, place.city].filter(Boolean).join(', ') : '',
+        rating: isCityDay ? (assoc.dest?.rating || null) : (rating || null),
+        rank: rankLine,
+        badges: [named.ref ? t('ox.routeRef', { ref: named.ref }) : null],
+        lead: hook,
       }}
-      pdfBusy={pdfBusy}
-      gettingThere={start && assoc.dest && startKm != null ? (
-        <ul className="igo-list">
-          {/* A town before any coordinate (T386): "4 km from Gosau" is what a
-              walker plans by; the coordinates are for the maps app. */}
-          <li className="igo-row tpage-start-near">
-            <ItemIcon name="pin" />
-            <span className="igo-main">
-              <span>
-                {startKm >= 2
-                  ? t('trails.startNear', { km: Math.round(startKm), city: assoc.dest.city })
-                  : t('trails.startIn', { city: assoc.dest.city })}
-              </span>
-              <span className="igo-sub tpage-start-coords">{start.lat.toFixed(5)}, {start.lon.toFixed(5)}</span>
-            </span>
-          </li>
-        </ul>
-      ) : null}
-      exits={exits}
-      nearby={(
-        <NearbyOutdoors
-          row={tr}
-          cc={tr.country}
-          headings={{ peak: 'nb.trail.peak', lake: 'nb.trail.lake', beach: 'nb.trail.beach' }}
-          onOpen={onOpenNeighbour}
-        />
-      )}
+      factsLead={<RouteRainWarning lat={start?.lat} lon={start?.lon} sac={src.sac_scale} highlights={highlightCodes} />}
+      facts={keyFacts}
+      jumps={jumps}
+      card={{
+        title: t(isCityDay ? 'ox.card.day' : 'ox.card.walk'),
+        rows: isCityDay ? [] : [
+          { key: 'g', label: t('ox.fact.grade'), value: gradeWord },
+          { key: 'l', label: t('ox.fact.length'), value: lengthText },
+          { key: 't', label: t('ox.fact.time'), value: timeText },
+          { key: 'c', label: t('ox.fact.climb'), value: climbText },
+          { key: 'r', label: t('ox.fact.route'), value: shapeWord },
+        ],
+        onAdd,
+        secondary: [
+          <Button key="gpx" variant="secondary" size="sm" iconStart={<DownloadIcon size={16} />} onClick={onGpx}>
+            {t('ox.gpx')}
+          </Button>,
+          dirUrl ? <OxLinkButton key="dir" href={dirUrl} icon={<RouteIcon size={16} />}>{t('ox.directions')}</OxLinkButton> : null,
+        ],
+        stay: assoc.destId && assoc.dest?.city ? (
+          <StayLine destId={assoc.destId} city={assoc.dest.city} km={startKm ?? assoc.km} onOpen={onSelectDest} />
+        ) : null,
+      }}
+      dock={{
+        fig: [lengthText, timeText].filter(Boolean).join(', ') || named.name,
+        note: gradeStep ? `T${gradeStep}` : '',
+        sub: [climbLine, shapeWord && shapeWord.toLocaleLowerCase(lang)].filter(Boolean).join(', '),
+      }}
       sources={sources}
       sourcesExtra={(
         <>
           {/* An upload is one more source, so its door sits with the others (T333). */}
           <UploadForm layer="trail" itemId={tr.id} />
-          <ReportProblem item={{ layer: 'trail', id: tr.id, cc: tr.country || tr.cc, name: tr.name }} />
+          <ReportProblem item={{ layer: 'trail', id: tr.id, cc: tr.country || tr.cc, name: named.name }} />
         </>
       )}
-    />
+    >
+      <PSection id="ox-route" title={t('ox.jump.route')}
+        note={!isCityDay && shapeWord ? shapeWord : null}>
+        <RouteBlock
+          map={mapNode}
+          profile={profileNode}
+          actions={follow ? null : (
+            <>
+              <Button variant="secondary" size="sm" className="ox-gpx" iconStart={<DownloadIcon size={16} />} onClick={onGpx}>
+                {gpxLabel}
+              </Button>
+              <Button variant="secondary" size="sm" className="tpage-follow" iconStart={<CompassIcon size={16} />} onClick={startFollow}>
+                {t('trails.follow')}
+              </Button>
+              <Button variant="secondary" size="sm" className="ipage-pdf" loading={pdfBusy}
+                iconStart={<DownloadIcon size={16} />} onClick={() => onPdf(pdfModel())}>
+                {t('ox.pdf')}
+              </Button>
+            </>
+          )}
+        />
+      </PSection>
+
+      {(gradeStep > 0 || beforeRows.some(Boolean)) && (
+        <PSection id="ox-before" title={t('go.head')}>
+          <GradeCard level={gradeStep} est={gradeEst} />
+          <CheckRows rows={beforeRows} />
+          {!isCityDay && <SafetyBlock />}
+        </PSection>
+      )}
+
+      {gettingRows.some(Boolean) && (
+        <PSection id="ox-getting" title={t('detail.gettingThere')}>
+          <CheckRows rows={gettingRows} />
+        </PSection>
+      )}
+
+      {hasAlong && (
+        <PSection id="ox-along" title={t('ox.jump.along')}>
+          <AlongCards items={sights} />
+          {hasStages && (
+            <div className="pt-block">
+              <h3 className="pt-block-title">{t('route.stagesTitle')}</h3>
+              <Stages
+                stages={detail.stages}
+                t={t}
+                canOpen={(id) => stageRowById.has(String(id))}
+                onOpenRoute={onOpenNeighbour
+                  ? (id) => { const row = stageRowById.get(String(id)); if (row) onOpenNeighbour('trail', row); }
+                  : null}
+              />
+            </div>
+          )}
+          {bases.length > 0 && (
+            <div className="pt-block">
+              <h3 className="pt-block-title">{t('route.basesTitle')}</h3>
+              <Bases bases={bases} t={t} onSelectDest={onSelectDest} />
+            </div>
+          )}
+          {hasStops && (
+            <div className="pt-block">
+              <h3 className="pt-block-title">{t('trails.stopsTitle')}</h3>
+              <ol className="tpage-stops">
+                {stops.map((st) => (
+                  <li key={st.seq}>
+                    <span className="tpage-stop-name">{stopNameFromRef(st.poi_ref)}</span>
+                    <span className="tpage-stop-facts">
+                      {st.dwell_min != null && <span>{t('trails.dwell', { min: st.dwell_min })}</span>}
+                      {st.leg_duration_min != null && st.seq > 1 && (
+                        <span>{t(st.leg_mode === 'transit' ? 'trails.legTransit' : 'trails.legWalk', { min: st.leg_duration_min })}</span>
+                      )}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+          {hasFamily && (
+            <p className="pt-muted">
+              {t('trails.familyPart', { name: family.n || family.k })}
+              {', '}
+              {t('trails.familyStages', { n: family.size })}
+            </p>
+          )}
+        </PSection>
+      )}
+
+      {(exits.length > 0 || tr.nb) && (
+        <PSection id="ox-near" title={t('ox.otherWalks')}>
+          <OtherNearby exits={exits} hrefOf={(r) => featureHref('trail', { id: r.id, cc: r.country || r.cc })} />
+          <NearbyOutdoors
+            row={tr}
+            cc={tr.country}
+            headings={{ peak: 'nb.trail.peak', lake: 'nb.trail.lake', beach: 'nb.trail.beach' }}
+            onOpen={onOpenNeighbour}
+          />
+        </PSection>
+      )}
+    </OutdoorPage>
   );
 }
