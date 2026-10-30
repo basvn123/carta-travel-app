@@ -23,6 +23,7 @@ import { cityLabel } from '../lib/placeName.js';
 import { useMedia } from '../browse/home/useHome.js';
 import { RecordMapDialog } from '../auth/mytrips/parts.jsx';
 import { CostCard } from './trip/CostCard.jsx';
+import { ChangeTripSheet } from './trip/ChangeTripSheet.jsx';
 import { RouteCodes } from './trip/RouteCodes.jsx';
 import { bookRows } from './trip/ReadyToBook.jsx';
 import { useSettings } from '../components/SettingsLine.jsx';
@@ -327,8 +328,8 @@ export function TripSummary({
   // T838: no edit mode. Every fact is changed where it is shown (the chips,
   // the name, the route's stops), so the page has one layout.
   onRename = null,
-  // T886: Change your trip (the T888 sheet); absent, the trip settings.
-  onChange = null,
+  // T888: Change your trip: what a patch does to the total, new dates, the flights.
+  quoteDelta = null, onDates = null, onFlights = null,
   // T887: add the hire car the advice names, and what it does to the total.
   onCar = null, carDelta = null,
 }) {
@@ -398,9 +399,10 @@ export function TripSummary({
     onLifestyle && lifestyle && { key: 'lifestyle', label: t('tp.bar.stay'), text: lifestyle, onClick: onLifestyle, dialog: true },
   ].filter(Boolean);
 
-  // T886: one primary, then the trip's two doors: Change your trip (every
-  // input of the price, onChange; the trip settings until then) and Share.
-  const change = onChange || onSettings;
+  // T886, T888: one primary, then the trip's two doors: Change your trip
+  // (one sheet for every input of the price) and Share.
+  const [changing, setChanging] = useState(false);
+  const change = () => setChanging(true);
   const tools = (
     <div className="tpg-tools" role="group" aria-label={t('plan.toolsTitle')}>
       {onPlanDays && wide && (
@@ -413,8 +415,8 @@ export function TripSummary({
           {t('pf.doors.rest')}
         </Button>
       )}
-      {change && (
-        <Button variant="secondary" className="tpg-tool" iconStart={<PencilIcon size={18} />} onClick={() => change()}>
+      {(
+        <Button variant="secondary" className="tpg-tool" iconStart={<PencilIcon size={18} />} onClick={change}>
           {t('tp.change')}
         </Button>
       )}
@@ -490,6 +492,11 @@ export function TripSummary({
           </Button>
         ) : <span />}
         <span className="tpg-bar">
+          {wide && (
+            <Button variant="secondary" size="sm" className="tpg-change" iconStart={<PencilIcon size={16} />} onClick={change}>
+              {t('tp.change')}
+            </Button>
+          )}
           {bar}
           {onExport && (
             // T847: Share this trip, beside Save and the settings.
@@ -588,16 +595,35 @@ export function TripSummary({
         )}
       </div>
 
+      {changing && (
+        <ChangeTripSheet
+          total={priced?.grandTotal}
+          tripStart={tripStart}
+          tripEnd={tripEnd}
+          quoteDelta={quoteDelta}
+          flightsBooked={Boolean(booked?.flights)}
+          onDates={(a, b) => onDates?.(a, b)}
+          history={history}
+          onClose={() => setChanging(false)}
+          open={{
+            people: onChip ? openChip('people') : null,
+            from: onChip && origin ? openChip('from') : null,
+            flights: onFlights,
+            stay: onLifestyle,
+            places: () => go('itinerary'),
+            settings: onSettings,
+          }}
+        />
+      )}
+
       {/* T829, T886: below 1024 px the next steps stay in view in a bar over
           the bottom nav: Change your trip and Plan your days. The total is
           the cost card's alone, so the page says it once. */}
       {!wide && (
         <div className="tpg-dock" data-testid="tpg-dock">
-          {change && (
-            <Button variant="secondary" className="tpg-dock-change" iconStart={<PencilIcon size={16} />} onClick={() => change()}>
-              {t('tp.change')}
-            </Button>
-          )}
+          <Button variant="secondary" className="tpg-dock-change" iconStart={<PencilIcon size={16} />} onClick={change}>
+            {t('tp.change')}
+          </Button>
           {onPlanDays && (
             <Button variant="primary" className="tpg-dock-go" iconStart={<SparkIcon size={16} />} onClick={onPlanDays}>
               {t('trip.planYourDays')}

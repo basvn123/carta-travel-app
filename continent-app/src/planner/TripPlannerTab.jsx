@@ -1478,6 +1478,11 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
             // T887: the car the advice names, added with what it does to the total.
             onCar={carTip && carTip.verdict !== 'no' ? () => tp.setTransportPref('car') : null}
             carDelta={carDelta}
+            // T888: Change your trip prices a move of the dates and saves it
+            // the way the dates chip does, so Undo takes it back.
+            quoteDelta={tp.quoteDelta}
+            onDates={(start, end) => saveChip('dates', { start, end })}
+            onFlights={tp.planned && !tp.flight?.driving ? () => setFlightSheet('out') : null}
             onAddPaid={() => {
               // T839: what was paid goes in on the route, where each part is.
               setTripTab('itinerary');

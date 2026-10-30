@@ -752,3 +752,49 @@ button.ct-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: 2
 .tpg-next-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--space-3); }
 .tpg-next-main { display: grid; gap: 2px; min-width: 0; }
 .tpg-next-go.btn { flex: none; }
+
+/* ---- Change your trip (T888): one sheet for every input of the price ---- */
+.tpg-change.btn { border-radius: var(--radius-pill); }
+.tpx { display: grid; gap: var(--space-3); }
+.tpx-opts { display: grid; gap: var(--space-1); margin: 0; padding: 0; list-style: none; }
+.tpx-opt.btn {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  height: auto;
+  min-height: 60px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  color: var(--text);
+  text-align: left;
+}
+.tpx-opt .btn-label { display: contents; }
+.tpx-opt .btn-icon { color: var(--text-3); }
+@media (hover: hover) { .tpx-opt.btn:hover { background: var(--surface-hover); } }
+.tpx-ic { display: grid; place-items: center; width: 38px; height: 38px; border-radius: var(--radius-control); background: var(--umber-50); color: var(--umber-700); }
+.tpx-txt { display: grid; min-width: 0; line-height: var(--leading-ui); }
+.tpx-txt b { font-size: var(--text-body); font-weight: 600; }
+.tpx-txt small { font-size: var(--text-caption); color: var(--text-3); font-weight: 400; white-space: normal; }
+.tpx-hist { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); flex-wrap: wrap; padding-top: var(--space-3); border-top: 1px solid var(--border-soft); }
+.tpx-hist-h { font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.tpx-hist-acts { display: flex; gap: var(--space-2); }
+.tpx-note { margin: 0; font-size: var(--text-label); color: var(--text-2); }
+.tpx-days { display: grid; grid-template-columns: repeat(auto-fit, minmax(54px, 1fr)); gap: var(--space-1); }
+.tpx-day.btn { display: grid; justify-items: center; gap: 2px; height: auto; min-height: 56px; padding: var(--space-2) 2px; border-radius: var(--radius-control); font-weight: 600; }
+.tpx-day .btn-label { display: contents; }
+.tpx-day-d { font-size: var(--text-caption); color: var(--text-2); }
+.tpx-day-x { font-size: var(--text-caption); font-variant-numeric: tabular-nums; }
+.tpx-day.is-best.btn { background: var(--best-bg); border-color: var(--best); }
+.tpx-day.is-on.btn { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
+.tpx-impact { display: grid; gap: var(--space-1); margin: 0; padding: var(--space-3); border-radius: var(--radius-card); background: var(--surface-sunken); }
+.tpx-impact > div { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); }
+.tpx-impact dt { font-size: var(--text-caption); color: var(--text-3); }
+.tpx-impact dd { margin: 0; font-variant-numeric: tabular-nums; font-weight: 600; }
+.tpx-impact .is-new dd { font-size: var(--text-title); font-weight: 800; }
+.tpx-impact dd.is-less { color: var(--select-ink); }
+.tpx-impact dd.is-more { color: var(--amber-ink); }
+.tpx-warn { margin: 0; font-size: var(--text-caption); color: var(--amber-ink); }
+.tpx-foot { display: flex; justify-content: flex-end; gap: var(--space-2); }
