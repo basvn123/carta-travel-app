@@ -8,7 +8,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import {
-  airportTowns, answersLine, cardLine, groupHead, placeChips, sortTrips, stageLines, thereMinutes, SORTS,
+  airportTowns, answersLine, cardLine, filterTrips, groupHead, placeChips, sortTrips, stageLines, thereMinutes, SORTS,
 } from "../src/planner/finder/finderText.js";
 import { priceInSlices, EARLY } from "../src/planner/finder/priceSlices.js";
 import { buildTrips } from "../src/lib/recommend/trips.js";
@@ -69,7 +69,7 @@ test("T868: the answers line names the places first (row T859-b), then from, whe
 });
 
 test("T868: the sorts; ties keep the ranked order", () => {
-  assert.deepEqual(SORTS, ["match", "cheapest", "shortest"]);
+  assert.deepEqual(SORTS, ["match", "cheapest", "shortest", "warmest", "quietest"]);
   const ranked = [
     trip("a", { group: 1900, out: { dep: "06:15", arr: "09:40" }, gw: 20 }),
     trip("b", { group: 1600, out: { dep: "10:00", arr: "11:05" }, gw: 60 }),
@@ -83,6 +83,20 @@ test("T868: the sorts; ties keep the ranked order", () => {
   assert.equal(thereMinutes(ranked[2]), null);
   assert.deepEqual(sortTrips(ranked, "shortest").map((x) => x.id), ["d", "b", "a", "c"], "unknown last");
   assert.notEqual(sortTrips(ranked, "match"), ranked, "a new array");
+});
+
+test("T880: warmest and quietest sort by the month's data; the quick filters narrow", () => {
+  const dest = (tmax, crowd) => ({ taste: { tmax_by_month: Array(12).fill(tmax), crowd_by_month: Array(12).fill(crowd) } });
+  const ranked = [trip("a"), trip("b", { places: 2 }), trip("c"), trip("d")].map((x) => ({ ...x, month: 9 }));
+  const d = { a0: dest(22, 3), b0: dest(27, 1), b1: dest(25, 1), c0: dest(30, 0), d0: dest(24, 2) };
+  assert.deepEqual(sortTrips(ranked, "warmest", d).map((x) => x.id), ["c", "b", "d", "a"]);
+  assert.deepEqual(sortTrips(ranked, "quietest", d).map((x) => x.id), ["c", "b", "d", "a"]);
+  assert.deepEqual(sortTrips(ranked, "warmest", {}).map((x) => x.id), ["a", "b", "c", "d"], "no data keeps the ranked order");
+  assert.deepEqual(filterTrips(ranked, ["warm"], d).map((x) => x.id), ["b", "c"]);
+  assert.deepEqual(filterTrips(ranked, ["quiet", "one"], d).map((x) => x.id), ["c"]);
+  const budget = [{ ...ranked[0], budget: { eur: 1000, delta: -20 } }, { ...ranked[1], budget: { eur: 1000, delta: 40 } }];
+  assert.deepEqual(filterTrips(budget, ["budget"], d).map((x) => x.id), ["a"]);
+  assert.equal(filterTrips(ranked, [], d), ranked, "nothing on, the same list");
 });
 
 test("T869: the card's line and the group it is priced for", () => {

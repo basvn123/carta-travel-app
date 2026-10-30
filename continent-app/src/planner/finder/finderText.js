@@ -398,27 +398,51 @@ export function cardFacts(trip, destinations) {
   };
 }
 
-/** The sorts on Trips for you (T868): the engine's own order first. */
-export const SORTS = Object.freeze(['match', 'cheapest', 'shortest']);
+/** The sorts on Trips for you (T868, warmest and quietest T880): the engine's own order first. */
+export const SORTS = Object.freeze(['match', 'cheapest', 'shortest', 'warmest', 'quietest']);
 
 /**
  * The trips in one sort, a new array: 'match' keeps the ranked order;
  * 'cheapest' by the group's total (a trip whose total leaves a line out
- * after the ones that do not); 'shortest' by thereMinutes, the unknown
- * last. Ties keep the ranked order.
+ * after the ones that do not); 'shortest' by thereMinutes; 'warmest' by the
+ * month's highs, warmest first; 'quietest' by the crowd tier. The unknown
+ * go last; ties keep the ranked order.
  */
-export function sortTrips(trips, sort = 'match') {
-  if (sort !== 'cheapest' && sort !== 'shortest') return trips.slice();
+export function sortTrips(trips, sort = 'match', destinations = {}) {
+  if (!SORTS.includes(sort) || sort === 'match') return trips.slice();
   const at = new Map(trips.map((x, i) => [x.id, i]));
-  const keyOf = sort === 'cheapest'
-    ? (x) => [totalLeavesOut(x) ? 1 : 0, Number.isFinite(x.total?.group) ? x.total.group : Number.isFinite(x.total?.perPerson) ? x.total.perPerson : Infinity]
-    : (x) => { const m = thereMinutes(x); return [m == null ? 1 : 0, m ?? Infinity]; };
+  const known = (v) => [v == null ? 1 : 0, v ?? Infinity];
+  const keyOf = {
+    cheapest: (x) => [totalLeavesOut(x) ? 1 : 0, Number.isFinite(x.total?.group) ? x.total.group : Number.isFinite(x.total?.perPerson) ? x.total.perPerson : Infinity],
+    shortest: (x) => known(thereMinutes(x)),
+    warmest: (x) => { const h = dayHighs(x, destinations); return known(h ? -h.hi : null); },
+    quietest: (x) => known(crowdTier(x, destinations)),
+  }[sort];
   const keys = new Map(trips.map((x) => [x.id, keyOf(x)]));
   return trips.slice().sort((a, b) => {
     const ka = keys.get(a.id);
     const kb = keys.get(b.id);
     return (ka[0] - kb[0]) || (ka[1] - kb[1]) || (at.get(a.id) - at.get(b.id));
   });
+}
+
+/**
+ * The quick filters on Trips for you (T880), each a loose answer made
+ * strict with one tap: direct (no stop, or no flight at all), within the
+ * typed budget, quiet that month, 25 degrees or warmer, one base.
+ */
+export const QUICK_FILTERS = Object.freeze({
+  direct: (x, d) => { const f = cardFacts(x, d); return f.way === 'car' || f.stops === 0; },
+  budget: (x) => Number.isFinite(x.budget?.delta) && x.budget.delta <= 0,
+  quiet: (x, d) => { const c = crowdTier(x, d); return c != null && c <= 1; },
+  warm: (x, d) => { const h = dayHighs(x, d); return h != null && h.hi >= 25; },
+  one: (x) => x.places.length === 1,
+});
+
+/** The trips that pass every quick filter that is on. */
+export function filterTrips(trips, on = [], destinations = {}) {
+  const tests = on.map((k) => QUICK_FILTERS[k]).filter(Boolean);
+  return tests.length ? trips.filter((x) => tests.every((f) => f(x, destinations))) : trips;
 }
 
 /** How many people the group total is for: every seat and every baby (the preview's count). */
