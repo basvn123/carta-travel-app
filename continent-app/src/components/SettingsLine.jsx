@@ -349,25 +349,8 @@ function PartyControl({ s }) {
           />
         </div>
       ))}
-      {s.setPriceView && (
-        // T694 (plan rule 4, owner 2026-10-24): every price in the app per
-        // person or for the whole group; filters and sorting follow.
-        <div className="party-row party-view">
-          <span className="party-row-text">
-            <span className="party-row-label" id="party-view-label">{t('party.view')}</span>
-          </span>
-          <Segmented
-            label={t('party.view')}
-            size="sm"
-            value={s.priceView === 'total' ? 'total' : 'pp'}
-            onChange={s.setPriceView}
-            options={[
-              { value: 'pp', label: t('party.viewPp') },
-              { value: 'total', label: t('party.viewTotal') },
-            ]}
-          />
-        </div>
-      )}
+      {/* T907: Per person or whole group left this list for the results'
+          toolbar (PriceViewSwitch): it is how prices read, not who goes. */}
     </div>
   );
 }

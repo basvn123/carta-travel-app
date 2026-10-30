@@ -708,3 +708,9 @@
   .xov-hero.has-photo .xov-credit { margin-top: calc(36px + var(--space-3)); }
   .xov-hero:not(.has-photo) .xov-panel { padding: 0; background: none; box-shadow: none; }
 }
+/* T907: how prices read, by the results: at the row's end on a desktop,
+   the map pill after it. */
+@media (min-width: 769px) {
+  .xov-quick .price-view { margin-left: auto; }
+  .xov-quick .price-view ~ .xov-view { margin-left: 0; }
+}

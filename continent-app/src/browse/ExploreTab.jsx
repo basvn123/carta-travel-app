@@ -21,6 +21,7 @@ import {
   ChevronRightIcon, MapPinIcon, ListDayIcon,
 } from '../components/Icons.jsx';
 import { useTravelMonth, useSettings } from '../components/SettingsLine.jsx';
+import { PriceViewSwitch } from '../components/PriceViewSwitch.jsx';
 import { resolveWhen } from '../lib/when.js';
 import { fromName } from '../components/FromPicker.jsx';
 import { flightLegs } from '../lib/price/flight.js';
@@ -1351,7 +1352,6 @@ export function ExploreTab({
             onShowAll={() => setFocusAll(true)}
             viewToggle={viewSwitch('xov-view')}
             quick={quickRails}
-            countries={<CountriesButton s={settingsLine} size="sm" className="xquick-chip" />}
             filtersRef={filterBtnRef}
             filtersOn={isDesktop ? ovPane : sheetOpen}
             filterCount={chips.length}
@@ -1763,7 +1763,7 @@ function useExploreLens({ isActive, railsIdle, focusAll, setFocusAll, clear }) {
  */
 function OverviewHero({
   t, TitleTag, locationQuery, setLocationQuery, onShowAll,
-  viewToggle, quick, countries, filtersRef, filtersOn, filterCount, onAllFilters, photo, tasteChip = null,
+  viewToggle, quick, filtersRef, filtersOn, filterCount, onAllFilters, photo, tasteChip = null,
   strongChip = null,
 }) {
   const [where, setWhere] = React.useState(locationQuery || '');
@@ -1840,8 +1840,10 @@ function OverviewHero({
           desktop (a phone has the floating one). */}
       <div className="xov-picks">
         <div className="xov-quick" role="group" aria-label={t('explore.quickAria')}>
-          {tasteChip}
-          {strongChip}
+          {/* T907 (owner, Explore board 2026-10-30): Filters first, three
+              quick doors, the taste and strong-match chips, then how prices
+              read and the map. The Countries chip (the bar has Countries)
+              and Show all places (each rail has See all) left the row. */}
           <Button ref={filtersRef} variant="secondary" size="sm"
             className={`xquick-chip xquick-filters${filtersOn ? ' is-on' : ''}`}
             iconStart={<FilterIcon size={16} />} aria-expanded={filtersOn}
@@ -1849,18 +1851,16 @@ function OverviewHero({
             {t('places.allFilters')}
             {filterCount > 0 && <Chip kind="count" className="xfilters-n">{filterCount}</Chip>}
           </Button>
-          {countries}
-          {quick.map((r) => (
+          {quick.slice(0, 3).map((r) => (
             <Button key={r.key} variant="secondary" size="sm" className="xquick-chip"
               iconStart={QUICK_ICONS[r.key] ? React.createElement(QUICK_ICONS[r.key], { size: 16 }) : null}
               onClick={r.seeAll}>
               {r.short || r.title}
             </Button>
           ))}
-          <Button variant="quiet" size="sm" className="xquick-chip xquick-all"
-            iconEnd={<ChevronRightIcon size={16} />} onClick={onShowAll}>
-            {t('explore.showAllPlaces')}
-          </Button>
+          {tasteChip}
+          {strongChip}
+          <PriceViewSwitch className="xov-price" />
           {viewToggle}
         </div>
       </div>
