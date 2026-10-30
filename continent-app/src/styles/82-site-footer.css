@@ -1,41 +1,64 @@
-/* The site footer (T594): a quiet band on --surface-sunken at the end of every
-   tab's content. Link columns, 4 across from 1024 px, 2 across below. */
+/* The site footer (T594; T910, the owner's Explore board 2026-10-30): a
+   white band with one rule above it. The logo, one line and the language;
+   four columns (folded on a phone, open from 769 px); one bottom line with
+   the year, the estimates note and the legal links. */
 .site-footer {
-  background: var(--surface-sunken);
+  background: var(--surface);
   border-top: 1px solid var(--border-soft);
   margin-top: var(--space-8);
   color: var(--text-2);
   font-size: var(--text-body);
 }
 .site-footer-inner {
-  max-width: 1180px;
+  max-width: 1240px;
   margin: 0 auto;
-  padding: var(--space-7) var(--space-5) var(--space-6);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
-}
-.site-footer-brand { display: flex; flex-direction: column; gap: var(--space-3); max-width: 44ch; }
-.site-footer-line { margin: 0; color: var(--text-2); font-size: var(--text-body); line-height: 1.5; }
-.site-footer-cols {
+  padding: var(--space-6) var(--space-4) var(--space-5);
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-6) var(--space-5);
+  gap: var(--space-5);
 }
-.site-footer-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
-.site-footer-h {
-  margin: 0 0 var(--space-2);
+.site-footer-brand { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); max-width: 40ch; }
+.site-footer-line { margin: 0; color: var(--text-2); font-size: var(--text-label); line-height: var(--leading-body); }
+.site-footer-lang {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 40px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--text);
   font-size: var(--text-label);
   font-weight: 600;
-  color: var(--text);
-  line-height: 1.3;
 }
+.site-footer-lang select { appearance: none; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; padding-right: var(--space-1); }
+.site-footer-lang:focus-within { outline: 2px solid var(--focus); outline-offset: 2px; }
+.site-footer-cols { display: grid; grid-template-columns: minmax(0, 1fr); }
+.site-footer-col { border-top: 1px solid var(--border-soft); }
+.site-footer-col ul { list-style: none; margin: 0; padding: 0 0 var(--space-3); display: flex; flex-direction: column; }
+.site-footer-h {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--tap);
+  margin: 0;
+  font-size: var(--text-label);
+  font-weight: 700;
+  color: var(--text);
+  list-style: none;
+  cursor: pointer;
+}
+.site-footer-h::-webkit-details-marker { display: none; }
+.site-footer-h:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
+.site-footer-chev { color: var(--text-3); transition: transform var(--dur-2) var(--ease-out); }
+.site-footer-col[open] .site-footer-chev { transform: rotate(180deg); }
 .site-footer-link {
   display: inline-flex;
   align-items: center;
   min-height: 32px;
   color: var(--text-2);
-  font-size: var(--text-body);
+  font-size: var(--text-label);
   text-decoration: none;
   overflow-wrap: anywhere;
   border-radius: var(--radius-sm);
@@ -43,24 +66,29 @@
 .site-footer-link:hover { color: var(--text); text-decoration: underline; text-underline-offset: 3px; }
 .site-footer-link:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .site-footer-base {
-  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
   padding-top: var(--space-4);
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--border-soft);
   color: var(--text-3);
   font-size: var(--text-caption);
 }
+.site-footer-base p { margin: 0; }
+.site-footer-legal { display: flex; flex-wrap: wrap; gap: var(--space-4); }
+.site-footer-legal .site-footer-link { min-height: 0; font-size: var(--text-caption); color: var(--text-3); }
 @media (pointer: coarse) {
-  .site-footer-link { min-height: var(--tap); }
+  .site-footer-col .site-footer-link { min-height: var(--tap); }
 }
-@media (min-width: 1024px) {
-  .site-footer-inner { padding-left: var(--space-5); padding-right: var(--space-5); }
-  .site-footer-cols { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-}
-@media (max-width: 768px) {
-  /* The explore wrap pads for the bottom nav already; the other tab containers
-     end above it, so the band only needs its own breathing room. */
-  .site-footer { margin-top: var(--space-7); }
-  .site-footer-inner { padding: var(--space-6) var(--space-4) var(--space-5); }
+@media (min-width: 769px) {
+  .site-footer-inner { grid-template-columns: 280px minmax(0, 1fr); column-gap: var(--space-8); padding: var(--space-7) var(--space-6) var(--space-5); }
+  .site-footer-cols { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-5); }
+  .site-footer-col { border-top: 0; }
+  .site-footer-h { min-height: 0; margin-bottom: var(--space-2); cursor: default; pointer-events: none; }
+  .site-footer-chev { display: none; }
+  .site-footer-base { grid-column: 1 / -1; }
 }
 /* Explore's map view is a full-bleed workspace, not a page: no footer. */
 .explore-shell.is-map .site-footer { display: none; }
