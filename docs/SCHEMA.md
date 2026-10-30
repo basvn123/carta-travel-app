@@ -1313,3 +1313,64 @@ Journeys (`continent-app/public/journeys/journey/{id}.json`, `build_wire.py`):
 | Key | Shape | Source | Status |
 |---|---|---|---|
 | `fit` | `{good: [string], less: [string]}`, short plain English phrases, an empty side left out | `Trips/carta-unified/carta-unified/data/fit.json`, `{journeys: {id: {good, less}}}` | placeholder (pt-culinary-douro-valley filled) |
+
+## Outdoor page keys (T915, added 2026-10-30)
+
+Additive only; no wire version changes. The redesigned trail, beach, lake,
+mountain and cycling pages read these. Every key is optional and absent, not
+null, when there is no data. Built by `pipeline/outdoor/derive_outdoor_pages.py`,
+a post-pass over the published wires (run_pipeline task `outdoor_pages`, after
+every nature export, through the publish gate; it is idempotent). A placeholder
+file has the shape `{"_about": "...", "items": {id: {...}}}`, keyed by the
+layer's own wire id, lives in `cache/outdoor/{trails,beaches,lakes,mountains,cycling}.json`,
+and a value there wins over a derived one field by field, so a later harvest
+fills it with no code change. Keys starting with `_` inside an item are notes
+and are never published.
+
+Shared shape, `access`:
+`{parking?: {name?, lat, lon, m, fee?: true|false, eur_day?}, transit?: [{name, mode: "bus"|"train"|"tram"|"ferry", lat, lon, m}]}`,
+`m` = metres from the start or entrance, rounded to 10; transit nearest first, at most 3.
+Parking is derived from `cache/parking_osm.json` (OSM car parks harvested within about
+1.5 km of each Carta destination; private and kerbside spots left out), so a place far
+from every destination has no parking row: absent means "not known", never "none".
+Transit has no offline source (the stops table lives in the trailslab lab and the
+Overture extract carries no stops): placeholder everywhere.
+Beaches (9 rows) and lakes (369 rows) already carry an older string `access`
+("road", "steps", "hike", "boat"); the pass never overwrites it, so on those rows
+`access` stays a string and the object is not written (2 beaches and 12 lakes lose
+a derived parking row this way). Read `typeof access === "object"`.
+
+| Layer, file | Key | Shape | Source | Status (all countries) |
+|---|---|---|---|---|
+| trails, `trails/trip/{id}.json` | `start` | `{name?, lat, lon, ele?}` | first vertex of the line, its Copernicus GLO-30 height; `name` = nearest OSM village or town within 1.2 km (`cache/osm_settlements.json`) | derived, 17,619 (name on 7,278) |
+| | `access` | shared shape, from the start point, parking within 400 m | parking derived, transit placeholder | 964 |
+| | `dogs` | `"yes"\|"leash"\|"no"` | `cache/outdoor/trails.json` | placeholder (0) |
+| | `permit` | short plain English sentence | `cache/outdoor/trails.json` | placeholder (0) |
+| | `huts[].season`, `huts[].booking` | `[fromMonth, toMonth]`, `true\|false`, merged into the existing `huts[]` by folded hut name | `cache/outdoor/trails.json` `huts: {name: {...}}` | placeholder (0) |
+| beaches, `beaches/{CC}.json` rows (`beaches` and `listed`) | `sea_temp` | 12 numbers, monthly mean sea surface temperature, C | the row's `sst`, else `cache/sea_temp_beaches.json` (T641 NASA MUR harvest, `pipeline/harvest_sea_temp.py`, not on disk in this checkout), else placeholder | 0 until the harvest lands |
+| | `access` | shared shape, parking within 500 m of the beach point | parking derived, transit placeholder | 522 |
+| | `step_free` | `true\|false` | OSM `wheelchair=yes` (row `wheelchair`) is true, `access: "steps"` is false; placeholder wins | derived, 33 |
+| | `shade` | `true\|false` (trees or cover within 50 m) | placeholder (no offline tree layer) | 0 |
+| | `sunbeds` | `{eur_day}` | placeholder | 0 |
+| | `lifeguard_season` | `[fromMonth, toMonth]` | placeholder | 0 |
+| | `waves` | `"calm"\|"moderate"\|"surf"` | placeholder | 1 (Figueirinha) |
+| lakes, `lakes/{CC}.json` rows (`lakes` and `listed`) | `alt_m` | metres | placeholder, else the export's Wikidata height `size.elevM`, else the lowest non-zero GLO-30 vertex of a published trail within 150 m of the lake's first linked bathing beach (or of the lake point when the lake is 1 km2 or smaller). Checked on 36 lakes that have both: median error 4 m, 89 percent within 20 m | derived, 964 (900 Wikidata, 64 trail heights) |
+| | `access` | shared shape, parking within 500 m of the same shore point | parking derived, transit placeholder | 72 |
+| | `entry_eur` | number, 0 for free | placeholder | 1 (Cinco Reis) |
+| | `rentals` | `[{kind: "boat"\|"sup"\|"pedalo"\|"kayak", eur_hour?}]` | placeholder | 0 |
+| | `lifeguard_season` | `[fromMonth, toMonth]` | placeholder | 0 |
+| mountains, `mountains/{CC}.json` rows (`mountains` and `listed`) | `routes` | `[{id, cc, name, grade, km, ascent_m, duration_min}]`, at most 4, best first (v5 score, then rating) | published hikes from every trails wire whose detail line passes within 150 m of the summit and whose GLO-30 height there (or the row's `ele.max` when the line has no height) is within 60 m plus the peak's `eleGap` of the summit; `grade` is the trail's `f.g` | derived, 275 of 2,143 peaks |
+| | `lift_info` | `{name, season?: [from, to], return_eur?, top_ele?}` | placeholder | 0 |
+| | `hut_info` | `{name, ele?, season?: [from, to], booking?}` | placeholder | 1 (Triglav) |
+| cycling, `cycling/route/{id}.json` | `stations` | `{start?: {name, m}, end?: {name, m}}` | the route's own service towns (`carta.services`, enrich_cycling.py): the nearest town with a railway station within 3 km of each end of the line; `name` is the station's name, `m` the metres to its town, rounded to 100 | derived, 7,598 |
+| | `stages` | `{prev?: {id, name, km}, next?: {id, name, km}}` | the same numbered series in the published wires ("part Portugal 30", "Etappe 4", the word between kept in the key), else for a stretch (`sec`) of an icn, ncn or rcn ref the route of the same ref whose end is within 1.5 km of this one's start or end | derived, 788; absent where the neighbouring part is not published (EV1 part Portugal 30) |
+| | `services` | `{water?: taps, repair?: [town names], cafes?}` | water and repair from the service towns within 2 km of the line (drinking water taps; a repair station or bike shop), at most 5 names; `cafes` placeholder | derived, 11,625 (cafes 0) |
+| | `bike_trains` | short plain English sentence | placeholder (`pipeline/cycling/seed_bike_rail.py` holds the per operator policy, not yet per route) | 1 (57332) |
+| | `rental` | `[{name, eur_day?}]` | placeholder | 0 |
+
+Gate: `pipeline/field_stubs/gate.py` ranges `sea_temp` 0 to 32, `alt_m` -450 to
+5000, `entry_eur` 0 to 500, `eur_day`, `eur_hour`, `return_eur` above 0; enum
+`waves` on beaches. Size growth (full wires): trail detail +1.08 MB (+0.31%),
+beaches +37 KB (+0.28%), lakes +16 KB (+0.21%), mountains +53 KB (+0.87%),
+cycling detail +1.26 MB (+0.28%); the trails and cycling country files are
+unchanged.
