@@ -8,7 +8,7 @@
  * trip settings. Screens with their own controls (who, sleep, when, from)
  * carry `custom: true` and render a component instead of options.
  */
-import { RHYTHM, LIKES } from './tripSettings.js';
+import { RHYTHM, LIKES, personasOfRaw } from './tripSettings.js';
 
 const opt = (value, icon, extra = {}) => ({ value, icon, labelKey: null, ...extra });
 
@@ -62,12 +62,15 @@ export const QUESTIONS = {
   'g:persona': {
     titleKey: 'pf.q.persona', custom: true,
     options: [
-      opt('cities', 'SkylineIcon'), opt('hubtrips', 'RouteIcon'), opt('outside', 'TownIcon'),
-      opt('towns', 'VillageIcon'), opt('coast', 'BeachIcon'), opt('nature', 'MountainIcon'),
+      // T892: the big city, the city base and the small towns first (owner).
+      opt('cities', 'SkylineIcon'), opt('hubtrips', 'RouteIcon'), opt('towns', 'VillageIcon'),
+      opt('outside', 'TownIcon'), opt('coast', 'BeachIcon'), opt('nature', 'MountainIcon'),
       opt('hidden', 'CompassIcon'), opt('slow', 'CoffeeIcon'), opt('lively', 'MusicIcon'), opt('mix', 'SparkIcon'),
     ].map((o) => ({ ...o, labelKey: `pf.persona.${o.value}`, subKey: `pf.persona.${o.value}Sub` })),
-    read: (s) => (s.guide.persona ? [s.guide.persona] : []),
-    write: (s, [v]) => ({ guide: { ...s.guide, persona: v } }),
+    // T891: up to three, one maybe most you (tripSettings personasOfRaw).
+    multi: true, max: 3,
+    read: (s) => (s.guide.personas?.length ? s.guide.personas : s.guide.persona ? [s.guide.persona] : []),
+    write: (s, values) => ({ guide: { ...s.guide, ...personasOfRaw({ personas: values, personaMost: s.guide.personaMost }) } }),
   },
   // T753: as many shapes as fit, or no preference.
   'g:shape': {

@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useBcp47, useMonths, whenText } from './flowHooks.js';
 import { formatMoney } from '../../lib/money.js';
 import { useFirstRun } from '../../lib/firstRunContext.js';
@@ -16,8 +16,8 @@ import { noFlying } from './flowGraph.js';
 import { DateField } from '../../components/DateField.jsx';
 import { Stepper } from '../../components/FilterControls.jsx';
 import { HeroImage } from '../../components/HeroImage.jsx';
-import { SheetShell } from '../../browse/SheetShell.jsx';
-import { PersonaMark } from './PersonaMark.jsx';
+import { personaPhotos } from '../../lib/recommend/persona.js';
+import { creditFor, creditLine } from '../../lib/imageCredit.js';
 import {
   Button, Chip, ChipGroup, ChoiceRows, Field, IconButton, Segmented, Switch,
 } from '../../components/ui/index.js';
@@ -30,7 +30,7 @@ import { LifestyleStep } from './LifestyleStep.jsx';
 import { StayTypes } from './StayTypes.jsx';
 import { VisibilityChoice } from './VisibilityChoice.jsx';
 import { PartyEditor } from '../PartyEditor.jsx';
-import { answer, markAnswered, normalizeSettings, withPartyKind, PARTY_KINDS, WAYS } from './tripSettings.js';
+import { answer, markAnswered, normalizeSettings, personasOfRaw, withPartyKind, PARTY_KINDS, WAYS } from './tripSettings.js';
 import { MAX_TRIP_NIGHTS, addDaysUTC, nightsBetween, windowFromStart } from '../../lib/tripDates.js';
 
 /*
@@ -491,101 +491,97 @@ export function LikeTiles({ picked, onToggle }) {
 
 // ---- How you like to travel: the persona (owner, plan flow walk 2026-10-30) ----
 
-/** The persona's own profile, one sheet: where you stay, what you visit,
- *  how you move between places, and a few places as words. */
-function PersonaSheet({ option, anchorRef, onClose, onChoose }) {
-  const { t } = useI18n();
-  const name = t(option.labelKey);
-  const id = option.value;
-  const rows = [
-    ['stay', 'BedIcon'],
-    ['visit', 'CameraIcon'],
-    ['move', 'RouteIcon'],
-    ...(id === 'mix' ? [] : [['eg', 'MapPinIcon']]),
-  ];
-  return (
-    <SheetShell title={name} onClose={onClose} anchorRef={anchorRef} width={440} className="pf-persona-sheet" closeLabel={t('pf.close')}>
-      <div className="pf-persona-profile" data-p={id}>
-        <PersonaMark id={id} className="is-hero" />
-        <p className="pf-persona-lede">{t(option.subKey)}</p>
-        <dl className="pf-persona-facts">
-          {rows.map(([k, icon]) => {
-            const Icon = AllIcons[icon];
-            return (
-              <div key={k} className="pf-persona-fact">
-                <dt>{Icon && <Icon size={16} />}{t(`pf.persona.label.${k}`)}</dt>
-                <dd>{t(`pf.persona.${id}.${k}`)}</dd>
-              </div>
-            );
-          })}
-        </dl>
-        <Button variant="primary" block onClick={onChoose}>{t('pf.persona.label.choose')}</Button>
-      </div>
-    </SheetShell>
-  );
+/** The Commons credits of photographs, read from the credits file (lib/imageCredit.js). */
+function usePhotoCredits(photos) {
+  const urls = Object.values(photos).map((x) => x.url).filter(Boolean);
+  const key = urls.join('|');
+  const [state, setState] = useState({ key: null, list: [] });
+  useEffect(() => {
+    let live = true;
+    if (!key) return undefined;
+    Promise.all(Object.values(photos).map((x) => creditFor(x.url).then((c) => ({ city: x.city, c })).catch(() => ({ city: x.city, c: null }))))
+      .then((rows) => { if (live) setState({ key, list: rows.filter((r) => r.c).map((r) => `${r.city}, ${creditLine(r.c)}`) }); });
+    return () => { live = false; };
+  }, [key]); // eslint-disable-line react-hooks/exhaustive-deps -- the urls are the key
+  return state.key === key ? state.list : [];
 }
 
 /**
- * What kind of traveller (owner, plan flow walk: "first a general statement
- * of that persona, then a button where you see that entire persona; no
- * picture of the place"; then "more modern, visually top notch"): ten
- * tiles, each the persona's mark (PersonaMark: how that traveller moves,
- * the filled dot where they stay), its name and one statement, and at its
- * foot Details, which opens the whole persona (PersonaSheet). The tile
- * chooses, Details explains: two sibling controls, nothing nested.
- * Selected is the tint, the brown edge, a tick, and the mark drawing itself
- * once. Two across on a phone, five from 769 px. The trip finder weighs places by it
- * (lib/recommend/persona.js).
+ * The persona (T892, owner's plan flow studio board 2026-10-30): ten
+ * travellers as photographs, two to a row on every width, each its name and
+ * one line in the traveller's own words over the photo (the Explore tile:
+ * no white band under it). The photo is a real place that fits that
+ * persona best (persona.js personaPhotos), credited under the grid. Up to
+ * three can be picked; a fourth replaces the first, "A bit of everything"
+ * stands alone. With two or more, one quiet row asks which is most you.
  */
 export function PersonaScreen({ settings, commit, doneLabel }) {
   const { t } = useI18n();
   const q = QUESTIONS['g:persona'];
-  const [picked, setPicked] = useState(settings.guide.persona || '');
-  const [about, setAbout] = useState(null);
-  const aboutRef = useRef(null);
-  const open = about ? q.options.find((o) => o.value === about) : null;
+  const ctx = useFirstRun();
+  const destinations = ctx?.data?.destinations;
+  const photos = useMemo(() => personaPhotos(destinations), [destinations]);
+  const credits = usePhotoCredits(photos);
+  const [showCredits, setShowCredits] = useState(false);
+  const [picked, setPicked] = useState(() => personasOfRaw(settings.guide).personas);
+  const [most, setMost] = useState(settings.guide.personaMost || '');
+  const real = picked.filter((v) => v !== 'mix');
+  const mostOn = real.length > 1 && real.includes(most) ? most : '';
+  const toggle = (v) => setPicked((cur) => {
+    if (cur.includes(v)) return cur.filter((x) => x !== v);
+    if (v === 'mix') return ['mix'];
+    const rest = cur.filter((x) => x !== 'mix');
+    return [...(rest.length >= 3 ? rest.slice(1) : rest), v];
+  });
   return (
     <>
-      <div className="pf-persona" role="radiogroup" aria-label={t(q.titleKey)}>
+      <div className="pf-pcs" role="group" aria-label={t(q.titleKey)}>
         {q.options.map((o) => {
-          const on = picked === o.value;
-          const name = t(o.labelKey);
+          const on = picked.includes(o.value);
+          const ph = photos[o.value];
           return (
-            <div key={o.value} className={`pf-persona-item${on ? ' is-on' : ''}`} data-p={o.value}>
-              <button type="button" role="radio" aria-checked={on} className="pf-persona-pick" onClick={() => setPicked(o.value)}>
-                <PersonaMark id={o.value} />
-                <span className="pf-persona-name">{name}</span>
-                <span className="pf-persona-sub">{t(`pf.persona.${o.value}Tag`)}</span>
-                <span className="pf-persona-tick" aria-hidden="true">{on && <CheckIcon size={14} />}</span>
-              </button>
-              <Button
-                variant="quiet"
-                size="sm"
-                className="pf-persona-more"
-                aria-haspopup="dialog"
-                aria-label={t('pf.persona.label.about', { name })}
-                iconEnd={<AllIcons.ChevronRightIcon size={14} />}
-                onClick={(e) => { aboutRef.current = e.currentTarget; setAbout(o.value); }}
-              >
-                {t('pf.persona.label.details')}
-              </Button>
-            </div>
+            <Button key={o.value} variant="quiet" role="checkbox" aria-checked={on} data-p={o.value}
+              className={`pf-pc${on ? ' is-on' : ''}`} onClick={() => toggle(o.value)}>
+              <HeroImage url={ph?.url} city={ph?.city || t(o.labelKey)} iso2={ph?.iso2} className="pf-pc-img" ratio={[4, 5]} maxWidth={480} />
+              <span className="pf-pc-tick" aria-hidden="true"><CheckIcon size={14} /></span>
+              {mostOn === o.value && <span className="pf-pc-most">{t('pf.persona.mostTag')}</span>}
+              <span className="pf-pc-text">
+                <span className="pf-pc-name">{t(o.labelKey)}</span>
+                <span className="pf-pc-line">{t(`pf.persona.${o.value}Line`)}</span>
+              </span>
+            </Button>
           );
         })}
       </div>
-      <Foot
-        disabled={!picked}
-        label={doneLabel}
-        onContinue={() => commit(answer(settings, 'g:persona', { guide: { ...settings.guide, persona: picked } }))}
-      />
-      {open && (
-        <PersonaSheet
-          option={open}
-          anchorRef={aboutRef}
-          onClose={() => setAbout(null)}
-          onChoose={() => { setPicked(open.value); setAbout(null); }}
-        />
+      {real.length > 1 && (
+        <div className="pf-pc-mostrow">
+          <p className="pf-pc-mostq" id="pf-pc-most">{t('pf.persona.most')}</p>
+          <ChipGroup aria-labelledby="pf-pc-most" className="pf-pc-mostchips">
+            {real.map((v) => (
+              <Chip key={v} kind="choice" role="radio" aria-checked={mostOn === v} selected={mostOn === v} onClick={() => setMost(v)}>
+                {t(`pf.persona.${v}`)}
+              </Chip>
+            ))}
+            <Chip kind="choice" role="radio" aria-checked={!mostOn} selected={!mostOn} onClick={() => setMost('')}>
+              {t('pf.persona.mostSame')}
+            </Chip>
+          </ChipGroup>
+        </div>
       )}
+      {credits.length > 0 && (
+        <div className="pf-credits">
+          <Button variant="quiet" size="sm" className="pf-credits-btn" aria-expanded={showCredits} aria-controls="pf-pc-credits"
+            onClick={() => setShowCredits((v) => !v)}>
+            {t('pf.likes.creditsBtn')}
+          </Button>
+          {showCredits && <p className="pf-credit" id="pf-pc-credits">{t('pf.likes.credit', { list: credits.join('; ') })}</p>}
+        </div>
+      )}
+      <Foot
+        disabled={!picked.length}
+        label={doneLabel}
+        onContinue={() => commit(answer(settings, 'g:persona', { guide: { ...settings.guide, ...personasOfRaw({ personas: picked, personaMost: mostOn }) } }))}
+      />
     </>
   );
 }
