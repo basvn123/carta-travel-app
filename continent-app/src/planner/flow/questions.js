@@ -37,7 +37,7 @@ export const QUESTIONS = {
   // T862: where to sleep alone (Tell Carta's stay chip); it answers sleep.
   stay: { titleKey: 'pf.q.stay', custom: true },
   priority: {
-    titleKey: 'pf.q.priority', helpKey: 'pf.q.priorityHelp',
+    titleKey: 'pf.q.priority',
     options: [
       opt('price', 'PiggyIcon', { labelKey: 'pf.o.price', subKey: 'pf.o.priceSub' }),
       opt('balance', 'ScaleIcon', { labelKey: 'pf.o.balance', subKey: 'pf.o.balanceSub' }),
@@ -51,8 +51,8 @@ export const QUESTIONS = {
   // T860: the way there, then (when it may fly) the airports in reach.
   way: { titleKey: 'pf.q.way', custom: true },
   airports: { titleKey: 'pf.q.airports', custom: true },
-  nowWhere: { titleKey: 'pf.q.nowWhere', helpKey: 'pf.q.nowWhereHelp', custom: true },
-  nowUntil: { titleKey: 'pf.q.nowUntil', helpKey: 'pf.q.nowUntilHelp', custom: true },
+  nowWhere: { titleKey: 'pf.q.nowWhere', custom: true },
+  nowUntil: { titleKey: 'pf.q.nowUntil', custom: true },
 
   // ---- Help me choose ----
   // How they like to travel, the persona (owner, plan flow walk 2026-10-30):
@@ -92,7 +92,7 @@ export const QUESTIONS = {
     },
   },
   'g:likes': {
-    titleKey: 'pf.q.likes', helpKey: 'pf.q.likesHelp', multi: true, max: 3, photos: true,
+    titleKey: 'pf.q.likes', multi: true, max: 3, photos: true,
     options: LIKES.map((k) => opt(k, null, { labelKey: `pf.like.${k}`, photo: k })),
     read: (s) => s.guide.likes,
     write: (s, values) => ({ guide: { ...s.guide, likes: values.slice(0, 3) } }),
@@ -166,7 +166,7 @@ export const QUESTIONS = {
 
   // ---- The days ----
   daysAsk: {
-    titleKey: 'pf.q.daysAsk', helpKey: 'pf.q.daysAskHelp',
+    titleKey: 'pf.q.daysAsk',
     options: [
       opt('yes', 'ListDayIcon', { labelKey: 'pf.o.daysYes' }),
       opt('no', 'CheckIcon', { labelKey: 'pf.o.daysNo' }),

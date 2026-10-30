@@ -52,6 +52,9 @@ export function QuestionBody({ id, settings, commit, doneLabel, showHelp = true 
   const label = doneLabel || t('pf.continue');
   return (
     <>
+      {/* T900 (owner, plan days board 2026-10-30): no help line under a
+          question; the question and its answers say it. A question may still
+          carry helpKey for a screen that wants one. */}
       {showHelp && q.helpKey && <p className="pf-help">{t(q.helpKey)}</p>}
       {Custom ? (
         <Custom id={id} settings={settings} commit={commit} doneLabel={doneLabel} />
@@ -319,7 +322,6 @@ function PlacesBody({ places, onSave }) {
   });
   return (
     <>
-      <p className="pf-help">{t('pf.places.help')}</p>
       <div className="pf-chips" role="group" aria-label={t('pf.places.title')}>
         {places.map((p) => (
           <Chip key={key(p)} kind="filter" selected={on.has(key(p))} onClick={() => toggle(key(p))}>{p.name}</Chip>
