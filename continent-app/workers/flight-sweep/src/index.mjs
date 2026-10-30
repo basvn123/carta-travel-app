@@ -13,13 +13,16 @@
  * the sweep for an hour, longer when refusals keep coming back (nextPause).
  * GET /status shows the last hour's counts. POST /ingest (T798) takes the
  * late tier's fares from the Hetzner box (ingest.mjs; secret INGEST_TOKEN).
+ * T915: /ingest also takes found routes from the box's gap search, and two
+ * reads for the box behind the same token: GET /extra (found and dormant
+ * routes) and GET /have?from&to (routes with a fare between two dates).
  *
  * Needs Workers Paid: a search costs 10 to 25 ms of CPU and the free plan
  * allows 10 ms per invocation.
  */
 import { searchDay } from '../../shared/flightSearch.mjs';
 import { flattenRoutes, jobsForMinute, nextPause, DORMANT_AFTER, FAR_WEEKS } from './plan.mjs';
-import { ingestRows, tokenOk } from './ingest.mjs';
+import { ingestFound, ingestRows, tokenOk } from './ingest.mjs';
 import { buildFile, buildIndex, logoSource, nextBatch, routeMoves, ROUTE_MOVE } from './publish.mjs';
 
 const ROUTES_KEY = 'data/flights/_routes.json';
@@ -36,6 +39,8 @@ const BLOCKS_TO_PAUSE = 1; // T780: was 3
 const ROUTES_TTL_MS = 3600000;
 const LOGOS_PER_PUBLISH = 25;
 const AIRLINE_KEY = /^[A-Z0-9]{2}$/;
+const FOUND_SQL = 'SELECT origin, dest FROM found ORDER BY first_seen, origin, dest';
+const DAY_ISO = /^\d{4}-\d{2}-\d{2}$/;
 
 let routesCache = null; // { at, data }, kept while the isolate lives
 
@@ -70,8 +75,8 @@ export async function sweepMinute(env, now = Date.now()) {
   if (pausedUntil > now) return { paused: true };
 
   const data = await loadRoutes(env);
-  const found = (await env.DB.prepare('SELECT origin, dest FROM found').all()).results
-    .map((r) => [r.origin, r.dest]);
+  // T915: in a fixed order, so the box (GET /extra) builds the same route list.
+  const found = (await env.DB.prepare(FOUND_SQL).all()).results.map((r) => [r.origin, r.dest]);
   const dormant = new Set((await env.DB.prepare('SELECT origin || dest AS k FROM misses WHERE n >= ?')
     .bind(DORMANT_AFTER).all()).results.map((r) => r.k));
   const jobs = jobsForMinute(flattenRoutes(data.routes, found), data.airports, now, dormant);
@@ -244,6 +249,7 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.pathname === '/ingest' && request.method === 'POST') return ingest(request, env);
+    if (url.pathname === '/extra' || url.pathname === '/have') return boxRead(request, url, env);
     if (url.pathname !== '/status') return new Response(null, { status: 404 });
     const since = Math.floor(Date.now() / 60000) - 60;
     const hour = await env.DB.prepare(
@@ -272,8 +278,11 @@ async function ingest(request, env) {
     return new Response(null, { status: 401 });
   }
   let cleaned;
+  let found;
   try {
-    cleaned = ingestRows(await request.json());
+    const body = await request.json();
+    cleaned = ingestRows(body);
+    found = ingestFound(body);
   } catch (e) {
     return Response.json({ error: String(e.message || e) }, { status: 400 });
   }
@@ -292,6 +301,39 @@ async function ingest(request, env) {
         ON CONFLICT(code) DO UPDATE SET name = excluded.name`).bind(r.airline, r.airlineName));
     }
   }
+  // T915: as the find tier does with a direct flight: a route, new or woken up.
+  for (const [o, d] of found) {
+    writes.push(env.DB.prepare('INSERT OR IGNORE INTO found (origin, dest, first_seen) VALUES (?, ?, ?)')
+      .bind(o, d, checked));
+    writes.push(env.DB.prepare('DELETE FROM misses WHERE origin = ? AND dest = ?').bind(o, d));
+  }
   for (let i = 0; i < writes.length; i += 90) await env.DB.batch(writes.slice(i, i + 90));
-  return Response.json({ stored: cleaned.rows.length, dropped: cleaned.dropped });
+  return Response.json({ stored: cleaned.rows.length, dropped: cleaned.dropped, found: found.length });
+}
+
+/**
+ * The box's reads (T915), behind the ingest token. GET /extra: the found
+ * routes in the sweep's order and the dormant ones. GET /have?from=&to=: the
+ * routes ('BRUBCN') with at least one fare between the two days, inclusive.
+ */
+async function boxRead(request, url, env) {
+  if (!(await tokenOk(request.headers.get('authorization'), env.INGEST_TOKEN))) {
+    return new Response(null, { status: 401 });
+  }
+  const json = (v) => Response.json(v, { headers: { 'cache-control': 'no-store' } });
+  if (url.pathname === '/extra') {
+    const found = (await env.DB.prepare(FOUND_SQL).all()).results.map((r) => [r.origin, r.dest]);
+    const dormant = (await env.DB.prepare('SELECT origin, dest FROM misses WHERE n >= ?')
+      .bind(DORMANT_AFTER).all()).results.map((r) => [r.origin, r.dest]);
+    return json({ found, dormant });
+  }
+  const from = url.searchParams.get('from');
+  const to = url.searchParams.get('to');
+  if (!DAY_ISO.test(from || '') || !DAY_ISO.test(to || '')) {
+    return Response.json({ error: 'from and to must be YYYY-MM-DD' }, { status: 400 });
+  }
+  const routes = (await env.DB.prepare(
+    'SELECT DISTINCT origin || dest AS k FROM fares WHERE date >= ? AND date <= ?',
+  ).bind(from, to).all()).results.map((r) => r.k);
+  return json({ routes });
 }

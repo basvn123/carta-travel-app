@@ -2323,7 +2323,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T815-c | T815 | One minimum trip date across the wizard (today), the setup flow (tomorrow) and On a trip now (Explore gets today) | next task | open |  |
 | T815-h | T815 | Batch Plan flow v2 lives on p15-plan-flow-v2 (worktree Portfolio/wt/pf2-batch, task worktrees wt/pf2-*); owner reviews, then merge to root main, mirror to continent-app master and deploy; unlink the public and node_modules junctions before removing any of these worktrees | user | closed by T817 |  |
 | T818-a | T818 | A trip without its pricing context (rebuilt from storage, e.g. Kept trips) still sums its slots on a swap instead of being repriced with one quote (Execution/P15/T818-finder-total-to-the-cent.md) | next task | open |  |
-| T798-a | T798 | The box's late tier does not know dormant routes or the find tier's discoveries, so it searches about 170 dormant routes every cycle and misses found ones; a Worker GET of both lists would fix it (Execution/P11/T798-late-flights.md) | next task | open |  |
+| T798-a | T798 | The box's late tier does not know dormant routes or the find tier's discoveries, so it searches about 170 dormant routes every cycle and misses found ones; a Worker GET of both lists would fix it (Execution/P11/T798-late-flights.md) | next task | closed by T915 |  |
 | T798-b | T798 | Watch the late tier's first cycle (ends about 2026-11-26): no refusals in journalctl -u carta-late-sweep, /status lateFares growing toward about 100,000, a May to July 2027 date priced in the app | next task | open |  |
 | T819-a | T819 | The trip page's tab is not in the address, so Back and a reload return to Overview; put it in #trip=...&tab= (Execution/P15/T819-T826-trip-page-v3.md) | next task | closed by T828 |  |
 | T819-b | T819 | No sticky phone bar with the total and Plan your days on the trip page; it has to sit above the bottom nav without covering it | next task | closed by T829 |  |
@@ -2491,3 +2491,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T914-a | T914 | Look at the place guide and trip booklet PDFs once with real photos in a browser (Execution/P15/T911-T914-place-pages.md) | next task | open |  |
 | T914-b | T914 | public/fonts PlusJakartaSans and JetBrainsMono may be unused after the place guide moved to Figtree; check and remove (Execution/P15/T911-T914-place-pages.md) | next task | open |  |
 | T914-c | T914 | Deploy the merged batch T911 to T914 (Cloudflare credentials are the owner's) (Execution/P15/T911-T914-place-pages.md) | user | open |  |
+| T915-a | T915 | Run scratchpad run-t915.sh: deploy the flight-sweep Worker (found routes, /extra, /have), then move the box to origin/main and reinstall, which restarts the sweep and the fill (Execution/P11/T915-T917-sweep-gaps.md) | user | open | 1 |
+| T915-b | T915 | After the box's gap fill, count the found routes (/status found, was 57) and check London-Prague gets Worker fares within 3 days | next task | open | 2 |
+| T916-a | T916 | Watch the box for Google refusals for two days after the faster fill; at the first, put FILL_GAP_MS back to 3000, 6500 | next task | open | 2 |
+| T917-a | T917 | About 2026-11-03, count routes with a fare in January and February 2027 against the routes that fly then; the far fill should have closed the gap | next task | open | 2 |
