@@ -14,7 +14,7 @@ import { QUESTIONS } from '../flow/questions.js';
 import { SLOT_ROWS, slotTotals } from '../../lib/recommend/slots.js';
 import { stayTierFor } from '../../lib/recommend/adapters/stay.js';
 import { keepHidden, repriceTrip } from '../../lib/recommend/trips.js';
-import { doorMinutes } from '../../lib/recommend/compare.js';
+import { crowdTier, dayHighs, doorMinutes } from '../../lib/recommend/compare.js';
 import { partyText } from '../../lib/party.js';
 
 /** How many trips before "Show more trips" (the CountryMatchCards page). */
@@ -359,6 +359,43 @@ export function thereMinutes(trip) {
   if (dep != null && arr != null) return ((arr - dep + 1440) % 1440) + (transfer || 0);
   if (!out && flight?.pick?.id === 'drive' && transfer != null) return transfer;
   return null;
+}
+
+/** A short duration for a card (T879): "2u 50", "45 min"; '' when unknown. */
+export function shortDuration(t, min) {
+  if (!Number.isFinite(min) || min <= 0) return '';
+  const h = Math.floor(min / 60);
+  const m = Math.round(min % 60);
+  if (!h) return t('tf.tp.min', { m });
+  return m ? t('tf.card.hm', { h, m: String(m).padStart(2, '0') }) : t('tf.card.h', { h });
+}
+
+/** The country in the reader's language (T879, "Italy" on a Dutch card), else the wire's name. */
+export function countryLabel(trip, lang = 'en') {
+  try {
+    if (trip.iso2) return new Intl.DisplayNames([lang], { type: 'region' }).of(trip.iso2.toUpperCase()) || trip.country;
+  } catch { /* an old engine without DisplayNames keeps the wire's name */ }
+  return trip.country;
+}
+
+/**
+ * The card's four deciding facts (T879), each an echo of an answer: the
+ * month's highs (weather), the way there and its time (how far), the
+ * stops, the crowds (avoid). Null where the data holds nothing.
+ */
+export function cardFacts(trip, destinations) {
+  const flight = trip.slots?.find((s) => s.id === 'flight');
+  const drive = flight?.pick?.id === 'drive';
+  const facts = flight?.pick?.facts;
+  const stops = drive ? null : (facts?.stops ?? facts?.out?.stops ?? null);
+  const highs = dayHighs(trip, destinations);
+  return {
+    high: highs ? highs.hi : null,
+    minutes: thereMinutes(trip),
+    way: drive ? 'car' : 'plane',
+    stops: Number.isFinite(stops) ? stops : null,
+    crowd: crowdTier(trip, destinations),
+  };
 }
 
 /** The sorts on Trips for you (T868): the engine's own order first. */

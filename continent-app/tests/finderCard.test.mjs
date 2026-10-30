@@ -137,3 +137,24 @@ test("on the real catalogue the three figures and things to do add up to the car
     assert.ok(x.match?.pct == null || x.match.pct >= 55, "the match shows from 55% up");
   }
 });
+
+test("the card's facts (T879): highs, the time there with its stops, the crowds", async () => {
+  const { cardFacts, shortDuration, countryLabel } = await import("../src/planner/finder/finderText.js");
+  const t = (k, v = {}) => ({ "tf.tp.min": `${v.m} min`, "tf.card.hm": `${v.h}h ${v.m}`, "tf.card.h": `${v.h}h` }[k] ?? k);
+  assert.equal(shortDuration(t, 170), "2h 50");
+  assert.equal(shortDuration(t, 125), "2h 05");
+  assert.equal(shortDuration(t, 120), "2h");
+  assert.equal(shortDuration(t, 45), "45 min");
+  assert.equal(shortDuration(t, null), "");
+  const dests = { a: { taste: { tmax_by_month: Array(12).fill(24), crowd_by_month: Array(12).fill(2) } }, b: { taste: { tmax_by_month: Array(12).fill(27), crowd_by_month: Array(12).fill(1) } } };
+  const trip = {
+    month: 9, places: [{ id: "a", nights: 4 }, { id: "b", nights: 3 }], gateway: { minutes: 60 },
+    slots: [{ id: "flight", pick: { id: "f1", facts: { stops: 1, out: { minutes: 170, stops: 1 } } } }],
+  };
+  assert.deepEqual(cardFacts(trip, dests), { high: 27, minutes: 230, way: "plane", stops: 1, crowd: 2 });
+  const drive = { ...trip, slots: [{ id: "flight", pick: { id: "drive" } }] };
+  assert.equal(cardFacts(drive, dests).way, "car");
+  assert.equal(cardFacts(drive, dests).stops, null);
+  assert.equal(countryLabel({ iso2: "it", country: "Italy" }, "nl"), "Italië");
+  assert.equal(countryLabel({ iso2: null, country: "Italy" }, "nl"), "Italy");
+});
