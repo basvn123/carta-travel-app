@@ -862,7 +862,13 @@ function TravelApp() {
   // uses, so the planner needs no new code path for it.
   const openTripInPlanner = useCallback((trip) => {
     const stops = (trip.stops || [])
-      .map((st) => ({ destinationId: st.dest, nights: st.nights, activities: [] }))
+      // T942: a stop from Saved may carry day activities (a trail or a beach
+      // at its nearest town), by name, as the planner keeps them.
+      .map((st) => ({
+        destinationId: st.dest,
+        nights: st.nights,
+        activities: Array.isArray(st.dayActivities) ? st.dayActivities.slice(0, 20).map((a) => String(a).slice(0, 80)) : [],
+      }))
       .filter((st) => st.destinationId && st.nights);
     if (!stops.length) return;
     // The published trip already says how each hop is made: bus here, train
