@@ -165,7 +165,7 @@ function Part({
   );
 }
 
-function useShortDate() {
+export function useShortDate() {
   const { lang, languages } = useI18n();
   const bcp47 = languages.find((l) => l.code === lang)?.bcp47 || 'en-GB';
   return useCallback((iso, opts = { day: 'numeric', month: 'short' }) => {
@@ -176,13 +176,13 @@ function useShortDate() {
   }, [bcp47]);
 }
 
-function addDaysISO(iso, n) {
+export function addDaysISO(iso, n) {
   const d = new Date(`${iso}T00:00:00Z`);
   d.setUTCDate(d.getUTCDate() + n);
   return d.toISOString().slice(0, 10);
 }
 
-function nightsBetween(a, b) {
+export function nightsBetween(a, b) {
   if (!a || !b) return 0;
   const ms = Date.parse(`${b}T00:00:00Z`) - Date.parse(`${a}T00:00:00Z`);
   return Math.max(0, Math.round(ms / 86400000));
@@ -205,7 +205,7 @@ function nextMonths(today = new Date()) {
  *  the one price request (lib/price/). Carta's own suggested dates are not
  *  the traveller's, so the prices are the year's average and the value reads
  *  "Any time"; the Explore month filter, while on, names its month. */
-function whenValue(t, s, shortDate, { nightsToo = true } = {}) {
+export function whenValue(t, s, shortDate, { nightsToo = true } = {}) {
   const nights = nightsBetween(s.departDate, s.returnDate);
   const w = s.priceRequest?.when || null;
   let range = '';
@@ -227,7 +227,7 @@ function whenValue(t, s, shortDate, { nightsToo = true } = {}) {
  * month's cheapest flight and the month's beds, and any time the cheapest
  * flight Carta has and the year's beds.
  */
-function DatesControl({ s, pickEnd, setPickEnd, pickDate, shortDate }) {
+export function DatesControl({ s, pickEnd, setPickEnd, pickDate, shortDate }) {
   const { t } = useI18n();
   const nights = nightsBetween(s.departDate, s.returnDate);
   const setNights = (n) => {
@@ -320,7 +320,7 @@ function DatesControl({ s, pickEnd, setPickEnd, pickDate, shortDate }) {
 }
 
 /** People (T579): adults, children and babies, one row each. */
-function PartyControl({ s }) {
+export function PartyControl({ s }) {
   const { t } = useI18n();
   const children = s.children || 0;
   const adults = Math.max(1, (s.party || 2) - children);

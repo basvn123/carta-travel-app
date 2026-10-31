@@ -148,6 +148,9 @@ import { resolveWhen, whenMonth, xmFromSearch } from './lib/when.js';
 import { gatewayCity } from './lib/rating.js';
 import { reportPriceDrops, mayAsk } from './lib/priceDrop.js';
 import { loadEmailPrefs } from './auth/account/emailPrefs.js';
+import { SearchDock } from './components/SearchDock.jsx';
+import { useIsDesktop } from './hooks/useIsDesktop.js';
+import { requestShowAll } from './browse/searchDockStore.js';
 
 // Once someone picks "continue without an account" on the entry gate, don't
 // ask again on this device, only a fresh sign-in should bring accounts back.
@@ -1670,6 +1673,20 @@ function TravelApp() {
   // landing page demonstrates its own inputs, and nothing in the Day planner
   // reads these, so neither shows a line. Hidden under My trips and Account,
   // which are pages of their own.
+  // T961: on a phone, Explore and its five layers search from the dock (one
+  // pill and Ask Carta) in place of the line's four buttons. A search moves
+  // to the kind's view with the Where text; Places with none opens every
+  // place, as its overview's empty Search did.
+  const isDesktopShell = useIsDesktop();
+  const dockSearch = useCallback(({ kind, q }) => {
+    if (kind === 'places') {
+      openExploreSection('places');
+      setLocationQuery(q);
+      if (!q) requestShowAll();
+      return;
+    }
+    openExploreSection(kind, undefined, q);
+  }, [openExploreSection]);
   const settingsParts = savedTripsOpen || accountOpen || togetherOpen ? null
     : activeTab === 'map' || activeTab === 'places' ? undefined
       // The Trip planner carries its Lifestyle on its own price card and its
@@ -1801,7 +1818,9 @@ function TravelApp() {
           savedCount={savedCount}
           planInProgress={planInProgress}
         />
-        {settingsParts !== null && <SettingsLine parts={settingsParts} slot />}
+        {settingsParts !== null && (settingsParts === undefined && !isDesktopShell
+          ? <SearchDock onSearch={dockSearch} />
+          : <SettingsLine parts={settingsParts} slot />)}
       </header>
 
       {/* A trip arrived via share link: offer it, never silently apply it. */}
