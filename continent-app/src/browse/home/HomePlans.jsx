@@ -9,9 +9,9 @@ import { useReveal } from './useHome.js';
 
 /**
  * The plans (T606, owner D9: they stay on the home page; the owner's Linear
- * pricing reference, in Carta's light colours). The free sentence word for
- * word (pass.freeSentence), then the three plans
- * as columns split by hairlines, no boxes: name, price, what it is for, and
+ * pricing reference, in Carta's light colours). The three plans as columns
+ * split by hairlines, no boxes (the free sentence left the home page, owner
+ * 2026-10-31, T959): name, price, what it is for, and
  * what it holds as a short tick list. One secondary door opens the prices;
  * the page's one primary stays in the hero.
  */
@@ -33,7 +33,6 @@ export function HomePlans() {
   return (
     <section className="hv-section hv-plans" aria-labelledby="hv-plans-title" {...reveal}>
       <h2 id="hv-plans-title" className="hv-h2">{t('home.priceTitle')}</h2>
-      <p className="hv-lead">{t('pass.freeSentence')}</p>
       <ul className="hv-plan-cols">
         {TIER_ORDER.map((id) => {
           const tier = TIERS[id];

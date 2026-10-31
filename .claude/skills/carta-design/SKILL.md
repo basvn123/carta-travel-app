@@ -512,7 +512,7 @@ reasoning in `docs/design-v6/DIRECTION.md` part 9), restated in Lagoon terms and
 
 **Places (T496, owner 2026-10-21).** Explore (Destinations folded in as six category tiles: Places, Trails, Beaches, Lakes, Mountains, Cycling; the trip library is a "Trip styles" row, never a tile), Plan (trip and day in one place; with nothing in progress a "Plan something new" page with two tiles, Trip and One day), My trips (star count only) and an account icon. Home is behind the logo on desktop and a "How Carta works" row in Account on a phone. Language and currency live in Account, not in the settings line.
 
-**The free sentence.** "Planning is free. A Trip Pass adds exports, more saved trips and more AI plans." One key (`pass.freeSentence`), in exactly six places: home, the FAQ, the pass sheet, Account's Your plan, /pricing and its meta text. Never "100% free".
+**The free sentence.** "Planning is free. A Trip Pass adds exports, more saved trips and more AI plans." One key (`pass.freeSentence`), in exactly five places (the home page dropped it, owner 2026-10-31, T959): the FAQ, the pass sheet, Account's Your plan, /pricing and its meta text. Never "100% free".
 
 **Workspace (T500, T501).** Desktop: list left, map right, a fixed total bar at the foot that reads only `priceTrip()`, opens the receipt and never holds the primary; inside a trip it shows the trip first, then the day. Phone: the map fills the screen under one MapDrawer with three states (a `--drawer-strip` strip, half, up to under the header); the amount is always in the strip; the handle is a `--tap-main` button, so dragging is never required; the bottom nav hides when the drawer is full. Picked countries on a map are `--select-bg` with a `--text` edge.
 
