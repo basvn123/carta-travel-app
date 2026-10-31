@@ -83,7 +83,8 @@ const MOCK_FAVS = [
 ];
 // T925: saved places the seam adds to this browser's own shortlist, with the
 // price each was saved at a little off today's so the moves render.
-const MOCK_FAV_KEYS = ['dest:BCN', 'dest:SPU', 'dest:LJU', 'dest:NAP'];
+// T942: a lake and a trail too, so Plan a trip with these hands kinds over.
+const MOCK_FAV_KEYS = ['dest:BCN', 'dest:SPU', 'dest:LJU', 'dest:NAP', 'lake:SI/si-lake-bled-Q648902', 'trail:AT/20050'];
 const MOCK_SAVED_AT = { 'dest:BCN': 6, 'dest:SPU': -3, 'dest:LIS': 11 };
 // T927: what the seam's booking reader "reads", in place of parse-booking.
 const mockRead = () => new Promise((resolve) => setTimeout(() => resolve({
@@ -1132,7 +1133,7 @@ export function SavedTripsPanel({
               loading={shortlist.loading || (authed && loading)}
               onOpen={openShortlisted}
               onRemove={dropShortlisted}
-              onPlan={(ids) => onPlanStops?.(ids.map((dest) => ({ dest, nights: 2 })))}
+              onPlan={(stops) => onPlanStops?.(stops)}
               onBrowse={() => onGoToTab?.('places')}
               onUndo={removeWithUndo}
               mapLocale={mapLocale}

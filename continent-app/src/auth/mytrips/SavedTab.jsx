@@ -15,6 +15,7 @@ import {
   priceChange, createList, renameList, deleteList, restoreList, moveList, toggleInList, setNote, MAX_NOTE,
 } from '../../lib/savedLists.js';
 import { byVotes, canRemoveItem, friendsToAdd } from '../../lib/sharedListModel.js';
+import { planFromSaves, cheapestStopDay } from '../../lib/savedPlan.js';
 import { CardMenu, Faces } from './parts.jsx';
 import { Empty } from './MyTripsTabs.jsx';
 import { SharedItem, PeoplePicker, facesOf } from './SharedList.jsx';
@@ -164,7 +165,7 @@ function SavedItem({
  *
  *   rows        every saved thing, resolved (useFavoriteItems + account saves)
  *   saved       lib/savedLists state { lists, meta }
- *   onPlan(ids) the picked places, to the trip planner
+ *   onPlan(stops) the picks as the planner's stops (lib/savedPlan.js, T942)
  *   onUndo      the panel's undo slot: ({ key, label, commit, restore })
  */
 export function SavedTab({
@@ -218,8 +219,11 @@ export function SavedTab({
   const toggleSel = (k) => setSel((cur) => (cur.includes(k) ? cur.filter((x) => x !== k) : [...cur, k]));
   const allRows = [...rows, ...(currentShared ? inList.filter((r) => !rows.some((x) => metaKey(x) === metaKey(r))) : [])];
   const picked = allRows.filter((r) => sel.includes(metaKey(r)));
-  const pickedPlaces = picked.filter((r) => r.kind === 'dest' && destinations[r.id]);
-  const fromEur = pickedPlaces.map((r) => costOf(r)?.dayEur).filter(Number.isFinite).sort((a, b) => a - b)[0];
+  // T942: every kind goes to the planner, a place as a stop and a trail,
+  // beach, lake, mountain or route as a day at its nearest town. The price
+  // is only for what the planner prices: the stops.
+  const plan = useMemo(() => planFromSaves(picked, destinations), [picked.map(metaKey).join('|'), destinations]); // eslint-disable-line react-hooks/exhaustive-deps -- keyed by the picks
+  const fromEur = cheapestStopDay(plan.stops, (id) => costs?.get?.(id)?.dayEur);
 
   const coverRows = (l) => rows.filter((r) => l.keys.includes(metaKey(r)));
   const startName = (id) => { setNaming(id); setName(id === 'new' ? '' : (lists.find((l) => l.id === id)?.name || '')); };
@@ -486,9 +490,12 @@ export function SavedTab({
               ? t('mt.selectedFrom', { n: sel.length, price: formatMoney(fromEur) })
               : t('mt.selectedN', { n: sel.length })}
           </span>
+          {plan.unplaced.length > 0 && plan.stops.length > 0 && (
+            <span className="mt-selbar-note">{t('mt2.notPlanned', { n: plan.unplaced.length })}</span>
+          )}
           <Button variant="quiet" size="sm" onClick={() => setSel([])}>{t('mt.clearSelection')}</Button>
-          <Button variant="primary" iconStart={<RouteIcon size={18} />} disabled={!pickedPlaces.length}
-            onClick={() => onPlan(pickedPlaces.map((r) => r.id))}>
+          <Button variant="primary" iconStart={<RouteIcon size={18} />} disabled={!plan.stops.length}
+            onClick={() => onPlan(plan.stops)}>
             {t('mt.planWithThese')}
           </Button>
         </div>

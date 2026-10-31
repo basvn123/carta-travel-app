@@ -7354,6 +7354,7 @@ export const fr = {
   "mt2.leaveList": "Quitter la liste",
   "mt2.sharedListLabel": "{name}, partagée avec {people}",
   "mt2.shareFailed": "La liste n'a pas pu être partagée. Réessayez.",
+  "mt2.notPlanned": "{n} laissé de côté : aucune ville assez proche",
   "coplan.inviteLink": "Copier le lien d'invitation",
   "coplan.linkCopied": "Lien d'invitation copié. Il fonctionne 7 jours.",
   "coplan.linkShared": "Invitation envoyée. Le lien fonctionne 7 jours.",
