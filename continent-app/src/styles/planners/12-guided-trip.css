@@ -3,12 +3,6 @@
    of the two, so edit it where it is. This sheet loads with the route's
    chunk, after the main sheet, and holds only rules nothing later in the
    cascade could override; scripts/css-routes.mjs --check proves it on a build. */
-.guide-head {
-  position: relative;
-  padding: 16px 18px 12px;
-  border-bottom: 1px solid var(--rule);
-  flex-shrink: 0;
-}
 .guide-sub { color: var(--ink-soft); font-size: 13px; margin: 4px 0 16px; }
 .guide-country-block { margin-bottom: 20px; }
 .guide-block-head {
@@ -20,17 +14,6 @@
   padding-bottom: 6px;
   border-bottom: 1px solid var(--rule);
 }
-.guide-city-list { display: flex; flex-direction: column; gap: 8px; }
-.guide-city-name {
-  display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
-  font-family: var(--display);
-  font-size: 15px;
-  color: var(--ink);
-}
-.guide-nights {
-  display: flex; align-items: center; gap: 8px;
-  flex-shrink: 0;
-}
 .guide-nights-zero { font-family: var(--ui); font-size: 12px; color: var(--ink-soft); font-weight: 600; }
 .guide-when-nights {
   font-family: var(--mono);
@@ -41,12 +24,6 @@
 }
 @media (hover: hover) {
   .guide-design-btn:hover { opacity: 0.93; }
-}
-.guide-design-text { display: flex; flex-direction: column; gap: 1px; }
-.guide-tier-legend {
-  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-  margin: -8px 0 14px;
-  font-size: 11px;
 }
 .guide-tier-legend-note { color: var(--ink-mute); font-size: 10.5px; }
 @media (hover: hover) {
@@ -98,29 +75,7 @@
   white-space: nowrap;
 }
 .guide-empty { font-size: 12.5px; color: var(--ink-soft); }
-.guide-foot-summary { font-family: var(--ui); font-size: 12px; color: var(--ink-soft); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .guide-foot-actions { display: flex; gap: 10px; }
-.day-saved-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(26, 26, 26, 0.42);
-  backdrop-filter: blur(2px);
-  display: flex; align-items: center; justify-content: center;
-  padding: 24px;
-  z-index: calc(var(--z-modal) + 2);
-}
-@media (hover: hover) {
-  .day-saved-close:hover { background: var(--paper-dim); color: var(--ink); }
-}
-.itin-overview { display: flex; flex-direction: column; gap: 8px; padding-top: 14px; }
-.itin-stop-idx {
-  display: flex; align-items: center; justify-content: center;
-  width: 24px; height: 24px; flex-shrink: 0;
-  border-radius: 50%;
-  background: var(--paper-dim);
-  color: var(--ink);
-  font-family: var(--mono); font-size: 12px; font-weight: 600;
-}
 .itin-stop-city { display: block; font-family: var(--display); font-size: 15.5px; color: var(--ink); }
 .itin-leg-rail {
   position: absolute;
@@ -133,22 +88,12 @@
   padding: 0 10px 10px 14px;
 }
 .itin-leg .trip-leg-links { margin: 0; padding: 0 10px 10px 14px; }
-.itin-day-row { display: flex; align-items: stretch; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
 .itin-day-row-num { font-family: var(--ui); font-size: 12px; color: var(--ink-soft); white-space: nowrap; }
 .itin-day-row-meta { font-size: 12.5px; color: var(--ink-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .guide-thumb-fallback { font-family: var(--display); color: var(--ink-mute); }
 .guide-city-thumb .guide-thumb-fallback { font-size: 22px; }
 .guide-arrange-thumb .guide-thumb-fallback { font-size: 18px; }
-.itin-stop-thumb {
-  flex-shrink: 0;
-  width: 46px; height: 46px;
-  border-radius: 9px;
-  background: var(--paper-dim) center/cover no-repeat;
-  display: flex; align-items: center; justify-content: center;
-}
 .itin-stop-thumb-fallback { font-family: var(--display); font-size: 18px; color: var(--ink-mute); }
-.guide-body { overflow-y: auto; padding: 18px; flex: 1; }
-.guide-city-info { flex: 1; min-width: 0; }
 .guide-city-insight {
   font-size: 11.5px;
   color: var(--ink-soft);
@@ -157,7 +102,6 @@
   overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
 }
 .guide-nights-val { font-size: 12px; min-width: 52px; text-align: center; color: var(--ink-soft); }
-.guide-staystyle-toggle { flex-wrap: wrap; width: fit-content; max-width: 100%; }
 .guide-note {
   display: flex; align-items: center; gap: 6px;
   margin-top: 16px;
@@ -165,12 +109,7 @@
   color: var(--ink-soft);
 }
 .guide-ownflight .guide-search { margin-bottom: 0; }
-.guide-design-spark {
-  display: flex; align-items: center; justify-content: center;
-  flex: none;
-}
 .guide-city-combo { font-size: 12px; color: var(--ink-soft); margin-top: 3px; }
-.citypick-ic { display: inline-flex; align-items: center; justify-content: center; flex: none; }
 .citypick-pin.tier-top .citypick-ic { color: var(--accent); }
 .citypick-pin.tier-great .citypick-ic { color: var(--good-mid); }
 .citypick-pin.tier-good .citypick-ic { color: var(--ink-soft); }
@@ -191,19 +130,8 @@
   border-top-color: var(--ink);
 }
 .guide-chip.on .guide-chip-kind { color: var(--select-ink); }
-.day-saved-card {
-  position: relative;
-  width: min(100%, 400px);
-  background: var(--paper);
-  border-radius: 18px;
-  box-shadow: var(--shadow-2);
-  padding: 26px 24px 20px;
-  text-align: center;
-}
 .itin-stop.active .itin-stop-idx { background: var(--select-bg); color: var(--select-ink); }
-.itin-stop-main { flex: 1; min-width: 0; }
 .itin-stop-sub { display: block; font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); margin-top: 1px; }
-.itin-leg-text { flex: 1; min-width: 0; font-size: 12px; color: var(--ink); }
 @media (hover: hover) {
   .itin-leg-main:hover .itin-leg-change { color: var(--accent); border-color: var(--accent); }
 }

@@ -61,14 +61,6 @@
   margin-bottom: 8px;
 }
 .dayws-tips-intro { font-size: 13px; line-height: 1.5; color: var(--ink-soft); margin-bottom: 8px; }
-.dayws-tip-name {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 6px;
-  font-size: 13.5px;
-  font-weight: 600;
-}
 .dayws-tip-tag {
   font-family: var(--mono);
   font-size: 10px;
@@ -77,13 +69,6 @@
 }
 .dayws-tip-star { display: inline-flex; color: var(--rate); }
 .dayws-tip-row.added .dayws-tip-name { color: var(--ink-soft); }
-.dayws-daybar {
-  flex-shrink: 0;
-  padding: 10px 20px 2px;
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
 .dayws-city-add {
   display: flex;
   align-items: center;
@@ -156,15 +141,6 @@
   justify-content: center;
   background: var(--paper-dim);
   color: var(--ink-mute);
-}
-.daya-name {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 6px;
-  font-size: 14.5px;
-  font-weight: 600;
-  line-height: 1.3;
 }
 .daya-must {
   display: inline-flex;
@@ -277,18 +253,6 @@
   line-height: 1.5;
   color: var(--ink-mute);
 }
-.dayf-drop {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 8px;
-  padding: 20px 16px;
-  border: 1px dashed var(--rule);
-  border-radius: 14px;
-  background: var(--paper-dim);
-  transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
-}
 .dayf-drop.over { border-color: var(--ink); background: var(--paper-dim); }
 .dayf-drop.busy { opacity: 0.7; }
 .dayf-drop-glyph {
@@ -355,11 +319,10 @@
 }
 .dayf-notes:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 @media (max-width: 768px) {
-  .dayws-daybar { padding: 9px 15px 2px; }
   .daya-shot .day-thumb { width: 76px; height: 76px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .daya-card, .dayf-drop {
+  .daya-card {
     transition: none;
   }
 }
@@ -400,7 +363,6 @@
   overflow: hidden;
 }
 .dayex-card-dist { font-family: var(--ui); font-size: 12px; color: var(--ink-soft); }
-.dayex-card-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 .dayex-card-fact { font-family: var(--mono); font-size: 11px; color: var(--ink-mute); }
 .dayex-card-sub { font-size: 11.5px; color: var(--ink-mute); }
 .dayex-water {
@@ -420,10 +382,8 @@
   background: var(--paper-dim);
   margin-bottom: 12px;
 }
-.dayex-detail-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
 .dayex-detail-dist { font-family: var(--mono); font-size: 12px; color: var(--ink-soft); }
 .dayex-detail-desc { font-size: 14px; line-height: 1.6; color: var(--ink-soft); margin: 0 0 14px; }
-.dayex-detail-acts { display: flex; gap: 8px; flex-wrap: wrap; }
 @media (min-width: 1100px) {
   .dayex-cards {
     display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -483,7 +443,6 @@
   box-shadow: var(--shadow-1);
   transition: border-color var(--dur-1) var(--ease-out);
 }
-:is(.day-ws, .dem-map) .dem-pin:not(.ai-disc):not(.ai-event) { border-color: var(--rule); }
 :is(.day-ws, .dem-map) .dem-pin .dem-pin-ico { background: transparent; color: var(--ink); }
 :is(.day-ws, .dem-map) .dem-pin.is-dot .dem-pin-ico { background: var(--ink); color: var(--on-fill); }
 :is(.day-ws, .dem-map) .dem-pin .dem-pin-chk { background: var(--ink-fill); color: var(--on-fill); }
@@ -593,9 +552,7 @@
   box-shadow: none;
 }
 .day-wizard .dayw-search:focus-within { border-color: var(--focus); outline: 2px solid var(--focus); outline-offset: 1px; box-shadow: none; }
-.dayw-quick { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .dayw-note { margin: 0; font-size: var(--text-label); color: var(--text-2); }
-.dayw-results { display: flex; flex-direction: column; border: 1px solid var(--border-soft); border-radius: var(--radius-card); background: var(--surface); overflow: hidden; }
 .dayw-chosen {
   display: flex;
   align-items: center;
@@ -618,16 +575,6 @@
 .dtrow .dtmenu-btn { width: var(--tap); height: var(--tap); }
 .dayw-when { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-5); align-items: start; }
 @media (min-width: 900px) { .dayw-when { grid-template-columns: minmax(0, 420px) minmax(0, 1fr); } }
-.dayw-when-cal {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  padding: var(--space-4);
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius-card);
-  background: var(--surface);
-}
-.dayw-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .dayw-count {
   display: flex;
   align-items: center;
@@ -670,23 +617,15 @@
   border-radius: var(--radius-card);
   background: var(--select-bg);
 }
-.daychat { display: flex; flex-direction: column; gap: var(--space-5); }
 .daychat-progress { display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
 .daychat-dots { display: inline-flex; gap: 4px; margin-left: var(--space-2); }
 .daychat-tiles { --tile-gap: var(--space-2); }
 @media (max-width: 560px) { .daychat-tiles { --tile-cols: 2 !important; } }
-.daychat-tile-text { display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; }
-.daychat-sub { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); }
-.daychat-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .daychat-hint { margin: 0; font-size: var(--text-label); color: var(--text-2); }
-.daychat-final { display: flex; flex-direction: column; gap: var(--space-4); }
 .daychat-credit { align-self: flex-start; }
 @media (max-width: 768px) { .dayw-chat .guide-foot-summary .credit-chip { display: none; } }
-.daychat-switches { display: flex; flex-direction: column; border: 1px solid var(--border-soft); border-radius: var(--radius-card); background: var(--surface); }
 .daychat-weather { margin: 0; font-size: var(--text-body); color: var(--text-2); }
-.daychat-busy, .daychat-fail { display: flex; flex-direction: column; gap: var(--space-4); }
 .daychat-fail-text { margin: 0; font-size: var(--text-body); color: var(--text-2); max-width: var(--measure); }
-.daychat-fail-acts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .dayw-manual .dayex { display: flex; flex-direction: column; gap: var(--space-4); padding: 0; }
 .dayw-manual .dayex-chips { display: flex; gap: var(--space-2); overflow-x: auto; scrollbar-width: none; padding-block: 2px; }
 .dayw-manual .dayex-card.is-picked { border-color: var(--select-border); outline: 1px solid var(--select-border); outline-offset: -2px; }
@@ -715,25 +654,13 @@
 .day-ws.is-page .dayws-title { font-size: var(--text-title); }
 .dayws-head .day-save-status::before { content: none; }
 .day-ws .day-sw { margin: 0; }
-.dayws-cities { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .day-ws .dayws-daybar { padding: 0; border: none; background: none; }
 .day-ws .dayws-city-add { display: flex; align-items: center; gap: var(--space-2); margin-top: var(--space-2); }
-.days-card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  padding: var(--space-5);
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius-card);
-  background: var(--surface);
-}
 .day-ws.is-page .days-card { padding: var(--space-4); }
 .days-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
 .day-ws.is-page .days-cost.btn { margin: 0; padding-inline: 0; }
 .day-ws.is-page .days-cost .btn-label { flex-direction: row; align-items: baseline; gap: var(--space-2); }
-.dayp { display: flex; flex-direction: column; gap: var(--space-4); }
 .dayp-summary { display: flex; gap: var(--space-2); margin: 0; padding: var(--space-3) var(--space-4); border-radius: var(--radius-card); background: var(--surface-sunken); font-size: var(--text-body); color: var(--text-2); }
-.dayt { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
 .day-ws.is-page .dayt > li { grid-template-columns: 44px 44px minmax(0, 1fr) auto; column-gap: var(--space-2); }
 .dayt-time .dayt-est { display: block; font-weight: 400; }
 .dayt-time { padding-top: 14px; font-size: var(--text-label); font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text); }
@@ -749,7 +676,6 @@
 .dayt-must { display: inline-flex; margin-left: var(--space-1); vertical-align: -1px; color: var(--rate); }
 .dayt-must svg { fill: currentColor; }
 .dayt-meta { font-size: var(--text-label); color: var(--text-2); }
-.dayt-links { display: flex; flex-wrap: wrap; align-items: center; column-gap: var(--space-3); }
 .dayt-link {
   display: inline-flex;
   align-items: center;
@@ -769,15 +695,12 @@
 .day-ws.is-page .dayt-mark .day-thumb { width: 44px; height: 44px; }
 .dayt-tools { display: flex; align-items: center; padding-top: var(--space-1); }
 .dayt-tool-up { transform: rotate(180deg); }
-.dayt-menu { position: relative; display: inline-flex; }
 .dayt-leg { min-height: 40px; }
 .dayt-leg .dayt-time { padding-top: 0; }
 .dayt-leg-text { grid-column: 3 / 4; padding-block: var(--space-2); font-size: var(--text-label); color: var(--text-2); }
 .dayt-leg.is-ride .dayt-leg-text { color: var(--text); }
-.dayp-tools { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .day-ws .dayws-stay-btn { box-shadow: none; border: 1px solid var(--border-soft); background: var(--surface); min-height: var(--tap); }
 .dayk-sheet .dayws-tips-body { max-height: none; padding: 0; }
-.dayk-import { display: flex; flex-direction: column; gap: var(--space-3); }
 @media (prefers-reduced-motion: no-preference) {
   .days-card, .dayt { animation: dayt-in var(--dur-3) var(--ease-out) both; }
   .dayt { animation-delay: 60ms; }
@@ -803,10 +726,6 @@
 .day-wizard .daychat-hint { margin-top: calc(-1 * var(--space-3)); }
 .day-wizard .daychat-progress { margin: 0 0 var(--space-2); }
 .dayr .plan-total-fig .plan-total-pp { font-size: var(--text-label); }
-.dayr-days { display: flex; flex-direction: column; gap: var(--space-4); margin: 0; padding: 0; list-style: none; }
-.dayr-day { display: flex; flex-direction: column; gap: var(--space-2); }
-.dayr-day-h { display: flex; align-items: baseline; flex-wrap: wrap; column-gap: var(--space-2); margin: 0; }
-.dayr-places { display: flex; flex-direction: column; gap: var(--space-1); margin: 0; padding: 0; list-style: none; counter-reset: dayr; }
 .dayr-places li::before {
   content: counter(dayr);
   flex: none;
@@ -827,7 +746,6 @@
 .dayw-fork-mosaic.n1 { grid-template-columns: 1fr; grid-template-rows: 1fr; }
 .dayw-fork-mosaic.n2 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr; }
 .dayw-fork-mosaic.n3 .dayw-fork-tile:first-child { grid-row: 1 / span 2; }
-.dayw-fork-body { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); }
 .dayw-fork-sub { font-size: var(--text-body); color: var(--text-2); }
 @media (max-width: 639px) {
   .dayw-fork-photo { aspect-ratio: 3 / 1; }
@@ -888,7 +806,6 @@
   text-align: left;
   transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
 }
-.dayws-stay-text { min-width: 0; display: flex; flex-direction: column; }
 .dayws-stay-search input {
   flex: 1;
   min-width: 0;
@@ -896,17 +813,6 @@
   background: none;
   font-size: 13.5px;
 }
-.dayws-stay-find {
-  flex: none;
-  height: 30px;
-  padding: 0 12px;
-  border-radius: 8px;
-  background: var(--action);
-  color: var(--on-fill);
-  font-size: 12.5px;
-  font-weight: 600;
-}
-.dayws-stay-results { margin-top: 8px; display: flex; flex-direction: column; }
 .dayws-stay-none { margin-top: 8px; font-size: 12.5px; color: var(--ink-mute); }
 .dayws-stay-clear {
   margin-top: 8px;
@@ -923,7 +829,6 @@
   line-height: 1.45;
   color: var(--ink-mute);
 }
-.dayws-tip-body { flex: 1; min-width: 0; }
 .dayws-tip-note {
   display: block;
   margin-top: 2px;
@@ -932,17 +837,7 @@
   color: var(--ink-soft);
 }
 .daya-search input { flex: 1; min-width: 0; border: none; background: none; font-size: 14px; }
-.daya-search-clear {
-  flex: none;
-  width: 28px; height: 28px;
-  border-radius: 8px;
-  color: var(--ink-mute);
-  font-size: 17px;
-  line-height: 1;
-}
 .daya-picks::-webkit-scrollbar { display: none; }
-.daya-shot { flex: none; }
-.daya-text { flex: 1; min-width: 0; }
 .daya-kind { display: block; margin-top: 2px; font-size: 11.5px; color: var(--ink-mute); }
 .daya-blurb {
   display: block;
@@ -966,17 +861,6 @@
   padding: 7px 0;
   text-align: left;
   border-top: 1px solid var(--rule-soft);
-}
-.daya-sugg-text { flex: 1; min-width: 0; }
-.daya-sugg-add {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 26px; height: 26px;
-  border-radius: 8px;
-  border: 1px solid var(--rule);
-  color: var(--ink-soft);
 }
 .daya-far { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--rule-soft); }
 .daya-tip {
@@ -1005,60 +889,13 @@
   padding: 9px 0;
   border-top: 1px solid var(--rule-soft);
 }
-.dayf-glyph {
-  position: relative;
-  flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px; height: 40px;
-  border-radius: 10px;
-  background: var(--paper-dim);
-  color: var(--ink-mute);
-  overflow: hidden;
-}
-.dayf-info { flex: 1; min-width: 0; }
-.dayf-act {
-  flex: none;
-  width: 32px; height: 32px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 9px;
-  color: var(--ink-mute);
-}
 @media (prefers-reduced-motion: reduce) {
   .dayws-stay-btn {
     transition: none;
   }
 }
-.dayex-chips {
-  display: flex; gap: 7px; align-items: center;
-  overflow-x: auto; flex: 1 1 auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
 .dayex-chips::-webkit-scrollbar { display: none; }
 .dayex-cards::-webkit-scrollbar { display: none; }
-.dayex-card-body {
-  display: flex; flex-direction: column;
-  border: none; background: none; cursor: pointer;
-  padding: 0; margin: 0; text-align: left; font: inherit;
-  min-width: 0;
-}
-.dayex-card-text { display: flex; flex-direction: column; gap: 4px; padding: 10px 12px 12px; min-width: 0; }
-.dayex-card-name { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; min-width: 0; }
-.day-save-status {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: var(--space-1);
-  font-family: var(--ui);
-  font-size: 12px;
-  color: var(--ink-soft);
-  white-space: nowrap;
-}
 .day-save-status::before {
   content: '';
   width: 6px;
@@ -1072,59 +909,16 @@
   gap: var(--space-2);
   margin-top: var(--space-2);
 }
-.day-sw-btn {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--tap);
-  height: var(--tap);
-  border: 1px solid var(--rule);
-  border-radius: 6px;
-  background: var(--bg-card);
-  color: var(--ink-soft);
-  cursor: pointer;
-  transition: border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
-}
 .day-sw-prev svg { transform: scaleX(-1); }
-.day-sw-label {
-  flex: 1 1 auto;
-  min-width: 0;
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-2);
-  white-space: nowrap;
-  overflow: hidden;
-}
-.day-sw-more { position: relative; flex: none; }
-@media (prefers-reduced-motion: reduce) {
-  .day-sw-btn { transition: none; }
-}
-.daytrip-reco-main b svg { color: var(--ink-soft); }
 @media (pointer: coarse) {
   .dayws-stay-btn,
   .dayws-stay-find,
   .dayws-stay-clear { min-height: var(--tap); min-width: var(--tap); }
-  .day-undo-btn { min-height: var(--tap); }
   .dayf-act { min-width: var(--tap); }
   .dtmenu-btn { min-width: var(--tap); min-height: var(--tap); }
   .dem-map .maplibregl-ctrl-group button { width: var(--tap); height: var(--tap); }
 }
 .day-undo-text { min-width: 0; padding: var(--space-2) 0; overflow-wrap: anywhere; }
-.day-undo-btn {
-  flex: none;
-  min-height: 36px;
-  padding: 0 var(--space-4);
-  border: 0;
-  border-radius: 999px;
-  background: transparent;
-  color: var(--on-fill);
-  font: inherit;
-  font-weight: 700;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  cursor: pointer;
-}
 @media (pointer: coarse) {
   :is(.day-ws, .dem-map) .dem-pin::after {
     content: '';
@@ -1148,11 +942,6 @@
   color: var(--text);
 }
 .day-wizard .dayw-search .day-stay-input::placeholder { color: var(--text-2); }
-.dayw-hit-ico { flex: none; color: var(--text-2); display: inline-flex; }
-.dayw-hit-text { display: flex; flex-direction: column; min-width: 0; }
-.dayw-chosen-text { flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0; }
-.dayw-section { display: flex; flex-direction: column; gap: var(--space-3); margin-top: var(--space-3); }
-.dayw-count-text { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
 .day-wizard .day-ideas-input {
   flex: 1 1 auto;
   min-width: 0;
@@ -1180,21 +969,9 @@
 }
 .day-wizard .day-ideas-chip .day-thumb { width: 40px; height: 40px; border-radius: var(--radius-sm); flex: none; }
 .day-wizard .day-ideas-chip-text { flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0; }
-.day-ideas-when-select {
-  flex: none;
-  min-height: var(--tap);
-  padding: 0 var(--space-3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-control);
-  background: var(--surface);
-  color: var(--text);
-  font: inherit;
-  font-size: var(--text-label);
-}
 .day-wizard .day-ideas-chip-x { width: var(--tap); height: var(--tap); flex: none; }
 .dayw-manual .dayex-chips::-webkit-scrollbar { display: none; }
 .dayws-head .day-save-status { flex: none; display: inline-flex; align-items: center; gap: var(--space-1); min-height: var(--tap); font-size: var(--text-label); color: var(--text-2); }
-.days-time { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
 .dayt-rail::before {
   content: '';
   position: absolute;
@@ -1205,7 +982,6 @@
   z-index: 0;
 }
 .dayt-rail > svg { position: relative; z-index: 1; padding: 3px; box-sizing: content-box; background: var(--surface-page); border-radius: 50%; }
-.dayt-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; padding-block: var(--space-2); }
 .dayt-no {
   position: absolute;
   top: 2px;
@@ -1225,7 +1001,6 @@
 }
 .dayt-leg > .dayt-link { grid-column: 4 / 5; align-self: center; padding-right: var(--space-2); }
 .dayr-days-wrap { border-top: 1px solid var(--border-soft); padding-top: var(--space-4); }
-.dayr-carta { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); border-top: 1px solid var(--border-soft); padding-top: var(--space-4); }
 .dayw-rail-sheet .plan-total-title { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .dayw-fork-card .card-title { font-size: var(--text-title); }
 .dayw-fork-card .card-meta { white-space: normal; }
@@ -1273,8 +1048,6 @@
 }
 .dayt-link { min-width: var(--tap); justify-content: center; }
 /* T487: the day's Google Maps link(s), under the summary. */
-.dayx-gmaps { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin: var(--space-3) 0; }
-.dayx-gmaps-h { flex: 1 0 100%; margin: 0; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
 .day-wizard .guide-foot-summary { flex: 1 1 auto; min-width: 0; }
 .dayw-rail-btn.btn { max-width: 100%; min-width: 0; overflow: hidden; }
 
@@ -1301,14 +1074,7 @@
 
 /* Phone and tablet: the page bar, then the map under the drawer. */
 .day-ws.is-drawer { display: flex; flex-direction: column; background: var(--surface-page); }
-.dayws-stage { position: relative; flex: 1 1 auto; min-height: 0; }
 .day-ws.is-drawer .dayws-map.is-under { position: absolute; inset: 0; }
-.dayws-drawer-body {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-5);
-  padding: var(--space-3) var(--space-4) calc(var(--space-7) + env(safe-area-inset-bottom, 0px));
-}
 .day-ws.is-drawer .dayx-gmaps .btn,
 .day-ws.is-drawer .dayp-tools .btn { min-height: var(--tap-main); }
 .day-ws.is-drawer .day-sw-btn { width: var(--tap-main); height: var(--tap-main); }
@@ -1316,11 +1082,9 @@
 /* The head: the day's name and its save state on one line. */
 .dayws-titlebar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
 .dayws-titlebar .dayws-title { min-width: 0; }
-.dayws-fromtrip { margin: 0; font-size: var(--text-label); color: var(--text-2); }
 
 /* The drawer's strip: the day and its figure, a tap from the receipt. */
 .day-strip { display: flex; align-items: center; gap: var(--space-3); width: 100%; min-width: 0; padding-left: var(--space-4); }
-.day-strip-text { display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; }
 .day-strip-title,
 .day-strip-sub { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .day-strip-title { font-size: var(--text-lead); font-weight: 600; color: var(--text); }
@@ -1329,35 +1093,23 @@
 
 /* The cost bar at the foot of the day (desktop): the trip first inside a
    trip (owner T492-f), then the day; each part opens what it holds. */
-.day-cost-bar {
-  flex: none;
-  display: flex;
-  align-items: stretch;
-  border-top: 1px solid var(--border);
-  background: var(--surface);
-}
 .day-cost-bar.has-trip .dcb-trip.btn { border-right: 1px solid var(--border-soft); }
 .day-cost-bar .dcb-part.btn:disabled { background: transparent; color: var(--text); }
 .day-cost-bar .dcb-part.btn:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
 @media (hover: hover) {
   .day-cost-bar .dcb-part.btn:not(:disabled):hover { background: var(--surface-hover); }
 }
-.dcb-lbl { flex: none; font-size: var(--text-label); font-weight: 400; color: var(--text-2); }
-.dcb-fig { display: flex; flex-direction: column; min-width: 0; }
 .dcb-n { font-size: var(--text-lead); font-weight: 700; color: var(--text); white-space: nowrap; font-variant-numeric: tabular-nums; }
 .dcb-unit { font-size: var(--text-caption); font-weight: 400; color: var(--text-2); }
 .dcb-open { margin-left: auto; display: inline-flex; align-items: center; gap: var(--space-1); font-size: var(--text-label); font-weight: 600; color: var(--action); white-space: nowrap; }
 
 /* The compact receipt (a sheet). */
-.day-receipt { display: flex; flex-direction: column; gap: var(--space-4); }
 .day-receipt-trip { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--border-soft); }
-.day-receipt-trip-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .day-receipt-life.btn { align-self: flex-start; }
 
 /* The day's head: "Your day" and the quiet Detail control. */
 .dayp-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
 .dayp-h { margin: 0; font-size: var(--text-title); font-weight: 600; color: var(--text); }
-.dayp-detail { position: relative; flex: none; }
 .dayp-detail-lbl { color: var(--text-2); font-weight: 400; }
 .dayp-menu-gap { display: inline-block; width: 16px; }
 
@@ -1393,10 +1145,7 @@
 .dayp-empty-line { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--border-soft); }
 
 /* "Best route" asks first (owner T492-e): one sentence, two buttons. */
-.dayp-ask { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-card); background: var(--surface); }
-.dayp-ask-acts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 
 /* The places to add, in the day's column or the drawer. */
-.dayws-add { display: flex; flex-direction: column; gap: var(--space-4); }
 .dayws-add-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
 .dayws-add-h { margin: 0; font-size: var(--text-title); font-weight: 600; color: var(--text); }

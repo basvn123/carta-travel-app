@@ -3,18 +3,6 @@
    of the two, so edit it where it is. This sheet loads with the route's
    chunk, after the main sheet, and holds only rules nothing later in the
    cascade could override; scripts/css-routes.mjs --check proves it on a build. */
-.carta-plan-q {
-  display: block;
-  font-size: 10.5px;
-  font-weight: 700;
-  color: var(--ink-soft);
-  margin-bottom: 6px;
-}
-.carta-plan-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
 .carta-route.rec { border-color: var(--accent); }
 .trip-carfrom { margin: 8px 0 4px; }
 .trip-carfrom-row { display: flex; gap: 8px; }
@@ -25,11 +13,6 @@
 @media (hover: hover) {
   .trip-carfrom-change:hover { color: var(--ink); border-color: var(--ink); }
 }
-.guide-stay-filters {
-  display: flex; align-items: center; gap: 10px;
-  flex-wrap: wrap;
-  margin: 8px 0 4px;
-}
 .guide-stay-filter { display: flex; align-items: center; gap: 6px; }
 .guide-stay-price {
   font-family: var(--mono); font-size: var(--text-micro);
@@ -39,70 +22,12 @@
   padding: 2px 7px;
   white-space: nowrap;
 }
-.ai-plan-overlay { align-items: flex-start; overflow-y: auto; }
-.ai-plan-card {
-  width: min(100%, 520px);
-  margin: 4vh auto;
-  text-align: left;
-  padding: 22px 22px 18px;
-}
-.ai-plan-head {
-  display: flex; align-items: center; gap: 10px;
-  margin-bottom: 6px; padding-right: 26px;
-}
-.ai-plan-lead { font-size: 13px; color: var(--ink-soft); line-height: 1.5; margin: 4px 0 12px; }
-.ai-plan-hills { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink); cursor: pointer; }
-.ai-plan-free:focus { outline: none; border-color: var(--accent); }
-.ai-plan-generate { display: inline-flex; align-items: center; justify-content: center; gap: 7px; }
-.ai-plan-secondary { text-align: center; }
-.ai-plan-busy { text-align: center; padding: 26px 0 18px; }
-.ai-sched { list-style: none; margin: 8px 0 0; padding: 0; }
-.ai-sched-stop:last-child { border-bottom: none; }
-.ai-sched-walk { color: var(--ink-mute); }
-.ai-sched-stop.on { background: var(--bg-card); outline: 2px solid var(--select-border); outline-offset: -2px; }
-.ai-disc-tag {
-  display: inline-flex; align-items: center; gap: 3px;
-  margin-left: 6px;
-  padding: 1px 6px;
-  border-radius: 999px;
-  background: var(--ai-violet-bg);
-  color: var(--ai-violet);
-  font-size: var(--text-micro); font-weight: 700;
-  vertical-align: 1px;
-}
-@media (max-width: 768px) {
-  .ai-plan-overlay { padding: 10px; }
-  .ai-plan-card { margin: 2vh auto; max-height: 92vh; overflow-y: auto; }
-}
-.ai-plan-facts { display: flex; gap: 14px; flex-wrap: wrap; }
-.ai-plan-fact { display: flex; flex-direction: column; gap: 5px; }
-.ai-plan-date:focus { outline: none; border-color: var(--accent); }
-.ai-plan-people { align-self: flex-start; }
-.ai-plan-toggles { display: flex; gap: 18px; flex-wrap: wrap; }
-.ai-plan-proposal-tag {
-  display: inline-block;
-  padding: 3px 9px;
-  border-radius: 999px;
-  background: var(--paper-dim);
-  color: var(--ink);
-  font-size: 10.5px; font-weight: 600;
-margin-bottom: 8px;
-}
-.ai-refine-nudges { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 9px; }
-.ai-refine-row { display: flex; gap: 8px; }
-.ai-refine-input:focus { outline: none; border-color: var(--accent); }
-.ai-plan-import { font-weight: 700; padding-top: 13px; padding-bottom: 13px; }
-.ai-event-tag { background: var(--event-bg); color: var(--event-ink); }
-@media (max-width: 768px) {
-  .ai-plan-facts { gap: 10px; }
-}
 .day-flow-screen {
   display: flex;
   justify-content: center;
   padding: 0;
   overflow-y: auto;
 }
-.dtsection { display: flex; flex-direction: column; }
 .dtcards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -139,7 +64,6 @@ margin-bottom: 8px;
   .dtmenu-item:hover { background: var(--paper-dim); }
 }
 .dtmenu-item.danger { color: var(--danger); }
-.dtday-groups { display: flex; flex-direction: column; gap: 16px; }
 .dtday-groupname {
   display: flex;
   align-items: center;
@@ -150,7 +74,6 @@ margin-bottom: 8px;
   font-weight: 600;
   color: var(--ink-soft);
 }
-.dtday-chips { display: flex; flex-wrap: wrap; gap: 7px; }
 @media (hover: hover) {
   .dtday-chip:hover:not(:disabled) { border-color: var(--ink); color: var(--ink); }
 }
@@ -171,10 +94,8 @@ margin-bottom: 8px;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
-  .dtsignin { flex-wrap: wrap; }
 }
 .day-flow-search { display: flex; gap: 8px; }
-.day-ideas-chips { display: flex; flex-direction: column; gap: 8px; list-style: none; margin: 0; padding: 0; }
 @media (hover: hover) {
   .day-ideas-chip-x:hover { background: var(--paper-dim); color: var(--ink); }
 }
@@ -183,89 +104,9 @@ margin-bottom: 8px;
 @media (hover: hover) {
   .day-ideas-clear:hover { background: var(--paper-dim); color: var(--ink); }
 }
-.day-ideas-results { display: flex; flex-direction: column; gap: 14px; }
-.day-ideas-group { display: flex; flex-direction: column; gap: 6px; }
-.day-ideas-rows { display: flex; flex-direction: column; gap: 4px; list-style: none; margin: 0; padding: 0; }
 .day-ideas-note { margin: 0; font-size: 12.5px; color: var(--ink-soft); text-align: center; }
-@media (max-width: 620px) {
-  .day-ideas-chip { flex-wrap: wrap; }
-}
-.carta-plan-row { margin-top: 13px; }
-.trip-carfrom-results { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; }
-.ai-plan-badge {
-  /* A plain --ink-soft icon, no tile (never-do 1, accent marks; T411, row
-     T399-d): the AI day plan and the pass dialogs head the same way. */
-  flex: 0 0 auto;
-  color: var(--ink-soft);
-  display: inline-flex; align-items: center; justify-content: center;
-}
-.ai-plan-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
-@media (prefers-reduced-motion: no-preference) {
-  .ai-sched-stop {
-    /* T389: the overshoot curve went (DIRECTION.md 2.1: no overshoot). */
-    animation: ai-sched-in var(--dur-3) var(--ease-out) both;
-  }
-  .ai-sched-stop:nth-child(2) { animation-delay: 45ms; }
-  .ai-sched-stop:nth-child(3) { animation-delay: 90ms; }
-  .ai-sched-stop:nth-child(4) { animation-delay: 135ms; }
-  .ai-sched-stop:nth-child(5) { animation-delay: 180ms; }
-  .ai-sched-stop:nth-child(6) { animation-delay: 225ms; }
-  .ai-sched-stop:nth-child(7) { animation-delay: 270ms; }
-  .ai-sched-stop:nth-child(n + 8) { animation-delay: 315ms; }
-}
-.ai-sched-time {
-  flex: 0 0 74px;
-  font-family: var(--ui); font-size: 12px; font-weight: 700;
-color: var(--ink-soft);
-  padding-top: 1px;
-}
-.ai-sched-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.ai-sched-thumb { position: relative; flex: 0 0 auto; }
-.ai-sched-no {
-  position: absolute;
-  left: -5px; top: -5px;
-  min-width: 18px; height: 18px;
-  display: flex; align-items: center; justify-content: center;
-  padding: 0 4px;
-  border-radius: 999px;
-  background: var(--ink-fill);
-  color: var(--on-fill);
-  font-family: var(--mono); font-size: 10px; font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  box-shadow: 0 0 0 2px var(--paper);
-}
-.ai-sched-stop.ext .ai-sched-no { background: var(--ai-violet); }
-.ai-route-hint {
-  margin-top: 8px;
-  font-size: 11px;
-  color: var(--ink-mute);
-}
-@media (max-width: 640px) {
-  .ai-sched-time { flex-basis: 58px; }
-}
-.ai-refine {
-  border-top: 1px solid var(--rule);
-  margin-top: 14px;
-  padding-top: 12px;
-}
-.day-flow-step {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 18px;
-  padding-bottom: 40px;
-}
 .dtcard:active .dtcard-body { background: var(--select-bg); }
-.dtcard-body {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  padding: 11px 13px 12px;
-  min-width: 0;
-}
 .dtcard.skeleton .dtcard-photo { background: var(--paper-dim); }
-.dtsignin-text { flex: 1 1 auto; min-width: 0; }
 @media (max-width: 700px) {
   .dtcards::-webkit-scrollbar { display: none; }
   .dtcards > .dtcard { flex: 0 0 82vw; scroll-snap-align: start; }
@@ -275,16 +116,5 @@ color: var(--ink-soft);
   font-size: 16px;
   padding: 14px 16px;
   border-radius: 12px;
-}
-.day-ideas-chip-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
-.day-ideas-row-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
-.day-ideas-row-mark {
-  flex: none;
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 24px; height: 24px;
-  border-radius: 7px;
-  background: var(--paper-dim);
-  color: var(--ink-soft);
-  font-size: 15px; line-height: 1;
 }
 .day-ideas-row.on .day-ideas-row-mark { background: var(--select-bg); color: var(--select-ink); }

@@ -2473,14 +2473,14 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T902-a | T902 | Carta's own trips has In season and Saved as quick filters; the artifact's "Under €50 a day" and "7 nights" chips were not built (the sheet's budget bands are relative thirds) (Execution/P15/T901-T904-plan-home.md) | next task | open |  |
 | T903-a | T903 | Up next on the Plan home has no days-planned bar or next steps; the home's trip records carry no booking state or planned days (Execution/P15/T901-T904-plan-home.md) | next task | open |  |
 | T903-b | T903 | Up next has no Plan your days button; the home has no door into the days of a trip that is not open (Execution/P15/T901-T904-plan-home.md) | next task | open |  |
-| T903-c | T903 | Deploy the merged batch T901 to T904 (Cloudflare credentials are the owner's) (Execution/P15/T901-T904-plan-home.md) | user | open |  |
+| T903-c | T903 | Deploy the merged batch T901 to T904 (Cloudflare credentials are the owner's) (Execution/P15/T901-T904-plan-home.md) | user | closed by T954 |  |
 | T905-a | T905 | The phone header row (logo, account) is checked only in a harness; walk Explore's map, the Plan flow, the day planner's drawer and the full-screen pages on a phone with app data (Execution/P15/T905-phone-header.md) | next task | open |  |
 | T906-a | T906 | Fold the settings into the search: the phone settings summary into the search pill, and From, When, Who into the desktop bar, with the settings line folded away (Execution/P15/T906-T910-explore-refined.md) | next task | open |  |
 | T906-b | T906 | The Explore hero (field on the photo's edge, 300 to 420 px, the phone pill) was not seen running; look once with app data at 390 and 1440 (Execution/P15/T906-T910-explore-refined.md) | next task | open |  |
 | T907-a | T907 | People asks no child ages; Booking asks them and they drive the cost (Execution/P15/T906-T910-explore-refined.md) | next task | open |  |
 | T907-b | T907 | "Tell Carta what you like" stays in the chip row because it is the personal match's only door; decide whether it moves into Filters or Account (Execution/P15/T906-T910-explore-refined.md) | user | closed by T937-T947 (owner decision 2026-10-31) |  |
 | T908-a | T908 | The .storyr-lead and .storyr-stack rules in styles/80-story-rail.css are unused since the lead card left; remove them (Execution/P15/T906-T910-explore-refined.md) | next task | open |  |
-| T910-a | T910 | Deploy the merged batch T906 to T910 (Cloudflare credentials are the owner's) (Execution/P15/T906-T910-explore-refined.md) | user | open |  |
+| T910-a | T910 | Deploy the merged batch T906 to T910 (Cloudflare credentials are the owner's) (Execution/P15/T906-T910-explore-refined.md) | user | closed by T954 |  |
 | T911-a | T911 | Harvest the four placeholder sources (a place's own dishes, steep streets, neighbourhood suits, trip fit); the files and their shape are in docs/SCHEMA.md (Execution/P15/T911-T914-place-pages.md) | next task | open |  |
 | T911-b | T911 | pytest is not installed in the session, so tests/test_parking_fold.py did not run after the dossier build change (Execution/P15/T911-T914-place-pages.md) | next task | open |  |
 | T912-a | T912 | Getting there showed only the train for Porto because the flight sweep host is unreachable here; look once where fares load (Execution/P15/T911-T914-place-pages.md) | next task | open |  |
@@ -2490,14 +2490,14 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T913-a | T913 | DestinationsTab does not pass onPlanTrip to the trip page, so Plan this trip falls back to a full reload (Execution/P15/T911-T914-place-pages.md) | next task | open |  |
 | T914-a | T914 | Look at the place guide and trip booklet PDFs once with real photos in a browser (Execution/P15/T911-T914-place-pages.md) | next task | open |  |
 | T914-b | T914 | public/fonts PlusJakartaSans and JetBrainsMono may be unused after the place guide moved to Figtree; check and remove (Execution/P15/T911-T914-place-pages.md) | next task | open |  |
-| T914-c | T914 | Deploy the merged batch T911 to T914 (Cloudflare credentials are the owner's) (Execution/P15/T911-T914-place-pages.md) | user | open |  |
+| T914-c | T914 | Deploy the merged batch T911 to T914 (Cloudflare credentials are the owner's) (Execution/P15/T911-T914-place-pages.md) | user | closed by T954 |  |
 | T915-a | T915 | Run scratchpad run-t915.sh: deploy the flight-sweep Worker (found routes, /extra, /have), then move the box to origin/main and reinstall, which restarts the sweep and the fill (Execution/P11/T915-T917-sweep-gaps.md) | user | open | 1 |
 | T915-b | T915 | After the box's gap fill, count the found routes (/status found, was 57) and check London-Prague gets Worker fares within 3 days | next task | open | 2 |
 | T916-a | T916 | Watch the box for Google refusals for two days after the faster fill; at the first, put FILL_GAP_MS back to 3000, 6500 | next task | open | 2 |
 | T917-a | T917 | About 2026-11-03, count routes with a fare in January and February 2027 against the routes that fly then; the far fill should have closed the gap | next task | open | 2 |
 | T918-a | T918 | Bus, train and tram stops near a trail start, beach or lake (access.transit) are empty: no offline stops source in the checkout (Execution/P15/T918-T922-outdoor-pages.md) | next task | open |  |
 | T918-b | T918 | Beach sea temperature by month waits for cache/sea_temp_beaches.json from pipeline/harvest_sea_temp.py (Execution/P15/T918-T922-outdoor-pages.md) | next task | open |  |
-| T918-c | T918 | Deploy the merged batches; this session has no CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID or network access to api.cloudflare.com; add them in the environment settings (Execution/P15/T918-T922-outdoor-pages.md) | user | open |  |
+| T918-c | T918 | Deploy the merged batches; this session has no CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID or network access to api.cloudflare.com; add them in the environment settings (Execution/P15/T918-T922-outdoor-pages.md) | user | closed by T954 |  |
 | T918-d | T918 | Harvest the outdoor placeholders in cache/outdoor/*.json (dogs, permit, hut season, sunbeds, lifeguard season, waves, entry fee, rentals, lifts, bike trains, rental) (Execution/P15/T918-T922-outdoor-pages.md) | next task | open |  |
 | T919-a | T919 | Move the helper exports out of OutdoorParts.jsx and PeakFacts.jsx into a lib file (react-refresh warnings) (Execution/P15/T918-T922-outdoor-pages.md) | next task | open |  |
 | T921-a | T921 | Mountain storm and crowd cells need season.storm or crowds in the data (Execution/P15/T918-T922-outdoor-pages.md) | next task | open |  |
@@ -2536,3 +2536,6 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T951-a | T951 | Without a sweep flight from the visitor's airport the boarding pass and the proof are hidden; decide whether a ground-only version shows (Execution/P15/T948-T953-home-v3.md) | user | open |  |
 | T952-a | T952 | Record the home tour's four new clips (ask, explore, trips, together) with real photos: `node scripts/record_home_clips.mjs --only=ask,explore,trips,together` (Execution/P15/T948-T953-home-v3.md) | user | open |  |
 | T953-a | T953 | scripts/verify_home.mjs still checks the retired home sections; rewrite it for v3 (Execution/P15/T948-T953-home-v3.md) | next task | open |  |
+| T954-a | T954 | Push the T911 dossier and T918 outdoor-page data to R2 (34,404 files in the dry run); the code is live and shows placeholders until then (Execution/P15/T954-deploy-home-v3.md) | user | open |  |
+| T954-b | T954 | The continent-app repo (master bbc5c2f) is behind the root copy of continent-app/ by T879 to T953; commit the root state into the app repo (Execution/P15/T954-deploy-home-v3.md) | next task | open |  |
+| T954-c | T954 | An uncommitted root change dropped carta-late-fill.service and its install.sh lines, against T915; saved as a patch, decide whether the late fill unit is retired (Execution/P15/T954-deploy-home-v3.md) | user | open |  |

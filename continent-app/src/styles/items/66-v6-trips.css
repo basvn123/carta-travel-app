@@ -24,17 +24,6 @@
   background: var(--paper);
   border-bottom: 1px solid var(--rule);
 }
-.itin-capband-score {
-  margin-left: var(--space-2);
-  padding: 2px var(--space-2);
-  border-radius: 6px;
-  background: var(--rate-bg);
-  color: var(--rate);
-  font-family: var(--mono);
-  font-size: 13px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
 .itin-facts .tpage-fact-val { white-space: normal; }
 .itin-page .itin-use {
   min-height: var(--tap);
@@ -82,21 +71,7 @@
 }
 .dtrack .tday-shot-cap { font-size: 12px; color: var(--ink-mute); }
 .itin-page .tday-prose { padding: var(--space-1) 0 var(--space-2); }
-.itin-receipt {
-  border: 1px solid var(--rule-soft);
-  border-radius: 10px;
-  background: var(--bg-card);
-  box-shadow: var(--shadow-card);
-  overflow: hidden;
-}
 .itin-receipt .itin-cost { padding: 0 var(--space-4); }
-.itin-receipt .itin-cost li {
-  align-items: baseline;
-  padding: var(--space-2) 0;
-  font-family: var(--ui);
-  font-size: 14px;
-  color: var(--ink-soft);
-}
 .itin-receipt .itin-cost li > span { min-width: 0; }
 .itin-receipt .itin-cost li b {
   flex: none;
@@ -174,5 +149,4 @@
   .jpage h2,
   .jpage h3,
   .jpage h4 { break-after: avoid; }
-  .jpage .tday-panel { grid-template-rows: 1fr; }
 }

@@ -2,65 +2,25 @@
 
 /* T895: the breadcrumb bar of a day inside a trip: Plan / the trip / the day,
    then previous and next day and Share. The trip's name gives way first. */
-.dayc { display: flex; align-items: center; min-height: 52px; }
-.dayc-path { flex: 1; min-width: 0; }
-.dayc-path ol { display: flex; align-items: center; min-width: 0; margin: 0; padding: 0 var(--space-2); list-style: none; }
-.dayc-path li { display: flex; align-items: center; min-width: 0; white-space: nowrap; }
 .dayc-path li + li::before { content: "/"; margin: 0 var(--space-2); color: var(--text-3); }
 .dayc-path .dayc-trip { flex: 0 1 auto; overflow: hidden; }
-.btn.dayc-link {
-  min-width: 0;
-  max-width: 100%;
-  min-height: 36px;
-  padding: 0 var(--space-1);
-  color: var(--action);
-  font-size: var(--text-label);
-  font-weight: 600;
-}
-.dayc-link .btn-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .dayc-here { font-size: var(--text-label); font-weight: 700; color: var(--text); }
-.dayc-acts { display: flex; align-items: center; gap: var(--space-1); }
 
 /* T896: Plan your days. How first: three ways as cards (a row of three from
    769 px), then, for Carta plans, one screen of chips and two switches. */
-.pdh-body { display: flex; flex-direction: column; gap: var(--space-5); }
 .pdh-ways { display: grid; gap: var(--space-2); }
-.btn.pdh-way {
-  position: relative;
-  display: flex;
-  width: 100%;
-  height: auto;
-  min-height: 0;
-  padding: var(--space-4);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  background: var(--surface);
-  color: var(--text);
-  text-align: left;
-  justify-content: flex-start;
-}
-.pdh-way .btn-label { display: grid; grid-template-columns: 48px minmax(0, 1fr) 22px; align-items: center; gap: var(--space-3); width: 100%; white-space: normal; }
-.btn.pdh-way.is-on { border-color: var(--select-border); background: var(--action-tint); outline: 1px solid var(--select-border); }
 .pdh-way-ic { display: grid; place-items: center; width: 48px; height: 48px; border-radius: var(--radius-control); background: var(--surface-sunken); color: var(--text); }
 .pdh-way.is-on .pdh-way-ic { background: var(--surface); color: var(--select-ink); }
-.pdh-way-txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .pdh-way-name { padding-right: var(--space-5); font-size: var(--text-body); font-weight: 700; line-height: var(--leading-tight); }
 .pdh-way-sub { font-size: var(--text-label); font-weight: 400; line-height: var(--leading-ui); color: var(--text-2); white-space: normal; }
-.pdh-way-tick { display: grid; place-items: center; width: 22px; height: 22px; border: 1.5px solid var(--border); border-radius: var(--radius-pill); color: var(--surface); }
-.pdh-way.is-on .pdh-way-tick { border-color: var(--select-border); background: var(--select-border); }
 @media (min-width: 769px) {
   .pdh-ways { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .pdh-way .btn-label { grid-template-columns: minmax(0, 1fr); align-content: start; gap: var(--space-3); }
-  .btn.pdh-way { align-items: flex-start; min-height: 176px; }
   .pdh-way-tick { position: absolute; top: var(--space-3); right: var(--space-3); }
 }
 .pdh-prefs { display: grid; gap: var(--space-5); }
-.pdh-group { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
 .pdh-q { margin: 0; font-size: var(--text-label); font-weight: 700; color: var(--text); }
-.pdh-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 @media (min-width: 769px) {
   .pdh-prefs { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5) var(--space-6); }
-  .pdh-group.is-wide { grid-column: 1 / -1; }
 }
 .pdh-foot { display: flex; justify-content: flex-end; gap: var(--space-2); }
 
@@ -68,7 +28,6 @@
    1280 px; over the map from 1024 px; a full-screen sheet on a phone (Ask
    Carta's pattern). The field sits at the foot; the answers are a sentence
    and the day as a card. */
-.dbot { display: flex; flex-direction: column; min-width: 0; min-height: 0; background: var(--surface); }
 .dbot.is-sheet { position: fixed; inset: 0; z-index: var(--z-modal); padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px); }
 .day-ws.is-desk.has-bot > .dbot { grid-row: 1; grid-column: 2; position: relative; z-index: var(--z-float); border-left: 1px solid var(--border-soft); box-shadow: var(--elev-2); }
 .day-ws.is-desk.has-bot > .dayws-panel { grid-row: 1; grid-column: 1; }
@@ -83,89 +42,44 @@
   .day-ws.is-desk.has-bot > .dbot { justify-self: start; width: min(400px, 100%); }
 }
 .dbot-head { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border-soft); }
-.dbot-mark { display: grid; place-items: center; width: 32px; height: 32px; border-radius: var(--radius-control); background: var(--action-tint); color: var(--select-ink); flex: none; }
-.dbot-name { display: flex; flex: 1; flex-direction: column; min-width: 0; }
-.dbot-name b { font-size: var(--text-body); }
-.dbot-name small { font-size: var(--text-caption); color: var(--text-3); }
-.dbot-msgs { display: flex; flex: 1; flex-direction: column; gap: var(--space-4); min-height: 0; overflow-y: auto; padding: var(--space-4); overscroll-behavior: contain; scrollbar-width: thin; }
-.dbot-hello { display: flex; flex-direction: column; gap: var(--space-3); }
 .dbot-hello-h { margin: 0; font-size: var(--text-title); font-weight: 700; letter-spacing: -0.01em; }
 .dbot-hello-p { margin: 0; font-size: var(--text-body); line-height: var(--leading-body); color: var(--text-2); }
-.dbot-asks { display: flex; flex-direction: column; gap: var(--space-2); }
-.btn.dbot-ask { justify-content: space-between; width: 100%; height: auto; min-height: 44px; padding: var(--space-2) var(--space-3); border-radius: var(--radius-control); font-weight: 500; text-align: left; white-space: normal; }
 .dbot-user { align-self: flex-end; max-width: 85%; margin: 0; padding: var(--space-2) var(--space-3); border-radius: var(--radius-card) var(--radius-card) var(--radius-sm) var(--radius-card); background: var(--surface-sunken); font-size: var(--text-body); line-height: var(--leading-body); overflow-wrap: anywhere; }
-.dbot-bot { display: flex; flex-direction: column; gap: var(--space-2); font-size: var(--text-body); line-height: var(--leading-body); }
-.dbot-bot > p { margin: 0; }
-.dbot-card { overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-card); }
 .dbot-card-h { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--border-soft); background: var(--action-tint); font-size: var(--text-label); }
-.dbot-card-h span { color: var(--text-2); }
 .dbot-rows { margin: 0; padding: 0; list-style: none; }
 .dbot-row { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: var(--space-2); padding: var(--space-2) var(--space-3); border-top: 1px solid var(--border-soft); font-size: var(--text-label); }
-.dbot-row:first-child { border-top: 0; }
 .dbot-row time { font-weight: 700; font-variant-numeric: tabular-nums; }
-.dbot-row-txt { display: flex; flex-direction: column; min-width: 0; }
-.dbot-row-txt b { font-weight: 600; }
-.dbot-row-txt small { font-size: var(--text-caption); color: var(--text-3); }
-.dbot-card-f { display: flex; flex-wrap: wrap; gap: var(--space-2); padding: var(--space-2) var(--space-3); border-top: 1px solid var(--border-soft); }
 .dbot-tools { display: flex; gap: var(--space-1); color: var(--text-3); }
-.dbot-nudges, .dbot-acts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .dbot-dots { display: inline-flex; gap: 4px; padding: var(--space-2) 0; }
-.dbot-dots i { width: 6px; height: 6px; border-radius: var(--radius-pill); background: var(--text-3); animation: dbot-blink 1s infinite; }
 .dbot-dots i:nth-child(2) { animation-delay: 0.15s; }
 .dbot-dots i:nth-child(3) { animation-delay: 0.3s; }
 @keyframes dbot-blink { 0%, 100% { opacity: 0.25; } 50% { opacity: 1; } }
-@media (prefers-reduced-motion: reduce) { .dbot-dots i { animation: none; opacity: 0.6; } }
 .dbot-comp { padding: var(--space-2) var(--space-4) var(--space-3); border-top: 1px solid var(--border-soft); }
-.dbot-form { display: flex; align-items: flex-end; gap: var(--space-2); padding: var(--space-1) var(--space-1) var(--space-1) var(--space-3); border: 1px solid var(--border); border-radius: var(--radius-card); background: var(--surface); }
-.dbot-form:focus-within { border-color: var(--select-border); outline: 1px solid var(--select-border); }
-.dbot-input { flex: 1; min-height: 40px; max-height: 120px; padding: var(--space-2) 0; border: 0; outline: 2px solid transparent; resize: none; background: transparent; color: var(--text); font: inherit; font-size: var(--text-body); line-height: var(--leading-ui); field-sizing: content; }
-.icon-btn.dbot-send { flex: none; background: var(--action); color: var(--surface); }
-.icon-btn.dbot-send:disabled { background: var(--surface-sunken); color: var(--text-3); }
 .dbot-foot { margin: var(--space-1) 0 0; font-size: var(--text-caption); color: var(--text-3); text-align: center; }
-.dbot-out { display: flex; flex-direction: column; gap: var(--space-2); font-size: var(--text-label); }
-.dbot-out p { margin: 0; color: var(--text-2); }
 
 /* T898: one day. The days as chips, Start your day on top, the town's
    guide folded at the end. */
 .dpl { margin: 0 calc(-1 * var(--space-1)); }
 .dpl-row { display: flex; gap: var(--space-2); margin: 0; padding: var(--space-1); overflow-x: auto; list-style: none; scrollbar-width: none; }
 .dpl-row::-webkit-scrollbar { display: none; }
-.dpl-row li { flex: none; }
-.btn.dpl-pill { min-height: 40px; padding: var(--space-1) var(--space-3); border-radius: var(--radius-control); }
-.dpl-pill .btn-label { display: inline-flex; align-items: center; gap: var(--space-1); }
 .dpl-day { font-weight: 600; }
 .dpl-date { font-size: var(--text-caption); font-weight: 500; color: var(--text-3); }
-.btn.dpl-pill.is-now { border-color: var(--text); background: var(--text); color: var(--surface); }
 .btn.dpl-pill.is-now .dpl-date { color: var(--border-soft); }
 .dpl-pill.is-empty .dpl-day::after { content: ""; display: inline-block; width: 6px; height: 6px; margin-left: var(--space-1); border: 1.5px solid currentColor; border-radius: var(--radius-pill); opacity: 0.5; vertical-align: middle; }
-.btn.dpl-pill.is-all { color: var(--action); }
-
-.dst { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-card); background: var(--surface); }
 .dst-top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
 .dst-h { margin: 0; font-size: var(--text-lead); font-weight: 700; }
 .dst-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3) var(--space-4); margin: 0; }
 .dst-fact { display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: var(--space-2); align-items: start; }
 .dst-ic { display: grid; place-items: center; width: 32px; height: 32px; border-radius: var(--radius-control); background: var(--surface-sunken); color: var(--text-2); }
 .dst-txt { min-width: 0; }
-.dst-txt dt { font-size: var(--text-caption); font-weight: 600; color: var(--text-3); }
-.dst-txt dd { margin: 0; font-size: var(--text-label); font-weight: 600; color: var(--text); overflow-wrap: anywhere; }
 .dst.is-empty { align-items: flex-start; }
-.dst-acts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 @media (min-width: 1280px) { .day-ws:not(.has-bot) .dst-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-
-.dtg-fold { border: 1px solid var(--border); border-radius: var(--radius-card); background: var(--surface); }
 .dtg-fold-sum { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); min-height: 48px; padding: var(--space-3) var(--space-4); font-weight: 700; list-style: none; cursor: pointer; }
 .dtg-fold-sum::-webkit-details-marker { display: none; }
-.dtg-fold-sum:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; border-radius: var(--radius-card); }
 .dtg-fold[open] .dtg-q-chev { transform: rotate(180deg); }
-.dtg-fold-rows { display: flex; flex-direction: column; gap: var(--space-3); margin: 0; padding: 0 var(--space-4) var(--space-4); }
-.dtg-fold-row dt { font-size: var(--text-caption); font-weight: 600; color: var(--text-3); }
-.dtg-fold-row dd { margin: 0; font-size: var(--text-label); }
 
 /* T897: All days. The head names the trip and offers to fill the empty
    days; each day is a row with its own colour at its edge. */
-.tdo-head { flex-direction: row; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--space-3); }
-.tdo-head-txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .tdo-dayrow { position: relative; }
 .tdo-dayrow .tdo-day.btn { padding-left: calc(var(--space-4) + 4px); }
 .tdo-dayrow::before { content: ""; position: absolute; top: var(--space-2); bottom: var(--space-2); left: 0; z-index: 1; width: 4px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; background: var(--tdo-c); pointer-events: none; }

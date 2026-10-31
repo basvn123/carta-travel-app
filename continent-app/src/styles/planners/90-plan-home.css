@@ -5,11 +5,7 @@
    the badge, the bookmark and, on an ink fade, the countries and the name
    (two lines at most); under it the flag with places and nights, then one
    price line, so cards in a row end level. */
-.ctc { position: relative; display: flex; flex-direction: column; min-width: 0; }
-.ctc-hit { display: flex; flex-direction: column; gap: var(--space-2); color: var(--text); text-decoration: none; }
-.ctc-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: var(--space-1); border-radius: var(--radius-card); }
 .ctc-media { position: relative; display: block; aspect-ratio: 4 / 5; overflow: hidden; border-radius: var(--radius-card); background: var(--surface-sunken); }
-.ctc-media .ctc-img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; }
 .ctc-media::after {
   content: "";
   position: absolute;
@@ -30,8 +26,6 @@
   font-size: var(--text-caption);
   font-weight: 700;
 }
-.ctc-over { position: absolute; inset: auto var(--space-3) var(--space-3); z-index: 1; display: flex; flex-direction: column; gap: 2px; color: var(--surface); }
-.ctc-where { overflow: hidden; font-size: var(--text-caption); font-weight: 600; white-space: nowrap; text-overflow: ellipsis; opacity: 0.92; }
 .ctc-name {
   display: -webkit-box;
   overflow: hidden;
@@ -44,16 +38,11 @@
   text-wrap: balance;
 }
 .ctc-meta { display: flex; align-items: center; gap: var(--space-2); min-width: 0; font-size: var(--text-caption); color: var(--text-2); }
-.ctc-flag { flex: none; }
 .ctc-facts { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-.ctc-price { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--space-1) var(--space-2); font-size: var(--text-label); }
-.ctc .ctc-save { position: absolute; top: var(--space-2); right: var(--space-2); z-index: 2; }
-@media (min-width: 600px) { .ctc-name { font-size: var(--text-lead); } .ctc-over { inset: auto var(--space-4) var(--space-4); } }
+@media (min-width: 600px) { .ctc-name { font-size: var(--text-lead); } }
 @media (hover: hover) {
-  .ctc-media .ctc-img { transition: transform var(--dur-3) var(--ease-out); }
   .ctc-hit:hover .ctc-img { transform: scale(1.04); }
 }
-@media (prefers-reduced-motion: reduce) { .ctc-media .ctc-img { transition: none; } }
 
 /* T902: Carta's own trips. The breadcrumb, the title alone, the styles as
    Explore's category row, quick filters, then rows of two cards on a phone
@@ -63,7 +52,6 @@
 .pf-carta-crumbs .btn.dayc-link { margin-left: calc(-1 * var(--space-1)); }
 .pf-carta-sep { color: var(--text-3); }
 .pf-carta-here { overflow: hidden; font-weight: 700; color: var(--text); white-space: nowrap; text-overflow: ellipsis; }
-.pf-carta .pf-carta-title { font-size: var(--text-headline); font-weight: 800; letter-spacing: -0.02em; }
 .pf-carta-styles {
   display: flex;
   gap: var(--space-1);
@@ -72,59 +60,18 @@
   scrollbar-width: none;
 }
 .pf-carta-styles::-webkit-scrollbar { display: none; }
-.btn.pf-carta-style {
-  flex: none;
-  flex-direction: column;
-  gap: var(--space-1);
-  height: auto;
-  min-height: 0;
-  padding: var(--space-2) var(--space-3) var(--space-3);
-  border-bottom: 2px solid transparent;
-  border-radius: 0;
-  color: var(--text-3);
-  font-size: var(--text-caption);
-  font-weight: 600;
-}
-.pf-carta-style .btn-label { display: flex; flex-direction: column; align-items: center; gap: var(--space-1); }
-.btn.pf-carta-style.is-on { border-bottom-color: var(--text); color: var(--text); }
 .btn.pf-carta-style:disabled { opacity: 0.4; }
-.pf-carta-quick { display: flex; flex-wrap: nowrap; align-items: center; gap: var(--space-2); min-width: 0; overflow-x: auto; scrollbar-width: none; }
-.pf-carta-quick > * { flex: none; }
-.pf-carta-quick .pf-carta-filters.btn { border-radius: var(--radius-pill); }
-.pf-carta-rail {
-  grid-auto-columns: calc((100% - var(--space-3)) / 2);
-  gap: var(--space-3);
-  margin: 0;
-  padding: var(--space-1) 0 var(--space-2);
-  scroll-padding-inline: 0;
-}
 .pf-carta-rail > .ctc { scroll-snap-align: start; }
-.pf-carta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5) var(--space-3); }
 .pf-carta-grid .pf-carta-ghost { height: auto; aspect-ratio: 4 / 6; }
-@media (min-width: 769px) {
-  .pf-carta-rail { grid-auto-columns: calc((100% - 3 * var(--space-4)) / 4); gap: var(--space-4); }
-  .pf-carta-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-6) var(--space-4); }
-  .pf-carta .pf-carta-title { font-size: var(--text-display); }
-}
-@media (min-width: 1100px) { .pf-carta-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 
 /* T903: the Plan home with trips. A small title with New trip and Carta's
    own trips; Up next as one wide card; Upcoming, Planning and Past as tabs
    (dated trips as photo cards two to a row on a phone, drafts as rows);
    Carta's trips in season beside the tabs from 1100 px, under them before. */
-.pfh { display: flex; flex-direction: column; gap: var(--space-5); width: 100%; max-width: 1240px; margin: 0 auto; padding: var(--space-4) var(--gutter) var(--space-8); }
-.pfh-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); }
-.pfh-title.pf-title { margin: 0; font-size: var(--text-headline); font-weight: 800; letter-spacing: -0.02em; }
-.pfh-acts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .pfh-eyebrow { font-size: var(--text-caption); font-weight: 700; color: var(--action); }
 .pfh-h2 { margin: 0; font-size: var(--text-title); font-weight: 700; }
-
-.pfh-next { display: grid; overflow: hidden; border: 1px solid var(--border-soft); border-radius: var(--radius-sheet); background: var(--surface); color: var(--text); text-decoration: none; box-shadow: var(--elev-1); }
-.pfh-next:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .pfh-next-media { position: relative; display: block; aspect-ratio: 16 / 9; overflow: hidden; background: var(--surface-sunken); }
-.pfh-next-media .pfh-next-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .pfh-next-cd { position: absolute; left: var(--space-3); bottom: var(--space-3); padding: var(--space-1) var(--space-3); border-radius: var(--radius-pill); background: var(--surface); color: var(--text); font-size: var(--text-label); font-weight: 700; box-shadow: var(--elev-1); }
-.pfh-next-body { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); padding: var(--space-4); }
 .pfh-next-name { font-size: var(--text-title); font-weight: 800; line-height: var(--leading-tight); letter-spacing: -0.01em; }
 .pfh-next-facts { font-size: var(--text-label); color: var(--text-2); }
 .pfh-next-go.btn { margin-top: var(--space-2); pointer-events: none; }
@@ -132,60 +79,29 @@
 @media (min-width: 769px) {
   .pfh-next { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); }
   .pfh-next-media { aspect-ratio: auto; min-height: 280px; }
-  .pfh-next-body { justify-content: center; padding: var(--space-6); }
   .pfh-next-name { font-size: var(--text-headline); }
 }
 
-.pfh-initial { display: grid; place-items: center; color: var(--surface); font-weight: 800; font-size: var(--text-title); }
-.pfh-initial.is-c0 { background: var(--action); }
-.pfh-initial.is-c1 { background: var(--cost-travel); }
-.pfh-initial.is-c2 { background: var(--cost-around); }
-.pfh-initial.is-c3 { background: var(--cost-food); }
-
 .pfh-split { display: grid; gap: var(--space-6); align-items: start; }
 @media (min-width: 1100px) { .pfh-split { grid-template-columns: minmax(0, 1fr) 380px; } }
-.pfh-mine { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
 .pfh-tabs { display: flex; gap: var(--space-1); overflow-x: auto; border-bottom: 1px solid var(--border-soft); scrollbar-width: none; }
-.btn.pfh-tab { flex: none; height: auto; min-height: var(--tap); padding: 0 var(--space-3); border-bottom: 2px solid transparent; border-radius: 0; color: var(--text-2); }
-.btn.pfh-tab.is-on { border-bottom-color: var(--text); color: var(--text); }
-.pfh-tab .btn-label { display: inline-flex; align-items: center; gap: var(--space-2); }
 .pfh-tab-n { padding: 1px var(--space-2); border-radius: var(--radius-pill); background: var(--surface-sunken); font-size: var(--text-caption); font-weight: 700; color: var(--text-2); }
 .pfh-none { margin: 0; padding: var(--space-4) 0; font-size: var(--text-body); color: var(--text-2); }
-
-.pfh-rows { display: flex; flex-direction: column; margin: 0; padding: 0; overflow: hidden; border: 1px solid var(--border-soft); border-radius: var(--radius-card); background: var(--surface); list-style: none; }
 .pfh-row { position: relative; display: flex; align-items: center; gap: var(--space-1); padding-right: var(--space-2); border-top: 1px solid var(--border-soft); }
-.pfh-row:first-child { border-top: 0; }
-.pfh-row-hit { display: grid; flex: 1; grid-template-columns: 56px minmax(0, 1fr) auto; align-items: center; gap: var(--space-3); min-width: 0; padding: var(--space-2) var(--space-3); color: var(--text); text-decoration: none; }
-.pfh-row-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
-.pfh-row-img { display: block; width: 56px; height: 56px; overflow: hidden; border-radius: var(--radius-control); object-fit: cover; }
-.pfh-row-txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .pfh-row-name { display: flex; align-items: center; gap: var(--space-1); overflow: hidden; font-size: var(--text-body); font-weight: 600; white-space: nowrap; text-overflow: ellipsis; }
-.pfh-row-cloud { flex: none; color: var(--text-3); }
 .pfh-row-meta { overflow: hidden; font-size: var(--text-caption); color: var(--text-3); white-space: nowrap; text-overflow: ellipsis; }
-.pfh-row-end { display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-1); }
 .pfh-row-edited { font-size: var(--text-caption); color: var(--text-3); white-space: nowrap; }
-@media (hover: hover) { .pfh-row:hover { background: var(--surface-hover); } }
 @media (max-width: 479px) { .pfh-row-edited { display: none; } }
 
 .pfh-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5) var(--space-3); margin: 0; padding: 0; list-style: none; }
 @media (min-width: 769px) { .pfh-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-6) var(--space-4); } }
 .pfh-card { position: relative; min-width: 0; }
-.pfh-card-hit { display: flex; flex-direction: column; gap: var(--space-2); color: var(--text); text-decoration: none; }
-.pfh-card-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: var(--space-1); border-radius: var(--radius-card); }
 .pfh-card-media { position: relative; display: block; aspect-ratio: 4 / 5; overflow: hidden; border-radius: var(--radius-card); background: var(--surface-sunken); }
-.pfh-card-media .pfh-card-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .pfh-card-media::after { content: ""; position: absolute; inset: auto 0 0 0; height: 62%; background: linear-gradient(to top, color-mix(in srgb, var(--text) 82%, transparent), transparent); pointer-events: none; }
 .pfh-card-cd { position: absolute; top: var(--space-2); left: var(--space-2); z-index: 1; padding: 3px var(--space-2); border-radius: var(--radius-pill); background: var(--surface); font-size: var(--text-caption); font-weight: 700; }
-.pfh-card-over { position: absolute; inset: auto var(--space-3) var(--space-3); z-index: 1; display: flex; flex-direction: column; gap: 2px; color: var(--surface); }
-.pfh-card-when { font-size: var(--text-caption); font-weight: 600; opacity: 0.92; }
 .pfh-card-name { display: -webkit-box; overflow: hidden; font-size: var(--text-body); font-weight: 700; line-height: var(--leading-tight); -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 .pfh-card-meta { font-size: var(--text-caption); color: var(--text-2); }
 .pfh-card-more { position: absolute; top: var(--space-2); right: var(--space-2); z-index: 2; }
-
-.pfh-carta { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
 .pfh-carta-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); }
-.btn.pfh-all { color: var(--action); }
 .pfh-carta-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
 /* T904: Delete the empty drafts, asked once in place. */
-.pfh-clear { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--space-2); font-size: var(--text-label); color: var(--text-2); }
-.btn.pfh-clear-btn { color: var(--text-2); }

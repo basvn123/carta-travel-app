@@ -4,7 +4,6 @@
    chunk, after the main sheet, and holds only rules nothing later in the
    cascade could override; scripts/css-routes.mjs --check proves it on a build. */
 .guide-stay-wrap { display: flex; gap: 12px; align-items: stretch; }
-.guide-city-side-title { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
 .guide-city-side-insight { font-size: 12px; color: var(--ink-soft); line-height: 1.55; margin: 4px 0 8px; }
 .citypick-pin.focused { box-shadow: 0 0 0 3px var(--accent-bg), 0 1px 6px rgba(0, 0, 0, 0.18); border-color: var(--accent); }
 @media (max-width: 999px) {
@@ -15,13 +14,6 @@
 }
 .guide-staystyle { margin-bottom: 10px; }
 .guide-city-btn { cursor: pointer; text-align: left; width: 100%; }
-@media (max-width: 700px) {
-  .guide-stay-wrap { flex-direction: column; }
-}
-.day-guide-moods { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
-@media (max-width: 700px) {
-  .day-guide-moods { grid-template-columns: 1fr; }
-}
 .dem-stay.dem-stay-clickable { pointer-events: auto; cursor: pointer; }
 @media (hover: hover) {
   .dem-stay.dem-stay-clickable:hover .dem-stay-pin { transform: scale(1.08); }
@@ -48,7 +40,6 @@
   border-bottom: 1px solid var(--rule);
   box-shadow: 0 6px 12px -10px rgba(26, 26, 26, 0.25);
 }
-.day-thumb { width: 46px; height: 46px; border-radius: 10px; }
 .trip-wizard-modal .guide-sub { font-size: 13.5px; }
 .trip-wizard-overlay { padding: 0; align-items: stretch; justify-content: stretch; }
 .trip-wizard-modal { --wiz-max: 1060px; }
@@ -142,7 +133,6 @@
   .guide-template:hover { border-color: var(--accent); box-shadow: var(--shadow-1); transform: translateY(-1px); }
 }
 .guide-template-name { font-family: var(--display); font-size: 14px; }
-.guide-template-route { display: flex; flex-wrap: wrap; gap: 3px 6px; font-size: 12px; }
 .guide-template-arrow { color: var(--ink-mute); margin-right: 6px; }
 .guide-template-legs { font-size: 11px; color: var(--ink-mute); }
 .booked-stop-thumb .guide-thumb-fallback { font-size: 18px; color: var(--ink-mute); }
@@ -173,19 +163,6 @@
     box-shadow: 0 4px 12px rgba(26, 26, 26, 0.05);
   }
 }
-.guide-side-idle { display: flex; flex-direction: column; height: 100%; }
-.guide-side-idle-head {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  text-align: center;
-  color: var(--ink-mute);
-  font-size: 12.5px;
-  line-height: 1.5;
-  padding: 22px 12px 18px;
-}
-.guide-side-idle-list { display: flex; flex-direction: column; gap: 8px; }
 @media (hover: hover) {
   .guide-side-idle-row:hover { border-color: var(--accent); background: var(--accent-bg); }
 }
@@ -197,7 +174,6 @@
   font-size: 11px;
   color: var(--ink-soft);
 }
-.guide-shortrow-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .wtrip-star {
   display: inline-flex; align-items: center; justify-content: center;
   width: 16px; height: 16px;
@@ -228,13 +204,6 @@
 .citypick-pin.sel { z-index: 4; }
 @media (hover: hover) {
   .citypick-pin:hover { z-index: 4; }
-}
-.guide-range-head {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 10px;
 }
 .guide-when-card .guide-card-row { margin-top: 12px; padding-top: 12px; }
 .guide-when-card .guide-flexpad { margin-top: 0; }
@@ -276,7 +245,6 @@
   .trip-wizard-modal .guide-canvas { transition: none; }
 }
 .trip-wizard-modal .guide-datemode { max-width: 520px; }
-.guide-city-side-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .guide-city-side-add { width: 100%; margin-top: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
 @media (max-width: 999px) {
   .trip-wizard-modal .guide-stay-wrap .guide-city-side-add {
@@ -335,18 +303,6 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.dem-pin-chk {
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 19px;
-  height: 19px;
-  border-radius: 999px;
-  background: var(--cat);
-  color: var(--on-fill);
-}
-.dem-pin-chk { display: none; background: var(--good-ink); }
 .guide-chip.on .dem-chip-count { background: rgba(255, 255, 255, 0.25); }
 .guide-card-row { margin-top: 18px; padding-top: 18px; border-top: 1px dashed var(--rule); }
 @media (hover: hover) {
@@ -380,9 +336,6 @@
 }
 .guide-where-col { min-width: 0; display: flow-root; }
 .guide-where-map { max-width: 1180px; }
-.guide-explore-icon { display: inline-flex; color: var(--ink-mute); flex: none; }
-.guide-explore-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.ext-arrow { margin-left: 4px; color: var(--ink-mute); flex: none; }
 .guide-template-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
@@ -397,7 +350,6 @@
     max-height: none;
   }
 }
-.guide-side-idle-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
 .guide-toolbar .guide-search { flex: 1 1 240px; margin-bottom: 0; }
 .guide-toolbar .guide-stay-view { margin: 0 0 0 auto; flex: none; }
 .guide-shortrow-chip.on .guide-shortrow-n { background: rgba(255, 255, 255, 0.24); color: var(--on-fill); }

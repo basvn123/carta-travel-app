@@ -69,24 +69,8 @@
 @media (hover: hover) {
   .itin-sight-link:hover { color: var(--accent); text-decoration: underline; }
 }
-.itin-cost-sum { border-bottom: none; border-top: 2px solid var(--ink); font-weight: 600; }
-.tday-shot-img {
-  width: 132px;
-  height: 99px;
-  object-fit: cover;
-  border-radius: 8px;
-  display: block;
-}
 .tday-prose { padding-bottom: 4px; }
-.tday-panel.is-open {
-  grid-template-rows: 1fr;
-  visibility: visible;
-  transition: grid-template-rows .22s ease, visibility 0s;
-}
 .tprac-row:first-child { border-top: 0; }
 @media (hover: hover) {
   .tprac-row.is-link > a:hover .tprac-row-label { color: var(--accent); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .tday-panel.is-open { transition: none; }
 }

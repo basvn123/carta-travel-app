@@ -27,12 +27,6 @@
 .rbs-node-halo { fill: var(--accent); opacity: 0.14; }
 .rbs-node-dot { fill: var(--paper); stroke: var(--accent); stroke-width: 2; }
 .rbs-head-dot { fill: var(--accent); }
-.rbs-log {
-  list-style: none;
-  margin: 0;
-  padding: 4px 16px 14px;
-  display: flex; flex-direction: column; gap: 7px;
-}
 .rbs-line-row {
   display: flex; align-items: flex-start; gap: 9px;
   font-size: 12.5px;
@@ -47,9 +41,7 @@
   .chat-opt:hover { border-color: var(--ink); color: var(--ink); }
 }
 .chat-opt.on { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); font-weight: 600; }
-.chat-opt-text { display: flex; flex-direction: column; gap: 1px; text-align: left; }
 .chat-free-input:focus { outline: none; border-color: var(--accent); }
-.chat-town-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
 .chat-town-resolve .chat-opt { margin-top: 8px; }
 .chat-town-resolve .chat-opt-lead {
   border-color: var(--ink);
@@ -67,8 +59,6 @@
 @media (max-width: 700px) {
   .day-flow-search .day-stay-input { min-height: 48px; padding: 0 16px; }
 }
-.ai-plan-balance { color: var(--ink-soft); }
-.ai-plan-upsell-link { margin-left: 6px; }
 .rbs-line {
   stroke: var(--accent);
   stroke-width: 2.6;
@@ -77,26 +67,13 @@
   stroke-dashoffset: 1;
   animation: rbs-draw 2800ms linear infinite;
 }
-.rbs-line-ico {
-  flex: none;
-  width: 19px; height: 19px;
-  border-radius: 50%;
-  display: inline-flex; align-items: center; justify-content: center;
-  background: var(--paper-dim);
-  color: var(--ink-mute);
-}
 .rbs-line-text { min-width: 0; font-variant-numeric: tabular-nums; }
 @media (prefers-reduced-motion: reduce) {
   .rbs-line { animation: none; }
   .rbs-line { stroke-dashoffset: 0; }
 }
-.chat-opts { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 12px; }
-.chat-free { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 12px; }
 .chat-town-picker { margin-top: 12px; }
 .chat-town-note { margin-top: 8px; }
 .chat-town-resolve { margin-top: 10px; }
 .chat-town-working { margin-top: 8px; }
 .chat-town-anywhere { margin-top: 10px; }
-@media (max-width: 720px) {
-  .chat-opt { flex: 1 1 100%; }
-}

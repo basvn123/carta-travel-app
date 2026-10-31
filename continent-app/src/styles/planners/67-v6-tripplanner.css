@@ -83,14 +83,6 @@
 @media (max-width: 768px) {
   .wtrip-media { aspect-ratio: 3 / 1; }
 }
-.mcard-why {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2) var(--space-4);
-}
 .mcard-why-n {
   font-family: var(--mono);
   font-size: 13px;
@@ -105,7 +97,6 @@
   line-height: 1.35;
   color: var(--ink-soft);
 }
-.mcard-why-text { flex-basis: 100%; }
 @media (max-width: 768px) {
   .trip-wizard-modal .guide-head { position: relative; padding-bottom: var(--space-3); }
   .trip-wizard-modal .guide-head-inner {
@@ -149,9 +140,6 @@
   overflow-wrap: anywhere;
   hyphens: auto;
 }
-@media (max-width: 400px) {
-  .guide-foot { gap: var(--space-2); flex-wrap: wrap; }
-}
 .trip-wizard-modal.wiz-form { --wiz-max: 1180px; }
 .trip-wizard-modal.wiz-mid { --wiz-max: 1240px; }
 .trip-wizard-modal.wiz-wide { --wiz-max: 1600px; }
@@ -184,27 +172,17 @@
     padding-inline: var(--space-4);
   }
 }
-.wwho { display: flex; flex-direction: column; gap: var(--space-6); }
 .wwho-party {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-4);
 }
-.wlife { display: flex; flex-direction: column; gap: var(--space-5); }
 .wlife-h { margin: 0 0 var(--space-3); font-size: var(--text-lead); font-weight: 600; color: var(--text); }
 @media (max-width: 768px) {
   .wwho-party { grid-template-columns: minmax(0, 1fr); gap: var(--space-2); }
   .wlife-tiles { --tile-cols: 2 !important; }
 }
-.plan-total-head { display: flex; flex-direction: column; gap: var(--space-1); }
 .plan-total-title { margin: 0; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
-.plan-total-fig {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  margin: 0;
-}
 .plan-total-n { font-size: var(--text-headline); font-weight: 700; line-height: var(--leading-tight); color: var(--text); }
 .plan-total-delta {
   font-size: var(--text-caption);
@@ -218,8 +196,6 @@
 .plan-total-pp { margin: 0; font-size: var(--text-body); color: var(--text-2); }
 .plan-total-ppfig { color: var(--text); font-weight: 600; }
 .plan-total-empty { margin: 0; font-size: var(--text-body); color: var(--text-2); }
-.plan-total-inputs { margin: 0; display: flex; flex-direction: column; }
-.plan-lines { margin: 0 0 var(--space-3); display: flex; flex-direction: column; }
 .plan-line-out { font-size: var(--text-caption); color: var(--text-3); }
 .plan-whatif { margin: 0; font-size: var(--text-caption); color: var(--text-2); }
 .plan-total-btn-lbl { font-size: var(--text-micro); font-weight: 600; color: var(--text-2); }
@@ -250,9 +226,7 @@
 }
 .trip-planner-screen.is-page .trip-topcard { padding-top: var(--space-4); }
 .trip-planner-screen.is-page .trip-sheet-footer { position: sticky; bottom: 0; z-index: 2; }
-.itin-overview { display: flex; flex-direction: column; gap: var(--space-6); }
 .itin-h { margin: 0 0 var(--space-3); font-size: var(--text-title); font-weight: 600; color: var(--text); }
-.itin-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
 .itin-end {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -287,18 +261,8 @@
 }
 .itin-stopcard .itin-stop-city { font-size: var(--text-lead); font-weight: 600; color: var(--text); }
 .itin-stopcard .itin-stop-sub { font-size: var(--text-caption); color: var(--text-2); }
-.itin-hop {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-  padding: 0 0 0 var(--space-6);
-}
 .itin-extras { margin: var(--space-3) 0 0; }
 /* The stop's bed line is the kit CostRow (T538), beside its Find and Paid actions. */
-.itin-bed-cost { flex: 1 1 220px; min-width: 0; margin: 0; }
-.itin-day-rows { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
 .itin-days-list .itin-day-row {
   display: flex;
   align-items: center;
@@ -316,7 +280,6 @@
 @media (max-width: 560px) {
   .itin-export-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-.bgo { display: flex; flex-direction: column; gap: var(--space-3); }
 .bgo-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
 .bgo-h { margin: 0; font-size: var(--text-title); font-weight: 600; color: var(--text); }
 .bgo-track {
@@ -331,7 +294,6 @@
 }
 .bgo-track:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-card); }
 @media (min-width: 769px) { .bgo-track { grid-auto-columns: calc((100% - var(--space-3)) / 2); } }
-.bgo-list { display: flex; flex-direction: column; gap: var(--space-3); }
 .bgo-meta { margin: 0; font-size: var(--text-caption); color: var(--text-2); }
 .bgo-title { margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); line-height: var(--leading-tight); }
 .bgo-text { margin: 0; font-size: var(--text-body); color: var(--text-2); line-height: var(--leading-body); }
@@ -384,28 +346,15 @@
   .trip-wizard-modal .wiz-rail { margin-top: calc(var(--text-headline) * 1.2 + var(--space-5)); }
 }
 .plan-input .fstepper { gap: var(--space-3); }
-.plan-input-panel { flex-basis: 100%; padding-bottom: var(--space-2); }
 .plan-input .plan-input-btn.btn { text-align: right; white-space: normal; }
 .wwho-party { display: block; }
 @media (min-width: 900px) {
   .wwho-party .party { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); }
 }
-.worigin {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  padding: var(--space-4) var(--space-5);
-  margin-bottom: var(--space-5);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-}
 .worigin-h { margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); }
 .worigin-search { display: flex; gap: var(--space-2); }
 .worigin-input:focus-visible { border-color: var(--action); outline: 2px solid var(--focus); outline-offset: 2px; }
-.worigin-results { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
 .worigin-picked { display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-lead); color: var(--text); }
-.worigin-air { display: flex; flex-direction: column; gap: var(--space-2); }
 .worigin-air-lbl { font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
 .wrev-find.btn, .itin-find.btn { text-decoration: none; }
 .itin-tool-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); }
@@ -413,8 +362,6 @@
 .itin-tool-icon { color: var(--text-2); }
 .itin-tool-name { font-size: var(--text-body); font-weight: 600; color: var(--text); }
 .itin-tool-state { font-size: var(--text-caption); font-weight: 400; color: var(--text-2); }
-.itin-bed-acts, .itin-hop-acts { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); }
-.itin-hop { align-items: center; }
 .itin-tool-sheet .extras-section { display: flex; flex-direction: column; gap: var(--space-2); }
 .itin-tool-sheet .extras-input,
 .itin-tool-sheet .extras-notes,
@@ -451,8 +398,6 @@
 .bgo-track .bgo-card { height: 232px; }
 .bgo-meta { display: flex; align-items: center; gap: var(--space-2); }
 .trip-planner-screen .trip-pin.active .trip-pin-shape { background: var(--action); outline: 2px solid var(--text); outline-offset: 2px; }
-.wstays { display: flex; flex-direction: column; gap: var(--space-4); }
-.wstay-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
 .wstay {
   display: grid;
   grid-template-columns: 28px 56px minmax(0, 1fr) var(--tap);
@@ -528,32 +473,12 @@
 .trip-planner-screen .trip-stop-tools .trip-stop-remove { grid-area: remove; align-self: start; }
 .trip-planner-screen .trip-stop-tools .trip-stop-remove:hover { color: var(--danger); }
 .trip-planner-screen .trip-block-title { font-size: var(--text-lead); font-weight: 600; color: var(--text); }
-.itin-airport-hop { display: flex; align-items: center; flex-wrap: nowrap; gap: var(--space-3); padding: var(--space-2) 0 var(--space-2) var(--space-6); }
 .wtrip.on .wtrip-choose {
   border-color: var(--select-border);
   background: var(--select-bg);
   color: var(--select-ink);
 }
-.trip-more { position: relative; flex: none; }
 .trip-more.is-down .trip-more-menu { top: calc(100% + var(--space-2)); bottom: auto; }
-.trip-more-menu {
-  position: absolute;
-  right: 0;
-  bottom: calc(100% + var(--space-2));
-  z-index: var(--z-popover);
-  min-width: 200px;
-  display: flex;
-  flex-direction: column;
-  padding: var(--space-1) 0;
-  background: var(--bg-card);
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  box-shadow: var(--shadow-2);
-  animation: wiz-more-in var(--dur-2) var(--ease-out);
-}
-@media (prefers-reduced-motion: reduce) {
-  .trip-more-menu { animation: none; }
-}
 @media (max-width: 768px) {
   .trip-wizard-modal .guide-foot-summary {
     flex: 1 1 0;
@@ -566,27 +491,6 @@
 }
 @media (max-width: 768px) {
   .trip-wizard-modal .wiz-mini { margin-top: var(--space-1); }
-}
-.mcard-check,
-.wtrip-check {
-  position: static;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: none;
-  width: 20px;
-  height: 20px;
-  margin-left: auto;
-  padding: 0;
-  border-radius: 999px;
-  background: var(--ink-fill);
-  color: var(--on-fill);
-}
-.mcard-why-fact {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  min-width: 0;
 }
 @media (max-width: 768px) {
   .trip-wizard-modal .guide-head-inner > .shape-head-title { flex: 1 1 auto; min-width: 0; }
@@ -617,40 +521,17 @@
   .trip-wizard-modal .guide-airport-chip { flex: none; }
 }
 .plan-total-more { border-top: 1px solid var(--border-soft); }
-.plan-paid { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .plan-paid.is-set .plan-paid-input { border-color: var(--select-border); background: var(--select-bg); }
 .plan-paid-input::placeholder { color: var(--text-3); }
 @media (max-width: 640px) {
   .wrev-stop .plan-paid { grid-column: 1 / -1; }
 }
 .booked-stop .plan-paid { flex: none; }
-.itin-end-main { display: flex; flex-direction: column; min-width: 0; }
-.itin-bed {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  border-top: 1px solid var(--border-soft);
-}
 .itin-hop > .itin-transfer { flex: 1 1 260px; min-width: 0; }
 .itin-days-list .itin-day-row-num { width: 56px; flex: none; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
 .itin-days-list .itin-day-row-meta { display: flex; flex-direction: column; min-width: 0; }
 .itin-days-list .itin-day-row.is-planned .itin-day-row-num::after { content: ''; display: inline-block; width: 6px; height: 6px; margin-left: var(--space-1); border-radius: 50%; background: var(--status-success); vertical-align: middle; }
 .bgo-track::-webkit-scrollbar { display: none; }
-.bgo-card {
-  scroll-snap-align: start;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  min-height: 180px;
-  padding: var(--space-4);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  overflow: hidden;
-}
 .bgo-card.bgo-intel { max-height: 420px; overflow-y: auto; }
 .trip-wizard-modal .guide-foot-summary { overflow: visible; height: auto; min-height: var(--tap); }
 @media (max-width: 640px) {
@@ -662,18 +543,6 @@
 }
 @media (min-width: 900px) {
   .wwho-party .party-rule { grid-column: 1 / -1; }
-}
-.worigin-input {
-  flex: 1 1 auto;
-  min-width: 0;
-  height: var(--tap);
-  padding: 0 var(--space-3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-control);
-  background: var(--surface);
-  font: inherit;
-  font-size: var(--text-lead);
-  color: var(--text);
 }
 .bgo-track .bgo-text {
   display: -webkit-box;
@@ -687,32 +556,11 @@
 }
 @media (min-width: 1100px) {
   .wstay .wstay-info { grid-column: auto; grid-row: auto; padding-right: 0; }
-  .wstay-acts { flex-direction: column; align-items: flex-start; gap: var(--space-1); }
 }
 .wstay-info { grid-area: info; min-width: 0; }
-.wstay-acts { grid-area: acts; display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); min-width: 0; }
-.itin-airport-hop-icon { flex: none; color: var(--text-2); }
-.itin-airport-hop-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-.itin-airport-hop-eur { flex: none; font-size: var(--text-body); color: var(--text); }
 
 /* Saved, and where (T500, 2.19). The positive status rule: ink text after a
    6 px dot, never a green box. */
-.trip-device-status {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  column-gap: var(--space-2);
-  margin: 0;
-  font-size: var(--text-label);
-  color: var(--text);
-}
-.trip-device-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: var(--radius-pill);
-  background: var(--status-success);
-  flex: none;
-}
 
 /* The toast: one line on --surface in the bottom slot, never over the nav. */
 .trip-planner-blank .trip-save-toast {
@@ -781,15 +629,6 @@
 .trip-keep-lead { margin: 0 0 var(--space-4); font-size: var(--text-body); line-height: var(--leading-body); color: var(--text-2); }
 .trip-keep-list { display: grid; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
 @media (min-width: 560px) { .trip-keep-list { grid-template-columns: 1fr 1fr; } }
-.trip-keep-card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  padding: var(--space-4);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  background: var(--surface);
-}
 .trip-keep-where { font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
 .trip-keep-name { font-size: var(--text-lead); font-weight: 600; color: var(--text); overflow-wrap: anywhere; }
 .trip-keep-line { font-size: var(--text-label); color: var(--text-2); }

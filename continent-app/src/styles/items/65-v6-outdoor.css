@@ -88,17 +88,6 @@
 .dsk-page #dsk-sec-map,
 .dsk-page #dsk-sec-details,
 .dsk-page #dsk-sec-nearby { scroll-margin-top: calc(var(--tap) + var(--space-2)); }
-.dsk-page .dsk-sketch {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-5);
-  background: var(--paper-dim);
-  pointer-events: none;
-}
 .dsk-page .dsk-sketch-svg { width: 100%; height: 100%; overflow: visible; }
 .dsk-page .dsk-sketch-line {
   fill: none;
@@ -109,19 +98,6 @@
 }
 .dsk-page .dsk-sketch-ring { fill: none; stroke: var(--ink); stroke-width: 1.5; }
 .dsk-page .dsk-sketch-dot { fill: var(--ink); }
-.dsk-page .dsk-sketch-name {
-  position: absolute;
-  left: var(--space-3);
-  bottom: var(--space-2);
-  max-width: calc(100% - 2 * var(--space-3));
-  overflow: hidden;
-  font-family: var(--ui);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--ink-soft);
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
 .dsk-page .dsk-map .maplibregl-canvas {
   opacity: 0;
   transition: opacity var(--dur-3) var(--ease-out);
@@ -219,7 +195,6 @@
 }
 .dsk-page .dsk-hook { overflow-wrap: break-word; text-wrap: pretty; }
 @media (pointer: coarse) {
-  .dsk-page .maplibregl-ctrl-attrib-button { position: relative; }
   .dsk-page .maplibregl-ctrl-attrib-button::before {
     content: '';
     position: absolute;

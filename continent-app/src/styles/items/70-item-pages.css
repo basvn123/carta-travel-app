@@ -6,7 +6,6 @@
 .tpage.following .map-tools { display: none; }
 
 @media (min-width: 900px) {
-  .dsk-map .dsk-map-frame,
   .dsk-map .tpage-hero,
   .dsk-map .cycle-map {
     height: calc(100dvh - 52px - 2 * var(--space-4) - var(--tap) - var(--space-2));
@@ -82,65 +81,20 @@
 
 .ihl-media { aspect-ratio: 4 / 3; overflow: hidden; background: var(--surface-sunken); }
 
-.ibyg-row {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-3);
-  padding: var(--space-3);
-  border-radius: var(--radius-control);
-  background: var(--surface-sunken);
-}
-
 .ibyg-row.is-safety .iicon { color: var(--amber-ink); }
 
 .ibyg-t { font-size: var(--text-body); font-weight: 600; color: var(--text); }
 
 .ibyg-s { font-size: var(--text-label); font-weight: 400; color: var(--text-2); line-height: var(--leading-ui); }
 
-.ipage .ipage-cost strong { color: var(--text); font-weight: 600; }
-
-.igo-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  min-height: var(--tap);
-  padding: var(--space-2) 0;
-  border-bottom: 1px solid var(--border-soft);
-  font-size: var(--text-body);
-  color: var(--text);
-}
-
-.igo-row:first-child { border-top: 1px solid var(--border-soft); }
-
-.igo-sub { font-size: var(--text-caption); color: var(--text-3); font-variant-numeric: tabular-nums; }
-
 .ialt .card-media { aspect-ratio: 3 / 2; }
 
 .ialt-fact { color: var(--text); font-variant-numeric: tabular-nums; }
-
-.iinc-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) 0;
-  border-bottom: 1px solid var(--border-soft);
-  font-size: var(--text-body);
-  color: var(--text);
-}
-
-.iinc-row:last-child { border-bottom: 0; }
-
-.iinc-row.is-in .iinc-mark { color: var(--status-success); }
-
-.iinc-row.is-out .iinc-mark { color: var(--text-3); }
-
-.iinc-row.is-out .iinc-label { color: var(--text-2); }
 
 .ipage .ipage-side .dsk-map { margin: 0; }
 
 .ipage .ipage-side .dsk-signature { margin: var(--space-4) 0 0; }
 
-.ipage .dsk-map-frame,
 .ipage .dsk-map .tpage-hero,
 .ipage .dsk-map .cycle-map {
   height: 46dvh;
@@ -151,7 +105,6 @@
 }
 
 @media (min-width: 1024px) {
-  .ipage .dsk-map-frame,
   .ipage .dsk-map .tpage-hero,
   .ipage .dsk-map .cycle-map { height: 52dvh; max-height: 560px; }
 }
@@ -197,53 +150,13 @@
 
 .tdiff-squares { display: inline-flex; gap: 2px; }
 
-.tdiff-sq { width: 8px; height: 8px; border-radius: 0; border: 1px solid var(--text-3); }
-
 .tdiff-sq.is-on { background: var(--text); border-color: var(--text); }
 
 .tdiff-word { font-weight: 600; }
 
 .tdiff-list li + li { margin-top: var(--space-1); }
 
-.tprice-head { display: grid; gap: var(--space-1); }
-
-.tprice-fig-n { font-size: var(--text-headline); font-weight: 700; line-height: var(--leading-tight); color: var(--text); font-variant-numeric: tabular-nums; }
-
-.tprice-unit { font-size: var(--text-body); color: var(--text-2); }
-
-.tprice-label { display: block; font-size: var(--text-label); font-weight: 500; color: var(--text); }
-
-.tprice-ls { display: grid; gap: var(--space-2); }
-
-.tprice-ls-label { font-size: var(--text-caption); font-weight: 500; color: var(--text-2); }
-
-.tprice-ls-value {
-  overflow: hidden;
-  font-size: var(--text-body);
-  font-weight: 600;
-  color: var(--text);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.tprice-ls-btn .btn-icon { color: var(--text-2); }
-
-
-
-
-.tprice-acts { display: grid; gap: var(--space-2); }
-
-.tprice-more { display: grid; gap: var(--space-2); }
-
-.tprice-lines[hidden] { display: none; }
-
 .tprice-report { font-size: var(--text-caption); }
-
-.tfit-months { display: grid; gap: var(--space-2); margin-bottom: var(--space-3); }
-
-.tfit-label { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--text-label); font-weight: 500; color: var(--text-2); }
-
-.tweek { display: grid; gap: var(--space-4); }
 
 .wclimb-cols {
   display: grid;
@@ -255,8 +168,6 @@
 .wclimb-fig { font-size: var(--text-caption); font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; white-space: nowrap; }
 
 .wclimb-bar-box { position: relative; display: flex; align-items: flex-end; width: 100%; height: 96px; justify-content: center; }
-
-.wclimb-bar { display: block; width: min(28px, 60%); height: 100%; border-radius: var(--radius-sm) var(--radius-sm) 0 0; background: var(--text-3); transform-origin: bottom; transition: transform var(--dur-3) var(--ease-out); }
 
 .wclimb-col.is-on .wclimb-bar { background: var(--action); }
 
@@ -271,39 +182,15 @@
   .wclimb-sub.is-high { display: none; }
 }
 
-@media (prefers-reduced-motion: reduce) { .wclimb-bar { transition: none; } }
-
-.tweek-map .dsk-map-frame { height: 280px; border-radius: var(--radius-card); overflow: hidden; background: var(--surface-sunken); }
-
-.tday-media { aspect-ratio: 3 / 2; overflow: hidden; background: var(--surface-sunken); }
-
-.tday-icon.is-flip { transform: scaleY(-1); }
-
-.tday-night-l { color: var(--text-2); }
-
-.tday-night-k { display: block; font-size: var(--text-caption); color: var(--text-2); }
-
 .tday-prose { display: grid; gap: var(--space-3); }
-
-.tday-when { display: block; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
-
-.tgo { display: grid; gap: var(--space-3); }
 
 .tgo-town { justify-self: start; }
 
-.tprep { display: grid; gap: var(--space-5); }
-
 .tprep .itrack-title { font-size: var(--text-title); }
-
-.gocard-icon { display: inline-flex; color: var(--text-2); }
 
 .gocard.is-risk .gocard-icon { color: var(--amber-ink); }
 
 .tskel { display: grid; gap: var(--space-3); padding: var(--space-4) var(--gutter); }
-
-.tskel-photo { display: block; aspect-ratio: 16 / 9; max-height: 40vh; border-radius: var(--radius-card); background: var(--surface-sunken); }
-
-.tskel-line { display: block; height: 14px; width: 60%; border-radius: var(--radius-sm); background: var(--surface-sunken); }
 
 .tskel-line.is-title { height: 28px; width: 80%; }
 
@@ -313,8 +200,6 @@
 }
 
 .tprice .iinc-row { padding-block: var(--space-1); font-size: var(--text-body); }
-
-.tprice .iinc-row { border-bottom: 0; }
 
 .itrack-pos { white-space: nowrap; }
 

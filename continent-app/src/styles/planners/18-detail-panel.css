@@ -7,17 +7,14 @@
   .cintel-head:hover { background: var(--paper); }
 }
 .cintel-country { font-weight: 600; font-size: 14px; color: var(--ink); }
-.cintel-chips { display: flex; gap: 4px; flex-wrap: wrap; margin-left: auto; }
 .cintel-chip.budget-very_high { background: var(--accent-bg); color: var(--accent); }
 .cintel-caret { font-family: var(--mono); color: var(--ink-mute); font-size: 14px; margin-left: 4px; }
 .cintel-row { display: flex; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--paper-dim); }
 .cintel-row:last-child { border-bottom: 0; }
-.cintel-lines { display: flex; flex-direction: column; gap: 7px; }
 .cintel-link { color: var(--accent); text-decoration: none; font-weight: 600; }
 @media (hover: hover) {
   .cintel-link:hover { text-decoration: underline; }
 }
-.cintel-sights { display: flex; flex-direction: column; gap: 6px; }
 .cintel-sight { font-size: 12.5px; line-height: 1.45; }
 .cintel-sight-name { font-weight: 600; color: var(--ink); }
 .cintel-sight-region {
@@ -37,7 +34,6 @@
 }
 .transfer-picker-modes { display: flex; gap: 6px; }
 .transfer-mode-lbl { display: flex; align-items: center; gap: 4px; }
-.trip-leg-links { display: flex; flex-wrap: wrap; gap: 10px; margin: 4px 0; }
 .trip-saving-row {
   display: flex;
   align-items: center;
@@ -49,9 +45,6 @@
   line-height: 1.45;
 }
 .trip-saving-row:last-of-type { border-bottom: 0; }
-@media (max-width: 768px) {
-  .guide-foot { padding-bottom: 16px; flex-wrap: wrap; }
-}
 .guide-city-fact {
   display: flex;
   gap: 10px;
@@ -83,33 +76,8 @@
   margin-bottom: 6px;
 }
 .day-plan-walk + .day-plan-walk { margin-top: 6px; }
-.cintel-flag { width: 24px; height: auto; border-radius: 3px; box-shadow: var(--shadow-1); flex: none; }
 .cintel-body { padding: 2px 14px 6px; border-top: 1px solid var(--rule); }
-.cintel-label {
-  flex: none;
-  width: 82px;
-  font-family: var(--ui);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--ink-soft);
-  padding-top: 3px;
-}
 .cintel-row > div { min-width: 0; flex: 1; }
-@media (max-width: 768px) {
-  .guide-foot-actions { flex: 1 1 100%; }
-}
-.guide-city-fact-label {
-  flex: none;
-  width: 84px;
-  font-family: var(--ui);
-  font-weight: 600;
-  font-size: 12px;
-  color: var(--ink-soft);
-  padding-top: 2px;
-}
-.guide-city-fact-value { flex: 1; min-width: 0; color: var(--ink-soft); }
 .day-stay-input::placeholder { color: var(--ink-mute); }
-.day-idea-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
 .day-plan-walks { margin-top: 10px; }
-.day-plan-walk-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .day-walk-len { display: inline-flex; gap: 4px; margin-top: 4px; }
