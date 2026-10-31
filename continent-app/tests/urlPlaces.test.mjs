@@ -43,12 +43,28 @@ test('plan opens the plan in progress, else the start page', () => {
 });
 
 test('My trips and Account are pages with an address', () => {
-  assert.deepEqual(routeFromSearch('?tab=trips'), { view: 'map', overlay: 'trips', cat: null, accountView: null });
-  const acc = routeFromSearch('?tab=account&view=friends');
+  assert.deepEqual(routeFromSearch('?tab=trips'), { view: 'map', overlay: 'trips', cat: null, accountView: null, togetherView: null, togetherId: null });
+  const acc = routeFromSearch('?tab=account&view=profile');
   assert.equal(acc.overlay, 'account');
-  assert.equal(acc.accountView, 'friends');
+  assert.equal(acc.accountView, 'profile');
+  // T928: the old Friends spoke's address opens Together.
+  assert.equal(routeFromSearch('?tab=account&view=friends').overlay, 'together');
   assert.equal(routeFromSearch('?tab=account&view=evil').accountView, null);
   assert.equal(tabFromSearch('?tab=trips'), 'trips');
+});
+
+test('Together is a page with sub-screens in its address (T928)', () => {
+  const r = routeFromSearch('?tab=together&tv=friend&tg=u-sam');
+  assert.equal(r.overlay, 'together');
+  assert.equal(r.togetherView, 'friend');
+  assert.equal(r.togetherId, 'u-sam');
+  assert.equal(routeFromSearch('?tab=together&tv=evil').togetherView, 'home');
+  assert.equal(routeFromSearch('?tab=together&tv=group&tg=a%20b').togetherId, null);
+  const q = new URLSearchParams(tabHref('together', '?g=2', { view: 'group', id: 'g1' }));
+  assert.equal(q.get('tab'), 'together');
+  assert.equal(q.get('tv'), 'group');
+  assert.equal(q.get('tg'), 'g1');
+  assert.equal(new URLSearchParams(tabHref('explore', '?tab=together&tv=add&tg=x')).get('tv'), null);
 });
 
 test('pricing is a place', () => {
