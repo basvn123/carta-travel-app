@@ -355,6 +355,59 @@ function PartyControl({ s }) {
   );
 }
 
+/**
+ * One part of the line as a sheet of its own (T934): Account's Your travel
+ * opens From and Who here, the same controls on the same store the line
+ * opens, so a change in either place shows in both. Every change holds at
+ * once; Done only closes.
+ *   part     'origin' or 'party'
+ */
+export function SettingsEditorSheet({ part, onClose, anchorRef = null }) {
+  const s = useSettings();
+  const { t } = useI18n();
+  const baseId = useId();
+  if (!s) return null;
+  const mayFly = !['train', 'bus', 'car'].includes(s.transportMode);
+  return (
+    <SheetShell
+      title={part === 'origin' ? t('settings.from') : t('settings.party')}
+      labelId={`${baseId}-ed`}
+      className="settings-sheet"
+      closeLabel={t('a11y.close')}
+      anchorRef={anchorRef}
+      onClose={onClose}
+    >
+      {part === 'origin' && (
+        <section className="settings-sheet-sec">
+          <FromPanel data={s.data} current={fromPoint(s)} autoFocus={false} onPick={(p) => s.setFrom(p)} />
+          {s.setAirports && s.fromPlace && mayFly && (
+            <section className="settings-airports" aria-labelledby={`${baseId}-airports`}>
+              <h3 className="settings-sheet-h" id={`${baseId}-airports`}>{t('pf.q.airports')}</h3>
+              <AirportReach
+                meta={s.data?.meta}
+                point={s.fromPlace}
+                covered={s.sweptOrigins}
+                hours={s.airportHours}
+                codes={s.airports}
+                labelId={`${baseId}-airports-list`}
+                onChange={(codes, hours) => s.setAirports(codes, hours)}
+              />
+            </section>
+          )}
+        </section>
+      )}
+      {part === 'party' && (
+        <section className="settings-sheet-sec">
+          <PartyControl s={s} />
+        </section>
+      )}
+      <Button variant="primary" block className="settings-done" onClick={onClose}>
+        {t('settings.done')}
+      </Button>
+    </SheetShell>
+  );
+}
+
 /** Getting there (T582): one button that steps to the next way. */
 function WayPart({ s, compact = false }) {
   const { t } = useI18n();

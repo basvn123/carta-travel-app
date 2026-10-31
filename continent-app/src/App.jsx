@@ -375,6 +375,18 @@ function TravelApp() {
     if (!accountOpen) pushOverlay('account', { view });
     setAccountOpen(true);
   };
+  // T933: a section change inside Account writes one history step, so its
+  // address names the section and Back walks out of it. A step Back or
+  // Forward already moved to is not written again.
+  const onAccountView = useCallback((v) => {
+    setAccountView(v);
+    try {
+      const cur = routeFromSearch(window.location.search, { hasPlan: hasPlanOpen() });
+      if (cur.overlay === 'account' && (cur.accountView || 'home') !== v) {
+        window.history.pushState({ cartaOverlay: 'account', av: v }, '', tabHref('account', window.location.search, { view: v }));
+      }
+    } catch { /* sandboxed: the section still shows */ }
+  }, []);
   const openSaved = () => {
     setAccountOpen(false);
     setTogetherOpen(false);
@@ -1186,6 +1198,8 @@ function TravelApp() {
       // My trips and Account have their own steps (T496): stepping onto one
       // opens it over the view that was showing.
       setAccountOpen(route.overlay === 'account');
+      // T933: each Account section is a step of its own.
+      if (route.overlay === 'account') setAccountView(route.accountView || 'home');
       setSavedTripsOpen(route.overlay === 'trips');
       setTogetherOpen(route.overlay === 'together');
       if (route.overlay === 'together') setTogetherView({ view: route.togetherView || 'home', id: route.togetherId || '' });
@@ -2267,9 +2281,11 @@ function TravelApp() {
           <AccountPanel
             key={accountEntry}
             initialView={accountView}
-            onViewChange={setAccountView}
+            onViewChange={onAccountView}
             pendingFriendHandle={pendingFriend}
             destinations={data?.destinations}
+            costs={exploreIndices}
+            favorites={favorites}
             onClose={closeOverlay}
             onOpenAdmin={() => setAdminOpen(true)}
             /* Lifestyle is a dialog: it opens over Account, which stays the
@@ -2277,7 +2293,7 @@ function TravelApp() {
             onOpenLifestyle={() => setLifestyleOpen(true)}
             onOpenSaved={openSaved}
             onOpenGuides={openGuides}
-            onOpenTogether={() => openTogether('home')}
+            onOpenTogether={(v) => openTogether(v || 'home')}
             onOpenHome={() => goToTab('home')}
             stayTier={choices.stay_tier || 'home'}
             lifestyle={choices.lifestyle}

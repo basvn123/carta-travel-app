@@ -148,6 +148,14 @@ export function AuthProvider({ children }) {
     if (error) throw error;
   }, []);
 
+  /** Sign out on every device, this one included (T936, Account's Sign-in
+   *  and security). Supabase's 'global' scope revokes every refresh token. */
+  const signOutEverywhere = useCallback(async () => {
+    const supabase = await getSupabase();
+    const { error } = await supabase.auth.signOut({ scope: 'global' });
+    if (error) throw error;
+  }, []);
+
   const sendPasswordReset = useCallback(async (email) => {
     const supabase = await getSupabase();
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
@@ -277,6 +285,7 @@ export function AuthProvider({ children }) {
     signInWithGoogle,
     signOut,
     signOutOtherDevices,
+    signOutEverywhere,
     sendPasswordReset,
     updatePassword,
     reauthenticate,

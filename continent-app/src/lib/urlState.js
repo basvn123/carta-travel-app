@@ -67,8 +67,13 @@ export const PLACE_KEYS = Object.freeze(['explore', 'plan', 'trips', 'account', 
 export const VIEW_KEYS = Object.freeze(['home', 'map', 'places', 'planstart', 'trip', 'day', 'pricing']);
 /** The Destinations categories, reachable inside Explore as `cat=`. */
 export const EXPLORE_CATS = Object.freeze(['trips', 'trails', 'beaches', 'lakes', 'mountains', 'cycling']);
-/** The Account spokes an address may name (`view=`). */
-export const ACCOUNT_VIEWS = Object.freeze(['home', 'profile', 'security', 'yourdata', 'friends', 'faq', 'feedback', 'plan']);
+/** The Account sections an address may name (`view=`; T933: one per
+ *  section, plus the views under them). `yourdata` is the old address of
+ *  `data` and `friends` opens Together; both still open. */
+export const ACCOUNT_VIEWS = Object.freeze([
+  'home', 'travel', 'plan', 'cancel', 'prefs', 'together', 'security', 'data', 'ai', 'help',
+  'profile', 'yourdata', 'friends', 'faq', 'feedback',
+]);
 /** The Together sub-screens an address may name (`tv=`, T928); `tg=` is the
  *  friend or group it is about. */
 export const TOGETHER_VIEWS = Object.freeze(['home', 'add', 'privacy', 'friend', 'group', 'newgroup']);
@@ -433,8 +438,9 @@ export function persistState(state) {
   const qs = encodeState({ ...state, exploreCat: state.exploreCat || current.get('dc') || undefined });
   const own = new URLSearchParams(qs);
   const merged = current;
-  // `view` names an Account spoke at boot only (App reads it once).
-  merged.delete('view');
+  // `view` names the Account section on screen (T933: every section has its
+  // own address), so it stays while Account shows and goes with it.
+  if (state.activeTab !== 'account') merged.delete('view');
   // Together's sub-screen keys (T928) belong to that page only.
   if (state.activeTab !== 'together') { merged.delete('tv'); merged.delete('tg'); }
   for (const key of OWN_KEYS) merged.delete(key);

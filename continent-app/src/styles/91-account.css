@@ -1,0 +1,365 @@
+/* Account (T933 to T936, owner-approved spec "Account: who you are, what you
+   pay, what Carta knows"): one page in the family of My trips and Together.
+   From 900 px a sticky left rail and one pane; on a phone the Overview is
+   the page and each section opens with a back link. Class prefix .ac-.
+   Loaded by src/auth/AccountPanel.jsx.
+
+   Departures from the carta-design defaults, under the owner's design
+   freedom (2026-10-30), named here and in the report:
+   - rows sit on white lists with a soft shadow (--elev-1) instead of a
+     border, the grouped-list look of My trips and Together;
+   - the identity card's face wears the umber tint Together gives "you". */
+
+.ac-panel { background: var(--surface-page); }
+.ac-page {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: var(--space-4) var(--gutter) var(--space-8);
+  display: grid;
+  gap: var(--space-5);
+  box-sizing: border-box;
+}
+.ac-pane { display: grid; gap: var(--space-5); align-content: start; min-width: 0; }
+
+/* The rail: desktop only. */
+.ac-rail { display: none; }
+@media (min-width: 900px) {
+  .ac-page {
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: var(--space-7);
+    padding: var(--space-6) var(--space-6) var(--space-8);
+    align-items: start;
+  }
+  .ac-rail {
+    display: grid;
+    gap: 2px;
+    position: sticky;
+    top: var(--space-5);
+  }
+}
+.ac-rail-a,
+.ac-rail .ac-rail-out.btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--space-3);
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-control);
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--text-2);
+  text-decoration: none;
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+}
+.ac-rail-a svg, .ac-rail .ac-rail-out svg { color: var(--text-3); flex: none; }
+.ac-rail-a[aria-current="page"] { background: var(--select-bg); color: var(--select-ink); }
+.ac-rail-a[aria-current="page"] svg { color: var(--select-ink); }
+@media (hover: hover) {
+  .ac-rail-a:hover { background: var(--surface-hover); }
+  .ac-rail-a[aria-current="page"]:hover { background: var(--select-bg); }
+}
+.ac-rail-a:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.ac-rail-hr { border: 0; border-top: 1px solid var(--border-soft); margin: var(--space-2) 0; width: 100%; }
+.ac-rail .ac-rail-out.btn { width: 100%; background: none; border-color: transparent; color: var(--text-3); }
+
+/* The head of a section: back link, then the one h1. */
+.ac-head { display: grid; gap: var(--space-2); justify-items: start; }
+.ac-h1 {
+  margin: 0;
+  font-size: var(--text-headline);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.ac-h1:focus:not(:focus-visible) { outline: 0; border-color: transparent; }
+.ac-h1:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.ac-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--tap);
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--action);
+  text-decoration: none;
+  margin-left: calc(var(--space-1) * -1);
+  padding: 0 var(--space-1);
+  border-radius: var(--radius-control);
+}
+.ac-back:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.ac-back-desk { display: none; }
+@media (min-width: 900px) {
+  .ac-back-phone { display: none; }
+  .ac-back-desk { display: inline-flex; }
+  .ac-phone-only { display: none !important; }
+}
+
+/* Groups of rows. */
+.ac-group { display: grid; gap: var(--space-2); min-width: 0; }
+.ac-group-h {
+  margin: 0;
+  padding-left: 2px;
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--text-2);
+}
+.ac-list {
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--elev-1);
+  overflow: hidden;
+  min-width: 0;
+}
+.ac-row,
+.ac-row.btn {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: 56px;
+  padding: var(--space-2) var(--space-4);
+  border: 0;
+  border-top: 1px solid var(--border-soft);
+  border-radius: 0;
+  background: none;
+  color: var(--text);
+  text-align: left;
+  text-decoration: none;
+  font-size: var(--text-body);
+  font-weight: 400;
+  box-sizing: border-box;
+}
+.ac-row.btn > .btn-label { display: contents; }
+.ac-list > .ac-row:first-child,
+.ac-list > :first-child .ac-row:first-child { border-top: 0; }
+.ac-row.is-static { grid-template-columns: auto minmax(0, 1fr) auto; }
+@media (hover: hover) {
+  a.ac-row:hover, .ac-row.btn:hover { background: var(--surface-hover); border-color: var(--border-soft); }
+}
+a.ac-row:focus-visible, .ac-row.btn:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+.ac-row-icon { color: var(--text-3); flex: none; }
+.ac-row-label { font-size: var(--text-lead); font-weight: 600; min-width: 0; overflow-wrap: anywhere; }
+.ac-row-v {
+  font-size: var(--text-body);
+  color: var(--text-2);
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 260px;
+  min-width: 0;
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 480px) { .ac-row-v { max-width: 44vw; } }
+.ac-row-chev { color: var(--text-3); transition: transform var(--dur-2) var(--ease-out); }
+.ac-row-chev.is-open { transform: rotate(90deg); }
+.ac-row.is-danger .ac-row-label, .ac-row.is-danger .ac-row-icon { color: var(--danger); }
+
+/* Who you are. */
+.ac-me {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--surface);
+  border-radius: var(--radius-sheet);
+  box-shadow: var(--elev-1);
+  color: var(--text);
+  text-decoration: none;
+}
+@media (hover: hover) { .ac-me:hover { background: var(--surface-hover); } }
+.ac-me:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.ac-face {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-pill);
+  display: grid;
+  place-items: center;
+  background: var(--umber-100);
+  color: var(--umber-700);
+  font-size: var(--text-title);
+  font-weight: 700;
+}
+.ac-me-tx { display: grid; gap: 2px; min-width: 0; }
+.ac-me-tx b { font-size: var(--text-title); font-weight: 700; letter-spacing: -0.01em; overflow-wrap: anywhere; }
+.ac-me-tx span { font-size: var(--text-body); color: var(--text-2); overflow-wrap: anywhere; }
+.ac-me-plan { justify-self: end; }
+.ac-nums {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-soft);
+}
+.ac-nums div { display: flex; flex-direction: column-reverse; gap: 2px; }
+.ac-nums dt { font-size: var(--text-caption); font-weight: 600; color: var(--text-3); }
+.ac-nums dd { margin: 0; font-size: var(--text-title); font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* Signed out. */
+.ac-signin {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  background: var(--surface);
+  border-radius: var(--radius-sheet);
+  box-shadow: var(--elev-1);
+}
+.ac-signin-h { margin: 0; font-size: var(--text-title); font-weight: 700; line-height: var(--leading-tight); }
+.ac-signin-btns { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+/* Google is the secondary beside the one primary, Sign in with email. */
+.account-shell .ac-signin-btns .auth-submit.auth-google {
+  width: auto;
+  min-height: var(--tap);
+  margin: 0;
+  padding: 0 var(--space-4);
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  font-size: var(--text-label);
+  font-weight: 600;
+}
+@media (hover: hover) {
+  .account-shell .ac-signin-btns .auth-submit.auth-google:hover:not(:disabled) { background: var(--surface-hover); color: var(--text); }
+}
+@media (max-width: 480px) {
+  .ac-signin-btns { display: grid; }
+  .account-shell .ac-signin-btns .auth-submit.auth-google { width: 100%; }
+}
+
+.ac-signout.btn { justify-self: start; }
+.ac-foot { display: flex; flex-wrap: wrap; gap: 0 var(--space-2); margin-left: calc(var(--space-3) * -1); }
+.ac-foot .btn { color: var(--text-3); font-weight: 500; }
+
+/* Your travel: one place priced with these settings (T934). */
+.ac-proof {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) auto;
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-2) var(--space-4) var(--space-2) var(--space-2);
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--elev-1);
+}
+.ac-proof-img { width: 64px; height: 64px; border-radius: var(--radius-control); object-fit: cover; display: block; }
+.ac-proof .hero-blank.ac-proof-img { display: grid; place-items: center; background: var(--surface-sunken); }
+.ac-proof-tx { display: grid; gap: 2px; min-width: 0; }
+.ac-proof-tx b { font-size: var(--text-lead); font-weight: 600; overflow-wrap: anywhere; }
+.ac-proof-tx span { font-size: var(--text-label); color: var(--text-2); }
+.ac-proof-fig { display: grid; justify-items: end; gap: 2px; text-align: right; }
+.ac-proof-fig b { font-size: var(--text-title); font-weight: 700; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+.ac-proof-fig small { font-size: var(--text-caption); color: var(--text-2); }
+.ac-unset { color: var(--amber-ink); font-weight: 600; }
+.ac-row .ac-seg { justify-self: end; }
+@media (max-width: 480px) {
+  .ac-prices .ac-row.is-static { grid-template-columns: auto minmax(0, 1fr); }
+  .ac-prices .ac-seg { grid-column: 1 / -1; justify-self: stretch; }
+}
+
+/* Preferences: the language list opens in place under its row. */
+.ac-pick { padding: 0 var(--space-4) var(--space-3); border-top: 1px solid var(--border-soft); }
+.ac-langs { display: grid; gap: var(--space-1); padding-top: var(--space-3); }
+.ac-langs .ui-crow { min-height: var(--tap); }
+
+/* Plan (T935): the plan held, its meters, its actions; then every plan. */
+.ac-plancard {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  background: var(--surface);
+  border-radius: var(--radius-sheet);
+  box-shadow: var(--elev-1);
+}
+.ac-plancard.is-loading { min-height: 180px; background: var(--surface-sunken); box-shadow: none; }
+.ac-plan-hd { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
+.ac-plan-name { display: grid; gap: 2px; }
+.ac-plan-name b { font-size: var(--text-title); font-weight: 700; }
+.ac-plan-name span { font-size: var(--text-body); color: var(--text-2); font-variant-numeric: tabular-nums; }
+.ac-plan-free { margin: 0; font-size: var(--text-body); color: var(--text-2); }
+.ac-meter { display: grid; gap: var(--space-2); }
+.ac-meter-row { display: flex; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; font-size: var(--text-body); }
+.ac-meter-row b { font-weight: 600; font-variant-numeric: tabular-nums; }
+.ac-meter-bar { display: block; height: 8px; border-radius: var(--radius-pill); background: var(--surface-sunken); overflow: hidden; }
+.ac-meter-bar > span {
+  display: block;
+  height: 100%;
+  background: var(--text-2);
+  border-radius: var(--radius-pill);
+  transform-origin: left center;
+  transition: transform var(--dur-2) var(--ease-out);
+}
+.ac-said { margin: 0; font-size: var(--text-body); color: var(--text); }
+.ac-said:empty { display: none; }
+.ac-plan-acts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.ac-plans { display: grid; gap: var(--space-3); }
+@media (min-width: 700px) { .ac-plans { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.ac-pc {
+  display: grid;
+  gap: var(--space-2);
+  align-content: start;
+  padding: var(--space-4);
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--elev-1);
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+}
+.ac-pc.is-mine { outline-color: var(--select-border); }
+.ac-pc-hd { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); flex-wrap: wrap; }
+.ac-pc-hd b { font-size: var(--text-lead); font-weight: 700; }
+.ac-pc-p { display: flex; align-items: baseline; gap: var(--space-2); flex-wrap: wrap; font-size: var(--text-title); font-weight: 700; font-variant-numeric: tabular-nums; }
+.ac-pc-p small { font-size: var(--text-label); font-weight: 500; color: var(--text-2); }
+.ac-pc ul { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--space-2); font-size: var(--text-label); color: var(--text-2); }
+.ac-pc li { display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: var(--space-2); align-items: start; }
+.ac-pc li svg { color: var(--text-2); margin-top: 1px; }
+.ac-pc .btn { justify-self: start; margin-top: var(--space-1); }
+.ac-cancel { margin: 0; display: grid; gap: var(--space-3); }
+.ac-cancel div { display: flex; justify-content: space-between; gap: var(--space-3); font-size: var(--text-lead); }
+.ac-cancel dt { color: var(--text-2); }
+.ac-cancel dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: reduce) { .ac-meter-bar > span { transition: none; } }
+
+/* Your data (T936): what Carta keeps, as figures. */
+.ac-know {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--border-soft);
+  border-radius: var(--radius-card);
+  box-shadow: var(--elev-1);
+  overflow: hidden;
+}
+@media (min-width: 700px) { .ac-know { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.ac-know > div { display: flex; flex-direction: column-reverse; gap: 2px; padding: var(--space-4); background: var(--surface); }
+.ac-know dt { font-size: var(--text-label); color: var(--text-2); }
+.ac-know dd { margin: 0; font-size: var(--text-title); font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* A form opened in place under its row (password, download, delete). */
+.ac-list > .ac-inline.panel-section {
+  padding: var(--space-3) var(--space-4) var(--space-4);
+  border-top: 1px solid var(--border-soft);
+  margin: 0;
+}
+.ac-list > .ac-inline.account-danger { background: none; border: 0; border-top: 1px solid var(--border-soft); border-radius: 0; }
+
+/* AI and booking reader: a short plain page. */
+.ac-doc { display: grid; gap: var(--space-5); max-width: var(--measure); }
+.ac-doc section { display: grid; gap: var(--space-2); }
+.ac-doc-h { margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); }
+.ac-doc p { margin: 0; font-size: var(--text-body); line-height: var(--leading-body); color: var(--text-2); }
+
+/* The older forms inside a section keep their own styles; the panel's
+   section padding is not wanted inside the pane. */
+.ac-pane .panel-section { padding-left: 0; padding-right: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ac-rail-a, .ac-row-chev { transition: none; }
+}
