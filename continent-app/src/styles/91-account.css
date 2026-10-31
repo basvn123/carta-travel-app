@@ -268,6 +268,64 @@ a.ac-row:focus-visible, .ac-row.btn:focus-visible { outline: 2px solid var(--foc
 .ac-langs { display: grid; gap: var(--space-1); padding-top: var(--space-3); }
 .ac-langs .ui-crow { min-height: var(--tap); }
 
+/* Plan (T935): the plan held, its meters, its actions; then every plan. */
+.ac-plancard {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  background: var(--surface);
+  border-radius: var(--radius-sheet);
+  box-shadow: var(--elev-1);
+}
+.ac-plancard.is-loading { min-height: 180px; background: var(--surface-sunken); box-shadow: none; }
+.ac-plan-hd { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
+.ac-plan-name { display: grid; gap: 2px; }
+.ac-plan-name b { font-size: var(--text-title); font-weight: 700; }
+.ac-plan-name span { font-size: var(--text-body); color: var(--text-2); font-variant-numeric: tabular-nums; }
+.ac-plan-free { margin: 0; font-size: var(--text-body); color: var(--text-2); }
+.ac-meter { display: grid; gap: var(--space-2); }
+.ac-meter-row { display: flex; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; font-size: var(--text-body); }
+.ac-meter-row b { font-weight: 600; font-variant-numeric: tabular-nums; }
+.ac-meter-bar { display: block; height: 8px; border-radius: var(--radius-pill); background: var(--surface-sunken); overflow: hidden; }
+.ac-meter-bar > span {
+  display: block;
+  height: 100%;
+  background: var(--text-2);
+  border-radius: var(--radius-pill);
+  transform-origin: left center;
+  transition: transform var(--dur-2) var(--ease-out);
+}
+.ac-said { margin: 0; font-size: var(--text-body); color: var(--text); }
+.ac-said:empty { display: none; }
+.ac-plan-acts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.ac-plans { display: grid; gap: var(--space-3); }
+@media (min-width: 700px) { .ac-plans { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.ac-pc {
+  display: grid;
+  gap: var(--space-2);
+  align-content: start;
+  padding: var(--space-4);
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--elev-1);
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+}
+.ac-pc.is-mine { outline-color: var(--select-border); }
+.ac-pc-hd { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); flex-wrap: wrap; }
+.ac-pc-hd b { font-size: var(--text-lead); font-weight: 700; }
+.ac-pc-p { display: flex; align-items: baseline; gap: var(--space-2); flex-wrap: wrap; font-size: var(--text-title); font-weight: 700; font-variant-numeric: tabular-nums; }
+.ac-pc-p small { font-size: var(--text-label); font-weight: 500; color: var(--text-2); }
+.ac-pc ul { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--space-2); font-size: var(--text-label); color: var(--text-2); }
+.ac-pc li { display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: var(--space-2); align-items: start; }
+.ac-pc li svg { color: var(--text-2); margin-top: 1px; }
+.ac-pc .btn { justify-self: start; margin-top: var(--space-1); }
+.ac-cancel { margin: 0; display: grid; gap: var(--space-3); }
+.ac-cancel div { display: flex; justify-content: space-between; gap: var(--space-3); font-size: var(--text-lead); }
+.ac-cancel dt { color: var(--text-2); }
+.ac-cancel dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: reduce) { .ac-meter-bar > span { transition: none; } }
+
 /* The older forms inside a section keep their own styles; the panel's
    section padding is not wanted inside the pane. */
 .ac-pane .panel-section { padding-left: 0; padding-right: 0; }

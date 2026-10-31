@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useAuth } from './AuthContext.jsx';
 import { authErrorText } from './authErrors.js';
@@ -16,7 +16,8 @@ import { PrivacyPolicy } from '../components/PrivacyPolicy.jsx';
 import { Imprint } from '../components/Imprint.jsx';
 import { TermsOfService } from '../components/TermsOfService.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
-import { daysLeft, TIERS } from '../lib/pricing.js';
+import { TIERS } from '../lib/pricing.js';
+import { openBillingPortal, cancelYearly, resumeYearly } from '../lib/billing.js';
 import {
   MIN_PASSWORD_LENGTH, passwordStrength, checkPasswordRules, passwordMeetsRules,
 } from '../lib/passwordStrength.js';
@@ -29,8 +30,7 @@ import { PasswordField } from './PasswordField.jsx';
 import { useIsAdmin } from '../hooks/useIsAdmin.js';
 import { FaqView } from './account/FaqView.jsx';
 import { FeedbackView } from './account/FeedbackView.jsx';
-import { PlanSection } from './account/PlanSection.jsx';
-import { useSettledFigure } from '../lib/figureChange.js';
+import { PlanView, CancelView } from './account/PlanView.jsx';
 import { Button, Chip } from '../components/ui/index.js';
 import { SiteFooter } from '../components/SiteFooter.jsx';
 import { GoogleButton } from './GoogleButton.jsx';
@@ -44,56 +44,6 @@ import {
   IS_ACCOUNT_MOCK, ACCOUNT_MOCK_GUEST, MOCK_USER, MOCK_PROFILE, mockEntitlement,
 } from './account/accountMock.js';
 import '../styles/91-account.css';
-
-/**
- * What the pass holds today, as figures and one thin bar (T400, brief V4-9).
- *
- * The status sentence is translated whole and its numbers cut back in, so
- * they sit in mono while the words stay in the UI face. Under it, an 8 px bar
- * in the ink ramp fills to the plans left over the period's cap (carta-design
- * "Data drawings", the thin bar): the figure is always beside it, so the bar
- * reads the same if removed. No tick, no green: a balance is not good news.
- * A balance that changes (a plan spent in another tab) settles in place.
- */
-const FIG_A = '\u0001';
-const FIG_B = '\u0002';
-function PassBalance({ entitlement, t }) {
-  const ref = useRef(null);
-  const left = Number(entitlement.plansLeft) || 0;
-  const cap = Number(entitlement.plansCap) || 0;
-  const free = entitlement.tier === 'free';
-  const days = daysLeft(entitlement.expiresAt) ?? 0;
-  useSettledFigure(ref, `${left}/${cap}/${days}`);
-  const text = free
-    ? t('pass.statusFree', { left: FIG_A, cap: FIG_B })
-    : t(days === 1 ? 'pass.statusPaid1' : 'pass.statusPaid', { days: FIG_A, left: FIG_B });
-  const a = free ? left : days;
-  const b = free ? cap : left;
-  const share = cap > 0 ? Math.max(0, Math.min(1, left / cap)) : 0;
-  // The sentence cut at its two figure slots, kept in order.
-  const parts = [];
-  let buf = '';
-  for (const ch of String(text)) {
-    if (ch === FIG_A || ch === FIG_B) { parts.push(buf, ch); buf = ''; } else buf += ch;
-  }
-  parts.push(buf);
-  return (
-    <>
-      <span className="account-pass-status" ref={ref}>
-        {parts.map((seg, i) => {
-          if (seg === FIG_A) return <span key={i} className="account-pass-fig">{a}</span>;
-          if (seg === FIG_B) return <span key={i} className="account-pass-fig">{b}</span>;
-          return seg;
-        })}
-      </span>
-      {cap > 0 && (
-        <span className="account-pass-bar" aria-hidden="true">
-          <span className="account-pass-bar-fill" style={{ transform: `scaleX(${share})` }} />
-        </span>
-      )}
-    </>
-  );
-}
 
 // Account hub. The panel is a hub with four spokes rather than one long
 // scroll: the hub answers "who am I, what do I hold, where do I get help",
@@ -719,6 +669,20 @@ export function AccountPanel({
   const railOn = PARENT[view] === 'home' ? 'home' : (PARENT[view] || view);
   const titleOf = (v) => (v === 'home' ? t('account.tag') : SECTIONS.find((x) => x.v === v)?.label || t('account.tag'));
 
+  // The plan's controls: lib/billing.js, or the seam's stand-ins, which
+  // change the fixture the way the webhook would change the row.
+  const [planSaid, setPlanSaid] = useState('');
+  const keepPlan = useCallback(() => setView('plan'), []);
+  const mockSub = (patch) => {
+    setMockEnt((m) => ({ ...m, subscription: { ...m.subscription, ...patch } }));
+    return Promise.resolve({ ok: true, mock: true });
+  };
+  const planActions = mockEnt ? {
+    cancel: () => mockSub({ cancelling: true }),
+    resume: () => mockSub({ cancelling: false }),
+    portal: () => Promise.resolve({ ok: true, mock: true }),
+  } : { cancel: cancelYearly, resume: resumeYearly, portal: openBillingPortal };
+
   // Signing out keeps Account open on its signed-out Overview.
   const doSignOut = () => { setView('home'); signOut(); };
 
@@ -1330,10 +1294,28 @@ export function AccountPanel({
 
   if (view === 'plan' && signedIn) {
     pane = (
-      <>
-        {head(t('ac.plan'))}
-        <PlanSection balance={<PassBalance entitlement={entitlement} t={t} />} />
-      </>
+      <PlanView
+        head={head(t('ac.plan'))}
+        entitlement={entitlement}
+        actions={planActions}
+        said={planSaid}
+        setSaid={setPlanSaid}
+        onGoCancel={() => go('cancel')}
+        onChangePlan={() => paywall.openPrices('browse')}
+        onPricingPage={paywall.openPricingPage}
+      />
+    );
+  }
+
+  if (view === 'cancel' && signedIn) {
+    pane = (
+      <CancelView
+        head={head(t('account.planCancel'))}
+        entitlement={entitlement}
+        actions={planActions}
+        onKeep={keepPlan}
+        onDone={(line) => { setPlanSaid(line); go('plan'); }}
+      />
     );
   }
 
