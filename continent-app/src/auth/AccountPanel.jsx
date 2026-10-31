@@ -1,19 +1,13 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useAuth } from './AuthContext.jsx';
 import { authErrorText } from './authErrors.js';
-import { onRadioKeys } from './radioKeys.js';
 import {
-  ArrowLeftIcon, CheckIcon, ChevronRightIcon, CloseIcon, DownloadIcon,
-  FeedbackIcon, FriendsIcon, HomeIcon, InfoIcon, LockIcon, PencilIcon,
-  PersonIcon, QuestionIcon, PiggyIcon, ReceiptIcon, ShareIcon, ShieldIcon, SignOutIcon,
-  SparkIcon, TrashIcon,
+  ArrowLeftIcon, BedIcon, CheckIcon, CloseIcon, DownloadIcon, EyeIcon,
+  FeedbackIcon, FriendsIcon, GlobeIcon, HomeIcon, LinkIcon, LockIcon, MapPinIcon, PencilIcon,
+  PersonIcon, PlaneIcon, QuestionIcon, ReceiptIcon, ShareIcon, ShieldIcon, SignOutIcon,
+  SparkIcon, TicketIcon, TrashIcon,
 } from '../components/Icons.jsx';
-import { useFirstRun } from '../lib/firstRunContext.js';
-import { tasteListText } from '../lib/taste.js';
-
-// T764: "Your travel style", the taste profile's sheet, loads when opened.
-const TasteSheet = React.lazy(() => import('../browse/TasteSheet.jsx').then((m) => ({ default: m.TasteSheet })));
 
 // The explainer page (scripts/explainer/numbers.mjs), a static page outside
 // the app, built as about/numbers.html and served at this clean path.
@@ -21,9 +15,9 @@ const NUMBERS_HREF = '/about/numbers';
 import { PrivacyPolicy } from '../components/PrivacyPolicy.jsx';
 import { Imprint } from '../components/Imprint.jsx';
 import { TermsOfService } from '../components/TermsOfService.jsx';
-import { CountryFlag } from '../components/CountryFlag.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
-import { daysLeft } from '../lib/pricing.js';
+import { TIERS } from '../lib/pricing.js';
+import { openBillingPortal, cancelYearly, resumeYearly } from '../lib/billing.js';
 import {
   MIN_PASSWORD_LENGTH, passwordStrength, checkPasswordRules, passwordMeetsRules,
 } from '../lib/passwordStrength.js';
@@ -34,63 +28,23 @@ import {
 } from './profiles.js';
 import { PasswordField } from './PasswordField.jsx';
 import { useIsAdmin } from '../hooks/useIsAdmin.js';
-import { matchProfile, PROFILE_LABEL_KEYS } from '../browse/LifestylePanel.jsx';
 import { FaqView } from './account/FaqView.jsx';
 import { FeedbackView } from './account/FeedbackView.jsx';
-import { PlanSection } from './account/PlanSection.jsx';
-import { useSettledFigure } from '../lib/figureChange.js';
-import { Button } from '../components/ui/index.js';
+import { PlanView, CancelView } from './account/PlanView.jsx';
+import { Button, Chip } from '../components/ui/index.js';
 import { SiteFooter } from '../components/SiteFooter.jsx';
-
-/**
- * What the pass holds today, as figures and one thin bar (T400, brief V4-9).
- *
- * The status sentence is translated whole and its numbers cut back in, so
- * they sit in mono while the words stay in the UI face. Under it, an 8 px bar
- * in the ink ramp fills to the plans left over the period's cap (carta-design
- * "Data drawings", the thin bar): the figure is always beside it, so the bar
- * reads the same if removed. No tick, no green: a balance is not good news.
- * A balance that changes (a plan spent in another tab) settles in place.
- */
-const FIG_A = '\u0001';
-const FIG_B = '\u0002';
-function PassBalance({ entitlement, t }) {
-  const ref = useRef(null);
-  const left = Number(entitlement.plansLeft) || 0;
-  const cap = Number(entitlement.plansCap) || 0;
-  const free = entitlement.tier === 'free';
-  const days = daysLeft(entitlement.expiresAt) ?? 0;
-  useSettledFigure(ref, `${left}/${cap}/${days}`);
-  const text = free
-    ? t('pass.statusFree', { left: FIG_A, cap: FIG_B })
-    : t(days === 1 ? 'pass.statusPaid1' : 'pass.statusPaid', { days: FIG_A, left: FIG_B });
-  const a = free ? left : days;
-  const b = free ? cap : left;
-  const share = cap > 0 ? Math.max(0, Math.min(1, left / cap)) : 0;
-  // The sentence cut at its two figure slots, kept in order.
-  const parts = [];
-  let buf = '';
-  for (const ch of String(text)) {
-    if (ch === FIG_A || ch === FIG_B) { parts.push(buf, ch); buf = ''; } else buf += ch;
-  }
-  parts.push(buf);
-  return (
-    <>
-      <span className="account-pass-status" ref={ref}>
-        {parts.map((seg, i) => {
-          if (seg === FIG_A) return <span key={i} className="account-pass-fig">{a}</span>;
-          if (seg === FIG_B) return <span key={i} className="account-pass-fig">{b}</span>;
-          return seg;
-        })}
-      </span>
-      {cap > 0 && (
-        <span className="account-pass-bar" aria-hidden="true">
-          <span className="account-pass-bar-fill" style={{ transform: `scaleX(${share})` }} />
-        </span>
-      )}
-    </>
-  );
-}
+import { GoogleButton } from './GoogleButton.jsx';
+import { useTogether } from '../together/useTogether.js';
+import { DEFAULT_VISIBILITY } from './friendVisibility.js';
+import { Group, Row, fmtDate, listValue, plainClick } from './account/parts.jsx';
+import { useAccountFacts } from './account/useAccountFacts.js';
+import { useTravelValues } from './account/travelValues.js';
+import { TravelView, PrefsView } from './account/TravelView.jsx';
+import { AiView } from './account/AiView.jsx';
+import {
+  IS_ACCOUNT_MOCK, ACCOUNT_MOCK_GUEST, MOCK_USER, MOCK_PROFILE, mockEntitlement,
+} from './account/accountMock.js';
+import '../styles/91-account.css';
 
 // Account hub. The panel is a hub with four spokes rather than one long
 // scroll: the hub answers "who am I, what do I hold, where do I get help",
@@ -216,56 +170,60 @@ function PasswordChecklist({ password }) {
   );
 }
 
-/** One row of the hub menu: icon, label, chevron. A real button, 52px tall. */
-function MenuRow({ icon, label, value, onClick }) {
-  return (
-    <button type="button" className="account-nav account-menu-row" onClick={onClick}>
-      <span className="account-menu-icon">{icon}</span>
-      <span className="account-menu-label">{label}</span>
-      {value && <span className="account-menu-value">{value}</span>}
-      <ChevronRightIcon size={16} className="account-menu-chev" />
-    </button>
-  );
-}
+/**
+ * Account (T933 to T936, the owner-approved spec "Account: who you are, what
+ * you pay, what Carta knows"). One page in the family of My trips and
+ * Together: from 900 px a sticky left rail (Overview, the seven sections,
+ * Sign out) and one pane; on a phone the Overview is the page, grouped rows
+ * that open each section with a back link, one level deep. Every row is a
+ * label, its current value and one action; no captions under rows.
+ *
+ * Every section has its own address (`?tab=account&view=`, ACCOUNT_VIEWS in
+ * lib/urlState.js); the old `yourdata` opens Your data, `friends` opens
+ * Together (App), `profile` is the identity card's editor.
+ */
+const VIEW_ALIAS = { yourdata: 'data', friends: 'together' };
+// The sections a guest may open; anything else lands on the Overview.
+const GUEST_VIEWS = new Set(['home', 'travel', 'prefs', 'help', 'faq', 'feedback']);
+// What each view returns to: the rail marks its parent, and on a desktop a
+// view under a section carries a back link to it.
+const PARENT = { cancel: 'plan', ai: 'data', faq: 'help', feedback: 'help', profile: 'home' };
+const normalView = (v) => VIEW_ALIAS[v] || v || 'home';
 
 export function AccountPanel({
   onClose, onOpenAuth, initialView = 'home', onViewChange,
   onOpenAdmin, onOpenLifestyle, onOpenHome, onOpenTogether,
-  stayTier = 'home', lifestyle,
+  destinations, costs, favorites,
 }) {
+  const auth = useAuth();
+  // The ?accountmock seam stands in for a signed-in account (T933).
+  const mockUser = IS_ACCOUNT_MOCK && !ACCOUNT_MOCK_GUEST ? MOCK_USER : null;
+  const user = IS_ACCOUNT_MOCK ? mockUser : auth.user;
+  const hasPassword = IS_ACCOUNT_MOCK ? true : auth.hasPassword;
+  const configured = auth.configured || ACCOUNT_MOCK_GUEST;
   const {
-    user, hasPassword, signOut, signOutOtherDevices, updatePassword, reauthenticate,
-    updateProfile, sendPasswordReset, deleteAccount, exportUserData, configured,
-  } = useAuth();
-  const { t, lang, setLang, languages } = useI18n();
+    signOut, signOutOtherDevices, updatePassword, reauthenticate,
+    updateProfile, sendPasswordReset, deleteAccount, exportUserData,
+  } = auth;
+  const { t, lang, languages } = useI18n();
   // One ai_status read for the whole app, owned by PaywallProvider, so the
   // balance shown here cannot disagree with the balance a gate enforced.
   const paywall = usePaywall();
-  const entitlement = paywall.entitlement;
+  const [mockEnt, setMockEnt] = useState(() => (mockUser ? mockEntitlement() : null));
+  const entitlement = mockEnt || paywall.entitlement;
   // Whether the staff door shows at all. A hint, not a gate: every admin RPC
   // re-checks membership on the server.
   const { isAdmin } = useIsAdmin();
+  const facts = useAccountFacts({ user, destinations, favorites });
   const panelRef = useRef(null);
-  const [view, setView] = useState(initialView); // 'home' | 'profile' | 'friends' | 'faq' | 'feedback' | 'data'
+  const headRef = useRef(null);
+  const [view, setView] = useState(() => normalView(initialView));
   const [privacyOpen, setPrivacyOpen] = useState(false);
   const [imprintOpen, setImprintOpen] = useState(false);
   const [termsOpen, setTermsOpen] = useState(false);
 
   const storedName = user?.user_metadata?.full_name?.trim() || '';
   const storedEmail = user?.email || '';
-
-  // What the lifestyle row states without being opened: the bed and the
-  // habits, the two answers that move every price in the app. A comma, never
-  // a bullet, because this app has no middot separators.
-  // T764: the taste profile beside it, in the words the Explore chip uses.
-  const firstRun = useFirstRun();
-  const tasteSummary = tasteListText(firstRun?.choices?.taste, t) || t('taste.notSet');
-  const [tasteOpen, setTasteOpen] = useState(false);
-  const lifestyleProfile = matchProfile(lifestyle || {});
-  const lifestyleSummary = [
-    t(`stay.${stayTier || 'home'}`),
-    lifestyleProfile ? t(PROFILE_LABEL_KEYS[lifestyleProfile]) : t('lifestyle.custom'),
-  ].join(', ');
 
   const [name, setName] = useState(storedName);
   const [email, setEmail] = useState(storedEmail);
@@ -302,6 +260,10 @@ export function AccountPanel({
   // fright, and the panel already uses this arm-then-confirm shape to delete.
   const [forgotArmed, setForgotArmed] = useState(false);
 
+  // T936: the password form opens in place under its row.
+  const [pwOpen, setPwOpen] = useState(false);
+  const [signOutBusy, setSignOutBusy] = useState(false);
+  const [signOutErr, setSignOutErr] = useState('');
   const [deleteArmed, setDeleteArmed] = useState(false);
   const [deletePassword, setDeletePassword] = useState('');
   const [deleteEmail, setDeleteEmail] = useState('');
@@ -341,6 +303,11 @@ export function AccountPanel({
   // error: it is not something the account holder can act on.
   useEffect(() => {
     if (!user) { setStoredHandle(''); setHandle(''); setAvatarEmoji(''); setStoredAvatar(''); return undefined; }
+    if (IS_ACCOUNT_MOCK) {
+      setStoredHandle(MOCK_PROFILE.handle); setHandle(MOCK_PROFILE.handle);
+      setAvatarEmoji(MOCK_PROFILE.avatarEmoji); setStoredAvatar(MOCK_PROFILE.avatarEmoji);
+      return undefined;
+    }
     let live = true;
     fetchMyProfile(user.id)
       .then((row) => {
@@ -360,16 +327,23 @@ export function AccountPanel({
   // so navigating back to the hub inside the panel unlights it. One effect
   // rather than a callback on every setView, which would drift.
   useEffect(() => { onViewChange?.(view); }, [view, onViewChange]);
+  // Back and Forward step through the sections: App hands the address's
+  // view back in, and the page follows it.
+  useEffect(() => { setView(normalView(initialView)); }, [initialView]);
 
   // A subview keeps the hub's scroll position otherwise, and "page two opens
   // halfway down" reads as a rendering bug.
+  // The heading takes focus on every step (carta-design "Navigation").
+  const firstView = useRef(true);
   useEffect(() => {
     panelRef.current?.scrollTo?.(0, 0);
+    if (firstView.current) { firstView.current = false; return; }
+    headRef.current?.focus?.({ preventScroll: true });
   }, [view]);
 
   // Signing out while on the profile spoke leaves a form for nobody.
   useEffect(() => {
-    if (!user && ['profile', 'security', 'yourdata', 'friends'].includes(view)) setView('home');
+    if (!user && !GUEST_VIEWS.has(view)) setView('home');
   }, [user, view]);
 
   const emailChanged = email.trim().toLowerCase() !== storedEmail.toLowerCase();
@@ -616,6 +590,19 @@ export function AccountPanel({
           return;
         }
       }
+      // T936: a yearly plan that would renew is cancelled first, so the
+      // card is never charged for an account that is gone (delete_user()
+      // erases the rows but not the Stripe subscription). If that fails,
+      // nothing is deleted and the traveller is told.
+      const sub = entitlement.subscription;
+      if (sub?.live && !sub.cancelling) {
+        const res = await planActions.cancel();
+        if (!res?.ok) {
+          setDeleteError(t('account.planFailed'));
+          setDeleteBusy(false);
+          return;
+        }
+      }
       await deleteAccount();
       onClose();
     } catch (err) {
@@ -654,268 +641,264 @@ export function AccountPanel({
     }
   };
 
+  const locale = (languages.find((l) => l.code === lang) || languages[0]).bcp47;
+  const travel = useTravelValues(t);
+  const hrefOf = (v) => tabHref('account', undefined, { view: v });
+  const go = (v) => setView(v);
+  const signedIn = !!user;
+  const langLabel = (languages.find((l) => l.code === lang) || languages[0]).label;
+  const google = !!(user?.identities || []).some((i) => i.provider === 'google')
+    || (user?.app_metadata?.providers || []).includes('google');
 
-  // The hub used to title itself with your own name, and then the card
-  // directly under it said the same name again with the email beneath. Two
-  // lines of the same fact, and the serif one pushed the card a screen-inch
-  // down from the row carrying Passes. The card is the better of the two, so
-  // signed in the hub goes straight to it. Every spoke keeps its title.
-  const heading = view === 'profile' ? t('account.profileDetails')
-    : view === 'security' ? t('account.menuSecurity')
-    : view === 'yourdata' ? t('account.dataTitle')
-    : view === 'friends' ? t('friends.title')
-    : view === 'faq' ? t('account.menuFaq')
-    : view === 'feedback' ? t('account.feedbackTitle')
-    : user ? null : t('account.preferences');
+  // The plan in one line: its name and when it renews or ends.
+  const tierKey = !signedIn ? 'free' : (TIERS[entitlement.tier] ? entitlement.tier : 'free');
+  const sub = entitlement.subscription;
+  const planWhen = !signedIn || !entitlement.known ? ''
+    : tierKey === 'year' && sub?.live && !sub.cancelling ? t('account.planRenews', { date: fmtDate(sub.renewsAt || entitlement.expiresAt, locale) })
+      : tierKey === 'year' && sub?.cancelling ? t('account.planEnds', { date: fmtDate(sub.renewsAt || entitlement.expiresAt, locale) })
+        : tierKey !== 'free' && entitlement.expiresAt ? t('ac.until', { date: fmtDate(entitlement.expiresAt, locale) })
+          : '';
+  const plansLine = signedIn && entitlement.known && entitlement.plansCap > 0
+    ? t('ac.leftOf', { left: entitlement.plansLeft, cap: entitlement.plansCap }) : '';
 
-  // The panel's spokes as one list, drawn twice: as the hub's menu rows on a
-  // phone, and as the desktop rail that stands where Destinations and Explore
-  // stand their filters. Two arrangements of one set of doors cannot drift
-  // apart while the source only holds one of them. `go` is what the row does;
-  // `view` is what makes it read as the page you are on.
-  const NAV = [
-    { key: 'home', group: 'account', view: 'home', Icon: HomeIcon, label: t('account.menuOverview'), go: () => setView('home') },
-    user && { key: 'profile', group: 'account', view: 'profile', Icon: PersonIcon, label: t('account.profileDetails'), go: () => setView('profile') },
-    // The old Profile spoke held five jobs and two accent primaries; it is
-    // three spokes now, one primary each (T390, brief V3-8).
-    user && { key: 'security', group: 'account', view: 'security', Icon: LockIcon, label: t('account.menuSecurity'), go: () => setView('security') },
-    user && { key: 'yourdata', group: 'account', view: 'yourdata', Icon: DownloadIcon, label: t('account.dataTitle'), go: () => setView('yourdata') },
-    // T928: friends live on Together now; Account keeps one row to it.
-    user && { key: 'friends', group: 'account', Icon: FriendsIcon, label: t('tg.title'), go: () => { onOpenTogether?.(); } },
-    user && isAdmin && { key: 'admin', group: 'account', Icon: LockIcon, label: t('account.menuAdmin'), go: () => { onClose?.(); onOpenAdmin?.(); } },
-    { key: 'feedback', group: 'help', view: 'feedback', Icon: FeedbackIcon, label: t('account.menuFeedback'), go: () => setView('feedback') },
-    { key: 'faq', group: 'help', view: 'faq', Icon: QuestionIcon, label: t('account.menuFaq'), go: () => setView('faq') },
-    // Where the numbers come from (T503, roadmap 1.3e): a link, it leaves the app.
-    { key: 'numbers', group: 'help', Icon: ReceiptIcon, label: t('account.numbers'), href: NUMBERS_HREF },
-    { key: 'share', group: 'help', Icon: ShareIcon, label: shareCopied ? t('account.inviteCopied') : t('account.inviteBtn'), go: handleShare },
-    { key: 'privacy', group: 'help', Icon: ShieldIcon, label: t('account.privacyPolicy'), go: () => setPrivacyOpen(true) },
-    { key: 'terms', group: 'help', Icon: ShieldIcon, label: t('account.terms'), go: () => setTermsOpen(true) },
-    { key: 'imprint', group: 'help', Icon: InfoIcon, label: t('account.imprint'), go: () => setImprintOpen(true) },
+  const tg = useTogether();
+  const visibility = tg.signedIn ? tg.visibility : DEFAULT_VISIBILITY;
+  const seeValue = listValue([
+    visibility.showCountries && t('tg.seeCountries'),
+    visibility.showSaves && t('tg.seeSaves'),
+    visibility.showCosts && t('tg.seeCosts'),
+    visibility.showTips && t('tg.seeTips'),
+  ], lang);
+  const keepsValue = listValue([
+    facts.trips != null && t(facts.trips === 1 ? 'ac.tripsOne' : 'ac.tripsMany', { n: facts.trips }),
+    facts.saves != null && t(facts.saves === 1 ? 'ac.savesOne' : 'ac.savesMany', { n: facts.saves }),
+  ], lang);
+
+  // The sections in rail order. Signed out: Your travel, Preferences, Help.
+  const SECTIONS = [
+    { v: 'travel', Icon: PlaneIcon, label: t('ac.travel') },
+    signedIn && { v: 'plan', Icon: TicketIcon, label: t('ac.plan') },
+    { v: 'prefs', Icon: GlobeIcon, label: t('account.preferences') },
+    signedIn && { v: 'together', Icon: FriendsIcon, label: t('tg.title') },
+    signedIn && { v: 'security', Icon: LockIcon, label: t('account.menuSecurity') },
+    signedIn && { v: 'data', Icon: ShieldIcon, label: t('account.dataTitle') },
+    { v: 'help', Icon: QuestionIcon, label: t('side.help') },
   ].filter(Boolean);
+  const railOn = PARENT[view] === 'home' ? 'home' : (PARENT[view] || view);
+  const titleOf = (v) => (v === 'home' ? t('account.tag') : SECTIONS.find((x) => x.v === v)?.label || t('account.tag'));
 
-  const renderNav = (group, cls) => NAV.filter((r) => r.group === group).map(
-    ({ key, view: v, Icon, label, go, href }) => (href ? (
-      <a key={key} className={`account-nav ${cls}`} href={href}>
-        <Icon size={16} />
-        <span>{label}</span>
-      </a>
-    ) : (
-      <button
-        key={key}
-        type="button"
-        className={`account-nav ${cls} ${v && view === v ? 'on' : ''}`}
-        aria-current={v && view === v ? 'page' : undefined}
-        onClick={go}
-      >
-        <Icon size={16} />
-        <span>{label}</span>
-      </button>
-    )),
+  // The plan's controls: lib/billing.js, or the seam's stand-ins, which
+  // change the fixture the way the webhook would change the row.
+  const [planSaid, setPlanSaid] = useState('');
+  const keepPlan = useCallback(() => setView('plan'), []);
+  const mockSub = (patch) => {
+    setMockEnt((m) => ({ ...m, subscription: { ...m.subscription, ...patch } }));
+    return Promise.resolve({ ok: true, mock: true });
+  };
+  const planActions = mockEnt ? {
+    cancel: () => mockSub({ cancelling: true }),
+    resume: () => mockSub({ cancelling: false }),
+    portal: () => Promise.resolve({ ok: true, mock: true }),
+  } : { cancel: cancelYearly, resume: resumeYearly, portal: openBillingPortal };
+
+  // Signing out keeps Account open on its signed-out Overview.
+  const doSignOut = () => { setView('home'); signOut(); };
+  // Every device, this one too (Supabase's global scope).
+  const signOutEverywhere = async () => {
+    setSignOutErr('');
+    setSignOutBusy(true);
+    try {
+      await auth.signOutEverywhere();
+      setView('home');
+    } catch {
+      setSignOutErr(t('account.errGeneric'));
+    } finally {
+      setSignOutBusy(false);
+    }
+  };
+  // What deleting does to the pass, said inside the delete confirm.
+  const passNote = !entitlement.known ? ''
+    : entitlement.tier === 'year' && sub?.live && !sub.cancelling ? t('ac.deleteEndsYear')
+      : entitlement.tier === 'trip' ? t('ac.deleteEndsTrip') : '';
+
+  const railLink = (v, Icon, label) => (
+    <a
+      key={v}
+      className="ac-rail-a"
+      href={hrefOf(v)}
+      aria-current={railOn === v ? 'page' : undefined}
+      onClick={(e) => { if (!plainClick(e)) return; e.preventDefault(); go(v); }}
+    >
+      <Icon size={20} />
+      <span>{label}</span>
+    </a>
   );
 
-  return (
-    <div className="account-shell">
-      {/* Desktop-only left panel (CSS hides it under 769px). It carries the
-          navigation the hub's help menu carries on a phone, which is why that
-          menu folds away at the same width: one set of doors, never two. */}
-      <aside className="side-panel account-side" aria-label={t('account.tag')}>
-        <div className="side-block">
-          <p className="side-label">{t('side.account')}</p>
-          <div className="side-nav">{renderNav('account', 'side-navrow')}</div>
-        </div>
-        <div className="side-block">
-          <p className="side-label">{t('side.help')}</p>
-          <div className="side-nav">{renderNav('help', 'side-navrow')}</div>
-        </div>
-      </aside>
-
-    <div className="panel open account-panel" ref={panelRef}>
-      {/* The close button lives INSIDE the sticky header. As a child of the
-          scrolling panel it was positioned against the content box, so it slid
-          out of sight the moment anybody scrolled and the panel had no visible
-          way out at the bottom, which is where the delete section is. */}
-      <div className={`panel-header${heading ? '' : ' account-header-bare'}`}>
-        {/* No close cross (T390, brief V3-1): it was hidden at every width by
-            `.account-panel .panel-close`, a letter x nobody could see. The
-            header's account door, the bottom nav and Escape close the page. */}
-        {view === 'home' ? (
-          // One h1 (T186): the overline is the page title unless a heading
-          // under it names the view, then that heading is.
-          heading ? <div className="panel-tag">{t('account.tag')}</div>
-            : <h1 className="panel-tag">{t('account.tag')}</h1>
-        ) : (
-          <button type="button" className="account-back" onClick={() => setView('home')}>
-            <ArrowLeftIcon size={13} /> {t('account.tag')}
-          </button>
-        )}
-        {heading && <h1 className="panel-city account-heading">{heading}</h1>}
-      </div>
-
-      {view === 'home' && (
+  const rail = (
+    <nav className="ac-rail" aria-label={t('account.tag')}>
+      {railLink('home', PersonIcon, t('account.menuOverview'))}
+      {SECTIONS.map((x) => railLink(x.v, x.Icon, x.label))}
+      {signedIn && (
         <>
-          {/* Who you are, as a door rather than a form: the editable fields
-              live one level down, so the hub stays a place you can read in
-              five seconds. */}
-          <div className="panel-section">
-            {user ? (
-              <button type="button" className="account-profile-card" onClick={() => setView('profile')}>
-                <span className="account-hub-avatar" aria-hidden="true">{monogram(storedName, storedEmail)}</span>
-                <span className="account-profile-meta">
-                  <b>{storedName || storedEmail}</b>
-                  <span>{storedName ? storedEmail : t('account.profileRowHint')}</span>
-                </span>
-                <ChevronRightIcon size={16} className="account-menu-chev" />
-              </button>
-            ) : configured ? (
-              <div className="account-signin-card">
-                <span className="account-hub-avatar account-hub-avatar-guest" aria-hidden="true"><PersonIcon size={20} /></span>
-                <Button variant="primary" onClick={onOpenAuth}>{t('account.signIn')}</Button>
-              </div>
-            ) : null}
-          </div>
-
-          {/* The hub in the traveller's order (T390, brief V3-7): who you are,
-              then the settings every figure in Carta is priced from, then the
-              language, then the pass, then the invitation and help. The pass
-              card and the invite used to fill the first two screens, so the
-              account read as a sales page before it read as your settings.
-
-              How this person travels, the setting behind every euro figure
-              the app prints. It is a preference, and preferences live here.
-              Works signed out. */}
-          {onOpenLifestyle && (
-            <div className="panel-section">
-              <h2 className="account-group-label">{t('account.tripSettings')}</h2>
-              <div className="account-menu">
-                <MenuRow
-                  icon={<PiggyIcon size={17} />}
-                  label={t('filter.lifestyle')}
-                  value={lifestyleSummary}
-                  onClick={() => { onClose?.(); onOpenLifestyle(); }}
-                />
-                {firstRun?.setChoices && (
-                  <MenuRow
-                    icon={<SparkIcon size={17} />}
-                    label={t('taste.title')}
-                    value={tasteSummary}
-                    onClick={() => setTasteOpen(true)}
-                  />
-                )}
-              </div>
-              {tasteOpen && (
-                <React.Suspense fallback={null}>
-                  <TasteSheet onClose={() => setTasteOpen(false)} />
-                </React.Suspense>
-              )}
-            </div>
-          )}
-
-          {/* App language, moved here from the top bar: switching it is a
-              once-per-person action, so it lives with the other settings
-              instead of spending header width. Works signed out. */}
-          <div className="panel-section">
-            <h2 className="account-group-label">{t('account.language')}</h2>
-            <div className="account-lang-grid" role="listbox" aria-label={t('account.language')} data-arrow-select="false" onKeyDown={onRadioKeys}>
-              {languages.map((l) => (
-                <button
-                  key={l.code}
-                  type="button"
-                  className={`account-lang-opt ${l.code === lang ? 'on' : ''}`}
-                  onClick={() => setLang(l.code)}
-                  role="option"
-                  tabIndex={l.code === lang ? 0 : -1}
-                  aria-selected={l.code === lang}
-                >
-                  <CountryFlag country={l.flag} size={15} />
-                  <span className="account-lang-label">{l.label}</span>
-                  {l.code === lang && <CheckIcon size={13} />}
-                </button>
-              ))}
-            </div>
-            {/* The currency moved here from the settings line with the
-                language (T496, owner T485-g): it moves no price, and EUR is
-                the only one, so it is a plain statement, not a control. */}
-            <p className="account-currency">{t('settings.currency')}</p>
-          </div>
-
-          {/* What they hold today, as one status line and one door to the
-              passes (brief V3-10). A pass is a finite thing that runs out, so
-              the line states the balance and the expiry rather than a status
-              word. What a pass adds is the pass modal's job, in the same plain
-              numbers, so the hub no longer repeats a price list with ticks.
-              Until the balance is known the line holds its place as a still
-              block (carta-design "Loading"), so the button does not jump. */}
-          {/* Guests too (roadmap 1.15): Free, the one sentence, the prices. */}
-          <PlanSection balance={user ? <PassBalance entitlement={entitlement} t={t} /> : null} />
-
-          {/* The account's own spokes on a phone (brief V3-7, V3-8). On a
-              phone Friends had no door here, only a 38 px icon in the top
-              bar, and the security and data spokes are new. The desktop rail
-              carries the same rows, so this block folds away there with the
-              help menu below. */}
-          {user && (
-            <div className="panel-section account-help-section">
-              <div className="account-menu account-menu-help">
-                <MenuRow icon={<FriendsIcon size={17} />} label={t('tg.title')} onClick={() => onOpenTogether?.()} />
-                <MenuRow icon={<LockIcon size={17} />} label={t('account.menuSecurity')} onClick={() => setView('security')} />
-                <MenuRow icon={<DownloadIcon size={17} />} label={t('account.dataTitle')} onClick={() => setView('yourdata')} />
-              </div>
-            </div>
-          )}
-
-          {/* Help, in the order people need it: say something, look something
-              up, read the fine print. All three work signed out. */}
-          <div className="panel-section account-help-section">
-            <div className="account-menu account-menu-help">
-              {/* The way back to the home page on a phone (T464; T496, owner
-                  T485-c: "How Carta works"), where the header and its logo
-                  are not drawn. A link, because it changes the view. */}
-              {onOpenHome && (
-                <a
-                  className="account-nav account-menu-row"
-                  href={tabHref('home')}
-                  onClick={(e) => {
-                    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-                    e.preventDefault();
-                    onOpenHome();
-                  }}
-                >
-                  <span className="account-menu-icon"><HomeIcon size={17} /></span>
-                  <span className="account-menu-label">{t('nav.howCartaWorks')}</span>
-                  <ChevronRightIcon size={16} className="account-menu-chev" />
-                </a>
-              )}
-              {/* The staff door. Rendered only for accounts on the admin
-                  list; for everybody else this row does not exist. It opens
-                  the back office as a full page rather than a spoke: a table
-                  of every account is not a thing you read in 440px. */}
-              {user && isAdmin && (
-                <MenuRow
-                  icon={<LockIcon size={17} />}
-                  label={t('account.menuAdmin')}
-                  onClick={() => { onClose?.(); onOpenAdmin?.(); }}
-                />
-              )}
-              <MenuRow icon={<FeedbackIcon size={17} />} label={t('account.menuFeedback')} onClick={() => setView('feedback')} />
-              <MenuRow icon={<QuestionIcon size={17} />} label={t('account.menuFaq')} onClick={() => setView('faq')} />
-              {/* Where the numbers come from (T503, roadmap 1.3e): the method
-                  lives on its own page, behind this door, not on every page. */}
-              <a className="account-nav account-menu-row" href={NUMBERS_HREF}>
-                <span className="account-menu-icon"><ReceiptIcon size={17} /></span>
-                <span className="account-menu-label">{t('account.numbers')}</span>
-                <ChevronRightIcon size={16} className="account-menu-chev" />
-              </a>
-              <MenuRow icon={<ShareIcon size={17} />} label={shareCopied ? t('account.inviteCopied') : t('account.inviteBtn')} onClick={handleShare} />
-              <MenuRow icon={<ShieldIcon size={17} />} label={t('account.privacyPolicy')} onClick={() => setPrivacyOpen(true)} />
-              <MenuRow icon={<ShieldIcon size={17} />} label={t('account.terms')} onClick={() => setTermsOpen(true)} />
-              <MenuRow icon={<InfoIcon size={17} />} label={t('account.imprint')} onClick={() => setImprintOpen(true)} />
-            </div>
-          </div>
+          <hr className="ac-rail-hr" />
+          <Button variant="quiet" className="ac-rail-out" iconStart={<SignOutIcon size={20} />} onClick={doSignOut}>
+            {t('account.signOut')}
+          </Button>
         </>
       )}
+    </nav>
+  );
 
-      {view === 'profile' && user && (
-        <>
+  const legal = (
+    <div className="ac-foot">
+      <Button variant="quiet" size="sm" onClick={() => setPrivacyOpen(true)}>{t('account.privacyPolicy')}</Button>
+      <Button variant="quiet" size="sm" onClick={() => setTermsOpen(true)}>{t('account.terms')}</Button>
+      <Button variant="quiet" size="sm" onClick={() => setImprintOpen(true)}>{t('account.imprint')}</Button>
+    </div>
+  );
+
+  const helpRows = (
+    <>
+      <Row icon={QuestionIcon} label={t('account.menuFaq')} href={hrefOf('faq')} onClick={() => go('faq')} />
+      <Row icon={ReceiptIcon} label={t('account.numbers')} href={NUMBERS_HREF} external />
+      <Row icon={FeedbackIcon} label={t('account.menuFeedback')} href={hrefOf('feedback')} onClick={() => go('feedback')} />
+      <Row icon={ShareIcon} label={t('account.inviteBtn')} value={shareCopied ? t('account.inviteCopied') : null} onClick={handleShare} />
+      {onOpenHome && (
+        <Row icon={HomeIcon} label={t('nav.howCartaWorks')} href={tabHref('home')} onClick={() => onOpenHome()} className="ac-phone-only" />
+      )}
+      {!signedIn && paywall.openPricingPage && (
+        <Row icon={TicketIcon} label={t('ac.plansPrices')} href={tabHref('pricing')} onClick={() => paywall.openPricingPage()} />
+      )}
+      {signedIn && isAdmin && (
+        <Row icon={LockIcon} label={t('account.menuAdmin')} onClick={() => { onClose?.(); onOpenAdmin?.(); }} />
+      )}
+    </>
+  );
+
+  const travelRows = travel ? (
+    <>
+      <Row icon={MapPinIcon} label={t('ac.home')} value={travel.home} href={hrefOf('travel')} onClick={() => go('travel')} />
+      <Row icon={FriendsIcon} label={t('ac.travellers')} value={travel.people} href={hrefOf('travel')} onClick={() => go('travel')} />
+      <Row icon={BedIcon} label={t('ac.stay')} value={`${travel.bed}, ${travel.vibe}`} href={hrefOf('travel')} onClick={() => go('travel')} />
+      {travel.party > 1 && (
+        <Row icon={ReceiptIcon} label={t('party.view')} value={travel.priceView} href={hrefOf('travel')} onClick={() => go('travel')} />
+      )}
+    </>
+  ) : null;
+
+  // The identity card: face, name, handle, plan; then three counts.
+  const nums = [
+    facts.trips != null && { k: 'trips', n: facts.trips, label: t('ac.nTrips') },
+    facts.countries != null && { k: 'countries', n: facts.countries, label: t('ac.nCountries') },
+    facts.friends != null && { k: 'friends', n: facts.friends, label: t('ac.nFriends') },
+  ].filter(Boolean);
+  const identity = signedIn && (
+    <a
+      className="ac-me"
+      href={hrefOf('profile')}
+      onClick={(e) => { if (!plainClick(e)) return; e.preventDefault(); go('profile'); }}
+      aria-label={t('ac.editProfileAria', { name: storedName || storedEmail })}
+    >
+      <span className="ac-face" aria-hidden="true">{avatarEmoji || monogram(storedName, storedEmail)}</span>
+      <span className="ac-me-tx">
+        <b>{storedName || storedEmail}</b>
+        {storedHandle ? <span>@{storedHandle}</span> : storedName ? <span>{storedEmail}</span> : null}
+      </span>
+      {entitlement.known && (
+        <Chip kind="status" tone="neutral" className="ac-me-plan">{t(TIERS[tierKey].labelKey)}</Chip>
+      )}
+      {nums.length > 0 && (
+        <dl className="ac-nums">
+          {nums.map((x) => (
+            <div key={x.k}>
+              <dt>{x.label}</dt>
+              <dd>{x.n}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
+    </a>
+  );
+
+  const overview = (
+    <>
+      <h1 className="ac-h1" ref={headRef} tabIndex={-1} data-focus-quiet="">{t('account.tag')}</h1>
+      {identity}
+      {!signedIn && configured && (
+        <section className="ac-signin" aria-labelledby="ac-signin-h">
+          <h2 className="ac-signin-h" id="ac-signin-h">{t('ac.signInTitle')}</h2>
+          <div className="ac-signin-btns">
+            <GoogleButton />
+            <Button variant="primary" onClick={onOpenAuth}>{t('ac.signInEmail')}</Button>
+          </div>
+        </section>
+      )}
+      <Group id="ac-g-travel" title={t('ac.travel')}>{travelRows}</Group>
+      {signedIn && (
+        <Group id="ac-g-plan" title={t('ac.plan')}>
+          <Row icon={TicketIcon} label={t(TIERS[tierKey].labelKey)} value={planWhen} href={hrefOf('plan')} onClick={() => go('plan')} />
+          {plansLine && <Row icon={SparkIcon} label={t('ac.meterPlans')} value={plansLine} href={hrefOf('plan')} onClick={() => go('plan')} />}
+        </Group>
+      )}
+      <Group id="ac-g-prefs" title={t('account.preferences')}>
+        <Row icon={GlobeIcon} label={t('account.language')} value={langLabel} href={hrefOf('prefs')} onClick={() => go('prefs')} />
+        <Row icon={ReceiptIcon} label={t('ac.currency')} value={t('ac.currencyEur')} href={hrefOf('prefs')} onClick={() => go('prefs')} />
+      </Group>
+      {signedIn && (
+        <Group id="ac-g-tg" title={t('tg.title')}>
+          {storedHandle && <Row icon={PersonIcon} label={t('profile.handle')} value={`@${storedHandle}`} href={hrefOf('together')} onClick={() => go('together')} />}
+          <Row icon={EyeIcon} label={t('tg.friendsSee')} value={seeValue} href={hrefOf('together')} onClick={() => go('together')} />
+        </Group>
+      )}
+      {signedIn && (
+        <Group id="ac-g-sec" title={t('account.menuSecurity')}>
+          <Row icon={LockIcon} label={t('account.email')} value={storedEmail} href={hrefOf('security')} onClick={() => go('security')} />
+          <Row icon={LinkIcon} label={t('ac.google')} value={t(google ? 'ac.connected' : 'ac.notConnected')} href={hrefOf('security')} onClick={() => go('security')} />
+        </Group>
+      )}
+      {signedIn && (
+        <Group id="ac-g-data" title={t('account.dataTitle')}>
+          <Row icon={ShieldIcon} label={t('ac.keeps')} value={keepsValue} href={hrefOf('data')} onClick={() => go('data')} />
+          <Row icon={DownloadIcon} label={t('account.exportBtn')} href={hrefOf('data')} onClick={() => go('data')} />
+        </Group>
+      )}
+      <Group id="ac-g-help" title={t('side.help')}>{helpRows}</Group>
+      {signedIn && (
+        <Button className="ac-signout" iconStart={<SignOutIcon size={20} />} onClick={doSignOut}>{t('account.signOut')}</Button>
+      )}
+      {legal}
+    </>
+  );
+
+  // A section's head: the back link (on a phone always to the Overview; on
+  // a desktop only under a section, to it), then the one h1.
+  const parent = PARENT[view] || 'home';
+  const head = (title) => (
+    <div className="ac-head">
+      <a
+        className="ac-back ac-back-phone"
+        href={hrefOf('home')}
+        onClick={(e) => { if (!plainClick(e)) return; e.preventDefault(); go('home'); }}
+      >
+        <ArrowLeftIcon size={16} />
+        {t('account.tag')}
+      </a>
+      {parent !== 'home' && (
+        <a
+          className="ac-back ac-back-desk"
+          href={hrefOf(parent)}
+          onClick={(e) => { if (!plainClick(e)) return; e.preventDefault(); go(parent); }}
+        >
+          <ArrowLeftIcon size={16} />
+          {titleOf(parent)}
+        </a>
+      )}
+      <h1 className="ac-h1" ref={headRef} tabIndex={-1} data-focus-quiet="">{title}</h1>
+    </div>
+  );
+
+  const profileForm = (
+    <>
           <div className="panel-section account-profile-head">
             <span className="account-hub-avatar account-hub-avatar-lg" aria-hidden="true">
               {avatarEmoji || monogram(storedName, storedEmail)}
@@ -1048,18 +1031,12 @@ export function AccountPanel({
             </form>
           </div>
 
-        </>
-      )}
+    </>
+  );
 
-      {/* Sign-in and security: the password, other devices, signing out. Its
-          own spoke since T390 (brief V3-8), so Update password is this page's
-          one primary rather than the second accent under Save changes. */}
-      {view === 'security' && user && (
-        <>
-          <div className="panel-section">
-            <div className="section-title section-title-iconed">
-              <LockIcon size={12} /> {t('account.securityTitle')}
-            </div>
+  const securityForm = (
+    <>
+          <div className="panel-section ac-inline">
             {/* Success is announced once, dismissibly, and the fields empty
                 behind it. A banner that cannot be closed becomes furniture on
                 the next visit to the panel. */}
@@ -1186,59 +1163,12 @@ export function AccountPanel({
             )}
           </div>
 
-          {/* Sign out lives in its own section rather than pressed between the
-              password form and the delete link, where a mis-tap on a moving
-              train hit one of the two things nobody meant to press. */}
-          <div className="panel-section">
-            <div className="section-title section-title-iconed"><SignOutIcon size={12} /> {t('account.sessionTitle')}</div>
-            {/* No explainer. Signing out is the one control here that nobody
-                needs told what it does, and the reassurance that saved trips
-                survive it only raises a doubt it then has to answer. */}
-            <button className="book-btn secondary account-signout account-wide-btn" onClick={signOut}>
-              {t('account.signOut')}
-            </button>
-          </div>
+    </>
+  );
 
-        </>
-      )}
-
-      {/* Your data: a copy of everything, and deleting the account. */}
-      {view === 'yourdata' && user && (
-        <>
-          {/* Your data sits above the danger zone, not inside it. Taking a
-              copy of your own trips is an ordinary thing to want, and the two
-              halves of the same right read better adjacent than merged: this
-              one is a plain secondary button, deletion below is the red one. */}
-          <div className="panel-section">
-            <div className="section-title section-title-iconed"><DownloadIcon size={12} /> {t('account.dataTitle')}</div>
-            {!exportArmed ? (
-              <>
-                <p className="account-section-hint">{t('account.exportHint')}</p>
-                <button
-                  className="book-btn secondary account-wide-btn"
-                  onClick={() => { setExportArmed(true); setExportDone(false); }}
-                >
-                  {t('account.exportBtn')}
-                </button>
-                {/* Same dismissible banner the password form uses, and for
-                    the same reason: a confirmation that cannot be closed is
-                    furniture by the next visit to the panel. */}
-                {exportDone && (
-                  <div className="auth-banner" role="status">
-                    <CheckIcon size={14} />
-                    <span className="auth-banner-text">{t('account.exportDone')}</span>
-                    <button
-                      type="button"
-                      className="auth-banner-x"
-                      onClick={() => setExportDone(false)}
-                      aria-label={t('account.dismissNotice')}
-                    >
-                      <CloseIcon size={13} />
-                    </button>
-                  </div>
-                )}
-              </>
-            ) : (
+  // Your data's two confirms, each opened in place under its row (T936).
+  const exportForm = (
+    <div className="panel-section ac-inline">
               <>
                 <p className="account-section-hint">{t('account.exportConfirmHint')}</p>
                 {hasPassword ? (
@@ -1274,24 +1204,34 @@ export function AccountPanel({
                   </button>
                 </div>
               </>
-            )}
-          </div>
-
-          <div className="panel-section">
-            <div className="section-title section-title-iconed account-danger-title"><TrashIcon size={12} /> {t('account.dangerTitle')}</div>
-            <div className="account-danger">
-              {/* Closed, this is one red button and nothing else. The sentence
-                  about what deletion costs is not a standing notice on a panel
-                  people open to change their name: it is the answer to having
-                  pressed the button, and it appears when the question is
-                  actually being asked. */}
-              {!deleteArmed ? (
-                <button className="book-btn account-delete-arm account-wide-btn" onClick={() => setDeleteArmed(true)}>
-                  {t('account.deleteBtn')}
-                </button>
-              ) : (
+    </div>
+  );
+  const exportDoneLine = (
+    <>
+                {exportDone && (
+                  <div className="auth-banner" role="status">
+                    <CheckIcon size={14} />
+                    <span className="auth-banner-text">{t('account.exportDone')}</span>
+                    <button
+                      type="button"
+                      className="auth-banner-x"
+                      onClick={() => setExportDone(false)}
+                      aria-label={t('account.dismissNotice')}
+                    >
+                      <CloseIcon size={13} />
+                    </button>
+                  </div>
+                )}
+    </>
+  );
+  const deleteForm = (
+    <div className="panel-section ac-inline account-danger">
                 <>
                   <p className="account-danger-text">{t('account.deleteHint')}</p>
+                  {/* Deleting the account also ends what the pass would do
+                      next: a yearly plan is cancelled first (handleDeleteAccount),
+                      a Trip Pass simply ends with the account. */}
+                  {passNote && <p className="account-danger-text">{passNote}</p>}
                   {hasPassword ? (
                     <PasswordField
                       id="acct-delete-pw"
@@ -1325,30 +1265,171 @@ export function AccountPanel({
                     </button>
                   </div>
                 </>
-              )}
-            </div>
-          </div>
-        </>
-      )}
-
-      {view === 'faq' && <FaqView onFeedback={() => setView('feedback')} />}
-
-      {view === 'feedback' && <FeedbackView />}
-
-      {/* The legal texts render at document.body, not inside the panel. Two
-          reasons, both about the panel's own CSS reaching them: the panel is
-          a slide-in (.panel.open carries a transform), which makes it the
-          containing block for position:fixed, so an overlay rendered in here
-          is pinned to the panel's scroll box instead of the screen; and
-          `.account-panel .panel-close { display: none }` hides every cross in
-          the panel, the legal modals' included. Outside the panel's DOM both
-          rules stop applying and the modals behave like the ones the auth gate
-          and the pass modal open. */}
-      {privacyOpen && createPortal(<PrivacyPolicy onClose={() => setPrivacyOpen(false)} />, document.body)}
-      {imprintOpen && createPortal(<Imprint onClose={() => setImprintOpen(false)} />, document.body)}
-      {termsOpen && createPortal(<TermsOfService onClose={() => setTermsOpen(false)} />, document.body)}
-      <SiteFooter />
     </div>
+  );
+
+  let pane = null;
+  if (view === 'home') pane = overview;
+
+  if (view === 'travel') {
+    pane = (
+      <TravelView
+        head={head(t('ac.travel'))}
+        destinations={destinations}
+        costs={costs}
+        preferId={facts.nextTripDest}
+        onOpenLifestyle={onOpenLifestyle}
+      />
+    );
+  }
+
+  if (view === 'prefs') pane = <PrefsView head={head(t('account.preferences'))} />;
+
+  if (view === 'plan' && signedIn) {
+    pane = (
+      <PlanView
+        head={head(t('ac.plan'))}
+        entitlement={entitlement}
+        actions={planActions}
+        said={planSaid}
+        setSaid={setPlanSaid}
+        onGoCancel={() => go('cancel')}
+        onChangePlan={() => paywall.openPrices('browse')}
+        onPricingPage={paywall.openPricingPage}
+      />
+    );
+  }
+
+  if (view === 'cancel' && signedIn) {
+    pane = (
+      <CancelView
+        head={head(t('account.planCancel'))}
+        entitlement={entitlement}
+        actions={planActions}
+        onKeep={keepPlan}
+        onDone={(line) => { setPlanSaid(line); go('plan'); }}
+      />
+    );
+  }
+
+  if (view === 'together' && signedIn) {
+    pane = (
+      <>
+        {head(t('tg.title'))}
+        <Group id="ac-tg">
+          {storedHandle && (
+            <Row icon={PersonIcon} label={t('profile.handle')} value={`@${storedHandle}`} href={hrefOf('profile')} onClick={() => go('profile')} />
+          )}
+          <Row icon={EyeIcon} label={t('tg.friendsSee')} value={seeValue} href={tabHref('together', undefined, { view: 'privacy' })} onClick={() => onOpenTogether?.('privacy')} />
+        </Group>
+        <Button className="ac-signout" iconStart={<FriendsIcon size={20} />} onClick={() => onOpenTogether?.('home')}>{t('ac.openTogether')}</Button>
+      </>
+    );
+  }
+
+  if (view === 'help') {
+    pane = (
+      <>
+        {head(t('side.help'))}
+        <Group id="ac-help">{helpRows}</Group>
+        {legal}
+      </>
+    );
+  }
+
+  if (view === 'faq') pane = <>{head(t('account.menuFaq'))}<FaqView onFeedback={() => go('feedback')} /></>;
+  if (view === 'feedback') pane = <>{head(t('account.feedbackTitle'))}<FeedbackView /></>;
+
+  if (view === 'profile' && user) {
+    pane = (
+      <>
+        {head(t('account.profileDetails'))}
+        {profileForm}
+      </>
+    );
+  }
+
+  if (view === 'security' && user) {
+    pane = (
+      <>
+        {head(t('account.menuSecurity'))}
+        <Group id="ac-sec">
+          <Row icon={LockIcon} label={t('account.email')} value={storedEmail} href={hrefOf('profile')} onClick={() => go('profile')} />
+          <Row
+            icon={LockIcon}
+            label={t('ac.password')}
+            value={hasPassword ? t('ac.change') : t('ac.notSet')}
+            expanded={pwOpen}
+            onClick={() => setPwOpen((o) => !o)}
+          />
+          {(pwOpen || pwNotice) && securityForm}
+          <Row icon={LinkIcon} label={t('ac.google')} value={t(google ? 'ac.connected' : 'ac.notConnected')} />
+        </Group>
+        {signOutErr && <div className="auth-error" role="alert">{signOutErr}</div>}
+        <Button className="ac-signout" iconStart={<SignOutIcon size={20} />} loading={signOutBusy} onClick={signOutEverywhere}>
+          {t('ac.signOutAll')}
+        </Button>
+      </>
+    );
+  }
+
+  if (view === 'data' && user) {
+    const know = [
+      ['trips', facts.trips, 'ac.nTrips'], ['saves', facts.saves, 'ac.nSaves'], ['photos', facts.photos, 'ac.nPhotos'],
+      ['days', facts.dayPlans, 'ac.nDayPlans'], ['friends', facts.friends, 'ac.nFriends'], ['chats', facts.chats, 'ac.nChats'],
+    ].filter(([, n]) => n != null);
+    pane = (
+      <>
+        {head(t('account.dataTitle'))}
+        {know.length > 0 && (
+          <dl className="ac-know" aria-label={t('ac.keeps')}>
+            {know.map(([k, n, label]) => (
+              <div key={k}><dt>{t(label)}</dt><dd>{n}</dd></div>
+            ))}
+          </dl>
+        )}
+        <Group id="ac-data">
+          <Row
+            icon={DownloadIcon}
+            label={t('account.exportBtn')}
+            expanded={exportArmed}
+            onClick={() => { if (exportArmed) disarmExport(); else { setExportArmed(true); setExportDone(false); } }}
+          />
+          {exportArmed && exportForm}
+          {exportDone && <div className="panel-section ac-inline">{exportDoneLine}</div>}
+          <Row icon={SparkIcon} label={t('ac.ai')} href={hrefOf('ai')} onClick={() => go('ai')} />
+          <Row icon={ShieldIcon} label={t('account.privacyPolicy')} onClick={() => setPrivacyOpen(true)} />
+        </Group>
+        <Group id="ac-del">
+          <Row
+            icon={TrashIcon}
+            label={t('account.deleteBtn')}
+            danger
+            expanded={deleteArmed}
+            onClick={() => { if (deleteArmed) disarmDelete(); else setDeleteArmed(true); }}
+          />
+          {deleteArmed && deleteForm}
+        </Group>
+      </>
+    );
+  }
+
+  if (view === 'ai' && user) pane = <AiView head={head(t('ac.ai'))} />;
+
+  return (
+    <div className="saved-shell account-shell">
+      <div className="panel open account-panel saved-trips-panel ac-panel" ref={panelRef}>
+        <div className={`ac-page${view === 'home' ? ' is-home' : ''}`}>
+          {rail}
+          <div className="ac-pane">{pane}</div>
+        </div>
+        {/* The legal texts render at document.body, not inside the panel:
+            the panel's transform would pin a fixed overlay to its own box. */}
+        {privacyOpen && createPortal(<PrivacyPolicy onClose={() => setPrivacyOpen(false)} />, document.body)}
+        {imprintOpen && createPortal(<Imprint onClose={() => setImprintOpen(false)} />, document.body)}
+        {termsOpen && createPortal(<TermsOfService onClose={() => setTermsOpen(false)} />, document.body)}
+        <SiteFooter />
+      </div>
     </div>
   );
 }
