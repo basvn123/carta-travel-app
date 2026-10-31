@@ -7,6 +7,7 @@ import { buildFriendInviteUrl } from '../auth/friends.js';
 import { useTogether, togetherActions } from './useTogether.js';
 import { IS_FRIENDS_MOCK, mockFind } from './friendsMock.js';
 import { ToneFace, nameOf } from './parts.jsx';
+import { QrCode } from './Privacy.jsx';
 
 /**
  * Add a friend (T928, T932): the exact handle with Find, the profile it found
@@ -130,6 +131,7 @@ export function AddFriend({ back, headRef, pendingHandle, aside = null }) {
                   </Button>
                 </span>
               </div>
+              <QrCode url={link} label={t('tg.qrLabel')} />
             </div>
           )}
         </div>

@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { Button, IconButton } from '../components/ui/index.js';
 import {
-  ArrowLeftIcon, CheckIcon, CloseIcon, PlusIcon, RouteIcon, ChevronRightIcon,
+  ArrowLeftIcon, CheckIcon, CloseIcon, LockIcon, PlusIcon, RouteIcon, ChevronRightIcon,
 } from '../components/Icons.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { LoadingBlock } from '../components/StateBlocks.jsx';
@@ -16,6 +16,7 @@ import { Block, ToneFace, fmtShort, nameOf } from './parts.jsx';
 import { AddFriend } from './AddFriend.jsx';
 import { FriendView } from './FriendView.jsx';
 import { MeetCard } from './MeetCard.jsx';
+import { FriendsSee } from './Privacy.jsx';
 import { GroupBlock, GroupView, NewGroup, groupWaits } from './GroupTrips.jsx';
 import { useOverlaps } from './signals.jsx';
 
@@ -79,7 +80,7 @@ function WaitRow({ face, title, line, children }) {
 
 export function TogetherPage({
   view = 'home', viewId = '', onView, onClose, destinations, costs, pendingHandle,
-  onOpenGuides, onOpenAuth, onPlanDay, favorites, onPlanPlace, choices, onOpenTripPlan,
+  onOpenGuides, onOpenAuth, onPlanDay, favorites, onPlanPlace, choices, onOpenTripPlan, onOpenSaved,
 }) {
   const { t, lang } = useI18n();
   const s = useTogether();
@@ -147,7 +148,14 @@ export function TogetherPage({
       </div>
     );
   } else if (view === 'add') {
-    body = <AddFriend back={back} headRef={headRef} pendingHandle={pendingHandle} />;
+    body = <AddFriend back={back} headRef={headRef} pendingHandle={pendingHandle} aside={<FriendsSee onOpenSaved={onOpenSaved} />} />;
+  } else if (view === 'privacy') {
+    body = (
+      <div className="tg-page">
+        <div className="tg-head is-sub">{back}<h1 className="tg-h1" ref={headRef} tabIndex={-1} data-focus-quiet="">{t('tg.privacy')}</h1></div>
+        <FriendsSee onOpenSaved={onOpenSaved} />
+      </div>
+    );
   } else if (view === 'friend') {
     body = (
       <FriendView back={back} headRef={headRef} friendId={viewId} destinations={destinations} costs={costs}
@@ -276,6 +284,9 @@ export function TogetherPage({
             )}
             <div className="tg-o-guides">
               <GuidesStrip onOpen={onOpenGuides} />
+            </div>
+            <div className="tg-o-privacy">
+              <Button variant="quiet" size="sm" iconStart={<LockIcon size={16} />} onClick={() => onView('privacy')}>{t('tg.privacy')}</Button>
             </div>
           </div>
         </div>
