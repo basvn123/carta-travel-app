@@ -210,7 +210,10 @@ export function SavedTripsPanel({
   const authed = !!user || SAVED_MOCK;
   const [trips, setTrips] = useState(SAVED_MOCK ? MOCK_FAVS : []);
   const [loading, setLoading] = useState(!!user && !SAVED_MOCK);
-  const [tripPlans, setTripPlans] = useState(SAVED_MOCK ? MOCK_PLANS : []);
+  // ?savedmock=next leaves out the trip happening today, so the seam shows
+  // the next trip's focal card instead of Today.
+  const [tripPlans, setTripPlans] = useState(() => (!SAVED_MOCK ? []
+    : new URLSearchParams(window.location.search).get('savedmock') === 'next' ? MOCK_PLANS.filter((p) => p.id !== 'mp6') : MOCK_PLANS));
   const [tripPlansLoading, setTripPlansLoading] = useState(!!user && !SAVED_MOCK);
   // A list that cannot be read is not a traveller with no trips (020 lesson).
   const [tripPlansError, setTripPlansError] = useState('');
