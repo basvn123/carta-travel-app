@@ -4,6 +4,7 @@ import { clampRatingRange, rangeFromMinTier } from '../lib/rating.js';
 import { readFavList, writeFavList } from '../lib/favorites.js';
 import { useI18n } from '../i18n/index.jsx';
 import { mergeVisitedCountries, useVisitedCountries } from '../lib/visitedCountries.js';
+import { mergeSavedListsIntoDevice, useSavedLists } from '../lib/savedLists.js';
 import { mergeAccountChoices, mergeTaste, tasteNeedsWriteBack } from '../lib/taste.js';
 
 /** Keeps a signed-in user's filter/lifestyle preferences synced with their
@@ -36,6 +37,9 @@ export function useAccountSync({
   const { lang, setLang, languages } = useI18n();
   // Countries marked visited by hand on My trips (T434), synced with the rest.
   const visitedCountries = useVisitedCountries();
+  // T925: the traveller's saved lists and the price each save was made at,
+  // carried the same way (lib/savedLists.js).
+  const savedLists = useSavedLists();
   // The account id we've already pulled settings for (keyed by id, not a bare
   // boolean, so a second sign-in in the same page session re-hydrates for the
   // new account instead of being short-circuited by the first pull).
@@ -129,6 +133,7 @@ export function useAccountSync({
       // Countries marked visited by hand (T434) merge the same way: a list
       // that only grows, so a union loses nothing marked on either side.
       if (Array.isArray(settings.visitedCountries)) mergeVisitedCountries(settings.visitedCountries);
+      if (settings.savedLists && typeof settings.savedLists === 'object') mergeSavedListsIntoDevice(settings.savedLists);
     }).catch(() => {}).finally(() => { hydratedRef.current = true; });
     // The setters are App's useState setters, stable for the page's life, so
     // listing them never re-runs the pull; appliedForRef guards it regardless.
@@ -156,11 +161,12 @@ export function useAccountSync({
         // anywhere else, which is the worse of the two.
         favorites: writeFavList(favorites),
         visitedCountries,
+        savedLists,
       }).catch(() => {});
     }, 1200);
     return () => clearTimeout(t);
     // writeBack (T764): one push after a sign-in merge that added to the account's taste.
-  }, [user, choices, priceMode, countryFilter, tripKinds, ratingRange, gemOnly, unescoOnly, topBeachOnly, sortKey, favorites, lang, visitedCountries, writeBack]);
+  }, [user, choices, priceMode, countryFilter, tripKinds, ratingRange, gemOnly, unescoOnly, topBeachOnly, sortKey, favorites, lang, visitedCountries, savedLists, writeBack]);
 
   const handleSaveTrip = useCallback(async (destination) => {
     if (!user) { setAuthModalOpen(true); throw new Error('Sign in to save trips'); }

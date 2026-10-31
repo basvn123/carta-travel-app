@@ -1,23 +1,26 @@
-/* My trips (T434), on the kit and the roles only.
-   Imported by auth/SavedTripsPanel.jsx, so it loads with the page's own lazy
-   chunk and leaves the first-paint stylesheet. The shell (the side panel and
-   the column) stays in 25-feature-pages.css with Destinations and Explore.
+/* My trips (T434, rebuilt as Concept A by T923 to T927), on the kit and the
+   roles only. Imported by auth/SavedTripsPanel.jsx, so it loads with the
+   page's own lazy chunk and leaves the first-paint stylesheet. The shell
+   stays in 25-feature-pages.css with the other pages.
 
-   One grammar with Explore and Destinations: a side panel with the sections
-   as tiles and the filters under them on desktop; on a phone the same tiles
-   under the title, and the filters as one refine row. Cards are white on the
-   warm grey, bordered, never shadowed; selection is the tint and a mark. */
+   One header (the title, Add a booking and New trip from 700 px) and three
+   underline tabs that stick under the app header, in the style of Explore's
+   category tabs. No side rail: the content column runs the page's width up
+   to 1180 px. Cards are white on the warm grey; the focal card is the one
+   object with a photo larger than a row. */
 
 .mytrips { --bg-card: var(--surface); }
 
-/* ── The header: title, the section tiles (phone), the refine row ── */
-.mytrips .saved-panel-header {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  padding-bottom: var(--space-2);
+/* ── The head: the title and its two actions ── */
+.mytrips .saved-panel-header.mt-header {
+  display: block;
+  padding: var(--space-4) var(--gutter) 0;
+  border-bottom: 0;
 }
-.mytrips .saved-title {
+.mt-head { display: flex; align-items: center; gap: var(--space-3); min-height: var(--tap); }
+.mt-title {
+  flex: 1;
+  min-width: 0;
   margin: 0;
   font-size: var(--text-headline);
   font-weight: 700;
@@ -25,10 +28,26 @@
   letter-spacing: -0.01em;
   color: var(--text);
 }
-.mt-tiles .ui-tile { position: relative; min-height: 72px; gap: var(--space-1); }
-.mt-tiles.is-top { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.mt-tiles .ui-tile-label { display: inline-flex; align-items: center; gap: 6px; }
-.mt-tab-n.ui-chip { min-width: 20px; justify-content: center; }
+.mt-head-acts { display: none; gap: var(--space-2); }
+@media (min-width: 700px) { .mt-head-acts { display: flex; } }
+
+/* The three tabs, sticky under the app header, on the page ground with a
+   hairline under them; the kit Tabs draw the brown underline. */
+.mt-tabs {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  margin: var(--space-2) calc(-1 * var(--gutter)) 0;
+  padding: 0 var(--gutter);
+  background: var(--surface-page);
+  border-bottom: 1px solid var(--border-soft);
+}
+.mt-tabs .ui-tabs { gap: var(--space-5); overflow-x: auto; scrollbar-width: none; }
+.mt-tabs .ui-tabs::-webkit-scrollbar { display: none; }
+.mt-tabs .ui-tab { flex: none; min-height: var(--tap); font-size: var(--text-lead); font-weight: 600; white-space: nowrap; }
+.mt-tabs .ui-tab-count { margin-left: 6px; font-size: var(--text-label); }
+
+.mt-refine { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); }
 .mt-filter-label {
   display: block;
   margin-bottom: var(--space-2);
@@ -43,6 +62,21 @@
 .mt-refine .mt-chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
 .mt-refine .mt-chips::-webkit-scrollbar { display: none; }
 .mt-refine .ui-chip { flex: none; }
+
+/* A link that navigates (All in Plan): a real anchor in the action brown. */
+.mt-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-height: var(--tap);
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--action);
+  text-decoration: none;
+}
+.mt-link:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
+@media (hover: hover) { .mt-link:hover { text-decoration: underline; } }
+
 
 /* ── The panel body ── */
 .mt-panel {
@@ -74,7 +108,8 @@
   gap: var(--space-4);
   padding: var(--space-6) 0;
 }
-.mt-empty-title { margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); }
+.mt-empty-title { margin: 0; font-size: var(--text-title); font-weight: 700; color: var(--text); }
+.mt-empty-line { margin: calc(-1 * var(--space-2)) 0 0; max-width: var(--measure); font-size: var(--text-body); line-height: var(--leading-body); color: var(--text-2); }
 .mt-empty-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .mt-signin-line { margin: 0; }
 /* T503 (T500-a): where the device trip is kept, under its card or row. */
@@ -102,90 +137,112 @@
 .btn.mt-friends-line .btn-label { display: flex; align-items: center; gap: var(--space-3); width: 100%; }
 .mt-friends-text { flex: 1; min-width: 0; }
 .mt-friends-open { display: inline-flex; align-items: center; gap: var(--space-1); flex: none; font-size: var(--text-label); font-weight: 600; color: var(--action); }
-
-/* ── The next trip: the focal card ── */
+/* ── The next trip: the focal card (T923) ── */
 .mt-next { display: flex; flex-direction: column; gap: var(--space-3); }
-.mt-hero {
+.mt-next-card {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
-  background: var(--surface);
-  overflow: hidden;
 }
-.mt-hero-media {
-  display: block;
+.mt-next-media {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  max-height: 40vh;
+  overflow: hidden;
   background: var(--surface-sunken);
   cursor: pointer;
-  aspect-ratio: 16 / 9;
-  max-height: 34vh;
-  overflow: hidden;
 }
-.mt-hero-media .hero-blank,
-.mt-hero-img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.mt-hero-body {
+.mt-next-media .hero-blank,
+.mt-next-img { display: block; width: 100%; height: 100%; object-fit: cover; }
+/* The countdown on the photo: a solid surface pill, never words on the
+   photograph itself (the Trips for you rule for pills on a photo). */
+.mt-photo-pill {
+  position: absolute;
+  left: var(--space-3);
+  bottom: var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+  font-size: var(--text-label);
+  font-weight: 700;
+  color: var(--text);
+}
+.mt-next-body { flex: 1; display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-4); min-width: 0; }
+.mt-next-top { display: flex; align-items: flex-start; gap: var(--space-2); }
+.mt-next-heading { flex: 1; min-width: 0; }
+.mt-next-top .flag-stack, .mt-next-top > span:not(.mt-next-heading) { margin-top: 6px; }
+.mt-next-title {
+  margin: 0;
+  font-size: var(--text-title);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  color: var(--text);
+}
+.mt-next-dates, .mt-next-sub, .mt-next-coplan { margin: 2px 0 0; font-size: var(--text-body); color: var(--text-2); }
+.mt-next-coplan { display: inline-flex; align-items: center; gap: 6px; margin: 0; }
+.mt-going { display: flex; align-items: center; gap: var(--space-2); margin: 0; font-size: var(--text-body); color: var(--text-2); }
+
+/* Ready for the trip: one bar of four, then the steps. */
+.mt-ready {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  padding: var(--space-3) var(--space-4) var(--space-4);
-  min-width: 0;
+  padding: var(--space-3);
+  border-radius: var(--radius-control);
+  background: var(--surface-sunken);
 }
-.mt-hero-top { display: flex; align-items: center; gap: var(--space-2); min-height: var(--tap); }
-.mt-hero-title { margin: 0; font-size: var(--text-title); font-weight: 700; line-height: var(--leading-tight); }
-.mt-hero-sub, .mt-hero-dates, .mt-hero-coplan { margin: 0; font-size: var(--text-body); color: var(--text-2); }
-.mt-hero-coplan { display: inline-flex; align-items: center; gap: 6px; }
-
-/* Four facts as label over value, hairlines between, never a card in a card. */
-.mt-facts {
+.mt-ready-head { display: flex; align-items: baseline; gap: var(--space-2); }
+.mt-ready-title { flex: 1; margin: 0; font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.mt-ready-n { font-size: var(--text-caption); color: var(--text-2); }
+.mt-ready-bar { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 3px; height: 8px; }
+.mt-ready-bar i { display: block; border-radius: var(--radius-pill); background: var(--border); }
+.mt-ready-bar i.is-done { background: var(--text); }
+.mt-ready-bar i.is-part { position: relative; overflow: hidden; }
+.mt-ready-bar i.is-part::after { content: ''; position: absolute; inset: 0 50% 0 0; background: var(--text); }
+.mt-steps {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0;
-  margin: var(--space-2) 0 0;
-  border-top: 1px solid var(--border-soft);
-}
-.mt-fact {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-  padding: var(--space-3) var(--space-3) var(--space-3) 0;
-  border-bottom: 1px solid var(--border-soft);
-}
-.mt-fact:nth-child(2n) { padding-left: var(--space-3); border-left: 1px solid var(--border-soft); }
-.mt-fact-label { font-size: var(--text-caption); font-weight: 400; color: var(--text-2); }
-.mt-fact-value {
+  gap: var(--space-1) var(--space-3);
   margin: 0;
-  font-size: var(--text-lead);
-  font-weight: 600;
-  color: var(--text);
-  font-variant-numeric: tabular-nums;
-  min-width: 0;
+  padding: 0;
+  list-style: none;
 }
-.mt-weather, .mt-going { display: inline-flex; align-items: center; gap: var(--space-2); }
-.mt-weather svg { color: var(--text-2); flex: none; }
-.mt-going-n { font-size: var(--text-body); font-weight: 500; color: var(--text-2); }
-.mt-progress { display: flex; flex-direction: column; gap: 6px; }
-/* The thin bar of the data drawings family: 8 px at most, ink, no brown. */
-.mt-bar {
-  display: block;
-  height: 6px;
+.mt-step { display: flex; align-items: center; gap: var(--space-2); min-width: 0; font-size: var(--text-label); color: var(--text); }
+.mt-step.is-todo { color: var(--text-2); }
+.mt-step-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--text-3);
   border-radius: var(--radius-pill);
-  background: var(--surface-sunken);
-  overflow: hidden;
 }
-.mt-bar > span {
-  display: block;
-  height: 100%;
-  background: var(--text);
-  transform-origin: left center;
-  transition: transform var(--dur-3) var(--ease-out);
-}
-.mt-hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  margin-top: var(--space-2);
-}
+.mt-step-mark.is-done { border-color: var(--text); background: var(--text); color: var(--surface); }
+.mt-step-mark { position: relative; overflow: hidden; }
+.mt-step-mark.is-part { border-color: var(--text); }
+.mt-step-mark.is-part::after { content: ''; position: absolute; inset: 0 50% 0 0; background: var(--text); }
+.mt-ready .btn-quiet { align-self: flex-start; }
+
+.mt-next-money { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-2); margin: 0; }
+.mt-next-money .mt-next-fig .money { font-size: var(--text-title); font-weight: 700; color: var(--text); }
+.mt-next-money.is-none { font-size: var(--text-body); color: var(--text-3); }
+.mt-next-party { font-size: var(--text-body); color: var(--text-2); }
+/* The one price nudge: good news in data, backed by words, green only as a dot. */
+.mt-nudge { display: flex; align-items: baseline; gap: var(--space-2); margin: 0; font-size: var(--text-body); line-height: var(--leading-body); color: var(--text); }
+.mt-nudge-dot { flex: none; width: 8px; height: 8px; border-radius: var(--radius-pill); background: var(--green); transform: translateY(-1px); }
+.mt-next-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+
+/* Coming up and Being planned: one column on a phone, two from 1024 px. */
+.mt-two { display: grid; gap: var(--space-6); }
 
 /* Who is going: initials in rings, overlapping a little. */
 .mt-faces { display: inline-flex; align-items: center; }
@@ -420,52 +477,414 @@
 .tshare-ask-text { margin: 0; font-size: var(--text-body); color: var(--text); }
 .tshare-ask-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 
+/* ── Today, while a trip runs (T924) ── */
+.mt-today {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+.mt-today-main, .mt-today-side { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
+.mt-today-kicker { margin: 0; font-size: var(--text-label); font-weight: 600; color: var(--select-ink); }
+.mt-today-title { margin: 0; font-size: var(--text-headline); font-weight: 700; line-height: var(--leading-tight); letter-spacing: -0.01em; color: var(--text); }
+.mt-today-facts { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-4); margin: 0; font-size: var(--text-body); color: var(--text-2); }
+.mt-today-facts span { display: inline-flex; align-items: center; gap: 6px; }
+.mt-today-empty { margin: 0; font-size: var(--text-body); color: var(--text-2); }
+.mt-today-acts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.mt-today-note { margin: 0; font-size: var(--text-label); color: var(--text-2); }
+.mt-today-note:empty { display: none; }
+
+/* The day as a timeline: a line of dots, done ones filled and dimmed, the
+   next one in the action brown because it is live, later ones open. */
+.mt-tl { position: relative; display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.mt-tl::before {
+  content: '';
+  position: absolute;
+  top: 22px;
+  bottom: 22px;
+  left: 6px;
+  width: 2px;
+  background: var(--border-soft);
+}
+.mt-tl-item { position: relative; display: flex; align-items: center; gap: var(--space-3); min-height: var(--tap); }
+.mt-tl-dot {
+  flex: none;
+  z-index: 1;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--text-3);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+}
+.mt-tl-item.is-done .mt-tl-dot { border-color: var(--text-3); background: var(--text-3); }
+.mt-tl-item.is-next .mt-tl-dot { border-color: var(--action); background: var(--action); }
+.mt-tl-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.mt-tl-name { font-size: var(--text-body); color: var(--text); }
+.mt-tl-item.is-next .mt-tl-name { font-weight: 600; }
+.mt-tl-item.is-done .mt-tl-name { color: var(--text-2); text-decoration: line-through; text-decoration-color: var(--text-3); }
+.mt-tl-sub { display: flex; flex-wrap: wrap; align-items: center; gap: 0 var(--space-2); font-size: var(--text-caption); color: var(--text-2); }
+.mt-tl-sub:empty { display: none; }
+.mt-tl-next { font-weight: 600; color: var(--select-ink); }
+.mt-tl-ticket { display: inline-flex; align-items: center; gap: 4px; color: var(--text); }
+
+/* Spent today: the figure, the plan line, the bar by category. */
+.mt-spend { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-3); border-radius: var(--radius-control); background: var(--surface-sunken); }
+.mt-spend-h { margin: 0; font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.mt-spend-fig { display: flex; align-items: baseline; gap: var(--space-2); margin: 0; font-size: var(--text-body); color: var(--text-2); }
+.mt-spend-fig .money { font-size: var(--text-title); font-weight: 700; color: var(--text); }
+.mt-spend-plan, .mt-spend-none, .mt-spend-help { margin: 0; font-size: var(--text-label); line-height: var(--leading-body); color: var(--text-2); }
+.mt-spend-bar { display: flex; gap: 1px; height: 8px; overflow: hidden; border-radius: var(--radius-pill); background: var(--surface); }
+.mt-spend-bar i { display: block; min-width: 4px; }
+.mt-spend-legend { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); margin: 0; padding: 0; list-style: none; font-size: var(--text-caption); color: var(--text-2); }
+.mt-spend-legend li { display: inline-flex; align-items: center; gap: 6px; }
+.mt-spend-legend li .money { color: var(--text); }
+.mt-spend-legend i { width: 8px; height: 8px; border-radius: var(--radius-pill); }
+.mt-spend .is-food { background: var(--cost-food); }
+.mt-spend .is-transport { background: var(--cost-around); }
+.mt-spend .is-activities { background: var(--kind-city); }
+.mt-spend .is-other, .mt-spend .is-stay, .mt-spend .is-flights { background: var(--kind-village); }
+.mt-spend .btn { align-self: flex-start; }
+.mt-spend-form { display: flex; flex-direction: column; gap: var(--space-2); }
+.mt-spend-fields { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: var(--space-2); }
+.mt-spend-foot { display: flex; gap: var(--space-2); }
+
+/* Quick tiles: kit secondary buttons laid out as an icon over two lines. */
+.mt-quick { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); }
+.btn.mt-qk {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  min-height: 84px;
+  padding: var(--space-3);
+  border-radius: var(--radius-card);
+  white-space: normal;
+  text-align: left;
+}
+.btn.mt-qk .btn-label { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; width: 100%; }
+.btn.mt-qk svg { color: var(--text-2); margin-bottom: var(--space-1); }
+.mt-qk-t { font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.mt-qk-s { font-size: var(--text-caption); font-weight: 400; color: var(--text-2); }
+@media (min-width: 1024px) {
+  .mt-today { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); padding: var(--space-5); gap: var(--space-6); }
+}
+
+/* ── Saved (T925) ── */
+.mt-saved { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+/* The lists as cards: a 2 x 2 photo cover, the name, the count. They scroll
+   sideways on a phone and wrap from 769 px. */
+.mt-lists {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 148px;
+  gap: var(--space-3);
+  margin: 0 calc(-1 * var(--gutter));
+  padding: 2px var(--gutter) var(--space-1);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.mt-lists::-webkit-scrollbar { display: none; }
+.btn.mt-lcard {
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 0;
+  height: auto;
+  min-height: 0;
+  padding: var(--space-2);
+  border-radius: var(--radius-card);
+  white-space: normal;
+  text-align: left;
+}
+.btn.mt-lcard .btn-label { display: flex; flex-direction: column; align-items: stretch; gap: 2px; width: 100%; }
+.btn.mt-lcard[aria-pressed='true'] { background: var(--select-bg); border-color: var(--select-border); }
+.btn.mt-lcard[aria-pressed='true'] .mt-lcard-name { color: var(--select-ink); }
+.mt-lcard-name { margin-top: var(--space-2); overflow: hidden; font-size: var(--text-body); font-weight: 600; color: var(--text); white-space: nowrap; text-overflow: ellipsis; }
+.mt-lcard-n { font-size: var(--text-caption); font-weight: 400; color: var(--text-2); }
+.mt-mosaic {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 2px;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: var(--radius-control);
+  background: var(--surface-sunken);
+}
+.mt-mosaic .mt-mosaic-img, .mt-mosaic .hero-blank { display: block; width: 100%; height: 100%; object-fit: cover; }
+.mt-mosaic.is-1 > * { grid-column: 1 / -1; grid-row: 1 / -1; }
+.mt-mosaic.is-2 > * { grid-row: 1 / -1; }
+.mt-mosaic.is-3 > :first-child { grid-row: 1 / -1; }
+.mt-mosaic-none, .mt-mosaic.is-new { display: flex; align-items: center; justify-content: center; grid-column: 1 / -1; grid-row: 1 / -1; color: var(--text-2); }
+.mt-mosaic.is-new { border: 1.5px dashed var(--border); background: transparent; }
+.mt-name-form, .mt-note-form { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-2); }
+.mt-name-form .field, .mt-note-form .field { flex: 1 1 200px; }
+.mt-list-bar { display: flex; align-items: center; gap: var(--space-2); }
+.mt-list-title { flex: 1; margin: 0; font-size: var(--text-title); font-weight: 700; color: var(--text); }
+.mt-saved-filters { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+
+/* The saved things: rows with a select box, the photo, the facts, a menu. */
+.mt-items { display: flex; flex-direction: column; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.mt-item {
+  display: grid;
+  grid-template-columns: auto 88px minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-2) var(--space-2) 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+.mt-item.is-selected { border-color: var(--select-border); }
+.mt-item.is-active { outline: 2px solid var(--text); outline-offset: -2px; }
+.mt-item-check { display: flex; align-items: center; justify-content: center; width: var(--tap); height: 88px; }
+.mt-item-check input { width: 20px; height: 20px; margin: 0; accent-color: var(--action); cursor: pointer; }
+.mt-item-check input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.mt-item-media { display: block; width: 88px; height: 88px; overflow: hidden; border-radius: var(--radius-control); cursor: pointer; }
+.mt-item-img, .mt-item-media .hero-blank { display: block; width: 100%; height: 100%; object-fit: cover; }
+.mt-item-body { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-width: 0; padding-top: 2px; }
+.mt-item-kind { display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-caption); color: var(--text-2); }
+.btn.mt-item-name {
+  min-height: 0;
+  padding: 0;
+  font-size: var(--text-lead);
+  font-weight: 600;
+  color: var(--text);
+  text-align: left;
+  white-space: normal;
+}
+@media (hover: hover) { .btn.mt-item-name:hover { background: none; text-decoration: underline; } }
+.mt-item-name.is-missing { font-size: var(--text-lead); color: var(--text-3); }
+.mt-item-price { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); }
+.mt-item-meta { font-size: var(--text-caption); color: var(--text-2); }
+.btn.mt-item-note { min-height: 32px; padding: 0; font-weight: 500; white-space: normal; text-align: left; }
+.mt-pick-lists { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-2); }
+
+/* List and map: the map beside the list from 1024 px; below it one of the
+   two, by the List or Map pill. */
+.mt-split { display: grid; gap: var(--space-4); }
+.mt-split.is-list .mt-split-map, .mt-split.is-map .mt-split-list { display: none; }
+.mt-map.is-saved { height: min(62vh, 520px); }
+.mt-selbar {
+  position: sticky;
+  bottom: calc(var(--space-3) + env(safe-area-inset-bottom));
+  z-index: 4;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--elev-2);
+}
+.mt-selbar-text { flex: 1 1 160px; display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--text-body); font-weight: 600; color: var(--text); }
+@media (min-width: 769px) {
+  .mt-lists { grid-auto-flow: row; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); margin: 0; padding: 2px 0; overflow: visible; }
+}
+@media (min-width: 1024px) {
+  .mt-view-toggle { display: none; }
+  .mt-split, .mt-split.is-map { grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr); align-items: start; }
+  .mt-split.is-list .mt-split-map, .mt-split.is-map .mt-split-list { display: block; }
+  .mt-split-map { position: sticky; top: calc(var(--tap) + var(--space-4)); }
+}
+@media (max-width: 480px) {
+  .mt-item { grid-template-columns: auto 64px minmax(0, 1fr) auto; gap: var(--space-2); }
+  .mt-item-media { width: 64px; height: 64px; }
+  .mt-item-check { height: 64px; }
+}
+
+/* ── Your Europe (T926) ── */
+.mt-europe { display: grid; gap: var(--space-6); }
+.mt-europe-map, .mt-europe-side { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+.mt-tilemap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+.mt-tiles-map { display: block; width: 100%; max-width: 560px; height: auto; margin: 0 auto; }
+/* Been: filled in the deep brown (the traveller's own record, the one
+   committed set on this map); next: the selected tint with its edge; saved:
+   a dashed outline; the rest: quiet. The code on each tile is the word. */
+.mt-tile rect { fill: var(--surface-sunken); stroke: none; }
+.mt-tile text { font-family: var(--font); font-size: var(--text-title); font-weight: 700; fill: var(--text-2); }
+.mt-tile.is-been rect { fill: var(--select-border); }
+.mt-tile.is-been text { fill: var(--surface); }
+.mt-tile.is-next rect { fill: var(--select-bg); stroke: var(--select-border); stroke-width: 2.5; }
+.mt-tile.is-next text { fill: var(--select-ink); }
+.mt-tile.is-saved rect { fill: var(--surface); stroke: var(--text-3); stroke-width: 2; stroke-dasharray: 5 4; }
+.mt-tile-legend { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-4); font-size: var(--text-caption); color: var(--text-2); }
+.mt-tile-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.mt-tile-legend i { width: 14px; height: 14px; border-radius: var(--radius-sm); }
+.mt-tile-legend i.is-been { background: var(--select-border); }
+.mt-tile-legend i.is-next { background: var(--select-bg); border: 2px solid var(--select-border); }
+.mt-tile-legend i.is-saved { border: 2px dashed var(--text-3); }
+.mt-tile-legend .btn { margin-left: auto; }
+
+/* The year's card: a photo band, then the line and its door. */
+.btn.mt-recap-card {
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 0;
+  height: auto;
+  padding: 0;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  white-space: normal;
+  text-align: left;
+}
+.btn.mt-recap-card .btn-label { display: flex; flex-direction: column; align-items: stretch; width: 100%; }
+.btn.mt-recap-card .mt-recap-img, .btn.mt-recap-card .hero-blank { display: block; width: 100%; height: auto; aspect-ratio: 16 / 7; max-height: none; object-fit: cover; }
+.mt-recap-text { display: flex; flex-direction: column; gap: 2px; padding: var(--space-3) var(--space-4) var(--space-4); }
+.mt-recap-k { font-size: var(--text-label); font-weight: 600; color: var(--select-ink); }
+.mt-recap-t { font-size: var(--text-title); font-weight: 700; color: var(--text); }
+.mt-recap-s { font-size: var(--text-label); font-weight: 500; color: var(--text-2); }
+
+/* The figures: label over value, two to a row. */
+.mt-figs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); margin: 0; }
+.mt-fig { display: flex; flex-direction: column; gap: 2px; padding: var(--space-3); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); min-width: 0; }
+.mt-fig dt { font-size: var(--text-caption); color: var(--text-2); }
+.mt-fig dd { margin: 0; }
+.mt-fig dd b { font-size: var(--text-headline); font-weight: 700; line-height: var(--leading-tight); color: var(--text); }
+.mt-fig-of { margin-left: 6px; font-size: var(--text-body); font-weight: 600; color: var(--text-3); }
+.mt-fig-sub { font-size: var(--text-caption); line-height: var(--leading-ui); color: var(--text-2); }
+
+.mt-miles { display: grid; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.mt-mile { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2) var(--space-3); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); }
+.mt-mile.is-next { border-style: dashed; background: transparent; }
+.mt-mile-icon { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 36px; height: 36px; border-radius: var(--radius-pill); background: var(--umber-50); color: var(--select-ink); }
+.mt-mile-text { display: flex; flex-direction: column; min-width: 0; font-size: var(--text-body); color: var(--text); }
+.mt-mile-text small { font-size: var(--text-caption); color: var(--text-2); }
+
+.mt-year { display: flex; flex-direction: column; gap: var(--space-2); }
+.mt-year + .mt-year { margin-top: var(--space-3); }
+.mt-year-title { margin: 0; font-size: var(--text-lead); font-weight: 700; color: var(--text); }
+.mt-journal { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--space-3); }
+.mt-jwrap { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
+.mt-jwrap:has(.memo, .tshare, .mt-crew) { grid-column: 1 / -1; }
+.mt-jcard { display: flex; flex-direction: column; overflow: hidden; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); }
+.mt-jcard-media { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: var(--surface-sunken); cursor: pointer; }
+.mt-jcard-img, .mt-jcard-media .hero-blank { display: block; width: 100%; height: 100%; object-fit: cover; }
+.mt-photo-pill.is-small { min-height: 28px; gap: 4px; padding: 0 var(--space-2); font-size: var(--text-caption); }
+.mt-jcard-body { display: flex; flex-direction: column; gap: 2px; padding: var(--space-2) var(--space-3) var(--space-3); }
+.mt-jcard-top { display: flex; align-items: flex-start; gap: var(--space-1); }
+.btn.mt-jcard-title { flex: 1; justify-content: flex-start; min-height: var(--tap); padding: 0; font-size: var(--text-lead); font-weight: 700; color: var(--text); text-align: left; white-space: normal; }
+@media (hover: hover) { .btn.mt-jcard-title:hover { background: none; text-decoration: underline; } }
+.mt-jcard-meta { font-size: var(--text-caption); color: var(--text-2); }
+.mt-jcard-meta.is-cost { font-size: var(--text-label); color: var(--text); }
+.mt-jcard-rate { display: inline-flex; align-items: center; gap: 4px; font-size: var(--text-caption); font-weight: 600; color: var(--text); }
+.mt-jcard-rate svg { color: var(--rate); }
+.mt-jcard-acts { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-2); }
+
+/* The recap screen: the story card beside its switches. */
+.mt-recap { display: flex; flex-direction: column; gap: var(--space-4); }
+.mt-recap-head { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-1); }
+.mt-recap-h { margin: 0; font-size: var(--text-headline); font-weight: 700; color: var(--text); }
+.mt-recap-h:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.mt-recap-grid { display: grid; gap: var(--space-5); }
+.mt-story {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  width: min(100%, 420px);
+  aspect-ratio: 4 / 5;
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--radius-sheet);
+  background: var(--home-ground-deep);
+  color: var(--surface);
+}
+.mt-story-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.mt-story.has-photo::after { content: ''; position: absolute; inset: 0; background: var(--home-film-tint); }
+.mt-story-body { position: relative; z-index: 1; display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-5); }
+.mt-story-title { margin: 0; font-size: var(--text-headline); font-weight: 700; line-height: var(--leading-tight); }
+.mt-story-cells { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); margin: 0; }
+.mt-story-cells div { display: flex; flex-direction: column-reverse; }
+.mt-story-cells dt { font-size: var(--text-label); }
+.mt-story-cells dd { margin: 0; font-size: var(--text-display); font-weight: 700; line-height: 1.1; }
+.mt-story-line { margin: 0; font-size: var(--text-body); }
+.mt-story-foot { margin: var(--space-2) 0 0; font-size: var(--text-label); font-weight: 700; }
+.mt-recap-side { display: flex; flex-direction: column; gap: var(--space-3); max-width: 420px; }
+.mt-recap-toggles { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 0 var(--space-3); }
+.mt-recap-toggles .ui-switch + .ui-switch { border-top: 1px solid var(--border-soft); }
+.mt-recap-note { display: inline-flex; align-items: center; gap: 6px; margin: 0; font-size: var(--text-label); color: var(--text-2); }
+@media (min-width: 1024px) {
+  .mt-europe { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: start; }
+  .mt-europe-map { position: sticky; top: calc(var(--tap) + var(--space-4)); }
+  .mt-recap-grid { grid-template-columns: auto minmax(0, 1fr); align-items: start; }
+}
+
+/* ── Add a booking (T927) ── */
+.mt-drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-6) var(--space-4);
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface-sunken);
+  color: var(--text-2);
+  text-align: center;
+  transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
+}
+.mt-drop.is-over { border-color: var(--select-border); background: var(--select-bg); }
+.mt-drop-title { margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); }
+.mt-drop-line { margin: 0 0 var(--space-2); max-width: 40ch; font-size: var(--text-body); line-height: var(--leading-body); }
+.mt-ways { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); margin-top: var(--space-3); }
+.mt-book-note { margin: var(--space-3) 0 0; font-size: var(--text-label); line-height: var(--leading-body); color: var(--text-2); }
+.mt-book-note:empty { display: none; }
+.mt-read { display: flex; flex-direction: column; gap: var(--space-4); }
+.mt-read-head, .mt-read-done { display: flex; align-items: center; gap: var(--space-2); margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); }
+.mt-read-item { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-3); border: 1px solid var(--border); border-radius: var(--radius-card); }
+.mt-read-kind { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
+.mt-read-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+/* A field the reader was unsure of: the warning edge and its words. */
+.mt-read-fields .field.is-unsure .field-control input,
+.mt-read-fields .field.is-unsure .field-control select { border-color: var(--amber-ink); }
+.mt-read-fields .field.is-unsure .field-hint { color: var(--amber-ink); font-weight: 600; }
+.mt-read-cmp { margin: 0; font-size: var(--text-body); line-height: var(--leading-body); color: var(--text); }
+.mt-read-trip { display: flex; flex-direction: column; gap: var(--space-1); }
+.mt-read-foot { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+@media (max-width: 480px) {
+  .mt-read-fields { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mt-drop { transition: none; }
+}
+
 /* The lazy chunk's own placeholder while it loads. */
 .mt-loading { position: fixed; inset: 0; z-index: var(--z-shell); background: var(--surface-page); }
 
-/* ── Desktop: the side panel holds the sections and the filters ── */
+/* ── From 769 px: the page's own column, up to 1180 px ── */
 @media (min-width: 769px) {
-  .mt-tiles.is-top, .mt-refine { display: none; }
-  .mytrips .saved-panel-header,
+  .mytrips .saved-panel-header.mt-header,
   .mt-panel { width: 100%; max-width: 1180px; margin: 0 auto; }
-  .mytrips .saved-panel-header { padding: var(--space-6) var(--space-6) 0; }
+  .mytrips .saved-panel-header.mt-header { padding: var(--space-6) var(--space-6) 0; }
+  .mt-tabs { margin-left: calc(-1 * var(--space-6)); margin-right: calc(-1 * var(--space-6)); padding: 0 var(--space-6); }
   .mt-panel { padding: var(--space-5) var(--space-6) var(--space-8); }
-  /* In the side panel the three sections are full-width rows: icon, name,
-     count. The panel is 216 to 264 px, and three tiles abreast broke the
-     longer names (Merkliste, Besucht) mid-word. */
-  .saved-side .mt-tiles { grid-template-columns: 1fr; gap: var(--space-2); }
-  .saved-side .mt-tiles .ui-tile {
-    flex-direction: row;
-    justify-content: flex-start;
-    gap: var(--space-3);
-    min-height: var(--tap);
-    padding: 0 var(--space-3);
-  }
-  .saved-side .mt-tiles .ui-tile-icon svg { width: 20px; height: 20px; }
-  .saved-side .mt-tiles .ui-tile-label { flex: 1; justify-content: space-between; }
-  .saved-side .mt-tiles .ui-tile-tick { display: none; }
-  .mt-side-filters { padding-top: var(--space-5); margin-top: var(--space-5); border-top: 1px solid var(--border-soft); }
+  .mt-next-card { flex-direction: row; }
+  .mt-next-media { flex: 0 0 44%; aspect-ratio: auto; max-height: none; min-height: 340px; }
+  .mt-next-body { padding: var(--space-5); }
 }
 
-/* Two columns once there is room: rows two to a line, the focal card's photo
-   beside its facts. */
+/* From 1024 px: rows two to a line in one list, Coming up and Being planned
+   side by side. */
 @media (min-width: 1024px) {
-  .mt-rows { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .mt-hero { flex-direction: row; }
-  .mt-hero-media { flex: 0 0 42%; aspect-ratio: auto; max-height: none; min-height: 320px; }
-  .mt-hero-body { padding: var(--space-4) var(--space-5) var(--space-5); }
-  .mt-facts { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .mt-fact { padding: var(--space-3) var(--space-3) var(--space-3) 0; }
-  .mt-fact + .mt-fact { padding-left: var(--space-3); border-left: 1px solid var(--border-soft); }
+  .mt-two { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+  .mt-rows.is-wide { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .mt-map { height: 360px; }
 }
 
 /* ── Phone ── */
 @media (max-width: 768px) {
-  .mytrips .saved-panel-header { padding: var(--space-3) var(--gutter) 0; }
-  .mt-tiles.is-top .ui-tile { min-height: 64px; }
-  /* The hero takes the whole first row, the three figures share the next:
-     no label is squeezed at 360 px, even "Nächte unterwegs". */
   .mt-band { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .mt-band-hero { grid-column: 1 / -1; border-bottom: 1px solid var(--border-soft); }
   .mt-band-hero + .mt-band-cell { border-left: 0; }
@@ -473,15 +892,11 @@
   .mt-band-hero { padding: var(--space-3); }
   .mt-band dd { font-size: var(--text-lead); }
   .mt-band-hero .mt-band-fig { font-size: var(--text-headline); }
-  .mt-hero-actions .btn { flex: 1 1 auto; }
-  .mt-hero-actions .btn-primary { flex-basis: 100%; }
-  .mt-hero-media { aspect-ratio: 2 / 1; }
-  .mt-hero-body { gap: var(--space-1); }
-  .mt-facts { margin-top: var(--space-1); }
+  .mt-next-actions .btn { flex: 1 1 auto; }
+  .mt-next-actions .btn-primary { flex-basis: 100%; }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .mt-bar > span { transition: none; }
+@media (max-width: 400px) {
+  .mt-steps { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* Kept trips from the trip finder (T806 to T808), above the shortlist: the
