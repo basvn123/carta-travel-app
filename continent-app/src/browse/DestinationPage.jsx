@@ -651,6 +651,9 @@ export function DestinationPage({
                   <JumpBar items={jumps} scrollRef={scrollRef} ready={`${destination.id}:${!!d}`}
                     label={t('dest.subnavAria')} />
                   <DestOverview p={p} />
+                  {/* Friends here (T466, T929), right after Good to know: the
+                      approved place for it, where the decision is made. */}
+                  <FriendsWentHere destId={destination?.id} destinations={data?.destinations} />
                   {!wide && priceCard && (
                     <PSection id="pt-cost" title={t('destx.dayCosts')} className="pt-inlinecost">
                       {priceCard}
@@ -663,8 +666,6 @@ export function DestinationPage({
                   <DestGetting p={p} />
                   <DestPractical p={p} />
                   <Similar rows={d?.similar} data={data} indices={firstRun?.indices} t={t} view={view} onSelect={onSelect} />
-                  {/* Friends showing you a trip that stops here (T466). */}
-                  <FriendsWentHere destId={destination?.id} destinations={data?.destinations} />
                   <div className="destp-utility">
                     <ReportProblem item={DEST_REPORT} />
                   </div>
