@@ -8099,6 +8099,10 @@ export const en = {
   "ac.plansPrices": "Plans and prices",
   "ac.openTogether": "Open Together",
   "ac.editProfileAria": "Edit your profile, {name}",
+  "ac.eatPace": "Eating and pace",
+  "ac.withSettings": "With your settings",
+  "ac.proofAria": "{city} priced with your settings",
+  "ac.showPrices": "Show prices",
   // Flights (T517, T518): Google Flights' price, airline and times
   "journey.incFlight": "The flight from your home airport and back",
   "flight.out": "There",

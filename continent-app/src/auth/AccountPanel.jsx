@@ -2,18 +2,12 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useAuth } from './AuthContext.jsx';
 import { authErrorText } from './authErrors.js';
-import { onRadioKeys } from './radioKeys.js';
 import {
   ArrowLeftIcon, BedIcon, CheckIcon, CloseIcon, DownloadIcon, EyeIcon,
   FeedbackIcon, FriendsIcon, GlobeIcon, HomeIcon, LinkIcon, LockIcon, MapPinIcon, PencilIcon,
   PersonIcon, PlaneIcon, QuestionIcon, ReceiptIcon, ShareIcon, ShieldIcon, SignOutIcon,
   SparkIcon, TicketIcon, TrashIcon,
 } from '../components/Icons.jsx';
-import { useFirstRun } from '../lib/firstRunContext.js';
-import { tasteListText } from '../lib/taste.js';
-
-// T764: "Your travel style", the taste profile's sheet, loads when opened.
-const TasteSheet = React.lazy(() => import('../browse/TasteSheet.jsx').then((m) => ({ default: m.TasteSheet })));
 
 // The explainer page (scripts/explainer/numbers.mjs), a static page outside
 // the app, built as about/numbers.html and served at this clean path.
@@ -21,7 +15,6 @@ const NUMBERS_HREF = '/about/numbers';
 import { PrivacyPolicy } from '../components/PrivacyPolicy.jsx';
 import { Imprint } from '../components/Imprint.jsx';
 import { TermsOfService } from '../components/TermsOfService.jsx';
-import { CountryFlag } from '../components/CountryFlag.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
 import { daysLeft, TIERS } from '../lib/pricing.js';
 import {
@@ -46,6 +39,7 @@ import { DEFAULT_VISIBILITY } from './friendVisibility.js';
 import { Group, Row, fmtDate, listValue, plainClick } from './account/parts.jsx';
 import { useAccountFacts } from './account/useAccountFacts.js';
 import { useTravelValues } from './account/travelValues.js';
+import { TravelView, PrefsView } from './account/TravelView.jsx';
 import {
   IS_ACCOUNT_MOCK, ACCOUNT_MOCK_GUEST, MOCK_USER, MOCK_PROFILE, mockEntitlement,
 } from './account/accountMock.js';
@@ -248,7 +242,7 @@ const normalView = (v) => VIEW_ALIAS[v] || v || 'home';
 export function AccountPanel({
   onClose, onOpenAuth, initialView = 'home', onViewChange,
   onOpenAdmin, onOpenLifestyle, onOpenHome, onOpenTogether,
-  destinations, favorites,
+  destinations, costs, favorites,
 }) {
   const auth = useAuth();
   // The ?accountmock seam stands in for a signed-in account (T933).
@@ -260,7 +254,7 @@ export function AccountPanel({
     signOut, signOutOtherDevices, updatePassword, reauthenticate,
     updateProfile, sendPasswordReset, deleteAccount, exportUserData,
   } = auth;
-  const { t, lang, setLang, languages } = useI18n();
+  const { t, lang, languages } = useI18n();
   // One ai_status read for the whole app, owned by PaywallProvider, so the
   // balance shown here cannot disagree with the balance a gate enforced.
   const paywall = usePaywall();
@@ -279,14 +273,6 @@ export function AccountPanel({
 
   const storedName = user?.user_metadata?.full_name?.trim() || '';
   const storedEmail = user?.email || '';
-
-  // What the lifestyle row states without being opened: the bed and the
-  // habits, the two answers that move every price in the app. A comma, never
-  // a bullet, because this app has no middot separators.
-  // T764: the taste profile beside it, in the words the Explore chip uses.
-  const firstRun = useFirstRun();
-  const tasteSummary = tasteListText(firstRun?.choices?.taste, t) || t('taste.notSet');
-  const [tasteOpen, setTasteOpen] = useState(false);
 
   const [name, setName] = useState(storedName);
   const [email, setEmail] = useState(storedEmail);
@@ -1330,45 +1316,17 @@ export function AccountPanel({
 
   if (view === 'travel') {
     pane = (
-      <>
-        {head(t('ac.travel'))}
-        <Group id="ac-travel">
-          <Row icon={BedIcon} label={t('filter.lifestyle')} value={travel ? `${travel.bed}, ${travel.vibe}` : null} onClick={() => onOpenLifestyle?.()} />
-          {firstRun?.setChoices && <Row icon={SparkIcon} label={t('taste.title')} value={tasteSummary} onClick={() => setTasteOpen(true)} />}
-        </Group>
-        {tasteOpen && (
-          <React.Suspense fallback={null}>
-            <TasteSheet onClose={() => setTasteOpen(false)} />
-          </React.Suspense>
-        )}
-      </>
+      <TravelView
+        head={head(t('ac.travel'))}
+        destinations={destinations}
+        costs={costs}
+        preferId={facts.nextTripDest}
+        onOpenLifestyle={onOpenLifestyle}
+      />
     );
   }
 
-  if (view === 'prefs') {
-    pane = (
-      <>
-        {head(t('account.preferences'))}
-        <div className="account-lang-grid" role="listbox" aria-label={t('account.language')} data-arrow-select="false" onKeyDown={onRadioKeys}>
-          {languages.map((l) => (
-            <button
-              key={l.code}
-              type="button"
-              className={`account-lang-opt ${l.code === lang ? 'on' : ''}`}
-              onClick={() => setLang(l.code)}
-              role="option"
-              tabIndex={l.code === lang ? 0 : -1}
-              aria-selected={l.code === lang}
-            >
-              <CountryFlag country={l.flag} size={15} />
-              <span className="account-lang-label">{l.label}</span>
-              {l.code === lang && <CheckIcon size={13} />}
-            </button>
-          ))}
-        </div>
-      </>
-    );
-  }
+  if (view === 'prefs') pane = <PrefsView head={head(t('account.preferences'))} />;
 
   if (view === 'plan' && signedIn) {
     pane = (

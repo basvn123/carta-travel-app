@@ -237,6 +237,37 @@ a.ac-row:focus-visible, .ac-row.btn:focus-visible { outline: 2px solid var(--foc
 .ac-foot { display: flex; flex-wrap: wrap; gap: 0 var(--space-2); margin-left: calc(var(--space-3) * -1); }
 .ac-foot .btn { color: var(--text-3); font-weight: 500; }
 
+/* Your travel: one place priced with these settings (T934). */
+.ac-proof {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) auto;
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-2) var(--space-4) var(--space-2) var(--space-2);
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--elev-1);
+}
+.ac-proof-img { width: 64px; height: 64px; border-radius: var(--radius-control); object-fit: cover; display: block; }
+.ac-proof .hero-blank.ac-proof-img { display: grid; place-items: center; background: var(--surface-sunken); }
+.ac-proof-tx { display: grid; gap: 2px; min-width: 0; }
+.ac-proof-tx b { font-size: var(--text-lead); font-weight: 600; overflow-wrap: anywhere; }
+.ac-proof-tx span { font-size: var(--text-label); color: var(--text-2); }
+.ac-proof-fig { display: grid; justify-items: end; gap: 2px; text-align: right; }
+.ac-proof-fig b { font-size: var(--text-title); font-weight: 700; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+.ac-proof-fig small { font-size: var(--text-caption); color: var(--text-2); }
+.ac-unset { color: var(--amber-ink); font-weight: 600; }
+.ac-row .ac-seg { justify-self: end; }
+@media (max-width: 480px) {
+  .ac-prices .ac-row.is-static { grid-template-columns: auto minmax(0, 1fr); }
+  .ac-prices .ac-seg { grid-column: 1 / -1; justify-self: stretch; }
+}
+
+/* Preferences: the language list opens in place under its row. */
+.ac-pick { padding: 0 var(--space-4) var(--space-3); border-top: 1px solid var(--border-soft); }
+.ac-langs { display: grid; gap: var(--space-1); padding-top: var(--space-3); }
+.ac-langs .ui-crow { min-height: var(--tap); }
+
 /* The older forms inside a section keep their own styles; the panel's
    section padding is not wanted inside the pane. */
 .ac-pane .panel-section { padding-left: 0; padding-right: 0; }
