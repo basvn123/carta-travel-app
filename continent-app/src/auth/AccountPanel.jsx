@@ -1283,7 +1283,7 @@ export function AccountPanel({
     );
   }
 
-  if (view === 'prefs') pane = <PrefsView head={head(t('account.preferences'))} />;
+  if (view === 'prefs') pane = <PrefsView head={head(t('account.preferences'))} userId={user?.id || null} />;
 
   if (view === 'plan' && signedIn) {
     pane = (

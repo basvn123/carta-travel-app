@@ -1,7 +1,9 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
-import { BedIcon, DiningIcon, FriendsIcon, GlobeIcon, MapPinIcon, ReceiptIcon, SparkIcon } from '../../components/Icons.jsx';
-import { ChoiceRows } from '../../components/ui/index.js';
+import {
+  BedIcon, DiningIcon, FriendsIcon, GlobeIcon, MapPinIcon, ReceiptIcon, SparkIcon, CalendarIcon, PiggyIcon,
+} from '../../components/Icons.jsx';
+import { ChoiceRows, Switch } from '../../components/ui/index.js';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { PriceViewSwitch } from '../../components/PriceViewSwitch.jsx';
 import { SettingsEditorSheet } from '../../components/SettingsLine.jsx';
@@ -10,6 +12,7 @@ import { formatMoney } from '../../lib/money.js';
 import { useSettledFigure } from '../../lib/figureChange.js';
 import { Group, Row } from './parts.jsx';
 import { useTravelValues } from './travelValues.js';
+import { EMAILS_OFF, loadEmailPrefs, saveEmailPrefs } from './emailPrefs.js';
 
 // T764: "Your travel style", the taste profile's sheet, loads when opened.
 const TasteSheet = React.lazy(() => import('../../browse/TasteSheet.jsx').then((m) => ({ default: m.TasteSheet })));
@@ -101,12 +104,53 @@ export function TravelView({ head, destinations, costs, preferId, onOpenLifestyl
 }
 
 /**
+ * Emails (T944): trip reminders and price drops on saved places, both off
+ * until switched on, each switch saving at once (emailPrefs.js, migration
+ * 060). Shown only to a signed-in account, and only once the table exists:
+ * with migration 060 missing the group is left out.
+ */
+function EmailsGroup({ userId }) {
+  const { t, lang } = useI18n();
+  const [prefs, setPrefs] = useState(null);
+  const [failed, setFailed] = useState(false);
+  useEffect(() => {
+    let live = true;
+    loadEmailPrefs(userId).then((res) => { if (live) setPrefs(res.state === 'ok' ? res.prefs : null); });
+    return () => { live = false; };
+  }, [userId]);
+  if (!prefs) return null;
+  const flip = async (key, on) => {
+    const was = prefs;
+    const next = { ...EMAILS_OFF, ...prefs, [key]: on };
+    setPrefs(next);
+    setFailed(false);
+    const res = await saveEmailPrefs(userId, next, lang);
+    if (res.state !== 'ok') { setPrefs(was); setFailed(true); }
+  };
+  const rows = [
+    ['trip_reminders', CalendarIcon, 'ac2.tripReminders'],
+    ['price_drops', PiggyIcon, 'ac2.priceDrops'],
+  ];
+  return (
+    <Group id="ac-emails" title={t('ac2.emails')}>
+      {rows.map(([key, Icon, label]) => (
+        <div key={key} className="ac-row is-static ac-switch-row">
+          <Icon size={20} className="ac-row-icon" />
+          <Switch className="ac-switch" label={t(label)} checked={!!prefs[key]} onChange={(on) => flip(key, on)} />
+        </div>
+      ))}
+      {failed && <p className="ac-row is-static ac-switch-err" role="alert">{t('ac2.emailsError')}</p>}
+    </Group>
+  );
+}
+
+/**
  * Preferences (T934): Language and Currency as rows. Language opens a
  * compact list in place (it replaced six large tiles); the euro is the one
  * currency Carta prices in, so Currency states it and opens nothing.
- * Emails are left out: Carta sends no trip or price emails yet.
+ * T944: Emails follows for a signed-in account.
  */
-export function PrefsView({ head }) {
+export function PrefsView({ head, userId = null }) {
   const { t, lang, setLang, languages } = useI18n();
   const [open, setOpen] = useState(false);
   const langRef = useRef(null);
@@ -129,6 +173,7 @@ export function PrefsView({ head }) {
         )}
         <Row icon={ReceiptIcon} label={t('ac.currency')} value={t('ac.currencyEur')} />
       </Group>
+      {userId && <EmailsGroup userId={userId} />}
     </>
   );
 }

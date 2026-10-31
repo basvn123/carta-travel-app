@@ -8134,6 +8134,10 @@ export const en = {
   "ac.aiNotP": "Your name, email address and password are not sent to Gemini.",
   "ac.deleteEndsYear": "Your yearly plan is cancelled first, so nothing more is charged.",
   "ac.deleteEndsTrip": "Your Trip Pass ends with the account. It does not renew.",
+  "ac2.emails": "Emails",
+  "ac2.tripReminders": "Trip reminders",
+  "ac2.priceDrops": "Price drops on saved places",
+  "ac2.emailsError": "That did not save. Try again.",
   // Flights (T517, T518): Google Flights' price, airline and times
   "journey.incFlight": "The flight from your home airport and back",
   "flight.out": "There",
