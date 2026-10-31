@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { useAuth } from './AuthContext.jsx';
 import { authErrorText } from './authErrors.js';
 import {
-  ArrowLeftIcon, BedIcon, CheckIcon, CloseIcon, DownloadIcon, EyeIcon,
+  ArrowLeftIcon, BedIcon, CheckIcon, CloseIcon, DownloadIcon, EyeIcon, EyeOffIcon,
   FeedbackIcon, FriendsIcon, GlobeIcon, HomeIcon, LinkIcon, LockIcon, MapPinIcon, PencilIcon,
   PersonIcon, PlaneIcon, QuestionIcon, ReceiptIcon, ShareIcon, ShieldIcon, SignOutIcon,
   SparkIcon, TicketIcon, TrashIcon,
@@ -15,6 +15,7 @@ const NUMBERS_HREF = '/about/numbers';
 import { PrivacyPolicy } from '../components/PrivacyPolicy.jsx';
 import { Imprint } from '../components/Imprint.jsx';
 import { TermsOfService } from '../components/TermsOfService.jsx';
+import { CookiesPage } from '../components/CookiesPage.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
 import { TIERS } from '../lib/pricing.js';
 import { openBillingPortal, cancelYearly, resumeYearly } from '../lib/billing.js';
@@ -221,6 +222,7 @@ export function AccountPanel({
   const [privacyOpen, setPrivacyOpen] = useState(false);
   const [imprintOpen, setImprintOpen] = useState(false);
   const [termsOpen, setTermsOpen] = useState(false);
+  const [cookiesOpen, setCookiesOpen] = useState(false);
 
   const storedName = user?.user_metadata?.full_name?.trim() || '';
   const storedEmail = user?.email || '';
@@ -647,8 +649,35 @@ export function AccountPanel({
   const go = (v) => setView(v);
   const signedIn = !!user;
   const langLabel = (languages.find((l) => l.code === lang) || languages[0]).label;
-  const google = !!(user?.identities || []).some((i) => i.provider === 'google')
-    || (user?.app_metadata?.providers || []).includes('google');
+  const providers = Array.isArray(user?.identities) && user.identities.length
+    ? user.identities.map((i) => i.provider) : (user?.app_metadata?.providers || []);
+  // T946: the seam flips Google in memory; a real account reads its identities.
+  const [mockGoogle, setMockGoogle] = useState(null);
+  const google = mockGoogle ?? providers.includes('google');
+  const otherSignIn = providers.some((p) => p !== 'google');
+  const [googleBusy, setGoogleBusy] = useState(false);
+  const [googleErr, setGoogleErr] = useState('');
+  const googleErrText = (e) => {
+    const code = String(e?.code || '');
+    const msg = String(e?.message || '');
+    if (code === 'manual_linking_disabled' || /manual linking/i.test(msg)) return t('ac2.linkOff');
+    if (code === 'identity_already_exists' || /already linked|already exists/i.test(msg)) return t('ac2.linkTaken');
+    if (code === 'single_identity_not_deletable') return t('ac2.unlinkLast');
+    return t('account.errGeneric');
+  };
+  const toggleGoogle = async () => {
+    setGoogleErr('');
+    if (IS_ACCOUNT_MOCK) { setMockGoogle(!google); return; }
+    setGoogleBusy(true);
+    try {
+      if (google) await auth.unlinkGoogle();
+      else await auth.linkGoogle();
+    } catch (e) {
+      setGoogleErr(googleErrText(e));
+    } finally {
+      setGoogleBusy(false);
+    }
+  };
 
   // The plan in one line: its name and when it renews or ends.
   const tierKey = !signedIn ? 'free' : (TIERS[entitlement.tier] ? entitlement.tier : 'free');
@@ -754,6 +783,7 @@ export function AccountPanel({
       <Button variant="quiet" size="sm" onClick={() => setPrivacyOpen(true)}>{t('account.privacyPolicy')}</Button>
       <Button variant="quiet" size="sm" onClick={() => setTermsOpen(true)}>{t('account.terms')}</Button>
       <Button variant="quiet" size="sm" onClick={() => setImprintOpen(true)}>{t('account.imprint')}</Button>
+      <Button variant="quiet" size="sm" onClick={() => setCookiesOpen(true)}>{t('ac2.cookies')}</Button>
     </div>
   );
 
@@ -1283,7 +1313,7 @@ export function AccountPanel({
     );
   }
 
-  if (view === 'prefs') pane = <PrefsView head={head(t('account.preferences'))} />;
+  if (view === 'prefs') pane = <PrefsView head={head(t('account.preferences'))} userId={user?.id || null} />;
 
   if (view === 'plan' && signedIn) {
     pane = (
@@ -1363,8 +1393,16 @@ export function AccountPanel({
             onClick={() => setPwOpen((o) => !o)}
           />
           {(pwOpen || pwNotice) && securityForm}
-          <Row icon={LinkIcon} label={t('ac.google')} value={t(google ? 'ac.connected' : 'ac.notConnected')} />
+          <Row icon={LinkIcon} label={t('ac.google')} value={t(google ? 'ac.connected' : 'ac.notConnected')} className="ac-act-row">
+            {(!google || otherSignIn) && (
+              <Button variant="quiet" size="sm" loading={googleBusy} onClick={toggleGoogle}
+                aria-label={t(google ? 'ac2.disconnectGoogle' : 'ac2.connectGoogle')}>
+                {t(google ? 'ac2.disconnect' : 'ac2.connect')}
+              </Button>
+            )}
+          </Row>
         </Group>
+        {googleErr && <div className="auth-error" role="alert">{googleErr}</div>}
         {signOutErr && <div className="auth-error" role="alert">{signOutErr}</div>}
         <Button className="ac-signout" iconStart={<SignOutIcon size={20} />} loading={signOutBusy} onClick={signOutEverywhere}>
           {t('ac.signOutAll')}
@@ -1399,6 +1437,7 @@ export function AccountPanel({
           {exportDone && <div className="panel-section ac-inline">{exportDoneLine}</div>}
           <Row icon={SparkIcon} label={t('ac.ai')} href={hrefOf('ai')} onClick={() => go('ai')} />
           <Row icon={ShieldIcon} label={t('account.privacyPolicy')} onClick={() => setPrivacyOpen(true)} />
+          <Row icon={EyeOffIcon} label={t('ac2.cookies')} onClick={() => setCookiesOpen(true)} />
         </Group>
         <Group id="ac-del">
           <Row
@@ -1428,6 +1467,7 @@ export function AccountPanel({
         {privacyOpen && createPortal(<PrivacyPolicy onClose={() => setPrivacyOpen(false)} />, document.body)}
         {imprintOpen && createPortal(<Imprint onClose={() => setImprintOpen(false)} />, document.body)}
         {termsOpen && createPortal(<TermsOfService onClose={() => setTermsOpen(false)} />, document.body)}
+        {cookiesOpen && createPortal(<CookiesPage onClose={() => setCookiesOpen(false)} />, document.body)}
         <SiteFooter />
       </div>
     </div>

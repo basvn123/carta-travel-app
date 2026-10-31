@@ -18,7 +18,8 @@ import '../styles/84-explore-overview.css';
  * comes, what you go for, where you like to stay and how you travel. One
  * component, TasteSteps, is drawn by the Explore start dialog's "Tell Carta
  * what you like" path (StartDialog.jsx) and by TasteSheet, the sheet the
- * Explore header chip and Account's "Your travel style" row open.
+ * doors in TasteDoor.jsx open (Account, Lifestyle, Filters, plan setup, a
+ * place page; T947 took the Explore header chip away).
  *
  * Every tap writes choices.taste at once (through FirstRunContext, so it
  * rides urlState and the account like every other choice); closing at any

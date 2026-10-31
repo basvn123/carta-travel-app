@@ -128,6 +128,39 @@ export function AuthProvider({ children }) {
     if (error) throw error;
   }, []);
 
+  /**
+   * Link or unlink Google on the signed-in account (T946, Account's Sign-in
+   * and security). Linking redirects to Google and back like a sign-in; it
+   * needs "manual linking" on in the Supabase project, and without it
+   * Supabase answers manual_linking_disabled, which the caller words.
+   * Unlinking keeps the session; the refresh brings the new identity list.
+   */
+  const linkGoogle = useCallback(async () => {
+    const supabase = await getSupabase();
+    const { error } = await supabase.auth.linkIdentity({
+      provider: 'google',
+      options: { redirectTo: `${window.location.origin}/?tab=account&view=security` },
+    });
+    if (error) throw error;
+  }, []);
+
+  const unlinkGoogle = useCallback(async () => {
+    const supabase = await getSupabase();
+    const { data, error } = await supabase.auth.getUserIdentities();
+    if (error) throw error;
+    const ids = data?.identities || [];
+    const google = ids.find((i) => i.provider === 'google');
+    if (!google) return;
+    if (ids.length < 2) {
+      const err = new Error('single identity');
+      err.code = 'single_identity_not_deletable';
+      throw err;
+    }
+    const { error: unErr } = await supabase.auth.unlinkIdentity(google);
+    if (unErr) throw unErr;
+    await supabase.auth.refreshSession();
+  }, []);
+
   const signOut = useCallback(async () => {
     const supabase = await getSupabase();
     await supabase.auth.signOut();
@@ -283,6 +316,8 @@ export function AuthProvider({ children }) {
     signUp,
     signIn,
     signInWithGoogle,
+    linkGoogle,
+    unlinkGoogle,
     signOut,
     signOutOtherDevices,
     signOutEverywhere,
