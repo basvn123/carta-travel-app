@@ -432,7 +432,7 @@
 .tg-duo .is-you { fill: var(--umber-600); }
 .tg-duo .is-them { fill: var(--lagoon-600); }
 .tg-duo .is-none { fill: var(--surface-sunken); }
-.tg-duo text { font-family: var(--font); font-size: var(--text-label); font-weight: 700; fill: var(--text-3); }
+.tg-duo text { font-family: var(--font); font-size: var(--text-lead); font-weight: 700; fill: var(--text-3); }
 .tg-duo text.is-on { fill: var(--surface); }
 .tg-leg { display: flex; gap: var(--space-4); flex-wrap: wrap; margin-top: var(--space-2); font-size: var(--text-label); color: var(--text-2); font-variant-numeric: tabular-nums; }
 .tg-leg i { display: inline-block; width: 10px; height: 10px; margin-right: var(--space-2); border-radius: var(--radius-sm); }

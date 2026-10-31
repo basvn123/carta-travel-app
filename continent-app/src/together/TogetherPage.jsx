@@ -78,7 +78,7 @@ function WaitRow({ face, title, line, children }) {
 
 export function TogetherPage({
   view = 'home', viewId = '', onView, onClose, destinations, costs, pendingHandle,
-  onOpenGuides, onOpenAuth, onPlanDay,
+  onOpenGuides, onOpenAuth, onPlanDay, favorites, onPlanPlace,
 }) {
   const { t, lang } = useI18n();
   const s = useTogether();
@@ -150,7 +150,7 @@ export function TogetherPage({
   } else if (view === 'friend') {
     body = (
       <FriendView back={back} headRef={headRef} friendId={viewId} destinations={destinations} costs={costs}
-        onGone={() => onView('home')} />
+        favorites={favorites} onPlanPlace={onPlanPlace} onGone={() => onView('home')} />
     );
   } else {
     const nothing = !incoming.length && !s.invites.length && !friends.length && !outgoing.length;

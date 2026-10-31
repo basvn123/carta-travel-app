@@ -127,6 +127,10 @@ export function mockState() {
     groupsMissing: false,
     visibility: { showCountries: true, showSaves: false, showCosts: false, showTips: true, showMeet: true },
     visibilityMissing: false,
+    // Your own record and shortlist as the seam has them (the real ones are
+    // this browser's visited countries and the App's favorites).
+    mockVisited: ['Belgium', 'Netherlands', 'France', 'Germany', 'Austria', 'Italy', 'Spain', 'Czechia'],
+    mockSaves: ['dest:OPO', 'dest:LJU'],
     // Accepted co-planners on your own trips, for My trips' "Sam joins".
     coplannersByPlan: { mp1: [{ userId: 'u-sam', name: 'Sam Martens', emoji: '' }] },
   };
