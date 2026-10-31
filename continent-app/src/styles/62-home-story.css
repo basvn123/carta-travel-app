@@ -1,0 +1,255 @@
+/* ==========================================================================
+   The home page under the hero (T950 to T953, owner 2026-10-31; DESIGN.md
+   "Home page exception v3"). Three acts after the cheap flight: what the
+   trip really costs on a deep umber panel that rises over the film, the
+   proof on warm mist, everything Carta does on the page's own ground, then
+   the visitor's first try. Motion (src/browse/home/motionKit.jsx) moves
+   transform and opacity only; this sheet holds every resting state, so the
+   page reads complete with Motion absent or reduced.
+   ========================================================================== */
+
+.hm-in { max-width: 1240px; margin: 0 auto; padding: 0 var(--gutter); }
+.hm-wait { min-height: 60vh; }
+
+.hm-kick {
+  margin: 0 0 var(--space-3);
+  color: var(--action);
+  font-size: var(--text-label);
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+.hm-big {
+  margin: 0;
+  max-width: 18ch;
+  font-size: var(--text-showcase);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+/* A heading's words, each in its own line box so it can lift out of it. */
+.hm-word { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.08em; margin-bottom: -0.08em; }
+.hm-word > span { display: inline-block; }
+.hm-em { color: var(--action); }
+
+/* ── Act one: the real cost ──────────────────────────────────────────── */
+
+.hm-cost {
+  position: relative;
+  z-index: 2;
+  margin-top: calc(var(--radius-stage) * -1);
+  padding: var(--space-8) 0 var(--space-7);
+  border-radius: var(--radius-stage) var(--radius-stage) 0 0;
+  background: var(--home-ground-deep);
+  color: var(--home-ink-on-deep);
+}
+.hm-cost .hm-kick { color: var(--umber-300); }
+.hm-cost .hm-em { color: var(--sun-400); }
+.hm-cost-head { display: grid; gap: var(--space-1); max-width: 900px; }
+.hm-cost-grid { display: grid; }
+.hm-chapter { display: grid; align-content: center; gap: var(--space-3); padding: var(--space-7) 0 var(--space-2); }
+.hm-chapter-label { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--umber-300); font-size: var(--text-lead); font-weight: 700; }
+.hm-amount { color: var(--sun-400); font-size: var(--text-amount); font-weight: 800; line-height: 0.9; letter-spacing: -0.05em; }
+.hm-amount small { margin-left: 0.25em; color: var(--umber-200); font-size: var(--text-title); font-weight: 700; letter-spacing: 0; }
+.hm-chapter-line { margin: 0; max-width: 34ch; color: var(--umber-100); font-size: var(--text-title); line-height: 1.45; }
+.hm-facts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.hm-facts span {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid color-mix(in srgb, var(--home-ink-on-deep) 26%, transparent);
+  border-radius: var(--radius-pill);
+  color: var(--home-ink-on-deep);
+  font-size: var(--text-label);
+  font-weight: 600;
+}
+
+/* The receipt: beside the chapters on a wide screen, held while they pass. */
+.hm-stage { display: none; }
+.hm-rcpt { display: grid; padding: var(--space-5) var(--space-5) var(--space-2); border-radius: var(--radius-sheet); background: var(--surface); color: var(--text); box-shadow: var(--elev-3); }
+.hm-rcpt-head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-3); padding-bottom: var(--space-3); border-bottom: 2px dashed var(--border); }
+.hm-rcpt-head b { font-size: var(--text-lead); }
+.hm-rcpt-head span { color: var(--text-3); font-size: var(--text-label); }
+.hm-rcpt-line { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: var(--space-3); padding: var(--space-3) 0; border-bottom: 1px solid var(--border-soft); font-size: var(--text-lead); }
+.hm-rcpt-line small { display: block; color: var(--text-3); font-size: var(--text-caption); }
+.hm-rcpt-line b { font-weight: 800; }
+.hm-rcpt-total { display: flex; justify-content: space-between; align-items: baseline; padding: var(--space-4) 0; }
+.hm-rcpt-total span { color: var(--text-3); }
+.hm-rcpt-sum { display: inline-block; font-size: var(--text-showcase); font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
+
+/* The running total on a phone: held to the panel's bottom edge. */
+.hm-runbar {
+  position: sticky;
+  bottom: var(--space-3);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--elev-3);
+}
+.hm-runbar-last { flex: 1; min-width: 0; overflow: hidden; color: var(--text-2); font-size: var(--text-label); white-space: nowrap; text-overflow: ellipsis; }
+.hm-runbar-tot { display: grid; justify-items: end; font-size: var(--text-headline); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+.hm-runbar-tot small { color: var(--text-3); font-size: var(--text-micro); font-weight: 600; letter-spacing: 0; }
+.hm-runbar-tot span { display: inline-block; }
+
+/* ── Act two: the proof ──────────────────────────────────────────────── */
+
+.hm-proof { padding: var(--space-8) 0; background: var(--home-ground-mist); }
+.hm-proof-title { max-width: 16ch; }
+.hm-compare {
+  display: grid;
+  gap: var(--space-5);
+  margin-top: var(--space-7);
+  padding: var(--space-6) var(--space-5);
+  border-radius: var(--radius-stage);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+}
+.hm-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "label total" "track track"; gap: var(--space-2) var(--space-3); align-items: baseline; }
+.hm-row-label { grid-area: label; color: var(--text-2); font-size: var(--text-body); font-weight: 600; }
+.hm-row-total { grid-area: total; font-size: var(--text-display); font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
+.hm-row.is-carta .hm-row-total { font-size: var(--text-total); letter-spacing: -0.045em; }
+.hm-row-track { grid-area: track; display: flex; height: 18px; overflow: hidden; border-radius: var(--radius-pill); background: var(--surface-sunken); }
+.hm-row.is-carta .hm-row-track { height: 44px; border-radius: var(--radius-control); }
+.hm-row-track i { display: block; height: 100%; }
+.is-fly { background: var(--sun-400); }
+.is-bed { background: var(--action); }
+.is-food { background: var(--lagoon-600); }
+.hm-legend { display: grid; gap: 0; }
+.hm-legend span { display: grid; grid-template-columns: 12px minmax(0, 1fr) auto 44px; align-items: center; gap: var(--space-3); padding: var(--space-3) 0; border-top: 1px solid var(--border-soft); font-size: var(--text-body); }
+.hm-legend i { width: 12px; height: 12px; border-radius: var(--radius-sm); }
+.hm-legend b { font-weight: 800; }
+.hm-legend em { color: var(--text-3); font-style: normal; font-size: var(--text-label); text-align: right; }
+.hm-compare-note { margin: 0; color: var(--text-3); font-size: var(--text-label); }
+
+/* Your dates, your people and how you stay flow into your total. */
+.hm-yours { display: grid; justify-items: start; gap: var(--space-5); margin-top: var(--space-8); }
+.hm-yours-title { margin: 0; max-width: 28ch; font-size: var(--text-headline); font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; }
+.hm-flow { display: grid; justify-items: start; gap: var(--space-2); }
+.hm-in-pill,
+.hm-out-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  padding: var(--space-2) var(--space-4) var(--space-2) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text);
+  font-size: var(--text-lead);
+  font-weight: 600;
+  box-shadow: var(--elev-1);
+}
+.hm-in-pill svg { color: var(--action); }
+.hm-out-pill { background: var(--action); color: var(--action-text); }
+.hm-flow-line { display: grid; place-items: center; width: 2px; height: 28px; margin-left: 22px; background: var(--umber-300); color: var(--action); }
+.hm-flow-line svg { display: none; }
+
+/* ── Act three: everything in one place ──────────────────────────────── */
+
+.hm-tour { padding: var(--space-8) 0 var(--space-6); }
+.hm-tour-head { max-width: 760px; }
+.hm-tour-grid { display: grid; }
+.hm-feature { display: grid; align-content: center; justify-items: start; gap: var(--space-3); padding: var(--space-7) 0 var(--space-2); }
+.hm-feature-tag { display: inline-flex; align-items: center; gap: var(--space-3); color: var(--text-2); font-size: var(--text-lead); font-weight: 700; }
+.hm-feature-dot { display: grid; place-items: center; width: 44px; height: 44px; border-radius: var(--radius-control); background: var(--umber-100); color: var(--action); }
+.hm-feature-title { margin: 0; max-width: 18ch; font-size: var(--text-feature); font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; text-wrap: balance; }
+.hm-feature-rows { display: grid; gap: var(--space-2); margin: var(--space-1) 0 0; padding: 0; list-style: none; }
+.hm-feature-rows li { display: flex; align-items: center; gap: var(--space-3); color: var(--text); font-size: var(--text-title); font-weight: 500; }
+.hm-feature-rows svg { flex: none; color: var(--action); }
+.hm-feature-door { display: inline-flex; align-items: center; min-height: var(--tap); color: var(--action); font-size: var(--text-lead); font-weight: 700; text-decoration: none; }
+.hm-feature-door:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* The app's own screen: a clean rounded screen, no phone body. */
+.hm-screen { width: 240px; aspect-ratio: 546 / 1182; overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-stage); background: var(--surface); box-shadow: var(--elev-3); }
+.hm-screen-inline { justify-self: center; margin-top: var(--space-4); }
+.hm-screen-in { width: 100%; height: 100%; }
+.hm-clip { display: block; width: 100%; height: 100%; object-fit: cover; }
+.hm-tour-stage { display: none; }
+
+.hm-also { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin-top: var(--space-7); padding-top: var(--space-5); border-top: 1px solid var(--border); }
+.hm-also b { margin-right: var(--space-2); font-size: var(--text-body); }
+.hm-also span { padding: var(--space-2) var(--space-3); border-radius: var(--radius-pill); background: var(--surface-sunken); color: var(--text-2); font-size: var(--text-label); font-weight: 600; }
+
+/* ── Try it ──────────────────────────────────────────────────────────── */
+
+.hm-try { padding: var(--space-7) 0 var(--space-4); }
+.hm-try-head { display: grid; gap: var(--space-5); }
+.hm-budget { display: grid; gap: var(--space-3); padding: var(--space-4) var(--space-5); border-radius: var(--radius-sheet); background: var(--surface); box-shadow: var(--elev-1); }
+.hm-budget label { display: flex; justify-content: space-between; gap: var(--space-3); color: var(--text-2); font-weight: 600; }
+.hm-budget label b { color: var(--text); font-size: var(--text-title); }
+.hm-budget input[type="range"] {
+  width: 100%;
+  height: 6px;
+  margin: var(--space-2) 0;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--action) var(--p, 50%), var(--umber-200) var(--p, 50%));
+  accent-color: var(--action);
+}
+.hm-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); margin-top: var(--space-6); }
+.hm-card { display: grid; align-content: start; gap: var(--space-1); }
+.hm-card-photo { position: relative; display: block; aspect-ratio: 4 / 5; overflow: hidden; margin-bottom: var(--space-2); border-radius: var(--radius-sheet); background: var(--surface-sunken); }
+.hm-card-photo img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur-4) var(--ease-out), filter var(--dur-3) var(--ease-out); }
+.hm-card.is-over .hm-card-photo img { filter: grayscale(1) opacity(0.55); }
+.hm-card-best,
+.hm-card-over { position: absolute; left: var(--space-2); top: var(--space-2); padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); font-size: var(--text-caption); font-weight: 700; }
+.hm-card-best { background: var(--sun-400); color: var(--text); }
+.hm-card-over { background: var(--surface); color: var(--text-2); }
+.hm-card b { font-size: var(--text-lead); }
+.hm-card-price { color: var(--text-2); font-size: var(--text-body); }
+.hm-card-price strong { color: var(--text); font-size: var(--text-lead); }
+.hm-try-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); margin-top: var(--space-5); color: var(--text-2); font-size: var(--text-lead); }
+.hm-try-foot .btn { text-decoration: none; }
+.hm-yours-go { text-decoration: none; }
+
+@media (hover: hover) {
+  .hm-card:hover .hm-card-photo img { transform: scale(1.04); }
+}
+
+/* ── Wider screens ───────────────────────────────────────────────────── */
+
+@media (min-width: 900px) {
+  .hm-in { padding: 0 var(--space-7); }
+  .hm-cost { padding: 120px 0 var(--space-8); margin-top: calc(var(--radius-stage) * -1.5); border-radius: calc(var(--radius-stage) * 1.6) calc(var(--radius-stage) * 1.6) 0 0; }
+  .hm-cost-grid { grid-template-columns: minmax(0, 1fr) 420px; gap: var(--space-8); }
+  .hm-chapter { min-height: 520px; padding: 0; opacity: 0.4; transition: opacity var(--dur-4) var(--ease-out); }
+  .hm-chapter.is-on { opacity: 1; }
+  .hm-stage { display: block; position: sticky; top: 140px; align-self: start; margin-top: var(--space-7); }
+  .hm-runbar { display: none; }
+
+  .hm-proof { padding: 136px 0; }
+  .hm-compare { padding: var(--space-7); }
+  .hm-legend { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5); }
+  .hm-legend span { border-top: 0; padding: 0; }
+  .hm-yours { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+  .hm-yours-title { grid-column: 1 / -1; }
+  .hm-flow { display: flex; align-items: center; gap: var(--space-3); }
+  .hm-flow-line { width: 72px; height: 2px; margin: 0; background: var(--umber-300); }
+  .hm-flow-line svg { display: block; margin-left: auto; transform: translateX(8px); }
+
+  .hm-tour { padding: 136px 0 var(--space-7); }
+  .hm-tour-grid { grid-template-columns: minmax(0, 1fr) 360px; gap: var(--space-8); }
+  .hm-feature { min-height: 620px; padding: 0; opacity: 0.4; transition: opacity var(--dur-4) var(--ease-out); }
+  .hm-feature.is-on { opacity: 1; }
+  .hm-tour-stage { display: grid; place-items: center; position: sticky; top: 96px; align-self: start; height: calc(100cqh - 120px); }
+  .hm-tour-stage .hm-screen { width: 300px; }
+
+  .hm-try { padding: var(--space-8) 0 var(--space-4); }
+  .hm-try-head { grid-template-columns: minmax(0, 1fr) 400px; align-items: end; gap: var(--space-7); }
+  .hm-cards { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--space-4); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hm-chapter,
+  .hm-feature,
+  .hm-card-photo img { transition: none; }
+}
+
+/* Two whole cards a row on a phone: the fifth place waits for a wider screen. */
+@media (max-width: 899px) {
+  .hm-card:nth-child(n + 5) { display: none; }
+}

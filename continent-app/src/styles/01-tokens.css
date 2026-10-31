@@ -349,6 +349,9 @@
   --tracking-hero:    -0.035em;
   --leading-hero:     0.98;
   --radius-stage:     28px;                      /* the film and the panels */
+  --text-amount:      clamp(64px, 9vw, 128px);   /* a cost chapter's amount (T950) */
+  --text-total:       clamp(40px, 5vw, 64px);    /* the proof's whole-trip figure (T951) */
+  --text-feature:     clamp(28px, 3.4vw, 48px);  /* a tour chapter's title (T952) */
   --home-ground-mist: var(--umber-100);          /* --text 12.0:1, --text-2 6.7:1 */
   --home-ground-deep: var(--umber-800);          /* --surface 10.5:1 on it */
   --home-ground-lake: var(--lagoon-100);         /* --text 12.4:1, --text-2 6.9:1 */

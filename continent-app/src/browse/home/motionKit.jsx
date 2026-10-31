@@ -64,7 +64,7 @@ export function MaskedText({ as = 'h2', className, parts, id }) {
               {x.w}
             </m.span>
           </span>
-          {i < words.length - 1 ? ' ' : null}
+          {i < words.length - 1 && !/^[.,:;!?)]/.test(words[i + 1].w) ? ' ' : null}
         </React.Fragment>
       ))}
     </Tag>
@@ -72,15 +72,15 @@ export function MaskedText({ as = 'h2', className, parts, id }) {
 }
 
 /** A block that rises 32 px and fades in once; `delay` staggers siblings. */
-export function Reveal({ as = 'div', className, delay = 0, children, ...rest }) {
+export const Reveal = React.forwardRef(function Reveal({ as = 'div', className, delay = 0, children, ...rest }, ref) {
   const Tag = m[as] || m.div;
   return (
-    <Tag className={className} initial={{ opacity: 0, y: 32 }} whileInView={{ opacity: 1, y: 0 }}
+    <Tag ref={ref} className={className} initial={{ opacity: 0, y: 32 }} whileInView={{ opacity: 1, y: 0 }}
       viewport={ONCE} transition={{ ...SPRING.reveal, delay }} {...rest}>
       {children}
     </Tag>
   );
-}
+});
 
 /** A figure that settles when it changes: a short dip and rise, never a
  *  count-up (PRODUCT.md, numbers). */

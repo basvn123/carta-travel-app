@@ -8,15 +8,13 @@ import { useAuth } from '../../auth/AuthContext.jsx';
 import { cheapestReturnAnyMonth } from '../../lib/flights/flights.js';
 import { destAnchor } from '../../lib/origins.js';
 import { tabHref } from '../../lib/urlState.js';
-import { STORY_PLACE, STORY_SEARCH, exploreHref, searchRows } from '../../lib/homeDemo.js';
+import { STORY_PLACE, exploreHref, searchRows } from '../../lib/homeDemo.js';
 import { AskField, HomeHero } from './HomeHero.jsx';
-import { HomeWeek } from './HomeWeek.jsx';
-import { HomeVoices } from './HomeVoices.jsx';
-import { HomeChapters } from './HomeChapters.jsx';
-import { HomeRoute } from './HomeRoute.jsx';
-import { HomeWhy } from './HomeWhy.jsx';
 import { HomePlans } from './HomePlans.jsx';
-import { useIdle, useReveal } from './useHome.js';
+import { useMedia, useReveal } from './useHome.js';
+
+// Everything under the hero, with Motion, in its own chunk (T950).
+const HomeStory = React.lazy(() => import('./HomeStory.jsx'));
 
 /**
  * The home page, rebuilt from scratch (T606 batch, owner 2026-10-23: "throw
@@ -71,29 +69,33 @@ export function HomePage({
   const { user } = useAuth();
   const destinations = data?.destinations || null;
   const rows = React.useMemo(() => searchRows(destinations, indices), [destinations, indices]);
-  const photosOn = useIdle();
+  const wide = useMedia('(min-width: 900px)');
 
   // The cheapest return flight a seat from the home airport to a place,
   // Google Flights' price from the sweep, or null: never a guess.
   const flights = data?.flights || settings?.data?.flights || null;
+  // ?flightmock (dev server only): a stand-in sweep flight, so the boarding
+  // pass and the proof can be looked at without the live sweep files.
+  const flightMock = import.meta.env.DEV && typeof location !== 'undefined' && /[?&]flightmock\b/.test(location.search);
   const flightFor = React.useCallback((id) => {
     const d = destinations?.[id];
+    if (flightMock && d) return { perSeat: 64, airline: 'W6', checked: Date.now(), to: destAnchor(d) };
     const r = flights && d ? cheapestReturnAnyMonth(flights, destAnchor(d)) : null;
     if (!r) return null;
     return { perSeat: r.perSeat, airline: r.out.airline, checked: Math.min(r.out.checked, r.back.checked), to: destAnchor(d) };
-  }, [flights, destinations]);
+  }, [flights, destinations, flightMock]);
   const origin = settings?.origin || null;
-  const fromName = origin ? (destinations?.[origin]?.city || origin) : null;
 
   const place = destinations?.[STORY_PLACE] || null;
-  const acts = {
-    search: { label: t('home.try1'), href: exploreHref(STORY_SEARCH), go: () => onSearch({ facets: STORY_SEARCH }) },
-    place: place
-      ? { label: t('home.openPlace', { place: place.city }), href: `#dest=${encodeURIComponent(STORY_PLACE)}`, go: () => onOpenDest(STORY_PLACE) }
-      : { label: t('nav.places'), href: tabHref('places'), go: () => onNavigate('places') },
-    trip: { label: t('home.ctaPlan'), href: tabHref('trip'), go: () => onNavigate('trip') },
-    day: { label: t('home.ctaDay'), href: tabHref('day'), go: () => onNavigate('day') },
-    trips: { label: t('home.ctaTrips'), go: onOpenTrips },
+  // The tour's doors (T952): each chapter opens that part of the app.
+  const doors = {
+    ask: { label: t('home.tDoorAsk'), href: exploreHref({}), go: door(() => onSearch({ open: true })) },
+    explore: place
+      ? { label: t('home.tDoorExplore', { place: place.city }), href: `#dest=${encodeURIComponent(STORY_PLACE)}`, go: door(() => onOpenDest(STORY_PLACE)) }
+      : { label: t('nav.places'), href: tabHref('places'), go: door(() => onNavigate('places')) },
+    plan: { label: t('home.ctaPlan'), href: tabHref('trip'), go: door(() => onNavigate('trip')) },
+    trips: { label: t('home.ctaTrips'), href: tabHref('trips'), go: door(onOpenTrips) },
+    together: { label: t('home.tDoorTogether'), href: tabHref('together'), go: door(() => onNavigate('together')) },
   };
   const login = () => onNavigate('account');
   const close = useReveal();
@@ -138,13 +140,12 @@ export function HomePage({
           )}
         </div>
       </HomeHero>
+      <React.Suspense fallback={<div className="hm-wait" />}>
+        <HomeStory rows={rows} places={destinations} place={place?.city || null} flightFor={flightFor} origin={origin}
+          lang={lang} doors={doors} wide={wide} onSearch={onSearch}
+          onPlan={() => onNavigate('trip')} planHref={tabHref('trip')} />
+      </React.Suspense>
       <div className="hv-wrap">
-        <HomeWeek rows={rows} flightFor={flightFor} fromName={fromName} places={destinations}
-          door={door} onOpenDest={onOpenDest} />
-        <HomeVoices rows={rows} photosOn={photosOn} door={door} onSearch={onSearch} onCategory={onCategory} />
-        <HomeChapters lang={lang} acts={acts} door={door} />
-        <HomeRoute rows={rows} places={destinations} door={door} onNavigate={onNavigate} />
-        <HomeWhy />
         <HomePlans />
         <section className="hv-section hv-close" aria-labelledby="hv-close-title" {...close}>
           <h2 id="hv-close-title" className="hv-h2 hv-close-title">{t('home.closeTitle')}</h2>
