@@ -1912,7 +1912,6 @@ export const nl = {
   "tg.perTrip": "Per reis",
   "tg.seeCountries": "Landen",
   "tg.seeSaves": "Bewaarde plekken",
-  "tg.seeCosts": "Kosten",
   "tg.seeTips": "Tips",
   "tg.qrLabel": "QR-code met jouw link",
   "tg2.friendTip": "Tip voor vrienden",

@@ -2316,7 +2316,6 @@ export const en = {
   "tg.perTrip": "Per trip",
   "tg.seeCountries": "Countries",
   "tg.seeSaves": "Saves",
-  "tg.seeCosts": "Costs",
   "tg.seeTips": "Tips",
   "tg.qrLabel": "QR code with your link",
   "tg2.friendTip": "Tip for friends",

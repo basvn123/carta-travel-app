@@ -1912,7 +1912,6 @@ export const de = {
   "tg.perTrip": "Pro Reise",
   "tg.seeCountries": "Länder",
   "tg.seeSaves": "Gespeicherte Orte",
-  "tg.seeCosts": "Kosten",
   "tg.seeTips": "Tipps",
   "tg.qrLabel": "QR-Code mit deinem Link",
   "tg2.friendTip": "Tipp für Freunde",

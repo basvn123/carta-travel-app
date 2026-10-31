@@ -695,7 +695,6 @@ export function AccountPanel({
   const seeValue = listValue([
     visibility.showCountries && t('tg.seeCountries'),
     visibility.showSaves && t('tg.seeSaves'),
-    visibility.showCosts && t('tg.seeCosts'),
     visibility.showTips && t('tg.seeTips'),
   ], lang);
   const keepsValue = listValue([
