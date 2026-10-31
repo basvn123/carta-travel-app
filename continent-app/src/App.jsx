@@ -2256,6 +2256,7 @@ function TravelApp() {
               onPlanDay={(destId, date) => openDayForDest(destId, date)}
               onOpenTripPlan={openPlanInList}
               favorites={favorites}
+              choices={choices}
               onPlanPlace={(id) => { const d = data?.destinations?.[id]; if (d?.iso2) openTripForCountry(d.iso2, id); }}
             />
           </Suspense>

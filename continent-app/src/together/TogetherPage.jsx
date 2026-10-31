@@ -16,6 +16,7 @@ import { Block, ToneFace, fmtShort, nameOf } from './parts.jsx';
 import { AddFriend } from './AddFriend.jsx';
 import { FriendView } from './FriendView.jsx';
 import { MeetCard } from './MeetCard.jsx';
+import { GroupBlock, GroupView, NewGroup, groupWaits } from './GroupTrips.jsx';
 import { useOverlaps } from './signals.jsx';
 
 /**
@@ -78,7 +79,7 @@ function WaitRow({ face, title, line, children }) {
 
 export function TogetherPage({
   view = 'home', viewId = '', onView, onClose, destinations, costs, pendingHandle,
-  onOpenGuides, onOpenAuth, onPlanDay, favorites, onPlanPlace,
+  onOpenGuides, onOpenAuth, onPlanDay, favorites, onPlanPlace, choices, onOpenTripPlan,
 }) {
   const { t, lang } = useI18n();
   const s = useTogether();
@@ -152,8 +153,16 @@ export function TogetherPage({
       <FriendView back={back} headRef={headRef} friendId={viewId} destinations={destinations} costs={costs}
         favorites={favorites} onPlanPlace={onPlanPlace} onGone={() => onView('home')} />
     );
+  } else if (view === 'group') {
+    body = (
+      <GroupView back={back} headRef={headRef} groupId={viewId} destinations={destinations} choices={choices}
+        onOpenTripPlan={onOpenTripPlan} />
+    );
+  } else if (view === 'newgroup') {
+    body = <NewGroup back={back} headRef={headRef} onCreated={(id) => onView('group', id)} />;
   } else {
     const nothing = !incoming.length && !s.invites.length && !friends.length && !outgoing.length;
+    const groupsWaiting = groupWaits(s);
     body = (
       <div className="tg-page">
         <div className="tg-head">
@@ -164,7 +173,7 @@ export function TogetherPage({
         </div>
         {error && <div className="auth-error" role="alert">{error}</div>}
 
-        {(incoming.length > 0 || s.invites.length > 0) && (
+        {(incoming.length > 0 || s.invites.length > 0 || groupsWaiting.length > 0) && (
           <Block id="tg-wait-h" title={t('tg.toAnswer')} className="tg-o-wait">
             <div className="tg-wait">
               {incoming.map((l, i) => (
@@ -190,6 +199,25 @@ export function TogetherPage({
                   </IconButton>
                 </WaitRow>
               ))}
+              {groupsWaiting.map((g) => {
+                const owner = g.members.find((m) => m.userId === g.ownerId);
+                return g.myStatus === 'invited' ? (
+                  <WaitRow key={g.id} face={<ToneFace id={g.ownerId} name={owner?.name || ''} emoji={owner?.emoji} />}
+                    title={g.title} line={t('tg.groupFrom', { who: owner?.name || '' })}>
+                    <Button variant="secondary" size="sm" iconStart={<CheckIcon size={16} />} onClick={() => act(togetherActions.respondGroup(g.id, true))}>
+                      {t('coplan.join')}
+                    </Button>
+                    <IconButton label={t('friends.decline')} onClick={() => act(togetherActions.respondGroup(g.id, false))}>
+                      <CloseIcon size={16} />
+                    </IconButton>
+                  </WaitRow>
+                ) : (
+                  <WaitRow key={g.id} face={<ToneFace id={g.ownerId} me={s.userId} name={owner?.name || ''} emoji={owner?.emoji} />}
+                    title={g.title} line={t('tg.voteWaiting')}>
+                    <Button variant="secondary" size="sm" onClick={() => onView('group', g.id)}>{t('tg.vote')}</Button>
+                  </WaitRow>
+                );
+              })}
             </div>
           </Block>
         )}
@@ -216,6 +244,7 @@ export function TogetherPage({
             )}
           </div>
           <div className="tg-col">
+            <GroupBlock s={s} onView={onView} />
             <Block id="tg-people-h" title={t('friends.title')} className="tg-o-people">
               {friends.length === 0 && outgoing.length === 0 ? (
                 <p className="tg-muted">{t('tg.noFriends')}</p>

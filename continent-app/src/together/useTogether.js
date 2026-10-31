@@ -125,7 +125,7 @@ function mapGroup(s, id, fn) {
 }
 // The other members' private maximums in the seam; never shown, only used
 // to answer the band the way group_trip_band() would.
-const MOCK_OTHER_BUDGETS = { 'g-summer': [74, 120] };
+const MOCK_OTHER_BUDGETS = { 'g-summer': [104, 150] };
 
 export const togetherActions = {
   async accept(linkId) {

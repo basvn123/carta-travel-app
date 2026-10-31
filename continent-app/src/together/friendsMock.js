@@ -85,7 +85,7 @@ export function mockState() {
     {
       id: 'g-summer', title: 'Summer 2027', ownerId: MOCK_ME, bookedPlanId: null, myStatus: 'joined',
       members: [
-        { userId: MOCK_ME, status: 'joined', handle: 'bas_v', name: 'You', emoji: '' },
+        { userId: MOCK_ME, status: 'joined', handle: 'bas_v', name: 'Bas', emoji: '' },
         { userId: 'u-sam', status: 'joined', handle: 'sam_m', name: 'Sam Martens', emoji: '' },
         { userId: 'u-jo', status: 'joined', handle: 'jo_p', name: 'Jo Peeters', emoji: '' },
       ],
@@ -103,15 +103,15 @@ export function mockState() {
         { kind: 'where', userId: 'u-sam', optionId: 'o-p1' },
         { kind: 'where', userId: 'u-jo', optionId: 'o-p2' },
       ],
-      myBudget: 90,
-      // What group_trip_band() would answer for budgets of 90, 74 and 120.
-      band: { top: 70, set: 3, members: 3, ready: true },
+      myBudget: 130,
+      // What group_trip_band() would answer for budgets of 130, 104 and 150.
+      band: { top: 100, set: 3, members: 3, ready: true },
     },
     {
       id: 'g-autumn', title: 'Autumn walk', ownerId: 'u-ana', bookedPlanId: null, myStatus: 'invited',
       members: [
         { userId: 'u-ana', status: 'joined', handle: 'ana_r', name: 'Ana Rocha', emoji: '' },
-        { userId: MOCK_ME, status: 'invited', handle: 'bas_v', name: 'You', emoji: '' },
+        { userId: MOCK_ME, status: 'invited', handle: 'bas_v', name: 'Bas', emoji: '' },
       ],
       options: [], votes: [], myBudget: null, band: { top: null, set: 0, members: 1, ready: false },
     },
