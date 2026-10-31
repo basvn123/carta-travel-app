@@ -40,6 +40,7 @@ import { Group, Row, fmtDate, listValue, plainClick } from './account/parts.jsx'
 import { useAccountFacts } from './account/useAccountFacts.js';
 import { useTravelValues } from './account/travelValues.js';
 import { TravelView, PrefsView } from './account/TravelView.jsx';
+import { AiView } from './account/AiView.jsx';
 import {
   IS_ACCOUNT_MOCK, ACCOUNT_MOCK_GUEST, MOCK_USER, MOCK_PROFILE, mockEntitlement,
 } from './account/accountMock.js';
@@ -259,6 +260,10 @@ export function AccountPanel({
   // fright, and the panel already uses this arm-then-confirm shape to delete.
   const [forgotArmed, setForgotArmed] = useState(false);
 
+  // T936: the password form opens in place under its row.
+  const [pwOpen, setPwOpen] = useState(false);
+  const [signOutBusy, setSignOutBusy] = useState(false);
+  const [signOutErr, setSignOutErr] = useState('');
   const [deleteArmed, setDeleteArmed] = useState(false);
   const [deletePassword, setDeletePassword] = useState('');
   const [deleteEmail, setDeleteEmail] = useState('');
@@ -585,6 +590,19 @@ export function AccountPanel({
           return;
         }
       }
+      // T936: a yearly plan that would renew is cancelled first, so the
+      // card is never charged for an account that is gone (delete_user()
+      // erases the rows but not the Stripe subscription). If that fails,
+      // nothing is deleted and the traveller is told.
+      const sub = entitlement.subscription;
+      if (sub?.live && !sub.cancelling) {
+        const res = await planActions.cancel();
+        if (!res?.ok) {
+          setDeleteError(t('account.planFailed'));
+          setDeleteBusy(false);
+          return;
+        }
+      }
       await deleteAccount();
       onClose();
     } catch (err) {
@@ -685,6 +703,23 @@ export function AccountPanel({
 
   // Signing out keeps Account open on its signed-out Overview.
   const doSignOut = () => { setView('home'); signOut(); };
+  // Every device, this one too (Supabase's global scope).
+  const signOutEverywhere = async () => {
+    setSignOutErr('');
+    setSignOutBusy(true);
+    try {
+      await auth.signOutEverywhere();
+      setView('home');
+    } catch {
+      setSignOutErr(t('account.errGeneric'));
+    } finally {
+      setSignOutBusy(false);
+    }
+  };
+  // What deleting does to the pass, said inside the delete confirm.
+  const passNote = !entitlement.known ? ''
+    : entitlement.tier === 'year' && sub?.live && !sub.cancelling ? t('ac.deleteEndsYear')
+      : entitlement.tier === 'trip' ? t('ac.deleteEndsTrip') : '';
 
   const railLink = (v, Icon, label) => (
     <a
@@ -1001,10 +1036,7 @@ export function AccountPanel({
 
   const securityForm = (
     <>
-          <div className="panel-section">
-            <div className="section-title section-title-iconed">
-              <LockIcon size={12} /> {t('account.securityTitle')}
-            </div>
+          <div className="panel-section ac-inline">
             {/* Success is announced once, dismissibly, and the fields empty
                 behind it. A banner that cannot be closed becomes furniture on
                 the next visit to the panel. */}
@@ -1131,58 +1163,12 @@ export function AccountPanel({
             )}
           </div>
 
-          {/* Sign out lives in its own section rather than pressed between the
-              password form and the delete link, where a mis-tap on a moving
-              train hit one of the two things nobody meant to press. */}
-          <div className="panel-section">
-            <div className="section-title section-title-iconed"><SignOutIcon size={12} /> {t('account.sessionTitle')}</div>
-            {/* No explainer. Signing out is the one control here that nobody
-                needs told what it does, and the reassurance that saved trips
-                survive it only raises a doubt it then has to answer. */}
-            <button className="book-btn secondary account-signout account-wide-btn" onClick={signOut}>
-              {t('account.signOut')}
-            </button>
-          </div>
-
     </>
   );
 
-  const dataForm = (
-    <>
-          {/* Your data sits above the danger zone, not inside it. Taking a
-              copy of your own trips is an ordinary thing to want, and the two
-              halves of the same right read better adjacent than merged: this
-              one is a plain secondary button, deletion below is the red one. */}
-          <div className="panel-section">
-            <div className="section-title section-title-iconed"><DownloadIcon size={12} /> {t('account.dataTitle')}</div>
-            {!exportArmed ? (
-              <>
-                <p className="account-section-hint">{t('account.exportHint')}</p>
-                <button
-                  className="book-btn secondary account-wide-btn"
-                  onClick={() => { setExportArmed(true); setExportDone(false); }}
-                >
-                  {t('account.exportBtn')}
-                </button>
-                {/* Same dismissible banner the password form uses, and for
-                    the same reason: a confirmation that cannot be closed is
-                    furniture by the next visit to the panel. */}
-                {exportDone && (
-                  <div className="auth-banner" role="status">
-                    <CheckIcon size={14} />
-                    <span className="auth-banner-text">{t('account.exportDone')}</span>
-                    <button
-                      type="button"
-                      className="auth-banner-x"
-                      onClick={() => setExportDone(false)}
-                      aria-label={t('account.dismissNotice')}
-                    >
-                      <CloseIcon size={13} />
-                    </button>
-                  </div>
-                )}
-              </>
-            ) : (
+  // Your data's two confirms, each opened in place under its row (T936).
+  const exportForm = (
+    <div className="panel-section ac-inline">
               <>
                 <p className="account-section-hint">{t('account.exportConfirmHint')}</p>
                 {hasPassword ? (
@@ -1218,24 +1204,34 @@ export function AccountPanel({
                   </button>
                 </div>
               </>
-            )}
-          </div>
-
-          <div className="panel-section">
-            <div className="section-title section-title-iconed account-danger-title"><TrashIcon size={12} /> {t('account.dangerTitle')}</div>
-            <div className="account-danger">
-              {/* Closed, this is one red button and nothing else. The sentence
-                  about what deletion costs is not a standing notice on a panel
-                  people open to change their name: it is the answer to having
-                  pressed the button, and it appears when the question is
-                  actually being asked. */}
-              {!deleteArmed ? (
-                <button className="book-btn account-delete-arm account-wide-btn" onClick={() => setDeleteArmed(true)}>
-                  {t('account.deleteBtn')}
-                </button>
-              ) : (
+    </div>
+  );
+  const exportDoneLine = (
+    <>
+                {exportDone && (
+                  <div className="auth-banner" role="status">
+                    <CheckIcon size={14} />
+                    <span className="auth-banner-text">{t('account.exportDone')}</span>
+                    <button
+                      type="button"
+                      className="auth-banner-x"
+                      onClick={() => setExportDone(false)}
+                      aria-label={t('account.dismissNotice')}
+                    >
+                      <CloseIcon size={13} />
+                    </button>
+                  </div>
+                )}
+    </>
+  );
+  const deleteForm = (
+    <div className="panel-section ac-inline account-danger">
                 <>
                   <p className="account-danger-text">{t('account.deleteHint')}</p>
+                  {/* Deleting the account also ends what the pass would do
+                      next: a yearly plan is cancelled first (handleDeleteAccount),
+                      a Trip Pass simply ends with the account. */}
+                  {passNote && <p className="account-danger-text">{passNote}</p>}
                   {hasPassword ? (
                     <PasswordField
                       id="acct-delete-pw"
@@ -1269,10 +1265,7 @@ export function AccountPanel({
                     </button>
                   </div>
                 </>
-              )}
-            </div>
-          </div>
-    </>
+    </div>
   );
 
   let pane = null;
@@ -1323,7 +1316,13 @@ export function AccountPanel({
     pane = (
       <>
         {head(t('tg.title'))}
-        <Button className="ac-signout" iconStart={<FriendsIcon size={20} />} onClick={() => onOpenTogether?.()}>{t('ac.openTogether')}</Button>
+        <Group id="ac-tg">
+          {storedHandle && (
+            <Row icon={PersonIcon} label={t('profile.handle')} value={`@${storedHandle}`} href={hrefOf('profile')} onClick={() => go('profile')} />
+          )}
+          <Row icon={EyeIcon} label={t('tg.friendsSee')} value={seeValue} href={tabHref('together', undefined, { view: 'privacy' })} onClick={() => onOpenTogether?.('privacy')} />
+        </Group>
+        <Button className="ac-signout" iconStart={<FriendsIcon size={20} />} onClick={() => onOpenTogether?.('home')}>{t('ac.openTogether')}</Button>
       </>
     );
   }
@@ -1354,19 +1353,68 @@ export function AccountPanel({
     pane = (
       <>
         {head(t('account.menuSecurity'))}
-        {securityForm}
+        <Group id="ac-sec">
+          <Row icon={LockIcon} label={t('account.email')} value={storedEmail} href={hrefOf('profile')} onClick={() => go('profile')} />
+          <Row
+            icon={LockIcon}
+            label={t('ac.password')}
+            value={hasPassword ? t('ac.change') : t('ac.notSet')}
+            expanded={pwOpen}
+            onClick={() => setPwOpen((o) => !o)}
+          />
+          {(pwOpen || pwNotice) && securityForm}
+          <Row icon={LinkIcon} label={t('ac.google')} value={t(google ? 'ac.connected' : 'ac.notConnected')} />
+        </Group>
+        {signOutErr && <div className="auth-error" role="alert">{signOutErr}</div>}
+        <Button className="ac-signout" iconStart={<SignOutIcon size={20} />} loading={signOutBusy} onClick={signOutEverywhere}>
+          {t('ac.signOutAll')}
+        </Button>
       </>
     );
   }
 
   if (view === 'data' && user) {
+    const know = [
+      ['trips', facts.trips, 'ac.nTrips'], ['saves', facts.saves, 'ac.nSaves'], ['photos', facts.photos, 'ac.nPhotos'],
+      ['days', facts.dayPlans, 'ac.nDayPlans'], ['friends', facts.friends, 'ac.nFriends'], ['chats', facts.chats, 'ac.nChats'],
+    ].filter(([, n]) => n != null);
     pane = (
       <>
         {head(t('account.dataTitle'))}
-        {dataForm}
+        {know.length > 0 && (
+          <dl className="ac-know" aria-label={t('ac.keeps')}>
+            {know.map(([k, n, label]) => (
+              <div key={k}><dt>{t(label)}</dt><dd>{n}</dd></div>
+            ))}
+          </dl>
+        )}
+        <Group id="ac-data">
+          <Row
+            icon={DownloadIcon}
+            label={t('account.exportBtn')}
+            expanded={exportArmed}
+            onClick={() => { if (exportArmed) disarmExport(); else { setExportArmed(true); setExportDone(false); } }}
+          />
+          {exportArmed && exportForm}
+          {exportDone && <div className="panel-section ac-inline">{exportDoneLine}</div>}
+          <Row icon={SparkIcon} label={t('ac.ai')} href={hrefOf('ai')} onClick={() => go('ai')} />
+          <Row icon={ShieldIcon} label={t('account.privacyPolicy')} onClick={() => setPrivacyOpen(true)} />
+        </Group>
+        <Group id="ac-del">
+          <Row
+            icon={TrashIcon}
+            label={t('account.deleteBtn')}
+            danger
+            expanded={deleteArmed}
+            onClick={() => { if (deleteArmed) disarmDelete(); else setDeleteArmed(true); }}
+          />
+          {deleteArmed && deleteForm}
+        </Group>
       </>
     );
   }
+
+  if (view === 'ai' && user) pane = <AiView head={head(t('ac.ai'))} />;
 
   return (
     <div className="saved-shell account-shell">

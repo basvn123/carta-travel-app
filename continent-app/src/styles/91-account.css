@@ -326,6 +326,36 @@ a.ac-row:focus-visible, .ac-row.btn:focus-visible { outline: 2px solid var(--foc
 .ac-cancel dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; }
 @media (prefers-reduced-motion: reduce) { .ac-meter-bar > span { transition: none; } }
 
+/* Your data (T936): what Carta keeps, as figures. */
+.ac-know {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--border-soft);
+  border-radius: var(--radius-card);
+  box-shadow: var(--elev-1);
+  overflow: hidden;
+}
+@media (min-width: 700px) { .ac-know { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.ac-know > div { display: flex; flex-direction: column-reverse; gap: 2px; padding: var(--space-4); background: var(--surface); }
+.ac-know dt { font-size: var(--text-label); color: var(--text-2); }
+.ac-know dd { margin: 0; font-size: var(--text-title); font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* A form opened in place under its row (password, download, delete). */
+.ac-list > .ac-inline.panel-section {
+  padding: var(--space-3) var(--space-4) var(--space-4);
+  border-top: 1px solid var(--border-soft);
+  margin: 0;
+}
+.ac-list > .ac-inline.account-danger { background: none; border: 0; border-top: 1px solid var(--border-soft); border-radius: 0; }
+
+/* AI and booking reader: a short plain page. */
+.ac-doc { display: grid; gap: var(--space-5); max-width: var(--measure); }
+.ac-doc section { display: grid; gap: var(--space-2); }
+.ac-doc-h { margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); }
+.ac-doc p { margin: 0; font-size: var(--text-body); line-height: var(--leading-body); color: var(--text-2); }
+
 /* The older forms inside a section keep their own styles; the panel's
    section padding is not wanted inside the pane. */
 .ac-pane .panel-section { padding-left: 0; padding-right: 0; }

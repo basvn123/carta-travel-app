@@ -2293,7 +2293,7 @@ function TravelApp() {
             onOpenLifestyle={() => setLifestyleOpen(true)}
             onOpenSaved={openSaved}
             onOpenGuides={openGuides}
-            onOpenTogether={() => openTogether('home')}
+            onOpenTogether={(v) => openTogether(v || 'home')}
             onOpenHome={() => goToTab('home')}
             stayTier={choices.stay_tier || 'home'}
             lifestyle={choices.lifestyle}
