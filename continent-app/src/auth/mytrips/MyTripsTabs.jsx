@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
-import { Button, Chip, Tabs } from '../../components/ui/index.js';
+import { Button, Chip, Tabs, IconButton } from '../../components/ui/index.js';
 import { CountryFlag, COUNTRY_ISO2 } from '../../components/CountryFlag.jsx';
 import { LoadingBlock, ErrorBlock } from '../../components/StateBlocks.jsx';
 import { SheetShell } from '../../browse/SheetShell.jsx';
@@ -62,6 +62,14 @@ export function MyTripsHead({ tab, onTab, counts = {}, onAddBooking, onNewTrip }
     <>
       <div className="mt-head">
         <h1 className="mt-title">{t('saved.title')}</h1>
+        {/* End check: a phone has no header buttons, so the booking door
+            stays reachable (above all during a trip, when the readiness
+            block is not shown). */}
+        {onAddBooking && (
+          <IconButton className="mt-head-book" label={t('mt.addBooking')} onClick={onAddBooking}>
+            <UploadIcon size={18} />
+          </IconButton>
+        )}
         <div className="mt-head-acts">
           {onAddBooking && (
             <Button size="sm" iconStart={<UploadIcon size={16} />} onClick={onAddBooking}>{t('mt.addBooking')}</Button>
