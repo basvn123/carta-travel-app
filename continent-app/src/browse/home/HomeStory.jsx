@@ -2,6 +2,7 @@ import React from 'react';
 import { HomeMotion } from './motionKit.jsx';
 import { HomeCost, useStoryWeek } from './HomeCost.jsx';
 import { HomeProof } from './HomeProof.jsx';
+import { HomeTour } from './HomeTour.jsx';
 
 /**
  * The home page under the hero (T950 to T953), in its own chunk so Motion
@@ -15,6 +16,7 @@ export default function HomeStory({ rows, places, place, flightFor, origin, lang
     <HomeMotion>
       <HomeCost week={week} place={place} from={origin} />
       <HomeProof week={week} place={place} onPlan={onPlan} planHref={planHref} />
+      <HomeTour lang={lang} doors={doors} wide={wide} />
     </HomeMotion>
   );
 }
