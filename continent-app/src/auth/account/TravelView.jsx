@@ -12,10 +12,9 @@ import { formatMoney } from '../../lib/money.js';
 import { useSettledFigure } from '../../lib/figureChange.js';
 import { Group, Row } from './parts.jsx';
 import { useTravelValues } from './travelValues.js';
+import { openTasteSheet } from '../../browse/TasteDoor.jsx';
 import { EMAILS_OFF, loadEmailPrefs, saveEmailPrefs } from './emailPrefs.js';
 
-// T764: "Your travel style", the taste profile's sheet, loads when opened.
-const TasteSheet = React.lazy(() => import('../../browse/TasteSheet.jsx').then((m) => ({ default: m.TasteSheet })));
 
 // Well-known catalogue places, in order, for the price proof when the
 // traveller has no dated trip ahead.
@@ -58,7 +57,6 @@ export function TravelView({ head, destinations, costs, preferId, onOpenLifestyl
   const { t } = useI18n();
   const v = useTravelValues(t);
   const [editor, setEditor] = useState(null); // 'origin' | 'party' | null
-  const [tasteOpen, setTasteOpen] = useState(false);
   const homeRef = useRef(null);
   const partyRef = useRef(null);
   const close = () => {
@@ -81,7 +79,7 @@ export function TravelView({ head, destinations, costs, preferId, onOpenLifestyl
               icon={SparkIcon}
               label={t('taste.title')}
               value={v.taste ? v.taste : <span className="ac-unset">{t('taste.notSet')}</span>}
-              onClick={() => setTasteOpen(true)}
+              onClick={(e) => openTasteSheet(e?.currentTarget || null)}
             />
           )}
         </Group>
@@ -94,11 +92,6 @@ export function TravelView({ head, destinations, costs, preferId, onOpenLifestyl
         </Group>
       )}
       {editor && <SettingsEditorSheet part={editor} onClose={close} anchorRef={editor === 'origin' ? homeRef : partyRef} />}
-      {tasteOpen && (
-        <React.Suspense fallback={null}>
-          <TasteSheet onClose={() => setTasteOpen(false)} />
-        </React.Suspense>
-      )}
     </>
   );
 }

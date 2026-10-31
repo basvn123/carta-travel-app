@@ -8160,6 +8160,7 @@ export const en = {
   "ac2.linkOff": "Connecting Google is not turned on yet. Try again later.",
   "ac2.linkTaken": "That Google account already belongs to another Carta account.",
   "ac2.unlinkLast": "Google is your only way to sign in, so it stays connected. Set a password first.",
+  "ac2.setStyle": "Set your travel style",
   // Flights (T517, T518): Google Flights' price, airline and times
   "journey.incFlight": "The flight from your home airport and back",
   "flight.out": "There",

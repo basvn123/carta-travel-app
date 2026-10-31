@@ -192,6 +192,7 @@ export function ExploreFilterRail({
   flightLimitAvailable = false,
   count = null, onClearAll = null,
   only = null,
+  tasteRow = null,
 }) {
   const view = useDayView();   // T694: the budget's unit in the traveller's view
   // T604: `only` draws a subset of the sections (a quick chip's popover
@@ -227,6 +228,10 @@ export function ExploreFilterRail({
           )}
         </div>
       )}
+
+      {/* T947: "Your travel style", the taste profile's door, at the top of
+          the full pane (never in a quick chip's popover). */}
+      {tasteRow && !only && <div className="xpane-sec xpane-taste-sec">{tasteRow}</div>}
 
       {setTripKinds && show('type') && (
         <section className="xpane-sec" aria-labelledby={hid('type')}>

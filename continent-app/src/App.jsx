@@ -14,6 +14,7 @@ import { MaintenanceGate } from './components/MaintenanceGate.jsx';
 import { ExploreTab } from './browse/ExploreTab.jsx';
 import { DestinationPage } from './browse/DestinationPage.jsx';
 import { LifestylePanel } from './browse/LifestylePanel.jsx';
+import { TasteSheetHost } from './browse/TasteDoor.jsx';
 import { DestinationsTab } from './browse/DestinationsTab.jsx';
 import Logo from './components/Logo.jsx';
 // The home page (T462). In the entry bundle, not lazy: it is what a first
@@ -2371,6 +2372,8 @@ function TravelApp() {
           </div>
         )}
       </BottomSlot>
+      {/* T947: the one "Your travel style" sheet every door opens. */}
+      <TasteSheetHost />
     </div>
     </SettingsContext.Provider>
     </FirstRunContext.Provider>

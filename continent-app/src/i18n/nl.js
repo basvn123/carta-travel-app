@@ -7546,6 +7546,7 @@ export const nl = {
   "ac2.linkOff": "Google koppelen staat nog niet aan. Probeer het later opnieuw.",
   "ac2.linkTaken": "Dat Google-account hoort al bij een ander Carta-account.",
   "ac2.unlinkLast": "Google is je enige manier om in te loggen, dus het blijft gekoppeld. Stel eerst een wachtwoord in.",
+  "ac2.setStyle": "Stel je reisstijl in",
   "account.feedbackKind": "Wat voor bericht is dit",
   "account.feedbackKind.bug": "Er werkt iets niet",
   "account.feedbackKind.idea": "Een idee",

@@ -7546,6 +7546,7 @@ export const es = {
   "ac2.linkOff": "Conectar Google aún no está activado. Inténtalo más tarde.",
   "ac2.linkTaken": "Esa cuenta de Google ya pertenece a otra cuenta de Carta.",
   "ac2.unlinkLast": "Google es tu única forma de iniciar sesión, así que sigue conectado. Crea antes una contraseña.",
+  "ac2.setStyle": "Define tu estilo de viaje",
   "account.feedbackKind": "Qué tipo de mensaje es",
   "account.feedbackKind.bug": "Algo no funciona",
   "account.feedbackKind.idea": "Una idea",

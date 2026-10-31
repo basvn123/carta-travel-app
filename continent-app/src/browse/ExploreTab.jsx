@@ -6,6 +6,7 @@ import { fmtMonthRanges, MONTHS_SHORT } from './ClimateStrip.jsx';
 import { useExploreCatalog } from '../hooks/useExploreCatalog.js';
 import { ExploreFilterRail, ExploreQuickFilters, minVerdict, goodForOf, legMinutes } from './ExploreFilterRail.jsx';
 import { PlacesFilterSheet } from './PlacesFilterSheet.jsx';
+import { TasteRow } from './TasteDoor.jsx';
 import { ExploreRails, interleaveByCountry } from './ExploreRails.jsx';
 import { ExploreCategories } from './ExploreCategories.jsx';
 import { TripStylesRow } from './TripStylesRow.jsx';
@@ -42,7 +43,6 @@ import { LoadingBlock } from '../components/StateBlocks.jsx';
 // takes it (and maplibre-gl.css) off the critical path.
 const loadExploreMap = () => import('./ExploreMap.jsx');
 // T764: the taste profile's sheet and learning question load when asked for.
-const TasteSheet = React.lazy(() => import('./TasteSheet.jsx').then((m) => ({ default: m.TasteSheet })));
 const TasteLearnPrompt = React.lazy(() => import('./TasteSheet.jsx').then((m) => ({ default: m.TasteLearnPrompt })));
 const ExploreMap = React.lazy(
   () => loadExploreMap().then((m) => ({ default: m.ExploreMap })),
@@ -96,7 +96,7 @@ import {
 import { StartDialog, startMode, markStartSeen } from './StartDialog.jsx';
 import { SortIcon, ShareIcon, BookmarkIcon, CheckIcon } from '../components/Icons.jsx';
 import { useFirstRun } from '../lib/firstRunContext.js';
-import { isEmptyTaste, learnFacet, normalizeTaste, tasteChipText } from '../lib/taste.js';
+import { isEmptyTaste, learnFacet, normalizeTaste } from '../lib/taste.js';
 import { MATCH } from '../lib/match.js';
 import { MatchMonth } from './WhyItMatches.jsx';
 import { isResizable, srcSetFor, fallbackSrc } from '../lib/heroImage.js';
@@ -1091,9 +1091,8 @@ export function ExploreTab({
     const mode = startMode({ tasteEmpty: isEmptyTaste(tasteRef.current) });
     if (mode) { markStartSeen(); setStartOpen(mode); }
   }, [isActive, pageOver]);
-  // T764: the header chip ("For you: hiking, villages, quiet") and its sheet.
-  const tasteBtnRef = React.useRef(null);
-  const [tasteOpen, setTasteOpen] = React.useState(false);
+  // T947 (owner): the taste chip left the chip row; "Your travel style" is a
+  // row in the Filters pane and in every settings surface (TasteDoor.jsx).
   // T764: the learning question, only with consent and only after a save:
   // when the shortlist grows (never on load), the saved places are read for
   // a facet five of them share that the traveller did not pick and was
@@ -1304,6 +1303,7 @@ export function ExploreTab({
   };
   const filterRail = (
     <ExploreFilterRail {...railProps}
+      tasteRow={<TasteRow className="xpane-taste" before={sheetOpen ? () => setSheetOpen(false) : undefined} />}
       count={gridTotal}
       onClearAll={chips.length ? resetAll : null}
     />
@@ -1356,13 +1356,6 @@ export function ExploreTab({
             filtersOn={isDesktop ? ovPane : sheetOpen}
             filterCount={chips.length}
             onAllFilters={() => (isDesktop ? setOvPane((v) => !v) : setSheetOpen(true))}
-            tasteChip={(
-              <Button ref={tasteBtnRef} variant="secondary" size="sm" className="xquick-chip xtaste-chip"
-                iconStart={<SparkIcon size={16} />} aria-haspopup="dialog" aria-expanded={tasteOpen}
-                onClick={() => setTasteOpen(true)}>
-                {tasteChipText(taste, t)}
-              </Button>
-            )}
             strongChip={matchTaste ? (
               // T765: Strong match, 70% and up; a filter the traveller sets.
               <Button variant="secondary" size="sm"
@@ -1639,10 +1632,9 @@ export function ExploreTab({
           dropdown on top of the rail's would be the duplicate control this
           change exists to remove. */}
       {startOpen && <StartDialog t={t} mode={startOpen} onClose={() => setStartOpen(null)} />}
-      {(tasteOpen || learn) && (
+      {learn && (
         <React.Suspense fallback={null}>
-          {tasteOpen && <TasteSheet anchorRef={tasteBtnRef} onClose={() => setTasteOpen(false)} />}
-          {learn && <TasteLearnPrompt facet={learn} onDone={() => setLearn(null)} />}
+          <TasteLearnPrompt facet={learn} onDone={() => setLearn(null)} />
         </React.Suspense>
       )}
 

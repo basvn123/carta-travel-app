@@ -7546,6 +7546,7 @@ export const de = {
   "ac2.linkOff": "Google verbinden ist noch nicht eingeschaltet. Versuch es später noch einmal.",
   "ac2.linkTaken": "Dieses Google-Konto gehört schon zu einem anderen Carta-Konto.",
   "ac2.unlinkLast": "Google ist deine einzige Anmeldung, also bleibt es verbunden. Leg zuerst ein Passwort fest.",
+  "ac2.setStyle": "Deinen Reisestil festlegen",
   "account.feedbackKind": "Was für eine Nachricht ist das",
   "account.feedbackKind.bug": "Etwas funktioniert nicht",
   "account.feedbackKind.idea": "Eine Idee",

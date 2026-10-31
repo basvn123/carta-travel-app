@@ -1,4 +1,5 @@
 import React from 'react';
+import { TasteRow } from './TasteDoor.jsx';
 import { offeredStayTiers } from '../lib/runtime_pricing.js';
 import {
   BunkIcon, HomeIcon, HotelIcon,
@@ -292,6 +293,11 @@ export function LifestylePanel({ choices, setChoices, onClose, data, side = 'lef
           })}
         </div>
         {!active && <p className="ls-note">{t('lifestyle.customNote')}</p>}
+      </div>
+
+      {/* T947: the taste profile, one door, the same sheet everywhere. */}
+      <div className="panel-section ls-taste">
+        <TasteRow before={onClose} />
       </div>
 
       <div className="panel-section ls-way-section">
