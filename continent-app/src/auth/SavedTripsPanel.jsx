@@ -52,6 +52,7 @@ import { MyTripsHead, TripsTab, VisitedCountriesSheet, MT_TABS } from './mytrips
 import { BAND_CUTOFFS } from '../lib/rating.js';
 import { YourEurope } from './mytrips/YourEurope.jsx';
 import { YearRecap } from './mytrips/YearRecap.jsx';
+import { AddBookingSheet } from './mytrips/AddBookingSheet.jsx';
 import { SavedTab } from './mytrips/SavedTab.jsx';
 import { useSavedLists, loadSavedLists, noteSaved, createList, setNote } from '../lib/savedLists.js';
 import { TodayCard } from './mytrips/TodayCard.jsx';
@@ -82,6 +83,16 @@ const MOCK_FAVS = [
 // price each was saved at a little off today's so the moves render.
 const MOCK_FAV_KEYS = ['dest:BCN', 'dest:SPU', 'dest:LJU', 'dest:NAP'];
 const MOCK_SAVED_AT = { 'dest:BCN': 6, 'dest:SPU': -3, 'dest:LIS': 11 };
+// T927: what the seam's booking reader "reads", in place of parse-booking.
+const mockRead = () => new Promise((resolve) => setTimeout(() => resolve({
+  ok: true,
+  result: {
+    bookings: [
+      { kind: 'stay', title: 'Casa do Rio', city: 'Porto', eur: 318, date: addDaysIso(24) },
+      { kind: 'activity', title: 'Port cellar tour', city: 'Porto', eur: 36, date: addDaysIso(25), code: 'PX7731' },
+    ],
+  },
+}), 700));
 const MOCK_FRIEND_TRIPS = [
   { ownerId: 'u-sofie', ownerHandle: 'sofie_v', ownerName: 'Sofie Vermeulen', tripPlanId: 'ft1', label: 'Two weeks in Portugal', startDate: addDaysIso(-90), endDate: addDaysIso(-80), cities: ['Lisbon', 'Porto'], countries: ['Portugal'], destinationIds: ['LIS', 'OPO'] },
   { ownerId: 'u-sofie', ownerHandle: 'sofie_v', ownerName: 'Sofie Vermeulen', tripPlanId: 'ft2', label: 'Alpine summer', startDate: addDaysIso(-200), endDate: addDaysIso(-193), cities: ['Innsbruck'], countries: ['Austria'], destinationIds: ['INN'] },
@@ -265,6 +276,9 @@ export function SavedTripsPanel({
   const [friendTrips, setFriendTrips] = useState(SAVED_MOCK ? MOCK_FRIEND_TRIPS : []);
   const [visById, setVisById] = useState({});
   const [recapOpen, setRecapOpen] = useState(false);
+  // T927: the Add a booking sheet, opened from the header or a trip's
+  // readiness, with the trip it was opened from.
+  const [book, setBook] = useState(null);
   const [countriesOpen, setCountriesOpen] = useState(false);
   const countriesRef = useRef(null);
   const manualCountries = useVisitedCountries();
@@ -646,6 +660,7 @@ export function SavedTripsPanel({
         readiness: local.readiness,
         nudge: nudgeFor(p, figure, local.readiness),
         nextStep: nextStepFor(p, local.readiness),
+        onAddBooking: device ? null : () => setBook({ planId: p.id }),
         coplanBy: p.coplan ? (p.ownerName || '') : '',
         // A day plan and a share link belong to a trip in an account; the
         // device trip opens in Plan, where its days begin.
@@ -1018,6 +1033,17 @@ export function SavedTripsPanel({
     recap.nights ? t(recap.nights === 1 ? 'saved.nights1' : 'saved.nightsN', { n: recap.nights }) : '',
   ].filter(Boolean).join(', ') : '';
 
+  // The trips a booking can go to: every dated account trip ahead.
+  const bookPlans = datedPlans.filter((p) => !p.device && !p.coplan).map((p) => ({
+    id: p.id,
+    title: journeyParts(p).title,
+    start: p.start_date,
+    end: p.end_date,
+    party: figures[p.id]?.party || p.choices?.groupSize || 2,
+    stops: tripStops(p).map((x) => ({
+      id: x.id, city: destinations[x.id]?.city || x.city, country: destinations[x.id]?.country || '', arrive: x.arrive, nights: x.nights,
+    })),
+  }));
   const tripsCount = datedPlans.length + upcomingDayPlans.length;
 
   // Land on Trips once a trip ahead is known, unless a tab was picked this visit.
@@ -1052,6 +1078,7 @@ export function SavedTripsPanel({
               europe: beenIso.size,
             }}
             onNewTrip={() => onGoToTab?.('planstart')}
+            onAddBooking={() => setBook({ planId: '' })}
           />
         </header>
 
@@ -1135,6 +1162,16 @@ export function SavedTripsPanel({
             manual={manualCountries}
             onToggle={(c) => toggleVisitedCountry(c)}
             onClose={() => { setCountriesOpen(false); countriesRef.current?.focus(); }}
+          />
+        )}
+        {book && (
+          <AddBookingSheet
+            plans={bookPlans}
+            planId={book.planId}
+            costs={costs}
+            onClose={() => setBook(null)}
+            onTypeIn={(id) => { setBook(null); if (id) onLoadTripPlan?.(id); }}
+            mockRead={SAVED_MOCK ? mockRead : null}
           />
         )}
         {undo && <UndoToast key={undo.key} label={undo.label} onUndo={undoRemoval} onClose={flushUndo} />}

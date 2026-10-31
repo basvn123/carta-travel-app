@@ -3,7 +3,7 @@ import { useI18n } from '../../i18n/index.jsx';
 import { Button, Card } from '../../components/ui/index.js';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { CountryFlagStack } from '../../components/CountryFlag.jsx';
-import { CheckIcon, ChevronRightIcon, PersonIcon, ListDayIcon } from '../../components/Icons.jsx';
+import { CheckIcon, ChevronRightIcon, PersonIcon, ListDayIcon, UploadIcon } from '../../components/Icons.jsx';
 import { formatMoney } from '../../lib/money.js';
 import { CardMenu, TripPrice, Faces, whenText } from './parts.jsx';
 
@@ -18,7 +18,7 @@ function StepMark({ state }) {
  * each from what the trip holds (lib/myTrips.readinessSteps). A step with a
  * count (beds, days) is part done once one is booked or planned.
  */
-export function Readiness({ readiness }) {
+export function Readiness({ readiness, onAddBooking = null }) {
   const { t } = useI18n();
   if (!readiness) return null;
   const state = (s) => (s.done ? 'done' : s.n > 0 ? 'part' : 'todo');
@@ -46,6 +46,9 @@ export function Readiness({ readiness }) {
           </li>
         ))}
       </ul>
+      {onAddBooking && (
+        <Button variant="quiet" size="sm" iconStart={<UploadIcon size={16} />} onClick={onAddBooking}>{t('mt.addBooking')}</Button>
+      )}
     </section>
   );
 }
@@ -60,7 +63,7 @@ export function Readiness({ readiness }) {
 export function NextTripCard({
   id = '', title, sub, img, iso2, countries = [], countdown = null, when, dates, nights, figure,
   people = [], crewLine = '', party = null, readiness = null, nudge = null,
-  onOpen, onPlanDays, nextStep = null, coplanBy = '', menuActions = [], onRemove, removeLabel,
+  onOpen, onPlanDays, nextStep = null, coplanBy = '', menuActions = [], onRemove, removeLabel, onAddBooking = null,
 }) {
   const { t } = useI18n();
   const head = Math.max(party || 0, people.length + 1);
@@ -98,7 +101,7 @@ export function NextTripCard({
           {head > 1 && <Faces people={people} />}
           <span>{crewLine || (head > 1 ? t('saved.goingN', { n: head }) : t('saved.goingYou'))}</span>
         </p>
-        <Readiness readiness={readiness} />
+        <Readiness readiness={readiness} onAddBooking={onAddBooking} />
         {figure ? (
           <p className="mt-next-money">
             <TripPrice figure={figure} className="mt-next-fig" />

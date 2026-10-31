@@ -821,6 +821,45 @@
   .mt-recap-grid { grid-template-columns: auto minmax(0, 1fr); align-items: start; }
 }
 
+/* ── Add a booking (T927) ── */
+.mt-drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-6) var(--space-4);
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface-sunken);
+  color: var(--text-2);
+  text-align: center;
+  transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
+}
+.mt-drop.is-over { border-color: var(--select-border); background: var(--select-bg); }
+.mt-drop-title { margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); }
+.mt-drop-line { margin: 0 0 var(--space-2); max-width: 40ch; font-size: var(--text-body); line-height: var(--leading-body); }
+.mt-ways { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); margin-top: var(--space-3); }
+.mt-book-note { margin: var(--space-3) 0 0; font-size: var(--text-label); line-height: var(--leading-body); color: var(--text-2); }
+.mt-book-note:empty { display: none; }
+.mt-read { display: flex; flex-direction: column; gap: var(--space-4); }
+.mt-read-head, .mt-read-done { display: flex; align-items: center; gap: var(--space-2); margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); }
+.mt-read-item { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-3); border: 1px solid var(--border); border-radius: var(--radius-card); }
+.mt-read-kind { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
+.mt-read-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+/* A field the reader was unsure of: the warning edge and its words. */
+.mt-read-fields .field.is-unsure .field-control input,
+.mt-read-fields .field.is-unsure .field-control select { border-color: var(--amber-ink); }
+.mt-read-fields .field.is-unsure .field-hint { color: var(--amber-ink); font-weight: 600; }
+.mt-read-cmp { margin: 0; font-size: var(--text-body); line-height: var(--leading-body); color: var(--text); }
+.mt-read-trip { display: flex; flex-direction: column; gap: var(--space-1); }
+.mt-read-foot { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+@media (max-width: 480px) {
+  .mt-read-fields { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mt-drop { transition: none; }
+}
+
 /* The lazy chunk's own placeholder while it loads. */
 .mt-loading { position: fixed; inset: 0; z-index: var(--z-shell); background: var(--surface-page); }
 
