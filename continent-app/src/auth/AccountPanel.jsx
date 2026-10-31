@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { useAuth } from './AuthContext.jsx';
 import { authErrorText } from './authErrors.js';
 import {
-  ArrowLeftIcon, BedIcon, CheckIcon, CloseIcon, DownloadIcon, EyeIcon,
+  ArrowLeftIcon, BedIcon, CheckIcon, CloseIcon, DownloadIcon, EyeIcon, EyeOffIcon,
   FeedbackIcon, FriendsIcon, GlobeIcon, HomeIcon, LinkIcon, LockIcon, MapPinIcon, PencilIcon,
   PersonIcon, PlaneIcon, QuestionIcon, ReceiptIcon, ShareIcon, ShieldIcon, SignOutIcon,
   SparkIcon, TicketIcon, TrashIcon,
@@ -15,6 +15,7 @@ const NUMBERS_HREF = '/about/numbers';
 import { PrivacyPolicy } from '../components/PrivacyPolicy.jsx';
 import { Imprint } from '../components/Imprint.jsx';
 import { TermsOfService } from '../components/TermsOfService.jsx';
+import { CookiesPage } from '../components/CookiesPage.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
 import { TIERS } from '../lib/pricing.js';
 import { openBillingPortal, cancelYearly, resumeYearly } from '../lib/billing.js';
@@ -221,6 +222,7 @@ export function AccountPanel({
   const [privacyOpen, setPrivacyOpen] = useState(false);
   const [imprintOpen, setImprintOpen] = useState(false);
   const [termsOpen, setTermsOpen] = useState(false);
+  const [cookiesOpen, setCookiesOpen] = useState(false);
 
   const storedName = user?.user_metadata?.full_name?.trim() || '';
   const storedEmail = user?.email || '';
@@ -754,6 +756,7 @@ export function AccountPanel({
       <Button variant="quiet" size="sm" onClick={() => setPrivacyOpen(true)}>{t('account.privacyPolicy')}</Button>
       <Button variant="quiet" size="sm" onClick={() => setTermsOpen(true)}>{t('account.terms')}</Button>
       <Button variant="quiet" size="sm" onClick={() => setImprintOpen(true)}>{t('account.imprint')}</Button>
+      <Button variant="quiet" size="sm" onClick={() => setCookiesOpen(true)}>{t('ac2.cookies')}</Button>
     </div>
   );
 
@@ -1399,6 +1402,7 @@ export function AccountPanel({
           {exportDone && <div className="panel-section ac-inline">{exportDoneLine}</div>}
           <Row icon={SparkIcon} label={t('ac.ai')} href={hrefOf('ai')} onClick={() => go('ai')} />
           <Row icon={ShieldIcon} label={t('account.privacyPolicy')} onClick={() => setPrivacyOpen(true)} />
+          <Row icon={EyeOffIcon} label={t('ac2.cookies')} onClick={() => setCookiesOpen(true)} />
         </Group>
         <Group id="ac-del">
           <Row
@@ -1428,6 +1432,7 @@ export function AccountPanel({
         {privacyOpen && createPortal(<PrivacyPolicy onClose={() => setPrivacyOpen(false)} />, document.body)}
         {imprintOpen && createPortal(<Imprint onClose={() => setImprintOpen(false)} />, document.body)}
         {termsOpen && createPortal(<TermsOfService onClose={() => setTermsOpen(false)} />, document.body)}
+        {cookiesOpen && createPortal(<CookiesPage onClose={() => setCookiesOpen(false)} />, document.body)}
         <SiteFooter />
       </div>
     </div>
