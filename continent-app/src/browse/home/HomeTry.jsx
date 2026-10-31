@@ -12,13 +12,15 @@ import { MaskedText, Reveal, SPRING } from './motionKit.jsx';
  * The door opens Explore with that budget. Places without a price are left
  * out, never guessed.
  */
-export function HomeTry({ rows, places, onSearch }) {
+export function HomeTry({ rows, places, onSearch, wide = true }) {
   const { t, lang } = useI18n();
   const money = (v) => formatMoney(v, { precision: 'whole', locale: lang });
   const list = React.useMemo(() => FILM
     .map((f) => ({ ...f, day: placeDay(rows, f.place)?.dayEur ?? null, name: places?.[f.place]?.city || f.label }))
     .filter((f) => f.day != null)
-    .sort((a, b) => a.day - b.day), [rows, places]);
+    .sort((a, b) => a.day - b.day)
+    // Two whole cards a row on a phone: four places there, five wide.
+    .slice(0, wide ? 5 : 4), [rows, places, wide]);
   const lo = list.length ? Math.floor((list[0].day - 10) / 5) * 5 : 50;
   const hi = list.length ? Math.ceil((list[list.length - 1].day + 20) / 5) * 5 : 200;
   const start = list.length > 2 ? Math.ceil(list[2].day / 5) * 5 : hi;

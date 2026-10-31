@@ -248,8 +248,3 @@
   .hm-feature,
   .hm-card-photo img { transition: none; }
 }
-
-/* Two whole cards a row on a phone: the fifth place waits for a wider screen. */
-@media (max-width: 899px) {
-  .hm-card:nth-child(n + 5) { display: none; }
-}
