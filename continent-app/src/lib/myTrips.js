@@ -154,9 +154,15 @@ export function tripFigure(plan, { data, stayTier, lifestyle } = {}) {
   // euros): what the trip costs one person, spread over its nights, each
   // night being a day with a bed and food, as a day price on Explore is.
   const nights = state.stops.reduce((n, s) => n + (s.nights || 1), 0) || 1;
+  const head = priced.party?.head || 1;
   return {
     total, perPerson: priced.perPerson, perPersonDay: priced.perPerson / nights, nights,
-    party: priced.party?.head || 1, partySet: c.groupSize != null, est,
+    party: head, partySet: c.groupSize != null, est,
+    // T923, T924: the beds for the whole party (the price nudge compares it
+    // over time) and the plan's food and drink a person a day (what a day on
+    // the ground is planned to cost, against the day's spend).
+    beds: Number.isFinite(p.beds) ? p.beds : null,
+    foodDayPP: Number.isFinite(p.days) && p.days > 0 ? p.days / nights / head : null,
   };
 }
 
@@ -263,4 +269,211 @@ export function visitedRecord({ pastPlans = [], pastDayPlans = [], memories = {}
     trips: pastPlans.length + pastDayPlans.length,
     nights,
   };
+}
+
+/* ───────────── T923 to T926: readiness, the day today, the record ───────────── */
+
+/** A booking row the traveller has filled: a reference, a price or a link. */
+const filled = (b) => Boolean(b && (b.ref || (b.price != null && b.price !== '') || b.url));
+const FLIGHT_ROWS = ['flight-out', 'flight'];
+const FLIGHT_KINDS = ['flight_out', 'flight', 'transfer'];
+
+/**
+ * The trip's stops with their nights and dates, in order: what the planner
+ * makes its days from (useTripPlanner dayPlan: one day per night of a stop).
+ */
+export function tripStops(plan) {
+  return (plan?.stops || []).filter((s) => s && s.destination_id).map((s) => ({
+    id: s.destination_id,
+    city: s.city || '',
+    arrive: s.arrive_date || null,
+    depart: s.depart_date || null,
+    nights: Math.max(1, nightsBetween(s.arrive_date, s.depart_date) || s.nights || 1),
+  }));
+}
+
+/**
+ * The trip days that hold something the traveller planned, as day numbers
+ * (1 based, the planner's own numbering): places picked in the day planner
+ * (assignments), a day's own words (dayNotes) and booked things put on a day
+ * (dayExtras).
+ */
+export function plannedDayNumbers(plan, { assignments = {}, extras = {} } = {}) {
+  const out = new Set();
+  const stops = tripStops(plan);
+  let first = 1;
+  stops.forEach((s, i) => {
+    const days = assignments?.[i] || {};
+    Object.entries(days).forEach(([di, list]) => {
+      const d = Number(di);
+      if (Array.isArray(list) && list.length && d >= 0 && d < s.nights) out.add(first + d);
+    });
+    first += s.nights;
+  });
+  Object.entries(extras?.dayNotes || {}).forEach(([n, text]) => { if (String(text || '').trim()) out.add(Number(n)); });
+  Object.entries(extras?.dayExtras || {}).forEach(([n, list]) => { if (Array.isArray(list) && list.length) out.add(Number(n)); });
+  return [...out].filter((n) => Number.isFinite(n) && n >= 1).sort((a, b) => a - b);
+}
+
+/**
+ * Ready for the trip (T923): four steps from what the trip and its bookings
+ * and day plans hold, nothing guessed.
+ *   dates    the trip has a start and an end
+ *   travel   the way there is booked: the planner's own flight marked booked,
+ *            or a filled outbound booking row (a reference, a price or a link)
+ *   beds     stops whose stay is booked (a filled stay row, or a stay price
+ *            the traveller typed) of the stops
+ *   days     trip days with a plan of the trip's days
+ * Returns { steps: [{ key, done, n, of }], done, total, next } where next is
+ * the first step not done, or null.
+ */
+export function readinessSteps(plan, { assignments = {}, extras = {} } = {}) {
+  const c = plan?.choices || plan?.stops?.[0]?.choices || {};
+  const stops = tripStops(plan);
+  const bookings = extras?.bookings || {};
+  const customs = Object.entries(bookings).filter(([k]) => k.startsWith('custom:')).map(([, b]) => b);
+  const dates = Boolean(plan?.start_date && plan?.end_date);
+  const travel = Boolean(c.ownFlight?.booked)
+    || FLIGHT_ROWS.some((k) => filled(bookings[k]))
+    || customs.some((b) => FLIGHT_KINDS.includes(b?.kind) && filled(b));
+  const bedsBooked = stops.filter((s, i) => filled(bookings[`stay-${i}`]) || c.ownStays?.[s.id] != null).length;
+  const totalDays = stops.reduce((n, s) => n + s.nights, 0);
+  const planned = Math.min(totalDays, plannedDayNumbers(plan, { assignments, extras }).length);
+  const steps = [
+    { key: 'dates', done: dates },
+    { key: 'travel', done: travel },
+    { key: 'beds', done: stops.length > 0 && bedsBooked >= stops.length, n: bedsBooked, of: stops.length },
+    { key: 'days', done: totalDays > 0 && planned >= totalDays, n: planned, of: totalDays },
+  ];
+  const done = steps.filter((s) => s.done).length;
+  return { steps, done, total: steps.length, next: steps.find((s) => !s.done)?.key || null };
+}
+
+/** Is the trip happening on `todayIso` (its first day to its last)? */
+export function isHappening(plan, todayIso) {
+  return Boolean(plan?.start_date && plan.start_date <= todayIso && (!plan.end_date || plan.end_date >= todayIso));
+}
+
+/**
+ * Where a trip is today (T924): { dayNum, of, stopIndex, dayIndex, stop,
+ * tomorrow } or null when it is not happening. The departure day counts as
+ * the last planned day, the planner having no day of its own for it.
+ */
+export function tripToday(plan, todayIso) {
+  if (!isHappening(plan, todayIso)) return null;
+  const stops = tripStops(plan);
+  const of = stops.reduce((n, s) => n + s.nights, 0);
+  if (!of) return null;
+  const dayNum = Math.min(of, Math.max(1, daysUntil(todayIso, plan.start_date) + 1));
+  const locate = (n) => {
+    let first = 1;
+    for (let i = 0; i < stops.length; i += 1) {
+      if (n < first + stops[i].nights) return { stopIndex: i, dayIndex: n - first, stop: stops[i] };
+      first += stops[i].nights;
+    }
+    return null;
+  };
+  const here = locate(dayNum);
+  const next = dayNum < of ? locate(dayNum + 1) : null;
+  return {
+    dayNum, of, ...here,
+    tomorrow: next ? { dayNum: dayNum + 1, ...next, moves: next.stopIndex !== here.stopIndex } : null,
+  };
+}
+
+/** The calendar day a ledger row was spent on: its own date, else the day its
+ *  id was minted (the ledger's ids are the time a row was entered). */
+export function expenseDay(row) {
+  if (row?.date && /^\d{4}-\d{2}-\d{2}$/.test(row.date)) return row.date;
+  const ms = Number(row?.id);
+  if (!Number.isFinite(ms) || ms < 1e12) return null;
+  return isoOf(new Date(ms));
+}
+
+/**
+ * What was spent on one day, from the expense ledger (T924): { total, byCat,
+ * rows } in euro, `toEur` converting a foreign amount. Rows a past-trip
+ * memory wrote (src 'memory') are the whole trip's spend, never a day's.
+ */
+export function spendOnDay(expenses = [], dayIso, toEur = (n) => n) {
+  const byCat = {};
+  let total = 0;
+  const rows = (expenses || []).filter((x) => x && x.src !== 'memory' && expenseDay(x) === dayIso && Number(x.amount) > 0);
+  rows.forEach((x) => {
+    const eur = toEur(Number(x.amount), x.currency || 'EUR');
+    if (!Number.isFinite(eur)) return;
+    const cat = x.cat || 'other';
+    byCat[cat] = (byCat[cat] || 0) + eur;
+    total += eur;
+  });
+  return { total, byCat, rows };
+}
+
+/* ───────────── Your Europe (T926) ───────────── */
+
+/** Small regions a traveller can complete, by ISO code. Facts, not goals. */
+export const REGIONS = [
+  { key: 'benelux', cc: ['BE', 'NL', 'LU'] },
+  { key: 'baltics', cc: ['EE', 'LV', 'LT'] },
+  { key: 'iberia', cc: ['ES', 'PT'] },
+  { key: 'nordics', cc: ['DK', 'NO', 'SE', 'FI', 'IS'] },
+  { key: 'alps', cc: ['AT', 'CH', 'LI'] },
+  { key: 'isles', cc: ['GB', 'IE'] },
+];
+
+/**
+ * Factual milestones from what the record holds, at most `max`:
+ *   region      every country of a small region visited ("All of Benelux")
+ *   next        a region the next trip completes ("Portugal completes Iberia")
+ *   nightTrain  a logged leg marked as a night train
+ *   longest     the longest trip, with its nights (only from two trips on)
+ *   north       the furthest north stayed (only from 55 degrees north)
+ * Each { key, region?, cc?, n?, title?, city?, lat?, when? }. None when the
+ * data cannot back them.
+ */
+export function europeMilestones({ beenIso = [], nextIso = [], trips = [], points = [], legs = [], max = 5 } = {}) {
+  const out = [];
+  const been = new Set(beenIso);
+  REGIONS.forEach((r) => {
+    if (r.cc.every((c) => been.has(c))) out.push({ key: 'region', region: r.key, n: r.cc.length });
+  });
+  const next = new Set(nextIso);
+  REGIONS.forEach((r) => {
+    const missing = r.cc.filter((c) => !been.has(c));
+    if (missing.length && missing.every((c) => next.has(c))) {
+      out.push({ key: 'next', region: r.key, cc: missing });
+    }
+  });
+  if (legs.some((l) => l && (l.night === true || l.mode === 'nighttrain'))) out.push({ key: 'nightTrain' });
+  const dated = trips.filter((x) => x.nights > 0);
+  if (dated.length >= 2) {
+    const long = dated.reduce((a, b) => (b.nights > a.nights ? b : a));
+    out.push({ key: 'longest', n: long.nights, title: long.title, when: long.end || null });
+  }
+  const north = points.filter((p) => Number.isFinite(p.lat)).reduce((a, b) => (!a || b.lat > a.lat ? b : a), null);
+  if (north && north.lat >= 55) out.push({ key: 'north', city: north.city, lat: north.lat });
+  return out.slice(0, max);
+}
+
+/**
+ * The record's money (T926), from the spend logged on past trips only:
+ *   avgDay         what a day cost a person on the trips with spend and nights
+ *   vsEstimate     that figure minus Carta's estimate for the same trips, only
+ *                  when every trip counted has both
+ *   cheapestGreat  the lowest day a person on a trip whose place scores in
+ *                  the Excellent band or above: { eur, title, score, when }
+ * trips: [{ id, title, nights, spendPP, estDayPP, score, end }].
+ */
+export function europeMoney(trips = [], { greatScore = 8.3 } = {}) {
+  const spent = trips.filter((x) => Number.isFinite(x.spendPP) && x.spendPP > 0 && x.nights > 0);
+  if (!spent.length) return { avgDay: null, vsEstimate: null, cheapestGreat: null, trips: 0 };
+  const nights = spent.reduce((n, x) => n + x.nights, 0);
+  const avgDay = spent.reduce((n, x) => n + x.spendPP, 0) / nights;
+  const both = spent.every((x) => Number.isFinite(x.estDayPP) && x.estDayPP > 0);
+  const est = both ? spent.reduce((n, x) => n + x.estDayPP * x.nights, 0) / nights : null;
+  const great = spent
+    .filter((x) => Number.isFinite(x.score) && x.score >= greatScore)
+    .map((x) => ({ eur: x.spendPP / x.nights, title: x.title, score: x.score, when: x.end || null }))
+    .sort((a, b) => a.eur - b.eur)[0] || null;
+  return { avgDay, vsEstimate: est != null ? avgDay - est : null, cheapestGreat: great, trips: spent.length };
 }

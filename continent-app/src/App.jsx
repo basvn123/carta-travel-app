@@ -88,7 +88,8 @@ import {
 } from './lib/urlState.js';
 import { usePlaceRows } from './hooks/usePlaceRows.js';
 import { countryName as localCountryName } from './lib/countryName.js';
-import { readFavList, isFav, favDestIds, toggleFav as toggleFavKey } from './lib/favorites.js';
+import { readFavList, isFav, favDestIds, favKey, toggleFav as toggleFavKey } from './lib/favorites.js';
+import { noteSaved, noteUnsaved } from './lib/savedLists.js';
 import { readTripShareFromUrl, decodeTripShare, readDayShareFromUrl } from './lib/shareLink.js';
 import { readShareTokenFromUrl, stripShareTokenFromUrl } from './auth/tripShares.js';
 import { readFriendHandleFromUrl, stripFriendHandleFromUrl } from './auth/friends.js';
@@ -1046,10 +1047,20 @@ function TravelApp() {
   // `cc` is required for the layers published one file per country (a trail,
   // a beach, a lake, a mountain, a cycle route); without it favKey refuses to
   // write a key it could never resolve again, and the star would do nothing.
-  const toggleFav = useCallback(
-    (id, kind = 'dest', cc = '') => setFavorites((prev) => toggleFavKey(prev, kind, id, cc)),
-    [],
-  );
+  // T925: a save records the day price Carta shows at that moment, so My
+  // trips can say how it moved since (lib/savedLists.js); an unsave keeps
+  // the record a minute for an Undo.
+  const favoritesRef = useRef(favorites);
+  favoritesRef.current = favorites;
+  const dayPricesRef = useRef(null);
+  const toggleFav = useCallback((id, kind = 'dest', cc = '') => {
+    const key = favKey(kind, id, cc);
+    if (key) {
+      if (favoritesRef.current?.has(key)) noteUnsaved(key);
+      else noteSaved(key, kind === 'dest' ? dayPricesRef.current?.get?.(id)?.dayEur ?? null : null);
+    }
+    setFavorites((prev) => toggleFavKey(prev, kind, id, cc));
+  }, []);
 
   // The shortlist as the rest of the app asks about it: a membership test
   // that takes the pair, and the destination-only view the Explore surfaces
@@ -1476,6 +1487,7 @@ function TravelApp() {
     () => (data && staysVersion >= 0 && liveVersion >= 0 ? priceDays(data.destinations, request) : null),
     [data, request, staysVersion, liveVersion],
   );
+  dayPricesRef.current = exploreIndices;
   // The catalogue as rows, for the country and region pages (T498), computed
   // only while one of them shows.
   const placeRows = usePlaceRows(data, exploreIndices, !!(countryPage || pendingRegion));
@@ -2149,6 +2161,9 @@ function TravelApp() {
               goToTab('day');
             }}
             onLoadTripPlan={openPlanInList}
+            /* T925: "Plan a trip with these" from Saved hands the picked
+               places to the trip planner through Explore's own door. */
+            onPlanStops={(stops) => openTripInPlanner({ stops })}
             /* The trip kept on this device (T503, T500-a) opens in Plan through
                the same hand-off, marked so the planner reads the device. */
             onOpenDeviceTrip={() => openPlanInList({ device: true })}
