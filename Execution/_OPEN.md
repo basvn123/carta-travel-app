@@ -2502,3 +2502,9 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T919-a | T919 | Move the helper exports out of OutdoorParts.jsx and PeakFacts.jsx into a lib file (react-refresh warnings) (Execution/P15/T918-T922-outdoor-pages.md) | next task | open |  |
 | T921-a | T921 | Mountain storm and crowd cells need season.storm or crowds in the data (Execution/P15/T918-T922-outdoor-pages.md) | next task | open |  |
 | T922-a | T922 | Cycling pages have no Stay nearby because route rows carry no base town; add base {id, city, km} in the cycling build (Execution/P15/T918-T922-outdoor-pages.md) | next task | open |  |
+| T923-a | T923 | The planner stores no bed price when a trip is saved, so the My trips price nudge compares against the first price seen in the browser instead of the plan (Execution/P15/T923-T927-my-trips.md) | next task | open |  |
+| T925-a | T925 | Sharing a Saved list for friends to add and vote needs a server table; not built (Execution/P15/T923-T927-my-trips.md) | user | open |  |
+| T925-b | T925 | Plan a trip with these hands only places to the planner, not trails, beaches, lakes, mountains or routes (Execution/P15/T923-T927-my-trips.md) | next task | open |  |
+| T925-c | T925 | Price-drop alerts by email or push need consent and a sender; shown on the page only for now (Execution/P15/T923-T927-my-trips.md) | user | open |  |
+| T926-a | T926 | Your Europe milestones and comparisons need data trips lack: elevation for highest point, a night leg option in the past-trip form, stops on hand-logged trips (Execution/P15/T923-T927-my-trips.md) | next task | open |  |
+| T926-b | T926 | The old record map CSS (.mt-band, savedmap) and RecordMapDialog may be unused after Your Europe; check and remove (Execution/P15/T923-T927-my-trips.md) | next task | open |  |
