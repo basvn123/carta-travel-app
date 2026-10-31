@@ -275,6 +275,10 @@
 }
 .storyr .storyr-status { left: var(--space-3); }
 .storyr .storyr-score { right: var(--space-3); max-width: none; padding: 0 var(--space-2); }
+/* T965: a walk's difficulty and its score never share the top edge (on a
+   phone the score's band word squeezed "Very hard" to "V"): with a score
+   on the photo the difficulty drops to the bottom left. */
+.storyr .storyr-status:has(~ .storyr-score) { top: auto; bottom: var(--space-3); max-width: calc(100% - 64px); }
 .storyr .storyr-save {
   position: absolute;
   right: var(--space-2);
