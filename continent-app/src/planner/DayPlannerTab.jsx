@@ -638,6 +638,8 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
         setNewStayWindow(null);
         setNewStayPoint(stay);
         setIdeas(ideaList);
+        // T929: "Plan a day together" names the day; the window clamps it.
+        if (daySeed.date) setNewStartDate(daySeed.date);
         setLandingStep('when');
       }
       onDaySeedConsumed && onDaySeedConsumed();

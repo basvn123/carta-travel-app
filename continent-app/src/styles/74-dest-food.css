@@ -57,7 +57,8 @@
   font-size: var(--text-caption);
   line-height: var(--leading-ui);
   color: var(--text-2);
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 .dfood-price dd {
   margin: 0;

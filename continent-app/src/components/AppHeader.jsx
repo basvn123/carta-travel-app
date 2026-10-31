@@ -3,7 +3,8 @@ import { useNavMarker } from '../lib/motion.js';
 import Logo from './Logo.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { tabHref } from '../lib/urlState.js';
-import { PersonIcon, CompassIcon, RouteIcon, BookmarkIcon } from './Icons.jsx';
+import { PersonIcon, CompassIcon, RouteIcon, BookmarkIcon, FriendsIcon } from './Icons.jsx';
+import { useTogether, waitingCount } from '../together/useTogether.js';
 
 /* The three places (T496, roadmap 1.3a and 1.15; owner T485-b): Explore,
    Plan and My trips, in this order on both widths. Home is the logo and
@@ -106,6 +107,32 @@ function AccountLink({ user, current, onNavigate }) {
   );
 }
 
+/**
+ * The Together door (T928, owner-approved spec v2): a people icon beside the
+ * account on every device, a link to the Together page. Its badge counts
+ * only what is waiting on you (friend requests, co-plan and group
+ * invitations, votes you owe), never anything a friend merely did.
+ */
+function TogetherDoor({ current, onNavigate }) {
+  const { t } = useI18n();
+  const s = useTogether();
+  const n = s.signedIn ? waitingCount(s) : 0;
+  const label = n ? t('tg.doorWaiting', { n }) : t('tg.title');
+  return (
+    <SectionLink
+      tab="together"
+      className={`account-door tg-door${current ? ' on' : ''}`}
+      current={current}
+      onNavigate={onNavigate}
+      title={t('tg.title')}
+      aria-label={label}
+    >
+      <FriendsIcon size={20} />
+      {n > 0 && <span className="tg-door-n" aria-hidden="true">{n > 9 ? '9+' : n}</span>}
+    </SectionLink>
+  );
+}
+
 // The desktop header (CSS hides it below 769 px, where BottomNav and the
 // settings band take over): the logo, the three places after it, Explore's
 // search slot and the account icon at the far right. One row, 64 px.
@@ -165,6 +192,7 @@ export function AppHeader({
             The slot collapses when empty (:empty), so every other place
             leaves no hole in the row. */}
         <div className="header-search-slot" id="header-search-slot" />
+        <TogetherDoor current={place === 'together'} onNavigate={onNavigate} />
         <AccountLink user={user} current={place === 'account'} onNavigate={onNavigate} />
       </div>
     </div>

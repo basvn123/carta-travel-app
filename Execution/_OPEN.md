@@ -2508,3 +2508,12 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T925-c | T925 | Price-drop alerts by email or push need consent and a sender; shown on the page only for now (Execution/P15/T923-T927-my-trips.md) | user | open |  |
 | T926-a | T926 | Your Europe milestones and comparisons need data trips lack: elevation for highest point, a night leg option in the past-trip form, stops on hand-logged trips (Execution/P15/T923-T927-my-trips.md) | next task | open |  |
 | T926-b | T926 | The old record map CSS (.mt-band, savedmap) and RecordMapDialog may be unused after Your Europe; check and remove (Execution/P15/T923-T927-my-trips.md) | next task | open |  |
+| T928-a | T928 | scripts/verify_friends.mjs targets the old Friends spoke in Account; rewrite it for Together (Execution/P15/T928-T932-together.md) | next task | open |  |
+| T929-a | T929 | Walk the Plan date step with ?friendsmock (a friend's stay line) in a browser; not seen in the end check (Execution/P15/T928-T932-together.md) | next task | open |  |
+| T930-a | T930 | Ask to join a friend's trip needs a request flow on the server; left out on Friends' plans and the friend page (Execution/P15/T928-T932-together.md) | next task | open |  |
+| T931-a | T931 | Apply supabase/migrations/055_group_trips.sql in the SQL editor after 054 (prints "group trips self-check passed"); group trips stay hidden until then (Execution/P15/T928-T932-together.md) | user | open | 1 |
+| T931-b | T931 | The group budget band shows only once three members set a maximum; decide whether that privacy floor is right (Execution/P15/T928-T932-together.md) | user | open |  |
+| T931-c | T931 | Settle up, group chat and Ask Sam need servers; not built (Execution/P15/T928-T932-together.md) | user | open |  |
+| T932-a | T932 | Apply supabase/migrations/056_friend_visibility.sql after 055 (prints "friend visibility self-check passed"); the Friends see switches do not save until then (Execution/P15/T928-T932-together.md) | user | open | 2 |
+| T932-b | T932 | No age signal exists, so friends features cannot be turned off under 16 (GDPR Article 8); decide on an age source (Execution/P15/T928-T932-together.md) | user | open |  |
+| T932-c | T932 | Confirm that a trip memory's story is the tip friends see (Execution/P15/T928-T932-together.md) | user | open |  |

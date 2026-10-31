@@ -52,7 +52,8 @@ function unpackLifestyle(s) {
  *             trip           ?tab=plan&mode=trip            the trip planner
  *             day            ?tab=plan&mode=day             one day
  *   trips     (a page)       ?tab=trips                     My trips
- *   account   (a page)       ?tab=account[&view=friends]    Account
+ *   account   (a page)       ?tab=account[&view=profile]    Account
+ *   together  (a page)       ?tab=together[&tv=add|friend|group&tg=id]  Together (T928)
  *   home      home           ?tab=home
  *   pricing   pricing        ?tab=pricing  (and the path /pricing)
  *
@@ -61,13 +62,17 @@ function unpackLifestyle(s) {
  * ------------------------------------------------------------------------- */
 
 /** The places, in nav order, then the two that are not in the bar. */
-export const PLACE_KEYS = Object.freeze(['explore', 'plan', 'trips', 'account', 'home', 'pricing']);
+export const PLACE_KEYS = Object.freeze(['explore', 'plan', 'trips', 'account', 'together', 'home', 'pricing']);
 /** The views App renders. `trips` and `account` are pages laid over a view. */
 export const VIEW_KEYS = Object.freeze(['home', 'map', 'places', 'planstart', 'trip', 'day', 'pricing']);
 /** The Destinations categories, reachable inside Explore as `cat=`. */
 export const EXPLORE_CATS = Object.freeze(['trips', 'trails', 'beaches', 'lakes', 'mountains', 'cycling']);
 /** The Account spokes an address may name (`view=`). */
 export const ACCOUNT_VIEWS = Object.freeze(['home', 'profile', 'security', 'yourdata', 'friends', 'faq', 'feedback', 'plan']);
+/** The Together sub-screens an address may name (`tv=`, T928); `tg=` is the
+ *  friend or group it is about. */
+export const TOGETHER_VIEWS = Object.freeze(['home', 'add', 'privacy', 'friend', 'group', 'newgroup']);
+const TOGETHER_ID_RE = /^[A-Za-z0-9_-]{1,64}$/;
 
 /** Every retired `tab=` value and the view it opens now (1.15 section 3). */
 export const LEGACY_TABS = Object.freeze({
@@ -88,7 +93,7 @@ export function placeOf(view) {
 /**
  * Read an address into what to draw: { view, overlay, cat, accountView }.
  *   view         one of VIEW_KEYS (the view under a page, for trips/account)
- *   overlay      'trips' | 'account' | null
+ *   overlay      'trips' | 'account' | 'together' | null
  *   cat          a Destinations category for the places view, or null
  *   accountView  the Account spoke named by `view=`, or null
  * `hasPlan` says whether a trip plan is open on this device, which is what
@@ -98,7 +103,7 @@ export function routeFromSearch(search, { hasPlan = false } = {}) {
   const q = new URLSearchParams(search || '');
   const raw = String(q.get('tab') || '').toLowerCase();
   const cat = q.get('cat');
-  const out = { view: 'map', overlay: null, cat: null, accountView: null };
+  const out = { view: 'map', overlay: null, cat: null, accountView: null, togetherView: null, togetherId: null };
   if (LEGACY_TABS[raw]) {
     out.view = LEGACY_TABS[raw];
   } else if (raw === 'explore' || raw === '') {
@@ -114,6 +119,14 @@ export function routeFromSearch(search, { hasPlan = false } = {}) {
   } else if (raw === 'trips' || raw === 'account') {
     out.overlay = raw;
     if (raw === 'account' && ACCOUNT_VIEWS.includes(q.get('view'))) out.accountView = q.get('view');
+    // The old Friends spoke's address opens Together (T928).
+    if (out.accountView === 'friends') { out.overlay = 'together'; out.accountView = null; out.togetherView = 'home'; }
+  } else if (raw === 'together') {
+    out.overlay = 'together';
+    const tv = q.get('tv');
+    out.togetherView = TOGETHER_VIEWS.includes(tv) ? tv : 'home';
+    const id = q.get('tg');
+    if (id && TOGETHER_ID_RE.test(id)) out.togetherId = id;
   }
   if (out.view === 'places' && EXPLORE_CATS.includes(cat)) out.cat = cat;
   return out;
@@ -134,7 +147,7 @@ function placeParams(key, { cat } = {}) {
 }
 // `dq` (T600) is the text a category was opened with: it belongs to that
 // one hand-off, so any move between places drops it.
-const PLACE_PARAM_KEYS = ['tab', 'mode', 'cat', 'view', 'dq'];
+const PLACE_PARAM_KEYS = ['tab', 'mode', 'cat', 'view', 'dq', 'tv', 'tg'];
 
 /** Longest search text an address carries (T600). */
 const BROWSE_QUERY_MAX = 80;
@@ -346,6 +359,10 @@ export function tabHref(key, search = (typeof window !== 'undefined' ? window.lo
   for (const k of PLACE_PARAM_KEYS) q.delete(k);
   for (const [k, v] of Object.entries(placeParams(key, opts))) q.set(k, v);
   if (key === 'account' && opts.view && opts.view !== 'home' && ACCOUNT_VIEWS.includes(opts.view)) q.set('view', opts.view);
+  if (key === 'together' && opts.view && opts.view !== 'home' && TOGETHER_VIEWS.includes(opts.view)) {
+    q.set('tv', opts.view);
+    if (opts.id && TOGETHER_ID_RE.test(String(opts.id))) q.set('tg', String(opts.id));
+  }
   // T600: the Where text a category is opened with.
   const dq = key === 'places' ? String(opts.q || '').trim().slice(0, BROWSE_QUERY_MAX) : '';
   if (dq) q.set('dq', dq);
@@ -418,6 +435,8 @@ export function persistState(state) {
   const merged = current;
   // `view` names an Account spoke at boot only (App reads it once).
   merged.delete('view');
+  // Together's sub-screen keys (T928) belong to that page only.
+  if (state.activeTab !== 'together') { merged.delete('tv'); merged.delete('tg'); }
   for (const key of OWN_KEYS) merged.delete(key);
   for (const [k, v] of own) merged.set(k, v);
   const ms = merged.toString();
