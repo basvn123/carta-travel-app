@@ -19,6 +19,7 @@ import { MeetCard } from './MeetCard.jsx';
 import { FriendsSee } from './Privacy.jsx';
 import { GroupBlock, GroupView, NewGroup, groupWaits } from './GroupTrips.jsx';
 import { useOverlaps } from './signals.jsx';
+import { AskJoin } from './AskJoin.jsx';
 
 /**
  * Together (T928, owner-approved spec v2): the people you travel with, on one
@@ -63,6 +64,7 @@ function TripCard({ trip, destinations, costs, me, open, onToggle }) {
         </span>
         <span className="tg-fp-who">{who}</span>
       </Button>
+      <AskJoin trip={trip} className="tg-fp-act" />
     </article>
   );
 }
@@ -113,6 +115,11 @@ export function TogetherPage({
     .sort((a, b) => String(a.startDate || '9').localeCompare(String(b.startDate || '9'))), [s.friendTrips, today]);
 
   const act = (p) => p.catch(() => setError(t('friends.unavailable')));
+  // The trip a join request names: its label, else its cities, from your own plans.
+  const joinTripName = (r) => {
+    const p = s.myPlans.find((x) => x.id === r.tripPlanId);
+    return r.label || p?.label || fmtWhere(p?.cities || []) || t('tg2.yourTrip');
+  };
 
   const factFor = (link) => {
     const { shown, next } = friendFacts(s.friendTrips, link.userId);
@@ -181,7 +188,7 @@ export function TogetherPage({
         </div>
         {error && <div className="auth-error" role="alert">{error}</div>}
 
-        {(incoming.length > 0 || s.invites.length > 0 || groupsWaiting.length > 0) && (
+        {(incoming.length > 0 || s.invites.length > 0 || groupsWaiting.length > 0 || s.joinToMe.length > 0) && (
           <Block id="tg-wait-h" title={t('tg.toAnswer')} className="tg-o-wait">
             <div className="tg-wait">
               {incoming.map((l, i) => (
@@ -193,6 +200,17 @@ export function TogetherPage({
                   <Button variant="secondary" size="sm" className="frn-no" onClick={() => act(togetherActions.remove(l.id))}>
                     {t('friends.decline')}
                   </Button>
+                </WaitRow>
+              ))}
+              {s.joinToMe.map((r) => (
+                <WaitRow key={r.id} face={<ToneFace id={r.requesterId} name={r.name} emoji={r.emoji} />}
+                  title={r.name} line={t('tg2.asksToJoin', { trip: joinTripName(r) })}>
+                  <Button variant="secondary" size="sm" iconStart={<CheckIcon size={16} />} onClick={() => act(togetherActions.answerJoin(r.id, true))}>
+                    {t('friends.accept')}
+                  </Button>
+                  <IconButton label={t('friends.decline')} onClick={() => act(togetherActions.answerJoin(r.id, false))}>
+                    <CloseIcon size={16} />
+                  </IconButton>
                 </WaitRow>
               ))}
               {s.invites.map((iv) => (

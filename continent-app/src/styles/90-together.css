@@ -500,3 +500,12 @@
 @media (prefers-reduced-motion: reduce) {
   .tg-opt-fill { transition: none; }
 }
+
+/* ── Ask to join (T939) ──────────────────────────────────────────────── */
+
+.tg-askjoin { display: inline-grid; gap: var(--space-1); justify-items: start; }
+.tg-fp-act { padding: 0 var(--space-3) var(--space-3); }
+.tg-askjoin-err { font-size: var(--text-caption); color: var(--danger); }
+@media (max-width: 420px) {
+  .tg-bi > .tg-askjoin { grid-column: 1 / -1; justify-self: start; }
+}

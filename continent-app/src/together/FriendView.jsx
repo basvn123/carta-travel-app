@@ -9,6 +9,7 @@ import { parseFavKey } from '../lib/favorites.js';
 import { loadVisitedCountries } from '../lib/visitedCountries.js';
 import { useTogether, togetherActions, shareOf } from './useTogether.js';
 import { ToneFace, Block, nameOf, firstName, fmtShort } from './parts.jsx';
+import { AskJoin } from './AskJoin.jsx';
 
 /**
  * A friend's page (T930): their face, name and handle with "Invite to a
@@ -18,8 +19,8 @@ import { ToneFace, Block, nameOf, firstName, fmtShort } from './parts.jsx';
  * share saves); "Next", their next shown trip. Remove and block sit in a
  * menu and are silent: the other side is never told.
  *
- * "Ask to join" is left out: Carta has no request to join somebody else's
- * trip yet (co-planning is by the owner's invitation only, 020 and 052).
+ * "Next" carries "Ask to join" (T939, migration 057): a request to the
+ * trip's owner, who answers in Together; yes makes you a co-planner.
  */
 
 // A tile grid of Europe: [column, row] per country (the spec's layout).
@@ -253,6 +254,7 @@ export function FriendView({ back, headRef, friendId, destinations, costs, favor
                   <b>{next.label || (next.cities || []).join(', ')}</b>
                   <span>{fmtShort(next.startDate, next.endDate, lang, t('friends.dateJoin'))}</span>
                 </span>
+                <AskJoin trip={next} />
               </div>
             </Block>
           )}

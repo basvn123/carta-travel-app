@@ -10,7 +10,10 @@
  * What it holds: a friend request (Lea), a co-plan invite and a group invite,
  * three friends with shown trips (Sam, Jo, Ana), an overlap (Sam in Lisbon on
  * the days of your own Lisbon stay), a group trip with votes and a band, and
- * Sam's shares (countries, saves and a tip for friends; never a cost).
+ * Sam's shares (countries, saves and a tip for friends; never a cost), Jo
+ * asking to join your Lisbon and Porto trip and your own request to join
+ * Jo's Ghent and Bruges trip ("Requested"; Sam's trips still offer "Ask to
+ * join", T939).
  * ?friendsmock=empty is an account with nobody yet.
  */
 import { E2E_SEAMS } from '../lib/e2eSeams.js';
@@ -126,6 +129,11 @@ export function mockState() {
     invites,
     groups,
     groupsMissing: false,
+    joinToMe: empty ? [] : [
+      { id: 'jr-jo', tripPlanId: 'mp1', requesterId: 'u-jo', handle: 'jo_p', name: 'Jo Peeters', emoji: '', label: 'Lisbon and Porto', createdAt: d(-1) },
+    ],
+    joinMine: new Set(empty ? [] : ['ft-jo-be']),
+    joinMissing: false,
     visibility: { showCountries: true, showSaves: false, showTips: true, showMeet: true },
     visibilityMissing: false,
     // Your own record and shortlist as the seam has them (the real ones are

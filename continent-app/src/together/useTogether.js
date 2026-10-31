@@ -11,7 +11,8 @@
  * nothing rather than show an error.
  *
  * The count is only for things waiting on YOU: friend requests, co-plan and
- * group invitations, and group questions you have not voted on. Nothing a
+ * group invitations, requests to join your trips (T939), and group
+ * questions you have not voted on. Nothing a
  * friend merely did is counted.
  */
 import { useEffect, useSyncExternalStore } from 'react';
@@ -29,6 +30,7 @@ import {
 import {
   listGroupTrips, createGroupTrip, respondGroupInvite, addGroupOption, castGroupVote, setGroupBudget, bookGroupTrip,
 } from '../auth/groupTrips.js';
+import { listJoinRequests, askToJoin, answerJoinRequest } from '../auth/joinRequests.js';
 import { owesVote, bandTopFrom } from './groupBand.js';
 import { readHidden, hideOverlap } from './overlaps.js';
 import { IS_FRIENDS_MOCK, MOCK_ME, mockState } from './friendsMock.js';
@@ -48,6 +50,10 @@ const EMPTY = Object.freeze({
   visibilityMissing: true,
   coplannersByPlan: {},
   hidden: new Set(),
+  // Ask to join (T939, 057): requests to your trips, and the trips you asked.
+  joinToMe: [],
+  joinMine: new Set(),
+  joinMissing: true,
 });
 
 let state = EMPTY;
@@ -69,7 +75,7 @@ async function load(userId) {
     return;
   }
   loadingFor = userId;
-  const [links, friendTrips, shares, invites, groupsRes, myPlans, vis, me] = await Promise.all([
+  const [links, friendTrips, shares, invites, groupsRes, myPlans, vis, me, join] = await Promise.all([
     settle(fetchFriendLinks(userId), []),
     settle(listFriendTrips(), []),
     settle(listFriendShares(), new Map()),
@@ -78,6 +84,7 @@ async function load(userId) {
     settle(fetchTripPlans(userId), []),
     settle(fetchMyVisibility(userId), { visibility: { ...DEFAULT_VISIBILITY }, missing: true }),
     settle(fetchMyProfile(userId), null),
+    settle(listJoinRequests(), { missing: true, toMe: [], mine: new Set() }),
   ]);
   if (loadingFor !== userId) return;
   emit({
@@ -95,6 +102,9 @@ async function load(userId) {
     visibility: vis.visibility,
     visibilityMissing: vis.missing,
     hidden: readHidden(),
+    joinToMe: join.toMe,
+    joinMine: join.mine,
+    joinMissing: join.missing,
   });
 }
 
@@ -112,7 +122,7 @@ export function waitingCount(s) {
   const groupInvites = s.groups.filter((g) => g.myStatus === 'invited').length;
   const votes = s.groups.filter((g) => g.myStatus === 'joined' && !g.bookedPlanId
     && (owesVote(g.options, g.votes, s.userId, 'when') || owesVote(g.options, g.votes, s.userId, 'where'))).length;
-  return incoming + s.invites.length + groupInvites + votes;
+  return incoming + s.invites.length + groupInvites + votes + (s.joinToMe?.length || 0);
 }
 
 /** Mock writes: change the fixture in memory so the seam can be tried. */
@@ -161,6 +171,16 @@ export const togetherActions = {
   async refuseInvite(planId) {
     if (IS_FRIENDS_MOCK) return mock((s) => ({ ...s, invites: s.invites.filter((i) => i.tripPlanId !== planId) }));
     await removeCoplanner(planId, state.userId);
+    return refreshTogether();
+  },
+  async askJoin(planId) {
+    if (IS_FRIENDS_MOCK) return mock((s) => ({ ...s, joinMine: new Set([...s.joinMine, planId]) }));
+    await askToJoin(planId);
+    return refreshTogether();
+  },
+  async answerJoin(requestId, yes) {
+    if (IS_FRIENDS_MOCK) return mock((s) => ({ ...s, joinToMe: s.joinToMe.filter((r) => r.id !== requestId) }));
+    await answerJoinRequest(requestId, yes);
     return refreshTogether();
   },
   async inviteToTrip(planId, friendUserId) {
