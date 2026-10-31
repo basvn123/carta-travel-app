@@ -5,7 +5,7 @@ import { HeroImage } from '../../components/HeroImage.jsx';
 import { CountryFlag } from '../../components/CountryFlag.jsx';
 import { DayPrice } from '../../browse/ExploreCards.jsx';
 import {
-  PlusIcon, RouteIcon, PencilIcon, ArrowLeftIcon, ArrowRightIcon, BookmarkIcon, CheckIcon,
+  PlusIcon, RouteIcon, PencilIcon, ArrowLeftIcon, ArrowRightIcon, BookmarkIcon, CheckIcon, FriendsIcon, ShareIcon,
 } from '../../components/Icons.jsx';
 import { FAV_KIND_LABEL } from '../../lib/favorites.js';
 import { formatMoney } from '../../lib/money.js';
@@ -14,8 +14,10 @@ import { cheapestStayMonths } from '../../lib/costIndex.js';
 import {
   priceChange, createList, renameList, deleteList, restoreList, moveList, toggleInList, setNote, MAX_NOTE,
 } from '../../lib/savedLists.js';
-import { CardMenu } from './parts.jsx';
+import { byVotes, canRemoveItem, friendsToAdd } from '../../lib/sharedListModel.js';
+import { CardMenu, Faces } from './parts.jsx';
 import { Empty } from './MyTripsTabs.jsx';
+import { SharedItem, PeoplePicker, facesOf } from './SharedList.jsx';
 
 const TripMap = lazy(() => import('../../map/TripMap.jsx').then((m) => ({ default: m.TripMap })));
 const MAP_PAD = { top: 32, left: 32, right: 32, bottom: 32 };
@@ -37,6 +39,16 @@ function useWide() {
 /** The record key a saved row's list membership and save price live under. */
 const metaKey = (row) => (row.kind === 'dest' ? `dest:${row.id}` : row.key);
 
+/** A shared list's item as a saved row: the row resolved from its key where
+ *  the app has one, else what the adder's app stored with it (T941). */
+function sharedRow(it, resolved) {
+  const r = resolved?.get?.(it.key);
+  const [kind, ...rest] = it.key.split(':');
+  const tail = rest.join(':');
+  const base = r || { kind, id: kind === 'dest' ? tail : tail.split('/').pop(), cc: it.cc, name: it.name, img: it.img, missing: false };
+  return { ...base, key: it.key, shared: it };
+}
+
 const monthName = (m) => {
   try { return new Date(Date.UTC(2026, m - 1, 15)).toLocaleDateString(activeLocale(), { month: 'long', timeZone: 'UTC' }); } catch { return ''; }
 };
@@ -56,7 +68,7 @@ function Mosaic({ rows }) {
 /** One saved thing: select box, photo, kind, name, today's price and its
  *  move since the save, the cheapest month, the traveller's note, a menu. */
 function SavedItem({
-  row, meta, cost, dest, lists, selected, onSelect, onOpen, onRemove, active, itemRef,
+  row, meta, cost, dest, lists, shared = [], me = null, onShared = null, selected, onSelect, onOpen, onRemove, active, itemRef,
 }) {
   const { t } = useI18n();
   const [editing, setEditing] = useState(false);
@@ -65,7 +77,8 @@ function SavedItem({
   const change = priceChange(meta, cost?.dayEur);
   const months = row.kind === 'dest' && dest ? cheapestStayMonths(dest) : null;
   const k = metaKey(row);
-  const inLists = lists.filter((l) => l.keys.includes(k));
+  const inShared = (l) => l.items.find((it) => it.key === k) || null;
+  const inLists = [...lists.filter((l) => l.keys.includes(k)), ...shared.filter(inShared)];
   const cbId = `mt-sel-${k.replace(/[^\w-]/g, '_')}`;
   return (
     <li className={`mt-item${selected ? ' is-selected' : ''}${active ? ' is-active' : ''}`} ref={itemRef}>
@@ -114,6 +127,16 @@ function SavedItem({
             {lists.map((l) => (
               <Chip key={l.id} kind="filter" selected={l.keys.includes(k)} onClick={() => toggleInList(l.id, k)}>{l.name}</Chip>
             ))}
+            {shared.map((l) => {
+              const it = inShared(l);
+              return (
+                <Chip key={`sh:${l.id}`} kind="filter" selected={!!it} icon={<FriendsIcon size={16} />}
+                  disabled={!!it && !canRemoveItem(l, it, me)}
+                  onClick={() => onShared?.(l, it, { key: k, name: row.name, cc: row.cc, img: row.img })}>
+                  {l.name}
+                </Chip>
+              );
+            })}
             <Button size="sm" variant="quiet" onClick={() => setPicking(false)}>{t('saved.done')}</Button>
           </div>
         )}
@@ -121,7 +144,7 @@ function SavedItem({
       <CardMenu
         label={t('mt.itemMenu', { name: row.name || row.id })}
         actions={[
-          ...(lists.length ? [{ key: 'lists', label: t('mt.addToList'), icon: <PlusIcon size={16} />, onClick: () => setPicking(true) }] : []),
+          ...(lists.length || shared.length ? [{ key: 'lists', label: t('mt.addToList'), icon: <PlusIcon size={16} />, onClick: () => setPicking(true) }] : []),
           { key: 'note', label: t(meta?.note ? 'mt.editNote' : 'mt.addNote'), icon: <PencilIcon size={16} />, onClick: () => { setDraft(meta?.note || ''); setEditing(true); } },
         ]}
         onRemove={() => onRemove(row)}
@@ -146,6 +169,7 @@ function SavedItem({
  */
 export function SavedTab({
   rows, saved, costs, destinations = {}, loading, onOpen, onRemove, onPlan, onBrowse, onUndo, top = null, mapLocale,
+  shared = null, friends = [], sharedRows = null, heldKey = '',
 }) {
   const { t } = useI18n();
   const [list, setList] = useState('all');
@@ -156,13 +180,30 @@ export function SavedTab({
   const [naming, setNaming] = useState(null); // null, 'new' or a list id
   const [name, setName] = useState('');
   const [active, setActive] = useState('');
+  const [people, setPeople] = useState(null); // null, or the list id whose people are open
+  const [shareFailed, setShareFailed] = useState(false);
   const itemRefs = useRef(new Map());
   // The map is drawn only where it shows: beside the list, or when asked for.
   const wide = useWide();
 
   const lists = saved.lists;
   const current = lists.find((l) => l.id === list) || null;
-  const inList = useMemo(() => (current ? rows.filter((r) => current.keys.includes(metaKey(r))) : rows), [rows, current]);
+  // T941: the lists shared with friends, from the server (none before 059).
+  const me = shared?.me || null;
+  const act = shared?.act || null;
+  const sharedLists = useMemo(
+    () => (shared && !shared.missing ? shared.lists.filter((l) => heldKey !== `sharedlist:${l.id}`) : []),
+    [shared, heldKey],
+  );
+  const currentShared = sharedLists.find((l) => `sh:${l.id}` === list) || null;
+  const canShare = !!act && !!shared && !shared.missing && friends.length > 0;
+  const sharedRowsOf = (l) => (l ? l.items.filter((it) => heldKey !== `shared:${it.id}`).map((it) => sharedRow(it, sharedRows)) : []);
+  const inList = useMemo(
+    () => (currentShared
+      ? byVotes(currentShared.items.filter((it) => heldKey !== `shared:${it.id}`)).map((it) => sharedRow(it, sharedRows))
+      : current ? rows.filter((r) => current.keys.includes(metaKey(r))) : rows),
+    [rows, current, currentShared, sharedRows, heldKey],
+  );
   const costOf = (r) => (r.kind === 'dest' ? costs?.get?.(r.id) || null : null);
   const fellOf = (r) => { const c = priceChange(saved.meta[metaKey(r)], costOf(r)?.dayEur); return c && c.diff < 0; };
   const kinds = useMemo(() => {
@@ -175,7 +216,8 @@ export function SavedTab({
   const shown = inList.filter((r) => (kindNow === 'all' || r.kind === kindNow) && (!fell || fellOf(r)));
 
   const toggleSel = (k) => setSel((cur) => (cur.includes(k) ? cur.filter((x) => x !== k) : [...cur, k]));
-  const picked = rows.filter((r) => sel.includes(metaKey(r)));
+  const allRows = [...rows, ...(currentShared ? inList.filter((r) => !rows.some((x) => metaKey(x) === metaKey(r))) : [])];
+  const picked = allRows.filter((r) => sel.includes(metaKey(r)));
   const pickedPlaces = picked.filter((r) => r.kind === 'dest' && destinations[r.id]);
   const fromEur = pickedPlaces.map((r) => costOf(r)?.dayEur).filter(Number.isFinite).sort((a, b) => a - b)[0];
 
@@ -184,12 +226,38 @@ export function SavedTab({
   const submitName = (e) => {
     e.preventDefault();
     if (!name.trim()) return;
-    if (naming === 'new') {
+    if (String(naming).startsWith('sh:')) act?.rename(naming.slice(3), name.trim()).catch(() => {});
+    else if (naming === 'new') {
       const { id } = createList(name, sel);
       if (id) setList(id);
     } else renameList(naming, name);
     setNaming(null);
   };
+  // Sharing a private list moves it to the server with its saves and notes;
+  // the device copy goes once the server has it.
+  const shareList = (l, friendIds) => {
+    setShareFailed(false);
+    const items = coverRows(l).map((r) => ({ key: metaKey(r), name: r.name, cc: r.cc, img: r.img, note: saved.meta[metaKey(r)]?.note }));
+    act.create(l.name, friendIds, items).then((id) => {
+      if (!id) { setShareFailed(true); return; }
+      deleteList(l.id);
+      setPeople(null);
+      setList(`sh:${id}`);
+    }).catch(() => setShareFailed(true));
+  };
+  const onShared = (l, it, item) => {
+    if (it) act?.removeItem(l.id, it.id).catch(() => {});
+    else act?.addItem(l.id, item).catch(() => {});
+  };
+  const removeShared = (it, label) => {
+    const listId = currentShared?.id;
+    onUndo({ key: `shared:${it.id}`, label, commit: () => act?.removeItem(listId, it.id).catch(() => {}) });
+  };
+  const removeSharedList = (l) => {
+    setList('all');
+    onUndo({ key: `sharedlist:${l.id}`, label: l.name, commit: () => act?.remove(l.id).catch(() => {}), restore: () => setList(`sh:${l.id}`) });
+  };
+  const leaveShared = (l) => { setList('all'); act?.removeMember(l.id, me).catch(() => {}); };
   const removeList = (l) => {
     const { removed, at } = deleteList(l.id);
     setList('all');
@@ -239,6 +307,20 @@ export function SavedTab({
             <span className="mt-lcard-n">{t(coverRows(l).length === 1 ? 'mt.saves1' : 'mt.savesN', { n: coverRows(l).length })}</span>
           </Button>
         ))}
+        {sharedLists.map((l) => {
+          const cover = sharedRowsOf(l);
+          return (
+            <Button key={`sh:${l.id}`} className="mt-lcard" aria-pressed={list === `sh:${l.id}`} onClick={() => setList(`sh:${l.id}`)}
+              aria-label={t('mt2.sharedListLabel', { name: l.name, people: l.members.map((m) => m.name).join(', ') })}>
+              <Mosaic rows={cover} />
+              <span className="mt-lcard-name">{l.name}</span>
+              <span className="mt-lcard-n mt-lcard-shared">
+                <Faces people={facesOf(l.members)} max={3} />
+                {t(cover.length === 1 ? 'mt.saves1' : 'mt.savesN', { n: cover.length })}
+              </span>
+            </Button>
+          );
+        })}
         <Button className="mt-lcard is-new" onClick={() => startName('new')} aria-expanded={naming === 'new'}>
           <span className="mt-mosaic is-new" aria-hidden="true"><PlusIcon size={24} /></span>
           <span className="mt-lcard-name">{t('mt.newList')}</span>
@@ -261,6 +343,7 @@ export function SavedTab({
             label={t('mt.listMenu', { name: current.name })}
             actions={[
               { key: 'rename', label: t('mt.renameList'), icon: <PencilIcon size={16} />, onClick: () => startName(current.id) },
+              ...(canShare ? [{ key: 'share', label: t('mt2.share'), icon: <ShareIcon size={16} />, onClick: () => { setShareFailed(false); setPeople(current.id); } }] : []),
               ...(lists[0]?.id !== current.id ? [{ key: 'up', label: t('mt.moveEarlier'), icon: <ArrowLeftIcon size={16} />, onClick: () => moveList(current.id, -1) }] : []),
               ...(lists[lists.length - 1]?.id !== current.id ? [{ key: 'down', label: t('mt.moveLater'), icon: <ArrowRightIcon size={16} />, onClick: () => moveList(current.id, 1) }] : []),
             ]}
@@ -269,6 +352,50 @@ export function SavedTab({
           />
         </div>
       )}
+
+      {current && people === current.id && (
+        <PeoplePicker
+          friends={friends}
+          me={me}
+          submitLabel={(n) => (n ? t('mt2.shareWithN', { n }) : t('mt2.share'))}
+          onSubmit={(ids) => shareList(current, ids)}
+          onClose={() => setPeople(null)}
+        />
+      )}
+      {currentShared && (
+        <div className="mt-list-bar">
+          <h3 className="mt-list-title">{currentShared.name}</h3>
+          <Button size="sm" className="mt-people-btn" aria-expanded={people === currentShared.id}
+            aria-label={t('mt2.peopleIn', { name: currentShared.name })}
+            onClick={() => setPeople((p) => (p === currentShared.id ? null : currentShared.id))}>
+            <Faces people={facesOf(currentShared.members)} max={4} />
+          </Button>
+          <CardMenu
+            label={t('mt.listMenu', { name: currentShared.name })}
+            actions={currentShared.mine ? [
+              { key: 'rename', label: t('mt.renameList'), icon: <PencilIcon size={16} />, onClick: () => { setNaming(`sh:${currentShared.id}`); setName(currentShared.name); } },
+              { key: 'people', label: t('mt2.addPeople'), icon: <FriendsIcon size={16} />, onClick: () => setPeople(currentShared.id) },
+            ] : [
+              { key: 'leave', label: t('mt2.leaveList'), icon: <ArrowLeftIcon size={16} />, onClick: () => leaveShared(currentShared) },
+            ]}
+            onRemove={currentShared.mine ? () => removeSharedList(currentShared) : undefined}
+            removeLabel={t('mt.deleteList', { name: currentShared.name })}
+          />
+        </div>
+      )}
+      {currentShared && people === currentShared.id && (
+        <PeoplePicker
+          friends={friendsToAdd(friends, currentShared)}
+          members={currentShared.members}
+          me={me}
+          owner={currentShared.mine}
+          submitLabel={(n) => (n ? t('mt2.addN', { n }) : t('mt2.addPeople'))}
+          onSubmit={(ids) => ids.forEach((u) => act.addMember(currentShared.id, u).catch(() => {}))}
+          onRemoveMember={(m) => act.removeMember(currentShared.id, m.userId).catch(() => {})}
+          onClose={() => setPeople(null)}
+        />
+      )}
+      {shareFailed && <p className="mt-muted" role="alert">{t('mt2.shareFailed')}</p>}
 
       {list === 'all' && top}
 
@@ -296,6 +423,23 @@ export function SavedTab({
             <ul className="mt-items">
               {shown.map((r) => {
                 const k = metaKey(r);
+                if (r.shared) {
+                  return (
+                    <SharedItem
+                      key={r.shared.id}
+                      list={currentShared}
+                      item={r.shared}
+                      row={r}
+                      cost={costOf(r)}
+                      me={me}
+                      act={act}
+                      selected={sel.includes(k)}
+                      onSelect={toggleSel}
+                      onOpen={onOpen}
+                      onRemove={removeShared}
+                    />
+                  );
+                }
                 return (
                   <SavedItem
                     key={r.key}
@@ -304,6 +448,9 @@ export function SavedTab({
                     cost={costOf(r)}
                     dest={r.kind === 'dest' ? destinations[r.id] : null}
                     lists={lists}
+                    shared={act ? sharedLists : []}
+                    me={me}
+                    onShared={onShared}
                     selected={sel.includes(k)}
                     active={active === k}
                     onSelect={toggleSel}
@@ -315,7 +462,7 @@ export function SavedTab({
               })}
             </ul>
           ) : (
-            <p className="mt-muted">{t(current && !current.keys.length ? 'mt.listEmpty' : 'mt.nothingMatches')}</p>
+            <p className="mt-muted">{t((current && !current.keys.length) || (currentShared && !currentShared.items.length) ? 'mt.listEmpty' : 'mt.nothingMatches')}</p>
           )}
         </div>
         <div className="mt-split-map">

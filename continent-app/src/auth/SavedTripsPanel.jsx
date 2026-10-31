@@ -54,6 +54,8 @@ import { YourEurope } from './mytrips/YourEurope.jsx';
 import { YearRecap } from './mytrips/YearRecap.jsx';
 import { AddBookingSheet } from './mytrips/AddBookingSheet.jsx';
 import { SavedTab } from './mytrips/SavedTab.jsx';
+import { useSharedLists, MOCK_FRIENDS } from './sharedLists.js';
+import { sharedKeys } from '../lib/sharedListModel.js';
 import { useSavedLists, loadSavedLists, noteSaved, createList, setNote } from '../lib/savedLists.js';
 import { TodayCard } from './mytrips/TodayCard.jsx';
 
@@ -780,6 +782,15 @@ export function SavedTripsPanel({
   );
   const shortlist = useFavoriteItems(shownFavs, destinations);
   const savedLists = useSavedLists();
+  // T941: lists shared with friends (migration 059; nothing before it), and
+  // their items resolved to photos and points like the traveller's own saves.
+  const sharedState = useSharedLists(user, { mock: SAVED_MOCK });
+  const sharedKeySet = useMemo(() => new Set(sharedKeys(sharedState.lists)), [sharedState.lists]);
+  const sharedFav = useFavoriteItems(sharedKeySet, destinations);
+  const sharedRowMap = useMemo(
+    () => new Map(sharedFav.sections.flatMap((s) => s.rows).filter((r) => !r.missing && !r.pending).map((r) => [r.key, r])),
+    [sharedFav.sections],
+  );
   const favOrder = useMemo(() => {
     const m = new Map();
     [...(shownFavs || [])].forEach((k, i) => m.set(k, i));
@@ -1125,6 +1136,10 @@ export function SavedTripsPanel({
               onBrowse={() => onGoToTab?.('places')}
               onUndo={removeWithUndo}
               mapLocale={mapLocale}
+              shared={authed || SAVED_MOCK ? sharedState : null}
+              friends={SAVED_MOCK ? MOCK_FRIENDS : friends}
+              sharedRows={sharedRowMap}
+              heldKey={heldKey}
               top={(
                 <>
                   {/* Kept trips from the trip finder (T806): planning one hands

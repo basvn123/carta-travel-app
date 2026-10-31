@@ -663,6 +663,29 @@
 .btn.mt-item-note { min-height: 32px; padding: 0; font-weight: 500; white-space: normal; text-align: left; }
 .mt-pick-lists { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-2); }
 
+/* T941: shared lists. Who added a thing and its hearts, on one line; the
+   people of a list as rows, and the friends who can join as chips. */
+.mt-shared-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-3); margin-top: var(--space-1); }
+.mt-shared-by { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--text-caption); color: var(--text-2); }
+.mt-shared-by .mt-face, .mt-lcard-shared .mt-face { width: 22px; height: 22px; }
+.mt-lcard-shared { display: inline-flex; align-items: center; gap: var(--space-2); }
+.btn.mt-people-btn { padding-inline: var(--space-2); }
+.mt-people {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+.mt-people-list { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.mt-people-row { display: flex; align-items: center; gap: var(--space-3); min-height: var(--tap); border-bottom: 1px solid var(--border-soft); }
+.mt-people-row:last-child { border-bottom: 0; }
+.mt-people-name { flex: 1; min-width: 0; font-size: var(--text-body); color: var(--text); }
+.mt-people .mt-pick-lists { margin-top: 0; }
+.mt-people-foot { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+
 /* List and map: the map beside the list from 1024 px; below it one of the
    two, by the List or Map pill. */
 .mt-split { display: grid; gap: var(--space-4); }
