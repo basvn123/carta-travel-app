@@ -89,7 +89,7 @@ import { ExploreCategories } from './ExploreCategories.jsx';
 import { EmptyResult } from './EmptyResult.jsx';
 import { OutdoorMap } from './OutdoorMap.jsx';
 import { WhereBar, FilterChipBar, SortPill } from './WhereBar.jsx';
-import { setDockKind, setDockResults } from './searchDockStore.js';
+import { setDockKind, setDockResults, setDockHandlers } from './searchDockStore.js';
 import {
   baseOfOutdoor, pointOfOutdoor, mapRowOf, regionsForLayer,
 } from '../lib/exploreLayers.js';
@@ -2606,13 +2606,27 @@ export function DestinationsTab({
   const nearMeDoor = null;
   const isDesktop = useIsDesktop();
   // T961: the phone's search dock names this layer while it is on screen
-  // (its colour tile and the sheet's What start here); the layer keeps its
-  // own Where and filter row for now (register T961-a).
+  // (its colour tile and the sheet's What start here).
+  // T966 (closes T961-a): on a phone the dock is the layer's one search, so
+  // its own Where bar is gone; once a Where, a near town or a filter is on,
+  // the dock draws Back (the layer at rest) and the one Filters button.
+  const catWord = t((CATS.find((c) => c.key === cat) || CATS[0]).labelKey);
+  const dockWhere = nearPlace?.name || query || (country ? countryName(country) : '');
+  const dockLabel = dockWhere ? t('dock.in', { what: catWord, q: dockWhere }) : catWord;
+  const dockOn = !!(query || nearPlace || activeFilters > 0) && cat !== 'trips';
+  if (isActive && !isDesktop) {
+    setDockHandlers({
+      onBack: clearAllChips,
+      onFilters: () => { setSheetFrom('toolbar'); setSheetOpen(true); },
+    });
+  }
   useEffect(() => {
     if (!isActive || isDesktop) return;
     setDockKind(cat === 'trips' ? 'places' : cat);
-    setDockResults(null);
-  }, [isActive, isDesktop, cat]);
+    setDockResults(dockOn ? {
+      label: dockLabel, query: query || '', filterCount: activeFilters, filtersOpen: sheetOpen,
+    } : null);
+  }, [isActive, isDesktop, cat, dockOn, dockLabel, query, activeFilters, sheetOpen]);
   // The By country track is one of the rails (T457): four on a desktop and
   // three on a phone in all, as on Explore, so the full list comes after the
   // same number of rails as Explore's "All places" does.
@@ -3015,21 +3029,22 @@ export function DestinationsTab({
     if (town) pickDest(town);
     scrollRef.current?.scrollTo?.(0, 0);
   };
+  // End check (T593 with T592): the one Map or List pill, as on Places, in
+  // the bar every outdoor tab opens on, so the map is one press away at rest
+  // too. T966: on a phone, where that bar is gone, it ends the quick row.
+  const viewPill = viewSwitch ? (
+    <Button variant="secondary" size={isDesktop ? undefined : 'sm'} className="xview-toggle wbar-view"
+      iconStart={viewSwitch.value === 'map' ? <ListDayIcon size={16} /> : <MapPinIcon size={16} />}
+      onClick={() => viewSwitch.onChange(viewSwitch.value === 'map' ? 'top' : 'map')}>
+      {t(viewSwitch.value === 'map' ? 'explore.viewList' : 'explore.viewMap')}
+    </Button>
+  ) : null;
   const whereBar = outdoorCat ? (
     <WhereBar
       t={t}
       what={whatSpec}
       onSearch={runWhere}
-      after={viewSwitch ? (
-        // End check (T593 with T592): the one Map or List pill, as on
-        // Places, in the bar every outdoor tab opens on, so the map is one
-        // press away at rest too.
-        <Button variant="secondary" className="xview-toggle wbar-view"
-          iconStart={viewSwitch.value === 'map' ? <ListDayIcon size={16} /> : <MapPinIcon size={16} />}
-          onClick={() => viewSwitch.onChange(viewSwitch.value === 'map' ? 'top' : 'map')}>
-          {t(viewSwitch.value === 'map' ? 'explore.viewList' : 'explore.viewMap')}
-        </Button>
-      ) : null}
+      after={viewPill}
       where={{
         value: query,
         boxRef: searchRef,
@@ -3070,7 +3085,8 @@ export function DestinationsTab({
   // The section's quick cuts sit on top (T622): the cuts that got no rail,
   // and with the full list on, every cut.
   const topStarters = opening && !mapOn ? (fullList ? openingDoors : openingRails.starters) : [];
-  const quickBar = facetGroups.length > 0 || sortPill || fullListBtn ? (
+  const phoneViewPill = isDesktop ? null : viewPill;
+  const quickBar = facetGroups.length > 0 || sortPill || fullListBtn || phoneViewPill ? (
     <FilterChipBar
       t={t}
       fmt={fmt}
@@ -3085,7 +3101,7 @@ export function DestinationsTab({
           {sortPill}
         </>
       )}
-      trail={fullListBtn}
+      trail={phoneViewPill ? <>{fullListBtn}{phoneViewPill}</> : fullListBtn}
       onAll={facetGroups.length > 0
         ? () => {
           if (isDesktop) setPaneOpen((v) => !v);
@@ -3211,7 +3227,8 @@ export function DestinationsTab({
             and the section's quick cuts, all before the first rail. */}
         {sectionHead && !mapOn && <SectionHead title={sectionHead.title} id={`dtab-head-${cat}`} />}
 
-        {whereBar}
+        {/* T966: on a phone the search dock is the Where. */}
+        {isDesktop && whereBar}
 
         {quickBar}
 
