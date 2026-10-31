@@ -6095,6 +6095,8 @@ export const de = {
   "dock.search": "Suchen",
   "dock.ask": "Frag Carta",
   "dock.askShort": "Fragen",
+  "xown.title": "Cartas eigene Reisen",
+  "xown.facts": "{trips} Wochen in {countries} Ländern, jede von Carta geplant",
   "dock.openAria": "Suche: {what}, {summary}, ändern",
   "dock.summary": "{when}, ab {from}, {people}",
   "dock.filtersAria": "Filter, {n} aktiv",

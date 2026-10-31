@@ -9,7 +9,7 @@ import { PlacesFilterSheet } from './PlacesFilterSheet.jsx';
 import { TasteRow } from './TasteDoor.jsx';
 import { ExploreRails, interleaveByCountry } from './ExploreRails.jsx';
 import { ExploreCategories } from './ExploreCategories.jsx';
-import { TripStylesRow } from './TripStylesRow.jsx';
+import { CartaOwnTrips } from './CartaOwnTrips.jsx';
 import { EmptyResult } from './EmptyResult.jsx';
 import { FilterChips } from './FilterChips.jsx';
 import { kindOf, roleOf, buildNearbyIndex } from '../lib/taxonomy.js';
@@ -1573,13 +1573,13 @@ export function ExploreTab({
             </div>
           )}
           <div className="xcontent-main">
-            {/* The trip library as a row at the top of Places (owner T484-e,
-                T489-a, T489-e): "Trip styles" with See all. It counts as one
-                of the rails, so three (two on a phone) follow it. */}
+            {/* The trip library at the top of Places (owner T484-e, T489-a,
+                T489-e). T964 (owner 2026-10-31): not a rail any more but
+                Carta's own trips, a block of its own that reads unlike the
+                rails under it. It still counts as one of the rails, so three
+                (two on a phone) follow it. */}
             {railsIdle && onOpenStyles && (
-              <TripStylesRow t={t} lang={lang} id="xrail-styles"
-                country={oneCountry}
-                onPick={(slug) => onOpenStyles(slug)} onSeeAll={() => onOpenStyles(null)} />
+              <CartaOwnTrips onOpen={() => onOpenStyles(null)} />
             )}
             {/* The rails' doors, Show all places and the map toggle moved to
                 the head block (T595); the rails draw no doors of their own. */}

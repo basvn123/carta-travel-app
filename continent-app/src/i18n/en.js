@@ -6795,6 +6795,9 @@ export const en = {
   'dock.search': 'Search',
   'dock.ask': 'Ask Carta',
   'dock.askShort': 'Ask',
+  // T964: Explore's own-trips block (the old Trip styles rail).
+  'xown.title': "Carta's own trips",
+  'xown.facts': "{trips} weeks in {countries} countries, each one planned by Carta",
   'dock.openAria': 'Search: {what}, {summary}, change',
   'dock.summary': '{when}, from {from}, {people}',
   'dock.filtersAria': 'Filters, {n} on',
