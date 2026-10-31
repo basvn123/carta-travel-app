@@ -8153,6 +8153,13 @@ export const en = {
   "ac2.ckOtherP": "Photos and map tiles load from Wikimedia Commons, CARTO, OpenStreetMap and Carta's own servers. Carta adds no tracking to those requests.",
   "ac2.ckClearH": "Removing it",
   "ac2.ckClearP": "Clear this site's data in your browser's settings to remove everything kept here. What is in your account stays there until you delete it under Account, Your data.",
+  "ac2.connect": "Connect",
+  "ac2.disconnect": "Disconnect",
+  "ac2.connectGoogle": "Connect Google",
+  "ac2.disconnectGoogle": "Disconnect Google",
+  "ac2.linkOff": "Connecting Google is not turned on yet. Try again later.",
+  "ac2.linkTaken": "That Google account already belongs to another Carta account.",
+  "ac2.unlinkLast": "Google is your only way to sign in, so it stays connected. Set a password first.",
   // Flights (T517, T518): Google Flights' price, airline and times
   "journey.incFlight": "The flight from your home airport and back",
   "flight.out": "There",

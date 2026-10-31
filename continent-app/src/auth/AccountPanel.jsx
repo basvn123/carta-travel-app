@@ -649,8 +649,35 @@ export function AccountPanel({
   const go = (v) => setView(v);
   const signedIn = !!user;
   const langLabel = (languages.find((l) => l.code === lang) || languages[0]).label;
-  const google = !!(user?.identities || []).some((i) => i.provider === 'google')
-    || (user?.app_metadata?.providers || []).includes('google');
+  const providers = Array.isArray(user?.identities) && user.identities.length
+    ? user.identities.map((i) => i.provider) : (user?.app_metadata?.providers || []);
+  // T946: the seam flips Google in memory; a real account reads its identities.
+  const [mockGoogle, setMockGoogle] = useState(null);
+  const google = mockGoogle ?? providers.includes('google');
+  const otherSignIn = providers.some((p) => p !== 'google');
+  const [googleBusy, setGoogleBusy] = useState(false);
+  const [googleErr, setGoogleErr] = useState('');
+  const googleErrText = (e) => {
+    const code = String(e?.code || '');
+    const msg = String(e?.message || '');
+    if (code === 'manual_linking_disabled' || /manual linking/i.test(msg)) return t('ac2.linkOff');
+    if (code === 'identity_already_exists' || /already linked|already exists/i.test(msg)) return t('ac2.linkTaken');
+    if (code === 'single_identity_not_deletable') return t('ac2.unlinkLast');
+    return t('account.errGeneric');
+  };
+  const toggleGoogle = async () => {
+    setGoogleErr('');
+    if (IS_ACCOUNT_MOCK) { setMockGoogle(!google); return; }
+    setGoogleBusy(true);
+    try {
+      if (google) await auth.unlinkGoogle();
+      else await auth.linkGoogle();
+    } catch (e) {
+      setGoogleErr(googleErrText(e));
+    } finally {
+      setGoogleBusy(false);
+    }
+  };
 
   // The plan in one line: its name and when it renews or ends.
   const tierKey = !signedIn ? 'free' : (TIERS[entitlement.tier] ? entitlement.tier : 'free');
@@ -1366,8 +1393,16 @@ export function AccountPanel({
             onClick={() => setPwOpen((o) => !o)}
           />
           {(pwOpen || pwNotice) && securityForm}
-          <Row icon={LinkIcon} label={t('ac.google')} value={t(google ? 'ac.connected' : 'ac.notConnected')} />
+          <Row icon={LinkIcon} label={t('ac.google')} value={t(google ? 'ac.connected' : 'ac.notConnected')} className="ac-act-row">
+            {(!google || otherSignIn) && (
+              <Button variant="quiet" size="sm" loading={googleBusy} onClick={toggleGoogle}
+                aria-label={t(google ? 'ac2.disconnectGoogle' : 'ac2.connectGoogle')}>
+                {t(google ? 'ac2.disconnect' : 'ac2.connect')}
+              </Button>
+            )}
+          </Row>
         </Group>
+        {googleErr && <div className="auth-error" role="alert">{googleErr}</div>}
         {signOutErr && <div className="auth-error" role="alert">{signOutErr}</div>}
         <Button className="ac-signout" iconStart={<SignOutIcon size={20} />} loading={signOutBusy} onClick={signOutEverywhere}>
           {t('ac.signOutAll')}

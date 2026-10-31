@@ -362,6 +362,9 @@ a.ac-row:focus-visible, .ac-row.btn:focus-visible { outline: 2px solid var(--foc
 .ac-switch .ui-switch-label { font-size: var(--text-lead); font-weight: 600; }
 .ac-switch-err { display: block; margin: 0; min-height: 0; padding: var(--space-3) var(--space-4); color: var(--danger); font-size: var(--text-body); }
 
+/* T946: a static row with its value and one quiet action after it. */
+.ac-row.is-static.ac-act-row { grid-template-columns: auto minmax(0, 1fr) auto auto; }
+
 /* The older forms inside a section keep their own styles; the panel's
    section padding is not wanted inside the pane. */
 .ac-pane .panel-section { padding-left: 0; padding-right: 0; }
