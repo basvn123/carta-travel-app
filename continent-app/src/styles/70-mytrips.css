@@ -707,7 +707,7 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
 }
-.mt-tiles-map { display: block; width: 100%; height: auto; }
+.mt-tiles-map { display: block; width: 100%; max-width: 560px; height: auto; margin: 0 auto; }
 /* Been: filled in the deep brown (the traveller's own record, the one
    committed set on this map); next: the selected tint with its edge; saved:
    a dashed outline; the rest: quiet. The code on each tile is the word. */
