@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, useMemo, useRef, useState } from 'react';
+import React, { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { Button, Chip, ChipGroup, Field } from '../../components/ui/index.js';
 import { HeroImage } from '../../components/HeroImage.jsx';
@@ -19,6 +19,20 @@ import { Empty } from './MyTripsTabs.jsx';
 
 const TripMap = lazy(() => import('../../map/TripMap.jsx').then((m) => ({ default: m.TripMap })));
 const MAP_PAD = { top: 32, left: 32, right: 32, bottom: 32 };
+const WIDE = '(min-width: 1024px)';
+
+/** Whether the map stands beside the list (1024 px and up). */
+function useWide() {
+  const [wide, setWide] = useState(() => typeof window !== 'undefined' && window.matchMedia?.(WIDE).matches);
+  useEffect(() => {
+    const mq = window.matchMedia?.(WIDE);
+    if (!mq) return undefined;
+    const on = () => setWide(mq.matches);
+    mq.addEventListener?.('change', on);
+    return () => mq.removeEventListener?.('change', on);
+  }, []);
+  return !!wide;
+}
 
 /** The record key a saved row's list membership and save price live under. */
 const metaKey = (row) => (row.kind === 'dest' ? `dest:${row.id}` : row.key);
@@ -143,6 +157,8 @@ export function SavedTab({
   const [name, setName] = useState('');
   const [active, setActive] = useState('');
   const itemRefs = useRef(new Map());
+  // The map is drawn only where it shows: beside the list, or when asked for.
+  const wide = useWide();
 
   const lists = saved.lists;
   const current = lists.find((l) => l.id === list) || null;
@@ -303,7 +319,7 @@ export function SavedTab({
           )}
         </div>
         <div className="mt-split-map">
-          {points.length > 0 ? (
+          {!(wide || view === 'map') ? null : points.length > 0 ? (
             <div className="mt-map is-saved">
               <Suspense fallback={<div className="mt-map-wait" aria-hidden="true" />}>
                 <TripMap {...mapProps} />
