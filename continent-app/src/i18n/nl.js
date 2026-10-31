@@ -8,6 +8,13 @@ export const nl = {
   // Home page (T462): plan any trip, with honest prices
   "home.title": "Een goedkope vlucht is geen goedkope reis",
   "home.sub": "Carta zet de vlucht, het bed en elke dag ter plaatse in één plan, met één eerlijk totaal. Je kaartenapp brengt je erheen.",
+  "home.titleLead": "Een goedkope vlucht is geen",
+  "home.titleAccent": "goedkope reis",
+  "home.subFlight": "Die vlucht van {price} is pas het begin. Carta telt het bed, het eten en elke dag ter plaatse erbij, zodat je weet wat de reis echt kost voor je vertrekt.",
+  "home.subNoFlight": "De vlucht is pas het begin. Carta telt het bed, het eten en elke dag ter plaatse erbij, zodat je weet wat de reis echt kost voor je vertrekt.",
+  "home.passLabel": "Retourvlucht {from} naar {to}, {price}",
+  "home.passChecked": "gecheckt op {when}",
+  "home.passFlight": "Vlucht",
   "home.try1": "Meren in de Alpen in juli",
   "home.ctaPlan": "Plan een reis",
   "home.storyTitle": "Volg een week in de Julische Alpen",

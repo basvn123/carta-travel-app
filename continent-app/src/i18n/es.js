@@ -8,6 +8,13 @@ export const es = {
   // Home page (T462): plan any trip, with honest prices
   "home.title": "Un vuelo barato no es un viaje barato",
   "home.sub": "Carta junta el vuelo, la cama y cada día allí en un solo plan, con un total honesto. Tu app de mapas te lleva.",
+  "home.titleLead": "Un vuelo barato no es un",
+  "home.titleAccent": "viaje barato",
+  "home.subFlight": "Ese vuelo de {price} es solo el principio. Carta suma la cama, la comida y cada día allí, para que sepas lo que cuesta de verdad el viaje antes de salir.",
+  "home.subNoFlight": "El vuelo es solo el principio. Carta suma la cama, la comida y cada día allí, para que sepas lo que cuesta de verdad el viaje antes de salir.",
+  "home.passLabel": "Vuelo de ida y vuelta {from} a {to}, {price}",
+  "home.passChecked": "consultado el {when}",
+  "home.passFlight": "Vuelo",
   "home.try1": "Lagos de los Alpes en julio",
   "home.ctaPlan": "Planificar un viaje",
   "home.storyTitle": "Sigue una semana en los Alpes Julianos",

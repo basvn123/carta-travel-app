@@ -80,7 +80,7 @@ export function HomePage({
     const d = destinations?.[id];
     const r = flights && d ? cheapestReturnAnyMonth(flights, destAnchor(d)) : null;
     if (!r) return null;
-    return { perSeat: r.perSeat, airline: r.out.airline, checked: Math.min(r.out.checked, r.back.checked) };
+    return { perSeat: r.perSeat, airline: r.out.airline, checked: Math.min(r.out.checked, r.back.checked), to: destAnchor(d) };
   }, [flights, destinations]);
   const origin = settings?.origin || null;
   const fromName = origin ? (destinations?.[origin]?.city || origin) : null;
@@ -130,7 +130,7 @@ export function HomePage({
 
   return (
     <div className="hv-page" ref={pageRef}>
-      <HomeHero onSearch={onSearch} titleAs={pageOver ? 'div' : 'h1'}>
+      <HomeHero onSearch={onSearch} titleAs={pageOver ? 'div' : 'h1'} flightFor={flightFor} origin={origin}>
         <div className="hv-top">
           <a className="hv-top-brand" href="?tab=home" aria-label="Carta"><Logo size={28} /><span>Carta</span></a>
           {!user && (

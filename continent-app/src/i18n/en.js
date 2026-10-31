@@ -13,6 +13,13 @@ export const en = {
   // Home page (T462): plan any trip, with honest prices
   "home.title": "A cheap flight is not a cheap trip",
   "home.sub": "Carta puts the flight, the bed and every day there in one plan, with one honest total. Your maps app takes you from there.",
+  "home.titleLead": "A cheap flight is not a",
+  "home.titleAccent": "cheap trip",
+  "home.subFlight": "That {price} flight is only the start. Carta adds the bed, the food and every day there, so you know what the trip really costs before you go.",
+  "home.subNoFlight": "The flight is only the start. Carta adds the bed, the food and every day there, so you know what the trip really costs before you go.",
+  "home.passLabel": "Return flight {from} to {to}, {price}",
+  "home.passChecked": "checked {when}",
+  "home.passFlight": "Flight",
   "home.try1": "Lakes in the Alps in July",
   "home.ctaPlan": "Plan a trip",
   "home.storyTitle": "Follow a week in the Julian Alps",

@@ -1,7 +1,9 @@
 import React from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { Button } from '../../components/ui/index.js';
-import { SearchIcon, SparkIcon } from '../../components/Icons.jsx';
+import { PlaneIcon, SearchIcon, SparkIcon } from '../../components/Icons.jsx';
+import { formatMoney } from '../../lib/money.js';
+import { useAirlines, airlineName } from '../../lib/flights/useAirlines.js';
 import { srcSetFor, thumbAt } from '../../lib/heroImage.js';
 import { loadGuidedData } from '../../lib/guidedData.js';
 import { FILM } from '../../lib/homeDemo.js';
@@ -30,23 +32,74 @@ import { useAutoAdvance, useInView, usePageVisible, useReducedMotion } from './u
  * Props
  *   onSearch   ({ question } | { open: true }) hands the question to Explore
  */
-export function HomeHero({ onSearch, titleAs = 'h1', children }) {
-  const { t } = useI18n();
+export function HomeHero({ onSearch, titleAs = 'h1', flightFor, origin, children }) {
+  const { t, lang } = useI18n();
   const Title = titleAs;
+  const [shot, setShot] = React.useState(0);
+  const place = FILM[shot]?.place;
+  const flight = flightFor ? flightFor(place) : null;
+  const price = flight ? formatMoney(flight.perSeat, { precision: 'whole', locale: lang }) : null;
+  // The slogan's words lift out of their own line once (T949): a lead and
+  // an accent, so every language keeps its own word order.
+  const words = (s) => s.split(/\s+/).filter(Boolean);
+  const lead = words(t('home.titleLead'));
+  const accent = words(t('home.titleAccent'));
   return (
     <section className="hv-hero" aria-labelledby="hv-title">
       <div className="hv-hero-stage">
-        <HomeFilm />
+        <HomeFilm onShot={setShot} />
         {children}
         <div className="hv-hero-copy">
-          <Title id="hv-title" className="hv-slogan">{t('home.title')}</Title>
-          <p className="hv-sub">{t('home.sub')}</p>
+          <Title id="hv-title" className="hv-slogan" aria-label={t('home.title')}>
+            {[...lead.map((w) => [w, false]), ...accent.map((w) => [w, true])].map(([w, em], i) => (
+              <React.Fragment key={i}>
+                <span className="hv-word" aria-hidden="true"><span className={em ? 'hv-em' : undefined} style={{ '--i': i }}>{w}</span></span>
+                {' '}
+              </React.Fragment>
+            ))}
+          </Title>
+          <p className="hv-sub">{price ? t('home.subFlight', { price }) : t('home.subNoFlight')}</p>
           <div className="hv-acts">
             <AskField t={t} onSearch={onSearch} id="hv-ask" primary />
           </div>
+          {flight && origin && <HomePass key={place} flight={flight} price={price} from={origin} to={flight.to} />}
         </div>
       </div>
     </section>
+  );
+}
+
+/**
+ * The boarding pass (T949): the one price every flight site shows, for the
+ * place on the film. Two lines: the route as airport codes, then the
+ * airline and when Google Flights' price was checked; the price on the
+ * stub. Shown only when the sweep has a flight from the traveller's home
+ * airport to that place: never a guess.
+ */
+function HomePass({ flight, price, from, to }) {
+  const { t, lang } = useI18n();
+  const airlines = useAirlines();
+  const when = flight.checked
+    ? new Intl.DateTimeFormat(lang, { day: 'numeric', month: 'short' }).format(new Date(flight.checked))
+    : null;
+  const airline = flight.airline ? airlineName(airlines, flight.airline) : null;
+  return (
+    <div className="hv-pass" role="group" aria-label={t('home.passLabel', { from, to, price })}>
+      <div className="hv-pass-main" aria-hidden="true">
+        <span className="hv-pass-route">
+          <span>{from}</span>
+          <span className="hv-pass-line"><PlaneIcon size={16} /></span>
+          <span>{to}</span>
+        </span>
+        <span className="hv-pass-meta">
+          {[airline, when ? t('home.passChecked', { when }) : null].filter(Boolean).join(', ')}
+        </span>
+      </div>
+      <div className="hv-pass-stub" aria-hidden="true">
+        <span className="hv-pass-label">{t('home.passFlight')}</span>
+        <span className="hv-pass-price">{price}</span>
+      </div>
+    </div>
   );
 }
 
@@ -88,7 +141,7 @@ export function AskField({ t, onSearch, id, primary = false }) {
 /** The film: every shot stacked, the current one shown; the next shot's
  *  clip is fetched while the current one plays, nothing further. Pure
  *  decoration for assistive tech: the words on it carry the message. */
-function HomeFilm() {
+function HomeFilm({ onShot }) {
   const ref = React.useRef(null);
   const onScreen = useInView(ref, { threshold: 0.2 });
   const visible = usePageVisible();
@@ -96,6 +149,7 @@ function HomeFilm() {
   const running = onScreen && visible && !reduced;
   const film = useAutoAdvance(FILM.length, { ms: 9000, running });
   const at = film.index;
+  React.useEffect(() => { onShot?.(at); }, [at, onShot]);
   const [loaded, setLoaded] = React.useState(() => new Set([0, 1]));
   React.useEffect(() => {
     setLoaded((s) => (s.has(at + 1) || at + 1 >= FILM.length ? s : new Set([...s, at + 1])));

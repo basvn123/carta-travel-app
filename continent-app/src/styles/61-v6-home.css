@@ -224,8 +224,13 @@ a.hv-pill:hover { background: var(--surface-hover); }
   line-height: var(--leading-hero);
   letter-spacing: var(--tracking-hero);
   text-wrap: balance;
-  animation: hv-rise var(--dur-reveal) var(--ease-out) both;
 }
+/* The slogan's words lift out of their own line once (T949), 40 ms apart;
+   the accent ("cheap trip") is sun yellow, large type on the tinted film. */
+.hv-word { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.08em; margin-bottom: -0.08em; }
+.hv-word > span { display: inline-block; animation: hv-lift var(--dur-reveal) var(--ease-out) calc(var(--i, 0) * 40ms) both; }
+.hv-em { color: var(--sun-400); }
+@keyframes hv-lift { from { transform: translateY(110%); } to { transform: none; } }
 .hv-sub {
   margin: 0;
   max-width: 44ch;
@@ -308,6 +313,45 @@ a.hv-pill:hover { background: var(--surface-hover); }
   margin-top: var(--space-2);
   animation: hv-rise var(--dur-reveal) var(--ease-out) 160ms both;
 }
+
+/* The boarding pass (T949): the one price every flight site shows. Two
+   lines and a stub; the stub's notches cut into the film. */
+.hv-pass {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  width: min(420px, 100%);
+  margin-top: var(--space-5);
+  border-radius: var(--radius-sheet);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--elev-3);
+  text-shadow: none;
+  text-align: left;
+  animation: hv-rise var(--dur-reveal) var(--ease-out) 240ms both;
+}
+.hv-pass-main { display: grid; gap: var(--space-1); min-width: 0; padding: var(--space-3) var(--space-4); }
+.hv-pass-route { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--space-3); font-size: var(--text-title); font-weight: 800; letter-spacing: 0.01em; }
+.hv-pass-line { position: relative; display: grid; place-items: center; height: 16px; color: var(--action); }
+.hv-pass-line::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; border-top: 2px dashed var(--umber-300); }
+.hv-pass-line svg { position: relative; padding: 0 var(--space-1); background: var(--surface); box-sizing: content-box; }
+.hv-pass-meta { overflow: hidden; color: var(--text-3); font-size: var(--text-label); white-space: nowrap; text-overflow: ellipsis; }
+.hv-pass-stub {
+  position: relative;
+  display: grid;
+  align-content: center;
+  justify-items: end;
+  gap: 2px;
+  padding: var(--space-3) var(--space-5);
+  border-left: 2px dashed var(--umber-300);
+  border-radius: 0 var(--radius-sheet) var(--radius-sheet) 0;
+  background: var(--sun-100);
+}
+.hv-pass-stub::before,
+.hv-pass-stub::after { content: ""; position: absolute; left: -9px; width: 16px; height: 16px; border-radius: 50%; background: var(--neutral-900); }
+.hv-pass-stub::before { top: -8px; }
+.hv-pass-stub::after { bottom: -8px; }
+.hv-pass-label { color: var(--sun-800); font-size: var(--text-micro); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.hv-pass-price { font-size: var(--text-display); font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
 
 /* ── The week ─────────────────────────────────────────────────────────── */
 
@@ -741,6 +785,8 @@ a.hv-pill:hover { background: var(--surface-hover); }
   .hv-slogan,
   .hv-sub,
   .hv-acts,
+  .hv-pass,
+  .hv-word > span,
   .hv-chapter-text,
   .hv-voices-photo img,
   .hv-why-glyph { animation: none !important; }

@@ -8,6 +8,13 @@ export const it = {
   // Home page (T462): plan any trip, with honest prices
   "home.title": "Un volo economico non è un viaggio economico",
   "home.sub": "Carta mette il volo, il letto e ogni giorno sul posto in un solo piano, con un totale onesto. La tua app di mappe ti porta lì.",
+  "home.titleLead": "Un volo economico non è un",
+  "home.titleAccent": "viaggio economico",
+  "home.subFlight": "Quel volo da {price} è solo l'inizio. Carta aggiunge il letto, il cibo e ogni giorno sul posto, così sai quanto costa davvero il viaggio prima di partire.",
+  "home.subNoFlight": "Il volo è solo l'inizio. Carta aggiunge il letto, il cibo e ogni giorno sul posto, così sai quanto costa davvero il viaggio prima di partire.",
+  "home.passLabel": "Volo andata e ritorno da {from} a {to}, {price}",
+  "home.passChecked": "controllato il {when}",
+  "home.passFlight": "Volo",
   "home.try1": "Laghi delle Alpi a luglio",
   "home.ctaPlan": "Pianifica un viaggio",
   "home.storyTitle": "Segui una settimana nelle Alpi Giulie",

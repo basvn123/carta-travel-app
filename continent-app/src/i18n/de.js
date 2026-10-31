@@ -8,6 +8,13 @@ export const de = {
   // Home page (T462): plan any trip, with honest prices
   "home.title": "Ein billiger Flug ist keine billige Reise",
   "home.sub": "Carta bringt den Flug, das Bett und jeden Tag vor Ort in einen Plan, mit einer ehrlichen Summe. Deine Karten-App bringt dich hin.",
+  "home.titleLead": "Ein billiger Flug ist keine",
+  "home.titleAccent": "billige Reise",
+  "home.subFlight": "Der Flug für {price} ist nur der Anfang. Carta rechnet das Bett, das Essen und jeden Tag vor Ort dazu, damit du vor der Abreise weißt, was die Reise wirklich kostet.",
+  "home.subNoFlight": "Der Flug ist nur der Anfang. Carta rechnet das Bett, das Essen und jeden Tag vor Ort dazu, damit du vor der Abreise weißt, was die Reise wirklich kostet.",
+  "home.passLabel": "Hin- und Rückflug {from} nach {to}, {price}",
+  "home.passChecked": "geprüft am {when}",
+  "home.passFlight": "Flug",
   "home.try1": "Seen in den Alpen im Juli",
   "home.ctaPlan": "Reise planen",
   "home.storyTitle": "Folge einer Woche in den Julischen Alpen",
