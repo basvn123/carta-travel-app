@@ -7355,6 +7355,7 @@ export const es = {
   "mt2.sharedListLabel": "{name}, compartida con {people}",
   "mt2.shareFailed": "No se pudo compartir la lista. Inténtalo de nuevo.",
   "mt2.notPlanned": "{n} fuera: ninguna ciudad lo bastante cerca",
+  "mt2.nudgePlan": "Camas en {city} un {pct} por debajo de tu plan.",
   "coplan.inviteLink": "Copiar enlace de invitación",
   "coplan.linkCopied": "Enlace de invitación copiado. Funciona 7 días.",
   "coplan.linkShared": "Invitación enviada. El enlace funciona 7 días.",

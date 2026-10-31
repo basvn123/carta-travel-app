@@ -43,7 +43,7 @@ import { holdPlan, useKept } from '../lib/recommend/keptStore.js';
 import {
   localToday, addDaysIso, classifyTrips, whenParts, dayPlanEndDate, orderedUnique, daysUntil,
   nightsBetween, tripFigure, visitedRecord, yearOf, deviceTripAsPlan, readinessSteps, tripStops,
-  isHappening, tripToday, europeMilestones, europeMoney,
+  isHappening, tripToday, europeMilestones, europeMoney, planBedNudge,
 } from '../lib/myTrips.js';
 import { useVisitedCountries, toggleVisitedCountry } from '../lib/visitedCountries.js';
 import { UNDO_MS, UndoToast, CrewBar, TripPrice, whenText } from './mytrips/parts.jsx';
@@ -108,7 +108,8 @@ const MOCK_STATEMENTS = [
 // real account's rows are priced (choices on the first stop, T434).
 const mockStops = (list) => list.map(([id, a, b]) => ({ destination_id: id, city: '', country: '', arrive_date: addDaysIso(a), depart_date: addDaysIso(b) }));
 const MOCK_PLANS = [
-  { id: 'mp1', label: null, cities: ['Lisbon', 'Porto'], countries: ['Portugal'], start_date: addDaysIso(21), end_date: addDaysIso(27), destination_ids: ['LIS', 'OPO'], stops: mockStops([['LIS', 21, 24], ['OPO', 24, 27]]), choices: { groupSize: 2 } },
+  // T943: saved with its plan bed prices, Porto's a little above today's.
+  { id: 'mp1', label: null, cities: ['Lisbon', 'Porto'], countries: ['Portugal'], start_date: addDaysIso(21), end_date: addDaysIso(27), destination_ids: ['LIS', 'OPO'], stops: mockStops([['LIS', 21, 24], ['OPO', 24, 27]]).map((s, i) => ({ ...s, choices: { planBed: i ? { mockOver: 0.09, at: addDaysIso(-12) } : { mockOver: 0.01, at: addDaysIso(-12) } } })), choices: { groupSize: 2 } },
   { id: 'mp2', label: 'Autumn in Flanders', cities: ['Bruges'], countries: ['Belgium'], start_date: addDaysIso(-40), end_date: addDaysIso(-35), destination_ids: ['gem:bruges'] },
   { id: 'mp3', label: null, cities: ['Salzburg'], countries: ['Austria'], start_date: addDaysIso(-380), end_date: addDaysIso(-377), destination_ids: ['SZG'] },
   { id: 'mp4', label: null, cities: ['Munich'], countries: ['Germany'], start_date: addDaysIso(-9), end_date: addDaysIso(-7), destination_ids: ['MUC'] },
@@ -162,6 +163,23 @@ function seedMock() {
   try {
     localStorage.setItem(BED_BASE_KEY, JSON.stringify({ mp1: { beds: null, at: addDaysIso(-12), mockLower: 42 } }));
   } catch { /* private mode */ }
+}
+
+// T943: the seam's trip carries a plan price a share above today's bed, so
+// the plan nudge renders against whatever today's price is (dev only).
+function mockPlanBeds(p, figure) {
+  if (!p?.stops?.some((s) => s.choices?.planBed?.mockOver)) return p;
+  let i = -1;
+  return {
+    ...p,
+    stops: p.stops.map((s) => {
+      if (!s.destination_id) return s;
+      i += 1;
+      const over = s.choices?.planBed?.mockOver;
+      const now = figure?.bedNights?.[i];
+      return over && Number.isFinite(now) ? { ...s, choices: { ...s.choices, planBed: { night: now * (1 + over), at: s.choices.planBed.at } } } : s;
+    }),
+  };
 }
 
 // How many euros the beds of a trip must have fallen, for the whole party,
@@ -584,9 +602,21 @@ export function SavedTripsPanel({
     if (changed) { writeBedBase(base); setBedBase(base); }
   }, [figures, todayIso]);
   const nudgeFor = (p, figure, readiness) => {
+    if (readiness?.steps?.find((s) => s.key === 'beds')?.done) return null;
+    // T943: a trip saved with its bed prices compares today's beds for the
+    // same dates with the plan's, stop by stop; an older trip falls back to
+    // the first price My trips saw in this browser (T923).
+    const vsPlan = planBedNudge(SAVED_MOCK ? mockPlanBeds(p, figure) : p, figure?.bedNights || []);
+    if (vsPlan.stored) {
+      const n = vsPlan.nudge;
+      if (!n) return null;
+      const city = destinations[n.destId]?.city || '';
+      let pct = `${Math.round(n.share * 100)}%`;
+      try { pct = new Intl.NumberFormat(activeLocale(), { style: 'percent', maximumFractionDigits: 0 }).format(n.share); } catch { /* the plain figure */ }
+      return city ? { plan: true, city, pct } : null;
+    }
     const base = bedBase[p.id];
     if (!figure || !base || !Number.isFinite(base.beds) || !Number.isFinite(figure.beds)) return null;
-    if (readiness?.steps?.find((s) => s.key === 'beds')?.done) return null;
     const fall = base.beds - figure.beds;
     if (fall < NUDGE_MIN_EUR || fall < base.beds * NUDGE_MIN_SHARE) return null;
     return { eur: fall, since: fmtDate(base.at) };

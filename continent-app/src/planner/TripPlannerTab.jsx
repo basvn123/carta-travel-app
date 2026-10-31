@@ -830,7 +830,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
       return;
     }
     const key = tp.deviceKey || newDeviceKey();
-    if (!saveDeviceTrip({ key, trip: tp.snapshot })) {
+    if (!saveDeviceTrip({ key, trip: { ...tp.snapshot, planBeds: tp.planBeds } })) {
       setDeviceError(true);
       return;
     }
@@ -876,7 +876,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   const keptHere = !user && Boolean(tp.deviceKey) && deviceTrip?.key === tp.deviceKey;
   useEffect(() => {
     if (!keptHere || !tp.stops.length) return;
-    if (!saveDeviceTrip({ key: tp.deviceKey, trip: tp.snapshot })) setDeviceError(true);
+    if (!saveDeviceTrip({ key: tp.deviceKey, trip: { ...tp.snapshot, planBeds: tp.planBeds } })) setDeviceError(true);
   }, [tp.snapshot]); // eslint-disable-line react-hooks/exhaustive-deps -- written when the trip changes, not when the key is first set (saveOnDevice already wrote it)
 
   // Signing in with a trip on the device (T490-f). With room on the account

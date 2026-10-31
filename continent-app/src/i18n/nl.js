@@ -7355,6 +7355,7 @@ export const nl = {
   "mt2.sharedListLabel": "{name}, gedeeld met {people}",
   "mt2.shareFailed": "De lijst kon niet gedeeld worden. Probeer het opnieuw.",
   "mt2.notPlanned": "{n} weggelaten: geen stad dichtbij genoeg",
+  "mt2.nudgePlan": "Bedden in {city} {pct} onder je plan.",
   "coplan.inviteLink": "Kopieer uitnodigingslink",
   "coplan.linkCopied": "Uitnodigingslink gekopieerd. Hij werkt 7 dagen.",
   "coplan.linkShared": "Uitnodiging verstuurd. De link werkt 7 dagen.",
