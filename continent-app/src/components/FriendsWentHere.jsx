@@ -3,8 +3,8 @@ import { FriendsHere } from '../together/signals.jsx';
 
 /**
  * Friends on a destination page (T466; T929 made it the "Friends here"
- * block): who went, with their cost a day and their tip where they share
- * them, who goes, and who saved it. The block itself lives with the other
+ * block): who went, with their tip where they share it (never a cost,
+ * T937), who goes, and who saved it. The block itself lives with the other
  * friend signals in src/together/signals.jsx; this file keeps the name the
  * place page imports. Signed out, or with nobody here, it renders nothing.
  *

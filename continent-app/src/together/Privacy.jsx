@@ -8,12 +8,12 @@ import { Block } from './parts.jsx';
 /**
  * "Friends see" (T932, migration 056): one switch per kind of sharing, read
  * by the friend projections on the server. Trips stay chosen one by one in
- * My trips, as since 011. Costs and saves are off until switched on.
+ * My trips, as since 011. Saves are off until switched on. What a trip cost
+ * is never shown to friends, so there is no switch for it (owner, T937).
  */
 const ROWS = [
   ['showCountries', 'tg.seeCountries'],
   ['showSaves', 'tg.seeSaves'],
-  ['showCosts', 'tg.seeCosts'],
   ['showTips', 'tg.seeTips'],
   ['showMeet', 'tg.plansMeet'],
 ];

@@ -18,8 +18,7 @@
 --
 --     show_countries  default ON   the countries on your record
 --     show_saves      default OFF  the places you saved
---     show_costs      default OFF  what your shown trips cost a day
---     show_tips       default ON   your own words about a shown trip
+--     show_tips       default ON   your "Tip for friends" on a shown trip
 --     show_meet       default ON   "Plans that meet" with your shown trips
 --
 --   list_friend_shares()  SECURITY DEFINER. One row per accepted friend with
@@ -29,41 +28,39 @@
 --                           saves       user_settings.settings.favorites
 --                           trips       per trip they show you: the stops
 --                                       with their own dates (the same data
---                                       get_friend_trip already gives), the
---                                       day cost when show_costs, and the tip
---                                       when show_tips.
---                         Costs and saves never leave an account until it
---                         switches them on.
+--                                       get_friend_trip already gives) and
+--                                       the tip when show_tips.
+--                         Saves never leave an account until it switches
+--                         them on.
 --   block_friend_link(link)  SECURITY DEFINER. Blocks the other side of a
 --                         link you are in, silently: the row becomes
 --                         'blocked' with you as the addressee, which is the
 --                         shape 011 already protects (only the blocker can
 --                         remove it, the other side cannot ask again).
 --
--- THE DAY COST, DEFINED. A trip's memory (pastTripMemory.js) is kept in
--- day_plans.payload.extras.memory. Its cost a day is (stay + food) divided
--- by the travellers (adults plus children, at least 1) and by the trip's
--- nights (last departure minus first arrival, at least 1), in whole euros.
--- It is the same basis as Carta's own day figure (a bed plus food and
--- drink). Only memories kept in euro are used; any other currency gives no
--- figure rather than a converted guess.
+-- COSTS ARE NEVER SHARED (owner, T937). Friends never see what somebody's
+-- trips cost: there is no switch for it, and nothing in this file reads a
+-- memory's spend, ledger or any amount. The self-check below fails if a
+-- cost column or a cost key ever comes back.
 --
--- THE TIP, DEFINED. The memory's own story text, trimmed, at most 160
--- characters. Nothing else from the memory (photos, ledger, crew) is read.
+-- THE TIP, DEFINED (T937). A trip's memory (pastTripMemory.js) is kept in
+-- day_plans.payload.extras.memory. The tip is its own "Tip for friends"
+-- field, memory.friendTip, trimmed, at most 160 characters, and only when
+-- show_tips is on. The memory's story stays private: it is never read here,
+-- nor are photos, the ledger or the crew.
 --
 -- AGE. Carta has no age signal today, so nothing here can switch friends
 -- off for an account under 16 (GDPR Article 8). Raised for the owner.
 --
 -- THE APP WITHOUT THIS FILE. src/auth/friendVisibility.js answers the
 -- defaults for your own switches (saving says it could not), and
--- list_friend_shares missing (PGRST202) gives no countries, saves, costs or
+-- list_friend_shares missing (PGRST202) gives no countries, saves or
 -- tips for anyone: only what list_friend_trips already shows.
 
 create table if not exists public.friend_visibility (
   user_id        uuid primary key default auth.uid() references auth.users(id) on delete cascade,
   show_countries boolean not null default true,
   show_saves     boolean not null default false,
-  show_costs     boolean not null default false,
   show_tips      boolean not null default true,
   show_meet      boolean not null default true,
   updated_at     timestamptz not null default now()
@@ -87,21 +84,19 @@ drop policy if exists "friend_visibility_delete_own" on public.friend_visibility
 create policy "friend_visibility_delete_own" on public.friend_visibility
   for delete using (auth.uid() = user_id);
 
--- A jsonb value as a number, or null when it is anything else.
-create or replace function public.jsonb_num(j jsonb)
-returns numeric
-language sql
-immutable
-as $$
-  select case when jsonb_typeof(j) = 'number' then (j #>> '{}')::numeric else null end;
-$$;
+-- A table made by an earlier draft of this file may still carry the cost
+-- switch; it goes, so no cost setting is ever stored.
+alter table public.friend_visibility drop column if exists show_costs;
+
+-- An earlier draft returned a cost; the return type changed, so drop first.
+drop function if exists public.list_friend_shares();
+drop function if exists public.jsonb_num(jsonb);
 
 create or replace function public.list_friend_shares()
 returns table (
   friend_id      uuid,
   show_countries boolean,
   show_saves     boolean,
-  show_costs     boolean,
   show_tips      boolean,
   show_meet      boolean,
   countries      jsonb,
@@ -123,14 +118,13 @@ as $$
     select fr.fid,
            coalesce(v.show_countries, true)  as sc,
            coalesce(v.show_saves, false)     as ss,
-           coalesce(v.show_costs, false)     as sk,
            coalesce(v.show_tips, true)       as st,
            coalesce(v.show_meet, true)       as sm
       from friends fr
       left join public.friend_visibility v on v.user_id = fr.fid
   )
   select
-    vis.fid, vis.sc, vis.ss, vis.sk, vis.st, vis.sm,
+    vis.fid, vis.sc, vis.ss, vis.st, vis.sm,
     case when vis.sc then coalesce(
       (select jsonb_agg(c) from (
          select c from jsonb_array_elements_text(
@@ -151,25 +145,8 @@ as $$
             'destination_id', s.destination_id, 'city', s.city,
             'arrive_date', s.arrive_date, 'depart_date', s.depart_date) order by s.position)
             from public.trip_plan_stops s where s.trip_plan_id = tp.id), '[]'::jsonb),
-        'day_cost', case when vis.sk then (
-          select case
-            when coalesce(dp.payload #>> '{extras,memory,spend,currency}', 'EUR') <> 'EUR' then null
-            when coalesce(public.jsonb_num(dp.payload #> '{extras,memory,spend,stay}'), 0)
-               + coalesce(public.jsonb_num(dp.payload #> '{extras,memory,spend,food}'), 0) <= 0 then null
-            else round(
-              (coalesce(public.jsonb_num(dp.payload #> '{extras,memory,spend,stay}'), 0)
-               + coalesce(public.jsonb_num(dp.payload #> '{extras,memory,spend,food}'), 0))
-              / greatest(1, coalesce(public.jsonb_num(dp.payload #> '{extras,memory,travellers,adults}'), 1)
-                          + coalesce(public.jsonb_num(dp.payload #> '{extras,memory,travellers,children}'), 0))
-              / greatest(1, (select max(s2.depart_date) - min(s2.arrive_date)
-                               from public.trip_plan_stops s2 where s2.trip_plan_id = tp.id))
-            )
-          end
-          from public.day_plans dp
-         where dp.user_id = tp.user_id and dp.plan_id = tp.id::text and dp.deleted_at is null
-         limit 1) else null end,
         'tip', case when vis.st then (
-          select nullif(left(btrim(dp.payload #>> '{extras,memory,story}'), 160), '')
+          select nullif(left(btrim(dp.payload #>> '{extras,memory,friendTip}'), 160), '')
             from public.day_plans dp
            where dp.user_id = tp.user_id and dp.plan_id = tp.id::text and dp.deleted_at is null
            limit 1) else null end
@@ -230,6 +207,21 @@ begin
        and coalesce(with_check, '') not like '%auth.uid() = user_id%'
   ) then
     raise exception 'only the owner may write a friend_visibility row';
+  end if;
+  -- Costs are never shared (T937): no cost switch, no cost in the shares.
+  if exists (
+    select 1 from information_schema.columns
+     where table_schema = 'public' and table_name = 'friend_visibility' and column_name = 'show_costs'
+  ) then
+    raise exception 'friend_visibility must not store a cost switch';
+  end if;
+  if exists (
+    select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+     where n.nspname = 'public' and p.proname = 'list_friend_shares'
+       and (pg_get_functiondef(p.oid) like '%day_cost%' or pg_get_functiondef(p.oid) like '%spend%'
+            or pg_get_functiondef(p.oid) like '%{extras,memory,story}%')
+  ) then
+    raise exception 'list_friend_shares must not read a cost or the private story';
   end if;
   raise notice 'friend visibility self-check passed';
 end;

@@ -7,5 +7,4 @@
 
 drop function if exists public.block_friend_link(uuid);
 drop function if exists public.list_friend_shares();
-drop function if exists public.jsonb_num(jsonb);
 drop table if exists public.friend_visibility;

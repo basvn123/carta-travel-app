@@ -10,7 +10,7 @@
  * What it holds: a friend request (Lea), a co-plan invite and a group invite,
  * three friends with shown trips (Sam, Jo, Ana), an overlap (Sam in Lisbon on
  * the days of your own Lisbon stay), a group trip with votes and a band, and
- * Sam's shares (countries, saves, a cost a day and a tip).
+ * Sam's shares (countries, saves and a tip for friends; never a cost).
  * ?friendsmock=empty is an account with nobody yet.
  */
 import { E2E_SEAMS } from '../lib/e2eSeams.js';
@@ -47,23 +47,23 @@ export function mockState() {
   ];
   const shares = empty ? new Map() : new Map([
     ['u-sam', {
-      showCountries: true, showSaves: true, showCosts: true, showTips: true, showMeet: true,
+      showCountries: true, showSaves: true, showTips: true, showMeet: true,
       countries: ['Belgium', 'Netherlands', 'France', 'Portugal', 'Spain', 'Italy', 'Greece', 'Croatia', 'Denmark', 'Sweden'],
       saves: ['dest:OPO', 'dest:LJU', 'dest:BCN'],
       trips: new Map([
-        ['ft-sam-opo', { stops: [], dayCost: 61, tip: 'Sit on the right side of the train out of Porto.' }],
+        ['ft-sam-opo', { stops: [], tip: 'Sit on the right side of the train out of Porto.' }],
         ['ft-sam-hr', { stops: [
           { destination_id: 'SPU', city: 'Split', arrive_date: d(180), depart_date: d(184) },
           { destination_id: 'DBV', city: 'Dubrovnik', arrive_date: d(184), depart_date: d(187) },
-        ], dayCost: null, tip: null }],
+        ], tip: null }],
       ]),
     }],
     ['u-jo', {
-      showCountries: true, showSaves: true, showCosts: false, showTips: true, showMeet: true,
+      showCountries: true, showSaves: true, showTips: true, showMeet: true,
       countries: ['Belgium', 'Netherlands', 'Germany'], saves: ['dest:OPO'], trips: new Map(),
     }],
     ['u-ana', {
-      showCountries: false, showSaves: false, showCosts: false, showTips: true, showMeet: true,
+      showCountries: false, showSaves: false, showTips: true, showMeet: true,
       countries: [], saves: [], trips: new Map(),
     }],
   ]);
@@ -125,7 +125,7 @@ export function mockState() {
     invites,
     groups,
     groupsMissing: false,
-    visibility: { showCountries: true, showSaves: false, showCosts: false, showTips: true, showMeet: true },
+    visibility: { showCountries: true, showSaves: false, showTips: true, showMeet: true },
     visibilityMissing: false,
     // Your own record and shortlist as the seam has them (the real ones are
     // this browser's visited countries and the App's favorites).
