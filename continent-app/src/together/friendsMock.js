@@ -10,7 +10,13 @@
  * What it holds: a friend request (Lea), a co-plan invite and a group invite,
  * three friends with shown trips (Sam, Jo, Ana), an overlap (Sam in Lisbon on
  * the days of your own Lisbon stay), a group trip with votes and a band, and
- * Sam's shares (countries, saves, a cost a day and a tip).
+ * Sam's shares (countries, saves and a tip for friends; never a cost), Jo
+ * asking to join your Lisbon and Porto trip and your own request to join
+ * Jo's Ghent and Bruges trip ("Requested"; Sam's trips still offer "Ask to
+ * join", T939), and Summer 2027's shared costs with Sam's payment link
+ * (Settle up, T940). ?friendsmock=settled is the same with every transfer
+ * marked as paid; ?friendsmock=owed adds train tickets you paid, so the
+ * others owe you and "Add your payment link" shows.
  * ?friendsmock=empty is an account with nobody yet.
  */
 import { E2E_SEAMS } from '../lib/e2eSeams.js';
@@ -47,23 +53,23 @@ export function mockState() {
   ];
   const shares = empty ? new Map() : new Map([
     ['u-sam', {
-      showCountries: true, showSaves: true, showCosts: true, showTips: true, showMeet: true,
+      showCountries: true, showSaves: true, showTips: true, showMeet: true,
       countries: ['Belgium', 'Netherlands', 'France', 'Portugal', 'Spain', 'Italy', 'Greece', 'Croatia', 'Denmark', 'Sweden'],
       saves: ['dest:OPO', 'dest:LJU', 'dest:BCN'],
       trips: new Map([
-        ['ft-sam-opo', { stops: [], dayCost: 61, tip: 'Sit on the right side of the train out of Porto.' }],
+        ['ft-sam-opo', { stops: [], tip: 'Sit on the right side of the train out of Porto.' }],
         ['ft-sam-hr', { stops: [
           { destination_id: 'SPU', city: 'Split', arrive_date: d(180), depart_date: d(184) },
           { destination_id: 'DBV', city: 'Dubrovnik', arrive_date: d(184), depart_date: d(187) },
-        ], dayCost: null, tip: null }],
+        ], tip: null }],
       ]),
     }],
     ['u-jo', {
-      showCountries: true, showSaves: true, showCosts: false, showTips: true, showMeet: true,
+      showCountries: true, showSaves: true, showTips: true, showMeet: true,
       countries: ['Belgium', 'Netherlands', 'Germany'], saves: ['dest:OPO'], trips: new Map(),
     }],
     ['u-ana', {
-      showCountries: false, showSaves: false, showCosts: false, showTips: true, showMeet: true,
+      showCountries: false, showSaves: false, showTips: true, showMeet: true,
       countries: [], saves: [], trips: new Map(),
     }],
   ]);
@@ -103,9 +109,10 @@ export function mockState() {
         { kind: 'where', userId: 'u-sam', optionId: 'o-p1' },
         { kind: 'where', userId: 'u-jo', optionId: 'o-p2' },
       ],
-      myBudget: 130,
-      // What group_trip_band() would answer for budgets of 130, 104 and 150.
-      band: { top: 100, set: 3, members: 3, ready: true },
+      myBudget: 1100,
+      // What group_trip_band() would answer for trip maximums of 1100, 705
+      // and 1400 a person (T938).
+      band: { top: 700, set: 3, members: 3, ready: true },
     },
     {
       id: 'g-autumn', title: 'Autumn walk', ownerId: 'u-ana', bookedPlanId: null, myStatus: 'invited',
@@ -125,7 +132,15 @@ export function mockState() {
     invites,
     groups,
     groupsMissing: false,
-    visibility: { showCountries: true, showSaves: false, showCosts: false, showTips: true, showMeet: true },
+    joinToMe: empty ? [] : [
+      { id: 'jr-jo', tripPlanId: 'mp1', requesterId: 'u-jo', handle: 'jo_p', name: 'Jo Peeters', emoji: '', label: 'Lisbon and Porto', createdAt: d(-1) },
+    ],
+    joinMine: new Set(empty ? [] : ['ft-jo-be']),
+    joinMissing: false,
+    ledgers: empty ? {} : { 'g-summer': mockLedger(FRIENDS_MOCK) },
+    payLink: '',
+    payLinkMissing: false,
+    visibility: { showCountries: true, showSaves: false, showTips: true, showMeet: true },
     visibilityMissing: false,
     // Your own record and shortlist as the seam has them (the real ones are
     // this browser's visited countries and the App's favorites).
@@ -133,6 +148,28 @@ export function mockState() {
     mockSaves: ['dest:OPO', 'dest:LJU'],
     // Accepted co-planners on your own trips, for My trips' "Sam joins".
     coplannersByPlan: { mp1: [{ userId: 'u-sam', name: 'Sam Martens', emoji: '' }] },
+  };
+}
+
+/** Summer 2027's shared costs: Sam paid the flat's deposit, you the
+ *  groceries, Jo a dinner for the two of you. Settled: both transfers
+ *  marked as paid. Owed: you also paid the train tickets. */
+function mockLedger(variant) {
+  const settled = variant === 'settled';
+  const at = new Date(Date.now() - 86400000).toISOString();
+  return {
+    missing: false,
+    expenses: [
+      { id: 'e-dinner', paidBy: 'u-jo', amountCents: 4500, description: 'Dinner', splitAmong: [MOCK_ME, 'u-jo'], createdBy: 'u-jo', createdAt: at },
+      { id: 'e-food', paidBy: MOCK_ME, amountCents: 9000, description: 'Groceries', splitAmong: [MOCK_ME, 'u-sam', 'u-jo'], createdBy: MOCK_ME, createdAt: at },
+      { id: 'e-flat', paidBy: 'u-sam', amountCents: 24000, description: 'Flat deposit', splitAmong: [MOCK_ME, 'u-sam', 'u-jo'], createdBy: 'u-sam', createdAt: at },
+      ...(variant === 'owed' ? [{ id: 'e-train', paidBy: MOCK_ME, amountCents: 36000, description: 'Train tickets', splitAmong: [MOCK_ME, 'u-sam', 'u-jo'], createdBy: MOCK_ME, createdAt: at }] : []),
+    ],
+    settlements: settled ? [
+      { id: 'st-jo', from: 'u-jo', to: 'u-sam', amountCents: 8750, createdBy: 'u-jo', createdAt: at },
+      { id: 'st-me', from: MOCK_ME, to: 'u-sam', amountCents: 4250, createdBy: MOCK_ME, createdAt: at },
+    ] : [],
+    payLinks: new Map([['u-sam', 'https://tikkie.me/pay/sam-summer']]),
   };
 }
 

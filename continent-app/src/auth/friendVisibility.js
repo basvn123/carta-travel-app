@@ -4,8 +4,9 @@
  *
  * Your own "Friends see" switches are one row in friend_visibility that only
  * you write. What a friend shows you comes back through list_friend_shares(),
- * which applies THEIR switches on the server: a cost or a save that is not
+ * which applies THEIR switches on the server: a save or a tip that is not
  * switched on never reaches this browser, so nothing here has to hide it.
+ * What a trip cost is never shared with friends at all (owner, T937).
  *
  * Trips stay chosen one by one (trip_plans.visibility, 011); that is not a
  * switch here.
@@ -16,15 +17,15 @@
 import { getSupabase } from '../lib/supabaseClient.js';
 import { removeFriendLink } from './friends.js';
 
-/** The defaults 056 writes, and what a missing row means. Costs and saves
- *  stay off until the account switches them on. */
+/** The defaults 056 writes, and what a missing row means. Saves stay off
+ *  until the account switches them on. There is no cost switch (T937). */
 export const DEFAULT_VISIBILITY = Object.freeze({
-  showCountries: true, showSaves: false, showCosts: false, showTips: true, showMeet: true,
+  showCountries: true, showSaves: false, showTips: true, showMeet: true,
 });
 
-export const VISIBILITY_KEYS = ['showCountries', 'showSaves', 'showCosts', 'showTips', 'showMeet'];
+export const VISIBILITY_KEYS = ['showCountries', 'showSaves', 'showTips', 'showMeet'];
 const COL = {
-  showCountries: 'show_countries', showSaves: 'show_saves', showCosts: 'show_costs', showTips: 'show_tips', showMeet: 'show_meet',
+  showCountries: 'show_countries', showSaves: 'show_saves', showTips: 'show_tips', showMeet: 'show_meet',
 };
 
 /** A missing table or function: the migration is not applied yet. */
@@ -45,7 +46,7 @@ export async function fetchMyVisibility(userId) {
   if (!supabase || !userId) return { visibility: { ...DEFAULT_VISIBILITY }, missing: true };
   const { data, error } = await supabase
     .from('friend_visibility')
-    .select('show_countries, show_saves, show_costs, show_tips, show_meet')
+    .select('show_countries, show_saves, show_tips, show_meet')
     .eq('user_id', userId)
     .maybeSingle();
   if (error) return { visibility: { ...DEFAULT_VISIBILITY }, missing: isMissing(error) };
@@ -63,9 +64,9 @@ export async function saveMyVisibility(userId, visibility) {
 
 /**
  * What each accepted friend shows you, as a Map friendId ->
- *   { showCountries, showSaves, showCosts, showTips, showMeet,
+ *   { showCountries, showSaves, showTips, showMeet,
  *     countries: [name], saves: [favKey],
- *     trips: Map tripPlanId -> { stops, dayCost, tip } }
+ *     trips: Map tripPlanId -> { stops, tip } }
  * An empty Map without 056.
  */
 export async function listFriendShares() {
@@ -83,7 +84,6 @@ export async function listFriendShares() {
       if (!tr?.trip_plan_id) continue;
       trips.set(tr.trip_plan_id, {
         stops: Array.isArray(tr.stops) ? tr.stops : [],
-        dayCost: Number.isFinite(Number(tr.day_cost)) && tr.day_cost !== null ? Number(tr.day_cost) : null,
         tip: typeof tr.tip === 'string' && tr.tip.trim() ? tr.tip.trim() : null,
       });
     }

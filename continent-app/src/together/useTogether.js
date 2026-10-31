@@ -11,7 +11,8 @@
  * nothing rather than show an error.
  *
  * The count is only for things waiting on YOU: friend requests, co-plan and
- * group invitations, and group questions you have not voted on. Nothing a
+ * group invitations, requests to join your trips (T939), and group
+ * questions you have not voted on. Nothing a
  * friend merely did is counted.
  */
 import { useEffect, useSyncExternalStore } from 'react';
@@ -29,6 +30,11 @@ import {
 import {
   listGroupTrips, createGroupTrip, respondGroupInvite, addGroupOption, castGroupVote, setGroupBudget, bookGroupTrip,
 } from '../auth/groupTrips.js';
+import { listJoinRequests, askToJoin, answerJoinRequest } from '../auth/joinRequests.js';
+import {
+  fetchGroupLedger, addGroupExpense, deleteGroupExpense, markTransferPaid, deleteSettlement,
+  fetchMyPayLink, saveMyPayLink,
+} from '../auth/groupExpenses.js';
 import { owesVote, bandTopFrom } from './groupBand.js';
 import { readHidden, hideOverlap } from './overlaps.js';
 import { IS_FRIENDS_MOCK, MOCK_ME, mockState } from './friendsMock.js';
@@ -48,6 +54,15 @@ const EMPTY = Object.freeze({
   visibilityMissing: true,
   coplannersByPlan: {},
   hidden: new Set(),
+  // Ask to join (T939, 057): requests to your trips, and the trips you asked.
+  joinToMe: [],
+  joinMine: new Set(),
+  joinMissing: true,
+  // Settle up (T940, 058): each group's ledger once opened, and your own
+  // payment link.
+  ledgers: {},
+  payLink: '',
+  payLinkMissing: true,
 });
 
 let state = EMPTY;
@@ -69,7 +84,7 @@ async function load(userId) {
     return;
   }
   loadingFor = userId;
-  const [links, friendTrips, shares, invites, groupsRes, myPlans, vis, me] = await Promise.all([
+  const [links, friendTrips, shares, invites, groupsRes, myPlans, vis, me, join, pay] = await Promise.all([
     settle(fetchFriendLinks(userId), []),
     settle(listFriendTrips(), []),
     settle(listFriendShares(), new Map()),
@@ -78,6 +93,8 @@ async function load(userId) {
     settle(fetchTripPlans(userId), []),
     settle(fetchMyVisibility(userId), { visibility: { ...DEFAULT_VISIBILITY }, missing: true }),
     settle(fetchMyProfile(userId), null),
+    settle(listJoinRequests(), { missing: true, toMe: [], mine: new Set() }),
+    settle(fetchMyPayLink(userId), { url: '', missing: true }),
   ]);
   if (loadingFor !== userId) return;
   emit({
@@ -95,6 +112,11 @@ async function load(userId) {
     visibility: vis.visibility,
     visibilityMissing: vis.missing,
     hidden: readHidden(),
+    joinToMe: join.toMe,
+    joinMine: join.mine,
+    joinMissing: join.missing,
+    payLink: pay.url,
+    payLinkMissing: pay.missing,
   });
 }
 
@@ -112,7 +134,7 @@ export function waitingCount(s) {
   const groupInvites = s.groups.filter((g) => g.myStatus === 'invited').length;
   const votes = s.groups.filter((g) => g.myStatus === 'joined' && !g.bookedPlanId
     && (owesVote(g.options, g.votes, s.userId, 'when') || owesVote(g.options, g.votes, s.userId, 'where'))).length;
-  return incoming + s.invites.length + groupInvites + votes;
+  return incoming + s.invites.length + groupInvites + votes + (s.joinToMe?.length || 0);
 }
 
 /** Mock writes: change the fixture in memory so the seam can be tried. */
@@ -123,9 +145,14 @@ function mock(fn) {
 function mapGroup(s, id, fn) {
   return { ...s, groups: s.groups.map((g) => (g.id === id ? fn(g) : g)) };
 }
+function mapLedger(s, groupId, fn) {
+  const l = s.ledgers[groupId] || { missing: false, expenses: [], settlements: [], payLinks: new Map() };
+  return { ...s, ledgers: { ...s.ledgers, [groupId]: fn(l) } };
+}
 // The other members' private maximums in the seam; never shown, only used
 // to answer the band the way group_trip_band() would.
-const MOCK_OTHER_BUDGETS = { 'g-summer': [104, 150] };
+// Trip maximums a person (T938).
+const MOCK_OTHER_BUDGETS = { 'g-summer': [705, 1400] };
 
 export const togetherActions = {
   async accept(linkId) {
@@ -162,6 +189,61 @@ export const togetherActions = {
     await removeCoplanner(planId, state.userId);
     return refreshTogether();
   },
+  /** Reads one group's ledger into the store (Settle up). */
+  async loadLedger(groupId) {
+    if (IS_FRIENDS_MOCK) return undefined;
+    const ledger = await settle(fetchGroupLedger(groupId), { missing: true, expenses: [], settlements: [], payLinks: new Map() });
+    emit({ ...state, ledgers: { ...state.ledgers, [groupId]: ledger } });
+    return undefined;
+  },
+  async addExpense(groupId, expense) {
+    if (IS_FRIENDS_MOCK) {
+      return mock((s) => mapLedger(s, groupId, (l) => ({
+        ...l, expenses: [{ ...expense, id: `e-${Date.now()}`, createdBy: s.userId, createdAt: new Date().toISOString() }, ...l.expenses],
+      })));
+    }
+    await addGroupExpense(groupId, state.userId, expense);
+    return togetherActions.loadLedger(groupId);
+  },
+  async deleteExpense(groupId, id) {
+    if (IS_FRIENDS_MOCK) return mock((s) => mapLedger(s, groupId, (l) => ({ ...l, expenses: l.expenses.filter((e) => e.id !== id) })));
+    await deleteGroupExpense(id);
+    return togetherActions.loadLedger(groupId);
+  },
+  async markPaid(groupId, transfer) {
+    if (IS_FRIENDS_MOCK) {
+      return mock((s) => mapLedger(s, groupId, (l) => ({
+        ...l, settlements: [{ ...transfer, id: `st-${Date.now()}`, createdBy: s.userId, createdAt: new Date().toISOString() }, ...l.settlements],
+      })));
+    }
+    await markTransferPaid(groupId, state.userId, transfer);
+    return togetherActions.loadLedger(groupId);
+  },
+  async deleteSettlement(groupId, id) {
+    if (IS_FRIENDS_MOCK) return mock((s) => mapLedger(s, groupId, (l) => ({ ...l, settlements: l.settlements.filter((x) => x.id !== id) })));
+    await deleteSettlement(id);
+    return togetherActions.loadLedger(groupId);
+  },
+  async setPayLink(url) {
+    const before = state.payLink;
+    emit({ ...state, payLink: url });
+    if (IS_FRIENDS_MOCK) return undefined;
+    try { await saveMyPayLink(state.userId, url); } catch (err) {
+      emit({ ...state, payLink: before });
+      throw err;
+    }
+    return undefined;
+  },
+  async askJoin(planId) {
+    if (IS_FRIENDS_MOCK) return mock((s) => ({ ...s, joinMine: new Set([...s.joinMine, planId]) }));
+    await askToJoin(planId);
+    return refreshTogether();
+  },
+  async answerJoin(requestId, yes) {
+    if (IS_FRIENDS_MOCK) return mock((s) => ({ ...s, joinToMe: s.joinToMe.filter((r) => r.id !== requestId) }));
+    await answerJoinRequest(requestId, yes);
+    return refreshTogether();
+  },
   async inviteToTrip(planId, friendUserId) {
     if (IS_FRIENDS_MOCK) return Promise.resolve();
     await inviteCoplanner(planId, state.userId, friendUserId);
@@ -187,15 +269,15 @@ export const togetherActions = {
     await castGroupVote(groupId, state.userId, kind, optionId);
     return refreshTogether();
   },
-  async setBudget(groupId, maxDay) {
+  async setBudget(groupId, maxTrip) {
     if (IS_FRIENDS_MOCK) {
       return mock((s) => mapGroup(s, groupId, (g) => {
-        const all = [...(MOCK_OTHER_BUDGETS[groupId] || []), ...(maxDay ? [maxDay] : [])];
+        const all = [...(MOCK_OTHER_BUDGETS[groupId] || []), ...(maxTrip ? [maxTrip] : [])];
         const top = bandTopFrom(all);
-        return { ...g, myBudget: maxDay || null, band: { top, set: all.length, members: g.members.length, ready: top != null } };
+        return { ...g, myBudget: maxTrip || null, band: { top, set: all.length, members: g.members.length, ready: top != null } };
       }));
     }
-    await setGroupBudget(groupId, state.userId, maxDay);
+    await setGroupBudget(groupId, state.userId, maxTrip);
     return refreshTogether();
   },
   async createGroup(title, friendIds) {

@@ -5,6 +5,8 @@
 -- private budget is deleted. Trip plans a group already booked stay, with
 -- their co-planners, because they live in trip_plans and trip_collaborators.
 -- The app keeps working: a missing table hides the Group trips block.
+-- If 058 (Settle up, T940) is applied, run 058_group_expenses_down.sql
+-- first: its ledgers point at group_trips.
 
 drop function if exists public.group_trip_people();
 drop function if exists public.group_trip_band(uuid);

@@ -321,6 +321,7 @@ export function PastTripForm({ destinations, todayIso, busy, error, initial, fri
       ...mem,
       crew: (mem.crew || []).map((c) => ({ ...c, name: c.name.trim() })),
       highlights: (mem.highlights || []).map((h) => h.trim()).filter(Boolean),
+      friendTip: String(mem.friendTip || '').trim().slice(0, 160),
       legs: legs.slice(0, places.length + 1),
       places: places.map((p, i) => ({
         id: p.id || null,
@@ -704,6 +705,14 @@ export function PastTripForm({ destinations, todayIso, busy, error, initial, fri
             placeholder={t('saved.pastStoryPlaceholder')}
             onChange={(e) => patchMem({ story: e.target.value })}
             aria-label={t('saved.pastStory')}
+          />
+          <label className="pasttrip-sublabel" htmlFor="pasttrip-friendtip">{t('tg2.friendTip')}</label>
+          <input
+            id="pasttrip-friendtip"
+            className="pasttrip-input is-plain"
+            value={mem.friendTip || ''}
+            maxLength={160}
+            onChange={(e) => patchMem({ friendTip: e.target.value })}
           />
           <span className="pasttrip-sublabel">{t('saved.pastHighlights')}</span>
           {(mem.highlights || []).map((h, i) => (

@@ -9,17 +9,18 @@ import { parseFavKey } from '../lib/favorites.js';
 import { loadVisitedCountries } from '../lib/visitedCountries.js';
 import { useTogether, togetherActions, shareOf } from './useTogether.js';
 import { ToneFace, Block, nameOf, firstName, fmtShort } from './parts.jsx';
+import { AskJoin } from './AskJoin.jsx';
 
 /**
  * A friend's page (T930): their face, name and handle with "Invite to a
  * trip"; "You and Sam", a tile map of Europe in three colours from the
- * countries each side shows; "Sam in Portugal", their cost a day and tip for
- * a country you plan (only what they share); "You both saved" (only if they
+ * countries each side shows; "Sam in Portugal", their tip for a country you
+ * plan (only if they share tips; what a trip cost is never shown, T937); "You both saved" (only if they
  * share saves); "Next", their next shown trip. Remove and block sit in a
  * menu and are silent: the other side is never told.
  *
- * "Ask to join" is left out: Carta has no request to join somebody else's
- * trip yet (co-planning is by the owner's invitation only, 020 and 052).
+ * "Next" carries "Ask to join" (T939, migration 057): a request to the
+ * trip's owner, who answers in Together; yes makes you a co-planner.
  */
 
 // A tile grid of Europe: [column, row] per country (the spec's layout).
@@ -124,11 +125,10 @@ export function FriendView({ back, headRef, friendId, destinations, costs, favor
     for (const tr of theirTrips) {
       if (!tr.endDate || tr.endDate >= today) continue;
       const notes = share.trips.get(tr.tripPlanId) || {};
-      const cost = share.showCosts && Number.isFinite(notes.dayCost) ? notes.dayCost : null;
       const tip = share.showTips && notes.tip ? notes.tip : null;
-      if (cost == null && !tip) continue;
+      if (!tip) continue;
       const c = [...isosOfTrip(tr, destinations)].find((x) => planned.has(x));
-      if (c) return { iso: c, trip: tr, cost, tip };
+      if (c) return { iso: c, trip: tr, tip };
     }
     return null;
   }, [myOwn, theirTrips, share, destinations, today]);
@@ -225,10 +225,7 @@ export function FriendView({ back, headRef, friendId, destinations, costs, favor
             <Block id="tg-in-h" title={t('tg.whoIn', { who, country: regionName(inCountry.iso, lang) })} className="tg-o-groups">
               <div className="tg-tip">
                 <ToneFace id={link.userId} name={name} emoji={link.avatarEmoji} size="sm" />
-                <span>
-                  {inCountry.cost != null && <b>{t('tg.aDay', { price: formatMoney(inCountry.cost, { precision: 'whole' }) })}</b>}
-                  {inCountry.tip && <q>{inCountry.tip}</q>}
-                </span>
+                <span><q>{inCountry.tip}</q></span>
               </div>
             </Block>
           )}
@@ -257,6 +254,7 @@ export function FriendView({ back, headRef, friendId, destinations, costs, favor
                   <b>{next.label || (next.cities || []).join(', ')}</b>
                   <span>{fmtShort(next.startDate, next.endDate, lang, t('friends.dateJoin'))}</span>
                 </span>
+                <AskJoin trip={next} />
               </div>
             </Block>
           )}

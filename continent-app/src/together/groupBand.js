@@ -8,12 +8,14 @@
  * band and where things sit on the band's bar. bandTopFrom() mirrors the
  * SQL definition so the dev seam and the tests use the same rule.
  *
- * THE BAND (055): the lowest maximum any joined member set, rounded down to
- * a multiple of 5, and only once at least three members have set one.
+ * THE BAND (055, T938): each member's private maximum is for the WHOLE TRIP,
+ * a person. The band is the lowest maximum any joined member set, rounded
+ * down to a multiple of 10, and only once at least three members have set
+ * one. Options are compared to it as trip totals a person (tripTotal).
  */
 
 export const BAND_MIN_SET = 3;
-export const BAND_STEP = 5;
+export const BAND_STEP = 10;
 
 /** The SQL rule, for the seam and the tests: null below three budgets. */
 export function bandTopFrom(maxes, minSet = BAND_MIN_SET) {
@@ -33,7 +35,19 @@ export function bandState(row) {
   };
 }
 
-/** Whether a day price fits everyone: true, false, or null when unknown. */
+/**
+ * A trip total a person from a day price a person and the nights: the price
+ * model's day (a bed plus food and drink) times the nights, whole euros.
+ * Null when either is unknown or the window has no night.
+ */
+export function tripTotal(dayPrice, nights) {
+  const n = Number(nights);
+  if (!Number.isFinite(dayPrice) || dayPrice <= 0 || !Number.isFinite(n) || n < 1) return null;
+  return Math.round(dayPrice * n);
+}
+
+/** Whether a trip total a person fits everyone: true, false, or null when
+ *  unknown. */
 export function fitsBand(price, band) {
   if (!band?.ready || !Number.isFinite(price)) return null;
   return price <= band.top;

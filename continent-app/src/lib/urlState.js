@@ -53,7 +53,7 @@ function unpackLifestyle(s) {
  *             day            ?tab=plan&mode=day             one day
  *   trips     (a page)       ?tab=trips                     My trips
  *   account   (a page)       ?tab=account[&view=profile]    Account
- *   together  (a page)       ?tab=together[&tv=add|friend|group&tg=id]  Together (T928)
+ *   together  (a page)       ?tab=together[&tv=add|friend|group|settle&tg=id]  Together (T928, T940)
  *   home      home           ?tab=home
  *   pricing   pricing        ?tab=pricing  (and the path /pricing)
  *
@@ -76,7 +76,7 @@ export const ACCOUNT_VIEWS = Object.freeze([
 ]);
 /** The Together sub-screens an address may name (`tv=`, T928); `tg=` is the
  *  friend or group it is about. */
-export const TOGETHER_VIEWS = Object.freeze(['home', 'add', 'privacy', 'friend', 'group', 'newgroup']);
+export const TOGETHER_VIEWS = Object.freeze(['home', 'add', 'privacy', 'friend', 'group', 'newgroup', 'settle']);
 const TOGETHER_ID_RE = /^[A-Za-z0-9_-]{1,64}$/;
 
 /** Every retired `tab=` value and the view it opens now (1.15 section 3). */
