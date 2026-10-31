@@ -2542,3 +2542,9 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T956-a | T956 | The home tour moves by itself with no pause button (owner: no pause or play icons); the tabs stop it, which a strict WCAG 2.2.2 audit may not accept (Execution/P15/T955-T959-home-polish.md) | user | open |  |
 | T957-a | T957 | The home hero on a phone shows two bars, the app header and the film's own Carta / Log in bar, live too; fix in HomeHero and 61-v6-home.css (Execution/P15/T955-T959-home-polish.md) | next task | open |  |
 | T957-b | T957 | The older home clips (find, place, plan, share) are fallbacks the tour never reaches; re-record or retire them with the CHAPTERS story test (Execution/P15/T955-T959-home-polish.md) | next task | open |  |
+| T960-a | T960 | Confirm the Together door opens the T928 page after a hard refresh or reopening the installed app; the code and production already do (Execution/P15/T960-T966-search-dock.md) | user | open |  |
+| T961-a | T961 | Trails, Beaches, Lakes, Mountains and Cycling kept their own Where bar under the phone dock (Execution/P15/T960-T966-search-dock.md) | next task | closed by T966 |  |
+| T961-b | T961 | verify_explore, verify_top_bar, verify_phone_chrome and verify_lifestyle still expect the phone's old top line; update them to the dock (Execution/P15/T960-T966-search-dock.md) | next task | open |  |
+| T961-c | T961 | The search dock is phone only; decide whether a desktop gets it too (Execution/P15/T960-T966-search-dock.md) | user | open |  |
+| T964-a | T964 | TripStylesRow has no caller after Carta's own trips replaced it; delete it (WeeksRow in the same file stays) (Execution/P15/T960-T966-search-dock.md) | next task | open |  |
+| T964-b | T964 | Write the own-trips block, the dock's activity colours and the Ask gradient into DESIGN.md and the carta-design skill (Execution/P15/T960-T966-search-dock.md) | next task | open |  |
