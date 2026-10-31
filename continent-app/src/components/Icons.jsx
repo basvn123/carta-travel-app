@@ -289,6 +289,25 @@ export function FriendsIcon({ size = 15, className = '' }) {
   );
 }
 
+/**
+ * Together (T960, owner 2026-10-31: "more Carta alike"): the logo's
+ * engraved compass ring twice, overlapping, with the logo's rust north
+ * needle in the shared middle. Two travellers whose plans meet, drawn in
+ * the brand mark's own language rather than a generic people glyph.
+ */
+export function TogetherIcon({ size = 22, className = '' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"
+      className={`tg-mark ${className}`.trim()} aria-hidden="true">
+      <circle cx="8.4" cy="12" r="6.6" />
+      <circle cx="15.6" cy="12" r="6.6" />
+      <path d="M12 6.4 L13.5 12 L12 10.9 L10.5 12 Z" fill="#e05a47" stroke="none" />
+      <path d="M12 17.6 L10.5 12 L12 13.1 L13.5 12 Z" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
 /** An adult and a child: the "family with kids" answer in the day planner. */
 export function FamilyIcon({ size = 15, className = '' }) {
   return (

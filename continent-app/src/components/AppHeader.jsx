@@ -3,7 +3,7 @@ import { useNavMarker } from '../lib/motion.js';
 import Logo from './Logo.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { tabHref } from '../lib/urlState.js';
-import { PersonIcon, CompassIcon, RouteIcon, BookmarkIcon, FriendsIcon } from './Icons.jsx';
+import { PersonIcon, CompassIcon, RouteIcon, BookmarkIcon, TogetherIcon } from './Icons.jsx';
 import { useTogether, waitingCount } from '../together/useTogether.js';
 
 /* The three places (T496, roadmap 1.3a and 1.15; owner T485-b): Explore,
@@ -127,7 +127,7 @@ function TogetherDoor({ current, onNavigate }) {
       title={t('tg.title')}
       aria-label={label}
     >
-      <FriendsIcon size={20} />
+      <TogetherIcon size={24} />
       {n > 0 && <span className="tg-door-n" aria-hidden="true">{n > 9 ? '9+' : n}</span>}
     </SectionLink>
   );
