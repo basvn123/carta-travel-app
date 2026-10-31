@@ -5,26 +5,28 @@ import { CheckIcon, PlusIcon } from '../components/Icons.jsx';
 import { formatMoney } from '../lib/money.js';
 import { priceRequest, priceDay } from '../lib/price/index.js';
 import { nightsBetween } from '../lib/tripDates.js';
-import { tally, leader, fitsBand, barScale, owesVote } from './groupBand.js';
+import { tally, leader, fitsBand, barScale, owesVote, tripTotal } from './groupBand.js';
 import { useTogether, togetherActions } from './useTogether.js';
 import { Block, ToneFace, ToneFaces, fmtShort, nameOf } from './parts.jsx';
 
 /**
  * Group trips (T931, migration 055): a few accepted friends decide one trip.
  * When and Where are two polls, one vote each, every option priced by
- * Carta's own price model (costIndex, the traveller's settings) at the
- * leading place or dates. Each member may set a private maximum a day; the
- * band that fits everyone comes back from the server as one number
- * (group_trip_band), and the page never sees another member's value.
- *
- * Settle up, a group chat and "Ask Sam" are not here: they need servers
- * this round does not build.
+ * Carta's own price model (lib/price/, the traveller's settings) as a TRIP
+ * TOTAL a person: the day price at the leading place or dates times that
+ * window's nights (T938, the owner: "focus on the total trip budget"). It is
+ * the bed and the food and drink; getting there is left out because every
+ * member leaves from their own home, and the result says so. Each member may
+ * set a private maximum for the whole trip; the band that fits everyone
+ * comes back from the server as one number (group_trip_band), and the page
+ * never sees another member's value.
  */
 
 const money = (n) => formatMoney(n, { precision: 'whole' });
 
 /** Day price a person at one place, for a window when there is one, from
- *  the price engine (lib/price/) with the traveller's own settings. */
+ *  the price engine (lib/price/) with the traveller's own settings. The
+ *  page multiplies it by the window's nights (tripTotal). */
 function usePricer(destinations, choices) {
   return useMemo(() => {
     const reqs = new Map();
@@ -85,7 +87,7 @@ export function GroupCard({ g, me, onOpen }) {
       </div>
       {g.band?.ready && (
         <div className="tg-fit">
-          <div className="tg-fit-row"><span>{t('tg.fitsAll')}</span><b>{t('tg.upTo', { price: money(g.band.top) })}</b></div>
+          <div className="tg-fit-row"><span>{t('tg.fitsAll')}</span><b>{t('tg2.upToTrip', { price: money(g.band.top) })}</b></div>
         </div>
       )}
       <Button variant="secondary" onClick={onOpen}>{t('tg.open')}</Button>
@@ -145,20 +147,25 @@ export function GroupView({ back, headRef, groupId, destinations, choices, onOpe
     when: leader(whenT),
   };
   const placeId = lead.where?.destId || null;
-  const pricesWhere = whereT.map((o) => price(o.destId, lead.when?.start, lead.when?.end));
-  const pricesWhen = whenT.map((o) => (placeId ? price(placeId, o.start, o.end) : null)).map((p) => (Number.isFinite(p) ? Math.round(p) : null));
-  const cheapestWhen = Math.min(...pricesWhen.filter(Number.isFinite));
-  // "Cheapest" only means something when the windows differ in price.
-  const spread = Math.max(...pricesWhen.filter(Number.isFinite)) > cheapestWhen;
+  // Every figure is a trip total a person: the day price at those dates
+  // times that window's nights. A place is priced over the leading dates; a
+  // window at the leading place. Without the other half there is no total.
+  const totalAt = (destId, w) => (destId && w ? tripTotal(price(destId, w.start, w.end), nightsBetween(w.start, w.end)) : null);
+  const totalsWhere = whereT.map((o) => totalAt(o.destId, lead.when));
+  const totalsWhen = whenT.map((o) => totalAt(placeId, o));
   const joined = g.members.filter((m) => m.status === 'joined');
   const isOwner = g.ownerId === me;
   const vote = (kind, o) => togetherActions.vote(g.id, kind, o.mine ? null : o.id).catch(fail);
-  const leadPrice = placeId ? price(placeId, lead.when?.start, lead.when?.end) : null;
-  const scale = barScale([...pricesWhere, g.band?.top, g.myBudget].filter(Number.isFinite));
+  const leadTotal = totalAt(placeId, lead.when);
+  const scale = barScale([...totalsWhere, ...totalsWhen, g.band?.top, g.myBudget].filter(Number.isFinite));
+  const totalLine = (p) => {
+    if (!Number.isFinite(p)) return null;
+    return fitsBand(p, g.band) === false ? t('tg2.tripOver', { price: money(p) }) : t('tg2.forTrip', { price: money(p) });
+  };
 
   const saveBudget = () => {
     const n = Math.round(Number(budget));
-    if (!Number.isFinite(n) || n < 1) return;
+    if (!Number.isFinite(n) || n < 1 || n > 99999) return;
     togetherActions.setBudget(g.id, n).then(() => { setEditBudget(false); setBudget(''); }).catch(fail);
   };
   const book = async () => {
@@ -203,13 +210,11 @@ export function GroupView({ back, headRef, groupId, destinations, choices, onOpe
             <div className="tg-poll" role="group" aria-labelledby="tg-q-when">
               <span className="tg-poll-q" id="tg-q-when">{t('tg.when')}</span>
               {whenT.map((o, i) => {
-                const p = pricesWhen[i];
-                const sub = !Number.isFinite(p) ? t('tg.nightsN', { n: nightsBetween(o.start, o.end) })
-                  : p > cheapestWhen ? t('tg.moreADay', { price: money(p - cheapestWhen) })
-                    : spread ? t('tg.cheapest') : t('tg.aDay', { price: money(p) });
+                const p = totalsWhen[i];
+                const sub = totalLine(p) || t('tg.nightsN', { n: nightsBetween(o.start, o.end) });
                 return (
                   <Option key={o.id} o={o} me={me} title={fmtShort(o.start, o.end, lang, t('friends.dateJoin'))} sub={sub}
-                    people={peopleOf(g, o.voters)} onVote={() => vote('when', o)} />
+                    over={fitsBand(p, g.band) === false} people={peopleOf(g, o.voters)} onVote={() => vote('when', o)} />
                 );
               })}
               {!g.bookedPlanId && (
@@ -224,13 +229,9 @@ export function GroupView({ back, headRef, groupId, destinations, choices, onOpe
               <span className="tg-poll-q" id="tg-q-where">{t('tg.where')}</span>
               {whereT.map((o, i) => {
                 const d = destinations?.[o.destId];
-                const p = pricesWhere[i];
-                const fits = fitsBand(p, g.band);
-                const sub = Number.isFinite(p)
-                  ? (fits === false ? t('tg.aDayOver', { price: money(p) }) : t('tg.aDay', { price: money(p) }))
-                  : null;
+                const p = totalsWhere[i];
                 return (
-                  <Option key={o.id} o={o} me={me} title={d?.city || o.destId} sub={sub} over={fits === false}
+                  <Option key={o.id} o={o} me={me} title={d?.city || o.destId} sub={totalLine(p)} over={fitsBand(p, g.band) === false}
                     people={peopleOf(g, o.voters)} onVote={() => vote('where', o)} />
                 );
               })}
@@ -250,7 +251,7 @@ export function GroupView({ back, headRef, groupId, destinations, choices, onOpe
           <div className="tg-fit tg-o-groups">
             <div className="tg-fit-row">
               <span>{t('tg.budget')}</span>
-              <b>{g.band?.ready ? t('tg.upTo', { price: money(g.band.top) }) : t('tg.budgetsSet', { n: g.band?.set || 0, m: 3 })}</b>
+              <b>{g.band?.ready ? t('tg2.upToTrip', { price: money(g.band.top) }) : t('tg.budgetsSet', { n: g.band?.set || 0, m: 3 })}</b>
             </div>
             {g.band?.ready && (
               <div className="tg-fitbar" aria-hidden="true">
@@ -268,10 +269,10 @@ export function GroupView({ back, headRef, groupId, destinations, choices, onOpe
             {editBudget || !Number.isFinite(g.myBudget) ? (
               <form className="tg-budget" onSubmit={(e) => { e.preventDefault(); saveBudget(); }}>
                 <label className="tg-hand">
-                  <span className="tg-label">{t('tg.yourMax')}</span>
-                  <input type="number" inputMode="numeric" min="1" max="9999" value={budget} onChange={(e) => setBudget(e.target.value)} />
+                  <span className="tg-label">{t('tg2.yourMaxTrip')}</span>
+                  <input type="number" inputMode="numeric" min="1" max="99999" value={budget} onChange={(e) => setBudget(e.target.value)} />
                 </label>
-                <Button type="submit" variant="secondary" size="sm" disabled={!(Number(budget) >= 1)}>{t('tg.save')}</Button>
+                <Button type="submit" variant="secondary" size="sm" disabled={!(Number(budget) >= 1 && Number(budget) <= 99999)}>{t('tg.save')}</Button>
               </form>
             ) : (
               <div className="tg-fit-row">
@@ -284,8 +285,11 @@ export function GroupView({ back, headRef, groupId, destinations, choices, onOpe
           {placeId && lead.when && (
             <article className="tg-gp tg-o-plans">
               <h2 className="tg-h2">{t('tg.resultTitle', { place: destinations?.[placeId]?.city || placeId, dates: fmtShort(lead.when.start, lead.when.end, lang, t('friends.dateJoin')) })}</h2>
-              {Number.isFinite(leadPrice) && (
-                <div className="tg-money2"><b>{money(leadPrice)}</b><span>{t('tg.aDayEach')}</span></div>
+              {Number.isFinite(leadTotal) && (
+                <>
+                  <div className="tg-money2"><b>{money(leadTotal)}</b><span>{t('tg2.aPersonTrip')}</span></div>
+                  <p className="tg-muted">{t('tg2.bedAndFood')}</p>
+                </>
               )}
               {g.bookedPlanId ? (
                 <Button variant="secondary" onClick={() => onOpenTripPlan?.(g.bookedPlanId)}>{t('saved.openTrip')}</Button>

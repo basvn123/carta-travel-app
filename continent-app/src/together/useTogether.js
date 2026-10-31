@@ -125,7 +125,8 @@ function mapGroup(s, id, fn) {
 }
 // The other members' private maximums in the seam; never shown, only used
 // to answer the band the way group_trip_band() would.
-const MOCK_OTHER_BUDGETS = { 'g-summer': [104, 150] };
+// Trip maximums a person (T938).
+const MOCK_OTHER_BUDGETS = { 'g-summer': [705, 1400] };
 
 export const togetherActions = {
   async accept(linkId) {
@@ -187,15 +188,15 @@ export const togetherActions = {
     await castGroupVote(groupId, state.userId, kind, optionId);
     return refreshTogether();
   },
-  async setBudget(groupId, maxDay) {
+  async setBudget(groupId, maxTrip) {
     if (IS_FRIENDS_MOCK) {
       return mock((s) => mapGroup(s, groupId, (g) => {
-        const all = [...(MOCK_OTHER_BUDGETS[groupId] || []), ...(maxDay ? [maxDay] : [])];
+        const all = [...(MOCK_OTHER_BUDGETS[groupId] || []), ...(maxTrip ? [maxTrip] : [])];
         const top = bandTopFrom(all);
-        return { ...g, myBudget: maxDay || null, band: { top, set: all.length, members: g.members.length, ready: top != null } };
+        return { ...g, myBudget: maxTrip || null, band: { top, set: all.length, members: g.members.length, ready: top != null } };
       }));
     }
-    await setGroupBudget(groupId, state.userId, maxDay);
+    await setGroupBudget(groupId, state.userId, maxTrip);
     return refreshTogether();
   },
   async createGroup(title, friendIds) {

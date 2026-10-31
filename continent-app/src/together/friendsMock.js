@@ -103,9 +103,10 @@ export function mockState() {
         { kind: 'where', userId: 'u-sam', optionId: 'o-p1' },
         { kind: 'where', userId: 'u-jo', optionId: 'o-p2' },
       ],
-      myBudget: 130,
-      // What group_trip_band() would answer for budgets of 130, 104 and 150.
-      band: { top: 100, set: 3, members: 3, ready: true },
+      myBudget: 1100,
+      // What group_trip_band() would answer for trip maximums of 1100, 705
+      // and 1400 a person (T938).
+      band: { top: 700, set: 3, members: 3, ready: true },
     },
     {
       id: 'g-autumn', title: 'Autumn walk', ownerId: 'u-ana', bookedPlanId: null, myStatus: 'invited',
