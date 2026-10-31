@@ -509,3 +509,29 @@
 @media (max-width: 420px) {
   .tg-bi > .tg-askjoin { grid-column: 1 / -1; justify-self: start; }
 }
+
+/* ── Settle up (T940) ────────────────────────────────────────────────── */
+
+.tg-amount { font-variant-numeric: tabular-nums; color: var(--text); }
+.tg-wr-tx .tg-amount { font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.tg-block-head > .tg-amount { font-size: var(--text-lead); font-weight: 600; }
+.tg-wr-acts a.btn { text-decoration: none; }
+.tg-addcost-row { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: var(--space-3); }
+.tg-addcost .tg-pick { align-items: center; }
+.tg-addcost .tg-pick .tg-label { flex-basis: 100%; }
+.tg-ledger { list-style: none; margin: 0; padding: 0; display: grid; }
+.tg-ledger li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto var(--tap);
+  gap: var(--space-3);
+  align-items: center;
+  min-height: var(--tap);
+  border-top: 1px solid var(--border-soft);
+}
+.tg-ledger-tx { display: grid; gap: 2px; min-width: 0; padding: var(--space-2) 0; }
+.tg-ledger-tx span { font-size: var(--text-body); color: var(--text); overflow-wrap: anywhere; }
+.tg-ledger li > .tg-amount { font-size: var(--text-body); text-align: right; }
+.tg-ledger-gap { width: var(--tap); }
+@media (max-width: 420px) {
+  .tg-addcost-row { grid-template-columns: minmax(0, 1fr); }
+}

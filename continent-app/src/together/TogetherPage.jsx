@@ -16,7 +16,8 @@ import { Block, ToneFace, fmtShort, nameOf } from './parts.jsx';
 import { AddFriend } from './AddFriend.jsx';
 import { FriendView } from './FriendView.jsx';
 import { MeetCard } from './MeetCard.jsx';
-import { FriendsSee } from './Privacy.jsx';
+import { FriendsSee, PayLink } from './Privacy.jsx';
+import { SettleView } from './SettleUp.jsx';
 import { GroupBlock, GroupView, NewGroup, groupWaits } from './GroupTrips.jsx';
 import { useOverlaps } from './signals.jsx';
 import { AskJoin } from './AskJoin.jsx';
@@ -161,8 +162,11 @@ export function TogetherPage({
       <div className="tg-page">
         <div className="tg-head is-sub">{back}<h1 className="tg-h1" ref={headRef} tabIndex={-1} data-focus-quiet="">{t('tg.privacy')}</h1></div>
         <FriendsSee onOpenSaved={onOpenSaved} />
+        <PayLink />
       </div>
     );
+  } else if (view === 'settle') {
+    body = <SettleView headRef={headRef} groupId={viewId} onView={onView} />;
   } else if (view === 'friend') {
     body = (
       <FriendView back={back} headRef={headRef} friendId={viewId} destinations={destinations} costs={costs}
@@ -171,7 +175,7 @@ export function TogetherPage({
   } else if (view === 'group') {
     body = (
       <GroupView back={back} headRef={headRef} groupId={viewId} destinations={destinations} choices={choices}
-        onOpenTripPlan={onOpenTripPlan} />
+        onOpenTripPlan={onOpenTripPlan} onSettle={() => onView('settle', viewId)} />
     );
   } else if (view === 'newgroup') {
     body = <NewGroup back={back} headRef={headRef} onCreated={(id) => onView('group', id)} />;

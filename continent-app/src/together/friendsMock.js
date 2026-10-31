@@ -13,7 +13,10 @@
  * Sam's shares (countries, saves and a tip for friends; never a cost), Jo
  * asking to join your Lisbon and Porto trip and your own request to join
  * Jo's Ghent and Bruges trip ("Requested"; Sam's trips still offer "Ask to
- * join", T939).
+ * join", T939), and Summer 2027's shared costs with Sam's payment link
+ * (Settle up, T940). ?friendsmock=settled is the same with every transfer
+ * marked as paid; ?friendsmock=owed adds train tickets you paid, so the
+ * others owe you and "Add your payment link" shows.
  * ?friendsmock=empty is an account with nobody yet.
  */
 import { E2E_SEAMS } from '../lib/e2eSeams.js';
@@ -134,6 +137,9 @@ export function mockState() {
     ],
     joinMine: new Set(empty ? [] : ['ft-jo-be']),
     joinMissing: false,
+    ledgers: empty ? {} : { 'g-summer': mockLedger(FRIENDS_MOCK) },
+    payLink: '',
+    payLinkMissing: false,
     visibility: { showCountries: true, showSaves: false, showTips: true, showMeet: true },
     visibilityMissing: false,
     // Your own record and shortlist as the seam has them (the real ones are
@@ -142,6 +148,28 @@ export function mockState() {
     mockSaves: ['dest:OPO', 'dest:LJU'],
     // Accepted co-planners on your own trips, for My trips' "Sam joins".
     coplannersByPlan: { mp1: [{ userId: 'u-sam', name: 'Sam Martens', emoji: '' }] },
+  };
+}
+
+/** Summer 2027's shared costs: Sam paid the flat's deposit, you the
+ *  groceries, Jo a dinner for the two of you. Settled: both transfers
+ *  marked as paid. Owed: you also paid the train tickets. */
+function mockLedger(variant) {
+  const settled = variant === 'settled';
+  const at = new Date(Date.now() - 86400000).toISOString();
+  return {
+    missing: false,
+    expenses: [
+      { id: 'e-dinner', paidBy: 'u-jo', amountCents: 4500, description: 'Dinner', splitAmong: [MOCK_ME, 'u-jo'], createdBy: 'u-jo', createdAt: at },
+      { id: 'e-food', paidBy: MOCK_ME, amountCents: 9000, description: 'Groceries', splitAmong: [MOCK_ME, 'u-sam', 'u-jo'], createdBy: MOCK_ME, createdAt: at },
+      { id: 'e-flat', paidBy: 'u-sam', amountCents: 24000, description: 'Flat deposit', splitAmong: [MOCK_ME, 'u-sam', 'u-jo'], createdBy: 'u-sam', createdAt: at },
+      ...(variant === 'owed' ? [{ id: 'e-train', paidBy: MOCK_ME, amountCents: 36000, description: 'Train tickets', splitAmong: [MOCK_ME, 'u-sam', 'u-jo'], createdBy: MOCK_ME, createdAt: at }] : []),
+    ],
+    settlements: settled ? [
+      { id: 'st-jo', from: 'u-jo', to: 'u-sam', amountCents: 8750, createdBy: 'u-jo', createdAt: at },
+      { id: 'st-me', from: MOCK_ME, to: 'u-sam', amountCents: 4250, createdBy: MOCK_ME, createdAt: at },
+    ] : [],
+    payLinks: new Map([['u-sam', 'https://tikkie.me/pay/sam-summer']]),
   };
 }
 

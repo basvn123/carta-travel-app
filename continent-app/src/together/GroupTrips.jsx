@@ -8,6 +8,7 @@ import { nightsBetween } from '../lib/tripDates.js';
 import { tally, leader, fitsBand, barScale, owesVote, tripTotal } from './groupBand.js';
 import { useTogether, togetherActions } from './useTogether.js';
 import { Block, ToneFace, ToneFaces, fmtShort, nameOf } from './parts.jsx';
+import { GroupCosts } from './SettleUp.jsx';
 
 /**
  * Group trips (T931, migration 055): a few accepted friends decide one trip.
@@ -19,7 +20,8 @@ import { Block, ToneFace, ToneFaces, fmtShort, nameOf } from './parts.jsx';
  * member leaves from their own home, and the result says so. Each member may
  * set a private maximum for the whole trip; the band that fits everyone
  * comes back from the server as one number (group_trip_band), and the page
- * never sees another member's value.
+ * never sees another member's value. Shared costs and Settle up live in
+ * SettleUp.jsx (T940, migration 058).
  */
 
 const money = (n) => formatMoney(n, { precision: 'whole' });
@@ -110,7 +112,7 @@ function Option({ o, title, sub, over, people, me, onVote }) {
   );
 }
 
-export function GroupView({ back, headRef, groupId, destinations, choices, onOpenTripPlan }) {
+export function GroupView({ back, headRef, groupId, destinations, choices, onOpenTripPlan, onSettle }) {
   const { t, lang } = useI18n();
   const s = useTogether();
   const g = s.groups.find((x) => x.id === groupId);
@@ -298,6 +300,7 @@ export function GroupView({ back, headRef, groupId, destinations, choices, onOpe
               ) : null}
             </article>
           )}
+          {onSettle && <GroupCosts g={g} onOpen={onSettle} />}
         </div>
       </div>
     </div>
