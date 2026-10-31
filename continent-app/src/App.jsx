@@ -125,6 +125,7 @@ import { AccountPanel } from './auth/AccountPanel.jsx';
 // My trips is its own chunk with its own stylesheet (T434): nothing of it is
 // needed before the traveller opens it.
 const SavedTripsPanel = lazy(() => import('./auth/SavedTripsPanel.jsx').then((m) => ({ default: m.SavedTripsPanel })));
+const TogetherPage = lazy(() => import('./together/TogetherPage.jsx').then((m) => ({ default: m.TogetherPage })));
 const TogetherSheet = lazy(() => import('./planner/finder/FindingTrips.jsx').then((m) => ({ default: m.TogetherSheet })));
 import { PaywallProvider } from './hooks/usePaywall.jsx';
 import { LegalFromUrl } from './components/LegalFromUrl.jsx';
@@ -250,6 +251,10 @@ function TravelApp() {
   const [adminOpen, setAdminOpen] = useState(false);
   const [accountView, setAccountView] = useState('home');
   const [accountEntry, setAccountEntry] = useState(0);
+  // Together (T928): a page over the view like My trips and Account, with
+  // its own sub-screen (tv=) and the friend or group it is about (tg=).
+  const [togetherOpen, setTogetherOpen] = useState(false);
+  const [togetherView, setTogetherView] = useState({ view: 'home', id: '' });
   // Somebody's invite link (#friend=<handle>). Read once at startup, like
   // every other hash this app answers, and stripped from the bar right away.
   const [pendingFriend, setPendingFriend] = useState(() => readFriendHandleFromUrl());
@@ -260,12 +265,13 @@ function TravelApp() {
   // it for. A guest lands on the account hub instead, which is where signing
   // in is, and the handle waits: dropping it would waste the one tap the
   // sender was trying to save.
+  // T928: the link opens Together's Add screen, the handle looked up there.
   useEffect(() => {
     if (!pendingFriend) return;
     setSavedTripsOpen(false);
-    setAccountView(user ? 'friends' : 'home');
-    setAccountEntry((n) => n + 1);
-    setAccountOpen(true);
+    setAccountOpen(false);
+    setTogetherView({ view: user ? 'add' : 'home', id: '' });
+    setTogetherOpen(true);
   }, [pendingFriend, user, setAccountOpen, setSavedTripsOpen]);
 
   // An invite to plan a trip together (#coplan=<token>, migration 052, T434).
@@ -331,6 +337,7 @@ function TravelApp() {
     stripGuideIdFromUrl();
     setAccountOpen(false);
     setSavedTripsOpen(false);
+    setTogetherOpen(false);
     setGuidesOpen(true);
     // pendingGuide only ever moves to '' after this (openGuides, the gallery's
     // close), which returns early, so the link still opens the guide once.
@@ -339,6 +346,7 @@ function TravelApp() {
   const openGuides = () => {
     setAccountOpen(false);
     setSavedTripsOpen(false);
+    setTogetherOpen(false);
     setPendingGuide('');
     setGuidesOpen(true);
   };
@@ -356,8 +364,11 @@ function TravelApp() {
     } catch { /* sandboxed: the page still opens */ }
   };
   const openAccountAt = (view) => {
+    // The old Friends spoke lives on Together now (T928).
+    if (view === 'friends') { openTogether('home'); return; }
     setGuidesOpen(false);
     setSavedTripsOpen(false);
+    setTogetherOpen(false);
     setLifestyleOpen(false);
     setAccountView(view);
     setAccountEntry((n) => n + 1);
@@ -366,6 +377,7 @@ function TravelApp() {
   };
   const openSaved = () => {
     setAccountOpen(false);
+    setTogetherOpen(false);
     setLifestyleOpen(false);
     setGuidesOpen(false);
     if (!savedTripsOpen) pushOverlay('trips');
@@ -376,17 +388,37 @@ function TravelApp() {
   // the popstate handler below then closes it. Opened from an address, there
   // is no such entry and it simply closes.
   const closeOverlay = () => {
-    if (window.history.state?.cartaOverlay && (accountOpen || savedTripsOpen)) {
+    if (window.history.state?.cartaOverlay && (accountOpen || savedTripsOpen || togetherOpen)) {
       try { window.history.back(); return; } catch { /* sandboxed */ }
     }
     setAccountOpen(false);
     setSavedTripsOpen(false);
+    setTogetherOpen(false);
   };
+  // Together (T928) and its sub-screens: the page is one history step, and
+  // each sub-screen one more, so Back walks out of a friend's page onto the
+  // page, then off the page.
+  function openTogether(view = 'home', id = '') {
+    setGuidesOpen(false);
+    setSavedTripsOpen(false);
+    setAccountOpen(false);
+    setLifestyleOpen(false);
+    const next = { view: view || 'home', id: id || '' };
+    try {
+      const st = window.history.state || {};
+      if (st.cartaOverlay !== 'together' || st.tv !== next.view || (st.tg || '') !== next.id) {
+        window.history.pushState({ cartaOverlay: 'together', tv: next.view, tg: next.id },
+          '', tabHref('together', window.location.search, next));
+      }
+    } catch { /* sandboxed: the page still opens */ }
+    setTogetherView(next);
+    setTogetherOpen(true);
+  }
   // My trips and the account hub cover the whole screen. The tab behind them
   // is inert while they are open, so Tab, a screen reader and the heading
   // outline stay inside the page the traveller is looking at (T186). React 18
   // has no boolean inert, so the attribute is written as an empty string.
-  const behindPanel = savedTripsOpen || accountOpen ? '' : undefined;
+  const behindPanel = savedTripsOpen || accountOpen || togetherOpen ? '' : undefined;
 
   // One door into a section, whatever pressed it: the header tabs, the brand
   // mark, the phone's bottom bar and the empty-shelf links all land on the
@@ -409,7 +441,7 @@ function TravelApp() {
   // Whether My trips or Account stands over the view, for the stable door
   // below: leaving one for the view under it is still a step in the history.
   const overlayOpenRef = useRef(false);
-  overlayOpenRef.current = accountOpen || savedTripsOpen;
+  overlayOpenRef.current = accountOpen || savedTripsOpen || togetherOpen;
   //
   // A real section change by the traveller moves (T391, rule R5): the new
   // tab fades in and rises 8 px through crossTab() in lib/sharedElement.js,
@@ -421,6 +453,7 @@ function TravelApp() {
     const commit = () => {
       setSavedTripsOpen(false);
       setAccountOpen(false);
+      setTogetherOpen(false);
       setLifestyleOpen(false);
       setActiveTab(key);
     };
@@ -503,6 +536,9 @@ function TravelApp() {
       setAccountOpen(true);
     } else if (bootRoute?.overlay === 'trips') {
       setSavedTripsOpen(true);
+    } else if (bootRoute?.overlay === 'together') {
+      setTogetherView({ view: bootRoute.togetherView || 'home', id: bootRoute.togetherId || '' });
+      setTogetherOpen(true);
     }
     // Once, at boot: bootRoute never changes.
   }, [bootRoute, setAccountOpen, setSavedTripsOpen]);
@@ -532,6 +568,7 @@ function TravelApp() {
   // A view key (map, places, trip, day) passes straight to goToTab.
   const goTo = (key) => {
     if (key === 'trips') { openSaved(); return; }
+    if (key === 'together') { openTogether('home'); return; }
     if (key === 'account') {
       // Pressing Account on Account goes back to its first page.
       if (accountOpen) { setAccountView('home'); setAccountEntry((n) => n + 1); return; }
@@ -863,11 +900,20 @@ function TravelApp() {
 
   /** "Plan a day here" on a destination page: the day flow, staying in that
    *  city, opened on the When question. */
-  const openDayForDest = useCallback((id) => {
+  const openDayForDest = useCallback((id, date = null) => {
     if (!id) return;
-    setPendingDaySeed({ destId: String(id) });
+    // T929: "Plan a day together" names the day too.
+    setPendingDaySeed(date && /^\d{4}-\d{2}-\d{2}$/.test(date) ? { destId: String(id), date } : { destId: String(id) });
     goToTab('day');
   }, [goToTab]);
+  // The friends signals across Carta (T929: the Plan date step, the place
+  // page) ask for the same door with one event, so no prop runs through
+  // every planner and page between here and them.
+  useEffect(() => {
+    const onPlanDay = (e) => { if (e.detail?.destId) openDayForDest(e.detail.destId, e.detail.date || null); };
+    window.addEventListener('carta:plan-day', onPlanDay);
+    return () => window.removeEventListener('carta:plan-day', onPlanDay);
+  }, [openDayForDest]);
 
   /** "Add to a day plan" on a trail, beach, lake or mountain page: the day
    *  flow with that place as the first idea, staying in the nearest town.
@@ -1141,6 +1187,8 @@ function TravelApp() {
       // opens it over the view that was showing.
       setAccountOpen(route.overlay === 'account');
       setSavedTripsOpen(route.overlay === 'trips');
+      setTogetherOpen(route.overlay === 'together');
+      if (route.overlay === 'together') setTogetherView({ view: route.togetherView || 'home', id: route.togetherId || '' });
       if (route.overlay) return;
       if (route.cat) setPendingCategory(route.cat);
       activeTabRef.current = route.view;
@@ -1412,7 +1460,7 @@ function TravelApp() {
     tripKinds, priceRange, priceBounds, selectedId, favorites, sortKey, showFavOnly,
     ratingRange, gemOnly, unescoOnly, topBeachOnly, bigOnly, topPick, reachHours,
     // The address names the place on screen: a page over the view wins.
-    activeTab: accountOpen ? 'account' : savedTripsOpen ? 'trips' : activeTab,
+    activeTab: accountOpen ? 'account' : savedTripsOpen ? 'trips' : togetherOpen ? 'together' : activeTab,
   });
 
   // Sync a signed-in user's filter/lifestyle preferences with their account,
@@ -1581,7 +1629,7 @@ function TravelApp() {
   // landing page demonstrates its own inputs, and nothing in the Day planner
   // reads these, so neither shows a line. Hidden under My trips and Account,
   // which are pages of their own.
-  const settingsParts = savedTripsOpen || accountOpen ? null
+  const settingsParts = savedTripsOpen || accountOpen || togetherOpen ? null
     : activeTab === 'map' || activeTab === 'places' ? undefined
       // The Trip planner carries its Lifestyle on its own price card and its
       // Who step (T432), so the shell's line would only repeat it.
@@ -1593,7 +1641,7 @@ function TravelApp() {
   // sections, which is when the planner has just written its draft.
   const savedCount = favorites.size;
   // The place on screen, which the header and the bottom nav mark.
-  const place = accountOpen ? 'account' : savedTripsOpen ? 'trips' : placeOf(activeTab);
+  const place = accountOpen ? 'account' : savedTripsOpen ? 'trips' : togetherOpen ? 'together' : placeOf(activeTab);
   const planInProgress = useMemo(() => {
     const d = loadTripDraft();
     return !!(d && !d.planId && d.stops?.length);
@@ -2146,7 +2194,7 @@ function TravelApp() {
             stayTier={choices.stay_tier || 'home'}
             lifestyle={choices.lifestyle}
             onPlanTripCountry={openTripForCountry}
-            onOpenFriends={() => openAccountAt('friends')}
+            onOpenFriends={() => openTogether('home')}
             /* An empty shelf offers the tab that fills it, so "nothing here
                yet" comes with somewhere to go. */
             onGoToTab={(key, opts) => {
@@ -2191,6 +2239,29 @@ function TravelApp() {
           </div>
         </Suspense>
       )}
+      {togetherOpen && (
+        <div onClick={(e) => e.stopPropagation()}>
+          <Suspense fallback={<div className="mt-loading" aria-busy="true" />}>
+            <TogetherPage
+              view={togetherView.view}
+              viewId={togetherView.id}
+              onView={(v, id) => openTogether(v, id)}
+              onClose={closeOverlay}
+              destinations={data?.destinations}
+              costs={exploreIndices}
+              pendingHandle={pendingFriend}
+              onOpenGuides={openGuides}
+              onOpenSaved={openSaved}
+              onOpenAuth={() => { setAuthModalMode('signin'); setAuthModalOpen(true); }}
+              onPlanDay={(destId, date) => openDayForDest(destId, date)}
+              onOpenTripPlan={openPlanInList}
+              favorites={favorites}
+              choices={choices}
+              onPlanPlace={(id) => { const d = data?.destinations?.[id]; if (d?.iso2) openTripForCountry(d.iso2, id); }}
+            />
+          </Suspense>
+        </div>
+      )}
       {accountOpen && (
         <div onClick={(e) => e.stopPropagation()}>
           <AccountPanel
@@ -2206,6 +2277,7 @@ function TravelApp() {
             onOpenLifestyle={() => setLifestyleOpen(true)}
             onOpenSaved={openSaved}
             onOpenGuides={openGuides}
+            onOpenTogether={() => openTogether('home')}
             onOpenHome={() => goToTab('home')}
             stayTier={choices.stay_tier || 'home'}
             lifestyle={choices.lifestyle}

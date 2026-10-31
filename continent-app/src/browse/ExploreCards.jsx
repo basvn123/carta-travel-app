@@ -8,6 +8,7 @@ import { BookmarkIcon, BusIcon, CarIcon, TrainIcon } from '../components/Icons.j
 import { formatEst } from '../lib/money.js';
 import { Card, IconButton } from '../components/ui/index.js';
 import { PriceParts } from '../components/PriceParts.jsx';
+import { FriendCardLine } from '../together/signals.jsx';
 import { useSettledFigure } from '../lib/figureChange.js';
 import { countryName } from '../lib/countryName.js';
 import { FlightChip } from '../components/flights/Flights.jsx';
@@ -109,7 +110,7 @@ export function PlaceTile({ p, onSelect, fav, onToggleFav, t }) {
           <MatchLine place={p} />
         </>
       )}
-      price={<DayPrice cost={p.cost} t={t} />}
+      price={<><DayPrice cost={p.cost} t={t} /><FriendCardLine destId={p.id} /></>}
       rating={<ScoreChip rating={p.rating} size="sm" />}
       actions={onToggleFav ? (
         <SaveButton fav={fav} onToggle={() => onToggleFav(p.id)} t={t} tone="photo" name={p.city} />

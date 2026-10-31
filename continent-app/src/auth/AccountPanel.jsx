@@ -32,7 +32,6 @@ import { tabHref } from '../lib/urlState.js';
 import {
   fetchMyProfile, saveMyProfile, normaliseHandle, handleProblem, HANDLE_MAX,
 } from './profiles.js';
-import { FriendsSpoke } from './FriendsSpoke.jsx';
 import { PasswordField } from './PasswordField.jsx';
 import { useIsAdmin } from '../hooks/useIsAdmin.js';
 import { matchProfile, PROFILE_LABEL_KEYS } from '../browse/LifestylePanel.jsx';
@@ -230,8 +229,8 @@ function MenuRow({ icon, label, value, onClick }) {
 }
 
 export function AccountPanel({
-  onClose, onOpenAuth, initialView = 'home', onViewChange, pendingFriendHandle,
-  destinations, onOpenAdmin, onOpenLifestyle, onOpenSaved, onOpenGuides, onOpenHome,
+  onClose, onOpenAuth, initialView = 'home', onViewChange,
+  onOpenAdmin, onOpenLifestyle, onOpenHome, onOpenTogether,
   stayTier = 'home', lifestyle,
 }) {
   const {
@@ -681,7 +680,8 @@ export function AccountPanel({
     // three spokes now, one primary each (T390, brief V3-8).
     user && { key: 'security', group: 'account', view: 'security', Icon: LockIcon, label: t('account.menuSecurity'), go: () => setView('security') },
     user && { key: 'yourdata', group: 'account', view: 'yourdata', Icon: DownloadIcon, label: t('account.dataTitle'), go: () => setView('yourdata') },
-    user && { key: 'friends', group: 'account', view: 'friends', Icon: FriendsIcon, label: t('friends.title'), go: () => setView('friends') },
+    // T928: friends live on Together now; Account keeps one row to it.
+    user && { key: 'friends', group: 'account', Icon: FriendsIcon, label: t('tg.title'), go: () => { onOpenTogether?.(); } },
     user && isAdmin && { key: 'admin', group: 'account', Icon: LockIcon, label: t('account.menuAdmin'), go: () => { onClose?.(); onOpenAdmin?.(); } },
     { key: 'feedback', group: 'help', view: 'feedback', Icon: FeedbackIcon, label: t('account.menuFeedback'), go: () => setView('feedback') },
     { key: 'faq', group: 'help', view: 'faq', Icon: QuestionIcon, label: t('account.menuFaq'), go: () => setView('faq') },
@@ -856,7 +856,7 @@ export function AccountPanel({
           {user && (
             <div className="panel-section account-help-section">
               <div className="account-menu account-menu-help">
-                <MenuRow icon={<FriendsIcon size={17} />} label={t('friends.title')} onClick={() => setView('friends')} />
+                <MenuRow icon={<FriendsIcon size={17} />} label={t('tg.title')} onClick={() => onOpenTogether?.()} />
                 <MenuRow icon={<LockIcon size={17} />} label={t('account.menuSecurity')} onClick={() => setView('security')} />
                 <MenuRow icon={<DownloadIcon size={17} />} label={t('account.dataTitle')} onClick={() => setView('yourdata')} />
               </div>
@@ -1329,16 +1329,6 @@ export function AccountPanel({
             </div>
           </div>
         </>
-      )}
-
-      {view === 'friends' && user && (
-        <FriendsSpoke
-          userId={user.id}
-          pendingHandle={pendingFriendHandle}
-          destinations={destinations}
-          onOpenSaved={onOpenSaved}
-          onOpenGuides={onOpenGuides}
-        />
       )}
 
       {view === 'faq' && <FaqView onFeedback={() => setView('feedback')} />}

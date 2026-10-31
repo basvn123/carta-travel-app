@@ -14,6 +14,7 @@ import { airportsNear, originsWithin, DEFAULT_REACH } from '../../lib/airportRea
 import { nearestOrigin } from '../../lib/origins.js';
 import { noFlying } from './flowGraph.js';
 import { DateField } from '../../components/DateField.jsx';
+import { FriendsInWindow } from '../../together/signals.jsx';
 import { Stepper } from '../../components/FilterControls.jsx';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { personaPhotos } from '../../lib/recommend/persona.js';
@@ -228,6 +229,8 @@ export function WhenScreen({ settings, commit, doneLabel }) {
             max={max}
             onChange={pickDate}
           />
+          {/* T929: a friend's shown plan in these days, one line. */}
+          <FriendsInWindow start={w.start || null} end={w.end || null} />
         </div>
       )}
       {w.mode === 'months' && (
