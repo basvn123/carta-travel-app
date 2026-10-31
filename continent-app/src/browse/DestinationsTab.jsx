@@ -89,6 +89,7 @@ import { ExploreCategories } from './ExploreCategories.jsx';
 import { EmptyResult } from './EmptyResult.jsx';
 import { OutdoorMap } from './OutdoorMap.jsx';
 import { WhereBar, FilterChipBar, SortPill } from './WhereBar.jsx';
+import { setDockKind, setDockResults } from './searchDockStore.js';
 import {
   baseOfOutdoor, pointOfOutdoor, mapRowOf, regionsForLayer,
 } from '../lib/exploreLayers.js';
@@ -2604,6 +2605,14 @@ export function DestinationsTab({
   // every width, so the head is the title alone.
   const nearMeDoor = null;
   const isDesktop = useIsDesktop();
+  // T961: the phone's search dock names this layer while it is on screen
+  // (its colour tile and the sheet's What start here); the layer keeps its
+  // own Where and filter row for now (register T961-a).
+  useEffect(() => {
+    if (!isActive || isDesktop) return;
+    setDockKind(cat === 'trips' ? 'places' : cat);
+    setDockResults(null);
+  }, [isActive, isDesktop, cat]);
   // The By country track is one of the rails (T457): four on a desktop and
   // three on a phone in all, as on Explore, so the full list comes after the
   // same number of rails as Explore's "All places" does.

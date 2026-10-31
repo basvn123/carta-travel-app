@@ -76,6 +76,7 @@ import { MapPlacePanel } from './MapPlacePanel.jsx';
 import { useGuidedData, vibeOf } from '../lib/guidedData.js';
 import { AskChatHost } from './ask/AskChatButton.jsx';
 import { openAskChat } from './ask/askChatStore.js';
+import { setDockKind, setDockResults, setDockHandlers, useSearchDock } from './searchDockStore.js';
 import { CountriesButton } from '../components/CountriesControl.jsx';
 import {
   noCarOk, underOk, quietOk, matchGuided, guidedComparator, whyFacts, makeLabels,
@@ -1061,6 +1062,31 @@ export function ExploreTab({
       setPickedId(null);
     },
   });
+  // T961, T962: the phone's search dock is this view's search. While this
+  // tab is on screen it says the kind is Places and, once a search or a
+  // filter has left the overview, what the list is and how many filters
+  // are on, so the dock draws Back and the one Filters button. Its empty
+  // Search opens every place.
+  const dock = useSearchDock();
+  const dockShowAll = React.useRef(dock.showAll);
+  React.useEffect(() => {
+    if (dock.showAll === dockShowAll.current) return;
+    dockShowAll.current = dock.showAll;
+    setFocusAll(true);
+  }, [dock.showAll]);
+  const dockLabel = locationQuery
+    ? t('dock.in', { what: t('places.catPlaces'), q: locationQuery })
+    : t('explore.placesTitle');
+  if (isActive && !isDesktop) {
+    setDockHandlers({ onBack: () => lens.back(), onFilters: () => setSheetOpen(true) });
+  }
+  React.useEffect(() => {
+    if (!isActive || isDesktop) return;
+    setDockKind('places');
+    setDockResults(railsIdle ? null : {
+      label: dockLabel, query: locationQuery || '', filterCount: chips.length, filtersOpen: sheetOpen,
+    });
+  }, [isActive, isDesktop, railsIdle, dockLabel, locationQuery, chips.length, sheetOpen]);
   // T588: Filters opens and closes the side pane on a desktop (the
   // overview never shows it); Share copies this view's address.
   // T601 (owner 2026-10-22): closed until Filters opens it.
@@ -1347,7 +1373,7 @@ export function ExploreTab({
             toggle, then the categories and the quick chips. The phone's
             old Ask Carta and Filters row is gone: both live in the block. */}
         {railsIdle && (
-          <OverviewHero t={t} TitleTag={TitleTag} photo={isDesktop ? heroPhoto : null}
+          <OverviewHero t={t} TitleTag={TitleTag} photo={isDesktop ? heroPhoto : null} docked={!isDesktop}
             locationQuery={locationQuery} setLocationQuery={setLocationQuery}
             onShowAll={() => setFocusAll(true)}
             viewToggle={viewSwitch('xov-view')}
@@ -1385,11 +1411,11 @@ export function ExploreTab({
                 a round arrow before the title: a link to the overview's
                 address, drawn as the kit's icon button; Back in the browser
                 does the same. */}
-            <a className="icon-btn icon-btn-surface xov-back" href={lens.href}
+            {isDesktop && <a className="icon-btn icon-btn-surface xov-back" href={lens.href}
               aria-label={t('explore.backOverview')} title={t('explore.backOverview')}
               onClick={(e) => { e.preventDefault(); lens.back(); }}>
               <ArrowLeftIcon size={20} />
-            </a>
+            </a>}
             <TitleTag className="xbar-title">{t('explore.placesTitle')}</TitleTag>
             <span className="xbar-count sr-only">
               {t(gridTotal === 1 ? 'explore.countOne' : 'explore.countMany',
@@ -1405,7 +1431,8 @@ export function ExploreTab({
               {t('explore.toolShare')}
             </Button>
             {sortMenu}
-            <Button
+            {/* T962: on a phone Filters is the dock's round button. */}
+            {isDesktop && <Button
               variant="secondary"
               size="sm"
               ref={filterBtnRef}
@@ -1418,7 +1445,7 @@ export function ExploreTab({
             >
               {t('filter.filters')}
               {chips.length > 0 && <Chip kind="count" className="xfilters-n">{chips.length}</Chip>}
-            </Button>
+            </Button>}
             <Button variant="secondary" size="sm" className={`xtool${showFavOnly ? ' is-on' : ''}`}
               iconStart={<BookmarkIcon size={18} />} aria-pressed={showFavOnly}
               onClick={() => setShowFavOnly(!showFavOnly)}>
@@ -1444,7 +1471,7 @@ export function ExploreTab({
         {/* T598 (owner points 7 and 11): quick filter chips right under the
             head, AllTrails style, each a small popover over the same state
             the pane edits; then the active filters. */}
-        {!railsIdle && <ExploreQuickFilters {...railProps} />}
+        {!railsIdle && isDesktop && <ExploreQuickFilters {...railProps} />}
         {!railsIdle && <FilterChips t={t} chips={chips} onClearAll={resetAll} />}
 
         {/* The one community surface on a browse tab: a real count of what
@@ -1649,7 +1676,13 @@ export function ExploreTab({
           anchorRef={filterBtnRef}
           groups={[]}
           countryOptions={[]}
-          extra={filterRail}
+          extra={isDesktop ? filterRail : (
+            <>
+              {/* T962: how prices read joins the filters on a phone. */}
+              <PriceViewSwitch className="xsheet-price" />
+              {filterRail}
+            </>
+          )}
           activeFilters={chips.length}
           resetAll={resetAll}
           resultCount={gridTotal}
@@ -1756,7 +1789,7 @@ function useExploreLens({ isActive, railsIdle, focusAll, setFocusAll, clear }) {
 function OverviewHero({
   t, TitleTag, locationQuery, setLocationQuery, onShowAll,
   viewToggle, quick, filtersRef, filtersOn, filterCount, onAllFilters, photo, tasteChip = null,
-  strongChip = null,
+  strongChip = null, docked = false,
 }) {
   const [where, setWhere] = React.useState(locationQuery || '');
   // T906 (owner, Explore board 2026-10-30): one field for a place and for
@@ -1777,6 +1810,12 @@ function OverviewHero({
   const imgRef = React.useCallback((el) => {
     if (el && el.complete && el.naturalWidth) setShown(photoUrl);
   }, [photoUrl]);
+  // T961 (owner 2026-10-31): on a phone the dock in the top bar is the
+  // search and Ask Carta, and the quick chips live behind its Filters
+  // button (T962), so the overview keeps only its name for a screen reader.
+  if (docked) {
+    return <TitleTag className="xov-title sr-only" id="xov-title">{t('explore.heroTitle')}</TitleTag>;
+  }
   return (
     <section className={`xov-hero${photo ? ' has-photo' : ''}`} aria-labelledby="xov-title">
       {/* T622 (owner 2026-10-23): on a desktop one scenic photograph with
