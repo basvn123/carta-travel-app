@@ -695,6 +695,132 @@
   .mt-item-check { height: 64px; }
 }
 
+/* ── Your Europe (T926) ── */
+.mt-europe { display: grid; gap: var(--space-6); }
+.mt-europe-map, .mt-europe-side { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+.mt-tilemap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+.mt-tiles-map { display: block; width: 100%; height: auto; }
+/* Been: filled in the deep brown (the traveller's own record, the one
+   committed set on this map); next: the selected tint with its edge; saved:
+   a dashed outline; the rest: quiet. The code on each tile is the word. */
+.mt-tile rect { fill: var(--surface-sunken); stroke: none; }
+.mt-tile text { font-family: var(--font); font-size: var(--text-title); font-weight: 700; fill: var(--text-2); }
+.mt-tile.is-been rect { fill: var(--select-border); }
+.mt-tile.is-been text { fill: var(--surface); }
+.mt-tile.is-next rect { fill: var(--select-bg); stroke: var(--select-border); stroke-width: 2.5; }
+.mt-tile.is-next text { fill: var(--select-ink); }
+.mt-tile.is-saved rect { fill: var(--surface); stroke: var(--text-3); stroke-width: 2; stroke-dasharray: 5 4; }
+.mt-tile-legend { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-4); font-size: var(--text-caption); color: var(--text-2); }
+.mt-tile-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.mt-tile-legend i { width: 14px; height: 14px; border-radius: var(--radius-sm); }
+.mt-tile-legend i.is-been { background: var(--select-border); }
+.mt-tile-legend i.is-next { background: var(--select-bg); border: 2px solid var(--select-border); }
+.mt-tile-legend i.is-saved { border: 2px dashed var(--text-3); }
+.mt-tile-legend .btn { margin-left: auto; }
+
+/* The year's card: a photo band, then the line and its door. */
+.btn.mt-recap-card {
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 0;
+  height: auto;
+  padding: 0;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  white-space: normal;
+  text-align: left;
+}
+.btn.mt-recap-card .btn-label { display: flex; flex-direction: column; align-items: stretch; width: 100%; }
+.btn.mt-recap-card .mt-recap-img, .btn.mt-recap-card .hero-blank { display: block; width: 100%; height: auto; aspect-ratio: 16 / 7; max-height: none; object-fit: cover; }
+.mt-recap-text { display: flex; flex-direction: column; gap: 2px; padding: var(--space-3) var(--space-4) var(--space-4); }
+.mt-recap-k { font-size: var(--text-label); font-weight: 600; color: var(--select-ink); }
+.mt-recap-t { font-size: var(--text-title); font-weight: 700; color: var(--text); }
+.mt-recap-s { font-size: var(--text-label); font-weight: 500; color: var(--text-2); }
+
+/* The figures: label over value, two to a row. */
+.mt-figs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); margin: 0; }
+.mt-fig { display: flex; flex-direction: column; gap: 2px; padding: var(--space-3); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); min-width: 0; }
+.mt-fig dt { font-size: var(--text-caption); color: var(--text-2); }
+.mt-fig dd { margin: 0; }
+.mt-fig dd b { font-size: var(--text-headline); font-weight: 700; line-height: var(--leading-tight); color: var(--text); }
+.mt-fig-of { margin-left: 6px; font-size: var(--text-body); font-weight: 600; color: var(--text-3); }
+.mt-fig-sub { font-size: var(--text-caption); line-height: var(--leading-ui); color: var(--text-2); }
+
+.mt-miles { display: grid; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.mt-mile { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2) var(--space-3); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); }
+.mt-mile.is-next { border-style: dashed; background: transparent; }
+.mt-mile-icon { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 36px; height: 36px; border-radius: var(--radius-pill); background: var(--umber-50); color: var(--select-ink); }
+.mt-mile-text { display: flex; flex-direction: column; min-width: 0; font-size: var(--text-body); color: var(--text); }
+.mt-mile-text small { font-size: var(--text-caption); color: var(--text-2); }
+
+.mt-year { display: flex; flex-direction: column; gap: var(--space-2); }
+.mt-year + .mt-year { margin-top: var(--space-3); }
+.mt-year-title { margin: 0; font-size: var(--text-lead); font-weight: 700; color: var(--text); }
+.mt-journal { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--space-3); }
+.mt-jwrap { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
+.mt-jwrap:has(.memo, .tshare, .mt-crew) { grid-column: 1 / -1; }
+.mt-jcard { display: flex; flex-direction: column; overflow: hidden; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); }
+.mt-jcard-media { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: var(--surface-sunken); cursor: pointer; }
+.mt-jcard-img, .mt-jcard-media .hero-blank { display: block; width: 100%; height: 100%; object-fit: cover; }
+.mt-photo-pill.is-small { min-height: 28px; gap: 4px; padding: 0 var(--space-2); font-size: var(--text-caption); }
+.mt-jcard-body { display: flex; flex-direction: column; gap: 2px; padding: var(--space-2) var(--space-3) var(--space-3); }
+.mt-jcard-top { display: flex; align-items: flex-start; gap: var(--space-1); }
+.btn.mt-jcard-title { flex: 1; justify-content: flex-start; min-height: var(--tap); padding: 0; font-size: var(--text-lead); font-weight: 700; color: var(--text); text-align: left; white-space: normal; }
+@media (hover: hover) { .btn.mt-jcard-title:hover { background: none; text-decoration: underline; } }
+.mt-jcard-meta { font-size: var(--text-caption); color: var(--text-2); }
+.mt-jcard-meta.is-cost { font-size: var(--text-label); color: var(--text); }
+.mt-jcard-rate { display: inline-flex; align-items: center; gap: 4px; font-size: var(--text-caption); font-weight: 600; color: var(--text); }
+.mt-jcard-rate svg { color: var(--rate); }
+.mt-jcard-acts { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-2); }
+
+/* The recap screen: the story card beside its switches. */
+.mt-recap { display: flex; flex-direction: column; gap: var(--space-4); }
+.mt-recap-head { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-1); }
+.mt-recap-h { margin: 0; font-size: var(--text-headline); font-weight: 700; color: var(--text); }
+.mt-recap-h:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.mt-recap-grid { display: grid; gap: var(--space-5); }
+.mt-story {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  width: min(100%, 420px);
+  aspect-ratio: 4 / 5;
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--radius-sheet);
+  background: var(--home-ground-deep);
+  color: var(--surface);
+}
+.mt-story-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.mt-story.has-photo::after { content: ''; position: absolute; inset: 0; background: var(--home-film-tint); }
+.mt-story-body { position: relative; z-index: 1; display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-5); }
+.mt-story-title { margin: 0; font-size: var(--text-headline); font-weight: 700; line-height: var(--leading-tight); }
+.mt-story-cells { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); margin: 0; }
+.mt-story-cells div { display: flex; flex-direction: column-reverse; }
+.mt-story-cells dt { font-size: var(--text-label); }
+.mt-story-cells dd { margin: 0; font-size: var(--text-display); font-weight: 700; line-height: 1.1; }
+.mt-story-line { margin: 0; font-size: var(--text-body); }
+.mt-story-foot { margin: var(--space-2) 0 0; font-size: var(--text-label); font-weight: 700; }
+.mt-recap-side { display: flex; flex-direction: column; gap: var(--space-3); max-width: 420px; }
+.mt-recap-toggles { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 0 var(--space-3); }
+.mt-recap-toggles .ui-switch + .ui-switch { border-top: 1px solid var(--border-soft); }
+.mt-recap-note { display: inline-flex; align-items: center; gap: 6px; margin: 0; font-size: var(--text-label); color: var(--text-2); }
+@media (min-width: 1024px) {
+  .mt-europe { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: start; }
+  .mt-europe-map { position: sticky; top: calc(var(--tap) + var(--space-4)); }
+  .mt-recap-grid { grid-template-columns: auto minmax(0, 1fr); align-items: start; }
+}
+
 /* The lazy chunk's own placeholder while it loads. */
 .mt-loading { position: fixed; inset: 0; z-index: var(--z-shell); background: var(--surface-page); }
 

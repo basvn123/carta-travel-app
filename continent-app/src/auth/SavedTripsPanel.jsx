@@ -17,7 +17,7 @@ import {
   updatePastTripInAccount, updatePastTripOnDevice,
 } from './pastTrip.js';
 import {
-  loadMemory, saveMemory, clearMemory, coverPhoto, memoryPoints, spendSummary, SPEND_CATS,
+  loadMemory, saveMemory, clearMemory, coverPhoto, memoryPoints, spendSummary, spendPerPerson, emptyMemory, SPEND_CATS,
 } from './pastTripMemory.js';
 import { COUNTRY_ISO2 } from '../components/CountryFlag.jsx';
 import { crewLabel, crewInitials, namedCrew, readCrew, writeCrew, MAX_CREW } from './tripCrew.js';
@@ -43,13 +43,15 @@ import { holdPlan, useKept } from '../lib/recommend/keptStore.js';
 import {
   localToday, addDaysIso, classifyTrips, whenParts, dayPlanEndDate, orderedUnique, daysUntil,
   nightsBetween, tripFigure, visitedRecord, yearOf, deviceTripAsPlan, readinessSteps, tripStops,
-  isHappening, tripToday,
+  isHappening, tripToday, europeMilestones, europeMoney,
 } from '../lib/myTrips.js';
 import { useVisitedCountries, toggleVisitedCountry } from '../lib/visitedCountries.js';
 import { UNDO_MS, UndoToast, CrewBar, TripPrice, whenText } from './mytrips/parts.jsx';
 import { SiteFooter } from '../components/SiteFooter.jsx';
 import { MyTripsHead, TripsTab, VisitedCountriesSheet, MT_TABS } from './mytrips/MyTripsTabs.jsx';
-import { YearFilter, VisitedTab } from './mytrips/LegacyTabs.jsx';
+import { BAND_CUTOFFS } from '../lib/rating.js';
+import { YourEurope } from './mytrips/YourEurope.jsx';
+import { YearRecap } from './mytrips/YearRecap.jsx';
 import { SavedTab } from './mytrips/SavedTab.jsx';
 import { useSavedLists, loadSavedLists, noteSaved, createList, setNote } from '../lib/savedLists.js';
 import { TodayCard } from './mytrips/TodayCard.jsx';
@@ -100,6 +102,10 @@ const MOCK_PLANS = [
   // T923: two drafts, no dates yet, for Being planned.
   { id: 'mp7', label: 'Alps hut tour', cities: ['Innsbruck'], countries: ['Austria'], start_date: null, end_date: null, destination_ids: ['INN'], stops: [{ destination_id: 'INN', nights: 6 }] },
   { id: 'mp8', label: 'Lake weekend', cities: ['Ljubljana'], countries: ['Slovenia'], start_date: null, end_date: null, destination_ids: ['LJU'] },
+  // T926: past trips with stops (so Carta's estimate exists for them), one
+  // completing Benelux with Bruges, one in Spain so Portugal completes Iberia.
+  { id: 'mp9', label: 'Amsterdam and Luxembourg', cities: ['Amsterdam', 'Luxembourg'], countries: ['Netherlands', 'Luxembourg'], start_date: addDaysIso(-200), end_date: addDaysIso(-195), destination_ids: ['AMS', 'LUX'], stops: mockStops([['AMS', -200, -197], ['LUX', -197, -195]]), choices: { groupSize: 2 } },
+  { id: 'mp10', label: null, cities: ['Seville'], countries: ['Spain'], start_date: addDaysIso(-430), end_date: addDaysIso(-424), destination_ids: ['SVQ'], stops: mockStops([['SVQ', -430, -424]]), choices: { groupSize: 2 } },
   // T924: a trip happening today, on its third day.
   { id: 'mp6', label: 'Rome and Naples', cities: ['Rome', 'Naples'], countries: ['Italy'], start_date: addDaysIso(-2), end_date: addDaysIso(3), destination_ids: ['FCO', 'NAP'], stops: mockStops([['FCO', -2, 2], ['NAP', 2, 3]]), choices: { groupSize: 2 } },
 ];
@@ -126,6 +132,13 @@ function seedMock() {
     });
     try { localStorage.setItem('carta.mytrips.done.v1', JSON.stringify({ mp6: { 3: ['i:i1'] } })); } catch { /* private mode */ }
   }
+  // T926: memories with spend, photos and a rating on three past trips.
+  const MEMS = {
+    mp2: { places: [{ id: 'gem:bruges', city: 'Bruges', country: 'Belgium', lat: 51.209, lon: 3.224, nights: 5 }], travellers: { adults: 2, children: 0 }, spend: { currency: 'EUR', stay: 380, food: 290, transport: 40, activities: 50 }, rating: 8, photos: [{ id: 'm1', src: '/home/film/bled.webp' }, { id: 'm2', src: '/home/film/porto.webp' }] },
+    mp9: { places: [{ id: 'AMS', city: 'Amsterdam', country: 'Netherlands', lat: 52.37, lon: 4.9, nights: 3 }, { id: 'LUX', city: 'Luxembourg', country: 'Luxembourg', lat: 49.61, lon: 6.13, nights: 2 }], travellers: { adults: 2, children: 0 }, spend: { currency: 'EUR', stay: 520, food: 240, transport: 60 }, rating: 9, photos: [{ id: 'm3', src: '/home/film/hallstatt.webp' }, { id: 'm4', src: '/home/film/lagos.webp' }, { id: 'm5', src: '/home/film/dubrovnik.webp' }] },
+    mp10: { places: [{ id: 'SVQ', city: 'Seville', country: 'Spain', lat: 37.39, lon: -5.98, nights: 6 }], travellers: { adults: 2, children: 0 }, spend: { currency: 'EUR', stay: 430, food: 310, activities: 70 }, rating: null, photos: [] },
+  };
+  Object.entries(MEMS).forEach(([id, m]) => { if (!loadMemory(id)) saveMemory(id, { ...emptyMemory(), ...m }, {}); });
   if (hasTripExtras('mp1')) return;
   persistTripExtras('mp1', {
     ...loadTripExtras('mp1'),
@@ -251,8 +264,7 @@ export function SavedTripsPanel({
   const [friends, setFriends] = useState([]);
   const [friendTrips, setFriendTrips] = useState(SAVED_MOCK ? MOCK_FRIEND_TRIPS : []);
   const [visById, setVisById] = useState({});
-  const [mapFull, setMapFull] = useState(false);
-  const [year, setYear] = useState('all');
+  const [recapOpen, setRecapOpen] = useState(false);
   const [countriesOpen, setCountriesOpen] = useState(false);
   const countriesRef = useRef(null);
   const manualCountries = useVisitedCountries();
@@ -297,19 +309,6 @@ export function SavedTripsPanel({
     listFriendTrips().then((rows) => { if (live) setFriendTrips(rows); }).catch(() => {});
     return () => { live = false; };
   }, [user]);
-
-  // Escape leaves the full-screen map first, in the capture phase, so one
-  // press does not also close the page behind it.
-  useEffect(() => {
-    if (!mapFull) return undefined;
-    const onKey = (e) => {
-      if (e.key !== 'Escape') return;
-      e.stopPropagation();
-      setMapFull(false);
-    };
-    window.addEventListener('keydown', onKey, true);
-    return () => window.removeEventListener('keydown', onKey, true);
-  }, [mapFull]);
 
   const spendLabels = useMemo(
     () => Object.fromEntries(SPEND_CATS.map((c) => [c, t(`saved.pastSpend_${c}`)])),
@@ -439,21 +438,6 @@ export function SavedTripsPanel({
   ]), [destinations]);
   const dayPlanCountries = useCallback((sp) => orderedUnique((sp.stops || []).map((s) => destinations[s.destinationId]?.country)), [destinations]);
   const dayPlanCities = useCallback((sp) => orderedUnique((sp.stops || []).map((s) => destinations[s.destinationId]?.city)), [destinations]);
-
-  const cityCoordIndex = useMemo(() => {
-    const m = new Map();
-    for (const d of Object.values(destinations)) {
-      const key = (d.city || '').toLowerCase();
-      const lat = d.city_lat != null ? d.city_lat : d.lat;
-      const lon = d.city_lon != null ? d.city_lon : d.lon;
-      if (!key || lat == null || lon == null) continue;
-      const score = d.rating?.score ?? d.beauty?.score ?? 0;
-      const cur = m.get(key);
-      if (!cur || score > cur.score) m.set(key, { lat, lon, score });
-    }
-    return m;
-  }, [destinations]);
-  const cityCoords = useCallback((city) => cityCoordIndex.get((city || '').toLowerCase()) || null, [cityCoordIndex]);
 
   // The trip's headline: the country when it stays in one, else its label or route.
   const journeyParts = useCallback((p) => {
@@ -833,76 +817,17 @@ export function SavedTripsPanel({
     removeWithUndo({ key: `star:${row.key}`, label: row.name || row.id, restore: () => onToggleFav?.(parsed.id, parsed.kind, parsed.cc) });
   };
 
-  // ── Visited: years, the record and the map, filtered by the chosen year. ──
-  const pastYear = (p) => yearOf(p.end_date || p.start_date);
-  const dayYear = (sp) => yearOf(dayPlanEndDate(sp));
-  const years = useMemo(() => {
-    const ys = new Set([...pastPlans.map(pastYear), ...pastDayPlans.map(dayYear)].filter(Boolean));
-    return [...ys].sort((a, b) => b - a);
-  }, [pastPlans, pastDayPlans]);
-  const yearNow = years.includes(year) ? year : 'all';
-  const inYear = (y) => yearNow === 'all' || y === yearNow;
-  const yPlans = useMemo(() => pastPlans.filter((p) => inYear(pastYear(p))), [pastPlans, yearNow]); // eslint-disable-line react-hooks/exhaustive-deps
-  const yDays = useMemo(() => pastDayPlans.filter((sp) => inYear(dayYear(sp))), [pastDayPlans, yearNow]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Only the chosen year's memories count towards the chosen year.
-  const yMemories = useMemo(() => {
-    const ids = new Set([...yPlans.map((p) => p.id), ...yDays.map((sp) => sp.id)]);
-    return Object.fromEntries(Object.entries(memories).filter(([id]) => ids.has(id)));
-  }, [memories, yPlans, yDays]);
-  const record = useMemo(() => visitedRecord({
-    pastPlans: yPlans, pastDayPlans: yDays, memories: yMemories, destinations,
-    manualCountries: yearNow === 'all' ? manualCountries : [],
-  }), [yPlans, yDays, yMemories, destinations, manualCountries, yearNow]);
+  // ── Your Europe (T926): the record, every year. ──
   const allRecord = useMemo(() => visitedRecord({ pastPlans, pastDayPlans, memories, destinations }), [pastPlans, pastDayPlans, memories, destinations]);
-
-  const visitedItems = useMemo(() => {
-    const out = [];
-    const seen = new Set();
-    const add = (city, at, open, id) => {
-      if (!at) return;
-      const key = (city || '').toLowerCase() || `${at.lat},${at.lon}`;
-      if (seen.has(key)) return;
-      seen.add(key);
-      out.push({ lat: at.lat, lon: at.lon, city: city || '', plain: true, img: resolveImage({ ids: id ? [id] : [], cities: [city] }), open });
-    };
-    yPlans.forEach((p) => {
-      const open = () => setOpenMemory((cur) => (cur === p.id ? '' : p.id));
-      (p.destination_ids || []).forEach((id) => add(destinations[id]?.city, destCoords(id), open, id));
-      (p.cities || []).forEach((c) => add(c, cityCoords(c), open));
-      memoryPoints(memories[p.id]).forEach((pt) => add(pt.city, pt, open, pt.id));
-    });
-    yDays.forEach((sp) => {
-      const open = () => setOpenMemory((cur) => (cur === sp.id ? '' : sp.id));
-      (sp.stops || []).forEach((s) => add(destinations[s.destinationId]?.city, destCoords(s.destinationId), open, s.destinationId));
-      memoryPoints(memories[sp.id]).forEach((pt) => add(pt.city, pt, open, pt.id));
-    });
-    return out;
-  }, [yPlans, yDays, destinations, memories, resolveImage, destCoords, cityCoords]);
+  const fullRecord = useMemo(() => visitedRecord({
+    pastPlans, pastDayPlans, memories, destinations, manualCountries,
+  }), [pastPlans, pastDayPlans, memories, destinations, manualCountries]);
 
   const mapLocale = useMemo(() => ({
     'CooperativeGesturesHandler.WindowsHelpText': t('map.ctrlZoom'),
     'CooperativeGesturesHandler.MacHelpText': t('map.cmdZoom'),
     'CooperativeGesturesHandler.MobileHelpText': t('map.twoFingers'),
   }), [t]);
-  const visitedIso = useMemo(() => record.countries.map((c) => COUNTRY_ISO2[c]).filter(Boolean), [record]);
-  // One object per change of the record, never per render: TripMap re-frames
-  // and re-pins whenever its props change identity (T434 audit, P1-1).
-  const mapProps = useMemo(() => ({
-    stops: visitedItems,
-    countryFills: visitedIso,
-    basemap: 'record',
-    showRoute: false,
-    scrollZoom: true,
-    zoomControls: true,
-    mapLocale,
-    photoZoom: 6,
-    easeToSelected: false,
-    padBottom: 0,
-    fitMaxZoom: 7,
-    fitPadding: { top: 24, left: 24, right: 24, bottom: 24 },
-    onSelectStop: (i) => { setMapFull(false); visitedItems[i]?.open(); },
-  }), [visitedItems, visitedIso, mapLocale]);
 
   const placesFromPlan = (p) => (p.cities || []).map((city, i) => ({
     id: (p.destination_ids || [])[i] || null, city,
@@ -923,20 +848,6 @@ export function SavedTripsPanel({
     memory: mem,
   });
 
-  const recordGroups = useMemo(() => {
-    const rows = [
-      ...yPlans.map((p) => ({ kind: 'plan', when: p.end_date, item: p })),
-      ...yDays.map((sp) => ({ kind: 'day', when: dayPlanEndDate(sp), item: sp })),
-    ].sort((a, b) => (a.when < b.when ? 1 : -1));
-    const groups = [];
-    rows.forEach((r) => {
-      const y = yearOf(r.when);
-      let g = groups.find((x) => x.year === y);
-      if (!g) { g = { year: y, items: [] }; groups.push(g); }
-      g.items.push(r);
-    });
-    return groups;
-  }, [yPlans, yDays]);
 
   const recordRow = (row) => {
     if (row.kind === 'plan') {
@@ -994,7 +905,118 @@ export function SavedTripsPanel({
       ) : null,
     };
   };
-  const groups = recordGroups.map((g) => ({ year: g.year, rows: g.items.map(recordRow) }));
+
+  // The record's parts (T926): countries as ISO codes, the past trips with
+  // their spend, Carta's estimate and the place's Score where each exists.
+  const isoOf = (c) => COUNTRY_ISO2[c] || (/^[A-Z]{2}$/.test(c || '') ? c : '');
+  const beenIso = useMemo(() => new Set(fullRecord.countries.map(isoOf).filter(Boolean)), [fullRecord]);
+  const nextPlan = ahead[0] || null;
+  const nextIsoAll = nextPlan ? planCountries(nextPlan).map(isoOf).filter(Boolean) : [];
+  const nextIso = new Set(nextIsoAll.filter((c) => !beenIso.has(c)));
+  const savedIso = new Set(shortRows.filter((r) => r.kind === 'dest')
+    .map((r) => r.cc || destinations[r.id]?.iso2 || isoOf(destinations[r.id]?.country))
+    .filter((c) => c && !beenIso.has(c) && !nextIso.has(c)));
+  const catalogueCountries = useMemo(() => new Set(Object.values(destinations)
+    .map((d) => d.iso2 || d.cc || COUNTRY_ISO2[d.country]).filter(Boolean)).size, [destinations]);
+  const fmtMonth = (iso) => (iso ? new Date(`${iso}T00:00:00Z`).toLocaleDateString(activeLocale(), { month: 'short', year: 'numeric', timeZone: 'UTC' }) : '');
+
+  const pastTrips = useMemo(() => {
+    const scoreOf = (ids) => {
+      const s = ids.map((id) => destinations[id]?.rating).filter((r) => r && Number.isFinite(r.score));
+      return s.sort((a, b) => b.score - a.score)[0]?.score ?? null;
+    };
+    const rows = [
+      ...pastPlans.map((p) => ({
+        kind: 'plan', item: p, id: p.id, end: p.end_date, nights: nightsBetween(p.start_date, p.end_date),
+        title: journeyParts(p).title, ids: p.destination_ids || [], est: priceFor(p)?.perPersonDay ?? null,
+      })),
+      ...pastDayPlans.map((sp) => ({
+        kind: 'day', item: sp, id: sp.id, end: dayPlanEndDate(sp),
+        nights: Math.max(0, (sp.stops || []).reduce((n, x) => n + (x.days || 1), 0) - 1),
+        title: dayJourneyParts(sp).title, ids: (sp.stops || []).map((x) => x.destinationId), est: null,
+      })),
+    ];
+    return rows.map((r) => {
+      const mem = memories[r.id] || null;
+      return { ...r, mem, spendPP: mem ? spendPerPerson(mem) : null, estDayPP: r.est, score: scoreOf(r.ids) };
+    }).sort((a, b) => ((a.end || '') < (b.end || '') ? 1 : -1));
+  }, [pastPlans, pastDayPlans, memories, destinations, journeyParts, dayJourneyParts, priceFor]);
+  const money = useMemo(() => europeMoney(pastTrips, { greatScore: BAND_CUTOFFS.excellent }), [pastTrips]);
+  const milestones = useMemo(() => {
+    const points = [];
+    pastTrips.forEach((x) => {
+      x.ids.forEach((id) => { const at = destCoords(id); if (at) points.push({ ...at, city: destinations[id]?.city || '' }); });
+      memoryPoints(x.mem).forEach((pt) => points.push(pt));
+    });
+    return europeMilestones({
+      beenIso: [...beenIso], nextIso: nextIsoAll, trips: pastTrips, points,
+      legs: pastTrips.flatMap((x) => x.mem?.legs || []),
+    });
+  }, [pastTrips, beenIso, nextIsoAll.join(','), destCoords, destinations]); // eslint-disable-line react-hooks/exhaustive-deps -- keyed on the codes
+
+  // The journal: each past trip with its cover, its photos, what a day cost
+  // a person against Carta's estimate, how it was, and the two invitations.
+  const journal = useMemo(() => {
+    const groups = [];
+    pastTrips.forEach((x) => {
+      const y = yearOf(x.end);
+      let g = groups.find((v) => v.year === y);
+      if (!g) { g = { year: y, items: [] }; groups.push(g); }
+      g.items.push(x);
+    });
+    return groups;
+  }, [pastTrips]);
+  const journalItem = (x) => {
+    const row = recordRow({ kind: x.kind, item: x.item });
+    const mem = x.mem;
+    const edit = () => openPastForm(x.kind === 'plan' ? editableFromPlan(x.item, mem) : editableFromDayPlan(x.item, mem));
+    const day = Number.isFinite(x.spendPP) && x.nights > 0 ? x.spendPP / x.nights : null;
+    const vs = day != null && Number.isFinite(x.estDayPP) ? day - x.estDayPP : null;
+    return {
+      ...row,
+      meta: [fmtMonth(x.end), x.nights > 0 ? t(x.nights === 1 ? 'saved.nights1' : 'saved.nightsN', { n: x.nights }) : '', mem ? crewLabel(mem.crew, lang, 2) : '']
+        .filter(Boolean).join(', '),
+      photos: mem?.photos?.length || 0,
+      cost: day == null ? '' : vs == null || Math.round(vs) === 0
+        ? t(vs == null ? 'mt.jDay' : 'mt.jDayOn', { price: formatMoney(day) })
+        : t(vs < 0 ? 'mt.jDayUnder' : 'mt.jDayOver', { price: formatMoney(day), diff: formatMoney(Math.abs(vs)) }),
+      rating: mem?.rating ?? null,
+      onPhotos: mem?.photos?.length ? null : edit,
+      onHow: mem?.rating != null || mem?.story?.trim() ? null : edit,
+    };
+  };
+
+  // Your year in Europe: this year once it has a trip, else the latest one.
+  const recap = useMemo(() => {
+    const thisYear = Number(todayIso.slice(0, 4));
+    const years = journal.map((g) => g.year).filter(Boolean);
+    const year = years.includes(thisYear) ? thisYear : years[0];
+    if (!year) return null;
+    const trips = pastTrips.filter((x) => yearOf(x.end) === year);
+    const rec = visitedRecord({
+      pastPlans: trips.filter((x) => x.kind === 'plan').map((x) => x.item),
+      pastDayPlans: trips.filter((x) => x.kind === 'day').map((x) => x.item),
+      memories: Object.fromEntries(trips.filter((x) => x.mem).map((x) => [x.id, x.mem])),
+      destinations,
+    });
+    const m = europeMoney(trips, { greatScore: BAND_CUTOFFS.excellent });
+    const loved = trips.filter((x) => Number.isFinite(x.mem?.rating)).sort((a, b) => b.mem.rating - a.mem.rating)[0];
+    // Only the traveller's own photo can go on the image: a catalogue photo
+    // is another site's and would taint the canvas.
+    const own = trips.map((x) => coverPhoto(x.mem)).find((src) => src && (src.startsWith('data:') || src.startsWith('/')));
+    return {
+      year, trips: trips.length, countries: rec.countries.length, nights: rec.nights,
+      avgDay: m.avgDay, cheapestGreat: m.cheapestGreat ? { ...m.cheapestGreat } : null,
+      best: loved ? { title: loved.title, rating: loved.mem.rating } : null,
+      photo: own || null,
+      img: trips.map((x) => coverPhoto(x.mem)).find(Boolean) || resolveImage({ ids: trips[0]?.ids || [] }),
+    };
+  }, [journal, pastTrips, destinations, todayIso, resolveImage]);
+  const recapLine = recap ? [
+    t(recap.trips === 1 ? 'mt.trips1' : 'mt.tripsN', { n: recap.trips }),
+    recap.countries ? t(recap.countries === 1 ? 'mt.countries1' : 'mt.countriesN', { n: recap.countries }) : '',
+    recap.nights ? t(recap.nights === 1 ? 'saved.nights1' : 'saved.nightsN', { n: recap.nights }) : '',
+  ].filter(Boolean).join(', ') : '';
 
   const tripsCount = datedPlans.length + upcomingDayPlans.length;
 
@@ -1027,7 +1049,7 @@ export function SavedTripsPanel({
             counts={{
               trips: tripsCount,
               saved: shortRows.length + savedWeeks + keptCount,
-              europe: allRecord.countries.length + manualCountries.filter((c) => !allRecord.fromTrips.has(c)).length,
+              europe: beenIso.size,
             }}
             onNewTrip={() => onGoToTab?.('planstart')}
           />
@@ -1083,22 +1105,26 @@ export function SavedTripsPanel({
               )}
             />
           )}
-          {tab === 'europe' && years.length > 1 && (
-            <div className="mt-refine"><YearFilter years={years} year={yearNow} onYear={setYear} compact /></div>
+          {tab === 'europe' && recapOpen && recap && (
+            <YearRecap recap={recap} onBack={() => setRecapOpen(false)} />
           )}
-          {tab === 'europe' && (
-            <VisitedTab
-              record={record}
-              mapProps={mapProps}
-              hasMap={visitedItems.length > 0 || visitedIso.length > 0}
-              mapFull={mapFull}
-              onMapFull={setMapFull}
-              groups={groups}
-              pastForm={pastForm}
+          {tab === 'europe' && !(recapOpen && recap) && (
+            <YourEurope
+              map={{ been: beenIso, next: nextIso, saved: savedIso, nextName: nextPlan ? journeyParts(nextPlan).title : '' }}
+              figures={{
+                countries: beenIso.size, total: catalogueCountries, nights: fullRecord.nights, trips: fullRecord.trips,
+                avgDay: money.avgDay, vsEstimate: money.vsEstimate, cheapestGreat: money.cheapestGreat,
+              }}
+              milestones={milestones}
+              journal={journal.map((g) => ({ year: g.year, items: g.items.map(journalItem) }))}
+              recap={recap ? { year: recap.year, line: recapLine, img: recap.img } : null}
+              onRecap={() => setRecapOpen(true)}
+              onMark={() => setCountriesOpen(true)}
+              markRef={countriesRef}
               onAddPast={() => openPastForm(null)}
+              pastForm={pastForm}
               error={tripPlansError}
-              onEditCountries={() => setCountriesOpen(true)}
-              countriesRef={countriesRef}
+              fmtMonth={fmtMonth}
             />
           )}
         </div>

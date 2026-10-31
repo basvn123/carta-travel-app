@@ -60,6 +60,38 @@ test('readinessSteps: no dates, no dates step', () => {
   assert.equal(r.next, 'dates');
 });
 
+// T926: Your Europe's milestones and money come only from what the record holds.
+test('europeMilestones: a whole region, the next trip completing one, the longest trip, nothing invented', async () => {
+  const { europeMilestones } = await import('../src/lib/myTrips.js');
+  const ms = europeMilestones({
+    beenIso: ['BE', 'NL', 'LU', 'ES'], nextIso: ['PT'],
+    trips: [{ nights: 3, title: 'A' }, { nights: 9, title: 'B', end: '2026-08-01' }],
+    points: [{ city: 'Bruges', lat: 51.2 }],
+  });
+  assert.deepEqual(ms.map((m) => m.key), ['region', 'next', 'longest']);
+  assert.equal(ms[0].region, 'benelux');
+  assert.deepEqual(ms[1].cc, ['PT']);
+  assert.equal(ms[2].n, 9);
+  assert.deepEqual(europeMilestones({ beenIso: ['FR'], trips: [{ nights: 4 }] }), []);
+  const north = europeMilestones({ points: [{ city: 'Tromso', lat: 69.6 }, { city: 'Oslo', lat: 59.9 }] });
+  assert.equal(north[0].city, 'Tromso');
+});
+
+test('europeMoney: a day a person from logged spend; the estimate only when every trip has one', async () => {
+  const { europeMoney } = await import('../src/lib/myTrips.js');
+  assert.equal(europeMoney([{ nights: 3 }]).avgDay, null);
+  const a = europeMoney([
+    { nights: 4, spendPP: 400, estDayPP: 110, score: 9.1, title: 'Lagos', end: '2025-09-10' },
+    { nights: 2, spendPP: 260, estDayPP: 120, score: 7.0, title: 'Rome' },
+  ], { greatScore: 8.3 });
+  assert.equal(a.avgDay, 110);
+  assert.equal(Math.round(a.vsEstimate * 100) / 100, -3.33);
+  assert.deepEqual(a.cheapestGreat, { eur: 100, title: 'Lagos', score: 9.1, when: '2025-09-10' });
+  const b = europeMoney([{ nights: 4, spendPP: 400, estDayPP: null }, { nights: 2, spendPP: 260, estDayPP: 120 }]);
+  assert.equal(b.vsEstimate, null);
+  assert.equal(b.cheapestGreat, null);
+});
+
 // T924: Today.
 test('tripToday: day 4 of 6 is the first day in Porto; tomorrow stays', () => {
   const d = tripToday(PLAN, '2026-11-23');
