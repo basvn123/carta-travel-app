@@ -15,6 +15,8 @@ import { useTogether, togetherActions } from './useTogether.js';
 import { Block, ToneFace, fmtShort, nameOf } from './parts.jsx';
 import { AddFriend } from './AddFriend.jsx';
 import { FriendView } from './FriendView.jsx';
+import { MeetCard } from './MeetCard.jsx';
+import { useOverlaps } from './signals.jsx';
 
 /**
  * Together (T928, owner-approved spec v2): the people you travel with, on one
@@ -76,13 +78,14 @@ function WaitRow({ face, title, line, children }) {
 
 export function TogetherPage({
   view = 'home', viewId = '', onView, onClose, destinations, costs, pendingHandle,
-  onOpenGuides, onOpenAuth,
+  onOpenGuides, onOpenAuth, onPlanDay,
 }) {
   const { t, lang } = useI18n();
   const s = useTogether();
   const headRef = useRef(null);
   const [openTrip, setOpenTrip] = useState('');
   const [error, setError] = useState('');
+  const meets = useOverlaps(s);
 
   // The page heading takes focus on arrival and on every sub-screen.
   useEffect(() => { headRef.current?.focus?.(); }, [view, viewId]);
@@ -193,6 +196,13 @@ export function TogetherPage({
 
         <div className="tg-grid">
           <div className="tg-col">
+            {meets.length > 0 && (
+              <Block id="tg-meet-h" title={t('tg.plansMeet')} className="tg-o-meet">
+                {meets.slice(0, 3).map((o) => (
+                  <MeetCard key={o.key} o={o} me={s.userId} meName={nameOf(s.me)} onPlanDay={onPlanDay} onHide={(k) => togetherActions.hideMeet(k)} />
+                ))}
+              </Block>
+            )}
             {shelf.length > 0 && (
               <Block id="tg-plans-h" title={t('tg.friendsPlans')} className="tg-o-plans">
                 <div className="tg-shelf">

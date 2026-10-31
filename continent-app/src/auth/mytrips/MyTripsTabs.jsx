@@ -8,6 +8,7 @@ import { PlusIcon, UploadIcon, ChevronRightIcon } from '../../components/Icons.j
 import { countryName } from '../../lib/countryName.js';
 import { tabHref } from '../../lib/urlState.js';
 import { NextTripCard, TripRow } from './TripCards.jsx';
+import { JoinsLine } from '../../together/signals.jsx';
 import { FaceStack } from '../FriendFaces.jsx';
 
 /** A plain click stays in the app; a modified click opens the address. */
@@ -117,6 +118,7 @@ export function TripsTab({
           {next && (
             <div className="mt-next">
               <NextTripCard {...next} />
+              <JoinsLine planId={next.id} />
               {next.below}
             </div>
           )}
@@ -125,7 +127,7 @@ export function TripsTab({
               {coming.length > 0 && (
                 <Section id="mt-coming" title={t('mt.comingUp')}>
                   <div className="mt-rows">
-                    {coming.map((r) => <TripRow key={r.id} {...r}>{r.below}</TripRow>)}
+                    {coming.map((r) => <TripRow key={r.id} {...r}><JoinsLine planId={r.id} />{r.below}</TripRow>)}
                   </div>
                 </Section>
               )}
