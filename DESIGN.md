@@ -723,6 +723,27 @@ The home tokens, read by `61-v6-home.css` alone:
 
 Everything else in this file still binds the home page: transform and opacity (plus `stroke-dashoffset`, `clip-path` and a panel's `background-color`), no overshoot, no parallax, nothing tied to the scroll position, no count-up, one primary, `--tap` targets, no catalogue counts. No other surface takes this exception.
 
+### Home page exception v3 (T948 to T953)
+
+The owner rebuilt the home page on 2026-10-31 around one story in three acts (the cheap flight, the real cost, everything Carta does) and chose Motion (`motion/react`) for it. Where v3 and v2 differ, v3 holds; the hero film, its tint and the header on the film stay as v2 says.
+
+- **Motion, in one kit.** Everything under the hero moves through `src/browse/home/motionKit.jsx`, in a lazy chunk, so Motion never sits in the first load. Springs have no bounce: `quick` 0.2 s for a settling figure, `surface` 0.32 s for a line or a card, `reveal` 0.64 s for a heading or a section. Only transform and opacity move; `MotionConfig reducedMotion="user"` and the sheets' resting states keep the page complete without motion.
+- **Things arrive once.** A heading's words lift out of their own line box 40 ms apart, the first time it is in view; blocks rise 32 px. Nothing is scrubbed, pinned by script or zoomed: the receipt and the tour's screen hold with CSS `position: sticky` while their chapters pass.
+- **The slogan** lifts word by word in CSS (it is in the first load), its accent in `--sun-400` on the tinted film.
+- **The boarding pass** under Ask Carta shows the sweep's return flight from the home airport to the place on the film, two lines and a stub; with no flight it is not shown.
+- **The real cost** lies on `--home-ground-deep`, its rounded top rising over the film. A cost chapter is led by its amount in `--text-amount`, `--sun-400` on the umber; the receipt takes a line as each chapter reaches the middle of the view, and its total settles (never counts up). On a phone a running total holds to the panel's bottom edge.
+- **The proof** is two bars on one scale: the flight alone, then the flight, the bed and the days (`--sun-400`, `--action`, `--lagoon-600`), growing from the left once. It needs a flight, so without one it is not shown.
+- **The tour** shows the app in recordings inside a clean rounded screen (no phone body), one clip playing at a time. A chapter names its new recording and an older one, and plays the first that exists.
+- **Icons** on the home page are Phosphor duotone in `currentColor`, the brown on `--umber-100` discs.
+
+| Token | Value | Only for |
+|---|---|---|
+| `--text-amount` | `clamp(64px, 9vw, 128px)` | A cost chapter's amount |
+| `--text-total` | `clamp(40px, 5vw, 64px)` | The proof's whole-trip figure |
+| `--text-feature` | `clamp(28px, 3.4vw, 48px)` | A tour chapter's title |
+
+The week card, the voices, the five story panels, the route drawing and the Why cards of v2 are gone, and with them the uses of `--dur-draw` and `--dur-advance` on the home page.
+
 ### Plan opening exception (T743 to T747)
 
 Owner 2026-10-27: the first page of the Plan place is a page of its own, not a sheet over a map, and it fits one screen with no scroll at every size from 360 by 640 up. Its point is two actions: Start planning and Carta's own trips. It may do four things no other surface does:

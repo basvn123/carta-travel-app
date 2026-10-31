@@ -2532,3 +2532,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T946-a | T946 | Turn on manual identity linking in Supabase so Connect Google works (Execution/P15/T937-T947-owner-decisions.md) | user | open |  |
 | T947-a | T947 | In Plan's trip settings the travel style sheet opens over a sheet; make it close the first sheet, as the Lifestyle panel does (Execution/P15/T937-T947-owner-decisions.md) | next task | open |  |
 | T947-b | T947 | Add the Your travel style row to the wizard's LifestyleChoices (Execution/P15/T937-T947-owner-decisions.md) | next task | open |  |
+| T948-a | T948 | The home story chunk is 50 KB gzipped, over the 25 KB budget; import Phosphor's duotone glyphs alone or a sprite (Execution/P15/T948-T953-home-v3.md) | next task | open |  |
+| T951-a | T951 | Without a sweep flight from the visitor's airport the boarding pass and the proof are hidden; decide whether a ground-only version shows (Execution/P15/T948-T953-home-v3.md) | user | open |  |
+| T952-a | T952 | Record the home tour's four new clips (ask, explore, trips, together) with real photos: `node scripts/record_home_clips.mjs --only=ask,explore,trips,together` (Execution/P15/T948-T953-home-v3.md) | user | open |  |
+| T953-a | T953 | scripts/verify_home.mjs still checks the retired home sections; rewrite it for v3 (Execution/P15/T948-T953-home-v3.md) | next task | open |  |

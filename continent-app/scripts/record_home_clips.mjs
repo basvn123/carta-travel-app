@@ -16,6 +16,16 @@
  *   day     a day at Lake Bled (#day=), down its four stops
  *   share   the same day, down to its day kit and "Export and share"
  *
+ * The home tour (T952) adds four chapters; until they are recorded the
+ * page plays the older clip named after each (HomeTour.jsx):
+ *
+ *   ask       the home page's Ask Carta field, "A week by the sea under
+ *             €80 a day" typed and asked, then down the answer
+ *   explore   Lake Bled's page, down past what a day costs to what to see,
+ *             things to do and its tips
+ *   trips     My trips with a saved trip (?savedmock=next), down its board
+ *   together  Together (?friendsmock), down the hub
+ *
  * The trip and the day travel inside their links (lib/shareLink.js), so the
  * clips need no account. ?paymock opens the planned views a pass holder
  * sees; the seam only exists on the dev server.
@@ -134,6 +144,28 @@ const DAY_LIST = '.dayw-stop, .itin-stop, [data-stop], #dayk-h';
 
 /** Each chapter: `ready` loads it off the record, `move` is the clip. */
 const CHAPTERS = {
+  ask: {
+    ready: (page) => open(page, '?tab=home', 9000),
+    move: async (page) => {
+      const f = page.locator('.hv-ask-input:visible').first();
+      await f.click(); await page.waitForTimeout(500);
+      await f.pressSequentially('A week by the sea under €80 a day', { delay: 70 });
+      await page.waitForTimeout(700); await f.press('Enter'); await page.waitForTimeout(6000);
+      await glide(page, 900, 4200); await page.waitForTimeout(900);
+    },
+  },
+  explore: {
+    ready: (page) => open(page, '#dest=gem%3Abled', 10000),
+    move: async (page) => { await page.waitForTimeout(700); await glide(page, 1800, 5200); await page.waitForTimeout(900); await glide(page, 1400, 4200); await page.waitForTimeout(900); },
+  },
+  trips: {
+    ready: (page) => open(page, '?tab=trips&savedmock=next', 9000),
+    move: async (page) => { await page.waitForTimeout(900); await glide(page, 1000, 5000); await page.waitForTimeout(1000); },
+  },
+  together: {
+    ready: (page) => open(page, '?tab=together&friendsmock', 9000),
+    move: async (page) => { await page.waitForTimeout(900); await glide(page, 1100, 5200); await page.waitForTimeout(1000); },
+  },
   find: {
     // July dates, so the settings line agrees with "lakes in the Alps in July".
     ready: (page) => open(page, '?tab=map&xe=lake&xa=alps&xm=7&d=2027-07-03&r=2027-07-10', 12000),
