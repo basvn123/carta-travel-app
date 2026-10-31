@@ -3,7 +3,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { Button, Chip } from '../components/ui/index.js';
 import { CheckIcon, PlusIcon } from '../components/Icons.jsx';
 import { formatMoney } from '../lib/money.js';
-import { costContext, costRow } from '../lib/costIndex.js';
+import { priceRequest, priceDay } from '../lib/price/index.js';
 import { nightsBetween } from '../lib/tripDates.js';
 import { tally, leader, fitsBand, barScale, owesVote } from './groupBand.js';
 import { useTogether, togetherActions } from './useTogether.js';
@@ -23,25 +23,34 @@ import { Block, ToneFace, ToneFaces, fmtShort, nameOf } from './parts.jsx';
 
 const money = (n) => formatMoney(n, { precision: 'whole' });
 
-/** Day price a person at one place, for a window when there is one. */
+/** Day price a person at one place, for a window when there is one, from
+ *  the price engine (lib/price/) with the traveller's own settings. */
 function usePricer(destinations, choices) {
   return useMemo(() => {
-    const cache = new Map();
-    const ctxFor = (start, end) => {
+    const reqs = new Map();
+    const reqFor = (start, end) => {
       const key = start && end ? `${start}:${end}` : '-';
-      if (!cache.has(key)) {
-        const nights = start && end ? Math.max(1, nightsBetween(start, end)) : choices?.nights || null;
-        cache.set(key, costContext(destinations || {}, { ...(choices || {}), start: start || null, nights }));
+      if (!reqs.has(key)) {
+        reqs.set(key, start && end
+          ? priceRequest({ choices, departDate: start, returnDate: end, ownDates: true })
+          : priceRequest({ choices }));
       }
-      return cache.get(key);
+      return reqs.get(key);
     };
+    // Each figure is worked out once per place and window: the engine repairs
+    // a place against the whole catalogue, which is not free.
+    const memo = new Map();
     return (destId, start = null, end = null) => {
+      const key = `${destId}|${start}|${end}`;
+      if (memo.has(key)) return memo.get(key);
       const d = destinations?.[destId];
-      if (!d) return null;
-      try {
-        const v = costRow(d, ctxFor(start, end)).dayEur;
-        return Number.isFinite(v) ? v : null;
-      } catch { return null; }
+      let v = null;
+      if (d) {
+        try { v = priceDay(d, reqFor(start, end), destinations)?.dayEur; } catch { v = null; }
+      }
+      const out = Number.isFinite(v) ? v : null;
+      memo.set(key, out);
+      return out;
     };
   }, [destinations, choices]);
 }
