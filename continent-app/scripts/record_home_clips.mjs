@@ -24,7 +24,8 @@
  *   explore   Lake Bled's page, down past what a day costs to what to see,
  *             things to do and its tips
  *   trips     My trips with a saved trip (?savedmock=next), down its board
- *   together  Together (?friendsmock), down the hub
+ *   together  a group trip in Together (?tv=group&tg=g-summer&friendsmock),
+ *             down its members, the budget that fits everyone and Settle up
  *
  * The trip and the day travel inside their links (lib/shareLink.js), so the
  * clips need no account. ?paymock opens the planned views a pass holder
@@ -139,8 +140,10 @@ async function openSharedTrip(page) {
 
 // What scrolls a day plan's own list (the stops, then the day kit).
 // The trip page scrolls inside its map drawer, 245 px tall on a phone.
-const PLAN_LIST = '.map-drawer-scroll';
-const DAY_LIST = '.dayw-stop, .itin-stop, [data-stop], #dayk-h';
+// The trip page (TripSummary, T885) scrolls in its body; a day's stops and
+// its day kit scroll in the day's phone drawer (T957 updated both).
+const PLAN_LIST = '.tpg-body';
+const DAY_LIST = '.dayws-drawer .map-drawer-scroll';
 
 /** Each chapter: `ready` loads it off the record, `move` is the clip. */
 const CHAPTERS = {
@@ -151,19 +154,43 @@ const CHAPTERS = {
       await f.click(); await page.waitForTimeout(500);
       await f.pressSequentially('A week by the sea under €80 a day', { delay: 70 });
       await page.waitForTimeout(700); await f.press('Enter'); await page.waitForTimeout(6000);
-      await glide(page, 900, 4200); await page.waitForTimeout(900);
+      // The answer scrolls in the chat sheet, not the Explore list under it.
+      await glide(page, 900, 4200, '.ac-body'); await page.waitForTimeout(900);
     },
   },
   explore: {
     ready: (page) => open(page, '#dest=gem%3Abled', 10000),
-    move: async (page) => { await page.waitForTimeout(700); await glide(page, 1800, 5200); await page.waitForTimeout(900); await glide(page, 1400, 4200); await page.waitForTimeout(900); },
+    move: async (page) => { await page.waitForTimeout(700); await glide(page, 1800, 5200, '.pt-scroll'); await page.waitForTimeout(900); await glide(page, 1400, 4200, '.pt-scroll'); await page.waitForTimeout(900); },
   },
   trips: {
-    ready: (page) => open(page, '?tab=trips&savedmock=next', 9000),
-    move: async (page) => { await page.waitForTimeout(900); await glide(page, 1000, 5000); await page.waitForTimeout(1000); },
+    // The seam's fixture carries a moderation statement for the DSA tests;
+    // it is no traveller's usual state, so the clip leaves it out (T957),
+    // and starts from the top of My trips.
+    ready: async (page) => {
+      await open(page, '?tab=trips&savedmock=next', 9000);
+      await page.addStyleTag({ content: '.modnote { display: none !important; }' });
+      await page.evaluate(() => {
+        document.querySelectorAll('*').forEach((el) => { if (el.scrollTop) el.scrollTop = 0; });
+        window.scrollTo(0, 0);
+      });
+      await page.waitForTimeout(1200);
+    },
+    move: async (page) => { await page.waitForTimeout(900); await glide(page, 900, 5000); await page.waitForTimeout(1000); },
   },
   together: {
-    ready: (page) => open(page, '?tab=together&friendsmock', 9000),
+    // A group trip, not the hub (T957): the members, the budget that fits
+    // everyone and Shared costs with Settle up, which the tour's lines name.
+    ready: async (page) => {
+      await open(page, '?tab=together&tv=group&tg=g-summer&friendsmock', 6000);
+      // The group page opens after Together's own load; start on its title.
+      await page.waitForSelector('.tg-head.is-sub .tg-h1', { timeout: 60000 });
+      await page.evaluate(() => {
+        const h = document.querySelector('.tg-head.is-sub');
+        h.scrollIntoView({ block: 'start' });
+        window.scrollTo(0, 0);
+      });
+      await page.waitForTimeout(2500);
+    },
     move: async (page) => { await page.waitForTimeout(900); await glide(page, 1100, 5200); await page.waitForTimeout(1000); },
   },
   find: {

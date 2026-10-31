@@ -47,6 +47,11 @@ export const CHAPTERS = [
   { id: 'share', tab: 'home.chShare', title: 'home.ch5Title', body: 'home.ch5', alt: 'home.ch5Alt', door: 'trips', ground: 'sea' },
 ];
 
+/** The clips the home tour plays first, one per chapter (T957): Ask, Explore,
+ *  a day of Plan, My trips and a Together group trip. scripts/record_home_clips.mjs
+ *  records each in all six languages. */
+export const TOUR_CLIPS = ['ask', 'explore', 'day', 'trips', 'together'];
+
 /** Explore's own address for a guided question (the URL lib/guidedSearch.js
  *  documents: xe vibe, xa area, xc country, xm month, xb budget, xp flags),
  *  so a search opened in a new tab keeps its question. */

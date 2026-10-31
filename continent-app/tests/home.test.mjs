@@ -15,7 +15,7 @@ import { readFileSync, existsSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import {
-  CHAPTERS, CLIP_LANGS, FILM, PERSONAS, ROUTE_PHOTO, ROUTE_STOPS, SLOVENIA, STORY_PLACE, STORY_SEARCH,
+  CHAPTERS, CLIP_LANGS, TOUR_CLIPS, FILM, PERSONAS, ROUTE_PHOTO, ROUTE_STOPS, SLOVENIA, STORY_PLACE, STORY_SEARCH,
   WEEK_NIGHTS, WEEK_PLACES, clipSrc, exploreHref, fitProjection, isEstimate, pagePhotos, placeDay,
   routeTotals, searchRows, smoothPath, weekSum,
 } from '../src/lib/homeDemo.js';
@@ -210,7 +210,7 @@ test('the route and the week card price every town they name', { skip: !haveData
 
 test('every chapter clip and its poster exist in all six languages, inside the budget', () => {
   for (const lang of CLIP_LANGS) {
-    for (const c of CHAPTERS) {
+    for (const c of [...CHAPTERS, ...TOUR_CLIPS.map((id) => ({ id }))]) {
       const mp4 = join(pub, clipSrc(lang, c.id));
       const poster = join(pub, clipSrc(lang, c.id, 'poster'));
       assert.ok(existsSync(mp4), `${lang}/${c.id}.mp4`);
@@ -237,7 +237,8 @@ test('every language carries the same home strings with the same placeholders', 
 
 test('the retired home strings are gone', () => {
   const retired = ['home.tryLabel', 'home.try2', 'home.try3', 'home.deskAlt', 'home.tripAlt', 'home.chapterPos',
-    'home.addsTitle', 'home.promise1', 'home.promise2', 'home.promise3', 'home.credits', 'home.aDay', 'home.planStory'];
+    'home.addsTitle', 'home.promise1', 'home.promise2', 'home.promise3', 'home.credits', 'home.aDay', 'home.planStory',
+    'home.yoursTitle', 'home.inDates', 'home.inPeople', 'home.inStay', 'home.inTotal'];
   for (const [lang, cat] of Object.entries(CATALOGS)) {
     for (const k of retired) assert.equal(cat[k], undefined, `${lang} ${k}`);
     assert.deepEqual(Object.keys(cat).filter((k) => k.startsWith('landing.')), [], lang);
