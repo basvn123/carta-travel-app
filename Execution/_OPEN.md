@@ -2517,3 +2517,9 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T932-a | T932 | Apply supabase/migrations/056_friend_visibility.sql after 055 (prints "friend visibility self-check passed"); the Friends see switches do not save until then (Execution/P15/T928-T932-together.md) | user | open | 2 |
 | T932-b | T932 | No age signal exists, so friends features cannot be turned off under 16 (GDPR Article 8); decide on an age source (Execution/P15/T928-T932-together.md) | user | open |  |
 | T932-c | T932 | Confirm that a trip memory's story is the tip friends see (Execution/P15/T928-T932-together.md) | user | open |  |
+| T933-a | T933 | The old .acct-plan and .account-lang-* styles in 69-v6-account.css may be unused after the Account rebuild; check and remove (Execution/P15/T933-T936-account.md) | next task | open |  |
+| T934-a | T934 | Carta sends no trip or price emails, so Account has no Emails section; add one with a sender and consent if wanted (Execution/P15/T933-T936-account.md) | user | open |  |
+| T936-a | T936 | No cookie or consent page exists; Account has no Cookies row until one does (Execution/P15/T933-T936-account.md) | user | open |  |
+| T936-b | T936 | Account shows no device list or blocked people (Supabase gives no session list; blocked links are dropped); Sign out everywhere stands in (Execution/P15/T933-T936-account.md) | next task | open |  |
+| T936-c | T936 | Linking Google from Account needs manual identity linking turned on in the Supabase project (Execution/P15/T933-T936-account.md) | user | open |  |
+| T936-d | T936 | The Your data photo count covers trip-memory photos on this device only (Execution/P15/T933-T936-account.md) | next task | open |  |
