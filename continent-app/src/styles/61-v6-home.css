@@ -55,15 +55,6 @@
   letter-spacing: -0.03em;
   text-wrap: balance;
 }
-.hv-h3 {
-  margin: 0 0 var(--space-4);
-  max-width: 14ch;
-  font-size: var(--text-display);
-  font-weight: 700;
-  line-height: 1.02;
-  letter-spacing: -0.03em;
-  text-wrap: balance;
-}
 .hv-lead {
   margin: 0 0 var(--space-5);
   max-width: 46ch;
@@ -72,50 +63,7 @@
   line-height: 1.45;
   color: var(--text-2);
 }
-.hv-caption {
-  margin: var(--space-2) 0 0;
-  font-size: var(--text-caption);
-  color: var(--text-3);
-}
-.hv-caption a { color: inherit; text-underline-offset: 2px; }
 .hv-page a.btn { text-decoration: none; }
-
-.hv-door {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  min-height: var(--tap);
-  color: var(--action);
-  font-size: var(--text-lead);
-  font-weight: 600;
-  text-decoration: none;
-}
-.hv-door:hover { text-decoration: underline; text-underline-offset: 3px; }
-
-/* A label or a price on a photograph: a solid pill, its contrast never
-   resting on the picture (carta-design, Photography). */
-.hv-pill,
-.hv-route-pill,
-.hv-route-total {
-  display: inline-flex;
-  align-items: baseline;
-  gap: var(--space-2);
-  min-height: var(--tap);
-  padding: var(--space-2) var(--space-4);
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  box-shadow: var(--elev-1);
-  color: var(--text);
-  font-size: var(--text-lead);
-  font-weight: 600;
-  line-height: 1.6;
-  white-space: nowrap;
-  text-decoration: none;
-}
-.hv-pill-fig { display: inline-flex; align-items: baseline; gap: var(--space-1); font-weight: 700; }
-.hv-pill-unit,
-.hv-unit { color: var(--text-2); font-size: var(--text-label); font-weight: 500; }
-a.hv-pill:hover { background: var(--surface-hover); }
 
 /* ── The hero ─────────────────────────────────────────────────────────── */
 
@@ -353,313 +301,6 @@ a.hv-pill:hover { background: var(--surface-hover); }
 .hv-pass-label { color: var(--sun-800); font-size: var(--text-micro); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
 .hv-pass-price { font-size: var(--text-display); font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
 
-/* ── The week ─────────────────────────────────────────────────────────── */
-
-.hv-week { display: grid; gap: var(--space-6); align-items: center; }
-.hv-week-line {
-  margin: 0;
-  max-width: 24ch;
-  font-size: var(--text-headline);
-  font-weight: 500;
-  line-height: 1.3;
-  color: var(--text-2);
-}
-.hv-fig { color: var(--text); font-weight: 700; white-space: nowrap; }
-
-.hv-week-card {
-  padding: var(--space-5);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-stage);
-  background: var(--surface);
-}
-.hv-week-inputs { display: grid; gap: var(--space-3); justify-items: start; }
-.hv-week-places { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.hv-week-total { display: grid; gap: var(--space-1); margin-top: var(--space-5); }
-.hv-week-total-label { font-size: var(--text-label); color: var(--text-2); }
-.hv-week-total-fig {
-  font-size: var(--text-showcase);
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.03em;
-}
-.hv-week-rows { margin: var(--space-4) 0 0; }
-.hv-week-note { margin: var(--space-3) 0 0; font-size: var(--text-caption); color: var(--text-3); }
-.hv-week-door { margin-top: var(--space-4); }
-
-/* ── The voices ───────────────────────────────────────────────────────── */
-
-.hv-voices-tabs,
-.hv-story-tabs { position: relative; }
-.hv-voices-tabs .ui-tabs,
-.hv-story-tabs .ui-tabs { overflow-x: auto; scrollbar-width: none; }
-/* A one-word tab ("Find", "Plan") is still a 44 px target on touch. */
-.hv-voices-tabs [role="tab"],
-.hv-story-tabs [role="tab"] { min-width: var(--tap); justify-content: center; }
-
-/* The line that fills while a tab waits to move on. Neutral, so it never
-   reads as a second selected tab's underline. */
-.hv-advance {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 1px;
-  background: var(--text-3);
-  transform-origin: left center;
-  transform: scaleX(0);
-  animation: hv-fill var(--dur-advance) linear both;
-  pointer-events: none;
-}
-.hv-advance.is-clip { animation: none; transform: scaleX(var(--p, 0)); }
-
-.hv-panel {
-  margin-top: var(--space-4);
-  padding: var(--space-5);
-  border-radius: var(--radius-stage);
-}
-.hv-voices-panel {
-  display: grid;
-  gap: var(--space-5);
-  background: var(--home-ground-mist);
-}
-.hv-chat { display: grid; align-content: center; gap: var(--space-3); }
-.hv-say {
-  max-width: 520px;
-  padding: var(--space-4) var(--space-5);
-  border-radius: var(--radius-sheet);
-  background: var(--surface);
-  box-shadow: var(--elev-1);
-}
-.hv-say-who {
-  display: block;
-  margin-bottom: var(--space-1);
-  font-size: var(--text-label);
-  font-weight: 600;
-  color: var(--text-2);
-}
-.hv-say-text { margin: 0; font-size: var(--text-title); font-weight: 500; line-height: 1.4; }
-.hv-caret {
-  display: inline-block;
-  width: 2px;
-  height: 1.05em;
-  margin-left: 2px;
-  vertical-align: -0.15em;
-  background: var(--text-3);
-  opacity: 0;
-}
-.hv-caret.is-typing { opacity: 1; }
-.hv-say-carta {
-  margin-left: var(--space-6);
-  opacity: 0;
-  transform: translateY(8px);
-  transition: opacity var(--dur-3) var(--ease-out), transform var(--dur-3) var(--ease-out);
-}
-.hv-say-carta.is-in { opacity: 1; transform: none; }
-.hv-answer-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-1) var(--space-3);
-}
-.hv-answer-name,
-.hv-answer-fig { font-size: var(--text-title); font-weight: 700; }
-.hv-answer-text { margin: var(--space-1) 0 var(--space-1); color: var(--text-2); font-size: var(--text-lead); line-height: 1.45; }
-
-.hv-voices-photo { margin: 0; }
-.hv-voices-photo img,
-.hv-photo-wait {
-  display: block;
-  width: 100%;
-  max-width: 100%;
-  aspect-ratio: 4 / 5;
-  border-radius: var(--radius-card);
-  object-fit: cover;
-  background: var(--surface-sunken);
-}
-.hv-voices-photo img { animation: hv-fade var(--dur-3) var(--ease-out) both; }
-
-/* ── The story ────────────────────────────────────────────────────────── */
-
-.hv-chapter {
-  display: grid;
-  gap: var(--space-6);
-  justify-items: start;
-  transition: background-color var(--dur-3) var(--ease-in-out), color var(--dur-3) var(--ease-in-out);
-}
-.hv-chapter.is-mist { background: var(--home-ground-mist); }
-.hv-chapter.is-lake { background: var(--home-ground-lake); }
-.hv-chapter.is-deep { background: var(--home-ground-deep); color: var(--home-ink-on-deep); }
-.hv-chapter.is-clay { background: var(--home-ground-clay); }
-.hv-chapter.is-sea { background: var(--home-ground-sea); }
-.hv-chapter-text { animation: hv-rise var(--dur-reveal) var(--ease-out) both; }
-.hv-chapter-body {
-  margin: 0 0 var(--space-5);
-  max-width: 34ch;
-  font-size: var(--text-title);
-  line-height: 1.45;
-  color: var(--text-2);
-}
-.hv-chapter.is-deep .hv-chapter-body { color: var(--home-ink-on-deep); }
-
-.hv-phone { position: relative; justify-self: center; width: min(72vw, 280px); }
-.hv-phone-bezel {
-  padding: var(--space-2);
-  border-radius: calc(var(--radius-sheet) * 2);
-  background: var(--text);
-  box-shadow: var(--elev-3);
-}
-.hv-phone-screen {
-  display: block;
-  width: 100%;
-  max-width: 100%;
-  height: auto;
-  aspect-ratio: 546 / 1182;
-  border-radius: calc(var(--radius-sheet) * 2 - var(--space-2));
-  object-fit: cover;
-  background: var(--surface-sunken);
-}
-.hv-phone-play {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  display: grid;
-  place-items: center;
-  width: 64px;
-  height: 64px;
-  border: 0;
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  box-shadow: var(--elev-2);
-  color: var(--text);
-  transform: translate(-50%, -50%);
-  cursor: pointer;
-}
-.hv-phone-play:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-
-/* ── The route ────────────────────────────────────────────────────────── */
-
-.hv-route { display: grid; gap: var(--space-6); align-items: center; }
-.hv-route-card { margin: 0; }
-.hv-route-map {
-  position: relative;
-  aspect-ratio: 640 / 420;
-  max-width: 100%;
-  border-radius: var(--radius-stage);
-  background: var(--surface-sunken);
-  overflow: hidden;
-}
-.hv-route-map svg { display: block; width: 100%; height: 100%; }
-.hv-route-land { fill: var(--surface); stroke: var(--border); stroke-width: 1.5; stroke-linejoin: round; }
-.hv-route-line,
-.hv-route-line-under {
-  fill: none;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-}
-.hv-route-line-under { stroke: var(--surface); stroke-width: 10; }
-.hv-route-line { stroke: var(--action); stroke-width: 4; }
-.hv-route-card.is-drawn .hv-route-line,
-.hv-route-card.is-drawn .hv-route-line-under {
-  stroke-dashoffset: 0;
-  transition: stroke-dashoffset var(--dur-draw) var(--ease-in-out);
-}
-.hv-route-dot { fill: var(--surface); stroke: var(--action); stroke-width: 3; opacity: 0; }
-.hv-route-pill,
-.hv-route-total {
-  position: absolute;
-  z-index: 1;
-  opacity: 0;
-  font-size: var(--text-label);
-  min-height: 36px;
-  padding: var(--space-1) var(--space-3);
-  transform: translate(-50%, 14px);
-}
-/* The northmost town's pill sits above its dot, the others below. */
-.hv-route-pill.is-up { transform: translate(-50%, calc(-100% - 14px)); }
-.hv-route-total {
-  right: var(--space-4);
-  bottom: var(--space-4);
-  gap: var(--space-2);
-  font-size: var(--text-lead);
-  box-shadow: var(--elev-2);
-  transform: none;
-}
-.hv-route-total .money { font-size: var(--text-title); font-weight: 700; }
-.hv-route-total-label { color: var(--text-2); font-size: var(--text-label); font-weight: 500; }
-.hv-route-card.is-drawn .hv-route-dot,
-.hv-route-card.is-drawn .hv-route-pill,
-.hv-route-card.is-drawn .hv-route-total {
-  opacity: 1;
-  transition: opacity var(--dur-3) var(--ease-out) calc(var(--dur-draw) * var(--i) / 2);
-}
-.hv-route-photo {
-  position: absolute;
-  left: 5%;
-  bottom: 8%;
-  width: 30%;
-  padding: var(--space-1);
-  border-radius: var(--radius-card);
-  background: var(--surface);
-  box-shadow: var(--elev-2);
-  transform: rotate(-3deg);
-}
-.hv-route-photo img {
-  display: block;
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  border-radius: calc(var(--radius-card) - var(--space-1));
-  object-fit: cover;
-}
-
-/* ── Why Carta ────────────────────────────────────────────────────────── */
-
-.hv-why-head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--space-4); }
-.hv-why-nav { display: none; gap: var(--space-2); margin-bottom: var(--space-5); }
-.hv-flip { transform: scaleX(-1); }
-.hv-why-rail {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: min(80%, 340px);
-  gap: var(--space-4);
-  margin: 0;
-  padding: var(--space-1) 0 var(--space-4);
-  list-style: none;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-}
-.hv-why-card {
-  display: flex;
-  flex-direction: column;
-  min-height: 360px;
-  padding: var(--space-6);
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius-stage);
-  background: var(--surface);
-  scroll-snap-align: start;
-  transition: transform var(--dur-2) var(--ease-out);
-}
-.hv-why-title {
-  margin: 0 0 var(--space-3);
-  font-size: var(--text-headline);
-  font-weight: 700;
-  line-height: 1.12;
-  letter-spacing: -0.02em;
-  text-wrap: balance;
-}
-.hv-why-body { margin: 0; font-size: var(--text-lead); line-height: 1.5; color: var(--text-2); }
-.hv-why-glyph { display: inline-flex; margin-top: auto; padding-top: var(--space-6); color: var(--text); }
-.hv-why-glyph svg :is(path, circle, rect, line, polyline, polygon) { stroke-width: 1.2px; }
-.hv-why[data-reveal="wait"] .hv-why-glyph { clip-path: inset(0 100% 0 0); }
-.hv-why[data-reveal="in"] .hv-why-glyph {
-  animation: hv-wipe var(--dur-reveal) var(--ease-out) both;
-  animation-delay: calc(var(--i) * 90ms + var(--dur-3));
-}
-
 /* ── Plans ────────────────────────────────────────────────────────────── */
 
 .hv-plan-cols {
@@ -709,10 +350,6 @@ a.hv-pill:hover { background: var(--surface-hover); }
 
 /* ── Pointers ─────────────────────────────────────────────────────────── */
 
-@media (hover: hover) {
-  .hv-why-card:hover { transform: translateY(-4px); }
-}
-
 /* ── Wider screens ────────────────────────────────────────────────────── */
 
 @media (min-width: 769px) {
@@ -746,56 +383,20 @@ a.hv-pill:hover { background: var(--surface-hover); }
     text-shadow: 0 1px 2px color-mix(in srgb, var(--neutral-900) 45%, transparent),
       0 0 16px color-mix(in srgb, var(--neutral-900) 40%, transparent);
   }
-  .hv-panel { padding: var(--space-7); }
   .hv-plan-cols { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .hv-plan { padding: var(--space-6) var(--space-5) var(--space-5) 0; }
   .hv-plan + .hv-plan { border-top: 0; border-left: 1px solid var(--border); padding-left: var(--space-5); }
-  .hv-week-card { padding: var(--space-6); }
-}
-
-@media (min-width: 1024px) {
-  .hv-week { grid-template-columns: minmax(0, 1fr) minmax(0, 500px); gap: var(--space-8); }
-  .hv-voices-panel { grid-template-columns: minmax(0, 1fr) minmax(0, 420px); gap: var(--space-7); }
-  .hv-chapter {
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    min-height: 600px;
-    padding: var(--space-7) var(--space-8);
-  }
-  .hv-phone { width: 300px; }
-  .hv-route { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: var(--space-8); }
-  .hv-why-nav { display: flex; }
-  .hv-why-rail {
-    margin-inline: calc(var(--space-6) * -1);
-    padding-inline: var(--space-6);
-    scroll-padding-inline: var(--space-6);
-  }
 }
 
 /* ── Reduced motion: the page stands still and shows everything ───────── */
 
 @media (prefers-reduced-motion: reduce) {
-  .hv-shot,
-  .hv-chapter,
-  .hv-why-card,
-  .hv-say-carta { transition: none; }
+  .hv-shot { transition: none; }
   .hv-shot-media,
-  .hv-pill,
-  .hv-advance,
   .hv-slogan,
   .hv-sub,
   .hv-acts,
   .hv-pass,
-  .hv-word > span,
-  .hv-chapter-text,
-  .hv-voices-photo img,
-  .hv-why-glyph { animation: none !important; }
-  .hv-say-carta { opacity: 1; transform: none; }
-  .hv-route-line,
-  .hv-route-line-under { stroke-dashoffset: 0; transition: none !important; }
-  .hv-route-dot,
-  .hv-route-pill,
-  .hv-route-total { opacity: 1; transition: none !important; }
+  .hv-word > span { animation: none !important; }
   .hv-section[data-reveal] { opacity: 1; transform: none; transition: none; }
-  .hv-why-glyph { clip-path: none; }
 }
