@@ -51,6 +51,10 @@ export function emptyMemory() {
     spend: { currency: 'EUR' },
     rating: null,
     story: '',
+    // A short tip for friends (T937), separate from the story, which stays
+    // private. Friends see it only on a trip shown to them and only while
+    // the Tips switch in Together is on (056, list_friend_shares).
+    friendTip: '',
     highlights: [],
     photos: [],
     cover: null,

@@ -714,3 +714,35 @@
   .xov-quick .price-view { margin-left: auto; }
   .xov-quick .price-view ~ .xov-view { margin-left: 0; }
 }
+
+/* T947: the doors to "Your travel style" (TasteDoor.jsx). A row in a
+   settings surface: icon, label, what is set, chevron; and a small link on
+   a place page while no taste is set. */
+.btn.taste-door {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--tap);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--text);
+  text-align: left;
+}
+.btn.taste-door > .btn-label { display: contents; }
+.taste-door-icon, .taste-door-chev { color: var(--text-2); }
+.taste-door-label { font-size: var(--text-body); font-weight: 600; min-width: 0; }
+.taste-door-v {
+  font-size: var(--text-label);
+  font-weight: 500;
+  color: var(--text-2);
+  min-width: 0;
+  max-width: 14em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.taste-door-v.is-unset { color: var(--text-3); }
+.btn.taste-link { justify-self: start; align-self: flex-start; width: auto; margin-left: calc(var(--space-2) * -1); }

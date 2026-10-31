@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { Button } from '../components/ui/index.js';
-import { formatMoney } from '../lib/money.js';
 import { favKey } from '../lib/favorites.js';
 import { listTripCoplanners } from '../auth/coplanners.js';
 import { FriendTripPanel } from '../auth/FriendTripPanel.jsx';
@@ -13,9 +12,9 @@ import { ToneFace, ToneFaces, fmtShort, firstName, Block } from './parts.jsx';
 /**
  * Friends where decisions happen (T929): one line each, and only with data.
  * Every figure here is either Carta's own price model or a friend's own
- * figure that friend switched on (056, list_friend_shares); a friend who
- * keeps costs, tips or saves to themselves shows none of them, and a place
- * no friend touched shows nothing at all.
+ * Carta's own price model; what a friend's trip cost is never shown (owner,
+ * T937). A tip or a save shows only where that friend switched it on (056,
+ * list_friend_shares), and a place no friend touched shows nothing at all.
  */
 
 /** Ask App to open the day planner for a city and a day. */
@@ -43,7 +42,7 @@ export function useOverlaps(s) {
 const todayIso = () => new Date().toISOString().slice(0, 10);
 
 /** Who went to a place (a shown trip there that has ended), who goes, and
- *  who saved it, with what each shares. */
+ *  who saved it, with the tip where shared. */
 export function useFriendsAt(destId) {
   const s = useTogether();
   return useMemo(() => {
@@ -59,7 +58,6 @@ export function useFriendsAt(destId) {
       const notes = sh.trips.get(tr.tripPlanId) || {};
       const row = {
         friendId: tr.ownerId, name: tr.ownerName || `@${tr.ownerHandle}`, emoji: tr.ownerEmoji || '', trip: tr,
-        dayCost: sh.showCosts && Number.isFinite(notes.dayCost) ? notes.dayCost : null,
         tip: sh.showTips && notes.tip ? notes.tip : null,
       };
       if (tr.endDate && tr.endDate < today) {
@@ -77,7 +75,7 @@ export function useFriendsAt(destId) {
   }, [s, destId]);
 }
 
-/** Explore card: "Sam went, €61 a day" (the cost only if Sam shares it). */
+/** Explore card: "Sam went". */
 export function FriendCardLine({ destId }) {
   const { t } = useI18n();
   const { went } = useFriendsAt(destId);
@@ -86,9 +84,7 @@ export function FriendCardLine({ destId }) {
   const who = firstName(first.name);
   const text = went.length > 1
     ? t('tg.wentMany', { who, n: went.length - 1 })
-    : Number.isFinite(first.dayCost)
-      ? t('tg.wentCost', { who, price: formatMoney(first.dayCost, { precision: 'whole' }) })
-      : t('tg.went', { who });
+    : t('tg.went', { who });
   return (
     <p className="tg-sig">
       <ToneFaces people={went.slice(0, 2).map((w) => ({ id: w.friendId, name: w.name, emoji: w.emoji }))} />
@@ -97,8 +93,8 @@ export function FriendCardLine({ destId }) {
   );
 }
 
-/** The place page's "Friends here": who went (with their cost a day and tip
- *  where shared), who goes, who saved it. Each trip opens read-only in place. */
+/** The place page's "Friends here": who went (with their tip where
+ *  shared), who goes, who saved it. Each trip opens read-only in place. */
 export function FriendsHere({ destId, destinations }) {
   const { t, lang } = useI18n();
   const { went, going, saved } = useFriendsAt(destId);
@@ -123,9 +119,7 @@ export function FriendsHere({ destId, destinations }) {
   return (
     <Block id={`tg-here-${destId}`} title={t('tg.friendsHere')} className="tg-here">
       <div>
-        {went.map((r) => tripRow(r, Number.isFinite(r.dayCost)
-          ? t('tg.wentCost', { who: firstName(r.name), price: formatMoney(r.dayCost, { precision: 'whole' }) })
-          : t('tg.went', { who: firstName(r.name) })))}
+        {went.map((r) => tripRow(r, t('tg.went', { who: firstName(r.name) })))}
         {going.map((r) => tripRow(r, t('tg.goes', { who: firstName(r.name), dates: fmtShort(r.trip.startDate, r.trip.endDate, lang, t('friends.dateJoin')) })))}
         {saved.map((r) => (
           <div className="tg-here-row" key={`s-${r.friendId}`}>

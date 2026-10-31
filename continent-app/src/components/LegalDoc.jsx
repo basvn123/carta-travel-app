@@ -14,9 +14,10 @@ import { IconButton } from './ui/index.js';
  * 1024 px and folded above it on smaller screens. One close, Escape, a focus
  * trap and focus back to the opener, as every dialog in the family.
  *
- * The documents stay English only, as before (register row T461-c).
+ * The documents stay English only, as before (register row T461-c); the
+ * cookie page (T945) is in six languages and names its own contents list.
  */
-export function LegalDoc({ id, title, updated, onClose, children }) {
+export function LegalDoc({ id, title, updated, onClose, children, contentsLabel = 'Contents' }) {
   const { t } = useI18n();
   const cardRef = useRef(null);
   const titleRef = useRef(null);
@@ -91,13 +92,13 @@ export function LegalDoc({ id, title, updated, onClose, children }) {
         </header>
         <div className="legal-cols">
           {contents && (
-            <nav className="legal-toc" aria-label="Contents">
+            <nav className="legal-toc" aria-label={contentsLabel}>
               <details className="legal-toc-fold">
-                <summary>Contents</summary>
+                <summary>{contentsLabel}</summary>
                 {contents}
               </details>
               <div className="legal-toc-wide">
-                <p className="legal-toc-title">Contents</p>
+                <p className="legal-toc-title">{contentsLabel}</p>
                 {contents}
               </div>
             </nav>

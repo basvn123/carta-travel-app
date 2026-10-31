@@ -632,7 +632,7 @@ export function DestinationPage({
                   )}
                 </div>
                 {/* T765: the match after the rank lines, never merged into the Score. */}
-                <MatchLine place={destination} month={tripMonth} className="destp-match" />
+                <MatchLine place={destination} month={tripMonth} className="destp-match" door />
                 {/* The intro is written in English; in another language the
                     head shows nothing rather than an English paragraph (T446). */}
                 {settled && shortIntro && lang === 'en' && <p className="pt-lead">{shortIntro}</p>}

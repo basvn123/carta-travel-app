@@ -10,6 +10,7 @@ import {
 import { Stepper } from '../../components/FilterControls.jsx';
 import { Button, Segmented, Tile, TileGroup } from '../../components/ui/index.js';
 import { ChevronDownIcon, SettingsIcon } from '../../components/Icons.jsx';
+import { TasteRow } from '../../browse/TasteDoor.jsx';
 
 // The seven counts in the order the Lifestyle panel shows them; coffee is a
 // day count whatever the cadence.
@@ -109,6 +110,9 @@ export function LifestyleStep() {
           </div>
         )}
       </section>
+
+      {/* T947: the taste profile, the same door as Account and Explore. */}
+      <TasteRow className="pf-ls-taste" />
 
       <p className="pf-ls-later">
         <SettingsIcon size={16} />

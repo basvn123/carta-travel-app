@@ -104,6 +104,7 @@ export function SiteFooter() {
             <FooterLink href={() => '?legal=terms'}>{t('footer.terms')}</FooterLink>,
             <FooterLink href={() => '?legal=privacy'}>{t('footer.privacy')}</FooterLink>,
             <FooterLink href={() => '?legal=imprint'}>{t('footer.imprint')}</FooterLink>,
+            <FooterLink href={() => '?legal=cookies'}>{t('ac2.cookies')}</FooterLink>,
           ])}
         </nav>
         <div className="site-footer-base">

@@ -163,7 +163,67 @@ export function tripFigure(plan, { data, stayTier, lifestyle } = {}) {
     // the ground is planned to cost, against the day's spend).
     beds: Number.isFinite(p.beds) ? p.beds : null,
     foodDayPP: Number.isFinite(p.days) && p.days > 0 ? p.days / nights / head : null,
+    // T943: each stop's bed a person a night at its own dates, as the plan
+    // price is stored (planBedOf), or null where the traveller typed their
+    // own stay or Carta has no bed price.
+    bedNights: (priced.stayCosts || []).map(bedNightOf),
   };
+}
+
+/** A stop's priced bed a person a night, or null (typed stay, no price). */
+function bedNightOf(stay) {
+  const n = stay && !stay.ownAccom ? stay.accom?.per_night : null;
+  return Number.isFinite(n) && n > 0 ? n : null;
+}
+
+/**
+ * The bed price a stop is saved with (T943): what the planner priced a person
+ * a night for that stop at the moment of saving, and the day. Null where the
+ * planner priced no bed (a typed stay, a pass-through, no price).
+ */
+export function planBedOf(stay, todayIso) {
+  const night = bedNightOf(stay);
+  return night == null ? null : { night: Math.round(night * 100) / 100, at: todayIso || null };
+}
+
+// A bed must have fallen this share of the plan price, and by at least this
+// many euros a person a night, before the card says so (T923, T943).
+export const PLAN_NUDGE_MIN_SHARE = 0.03;
+export const PLAN_NUDGE_MIN_EUR = 1;
+
+/**
+ * Today's beds against the plan's (T943). `plan` is a trip row whose stops
+ * carry `choices.planBed` from the save; `bedNights` is tripFigure's
+ * bedNights for today, the same dates and the same stops in order.
+ *
+ *   { stored: false }                 no stop carries a plan price (an older
+ *                                     trip): the caller falls back to the
+ *                                     first price My trips saw (T923).
+ *   { stored: true, nudge: null }     stored, and no bed is enough under it.
+ *   { stored: true, nudge: { destId, share, fall, at } }
+ *                                     the stop whose bed fell the most, as a
+ *                                     share of its plan price.
+ *
+ * A stop with its own stay tier is left out: My trips prices every stop at
+ * the trip's tier, so the two figures would not be the same bed.
+ */
+export function planBedNudge(plan, bedNights = [], { minShare = PLAN_NUDGE_MIN_SHARE, minEur = PLAN_NUDGE_MIN_EUR } = {}) {
+  const stops = (plan?.stops || []).filter((s) => s && s.destination_id);
+  let stored = false;
+  let best = null;
+  stops.forEach((s, i) => {
+    const pb = s.choices?.planBed;
+    if (!pb || !Number.isFinite(pb.night) || pb.night <= 0) return;
+    stored = true;
+    if (s.choices?.stayTier) return;
+    const now = bedNights[i];
+    if (!Number.isFinite(now)) return;
+    const fall = pb.night - now;
+    const share = fall / pb.night;
+    if (fall < minEur || share < minShare) return;
+    if (!best || share > best.share) best = { destId: s.destination_id, share, fall, at: pb.at || null };
+  });
+  return { stored, nudge: best };
 }
 
 /** An ISO date `n` nights after `iso` (calendar arithmetic in UTC). */
@@ -185,13 +245,16 @@ export const DEVICE_PLAN_ID = 'device-trip';
  */
 export function deviceTripAsPlan(stored, destinations = {}) {
   const trip = stored?.trip;
-  const raw = (trip?.stops || []).filter((s) => s && s.destinationId);
+  // T943: the plan's bed prices ride beside the stops, by the stop's index.
+  const beds = Array.isArray(trip?.planBeds) ? trip.planBeds : [];
+  const raw = (trip?.stops || []).map((s, i) => (s && s.destinationId ? { ...s, planBed: beds[i] || null } : null)).filter(Boolean);
   if (!raw.length) return null;
   const start = trip.tripStart || '';
   let at = start;
   const stops = raw.map((s) => {
     const nights = Math.max(1, Number(s.nights) || 1);
     const row = { destination_id: s.destinationId, nights };
+    if (s.planBed && Number.isFinite(s.planBed.night)) row.choices = { planBed: s.planBed, ...(s.stayTier ? { stayTier: s.stayTier } : {}) };
     if (at) {
       row.arrive_date = at;
       row.depart_date = addNights(at, nights);

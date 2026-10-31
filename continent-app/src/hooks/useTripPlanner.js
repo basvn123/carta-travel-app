@@ -3,6 +3,7 @@ import { tripDaysBetween, DEFAULT_LIFESTYLE, haversineKm } from '../lib/runtime_
 import { suggestNextStops } from '../lib/trip_planner_pricing.js';
 import { quoteTrip, normalizeTransferMode, tripStopDetails, MAX_PARTY, PLANNER_BAG } from '../lib/tripTotal.js';
 import { reorderSavings } from '../lib/tripCostOptimizer.js';
+import { planBedOf, localToday } from '../lib/myTrips.js';
 import { addDays } from '../lib/dates.js';
 import { useLiveFlights } from '../lib/flights/useLiveFlights.js';
 import { loadLiveStay, useLiveStaysVersion } from '../lib/liveStays.js';
@@ -480,6 +481,12 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     flight, legs, anchorLegs, flightTransfer, driveLegs, carRental, vignettes, stayCosts,
     grandTotal, tripHasCar,
   } = priced;
+  // T943: the bed a person a night the planner prices each stop at now, so
+  // a save keeps it and My trips can compare today's beds with the plan's.
+  const planBeds = useMemo(() => {
+    const today = localToday();
+    return (stayCosts || []).map((s) => planBedOf(s, today));
+  }, [stayCosts]);
 
   // What a change would do to the total (T836, T837): the trip priced with
   // `patch` (stops, tripStart, tripEnd) against the same trip as it is, both
@@ -637,6 +644,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
             activities: s.activities || [],
             ...(s.stayTier ? { stayTier: s.stayTier } : {}),
             ...(s.dayTrips?.length ? { dayTrips: s.dayTrips } : {}),
+            ...(planBeds[i] ? { planBed: planBeds[i] } : {}),
             ...(i === 0 ? { baggage, transportPref, transferMode, pace, ...(anchorId ? { anchorId } : {}), ...(anchorOrigin ? { anchorOrigin } : {}), ...(returnAnchorId ? { returnAnchorId } : {}), ...(ownFlight ? { ownFlight } : {}), ...(carHome ? { carHome } : {}), ...(Object.keys(legModes).length ? { legModes } : {}), ...(Object.keys(ownLegs).length ? { ownLegs } : {}), ...(Object.keys(ownStays).length ? { ownStays } : {}), ...(children ? { children } : {}), ...(babies ? { babies } : {}), priceRequest: { stay: stayTier, lifestyle } } : {}),
           },
         };
@@ -673,7 +681,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
       setSaveState('idle');
       throw e;
     }
-  }, [planId, planLabel, stops, stopDetails, groupSize, legs, flight, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, baggage, transportPref, transferMode, pace, legModes, ownLegs, ownStays, children, babies, stayTier, lifestyle]);
+  }, [planId, planLabel, stops, stopDetails, groupSize, legs, flight, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, baggage, transportPref, transferMode, pace, legModes, ownLegs, ownStays, children, babies, stayTier, lifestyle, planBeds]);
 
   // The trip as the device keeps it (T500): the same fields the draft holds,
   // so a device trip reopens exactly as it was saved.
@@ -763,7 +771,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     cheaperOrder, applyCheaperOrder,
     addStop, removeStop, setStopNights, setStopActivities, moveStop, reorderStop, swapStop, setStopStay, setStopDayTrips,
     optimizeRoute, clearPlan, loadFromWizard,
-    nextStopSuggestions, flight, legs, anchorLegs, flightTransfer, driveLegs, stayCosts, grandTotal, dayPlan,
+    nextStopSuggestions, flight, legs, anchorLegs, flightTransfer, driveLegs, stayCosts, planBeds, grandTotal, dayPlan,
     vignettes, tripHasCar,
     baggage, setBaggage,
     flightHours, setFlightHours,

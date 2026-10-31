@@ -1,31 +1,40 @@
-// T931: the client half of a group trip: band, tallies, leader.
+// T931, T938: the client half of a group trip: band, tallies, leader. The
+// budgets and the band are for the whole trip, a person (T938).
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  bandTopFrom, bandState, fitsBand, tally, leader, owesVote, barScale,
+  bandTopFrom, bandState, fitsBand, tally, leader, owesVote, barScale, tripTotal,
 } from '../src/together/groupBand.js';
 
-test('the band top is the lowest maximum, rounded down to 5, from three budgets', () => {
-  assert.equal(bandTopFrom([90, 74, 120]), 70);
-  assert.equal(bandTopFrom([90, 75, 120]), 75);
-  assert.equal(bandTopFrom([90, 74]), null);
-  assert.equal(bandTopFrom([90, 0, 'x', 80]), null);
-  assert.equal(bandTopFrom([90, 80], 2), 80);
+test('the band top is the lowest trip maximum, rounded down to 10, from three budgets', () => {
+  assert.equal(bandTopFrom([1200, 907, 1500]), 900);
+  assert.equal(bandTopFrom([1200, 910, 1500]), 910);
+  assert.equal(bandTopFrom([1200, 907]), null);
+  assert.equal(bandTopFrom([1200, 0, 'x', 800]), null);
+  assert.equal(bandTopFrom([1200, 800], 2), 800);
 });
 
 test('band state reads the RPC row and never invents a top', () => {
-  assert.deepEqual(bandState({ band_top: 70, members_set: 3, members: 3 }), { top: 70, set: 3, members: 3, ready: true });
+  assert.deepEqual(bandState({ band_top: 900, members_set: 3, members: 3 }), { top: 900, set: 3, members: 3, ready: true });
   assert.equal(bandState({ band_top: null, members_set: 2, members: 3 }).ready, false);
   assert.equal(bandState(null).ready, false);
 });
 
-test('fits is true, false, or unknown', () => {
-  const band = bandState({ band_top: 70, members_set: 3, members: 3 });
-  assert.equal(fitsBand(64, band), true);
-  assert.equal(fitsBand(70, band), true);
-  assert.equal(fitsBand(88, band), false);
+test('a trip total a person is the day price times the nights, whole euros', () => {
+  assert.equal(tripTotal(64.4, 7), 451);
+  assert.equal(tripTotal(80, 1), 80);
+  assert.equal(tripTotal(80, 0), null);
+  assert.equal(tripTotal(null, 7), null);
+  assert.equal(tripTotal(80, 'x'), null);
+});
+
+test('fits compares trip totals: true, false, or unknown', () => {
+  const band = bandState({ band_top: 900, members_set: 3, members: 3 });
+  assert.equal(fitsBand(tripTotal(100, 7), band), true);
+  assert.equal(fitsBand(900, band), true);
+  assert.equal(fitsBand(tripTotal(140, 7), band), false);
   assert.equal(fitsBand(null, band), null);
-  assert.equal(fitsBand(64, bandState(null)), null);
+  assert.equal(fitsBand(640, bandState(null)), null);
 });
 
 const opts = [{ id: 'a', kind: 'where' }, { id: 'b', kind: 'where' }, { id: 'c', kind: 'where' }];

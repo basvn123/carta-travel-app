@@ -356,6 +356,15 @@ a.ac-row:focus-visible, .ac-row.btn:focus-visible { outline: 2px solid var(--foc
 .ac-doc-h { margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); }
 .ac-doc p { margin: 0; font-size: var(--text-body); line-height: var(--leading-body); color: var(--text-2); }
 
+/* T944: the Emails switches, one row each; the whole row is the switch. */
+.ac-switch-row { grid-template-columns: auto minmax(0, 1fr); padding-top: 0; padding-bottom: 0; }
+.ac-switch.ui-switch { min-height: 56px; }
+.ac-switch .ui-switch-label { font-size: var(--text-lead); font-weight: 600; }
+.ac-switch-err { display: block; margin: 0; min-height: 0; padding: var(--space-3) var(--space-4); color: var(--danger); font-size: var(--text-body); }
+
+/* T946: a static row with its value and one quiet action after it. */
+.ac-row.is-static.ac-act-row { grid-template-columns: auto minmax(0, 1fr) auto auto; }
+
 /* The older forms inside a section keep their own styles; the panel's
    section padding is not wanted inside the pane. */
 .ac-pane .panel-section { padding-left: 0; padding-right: 0; }

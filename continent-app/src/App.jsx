@@ -14,6 +14,7 @@ import { MaintenanceGate } from './components/MaintenanceGate.jsx';
 import { ExploreTab } from './browse/ExploreTab.jsx';
 import { DestinationPage } from './browse/DestinationPage.jsx';
 import { LifestylePanel } from './browse/LifestylePanel.jsx';
+import { TasteSheetHost } from './browse/TasteDoor.jsx';
 import { DestinationsTab } from './browse/DestinationsTab.jsx';
 import Logo from './components/Logo.jsx';
 // The home page (T462). In the entry bundle, not lazy: it is what a first
@@ -89,7 +90,7 @@ import {
 import { usePlaceRows } from './hooks/usePlaceRows.js';
 import { countryName as localCountryName } from './lib/countryName.js';
 import { readFavList, isFav, favDestIds, favKey, toggleFav as toggleFavKey } from './lib/favorites.js';
-import { noteSaved, noteUnsaved } from './lib/savedLists.js';
+import { noteSaved, noteUnsaved, loadSavedLists } from './lib/savedLists.js';
 import { readTripShareFromUrl, decodeTripShare, readDayShareFromUrl } from './lib/shareLink.js';
 import { readShareTokenFromUrl, stripShareTokenFromUrl } from './auth/tripShares.js';
 import { readFriendHandleFromUrl, stripFriendHandleFromUrl } from './auth/friends.js';
@@ -145,6 +146,8 @@ import { useFilterState } from './hooks/useFilterState.js';
 import { useReach } from './lib/reach.js';
 import { resolveWhen, whenMonth, xmFromSearch } from './lib/when.js';
 import { gatewayCity } from './lib/rating.js';
+import { reportPriceDrops, mayAsk } from './lib/priceDrop.js';
+import { loadEmailPrefs } from './auth/account/emailPrefs.js';
 
 // Once someone picks "continue without an account" on the entry gate, don't
 // ask again on this device, only a fresh sign-in should bring accounts back.
@@ -862,7 +865,13 @@ function TravelApp() {
   // uses, so the planner needs no new code path for it.
   const openTripInPlanner = useCallback((trip) => {
     const stops = (trip.stops || [])
-      .map((st) => ({ destinationId: st.dest, nights: st.nights, activities: [] }))
+      // T942: a stop from Saved may carry day activities (a trail or a beach
+      // at its nearest town), by name, as the planner keeps them.
+      .map((st) => ({
+        destinationId: st.dest,
+        nights: st.nights,
+        activities: Array.isArray(st.dayActivities) ? st.dayActivities.slice(0, 20).map((a) => String(a).slice(0, 80)) : [],
+      }))
       .filter((st) => st.destinationId && st.nights);
     if (!stops.length) return;
     // The published trip already says how each hop is made: bus here, train
@@ -1550,6 +1559,24 @@ function TravelApp() {
     [data, request, staysVersion, liveVersion],
   );
   dayPricesRef.current = exploreIndices;
+  // T944: a saved place whose day price fell clearly since it was saved is
+  // reported to the notify function, only for an account with price drops
+  // on, at most once a day from this device (lib/priceDrop.js). Quiet.
+  useEffect(() => {
+    if (!user?.id || !exploreIndices || !data?.destinations || !favorites?.size || !mayAsk()) return undefined;
+    let live = true;
+    const timer = setTimeout(async () => {
+      const res = await loadEmailPrefs(user.id);
+      if (!live || res.state !== 'ok' || !res.prefs.price_drops) return;
+      reportPriceDrops({
+        favorites,
+        meta: loadSavedLists().meta,
+        priceOf: (id) => exploreIndices.get?.(id)?.dayEur ?? null,
+        nameOf: (id) => data.destinations[id]?.city || '',
+      });
+    }, 4000);
+    return () => { live = false; clearTimeout(timer); };
+  }, [user?.id, exploreIndices, data, favorites]);
   // The catalogue as rows, for the country and region pages (T498), computed
   // only while one of them shows.
   const placeRows = usePlaceRows(data, exploreIndices, !!(countryPage || pendingRegion));
@@ -2351,6 +2378,8 @@ function TravelApp() {
           </div>
         )}
       </BottomSlot>
+      {/* T947: the one "Your travel style" sheet every door opens. */}
+      <TasteSheetHost />
     </div>
     </SettingsContext.Provider>
     </FirstRunContext.Provider>

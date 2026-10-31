@@ -9,7 +9,9 @@
 -- Group trips (T931, the Together page): a few accepted friends decide one
 -- trip together. Each member votes on WHEN (date options) and WHERE (place
 -- options), one vote per member per question, and each member may say the
--- most they want to spend a day. Nobody else can read that number.
+-- most they want to spend on the WHOLE TRIP, a person (owner, T938: "focus
+-- on the total trip budget, instead of a day"). Nobody else can read that
+-- number.
 --
 -- WHAT IT ADDS
 --
@@ -25,10 +27,11 @@
 --   group_trip_votes     one row per member per question (primary key
 --                        group, kind, user), pointing at one option of that
 --                        group and that kind.
---   group_trip_budgets   one row per member: their maximum a day, in whole
---                        euros a person. RLS lets a member read ONLY their
---                        own row. No policy, function or view in this file
---                        returns another member's value.
+--   group_trip_budgets   one row per member: their maximum for the whole
+--                        trip (max_trip), in whole euros a person. RLS
+--                        lets a member read ONLY their own row. No policy,
+--                        function or view in this file returns another
+--                        member's value.
 --
 --   group_trip_band(g)   SECURITY DEFINER. Returns the group's band and
 --                        nothing else: band_top, members_set, members.
@@ -36,9 +39,10 @@
 --                        everyone in the groups you are in, so voters' faces
 --                        can be drawn for co-members who are not your friend.
 --
--- THE BAND, DEFINED. "What fits everyone" is the LOWEST maximum any member
--- set, rounded DOWN to a multiple of 5 euros: a day price at or under it is
--- within every member's maximum. The band is the range from 0 up to that
+-- THE BAND, DEFINED. "What fits everyone" is the LOWEST trip maximum any
+-- member set, rounded DOWN to a multiple of 10 euros: a trip total a person
+-- at or under it is within every member's maximum ("Up to 900 euros for the
+-- trip"). The band is the range from 0 up to that
 -- top; there is no lower bound, because nobody has a minimum. It is returned
 -- only once at least THREE members have set a maximum. With two, the lower
 -- of the two values would be the other person's own number whenever it is
@@ -103,7 +107,7 @@ create table if not exists public.group_trip_votes (
 create table if not exists public.group_trip_budgets (
   group_id   uuid not null references public.group_trips(id) on delete cascade,
   user_id    uuid not null default auth.uid() references auth.users(id) on delete cascade,
-  max_day    integer not null check (max_day between 1 and 9999),
+  max_trip   integer not null check (max_trip between 1 and 99999),
   updated_at timestamptz not null default now(),
   primary key (group_id, user_id)
 );
@@ -282,7 +286,7 @@ as $$
   with ok as (
     select public.group_role(g) in ('owner', 'joined') as allowed
   ), b as (
-    select count(*)::int as n, min(bu.max_day) as low
+    select count(*)::int as n, min(bu.max_trip) as low
       from public.group_trip_budgets bu
       join public.group_trip_members m on m.group_id = bu.group_id and m.user_id = bu.user_id and m.status = 'joined'
      where bu.group_id = g
@@ -290,7 +294,7 @@ as $$
     select count(*)::int as n from public.group_trip_members where group_id = g and status = 'joined'
   )
   select
-    case when b.n >= 3 then (floor(b.low / 5.0) * 5)::int else null end,
+    case when b.n >= 3 then (floor(b.low / 10.0) * 10)::int else null end,
     b.n,
     m.n
   from b, m, ok
@@ -346,6 +350,16 @@ begin
        and qual not like '%group_role%'
   ) then
     raise exception 'the group_trip_budgets select policy must read the caller''s own row only';
+  end if;
+  -- The budget is one figure for the whole trip (T938), never a day.
+  if not exists (
+    select 1 from information_schema.columns
+     where table_schema = 'public' and table_name = 'group_trip_budgets' and column_name = 'max_trip'
+  ) or exists (
+    select 1 from information_schema.columns
+     where table_schema = 'public' and table_name = 'group_trip_budgets' and column_name = 'max_day'
+  ) then
+    raise exception 'group_trip_budgets must hold max_trip, the maximum for the whole trip';
   end if;
   raise notice 'group trips self-check passed';
 end;

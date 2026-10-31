@@ -45,7 +45,7 @@ export async function listGroupTrips(userId) {
     supabase.rpc('group_trip_people'),
     supabase.from('group_trip_options').select('id, group_id, kind, start_date, end_date, destination_id, created_by, created_at').in('group_id', ids).order('created_at'),
     supabase.from('group_trip_votes').select('group_id, kind, user_id, option_id').in('group_id', ids),
-    supabase.from('group_trip_budgets').select('group_id, max_day').eq('user_id', userId).in('group_id', ids),
+    supabase.from('group_trip_budgets').select('group_id, max_trip').eq('user_id', userId).in('group_id', ids),
   ]);
   const by = (rows, key = 'group_id') => {
     const m = new Map();
@@ -55,7 +55,7 @@ export async function listGroupTrips(userId) {
   const peopleBy = by(people.data);
   const optBy = by(options.data);
   const voteBy = by(votes.data);
-  const budgetBy = new Map((budgets.data || []).map((b) => [b.group_id, b.max_day]));
+  const budgetBy = new Map((budgets.data || []).map((b) => [b.group_id, b.max_trip]));
   const groups = await Promise.all(trips.map(async (g) => {
     const members = (peopleBy.get(g.id) || []).map((p) => ({
       userId: p.user_id, status: p.status, handle: p.handle, name: p.display_name || `@${p.handle}`, emoji: p.avatar_emoji || '',
@@ -133,16 +133,17 @@ export async function castGroupVote(groupId, userId, kind, optionId) {
   if (error) throw error;
 }
 
-/** Your private maximum a day, whole euros; null removes it. */
-export async function setGroupBudget(groupId, userId, maxDay) {
+/** Your private maximum for the whole trip, a person, whole euros (T938);
+ *  null removes it. */
+export async function setGroupBudget(groupId, userId, maxTrip) {
   const supabase = await getSupabase();
-  if (maxDay == null) {
+  if (maxTrip == null) {
     const { error } = await supabase.from('group_trip_budgets').delete().eq('group_id', groupId).eq('user_id', userId);
     if (error) throw error;
     return;
   }
   const { error } = await supabase.from('group_trip_budgets').upsert(
-    { group_id: groupId, user_id: userId, max_day: Math.round(maxDay), updated_at: new Date().toISOString() },
+    { group_id: groupId, user_id: userId, max_trip: Math.round(maxTrip), updated_at: new Date().toISOString() },
     { onConflict: 'group_id,user_id' },
   );
   if (error) throw error;

@@ -2478,7 +2478,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T906-a | T906 | Fold the settings into the search: the phone settings summary into the search pill, and From, When, Who into the desktop bar, with the settings line folded away (Execution/P15/T906-T910-explore-refined.md) | next task | open |  |
 | T906-b | T906 | The Explore hero (field on the photo's edge, 300 to 420 px, the phone pill) was not seen running; look once with app data at 390 and 1440 (Execution/P15/T906-T910-explore-refined.md) | next task | open |  |
 | T907-a | T907 | People asks no child ages; Booking asks them and they drive the cost (Execution/P15/T906-T910-explore-refined.md) | next task | open |  |
-| T907-b | T907 | "Tell Carta what you like" stays in the chip row because it is the personal match's only door; decide whether it moves into Filters or Account (Execution/P15/T906-T910-explore-refined.md) | user | open |  |
+| T907-b | T907 | "Tell Carta what you like" stays in the chip row because it is the personal match's only door; decide whether it moves into Filters or Account (Execution/P15/T906-T910-explore-refined.md) | user | closed by T937-T947 (owner decision 2026-10-31) |  |
 | T908-a | T908 | The .storyr-lead and .storyr-stack rules in styles/80-story-rail.css are unused since the lead card left; remove them (Execution/P15/T906-T910-explore-refined.md) | next task | open |  |
 | T910-a | T910 | Deploy the merged batch T906 to T910 (Cloudflare credentials are the owner's) (Execution/P15/T906-T910-explore-refined.md) | user | open |  |
 | T911-a | T911 | Harvest the four placeholder sources (a place's own dishes, steep streets, neighbourhood suits, trip fit); the files and their shape are in docs/SCHEMA.md (Execution/P15/T911-T914-place-pages.md) | next task | open |  |
@@ -2502,24 +2502,33 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T919-a | T919 | Move the helper exports out of OutdoorParts.jsx and PeakFacts.jsx into a lib file (react-refresh warnings) (Execution/P15/T918-T922-outdoor-pages.md) | next task | open |  |
 | T921-a | T921 | Mountain storm and crowd cells need season.storm or crowds in the data (Execution/P15/T918-T922-outdoor-pages.md) | next task | open |  |
 | T922-a | T922 | Cycling pages have no Stay nearby because route rows carry no base town; add base {id, city, km} in the cycling build (Execution/P15/T918-T922-outdoor-pages.md) | next task | open |  |
-| T923-a | T923 | The planner stores no bed price when a trip is saved, so the My trips price nudge compares against the first price seen in the browser instead of the plan (Execution/P15/T923-T927-my-trips.md) | next task | open |  |
-| T925-a | T925 | Sharing a Saved list for friends to add and vote needs a server table; not built (Execution/P15/T923-T927-my-trips.md) | user | open |  |
-| T925-b | T925 | Plan a trip with these hands only places to the planner, not trails, beaches, lakes, mountains or routes (Execution/P15/T923-T927-my-trips.md) | next task | open |  |
-| T925-c | T925 | Price-drop alerts by email or push need consent and a sender; shown on the page only for now (Execution/P15/T923-T927-my-trips.md) | user | open |  |
+| T923-a | T923 | The planner stores no bed price when a trip is saved, so the My trips price nudge compares against the first price seen in the browser instead of the plan (Execution/P15/T923-T927-my-trips.md) | next task | closed by T937-T947 (owner decision 2026-10-31) |  |
+| T925-a | T925 | Sharing a Saved list for friends to add and vote needs a server table; not built (Execution/P15/T923-T927-my-trips.md) | user | closed by T937-T947 (owner decision 2026-10-31) |  |
+| T925-b | T925 | Plan a trip with these hands only places to the planner, not trails, beaches, lakes, mountains or routes (Execution/P15/T923-T927-my-trips.md) | next task | closed by T937-T947 (owner decision 2026-10-31) |  |
+| T925-c | T925 | Price-drop alerts by email or push need consent and a sender; shown on the page only for now (Execution/P15/T923-T927-my-trips.md) | user | closed by T937-T947 (owner decision 2026-10-31) |  |
 | T926-a | T926 | Your Europe milestones and comparisons need data trips lack: elevation for highest point, a night leg option in the past-trip form, stops on hand-logged trips (Execution/P15/T923-T927-my-trips.md) | next task | open |  |
 | T926-b | T926 | The old record map CSS (.mt-band, savedmap) and RecordMapDialog may be unused after Your Europe; check and remove (Execution/P15/T923-T927-my-trips.md) | next task | open |  |
 | T928-a | T928 | scripts/verify_friends.mjs targets the old Friends spoke in Account; rewrite it for Together (Execution/P15/T928-T932-together.md) | next task | open |  |
 | T929-a | T929 | Walk the Plan date step with ?friendsmock (a friend's stay line) in a browser; not seen in the end check (Execution/P15/T928-T932-together.md) | next task | open |  |
-| T930-a | T930 | Ask to join a friend's trip needs a request flow on the server; left out on Friends' plans and the friend page (Execution/P15/T928-T932-together.md) | next task | open |  |
+| T930-a | T930 | Ask to join a friend's trip needs a request flow on the server; left out on Friends' plans and the friend page (Execution/P15/T928-T932-together.md) | next task | closed by T937-T947 (owner decision 2026-10-31) |  |
 | T931-a | T931 | Apply supabase/migrations/055_group_trips.sql in the SQL editor after 054 (prints "group trips self-check passed"); group trips stay hidden until then (Execution/P15/T928-T932-together.md) | user | open | 1 |
-| T931-b | T931 | The group budget band shows only once three members set a maximum; decide whether that privacy floor is right (Execution/P15/T928-T932-together.md) | user | open |  |
-| T931-c | T931 | Settle up, group chat and Ask Sam need servers; not built (Execution/P15/T928-T932-together.md) | user | open |  |
+| T931-b | T931 | The group budget band shows only once three members set a maximum; decide whether that privacy floor is right (Execution/P15/T928-T932-together.md) | user | closed by T937-T947 (owner decision 2026-10-31) |  |
+| T931-c | T931 | Settle up, group chat and Ask Sam need servers; not built (Execution/P15/T928-T932-together.md) | user | closed by T937-T947 (owner decision 2026-10-31) |  |
 | T932-a | T932 | Apply supabase/migrations/056_friend_visibility.sql after 055 (prints "friend visibility self-check passed"); the Friends see switches do not save until then (Execution/P15/T928-T932-together.md) | user | open | 2 |
-| T932-b | T932 | No age signal exists, so friends features cannot be turned off under 16 (GDPR Article 8); decide on an age source (Execution/P15/T928-T932-together.md) | user | open |  |
-| T932-c | T932 | Confirm that a trip memory's story is the tip friends see (Execution/P15/T928-T932-together.md) | user | open |  |
+| T932-b | T932 | No age signal exists, so friends features cannot be turned off under 16 (GDPR Article 8); decide on an age source (Execution/P15/T928-T932-together.md) | user | closed by T937-T947 (owner decision 2026-10-31) |  |
+| T932-c | T932 | Confirm that a trip memory's story is the tip friends see (Execution/P15/T928-T932-together.md) | user | closed by T937-T947 (owner decision 2026-10-31) |  |
 | T933-a | T933 | The old .acct-plan and .account-lang-* styles in 69-v6-account.css may be unused after the Account rebuild; check and remove (Execution/P15/T933-T936-account.md) | next task | open |  |
-| T934-a | T934 | Carta sends no trip or price emails, so Account has no Emails section; add one with a sender and consent if wanted (Execution/P15/T933-T936-account.md) | user | open |  |
-| T936-a | T936 | No cookie or consent page exists; Account has no Cookies row until one does (Execution/P15/T933-T936-account.md) | user | open |  |
+| T934-a | T934 | Carta sends no trip or price emails, so Account has no Emails section; add one with a sender and consent if wanted (Execution/P15/T933-T936-account.md) | user | closed by T937-T947 (owner decision 2026-10-31) |  |
+| T936-a | T936 | No cookie or consent page exists; Account has no Cookies row until one does (Execution/P15/T933-T936-account.md) | user | closed by T937-T947 (owner decision 2026-10-31) |  |
 | T936-b | T936 | Account shows no device list or blocked people (Supabase gives no session list; blocked links are dropped); Sign out everywhere stands in (Execution/P15/T933-T936-account.md) | next task | open |  |
-| T936-c | T936 | Linking Google from Account needs manual identity linking turned on in the Supabase project (Execution/P15/T933-T936-account.md) | user | open |  |
+| T936-c | T936 | Linking Google from Account needs manual identity linking turned on in the Supabase project (Execution/P15/T933-T936-account.md) | user | closed by T937-T947 (owner decision 2026-10-31) |  |
 | T936-d | T936 | The Your data photo count covers trip-memory photos on this device only (Execution/P15/T933-T936-account.md) | next task | open |  |
+| T937-a | T937 | Paste migrations 055 to 060 in order in the SQL editor (055 and 056 changed in this batch; 060 needs pg_cron, pg_net and Vault notify_url and notify_secret) (Execution/P15/T937-T947-owner-decisions.md) | user | open | 1 |
+| T938-a | T938 | Decide whether the group trip budget should count travel from each member's home; it covers beds and food now (Execution/P15/T937-T947-owner-decisions.md) | user | open |  |
+| T941-a | T941 | Shared Saved lists have no realtime refresh; they reload after your own change and on opening the tab (Execution/P15/T937-T947-owner-decisions.md) | next task | open |  |
+| T943-a | T943 | My trips prices every stop at the trip's stay tier, so stops with their own tier are skipped in the plan-price nudge (Execution/P15/T937-T947-owner-decisions.md) | next task | open |  |
+| T944-a | T944 | The data export (migration 048) does not include email_prefs or email_log (Execution/P15/T937-T947-owner-decisions.md) | next task | open |  |
+| T944-b | T944 | Set RESEND_API_KEY, NOTIFY_FROM (a domain verified in Resend), NOTIFY_SECRET, deploy notify with --no-verify-jwt, and send one test email (Execution/P15/T937-T947-owner-decisions.md) | user | open | 2 |
+| T946-a | T946 | Turn on manual identity linking in Supabase so Connect Google works (Execution/P15/T937-T947-owner-decisions.md) | user | open |  |
+| T947-a | T947 | In Plan's trip settings the travel style sheet opens over a sheet; make it close the first sheet, as the Lifestyle panel does (Execution/P15/T937-T947-owner-decisions.md) | next task | open |  |
+| T947-b | T947 | Add the Your travel style row to the wizard's LifestyleChoices (Execution/P15/T937-T947-owner-decisions.md) | next task | open |  |

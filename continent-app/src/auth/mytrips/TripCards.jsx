@@ -115,7 +115,11 @@ export function NextTripCard({
         {nudge && (
           <p className="mt-nudge">
             <span className="mt-nudge-dot" aria-hidden="true" />
-            <span>{t('mt.nudgeBeds', { price: formatMoney(nudge.eur), date: nudge.since })}</span>
+            <span>
+              {nudge.plan
+                ? t('mt2.nudgePlan', { city: nudge.city, pct: nudge.pct })
+                : t('mt.nudgeBeds', { price: formatMoney(nudge.eur), date: nudge.since })}
+            </span>
           </p>
         )}
         <div className="mt-next-actions">
