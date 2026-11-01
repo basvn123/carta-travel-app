@@ -113,7 +113,7 @@ begin
   return query select l.token, l.expires_at from public.coplan_links l where l.token = tok;
 end;
 $$;
-revoke all on function public.create_coplan_link(uuid) from public;
+revoke all on function public.create_coplan_link(uuid) from public, anon;
 grant execute on function public.create_coplan_link(uuid) to authenticated;
 
 -- ---------------------------------------------------------------------------
@@ -133,7 +133,7 @@ as $$
      and l.expires_at > now()
    order by l.created_at desc;
 $$;
-revoke all on function public.list_coplan_links(uuid) from public;
+revoke all on function public.list_coplan_links(uuid) from public, anon;
 grant execute on function public.list_coplan_links(uuid) to authenticated;
 
 -- ---------------------------------------------------------------------------
@@ -151,7 +151,7 @@ begin
   return n > 0;
 end;
 $$;
-revoke all on function public.revoke_coplan_link(text) from public;
+revoke all on function public.revoke_coplan_link(text) from public, anon;
 grant execute on function public.revoke_coplan_link(text) to authenticated;
 
 -- ---------------------------------------------------------------------------
@@ -215,7 +215,7 @@ begin
   return query select 'joined'::text, l.trip_plan_id, (select p.label from public.trip_plans p where p.id = l.trip_plan_id);
 end;
 $$;
-revoke all on function public.accept_coplan_link(text) from public;
+revoke all on function public.accept_coplan_link(text) from public, anon;
 grant execute on function public.accept_coplan_link(text) to authenticated;
 
 notify pgrst, 'reload schema';
