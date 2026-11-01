@@ -187,3 +187,9 @@
   .xown-now-word { animation: none; }
   .xown:hover { --step: 60%; --turn: 6deg; }
 }
+
+/* T983 (owner 2026-11-01): on a phone the dealt deck gets air under the
+   six tabs, and the first rail follows the folder closer. */
+@media (max-width: 768px) {
+  .xown { margin-top: calc(var(--lift) + var(--space-5)); margin-bottom: var(--space-4); }
+}

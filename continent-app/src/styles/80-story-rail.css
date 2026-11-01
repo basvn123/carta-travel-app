@@ -414,7 +414,7 @@
   .storyr { gap: var(--space-2); }
   .storyr .storyr-strip { padding: var(--space-1) 0 0; }
   .storyr .storyr-card .card-media { aspect-ratio: 1 / 1; }
-  .explore-shell .xrails.xrails { gap: var(--space-5); }
+  .explore-shell .xrails.xrails { gap: var(--space-4); }  /* T983: 24 to 16 px */
 }
 
 /* T982 (owner 2026-11-01): a rail card's caption is three lines, not
@@ -422,3 +422,8 @@
    flag a block svg, so the flag took a line of its own). */
 .storyr .storyr-card .card-meta > span { display: inline-flex; align-items: center; gap: 6px; }
 .storyr .storyr-card .card-meta .country-flag { flex: none; }
+/* T983: a phone scrolls a rail by touch, so the arrows go and the title
+   keeps one line. */
+@media (max-width: 768px) {
+  .storyr .storyr-nav { display: none; }
+}
