@@ -50,14 +50,15 @@
   width: 100%;
   max-width: 1180px;
   margin: 0 auto;
-  padding: var(--space-5) var(--gutter) var(--space-8);
+  padding: var(--space-3) var(--gutter) var(--space-8);
   display: grid;
   gap: var(--space-5);
   box-sizing: border-box;
 }
-.tg-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
-.tg-head.is-sub { justify-content: flex-start; }
-.tg-head.is-sub .tg-h1 { flex-basis: 100%; }
+/* T986: the title sits at the top and whatever acts on the page (Add a friend,
+   Invite to a trip, the group's faces) sits under it, on every width. */
+.tg-head { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); }
+.tg-head.is-sub { gap: var(--space-1); }
 .tg-h1 {
   margin: 0;
   font-size: var(--text-headline);
@@ -89,7 +90,7 @@
   .tg-page { max-width: 760px; }
 }
 @media (min-width: 1024px) {
-  .tg-page { padding: var(--space-6) var(--space-5) var(--space-8); }
+  .tg-page { padding: var(--space-4) var(--space-5) var(--space-8); }
   .tg-grid { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: start; gap: var(--space-6); }
   .tg-col { display: grid; gap: var(--space-5); align-content: start; min-width: 0; }
   .tg-col > * { order: 0; }
@@ -116,6 +117,19 @@
   .tg-wr { grid-template-columns: auto minmax(0, 1fr); }
   .tg-wr-acts { grid-column: 1 / -1; justify-content: flex-start; }
 }
+
+/* T986: To answer is one card of rows split by hairlines, as Friends is, and a
+   row keeps its answer beside it on a phone too (the tick icon steps aside). */
+.tg-wait.tg-list { gap: 0; padding: 0 var(--space-4); background: var(--surface); border-radius: var(--radius-card); box-shadow: var(--elev-1); }
+.tg-wait.tg-list .tg-wr { padding: var(--space-3) 0; background: none; border-radius: 0; box-shadow: none; }
+.tg-wait.tg-list .tg-wr + .tg-wr { border-top: 1px solid var(--border-soft); }
+.tg-wait.tg-list .tg-wr-acts { flex-wrap: nowrap; gap: var(--space-1); }
+@media (max-width: 420px) {
+  .tg-wait.tg-list .tg-wr { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .tg-wait.tg-list .tg-wr-acts { grid-column: auto; }
+  .tg-wait.tg-list .tg-wr-acts .btn-icon { display: none; }
+}
+.tg-invite { display: grid; gap: var(--space-4); }
 
 /* ── Plans that meet: the signature dark card ────────────────────────── */
 
@@ -248,7 +262,7 @@
   overflow: hidden;
   font-weight: 400;
 }
-.tg-opt-fill { position: absolute; inset: 0 auto 0 0; background: var(--umber-50); transition: transform var(--dur-2) var(--ease-out); transform-origin: left; }
+.tg-opt-fill { position: absolute; inset: 0; background: var(--umber-50); transition: transform var(--dur-2) var(--ease-out); transform-origin: left; }
 .tg-opt > .btn-label {
   position: static;
   display: grid;
@@ -328,7 +342,8 @@
   padding-bottom: var(--space-1);
 }
 .tg-shelf::-webkit-scrollbar { display: none; }
-@media (min-width: 769px) { .tg-shelf { grid-auto-columns: minmax(200px, calc((100% - var(--space-3)) / 2)); } }
+@media (min-width: 769px) { .tg-shelf { grid-auto-columns: minmax(180px, calc((100% - 2 * var(--space-3)) / 3)); } }
+.tg-shelf.is-all { grid-auto-flow: row; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); overflow: visible; }
 .tg-fp { scroll-snap-align: start; display: grid; background: var(--surface); border-radius: var(--radius-card); box-shadow: var(--elev-1); overflow: hidden; }
 .tg-fp.is-open { outline: 2px solid var(--select-border); outline-offset: -2px; }
 .tg-fp-ph { position: relative; aspect-ratio: 4 / 3; background: var(--surface-sunken); }
@@ -350,7 +365,8 @@
 
 /* ── Friends: rows ───────────────────────────────────────────────────── */
 
-.tg-people { display: grid; }
+.tg-people { display: grid; padding: 0 var(--space-4); background: var(--surface); border-radius: var(--radius-card); box-shadow: var(--elev-1); }
+.tg-people > :first-child { border-top: 0; }
 .tg-pr.btn > .btn-label { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--space-3); align-items: center; width: 100%; }
 .tg-pr.is-static { display: grid; }
 .tg-pr.btn, .tg-pr.is-static {
@@ -376,7 +392,8 @@
 
 .tg-addw { display: grid; gap: var(--space-4); align-content: start; }
 @media (max-width: 1023px) { .tg-addw { display: grid; } }
-.tg-hand { display: grid; gap: var(--space-2); }
+.tg-hand { display: grid; gap: var(--space-2); padding: var(--space-4); background: var(--surface); border-radius: var(--radius-card); box-shadow: var(--elev-1); }
+.tg-hand .tg-found { padding: var(--space-3) 0 0; background: none; border-radius: 0; box-shadow: none; border-top: 1px solid var(--border-soft); }
 .tg-in { display: flex; gap: var(--space-2); align-items: stretch; }
 .tg-in .acct-handle-row { flex: 1 1 auto; min-width: 0; }
 .tg-sharecard {
@@ -385,9 +402,8 @@
   gap: var(--space-4);
   align-items: center;
   padding: var(--space-4);
-  background: var(--surface);
+  background: var(--umber-50);
   border-radius: var(--radius-card);
-  box-shadow: var(--elev-1);
 }
 .tg-share-tx { display: grid; gap: var(--space-1); min-width: 0; }
 .tg-share-tx b { font-size: var(--text-lead); font-weight: 600; }
@@ -405,17 +421,16 @@
 
 /* ── A friend's page ─────────────────────────────────────────────────── */
 
-.tg-fhead { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--space-4); align-items: center; }
+.tg-fhead { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-3) var(--space-4); align-items: center; }
 .tg-fhead-tx { display: grid; gap: 2px; min-width: 0; }
-.tg-fhead-acts { display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap; justify-content: flex-end; }
-@media (max-width: 480px) {
-  .tg-fhead { grid-template-columns: auto minmax(0, 1fr); }
-  .tg-fhead-acts { grid-column: 1 / -1; justify-content: flex-start; }
-}
+/* T986: Invite to a trip and More sit under the name on every width, like
+   Add a friend under Together; their menus open to the right so they stay
+   on screen. */
+.tg-fhead-acts { grid-column: 1 / -1; display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap; justify-content: flex-start; }
 .tg-menu { position: relative; }
 .tg-menu-list {
   position: absolute;
-  right: 0;
+  left: 0;
   top: calc(100% + var(--space-1));
   z-index: var(--z-popover);
   display: grid;
@@ -535,3 +550,18 @@
 @media (max-width: 420px) {
   .tg-addcost-row { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* T986: Guides as two photo cards, the duo map in a card, the poll's add
+   button, as in the proposal. */
+.tg-guides { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+.tg-gd.btn { display: block; align-self: start; height: auto; padding: 0; text-align: left; background: none; border: 0; border-radius: var(--radius-card); }
+.tg-gd.btn > .btn-label { display: grid; gap: 2px; justify-items: start; width: 100%; white-space: normal; }
+.tg-gd-ph { position: relative; display: block; width: 100%; aspect-ratio: 4 / 3; overflow: hidden; border-radius: var(--radius-card); background: var(--surface-sunken); margin-bottom: var(--space-2); }
+.tg-gd-img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.tg-gd b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.tg-gd-by { font-size: var(--text-label); color: var(--text-2); font-weight: 400; }
+.tg-guides { align-items: start; }
+.tg-gd-ph .hero-blank { position: absolute; inset: 0; width: 100%; height: 100%; }
+.tg-cardblock { padding: var(--space-4); background: var(--surface); border-radius: var(--radius-card); box-shadow: var(--elev-1); }
+.tg-cardblock .tg-block-head { min-height: 0; }
+.tg-addopt-open.btn { justify-self: start; }

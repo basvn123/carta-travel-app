@@ -215,7 +215,7 @@ export function FriendView({ back, headRef, friendId, destinations, costs, favor
       <div className="tg-grid">
         <div className="tg-col">
           {(you.size > 0 || them.size > 0) && (
-            <Block id="tg-duo-h" title={t('tg.youAnd', { who })} className="tg-o-meet">
+            <Block id="tg-duo-h" title={t('tg.youAnd', { who })} className="tg-o-meet tg-cardblock">
               <DuoMap you={you} them={them} name={who} t={t} />
             </Block>
           )}

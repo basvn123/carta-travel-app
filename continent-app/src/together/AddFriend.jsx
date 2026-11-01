@@ -23,15 +23,7 @@ export function AddFriend({ back, headRef, pendingHandle, aside = null }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
-  const [copied, setCopied] = useState(false);
   const myHandle = s.me?.handle || '';
-  const link = myHandle ? buildFriendInviteUrl(myHandle) : null;
-
-  useEffect(() => {
-    if (!copied) return undefined;
-    const id = setTimeout(() => setCopied(false), 2500);
-    return () => clearTimeout(id);
-  }, [copied]);
 
   const lookup = async (wanted) => {
     setError(''); setNotice(''); setFound(null);
@@ -64,20 +56,6 @@ export function AddFriend({ back, headRef, pendingHandle, aside = null }) {
       setNotice(t('tg.requestSentNotice'));
     } catch (err) {
       setError(t(err?.code === 'ALREADY_LINKED' ? 'friends.errAlready' : 'friends.unavailable'));
-    }
-  };
-
-  const copy = async () => {
-    try { await navigator.clipboard.writeText(link); setCopied(true); } catch { setError(t('share.copyFailed')); }
-  };
-  const share = async () => {
-    const text = t('friends.inviteText', { handle: myHandle });
-    try {
-      if (navigator.share) { await navigator.share({ title: 'Carta', text, url: link }); return; }
-      await navigator.clipboard.writeText(`${text} ${link}`);
-      setCopied(true);
-    } catch (err) {
-      if (err?.name !== 'AbortError') setError(t('share.copyFailed'));
     }
   };
 
@@ -117,26 +95,62 @@ export function AddFriend({ back, headRef, pendingHandle, aside = null }) {
             {notice && <div className="auth-notice auth-notice-inline" role="status">{notice}</div>}
           </form>
 
-          {link && (
-            <div className="tg-sharecard">
-              <div className="tg-share-tx">
-                <b>{t('tg.yourLink')}</b>
-                <span className="tg-muted">@{myHandle}</span>
-                <span className="tg-share-acts">
-                  <Button variant="secondary" size="sm" className="frn-me-copy" iconStart={copied ? <CheckIcon size={16} /> : <CopyIcon size={16} />} onClick={copy}>
-                    {copied ? t('share.copied') : t('tg.copyLink')}
-                  </Button>
-                  <Button variant="secondary" size="sm" className="frn-me-share" iconStart={<ShareIcon size={16} />} onClick={share}>
-                    {t('tg.share')}
-                  </Button>
-                </span>
-              </div>
-              <QrCode url={link} label={t('tg.qrLabel')} />
-            </div>
-          )}
+          <ShareCard onError={setError} />
         </div>
         {aside && <div className="tg-col">{aside}</div>}
       </div>
+    </div>
+  );
+}
+
+/**
+ * Your own link to hand over (T986): Copy link, Share and the QR code. On Add
+ * a friend, and on an empty Together page, where it is the quickest way in.
+ */
+export function ShareCard({ onError, className = '' }) {
+  const { t } = useI18n();
+  const s = useTogether();
+  const [copied, setCopied] = useState(false);
+  const myHandle = s.me?.handle || '';
+  const link = myHandle ? buildFriendInviteUrl(myHandle) : null;
+
+  useEffect(() => {
+    if (!copied) return undefined;
+    const id = setTimeout(() => setCopied(false), 2500);
+    return () => clearTimeout(id);
+  }, [copied]);
+
+  if (!link) return null;
+  const fail = () => onError?.(t('share.copyFailed'));
+  const copy = async () => {
+    try { await navigator.clipboard.writeText(link); setCopied(true); } catch { fail(); }
+  };
+  const share = async () => {
+    const text = t('friends.inviteText', { handle: myHandle });
+    try {
+      if (navigator.share) { await navigator.share({ title: 'Carta', text, url: link }); return; }
+      await navigator.clipboard.writeText(`${text} ${link}`);
+      setCopied(true);
+    } catch (err) {
+      if (err?.name !== 'AbortError') fail();
+    }
+  };
+
+  return (
+    <div className={`tg-sharecard ${className}`.trim()}>
+      <div className="tg-share-tx">
+        <b>{t('tg.yourLink')}</b>
+        <span className="tg-muted">@{myHandle}</span>
+        <span className="tg-share-acts">
+          <Button variant="secondary" size="sm" className="frn-me-copy" iconStart={copied ? <CheckIcon size={16} /> : <CopyIcon size={16} />} onClick={copy}>
+            {copied ? t('share.copied') : t('tg.copyLink')}
+          </Button>
+          <Button variant="secondary" size="sm" className="frn-me-share" iconStart={<ShareIcon size={16} />} onClick={share}>
+            {t('tg.share')}
+          </Button>
+        </span>
+      </div>
+      <QrCode url={link} label={t('tg.qrLabel')} />
     </div>
   );
 }

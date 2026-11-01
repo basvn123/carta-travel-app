@@ -1892,6 +1892,8 @@ export const de = {
   "tg.more": "Mehr",
   "tg.friendGone": "Diese Person ist nicht mehr auf deiner Liste.",
   "tg.plansMeet": "Pläne, die sich treffen",
+  "tg.guides": "Reiseguides",
+  "tg.fewer": "Weniger zeigen",
   "tg.meetTitle": "Du und {who} in {city}, {dates}",
   "tg.you": "Du",
   "tg.planDayTogether": "Einen Tag zusammen planen",

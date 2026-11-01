@@ -37,7 +37,7 @@ export function MeetCard({ o, me, meName = '', onPlanDay, onHide }) {
       </div>
       <div className="tg-meet-acts">
         {o.destId && (
-          <Button className="tg-on-dark" onClick={() => onPlanDay?.(o.destId, o.start)}>{t('tg.planDayTogether')}</Button>
+          <Button variant="primary" onClick={() => onPlanDay?.(o.destId, o.start)}>{t('tg.planDayTogether')}</Button>
         )}
         <Button className="tg-on-dark-quiet" onClick={() => onHide?.(o.key)}>{t('tg.hide')}</Button>
       </div>

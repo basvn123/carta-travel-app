@@ -6,14 +6,14 @@ import {
 } from '../components/Icons.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { LoadingBlock } from '../components/StateBlocks.jsx';
-import { GuidesStrip } from '../community/GuidesStrip.jsx';
+import { listGuides } from '../community/guides.js';
 import { FriendTripPanel } from '../auth/FriendTripPanel.jsx';
 import { FriendBadges } from '../auth/FriendBadges.jsx';
 import { friendFacts, fmtWhere } from '../auth/friendFacts.js';
 import { formatMoney } from '../lib/money.js';
 import { useTogether, togetherActions } from './useTogether.js';
 import { Block, ToneFace, fmtShort, nameOf } from './parts.jsx';
-import { AddFriend } from './AddFriend.jsx';
+import { AddFriend, ShareCard } from './AddFriend.jsx';
 import { FriendView } from './FriendView.jsx';
 import { MeetCard } from './MeetCard.jsx';
 import { FriendsSee, PayLink } from './Privacy.jsx';
@@ -28,7 +28,7 @@ import { AskJoin } from './AskJoin.jsx';
  * of Account, which keeps a single row linking here.
  *
  * Order, top to bottom on a phone (desktop splits it in two columns):
- *   the title and Add a friend;
+ *   the title, Add a friend under it (T986, on every width);
  *   To answer: what is waiting on you (requests, invitations, votes);
  *   Friends' plans: the trips friends chose to show you;
  *   Friends: one row a person, one fact line, tap for their page;
@@ -70,6 +70,41 @@ function TripCard({ trip, destinations, costs, me, open, onToggle }) {
   );
 }
 
+/**
+ * Guides: the two newest published guides as photo cards, and the door to
+ * all of them. Absent when nothing is published, as the strip was.
+ */
+function GuidesBlock({ destinations, onOpen }) {
+  const { t } = useI18n();
+  const [rows, setRows] = useState([]);
+  useEffect(() => {
+    let live = true;
+    listGuides({ limit: 6 }).then((r) => { if (live) setRows(r); }).catch(() => {});
+    return () => { live = false; };
+  }, []);
+  if (!rows.length || !onOpen) return null;
+  return (
+    <Block id="tg-guides-h" title={t('tg.guides')} className="tg-o-guides"
+      action={<Button variant="quiet" size="sm" onClick={onOpen}>{t('rail.seeAllPlain')}</Button>}>
+      <div className="tg-guides">
+        {rows.slice(0, 2).map((g) => {
+          const d = (g.destinationIds || []).map((id) => destinations?.[id]).find((x) => x?.image?.url);
+          return (
+            <Button key={g.tripPlanId} variant="quiet" className="tg-gd" onClick={onOpen}>
+              <span className="tg-gd-ph">
+                <HeroImage url={d?.image?.url || null} city={d?.city || (g.cities || [])[0] || g.label} iso2={d?.iso2}
+                  className="tg-gd-img" maxWidth={480} sizes="(min-width: 1024px) 240px, 45vw" ratio={[4, 3]} />
+              </span>
+              <b>{g.label || fmtWhere(g.cities)}</b>
+              <span className="tg-gd-by">@{g.ownerHandle}</span>
+            </Button>
+          );
+        })}
+      </div>
+    </Block>
+  );
+}
+
 /** One row of "To answer": who or what, what it is, and its answer. */
 function WaitRow({ face, title, line, children }) {
   return (
@@ -90,6 +125,7 @@ export function TogetherPage({
   const headRef = useRef(null);
   const [openTrip, setOpenTrip] = useState('');
   const [error, setError] = useState('');
+  const [allPlans, setAllPlans] = useState(false);
   const meets = useOverlaps(s);
 
   // The page heading takes focus on arrival and on every sub-screen.
@@ -194,16 +230,16 @@ export function TogetherPage({
 
         {(incoming.length > 0 || s.invites.length > 0 || groupsWaiting.length > 0 || s.joinToMe.length > 0) && (
           <Block id="tg-wait-h" title={t('tg.toAnswer')} className="tg-o-wait">
-            <div className="tg-wait">
+            <div className="tg-wait tg-list">
               {incoming.map((l, i) => (
                 <WaitRow key={l.id} face={<ToneFace id={l.userId} name={nameOf(l)} emoji={l.avatarEmoji} />}
                   title={nameOf(l)} line={t('tg.friendRequest')}>
                   <Button variant={i === 0 ? 'primary' : 'secondary'} size="sm" className="frn-yes" onClick={() => act(togetherActions.accept(l.id))}>
                     {t('friends.accept')}
                   </Button>
-                  <Button variant="secondary" size="sm" className="frn-no" onClick={() => act(togetherActions.remove(l.id))}>
-                    {t('friends.decline')}
-                  </Button>
+                  <IconButton label={t('friends.decline')} className="frn-no" onClick={() => act(togetherActions.remove(l.id))}>
+                    <CloseIcon size={16} />
+                  </IconButton>
                 </WaitRow>
               ))}
               {s.joinToMe.map((r) => (
@@ -262,8 +298,13 @@ export function TogetherPage({
               </Block>
             )}
             {shelf.length > 0 && (
-              <Block id="tg-plans-h" title={t('tg.friendsPlans')} className="tg-o-plans">
-                <div className="tg-shelf">
+              <Block id="tg-plans-h" title={t('tg.friendsPlans')} className="tg-o-plans"
+                action={shelf.length > 3 && (
+                  <Button variant="quiet" size="sm" aria-expanded={allPlans} onClick={() => setAllPlans((v) => !v)}>
+                    {allPlans ? t('tg.fewer') : t('rail.seeAllPlain')}
+                  </Button>
+                )}>
+                <div className={`tg-shelf${allPlans ? ' is-all' : ''}`}>
                   {shelf.map((tr) => (
                     <TripCard key={tr.tripPlanId} trip={tr} destinations={destinations} costs={costs} me={s.userId}
                       open={openTrip === tr.tripPlanId} onToggle={() => setOpenTrip((cur) => (cur === tr.tripPlanId ? '' : tr.tripPlanId))} />
@@ -277,7 +318,10 @@ export function TogetherPage({
             <GroupBlock s={s} onView={onView} />
             <Block id="tg-people-h" title={t('friends.title')} className="tg-o-people">
               {friends.length === 0 && outgoing.length === 0 ? (
-                <p className="tg-muted">{t('tg.noFriends')}</p>
+                <div className="tg-invite">
+                  <p className="tg-muted">{t('tg.noFriends')}</p>
+                  <ShareCard onError={setError} />
+                </div>
               ) : (
                 <div className="tg-people">
                   {friends.map((l) => (
@@ -304,9 +348,7 @@ export function TogetherPage({
                 <FriendBadges userId={s.userId} friendCount={friends.length} refreshKey={friends.length} />
               </div>
             )}
-            <div className="tg-o-guides">
-              <GuidesStrip onOpen={onOpenGuides} />
-            </div>
+            <GuidesBlock destinations={destinations} onOpen={onOpenGuides} />
             <div className="tg-o-privacy">
               <Button variant="quiet" size="sm" iconStart={<LockIcon size={16} />} onClick={() => onView('privacy')}>{t('tg.privacy')}</Button>
             </div>

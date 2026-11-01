@@ -122,6 +122,8 @@ export function GroupView({ back, headRef, groupId, destinations, choices, onOpe
   const [editBudget, setEditBudget] = useState(false);
   const [addWhen, setAddWhen] = useState({ start: '', end: '' });
   const [addWhere, setAddWhere] = useState('');
+  // Which poll's add form is open: the fields stay hidden until asked for.
+  const [adding, setAdding] = useState('');
   const [busy, setBusy] = useState(false);
 
   const cityIndex = useMemo(() => {
@@ -219,9 +221,12 @@ export function GroupView({ back, headRef, groupId, destinations, choices, onOpe
                     over={fitsBand(p, g.band) === false} people={peopleOf(g, o.voters)} onVote={() => vote('when', o)} />
                 );
               })}
-              {!g.bookedPlanId && (
-                <form className="tg-addopt" onSubmit={(e) => { e.preventDefault(); if (addWhen.start && addWhen.end > addWhen.start) { addOption({ kind: 'when', start: addWhen.start, end: addWhen.end }); setAddWhen({ start: '', end: '' }); } }}>
-                  <input type="date" aria-label={t('tg.from')} value={addWhen.start} onChange={(e) => setAddWhen((w) => ({ ...w, start: e.target.value }))} />
+              {!g.bookedPlanId && adding !== 'when' && (
+                <Button variant="quiet" size="sm" className="tg-addopt-open" iconStart={<PlusIcon size={16} />} onClick={() => setAdding('when')}>{t('tg.addDates')}</Button>
+              )}
+              {!g.bookedPlanId && adding === 'when' && (
+                <form className="tg-addopt" onSubmit={(e) => { e.preventDefault(); if (addWhen.start && addWhen.end > addWhen.start) { addOption({ kind: 'when', start: addWhen.start, end: addWhen.end }); setAddWhen({ start: '', end: '' }); setAdding(''); } }}>
+                  <input type="date" autoFocus aria-label={t('tg.from')} value={addWhen.start} onChange={(e) => setAddWhen((w) => ({ ...w, start: e.target.value }))} />
                   <input type="date" aria-label={t('tg.until')} value={addWhen.end} min={addWhen.start || undefined} onChange={(e) => setAddWhen((w) => ({ ...w, end: e.target.value }))} />
                   <Button type="submit" variant="quiet" size="sm" iconStart={<PlusIcon size={16} />} disabled={!addWhen.start || !(addWhen.end > addWhen.start)}>{t('tg.addDates')}</Button>
                 </form>
@@ -237,9 +242,12 @@ export function GroupView({ back, headRef, groupId, destinations, choices, onOpe
                     people={peopleOf(g, o.voters)} onVote={() => vote('where', o)} />
                 );
               })}
-              {!g.bookedPlanId && (
-                <form className="tg-addopt" onSubmit={(e) => { e.preventDefault(); const id = cityIndex.get(addWhere.trim()); if (id) { addOption({ kind: 'where', destId: id }); setAddWhere(''); } }}>
-                  <input type="text" list="tg-cities" aria-label={t('tg.where')} value={addWhere} onChange={(e) => setAddWhere(e.target.value)} />
+              {!g.bookedPlanId && adding !== 'where' && (
+                <Button variant="quiet" size="sm" className="tg-addopt-open" iconStart={<PlusIcon size={16} />} onClick={() => setAdding('where')}>{t('tg.addPlace')}</Button>
+              )}
+              {!g.bookedPlanId && adding === 'where' && (
+                <form className="tg-addopt" onSubmit={(e) => { e.preventDefault(); const id = cityIndex.get(addWhere.trim()); if (id) { addOption({ kind: 'where', destId: id }); setAddWhere(''); setAdding(''); } }}>
+                  <input type="text" autoFocus list="tg-cities" aria-label={t('tg.where')} value={addWhere} onChange={(e) => setAddWhere(e.target.value)} />
                   <datalist id="tg-cities">
                     {[...cityIndex.keys()].slice(0, 4000).map((c) => <option key={c} value={c} />)}
                   </datalist>
