@@ -862,7 +862,6 @@
 .mt-fig dt { font-size: var(--text-caption); color: var(--text-2); }
 .mt-fig dd { margin: 0; }
 .mt-fig dd b { font-size: var(--text-headline); font-weight: 700; line-height: var(--leading-tight); color: var(--text); }
-.mt-fig-of { margin-left: 6px; font-size: var(--text-body); font-weight: 600; color: var(--text-3); }
 .mt-fig-sub { font-size: var(--text-caption); line-height: var(--leading-ui); color: var(--text-2); }
 
 .mt-miles { display: grid; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
@@ -947,7 +946,6 @@
 }
 .mt-drop.is-over { border-color: var(--select-border); background: var(--select-bg); }
 .mt-drop-title { margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); }
-.mt-drop-line { margin: 0 0 var(--space-2); max-width: 40ch; font-size: var(--text-body); line-height: var(--leading-body); }
 .mt-ways { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); margin-top: var(--space-3); }
 .mt-book-note { margin: var(--space-3) 0 0; font-size: var(--text-label); line-height: var(--leading-body); color: var(--text-2); }
 .mt-book-note:empty { display: none; }
