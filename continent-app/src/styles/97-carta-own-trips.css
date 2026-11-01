@@ -10,7 +10,6 @@
   --step: 60%;
   --turn: 6deg;
   --lift: 52px;
-  --folder: var(--umber-800);
   position: relative;
   isolation: isolate;
   display: grid;
@@ -19,10 +18,11 @@
   margin: calc(var(--lift) + var(--space-2)) 0 var(--space-7);
   padding: 0 var(--space-5) var(--space-5);
   border-radius: 20px;
+  /* T967: the Ask door's own brown (96-search-dock.css .sdock-ask), so
+     the two Carta doors on the screen are one colour. */
   background:
-    radial-gradient(120% 85% at 88% 0%, rgba(168, 115, 63, 0.55) 0%, rgba(168, 115, 63, 0) 62%),
-    radial-gradient(90% 70% at 0% 100%, rgba(31, 42, 51, 0.35) 0%, rgba(31, 42, 51, 0) 70%),
-    var(--folder);
+    radial-gradient(120% 90% at 30% 20%, color-mix(in srgb, var(--sun-400) 30%, transparent), transparent 60%),
+    linear-gradient(150deg, var(--umber-600), var(--umber-800));
   box-shadow: 0 10px 24px rgba(90, 55, 22, 0.22), 0 2px 6px rgba(90, 55, 22, 0.16);
   color: var(--umber-50);
   text-decoration: none;
@@ -139,12 +139,6 @@
   letter-spacing: -0.02em;
   text-wrap: balance;
 }
-.xown-facts {
-  max-width: 36ch;
-  color: var(--umber-200);
-  font-size: var(--text-body);
-  line-height: 1.45;
-}
 .xown-go {
   display: inline-flex;
   align-items: center;
@@ -183,7 +177,6 @@
   }
   .xown-text { align-self: center; padding-top: var(--space-6); }
   .xown-title { font-size: var(--text-feature); }
-  .xown-facts { max-width: 46ch; font-size: var(--text-lead); }
 }
 
 @media (prefers-reduced-motion: reduce) {

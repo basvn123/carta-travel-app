@@ -6096,7 +6096,6 @@ export const es = {
   "dock.ask": "Preguntar a Carta",
   "dock.askShort": "Preguntar",
   "xown.title": "Los viajes de Carta",
-  "xown.facts": "{trips} semanas en {countries} países, cada una planeada por Carta",
   "dock.openAria": "Búsqueda: {what}, {summary}, cambiar",
   "dock.summary": "{when}, desde {from}, {people}",
   "dock.filtersAria": "Filtros, {n} activos",

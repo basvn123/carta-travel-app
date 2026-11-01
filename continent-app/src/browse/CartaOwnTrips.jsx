@@ -3,7 +3,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { tabHref } from '../lib/urlState.js';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { ArrowRightIcon } from '../components/Icons.jsx';
-import { loadJourneyIndex, coverageFacts, typeLabel } from '../lib/journeys.js';
+import { loadJourneyIndex, typeLabel } from '../lib/journeys.js';
 import '../styles/97-carta-own-trips.css';
 
 /*
@@ -42,7 +42,6 @@ function reducedMotion() {
 export function CartaOwnTrips({ onOpen }) {
   const { t } = useI18n();
   const [deck, setDeck] = useState(null);
-  const [facts, setFacts] = useState(null);
   const [turn, setTurn] = useState(0);
   const [dealt, setDealt] = useState(false);
   const rootRef = useRef(null);
@@ -57,8 +56,6 @@ export function CartaOwnTrips({ onOpen }) {
       const month = new Date().getMonth() + 1;
       const order = [...new Set([SEASON[month], ...FAN, ...bySlug.keys()])].filter((s) => bySlug.has(s)).slice(0, POOL);
       if (order.length >= 3) setDeck(order.map((s) => bySlug.get(s)));
-      const f = coverageFacts(ix);
-      if (f.trips > 0 && f.countries > 0) setFacts(f);
     }).catch(() => {});
     return () => { live = false; };
   }, []);
@@ -121,8 +118,8 @@ export function CartaOwnTrips({ onOpen }) {
               style={{ '--k': k, '--z': shown ? SLOTS.length - Math.abs(k) + (s === 0 ? 1 : 0) : 0, '--i': i }}
             >
               {tp.hero?.url && (
-                <HeroImage url={tp.hero.url} city={tp.name || tp.slug} className="xown-img" maxWidth={500}
-                  sizes="(max-width: 768px) 34vw, 220px" ratio={[3, 4]} />
+                <HeroImage url={tp.hero.url} city={tp.name || tp.slug} className="xown-img" maxWidth={960}
+                  sizes="(max-width: 768px) 45vw, 320px" ratio={[3, 4]} eager={i < SLOTS.length} />
               )}
             </span>
           );
@@ -135,9 +132,6 @@ export function CartaOwnTrips({ onOpen }) {
 
       <span className="xown-text">
         <h2 className="xown-title">{t('xown.title')}</h2>
-        {facts && (
-          <span className="xown-facts">{t('xown.facts', { trips: facts.trips, countries: facts.countries })}</span>
-        )}
         <span className="xown-go">
           {t('pf.promo.link')}
           <ArrowRightIcon size={16} />
