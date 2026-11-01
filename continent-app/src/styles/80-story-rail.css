@@ -416,3 +416,9 @@
   .storyr .storyr-card .card-media { aspect-ratio: 1 / 1; }
   .explore-shell .xrails.xrails { gap: var(--space-5); }
 }
+
+/* T982 (owner 2026-11-01): a rail card's caption is three lines, not
+   four. The flag sits beside the country (.xstory-meta was a block, and the
+   flag a block svg, so the flag took a line of its own). */
+.storyr .storyr-card .card-meta > span { display: inline-flex; align-items: center; gap: 6px; }
+.storyr .storyr-card .card-meta .country-flag { flex: none; }
