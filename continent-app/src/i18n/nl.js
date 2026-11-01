@@ -1922,6 +1922,7 @@ export const nl = {
   "tg.groupTrips": "Groepsreizen",
   "tg.new": "Nieuw",
   "tg.newGroup": "Nieuwe groepsreis",
+  "tg.groupPitch": "Stem over data en plekken, met een budget dat iedereen past",
   "tg.groupName": "Naam",
   "tg.create": "Aanmaken",
   "tg.groupGone": "Deze groepsreis is er niet meer.",

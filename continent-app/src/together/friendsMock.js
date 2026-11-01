@@ -17,7 +17,8 @@
  * (Settle up, T940). ?friendsmock=settled is the same with every transfer
  * marked as paid; ?friendsmock=owed adds train tickets you paid, so the
  * others owe you and "Add your payment link" shows.
- * ?friendsmock=empty is an account with nobody yet.
+ * ?friendsmock=empty is an account with nobody yet; ?friendsmock=one has
+ * one friend and nothing else.
  */
 import { E2E_SEAMS } from '../lib/e2eSeams.js';
 
@@ -36,9 +37,13 @@ function addDaysIso(n) {
 }
 
 export function mockState() {
-  const empty = FRIENDS_MOCK === 'empty';
+  // ?friendsmock=one: one friend who shows nothing, and nothing else yet.
+  const one = FRIENDS_MOCK === 'one';
+  const empty = FRIENDS_MOCK === 'empty' || one;
   const d = addDaysIso;
-  const links = empty ? [] : [
+  const links = one
+    ? [{ id: 'l-sam', kind: 'friend', userId: 'u-sam', handle: 'sam_m', displayName: 'Sam Martens', avatarEmoji: '', createdAt: d(-3) }]
+    : empty ? [] : [
     { id: 'l-lea', kind: 'incoming', userId: 'u-lea', handle: 'lea_d', displayName: 'Léa Dubois', avatarEmoji: '', createdAt: d(-1) },
     { id: 'l-sam', kind: 'friend', userId: 'u-sam', handle: 'sam_m', displayName: 'Sam Martens', avatarEmoji: '', createdAt: d(-90) },
     { id: 'l-jo', kind: 'friend', userId: 'u-jo', handle: 'jo_p', displayName: 'Jo Peeters', avatarEmoji: '', createdAt: d(-60) },

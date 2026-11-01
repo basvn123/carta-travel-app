@@ -1922,6 +1922,7 @@ export const es = {
   "tg.groupTrips": "Viajes en grupo",
   "tg.new": "Nuevo",
   "tg.newGroup": "Nuevo viaje en grupo",
+  "tg.groupPitch": "Votad fechas y lugares, con un presupuesto que encaje a todos",
   "tg.groupName": "Nombre",
   "tg.create": "Crear",
   "tg.groupGone": "Este viaje en grupo ya no está.",

@@ -1922,6 +1922,7 @@ export const it = {
   "tg.groupTrips": "Viaggi di gruppo",
   "tg.new": "Nuovo",
   "tg.newGroup": "Nuovo viaggio di gruppo",
+  "tg.groupPitch": "Votate date e luoghi, con un budget che va bene a tutti",
   "tg.groupName": "Nome",
   "tg.create": "Crea",
   "tg.groupGone": "Questo viaggio di gruppo non c'è più.",

@@ -59,6 +59,10 @@
    Invite to a trip, the group's faces) sits under it, on every width. */
 .tg-head { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); }
 .tg-head.is-sub { gap: var(--space-1); }
+.tg-head.is-home { align-items: stretch; }
+.tg-head-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.tg-head.is-home > .btn { align-self: flex-start; }
+.tg-privacy { color: var(--text-2); margin-right: calc(var(--space-2) * -1); }
 .tg-h1 {
   margin: 0;
   font-size: var(--text-headline);
@@ -565,3 +569,25 @@
 .tg-cardblock { padding: var(--space-4); background: var(--surface); border-radius: var(--radius-card); box-shadow: var(--elev-1); }
 .tg-cardblock .tg-block-head { min-height: 0; }
 .tg-addopt-open.btn { justify-self: start; }
+
+/* T987: the title as on My trips; an empty Group trips is one row that starts
+   one; Milestones wears the same heading and card as every other block. */
+.tg-h1 { letter-spacing: -0.01em; }
+.tg-start.btn { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--space-3); align-items: center; height: auto; min-height: 72px; padding: var(--space-3) var(--space-4); text-align: left; background: var(--surface); border: 0; border-radius: var(--radius-card); box-shadow: var(--elev-1); }
+.tg-start.btn > .btn-label { display: contents; }
+.tg-start-ic { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--select-bg); color: var(--select-ink); }
+.tg-start .tg-pr-tx span { white-space: normal; }
+.tg-o-badges .panel-section { padding: 0; border: 0; }
+.tg-o-badges .frn-head { min-height: var(--tap); }
+.tg-o-badges .frn-h { font-size: var(--text-title); font-weight: 600; line-height: var(--leading-tight); color: var(--text); }
+.tg-o-badges .fbadge-row { padding: var(--space-3) var(--space-2); border: 0; background: var(--surface); box-shadow: var(--elev-1); }
+
+/* T987: on a desktop with nothing for the wide column (no plans that meet,
+   no friends' plans), the blocks share two equal columns instead of leaving
+   the left half empty. */
+@media (min-width: 1024px) {
+  .tg-grid:has(> .tg-col:first-child:empty) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tg-grid:has(> .tg-col:first-child:empty) > .tg-col:first-child { display: none; }
+  .tg-grid:has(> .tg-col:first-child:empty) > .tg-col:last-child { display: contents; }
+  .tg-grid:has(> .tg-col:first-child:empty) > .tg-col:last-child > * { order: initial; }
+}

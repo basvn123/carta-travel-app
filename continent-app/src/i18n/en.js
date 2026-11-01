@@ -2326,6 +2326,7 @@ export const en = {
   "tg.groupTrips": "Group trips",
   "tg.new": "New",
   "tg.newGroup": "New group trip",
+  "tg.groupPitch": "Vote on dates and places, with a budget that fits all",
   "tg.groupName": "Name",
   "tg.create": "Create",
   "tg.groupGone": "This group trip is no longer here.",

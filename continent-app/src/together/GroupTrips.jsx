@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { Button, Chip } from '../components/ui/index.js';
-import { CheckIcon, PlusIcon } from '../components/Icons.jsx';
+import { CheckIcon, ChevronRightIcon, FriendsIcon, PlusIcon } from '../components/Icons.jsx';
 import { formatMoney } from '../lib/money.js';
 import { priceRequest, priceDay } from '../lib/price/index.js';
 import { nightsBetween } from '../lib/tripDates.js';
@@ -362,9 +362,16 @@ export function GroupBlock({ s, onView }) {
       id="tg-groups-h"
       title={t('tg.groupTrips')}
       className="tg-o-groups"
-      action={hasFriends ? <Button variant="quiet" size="sm" iconStart={<PlusIcon size={16} />} onClick={() => onView('newgroup')}>{t('tg.new')}</Button> : null}
+      action={hasFriends && joined.length > 0 ? <Button variant="quiet" size="sm" iconStart={<PlusIcon size={16} />} onClick={() => onView('newgroup')}>{t('tg.new')}</Button> : null}
     >
       {joined.map((g) => <GroupCard key={g.id} g={g} me={s.userId} onOpen={() => onView('group', g.id)} />)}
+      {!joined.length && (
+        <Button variant="quiet" block className="tg-start" onClick={() => onView('newgroup')}>
+          <span className="tg-start-ic" aria-hidden="true"><FriendsIcon size={20} /></span>
+          <span className="tg-pr-tx"><b>{t('tg.newGroup')}</b><span>{t('tg.groupPitch')}</span></span>
+          <ChevronRightIcon size={16} className="tg-pr-go" />
+        </Button>
+      )}
     </Block>
   );
 }

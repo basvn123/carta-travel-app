@@ -220,8 +220,11 @@ export function TogetherPage({
     const groupsWaiting = groupWaits(s);
     body = (
       <div className="tg-page">
-        <div className="tg-head">
-          <h1 className="tg-h1" ref={headRef} tabIndex={-1} data-focus-quiet="">{t('tg.title')}</h1>
+        <div className="tg-head is-home">
+          <span className="tg-head-row">
+            <h1 className="tg-h1" ref={headRef} tabIndex={-1} data-focus-quiet="">{t('tg.title')}</h1>
+            <IconButton label={t('tg.privacy')} className="tg-privacy" onClick={() => onView('privacy')}><LockIcon size={18} /></IconButton>
+          </span>
           <Button variant={nothing ? 'primary' : 'secondary'} size="sm" iconStart={<PlusIcon size={16} />} onClick={() => onView('add')}>
             {t('friends.addTitle')}
           </Button>
@@ -349,9 +352,6 @@ export function TogetherPage({
               </div>
             )}
             <GuidesBlock destinations={destinations} onOpen={onOpenGuides} />
-            <div className="tg-o-privacy">
-              <Button variant="quiet" size="sm" iconStart={<LockIcon size={16} />} onClick={() => onView('privacy')}>{t('tg.privacy')}</Button>
-            </div>
           </div>
         </div>
       </div>
