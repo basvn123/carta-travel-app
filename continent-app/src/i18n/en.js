@@ -7855,7 +7855,6 @@ export const en = {
   "mt.tabEurope": "Your Europe",
   "mt.addBooking": "Add a booking",
   "mt.newTrip": "New trip",
-  "mt.emptyTripsLine": "Plan one and it waits here, with what each day costs and how ready it is.",
   "mt.comingUp": "Coming up",
   "mt.beingPlanned": "Being planned",
   "mt.allInPlan": "All in Plan",

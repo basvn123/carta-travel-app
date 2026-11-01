@@ -109,7 +109,6 @@ export function TripsTab({
       ) : nothing ? (
         <Empty
           title={t('saved.noTripsYet')}
-          line={t('mt.emptyTripsLine')}
           action={<Button variant="primary" onClick={onPlanTrip}>{t('saved.planTrip')}</Button>}
         />
       ) : (

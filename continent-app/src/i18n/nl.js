@@ -7239,7 +7239,6 @@ export const nl = {
   "mt.tabEurope": "Jouw Europa",
   "mt.addBooking": "Boeking toevoegen",
   "mt.newTrip": "Nieuwe reis",
-  "mt.emptyTripsLine": "Plan er een en hij staat hier, met wat elke dag kost en hoe klaar hij is.",
   "mt.comingUp": "Binnenkort",
   "mt.beingPlanned": "In planning",
   "mt.allInPlan": "Alles in Plannen",

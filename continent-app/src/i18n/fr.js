@@ -7239,7 +7239,6 @@ export const fr = {
   "mt.tabEurope": "Votre Europe",
   "mt.addBooking": "Ajouter une réservation",
   "mt.newTrip": "Nouveau voyage",
-  "mt.emptyTripsLine": "Planifiez-en un et il vous attend ici, avec le coût de chaque jour et ce qui reste à faire.",
   "mt.comingUp": "À venir",
   "mt.beingPlanned": "En préparation",
   "mt.allInPlan": "Tout dans Planifier",
