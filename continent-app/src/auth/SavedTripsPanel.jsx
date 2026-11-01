@@ -969,6 +969,14 @@ export function SavedTripsPanel({
   // their spend, Carta's estimate and the place's Score where each exists.
   const isoOf = (c) => COUNTRY_ISO2[c] || (/^[A-Z]{2}$/.test(c || '') ? c : '');
   const beenIso = useMemo(() => new Set(fullRecord.countries.map(isoOf).filter(Boolean)), [fullRecord]);
+  // T972: the map marks by ISO code; the hand-marked list keeps country
+  // names, under whichever spelling the sheet stored.
+  const viaTripIso = new Set([...allRecord.fromTrips].map(isoOf).filter(Boolean));
+  const toggleIso = (iso) => {
+    const names = manualCountries.filter((c) => isoOf(c) === iso);
+    if (names.length) names.forEach((c) => toggleVisitedCountry(c));
+    else toggleVisitedCountry(Object.keys(COUNTRY_ISO2).find((n) => COUNTRY_ISO2[n] === iso) || iso);
+  };
   const nextPlan = ahead[0] || null;
   const nextIsoAll = nextPlan ? planCountries(nextPlan).map(isoOf).filter(Boolean) : [];
   const nextIso = new Set(nextIsoAll.filter((c) => !beenIso.has(c)));
@@ -1186,7 +1194,11 @@ export function SavedTripsPanel({
           )}
           {tab === 'europe' && !(recapOpen && recap) && (
             <YourEurope
-              map={{ been: beenIso, next: nextIso, saved: savedIso, nextName: nextPlan ? journeyParts(nextPlan).title : '' }}
+              map={{
+                been: beenIso, next: nextIso, saved: savedIso, viaTrip: viaTripIso,
+                nextName: nextPlan ? journeyParts(nextPlan).title : '',
+              }}
+              onToggleCountry={toggleIso}
               figures={{
                 countries: beenIso.size, total: catalogueCountries, nights: fullRecord.nights, trips: fullRecord.trips,
                 avgDay: money.avgDay, vsEstimate: money.vsEstimate, cheapestGreat: money.cheapestGreat,

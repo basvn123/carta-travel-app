@@ -111,13 +111,14 @@ function milestoneText(t, m, fmtMonth) {
  * factual milestones, then the past trips as a journal by year and Add a
  * past trip.
  *
- *   map       { been: Set, next: Set, saved: Set, nextName }
+ *   map       { been: Set, next: Set, saved: Set, viaTrip: Set, nextName }
+ *   onToggleCountry(iso)   marks or unmarks a country by hand (T972)
  *   figures   { countries, total, nights, trips, avgDay, vsEstimate, cheapestGreat }
  *   journal   [{ year, items: [{ id, title, img, photos, nights, cost, vs, rating, when, needs, onOpen,
  *               onPhotos, onHow, menuActions, onRemove, removeLabel, below }] }]
  */
 export function YourEurope({
-  map, figures, milestones = [], journal = [], recap = null, onRecap, onMark, markRef, onAddPast, pastForm, error,
+  map, figures, milestones = [], journal = [], recap = null, onRecap, onMark, markRef, onToggleCountry, onAddPast, pastForm, error,
   fmtMonth,
 }) {
   const { t } = useI18n();
@@ -166,7 +167,15 @@ export function YourEurope({
                 <span className="mt-atlas-pill">
                   <CountryFlag country={NAME_OF[picked] || picked} size={14} />
                   <b>{countryName(picked, NAME_OF[picked] || picked)}</b>
-                  <span className={`is-${pickedState}`}>{t(`mt.state.${pickedState}`)}</span>
+                  {/* T972: a tap marks a country by hand, as the sheet does;
+                      one a finished trip put on the record stays fixed. */}
+                  {onToggleCountry && !map.viaTrip?.has(picked) ? (
+                    <button type="button" className={`mt-atlas-toggle${pickedState === 'been' ? ' is-on' : ''}`} onClick={() => onToggleCountry(picked)}>
+                      {pickedState === 'been' ? t('mt.unmarkCountry') : t('mt.markBeen')}
+                    </button>
+                  ) : (
+                    <span className={`is-${pickedState}`}>{t(`mt.state.${pickedState}`)}</span>
+                  )}
                 </span>
               )}
             </p>

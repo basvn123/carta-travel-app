@@ -798,7 +798,6 @@
   left: var(--space-3);
   bottom: var(--space-3);
   margin: 0;
-  pointer-events: none;
 }
 .mt-atlas-pill {
   display: inline-flex;
@@ -811,7 +810,23 @@
   font-size: var(--text-label);
   color: var(--text);
 }
-.mt-atlas-pill > span { color: var(--text-3); }
+.mt-atlas-pill { min-height: var(--tap); padding-right: var(--space-1); }
+.mt-atlas-pill > span { padding-right: var(--space-2); color: var(--text-3); }
+/* T972: the pill's one action, a small brown pill inside it. */
+.mt-atlas-toggle {
+  min-height: 36px;
+  margin-left: var(--space-1);
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: 999px;
+  background: var(--select-bg);
+  font: inherit;
+  font-weight: 600;
+  color: var(--select-ink);
+  cursor: pointer;
+}
+.mt-atlas-toggle.is-on { background: var(--surface-sunken); color: var(--text-2); }
+.mt-atlas-toggle:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .mt-atlas-pill > span.is-been, .mt-atlas-pill > span.is-next { color: var(--select-ink); font-weight: 600; }
 .mt-atlas-legend {
   display: flex;

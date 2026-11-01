@@ -7960,6 +7960,8 @@ export const en = {
   "mt.mapLabel": "Map of Europe, {n} countries you have been to filled",
   "mt.ofEurope": "of {n} countries in Europe",
   "mt.landShare": "{n}% of their land",
+  "mt.markBeen": "Been here",
+  "mt.unmarkCountry": "Remove",
   "mt.state.been": "Been",
   "mt.state.next": "Next trip",
   "mt.state.saved": "Saved",

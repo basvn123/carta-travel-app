@@ -7344,6 +7344,8 @@ export const nl = {
   "mt.mapLabel": "Kaart van Europa, {n} landen waar je was ingekleurd",
   "mt.ofEurope": "van {n} landen in Europa",
   "mt.landShare": "{n}% van hun oppervlakte",
+  "mt.markBeen": "Hier geweest",
+  "mt.unmarkCountry": "Weghalen",
   "mt.state.been": "Geweest",
   "mt.state.next": "Volgende reis",
   "mt.state.saved": "Bewaard",

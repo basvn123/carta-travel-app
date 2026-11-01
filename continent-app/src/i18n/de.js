@@ -7344,6 +7344,8 @@ export const de = {
   "mt.mapLabel": "Karte von Europa, {n} besuchte Länder gefüllt",
   "mt.ofEurope": "von {n} Ländern in Europa",
   "mt.landShare": "{n} % ihrer Fläche",
+  "mt.markBeen": "Hier gewesen",
+  "mt.unmarkCountry": "Entfernen",
   "mt.state.been": "Besucht",
   "mt.state.next": "Nächste Reise",
   "mt.state.saved": "Gemerkt",
