@@ -185,7 +185,6 @@ export function YourEurope({
           ) : journal.length === 0 && !pastForm ? (
             <Empty
               title={t('saved.pastEmptyShort')}
-              line={t('mt.journalEmptyLine')}
               action={<Button variant="primary" iconStart={<PlusIcon size={18} />} onClick={onAddPast}>{t('saved.addPastTrip')}</Button>}
             />
           ) : (

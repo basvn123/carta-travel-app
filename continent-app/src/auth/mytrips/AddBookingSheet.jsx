@@ -183,19 +183,16 @@ export function AddBookingSheet({ plans = [], planId = '', costs = null, onClose
           >
             <UploadIcon size={28} />
             <p className="mt-drop-title">{t('mt.dropTitle')}</p>
-            <p className="mt-drop-line">{t('mt.dropLine')}</p>
             <Button variant="primary" loading={phase === 'busy'} onClick={() => fileRef.current?.click()}>{t('mt.chooseFile')}</Button>
             <input ref={fileRef} type="file" accept={IMPORT_ACCEPT} multiple hidden onChange={(e) => { read(e.target.files); e.target.value = ''; }} />
           </div>
           <div className="mt-ways">
             <Button className="mt-qk" onClick={() => camRef.current?.click()} disabled={phase === 'busy'}>
               <CameraIcon size={20} /><span className="mt-qk-t">{t('mt.takePhoto')}</span>
-              <span className="mt-qk-s">{t('mt.takePhotoLine')}</span>
             </Button>
             <input ref={camRef} type="file" accept="image/*" capture="environment" hidden onChange={(e) => { read(e.target.files); e.target.value = ''; }} />
             <Button className="mt-qk" onClick={() => onTypeIn?.(target || plans[0]?.id || '')} disabled={!plans.length}>
               <PencilIcon size={20} /><span className="mt-qk-t">{t('mt.typeIn')}</span>
-              <span className="mt-qk-s">{t('mt.typeInLine')}</span>
             </Button>
           </div>
           <p className="mt-book-note" role="status">

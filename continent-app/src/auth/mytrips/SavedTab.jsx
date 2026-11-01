@@ -291,7 +291,7 @@ export function SavedTab({
     return (
       <>
         {top}
-        <Empty title={t('saved.shortlistEmpty')} line={t('mt.savedEmptyLine')} action={<Button variant="primary" onClick={onBrowse}>{t('saved.browseDestinations')}</Button>} />
+        <Empty title={t('saved.shortlistEmpty')} action={<Button variant="primary" onClick={onBrowse}>{t('saved.browseDestinations')}</Button>} />
       </>
     );
   }

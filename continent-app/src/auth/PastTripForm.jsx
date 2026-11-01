@@ -479,7 +479,6 @@ export function PastTripForm({ destinations, todayIso, busy, error, initial, fri
         <button type="button" className="pasttrip-details" onClick={() => setDetails(true)} aria-expanded={false}>
           <PlusIcon size={13} />
           <span>{t('saved.pastAddDetails')}</span>
-          <span className="pasttrip-details-sub">{t('saved.pastAddDetailsSub')}</span>
         </button>
       )}
 

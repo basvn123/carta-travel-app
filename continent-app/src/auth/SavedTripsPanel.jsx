@@ -656,19 +656,18 @@ export function SavedTripsPanel({
     const when = whenParts(p.start_date, p.end_date, todayIso);
     const figure = figures[p.id] || null;
     const removeLabel = t('saved.removeItem', { name: parts.title });
-    // The trip on this device says where it is kept; signing in is offered
-    // only as the way to have it on a second device (T503, owner T500-a).
+    // The trip on this device offers signing in as the way to keep it on a
+    // second device (T503, owner T500-a); the "Saved on this device" line
+    // went in T968 (owner 2026-11-01: clutter).
     const device = !!p.device;
     const onRemove = p.coplan ? null : device
       ? () => removeWithUndo({ key: `plan:${p.id}`, label: parts.title, commit: () => { clearDeviceTrip(); setDeviceStored(null); } })
       : () => removeWithUndo({ key: `plan:${p.id}`, label: parts.title, commit: () => handleDeleteTripPlan(p.id) });
-    const below = device ? (
+    const below = device ? (!user && configured ? (
       <p className="mt-device-line">
-        <span>{t(!user && configured ? 'saved.deviceLine' : 'saved.deviceLineShort')}</span>
-        {!user && configured && (
-          <Button variant="quiet" size="sm" onClick={onOpenAuth}>{t('saved.signIn')}</Button>
-        )}
+        <Button variant="quiet" size="sm" onClick={onOpenAuth}>{t('saved.signIn')}</Button>
       </p>
+    ) : null
     ) : <>{statementFor(p.id)}{sharePanelFor(p.id, parts.title)}</>;
     const common = {
       id: p.id,
