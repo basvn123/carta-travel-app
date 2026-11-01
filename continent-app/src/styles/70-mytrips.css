@@ -847,6 +847,43 @@
   .mt-eumap-land { transition: none; }
 }
 
+/* T984 (owner 2026-11-01): an empty travel record is one add tile, a
+   dashed outline the width of the column, in place of a title, a line and
+   a button that repeated the head's action. */
+.mt-add-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: 64px;
+  padding: var(--space-3) var(--space-4);
+  border: 1.5px dashed color-mix(in srgb, var(--select-border) 45%, var(--border));
+  border-radius: var(--radius-card);
+  background: transparent;
+  font: inherit;
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--select-ink);
+  cursor: pointer;
+  transition: background-color var(--dur-2) var(--ease-out), border-color var(--dur-2) var(--ease-out);
+}
+.mt-add-tile-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--select-bg);
+}
+@media (hover: hover) {
+  .mt-add-tile:hover { background: var(--surface); border-color: var(--select-border); }
+}
+.mt-add-tile:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .mt-add-tile { transition: none; }
+}
+
 /* The year's card: a photo band, then the line and its door. */
 .btn.mt-recap-card {
   flex-direction: column;

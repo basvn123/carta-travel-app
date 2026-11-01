@@ -10,7 +10,7 @@ import { countryName } from '../../lib/countryName.js';
 import { formatMoney } from '../../lib/money.js';
 import { activeLocale } from '../../lib/localeState.js';
 import { CardMenu } from './parts.jsx';
-import { Section, Empty } from './MyTripsTabs.jsx';
+import { Section } from './MyTripsTabs.jsx';
 
 /**
  * Europe drawn as a map (T970, owner 2026-11-01: "the cleanest, nicest
@@ -251,7 +251,9 @@ export function YourEurope({
         <Section
           id="mt-journal"
           title={t('saved.travelRecord')}
-          action={!pastForm && (
+          // T984: with no past trips the one way in is the add tile below,
+          // so the head carries no second copy of it.
+          action={!pastForm && journal.length > 0 && (
             <Button size="sm" variant="quiet" iconStart={<PlusIcon size={16} />} onClick={onAddPast}>{t('saved.addPastTrip')}</Button>
           )}
         >
@@ -259,10 +261,10 @@ export function YourEurope({
           {error ? (
             <p className="mt-error" role="alert">{error}</p>
           ) : journal.length === 0 && !pastForm ? (
-            <Empty
-              title={t('saved.pastEmptyShort')}
-              action={<Button variant="primary" iconStart={<PlusIcon size={18} />} onClick={onAddPast}>{t('saved.addPastTrip')}</Button>}
-            />
+            <button type="button" className="mt-add-tile" onClick={onAddPast}>
+              <span className="mt-add-tile-icon" aria-hidden="true"><PlusIcon size={18} /></span>
+              {t('saved.addPastTrip')}
+            </button>
           ) : (
             journal.map((g) => (
               <div className="mt-year" key={g.year}>

@@ -7213,7 +7213,6 @@ export const it = {
   "saved.editCountries": "Modifica",
   "saved.editCountriesLabel": "Modifica i paesi",
   "saved.addCountries": "Aggiungi paesi",
-  "saved.pastEmptyShort": "Ancora nessun viaggio passato",
   "saved.nights1": "{n} notte",
   "saved.nightsN": "{n} notti",
   "saved.factCost": "Costo al giorno",

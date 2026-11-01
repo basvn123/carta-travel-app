@@ -7829,7 +7829,6 @@ export const en = {
   "saved.editCountries": "Edit",
   "saved.editCountriesLabel": "Edit countries",
   "saved.addCountries": "Add countries",
-  "saved.pastEmptyShort": "No past trips yet",
   "saved.nights1": "{n} night",
   "saved.nightsN": "{n} nights",
   "saved.factCost": "Day cost",
