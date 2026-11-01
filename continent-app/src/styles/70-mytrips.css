@@ -17,8 +17,6 @@
   padding: var(--space-4) var(--gutter) 0;
   border-bottom: 0;
 }
-/* T969: the dock over the page on a phone, as on Explore. */
-.mt-topbar { padding: var(--space-3) 0 var(--space-2); }
 .mt-head { display: flex; align-items: center; gap: var(--space-3); min-height: var(--tap); }
 .mt-title {
   flex: 1;

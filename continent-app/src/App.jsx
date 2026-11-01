@@ -2236,9 +2236,6 @@ function TravelApp() {
           <Suspense fallback={<div className="mt-loading" aria-busy="true" />}>
           <SavedTripsPanel
             data={data}
-            /* T969 (owner 2026-11-01): on a phone My trips wears Explore's
-               top bar, the plain dock; a search leaves for Explore. */
-            topBar={isDesktopShell ? null : <SearchDock onSearch={dockSearch} plain />}
             startWithPast={pastAtOpen}
             onPastStarted={() => setPastAtOpen(false)}
             onClose={closeOverlay}

@@ -664,3 +664,12 @@
    the buttons beside it keep the browser's normal line height, a link would
    take the body's and stand 3 px taller. */
 .account-side a.side-navrow { text-decoration: none; line-height: normal; }
+
+/* T980 (owner 2026-11-01): on a phone My trips and Account start under the
+   shell's header, so the logo, Together and the account door sit at the top
+   as on every other tab. 60 px is the phone header row (96-search-dock.css,
+   T960 .top-bar .app-header); 23-places-pages.css pinned these to top: 0. */
+@media (max-width: 768px) {
+  .saved-trips-panel.saved-trips-panel,
+  .account-panel.account-panel { top: calc(60px + env(safe-area-inset-top, 0px)); padding-top: 0; }
+}
