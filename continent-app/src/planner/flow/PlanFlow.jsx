@@ -101,7 +101,6 @@ export function PlanFlow({
           onDeleteTrip={(trip) => tripsStore.remove(trip.id)}
           onOpenTrips={() => go('carta')}
           onOpenKept={() => { showKeptNext(); onNavigate('trips'); }}
-          onOpenJourney={onOpenJourney}
         />
       </div>
     );

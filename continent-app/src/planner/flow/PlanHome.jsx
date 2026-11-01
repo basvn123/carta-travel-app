@@ -1,11 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { tabHref } from '../../lib/urlState.js';
-import { loadAllJourneyCards, loadJourneyIndex, splitAround } from '../../lib/journeys.js';
-import { cardPerDay } from '../../lib/tripFilters.js';
-import { WEEK, cardAtLength } from '../../lib/tripLength.js';
-import { useSavedJourneys, toggleSavedJourney } from '../../lib/journeySaves.js';
-import { TripPlaceCard } from '../../browse/TripPlaceCard.jsx';
+import { loadJourneyIndex, splitAround } from '../../lib/journeys.js';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { Button, Chip, IconButton } from '../../components/ui/index.js';
 import { countdownText } from '../trip/tripHead.js';
@@ -70,6 +66,29 @@ function TripCollection({ fan, onOpen }) {
           <ArrowRightIcon size={16} />
         </span>
       </span>
+    </a>
+  );
+}
+
+/**
+ * Carta's own trips as a door (T988, after Explore's folder, T964): the
+ * umber band with three trip-style photographs fanned out of it, the name
+ * and an arrow. The deck opens a little further on hover.
+ */
+function CartaDoor({ fan, onOpen }) {
+  const { t } = useI18n();
+  const deck = (fan || []).slice(0, 3);
+  return (
+    <a className="pfh-door" href={tabHref('places')} onClick={door(onOpen)}>
+      <span className="pfh-door-deck" aria-hidden="true">
+        {[0, 1, 2].map((i) => (
+          <span key={i} className="pfh-door-photo" style={{ '--i': i }}>
+            {deck[i] && <HeroImage url={deck[i].hero.url} city={deck[i].name} className="pfh-door-img" maxWidth={240} sizes="64px" ratio={[3, 4]} />}
+          </span>
+        ))}
+      </span>
+      <span className="pfh-door-name">{t('pf.home.browse')}</span>
+      <span className="pfh-door-go" aria-hidden="true"><ArrowRightIcon size={18} /></span>
     </a>
   );
 }
@@ -180,36 +199,45 @@ function Cover({ trip, className, sizes, ratio }) {
 }
 
 /**
- * Up next (T903, the owner's Plan home board): the nearest dated trip, else
- * the last one worked on, as one wide card: the photo with the countdown,
- * the name, the dates, nights and places, and Open trip.
+ * Up next (T903, the owner's Plan home board; T988 made it the page's
+ * photograph): the nearest dated trip, else the last one worked on. The
+ * cover fills the card and drifts slowly, the name and the dates sit on it,
+ * the countdown is a chip and the round arrow says the card opens the trip.
+ * A trip with no photo yet stands on Carta's umber with a route drawn on it.
  */
 function UpNext({ trip, onOpen }) {
   const { t } = useI18n();
   const bcp47 = useBcp47();
   const cd = trip.start ? countdownText(t, trip.start, trip.end) : '';
-  const facts = [
-    whenLine(t, trip, bcp47),
-    trip.nights > 0 ? t(trip.nights === 1 ? 'pf.home.nightsOne' : 'pf.home.nightsMany', { n: trip.nights }) : '',
-    trip.stopCount > 0 ? t(trip.stopCount === 1 ? 'tp.places1' : 'tp.placesN', { n: trip.stopCount }) : '',
-  ].filter(Boolean).join(', ');
   return (
-    <a className="pfh-next" href={tabHref('trip')} onClick={door(onOpen)} aria-labelledby={`pfh-next-${trip.id}`}>
-      <span className="pfh-next-media">
-        <Cover trip={trip} className="pfh-next-img" ratio={[16, 9]} sizes="(min-width: 1024px) 640px, 100vw" />
-        {cd && <span className="pfh-next-cd">{cd}</span>}
+    <a className={`pfh-next${trip.cover ? '' : ' is-blank'}`} href={tabHref('trip')} onClick={door(onOpen)} aria-labelledby={`pfh-next-${trip.id}`}>
+      <span className="pfh-next-media" aria-hidden="true">
+        {trip.cover
+          ? <HeroImage url={trip.cover} city={trip.name} className="pfh-next-img" maxWidth={1280} ratio={[16, 9]} sizes="(min-width: 1240px) 1200px, 100vw" />
+          : (
+            <svg className="pfh-next-route" viewBox="0 0 400 200" preserveAspectRatio="none">
+              <path pathLength="1" d="M-10 160 C 60 150, 90 70, 160 90 S 260 170, 310 110 S 380 40, 420 50" />
+            </svg>
+          )}
       </span>
+      {cd && <span className="pfh-next-cd">{cd}</span>}
       <span className="pfh-next-body">
-        <span className="pfh-eyebrow">{t(trip.start ? 'pf.home.upNext' : 'pf.home.continuePlan')}</span>
-        <span className="pfh-next-name" id={`pfh-next-${trip.id}`}>{trip.name}</span>
-        <span className="pfh-next-facts">{facts}</span>
-        <span className="pfh-next-go btn btn-primary">{t('pf.home.openTrip')}<ChevronRightIcon size={18} /></span>
+        <span className="pfh-next-txt">
+          <span className="pfh-next-name" id={`pfh-next-${trip.id}`}>{trip.name}</span>
+          <span className="pfh-next-facts">{whenLine(t, trip, bcp47)}</span>
+        </span>
+        <span className="pfh-next-go" aria-hidden="true"><ArrowRightIcon size={20} /></span>
       </span>
     </a>
   );
 }
 
-/** A dated trip (upcoming or past): Trips for you's card, the countdown on the photo. */
+/**
+ * A dated trip (upcoming or past) as Explore's rail cards are drawn (T988):
+ * the photograph with its corners and a solid chip for the countdown, the
+ * name and the dates on the page under it. Nights and places stay on the
+ * trip itself.
+ */
 function OwnCard({ trip, onOpen, onDelete }) {
   const { t } = useI18n();
   const bcp47 = useBcp47();
@@ -218,17 +246,11 @@ function OwnCard({ trip, onOpen, onDelete }) {
     <li className="pfh-card">
       <a className="pfh-card-hit" href={tabHref('trip')} onClick={door(onOpen)}>
         <span className="pfh-card-media">
-          <Cover trip={trip} className="pfh-card-img" ratio={[4, 5]} sizes="(min-width: 1024px) 260px, 46vw" />
+          <Cover trip={trip} className="pfh-card-img" ratio={[1, 1]} sizes="(min-width: 1024px) 280px, 46vw" />
           {cd && <span className="pfh-card-cd">{cd}</span>}
-          <span className="pfh-card-over">
-            <span className="pfh-card-when">{whenLine(t, trip, bcp47)}</span>
-            <span className="pfh-card-name">{trip.name}</span>
-          </span>
         </span>
-        <span className="pfh-card-meta">
-          {[trip.nights > 0 ? t(trip.nights === 1 ? 'pf.home.nightsOne' : 'pf.home.nightsMany', { n: trip.nights }) : '',
-            trip.stopCount > 0 ? t(trip.stopCount === 1 ? 'tp.places1' : 'tp.placesN', { n: trip.stopCount }) : ''].filter(Boolean).join(', ')}
-        </span>
+        <span className="pfh-card-name">{trip.name}</span>
+        <span className="pfh-card-when">{whenLine(t, trip, bcp47)}</span>
       </a>
       {onDelete && <span className="pfh-card-more"><TripMore name={trip.name} onDelete={onDelete} /></span>}
     </li>
@@ -239,10 +261,7 @@ function OwnCard({ trip, onOpen, onDelete }) {
 function DraftRow({ trip, onOpen, onDelete }) {
   const { t, lang } = useI18n();
   const bcp47 = useBcp47();
-  const meta = [
-    whenLine(t, trip, bcp47),
-    trip.nights > 0 ? t(trip.nights === 1 ? 'pf.home.nightsOne' : 'pf.home.nightsMany', { n: trip.nights }) : '',
-  ].filter(Boolean).join(', ');
+  const meta = whenLine(t, trip, bcp47);
   const edited = editedText(t, trip.updatedAt, lang);
   return (
     <li className="pfh-row">
@@ -263,24 +282,6 @@ function DraftRow({ trip, onOpen, onDelete }) {
       {onDelete && <TripMore name={trip.name} onDelete={onDelete} tone="plain" />}
     </li>
   );
-}
-
-/** Carta's trips in season this month, cheapest a person a day first. */
-function useSeasonCards(n) {
-  const [cards, setCards] = useState(null);
-  useEffect(() => {
-    let live = true;
-    loadAllJourneyCards().then((all) => { if (live) setCards(all || []); }).catch(() => { if (live) setCards([]); });
-    return () => { live = false; };
-  }, []);
-  return useMemo(() => {
-    if (!cards) return { list: [], total: 0 };
-    const month = new Date().getMonth() + 1;
-    const at = (c) => cardPerDay(c, WEEK) ?? Infinity;
-    const week = cards.filter((c) => cardAtLength(c, WEEK));
-    const list = week.filter((c) => (c.months || []).includes(month)).sort((a, b) => at(a) - at(b)).slice(0, n);
-    return { list, total: week.length };
-  }, [cards, n]);
 }
 
 const TABS = ['upcoming', 'planning', 'past'];
@@ -332,7 +333,7 @@ function ClearEmpty({ trips, onDelete }) {
  * A trip kept from the trip finder whose flight got cheaper since (T807)
  * shows as one line under the actions, the biggest drop only.
  */
-export function PlanHome({ titleTag = 'h1', trips = [], onStart, onOpenTrip, onDeleteTrip, onOpenTrips, onOpenKept = null, onOpenJourney = null }) {
+export function PlanHome({ titleTag = 'h1', trips = [], onStart, onOpenTrip, onDeleteTrip, onOpenTrips, onOpenKept = null }) {
   const { t, lang } = useI18n();
   const kept = useKept();
   const drops = useKeptDrops(kept, loadFlightFile);
@@ -351,7 +352,8 @@ export function PlanHome({ titleTag = 'h1', trips = [], onStart, onOpenTrip, onD
 
   // T903 (owner, Plan home board 2026-10-30): with trips, the page is where
   // you come back to: your trips first, the slogan and the fan only greet a
-  // first visit.
+  // first visit. T988: no in-season rail; Carta's trips are the door under
+  // the head, its deck from the same fan.
   const byState = useMemo(() => {
     const today = todayISO();
     const out = { upcoming: [], planning: [], past: [] };
@@ -363,22 +365,19 @@ export function PlanHome({ titleTag = 'h1', trips = [], onStart, onOpenTrip, onD
   }, [trips]);
   const [tab, setTab] = useState(() => TABS.find((k) => byState[k].length) || 'planning');
   const next = byState.upcoming[0] || byState.planning[0] || null;
-  const season = useSeasonCards(2);
-  const saved = useSavedJourneys();
-  const savedSet = useMemo(() => new Set(saved), [saved]);
-  const monthNow = new Date().getMonth() + 1;
 
   if (trips.length > 0) {
     const del = (trip) => (trip.account ? null : () => onDeleteTrip(trip));
-    const list = byState[tab];
+    // T988: a tab with no trips is not drawn, so no "No past trips yet".
+    const tabs = TABS.filter((k) => byState[k].length);
+    const on = tabs.includes(tab) ? tab : tabs[0];
+    const list = byState[on] || [];
     return (
       <div className="pfh">
         <header className="pfh-head">
           <Title className="pf-title pfh-title" tabIndex={-1}>{t('pf.home.yourTrips')}</Title>
-          <div className="pfh-acts">
-            <Button variant="primary" iconStart={<PlusIcon size={18} />} onClick={onStart}>{t('pf.home.newTrip')}</Button>
-            <Button variant="secondary" iconStart={<SparkIcon size={18} />} onClick={onOpenTrips}>{t('pf.home.browse')}</Button>
-          </div>
+          <Button variant="primary" className="pfh-new" iconStart={<PlusIcon size={18} />} onClick={onStart}>{t('pf.home.newTrip')}</Button>
+          <CartaDoor fan={fan} onOpen={onOpenTrips} />
         </header>
 
         {dropped && onOpenKept && (
@@ -396,51 +395,32 @@ export function PlanHome({ titleTag = 'h1', trips = [], onStart, onOpenTrip, onD
 
         {next && <UpNext trip={next} onOpen={() => onOpenTrip(next)} />}
 
-        <div className="pfh-split">
-          <section className="pfh-mine" aria-labelledby="pfh-tabs-h">
-            <h2 className="sr-only" id="pfh-tabs-h">{t('pf.home.yourTrips')}</h2>
-            <div className="pfh-tabs" role="tablist" aria-label={t('pf.home.yourTrips')}>
-              {TABS.map((k) => (
-                <Button key={k} variant="quiet" role="tab" aria-selected={tab === k} id={`pfh-tab-${k}`} aria-controls="pfh-panel"
-                  className={`pfh-tab${tab === k ? ' is-on' : ''}`} onClick={() => setTab(k)}>
-                  {t(`pf.home.tab.${k}`)}
-                  <span className="pfh-tab-n">{byState[k].length}</span>
-                </Button>
-              ))}
-            </div>
-            <div id="pfh-panel" role="tabpanel" aria-labelledby={`pfh-tab-${tab}`}>
-              {list.length === 0 ? (
-                <p className="pfh-none">{t(`pf.home.none.${tab}`)}</p>
-              ) : tab === 'planning' ? (
-                <>
-                  <ul className="pfh-rows">
-                    {list.map((trip) => <DraftRow key={trip.id} trip={trip} onOpen={() => onOpenTrip(trip)} onDelete={del(trip)} />)}
-                  </ul>
-                  <ClearEmpty trips={list.filter((x) => !x.account && !x.stopCount && !x.start)} onDelete={onDeleteTrip} />
-                </>
-              ) : (
-                <ul className="pfh-cards">
-                  {list.map((trip) => <OwnCard key={trip.id} trip={trip} onOpen={() => onOpenTrip(trip)} onDelete={del(trip)} />)}
+        <section className="pfh-mine" aria-labelledby="pfh-tabs-h">
+          <h2 className="sr-only" id="pfh-tabs-h">{t('pf.home.yourTrips')}</h2>
+          <div className="pfh-tabs" role="tablist" aria-label={t('pf.home.yourTrips')}>
+            {tabs.map((k) => (
+              <Button key={k} variant="quiet" role="tab" aria-selected={on === k} id={`pfh-tab-${k}`} aria-controls="pfh-panel"
+                className={`pfh-tab${on === k ? ' is-on' : ''}`} onClick={() => setTab(k)}>
+                {t(`pf.home.tab.${k}`)}
+                <span className="pfh-tab-n">{byState[k].length}</span>
+              </Button>
+            ))}
+          </div>
+          <div id="pfh-panel" role="tabpanel" aria-labelledby={`pfh-tab-${on}`}>
+            {on === 'planning' ? (
+              <>
+                <ul className="pfh-rows">
+                  {list.map((trip) => <DraftRow key={trip.id} trip={trip} onOpen={() => onOpenTrip(trip)} onDelete={del(trip)} />)}
                 </ul>
-              )}
-            </div>
-          </section>
-
-          {season.list.length > 0 && (
-            <aside className="pfh-carta" aria-labelledby="pfh-carta-h">
-              <div className="pfh-carta-head">
-                <h2 className="pfh-h2" id="pfh-carta-h">{t('pf.home.cartaInSeason')}</h2>
-                <Button variant="quiet" size="sm" className="pfh-all" onClick={onOpenTrips}>{t('pf.home.seeAll', { n: season.total })}</Button>
-              </div>
-              <div className="pfh-carta-row">
-                {season.list.map((c) => (
-                  <TripPlaceCard key={c.id} card={c} length={WEEK} month={monthNow} saved={savedSet.has(c.id)}
-                    onToggleSave={toggleSavedJourney} onOpen={(card) => (onOpenJourney ? onOpenJourney(card.id) : onOpenTrips())} t={t} lang={lang} sizes="(min-width: 1100px) 170px, 46vw" />
-                ))}
-              </div>
-            </aside>
-          )}
-        </div>
+                <ClearEmpty trips={list.filter((x) => !x.account && !x.stopCount && !x.start)} onDelete={onDeleteTrip} />
+              </>
+            ) : (
+              <ul className="pfh-cards">
+                {list.map((trip) => <OwnCard key={trip.id} trip={trip} onOpen={() => onOpenTrip(trip)} onDelete={del(trip)} />)}
+              </ul>
+            )}
+          </div>
+        </section>
       </div>
     );
   }
