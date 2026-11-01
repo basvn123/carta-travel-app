@@ -766,6 +766,17 @@ Owner 2026-10-22: "I like some animation." Ask Carta is a chat (T570, `src/brows
 - **Typing, then the words** (T583). A typing bubble (three 6 px `--text-3` dots pulsing in turn, 1.2 s) lasts the real wait, at least 750 ms; past 2.5 s the steps replace it, never both. The answer then appears word by word, about 30 ms a word and under 1.5 s in all. Under reduced motion, or for a chat reopened from the list, the text shows at once.
 - **Arrivals.** The panel slides in once at `--dur-3`; a question, the trip card and the suggestions fade in at `--dur-2`, suggestions staggered by at most 120 ms.
 
+### Your Europe atlas (T970, T972)
+
+Owner 2026-11-01: "the cleanest, nicest looking map you can find". Your Europe draws Europe as a map, not as tiles (`YourEurope.jsx`, `.mt-atlas` and `.mt-eumap-*` in `70-mytrips.css`). The geometry is `public/europe_map.json`: Natural Earth 1:50m, Lambert azimuthal equal-area at 52N 10E (the EU's EPSG:3035 framing), already projected to SVG paths by `pipeline/oneoff/build_europe_map.py`.
+
+- **One white card, the map edge to edge.** The sea is the card (`--surface`). There is no blue water, no graticule and no coastline stroke.
+- **Land in two greys.** Land round Europe is `--neutral-100`. The 43 catalogue countries not yet visited are `--neutral-200`. Borders are 1 px gaps in `--surface` (non-scaling). There are no labels.
+- **Three states, one colour.** Been is filled in `--select-border`. The next trip is a 45° hatch of `--select-border` on `--select-bg`. A saved country gets a `--select-border` dot at its label point. The countries under 3,000 km² (AD, FO, LI, LU, MC, MT, SM) are also drawn as a 7-unit dot in their state's colour, so they can be seen and tapped.
+- **The count leads.** A 56 px `--select-border` figure with tabular numerals, then "of 43 countries in Europe" and the share of their land. The share is honest only because the projection is equal-area, so keep the projection if the map changes. Mark a country is a pencil icon button in the head row, and the legend under the map is one line.
+- **A tap names the country.** A floating pill (`--surface`, `--shadow-1`, 44 px) shows the flag, the name and either the state or a small `--select-bg` action, Been here or Remove (T972). A country a finished trip put on the record has no action.
+- **Accessibility.** The map is one `role="img"` with a count label. The keyboard route to marking a country is the Mark a country sheet.
+
 ### Interaction
 
 Focus: `outline: 2px solid var(--focus); outline-offset: 2px` on `:focus-visible` (the focus floor in `02-base.css` reads it since T426). Brown, so focus never reads as an error. The browser's own surfaces take the palette too: text selection is `--select-bg`, the caret and native checkboxes and radios are `--action`, scrollbars are `--neutral-300`. Inputs may add `border-color: var(--action)` to the ring but never ship `outline: none` without a replacement.
