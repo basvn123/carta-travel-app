@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect, useId, useMemo, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
-import { Button } from '../../components/ui/index.js';
+import { Button, IconButton } from '../../components/ui/index.js';
 import { HeroImage } from '../../components/HeroImage.jsx';
-import { COUNTRY_ISO2 } from '../../components/CountryFlag.jsx';
+import { CountryFlag, COUNTRY_ISO2 } from '../../components/CountryFlag.jsx';
 import {
   PencilIcon, PlusIcon, CameraIcon, MountainIcon, TrainIcon, GlobeIcon, CalendarIcon, StarIcon, ArrowRightIcon,
 } from '../../components/Icons.jsx';
@@ -13,44 +13,78 @@ import { CardMenu } from './parts.jsx';
 import { Section, Empty } from './MyTripsTabs.jsx';
 
 /**
- * Europe as tiles (T926): one rounded square per country, its ISO code,
- * laid out roughly where it lies (column, row). Every country in
- * COUNTRY_ISO2 has a tile.
+ * Europe drawn as a map (T970, owner 2026-11-01: "the cleanest, nicest
+ * looking map", replacing T926's tiles). public/europe_map.json is Natural
+ * Earth projected equal-area at 52N 10E and already written as SVG paths
+ * (pipeline/oneoff/build_europe_map.py): the 43 catalogue countries one path
+ * each with a label point and true area, the land around them as one quiet
+ * context path, the smallest countries flagged to draw as a dot too.
  */
-const EUROPE_TILES = {
-  IS: [0, 0], FO: [2, 0], NO: [5, 0], SE: [6, 0], FI: [7, 0],
-  IE: [1, 1], GB: [2, 1], DK: [5, 1], EE: [7, 1],
-  NL: [4, 2], DE: [5, 2], PL: [6, 2], LV: [7, 2],
-  BE: [3, 3], LU: [4, 3], CZ: [5, 3], SK: [6, 3], LT: [7, 3],
-  FR: [3, 4], CH: [4, 4], LI: [5, 4], AT: [6, 4], HU: [7, 4], RO: [8, 4], MD: [9, 4],
-  PT: [1, 5], ES: [2, 5], AD: [3, 5], MC: [4, 5], IT: [5, 5], SI: [6, 5], HR: [7, 5], RS: [8, 5], BG: [9, 5],
-  SM: [5, 6], BA: [7, 6], ME: [8, 6], XK: [9, 6],
-  MT: [5, 7], AL: [8, 7], MK: [9, 7],
-  GR: [9, 8], CY: [10, 8],
+let europeMapPromise = null;
+const loadEuropeMap = () => {
+  if (!europeMapPromise) {
+    europeMapPromise = fetch('/europe_map.json')
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+      .catch(() => { europeMapPromise = null; return null; });
+  }
+  return europeMapPromise;
 };
-const COLS = 11;
-const ROWS = 9;
-const NAME_OF = Object.fromEntries(Object.entries(COUNTRY_ISO2).map(([name, iso]) => [iso, name]));
+function useEuropeMap() {
+  const [geo, setGeo] = useState(null);
+  useEffect(() => {
+    let live = true;
+    loadEuropeMap().then((g) => { if (live) setGeo(g); });
+    return () => { live = false; };
+  }, []);
+  return geo;
+}
 
-/** The tile map: been filled, the next trip outlined, saved countries dashed. */
-export function EuropeTiles({ been, next, saved, label }) {
-  const s = 44;
-  const g = 6;
+const NAME_OF = Object.fromEntries(Object.entries(COUNTRY_ISO2).map(([name, iso]) => [iso, name]));
+const stateOf = (cc, been, next, saved) => (been.has(cc) ? 'been' : next.has(cc) ? 'next' : saved.has(cc) ? 'saved' : 'none');
+
+/**
+ * The map: land you have not been to one flat grey, been in umber, the next
+ * trip hatched in umber, a saved country a small umber dot; borders are
+ * hairline gaps, no labels. A tap names the country under the map.
+ */
+export function EuropeMap({ geo, been, next, saved, label, picked, onPick }) {
+  const pid = useId().replace(/:/g, '');
+  if (!geo) return <div className="mt-eumap is-loading" aria-hidden="true" />;
+  const pick = (cc) => (e) => { e.stopPropagation(); onPick?.(cc === picked ? '' : cc); };
   return (
-    <svg className="mt-tiles-map" viewBox={`0 0 ${COLS * (s + g)} ${ROWS * (s + g)}`} role="img" aria-label={label}>
-      {Object.entries(EUROPE_TILES).map(([cc, [x, y]]) => {
-        const state = been.has(cc) ? 'been' : next.has(cc) ? 'next' : saved.has(cc) ? 'saved' : 'none';
+    <svg className="mt-eumap" viewBox={`0 0 ${geo.w} ${geo.h}`} role="img" aria-label={label} onClick={() => onPick?.('')}>
+      <defs>
+        <pattern id={`${pid}-hatch`} width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+          <rect width="9" height="9" className="mt-eumap-hatch-bg" />
+          <rect width="4" height="9" className="mt-eumap-hatch" />
+        </pattern>
+      </defs>
+      <path className="mt-eumap-context" d={geo.context} />
+      {geo.countries.map((c) => {
+        const st = stateOf(c.cc, been, next, saved);
         return (
-          <g key={cc} className={`mt-tile is-${state}`}>
-            <title>{countryName(cc, NAME_OF[cc] || cc)}</title>
-            <rect x={x * (s + g) + 1} y={y * (s + g) + 1} width={s - 2} height={s - 2} rx="10" />
-            <text x={x * (s + g) + s / 2} y={y * (s + g) + s / 2 + 7} textAnchor="middle">{cc}</text>
-          </g>
+          <path
+            key={c.cc}
+            className={`mt-eumap-land is-${st}${picked === c.cc ? ' is-picked' : ''}`}
+            d={c.d}
+            style={st === 'next' ? { fill: `url(#${pid}-hatch)` } : undefined}
+            onClick={pick(c.cc)}
+          />
         );
       })}
+      {geo.countries.filter((c) => c.dot).map((c) => (
+        <circle key={`dot-${c.cc}`} className={`mt-eumap-dot is-${stateOf(c.cc, been, next, saved)}${picked === c.cc ? ' is-picked' : ''}`}
+          cx={c.x} cy={c.y} r="7" onClick={pick(c.cc)} />
+      ))}
+      {geo.countries.filter((c) => !c.dot && stateOf(c.cc, been, next, saved) === 'saved').map((c) => (
+        <circle key={`saved-${c.cc}`} className="mt-eumap-pin" cx={c.x} cy={c.y} r="11" onClick={pick(c.cc)} />
+      ))}
     </svg>
   );
 }
+
+/** A share as the reader's locale writes it: one decimal under 10, whole above. */
+const shareText = (n) => Number(n).toLocaleString(activeLocale(), { maximumFractionDigits: n < 10 ? 1 : 0 });
 
 /** A Score as the reader's locale writes it, one decimal. */
 const scoreText = (n) => Number(n).toLocaleString(activeLocale(), { minimumFractionDigits: 1, maximumFractionDigits: 1 });
@@ -72,8 +106,8 @@ function milestoneText(t, m, fmtMonth) {
 }
 
 /**
- * Your Europe (T926), replacing Visited: the tile map with Mark a country,
- * the year's recap card, the figures the record can back, up to five
+ * Your Europe (T926), replacing Visited: the count and the share of
+ * Europe's land over the map (T970), Mark a country, the year's recap card, the figures the record can back, up to five
  * factual milestones, then the past trips as a journal by year and Add a
  * past trip.
  *
@@ -88,21 +122,59 @@ export function YourEurope({
 }) {
   const { t } = useI18n();
   const hasAny = figures.countries > 0 || journal.length > 0;
+  const geo = useEuropeMap();
+  const [picked, setPicked] = useState('');
+  // The share of the catalogue's land: honest because the map's areas are
+  // equal-area (km2 per country from the build script).
+  const share = useMemo(() => {
+    if (!geo) return 0;
+    let all = 0;
+    let mine = 0;
+    for (const c of geo.countries) {
+      all += c.km2;
+      if (map.been.has(c.cc)) mine += c.km2;
+    }
+    return all > 0 ? (mine / all) * 100 : 0;
+  }, [geo, map.been]);
+  const pickedState = picked ? stateOf(picked, map.been, map.next, map.saved) : '';
   return (
     <div className="mt-europe">
       <div className="mt-europe-map">
-        <div className="mt-tilemap">
-          <EuropeTiles
-            been={map.been}
-            next={map.next}
-            saved={map.saved}
-            label={t('mt.tileMapLabel', { n: map.been.size })}
-          />
-          <div className="mt-tile-legend">
+        <div className="mt-atlas">
+          <p className="mt-atlas-head">
+            <b className="mt-atlas-n">{map.been.size}</b>
+            <span className="mt-atlas-of">
+              {t('mt.ofEurope', { n: figures.total })}
+              {share > 0 && <span className="mt-atlas-share">{t('mt.landShare', { n: shareText(share) })}</span>}
+            </span>
+            <IconButton ref={markRef} className="mt-atlas-mark" label={t('mt.markCountry')} onClick={onMark}>
+              <PencilIcon size={18} />
+            </IconButton>
+          </p>
+          <div className="mt-atlas-frame">
+            <EuropeMap
+              geo={geo}
+              been={map.been}
+              next={map.next}
+              saved={map.saved}
+              label={t('mt.mapLabel', { n: map.been.size })}
+              picked={picked}
+              onPick={setPicked}
+            />
+            <p className="mt-atlas-pick" aria-live="polite">
+              {picked && (
+                <span className="mt-atlas-pill">
+                  <CountryFlag country={NAME_OF[picked] || picked} size={14} />
+                  <b>{countryName(picked, NAME_OF[picked] || picked)}</b>
+                  <span className={`is-${pickedState}`}>{t(`mt.state.${pickedState}`)}</span>
+                </span>
+              )}
+            </p>
+          </div>
+          <div className="mt-atlas-legend">
             <span><i className="is-been" aria-hidden="true" />{t('mt.legendBeen', { n: map.been.size })}</span>
             {map.next.size > 0 && <span><i className="is-next" aria-hidden="true" />{t('mt.legendNext', { name: map.nextName })}</span>}
             {map.saved.size > 0 && <span><i className="is-saved" aria-hidden="true" />{t('mt.legendSaved', { n: map.saved.size })}</span>}
-            <Button ref={markRef} variant="quiet" size="sm" iconStart={<PencilIcon size={14} />} onClick={onMark}>{t('mt.markCountry')}</Button>
           </div>
         </div>
         {recap && (
@@ -120,11 +192,6 @@ export function YourEurope({
       <div className="mt-europe-side">
         {hasAny && (
           <dl className="mt-figs" aria-label={t('saved.recordFacts')}>
-            <div className="mt-fig">
-              <dt>{t('saved.factCountries')}</dt>
-              <dd><b>{figures.countries}</b>{figures.total > 0 && <span className="mt-fig-of">{t('mt.ofTotal', { n: figures.total })}</span>}</dd>
-              {map.nextName && map.next.size > 0 && <dd className="mt-fig-sub">{t('mt.nextIn', { name: map.nextName })}</dd>}
-            </div>
             <div className="mt-fig">
               <dt>{t('saved.factNights')}</dt>
               <dd><b>{figures.nights}</b></dd>
