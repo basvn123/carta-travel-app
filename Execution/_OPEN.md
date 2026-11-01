@@ -2548,3 +2548,6 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T961-c | T961 | The search dock is phone only; decide whether a desktop gets it too (Execution/P15/T960-T966-search-dock.md) | user | open |  |
 | T964-a | T964 | TripStylesRow has no caller after Carta's own trips replaced it; delete it (WeeksRow in the same file stays) (Execution/P15/T960-T966-search-dock.md) | next task | open |  |
 | T964-b | T964 | Write the own-trips block, the dock's activity colours and the Ask gradient into DESIGN.md and the carta-design skill (Execution/P15/T960-T966-search-dock.md) | next task | open |  |
+| T968-a | T968 | Delete the strings and CSS rules My trips no longer renders (device line, empty lines, booking subcaptions, Add details list) (Execution/P15/T968-T970-my-trips-clean.md) | next task | open |  |
+| T970-a | T970 | continent-app's own git tree holds uncommitted work from T878 to T967 (the root carries it); commit it as one catch-up commit or write the root-only convention down (Execution/P15/T968-T970-my-trips-clean.md) | user | open |  |
+| T970-b | T970 | Write Your Europe's atlas (hatched next trip, dots, 56 px count) into DESIGN.md and the carta-design skill (Execution/P15/T968-T970-my-trips-clean.md) | next task | open |  |
