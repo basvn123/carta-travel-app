@@ -102,7 +102,7 @@ function useStripPosition(ref, count) {
  * is wrapped in the strip's list item here.
  */
 export function StoryRail({
-  id, title, line = null, facts = [], onSeeAll = null, t, headingLevel = 2, className = '', children,
+  id, title, line: _line = null, facts: _facts = [], onSeeAll = null, t, headingLevel = 2, className = '', children,
   stack: _stack = null,
 }) {
   const sectionRef = React.useRef(null);
@@ -138,17 +138,14 @@ export function StoryRail({
   // dots alone move no one through a carousel). The cards that follow are
   // whole: two on a phone, three, then four.
   const H = headingLevel === 3 ? 'h3' : 'h2';
-  const factLine = [line, ...(facts || []).filter((f) => f && f.text).map((f) => f.text)].filter(Boolean).slice(0, 3);
+  // T968 (owner 2026-11-01): the head is the title alone; the fact line
+  // under it ("From €89 a day", "Good walks from town.") is gone, so `line`
+  // and `facts` are accepted and not drawn.
   return (
     <section ref={sectionRef} className={`storyr ${className}`.trim()} aria-labelledby={id} data-arrival={arrival}>
       <div className="storyr-head">
         <div className="storyr-head-txt">
           <H className="storyr-title" id={id}>{title}</H>
-          {factLine.length > 0 && (
-            <p className="storyr-line">
-              {factLine.map((f, i) => <span key={i} className="storyr-line-part">{f}</span>)}
-            </p>
-          )}
         </div>
         <div className="storyr-head-acts">
           {onSeeAll && (
