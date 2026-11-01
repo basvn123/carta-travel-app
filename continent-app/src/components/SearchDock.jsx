@@ -41,6 +41,8 @@ import '../styles/96-search-dock.css';
  * desktop line writes); Where and What wait for Search.
  *
  *   onSearch({ kind, q })   App moves to the kind's view with the text
+ *   plain                   a page that is not Explore (My trips, T969): the
+ *                           pill and Ask only, whatever Explore left behind
  */
 export const DOCK_KINDS = [
   { key: 'places', labelKey: 'places.catPlaces', Icon: CompassIcon },
@@ -64,7 +66,7 @@ function useTripLine(s) {
   return from ? t('dock.summary', { when, from, people }) : t('settings.summary', { dates: when, people });
 }
 
-export function SearchDock({ onSearch }) {
+export function SearchDock({ onSearch, plain = false }) {
   const s = useSettings();
   const { t } = useI18n();
   const dock = useSearchDock();
@@ -73,8 +75,8 @@ export function SearchDock({ onSearch }) {
   const filtersRef = useRef(null);
   const line = useTripLine(s);
   if (!s) return null;
-  const r = dock.results;
-  const kind = kindOf(dock.kind);
+  const r = plain ? null : dock.results;
+  const kind = kindOf(plain ? 'places' : dock.kind);
   const title = r?.label || t('dock.where');
   return (
     <div className={`sdock${r ? ' is-results' : ''}`} role="search" aria-label={t('dock.title')}>

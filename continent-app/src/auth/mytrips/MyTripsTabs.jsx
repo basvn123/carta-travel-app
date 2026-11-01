@@ -48,11 +48,12 @@ export function Empty({ title, line, action }) {
 export const MT_TABS = ['trips', 'saved', 'europe'];
 
 /**
- * The page head (T923): "My trips", Add a booking and New trip from 700 px,
- * then the three underline tabs with their counts, sticky under the app
- * header, in the style of Explore's category tabs.
+ * The page head (T923): on a phone the shell's search dock first (topBar,
+ * T969), then "My trips", Add a booking and New trip from 700 px, then the
+ * three underline tabs with their counts, sticky under the app header, in
+ * the style of Explore's category tabs.
  */
-export function MyTripsHead({ tab, onTab, counts = {}, onAddBooking, onNewTrip }) {
+export function MyTripsHead({ topBar = null, tab, onTab, counts = {}, onAddBooking, onNewTrip }) {
   const { t } = useI18n();
   const tabs = [
     { id: 'trips', label: t('mt.tabTrips'), count: counts.trips || null },
@@ -61,6 +62,7 @@ export function MyTripsHead({ tab, onTab, counts = {}, onAddBooking, onNewTrip }
   ];
   return (
     <>
+      {topBar && <div className="mt-topbar">{topBar}</div>}
       <div className="mt-head">
         <h1 className="mt-title">{t('saved.title')}</h1>
         {/* End check: a phone has no header buttons, so the booking door

@@ -206,7 +206,7 @@ const readTab = () => {
 const writeStored = (key, v) => { try { localStorage.setItem(key, v); } catch { /* private mode */ } };
 
 export function SavedTripsPanel({
-  data, onLoadTripPlan, onOpenAuth, onOpenDayPlan, onGoToTab,
+  data, topBar = null, onLoadTripPlan, onOpenAuth, onOpenDayPlan, onGoToTab,
   favorites = null, onToggleFav = null, onOpenFeature = null, onOpenDest = null,
   // The day-cost map Explore prints from, and the Lifestyle the trip planner
   // prices with, so every figure here is the figure there.
@@ -1114,6 +1114,7 @@ export function SavedTripsPanel({
       <div className="panel open account-panel saved-trips-panel">
         <header className="panel-header saved-panel-header mt-header">
           <MyTripsHead
+            topBar={topBar}
             tab={tab}
             onTab={pickTab}
             counts={{
