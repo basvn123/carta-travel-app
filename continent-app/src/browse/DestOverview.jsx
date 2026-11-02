@@ -14,7 +14,7 @@ import { tipText } from './destParts.js';
  *                  steep-streets row when d.access.steep (what to book ahead
  *                  is in Practical's quick facts)
  *   Eat and drink  the local dishes and drinks (d.eat.dishes) as chips beside
- *                  what a coffee, a meal and a drink cost here (DestFood)
+ *                  how dear eating out is here (DestFood's price feel)
  *
  * A row without data is not drawn, nor a section without rows: the jump
  * bar's Overview link goes with them (`overviewShown`).

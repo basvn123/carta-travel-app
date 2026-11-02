@@ -286,7 +286,6 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
   color: var(--text);
 }
 .pt-dish a { color: inherit; text-decoration: underline; text-decoration-color: var(--border); text-underline-offset: 3px; }
-.pt-eat .dfood-menu { margin: 0; padding: var(--space-1) var(--space-4); background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-card); }
 
 /* What to see */
 .pt-see { display: grid; gap: var(--space-4); }
