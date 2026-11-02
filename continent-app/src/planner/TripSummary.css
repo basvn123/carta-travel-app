@@ -1176,3 +1176,37 @@ span.tbp-seg { cursor: default; }
 .tpf-delta-pill.is-up { background: #fbe3d8; color: #8f3a17; }
 .tpf-delta-pill.is-down { background: var(--lagoon-100); color: var(--lagoon-800); }
 
+
+/* ---- The Itinerary and Costs tabs in the Overview's language (T1007) ----
+   The Itinerary's flights are passes (the airline and Change flight in the
+   head, the airports large, the ticket and bag, one foot with Book). The
+   Costs tab opens on the cost card (a phone; the side column from 1024 px)
+   and the receipt under it loses its own head, budget band and bar: the
+   card says those once. Its groups carry the card's four colours. */
+.itin-end-head .jr-brand { min-width: 0; }
+.itin-flight.is-pass { display: grid; gap: var(--space-2); margin-top: var(--space-2); }
+.itin-pass-facts { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-4); font-size: var(--text-caption); color: var(--text-2); }
+.itin-pass-facts .money { font-weight: 700; color: var(--text); }
+.itin-pass-fare:empty { display: none; }
+.itin-flight.is-pass .jr-status { font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.tpg-costs { display: flex; flex-direction: column; gap: var(--space-5); min-width: 0; }
+.tpg.is-costs .plan-total-head,
+.tpg.is-costs .plan-total-note,
+.tpg.is-costs .plan-costbar { display: none; }
+.tpg.is-costs .plan-total-group .plan-total-dot { width: 12px; height: 12px; box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 0%, transparent); }
+.tpg.is-costs .is-travel > .plan-total-group-h .plan-total-dot { background: var(--sun-400); }
+.tpg.is-costs .is-around > .plan-total-group-h .plan-total-dot { background: var(--lagoon-300); }
+.tpg.is-costs .is-stay > .plan-total-group-h .plan-total-dot { background: var(--umber-300); }
+.tpg.is-costs .is-food > .plan-total-group-h .plan-total-dot { background: #e8916b; }
+.tpg.is-costs .plan-total-group-name { font-weight: 700; }
+.tpg.is-costs .plan-total-group-n { font-weight: 800; }
+.tpg.is-costs .plan-line-edit.btn {
+  min-height: 30px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  font-size: var(--text-caption);
+  font-weight: 600;
+}
+@media (hover: hover) { .tpg.is-costs .plan-line-edit.btn:hover { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); } }

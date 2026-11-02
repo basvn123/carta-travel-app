@@ -334,7 +334,11 @@ export function TripSummary({
     </div>
   );
 
-  const body = tab === 'overview' ? overview : (panels[tab] || null);
+  // T1007: on a phone the Costs tab opens on the cost card (from 1024 px it
+  // is in the side column already); the receipt under it is the detail.
+  const body = tab === 'overview' ? overview
+    : tab === 'costs' && !wide ? <div className="tpg-costs">{costCard}{panels.costs || null}</div>
+      : (panels[tab] || null);
 
   return (
     <div className={`tpg is-${tab}${wide ? '' : ' has-dock'}`}>

@@ -19,10 +19,11 @@ import { scrollBehavior } from '../lib/motion.js';
 import { usePaywall } from '../hooks/usePaywall.jsx';
 import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon, MapPinIcon, RouteIcon, CalendarIcon, LinkIcon, ChevronDownIcon, CloseIcon, TicketIcon, LuggageIcon, PencilIcon, ExternalIcon, PlusIcon, GripIcon, SwapIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
-import { TRAVEL_MODE_LABEL, legLinks, stayBookLinks } from '../lib/transportLinks.js';
+import { TRAVEL_MODE_LABEL, googleFlightsLink, legLinks, stayBookLinks } from '../lib/transportLinks.js';
 import { AirportLine } from './trip/AirportLine.jsx';
 import { SheetShell } from '../browse/SheetShell.jsx';
-import { FlightRow, HoursFilter } from '../components/flights/Flights.jsx';
+import { AirlineMark, FlightRow, HoursFilter } from '../components/flights/Flights.jsx';
+import { bagTier } from '../lib/flights/bagFees.js';
 import { useAirlines, airlineName } from '../lib/flights/useAirlines.js';
 import { useLiveFlights, liveKey } from '../lib/flights/useLiveFlights.js';
 import { Stepper as KitStepper } from '../components/FilterControls.jsx';
@@ -92,6 +93,58 @@ function ItinFlight({ dir, leg, waiting, query, baggage, hours, onHours, fareFie
   // search gave up) is 'unknown', never "no flight that day": only a known
   // empty day (null) says that.
   const state = leg ? null : (leg === undefined ? (waiting ? 'loading' : 'unknown') : 'none');
+  const { lang } = useI18n();
+  const hoursFilter = onHours && (
+    <HoursFilter
+      value={hours || 'any'}
+      onChange={(band) => onHours(dir, band)}
+      label={`${t('flight.hours')}, ${dir === 'back' ? t('flight.back') : t('flight.out')}`}
+    />
+  );
+  // T1007 (owner: the Itinerary like the Overview's route): a known flight
+  // as a pass: the two airports large with their times, the stops on the
+  // line between them; the ticket and the bag a person; then the trip's
+  // figure for it and Book out to Google Flights. The airline and Change
+  // flight sit in the item's head.
+  if (leg) {
+    const stops = leg.stops === 0 ? t('flight.direct') : leg.stops === 1 ? t('flight.stop1') : t('flight.stops', { n: leg.stops });
+    const href = leg.from && leg.to ? googleFlightsLink({ fromIata: leg.from, toIata: leg.to, date: leg.date, lang }) : null;
+    const bag = leg.cost?.bags > 0 ? leg.cost.perSeat - leg.price : 0;
+    return (
+      <div className="itin-flight is-pass">
+        <div className="jr-ends">
+          <span className="jr-end">
+            <span className="jr-code">{leg.from}</span>
+            <span className="jr-time">{leg.dep}</span>
+          </span>
+          <span className="jr-line">
+            <PlaneIcon size={14} aria-hidden="true" />
+            <span className="jr-line-note">{stops}</span>
+          </span>
+          <span className="jr-end is-to">
+            <span className="jr-code">{leg.to}</span>
+            <span className="jr-time">{leg.arr}{leg.arr < leg.dep ? ' +1' : ''}</span>
+          </span>
+        </div>
+        <div className="itin-pass-facts">
+          <span><Money value={leg.price} precision="cents" /> {t('money.perPerson')}</span>
+          {bag > 0 && <span>{bagTier(baggage) === 'checked' ? t('flight.bagChecked') : t('flight.bagCabin')} <Money value={bag} precision="cents" est /></span>}
+        </div>
+        {fareField && <div className="itin-pass-fare">{fareField}</div>}
+        <div className="jr-foot">
+          <span className="jr-status">{fmtDate(leg.date, true)}</span>
+          <span className="jr-fig">{Number.isFinite(leg.cost?.total) ? <Money value={leg.cost.total} precision="cents" /> : null}</span>
+          {href && (
+            <a className="btn btn-secondary btn-sm jr-book" href={href} target="_blank" rel="noreferrer noopener" aria-label={t('plan.findOn', { provider: 'Google Flights' })}>
+              <span className="btn-label">{t('tp.book')}</span>
+              <ExternalIcon size={13} />
+            </a>
+          )}
+        </div>
+        {hoursFilter}
+      </div>
+    );
+  }
   return (
     <div className="itin-flight">
       <FlightRow leg={leg || null} cost={leg?.cost} dir={dir} bagKey={baggage} state={state} wantedDate={query?.date || null} showChecked={false}>
@@ -829,12 +882,17 @@ export function TripItinerary({
                 <span className="itin-end-icon"><OwnTravelIcon mode={travelMode} size={16} /></span>
                 <div className="itin-end-main">
                   <span className="itin-end-head">
-                    <b>{outCodes ? <RouteCodes from={outCodes[0]} to={outCodes[1]} icon={false} /> : t('itin.secGetThere')}</b>
+                    {showFlight('out') && cartaFlight.out ? (
+                      <span className="jr-brand">
+                        <AirlineMark code={cartaFlight.out.airline} size="sm" />
+                        <span className="jr-name">{airlineName(airlines, cartaFlight.out.airline) || cartaFlight.out.airline}</span>
+                      </span>
+                    ) : <b>{outCodes ? <RouteCodes from={outCodes[0]} to={outCodes[1]} icon={false} /> : t('itin.secGetThere')}</b>}
                     {onChangeFlight && showFlight('out') && (
                       <Button variant="secondary" size="sm" className="itin-change-flight" onClick={() => onChangeFlight('out')}>{t('tp.fl.change')}</Button>
                     )}
                   </span>
-                  <small>{thereText}</small>
+                  {!(showFlight('out') && cartaFlight.out) && <small>{thereText}</small>}
                   {showFlight('out') && (
                     <ItinFlight
                       dir="out"
@@ -1064,12 +1122,17 @@ export function TripItinerary({
                 <span className="itin-end-icon"><OwnTravelIcon mode={travelMode} size={16} /></span>
                 <div className="itin-end-main">
                   <span className="itin-end-head">
-                    <b>{backCodes ? <RouteCodes from={backCodes[0]} to={backCodes[1]} icon={false} /> : t('itin.secGetHome')}</b>
+                    {showFlight('back') && cartaFlight.back ? (
+                      <span className="jr-brand">
+                        <AirlineMark code={cartaFlight.back.airline} size="sm" />
+                        <span className="jr-name">{airlineName(airlines, cartaFlight.back.airline) || cartaFlight.back.airline}</span>
+                      </span>
+                    ) : <b>{backCodes ? <RouteCodes from={backCodes[0]} to={backCodes[1]} icon={false} /> : t('itin.secGetHome')}</b>}
                     {onChangeFlight && showFlight('back') && (
                       <Button variant="secondary" size="sm" className="itin-change-flight" onClick={() => onChangeFlight('back')}>{t('tp.fl.change')}</Button>
                     )}
                   </span>
-                  <small>{homeText}</small>
+                  {!(showFlight('back') && cartaFlight.back) && <small>{homeText}</small>}
                   {showFlight('back') && (
                     <ItinFlight
                       dir="back"
