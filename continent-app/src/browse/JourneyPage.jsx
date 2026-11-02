@@ -256,18 +256,26 @@ export function JourneyPage({
       }
     } catch { /* the page still works; only the address bar stays put */ }
   }, [id]);
+  // T1030: one listener for the page's life, reading onClose through a ref.
+  // It re-subscribed on every render before (onClose is a new function each
+  // time), and App's own popstate listener re-renders this page first: the
+  // re-subscription removed the old listener before its turn and the new one
+  // never hears the event it was added during, so Back (the arrow or the
+  // browser's) left the page open when opened from Plan.
+  const closeRef = useRef(onClose);
+  closeRef.current = onClose;
   useEffect(() => {
     const onPop = () => {
       if (!pushed.current) return;
       pushed.current = false;
-      onClose();
+      closeRef.current();
       const go = afterPop.current;
       afterPop.current = null;
       if (go) go();
     };
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
-  }, [onClose]);
+  }, []);
   const close = useCallback(() => {
     if (pushed.current) {
       try { window.history.back(); return; } catch { /* fall through */ }

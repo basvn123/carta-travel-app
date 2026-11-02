@@ -9,7 +9,6 @@ import { PlacesFilterSheet } from './PlacesFilterSheet.jsx';
 import { TasteRow } from './TasteDoor.jsx';
 import { ExploreRails, interleaveByCountry } from './ExploreRails.jsx';
 import { ExploreCategories } from './ExploreCategories.jsx';
-import { CartaOwnTrips } from './CartaOwnTrips.jsx';
 import { EmptyResult } from './EmptyResult.jsx';
 import { FilterChips } from './FilterChips.jsx';
 import { kindOf, roleOf, buildNearbyIndex } from '../lib/taxonomy.js';
@@ -365,7 +364,7 @@ export function ExploreTab({
   // library opens from the Trip styles row.
   onOpenCountry = null,
   onPickCategory = null,
-  onOpenStyles = null,
+  onOpenStyles: _onOpenStyles = null, // T1030: kept for callers; Explore no longer draws the trip block
   // T462: a search handed over from the home page, once: { facets } applies
   // a guided question, { open: true } opens the search panel on arrival.
   seed = null, onSeedConsumed = null,
@@ -1211,7 +1210,7 @@ export function ExploreTab({
   // the overview as quick chips that act at once: every rail past the ones
   // drawn as strips, then the month's price and season rails. The same rail
   // objects, so a chip opens exactly what that rail's See all opens.
-  const railLead = (isDesktop ? 4 : 3) - (onOpenStyles ? 1 : 0);
+  const railLead = isDesktop ? 4 : 3;
   const quickRails = React.useMemo(() => {
     const shown = rails.filter((r) => r.rows.length >= 4);
     const out = shown.slice(railLead);
@@ -1573,14 +1572,8 @@ export function ExploreTab({
             </div>
           )}
           <div className="xcontent-main">
-            {/* The trip library at the top of Places (owner T484-e, T489-a,
-                T489-e). T964 (owner 2026-10-31): not a rail any more but
-                Carta's own trips, a block of its own that reads unlike the
-                rails under it. It still counts as one of the rails, so three
-                (two on a phone) follow it. */}
-            {railsIdle && onOpenStyles && (
-              <CartaOwnTrips onOpen={() => onOpenStyles(null)} />
-            )}
+            {/* T1030 (owner): Carta's own trips is Plan's page only; Explore
+                no longer carries its own block or list. */}
             {/* The rails' doors, Show all places and the map toggle moved to
                 the head block (T595); the rails draw no doors of their own. */}
             {railsIdle && (

@@ -839,11 +839,24 @@ function TravelApp() {
   // The trip library inside Explore (owner T484-e, T489-a): "See all" on the
   // Trip styles row, one style from it, or a country's weeks.
   const [pendingStyle, setPendingStyle] = useState(null);
+  // T1030 (owner: "two different pages; use the one from Plan"): every door
+  // to the trip library (a style tile, a country's weeks) opens Plan's
+  // Carta's own trips, with the style or the country already chosen.
+  const [planOpen, setPlanOpen] = useState(null);
   const openTripStyles = useCallback((slug = null, cc = null) => {
-    setPendingCategory('trips');
-    setPendingStyle({ slug: slug || null });
-    if (cc) setPendingCountry(String(cc).toUpperCase());
-    goToTab('places', { cat: 'trips' });
+    setPlanOpen({ screen: 'carta', style: slug || null, cc: cc ? String(cc).toUpperCase() : null, n: Date.now() });
+    goToTab('planstart');
+  }, [goToTab]);
+  // A trip's page closes back onto Plan's Carta's own trips (T1030): the
+  // trip library has one home, so a week never lands on a second list.
+  // The page closes by stepping history back, and App's own Back handling
+  // restores the tab under it on that same popstate, so the move to Plan
+  // waits one tick to land after it.
+  const onJourneyClosed = useCallback(() => {
+    window.setTimeout(() => {
+      setPlanOpen({ screen: 'carta', n: Date.now() });
+      goToTab('planstart');
+    }, 0);
   }, [goToTab]);
 
   // One journey (a week from the journeys library) to open, handed to
@@ -983,6 +996,9 @@ function TravelApp() {
     // A starred journey (T390-c): the week opens over the Trips category, the
     // list it belongs to, through the same door a shared link uses (T474,
     // closes row T391-a).
+    // T1030: closing the week goes back to Plan's Carta's own trips (see
+    // onJourneyClosed); the page still sits on the Trips category, which
+    // Destinations' own back handling expects.
     else if (layer === 'journey' || layer === 'journeys') {
       setPendingCategory('trips');
       setPendingJourney({ id: String(ref.id) });
@@ -2011,6 +2027,7 @@ function TravelApp() {
             onOpenCategoryConsumed={() => setPendingCategory(null)}
             openJourney={pendingJourney}
             onOpenJourneyConsumed={clearPendingJourney}
+            onJourneyClosed={onJourneyClosed}
             isFavorite={isFavorite}
             onToggleFav={toggleFav}
             onAddToDay={openDayForFeature}
@@ -2107,6 +2124,7 @@ function TravelApp() {
               onAddPast={() => { setPastAtOpen(true); goTo('trips'); }}
               onOpenJourney={(id) => openFeature('journey', { id })}
               onOpenPlan={openPlanInList}
+              openAt={planOpen}
               destinations={data?.destinations}
             />
           </Suspense>

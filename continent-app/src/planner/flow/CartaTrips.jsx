@@ -57,14 +57,17 @@ function readKept() {
  *   onBack()             back where the page was opened from
  *   onOpenJourney(id)    one week, its whole plan
  */
-export function CartaTrips({ titleTag = 'h1', onBack, onOpenJourney }) {
+export function CartaTrips({ titleTag = 'h1', onBack, onOpenJourney, initialStyle = null, initialCountry = null }) {
   const { t, lang } = useI18n();
   const Title = titleTag;
   const month = new Date().getMonth() + 1;
   const kept0 = useMemo(readKept, []);
   const [types, setTypes] = useState([]);
   const [cards, setCards] = useState(null);
-  const [style, setStyle] = useState(kept0.style || null);
+  // T1030: a door from Explore (a style tile, a country's weeks) opens the
+  // page with its style or its country already chosen.
+  const [style, setStyle] = useState(initialStyle || (initialCountry ? null : kept0.style) || null);
+  const [cc, setCc] = useState(initialCountry || null);
   const [band, setBand] = useState(kept0.band || null);
   const [fMonth, setFMonth] = useState(kept0.month || null);
   const [tag, setTag] = useState(kept0.tag || null);
@@ -99,9 +102,10 @@ export function CartaTrips({ titleTag = 'h1', onBack, onOpenJourney }) {
   const scoped = useMemo(() => {
     let out = all;
     if (style) out = out.filter((c) => c.type === style);
+    if (cc) out = out.filter((c) => c.cc === cc || (c.countries || []).includes(cc));
     if (savedOnly) out = out.filter((c) => savedSet.has(c.id));
     return out;
-  }, [all, style, savedOnly, savedSet]);
+  }, [all, style, cc, savedOnly, savedSet]);
   const vocab = useMemo(() => tagVocabulary(scoped), [scoped]);
   const activeTag = tag && vocab.includes(tag) ? tag : null;
   const apply = (list, { skipBand = false, skipTag = false, skipMonth = false } = {}) => {
@@ -169,12 +173,13 @@ export function CartaTrips({ titleTag = 'h1', onBack, onOpenJourney }) {
   ].filter(Boolean);
   const chips = [
     style && { key: 'style', label: styleName(style), remove: () => setStyle(null) },
+    cc && { key: 'cc', label: all.find((c) => c.cc === cc)?.country || cc, remove: () => setCc(null) },
     savedOnly && { key: 'saved', label: t('tp.flt.savedChip'), remove: () => setSavedOnly(false) },
     ...parts.chips,
   ].filter(Boolean);
   const active = chips.length;
   const clearAll = () => {
-    setStyle(null); setBand(null); setFMonth(null); setTag(null); setCheapBeds(false); setSavedOnly(false);
+    setStyle(null); setCc(null); setBand(null); setFMonth(null); setTag(null); setCheapBeds(false); setSavedOnly(false);
   };
 
   const featured = useMemo(
@@ -219,9 +224,9 @@ export function CartaTrips({ titleTag = 'h1', onBack, onOpenJourney }) {
         <span className="pf-carta-here" aria-current="page">{t('pf.carta.title')}</span>
       </nav>
 
-      <header className="pf-carta-hero">
-        <Title className="pf-title pf-carta-title" tabIndex={-1}>{t('pf.carta.title')}</Title>
-      </header>
+      {/* T1030 (owner): no big title under the breadcrumb that already
+          names the page; the heading stays for screen readers and focus. */}
+      <Title className="pf-title pf-carta-title sr-only" tabIndex={-1}>{t('pf.carta.title')}</Title>
 
       {/* The styles as Explore's category row: All, then each style. */}
       {types.length > 0 && (
@@ -250,7 +255,6 @@ export function CartaTrips({ titleTag = 'h1', onBack, onOpenJourney }) {
           )}
           {filtersButton}
         </div>
-        {cards && <span className="pf-carta-count" aria-live="polite">{t(rows.length === 1 ? 'tp.carta.countOne' : 'tp.carta.count', { n: rows.length })}</span>}
       </div>
       {chips.length > 0 && <FilterChips t={t} chips={chips} onClearAll={clearAll} />}
 
