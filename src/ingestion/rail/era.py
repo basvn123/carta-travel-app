@@ -16,9 +16,12 @@ from ..core.scrape import extract_links
 # Probed 2026-07-31: ERA's own registers overview page moved (404); the EU
 # open data portal's ERA publisher catalogue is live and links dataset
 # distributions directly, so it replaces the dead page.
+# Probed 2026-11-02 (T996): rinf.era.europa.eu answers 301 to
+# data-interop.era.europa.eu, a name with no A, AAAA or CNAME record, so the
+# RINF page failed every run since 2026-10-22. Dropped; the RINF API itself
+# needs an ERA account (ERA_EXPORT_URLS below).
 PAGES = config.env_list("ERA_PAGES", [
     "https://eradis.era.europa.eu/",
-    "https://rinf.era.europa.eu/",
     "https://www.era.europa.eu/",
     "https://data.europa.eu/data/datasets?publisher=European%20Union%20Agency%20for%20Railways&locale=en",
 ])
