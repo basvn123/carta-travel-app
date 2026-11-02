@@ -54,7 +54,7 @@
   border-radius: 50%;
   background: color-mix(in srgb, var(--surface) 94%, transparent);
   color: var(--art-b);
-  box-shadow: 0 6px 18px rgba(20, 14, 8, 0.22);
+  box-shadow: var(--elev-2);
   transform: translate(-50%, -50%);
 }
 
