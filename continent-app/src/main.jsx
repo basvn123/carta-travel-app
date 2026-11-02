@@ -14,6 +14,22 @@ import './styles.css';
 installAffiliateClickCounter();
 installTouchFeedback();
 
+// T1000: a tab left open across a deploy asks for chunks the new deploy no
+// longer serves. Vite fires vite:preloadError when a JS or CSS chunk will not
+// load (a CSS failure says "Unable to preload CSS", which the crash panel's
+// stale-bundle test did not know). Reload for the fresh build instead of
+// showing "This page stopped working"; at most once a minute, so a chunk
+// that is really broken still reaches the panel rather than a reload loop.
+const PRELOAD_RELOAD_KEY = 'continent.preloadReloadAt.v1';
+window.addEventListener('vite:preloadError', (event) => {
+  let last = 0;
+  try { last = Number(window.sessionStorage.getItem(PRELOAD_RELOAD_KEY)) || 0; } catch { /* storage blocked */ }
+  if (Date.now() - last < 60000) return;
+  try { window.sessionStorage.setItem(PRELOAD_RELOAD_KEY, String(Date.now())); } catch { /* storage blocked */ }
+  event.preventDefault();
+  window.location.reload();
+});
+
 // ?styleguide opens the design system page (T424, roadmap 1.2) instead of the
 // app: lazy, with its own stylesheet, so the app's first paint carries none of it.
 const StyleGuide = lazy(() => import('./styleguide/StyleGuide.jsx'));

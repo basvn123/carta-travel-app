@@ -6,8 +6,9 @@ import { reportClientCrash } from '../planner/edgeFailure.js';
 
 // Signatures browsers use when a dynamically-imported chunk can't be fetched, // almost always a stale bundle after a redeploy. Safari: "Importing a module
 // script failed."; Chrome: "Failed to fetch dynamically imported module";
-// Firefox: "error loading dynamically imported module".
-const CHUNK_ERROR_RE = /importing a module script failed|failed to fetch dynamically imported module|error loading dynamically imported module/i;
+// Firefox: "error loading dynamically imported module". Vite, for a CSS chunk
+// (T1000): "Unable to preload CSS for /assets/...".
+const CHUNK_ERROR_RE = /importing a module script failed|failed to fetch dynamically imported module|error loading dynamically imported module|unable to preload css/i;
 const CHUNK_RELOAD_KEY = 'continent.chunkReloaded.v1';
 
 function isChunkLoadError(error) {
