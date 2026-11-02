@@ -141,7 +141,10 @@
 .tpg-cell-sub { font-size: var(--text-micro); font-weight: 500; line-height: var(--leading-tight); color: var(--text-2); overflow-wrap: anywhere; }
 .tpg-cell-pen { position: absolute; right: var(--space-3); top: 50%; margin-top: -7px; color: var(--text-3); }
 
-.tpg-tabs { scroll-margin-top: var(--space-4); }
+/* T1009: the tabs come up flush under the top bar, so the trip bar above
+   them does not peek out as a line, and they draw no rule of their own. */
+.tpg-tabs { scroll-margin-top: 0; }
+.tpg-tabs .ui-tabs { border-bottom: 0; box-shadow: none; }
 .tpg-tabs .ui-tabs { overflow-x: auto; scrollbar-width: none; }
 /* T835: Undo and Redo at the end of the tab row from 1024 px, on the tabs'
    own hairline. Below that they are in the top row's More menu. */
@@ -1303,3 +1306,116 @@ span.tbp-seg { cursor: default; }
 .tpg .itin-stopcard .itin-daytrips { gap: var(--space-1); padding: var(--space-1) var(--space-4) 0; }
 .tpg .itin-stopcard .itin-stop-acts { padding: 0 var(--space-2) var(--space-1); }
 .tpg .itin-bed-cost dt svg, .tpg .itin-bed-cost .costrow-icon { display: none; }
+
+/* T1009: Own fare is as big as Book, and every small action on the
+   Itinerary is one size: 40 px, the touch target on a phone. */
+.tpg .itin-pass-acts .btn,
+.tpg .itin-pass-acts .plan-paid-add.btn { min-height: 40px; height: 40px; padding-inline: 14px; border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--surface); font-size: var(--text-label); font-weight: 600; }
+
+/* ---- The Itinerary's stop and hop, labelled (T1009) ----
+   After the research round (Apple Wallet's labelled fields, Airbnb's and
+   TripIt's check-in events, Wanderlog's tappable mode between two places,
+   Rome2Rio's mode, time, distance order, Wanderlog's add row): every value
+   sits under its label, nothing is cut off, and each group says one thing. */
+
+/* Check-in, the nights, check-out. */
+.tpg .itin-io-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-4) var(--space-3);
+}
+.tpg .itin-io-row.is-nights { grid-template-columns: minmax(0, 1fr); justify-items: center; }
+.tpg .itin-io-row > .itin-balance { grid-column: 1 / -1; }
+.itin-io-end { display: grid; gap: 2px; min-width: 0; }
+.itin-io-end.is-to { text-align: right; }
+.itin-io-k { font-size: var(--text-caption); font-weight: 600; color: var(--text-3); }
+.itin-io-v { font-size: var(--text-label); font-weight: 700; color: var(--text); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.tpg .itin-io-row .itin-nights { flex-direction: column; align-items: center; gap: 2px; margin: 0; }
+.tpg .itin-io-row .itin-nights .fstepper-btn { width: 28px; height: 28px; min-width: 28px; min-height: 28px; }
+.tpg .itin-io-row .itin-nights-lbl { font-size: var(--text-micro); font-weight: 600; color: var(--text-3); }
+
+/* The lodging: what kind of bed, its figure, where to book it. */
+.tpg .itin-lodging {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0 var(--space-3) var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-control);
+  background: var(--surface-sunken);
+}
+.tpg .itin-lodging-pick .field-label { margin: 0 0 4px; font-size: var(--text-caption); font-weight: 600; color: var(--text-3); }
+.tpg .itin-lodging-pick select { width: 100%; min-height: 40px; background-color: var(--surface); font-size: var(--text-label); }
+.tpg .itin-lodging .itin-bed { margin: 0; padding: 0; border-top: 0; }
+.tpg .itin-lodging .itin-bed-cost .costrow { font-weight: 600; }
+.tpg .itin-lodging .itin-find.btn,
+.tpg .itin-lodging .plan-paid-add.btn { min-height: 36px; height: 36px; }
+
+/* Add a day trip: one dashed row at the end of the stop. */
+.tpg .itin-stopcard .itin-daytrips { padding: 0 var(--space-3) var(--space-2); border-top: 0; }
+.tpg .itin-daytrips > .btn {
+  align-self: stretch;
+  justify-content: flex-start;
+  gap: var(--space-2);
+  min-height: 44px;
+  margin: 0;
+  padding-inline: var(--space-3);
+  border: 1.5px dashed var(--umber-200);
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--action);
+  font-weight: 600;
+  transition: background var(--dur-2) var(--ease-out), border-color var(--dur-2) var(--ease-out);
+}
+.tpg .itin-daytrips > .btn .btn-icon { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--umber-100); }
+@media (hover: hover) { .tpg .itin-daytrips > .btn:hover { border-color: var(--umber-300); background: var(--umber-50); } }
+
+/* The hop: a dashed connector between the two stops, the mode as a pill
+   button, the time and distance, the figure; its ticket site and Own price
+   under it. */
+.tpg .itin-hop {
+  position: relative;
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-2) 0 var(--space-2) 44px;
+}
+.tpg .itin-hop::before { content: ''; position: absolute; top: 0; bottom: 0; left: 27px; border-left: 2px dashed var(--umber-200); }
+.tpg .itin-hop > .itin-leg { flex: none; }
+.tpg .itin-leg { display: grid; gap: var(--space-2); padding: 0; border: 0; background: none; }
+.tpg .itin-leg-rail { display: none; }
+.tpg .itin-leg-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); }
+.tpg .itin-leg-main {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 var(--space-2) 0 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-label);
+  font-weight: 700;
+  cursor: pointer;
+}
+.tpg .itin-leg-main:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+@media (hover: hover) { .tpg .itin-leg-main:hover { border-color: var(--select-border); } }
+.tpg .itin-leg-glyph { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--umber-100); color: var(--umber-700); }
+.tpg .itin-leg-chev { color: var(--text-3); transition: transform var(--dur-2) var(--ease-out); }
+.tpg .itin-leg-chev.is-open { transform: rotate(180deg); }
+.tpg .itin-leg-meta { flex: 1; min-width: 0; font-size: var(--text-caption); color: var(--text-2); }
+.tpg .itin-leg-fig { font-size: var(--text-label); font-weight: 700; font-variant-numeric: tabular-nums; }
+.tpg .itin-hop-acts .itin-find.btn,
+.tpg .itin-hop-acts .plan-paid-add.btn { min-height: 36px; height: 36px; }
+@media (prefers-reduced-motion: reduce) { .tpg .itin-leg-chev, .tpg .itin-daytrips > .btn { transition: none; } }
+/* T1009: the flight's foot is the figure, then Own fare and Book side by
+   side at one width each. */
+.tpg .itin-pass-foot { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); }
+.tpg .itin-pass-fig { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--space-2); }
+.tpg .itin-pass-acts { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+.tpg .itin-pass-acts > .btn, .tpg .itin-pass-acts .plan-paid-add.btn { width: 100%; justify-content: center; }
+.tpg .itin-pass-acts > .plan-paid { grid-column: 1 / -1; }
+.tpg .itin-leg-row > .itin-leg-main { flex: none; width: auto; max-width: max-content; }

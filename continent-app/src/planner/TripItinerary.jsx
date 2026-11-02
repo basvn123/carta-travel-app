@@ -351,28 +351,36 @@ function ItinLeg({ leg, onMode }) {
   }
   const Icon = LEG_ICONS[leg.mode] || TrainIcon;
   const chosen = leg.modes[leg.mode];
+  // T1009: the hop as a connector between the two stops: the mode as a
+  // button ("Bus" and a chevron: tap to choose another), the time and the
+  // distance after it, the figure at the end. Its ticket site and Own price
+  // sit under it (the li's acts).
   return (
     <div className={`itin-leg ${open ? 'open' : ''}`}>
       <span className="itin-leg-rail" aria-hidden="true" />
-      <button
-        className="itin-leg-main"
-        onClick={() => setOpen(!open)}
-        aria-expanded={open}
-        title={t('itin.legChangeTitle')}
-      >
-        <span className="itin-leg-glyph"><Icon size={12} /></span>
-        <span className="itin-leg-text">
-          {t(MODE_LABEL_KEY[leg.mode])}
-          <small>
-            {chosen?.own
-              // Their own booking: Carta has no km or duration for it, only
-              // the fare they told us, so it must not pretend to an estimate.
-              ? (leg.ground_total > 0 ? <>{t('trip.legBooked')}, <Money value={leg.ground_total} precision="cents" /></> : t('trip.legBookedNoPrice'))
-              : <>{t('plan.legKmTime', { km: leg.road_km, hours: fmtHours(chosen?.hours ?? leg.hours) })}, <Money value={leg.ground_total} est precision="cents" /></>}
-          </small>
+      <div className="itin-leg-row">
+        <button
+          type="button"
+          className="itin-leg-main"
+          onClick={() => setOpen(!open)}
+          aria-expanded={open}
+          title={t('itin.legChangeTitle')}
+        >
+          <span className="itin-leg-glyph"><Icon size={14} /></span>
+          <span className="itin-leg-name">{t(MODE_LABEL_KEY[leg.mode])}</span>
+          <ChevronDownIcon size={14} className={`itin-leg-chev${open ? ' is-open' : ''}`} />
+        </button>
+        <span className="itin-leg-meta">
+          {chosen?.own
+            // Their own booking: Carta has no km or duration for it, only
+            // the fare they told us, so it must not pretend to an estimate.
+            ? t('trip.legBooked')
+            : [`~${fmtHours(chosen?.hours ?? leg.hours)}`, leg.road_km ? `${Math.round(leg.road_km)} km` : ''].filter(Boolean).join(', ')}
         </span>
-        <span className="itin-leg-change">{open ? t('itin.legClose') : t('itin.legChange')}</span>
-      </button>
+        <span className="itin-leg-fig">
+          {leg.ground_total > 0 ? <Money value={leg.ground_total} precision="cents" est={!chosen?.own} /> : chosen?.own ? t('trip.legBookedNoPrice') : null}
+        </span>
+      </div>
       {open && leg.sea_crossing && chosen?.note && (
         <div className="itin-leg-text"><small>{chosen.note}</small></div>
       )}
@@ -941,36 +949,48 @@ export function TripItinerary({
                                 {t(s.nights === 1 ? 'plan.nightsOne' : 'plan.nightsMany', { n: s.nights })}
                                 {s.arriveDate ? `, ${fmtLong(s.arriveDate)}` : ''}
                               </span>
-                            ) : s.arriveDate && s.departDate && (
-                              // T1008: the stay's two days as one line (were two tiles).
-                              <span className="itin-stop-sub">{t('plan.dateRange', { a: fmtDate(s.arriveDate, true), b: fmtDate(s.departDate, true) })}</span>
-                            )}
+                            ) : null}
                           </span>
                         </Button>
                       </div>
-                      {/* T1008: where this stop sleeps (T842: its own way, or the
-                          trip's) and its nights, one row under the head. */}
+                      {/* T1009 (owner: "crystal clear what everything means", after
+                          Apple Wallet's labelled fields and Airbnb's check-in
+                          event): check-in and check-out as the two ends, the
+                          nights between them, every value under its label. */}
                       {stopEdit && (
-                        <div className="itin-stay">
-                          {sc && stopEdit.stayOptions?.length > 1 && (
-                            <span className="itin-stay-pick">
-                              <BedIcon size={16} aria-hidden="true" />
-                              <Field
-                                as="select"
-                                hideLabel
-                                label={t('tp.stay.label', { city: cityLabel(s.dest?.city || '') })}
-                                value={s.stayTier || ''}
-                                onChange={(e) => stopEdit.setStay(i, e.target.value || null)}
-                              >
-                                <option value="">{t('tp.stay.trip', { stay: stopEdit.tripStayLabel })}</option>
-                                {stopEdit.stayOptions.map((o) => <option key={o.tier} value={o.tier}>{o.label}</option>)}
-                              </Field>
+                        <div className={`itin-io-row${s.arriveDate && s.departDate ? '' : ' is-nights'}`}>
+                          {s.arriveDate && (
+                            <span className="itin-io-end">
+                              <span className="itin-io-k">{t('tp.pass.in')}</span>
+                              <span className="itin-io-v">{fmtDate(s.arriveDate, true)}</span>
                             </span>
                           )}
                           <StopNights i={i} s={s} stopDetails={stopDetails} edit={stopEdit} />
+                          {s.departDate && (
+                            <span className="itin-io-end is-to">
+                              <span className="itin-io-k">{t('tp.pass.out')}</span>
+                              <span className="itin-io-v">{fmtDate(s.departDate, true)}</span>
+                            </span>
+                          )}
                         </div>
                       )}
+                      {/* T1009: the stay's lodging as one group: the kind of bed
+                          (T842: its own, or the trip's), its figure, then the
+                          providers and Own price. Nothing in it is cut off. */}
                       {sc && (
+                        <div className="itin-lodging">
+                        {stopEdit?.stayOptions?.length > 1 && (
+                          <Field
+                            as="select"
+                            className="itin-lodging-pick"
+                            label={t('tp.stay.label', { city: cityLabel(s.dest?.city || '') })}
+                            value={s.stayTier || ''}
+                            onChange={(e) => stopEdit.setStay(i, e.target.value || null)}
+                          >
+                            <option value="">{t('tp.stay.trip', { stay: stopEdit.tripStayLabel })}</option>
+                            {stopEdit.stayOptions.map((o) => <option key={o.tier} value={o.tier}>{o.label}</option>)}
+                          </Field>
+                        )}
                         <div className="itin-bed">
                           <dl className="costrows itin-bed-cost">
                             <CostRow kind="bed" label={t('plan.lineBeds')} tone={sc.ownAccom ? 'yours' : null}
@@ -1011,6 +1031,7 @@ export function TripItinerary({
                               />
                             )}
                           </span>
+                        </div>
                         </div>
                       )}
                       {stopEdit && stopEdit.addDayTrip && (
