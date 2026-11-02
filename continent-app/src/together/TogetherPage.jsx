@@ -2,8 +2,9 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { Button, IconButton } from '../components/ui/index.js';
 import {
-  ArrowLeftIcon, CheckIcon, CloseIcon, LockIcon, PlusIcon, RouteIcon, ChevronRightIcon,
+  ArrowLeftIcon, CheckIcon, CloseIcon, LockIcon, PlusIcon, RouteIcon, ChevronRightIcon, TogetherIcon,
 } from '../components/Icons.jsx';
+import { TripArt } from '../components/TripArt.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { LoadingBlock } from '../components/StateBlocks.jsx';
 import { listGuides } from '../community/guides.js';
@@ -175,12 +176,17 @@ export function TogetherPage({
 
   let body;
   if (!s.signedIn && s.loaded) {
+    // T991 (owner): signed out, Together is one card: TripArt with the
+    // Together mark, the title, the one line and Sign in.
     body = (
       <div className="tg-page">
-        <div className="tg-head"><h1 className="tg-h1" ref={headRef} tabIndex={-1} data-focus-quiet="">{t('tg.title')}</h1></div>
-        <div className="tg-empty">
-          <p>{t('tg.signInLine')}</p>
-          <Button variant="primary" onClick={onOpenAuth}>{t('saved.signIn')}</Button>
+        <div className="tg-out">
+          <TripArt tone="ink" icon={<TogetherIcon size={30} />} className="tg-out-art" />
+          <div className="tg-out-body">
+            <h1 className="tg-h1" ref={headRef} tabIndex={-1} data-focus-quiet="">{t('tg.title')}</h1>
+            <p className="tg-out-line">{t('tg.signInLine')}</p>
+            <Button variant="primary" className="tg-out-go" onClick={onOpenAuth}>{t('saved.signIn')}</Button>
+          </div>
         </div>
       </div>
     );

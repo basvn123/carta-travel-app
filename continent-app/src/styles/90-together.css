@@ -591,3 +591,21 @@
   .tg-grid:has(> .tg-col:first-child:empty) > .tg-col:last-child { display: contents; }
   .tg-grid:has(> .tg-col:first-child:empty) > .tg-col:last-child > * { order: initial; }
 }
+
+/* T991: signed out, one card: TripArt with the Together mark, the title,
+   the line and Sign in (full width on a phone). */
+.tg-out {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-width: 520px;
+  border-radius: var(--radius-sheet);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+}
+.tg-out-art { aspect-ratio: 16 / 9; }
+.tg-out-body { display: flex; flex-direction: column; align-items: stretch; gap: var(--space-3); padding: var(--space-5); }
+.tg-out-body .tg-h1 { margin: 0; }
+.tg-out-line { margin: 0; font-size: var(--text-body); line-height: var(--leading-body); color: var(--text-2); }
+.tg-out-go.btn { margin-top: var(--space-2); }
+@media (min-width: 560px) { .tg-out-go.btn { align-self: flex-start; } }
