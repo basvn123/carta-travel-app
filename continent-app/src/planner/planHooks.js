@@ -10,13 +10,20 @@ import { matchProfile, PROFILE_LABEL_KEYS } from '../browse/LifestylePanel.jsx';
 /** "Entire place, Easygoing": the Lifestyle the trip is priced at, in the
  *  settings line's own words. */
 export function useLifestyleLabel() {
+  const parts = useLifestyleParts();
+  return parts ? `${parts.bed}, ${parts.vibe}` : '';
+}
+
+/** The same Lifestyle as two words, the bed and the way of travelling, for a
+ *  cell that shows them on two lines (T1001). */
+export function useLifestyleParts() {
   const { t } = useI18n();
   const s = useSettings();
-  if (!s) return '';
+  if (!s) return null;
   const bed = t(`stay.${s.stayTier || 'home'}`);
   const key = matchProfile(s.lifestyle || {});
   const vibe = key ? t(PROFILE_LABEL_KEYS[key]) : t('lifestyle.custom');
-  return `${bed}, ${vibe}`;
+  return { bed, vibe };
 }
 
 /** What the last change did to the total, for three seconds. */

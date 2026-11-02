@@ -69,19 +69,17 @@
    (an umber door with a small deck, Explore's folder, T964); then Up next as
    the page's photograph; then Upcoming, Planning and Past as tabs, only those
    with trips (dated trips as Explore's rail cards, drafts as rows). */
+/* T999, T1001 (owner): New trip is as wide as its plus and its words at
+   every width, the door takes the rest of the row, close to the plus. */
 .pfh .pfh-head {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+  grid-template-columns: auto minmax(0, 1fr);
   gap: var(--space-3);
 }
-/* T999 (owner): from 560 px New trip is as wide as its words, the door
-   takes the rest of the row; both tiles one height. */
-@media (min-width: 560px) {
-  .pfh .pfh-head { grid-template-columns: auto minmax(0, 1fr); }
-}
 
-/* New trip: a white tile, the plus on a brown disc (the kit Button, its
-   quiet look replaced). */
+/* New trip: no tile of its own (T1001, owner), the plus on a brown disc and
+   the words, straight on the page ground (the kit Button, its quiet look
+   replaced). */
 .pfh .pfh-new.btn {
   display: flex;
   align-items: center;
@@ -89,17 +87,17 @@
   justify-content: center;
   height: auto;
   min-height: 64px;
-  padding: var(--space-2) var(--space-4);
+  padding: var(--space-2) var(--space-1) var(--space-2) 0;
   border: 0;
   border-radius: var(--radius-card);
-  background: var(--surface);
-  box-shadow: var(--elev-1);
+  background: transparent;
+  box-shadow: none;
   color: var(--text);
   font: inherit;
   text-align: left;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition: transform var(--dur-2) var(--ease-out), box-shadow var(--dur-3) var(--ease-out);
+  transition: transform var(--dur-2) var(--ease-out);
 }
 .pfh .pfh-new.btn:active { transform: scale(0.985); }
 .pfh .pfh-new.btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
@@ -109,15 +107,16 @@
   display: grid;
   flex: none;
   place-items: center;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: var(--action);
+  box-shadow: var(--elev-1);
   color: var(--surface);
   transition: transform var(--dur-3) var(--ease-out);
 }
 @media (hover: hover) {
-  .pfh .pfh-new.btn:hover { background: var(--surface); box-shadow: var(--elev-2); }
+  .pfh .pfh-new.btn:hover { background: transparent; }
   .pfh .pfh-new.btn:hover .pfh-new-plus { transform: rotate(90deg); }
 }
 
@@ -133,7 +132,7 @@
 }
 @media (min-width: 769px) {
   .pfh .pfh-new.btn, .pfh .pfh-door { min-height: 72px; }
-  .pfh .pfh-new.btn { padding-inline: var(--space-5) var(--space-6); }
+  .pfh .pfh-new.btn { padding-inline: 0 var(--space-2); }
 }
 
 /* The door: the Ask door's and Explore's umber, a sun glow, three photographs

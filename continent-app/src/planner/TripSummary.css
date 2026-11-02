@@ -132,7 +132,13 @@
 @media (hover: hover) { .tpg-cell.btn:hover { background: var(--surface-hover); } }
 .tpg-cell:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
 .tpg-cell-k { font-size: var(--text-micro); font-weight: 600; color: var(--text-3); }
-.tpg-cell-v { font-size: var(--text-body); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* T1001: a value never ends in an ellipsis. A long one is split by the cell
+   into a value and a quiet second line (When: the days, then weekdays and
+   nights; Stay: the bed, then the way of travelling), and either may wrap. */
+.tpg-tripbar { align-items: stretch; }
+.tpg-cell.btn { align-content: start; }
+.tpg-cell-v { font-size: var(--text-body); font-weight: 600; line-height: var(--leading-tight); overflow-wrap: anywhere; text-wrap: balance; font-variant-numeric: tabular-nums; }
+.tpg-cell-sub { font-size: var(--text-micro); font-weight: 500; line-height: var(--leading-tight); color: var(--text-2); overflow-wrap: anywhere; }
 .tpg-cell-pen { position: absolute; right: var(--space-3); top: 50%; margin-top: -7px; color: var(--text-3); }
 
 .tpg-tabs { scroll-margin-top: var(--space-4); }

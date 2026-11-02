@@ -27,7 +27,7 @@ import { ChangeTripSheet } from './trip/ChangeTripSheet.jsx';
 import { RouteCodes } from './trip/RouteCodes.jsx';
 import { bookRows } from './trip/ReadyToBook.jsx';
 import { useSettings } from '../components/SettingsLine.jsx';
-import { useLifestyleLabel } from './planHooks.js';
+import { useLifestyleParts } from './planHooks.js';
 import { bookedCount, countdownText, shownTripName } from './trip/tripHead.js';
 
 const WAY_ICON = { fly: PlaneIcon, train: TrainIcon, bus: BusIcon, car: CarIcon, ferry: FerryIcon };
@@ -343,7 +343,7 @@ export function TripSummary({
   // The Lifestyle sets what the days cost (one .lifestyle-btn door): a chip
   // with the trip's own, opening the same sheet as everywhere else.
   const settings = useSettings();
-  const lifestyle = useLifestyleLabel();
+  const lifestyle = useLifestyleParts();
   const onLifestyle = settings?.openLifestyle || null;
   const uid = useId();
   const wide = useMedia('(min-width: 1024px)');
@@ -357,6 +357,18 @@ export function TripSummary({
   const planned = stopDetails.reduce((x, s) => x + (s.nights || 0), 0);
   const windowN = nightsBetween(tripStart, tripEnd);
   const nightsNote = windowN > 0 && planned !== windowN ? t('pf.home.nightsPlanned', { x: planned, n: windowN }) : '';
+  // T1001: the When cell on two lines, so nothing is cut off: the days
+  // ("5 Jun to 12 Jun"), then the weekdays and the nights ("Sat to Sat, 7 nights").
+  const dayFmt = (iso, opts) => {
+    try { return new Intl.DateTimeFormat(lang === 'en' ? 'en-GB' : lang, { ...opts, timeZone: 'UTC' }).format(new Date(`${iso}T00:00:00Z`)); } catch { return ''; }
+  };
+  const datesShort = tripStart && tripEnd
+    ? t('plan.dateRange', { a: dayFmt(tripStart, { day: 'numeric', month: 'short' }), b: dayFmt(tripEnd, { day: 'numeric', month: 'short' }) })
+    : '';
+  const datesSub = tripStart && tripEnd
+    ? [t('plan.dateRange', { a: dayFmt(tripStart, { weekday: 'short' }), b: dayFmt(tripEnd, { weekday: 'short' }) }),
+      nightsNote || (windowN > 0 ? t('pf.nightsN', { n: windowN }) : '')].filter(Boolean).join(', ')
+    : '';
   // T836: the chips' own editors hang from the chip that opened them.
   const chipEls = useRef({});
   const shareRef = useRef(null);
@@ -399,10 +411,10 @@ export function TripSummary({
   // T885: the trip bar, every input of the price as a label over its value,
   // one tap each to its own editor (T836's chip editors, the Lifestyle sheet).
   const cells = [
-    { key: 'dates', label: t('tp.bar.when'), text: [dates || t('pf.when.unsure'), nightsNote].filter(Boolean).join(', '), onClick: openChip('dates'), dialog: Boolean(onChip) },
+    { key: 'dates', label: t('tp.bar.when'), text: datesShort || dates || t('pf.when.unsure'), sub: datesShort ? datesSub : nightsNote, onClick: openChip('dates'), dialog: Boolean(onChip) },
     { key: 'people', label: t('tp.bar.who'), text: people, onClick: openChip('people'), dialog: Boolean(onChip) },
     origin && { key: 'from', label: t('tp.bar.from'), text: origin, onClick: openChip('from'), dialog: Boolean(onChip) },
-    onLifestyle && lifestyle && { key: 'lifestyle', label: t('tp.bar.stay'), text: lifestyle, onClick: onLifestyle, dialog: true },
+    onLifestyle && lifestyle && { key: 'lifestyle', label: t('tp.bar.stay'), text: lifestyle.bed, sub: lifestyle.vibe, onClick: onLifestyle, dialog: true },
   ].filter(Boolean);
 
   // T886, T888: one primary, then the trip's two doors: Change your trip
@@ -562,12 +574,13 @@ export function TripSummary({
       </header>
 
       <div className="tpg-tripbar" role="group" aria-label={t('tp.bar.label')}>
-        {cells.map(({ key, label, text, onClick, dialog }) => (
+        {cells.map(({ key, label, text, sub, onClick, dialog }) => (
           <Button key={key} variant="quiet" className="tpg-cell" onClick={onClick} data-chip={key}
-            aria-label={t('tp.bar.edit', { what: label, value: text })} aria-haspopup={dialog ? 'dialog' : undefined}
+            aria-label={t('tp.bar.edit', { what: label, value: [text, sub].filter(Boolean).join(', ') })} aria-haspopup={dialog ? 'dialog' : undefined}
             ref={(el) => { chipEls.current[key] = el; }}>
             <span className="tpg-cell-k">{label}</span>
             <span className="tpg-cell-v">{text}</span>
+            {sub && <span className="tpg-cell-sub">{sub}</span>}
             <PencilIcon size={14} className="tpg-cell-pen" aria-hidden="true" />
           </Button>
         ))}
