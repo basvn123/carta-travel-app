@@ -70,11 +70,18 @@
    the page's photograph; then Upcoming, Planning and Past as tabs, only those
    with trips (dated trips as Explore's rail cards, drafts as rows). */
 /* T999, T1001 (owner): New trip is as wide as its plus and its words at
-   every width, the door takes the rest of the row, close to the plus. */
+   every width. On a phone the door takes the rest of the row; from 560 px
+   (T1002, owner: a full-width bar was far too wide) the door is as wide as
+   its deck, its name and its arrow, beside New trip. */
 .pfh .pfh-head {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   gap: var(--space-3);
+}
+@media (min-width: 560px) {
+  .pfh .pfh-head { grid-template-columns: auto auto; justify-content: start; gap: var(--space-4); }
+  .pfh .pfh-door { padding-right: var(--space-3); }
+  .pfh .pfh-door-name { flex: none; padding-right: var(--space-4); white-space: nowrap; }
 }
 
 /* New trip: no tile of its own (T1001, owner), the plus on a brown disc and
@@ -120,13 +127,13 @@
   .pfh .pfh-new.btn:hover .pfh-new-plus { transform: rotate(90deg); }
 }
 
-/* On a phone the door is half the row: the name first, the deck after it
-   running out of the tile's right edge, no arrow. */
+/* On a phone the door is the rest of the row: the name first, the deck
+   after it, every photograph whole inside the tile (T1002, owner), no arrow. */
 @media (max-width: 559px) {
-  .pfh .pfh-door { min-height: 64px; gap: var(--space-2); padding: var(--space-2) 0 var(--space-2) var(--space-4); }
+  .pfh .pfh-door { min-height: 64px; gap: var(--space-2); padding: var(--space-2) var(--space-3) var(--space-2) var(--space-4); }
   .pfh .pfh-new .btn-label { font-size: var(--text-body); }
   .pfh .pfh-door-name { order: 1; font-size: var(--text-body); line-height: var(--leading-tight); }
-  .pfh .pfh-door-deck { order: 2; width: 58px; height: 56px; margin-right: -14px; }
+  .pfh .pfh-door-deck { order: 2; width: 62px; height: 56px; }
   .pfh .pfh-door-photo { width: 34px; height: 46px; top: 5px; left: calc(var(--i) * 12px); z-index: calc(1 + var(--i)); }
   .pfh .pfh-door-go { display: none; }
 }
