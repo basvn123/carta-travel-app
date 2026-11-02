@@ -8647,6 +8647,8 @@ export const en = {
   "pf.home.tripMore": "More for {name}",
   "pf.home.delete": "Delete trip",
   "pf.home.deleteAsk": "Delete this trip from this device? This cannot be undone.",
+  "pf.home.deleteAskAccount": "Delete this trip from your account? This cannot be undone.",
+  "pf.home.clearGo": "Delete",
   "pf.home.cheaper": "Cheaper since you kept it",
   "pf.home.cheaperBy": "{price} less a person: {name}",
   "pf.home.newTrip": "New trip",

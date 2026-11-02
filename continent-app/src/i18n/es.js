@@ -8038,6 +8038,8 @@ export const es = {
   "pf.home.tripMore": "Más para {name}",
   "pf.home.delete": "Eliminar viaje",
   "pf.home.deleteAsk": "¿Eliminar este viaje de este dispositivo? No se puede deshacer.",
+  "pf.home.deleteAskAccount": "¿Eliminar este viaje de tu cuenta? No se puede deshacer.",
+  "pf.home.clearGo": "Eliminar",
   "pf.home.cheaper": "Más barato desde que lo guardaste",
   "pf.home.cheaperBy": "{price} menos por persona: {name}",
   "pf.home.newTrip": "Nuevo viaje",

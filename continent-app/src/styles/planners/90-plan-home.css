@@ -64,30 +64,65 @@
 .pf-carta-rail > .ctc { scroll-snap-align: start; }
 .pf-carta-grid .pf-carta-ghost { height: auto; aspect-ratio: 4 / 6; }
 
-/* T903, T988: the Plan home with trips. The title and New trip on one row;
-   Carta's own trips as an umber door with a small deck (Explore's folder,
-   T964); Up next as the page's photograph; Upcoming, Planning and Past as
-   tabs, only those with trips (dated trips as Explore's rail cards, drafts
-   as rows). The in-season rail went (T988, owner). */
+/* T903, T988, T989: the Plan home with trips. No visible title (owner,
+   T989): the page opens on two equal tiles, New trip and Carta's own trips
+   (an umber door with a small deck, Explore's folder, T964); then Up next as
+   the page's photograph; then Upcoming, Planning and Past as tabs, only those
+   with trips (dated trips as Explore's rail cards, drafts as rows). */
 .pfh .pfh-head {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-areas: 'title new' 'door door';
-  align-items: center;
-  gap: var(--space-4) var(--space-3);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
 }
-.pfh .pfh-title.pf-title { grid-area: title; min-width: 0; font-size: var(--text-headline); letter-spacing: -0.02em; }
-.pfh .pfh-new.btn { grid-area: new; box-shadow: var(--elev-1); }
-.pfh .pfh-door { grid-area: door; }
-/* From 769 px the door sits in the head's row, between the title and New trip. */
+
+/* New trip: a white tile, the plus on a brown disc. */
+.pfh-new {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 72px;
+  padding: var(--space-2) var(--space-3);
+  border: 0;
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform var(--dur-2) var(--ease-out), box-shadow var(--dur-3) var(--ease-out);
+}
+.pfh-new:active { transform: scale(0.985); }
+.pfh-new:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+.pfh-new-plus {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--action);
+  color: var(--surface);
+  transition: transform var(--dur-3) var(--ease-out);
+}
+.pfh-new-name { min-width: 0; font-size: var(--text-lead); font-weight: 700; letter-spacing: -0.01em; line-height: var(--leading-tight); }
+@media (hover: hover) {
+  .pfh-new:hover { box-shadow: var(--elev-2); }
+  .pfh-new:hover .pfh-new-plus { transform: rotate(90deg); }
+}
+
+/* On a phone the door is half the row: the name first, the deck after it
+   running out of the tile's right edge, no arrow. */
+@media (max-width: 559px) {
+  .pfh .pfh-door { gap: var(--space-2); padding: var(--space-2) 0 var(--space-2) var(--space-4); }
+  .pfh .pfh-door-name { order: 1; font-size: var(--text-body); line-height: var(--leading-tight); }
+  .pfh .pfh-door-deck { order: 2; width: 58px; height: 56px; margin-right: -14px; }
+  .pfh .pfh-door-photo { width: 34px; height: 46px; top: 5px; left: calc(var(--i) * 12px); z-index: calc(1 + var(--i)); }
+  .pfh .pfh-door-go { display: none; }
+}
 @media (min-width: 769px) {
-  .pfh .pfh-head { grid-template-columns: minmax(0, 1fr) auto auto; grid-template-areas: 'title door new'; }
-  .pfh .pfh-door { min-height: 56px; padding-block: var(--space-1); padding-right: var(--space-2); gap: var(--space-3); }
-  .pfh .pfh-door-deck { width: 80px; height: 48px; }
-  .pfh .pfh-door-photo { width: 34px; height: 44px; left: calc(var(--i) * 20px); }
-  .pfh .pfh-door-name { font-size: var(--text-body); }
-  .pfh .pfh-door-go { width: 36px; height: 36px; }
-  .pfh .pfh-new.btn { min-height: 56px; padding-inline: var(--space-5); border-radius: var(--radius-card); }
+  .pfh .pfh-new, .pfh .pfh-door { min-height: 80px; }
 }
 
 /* The door: the Ask door's and Explore's umber, a sun glow, three photographs
@@ -184,19 +219,6 @@
   animation: pfh-drift 18s ease-in-out infinite alternate;
 }
 @keyframes pfh-drift { from { transform: scale(1.02); } to { transform: scale(1.1) translate(-1.5%, 1%); } }
-.pfh-next-route { position: absolute; inset: 0; width: 100%; height: 100%; }
-.pfh-next-route path {
-  fill: none;
-  stroke: var(--umber-300);
-  stroke-opacity: 0.45;
-  stroke-width: 1.5;
-  stroke-linecap: round;
-  stroke-dasharray: 0.012 0.018;
-  vector-effect: non-scaling-stroke;
-  animation: pfh-route 30s linear infinite;
-}
-@keyframes pfh-route { to { stroke-dashoffset: -1; } }
-.pfh .pfh-next.is-blank .pfh-next-media::after { background: radial-gradient(90% 80% at 20% 0%, color-mix(in srgb, var(--sun-400) 26%, transparent), transparent 60%); }
 .pfh .pfh-next-cd {
   position: absolute;
   top: var(--space-3);
@@ -256,15 +278,10 @@
   .pfh .pfh-next-cd { top: var(--space-5); left: var(--space-5); }
 }
 
-/* A trip with no photo yet: Carta's umber and its first letter, as on Up next. */
-.pfh .pfh-initial,
-.pfh .pfh-initial.is-c0, .pfh .pfh-initial.is-c1, .pfh .pfh-initial.is-c2, .pfh .pfh-initial.is-c3 {
-  background:
-    radial-gradient(90% 80% at 20% 0%, color-mix(in srgb, var(--sun-400) 26%, transparent), transparent 60%),
-    linear-gradient(150deg, var(--umber-500), var(--umber-800));
-  color: var(--umber-50);
-}
-.pfh .pfh-card-media .pfh-initial { position: absolute; inset: 0; font-size: var(--text-display); }
+/* A trip with no photo yet: TripArt (T990) fills the photo's place. */
+.pfh .pfh-art { position: absolute; inset: 0; width: 100%; height: 100%; }
+.pfh .pfh-row-img.pfh-art { position: relative; inset: auto; flex: none; width: 56px; height: 56px; border-radius: var(--radius-control); }
+.pfh .pfh-next-media .pfh-art { animation: none; }
 
 /* The tabs: only those with trips. */
 .pfh-tabs { display: flex; gap: var(--space-1); overflow-x: auto; border-bottom: 1px solid var(--border-soft); scrollbar-width: none; }
@@ -285,14 +302,15 @@
 .pfh-card-media { position: relative; display: block; aspect-ratio: 1 / 1; margin-bottom: var(--space-2); overflow: hidden; border-radius: var(--radius-card); background: var(--surface-sunken); }
 @media (min-width: 769px) { .pfh-card-media { aspect-ratio: 4 / 5; } }
 .pfh .pfh-card-img { transition: transform var(--dur-4) var(--ease-out); }
-.pfh-card-cd {
+.pfh .pfh-card-cd {
   position: absolute;
-  top: var(--space-3);
+  top: auto;
+  bottom: var(--space-3);
   left: var(--space-3);
   z-index: 1;
   display: inline-flex;
   align-items: center;
-  max-width: calc(100% - 64px);
+  max-width: calc(100% - 2 * var(--space-3));
   min-height: 28px;
   padding: 0 var(--space-3);
   border-radius: var(--radius-pill);
@@ -327,7 +345,6 @@ body:has(.pf) .top-bar .app-header { background: var(--plan-ground); }
 
 @media (prefers-reduced-motion: reduce) {
   .pfh .pfh-next-img,
-  .pfh-next-route path,
   .pfh-door-photo { animation: none; }
   .pfh .pfh-next,
   .pfh-door,
@@ -337,3 +354,38 @@ body:has(.pf) .top-bar .app-header { background: var(--plan-ground); }
   .pfh .pfh-card-img { transition: none; }
 }
 /* T904: Delete the empty drafts, asked once in place. */
+
+/* T989: Delete the empty drafts. A quiet line under the list; pressed, one
+   small card: the question beside a trash disc, Cancel and Delete as two
+   equal buttons under it. */
+.pfh .pfh-clear { justify-content: flex-start; margin-top: var(--space-2); }
+.pfh-clear-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--elev-2);
+  animation: pfh-clear-in var(--dur-3) var(--ease-out);
+}
+.pfh-clear-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--danger) 12%, var(--surface));
+  color: var(--danger);
+}
+.pfh-clear-q { margin: 0; font-size: var(--text-body); font-weight: 600; line-height: var(--leading-tight); color: var(--text); }
+.pfh-clear-acts { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); }
+.pfh-clear-acts .btn { min-height: var(--tap); }
+@keyframes pfh-clear-in { from { opacity: 0; transform: translateY(6px); } }
+@media (min-width: 769px) { .pfh-clear-card { max-width: 480px; } }
+@media (prefers-reduced-motion: reduce) {
+  .pfh-clear-card { animation: none; }
+  .pfh-new, .pfh-new-plus { transition: none; }
+}

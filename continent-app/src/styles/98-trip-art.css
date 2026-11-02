@@ -1,0 +1,63 @@
+/* TripArt (T990): a trip with no photograph yet, and the empty states of My
+   trips and Together. Map geometry on a Carta ground: contour lines, a
+   dashed route, its two ends. The route creeps along slowly; reduced motion
+   holds it still. */
+
+.trip-art {
+  --art-a: var(--umber-500);
+  --art-b: var(--umber-800);
+  --art-line: var(--umber-100);
+  --art-glow: var(--sun-400);
+  position: relative;
+  isolation: isolate;
+  display: block;
+  overflow: hidden;
+  background:
+    radial-gradient(90% 80% at 18% 0%, color-mix(in srgb, var(--art-glow) 26%, transparent), transparent 62%),
+    linear-gradient(150deg, var(--art-a), var(--art-b));
+}
+.trip-art.is-lagoon { --art-a: var(--lagoon-600); --art-b: var(--lagoon-900); --art-line: var(--lagoon-100); --art-glow: var(--lagoon-300); }
+.trip-art.is-ink { --art-a: var(--neutral-700); --art-b: var(--neutral-900); --art-line: var(--umber-100); --art-glow: var(--umber-300); }
+
+.trip-art-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.trip-art-contours path {
+  fill: none;
+  stroke: var(--art-line);
+  stroke-opacity: 0.16;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.trip-art-route {
+  fill: none;
+  stroke: var(--art-line);
+  stroke-opacity: 0.7;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 0.018 0.022;
+  vector-effect: non-scaling-stroke;
+  animation: trip-art-walk 24s linear infinite;
+}
+.trip-art.is-compact .trip-art-route { stroke-width: 2.5; stroke-dasharray: 0.06 0.05; animation: none; }
+.trip-art-from { fill: none; stroke: var(--art-line); stroke-opacity: 0.8; stroke-width: 2; vector-effect: non-scaling-stroke; }
+.trip-art-to { fill: var(--art-line); fill-opacity: 0.92; }
+@keyframes trip-art-walk { to { stroke-dashoffset: -1; } }
+
+/* The icon disc in the middle. */
+.trip-art-disc {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  color: var(--art-b);
+  box-shadow: 0 6px 18px rgba(20, 14, 8, 0.22);
+  transform: translate(-50%, -50%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trip-art-route { animation: none; }
+}

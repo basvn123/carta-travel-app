@@ -8038,6 +8038,8 @@ export const nl = {
   "pf.home.tripMore": "Meer voor {name}",
   "pf.home.delete": "Reis verwijderen",
   "pf.home.deleteAsk": "Deze reis van dit apparaat verwijderen? Dit kan niet ongedaan worden gemaakt.",
+  "pf.home.deleteAskAccount": "Deze reis uit je account verwijderen? Dit kan niet ongedaan worden gemaakt.",
+  "pf.home.clearGo": "Verwijderen",
   "pf.home.cheaper": "Goedkoper sinds je hem bewaarde",
   "pf.home.cheaperBy": "{price} minder per persoon: {name}",
   "pf.home.newTrip": "Nieuwe reis",

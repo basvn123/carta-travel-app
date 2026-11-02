@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import '../../styles/planners.css';
 import { useI18n } from '../../i18n/index.jsx';
 import { loadTripDraft } from '../tripDraftStore.js';
@@ -41,7 +41,7 @@ export function PlanFlow({
   const { t, lang } = useI18n();
   const months = useMonths();
   const bcp47 = useBcp47();
-  const trips = useHomeTrips(destinations);
+  const [trips, removePlan] = useHomeTrips(destinations);
   const [settings, save] = useTripSettings();
   const [screen, setScreen] = useState('home');
   const [kind, setKind] = useState('new');
@@ -98,7 +98,11 @@ export function PlanFlow({
             if (trip.planId && onOpenPlan) { onOpenPlan(trip.planId); return; }
             onNavigate('trip');
           }}
-          onDeleteTrip={(trip) => tripsStore.remove(trip.id)}
+          onDeleteTrip={(trip) => {
+            // T989: a device trip leaves the device; one in the account leaves the account too.
+            if (trip.device) tripsStore.remove(trip.id);
+            if (trip.planId) removePlan(trip.planId);
+          }}
           onOpenTrips={() => go('carta')}
           onOpenKept={() => { showKeptNext(); onNavigate('trips'); }}
         />
@@ -230,6 +234,7 @@ function useHomeTrips(destinations) {
   const [bump, setBump] = useState(0);
   useEffect(() => tripsStore.subscribe(() => setBump((n) => n + 1)), []);
   const [plans, setPlans] = useState(NO_TRIPS);
+  const [reload, setReload] = useState(0);
   useEffect(() => {
     if (!user?.id) { setPlans(NO_TRIPS); return undefined; }
     let live = true;
@@ -238,9 +243,18 @@ function useHomeTrips(destinations) {
       .then((rows) => { if (live) setPlans(rows || NO_TRIPS); })
       .catch(() => { if (live) setPlans(NO_TRIPS); });
     return () => { live = false; };
-  }, [user?.id]);
+  }, [user?.id, reload]);
 
-  return useMemo(() => {
+  // T989: an account trip goes from the list at once; if the delete fails
+  // (a trip someone else owns, no network) the list is read again.
+  const removePlan = useCallback((planId) => {
+    setPlans((rows) => rows.filter((r) => r?.id !== planId));
+    import('../../auth/tripPlanStorage.js')
+      .then((m) => m.deleteTripPlan(planId))
+      .catch(() => setReload((n) => n + 1));
+  }, []);
+
+  const list = useMemo(() => {
     const dest = destinations || {};
     const photo = (ids) => {
       for (const id of ids) { const u = dest[id]?.image?.url; if (u) return u; }
@@ -294,6 +308,7 @@ function useHomeTrips(destinations) {
     });
     return [...device, ...account];
   }, [destinations, plans, tick, bump, t]); // eslint-disable-line react-hooks/exhaustive-deps -- tick and bump re-read the device list
+  return [list, removePlan];
 }
 
 /**

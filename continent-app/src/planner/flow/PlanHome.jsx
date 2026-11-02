@@ -3,6 +3,7 @@ import { useI18n } from '../../i18n/index.jsx';
 import { tabHref } from '../../lib/urlState.js';
 import { loadJourneyIndex, splitAround } from '../../lib/journeys.js';
 import { HeroImage } from '../../components/HeroImage.jsx';
+import { TripArt } from '../../components/TripArt.jsx';
 import { Button, Chip, IconButton } from '../../components/ui/index.js';
 import { countdownText } from '../trip/tripHead.js';
 import {
@@ -109,8 +110,11 @@ function whenLine(t, trip, bcp47) {
  * The trip's "More" (T809): one Delete, which asks once in place (the
  * owner asked for a confirm: a trip on this device has no Undo to hold).
  * Escape, a tap outside or tabbing out closes it; Escape returns focus.
+ * T989: a blur with no next focus (Safari does not focus a tapped button)
+ * no longer closes it, so the tap on Delete lands; a tap outside still does.
+ * An account trip's ask says it leaves the account, not this device.
  */
-function TripMore({ name, onDelete, tone = 'photo' }) {
+function TripMore({ name, onDelete, tone = 'photo', account = false }) {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const [asking, setAsking] = useState(false);
@@ -141,7 +145,7 @@ function TripMore({ name, onDelete, tone = 'photo' }) {
   const label = t('pf.home.tripMore', { name });
   return (
     <div className="pf-trip-more" ref={boxRef}
-      onBlur={(e) => { if (open && !boxRef.current?.contains(e.relatedTarget)) close(false); }}>
+      onBlur={(e) => { if (open && e.relatedTarget && !boxRef.current?.contains(e.relatedTarget)) close(false); }}>
       <IconButton ref={btnRef} tone={tone} label={label}
         aria-haspopup="menu" aria-expanded={open} onClick={() => (open ? close() : setOpen(true))}>
         <MoreIcon size={18} />
@@ -155,8 +159,8 @@ function TripMore({ name, onDelete, tone = 'photo' }) {
         </div>
       )}
       {open && asking && (
-        <div className="pf-trip-pop pf-trip-ask" role="group" aria-label={t('pf.home.deleteAsk')}>
-          <p className="pf-trip-ask-text">{t('pf.home.deleteAsk')}</p>
+        <div className="pf-trip-pop pf-trip-ask" role="group" aria-label={t(account ? 'pf.home.deleteAskAccount' : 'pf.home.deleteAsk')}>
+          <p className="pf-trip-ask-text">{t(account ? 'pf.home.deleteAskAccount' : 'pf.home.deleteAsk')}</p>
           <div className="pf-trip-ask-row">
             <Button variant="secondary" size="sm" className="pf-trip-keep" onClick={() => close()}>{t('pf.cancel')}</Button>
             <Button variant="danger" size="sm" onClick={() => { close(false); onDelete(); }}>{t('pf.home.delete')}</Button>
@@ -191,11 +195,10 @@ function editedText(t, ms, lang) {
   return t('pf.home.edited', { when: text });
 }
 
-/** The trip's cover: its photo, else its first letter on one of four colours. */
-function Cover({ trip, className, sizes, ratio }) {
+/** The trip's cover: its photo, else TripArt (T990) on the trip's own ground. */
+function Cover({ trip, className, sizes, ratio, compact = false }) {
   if (trip.cover) return <HeroImage url={trip.cover} city={trip.name} className={className} maxWidth={720} ratio={ratio} sizes={sizes} />;
-  const n = [...(trip.id || '')].reduce((a, c) => a + c.charCodeAt(0), 0) % 4;
-  return <span className={`${className} pfh-initial is-c${n}`} aria-hidden="true">{(trip.name || '?').trim().charAt(0).toUpperCase()}</span>;
+  return <TripArt seed={trip.id} compact={compact} className={`${className} pfh-art`} />;
 }
 
 /**
@@ -203,7 +206,7 @@ function Cover({ trip, className, sizes, ratio }) {
  * photograph): the nearest dated trip, else the last one worked on. The
  * cover fills the card and drifts slowly, the name and the dates sit on it,
  * the countdown is a chip and the round arrow says the card opens the trip.
- * A trip with no photo yet stands on Carta's umber with a route drawn on it.
+ * A trip with no photo yet stands on TripArt (T990), its own ground.
  */
 function UpNext({ trip, onOpen }) {
   const { t } = useI18n();
@@ -214,11 +217,7 @@ function UpNext({ trip, onOpen }) {
       <span className="pfh-next-media" aria-hidden="true">
         {trip.cover
           ? <HeroImage url={trip.cover} city={trip.name} className="pfh-next-img" maxWidth={1280} ratio={[16, 9]} sizes="(min-width: 1240px) 1200px, 100vw" />
-          : (
-            <svg className="pfh-next-route" viewBox="0 0 400 200" preserveAspectRatio="none">
-              <path pathLength="1" d="M-10 160 C 60 150, 90 70, 160 90 S 260 170, 310 110 S 380 40, 420 50" />
-            </svg>
-          )}
+          : <TripArt seed={trip.id} className="pfh-next-img" />}
       </span>
       {cd && <span className="pfh-next-cd">{cd}</span>}
       <span className="pfh-next-body">
@@ -252,7 +251,7 @@ function OwnCard({ trip, onOpen, onDelete }) {
         <span className="pfh-card-name">{trip.name}</span>
         <span className="pfh-card-when">{whenLine(t, trip, bcp47)}</span>
       </a>
-      {onDelete && <span className="pfh-card-more"><TripMore name={trip.name} onDelete={onDelete} /></span>}
+      {onDelete && <span className="pfh-card-more"><TripMore name={trip.name} onDelete={onDelete} account={trip.account} /></span>}
     </li>
   );
 }
@@ -266,7 +265,7 @@ function DraftRow({ trip, onOpen, onDelete }) {
   return (
     <li className="pfh-row">
       <a className="pfh-row-hit" href={tabHref('trip')} onClick={door(onOpen)}>
-        <Cover trip={trip} className="pfh-row-img" ratio={[1, 1]} sizes="56px" />
+        <Cover trip={trip} className="pfh-row-img" ratio={[1, 1]} sizes="56px" compact />
         <span className="pfh-row-txt">
           <span className="pfh-row-name">
             {trip.name}
@@ -279,7 +278,7 @@ function DraftRow({ trip, onOpen, onDelete }) {
           {edited && <span className="pfh-row-edited">{edited}</span>}
         </span>
       </a>
-      {onDelete && <TripMore name={trip.name} onDelete={onDelete} tone="plain" />}
+      {onDelete && <TripMore name={trip.name} onDelete={onDelete} tone="plain" account={trip.account} />}
     </li>
   );
 }
@@ -288,26 +287,33 @@ const TABS = ['upcoming', 'planning', 'past'];
 
 /**
  * T904: the drafts with nothing in them (no places, no dates, on this
- * device) can go in one step, asked once in place.
+ * device) can go in one step. T989: a quiet line under the list; pressed, it
+ * becomes one small card that asks, with Cancel and Delete side by side.
  */
 function ClearEmpty({ trips, onDelete }) {
   const { t } = useI18n();
   const [asking, setAsking] = useState(false);
+  const cardRef = useRef(null);
+  useEffect(() => { if (asking) cardRef.current?.querySelector('.pfh-clear-keep')?.focus(); }, [asking]);
   if (!trips.length) return null;
   const n = trips.length;
-  return (
-    <div className="pfh-clear">
-      {asking ? (
-        <>
-          <span>{t(n === 1 ? 'pf.home.clearAskOne' : 'pf.home.clearAsk', { n })}</span>
-          <Button variant="secondary" size="sm" onClick={() => setAsking(false)}>{t('pf.cancel')}</Button>
-          <Button variant="danger" size="sm" onClick={() => { setAsking(false); trips.forEach(onDelete); }}>{t('pf.home.delete')}</Button>
-        </>
-      ) : (
+  if (!asking) {
+    return (
+      <div className="pfh-clear">
         <Button variant="quiet" size="sm" className="pfh-clear-btn" iconStart={<TrashIcon size={16} />} onClick={() => setAsking(true)}>
           {t(n === 1 ? 'pf.home.clearOne' : 'pf.home.clear', { n })}
         </Button>
-      )}
+      </div>
+    );
+  }
+  return (
+    <div className="pfh-clear-card" role="group" aria-labelledby="pfh-clear-q" ref={cardRef}>
+      <span className="pfh-clear-icon" aria-hidden="true"><TrashIcon size={20} /></span>
+      <p className="pfh-clear-q" id="pfh-clear-q">{t(n === 1 ? 'pf.home.clearAskOne' : 'pf.home.clearAsk', { n })}</p>
+      <div className="pfh-clear-acts">
+        <Button variant="secondary" className="pfh-clear-keep" onClick={() => setAsking(false)}>{t('pf.cancel')}</Button>
+        <Button variant="danger" onClick={() => { setAsking(false); trips.forEach(onDelete); }}>{t('pf.home.clearGo')}</Button>
+      </div>
     </div>
   );
 }
@@ -367,7 +373,7 @@ export function PlanHome({ titleTag = 'h1', trips = [], onStart, onOpenTrip, onD
   const next = byState.upcoming[0] || byState.planning[0] || null;
 
   if (trips.length > 0) {
-    const del = (trip) => (trip.account ? null : () => onDeleteTrip(trip));
+    const del = (trip) => () => onDeleteTrip(trip);
     // T988: a tab with no trips is not drawn, so no "No past trips yet".
     const tabs = TABS.filter((k) => byState[k].length);
     const on = tabs.includes(tab) ? tab : tabs[0];
@@ -375,8 +381,12 @@ export function PlanHome({ titleTag = 'h1', trips = [], onStart, onOpenTrip, onD
     return (
       <div className="pfh">
         <header className="pfh-head">
-          <Title className="pf-title pfh-title" tabIndex={-1}>{t('pf.home.yourTrips')}</Title>
-          <Button variant="primary" className="pfh-new" iconStart={<PlusIcon size={18} />} onClick={onStart}>{t('pf.home.newTrip')}</Button>
+          {/* T989 (owner): no visible title; the page's name stays for screen readers. */}
+          <Title className="pf-title sr-only" tabIndex={-1}>{t('pf.home.yourTrips')}</Title>
+          <button type="button" className="pfh-new" onClick={onStart}>
+            <span className="pfh-new-plus" aria-hidden="true"><PlusIcon size={20} /></span>
+            <span className="pfh-new-name">{t('pf.home.newTrip')}</span>
+          </button>
           <CartaDoor fan={fan} onOpen={onOpenTrips} />
         </header>
 
