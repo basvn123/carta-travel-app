@@ -37,6 +37,7 @@ import { useAuth } from '../../auth/AuthContext.jsx';
  */
 export function PlanFlow({
   onNavigate, onCreated, onAddPast = null, onOpenJourney = null, onOpenPlan = null, destinations = null, pageOver = false,
+  openAt = null,
 }) {
   const { t, lang } = useI18n();
   const months = useMonths();
@@ -44,6 +45,14 @@ export function PlanFlow({
   const [trips, removePlan] = useHomeTrips(destinations);
   const [settings, save] = useTripSettings();
   const [screen, setScreen] = useState('home');
+  // T1030: Explore's doors and a closed trip page open Carta's own trips
+  // here (openAt: { screen: 'carta', style, cc, n }), the one trip library.
+  const [cartaStart, setCartaStart] = useState(null);
+  useEffect(() => {
+    if (openAt?.screen !== 'carta') return;
+    setCartaStart({ style: openAt.style || null, cc: openAt.cc || null, n: openAt.n });
+    setScreen('carta');
+  }, [openAt?.n]); // eslint-disable-line react-hooks/exhaustive-deps -- one open per door tap
   const [kind, setKind] = useState('new');
   const [settingsOpen, setSettingsOpen] = useState(false);
   const gearRef = useRef(null);
@@ -115,6 +124,9 @@ export function PlanFlow({
     return (
       <div className="pf is-carta" ref={sheetRef}>
         <CartaTrips
+          key={cartaStart?.n || 'carta'}
+          initialStyle={cartaStart?.style || null}
+          initialCountry={cartaStart?.cc || null}
           titleTag={Title}
           onBack={() => go('home')}
           onOpenJourney={(id) => (onOpenJourney ? onOpenJourney(id) : onNavigate('trips'))}

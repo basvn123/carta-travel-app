@@ -434,7 +434,7 @@ export function DestinationsTab({
   openCategory = null, onOpenCategoryConsumed,
   // One week from the journeys library, { id, fromLink }: a shared link or a
   // starred week (T474). It opens over whatever the tab shows.
-  openJourney = null, onOpenJourneyConsumed,
+  openJourney = null, onOpenJourneyConsumed, onJourneyClosed = null,
   // The shortlist, as the pair-aware pair App keeps: isFavorite(id, kind)
   // and onToggleFav(id, kind). Every full-screen feature page below wears the
   // same star from them, so a trail is kept exactly the way a city is.
@@ -760,6 +760,17 @@ export function DestinationsTab({
     });
     return () => { live = false; };
   }, [openJourney]);
+
+  // T1030: a trip's page that closes, by its own back control or the
+  // browser's, hands back to Plan's Carta's own trips (the one trip list).
+  const hadJourney = useRef(false);
+  const journeyClosed = useRef(onJourneyClosed);
+  journeyClosed.current = onJourneyClosed;
+  useEffect(() => {
+    const was = hadJourney.current;
+    hadJourney.current = Boolean(pageJourney);
+    if (was && !pageJourney) journeyClosed.current?.();
+  }, [pageJourney]);
 
   // Debounce only the 24.8k-row filter, never the input itself.
   useEffect(() => {
