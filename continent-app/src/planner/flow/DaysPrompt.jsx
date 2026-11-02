@@ -65,7 +65,7 @@ export function DaysPrompt({ onClose, onPlan }) {
                 <span className="pdh-way-ic" aria-hidden="true"><Icon size={22} /></span>
                 <span className="pdh-way-txt">
                   <span className="pdh-way-name">{t(`pf.dh.${value}`)}</span>
-                  <span className="pdh-way-sub">{t(`pf.dh.${value}Sub`)}</span>
+                  {/* T1017 (owner): the way's name only, no subline. */}
                 </span>
                 <span className="pdh-way-tick" aria-hidden="true">{way === value && <CheckIcon size={13} />}</span>
               </Button>
