@@ -979,25 +979,41 @@ export function TripItinerary({
                           providers and Own price. Nothing in it is cut off. */}
                       {sc && (
                         <div className="itin-lodging">
-                        {stopEdit?.stayOptions?.length > 1 && (
-                          <Field
-                            as="select"
-                            className="itin-lodging-pick"
-                            label={t('tp.stay.label', { city: cityLabel(s.dest?.city || '') })}
-                            value={s.stayTier || ''}
-                            onChange={(e) => stopEdit.setStay(i, e.target.value || null)}
-                          >
-                            <option value="">{t('tp.stay.trip', { stay: stopEdit.tripStayLabel })}</option>
-                            {stopEdit.stayOptions.map((o) => <option key={o.tier} value={o.tier}>{o.label}</option>)}
-                          </Field>
-                        )}
+                        {/* T1010 (owner: "more compact, professional, clean"): one
+                            row, the bed's kind (tap to choose: a native select
+                            under its own words) and the figure. */}
+                        <div className="itin-lodging-top">
+                          {(() => {
+                            const opts = stopEdit?.stayOptions || [];
+                            const pick = opts.length > 1;
+                            const kind = sc.ownAccom ? t('trip.sum.ownStay')
+                              : (s.stayTier && opts.find((o) => o.tier === s.stayTier)?.label) || stopEdit?.tripStayLabel || t(`stay.${s.stayTier || tripStayTier || 'home'}`);
+                            return (
+                              <span className={`itin-lodging-kind${pick ? ' is-pick' : ''}`}>
+                                <BedIcon size={16} aria-hidden="true" />
+                                <span className="itin-lodging-name" aria-hidden={pick ? 'true' : undefined}>{kind}</span>
+                                {pick && <ChevronDownIcon size={14} className="itin-lodging-chev" aria-hidden="true" />}
+                                {pick && (
+                                  <select
+                                    className="itin-lodging-select"
+                                    aria-label={t('tp.stay.label', { city: cityLabel(s.dest?.city || '') })}
+                                    value={s.stayTier || ''}
+                                    onChange={(e) => stopEdit.setStay(i, e.target.value || null)}
+                                  >
+                                    <option value="">{t('tp.stay.trip', { stay: stopEdit.tripStayLabel })}</option>
+                                    {opts.map((o) => <option key={o.tier} value={o.tier}>{o.label}</option>)}
+                                  </select>
+                                )}
+                              </span>
+                            );
+                          })()}
+                          <span className="itin-lodging-fig">
+                            {sc.ownAccom
+                              ? <span className="plan-line-yours"><Money value={sc.accomTotal} precision="cents" /><small>{t('plan.yours')}</small></span>
+                              : <Money value={sc.accomTotal} est precision="cents" />}
+                          </span>
+                        </div>
                         <div className="itin-bed">
-                          <dl className="costrows itin-bed-cost">
-                            <CostRow kind="bed" label={t('plan.lineBeds')} tone={sc.ownAccom ? 'yours' : null}
-                              value={sc.ownAccom
-                                ? <span className="plan-line-yours"><Money value={sc.accomTotal} precision="cents" /><small>{t('plan.yours')}</small></span>
-                                : <Money value={sc.accomTotal} est precision="cents" />} />
-                          </dl>
                           <span className="itin-bed-acts">
                             {/* T862: the book links of the stay's type (Booking.com
                                 apartments and Airbnb, Airbnb rooms, Hostelworld, or
@@ -1061,6 +1077,7 @@ export function TripItinerary({
                     </li>
                     {leg && (
                       <li className="itin-hop">
+                        <div className="itin-hop-card">
                         <ItinLeg leg={leg} onMode={setLegMode ? (m) => setLegMode(i, m) : null} />
                         <span className="itin-hop-acts">
                           {!legOwn && leg.mode && leg.mode !== 'car' && !leg.no_road && (() => {
@@ -1091,6 +1108,7 @@ export function TripItinerary({
                             />
                           )}
                         </span>
+                        </div>
                       </li>
                     )}
                   </React.Fragment>

@@ -1419,3 +1419,95 @@ span.tbp-seg { cursor: default; }
 .tpg .itin-pass-acts > .btn, .tpg .itin-pass-acts .plan-paid-add.btn { width: 100%; justify-content: center; }
 .tpg .itin-pass-acts > .plan-paid { grid-column: 1 / -1; }
 .tpg .itin-leg-row > .itin-leg-main { flex: none; width: auto; max-width: max-content; }
+
+/* ---- The hop and the lodging, tightened (T1010) ----
+   The hop is one small card on the dashed connector: the mode (its icon
+   inside the control, tap to change) and the figure, the time and distance
+   under it, then the ticket site and Own price as chips. The lodging is two
+   rows under a hairline: the bed's kind as a select drawn in its own words
+   with the figure, then where to book it as chips. */
+.tpg .itin-hop { padding: var(--space-2) 0 var(--space-2) 48px; }
+.tpg .itin-hop-card {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+  padding: var(--space-2) var(--space-3) var(--space-3);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+}
+.tpg .itin-hop-card .itin-leg { margin: 0; padding: 0; }
+.tpg .itin-hop-card .itin-leg-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "main fig" "meta meta";
+  align-items: center;
+  gap: 0 var(--space-2);
+}
+.tpg .itin-hop-card .itin-leg-main {
+  grid-area: main;
+  justify-self: start;
+  gap: var(--space-2);
+  min-height: 40px;
+  padding: 0 var(--space-2) 0 0;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: none;
+  font-size: var(--text-body);
+}
+.tpg .itin-hop-card .itin-leg-glyph { width: 32px; height: 32px; margin: 0; border: 0; }
+.tpg .itin-hop-card .itin-leg-fig { grid-area: fig; font-size: var(--text-body); font-weight: 800; }
+.tpg .itin-hop-card .itin-leg-meta { grid-area: meta; padding-left: 40px; margin-top: -6px; }
+@media (hover: hover) { .tpg .itin-hop-card .itin-leg-main:hover .itin-leg-name { text-decoration: underline; text-underline-offset: 3px; } }
+.tpg .itin-hop-card .itin-hop-acts { gap: 6px; padding-top: var(--space-2); border-top: 1px solid var(--border-soft); }
+
+/* The lodging. */
+.tpg .itin-lodging {
+  gap: var(--space-2);
+  margin: 0 var(--space-4) var(--space-2);
+  padding: var(--space-3) 0 0;
+  border-top: 1px solid var(--border-soft);
+  border-radius: 0;
+  background: none;
+}
+.itin-lodging-top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); min-width: 0; }
+.itin-lodging-kind {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  min-height: 36px;
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--text);
+}
+.itin-lodging-kind > svg:first-child { flex: none; color: var(--umber-700); }
+.itin-lodging-kind.is-pick { padding: 0 var(--space-3) 0 10px; border: 1px solid var(--border); border-radius: var(--radius-pill); background: var(--surface); }
+.itin-lodging-kind.is-pick:focus-within { outline: 2px solid var(--focus); outline-offset: 2px; }
+@media (hover: hover) { .itin-lodging-kind.is-pick:hover { border-color: var(--select-border); } }
+.itin-lodging-name { min-width: 0; overflow-wrap: anywhere; }
+.itin-lodging-chev { flex: none; color: var(--text-3); }
+.itin-lodging-select { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; font-size: 16px; cursor: pointer; }
+.itin-lodging-fig { flex: none; font-size: var(--text-body); font-weight: 800; font-variant-numeric: tabular-nums; }
+.tpg .itin-lodging .itin-bed { display: block; }
+.tpg .itin-lodging .itin-bed-acts { gap: 6px; }
+
+/* Chips: where to book, and Own price. */
+.tpg .itin-lodging .itin-find.btn,
+.tpg .itin-lodging .plan-paid-add.btn,
+.tpg .itin-hop-card .itin-find.btn,
+.tpg .itin-hop-card .plan-paid-add.btn {
+  min-height: 32px;
+  height: 32px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  font-size: var(--text-label);
+  font-weight: 600;
+}
+.tpg .itin-hop > .itin-hop-card { justify-self: stretch; width: 100%; box-sizing: border-box; }
+/* The base .itin-hop packs its tracks (justify-content: space-between); the
+   trip page's hop is one full column. */
+.tpg .itin-hop { grid-template-columns: minmax(0, 1fr); justify-content: stretch; align-items: stretch; }
