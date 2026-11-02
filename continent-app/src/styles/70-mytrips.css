@@ -34,7 +34,6 @@
   margin: 0 calc(-1 * var(--gutter));
   padding: var(--space-1) var(--gutter) 0;
   background: var(--surface-page);
-  border-bottom: 1px solid var(--border-soft);
 }
 .mt-tabs .ui-tabs { gap: var(--space-5); overflow-x: auto; scrollbar-width: none; border-bottom: 0; }
 .mt-tabs .ui-tabs::-webkit-scrollbar { display: none; }

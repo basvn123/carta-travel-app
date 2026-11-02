@@ -383,9 +383,9 @@ export function PlanHome({ titleTag = 'h1', trips = [], onStart, onOpenTrip, onD
         <header className="pfh-head">
           {/* T989 (owner): no visible title; the page's name stays for screen readers. */}
           <Title className="pf-title sr-only" tabIndex={-1}>{t('pf.home.yourTrips')}</Title>
-          <Button variant="quiet" className="pfh-new" onClick={onStart}>
-            <span className="pfh-new-plus" aria-hidden="true"><PlusIcon size={20} /></span>
-            <span className="pfh-new-name">{t('pf.home.newTrip')}</span>
+          <Button variant="quiet" className="pfh-new" onClick={onStart}
+            iconStart={<span className="pfh-new-plus"><PlusIcon size={20} /></span>}>
+            {t('pf.home.newTrip')}
           </Button>
           <CartaDoor fan={fan} onOpen={onOpenTrips} />
         </header>

@@ -371,7 +371,7 @@
      Read only by src/styles/86-plan-flow.css; no other surface takes them.
      The ground is an existing primitive: --text 13.6:1, --text-2 7.6:1,
      --text-3 5.3:1, --action 5.4:1 on it. */
-  --plan-ground:      var(--umber-50);
+  --plan-ground:      var(--surface-page);  /* T999: the app's ground; was --umber-50 */
   --text-plan-hero:   clamp(32px, 3.9vw, 56px);  /* the headline, Figtree 700 */
   --tracking-plan:    -0.025em;
 }

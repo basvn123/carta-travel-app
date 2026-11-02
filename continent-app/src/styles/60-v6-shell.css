@@ -925,10 +925,10 @@ html.kbd-open .bottom-nav { display: none; }
 .skip-link:focus-visible { transform: none; }
 
 /* A phone has no header row: with nothing above the settings band on Plan,
-   My trips and Account, the bar keeps only the safe area and loses its rule. */
-@media (max-width: 768px) {
-  .top-bar:not(:has(.settings-line)) { border-bottom: 0; }
-}
+   My trips and Account, the bar keeps only the safe area and loses its rule.
+   T999 (owner): at every width, a bar with no settings band under it has no
+   rule; it stands on the page's own colour. */
+.top-bar:not(:has(.settings-line)) { border-bottom: 0; }
 
 /* The bottom nav's slots: the icon in a box the selected pill fits, the
    initial in a 24 px disc when signed in. */
