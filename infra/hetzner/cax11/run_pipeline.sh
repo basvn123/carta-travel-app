@@ -13,8 +13,9 @@
 #   2. loads the secrets file through load-env.sh and activates the venv;
 #   3. re-syncs the venv when requirements.txt or constraints.txt changed, so
 #      the box keeps resolving the laptop's pinned versions (T046-h);
-#   4. installs continent-app's node_modules if they are missing, because the
-#      ship step runs `npm run build` and cloud-init never ran `npm ci`;
+#   4. installs continent-app's node_modules if they are missing or
+#      package-lock.json changed since the last install (T993), because the
+#      ship step runs `npm run build`;
 #   5. pulls from R2 whatever the weekly cadence needs and the box does not
 #      have yet: the master (app_data/app_data.json, gitignored), the fare
 #      history and model (data/history, data/models) and the orchestrator's
@@ -211,13 +212,21 @@ if "$PY" -c "import anthropic" 2>/dev/null; then
 fi
 
 # --- node_modules for the ship step --------------------------------------------
+# T993: also when package-lock.json changed since the last npm ci, stamped the
+# way the venv is. On 2026-10-23 the ship failed on "minisearch", a package the
+# app gained after the box's first npm ci; nothing reinstalled it.
 SHIP="${CARTA_SHIP:-build}"
-if [ "$SHIP" != "none" ] && [ ! -d continent-app/node_modules ]; then
+LOCK_STAMP="continent-app/node_modules/.carta-lock"
+lock_want="$(sha256sum continent-app/package-lock.json 2>/dev/null | cut -c1-16)"
+lock_have="$(cat "$LOCK_STAMP" 2>/dev/null || true)"
+if [ "$SHIP" != "none" ] && { [ ! -d continent-app/node_modules ] || [ "$lock_want" != "$lock_have" ]; }; then
+  if [ ! -d continent-app/node_modules ]; then why="missing"; else why="package-lock.json changed (stamp ${lock_have:-none} -> $lock_want)"; fi
   if [ $DRY_RUN -eq 1 ]; then
-    say "continent-app/node_modules missing; a real run would run npm ci first"
+    say "continent-app/node_modules $why; a real run would run npm ci first"
   else
-    say "continent-app/node_modules missing; running npm ci"
+    say "continent-app/node_modules $why; running npm ci"
     (cd continent-app && npm ci --no-audit --no-fund) || { say "npm ci failed; the ship step would fail too"; exit 5; }
+    echo "$lock_want" > "$LOCK_STAMP"
   fi
 fi
 
