@@ -196,8 +196,8 @@
   position: relative;
   isolation: isolate;
   display: grid;
-  gap: var(--space-3);
-  padding: var(--space-4) var(--space-4) var(--space-3);
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4) var(--space-2);
   overflow: hidden;
   border-radius: var(--radius-sheet);
   background:
@@ -207,7 +207,7 @@
   color: var(--tpc-ink);
 }
 .tpc ::selection { background: var(--sun-400); color: var(--umber-800); }
-@media (min-width: 1024px) { .tpg-side .tpc { padding: var(--space-5) var(--space-5) var(--space-4); } }
+@media (min-width: 1024px) { .tpg-side .tpc { padding: var(--space-4) var(--space-5) var(--space-3); } }
 .tpc-top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
 .tpc-h { margin: 0; font-size: var(--text-body); font-weight: 700; letter-spacing: -0.01em; color: var(--tpc-ink); }
 /* Group / Per person: cream on umber, the chosen one a cream pill. */
@@ -217,9 +217,9 @@
 .tpc .tpc-per .seg-item:focus-visible { outline: 2px solid var(--umber-50); outline-offset: 2px; }
 
 /* The arc and the total inside it. */
-.tpc-gauge { position: relative; display: grid; justify-items: center; margin-top: var(--space-1); }
-.tpc-arc { display: block; width: 100%; max-width: 300px; height: auto; overflow: visible; }
-.tpc-arc path { fill: none; stroke-width: 13; }
+.tpc-gauge { position: relative; display: grid; justify-items: center; margin-top: calc(-1 * var(--space-1)); }
+.tpc-arc { display: block; width: 100%; max-width: 236px; height: auto; overflow: visible; }
+.tpc-arc path { fill: none; stroke-width: 12; }
 .tpc-arc-ground { stroke: var(--tpc-line); stroke-linecap: butt; }
 .tpc-arc-seg {
   stroke-linecap: butt;
@@ -238,7 +238,7 @@
   margin: 0;
   text-align: center;
 }
-.tpc-n { font-size: 34px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; color: var(--tpc-ink); font-variant-numeric: tabular-nums; }
+.tpc-n { font-size: 30px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; color: var(--tpc-ink); font-variant-numeric: tabular-nums; }
 .tpc-unit { font-size: var(--text-caption); font-weight: 500; color: var(--tpc-ink-2); }
 @media (max-width: 359px) { .tpc-n { font-size: var(--text-headline); } }
 
@@ -261,8 +261,8 @@
   align-items: center;
   gap: var(--space-3);
   width: 100%;
-  min-height: 56px;
-  padding: var(--space-2) var(--space-1);
+  min-height: 48px;
+  padding: 6px var(--space-1);
   border: 0;
   border-radius: var(--radius-control);
   background: none;
@@ -277,21 +277,21 @@ div.tpc-hit { cursor: default; }
 @media (hover: hover) { button.tpc-hit:hover { background: color-mix(in srgb, var(--umber-50) 7%, transparent); } }
 .tpc-hit:focus-visible { outline: 2px solid var(--umber-50); outline-offset: -2px; }
 /* Each group's mark: its arc colour as a disc, the drawing in umber. */
-.tpc-ico { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; color: var(--umber-800); }
+.tpc-ico { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; color: var(--umber-800); }
 .tpc-k-travel .tpc-ico { background: var(--tpc-travel); }
 .tpc-k-around .tpc-ico { background: var(--tpc-around); }
 .tpc-k-stay .tpc-ico { background: var(--tpc-stay); }
 .tpc-k-food .tpc-ico { background: var(--tpc-food); }
 /* Flights: the airline's own mark on white, ringed in the flights colour. */
-.tpc-ico.is-marks { display: flex; width: auto; min-width: 36px; padding: 0; background: none; }
-.tpc .tpc-ico.is-marks .flt-mark { display: grid; place-items: center; width: 36px; height: 36px; padding: 0; overflow: hidden; border: 0; border-radius: 50%; background: var(--surface); box-shadow: 0 0 0 2px var(--tpc-travel); }
+.tpc-ico.is-marks { display: flex; width: auto; min-width: 32px; padding: 0; background: none; }
+.tpc .tpc-ico.is-marks .flt-mark { display: grid; place-items: center; width: 32px; height: 32px; padding: 0; overflow: hidden; border: 0; border-radius: 50%; background: var(--surface); box-shadow: 0 0 0 2px var(--tpc-travel); }
 .tpc-ico.is-marks .flt-mark + .flt-mark { margin-left: -10px; }
-.tpc .tpc-ico.is-marks .flt-mark img { width: 24px; height: 24px; object-fit: contain; }
+.tpc .tpc-ico.is-marks .flt-mark img { width: 22px; height: 22px; object-fit: contain; }
 .tpc-what { display: grid; gap: 1px; min-width: 0; }
 .tpc-label { font-size: var(--text-body); font-weight: 600; color: var(--tpc-ink); }
 .tpc-sub { display: inline-flex; align-items: center; gap: var(--space-1); min-width: 0; font-size: var(--text-caption); color: var(--tpc-ink-2); }
 .tpc-sub svg { flex: none; opacity: 0.8; }
-.tpc-fig { font-size: var(--text-lead); font-weight: 700; color: var(--tpc-ink); font-variant-numeric: tabular-nums; text-align: right; }
+.tpc-fig { font-size: var(--text-body); font-weight: 700; color: var(--tpc-ink); font-variant-numeric: tabular-nums; text-align: right; }
 .tpc-none { font-size: var(--text-label); font-weight: 500; color: var(--tpc-ink-2); }
 .tpc-go { width: 16px; color: var(--tpc-ink-2); }
 .tpc-row.is-empty .tpc-ico { opacity: 0.55; }
@@ -840,7 +840,11 @@ button.ct-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: 2
 .tbp { display: grid; gap: var(--space-2); min-width: 0; }
 .tbp-top { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); flex-wrap: wrap; }
 .tbp-h { margin: 0; font-size: var(--text-title); font-weight: 800; letter-spacing: -0.02em; }
-.tbp-n { font-size: var(--text-label); color: var(--text-3); font-variant-numeric: tabular-nums; }
+.tbp-n { margin-left: auto; font-size: var(--text-label); color: var(--text-3); font-variant-numeric: tabular-nums; }
+/* T1004: Previous and Next for a mouse or a trackpad; a finger swipes. */
+.tbp-steps { display: none; gap: var(--space-1); align-self: center; }
+@media (hover: hover) and (pointer: fine) { .tbp-steps { display: inline-flex; } }
+.tbp-prev { transform: rotate(180deg); }
 .tbp-pager { display: flex; gap: 4px; }
 .tbp-seg {
   flex: 1;

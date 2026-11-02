@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
-import { Money } from '../../components/ui/index.js';
-import { BedIcon, BusIcon, FerryIcon, TrainIcon } from '../../components/Icons.jsx';
+import { IconButton, Money } from '../../components/ui/index.js';
+import { BedIcon, BusIcon, ChevronRightIcon, FerryIcon, TrainIcon } from '../../components/Icons.jsx';
 import { PlaneIcon } from '../../components/TransportIcons.jsx';
 import { AirlineMark } from '../../components/flights/Flights.jsx';
 import { fmtDate } from '../../lib/dates.js';
@@ -23,7 +23,8 @@ const MODE_ICON = { train: TrainIcon, bus: BusIcon, ferry: FerryIcon, fly: Plane
  * Under a perforation: the figure and Book (the operator's own site). The
  * segments above the cards are the booked count and the pager in one: one
  * segment a part, filled when booked, the card in view marked, and a tap on
- * one brings its card in.
+ * one brings its card in. With a mouse or a trackpad (no swipe), Previous
+ * and Next beside the count step a card at a time (T1004).
  *
  *   rows      bookRows() output, every bookable part, booked or not
  *   headId    the heading's id
@@ -33,6 +34,7 @@ export function BookPasses({ rows, headId }) {
   const todo = rows.filter((r) => !r.booked);
   const track = useRef(null);
   const [at, setAt] = useState(0);
+  const [atEnd, setAtEnd] = useState(false);
 
   // The card in view: the one whose left edge is nearest the track's.
   useEffect(() => {
@@ -50,9 +52,13 @@ export function BookPasses({ rows, headId }) {
           const d = Math.abs(c.getBoundingClientRect().left - left);
           if (d < dist) { dist = d; best = i; }
         });
-        setAt(best);
+        // Scrolled to the end with two cards in view: the last one is "at".
+        const end = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4;
+        setAtEnd(end);
+        setAt(end ? cards.length - 1 : best);
       });
     };
+    onScroll();
     el.addEventListener('scroll', onScroll, { passive: true });
     return () => { el.removeEventListener('scroll', onScroll); cancelAnimationFrame(raf); };
   }, [todo.length]);
@@ -74,6 +80,16 @@ export function BookPasses({ rows, headId }) {
       <div className="tbp-top">
         <h2 className="tbp-h" id={headId}>{t(todo.length ? 'tp.next.title' : 'tp.next.done')}</h2>
         <span className="tbp-n">{t('tp.bookedOf', { n: nBooked, of: rows.length })}</span>
+        {todo.length > 1 && (
+          <span className="tbp-steps">
+            <IconButton tone="plain" label={t('detail.trackPrev')} disabled={at === 0} onClick={() => goTo(at - 1)}>
+              <ChevronRightIcon size={18} className="tbp-prev" />
+            </IconButton>
+            <IconButton tone="plain" label={t('detail.trackNext')} disabled={atEnd} onClick={() => goTo(at + 1)}>
+              <ChevronRightIcon size={18} />
+            </IconButton>
+          </span>
+        )}
       </div>
       <div className="tbp-pager">
         {Array.from({ length: nBooked }, (_, i) => <span key={`b${i}`} className="tbp-seg is-booked" aria-hidden="true" />)}
