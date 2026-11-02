@@ -4,7 +4,8 @@ import { Button, Chip, Tabs, IconButton } from '../../components/ui/index.js';
 import { CountryFlag, COUNTRY_ISO2 } from '../../components/CountryFlag.jsx';
 import { LoadingBlock, ErrorBlock } from '../../components/StateBlocks.jsx';
 import { SheetShell } from '../../browse/SheetShell.jsx';
-import { PlusIcon, UploadIcon, ChevronRightIcon } from '../../components/Icons.jsx';
+import { PlusIcon, UploadIcon, ChevronRightIcon, RouteIcon } from '../../components/Icons.jsx';
+import { TripArt } from '../../components/TripArt.jsx';
 import { countryName } from '../../lib/countryName.js';
 import { tabHref } from '../../lib/urlState.js';
 import { NextTripCard, TripRow } from './TripCards.jsx';
@@ -34,13 +35,20 @@ export function Section({ title, count, action, children, id, className = '' }) 
   );
 }
 
-/** An empty tab: the space named, one way forward, no apology. */
-export function Empty({ title, line, action }) {
+/**
+ * An empty tab: the space named, one way forward, no apology. T990: one
+ * card, TripArt across its top (with an icon when given), the title and the
+ * action under it.
+ */
+export function Empty({ title, line, action, icon = null, tone = 'umber' }) {
   return (
     <div className="mt-empty">
-      <p className="mt-empty-title">{title}</p>
-      {line && <p className="mt-empty-line">{line}</p>}
-      {action && <div className="mt-empty-actions">{action}</div>}
+      <TripArt tone={tone} icon={icon} className="mt-empty-art" />
+      <div className="mt-empty-body">
+        <p className="mt-empty-title">{title}</p>
+        {line && <p className="mt-empty-line">{line}</p>}
+        {action && <div className="mt-empty-actions">{action}</div>}
+      </div>
     </div>
   );
 }
@@ -48,9 +56,11 @@ export function Empty({ title, line, action }) {
 export const MT_TABS = ['trips', 'saved', 'europe'];
 
 /**
- * The page head (T923): "My trips", Add a booking and New trip from 700 px,
- * then the three underline tabs with their counts, sticky under the app
- * header, in the style of Explore's category tabs.
+ * The page head (T923, T989): the three underline tabs with their counts,
+ * sticky under the app header, in the style of Explore's category tabs, and
+ * at their right Add a booking (an icon on a phone; with New trip as buttons
+ * from 700 px). No visible "My trips" title (owner, T989): the tab bar and
+ * the lit door say where you are; the name stays for screen readers.
  */
 export function MyTripsHead({ tab, onTab, counts = {}, onAddBooking, onNewTrip }) {
   const { t } = useI18n();
@@ -61,27 +71,27 @@ export function MyTripsHead({ tab, onTab, counts = {}, onAddBooking, onNewTrip }
   ];
   return (
     <>
-      <div className="mt-head">
-        <h1 className="mt-title">{t('saved.title')}</h1>
-        {/* End check: a phone has no header buttons, so the booking door
-            stays reachable (above all during a trip, when the readiness
-            block is not shown). */}
-        {onAddBooking && (
-          <IconButton className="mt-head-book" label={t('mt.addBooking')} onClick={onAddBooking}>
-            <UploadIcon size={18} />
-          </IconButton>
-        )}
-        <div className="mt-head-acts">
-          {onAddBooking && (
-            <Button size="sm" iconStart={<UploadIcon size={16} />} onClick={onAddBooking}>{t('mt.addBooking')}</Button>
-          )}
-          {onNewTrip && (
-            <Button size="sm" iconStart={<PlusIcon size={16} />} onClick={onNewTrip}>{t('mt.newTrip')}</Button>
-          )}
-        </div>
-      </div>
+      <h1 className="sr-only">{t('saved.title')}</h1>
       <div className="mt-tabs">
-        <Tabs label={t('saved.title')} tabs={tabs} value={tab} onChange={onTab} panelId="mytrips-panel" className="mt-tabs-row" />
+        <div className="mt-tabs-bar">
+          <Tabs label={t('saved.title')} tabs={tabs} value={tab} onChange={onTab} panelId="mytrips-panel" className="mt-tabs-row" />
+          {/* End check: a phone has no header buttons, so the booking door
+              stays reachable (above all during a trip, when the readiness
+              block is not shown). */}
+          {onAddBooking && (
+            <IconButton className="mt-head-book" label={t('mt.addBooking')} onClick={onAddBooking}>
+              <UploadIcon size={18} />
+            </IconButton>
+          )}
+          <div className="mt-head-acts">
+            {onAddBooking && (
+              <Button size="sm" iconStart={<UploadIcon size={16} />} onClick={onAddBooking}>{t('mt.addBooking')}</Button>
+            )}
+            {onNewTrip && (
+              <Button size="sm" iconStart={<PlusIcon size={16} />} onClick={onNewTrip}>{t('mt.newTrip')}</Button>
+            )}
+          </div>
+        </div>
       </div>
     </>
   );
@@ -109,7 +119,8 @@ export function TripsTab({
       ) : nothing ? (
         <Empty
           title={t('saved.noTripsYet')}
-          action={<Button variant="primary" onClick={onPlanTrip}>{t('saved.planTrip')}</Button>}
+          icon={<RouteIcon size={28} />}
+          action={<Button variant="primary" iconStart={<PlusIcon size={18} />} onClick={onPlanTrip}>{t('saved.planTrip')}</Button>}
         />
       ) : (
         <>
