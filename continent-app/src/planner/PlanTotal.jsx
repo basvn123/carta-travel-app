@@ -271,7 +271,11 @@ export function PlanTotal({
                   </h3>
                   {mine.length > 0 && isOpen && (
                     <dl className="plan-lines costrows" id={`${uid}-gl-${tile.key}`}>
-                      {mine.map((l) => (
+                      {mine.map((l) => {
+                        // T1013 (owner: "not twice the same price"): a group of
+                        // one line shows its figure once, on the group's head.
+                        const once = mine.length === 1 && l.kind !== 'missing' && Math.abs((l.eur || 0) - (tile.eur || 0)) < 0.005;
+                        return (
                         <CostRow
                           key={l.key}
                           kind={l.key}
@@ -282,7 +286,7 @@ export function PlanTotal({
                           mark={l.kind === 'flight' && l.leg?.airline ? <AirlineMark code={l.leg.airline} size="sm" /> : null}
                           value={(
                             <>
-                              <LineValue line={l} lang={lang} t={t} onAddFare={onAddFare} />
+                              {!once && <LineValue line={l} lang={lang} t={t} onAddFare={onAddFare} />}
                               {onLine && l.kind !== 'missing' && (
                                 <Button variant="quiet" size="sm" className="plan-line-edit" onClick={() => onLine(l.key)}
                                   aria-label={t('tp.cost.changeAria', { what: (l.key === 'out' || l.key === 'back') && l.leg?.from ? `${l.leg.from} ${l.leg.to}` : t(LINE_KEY[l.key]) })}>
@@ -292,7 +296,8 @@ export function PlanTotal({
                             </>
                           )}
                         />
-                      ))}
+                        );
+                      })}
                     </dl>
                   )}
                 </section>

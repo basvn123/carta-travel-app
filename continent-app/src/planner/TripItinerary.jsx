@@ -1282,16 +1282,16 @@ export function TripItinerary({
               view as one grid of equal buttons (T432). */}
           {show('export') && <section className="itin-export" aria-labelledby="itin-export-h">
             <div className="itin-export-card">
-            <h2 className="itin-export-h" id="itin-export-h">{t('export.exportAndShare')}</h2>
-            {/* T1011 (owner: "more colourful, modern"; TripIt, Wanderlog and
-                KAYAK keep one Share door and the rest under it): Share trip
-                is the one primary, the PDF beside it, then every other way
-                out as a chip. */}
-            <div className="itin-export-main">
+            {/* T1013 (owner: "align better, more structured, Share trip
+                smaller"): the title with a compact Share trip on one row,
+                then every other way out as an even grid of tiles. */}
+            <div className="itin-export-top">
+              <h2 className="itin-export-h" id="itin-export-h">{t('export.exportAndShare')}</h2>
               <Button
-                variant="secondary"
+                variant="primary"
+                size="sm"
                 className="itin-export-share"
-                iconStart={<ShareIcon size={18} />}
+                iconStart={<ShareIcon size={16} />}
                 onClick={async () => {
                   const r = await shareTrip(exportPayload);
                   setShareState(r === 'copied' ? t('export.copied') : '');
@@ -1301,20 +1301,19 @@ export function TripItinerary({
               >
                 {t('export.shareTrip')}
               </Button>
-              <Button
-                variant="secondary"
-                className="itin-export-pdf"
-                iconStart={<DownloadIcon size={18} />}
+            </div>
+            <div className="itin-export-chips">
+              <button
+                type="button"
+                className="itin-export-chip is-umber"
                 onClick={() => {
                   if (!paywall.require('export')) return;
                   if (onPdf) onPdf(exportPayload); else downloadTripPdf(exportPayload);
                 }}
                 title={t('export.downloadPdfTitle')}
               >
-                PDF
-              </Button>
-            </div>
-            <div className="itin-export-chips">
+                <span className="itin-export-chip-ic" aria-hidden="true"><DownloadIcon size={14} /></span>{t('export.downloadPdf')}
+              </button>
               {sharePayload && (
                 <button type="button" className="itin-export-chip is-lagoon" onClick={handleCopyLink} title={t('export.copyLinkTitle')}>
                   <span className="itin-export-chip-ic" aria-hidden="true"><LinkIcon size={14} /></span>{t('export.copyLink')}
