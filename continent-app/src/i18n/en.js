@@ -9934,6 +9934,16 @@ export const en = {
   "tp.pass.of": "{n} of {of}",
   // T1005: the drawn map on the trip page
   "tp.map.title": "Your trip on the map",
+  // T1015: the Notes tab
+  "tp.notes.title": "Notes",
+  "tp.notes.hint": "Addresses, phone numbers, emergency contacts, door codes",
+  "tp.docs.title": "Documents",
+  "tp.docs.add": "Add",
+  "tp.docs.emptyTitle": "Keep your travel papers here",
+  "tp.docs.empty": "Booking confirmations, a passport scan, your insurance policy, tickets and boarding passes.",
+  "tp.docs.private": "Only you can see these. They stay on this device, so they open offline. PDF or photos, up to {mb} MB each.",
+  "tp.docs.open": "Open {name}",
+  "tp.docs.delete": "Delete {name}",
   // T1008: the compact passes on the Itinerary
   "tp.pass.each": "{price} a seat",
   "tp.pass.withCabin": "cabin bag in",

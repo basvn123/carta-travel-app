@@ -73,7 +73,9 @@ const FULL_MAP_PAD = { top: 110, left: 80, right: 200, bottom: 80 };
 const NO_DESTINATIONS = Object.freeze({});
 
 // The trip page's tabs, in order (T819); the address carries one (T828).
-const TRIP_TABS = ['overview', 'itinerary', 'costs', 'days'];
+// T1015: 'notes' was missing, so every tap on the Notes tab fell back to
+// the Overview (the tab never opened).
+const TRIP_TABS = ['overview', 'itinerary', 'costs', 'days', 'notes'];
 
 
 /**

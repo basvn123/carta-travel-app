@@ -9325,6 +9325,16 @@ export const es = {
   "tp.pass.of": "{n} de {of}",
   // T1005: the drawn map on the trip page
   "tp.map.title": "Tu viaje en el mapa",
+  // T1015: the Notes tab
+  "tp.notes.title": "Notas",
+  "tp.notes.hint": "Direcciones, teléfonos, contactos de emergencia, códigos de puerta",
+  "tp.docs.title": "Documentos",
+  "tp.docs.add": "Añadir",
+  "tp.docs.emptyTitle": "Guarda aquí tus papeles de viaje",
+  "tp.docs.empty": "Confirmaciones de reserva, una copia del pasaporte, tu póliza de seguro, billetes y tarjetas de embarque.",
+  "tp.docs.private": "Solo tú los ves. Se quedan en este dispositivo y se abren sin conexión. PDF o fotos, hasta {mb} MB cada uno.",
+  "tp.docs.open": "Abrir {name}",
+  "tp.docs.delete": "Eliminar {name}",
   // T1008: the compact passes on the Itinerary
   "tp.pass.each": "{price} por asiento",
   "tp.pass.withCabin": "equipaje de mano incluido",

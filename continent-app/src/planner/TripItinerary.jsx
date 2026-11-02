@@ -3,6 +3,7 @@ import { eur, eurExact, fmtHours, safeUrl } from '../lib/format.js';
 import { fmtDate } from '../lib/dates.js';
 import { formatMoney } from '../lib/money.js';
 import { TripExtras } from './TripExtras.jsx';
+import { TripNotes } from './trip/TripNotes.jsx';
 import { loadTripExtras, persistTripExtras, subscribeDayPlanStore } from './dayPlanStore.js';
 import { googleMapsDirParts, GMAPS_STOPS_PHONE, GMAPS_STOPS_DESKTOP } from '../lib/routing.js';
 import { cityCoords } from '../lib/runtime_pricing.js';
@@ -1344,23 +1345,15 @@ export function TripItinerary({
           {/* T889: the trip page's Notes tab, the extras inline: the bookings
               with Carta's booking reader, the inbox, the notes and the packing
               list (its basics a tap away). */}
+          {/* T1015: the Notes tab is the trip's notes and its documents
+              (TripNotes); the bookings and the packing list are the
+              Itinerary's kit. */}
           {show('extras') && (
-            <section className="itin-extras" aria-labelledby="itin-extras-h">
-              <h2 className="sr-only" id="itin-extras-h">{t('tp.tab.notes')}</h2>
-              <p className="itin-extras-lead">{t('tp.notes.lead')}</p>
-              <TripExtras
-                rows={bookingRows}
-                extras={extras}
-                onChange={saveExtras}
-                days={dayPlan.map((d) => ({ n: d.dayNum, city: d.stop.dest?.city || '', date: d.date }))}
-                importContext={{
-                  stops: stopDetails.filter((s) => s.dest).map((s) => ({
-                    city: s.dest.city, country: s.dest.country, arrive: s.arriveDate || '', nights: s.nights,
-                  })),
-                  groupSize,
-                }}
-              />
-            </section>
+            <TripNotes
+              planId={extrasPlanId || 'tripdraft'}
+              notes={extras.notes || ''}
+              onNotes={(text) => saveExtras({ ...extras, notes: text })}
+            />
           )}
       </div>
 

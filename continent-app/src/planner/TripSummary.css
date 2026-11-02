@@ -1749,3 +1749,66 @@ span.tbp-seg { cursor: default; }
 .tpg .itin-export-chip { border: 0; background: var(--surface); }
 @media (hover: hover) { .tpg .itin-export-chip:hover { border: 0; background: var(--umber-50); } }
 .tpg .itin-export-top .itin-export-h { font-size: var(--text-title); font-weight: 600; letter-spacing: 0; }
+
+/* ---- The Notes tab (T1015): notes, then documents ----
+   One field for the notes, then the documents: one Add, a list of files
+   (an image's thumbnail or a PDF's mark, the name, the size; a tap opens
+   it), and one quiet line saying they stay on this device. */
+.tnt { display: grid; gap: var(--space-6); min-width: 0; }
+.tnt-block { display: grid; gap: var(--space-3); min-width: 0; }
+.tnt-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.tnt-h { display: inline-flex; align-items: center; gap: var(--space-2); margin: 0; font-size: var(--text-title); font-weight: 600; color: var(--text); }
+.tnt-count { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: var(--radius-pill); background: var(--umber-100); color: var(--umber-700); font-size: var(--text-caption); font-weight: 700; }
+.tnt-notes {
+  width: 100%;
+  min-height: 132px;
+  padding: var(--space-3) var(--space-4);
+  border: 0;
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  resize: vertical;
+}
+.tnt-notes::placeholder { color: var(--text-3); }
+.tnt-notes:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.tnt-add.btn { flex: none; min-height: 36px; border-radius: var(--radius-pill); }
+.tnt-docs.is-over .tnt-empty, .tnt-docs.is-over .tnt-list { outline: 2px dashed var(--umber-300); outline-offset: 4px; border-radius: var(--radius-card); }
+.tnt-empty {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-4);
+  border: 1.5px dashed var(--umber-200);
+  border-radius: var(--radius-card);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+@media (hover: hover) { .tnt-empty:hover { border-color: var(--umber-300); background: var(--umber-50); } }
+.tnt-empty:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.tnt-empty-ic { display: grid; flex: none; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--umber-100); color: var(--umber-700); }
+.tnt-empty-text { display: grid; gap: 2px; min-width: 0; }
+.tnt-empty-text b { font-size: var(--text-body); font-weight: 700; }
+.tnt-empty-text span { font-size: var(--text-label); line-height: 1.4; color: var(--text-2); }
+.tnt-list { display: grid; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.tnt-row { display: flex; align-items: center; gap: var(--space-1); padding-right: var(--space-1); border-radius: var(--radius-card); background: var(--surface); box-shadow: var(--elev-1); }
+.tnt-open { display: flex; flex: 1; align-items: center; gap: var(--space-3); min-width: 0; padding: var(--space-2) var(--space-2) var(--space-2) var(--space-2); border: 0; border-radius: var(--radius-card); background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.tnt-open:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+.tnt-thumb { display: block; flex: none; width: 48px; height: 48px; border-radius: var(--radius-control); object-fit: cover; background: var(--surface-sunken); }
+.tnt-thumb.is-mark { display: grid; place-items: center; align-content: center; gap: 1px; background: var(--lagoon-100); color: var(--lagoon-800); }
+.tnt-thumb.is-pdf { background: #fbe3d8; color: #8f3a17; }
+.tnt-thumb.is-mark small { font-size: 9px; font-weight: 800; letter-spacing: 0.04em; }
+.tnt-info { display: grid; gap: 2px; min-width: 0; }
+.tnt-name { overflow: hidden; font-size: var(--text-body); font-weight: 600; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
+.tnt-meta { font-size: var(--text-caption); color: var(--text-2); font-variant-numeric: tabular-nums; }
+.tnt-del { flex: none; color: var(--text-3); }
+.tnt-quiet { display: flex; align-items: flex-start; gap: var(--space-2); margin: 0; font-size: var(--text-caption); line-height: 1.45; color: var(--text-2); }
+.tnt-quiet svg { flex: none; margin-top: 2px; color: var(--umber-600); }
+.tnt-problem { margin: 0; padding: var(--space-2) var(--space-3); border-radius: var(--radius-control); background: #fbe3d8; color: #8f3a17; font-size: var(--text-label); }

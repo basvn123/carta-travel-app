@@ -9325,6 +9325,16 @@ export const nl = {
   "tp.pass.of": "{n} van {of}",
   // T1005: the drawn map on the trip page
   "tp.map.title": "Je reis op de kaart",
+  // T1015: the Notes tab
+  "tp.notes.title": "Notities",
+  "tp.notes.hint": "Adressen, telefoonnummers, noodcontacten, deurcodes",
+  "tp.docs.title": "Documenten",
+  "tp.docs.add": "Toevoegen",
+  "tp.docs.emptyTitle": "Bewaar hier je reispapieren",
+  "tp.docs.empty": "Boekingsbevestigingen, een scan van je paspoort, je verzekeringspolis, tickets en instapkaarten.",
+  "tp.docs.private": "Alleen jij ziet deze. Ze blijven op dit toestel, dus ze openen ook offline. PDF of foto’s, tot {mb} MB per stuk.",
+  "tp.docs.open": "{name} openen",
+  "tp.docs.delete": "{name} verwijderen",
   // T1008: the compact passes on the Itinerary
   "tp.pass.each": "{price} per stoel",
   "tp.pass.withCabin": "handbagage inbegrepen",
