@@ -9928,6 +9928,10 @@ export const en = {
   "tp.sw.noPicks": "Nothing in reach fits those answers. Try fewer wishes or a longer reach.",
   "tp.fl.title": "Change your flight",
   "tp.fl.change": "Change flight",
+  // T1003: the Still to book passes
+  "tp.pass.in": "Check-in",
+  "tp.pass.out": "Check-out",
+  "tp.pass.of": "{n} of {of}",
   "tp.fl.way": "Which way",
   "tp.fl.to": "to",
   "tp.fl.prefs": "Your flight preferences",

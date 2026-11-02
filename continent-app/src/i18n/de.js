@@ -9319,6 +9319,10 @@ export const de = {
   "tp.sw.noPicks": "Nichts in Reichweite passt dazu. Wähle weniger Wünsche oder eine größere Entfernung.",
   "tp.fl.title": "Flug ändern",
   "tp.fl.change": "Flug ändern",
+  // T1003: the Still to book passes
+  "tp.pass.in": "Check-in",
+  "tp.pass.out": "Check-out",
+  "tp.pass.of": "{n} von {of}",
   "tp.fl.way": "Welche Richtung",
   "tp.fl.to": "nach",
   "tp.fl.prefs": "Deine Flugwünsche",

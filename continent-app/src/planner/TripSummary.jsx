@@ -26,6 +26,7 @@ import { CostCard } from './trip/CostCard.jsx';
 import { ChangeTripSheet } from './trip/ChangeTripSheet.jsx';
 import { RouteCodes } from './trip/RouteCodes.jsx';
 import { bookRows } from './trip/ReadyToBook.jsx';
+import { BookPasses } from './trip/BookPasses.jsx';
 import { useSettings } from '../components/SettingsLine.jsx';
 import { useLifestyleParts } from './planHooks.js';
 import { bookedCount, countdownText, shownTripName } from './trip/tripHead.js';
@@ -315,6 +316,7 @@ function MapCard({ map, mapFull, title }) {
  *   carTip               T873: lib/transport.js carAdvice for the route's one car row
  *   budgetCard           T846: the total against the budget, inside the
  *                        cost card since T886 (BudgetCard compact)
+ *   onChangeFlight(dir)  T1003: the flight sheet, from the cost card's Flights row
  *   bar                  round buttons on the top row (save)
  *   footer               the saved line under the page
  */
@@ -323,7 +325,7 @@ export function TripSummary({
   priced, flight = null, ownFlight = null, driveLegs = null, origin = '',
   tab = 'overview', onTab, panels = {}, map = null, mapFull = null,
   onPlanDays = null, onPlanHome = null, onSettings = null,
-  onExport = null, bar = null, footer = null, history = null, onChip = null, onAddPaid = null, budgetCard = null,
+  onExport = null, bar = null, footer = null, history = null, onChip = null, onAddPaid = null, budgetCard = null, onChangeFlight = null,
   onPlanRest = null, booked = null, book = null, carTip = null,
   // T838: no edit mode. Every fact is changed where it is shown (the chips,
   // the name, the route's stops), so the page has one layout.
@@ -339,7 +341,6 @@ export function TripSummary({
   const bookedNow = bookedCount({ flight, priced, ownFlight, stopDetails, stayCosts, booked });
   const airlinesAll = useAirlines();
   const rows = bookRows({ tripStart, tripEnd, stopDetails, stayCosts, stayTier, priced, flight, ownFlight, party, booked, book }, { t, lang, airlines: airlinesAll });
-  const nextRow = rows.find((r) => !r.booked && r.link) || null;
   // The Lifestyle sets what the days cost (one .lifestyle-btn door): a chip
   // with the trip's own, opening the same sheet as everywhere else.
   const settings = useSettings();
@@ -453,34 +454,13 @@ export function TripSummary({
   const costCard = (
     <CostCard priced={priced} people={n} per={per} onPer={setPer} budget={budgetCard}
       aroundNote={carTip && carTip.verdict === 'yes' && !flight?.driving ? t('tp.tile.carAdvised') : ''}
-      onOpen={(k) => go('costs', `tp-cost-${k}`)} onAll={() => go('costs')} onAddPaid={onAddPaid} />
+      onOpen={(k) => go('costs', `tp-cost-${k}`)} onAll={() => go('costs')} onAddPaid={onAddPaid}
+      lifestyle={lifestyle} onLifestyle={onLifestyle} onChangeFlight={onChangeFlight} />
   );
 
   const overview = (
     <div className="tpg-overview">
-      {bookedNow.of > 0 && (
-        <section className="tpg-next" aria-labelledby={`${uid}-next`}>
-          <div className="tpg-next-top">
-            <h2 className="tpg-next-h" id={`${uid}-next`}>{t(nextRow ? 'tp.next.title' : 'tp.next.done')}</h2>
-            <span className="tpg-next-n">{t('tp.bookedOf', { n: bookedNow.n, of: bookedNow.of })}</span>
-          </div>
-          <span className="tpg-next-bar" aria-hidden="true">
-            {Array.from({ length: bookedNow.of }, (_, i) => <i key={i} className={i < bookedNow.n ? 'is-on' : ''} />)}
-          </span>
-          {nextRow && (
-            <div className="tpg-next-row">
-              <span className="ts-mark" aria-hidden="true">{nextRow.icon}</span>
-              <span className="tpg-next-main">
-                <span className="ts-node-title">{nextRow.title}</span>
-                <span className="ts-node-sub">{[nextRow.sub, Number.isFinite(nextRow.eur) && nextRow.eur > 0 ? formatMoney(nextRow.eur, { precision: 'whole', locale: lang }) : ''].filter(Boolean).join(', ')}</span>
-              </span>
-              <a className="btn btn-secondary btn-sm tpg-next-go" href={nextRow.link.href} target="_blank" rel="noreferrer noopener" aria-label={nextRow.link.label}>
-                <span className="btn-label">{t('tp.book')}</span>
-              </a>
-            </div>
-          )}
-        </section>
-      )}
+      {bookedNow.of > 0 && <BookPasses rows={rows} headId={`${uid}-next`} />}
 
       {!wide && costCard}
       {!wide && mapCard}

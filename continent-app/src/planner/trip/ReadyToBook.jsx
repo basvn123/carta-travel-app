@@ -67,6 +67,12 @@ export function bookRows({
         date ? fmtDate(date, true) : '',
         leg && !(paid[dir] > 0) ? [airlineName(airlines, leg.airline) || leg.airline, t('flight.times', { dep: leg.dep, arr: leg.arr })].filter(Boolean).join(' ') : '',
       ].filter(Boolean).join(', '),
+      // T1003: the pass's own fields, so the card lays them out instead of one line.
+      pass: {
+        kind: 'flight', from: ends[0] || '', to: ends[1] || '', date,
+        dep: leg && !(paid[dir] > 0) ? leg.dep : '', arr: leg && !(paid[dir] > 0) ? leg.arr : '',
+        airline: leg?.airline || '', airlineName: leg?.airline ? (airlineName(airlines, leg.airline) || leg.airline) : '',
+      },
       eur: paid[dir] > 0 ? paid[dir] : (leg?.cost?.total ?? null),
       yours: paid[dir] > 0,
       booked: isBooked,
@@ -93,6 +99,10 @@ export function bookRows({
       icon: <BedIcon size={18} />,
       title: t('tp.rb.stay', { city, nights: t(s.nights === 1 ? 'plan.nightsOne' : 'plan.nightsMany', { n: s.nights }) }),
       sub: [sc.ownAccom ? t('trip.sum.ownStay') : t(`stay.${tier || 'home'}`), s.arriveDate ? t('plan.dateRange', { a: fmtDate(s.arriveDate, true), b: fmtDate(s.departDate, true) }) : ''].filter(Boolean).join(', '),
+      pass: {
+        kind: 'stay', city, nights: s.nights, checkin: s.arriveDate || '', checkout: s.departDate || '',
+        what: sc.ownAccom ? t('trip.sum.ownStay') : t(`stay.${tier || 'home'}`),
+      },
       eur: sc.accomTotal ?? null,
       yours: Boolean(sc.ownAccom),
       booked: isBooked,
@@ -115,6 +125,7 @@ export function bookRows({
       icon: <Icon size={18} />,
       title: t(`tp.rb.leg.${leg.mode}`, { city: cityLabel(next.dest.city || '') }),
       sub: next.arriveDate ? fmtDate(next.arriveDate, true) : '',
+      pass: { kind: 'leg', mode: leg.mode, from: city, to: cityLabel(next.dest.city || ''), date: next.arriveDate || '' },
       eur: leg.ground_total ?? null,
       yours: own,
       booked: false,

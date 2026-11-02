@@ -9319,6 +9319,10 @@ export const es = {
   "tp.sw.noPicks": "Nada a tu alcance encaja. Prueba con menos deseos o más distancia.",
   "tp.fl.title": "Cambiar el vuelo",
   "tp.fl.change": "Cambiar vuelo",
+  // T1003: the Still to book passes
+  "tp.pass.in": "Entrada",
+  "tp.pass.out": "Salida",
+  "tp.pass.of": "{n} de {of}",
   "tp.fl.way": "Qué trayecto",
   "tp.fl.to": "a",
   "tp.fl.prefs": "Tus preferencias de vuelo",

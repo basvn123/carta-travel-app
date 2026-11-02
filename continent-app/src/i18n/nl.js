@@ -9319,6 +9319,10 @@ export const nl = {
   "tp.sw.noPicks": "Niets binnen bereik past bij die antwoorden. Kies minder wensen of verder weg.",
   "tp.fl.title": "Je vlucht wijzigen",
   "tp.fl.change": "Vlucht wijzigen",
+  // T1003: the Still to book passes
+  "tp.pass.in": "Inchecken",
+  "tp.pass.out": "Uitchecken",
+  "tp.pass.of": "{n} van {of}",
   "tp.fl.way": "Welke kant",
   "tp.fl.to": "naar",
   "tp.fl.prefs": "Je vluchtvoorkeuren",

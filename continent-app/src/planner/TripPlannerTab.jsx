@@ -1444,6 +1444,8 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
               if (el && el.getBoundingClientRect().top > window.innerHeight * 0.4) el.scrollIntoView({ block: 'start' });
               setChipOpen({ kind, ref });
             }}
+            // T1003: the cost card's Flights row opens the same flight sheet as the Itinerary.
+            onChangeFlight={tp.planned && tp.priced?.cartaFlight ? setFlightSheet : null}
             budgetCard={(
               <BudgetCard
                 priced={tp.priced}

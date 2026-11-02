@@ -9319,6 +9319,10 @@ export const it = {
   "tp.sw.noPicks": "Nulla nel raggio corrisponde. Prova con meno desideri o più distanza.",
   "tp.fl.title": "Cambia il volo",
   "tp.fl.change": "Cambia volo",
+  // T1003: the Still to book passes
+  "tp.pass.in": "Check-in",
+  "tp.pass.out": "Check-out",
+  "tp.pass.of": "{n} di {of}",
   "tp.fl.way": "Quale tratta",
   "tp.fl.to": "a",
   "tp.fl.prefs": "Le tue preferenze di volo",
