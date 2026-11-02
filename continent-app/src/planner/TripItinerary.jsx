@@ -3,7 +3,6 @@ import { eur, eurExact, fmtHours, safeUrl } from '../lib/format.js';
 import { fmtDate } from '../lib/dates.js';
 import { formatMoney } from '../lib/money.js';
 import { TripExtras } from './TripExtras.jsx';
-import { ExpenseLedger } from './ExpenseLedger.jsx';
 import { loadTripExtras, persistTripExtras, subscribeDayPlanStore } from './dayPlanStore.js';
 import { googleMapsDirParts, GMAPS_STOPS_PHONE, GMAPS_STOPS_DESKTOP } from '../lib/routing.js';
 import { cityCoords } from '../lib/runtime_pricing.js';
@@ -654,8 +653,8 @@ export function TripItinerary({
   const tools = [
     // T1011 (owner): the kit is what is carried out: the bookings and the
     // packing list, each with how far along it is. Notes have their own tab;
-    // what was spent sits with the costs (the Costs tab, after Wanderlog's
-    // budget beside the plan).
+    // group expenses left the trip page (T1012, owner: a section of their own
+    // comes later).
     { key: 'bookings', Icon: TicketIcon, tone: 'lagoon', title: t('plan.toolBookings'), state: t('plan.toolBookedOf', { n: doneBookings, of: bookingRows.length }), of: bookingRows.length, n: doneBookings },
     { key: 'packing', Icon: LuggageIcon, tone: 'sun', title: t('plan.toolPacking'), state: (extras.checklist || []).length ? t('plan.toolPackedOf', { n: packed, of: extras.checklist.length }) : t('plan.toolEmpty'), of: (extras.checklist || []).length, n: packed },
   ];
@@ -1342,13 +1341,6 @@ export function TripItinerary({
 
           {show('before') && beforeSlot}
 
-          {/* T1011: what was spent sits with what it costs (the Costs tab). */}
-          {show('expenses') && (
-            <section className="itin-spent" aria-labelledby="itin-spent-h">
-              <h2 className="itin-h" id="itin-spent-h">{t('plan.toolExpenses')}</h2>
-              <ExpenseLedger extras={extras} onChange={saveExtras} groupSize={groupSize} />
-            </section>
-          )}
 
           {/* T889: the trip page's Notes tab, the extras inline: the bookings
               with Carta's booking reader, the inbox, the notes and the packing
@@ -1375,9 +1367,7 @@ export function TripItinerary({
 
       {openTool && (
         <SheetShell title={openTool.title} onClose={() => setToolOpen('')} className="itin-tool-sheet" labelId="itin-tool-sheet-title">
-          {openTool.key === 'expenses' ? (
-            <ExpenseLedger extras={extras} onChange={saveExtras} groupSize={groupSize} />
-          ) : (
+          {(
             <TripExtras
               only={openTool.key}
               rows={bookingRows}

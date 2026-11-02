@@ -1180,8 +1180,11 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
           ['car', CarIcon, 'trip.rentalCarOpt'],
           ['owncar', CarIcon, 'trip.ownCarOpt'],
         ].map(([k, ModeIco, lbl]) => (
-          <Chip key={k} kind="choice" selected={tp.transportPref === k} onClick={() => tp.setTransportPref(k)}>
-            {React.createElement(ModeIco, { size: 16 })} {t(lbl)}
+          // T1012: the mode's icon in the chip's own icon slot, so it and
+          // the words sit on one centre line (it was inline in the label).
+          <Chip key={k} kind="choice" selected={tp.transportPref === k} onClick={() => tp.setTransportPref(k)}
+            icon={React.createElement(ModeIco, { size: 18 })}>
+            {t(lbl)}
           </Chip>
         ))}
       </ChipGroup>
@@ -1533,7 +1536,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
             history={tp.planned ? { canUndo: hist.canUndo, canRedo: hist.canRedo, undo: () => { hist.undo(); setToast(null); }, redo: () => { hist.redo(); setToast(null); } } : null}
             panels={{
               itinerary: renderItinerary(['route', 'tools', 'export', 'before']),
-              costs: renderItinerary(['receipt', 'expenses'], true),
+              costs: renderItinerary(['receipt'], true),
               // T889: the Notes tab, the trip extras inline.
               notes: renderItinerary(['extras']),
               // T849-T851: the Days tab, each day as a card of what it holds.

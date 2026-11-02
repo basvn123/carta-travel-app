@@ -1603,9 +1603,6 @@ span.tbp-seg { cursor: default; }
 .tpg .itin-export-chip.is-sand .itin-export-chip-ic { background: var(--umber-200); }
 .tpg .itin-export-note { margin: var(--space-2) 0 0; font-size: var(--text-caption); color: var(--text-2); }
 
-/* What was spent, on the Costs tab. */
-.tpg .itin-spent { display: grid; gap: var(--space-2); }
-.tpg .itin-spent .itin-h { margin: 0; }
 
 /* Before you go: short cards that swipe, each topic its colour. */
 .bgo { display: grid; gap: var(--space-3); }
@@ -1645,3 +1642,49 @@ span.tbp-seg { cursor: default; }
 .bgo .bgo-card .bgo-text { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
 .bgo .bgo-list .bgo-card .bgo-text { display: block; -webkit-line-clamp: unset; }
 .tpg-tools > .tpg-tool:only-child { grid-column: 1 / -1; flex: 1 1 100%; }
+
+/* T1012: Getting between stops, four equal choices in a 2 x 2 grid, the
+   icon and the words on one centre line. */
+.tpg .trip-transport-chips { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+.tpg .trip-transport-chips .ui-chip {
+  justify-content: flex-start;
+  gap: var(--space-2);
+  min-height: 48px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-control);
+  font-size: var(--text-body);
+  line-height: 1.2;
+  white-space: normal;
+  text-align: left;
+}
+.tpg .trip-transport-chips .ui-chip-icon,
+.tpg .trip-transport-chips .ui-chip-tick { display: grid; flex: none; place-items: center; width: 20px; height: 20px; margin: 0; }
+.tpg .trip-transport-chips .ui-chip-icon { color: var(--umber-700); }
+
+/* ---- T1012: Export & share quieter, the prices to the front ----
+   Export & share is a white card (owner: "the brown feels busy"): Share trip
+   is its one umber button, the PDF a quiet one beside it, and the other ways
+   out are light chips whose small coloured marks carry the colour. */
+.tpg .itin-export-card { background: var(--surface); box-shadow: var(--elev-1); color: var(--text); }
+.tpg .itin-export-h { font-size: var(--text-lead); font-weight: 700; letter-spacing: -0.01em; color: var(--text); }
+.tpg .itin-export-share.btn { background: var(--action); color: var(--action-text); }
+.tpg .itin-export-pdf.btn { border: 1px solid var(--border); background: var(--surface); color: var(--text); }
+@media (hover: hover) {
+  .tpg .itin-export-share.btn:hover { background: var(--action-hover); }
+  .tpg .itin-export-pdf.btn:hover { background: var(--surface-hover); }
+  .tpg .itin-export-chip:hover { background: var(--surface-hover); }
+}
+.tpg .itin-export-main .btn:focus-visible, .tpg .itin-export-chip:focus-visible { outline-color: var(--focus); }
+.tpg .itin-export-chip { background: var(--surface-sunken); color: var(--text); }
+.tpg .itin-export-chip-ic { width: 26px; height: 26px; }
+
+/* Prices: larger and heavier wherever the trip page names one, so the
+   figure is the first thing read on each card. */
+.tpg .jr-fig { font-size: var(--text-title); font-weight: 800; letter-spacing: -0.02em; color: var(--text); }
+.tpg .tbp-fig { font-size: 22px; }
+.tpg .itin-pass-fig .money { font-size: var(--text-title); letter-spacing: -0.02em; }
+.itin-lodging-fig { font-size: var(--text-lead); letter-spacing: -0.01em; }
+.tpg .itin-hop-card .itin-leg-fig { font-size: var(--text-lead); letter-spacing: -0.01em; }
+.tpc-fig { font-size: var(--text-lead); font-weight: 800; letter-spacing: -0.01em; }
+.tpg.is-costs .plan-total-group-n { font-size: var(--text-lead); font-weight: 800; letter-spacing: -0.01em; }
+.tpg.is-costs .plan-lines .money { font-weight: 700; color: var(--text); }
