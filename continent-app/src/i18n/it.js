@@ -9323,6 +9323,8 @@ export const it = {
   "tp.pass.in": "Check-in",
   "tp.pass.out": "Check-out",
   "tp.pass.of": "{n} di {of}",
+  // T1005: the drawn map on the trip page
+  "tp.map.title": "Il tuo viaggio sulla mappa",
   "tp.fl.way": "Quale tratta",
   "tp.fl.to": "a",
   "tp.fl.prefs": "Le tue preferenze di volo",

@@ -2,21 +2,15 @@ import React, { useState, useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import './TripSummary.css';
 import { useI18n } from '../i18n/index.jsx';
-import { Button, Chip, IconButton, Money, Tabs } from '../components/ui/index.js';
+import { Button, IconButton, Tabs } from '../components/ui/index.js';
 import {
-  ArrowLeftIcon, BedIcon, CalendarIcon, CarIcon, FerryIcon, HomeIcon, MoonIcon, PersonIcon, PencilIcon,
-  TrainIcon, BusIcon, SparkIcon, ShareIcon,
+  ArrowLeftIcon, CalendarIcon, MoonIcon, PersonIcon, PencilIcon, SparkIcon, ShareIcon,
   ExpandIcon, ShrinkIcon, UndoIcon, RedoIcon, RouteIcon,
 } from '../components/Icons.jsx';
-import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
-import NotYet from '../components/NotYet.jsx';
-import { AirlineMark } from '../components/flights/Flights.jsx';
-import { useAirlines, airlineName } from '../lib/flights/useAirlines.js';
-import { TRAVEL_MODE_LABEL } from '../lib/transportLinks.js';
+import { useAirlines } from '../lib/flights/useAirlines.js';
 import { fmtDate } from '../lib/dates.js';
-import { formatMoney } from '../lib/money.js';
 import { nightsBetween } from '../lib/tripDates.js';
 import { partyText } from '../lib/party.js';
 import { cityLabel } from '../lib/placeName.js';
@@ -24,14 +18,14 @@ import { useMedia } from '../browse/home/useHome.js';
 import { RecordMapDialog } from '../auth/mytrips/parts.jsx';
 import { CostCard } from './trip/CostCard.jsx';
 import { ChangeTripSheet } from './trip/ChangeTripSheet.jsx';
-import { RouteCodes } from './trip/RouteCodes.jsx';
 import { bookRows } from './trip/ReadyToBook.jsx';
 import { BookPasses } from './trip/BookPasses.jsx';
+import { Journey } from './trip/Journey.jsx';
+import { TripTrace } from './trip/TripTrace.jsx';
 import { useSettings } from '../components/SettingsLine.jsx';
 import { useLifestyleParts } from './planHooks.js';
 import { bookedCount, countdownText, shownTripName } from './trip/tripHead.js';
 
-const WAY_ICON = { fly: PlaneIcon, train: TrainIcon, bus: BusIcon, car: CarIcon, ferry: FerryIcon };
 
 /**
  * The trip's head (T814): its photos, its name, the dates and the people,
@@ -92,187 +86,40 @@ export function TripHead({ name, photos = [], dates = '', people = '', nights = 
  * flight names its arrival day. The car advice offers the car with what it
  * does to the total (`onCar`, `carDelta`).
  */
-function OverviewRoute({ tripStart, tripEnd, stopDetails, stayCosts, stayTier, priced, flight, ownFlight, driveLegs, origin, div, carTip = null, rows = [], onCar = null, carDelta = null }) {
-  const { t } = useI18n();
-  const { lang } = useI18n();
-  const airlines = useAirlines();
-  const byKey = new Map(rows.map((r) => [r.key, r]));
-  // Where a part stands, its link out and what was paid (T866, T873, T887).
-  const Book = ({ row }) => {
-    if (!row) return null;
-    return (
-      <span className="ts-node-book">
-        {row.booked
-          ? <Chip kind="status" tone="positive" className="ts-booked">{t('pf.doors.bookedMark')}</Chip>
-          : row.link && <Chip kind="status" tone="neutral" className="ts-tobook">{t('tp.toBook')}</Chip>}
-        {!row.booked && row.link && (
-          <a className="btn btn-quiet btn-sm ts-book-link" href={row.link.href} target="_blank" rel="noreferrer noopener">
-            <span className="btn-label">{row.link.label}</span>
-          </a>
-        )}
-        {row.paid}
-      </span>
-    );
-  };
-  const split = ownFlight && (ownFlight.costOut != null || ownFlight.costBack != null);
-  const paid = {
-    out: ownFlight ? (split ? Number(ownFlight.costOut) || 0 : Number(ownFlight.costTotal) || 0) : 0,
-    back: ownFlight && split ? Number(ownFlight.costBack) || 0 : 0,
-  };
-  const way = (dir) => {
-    const date = dir === 'out' ? tripStart : tripEnd;
-    const label = t(dir === 'out' ? 'itin.secGetThere' : 'itin.secGetHome');
-    if (flight?.driving) {
-      const d = dir === 'out' ? driveLegs?.out : driveLegs?.home;
-      return { Icon: CarIcon, label, line: t('trip.modeCar'), sub: [d ? t('trip.sum.km', { km: Math.round(d.road_km) }) : '', date ? fmtDate(date, true) : ''], eur: d?.ground_total ?? null };
-    }
-    const leg = priced?.cartaFlight?.[dir] || null;
-    if (leg && !(paid[dir] > 0)) {
-      // T887: an arrival before the departure's clock time is the next day.
-      const clock = (x) => { const m = /^(\d{1,2}):(\d{2})/.exec(String(x || '')); return m ? Number(m[1]) * 60 + Number(m[2]) : null; };
-      const day = leg.date || date;
-      const overnight = clock(leg.arr) != null && clock(leg.dep) != null && clock(leg.arr) < clock(leg.dep) && day;
-      const next = overnight ? new Date(Date.parse(`${day}T12:00:00Z`) + 86400000).toISOString().slice(0, 10) : null;
-      const arr = overnight ? t('tp.arrNext', { time: leg.arr, day: fmtDate(next, true) }) : leg.arr;
-      return {
-        Icon: PlaneIcon, label, mark: leg.airline, from: leg.from, to: leg.to,
-        line: airlineName(airlines, leg.airline) || t('trip.modeFly'),
-        sub: [t('flight.times', { dep: leg.dep, arr }), overnight ? '' : fmtDate(day, true), leg.stops > 0 ? (leg.stops === 1 ? t('flight.stop1') : t('flight.stops', { n: leg.stops })) : ''],
-        eur: leg.cost?.total ?? null,
-      };
-    }
-    if (flight?.own || paid[dir] > 0) {
-      const mode = flight?.mode || ownFlight?.mode || 'fly';
-      const who = (flight?.airline || ownFlight?.airline || '').trim();
-      return {
-        Icon: WAY_ICON[mode] || PlaneIcon, label, line: who || t(TRAVEL_MODE_LABEL[mode] || 'trip.modeFly'),
-        sub: [t('trip.sum.yourOwn'), date ? fmtDate(date, true) : ''],
-        eur: paid[dir] > 0 ? paid[dir] : (dir === 'out' && !split ? (flight?.cost_total || null) : null),
-      };
-    }
-    // A planned route without a fare yet still names its airports (T839).
-    const ends = flight?.combinable ? (dir === 'out' ? [flight.origin, flight.into_anchor] : [flight.out_anchor, flight.origin]) : [];
-    return { Icon: PlaneIcon, label, from: ends[0], to: ends[1], line: t('trip.modeFly'), notYet: true, sub: [date ? fmtDate(date, true) : ''], eur: null };
-  };
-  const fig = (eur) => (Number.isFinite(eur) && eur > 0 ? <Money value={eur / div} est precision="whole" /> : null);
-
-  const Home = ({ date, end = false }) => (
-    <li className={`ts-node is-home${end ? ' is-end' : ''}`}>
-      <span className="ts-mark" aria-hidden="true"><HomeIcon size={18} /></span>
-      <div className="ts-node-main">
-        <span className="ts-node-title">{origin || t('trip.sum.home')}</span>
-        <span className="ts-node-sub">{date ? fmtDate(date, true) : <NotYet />}</span>
-      </div>
-    </li>
-  );
-  const Way = ({ dir }) => {
-    const w = way(dir);
-    const { Icon } = w;
-    return (
-      <li className="ts-node is-way">
-        <span className="ts-mark" aria-hidden="true"><Icon size={18} /></span>
-        <div className="ts-node-main">
-          <span className="ts-node-label">{w.from && w.to ? <RouteCodes from={w.from} to={w.to} icon={false} /> : w.label}</span>
-          <span className="ts-node-title">
-            {w.mark && <AirlineMark code={w.mark} size="sm" />}
-            {w.line}
-          </span>
-          <span className="ts-node-sub">{w.notYet ? <NotYet /> : w.sub.filter(Boolean).join(', ')}</span>
-          <Book row={byKey.get(`flight-${dir}`)} />
-        </div>
-        <span className="ts-node-fig">{w.notYet ? null : fig(w.eur)}</span>
-      </li>
-    );
-  };
-
-  return (
-    <ol className="ts-route">
-      <Home date={tripStart} />
-      <Way dir="out" />
-      {stopDetails.map((s, i) => {
-        const city = cityLabel(s.dest?.city || '') || t('itin.unknown');
-        const sc = stayCosts[i];
-        const hop = byKey.get(`leg-${i}`);
-        return (
-          <React.Fragment key={`${s.destinationId}-${i}`}>
-          <li className="ts-node is-stop">
-            <span className="ts-mark is-photo" aria-hidden="true">
-              <HeroImage url={s.dest?.image?.url} city={city} iso2={s.dest?.iso2} className="ts-mark-img" ratio={[1, 1]} maxWidth={160} />
-            </span>
-            <div className="ts-node-main">
-              <span className="ts-node-title">{city}</span>
-              <span className="ts-node-sub ts-node-facts">
-                <span><MoonIcon size={14} /> {t(s.nights === 1 ? 'plan.nightsOne' : 'plan.nightsMany', { n: s.nights })}</span>
-                {s.arriveDate && (
-                  <span><CalendarIcon size={14} /> {t('plan.dateRange', { a: fmtDate(s.arriveDate, true), b: fmtDate(s.departDate, true) })}</span>
-                )}
-                <span><BedIcon size={14} /> {sc?.ownAccom ? t('trip.sum.ownStay') : t(`stay.${stayTier || 'home'}`)}</span>
-              </span>
-              <Book row={byKey.get(`stay-${i}`)} />
-            </div>
-            <span className="ts-node-fig">
-              {fig(sc?.accomTotal ?? sc?.total)}
-              {Number.isFinite(sc?.accomTotal ?? sc?.total) && <small>{t('tp.fig.stay')}</small>}
-            </span>
-          </li>
-          {hop && (
-            <li className="ts-node is-hop">
-              <span className="ts-mark" aria-hidden="true">{hop.icon}</span>
-              <div className="ts-node-main">
-                <span className="ts-node-title">{hop.title}</span>
-                {hop.sub && <span className="ts-node-sub">{hop.sub}</span>}
-                <Book row={hop} />
-              </div>
-              <span className="ts-node-fig">{fig(hop.eur)}</span>
-            </li>
-          )}
-          </React.Fragment>
-        );
-      })}
-      {/* T873: the car advice is one quiet row on the route (it was a
-          block under Review's receipt): only when a car is worth it and the
-          trip does not drive already. */}
-      {carTip && carTip.verdict !== 'no' && !flight?.driving && (
-        <li className="ts-node is-car" data-testid="ts-car">
-          <span className="ts-mark" aria-hidden="true"><CarIcon size={18} /></span>
-          <div className="ts-node-main">
-            <span className="ts-node-title">{t(carTip.verdict === 'yes' ? 'wizard.carAdviceYes' : 'wizard.carAdviceMaybe')}</span>
-            {carTip.carStops?.length > 0 && (
-              <span className="ts-node-sub">{t('tp.car.where', { places: carTip.carStops.map((c) => cityLabel(c)).join(', ') })}</span>
-            )}
-            {onCar && (
-              <span className="ts-node-book">
-                <Button variant="secondary" size="sm" className="ts-car-add" onClick={onCar}>
-                  {Number.isFinite(carDelta) && Math.abs(carDelta) >= 1
-                    ? t('tp.car.addFor', { delta: `${carDelta > 0 ? '+' : '-'}${formatMoney(Math.abs(carDelta), { precision: 'whole', locale: lang })}` })
-                    : t('tp.car.add')}
-                </Button>
-              </span>
-            )}
-          </div>
-          <span className="ts-node-fig" />
-        </li>
-      )}
-      <Way dir="back" />
-      <Home date={tripEnd} end />
-    </ol>
-  );
-}
-
-/** The trip's map as a card (T819): still on touch until opened full size. */
-function MapCard({ map, mapFull, title }) {
+/**
+ * The trip's map as a titled card (T819; T1005, owner: "a title, a better
+ * map with the full trajectory, clean"): the trip drawn on Europe
+ * (TripTrace), then Open the map for the live map full size. Without a
+ * trace, the live map as before.
+ */
+function MapCard({ map, mapFull, title, trace, headId }) {
   const { t } = useI18n();
   const [full, setFull] = useState(false);
-  if (!map) return null;
+  if (!map && !trace) return null;
+  const drawn = trace?.stops?.length ? <TripTrace trace={trace} label={t('tp.map.title')} /> : null;
   return (
-    <>
-      <div className="tpg-map" data-testid="tpg-map">
-        {!full && map}
-        <div className="tpg-map-shield" aria-hidden="true" onClick={() => setFull(true)} />
-        <IconButton tone="surface" className="tpg-map-expand" label={t('saved.mapExpand')} onClick={() => setFull(true)}>
-          <ExpandIcon size={18} />
-        </IconButton>
+    <section className="tpg-mapcard" aria-labelledby={headId}>
+      <div className="tpg-mapcard-top">
+        <h2 className="tpg-h" id={headId}>{t('tp.map.title')}</h2>
+        {(mapFull || map) && (
+          <Button variant="quiet" size="sm" className="tpg-mapcard-open" iconStart={<ExpandIcon size={16} />} onClick={() => setFull(true)}>
+            {t('saved.mapExpand')}
+          </Button>
+        )}
       </div>
+      {drawn ? (
+        <button type="button" className="tpg-mapcard-hit" onClick={() => (mapFull || map) && setFull(true)} aria-label={t('saved.mapExpand')}>
+          {drawn}
+        </button>
+      ) : (
+        <div className="tpg-map" data-testid="tpg-map">
+          {!full && map}
+          <div className="tpg-map-shield" aria-hidden="true" onClick={() => setFull(true)} />
+          <IconButton tone="surface" className="tpg-map-expand" label={t('saved.mapExpand')} onClick={() => setFull(true)}>
+            <ExpandIcon size={18} />
+          </IconButton>
+        </div>
+      )}
       {full && createPortal(
         <RecordMapDialog title={title} onClose={() => setFull(false)}>
           <div className="savedmap-full-map">{mapFull || map}</div>
@@ -283,7 +130,7 @@ function MapCard({ map, mapFull, title }) {
         </RecordMapDialog>,
         document.body,
       )}
-    </>
+    </section>
   );
 }
 
@@ -317,6 +164,8 @@ function MapCard({ map, mapFull, title }) {
  *   budgetCard           T846: the total against the budget, inside the
  *                        cost card since T886 (BudgetCard compact)
  *   onChangeFlight(dir)  T1003: the flight sheet, from the cost card's Flights row
+ *                        and (T1005) the route's flight cards
+ *   trace                T1005: the trip's points for the drawn map (TripTrace)
  *   bar                  round buttons on the top row (save)
  *   footer               the saved line under the page
  */
@@ -325,7 +174,7 @@ export function TripSummary({
   priced, flight = null, ownFlight = null, driveLegs = null, origin = '',
   tab = 'overview', onTab, panels = {}, map = null, mapFull = null,
   onPlanDays = null, onPlanHome = null, onSettings = null,
-  onExport = null, bar = null, footer = null, history = null, onChip = null, onAddPaid = null, budgetCard = null, onChangeFlight = null,
+  onExport = null, bar = null, footer = null, history = null, onChip = null, onAddPaid = null, budgetCard = null, onChangeFlight = null, trace = null,
   onPlanRest = null, booked = null, book = null, carTip = null,
   // T838: no edit mode. Every fact is changed where it is shown (the chips,
   // the name, the route's stops), so the page has one layout.
@@ -447,7 +296,7 @@ export function TripSummary({
     </div>
   );
 
-  const mapCard = <MapCard map={map} mapFull={mapFull} title={title} />;
+  const mapCard = <MapCard map={map} mapFull={mapFull} title={title} trace={trace} headId={`${uid}-map`} />;
 
   // T886: what the trip costs, once: the side column from 1024 px (every
   // tab), the Overview on a phone. The budget lives inside it.
@@ -467,12 +316,11 @@ export function TripSummary({
 
       <section className="tpg-route" aria-labelledby={`${uid}-route`}>
         <h2 className="tpg-h" id={`${uid}-route`}>{t('plan.yourRoute')}</h2>
-        <OverviewRoute
+        <Journey
           tripStart={tripStart} tripEnd={tripEnd} stopDetails={stopDetails} stayCosts={stayCosts} stayTier={stayTier}
           priced={priced} flight={flight} ownFlight={ownFlight} driveLegs={driveLegs} origin={origin} div={div}
-          carTip={carTip} rows={rows} onCar={onCar} carDelta={carDelta}
+          carTip={carTip} rows={rows} onCar={onCar} carDelta={carDelta} onChangeFlight={onChangeFlight}
         />
-        {rows.some((r) => r.link) && <p className="tpg-book-note">{t('prov.bookingNote')}</p>}
       </section>
 
       {!wide && tools}

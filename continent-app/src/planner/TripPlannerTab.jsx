@@ -742,6 +742,25 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   const geoStops = tp.stopDetails.filter((s) => s.dest && s.dest.lat != null && s.dest.lon != null);
   const airIn = flying ? airportOf(geoStops[0]?.dest, tp.priced?.cartaFlight?.inAirport) : null;
   const airOut = flying ? airportOf(geoStops[geoStops.length - 1]?.dest, tp.priced?.cartaFlight?.outAirport) : null;
+  // T1005: the trip's points for the drawn map on the trip page (TripTrace):
+  // home's airport, the airports flown into and out of, the stops, the hops.
+  const homeIata = tp.priced?.cartaFlight?.out?.from || tp.flight?.origin || null;
+  const homeAir = homeIata ? data?.meta?.origins?.[homeIata] : null;
+  const traceStopsKey = geoStops.map((s) => `${s.destinationId}:${s.nights}`).join('|');
+  const traceHopsKey = (tp.priced?.legs || []).map((l) => l?.mode).join('|');
+  const trace = useMemo(() => (geoStops.length ? {
+    home: homeAir && homeAir.lat != null ? { lat: homeAir.lat, lon: homeAir.lon, name: cityLabel(homeAir.city || homeIata) } : null,
+    airIn: airIn ? { lat: airIn.lat, lon: airIn.lon } : null,
+    airOut: airOut ? { lat: airOut.lat, lon: airOut.lon } : null,
+    stops: geoStops.map((s) => ({
+      lat: s.dest.lat, lon: s.dest.lon, city: cityLabel(s.dest.city), nights: s.nights, iso2: String(s.dest.iso2 || '').toUpperCase(),
+    })),
+    hops: geoStops.slice(1).map((_, i) => tp.priced?.legs?.[i]?.mode || ''),
+    driving: Boolean(tp.flight?.driving),
+  } : null), [ // eslint-disable-line react-hooks/exhaustive-deps -- keyed by value, like mapStops below
+    homeIata, homeAir?.lat, airIn?.lat, airIn?.lon, airOut?.lat, airOut?.lon, tp.flight?.driving,
+    traceStopsKey, traceHopsKey,
+  ]);
   const mapStopsKey = [
     airIn ? `${airIn.lat},${airIn.lon}` : '',
     ...geoStops.map((s) => `${s.dest.lat},${s.dest.lon},${cityLabel(s.dest.city)},${pinTag(s)}`),
@@ -1446,6 +1465,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
             }}
             // T1003: the cost card's Flights row opens the same flight sheet as the Itinerary.
             onChangeFlight={tp.planned && tp.priced?.cartaFlight ? setFlightSheet : null}
+            trace={trace}
             budgetCard={(
               <BudgetCard
                 priced={tp.priced}

@@ -352,7 +352,6 @@ function ItinLeg({ leg, onMode }) {
           {chosen.links.map((l, j) => (
             <a key={j} href={safeUrl(l.url)} target="_blank" rel="noreferrer">{l.label} <ExternalIcon size={12} className="link-ext" /></a>
           ))}
-          <p className="booking-note">{t('prov.bookingNote')}</p>
         </div>
       )}
     </div>

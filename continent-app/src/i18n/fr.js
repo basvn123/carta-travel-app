@@ -9323,6 +9323,8 @@ export const fr = {
   "tp.pass.in": "Arrivée",
   "tp.pass.out": "Départ",
   "tp.pass.of": "{n} sur {of}",
+  // T1005: the drawn map on the trip page
+  "tp.map.title": "Votre voyage sur la carte",
   "tp.fl.way": "Quel trajet",
   "tp.fl.to": "à",
   "tp.fl.prefs": "Vos préférences de vol",

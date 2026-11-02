@@ -9323,6 +9323,8 @@ export const nl = {
   "tp.pass.in": "Inchecken",
   "tp.pass.out": "Uitchecken",
   "tp.pass.of": "{n} van {of}",
+  // T1005: the drawn map on the trip page
+  "tp.map.title": "Je reis op de kaart",
   "tp.fl.way": "Welke kant",
   "tp.fl.to": "naar",
   "tp.fl.prefs": "Je vluchtvoorkeuren",

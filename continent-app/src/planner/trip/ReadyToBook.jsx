@@ -177,7 +177,6 @@ export function ReadyToBook(props) {
           </li>
         ))}
       </ol>
-      <p className="tpg-book-note">{t('prov.bookingNote')}</p>
     </section>
   );
 }

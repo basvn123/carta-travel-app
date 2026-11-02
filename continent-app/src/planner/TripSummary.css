@@ -822,7 +822,6 @@ button.ct-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: 2
 .tpg-book-acts { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); margin: var(--space-1) 0 0 calc(-1 * var(--space-2)); }
 .tpg-book-acts .plan-paid { margin-left: var(--space-2); }
 .tpg-book-row .ts-node-fig { padding-top: 10px; }
-.tpg-book-note { margin: 0; font-size: var(--text-caption); color: var(--text-3); }
 .ts-node.is-car .ts-node-title { font-weight: 500; }
 
 /* ---- T887: the route carries its bookings; what is still to book ---- */
@@ -977,3 +976,182 @@ span.tbp-seg { cursor: default; }
 /* ---- The Notes tab (T889): the trip extras inline ---- */
 .itin-extras { display: grid; gap: var(--space-3); }
 .itin-extras-lead { margin: 0; max-width: var(--measure); font-size: var(--text-body); color: var(--text-2); }
+
+/* ---- The trip on the map (T1005) ----
+   A titled card: Europe drawn quietly (white land on a pale lagoon sea, the
+   trip's countries in sand), the flights as dashed umber arcs with a plane
+   at their middle, the ground between stops as a solid lagoon line, home
+   and the numbered stops as marks with their names. Open the map gives the
+   live map full size. */
+.tpg-mapcard { display: grid; gap: var(--space-2); min-width: 0; }
+.tpg-mapcard-top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.tpg-mapcard-top .tpg-h { margin: 0; }
+.tpg-mapcard-open.btn { margin-right: calc(-1 * var(--space-2)); }
+.tpg-mapcard-hit {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-card);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.tpg-mapcard-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+.tt { display: grid; gap: var(--space-2); margin: 0; }
+.tt-map {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--lagoon-50);
+  box-shadow: var(--elev-1);
+}
+.tt-svg { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+.tt-context { fill: color-mix(in srgb, var(--umber-100) 30%, var(--surface)); }
+.tt-land { fill: var(--surface); stroke: var(--umber-200); stroke-width: 0.75; stroke-linejoin: round; }
+.tt-land.is-trip { fill: var(--umber-100); }
+.tt-fly { fill: none; stroke: var(--umber-700); stroke-width: 2; stroke-dasharray: 6 5; stroke-linecap: round; }
+.tt-ground { fill: none; stroke: var(--lagoon-600); stroke-width: 3; stroke-linecap: round; }
+.tt-plane {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--umber-700);
+  box-shadow: 0 2px 6px -2px rgba(31, 41, 51, 0.35);
+  transform: translate(-50%, -50%);
+}
+.tt-air {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--umber-700);
+  border-radius: 50%;
+  background: var(--surface);
+  transform: translate(-50%, -50%);
+}
+.tt-pin { position: absolute; display: flex; align-items: center; gap: 6px; transform: translate(-13px, -50%); pointer-events: none; }
+.tt-pin.is-left { flex-direction: row-reverse; transform: translate(calc(-100% + 13px), -50%); }
+.tt-dot {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--umber-700);
+  color: var(--umber-50);
+  font-size: var(--text-caption);
+  font-weight: 800;
+  box-shadow: 0 0 0 3px var(--surface), 0 3px 8px -2px rgba(31, 41, 51, 0.4);
+}
+.tt-pin.is-home .tt-dot { background: var(--text); }
+.tt-label {
+  display: grid;
+  padding: 3px var(--space-2);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  box-shadow: 0 2px 6px -2px rgba(31, 41, 51, 0.25);
+  font-size: var(--text-label);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text);
+  white-space: nowrap;
+}
+.tt-label small { font-size: var(--text-micro); font-weight: 500; color: var(--text-2); }
+.tt-key { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-4); font-size: var(--text-caption); color: var(--text-2); }
+.tt-key-item { display: inline-flex; align-items: center; gap: var(--space-1); }
+.tt-key-item svg { color: var(--lagoon-700); }
+.tt-swatch { display: inline-block; width: 22px; height: 0; margin-right: 2px; border-top: 2px dashed var(--umber-700); }
+.tt-swatch.is-ground { border-top: 3px solid var(--lagoon-600); border-radius: 2px; }
+
+/* ---- Your route as a journey (T1005) ----
+   A rail of day stamps on the left, the trip's parts beside them as cards in
+   the passes' family: the airline and Change flight, the two airports large
+   with their times; the stay's photograph, nights and bed, check-in and out;
+   a hop's two towns. One foot each: where it stands, the link out, what was
+   paid, the figure. */
+.jr { position: relative; display: grid; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
+.jr::before { content: ''; position: absolute; top: 24px; bottom: 24px; left: 21px; width: 2px; border-radius: 1px; background: var(--border); }
+.jr-step { position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: var(--space-3); align-items: start; }
+.jr-stamp {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+  padding: var(--space-1) 0;
+  margin-top: var(--space-2);
+  background: var(--surface-page);
+  line-height: 1;
+  text-align: center;
+}
+.jr-stamp-wd, .jr-stamp-m { font-size: var(--text-micro); font-weight: 700; color: var(--text-3); }
+.jr-stamp-d { font-size: var(--text-title); font-weight: 800; letter-spacing: -0.02em; color: var(--text); font-variant-numeric: tabular-nums; }
+.jr-stamp.is-empty { justify-self: center; width: 10px; height: 10px; margin-top: var(--space-5); padding: 0; border-radius: 50%; background: var(--border); }
+.jr-card {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: var(--space-4);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+}
+.jr-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); min-width: 0; }
+.jr-brand { display: inline-flex; align-items: center; gap: var(--space-2); min-width: 0; font-size: var(--text-body); font-weight: 700; }
+.jr-brand .flt-mark { flex: none; width: 32px; height: 32px; border-radius: 50%; }
+.jr-glyph { display: grid; flex: none; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--umber-100); color: var(--umber-700); }
+.jr-brand-text { display: grid; gap: 1px; min-width: 0; }
+.jr-name { overflow: hidden; font-size: var(--text-body); font-weight: 700; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
+.jr-meta { font-size: var(--text-caption); font-weight: 500; color: var(--text-2); }
+.jr-step.is-home .jr-stamp.is-empty { margin-top: 19px; background: var(--text); }
+.jr-change.btn { flex: none; }
+.jr-ends { display: grid; grid-template-columns: auto minmax(40px, 1fr) auto; align-items: center; gap: var(--space-3); }
+.jr-end { display: grid; gap: 2px; min-width: 0; }
+.jr-end.is-to { text-align: right; }
+.jr-code { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; color: var(--text); }
+.jr-time { font-size: var(--text-body); font-weight: 600; color: var(--text-2); font-variant-numeric: tabular-nums; }
+.jr-town { font-size: var(--text-lead); font-weight: 700; line-height: var(--leading-tight); overflow-wrap: anywhere; }
+.jr-k { font-size: var(--text-caption); font-weight: 600; color: var(--text-3); }
+.jr-date { font-size: var(--text-body); font-weight: 700; font-variant-numeric: tabular-nums; }
+.jr-line { position: relative; display: grid; place-items: center; height: 28px; color: var(--umber-700); }
+.jr-line::before { content: ''; position: absolute; inset: 50% 0 auto; border-top: 2px dashed var(--umber-200); }
+.jr-line svg { position: relative; box-sizing: content-box; padding: 5px; border-radius: 50%; background: var(--umber-100); }
+.jr-line.is-quiet::before { border-top: 1px solid var(--border); }
+.jr-stay { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
+.jr-photo { flex: none; width: 56px; height: 56px; overflow: hidden; border-radius: var(--radius-control); background: var(--surface-sunken); }
+.jr-photo-img, .jr-photo .hero-blank { display: block; width: 100%; height: 100%; object-fit: cover; }
+.jr-stay-main { display: grid; gap: 2px; min-width: 0; }
+.jr-city { font-size: var(--text-title); font-weight: 800; letter-spacing: -0.02em; line-height: var(--leading-tight); }
+.jr-none { margin: 0; color: var(--text-3); }
+.jr-foot {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-soft);
+}
+.jr-status { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); min-width: 0; }
+.jr-link { font-size: var(--text-label); font-weight: 600; color: var(--action); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--action) 35%, transparent); text-underline-offset: 3px; }
+@media (hover: hover) { .jr-link:hover { color: var(--action-hover); text-decoration-color: currentColor; } }
+.jr-link:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
+.jr-fig { font-size: var(--text-lead); font-weight: 800; letter-spacing: -0.01em; text-align: right; font-variant-numeric: tabular-nums; }
+.jr-fig small { margin-left: var(--space-1); font-size: var(--text-caption); font-weight: 500; color: var(--text-3); letter-spacing: 0; }
+.jr-paid { grid-column: 1 / -1; }
+.jr-paid .plan-paid-add, .jr-paid .btn { margin-left: calc(-1 * var(--space-2)); }
+.jr-home { display: flex; align-items: center; gap: var(--space-2); min-height: 48px; margin-top: var(--space-1); }
+.jr-home-mark { display: grid; flex: none; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--text); color: var(--surface); }
+.jr-home-name { font-size: var(--text-lead); font-weight: 700; }
+.jr-card.is-tip { background: var(--umber-50); box-shadow: none; border: 1px solid var(--umber-100); }
+@media (min-width: 600px) {
+  .jr-step { grid-template-columns: 56px minmax(0, 1fr); gap: var(--space-4); }
+  .jr::before { left: 27px; }
+  .jr-code { font-size: var(--text-headline); }
+}
