@@ -75,11 +75,14 @@
   gap: var(--space-3);
 }
 
-/* New trip: a white tile, the plus on a brown disc. */
-.pfh-new {
+/* New trip: a white tile, the plus on a brown disc (the kit Button, its
+   quiet look replaced). */
+.pfh .pfh-new.btn {
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  justify-content: flex-start;
+  height: auto;
   min-height: 72px;
   padding: var(--space-2) var(--space-3);
   border: 0;
@@ -93,8 +96,8 @@
   -webkit-tap-highlight-color: transparent;
   transition: transform var(--dur-2) var(--ease-out), box-shadow var(--dur-3) var(--ease-out);
 }
-.pfh-new:active { transform: scale(0.985); }
-.pfh-new:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+.pfh .pfh-new.btn:active { transform: scale(0.985); }
+.pfh .pfh-new.btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
 .pfh-new-plus {
   display: grid;
   flex: none;
@@ -108,8 +111,8 @@
 }
 .pfh-new-name { min-width: 0; font-size: var(--text-lead); font-weight: 700; letter-spacing: -0.01em; line-height: var(--leading-tight); }
 @media (hover: hover) {
-  .pfh-new:hover { box-shadow: var(--elev-2); }
-  .pfh-new:hover .pfh-new-plus { transform: rotate(90deg); }
+  .pfh .pfh-new.btn:hover { background: var(--surface); box-shadow: var(--elev-2); }
+  .pfh .pfh-new.btn:hover .pfh-new-plus { transform: rotate(90deg); }
 }
 
 /* On a phone the door is half the row: the name first, the deck after it
@@ -122,7 +125,7 @@
   .pfh .pfh-door-go { display: none; }
 }
 @media (min-width: 769px) {
-  .pfh .pfh-new, .pfh .pfh-door { min-height: 80px; }
+  .pfh .pfh-new.btn, .pfh .pfh-door { min-height: 80px; }
 }
 
 /* The door: the Ask door's and Explore's umber, a sun glow, three photographs
@@ -140,7 +143,7 @@
   background:
     radial-gradient(90% 140% at 12% 0%, color-mix(in srgb, var(--sun-400) 32%, transparent), transparent 62%),
     linear-gradient(150deg, var(--umber-600), var(--umber-800));
-  box-shadow: 0 8px 20px rgba(90, 55, 22, 0.2), 0 2px 5px rgba(90, 55, 22, 0.14);
+  box-shadow: var(--elev-2);
   color: var(--umber-50);
   text-decoration: none;
   -webkit-tap-highlight-color: transparent;
@@ -158,9 +161,9 @@
   height: 52px;
   overflow: hidden;
   border: 2px solid var(--umber-50);
-  border-radius: 8px;
+  border-radius: var(--radius-control);
   background: var(--umber-700);
-  box-shadow: 0 3px 8px rgba(40, 22, 6, 0.35);
+  box-shadow: var(--elev-2);
   transform: rotate(calc((var(--i) - 1) * 7deg));
   transition: transform var(--dur-3) var(--ease-out);
   animation: pfh-deal var(--dur-4) var(--ease-out) calc(var(--i) * 70ms) backwards;
@@ -181,7 +184,7 @@
   transition: transform var(--dur-2) var(--ease-out);
 }
 @media (hover: hover) {
-  .pfh-door:hover { box-shadow: 0 12px 28px rgba(90, 55, 22, 0.26), 0 3px 8px rgba(90, 55, 22, 0.16); }
+  .pfh-door:hover { box-shadow: var(--elev-3); }
   .pfh-door:hover .pfh-door-photo { transform: translateX(calc((var(--i) - 1) * 6px)) translateY(-2px) rotate(calc((var(--i) - 1) * 11deg)); }
   .pfh-door:hover .pfh-door-go { transform: translateX(3px); }
 }
@@ -252,7 +255,6 @@
   letter-spacing: -0.02em;
   color: var(--surface);
   text-wrap: balance;
-  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.25);
 }
 .pfh .pfh-next-facts { font-size: var(--text-label); font-weight: 600; color: color-mix(in srgb, var(--surface) 88%, transparent); }
 .pfh .pfh-next-go {
@@ -387,5 +389,5 @@ body:has(.pf) .top-bar .app-header { background: var(--plan-ground); }
 @media (min-width: 769px) { .pfh-clear-card { max-width: 480px; } }
 @media (prefers-reduced-motion: reduce) {
   .pfh-clear-card { animation: none; }
-  .pfh-new, .pfh-new-plus { transition: none; }
+  .pfh .pfh-new.btn, .pfh-new-plus { transition: none; }
 }
