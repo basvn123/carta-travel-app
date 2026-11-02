@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { eur, eurExact, fmtHours, safeUrl } from '../lib/format.js';
 import { fmtDate } from '../lib/dates.js';
+import { formatMoney } from '../lib/money.js';
 import { TripExtras } from './TripExtras.jsx';
 import { ExpenseLedger } from './ExpenseLedger.jsx';
 import { loadTripExtras, persistTripExtras, subscribeDayPlanStore } from './dayPlanStore.js';
@@ -27,7 +28,6 @@ import { bagTier } from '../lib/flights/bagFees.js';
 import { useAirlines, airlineName } from '../lib/flights/useAirlines.js';
 import { useLiveFlights, liveKey } from '../lib/flights/useLiveFlights.js';
 import { Stepper as KitStepper } from '../components/FilterControls.jsx';
-import { useBcp47 } from './flow/flowHooks.js';
 import { nightsOptions, applyNights } from '../lib/tripBalance.js';
 import { Balance } from './trip/Balance.jsx';
 import { RouteCodes } from './trip/RouteCodes.jsx';
@@ -87,6 +87,9 @@ function useFlightWaiting(queries) {
  * and the door to the traveller's own fare under it. `leg` undefined while a
  * live answer may come reads as checking; null or no fit reads as none.
  */
+/** "Direct", "1 stop", "2 stops". */
+const stopsText = (t, n) => ((Number(n) || 0) === 0 ? t('flight.direct') : n === 1 ? t('flight.stop1') : t('flight.stops', { n }));
+
 function ItinFlight({ dir, leg, waiting, query, baggage, hours, onHours, fareField }) {
   const { t } = useI18n();
   // T733: a day nobody has answered for (not in the sweep, and the live
@@ -94,22 +97,15 @@ function ItinFlight({ dir, leg, waiting, query, baggage, hours, onHours, fareFie
   // empty day (null) says that.
   const state = leg ? null : (leg === undefined ? (waiting ? 'loading' : 'unknown') : 'none');
   const { lang } = useI18n();
-  const hoursFilter = onHours && (
-    <HoursFilter
-      value={hours || 'any'}
-      onChange={(band) => onHours(dir, band)}
-      label={`${t('flight.hours')}, ${dir === 'back' ? t('flight.back') : t('flight.out')}`}
-    />
-  );
-  // T1007 (owner: the Itinerary like the Overview's route): a known flight
-  // as a pass: the two airports large with their times, the stops on the
-  // line between them; the ticket and the bag a person; then the trip's
-  // figure for it and Book out to Google Flights. The airline and Change
-  // flight sit in the item's head.
+  // T1007, T1008 (owner: "too big; compact, super clean"): a known flight
+  // as a pass in two rows: the airports with their times, then the trip's
+  // figure (what a seat is under it) with Own fare and Book. The airline,
+  // the day, the stops and Change flight sit in the item's head; the hours
+  // are the flight sheet's preferences (Change flight).
   if (leg) {
-    const stops = leg.stops === 0 ? t('flight.direct') : leg.stops === 1 ? t('flight.stop1') : t('flight.stops', { n: leg.stops });
     const href = leg.from && leg.to ? googleFlightsLink({ fromIata: leg.from, toIata: leg.to, date: leg.date, lang }) : null;
     const bag = leg.cost?.bags > 0 ? leg.cost.perSeat - leg.price : 0;
+    const each = leg.cost?.perSeat || leg.price;
     return (
       <div className="itin-flight is-pass">
         <div className="jr-ends">
@@ -117,31 +113,32 @@ function ItinFlight({ dir, leg, waiting, query, baggage, hours, onHours, fareFie
             <span className="jr-code">{leg.from}</span>
             <span className="jr-time">{leg.dep}</span>
           </span>
-          <span className="jr-line">
-            <PlaneIcon size={14} aria-hidden="true" />
-            <span className="jr-line-note">{stops}</span>
-          </span>
+          <span className="jr-line" aria-hidden="true"><PlaneIcon size={14} /></span>
           <span className="jr-end is-to">
             <span className="jr-code">{leg.to}</span>
             <span className="jr-time">{leg.arr}{leg.arr < leg.dep ? ' +1' : ''}</span>
           </span>
         </div>
-        <div className="itin-pass-facts">
-          <span><Money value={leg.price} precision="cents" /> {t('money.perPerson')}</span>
-          {bag > 0 && <span>{bagTier(baggage) === 'checked' ? t('flight.bagChecked') : t('flight.bagCabin')} <Money value={bag} precision="cents" est /></span>}
+        {/* T1008: one foot; the figure for the trip with what a seat is
+            under it, then the traveller's own fare and Book side by side. */}
+        <div className="itin-pass-foot">
+          <span className="itin-pass-fig">
+            {Number.isFinite(leg.cost?.total) && <Money value={leg.cost.total} precision="cents" />}
+            <small>
+              {t('tp.pass.each', { price: formatMoney(each, { precision: 'cents', locale: lang }) })}
+              {bag > 0 ? `, ${t(bagTier(baggage) === 'checked' ? 'tp.pass.withBag' : 'tp.pass.withCabin')}` : ''}
+            </small>
+          </span>
+          <span className="itin-pass-acts">
+            {fareField}
+            {href && (
+              <a className="btn btn-secondary btn-sm jr-book" href={href} target="_blank" rel="noreferrer noopener" aria-label={t('plan.findOn', { provider: 'Google Flights' })}>
+                <span className="btn-label">{t('tp.book')}</span>
+                <ExternalIcon size={13} />
+              </a>
+            )}
+          </span>
         </div>
-        {fareField && <div className="itin-pass-fare">{fareField}</div>}
-        <div className="jr-foot">
-          <span className="jr-status">{fmtDate(leg.date, true)}</span>
-          <span className="jr-fig">{Number.isFinite(leg.cost?.total) ? <Money value={leg.cost.total} precision="cents" /> : null}</span>
-          {href && (
-            <a className="btn btn-secondary btn-sm jr-book" href={href} target="_blank" rel="noreferrer noopener" aria-label={t('plan.findOn', { provider: 'Google Flights' })}>
-              <span className="btn-label">{t('tp.book')}</span>
-              <ExternalIcon size={13} />
-            </a>
-          )}
-        </div>
-        {hoursFilter}
       </div>
     );
   }
@@ -469,33 +466,6 @@ function StopDayTrips({ i, s, trips, edit }) {
   );
 }
 
-/** A stop's arrive and leave days as two tiles (Airbnb's check-in and
- *  check-out, owner board panel 4): the weekday over the day, the month. */
-function StayDays({ arrive, depart }) {
-  const { t } = useI18n();
-  const bcp47 = useBcp47();
-  if (!arrive || !depart) return null;
-  const part = (iso, opt) => new Intl.DateTimeFormat(bcp47, { ...opt, timeZone: 'UTC' }).format(new Date(`${iso}T00:00:00Z`));
-  const tile = (iso, label) => (
-    <div className="itin-io">
-      <span className="itin-io-day" aria-hidden="true">
-        <span>{part(iso, { weekday: 'short' })}</span>
-        <b>{part(iso, { day: 'numeric' })}</b>
-      </span>
-      <span className="itin-io-text" aria-hidden="true">
-        <b>{label}</b>
-        <span>{part(iso, { month: 'short' })}</span>
-      </span>
-      <span className="sr-only">{`${label}: ${fmtLong(iso)}`}</span>
-    </div>
-  );
-  return (
-    <div className="itin-ios">
-      {tile(arrive, t('tp.stop.arrive'))}
-      {tile(depart, t('tp.stop.leave'))}
-    </div>
-  );
-}
 
 /**
  * A stop's nights on the trip page (T837, owner board panels 4 and 5): the
@@ -814,7 +784,7 @@ export function TripItinerary({
       value={paidOut}
       estimate={flight?.driving ? driveLegs?.out?.ground_total ?? null : null}
       label={t('plan.yourFareFor', { people: partyText })}
-      addLabel={t('plan.addYourFare')}
+      addLabel={showFlight('out') && cartaFlight?.out ? t('tp.pass.ownFare') : t('plan.addYourFare')}
       onChange={(n) => onTravelPaid?.('out', n)}
       folded
       hint={false}
@@ -826,7 +796,7 @@ export function TripItinerary({
       value={paidBack}
       estimate={flight?.driving ? driveLegs?.home?.ground_total ?? null : null}
       label={t('plan.yourFareFor', { people: partyText })}
-      addLabel={t('plan.addYourFare')}
+      addLabel={showFlight('back') && cartaFlight?.back ? t('tp.pass.ownFare') : t('plan.addYourFare')}
       onChange={(n) => onTravelPaid?.('back', n)}
       folded
       hint={false}
@@ -885,7 +855,10 @@ export function TripItinerary({
                     {showFlight('out') && cartaFlight.out ? (
                       <span className="jr-brand">
                         <AirlineMark code={cartaFlight.out.airline} size="sm" />
-                        <span className="jr-name">{airlineName(airlines, cartaFlight.out.airline) || cartaFlight.out.airline}</span>
+                        <span className="jr-brand-text">
+                          <span className="jr-name">{airlineName(airlines, cartaFlight.out.airline) || cartaFlight.out.airline}</span>
+                          <span className="jr-meta">{[fmtDate(cartaFlight.out.date, true), stopsText(t, cartaFlight.out.stops)].filter(Boolean).join(', ')}</span>
+                        </span>
                       </span>
                     ) : <b>{outCodes ? <RouteCodes from={outCodes[0]} to={outCodes[1]} icon={false} /> : t('itin.secGetThere')}</b>}
                     {onChangeFlight && showFlight('out') && (
@@ -963,29 +936,38 @@ export function TripItinerary({
                           </span>
                           <span className="itin-stop-main">
                             <span className="itin-stop-city">{s.dest?.city || t('itin.unknown')}</span>
-                            {!stopEdit && (
+                            {!stopEdit ? (
                               <span className="itin-stop-sub">
                                 {t(s.nights === 1 ? 'plan.nightsOne' : 'plan.nightsMany', { n: s.nights })}
                                 {s.arriveDate ? `, ${fmtLong(s.arriveDate)}` : ''}
                               </span>
+                            ) : s.arriveDate && s.departDate && (
+                              // T1008: the stay's two days as one line (were two tiles).
+                              <span className="itin-stop-sub">{t('plan.dateRange', { a: fmtDate(s.arriveDate, true), b: fmtDate(s.departDate, true) })}</span>
                             )}
                           </span>
                         </Button>
-                        {stopEdit && <StopNights i={i} s={s} stopDetails={stopDetails} edit={stopEdit} />}
                       </div>
-                      {stopEdit && <StayDays arrive={s.arriveDate} depart={s.departDate} />}
-                      {sc && stopEdit?.stayOptions?.length > 1 && (
-                        // T842 (owner D2): this stop sleeps its own way, or the trip's.
+                      {/* T1008: where this stop sleeps (T842: its own way, or the
+                          trip's) and its nights, one row under the head. */}
+                      {stopEdit && (
                         <div className="itin-stay">
-                          <Field
-                            as="select"
-                            label={t('tp.stay.label', { city: cityLabel(s.dest?.city || '') })}
-                            value={s.stayTier || ''}
-                            onChange={(e) => stopEdit.setStay(i, e.target.value || null)}
-                          >
-                            <option value="">{t('tp.stay.trip', { stay: stopEdit.tripStayLabel })}</option>
-                            {stopEdit.stayOptions.map((o) => <option key={o.tier} value={o.tier}>{o.label}</option>)}
-                          </Field>
+                          {sc && stopEdit.stayOptions?.length > 1 && (
+                            <span className="itin-stay-pick">
+                              <BedIcon size={16} aria-hidden="true" />
+                              <Field
+                                as="select"
+                                hideLabel
+                                label={t('tp.stay.label', { city: cityLabel(s.dest?.city || '') })}
+                                value={s.stayTier || ''}
+                                onChange={(e) => stopEdit.setStay(i, e.target.value || null)}
+                              >
+                                <option value="">{t('tp.stay.trip', { stay: stopEdit.tripStayLabel })}</option>
+                                {stopEdit.stayOptions.map((o) => <option key={o.tier} value={o.tier}>{o.label}</option>)}
+                              </Field>
+                            </span>
+                          )}
+                          <StopNights i={i} s={s} stopDetails={stopDetails} edit={stopEdit} />
                         </div>
                       )}
                       {sc && (
@@ -1010,8 +992,10 @@ export function TripItinerary({
                                 href={l.href}
                                 target="_blank"
                                 rel="noreferrer noopener"
+                                aria-label={all.length > 1 || /^(dorm|private|room)$/.test(s.stayTier || tripStayTier) ? t('plan.findOn', { provider: l.provider }) : t('plan.findStay')}
                               >
-                                <span className="btn-label">{all.length > 1 || /^(dorm|private|room)$/.test(s.stayTier || tripStayTier) ? t('plan.findOn', { provider: l.provider }) : t('plan.findStay')}</span>
+                                <span className="btn-label">{l.provider}</span>
+                                <ExternalIcon size={12} />
                               </a>
                             ))}
                             {onOwnStay && (
@@ -1020,7 +1004,7 @@ export function TripItinerary({
                                 value={sc.ownAccom ? sc.accomTotal : 0}
                                 estimate={sc.estAccomTotal ?? sc.accomTotal}
                                 label={t('plan.bookingPrice')}
-                                addLabel={t('plan.addBookingPrice')}
+                                addLabel={t('tp.pass.ownPrice')}
                                 onChange={(n) => onOwnStay(s.destinationId, n)}
                                 folded
                                 hint={false}
@@ -1034,22 +1018,22 @@ export function TripItinerary({
                       )}
                       {stopEdit && (
                         <div className="itin-stop-acts" role="group" aria-label={t('tp.stop.tools', { city: cityLabel(s.dest?.city || '') })}>
-                          <Button variant="secondary" size="sm" className="itin-move is-up" iconStart={<ChevronDownIcon size={16} />} disabled={i === 0} onClick={() => stopEdit.move(i, -1)}>
-                            {t('trip.moveUp')}
-                          </Button>
-                          <Button variant="secondary" size="sm" className="itin-move" iconStart={<ChevronDownIcon size={16} />} disabled={i === stopDetails.length - 1} onClick={() => stopEdit.move(i, 1)}>
-                            {t('trip.moveDown')}
-                          </Button>
+                          <IconButton tone="plain" className="itin-move is-up" label={t('trip.moveUp')} disabled={i === 0} onClick={() => stopEdit.move(i, -1)}>
+                            <ChevronDownIcon size={18} />
+                          </IconButton>
+                          <IconButton tone="plain" className="itin-move" label={t('trip.moveDown')} disabled={i === stopDetails.length - 1} onClick={() => stopEdit.move(i, 1)}>
+                            <ChevronDownIcon size={18} />
+                          </IconButton>
                           {stopEdit.swap && (
-                            <Button variant="secondary" size="sm" className="itin-swap" iconStart={<SwapIcon size={16} />} onClick={() => stopEdit.swap(i)}>
-                              {t('tp.sw.button')}
-                            </Button>
+                            <IconButton tone="plain" className="itin-swap" label={t('tp.sw.button')} onClick={() => stopEdit.swap(i)}>
+                              <SwapIcon size={18} />
+                            </IconButton>
                           )}
                           <span className="itin-stop-acts-gap" />
                           {stopDetails.length > 1 && (
-                            <Button variant="quiet" size="sm" className="itin-stop-remove" iconStart={<CloseIcon size={14} />} onClick={() => stopEdit.remove(i)}>
-                              {t('tp.stop.remove')}
-                            </Button>
+                            <IconButton tone="plain" className="itin-stop-remove" label={`${t('tp.stop.remove')} ${cityLabel(s.dest?.city || '')}`} onClick={() => stopEdit.remove(i)}>
+                              <CloseIcon size={16} />
+                            </IconButton>
                           )}
                         </div>
                       )}
@@ -1066,8 +1050,10 @@ export function TripItinerary({
                               mode: leg.mode, date: next?.arriveDate || '',
                             })[0];
                             return link ? (
-                              <a className="btn btn-quiet btn-sm itin-find" href={link.url} target="_blank" rel="noreferrer noopener">
-                                <span className="btn-label">{t('plan.findTicketsOn', { site: link.label })}</span>
+                              <a className="btn btn-quiet btn-sm itin-find" href={link.url} target="_blank" rel="noreferrer noopener"
+                                aria-label={t('plan.findTicketsOn', { site: link.label })}>
+                                <span className="btn-label">{link.label}</span>
+                                <ExternalIcon size={12} />
                               </a>
                             ) : null;
                           })()}
@@ -1077,7 +1063,7 @@ export function TripItinerary({
                               value={legOwn ? leg.ground_total : 0}
                               estimate={legOwn ? null : leg.ground_total}
                               label={t('plan.youPaidFor', { people: partyText })}
-                              addLabel={t('plan.addTicketPrice')}
+                              addLabel={t('tp.pass.ownPrice')}
                               onChange={(n) => onOwnLeg(i, n > 0 ? leg.mode : null, n)}
                               folded
                               hint={false}
@@ -1125,7 +1111,10 @@ export function TripItinerary({
                     {showFlight('back') && cartaFlight.back ? (
                       <span className="jr-brand">
                         <AirlineMark code={cartaFlight.back.airline} size="sm" />
-                        <span className="jr-name">{airlineName(airlines, cartaFlight.back.airline) || cartaFlight.back.airline}</span>
+                        <span className="jr-brand-text">
+                          <span className="jr-name">{airlineName(airlines, cartaFlight.back.airline) || cartaFlight.back.airline}</span>
+                          <span className="jr-meta">{[fmtDate(cartaFlight.back.date, true), stopsText(t, cartaFlight.back.stops)].filter(Boolean).join(', ')}</span>
+                        </span>
                       </span>
                     ) : <b>{backCodes ? <RouteCodes from={backCodes[0]} to={backCodes[1]} icon={false} /> : t('itin.secGetHome')}</b>}
                     {onChangeFlight && showFlight('back') && (

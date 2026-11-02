@@ -9325,6 +9325,12 @@ export const de = {
   "tp.pass.of": "{n} von {of}",
   // T1005: the drawn map on the trip page
   "tp.map.title": "Deine Reise auf der Karte",
+  // T1008: the compact passes on the Itinerary
+  "tp.pass.each": "{price} pro Sitz",
+  "tp.pass.withCabin": "Handgepäck inklusive",
+  "tp.pass.withBag": "Aufgabegepäck inklusive",
+  "tp.pass.ownFare": "Eigener Flug",
+  "tp.pass.ownPrice": "Eigener Preis",
   "tp.fl.way": "Welche Richtung",
   "tp.fl.to": "nach",
   "tp.fl.prefs": "Deine Flugwünsche",

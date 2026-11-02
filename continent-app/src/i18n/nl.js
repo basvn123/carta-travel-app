@@ -9325,6 +9325,12 @@ export const nl = {
   "tp.pass.of": "{n} van {of}",
   // T1005: the drawn map on the trip page
   "tp.map.title": "Je reis op de kaart",
+  // T1008: the compact passes on the Itinerary
+  "tp.pass.each": "{price} per stoel",
+  "tp.pass.withCabin": "handbagage inbegrepen",
+  "tp.pass.withBag": "ruimbagage inbegrepen",
+  "tp.pass.ownFare": "Eigen ticket",
+  "tp.pass.ownPrice": "Eigen prijs",
   "tp.fl.way": "Welke kant",
   "tp.fl.to": "naar",
   "tp.fl.prefs": "Je vluchtvoorkeuren",

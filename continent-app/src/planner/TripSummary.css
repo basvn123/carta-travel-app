@@ -1210,3 +1210,96 @@ span.tbp-seg { cursor: default; }
   font-weight: 600;
 }
 @media (hover: hover) { .tpg.is-costs .plan-line-edit.btn:hover { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); } }
+
+/* ---- The Itinerary, compact (T1008, owner: "too big; super clean; less
+   scrolling on a phone") ----
+   A flight item is three rows: the airline with its day and stops beside
+   Change flight; the airports with their times; one foot with the figure
+   (what a seat is under it), Own fare and Book. No rail icon: the pass
+   says what it is. A stop is its photo, town and dates in one head with a
+   small nights stepper, a slim Where you sleep, one price row, and its
+   tools as icons. */
+.tpg .itin-end { grid-template-columns: minmax(0, 1fr); gap: var(--space-2); padding: var(--space-3) var(--space-4); border-color: transparent; box-shadow: var(--elev-1); }
+.tpg .itin-end > * { grid-column: 1; }
+.tpg .itin-end-icon { display: none; }
+.tpg .itin-end-head { flex-wrap: nowrap; }
+.tpg .itin-end-head .jr-brand-text { display: grid; gap: 0; min-width: 0; }
+.tpg .itin-end-head .jr-meta { font-size: var(--text-caption); }
+.tpg .itin-change-flight.btn { flex: none; min-height: 32px; padding-inline: var(--space-3); }
+.tpg .itin-flight.is-pass { gap: var(--space-2); margin-top: var(--space-1); }
+.tpg .itin-flight.is-pass .jr-code { font-size: 20px; }
+.tpg .itin-flight.is-pass .jr-time { font-size: var(--text-label); }
+.itin-pass-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border-soft);
+}
+.itin-pass-fig { display: grid; min-width: 0; }
+.itin-pass-fig .money { font-size: var(--text-lead); font-weight: 800; font-variant-numeric: tabular-nums; }
+.itin-pass-fig small { font-size: var(--text-caption); color: var(--text-2); }
+.itin-pass-acts { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--space-2); }
+.itin-pass-acts .plan-paid-add.btn,
+.tpg .itin-bed-acts .plan-paid-add.btn {
+  min-height: 32px;
+  padding-inline: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  font-size: var(--text-label);
+}
+.itin-pass-acts .plan-paid { flex-basis: 100%; }
+
+/* The stop. */
+.tpg .itin-stopcard.is-editable { border-color: transparent; box-shadow: var(--elev-1); }
+.tpg .itin-stop-top { flex-wrap: nowrap; gap: var(--space-2); padding: var(--space-3) var(--space-3) var(--space-2) var(--space-4); }
+.tpg .itin-stopcard.is-editable .itin-stop { flex: 1 1 auto; }
+.tpg .itin-stopcard .itin-stop-idx { width: 20px; height: 20px; font-size: var(--text-micro); }
+.tpg .itin-stop-thumb { width: 44px; height: 44px; border-radius: var(--radius-control); }
+.tpg .itin-stop-city { font-size: var(--text-lead); font-weight: 700; }
+.tpg .itin-stop-sub { font-size: var(--text-caption); color: var(--text-2); }
+.tpg .itin-nights { gap: var(--space-1); }
+.tpg .itin-nights .fstepper-btn { width: 30px; height: 30px; min-width: 30px; min-height: 30px; }
+.tpg .itin-nights .fstepper-value { min-width: 20px; font-size: var(--text-body); font-weight: 700; text-align: center; }
+.tpg .itin-nights-lbl { font-size: var(--text-caption); }
+.tpg .itin-stay { max-width: none; padding: 0 var(--space-4) var(--space-2); }
+.tpg .itin-stay .field { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: var(--space-2); }
+.tpg .itin-stay .field-label { margin: 0; font-size: var(--text-caption); color: var(--text-2); white-space: nowrap; }
+.tpg .itin-stay .field-control select { min-height: 36px; padding-block: 0; font-size: var(--text-label); }
+.tpg .itin-bed { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); margin: 0 var(--space-4); padding: var(--space-2) 0; border-top: 1px solid var(--border-soft); }
+.tpg .itin-bed-cost { margin: 0; }
+.tpg .itin-bed-acts { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.tpg .itin-bed-acts .itin-find.btn { min-height: 32px; border: 1px solid var(--border); border-radius: var(--radius-control); }
+.tpg .itin-stop-acts { gap: 0; padding: var(--space-1) var(--space-2); }
+.tpg .itin-stop-acts .icon-btn { width: 36px; height: 36px; color: var(--text-2); }
+.tpg .itin-stop-acts .itin-stop-remove { color: var(--danger); }
+/* T1008, second pass: the head is the photo, the town and its dates; Where
+   you sleep and the nights share the row under it; the price row carries
+   the providers by name; a hop is a slim row. */
+.tpg .itin-stopcard .itin-stop-thumb { width: 44px; height: 44px; flex: none; border-radius: var(--radius-control); }
+.tpg .itin-stay { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); padding: 0 var(--space-4) var(--space-2); }
+.tpg .itin-stay-pick { display: flex; flex: 1 1 160px; align-items: center; gap: var(--space-2); min-width: 0; color: var(--text-2); }
+.tpg .itin-stay-pick .field { display: block; flex: 1; min-width: 0; }
+.tpg .itin-stay .itin-nights { margin-left: auto; }
+.tpg .itin-stay .itin-balance { flex-basis: 100%; }
+.tpg .itin-pass-acts .plan-paid-add .btn-icon,
+.tpg .itin-bed-acts .plan-paid-add .btn-icon,
+.tpg .itin-hop-acts .plan-paid-add .btn-icon { display: none; }
+.tpg .itin-pass-acts .plan-paid-add.btn { padding-inline: 10px; }
+.tpg .itin-pass-foot { flex-wrap: nowrap; }
+.tpg .itin-find.btn { gap: 5px; min-height: 32px; padding-inline: 10px; border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--surface); color: var(--text); font-size: var(--text-label); }
+.tpg .itin-find.btn svg { opacity: 0.6; }
+.tpg .itin-bed-cost .costrow { min-height: 0; padding: 0; }
+.tpg .itin-stopcard .itin-daytrips, .tpg .itin-stopcard .itin-trips { padding-block: var(--space-1); }
+.tpg .itin-stop-acts { border-top: 0; }
+.tpg .itin-hop { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); padding: var(--space-1) var(--space-4) var(--space-1) var(--space-6); }
+.tpg .itin-hop > .itin-leg { flex: 1 1 100%; }
+.tpg .itin-hop-acts { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.tpg .itin-hop-acts .plan-paid-add.btn { min-height: 32px; padding-inline: 10px; border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--surface); font-size: var(--text-label); }
+/* The day trips and the stop's tools close the card in one tight band. */
+.tpg .itin-stopcard .itin-daytrips { gap: var(--space-1); padding: var(--space-1) var(--space-4) 0; }
+.tpg .itin-stopcard .itin-stop-acts { padding: 0 var(--space-2) var(--space-1); }
+.tpg .itin-bed-cost dt svg, .tpg .itin-bed-cost .costrow-icon { display: none; }

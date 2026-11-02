@@ -9934,6 +9934,12 @@ export const en = {
   "tp.pass.of": "{n} of {of}",
   // T1005: the drawn map on the trip page
   "tp.map.title": "Your trip on the map",
+  // T1008: the compact passes on the Itinerary
+  "tp.pass.each": "{price} a seat",
+  "tp.pass.withCabin": "cabin bag in",
+  "tp.pass.withBag": "checked bag in",
+  "tp.pass.ownFare": "Own fare",
+  "tp.pass.ownPrice": "Own price",
   "tp.fl.way": "Which way",
   "tp.fl.to": "to",
   "tp.fl.prefs": "Your flight preferences",
