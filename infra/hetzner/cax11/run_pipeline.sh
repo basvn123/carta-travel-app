@@ -15,7 +15,8 @@
 #      the box keeps resolving the laptop's pinned versions (T046-h);
 #   4. installs continent-app's node_modules if they are missing or
 #      package-lock.json changed since the last install (T993), because the
-#      ship step runs `npm run build`;
+#      ship step runs `npm run build`; then deletes the older dated folders
+#      under data/raw, keeping the newest per source (T992, again after 8);
 #   5. pulls from R2 whatever the weekly cadence needs and the box does not
 #      have yet: the master (app_data/app_data.json, gitignored), the fare
 #      history and model (data/history, data/models) and the orchestrator's
@@ -230,6 +231,43 @@ if [ "$SHIP" != "none" ] && { [ ! -d continent-app/node_modules ] || [ "$lock_wa
   fi
 fi
 
+# --- raw mirror retention (T992) -----------------------------------------------
+# src/ingestion writes every run's download under data/raw/<source>/<date>/ and
+# nothing removed the older ones: the three big transit sources add about 12 GB
+# a run, and on 2026-11-02 the 38 GB disk was 98% full mid-run. Per source, keep
+# the newest dated folder and delete the older ones. When the newest is under
+# half the size of the one before it (a download that stopped halfway), keep
+# that one too. The raw-mirrors push copies to R2 and never deletes, so R2
+# keeps what earlier runs pushed. Runs before the pipeline, to make room for
+# this run's download, and again after the push.
+prune_raw() {  # label
+  local src keep n d before after
+  local -a dirs
+  before=$(df -Pk . | awk 'NR==2 {print $4}')
+  for src in data/raw/*/; do
+    [ -d "$src" ] || continue
+    mapfile -t dirs < <(find "$src" -mindepth 1 -maxdepth 1 -type d -regextype posix-extended \
+      -regex '.*/[0-9]{4}-[0-9]{2}-[0-9]{2}' | sort)
+    n=${#dirs[@]}
+    [ "$n" -lt 2 ] && continue
+    keep=1
+    if [ "$(du -sk "${dirs[n-1]}" | cut -f1)" -lt $(( $(du -sk "${dirs[n-2]}" | cut -f1) / 2 )) ]; then
+      keep=2
+      say "raw retention ($1): ${dirs[n-1]#data/raw/} is under half the size of ${dirs[n-2]#data/raw/}; keeping both"
+    fi
+    for d in "${dirs[@]:0:n-keep}"; do
+      if [ $DRY_RUN -eq 1 ]; then
+        say "raw retention ($1): would delete ${d#data/raw/}"
+      else
+        rm -rf -- "$d" && say "raw retention ($1): deleted ${d#data/raw/}"
+      fi
+    done
+  done
+  after=$(df -Pk . | awk 'NR==2 {print $4}')
+  say "raw retention ($1): $(( (after - before) / 1048576 )) GB freed, $(( after / 1048576 )) GB free"
+}
+prune_raw "before the run"
+
 # --- R2 ------------------------------------------------------------------------
 r2_configured() {
   command -v rclone >/dev/null 2>&1 \
@@ -426,6 +464,10 @@ else
       PUBLISH_FAILED=1
     fi
   fi
+fi
+
+if [ $ARCHIVE -eq 1 ] && [ "$PULL_ONLY" -eq 0 ]; then
+  prune_raw "after the push"
 fi
 
 if [ $rc -ne 0 ]; then
