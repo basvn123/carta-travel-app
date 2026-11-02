@@ -1742,3 +1742,10 @@ span.tbp-seg { cursor: default; }
 }
 @media (hover: hover) { .tpg.is-costs .plan-line-edit.btn:hover { border-color: var(--umber-300); background: var(--umber-100); color: var(--umber-800); } }
 .tpg.is-costs .plan-whatif { margin-top: var(--space-2); padding: var(--space-2) var(--space-3); border-radius: var(--radius-control); background: var(--sun-100); color: var(--text); }
+
+/* T1014 (owner: "remove that border, and the white background"): the
+   section sits on the page ground; its tiles are white, no rule. */
+.tpg .itin-export-card { padding: 0; overflow: visible; border-radius: 0; background: none; box-shadow: none; }
+.tpg .itin-export-chip { border: 0; background: var(--surface); }
+@media (hover: hover) { .tpg .itin-export-chip:hover { border: 0; background: var(--umber-50); } }
+.tpg .itin-export-top .itin-export-h { font-size: var(--text-title); font-weight: 600; letter-spacing: 0; }
