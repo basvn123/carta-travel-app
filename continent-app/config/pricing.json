@@ -205,6 +205,20 @@
       "review": "2027-04-24",
       "test": "tests/priceGolden.test.mjs"
     },
+    "bands.feel": {
+      "value": {
+        "gap": 0.1,
+        "rows": 4,
+        "min_items": 3,
+        "reach": 0.5
+      },
+      "unit": "gap and reach: ratio off the catalogue median; rows and min_items: count",
+      "kind": "estimate",
+      "source": "Price feel (T1018): an item more than gap off its bands.ref_prices median is cheaper or dearer than usual; at most rows of them are drawn, a bar fills its half width at reach off, and under min_items priced things the page shows the verdict only",
+      "date": "2026-11-02",
+      "review": "2027-05-02",
+      "test": "tests/priceFeel.test.mjs"
+    },
     "lifestyle.default": {
       "value": {
         "cadence": "week",

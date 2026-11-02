@@ -164,6 +164,20 @@ export function bandFor(kind, eur, scale = 1) {
   return cuts.length;
 }
 
+/** Where a euro figure sits on a scale: its band (as bandFor) and `frac`,
+ *  0 to 1 between the band's cut points. The open end bands borrow the
+ *  width of their neighbour, so a very cheap or very pricey place still has
+ *  a spot inside its band. */
+export function bandPos(kind, eur, scale = 1) {
+  const band = bandFor(kind, eur, scale);
+  if (band == null) return null;
+  const cuts = CUTS[kind].map((c) => c * scale);
+  const last = cuts.length - 1;
+  const lo = band === 0 ? 2 * cuts[0] - cuts[1] : cuts[band - 1];
+  const hi = band > last ? 2 * cuts[last] - cuts[last - 1] : cuts[band];
+  return { band, frac: Math.min(1, Math.max(0, (eur - lo) / (hi - lo))) };
+}
+
 /** i18n keys for the five bands, so the five words live in one place. */
 export const BAND_KEY = ['cost.band0', 'cost.band1', 'cost.band2', 'cost.band3', 'cost.band4'];
 
@@ -349,6 +363,61 @@ export function costRow(d, ctx) {
     // T662: what the engine (lib/price/) reports as each line's basis.
     stayRepaired: repaired,
     stayUnits: at.bed ? { unit: at.bed.unit, units: at.bed.units, tier: at.bed.tier, basis: at.bed.basis } : null,
+  };
+}
+
+/** The seven things a place prices (a coffee, a meal), in display order. */
+export const FOOD_ITEMS = ['meal_mid_eur', 'meal_cheap_eur', 'fastfood_eur', 'drink_out_eur',
+  'coffee_eur', 'cocktail_eur', 'grocery_day_eur'];
+
+/**
+ * The price feel (T1018): how dear eating out is here, said the way a
+ * traveller judges a price, against one they know. The place page's Eat and
+ * drink shows this instead of seven prices to the cent.
+ *
+ *   band   the food band word (the Explore card's word), 0 to 4
+ *   pos    the place on the five-step scale, 0 to 1 (bandPos), the pin kept
+ *          in the middle half of its step so it never reads as the next one
+ *   lean   'cheap' or 'dear' when the figure sits in the outer third of a
+ *          middle band, else null ("Mid-priced, toward the dear side")
+ *   items  each priced thing against the frozen catalogue median for it
+ *          (bands.ref_prices): ratio -0.41 is 41% under the norm; reach is
+ *          the share of the bar's half width that distance fills
+ *   cheaper / dearer   the items more than bands.feel gap off the norm,
+ *          furthest first, at most bands.feel rows together
+ *   usual  the items within the gap, named once
+ *   brief  fewer than bands.feel min_items priced: the verdict only
+ *
+ * The norm is frozen, so a town reads the same against it as the catalogue
+ * grows. `foodEur` is the cost row's food day at the traveller's lifestyle
+ * and `lifestyle` scales the cut points the same way costRow does.
+ */
+const FEEL = rule('bands.feel');
+
+export function priceFeel(costs, foodEur, lifestyle) {
+  const items = FOOD_ITEMS
+    .filter((key) => costs?.[key] > 0 && REF_PRICES[key] > 0)
+    .map((key) => {
+      const ratio = costs[key] / REF_PRICES[key] - 1;
+      return { key, eur: costs[key], ratio, reach: Math.min(1, Math.abs(ratio) / FEEL.reach) };
+    });
+  if (!items.length) return null;
+
+  const at = bandPos('food', foodEur, bandScale(lifestyle, 'home').food);
+  const middle = at && at.band > 0 && at.band < CUTS.food.length;
+  const off = items.filter((i) => Math.abs(i.ratio) > FEEL.gap)
+    .sort((x, y) => Math.abs(y.ratio) - Math.abs(x.ratio))
+    .slice(0, FEEL.rows)
+    .sort((x, y) => x.ratio - y.ratio);
+  return {
+    band: at ? at.band : null,
+    pos: at ? (at.band + 0.25 + at.frac * 0.5) / (CUTS.food.length + 1) : null,
+    lean: !middle ? null : at.frac < 1 / 3 ? 'cheap' : at.frac > 2 / 3 ? 'dear' : null,
+    items,
+    cheaper: off.filter((i) => i.ratio < 0),
+    dearer: off.filter((i) => i.ratio > 0).reverse(),
+    usual: items.filter((i) => Math.abs(i.ratio) <= FEEL.gap),
+    brief: items.length < FEEL.min_items,
   };
 }
 

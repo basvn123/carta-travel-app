@@ -72,3 +72,96 @@
 @media (min-width: 700px) {
   .dfood-prices { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
+
+/* The price feel (T1018, DestFood.jsx PriceFeel): the place page's Eat and
+   drink. On the page's ground, no card (owner's mock 2026-11-02): the band
+   word, the five-step scale with a pin, then what is cheaper and dearer than
+   the European norm as short bars from a centre tick. Green is cheaper, the
+   umber ramp dearer, and every group carries its heading so colour is never
+   the only signal. */
+.pfeel { display: grid; gap: var(--space-4); min-width: 0; }
+.pfeel-verdict {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.02em;
+  color: var(--text);
+  text-wrap: balance;
+}
+.pfeel-verdict span { color: var(--umber-600); }
+
+.pfeel-scale { display: grid; gap: var(--space-2); margin-top: calc(-1 * var(--space-1)); }
+.pfeel-steps { position: relative; display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--space-1); height: 8px; }
+.pfeel-steps i { border-radius: var(--radius-pill); }
+.pfeel-steps .is-0 { background: var(--good-mid); }
+.pfeel-steps .is-1 { background: color-mix(in srgb, var(--good-mid) 50%, var(--surface-page)); }
+.pfeel-steps .is-2 { background: color-mix(in srgb, var(--umber-200) 75%, var(--surface-page)); }
+.pfeel-steps .is-3 { background: var(--umber-300); }
+.pfeel-steps .is-4 { background: var(--umber-500); }
+.pfeel-pin {
+  position: absolute;
+  top: 50%;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 3px solid var(--text);
+  box-shadow: 0 2px 6px rgba(31, 42, 51, 0.22);
+  transform: translate(-50%, -50%);
+}
+.pfeel-ends { display: flex; justify-content: space-between; gap: var(--space-3); font-size: var(--text-label); color: var(--text-3); }
+
+.pfeel-group { display: grid; gap: var(--space-3); }
+.pfeel-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: var(--text-body);
+  font-weight: 700;
+  color: var(--text);
+}
+.pfeel-head::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--feel); }
+.pfeel-group.is-cheap, .pfeel-dev.is-cheap { --feel: var(--good-mid); }
+.pfeel-group.is-dear, .pfeel-dev.is-dear { --feel: var(--umber-500); }
+
+.pfeel-rows { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
+.pfeel-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(64px, 96px);
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-lead);
+  color: var(--text);
+}
+.pfeel-name { min-width: 0; overflow-wrap: break-word; }
+.pfeel-about { color: var(--text-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pfeel-dev { position: relative; height: 12px; }
+.pfeel-dev::before { content: ""; position: absolute; inset: 5px 0 auto; height: 2px; border-radius: 2px; background: var(--border); }
+.pfeel-dev::after { content: ""; position: absolute; left: 50%; top: 0; width: 2px; height: 12px; margin-left: -1px; border-radius: 1px; background: var(--neutral-300); }
+/* --reach (0 to 1, set per row) is how far of the half width the bar runs
+   from the centre tick: leftward when cheaper, rightward when dearer. */
+.pfeel-dev i { position: absolute; top: 5px; height: 2px; width: calc(var(--reach) * 50%); border-radius: 2px; background: var(--feel); }
+.pfeel-dev b { position: absolute; top: 1px; width: 10px; height: 10px; margin-left: -5px; border-radius: 50%; background: var(--feel); }
+.pfeel-dev.is-cheap i { right: 50%; }
+.pfeel-dev.is-dear i { left: 50%; }
+.pfeel-dev.is-cheap b { left: calc(50% - var(--reach) * 50%); }
+.pfeel-dev.is-dear b { left: calc(50% + var(--reach) * 50%); }
+
+.pfeel-usual { margin: 0; font-size: var(--text-body); color: var(--text-2); }
+.pfeel-usual b { font-weight: 700; color: var(--text); }
+
+/* All prices is the kit's quiet Button; only its place and the chevron's
+   turn are this panel's. */
+.pfeel-more { justify-self: center; }
+.pfeel-more svg { transition: transform 160ms cubic-bezier(0.22, 1, 0.36, 1); }
+.pfeel-more[aria-expanded="true"] svg { transform: rotate(180deg); }
+@media (prefers-reduced-motion: reduce) { .pfeel-more svg { transition: none; } }
+.pfeel-prices { margin-top: calc(-1 * var(--space-2)); }
+/* In the Eat and drink column the cells take what room there is, never four
+   cramped across; stacked under the dishes on a phone the verdict keeps a
+   section's distance from the chips. */
+.pt-eat .pfeel-prices { grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); }
+@media (max-width: 699px) { .pt-eat .pfeel { margin-top: var(--space-4); } }
+.pfeel-prices[hidden] { display: none; }
