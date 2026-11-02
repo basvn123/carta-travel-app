@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { Button, IconButton } from '../../components/ui/index.js';
-import { PlusIcon, TrashIcon, LockIcon, ReceiptIcon, TicketIcon } from '../../components/Icons.jsx';
+import { PlusIcon, TrashIcon, ReceiptIcon, TicketIcon } from '../../components/Icons.jsx';
 import { useUndo, UndoToast } from '../DayPlanPanel.jsx';
 import {
   listFiles, addFiles, readFile, deleteFile, filesAvailable, fmtBytes, MAX_FILE_BYTES,
@@ -154,7 +154,6 @@ export function TripNotes({ planId, notes = '', onNotes }) {
             <span className="tnt-empty-ic" aria-hidden="true"><PlusIcon size={20} /></span>
             <span className="tnt-empty-text">
               <b>{t('tp.docs.emptyTitle')}</b>
-              <span>{t('tp.docs.empty')}</span>
             </span>
           </button>
         )}
@@ -178,12 +177,7 @@ export function TripNotes({ planId, notes = '', onNotes }) {
           </ul>
         )}
 
-        {ready && (
-          <p className="tnt-quiet">
-            <LockIcon size={13} aria-hidden="true" />
-            {t('tp.docs.private', { mb: Math.round(MAX_FILE_BYTES / (1024 * 1024)) })}
-          </p>
-        )}
+        {/* T1016 (owner): no line about where the files are kept. */}
       </section>
       {pending && <UndoToast pending={pending} onUndo={undo} />}
     </div>
