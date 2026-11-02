@@ -452,10 +452,14 @@ button.ct-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: 2
   justify-content: space-between;
   gap: var(--space-3);
   padding: var(--space-2) max(var(--gutter), env(safe-area-inset-right, 0px)) var(--space-2) max(var(--gutter), env(safe-area-inset-left, 0px));
-  background: var(--surface);
-  border-top: 1px solid var(--border);
-  box-shadow: 0 -4px 16px rgba(31, 42, 51, 0.08);
+  /* T1011 (owner): no white band and no rule; the page's own ground fades
+     in under the two buttons so they stay legible over what scrolls by. */
+  background: linear-gradient(to top, var(--surface-page) 55%, color-mix(in srgb, var(--surface-page) 0%, transparent));
+  border-top: 0;
+  box-shadow: none;
 }
+body:has(.tpg-dock) .bottom-nav { border-top-color: transparent; box-shadow: none; }
+.tpg-dock .btn { box-shadow: var(--elev-1); }
 .tpg-dock-change.btn { flex: none; }
 .tpg-dock-go.btn { flex: 1; }
 
@@ -1511,3 +1515,133 @@ span.tbp-seg { cursor: default; }
 /* The base .itin-hop packs its tracks (justify-content: space-between); the
    trip page's hop is one full column. */
 .tpg .itin-hop { grid-template-columns: minmax(0, 1fr); justify-content: stretch; align-items: stretch; }
+
+/* ---- The Itinerary's end: kit, export, before you go (T1011) ----
+   After the research round: one Share door with the other ways out under
+   it (TripIt, Wanderlog, KAYAK), packing as a row with its count and a thin
+   bar (QuickPack), the country's facts as short cards. Colour comes from the
+   Carta palette: the umber card, the sun, the lagoon, the terracotta. */
+
+/* The kit: two rows, each a tinted mark, its name and state, a thin bar. */
+.tpg .itin-tool-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); }
+@media (min-width: 600px) { .tpg .itin-tool-grid { grid-template-columns: 1fr 1fr; } }
+.tpg .itin-tool.btn {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas: "ic name go" "ic state go" "ic bar go";
+  align-items: center;
+  justify-content: stretch;
+  gap: 2px var(--space-3);
+  height: auto;
+  min-height: 64px;
+  padding: var(--space-3) var(--space-4);
+  border: 0;
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+  text-align: left;
+}
+.tpg .itin-tool .btn-label { display: contents; }
+.tpg .itin-tool-icon { grid-area: ic; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; }
+.tpg .itin-tool.is-lagoon .itin-tool-icon { background: var(--lagoon-100); color: var(--lagoon-800); }
+.tpg .itin-tool.is-sun .itin-tool-icon { background: var(--sun-100); color: var(--sun-800); }
+.tpg .itin-tool-name { grid-area: name; font-size: var(--text-body); font-weight: 700; color: var(--text); }
+.tpg .itin-tool-state { grid-area: state; font-size: var(--text-caption); color: var(--text-2); }
+.tpg .itin-tool-bar { grid-area: bar; display: block; height: 4px; margin-top: 4px; overflow: hidden; border-radius: 2px; background: var(--surface-sunken); }
+.tpg .itin-tool-bar i { display: block; height: 100%; border-radius: 2px; transition: width var(--dur-3) var(--ease-out); }
+.tpg .itin-tool.is-lagoon .itin-tool-bar i { background: var(--lagoon-600); }
+.tpg .itin-tool.is-sun .itin-tool-bar i { background: var(--sun-400); }
+.tpg .itin-tool-go { grid-area: go; color: var(--text-3); }
+@media (hover: hover) { .tpg .itin-tool.btn:hover { box-shadow: var(--elev-2); } }
+
+/* Export & share: the umber card, Share trip and the PDF, then the chips. */
+.tpg .itin-export-card {
+  position: relative;
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  overflow: hidden;
+  border-radius: var(--radius-sheet);
+  background:
+    radial-gradient(80% 90% at 100% 0%, color-mix(in srgb, var(--sun-400) 30%, transparent), transparent 60%),
+    linear-gradient(150deg, var(--umber-600), var(--umber-800));
+  box-shadow: 0 10px 24px -14px color-mix(in srgb, var(--umber-800) 60%, transparent);
+  color: var(--umber-50);
+}
+.tpg .itin-export-h { margin: 0; font-size: var(--text-title); font-weight: 800; letter-spacing: -0.02em; color: var(--umber-50); }
+.tpg .itin-export-main { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-2); }
+.tpg .itin-export-main .btn { min-height: 44px; border: 0; border-radius: var(--radius-control); font-weight: 700; }
+.tpg .itin-export-share.btn { background: var(--umber-50); color: var(--umber-800); }
+.tpg .itin-export-pdf.btn { padding-inline: var(--space-4); background: color-mix(in srgb, var(--umber-50) 16%, transparent); color: var(--umber-50); }
+@media (hover: hover) {
+  .tpg .itin-export-share.btn:hover { background: var(--surface); }
+  .tpg .itin-export-pdf.btn:hover { background: color-mix(in srgb, var(--umber-50) 24%, transparent); }
+}
+.tpg .itin-export-main .btn:focus-visible, .tpg .itin-export-chip:focus-visible { outline: 2px solid var(--umber-50); outline-offset: 2px; }
+.tpg .itin-export-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.tpg .itin-export-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 36px;
+  padding: 0 var(--space-3) 0 4px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--umber-50) 12%, transparent);
+  color: var(--umber-50);
+  font: inherit;
+  font-size: var(--text-label);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+@media (hover: hover) { .tpg .itin-export-chip:hover { background: color-mix(in srgb, var(--umber-50) 22%, transparent); } }
+.tpg .itin-export-chip-ic { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; color: var(--umber-800); }
+.tpg .itin-export-chip.is-lagoon .itin-export-chip-ic { background: var(--lagoon-300); }
+.tpg .itin-export-chip.is-sun .itin-export-chip-ic { background: var(--sun-400); }
+.tpg .itin-export-chip.is-terra .itin-export-chip-ic { background: #e8916b; }
+.tpg .itin-export-chip.is-sand .itin-export-chip-ic { background: var(--umber-200); }
+.tpg .itin-export-note { margin: var(--space-2) 0 0; font-size: var(--text-caption); color: var(--text-2); }
+
+/* What was spent, on the Costs tab. */
+.tpg .itin-spent { display: grid; gap: var(--space-2); }
+.tpg .itin-spent .itin-h { margin: 0; }
+
+/* Before you go: short cards that swipe, each topic its colour. */
+.bgo { display: grid; gap: var(--space-3); }
+.bgo-track { grid-auto-columns: 84%; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; }
+.bgo-track::-webkit-scrollbar { display: none; }
+@media (min-width: 769px) { .bgo-track { grid-auto-columns: calc((100% - var(--space-3)) / 2); } }
+.bgo-track .bgo-card { height: auto; min-height: 168px; scroll-snap-align: start; }
+.bgo-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border: 0;
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+}
+.bgo-meta { display: flex; align-items: center; gap: var(--space-2); margin: 0; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.bgo-mark { display: grid; flex: none; place-items: center; width: 32px; height: 32px; border-radius: 10px; }
+.bgo-card.is-sun .bgo-mark { background: var(--sun-100); color: var(--sun-800); }
+.bgo-card.is-lagoon .bgo-mark { background: var(--lagoon-100); color: var(--lagoon-800); }
+.bgo-card.is-terra .bgo-mark { background: #fbe3d8; color: #8f3a17; }
+.bgo-card.is-umber .bgo-mark { background: var(--umber-100); color: var(--umber-700); }
+.bgo-meta-text { min-width: 0; }
+.bgo-title { font-size: var(--text-lead); font-weight: 700; line-height: var(--leading-tight); }
+.bgo-text { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 3; font-size: var(--text-label); line-height: 1.45; }
+.bgo-list .bgo-text { display: block; -webkit-line-clamp: unset; }
+.bgo-nav { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.bgo-segs { display: flex; flex: 1; gap: 4px; min-width: 0; }
+.bgo-seg { flex: 1; min-width: 0; height: 22px; padding: 9px 0; border: 0; border-radius: var(--radius-pill); background: var(--border) content-box; cursor: pointer; }
+.bgo-seg.is-at { background-color: var(--umber-600); }
+.bgo-seg:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+.bgo-arrows { display: none; gap: var(--space-2); }
+@media (hover: hover) and (pointer: fine) { .bgo-arrows { display: inline-flex; } }
+/* T1011, second pass: the card's detail stops at three lines (an older
+   track rule had the last word); a lone tool spans the row. */
+.bgo .bgo-card .bgo-text { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
+.bgo .bgo-list .bgo-card .bgo-text { display: block; -webkit-line-clamp: unset; }
+.tpg-tools > .tpg-tool:only-child { grid-column: 1 / -1; flex: 1 1 100%; }

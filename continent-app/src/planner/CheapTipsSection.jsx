@@ -23,6 +23,9 @@ const CATEGORY_KEY = {
 
 const TRACK_CAP = 8;
 
+// T1011: each topic its colour, the card's mark tinted by it.
+const TONE = { best: 'sun', around: 'lagoon', car: 'umber', food: 'terra', see: 'sun', know: 'lagoon' };
+
 /** One country's rules as cards of one shape (T458): the best time, getting
  *  around, the car, food, what not to miss and what is good to know. Each card
  *  is a fact; nothing nests. */
@@ -31,7 +34,11 @@ function countryCards(country, rec, t, lang) {
   const out = [];
   const card = (key, Icon, label, title, text) => {
     if (!title && !text) return;
-    out.push({ key: `${country}-${key}`, Icon, meta: `${label}, ${country}`, title: stripDashes(title || ''), text: stripDashes(text || '') });
+    const head = stripDashes(title || '');
+    const body = stripDashes(text || '');
+    // T1011: a body that only repeats the title says nothing more.
+    const same = head && body && head.trim().toLowerCase() === body.trim().toLowerCase();
+    out.push({ key: `${country}-${key}`, Icon, tone: TONE[key.replace(/\d+$/, '')] || 'umber', meta: `${label}, ${country}`, title: head || body, text: head && !same ? body : '' });
   };
   if (rec.best_months?.length) {
     card('best', CalendarIcon, t('intel.bestTime'), rec.best_months.map((m) => monthName(m, lang)).join(', '), rec.best_time_note);
@@ -81,14 +88,14 @@ export function CheapTipsSection({ stopDetails = [], tripStart = null, transport
     picked.byCountry.forEach((g) => g.tips.forEach((tip) => {
       const label = CATEGORY_KEY[tip.category] ? t(CATEGORY_KEY[tip.category]) : (tip.category || '');
       out.push({
-        key: tip.id, Icon: SparkIcon, meta: [label, countryNames.get(g.iso2) || g.iso2].filter(Boolean).join(', '),
+        key: tip.id, Icon: SparkIcon, tone: 'umber', meta: [label, countryNames.get(g.iso2) || g.iso2].filter(Boolean).join(', '),
         title: stripDashes(tip.title || ''), text: stripDashes(tip.tip || ''), save: tip.savings || '',
       });
     }));
     // Europe-wide tips only when nothing was researched for these countries.
     if (!out.length) {
       picked.generic.forEach((tip) => out.push({
-        key: tip.id, Icon: SparkIcon, meta: CATEGORY_KEY[tip.category] ? t(CATEGORY_KEY[tip.category]) : '',
+        key: tip.id, Icon: SparkIcon, tone: 'umber', meta: CATEGORY_KEY[tip.category] ? t(CATEGORY_KEY[tip.category]) : '',
         title: stripDashes(tip.title || ''), text: stripDashes(tip.tip || ''), save: tip.savings || '',
       }));
     }
@@ -117,8 +124,11 @@ export function CheapTipsSection({ stopDetails = [], tripStart = null, transport
   if (!cards.length) return null;
 
   const renderCard = (c) => (
-    <article className="bgo-card" key={c.key}>
-      <p className="bgo-meta">{c.Icon && <c.Icon size={16} />} {c.meta}</p>
+    <article className={`bgo-card is-${c.tone || 'umber'}`} key={c.key}>
+      <p className="bgo-meta">
+        <span className="bgo-mark" aria-hidden="true">{c.Icon && <c.Icon size={16} />}</span>
+        <span className="bgo-meta-text">{c.meta}</span>
+      </p>
       {c.title && <h3 className="bgo-title">{c.title}</h3>}
       {c.text && <p className="bgo-text">{c.text}</p>}
       {c.save && <p className="bgo-save">{c.save}</p>}
@@ -154,10 +164,21 @@ export function CheapTipsSection({ stopDetails = [], tripStart = null, transport
             {shown.map(renderCard)}
           </div>
           {shown.length > 1 && (
+            // T1011 (owner: "easy to digest, swipe on a phone"): the cards
+            // swipe; under them one segment a card, the one in view marked,
+            // a tap on one brings it in. Previous and Next for a mouse.
             <div className="bgo-nav">
-              <Button variant="secondary" size="sm" onClick={() => go(-1)} disabled={at <= 0}>{t('journey.trackPrev')}</Button>
-              <span className="bgo-pos" aria-live="polite">{t('plan.trackPos', { n: at + 1, total: shown.length })}</span>
-              <Button variant="secondary" size="sm" onClick={() => go(1)} disabled={at >= shown.length - 1}>{t('journey.trackNext')}</Button>
+              <span className="bgo-segs">
+                {shown.map((c, k) => (
+                  <button key={c.key} type="button" className={`bgo-seg${k === at ? ' is-at' : ''}`}
+                    aria-label={t('plan.trackPos', { n: k + 1, total: shown.length })} aria-current={k === at ? 'true' : undefined}
+                    onClick={() => go(k - at)} />
+                ))}
+              </span>
+              <span className="bgo-arrows">
+                <Button variant="secondary" size="sm" onClick={() => go(-1)} disabled={at <= 0}>{t('journey.trackPrev')}</Button>
+                <Button variant="secondary" size="sm" onClick={() => go(1)} disabled={at >= shown.length - 1}>{t('journey.trackNext')}</Button>
+              </span>
             </div>
           )}
         </>

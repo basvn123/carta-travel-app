@@ -43,13 +43,13 @@ export function ChangeTripSheet({ total, tripStart, tripEnd, quoteDelta, flights
   const go = (fn) => () => { onClose(); fn(); };
 
   const rows = [
-    { key: 'dates', Icon: CalendarIcon, label: t('tp.cx.dates'), sub: t('tp.cx.datesSub'), onClick: tripStart && tripEnd ? () => { setPick(0); setView('dates'); } : null },
-    { key: 'people', Icon: PersonIcon, label: t('tp.bar.who'), sub: t('tp.cx.whoSub'), onClick: open.people ? go(open.people) : null },
-    { key: 'from', Icon: HomeIcon, label: t('tp.bar.from'), sub: t('tp.cx.fromSub'), onClick: open.from ? go(open.from) : null },
-    { key: 'flights', Icon: PlaneIcon, label: t('tp.cx.flights'), sub: t('tp.cx.flightsSub'), onClick: open.flights ? go(open.flights) : null },
-    { key: 'stay', Icon: BedIcon, label: t('tp.cx.stay'), sub: t('tp.cx.staySub'), onClick: open.stay ? go(open.stay) : null },
-    { key: 'places', Icon: SwapIcon, label: t('tp.cx.place'), sub: t('tp.cx.placeSub'), onClick: open.places ? go(open.places) : null },
-    { key: 'settings', Icon: SettingsIcon, label: t('tp.cx.all'), sub: '', onClick: open.settings ? go(open.settings) : null },
+    { key: 'dates', Icon: CalendarIcon, label: t('tp.cx.dates'), onClick: tripStart && tripEnd ? () => { setPick(0); setView('dates'); } : null },
+    { key: 'people', Icon: PersonIcon, label: t('tp.bar.who'), onClick: open.people ? go(open.people) : null },
+    { key: 'from', Icon: HomeIcon, label: t('tp.bar.from'), onClick: open.from ? go(open.from) : null },
+    { key: 'flights', Icon: PlaneIcon, label: t('tp.cx.flights'), onClick: open.flights ? go(open.flights) : null },
+    { key: 'stay', Icon: BedIcon, label: t('tp.cx.stay'), onClick: open.stay ? go(open.stay) : null },
+    { key: 'places', Icon: SwapIcon, label: t('tp.cx.place'), onClick: open.places ? go(open.places) : null },
+    { key: 'settings', Icon: SettingsIcon, label: t('tp.cx.all'), onClick: open.settings ? go(open.settings) : null },
   ].filter((r) => r.onClick);
 
   return (
@@ -57,11 +57,12 @@ export function ChangeTripSheet({ total, tripStart, tripEnd, quoteDelta, flights
       {view === 'menu' ? (
         <div className="tpx">
           <ul className="tpx-opts">
-            {rows.map(({ key, Icon, label, sub, onClick }) => (
+            {rows.map(({ key, Icon, label, onClick }) => (
               <li key={key}>
                 <Button variant="quiet" className="tpx-opt" onClick={onClick} data-opt={key} iconEnd={<ChevronRightIcon size={16} />}>
                   <span className="tpx-ic" aria-hidden="true"><Icon size={18} /></span>
-                  <span className="tpx-txt"><b>{label}</b>{sub && <small>{sub}</small>}</span>
+                  {/* T1011 (owner: "remove the subtext, more clean"): the name only. */}
+                  <span className="tpx-txt"><b>{label}</b></span>
                 </Button>
               </li>
             ))}

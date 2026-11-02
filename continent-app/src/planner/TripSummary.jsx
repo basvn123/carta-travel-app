@@ -283,11 +283,8 @@ export function TripSummary({
           {t('pf.doors.rest')}
         </Button>
       )}
-      {(
-        <Button variant="secondary" className="tpg-tool" iconStart={<PencilIcon size={18} />} onClick={change}>
-          {t('tp.change')}
-        </Button>
-      )}
+      {/* T1011 (owner: "just one Change your trip"): it is the dock's on a
+          phone and the top row's from 1024 px, never a tool as well. */}
       {onExport && (
         <Button variant="secondary" className="tpg-tool" iconStart={<ShareIcon size={18} />} onClick={() => onExport(null)}>
           {t('export.exportAndShare')}

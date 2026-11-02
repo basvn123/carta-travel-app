@@ -18,7 +18,7 @@ import { cityLabel } from '../lib/placeName.js';
 import { PlanTotal, PaidField } from './PlanTotal.jsx';
 import { scrollBehavior } from '../lib/motion.js';
 import { usePaywall } from '../hooks/usePaywall.jsx';
-import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon, MapPinIcon, RouteIcon, CalendarIcon, LinkIcon, ChevronDownIcon, CloseIcon, TicketIcon, LuggageIcon, PencilIcon, ExternalIcon, PlusIcon, GripIcon, SwapIcon } from '../components/Icons.jsx';
+import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon, MapPinIcon, RouteIcon, CalendarIcon, LinkIcon, ChevronDownIcon, ChevronRightIcon, CloseIcon, TicketIcon, LuggageIcon, PencilIcon, ExternalIcon, PlusIcon, GripIcon, SwapIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { TRAVEL_MODE_LABEL, googleFlightsLink, legLinks, stayBookLinks } from '../lib/transportLinks.js';
 import { AirportLine } from './trip/AirportLine.jsx';
@@ -587,7 +587,6 @@ export function TripItinerary({
   const dayPlanned = (d) => Boolean(isDayPlanned && isDayPlanned(d.stopIndex, d.dayOfStay));
   const { t } = useI18n();
   const [toolOpen, setToolOpen] = useState('');
-  const [moreExports, setMoreExports] = useState(false);
   const [shareState, setShareState] = useState('');
 
   // Bookings / notes / packing list, keyed by the plan id (or the draft id
@@ -653,10 +652,12 @@ export function TripItinerary({
   const doneBookings = bookingRows.filter((r) => extras.bookings?.[r.key]?.done).length;
   const packed = (extras.checklist || []).filter((c) => c.done).length;
   const tools = [
-    { key: 'bookings', Icon: TicketIcon, title: t('plan.toolBookings'), state: t('plan.toolBookedOf', { n: doneBookings, of: bookingRows.length }) },
-    { key: 'packing', Icon: LuggageIcon, title: t('plan.toolPacking'), state: (extras.checklist || []).length ? t('plan.toolPackedOf', { n: packed, of: extras.checklist.length }) : t('plan.toolEmpty') },
-    { key: 'notes', Icon: PencilIcon, title: t('plan.toolNotes'), state: (extras.notes || '').trim() ? t('plan.toolWritten') : t('plan.toolEmpty') },
-    { key: 'expenses', Icon: ReceiptIcon, title: t('plan.toolExpenses'), state: (extras.expenses || []).length ? t('plan.toolEntries', { n: extras.expenses.length }) : t('plan.toolEmpty') },
+    // T1011 (owner): the kit is what is carried out: the bookings and the
+    // packing list, each with how far along it is. Notes have their own tab;
+    // what was spent sits with the costs (the Costs tab, after Wanderlog's
+    // budget beside the plan).
+    { key: 'bookings', Icon: TicketIcon, tone: 'lagoon', title: t('plan.toolBookings'), state: t('plan.toolBookedOf', { n: doneBookings, of: bookingRows.length }), of: bookingRows.length, n: doneBookings },
+    { key: 'packing', Icon: LuggageIcon, tone: 'sun', title: t('plan.toolPacking'), state: (extras.checklist || []).length ? t('plan.toolPackedOf', { n: packed, of: extras.checklist.length }) : t('plan.toolEmpty'), of: (extras.checklist || []).length, n: packed },
   ];
   const openTool = tools.find((x) => x.key === toolOpen) || null;
 
@@ -1264,11 +1265,15 @@ export function TripItinerary({
             <h2 className="itin-h" id="itin-tools-h">{t('plan.toolsTitle')}</h2>
             <div className="itin-tool-grid">
               {tools.map((tool) => (
-                <Button key={tool.key} variant="secondary" className="itin-tool" onClick={() => setToolOpen(tool.key)}
+                <Button key={tool.key} variant="secondary" className={`itin-tool is-${tool.tone}`} onClick={() => setToolOpen(tool.key)}
                   aria-haspopup="dialog">
-                  <span className="itin-tool-icon" aria-hidden="true"><tool.Icon size={24} /></span>
+                  <span className="itin-tool-icon" aria-hidden="true"><tool.Icon size={20} /></span>
                   <span className="itin-tool-name">{tool.title}</span>
                   <span className="itin-tool-state">{tool.state}</span>
+                  {tool.of > 0 && (
+                    <span className="itin-tool-bar" aria-hidden="true"><i style={{ width: `${Math.round((tool.n / tool.of) * 100)}%` }} /></span>
+                  )}
+                  <ChevronRightIcon size={16} className="itin-tool-go" aria-hidden="true" />
                 </Button>
               ))}
             </div>
@@ -1277,22 +1282,17 @@ export function TripItinerary({
           {/* Take the trip with you: the PDF first, then the rest, all in
               view as one grid of equal buttons (T432). */}
           {show('export') && <section className="itin-export" aria-labelledby="itin-export-h">
-            <h2 className="itin-h" id="itin-export-h">{t('export.exportAndShare')}</h2>
-            <div className="itin-export-grid">
+            <div className="itin-export-card">
+            <h2 className="itin-export-h" id="itin-export-h">{t('export.exportAndShare')}</h2>
+            {/* T1011 (owner: "more colourful, modern"; TripIt, Wanderlog and
+                KAYAK keep one Share door and the rest under it): Share trip
+                is the one primary, the PDF beside it, then every other way
+                out as a chip. */}
+            <div className="itin-export-main">
               <Button
                 variant="secondary"
-                iconStart={<DownloadIcon size={20} />}
-                onClick={() => {
-                  if (!paywall.require('export')) return;
-                  if (onPdf) onPdf(exportPayload); else downloadTripPdf(exportPayload);
-                }}
-                title={t('export.downloadPdfTitle')}
-              >
-                {t('export.downloadPdf')}
-              </Button>
-              <Button
-                variant="secondary"
-                iconStart={<ShareIcon size={20} />}
+                className="itin-export-share"
+                iconStart={<ShareIcon size={18} />}
                 onClick={async () => {
                   const r = await shareTrip(exportPayload);
                   setShareState(r === 'copied' ? t('export.copied') : '');
@@ -1302,41 +1302,53 @@ export function TripItinerary({
               >
                 {t('export.shareTrip')}
               </Button>
+              <Button
+                variant="secondary"
+                className="itin-export-pdf"
+                iconStart={<DownloadIcon size={18} />}
+                onClick={() => {
+                  if (!paywall.require('export')) return;
+                  if (onPdf) onPdf(exportPayload); else downloadTripPdf(exportPayload);
+                }}
+                title={t('export.downloadPdfTitle')}
+              >
+                PDF
+              </Button>
+            </div>
+            <div className="itin-export-chips">
               {sharePayload && (
-                <Button variant="secondary" iconStart={<LinkIcon size={20} />} onClick={handleCopyLink} title={t('export.copyLinkTitle')}>
-                  {t('export.copyLink')}
-                </Button>
+                <button type="button" className="itin-export-chip is-lagoon" onClick={handleCopyLink} title={t('export.copyLinkTitle')}>
+                  <span className="itin-export-chip-ic" aria-hidden="true"><LinkIcon size={14} /></span>{t('export.copyLink')}
+                </button>
               )}
-              {gmapsParts.map((p, i) => (
-                <a key={i} className="btn btn-secondary itin-export-link" href={p.url} target="_blank" rel="noreferrer" title={t('export.openRoute')}>
-                  <span className="btn-icon" aria-hidden="true"><MapPinIcon size={20} /></span>
-                  <span className="btn-label">
-                    {gmapsParts.length === 1
-                      ? t('export.openInGmaps')
-                      : t('day.gmapsPart', { i: i + 1, from: p.from.city || '', to: p.to.city || '' })}
-                  </span>
+              <button type="button" className="itin-export-chip is-sun" onClick={handleIcs} title={t('export.calendarTitle')}>
+                <span className="itin-export-chip-ic" aria-hidden="true"><CalendarIcon size={14} /></span>{t('export.calendar')}
+              </button>
+              <button type="button" className="itin-export-chip is-terra" onClick={handleKml} title={t('export.myMapsTitle')}>
+                <span className="itin-export-chip-ic" aria-hidden="true"><RouteIcon size={14} /></span>{t('export.myMaps')}
+              </button>
+              {gmapsParts.map((p, k) => (
+                <a key={k} className="itin-export-chip is-sand" href={p.url} target="_blank" rel="noreferrer" title={t('export.openRoute')}>
+                  <span className="itin-export-chip-ic" aria-hidden="true"><MapPinIcon size={14} /></span>
+                  {gmapsParts.length === 1
+                    ? t('export.openInGmaps')
+                    : t('day.gmapsPart', { i: k + 1, from: p.from.city || '', to: p.to.city || '' })}
                 </a>
               ))}
             </div>
-            <Button variant="quiet" size="sm" className="itin-export-more" aria-expanded={moreExports}
-              onClick={() => setMoreExports((v) => !v)}
-              iconEnd={<ChevronDownIcon size={16} className={moreExports ? 'plan-chev is-open' : 'plan-chev'} />}>
-              {t('plan.moreExports')}
-            </Button>
-            {moreExports && (
-              <div className="itin-export-grid">
-                <Button variant="secondary" iconStart={<RouteIcon size={20} />} onClick={handleKml} title={t('export.myMapsTitle')}>
-                  {t('export.myMaps')}
-                </Button>
-                <Button variant="secondary" iconStart={<CalendarIcon size={20} />} onClick={handleIcs} title={t('export.calendarTitle')}>
-                  {t('export.calendar')}
-                </Button>
-              </div>
-            )}
+            </div>
             {shareState && <p className="itin-export-note" role="status">{shareState}</p>}
           </section>}
 
           {show('before') && beforeSlot}
+
+          {/* T1011: what was spent sits with what it costs (the Costs tab). */}
+          {show('expenses') && (
+            <section className="itin-spent" aria-labelledby="itin-spent-h">
+              <h2 className="itin-h" id="itin-spent-h">{t('plan.toolExpenses')}</h2>
+              <ExpenseLedger extras={extras} onChange={saveExtras} groupSize={groupSize} />
+            </section>
+          )}
 
           {/* T889: the trip page's Notes tab, the extras inline: the bookings
               with Carta's booking reader, the inbox, the notes and the packing
