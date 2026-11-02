@@ -241,13 +241,21 @@ fi
 # src/ingestion writes every run's download under data/raw/<source>/<date>/ and
 # nothing removed the older ones: the three big transit sources add about 12 GB
 # a run, and on 2026-11-02 the 38 GB disk was 98% full mid-run. Per source, keep
-# the newest dated folder and delete the older ones. When the newest is under
-# half the size of the one before it (a download that stopped halfway), keep
-# that one too. The raw-mirrors push copies to R2 and never deletes, so R2
-# keeps what earlier runs pushed. Runs before the pipeline, to make room for
-# this run's download, and again after the push.
+# the newest dated folder and delete the older ones. When the newest looks like
+# a download that stopped halfway, keep the one before it too: fewer than half
+# its distinct files, or under half its bytes per copy. Per copy, because a
+# day with two runs holds every file twice (RawStore stamps a same-day rerun
+# with _HHMMSS), as 2026-10-22 did. The raw-mirrors push copies to R2 and never
+# deletes, so R2 keeps what earlier runs pushed. Runs before the pipeline, to
+# make room for this run's download, and again after the push.
+raw_stats() {  # dir -> "distinct copies kilobytes"
+  local distinct copies
+  distinct=$(find "$1" -type f ! -name manifest.jsonl | sed -E 's/_[0-9]{6}(\.[^./]*)?$/\1/' | sort -u | wc -l)
+  copies=$(find "$1" -type f ! -name manifest.jsonl | wc -l)
+  echo "$distinct $copies $(du -sk "$1" | cut -f1)"
+}
 prune_raw() {  # label
-  local src keep n d before after
+  local src keep n d before after nd nc nk pd pc pk
   local -a dirs
   before=$(df -Pk . | awk 'NR==2 {print $4}')
   for src in data/raw/*/; do
@@ -257,9 +265,12 @@ prune_raw() {  # label
     n=${#dirs[@]}
     [ "$n" -lt 2 ] && continue
     keep=1
-    if [ "$(du -sk "${dirs[n-1]}" | cut -f1)" -lt $(( $(du -sk "${dirs[n-2]}" | cut -f1) / 2 )) ]; then
+    read -r nd nc nk <<< "$(raw_stats "${dirs[n-1]}")"
+    read -r pd pc pk <<< "$(raw_stats "${dirs[n-2]}")"
+    # bytes per copy compared as nk/nc < (pk/pc)/2, multiplied out: 2*nk*pc < pk*nc
+    if [ "$nc" -eq 0 ] || [ $((nd * 2)) -lt "$pd" ] || [ $((2 * nk * pc)) -lt $((pk * nc)) ]; then
       keep=2
-      say "raw retention ($1): ${dirs[n-1]#data/raw/} is under half the size of ${dirs[n-2]#data/raw/}; keeping both"
+      say "raw retention ($1): ${dirs[n-1]#data/raw/} looks incomplete ($nd files, $nk KB against $pd files, $pk KB); keeping ${dirs[n-2]#data/raw/} too"
     fi
     for d in "${dirs[@]:0:n-keep}"; do
       if [ $DRY_RUN -eq 1 ]; then
