@@ -35,8 +35,10 @@
 #      `push-data.mjs --live`, phase 1, which adds and replaces and deletes
 #      nothing. That is how the box's output reaches production without a
 #      deploy key (T048-j). The boot index and the app shell stay as the last
-#      app deploy left them, and phase 2 (--prune) waits for that deploy, so
-#      neither runs here.
+#      app deploy left them, and phase 2 (--prune) waits for that deploy;
+#  10. with CARTA_DEPLOY=1, deploys the app shell to Cloudflare Pages and then
+#      runs phase 2 (T995), but only when the build's entry script is the one
+#      the live site serves, so a weekly deploy changes data and never code.
 #
 # Steps 5, 7 and 8 are the archive wiring of register row T045-g. They live
 # here and not as run_pipeline.py tasks because they are not data tasks: they
@@ -72,9 +74,13 @@
 #                      on the box. Set it only after the production cutover
 #                      (T054-c): the split build refuses to run until the data
 #                      host is in the CSP (T053-b), which fails the ship.
+#   CARTA_DEPLOY       1 turns on step 10; needs CLOUDFLARE_API_TOKEN (Account,
+#                      Cloudflare Pages, Edit) and CLOUDFLARE_ACCOUNT_ID
+#   CARTA_APP_URL      the live site the guard reads (default the www host)
+#   CARTA_WRANGLER_VERSION  pinned wrangler for the deploy (default 4.156.1)
 #
 # Exit codes: the pipeline's own (0 ok, 1 a task failed, 2 refused to start),
-# 3 the pipeline succeeded but an archive or publish step failed, 4 the venv could not be
+# 3 the pipeline succeeded but an archive, publish or deploy step failed, 4 the venv could not be
 # synced, 5 the environment is broken (no venv, no repo), 75 another run holds
 # the lock.
 set -uo pipefail
@@ -458,10 +464,65 @@ else
   else
     say "publish: phase 1 upload of the staged data to R2 (adds and replaces, deletes nothing)"
     if (cd continent-app && node scripts/r2/push-data.mjs --live); then
+      PUBLISHED=1
       say "publish: done. The boot index and app shell change with the next app deploy; run push-data.mjs --live --prune after it"
     else
       say "PUBLISH FAILED: push-data.mjs exited non-zero; production may hold part of this week's data"
       PUBLISH_FAILED=1
+    fi
+  fi
+fi
+
+# --- deploy the app shell, then prune (T995, owner decision D3, 2026-11-02) ----
+# The step a person did on the laptop after every run (register row T262-a):
+# the boot index and the other shell data files change only with a Pages
+# deploy, and phase 2 of push-data (--prune) must wait for that deploy.
+#
+# The guard. The box builds the app from the root repo's continent-app mirror,
+# while sessions deploy from continent-app itself, sometimes before their work
+# reaches main. A box deploy must never roll that code back. The pipeline
+# writes data only (public/, the split tree), never code or config/, so the
+# hashed entry script assets/index-<hash>.js changes with the code alone. The
+# box deploys only when its entry script is the one the live site serves:
+# then the deploy changes data and nothing else. Otherwise it logs both names
+# and leaves the deploy to a person; phase 1 data is already live either way.
+#
+# Opt-in with CARTA_DEPLOY=1, and needs CLOUDFLARE_API_TOKEN (Account,
+# Cloudflare Pages, Edit) and CLOUDFLARE_ACCOUNT_ID in the secrets file.
+PUBLISHED="${PUBLISHED:-0}"
+DEPLOY_FAILED=0
+APP_URL="${CARTA_APP_URL:-https://www.carta-europetravel.com}"
+WRANGLER="wrangler@${CARTA_WRANGLER_VERSION:-4.156.1}"
+if [ "${CARTA_DEPLOY:-0}" != "1" ]; then
+  say "deploy skipped: CARTA_DEPLOY is not 1 (deploy the app shell by hand, then push-data.mjs --live --prune)"
+elif [ $DRY_RUN -eq 1 ]; then
+  say "deploy: a real run would compare the entry script with $APP_URL, then: npx $WRANGLER pages deploy dist --project-name carta-app --branch main, then push-data.mjs --live --prune"
+elif [ "$PUBLISHED" != "1" ]; then
+  say "deploy skipped: this run published no new data"
+elif [ -z "${CLOUDFLARE_API_TOKEN:-}" ] || [ -z "${CLOUDFLARE_ACCOUNT_ID:-}" ]; then
+  say "deploy skipped: CLOUDFLARE_API_TOKEN or CLOUDFLARE_ACCOUNT_ID is not set"
+else
+  box_entry="$(grep -oE '/assets/index-[A-Za-z0-9_-]+\.js' continent-app/dist/index.html 2>/dev/null | head -n 1)"
+  live_entry="$(curl -fsS -m 30 "$APP_URL/" 2>/dev/null | grep -oE '/assets/index-[A-Za-z0-9_-]+\.js' | head -n 1)"
+  if [ -z "$box_entry" ] || [ -z "$live_entry" ]; then
+    say "deploy skipped: could not read the entry script (box '${box_entry:-?}', live '${live_entry:-?}')"
+  elif [ "$box_entry" != "$live_entry" ]; then
+    say "deploy skipped: the live app runs other code (live $live_entry, this build $box_entry). A session deployed code that is not on main, or main holds code not deployed yet. Deploy by hand once the two agree; this week's data is live through phase 1"
+  else
+    say "deploy: entry script $box_entry matches the live site; deploying the app shell"
+    cp continent-app/dist/index.html continent-app/dist/404.html
+    if ! (cd continent-app && node scripts/check-pages-limits.mjs dist); then
+      say "DEPLOY FAILED: dist/ breaks the Pages limits; nothing deployed"
+      DEPLOY_FAILED=1
+    elif ! (cd continent-app && npx --yes "$WRANGLER" pages deploy dist --project-name carta-app --branch main --commit-dirty=true); then
+      say "DEPLOY FAILED: wrangler pages deploy exited non-zero; production keeps the last shell"
+      DEPLOY_FAILED=1
+    else
+      say "deploy: done; pruning the data host (push-data.mjs --live --prune)"
+      if ! (cd continent-app && node scripts/r2/push-data.mjs --live --prune); then
+        say "DEPLOY FAILED: the prune exited non-zero; old objects stay on the data host, nothing is broken"
+        DEPLOY_FAILED=1
+      fi
     fi
   fi
 fi
@@ -474,8 +535,8 @@ if [ $rc -ne 0 ]; then
   say "pipeline FAILED (exit $rc); see the log above"
   exit $rc
 fi
-if [ $ARCHIVE_FAILED -ne 0 ] || [ $PUBLISH_FAILED -ne 0 ]; then
-  say "pipeline ok, but an archive or publish step failed (exit 3)"
+if [ $ARCHIVE_FAILED -ne 0 ] || [ $PUBLISH_FAILED -ne 0 ] || [ $DEPLOY_FAILED -ne 0 ]; then
+  say "pipeline ok, but an archive, publish or deploy step failed (exit 3)"
   exit 3
 fi
 say "done"
