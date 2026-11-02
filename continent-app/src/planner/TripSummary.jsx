@@ -315,7 +315,14 @@ export function TripSummary({
       {!wide && mapCard}
 
       <section className="tpg-route" aria-labelledby={`${uid}-route`}>
-        <h2 className="tpg-h" id={`${uid}-route`}>{t('plan.yourRoute')}</h2>
+        <div className="tpg-route-top">
+          <h2 className="tpg-h" id={`${uid}-route`}>{t('plan.yourRoute')}</h2>
+          {onAddPaid && (
+            <Button variant="quiet" size="sm" className="tpg-route-paid" iconStart={<PencilIcon size={14} />} onClick={onAddPaid}>
+              {t('tp.addPaid')}
+            </Button>
+          )}
+        </div>
         <Journey
           tripStart={tripStart} tripEnd={tripEnd} stopDetails={stopDetails} stayCosts={stayCosts} stayTier={stayTier}
           priced={priced} flight={flight} ownFlight={ownFlight} driveLegs={driveLegs} origin={origin} div={div}

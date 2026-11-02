@@ -106,7 +106,7 @@ export function ChangeFlight({ dir: startDir = 'out', cartaFlight, answers, pref
                     </span>
                     <span className="tpf-fig">
                       <Money value={r.total} precision="cents" />
-                      <span className="tpf-delta">{r.current ? t('tp.fl.now') : delta(r.delta)}</span>
+                      {r.current ? <span className="tpf-delta">{t('tp.fl.now')}</span> : <Delta d={r.delta} label={delta(r.delta)} />}
                     </span>
                   </button>
                 </li>
@@ -118,5 +118,25 @@ export function ChangeFlight({ dir: startDir = 'out', cartaFlight, answers, pref
         <Button variant="quiet" className="tpf-own" onClick={() => onOwnFare(dir)}>{t('plan.addYourFare')}</Button>
       </div>
     </SheetShell>
+  );
+}
+
+/**
+ * What a flight does to the trip's total, as a mark (T1006, owner: "shorter,
+ * with a colour and an icon"): an arrow and the signed figure, terracotta
+ * when the trip costs more, lagoon when less. The sentence ("€34.00 more
+ * for the trip") is its accessible name.
+ */
+function Delta({ d, label }) {
+  const { lang } = useI18n();
+  if (!Number.isFinite(d) || Math.abs(d) < 0.005) return null;
+  const up = d > 0;
+  return (
+    <span className={`tpf-delta-pill ${up ? 'is-up' : 'is-down'}`} role="img" aria-label={label}>
+      <svg width="8" height="8" viewBox="0 0 8 8" aria-hidden="true" focusable="false">
+        <path d={up ? 'M4 1 L7.5 7 L0.5 7 Z' : 'M4 7 L7.5 1 L0.5 1 Z'} fill="currentColor" />
+      </svg>
+      {`${up ? '+' : '-'}${formatMoney(Math.abs(d), { precision: 'whole', locale: lang })}`}
+    </span>
   );
 }

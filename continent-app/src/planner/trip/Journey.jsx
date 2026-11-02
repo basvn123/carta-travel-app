@@ -2,7 +2,7 @@ import React from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { Button, Chip, Money } from '../../components/ui/index.js';
 import NotYet from '../../components/NotYet.jsx';
-import { BusIcon, CarIcon, FerryIcon, HomeIcon, PencilIcon, TrainIcon } from '../../components/Icons.jsx';
+import { BusIcon, CarIcon, ExternalIcon, FerryIcon, HomeIcon, PencilIcon, TrainIcon } from '../../components/Icons.jsx';
 import { PlaneIcon } from '../../components/TransportIcons.jsx';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { AirlineMark } from '../../components/flights/Flights.jsx';
@@ -53,8 +53,9 @@ function Stamp({ iso }) {
  *   stay    the town's photograph, its nights and bed, check-in and out
  *   hop     the two towns, the mode between them
  *
- * Every card that is booked somewhere ends in one foot: To book or Booked,
- * the link out, Add what you paid, and the figure.
+ * Every card that is booked somewhere ends in one row: To book or Booked,
+ * the figure, and Book (T1006: compact; what was paid goes in from the
+ * section's Add what you paid).
  *
  *   rows             bookRows() output (the links, the paid fields, booked)
  *   onChangeFlight   (dir) the flight sheet, or null
@@ -74,21 +75,27 @@ export function Journey({
     back: ownFlight && split ? Number(ownFlight.costBack) || 0 : 0,
   };
 
+  // T1006 (owner: "more compact, the Find on link placed more cleanly"):
+  // one row, where it stands, the figure, then Book out to the operator
+  // (named for screen readers as the link it is: "Find on Google Flights").
+  // What was paid goes in from the section's own Add what you paid.
   const Foot = ({ row, fig, figNote = '' }) => (
     <div className="jr-foot">
       <span className="jr-status">
         {row?.booked
           ? <Chip kind="status" tone="positive" className="ts-booked">{t('pf.doors.bookedMark')}</Chip>
           : row?.link && <Chip kind="status" tone="neutral" className="ts-tobook">{t('tp.toBook')}</Chip>}
-        {!row?.booked && row?.link && (
-          <a className="jr-link" href={row.link.href} target="_blank" rel="noreferrer noopener">{row.link.label}</a>
-        )}
       </span>
       <span className="jr-fig">
         {fig}
-        {fig && figNote && <small>{figNote}</small>}
+        {fig && (row?.yours ? <small>{t('plan.yours')}</small> : figNote && <small>{figNote}</small>)}
       </span>
-      {row?.paid && <span className="jr-paid">{row.paid}</span>}
+      {!row?.booked && row?.link && (
+        <a className="btn btn-secondary btn-sm jr-book" href={row.link.href} target="_blank" rel="noreferrer noopener" aria-label={row.link.label}>
+          <span className="btn-label">{t('tp.book')}</span>
+          <ExternalIcon size={13} />
+        </a>
+      )}
     </div>
   );
 
@@ -133,10 +140,7 @@ export function Journey({
           <div className="jr-head">
             <span className="jr-brand">
               {leg?.airline && !own ? <AirlineMark code={leg.airline} size="sm" /> : <span className="jr-glyph"><Icon size={16} /></span>}
-              <span className="jr-brand-text">
-                <span className="jr-name">{who}</span>
-                <span className="jr-meta">{[title, stops].filter(Boolean).join(', ')}</span>
-              </span>
+              <span className="jr-name">{who}</span>
             </span>
             {canChange && (
               <Button variant="secondary" size="sm" className="jr-change" iconStart={<PencilIcon size={14} />} onClick={() => onChangeFlight(dir)}>
@@ -150,8 +154,9 @@ export function Journey({
                 <span className="jr-code">{ends[0]}</span>
                 <span className="jr-time">{leg?.dep || ' '}</span>
               </span>
-              <span className="jr-line" aria-hidden="true">
-                <Icon size={14} />
+              <span className="jr-line">
+                <Icon size={14} aria-hidden="true" />
+                {stops && <span className="jr-line-note">{stops}</span>}
               </span>
               <span className="jr-end is-to">
                 <span className="jr-code">{ends[1]}</span>
@@ -198,10 +203,7 @@ export function Journey({
                   <span className="jr-photo" aria-hidden="true">
                     <HeroImage url={s.dest?.image?.url} city={city} iso2={s.dest?.iso2} className="jr-photo-img" ratio={[1, 1]} maxWidth={200} />
                   </span>
-                  <span className="jr-stay-main">
-                    <span className="jr-city">{city}</span>
-                    <span className="jr-meta">{nights}, {bed}</span>
-                  </span>
+                  <span className="jr-city">{city}</span>
                 </div>
                 {s.arriveDate && (
                   <div className="jr-ends is-dates">
@@ -222,10 +224,8 @@ export function Journey({
             {hop && (
               <li className="jr-step is-hop">
                 <Stamp iso={hop.pass?.date} />
+                {/* T1006: the two towns and the mode between them say it all. */}
                 <article className="jr-card is-hop" aria-label={hop.title}>
-                  <div className="jr-head">
-                    <span className="jr-brand"><span className="jr-glyph"><HopIcon size={16} /></span><span className="jr-name">{hop.title}</span></span>
-                  </div>
                   <div className="jr-ends is-towns">
                     <span className="jr-end"><span className="jr-town">{hop.pass?.from}</span></span>
                     <span className="jr-line" aria-hidden="true"><HopIcon size={14} /></span>
