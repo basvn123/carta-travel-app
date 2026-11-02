@@ -31,6 +31,10 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LOG_DIR="${CARTA_LOG_DIR:-$HOME/logs}"
 mkdir -p "$LOG_DIR"
 
+# Everything runs inside main(), called on the last line: bash has then read
+# the whole body before the code update below rewrites this file (T994).
+main() {
+
 # shellcheck source=load-env.sh
 . "$HERE/load-env.sh"
 
@@ -53,6 +57,26 @@ fi
 printf '%s cron fired on %s (pipeline run starting; %d of %d env variables set)\n' \
   "$(date -Is)" "$(hostname)" "$set_count" "$total" >> "$LOG_DIR/weekly.log"
 
+# T994: bring the clone to the newest main before the run. The box never
+# pulled by itself, so a fix on main reached it only by hand; run 2
+# (2026-11-02) ran a checkout two days behind main. reset --hard because the
+# pipeline rewrites tracked wire files under continent-app/public, which the
+# run writes again; the master, the caches and data/raw are gitignored and
+# stay. CARTA_AUTO_UPDATE=0 keeps the checkout as it is (a branch put there
+# by hand). A failed fetch leaves the code as it was and the run goes on.
+if [ "${CARTA_AUTO_UPDATE:-1}" = "1" ]; then
+  local repo branch before
+  repo="$(cd "$HERE/../../.." && pwd)"
+  branch="${CARTA_REPO_BRANCH:-main}"
+  before="$(git -C "$repo" rev-parse --short HEAD 2>/dev/null || echo '?')"
+  if git -C "$repo" fetch -q --depth 1 origin "$branch" && git -C "$repo" reset -q --hard FETCH_HEAD; then
+    printf '%s code update: %s -> %s (origin/%s)\n' \
+      "$(date -Is)" "$before" "$(git -C "$repo" rev-parse --short HEAD)" "$branch" >> "$LOG_DIR/weekly.log"
+  else
+    printf '%s code update FAILED; running %s as it is\n' "$(date -Is)" "$before" >> "$LOG_DIR/weekly.log"
+  fi
+fi
+
 bash "$HERE/run_pipeline.sh" "$@"
 rc=$?
 printf '%s pipeline run finished on %s with exit %d (0 ok, 1 task failed, 2 refused, 3 archive step failed, 75 already running)\n' \
@@ -72,3 +96,6 @@ if [ "$rc" -ne 0 ] && [ -n "${CARTA_HEARTBEAT_URL:-}" ]; then
   fi
 fi
 exit $rc
+}
+
+main "$@"; exit $?
