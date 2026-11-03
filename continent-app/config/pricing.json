@@ -205,6 +205,18 @@
       "review": "2027-04-24",
       "test": "tests/priceGolden.test.mjs"
     },
+    "when.guide": {
+      "value": {
+        "hot_c": 31,
+        "stay_flat": 1.1
+      },
+      "unit": "hot_c: daytime high in C; stay_flat: dearest / cheapest scraped month",
+      "kind": "estimate",
+      "source": "When to go (T1022): a month at hot_c or more with busy crowds is 'hot and busy'; scraped stay prices within stay_flat read 'prices hardly change through the year'",
+      "date": "2026-11-03",
+      "review": "2027-05-03",
+      "test": "tests/whenGuide.test.mjs"
+    },
     "bands.feel": {
       "value": {
         "gap": 0.1,
@@ -1166,43 +1178,16 @@
     "stays.model": {
       "value": {
         "max_age_days": 400,
-        "near_km": 30,
         "outlier": 2.5,
         "curve_min": 0.5,
         "curve_max": 2.2,
-        "star_step": 1.08,
-        "star_default": {
-          "2": 0.72,
-          "3": 0.92,
-          "4": 1.25,
-          "5": 2.1
-        },
-        "season_damp": 0.35,
-        "home_cap_ratios": {
-          "2": 0.8,
-          "4": 1,
-          "6": 1.35,
-          "8": 1.7
-        },
-        "airbnb_home_ratio": 1.15,
-        "airbnb_room_ratio": 0.95,
         "hw_private_unit": "person",
-        "hw_private_guests": 2,
-        "pli_default": 100,
-        "pli_proxy": {
-          "GB": "IE",
-          "FO": "DK",
-          "AD": "ES",
-          "LI": "CH",
-          "MC": "FR",
-          "SM": "IT",
-          "MD": "RO"
-        }
+        "hw_private_guests": 2
       },
       "unit": "days, km, ratios",
       "kind": "estimate",
-      "source": "pipeline/stays/build_stays.py (T530 to T536, T643); most are estimates to calibrate in F7",
-      "date": "2026-10-22",
+      "source": "Scrape-only stays build (T1021, owner 2026-11-03): max_age_days, outlier and curve bounds for Booking + Hostelworld prices; hw_private_unit from the B4 sample (T643)",
+      "date": "2026-11-03",
       "review": "2026-12-31",
       "test": "pipeline/stays/tests/test_stays.py"
     },
@@ -1308,9 +1293,6 @@
         "coverage_drop": 0.02,
         "min_star_props": 2,
         "min_pairs": 2,
-        "min_curve_towns": 3,
-        "serpapi_mape_max": 0.25,
-        "serpapi_min_n": 10,
         "explain_tolerance": 0.02
       },
       "unit": "shares, counts",

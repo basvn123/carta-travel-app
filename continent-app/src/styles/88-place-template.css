@@ -11,7 +11,12 @@
 .pt-wrap {
   max-width: 1240px;
   margin: 0 auto;
-  padding: 0 var(--gutter) var(--space-8);
+  /* T1023 (owner): more room between the content and the screen's edges on
+     every device, and never under a curved edge or notch. */
+  padding: 0 max(var(--space-5), env(safe-area-inset-right, 0px)) var(--space-8) max(var(--space-5), env(safe-area-inset-left, 0px));
+}
+@media (min-width: 600px) {
+  .pt-wrap { padding-left: max(var(--space-6), env(safe-area-inset-left, 0px)); padding-right: max(var(--space-6), env(safe-area-inset-right, 0px)); }
 }
 @media (min-width: 1024px) {
   .pt-wrap { padding: var(--space-4) var(--space-6) var(--space-8); }
@@ -371,7 +376,6 @@ a.pt-trip-name:focus-visible { outline: 2px solid var(--focus); outline-offset: 
 .pt-count-n { margin-left: var(--space-1); font-weight: 700; font-variant-numeric: tabular-nums; }
 
 /* When to go */
-.pt-months { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-card); padding: var(--space-3) var(--space-2) var(--space-2); }
 .pt-cells { display: grid; gap: var(--space-2); }
 @media (min-width: 700px) { .pt-cells { grid-template-columns: repeat(3, minmax(0, 1fr)); } .pt-cells.is-icons { grid-template-columns: 1fr 1fr; } }
 .pt-cell {
@@ -397,14 +401,6 @@ a.pt-trip-name:focus-visible { outline: 2px solid var(--focus); outline-offset: 
 .pt-fest-name small { font-size: var(--text-caption); color: var(--text-2); }
 
 /* Where to stay */
-.pt-page .destp-hood-suits { display: block; font-size: var(--text-caption); font-weight: 400; color: var(--text-3); }
-.pt-page .destp-hoods { gap: 0; padding: var(--space-1) var(--space-4); background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-card); }
-.pt-page .destp-hood { grid-template-columns: minmax(96px, 1fr) 2fr 64px; gap: var(--space-3); padding: var(--space-2) 0; font-size: var(--text-body); border-top: 1px solid var(--border-soft); }
-.pt-page .destp-hood:first-child { border-top: 0; }
-.pt-page .destp-hood-name { white-space: normal; color: var(--text); font-weight: 600; }
-.pt-page .destp-hood-bar { height: 8px; background: var(--surface-sunken); border-radius: var(--radius-pill); }
-.pt-page .destp-hood-bar span { background: var(--umber-300); border-radius: var(--radius-pill); }
-.pt-page .destp-hood-eur { color: var(--text); font-weight: 600; }
 .pt-out { display: grid; gap: var(--space-2); justify-items: start; }
 .pt-outs { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .pt-linkbtn {

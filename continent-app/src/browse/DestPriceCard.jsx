@@ -163,7 +163,19 @@ export function DestPriceCard({
   const linesRef = React.useRef(null);
   useSettleChanged(linesRef, price ? `${price.lines.map((l) => `${l.key}:${l.eur}`).join('|')}|${price.total}` : '');
 
-  if (!ctx || !price) return null;
+  if (!ctx) return null;
+  // T1021: a place the scrape did not reach has no bed price. Missing data
+  // leaves this page (owner, 2026-10-30), so the card goes; the trip can
+  // still be planned, so the primary stays.
+  if (!price) {
+    return onPlanTrip ? (
+      <div className="dpc-wrap">
+        <Button variant="primary" block className="destp-plan-btn" iconStart={<RouteIcon size={18} />} onClick={onPlanTrip}>
+          {t('dest.planTrip')}
+        </Button>
+      </div>
+    ) : null;
+  }
 
   const bcp47 = languages.find((l) => l.code === lang)?.bcp47 || 'en-GB';
   const shortDate = (iso) => {

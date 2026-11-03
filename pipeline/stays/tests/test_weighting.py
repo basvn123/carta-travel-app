@@ -23,9 +23,9 @@ def ob(src, key, price, day=TUE, **kw):
 
 
 def test_each_source_votes_once():
-    obs = [ob("booking", i, 100) for i in range(30)] + [ob("xotelo", i, 200) for i in range(2)]
+    obs = [ob("booking", i, 100) for i in range(30)] + [ob("hostelworld", i, 200) for i in range(2)]
     level, _, n = B.curve_and_level(obs)
-    assert level == 150 and n == 32          # was 100: thirty Booking cards outvoted Xotelo
+    assert level == 150 and n == 32          # was 100: thirty Booking cards outvoted the other source
 
 
 def test_one_source_keeps_its_own_median():
@@ -38,17 +38,23 @@ def dests():
 
 
 def test_untaxed_and_discounted_prices_do_not_set_hotel_levels():
-    obs = [ob("booking", i, 100) for i in range(3)] + \
-          [ob("booking", f"t{i}", 50, tax_included=0) for i in range(5)] + \
-          [ob("booking", f"d{i}", 40, from_or_discount=1) for i in range(5)]
-    rec = B.build(dests(), obs, {}, {}, {})["X"]
+    obs = [ob("booking", i, 100, stars=3) for i in range(3)] + \
+          [ob("booking", f"t{i}", 50, stars=3, tax_included=0) for i in range(5)] + \
+          [ob("booking", f"d{i}", 40, stars=3, from_or_discount=1) for i in range(5)]
+    rec = B.build(dests(), obs)["X"]
     assert rec["src"]["hotel3"]["n"] == 3      # only the three taxed, plain prices
 
 
-def test_a_peak_factor_needs_two_pairs():
-    aug = date(2027, 8, 10)
-    peak = date(2027, 8, 14)
-    one = [ob("booking", "a", 100, aug), ob("booking", "a", 200, peak)]
-    two = one + [ob("booking", "b", 100, aug), ob("booking", "b", 180, peak)]
-    assert "aug15" not in B.build(dests(), one, {}, {}, {})["X"]["peak"]
-    assert B.build(dests(), two, {}, {}, {})["X"]["peak"]["aug15"] == 1.9
+def test_a_weekend_factor_needs_two_pairs():
+    fri = date(2027, 1, 15)
+    one = [ob("booking", "a", 100, stars=3), ob("booking", "a", 130, fri, stars=3),
+           ob("booking", "b", 100, stars=3)]
+    two = one + [ob("booking", "b", 120, fri, stars=3)]
+    assert B.build(dests(), one)["X"]["weekend"] is None
+    assert B.build(dests(), two)["X"]["weekend"] == 1.25
+
+
+def test_a_hotel_without_stars_sets_no_star_class():
+    rec = B.build(dests(), [ob("booking", i, 100) for i in range(3)] +
+                  [ob("booking", "s", 60, kind="apartment", bed="home")])["X"]
+    assert not any(k.startswith("hotel") for k in rec["beds"])

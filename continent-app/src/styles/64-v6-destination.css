@@ -818,9 +818,6 @@ body:has(.destp, .tpage) .accom-panel.lifestyle-panel { z-index: calc(var(--z-pa
 
 /* Long names and long languages wrap; they never push a row sideways. */
 .destp-city { overflow-wrap: anywhere; hyphens: auto; }
-.destp-hood { min-width: 0; }
-.destp-hood-name { min-width: 0; overflow-wrap: anywhere; }
-.destp-sleep-tiers { flex-wrap: wrap; }
 
 /* Tap targets. On a touch screen every control on this page is --tap tall
    and wide; a link inside a sentence keeps its line and grows its hit area

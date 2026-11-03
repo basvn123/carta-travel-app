@@ -153,7 +153,9 @@ function nightFor(dest, rec, tier, people, ms, month) {
     const curve = rec?.month?.bnb_home;
     const four = homes['4'] || annual;
     base = m && curve?.[m - 1] && four ? (curve[m - 1] / four) * annual : annual;
-    units = 1;
+    // T1021: the scrape prices a place for two; a bigger group books as many
+    // of the largest measured place as it fills.
+    units = b.cap ? Math.max(1, Math.ceil(people / b.cap)) : 1;
     unit = 'place';
   } else {
     annual = dest.accommodation.beds[key];

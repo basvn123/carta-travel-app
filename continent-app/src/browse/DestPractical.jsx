@@ -9,9 +9,15 @@ import { Fold } from './Fold.jsx';
 import { RatingBreakdown } from './RatingBreakdown.jsx';
 import { WhyItMatches, useFit } from './WhyItMatches.jsx';
 import { showMatch } from '../lib/match.js';
-import { Neighbourhoods } from './Neighbourhoods.jsx';
+import { useFirstRun } from '../lib/firstRunContext.js';
+import { useStayRecord } from '../lib/staysData.js';
+import { baseCity } from '../lib/nearby.js';
+import { stayBookLinks } from '../lib/transportLinks.js';
+import { stayKindsOf } from '../lib/whenGuide.js';
+import { BunkIcon, HomeIcon, HotelIcon } from '../components/Icons.jsx';
 import { PracticalSlots, practicalSlotRows } from './DestPracticalSlots.jsx';
 import { PSection } from './PageTemplate.jsx';
+import '../styles/94-when-stay.css';
 import { cleanName, fmtKm } from './destParts.js';
 import {
   PersonIcon, ParkingIcon, SunIcon, RainIcon, SnowIcon, ShoeIcon, SwimIcon, BootIcon, PlugIcon,
@@ -46,23 +52,56 @@ const WAY_ICON = { plane: PlaneIcon, train: TrainIcon, bus: BusIcon, car: CarIco
 const TIPS = ['round', '5-10', '10-15', 'included', 'none'];
 const TAP = ['safe', 'bottled', 'varies'];
 
+// The stay types Where to stay offers, each with the tier its book links
+// search for and its glyph (T1022).
+const STAY_ROWS = {
+  hostel: { tier: 'dorm', Icon: BunkIcon },
+  hotel: { tier: 'hotel3', Icon: HotelIcon },
+  home: { tier: 'home', Icon: HomeIcon },
+};
+
+/**
+ * Where to stay (T1022, owner 2026-11-03: no areas, no prices here, clean
+ * buttons to the sites; T1023: no sublines). One row per stay type the
+ * scrape found here (lib/whenGuide.js stayKindsOf), else the three types:
+ * its name and the sites that sell it, searched for the traveller's dates
+ * and party (stayBookLinks). What each costs by month is When to go's.
+ */
 export function DestStay({ p }) {
-  const { t, city, sleep, exits } = p;
-  const hasSleep = !!(sleep?.neighbourhoods?.length > 0 || sleep?.beds || sleep?.curve);
-  const search = exits.find((x) => x.key === 'bk') || exits.find((x) => x.key === 'ab') || null;
-  if (!hasSleep && !search) return null;
+  const { t, destination } = p;
+  const ctx = useFirstRun();
+  const rec = useStayRecord(destination.id);
+  const found = stayKindsOf(rec);
+  const kinds = found.length ? found : ['hotel', 'home', 'hostel'];
+  // A gateway's name carries its airport; the sites search the town.
+  const town = baseCity(destination.city);
+  const checkin = ctx?.departDate || ctx?.defaultDates?.start || '';
+  const checkout = ctx?.returnDate || ctx?.defaultDates?.end || '';
+  const adults = Math.max(1, Math.round(ctx?.choices?.group_size || 2));
+  if (!town) return null;
   return (
     <PSection id="pt-stay" title={t('destx.jump.stay')}>
-      {hasSleep && <Neighbourhoods sleep={sleep} t={t} />}
-      {search && (
-        <div className="pt-out">
-          <a className="pt-linkbtn" href={search.href} target="_blank" rel="noreferrer noopener">
-            <ExternalIcon size={14} />
-            <span>{t('destx.searchStays', { city })}</span>
-          </a>
-          <p className="pt-muted">{t('prov.bookingNote')}</p>
-        </div>
-      )}
+      <ul className="stay-kinds">
+        {kinds.map((k) => {
+          const { tier, Icon } = STAY_ROWS[k];
+          const links = stayBookLinks({ tier, city: town, country: destination.country, checkin, checkout, adults });
+          return (
+            <li key={k} className={`stay-kind is-${k}`}>
+              <span className="stay-ico" aria-hidden="true"><Icon size={20} /></span>
+              <b className="stay-what">{t(`stay.kind.${k}`)}</b>
+              <span className="stay-go">
+                {links.map((l) => (
+                  <a key={l.provider} className="btn btn-secondary btn-sm stay-btn" href={l.href} target="_blank" rel="noreferrer noopener"
+                    aria-label={t('stay.searchOn', { kind: t(`stay.kind.${k}`), provider: l.provider })}>
+                    <span className="btn-label">{l.provider}</span>
+                    <ExternalIcon size={13} />
+                  </a>
+                ))}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
     </PSection>
   );
 }

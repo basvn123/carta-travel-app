@@ -52,6 +52,7 @@ const PRICE_MODULES = [
   "src/lib/flights/bagFees.js", "src/lib/trip_planner_pricing.js", "src/lib/price/request.js",
   "src/lib/price/priceDay.js", "src/lib/price/flight.js",
   "src/lib/airportReach.js", // T860: the drive to a home airport, from origins.airport_access
+  "src/lib/whenGuide.js", // T1022: when to go and stay prices by month
 ];
 const NOT_A_PRICE = new Set([
   "DAY", "DAY_MS",        // milliseconds in a day

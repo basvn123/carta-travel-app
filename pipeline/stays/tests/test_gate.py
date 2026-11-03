@@ -46,9 +46,9 @@ def scrape(tmp_path, name, times=1.0, currency="EUR", hw_private_unit="person", 
                            currency="EUR", unit=hw_private_unit, from_or_discount=1)
     con.commit()
     stats = {}
-    obs = B.load_obs(con, {}, ISO, stats, "person")
+    obs = B.load_obs(con, ISO, stats, "person")
     stats = {s: dict(v, rejected=dict(v["rejected"])) for s, v in stats.items()}
-    return B.build(DESTS, obs, {}, {}, {}), stats
+    return B.build(DESTS, obs), stats
 
 
 def gate(tmp_path, **broken):
@@ -91,11 +91,3 @@ def test_an_explained_move_passes(tmp_path):
               [{"key": f"{did}:{k}", "new": B.bed_value(r, k), "reason": "test"}
                for did, r in bad.items() for k in B.BED_TYPES if B.bed_value(r, k)]
     assert B.gates(bad, ISO, stats, prev=good, explain=explain)[0] == []
-
-
-def test_serpapi_judges_this_build(tmp_path):
-    good, _ = scrape(tmp_path, "good")
-    hotel3 = B.bed_value(good["PT0"], "hotel3")
-    refs = [{"dest": "PT0", "bed": "hotel3", "month": 1, "google": hotel3 * 3}] * 12
-    fails = B.gates(good, ISO, {}, prev=good, calib={"refs": refs})[0]
-    assert any(f.startswith("SerpApi") for f in fails)

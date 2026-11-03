@@ -3,6 +3,7 @@ import { useI18n, tOutsideProvider } from '../i18n/index.jsx';
 import { monthName } from '../lib/dates.js';
 import NotYet from '../components/NotYet.jsx';
 import { climateExtras, windSeriesKmh } from '../lib/waterFacts.js';
+import { comfortTier } from '../lib/whenGuide.js';
 
 /**
  * Real climate normals (NASA POWER, 2001-2020) as a 12-month comfort strip:
@@ -22,13 +23,6 @@ const T_LOW = 1;
 const PRECIP = 2;
 const COMFORT = 3;
 
-// Comfort tier -> colour band. Mirrors apply_climate.py's 0-100 index.
-export function comfortTier(c) {
-  if (c >= 78) return 'great';
-  if (c >= 60) return 'good';
-  if (c >= 45) return 'mixed';
-  return 'poor';
-}
 
 // Collapse a list of 1-12 month numbers into readable ranges, e.g.
 // [4,5,9,10,11] -> "Apr to May, Sep to Nov", the joiner from the

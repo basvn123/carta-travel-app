@@ -1,0 +1,140 @@
+/* 94-when-stay.css: the place page's When to go and Where to stay (T1022).
+   On the page's ground, no white cards (owner). One month strip whose
+   colour is the weather's comfort band, crowd dots under each bar; the stay
+   prices by month as umber bars with gaps where the scrape did not look;
+   the stay types as rows with their booking sites as buttons. */
+
+.pt-page #pt-when,
+.pt-page #pt-stay { --when-great: var(--good-mid); --when-good: color-mix(in srgb, var(--good-mid) 55%, var(--surface-page));
+  --when-mixed: var(--umber-200); --when-poor: var(--neutral-200); }
+
+/* ---- The verdict ---- */
+.when-verdict { display: grid; gap: var(--space-2); margin-bottom: var(--space-5); }
+.when-best { margin: 0; font-size: 26px; font-weight: 800; line-height: var(--leading-tight); letter-spacing: -0.02em; color: var(--text); text-wrap: balance; }
+.when-why { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-1); }
+.when-why li { display: flex; align-items: baseline; gap: var(--space-2); font-size: var(--text-lead); color: var(--text-2); }
+.when-why li::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; transform: translateY(-1px); background: var(--when-great); }
+.when-why li.is-warn::before { background: var(--umber-500); }
+.when-why li.is-cold::before { background: var(--lagoon-300); }
+
+/* ---- The months ---- */
+.when-months { display: grid; gap: var(--space-3); }
+.when-strip { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 4px; align-items: end; }
+.when-m {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: var(--space-1) 0 var(--space-2);
+  border: 0;
+  border-radius: var(--radius-control);
+  background: none;
+  color: var(--text-2);
+  font: inherit;
+  cursor: pointer;
+  transition: background var(--dur-2) var(--ease-out);
+}
+@media (hover: hover) { .when-m:hover { background: var(--surface-hover); } }
+.when-m:focus-visible, .when-pb:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+.when-m.is-on { background: var(--surface); box-shadow: 0 0 0 2px var(--text); }
+.when-hi { font-size: var(--text-caption); font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+.when-bar, .when-pb-bar { width: 100%; max-width: 32px; border-radius: 8px 8px 4px 4px; }
+.when-bar { height: var(--bar, 40px); background: var(--when-poor); }
+.when-m.is-great .when-bar { --bar: 96px; background: var(--when-great); }
+.when-m.is-good .when-bar { --bar: 76px; background: var(--when-good); }
+.when-m.is-mixed .when-bar { --bar: 58px; background: var(--when-mixed); }
+.when-m.is-poor .when-bar { --bar: 40px; }
+.when-dots { display: flex; gap: 2px; }
+.when-dots i { width: 4px; height: 4px; border-radius: 50%; background: var(--neutral-300); }
+.when-dots[data-c="0"] i:nth-child(-n+1),
+.when-dots[data-c="1"] i:nth-child(-n+2),
+.when-dots[data-c="2"] i:nth-child(-n+3),
+.when-dots[data-c="3"] i { background: var(--umber-600); }
+.when-init { font-size: var(--text-caption); font-weight: 600; color: var(--text-3); }
+.when-m.is-best .when-init, .when-m.is-on .when-init, .when-pb.is-on .when-init { color: var(--text); font-weight: 800; }
+.when-fest { position: absolute; top: 2px; right: 3px; width: 6px; height: 6px; border-radius: 50%; background: var(--sun-400); }
+
+.when-key { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); font-size: var(--text-caption); color: var(--text-3); }
+.when-key li { display: inline-flex; align-items: center; gap: 6px; }
+.when-key li::before { content: ""; width: 10px; height: 10px; border-radius: 3px; background: var(--when-poor); }
+.when-key li.is-great::before { background: var(--when-great); }
+.when-key li.is-good::before { background: var(--when-good); }
+.when-key li.is-mixed::before { background: var(--when-mixed); }
+.when-key li.is-crowd::before { width: 4px; height: 4px; border-radius: 50%; background: var(--umber-600); box-shadow: 6px 0 0 var(--umber-600), 12px 0 0 var(--neutral-300); margin-right: 12px; }
+
+.when-detail { display: grid; gap: 2px; padding: var(--space-3) var(--space-4); border-radius: var(--radius-card); background: var(--surface-sunken); }
+.when-detail-head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin: 0; font-size: var(--text-lead); color: var(--text); }
+.when-detail-text { margin: 0; font-size: var(--text-body); color: var(--text-2); }
+.when-tag { display: inline-flex; align-items: center; min-height: 22px; padding: 0 var(--space-2); border-radius: var(--radius-pill); font-size: var(--text-caption); font-weight: 700; background: var(--surface); color: var(--text-2); }
+.when-tag.is-great, .when-tag.is-good { background: color-mix(in srgb, var(--good-mid) 18%, var(--surface)); color: var(--good-ink); }
+.when-tag.is-crowd { background: var(--umber-100); color: var(--umber-700); }
+
+.when-crowd-line { display: flex; align-items: center; gap: var(--space-3); margin: var(--space-4) 0 0; font-size: var(--text-body); color: var(--text-2); }
+.when-gauge { position: relative; flex: none; width: 72px; height: 6px; border-radius: var(--radius-pill); background: linear-gradient(90deg, var(--when-good), var(--umber-200), var(--umber-500)); }
+.when-gauge i { position: absolute; top: 50%; left: var(--at); width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: var(--surface); border: 2px solid var(--text); }
+
+/* ---- Stay prices by month ---- */
+.when-stay { display: grid; gap: var(--space-3); margin-top: var(--space-6); }
+.when-stay-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2) var(--space-3); }
+.when-sub { margin: 0; font-size: var(--text-lead); font-weight: 700; color: var(--text); }
+.when-bars { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 4px; align-items: end; height: 132px; }
+.when-pb-v { font-size: var(--text-caption); font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.when-pb.is-cheap .when-pb-v { color: var(--good-ink); }
+.when-pb {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  justify-items: center;
+  align-items: end;
+  gap: 6px;
+  height: 100%;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: none;
+  font: inherit;
+  cursor: pointer;
+}
+.when-pb-bar { height: var(--h, 0); min-height: 6px; background: var(--umber-300); }
+.when-pb.is-cheap .when-pb-bar { background: var(--good-mid); }
+.when-pb.is-on .when-pb-bar { box-shadow: 0 0 0 2px var(--text); }
+.when-pb.is-gap { cursor: default; }
+.when-pb.is-gap .when-pb-bar { height: 2px; min-height: 2px; background: none; border-top: 2px dashed var(--neutral-300); border-radius: 0; }
+.when-stay-line { display: grid; gap: 2px; margin: 0; font-size: var(--text-body); color: var(--text-2); }
+.when-stay-line b { font-size: var(--text-lead); color: var(--text); }
+
+.when-swim { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: var(--space-4) 0 0; font-size: var(--text-body); color: var(--text-2); }
+.when-swim b { color: var(--text); }
+.pt-page #pt-when .pt-fests { margin-top: var(--space-5); }
+.pt-page #pt-when .pt-fests a { color: var(--umber-700); font-weight: 600; text-decoration-color: color-mix(in srgb, var(--umber-700) 35%, transparent); text-underline-offset: 3px; }
+.pt-page #pt-when .pt-fests a:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
+
+@media (prefers-reduced-motion: reduce) { .when-m { transition: none; } }
+@media (max-width: 420px) {
+  .when-strip, .when-bars { gap: 2px; }
+  .when-hi, .when-pb-v { font-size: 10px; }
+}
+
+/* ---- Where to stay ---- */
+.stay-kinds { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+.stay-kind {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+}
+.stay-kind + .stay-kind { border-top: 1px solid var(--border-soft); }
+.stay-ico { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; color: var(--umber-800); background: var(--umber-100); }
+.stay-kind.is-hostel .stay-ico { background: color-mix(in srgb, var(--lagoon-300) 45%, var(--surface)); color: var(--lagoon-900); }
+.stay-kind.is-home .stay-ico { background: color-mix(in srgb, var(--good-mid) 25%, var(--surface)); color: var(--good-ink); }
+.stay-what { min-width: 0; font-size: var(--text-lead); color: var(--text); }
+.stay-go { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-2); }
+.stay-btn.btn { gap: 6px; text-decoration: none; min-height: 40px; }
+.stay-btn.btn svg { opacity: 0.7; }
+@media (max-width: 599px) {
+  .stay-kind { grid-template-columns: auto minmax(0, 1fr); }
+  .stay-go { grid-column: 2; justify-content: flex-start; }
+}
+@media (pointer: coarse) { .stay-btn.btn { min-height: var(--tap); } }

@@ -1,4 +1,4 @@
-"""Unit tests for the stay layer: parsers, dates, drift and the model.
+"""Unit tests for the stay layer: parsers, dates and the scrape-only model (T1021).
 
 Run:  python -m pytest pipeline/stays/tests -q
 """
@@ -14,9 +14,8 @@ from booking.page import classify, parse_money, prop_key, search_dropped  # noqa
 from booking.urls import search_url  # noqa: E402
 from common import journal  # noqa: E402
 from hostelworld.page import city_url, parse_card  # noqa: E402
-from price_xotelo import easter, peak_days, probe_day  # noqa: E402
+from common import easter, peak_days, probe_day  # noqa: E402
 from scrape_booking import probe_dates  # noqa: E402
-from xotelo import parse_property, rate_median  # noqa: E402
 
 
 def test_parse_money_formats():
@@ -79,31 +78,15 @@ def test_lean_plan_is_six_dates_and_skips_empty_towns():
     assert bookable({"id": "X"}, {"X": {"hotel": 3, "hostel": 0}}) == (True, False)
 
 
-def test_fill_scales_the_fallback_to_the_measured_months():
+def test_nearest_fill_takes_the_closest_scraped_month():
+    # The scrape's months: Jan, Mar, May, Aug, Oct.
     measured = [0.8, None, 1.0, None, 1.2, None, None, 1.6, None, 1.0, None, None]
-    country = [0.5, 0.55, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 0.9, 0.7, 0.6, 0.6]
-    curve, flags = B.fill(measured, country)
+    curve, flags = B.nearest_fill(measured)
     assert flags.count(True) == 5
-    # The town sits about 1.55x the country curve; July follows that, so it
-    # lands near August's level, not at the country's raw 1.0.
-    assert curve[6] > curve[4] and curve[6] < curve[7]
-    assert curve[1] > curve[0] * 0.9
-
-
-def test_xotelo_helpers():
-    p = parse_property({"key": "g187768-d1", "name": "X", "accommodation_type": "Hostel",
-                        "url": "https://www.tripadvisor.com/Hotel_Review-g194729-d567471-Reviews-Hotel_Schiller-Cervia_Province.html",
-                        "geo": {"latitude": 44.2, "longitude": 12.3}})
-    assert p["town_geo"] == "g194729" and p["kind"] == "hostel"
-    assert rate_median({"rates": [{"rate": 100, "code": "A"}, {"rate": 120, "code": "B"},
-                                  {"rate": 0, "code": "C"}]})[0] == 110.0
-
-
-def test_drift_is_year_on_year():
-    hicp = {"IT": {"2025-09": 100.0, "2026-09": 110.0, "2026-08": 140.0}}
-    assert B.drift(hicp, "IT", date(2026, 9, 1)) == 1.0
-    assert abs(B.drift(hicp, "IT", date(2025, 9, 1)) - 1.10) < 1e-9
-    assert abs(B.drift(hicp, "IT", date(2026, 3, 1)) - 1.10 ** 0.5) < 1e-9
+    # Feb -> Jan and Apr -> Mar (ties go to the earlier month), Jun -> May,
+    # Jul -> Aug, Sep -> Aug (tie), Nov and Dec -> Oct (never next January).
+    assert curve == [0.8, 0.8, 1.0, 1.0, 1.2, 1.2, 1.6, 1.6, 1.6, 1.0, 1.0, 1.0]
+    assert B.nearest_fill([None] * 12) == ([None] * 12, [False] * 12)
 
 
 def _dest(i, lat, lon, pop=300_000, cc="ES"):
@@ -111,88 +94,82 @@ def _dest(i, lat, lon, pop=300_000, cc="ES"):
             "pop": pop, "settlement": "city", "cls": None, "tier": "gem"}
 
 
-def _obs(dest, key, kind, bed, day, price, stars=None, adults=2):
-    return {"src": "xotelo", "dest": dest, "key": key, "kind": kind, "stars": stars,
+def _obs(dest, key, kind, bed, day, price, stars=None, adults=2, src="booking"):
+    return {"src": src, "dest": dest, "key": key, "kind": kind, "stars": stars,
             "bed": bed, "adults": adults, "day": day, "price": price,
-            "cap": date(2026, 10, 1)}
+            "cap": date(2026, 10, 25)}
 
 
 def _season(m):
-    # Mallorca-like: August twice November.
-    return {1: .6, 2: .6, 3: .7, 4: .85, 5: 1, 6: 1.3, 7: 1.6, 8: 1.7, 9: 1.3, 10: .9, 11: .6, 12: .65}[m]
+    # Mallorca-like: August twice January.
+    return {1: .6, 3: .7, 5: 1, 8: 1.7, 10: .9}[m]
 
 
-def _seasonal_obs(dest="PMI"):
+SCRAPE_DAYS = [date(2027, 1, 12), date(2027, 3, 16), date(2027, 5, 18), date(2027, 8, 17),
+               date(2027, 10, 12)]
+
+
+def _scraped_obs(dest="PMI"):
     obs = []
-    for m in range(1, 13):
-        y = 2027 if m < 10 else 2026
-        day = probe_day(date(y, m, 1), 0)          # the Tuesday near the 15th
+    for day in SCRAPE_DAYS:
+        f = _season(day.month)
         for j, (base, stars) in enumerate([(80, 3), (90, 3), (140, 4), (150, 4)]):
-            obs.append(_obs(dest, f"h{j}", "hotel", "room", day, base * _season(m), stars))
-        obs.append(_obs(dest, "hs", "hostel", "dorm", day, 25 * _season(m), adults=1))
-    fri = date(2027, 2, 19)
-    obs.append(_obs(dest, "h0", "hotel", "room", fri, 80 * _season(2) * 1.2, 3))
-    obs.append(_obs(dest, "h0", "hotel", "room", date(2027, 8, 14), 80 * _season(8) * 1.3, 3))
-    # A peak factor needs two pairs (T644).
-    obs.append(_obs(dest, "h1", "hotel", "room", date(2027, 8, 14), 90 * _season(8) * 1.3, 3))
+            obs.append(_obs(dest, f"h{j}", "hotel", "room", day, base * f, stars))
+        obs.append(_obs(dest, "a0", "apartment", "home", day, 120 * f))
+        obs.append(_obs(dest, "hs", "hostel", "dorm", day, 25 * f, adults=1, src="hostelworld"))
+    # The weekend probe: the Friday of the May week, two pairs.
+    fri = date(2027, 5, 21)
+    obs.append(_obs(dest, "h0", "hotel", "room", fri, 80 * 1.2, 3))
+    obs.append(_obs(dest, "h1", "hotel", "room", fri, 90 * 1.2, 3))
     return obs
 
 
-def test_model_season_weekend_peak_and_stars():
-    dests = [_dest("PMI", 39.57, 2.65)]
-    rec = B.build(dests, _seasonal_obs(), {}, {}, {})["PMI"]
+def test_model_season_weekend_and_stars():
+    rec = B.build([_dest("PMI", 39.57, 2.65)], _scraped_obs())["PMI"]
     h3 = rec["month"]["hotel3"]
-    assert h3[7] > 1.4 * h3[10]                       # August vs November
-    assert rec["src"]["hotel3"]["q"] == "measured"
+    assert h3[7] > 2 * h3[0]                          # August vs January
+    assert h3[6] == h3[7] and h3[11] == h3[9]         # Jul takes Aug, Dec takes Oct
+    assert rec["season_q"] == "mfmfmffmfmff"
+    assert rec["src"]["hotel3"] == {"q": "measured", "n": 2}
     assert rec["beds"]["hotel4"] > rec["beds"]["hotel3"]
-    assert rec["src"]["hotel5"].get("scaled")          # no 5-star measured
-    assert rec["weekend"] is None or rec["weekend"] > 1.1
-    assert rec["peak"]["aug15"] > 1.2
-    assert rec["season_q"] == "m" * 12
-    assert "dorm" in rec["beds"] and rec["month"]["dorm"][7] > rec["month"]["dorm"][0]
+    assert "hotel5" not in rec["beds"] and "hotel2" not in rec["beds"]   # never scaled in
+    assert rec["weekend"] > 1.1
+    assert rec["peak"] == {}
+    assert rec["month"]["dorm"][7] > rec["month"]["dorm"][0]
+    assert rec["q"] == "measured" and rec["supply"]["hotel5"] is False
 
 
-def test_nearby_ladder_and_modelled():
-    dests = [_dest("PMI", 39.57, 2.65), _dest("ALC", 39.62, 2.70),     # ~7 km
-             _dest("FAR", 41.0, 1.0, pop=300_000)]
-    recs = B.build(dests, _seasonal_obs(), {}, {}, {})
-    near = recs["ALC"]["src"]["hotel3"]
-    assert near["q"] == "nearby" and near["from"] == "PMI" and near["km"] <= 10
-    assert recs["FAR"]["src"]["hotel3"]["q"] == "modelled"
-    assert recs["FAR"]["q"] == "modelled"
+def test_apartments_are_the_place_for_two():
+    rec = B.build([_dest("PMI", 39.57, 2.65)], _scraped_obs())["PMI"]
+    assert set(rec["beds"]["bnb_home"]) == {"2"}
+    assert rec["month"]["bnb_home"][7] > rec["month"]["bnb_home"][0]
+    assert "bnb_room" not in rec["beds"]
 
 
-def test_iab_homes_and_room():
-    dests = [_dest("PMI", 39.57, 2.65)]
-    iab = {"PMI": {"n": 900, "home": {"2": 120, "4": 160, "6": 230}, "room": 70,
-                   "snapshot": "2026-09-19"}}
-    rec = B.build(dests, _seasonal_obs(), iab, {}, {})["PMI"]
-    assert rec["beds"]["bnb_home"]["4"] == 160 and rec["beds"]["bnb_home"]["8"] > 230
-    assert rec["beds"]["bnb_room"] == 70
-    assert rec["month"]["bnb_home"][7] > rec["month"]["bnb_home"][10]
+def test_an_unscraped_place_has_no_record():
+    dests = [_dest("PMI", 39.57, 2.65), _dest("ALC", 39.62, 2.70)]     # ~7 km away
+    recs = B.build(dests, _scraped_obs())
+    assert "PMI" in recs and "ALC" not in recs
 
 
-def test_fixture_rows_refused(tmp_path):
+def test_one_hotel_is_not_a_star_class():
+    obs = [o for o in _scraped_obs() if o["key"] != "h1"]
+    rec = B.build([_dest("PMI", 39.57, 2.65)], obs)["PMI"]
+    assert "hotel3" not in rec["beds"] and "hotel4" in rec["beds"]
+
+
+def test_only_scrape_rows_are_read(tmp_path):
     con = journal(tmp_path / "j.sqlite")
-    con.execute("insert into obs values ('fixture','PMI','k','hotel',3,'room',2,'2027-02-16',1,99,null,?)",
-                (date.today().isoformat() + "T00:00:00Z",))
-    con.execute("insert into obs values ('xotelo','PMI','k','hotel',3,'room',2,'2027-02-16',1,99,null,?)",
-                (date.today().isoformat() + "T00:00:00Z",))
-    obs = B.load_obs(con, {}, {"PMI": "ES"}, None)
-    assert [o["src"] for o in obs] == ["xotelo"]
+    for src in ("fixture", "xotelo", "booking"):
+        con.execute("insert into obs values (?,'PMI','k','hotel',3,'room',2,'2027-02-16',1,99,null,?)",
+                    (src, date.today().isoformat() + "T00:00:00Z"))
+    obs = B.load_obs(con, {"PMI": "ES"}, None)
+    assert [o["src"] for o in obs] == ["booking"]
 
 
-def test_outlier_rate_and_star_order():
-    obs = _seasonal_obs()
+def test_outlier_rate_stays_out_of_the_curve():
+    obs = _scraped_obs()
     # One absurd OTA rate (a suite, a typo) in October must not reach the curve.
-    obs.append(_obs("PMI", "h0", "hotel", "room", probe_day(date(2026, 10, 1), 0), 80 * 25, 3))
-    # A 4-star priced under the 3-stars must not stay under them.
-    for m in range(1, 13):
-        y = 2027 if m < 10 else 2026
-        obs.append(_obs("PMI", "cheap4", "hotel", "room", probe_day(date(y, m, 1), 0), 60 * _season(m), 4))
-        obs.append(_obs("PMI", "cheap4b", "hotel", "room", probe_day(date(y, m, 1), 0), 62 * _season(m), 4))
-    rec = B.build([_dest("PMI", 39.57, 2.65)], obs, {}, {}, {})["PMI"]
-    h3 = rec["month"]["hotel3"]
+    obs.append(_obs("PMI", "h0", "hotel", "room", date(2027, 10, 12), 80 * 25, 3))
+    h3 = B.build([_dest("PMI", 39.57, 2.65)], obs)["PMI"]["month"]["hotel3"]
     assert max(h3) < 3 * min(h3)
-    b = rec["beds"]
-    assert b["hotel2"] < b["hotel3"] < b["hotel4"] < b["hotel5"]

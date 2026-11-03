@@ -1595,35 +1595,21 @@ TASKS = [
                  "touches country-level costs blocks, and this task owns them."),
     },
     {
-        "key": "stays_discover",
-        "title": "Stay layer: Xotelo property pool + OSM supply (T531)",
-        "cadence": "quarterly",
+        "key": "stays",
+        "title": "Stay layer: the Booking + Hostelworld scrape -> live stays wire (T1021)",
+        "cadence": "monthly",
         "writes_app_data": False,
         "soft": True,
         "cmds": [
-            [PY, "pipeline/stays/discover_xotelo.py"],
-            [PY, "pipeline/stays/harvest_supply.py", "--refresh"],
+            [PY, "pipeline/stays/box_stays.py"],
         ],
-        "note": ("about 4 hours of polite Xotelo calls; state in cache/stays (R2 "
-                 "stays/state on Actions). Anchors are kept between runs."),
-    },
-    {
-        "key": "stays",
-        "title": "Stay layer: Eurostat + Inside Airbnb + Xotelo prices -> stays wire (T531)",
-        "cadence": "monthly",
-        "writes_app_data": True,
-        "soft": True,
-        "cmds": [
-            [PY, "pipeline/stays/harvest_eurostat.py"],
-            [PY, "pipeline/stays/harvest_iab.py"],
-            [PY, "pipeline/stays/price_xotelo.py", "--max-hours", "6"],
-            [PY, "pipeline/stays/calibrate_serpapi.py"],
-            [PY, "pipeline/stays/build_stays.py", "--gate"],
-            [PY, "pipeline/stays/apply_stays.py"],
-        ],
-        "note": ("the same steps as .github/workflows/stays-refresh.yml, for a local "
-                 "run. The Booking/Hostelworld scrape is the owner's twice-yearly "
-                 "laptop task (scripts/stays_scrape.bat), not part of this."),
+        "note": ("the scrape journal is the single source (owner 2026-11-03). The laptop "
+                 "scrapes (scripts/stays_scrape.bat; Booking blocks datacenter addresses) "
+                 "and uploads journal_scrape.sqlite to r2:carta-stays-state; this task "
+                 "downloads it, builds with the gate and publishes to "
+                 "r2:carta/data/stays-live/v1/, which the app reads without a deploy. "
+                 "Needs rclone's r2 remote (source ~/.config/carta/env). To bake a build "
+                 "into the app instead: build_stays.py --gate, then apply_stays.py."),
     },
 
     # ---- trails content lab (tools/trailslab, local PostGIS): soft + guarded ---- #

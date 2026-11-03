@@ -28,7 +28,7 @@ import statistics
 import sys
 import time
 import traceback
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -288,3 +288,37 @@ def write_json(path, data, compact=False):
         atomic_write_json(path, data, indent=None, separators=(",", ":"))
     else:
         atomic_write_json(path, data)
+
+
+# ---- the scrape's dates (T1021: from price_xotelo.py, which is gone) ---- #
+
+def easter(y):
+    a, b, c = y % 19, y // 100, y % 100
+    d, e = b // 4, b % 4
+    f = (b + 8) // 25
+    g = (b - f + 1) // 3
+    h = (19 * a + b - d - g + 15) % 30
+    i, k = c // 4, c % 4
+    l = (32 + 2 * e + 2 * i - h - k) % 7
+    m = (a + 11 * h + 22 * l) // 451
+    month = (h + l - 7 * m + 114) // 31
+    day = (h + l - 7 * m + 114) % 31 + 1
+    return date(y, month, day)
+
+
+def probe_day(today, month_ahead):
+    """Tuesday nearest the 15th of the month `month_ahead` months from today."""
+    y, m = today.year, today.month + month_ahead
+    y += (m - 1) // 12
+    m = (m - 1) % 12 + 1
+    d = date(y, m, 15)
+    return d + timedelta(days=(1 - d.weekday() + 3) % 7 - 3)
+
+
+def peak_days(today):
+    out = []
+    for y in (today.year, today.year + 1):
+        for d in (date(y, 8, 14), date(y, 12, 28), easter(y) - timedelta(days=1)):
+            if timedelta(days=7) < d - today <= timedelta(days=365):
+                out.append(d)
+    return out

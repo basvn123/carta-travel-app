@@ -32,7 +32,7 @@ from common import (JOURNAL_SCRAPE, STATE, OutOfTime, Trouble, blocked_until,  #
                     now_iso, priority, read_json, set_block)
 from booking.page import close_overlays, decline_cookies  # noqa: E402
 from hostelworld.page import CARDS_JS, city_url, parse_card  # noqa: E402
-from price_xotelo import probe_day  # noqa: E402
+from common import probe_day  # noqa: E402
 from scrape_booking import LEAN_MONTHS  # noqa: E402
 
 SOURCE = "hostelworld"

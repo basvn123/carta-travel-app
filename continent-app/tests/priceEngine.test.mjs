@@ -202,14 +202,17 @@ test("the catalogue map and a single place agree to the cent", () => {
   }
 });
 
-test("the country repair: a place with no usable bed borrows its country's median, marked", () => {
-  const broken = { ...ALL.LIS, id: "LIS0", accommodation: { ...ALL.LIS.accommodation, beds: { bnb_home: { "2": 0 } } } };
+test("the country repair: a bed outside its bounds borrows its country's median, marked", () => {
+  // T1021: only a scraped bed out of bounds is repaired; an unscraped place has none.
+  const broken = { ...ALL.LIS, id: "LIS0", accommodation: { ...ALL.LIS.accommodation, beds: { bnb_home: { "2": 2 } } } };
   const all = { ...ALL, LIS0: broken };
   const row = priceDay(broken, DEFAULT_PRICE_REQUEST, all);
   assert.ok(row.stayEur > 0);
   assert.equal(row.lines[0].provenance.repaired, true);
   assert.equal(row.lines[0].quality, "modelled");
   assert.equal(priceDay(broken, DEFAULT_PRICE_REQUEST).dayEur, null, "alone there is nothing to borrow from");
+  const none = { ...ALL.LIS, id: "LIS1", accommodation: { ...ALL.LIS.accommodation, beds: {} } };
+  assert.equal(priceDay(none, DEFAULT_PRICE_REQUEST, { ...ALL, LIS1: none }).stayEur, null, "an unscraped place borrows nothing");
 });
 
 test("the food breakdown sums to the food line", () => {
