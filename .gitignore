@@ -234,3 +234,4 @@ Execution/**/*.gif
 .wrangler/
 .claude/worktrees/
 wt/
+.fastbuild/
