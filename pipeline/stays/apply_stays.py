@@ -1,8 +1,8 @@
 """Write the stays build into app_data and bake the fallback wire (schema v18).
 
   dest.accommodation   becomes the compact block every first paint needs:
-                       {beds (annual medians, EUR), q, captured, supply,
-                       neighbourhoods (Inside Airbnb, where the town has them)}
+                       {beds (annual medians, EUR), q, captured, supply}; a
+                       destination the scrape did not price loses it (T1021)
                        The month curves, weekend and peak factors stay in the
                        stays wire (stays/v1/{cc}.json), which the app fetches.
   meta.stays           {v, built, url, fees, tiers}: where the live wire lives,
@@ -26,11 +26,11 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from common import MASTER, OUT, ROOT, SERVED, STATE, read_json, write_json  # noqa: E402
+from common import MASTER, OUT, ROOT, SERVED, read_json, write_json  # noqa: E402
 
 V = OUT / "v1"
 PUBLIC = ROOT / "continent-app" / "public" / "stays" / "v1"
-# The monthly Actions refresh writes here (r2:carta/data/stays-live/v1/); a
+# The box's monthly build writes here (r2:carta/data/stays-live/v1/); a
 # deploy re-uploads public/stays/ under data/stays/, so the two never collide.
 LIVE_URL = "https://data.carta-europetravel.com/data/stays-live/v1/"
 OVERRIDE = ""        # the reason given with --override, kept in meta.stays
@@ -46,26 +46,23 @@ from pricing_config import rule  # noqa: E402
 FEES = rule("stay.fees")
 
 
-def compact(rec, hoods=None):
-    out = {"beds": rec["beds"], "q": rec["q"], "captured": rec.get("captured"),
-           "supply": rec.get("supply", {})}
-    if hoods:
-        out["neighbourhoods"] = hoods
-    return out
+def compact(rec):
+    return {"beds": rec["beds"], "q": rec["q"], "captured": rec.get("captured"),
+            "supply": rec.get("supply", {})}
 
 
 TIER_OF = {"dorm": "dorm", "private": "private", "bnb_room": "room", "bnb_home": "home",
            "hotel2": "hotel2", "hotel3": "hotel3", "hotel4": "hotel4", "hotel5": "hotel5"}
 
 
-def patch(path, records, manifest, iab):
+def patch(path, records, manifest):
     with open(path, encoding="utf-8") as f:
         data = json.load(f)
     n = 0
     for did, d in data["destinations"].items():
         rec = records.get(did)
         if rec and rec.get("beds"):
-            d["accommodation"] = compact(rec, (iab.get(did) or {}).get("hoods"))
+            d["accommodation"] = compact(rec)
             n += 1
         else:
             d.pop("accommodation", None)
@@ -125,10 +122,9 @@ def main():
           f"(built {manifest['built']})")
     if a.dry_run:
         return
-    iab = (read_json(STATE / "iab.json", {}) or {}).get("dests", {})
     for path in (MASTER, SERVED):
         if path.exists():
-            print(f"{path.relative_to(ROOT)}: {patch(path, records, manifest, iab)} blocks")
+            print(f"{path.relative_to(ROOT)}: {patch(path, records, manifest)} blocks")
     if PUBLIC.exists():
         shutil.rmtree(PUBLIC)
     shutil.copytree(V, PUBLIC)

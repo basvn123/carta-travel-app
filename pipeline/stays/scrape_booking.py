@@ -49,7 +49,7 @@ from common import (JOURNAL_SCRAPE, OutOfTime, Trouble, blocked_until, browser_g
 from booking.page import (card_price, classify, close_overlays, decline_cookies,  # noqa: E402
                           looks_blocked, per_ok, prop_key, read_cards, search_dropped)
 from booking.urls import search_url  # noqa: E402
-from price_xotelo import peak_days, probe_day  # noqa: E402
+from common import peak_days, probe_day  # noqa: E402
 
 SOURCE = "booking"
 DEST_MAP = STATE / "booking_dest.json"   # optional {dest_id: "search text"} overrides

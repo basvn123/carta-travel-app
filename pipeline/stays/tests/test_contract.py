@@ -93,6 +93,6 @@ def test_migration_is_additive_and_old_rows_still_load(tmp_path):
                per_text=None)
     con.commit()
     stats = {}
-    obs = B.load_obs(con, {}, {"X": "PT"}, stats)
+    obs = B.load_obs(con, {"X": "PT"}, stats)
     assert {o["key"]: round(o["price"]) for o in obs} == {"booking:old": 80, "hostelworld:new": 60}
     assert stats["booking"]["legacy"] == 1 and stats["hostelworld"]["legacy"] == 0
