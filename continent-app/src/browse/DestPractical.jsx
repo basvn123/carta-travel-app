@@ -21,7 +21,7 @@ import { cleanName, fmtKm } from './destParts.js';
 import {
   PersonIcon, ParkingIcon, SunIcon, RainIcon, SnowIcon, ShoeIcon, SwimIcon, BootIcon, PlugIcon,
   BottleIcon, JacketIcon, BackpackIcon, CheckIcon, StarIcon, SparkIcon, LinkIcon, BusIcon,
-  TrainIcon, CarIcon, ExternalIcon, ClockIcon,
+  TrainIcon, CarIcon, ExternalIcon, ClockIcon, TicketIcon,
 } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 
@@ -220,12 +220,11 @@ function CardLinks({ links }) {
   const [first, ...rest] = links;
   return (
     <div className="pcard-links">
-      <a className="btn btn-secondary btn-sm pcard-go" href={first.href} target="_blank" rel="noreferrer noopener">
-        <span className="btn-label">{first.label}</span>
-        <ExternalIcon size={13} />
-      </a>
-      {rest.map((l) => (
-        <a key={l.key} className="pcard-alt" href={l.href} target="_blank" rel="noreferrer noopener">{l.label}</a>
+      {[first, ...rest].map((l, i) => (
+        <a key={l.key} className={i ? 'pcard-alt' : 'pcard-go'} href={l.href} target="_blank" rel="noreferrer noopener">
+          {l.label}
+          {!i && <ExternalIcon size={13} />}
+        </a>
       ))}
     </div>
   );
@@ -256,20 +255,22 @@ export function DestPractical({ p }) {
       ? t('destx.carHire', { price: formatMoney(carDayEur, { precision: 'whole', locale: lang }) }) : null,
   ].filter(Boolean);
 
-  // T1027 (owner: swipeable cards, images where they suit): the sights to
-  // book with their photograph and the tour links; the airport with the
-  // flight links; then every fact on its own colour field.
+  // T1027 + T1028 (owner: swipeable, then "the same kind of structure",
+  // clean and aligned): every card is one shape. A 44 px slot (the icon,
+  // or the sight's photograph for Book ahead), a small label, the fact in
+  // ink, a quieter line, and the card's links at its foot. One ground, one
+  // accent; a warning differs only in its slot's amber.
   const cards = [
     (bookAhead.length > 0 || tours.length > 0) && {
-      key: 'book', photo: bookPhoto,
-      title: bookAhead.length ? t('destx.qf.bookAhead') : t('pc.tickets'), names: bookAhead, links: tours,
+      key: 'book', photo: bookPhoto, Icon: TicketIcon,
+      title: bookAhead.length ? t('destx.qf.bookAhead') : t('pc.tickets'), value: bookAhead.join(', '), links: tours,
     },
     (airportIata || flightLinks.length > 0) && {
-      key: 'air', tone: 'sun', Icon: PlaneIcon, title: t('destx.airport'), code: airportIata, text: airportText, links: flightLinks,
+      key: 'air', Icon: PlaneIcon, title: t('destx.airport'), value: airportIata, text: airportText, links: flightLinks,
     },
-    aroundBits.length > 0 && { key: 'around', tone: 'lagoon', Icon: BusIcon, title: t('dest.keyAround'), text: aroundBits.join(' ') },
-    rhythm && lang === 'en' && { key: 'rhythm', tone: 'umber', Icon: ClockIcon, title: t('destx.rhythm'), text: rhythm },
-    ...practicalSlotRows(p).map((r) => ({ tone: 'lagoon', ...r })),
+    aroundBits.length > 0 && { key: 'around', Icon: BusIcon, title: t('dest.keyAround'), text: aroundBits.join(' ') },
+    rhythm && lang === 'en' && { key: 'rhythm', Icon: ClockIcon, title: t('destx.rhythm'), text: rhythm },
+    ...practicalSlotRows(p),
   ].filter(Boolean);
 
   return (
@@ -277,19 +278,14 @@ export function DestPractical({ p }) {
       {cards.length > 0 && (
         <ul className="pcards" aria-label={t('destx.jump.practical')}>
           {cards.map((c) => (
-            <li key={c.key} className={`pcard${c.photo ? ' is-photo' : ''}${c.tone ? ` is-${c.tone}` : ''}`} data-testid={`pr-${c.key}`}>
-              {c.photo
-                ? <img className="pcard-img" src={c.photo} alt="" loading="lazy" decoding="async" />
-                : c.Icon && <span className="pcard-ico" aria-hidden="true"><c.Icon size={22} /></span>}
-              <div className="pcard-body">
-                <h3 className="pcard-title">{c.title}</h3>
-                {c.code && <p className="pcard-code">{c.code}</p>}
-                {c.names?.length > 0 && (
-                  <ul className="pcard-names">{c.names.map((n) => <li key={n} className="pt-tag">{n}</li>)}</ul>
-                )}
-                {c.text && <p className="pcard-text">{c.text}</p>}
-                {c.links?.length > 0 && <CardLinks links={c.links} />}
-              </div>
+            <li key={c.key} className={`pcard${c.tone === 'warn' ? ' is-warn' : ''}`} data-testid={`pr-${c.key}`}>
+              <span className="pcard-slot" aria-hidden="true">
+                {c.photo ? <img src={c.photo} alt="" loading="lazy" decoding="async" /> : c.Icon && <c.Icon size={20} />}
+              </span>
+              <h3 className="pcard-title">{c.title}</h3>
+              {c.value && <p className="pcard-value">{c.value}</p>}
+              {c.text && <p className="pcard-text">{c.text}</p>}
+              {c.links?.length > 0 && <CardLinks links={c.links} />}
             </li>
           ))}
         </ul>

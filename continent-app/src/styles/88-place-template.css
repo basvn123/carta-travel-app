@@ -478,19 +478,20 @@ a.pt-trip-name:focus-visible { outline: 2px solid var(--focus); outline-offset: 
   font-weight: 600;
 }
 
-/* Practical (T1027, owner: swipeable cards, images where they suit).
-   A swipe row on a phone, bled to the screen with the margin as its inner
-   padding and the next card peeking; a wrapped grid from 700 px. The sights
-   to book carry their photograph; every fact sits on its own colour field
-   from the palette (sun for flying, lagoon for moving, umber for the day's
-   rhythm, amber for a warning), its icon in a disc of the same hue. No white,
-   no border: the field is the card. */
+/* Practical (T1027, T1028). One card shape for every fact, on the same
+   ground as the quick-fact tiles under it: a 44 px slot (an umber icon, or
+   the sight's photograph), a small label, the fact in ink, a quieter line,
+   the links pinned to the foot. One accent (umber); a warning differs only
+   in its slot's amber. A swipe row of equal cards on a phone; from 700 px
+   a three-column grid of equal rows, the last card widening to close its
+   row, so every edge lines up with the tiles below. */
 .pcards {
   list-style: none;
   display: flex;
+  align-items: stretch;
   gap: var(--space-3);
   margin: 0;
-  padding: var(--space-1) 0 var(--space-2);
+  padding: 0 0 var(--space-1);
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
@@ -498,61 +499,79 @@ a.pt-trip-name:focus-visible { outline: 2px solid var(--focus); outline-offset: 
 }
 .pcards::-webkit-scrollbar { display: none; }
 .pcard {
-  --pc-bg: var(--tone-bg, var(--surface-sunken));
-  --pc-ink: var(--tone-ink, var(--text));
-  --pc-ink-2: color-mix(in srgb, var(--pc-ink) 82%, var(--pc-bg));
-  --pc-disc: color-mix(in srgb, var(--pc-ink) 10%, transparent);
   flex: none;
-  width: min(264px, 76vw);
+  width: min(256px, 74vw);
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  align-items: flex-start;
+  gap: var(--space-1);
+  min-height: 188px;
   padding: var(--space-4);
-  border-radius: 16px;
-  background: var(--pc-bg);
-  color: var(--pc-ink);
+  border-radius: 14px;
+  background: var(--surface-sunken);
   scroll-snap-align: start;
-  overflow: hidden;
 }
-/* The tones are the shared .is-sun / .is-lagoon / .is-umber set
-   (62-home-story.css: --tone-bg, --tone-ink); a warning adds amber. */
-.pcard.is-warn { --tone-bg: var(--amber-bg); --tone-ink: var(--amber-ink); }
-.pcard.is-photo { padding: 0; gap: 0; --pc-bg: var(--umber-800); --pc-ink: var(--umber-50); }
+.pcard-slot {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  margin-bottom: var(--space-2);
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--umber-100);
+  color: var(--umber-700);
+}
+.pcard-slot img { width: 100%; height: 100%; object-fit: cover; }
+.pcard.is-warn .pcard-slot { background: var(--amber-bg); color: var(--amber-ink); }
+.pcard-title { margin: 0; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.pcard-value { margin: 0; font-size: var(--text-body); font-weight: 700; line-height: 1.3; color: var(--text); }
+.pcard-text { margin: 0; font-size: var(--text-label); line-height: var(--leading-ui); color: var(--text); text-wrap: pretty; }
+.pcard-value + .pcard-text { color: var(--text-2); }
 
-.pcard-ico { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: var(--pc-disc); color: var(--pc-ink); }
-.pcard-img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: var(--umber-700); }
-.pcard-body { display: flex; flex: 1; flex-direction: column; gap: var(--space-2); min-width: 0; }
-.pcard.is-photo .pcard-body { padding: var(--space-4); }
-.pcard-title { margin: 0; font-size: var(--text-lead); font-weight: 800; line-height: 1.2; letter-spacing: -0.015em; text-wrap: balance; }
-.pcard-code { margin: calc(-1 * var(--space-1)) 0 0; font-size: 44px; font-weight: 800; line-height: 1; letter-spacing: 0.02em; font-variant-numeric: tabular-nums; }
-.pcard-text { margin: 0; font-size: var(--text-label); line-height: var(--leading-ui); color: var(--pc-ink-2); text-wrap: pretty; }
-.pcard-names { list-style: none; display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-2); margin: 0; padding: 0; }
-.pcard-names .pt-tag { background: color-mix(in srgb, var(--pc-ink) 14%, transparent); color: inherit; }
+/* The links at the card's foot: the first a small umber button, the rest
+   a quiet link under it, so every card's foot is the same shape. */
+.pcard-links { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); margin-top: auto; padding-top: var(--space-3); }
+.pcard-go {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--umber-700);
+  color: var(--umber-50);
+  font-size: var(--text-label);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background var(--dur-2) var(--ease-out);
+}
+@media (hover: hover) { .pcard-go:hover { background: var(--umber-800); } }
+.pcard-alt { font-size: var(--text-label); font-weight: 600; color: var(--umber-700); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--umber-200); }
+.pcard-go:focus-visible, .pcard-alt:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+@media (pointer: coarse) { .pcard-go, .pcard-alt { min-height: var(--tap); display: inline-flex; align-items: center; } }
+@media (prefers-reduced-motion: reduce) { .pcard-go { transition: none; } }
 
-/* The links ride at the card's foot: one button, the rest a quiet link. */
-.pcard-links { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-4); margin-top: auto; padding-top: var(--space-2); }
-.pcard .btn.pcard-go { border-color: transparent; background: var(--pc-ink); color: var(--pc-bg); text-decoration: none; }
-@media (hover: hover) { .pcard .btn.pcard-go:hover { background: color-mix(in srgb, var(--pc-ink) 88%, var(--pc-bg)); } }
-.pcard-alt { font-size: var(--text-label); font-weight: 600; color: var(--pc-ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: color-mix(in srgb, var(--pc-ink) 40%, transparent); }
-.pcard-go:focus-visible, .pcard-alt:focus-visible { outline: 2px solid var(--pc-ink); outline-offset: 2px; }
-@media (pointer: coarse) { .pcard-alt { display: inline-flex; align-items: center; min-height: var(--tap); } }
-
-/* From 700 px a grid: the photograph two rows high, the facts beside it. */
 @media (min-width: 700px) {
-  .pt-wrap .pcards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-flow: row dense; margin: 0; padding: 0; overflow: visible; }
-  .pcard { width: auto; }
-  .pcard.is-photo { grid-row: span 2; }
-  .pcard.is-photo .pcard-img { aspect-ratio: auto; flex: 1; min-height: 160px; }
+  .pt-wrap .pcards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; padding: 0; overflow: visible; }
+  .pcard { width: auto; min-height: 0; }
+  .pcard:last-child:nth-child(3n + 2) { grid-column: span 2; }
+  .pcard:last-child:nth-child(3n + 1) { grid-column: 1 / -1; }
 }
 
 /* The quick facts: soft tiles on the page's ground, like the key facts. */
-.pt-qf { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); margin: 0; }
+.pt-qf { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin: 0; }
 @media (min-width: 700px) { .pt-qf { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-.pt-qf > div { display: grid; gap: 2px; min-width: 0; padding: var(--space-3); border-radius: 12px; background: var(--surface-sunken); }
+.pt-qf > div { display: grid; align-content: start; gap: 2px; min-width: 0; padding: var(--space-3) var(--space-4); border-radius: 14px; background: var(--surface-sunken); }
 .pt-qf dt { font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
 .pt-qf dd { margin: 0; font-size: var(--text-body); font-weight: 600; color: var(--text); }
 .pt-folds { margin-top: 0; }
 .pt-fold { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-card); padding: 0 var(--space-4); }
+/* On the place page the sources read as the folds above them: a row
+   under a rule, no box (T1028). */
+#pt-practical .pt-fold { background: none; border: 0; border-bottom: 1px solid var(--border-soft); border-radius: 0; padding: 0; }
+#pt-practical .pt-fold summary { min-height: 52px; font-size: 16px; }
 .pt-fold summary {
   min-height: var(--tap);
   display: flex;
