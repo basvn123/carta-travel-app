@@ -28,7 +28,7 @@ The source says SEO and organic are the only viable channels. That makes the Des
 
 The honest coverage and reason code work matters commercially too. The source's example is a page that says "we know of 31 more walks in Albania and cannot map 19 of them", which ranks and converts better than a blank grid.
 
-The tasks that build this surface already exist in Execution/_ORDER.md. T205 is the programmatic SEO plan, T221 is static prerendering, T222 is the sitemap, T239 is the organic acquisition surface, and T243 is the conversion funnel. The P7 coverage tasks are T106, T111 and T112.
+The tasks that build this surface already exist in archive/plans/_ORDER.md. T205 is the programmatic SEO plan, T221 is static prerendering, T222 is the sitemap, T239 is the organic acquisition surface, and T243 is the conversion funnel. The P7 coverage tasks are T106, T111 and T112.
 
 ## Affiliate as free-user monetisation
 
@@ -46,4 +46,4 @@ The source's own levers for contribution per user are in section 4 of CARTA_UNIT
 
 ## References
 
-CARTA_UNIT_ECONOMICS.md sections 3.5, 4 and 5 (additional docs/Carta/Plan/Finance). Execution/_ORDER.md for the task ids named above. Execution/P12/T201-positioning.md for the 3,868 destination count.
+CARTA_UNIT_ECONOMICS.md sections 3.5, 4 and 5 (additional docs/Carta/Plan/Finance). archive/plans/_ORDER.md for the task ids named above. Execution/P12/T201-positioning.md for the 3,868 destination count.

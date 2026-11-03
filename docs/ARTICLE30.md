@@ -8,7 +8,7 @@ legal advice.
 Every fact below cites the file it comes from. The record describes the system
 as written in `supabase/migrations/` (002 to 048) and `supabase/functions/`.
 Several of those migrations are not yet pasted into the live project
-(`Execution/_OPEN-MASTER.md` stage 2.2 says "Nothing has been pasted" for 022,
+(`archive/plans/_OPEN-MASTER.md` stage 2.2 says "Nothing has been pasted" for 022,
 024, 032 to 043, 045, 047 and 048; stage 3 holds 028 to 031; stage 10 holds
 021, 025 to 027 and 044). A table whose migration is not pasted holds no data
 yet; its row here describes what it will hold once it is.

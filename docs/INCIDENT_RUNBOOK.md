@@ -1,7 +1,7 @@
 # Incident runbook
 
 Owner and only responder: Bas. Written by T218, 2026-10-02, for the hosting described in
-Execution/_OPEN-MASTER.md after stages 5 to 7: the app shell on Cloudflare Pages (Vercel until stage 6),
+archive/plans/_OPEN-MASTER.md after stages 5 to 7: the app shell on Cloudflare Pages (Vercel until stage 6),
 app data on R2 at data.carta-europetravel.com, images on cdn.carta-europetravel.com, the weekly pipeline
 on the Hetzner CAX11 box, Supabase project ntssxktaduxzpsmejwyv for accounts, AI and payments, Gemini
 behind the plan-day, parse-booking and suggest-city functions, and Stripe for passes.
