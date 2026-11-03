@@ -88,7 +88,6 @@ function Park({ p, truth }) {
       {rides.length > 0 && (
         <section className="bf-group" aria-labelledby="bf-ride-h">
           <h4 id="bf-ride-h" className="bf-h">{t('explore.park.park_ride')}</h4>
-          <p className="bf-sub">{t('pk.ridesSub')}</p>
           <ul className="bf-rows">
             {rides.map((r) => (
               <li key={r.name} className="bf-row">

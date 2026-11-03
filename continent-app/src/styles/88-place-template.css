@@ -961,7 +961,6 @@ ul.pt-cells { list-style: none; margin: 0; padding: 0; }
 
 .bf-group { display: grid; gap: var(--space-2); }
 .bf-h { margin: 0; font-size: var(--text-body); font-weight: 700; color: var(--text); }
-.bf-sub { margin: calc(-1 * var(--space-1)) 0 0; font-size: var(--text-label); color: var(--text-2); }
 /* One sunken list for the parking rows and the rating's parts. */
 .bf-rows, .rs-parts ul { list-style: none; margin: 0; padding: 0 var(--space-4); border-radius: 14px; background: var(--surface-sunken); }
 .bf-row { display: grid; grid-template-columns: 32px minmax(0, 1fr) auto; align-items: center; gap: var(--space-3); min-height: 60px; padding: var(--space-2) 0; }
@@ -992,8 +991,7 @@ ul.pt-cells { list-style: none; margin: 0; padding: 0; }
 .rs-part + .rs-part { border-top: 1px solid var(--border-soft); }
 .rs-part-top { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
 .rs-part-name { font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.rs-gem { margin: 0; font-size: var(--text-label); line-height: 1.5; color: var(--text-2); }
 .rs-part-val { font-size: var(--text-body); font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
 .rs-track { display: block; height: 6px; border-radius: 999px; background: color-mix(in srgb, var(--umber-700) 12%, transparent); overflow: hidden; }
 .rs-track > span { display: block; height: 100%; border-radius: inherit; background: var(--umber-700); }
-.rs-part-sub { font-size: var(--text-caption); line-height: 1.45; color: var(--text-2); }
-.rs-how { margin: 0; font-size: var(--text-caption); line-height: 1.5; color: var(--text-2); }

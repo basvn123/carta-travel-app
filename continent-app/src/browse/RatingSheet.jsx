@@ -15,13 +15,11 @@ import { useI18n } from '../i18n/index.jsx';
  *
  *   the Score and its band, then the one reason sentence in the reader's
  *   language (the lazy why files, English standing in)
- *   where it stands: in its country (rank of all rated places there) and in
- *   Europe (its class: big cities, towns...), from the wire's ranks
- *   what goes into it: the four parts in the model's weight order, each with
- *   a plain name that says what it measures, its value out of ten and a bar;
- *   recognition names the registers the place is on
- *   one line on how the parts become the score (weights from config through
- *   PART_WEIGHTS, then the class curve), so the bars are never read as a sum
+ *   where it stands: in its country (its rank as a share of the places
+ *   there) and in Europe (its class: big cities, towns...), in plain words
+ *   what goes into it: the four parts in the model's weight order, each a
+ *   plain name with its value out of ten and a bar (owner: no sublines, no
+ *   weights line)
  *
  * No "Measured": every rated place is a hand or rubric judgement, and the
  * word claimed more than that.
@@ -50,14 +48,18 @@ export function RatingSheet({ rating, destination, city, country, fmtScore, onCl
   const rank = classRank(rating);
   const cls = rank ? t(`rating.class.${rank.cls}`) : '';
   const europe = !rank ? '' : rank.top ? t('rs.top', { pct: rank.top, cls }) : t('rs.above', { pct: rank.pct, cls });
-  const inCountry = rating.country_rank && rating.country_n
-    ? (rating.country_rank === 1 ? t('rs.bestOf', { n: rating.country_n }) : t('rs.rankOf', { rank: rating.country_rank, n: rating.country_n }))
-    : '';
-  const registers = [...new Set((destination?.designations || []).map((x) => x?.name).filter(Boolean))];
+  // Owner 2026-11-03: the standing in words a traveller reads at once, the
+  // country rank as a share of its places, never "#176 of 300".
+  const cRank = Number(rating.country_rank);
+  const cN = Number(rating.country_n);
+  const share = cRank > 0 && cN > 0 ? cRank / cN : null;
+  const inCountry = share == null ? ''
+    : cRank === 1 ? t('rs.cBest')
+    : share <= 0.1 ? t('rs.cTop', { pct: Math.max(1, Math.round(share * 100)) })
+    : t('rs.cAbove', { pct: Math.round((1 - share) * 100) });
   const parts = ORDER
-    .map((k) => ({ k, v: ratingPart(rating, k), w: PART_WEIGHTS[k] }))
-    .filter((r) => r.v != null && r.w != null);
-  const weight = Object.fromEntries(parts.map(({ k, w }) => [k, Math.round(w * 100)]));
+    .map((k) => ({ k, v: ratingPart(rating, k) }))
+    .filter((r) => r.v != null && PART_WEIGHTS[r.k] != null);
   const title = t('rs.title', { city, score: fmtScore(rating.score) });
 
   return createPortal(
@@ -93,19 +95,13 @@ export function RatingSheet({ rating, destination, city, country, fmtScore, onCl
                       <span className="rs-part-val">{fmtScore(Math.round(v * 100) / 10)}</span>
                     </span>
                     <span className="rs-track" aria-hidden="true"><span style={{ width: `${Math.max(2, v * 100)}%` }} /></span>
-                    <span className="rs-part-sub">
-                      {k === 'recognition' && registers.length ? registers.join(', ') : t(`rs.sub.${k}`)}
-                    </span>
                   </li>
                 ))}
               </ul>
-              <p className="rs-how">
-                {t('rs.how', { a: weight.appeal, d: weight.depth, b: weight.beauty, r: weight.recognition, cls: cls || t('rating.class.city') })}
-              </p>
             </section>
           )}
 
-          {rating.hidden_gem && <p className="rs-how">{t('rating.gemWhy')}</p>}
+          {rating.hidden_gem && <p className="rs-gem">{t('rating.gemWhy')}</p>}
         </div>
       </div>
     </div>,
