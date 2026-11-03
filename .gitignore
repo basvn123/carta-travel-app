@@ -220,3 +220,17 @@ cache/guided/*
 
 # Stay-price layer state and builds (T531): journal, pools, downloads. Lives in R2 stays/state on Actions.
 cache/stays/
+
+# T1034 (2026-11-03): keep the repo small.
+# Screenshots stay on disk for the end check and are never committed; the
+# report names the screens checked instead. Old shots are in git under the
+# tag archive/execution-full-2026-11-03.
+Execution/**/*.png
+Execution/**/*.jpg
+Execution/**/*.jpeg
+Execution/**/*.webp
+Execution/**/*.gif
+.pytest_cache/
+.wrangler/
+.claude/worktrees/
+wt/
