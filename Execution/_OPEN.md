@@ -1548,3 +1548,6 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1024-b | T1024 | The place head's rank and UNESCO tags are a local .pt-tag look; add those tones to Chip so Explore cards and the place page match (Execution/P15/T1024-place-head.md) | next task | open |  |
 | T1024-c | T1024 | Four photo carousels style their own arrows (destp-gallery-arrow, tphotos-arrow, pmos-arrow, .destp-v3); make one (Execution/P15/T1024-place-head.md) | next task | open |  |
 | T1024-d | T1024 | Rome's key facts say sights about 13 hours, its intro about seventeen hours (two visit_h sources); decide which is true (Execution/P15/T1024-place-head.md) | user | open |  |
+| T1026-a | T1026 | /simplify (four review agents) did not run on the trip card diff; run it before the next change to the card (Execution/P15/T1026-trip-card.md) | next task | open |  |
+| T1026-b | T1026 | Train, bus and car lines in the trip card are estimates beside a found fare, with nothing saying so; decide whether they need an "about" (Execution/P15/T1026-trip-card.md) | user | open |  |
+| T1026-c | T1026 | The plan tab's cost card still uses the arc; decide whether it follows the place page's trip card (Execution/P15/T1026-trip-card.md) | user | open |  |

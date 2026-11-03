@@ -510,6 +510,7 @@ export function DestinationPage({
       onPlanTrip={onPlanTrip}
       onPlanDay={onPlanDay}
       doItems={doItems}
+      ways={ways}
       openSignal={cardSignal}
     />
   ) : null;
@@ -547,9 +548,12 @@ export function DestinationPage({
     carDayEur: getting?.car_needed ? getting.rental_eur_day ?? null : null,
   };
 
+  // T1026: the trip card carries the ways there wherever a day prices; the
+  // section (and its jump) stays only for a place without one.
+  const waysInCard = costRow?.dayEur != null;
   const jumps = [
     ['overview', 'pt-overview'], ['see', 'pt-see'], ['around', 'pt-around'], ['when', 'pt-when'],
-    ['stay', 'pt-stay'], ['getting', 'pt-getting'], ['practical', 'pt-practical'],
+    ['stay', 'pt-stay'], ...(waysInCard ? [] : [['getting', 'pt-getting']]), ['practical', 'pt-practical'],
   ].map(([key, id]) => ({ key, id, label: t(`destx.jump.${key}`) }));
 
   // The foot bar's line: the dates and the party, as the card's fields say it.
@@ -671,7 +675,7 @@ export function DestinationPage({
                       approved place for it, where the decision is made. */}
                   <FriendsWentHere destId={destination?.id} destinations={data?.destinations} />
                   {/* T1021: no section without a day price (missing data leaves). */}
-                  {!wide && priceCard && costRow?.dayEur != null && (
+                  {!wide && priceCard && waysInCard && (
                     <PSection id="pt-cost" title={t('destx.dayCosts')} className="pt-inlinecost">
                       {priceCard}
                     </PSection>
@@ -680,7 +684,7 @@ export function DestinationPage({
                   <DestAround p={p} />
                   <DestWhen p={p} />
                   <DestStay p={p} />
-                  <DestGetting p={p} />
+                  {!waysInCard && <DestGetting p={p} />}
                   <DestPractical p={p} />
                   <Similar rows={d?.similar} data={data} indices={firstRun?.indices} t={t} view={view} onSelect={onSelect} />
                   <div className="destp-utility">
