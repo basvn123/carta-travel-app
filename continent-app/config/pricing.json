@@ -205,6 +205,18 @@
       "review": "2027-04-24",
       "test": "tests/priceGolden.test.mjs"
     },
+    "when.guide": {
+      "value": {
+        "hot_c": 31,
+        "stay_flat": 1.1
+      },
+      "unit": "hot_c: daytime high in C; stay_flat: dearest / cheapest scraped month",
+      "kind": "estimate",
+      "source": "When to go (T1022): a month at hot_c or more with busy crowds is 'hot and busy'; scraped stay prices within stay_flat read 'prices hardly change through the year'",
+      "date": "2026-11-03",
+      "review": "2027-05-03",
+      "test": "tests/whenGuide.test.mjs"
+    },
     "bands.feel": {
       "value": {
         "gap": 0.1,

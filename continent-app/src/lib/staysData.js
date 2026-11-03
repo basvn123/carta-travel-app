@@ -103,6 +103,12 @@ export function useStaysVersion() {
 
 /** Seed the records directly: the node builds (prerender, OG cards) read the
  *  baked files from disk with this, and the tests use it. */
+/** stayRecord(id), re-read whenever a country's stays file arrives (T1022). */
+export function useStayRecord(id) {
+  useStaysVersion();
+  return stayRecord(id);
+}
+
 export function setStayRecords(map) {
   records.clear();
   for (const [id, rec] of Object.entries(map || {})) records.set(id, rec);

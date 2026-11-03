@@ -42,7 +42,8 @@ const MIN_KM = 6;
 // distance. The catalogue median is 6.6, so this keeps the upper half.
 const MIN_RATING = 6.4;
 
-const baseCity = (name) => String(name || '').replace(/\s*\([^)]*\)\s*$/, '').trim();
+/** A gateway's name without its airport: "Rome (Fiumicino)" -> "Rome". */
+export const baseCity = (name) => String(name || '').replace(/\s*\([^)]*\)\s*$/, '').trim();
 
 /**
  * The handful of catalogue destinations worth pairing with this one.

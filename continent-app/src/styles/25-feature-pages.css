@@ -1681,21 +1681,6 @@
 .destp-howlong { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink-soft); margin: 10px 0 0; }
 
 /* sleep */
-.destp-hoods { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 5px; }
-.destp-hood { display: grid; grid-template-columns: minmax(90px, 1fr) 2fr 52px; align-items: center; gap: 8px; font-size: 12.5px; }
-.destp-hood-name { color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.destp-hood-bar { height: 7px; background: var(--rule-soft); border-radius: 4px; overflow: hidden; }
-.destp-hood-bar span { display: block; height: 100%; background: var(--rate-soft); border-radius: 4px; }
-.destp-hood-eur { text-align: right; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
-.destp-sleep-note { font-size: 11.5px; color: var(--ink-mute); margin: 8px 0 0; }
-.destp-sleep-tiers { display: grid; grid-template-columns: auto 1fr; align-items: baseline; gap: var(--space-1) var(--space-2); font-size: var(--text-body); color: var(--text-2); margin: var(--space-2) 0 0; }
-.destp-sleep-tiers > svg { grid-row: 1 / span 3; align-self: start; margin-top: 3px; color: var(--text-2); }
-.destp-sleep-tiers > .destp-sleep-tier { grid-column: 2; font-variant-numeric: tabular-nums; }
-.destp-season { margin: 10px 0 0; }
-.destp-season-bars { display: flex; align-items: flex-end; gap: 3px; height: 42px; }
-.destp-season-bars span { flex: 1; background: var(--rule); border-radius: 2px 2px 0 0; }
-.destp-season-bars span.is-low { background: var(--green); }
-.destp-season-note { font-size: 11.5px; color: var(--green); margin: 4px 0 0; font-weight: 600; }
 
 /* getting there */
 .destp-getting { display: flex; flex-direction: column; gap: 7px; }
@@ -2314,11 +2299,6 @@
 .destp-v2 .destp-howlong { margin-top: 8px; }
 .destp-v2 .destp-further { grid-template-columns: 1fr 1fr; }
 .destp-v2 .xp-source { margin-top: 8px; }
-
-/* The stay tiers, one to a line, no separators to wrap (T446). */
-.destp-sleep-tier { display: block; }
-.destp-sleep-tier::first-letter { text-transform: uppercase; }
-.destp-sleep-sep { display: none; }
 
 /* Routes from here (ROUTES.md R6). One row per PATH, with the stretch that
    passes named underneath, so the reader can tell the Via Francigena from

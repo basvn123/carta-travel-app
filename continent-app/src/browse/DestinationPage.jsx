@@ -37,7 +37,7 @@ import {
 } from './destParts.js';
 import { DestOverview } from './DestOverview.jsx';
 import { DestSee, DestAround } from './DestNearby.jsx';
-import { DestWhen, monthDayCosts } from './DestWhen.jsx';
+import { DestWhen } from './DestWhen.jsx';
 import { DestStay, DestGetting, DestPractical } from './DestPractical.jsx';
 import { useSettings } from '../components/SettingsLine.jsx';
 import { resolveWhen, whenMonth, xmFromSearch } from '../lib/when.js';
@@ -501,9 +501,6 @@ export function DestinationPage({
     bagKey: request?.baggage || fl.bagKey,
   }) : null;
 
-  // What a day costs by month: the measured bed curve on the card's own row.
-  const monthCosts = monthDayCosts(sleep?.curve, costRow, tripMonth, statMonth);
-
   const priceCard = settled ? (
     <DestPriceCard
       dest={destination}
@@ -523,8 +520,8 @@ export function DestinationPage({
     highlights, doRows, monthList, fmtScore,
     cats, aroundKey, setAroundKey: setAroundPick, aroundKm: around?.radius_km || 20,
     area: isArea(d), routeRows, hasRoutes, members, memberFocus,
-    monthPick: statMonth, water, festivals, crowdText, monthCosts,
-    getting, rhythm, bookAhead, verdict, verdictBand, sleep, tips, packs, month, parking, exits,
+    monthPick: statMonth, water, festivals,
+    getting, rhythm, bookAhead, verdict, verdictBand, tips, packs, month, parking, exits,
     isOpen, toggle, onOpenLifestyle, onOpenFeature, onSelect, onOpenItin, goTab,
     exportPdf, pdfBusy, pdfReady: !!d, ways, aroundStat, airportText, guideUrl,
     carDayEur: getting?.car_needed ? getting.rental_eur_day ?? null : null,
