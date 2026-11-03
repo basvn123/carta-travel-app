@@ -1,6 +1,6 @@
 # Claude Code working rules for Carta
 
-Carta is a Europe trip planner: a Python data pipeline in this repo and a Vite + React app in `continent-app/`, which is its own git repo nested inside this one. Every session follows these rules. They are short on purpose: read this file whole, read everything else only in the lines you need.
+Carta is a Europe trip planner: a Python data pipeline in this repo and a Vite + React app in `continent-app/`, both tracked in this one git repo (branch `main`). Every session follows these rules. They are short on purpose: read this file whole, read everything else only in the lines you need.
 
 **Start here:** this file, then `MAP.md`, which maps each product area (Explore, Plan, prices, trails...) to its app code, pipeline code, docs and latest task reports. Go from the map straight to the files; do not browse folders or open old reports to find your way.
 
@@ -11,7 +11,7 @@ Carta is a Europe trip planner: a Python data pipeline in this repo and a Vite +
 | `MAP.md` | Area to files map: open it first for any feature. |
 | `PRODUCT.md`, `DESIGN.md` | Who Carta is for and the locked design tokens. Read before touching anything a traveller sees (see Design). |
 | `run_pipeline.py`, `pipeline/` | The data pipeline. `pipeline/schema.py` and `docs/SCHEMA.md` hold the data contract. |
-| `continent-app/` | The app (own git repo, branch `master`). `public/` is shipped data and images: never delete it. |
+| `continent-app/` | The app, tracked by this repo. Its old nested `.git` (stuck at T915, no remote) is stale: never commit there. `public/` is shipped data and images: never delete it. |
 | `cache/`, `tools/trailslab/`, `tools/brouter/` | Pipeline inputs and routing tools. Hours to rebuild: never delete them for space. |
 | `Execution/_OPEN.md` | The register of open items. |
 | `Execution/P{n}/_DIGEST.md` | One file per finished phase: what each task changed and what broke. Search it, do not read it whole. |
@@ -31,7 +31,7 @@ Tasks are numbered `T001`, `T002`, and so on, and filed under phase folders `P0`
 
 1. Read the prompt completely: the files it names and its done condition.
 2. Grep `Execution/_OPEN.md` for `| next task | open` together with the feature's words (do not read the file whole) and take the rows the prompt covers. For history, grep `Execution/P*/_DIGEST.md` and `Execution/P15/` for the latest task IDs `MAP.md` names, and read only that report.
-3. Make a branch `p{n}-{slug}` (for example `p15-explore-cards`), in `continent-app/` too if the app changes.
+3. Make a branch `p{n}-{slug}` (for example `p15-explore-cards`) in this repo; it carries app changes too.
 4. Do the work. Touch only the files the prompt names. A bug or refactor outside that scope becomes a line in "What is still open", not an edit. Schema and data migrations are the one exception, and the prompt marks them.
 5. Check it (see Checks).
 6. Write the report `Execution/P{n}/T{n:03d}-{slug}.md` from `_TEMPLATE.md`, and add one register row per open item.
@@ -43,7 +43,7 @@ A task with no code changes commits only its report.
 
 When one prompt names several tasks, they run as a batch: the same depth of work, less repetition (owner, 2026-10-21).
 
-- One batch branch in the root repo and one in `continent-app/`. Every task is still its own commit (or a few), each message starting `T{n}:`, so any one task can be reverted alone.
+- One batch branch. Every task is still its own commit (or a few), each message starting `T{n}:`, so any one task can be reverted alone.
 - Tasks that run in parallel each get a worktree, merged into the batch branch at the end. Never `git stash` while worktrees exist: `refs/stash` is shared, and one agent's pop once took another agent's edits (T480).
 - Checks per task are static: lint the touched files, `npm test`, and the fast build when the task promises a number. No dev server or screenshots per task; each task writes down which screens the end check must look at.
 - One end check in the browser on the merged batch, at phone and desktop width, covering every screen any task touched. A failure is fixed on the batch branch and noted under that task's "What broke".
@@ -56,6 +56,7 @@ When one prompt names several tasks, they run as a batch: the same depth of work
 - Prefer the DOM checks in `continent-app/scripts/verify_*.mjs` over screenshots. Take one screenshot per touched screen and width, only where the look is the point.
 - **Screenshots are never committed.** Save them under `Execution/P{n}/T{n}-shots/` (gitignored); the report names the screens checked and what was seen.
 - **Fast build** for any number a task promises: `cd continent-app && FAST_OUT=../.fastbuild node node_modules/vite/bin/vite.js build --config ../scripts/vite.fast.mjs`. About 10 seconds, with `publicDir` off; its `assets/` and `index.html` match a full build's. From an app worktree, set `CARTA_APP` to that worktree. The full build with `public/` is only for a deploy and needs about 1.3 GB free.
+- **Deploy** (only when the owner asks), from `continent-app/`: `VITE_E2E_SEAMS= npm run build:pages`, `node scripts/css-routes.mjs --check dist/assets`, `node scripts/r2/push-data.mjs --live` (data first), `npx wrangler pages deploy dist --project-name carta-app --branch preview`, then `--branch main`, then `push-data.mjs --live --prune`. The header of `scripts/build-pages.mjs` explains each step.
 - Every number the task implies gets a before and an after in the report. If none is implied, write "Not measured".
 - A change to the data contract (a new column, a removed or renamed key) is tested end to end: pipeline run (`run_pipeline.py`), data artifact, wire build, app load.
 
@@ -82,7 +83,7 @@ All Claude work happens in Claude Code or Cowork sessions. Do not add the `anthr
 
 ## Rollback
 
-Every report says how to undo the task, normally `git revert` of its commits, in both repos where both changed. Data migrations are reversible or say plainly that they are one-way; schema changes carry a down migration. The production baseline is the tag `prod-2026-09` (commit `8b53babed`), kept for reference only. Several sessions share this checkout: never `git reset --hard` it and never switch its branch under another session; when another session is active, work in a worktree.
+Every report says how to undo the task, normally `git revert` of its commits. Data migrations are reversible or say plainly that they are one-way; schema changes carry a down migration. The production baseline is the tag `prod-2026-09` (commit `8b53babed`), kept for reference only. Several sessions share this checkout: never `git reset --hard` it and never switch its branch under another session; when another session is active, work in a worktree.
 
 ## Disk and worktrees
 
@@ -94,7 +95,7 @@ The disk runs full; keep it clean.
 
 ## Known gotchas
 
-- `continent-app/` is its own git repo: commit there separately and check `git -C continent-app status` before calling a task done.
+- `continent-app/.git` is a stale nested repo (no remote, `master` at T915): `git -C continent-app status` there shows hundreds of false changes. Commit app work in this repo; `git status` here is the truth.
 - Schema versioning lives in `pipeline/schema.py` and `docs/SCHEMA.md`; changes reach the wire format and the app's hydration, so they are slow.
 - The dev server watches `public/` and reloads.
 
