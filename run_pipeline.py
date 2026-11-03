@@ -2382,15 +2382,19 @@ TASKS = [
                         ("cache/beaches/rich_*.json", 20, "pull beaches-cache from R2")),
             guard_reachable("Overpass", *OVERPASS)),
         "cmds": [
-            [PY, "pipeline/beaches/enrich_beaches.py"],
+            [PY, "pipeline/beaches/enrich_beaches.py", "--max-hours", "6"],
             [PY, "pipeline/beaches/harvest_beach_walks.py"],
             [PY, PUBLISH, "--layer", "beaches", "--", PY, "pipeline/beaches/export_beaches.py"],
         ],
+        "partial_rc": 3,
         "note": ("enrich_beaches re-asks Overpass only for the beaches whose "
                  "context predates CONTEXT_V 2 (T631 sunbed rentals and children's "
                  "pools; photographs and article facts are kept), about 400 "
                  "batches of 12. Then the walks (T641, modelled straight line x "
-                 "1.3) and the gated export, which also reads cache/sea_temp_beaches.json."),
+                 "1.3) and the gated export, which also reads cache/sea_temp_beaches.json. "
+                 "T1031/T1032: enrich stops after 6 h (run 2, 2026-11-02, spent "
+                 "7 h on Spain alone), saves every 10 batches and exits 3; the "
+                 "walks and export still run and the task stays due."),
     },
     {
         "key": "peak_context",
@@ -3082,6 +3086,7 @@ def main():
                     backed_up = True
 
                 t0 = time.time()
+                partial = False
                 if t.get("run"):
                     ok = bool(t["run"](ctx))
                 else:
@@ -3092,6 +3097,15 @@ def main():
                     for c in t["cmds"]:
                         attempt = 0
                         while (rc := run_cmd(c)) != 0:
+                            # T1032: a task may name the exit code that means
+                            # "saved what it did, ran out of time". The cmds
+                            # after it still run (the export ships this week's
+                            # part) and the task stays due instead of OK.
+                            if t.get("partial_rc") is not None and rc == t["partial_rc"]:
+                                partial = True
+                                log(f"  cmd stopped incomplete (rc={rc}); the rest of "
+                                    "the task runs, and the task stays due")
+                                break
                             attempt += 1
                             if attempt > retries:
                                 ok = False
@@ -3110,7 +3124,11 @@ def main():
                 release_rescore_hold(hold)
             dt = int(time.time() - t0)
 
-            if ok:
+            if ok and partial:
+                log(f"  INCOMPLETE ({dt}s) - its outputs hold what was done; "
+                    "the task stays due and resumes next run.")
+                soft_failed.append(t["key"])
+            elif ok:
                 log(f"  OK ({dt}s)")
                 ran.append(t["key"])
                 state.setdefault(t["key"], {})["last_success"] = now_utc().isoformat()
