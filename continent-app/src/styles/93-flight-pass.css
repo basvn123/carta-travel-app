@@ -1,0 +1,25 @@
+/* 93-flight-pass.css: the flight pass (T1019, from planner/TripSummary.css),
+   drawn by PassHead and PassEnds in components/flights/Flights.jsx. */
+
+/* ---- The flight pass (T1007, T1008): two airports with their times on a
+   dashed line with the plane, the airline and day in the head. ---- */
+.jr-brand { display: inline-flex; align-items: center; gap: var(--space-2); min-width: 0; font-size: var(--text-body); font-weight: 700; }
+.jr-brand .flt-mark { flex: none; width: 32px; height: 32px; border-radius: 50%; }
+.jr-brand-text { display: grid; gap: 1px; min-width: 0; }
+.jr-name { overflow: hidden; font-size: var(--text-body); font-weight: 700; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
+.jr-meta { font-size: var(--text-caption); font-weight: 500; color: var(--text-2); }
+.jr-ends { display: grid; grid-template-columns: auto minmax(40px, 1fr) auto; align-items: center; gap: var(--space-3); }
+.jr-end { display: grid; gap: 2px; min-width: 0; }
+.jr-end.is-to { text-align: right; }
+.jr-code { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; color: var(--text); }
+.jr-time { font-size: var(--text-body); font-weight: 600; color: var(--text-2); font-variant-numeric: tabular-nums; }
+.jr-line { position: relative; display: grid; justify-items: center; align-content: start; gap: 2px; min-height: 28px; color: var(--umber-700); }
+.jr-line::before { content: ''; position: absolute; top: 13px; right: 0; left: 0; border-top: 2px dashed var(--umber-200); }
+.jr-line-note { font-size: var(--text-micro); font-weight: 600; color: var(--text-3); white-space: nowrap; }
+.jr-line svg { position: relative; box-sizing: content-box; padding: 5px; border-radius: 50%; background: var(--umber-100); }
+.jr-line.is-quiet::before { top: 50%; border-top: 1px solid var(--border); }
+.jr-book.btn { gap: 6px; text-decoration: none; }
+.jr-book.btn svg { opacity: 0.7; }
+@media (min-width: 600px) {
+  .jr-code { font-size: var(--text-headline); }
+}

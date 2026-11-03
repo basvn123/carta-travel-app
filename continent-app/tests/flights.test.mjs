@@ -4,7 +4,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
-  sweptDay, sweptCheapest, pickLeg, legCost, fitsHours, cheapestReturn, MAX_AGE_MS,
+  sweptDay, sweptCheapest, pickLeg, legCost, fitsHours, cheapestReturn, roundTripNear, MAX_AGE_MS,
 } from "../src/lib/flights/flights.js";
 import { bagFee, bagTier } from "../src/lib/flights/bagFees.js";
 import { existsSync, readFileSync } from "node:fs";
@@ -65,6 +65,40 @@ test("the cheapest return in a month", () => {
   assert.equal(r.perSeat, 64 + 70);
   assert.equal(r.out.airline, "FR");
   assert.equal(cheapestReturn(file, "LIS", "2026-11", NOW), null);
+});
+
+test("T1019: the cheapest return never flies home before it flies out", () => {
+  const f = { v: 1, from: "BRU", to: { FCO: {
+    "2027-01-16": [33, "U2", "20:50", "23:00", 0, fresh],
+    "2027-01-05": [48, "U2", "20:50", "23:00", 0, fresh],
+  } }, back: { FCO: {
+    "2027-01-12": [35, "U2", "06:20", "08:40", 0, fresh],
+    "2027-01-20": [61, "U2", "06:20", "08:40", 0, fresh],
+  } } };
+  const r = cheapestReturn(f, "FCO", "2027-01", NOW);
+  assert.ok(r.back.date > r.out.date, `${r.out.date} then ${r.back.date}`);
+  assert.equal(r.perSeat, 48 + 35, "out 5 Jan, home 12 Jan beats out 16 Jan, home 20 Jan");
+  const late = { ...f, back: { FCO: { "2027-01-12": [35, "U2", "06:20", "08:40", 0, fresh] } } };
+  assert.equal(cheapestReturn({ ...late, to: { FCO: { "2027-01-16": [33, "U2", "20:50", "23:00", 0, fresh] } } }, "FCO", "2027-01", NOW), null);
+});
+
+test("T1019: of equal prices, the shorter trip", () => {
+  const f = { v: 1, from: "BRU", to: { FCO: {
+    "2027-01-16": [48, "U2", "20:50", "23:00", 0, fresh],
+    "2027-01-17": [48, "U2", "20:50", "23:00", 0, fresh],
+  } }, back: { FCO: {
+    "2027-01-20": [50, "U2", "06:20", "08:40", 0, fresh],
+    "2027-02-05": [50, "U2", "06:20", "08:40", 0, fresh],
+  } } };
+  const r = cheapestReturn(f, "FCO", "2027-01", NOW);
+  assert.deepEqual([r.out.date, r.back.date], ["2027-01-17", "2027-01-20"]);
+});
+
+test("T1019: near the dates, the way home is still after the way out", () => {
+  const f = { v: 1, from: "BRU", to: { FCO: { "2027-01-10": [40, "U2", "08:00", "10:00", 0, fresh] } },
+    back: { FCO: { "2027-01-09": [20, "U2", "06:20", "08:40", 0, fresh], "2027-01-12": [35, "U2", "06:20", "08:40", 0, fresh] } } };
+  const r = roundTripNear(f, "FCO", "2027-01-10", "2027-01-10", { now: NOW });
+  assert.equal(r.back.date, "2027-01-12");
 });
 
 test("live beats swept, and the hours filter picks inside the window", () => {

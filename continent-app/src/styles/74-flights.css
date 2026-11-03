@@ -175,5 +175,4 @@
 .itin-flight .flt-hours,
 .tleg-flight .flt-hours { padding-top: var(--space-2); }
 /* The airline mark inside a receipt line's label. */
-.dprice .flt-mark,
 .tprice .flt-mark { vertical-align: middle; margin-right: var(--space-2); }

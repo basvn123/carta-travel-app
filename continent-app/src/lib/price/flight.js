@@ -17,7 +17,7 @@ export function flightLegs(file, airport, req, now = Date.now()) {
   const w = flightWindow(req);
   if (w.kind === 'exact') {
     const out = sweptNear(file, 'out', airport, w.from, { now });
-    const back = sweptNear(file, 'back', airport, w.to, { now });
+    const back = out && sweptNear(file, 'back', airport, w.to, { now, after: out.date });
     return out && back ? { out, back, kind: 'exact' } : null;
   }
   const r = w.kind === 'month' ? cheapestReturn(file, airport, w.ym, now) : cheapestReturnAnyMonth(file, airport, now);

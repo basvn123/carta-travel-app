@@ -87,18 +87,20 @@ export function sweptDay(file, dir, airport, date, now = Date.now()) {
   return leg && now - leg.checked <= maxAgeMs(date, now) ? leg : undefined;
 }
 
+/** Every fresh swept flight one way in a month ('2026-11'), or over all days. */
+function sweptLegs(file, dir, airport, month = null, now = Date.now()) {
+  const days = file?.[dir === 'back' ? 'back' : 'to']?.[airport];
+  if (!days) return [];
+  return Object.entries(days)
+    .filter(([date]) => !month || date.startsWith(month))
+    .map(([date, v]) => fromDay(date, v))
+    .filter((leg) => leg && now - leg.checked <= maxAgeMs(leg.date, now));
+}
+
 /** The cheapest swept flight in a month ('2026-11') or over all days: a leg or null. */
 export function sweptCheapest(file, dir, airport, month = null, now = Date.now()) {
-  const days = file?.[dir === 'back' ? 'back' : 'to']?.[airport];
-  if (!days) return null;
-  let best = null;
-  for (const [date, v] of Object.entries(days)) {
-    if (month && !date.startsWith(month)) continue;
-    const leg = fromDay(date, v);
-    if (!leg || now - leg.checked > maxAgeMs(date, now)) continue;
-    if (!best || leg.price < best.price) best = leg;
-  }
-  return best;
+  return sweptLegs(file, dir, airport, month, now)
+    .reduce((best, leg) => (!best || leg.price < best.price ? leg : best), null);
 }
 
 /** Hours a traveller who puts comfort first would rather not fly at. */
@@ -184,12 +186,28 @@ export function googleFlightsLink(from, to, date, { back = null, lang = 'en' } =
  * Returns { out, back, perSeat } or null when either way has no flight.
  */
 export function cheapestReturn(file, airport, month, now = Date.now()) {
-  const out = sweptCheapest(file, 'out', airport, month, now);
-  if (!out) return null;
-  const back = sweptCheapest(file, 'back', airport, month, now)
-    || sweptCheapest(file, 'back', airport, nextMonth(month), now);
-  if (!back) return null;
-  return { out, back, perSeat: out.price + back.price };
+  // T1019: the cheapest PAIR whose way home is after the way out, home in the
+  // month or the next (picking the two cheapest on their own put a 12 Jan
+  // flight home under a 16 Jan flight out). One pass over both ways, latest
+  // first: by each way out, `home` is the cheapest way home after it, the
+  // earliest of equal prices, and of equal pairs the shorter trip wins.
+  const latest = (a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0);
+  const outs = sweptLegs(file, 'out', airport, month, now).sort(latest);
+  const backs = [...sweptLegs(file, 'back', airport, month, now), ...sweptLegs(file, 'back', airport, nextMonth(month), now)].sort(latest);
+  let best = null;
+  let home = null;
+  let i = 0;
+  for (const out of outs) {
+    for (; i < backs.length && backs[i].date > out.date; i += 1) {
+      if (!home || backs[i].price <= home.price) home = backs[i];
+    }
+    const perSeat = home ? out.price + home.price : Infinity;
+    const days = (r) => Date.parse(r.back.date) - Date.parse(r.out.date);
+    if (home && (!best || perSeat < best.perSeat || (perSeat === best.perSeat && days({ out, back: home }) < days(best)))) {
+      best = { out, back: home, perSeat };
+    }
+  }
+  return best;
 }
 
 /**
@@ -223,7 +241,7 @@ export function nextMonth(month) {
  * null. The leg keeps its own date, which every screen shows beside it, so a
  * price for the 19th is never presented as the 18th's.
  */
-export function sweptNear(file, dir, airport, date, { spread = NEAREST_SPREAD, now = Date.now() } = {}) {
+export function sweptNear(file, dir, airport, date, { spread = NEAREST_SPREAD, now = Date.now(), after = null } = {}) {
   if (!date) return null;
   const at = Date.parse(`${date}T00:00:00Z`);
   let best = null;
@@ -231,7 +249,8 @@ export function sweptNear(file, dir, airport, date, { spread = NEAREST_SPREAD, n
     for (const s of k ? [-k, k] : [0]) {
       const day = new Date(at + s * 86400000).toISOString().slice(0, 10);
       const leg = sweptDay(file, dir, airport, day, now);
-      if (leg && (!best || leg.price < best.price)) best = leg;
+      // T1019: `after` (the way out's day) keeps a way home after the way out.
+      if (leg && (!after || leg.date > after) && (!best || leg.price < best.price)) best = leg;
     }
     if (best) return best;
   }
@@ -248,7 +267,7 @@ export function sweptNear(file, dir, airport, date, { spread = NEAREST_SPREAD, n
 export function roundTripNear(file, airport, outDate, backDate, { paying = 1, bagKey = DEFAULT_BAG, now = Date.now() } = {}) {
   if (!file || !airport || airport === file.from) return null;
   const out = sweptNear(file, 'out', airport, outDate, { now });
-  const back = sweptNear(file, 'back', airport, backDate, { now });
+  const back = out && sweptNear(file, 'back', airport, backDate, { now, after: out.date });
   if (!out || !back) return null;
   const a = legCost(out, { paying, bagKey });
   const b = legCost(back, { paying, bagKey });

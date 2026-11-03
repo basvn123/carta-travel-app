@@ -180,134 +180,6 @@
 /* ---- The cost band (direction 2: what it costs comes first) ---- */
 .tpg-overview { display: flex; flex-direction: column; gap: var(--space-6); min-width: 0; }
 
-/* ---- What it costs (T1003, owner: "fully redesign it") ----
-   One umber card, the Carta door's ground with its sun glow. The total in a
-   half arc; the arc is the breakdown in the card's four colours (sun for
-   the flights, lagoon for getting around, sand for the stay, terracotta for
-   food), each length moving to its new value when a figure changes. Under
-   it the four groups as rows, each a key to its arc colour and a door to
-   what sets it. Text is the cream of the umber scale, its quieter steps
-   mixed from the cream itself, never grey. */
-.tpc {
-  --tpc-ink: var(--umber-50);
-  --tpc-ink-2: color-mix(in srgb, var(--umber-50) 76%, var(--umber-800));
-  --tpc-line: color-mix(in srgb, var(--umber-50) 14%, transparent);
-  --tpc-travel: var(--sun-400);
-  --tpc-around: var(--lagoon-300);
-  --tpc-stay: var(--umber-200);
-  --tpc-food: #e8916b;
-  position: relative;
-  isolation: isolate;
-  display: grid;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-4) var(--space-2);
-  overflow: hidden;
-  border-radius: var(--radius-sheet);
-  background:
-    radial-gradient(80% 60% at 50% 0%, color-mix(in srgb, var(--sun-400) 26%, transparent), transparent 70%),
-    linear-gradient(165deg, var(--umber-700), var(--umber-800) 70%);
-  box-shadow: 0 10px 28px -12px color-mix(in srgb, var(--umber-800) 55%, transparent), var(--elev-1);
-  color: var(--tpc-ink);
-}
-.tpc ::selection { background: var(--sun-400); color: var(--umber-800); }
-@media (min-width: 1024px) { .tpg-side .tpc { padding: var(--space-4) var(--space-5) var(--space-3); } }
-.tpc-top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
-.tpc-h { margin: 0; font-size: var(--text-body); font-weight: 700; letter-spacing: -0.01em; color: var(--tpc-ink); }
-/* Group / Per person: cream on umber, the chosen one a cream pill. */
-.tpc .seg.tpc-per { background: color-mix(in srgb, var(--umber-50) 12%, transparent); border-color: transparent; }
-.tpc .tpc-per .seg-item { color: var(--tpc-ink-2); }
-.tpc .tpc-per .seg-item.is-selected { background: var(--umber-50); color: var(--umber-800); box-shadow: 0 2px 6px -2px rgba(0, 0, 0, 0.35); }
-.tpc .tpc-per .seg-item:focus-visible { outline: 2px solid var(--umber-50); outline-offset: 2px; }
-
-/* The arc and the total inside it. */
-.tpc-gauge { position: relative; display: grid; justify-items: center; margin-top: calc(-1 * var(--space-1)); }
-.tpc-arc { display: block; width: 100%; max-width: 236px; height: auto; overflow: visible; }
-.tpc-arc path { fill: none; stroke-width: 12; }
-.tpc-arc-ground { stroke: var(--tpc-line); stroke-linecap: butt; }
-.tpc-arc-seg {
-  stroke-linecap: butt;
-  transition: stroke-dasharray 900ms var(--ease-out), stroke-dashoffset 900ms var(--ease-out);
-}
-.tpc-arc-seg.tpc-k-travel { stroke: var(--tpc-travel); }
-.tpc-arc-seg.tpc-k-around { stroke: var(--tpc-around); }
-.tpc-arc-seg.tpc-k-stay { stroke: var(--tpc-stay); }
-.tpc-arc-seg.tpc-k-food { stroke: var(--tpc-food); }
-.tpc-sum {
-  position: absolute;
-  inset: auto 0 0;
-  display: grid;
-  justify-items: center;
-  gap: 2px;
-  margin: 0;
-  text-align: center;
-}
-.tpc-n { font-size: 30px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; color: var(--tpc-ink); font-variant-numeric: tabular-nums; }
-.tpc-unit { font-size: var(--text-caption); font-weight: 500; color: var(--tpc-ink-2); }
-@media (max-width: 359px) { .tpc-n { font-size: var(--text-headline); } }
-
-/* The budget, under the arc: one line and Edit budget, centred. */
-.tpc-budget { display: grid; justify-items: center; }
-.tpc .tpbud.is-compact { align-items: center; gap: var(--space-1); padding: 0; border: 0; background: none; box-shadow: none; text-align: center; }
-.tpc .tpbud.is-compact .tpbud-bar { display: none; }
-.tpc .tpbud.is-compact .tpbud-line { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: var(--space-1) var(--space-2); margin: 0; font-size: var(--text-caption); color: var(--tpc-ink-2); }
-.tpc .tpbud-gap { padding: 2px var(--space-2); border-radius: var(--radius-pill); background: color-mix(in srgb, var(--lagoon-300) 24%, transparent); color: var(--tpc-ink); font-weight: 700; }
-.tpc .tpbud-gap.is-over { background: var(--sun-400); color: var(--umber-800); }
-.tpc .tpbud.is-compact > .tpbud-edit.btn { align-self: center; margin: 0; color: var(--tpc-ink); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--umber-50) 40%, transparent); text-underline-offset: 3px; }
-.tpc .tpbud-form { width: 100%; padding: var(--space-3); border-radius: var(--radius-card); background: var(--surface); color: var(--text); text-align: left; }
-
-/* The four groups. */
-.tpc-rows { display: grid; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--tpc-line); }
-.tpc-row + .tpc-row { border-top: 1px solid var(--tpc-line); }
-.tpc-hit {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto auto;
-  align-items: center;
-  gap: var(--space-3);
-  width: 100%;
-  min-height: 48px;
-  padding: 6px var(--space-1);
-  border: 0;
-  border-radius: var(--radius-control);
-  background: none;
-  color: inherit;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  transition: background var(--dur-2) var(--ease-out);
-}
-div.tpc-hit { cursor: default; }
-@media (hover: hover) { button.tpc-hit:hover { background: color-mix(in srgb, var(--umber-50) 7%, transparent); } }
-.tpc-hit:focus-visible { outline: 2px solid var(--umber-50); outline-offset: -2px; }
-/* Each group's mark: its arc colour as a disc, the drawing in umber. */
-.tpc-ico { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; color: var(--umber-800); }
-.tpc-k-travel .tpc-ico { background: var(--tpc-travel); }
-.tpc-k-around .tpc-ico { background: var(--tpc-around); }
-.tpc-k-stay .tpc-ico { background: var(--tpc-stay); }
-.tpc-k-food .tpc-ico { background: var(--tpc-food); }
-/* Flights: the airline's own mark on white, ringed in the flights colour. */
-.tpc-ico.is-marks { display: flex; width: auto; min-width: 32px; padding: 0; background: none; }
-.tpc .tpc-ico.is-marks .flt-mark { display: grid; place-items: center; width: 32px; height: 32px; padding: 0; overflow: hidden; border: 0; border-radius: 50%; background: var(--surface); box-shadow: 0 0 0 2px var(--tpc-travel); }
-.tpc-ico.is-marks .flt-mark + .flt-mark { margin-left: -10px; }
-.tpc .tpc-ico.is-marks .flt-mark img { width: 22px; height: 22px; object-fit: contain; }
-.tpc-what { display: grid; gap: 1px; min-width: 0; }
-.tpc-label { font-size: var(--text-body); font-weight: 600; color: var(--tpc-ink); }
-.tpc-sub { display: inline-flex; align-items: center; gap: var(--space-1); min-width: 0; font-size: var(--text-caption); color: var(--tpc-ink-2); }
-.tpc-sub svg { flex: none; opacity: 0.8; }
-.tpc-fig { font-size: var(--text-body); font-weight: 700; color: var(--tpc-ink); font-variant-numeric: tabular-nums; text-align: right; }
-.tpc-none { font-size: var(--text-label); font-weight: 500; color: var(--tpc-ink-2); }
-.tpc-go { width: 16px; color: var(--tpc-ink-2); }
-.tpc-row.is-empty .tpc-ico { opacity: 0.55; }
-.tpc .is-missing, .tpc .not-yet { color: var(--tpc-ink-2); }
-
-.tpc-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); }
-.tpc-foot .btn { color: var(--tpc-ink); }
-@media (hover: hover) { .tpc-foot .btn:hover { background: color-mix(in srgb, var(--umber-50) 8%, transparent); color: var(--tpc-ink); } }
-.tpc-foot .btn:focus-visible { outline: 2px solid var(--umber-50); outline-offset: 2px; }
-.tpc-all.btn { margin-left: calc(-1 * var(--space-2)); }
-.tpc-paid.btn { margin-right: calc(-1 * var(--space-2)); }
-@media (prefers-reduced-motion: reduce) { .tpc-arc-seg, .tpc-hit { transition: none; } }
-
 /* The four tiles (concept C): 4 across, 2 by 2 on a phone. */
 .ct {
   display: grid;
@@ -1111,27 +983,12 @@ span.tbp-seg { cursor: default; }
   box-shadow: var(--elev-1);
 }
 .jr-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); min-width: 0; }
-.jr-brand { display: inline-flex; align-items: center; gap: var(--space-2); min-width: 0; font-size: var(--text-body); font-weight: 700; }
-.jr-brand .flt-mark { flex: none; width: 32px; height: 32px; border-radius: 50%; }
 .jr-glyph { display: grid; flex: none; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--umber-100); color: var(--umber-700); }
-.jr-brand-text { display: grid; gap: 1px; min-width: 0; }
-.jr-name { overflow: hidden; font-size: var(--text-body); font-weight: 700; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
-.jr-meta { font-size: var(--text-caption); font-weight: 500; color: var(--text-2); }
 .jr-step.is-home .jr-stamp.is-empty { margin-top: 19px; background: var(--text); }
 .jr-change.btn { flex: none; white-space: nowrap; }
-.jr-ends { display: grid; grid-template-columns: auto minmax(40px, 1fr) auto; align-items: center; gap: var(--space-3); }
-.jr-end { display: grid; gap: 2px; min-width: 0; }
-.jr-end.is-to { text-align: right; }
-.jr-code { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; color: var(--text); }
-.jr-time { font-size: var(--text-body); font-weight: 600; color: var(--text-2); font-variant-numeric: tabular-nums; }
 .jr-town { font-size: var(--text-lead); font-weight: 700; line-height: var(--leading-tight); overflow-wrap: anywhere; }
 .jr-k { font-size: var(--text-caption); font-weight: 600; color: var(--text-3); }
 .jr-date { font-size: var(--text-body); font-weight: 700; font-variant-numeric: tabular-nums; }
-.jr-line { position: relative; display: grid; justify-items: center; align-content: start; gap: 2px; min-height: 28px; color: var(--umber-700); }
-.jr-line::before { content: ''; position: absolute; top: 13px; right: 0; left: 0; border-top: 2px dashed var(--umber-200); }
-.jr-line-note { font-size: var(--text-micro); font-weight: 600; color: var(--text-3); white-space: nowrap; }
-.jr-line svg { position: relative; box-sizing: content-box; padding: 5px; border-radius: 50%; background: var(--umber-100); }
-.jr-line.is-quiet::before { top: 50%; border-top: 1px solid var(--border); }
 .jr-stay { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
 .jr-photo { flex: none; width: 40px; height: 40px; overflow: hidden; border-radius: var(--radius-control); background: var(--surface-sunken); }
 .jr-photo-img, .jr-photo .hero-blank { display: block; width: 100%; height: 100%; object-fit: cover; }
@@ -1146,8 +1003,6 @@ span.tbp-seg { cursor: default; }
   padding-top: var(--space-2);
   border-top: 1px solid var(--border-soft);
 }
-.jr-book.btn { gap: 6px; text-decoration: none; }
-.jr-book.btn svg { opacity: 0.7; }
 .jr-status { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); min-width: 0; }
 .jr-link { font-size: var(--text-label); font-weight: 600; color: var(--action); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--action) 35%, transparent); text-underline-offset: 3px; }
 @media (hover: hover) { .jr-link:hover { color: var(--action-hover); text-decoration-color: currentColor; } }
@@ -1163,7 +1018,6 @@ span.tbp-seg { cursor: default; }
 @media (min-width: 600px) {
   .jr-step { grid-template-columns: 56px minmax(0, 1fr); gap: var(--space-4); }
   .jr::before { left: 27px; }
-  .jr-code { font-size: var(--text-headline); }
 }
 /* T1006: Your route's head carries the one Add what you paid. */
 .tpg-route-top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); margin-bottom: var(--space-2); }
@@ -1685,7 +1539,6 @@ span.tbp-seg { cursor: default; }
 .tpg .itin-pass-fig .money { font-size: var(--text-title); letter-spacing: -0.02em; }
 .itin-lodging-fig { font-size: var(--text-lead); letter-spacing: -0.01em; }
 .tpg .itin-hop-card .itin-leg-fig { font-size: var(--text-lead); letter-spacing: -0.01em; }
-.tpc-fig { font-size: var(--text-lead); font-weight: 800; letter-spacing: -0.01em; }
 .tpg.is-costs .plan-total-group-n { font-size: var(--text-lead); font-weight: 800; letter-spacing: -0.01em; }
 .tpg.is-costs .plan-lines .money { font-weight: 700; color: var(--text); }
 
