@@ -200,7 +200,7 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
    one that scrolls rather than one cut off at the margin. */
 @media (max-width: 1023px) {
   .pt-wrap .pt-tags, .pt-wrap .pt-jump, .pt-wrap .pcards, .pt-wrap .spots,
-  .pt-wrap .ar-kinds, .pt-wrap .ar-radius, .pt-wrap .ar-rail .storyr-strip {
+  .pt-wrap .ar-radius {
     margin-left: calc(-1 * var(--pt-pad-l, var(--gutter)));
     margin-right: calc(-1 * var(--pt-pad-r, var(--gutter)));
     padding-left: var(--pt-pad-l, var(--gutter));
@@ -1089,14 +1089,59 @@ ul.pt-cells { list-style: none; margin: 0; padding: 0; }
 .dmap-pin.has-photo.is-dot .dmap-pin-ph { width: 24px; height: 24px; }
 .dmap-pin.has-photo.is-dot::after { display: none; }
 
-/* ── Around (T1033): kinds, how far, the Explore rail ──
-   The kind chips (one swipe row on a phone), the distance steps as quieter
-   small chips under them, then the kind's places as the Explore StoryRail's
-   photo cards: no box, the words on the page under the photograph. */
-.ar { display: grid; gap: var(--space-3); min-width: 0; }
-.ui-chip-group.ar-kinds, .ui-chip-group.ar-radius { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
-.ar-kinds::-webkit-scrollbar, .ar-radius::-webkit-scrollbar { display: none; }
-.ar-kinds > *, .ar-radius > * { flex: none; }
+.ui-chip-group.ar-radius { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+.ar-radius::-webkit-scrollbar { display: none; }
+.ar-radius > * { flex: none; }
 @media (pointer: fine) { .ar-radius .ui-chip { min-height: 32px; padding: 0 var(--space-3); font-size: var(--text-label); } }
-.ar-rail.storyr { margin-top: var(--space-2); }
-.ar-rail .storyr-title { font-size: var(--text-body); }
+
+/* ── Around (T1033): one photo tile per kind, each a door to its page ──
+   Two across on a phone, up to five on a desktop; the kind's best
+   photograph under a dark scrim (the umber ground where there is none), the
+   icon in a frosted disc, the name and count in white at the foot. */
+.ar-tiles { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); margin: 0; padding: 0; }
+@media (min-width: 700px) { .ar-tiles { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); } }
+.ar-tile {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  padding: var(--space-3);
+  overflow: hidden;
+  border: 0;
+  border-radius: 16px;
+  background: linear-gradient(160deg, var(--umber-600), var(--umber-800));
+  color: #fff;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: var(--elev-1);
+  transition: transform var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
+}
+.ar-tile > img { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur-3) var(--ease-out); }
+.ar-tile.has-photo::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(20, 12, 4, 0.08) 30%, rgba(20, 12, 4, 0.72)); }
+.ar-tile-ico { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: rgba(255, 255, 255, 0.22); backdrop-filter: blur(6px); }
+.ar-tile-txt { display: grid; gap: 0; padding-right: 28px; }
+.ar-tile-txt b { font-size: var(--text-lead); font-weight: 800; line-height: 1.15; letter-spacing: -0.01em; text-shadow: 0 1px 8px rgba(0, 0, 0, 0.3); }
+.ar-tile-txt small { font-size: var(--text-label); font-weight: 600; opacity: 0.9; font-variant-numeric: tabular-nums; }
+.ar-tile-go { position: absolute; right: var(--space-3); bottom: var(--space-3); display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #fff; color: var(--umber-800); }
+@media (hover: hover) {
+  .ar-tile:hover { transform: translateY(-2px); box-shadow: var(--elev-2); }
+  .ar-tile:hover > img { transform: scale(1.05); }
+}
+.ar-tile:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .ar-tile, .ar-tile > img { transition: none; } .ar-tile:hover { transform: none; } }
+
+/* ── A kind's own page (NearPage): over the place page in its frame ── */
+.destp.near-page { z-index: calc(var(--z-page) + 45); }
+.near-wrap { padding-top: var(--space-5); padding-bottom: var(--space-8); }
+.near-head { display: grid; gap: var(--space-1); }
+.near-title { margin: 0; font-size: 32px; font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; color: var(--text); text-wrap: balance; }
+@media (min-width: 700px) { .near-title { font-size: 40px; } }
+.near-sub { margin: 0; font-size: var(--text-body); color: var(--text-2); }
+.near-tools { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); margin: var(--space-5) 0 var(--space-5); }
+.near-tools .ar-radius { flex: 1 1 auto; min-width: 0; }
+.storyr.near-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: var(--space-6) var(--space-4); }
+@media (max-width: 559px) { .storyr.near-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5) var(--space-3); } }

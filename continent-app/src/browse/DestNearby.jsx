@@ -5,16 +5,12 @@ import { ArrowRightIcon, CalendarIcon, CompassIcon, ExternalIcon, MapPinIcon, Sp
 import { mapsSearchUrl } from '../lib/destInfo.js';
 import { safeUrl } from '../lib/format.js';
 import { activityLink } from '../lib/activityAffiliates.js';
-import { natureRating, poiLabelWord } from '../lib/rating.js';
-import { AROUND_CAP } from '../lib/destOverview.js';
-import { CLASS_KEY as WATER_KEY } from '../components/WaterQualityBadge.jsx';
+import { poiLabelWord } from '../lib/rating.js';
 import { featureHref, linkOpener } from '../lib/featureHref.js';
 import { minutesText } from '../lib/journeys.js';
 import { MemberPlaces } from './MemberPlaces.jsx';
-import { FeaturePhoto } from './AroundHere.jsx';
-import { StoryCard, StoryRail } from './StoryRail.jsx';
-import { trailClimbUp, gradeLabelKey } from '../lib/trailStory.js';
-import { clock } from '../lib/routeEffort.js';
+import { LAYER_ICON } from './AroundHere.jsx';
+import { NearPage } from './NearPage.jsx';
 import { PSection, PBlock } from './PageTemplate.jsx';
 import { DO_TYPE_KEYS, cleanName, fmtKm, thumb500 } from './destParts.js';
 import { isResizable, thumbAt } from '../lib/heroImage.js';
@@ -262,116 +258,47 @@ function TripRow({ tr, t, onSelect, onOpenItin }) {
   );
 }
 
-/** How far to look (T1033): plain steps over each row's distance from the
- *  centre; a step that shows nothing new, or nothing, is left out. The
- *  widest chip is the real reach of the rows (the dossier looks 20 km out
- *  for every kind, further for a few peaks, lakes and beaches). */
-const RADII = [5, 10, 25];
-
-/** The one or two facts a kind is chosen on (the research: length, climb and
- *  time for a route; height for a peak; the water for a lake or a beach),
- *  then how far and which way. A fact the row lacks is left out. */
-function kindFacts(f, style, t) {
-  const bits = [];
-  if (style === 'route') {
-    if (f.km_len != null) bits.push(t('dest.trackLong', { km: Math.round(f.km_len) }));
-    const up = trailClimbUp(f);
-    if (up != null && up >= 20) bits.push(t('dest.ascentUp', { m: Math.round(up) }));
-    const mins = f.duration_min ?? f.dur?.min;
-    if (mins != null) bits.push(clock(mins));
-  } else if (style === 'height' && f.elev_m != null) {
-    bits.push(t('ar.high', { m: Math.round(f.elev_m).toLocaleString(t.lang || 'en') }));
-  }
-  if (f.km != null) bits.push(`${fmtKm(f.km)}${f.bearing ? ` ${f.bearing}` : ''}`);
-  return bits.join(', ');
-}
-
-/** The pill on the photograph: a route's grade, or a lake's or a beach's
- *  bathing water. */
-function kindStatus(f, style, t) {
-  if (style === 'route') {
-    const g = gradeLabelKey(f);
-    return g ? t(g) : null;
-  }
-  if (style === 'water' && WATER_KEY[f.water]) return t('ar.water', { q: t(WATER_KEY[f.water]) });
-  return null;
-}
-
 /**
- * Around (T1033, owner: "one tab where I can click on walks, rides, lakes,
- * beaches ... the specific detail pages of that destination"). The kinds
- * come from the registry (lib/destOverview.js AROUND_KINDS): a chip each for
- * every kind with something in reach, with its count; then how far, as
- * plain steps; then the kind's places as the Explore rail's photo cards
- * (StoryRail, StoryCard: the photograph with its pills, the words on the
- * page under it, no box), each opening its own page. Nearest first.
+ * Around (T1033, owner: "only the tabs must be visible at first ... when you
+ * click on one you go to a detailed page"): one photo tile per kind with
+ * something in reach (the kind's best photograph, its icon, its name and
+ * count), each opening the kind's own page (NearPage); then the day trips
+ * and, inside an area, its villages. The kinds come from the registry
+ * (lib/destOverview.js AROUND_KINDS).
  */
 export function DestAround({ p }) {
-  const {
-    t, city, cats, aroundKey, setAroundKey, members, memberFocus,
-    onOpenFeature, onSelect, onOpenItin,
-  } = p;
-  const [radius, setRadius] = React.useState(null);
+  const { t, city, cats, members, memberFocus, onOpenFeature, onSelect, onOpenItin } = p;
+  const [openKey, setOpenKey] = React.useState(null);
   const trips = cats.find((c) => c.key === 'trips');
   const all = cats.filter((c) => c.key !== 'trips' && c.count > 0);
-  const cur = all.find((c) => c.key === aroundKey) || all[0] || null;
-  // Every row of the kind, nearest first; the steps worth offering (each
-  // shows something, and fewer than the step above it); the reach of all.
-  const near = cur ? [...cur.all].sort((x, y) => (x.km ?? 99) - (y.km ?? 99)) : [];
-  const reach = Math.ceil(Math.max(0, ...near.map((f) => f.km ?? 0)));
-  const steps = [];
-  let above = near.length;
-  for (const km of [...RADII].reverse()) {
-    const n = near.filter((f) => f.km != null && f.km <= km).length;
-    if (km < reach && n > 0 && n < above) { steps.unshift(km); above = n; }
-  }
-  const r = steps.includes(radius) ? radius : null;
-  const rows = (r == null ? near : near.filter((f) => f.km != null && f.km <= r)).slice(0, AROUND_CAP);
+  const open = all.find((c) => c.key === openKey) || null;
   if (!trips?.count && !all.length && !members?.length) return null;
   return (
     <PSection id="pt-around" title={t('dest.aroundTitle', { city })}>
-      {cur && (
-        <div className="ar">
-          <ChipGroup label={t('dest.aroundChipsAria', { city })} className="ar-kinds">
-            {all.map((c) => (
-              <Chip key={c.key} kind="choice" selected={c.key === cur.key} onClick={() => { setAroundKey(c.key); setRadius(null); }}>
-                {t(`dest.aroundKind.${c.key}`)}
-                <span className="pt-count-n">{c.count}</span>
-              </Chip>
-            ))}
-          </ChipGroup>
-          {steps.length > 0 && (
-            <ChipGroup label={t('ar.howFar')} className="ar-radius">
-              {steps.map((km) => (
-                <Chip key={km} kind="choice" size="sm" selected={r === km} onClick={() => setRadius(km)}>
-                  {t('ar.within', { km })}
-                </Chip>
-              ))}
-              <Chip kind="choice" selected={r == null} onClick={() => setRadius(null)}>{t('ar.within', { km: reach })}</Chip>
-            </ChipGroup>
-          )}
-          <StoryRail key={cur.key} id="pt-around-rail" headingLevel={3} t={t} className="ar-rail"
-            title={t('ar.near', { kind: t(`dest.aroundKind.${cur.key}`), city })}>
-            {rows.map((f) => {
-              const ref = { id: f.id, cc: f.cc };
-              const href = onOpenFeature ? featureHref(f.layer, ref) : null;
-              const rating = natureRating(f);
-              return (
-                <StoryCard key={f.key}
-                  photo={<FeaturePhoto src={f.thumb} lat={f.lat} lon={f.lon} />}
-                  status={kindStatus(f, cur.facts, t)}
-                  score={rating?.score != null ? <ScoreChip rating={rating} size="sm" /> : null}
-                  title={cleanName(f.name)}
-                  href={href || undefined}
-                  onOpen={onOpenFeature
-                    ? (href ? linkOpener(() => onOpenFeature(f.layer, ref)) : () => onOpenFeature(f.layer, ref))
-                    : undefined}
-                  meta={kindFacts(f, cur.facts, t)}
-                />
-              );
-            })}
-          </StoryRail>
-        </div>
+      {all.length > 0 && (
+        <ul className="ar-tiles" aria-label={t('dest.aroundChipsAria', { city })}>
+          {all.map((c) => {
+            const Icon = LAYER_ICON[c.layer] || CompassIcon;
+            const shot = c.all.find((f) => f.thumb)?.thumb || null;
+            return (
+              <li key={c.key}>
+                <button type="button" className={`ar-tile${shot ? ' has-photo' : ''}`} aria-haspopup="dialog"
+                  onClick={() => setOpenKey(c.key)}>
+                  {shot && <img src={shot} alt="" loading="lazy" decoding="async" />}
+                  <span className="ar-tile-ico" aria-hidden="true"><Icon size={20} /></span>
+                  <span className="ar-tile-txt">
+                    <b>{t(`dest.aroundKind.${c.key}`)}</b>
+                    <small>{c.count}</small>
+                  </span>
+                  <span className="ar-tile-go" aria-hidden="true"><ArrowRightIcon size={18} /></span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+      {open && (
+        <NearPage cat={open} city={city} t={t} onOpenFeature={onOpenFeature} onClose={() => setOpenKey(null)} />
       )}
       {trips?.count > 0 && (
         <PBlock title={t('dest.aroundKind.trips')}>

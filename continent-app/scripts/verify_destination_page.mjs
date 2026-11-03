@@ -364,7 +364,7 @@ await tab(phone, 'Nearby');
 // (#sec-around-*), so any photo track on Nearby counts, as long as one of
 // them overflows its width.
 const tracksSwipe = await phone.evaluate(() => Array.from(document.querySelectorAll(
-  '#pt-see .spots, #pt-around .ar-rail .storyr-strip',
+  '#pt-see .spots',
 )).some((s) => s.scrollWidth > s.clientWidth + 20));
 check('phone photo tracks swipe sideways', tracksSwipe);
 await phone.screenshot({ path: 'shots/destp-phone.png' });

@@ -32,7 +32,7 @@ import { sentences } from '../lib/journeys.js';
 import { BedIcon, CompassIcon, RouteIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { FriendsWentHere } from '../components/FriendsWentHere.jsx';
-import { tabFromHash, aroundCategories, defaultAroundKey } from '../lib/destOverview.js';
+import { tabFromHash, aroundCategories } from '../lib/destOverview.js';
 import { featureHref, linkOpener } from '../lib/featureHref.js';
 import {
   baseCity, monthOf, photoMatcher, thumb500, NOT_A_VIEW, isArea, useDoPhotos,
@@ -208,7 +208,6 @@ export function DestinationPage({
   const [notice, setNotice] = React.useState(null);
   const [open, setOpen] = React.useState(() => readFolds(destination?.id) || new Set());
   // The chosen Around chip; null until the traveller picks.
-  const [aroundPick, setAroundPick] = React.useState(null);
   // A section to scroll to once the page has drawn it: the tab an address
   // named, or a jump asked before the dossier answered.
   const [pendingJump, setPendingJump] = React.useState(() => {
@@ -261,7 +260,6 @@ export function DestinationPage({
     setStuck(false);
     setCopied(false);
     setNotice(null);
-    setAroundPick(null);
     const tab = initialTab(destId);
     setPendingJump(tab && tab !== 'overview' ? { id: TAB_SECTION[tab] } : null);
     setOpen(readFolds(destId) || new Set());
@@ -481,7 +479,6 @@ export function DestinationPage({
       .map((tr, i) => ({ ...tr, key: `${i}:${tr.id}` }));
   })();
   const cats = aroundCategories({ around, nearby, routes: routeRows, trips: tripRows });
-  const aroundKey = aroundPick || defaultAroundKey(cats.filter((c) => c.key !== 'trips'));
   const hasRoutes = (routeRows.hiking?.length || 0) + (routeRows.cycling?.length || 0) > 0
     || !!routeRows.node_network?.km;
 
@@ -557,7 +554,7 @@ export function DestinationPage({
     t, lang, city, destination, data, d, lat: destination.city_lat ?? destination.lat,
     lon: destination.city_lon ?? destination.lon, scrollRef, view,
     highlights, doRows, monthList, fmtScore,
-    cats, aroundKey, setAroundKey: setAroundPick,
+    cats,
     area: isArea(d), hasRoutes, members, memberFocus,
     monthPick: statMonth, water, festivals,
     getting, rhythm, bookAhead, verdict, tips, packs, month, parking, tours, flightLinks, bookPhoto,
