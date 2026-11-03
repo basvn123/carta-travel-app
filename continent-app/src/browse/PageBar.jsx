@@ -26,7 +26,7 @@ export function PageBar({
   t, className = '',
 }) {
   return (
-    <div className={`tpage-bar ipage-bar ${className}`.trim()} data-page-bar>
+    <div className={`tpage-bar ipage-bar${nameOn ? ' is-scrolled' : ''} ${className}`.trim()} data-page-bar>
       <Button variant="quiet" className="tpage-back ipage-back" onClick={onBack} ref={backRef}
         iconStart={<ArrowLeftIcon size={20} />}>
         {backLabel}

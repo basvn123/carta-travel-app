@@ -843,6 +843,8 @@ function TravelApp() {
   // to the trip library (a style tile, a country's weeks) opens Plan's
   // Carta's own trips, with the style or the country already chosen.
   const [planOpen, setPlanOpen] = useState(null);
+  // T1037: Plan past its opening shows its own page bar, not the app head.
+  const [planInner, setPlanInner] = useState(false);
   const openTripStyles = useCallback((slug = null, cc = null) => {
     setPlanOpen({ screen: 'carta', style: slug || null, cc: cc ? String(cc).toUpperCase() : null, n: Date.now() });
     goToTab('planstart');
@@ -1826,7 +1828,7 @@ function TravelApp() {
       >
         {t('a11y.skipToContent')}
       </a>
-      <header className="top-bar" ref={filterBarRef} onClick={(e) => e.stopPropagation()}>
+      <header className={`top-bar${place === 'plan' && planInner ? ' is-hidden' : ''}`} ref={filterBarRef} onClick={(e) => e.stopPropagation()}>
         <AppHeader
           user={user}
           place={place}
@@ -2126,6 +2128,7 @@ function TravelApp() {
               onOpenPlan={openPlanInList}
               openAt={planOpen}
               destinations={data?.destinations}
+              onInnerChange={setPlanInner}
             />
           </Suspense>
         </div>

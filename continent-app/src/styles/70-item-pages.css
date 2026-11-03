@@ -180,9 +180,13 @@
   box-sizing: content-box;
   gap: var(--space-1);
   padding: env(safe-area-inset-top, 0px) max(var(--space-2), env(safe-area-inset-right, 0px)) 0 max(var(--space-2), env(safe-area-inset-left, 0px));
-  background: var(--surface);
-  border-bottom: 1px solid var(--border-soft);
+  /* T1037 (owner): the bar wears the page's own ground, not white; its
+     hairline shows only once the page has scrolled under it. */
+  background: var(--surface-page);
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--dur-2) var(--ease-out);
 }
+.tpage-bar.ipage-bar.is-scrolled { border-bottom-color: var(--border-soft); }
 .ipage-bar .ipage-back { padding-inline: var(--space-2); color: var(--text); }
 .ipage-bar .ipage-back .btn-label { color: var(--text); }
 .ipage-bar .ipage-bar-title {
