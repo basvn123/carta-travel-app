@@ -51,6 +51,7 @@ import json
 import math
 import re
 import sys
+import time
 import urllib.parse
 from datetime import datetime, timezone
 from pathlib import Path
@@ -149,6 +150,17 @@ PROTECTED_MAX_KM = 6.0
 DEST_MAX_KM = 90.0
 CONTEXT_RADIUS_M = 400
 OSM_BATCH = 12           # beaches per Overpass request
+# T1031: during the Overpass pass the country is saved every this many
+# batches, so an interrupted run keeps what it fetched. The whole-Europe
+# CONTEXT_V 2 refresh of 2026-11-02 spent seven hours on Spain alone, with
+# nothing saved until the country finished.
+CHECKPOINT_BATCHES = 10
+# T1031: --max-hours sets this (time.monotonic()). Past it no new Overpass
+# batch and no new country starts; what is done is saved and the script
+# exits 3, which beach_context reads as "incomplete, stays due".
+DEADLINE = None
+TIMED_OUT = False
+EXIT_INCOMPLETE = 3
 # T640 wiring: the version of the context query. A beach whose cached context
 # was fetched by an older query (no `context_v`, or a lower one) is asked
 # again, and only the context is: its photographs and article facts stay.
@@ -1193,7 +1205,50 @@ def enrich_country(cc, shortlist_n=None, refresh=False, bathing=None,
             b["context"] = was["context"]
             if was.get("context_v"):
                 b["context_v"] = was["context_v"]
-    for i in range(0, len(todo), OSM_BATCH):
+    # Steps 4 to 6 and the save, as one function: the Overpass loop below
+    # calls it as a checkpoint, so every saved file is complete row for row.
+    # A beach whose new context has not been fetched yet keeps its old one at
+    # the old context_v, and stale() asks for it again on the next run.
+    def finish(final=True):
+        # 4. Region ids, local and free. Stored here so export reads, never
+        # recomputes; rows the carry-over already stamped are skipped.
+        try:
+            _regions_assign().stamp_rows(short)
+        except Exception as exc:  # the spine is optional at enrich time
+            print(f"    rg stamping skipped ({type(exc).__name__}: {exc})")
+
+        # 5. Which way the beach faces, and whether the sun sets over its
+        # water. Local, free and cached per row, so this is idempotent like
+        # everything above it. Skipped entirely on a clone with no EEA
+        # coastline.
+        if aspect_reader is not None and aspect_reader.ready:
+            stamped = aspect_reader.stamp(short)
+            if stamped and final:
+                facing = sum(1 for b in short if b.get("sunset_facing"))
+                print(f"    aspect on {stamped} beaches, {facing} face the sunset")
+
+        # 6. Protection, including outside the EU. Natura 2000 is the EU half
+        # and the Emerald Network is its non-EU twin, so the chip works in
+        # Norway and the Balkans rather than stopping at the EU border.
+        if protection_reader is not None and protection_reader.ready:
+            protection_reader.stamp(short)
+
+        payload = {
+            "country": cc,
+            "enriched_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+            "n_harvested": len(beaches),
+            "beaches": short,
+        }
+        save_cache(STAGE_OUT, cc, payload)
+        return payload
+
+    global TIMED_OUT
+    for n, i in enumerate(range(0, len(todo), OSM_BATCH)):
+        if DEADLINE is not None and time.monotonic() > DEADLINE:
+            TIMED_OUT = True
+            print(f"    --max-hours reached: context {i}/{len(todo)}, "
+                  f"the other {len(todo) - i} stay due for the next run")
+            break
         chunk = todo[i:i + OSM_BATCH]
         found = context_for(chunk)
         for b in chunk:
@@ -1205,36 +1260,11 @@ def enrich_country(cc, shortlist_n=None, refresh=False, bathing=None,
                 # so the next run asks again.
                 b["context"] = {}
         print(f"    context {min(i + OSM_BATCH, len(todo))}/{len(todo)}")
+        if (n + 1) % CHECKPOINT_BATCHES == 0 and i + OSM_BATCH < len(todo):
+            finish(final=False)
+            print(f"    checkpoint saved ({min(i + OSM_BATCH, len(todo))}/{len(todo)})")
 
-    # 4. Region ids, local and free. Stored here so export reads, never
-    # recomputes; rows the carry-over already stamped are skipped.
-    try:
-        _regions_assign().stamp_rows(short)
-    except Exception as exc:  # the spine is optional at enrich time
-        print(f"    rg stamping skipped ({type(exc).__name__}: {exc})")
-
-    # 5. Which way the beach faces, and whether the sun sets over its water.
-    # Local, free and cached per row, so this is idempotent like everything
-    # above it. Skipped entirely on a clone with no EEA coastline.
-    if aspect_reader is not None and aspect_reader.ready:
-        stamped = aspect_reader.stamp(short)
-        if stamped:
-            facing = sum(1 for b in short if b.get("sunset_facing"))
-            print(f"    aspect on {stamped} beaches, {facing} face the sunset")
-
-    # 6. Protection, including outside the EU. Natura 2000 is the EU half and
-    # the Emerald Network is its non-EU twin, so the chip works in Norway and
-    # the Balkans rather than stopping at the EU border.
-    if protection_reader is not None and protection_reader.ready:
-        protection_reader.stamp(short)
-
-    payload = {
-        "country": cc,
-        "enriched_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-        "n_harvested": len(beaches),
-        "beaches": short,
-    }
-    save_cache(STAGE_OUT, cc, payload)
+    payload = finish()
     with_img = sum(1 for b in short if b.get("images"))
     print(f"  {cc}: enriched {len(short)}, {with_img} with photographs")
     return payload
@@ -1265,7 +1295,14 @@ def main():
                         help="skip the Overpass ground truth pass, so this can "
                              "run alongside a harvest without fighting it for "
                              "the same Overpass slot")
+    parser.add_argument("--max-hours", type=float, default=0,
+                        help="T1031: start no Overpass batch and no country "
+                             "after this many hours; save what is done and "
+                             "exit 3 so the task stays due (0 = no limit)")
     args = parser.parse_args()
+    global DEADLINE
+    if args.max_hours:
+        DEADLINE = time.monotonic() + args.max_hours * 3600
 
     wanted = [c.strip().upper() for c in args.countries.split(",") if c.strip()]
     countries = wanted or COUNTRIES
@@ -1294,8 +1331,12 @@ def main():
     except Exception:
         protection_reader = None
 
+    left = []
     for cc in countries:
         if load_cache(STAGE_IN, cc) is None:
+            continue
+        if DEADLINE is not None and time.monotonic() > DEADLINE:
+            left.append(cc)
             continue
         try:
             enrich_country(cc, shortlist_n=args.shortlist, refresh=args.refresh,
@@ -1310,6 +1351,12 @@ def main():
             raise
         except Exception as exc:
             print(f"  {cc}: failed ({exc})")
+
+    if TIMED_OUT or left:
+        print(f"  incomplete: --max-hours {args.max_hours:g} reached"
+              + (f"; not started: {', '.join(left)}" if left else "")
+              + ". What is done is saved; the next run resumes.")
+        sys.exit(EXIT_INCOMPLETE)
 
 
 if __name__ == "__main__":
