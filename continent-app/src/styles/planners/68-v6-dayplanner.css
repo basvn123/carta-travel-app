@@ -74,16 +74,6 @@
   align-items: center;
   gap: 8px;
 }
-.dayp { padding-top: 12px; }
-.dayp-summary {
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--ink-soft);
-  padding: 10px 12px;
-  background: var(--paper-dim);
-  border-radius: 10px;
-  margin-bottom: 14px;
-}
 .daya { padding-top: 12px; }
 .daya-empty, .daya-thin {
   font-size: 12.5px;
@@ -129,18 +119,6 @@
   gap: 12px;
   padding: 12px;
   text-align: left;
-}
-.daya-shot .day-thumb {
-  width: 92px; height: 92px;
-  border-radius: 10px;
-  object-fit: cover;
-}
-.daya-shot .day-thumb-empty {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--paper-dim);
-  color: var(--ink-mute);
 }
 .daya-must {
   display: inline-flex;
@@ -318,9 +296,6 @@
   resize: vertical;
 }
 .dayf-notes:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
-@media (max-width: 768px) {
-  .daya-shot .day-thumb { width: 76px; height: 76px; }
-}
 @media (prefers-reduced-motion: reduce) {
   .daya-card {
     transition: none;
@@ -447,11 +422,7 @@
 :is(.day-ws, .dem-map) .dem-pin.is-dot .dem-pin-ico { background: var(--ink); color: var(--on-fill); }
 :is(.day-ws, .dem-map) .dem-pin .dem-pin-chk { background: var(--ink-fill); color: var(--on-fill); }
 :is(.day-ws, .dem-map) .dem-pin .dem-pin-star { color: var(--ink); }
-@media (hover: hover) {
-  :is(.day-ws, .dem-map) .dem-pin:hover { transform: none; box-shadow: var(--shadow-1); border-color: var(--ink); }
-}
-:is(.day-ws, .dem-map) .dem-pin.on { border-color: var(--ink); box-shadow: var(--shadow-1); }
-:is(.day-ws, .dem-map) .dem-pin.focused, :is(.day-ws, .dem-map) .dem-pin.on.focused {
+:is(.day-ws, .dem-map) .dem-pin.on.focused {
   border-color: var(--ink);
   box-shadow: var(--shadow-1);
   outline: 2px solid var(--ink);
@@ -486,32 +457,6 @@
   .dayf-browse,
   .dayf-act { min-height: var(--tap); }
   .dtmenu-item { min-height: var(--tap); }
-}
-.day-undo {
-  position: fixed;
-  left: 50%;
-  bottom: calc(84px + env(safe-area-inset-bottom, 0px));
-  transform: translateX(-50%);
-  z-index: calc(var(--z-modal) + 1);
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  width: max-content;
-  max-width: min(92vw, 440px);
-  padding: 0 var(--space-1) 0 var(--space-4);
-  background: var(--ink-fill);
-  color: var(--on-fill);
-  border-radius: 999px;
-  box-shadow: var(--shadow-2);
-  font: 600 13px/1.3 var(--ui);
-  animation: day-undo-in var(--dur-2) var(--ease-out);
-}
-@media (hover: hover) {
-  .day-undo-btn:hover { background: color-mix(in srgb, var(--on-fill) 14%, transparent); }
-}
-.day-undo-btn:focus-visible { outline: 2px solid var(--on-fill); outline-offset: 2px; }
-@media (prefers-reduced-motion: reduce) {
-  .day-undo { animation: none; }
 }
 .dem-map-fail {
   position: absolute;
@@ -632,7 +577,6 @@
 .dayw-manual .dayex-card-meta { display: flex; flex-wrap: wrap; column-gap: var(--space-2); row-gap: 2px; font-size: var(--text-label); color: var(--text-2); }
 .dayex-rows { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); margin: var(--space-3) 0 0; padding: 0; list-style: none; }
 @media (min-width: 700px) { .dayex-rows { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-.dayex-row.is-picked { border-color: var(--select-border); background: var(--select-bg); }
 .day-ws { --panel-w: min(620px, 46vw); }
 @media (min-width: 1280px) { .day-ws { --panel-w: min(760px, 52vw); } }
 .day-ws .dayws-map { position: absolute; inset: 0; }
@@ -660,50 +604,12 @@
 .days-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
 .day-ws.is-page .days-cost.btn { margin: 0; padding-inline: 0; }
 .day-ws.is-page .days-cost .btn-label { flex-direction: row; align-items: baseline; gap: var(--space-2); }
-.dayp-summary { display: flex; gap: var(--space-2); margin: 0; padding: var(--space-3) var(--space-4); border-radius: var(--radius-card); background: var(--surface-sunken); font-size: var(--text-body); color: var(--text-2); }
 .day-ws.is-page .dayt > li { grid-template-columns: 44px 44px minmax(0, 1fr) auto; column-gap: var(--space-2); }
-.dayt-time .dayt-est { display: block; font-weight: 400; }
-.dayt-time { padding-top: 14px; font-size: var(--text-label); font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text); }
-.dayt-start, .dayt-end { min-height: 48px; }
-.dayt-start .dayt-time, .dayt-end .dayt-time, .dayt-lunch .dayt-time { color: var(--text-2); }
-.dayt-rail { position: relative; display: flex; align-items: center; justify-content: center; align-self: stretch; color: var(--text-2); }
-.dayt-start .dayt-rail::before { top: 50%; }
-.dayt-end .dayt-rail::before { bottom: 50%; }
-.dayt-leg.is-ride .dayt-rail::before { border-left-style: dashed; border-left-color: var(--text-3); }
-.dayt-start .dayt-body, .dayt-end .dayt-body, .dayt-lunch .dayt-body { padding-top: 14px; }
-.dayt-name { display: block; font-size: var(--text-body); font-weight: 600; color: var(--text); overflow-wrap: anywhere; }
-.dayt-start .dayt-name, .dayt-end .dayt-name, .dayt-lunch .dayt-name { font-size: var(--text-label); color: var(--text-2); }
-.dayt-must { display: inline-flex; margin-left: var(--space-1); vertical-align: -1px; color: var(--rate); }
-.dayt-must svg { fill: currentColor; }
-.dayt-meta { font-size: var(--text-label); color: var(--text-2); }
-.dayt-link {
-  display: inline-flex;
-  align-items: center;
-  min-height: 32px;
-  font-size: var(--text-label);
-  font-weight: 600;
-  color: var(--action);
-  text-decoration: none;
-}
-@media (pointer: coarse) { .dayt-link { min-height: var(--tap); } }
-@media (hover: hover) { .dayt-link:hover { text-decoration: underline; } }
-.dayt-link-quiet { color: var(--text-2); font-weight: 400; }
-.dayt-flag { font-size: var(--text-label); font-weight: 600; color: var(--amber-ink); }
-.dayt-est { font-size: var(--text-caption); color: var(--text-3); }
-.dayt-mark { position: relative; padding-top: var(--space-2); }
-.dayt-mark .day-thumb { display: block; width: 48px; height: 48px; border-radius: var(--radius-sm); object-fit: cover; }
 .day-ws.is-page .dayt-mark .day-thumb { width: 44px; height: 44px; }
-.dayt-tools { display: flex; align-items: center; padding-top: var(--space-1); }
-.dayt-tool-up { transform: rotate(180deg); }
-.dayt-leg { min-height: 40px; }
-.dayt-leg .dayt-time { padding-top: 0; }
-.dayt-leg-text { grid-column: 3 / 4; padding-block: var(--space-2); font-size: var(--text-label); color: var(--text-2); }
-.dayt-leg.is-ride .dayt-leg-text { color: var(--text); }
 .day-ws .dayws-stay-btn { box-shadow: none; border: 1px solid var(--border-soft); background: var(--surface); min-height: var(--tap); }
 .dayk-sheet .dayws-tips-body { max-height: none; padding: 0; }
 @media (prefers-reduced-motion: no-preference) {
-  .days-card, .dayt { animation: dayt-in var(--dur-3) var(--ease-out) both; }
-  .dayt { animation-delay: 60ms; }
+  .days-card { animation: dayt-in var(--dur-3) var(--ease-out) both; }
 }
 .day-wizard .dayw-step,
 .day-wizard .daychat,
@@ -762,7 +668,6 @@
 .dayw-manual .dayex-card-dist,
 .dayw-manual .dayex-card-sub,
 .dayw-manual .dayex-card-fact { font-family: inherit; font-size: var(--text-label); color: var(--text-2); }
-.dayw-manual .dayex-more.btn { color: var(--action); }
 .dayw-manual .dayex-count { font-size: var(--text-label); color: var(--text-2); }
 @media (max-width: 768px) {
   .dayw-manual .dayex-what-head { flex-wrap: wrap; }
@@ -918,7 +823,6 @@
   .dtmenu-btn { min-width: var(--tap); min-height: var(--tap); }
   .dem-map .maplibregl-ctrl-group button { width: var(--tap); height: var(--tap); }
 }
-.day-undo-text { min-width: 0; padding: var(--space-2) 0; overflow-wrap: anywhere; }
 @media (pointer: coarse) {
   :is(.day-ws, .dem-map) .dem-pin::after {
     content: '';
@@ -972,34 +876,6 @@
 .day-wizard .day-ideas-chip-x { width: var(--tap); height: var(--tap); flex: none; }
 .dayw-manual .dayex-chips::-webkit-scrollbar { display: none; }
 .dayws-head .day-save-status { flex: none; display: inline-flex; align-items: center; gap: var(--space-1); min-height: var(--tap); font-size: var(--text-label); color: var(--text-2); }
-.dayt-rail::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  border-left: 2px dotted var(--border);
-  z-index: 0;
-}
-.dayt-rail > svg { position: relative; z-index: 1; padding: 3px; box-sizing: content-box; background: var(--surface-page); border-radius: 50%; }
-.dayt-no {
-  position: absolute;
-  top: 2px;
-  left: -6px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 4px;
-  border-radius: var(--radius-pill);
-  background: var(--text);
-  color: var(--surface);
-  font-size: var(--text-caption);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-.dayt-leg > .dayt-link { grid-column: 4 / 5; align-self: center; padding-right: var(--space-2); }
 .dayr-days-wrap { border-top: 1px solid var(--border-soft); padding-top: var(--space-4); }
 .dayw-rail-sheet .plan-total-title { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .dayw-fork-card .card-title { font-size: var(--text-title); }
@@ -1046,7 +922,6 @@
   background: var(--surface);
   overflow: hidden;
 }
-.dayt-link { min-width: var(--tap); justify-content: center; }
 /* T487: the day's Google Maps link(s), under the summary. */
 .day-wizard .guide-foot-summary { flex: 1 1 auto; min-width: 0; }
 .dayw-rail-btn.btn { max-width: 100%; min-width: 0; overflow: hidden; }
@@ -1108,10 +983,6 @@
 .day-receipt-life.btn { align-self: flex-start; }
 
 /* The day's head: "Your day" and the quiet Detail control. */
-.dayp-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
-.dayp-h { margin: 0; font-size: var(--text-title); font-weight: 600; color: var(--text); }
-.dayp-detail-lbl { color: var(--text-2); font-weight: 400; }
-.dayp-menu-gap { display: inline-block; width: 16px; }
 
 /* The parts of the day: a quiet head over a group of rows, never a card,
    never a colour; "Add" for that part at its end. */
@@ -1125,24 +996,14 @@
   padding-top: var(--space-2);
   border-top: 1px solid var(--border-soft);
 }
-.dayt-band-h { margin: 0; display: flex; align-items: baseline; gap: var(--space-2); font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
-.dayt-band-range { font-weight: 400; color: var(--text-3); font-variant-numeric: tabular-nums; }
-.dayt.is-bands .dayt-meal .dayt-name { font-size: var(--text-label); color: var(--text-2); }
 
 /* List and Parts of the day carry no clock: the time column goes. */
 .day-ws .dayt.is-untimed > li { grid-template-columns: 48px minmax(0, 1fr) auto; }
 .day-ws.is-page .dayt.is-untimed > li { grid-template-columns: 44px minmax(0, 1fr) auto; }
-.dayt.is-untimed .dayt-time { display: none; }
-.dayt.is-untimed .dayt-leg > .dayt-link { grid-column: 3 / 4; }
-.dayt.is-untimed .dayt-start .dayt-body,
-.dayt.is-untimed .dayt-end .dayt-body,
-.dayt.is-untimed .dayt-lunch .dayt-body { padding-top: var(--space-3); }
 
 /* A ticket on a stop: a price Carta knows, or that there is one. */
-.dayt-ticket { display: inline-flex; align-items: center; gap: var(--space-1); font-size: var(--text-label); color: var(--text-2); font-variant-numeric: tabular-nums; }
 
 /* An empty day: the parts (or one line) and one primary. */
-.dayp-empty-line { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--border-soft); }
 
 /* "Best route" asks first (owner T492-e): one sentence, two buttons. */
 

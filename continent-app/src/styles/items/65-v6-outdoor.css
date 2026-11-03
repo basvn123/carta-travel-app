@@ -54,19 +54,7 @@
 .dsk-page .dsk-part + .dsk-part,
 .dsk-page .tpage-part + .tpage-part { margin-top: var(--space-2); }
 .dsk-page .rstage.is-static { cursor: default; color: var(--ink); }
-.dsk-page .sig-sq {
-  width: 14px;
-  height: 14px;
-  border: 1px solid var(--ink-mute);
-  background: transparent;
-}
 .dsk-page .sig-sq.is-on { border-color: var(--select-border); background: var(--ink); }
-.dsk-page .tpage-loop {
-  border: 1px solid var(--rule);
-  background: transparent;
-  color: var(--ink-soft);
-  font-size: 12px;
-}
 .dsk-page .dsk-head .tpage-title,
 .dsk-page .dsk-head .bpage-name,
 .dsk-page .dsk-head .cycle-title h1 {
@@ -160,11 +148,6 @@
   .dsk-page .dsk-getting .tpage-act,
   .dsk-page .dsk-primary.tpage-primary:active,
   .dsk-page .dsk-primary.cycle-gpx:active { transition: none; }
-}
-.dsk-page .tpage-chip-hl {
-  border: 1px solid var(--rule);
-  background: transparent;
-  color: var(--ink-soft);
 }
 .dsk-page .lpage-swim-ok .lpage-swim-word::before,
 .dsk-page .mpage-way-ride .mpage-way-word::before {

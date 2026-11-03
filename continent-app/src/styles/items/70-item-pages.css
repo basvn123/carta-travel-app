@@ -150,8 +150,6 @@
 
 .tdiff-squares { display: inline-flex; gap: 2px; }
 
-.tdiff-sq.is-on { background: var(--text); border-color: var(--text); }
-
 .tdiff-word { font-weight: 600; }
 
 .tdiff-list li + li { margin-top: var(--space-1); }

@@ -37,7 +37,6 @@
   -webkit-box-orient: vertical;
   text-wrap: balance;
 }
-.ctc-meta { display: flex; align-items: center; gap: var(--space-2); min-width: 0; font-size: var(--text-caption); color: var(--text-2); }
 .ctc-facts { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 @media (min-width: 600px) { .ctc-name { font-size: var(--text-lead); } }
 @media (hover: hover) {
@@ -48,10 +47,7 @@
    Explore's category row, quick filters, then rows of two cards on a phone
    (whole cards inside the gutter, the next pair a swipe away) and four
    from 769 px, then the grid: two on a phone, three, then four. */
-.pf-carta-crumbs { display: flex; align-items: center; gap: var(--space-1); min-height: var(--tap); min-width: 0; font-size: var(--text-label); }
 .pf-carta-crumbs .btn.dayc-link { margin-left: calc(-1 * var(--space-1)); }
-.pf-carta-sep { color: var(--text-3); }
-.pf-carta-here { overflow: hidden; font-weight: 700; color: var(--text); white-space: nowrap; text-overflow: ellipsis; }
 .pf-carta-styles {
   display: flex;
   gap: var(--space-1);
@@ -73,55 +69,15 @@
    every width. On a phone the door takes the rest of the row; from 560 px
    (T1002, owner: a full-width bar was far too wide) the door is as wide as
    its deck, its name and its arrow, beside New trip. */
-.pfh .pfh-head {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: var(--space-3);
-}
 @media (min-width: 560px) {
-  .pfh .pfh-head { grid-template-columns: auto auto; justify-content: start; gap: var(--space-4); }
-  .pfh .pfh-door { padding-right: var(--space-3); }
   .pfh .pfh-door-name { flex: none; padding-right: var(--space-4); white-space: nowrap; }
 }
 
 /* New trip: no tile of its own (T1001, owner), the plus on a brown disc and
    the words, straight on the page ground (the kit Button, its quiet look
    replaced). */
-.pfh .pfh-new.btn {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  justify-content: center;
-  height: auto;
-  min-height: 64px;
-  padding: var(--space-2) var(--space-1) var(--space-2) 0;
-  border: 0;
-  border-radius: var(--radius-card);
-  background: transparent;
-  box-shadow: none;
-  color: var(--text);
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  transition: transform var(--dur-2) var(--ease-out);
-}
 .pfh .pfh-new.btn:active { transform: scale(0.985); }
 .pfh .pfh-new.btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
-.pfh .pfh-new .btn-icon { display: contents; }
-.pfh .pfh-new .btn-label { font-size: var(--text-lead); font-weight: 700; letter-spacing: -0.01em; white-space: nowrap; }
-.pfh-new-plus {
-  display: grid;
-  flex: none;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: var(--action);
-  box-shadow: var(--elev-1);
-  color: var(--surface);
-  transition: transform var(--dur-3) var(--ease-out);
-}
 @media (hover: hover) {
   .pfh .pfh-new.btn:hover { background: transparent; }
   .pfh .pfh-new.btn:hover .pfh-new-plus { transform: rotate(90deg); }
@@ -130,73 +86,17 @@
 /* On a phone the door is the rest of the row: the name first, the deck
    after it, every photograph whole inside the tile (T1002, owner), no arrow. */
 @media (max-width: 559px) {
-  .pfh .pfh-door { min-height: 64px; gap: var(--space-2); padding: var(--space-2) var(--space-3) var(--space-2) var(--space-4); }
-  .pfh .pfh-new .btn-label { font-size: var(--text-body); }
   .pfh .pfh-door-name { order: 1; font-size: var(--text-body); line-height: var(--leading-tight); }
   .pfh .pfh-door-deck { order: 2; width: 62px; height: 56px; }
   .pfh .pfh-door-photo { width: 34px; height: 46px; top: 5px; left: calc(var(--i) * 12px); z-index: calc(1 + var(--i)); }
   .pfh .pfh-door-go { display: none; }
 }
-@media (min-width: 769px) {
-  .pfh .pfh-new.btn, .pfh .pfh-door { min-height: 72px; }
-  .pfh .pfh-new.btn { padding-inline: 0 var(--space-2); }
-}
 
 /* The door: the Ask door's and Explore's umber, a sun glow, three photographs
    fanned out of its left edge. */
-.pfh-door {
-  position: relative;
-  isolation: isolate;
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  min-height: 72px;
-  padding: var(--space-2) var(--space-3) var(--space-2) var(--space-2);
-  overflow: hidden;
-  border-radius: var(--radius-card);
-  background:
-    radial-gradient(90% 140% at 12% 0%, color-mix(in srgb, var(--sun-400) 32%, transparent), transparent 62%),
-    linear-gradient(150deg, var(--umber-600), var(--umber-800));
-  box-shadow: var(--elev-2);
-  color: var(--umber-50);
-  text-decoration: none;
-  -webkit-tap-highlight-color: transparent;
-  transition: transform var(--dur-2) var(--ease-out), box-shadow var(--dur-3) var(--ease-out);
-}
 .pfh-door:active { transform: scale(0.985); }
-.pfh-door:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
-.pfh-door-deck { position: relative; flex: none; width: 92px; height: 56px; }
-.pfh-door-photo {
-  position: absolute;
-  top: 2px;
-  left: calc(var(--i) * 24px);
-  z-index: calc(3 - var(--i));
-  width: 40px;
-  height: 52px;
-  overflow: hidden;
-  border: 2px solid var(--umber-50);
-  border-radius: var(--radius-control);
-  background: var(--umber-700);
-  box-shadow: var(--elev-2);
-  transform: rotate(calc((var(--i) - 1) * 7deg));
-  transition: transform var(--dur-3) var(--ease-out);
-  animation: pfh-deal var(--dur-4) var(--ease-out) calc(var(--i) * 70ms) backwards;
-}
 .pfh-door-photo:nth-child(2) { top: 0; }
-.pfh-door-img { display: block; width: 100%; height: 100%; object-fit: cover; }
 @keyframes pfh-deal { from { opacity: 0; transform: translateX(calc(var(--i) * -24px)) rotate(0deg); } }
-.pfh-door-name { flex: 1; min-width: 0; font-size: var(--text-lead); font-weight: 700; letter-spacing: -0.01em; }
-.pfh-door-go {
-  display: grid;
-  flex: none;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--umber-50);
-  color: var(--umber-800);
-  transition: transform var(--dur-2) var(--ease-out);
-}
 @media (hover: hover) {
   .pfh-door:hover { box-shadow: var(--elev-3); }
   .pfh-door:hover .pfh-door-photo { transform: translateX(calc((var(--i) - 1) * 6px)) translateY(-2px) rotate(calc((var(--i) - 1) * 11deg)); }
@@ -205,99 +105,20 @@
 
 /* Up next: the cover is the card. A slow drift on the photograph is the one
    moving thing; the words sit on a dark fall at the bottom. */
-.pfh .pfh-next {
-  position: relative;
-  isolation: isolate;
-  display: block;
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  border: 0;
-  border-radius: var(--radius-sheet);
-  background: linear-gradient(150deg, var(--umber-500), var(--umber-800));
-  color: var(--surface);
-  box-shadow: var(--elev-2);
-  transition: transform var(--dur-2) var(--ease-out), box-shadow var(--dur-3) var(--ease-out);
-}
 .pfh .pfh-next:active { transform: scale(0.99); }
-.pfh .pfh-next:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
-.pfh .pfh-next-media { position: absolute; inset: 0; z-index: -1; aspect-ratio: auto; background: none; }
 .pfh .pfh-next-media::after {
   content: "";
   position: absolute;
   inset: 0;
   background: linear-gradient(to top, rgba(20, 14, 8, 0.78) 0%, rgba(20, 14, 8, 0.34) 38%, transparent 64%);
 }
-.pfh .pfh-next-img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform-origin: 60% 40%;
-  animation: pfh-drift 18s ease-in-out infinite alternate;
-}
 @keyframes pfh-drift { from { transform: scale(1.02); } to { transform: scale(1.1) translate(-1.5%, 1%); } }
-.pfh .pfh-next-cd {
-  position: absolute;
-  top: var(--space-3);
-  left: var(--space-3);
-  bottom: auto;
-  min-height: 28px;
-  display: inline-flex;
-  align-items: center;
-  padding: 0 var(--space-3);
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  color: var(--text);
-  font-size: var(--text-caption);
-  font-weight: 700;
-  box-shadow: var(--elev-1);
-}
-.pfh .pfh-next-body {
-  position: absolute;
-  inset: auto 0 0 0;
-  display: flex;
-  flex-direction: row;
-  align-items: flex-end;
-  gap: var(--space-3);
-  padding: var(--space-4);
-}
-.pfh-next-txt { display: flex; flex: 1; flex-direction: column; gap: 2px; min-width: 0; }
-.pfh .pfh-next-name {
-  font-size: var(--text-headline);
-  font-weight: 800;
-  line-height: var(--leading-tight);
-  letter-spacing: -0.02em;
-  color: var(--surface);
-  text-wrap: balance;
-}
-.pfh .pfh-next-facts { font-size: var(--text-label); font-weight: 600; color: color-mix(in srgb, var(--surface) 88%, transparent); }
-.pfh .pfh-next-go {
-  display: grid;
-  flex: none;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: var(--surface);
-  color: var(--text);
-  box-shadow: var(--elev-1);
-  transition: transform var(--dur-2) var(--ease-out), background var(--dur-2) var(--ease-out);
-}
 @media (hover: hover) {
   .pfh .pfh-next:hover { box-shadow: var(--elev-3, var(--elev-2)); transform: translateY(-2px); }
   .pfh .pfh-next:hover .pfh-next-go { transform: translateX(3px); background: var(--umber-50); }
 }
-@media (min-width: 769px) {
-  .pfh .pfh-next { grid-template-columns: none; aspect-ratio: 3 / 1; min-height: 300px; }
-  .pfh .pfh-next-body { padding: var(--space-6); }
-  .pfh .pfh-next-name { font-size: var(--text-display, 2.5rem); }
-  .pfh .pfh-next-cd { top: var(--space-5); left: var(--space-5); }
-}
 
 /* A trip with no photo yet: TripArt (T990) fills the photo's place. */
-.pfh .pfh-art { position: absolute; inset: 0; width: 100%; height: 100%; }
-.pfh .pfh-row-img.pfh-art { position: relative; inset: auto; flex: none; width: 56px; height: 56px; border-radius: var(--radius-control); }
-.pfh .pfh-next-media .pfh-art { animation: none; }
 
 /* The tabs: only those with trips. */
 .pfh-tabs { display: flex; gap: var(--space-1); overflow-x: auto; border-bottom: 1px solid var(--border-soft); scrollbar-width: none; }
@@ -314,57 +135,10 @@
 .pfh-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5) var(--space-3); margin: 0; padding: var(--space-4) 0 0; list-style: none; }
 @media (min-width: 769px) { .pfh-cards { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-6) var(--space-4); } }
 .pfh-card { position: relative; min-width: 0; }
-.pfh .pfh-card-hit { gap: 2px; transition: transform var(--dur-2) var(--ease-out); }
 .pfh-card-media { position: relative; display: block; aspect-ratio: 1 / 1; margin-bottom: var(--space-2); overflow: hidden; border-radius: var(--radius-card); background: var(--surface-sunken); }
 @media (min-width: 769px) { .pfh-card-media { aspect-ratio: 4 / 5; } }
-.pfh .pfh-card-img { transition: transform var(--dur-4) var(--ease-out); }
-.pfh .pfh-card-cd {
-  position: absolute;
-  top: auto;
-  bottom: var(--space-3);
-  left: var(--space-3);
-  z-index: 1;
-  display: inline-flex;
-  align-items: center;
-  max-width: calc(100% - 2 * var(--space-3));
-  min-height: 28px;
-  padding: 0 var(--space-3);
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  box-shadow: var(--elev-1);
-  color: var(--text);
-  font-size: var(--text-caption);
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.pfh .pfh-card-name {
-  display: -webkit-box;
-  overflow: hidden;
-  color: var(--text);
-  font-size: var(--text-body);
-  font-weight: 600;
-  line-height: var(--leading-tight);
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-@media (min-width: 769px) { .pfh .pfh-card-name { font-size: var(--text-lead); } }
-.pfh .pfh-card-when { overflow: hidden; color: var(--text-2); font-size: var(--text-label); font-weight: 400; opacity: 1; white-space: nowrap; text-overflow: ellipsis; }
 .pfh-card-more { position: absolute; top: var(--space-2); right: var(--space-2); z-index: 2; }
 @media (hover: hover) { .pfh .pfh-card-hit:hover .pfh-card-img { transform: scale(1.04); } }
-
-@media (prefers-reduced-motion: reduce) {
-  .pfh .pfh-next-img,
-  .pfh-door-photo { animation: none; }
-  .pfh .pfh-next,
-  .pfh-door,
-  .pfh-door-photo,
-  .pfh-door-go,
-  .pfh .pfh-next-go,
-  .pfh .pfh-card-img { transition: none; }
-}
 /* T904: Delete the empty drafts, asked once in place. */
 
 /* T989: Delete the empty drafts. A quiet line under the list; pressed, one
@@ -394,12 +168,10 @@
 }
 .pfh-clear-q { margin: 0; font-size: var(--text-body); font-weight: 600; line-height: var(--leading-tight); color: var(--text); }
 .pfh-clear-acts { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); }
-.pfh-clear-acts .btn { min-height: var(--tap); }
 @keyframes pfh-clear-in { from { opacity: 0; transform: translateY(6px); } }
 @media (min-width: 769px) { .pfh-clear-card { max-width: 480px; } }
 @media (prefers-reduced-motion: reduce) {
   .pfh-clear-card { animation: none; }
-  .pfh .pfh-new.btn, .pfh-new-plus { transition: none; }
 }
 
 /* ---- T1030: Carta's own trips, one page (owner 2026-11-02) ----
@@ -407,23 +179,14 @@
    big title and no count. Rows sit closer on a phone. The card's name on
    the photo is never cut; under it what the week is, how hard and how long,
    then the price. */
-.pf.is-carta .pf-carta { gap: var(--space-3); padding-top: 0; }
-.pf.is-carta .pf-carta-crumbs { min-height: 40px; }
-.pf.is-carta .pf-carta-styles { margin-top: calc(-1 * var(--space-1)); border-bottom: 0; }
 .pf.is-carta .pf-carta-sec { margin-top: var(--space-2); }
 .pf.is-carta .pf-carta-h { margin-bottom: var(--space-2); font-size: var(--text-lead); }
-.pf.is-carta .pf-carta-rail { gap: var(--space-3); padding-bottom: 0; }
-.pf.is-carta .pf-carta-grid { gap: var(--space-4) var(--space-3); }
 @media (min-width: 769px) {
-  .pf.is-carta .pf-carta { gap: var(--space-4); }
   .pf.is-carta .pf-carta-sec { margin-top: var(--space-4); }
   .pf.is-carta .pf-carta-h { font-size: var(--text-title); }
-  .pf.is-carta .pf-carta-grid { gap: var(--space-6) var(--space-5); }
 }
 
 /* The card. */
-.ctc-hit { gap: 6px; }
-.ctc-over { gap: 2px; }
 .ctc-name { display: block; overflow: visible; -webkit-line-clamp: unset; font-size: var(--text-body); line-height: 1.2; text-wrap: balance; }
 .ctc-media::after { height: 70%; }
 .ctc-what {
@@ -433,14 +196,8 @@
   color: var(--text);
   overflow-wrap: anywhere;
 }
-.ctc-facts { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: var(--text-caption); color: var(--text-2); }
 .ctc-level { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px; border-radius: var(--radius-pill); font-weight: 700; }
 .ctc-level::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-.ctc-level.is-easy { background: var(--lagoon-100); color: var(--lagoon-800); }
-.ctc-level.is-mid { background: var(--sun-100); color: var(--sun-800); }
-.ctc-level.is-hard { background: #fbe3d8; color: #8f3a17; }
 .ctc-days { font-weight: 600; }
 .ctc-price { margin-top: 2px; }
-.ctc-price .jcap-fig { font-weight: 800; color: var(--text); }
 @media (min-width: 600px) { .ctc-name { font-size: var(--text-lead); } }
-.ctc-where { overflow: visible; white-space: normal; text-overflow: clip; }

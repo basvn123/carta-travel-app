@@ -12,7 +12,6 @@
 .pdh-way-ic { display: grid; place-items: center; width: 48px; height: 48px; border-radius: var(--radius-control); background: var(--surface-sunken); color: var(--text); }
 .pdh-way.is-on .pdh-way-ic { background: var(--surface); color: var(--select-ink); }
 .pdh-way-name { padding-right: var(--space-5); font-size: var(--text-body); font-weight: 700; line-height: var(--leading-tight); }
-.pdh-way-sub { font-size: var(--text-label); font-weight: 400; line-height: var(--leading-ui); color: var(--text-2); white-space: normal; }
 @media (min-width: 769px) {
   .pdh-ways { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .pdh-way-tick { position: absolute; top: var(--space-3); right: var(--space-3); }
@@ -86,4 +85,3 @@
 
 /* T1017: the ways carry their names only now, so the side-by-side cards
    need no room kept for a subline. */
-@media (min-width: 600px) { .btn.pdh-way { min-height: 0; padding-block: var(--space-4); } }

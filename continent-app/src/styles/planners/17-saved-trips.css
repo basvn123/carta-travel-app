@@ -23,14 +23,6 @@
 .extras-price { font-variant-numeric: tabular-nums; }
 .extras-label-input:focus { outline: none; border-color: var(--accent); }
 .extras-notes:focus { outline: none; border-color: var(--accent); }
-.exp-row {
-  display: flex; align-items: center; gap: 8px;
-  padding: 6px 0;
-  border-bottom: 1px dashed var(--rule);
-}
-.exp-row-amt { font-family: var(--mono); font-size: 12px; white-space: nowrap; }
-.exp-sharers-lbl { font-size: 10.5px; color: var(--ink-mute); }
-.exp-total { font-size: 12px; font-weight: 700; color: var(--ink); }
 .itin-transfer-main {
   width: 100%;
   font-family: inherit;
@@ -64,8 +56,6 @@
 .extras-notes::placeholder { color: var(--ink-mute); }
 .extras-check-row.done .extras-check-text { color: var(--ink-mute); text-decoration: line-through; }
 .extras-check-add { display: flex; gap: 6px; margin-top: 8px; align-items: center; }
-.exp-ledger { margin-top: 4px; }
-.exp-rate-note { margin-top: 6px; font-size: 10px; color: var(--ink-mute); }
 .itin-transfer-main .itin-leg-change { flex: none; margin-left: 8px; }
 @media (hover: hover) {
   .itin-transfer-main:hover .itin-leg-change { color: var(--accent); border-color: var(--accent); }

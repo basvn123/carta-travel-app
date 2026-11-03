@@ -3,9 +3,6 @@
    of the two, so edit it where it is. This sheet loads with the route's
    chunk, after the main sheet, and holds only rules nothing later in the
    cascade could override; scripts/css-routes.mjs --check proves it on a build. */
-@media (hover: hover) {
-  .upl-open:hover { border-color: var(--ink); color: var(--ink); }
-}
 
 .upl-scrim {
   position: fixed;
@@ -25,10 +22,6 @@
   justify-content: space-between;
   gap: var(--space-3);
   margin-bottom: var(--space-2);
-}
-
-@media (hover: hover) {
-  .upl-x:hover { border-color: var(--ink); color: var(--ink); }
 }
 
 .upl-legend,
@@ -110,10 +103,6 @@
 }
 
 .upl-send:disabled { opacity: 0.55; cursor: default; }
-
-@media (hover: hover) {
-  .upl-btn:hover:not(:disabled) { border-color: var(--ink); }
-}
 
 .upl-open:focus-visible,
 .upl-x:focus-visible,

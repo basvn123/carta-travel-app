@@ -3,7 +3,6 @@
    of the two, so edit it where it is. This sheet loads with the route's
    chunk, after the main sheet, and holds only rules nothing later in the
    cascade could override; scripts/css-routes.mjs --check proves it on a build. */
-.carta-route.rec { border-color: var(--accent); }
 .trip-carfrom { margin: 8px 0 4px; }
 .trip-carfrom-row { display: flex; gap: 8px; }
 .trip-carfrom-btn:disabled { opacity: 0.5; cursor: default; }

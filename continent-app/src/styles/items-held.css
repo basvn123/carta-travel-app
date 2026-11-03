@@ -338,3 +338,67 @@
 .tskel-photo { display: block; aspect-ratio: 16 / 9; max-height: 40vh; border-radius: var(--radius-card); background: var(--surface-sunken); }
 .tskel-line { display: block; height: 14px; width: 60%; border-radius: var(--radius-sm); background: var(--surface-sunken); }
 .tprice .iinc-row { border-bottom: 0; }
+.itin-photohero .itin-theme {
+  border-color: rgba(255, 255, 255, 0.45);
+  color: var(--on-fill);
+}
+@media (hover: hover) {
+  .itin-gone-back:hover { border-color: var(--ink); }
+}
+.itin-est {
+  margin-left: auto;
+  font-size: 10.5px;
+  color: var(--ink-mute);
+}
+.tprac-row:first-child { border-top: 0; }
+@media (hover: hover) {
+  .upl-open:hover { border-color: var(--ink); color: var(--ink); }
+  .upl-x:hover { border-color: var(--ink); color: var(--ink); }
+  .upl-btn:hover:not(:disabled) { border-color: var(--ink); }
+}
+.dsk-page .sig-sq {
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--ink-mute);
+  background: transparent;
+}
+.dsk-page .tpage-loop {
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 12px;
+}
+.dsk-page .tpage-chip-hl {
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink-soft);
+}
+.itin-page .itin-use {
+  min-height: var(--tap);
+  border-radius: 6px;
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+.itin-leg-fig {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.dtrack .tday-shot-img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  border-radius: 6px;
+  background: var(--paper-dim);
+}
+.itin-receipt .itin-cost-sum {
+  border-top: 2px solid var(--ink);
+  border-bottom: 1px solid var(--rule-soft);
+  color: var(--ink);
+  font-weight: 600;
+}
+@media (prefers-reduced-motion: reduce) {
+  .itin-page .itin-use { transition: none; }
+}
+.tdiff-sq.is-on { background: var(--text); border-color: var(--text); }

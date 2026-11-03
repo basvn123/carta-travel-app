@@ -21,10 +21,6 @@
   display: block;
 }
 .itin-photohero-none { background: var(--paper-dim); }
-.itin-photohero .itin-theme {
-  border-color: rgba(255, 255, 255, 0.45);
-  color: var(--on-fill);
-}
 .itin-facts .tpage-fact-val.is-word { white-space: normal; }
 .itin-map-wait {
   display: flex;
@@ -41,9 +37,6 @@
   .itin-use:hover { background: var(--accent-soft); }
 }
 .itin-use:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-@media (hover: hover) {
-  .itin-gone-back:hover { border-color: var(--ink); }
-}
 .itin-sight-noimg { background: var(--paper-dim); }
 .itin-stop-open {
   position: absolute;
@@ -55,11 +48,6 @@
 }
 .itin-around-km { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); }
 .itin-leg-home { color: var(--ink-mute); }
-.itin-est {
-  margin-left: auto;
-  font-size: 10.5px;
-  color: var(--ink-mute);
-}
 @media (min-width: 620px) {
   .itin-outs { grid-template-columns: 1fr 1fr; }
 }
@@ -70,7 +58,6 @@
   .itin-sight-link:hover { color: var(--accent); text-decoration: underline; }
 }
 .tday-prose { padding-bottom: 4px; }
-.tprac-row:first-child { border-top: 0; }
 @media (hover: hover) {
   .tprac-row.is-link > a:hover .tprac-row-label { color: var(--accent); }
 }

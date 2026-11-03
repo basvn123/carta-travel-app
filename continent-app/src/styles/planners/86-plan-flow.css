@@ -408,5 +408,3 @@
 .dtg-sub { font-size: var(--text-caption); color: var(--text-2); }
 
 .dtg-loading { height: 160px; border-radius: var(--radius-card); background: var(--surface-sunken); }
-
-.dayp-head .dayp-links { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); width: 100%; }
