@@ -6190,6 +6190,7 @@ export const de = {
   "dest.carFor.countryside": "das Umland",
   "dest.keyTime": "Zeit vor Ort",
   "dest.priceTitle": "{nights} in {city}",
+  "dt.approx": "~{time}",
   "dt.byAbout": "Etwa {time} mit dem {mode}",
   "dt.days": "{n} Tage",
   "dt.title": "Tagesausflüge ab {city}",

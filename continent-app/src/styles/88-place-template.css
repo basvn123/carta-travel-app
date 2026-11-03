@@ -1142,3 +1142,5 @@ ul.pt-cells { list-style: none; margin: 0; padding: 0; }
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+.dt-rail .storyr-status { gap: 5px; }
+.dt-rail .dt-mode { flex: none; color: var(--text-2); }

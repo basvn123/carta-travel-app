@@ -6190,6 +6190,7 @@ export const it = {
   "dest.carFor.countryside": "la campagna",
   "dest.keyTime": "Tempo sul posto",
   "dest.priceTitle": "{nights} a {city}",
+  "dt.approx": "~{time}",
   "dt.byAbout": "Circa {time} in {mode}",
   "dt.days": "{n} giorni",
   "dt.title": "Gite da {city}",

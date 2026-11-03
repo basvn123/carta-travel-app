@@ -6190,6 +6190,7 @@ export const nl = {
   "dest.carFor.countryside": "het platteland",
   "dest.keyTime": "Tijd hier",
   "dest.priceTitle": "{nights} in {city}",
+  "dt.approx": "~{time}",
   "dt.byAbout": "Ongeveer {time} met de {mode}",
   "dt.days": "{n} dagen",
   "dt.title": "Dagtrips vanuit {city}",

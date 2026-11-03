@@ -1,7 +1,8 @@
 import React from 'react';
 import { Button, Chip, ChipGroup } from '../components/ui/index.js';
 import { ScoreChip } from '../components/RatingBadge.jsx';
-import { ArrowRightIcon, CalendarIcon, CompassIcon, ExternalIcon, MapPinIcon, SparkIcon } from '../components/Icons.jsx';
+import { ArrowRightIcon, BusIcon, CalendarIcon, CarIcon, CompassIcon, ExternalIcon, MapPinIcon, SparkIcon, TrainIcon } from '../components/Icons.jsx';
+import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { mapsSearchUrl } from '../lib/destInfo.js';
 import { cleanBlurb, safeUrl } from '../lib/format.js';
 import { activityLink } from '../lib/activityAffiliates.js';
@@ -250,6 +251,8 @@ function SpotCard({ refEl, n, img, icon, chip, name, meta, text, href, active, o
  * No filter: the data holds the fastest way there, not whether a car is
  * needed, so "no car needed" could not be told honestly (register T1036-a).
  */
+const TRIP_MODE_ICON = { train: TrainIcon, car: CarIcon, bus: BusIcon, plane: PlaneIcon };
+
 function DayTrips({ trips, city, t, onSelect, onOpenItin }) {
   return (
     <StoryRail id="pt-trips-rail" headingLevel={3} t={t} className="dt-rail" title={t('dt.title', { city })}>
@@ -260,9 +263,19 @@ function DayTrips({ trips, city, t, onSelect, onOpenItin }) {
         const mins = tr.travel?.minutes;
         const time = Number.isFinite(mins) ? minutesText(mins) : null;
         const mode = tr.travel?.mode ? t(`mode.${tr.travel.mode}`) : null;
+        // The pill stays short enough for a phone card (owner: the sentence
+        // was cut off): the mode's icon and the time, "~" where the time is
+        // modelled; the whole sentence for a screen reader.
+        const routed = tr.travel?.source === 'routed';
+        const ModeIcon = TRIP_MODE_ICON[tr.travel?.mode];
         const status = route ? t('dest.tripDays', { n: tr.days || 0 })
-          : time && mode ? t(tr.travel?.source === 'routed' ? 'destx.tripBy' : 'dt.byAbout', { time, mode })
-            : time;
+          : time ? (
+            <>
+              {ModeIcon && <ModeIcon size={14} className="dt-mode" />}
+              <span aria-hidden="true">{routed ? time : t('dt.approx', { time })}</span>
+              <span className="sr-only">{mode ? t(routed ? 'destx.tripBy' : 'dt.byAbout', { time, mode }) : time}</span>
+            </>
+          ) : null;
         const stay = route ? null : visitLength({ place: { visit_h: tr.visit_h } });
         const facts = [
           !route && tr.dist_km != null ? `${tr.dist_km} km` : null,

@@ -6891,6 +6891,7 @@ export const en = {
   "dest.carFor.countryside": "the countryside",
   "dest.keyTime": "Time here",
   "dest.priceTitle": "{nights} in {city}",
+  "dt.approx": "~{time}",
   "dt.byAbout": "About {time} by {mode}",
   "dt.days": "{n} days",
   "dt.title": "Day trips from {city}",

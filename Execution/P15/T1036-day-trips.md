@@ -75,6 +75,7 @@ None.
 ## What broke and how it was fixed
 | What | Cause | Fix |
 |---|---|---|
+| The time pill was cut off on a phone ("About 34 min b") | The whole sentence in a pill on a narrow card | Owner review: the mode's icon and a short time ("~34 min"), the full sentence for screen readers (`dt.approx`) |
 | Facts and blurb ran together on desktop | The Explore card's meta is a nowrap line | The two lines stack in this rail |
 | `visitLength` not defined | My import check matched the doc comment | Import added |
 
