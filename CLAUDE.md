@@ -2,10 +2,13 @@
 
 Carta is a Europe trip planner: a Python data pipeline in this repo and a Vite + React app in `continent-app/`, which is its own git repo nested inside this one. Every session follows these rules. They are short on purpose: read this file whole, read everything else only in the lines you need.
 
+**Start here:** this file, then `MAP.md`, which maps each product area (Explore, Plan, prices, trails...) to its app code, pipeline code, docs and latest task reports. Go from the map straight to the files; do not browse folders or open old reports to find your way.
+
 ## Where things are
 
 | Path | What |
 |---|---|
+| `MAP.md` | Area to files map: open it first for any feature. |
 | `PRODUCT.md`, `DESIGN.md` | Who Carta is for and the locked design tokens. Read before touching anything a traveller sees (see Design). |
 | `run_pipeline.py`, `pipeline/` | The data pipeline. `pipeline/schema.py` and `docs/SCHEMA.md` hold the data contract. |
 | `continent-app/` | The app (own git repo, branch `master`). `public/` is shipped data and images: never delete it. |
@@ -27,7 +30,7 @@ Tasks are numbered `T001`, `T002`, and so on, and filed under phase folders `P0`
 ## How to run a task
 
 1. Read the prompt completely: the files it names and its done condition.
-2. Read the `open` rows in `Execution/_OPEN.md` owned by `next task` and take the ones the prompt covers. Grep the digests and P15 for earlier reports on the same feature.
+2. Grep `Execution/_OPEN.md` for `| next task | open` together with the feature's words (do not read the file whole) and take the rows the prompt covers. For history, grep `Execution/P*/_DIGEST.md` and `Execution/P15/` for the latest task IDs `MAP.md` names, and read only that report.
 3. Make a branch `p{n}-{slug}` (for example `p15-explore-cards`), in `continent-app/` too if the app changes.
 4. Do the work. Touch only the files the prompt names. A bug or refactor outside that scope becomes a line in "What is still open", not an edit. Schema and data migrations are the one exception, and the prompt marks them.
 5. Check it (see Checks).
