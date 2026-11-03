@@ -22,26 +22,8 @@ export function monthOf(iso) {
 
 export const CROWD_KEY = ['crowd.quiet', 'crowd.moderate', 'crowd.busy', 'crowd.crowded'];
 
-/** A catalogue name that is a number with the place in brackets, as
- *  OpenStreetMap sometimes records a waterfall or a spring ("7 (The Blue
- *  Eye)"), shows the place (T446). Every other name is kept as it is. */
-export const cleanName = (name) => {
-  const raw = String(name || '');
-  const m = /^\s*\d+\s*\((.+)\)\s*$/.exec(raw);
-  if (m) return m[1];
-  // A route's stage code is bookkeeping, not a name: "CNP - 01 - Roma -
-  // Castel Gandolfo" reads "Roma, Castel Gandolfo", "Romea Strata in
-  // Italia - Tappa RSIT47" reads "Romea Strata in Italia" (T446).
-  const parts = raw.split(/\s+-\s+/);
-  const named = parts.length > 1
-    ? parts.filter((p) => !/^(?:[A-Z]{2,5}|\d{1,3})$/.test(p.trim())
-      && !/^(?:tappa|stage|etappe|etapa|tronçon)\s+\S+$/i.test(p.trim()))
-    : parts;
-  const joined = (named.length ? named : parts).join(', ');
-  // Words set in capitals by the source ("DORSALE", "STAZIONE") are set in
-  // the name's own case.
-  return joined.replace(/\b([A-ZÀ-ÖØ-Ý]{4,})\b/g, (w) => w[0] + w.slice(1).toLowerCase());
-};
+// cleanName moved to lib/format.js (T1030) so lib modules can use it.
+export { cleanName } from '../lib/format.js';
 
 export const fmtKm = (km) => (km < 0.95 ? `${Math.round((km * 1000) / 10) * 10} m` : `${Math.round(km)} km`);
 

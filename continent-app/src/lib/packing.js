@@ -64,3 +64,31 @@ export function packingList(dest, month) {
   if (m == null && !items.includes('layers')) items.push('layers'); // no normals: hedge
   return items;
 }
+
+/**
+ * Why each line is on the list (T1030), from the same facts packingList
+ * read: { key: [i18nKey, params] }. A line whose fact is missing gets its
+ * general reason, never a made-up figure.
+ */
+export function packingReasons(dest, month) {
+  const m = dest?.climate?.m?.[month - 1] || null;
+  const round = (v) => (Number.isFinite(v) ? Math.round(v) : null);
+  const hi = m ? round(m[T_HIGH]) : null;
+  const lo = m ? round(m[T_LOW]) : null;
+  const rain = m ? round(m[PRECIP]) : null;
+  const high = hi != null ? ['pack.why.high', { t: hi }] : null;
+  return {
+    shoes: ['pack.why.shoes'],
+    daypack: ['pack.why.daypack'],
+    sun: high,
+    bottle: high,
+    winter: high,
+    swim: ['pack.why.swim'],
+    rain: rain != null ? ['pack.why.rain', { mm: rain }] : null,
+    layers: lo != null ? ['pack.why.low', { t: lo }] : ['pack.why.layers'],
+    evening: lo != null ? ['pack.why.low', { t: lo }] : null,
+    boots: ['pack.why.boots'],
+    modest: ['pack.why.modest'],
+    plug: ['pack.why.plug'],
+  };
+}

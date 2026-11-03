@@ -1,11 +1,9 @@
 import React from 'react';
 import { safeUrl } from '../lib/format.js';
 import { formatMoney } from '../lib/money.js';
-import { monthName } from '../lib/dates.js';
 import { minutesText } from '../lib/journeys.js';
 import { AirlineMark } from '../components/flights/Flights.jsx';
 import { Fold } from './Fold.jsx';
-import { RatingBreakdown } from './RatingBreakdown.jsx';
 import { WhyItMatches, useFit } from './WhyItMatches.jsx';
 import { showMatch } from '../lib/match.js';
 import { useFirstRun } from '../lib/firstRunContext.js';
@@ -15,13 +13,12 @@ import { stayBookLinks } from '../lib/transportLinks.js';
 import { stayKindsOf } from '../lib/whenGuide.js';
 import { BunkIcon, HomeIcon, HotelIcon } from '../components/Icons.jsx';
 import { practicalSlotRows } from './DestPracticalSlots.jsx';
+import { BeforeYouGo } from './DestBefore.jsx';
+import { parkingTruth } from '../lib/parkingTruth.js';
 import { PSection } from './PageTemplate.jsx';
 import '../styles/94-when-stay.css';
-import { cleanName, fmtKm } from './destParts.js';
 import {
-  PersonIcon, ParkingIcon, SunIcon, RainIcon, SnowIcon, ShoeIcon, SwimIcon, BootIcon, PlugIcon,
-  BottleIcon, JacketIcon, BackpackIcon, CheckIcon, StarIcon, SparkIcon, LinkIcon, BusIcon,
-  TrainIcon, CarIcon, ExternalIcon, ClockIcon, TicketIcon,
+  SunIcon, RainIcon, SnowIcon, ShoeIcon, SwimIcon, BootIcon, PlugIcon, BottleIcon, JacketIcon, BackpackIcon, SparkIcon, BusIcon, TrainIcon, CarIcon, ExternalIcon, ClockIcon, TicketIcon,
 } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 
@@ -188,11 +185,11 @@ function quickFacts(p) {
 }
 
 /** The sources and photo credits, every one we owe, in one fold. */
-function Credits({ p }) {
+function Credits({ p, osm = false }) {
   const { t, d, hasRoutes, guideUrl } = p;
   const photos = (d?.gallery || []).filter((g) => g?.author || g?.licence);
   const rows = (d?.credits || []).filter((c) => c?.name);
-  if (!photos.length && !rows.length && !hasRoutes && !guideUrl) return null;
+  if (!photos.length && !rows.length && !hasRoutes && !guideUrl && !osm) return null;
   return (
     <details className="pt-fold">
       <summary>{t('destx.sources')}</summary>
@@ -208,6 +205,8 @@ function Credits({ p }) {
           return <li key={c.key || c.name}>{href ? <a href={href} target="_blank" rel="noreferrer">{text}</a> : text}</li>;
         })}
         {hasRoutes && <li>{t('dest.routesCredit')}</li>}
+        {/* The ODbL credit for the car parks shown (T1030: off the panel). */}
+        {osm && <li>{t('explore.parkCredit')}</li>}
         {guideUrl && <li><a href={guideUrl} target="_blank" rel="noreferrer">{t('detail.readGuide')}</a></li>}
       </ul>
     </details>
@@ -232,22 +231,13 @@ function CardLinks({ links }) {
 
 export function DestPractical({ p }) {
   const {
-    t, lang, city, destination, getting, rhythm, verdict, verdictBand, fmtScore,
-    packs, month, parking, tours, flightLinks, bookPhoto, isOpen, toggle, bookAhead,
+    t, lang, destination, getting, rhythm,
+    month, tours, flightLinks, bookPhoto, isOpen, toggle, bookAhead,
     aroundStat, airportText, airportIata, carDayEur,
   } = p;
   const matchFit = useFit(destination, month);
   const qf = quickFacts(p);
-  const hasPark = !!(parking && (parking.spots?.length > 0 || parking.park_ride || parking.web));
-  const webPark = parking?.web || null;
-  const cityNamed = new Set((webPark?.car_parks || []).map((c) => (c.name || '').toLowerCase()));
-  const parkSearch = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`parking ${city}`)}`;
-  const fmtDate = (iso) => {
-    try {
-      return new Intl.DateTimeFormat(lang, { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
-        .format(new Date(`${iso}T00:00:00Z`));
-    } catch { return iso; }
-  };
+  const truth = React.useMemo(() => parkingTruth(p.parking), [p.parking]);
   const aroundBits = [
     aroundStat?.value || null,
     getting?.why && lang === 'en' ? getting.why : null,
@@ -302,30 +292,9 @@ export function DestPractical({ p }) {
         </dl>
       )}
 
-      <div className="destp-folds pt-folds">
-        {/* The verdict, with its argument. The Score in the head opens it. */}
-        {verdict?.score != null && (
-          <Fold level={3}
-            id="sec-rating"
-            icon={StarIcon}
-            title={t('dest.ratingTitle', { score: fmtScore(verdict.score) })}
-            summary={verdictBand}
-            open={isOpen('rating')}
-            onToggle={() => toggle('rating')}
-          >
-            <RatingBreakdown
-              rating={verdict}
-              destId={destination.id}
-              t={t}
-              countryLine={verdict.country_rank === 1
-                ? t('card.topOf', { country: destination.country })
-                : verdict.country_badge
-                  ? t('card.rankIn', { n: verdict.country_rank, country: destination.country })
-                  : null}
-            />
-          </Fold>
-        )}
+      <BeforeYouGo p={p} truth={truth} glyphs={PACK_GLYPH} />
 
+      <div className="destp-folds pt-folds">
         {/* T765: the personal match, one bar per pick and every conflict. */}
         {showMatch(matchFit) && (
           <Fold level={3}
@@ -340,104 +309,9 @@ export function DestPractical({ p }) {
           </Fold>
         )}
 
-        {/* Parking and what to bring: the two practical lists, one fold. */}
-        {(hasPark || packs.length > 0) && (
-          <Fold level={3}
-            id="sec-practical"
-            icon={BackpackIcon}
-            title={t('dest.practicalTitle')}
-            summary={packs.length > 0 ? t('dest.packSummaryFor', { month: monthName(month, lang, true) }) : ''}
-            open={isOpen('practical')}
-            onToggle={() => toggle('practical')}
-          >
-            {packs.length > 0 && (
-              <div className="destp-pack">
-                <h4 className="destp-subhead">{t('explore.packTitle')}</h4>
-                <div className="xp-packs">
-                  {packs.map((key) => {
-                    const Glyph = PACK_GLYPH[key] || PersonIcon;
-                    return (
-                      <span key={key} className="xp-pack">
-                        <Glyph size={16} />
-                        <span>{t(`explore.pack.${key}`)}</span>
-                      </span>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-            {hasPark && (
-              <div className="destp-parking">
-                <h4 className="destp-subhead">{t('explore.parkTitle')}</h4>
-                {webPark && (
-                  <div className="dpark-web">
-                    <p className="dpark-web-head"><CheckIcon size={12} />{t('dest.parkChecked', { date: fmtDate(webPark.checked) })}</p>
-                    {webPark.restricted && <p className="dpark-web-line is-warn">{t('dest.parkRestricted')}</p>}
-                    {webPark.car_parks?.length > 0 && (
-                      <p className="dpark-web-line">
-                        <b>{t('dest.parkCityNamed')}:</b> {webPark.car_parks.map((c) => cleanName(c.name)).join(', ')}
-                      </p>
-                    )}
-                    {webPark.park_ride_names?.length > 0 && (
-                      <p className="dpark-web-line"><b>{t('explore.park.park_ride')}:</b> {webPark.park_ride_names.map(cleanName).join(', ')}</p>
-                    )}
-                    {safeUrl(webPark.official_url) && (
-                      <a className="dpark-web-link" href={safeUrl(webPark.official_url)} target="_blank" rel="noreferrer noopener"><LinkIcon size={12} />{t('dest.parkOfficial')}</a>
-                    )}
-                  </div>
-                )}
-                <ul className="destp-park-list">
-                  {(parking.spots || []).map((s) => {
-                    const confirmed = s.name && cityNamed.has(s.name.toLowerCase());
-                    return (
-                      <li className="destp-park" key={`${s.lat}|${s.lon}`}>
-                        <span className="destp-park-main">
-                          <span className="destp-park-name">
-                            {s.name ? cleanName(s.name) : t('explore.parkUnnamed')}
-                            {confirmed && <span className="dpark-ok"><CheckIcon size={10} />{t('dest.parkVerified')}</span>}
-                          </span>
-                          <span className="destp-park-sub">
-                            {s.fee === 'no' && <span className="destp-park-free">{t('explore.parkFree')}</span>}
-                            {s.fee === 'yes' && <span>{t('explore.parkPaid')}</span>}
-                            {s.capacity != null && <span>{t('explore.parkSpaces', { n: s.capacity })}</span>}
-                            {Number.isFinite(s.walk_min) && <span>{t('dest.walkMin', { n: s.walk_min })}</span>}
-                          </span>
-                        </span>
-                        {s.nav && (
-                          <span className="destp-park-nav">
-                            <a href={s.nav.gmaps} target="_blank" rel="noreferrer noopener">{t('dest.navGmaps')}</a>
-                            <a href={s.nav.waze} target="_blank" rel="noreferrer noopener">{t('dest.navWaze')}</a>
-                          </span>
-                        )}
-                      </li>
-                    );
-                  })}
-                  {parking.park_ride?.nav && (
-                    <li className="destp-park is-pr" key="pr">
-                      <span className="destp-park-main">
-                        <span className="destp-park-name">{parking.park_ride.name || t('explore.park.park_ride')}</span>
-                        <span className="destp-park-sub">
-                          <span>{t('explore.park.park_ride')}</span>
-                          <span>{fmtKm((parking.park_ride.dist_m || 0) / 1000)}</span>
-                        </span>
-                      </span>
-                      <span className="destp-park-nav">
-                        <a href={parking.park_ride.nav.gmaps} target="_blank" rel="noreferrer noopener">{t('dest.navGmaps')}</a>
-                        <a href={parking.park_ride.nav.waze} target="_blank" rel="noreferrer noopener">{t('dest.navWaze')}</a>
-                      </span>
-                    </li>
-                  )}
-                </ul>
-                <a className="destp-exit dpark-search" href={parkSearch} target="_blank" rel="noreferrer noopener"><ParkingIcon size={16} /><span>{t('dest.parkSearch')}</span></a>
-                {/* The OpenStreetMap credit the ODbL asks for stays. */}
-                <p className="xp-source">{t('dest.parkSource')}</p>
-              </div>
-            )}
-          </Fold>
-        )}
       </div>
 
-      <Credits p={p} />
+      <Credits p={p} osm={!!truth && (truth.spots.length > 0 || truth.rides.some((r) => r.nav))} />
     </PSection>
   );
 }

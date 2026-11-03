@@ -13,7 +13,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
-import { classRankLine, poiLabel, ratingWords } from '../lib/rating.js';
+import { classRankLine, poiLabel } from '../lib/rating.js';
 import { fetchDestPois } from '../lib/appData.js';
 import { visitLength } from '../lib/nearby.js';
 import { countryName } from '../lib/countryName.js';
@@ -24,6 +24,7 @@ import { MatchLine } from './WhyItMatches.jsx';
 import { PhotoGallery } from './PhotoGallery.jsx';
 import { DestPriceCard } from './DestPriceCard.jsx';
 import { PageBar } from './PageBar.jsx';
+import { RatingSheet } from './RatingSheet.jsx';
 import { KeyFacts } from './KeyFacts.jsx';
 import { usePageArrival } from '../hooks/usePageArrival.js';
 import { Button, Money } from '../components/ui/index.js';
@@ -69,7 +70,8 @@ import { JumpBar, PSection, PriceDock, scrollToSection, useWide } from './PageTe
  * jump bar: Overview (Good to know, Eat and drink), What to see, Around, When
  * to go, Where to stay, Getting there, Practical, and Places like this at
  * the foot. The tabs are gone; a link or an address that named a tab
- * (#dest=OPO&tab=when, the Score's #sec-rating) scrolls to its section.
+ * (#dest=OPO&tab=when) scrolls to its section; the Score opens the rating
+ * sheet (T1029).
  *
  * The price card holds the page's one primary ("Plan a trip here"): a sticky
  * right column from 1024 px; below that it sits in the page ("What a day
@@ -201,6 +203,7 @@ export function DestinationPage({
   const [stuck, setStuck] = React.useState(false);
   const [copied, setCopied] = React.useState(false);
   const [pdfBusy, setPdfBusy] = React.useState(false);
+  const [ratingOpen, setRatingOpen] = React.useState(false);
   // One-line status for a failed PDF or a blocked clipboard (T405).
   const [notice, setNotice] = React.useState(null);
   const [open, setOpen] = React.useState(() => readFolds(destination?.id) || new Set());
@@ -337,7 +340,6 @@ export function DestinationPage({
   const verdict = (d?.verdict || destination.rating)
     ? { ...(d?.verdict || {}), ...(destination.rating || {}) }
     : null;
-  const verdictBand = ratingWords(verdict, t)?.word || '';
   const verdictClassRank = classRankLine(verdict, t);
   const sleep = destSleep(destination, d, staysVersion);
   const gettingRaw = d?.practical?.getting_there || null;
@@ -550,7 +552,7 @@ export function DestinationPage({
     cats, aroundKey, setAroundKey: setAroundPick, aroundKm: around?.radius_km || 20,
     area: isArea(d), routeRows, hasRoutes, members, memberFocus,
     monthPick: statMonth, water, festivals,
-    getting, rhythm, bookAhead, verdict, verdictBand, tips, packs, month, parking, tours, flightLinks, bookPhoto,
+    getting, rhythm, bookAhead, verdict, tips, packs, month, parking, tours, flightLinks, bookPhoto,
     isOpen, toggle, onOpenLifestyle, onOpenFeature, onSelect, onOpenItin, goTab,
     ways, aroundStat, airportText, airportIata, guideUrl,
     carDayEur: getting?.car_needed ? getting.rental_eur_day ?? null : null,
@@ -610,6 +612,11 @@ export function DestinationPage({
         copiedLabel={t('dest.linkCopied')}
       />
 
+      {ratingOpen && (
+        <RatingSheet rating={verdict} destination={destination} city={city} country={countryLabel}
+          fmtScore={fmtScore} onClose={() => setRatingOpen(false)} />
+      )}
+
       {notice && (
         <p className="destp-notice" role="status">
           {t(notice.key)}
@@ -641,16 +648,12 @@ export function DestinationPage({
                     <span>{countryLabel}</span>
                   </span>
                   {verdict?.score != null && (
-                    // A jump within the page: it opens Why it rates in Practical.
-                    <a className="pt-score" href="#sec-rating"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setOpen((st) => new Set([...st, 'rating']));
-                        goTab('practical', 'sec-rating');
-                      }}
+                    // T1029: the Score opens why it rates what it rates.
+                    <button type="button" className="pt-score" aria-haspopup="dialog"
+                      onClick={() => setRatingOpen(true)}
                       aria-label={t('dest.ratingTitle', { score: fmtScore(verdict.score) })}>
                       <ScoreChip rating={verdict} size="lg" band />
-                    </a>
+                    </button>
                   )}
                 </div>
                 {tags.length > 0 && <ul className="pt-tags">{tags}</ul>}

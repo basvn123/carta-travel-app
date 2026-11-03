@@ -38,6 +38,7 @@
 import { createPdf, clean, fileSlug, monthSpan as spanOf, M, W } from './pdfKit.js';
 import { formatMoney } from './money.js';
 import { activityLink } from './activityAffiliates.js';
+import { parkingTruth } from './parkingTruth.js';
 import { routePageUrlHere } from './routeLinks.js';
 import { destShareUrl } from './dossier.js';
 import { trailClimbUp, gradeLabelKey } from './trailStory.js';
@@ -462,17 +463,20 @@ export async function downloadDestinationPdf({
     kit.rule();
     kit.gap(2);
   }
-  const pk = d.parking;
-  const spots = [...(pk?.spots || []).map((s) => ({ ...s, kind: 'spot' })), ...(pk?.park_ride ? [{ ...pk.park_ride, kind: 'pr' }] : [])];
-  if (spots.length || pk?.web?.official_url) {
+  // T1030: the same fact-checked parking as the page (lib/parkingTruth.js).
+  const pk = parkingTruth(d.parking);
+  if (pk) {
     kit.h2(T('explore.parkTitle'));
-    if (pk.web?.advice) kit.para(pk.web.advice, { size: 9.5, color: C.text2, after: 2 });
-    for (const s of spots) {
-      const bits = [s.kind === 'pr' ? T('explore.park.park_ride') : T(s.fee === 'no' ? 'explore.parkFree' : s.fee === 'yes' ? 'explore.parkPaid' : 'explore.parkFeeUnknown'),
-        s.capacity != null ? T('explore.parkSpaces', { n: s.capacity }) : '', s.walk_min != null ? T('dest.walkMin', { n: s.walk_min }) : ''].filter(Boolean);
-      row({ name: s.name || (s.kind === 'pr' ? T('explore.park.park_ride') : T('explore.parkUnnamed')), right: bits.join(', '), link: s.nav?.gmaps || '' });
+    if (pk.restricted) kit.para(`${T('pk.zone')}. ${T('pk.zoneText')}`, { size: 9.5, color: C.text2, after: 2 });
+    const km = (m) => (Number.isFinite(m) ? T('pk.fromCentre', { km: `${(m / 1000).toFixed(1)} km` }) : '');
+    for (const r of pk.rides) row({ name: r.name, right: [T('explore.park.park_ride'), km(r.dist_m)].filter(Boolean).join(', '), link: r.nav?.gmaps || '' });
+    for (const c of pk.named) row({ name: c.name, right: T('pk.namedByCity'), link: '' });
+    for (const sp of pk.spots) {
+      const bits = [sp.fee === 'yes' ? T('explore.parkPaid') : sp.fee === 'no' ? T('explore.parkFree') : '',
+        Number.isFinite(sp.capacity) ? T('pk.spaces', { n: sp.capacity }) : '', km(sp.dist_m)].filter(Boolean);
+      row({ name: sp.name, right: bits.join(', '), link: sp.nav?.gmaps || '' });
     }
-    if (pk.web?.official_url) kit.link(T('dest.parkOfficial'), pk.web.official_url);
+    if (pk.url) kit.link(T('dest.parkOfficial'), pk.url);
   }
   const linkRows = [
     [T('dest.linkGflights'), links.flights_google], [T('dest.linkSkyscanner'), links.skyscanner],
