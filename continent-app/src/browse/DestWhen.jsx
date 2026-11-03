@@ -74,6 +74,7 @@ function StayPrices({ t, lang, rec, kinds, names, month, setMonth, monthList }) 
             <button type="button" key={m} className={`when-pb${v == null ? ' is-gap' : ''}${cheap ? ' is-cheap' : ''}${m === month ? ' is-on' : ''}`}
               aria-pressed={m === month} onClick={() => setMonth(m)}
               aria-label={v == null ? names.long[i] : `${names.long[i]}: ${t('when.stayNight', { price: money(v) })}`}>
+              <span className="when-pb-v" aria-hidden="true">{v == null ? '' : money(v)}</span>
               <span className="when-pb-bar" style={v == null ? undefined : { '--h': `${Math.round((v / row.hi) * 100)}%` }} />
               <span className="when-init" aria-hidden="true">{names.initial[i]}</span>
             </button>

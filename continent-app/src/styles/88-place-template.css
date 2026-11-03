@@ -11,7 +11,12 @@
 .pt-wrap {
   max-width: 1240px;
   margin: 0 auto;
-  padding: 0 var(--gutter) var(--space-8);
+  /* T1023 (owner): more room between the content and the screen's edges on
+     every device, and never under a curved edge or notch. */
+  padding: 0 max(var(--space-5), env(safe-area-inset-right, 0px)) var(--space-8) max(var(--space-5), env(safe-area-inset-left, 0px));
+}
+@media (min-width: 600px) {
+  .pt-wrap { padding-left: max(var(--space-6), env(safe-area-inset-left, 0px)); padding-right: max(var(--space-6), env(safe-area-inset-right, 0px)); }
 }
 @media (min-width: 1024px) {
   .pt-wrap { padding: var(--space-4) var(--space-6) var(--space-8); }

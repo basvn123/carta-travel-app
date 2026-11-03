@@ -62,9 +62,9 @@ const STAY_ROWS = {
 
 /**
  * Where to stay (T1022, owner 2026-11-03: no areas, no prices here, clean
- * buttons to the sites). One row per stay type the scrape found here
- * (lib/whenGuide.js stayKindsOf), else the three types: its name, what it is
- * good for, and the sites that sell it, searched for the traveller's dates
+ * buttons to the sites; T1023: no sublines). One row per stay type the
+ * scrape found here (lib/whenGuide.js stayKindsOf), else the three types:
+ * its name and the sites that sell it, searched for the traveller's dates
  * and party (stayBookLinks). What each costs by month is When to go's.
  */
 export function DestStay({ p }) {
@@ -88,10 +88,7 @@ export function DestStay({ p }) {
           return (
             <li key={k} className={`stay-kind is-${k}`}>
               <span className="stay-ico" aria-hidden="true"><Icon size={20} /></span>
-              <span className="stay-what">
-                <b>{t(`stay.kind.${k}`)}</b>
-                <span>{t(`stay.for.${k}`)}</span>
-              </span>
+              <b className="stay-what">{t(`stay.kind.${k}`)}</b>
               <span className="stay-go">
                 {links.map((l) => (
                   <a key={l.provider} className="btn btn-secondary btn-sm stay-btn" href={l.href} target="_blank" rel="noreferrer noopener"
