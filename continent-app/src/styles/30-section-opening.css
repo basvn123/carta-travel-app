@@ -181,3 +181,10 @@
   line-height: var(--leading-tight);
   color: var(--text);
 }
+
+/* T1038 (owner: rows closer): on a phone the rails sit 16 px apart, as the
+   Places tab's rails do (T983). */
+@media (max-width: 768px) {
+  .dtab-open { gap: var(--space-4); margin-bottom: var(--space-4); }
+  .dtab-rails { gap: var(--space-4); }
+}
