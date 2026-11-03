@@ -2583,3 +2583,6 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T1021-c | T1021 | 173,754 Booking hotel rows (3,336 places) have no star class and price no tier; decide whether a 'Hotel (any class)' tier uses them (Execution/P15/T1021-stays-scrape-only.md) | user | open |  |
 | T1021-d | T1021 | 515 places have no scrape (Jersey, Isle of Man, Saxon Switzerland, Reus...); check their Booking search terms and rescrape on the laptop (Execution/P15/T1021-stays-scrape-only.md) | next task | open |  |
 | T1021-e | T1021 | The licence ledger (src/ingestion/core/registry.py), attribution.js and docs/1.CARTA.md still credit Inside Airbnb, Xotelo and Eurostat for stays (Execution/P15/T1021-stays-scrape-only.md) | next task | open |  |
+| T1022-a | T1022 | ClimateStrip keeps an English-only MONTHS_INITIAL while When to go uses locale initials; one locale-aware initial in lib/dates.js for both (Execution/P15/T1022-when-stay.md) | next task | open |  |
+| T1022-b | T1022 | The comfort cut points 78/60/45 in lib/whenGuide.js copy apply_climate.py by hand; one config both read (Execution/P15/T1022-when-stay.md) | next task | open |  |
+| T1022-c | T1022 | The climate comfort index rates Rome's August (33 C) Good while the verdict says Hot and busy; decide whether comfort weighs heat harder (Execution/P15/T1022-when-stay.md) | user | open |  |
