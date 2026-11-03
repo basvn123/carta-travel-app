@@ -10,7 +10,9 @@
 
 /* ---- The verdict ---- */
 .when-verdict { display: grid; gap: var(--space-2); margin-bottom: var(--space-5); }
-.when-best { margin: 0; font-size: 26px; font-weight: 800; line-height: var(--leading-tight); letter-spacing: -0.02em; color: var(--text); text-wrap: balance; }
+/* Under the section title, never bigger than it (owner 2026-11-03): the
+   step between the section title (20 px) and the body (16 px). */
+.when-best { margin: 0; font-size: 18px; font-weight: 700; line-height: var(--leading-tight); letter-spacing: -0.01em; color: var(--text); text-wrap: balance; }
 .when-why { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-1); }
 .when-why li { display: flex; align-items: baseline; gap: var(--space-2); font-size: var(--text-lead); color: var(--text-2); }
 .when-why li::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; transform: translateY(-1px); background: var(--when-great); }
