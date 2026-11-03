@@ -124,10 +124,13 @@ export function buildCountryBriefs(destinations, insights = null, lifestyle = nu
   // T702 (plan F6): a country's typical bed and food are the medians of its
   // towns' day prices from the engine, at the default request (B5) and the
   // traveller's Lifestyle, the figures Explore shows for the same question.
-  const days = priceDays(destinations, lifestyle ? { ...DEFAULT_PRICE_REQUEST, lifestyle } : DEFAULT_PRICE_REQUEST);
+  // Gateways are left out before pricing too (T1021): a bed out of bounds
+  // borrows its country's median, which must not count a gateway either.
+  const towns = Object.fromEntries(Object.entries(destinations || {}).filter(([, d]) => d && !isGateway(d)));
+  const days = priceDays(towns, lifestyle ? { ...DEFAULT_PRICE_REQUEST, lifestyle } : DEFAULT_PRICE_REQUEST);
   const byCountry = new Map();
-  for (const [id, d] of Object.entries(destinations || {})) {
-    if (!d?.country || isGateway(d)) continue;
+  for (const [id, d] of Object.entries(towns)) {
+    if (!d.country) continue;
     if (!byCountry.has(d.country)) byCountry.set(d.country, []);
     byCountry.get(d.country).push({ id, d });
   }

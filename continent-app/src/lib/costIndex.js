@@ -331,7 +331,10 @@ export function costRow(d, ctx) {
   const at = (d.id != null && atById?.get(d.id)) || stayAtTier(d, stayTier, party, when);
   let stayEur = at.eur;
   let repaired = false;
-  if (stayEur == null) {
+  // T1021 (owner 2026-11-03): only a scraped bed outside its bounds borrows
+  // its country's median; a place the scrape did not reach has no bed price
+  // ("Not available yet"), never a borrowed one.
+  if (stayEur == null && at.outOfBounds) {
     const m = medians.get(d.iso2);
     if (m != null) { stayEur = m; repaired = true; }
   }

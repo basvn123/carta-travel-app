@@ -76,12 +76,13 @@ test("stay, food and getting around add up to the engine's own parts", { skip },
 test("a stay option costs what the engine quotes for that tier", { skip }, () => {
   const { slots } = trip();
   const s = slot(slots, "stay");
-  assert.equal(s.pick.id, "room", "balance picks the guesthouse room");
-  assert.deepEqual(s.options.map((o) => o.id), ["room", "private", "hotel3"]);
-  assert.equal(s.options.find((o) => o.id === "room").delta, 0);
+  // T1021: the scrape prices no guesthouse room, so balance picks the entire place.
+  assert.equal(s.pick.id, "home", "balance picks the entire place");
+  assert.deepEqual(s.options.map((o) => o.id), ["home", "private", "hotel3"]);
+  assert.equal(s.options.find((o) => o.id === "home").delta, 0);
   for (const o of s.options) {
     const again = trip({ stayTier: o.id });
-    assert.equal(o.eurGroup, Math.round(again.quote.parts.beds), `${o.id} is the engine's beds`);
+    assert.ok(Math.abs(o.eurGroup - again.quote.parts.beds) <= 0.01, `${o.id} is the engine's beds`);
   }
   const hotel = s.options.find((o) => o.id === "hotel3");
   const priv = s.options.find((o) => o.id === "private");
@@ -126,7 +127,7 @@ test("choosing an option swaps the slot's price and its deltas", { skip }, () =>
   assert.equal(hotel.pick.id, "hotel3");
   assert.equal(hotel.eur, s.options.find((o) => o.id === "hotel3").eur);
   assert.equal(hotel.options.find((o) => o.id === "hotel3").delta, 0);
-  assert.ok(hotel.options.find((o) => o.id === "room").delta < 0);
+  assert.ok(hotel.options.find((o) => o.id === "private").delta < 0);
   assert.equal(chooseOption(s, "castle"), s);
 });
 

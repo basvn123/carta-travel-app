@@ -75,14 +75,23 @@ test("a destination without a bed or a food figure prices no receipt", () => {
 });
 
 test("a broken harvest borrows the country median and says it is an estimate", () => {
-  // T702: the repair is the engine's, from the catalogue handed in.
+  // T702: the repair is the engine's, from the catalogue handed in. T1021: a
+  // broken harvest is a scraped bed outside its bounds (EUR 2 for a place).
   const town = { ...dest, iso2: "IT" };
-  const broken = { ...town, id: "BRK", accommodation: { beds: {} } };
+  const broken = { ...town, id: "BRK", accommodation: { ...dest.accommodation, beds: { bnb_home: { 2: 2 } } } };
   const r = priceReceipt(broken, { ...opts, destinations: { TRS: town, BRK: broken } });
   const s = r.lines.find((l) => l.key === "stay");
   assert.notEqual(s.level, "city");
   assert.ok(s.eur > 0);
   assert.equal(s.est, true);
+});
+
+test("a place the scrape did not reach borrows no bed (T1021)", () => {
+  const town = { ...dest, iso2: "IT" };
+  const unscraped = { ...town, id: "NOS", accommodation: { beds: {} } };
+  const r = priceReceipt(unscraped, { ...opts, destinations: { TRS: town, NOS: unscraped } });
+  const s = r?.lines?.find((l) => l.key === "stay");
+  assert.ok(!(s?.eur > 0), "no borrowed bed price");
 });
 
 test("the footer names a measured cheaper tier while the dates are Carta's", () => {

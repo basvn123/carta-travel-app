@@ -26,6 +26,7 @@ import { chooseOption } from './slots.js';
 import { buildTrips, keepHidden, repriceTrip } from './trips.js';
 import { tasteFor } from './candidates.js';
 import { tripFit, reasonsFor, catchFor } from './reasons.js';
+import { MATCH } from '../match.js';
 import { flightLeverKeys } from './adapters/flight.js';
 import { personaOf, picksOf, personaReason, tripPersona } from './persona.js';
 
@@ -182,12 +183,15 @@ export function rankTrips(trips, { settings, taste = null, data, levers = null }
     const said = personaReason(trip, persona, destinations);
     const quality = info.Q ?? trip.signals?.countryScore ?? null;
     const score = (blendOf(info.F, p, quality) ?? 0) - sink / 10 - (pull.get(trip.id) || 0) / 10;
+    // T1021: the shown match keeps show_min too, not only the fit behind it: a
+    // budget sink could pull a fitting trip's figure under it.
+    const shown = matchPct(score);
     const out = {
       ...trip,
       budget,
       // pct is the ranked score (T884), shown while the fit itself reads
       // show_min or more; fit is the answers alone, for the trip page.
-      match: info.F == null ? null : { pct: info.pct == null ? null : matchPct(score), fit: info.pct, bars: info.bars, conflicts: info.conflicts },
+      match: info.F == null ? null : { pct: info.pct == null || shown < MATCH.show_min * 100 ? null : shown, fit: info.pct, bars: info.bars, conflicts: info.conflicts },
       persona: p == null ? null : { id: picksOf(persona)[0]?.id || null, p },
       reasons: said ? [said, ...reasonsFor(trip, { settings, info })].slice(0, RECOMMEND.reasons.max) : reasonsFor(trip, { settings, info }),
       catch: catchFor(trip, { settings, info, budget }),

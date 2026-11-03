@@ -654,7 +654,8 @@ export function DestinationPage({
                   {/* Friends here (T466, T929), right after Good to know: the
                       approved place for it, where the decision is made. */}
                   <FriendsWentHere destId={destination?.id} destinations={data?.destinations} />
-                  {!wide && priceCard && (
+                  {/* T1021: no section without a day price (missing data leaves). */}
+                  {!wide && priceCard && costRow?.dayEur != null && (
                     <PSection id="pt-cost" title={t('destx.dayCosts')} className="pt-inlinecost">
                       {priceCard}
                     </PSection>

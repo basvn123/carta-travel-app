@@ -9,8 +9,8 @@
     {
       "id": "stay", "order": 20, "labelKey": "tf.slot.stay", "subKey": "tf.slot.staySub", "icon": "BedIcon",
       "adapter": "stay", "pickable": true, "status": "live",
-      "options": [{ "id": "private" }, { "id": "room" }, { "id": "hotel3" }],
-      "byPriority": { "price": "private", "balance": "room", "comfort": "hotel3" }
+      "options": [{ "id": "private" }, { "id": "home" }, { "id": "hotel3" }],
+      "byPriority": { "price": "private", "balance": "home", "comfort": "hotel3" }
     },
     {
       "id": "food", "order": 30, "labelKey": "tf.slot.food", "subKey": "tf.slot.foodSub", "icon": "DiningIcon",
