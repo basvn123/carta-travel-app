@@ -188,7 +188,7 @@ test("each route has exactly one minute a cycle, spread evenly when there are fe
   }
 });
 
-test("the late tier picks up where the far tier stops, weeks 27 to 40, each route once in 4 weeks (T798)", () => {
+test("the late tier picks up where the far tier stops, after week 26, each route once in 4 weeks (T798)", () => {
   const list = flattenRoutes(routes);
   const DAY = 86400000;
   const aheadOf = (j, at) => (Date.parse(j.date) - Math.floor(at / DAY) * DAY) / DAY;
@@ -214,6 +214,33 @@ test("the late tier picks up where the far tier stops, weeks 27 to 40, each rout
   // All-year routes get every one of their LATE_WEEKS days once; FAO flies April to July only.
   assert.equal(lateDays.get("BRUBCN"), LATE_WEEKS);
   assert.ok(lateDays.get("BRUFAO") > 0 && lateDays.get("BRUFAO") < LATE_WEEKS);
+});
+
+test("the far and late tiers cover every week to day 300 and past, under the booking horizon (T805)", () => {
+  const list = flattenRoutes(routes);
+  const DAY = 86400000;
+  const start = Date.UTC(2026, 9, 28, 0, 0);
+  const weeks = new Set();
+  let last = "";
+  let most = 0;
+  for (let m = 0; m < LATE_CYCLE; m++) {
+    const at = start + m * 60000;
+    const jobs = lateJobsForMinute(list, at);
+    if (m < FAR_CYCLE) jobs.push(...jobsForMinute(list, airports, at).filter((j) => j.tier === "far"));
+    for (const j of jobs) {
+      if (j.o + j.d !== "BRUBCN") continue;
+      const ahead = (Date.parse(j.date) - Math.floor(at / DAY) * DAY) / DAY;
+      weeks.add(Math.floor((ahead - 14) / 7));
+      most = Math.max(most, ahead);
+      if (j.date > last) last = j.date;
+    }
+  }
+  // An all-year route: one day in each of weeks 3 to 45, none missing.
+  assert.deepEqual([...weeks].sort((a, b) => a - b), Array.from({ length: FAR_WEEKS + LATE_WEEKS }, (_, w) => w));
+  assert.ok(most >= 300, `the last date is ${most} days out`);
+  assert.ok(most < 330, `${most} days is past Google Flights' booking horizon`);
+  // From late October on, the window passes the end of next August.
+  assert.ok(last > "2027-08-31", `last date ${last}`);
 });
 
 test("the late cycle stays inside the app's late fare age, which starts where the far tier ends (T798)", () => {

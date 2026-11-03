@@ -3,7 +3,7 @@
  * late-sweep: the flight sweep's late tier, on the Hetzner box (T798).
  *
  * The Worker (workers/flight-sweep) checks the next 26 weeks. This checks
- * weeks 27 to 40 (plan.mjs lateJobsForMinute: each route every 4 weeks, one
+ * weeks 27 to 45 (T805, was 40; plan.mjs lateJobsForMinute: each route every 4 weeks, one
  * day a week), slowly, from the box's own address, and sends what it finds to
  * the Worker's POST /ingest, which writes it to the same D1 table; the
  * Worker's 10-minute publish then ships it to the app.
@@ -66,7 +66,8 @@ const TOKEN = process.env.CARTA_SWEEP_INGEST_TOKEN;
 const STATE_DIR = `${homedir()}/.local/state/carta`;
 const STATE = process.env.CARTA_LATE_STATE || `${STATE_DIR}/late-sweep.json`;
 // A search takes about half a second; 4 to 9 s between them is at most about
-// 500 an hour while catching up, and about 200 an hour once caught up.
+// 500 an hour while catching up, and about 280 an hour once caught up (T805,
+// weeks 27 to 45; was about 205).
 const GAP_MS = [4000, 9000];
 // T819: the fill beside the cycle's 205 an hour. T916: 2 to 4.5 s, was 3 to
 // 6.5 (about 960 searches an hour by day, was about 690), half that from
