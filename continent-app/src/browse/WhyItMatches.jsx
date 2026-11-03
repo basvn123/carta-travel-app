@@ -6,7 +6,6 @@ import { fit, showMatch } from '../lib/match.js';
 import { isEmptyTaste, normalizeTaste, tripLikesDiffer, tripTaste } from '../lib/taste.js';
 import { Button } from '../components/ui/index.js';
 import { CheckIcon } from '../components/Icons.jsx';
-import { TasteLink } from './TasteDoor.jsx';
 
 /**
  * The personal match on the screens (Carta rating v5, Layer 3, T765).
@@ -56,14 +55,12 @@ function barLabelKey(b) {
 }
 
 /**
- * "86% match: hiking, quiet" for a card, or nothing under 55%. With `door`
- * (a place page, T947) and no taste set, "Set your travel style" instead.
+ * "86% match: hiking, quiet" for a card, or nothing under 55%. (The place
+ * page's "Set your travel style" door left with T1024, owner.)
  */
-export function MatchLine({ place, month, className = '', door = false }) {
+export function MatchLine({ place, month, className = '' }) {
   const { t } = useI18n();
-  const taste = useTaste();
   const f = useFit(place, month);
-  if (door && !taste && place?.taste) return <TasteLink className={className} />;
   if (!showMatch(f)) return null;
   const why = f.top.slice(0, 2).map((b) => t(barKey(b))).join(', ');
   return (

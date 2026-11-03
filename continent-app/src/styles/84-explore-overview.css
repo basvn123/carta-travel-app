@@ -745,4 +745,3 @@
   white-space: nowrap;
 }
 .taste-door-v.is-unset { color: var(--text-3); }
-.btn.taste-link { justify-self: start; align-self: flex-start; width: auto; margin-left: calc(var(--space-2) * -1); }

@@ -381,8 +381,6 @@ export const FOOD_ITEMS = ['meal_mid_eur', 'meal_cheap_eur', 'fastfood_eur', 'dr
  *   band   the food band word (the Explore card's word), 0 to 4
  *   pos    the place on the five-step scale, 0 to 1 (bandPos), the pin kept
  *          in the middle half of its step so it never reads as the next one
- *   lean   'cheap' or 'dear' when the figure sits in the outer third of a
- *          middle band, else null ("Mid-priced, toward the dear side")
  *   items  each priced thing against the frozen catalogue median for it
  *          (bands.ref_prices): ratio -0.41 is 41% under the norm; reach is
  *          the share of the bar's half width that distance fills
@@ -407,7 +405,6 @@ export function priceFeel(costs, foodEur, lifestyle) {
   if (!items.length) return null;
 
   const at = bandPos('food', foodEur, bandScale(lifestyle, 'home').food);
-  const middle = at && at.band > 0 && at.band < CUTS.food.length;
   const off = items.filter((i) => Math.abs(i.ratio) > FEEL.gap)
     .sort((x, y) => Math.abs(y.ratio) - Math.abs(x.ratio))
     .slice(0, FEEL.rows)
@@ -415,7 +412,6 @@ export function priceFeel(costs, foodEur, lifestyle) {
   return {
     band: at ? at.band : null,
     pos: at ? (at.band + 0.25 + at.frac * 0.5) / (CUTS.food.length + 1) : null,
-    lean: !middle ? null : at.frac < 1 / 3 ? 'cheap' : at.frac > 2 / 3 ? 'dear' : null,
     items,
     cheaper: off.filter((i) => i.ratio < 0),
     dearer: off.filter((i) => i.ratio > 0).reverse(),

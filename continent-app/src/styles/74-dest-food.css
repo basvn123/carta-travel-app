@@ -80,18 +80,8 @@
    umber ramp dearer, and every group carries its heading so colour is never
    the only signal. */
 .pfeel { display: grid; gap: var(--space-4); min-width: 0; }
-.pfeel-verdict {
-  margin: 0;
-  font-size: 26px;
-  font-weight: 800;
-  line-height: var(--leading-tight);
-  letter-spacing: -0.02em;
-  color: var(--text);
-  text-wrap: balance;
-}
-.pfeel-verdict span { color: var(--umber-600); }
 
-.pfeel-scale { display: grid; gap: var(--space-2); margin-top: calc(-1 * var(--space-1)); }
+.pfeel-scale { display: grid; gap: var(--space-2); }
 .pfeel-steps { position: relative; display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--space-1); height: 8px; }
 .pfeel-steps i { border-radius: var(--radius-pill); }
 .pfeel-steps .is-0 { background: var(--good-mid); }

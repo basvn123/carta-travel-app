@@ -123,17 +123,14 @@ function PriceFeel({ t, destination }) {
     return priceFeel(costs, foodEur, lifestyle);
   }, [rowEur, costs, destination, request, lifestyle]);
   if (!feel) return null;
-  const { band, pos, lean, cheaper, dearer, usual, brief } = feel;
+  const { band, pos, cheaper, dearer, usual, brief } = feel;
   const bandWord = band != null ? t(BAND_KEY[band]) : null;
 
   return (
     <div className="pfeel">
       {bandWord && (
         <>
-          <p className="pfeel-verdict">
-            {bandWord}
-            {lean && <>, <span>{t(`feel.lean.${lean}`)}</span></>}
-          </p>
+          {/* T1024 (owner): no verdict line; the scale says it, and its label to a screen reader. */}
           <div className="pfeel-scale" role="img"
             aria-label={t('feel.scaleAria', { band: midSentence(bandWord, lang) })}>
             <span className="pfeel-steps" aria-hidden="true">
