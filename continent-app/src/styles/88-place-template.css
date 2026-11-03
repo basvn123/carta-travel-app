@@ -539,6 +539,82 @@ a.pt-trip-name:focus-visible { outline: 2px solid var(--focus); outline-offset: 
 .pt-card-row { display: flex; gap: var(--space-2); }
 .pt-card-row > .btn { flex: 1; }
 
+/* ── The place's price card in the plan tab's language (T1019) ──
+   The umber cost card (92-cost-card.css: .ccard, the arc, the rows, the
+   foot), plus what only this card has: the two input pills, the light sheet
+   a pill opens, the trip lines under the rows, and the flight passes one
+   tap away under Flights. Cream on umber throughout, never grey. */
+.dpc-wrap { display: grid; gap: var(--space-4); min-width: 0; }
+.ccard.dpc { gap: var(--space-3); padding: var(--space-4); }
+
+.dpc-inputs { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.dpc-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--umber-50) 12%, transparent);
+  color: var(--ccard-ink);
+  font: inherit;
+  font-size: var(--text-label);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: background var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out);
+}
+.dpc-pill svg { flex: none; opacity: 0.85; }
+.dpc-pill.is-open { background: var(--umber-50); color: var(--umber-800); }
+@media (hover: hover) { .dpc-pill:not(.is-open):hover { background: color-mix(in srgb, var(--umber-50) 20%, transparent); } }
+.dpc-pill:focus-visible { outline: 2px solid var(--umber-50); outline-offset: 2px; }
+@media (pointer: coarse) { .dpc-pill { min-height: var(--tap); } }
+
+.dpc-sheet, .dpc-party { border-radius: var(--radius-card); background: var(--surface); color: var(--text); }
+.dpc-sheet { display: grid; gap: var(--space-3); padding: var(--space-3); }
+.dpc-party { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-2) var(--space-3); }
+
+.dpc-trip { display: grid; gap: var(--space-1); margin: 0; padding-top: var(--space-2); border-top: 1px solid var(--ccard-line); font-size: var(--text-body); color: var(--ccard-ink-2); }
+.dpc-trip > div { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); min-height: 36px; }
+.dpc-trip dt { min-width: 0; }
+.dpc-trip dd { margin: 0; color: var(--ccard-ink); font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.dpc-trip .is-big { padding-top: var(--space-1); font-size: var(--text-lead); }
+.dpc-trip .is-big dt { color: var(--ccard-ink); font-weight: 700; }
+.dpc-trip .is-big dd { font-size: var(--text-title); font-weight: 800; letter-spacing: -0.02em; }
+
+.dpc-flt-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 36px;
+  margin-left: calc(-1 * var(--space-1));
+  padding: 0 var(--space-1);
+  border: 0;
+  border-radius: var(--radius-control);
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.dpc-flt-toggle svg { transition: transform var(--dur-2) var(--ease-out); }
+.dpc-flt-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
+@media (hover: hover) { .dpc-flt-toggle:hover { color: var(--ccard-ink); } }
+.dpc-flt-toggle:focus-visible { outline: 2px solid var(--umber-50); outline-offset: 2px; }
+.dpc-marks { display: inline-flex; }
+.dpc-marks .flt-mark { width: 24px; height: 24px; border-radius: 50%; background: var(--surface); box-shadow: 0 0 0 2px var(--ccard-travel); }
+.dpc-marks .flt-mark + .flt-mark { margin-left: -8px; }
+
+.dpc-flights { display: grid; gap: var(--space-2); }
+.dpc-pass { display: grid; gap: var(--space-2); padding: var(--space-3) var(--space-4); border-radius: var(--radius-card); background: var(--surface); color: var(--text); }
+.dpc-pass .jr-code { font-size: 20px; }
+.dpc-pass-fig { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-2); margin: 0; padding-top: var(--space-2); border-top: 1px solid var(--border-soft); }
+.dpc-pass-fig .money { font-size: var(--text-lead); font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
+.dpc-pass-fig small { font-size: var(--text-caption); color: var(--text-2); }
+.dpc-flt-note { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); margin: 0; font-size: var(--text-caption); color: var(--ccard-ink-2); }
+.dpc-flt-note .jr-book.btn { flex: none; }
+@media (prefers-reduced-motion: reduce) { .dpc-pill, .dpc-flt-toggle svg { transition: none; } }
+
 /* Below 1024 px the foot bar holds the page's one primary, so the card's
    own primary hides (one primary at a time, carta-design). */
 @media (max-width: 1023px) {

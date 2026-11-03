@@ -1,0 +1,139 @@
+/* 92-cost-card.css: the umber cost card (T1019).
+   Moved out of planner/TripSummary.css so the place page's price card
+   (browse/DestPriceCard.jsx) wears the plan tab's look without loading the
+   whole trip page's sheet; the pieces are components/CostCardKit.jsx. The card's prefix was .tpc, which the Explore
+   trip card (86-plan-flow.css) also uses; it is .ccard now. */
+
+/* ---- What it costs (T1003, owner: "fully redesign it") ----
+   One umber card, the Carta door's ground with its sun glow. The total in a
+   half arc; the arc is the breakdown in the card's four colours (sun for
+   the flights, lagoon for getting around, sand for the stay, terracotta for
+   food), each length moving to its new value when a figure changes. Under
+   it the four groups as rows, each a key to its arc colour and a door to
+   what sets it. Text is the cream of the umber scale, its quieter steps
+   mixed from the cream itself, never grey. */
+.ccard {
+  --ccard-ink: var(--umber-50);
+  --ccard-ink-2: color-mix(in srgb, var(--umber-50) 76%, var(--umber-800));
+  --ccard-line: color-mix(in srgb, var(--umber-50) 14%, transparent);
+  --ccard-travel: var(--sun-400);
+  --ccard-around: var(--lagoon-300);
+  --ccard-stay: var(--umber-200);
+  --ccard-food: #e8916b;
+  --ccard-do: var(--sun-100);
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4) var(--space-2);
+  overflow: hidden;
+  border-radius: var(--radius-sheet);
+  background:
+    radial-gradient(80% 60% at 50% 0%, color-mix(in srgb, var(--sun-400) 26%, transparent), transparent 70%),
+    linear-gradient(165deg, var(--umber-700), var(--umber-800) 70%);
+  box-shadow: 0 10px 28px -12px color-mix(in srgb, var(--umber-800) 55%, transparent), var(--elev-1);
+  color: var(--ccard-ink);
+}
+.ccard ::selection { background: var(--sun-400); color: var(--umber-800); }
+@media (min-width: 1024px) { :is(.tpg-side, .pt-side) .ccard { padding: var(--space-4) var(--space-5) var(--space-3); } }
+.ccard-top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
+.ccard-h { margin: 0; font-size: var(--text-body); font-weight: 700; letter-spacing: -0.01em; color: var(--ccard-ink); }
+/* Group / Per person: cream on umber, the chosen one a cream pill. */
+.ccard .seg.ccard-per { background: color-mix(in srgb, var(--umber-50) 12%, transparent); border-color: transparent; }
+.ccard .ccard-per .seg-item { color: var(--ccard-ink-2); }
+.ccard .ccard-per .seg-item.is-selected { background: var(--umber-50); color: var(--umber-800); box-shadow: 0 2px 6px -2px rgba(0, 0, 0, 0.35); }
+.ccard .ccard-per .seg-item:focus-visible { outline: 2px solid var(--umber-50); outline-offset: 2px; }
+
+/* The arc and the total inside it. */
+.ccard-gauge { position: relative; display: grid; justify-items: center; margin-top: calc(-1 * var(--space-1)); }
+.ccard-arc { display: block; width: 100%; max-width: 236px; height: auto; overflow: visible; }
+.ccard-arc path { fill: none; stroke-width: 12; }
+.ccard-arc-ground { stroke: var(--ccard-line); stroke-linecap: butt; }
+.ccard-arc-seg {
+  stroke-linecap: butt;
+  transition: stroke-dasharray 900ms var(--ease-out), stroke-dashoffset 900ms var(--ease-out);
+}
+.ccard-arc-seg.ccard-k-travel { stroke: var(--ccard-travel); }
+.ccard-arc-seg.ccard-k-around { stroke: var(--ccard-around); }
+.ccard-arc-seg.ccard-k-stay { stroke: var(--ccard-stay); }
+.ccard-arc-seg.ccard-k-food { stroke: var(--ccard-food); }
+.ccard-arc-seg.ccard-k-do { stroke: var(--ccard-do); }
+.ccard-sum {
+  position: absolute;
+  inset: auto 0 0;
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  margin: 0;
+  text-align: center;
+}
+.ccard-n { font-size: 30px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; color: var(--ccard-ink); font-variant-numeric: tabular-nums; }
+.ccard-unit { font-size: var(--text-caption); font-weight: 500; color: var(--ccard-ink-2); }
+@media (max-width: 359px) { .ccard-n { font-size: var(--text-headline); } }
+
+/* The budget, under the arc: one line and Edit budget, centred. */
+.ccard-budget { display: grid; justify-items: center; }
+.ccard .tpbud.is-compact { align-items: center; gap: var(--space-1); padding: 0; border: 0; background: none; box-shadow: none; text-align: center; }
+.ccard .tpbud.is-compact .tpbud-bar { display: none; }
+.ccard .tpbud.is-compact .tpbud-line { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: var(--space-1) var(--space-2); margin: 0; font-size: var(--text-caption); color: var(--ccard-ink-2); }
+.ccard .tpbud-gap { padding: 2px var(--space-2); border-radius: var(--radius-pill); background: color-mix(in srgb, var(--lagoon-300) 24%, transparent); color: var(--ccard-ink); font-weight: 700; }
+.ccard .tpbud-gap.is-over { background: var(--sun-400); color: var(--umber-800); }
+.ccard .tpbud.is-compact > .tpbud-edit.btn { align-self: center; margin: 0; color: var(--ccard-ink); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--umber-50) 40%, transparent); text-underline-offset: 3px; }
+.ccard .tpbud-form { width: 100%; padding: var(--space-3); border-radius: var(--radius-card); background: var(--surface); color: var(--text); text-align: left; }
+
+/* The four groups. */
+.ccard-rows { display: grid; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--ccard-line); }
+.ccard-row + .ccard-row { border-top: 1px solid var(--ccard-line); }
+.ccard-hit {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: 48px;
+  padding: 6px var(--space-1);
+  border: 0;
+  border-radius: var(--radius-control);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background var(--dur-2) var(--ease-out);
+}
+div.ccard-hit { cursor: default; }
+/* Rows that go nowhere but their own dialog keep no chevron column, so the
+   figures end at the card's edge (the place page's day split). */
+.ccard-rows.is-plain .ccard-hit { grid-template-columns: auto minmax(0, 1fr) auto; padding-right: 0; }
+@media (hover: hover) { button.ccard-hit:hover { background: color-mix(in srgb, var(--umber-50) 7%, transparent); } }
+.ccard-hit:focus-visible { outline: 2px solid var(--umber-50); outline-offset: -2px; }
+/* Each group's mark: its arc colour as a disc, the drawing in umber. */
+.ccard-ico { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; color: var(--umber-800); }
+.ccard-k-travel .ccard-ico { background: var(--ccard-travel); }
+.ccard-k-around .ccard-ico { background: var(--ccard-around); }
+.ccard-k-stay .ccard-ico { background: var(--ccard-stay); }
+.ccard-k-food .ccard-ico { background: var(--ccard-food); }
+.ccard-k-do .ccard-ico { background: var(--ccard-do); }
+/* Flights: the airline's own mark on white, ringed in the flights colour. */
+.ccard-ico.is-marks { display: flex; width: auto; min-width: 32px; padding: 0; background: none; }
+.ccard .ccard-ico.is-marks .flt-mark { display: grid; place-items: center; width: 32px; height: 32px; padding: 0; overflow: hidden; border: 0; border-radius: 50%; background: var(--surface); box-shadow: 0 0 0 2px var(--ccard-travel); }
+.ccard-ico.is-marks .flt-mark + .flt-mark { margin-left: -10px; }
+.ccard .ccard-ico.is-marks .flt-mark img { width: 22px; height: 22px; object-fit: contain; }
+.ccard-what { display: grid; gap: 1px; min-width: 0; }
+.ccard-label { font-size: var(--text-body); font-weight: 600; color: var(--ccard-ink); }
+.ccard-sub { display: inline-flex; align-items: center; gap: var(--space-1); min-width: 0; font-size: var(--text-caption); color: var(--ccard-ink-2); }
+.ccard-sub svg { flex: none; opacity: 0.8; }
+.ccard-fig { font-size: var(--text-lead); font-weight: 800; letter-spacing: -0.01em; color: var(--ccard-ink); font-variant-numeric: tabular-nums; text-align: right; }
+.ccard-none { font-size: var(--text-label); font-weight: 500; color: var(--ccard-ink-2); }
+.ccard-go { width: 16px; color: var(--ccard-ink-2); }
+.ccard-row.is-empty .ccard-ico { opacity: 0.55; }
+.ccard .is-missing, .ccard .not-yet { color: var(--ccard-ink-2); }
+
+.ccard-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.ccard-foot .btn { color: var(--ccard-ink); }
+@media (hover: hover) { .ccard-foot .btn:hover { background: color-mix(in srgb, var(--umber-50) 8%, transparent); color: var(--ccard-ink); } }
+.ccard-foot .btn:focus-visible { outline: 2px solid var(--umber-50); outline-offset: 2px; }
+.ccard-all.btn { margin-left: calc(-1 * var(--space-2)); }
+.ccard-paid.btn { margin-right: calc(-1 * var(--space-2)); }
+@media (prefers-reduced-motion: reduce) { .ccard-arc-seg, .ccard-hit { transition: none; } }

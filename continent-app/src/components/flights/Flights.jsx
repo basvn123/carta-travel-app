@@ -15,12 +15,14 @@ import { useI18n } from '../../i18n/index.jsx';
 import { Money } from '../ui/Money.jsx';
 import { Segmented } from '../ui/Segmented.jsx';
 import { fmtDate } from '../../lib/dates.js';
+import { checkedLabel, stopsText } from '../../lib/flights/flightText.js';
 import { airlineLogoUrl } from '../../lib/flights/flightData.js';
 import { useAirlines, airlineName } from '../../lib/flights/useAirlines.js';
 import { googleFlightsLink } from '../../lib/flights/flights.js';
 import { bagTier } from '../../lib/flights/bagFees.js';
 import { formatMoney } from '../../lib/money.js';
 import { ExternalIcon } from '../Icons.jsx';
+import { PlaneIcon } from '../TransportIcons.jsx';
 import '../../styles/74-flights.css';
 
 /** The airline's logo in a small white square, or its code when there is none. */
@@ -41,13 +43,36 @@ export function AirlineMark({ code, size = 'md' }) {
 /** '21:55' + '01:10' -> true: the flight lands the next day. */
 const nextDay = (dep, arr) => Boolean(dep && arr && arr < dep);
 
-function checkedLabel(t, checked) {
-  if (!checked) return null;
-  const at = new Date(checked);
-  const today = new Date().toDateString() === at.toDateString();
-  return today
-    ? t('flight.checked', { time: at.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) })
-    : t('flight.checkedDay', { date: fmtDate(at.toISOString().slice(0, 10)) });
+
+/**
+ * The flight pass (T1008, shared since T1019 by the itinerary and the place
+ * page's price card): its head, the airline's mark and name with `meta` (the
+ * day and the stops) under it, and its ends, the two airports with their
+ * times on the dashed line with the plane. Styles: 93-flight-pass.css.
+ */
+export function PassHead({ airline, airlines, meta }) {
+  return (
+    <span className="jr-brand">
+      <AirlineMark code={airline} size="sm" />
+      <span className="jr-brand-text">
+        <span className="jr-name">{airlineName(airlines, airline) || airline}</span>
+        <span className="jr-meta">{meta}</span>
+      </span>
+    </span>
+  );
+}
+
+export function PassEnds({ leg }) {
+  return (
+    <div className="jr-ends">
+      <span className="jr-end"><span className="jr-code">{leg.from}</span><span className="jr-time">{leg.dep}</span></span>
+      <span className="jr-line" aria-hidden="true"><PlaneIcon size={14} /></span>
+      <span className="jr-end is-to">
+        <span className="jr-code">{leg.to}</span>
+        <span className="jr-time">{leg.arr}{nextDay(leg.dep, leg.arr) ? ' +1' : ''}</span>
+      </span>
+    </div>
+  );
 }
 
 /**
@@ -99,7 +124,7 @@ export function FlightRow({ leg, cost, dir = 'out', bagKey = 'small', state = nu
     );
   }
   const name = airlineName(airlines, leg.airline);
-  const stops = leg.stops === 0 ? t('flight.direct') : leg.stops === 1 ? t('flight.stop1') : t('flight.stops', { n: leg.stops });
+  const stops = stopsText(t, leg.stops);
   // The header always shows the flight's own day, so a flight near (not on)
   // the wanted day is never read as that day's.
   const moved = Boolean(wantedDate && leg.date && wantedDate !== leg.date);

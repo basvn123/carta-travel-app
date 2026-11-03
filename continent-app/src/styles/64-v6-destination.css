@@ -181,15 +181,6 @@
    the one primary first, the receipt after them (a booking card's order), so
    the primary is in view at 1280 x 720. */
 .destp-v3 .destp-side { padding-top: var(--space-5); }
-.dprice {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  padding: var(--space-4) var(--space-5);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  background: var(--surface);
-}
 .dprice-title {
   margin: 0;
   font-size: var(--text-label);
@@ -302,7 +293,6 @@
 .dprice-bar-stay { background: var(--text); }
 .dprice-bar-food { background: var(--kind-village); }
 
-.dprice .dprice-lines { padding: 0; }
 
 .dprice-foot {
   display: flex;
