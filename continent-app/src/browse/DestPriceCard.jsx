@@ -25,7 +25,7 @@ import { bagTier } from '../lib/flights/bagFees.js';
 import { flightLegs, flightQuote } from '../lib/price/flight.js';
 import { destAnchor } from '../lib/origins.js';
 import { AirlineMark, PassEnds, PassHead } from '../components/flights/Flights.jsx';
-import { checkedLabel, stopsText } from '../lib/flights/flightText.js';
+import { stopsText } from '../lib/flights/flightText.js';
 import { useAirlines } from '../lib/flights/useAirlines.js';
 import { homeFlightSetup, withEnds } from './cartaFlight.js';
 import { useStaysVersion } from '../lib/staysData.js';
@@ -355,7 +355,6 @@ export function DestPriceCard({
             <FlightPass dir="out" leg={withEnds(carta.out, home, airport)} paying={people} bagKey={bagKey} airlines={airlines} />
             <FlightPass dir="back" leg={withEnds(carta.back, airport, home)} paying={people} bagKey={bagKey} airlines={airlines} />
             <p className="dpc-flt-note">
-              <span>{`${checkedLabel(t, carta.checked)}. ${t('tf.pick.mayChange')}.`}</span>
               <a className="btn btn-secondary btn-sm jr-book" target="_blank" rel="noopener noreferrer"
                 href={googleFlightsLink(home, airport, carta.out?.date, { back: carta.back?.date, lang })}
                 aria-label={t('plan.findOn', { provider: 'Google Flights' })}>

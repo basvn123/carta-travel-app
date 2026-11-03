@@ -611,7 +611,8 @@ a.pt-trip-name:focus-visible { outline: 2px solid var(--focus); outline-offset: 
 .dpc-pass-fig { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-2); margin: 0; padding-top: var(--space-2); border-top: 1px solid var(--border-soft); }
 .dpc-pass-fig .money { font-size: var(--text-lead); font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
 .dpc-pass-fig small { font-size: var(--text-caption); color: var(--text-2); }
-.dpc-flt-note { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); margin: 0; font-size: var(--text-caption); color: var(--ccard-ink-2); }
+/* Owner 2026-11-03: no source or "may have changed" line, only Book. */
+.dpc-flt-note { display: flex; justify-content: flex-end; margin: 0; }
 .dpc-flt-note .jr-book.btn { flex: none; }
 @media (prefers-reduced-motion: reduce) { .dpc-pill, .dpc-flt-toggle svg { transition: none; } }
 
