@@ -483,6 +483,11 @@
 .day-wizard.wiz-form { --wiz-max: 880px; }
 .day-wizard.wiz-mid { --wiz-max: 1080px; }
 .day-wizard.wiz-wide { --wiz-max: 1600px; }
+/* T1041: with its summary beside it a step is one question, not a map: the
+   detail width (about 840 px of step and the 360 px card), not 1600 px.
+   Set on the wizard so the step bar, the recap band and the foot bar keep
+   the step's edges. */
+.day-wizard.wiz-wide:has(.wiz-main.has-rail) { --wiz-max: var(--w-detail); }
 .day-wizard .dayw-search {
   position: relative;
   display: flex;

@@ -317,6 +317,27 @@
   /* Layout */
   --filter-h:     132px;
   --panel-w:      440px;
+  /* Page widths (T1041): one cap per kind of page, measured against Airbnb,
+     Booking, Wanderlog and Google Explore. The cap is the content box; the
+     page adds --page-gutter on each side, so its max-width is
+     calc(var(--w-...) + 2 * var(--page-gutter)). Browse is a grid of places
+     or trips, Detail one place or one trip with its sticky price column,
+     Hub a set of settings cards, Form one question's column and Aside the
+     summary card beside it. A map surface has no cap: its list keeps
+     --panel-w and the map takes the rest. */
+  --w-browse:     1440px;
+  --w-detail:     1240px;
+  --w-hub:        1120px;
+  --w-form:       720px;
+  --w-aside:      360px;
+  /* The side margin of a page: --gutter on a phone, then 24, 32 and 48 px
+     from 769, 1024 and 1440 px (Airbnb's steps), set after :root. */
+  --page-gutter:  var(--gutter);
+  /* The header's, the settings line's and a browse page's side padding:
+     the gutter, or on a screen wider than the browse cap, whatever centres
+     that cap. 100vw rather than 100% so a scroller's bar never moves the
+     left edge, which every tab shares (T427). */
+  --page-inset:   max(var(--page-gutter), calc((100vw - var(--w-browse)) / 2));
   /* The phone bar, 64 px, plus the home-indicator inset, so the bar keeps
      --tap-main for its slots on a notched phone and everything above it
      clears the bar (T496, 1.3a). */
@@ -375,3 +396,8 @@
   --text-plan-hero:   clamp(32px, 3.9vw, 56px);  /* the headline, Figtree 700 */
   --tracking-plan:    -0.025em;
 }
+
+/* The page gutter's steps (T1041). */
+@media (min-width: 769px)  { :root { --page-gutter: var(--space-5); } }
+@media (min-width: 1024px) { :root { --page-gutter: var(--space-6); } }
+@media (min-width: 1440px) { :root { --page-gutter: 48px; } }

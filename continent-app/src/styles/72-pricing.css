@@ -31,9 +31,9 @@ body:has(.prc[aria-modal="true"]) .tab-h1 { display: none; }
   overscroll-behavior: contain;
 }
 .prc-inner {
-  max-width: 920px;
+  max-width: calc(var(--w-hub) + 2 * var(--page-gutter));  /* T1041: the hub width; the text keeps --measure */
   margin: 0 auto;
-  padding: var(--space-6) var(--gutter) calc(var(--space-8) + env(safe-area-inset-bottom, 0px));
+  padding: var(--space-6) var(--page-gutter) calc(var(--space-8) + env(safe-area-inset-bottom, 0px));
 }
 
 /* ── Head ─────────────────────────────────────────────────────────────── */

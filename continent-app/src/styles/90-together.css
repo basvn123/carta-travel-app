@@ -48,9 +48,9 @@
 .tg-panel { background: var(--surface-page); }
 .tg-page {
   width: 100%;
-  max-width: 1180px;
+  max-width: calc(var(--w-hub) + 2 * var(--page-gutter));  /* T1041: the hub width, as Account */
   margin: 0 auto;
-  padding: var(--space-3) var(--gutter) var(--space-8);
+  padding: var(--space-3) var(--page-gutter) var(--space-8);
   display: grid;
   gap: var(--space-5);
   box-sizing: border-box;
@@ -94,7 +94,7 @@
   .tg-page { max-width: 760px; }
 }
 @media (min-width: 1024px) {
-  .tg-page { padding: var(--space-4) var(--space-5) var(--space-8); }
+  .tg-page { padding: var(--space-4) var(--page-gutter) var(--space-8); }
   .tg-grid { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: start; gap: var(--space-6); }
   .tg-col { display: grid; gap: var(--space-5); align-content: start; min-width: 0; }
   .tg-col > * { order: 0; }

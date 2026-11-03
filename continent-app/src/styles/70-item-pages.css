@@ -187,6 +187,11 @@
   transition: border-color var(--dur-2) var(--ease-out);
 }
 .tpage-bar.ipage-bar.is-scrolled { border-bottom-color: var(--border-soft); }
+/* T1041: on a desktop the bar stands where the app header stood, the back
+   arrow on the header's line (less the button's own inner space). */
+@media (min-width: 769px) {
+  .tpage-bar.ipage-bar { padding-inline: calc(var(--page-inset) - var(--space-2)); }
+}
 .ipage-bar .ipage-back { padding-inline: var(--space-2); color: var(--text); }
 .ipage-bar .ipage-back .btn-label { color: var(--text); }
 .ipage-bar .ipage-bar-title {
@@ -209,7 +214,7 @@
 
 .ipage .ipage-wrap {
   width: 100%;
-  max-width: 1180px;
+  max-width: var(--w-detail);  /* T1041: the detail width */
   margin: 0 auto;
   padding: 0 0 calc(var(--space-8) + env(safe-area-inset-bottom, 0px));
 }

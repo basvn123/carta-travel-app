@@ -48,7 +48,7 @@
 }
 .dsk-hero.no-media .dsk-strip-band { border-top: 1px solid var(--rule); }
 .dsk-strip-band .jstrip {
-  max-width: 1180px;
+  max-width: var(--w-detail);  /* T1041 */
   margin: 0 auto;
   border: 0;
   border-radius: 0;
@@ -57,7 +57,7 @@
    phrase such as "Steps down from the road" must not become title case. */
 .dsk-strip-band .jstrip-word { text-transform: none; }
 .dsk-hero-credit {
-  max-width: 1180px;
+  max-width: var(--w-detail);  /* T1041 */
   margin: 0 auto;
   padding: var(--space-1) var(--space-4) 0;
 }
@@ -66,7 +66,7 @@
 
 /* ── The two columns ── */
 .dsk-grid {
-  max-width: 1180px;
+  max-width: var(--w-detail);  /* T1041 */
   margin: 0 auto;
   padding: var(--space-4) var(--space-4) 0;
 }

@@ -421,10 +421,13 @@
    ========================================================================== */
 
 /* --- Full width: one gutter from the header to the content ------------- */
+/* T1041: the gutter is --page-inset, the header's own, so the content caps
+   at the browse width on a wide screen and still starts on the header's
+   line. */
 .explore-shell .explore-wrap {
   max-width: none;
   margin: 0;
-  padding: var(--space-5) var(--space-6) calc(var(--space-8) + env(safe-area-inset-bottom, 0px));
+  padding: var(--space-5) var(--page-inset) calc(var(--space-8) + env(safe-area-inset-bottom, 0px));
 }
 @media (max-width: 768px) {
   .explore-shell .explore-wrap {
@@ -939,6 +942,59 @@
   /* maplibre-gl.css loads after this file (with the map), so the zoom
      buttons need the extra class to win. */
   .explore-shell .xmap .maplibregl-ctrl-group button { width: var(--tap); height: var(--tap); }
+}
+/* --- The map view on a desktop: the map owns the screen (T1041) ---------
+   Google Explore and Airbnb give the map every pixel under one short bar;
+   here it sat under four bands as a 420 px card. Now the six categories
+   keep their row (shorter, still across the width, T622), the back
+   button, the chips and the tools share the one under it, the title is
+   read but not drawn (as on a phone), and the map fills the rest to the
+   bottom of the screen. The two bars stay on the header's line; the map
+   surface has no cap and runs from gutter to gutter at any width, with
+   the list floating inside it. */
+@media (min-width: 769px) {
+  .explore-shell.is-map .explore-wrap {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    column-gap: var(--space-4);
+    height: 100%;
+    padding: var(--space-3) var(--page-inset) var(--space-4);
+  }
+  .explore-shell.is-map .xcats-bar { grid-column: 1 / -1; margin: 0 0 var(--space-3); }
+  .explore-shell.is-map .xcats-row .ui-tab { min-height: var(--tap-main); }
+  .explore-shell.is-map .xbar { display: contents; }
+  .explore-shell.is-map .xbar-lead { grid-column: 1; grid-row: 2; }
+  .explore-shell.is-map .xqf { grid-column: 2; grid-row: 2; align-self: center; }
+  .explore-shell.is-map .xbar-tools { grid-column: 3; grid-row: 2; }
+  .explore-shell.is-map .xbar-title {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .explore-shell.is-map .xcontent {
+    display: flex;
+    grid-column: 1 / -1;
+    grid-row: 3;
+    min-height: 0;
+    margin: var(--space-3) calc(var(--page-gutter) - var(--page-inset)) 0;
+  }
+  .explore-shell.is-map .xcontent-map {
+    position: relative;
+    top: auto;
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .explore-shell.is-map .xcontent-map .xmap { flex: 1 1 auto; height: auto; min-height: 360px; }
+  /* Anything else the view adds (a country link, an empty line) goes
+     under the map, full width, rather than into a column. */
+  .explore-shell.is-map .explore-wrap > :not(.xcats-bar, .xbar, .xqf, .xcontent) { grid-column: 1 / -1; }
 }
 .explore-shell .xmap-failed {
   position: absolute;

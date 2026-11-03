@@ -9,19 +9,21 @@
 .pt-page { background: var(--surface-page); }
 .pt-page .pt-scroll { background: var(--surface-page); }
 .pt-wrap {
-  max-width: 1240px;
+  /* T1041: the detail width of content, plus the page's own padding. */
+  max-width: calc(var(--w-detail) + var(--pt-pad-l) + var(--pt-pad-r));
   margin: 0 auto;
   /* T1023 (owner): more room between the content and the screen's edges on
-     every device, and never under a curved edge or notch. */
-  --pt-pad-l: max(var(--space-5), env(safe-area-inset-left, 0px));
-  --pt-pad-r: max(var(--space-5), env(safe-area-inset-right, 0px));
+     every device, and never under a curved edge or notch. T1041: and never
+     less than the page gutter. */
+  --pt-pad-l: max(var(--space-5), var(--page-gutter), env(safe-area-inset-left, 0px));
+  --pt-pad-r: max(var(--space-5), var(--page-gutter), env(safe-area-inset-right, 0px));
   padding: 0 var(--pt-pad-r) var(--space-8) var(--pt-pad-l);
 }
 @media (min-width: 600px) {
-  .pt-wrap { --pt-pad-l: max(var(--space-6), env(safe-area-inset-left, 0px)); --pt-pad-r: max(var(--space-6), env(safe-area-inset-right, 0px)); }
+  .pt-wrap { --pt-pad-l: max(var(--space-6), var(--page-gutter), env(safe-area-inset-left, 0px)); --pt-pad-r: max(var(--space-6), var(--page-gutter), env(safe-area-inset-right, 0px)); }
 }
 @media (min-width: 1024px) {
-  .pt-wrap { padding: var(--space-4) var(--space-6) var(--space-8); }
+  .pt-wrap { padding: var(--space-4) var(--pt-pad-r) var(--space-8) var(--pt-pad-l); }
 }
 
 /* ── Photographs (T1024): inset with round corners inside the page's margin.

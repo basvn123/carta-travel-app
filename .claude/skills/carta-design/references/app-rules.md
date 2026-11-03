@@ -427,9 +427,12 @@ in the kit. Two screens can never write the same figure two ways.
   places visited, the best months and the price.
 - **Breakpoints.** Floor 360 px with no horizontal scroll; below 769 px the phone (four-slot bottom nav,
   sheets for choices, pages for detail); from 769 px the header carries the tabs; from 1024 px list and map
-  side by side, highlighting each other, and two-column detail pages. Reading pages (a destination, a
-  trip, an item page) cap their content column at 1180 px; browse surfaces (Explore, Destinations) use
-  the full width with one gutter shared by the header, the settings line and the content (T438).
+  side by side, highlighting each other, and two-column detail pages. Page widths (owner, 2026-11-03,
+  T1041, after Airbnb, Booking, Wanderlog and Google Explore): browse pages cap their content at
+  `--w-browse` (1440 px), one place or one trip at `--w-detail` (1240 px), hubs (Account, Together,
+  Pricing) at `--w-hub` (1120 px); a map surface has no cap and gives the map the rest of the screen.
+  The header, the settings line, a page bar and a browse page share one left edge, `--page-inset`
+  (T438, T427 kept: on a wide screen that edge moves in with the cap instead of staying at the screen's).
 - **Icons** through `<Icon>`: 16 px in chips and inline, 20 px in buttons, rows and the tab bar, 24 px in
   empty states. Line icons from `Icons.jsx`, 1.5 stroke, `currentColor`, `--text-2` by default,
   decorative ones `aria-hidden`. No tile behind an icon.

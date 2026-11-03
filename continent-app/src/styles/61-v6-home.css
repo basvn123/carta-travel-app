@@ -39,9 +39,9 @@
 .hv-page::-webkit-scrollbar { display: none; }
 
 .hv-wrap {
-  max-width: 1240px;
+  max-width: calc(var(--w-browse) + 2 * var(--page-gutter));  /* T1041: the browse width, as Explore */
   margin: 0 auto;
-  padding: 0 var(--gutter) var(--space-8);
+  padding: 0 var(--page-gutter) var(--space-8);
 }
 
 .hv-section { margin-top: clamp(80px, 11vw, 152px); }
@@ -354,7 +354,7 @@
 
 @media (min-width: 769px) {
   .hv-top { display: none; }
-  .hv-wrap { padding: 0 var(--space-6) var(--space-8); }
+  .hv-wrap { padding: 0 var(--page-gutter) var(--space-8); }  /* T1041: on the header's line */
   .hv-hero-copy { padding: 0 var(--space-6) clamp(var(--space-7), 11cqh, 136px); gap: var(--space-5); }
   .hv-sub { font-size: var(--text-title); line-height: 1.45; }
   .hv-acts { max-width: 640px; }

@@ -30,7 +30,7 @@
   .places-shell .places-wrap {
     max-width: none;
     margin: 0;
-    padding: var(--space-5) var(--space-6) calc(var(--space-8) + env(safe-area-inset-bottom, 0px));
+    padding: var(--space-5) var(--page-inset) calc(var(--space-8) + env(safe-area-inset-bottom, 0px));
   }
 }
 

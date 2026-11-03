@@ -645,9 +645,9 @@
 /* The bar stays put (PageBar, T474); the record scrolls under it. */
 .rgnp-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
 .rgnp-inner {
-  max-width: 1180px;
+  max-width: calc(var(--w-detail) + 2 * var(--page-gutter));  /* T1041: the detail width */
   margin: 0 auto;
-  padding: var(--space-3) var(--gutter) var(--space-8);
+  padding: var(--space-3) var(--page-gutter) var(--space-8);
 }
 .rgnp-grid { display: flex; flex-direction: column; gap: var(--space-6); min-width: 0; }
 .rgnp-grid > * { min-width: 0; }
@@ -742,7 +742,7 @@
 .rgnp-neigh { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 
 @media (min-width: 769px) {
-  .rgnp-inner { padding: var(--space-4) var(--space-6) var(--space-8); }
+  .rgnp-inner { padding: var(--space-4) var(--page-gutter) var(--space-8); }
   .rgnp h1 { font-size: var(--text-headline); }
   .rgnp-hero-frame { max-height: 60vh; max-height: 60dvh; }
 }

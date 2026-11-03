@@ -1019,13 +1019,14 @@
 /* The lazy chunk's own placeholder while it loads. */
 .mt-loading { position: fixed; inset: 0; z-index: var(--z-shell); background: var(--surface-page); }
 
-/* ── From 769 px: the page's own column, up to 1180 px ── */
+/* ── From 769 px: the page's own column, the browse width (T1041; was
+   1180 px), on the page gutter ── */
 @media (min-width: 769px) {
   .mytrips .saved-panel-header.mt-header,
-  .mt-panel { width: 100%; max-width: 1180px; margin: 0 auto; }
-  .mytrips .saved-panel-header.mt-header { padding: var(--space-3) var(--space-6) 0; }
-  .mt-tabs { margin-left: calc(-1 * var(--space-6)); margin-right: calc(-1 * var(--space-6)); padding: 0 var(--space-6); }
-  .mt-panel { padding: var(--space-5) var(--space-6) var(--space-8); }
+  .mt-panel { width: 100%; max-width: calc(var(--w-browse) + 2 * var(--page-gutter)); margin: 0 auto; }
+  .mytrips .saved-panel-header.mt-header { padding: var(--space-3) var(--page-gutter) 0; }
+  .mt-tabs { margin-left: calc(-1 * var(--page-gutter)); margin-right: calc(-1 * var(--page-gutter)); padding: 0 var(--page-gutter); }
+  .mt-panel { padding: var(--space-5) var(--page-gutter) var(--space-8); }
   .mt-next-card { flex-direction: row; }
   .mt-next-media { flex: 0 0 44%; aspect-ratio: auto; max-height: none; min-height: 340px; }
   .mt-next-body { padding: var(--space-5); }

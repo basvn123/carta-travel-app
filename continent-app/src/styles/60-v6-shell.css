@@ -246,7 +246,7 @@
   background: var(--surface-page);
 }
 .tab-fallback .state-skel {
-  max-width: 1180px;
+  max-width: var(--w-detail);  /* T1041 */
   margin: 0 auto;
 }
 .tab-fallback .state-skel-item { animation: none; }
@@ -788,10 +788,12 @@ html.kbd-open .bottom-nav { display: none; }
    and its older class .header-pricing-btn went with it (T485-j, T371-e). */
 
 /* One gutter on every tab (T427): the header, the settings line and the
-   content start and end on the same line from 769 px. */
+   content start and end on the same line from 769 px. T1041: the line is
+   --page-inset, so past the browse cap (1440 px of content) all three
+   centre on it instead of running to the screen's edges. */
 @media (min-width: 769px) {
-  .app-header { padding-left: var(--space-6); padding-right: var(--space-6); }
-  .settings-line { padding-left: var(--space-6); padding-right: var(--space-6); }
+  .app-header { padding-left: var(--page-inset); padding-right: var(--page-inset); }
+  .settings-line { padding-left: var(--page-inset); padding-right: var(--page-inset); }
 }
 
 /* The settings line as a booking bar (T440, the owner's review: the same

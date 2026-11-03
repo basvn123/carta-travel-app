@@ -11,7 +11,7 @@
 .jpage-book-count { font-family: var(--ui); }
 @media (min-width: 1024px) {
   .jpage .jpage-wrap {
-    max-width: 1180px;
+    max-width: var(--w-detail);  /* T1041: the detail width */
     display: grid;
     grid-template-columns: minmax(0, 1fr) var(--panel-w);
     column-gap: var(--space-7);

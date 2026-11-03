@@ -330,7 +330,7 @@
 .trip-wizard-modal.wiz-form,
 .trip-wizard-modal.wiz-mid,
 .trip-wizard-modal.wiz-wide,
-.trip-wizard-modal.wiz-inline.wiz-when.wiz-form { --wiz-max: 1440px; }
+.trip-wizard-modal.wiz-inline.wiz-when.wiz-form { --wiz-max: var(--w-browse); }  /* T1041 */
 .itin-hop .itin-leg-text { font-size: var(--text-caption); }
 @media (max-width: 400px) {
   .plan-total-btn-lbl { display: none; }

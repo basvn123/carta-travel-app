@@ -10,9 +10,9 @@
   font-size: var(--text-body);
 }
 .site-footer-inner {
-  max-width: 1240px;
+  max-width: calc(var(--w-browse) + 2 * var(--page-gutter));  /* T1041: the browse width, on the header's line */
   margin: 0 auto;
-  padding: var(--space-6) var(--space-4) var(--space-5);
+  padding: var(--space-6) var(--page-gutter) var(--space-5);
   display: grid;
   gap: var(--space-5);
 }
@@ -83,7 +83,7 @@
   .site-footer-col .site-footer-link { min-height: var(--tap); }
 }
 @media (min-width: 769px) {
-  .site-footer-inner { grid-template-columns: 280px minmax(0, 1fr); column-gap: var(--space-8); padding: var(--space-7) var(--space-6) var(--space-5); }
+  .site-footer-inner { grid-template-columns: 280px minmax(0, 1fr); column-gap: var(--space-8); padding: var(--space-7) var(--page-gutter) var(--space-5); }
   .site-footer-cols { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-5); }
   .site-footer-col { border-top: 0; }
   .site-footer-h { min-height: 0; margin-bottom: var(--space-2); cursor: default; pointer-events: none; }

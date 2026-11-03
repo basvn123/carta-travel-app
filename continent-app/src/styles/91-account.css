@@ -13,9 +13,9 @@
 .ac-panel { background: var(--surface-page); }
 .ac-page {
   width: 100%;
-  max-width: 1120px;
+  max-width: calc(var(--w-hub) + 2 * var(--page-gutter));  /* T1041: the hub width */
   margin: 0 auto;
-  padding: var(--space-4) var(--gutter) var(--space-8);
+  padding: var(--space-4) var(--page-gutter) var(--space-8);
   display: grid;
   gap: var(--space-5);
   box-sizing: border-box;
@@ -28,7 +28,7 @@
   .ac-page {
     grid-template-columns: 240px minmax(0, 1fr);
     gap: var(--space-7);
-    padding: var(--space-6) var(--space-6) var(--space-8);
+    padding: var(--space-6) var(--page-gutter) var(--space-8);
     align-items: start;
   }
   .ac-rail {

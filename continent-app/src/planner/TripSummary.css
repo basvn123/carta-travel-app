@@ -26,9 +26,9 @@
 /* ---- The page ---- */
 .tpg {
   width: 100%;
-  max-width: 1320px;
+  max-width: calc(var(--w-detail) + 2 * var(--page-gutter));  /* T1041: the detail width, as a place */
   margin: 0 auto;
-  padding: var(--space-2) var(--gutter) var(--space-8);
+  padding: var(--space-2) var(--page-gutter) var(--space-8);
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
@@ -36,7 +36,7 @@
 }
 
 @media (min-width: 769px) {
-  .tpg { padding: var(--space-4) var(--space-6) var(--space-8); }
+  .tpg { padding: var(--space-4) var(--page-gutter) var(--space-8); }
 }
 
 .tpg-top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); min-height: var(--tap); }
