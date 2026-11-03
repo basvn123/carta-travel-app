@@ -199,7 +199,8 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
    edges, the page's margin kept as their inner padding, so a row reads as
    one that scrolls rather than one cut off at the margin. */
 @media (max-width: 1023px) {
-  .pt-wrap .pt-tags, .pt-wrap .pt-jump, .pt-wrap .pcards, .pt-wrap .spots {
+  .pt-wrap .pt-tags, .pt-wrap .pt-jump, .pt-wrap .pcards, .pt-wrap .spots,
+  .pt-wrap .ar-kinds, .pt-wrap .ar-radius, .pt-wrap .ar-rail .storyr-strip {
     margin-left: calc(-1 * var(--pt-pad-l, var(--gutter)));
     margin-right: calc(-1 * var(--pt-pad-r, var(--gutter)));
     padding-left: var(--pt-pad-l, var(--gutter));
@@ -407,7 +408,6 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 a.pt-trip-name:hover { text-decoration: underline; }
 a.pt-trip-name:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .btn.pt-trip-name { padding: 0; }
-.pt-counts { margin-bottom: var(--space-2); }
 .pt-count-n { margin-left: var(--space-1); font-weight: 700; font-variant-numeric: tabular-nums; }
 
 /* When to go */
@@ -1088,3 +1088,15 @@ ul.pt-cells { list-style: none; margin: 0; padding: 0; }
 .dmap-pin.has-photo.is-dot .dmap-pin-in { padding: 2px; border: 1px solid var(--rule); background: var(--bg-card); box-shadow: var(--shadow-1); }
 .dmap-pin.has-photo.is-dot .dmap-pin-ph { width: 24px; height: 24px; }
 .dmap-pin.has-photo.is-dot::after { display: none; }
+
+/* ── Around (T1033): kinds, how far, the Explore rail ──
+   The kind chips (one swipe row on a phone), the distance steps as quieter
+   small chips under them, then the kind's places as the Explore StoryRail's
+   photo cards: no box, the words on the page under the photograph. */
+.ar { display: grid; gap: var(--space-3); min-width: 0; }
+.ui-chip-group.ar-kinds, .ui-chip-group.ar-radius { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+.ar-kinds::-webkit-scrollbar, .ar-radius::-webkit-scrollbar { display: none; }
+.ar-kinds > *, .ar-radius > * { flex: none; }
+@media (pointer: fine) { .ar-radius .ui-chip { min-height: 32px; padding: 0 var(--space-3); font-size: var(--text-label); } }
+.ar-rail.storyr { margin-top: var(--space-2); }
+.ar-rail .storyr-title { font-size: var(--text-body); }

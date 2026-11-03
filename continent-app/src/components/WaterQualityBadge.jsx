@@ -24,7 +24,7 @@ export function swimRelevant(dest) {
   return !!dest?.bathing_water && (dest.categories || []).some((c) => SWIM_CATS.has(c));
 }
 
-const CLASS_KEY = {
+export const CLASS_KEY = {
   Excellent: 'water.excellent',
   Good: 'water.good',
   Sufficient: 'water.sufficient',

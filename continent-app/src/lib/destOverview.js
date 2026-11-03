@@ -48,12 +48,18 @@ export function hashWithTab(hash, destId, tab) {
  * (the waymarked routes measured to their nearest point). Best first, then
  * nearest. Day trips keep the dossier's own order.
  */
+// T1033: the one list of outdoor kinds in the app. Each names where its rows
+// come from in the dossier ([part, key]; a `routes` part is read as route
+// rows) and how its card describes it (`facts`: route, height or water).
+// A new kind is one line here, plus what still lives elsewhere: its
+// dest.aroundKind.* label (six languages), its featureHref page and the
+// pipeline's AROUND_LAYERS / NEARBY_RULES that write its rows.
 export const AROUND_KINDS = [
-  { key: 'walks', layer: 'trails', loader: 'trail' },
-  { key: 'rides', layer: 'cycling', loader: 'cycling' },
-  { key: 'peaks', layer: 'mountains', loader: 'mountain' },
-  { key: 'lakes', layer: 'lakes', loader: 'lake' },
-  { key: 'beaches', layer: 'beaches', loader: 'beach' },
+  { key: 'walks', layer: 'trails', loader: 'trail', facts: 'route', from: [['around', 'trails'], ['nearby', 'trails'], ['routes', 'hiking']] },
+  { key: 'rides', layer: 'cycling', loader: 'cycling', facts: 'route', from: [['around', 'cycling'], ['nearby', 'cycling'], ['routes', 'cycling']] },
+  { key: 'peaks', layer: 'mountains', loader: 'mountain', facts: 'height', from: [['around', 'mountains'], ['nearby', 'mountains']] },
+  { key: 'lakes', layer: 'lakes', loader: 'lake', facts: 'water', from: [['around', 'lakes'], ['nearby', 'lakes']] },
+  { key: 'beaches', layer: 'beaches', loader: 'beach', facts: 'water', from: [['around', 'beaches'], ['nearby', 'beaches']] },
 ];
 export const AROUND_CAP = 16;
 
@@ -68,19 +74,11 @@ function routeAsRow(r) {
 }
 
 export function aroundCategories({ around = null, nearby = null, routes = null, trips = [] } = {}) {
-  const a = around || {};
-  const n = nearby || {};
-  const r = routes || {};
-  const sources = {
-    walks: [a.trails, n.trails, (r.hiking || []).map(routeAsRow)],
-    rides: [a.cycling, n.cycling, (r.cycling || []).map(routeAsRow)],
-    peaks: [a.mountains, n.mountains],
-    lakes: [a.lakes, n.lakes],
-    beaches: [a.beaches, n.beaches],
-  };
-  const cats = AROUND_KINDS.map(({ key, layer, loader }) => {
+  const parts = { around: around || {}, nearby: nearby || {}, routes: routes || {} };
+  const cats = AROUND_KINDS.map(({ key, layer, loader, facts, from }) => {
     const seen = new Map();
-    for (const list of sources[key]) {
+    const lists = from.map(([part, k]) => (part === 'routes' ? (parts.routes[k] || []).map(routeAsRow) : parts[part][k]));
+    for (const list of lists) {
       for (const f of list || []) {
         if (!f || f.id == null) continue;
         const id = String(f.id);
@@ -98,7 +96,9 @@ export function aroundCategories({ around = null, nearby = null, routes = null, 
     }
     const rows = [...seen.values()].sort((x, y) => (y.score ?? -1) - (x.score ?? -1)
       || (x.km ?? 99) - (y.km ?? 99));
-    return { key, layer, loader, rows: rows.slice(0, AROUND_CAP), count: rows.length };
+    // `all` keeps every row for a reader that filters (the place page's
+    // distance steps cut after filtering); `rows` is the capped best-first list.
+    return { key, layer, loader, facts, rows: rows.slice(0, AROUND_CAP), all: rows, count: rows.length };
   });
   const tripRows = (trips || []).slice(0, AROUND_CAP);
   cats.push({ key: 'trips', layer: 'trips', loader: null, rows: tripRows, count: (trips || []).length });
@@ -142,7 +142,7 @@ export function kindsList(nouns, lang = 'en') {
  * what the page lists. `km` is the radius that covers every row printed, so
  * the heading never claims less than the list shows.
  */
-const PDF_LAYERS = ['trails', 'cycling', 'mountains', 'lakes', 'beaches'];
+const PDF_LAYERS = AROUND_KINDS.map((k) => k.layer);
 export function pdfOutdoorRows(around, nearby, perLayer = 6) {
   const a = around || {};
   const n = nearby || {};

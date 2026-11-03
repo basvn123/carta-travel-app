@@ -5,7 +5,7 @@ import { BootIcon, CompassIcon, MusicIcon, SwimIcon, SparkIcon, MapPinIcon } fro
 import { FeaturePhoto } from './AroundHere.jsx';
 import { safeUrl } from '../lib/format.js';
 import { activityLink } from '../lib/activityAffiliates.js';
-import { natureRating, poiLabelWord } from '../lib/rating.js';
+import { poiLabelWord } from '../lib/rating.js';
 import { featureHref, linkOpener } from '../lib/featureHref.js';
 import { cleanName, fmtKm } from './destParts.js';
 import { doFacts } from '../lib/doFacts.js';
@@ -141,33 +141,6 @@ export function SightList({ items, lang, t }) {
         </li>
       ))}
     </ul>
-  );
-}
-
-/** A trail, ride, peak, lake or beach in reach, as a tile that is a link to
- *  its own page (row T491-l). */
-export function OutdoorTile({ f, t, onOpenFeature }) {
-  const ref = { id: f.id, cc: f.cc };
-  const href = onOpenFeature ? featureHref(f.layer, ref) : null;
-  return (
-    <Card
-      layout="tile"
-      className="dout"
-      media={<FeaturePhoto src={f.thumb} lat={f.lat} lon={f.lon} />}
-      title={cleanName(f.name)}
-      href={href || undefined}
-      onOpen={onOpenFeature
-        ? (href ? linkOpener(() => onOpenFeature(f.layer, ref)) : () => onOpenFeature(f.layer, ref))
-        : undefined}
-      meta={(
-        <span className="dtile-meta">
-          <span>{t(`dest.layerKind.${f.layer}`)}</span>
-          {f.km != null && <span>{`${fmtKm(f.km)}${f.bearing ? ` ${f.bearing}` : ''}`}</span>}
-          {f.km_len != null && <span>{t('dest.trackLong', { km: Math.round(f.km_len) })}</span>}
-        </span>
-      )}
-      rating={<ScoreChip rating={natureRating(f)} size="sm" />}
-    />
   );
 }
 

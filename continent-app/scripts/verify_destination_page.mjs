@@ -279,7 +279,6 @@ check('Rome prints its day figure as a plain amount, no estimate mark',
 await tab(page, 'Nearby');
 await scrollTo(page, '#sec-highlights');
 await page.waitForTimeout(1500);
-await page.locator('#sec-highlights .dphoto-all').click().catch(() => {});
 await page.waitForTimeout(800);
 await page.evaluate(() => {
   const card = Array.from(document.querySelectorAll('#sec-highlights .dhl2')).find((c) => /Pantheon/i.test(c.textContent));
@@ -365,7 +364,7 @@ await tab(phone, 'Nearby');
 // (#sec-around-*), so any photo track on Nearby counts, as long as one of
 // them overflows its width.
 const tracksSwipe = await phone.evaluate(() => Array.from(document.querySelectorAll(
-  '#sec-do .dphoto-strip, [id^="sec-around-"] .dphoto-strip, #sec-highlights .dphoto-strip',
+  '#pt-see .spots, #pt-around .ar-rail .storyr-strip',
 )).some((s) => s.scrollWidth > s.clientWidth + 20));
 check('phone photo tracks swipe sideways', tracksSwipe);
 await phone.screenshot({ path: 'shots/destp-phone.png' });
