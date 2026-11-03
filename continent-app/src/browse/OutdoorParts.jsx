@@ -4,7 +4,7 @@ import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { usePageArrival } from '../hooks/usePageArrival.js';
 import { useBaseDay } from '../hooks/useBaseDay.js';
 import { useDayView } from '../hooks/useDayView.js';
-import { Button, Chip } from '../components/ui/index.js';
+import { Button } from '../components/ui/index.js';
 import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import {
@@ -259,6 +259,7 @@ export function OutdoorPage({
   onShare = null, shareLabel = '', copied = false, resetKey, toast = null, following = false,
   photos = [], photoFallback = null,
   head, factsLead = null, facts = [], jumps = [], card = null, dock = null,
+  onPdf = null, pdfBusy = false, pdfModel = null,
   whyRates = null, sources = [], sourcesExtra = null, children,
 }) {
   const { t } = useI18n();
@@ -316,6 +317,8 @@ export function OutdoorPage({
         shareLabel={shareLabel || t('trails.shareLink')}
         copied={copied}
         copiedLabel={t('dest.linkCopied')}
+        onPdf={onPdf && pdfModel ? () => onPdf(pdfModel()) : null}
+        pdfBusy={pdfBusy}
       />
 
       <div className="tpage-scroll pt-scroll" ref={scrollRef}>
@@ -328,14 +331,16 @@ export function OutdoorPage({
               <header className="pt-head" ref={headRef}>
                 <h1 className="pt-title" tabIndex={-1}>{head.title}</h1>
                 {head.sub && <p className="pt-subtitle">{head.sub}</p>}
-                {head.where && (
-                  <p className="pt-where">
-                    {head.iso2 && <CountryFlag country={head.iso2} size={15} />}
-                    <span>{head.where}</span>
-                  </p>
-                )}
-                {(head.rating || head.gem || head.rank || head.badges?.length > 0) && (
-                  <div className="pt-badges">
+                {/* T1039 (owner: the place page's head): where and the rating on
+                    one line with no dot, the standing as tags on one row. */}
+                {(head.where || head.rating) && (
+                  <div className="pt-meta">
+                    {head.where && (
+                      <span className="pt-where">
+                        {head.iso2 && <CountryFlag country={head.iso2} size={15} />}
+                        <span>{head.where}</span>
+                      </span>
+                    )}
                     {head.rating && (whyRates && !head.rating.unscored ? (
                       <a className="pt-score" href="#ox-why" onClick={openWhy}>
                         <ScoreChip rating={head.rating} size="lg" band />
@@ -343,23 +348,29 @@ export function OutdoorPage({
                     ) : (
                       <span className="pt-score"><ScoreChip rating={head.rating} size="lg" band /></span>
                     ))}
-                    {head.gem && <HiddenGemTag />}
-                    {head.rank && <Chip kind="status" className="pt-badge">{head.rank}</Chip>}
-                    {(head.badges || []).filter(Boolean).map((b) => (
-                      <Chip key={b} kind="status" className="pt-badge">{b}</Chip>
-                    ))}
                   </div>
                 )}
-                {head.lead && <p className="pt-lead">{head.lead}</p>}
+                {(head.gem || head.rank || head.badges?.length > 0) && (
+                  <ul className="pt-tags">
+                    {head.gem && <li><HiddenGemTag /></li>}
+                    {head.rank && <li className="pt-tag is-rank">{head.rank}</li>}
+                    {(head.badges || []).filter(Boolean).map((b) => (
+                      <li key={b} className="pt-tag is-rank">{b}</li>
+                    ))}
+                  </ul>
+                )}
               </header>
+
+              {/* T1039: the tabs right under the head, as on the place page. */}
+              <JumpBar items={jumps} scrollRef={scrollRef} ready={`${resetKey}:${React.Children.count(children)}`}
+                label={t('detail.railAria')} />
+
+              {head.lead && <div className="pt-lead"><p className="pt-lead-first">{head.lead}</p></div>}
 
               {factsLead}
               <KeyFacts cells={facts} className={factsCls} />
 
               {!wide && card && <OxCard card={card} compact />}
-
-              <JumpBar items={jumps} scrollRef={scrollRef} ready={`${resetKey}:${React.Children.count(children)}`}
-                label={t('detail.railAria')} />
 
               {children}
 

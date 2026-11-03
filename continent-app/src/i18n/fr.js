@@ -6410,7 +6410,6 @@ export const fr = {
   "ox.card.walk": "La randonnée",
   "ox.card.day": "La journée",
   "ox.gpx": "GPX",
-  "ox.pdf": "PDF",
   "ox.otherWalks": "Autres randonnées à proximité",
   "ox.waves": "Vagues",
   "ox.waves.calm": "Calme",

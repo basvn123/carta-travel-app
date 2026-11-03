@@ -7111,7 +7111,6 @@ export const en = {
   "ox.card.walk": "The walk",
   "ox.card.day": "The day",
   "ox.gpx": "GPX",
-  "ox.pdf": "PDF",
   "ox.otherWalks": "Other walks nearby",
   "ox.waves": "Waves",
   "ox.waves.calm": "Calm",

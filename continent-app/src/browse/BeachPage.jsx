@@ -22,13 +22,13 @@ import {
 import { beachShareUrl, loadBeaches } from '../lib/beaches.js';
 import { trailheadDirectionsUrl, shareTrailLink } from '../lib/trailExport.js';
 import {
-  MapPinIcon, DownloadIcon, ParkingIcon, BottleIcon, DiningIcon, BedIcon, ShieldIcon,
+  MapPinIcon, ParkingIcon, BottleIcon, DiningIcon, BedIcon, ShieldIcon,
   TreeIcon, SunIcon, BeachIcon, RouteIcon, CheckIcon,
 } from '../components/Icons.jsx';
 import { beachFacing } from '../lib/derivedModules.js';
 import { CompassRosette } from './Signature.jsx';
 import { compassPoint } from '../lib/signature.js';
-import { Button } from '../components/ui/index.js';
+
 import {
   OutdoorPage, PSection, StayLine, RouteBlock, CheckRows, Facilities, WaterClass, MonthStrip,
   OtherNearby, OxLinkButton, outdoorPdfModel, monthIndex, useMonthWords, accessRows, pointRow,
@@ -272,6 +272,9 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
 
   return (
     <OutdoorPage
+      onPdf={onPdf}
+      pdfBusy={pdfBusy}
+      pdfModel={pdfModel}
       name={beach.name}
       className="bpage-v2"
       backLabel={backLabel || t('beach.back')}
@@ -307,10 +310,6 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
         onAdd,
         secondary: [
           <OxLinkButton key="dir" href={mapsUrl} icon={<MapPinIcon size={16} />}>{t('ox.directions')}</OxLinkButton>,
-          <Button key="pdf" variant="secondary" size="sm" loading={pdfBusy} iconStart={<DownloadIcon size={16} />}
-            onClick={() => onPdf(pdfModel())}>
-            {t('ox.pdf')}
-          </Button>,
         ],
         stay: beach.base?.id && beach.base.city ? (
           <StayLine destId={beach.base.id} city={beach.base.city} km={beach.base.km} onOpen={onSelectDest} />

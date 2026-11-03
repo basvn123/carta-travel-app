@@ -23,11 +23,11 @@ import {
 import { lakeShareUrl, loadLakes } from '../lib/lakes.js';
 import { trailheadDirectionsUrl, shareTrailLink } from '../lib/trailExport.js';
 import {
-  MapPinIcon, DownloadIcon, ParkingIcon, DiningIcon, BedIcon, ShieldIcon, SwimIcon, BootIcon,
+  MapPinIcon, ParkingIcon, DiningIcon, BedIcon, ShieldIcon, SwimIcon, BootIcon,
   BeachIcon, TicketIcon, FerryIcon, RouteIcon, CheckIcon, AlertIcon,
 } from '../components/Icons.jsx';
 import { lakeShore } from '../lib/derivedModules.js';
-import { Button } from '../components/ui/index.js';
+
 import {
   OutdoorPage, PSection, StayLine, RouteBlock, CheckRows, Facilities, WaterClass, MonthStrip,
   OtherNearby, OxLinkButton, outdoorPdfModel, monthIndex, useMonthWords, accessRows, pointRow,
@@ -270,6 +270,9 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, onOpenNeigh
 
   return (
     <OutdoorPage
+      onPdf={onPdf}
+      pdfBusy={pdfBusy}
+      pdfModel={pdfModel}
       name={lake.name}
       className="lpage-v2"
       backLabel={backLabel || t('lake.back')}
@@ -306,10 +309,6 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, onOpenNeigh
         onAdd,
         secondary: [
           <OxLinkButton key="dir" href={mapsUrl} icon={<MapPinIcon size={16} />}>{t('ox.directions')}</OxLinkButton>,
-          <Button key="pdf" variant="secondary" size="sm" loading={pdfBusy} iconStart={<DownloadIcon size={16} />}
-            onClick={() => onPdf(pdfModel())}>
-            {t('ox.pdf')}
-          </Button>,
         ],
         stay: lake.base?.id && lake.base.city ? (
           <StayLine destId={lake.base.id} city={lake.base.city} km={lake.base.km} onOpen={onSelectDest} />

@@ -612,7 +612,6 @@ export function DestinationPage({
         shareLabel={t('dest.share')}
         onPdf={d ? exportPdf : null}
         pdfBusy={pdfBusy}
-        pdfLabel={pdfBusy ? t('dest.pdfBuilding') : t('dest.pdf')}
         copied={copied}
         copiedLabel={t('dest.linkCopied')}
       />

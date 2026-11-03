@@ -37,7 +37,7 @@ export function PageBar({
       <div className="ipage-bar-acts">
         {onFav && <SaveButton fav={fav} onToggle={onFav} t={t} name={name} />}
         {onPdf && (
-          <IconButton className="tpage-bar-act" onClick={onPdf} label={pdfLabel} disabled={pdfBusy} aria-busy={pdfBusy || undefined}>
+          <IconButton className="tpage-bar-act" onClick={onPdf} label={pdfLabel || t(pdfBusy ? 'dest.pdfBuilding' : 'dest.pdf')} disabled={pdfBusy} aria-busy={pdfBusy || undefined}>
             <DownloadIcon size={18} />
           </IconButton>
         )}
