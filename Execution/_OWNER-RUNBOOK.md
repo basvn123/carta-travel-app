@@ -1,8 +1,8 @@
 # Owner runbook: your manual steps, in order, so the waves can run on their own
 
-Written 2026-10-04 from everything that was still open: `_OPEN-MASTER.md` (stages
+Written 2026-10-04 from everything that was still open: `archive/plans/_OPEN-MASTER.md` (stages
 and Part E, written 2026-10-02), the 282 open rows with Owner `user` in
-`_OPEN.md`, the wave log in `_WAVES.md` up to wave 15, and
+`_OPEN.md`, the wave log in `archive/plans/_WAVES.md` up to wave 15, and
 `P9/_OPEN-paid-runs.md`. Use this file to see what you have to do. `_OPEN.md`
 stays the record of every row, and a task report wins on detail. Every open
 owner row from 4 October appears below under its id, so nothing was dropped.
@@ -32,7 +32,7 @@ owner row from 4 October appears below under its id, so nothing was dropped.
 
 ## How it works
 
-Claude's code work runs in waves (`Execution/_WAVES.md`). A wave runs its
+Claude's code work runs in waves (`archive/plans/_WAVES.md`). A wave runs its
 sessions, skips any session that needs you, and the chain carries on. So
 everything in this file does one thing: it opens a gate. Each block says what
 you do, how long it takes, how you know it worked, what it unlocks, and the
@@ -92,7 +92,7 @@ when you have typed the command.
 
 To start a chain of waves, say:
 
-> Run waves N to M from Execution/_WAVES.md back to back. Skip any session whose
+> Run waves N to M from archive/plans/_WAVES.md back to back. Skip any session whose
 > gate is still open, note it in the wave log, and stop at the first GATED wave
 > whose stage is not done. Ask me before any push.
 
@@ -214,27 +214,27 @@ Design calls that free no session but close rows:
 | T084-c | trip-validator as a required check now? | Informational until F1 makes it green (inferred) | ok (2026-10-07) |
 | T062-c | Task number T062 is used twice | Renumber the P3 one to T062b in a housekeeping task | ok (2026-10-07) |
 | T265-c | Edit applied migration 006's comment, or close T035-c as is? | Close as is; 044 carries the correction (inferred) | ok (2026-10-07) |
-| T300-v | Commit `PARALLEL-WAVES-PLAN.md`, `_WAVES.md` and the `_queue` tools? | Yes (inferred) | ok (2026-10-07) |
+| T300-v | Commit `archive/plans/PARALLEL-WAVES-PLAN.md`, `archive/plans/_WAVES.md` and the `_queue` tools? | Yes (inferred) | ok (2026-10-07) |
 | T320-b, T252-c | Apply the secret-scan workflow fix written as a diff in the T320 report (the classifier refused it) | Yes; Claude applies it with you present | ok (2026-10-07) |
-| T320-a | Add the wave gate script to step 4 of `_WAVES.md` | Yes | ok (2026-10-07) |
+| T320-a | Add the wave gate script to step 4 of `archive/plans/_WAVES.md` | Yes | ok (2026-10-07) |
 | T143-d | Add `jsonschema>=4.23` to requirements.txt | Yes | ok (2026-10-07) |
 
 ## A6. Then say
 
 **Done 2026-10-07 by T362** (`Execution/P11/T362-owner-decisions-applied.md`): the rules are in the
 carta-design skill and `DESIGN.md`, 76 rows are closed in `_OPEN.md`, six work rows (T362-a to
-T362-f) are claimed by the catch-up waves 16b and 16c in `_WAVES.md`, and the four permissions are
+T362-f) are claimed by the catch-up waves 16b and 16c in `archive/plans/_WAVES.md`, and the four permissions are
 applied. The text below is kept as the record of what was asked.
 
-Wait until no wave is running (the last line of the wave log in `_WAVES.md`
+Wait until no wave is running (the last line of the wave log in `archive/plans/_WAVES.md`
 names the last wave, and `git worktree list` shows only the main checkout).
 Then:
 
 > Apply my answers in Execution/_OWNER-RUNBOOK.md block A: close or update each
 > answered row in _OPEN.md as "decided by owner <date>: <answer>", write the
 > approved design rules into the carta-design skill and DESIGN.md, apply the
-> permissions in A4, tick the same items in _OPEN-MASTER.md Part E, and table a
-> catch-up wave in _WAVES.md with every skipped session whose gate is now open.
+> permissions in A4, tick the same items in archive/plans/_OPEN-MASTER.md Part E, and table a
+> catch-up wave in archive/plans/_WAVES.md with every skipped session whose gate is now open.
 > Then run the catch-up wave.
 
 ---
@@ -562,7 +562,7 @@ The sentence for every item:
 - [ ] **F7. The heavy data lane waits for block G.** T104, T105, T120, T123,
   T106, T110, T114 to T119, T122, T133, T109 and T125 need the OSM extracts
   (30 GB) and elevation tiles (24 GB). Run them on the box or a CAX41, in the
-  order of the data-lane table in `_WAVES.md`. T122 and T125 need your answers
+  order of the data-lane table in `archive/plans/_WAVES.md`. T122 and T125 need your answers
   in A3.
 - [ ] **F8. The authoring pass** (owner-started generation lane, after block E):
   weather fallbacks per outdoor day (T170-a), arrival and departure facts
@@ -575,14 +575,14 @@ The sentence for every item:
 
 # Block G. Stage 7: the Hetzner box (about 2 days, mostly waiting)
 
-About EUR 6.60 a month. The full commands are in `_OPEN-MASTER.md` stage 7,
+About EUR 6.60 a month. The full commands are in `archive/plans/_OPEN-MASTER.md` stage 7,
 current since T299 (CX23, x86, IPv4 on). Never run a real step on the box while
 a laptop pipeline run is active. Push `main` first (C1): the box clones GitHub.
 
 - [ ] **G1. Hetzner project and token (T046-c).** Project "Carta", a Read and
   Write API token, `hcloud` on the laptop, `export HCLOUD_TOKEN=...` in the Git
   Bash window only. IPv4 is on by default (T046-a answered by T299).
-- [ ] **G2. Provision (T046-d).** The stock-wait loop in `_OPEN-MASTER.md` 7.2;
+- [ ] **G2. Provision (T046-d).** The stock-wait loop in `archive/plans/_OPEN-MASTER.md` 7.2;
   the bootstrap log must show "ok: architecture amd64" and end "finished, all
   steps ok".
 - [ ] **G3. Secrets file (T046-e).** `~/.config/carta/env` from `env.example`:
@@ -605,9 +605,9 @@ a laptop pipeline run is active. Push `main` first (C1): the box clones GitHub.
   against the multi-arch lab image; record the pgRouting version.
 - [ ] **G10. After each weekly run** that changed destinations, a deploy from
   the laptop (T262-a): pull `master-current`, `npm run build:pages`, deploy,
-  prune. The commands are at the end of `_OPEN-MASTER.md` 7.9.
+  prune. The commands are at the end of `archive/plans/_OPEN-MASTER.md` 7.9.
 - [ ] **G11. Finish the laptop clean-out (T045-e)** with the rclone checks in
-  `_OPEN-MASTER.md` 7.11, only after G7.
+  `archive/plans/_OPEN-MASTER.md` 7.11, only after G7.
 
 Then say: "Stage 7.9 done; run wave 18 and move the heavy data lane to the box."
 
@@ -615,7 +615,7 @@ Then say: "Stage 7.9 done; run wave 18 and move the heavy data lane to the box."
 
 # Block H. Stage 8: images on the CDN (short sessions over 2 weeks)
 
-Needs block G. The commands are in `_OPEN-MASTER.md` stage 8.
+Needs block G. The commands are in `archive/plans/_OPEN-MASTER.md` stage 8.
 
 - [ ] **H0. A Flickr API key (T127).** Create one at flickr.com/services/api and
   give it to Claude as a secret in the env file, never in the repository. Wave
