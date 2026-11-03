@@ -17,8 +17,11 @@ import { useSettleChanged } from '../components/ReceiptCard.jsx';
 import { FlightSheet } from '../components/FlightSheet.jsx';
 import { ReportProblem } from '../components/ReportProblem.jsx';
 import {
-  RouteIcon, BedIcon, DiningIcon, TicketIcon, BusIcon, CalendarIcon, PersonIcon, PencilIcon, ChevronDownIcon, ExternalIcon,
+  RouteIcon, BusIcon, CarIcon, TrainIcon, CalendarIcon, PersonIcon, PencilIcon, ChevronDownIcon, ExternalIcon,
 } from '../components/Icons.jsx';
+import { PlaneIcon } from '../components/TransportIcons.jsx';
+import { minutesText } from '../lib/journeys.js';
+import { tiersAt } from '../lib/stayPrice.js';
 import { matchProfile, PROFILE_LABEL_KEYS } from './LifestylePanel.jsx';
 import { legCost, googleFlightsLink } from '../lib/flights/flights.js';
 import { bagTier } from '../lib/flights/bagFees.js';
@@ -33,7 +36,6 @@ import { loadLiveStay } from '../lib/liveStays.js';
 import { rule } from '../lib/price/config.js';
 import { useDayView } from '../hooks/useDayView.js';
 import { PriceItems } from '../components/PriceItems.jsx';
-import { CostArc, CostRow } from '../components/CostCardKit.jsx';
 
 /**
  * The destination page's price card (T429): what a day here costs at the
@@ -73,9 +75,10 @@ import { CostArc, CostRow } from '../components/CostCardKit.jsx';
  * the card's foot; the page's primary under the card.
  */
 const MAX_PARTY = rule('party.limits').max_seats;   // T691: one cap
+const WAY_ICONS = { plane: PlaneIcon, train: TrainIcon, bus: BusIcon, car: CarIcon };
 
 export function DestPriceCard({
-  dest, city, onOpenLifestyle, onPlanTrip, onPlanDay, reportItem, doItems = null,
+  dest, city, onOpenLifestyle, onPlanTrip, onPlanDay, reportItem, doItems = null, ways = null,
   // T912: a number the page bumps when its foot bar asks for the inputs;
   // the card then opens its dates and takes the focus.
   openSignal = 0,
@@ -85,7 +88,6 @@ export function DestPriceCard({
   const view = useDayView();   // T694: per person or the group's total
   const airlines = useAirlines();
   const flightOff = !!view.request.excluded?.includes('flight');
-  const excluded = new Set(view.request.excluded || []);
   const uid = React.useId();
   const receiptKey = `dest:${dest.id}`;
   const [fare, setFare] = React.useState(() => readOwnFare(receiptKey));
@@ -94,6 +96,7 @@ export function DestPriceCard({
   const [pickEnd, setPickEnd] = React.useState('start');
   const [partyOpen, setPartyOpen] = React.useState(false);
   const [flightsOpen, setFlightsOpen] = React.useState(false);
+  const [modePick, setModePick] = React.useState(null);
   const datesBtnRef = React.useRef(null);
   React.useEffect(() => {
     if (!openSignal) return;
@@ -107,6 +110,7 @@ export function DestPriceCard({
     setDatesOpen(false);
     setPartyOpen(false);
     setFlightsOpen(false);
+    setModePick(null);
   }, [receiptKey]);
 
   const choices = ctx?.choices;
@@ -140,12 +144,19 @@ export function DestPriceCard({
   }).filter(Boolean).slice(0, 6), [doItems]);
   const [actsOn, setActsOn] = React.useState(() => new Set());
   const chosenActs = React.useMemo(() => pricedDo.filter((a) => actsOn.has(a.key)), [pricedDo, actsOn]);
+  // T1026: the way there the traveller picked among the page's ways (plane,
+  // train, bus, car); a typed fare keeps the plane, else the cheapest way.
+  const rows = ways?.rows || [];
+  const mode = rows.some((w) => w.mode === modePick) ? modePick
+    : fare || !rows.length ? 'plane' : (ways.cheapest || rows[0].mode);
+  const pickedWay = rows.find((w) => w.mode === mode) || null;
   const price = React.useMemo(
     // T695: a flight switched off in the opened price leaves the receipt.
     () => (flightOff
       ? quoteNights(costRow, nights, people, null, null, chosenActs)
-      : quoteNights(costRow, nights, people, fare, carta, chosenActs)),
-    [costRow, nights, people, fare, carta, flightOff, chosenActs],
+      : quoteNights(costRow, nights, people, fare, carta, chosenActs,
+        pickedWay && mode !== 'plane' ? { mode, total: pickedWay.perPerson * people } : null)),
+    [costRow, nights, people, fare, carta, flightOff, chosenActs, mode, pickedWay],
   );
   // T540: with the traveller's own dates, ask for tonight's hotel prices on
   // those nights; the cost index reprices the bed from them when they land.
@@ -225,46 +236,62 @@ export function DestPriceCard({
 
   const home = flightFile?.from || null;
   const cartaLine = price.lines.find((l) => l.key === 'flight' && l.carta) || null;
-  const flightLine = price.lines.find((l) => l.key === 'flight') || null;
-  const stayTotal = Math.round(price.lines.filter((l) => l.key !== 'flight').reduce((sum, l) => sum + l.eur, 0) * 100) / 100;
-
-  // What the day is made of, a person (T912): the engine's own lines that
-  // carry an amount; a part the data does not price is left out, never a
-  // zero. Each is one length of the arc in its ccard colour and one row
-  // under it; the bed and the food are the Lifestyle's, so they open it.
-  const lineEur = (key) => (costRow?.lines || []).find((l) => l.key === key && l.status === 'included' && l.eur != null)?.eur;
-  const split = [
-    { key: 'stay', Icon: BedIcon, label: t('destx.split.bed'), sub: t(`stay.${tier}`), eur: excluded.has('bed') ? null : costRow?.stayEur },
-    { key: 'food', Icon: DiningIcon, label: t('destx.split.food'), sub: vibe, eur: excluded.has('food') ? null : costRow?.foodEur },
-    { key: 'do', Icon: TicketIcon, label: t('destx.split.sights'), eur: lineEur('activities') },
-    { key: 'around', Icon: BusIcon, label: t('destx.split.around'), eur: lineEur('transport') },
-  ].map((r) => ({ ...r, eur: Number(r.eur) })).filter((r) => Number.isFinite(r.eur) && r.eur > 0);
   const datesText = from && to ? t('settings.datesRange', { start: shortDate(from), end: shortDate(to) }) : '';
-  const carriers = cartaLine ? [...new Set([carta.out?.airline, carta.back?.airline].filter(Boolean))] : [];
   const pill = (open) => `dpc-pill${open ? ' is-open' : ''}`;
+  const money = (v) => formatMoney(v, { precision: 'whole', locale: lang });
+  const minutesOf = (w) => (w.minutes ?? (Number.isFinite(w.hours) ? w.hours * 60 : null));
+  const timed = rows.filter((w) => minutesOf(w) != null);
+  const fastest = timed.length > 1 ? timed.reduce((a, b) => (minutesOf(b) < minutesOf(a) ? b : a)).mode : null;
+  const wayName = (w) => (w.mode === 'plane' ? (w.iata ? t('destx.flyToIata', { iata: w.iata }) : t('way.plane')) : t(`way.${w.mode}`));
+  const waySub = (w) => (w.mode === 'plane' && w.dep && w.arr
+    ? [t('destx.flightTimes', { dep: w.dep, arr: w.arr }), w.minutes ? minutesText(w.minutes) : ''].filter(Boolean)
+      .map((part, i, all) => <span key={part}>{part}{i < all.length - 1 ? ',' : ''}</span>)
+    : Number.isFinite(w.hours) ? t('destx.aboutTime', { time: minutesText(Math.round(w.hours * 60)) }) : '');
+  const offered = tiersAt(dest);
+  const lineLabel = (l) => (l.key === 'flight' ? (l.carta ? t('tp.tile.flights') : t('receipt.yourFlight'))
+    : l.key === 'way' ? t(`way.${l.mode}`)
+    : l.key === 'stay' ? t('receipt.stay', { nights: nightsText })
+    : l.key === 'ground' ? t('destx.split.food')
+    : l.key === 'car' ? t('price.item.car')
+    : l.key === 'transport' ? t('price.item.transport') : t('price.item.activities'));
+  const lineSub = (l) => (l.key === 'stay' ? t(`stay.${tier}`) : l.key === 'ground' ? vibe : '');
+  const opensLifestyle = (l) => onOpenLifestyle && (l.key === 'stay' || l.key === 'ground');
 
   return (
     <div className="dpc-wrap">
-      <section className="ccard dpc" aria-labelledby={`${uid}-h`}>
+      <section className="ccard tcard" aria-labelledby={`${uid}-h`}>
         <h3 className="sr-only" id={`${uid}-h`}>{t('dest.priceTitle', { nights: nightsText, city })}</h3>
 
-        {/* The two inputs the price depends on, as pills; the stay is the
-            Bed and Food rows' (they open the Lifestyle). */}
-        <div className="dpc-inputs" role="group" aria-label={t('receipt.stripAria')}>
-          <button type="button" className={pill(datesOpen)} ref={datesBtnRef}
-            aria-expanded={datesOpen} aria-controls={`${uid}-dates`} aria-label={`${t('settings.dates')}: ${datesText}`}
-            onClick={() => { setPickEnd('start'); setDatesOpen((v) => !v); setPartyOpen(false); }}>
-            <CalendarIcon size={16} />{datesText}
-          </button>
-          <button type="button" className={pill(partyOpen)}
-            aria-expanded={partyOpen} aria-controls={`${uid}-party`} aria-label={`${t('destx.travellers')}: ${peopleText}`}
-            onClick={() => { setPartyOpen((v) => !v); setDatesOpen(false); }}>
-            <PersonIcon size={16} />{peopleText}
-          </button>
+        {/* The band: the inputs, then the trip's total for the party (the
+            research's one anchor), then a person and a day under it. */}
+        <div className="tcard-band">
+          <div className="dpc-inputs" role="group" aria-label={t('receipt.stripAria')}>
+            <button type="button" className={pill(datesOpen)} ref={datesBtnRef}
+              aria-expanded={datesOpen} aria-controls={`${uid}-dates`} aria-label={`${t('settings.dates')}: ${datesText}`}
+              onClick={() => { setPickEnd('start'); setDatesOpen((v) => !v); setPartyOpen(false); }}>
+              <CalendarIcon size={16} />{datesText}
+            </button>
+            <button type="button" className={pill(partyOpen)}
+              aria-expanded={partyOpen} aria-controls={`${uid}-party`} aria-label={`${t('destx.travellers')}: ${peopleText}`}
+              onClick={() => { setPartyOpen((v) => !v); setDatesOpen(false); }}>
+              <PersonIcon size={16} />{peopleText}
+            </button>
+          </div>
+          <p className="tcard-total" ref={linesRef}>
+            <Money value={price.total} />
+            <span>{t('tc.forParty', { people: peopleText, nights: nightsText })}</span>
+          </p>
+          <p className="tcard-each" ref={dayRef}>
+            {price.each != null && <span>{t('tc.each', { price: money(price.each) })}</span>}
+            <PriceItems cost={costRow} way={carta?.perSeat > 0 ? { mode: 'plane', perPerson: carta.perSeat } : null}>
+              <Money value={view.day(price.dayEur)} />
+            </PriceItems>
+            <span>{view.unit}</span>
+          </p>
         </div>
 
         {datesOpen && (
-          <div className="dpc-sheet dprice-dates" id={`${uid}-dates`}>
+          <div className="dpc-sheet dprice-dates tcard-sheet" id={`${uid}-dates`}>
             <Segmented
               block
               className="dprice-ends"
@@ -303,7 +330,7 @@ export function DestPriceCard({
           </div>
         )}
         {partyOpen && (
-          <div className="dpc-party" id={`${uid}-party`}>
+          <div className="dpc-party tcard-sheet" id={`${uid}-party`}>
             <span className="pt-field-label">{t('settings.party')}</span>
             <Stepper value={people} min={1} max={MAX_PARTY} onChange={setPeople}
               ariaLabel={t('settings.partyAria', { n: people })}
@@ -311,80 +338,106 @@ export function DestPriceCard({
           </div>
         )}
 
-        {/* Plan rule 2 (2026-10-24): the amount and its unit, no estimate
-            mark; a tap opens the items in it (T695). */}
-        <CostArc parts={split}>
-          <p className="ccard-sum">
-            <span className="ccard-n" ref={dayRef}>
-              <PriceItems cost={costRow} way={carta?.perSeat > 0 ? { mode: 'plane', perPerson: carta.perSeat } : null}>
-                <Money value={view.day(price.dayEur)} />
-              </PriceItems>
-            </span>
-            <span className="ccard-unit">{view.unit}</span>
-          </p>
-        </CostArc>
-
-        {split.length > 0 && (
-          <ul className="ccard-rows is-plain" aria-label={t('destx.splitAria')}>
-            {split.map(({ key, Icon, label, sub, eur }) => (
-              <CostRow key={key} k={key} go={false} lead={<span className="ccard-ico"><Icon size={18} /></span>}
-                label={label} sub={sub} edits={!!(sub && onOpenLifestyle)} fig={<Money value={view.day(eur)} />}
-                onAct={sub && onOpenLifestyle ? onOpenLifestyle : null} popup actLabel={t('lifestyle.title')} />
-            ))}
-          </ul>
-        )}
-
-        {/* The trip at these inputs: the stay for the party, the way there
-            (its passes one tap away), and the total. */}
-        <dl className="dpc-trip" ref={linesRef}>
-          <div>
-            <dt>{nightsText}</dt>
-            <dd><Money value={stayTotal} precision="cents" /></dd>
-          </div>
-          {flightLine && (
-            <div>
-              <dt>
-                {cartaLine ? (
-                  <button type="button" className="dpc-flt-toggle" aria-expanded={flightsOpen} aria-controls={`${uid}-flights`}
-                    onClick={() => setFlightsOpen((v) => !v)}>
-                    <span className="dpc-marks">{carriers.map((c) => <AirlineMark key={c} code={c} size="sm" />)}</span>
-                    {t('tp.tile.flights')}
-                    <ChevronDownIcon size={14} />
-                  </button>
-                ) : t('receipt.yourFlight')}
-              </dt>
-              <dd><Money value={flightLine.eur} precision="cents" /></dd>
+        <div className="tcard-body">
+          {/* Getting there (T1026): every way that prices, one to pick; the
+              pick is the way there in the total. */}
+          {rows.length > 0 && (
+            <div className="tcard-part">
+              <h4 className="tcard-h">{ways?.from ? t('destx.gettingFrom', { place: ways.from }) : t('detail.gettingThere')}</h4>
+              <div className="tcard-ways" role="radiogroup" aria-label={t('detail.gettingThere')}>
+                {rows.map((w) => {
+                  const Icon = WAY_ICONS[w.mode] || RouteIcon;
+                  const on = w.mode === mode;
+                  return (
+                    <button type="button" key={w.mode} role="radio" aria-checked={on}
+                      className={`tcard-way${on ? ' is-on' : ''}`} onClick={() => { acted(); setModePick(w.mode); }}>
+                      <span className="tcard-way-ico" aria-hidden="true">
+                        {w.mode === 'plane' && w.airline ? <AirlineMark code={w.airline} size="sm" /> : <Icon size={18} />}
+                      </span>
+                      <span className="tcard-way-what">
+                        <span className="tcard-way-name">
+                          {wayName(w)}
+                          {rows.length > 1 && w.mode === ways.cheapest && <span className="tcard-badge is-cheap">{t('destx.cheapest')}</span>}
+                          {fastest === w.mode && fastest !== ways.cheapest && <span className="tcard-badge">{t('tc.fastest')}</span>}
+                        </span>
+                        <span className="tcard-way-sub">{waySub(w)}</span>
+                      </span>
+                      <span className="tcard-way-fig">
+                        <b>{money(w.perPerson)}</b>
+                        <small>{t('tc.returnEach')}</small>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+              {mode === 'plane' && (
+                <div className="tcard-acts">
+                  {cartaLine && (
+                    <Button variant="quiet" size="sm" aria-expanded={flightsOpen} aria-controls={`${uid}-flights`}
+                      iconEnd={<ChevronDownIcon size={14} />} className="tcard-more" onClick={() => setFlightsOpen((v) => !v)}>
+                      {t('tc.flightDetails')}
+                    </Button>
+                  )}
+                  <Button variant="quiet" size="sm" iconStart={<PencilIcon size={14} />} onClick={() => setSheetOpen(true)}>
+                    {fare ? t('receipt.changeFare') : t('tp.fl.change')}
+                  </Button>
+                </div>
+              )}
+              {mode === 'plane' && cartaLine && flightsOpen && (
+                <div className="dpc-flights tcard-flights" id={`${uid}-flights`}>
+                  <FlightPass dir="out" leg={withEnds(carta.out, home, airport)} paying={people} bagKey={bagKey} airlines={airlines} />
+                  <FlightPass dir="back" leg={withEnds(carta.back, airport, home)} paying={people} bagKey={bagKey} airlines={airlines} />
+                  <p className="dpc-flt-note">
+                    <a className="btn btn-secondary btn-sm jr-book" target="_blank" rel="noopener noreferrer"
+                      href={googleFlightsLink(home, airport, carta.out?.date, { back: carta.back?.date, lang })}
+                      aria-label={t('plan.findOn', { provider: 'Google Flights' })}>
+                      <span className="btn-label">{t('tp.book')}</span>
+                      <ExternalIcon size={13} />
+                    </a>
+                  </p>
+                </div>
+              )}
             </div>
           )}
-          <div className="is-big">
-            <dt>{t('destx.totalFor', { people: peopleText })}</dt>
-            <dd><Money value={price.total} precision="cents" /></dd>
-          </div>
-        </dl>
 
-        {cartaLine && flightsOpen && (
-          <div className="dpc-flights" id={`${uid}-flights`}>
-            <FlightPass dir="out" leg={withEnds(carta.out, home, airport)} paying={people} bagKey={bagKey} airlines={airlines} />
-            <FlightPass dir="back" leg={withEnds(carta.back, airport, home)} paying={people} bagKey={bagKey} airlines={airlines} />
-            <p className="dpc-flt-note">
-              <a className="btn btn-secondary btn-sm jr-book" target="_blank" rel="noopener noreferrer"
-                href={googleFlightsLink(home, airport, carta.out?.date, { back: carta.back?.date, lang })}
-                aria-label={t('plan.findOn', { provider: 'Google Flights' })}>
-                <span className="btn-label">{t('tp.book')}</span>
-                <ExternalIcon size={13} />
-              </a>
-            </p>
-          </div>
-        )}
-
-        <div className="ccard-foot">
-          {onPlanDay && (
-            <Button variant="quiet" size="sm" className="ccard-all" onClick={onPlanDay}>{t('destx.planOneDay')}</Button>
+          {/* Where you sleep (T1026, owner: "change stays"): the stay types
+              this place prices, one tap each; the same choice the Lifestyle
+              holds, so every card follows. */}
+          {offered.length > 1 && (
+            <div className="tcard-part">
+              <h4 className="tcard-h">{t('lifestyle.stay')}</h4>
+              <div className="tcard-chips" role="radiogroup" aria-label={t('lifestyle.stay')}>
+                {offered.map((k) => (
+                  <button type="button" key={k} role="radio" aria-checked={k === tier}
+                    className={`tcard-chip${k === tier ? ' is-on' : ''}`}
+                    onClick={() => { acted(); ctx.setChoices((prev) => ({ ...prev, stay_tier: k })); }}>
+                    {t(`stay.${k}`)}
+                  </button>
+                ))}
+              </div>
+            </div>
           )}
-          <Button variant="quiet" size="sm" className="ccard-paid dprice-fare" iconStart={<PencilIcon size={16} />}
-            onClick={() => setSheetOpen(true)}>
-            {fare ? t('receipt.changeFare') : t('trip.addOwnFare')}
-          </Button>
+
+          {/* The breakdown: every line of the total, the total under them. */}
+          <dl className="tcard-lines">
+            {price.lines.map((l) => (
+              <div key={l.key} className="tcard-line">
+                <dt>
+                  {opensLifestyle(l) ? (
+                    <button type="button" className="tcard-line-btn" aria-haspopup="dialog" onClick={onOpenLifestyle}>
+                      {lineLabel(l)}
+                      <small>{lineSub(l)}<PencilIcon size={12} /></small>
+                    </button>
+                  ) : lineLabel(l)}
+                </dt>
+                <dd><Money value={l.eur} /></dd>
+              </div>
+            ))}
+            <div className="tcard-line is-total">
+              <dt>{t('destx.totalFor', { people: peopleText })}</dt>
+              <dd><Money value={price.total} /></dd>
+            </div>
+          </dl>
         </div>
       </section>
 
@@ -401,11 +454,14 @@ export function DestPriceCard({
       )}
 
       {/* The page's one primary (hidden below 1024 px, where the foot bar
-          carries it). */}
+          carries it), and one day as a quiet link under it. */}
       {onPlanTrip && (
         <Button variant="primary" block className="destp-plan-btn" iconStart={<RouteIcon size={18} />} onClick={onPlanTrip}>
           {t('dest.planTrip')}
         </Button>
+      )}
+      {onPlanDay && (
+        <Button variant="quiet" size="sm" className="tcard-day" onClick={onPlanDay}>{t('destx.planOneDay')}</Button>
       )}
       {reportItem && (
         <div className="dprice-report">

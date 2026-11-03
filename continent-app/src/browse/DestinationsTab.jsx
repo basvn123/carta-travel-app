@@ -3093,9 +3093,10 @@ export function DestinationsTab({
       {t('dtab.fullList')}
     </Button>
   ) : null;
-  // The section's quick cuts sit on top (T622): the cuts that got no rail,
-  // and with the full list on, every cut.
-  const topStarters = opening && !mapOn ? (fullList ? openingDoors : openingRails.starters) : [];
+  // T1038 (owner: the filters under the tabs, tidier): the cuts that got no
+  // rail are presets of options already in All filters, so they leave the
+  // top; with the full list on, the doors to every rail stay.
+  const topStarters = opening && !mapOn && fullList ? openingDoors : [];
   const phoneViewPill = isDesktop ? null : viewPill;
   const quickBar = facetGroups.length > 0 || sortPill || fullListBtn || phoneViewPill ? (
     <FilterChipBar
@@ -3108,11 +3109,14 @@ export function DestinationsTab({
       allControls={isDesktop ? 'dtab-side' : undefined}
       lead={(
         <>
+          {/* T1038: the full list right after All filters, never wrapped
+              down to a second line. */}
+          {fullListBtn}
           {settings?.setCountryFilter && <CountriesButton s={settings} size="sm" className="qfbar-ctry" />}
           {sortPill}
         </>
       )}
-      trail={phoneViewPill ? <>{fullListBtn}{phoneViewPill}</> : fullListBtn}
+      trail={phoneViewPill}
       onAll={facetGroups.length > 0
         ? () => {
           if (isDesktop) setPaneOpen((v) => !v);

@@ -16,6 +16,7 @@ import { TripSettingsSheet } from './TripSettingsSheet.jsx';
 import { PlanHome } from './PlanHome.jsx';
 import { showKeptNext } from '../../lib/recommend/keptStore.js';
 import { CartaTrips } from './CartaTrips.jsx';
+import { PageBar } from '../../browse/PageBar.jsx';
 import { tripsStore } from '../tripsStore.js';
 import { useAuth } from '../../auth/AuthContext.jsx';
 
@@ -37,7 +38,7 @@ import { useAuth } from '../../auth/AuthContext.jsx';
  */
 export function PlanFlow({
   onNavigate, onCreated, onAddPast = null, onOpenJourney = null, onOpenPlan = null, destinations = null, pageOver = false,
-  openAt = null,
+  openAt = null, onInnerChange = null,
 }) {
   const { t, lang } = useI18n();
   const months = useMonths();
@@ -58,6 +59,16 @@ export function PlanFlow({
   const gearRef = useRef(null);
   const sheetRef = useRef(null);
   const Title = pageOver ? 'div' : 'h1';
+
+  // T1037 (owner): past the Plan opening the app's own head (the mark,
+  // together, account) gives way to the page bar on the page's ground,
+  // "Plan" as the way back, like every other inner page.
+  useEffect(() => { onInnerChange?.(screen !== 'home'); }, [screen, onInnerChange]);
+  useEffect(() => () => onInnerChange?.(false), [onInnerChange]);
+  const pageBar = (
+    <PageBar t={t} className="pf-bar" backLabel={t('dayws.crumbPlan')} onBack={() => setScreen('home')}
+      name={screen === 'carta' ? t('pf.carta.title') : ''} nameOn={screen === 'carta'} />
+  );
 
   // Every move lands at the top of the sheet, focus on its heading, so a
   // screen reader hears the new question and a phone shows its start.
@@ -123,12 +134,12 @@ export function PlanFlow({
   if (screen === 'carta') {
     return (
       <div className="pf is-carta" ref={sheetRef}>
+        {pageBar}
         <CartaTrips
           key={cartaStart?.n || 'carta'}
           initialStyle={cartaStart?.style || null}
           initialCountry={cartaStart?.cc || null}
-          titleTag={Title}
-          onBack={() => go('home')}
+          titleTag={Title}
           onOpenJourney={(id) => (onOpenJourney ? onOpenJourney(id) : onNavigate('trips'))}
         />
       </div>
@@ -205,8 +216,6 @@ export function PlanFlow({
         <SheetHead
           onBack={back}
           backLabel={t('pf.back')}
-          onClose={() => go('home')}
-          closeLabel={t('pf.close')}
           position={t('pf.position', { x: pos.index + 1, n: list.length })}
           marks={list.map((id) => ({ key: id, now: id === screen, done: settings.answered.includes(id) }))}
         />
@@ -222,6 +231,7 @@ export function PlanFlow({
 
   return (
     <div className="pf" ref={sheetRef}>
+      {pageBar}
       <PlanStage bar={bar} rail={rail} sheetLabel={t('pf.sheet')}>
         {body}
       </PlanStage>
@@ -363,7 +373,6 @@ function KindSheet({ value, onPick, onClose, onContinue, onPast }) {
   ];
   return (
     <div className="pf-step">
-      <SheetHead onClose={onClose} closeLabel={t('pf.close')} />
       <h2 className="pf-title" tabIndex={-1}>{t('pf.kind.title')}</h2>
       <ChoiceRows label={t('pf.kind.title')} options={options} value={[value]} onPick={onPick} />
       <div className="pf-foot">

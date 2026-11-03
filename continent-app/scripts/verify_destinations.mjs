@@ -77,7 +77,8 @@ for (const view of ['phone', 'desk']) {
   const seeAll = await page.$$eval('.dtab-all', (els) => els.map((e) => e.textContent.trim()));
   check(seeAll.every((s) => !/\d/.test(s)), `${tag}"See all" carries no figure`, seeAll.slice(0, 2).join(','));
   const starters = await page.$$eval('.dtab-starter', (els) => els.length);
-  check(starters >= 1, `${tag}"Try one" offers starters`, String(starters));
+  // T1038 (owner): the cuts with no rail live in All filters, not on top.
+  check(starters === 0, `${tag}no starter row at rest`, String(starters));
   const ids = await page.$$eval('.dtab-rails .dtab-item .card-title', (els) => els.map((e) => e.textContent.trim()));
   const dup = ids.length - new Set(ids).size;
   check(dup <= ids.length / 4, `${tag}rails mostly do not repeat each other`, `${dup} of ${ids.length}`);

@@ -47,6 +47,17 @@ test("a typed fare is added first, as the traveller's own figure", () => {
   assert.equal(quoteNights(rome, 7, 2, { costTotal: 0 }).lines.length, 2);
 });
 
+test("a picked way there stands where the flight would (T1026)", () => {
+  const r = quoteNights(rome, 7, 2, { costTotal: 117.96 }, null, [], { mode: "train", total: 200 });
+  assert.equal(r.lines[0].key, "way");
+  assert.equal(r.lines[0].mode, "train");
+  assert.equal(r.lines.filter((l) => l.key === "flight").length, 0);
+  assert.equal(r.total, 1420.38);
+  // The plane as the pick, or a way with no price, keeps the flight.
+  assert.equal(quoteNights(rome, 7, 2, { costTotal: 117.96 }, null, [], { mode: "plane", total: 90 }).total, 1338.34);
+  assert.equal(quoteNights(rome, 7, 2, { costTotal: 117.96 }, null, [], { mode: "car", total: 0 }).lines[0].key, "flight");
+});
+
 test("nights and party are whole and at least one", () => {
   const r = quoteNights(rome, 0, 0);
   assert.equal(r.nights, 1);

@@ -822,6 +822,9 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
 
   return (
     <OutdoorPage
+      onPdf={onPdf}
+      pdfBusy={pdfBusy}
+      pdfModel={pdfModel}
       name={title}
       className="cycle-dpage"
       backLabel={backLabel || t('detail.backCycle')}
@@ -896,18 +899,10 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
             profile={hasElev ? (
               <HeightProfile elevation={carta.elevation} plain onScrub={highlightAt} markM={markM} testId="cycle-elev" />
             ) : null}
-            actions={(gpxText || route || tour) ? (
-              <>
-                {gpxText && (
-                  <Button variant="secondary" size="sm" iconStart={<DownloadIcon size={16} />} onClick={onGpx}>
-                    {t('cycle.gpx')}
-                  </Button>
-                )}
-                <Button variant="secondary" size="sm" loading={pdfBusy} iconStart={<DownloadIcon size={16} />}
-                  onClick={() => onPdf(pdfModel())}>
-                  {t('ox.pdf')}
-                </Button>
-              </>
+            actions={gpxText ? (
+              <Button variant="secondary" size="sm" iconStart={<DownloadIcon size={16} />} onClick={onGpx}>
+                {t('cycle.gpx')}
+              </Button>
             ) : null}
           />
       </PSection>

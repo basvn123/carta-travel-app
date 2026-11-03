@@ -35,8 +35,14 @@ const round2 = (v) => Math.round(v * 100) / 100;
  * in the calculator, [{ eur }] a person for the visit (lib/price/doPrice.js);
  * off by default, so the total is the reference amount until one is on, and
  * switching one on adds exactly its price times the party (V9).
+ *
+ * `way` (T1026): the way there the traveller picked on the place page when it
+ * is not the plane, { mode: 'train' | 'bus' | 'car', total } for the party,
+ * return (browse/placeWays.js). It stands where the flight would, so the
+ * total is the trip by that way; without it the flight (typed or Carta's) is
+ * the way there, as before.
  */
-export function quoteNights(costRow, nights, people, fare = null, carta = null, activities = []) {
+export function quoteNights(costRow, nights, people, fare = null, carta = null, activities = [], way = null) {
   if (costRow?.stayEur == null || costRow?.foodEur == null) return null;
   const stay = Number(costRow.stayEur);
   const food = Number(costRow.foodEur);
@@ -49,7 +55,9 @@ export function quoteNights(costRow, nights, people, fare = null, carta = null, 
   const off = new Set((costRow.lines || []).filter((l) => l.status === 'excluded').map((l) => l.key));
   const lines = [];
   const fareEur = Number(fare?.costTotal);
-  if (Number.isFinite(fareEur) && fareEur > 0) {
+  if (way && way.mode !== 'plane' && way.total > 0) {
+    lines.push({ key: 'way', mode: way.mode, eur: round2(way.total), est: true });
+  } else if (Number.isFinite(fareEur) && fareEur > 0) {
     lines.push({ key: 'flight', eur: round2(fareEur), est: false });
   } else if (carta?.total > 0) {
     lines.push({ key: 'flight', eur: round2(carta.total), est: false, carta });

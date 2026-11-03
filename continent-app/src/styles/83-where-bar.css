@@ -329,12 +329,9 @@
   }
   /* One pane for the filters: the chips' groups are all in the sheet. */
   .qfbar .qfbar-chip { display: none; }
-  .qfbar-row { flex-wrap: wrap; overflow: visible; }
-  .qfbar-trail { margin-left: auto; padding-left: 0; }
-  .dtab-starters.is-top {
-    flex-wrap: wrap;
-    overflow: visible;
-    margin: 0 0 var(--space-4);
-    padding: 0;
-  }
+  /* T1038: one swipe row (All filters, Full list, Countries, Sort, Map),
+     never a second line; the rail doors under it one swipe row too. */
+  .qfbar-row { flex-wrap: nowrap; }
+  .qfbar-trail { margin-left: auto; padding-left: var(--space-2); }
+  .dtab-starters.is-top { margin: 0 0 var(--space-3); }
 }

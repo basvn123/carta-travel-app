@@ -25,7 +25,7 @@ import {
 import { mountainShareUrl, loadMountains } from '../lib/mountains.js';
 import { trailheadDirectionsUrl, shareTrailLink } from '../lib/trailExport.js';
 import {
-  MapPinIcon, DownloadIcon, BedIcon, GondolaIcon, RouteIcon, ChevronRightIcon, SnowIcon,
+  MapPinIcon, BedIcon, GondolaIcon, RouteIcon, ChevronRightIcon, SnowIcon,
   StormIcon, FriendsIcon, MountainIcon, ParkingIcon,
 } from '../components/Icons.jsx';
 import { rangeRankLine, slopeFact, liftFareLine, flankHuts, SummitForecast } from './PeakFacts.jsx';
@@ -380,6 +380,9 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
 
   return (
     <OutdoorPage
+      onPdf={onPdf}
+      pdfBusy={pdfBusy}
+      pdfModel={pdfModel}
       name={mountain.name}
       className="mpage-v2"
       backLabel={backLabel || t('mtn.back')}
@@ -423,10 +426,6 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
             </Button>
           ) : null,
           <OxLinkButton key="dir" href={mapsUrl} icon={<MapPinIcon size={16} />}>{t('ox.directions')}</OxLinkButton>,
-          <Button key="pdf" variant="secondary" size="sm" loading={pdfBusy} iconStart={<DownloadIcon size={16} />}
-            onClick={() => onPdf(pdfModel())}>
-            {t('ox.pdf')}
-          </Button>,
         ],
         stay: mountain.near?.dest_id && mountain.near.city ? (
           <StayLine destId={mountain.near.dest_id} city={mountain.near.city} km={mountain.near.km} onOpen={onSelectDest} />

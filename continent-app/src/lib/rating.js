@@ -27,6 +27,14 @@ export const PART_WEIGHTS = Object.freeze(Object.fromEntries(
   Object.entries(RATING.weights_v5).filter(([k]) => !k.startsWith('_')),
 ));
 
+/** How far two parts reach (T1029: their labels say it): beauty's setting
+ *  in km, depth's reach in minutes by road (reach_km straight x 1.3 detour
+ *  at 65 km/h, as config/rating.json's depth note has it). */
+export const PART_REACH = Object.freeze({
+  km: RATING.beauty?.setting_km ?? null,
+  min: RATING.depth?.reach_km != null ? Math.round((RATING.depth.reach_km * 1.3) / 65 * 60) : null,
+});
+
 /** The band a score falls in, or null under the lowest cutoff. */
 export function bandForScore(score) {
   const s = Number(score);
@@ -110,11 +118,17 @@ const CLASS_RANK_MIN_PCT = 90;
  * scope }), or '' outside the top 10% of the class.
  */
 export function classRankLine(rating, t) {
+  const r = classRank(rating);
+  return r?.top ? t('rating.classRank', { pct: r.top, cls: t(`rating.class.${r.cls}`) }) : '';
+}
+
+/** The class rank as numbers: { cls, pct, top }, `top` (the "Top n%")
+ *  only inside the top tenth; null without a rank. */
+export function classRank(rating) {
   const cr = rating?.class_rank;
   const pct = Number(cr?.pct);
-  if (!cr?.class || !Number.isFinite(pct) || pct < CLASS_RANK_MIN_PCT) return '';
-  const top = Math.max(1, Math.round(100 - pct));
-  return t('rating.classRank', { pct: top, cls: t(`rating.class.${cr.class}`) });
+  if (!cr?.class || !Number.isFinite(pct)) return null;
+  return { cls: cr.class, pct: Math.round(pct), top: pct >= CLASS_RANK_MIN_PCT ? Math.max(1, Math.round(100 - pct)) : null };
 }
 
 /**

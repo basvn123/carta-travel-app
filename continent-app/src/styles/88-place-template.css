@@ -190,7 +190,7 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
   font-weight: 600;
   color: var(--text-2);
 }
-.pt-score { display: inline-flex; align-items: center; min-height: var(--tap); border-radius: var(--radius-control); color: inherit; text-decoration: none; }
+.pt-score { display: inline-flex; align-items: center; min-height: var(--tap); padding: 0; border: 0; border-radius: var(--radius-control); background: none; font: inherit; color: inherit; text-decoration: none; cursor: pointer; }
 .pt-score:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .pt-tags { list-style: none; margin: 0; padding: 0; display: flex; gap: var(--space-2); overflow-x: auto; scrollbar-width: none; }
 .pt-tags::-webkit-scrollbar { display: none; }
@@ -199,7 +199,8 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
    edges, the page's margin kept as their inner padding, so a row reads as
    one that scrolls rather than one cut off at the margin. */
 @media (max-width: 1023px) {
-  .pt-wrap .pt-tags, .pt-wrap .pt-jump {
+  .pt-wrap .pt-tags, .pt-wrap .pt-jump, .pt-wrap .pcards, .pt-wrap .spots,
+  .pt-wrap .ar-radius {
     margin-left: calc(-1 * var(--pt-pad-l, var(--gutter)));
     margin-right: calc(-1 * var(--pt-pad-r, var(--gutter)));
     padding-left: var(--pt-pad-l, var(--gutter));
@@ -313,7 +314,6 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 .pt-block-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
 .pt-block-title { margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); }
 .pt-muted { margin: 0; font-size: var(--text-label); color: var(--text-2); }
-.pt-more { justify-self: start; }
 
 /* Good to know */
 .pt-tips { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
@@ -350,17 +350,6 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 /* What to see */
 .pt-see { display: grid; gap: var(--space-4); }
 @media (min-width: 700px) { .pt-see.has-map { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; } }
-.pt-sights, .pt-dolist { list-style: none; margin: 0; padding: 0; display: grid; }
-.pt-sights li, .pt-dolist li {
-  display: grid;
-  grid-template-columns: 24px 56px 1fr;
-  gap: var(--space-3);
-  align-items: center;
-  padding: var(--space-2) 0;
-  border-top: 1px solid var(--border-soft);
-}
-.pt-dolist li { grid-template-columns: 56px 1fr; }
-.pt-sights li:first-child, .pt-dolist li:first-child { border-top: 0; padding-top: 0; }
 .pt-num {
   width: 24px;
   height: 24px;
@@ -373,14 +362,6 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
   text-align: center;
   font-variant-numeric: tabular-nums;
 }
-.pt-sights li.is-focus .pt-num { background: var(--action); color: var(--action-text); }
-.pt-sights li.is-hover .pt-sight-text b { text-decoration: underline; }
-.pt-thumb { width: 56px; height: 56px; border-radius: var(--radius-control); object-fit: cover; display: block; background: var(--surface-sunken); }
-.pt-thumb.is-blank { display: grid; place-items: center; color: var(--text-3); }
-.pt-sight-text { display: grid; gap: 2px; min-width: 0; }
-.pt-sight-text b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
-.pt-sight-text b a { color: inherit; }
-.pt-sight-text small { font-size: var(--text-caption); color: var(--text-2); }
 .pt-mapbox { position: relative; border-radius: var(--radius-card); overflow: hidden; background: var(--surface-sunken); min-height: 240px; }
 .pt-mapbox .dmap, .pt-mapbox .place-map { border-radius: 0; }
 .pt-mapbox .place-map-wait { height: 340px; }
@@ -409,25 +390,6 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 .pt-step-gap { display: inline-flex; align-items: center; gap: 2px; font-size: var(--text-caption); color: var(--text-3); font-variant-numeric: tabular-nums; }
 
 /* Around */
-.pt-trips { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
-@media (min-width: 700px) { .pt-trips { grid-template-columns: 1fr 1fr; } }
-.pt-trip {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: 2px var(--space-3);
-  padding: var(--space-2) var(--space-4);
-  background: var(--surface);
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius-card);
-  min-width: 0;
-}
-.pt-trip small { grid-column: 1 / -1; font-size: var(--text-label); color: var(--text-2); }
-.pt-trip-name { font-size: var(--text-lead); font-weight: 600; color: var(--text); text-decoration: none; justify-self: start; min-height: 32px; display: inline-flex; align-items: center; }
-a.pt-trip-name:hover { text-decoration: underline; }
-a.pt-trip-name:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-.btn.pt-trip-name { padding: 0; }
-.pt-counts { margin-bottom: var(--space-2); }
 .pt-count-n { margin-left: var(--space-1); font-weight: 700; font-variant-numeric: tabular-nums; }
 
 /* When to go */
@@ -455,27 +417,6 @@ a.pt-trip-name:focus-visible { outline: 2px solid var(--focus); outline-offset: 
 .pt-fest-name { display: grid; gap: 2px; color: var(--text); }
 .pt-fest-name small { font-size: var(--text-caption); color: var(--text-2); }
 
-/* Where to stay */
-.pt-out { display: grid; gap: var(--space-2); justify-items: start; }
-.pt-outs { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.pt-linkbtn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: var(--tap);
-  padding: 0 var(--space-4);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-control);
-  background: var(--surface);
-  font-size: var(--text-label);
-  font-weight: 600;
-  color: var(--text);
-  text-decoration: none;
-}
-@media (hover: hover) { .pt-linkbtn:hover { background: var(--surface-hover); } }
-.pt-linkbtn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-@media (pointer: fine) { .pt-linkbtn { min-height: 36px; } }
-
 /* Getting there */
 .pt-ways { list-style: none; margin: 0; padding: var(--space-1) var(--space-4); display: grid; background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-card); }
 .pt-way { display: grid; grid-template-columns: 24px 1fr auto; gap: var(--space-3); align-items: center; padding: var(--space-3) 0; border-top: 1px solid var(--border-soft); }
@@ -499,15 +440,100 @@ a.pt-trip-name:focus-visible { outline: 2px solid var(--focus); outline-offset: 
   font-weight: 600;
 }
 
-/* Practical */
-.pt-qf { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; margin: 0; background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-card); overflow: hidden; }
+/* Practical (T1027, T1028). One card shape for every fact, on the same
+   ground as the quick-fact tiles under it: a 44 px slot (an umber icon, or
+   the sight's photograph), a small label, the fact in ink, a quieter line,
+   the links pinned to the foot. One accent (umber); a warning differs only
+   in its slot's amber. A swipe row of equal cards on a phone; from 700 px
+   a three-column grid of equal rows, the last card widening to close its
+   row, so every edge lines up with the tiles below. */
+.pcards {
+  list-style: none;
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0 0 var(--space-1);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+.pcards::-webkit-scrollbar { display: none; }
+.pcard {
+  flex: none;
+  width: min(256px, 74vw);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+  min-height: 188px;
+  padding: var(--space-4);
+  border-radius: 14px;
+  background: var(--surface-sunken);
+  scroll-snap-align: start;
+}
+.pcard-slot {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  margin-bottom: var(--space-2);
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--umber-100);
+  color: var(--umber-700);
+}
+.pcard-slot img { width: 100%; height: 100%; object-fit: cover; }
+.pcard.is-warn .pcard-slot { background: var(--amber-bg); color: var(--amber-ink); }
+.pcard-title { margin: 0; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.pcard-value { margin: 0; font-size: var(--text-body); font-weight: 700; line-height: 1.3; color: var(--text); }
+.pcard-text { margin: 0; font-size: var(--text-label); line-height: var(--leading-ui); color: var(--text); text-wrap: pretty; }
+.pcard-value + .pcard-text { color: var(--text-2); }
+
+/* The links at the card's foot: the first a small umber button, the rest
+   a quiet link under it, so every card's foot is the same shape. */
+.pcard-links { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); margin-top: auto; padding-top: var(--space-3); }
+.pcard-go {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--umber-700);
+  color: var(--umber-50);
+  font-size: var(--text-label);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background var(--dur-2) var(--ease-out);
+}
+@media (hover: hover) { .pcard-go:hover { background: var(--umber-800); } }
+.pcard-alt { font-size: var(--text-label); font-weight: 600; color: var(--umber-700); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--umber-200); }
+.pcard-go:focus-visible, .pcard-alt:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+@media (pointer: coarse) { .pcard-go, .pcard-alt { min-height: var(--tap); display: inline-flex; align-items: center; } }
+@media (prefers-reduced-motion: reduce) { .pcard-go { transition: none; } }
+
+@media (min-width: 700px) {
+  .pt-wrap .pcards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; padding: 0; overflow: visible; }
+  .pcard { width: auto; min-height: 0; }
+  .pcard:last-child:nth-child(3n + 2) { grid-column: span 2; }
+  .pcard:last-child:nth-child(3n + 1) { grid-column: 1 / -1; }
+}
+
+/* The quick facts: soft tiles on the page's ground, like the key facts. */
+.pt-qf { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin: 0; }
 @media (min-width: 700px) { .pt-qf { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-.pt-qf > div { background: var(--surface); outline: 1px solid var(--border-soft); padding: var(--space-2) var(--space-3); display: grid; gap: 1px; min-width: 0; }
-.pt-qf dt { font-size: var(--text-caption); font-weight: 600; color: var(--text-3); }
+.pt-qf > div { display: grid; align-content: start; gap: 2px; min-width: 0; padding: var(--space-3) var(--space-4); border-radius: 14px; background: var(--surface-sunken); }
+.pt-qf dt { font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
 .pt-qf dd { margin: 0; font-size: var(--text-body); font-weight: 600; color: var(--text); }
-.pt-dl { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .pt-folds { margin-top: 0; }
 .pt-fold { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-card); padding: 0 var(--space-4); }
+/* On the place page the sources read as the folds above them: a row
+   under a rule, no box (T1028). */
+#pt-practical .pt-fold { background: none; border: 0; border-bottom: 1px solid var(--border-soft); border-radius: 0; padding: 0; }
+#pt-practical .pt-fold summary { min-height: 52px; font-size: 16px; }
 .pt-fold summary {
   min-height: var(--tap);
   display: flex;
@@ -596,7 +622,6 @@ a.pt-trip-name:focus-visible { outline: 2px solid var(--focus); outline-offset: 
    a pill opens, the trip lines under the rows, and the flight passes one
    tap away under Flights. Cream on umber throughout, never grey. */
 .dpc-wrap { display: grid; gap: var(--space-4); min-width: 0; }
-.ccard.dpc { gap: var(--space-3); padding: var(--space-4); }
 
 .dpc-inputs { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .dpc-pill {
@@ -626,35 +651,109 @@ a.pt-trip-name:focus-visible { outline: 2px solid var(--focus); outline-offset: 
 .dpc-sheet { display: grid; gap: var(--space-3); padding: var(--space-3); }
 .dpc-party { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-2) var(--space-3); }
 
-.dpc-trip { display: grid; gap: var(--space-1); margin: 0; padding-top: var(--space-2); border-top: 1px solid var(--ccard-line); font-size: var(--text-body); color: var(--ccard-ink-2); }
-.dpc-trip > div { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); min-height: 36px; }
-.dpc-trip dt { min-width: 0; }
-.dpc-trip dd { margin: 0; color: var(--ccard-ink); font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.dpc-trip .is-big { padding-top: var(--space-1); font-size: var(--text-lead); }
-.dpc-trip .is-big dt { color: var(--ccard-ink); font-weight: 700; }
-.dpc-trip .is-big dd { font-size: var(--text-title); font-weight: 800; letter-spacing: -0.02em; }
+/* ── The trip card (T1026): the total, the way there, the stay ──
+   The umber cost card's ground (.ccard tokens), in two parts: the band
+   (the dates and party pills, the trip's total for the party, then a
+   person and a day), and the body (the ways there to pick, the stay types
+   to pick, the lines of the total). The picked way and stay wear the open
+   pill's cream fill; everything else stays cream on umber, never white. */
+.ccard.tcard { gap: 0; padding: 0; }
+.tcard-band { display: grid; gap: var(--space-1); padding: var(--space-4); }
+.tcard-band .dpc-inputs { margin-bottom: var(--space-3); }
+.tcard-total { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-2); margin: 0; }
+.tcard-total .money { font-size: 40px; font-weight: 800; line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; color: var(--ccard-ink); }
+.tcard-total > span { font-size: var(--text-label); color: var(--ccard-ink-2); }
+.tcard-each { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--space-1); margin: 0; font-size: var(--text-label); color: var(--ccard-ink-2); font-variant-numeric: tabular-nums; }
+.tcard-each > span:first-child::after { content: ","; }
+.tcard-each .money { color: var(--ccard-ink); font-weight: 700; }
+.tcard-sheet { margin: 0 var(--space-4) var(--space-3); }
 
-.dpc-flt-toggle {
-  display: inline-flex;
+.tcard-body { display: grid; gap: var(--space-5); padding: var(--space-4); border-top: 1px solid var(--ccard-line); }
+.tcard-part { display: grid; gap: var(--space-2); min-width: 0; }
+.tcard-h { margin: 0; font-size: var(--text-label); font-weight: 700; color: var(--ccard-ink); }
+
+/* The ways there: one to pick; the price on the right, tabular. */
+.tcard-ways { display: grid; gap: var(--space-1); }
+.tcard-way {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
   align-items: center;
-  gap: var(--space-2);
-  min-height: 36px;
-  margin-left: calc(-1 * var(--space-1));
-  padding: 0 var(--space-1);
+  gap: var(--space-3);
+  min-height: 56px;
+  padding: var(--space-2) var(--space-3);
   border: 0;
   border-radius: var(--radius-control);
-  background: none;
-  color: inherit;
+  background: color-mix(in srgb, var(--umber-50) 8%, transparent);
+  color: var(--ccard-ink);
   font: inherit;
+  text-align: left;
   cursor: pointer;
+  transition: background var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out);
 }
-.dpc-flt-toggle svg { transition: transform var(--dur-2) var(--ease-out); }
-.dpc-flt-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
-@media (hover: hover) { .dpc-flt-toggle:hover { color: var(--ccard-ink); } }
-.dpc-flt-toggle:focus-visible { outline: 2px solid var(--umber-50); outline-offset: 2px; }
-.dpc-marks { display: inline-flex; }
-.dpc-marks .flt-mark { width: 24px; height: 24px; border-radius: 50%; background: var(--surface); box-shadow: 0 0 0 2px var(--ccard-travel); }
-.dpc-marks .flt-mark + .flt-mark { margin-left: -8px; }
+@media (hover: hover) { .tcard-way:not(.is-on):hover { background: color-mix(in srgb, var(--umber-50) 16%, transparent); } }
+.tcard-way:focus-visible, .tcard-chip:focus-visible, .tcard-line-btn:focus-visible { outline: 2px solid var(--umber-50); outline-offset: 2px; }
+.tcard-way.is-on { background: var(--umber-50); color: var(--umber-800); }
+.tcard-way-ico { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: color-mix(in srgb, var(--umber-50) 14%, transparent); }
+.tcard-way.is-on .tcard-way-ico { background: var(--umber-100); }
+.tcard-way-ico .flt-mark { width: 24px; height: 24px; border-radius: 50%; background: var(--surface); }
+.tcard-way-what { display: grid; gap: 2px; min-width: 0; }
+.tcard-way-name { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); font-weight: 700; font-size: var(--text-body); }
+.tcard-way-sub { display: flex; flex-wrap: wrap; gap: 0 4px; font-size: var(--text-caption); color: var(--ccard-ink-2); }
+.tcard-way.is-on .tcard-way-sub, .tcard-way.is-on .tcard-way-fig small { color: var(--umber-600); }
+.tcard-way-fig { display: grid; justify-items: end; gap: 2px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.tcard-way-fig b { font-size: var(--text-lead); font-weight: 800; }
+.tcard-way-fig small { font-size: var(--text-caption); color: var(--ccard-ink-2); }
+.tcard-badge { display: inline-flex; align-items: center; min-height: 20px; padding: 0 var(--space-2); border-radius: var(--radius-pill); background: color-mix(in srgb, var(--umber-50) 16%, transparent); font-size: 11px; font-weight: 700; letter-spacing: 0.01em; }
+.tcard-badge.is-cheap { background: var(--sun-400); color: var(--umber-800); }
+.tcard-way.is-on .tcard-badge:not(.is-cheap) { background: var(--umber-100); }
+
+.tcard-acts { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-2); }
+.ccard .tcard-acts .btn, .ccard .tcard-acts .btn:is(:hover, :focus, :active, [aria-expanded="true"]) { background: transparent; color: var(--ccard-ink); }
+@media (hover: hover) { .ccard .tcard-acts .btn:hover { background: color-mix(in srgb, var(--umber-50) 10%, transparent); } }
+.tcard-way-sub > span { white-space: nowrap; }
+.tcard-more svg { transition: transform var(--dur-2) var(--ease-out); }
+.tcard-more[aria-expanded="true"] svg { transform: rotate(180deg); }
+
+/* The stay types as chips: one swipe row on a phone, wrapped on desktop. */
+.tcard-chips { display: flex; gap: var(--space-2); overflow-x: auto; scrollbar-width: none; margin: 0 calc(-1 * var(--space-4)); padding: 0 var(--space-4); }
+.tcard-chips::-webkit-scrollbar { display: none; }
+.tcard-chip {
+  flex: none;
+  min-height: 36px;
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--umber-50) 10%, transparent);
+  color: var(--ccard-ink);
+  font: inherit;
+  font-size: var(--text-label);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out);
+}
+@media (hover: hover) { .tcard-chip:not(.is-on):hover { background: color-mix(in srgb, var(--umber-50) 18%, transparent); } }
+.tcard-chip.is-on { background: var(--umber-50); color: var(--umber-800); }
+@media (pointer: coarse) { .tcard-chip { min-height: var(--tap); } .tcard-way { min-height: 60px; } }
+@media (min-width: 1024px) { .tcard-chips { flex-wrap: wrap; overflow: visible; margin: 0; padding: 0; } }
+
+/* The lines of the total, the total under a rule. */
+.tcard-lines { display: grid; margin: 0; padding-top: var(--space-3); border-top: 1px solid var(--ccard-line); font-size: var(--text-body); color: var(--ccard-ink-2); }
+.tcard-line { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); min-height: 36px; }
+.tcard-line dt { min-width: 0; }
+.tcard-line dd { margin: 0; color: var(--ccard-ink); font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tcard-line-btn { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--space-2); padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.tcard-line-btn small { display: inline-flex; align-items: center; gap: 4px; font-size: var(--text-caption); color: var(--ccard-ink-2); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--ccard-line); }
+.tcard-line.is-total { margin-top: var(--space-1); padding-top: var(--space-2); border-top: 1px solid var(--ccard-line); }
+.tcard-line.is-total dt { color: var(--ccard-ink); font-weight: 700; }
+.tcard-line.is-total dd { font-size: var(--text-lead); font-weight: 800; }
+.tcard-flights { margin-top: var(--space-1); }
+.btn.tcard-day { justify-self: center; }
+@media (min-width: 1024px) {
+  .pt-side .tcard-band, .pt-side .tcard-body { padding-left: var(--space-5); padding-right: var(--space-5); }
+  .pt-side .tcard-sheet { margin-left: var(--space-5); margin-right: var(--space-5); }
+}
+@media (prefers-reduced-motion: reduce) { .tcard-way, .tcard-chip, .tcard-more svg { transition: none; } }
 
 .dpc-flights { display: grid; gap: var(--space-2); }
 .dpc-pass { display: grid; gap: var(--space-2); padding: var(--space-3) var(--space-4); border-radius: var(--radius-card); background: var(--surface); color: var(--text); }
@@ -665,7 +764,7 @@ a.pt-trip-name:focus-visible { outline: 2px solid var(--focus); outline-offset: 
 /* Owner 2026-11-03: no source or "may have changed" line, only Book. */
 .dpc-flt-note { display: flex; justify-content: flex-end; margin: 0; }
 .dpc-flt-note .jr-book.btn { flex: none; }
-@media (prefers-reduced-motion: reduce) { .dpc-pill, .dpc-flt-toggle svg { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .dpc-pill { transition: none; } }
 
 /* Below 1024 px the foot bar holds the page's one primary, so the card's
    own primary hides (one primary at a time, carta-design). */
@@ -803,3 +902,245 @@ ul.pt-cells { list-style: none; margin: 0; padding: 0; }
    (owner, place page board 2026-10-30), so a card without a figure shows
    none. */
 .destp .not-yet, .jpage .not-yet { display: none; }
+
+/* ── What to bring and Where to park (T1030) ──
+   Two tabs under the quick facts. What to bring is the Practical card row
+   (the item in ink, why under it); Where to park is the zone, then grouped
+   rows on the cards' ground, each with its directions as quiet links. */
+.bf { display: grid; gap: var(--space-4); margin-top: var(--space-6); }
+.bf-panel { display: grid; gap: var(--space-3); min-width: 0; }
+.bf-note { margin: 0; font-size: var(--text-label); color: var(--text-2); }
+.pcard.is-bring { min-height: 148px; }
+.pcard.is-bring .pcard-value { margin-top: var(--space-1); }
+.pcard.is-bring .pcard-text { color: var(--text-2); }
+.pcard-slot.is-warn { background: var(--amber-bg); color: var(--amber-ink); }
+
+.bf-park { display: grid; gap: var(--space-5); }
+.bf-zone { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: var(--space-3); align-items: start; padding: var(--space-4); border-radius: 14px; background: var(--surface-sunken); }
+.bf-zone .pcard-slot { margin: 0; }
+.bf-zone-h { margin: 0; font-size: var(--text-body); font-weight: 700; color: var(--text); text-wrap: balance; }
+.bf-zone-text { margin: var(--space-1) 0 0; font-size: var(--text-label); line-height: var(--leading-ui); color: var(--text-2); max-width: 62ch; }
+
+.bf-group { display: grid; gap: var(--space-2); }
+.bf-h { margin: 0; font-size: var(--text-body); font-weight: 700; color: var(--text); }
+/* One sunken list for the parking rows and the rating's parts. */
+.bf-rows, .rs-parts ul { list-style: none; margin: 0; padding: 0 var(--space-4); border-radius: 14px; background: var(--surface-sunken); }
+.bf-row { display: grid; grid-template-columns: 32px minmax(0, 1fr) auto; align-items: center; gap: var(--space-3); min-height: 60px; padding: var(--space-2) 0; }
+.bf-row + .bf-row { border-top: 1px solid var(--border-soft); }
+.bf-ico { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 10px; background: var(--umber-100); color: var(--umber-700); }
+.bf-what { display: grid; gap: 2px; min-width: 0; }
+.bf-what b { font-size: var(--text-body); font-weight: 600; color: var(--text); overflow-wrap: anywhere; }
+.bf-what small { font-size: var(--text-caption); color: var(--text-2); }
+.bf-go { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-1) var(--space-3); }
+.bf-go a, .bf-foot a { display: inline-flex; align-items: center; gap: 4px; font-size: var(--text-label); font-weight: 600; color: var(--umber-700); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--umber-200); white-space: nowrap; }
+.bf-go a:focus-visible, .bf-foot a:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+@media (pointer: coarse) { .bf-go a { min-height: var(--tap); } }
+@media (max-width: 420px) { .bf-go { flex-direction: column; align-items: flex-end; gap: 0; } }
+.bf-foot { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-5); margin: 0; font-size: var(--text-label); color: var(--text-2); }
+
+/* ── Why it rates (T1029): the sheet behind the Score in the head ── */
+.rs-sheet { background: var(--surface-page); max-width: 560px; }
+.rs-body { display: grid; gap: var(--space-5); padding: var(--space-4) var(--space-4) calc(var(--space-5) + env(safe-area-inset-bottom, 0px)); }
+.rs-hero { display: grid; gap: var(--space-3); justify-items: start; }
+.rs-why { margin: 0; font-size: var(--text-lead); font-weight: 600; line-height: 1.35; color: var(--text); text-wrap: pretty; }
+.rs-stand { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin: 0; }
+.rs-stand > div { display: grid; align-content: start; gap: 2px; padding: var(--space-3) var(--space-4); border-radius: 14px; background: var(--surface-sunken); }
+.rs-stand dt { font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.rs-stand dd { margin: 0; font-size: var(--text-body); font-weight: 700; color: var(--text); }
+.rs-parts { display: grid; gap: var(--space-3); }
+.rs-h { margin: 0; font-size: var(--text-body); font-weight: 700; color: var(--text); }
+.rs-part { display: grid; gap: var(--space-1); padding: var(--space-3) 0; }
+.rs-part + .rs-part { border-top: 1px solid var(--border-soft); }
+.rs-part-top { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
+.rs-part-name { font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.rs-gem { margin: 0; font-size: var(--text-label); line-height: 1.5; color: var(--text-2); }
+.rs-part-val { font-size: var(--text-body); font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+.rs-track { display: block; height: 6px; border-radius: 999px; background: color-mix(in srgb, var(--umber-700) 12%, transparent); overflow: hidden; }
+.rs-track > span { display: block; height: 100%; border-radius: inherit; background: var(--umber-700); }
+
+/* ── What to see and Best things to do (T1032) ──
+   One card for both: the photograph on top (4:3), the name, one line of
+   what and where, the short description. A swipe row on a phone (the next
+   card peeking, bled to the screen with the shared rule); three columns
+   from 700 px, the first six with a Show all. The active card (hovered,
+   focused, or chosen on the map) is ringed in ink like its pin. */
+.spots {
+  list-style: none;
+  display: flex;
+  gap: var(--space-3);
+  margin: 0;
+  padding: var(--space-1) 0 var(--space-2);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+.spots::-webkit-scrollbar { display: none; }
+.spot {
+  position: relative;
+  flex: none;
+  width: min(272px, 76vw);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 16px;
+  background: var(--surface-sunken);
+  scroll-snap-align: start;
+  transition: box-shadow var(--dur-2) var(--ease-out);
+}
+.spot.is-active { box-shadow: 0 0 0 2px var(--text); }
+.spot-media { position: relative; aspect-ratio: 4 / 3; background: var(--umber-100); overflow: hidden; }
+.spot-media img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur-3) var(--ease-out); }
+@media (hover: hover) { .spot:hover .spot-media img { transform: scale(1.04); } }
+.spot-ph { display: grid; place-items: center; width: 100%; height: 100%; color: var(--umber-700); background: linear-gradient(160deg, var(--umber-100), color-mix(in srgb, var(--umber-200) 70%, var(--umber-100))); }
+.spot-n {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  display: grid;
+  place-items: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 6px;
+  border-radius: var(--radius-pill);
+  background: var(--text);
+  color: var(--surface);
+  font-size: var(--text-caption);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.spot.is-active .spot-n { background: var(--action); }
+.spot-chip {
+  position: absolute;
+  left: var(--space-2);
+  bottom: var(--space-2);
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--sun-400);
+  color: var(--umber-800);
+  font-size: 12px;
+  font-weight: 700;
+}
+.spot-body { display: grid; align-content: start; gap: 4px; padding: var(--space-3) var(--space-4) var(--space-4); min-width: 0; }
+.spot-name { margin: 0; font-size: var(--text-body); font-weight: 700; line-height: 1.3; color: var(--text); text-wrap: balance; }
+.spot-hit { padding: 0; border: 0; background: none; font: inherit; color: inherit; text-align: left; cursor: pointer; text-decoration: none; }
+.spot-hit::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+.spot-hit:focus-visible { outline: none; }
+/* The stretched name must not take the global press scale: it would shrink
+   its ::after to the title, and a press begun on the photograph would miss
+   it (the kit card's T428 fix, 04-ui.css). The card answers the press. */
+.spot .spot-hit.spot-hit:active { scale: none; opacity: 1; }
+.spot:has(.spot-hit:active) { scale: 0.99; transition-duration: 0.06s; }
+.spot:has(.spot-hit:focus-visible) { box-shadow: 0 0 0 2px var(--focus); }
+.spot-meta { margin: 0; font-size: var(--text-caption); color: var(--text-2); }
+.spot-text {
+  margin: 2px 0 0;
+  font-size: var(--text-label);
+  line-height: var(--leading-ui);
+  color: var(--text);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.btn.spots-more { display: none; }
+.spots-map { margin-top: var(--space-4); }
+.spots-map .dmap { border-radius: 16px; }
+.spots-map .place-map-wait { height: 420px; }
+@media (min-width: 700px) {
+  .pt-wrap .spots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4) var(--space-3); margin: 0; padding: 0; overflow: visible; }
+  .spot { width: auto; }
+  .spots:not(.is-all) > .spot:nth-child(n + 7) { display: none; }
+  .btn.spots-more { display: inline-flex; justify-self: start; margin-top: var(--space-3); }
+}
+@media (prefers-reduced-motion: reduce) { .spot, .spot-media img { transition: none; } .spot:has(.spot-hit:active) { scale: none; } }
+
+/* The photo pins: the sight's photograph in a round frame, its number on
+   the corner; the name shows on hover and on the chosen pin only. */
+.dmap-pin.has-photo .dmap-pin-in { position: relative; padding: 3px; gap: 0; border-radius: 999px; }
+.dmap-pin-ph { display: block; width: 40px; height: 40px; border-radius: 50%; background: var(--umber-100) center / cover no-repeat; }
+.dmap-pin.has-photo .dmap-pin-n { position: absolute; top: -6px; left: -6px; min-width: 20px; height: 20px; box-shadow: 0 0 0 2px var(--surface); }
+.dmap-pin.has-photo .dmap-pin-name { display: none; padding: 0 8px 0 6px; }
+.dmap-pin.has-photo:is(.is-hover, .is-focus) .dmap-pin-in { padding-right: 4px; }
+.dmap-pin.has-photo:is(.is-hover, .is-focus) .dmap-pin-name { display: inline; }
+.dmap-pin.has-photo.is-tight .dmap-pin-ph { width: 30px; height: 30px; }
+.dmap-pin.has-photo.is-dot .dmap-pin-in { padding: 2px; border: 1px solid var(--rule); background: var(--bg-card); box-shadow: var(--shadow-1); }
+.dmap-pin.has-photo.is-dot .dmap-pin-ph { width: 24px; height: 24px; }
+.dmap-pin.has-photo.is-dot::after { display: none; }
+
+.ui-chip-group.ar-radius { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+.ar-radius::-webkit-scrollbar { display: none; }
+.ar-radius > * { flex: none; }
+@media (pointer: fine) { .ar-radius .ui-chip { min-height: 32px; padding: 0 var(--space-3); font-size: var(--text-label); } }
+
+/* ── Around (T1033): one photo tile per kind, each a door to its page ──
+   Two across on a phone, up to five on a desktop; the kind's best
+   photograph under a dark scrim (the umber ground where there is none), the
+   icon in a frosted disc, the name and count in white at the foot. */
+.ar-tiles { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); margin: 0; padding: 0; }
+@media (min-width: 700px) { .ar-tiles { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); } }
+.ar-tile {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  padding: var(--space-3);
+  overflow: hidden;
+  border: 0;
+  border-radius: 16px;
+  background: linear-gradient(160deg, var(--umber-600), var(--umber-800));
+  color: #fff;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: var(--elev-1);
+  transition: transform var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
+}
+.ar-tile > img { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur-3) var(--ease-out); }
+.ar-tile.has-photo::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(20, 12, 4, 0.08) 30%, rgba(20, 12, 4, 0.72)); }
+.ar-tile-ico { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: rgba(255, 255, 255, 0.22); backdrop-filter: blur(6px); }
+.ar-tile-txt { display: grid; gap: 0; padding-right: 28px; }
+.ar-tile-txt b { font-size: var(--text-lead); font-weight: 800; line-height: 1.15; letter-spacing: -0.01em; text-shadow: 0 1px 8px rgba(0, 0, 0, 0.3); }
+.ar-tile-txt small { font-size: var(--text-label); font-weight: 600; opacity: 0.9; font-variant-numeric: tabular-nums; }
+.ar-tile-go { position: absolute; right: var(--space-3); bottom: var(--space-3); display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #fff; color: var(--umber-800); }
+@media (hover: hover) {
+  .ar-tile:hover { transform: translateY(-2px); box-shadow: var(--elev-2); }
+  .ar-tile:hover > img { transform: scale(1.05); }
+}
+.ar-tile:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .ar-tile, .ar-tile > img { transition: none; } .ar-tile:hover { transform: none; } }
+
+/* ── A kind's own page (NearPage): over the place page in its frame ── */
+.destp.near-page { z-index: calc(var(--z-page) + 45); }
+.near-wrap { padding-top: var(--space-5); padding-bottom: var(--space-8); }
+.near-head { display: grid; gap: var(--space-1); }
+.near-title { margin: 0; font-size: 32px; font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; color: var(--text); text-wrap: balance; }
+@media (min-width: 700px) { .near-title { font-size: 40px; } }
+.near-sub { margin: 0; font-size: var(--text-body); color: var(--text-2); }
+.near-tools { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); margin: var(--space-5) 0 var(--space-5); }
+.near-tools .ar-radius { flex: 1 1 auto; min-width: 0; }
+.storyr.near-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: var(--space-6) var(--space-4); }
+@media (max-width: 559px) { .storyr.near-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5) var(--space-3); } }
+
+/* ── Day trips (T1036): the Explore rail; the facts, then the line it is
+   known for, under each photograph. ── */
+.storyr.dt-rail { margin-top: var(--space-6); }
+.dt-rail .storyr-title { font-size: var(--text-lead); }
+.storyr.dt-rail .storyr-card .card-meta { display: grid; gap: 2px; }
+.storyr.dt-rail .storyr-card .card-meta > * { display: block; white-space: normal; text-overflow: clip; }
+.dt-facts { color: var(--text-2); }
+.dt-blurb {
+  color: var(--text);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.dt-rail .storyr-status { gap: 5px; }
+.dt-rail .dt-mode { flex: none; color: var(--text-2); }

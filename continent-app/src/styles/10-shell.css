@@ -790,3 +790,6 @@
 body:has(.tpage[aria-modal="true"], .rgnp[aria-modal="true"], .destp[aria-modal="true"],
   .cpage[aria-modal="true"]) .tab-h1,
 [inert] .tab-h1 { display: none; }
+
+/* T1037: Plan's inner screens wear their own page bar; the app head steps aside. */
+.top-bar.is-hidden { display: none; }

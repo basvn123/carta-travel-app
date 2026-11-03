@@ -57,7 +57,7 @@ function readKept() {
  *   onBack()             back where the page was opened from
  *   onOpenJourney(id)    one week, its whole plan
  */
-export function CartaTrips({ titleTag = 'h1', onBack, onOpenJourney, initialStyle = null, initialCountry = null }) {
+export function CartaTrips({ titleTag = 'h1', onOpenJourney, initialStyle = null, initialCountry = null }) {
   const { t, lang } = useI18n();
   const Title = titleTag;
   const month = new Date().getMonth() + 1;
@@ -216,16 +216,11 @@ export function CartaTrips({ titleTag = 'h1', onBack, onOpenJourney, initialStyl
 
   return (
     <div className="pf-carta">
-      {/* T902 (owner, Plan home board 2026-10-30): where the page sits,
-          Plan / Carta's own trips, in place of a bare Back. */}
-      <nav className="pf-carta-crumbs" aria-label={t('dayws.crumbsAria')}>
-        <Button variant="quiet" size="sm" className="dayc-link" onClick={onBack}>{t('dayws.crumbPlan')}</Button>
-        <span className="pf-carta-sep" aria-hidden="true">/</span>
-        <span className="pf-carta-here" aria-current="page">{t('pf.carta.title')}</span>
-      </nav>
+      {/* T1037: the page bar above (PlanFlow) names the page and goes back
+          to Plan, so no breadcrumb here. */}
 
-      {/* T1030 (owner): no big title under the breadcrumb that already
-          names the page; the heading stays for screen readers and focus. */}
+      {/* T1030 (owner): no big title; the page bar names the page, the
+          heading stays for screen readers and focus. */}
       <Title className="pf-title pf-carta-title sr-only" tabIndex={-1}>{t('pf.carta.title')}</Title>
 
       {/* The styles as Explore's category row: All, then each style. */}

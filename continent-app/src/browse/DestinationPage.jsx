@@ -13,7 +13,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
-import { classRankLine, poiLabel, ratingWords } from '../lib/rating.js';
+import { classRankLine, poiLabel } from '../lib/rating.js';
 import { fetchDestPois } from '../lib/appData.js';
 import { visitLength } from '../lib/nearby.js';
 import { countryName } from '../lib/countryName.js';
@@ -24,6 +24,7 @@ import { MatchLine } from './WhyItMatches.jsx';
 import { PhotoGallery } from './PhotoGallery.jsx';
 import { DestPriceCard } from './DestPriceCard.jsx';
 import { PageBar } from './PageBar.jsx';
+import { RatingSheet } from './RatingSheet.jsx';
 import { KeyFacts } from './KeyFacts.jsx';
 import { usePageArrival } from '../hooks/usePageArrival.js';
 import { Button, Money } from '../components/ui/index.js';
@@ -31,7 +32,7 @@ import { sentences } from '../lib/journeys.js';
 import { BedIcon, CompassIcon, RouteIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { FriendsWentHere } from '../components/FriendsWentHere.jsx';
-import { tabFromHash, aroundCategories, defaultAroundKey } from '../lib/destOverview.js';
+import { tabFromHash, aroundCategories } from '../lib/destOverview.js';
 import { featureHref, linkOpener } from '../lib/featureHref.js';
 import {
   baseCity, monthOf, photoMatcher, thumb500, NOT_A_VIEW, isArea, useDoPhotos,
@@ -69,7 +70,8 @@ import { JumpBar, PSection, PriceDock, scrollToSection, useWide } from './PageTe
  * jump bar: Overview (Good to know, Eat and drink), What to see, Around, When
  * to go, Where to stay, Getting there, Practical, and Places like this at
  * the foot. The tabs are gone; a link or an address that named a tab
- * (#dest=OPO&tab=when, the Score's #sec-rating) scrolls to its section.
+ * (#dest=OPO&tab=when) scrolls to its section; the Score opens the rating
+ * sheet (T1029).
  *
  * The price card holds the page's one primary ("Plan a trip here"): a sticky
  * right column from 1024 px; below that it sits in the page ("What a day
@@ -201,11 +203,11 @@ export function DestinationPage({
   const [stuck, setStuck] = React.useState(false);
   const [copied, setCopied] = React.useState(false);
   const [pdfBusy, setPdfBusy] = React.useState(false);
+  const [ratingOpen, setRatingOpen] = React.useState(false);
   // One-line status for a failed PDF or a blocked clipboard (T405).
   const [notice, setNotice] = React.useState(null);
   const [open, setOpen] = React.useState(() => readFolds(destination?.id) || new Set());
   // The chosen Around chip; null until the traveller picks.
-  const [aroundPick, setAroundPick] = React.useState(null);
   // A section to scroll to once the page has drawn it: the tab an address
   // named, or a jump asked before the dossier answered.
   const [pendingJump, setPendingJump] = React.useState(() => {
@@ -258,7 +260,6 @@ export function DestinationPage({
     setStuck(false);
     setCopied(false);
     setNotice(null);
-    setAroundPick(null);
     const tab = initialTab(destId);
     setPendingJump(tab && tab !== 'overview' ? { id: TAB_SECTION[tab] } : null);
     setOpen(readFolds(destId) || new Set());
@@ -291,11 +292,15 @@ export function DestinationPage({
 
   // Photographs for the things to do.
   const doPhotos = useDoPhotos(destination?.id);
-  // The POI labels (Must-see, Recommended, Worth a look) by name (T763).
+  // The POI labels (Must-see, Recommended, Worth a look) by name (T763),
+  // and their one-line description (T1032: the sight card's line; Wikidata's
+  // short description, English only, matched like the photographs).
   const [poiLabels, setPoiLabels] = React.useState(null);
+  const [poiDesc, setPoiDesc] = React.useState(null);
   React.useEffect(() => {
     const id = destination?.id;
     setPoiLabels(null);
+    setPoiDesc(null);
     if (!id) return undefined;
     let live = true;
     fetchDestPois(id).then((items) => {
@@ -307,6 +312,9 @@ export function DestinationPage({
         if (label && !m.has(p.name.toLowerCase())) m.set(p.name.toLowerCase(), label);
       }
       setPoiLabels(m);
+      // photoMatcher matches any field by name; here the field is the line.
+      const cap = (v) => (v ? v.charAt(0).toUpperCase() + v.slice(1) : v);
+      setPoiDesc(() => photoMatcher((items || []).map((x) => ({ name: x.name, img: cap(x.desc) }))));
     });
     return () => { live = false; };
   }, [destination?.id]);
@@ -337,7 +345,6 @@ export function DestinationPage({
   const verdict = (d?.verdict || destination.rating)
     ? { ...(d?.verdict || {}), ...(destination.rating || {}) }
     : null;
-  const verdictBand = ratingWords(verdict, t)?.word || '';
   const verdictClassRank = classRankLine(verdict, t);
   const sleep = destSleep(destination, d, staysVersion);
   const gettingRaw = d?.practical?.getting_there || null;
@@ -361,7 +368,8 @@ export function DestinationPage({
     .map((h) => {
       const label = h.name ? poiLabels?.get(h.name.toLowerCase()) : null;
       const photo = h.image?.url ? null : hlPhoto(h.name);
-      return { ...h, ...(label ? { label } : {}), ...(photo ? { photo } : {}) };
+      const desc = lang === 'en' && h.name ? poiDesc?.(h.name) : null;
+      return { ...h, ...(label ? { label } : {}), ...(photo ? { photo } : {}), ...(desc ? { desc } : {}) };
     });
   const doItems = [...(d?.do || [])]
     .sort((a, b) => (b.evidence?.n_sources ?? -1) - (a.evidence?.n_sources ?? -1));
@@ -391,8 +399,9 @@ export function DestinationPage({
   // sights, getting around, the airport. A missing fact is left out.
   const aroundStat = mobilityStat(destination, t, lang);
   const airportPick = pickAirport(getting);
-  const airportText = airportPick ? (airportPick.minutes != null && (airportPick.road || airportPick.mode)
-    ? airportLine(airportPick, t, '') : airportPick.iata) : null;
+  const airportIata = airportPick?.iata || null;
+  const airportText = airportPick?.minutes != null && (airportPick.road || airportPick.mode)
+    ? airportLine(airportPick, t, '') : null;
   const crowd = crowdFor(destination.crowding, tripWhen);
   const crowdText = !crowd ? null
     : crowd.kind === 'tier' ? t(CROWD_TIER_KEYS[crowd.tier])
@@ -470,18 +479,24 @@ export function DestinationPage({
       .map((tr, i) => ({ ...tr, key: `${i}:${tr.id}` }));
   })();
   const cats = aroundCategories({ around, nearby, routes: routeRows, trips: tripRows });
-  const aroundKey = aroundPick || defaultAroundKey(cats.filter((c) => c.key !== 'trips'));
   const hasRoutes = (routeRows.hiking?.length || 0) + (routeRows.cycling?.length || 0) > 0
     || !!routeRows.node_network?.km;
 
-  const exits = [
-    links.booking && { key: 'bk', href: links.booking, label: t('dest.linkBooking'), Icon: BedIcon },
-    links.airbnb && { key: 'ab', href: links.airbnb, label: t('dest.linkAirbnb'), Icon: BedIcon },
-    links.getyourguide && { key: 'gyg', href: activityLink(links.getyourguide, 'dest-book'), label: t('dest.bookGyg'), Icon: CompassIcon },
-    links.viator && { key: 'via', href: activityLink(links.viator, 'dest-book'), label: t('dest.bookViator'), Icon: CompassIcon },
-    links.flights_google && { key: 'gf', href: links.flights_google, label: t('dest.linkGflights'), Icon: PlaneIcon },
-    links.skyscanner && { key: 'sky', href: links.skyscanner, label: t('dest.linkSkyscanner'), Icon: PlaneIcon },
+  // T1027: each link rides on its Practical card, tours on the sights to
+  // book and flights on the airport.
+  const tours = [
+    links.getyourguide && { key: 'gyg', href: activityLink(links.getyourguide, 'dest-book'), label: t('pc.ticketsOn', { provider: 'GetYourGuide' }) },
+    links.viator && { key: 'via', href: activityLink(links.viator, 'dest-book'), label: 'Viator' },
   ].filter(Boolean);
+  const flightLinks = [
+    links.flights_google && { key: 'gf', href: links.flights_google, label: t('dest.linkGflights') },
+    links.skyscanner && { key: 'sky', href: links.skyscanner, label: t('dest.linkSkyscanner') },
+  ].filter(Boolean);
+  // The card's photograph: the first sight to book that has one, else the
+  // first highlight's (the same matcher and filter as the highlights).
+  const bookPhoto = bookAhead.map(hlPhoto).find(Boolean)
+    || highlights.map((h) => (h.image?.url && !NOT_A_VIEW.test(h.image.url) ? thumb500(h.image.url) : h.photo)).find(Boolean)
+    || null;
 
   // Getting there from the traveller's home, by the app's own travel models.
   const homeChoices = settingsCtx
@@ -510,6 +525,7 @@ export function DestinationPage({
       onPlanTrip={onPlanTrip}
       onPlanDay={onPlanDay}
       doItems={doItems}
+      ways={ways}
       openSignal={cardSignal}
     />
   ) : null;
@@ -538,18 +554,21 @@ export function DestinationPage({
     t, lang, city, destination, data, d, lat: destination.city_lat ?? destination.lat,
     lon: destination.city_lon ?? destination.lon, scrollRef, view,
     highlights, doRows, monthList, fmtScore,
-    cats, aroundKey, setAroundKey: setAroundPick, aroundKm: around?.radius_km || 20,
-    area: isArea(d), routeRows, hasRoutes, members, memberFocus,
+    cats,
+    area: isArea(d), hasRoutes, members, memberFocus,
     monthPick: statMonth, water, festivals,
-    getting, rhythm, bookAhead, verdict, verdictBand, tips, packs, month, parking, exits,
+    getting, rhythm, bookAhead, verdict, tips, packs, month, parking, tours, flightLinks, bookPhoto,
     isOpen, toggle, onOpenLifestyle, onOpenFeature, onSelect, onOpenItin, goTab,
-    exportPdf, pdfBusy, pdfReady: !!d, ways, aroundStat, airportText, guideUrl,
+    ways, aroundStat, airportText, airportIata, guideUrl,
     carDayEur: getting?.car_needed ? getting.rental_eur_day ?? null : null,
   };
 
+  // T1026: the trip card carries the ways there wherever a day prices; the
+  // section (and its jump) stays only for a place without one.
+  const waysInCard = costRow?.dayEur != null;
   const jumps = [
     ['overview', 'pt-overview'], ['see', 'pt-see'], ['around', 'pt-around'], ['when', 'pt-when'],
-    ['stay', 'pt-stay'], ['getting', 'pt-getting'], ['practical', 'pt-practical'],
+    ['stay', 'pt-stay'], ...(waysInCard ? [] : [['getting', 'pt-getting']]), ['practical', 'pt-practical'],
   ].map(([key, id]) => ({ key, id, label: t(`destx.jump.${key}`) }));
 
   // The foot bar's line: the dates and the party, as the card's fields say it.
@@ -591,9 +610,16 @@ export function DestinationPage({
         onFav={onToggleFavorite || null}
         onShare={share}
         shareLabel={t('dest.share')}
+        onPdf={d ? exportPdf : null}
+        pdfBusy={pdfBusy}
         copied={copied}
         copiedLabel={t('dest.linkCopied')}
       />
+
+      {ratingOpen && (
+        <RatingSheet rating={verdict} destination={destination} city={city} country={countryLabel}
+          fmtScore={fmtScore} onClose={() => setRatingOpen(false)} />
+      )}
 
       {notice && (
         <p className="destp-notice" role="status">
@@ -626,16 +652,12 @@ export function DestinationPage({
                     <span>{countryLabel}</span>
                   </span>
                   {verdict?.score != null && (
-                    // A jump within the page: it opens Why it rates in Practical.
-                    <a className="pt-score" href="#sec-rating"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setOpen((st) => new Set([...st, 'rating']));
-                        goTab('practical', 'sec-rating');
-                      }}
+                    // T1029: the Score opens why it rates what it rates.
+                    <button type="button" className="pt-score" aria-haspopup="dialog"
+                      onClick={() => setRatingOpen(true)}
                       aria-label={t('dest.ratingTitle', { score: fmtScore(verdict.score) })}>
                       <ScoreChip rating={verdict} size="lg" band />
-                    </a>
+                    </button>
                   )}
                 </div>
                 {tags.length > 0 && <ul className="pt-tags">{tags}</ul>}
@@ -671,7 +693,7 @@ export function DestinationPage({
                       approved place for it, where the decision is made. */}
                   <FriendsWentHere destId={destination?.id} destinations={data?.destinations} />
                   {/* T1021: no section without a day price (missing data leaves). */}
-                  {!wide && priceCard && costRow?.dayEur != null && (
+                  {!wide && priceCard && waysInCard && (
                     <PSection id="pt-cost" title={t('destx.dayCosts')} className="pt-inlinecost">
                       {priceCard}
                     </PSection>
@@ -680,7 +702,7 @@ export function DestinationPage({
                   <DestAround p={p} />
                   <DestWhen p={p} />
                   <DestStay p={p} />
-                  <DestGetting p={p} />
+                  {!waysInCard && <DestGetting p={p} />}
                   <DestPractical p={p} />
                   <Similar rows={d?.similar} data={data} indices={firstRun?.indices} t={t} view={view} onSelect={onSelect} />
                   <div className="destp-utility">

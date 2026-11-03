@@ -307,7 +307,6 @@
    and no toggle. Photography is their colour (owner, T429). */
 .dsec2 { padding-top: var(--space-7); scroll-margin-top: var(--tap); }
 .dsec2-title,
-.dphoto-title,
 .destp-exits-title {
   margin: 0 0 var(--space-4);
   font-family: var(--font);
@@ -334,76 +333,6 @@
   color: var(--text);
 }
 
-/* The photo tracks (DestTrack): Explore's rail mechanics, the page's sizes.
-   About 1.3 cards on a phone so the next one shows, three and a bit in the
-   desktop column; See all turns the strip into a grid of the same tiles. */
-.dphoto { container-type: inline-size; }
-.dphoto + .dphoto,
-.dmap-slot + .dphoto { margin-top: var(--space-5); }
-.dphoto-head {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin-bottom: var(--space-3);
-}
-.dphoto-head .dphoto-title { flex: 1 1 auto; min-width: 0; margin: 0; }
-h3.dphoto-title { font-size: var(--text-lead); font-weight: 600; letter-spacing: 0; }
-.dphoto-all { flex: none; }
-.dphoto-nav { display: none; gap: var(--space-1); }
-@media (min-width: 769px) and (hover: hover) {
-  .dphoto-nav { display: inline-flex; }
-}
-.dphoto-arrow.is-prev .icon-btn-glyph { transform: rotate(180deg); }
-.dphoto-strip {
-  --tile-gap: var(--space-3);
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 76%;
-  gap: var(--tile-gap);
-  margin: 0;
-  padding: 0 0 var(--space-1);
-  list-style: none;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-}
-.dphoto-strip::-webkit-scrollbar { display: none; }
-@container (min-width: 480px) {
-  .dphoto-strip { grid-auto-columns: calc((100% - 2 * var(--tile-gap)) / 2.35); }
-}
-@container (min-width: 680px) {
-  .dphoto-strip { grid-auto-columns: calc((100% - 3 * var(--tile-gap)) / 3.3); }
-}
-.dphoto.is-all .dphoto-strip {
-  grid-auto-flow: row;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  overflow: visible;
-  scroll-snap-type: none;
-}
-.dphoto-item { display: flex; min-width: 0; scroll-snap-align: start; }
-/* The kit draws a card's focus ring 2 px outside it, where the strip's
-   sideways scroll clips it away; inside a track the ring sits just inside
-   the card's edge instead, so a keyboard walk always sees it. */
-.dphoto .card.is-interactive:has(.card-open:focus-visible) { outline-offset: -3px; }
-.dphoto-item > .card { flex: 1 1 auto; min-width: 0; }
-/* The whole name, wrapped (owner, T429: no name cut off). */
-.dphoto .card-title {
-  font-size: var(--text-body);
-  line-height: var(--leading-ui);
-  white-space: normal;
-  overflow: visible;
-  overflow-wrap: break-word;
-}
-.dphoto .card-tile .card-body { padding: var(--space-3); gap: var(--space-1); }
-.dphoto .card-media > img,
-.dphoto .card-media > .is-blank { width: 100%; height: 100%; object-fit: cover; }
-.dphoto .card-media > .is-blank {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-3);
-}
 .dtile-meta {
   display: flex;
   flex-wrap: wrap;
@@ -861,7 +790,6 @@ body:has(.destp, .tpage) .accom-panel.lifestyle-panel { z-index: calc(var(--z-pa
   padding: 0;
   list-style: none;
 }
-.dphoto + .ddo-list { margin-top: var(--space-4); }
 @media (min-width: 680px) { .ddo-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .ddo-list > li { border-top: 1px solid var(--border-soft); }
 .ddo-list-row,
@@ -914,16 +842,6 @@ a.ddo-list-row:focus-visible { outline: 2px solid var(--focus); outline-offset: 
   .destp .maplibregl-ctrl-attrib-button { background-repeat: no-repeat; background-position: center; }
 }
 
-/* On a phone the photo tracks run to the screen's edge, so the next card
-   is cut by the screen, not 16 px inside it; the first card still lines up
-   with the heading. */
-@media (max-width: 1023px) {
-  .destp-v3 .dphoto-strip {
-    margin-inline: calc(-1 * var(--space-4));
-    padding-inline: var(--space-4);
-    scroll-padding-inline: var(--space-4);
-  }
-}
 
 /* A control that takes keyboard focus is scrolled into view below the
    sticky section rail, never under it (T446: track cards were covered at
@@ -960,8 +878,6 @@ a.ddo-list-row:focus-visible { outline: 2px solid var(--focus); outline-offset: 
 /* The village list spans the column under its heading. */
 .destp-villages .destp-subhead { margin-bottom: var(--space-1); }
 
-/* After See all, the way back at the grid's end. */
-.dphoto-all.is-end { margin-top: var(--space-3); }
 
 
 /* MapLibre's controls: no blue glow on a pointer press (its own default),

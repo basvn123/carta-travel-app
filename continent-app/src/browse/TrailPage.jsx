@@ -871,6 +871,9 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
 
   return (
     <OutdoorPage
+      onPdf={onPdf}
+      pdfBusy={pdfBusy}
+      pdfModel={pdfModel}
       name={named.name}
       className="tpage-v2"
       backLabel={backLabel || t('detail.backTrails')}
@@ -942,10 +945,6 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
               </Button>
               <Button variant="secondary" size="sm" className="tpage-follow" iconStart={<CompassIcon size={16} />} onClick={startFollow}>
                 {t('trails.follow')}
-              </Button>
-              <Button variant="secondary" size="sm" className="ipage-pdf" loading={pdfBusy}
-                iconStart={<DownloadIcon size={16} />} onClick={() => onPdf(pdfModel())}>
-                {t('ox.pdf')}
               </Button>
             </>
           )}

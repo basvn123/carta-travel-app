@@ -9,7 +9,7 @@ import { TrainIcon, BusIcon, FerryIcon, AlertIcon, InfoIcon } from '../component
  * "nothing found" line. With none of them, nothing renders.
  *
  * Data: d.practical.transit.{train,bus,ferry}[] ({ from, to, name, minutes,
- * operator }), parking.web.restricted (+ restricted_note), water.bans[],
+ * operator }), parking.web.restricted, water.bans[],
  * d.practical.local_rules[] ({ code, text }).
  */
 const MODES = [['train', TrainIcon], ['bus', BusIcon], ['ferry', FerryIcon]];
@@ -32,13 +32,13 @@ export function practicalSlotRows(p) {
   }
   if (webPark?.restricted) {
     rows.push({
-      key: 'park', Icon: AlertIcon, title: t('dest.pr.parkTitle'),
-      text: [t('dest.parkRestricted'), webPark.restricted_note].filter(Boolean).join(' '),
+      key: 'park', Icon: AlertIcon, tone: 'warn', title: t('dest.pr.parkTitle'),
+      text: t('dest.parkRestricted'),
     });
   }
   const bans = (water?.bans || []).filter((b) => b?.site || b?.reason);
   if (bans.length) {
-    rows.push({ key: 'bans', Icon: AlertIcon, title: t('dest.pr.bans'), text: bans.map((b) => [b.site, b.reason].filter(Boolean).join(', ')).join('; ') });
+    rows.push({ key: 'bans', Icon: AlertIcon, tone: 'warn', title: t('dest.pr.bans'), text: bans.map((b) => [b.site, b.reason].filter(Boolean).join(', ')).join('; ') });
   }
   const rules = (d?.practical?.local_rules || []).filter((r) => r?.text);
   if (rules.length) {
@@ -47,15 +47,3 @@ export function practicalSlotRows(p) {
   return rows;
 }
 
-/** The rows as Practical's cells (the same cell as airport and rhythm). */
-export function PracticalSlots({ p }) {
-  const rows = practicalSlotRows(p);
-  if (!rows.length) return null;
-  return rows.map(({ key, Icon, title, text }) => (
-    <div className="pt-cell" key={key} data-testid={`pr-${key}`}>
-      <span className="pt-cell-icon" aria-hidden="true"><Icon size={16} /></span>
-      <b className="pt-cell-title">{title}</b>
-      <p className="pt-cell-text">{text}</p>
-    </div>
-  ));
-}

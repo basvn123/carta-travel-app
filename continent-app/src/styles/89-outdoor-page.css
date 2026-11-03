@@ -61,8 +61,8 @@
 /* ── Route: the map, then the profile, in one bordered block ── */
 .ox-route {
   display: grid;
-  background: var(--surface);
-  border: 1px solid var(--border-soft);
+  background: var(--surface-sunken);
+  border: 1px solid transparent;
   border-radius: var(--radius-card);
   overflow: hidden;
 }
@@ -158,8 +158,8 @@
   gap: var(--space-3) var(--space-4);
   align-items: center;
   padding: var(--space-4);
-  background: var(--surface);
-  border: 1px solid var(--border-soft);
+  background: var(--surface-sunken);
+  border: 1px solid transparent;
   border-radius: var(--radius-card);
 }
 @media (max-width: 499px) { .ox-grade { grid-template-columns: 1fr; } }
@@ -188,8 +188,8 @@
   gap: var(--space-3);
   align-items: start;
   padding: var(--space-3) var(--space-4);
-  background: var(--surface);
-  border: 1px solid var(--border-soft);
+  background: var(--surface-sunken);
+  border: 1px solid transparent;
   border-radius: var(--radius-card);
   min-width: 0;
 }
@@ -206,11 +206,11 @@
   grid-auto-columns: minmax(0, 1fr);
   gap: 1px;
   background: var(--border-soft);
-  border: 1px solid var(--border-soft);
+  border: 1px solid transparent;
   border-radius: var(--radius-card);
   overflow: hidden;
 }
-.ox-safety > div { background: var(--surface); padding: var(--space-2) var(--space-3); display: grid; gap: 2px; min-width: 0; }
+.ox-safety > div { background: var(--surface-page); padding: var(--space-2) var(--space-3); display: grid; gap: 2px; min-width: 0; }
 .ox-safety dt { font-size: var(--text-caption); font-weight: 600; color: var(--text-3); }
 .ox-safety dd { margin: 0; font-size: var(--text-body); font-weight: 600; color: var(--text); }
 @media (max-width: 499px) { .ox-safety { grid-auto-flow: row; } }
@@ -225,14 +225,14 @@
   gap: 1px;
   /* End check: the surface, not the hairline colour, so an odd last row
      leaves white, not a grey hole; the cells draw the hairlines. */
-  background: var(--surface);
-  border: 1px solid var(--border-soft);
+  background: var(--surface-sunken);
+  border: 1px solid transparent;
   border-radius: var(--radius-card);
   overflow: hidden;
 }
 @media (min-width: 700px) { .ox-facil { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .ox-facil li {
-  background: var(--surface);
+  background: var(--surface-page);
   outline: 1px solid var(--border-soft);
   padding: var(--space-2) var(--space-3);
   display: grid;
@@ -249,7 +249,7 @@
 .ox-facil li.is-no .ox-facil-icon { color: var(--text-3); }
 
 /* ── The water class: four named steps ── */
-.ox-wq { display: grid; gap: var(--space-2); padding: var(--space-4); background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-card); }
+.ox-wq { display: grid; gap: var(--space-2); padding: var(--space-4); background: var(--surface-sunken); border: 1px solid transparent; border-radius: var(--radius-card); }
 .ox-wq-top { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-3); flex-wrap: wrap; }
 .ox-wq-top b { font-size: var(--text-lead); font-weight: 700; color: var(--text); }
 .ox-wq-top span { font-size: var(--text-label); color: var(--text-2); }
@@ -268,8 +268,8 @@
   gap: var(--space-1);
   align-items: end;
   padding: var(--space-3) var(--space-2) var(--space-2);
-  background: var(--surface);
-  border: 1px solid var(--border-soft);
+  background: var(--surface-sunken);
+  border: 1px solid transparent;
   border-radius: var(--radius-card);
 }
 .ox-mo { display: grid; justify-items: center; gap: var(--space-1); min-width: 0; padding: 2px 0; border-radius: var(--radius-sm); }
@@ -286,7 +286,7 @@
 /* ── Cells (waves, faces, storms...) ── */
 .ox-cells { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
 @media (min-width: 700px) { .ox-cells { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-.ox-cells li { display: grid; gap: 2px; align-content: start; padding: var(--space-3) var(--space-4); background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-card); min-width: 0; }
+.ox-cells li { display: grid; gap: 2px; align-content: start; padding: var(--space-3) var(--space-4); background: var(--surface-sunken); border: 1px solid transparent; border-radius: var(--radius-card); min-width: 0; }
 .ox-cells small { font-size: var(--text-caption); font-weight: 600; color: var(--text-3); }
 .ox-cells b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
 .ox-cells span { font-size: var(--text-label); color: var(--text-2); }
@@ -329,8 +329,8 @@
   gap: var(--space-2) var(--space-3);
   align-items: start;
   padding: var(--space-3) var(--space-4);
-  background: var(--surface);
-  border: 1px solid var(--border-soft);
+  background: var(--surface-sunken);
+  border: 1px solid transparent;
   border-radius: var(--radius-card);
   color: var(--text);
   text-decoration: none;
@@ -343,7 +343,7 @@ a.ox-rc:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .ox-rc-go { color: var(--text-3); }
 
 /* ── Surface and traffic (cycling): two stacked bars ── */
-.ox-mix { display: grid; gap: var(--space-4); padding: var(--space-4); background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-card); }
+.ox-mix { display: grid; gap: var(--space-4); padding: var(--space-4); background: var(--surface-sunken); border: 1px solid transparent; border-radius: var(--radius-card); }
 .ox-mix-row { display: grid; gap: var(--space-2); }
 .ox-mix-h { display: flex; justify-content: space-between; gap: var(--space-3); font-size: var(--text-body); color: var(--text-2); }
 .ox-mix-h b { color: var(--text); font-weight: 700; font-variant-numeric: tabular-nums; }
@@ -359,7 +359,7 @@ a.ox-rc:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 
 /* Stages before and after */
 .ox-stages { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
-.ox-stage { display: grid; gap: 2px; padding: var(--space-3) var(--space-4); background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-card); font-size: var(--text-label); color: var(--text-2); text-decoration: none; min-width: 0; }
+.ox-stage { display: grid; gap: 2px; padding: var(--space-3) var(--space-4); background: var(--surface-sunken); border: 1px solid transparent; border-radius: var(--radius-card); font-size: var(--text-label); color: var(--text-2); text-decoration: none; min-width: 0; }
 .ox-stage b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
 .ox-stage.is-next { text-align: right; }
 a.ox-stage:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
@@ -375,3 +375,13 @@ a.ox-stage:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px;
 
 /* No "Not available yet" on these pages: a cell without data is left out. */
 .oxp .not-yet { display: none; }
+
+/* T1039 (owner: follow the place page, no white boxes; the blocks above
+   take the sunken ground in their own rules). The card's buttons and stay
+   line sit on the page on a phone; the desktop side card goes soft. */
+.oxp .ox-card.is-compact { background: none; border: 0; box-shadow: none; padding: 0; margin-top: var(--space-4); }
+.oxp .pt-side .pt-card { background: var(--surface-sunken); border: 0; box-shadow: none; }
+.oxp .ox-kv > div { border-top-color: color-mix(in srgb, var(--text) 8%, transparent); }
+/* The why-it-rates fold reads as the place page's folds: a row under a rule. */
+.oxp .pt-fold { background: none; border: 0; border-bottom: 1px solid var(--border-soft); border-radius: 0; padding: 0; }
+.oxp .pt-fold summary { min-height: 52px; font-size: 16px; }
