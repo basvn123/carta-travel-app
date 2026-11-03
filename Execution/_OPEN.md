@@ -1544,3 +1544,7 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1034-d | T1034 | Triage the 1,534 open register rows; many are likely done or stale | next task | open | |
 | T1034-e | T1034 | Fold P15 into a digest with scripts/execution_digest.py when the phase closes | next task | open | |
 | T1034-f | T1034 | Branches p0-next-steps-docs (root 4 commits) and p11-flights-to-august (root 2, app 1) are unmerged: merge or delete | user | open | |
+| T1024-a | T1024 | The place page intro's lead sentence is split in the client; build_dossier.py should write lead and rest, and the intro should exist in all six languages (Execution/P15/T1024-place-head.md) | next task | open |  |
+| T1024-b | T1024 | The place head's rank and UNESCO tags are a local .pt-tag look; add those tones to Chip so Explore cards and the place page match (Execution/P15/T1024-place-head.md) | next task | open |  |
+| T1024-c | T1024 | Four photo carousels style their own arrows (destp-gallery-arrow, tphotos-arrow, pmos-arrow, .destp-v3); make one (Execution/P15/T1024-place-head.md) | next task | open |  |
+| T1024-d | T1024 | Rome's key facts say sights about 13 hours, its intro about seventeen hours (two visit_h sources); decide which is true (Execution/P15/T1024-place-head.md) | user | open |  |

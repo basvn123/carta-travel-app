@@ -26,7 +26,8 @@ import { DestPriceCard } from './DestPriceCard.jsx';
 import { PageBar } from './PageBar.jsx';
 import { KeyFacts } from './KeyFacts.jsx';
 import { usePageArrival } from '../hooks/usePageArrival.js';
-import { Button, Chip, Money } from '../components/ui/index.js';
+import { Button, Money } from '../components/ui/index.js';
+import { sentences } from '../lib/journeys.js';
 import { BedIcon, CompassIcon, RouteIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { FriendsWentHere } from '../components/FriendsWentHere.jsx';
@@ -514,6 +515,25 @@ export function DestinationPage({
   ) : null;
 
   // The page's one reading of the dossier, handed to every section.
+  // The intro as its first sentence and the rest (T1024), English only (T446).
+  const [leadFirst, ...leadRest] = shortIntro && lang === 'en' ? sentences(shortIntro) : [];
+  // The standing as small tags (T1024): the strongest first.
+  const tags = [
+    verdict?.hidden_gem && <li key="gem"><HiddenGemTag /></li>,
+    verdictClassRank && <li key="class" className="pt-tag is-rank">{verdictClassRank}</li>,
+    verdict?.country_rank === 1
+      ? <li key="country" className="pt-tag is-rank">{t('card.topOf', { country: countryLabel })}</li>
+      : verdict?.country_badge
+        ? <li key="country" className="pt-tag is-rank">{t('card.rankIn', { n: verdict.country_rank, country: countryLabel })}</li>
+        : null,
+    isUnesco && (
+      <li key="unesco" className="pt-tag is-unesco"
+        title={(destination.designations || []).find((g) => g.kind === 'unesco_whc')?.name || ''}>
+        {t('dest.unesco')}
+      </li>
+    ),
+  ].filter(Boolean);
+
   const p = {
     t, lang, city, destination, data, d, lat: destination.city_lat ?? destination.lat,
     lon: destination.city_lon ?? destination.lon, scrollRef, view,
@@ -595,44 +615,41 @@ export function DestinationPage({
 
           <div className="pt-body">
             <div className="pt-main">
+              {/* T1024 (owner 2026-11-03: compact, clean, no travel style here):
+                  the name, then one line of where it is and how it rates, then
+                  the standing as small tags, then the intro, answer first. */}
               <header className="pt-head">
                 <h1 className="pt-title" ref={titleRef} tabIndex={-1}>{city}</h1>
-                <p className="pt-where">
-                  <CountryFlag country={destination.iso2} size={15} />
-                  <span>{countryLabel}</span>
-                </p>
-                <div className="pt-badges">
+                <div className="pt-meta">
+                  <span className="pt-where">
+                    <CountryFlag country={destination.iso2} size={15} />
+                    <span>{countryLabel}</span>
+                  </span>
                   {verdict?.score != null && (
                     // A jump within the page: it opens Why it rates in Practical.
                     <a className="pt-score" href="#sec-rating"
                       onClick={(e) => {
                         e.preventDefault();
-                        setOpen((s) => new Set([...s, 'rating']));
+                        setOpen((st) => new Set([...st, 'rating']));
                         goTab('practical', 'sec-rating');
                       }}
                       aria-label={t('dest.ratingTitle', { score: fmtScore(verdict.score) })}>
                       <ScoreChip rating={verdict} size="lg" band />
                     </a>
                   )}
-                  {verdict?.hidden_gem && <HiddenGemTag />}
-                  {verdictClassRank && <Chip kind="status" className="pt-badge">{verdictClassRank}</Chip>}
-                  {verdict?.country_rank === 1 ? (
-                    <Chip kind="status" className="pt-badge">{t('card.topOf', { country: countryLabel })}</Chip>
-                  ) : verdict?.country_badge ? (
-                    <Chip kind="status" className="pt-badge">{t('card.rankIn', { n: verdict.country_rank, country: countryLabel })}</Chip>
-                  ) : null}
-                  {isUnesco && (
-                    <Chip kind="status" className="pt-badge"
-                      title={(destination.designations || []).find((g) => g.kind === 'unesco_whc')?.name || ''}>
-                      {t('dest.unesco')}
-                    </Chip>
-                  )}
                 </div>
+                {tags.length > 0 && <ul className="pt-tags">{tags}</ul>}
                 {/* T765: the match after the rank lines, never merged into the Score. */}
-                <MatchLine place={destination} month={tripMonth} className="destp-match" door />
+                <MatchLine place={destination} month={tripMonth} />
                 {/* The intro is written in English; in another language the
-                    head shows nothing rather than an English paragraph (T446). */}
-                {settled && shortIntro && lang === 'en' && <p className="pt-lead">{shortIntro}</p>}
+                    head shows nothing rather than an English paragraph (T446).
+                    Its first sentence leads, the rest follows quieter (T1024). */}
+                {settled && leadFirst && (
+                  <div className="pt-lead">
+                    <p className="pt-lead-first">{leadFirst}</p>
+                    {leadRest.length > 0 && <p className="pt-lead-rest">{leadRest.join(' ')}</p>}
+                  </div>
+                )}
               </header>
 
               {settled && <KeyFacts cells={keyFacts} className="pt-facts" />}

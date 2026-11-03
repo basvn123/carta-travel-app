@@ -419,7 +419,7 @@ const stripBold = (s) => String(s || '').replace(/\*\*/g, '').replace(/\s+/g, ' 
 
 /* Sentence split that does not cut at "St.", "km.", "e.g." or a decimal. */
 const ABBR = /(?:\b(?:St|Mt|Dr|Mr|Mrs|Ms|vs|e\.g|i\.e|c|approx|no|km|m|ca)\.)$/i;
-function sentences(text) {
+export function sentences(text) {
   const clean = stripBold(text);
   if (!clean) return [];
   const parts = clean.split(/(?<=[.!?])\s+(?=[A-Z"\u201C\u00C0-\u00DE])/);

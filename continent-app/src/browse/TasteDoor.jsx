@@ -83,22 +83,3 @@ export function TasteRow({ className = '', before }) {
     </Button>
   );
 }
-
-/** The link on a place page while no taste is set: "Set your travel style". */
-export function TasteLink({ className = '' }) {
-  const { t } = useI18n();
-  const firstRun = useFirstRun();
-  if (!firstRun?.setChoices) return null;
-  return (
-    <Button
-      variant="quiet"
-      size="sm"
-      className={`taste-link ${className}`.trim()}
-      aria-haspopup="dialog"
-      iconStart={<SparkIcon size={16} />}
-      onClick={(e) => openTasteSheet(e.currentTarget)}
-    >
-      {t('ac2.setStyle')}
-    </Button>
-  );
-}

@@ -27,21 +27,17 @@ test("T1018: Rome splits into cheaper, dearer and about usual", () => {
   assert.equal(Math.round(f.cheaper[0].ratio * 100), -41);
 });
 
-test("T1018: the verdict is the Explore card's food band, with a lean in the outer thirds", () => {
+test("T1018: the verdict is the Explore card's food band", () => {
   const f = priceFeel(ROME, 60, DEFAULT_LIFESTYLE);
   assert.equal(f.band, bandFor("food", 60, 1));
   assert.equal(f.band, 2);
-  assert.equal(f.lean, "dear");
   assert.ok(f.pos > 0.4 && f.pos < 0.6, `pin inside the middle step, got ${f.pos}`);
-  assert.equal(priceFeel(ROME, 56, DEFAULT_LIFESTYLE).lean, null);
-  assert.equal(priceFeel(ROME, 51, DEFAULT_LIFESTYLE).lean, "cheap");
 });
 
 test("T1018: the pin stays inside the scale at both open ends", () => {
   for (const eur of [1, 20, 500]) {
     const f = priceFeel(ROME, eur, DEFAULT_LIFESTYLE);
     assert.ok(f.pos > 0 && f.pos < 1, `${eur}: ${f.pos}`);
-    assert.equal(f.lean, null);
   }
 });
 

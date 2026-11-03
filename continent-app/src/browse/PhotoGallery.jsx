@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { Button, IconButton } from '../components/ui/index.js';
-import { ChevronRightIcon, CloseIcon } from '../components/Icons.jsx';
+import { CameraIcon, ChevronRightIcon, CloseIcon } from '../components/Icons.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { claimShared } from '../lib/sharedElement.js';
@@ -134,6 +134,10 @@ function PhotoStrip({ photos, label, claimKey, final, fallback, sizes, className
 
 const creditOf = (g) => [g?.author, g?.licence].filter(Boolean).join(', ');
 
+// One photograph on in a track whose slides peek (T1024): the distance
+// between two slides' starts, so the CSS gap and width are the only truth.
+const stepOf = (el) => (el.children.length > 1 ? el.children[1].offsetLeft - el.children[0].offsetLeft : el.clientWidth);
+
 /**
  * Every photograph with its caption and full credit, over the page (T912):
  * what "Show all N photos" opens. A dialog of the family (one scrim, one
@@ -177,13 +181,15 @@ function AllPhotos({ imgs, label, onClose }) {
 }
 
 /**
- * The place and trip pages' photographs (T912, the owner's approved spec):
- * on a phone a swipe carousel, one photograph a frame, with "1 / N" and the
- * photograph's credit as small solid pills on it; from 700 px a mosaic of
- * one large photograph (two rows high) and four small ones, with "Show all N
- * photos" opening every photograph with its caption and full credit. The
- * credit chip names the photograph on screen; the full list is also in the
- * page's sources fold. A missing photograph is the flag-and-name placeholder.
+ * The place and trip pages' photographs (T912; T1024, owner 2026-11-03:
+ * "arrows I can click, not 1/8; credits at the bottom, not on the image").
+ * On a phone a swipe carousel with the next photograph peeking in, round
+ * arrows on it (the pointer's way through, and a tap's) and "N photos" to
+ * open them all; from 700 px a mosaic of one large photograph and four small
+ * ones, each a door to every photograph, with "Show all N photos". The
+ * credit is a caption line under the photographs: the one in view on a
+ * phone, the large one from 700 px; every credit is in the all-photos view
+ * and the sources fold. A missing photograph is the flag-and-name placeholder.
  */
 function PhotoMosaic({ photos, label, claimKey, fallback, className }) {
   const { t } = useI18n();
@@ -196,7 +202,7 @@ function PhotoMosaic({ photos, label, claimKey, fallback, className }) {
   useEffect(() => { setIdx(0); track.current?.scrollTo?.({ left: 0 }); }, [photos]);
   if (!imgs.length) {
     return (
-      <div className={`pgal pmos is-blank ${className}`.trim()}>
+      <div className={`pmos is-blank ${className}`.trim()}>
         <HeroImage url={null} city={fallback?.city || label} iso2={fallback?.iso2} className="pmos-blank" />
       </div>
     );
@@ -204,14 +210,15 @@ function PhotoMosaic({ photos, label, claimKey, fallback, className }) {
   const fail = (u) => setFailed((s) => new Set([...s, u]));
   const nudge = (dir) => {
     const el = track.current;
-    if (el) el.scrollBy({ left: dir * el.clientWidth, behavior: scrollBehavior() });
+    if (el) el.scrollBy({ left: dir * stepOf(el), behavior: scrollBehavior() });
   };
   const n = imgs.length;
   const credit = creditOf(imgs[Math.min(idx, n - 1)]);
   const mainCredit = creditOf(imgs[0]);
   const tiles = imgs.slice(0, 5);
   return (
-    <div className={`pgal pmos pmos-n${tiles.length} ${className}`.trim()}>
+    <div className={`pmos pmos-n${tiles.length} ${className}`.trim()}>
+      <div className="pmos-frame">
       <div
         className="pmos-track"
         ref={track}
@@ -220,7 +227,7 @@ function PhotoMosaic({ photos, label, claimKey, fallback, className }) {
         aria-label={n > 1 ? label : undefined}
         onScroll={(e) => {
           const el = e.currentTarget;
-          const i = Math.round(el.scrollLeft / Math.max(1, el.clientWidth));
+          const i = Math.round(el.scrollLeft / Math.max(1, stepOf(el)));
           setIdx((cur) => (cur === i ? cur : Math.min(i, n - 1)));
         }}
         onKeyDown={n > 1 ? (e) => {
@@ -237,23 +244,38 @@ function PhotoMosaic({ photos, label, claimKey, fallback, className }) {
         ))}
       </div>
       {n > 1 && (
-        <span className="pmos-pill pmos-count" aria-live="polite">
-          <span aria-hidden="true">{`${idx + 1} / ${n}`}</span>
-          <span className="sr-only">{t('destx.photoOf', { i: idx + 1, n })}</span>
-        </span>
+        <>
+          <IconButton tone="photo" className="pmos-arrow is-prev" onClick={() => nudge(-1)}
+            label={t('dest.photoPrev')} disabled={idx === 0}>
+            <ChevronRightIcon size={18} />
+          </IconButton>
+          <IconButton tone="photo" className="pmos-arrow is-next" onClick={() => nudge(1)}
+            label={t('dest.photoNext')} disabled={idx >= n - 1}>
+            <ChevronRightIcon size={18} />
+          </IconButton>
+          <button type="button" className="pmos-count" onClick={() => setAll(true)}>
+            <CameraIcon size={14} />
+            <span>{t('destx.photosN', { n })}</span>
+            <span className="sr-only">{t('destx.photoOf', { i: idx + 1, n })}</span>
+          </button>
+        </>
       )}
       <div className="pmos-grid">
         {tiles.map((g, i) => (
-          <img key={g.url} className={`pmos-tile${i === 0 ? ' is-main' : ''}`} src={g.url} srcSet={g.srcSet || undefined}
-            sizes={g.srcSet ? (i === 0 ? '(max-width: 1240px) 60vw, 740px' : '(max-width: 1240px) 20vw, 250px') : undefined}
-            alt={g.caption || label} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" onError={() => fail(g.url)} />
+          <button type="button" key={g.url} className={`pmos-tile${i === 0 ? ' is-main' : ''}`} onClick={() => setAll(true)}
+            aria-label={t('destx.photosAll', { n })}>
+            <img src={g.url} srcSet={g.srcSet || undefined}
+              sizes={g.srcSet ? (i === 0 ? '(max-width: 1240px) 60vw, 740px' : '(max-width: 1240px) 20vw, 250px') : undefined}
+              alt={g.caption || label} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" onError={() => fail(g.url)} />
+          </button>
         ))}
       </div>
-      {credit && <span className="pmos-pill pmos-credit is-phone" title={credit}>{credit}</span>}
-      {mainCredit && <span className="pmos-pill pmos-credit is-wide" title={mainCredit}>{mainCredit}</span>}
       <Button variant="secondary" size="sm" className="pmos-all" onClick={() => setAll(true)}>
         {t('destx.photosAll', { n })}
       </Button>
+      </div>
+      {credit && <p className="pmos-credit is-phone">{t('destx.photoCredit', { credit })}</p>}
+      {mainCredit && <p className="pmos-credit is-wide">{t('destx.photoCredit', { credit: mainCredit })}</p>}
       {all && <AllPhotos imgs={imgs} label={label} onClose={() => setAll(false)} />}
     </div>
   );
