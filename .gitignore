@@ -235,3 +235,11 @@ Execution/**/*.gif
 .claude/worktrees/
 wt/
 .fastbuild/
+
+# T1040: raw downloads the pipeline refetches (64 MB trails_lab_rows.json alone);
+# kept on disk like the rest of cache/, out of git. impeccable/ is the vendored
+# skill package with its 14.7 MB engine; the skill itself is in .claude/skills.
+cache/gtfs/
+cache/nature/
+cache/open_prices/
+/impeccable/
