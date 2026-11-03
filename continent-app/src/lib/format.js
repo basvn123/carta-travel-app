@@ -140,3 +140,12 @@ export const cleanName = (name) => {
   // the name's own case.
   return joined.replace(/\b([A-ZÀ-ÖØ-Ý]{4,})\b/g, (w) => w[0] + w.slice(1).toLowerCase());
 };
+
+/** A register's stock description ("Italian comune.", "Commune in Jura,
+ *  France.") says nothing; it goes, and a line that starts with one keeps
+ *  what follows. Null when nothing real is left (T1036). */
+const STOCK_BLURB = /^(?:[A-Z][a-z]+ )?(?:comune|commune|municipality|gemeinde|town|village)(?: in [^.]+)?\.\s*/i;
+export function cleanBlurb(b) {
+  const s = String(b || '').replace(STOCK_BLURB, '').trim();
+  return s.length >= 12 ? s : null;
+}

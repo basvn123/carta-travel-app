@@ -3,13 +3,15 @@ import { Button, Chip, ChipGroup } from '../components/ui/index.js';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { ArrowRightIcon, CalendarIcon, CompassIcon, ExternalIcon, MapPinIcon, SparkIcon } from '../components/Icons.jsx';
 import { mapsSearchUrl } from '../lib/destInfo.js';
-import { safeUrl } from '../lib/format.js';
+import { cleanBlurb, safeUrl } from '../lib/format.js';
 import { activityLink } from '../lib/activityAffiliates.js';
 import { poiLabelWord } from '../lib/rating.js';
 import { featureHref, linkOpener } from '../lib/featureHref.js';
 import { minutesText } from '../lib/journeys.js';
+import { visitLength } from '../lib/nearby.js';
 import { MemberPlaces } from './MemberPlaces.jsx';
-import { LAYER_ICON } from './AroundHere.jsx';
+import { FeaturePhoto, LAYER_ICON } from './AroundHere.jsx';
+import { StoryCard, StoryRail } from './StoryRail.jsx';
 import { NearPage } from './NearPage.jsx';
 import { PSection, PBlock } from './PageTemplate.jsx';
 import { DO_TYPE_KEYS, cleanName, fmtKm, thumb500 } from './destParts.js';
@@ -235,26 +237,56 @@ function SpotCard({ refEl, n, img, icon, chip, name, meta, text, href, active, o
   );
 }
 
-/** A day trip: a catalogue place (a link to its page) or a composed trip. */
-function TripRow({ tr, t, onSelect, onOpenItin }) {
-  const itin = tr.kind === 'composed_trip';
-  const href = itin ? null : featureHref('dest', tr);
-  const open = itin ? () => onOpenItin?.(tr.id) : linkOpener(() => onSelect?.(tr.id));
-  const time = Number.isFinite(tr.travel?.minutes) ? minutesText(tr.travel.minutes) : null;
-  const line = itin ? t('dest.tripDays', { n: tr.days || 0 })
-    : [
-      time && tr.travel?.mode ? t('destx.tripBy', { time, mode: t(`mode.${tr.travel.mode}`) }) : time,
-      tr.dist_km != null ? `${tr.dist_km} km` : null,
-    ].filter(Boolean).join(', ');
-  const name = cleanName(tr.name);
+/**
+ * The day trips from a place (T1036, owner: "more professional, more clean,
+ * more simple ... for every day trip a clean image"): the Explore rail of
+ * photo cards (StoryRail + StoryCard) in the dossier's own order (its rank,
+ * the composed route last). On the photograph the trip itself (time and
+ * mode, "about" where the time is modelled rather than routed, or "4-day
+ * route") and the score; under it the name, how far and how long it wants
+ * (lib/nearby.js visitLength, the rule the place's own page uses), and the
+ * one line it is known for where the catalogue has a real one.
+ *
+ * No filter: the data holds the fastest way there, not whether a car is
+ * needed, so "no car needed" could not be told honestly (register T1036-a).
+ */
+function DayTrips({ trips, city, t, onSelect, onOpenItin }) {
   return (
-    <li className="pt-trip">
-      {href
-        ? <a className="pt-trip-name" href={href} onClick={open}>{name}</a>
-        : <Button variant="quiet" size="sm" className="pt-trip-name" onClick={open}>{name}</Button>}
-      {tr.rating?.score != null && <ScoreChip rating={tr.rating} size="sm" />}
-      {line && <small>{line}</small>}
-    </li>
+    <StoryRail id="pt-trips-rail" headingLevel={3} t={t} className="dt-rail" title={t('dt.title', { city })}>
+      {trips.map((tr) => {
+        const route = tr.kind === 'composed_trip';
+        const href = route ? null : featureHref('dest', tr);
+        const open = route ? () => onOpenItin?.(tr.id) : linkOpener(() => onSelect?.(tr.id));
+        const mins = tr.travel?.minutes;
+        const time = Number.isFinite(mins) ? minutesText(mins) : null;
+        const mode = tr.travel?.mode ? t(`mode.${tr.travel.mode}`) : null;
+        const status = route ? t('dest.tripDays', { n: tr.days || 0 })
+          : time && mode ? t(tr.travel?.source === 'routed' ? 'destx.tripBy' : 'dt.byAbout', { time, mode })
+            : time;
+        const stay = route ? null : visitLength({ place: { visit_h: tr.visit_h } });
+        const facts = [
+          !route && tr.dist_km != null ? `${tr.dist_km} km` : null,
+          stay ? (stay.days < 1 ? t('dt.half') : stay.days === 1 ? t('dt.full') : t('dt.days', { n: stay.n })) : null,
+        ].filter(Boolean).join(', ');
+        const blurb = cleanBlurb(tr.blurb);
+        return (
+          <StoryCard key={tr.key || tr.id}
+            photo={<FeaturePhoto src={tr.image?.url || null} lat={tr.lat} lon={tr.lon} />}
+            status={status}
+            score={tr.rating?.score != null ? <ScoreChip rating={tr.rating} size="sm" /> : null}
+            title={cleanName(tr.name)}
+            href={href || undefined}
+            onOpen={open}
+            meta={(facts || blurb) ? (
+              <>
+                {facts && <span className="dt-facts">{facts}</span>}
+                {blurb && <span className="dt-blurb">{blurb}</span>}
+              </>
+            ) : null}
+          />
+        );
+      })}
+    </StoryRail>
   );
 }
 
@@ -263,7 +295,7 @@ function TripRow({ tr, t, onSelect, onOpenItin }) {
  * click on one you go to a detailed page"): one photo tile per kind with
  * something in reach (the kind's best photograph, its icon, its name and
  * count), each opening the kind's own page (NearPage); then the day trips
- * and, inside an area, its villages. The kinds come from the registry
+ * (DayTrips, the Explore rail) and, inside an area, its villages. The kinds come from the registry
  * (lib/destOverview.js AROUND_KINDS).
  */
 export function DestAround({ p }) {
@@ -301,11 +333,7 @@ export function DestAround({ p }) {
         <NearPage cat={open} city={city} t={t} onOpenFeature={onOpenFeature} onClose={() => setOpenKey(null)} />
       )}
       {trips?.count > 0 && (
-        <PBlock title={t('dest.aroundKind.trips')}>
-          <ul className="pt-trips">
-            {trips.rows.map((tr) => <TripRow key={tr.key} tr={tr} t={t} onSelect={onSelect} onOpenItin={onOpenItin} />)}
-          </ul>
-        </PBlock>
+        <DayTrips trips={trips.rows} city={city} t={t} onSelect={onSelect} onOpenItin={onOpenItin} />
       )}
       {members?.length > 0 && (
         <PBlock title={t('dest.membersInside', { city })}>

@@ -38,6 +38,7 @@
 import { createPdf, clean, fileSlug, monthSpan as spanOf, M, W } from './pdfKit.js';
 import { formatMoney } from './money.js';
 import { activityLink } from './activityAffiliates.js';
+import { cleanBlurb } from './format.js';
 import { parkingTruth } from './parkingTruth.js';
 import { routePageUrlHere } from './routeLinks.js';
 import { destShareUrl } from './dossier.js';
@@ -285,7 +286,7 @@ export async function downloadDestinationPdf({
           : [tr.travel?.minutes != null ? T('dest.minutesBy', { n: nf(tr.travel.minutes), mode: T(`mode.${tr.travel.mode}`) }) : '',
             tr.dist_km != null ? kmText(tr.dist_km) : ''].filter(Boolean).join(', ');
         const score = ratingWords(tr.rating, t);
-        row({ name: tr.name, right: score ? clean(score.text) : '', sub: [how, tr.blurb].filter(Boolean).join('. ') });
+        row({ name: tr.name, right: score ? clean(score.text) : '', sub: [how, cleanBlurb(tr.blurb)].filter(Boolean).join('. ') });
       }
     }
     if (routeRows.length) {
