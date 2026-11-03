@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, IconButton } from '../components/ui/index.js';
-import { ArrowLeftIcon, CheckIcon, ShareIcon } from '../components/Icons.jsx';
+import { ArrowLeftIcon, CheckIcon, DownloadIcon, ShareIcon } from '../components/Icons.jsx';
 import { SaveButton } from './ExploreCards.jsx';
 
 /**
@@ -22,6 +22,7 @@ import { SaveButton } from './ExploreCards.jsx';
 export function PageBar({
   backLabel, onBack, backRef = null, name = '', nameOn = false,
   fav = false, onFav = null, onShare = null, shareLabel = '', copied = false, copiedLabel = '',
+  onPdf = null, pdfLabel = '', pdfBusy = false,
   t, className = '',
 }) {
   return (
@@ -35,6 +36,11 @@ export function PageBar({
       </span>
       <div className="ipage-bar-acts">
         {onFav && <SaveButton fav={fav} onToggle={onFav} t={t} name={name} />}
+        {onPdf && (
+          <IconButton className="tpage-bar-act" onClick={onPdf} label={pdfLabel} disabled={pdfBusy} aria-busy={pdfBusy || undefined}>
+            <DownloadIcon size={18} />
+          </IconButton>
+        )}
         {onShare && (
           <IconButton className="tpage-bar-act" onClick={onShare} label={copied ? (copiedLabel || shareLabel) : shareLabel}>
             {copied ? <CheckIcon size={18} /> : <ShareIcon size={18} />}

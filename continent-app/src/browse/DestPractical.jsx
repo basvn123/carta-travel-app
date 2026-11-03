@@ -3,7 +3,6 @@ import { safeUrl } from '../lib/format.js';
 import { formatMoney } from '../lib/money.js';
 import { monthName } from '../lib/dates.js';
 import { minutesText } from '../lib/journeys.js';
-import { Button } from '../components/ui/index.js';
 import { AirlineMark } from '../components/flights/Flights.jsx';
 import { Fold } from './Fold.jsx';
 import { RatingBreakdown } from './RatingBreakdown.jsx';
@@ -15,14 +14,14 @@ import { baseCity } from '../lib/nearby.js';
 import { stayBookLinks } from '../lib/transportLinks.js';
 import { stayKindsOf } from '../lib/whenGuide.js';
 import { BunkIcon, HomeIcon, HotelIcon } from '../components/Icons.jsx';
-import { PracticalSlots, practicalSlotRows } from './DestPracticalSlots.jsx';
+import { practicalSlotRows } from './DestPracticalSlots.jsx';
 import { PSection } from './PageTemplate.jsx';
 import '../styles/94-when-stay.css';
 import { cleanName, fmtKm } from './destParts.js';
 import {
   PersonIcon, ParkingIcon, SunIcon, RainIcon, SnowIcon, ShoeIcon, SwimIcon, BootIcon, PlugIcon,
-  BottleIcon, JacketIcon, BackpackIcon, CheckIcon, StarIcon, SparkIcon, LinkIcon, BusIcon, CalendarIcon,
-  DownloadIcon, TrainIcon, CarIcon, ExternalIcon,
+  BottleIcon, JacketIcon, BackpackIcon, CheckIcon, StarIcon, SparkIcon, LinkIcon, BusIcon,
+  TrainIcon, CarIcon, ExternalIcon, ClockIcon,
 } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 
@@ -154,7 +153,7 @@ export function DestGetting({ p }) {
 
 /** The quick facts from d.essentials, each only when the dossier has it. */
 function quickFacts(p) {
-  const { t, lang, d, bookAhead } = p;
+  const { t, lang, d } = p;
   const e = d?.essentials || {};
   const out = [];
   const langs = (e.languages || []).filter((x) => typeof x === 'string' && x);
@@ -185,7 +184,6 @@ function quickFacts(p) {
   }
   if (TAP.includes(e.tap_water)) out.push({ k: 'tap', label: t('destx.qf.tap'), value: t(`destx.tap.${e.tap_water}`) });
   if (e.emergency) out.push({ k: 'sos', label: t('destx.qf.emergency'), value: String(e.emergency) });
-  if (bookAhead.length) out.push({ k: 'book', label: t('destx.qf.bookAhead'), value: bookAhead.join(', ') });
   return out;
 }
 
@@ -216,11 +214,28 @@ function Credits({ p }) {
   );
 }
 
+/** A link inside a card: the first the card's one button, the rest quiet. */
+function CardLinks({ links }) {
+  if (!links.length) return null;
+  const [first, ...rest] = links;
+  return (
+    <div className="pcard-links">
+      <a className="btn btn-secondary btn-sm pcard-go" href={first.href} target="_blank" rel="noreferrer noopener">
+        <span className="btn-label">{first.label}</span>
+        <ExternalIcon size={13} />
+      </a>
+      {rest.map((l) => (
+        <a key={l.key} className="pcard-alt" href={l.href} target="_blank" rel="noreferrer noopener">{l.label}</a>
+      ))}
+    </div>
+  );
+}
+
 export function DestPractical({ p }) {
   const {
     t, lang, city, destination, getting, rhythm, verdict, verdictBand, fmtScore,
-    packs, month, parking, exits, isOpen, toggle, exportPdf, pdfBusy, pdfReady,
-    aroundStat, airportText, carDayEur,
+    packs, month, parking, tours, flightLinks, bookPhoto, isOpen, toggle, bookAhead,
+    aroundStat, airportText, airportIata, carDayEur,
   } = p;
   const matchFit = useFit(destination, month);
   const qf = quickFacts(p);
@@ -240,16 +255,46 @@ export function DestPractical({ p }) {
     Number.isFinite(carDayEur) && carDayEur > 0
       ? t('destx.carHire', { price: formatMoney(carDayEur, { precision: 'whole', locale: lang }) }) : null,
   ].filter(Boolean);
-  const cells = [
-    airportText && { key: 'air', Icon: PlaneIcon, title: t('destx.airport'), text: airportText },
-    aroundBits.length > 0 && { key: 'around', Icon: BusIcon, title: t('dest.keyAround'), text: aroundBits.join(' ') },
-    rhythm && lang === 'en' && { key: 'rhythm', Icon: CalendarIcon, title: t('destx.rhythm'), text: rhythm },
+
+  // T1027 (owner: swipeable cards, images where they suit): the sights to
+  // book with their photograph and the tour links; the airport with the
+  // flight links; then every fact on its own colour field.
+  const cards = [
+    (bookAhead.length > 0 || tours.length > 0) && {
+      key: 'book', photo: bookPhoto,
+      title: bookAhead.length ? t('destx.qf.bookAhead') : t('pc.tickets'), names: bookAhead, links: tours,
+    },
+    (airportIata || flightLinks.length > 0) && {
+      key: 'air', tone: 'sun', Icon: PlaneIcon, title: t('destx.airport'), code: airportIata, text: airportText, links: flightLinks,
+    },
+    aroundBits.length > 0 && { key: 'around', tone: 'lagoon', Icon: BusIcon, title: t('dest.keyAround'), text: aroundBits.join(' ') },
+    rhythm && lang === 'en' && { key: 'rhythm', tone: 'umber', Icon: ClockIcon, title: t('destx.rhythm'), text: rhythm },
+    ...practicalSlotRows(p).map((r) => ({ tone: 'lagoon', ...r })),
   ].filter(Boolean);
-  const slots = practicalSlotRows(p).length > 0;
-  const outs = exits.filter((x) => x.key !== 'bk' && x.key !== 'ab');
 
   return (
     <PSection id="pt-practical" title={t('destx.jump.practical')}>
+      {cards.length > 0 && (
+        <ul className="pcards" aria-label={t('destx.jump.practical')}>
+          {cards.map((c) => (
+            <li key={c.key} className={`pcard${c.photo ? ' is-photo' : ''}${c.tone ? ` is-${c.tone}` : ''}`} data-testid={`pr-${c.key}`}>
+              {c.photo
+                ? <img className="pcard-img" src={c.photo} alt="" loading="lazy" decoding="async" />
+                : c.Icon && <span className="pcard-ico" aria-hidden="true"><c.Icon size={22} /></span>}
+              <div className="pcard-body">
+                <h3 className="pcard-title">{c.title}</h3>
+                {c.code && <p className="pcard-code">{c.code}</p>}
+                {c.names?.length > 0 && (
+                  <ul className="pcard-names">{c.names.map((n) => <li key={n} className="pt-tag">{n}</li>)}</ul>
+                )}
+                {c.text && <p className="pcard-text">{c.text}</p>}
+                {c.links?.length > 0 && <CardLinks links={c.links} />}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+
       {qf.length > 0 && (
         <dl className="pt-qf">
           {qf.map((f) => (
@@ -259,39 +304,6 @@ export function DestPractical({ p }) {
             </div>
           ))}
         </dl>
-      )}
-      {(cells.length > 0 || slots) && (
-        <div className="pt-cells is-icons">
-          {cells.map(({ key, Icon, title, text }) => (
-            <div className="pt-cell" key={key}>
-              <span className="pt-cell-icon" aria-hidden="true"><Icon size={16} /></span>
-              <b className="pt-cell-title">{title}</b>
-              <p className="pt-cell-text">{text}</p>
-            </div>
-          ))}
-          <PracticalSlots p={p} />
-        </div>
-      )}
-
-      <div className="pt-dl">
-        <Button variant="secondary" size="sm" onClick={exportPdf} disabled={pdfBusy || !pdfReady}
-          loading={pdfBusy} iconStart={<DownloadIcon size={16} />}>
-          {pdfBusy ? t('dest.pdfBuilding') : t('dest.pdf')}
-        </Button>
-      </div>
-
-      {outs.length > 0 && (
-        <div className="pt-out">
-          <div className="pt-outs">
-            {outs.map(({ key, href, label, Icon }) => (
-              <a key={key} className="pt-linkbtn" href={href} target="_blank" rel="noreferrer noopener">
-                <Icon size={14} />
-                <span>{label}</span>
-              </a>
-            ))}
-          </div>
-          <p className="pt-muted">{t('prov.bookingNote')}</p>
-        </div>
       )}
 
       <div className="destp-folds pt-folds">

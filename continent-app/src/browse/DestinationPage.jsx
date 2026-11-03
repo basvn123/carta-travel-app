@@ -391,8 +391,9 @@ export function DestinationPage({
   // sights, getting around, the airport. A missing fact is left out.
   const aroundStat = mobilityStat(destination, t, lang);
   const airportPick = pickAirport(getting);
-  const airportText = airportPick ? (airportPick.minutes != null && (airportPick.road || airportPick.mode)
-    ? airportLine(airportPick, t, '') : airportPick.iata) : null;
+  const airportIata = airportPick?.iata || null;
+  const airportText = airportPick?.minutes != null && (airportPick.road || airportPick.mode)
+    ? airportLine(airportPick, t, '') : null;
   const crowd = crowdFor(destination.crowding, tripWhen);
   const crowdText = !crowd ? null
     : crowd.kind === 'tier' ? t(CROWD_TIER_KEYS[crowd.tier])
@@ -474,14 +475,21 @@ export function DestinationPage({
   const hasRoutes = (routeRows.hiking?.length || 0) + (routeRows.cycling?.length || 0) > 0
     || !!routeRows.node_network?.km;
 
-  const exits = [
-    links.booking && { key: 'bk', href: links.booking, label: t('dest.linkBooking'), Icon: BedIcon },
-    links.airbnb && { key: 'ab', href: links.airbnb, label: t('dest.linkAirbnb'), Icon: BedIcon },
-    links.getyourguide && { key: 'gyg', href: activityLink(links.getyourguide, 'dest-book'), label: t('dest.bookGyg'), Icon: CompassIcon },
-    links.viator && { key: 'via', href: activityLink(links.viator, 'dest-book'), label: t('dest.bookViator'), Icon: CompassIcon },
-    links.flights_google && { key: 'gf', href: links.flights_google, label: t('dest.linkGflights'), Icon: PlaneIcon },
-    links.skyscanner && { key: 'sky', href: links.skyscanner, label: t('dest.linkSkyscanner'), Icon: PlaneIcon },
+  // T1027: each link rides on its Practical card, tours on the sights to
+  // book and flights on the airport.
+  const tours = [
+    links.getyourguide && { key: 'gyg', href: activityLink(links.getyourguide, 'dest-book'), label: t('pc.ticketsOn', { provider: 'GetYourGuide' }) },
+    links.viator && { key: 'via', href: activityLink(links.viator, 'dest-book'), label: 'Viator' },
   ].filter(Boolean);
+  const flightLinks = [
+    links.flights_google && { key: 'gf', href: links.flights_google, label: t('dest.linkGflights') },
+    links.skyscanner && { key: 'sky', href: links.skyscanner, label: t('dest.linkSkyscanner') },
+  ].filter(Boolean);
+  // The card's photograph: the first sight to book that has one, else the
+  // first highlight's (the same matcher and filter as the highlights).
+  const bookPhoto = bookAhead.map(hlPhoto).find(Boolean)
+    || highlights.map((h) => (h.image?.url && !NOT_A_VIEW.test(h.image.url) ? thumb500(h.image.url) : h.photo)).find(Boolean)
+    || null;
 
   // Getting there from the traveller's home, by the app's own travel models.
   const homeChoices = settingsCtx
@@ -542,9 +550,9 @@ export function DestinationPage({
     cats, aroundKey, setAroundKey: setAroundPick, aroundKm: around?.radius_km || 20,
     area: isArea(d), routeRows, hasRoutes, members, memberFocus,
     monthPick: statMonth, water, festivals,
-    getting, rhythm, bookAhead, verdict, verdictBand, tips, packs, month, parking, exits,
+    getting, rhythm, bookAhead, verdict, verdictBand, tips, packs, month, parking, tours, flightLinks, bookPhoto,
     isOpen, toggle, onOpenLifestyle, onOpenFeature, onSelect, onOpenItin, goTab,
-    exportPdf, pdfBusy, pdfReady: !!d, ways, aroundStat, airportText, guideUrl,
+    ways, aroundStat, airportText, airportIata, guideUrl,
     carDayEur: getting?.car_needed ? getting.rental_eur_day ?? null : null,
   };
 
@@ -595,6 +603,9 @@ export function DestinationPage({
         onFav={onToggleFavorite || null}
         onShare={share}
         shareLabel={t('dest.share')}
+        onPdf={d ? exportPdf : null}
+        pdfBusy={pdfBusy}
+        pdfLabel={pdfBusy ? t('dest.pdfBuilding') : t('dest.pdf')}
         copied={copied}
         copiedLabel={t('dest.linkCopied')}
       />
