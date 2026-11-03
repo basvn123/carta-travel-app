@@ -1581,3 +1581,6 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1040-c | T1040 | R2 phase 2 prune not run: 29 old dest shards (3 MB, pre re-tile PL/GB/GR/SE/CZ); run push-data.mjs --live --prune once no tab holds the T1018 build (Execution/P0/T1040-ship-all.md) | next task | open |  |
 | T1040-d | T1040 | continent-app/.git is a stale nested repo (master at T915, no remote, ~350 false changes); delete it so no session commits there (Execution/P0/T1040-ship-all.md) | user | open |  |
 | T1040-e | T1040 | Branches p0-next-steps-docs and explore-v4 are superseded (merging would revert newer docs and app code); delete them (Execution/P0/T1040-ship-all.md) | user | open |  |
+| T1041-a | T1041 | Pages in their own scroller (My trips, the trip wizard) sit 8 px left of the header line at 1920 px because the scroller's bar narrows what they centre in; needs scrollbar-gutter on the header or a scroller-aware inset | next task | open | |
+| T1041-b | T1041 | Trip page with a saved trip, Together, an item page and a region page were not seen in the browser after the width tokens; look at 1440 and 1920 px | next task | open | |
+| T1041-c | T1041 | `.destp-v3 .destp-grid` (64-v6-destination.css) still caps at 1180 px but nothing renders destp-v3; confirm dead and remove | next task | open | |
