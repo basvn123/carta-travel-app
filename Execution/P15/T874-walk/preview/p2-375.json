@@ -1,0 +1,374 @@
+{
+ "log": [
+  {
+   "screen": "Tell Carta",
+   "chips": [
+    "November",
+    "4 nights",
+    "1 adult",
+    "From Leuven",
+    "€900 a person",
+    "Hostel"
+   ],
+   "missing": [
+    "Booked anything?",
+    "What matters most?",
+    "How to get there?",
+    "Which airports?"
+   ]
+  },
+  {
+   "screen": "What have you booked already?",
+   "count": "2 of 10",
+   "marks": "x.xx.xx...",
+   "picked": [
+    "Nothing yet"
+   ]
+  },
+  {
+   "screen": "What matters most?",
+   "count": "5 of 10",
+   "marks": "xxxx.xx...",
+   "picked": [
+    "A good balance"
+   ]
+  },
+  {
+   "screen": "How do you want to get there?",
+   "count": "8 of 10",
+   "marks": "xxxxxxx...",
+   "picked": [
+    "Any way"
+   ]
+  },
+  {
+   "screen": "How far would you go to an airport?",
+   "count": "9 of 10",
+   "marks": "xxxxxxxx..",
+   "picked": [
+    "2 hours",
+    "Brussels (BRU)",
+    "Charleroi (CRL)"
+   ]
+  },
+  {
+   "screen": "New trip",
+   "count": "",
+   "marks": "",
+   "picked": [
+    "Only me"
+   ]
+  },
+  {
+   "screen": "My trip",
+   "count": "",
+   "marks": "",
+   "picked": []
+  },
+  {
+   "screen": "How much should Carta plan?",
+   "count": "",
+   "marks": "",
+   "picked": [
+    "Find my flight first"
+   ],
+   "preselected": "flight"
+  },
+  {
+   "screen": "Pick your flight",
+   "chips": "From Leuven Up to €900 a person",
+   "rows": [
+    {
+     "name": "Český Krumlov",
+     "fare": "€348",
+     "lbl": "for one",
+     "legs": [
+      "14:55 to 22:20 Out Sat 7 Nov, 1 stop",
+      "18:00 to 22:25 Back Mon 9 Nov, 1 stop"
+     ]
+    },
+    {
+     "name": "Lake Bled",
+     "fare": "€354",
+     "lbl": "for one",
+     "legs": [
+      "08:05 to 12:10 Out Sat 7 Nov, 1 stop",
+      "20:45 to 08:30 Back Mon 9 Nov, 1 stop"
+     ]
+    },
+    {
+     "name": "Salzburg",
+     "fare": "€366",
+     "lbl": "for one",
+     "legs": [
+      "06:45 to 08:05 Out Sat 7 Nov, Direct",
+      "19:50 to 08:35 Back Mon 9 Nov, 1 stop"
+     ]
+    }
+   ]
+  },
+  {
+   "screen": "Trip page (TripSummary)",
+   "name": "My trip",
+   "total": 601.74,
+   "tiles": "Total for 1 person €601.74 Flights €348 KLM, LOT Getting around €55 Stay €64 Food €134 View breakdown Add what you paid",
+   "chips": "Český Krumlov Sat 07 Nov to Wed 11 Nov 1 adult Leuven Dorm bed, Easygoing",
+   "route": "Leuven Sat 07 Nov BRU PRG KLM 14:55 to 22:20, Sat 07 Nov €174 Český Krumlov 4 nights Sat 07 Nov to Wed 11 Nov Dorm bed €198 PRG BRU LOT 18:00 to 22:25, Mon 09 Nov €154 Leuven Wed 11 Nov",
+   "book": [
+    "flight-out",
+    "stay-0",
+    "flight-back"
+   ],
+   "booked": 0,
+   "wizard": 0,
+   "planDays": 1
+  },
+  {
+   "screen": "Plan your days",
+   "questions": [
+    "How do you like your mornings? (1 of 7): Up at sunrise / Slow coffee, late start / Breakfast on the go",
+    "What pace suits you? (2 of 7): Action packed / Balanced, with downtime / Slow and relaxed",
+    "How planned should a day be? (3 of 7): Every hour planned / A loose frame / Lots of free time",
+    "What's the trip mostly for? (4 of 7): Culture / Relaxing / The outdoors / Food",
+    "How do you like to eat? (5 of 7): Street food on the move / Sit down local spots / Fine dining / Cooking my own meals",
+    "How do you get around? (6 of 7): Walking everywhere / Public transport / Taxis and rides / A car",
+    "Who plans the days? (7 of 7): Let Carta plan them\nA full day plan from your answers, yours to change / I'll plan them myself\nPick what you like from Carta's ideas"
+   ]
+  }
+ ],
+ "fig": {
+  "chips": [
+   "November",
+   "4 nights",
+   "1 adult",
+   "From Leuven",
+   "€900 a person",
+   "Hostel"
+  ],
+  "missing": [
+   "Booked anything?",
+   "What matters most?",
+   "How to get there?",
+   "Which airports?"
+  ],
+  "flights": [
+   {
+    "name": "Český Krumlov",
+    "fare": "€348",
+    "lbl": "for one",
+    "legs": [
+     "14:55 to 22:20 Out Sat 7 Nov, 1 stop",
+     "18:00 to 22:25 Back Mon 9 Nov, 1 stop"
+    ]
+   },
+   {
+    "name": "Lake Bled",
+    "fare": "€354",
+    "lbl": "for one",
+    "legs": [
+     "08:05 to 12:10 Out Sat 7 Nov, 1 stop",
+     "20:45 to 08:30 Back Mon 9 Nov, 1 stop"
+    ]
+   },
+   {
+    "name": "Salzburg",
+    "fare": "€366",
+    "lbl": "for one",
+    "legs": [
+     "06:45 to 08:05 Out Sat 7 Nov, Direct",
+     "19:50 to 08:35 Back Mon 9 Nov, 1 stop"
+    ]
+   }
+  ],
+  "flightChips": "From Leuven Up to €900 a person",
+  "flight": {
+   "name": "Český Krumlov",
+   "fare": "€348",
+   "lbl": "for one",
+   "legs": [
+    "14:55 to 22:20 Out Sat 7 Nov, 1 stop",
+    "18:00 to 22:25 Back Mon 9 Nov, 1 stop"
+   ]
+  },
+  "tpg": {
+   "name": "My trip",
+   "total": 601.74,
+   "tiles": "Total for 1 person €601.74 Flights €348 KLM, LOT Getting around €55 Stay €64 Food €134 View breakdown Add what you paid",
+   "chips": "Český Krumlov Sat 07 Nov to Wed 11 Nov 1 adult Leuven Dorm bed, Easygoing",
+   "route": "Leuven Sat 07 Nov BRU PRG KLM 14:55 to 22:20, Sat 07 Nov €174 Český Krumlov 4 nights Sat 07 Nov to Wed 11 Nov Dorm bed €198 PRG BRU LOT 18:00 to 22:25, Mon 09 Nov €154 Leuven Wed 11 Nov",
+   "book": [
+    "flight-out",
+    "stay-0",
+    "flight-back"
+   ],
+   "booked": 0,
+   "wizard": 0,
+   "planDays": 1
+  },
+  "screens": "Tell Carta | What have you booked already? | What matters most? | How do you want to get there? | How far would you go to an airport? | New trip | My trip | How much should Carta plan? | Pick your flight | Trip page (TripSummary)",
+  "costs": "All trips My trip Český Krumlov Sat 07 Nov to Wed 11 Nov 1 adult Leuven Dorm bed, Easygoing Overview Itinerary Costs Days Your trip costs €601.74 in total Total for 1 person €298 under your budget Flights €348.00 BRU PRG €174.00 Change PRG BRU €154.00 Change To the airport and back €20.00 Change Getting around €55.42 Airport transfers €55.42 Change Stay €64.00 Beds €64.00 Change Food €134.32 Food and drink €134.32 Change One more night in Český Krumlov adds €49.58 €601.74 Total for 1 person Plan your days",
+  "days": [
+   {
+    "title": "How do you like your mornings?",
+    "count": "1 of 7",
+    "opts": [
+     "Up at sunrise",
+     "Slow coffee, late start",
+     "Breakfast on the go"
+    ]
+   },
+   {
+    "title": "What pace suits you?",
+    "count": "2 of 7",
+    "opts": [
+     "Action packed",
+     "Balanced, with downtime",
+     "Slow and relaxed"
+    ]
+   },
+   {
+    "title": "How planned should a day be?",
+    "count": "3 of 7",
+    "opts": [
+     "Every hour planned",
+     "A loose frame",
+     "Lots of free time"
+    ]
+   },
+   {
+    "title": "What's the trip mostly for?",
+    "count": "4 of 7",
+    "opts": [
+     "Culture",
+     "Relaxing",
+     "The outdoors",
+     "Food"
+    ]
+   },
+   {
+    "title": "How do you like to eat?",
+    "count": "5 of 7",
+    "opts": [
+     "Street food on the move",
+     "Sit down local spots",
+     "Fine dining",
+     "Cooking my own meals"
+    ]
+   },
+   {
+    "title": "How do you get around?",
+    "count": "6 of 7",
+    "opts": [
+     "Walking everywhere",
+     "Public transport",
+     "Taxis and rides",
+     "A car"
+    ]
+   },
+   {
+    "title": "Who plans the days?",
+    "count": "7 of 7",
+    "opts": [
+     "Let Carta plan them\nA full day plan from your answers, yours to change",
+     "I'll plan them myself\nPick what you like from Carta's ideas"
+    ]
+   }
+  ]
+ },
+ "settings": {
+  "version": 1,
+  "answered": [
+   "who",
+   "when",
+   "from",
+   "g:budget",
+   "sleep",
+   "doors",
+   "tell",
+   "booked",
+   "priority",
+   "way",
+   "airports"
+  ],
+  "booked": {
+   "flights": false,
+   "stays": false,
+   "car": false,
+   "tickets": false
+  },
+  "party": {
+   "kind": "solo",
+   "adults": 1,
+   "kids": 0,
+   "kidAges": [],
+   "babies": 0,
+   "slowWalkers": false
+  },
+  "priority": "price",
+  "when": {
+   "mode": "months",
+   "start": "",
+   "end": "",
+   "months": [
+    11
+   ],
+   "nights": 4
+  },
+  "from": {
+   "name": "Leuven",
+   "lat": 50.8794,
+   "lng": 4.7009,
+   "countryCode": "BE"
+  },
+  "way": "plane",
+  "kind": "new",
+  "now": null,
+  "guide": {
+   "shapes": [],
+   "shape": "",
+   "likes": [],
+   "weather": "",
+   "reach": "",
+   "avoid": [],
+   "budget": {
+    "kind": "total",
+    "eur": 900
+   },
+   "pick": [
+    "flight",
+    "stay",
+    "local"
+   ]
+  },
+  "rhythm": {
+   "mornings": "",
+   "pace": "",
+   "detail": "",
+   "goal": "",
+   "food": "",
+   "around": "",
+   "steps": 0
+  },
+  "trip": {
+   "name": "",
+   "visibility": "private",
+   "cover": "",
+   "created": 1793348318976,
+   "buddies": []
+  },
+  "note": "Just a cheap flight for me alone from Leuven, 4 nights in November, max 900 euro, a hostel is fine",
+  "daysHow": "",
+  "imports": [],
+  "places": [],
+  "sources": {
+   "who": "words",
+   "when": "words",
+   "from": "words",
+   "g:budget": "words",
+   "sleep": "words",
+   "doors": "words",
+   "tell": "words"
+  },
+  "door": "flight"
+ }
+}

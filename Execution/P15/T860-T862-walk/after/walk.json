@@ -1,0 +1,425 @@
+{
+ "results": [
+  {
+   "w": 1440,
+   "label": "the stay chip names the type",
+   "ok": true,
+   "note": "Portugal | May | 7 nights | 2 adults | From Ghent | Apartment or holiday home | Booked anything? | What matters most? | How to get there? | Which airports?"
+  },
+  {
+   "w": 1440,
+   "label": "the way there and the airports are dashed chips",
+   "ok": true,
+   "note": "Booked anything? | What matters most? | How to get there? | Which airports?"
+  },
+  {
+   "w": 1440,
+   "label": "the stay chip opens the stay types alone (no spend, no counts)",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "Either shows the four types",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "every type has a typical night a person",
+   "ok": true,
+   "note": "€58 a person a night | €66 a person a night | €37 a person a night | €21 a person a night"
+  },
+  {
+   "w": 1440,
+   "label": "the space Segmented fills its box, no word spills",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "the apartment is picked (the words said a flat)",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "A room shows Hotel, Room in a home, Hostel",
+   "ok": true,
+   "note": "Hotel | Room in a home | Hostel"
+  },
+  {
+   "w": 1440,
+   "label": "the stars show for Hotel only",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "the stars fill their box too",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "no stars for Hostel",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "A whole place shows the apartment alone and picks it",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "the setup asks how to get there after the town",
+   "ok": true,
+   "note": "What have you booked already? | What matters most? | How do you want to get there?"
+  },
+  {
+   "w": 1440,
+   "label": "four ways: Any way, Fly, Train, Car",
+   "ok": true,
+   "note": "Any way | Fly | Train | Car"
+  },
+  {
+   "w": 1440,
+   "label": "then how far to an airport",
+   "ok": true,
+   "note": "How far would you go to an airport?"
+  },
+  {
+   "w": 1440,
+   "label": "airports in reach, nearest drive first, each with its drive",
+   "ok": true,
+   "note": "Antwerp (ANR) 50 min by car | Brussels (BRU) 52 min by car | Oostende (OST) 56 min by car | Lesquin (LIL) 1 h 04 by car"
+  },
+  {
+   "w": 1440,
+   "label": "Liege has no prices yet and cannot be ticked",
+   "ok": true,
+   "note": "Grâce-Hollogne (LGG) 1 h 59 by car. No prices yet"
+  },
+  {
+   "w": 1440,
+   "label": "2 hours is the default and ticks the covered airports inside it",
+   "ok": true,
+   "note": "Antwerp (ANR), Brussels (BRU), Oostende (OST), Lesquin (LIL), Charleroi (CRL), Rotterdam (RTM), Eindhoven (EIN)"
+  },
+  {
+   "w": 1440,
+   "label": "the reach Segmented fills its box",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "airports: no sideways scroll",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "1 hour ticks fewer",
+   "ok": true,
+   "note": "3 against 7"
+  },
+  {
+   "w": 1440,
+   "label": "a tap on a row switches to Pick",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "the airports are the app's own choice (oa and ah in the address)",
+   "ok": true,
+   "note": "df=m&tab=plan&mode=new&d=2027-05-01&r=2027-05-08&g=2&b=priority_10kg&t=plane&o=BRU&oa=ANR.BRU.OST.EIN&ah=p&ls=5%2C4%2C2%"
+  },
+  {
+   "w": 1440,
+   "label": "the setup ends on the trip",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "the stay chip names the type",
+   "ok": true,
+   "note": "Portugal | May | 7 nights | 2 adults | From Ghent | Apartment or holiday home | Booked anything? | What matters most? | How to get there? | Which airports?"
+  },
+  {
+   "w": 375,
+   "label": "the way there and the airports are dashed chips",
+   "ok": true,
+   "note": "Booked anything? | What matters most? | How to get there? | Which airports?"
+  },
+  {
+   "w": 375,
+   "label": "the stay chip opens the stay types alone (no spend, no counts)",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "Either shows the four types",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "every type has a typical night a person",
+   "ok": true,
+   "note": "€58 a person a night | €66 a person a night | €37 a person a night | €21 a person a night"
+  },
+  {
+   "w": 375,
+   "label": "the space Segmented fills its box, no word spills",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "the apartment is picked (the words said a flat)",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "A room shows Hotel, Room in a home, Hostel",
+   "ok": true,
+   "note": "Hotel | Room in a home | Hostel"
+  },
+  {
+   "w": 375,
+   "label": "the stars show for Hotel only",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "the stars fill their box too",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "no stars for Hostel",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "A whole place shows the apartment alone and picks it",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "the setup asks how to get there after the town",
+   "ok": true,
+   "note": "What have you booked already? | What matters most? | How do you want to get there?"
+  },
+  {
+   "w": 375,
+   "label": "four ways: Any way, Fly, Train, Car",
+   "ok": true,
+   "note": "Any way | Fly | Train | Car"
+  },
+  {
+   "w": 375,
+   "label": "then how far to an airport",
+   "ok": true,
+   "note": "How far would you go to an airport?"
+  },
+  {
+   "w": 375,
+   "label": "airports in reach, nearest drive first, each with its drive",
+   "ok": true,
+   "note": "Antwerp (ANR) 50 min by car | Brussels (BRU) 52 min by car | Oostende (OST) 56 min by car | Lesquin (LIL) 1 h 04 by car"
+  },
+  {
+   "w": 375,
+   "label": "Liege has no prices yet and cannot be ticked",
+   "ok": true,
+   "note": "Grâce-Hollogne (LGG) 1 h 59 by car. No prices yet"
+  },
+  {
+   "w": 375,
+   "label": "2 hours is the default and ticks the covered airports inside it",
+   "ok": true,
+   "note": "Antwerp (ANR), Brussels (BRU), Oostende (OST), Lesquin (LIL), Charleroi (CRL), Rotterdam (RTM), Eindhoven (EIN)"
+  },
+  {
+   "w": 375,
+   "label": "the reach Segmented fills its box",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "airports: no sideways scroll",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "1 hour ticks fewer",
+   "ok": true,
+   "note": "3 against 7"
+  },
+  {
+   "w": 375,
+   "label": "a tap on a row switches to Pick",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "the airports are the app's own choice (oa and ah in the address)",
+   "ok": true,
+   "note": "df=m&tab=plan&mode=new&d=2027-05-01&r=2027-05-08&g=2&b=priority_10kg&t=plane&o=BRU&oa=ANR.BRU.OST.EIN&ah=p&ls=5%2C4%2C2%"
+  },
+  {
+   "w": 375,
+   "label": "the setup ends on the trip",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "the first trip for you flies from Eindhoven (half the fare beats the longer drive), handed to Getting there",
+   "ok": true,
+   "note": "Getting there: From Ghent (EIN)"
+  },
+  {
+   "w": 1440,
+   "label": "Review holds the way to the airport and back as its own line",
+   "ok": true,
+   "note": "Getting there €120.00 Getting home €132.00 To the airport and back €96.60 Airport transfers €44.68 Between your stops €16.26 Beds €491.30 Food and drink €884.96"
+  },
+  {
+   "w": 1440,
+   "label": "the flight line names Eindhoven and the saving against Brussels",
+   "ok": true,
+   "note": "Flies from Eindhoven (EIN): €197.20 less door to door than Brussels (BRU).\nFly from Brussels (BRU)"
+  },
+  {
+   "w": 1440,
+   "label": "an apartment stay books on Booking.com apartments and Airbnb",
+   "ok": true,
+   "note": "Find on Booking.com | Find on Airbnb | Find on Booking.com | Find on Airbnb"
+  },
+  {
+   "w": 1440,
+   "label": "the Booking.com link has the apartments filter",
+   "ok": true,
+   "note": "https://www.booking.com/searchresults.html?ss=Hallstatt%2C+Austria&group_adults=2&no_rooms"
+  },
+  {
+   "w": 1440,
+   "label": "trip page: no sideways scroll",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "one tap swaps to Brussels, the nearest",
+   "ok": true,
+   "note": "Flies from Brussels (BRU), your nearest airport.\nFly from Eindhoven (EIN)"
+  },
+  {
+   "w": 1440,
+   "label": "the costs hold the way to the airport and back",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "the first trip for you flies from Eindhoven (half the fare beats the longer drive), handed to Getting there",
+   "ok": true,
+   "note": "Getting there: From Ghent (EIN)"
+  },
+  {
+   "w": 375,
+   "label": "Review holds the way to the airport and back as its own line",
+   "ok": true,
+   "note": "Getting there €120.00 Getting home €132.00 To the airport and back €96.60 Airport transfers €44.68 Between your stops €16.26 Beds €491.30 Food and drink €884.96"
+  },
+  {
+   "w": 375,
+   "label": "the flight line names Eindhoven and the saving against Brussels",
+   "ok": true,
+   "note": "Flies from Eindhoven (EIN): €197.20 less door to door than Brussels (BRU).\nFly from Brussels (BRU)"
+  },
+  {
+   "w": 375,
+   "label": "an apartment stay books on Booking.com apartments and Airbnb",
+   "ok": true,
+   "note": "Find on Booking.com | Find on Airbnb | Find on Booking.com | Find on Airbnb"
+  },
+  {
+   "w": 375,
+   "label": "the Booking.com link has the apartments filter",
+   "ok": true,
+   "note": "https://www.booking.com/searchresults.html?ss=Hallstatt%2C+Austria&group_adults=2&no_rooms"
+  },
+  {
+   "w": 375,
+   "label": "trip page: no sideways scroll",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "one tap swaps to Brussels, the nearest",
+   "ok": true,
+   "note": "Flies from Brussels (BRU), your nearest airport.\nFly from Eindhoven (EIN)"
+  },
+  {
+   "w": 375,
+   "label": "the costs hold the way to the airport and back",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "the From control shows the airports in reach",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "with the planner's ticks",
+   "ok": true,
+   "note": "Brussels (BRU), Charleroi (CRL), Eindhoven (EIN)"
+  },
+  {
+   "w": 1440,
+   "label": "the From control: no sideways scroll",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "the From control shows the airports in reach",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "with the planner's ticks",
+   "ok": true,
+   "note": "Brussels (BRU), Charleroi (CRL), Eindhoven (EIN)"
+  },
+  {
+   "w": 375,
+   "label": "the From control: no sideways scroll",
+   "ok": true,
+   "note": ""
+  }
+ ],
+ "errors": []
+}

@@ -1,0 +1,323 @@
+{
+ "log": [
+  {
+   "screen": "Tell Carta",
+   "chips": [
+    "Prague",
+    "21 Nov to 28 Nov",
+    "2 adults",
+    "From Ghent",
+    "Flights booked"
+   ],
+   "missing": [
+    "Where to sleep?",
+    "What matters most?"
+   ]
+  },
+  {
+   "screen": "How do you like to travel?",
+   "count": "4 of 6",
+   "marks": "xxx...",
+   "picked": [
+    "Either",
+    "Apartment or holiday home",
+    "Easygoing"
+   ]
+  },
+  {
+   "screen": "What matters most?",
+   "count": "5 of 6",
+   "marks": "xxxx..",
+   "picked": [
+    "A good balance"
+   ]
+  },
+  {
+   "screen": "New trip",
+   "count": "",
+   "marks": "",
+   "picked": [
+    "Only me"
+   ]
+  },
+  {
+   "screen": "My trip",
+   "count": "",
+   "marks": "",
+   "picked": []
+  },
+  {
+   "screen": "How much should Carta plan?",
+   "count": "",
+   "marks": "",
+   "picked": [
+    "I've booked part of it"
+   ],
+   "preselected": "booked"
+  },
+  {
+   "screen": "What have you booked?",
+   "count": "",
+   "marks": "",
+   "picked": []
+  },
+  {
+   "screen": "Trip page (TripSummary)",
+   "name": "My trip",
+   "total": 1375.58,
+   "tiles": "Total for 2 people €1,375.58 Group Per person Flights €270 Getting around Not needed Stay €565 Food €540 View breakdown Add what you paid",
+   "chips": "Prague Sat 21 Nov to Sat 28 Nov 2 adults Ghent Entire place, Easygoing",
+   "route": "Ghent Sat 21 Nov Getting there Prague Your own, Sat 21 Nov Booked €142 Prague 7 nights Sat 21 Nov to Sat 28 Nov Entire place €1,106 Getting home Prague Your own, Sat 28 Nov Booked €128 Ghent Sat 28 Nov",
+   "book": [
+    "flight-out",
+    "stay-0",
+    "flight-back"
+   ],
+   "booked": 2,
+   "wizard": 0,
+   "planDays": 1
+  },
+  {
+   "screen": "Plan your days",
+   "questions": [
+    "How do you like your mornings? (1 of 7): Up at sunrise / Slow coffee, late start / Breakfast on the go",
+    "What pace suits you? (2 of 7): Action packed / Balanced, with downtime / Slow and relaxed",
+    "How planned should a day be? (3 of 7): Every hour planned / A loose frame / Lots of free time",
+    "What's the trip mostly for? (4 of 7): Culture / Relaxing / The outdoors / Food",
+    "How do you like to eat? (5 of 7): Street food on the move / Sit down local spots / Fine dining / Cooking my own meals",
+    "How do you get around? (6 of 7): Walking everywhere / Public transport / Taxis and rides / A car",
+    "Who plans the days? (7 of 7): Let Carta plan them\nA full day plan from your answers, yours to change / I'll plan them myself\nPick what you like from Carta's ideas"
+   ]
+  }
+ ],
+ "fig": {
+  "chips": [
+   "Prague",
+   "21 Nov to 28 Nov",
+   "2 adults",
+   "From Ghent",
+   "Flights booked"
+  ],
+  "missing": [
+   "Where to sleep?",
+   "What matters most?"
+  ],
+  "typed": true,
+  "prefill": [
+   {
+    "kind": "Flight there",
+    "town": "Prague",
+    "day": "2026-11-21"
+   },
+   {
+    "kind": "Flight home",
+    "town": "Prague",
+    "day": "2026-11-28"
+   }
+  ],
+  "bookedRows": [
+   "Prague Flight there, Sat 21 Nov €142.00",
+   "Prague Flight home, Sat 28 Nov €128.00"
+  ],
+  "tpg": {
+   "name": "My trip",
+   "total": 1375.58,
+   "tiles": "Total for 2 people €1,375.58 Group Per person Flights €270 Getting around Not needed Stay €565 Food €540 View breakdown Add what you paid",
+   "chips": "Prague Sat 21 Nov to Sat 28 Nov 2 adults Ghent Entire place, Easygoing",
+   "route": "Ghent Sat 21 Nov Getting there Prague Your own, Sat 21 Nov Booked €142 Prague 7 nights Sat 21 Nov to Sat 28 Nov Entire place €1,106 Getting home Prague Your own, Sat 28 Nov Booked €128 Ghent Sat 28 Nov",
+   "book": [
+    "flight-out",
+    "stay-0",
+    "flight-back"
+   ],
+   "booked": 2,
+   "wizard": 0,
+   "planDays": 1
+  },
+  "screens": "Tell Carta | How do you like to travel? | What matters most? | New trip | My trip | How much should Carta plan? | What have you booked? | Trip page (TripSummary)",
+  "costs": "All trips My trip Prague Sat 21 Nov to Sat 28 Nov 2 adults Ghent Entire place, Easygoing Overview Itinerary Costs Days Your trip costs €1,375.58 in total Total for 2 people Flights €270.00 Getting there yours €142.00 Change Getting home yours €128.00 Change Getting around Not needed Stay €565.18 Beds €565.18 Change Food €540.40 Food and drink €540.40 Change One more night in Prague adds €157.94 Prague PRG Airport 1 Prague 7 nights © OpenStreetMap contributors © CARTO Your trip costs Set a budget €1,375.58 Total for 2 people Plan your days Plan the rest Trip settings Export & share",
+  "days": [
+   {
+    "title": "How do you like your mornings?",
+    "count": "1 of 7",
+    "opts": [
+     "Up at sunrise",
+     "Slow coffee, late start",
+     "Breakfast on the go"
+    ]
+   },
+   {
+    "title": "What pace suits you?",
+    "count": "2 of 7",
+    "opts": [
+     "Action packed",
+     "Balanced, with downtime",
+     "Slow and relaxed"
+    ]
+   },
+   {
+    "title": "How planned should a day be?",
+    "count": "3 of 7",
+    "opts": [
+     "Every hour planned",
+     "A loose frame",
+     "Lots of free time"
+    ]
+   },
+   {
+    "title": "What's the trip mostly for?",
+    "count": "4 of 7",
+    "opts": [
+     "Culture",
+     "Relaxing",
+     "The outdoors",
+     "Food"
+    ]
+   },
+   {
+    "title": "How do you like to eat?",
+    "count": "5 of 7",
+    "opts": [
+     "Street food on the move",
+     "Sit down local spots",
+     "Fine dining",
+     "Cooking my own meals"
+    ]
+   },
+   {
+    "title": "How do you get around?",
+    "count": "6 of 7",
+    "opts": [
+     "Walking everywhere",
+     "Public transport",
+     "Taxis and rides",
+     "A car"
+    ]
+   },
+   {
+    "title": "Who plans the days?",
+    "count": "7 of 7",
+    "opts": [
+     "Let Carta plan them\nA full day plan from your answers, yours to change",
+     "I'll plan them myself\nPick what you like from Carta's ideas"
+    ]
+   }
+  ]
+ },
+ "settings": {
+  "version": 1,
+  "answered": [
+   "who",
+   "when",
+   "from",
+   "booked",
+   "places",
+   "tell",
+   "sleep",
+   "priority"
+  ],
+  "booked": {
+   "flights": true,
+   "stays": false,
+   "car": false,
+   "tickets": false
+  },
+  "party": {
+   "kind": "couple",
+   "adults": 2,
+   "kids": 0,
+   "kidAges": [],
+   "babies": 0,
+   "slowWalkers": false
+  },
+  "priority": "balance",
+  "when": {
+   "mode": "exact",
+   "start": "2026-11-21",
+   "end": "2026-11-28",
+   "months": [],
+   "nights": 7
+  },
+  "from": {
+   "name": "Ghent",
+   "lat": 51.0543,
+   "lng": 3.7174,
+   "countryCode": "BE"
+  },
+  "way": "",
+  "kind": "new",
+  "now": null,
+  "guide": {
+   "shapes": [],
+   "shape": "",
+   "likes": [],
+   "weather": "",
+   "reach": "",
+   "avoid": [],
+   "budget": {
+    "kind": "total",
+    "eur": 0
+   },
+   "pick": [
+    "flight",
+    "stay",
+    "local"
+   ]
+  },
+  "rhythm": {
+   "mornings": "",
+   "pace": "",
+   "detail": "",
+   "goal": "",
+   "food": "",
+   "around": "",
+   "steps": 0
+  },
+  "trip": {
+   "name": "",
+   "visibility": "private",
+   "cover": "",
+   "created": 1793341805548,
+   "buddies": []
+  },
+  "note": "We already booked our flights to Prague, 21 to 28 November, two of us from Ghent",
+  "daysHow": "",
+  "imports": [
+   {
+    "kind": "flight_out",
+    "title": "Prague",
+    "city": "Prague",
+    "date": "2026-11-21",
+    "eur": 142,
+    "code": "",
+    "link": ""
+   },
+   {
+    "kind": "flight_home",
+    "title": "Prague",
+    "city": "Prague",
+    "date": "2026-11-28",
+    "eur": 128,
+    "code": "",
+    "link": ""
+   }
+  ],
+  "places": [
+   {
+    "kind": "place",
+    "id": "PRG",
+    "name": "Prague",
+    "iso2": "CZ",
+    "country": "Czechia"
+   }
+  ],
+  "sources": {
+   "who": "words",
+   "when": "words",
+   "from": "words",
+   "places": "words",
+   "tell": "words"
+  },
+  "door": "booked"
+ }
+}

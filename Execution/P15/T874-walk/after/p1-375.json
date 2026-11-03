@@ -1,0 +1,447 @@
+{
+ "log": [
+  {
+   "screen": "Tell Carta",
+   "chips": [
+    "december",
+    "7 nachten",
+    "2 volwassenen, 2 kinderen",
+    "Vanuit Gent",
+    "€ 3.000 voor 4"
+   ],
+   "missing": [
+    "Al iets geboekt?",
+    "Waar slapen?",
+    "Wat is het belangrijkst?",
+    "Hoe erheen?",
+    "Welke luchthavens?"
+   ]
+  },
+  {
+   "screen": "Wat heb je al geboekt?",
+   "count": "2 van 10",
+   "marks": "x.x..xx...",
+   "picked": [
+    "Nog niets"
+   ]
+  },
+  {
+   "screen": "Hoe reis je graag?",
+   "count": "4 van 10",
+   "marks": "xxx..xx...",
+   "picked": [
+    "Allebei goed",
+    "Appartement of vakantiehuis",
+    "Relaxed"
+   ]
+  },
+  {
+   "screen": "Wat vind je het belangrijkst?",
+   "count": "5 van 10",
+   "marks": "xxxx.xx...",
+   "picked": [
+    "Een goede balans"
+   ]
+  },
+  {
+   "screen": "Hoe wil je er komen?",
+   "count": "8 van 10",
+   "marks": "xxxxxxx...",
+   "picked": [
+    "Hoe dan ook"
+   ]
+  },
+  {
+   "screen": "Hoe ver wil je rijden naar een luchthaven?",
+   "count": "9 van 10",
+   "marks": "xxxxxxxx..",
+   "picked": [
+    "2 uur",
+    "Brussels (BRU)",
+    "Charleroi (CRL)"
+   ]
+  },
+  {
+   "screen": "Nieuwe reis",
+   "count": "",
+   "marks": "",
+   "picked": [
+    "Alleen ik"
+   ]
+  },
+  {
+   "screen": "Mijn reis",
+   "count": "",
+   "marks": "",
+   "picked": []
+  },
+  {
+   "screen": "Hoeveel moet Carta plannen?",
+   "count": "",
+   "marks": "",
+   "picked": [
+    "Plan de hele reis voor me"
+   ],
+   "preselected": "guide"
+  },
+  {
+   "screen": "Wat voor reis?",
+   "count": "1 van 7",
+   "marks": ".....x.",
+   "picked": [
+    "Geen voorkeur"
+   ]
+  },
+  {
+   "screen": "Waar heb je zin in?",
+   "count": "2 van 7",
+   "marks": "x....x.",
+   "picked": []
+  },
+  {
+   "screen": "Welk weer?",
+   "count": "3 van 7",
+   "marks": "xx...x.",
+   "picked": []
+  },
+  {
+   "screen": "Hoe ver wil je gaan?",
+   "count": "4 van 7",
+   "marks": "xxx..x.",
+   "picked": []
+  },
+  {
+   "screen": "Iets wat je liever vermijdt?",
+   "count": "5 van 7",
+   "marks": "xxxx.x.",
+   "picked": [
+    "Niets in het bijzonder"
+   ]
+  },
+  {
+   "screen": "Wat moet Carta voor je kiezen?",
+   "count": "7 van 7",
+   "marks": "xxxxxx.",
+   "picked": [
+    "Waar naartoe",
+    "Vluchten",
+    "Waar je slaapt",
+    "Ter plaatse reizen"
+   ]
+  },
+  {
+   "screen": "Trips for you",
+   "head": "21 reizen voor jou",
+   "cards": [
+    {
+     "name": "Dubrovnik",
+     "total": "€ 1.828",
+     "catch": "Nog geen vluchtprijs voor deze data."
+    },
+    {
+     "name": "Bruges",
+     "total": "€ 2.805",
+     "catch": "Nog geen vluchtprijs voor deze data."
+    },
+    {
+     "name": "Portovenere",
+     "total": "€ 2.397",
+     "catch": "Nog geen vluchtprijs voor deze data."
+    },
+    {
+     "name": "Porto",
+     "total": "€ 1.785",
+     "catch": "Nog geen vluchtprijs voor deze data."
+    },
+    {
+     "name": "Corfu",
+     "total": "€ 1.716",
+     "catch": "Nog geen vluchtprijs voor deze data."
+    },
+    {
+     "name": "Portovenere en Portoferraio",
+     "total": "€ 2.414",
+     "catch": "Nog geen vluchtprijs voor deze data."
+    }
+   ]
+  },
+  {
+   "screen": "Trip page (finder)",
+   "name": "Dubrovnik",
+   "total": 1828.4,
+   "lines": "Wat het kost € 1.828,40 voor 4, zonder de vlucht Vluchten Nog niet beschikbaar BRU naar DBV Verblijf € 628,04 Hele woning Eten € 1.200,36 Een mix Onderweg € 0,00 Openbaar vervoer Plan deze reis"
+  },
+  {
+   "screen": "Trip page (TripSummary)",
+   "name": "Mijn reis",
+   "total": 1828.4,
+   "tiles": "Totaal voor 4 personen € 1.828,40 Groep Per persoon Vluchten Nog niet beschikbaar Onderweg Niet nodig Verblijf € 628 Eten € 1.200 Bekijk de opbouw Voeg toe wat je betaalde",
+   "chips": "Dubrovnik za 5 dec tot za 12 dec 2 volwassenen, 2 kinderen Gent Hele woning, Relaxed",
+   "route": "Gent za 5 dec BRU DBV Vlucht Nog niet beschikbaar Dubrovnik 7 nachten za 5 dec tot za 12 dec Hele woning € 1.828 Een auto kan hier de moeite zijn DBV BRU Vlucht Nog niet beschikbaar Gent za 12 dec",
+   "book": [
+    "flight-out",
+    "stay-0",
+    "flight-back"
+   ],
+   "booked": 0,
+   "wizard": 0,
+   "planDays": 1
+  },
+  {
+   "screen": "Plan your days",
+   "questions": [
+    "Hoe zijn je ochtenden het liefst? (1 van 7): Op bij zonsopgang / Rustig koffie, laat beginnen / Ontbijt onderweg",
+    "Welk tempo past bij je? (2 van 7): Vol actie / In balans, met rust / Langzaam en ontspannen",
+    "Hoe gepland moet een dag zijn? (3 van 7): Elk uur gepland / Een losse opzet / Veel vrije tijd",
+    "Waar is de reis vooral voor? (4 van 7): Cultuur / Ontspannen / Buiten zijn / Eten",
+    "Hoe eet je het liefst? (5 van 7): Streetfood onderweg / Lokale plekken om te zitten / Fijn dineren / Zelf koken",
+    "Hoe kom je rond? (6 van 7): Overal lopen / Openbaar vervoer / Taxi's en ritjes / Een auto",
+    "Wie plant de dagen? (7 van 7): Laat Carta ze plannen\nEen volle dagplanning uit je antwoorden, aan te passen / Ik plan ze zelf\nKies wat je leuk vindt uit Carta's ideeën"
+   ]
+  }
+ ],
+ "fig": {
+  "chips": [
+   "december",
+   "7 nachten",
+   "2 volwassenen, 2 kinderen",
+   "Vanuit Gent",
+   "€ 3.000 voor 4"
+  ],
+  "missing": [
+   "Al iets geboekt?",
+   "Waar slapen?",
+   "Wat is het belangrijkst?",
+   "Hoe erheen?",
+   "Welke luchthavens?"
+  ],
+  "cards": [
+   {
+    "name": "Dubrovnik",
+    "total": "€ 1.828",
+    "catch": "Nog geen vluchtprijs voor deze data."
+   },
+   {
+    "name": "Bruges",
+    "total": "€ 2.805",
+    "catch": "Nog geen vluchtprijs voor deze data."
+   },
+   {
+    "name": "Portovenere",
+    "total": "€ 2.397",
+    "catch": "Nog geen vluchtprijs voor deze data."
+   },
+   {
+    "name": "Porto",
+    "total": "€ 1.785",
+    "catch": "Nog geen vluchtprijs voor deze data."
+   },
+   {
+    "name": "Corfu",
+    "total": "€ 1.716",
+    "catch": "Nog geen vluchtprijs voor deze data."
+   },
+   {
+    "name": "Portovenere en Portoferraio",
+    "total": "€ 2.414",
+    "catch": "Nog geen vluchtprijs voor deze data."
+   }
+  ],
+  "card": {
+   "name": "Dubrovnik",
+   "total": "€ 1.828",
+   "catch": "Nog geen vluchtprijs voor deze data."
+  },
+  "tripPage": {
+   "name": "Dubrovnik",
+   "eur": 1828.4,
+   "lines": "Wat het kost € 1.828,40 voor 4, zonder de vlucht Vluchten Nog niet beschikbaar BRU naar DBV Verblijf € 628,04 Hele woning Eten € 1.200,36 Een mix Onderweg € 0,00 Openbaar vervoer Plan deze reis"
+  },
+  "tpg": {
+   "name": "Mijn reis",
+   "total": 1828.4,
+   "tiles": "Totaal voor 4 personen € 1.828,40 Groep Per persoon Vluchten Nog niet beschikbaar Onderweg Niet nodig Verblijf € 628 Eten € 1.200 Bekijk de opbouw Voeg toe wat je betaalde",
+   "chips": "Dubrovnik za 5 dec tot za 12 dec 2 volwassenen, 2 kinderen Gent Hele woning, Relaxed",
+   "route": "Gent za 5 dec BRU DBV Vlucht Nog niet beschikbaar Dubrovnik 7 nachten za 5 dec tot za 12 dec Hele woning € 1.828 Een auto kan hier de moeite zijn DBV BRU Vlucht Nog niet beschikbaar Gent za 12 dec",
+   "book": [
+    "flight-out",
+    "stay-0",
+    "flight-back"
+   ],
+   "booked": 0,
+   "wizard": 0,
+   "planDays": 1
+  },
+  "screens": "Tell Carta | Wat heb je al geboekt? | Hoe reis je graag? | Wat vind je het belangrijkst? | Hoe wil je er komen? | Hoe ver wil je rijden naar een luchthaven? | Nieuwe reis | Mijn reis | Hoeveel moet Carta plannen? | Wat voor reis? | Waar heb je zin in? | Welk weer? | Hoe ver wil je gaan? | Iets wat je liever vermijdt? | Wat moet Carta voor je kiezen? | Trips for you | Trip page (finder) | Trip page (TripSummary)",
+  "costs": "Alle reizen Mijn reis Dubrovnik za 5 dec tot za 12 dec 2 volwassenen, 2 kinderen Gent Hele woning, Relaxed Overzicht Reisplan Kosten Dagen Je reis kost € 1.828,40 in totaal Totaal voor 4 personen € 293 onder je budget Vluchten € 0,00 Heenreis Voeg je ticket toe Terugreis Voeg je ticket toe Onderweg Niet nodig Verblijf € 628,04 Bedden € 628,04 Wijzigen Eten € 1.200,36 Eten en drinken € 1.200,36 Wijzigen Een nacht extra in Dubrovnik kost € 261,20 € 1.828,40 Totaal voor 4 personen Plan je dagen",
+  "days": [
+   {
+    "title": "Hoe zijn je ochtenden het liefst?",
+    "count": "1 van 7",
+    "opts": [
+     "Op bij zonsopgang",
+     "Rustig koffie, laat beginnen",
+     "Ontbijt onderweg"
+    ]
+   },
+   {
+    "title": "Welk tempo past bij je?",
+    "count": "2 van 7",
+    "opts": [
+     "Vol actie",
+     "In balans, met rust",
+     "Langzaam en ontspannen"
+    ]
+   },
+   {
+    "title": "Hoe gepland moet een dag zijn?",
+    "count": "3 van 7",
+    "opts": [
+     "Elk uur gepland",
+     "Een losse opzet",
+     "Veel vrije tijd"
+    ]
+   },
+   {
+    "title": "Waar is de reis vooral voor?",
+    "count": "4 van 7",
+    "opts": [
+     "Cultuur",
+     "Ontspannen",
+     "Buiten zijn",
+     "Eten"
+    ]
+   },
+   {
+    "title": "Hoe eet je het liefst?",
+    "count": "5 van 7",
+    "opts": [
+     "Streetfood onderweg",
+     "Lokale plekken om te zitten",
+     "Fijn dineren",
+     "Zelf koken"
+    ]
+   },
+   {
+    "title": "Hoe kom je rond?",
+    "count": "6 van 7",
+    "opts": [
+     "Overal lopen",
+     "Openbaar vervoer",
+     "Taxi's en ritjes",
+     "Een auto"
+    ]
+   },
+   {
+    "title": "Wie plant de dagen?",
+    "count": "7 van 7",
+    "opts": [
+     "Laat Carta ze plannen\nEen volle dagplanning uit je antwoorden, aan te passen",
+     "Ik plan ze zelf\nKies wat je leuk vindt uit Carta's ideeën"
+    ]
+   }
+  ]
+ },
+ "settings": {
+  "version": 1,
+  "answered": [
+   "who",
+   "when",
+   "from",
+   "g:budget",
+   "tell",
+   "booked",
+   "sleep",
+   "priority",
+   "way",
+   "airports",
+   "g:shape",
+   "g:likes",
+   "g:weather",
+   "g:reach",
+   "g:avoid",
+   "g:pick"
+  ],
+  "booked": {
+   "flights": false,
+   "stays": false,
+   "car": false,
+   "tickets": false
+  },
+  "party": {
+   "kind": "family",
+   "adults": 2,
+   "kids": 2,
+   "kidAges": [],
+   "babies": 0,
+   "slowWalkers": false
+  },
+  "priority": "balance",
+  "when": {
+   "mode": "months",
+   "start": "",
+   "end": "",
+   "months": [
+    12
+   ],
+   "nights": 7
+  },
+  "from": {
+   "name": "Gent",
+   "lat": 51.0543,
+   "lng": 3.7174,
+   "countryCode": "BE"
+  },
+  "way": "plane",
+  "kind": "new",
+  "now": null,
+  "guide": {
+   "shapes": [],
+   "shape": "",
+   "likes": [
+    "beach",
+    "culture"
+   ],
+   "weather": "any",
+   "reach": "any",
+   "avoid": [],
+   "budget": {
+    "kind": "total",
+    "eur": 750
+   },
+   "pick": [
+    "flight",
+    "stay",
+    "local"
+   ]
+  },
+  "rhythm": {
+   "mornings": "",
+   "pace": "",
+   "detail": "",
+   "goal": "",
+   "food": "",
+   "around": "",
+   "steps": 0
+  },
+  "trip": {
+   "name": "",
+   "visibility": "private",
+   "cover": "",
+   "created": 1793341594707,
+   "buddies": []
+  },
+  "note": "Met het gezin, 2 volwassenen en 2 kinderen van 6 en 9, een week in december vanuit Gent, plan alles voor ons, budget 3000 euro",
+  "daysHow": "",
+  "imports": [],
+  "places": [],
+  "sources": {
+   "who": "words",
+   "when": "words",
+   "from": "words",
+   "g:budget": "words",
+   "tell": "words"
+  },
+  "door": "guide"
+ }
+}

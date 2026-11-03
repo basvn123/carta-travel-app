@@ -1,0 +1,233 @@
+{
+ "results": [
+  {
+   "w": 1440,
+   "label": "with no words every setup question is a dashed chip",
+   "ok": true,
+   "note": "Booked anything? | Who is going? | Where to sleep? | What matters most? | When? | Leaving from?"
+  },
+  {
+   "w": 1440,
+   "label": "the words become selected chips",
+   "ok": true,
+   "note": "Portugal | May | 7 nights | 2 adults | Beaches | Food and wine | From Ghent | €1,500 for 2"
+  },
+  {
+   "w": 1440,
+   "label": "what the words leave open is dashed: booked, sleep, priority",
+   "ok": true,
+   "note": "Booked anything? | Where to sleep? | What matters most?"
+  },
+  {
+   "w": 1440,
+   "label": "the line under the chips counts what is left",
+   "ok": true,
+   "note": "3 questions left. Tap a chip to change it."
+  },
+  {
+   "w": 1440,
+   "label": "chips: no sideways scroll",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "the who chip opens a popover with the Who question",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "on a pointer screen the popover hangs from the chip, on a phone it is a sheet",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "the popover answer stays as the words go on (2 adults, 2 children)",
+   "ok": true,
+   "note": "Portugal | May | 7 nights | 2 adults, 2 children | Beaches | Food and wine | From Ghent | €1,500 for 4 | Dorm bed"
+  },
+  {
+   "w": 1440,
+   "label": "a stay type in the words is a chip and answers where to sleep",
+   "ok": true,
+   "note": "Portugal | May | 7 nights | 2 adults, 2 children | Beaches | Food and wine | From Ghent | €1,500 for 4 | Dorm bed"
+  },
+  {
+   "w": 1440,
+   "label": "chips name their popover (aria-haspopup) and none stays open",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 1440,
+   "label": "Continue opens the first open question (Booked)",
+   "ok": true,
+   "note": "What have you booked already?"
+  },
+  {
+   "w": 1440,
+   "label": "the step marks: one a screen, the answered ones ticked",
+   "ok": true,
+   "note": "5 of 8 ticked"
+  },
+  {
+   "w": 1440,
+   "label": "then What matters most, skipping the answered ones",
+   "ok": true,
+   "note": "What matters most?"
+  },
+  {
+   "w": 1440,
+   "label": "the words named Portugal: the planner holds it as the picked country",
+   "ok": true,
+   "note": "[\"Portugal\"]"
+  },
+  {
+   "w": 1440,
+   "label": "the settings keep each answer with its source",
+   "ok": true,
+   "note": "{\"when\":\"words\",\"from\":\"words\",\"g:likes\":\"words\",\"g:budget\":\"words\",\"places\":\"words\",\"sleep\":\"words\",\"tell\":\"words\"}"
+  },
+  {
+   "w": 1440,
+   "label": "Help me choose skips weather, reach and likes (the words gave them)",
+   "ok": true,
+   "note": "What kind of trip? | Anything you'd rather avoid? | What should Carta pick for you? | Finding trips for the family"
+  },
+  {
+   "w": 1440,
+   "label": "every trip for you is in Portugal",
+   "ok": true,
+   "note": "3 cards"
+  },
+  {
+   "w": 1440,
+   "label": "Plan this trip keeps Portugal among the planner's countries",
+   "ok": true,
+   "note": "[\"Portugal\"]"
+  },
+  {
+   "w": 375,
+   "label": "with no words every setup question is a dashed chip",
+   "ok": true,
+   "note": "Booked anything? | Who is going? | Where to sleep? | What matters most? | When? | Leaving from?"
+  },
+  {
+   "w": 375,
+   "label": "the words become selected chips",
+   "ok": true,
+   "note": "Portugal | May | 7 nights | 2 adults | Beaches | Food and wine | From Ghent | €1,500 for 2"
+  },
+  {
+   "w": 375,
+   "label": "what the words leave open is dashed: booked, sleep, priority",
+   "ok": true,
+   "note": "Booked anything? | Where to sleep? | What matters most?"
+  },
+  {
+   "w": 375,
+   "label": "the line under the chips counts what is left",
+   "ok": true,
+   "note": "3 questions left. Tap a chip to change it."
+  },
+  {
+   "w": 375,
+   "label": "chips: no sideways scroll",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "the who chip opens a popover with the Who question",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "on a pointer screen the popover hangs from the chip, on a phone it is a sheet",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "the popover answer stays as the words go on (2 adults, 2 children)",
+   "ok": true,
+   "note": "Portugal | May | 7 nights | 2 adults, 2 children | Beaches | Food and wine | From Ghent | €1,500 for 4 | Dorm bed"
+  },
+  {
+   "w": 375,
+   "label": "a stay type in the words is a chip and answers where to sleep",
+   "ok": true,
+   "note": "Portugal | May | 7 nights | 2 adults, 2 children | Beaches | Food and wine | From Ghent | €1,500 for 4 | Dorm bed"
+  },
+  {
+   "w": 375,
+   "label": "chips name their popover (aria-haspopup) and none stays open",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "w": 375,
+   "label": "Continue opens the first open question (Booked)",
+   "ok": true,
+   "note": "What have you booked already?"
+  },
+  {
+   "w": 375,
+   "label": "the step marks: one a screen, the answered ones ticked",
+   "ok": true,
+   "note": "5 of 8 ticked"
+  },
+  {
+   "w": 375,
+   "label": "then What matters most, skipping the answered ones",
+   "ok": true,
+   "note": "What matters most?"
+  },
+  {
+   "w": 375,
+   "label": "the words named Portugal: the planner holds it as the picked country",
+   "ok": true,
+   "note": "[\"Portugal\"]"
+  },
+  {
+   "w": 375,
+   "label": "the settings keep each answer with its source",
+   "ok": true,
+   "note": "{\"when\":\"words\",\"from\":\"words\",\"g:likes\":\"words\",\"g:budget\":\"words\",\"places\":\"words\",\"sleep\":\"words\",\"tell\":\"words\"}"
+  },
+  {
+   "w": 375,
+   "label": "Help me choose skips weather, reach and likes (the words gave them)",
+   "ok": true,
+   "note": "What kind of trip? | Anything you'd rather avoid? | What should Carta pick for you? | Finding trips for the family"
+  },
+  {
+   "w": 375,
+   "label": "every trip for you is in Portugal",
+   "ok": true,
+   "note": "3 cards"
+  },
+  {
+   "w": 375,
+   "label": "Plan this trip keeps Portugal among the planner's countries",
+   "ok": true,
+   "note": "[\"Portugal\"]"
+  },
+  {
+   "w": 1440,
+   "label": "nl: Italy, July, 10 nights, the family and From Ghent as chips",
+   "ok": true,
+   "note": "Italië | juli | 10 nachten | 2 volwassenen, 2 kinderen, 1 baby | Vanuit Gent"
+  },
+  {
+   "w": 1440,
+   "label": "nl: the dashed chips are in Dutch",
+   "ok": true,
+   "note": "Al iets geboekt? | Waar slapen? | Wat is het belangrijkst?"
+  }
+ ],
+ "errors": []
+}

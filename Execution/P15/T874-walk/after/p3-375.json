@@ -1,0 +1,323 @@
+{
+ "log": [
+  {
+   "screen": "Tell Carta",
+   "chips": [
+    "Prague",
+    "Český Krumlov",
+    "21 Nov to 28 Nov",
+    "2 adults",
+    "From Antwerp",
+    "Hotel"
+   ],
+   "missing": [
+    "Booked anything?",
+    "What matters most?",
+    "How to get there?",
+    "Which airports?"
+   ]
+  },
+  {
+   "screen": "What have you booked already?",
+   "count": "2 of 10",
+   "marks": "x.xx.xx...",
+   "picked": [
+    "Nothing yet"
+   ]
+  },
+  {
+   "screen": "What matters most?",
+   "count": "5 of 10",
+   "marks": "xxxx.xx...",
+   "picked": [
+    "A good balance"
+   ]
+  },
+  {
+   "screen": "How do you want to get there?",
+   "count": "8 of 10",
+   "marks": "xxxxxxx...",
+   "picked": [
+    "Any way"
+   ]
+  },
+  {
+   "screen": "How far would you go to an airport?",
+   "count": "9 of 10",
+   "marks": "xxxxxxxx..",
+   "picked": [
+    "2 hours",
+    "Brussels (BRU)",
+    "Charleroi (CRL)"
+   ]
+  },
+  {
+   "screen": "New trip",
+   "count": "",
+   "marks": "",
+   "picked": [
+    "Only me"
+   ]
+  },
+  {
+   "screen": "My trip",
+   "count": "",
+   "marks": "",
+   "picked": []
+  },
+  {
+   "screen": "How much should Carta plan?",
+   "count": "",
+   "marks": "",
+   "picked": [
+    "I know where I'm going"
+   ],
+   "preselected": "know"
+  },
+  {
+   "screen": "Where are you going?",
+   "count": "",
+   "marks": "",
+   "picked": []
+  },
+  {
+   "screen": "Trip page (TripSummary)",
+   "name": "My trip",
+   "total": 2027.3,
+   "tiles": "Total for 2 people €2,027.30 Group Per person Flights €536 KLM Getting around €82 Stay €899 Food €510 View breakdown Add what you paid",
+   "chips": "Prague, Český Krumlov Sat 21 Nov to Sat 28 Nov 2 adults Antwerp 3-star hotel, Easygoing",
+   "route": "Antwerp Sat 21 Nov BRU PRG KLM 14:55 to 19:35, Sat 21 Nov €236 Prague 4 nights Sat 21 Nov to Wed 25 Nov 3-star hotel €821 Český Krumlov 3 nights Wed 25 Nov to Sat 28 Nov 3-star hotel €588 PRG BRU KLM 06:00 to 10:10, Sat 28 Nov €260 Antwerp Sat 28 Nov",
+   "book": [
+    "flight-out",
+    "stay-0",
+    "leg-0",
+    "stay-1",
+    "flight-back"
+   ],
+   "booked": 0,
+   "wizard": 0,
+   "planDays": 1
+  },
+  {
+   "screen": "Plan your days",
+   "questions": [
+    "How do you like your mornings? (1 of 7): Up at sunrise / Slow coffee, late start / Breakfast on the go",
+    "What pace suits you? (2 of 7): Action packed / Balanced, with downtime / Slow and relaxed",
+    "How planned should a day be? (3 of 7): Every hour planned / A loose frame / Lots of free time",
+    "What's the trip mostly for? (4 of 7): Culture / Relaxing / The outdoors / Food",
+    "How do you like to eat? (5 of 7): Street food on the move / Sit down local spots / Fine dining / Cooking my own meals",
+    "How do you get around? (6 of 7): Walking everywhere / Public transport / Taxis and rides / A car",
+    "Who plans the days? (7 of 7): Let Carta plan them\nA full day plan from your answers, yours to change / I'll plan them myself\nPick what you like from Carta's ideas"
+   ]
+  }
+ ],
+ "fig": {
+  "chips": [
+   "Prague",
+   "Český Krumlov",
+   "21 Nov to 28 Nov",
+   "2 adults",
+   "From Antwerp",
+   "Hotel"
+  ],
+  "missing": [
+   "Booked anything?",
+   "What matters most?",
+   "How to get there?",
+   "Which airports?"
+  ],
+  "tpg": {
+   "name": "My trip",
+   "total": 2027.3,
+   "tiles": "Total for 2 people €2,027.30 Group Per person Flights €536 KLM Getting around €82 Stay €899 Food €510 View breakdown Add what you paid",
+   "chips": "Prague, Český Krumlov Sat 21 Nov to Sat 28 Nov 2 adults Antwerp 3-star hotel, Easygoing",
+   "route": "Antwerp Sat 21 Nov BRU PRG KLM 14:55 to 19:35, Sat 21 Nov €236 Prague 4 nights Sat 21 Nov to Wed 25 Nov 3-star hotel €821 Český Krumlov 3 nights Wed 25 Nov to Sat 28 Nov 3-star hotel €588 PRG BRU KLM 06:00 to 10:10, Sat 28 Nov €260 Antwerp Sat 28 Nov",
+   "book": [
+    "flight-out",
+    "stay-0",
+    "leg-0",
+    "stay-1",
+    "flight-back"
+   ],
+   "booked": 0,
+   "wizard": 0,
+   "planDays": 1
+  },
+  "screens": "Tell Carta | What have you booked already? | What matters most? | How do you want to get there? | How far would you go to an airport? | New trip | My trip | How much should Carta plan? | Where are you going? | Trip page (TripSummary)",
+  "costs": "All trips My trip Prague, Český Krumlov Sat 21 Nov to Sat 28 Nov 2 adults Antwerp 3-star hotel, Easygoing Overview Itinerary Costs Days Your trip costs €2,027.30 in total Total for 2 people Flights €536.00 BRU PRG €236.00 Change PRG BRU €260.00 Change To the airport and back €40.00 Change Getting around €82.02 Airport transfers €55.42 Change Between your stops €26.60 Change Stay €899.00 Beds €899.00 Change Food €510.28 Food and drink €510.28 Change One more night in Český Krumlov adds €196.16 €2,027.30 Total for 2 people Plan your days",
+  "days": [
+   {
+    "title": "How do you like your mornings?",
+    "count": "1 of 7",
+    "opts": [
+     "Up at sunrise",
+     "Slow coffee, late start",
+     "Breakfast on the go"
+    ]
+   },
+   {
+    "title": "What pace suits you?",
+    "count": "2 of 7",
+    "opts": [
+     "Action packed",
+     "Balanced, with downtime",
+     "Slow and relaxed"
+    ]
+   },
+   {
+    "title": "How planned should a day be?",
+    "count": "3 of 7",
+    "opts": [
+     "Every hour planned",
+     "A loose frame",
+     "Lots of free time"
+    ]
+   },
+   {
+    "title": "What's the trip mostly for?",
+    "count": "4 of 7",
+    "opts": [
+     "Culture",
+     "Relaxing",
+     "The outdoors",
+     "Food"
+    ]
+   },
+   {
+    "title": "How do you like to eat?",
+    "count": "5 of 7",
+    "opts": [
+     "Street food on the move",
+     "Sit down local spots",
+     "Fine dining",
+     "Cooking my own meals"
+    ]
+   },
+   {
+    "title": "How do you get around?",
+    "count": "6 of 7",
+    "opts": [
+     "Walking everywhere",
+     "Public transport",
+     "Taxis and rides",
+     "A car"
+    ]
+   },
+   {
+    "title": "Who plans the days?",
+    "count": "7 of 7",
+    "opts": [
+     "Let Carta plan them\nA full day plan from your answers, yours to change",
+     "I'll plan them myself\nPick what you like from Carta's ideas"
+    ]
+   }
+  ]
+ },
+ "settings": {
+  "version": 1,
+  "answered": [
+   "who",
+   "when",
+   "from",
+   "places",
+   "sleep",
+   "tell",
+   "booked",
+   "priority",
+   "way",
+   "airports"
+  ],
+  "booked": {
+   "flights": false,
+   "stays": false,
+   "car": false,
+   "tickets": false
+  },
+  "party": {
+   "kind": "couple",
+   "adults": 2,
+   "kids": 0,
+   "kidAges": [],
+   "babies": 0,
+   "slowWalkers": false
+  },
+  "priority": "balance",
+  "when": {
+   "mode": "exact",
+   "start": "2026-11-21",
+   "end": "2026-11-28",
+   "months": [],
+   "nights": 7
+  },
+  "from": {
+   "name": "Antwerp",
+   "lat": 51.2194,
+   "lng": 4.4025,
+   "countryCode": "BE"
+  },
+  "way": "plane",
+  "kind": "new",
+  "now": null,
+  "guide": {
+   "shapes": [],
+   "shape": "",
+   "likes": [],
+   "weather": "",
+   "reach": "",
+   "avoid": [],
+   "budget": {
+    "kind": "total",
+    "eur": 0
+   },
+   "pick": [
+    "flight",
+    "stay",
+    "local"
+   ]
+  },
+  "rhythm": {
+   "mornings": "",
+   "pace": "",
+   "detail": "",
+   "goal": "",
+   "food": "",
+   "around": "",
+   "steps": 0
+  },
+  "trip": {
+   "name": "",
+   "visibility": "private",
+   "cover": "",
+   "created": 1793341770750,
+   "buddies": []
+  },
+  "note": "My partner and I from Antwerp, 21 to 28 November in Prague and Cesky Krumlov, mid-range hotels",
+  "daysHow": "",
+  "imports": [],
+  "places": [
+   {
+    "kind": "place",
+    "id": "PRG",
+    "name": "Prague",
+    "iso2": "CZ",
+    "country": "Czechia"
+   },
+   {
+    "kind": "place",
+    "id": "gem:cesky-krumlov",
+    "name": "Český Krumlov",
+    "iso2": "CZ",
+    "country": "Czechia"
+   }
+  ],
+  "sources": {
+   "who": "words",
+   "when": "words",
+   "from": "words",
+   "places": "words",
+   "sleep": "words",
+   "tell": "words"
+  },
+  "door": "know"
+ }
+}

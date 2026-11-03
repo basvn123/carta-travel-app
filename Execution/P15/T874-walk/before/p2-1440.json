@@ -1,0 +1,196 @@
+{
+ "log": [
+  {
+   "screen": "Tell Carta",
+   "chips": [
+    "November",
+    "4 nights",
+    "1 adult",
+    "From Leuven",
+    "€300 a person",
+    "Hostel"
+   ],
+   "missing": [
+    "Booked anything?",
+    "What matters most?",
+    "How to get there?",
+    "Which airports?"
+   ]
+  },
+  {
+   "screen": "What have you booked already?",
+   "count": "2 of 10",
+   "marks": "x.xx.xx...",
+   "picked": [
+    "Nothing yet"
+   ]
+  },
+  {
+   "screen": "What matters most?",
+   "count": "5 of 10",
+   "marks": "xxxx.xx...",
+   "picked": [
+    "A good balance"
+   ]
+  },
+  {
+   "screen": "How do you want to get there?",
+   "count": "8 of 10",
+   "marks": "xxxxxxx...",
+   "picked": [
+    "Any way"
+   ]
+  },
+  {
+   "screen": "How far would you go to an airport?",
+   "count": "9 of 10",
+   "marks": "xxxxxxxx..",
+   "picked": [
+    "2 hours",
+    "Brussels (BRU)",
+    "Charleroi (CRL)"
+   ]
+  },
+  {
+   "screen": "New trip",
+   "count": "",
+   "marks": "",
+   "picked": [
+    "Only me"
+   ]
+  },
+  {
+   "screen": "My trip",
+   "count": "",
+   "marks": "",
+   "picked": []
+  },
+  {
+   "screen": "How much should Carta plan?",
+   "count": "",
+   "marks": "",
+   "picked": [
+    "Find my flight first"
+   ],
+   "preselected": "flight"
+  },
+  {
+   "screen": "Trip page (TripSummary)"
+  }
+ ],
+ "fig": {
+  "chips": [
+   "November",
+   "4 nights",
+   "1 adult",
+   "From Leuven",
+   "€300 a person",
+   "Hostel"
+  ],
+  "missing": [
+   "Booked anything?",
+   "What matters most?",
+   "How to get there?",
+   "Which airports?"
+  ],
+  "tpg": null,
+  "screens": "Tell Carta | What have you booked already? | What matters most? | How do you want to get there? | How far would you go to an airport? | New trip | My trip | How much should Carta plan? | Trip page (TripSummary)",
+  "costs": ""
+ },
+ "settings": {
+  "version": 1,
+  "answered": [
+   "who",
+   "when",
+   "from",
+   "g:budget",
+   "sleep",
+   "doors",
+   "tell",
+   "booked",
+   "priority",
+   "way",
+   "airports"
+  ],
+  "booked": {
+   "flights": false,
+   "stays": false,
+   "car": false,
+   "tickets": false
+  },
+  "party": {
+   "kind": "solo",
+   "adults": 1,
+   "kids": 0,
+   "kidAges": [],
+   "babies": 0,
+   "slowWalkers": false
+  },
+  "priority": "price",
+  "when": {
+   "mode": "months",
+   "start": "",
+   "end": "",
+   "months": [
+    11
+   ],
+   "nights": 4
+  },
+  "from": {
+   "name": "Leuven",
+   "lat": 50.8794,
+   "lng": 4.7009,
+   "countryCode": "BE"
+  },
+  "way": "plane",
+  "kind": "new",
+  "now": null,
+  "guide": {
+   "shapes": [],
+   "shape": "",
+   "likes": [],
+   "weather": "",
+   "reach": "",
+   "avoid": [],
+   "budget": {
+    "kind": "total",
+    "eur": 300
+   },
+   "pick": [
+    "flight",
+    "stay",
+    "local"
+   ]
+  },
+  "rhythm": {
+   "mornings": "",
+   "pace": "",
+   "detail": "",
+   "goal": "",
+   "food": "",
+   "around": "",
+   "steps": 0
+  },
+  "trip": {
+   "name": "",
+   "visibility": "private",
+   "cover": "",
+   "created": 1793340081456,
+   "buddies": []
+  },
+  "note": "Just a cheap flight for me alone from Leuven, 4 nights in November, max 300 euro, a hostel is fine",
+  "daysHow": "",
+  "imports": [],
+  "places": [],
+  "sources": {
+   "who": "words",
+   "when": "words",
+   "from": "words",
+   "g:budget": "words",
+   "sleep": "words",
+   "doors": "words",
+   "tell": "words"
+  },
+  "door": "flight"
+ }
+}
