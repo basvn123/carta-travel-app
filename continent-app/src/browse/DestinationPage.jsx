@@ -641,18 +641,7 @@ export function DestinationPage({
                 {tags.length > 0 && <ul className="pt-tags">{tags}</ul>}
                 {/* T765: the match after the rank lines, never merged into the Score. */}
                 <MatchLine place={destination} month={tripMonth} />
-                {/* The intro is written in English; in another language the
-                    head shows nothing rather than an English paragraph (T446).
-                    Its first sentence leads, the rest follows quieter (T1024). */}
-                {settled && leadFirst && (
-                  <div className="pt-lead">
-                    <p className="pt-lead-first">{leadFirst}</p>
-                    {leadRest.length > 0 && <p className="pt-lead-rest">{leadRest.join(' ')}</p>}
-                  </div>
-                )}
               </header>
-
-              {settled && <KeyFacts cells={keyFacts} className="pt-facts" />}
 
               {!settled && (
                 <div className="destp-wait" aria-busy="true">
@@ -662,8 +651,21 @@ export function DestinationPage({
 
               {settled && (
                 <>
+                  {/* T1024 (owner): the tabs right under the name, so a phone
+                      shows them on its first screen; the intro and the facts
+                      open the page under them. */}
                   <JumpBar items={jumps} scrollRef={scrollRef} ready={`${destination.id}:${!!d}`}
                     label={t('dest.subnavAria')} />
+                  {/* The intro is written in English; in another language the
+                      page shows nothing rather than an English paragraph (T446).
+                      Its first sentence leads, the rest follows quieter. */}
+                  {leadFirst && (
+                    <div className="pt-lead">
+                      <p className="pt-lead-first">{leadFirst}</p>
+                      {leadRest.length > 0 && <p className="pt-lead-rest">{leadRest.join(' ')}</p>}
+                    </div>
+                  )}
+                  <KeyFacts cells={keyFacts} className="pt-facts" />
                   <DestOverview p={p} />
                   {/* Friends here (T466, T929), right after Good to know: the
                       approved place for it, where the decision is made. */}
