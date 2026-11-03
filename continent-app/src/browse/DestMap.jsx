@@ -1,3 +1,4 @@
+import { safeUrl } from '../lib/format.js';
 import React from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -64,6 +65,8 @@ const DestMap = React.forwardRef(function DestMap({
   // The focus pin is restyled in place by the light effect below, so a
   // rebuild reads the current focus through a ref instead of depending on it.
   const focusRef = React.useRef(focus);
+  const fitRef = React.useRef(null);
+  const movedRef = React.useRef(false);
   focusRef.current = focus;
   const hoverRef = React.useRef(hover);
   hoverRef.current = hover;
@@ -120,7 +123,17 @@ const DestMap = React.forwardRef(function DestMap({
       pts.push([row.lon, row.lat]);
       let el;
       if (active === 'highlights') {
-        el = makeEl(`dmap-pin is-hl ${focusRef.current === i ? 'is-focus' : ''} ${hoverRef.current === i ? 'is-hover' : ''}`, `<span class="dmap-pin-in"><span class="dmap-pin-n mono">${i + 1}</span><span class="dmap-pin-name">${esc(row.name)}</span></span>`);
+        // T1032: a sight with a photograph is pinned by it (the number on
+        // its corner, the name on hover or selection); the rest keep the pill.
+        const shot = safeUrl(row.pin || row.thumb);
+        el = makeEl(`dmap-pin is-hl${shot ? ' has-photo' : ''} ${focusRef.current === i ? 'is-focus' : ''} ${hoverRef.current === i ? 'is-hover' : ''}`,
+          `<span class="dmap-pin-in"><span class="dmap-pin-n mono">${i + 1}</span><span class="dmap-pin-name">${esc(row.name)}</span></span>`);
+        if (shot) {
+          const ph = document.createElement('span');
+          ph.className = 'dmap-pin-ph';
+          ph.style.backgroundImage = `url(${JSON.stringify(shot)})`;
+          el.firstElementChild.prepend(ph);
+        }
         if (hasHl) {
           el.style.cursor = 'pointer';
           el.addEventListener('click', (e) => { e.stopPropagation(); picks.current.onPickHighlight?.(i); });
@@ -164,14 +177,18 @@ const DestMap = React.forwardRef(function DestMap({
     if (pts.length) {
       const b = new maplibregl.LngLatBounds([lon, lat], [lon, lat]);
       for (const p of pts) b.extend(p);
+      // T1032: the padding holds a photo pin whole at the edge (44 px), so
+      // the first view shows every sight; kept for a refit on resize.
+      const opts = {
+        padding: active === 'highlights' ? { top: 56, bottom: 48, left: 48, right: 56 } : { top: 40, bottom: 28, left: 34, right: 34 },
+        maxZoom: active === 'highlights' ? 14 : active === 'trips' ? 10.5 : 11.5,
+      };
+      fitRef.current = { b, opts };
+      movedRef.current = false;
       try {
-        map.fitBounds(b, {
-          padding: { top: 40, bottom: 28, left: 34, right: 34 },
-          maxZoom: active === 'highlights' ? 14 : active === 'trips' ? 10.5 : 11.5,
-          // The camera moves once, to what the layer shows (--dur-4; 0 under
-          // reduced motion, which durationMs answers).
-          duration: durationMs('--dur-4'),
-        });
+        // The camera moves once, to what the layer shows (--dur-4; 0 under
+        // reduced motion, which durationMs answers).
+        map.fitBounds(b, { ...opts, duration: durationMs('--dur-4') });
       } catch { /* a bad bound is not worth a blank page */ }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- the rows are read from rowsRef; rowsKey is their content
@@ -205,10 +222,26 @@ const DestMap = React.forwardRef(function DestMap({
       // starts folded to its button, one tap from the full line (T446).
       holder.current?.querySelector('.maplibregl-ctrl-attrib')?.classList.remove('maplibregl-compact-show');
     });
-    const ro = new ResizeObserver(() => map.resize());
+    // A column that changes width refits the sights, until the traveller
+    // has moved the map themselves (T1032).
+    const moved = (e) => { if (e?.originalEvent) movedRef.current = true; };
+    map.on('dragstart', moved);
+    map.on('zoomstart', moved);
+    let frame = 0;
+    const ro = new ResizeObserver(() => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        map.resize();
+        const f = fitRef.current;
+        if (f && !movedRef.current && readyRef.current && !map.isMoving()) {
+          try { map.fitBounds(f.b, { ...f.opts, duration: 0 }); } catch { /* the map is gone */ }
+        }
+      });
+    });
     ro.observe(holder.current);
     return () => {
       ro.disconnect();
+      cancelAnimationFrame(frame);
       declutterRef.current?.();
       declutterRef.current = null;
       readyRef.current = false;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Chip, ChipGroup } from '../components/ui/index.js';
 import { ScoreChip } from '../components/RatingBadge.jsx';
-import { ArrowRightIcon, ExternalIcon, MapPinIcon } from '../components/Icons.jsx';
+import { ArrowRightIcon, CalendarIcon, CompassIcon, ExternalIcon, MapPinIcon, SparkIcon } from '../components/Icons.jsx';
 import { mapsSearchUrl } from '../lib/destInfo.js';
 import { safeUrl } from '../lib/format.js';
 import { activityLink } from '../lib/activityAffiliates.js';
@@ -13,7 +13,8 @@ import { DestTrack } from './DestTrack.jsx';
 import { OutdoorTile } from './DestTiles.jsx';
 import { DestRouteGpx } from './DestRouteGpx.jsx';
 import { PSection, PBlock } from './PageTemplate.jsx';
-import { cleanName, fmtKm, thumb500 } from './destParts.js';
+import { DO_TYPE_KEYS, cleanName, fmtKm, thumb500 } from './destParts.js';
+import { isResizable, thumbAt } from '../lib/heroImage.js';
 
 const DestMap = React.lazy(() => import('./DestMap.jsx'));
 
@@ -35,16 +36,10 @@ const DestMap = React.lazy(() => import('./DestMap.jsx'));
  * kind with nothing in reach is not named (the owner removed "No peak, lake
  * or beach within 20 km", 2026-10-30).
  */
-const SIGHTS_FIRST = 7;
-const DO_FIRST = 6;
-
-function Thumb({ src }) {
-  const [bad, setBad] = React.useState(false);
-  if (!src || bad) {
-    return <span className="pt-thumb is-blank" aria-hidden="true"><MapPinIcon size={18} /></span>;
-  }
-  return <img className="pt-thumb" src={src} alt="" loading="lazy" decoding="async" onError={() => setBad(true)} />;
-}
+// Cards shown before Show all from 700 px; the CSS hides the rest with
+// .spots:not(.is-all) > .spot:nth-child(n + 7), so the two change together.
+const SPOTS_FIRST = 6;
+const DO_ICON = { activity: CompassIcon, experience: SparkIcon, festival: CalendarIcon };
 
 /** "A day on foot": the walk's stops with the minutes between them. */
 function OnFoot({ walk, t, lang }) {
@@ -78,6 +73,7 @@ function OnFoot({ walk, t, lang }) {
 export function DestSee({ p }) {
   const { t, lang, city, lat, lon, highlights, doRows, scrollRef, d } = p;
   const [allSights, setAllSights] = React.useState(false);
+  const cardRefs = React.useRef([]);
   const [allDo, setAllDo] = React.useState(false);
   const [focus, setFocus] = React.useState(null);
   const [hover, setHover] = React.useState(null);
@@ -102,46 +98,63 @@ export function DestSee({ p }) {
   const hasWalk = (walk?.stops || []).filter((s) => s?.name).length >= 2;
   if (!highlights.length && !doRows.length && !hasWalk) return null;
 
-  const sights = allSights ? highlights : highlights.slice(0, SIGHTS_FIRST);
-  const dos = allDo ? doRows : doRows.slice(0, DO_FIRST);
+  // One row per sight for its card and its pin: the card's 500 px photo,
+  // the pin's 120 px one (a 40 px frame at 2x), the pipeline's fact first.
+  const sights = highlights.map((h) => {
+    const url = h.image?.url || null;
+    const thumb = thumb500(url) || h.photo || null;
+    return { ...h, thumb, pin: url && isResizable(url) ? thumbAt(url, 120) : thumb, text: h.fact || h.desc || null };
+  });
+  const pick = (i) => {
+    setFocus(i);
+    if (i >= SPOTS_FIRST) setAllSights(true);
+    // The card comes into view in its row (a swipe row on a phone).
+    requestAnimationFrame(() => cardRefs.current[i]?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' }));
+  };
   return (
     <PSection id="pt-see" title={t('destx.jump.see')}>
       {highlights.length > 0 && (
-        <div className={`pt-see${hasMap ? ' has-map' : ''}`}>
-          <ol className="pt-sights">
+        <>
+          <ol className={`spots is-sights${allSights ? ' is-all' : ''}`} aria-label={t('destx.jump.see')}>
             {sights.map((h, i) => (
-              <li key={h.id || `${i}:${h.name}`}
-                className={`${focus === i ? 'is-focus' : ''}${hover === i ? ' is-hover' : ''}`.trim() || undefined}
-                onMouseEnter={() => setHover(i)}
-                onMouseLeave={() => setHover((c) => (c === i ? null : c))}>
-                <span className="pt-num" aria-hidden="true">{i + 1}</span>
-                <Thumb src={thumb500(h.image?.url) || h.photo || null} />
-                <span className="pt-sight-text">
-                  <b>{h.name}</b>
-                  <small>
-                    {[
-                      h.label ? poiLabelWord(t, h.label) : null,
-                      h.kind && lang === 'en' ? h.kind : null,
-                      h.dist_km != null ? t('destx.fromCentre', { km: fmtKm(h.dist_km) }) : null,
-                    ].filter(Boolean).join(', ')}
-                  </small>
-                </span>
-              </li>
+              <SpotCard key={h.id || `${i}:${h.name}`} refEl={(el) => { cardRefs.current[i] = el; }}
+                n={i + 1}
+                img={h.thumb}
+                chip={h.label === 'must_see' ? poiLabelWord(t, h.label) : null}
+                name={h.name}
+                meta={[
+                  h.label && h.label !== 'must_see' ? poiLabelWord(t, h.label) : null,
+                  h.kind && lang === 'en' ? h.kind : null,
+                  h.dist_km != null ? t('destx.fromCentre', { km: fmtKm(h.dist_km) }) : null,
+                ].filter(Boolean).join(', ')}
+                text={h.text}
+                active={focus === i || hover === i}
+                onEnter={() => setHover(i)}
+                onLeave={() => setHover((c) => (c === i ? null : c))}
+                onPick={() => setFocus(i)}
+                pickLabel={t('ai.showOnMap', { name: h.name })}
+              />
             ))}
           </ol>
+          {highlights.length > SPOTS_FIRST && (
+            <Button variant="secondary" size="sm" className="spots-more" aria-expanded={allSights}
+              onClick={() => setAllSights((v) => !v)}>
+              {allSights ? t('dest.showLess') : t('destx.showAllSights', { n: highlights.length })}
+            </Button>
+          )}
           {hasMap && (
-            <div className="pt-mapbox" ref={slotRef}>
+            <div className="pt-mapbox spots-map" ref={slotRef}>
               {mapOn ? (
                 <React.Suspense fallback={<div className="place-map place-map-wait dmap" />}>
                   <DestMap
                     place={{ lat, lon, name: city }}
-                    highlights={highlights}
+                    highlights={sights}
                     active="highlights"
                     focus={focus}
                     hover={hover}
                     onHoverHighlight={setHover}
-                    height={340}
-                    onPickHighlight={(i) => { setFocus(i); if (i >= SIGHTS_FIRST) setAllSights(true); }}
+                    height={420}
+                    onPickHighlight={pick}
                   />
                 </React.Suspense>
               ) : <div className="place-map place-map-wait dmap" />}
@@ -153,41 +166,73 @@ export function DestSee({ p }) {
               )}
             </div>
           )}
-        </div>
-      )}
-      {highlights.length > SIGHTS_FIRST && (
-        <Button variant="secondary" size="sm" className="pt-more" aria-expanded={allSights}
-          onClick={() => setAllSights((v) => !v)}>
-          {allSights ? t('dest.showLess') : t('destx.showAllSights', { n: highlights.length })}
-        </Button>
+        </>
       )}
 
       <OnFoot walk={walk} t={t} lang={lang} />
 
       {doRows.length > 0 && (
         <PBlock title={t('dest.doTitle')} className="pt-do">
-          <ul className="pt-dolist">
-            {dos.map((item) => {
+          <ul className={`spots is-do${allDo ? ' is-all' : ''}`} aria-label={t('dest.doTitle')}>
+            {doRows.map((item) => {
               const href = item.link && safeUrl(item.link) ? activityLink(safeUrl(item.link), 'dest-do') : null;
               return (
-                <li key={item.key}>
-                  <Thumb src={item.photo} />
-                  <span className="pt-sight-text">
-                    <b>{href ? <a href={href} target="_blank" rel="noreferrer">{item.name}</a> : item.name}</b>
-                    {item.detail && lang === 'en' && <small>{item.detail}</small>}
-                  </span>
-                </li>
+                <SpotCard key={item.key}
+                  img={item.photo}
+                  icon={DO_ICON[item.type] || CompassIcon}
+                  name={item.name}
+                  meta={DO_TYPE_KEYS[item.type] ? t(DO_TYPE_KEYS[item.type]) : ''}
+                  text={item.detail && lang === 'en' ? item.detail : null}
+                  href={href}
+                />
               );
             })}
           </ul>
-          {doRows.length > DO_FIRST && (
-            <Button variant="quiet" size="sm" className="pt-more" aria-expanded={allDo} onClick={() => setAllDo((v) => !v)}>
+          {doRows.length > SPOTS_FIRST && (
+            <Button variant="secondary" size="sm" className="spots-more" aria-expanded={allDo} onClick={() => setAllDo((v) => !v)}>
               {allDo ? t('dest.showLess') : t('rail.seeAllPlain')}
             </Button>
           )}
         </PBlock>
       )}
     </PSection>
+  );
+}
+
+/**
+ * One card for a sight and for a thing to do (T1032, owner: "the same style
+ * ... bigger images ... swipe on a phone"): the photograph on top (4:3), its
+ * number when the map shows it, the Must-see chip on it; then the name, one
+ * line of what it is and where, and the short description. A thing to do
+ * without a photograph of its own shows its kind's icon on the warm ground,
+ * never somebody else's picture. A sight's name selects it on the map; a
+ * thing to do's name opens its booking page when it has one.
+ */
+function SpotCard({ refEl, n, img, icon, chip, name, meta, text, href, active, onEnter, onLeave, onPick, pickLabel }) {
+  const [bad, setBad] = React.useState(false);
+  const photo = img && !bad;
+  const Glyph = icon || MapPinIcon;
+  return (
+    <li ref={refEl} className={`spot${active ? ' is-active' : ''}`} onMouseEnter={onEnter} onMouseLeave={onLeave}>
+      <div className="spot-media">
+        {photo
+          ? <img src={img} alt="" loading="lazy" decoding="async" onError={() => setBad(true)} />
+          : <span className="spot-ph" aria-hidden="true"><Glyph size={28} /></span>}
+        {n != null && <span className="spot-n" aria-hidden="true">{n}</span>}
+        {chip && <span className="spot-chip">{chip}</span>}
+      </div>
+      <div className="spot-body">
+        <h3 className="spot-name">
+          {onPick ? (
+            <button type="button" className="spot-hit" onClick={onPick} onFocus={onEnter} onBlur={onLeave} aria-label={pickLabel}>{name}</button>
+          ) : href ? (
+            <a className="spot-hit" href={href} target="_blank" rel="noreferrer">{name}</a>
+          ) : name}
+        </h3>
+        {meta && <p className="spot-meta">{meta}</p>}
+        {text && <p className="spot-text">{text}</p>}
+      </div>
+    </li>
   );
 }
 

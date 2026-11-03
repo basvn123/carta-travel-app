@@ -294,11 +294,15 @@ export function DestinationPage({
 
   // Photographs for the things to do.
   const doPhotos = useDoPhotos(destination?.id);
-  // The POI labels (Must-see, Recommended, Worth a look) by name (T763).
+  // The POI labels (Must-see, Recommended, Worth a look) by name (T763),
+  // and their one-line description (T1032: the sight card's line; Wikidata's
+  // short description, English only, matched like the photographs).
   const [poiLabels, setPoiLabels] = React.useState(null);
+  const [poiDesc, setPoiDesc] = React.useState(null);
   React.useEffect(() => {
     const id = destination?.id;
     setPoiLabels(null);
+    setPoiDesc(null);
     if (!id) return undefined;
     let live = true;
     fetchDestPois(id).then((items) => {
@@ -310,6 +314,9 @@ export function DestinationPage({
         if (label && !m.has(p.name.toLowerCase())) m.set(p.name.toLowerCase(), label);
       }
       setPoiLabels(m);
+      // photoMatcher matches any field by name; here the field is the line.
+      const cap = (v) => (v ? v.charAt(0).toUpperCase() + v.slice(1) : v);
+      setPoiDesc(() => photoMatcher((items || []).map((x) => ({ name: x.name, img: cap(x.desc) }))));
     });
     return () => { live = false; };
   }, [destination?.id]);
@@ -363,7 +370,8 @@ export function DestinationPage({
     .map((h) => {
       const label = h.name ? poiLabels?.get(h.name.toLowerCase()) : null;
       const photo = h.image?.url ? null : hlPhoto(h.name);
-      return { ...h, ...(label ? { label } : {}), ...(photo ? { photo } : {}) };
+      const desc = lang === 'en' && h.name ? poiDesc?.(h.name) : null;
+      return { ...h, ...(label ? { label } : {}), ...(photo ? { photo } : {}), ...(desc ? { desc } : {}) };
     });
   const doItems = [...(d?.do || [])]
     .sort((a, b) => (b.evidence?.n_sources ?? -1) - (a.evidence?.n_sources ?? -1));
