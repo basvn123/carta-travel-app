@@ -1538,7 +1538,6 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1022-a | T1022 | ClimateStrip keeps an English-only MONTHS_INITIAL while When to go uses locale initials; one locale-aware initial in lib/dates.js for both (Execution/P15/T1022-when-stay.md) | next task | open |  |
 | T1022-b | T1022 | The comfort cut points 78/60/45 in lib/whenGuide.js copy apply_climate.py by hand; one config both read (Execution/P15/T1022-when-stay.md) | next task | open |  |
 | T1022-c | T1022 | The climate comfort index rates Rome's August (33 C) Good while the verdict says Hot and busy; decide whether comfort weighs heat harder (Execution/P15/T1022-when-stay.md) | user | open |  |
-| T1034-a | T1034 | Push the tag archive/execution-full-2026-11-03 so the digests' git show lines work off this machine | user | open | |
 | T1034-b | T1034 | Git history still holds the old screenshots and reports (packs 1.42 GB); reclaiming it needs a history rewrite and force push: decide | user | open | |
 | T1034-c | T1034 | Slim continent-app the same way: three September CARTA_*.md prompt files, bash.exe.stackdump, review its 93 tracked images | next task | open | |
 | T1034-d | T1034 | Triage the 1,534 open register rows; many are likely done or stale | next task | open | |
