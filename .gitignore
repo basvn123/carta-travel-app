@@ -243,3 +243,6 @@ cache/gtfs/
 cache/nature/
 cache/open_prices/
 /impeccable/
+
+# Dated coverage backlogs, written by pipeline/regions/coverage.py on every run (T1050)
+reports/coverage_backlog_*_20*.csv

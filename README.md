@@ -43,7 +43,7 @@ see [SCHEMA.md](docs/SCHEMA.md)).
 │   │                       (NAP schedule feeds, GTFS-RT/SIRI, OpenSky ADS-B,
 │   │                       ferries, pricing archives, holiday calendars)
 │   └── estimation/         Retired fare model (Carta no longer prices flights);
-│                           kept for history. See docs/ESTIMATION.md
+│                           kept for history. See archive/docs-2026-11/ESTIMATION.md
 │
 ├── pipeline/               All live data-pipeline code (run from the repo root)
 │   ├── harvest_*.py            Fetch external sources -> cache/ and/or master
@@ -98,19 +98,19 @@ validation task also demotes published trips whose quality regressed, back to
 `needs_review` and never further - see [tools/trailslab/README.md](tools/trailslab/README.md).
 
 **Trails data quality is governed by a standing contract:
-[docs/TRAILS_DATA_QUALITY.md](docs/TRAILS_DATA_QUALITY.md).** Read it before
+[archive/docs-2026-11/TRAILS_DATA_QUALITY.md](archive/docs-2026-11/TRAILS_DATA_QUALITY.md).** Read it before
 changing anything under `pipeline/trails/`. In one line: a region counts as
 covered only when its best-known walks are published under the names people
 search for, with a photo of the place and numbers that match the ground - so
 the famous-trail registry, the per-region coverage gate, way-chain derivation,
 parent pages for stage families and the per-row publish gates are requirements,
-not nice-to-haves. `docs/TRAILS.md` remains the reference for how the layer
+not nice-to-haves. `archive/docs-2026-11/TRAILS.md` remains the reference for how the layer
 works.
 
 On top of the fare refresh sits an automated estimation layer (weekly
 snapshot history -> quantile GBDT fare model -> PSI/KS drift-gated
 retraining) plus a raw open-data ingestion mirror - see
-[ESTIMATION.md](docs/ESTIMATION.md).
+[ESTIMATION.md](archive/docs-2026-11/ESTIMATION.md).
 
 ## Data flow
 

@@ -273,7 +273,7 @@ Discover is the part of Carta where a traveller finds a place: the home page, Ex
 
 **Data behind it.** `public/dossier/{id}.json` (3,869 files, dated 2026-10-31 on disk), built monthly by `python run_pipeline.py dossier` (harvest landmarks, city intros, event dates, research, then build, fill licences, build again, audit; previous dossiers are put back when the audit fails). Sources: Wikivoyage, Wikidata, Wikimedia Commons, OpenTripMap, OpenStreetMap (parking), the beach, lake, mountain, trail and cycling wires. POI items come from `public/poi/{id}.json`. Day prices come from the runtime price engine, not the dossier.
 
-**Where it lives.** continent-app/src/browse/DestinationPage.jsx, continent-app/src/browse/DestOverview.jsx, continent-app/src/browse/DestNearby.jsx, continent-app/src/browse/DestWhen.jsx, continent-app/src/browse/DestPractical.jsx, continent-app/src/browse/DestPriceCard.jsx, continent-app/src/browse/RatingSheet.jsx, continent-app/src/browse/KeyFacts.jsx, continent-app/src/browse/NearPage.jsx, continent-app/src/lib/dossier.js, continent-app/src/lib/destOverview.js. Pipeline: pipeline/dossier/build_dossier.py, pipeline/dossier/derive_place_page.py, pipeline/place_layer.py. Docs: docs/ITEM_PAGE_DATA_CONTRACT.md. Latest reports: T1019, T1022, T1024 to T1039.
+**Where it lives.** continent-app/src/browse/DestinationPage.jsx, continent-app/src/browse/DestOverview.jsx, continent-app/src/browse/DestNearby.jsx, continent-app/src/browse/DestWhen.jsx, continent-app/src/browse/DestPractical.jsx, continent-app/src/browse/DestPriceCard.jsx, continent-app/src/browse/RatingSheet.jsx, continent-app/src/browse/KeyFacts.jsx, continent-app/src/browse/NearPage.jsx, continent-app/src/lib/dossier.js, continent-app/src/lib/destOverview.js. Pipeline: pipeline/dossier/build_dossier.py, pipeline/dossier/derive_place_page.py, pipeline/place_layer.py. Docs: archive/docs-2026-11/ITEM_PAGE_DATA_CONTRACT.md. Latest reports: T1019, T1022, T1024 to T1039.
 
 **Limits.**
 - The intro exists in English only (register T1024-a).
@@ -295,7 +295,7 @@ Discover is the part of Carta where a traveller finds a place: the home page, Ex
 
 **Data behind it.** `public/dossier/{id}.json` gallery, built by `python run_pipeline.py dossier` (`fill_licences.py` reads Commons metadata). Hero images from the `images` and `image_audit` tasks.
 
-**Where it lives.** continent-app/src/browse/PhotoGallery.jsx, continent-app/src/browse/DestinationPage.jsx (`GalleryStrip`), continent-app/src/components/HeroImage.jsx, continent-app/src/lib/heroImage.js. Pipeline: pipeline/dossier/build_dossier.py, pipeline/dossier/fill_licences.py. Docs: docs/PHOTOS.md, docs/IMAGE_BRIEF.md.
+**Where it lives.** continent-app/src/browse/PhotoGallery.jsx, continent-app/src/browse/DestinationPage.jsx (`GalleryStrip`), continent-app/src/components/HeroImage.jsx, continent-app/src/lib/heroImage.js. Pipeline: pipeline/dossier/build_dossier.py, pipeline/dossier/fill_licences.py. Docs: archive/docs-2026-11/PHOTOS.md, archive/docs-2026-11/IMAGE_BRIEF.md.
 
 **Limits.** Four photo carousels style their own arrows (register T1024-c). Many surfaces still load Wikimedia images at fixed widths (register T052-f).
 
@@ -368,7 +368,7 @@ Discover is the part of Carta where a traveller finds a place: the home page, Ex
 
 **Data behind it.** `public/region/` (4,849 files, dated 2026-10-29), from `python run_pipeline.py regions` (quarterly: `build_regions.py --skip-fetch`, `coverage.py`, `export_regions.py --all`). Sources: NUTS, ITL, geoBoundaries, coastal stretches, GMBA mountain ranges, basins, biogeographic regions. Towns, climate and prices come from the catalogue in the app.
 
-**Where it lives.** continent-app/src/browse/RegionPage.jsx, continent-app/src/lib/regions.js. Pipeline: pipeline/regions/. Docs: docs/REGIONS.md, docs/COVERAGE.md. Latest reports: T450, T456.
+**Where it lives.** continent-app/src/browse/RegionPage.jsx, continent-app/src/lib/regions.js. Pipeline: pipeline/regions/. Docs: docs/REGIONS.md, archive/docs-2026-11/COVERAGE.md. Latest reports: T450, T456.
 
 **Limits.** No coverage footer on the region page, since its ids do not match the NUTS3 keys in `coverage.json` (register T160-e). `coverage.json` lacks its contract block until `coverage.py` runs again (registers T160-a, T211-c).
 
@@ -386,7 +386,7 @@ Discover is the part of Carta where a traveller finds a place: the home page, Ex
 
 **Data behind it.** The catalogue rows Explore holds (ratings and `country_rank` from `python run_pipeline.py fame`), `public/country_insights.json`, journeys from `public/journeys/`, region index from `public/region/`.
 
-**Where it lives.** continent-app/src/browse/CountryPage.jsx, continent-app/src/browse/CountryGallery.jsx. Pipeline: pipeline/regions/, pipeline/intake/. Docs: docs/REGIONS.md, docs/COVERAGE.md.
+**Where it lives.** continent-app/src/browse/CountryPage.jsx, continent-app/src/browse/CountryGallery.jsx. Pipeline: pipeline/regions/, pipeline/intake/. Docs: docs/REGIONS.md, archive/docs-2026-11/COVERAGE.md.
 
 **Limits.** Five places are not reachable by links from any country page (register T225-a). No share card image for country pages (register T212-c).
 
@@ -456,7 +456,7 @@ Every rating number lives in one file, `continent-app/config/rating.json` (versi
 
 **Data behind it.** `dest.rating` = `{score, tier, label, hidden_gem, confidence, inputs_present, fame, components, source, band, why}` in `app_data/app_data.json`, mirrored to `continent-app/public/app_data.json` and shipped by `continent-app/scripts/sync-data.mjs`. Inputs: `app_data/curated_appeal.json` (hand scores), the rubric scores file, `cache/dest_pageviews.json`, `cache/urban_fabric.json`, POI lists, the nature wires. Run by `python run_pipeline.py --only fame` (monthly: pageviews, designations, beauty, place class, rating) and again at the end of `poi_significance` (monthly).
 
-**Where it lives.** App: `continent-app/src/lib/rating.js`, `continent-app/config/rating.json`, `continent-app/src/components/RatingBadge.jsx`. Pipeline: `pipeline/rating_layer.py`, `pipeline/apply_rating_layer.py`, `pipeline/appeal_scale.py`, `pipeline/rating_config.py`. Docs: `docs/RATING_RUBRIC.md`.
+**Where it lives.** App: `continent-app/src/lib/rating.js`, `continent-app/config/rating.json`, `continent-app/src/components/RatingBadge.jsx`. Pipeline: `pipeline/rating_layer.py`, `pipeline/apply_rating_layer.py`, `pipeline/appeal_scale.py`, `pipeline/rating_config.py`. Docs: `archive/docs-2026-11/RATING_RUBRIC.md`.
 
 **Limits.**
 - `rating_layer.py`'s module docstring still describes rating v4 (weights 0.70/0.13/0.06/0.11). That is the rollback path (`formula: "v4"`), not what runs.
@@ -472,14 +472,14 @@ Every rating number lives in one file, `continent-app/config/rating.json` (versi
 
 **How it works.**
 1. Source order (`load_appeal`): a hand score in `app_data/curated_appeal.json` always wins; else a rubric score (`source: rubric`).
-2. Rubric (`docs/RATING_RUBRIC.md`): applied by Claude in Claude Code sessions, never through an API, one fact card at a time. Classes: metro (300,000 people or more), city (50,000 or more), town (8,000 or more), village (under 8,000), area (no centre, or nature-tagged under 1,200). Five criteria scored 0 to 10 for the record (setting, character, signature sights, atmosphere, uniqueness). The band test decides the band; anchors in `continent-app/config/rating_anchors.json` place the score inside it. Low-confidence cards stay at 7.5 or below unless a source shows more.
+2. Rubric (`archive/docs-2026-11/RATING_RUBRIC.md`): applied by Claude in Claude Code sessions, never through an API, one fact card at a time. Classes: metro (300,000 people or more), city (50,000 or more), town (8,000 or more), village (under 8,000), area (no centre, or nature-tagged under 1,200). Five criteria scored 0 to 10 for the record (setting, character, signature sights, atmosphere, uniqueness). The band test decides the band; anchors in `continent-app/config/rating_anchors.json` place the score inside it. Low-confidence cards stay at 7.5 or below unless a source shows more.
 3. Drift check: each shard holds five hidden hand-scored controls; their rubric scores must sit within 0.5 of the hand scores on average, else the shard is rescored. `pipeline/validate_rubric_scores.py` checks schema, ranges, band match, six languages and no em dash.
 4. Per-class appeal scale (`appeal_scale.rescale`): appeal at or below the class median is unchanged. Above it, `t = min(1, (a - median) / (best - median))` and `out = median + (ceiling - median) x t^gamma`, with `gamma` = 0.7 and the class ceilings above. Median and best per class are frozen in the reference.
 5. Reason sentence: one English sentence per place (`rating.why`, hand reason first, then rubric reason), at most 25 words. Other languages are lazy files `public/app_data/why_i18n/<lang>.json`, loaded by `loadRatingWhy`.
 
 **Data behind it.** `app_data/curated_appeal.json` (about 1,570 hand scores per the rubric doc), `data/rating/rubric_scores/shard_XX.json`, `data/rating/fact_cards/`, `app_data/curated_why_i18n.json`.
 
-**Where it lives.** `pipeline/rating_layer.py` (`load_appeal`, `load_why_en`), `pipeline/appeal_scale.py`, `pipeline/validate_rubric_scores.py`, `docs/RATING_RUBRIC.md`, `continent-app/config/rating_anchors.json`.
+**Where it lives.** `pipeline/rating_layer.py` (`load_appeal`, `load_why_en`), `pipeline/appeal_scale.py`, `pipeline/validate_rubric_scores.py`, `archive/docs-2026-11/RATING_RUBRIC.md`, `continent-app/config/rating_anchors.json`.
 
 **Limits.** The rubric needs a Claude Code session per shard; new places arrive as estimates until scored. The owner spot-checks 5% of each round (`reports/rubric_spotcheck_v5.md`).
 
@@ -640,7 +640,7 @@ Every rating number lives in one file, `continent-app/config/rating.json` (versi
 
 **Data behind it.** `cache/poi_significance.json`, `logs/significance_report.json`, pageview, Wikidata and Wikivoyage caches; shipped as `public/poi/{id}.json`. `python run_pipeline.py --only poi_significance`, monthly.
 
-**Where it lives.** `pipeline/score_significance.py`, `pipeline/poi_labels.py`, `continent-app/src/lib/rating.js` (`poiLabel`, `POI_LABELS`). Doc: `docs/2.SIGNIFICANCE.md`.
+**Where it lives.** `pipeline/score_significance.py`, `pipeline/poi_labels.py`, `continent-app/src/lib/rating.js` (`poiLabel`, `POI_LABELS`). Doc: `archive/docs-2026-11/2.SIGNIFICANCE.md`.
 
 **Limits.** The significance weights sum to 1.06, not 1. "A must-see closed in the chosen month becomes recommended" needs opening months no source carries; not built. The 52-item POI cap applies here too.
 
@@ -691,7 +691,7 @@ Every rating number lives in one file, `continent-app/config/rating.json` (versi
 
 **Data behind it.** The trails lab Postgres (`tools/trailslab/`, Docker), Copernicus DEM, Commons photos, OSM. `python run_pipeline.py --only trails_rate` runs after `trails_curate`, `trails_scenic`, `trails_images`, `trails_attributes`, then exports the wire; `rating_v5_profile` adds `v5`.
 
-**Where it lives.** `pipeline/trails/rate.py`, `pipeline/trails/export_wire.py`, `pipeline/nature_tiers.py`, `continent-app/src/lib/trailCards.js`, `continent-app/src/browse/TrailPage.jsx`. Docs: `docs/TRAILS.md`, `docs/TRAILS_DATA_QUALITY.md`.
+**Where it lives.** `pipeline/trails/rate.py`, `pipeline/trails/export_wire.py`, `pipeline/nature_tiers.py`, `continent-app/src/lib/trailCards.js`, `continent-app/src/browse/TrailPage.jsx`. Docs: `archive/docs-2026-11/TRAILS.md`, `archive/docs-2026-11/TRAILS_DATA_QUALITY.md`.
 
 **Limits.** Relief reads stored ascent per km, so 488 routes drawn downhill under-score (T286-c). The lab still runs on the laptop (T784-a). The worker does not rerun rate.py after way tag refreshes (T647-e).
 
@@ -1462,7 +1462,7 @@ Planning is everything that turns "I want to go somewhere" into a dated, priced 
 
 **Data behind it.** `continent-app/public/journeys/index.json`, `type/{slug}.json`, `journey/{id}.json`. Current index: `journeys_v1`, 258 trips, 15 types, generated 2026-10-15. Built by hand (`build_wire.py` is "Tier: Manual"), not on a schedule.
 
-**Where it lives.** App: `continent-app/src/planner/flow/CartaTrips.jsx`, `continent-app/src/browse/JourneyPage.jsx`, `continent-app/src/browse/TripPlaceCard.jsx`, `continent-app/src/lib/journeys.js`, `continent-app/src/lib/tripLength.js`, `continent-app/src/lib/journeyTrips.js`. Pipeline: `pipeline/journeys/build_wire.py`, `pipeline/journeys/sample_trips.py`, `pipeline/journeys/credits.py`. Docs: `docs/ITEM_PAGE_DATA_CONTRACT.md`. Latest: `Execution/P15/T1030-one-carta-trips.md`.
+**Where it lives.** App: `continent-app/src/planner/flow/CartaTrips.jsx`, `continent-app/src/browse/JourneyPage.jsx`, `continent-app/src/browse/TripPlaceCard.jsx`, `continent-app/src/lib/journeys.js`, `continent-app/src/lib/tripLength.js`, `continent-app/src/lib/journeyTrips.js`. Pipeline: `pipeline/journeys/build_wire.py`, `pipeline/journeys/sample_trips.py`, `pipeline/journeys/credits.py`. Docs: `archive/docs-2026-11/ITEM_PAGE_DATA_CONTRACT.md`. Latest: `Execution/P15/T1030-one-carta-trips.md`.
 
 **Limits.**
 - Every curated trip is 7 days; the short version is derived, not authored. Getting to the start sits inside the transport line and scales with it, which understates a short trip.
@@ -1490,7 +1490,7 @@ Planning is everything that turns "I want to go somewhere" into a dated, priced 
 
 **Data behind it.** `continent-app/public/trips/index.json`, `top.json`, `{CC}.json` (cards, about 600 bytes each), `trip/{id}.json` (about 12 KB). Current index: model `trips_v1`, 3,984 trips, 19 dropped, 43 countries, generated 2026-09-15. Inputs: `app_data/app_data.json`, `cache/wikivoyage.json`, `cache/trips/routes.json`, `cache/dest_pageviews.json`, `cache/eurostat_nights_nuts3.json`.
 
-**Where it lives.** App: `continent-app/src/lib/trips.js`, `continent-app/src/planner/ReadyTripsStep.jsx`, `continent-app/src/browse/TripPage.jsx` (the library trip page). Pipeline: `pipeline/trips/` (`build_trips.py`, `harvest_routes.py`, `compose_trips.py`, `trip_model.py`, `validate_trips.py`, `export_trips.py`, `trip_sources.py`). Docs: `docs/trips_layer.md`.
+**Where it lives.** App: `continent-app/src/lib/trips.js`, `continent-app/src/planner/ReadyTripsStep.jsx`, `continent-app/src/browse/TripPage.jsx` (the library trip page). Pipeline: `pipeline/trips/` (`build_trips.py`, `harvest_routes.py`, `compose_trips.py`, `trip_model.py`, `validate_trips.py`, `export_trips.py`, `trip_sources.py`). Docs: `archive/docs-2026-11/trips_layer.md`.
 
 **Limits.**
 - `ReadyTripsStep` and the wizard's picked-trip load have no failure state (row T189-b).
@@ -1582,7 +1582,7 @@ Planning is everything that turns "I want to go somewhere" into a dated, priced 
 
 **Data behind it.** `trip_plans` and `trip_plan_stops` for signed-in travellers, the device draft for guests; trip extras (ideas, notes, expenses, imported bookings, photos) in the `day_plans` payload (migration 004) and in localStorage. Live flights from `/api/flights`.
 
-**Where it lives.** App: `continent-app/src/planner/TripPlannerTab.jsx`, `continent-app/src/planner/TripSummary.jsx`, `continent-app/src/planner/TripItinerary.jsx`, `continent-app/src/planner/PlanTotal.jsx`, `continent-app/src/planner/trip/`. Note: `MAP.md` names `planner/finder/TripPage.jsx` for this page, but that file is the trip finder's page for one found trip; the planned trip page is `TripPlannerTab.jsx` with `TripSummary.jsx`. Docs: `docs/ITEM_PAGE_DATA_CONTRACT.md`. Latest: `Execution/P15/T1001-new-trip-trip-bar.md` to `T1017-days-prompt-names.md`.
+**Where it lives.** App: `continent-app/src/planner/TripPlannerTab.jsx`, `continent-app/src/planner/TripSummary.jsx`, `continent-app/src/planner/TripItinerary.jsx`, `continent-app/src/planner/PlanTotal.jsx`, `continent-app/src/planner/trip/`. Note: `MAP.md` names `planner/finder/TripPage.jsx` for this page, but that file is the trip finder's page for one found trip; the planned trip page is `TripPlannerTab.jsx` with `TripSummary.jsx`. Docs: `archive/docs-2026-11/ITEM_PAGE_DATA_CONTRACT.md`. Latest: `Execution/P15/T1001-new-trip-trip-bar.md` to `T1017-days-prompt-names.md`.
 
 **Limits.**
 - Deleting a trip on Plan home asks for a confirm rather than an Undo (row T809-a).
@@ -1767,7 +1767,7 @@ Carta shows walks, bike routes, beaches, lakes and peaks on their own pages. Eac
 - Tasks, in chain order: `trails_ingest` (quarterly), `trails_elevation`, `trails_validate`, `trails_popularity` (monthly), `trails_registry` (monthly), `trails_splice` (monthly), `trails_regionize`, `trails_derive_routes` (quarterly), `trails_hierarchy`, `trails_curate`, `trails_forests` (quarterly), `trails_scenic`, `trails_images`, `trails_way_tags`, `trails_attributes`, `trails_rate` (which also exports the wire). Run each with `python run_pipeline.py <task>`. All except `trails_registry` need the trailslab database up (`guard_trailslab_up`).
 - Wire: `continent-app/public/trails/index.json` (generated 2026-09-13) lists 45 country entries, 17,619 rated trails and 51 listed. Scope is 43 countries; TR and UA only with `curate.py --include TR,UA`.
 
-**Where it lives.** `pipeline/trails/` (`ingest_osm_routes.py`, `derive_routes.py`, `splice.py`, `repair.py`, `dedup.py`, `hierarchy.py`, `curate.py`, `famous_registry.py`, `waymarked.py`, `rate.py`, `export_wire.py`), `pipeline/regions/quotas.py`, `continent-app/src/lib/trails.js`. Docs: `docs/TRAILS.md`, `docs/TRAILS_DATA_QUALITY.md`.
+**Where it lives.** `pipeline/trails/` (`ingest_osm_routes.py`, `derive_routes.py`, `splice.py`, `repair.py`, `dedup.py`, `hierarchy.py`, `curate.py`, `famous_registry.py`, `waymarked.py`, `rate.py`, `export_wire.py`), `pipeline/regions/quotas.py`, `continent-app/src/lib/trails.js`. Docs: `archive/docs-2026-11/TRAILS.md`, `archive/docs-2026-11/TRAILS_DATA_QUALITY.md`.
 
 **Limits.**
 - The ingest reads relations only. Path-only routes are derived for just 5 countries.
@@ -1791,7 +1791,7 @@ Carta shows walks, bike routes, beaches, lakes and peaks on their own pages. Eac
 
 **Data behind it.** OSM-derived routing graphs (Valhalla tiles, BRouter segments from brouter.de). Not found in code: a refresh schedule for these graphs.
 
-**Where it lives.** `tools/trailslab/`, `tools/brouter/prepare.py`, `pipeline/trails/repair.py`, `pipeline/cycling/bridge_gaps.py`, `docs/CYCLING.md`.
+**Where it lives.** `tools/trailslab/`, `tools/brouter/prepare.py`, `pipeline/trails/repair.py`, `pipeline/cycling/bridge_gaps.py`, `archive/docs-2026-11/CYCLING.md`.
 
 **Limits.** Only GB has BRouter tiles staged. Valhalla holds one country graph at a time. Both folders are large and slow to rebuild, so they must not be deleted for disk space.
 
@@ -1921,7 +1921,7 @@ Carta shows walks, bike routes, beaches, lakes and peaks on their own pages. Eac
 - Tasks: `cycling_harvest` (quarterly), `cycling_enrich`, `cycling_photos`, `cycling_bridge`, `cycling_publish`, or `python pipeline/cycling/build_cycling.py` for all.
 - Wire of 2026-10-23: 513 rated, 16,460 listed, 16 tours, 39 countries.
 
-**Where it lives.** `pipeline/cycling/` (`harvest_cycling.py`, `stage_planner.py`, `validate_cycling.py`, `cycle_index.py`, `export_cycling.py`, `cycle_images.py`, `bridge_gaps.py`), `continent-app/src/browse/CyclePage.jsx`, `continent-app/src/lib/cycling.js`, `docs/CYCLING.md`.
+**Where it lives.** `pipeline/cycling/` (`harvest_cycling.py`, `stage_planner.py`, `validate_cycling.py`, `cycle_index.py`, `export_cycling.py`, `cycle_images.py`, `bridge_gaps.py`), `continent-app/src/browse/CyclePage.jsx`, `continent-app/src/lib/cycling.js`, `archive/docs-2026-11/CYCLING.md`.
 
 **Limits.**
 - In GB, 95 of 103 tour candidates fail continuity.
@@ -1972,7 +1972,7 @@ Carta shows walks, bike routes, beaches, lakes and peaks on their own pages. Eac
 - Tasks: `bathing_water`, `beaches`, `sea_temp`, `beach_context` (all quarterly), `dest_overlays` for swim bans.
 - Wire: `public/beaches/index.json` (2026-10-29) holds 2,745 rated and 3,873 listed beaches.
 
-**Where it lives.** `pipeline/beaches/`, `pipeline/harvest_bathing_water.py`, `pipeline/harvest_sea_temp.py`, `pipeline/harvest_swim_bans.py`, `continent-app/src/browse/BeachPage.jsx`, `docs/BEACHES.md`.
+**Where it lives.** `pipeline/beaches/`, `pipeline/harvest_bathing_water.py`, `pipeline/harvest_sea_temp.py`, `pipeline/harvest_swim_bans.py`, `continent-app/src/browse/BeachPage.jsx`, `archive/docs-2026-11/BEACHES.md`.
 
 **Limits.**
 - Sea temperature reaches no beach yet: `sea_temp` is filled on 0 rows. The first run stopped after 12.7 hours on an ERDDAP HTTP 503 and now resumes in 6-hour slices (T918-b).
@@ -2057,7 +2057,7 @@ Carta shows walks, bike routes, beaches, lakes and peaks on their own pages. Eac
 
 **Data behind it.** Wikidata (CC0), OSM (ODbL), Copernicus GLO-30, NASA POWER. ERA5 is written but needs `CDSAPI_KEY`. Tasks: `mountains` and `peak_context` (quarterly). They need the Wikidata cache (`guard_mountains`). The wire holds 728 rated peaks.
 
-**Where it lives.** `pipeline/mountains/` (`osm_spine.py`, `harvest_peaks.py`, `terrain.py`, `season.py`, `peak_index.py`, `harvest_lift_hours.py`, `export_peaks.py`), `continent-app/src/browse/MountainPage.jsx`, `docs/MOUNTAINS.md`.
+**Where it lives.** `pipeline/mountains/` (`osm_spine.py`, `harvest_peaks.py`, `terrain.py`, `season.py`, `peak_index.py`, `harvest_lift_hours.py`, `export_peaks.py`), `continent-app/src/browse/MountainPage.jsx`, `archive/docs-2026-11/MOUNTAINS.md`.
 
 **Limits.**
 - Photos are the binding constraint: Norway passes 23.4% against 36.8% for the whole layer.
@@ -2121,7 +2121,7 @@ Carta shows walks, bike routes, beaches, lakes and peaks on their own pages. Eac
 
 **Data behind it.** R2 bucket `carta` behind `cdn.carta-europetravel.com`. Objects are cached for a year as immutable; manifests for 300 seconds. Garbage collection (`derive.py gc`) waits 14 days and refuses to delete over 25% of the bucket without `--force`. Transcoding runs as `image_transcode` on a Hetzner CAX41.
 
-**Where it lives.** `pipeline/photos/derive.py`, `pipeline/photos/wire_ladder.py`, `continent-app/src/lib/imageLadder.js`, `continent-app/src/lib/heroImage.js`, `continent-app/src/lib/pictureFlag.js`, `continent-app/src/components/LayerPhoto.jsx`, `continent-app/src/components/HeroImage.jsx`, `docs/PHOTOS.md`.
+**Where it lives.** `pipeline/photos/derive.py`, `pipeline/photos/wire_ladder.py`, `continent-app/src/lib/imageLadder.js`, `continent-app/src/lib/heroImage.js`, `continent-app/src/lib/pictureFlag.js`, `continent-app/src/components/LayerPhoto.jsx`, `continent-app/src/components/HeroImage.jsx`, `archive/docs-2026-11/PHOTOS.md`.
 
 **Limits.**
 - The CDN is not live: open rows T049-a to T049-d, T052-a and T235-d.
@@ -2158,7 +2158,7 @@ Carta shows walks, bike routes, beaches, lakes and peaks on their own pages. Eac
 
 **Data behind it.** Commons (licence per file), Wikidata (CC0), Wikipedia, Geograph, Mapillary, Pexels. Task `photo_sources` runs after the outdoor layers (`derive.py sources ... --upload auto`). Tasks `poi_images_wikidata` and `poi_images` are backfills.
 
-**Where it lives.** `pipeline/photos/` (`commons.py`, `geograph.py`, `mapillary.py`, `wikidata_views.py`, `credit.py`, `takedown.py`, `derive.py`), `pipeline/harvest_images.py`, `pipeline/harvest_image_licenses.py`, `pipeline/enrich_images_commons.py`, `pipeline/enrich_images_web.py`, `continent-app/src/lib/imageCredit.js`, `docs/PHOTOS.md`.
+**Where it lives.** `pipeline/photos/` (`commons.py`, `geograph.py`, `mapillary.py`, `wikidata_views.py`, `credit.py`, `takedown.py`, `derive.py`), `pipeline/harvest_images.py`, `pipeline/harvest_image_licenses.py`, `pipeline/enrich_images_commons.py`, `pipeline/enrich_images_web.py`, `continent-app/src/lib/imageCredit.js`, `archive/docs-2026-11/PHOTOS.md`.
 
 **Limits.**
 - 22 photos owe a credit nobody can supply.
@@ -2184,7 +2184,7 @@ Carta shows walks, bike routes, beaches, lakes and peaks on their own pages. Eac
 4. **Relevance.** A CLIP check (`relevance.py`, `MARGIN = 0.02`) can veto a photo but never admit one. P18 images are exempt.
 5. **Duplicates.** `dedupe.py` treats `PHASH_SAME = 6` or `COSINE_SAME = 0.93` as the same image, and keeps one per cluster.
 6. **Season.** The month comes from EXIF, metadata or the filename (`season.py`). The overcast probe is disabled (`CONDITION_ENABLED = False`).
-7. **Brief.** `docs/IMAGE_BRIEF.md` lists hard rejects: animal or plant close-ups, vehicles, interiors, maps or diagrams, satellite images, people or markers as the subject, and views from more than 2 km away unless framed "seen from".
+7. **Brief.** `archive/docs-2026-11/IMAGE_BRIEF.md` lists hard rejects: animal or plant close-ups, vehicles, interiors, maps or diagrams, satellite images, people or markers as the subject, and views from more than 2 km away unless framed "seen from".
 8. **Destination heroes** (`audit_hero_images.py`).
    - Rejects `BAD_PATTERNS` (map, satellite, emblem, diagram, collage, document).
    - Checks the 12:5 frame (`HERO_FRAME_AR`) and flags narrow images.
@@ -2192,7 +2192,7 @@ Carta shows walks, bike routes, beaches, lakes and peaks on their own pages. Eac
 
 **Data behind it.** The sources above. Tasks `photo_sources`, `clip_sweep` (Hetzner), `images` and `hero_audit`.
 
-**Where it lives.** `pipeline/photos/selection.py`, `technical.py`, `aesthetics.py`, `relevance.py`, `dedupe.py`, `season.py`, `vision_prompt.py`, `pipeline/audit_hero_images.py`, `continent-app/src/lib/heroImage.js`, `docs/IMAGE_BRIEF.md`.
+**Where it lives.** `pipeline/photos/selection.py`, `technical.py`, `aesthetics.py`, `relevance.py`, `dedupe.py`, `season.py`, `vision_prompt.py`, `pipeline/audit_hero_images.py`, `continent-app/src/lib/heroImage.js`, `archive/docs-2026-11/IMAGE_BRIEF.md`.
 
 **Limits.**
 - The NIMA model is not converted, so its weight drops out.
@@ -2405,7 +2405,7 @@ This section covers the parts of Carta that sit around the travel content: the A
 
 **Data behind it.** `plan_tiers`, `entitlements`, `pass_grants`, `ai_usage` (007), free tier once (021), `paywall_events` (022, 027), withdrawal waiver (025), OSS threshold (026), payments quota (044), subscriptions (053).
 
-**Where it lives.** App: `continent-app/src/pass/PricingPage.jsx`, `continent-app/src/components/PassModal.jsx`, `continent-app/src/hooks/usePaywall.jsx`, `continent-app/src/hooks/useEntitlement.js`, `continent-app/src/lib/pricing.js`, `continent-app/src/lib/billing.js`, `continent-app/src/lib/passMoments.js`. Backend: `supabase/functions/checkout/`, `supabase/functions/stripe-webhook/`, `supabase/functions/billing/`, `supabase/functions/_shared/passes.mjs`. Docs: `docs/REFUND_SOP.md`, `Execution/P2/_OPEN-stripe-launch.md`, `Execution/P11/_OPEN-pass-subscription.md`.
+**Where it lives.** App: `continent-app/src/pass/PricingPage.jsx`, `continent-app/src/components/PassModal.jsx`, `continent-app/src/hooks/usePaywall.jsx`, `continent-app/src/hooks/useEntitlement.js`, `continent-app/src/lib/pricing.js`, `continent-app/src/lib/billing.js`, `continent-app/src/lib/passMoments.js`. Backend: `supabase/functions/checkout/`, `supabase/functions/stripe-webhook/`, `supabase/functions/billing/`, `supabase/functions/_shared/passes.mjs`. Docs: `archive/docs-2026-11/REFUND_SOP.md`, `Execution/P2/_OPEN-stripe-launch.md`, `Execution/P11/_OPEN-pass-subscription.md`.
 
 **Limits.**
 - Stripe is not live: Prices, secrets, the Terms URL, the webhook deploy and a real test purchase are open owner steps (T030-a, T030-b, T032-a, T032-c), and 044 must be pasted before the function deploys (T265-a).
@@ -2427,7 +2427,7 @@ This section covers the parts of Carta that sit around the travel content: the A
 
 **Data behind it.** `src/i18n/en.js` (about 10,100 lines) and five catalogs of about 9,500 lines each. No pipeline input.
 
-**Where it lives.** `continent-app/src/i18n/`, `continent-app/scripts/i18n/`, `continent-app/src/lib/format.js`. Docs: `docs/SEO.md` (hreflang across six languages).
+**Where it lives.** `continent-app/src/i18n/`, `continent-app/scripts/i18n/`, `continent-app/src/lib/format.js`. Docs: `archive/docs-2026-11/SEO.md` (hreflang across six languages).
 
 **Limits.** The five non-English catalogs are about 600 lines shorter than en.js, so some strings fall back to English. Not found in code: an automated key parity test across all six catalogs.
 
@@ -2447,7 +2447,7 @@ This section covers the parts of Carta that sit around the travel content: the A
 
 **Data behind it.** Migrations 014 to 018, 022, 028 to 043, 045, 048, 051. Tables include `admin_users`, `admin_audit_log`, `site_config`, `content_overrides`, `content_reports`, `moderation_statements`, `launch_counts`, `edge_errors`, `edge_error_daily_total`, `ai_model_events`, `ai_cap_events`.
 
-**Where it lives.** `continent-app/src/admin/AdminPage.jsx`, `continent-app/src/components/admin/` (Overview, UsersList, UserDetail, ConfigManager, AuditLog, ContentReports, ModerationComplaints, FeedbackInbox, AiUsage, AiModelFallbacks, CacheHitRate, Margin, LaunchMetrics, EdgeErrors, PipelineHealth, PaywallFunnel, PriceProvenance), `continent-app/src/auth/admin.js`, `continent-app/src/auth/moderation.js`, `continent-app/src/lib/launchEvents.js`, `continent-app/src/planner/edgeFailure.js`, `continent-app/src/hooks/useIsAdmin.js`. Docs: `docs/LAUNCH-METRICS.md`, `docs/INCIDENT_RUNBOOK.md`.
+**Where it lives.** `continent-app/src/admin/AdminPage.jsx`, `continent-app/src/components/admin/` (Overview, UsersList, UserDetail, ConfigManager, AuditLog, ContentReports, ModerationComplaints, FeedbackInbox, AiUsage, AiModelFallbacks, CacheHitRate, Margin, LaunchMetrics, EdgeErrors, PipelineHealth, PaywallFunnel, PriceProvenance), `continent-app/src/auth/admin.js`, `continent-app/src/auth/moderation.js`, `continent-app/src/lib/launchEvents.js`, `continent-app/src/planner/edgeFailure.js`, `continent-app/src/hooks/useIsAdmin.js`. Docs: `archive/docs-2026-11/LAUNCH-METRICS.md`, `archive/docs-2026-11/INCIDENT_RUNBOOK.md`.
 
 **Limits.**
 - Several admin migrations are recorded as unapplied: 022, 027, 029, 031 and others (T034-a, T039-d, T043-a, T077-b); their cards show nothing until pasted. Whether 041 is live is unconfirmed (T235-h).
@@ -2468,7 +2468,7 @@ This section covers the parts of Carta that sit around the travel content: the A
 
 **Data behind it.** `app_data/app_data.json`, `public/boot.json`, `public/dest/`, `public/poi/`, plus every layer folder in `R2_TIER`. Freshness follows the pipeline runs (weekly on the build box, or by hand).
 
-**Where it lives.** `run_pipeline.py`, `pipeline/pipeline_io.py`, `pipeline/joins/`, `continent-app/scripts/sync-data.mjs`, `continent-app/src/lib/bootIndex.js`, `continent-app/src/lib/appData.js`, `continent-app/src/lib/dataHost.js`, `continent-app/scripts/ci/check-contract.mjs`, `continent-app/scripts/ci/contract.mjs`. Docs: `docs/SCHEMA.md`, `docs/PIPELINE.md`, `docs/JOINS.md`.
+**Where it lives.** `run_pipeline.py`, `pipeline/pipeline_io.py`, `pipeline/joins/`, `continent-app/scripts/sync-data.mjs`, `continent-app/src/lib/bootIndex.js`, `continent-app/src/lib/appData.js`, `continent-app/src/lib/dataHost.js`, `continent-app/scripts/ci/check-contract.mjs`, `continent-app/scripts/ci/contract.mjs`. Docs: `docs/SCHEMA.md`, `archive/docs-2026-11/PIPELINE.md`, `archive/docs-2026-11/JOINS.md`.
 
 **Limits.** `pipeline/schema.py`, named in CLAUDE.md as holding the contract, was not found in code; the version lives in each layer's writer, `contract.mjs` and `docs/SCHEMA.md`. Pin tiles are deferred (dataHost.js comment).
 
@@ -2484,11 +2484,11 @@ This section covers the parts of Carta that sit around the travel content: the A
 5. `push-data.mjs --live --prune`: phase 2, `rclone sync`, removes stale objects after production is live. It refuses to prune from an empty listing and never prunes prefixes other writers own, such as `data/flights/` (T1042).
 - Bindings in `continent-app/wrangler.toml`: R2 `PRERENDER` (bucket `carta-prerender`), Workers AI `AI`, KV `ASK`. Compatibility date 2026-09-23.
 - **Prerender:** `scripts/prerender/build.mjs` reads the wire and writes one HTML page per indexable path (country, section, dest, cost, days, trail, cycle, tour, beach, lake, mountain, region, trip, journey, receipt) into R2, with a manifest, canonicals and an optional share card. The one Pages Function `functions/[[path]].js` serves them for routes in `public/_routes.json`, keeps the shell's CSP and security headers, refuses to serve without a CSP, and falls through to the static app on any miss.
-- **SEO:** titles, descriptions, JSON-LD, canonicals, hreflang across six languages and sitemaps are set out in `docs/SEO.md`.
+- **SEO:** titles, descriptions, JSON-LD, canonicals, hreflang across six languages and sitemaps are set out in `archive/docs-2026-11/SEO.md`.
 
 **Data behind it.** `dist/` (app shell), `dist-data/` (R2 data), `dist-prerender/` (about 32,000 files, deleted after upload).
 
-**Where it lives.** `continent-app/scripts/build-pages.mjs`, `continent-app/scripts/r2/` (stage-data.mjs, push-data.mjs, verify-data.mjs, data-cors.json), `continent-app/scripts/prerender/`, `continent-app/functions/[[path]].js`, `continent-app/wrangler.toml`, `continent-app/public/_headers`, `continent-app/public/_routes.json`. Docs: `docs/SEO.md`, `docs/BACKUP.md`.
+**Where it lives.** `continent-app/scripts/build-pages.mjs`, `continent-app/scripts/r2/` (stage-data.mjs, push-data.mjs, verify-data.mjs, data-cors.json), `continent-app/scripts/prerender/`, `continent-app/functions/[[path]].js`, `continent-app/wrangler.toml`, `continent-app/public/_headers`, `continent-app/public/_routes.json`. Docs: `archive/docs-2026-11/SEO.md`, `archive/docs-2026-11/BACKUP.md`.
 
 **Limits.** The full build needs about 1.3 GB free disk (CLAUDE.md). Per-deploy hash URLs cannot read R2 because of CORS (build-pages.mjs comment). Ask Carta's index is not in git and must exist before the build (T551-a).
 

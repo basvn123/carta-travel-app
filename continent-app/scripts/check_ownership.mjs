@@ -2,7 +2,7 @@
 /**
  * Ownership check (T380, design wave V2).
  *
- * docs/design-v6/OWNERSHIP.md (root repo) assigns every file under src/ to
+ * archive/docs-2026-11/design-v6/OWNERSHIP.md (root repo, archived by T1050) assigns every file under src/ to
  * exactly one of the ten v6 surfaces. This script proves it: it walks src/
  * for .js, .jsx, .mjs and .css files, reads every backticked path in the
  * ownership tables, and reports files that are missing from the tables,
@@ -11,7 +11,7 @@
  *
  * Usage, from the app repo (continent-app or its worktree):
  *   node scripts/check_ownership.mjs [path/to/OWNERSHIP.md]
- * The default path is ../docs/design-v6/OWNERSHIP.md (the main checkout
+ * The default path is ../archive/docs-2026-11/design-v6/OWNERSHIP.md (archived by T1050) (the main checkout
  * layout). In a wave worktree pass the root worktree's copy explicitly.
  */
 import fs from 'fs';
@@ -20,7 +20,7 @@ import { fileURLToPath } from 'url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const appRoot = path.resolve(here, '..');
-const docPath = path.resolve(process.argv[2] || path.join(appRoot, '..', 'docs', 'design-v6', 'OWNERSHIP.md'));
+const docPath = path.resolve(process.argv[2] || path.join(appRoot, '..', 'archive', 'docs-2026-11', 'design-v6', 'OWNERSHIP.md'));
 
 const SURFACES = ['shell', 'landing', 'explore', 'destinations', 'destination', 'outdoor', 'trips', 'tripplanner', 'dayplanner', 'account'];
 

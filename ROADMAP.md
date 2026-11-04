@@ -261,7 +261,7 @@ The order of work is the phase plan in section 4. Every item's **Phase** column 
 
 | ID | Item | Done when | Size | Phase | Status |
 |---|---|---|---|---|---|
-| A1 | Top-level layout | Root and `continent-app/` root clean, MAP updated, tests and dry run pass | M | P0 | todo |
+| A1 | Top-level layout | Root and `continent-app/` root clean, MAP updated, tests and dry run pass (T1050: docs and stray folders archived; live code folders moved to A2; `Trips/` waits on A-a) | M | P0 | done |
 | A2 | Pipeline structure | `run_pipeline.py` split by domain, flat files grouped, ruff on touched files | L | P4 | todo |
 | A3 | Register triage | Under 250 open rows, owner rows in one procedure per system | M | P1 | todo |
 | A4 | Claude context, lean and exact | Memory index under 5 KB with stale memories merged or removed; CLAUDE.md and MAP.md corrected and only pointing at files that exist; one entry path (CLAUDE.md, then MAP.md, then the handbook section, then the file); skills folder trimmed; a check that fails when MAP or CLAUDE names a missing path | S | P0 | todo |
@@ -285,11 +285,11 @@ archive/            retired code and plans
 
 | Action | Paths |
 |---|---|
-| Archive | `Claude outputs/`, `additional docs/`, `Roadmap/`, `PLAN.md`, `ROUTES.md`, `CARTA_TRAILS_BUILD_BRIEF.md`, `continent-app/CARTA_*.md` (3), `src/estimation/`, `pipeline/oneoff/` (21), `pipeline/diagnostics/`, `pipeline/field_stubs/` |
-| Move to `docs/` | root `1.CARTA.md` (replaces the older copy), `user_knowledge.md` |
-| Fold, then archive | `Trips/carta-unified/` (308 files): move what runs into `pipeline/trips/`, repoint `golden-set.yml` and `trip-validator.yml` |
-| Untrack and gitignore | `reports/` (47 files, 12 MB), `continent-app/reports/` (22 files) |
-| Delete locally (already ignored) | `logs/` (61 MB), `impeccable/` (17 MB), `dev/null`, `.vercel/`, `bash.exe.stackdump`, `continent-app/screenshots/`, root `*.log`, all `__pycache__/` |
+| Archived (done, T1050) | `Claude outputs/`, `additional docs/`, `Roadmap/`, `Execution/_queue/`, root `1.CARTA.md`, `PLAN.md`, `ROUTES.md`, `CARTA_TRAILS_BUILD_BRIEF.md`, `user_knowledge.md`, `continent-app/CARTA_*.md` (3), and every old doc in `docs/` (to `archive/docs-2026-11/`). Kept in `docs/` because code reads them: `SCHEMA.md`, `tos/data_licenses.md`, `REGIONS.md`, `LAKES.md`. `ARTICLE30.md` moved to `docs/legal/` |
+| Not archived: still in use (moved to A2) | `pipeline/field_stubs/` (imported by `run_pipeline.py` and the trails worker), `pipeline/diagnostics/` (rating-tests workflow), `pipeline/oneoff/` (imported by `apply_new_gems.py`), `src/estimation/` (used by holiday ingestion), `ops/*.sh` (named by the secret-scan workflow) |
+| Fold, then archive (waits on decision A-a) | `Trips/carta-unified/` (308 files): move what runs into `pipeline/trips/`, repoint `golden-set.yml` and `trip-validator.yml` |
+| Untracked and ignored (done, T1050) | the 28 dated `reports/coverage_backlog_*.csv`. The rest of `reports/` stays tracked: `rating_reference_v5.json` is the frozen rating calibration. `continent-app/reports/` stays: it holds the performance baselines reports cite |
+| Deleted locally (done, T1050) | `impeccable/` (17 MB copy), `.fastbuild/`, `dev/`, `.vercel/`, `bash.exe.stackdump`, empty `continent-app/screenshots/`, root `*.log` (3.3 MB), all `__pycache__/`. `logs/` stays: Task Scheduler runs `logs/run_*.cmd` and `logs/pipeline_state.json` is pipeline state |
 | Review | 622 tracked files in `cache/` (git or R2?); `vercel.json` plus `csp-hash.mjs` (retire both or document) |
 
 **A2. Pipeline structure**
@@ -528,7 +528,7 @@ docs/
 - The controls are E3's guardrail module; this item adds the mapping, the tests and the doc `docs/security/ai.md`.
 
 **C9. Privacy and GDPR**
-- Builds on `docs/ARTICLE30.md` and the existing GDPR export. Retention for logs, AI caches, Ask query logs, stays scrape data.
+- Builds on `docs/legal/ARTICLE30.md` and the existing GDPR export. Retention for logs, AI caches, Ask query logs, stays scrape data.
 
 **C10. Security testing**
 - ZAP baseline on each preview deploy, failing on high alerts.
@@ -963,7 +963,7 @@ docs/
 | I-R2 | Which business model mix fits Carta: Pass, yearly plan, affiliate, or a blend? | Competitor pricing pages, affiliate programme terms (Booking/Awin, GetYourGuide, Viator, Omio), Belgian VAT and OSS rules for digital content | 1 day | Pricing and revenue decision for I2 and I4 |
 | I-R3 | Which route to the phone: stay a PWA, wrap with Capacitor, or go native? | Capacitor docs, Apple App Store guidelines (sign-in with Apple rule 4.8, payments rule 3.1), Google Play policies, PWA install and push support on iOS | 1 day | Mobile decision for I7 |
 | I-R4 | How do I register late and run the admin myself? When does building, a free beta or affiliate sign-up turn into economic activity that must be registered; sole trader as main or side job (hoofdberoep or bijberoep); social contributions; the VAT small-enterprise exemption and how EU sales of digital content are taxed (OSS); simplified bookkeeping a sole trader may keep alone | Official pages of FOD Economie (ondernemingsloket, KBO), FOD Financien (VAT, small-enterprise exemption, OSS), your social insurance fund, the EU "Your Europe" business pages, Stripe Tax docs | 2 days | A written plan for I1 and I10: the registration week, the VAT regime, the bookkeeping method, and the yearly obligations with their dates |
-| I-R5 | How do I do the legal parts myself, safely? Terms for a one-off digital pass, the right of withdrawal for digital content and its waiver, privacy policy and records under GDPR, the Imprint, affiliate disclosure, accessibility statement, trademark check | EU Consumer Rights Directive guidance (digital content, withdrawal), FOD Economie consumer pages, the Belgian data protection authority (APD/GBA) guides and templates, EU accessibility statement model, EUIPO TMview (free search), the existing `docs/tos/` and `docs/ARTICLE30.md` | 2 days | A legal checklist in `docs/legal/` with each rule, its official source and where Carta meets it; the simplifications in I1 |
+| I-R5 | How do I do the legal parts myself, safely? Terms for a one-off digital pass, the right of withdrawal for digital content and its waiver, privacy policy and records under GDPR, the Imprint, affiliate disclosure, accessibility statement, trademark check | EU Consumer Rights Directive guidance (digital content, withdrawal), FOD Economie consumer pages, the Belgian data protection authority (APD/GBA) guides and templates, EU accessibility statement model, EUIPO TMview (free search), the existing `archive/docs-2026-11/tos/` and `docs/legal/ARTICLE30.md` | 2 days | A legal checklist in `docs/legal/` with each rule, its official source and where Carta meets it; the simplifications in I1 |
 
 ### Items
 
@@ -993,7 +993,7 @@ docs/
 - **Simplifications that keep you out of the hard legal areas.** Each one replaces a question the register had parked for a lawyer:
   - Sell only one-off passes. Make the yearly plan a 12-month pass that does not renew automatically. This removes the subscription renewal rules entirely (T460-b, T461-e).
   - Use the EU's standard model wording for the digital-content withdrawal waiver at checkout (T032-e).
-  - Write the privacy policy and processing records from the APD/GBA templates. `docs/ARTICLE30.md` already exists.
+  - Write the privacy policy and processing records from the APD/GBA templates. `docs/legal/ARTICLE30.md` already exists.
   - Use links-only affiliates with clear disclosure and no tracking scripts, so no cookie banner is needed (I15).
   - Resolve the commission contradiction with the I-e wording (T461-d).
   - Run the trademark check yourself in TMview. Register the mark later, if ever.
@@ -1048,7 +1048,7 @@ docs/
 
 **Goal.** People who would love Carta find it, try it and tell others, without paid ads. Every campaign points at pages and flows that already pass the marketing surface gate (section 4).
 
-**The constraint.** A visitor is worth about 0.17 EUR (`docs/GTM-ACQUISITION-CONSTRAINT.md`), so paid search, paid social, influencer fees and sponsorships are out. The budget is engineering and writing time. Carta's edge is data nobody else publishes: real daily costs for 3,868 places, 17,619 rated trails, bathing water and crowds by month.
+**The constraint.** A visitor is worth about 0.17 EUR (`archive/docs-2026-11/GTM-ACQUISITION-CONSTRAINT.md`), so paid search, paid social, influencer fees and sponsorships are out. The budget is engineering and writing time. Carta's edge is data nobody else publishes: real daily costs for 3,868 places, 17,619 rated trails, bathing water and crowds by month.
 
 **Exit criteria.**
 - Search Console shows the indexable page sets growing and "discovered, not indexed" under 30%.
@@ -1079,7 +1079,7 @@ docs/
 | K8 | Open dataset and Show HN | A CC-BY subset (licences checked) on GitHub with a write-up; Show HN once the free part needs no signup | S | P3 | todo |
 | K9 | Beta programme | Closed beta of 50 from the waitlist (P3), open beta in March for summer planners (P4); feedback loop into the register; testimonials collected with consent | M | P3 to P4 | todo |
 | K10 | Press kit and list | A press page (facts, screenshots, methodology, contact); a list of about 40 BE, NL and UK travel and data journalists and newsletters | S | P2 to P3 | todo |
-| K11 | Launch campaign | Product Hunt on 4 May, waitlist email, courtesy notes to the credited bodies (`docs/LAUNCH-OUTREACH-DRAFTS.md`), community posts, mid-May beach ranking; a two-week plan with owners per thread | M | P5 | todo |
+| K11 | Launch campaign | Product Hunt on 4 May, waitlist email, courtesy notes to the credited bodies (`archive/docs-2026-11/LAUNCH-OUTREACH-DRAFTS.md`), community posts, mid-May beach ranking; a two-week plan with owners per thread | M | P5 | todo |
 | K12 | Marketing measurement | Cookieless channel counts (UTM to the existing counters), Search Console per page type, waitlist and referral funnel, one weekly marketing number in admin | S | P0 to P1 | todo |
 | K13 | The creative slot | One experiment every two weeks from P2, picked from K-R3's shortlist; each written up in one paragraph (idea, what it took, what it did) | S each | P2 onwards | todo |
 
