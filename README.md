@@ -6,6 +6,8 @@ day by day. Carta never navigates (each day and ride opens in the traveller's ma
 never prices flights (a fare is the traveller's own entry). The destination count is `meta.n_destinations` in `app_data.json`, across 43 European countries (master schema v15,
 see [SCHEMA.md](docs/SCHEMA.md)).
 
+**Start here:** [docs/HANDBOOK.md](docs/HANDBOOK.md) explains every feature and how it works, [MAP.md](MAP.md) says where each area's files are, and [ROADMAP.md](ROADMAP.md) is the plan to production. Parts of this README are out of date and are rewritten under roadmap item B2.
+
 ## Repository layout
 
 ```

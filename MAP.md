@@ -1,5 +1,7 @@
 # Carta map
 
+To understand what a feature does and exactly how it works (rules, formulas, thresholds), read [docs/HANDBOOK.md](docs/HANDBOOK.md). This map only says where the files are. The plan to production is [ROADMAP.md](ROADMAP.md).
+
 Where each part of Carta lives. Find the area, open the files named, stop. App paths start with `app/`, meaning `continent-app/` (tracked in this repo). Docs are in `docs/`. "Latest" are the newest task reports on the area: grep `Execution/P15/` and `Execution/P*/_DIGEST.md` for the ID. Checked against the code on 2026-11-03 (T1034); a task that moves an area's main files updates its row.
 
 ## Product areas

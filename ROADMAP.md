@@ -1,0 +1,945 @@
+# Carta roadmap to production
+
+Nov 4, 2026, @Bas. Launch: **Tuesday 4 May 2027** (week 19 of 2027), 26 weeks from today.
+
+This file is the plan of record. It replaces `Roadmap/Carta roadmap.md` (Dutch, last updated 10-28). Every figure in it comes from a read-only audit of the repo on 2026-11-04.
+
+Three things carry the most weight: **documentation** (every piece of logic written down and kept true), **security** (designed in, tested, never an afterthought) and **UI** (researched, tested with people, measured). The goal is a full-time product, not only a finished app, so Track I covers the business around it: onboarding, accounts, retention, money, support, growth and operations.
+
+The full audit of the app as it is today, with every pain point, its evidence and its severity, is [docs/AUDIT-2026-11.md](docs/AUDIT-2026-11.md). Each pain point (`P-01` to `P-59`) is carried by an item below.
+
+---
+
+## 1. How to read this file
+
+- **Fix now** (section 3) comes first: production breakage, security exposure and spinning jobs found by the audit. Items `N1` to `N8`, all this week or next.
+- **Ten tracks**, A to J. Each track has the same six parts: Goal, Exit criteria, Research, Items, Item details, Depends on.
+- **Pain point IDs** (`P-21`) point into [docs/AUDIT-2026-11.md](docs/AUDIT-2026-11.md).
+- **Item IDs**: build items are `B3`, `C7` and so on. Research items are `B-R1`, `C-R2` and so on.
+- **Build items** are done in Claude Code sessions. A session takes real task numbers (`T1045` onwards, CLAUDE.md "Task numbers") and names the item ID in its report.
+- **Research items are yours.** Each has a question, starting points, a timebox and an output. The output is a note in `docs/research/` (template in section 2) that ends in a decision. A build item that depends on research waits until that decision is written. Claude can gather sources or summarise for you, but you make the call.
+- **Size**: **S** is one session, **M** is a batch of 2 to 4 tasks, **L** is a phase of its own. Research timeboxes are in days.
+- **Weeks** are ISO weeks. 2026 W45 starts Mon 2 Nov. W1 to W19 are 2027.
+- **Status** per item: `todo`, `doing`, `done`. Update the tables as items move.
+
+---
+
+## 2. Research: how your own research fits in
+
+**Rhythm.** Each track opens with its research items. About one day a week is research time (suggested: Fridays). Research for a track finishes before that track's first build item that depends on it.
+
+**Output template** (`docs/research/_TEMPLATE.md`):
+
+```
+# <ID>: <question>
+Date, time spent, status (open / decided)
+
+## Question
+## Why it matters for Carta
+## Options considered (2 to 4)
+## What I read or tried (links, notes, small experiments)
+## Comparison (table: option x criteria)
+## Decision and reason
+## What it changes (which build items, which docs)
+```
+
+A decided research note becomes an ADR in `docs/architecture/adr/` when it changes the architecture.
+
+**Total research budget.** About 28 days across 26 weeks (24 research items), listed per track below.
+
+---
+
+## 3. Fix now (this week and next)
+
+The audit found things that are broken in production, exposed, or burning effort right now. They come before any track. Owner means only you can do it.
+
+| ID | Fix | Why now | Done when | Owner | Pain point | Status |
+|---|---|---|---|---|---|---|
+| N1 | Pause the hourly `CartaStaysBooking` and `CartaStaysHostelworld` tasks; remove the dead `CartaFlightsAll` and `CartaFlightsNow` tasks; drop `VITE_E2E_SEAMS=1` from `continent-app/.env` | Booking returns 0 prices for 3,437 towns every hour since Oct 30 (block risk, 43.7 MB log); Hostelworld parses 0 prices from 677 pages | Tasks disabled, log rotated, Hostelworld parser bug filed (fixed in D5) | you (Task Scheduler) | P-13, P-20 | todo |
+| N2 | Publish `status.json` and add `status.json`, `.keep`, `_test` to the prune keep list in `scripts/r2/push-data.mjs`; make `--prune` list what it would delete and ask | 404 on every page view; the Nov 3 prune deleted `data/flights/` | `status.json` returns 200; a dry prune shows its list | next task | P-14 | todo |
+| N3 | Rotate the leaked R2 admin token (T291-b) and check R2 access logs | Anyone holding it can change or delete shipped data | Old token revoked, new one only in secrets | you | P-07 | todo |
+| N4 | Bump `dompurify` (non-breaking); file jspdf 4 and maplibre 5/6 as C6 tasks | Three critical advisories in production dependencies | `npm audit --omit=dev` shows no critical that a minor bump fixes | next task | P-08 | todo |
+| N5 | Clear account-tied `carta.*` stores on sign-out (or ask "remove this device's copy") | Bookings and companions stay visible on a shared device | Sign-out test passes on a real phone | next task | P-09 | todo |
+| N6 | Commit the flight-sweep deploy script under `scripts/`, deploy the half-speed night fix (T1043-a), check refusals by hour (T1043-b) | Google refuses the sweep 3 of 3 nights | Three clean nights | you (deploy) | P-16 | todo |
+| N7 | Fix the lint error at `ExploreMap.jsx:911` (missing `collectKpins` dependency) | A real stale-closure bug on the main screen | `npm run lint` shows 0 errors | next task | P-45 | todo |
+| N8 | Move the 6 closed rows out of `_OPEN.md`; close the migration rows T985 proved live (T034-a, T043-a, T265-a, T270-b, T281-b) | The register misleads every session | Rows moved with reasons | next task | P-56, P-58 | todo |
+
+---
+
+## 4. Where Carta stands today
+
+| Area | Today | Gap to production |
+|---|---|---|
+| Repo | 52k tracked files, 528 `.md`, 89 flat `.py` files in `pipeline/`, `run_pipeline.py` 3,203 lines, 13 stray top-level folders | One layout, one home per kind of file |
+| Documentation | 43 flat files in `docs/`, 24 older than 10-15, 12 on MAP's distrust list, 9 product areas with no doc, both READMEs stale, no doc that explains every feature, no record of where each rule and threshold lives | Handbook, logic catalogue, area docs, generated reference, drift checks |
+| Security | Secret scan, RLS tests and admin RPC tests in CI, CSP, a security pass on 2026-08-12. No threat model, no dependency audit in CI, no dynamic scan, rate limits per isolate, AI injection defence in one function only | Threat model, OWASP ASVS checklist, supply-chain checks, AI security, tested and documented |
+| Register | 1,592 open rows in `Execution/_OPEN.md` (541 owner), about 230 likely stale, 70% raised before T600 | Under 250 rows, each mapped to an item or procedure |
+| Data quality | Data contract in `docs/SCHEMA.md` (v19) and a hand-written JS validator. `pipeline/schema.py`, named in CLAUDE.md, does not exist. Separate audits; freshness for trails only; provenance per layer | One schema checked at write and sync, scorecard per run, accuracy measured |
+| Ask Carta (RAG) | Dense (potion-128M) + BM25 with RRF, sentence verifier that withdraws bad answers, 50 golden queries run by hand | Eval gate in CI, reranker, BM25 everywhere, injection tests, query logs |
+| LLM features | Gemini plan-day, parse-booking, suggest-city with quotas, catalogue checks, model fallback chain | One guardrail module, every call logged with tokens and cost |
+| UI | 244 tokens, UI kit in 185 files, live styleguide. 1,740 literal font sizes, 775 literal radii, 446 raw `<button>`, about 15 breakpoints, place head built 3 times, no axe or Lighthouse, no usability tests with travellers | Researched direction, tested with people, one component per role, quality gates |
+| Ops | 11 GitHub workflows, but `npm run ci` and app tests not in CI (1,229 of 1,229 pass locally). No Python lint. No error tracking. Manual backups. No load tests. 28 monthly and quarterly tasks run nowhere; Booking scrape failing hourly; `status.json` 404 | Full CI, Sentry, nightly backups, load tested, every task scheduled |
+| Shipped data | Trails 20.2% photo and 2.6% summary (unchanged since Sep 13); sea temperature 0%; local transport fare 0%; bed price missing for 515 places; UK crowds missing; full place intro 47.5%, English only; four wires 49 to 70 days old | Every must-see place and top trail complete, every layer fresh |
+| Performance and code | 477 KB gzip JS and 170 KB blocking CSS on first load; one error boundary; 3 critical advisories; DayPlannerTab 4,446 lines; 18 dead files | Entry under 150 KB gzip, boundary per tab, no critical advisory |
+| Product and business | No legal entity or VAT, Stripe not live, affiliate IDs empty, retention email off, guest trips lost at sign-up, no support mailbox, English-only URLs, no store app, only a developer can edit a place | A business that can sell, support, retain and grow |
+
+---
+
+## 5. Tracks at a glance
+
+| Track | Goal | Weeks | Build | Research |
+|---|---|---|---|---|
+| **A** Repo cleanup | One clean layout and a register a human can work | 2026 W45 to W50 | 3 | 1 |
+| **B** Documentation | Every feature and every piece of logic written down, generated where possible, checked in CI | 2026 W45 to 2027 W8 | 8 | 4 |
+| **C** Security | Threat-modelled, tested against OWASP ASVS and the LLM Top 10, documented | 2026 W46 to 2027 W16 | 11 | 4 |
+| **D** Data quality and completeness | Prove every place is complete, valid, fresh and accurate, and fill the gaps the audit found | 2026 W47 to 2027 W10 | 13 | 2 |
+| **E** RAG and guardrails | Measured retrieval, guarded and logged LLM calls | 2026 W47 to 2027 W5 | 6 | 2 |
+| **F** Carta Intelligence | The AI product engineering skill set as real Carta features | 2027 W1 to W10 | 8 | 2 |
+| **G** UI and UX | Researched direction, tested with travellers, consistent and measured | 2026 W46 to 2027 W13 | 13 | 5 |
+| **H** Production hardening | CI, monitoring, limits, backups, scheduling, performance, code health | 2026 W45 to 2027 W14 | 14 | 1 |
+| **I** Product and business | Everything a full-time product needs around the features: legal, money, onboarding, accounts, retention, mobile, support, analytics, growth, content ops | 2026 W46 to 2027 W16 | 13 | 3 |
+| **J** Launch | Beta, freeze, go live | 2027 W12 to W19 | 5 | 0 |
+
+### Timeline
+
+| Month | Fix now | A | B | C | D | E | F | G | H | I | J |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| Nov (W45 to W48) | N1 to N8 | A1 A2 | B1, B-R1 B-R2 | C-R1 C-R2, C1 | D7 D8 | E1 | | G-R1 G-R2 | H1 H2 H9 | I-R1, I1 I2 I3 | |
+| Dec (W49 to W52) | | A3 | B2 B3 | C2 C3 C4, C-R3 | D-R1, D1 D2 D10 | E2 E3 E6 | | G-R3, G1 G2 G12 | H3 H10 H11 | I4 I5 I9 | |
+| Jan (W1 to W4) | | | B4 B5, B-R3 | C5 C6 C7 | D3 D4 D5 D6 D11 D13 | E4 E5, E-R1 E-R2 | F-R1, F1 F6 | G3 G4 G5 G13 | H4 H5 H12 H13 | I6 I8, I-R2 | |
+| Feb (W5 to W8) | | | B6 B7 B8, B-R4 | C8 C9, C-R4 | D9 D12 | | F2 F3 F4 F5, F-R2 | G-R4, G6 G7 | H6 H7 H14 | I10 I11 I12, I-R3 | |
+| Mar (W9 to W13) | | | | C10 | | | F7 F8 | G-R5, G8 G9 G10 G11 | H8 | I7 I13 | |
+| Apr (W14 to W17) | | | | C11 (retest) | | | | | buffer | | J1 J2 J3 J4 |
+| May (W18 to W19) | | | | | | | | | | | J5, launch 4 May |
+
+### Dependencies between tracks
+
+- **A1 before B2**: the docs tree lands in the cleaned layout.
+- **B3 (logic catalogue) runs alongside every later track**: each new rule gets a logic ID the day it is written.
+- **C1 (threat model) before C3 to C9**: each hardening item answers a threat from the model.
+- **H1 (CI) before every gate** in B, C, D, E, G.
+- **D1 before D2 and D3**: rules and provenance hang off the schema.
+- **E1 before E2**: retrieval changes are measured against the gate.
+- **F1 before F2, F3, G9**: the taxonomy feeds the student model, the taste profile and the "why this place" chips.
+- **E3 and C8 are one piece of work**: the guardrail module is also the AI security control.
+
+---
+
+## 6. Track A: repo cleanup
+
+**Goal.** One clean layout, one home per kind of file, and a register you can actually work.
+
+**Exit criteria.**
+- The root holds only README, CLAUDE, MAP, PRODUCT, DESIGN, ROADMAP, SECURITY and folders.
+- `run_pipeline.py` is a CLI over a registry split by domain.
+- The register is under 250 open rows.
+
+### Research
+
+| ID | Question | Starting points | Timebox | Output |
+|---|---|---|---|---|
+| A-R1 | How should a Python data pipeline plus a JS app be laid out in one repo? Keep `pipeline/` flat-by-prefix, or group by stage, or by domain? | Layouts of open-source data projects (dbt, Dagster example repos), "Cookiecutter Data Science", Python Packaging User Guide on `src` layouts | 1 day | Decision on A2's target structure |
+
+### Items
+
+| ID | Item | Done when | Size | Weeks | Status |
+|---|---|---|---|---|---|
+| A1 | Top-level layout | Root and `continent-app/` root clean, MAP updated, tests and dry run pass | M | W45 to W46 | todo |
+| A2 | Pipeline structure | `run_pipeline.py` split by domain, flat files grouped, ruff on touched files | L | W47 to W49 | todo |
+| A3 | Register triage | Under 250 open rows, owner rows in one procedure per system | M | W49 to W50 | todo |
+
+### Item details
+
+**A1. Top-level layout**
+
+```
+README.md  CLAUDE.md  MAP.md  PRODUCT.md  DESIGN.md  ROADMAP.md  SECURITY.md
+continent-app/      the app
+pipeline/           all Python pipeline code (src/ingestion moves in)
+supabase/  infra/   backend and build box (ops/*.sh moves to infra/backup/)
+services/           FastAPI and MCP services (Track F)
+evals/              golden sets, runners, results
+docs/               see B2
+Execution/          task reports and register
+data/ app_data/ cache/ tools/   data and tools, never deleted
+archive/            retired code and plans
+```
+
+| Action | Paths |
+|---|---|
+| Archive | `Claude outputs/`, `additional docs/`, `Roadmap/`, `PLAN.md`, `ROUTES.md`, `CARTA_TRAILS_BUILD_BRIEF.md`, `continent-app/CARTA_*.md` (3), `src/estimation/`, `pipeline/oneoff/` (21), `pipeline/diagnostics/`, `pipeline/field_stubs/` |
+| Move to `docs/` | root `1.CARTA.md` (replaces the older copy), `user_knowledge.md` |
+| Fold, then archive | `Trips/carta-unified/` (308 files): move what runs into `pipeline/trips/`, repoint `golden-set.yml` and `trip-validator.yml` |
+| Untrack and gitignore | `reports/` (47 files, 12 MB), `continent-app/reports/` (22 files) |
+| Delete locally (already ignored) | `logs/` (61 MB), `impeccable/` (17 MB), `dev/null`, `.vercel/`, `bash.exe.stackdump`, `continent-app/screenshots/`, root `*.log`, all `__pycache__/` |
+| Review | 622 tracked files in `cache/` (git or R2?); `vercel.json` plus `csp-hash.mjs` (retire both or document) |
+
+**A2. Pipeline structure**
+- Split `run_pipeline.py` (74 tasks in one list) into `pipeline/tasks/<domain>.py`. `run_pipeline.py` keeps the CLI and imports the registry.
+- Group the 89 flat files as A-R1 decides. One commit per folder.
+- Add `pyproject.toml` with ruff and mypy, scoped to new packages first.
+- Done check: `--dry-run` lists all 74 tasks, Python tests pass.
+
+**A3. Register triage**
+1. A script groups the 1,576 rows by area and age.
+2. Each row becomes: still true, done already (closed with its task), won't do (closed with a reason), or folded into a roadmap item.
+3. Owner rows (539) become one ordered procedure per system (Stripe, Supabase migrations, Dashboard, legal) in `Execution/_OPEN-<slug>.md`.
+4. Rows are moved, never deleted.
+
+**Depends on.** Nothing. A runs first.
+
+---
+
+## 7. Track B: documentation
+
+**Goal.** You can look up any feature, any rule, any threshold and any data field and find: what it does, why, where it lives in the code, what feeds it, and when it last changed. Most of it is generated from the code, and CI fails when the docs and the code disagree.
+
+**Exit criteria.**
+- `docs/HANDBOOK.md` covers every feature in MAP.md.
+- Every business rule in the code has a logic ID and an entry in the logic catalogue, both ways, checked in CI.
+- Every config number (rating, pricing, quality rules) appears in generated docs with its explanation.
+- Every MAP area has a current doc; reference, lineage and diagrams regenerate in CI; the drift check is green.
+- Worked examples in the docs run as tests.
+- The docs site is live with search and an "ask the docs" box.
+
+### The documentation system
+
+Seven layers. Each answers a different question, and each has an owner (you, Claude in the task loop, or a generator).
+
+| Layer | Answers | Kind | Kept true by |
+|---|---|---|---|
+| **Handbook** | What does each feature do and how does it work? | Written | Task loop updates the section |
+| **Logic catalogue** | Where is every rule, formula and threshold, and why is it that value? | Written, linked to code by ID | CI check: every tag has an entry and every entry a tag |
+| **Config reference** | What does every number in `rating.json`, `pricing.json`, `rules.yaml` mean? | Generated from `_doc` fields in config | Generator in CI |
+| **Area docs** | How does this part of the system fit together? | Written, one template | Drift check per area |
+| **Data lineage** | Which source and pipeline step produced this field? | Generated from the task registry and schema | Generator in CI |
+| **Reference** | What functions, tasks, endpoints and tables exist? | Generated (pdoc, TypeDoc, OpenAPI, SQL) | Generator in CI |
+| **Decisions and history** | Why did we choose this, and what changed when? | ADRs and per-area changelog | ADR per decision; changelog from `T`-prefixed commits |
+
+Plus: runbooks (how to operate), a glossary (every Carta term), and research notes (section 2).
+
+### Research
+
+| ID | Question | Starting points | Timebox | Output |
+|---|---|---|---|---|
+| B-R1 | Which documentation framework should structure Carta's docs? | Diátaxis (tutorials, how-to, reference, explanation), the Good Docs Project templates, "Docs for Developers" (book), GitLab and Stripe docs as examples | 1 day | Decision on B2's tree and doc types |
+| B-R2 | How do teams keep business logic documented next to the code without it rotting? | "Living documentation" (Cyrille Martraire), docs-as-code practice, ADR practice (Michael Nygard), architecture decision log examples on GitHub | 1 day | Decision on B3's tag format and catalogue shape |
+| B-R3 | Which docs site and generators fit a Python + JS repo? | MkDocs Material vs Docusaurus vs Starlight; pdoc vs Sphinx; TypeDoc; mkdocstrings; Mermaid for diagrams | 1 day | Decision on B6 tooling |
+| B-R4 | Can an "ask the docs" assistant be built on the existing Ask Carta stack without the Claude API? | Ask Carta's own `ask_index_layer.py` and model2vec, Workers AI models, local Ollama | 1 day | Go or no-go for B8 |
+
+### Items
+
+| ID | Item | Done when | Size | Weeks | Status |
+|---|---|---|---|---|---|
+| B1 | Carta Handbook | `docs/HANDBOOK.md` explains every feature from the code (T1045: 93 features) | M | W45 | done |
+| B2 | Docs tree and area docs | New `docs/` tree, 12 distrusted docs archived, stale core rewritten, 9 missing area docs written, CLAUDE.md corrected | M | W49 to W50 | todo |
+| B3 | Logic catalogue | Every rule tagged with an ID in code, one catalogue entry per ID, two-way CI check | L | W50 to W52 | todo |
+| B4 | Config reference | `_doc` on every key of `rating.json`, `pricing.json` and quality rules; tables generated | S | W1 | todo |
+| B5 | Data lineage and diagrams | Per field: source, task, file; Mermaid diagrams of the pipeline and the request paths, generated | M | W2 to W4 | todo |
+| B6 | Generated reference and docs site | pdoc, TypeDoc, task catalogue, OpenAPI, SQL tables; MkDocs site with search on private Cloudflare Pages | M | W5 to W6 | todo |
+| B7 | Keep it true: drift checks and the task loop | Drift check per area, executable examples, link check, docstring floor, `carta-docs` skill and Stop hook, CLAUDE.md step | M | W6 to W7 | todo |
+| B8 | Ask the docs | Search box on the docs site answers from the docs with citations (if B-R4 says go) | M | W8 | todo |
+
+### Item details
+
+**B1. Carta Handbook**
+- One file, six parts: Discover; Scores and seasons; Prices and logistics; Planning; Outdoors and imagery; Ask Carta, accounts and platform.
+- Every feature uses five headings: What it does, How it works (real rules and numbers from code and config), Data behind it, Where it lives, Limits.
+- Linked from README, MAP and `docs/README.md`. Once B3 exists, every rule in the handbook links to its logic ID.
+
+**B2. Docs tree and area docs**
+
+```
+docs/
+  README.md        index: what to read for what
+  HANDBOOK.md      every feature (B1)
+  logic/           the logic catalogue, one file per domain (B3)
+  architecture/    system overview, diagrams (B5), ADRs
+  areas/           one file per MAP row, same template
+  data/            schema, lineage, sources and licences, quality rules
+  ai/              Ask Carta, plan-day, guardrails, evals, model cards
+  security/        threat model, controls, ASVS checklist (Track C)
+  runbooks/        deploy, incident, backup, refund, build box
+  reference/       generated, never edited by hand (B6)
+  research/        your research notes (section 2)
+  glossary.md      every Carta term
+  archive/         nothing here binds
+```
+
+- Archive the 12 docs on MAP's distrust list.
+- Rewrite: both READMEs, PIPELINE, COVERAGE, JOINS, TRAILS, LAKES, BEACHES, MOUNTAINS, REGIONS, PHOTOS, BACKUP, trips_layer.
+- Write the 9 missing area docs: Explore, Plan flow, Day planner and plan-day, My trips and Together, Ask Carta, Climate and crowds, Languages, Build box, Tests and checks.
+- Correct CLAUDE.md: `pipeline/schema.py` does not exist; tests do run in 11 workflows.
+- Area doc template: Purpose, How it works, Files, Data read and written, Logic IDs used, Quality checks, Metrics, Security notes, Known limits, Open items, History, Last verified.
+
+**B3. Logic catalogue**
+- A rule is any decision the code makes that a traveller would notice: a formula, weight, threshold, band, sort order, fallback, cap, cache time, eligibility rule.
+- Each gets an ID like `RATING-004` or `PRICE-012`, tagged in the code with one comment (`# LOGIC: RATING-004` in Python, `// LOGIC: RATING-004` in JS).
+- Each ID has one entry in `docs/logic/<domain>.md`: statement in plain words, the formula or rule, current values (linked to config), why this value, where it is used, tests that cover it, the task that introduced or last changed it.
+- `scripts/docs/logic_check.py` in CI: every tag has an entry, every entry has at least one tag, no ID used twice.
+- First pass by domain in this order: rating, price, recommendation, seasons and crowds, trails, Ask, plan-day, quotas and paywall.
+
+**B4. Config reference**
+- Every key in `continent-app/config/rating.json`, `pricing.json` and `pipeline/quality/rules.yaml` gets a `_doc` sibling (meaning, unit, range, logic ID).
+- A generator writes `docs/reference/config.md`. A missing `_doc` fails CI.
+
+**B5. Data lineage and diagrams**
+- Each task in the registry declares `reads` and `writes`. With the schema (D1) this gives, per wire field: source, task, intermediate file, final file.
+- Generated outputs: `docs/data/lineage.md` (table per wire file) and Mermaid diagrams for the pipeline DAG, the data wire, and the request paths of Ask, plan-day, flights and stays.
+
+**B6. Generated reference and docs site**
+- pdoc (Python), TypeDoc (app `src/lib`), the task catalogue (cadence, inputs, outputs), OpenAPI for the Intelligence API (F5), Supabase tables and RLS policies from the migrations.
+- Site: tool from B-R3, private Cloudflare Pages project `carta-docs`, full-text search, built in CI on every merge.
+
+**B7. Keep it true**
+
+| Check | How |
+|---|---|
+| Drift per area | `scripts/docs/drift.py` maps each area doc to file globs (from MAP.md). A change to those files without touching the area doc's History fails CI (skip label for trivial changes) |
+| Executable examples | Worked examples in the handbook and logic catalogue (for example a 4-night trip total) live as fenced blocks that a test runs against the real code |
+| Links | `lychee` link checker |
+| Docstrings | `interrogate` floor at today's figure, ratcheting up |
+| Task loop | New step in CLAUDE.md "How to run a task": update the handbook section, logic entries and area History. A `carta-docs` skill holds the checklist; a Stop hook reminds when area files changed but docs did not |
+| Changelog | Per-area changelog generated from `T`-prefixed commit messages |
+
+**B8. Ask the docs**
+- Index `docs/` with the same passage builder and model2vec embeddings as Ask Carta; answer with citations to doc sections; runs locally or on Workers AI. Never the Claude API.
+- Doubles as a second RAG system to evaluate with the E1 harness.
+
+**Depends on.** A1 for B2. D1 for B5. F5 for the OpenAPI part of B6.
+
+---
+
+## 8. Track C: security
+
+**Goal.** Every surface of Carta is threat-modelled, every threat has a control, every control is tested, and all of it is written down. Target: OWASP ASVS level 2 for the app and APIs, the OWASP Top 10 for LLM Applications for the AI features.
+
+**Exit criteria.**
+- `docs/security/threat-model.md` covers every surface, with each threat mapped to a control and a test.
+- ASVS L2 checklist complete, every gap closed or accepted in writing.
+- Dependency, secret, SAST and DAST scans run in CI with no high finding open.
+- External retest (C11) passed.
+- `SECURITY.md` and `security.txt` published.
+
+### Surfaces in scope
+
+| Surface | What is there |
+|---|---|
+| App (browser) | React SPA, local storage of trips, CSP |
+| Pages functions | `functions/api/ask`, `flights`, `stays`, prerender |
+| Supabase | Auth, Postgres with RLS, Edge Functions (plan-day, parse-booking, suggest-city, checkout, stripe-webhook), storage |
+| Payments | Stripe checkout and webhook |
+| Data and storage | R2 buckets, wire files, backups |
+| AI | Gemini calls, Workers AI, prompts, retrieved notes, booking emails |
+| Build box | Hetzner server, SSH, scheduled scrapers, secrets on disk |
+| Supply chain | npm and pip dependencies, GitHub Actions, Cloudflare and Supabase accounts |
+| People and accounts | Owner accounts on GitHub, Cloudflare, Supabase, Stripe, Google, Hetzner |
+
+### Research
+
+| ID | Question | Starting points | Timebox | Output |
+|---|---|---|---|---|
+| C-R1 | How do I threat-model a small product properly? | STRIDE, OWASP Threat Modeling Cheat Sheet, OWASP Threat Dragon, "Threat Modeling: Designing for Security" (Shostack) | 2 days | Method and template for C1 |
+| C-R2 | Which standard should Carta be measured against, and at what level? | OWASP ASVS 4.0 (L1 vs L2), OWASP Top 10, OWASP Top 10 for LLM Applications, OWASP MASVS (if a mobile app comes) | 1 day | Chosen checklist and level for C10 |
+| C-R3 | How do Supabase and Cloudflare recommend locking down auth, RLS, functions and accounts? | Supabase security and RLS guides, Supabase "production checklist", Cloudflare Pages and Workers security docs, Stripe webhook security docs | 1 day | Settings list for C3, C4, C5 |
+| C-R4 | Which free scanners fit this stack, and what do they catch? | Semgrep, CodeQL, OWASP ZAP baseline, gitleaks, trivy, pip-audit, npm audit, OSV-Scanner, Dependabot vs Renovate | 1 day | Tool choice for C6 and C10 |
+
+### Items
+
+| ID | Item | Done when | Size | Weeks | Status |
+|---|---|---|---|---|---|
+| C1 | Threat model | Every surface modelled with STRIDE (or C-R1's method), threats ranked, each mapped to a control and test | M | W47 to W48 | todo |
+| C2 | Secrets and accounts | Inventory of every secret (where, who, rotation), rotation done for old ones, MFA on every owner account, recovery codes stored | S | W49 | todo |
+| C3 | Auth and access | Supabase auth settings per C-R3, admin behind MFA and role checks, session lifetimes set, admin actions audit-logged | M | W50 to W51 | todo |
+| C4 | Data access and RLS | RLS on every table proven by tests (exist, extended), service-role key never in the browser, storage and R2 access reviewed | S | W51 to W52 | todo |
+| C5 | Web and API hardening | Strict CSP and security headers, CORS allow-list, input validation on every endpoint, durable rate limits (with H3), Stripe webhook signature check verified | M | W1 to W2 | todo |
+| C6 | Supply chain | Lockfiles enforced, `npm audit`, `pip-audit`, OSV in CI, Renovate or Dependabot, GitHub Actions pinned to SHAs, SBOM per release | S | W2 to W3 | todo |
+| C7 | Static analysis | Semgrep or CodeQL on every PR, findings triaged to zero high | S | W3 to W4 | todo |
+| C8 | AI security | OWASP LLM Top 10 mapped to Carta; guardrail module (E3) covers injection, output handling, excessive agency, data leakage; injection set in CI | M | W5 to W6 | todo |
+| C9 | Privacy and GDPR | Data map (what personal data, where, how long), retention jobs, export and delete tested end to end, Article 30 current, a light DPIA for AI features | M | W7 to W8 | todo |
+| C10 | Security testing | ZAP baseline scan in CI against preview deploys; full ASVS L2 checklist walked and recorded | M | W9 to W11 | todo |
+| C11 | External check and disclosure | `SECURITY.md`, `security.txt`, incident response for security events; an outside review or a structured self-pentest, then retest | M | W14 to W16 | todo |
+
+### Item details
+
+**C1. Threat model**
+- One section per surface: data flow diagram, assets, trust boundaries, threats (STRIDE), likelihood and impact, control, test.
+- Kept in `docs/security/threat-model.md`. Revisited whenever a new surface appears (for example F5 and F7 add services).
+
+**C2. Secrets and accounts**
+- Inventory in `docs/security/secrets.md` with names only, never values: Supabase keys, Stripe keys, Gemini keys, Cloudflare tokens, R2 keys, Hetzner SSH, Google.
+- Rotation schedule; any secret ever pasted in a chat, log or commit rotated now.
+
+**C3. Auth and access**
+- Email confirmation, password rules, leaked-password check, rate limits on auth endpoints, JWT expiry, refresh rotation.
+- Admin: role checked server side on every RPC (the `admin-rpc-security` workflow exists), MFA required, every admin action written to an audit table.
+
+**C4. Data access and RLS**
+- Extend `rls-policies.yml` to every table, including new ones from C4, E4 and F3.
+- Check that no browser bundle contains a service key (a CI grep on `dist/`).
+
+**C5. Web and API hardening**
+- CSP without `unsafe-inline` where possible, HSTS, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`; verified with a header test.
+- Every Pages and Edge Function validates input with a schema and returns generic errors.
+
+**C6. Supply chain**
+- Renovate (or Dependabot) with grouped weekly updates; auto-merge only for patch updates with green CI.
+- GitHub Actions pinned to commit SHAs; workflow permissions set to read by default.
+
+**C7. Static analysis**
+- Semgrep rules for JS, Python and SQL plus a few Carta-specific rules (no `service_role` in `src/`, no raw SQL from user input, no Claude API imports).
+
+**C8. AI security**
+- Map each OWASP LLM Top 10 risk to Carta: prompt injection (booking emails, user questions), insecure output handling (rendering model text), sensitive data disclosure, excessive agency (no write tools), model denial of service (quotas, caps), supply chain (models).
+- The controls are E3's guardrail module; this item adds the mapping, the tests and the doc `docs/security/ai.md`.
+
+**C9. Privacy and GDPR**
+- Builds on `docs/ARTICLE30.md` and the existing GDPR export. Retention for logs, AI caches, Ask query logs, stays scrape data.
+
+**C10. Security testing**
+- ZAP baseline on each preview deploy, failing on high alerts.
+- ASVS checklist in `docs/security/asvs.md`: each requirement marked met, not applicable, or gap with a register row.
+
+**C11. External check and disclosure**
+- Ask a security-minded peer, a university contact, or use a structured self-pentest against the threat model. Retest every finding.
+- `security.txt` in `public/.well-known/`.
+
+**Depends on.** C1 before C3 to C9. H1 for the CI scans. E3 and C8 are built together.
+
+---
+
+## 9. Track D: data quality and completeness
+
+**Goal.** At any moment, answer "is every place complete, valid, fresh and accurate, and how do I know?" with a number, and close the data gaps the audit measured (trails first).
+
+**Exit criteria.**
+- One JSON Schema validates every wire file at write and at sync.
+- Every run writes a scorecard; no hard rule fails.
+- 95% of truth-set fields correct within tolerance.
+- Every layer inside its freshness limit.
+- Completeness targets met (baseline from the 2026-11-04 audit):
+
+| Field | Today | Target at launch |
+|---|---|---|
+| Trails with photo | 20.2% (top band 64%) | 60% overall, 95% top band |
+| Trails with summary | 2.6% (top band 6.9%) | 40% overall, 100% top band |
+| Trails with a clean display name | 93.6% (6.4% code or empty) | 100% |
+| Beaches with sea temperature by month | 0% | 95% |
+| Places with local transport fare | 0% | 100% of metros and cities (741) |
+| Places with measured bed price | 86.7% | 98% |
+| Places with crowds by month | 85.0% (UK 0.4%) | 98% |
+| Places with full intro | 47.5% | 85%, in all six languages |
+| Places with 5+ photos | 58.0% | 85% |
+| POIs (must-see and recommended) with description | must-see 71% | 95% |
+| Wires older than their freshness limit | 4 | 0 |
+
+### The six quality dimensions
+
+| Dimension | Question | Check |
+|---|---|---|
+| Completeness | Does every place have the fields its page needs? | Required fields per entity and tier |
+| Validity | Is every value the right type and range? | JSON Schema plus range rules |
+| Uniqueness | Is each real place in the catalogue once? | Dedupe within 150 m plus name similarity, as a gate |
+| Consistency | Do layers agree? | Cross-layer rules (country of coords = country code, price tier matches price) |
+| Freshness | Is it recent enough? | Max age per layer (stays 14 days, flights 3, food prices 180, climate 365) |
+| Accuracy | Is it true? | Truth set and cross-source agreement |
+
+### Research
+
+| ID | Question | Starting points | Timebox | Output |
+|---|---|---|---|---|
+| D-R1 | Build the quality engine myself or use a framework? | Great Expectations, Soda Core, pandera, Pydantic validators; "data contracts" (Andrew Jones) | 1 day | Decision for D2 |
+| D-R2 | How do I measure accuracy without labelling everything? | Stratified sampling, confidence intervals on a sample, cross-source agreement, LLM-as-judge calibration (Cohen's kappa) | 1 day | Sample size and method for D4 |
+
+### Items
+
+| ID | Item | Done when | Size | Weeks | Status |
+|---|---|---|---|---|---|
+| D1 | One machine-readable contract | A seeded bad value fails both pipeline write and app sync, with the field path | M | W50 to W52 | todo |
+| D2 | Quality engine and scorecard | One engine, scorecard and 90-day trend per run, admin Data health panel | M | W52 to W1 | todo |
+| D3 | Provenance and freshness per field | Every key block carries `_src` and `_asof`; sources registry generated | M | W1 to W2 | todo |
+| D4 | Truth set | 150 items verified by hand, scored per release | M | W1 to W3 | todo |
+| D5 | Scraper and source health | Yield, drift and staleness alerts reach admin and email | S | W3 | todo |
+| D6 | Coverage fairness | Parity table per country, region and language in `docs/data/` | S | W4 | todo |
+| D7 | Trails and outdoor fill | Trail targets in the table met; display names cleaned; difficulty weighs climb and terrain, not length; mountains and lakes filled (P-21, P-30, P-36) | L | W46 to W52 | todo |
+| D8 | Sea temperature | `sea_temp` run, beaches re-exported, `climate.water_c` filled, beach strip draws (P-22) | S | W47 | todo |
+| D9 | Place text and photos | Intros, guide text and galleries to target, French, Italian and UK first; POI descriptions; intros in six languages (P-23, P-24) | L | W5 to W8 | todo |
+| D10 | Prices completed | Local transport fare table for 741 places; bed prices for the 515 missing places; "not yet measured" shown honestly (P-25, P-26) | M | W50 to W52 | todo |
+| D11 | UK crowds by month | ONS or VisitBritain regional visitor nights for GB, plus BA, FO, MD, XK (P-27) | S | W2 | todo |
+| D12 | Freshness and stamps | Every wire inside its limit; `generated_at` correct in `app_data.json` and all wires (P-29) | S | W6 | todo |
+| D13 | Getting there mode choice | Mode picked by door-to-door time and cost; flights preferred above a distance; checked on 50 origin and destination pairs (P-31) | M | W3 to W4 | todo |
+
+### Item details
+
+**D1. One machine-readable contract** (schema migration)
+- `pipeline/contract/`: Pydantic models for every wire file. Generate JSON Schema into `docs/data/schema/`, versioned with `schema_version`.
+- Validate on write in `pipeline_io.py`; validate with ajv in `sync-data.mjs`. Retire `contract.mjs` once covered.
+- End-to-end check: pipeline run, artifact, wire build, app load.
+
+**D2. Quality engine and scorecard**
+- Rules in `pipeline/quality/rules.yaml`, each hard (blocks the wire) or soft (warns). Fold in `audit_quality.py`, `audit_gaps.py`, `dossier/audit.py`, image audits, trails freshness.
+- Output `data/reports/quality/<date>.json` plus `quality_history.jsonl`. Admin "Data health" panel with the 90-day trend. A drop of more than 2 points on a must_see field fails the run.
+
+**D3. Provenance and freshness per field** (schema migration)
+- `_src` and `_asof` on every block that matters. `pipeline/config/sources.yaml` holds licence, cadence and owner per source; `docs/data/sources.md` is generated.
+
+**D4. Truth set**
+- 100 places by stratified sample, 25 trails, 25 beaches and lakes, verified once by hand. `evals/truth/` and `evals/run_truth.py`. Refresh 20 places a month.
+- Text fields: LLM-as-judge against cited sources (offline in a Claude Code session or via Gemini), calibrated on 50 human judgments.
+
+**D5. Scraper and source health**
+- First fix what is broken today: the Hostelworld parser (677 pages, 0 prices), the Booking block since Oct 30 (paused in N1), and switch on the box's monthly stays build (T1021-a). Remove the inert Xotelo path from `functions/api/stays.js` and `src/lib/liveStays.js`.
+- Yield alert below 70% of the 7-run median; drift alert when a city's median price moves more than 25%; staleness alerts from D2.
+
+**D6. Coverage fairness**
+- Completeness and rating distributions per country and region; Ask recall per language. Each gap becomes a backlog item.
+
+**D7. Trails and outdoor fill**
+- Photos: run `trails_images`, then a per-country pass for the worst (DE 4% of 4,725, IT 10%, GB 12%, FR 16%).
+- Summaries: top-band trails first (2,348), then the rest, grounded in the trail's own facts (route, climb, sights on the way), checked by the D2 rules.
+- Display names: strip route codes and network prefixes, transliterate Cyrillic, shorten long titles, keep the source name on the page.
+- Difficulty: weigh climb, terrain (`sac_scale`), and length per day, so a flat 286 km path is "long", not "very hard".
+- Recover the 8,893 walks lost as `way_only_not_derived` with the Phase 2 way derivation; close the 549 places with no trail in 20 km where data exists.
+- Mountains: route up (14.8% today); lakes: water class (55.8%) and the 258 unknown swim flags.
+- Check the country assignment (for example "Grote Rivierenpad" filed under Germany).
+
+**D8. Sea temperature**
+- Run the `sea_temp` task, re-export beaches, run `apply_climate`. Confirm the beach page strip draws.
+
+**D9. Place text and photos**
+- Harvest Wikipedia and Wikivoyage intros and guide text (FR 27%, RS 29%, IT 31% today), festivals, neighbourhoods.
+- Gallery pass for GB (29%), RO, FR, IT. POI descriptions for must-see and recommended.
+- Translate intros into the five other languages (I8).
+
+**D10. Prices completed**
+- Local transport: a curated single-ticket and day-pass table per city (owner picks the source, T714-b), 127 metros and 614 cities first.
+- Beds: re-scrape the 515 missing places (FR 94, IT 77, GB 56, GR 40) once D5's parser fix lands; places with 2 or fewer observations flagged.
+
+**D11. UK crowds by month**
+- Regional visitor nights from ONS or VisitBritain mapped to UK places; same method for BA, FO, MD, XK.
+
+**D12. Freshness and stamps**
+- destinfo (70 days), trails (52), trips (50), region (49) refreshed by the H9 schedule; every wire stamps its real build time.
+
+**D13. Getting there mode choice**
+- Today the card can show a car to Bergen or a 512 euro train to Taormina while flights exist. Compare modes on door-to-door time and cost; set a distance above which flight is the default when a fare exists.
+
+**Depends on.** H1, B2. D7 to D12 also need H9 (scheduling) and D5 (scraper health).
+
+---
+
+## 10. Track E: RAG and guardrails
+
+**Goal.** Ask Carta's retrieval and answers are measured on every change, and every LLM call is guarded, logged and has a fallback.
+
+**Exit criteria.**
+- Ask eval gate green in CI (recall@10, nDCG@10, abstention).
+- Injection test set passes for every LLM function.
+- Withdrawal rate under 10%.
+- Every call logged with tokens, cost and latency.
+
+### Research
+
+| ID | Question | Starting points | Timebox | Output |
+|---|---|---|---|---|
+| E-R1 | How do strong teams evaluate RAG end to end? | RAGAS, DeepEval, promptfoo docs; BEIR benchmark paper; recall@k, MRR, nDCG definitions | 1 day | Metric set and thresholds for E1 |
+| E-R2 | Does a reranker pay off at Carta's scale and latency budget? | Workers AI reranker models, cross-encoder basics (Sentence-Transformers docs), MTEB reranking leaderboard | 1 day | Go or no-go and model for E2 |
+
+### Items
+
+| ID | Item | Done when | Size | Weeks | Status |
+|---|---|---|---|---|---|
+| E1 | Ask eval gate | 200 labelled queries, metrics per retriever, gate in CI | M | W47 to W49 | todo |
+| E2 | Retrieval upgrades | BM25 everywhere, reranker kept only if it wins, index built on the box | M | W50 to W52 | todo |
+| E3 | One guardrail module | Same input, output and failure rules in every LLM function; injection set in CI | M | W50 to W52 | todo |
+| E4 | LLM observability | Every call in `ai_model_events`; admin cost and latency panel; Ask query logs | S | W1 to W2 | todo |
+| E5 | Prompt registry | Prompts versioned in files; a bump runs its eval | S | W3 | todo |
+| E6 | Answer and cards agree | The places Ask's text names are exactly the cards it shows, enforced in the verifier; the failing live query is in the golden set (P-35) | S | W51 | todo |
+
+### Item details
+
+**E1. Ask eval gate**
+- `evals/ask/`: 200 queries across 6 languages, labelled per passage, 30 that must get "Carta does not know".
+- Retrieval: recall@5 and @10, MRR, nDCG@10 for dense, BM25, hybrid, hybrid + rerank. Generation: verifier pass rate, withdrawal rate, abstention correctness.
+- GitHub Action on Ask changes; fails on a drop beyond tolerance. Results in `docs/reference/evals.md`.
+
+**E2. Retrieval upgrades** (each measured against E1)
+1. BM25 over every source, server side.
+2. Reranker on the top 30 if E-R2 says go.
+3. Contextual passages: place and country prepended before embedding.
+4. Index built on the build box with a staleness check.
+
+**E3. One guardrail module**
+
+| Stage | Rule |
+|---|---|
+| Input | Length caps, PII scrub, user text and retrieved notes wrapped and labelled as data (parse-booking's pattern, copied to plan-day, suggest-city, Ask) |
+| Output | Schema validation always (grounded suggest-city gets a validator), every place id in the catalogue, every number traced to input, banned terms and no dashes |
+| Failure | Retry once, next model in the chain, then a rule-based or cached answer; never an empty screen |
+
+- Shared code in `supabase/functions/_shared/guard/` and `continent-app/functions/_lib/guard/`. `evals/injection/`: 40 adversarial inputs in CI. Security mapping in C8.
+
+**E4. LLM observability**
+- One `ai_model_events` row per call (today only plan-day logs). Admin panel: cost per day, p50 and p95 latency, failure rate. Ask query log hashed, 30-day retention, thumbs up and down.
+
+**E5. Prompt registry**
+- `prompts/<function>/vN.md` with a changelog; a version bump runs that function's eval.
+
+**E6. Answer and cards agree**
+- Live example: "quiet lake with good walks in June under 120 a day" named Castel di Tora in the text and showed Esztergom as a card. The verifier rejects an answer whose named places differ from its cards.
+
+**Depends on.** H1, B2, C1 (threat model informs E3).
+
+---
+
+## 11. Track F: Carta Intelligence
+
+**Goal.** Build the AI product engineering skill set (retrieval, classification, evaluation, distillation, API design, LLMOps, responsible AI) as real Carta features, each with a measured result.
+
+**The framing.** TechWolf infers skills from messy work text, maps them to a taxonomy, lets employees validate them and serves the result through an API. Carta has the same shape: infer what a place offers and what a traveller likes from messy text, map both to one taxonomy, let travellers validate it, serve it through an API.
+
+**Exit criteria.**
+- Every model has an eval set, a metric and a CI gate.
+- The tagger runs in the pipeline; the student model is published with a model card.
+- The Intelligence API serves the pipeline in batch.
+- Taste-profile acceptance rate is tracked.
+
+### Research
+
+| ID | Question | Starting points | Timebox | Output |
+|---|---|---|---|---|
+| F-R1 | How are skill taxonomies built and how is extreme multi-label extraction done? | ESCO structure, TechWolf papers (JobBERT, LLM skill extraction 2023, Efficient Text Encoders 2025), Sentence-Transformers training docs | 2 days | Taxonomy shape and pipeline for F1 |
+| F-R2 | How do I distil an LLM labeller into a small encoder and serve it cheaply? | Sentence-Transformers fine-tuning guide, hard-negative mining, ONNX Runtime quantisation, Hugging Face model card guide | 1 day | Training plan for F2 |
+
+### Items
+
+| ID | Item | Parallel at TechWolf | Skill | Done when | Size | Weeks | Status |
+|---|---|---|---|---|---|---|---|
+| F1 | Travel taxonomy and tagging | ESCO, extreme multi-label skill extraction | Retrieval, classification, calibration | Every place tagged, P@5 and F1 reported on 400 labelled items | L | W1 to W4 | todo |
+| F2 | Distilled tagger | ConTeXT-match, JobBERT V2 | PyTorch, HF Transformers, Sentence-Transformers, contrastive learning, ONNX | Student within 3 F1 points of teacher at under 1% of the cost; on the HF Hub | L | W5 to W8 | todo |
+| F3 | Taste profile with validation | Employee skill validation, acceptance rate | Human in the loop, explainability | Chips with evidence on My trips, acceptance rate tracked | M | W6 to W7 | todo |
+| F4 | Place linking | Job-title normalisation | Entity linking | MRR and accuracy@1 on 300 messy mentions | M | W5 to W6 | todo |
+| F5 | Intelligence API | API-first data layer | FastAPI, Pydantic, OpenAPI, Docker, tests | Service on the box, pipeline calls it in batch | M | W7 to W8 | todo |
+| F6 | Eval and LLMOps platform | Eval-driven development | Golden sets, LLM-as-judge, tracing | One runner for all evals; plan-day judge with kappa reported; Langfuse traces | M | W2 to W4 | todo |
+| F7 | Carta MCP server | MCP, agents and workflows | Tool design | Read-only tools usable from an MCP client | S | W9 | todo |
+| F8 | Responsible AI | Fair, transparent AI, EU AI Act | Fairness, documentation | Public AI page, model cards, parity table | S | W10 | todo |
+
+### Item details
+
+**F1. Travel taxonomy and tagging**
+- About 300 nodes in 3 levels (activity, setting, vibe, traveller style, practical), each with code, definition, synonyms in 6 languages, parent, "not to be confused with". File: `pipeline/taxonomy/carta_taxonomy.yaml`.
+- Replaces the hand-built gem categories, the 20 vibe scores and the 12 taste keys.
+- Passages per place → bi-encoder top 25 labels → Gemini verifier only where uncertain → threshold per use → place-level tags with evidence.
+- Eval on 400 labelled items: precision@5, recall@10, micro and macro F1, calibration, cost per 1,000 items.
+
+**F2. Distilled tagger**
+- Teacher labels 20k pairs; hard negatives from the taxonomy. Student: `gte-small`, Sentence-Transformers, `MultipleNegativesRankingLoss`, PyTorch, ONNX int8.
+- Publish model, card and eval set to the Hugging Face Hub after a licence check.
+
+**F3. Taste profile with validation**
+- Profile from saves, trips and filters on the taxonomy; chips with evidence; accept or reject; rejections become negatives. User's own data only, deletable, in the GDPR export.
+
+**F4. Place linking**
+- Alias table, BM25 and embeddings for candidates; context to disambiguate; "did you mean" below the threshold. Used by parse-booking, Ask and search.
+
+**F5. Intelligence API**
+- `services/intelligence/`: FastAPI, Docker, on the box. `/tag`, `/link`, `/similar`, `/taxonomy`, `/profile`. Pydantic, OpenAPI, pytest with eval sets as contract tests, structured logs, metrics, API key, rate limit. Added to the threat model (C1).
+
+**F6. Eval and LLMOps platform**
+- One runner and results format for every eval; dashboard page in the docs site. Plan-day LLM-as-judge calibrated on 40 human-rated plans with Cohen's kappa. Self-hosted Langfuse on the box.
+
+**F7. Carta MCP server**
+- `services/mcp/`: read-only tools (search places, place facts, price a trip, list trips). No write tools. Added to the threat model.
+
+**F8. Responsible AI**
+- Public "How Carta uses AI" page; model cards for the tagger and Ask; D6 parity table.
+
+**Depends on.** E1 and F6 (eval runner), D1 (contract for new fields), C1 (threat model for new services).
+
+**Owner decision F-a.** The JD names AWS Bedrock; CLAUDE.md keeps runtime AI on Gemini and forbids any Claude API use. Option: an offline-only experiment with non-Anthropic Bedrock models on the F1 eval set, never in the app.
+
+---
+
+## 12. Track G: UI and UX
+
+**Goal.** A design direction you chose on evidence, tested with real travellers, built from shared parts, with motion and trust made visible, and quality gates that stop it slipping back.
+
+**Exit criteria.**
+- A written design direction (G-R1 to G-R3) approved by you.
+- Usability tests with at least 5 travellers on each core flow, findings fixed and retested.
+- WCAG 2.2 AA audit passed.
+- One component per role; design-lint baseline down by at least 2,500.
+- axe, Lighthouse, bundle budget and visual baselines in CI.
+
+### Research
+
+| ID | Question | Starting points | Timebox | Output |
+|---|---|---|---|---|
+| G-R1 | What do the best travel and planning products do that Carta does not? | Teardown of 6 products (for example Airbnb, Hopper, Wanderlog, Komoot, Google Travel, Booking) on the same 4 flows: find a place, judge it, price it, plan days; Mobbin for screen references | 2 days | Benchmark board and 10 patterns to adopt or reject |
+| G-R2 | What makes an interface feel premium and calm rather than busy? | "Refactoring UI", Laws of UX, Apple Human Interface Guidelines (layout, motion), Material 3 motion, awwwards travel sites (inspiration only; carta-design wins) | 2 days | Principles note that extends the carta-design skill |
+| G-R3 | Where do travellers struggle in Carta today? | 5 short interviews and one unmoderated test on the live app (Maze, Lyssna or a call with screen share), Nielsen's 10 heuristics as a self-audit | 2 days | Top 10 problems ranked by severity, feeding G1 to G11 |
+| G-R4 | How should motion work across the product? | Material 3 motion, Apple HIG motion, `motion` library docs, Val Head "Designing Interface Animation" | 1 day | Motion principles and tokens for G5 |
+| G-R5 | How do I run a proper accessibility audit? | WCAG 2.2 AA, axe-core rules, screen reader testing with NVDA and VoiceOver, the A11y Project checklist | 1 day | Audit method for G10 |
+
+### Items
+
+| ID | Item | Done when | Size | Weeks | Status |
+|---|---|---|---|---|---|
+| G1 | Design direction | G-R1 to G-R3 turned into a direction doc and carta-design skill update, approved by you | S | W49 to W50 | todo |
+| G2 | Shared parts that exist once | `PlaceHead`, `PhotoCarousel`, `Chip` tones, `Button href` used everywhere; T1024-b/c, T1027-c, T1039-b closed | M | W51 to W52 | todo |
+| G3 | Umber cost card as signature | One component in Explore card, place page, plan tab, receipt; T1026-c closed | M | W1 to W2 | todo |
+| G4 | Core flow fixes from research | The top problems from G-R3 fixed in Explore, place page, plan flow and trip page | M | W2 to W4 | todo |
+| G5 | Motion system | Shared springs for sheets, tabs, figures, card-to-place photo move; reduced motion shows the end state | M | W4 to W5 | todo |
+| G6 | Type and radius debt | Literal font sizes and radii on the scale, legacy aliases removed | M | W6 to W7 | todo |
+| G7 | Breakpoints and CSS consolidation | 4 width tokens, v6 override layer folded in, big files split, dead-selector check, `!important` halved | M | W7 to W8 | todo |
+| G8 | Imagery gaps | Photo share on walks above 60%, styled map thumbnails instead of grey tiles | M | W9 to W10 | todo |
+| G9 | Trust made visible | "Why this place" chips (F1), "checked on" dates (D3), confidence in words | M | W10 to W11 | todo |
+| G10 | Accessibility audit | WCAG 2.2 AA audit with screen readers, every failure fixed | M | W11 to W12 | todo |
+| G11 | Quality gates and usability retest | axe-core, Lighthouse CI, bundle budget, visual baselines for 10 screens at 390 and 1440; 5-person retest of core flows; one real-phone pass per release replaces the 49 per-task phone rows | M | W12 to W13 | todo |
+| G12 | Onboarding and a shorter plan flow | First plan in 5 screens or fewer (12 today); a priced draft after 3 answers; Explore's start dialog inline and dismissible; sample trip on an empty Plan home (P-33, P-34, P-46) | M | W51 to W52 | todo |
+| G13 | Trail cards and trail links | Cards show time and climb next to length; trail pages get their own URL like places; display names from D7 (P-36, P-37) | S | W3 | todo |
+
+### Item details
+
+**G1.** One doc, `docs/design/direction.md`, plus an update to `.claude/skills/carta-design/SKILL.md`. The carta-design skill stays the top design source.
+
+**G2.** Today the place head is built 3 times, carousels 4 times, external link buttons 3 times. One component each in `src/components/ui/`, added to the styleguide.
+
+**G3.** End the arc vs no-arc split. Figures on `--text-amount` with tabular numbers.
+
+**G4.** Scope comes from G-R3. Each fix is checked with the same task that found it.
+
+**G5.** `motion` is used only on Home today. Tokens from `--dur` and `--ease`. Check INP before and after.
+
+**G6.** Codemod 1,740 literal font sizes and 775 literal radii; remove legacy aliases (4,638 uses).
+
+**G7.** Replace about 15 widths and the 768/769 split with 560, 768, 1024, 1440. Fold files 60 to 69 into domain files, split files over 2,500 lines, coverage-based dead-selector report. Finish the 1440 and 1920 checks (T1041-b).
+
+**G8.** A photo source for routes and things to do (22% of walks have a photo today, T1033-a, T1032-b). Map thumbnails in brand colours.
+
+**G9.** Chips explain why a place fits, with evidence. Dates where honesty needs them. Six languages.
+
+**G10.** Keyboard, focus order, contrast, 44 px targets, screen reader labels, reduced motion. Results in `docs/design/a11y-audit.md`.
+
+**G11.** Gates block regressions on every PR. The retest uses the G-R3 tasks so the results compare.
+
+**G12.** Today: "Start planning", then a choice that is already made, then 10 steps. Skip the choice when no trip is in progress; merge steps the free-text box already answers; show a priced draft early and let the rest refine it. Explore's "What matters most" dialog becomes an inline prompt, and its seen-flag follows the account. Measure time to first plan before and after (G-R3 tasks).
+
+**G13.** Trail tiles today show only difficulty and length. Add walking time and climb. Opening a trail sets `#trail=<id>` so it can be shared, bookmarked and reached with Back.
+
+**Process.** `impeccable` critique and the `taste-skill` look-and-fix loop per screen; the seven carta-design questions before shipping.
+
+**Depends on.** G-R1 to G-R3 before G1; G1 before G2 to G9; F1 and D3 for G9; H1 for G11.
+
+---
+
+## 13. Track H: production hardening
+
+**Goal.** Carta runs unattended, fails visibly, recovers quickly and survives 10x launch traffic.
+
+**Exit criteria.**
+- Every check runs in CI and `main` is protected.
+- Errors reach Sentry; SLOs on one panel.
+- Load test at 10x passed; restore drill timed.
+- Every owner gate for launch closed.
+
+### Research
+
+| ID | Question | Starting points | Timebox | Output |
+|---|---|---|---|---|
+| H-R1 | Which SLOs and alerts make sense for a one-person product? | Google SRE book (SLO chapters), "Implementing Service Level Objectives" (Hidalgo), Cloudflare and Supabase observability docs | 1 day | SLO list for H8 |
+
+### Items
+
+| ID | Item | Done when | Size | Weeks | Status |
+|---|---|---|---|---|---|
+| H1 | CI that runs everything | `npm run ci`, `npm test`, ruff, mypy, pytest on every push and PR; branch protection on `main` | S | W45 to W46 | todo |
+| H2 | Error tracking | Sentry (EU) for app, Pages functions, Edge Functions, pipeline; release tags, PII scrubbing | S | W47 to W48 | todo |
+| H3 | Durable rate limiting | Limits for ask, flights, stays hold across isolates | S | W49 | todo |
+| H4 | Load tests | k6 at 10x launch traffic, p95 under budget, report in docs | M | W1 to W2 | todo |
+| H5 | Backups and restore drill | Nightly encrypted `pg_dump` to R2, 30-day retention, timed restore written up | S | W3 | todo |
+| H6 | Owner gates cleared | Unapplied migrations (022, 029, 030, 031 and the rest), Stripe live setup, secrets, Dashboard steps | M | W5 to W8 | todo |
+| H7 | Pipeline unattended on the box | Every scheduled task with manifest, retries, D2 gate before publish, failure alert; two clean weeks | M | W6 to W8 | todo |
+| H8 | SLOs and incident drill | Uptime, error rate, p95 per API, freshness on one panel; one drill written up | S | W10 to W11 | todo |
+| H9 | Every pipeline task on a schedule | Monthly and quarterly tiers run on the box; the box pushes `pipeline_state.json` and a freshness report to R2 after each run (P-15) | M | W47 to W48 | todo |
+| H10 | No laptop-only steps | Ask index, stays scrape, guided search, trails lab and trip promotion run on the box or the worker; the trails lab dump is in R2 (P-17) | M | W50 to W52 | todo |
+| H11 | One scripted ship and a stable toolbox | `ship` script that stops on any failed step; css-routes check in `npm test`; `PYTHONUTF8=1`; a worktree script that handles junctions; stale `continent-app/.git` removed (P-18, P-19) | M | W51 to W52 | todo |
+| H12 | Fast first load and self-hosted images | Entry chunk under 150 KB gzip (224 today); DestinationsTab, DestinationPage, AccountPanel and planner screens lazy; CSS split by route; own AVIF and WebP images live (P-11, P-41) | M | W1 to W3 | todo |
+| H13 | Errors that stay local | Error boundary per tab; the 107 silent catches reviewed, data errors show a visible state (P-42) | S | W3 to W4 | todo |
+| H14 | Code health | DestinationsTab and DayPlannerTab split; App overlays into a shell; 18 dead files removed; finder TripPage renamed; react-refresh warnings quieted (P-43, P-44, P-45) | M | W6 to W8 | todo |
+
+### Item details
+
+**H1.** 11 workflows exist, but none runs `npm run ci`. Add `ci.yml` (app) and `python.yml` (ruff, mypy scoped, pytest). Protect `main`.
+
+**H2.** Free tier, EU region, source maps uploaded on deploy, PII scrubbing on.
+
+**H3.** Cloudflare rate-limit binding or a Durable Object. Today limits live in memory per isolate.
+
+**H4.** Scripts in `tests/load/` for ask, flights, stays, static wire.
+
+**H5.** Replace manual `ops/backup_supabase.sh` with a scheduled job; restore into a scratch project.
+
+**H6.** One ordered owner procedure from A3. Only you can do these steps.
+
+**H7.** Builds on the existing Hetzner box and Task Scheduler runs.
+
+**H8.** Builds on the existing uptime workflow and `INCIDENT_RUNBOOK.md`.
+
+**H9.** Today 50 of 74 tasks are due in the local state and the box runs the weekly tier only (T048-h); its own state is never pulled back (T740-b). Schedule the 28 monthly and quarterly tasks, push state and freshness to R2, show them in the admin Data health panel (D2).
+
+**H10.** Install `requirements-ml.txt` on the box or the CAX41 worker so the Ask index builds there; move the stays scrape off the laptop; trails lab PostGIS and trip promotion into the worker job.
+
+**H11.** The 657 "What broke" entries cluster on encoding (47), heredoc quoting (44), worktrees (33), flaky tests (22). Fix the causes once.
+
+**H12.** `App.jsx` imports the biggest screens eagerly; only 7 screens use `lazy()`; one 950 KB CSS file blocks rendering. Photos are hot-linked from Wikimedia (5 to 8 s on trail and plan pages) while own copies are built but not live (T1045-h).
+
+**H13.** One boundary in `main.jsx` today, so any panel error blanks the app.
+
+**H14.** Ranked by churn times size: App.jsx, TripPlannerTab, DestinationsTab, ExploreTab, DayPlannerTab, GuidedTripWizard.
+
+**Depends on.** A3 for H6.
+
+---
+
+## 14. Track I: product and business
+
+**Goal.** Everything a full-time consumer product needs around the features: a company that can sell, money that flows, onboarding that gets people to value, accounts that keep their work, reasons to come back, a phone app, support, numbers to steer by, growth, and a way to edit content without a developer. The audit's verdict: the product is far more complete than the business behind it.
+
+**Exit criteria.**
+- A registered company with VAT settled and every legal review closed.
+- A real purchase and a real refund done end to end; affiliate links earning.
+- Every data source used commercially has terms that allow it.
+- Guest work survives sign-up; lifecycle email live.
+- Support mailbox, About page and accessibility statement live.
+- Weekly cohort and funnel numbers visible in admin.
+- All six languages complete, with language in the URL.
+
+### Research
+
+| ID | Question | Starting points | Timebox | Output |
+|---|---|---|---|---|
+| I-R1 | How do the best travel apps onboard and bring people back? | Teardown of first run and the first 30 days of email in Wanderlog, Hopper, Komoot, Airbnb; "Hooked" (Nir Eyal) and Reforge retention notes as frameworks | 2 days | Onboarding and lifecycle plan for G12 and I6 |
+| I-R2 | Which business model mix fits Carta: Pass, yearly plan, affiliate, or a blend? | Competitor pricing pages, affiliate programme terms (Booking/Awin, GetYourGuide, Viator, Omio), Belgian VAT and OSS rules for digital content | 1 day | Pricing and revenue decision for I2 and I4 |
+| I-R3 | Which route to the phone: stay a PWA, wrap with Capacitor, or go native? | Capacitor docs, Apple App Store guidelines (sign-in with Apple rule 4.8, payments rule 3.1), Google Play policies, PWA install and push support on iOS | 1 day | Mobile decision for I7 |
+
+### Items
+
+| ID | Item | Done when | Size | Weeks | Status |
+|---|---|---|---|---|---|
+| I1 | Company, VAT and legal | Company registered, accountant's VAT and OSS answer, Imprint and KBO published; Article 16(m), yearly renewal law, privacy and terms, commission contradiction and trademark search reviewed (P-01, P-05) | M | W46 to W50 | todo |
+| I2 | Payments live | Stripe Prices (tax inclusive), secrets, Terms URL, webhook deployed, real purchase and refund on a phone; `REFUND_SOP.md` corrected (P-02, P-50) | M | W48 to W51 | todo |
+| I3 | Data source licensing | Terms checked for Booking, Hostelworld, Google Flights, Xotelo, Ferryhopper, OpenSky; each source cleared, replaced by an affiliate or licensed feed, or dropped (P-03) | M | W46 to W52 | todo |
+| I4 | Affiliate revenue | Partner accounts for Booking/Awin, GetYourGuide, Viator, Omio; `VITE_*` IDs set; clicks and revenue visible in admin (P-04) | S | W49 | todo |
+| I5 | Accounts that keep your work | Device trips, kept trips and day plans move to the account on sign-in ("3 trips moved"); Apple sign-in and magic link (P-47) | M | W50 to W51 | todo |
+| I6 | Retention email | Resend secrets and the 060 cron live; welcome, "your trip is in 30 days" and price-drop emails; unsubscribe and preferences (P-48) | M | W1 to W3 | todo |
+| I7 | Mobile app | Checkout and offline trip checked on real iOS and Android; route from I-R3 built (Capacitor wrap with push, or a polished PWA); store listings live (P-49) | L | W9 to W12 | todo |
+| I8 | Six complete languages | 525 missing keys filled per locale; key-parity test in CI; browser language on first visit; place intros translated; display currency choice (P-40) | M | W2 to W4 | todo |
+| I9 | Support and trust | support@ mailbox with SPF, DKIM and DMARC; contact switched from the personal Gmail; About page; accessibility statement (EU Accessibility Act); feedback loop approved and running (P-51) | S | W50 to W51 | todo |
+| I10 | Business operations | `infra_ledger` live, monthly books, cost per active user in admin, Hetzner backups on (P-06, P-55) | S | W5 to W6 | todo |
+| I11 | Product analytics | Consent-free weekly cohorts (returning accounts, trips saved, plans priced), funnel from first visit to saved trip, a server-side experiment flag in `site_config` (P-52) | M | W6 to W7 | todo |
+| I12 | Growth | Language in the URL (`/nl/...`) with prerender per language; per-page share images for places and trips; newsletter; referral link (P-53) | M | W6 to W8 | todo |
+| I13 | Content operations | An admin editor for place facts, photos and text that writes overrides the pipeline respects; audit trail per edit (P-54) | M | W10 to W12 | todo |
+
+### Item details
+
+**I1.** All owner work. The ordered owner procedure lives once in `Execution/P15/_OPEN-business-launch.md` (created under A3), built from the 10 launch blockers the register analysis listed.
+
+**I2.** Follows `Execution/P2/_OPEN-stripe-launch.md` and `Execution/P11/_OPEN-pass-subscription.md`. Test from the installed app on a real phone (T246-c).
+
+**I3.** The highest business risk after I1. For each source: terms read, risk written, decision recorded as an ADR.
+
+**I5.** Today the device trip only shows in `SavedTripsPanel.jsx` and kept trips stay on the device. On `SIGNED_IN`, upload and merge, then clear the device copy (pairs with N5).
+
+**I6.** `supabase/functions/notify` exists. Lifecycle content follows I-R1.
+
+**I8.** 136 of the missing keys are traveller-facing (wizard 49, trip 38). Editorial text is English only today.
+
+**I11.** Keep the current no-identifier, no-consent approach: counters per week, not per person.
+
+**I13.** Today only a developer can add or fix a place. Admin overrides (migrations 018, 043) are the base.
+
+**Depends on.** I1 before I2 and I4; I3 before relying on scraped data commercially; I5 pairs with N5; G12 uses I-R1.
+
+---
+
+## 15. Track J: launch
+
+**Goal.** Go live on 4 May 2027 with the business in place (Track I), a tested beta and a frozen, rollback-ready build.
+
+**Exit criteria.** The production-ready checklist (section 16) is all ticked.
+
+### Items
+
+| ID | Item | Done when | Size | Weeks | Status |
+|---|---|---|---|---|---|
+| J1 | Launch sign-off | I1 to I3 closed, terms and privacy final, AI page live (F8), Article 30 current (C9) | S | W14 | todo |
+| J2 | Performance and SEO | Prerendered place pages within G11 budgets, sitemap, structured data | S | W14 | todo |
+| J3 | Beta | 30 travellers, plan completion, Ask withdrawal rate and taste acceptance measured, two fix weeks | M | W14 to W17 | todo |
+| J4 | Launch metrics and outreach | `LAUNCH-METRICS.md` live, outreach from `LAUNCH-OUTREACH-DRAFTS.md` | S | W16 to W17 | todo |
+| J5 | Freeze and go live | Fixes only from W18, full deploy procedure, rollback tested, launch 4 May | S | W18 to W19 | todo |
+
+**Depends on.** All other tracks.
+
+---
+
+## 16. Production-ready checklist
+
+**Documentation**
+- [ ] Handbook covers every feature; every rule has a logic ID and a catalogue entry, checked both ways in CI
+- [ ] Config reference, lineage, diagrams and API reference regenerate in CI; drift check green; examples run as tests
+
+**Security**
+- [ ] Threat model current; ASVS L2 and LLM Top 10 checklists complete, no high finding open
+- [ ] Dependency, secret, SAST and DAST scans in CI; MFA on every owner account; secrets inventoried and rotated
+- [ ] External check passed and retested; `SECURITY.md` and `security.txt` live
+
+**Data and AI**
+- [ ] One JSON Schema validates every wire file at write and at sync
+- [ ] Scorecard per run, no hard rule failing, 95% truth-set accuracy, every layer fresh
+- [ ] Ask gate green, injection set passes, withdrawal rate under 10%
+- [ ] Every LLM call guarded and logged, with a fallback that never shows an empty screen
+
+**UI**
+- [ ] Usability retest with 5 travellers passes on every core flow
+- [ ] WCAG 2.2 AA audit passed; axe, Lighthouse, bundle and visual gates in CI
+
+**Fix now**
+- [ ] N1 to N8 done
+
+**Data completeness**
+- [ ] Every target in the Track D completeness table met
+
+**Product and business**
+- [ ] Company and VAT in place, legal reviews closed, every data source cleared for commercial use
+- [ ] Real purchase and refund done; affiliate links earning
+- [ ] Guest work survives sign-up; lifecycle email live; support mailbox live
+- [ ] Six complete languages with language in the URL; weekly cohorts in admin
+- [ ] First plan in 5 screens or fewer
+
+**Operations**
+- [ ] CI runs every check on every PR; `main` protected
+- [ ] Sentry, SLO panel, durable rate limits, load test at 10x passed
+- [ ] Nightly backups, timed restore drill
+- [ ] Every pipeline task scheduled off the laptop; entry chunk under 150 KB gzip
+- [ ] Every owner gate closed, legal reviewed
+- [ ] Register under 250 open rows, each mapped to an item or procedure
+
+---
+
+## 17. Decisions only you can make
+
+| ID | Question | Recommendation |
+|---|---|---|
+| R-a | Approve this file as the plan of record and archive `Roadmap/` | Yes |
+| R-b | One research day a week (Fridays) as the rhythm | Yes |
+| F-a | Offline Bedrock experiment with non-Anthropic models (needs an AWS account) | Yes, offline only |
+| H-a | Sentry and Langfuse as new services (EU options; Langfuse self-hosted) | Yes |
+| C-a | Who does the external security check in C11 | A security-minded peer or a structured self-pentest |
+| A-a | `Trips/carta-unified/`: fold into `pipeline/trips/` or archive with its two workflows | Fold what runs, archive the rest |
+| B-a | Docs site private or public | Private first, public after the C10 checks |
+| I-a | Company form and accountant (I1) | Decide this month; it gates payments and affiliates |
+| I-b | For each scraped source, keep, replace with an affiliate or licensed feed, or drop (I3) | Decide per source after the terms check |
+| I-c | Local transport fare source (D10, T714-b) | A curated table you approve, not a paid API |
+| I-d | Mobile route (I7, after I-R3) | Decide in February |
+| N-a | Pause the hourly stays tasks and rotate the R2 token this week (N1, N3) | Yes, now |

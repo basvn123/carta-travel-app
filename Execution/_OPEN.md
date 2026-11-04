@@ -1587,3 +1587,12 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1043-a | T1043 | Run scratchpad deploy-t1043.sh: deploy the flight-sweep Worker with half speed from 22:00 to 05:00 UTC (Execution/P15/T1043-sweep-night-half.md) | user | open | 1 |
 | T1043-b | T1043 | After three nights, count the Worker's refusals by hour; nights should be clean, and a day refusal means the 17% higher day share is too much | next task | open | 2 |
 | T1044-a | T1044 | The Plan home draws the Up next trip twice, as the hero and as the first Upcoming card; decide whether Upcoming leaves it out | user | open | |
+| T1045-a | T1045 | CLAUDE.md names pipeline/schema.py as the data contract (it does not exist) and says tests are not in CI (11 workflows run); correct both under roadmap B2 | next task | open | |
+| T1045-b | T1045 | MAP.md lists RatingBreakdown.jsx (the sheet is browse/RatingSheet.jsx) and points Trip page at planner/finder/TripPage.jsx (the planned trip is planner/TripPlannerTab.jsx with TripSummary.jsx) | next task | open | |
+| T1045-c | T1045 | Comments that contradict the code: rating_layer.py docstring (v4 weights), beauty v2 NOT LIVE, vibe text top fifth (code: top tenth), CrowdCalendar no monthly data, sea temperature metadata | next task | open | |
+| T1045-d | T1045 | The 10% buffer exists only in Ask's budget search, not in the planner total or place card; decide whether the planner shows it (see docs/HANDBOOK.md, Prices) | user | open | |
+| T1045-e | T1045 | The toll layer has no run_pipeline.py task, and search_index_layer.py and guided_search_layer.py run by hand outside the registry | next task | open | |
+| T1045-f | T1045 | plan-day keeps the first 28 candidates on the server so the trim limit of 30 never applies, and has no prompt version beyond CACHE_KEY_VERSION 6 (roadmap E5) | next task | open | |
+| T1045-g | T1045 | No test checks that the six language files share their keys; the five non-English files are about 600 lines shorter than English | next task | open | |
+| T1045-h | T1045 | Own AVIF and WebP image copies are built but not live; production still links photos from Wikimedia | next task | open | |
+| T1045-i | T1045 | Answer the owner decisions in ROADMAP.md section 15 (approve the plan and archive Roadmap/, research rhythm, Bedrock, Sentry and Langfuse, security check, Trips/carta-unified, docs site visibility) | user | open | 1 |
