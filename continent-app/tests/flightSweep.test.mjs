@@ -4,7 +4,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import {
-  flattenRoutes, jobsForMinute, nextPause, routesInMinute, NEAR_CYCLE, FAR_CYCLE, FIND_CYCLE, NEAR_DAYS, FAR_WEEKS, km,
+  flattenRoutes, jobsForMinute, nextPause, routesInMinute, routesForMinute, slotsAt, SLOTS_PER_DAY, NIGHT_UTC, NEAR_CYCLE, FAR_CYCLE, FIND_CYCLE, NEAR_DAYS, FAR_WEEKS, km,
   PAUSE_BASE_MS, PAUSE_MAX_MS, lateJobsForMinute, lateJobsForRoute, lateFillOrder, LATE_CYCLE, LATE_WEEKS, farJobsInWindow,
 } from "../workers/flight-sweep/src/plan.mjs";
 import { buildFile, buildIndex, nextBatch, priceOk, routeMoves } from "../workers/flight-sweep/src/publish.mjs";
@@ -320,7 +320,7 @@ test("the far fill asks a route for the far tier's own days inside its window (T
   for (let r = 0; r < list.length; r++) {
     // The minute the Worker's far tier runs route r today.
     let m = Math.floor(NOW / 60000);
-    while (!routesInMinute(m, FAR_CYCLE, list.length).includes(r)) m++;
+    while (!routesForMinute(m, FAR_CYCLE, list.length).includes(r)) m++;
     const want = jobsForMinute(list, airports, m * 60000)
       .filter((j) => j.tier === "far" && j.o === list[r][0] && j.d === list[r][1] && j.date >= from && j.date <= to);
     const day0 = Math.floor((m * 60000) / 86400000) * 86400000;
@@ -346,4 +346,32 @@ test("the gap search takes pairs between countries that do not report, far enoug
   const list = flattenRoutes(json.routes, [["EDI", "PRG"]]);
   // LHR-LGW is under 150 km; EDI-PRG is a found route already; BRU and ATH report.
   assert.deepEqual(gapPairs(json, countries, list), [["EDI", "LGW"], ["EDI", "LHR"], ["LGW", "PRG"], ["LHR", "PRG"]]);
+});
+
+test("a night minute (22:00 to 05:00 UTC) has one slot, a day minute two, and a day always the same count (T1043)", () => {
+  const day = Math.floor(NOW / 86400000) * 1440;
+  assert.equal(slotsAt(day + 1440) - slotsAt(day), SLOTS_PER_DAY);
+  assert.equal(SLOTS_PER_DAY, 2 * 1440 - (24 - NIGHT_UTC[0] + NIGHT_UTC[1]) * 60);
+  assert.equal(slotsAt(day + 3 * 60 + 1) - slotsAt(day + 3 * 60), 1, "03:00 is night");
+  assert.equal(slotsAt(day + 23 * 60 + 1) - slotsAt(day + 23 * 60), 1, "23:00 is night");
+  assert.equal(slotsAt(day + 12 * 60 + 1) - slotsAt(day + 12 * 60), 2, "noon is day");
+  for (let m = day; m < day + 1440; m++) assert.ok(slotsAt(m + 1) > slotsAt(m));
+});
+
+test("over each cycle every route has its turn exactly once, and a night hour carries about half a day hour (T1043)", () => {
+  const n = 10285;
+  const m0 = Math.floor(NOW / 60000);
+  for (const cycle of [NEAR_CYCLE, FAR_CYCLE]) {
+    const seen = new Array(n).fill(0);
+    for (let m = m0; m < m0 + cycle; m++) for (const r of routesForMinute(m, cycle, n)) seen[r]++;
+    assert.ok(seen.every((c) => c === 1), `cycle ${cycle}`);
+  }
+  const hour = (h) => {
+    const start = Math.floor(NOW / 86400000) * 1440 + h * 60;
+    let k = 0;
+    for (let m = start; m < start + 60; m++) k += routesForMinute(m, NEAR_CYCLE, n).length;
+    return k;
+  };
+  const ratio = hour(2) / hour(14);
+  assert.ok(ratio > 0.45 && ratio < 0.55, `night/day ${ratio}`);
 });

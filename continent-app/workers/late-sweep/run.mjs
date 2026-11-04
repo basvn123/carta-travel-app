@@ -53,7 +53,7 @@ import { homedir } from 'node:os';
 import { searchDay } from '../shared/flightSearch.mjs';
 import {
   farJobsInWindow, flattenRoutes, lateFillOrder, lateJobsForMinute, lateJobsForRoute, nextPause,
-  FAR_CYCLE, LATE_CYCLE,
+  slotsAt, FAR_CYCLE, LATE_CYCLE, SLOTS_PER_DAY,
 } from '../flight-sweep/src/plan.mjs';
 import { airportCountries, gapPairs, AIRPORTS_CSV } from './gaps.mjs';
 
@@ -313,7 +313,9 @@ async function farFill(slow) {
     const now = Date.now();
     // The Worker's far tier is at this route now and walks upwards; start
     // just behind it and walk down.
-    const cur = Math.ceil(((Math.floor(now / 60000) % FAR_CYCLE) * list.length) / FAR_CYCLE);
+    // T1043: the Worker counts its cycle in slots, not minutes.
+    const farSlots = (FAR_CYCLE / 1440) * SLOTS_PER_DAY;
+    const cur = Math.ceil(((slotsAt(Math.floor(now / 60000)) % farSlots) * list.length) / farSlots);
     const todo = [];
     for (let k = 1; k <= list.length; k++) {
       const r = (((cur - k) % list.length) + list.length) % list.length;

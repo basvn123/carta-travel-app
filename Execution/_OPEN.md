@@ -1584,3 +1584,5 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1041-a | T1041 | Pages in their own scroller (My trips, the trip wizard) sit 8 px left of the header line at 1920 px because the scroller's bar narrows what they centre in; needs scrollbar-gutter on the header or a scroller-aware inset | next task | open | |
 | T1041-b | T1041 | Trip page with a saved trip, Together, an item page and a region page were not seen in the browser after the width tokens; look at 1440 and 1920 px | next task | open | |
 | T1041-c | T1041 | `.destp-v3 .destp-grid` (64-v6-destination.css) still caps at 1180 px but nothing renders destp-v3; confirm dead and remove | next task | open | |
+| T1043-a | T1043 | Run scratchpad deploy-t1043.sh: deploy the flight-sweep Worker with half speed from 22:00 to 05:00 UTC (Execution/P15/T1043-sweep-night-half.md) | user | open | 1 |
+| T1043-b | T1043 | After three nights, count the Worker's refusals by hour; nights should be clean, and a day refusal means the 17% higher day share is too much | next task | open | 2 |

@@ -17,6 +17,12 @@
  * remembering anything. A route Eurostat saw only in some months is skipped
  * on dates in its off months; a route with no direct flight on six checks in
  * a row is dormant and only the find tier looks at it again.
+ *
+ * T1043: the slots are counted in half minutes, two to a minute by day and
+ * one from 22:00 to 05:00 UTC, the hours Google refused the Worker every
+ * night (owner, 2026-11-04). So a night minute carries half a day minute's
+ * share; each cycle still takes exactly its days (a day has the same
+ * SLOTS_PER_DAY), and by day a minute carries about 17% more than before.
  */
 
 // T780: as few searches as the app needs (owner, 2026-10-27: a price may be a
@@ -40,8 +46,31 @@ export const LATE_CYCLE = 40320; // minutes in 4 weeks
 export const LATE_WEEKS = 19; // weeks 27 to 45, after the far tier's 24
 export const FIND_MIN_KM = 150; // closer than this nobody flies
 export const DORMANT_AFTER = 6;
+// T1043: half speed from 22:00 to 05:00 UTC.
+export const NIGHT_UTC = [22, 5];
+const NIGHT_MIN = (24 - NIGHT_UTC[0] + NIGHT_UTC[1]) * 60;
+export const SLOTS_PER_DAY = 2 * 1440 - NIGHT_MIN;
 
 const DAY = 86400000;
+
+/** Slots (half minutes, one per night minute) from the epoch to this minute. */
+export function slotsAt(minute) {
+  const day = Math.floor(minute / 1440);
+  const r = minute - day * 1440;
+  const night = Math.min(r, NIGHT_UTC[1] * 60) + Math.max(0, r - NIGHT_UTC[0] * 60);
+  return 2 * minute - day * NIGHT_MIN - night;
+}
+
+/**
+ * The route indices whose turn it is in this real minute (T1043): those of
+ * its slots in a cycle of `cycleMin` real minutes, a whole number of days.
+ */
+export function routesForMinute(minute, cycleMin, n) {
+  const cycle = (cycleMin / 1440) * SLOTS_PER_DAY;
+  const out = [];
+  for (let s = slotsAt(minute); s < slotsAt(minute + 1); s++) out.push(...routesInMinute(s, cycle, n));
+  return out;
+}
 
 export const isoDay = (ms) => new Date(ms).toISOString().slice(0, 10);
 const monthBit = (ms) => 1 << new Date(ms).getUTCMonth();
@@ -101,12 +130,12 @@ export function jobsForMinute(list, airports, nowMs, dormant = new Set()) {
     if (mask & monthBit(ms)) jobs.push({ o, d, date: isoDay(ms), tier });
   };
 
-  for (const r of routesInMinute(minute, NEAR_CYCLE, list.length)) {
+  for (const r of routesForMinute(minute, NEAR_CYCLE, list.length)) {
     const [o, d, mask] = list[r];
     if (dormant.has(o + d)) continue;
     for (const k of NEAR_DAYS) add(o, d, today + k * DAY, 'near', mask);
   }
-  for (const r of routesInMinute(minute, FAR_CYCLE, list.length)) {
+  for (const r of routesForMinute(minute, FAR_CYCLE, list.length)) {
     const [o, d, mask] = list[r];
     if (dormant.has(o + d)) continue;
     for (let w = 0; w < FAR_WEEKS; w++) {
@@ -119,12 +148,15 @@ export function jobsForMinute(list, airports, nowMs, dormant = new Set()) {
   const codes = Object.keys(airports).sort();
   const known = new Set(list.filter(([o, d]) => !dormant.has(o + d)).map(([o, d]) => o + d));
   const pairs = codes.length * codes.length;
-  for (let p = minute % FIND_CYCLE; p < pairs; p += FIND_CYCLE) {
-    const o = codes[Math.floor(p / codes.length)];
-    const d = codes[p % codes.length];
-    if (o === d || known.has(o + d)) continue;
-    if (km(airports[o], airports[d]) < FIND_MIN_KM) continue;
-    jobs.push({ o, d, date: isoDay(today + FIND_AHEAD * DAY), tier: 'find' });
+  const findSlots = (FIND_CYCLE / 1440) * SLOTS_PER_DAY;
+  for (let s = slotsAt(minute); s < slotsAt(minute + 1); s++) {
+    for (let p = s % findSlots; p < pairs; p += findSlots) {
+      const o = codes[Math.floor(p / codes.length)];
+      const d = codes[p % codes.length];
+      if (o === d || known.has(o + d)) continue;
+      if (km(airports[o], airports[d]) < FIND_MIN_KM) continue;
+      jobs.push({ o, d, date: isoDay(today + FIND_AHEAD * DAY), tier: 'find' });
+    }
   }
   return jobs;
 }
