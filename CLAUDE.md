@@ -2,23 +2,26 @@
 
 Carta is a Europe trip planner: a Python data pipeline in this repo and a Vite + React app in `continent-app/`, both tracked in this one git repo (branch `main`). Every session follows these rules. They are short on purpose: read this file whole, read everything else only in the lines you need.
 
-**Start here:** this file, then `MAP.md`, which maps each product area (Explore, Plan, prices, trails...) to its app code, pipeline code, docs and latest task reports. Go from the map straight to the files; do not browse folders or open old reports to find your way.
+**Start here:** this file, then `MAP.md`, which maps each product area (Explore, Plan, prices, trails...) to its app code, pipeline code, handbook section and latest task reports. To understand how a feature works (its rules, formulas and thresholds), read its section in `docs/HANDBOOK.md`. Then go straight to the files; do not browse folders, `archive/` or old reports to find your way. The plan of record is `ROADMAP.md`: name its item ID (`A4`, `D7`) in every report.
 
 ## Where things are
 
 | Path | What |
 |---|---|
 | `MAP.md` | Area to files map: open it first for any feature. |
+| `ROADMAP.md` | The plan to production: phases with quality gates (section 4), then tracks A to K with item IDs. |
+| `docs/HANDBOOK.md` | Every feature and how it works, with the config key or constant behind each number. Grep for the feature; never read it whole (2,500 lines). |
+| `docs/AUDIT-2026-11.md` | The pain points found on 2026-11-04 (`P-01` to `P-59`), each mapped to a roadmap item. |
 | `PRODUCT.md`, `DESIGN.md` | Who Carta is for and the locked design tokens. Read before touching anything a traveller sees (see Design). |
-| `run_pipeline.py`, `pipeline/` | The data pipeline. `pipeline/schema.py` and `docs/SCHEMA.md` hold the data contract. |
+| `run_pipeline.py`, `pipeline/` | The data pipeline. The data contract is `docs/SCHEMA.md` (CI reads its "Wire contract" table) plus each layer's writer; there is no `pipeline/schema.py`. |
 | `continent-app/` | The app, tracked by this repo. Its old nested `.git` (stuck at T915, no remote) is stale: never commit there. `public/` is shipped data and images: never delete it. |
 | `cache/`, `tools/trailslab/`, `tools/brouter/` | Pipeline inputs and routing tools. Hours to rebuild: never delete them for space. |
 | `Execution/_OPEN.md` | The register of open items. |
 | `Execution/P{n}/_DIGEST.md` | One file per finished phase: what each task changed and what broke. Search it, do not read it whole. |
 | `Execution/P15/` | The active phase, full reports. |
 | `Execution/_TEMPLATE.md` | The report template. |
-| `docs/` | Durable reference per topic (trails, lakes, schema, runbooks). |
-| `archive/` | Retired code and finished plans. Nothing there runs or binds. |
+| `docs/` | Started over on 2026-11-04 (T1050). Today: `HANDBOOK.md`, `AUDIT-2026-11.md`, `research/`, `legal/ARTICLE30.md`, and four files code reads, which must stay where they are: `SCHEMA.md`, `tos/data_licenses.md` (generated), `REGIONS.md`, `LAKES.md`. New docs follow the tree in ROADMAP item B2. |
+| `archive/` | Retired code, finished plans and the old docs (`archive/docs-2026-11/`, `archive/roadmap-2026-10/`). Nothing there runs or binds; do not read it to find your way. |
 | `scripts/vite.fast.mjs` | The fast build (see Checks). |
 
 Full old reports and screenshots up to 2026-11-03 are in git under the tag `archive/execution-full-2026-11-03`; each digest entry gives the `git show` command for its report.
@@ -34,7 +37,7 @@ Tasks are numbered `T001`, `T002`, and so on, and filed under phase folders `P0`
 3. Make a branch `p{n}-{slug}` (for example `p15-explore-cards`) in this repo; it carries app changes too.
 4. Do the work. Touch only the files the prompt names. A bug or refactor outside that scope becomes a line in "What is still open", not an edit. Schema and data migrations are the one exception, and the prompt marks them.
 5. Check it (see Checks).
-6. Write the report `Execution/P{n}/T{n:03d}-{slug}.md` from `_TEMPLATE.md`, and add one register row per open item.
+6. Write the report `Execution/P{n}/T{n:03d}-{slug}.md` from `_TEMPLATE.md`, and add one register row per open item. If the task changed how a feature works, update that feature's section in `docs/HANDBOOK.md` in the same commit, and set the item's Status in `ROADMAP.md`.
 7. Commit the report and the register together, then merge or hand the branch back. Never merge before the report exists.
 
 A task with no code changes commits only its report.
@@ -52,7 +55,7 @@ When one prompt names several tasks, they run as a batch: the same depth of work
 
 ## Checks
 
-- Tests are not wired to CI. Run `npm test` in `continent-app/`. For anything a traveller sees, run `npm run dev` and look at every touched screen before committing (in a batch, once at the end).
+- GitHub Actions run 11 workflows on push to `main` (contract, design lint, RLS, rating tests, licences and more), but none runs `npm test` or `npm run ci` yet (ROADMAP H1). Run `npm test` in `continent-app/` yourself. Run `python -I scripts/docs/check_entry_points.py` after editing CLAUDE.md or MAP.md. For anything a traveller sees, run `npm run dev` and look at every touched screen before committing (in a batch, once at the end).
 - Prefer the DOM checks in `continent-app/scripts/verify_*.mjs` over screenshots. Take one screenshot per touched screen and width, only where the look is the point.
 - **Screenshots are never committed.** Save them under `Execution/P{n}/T{n}-shots/` (gitignored); the report names the screens checked and what was seen.
 - **Fast build** for any number a task promises: `cd continent-app && FAST_OUT=../.fastbuild node node_modules/vite/bin/vite.js build --config ../scripts/vite.fast.mjs`. About 10 seconds, with `publicDir` off; its `assets/` and `index.html` match a full build's. From an app worktree, set `CARTA_APP` to that worktree. The full build with `public/` is only for a deploy and needs about 1.3 GB free.
@@ -96,9 +99,11 @@ The disk runs full; keep it clean.
 ## Known gotchas
 
 - `continent-app/.git` is a stale nested repo (no remote, `master` at T915): `git -C continent-app status` there shows hundreds of false changes. Commit app work in this repo; `git status` here is the truth.
-- Schema versioning lives in `pipeline/schema.py` and `docs/SCHEMA.md`; changes reach the wire format and the app's hydration, so they are slow.
+- Schema version 19 is set in each layer's writer, pinned in `continent-app/scripts/ci/contract.mjs` and documented in `docs/SCHEMA.md`; changes reach the wire format and the app's hydration, so they are slow.
 - The dev server watches `public/` and reloads.
+- `reports/` at the root is not scratch: `rating_reference_v5.json` is the frozen rating calibration and the coverage CI gate reads `coverage_contract.json`. Only the dated `coverage_backlog_*.csv` files are untracked.
+- Windows Task Scheduler runs `logs/run_*.cmd`, and `logs/pipeline_state.json` is pipeline state: never clean `logs/` wholesale.
 
 ---
 
-**Last updated:** 2026-11-03 (T1034)
+**Last updated:** 2026-11-04 (T1051)

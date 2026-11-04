@@ -264,7 +264,7 @@ The order of work is the phase plan in section 4. Every item's **Phase** column 
 | A1 | Top-level layout | Root and `continent-app/` root clean, MAP updated, tests and dry run pass (T1050: docs and stray folders archived; live code folders moved to A2; `Trips/` waits on A-a) | M | P0 | done |
 | A2 | Pipeline structure | `run_pipeline.py` split by domain, flat files grouped, ruff on touched files | L | P4 | todo |
 | A3 | Register triage | Under 250 open rows, owner rows in one procedure per system | M | P1 | todo |
-| A4 | Claude context, lean and exact | Memory index under 5 KB with stale memories merged or removed; CLAUDE.md and MAP.md corrected and only pointing at files that exist; one entry path (CLAUDE.md, then MAP.md, then the handbook section, then the file); skills folder trimmed; a check that fails when MAP or CLAUDE names a missing path | S | P0 | todo |
+| A4 | Claude context, lean and exact | Memory index under 5 KB with stale memories merged or removed; CLAUDE.md and MAP.md corrected and only pointing at files that exist; one entry path (CLAUDE.md, then MAP.md, then the handbook section, then the file); skills folder trimmed; a check that fails when MAP or CLAUDE names a missing path (T1051: memory index 15 KB to 3.7 KB, CLAUDE and MAP corrected, `scripts/docs/check_entry_points.py` plus the `entry-points` workflow; skills kept, since the project impeccable skill is the one in use; `continent-app/.git` removal stays an owner step, T1040-d) | S | P0 | done |
 
 ### Item details
 
