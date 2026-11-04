@@ -46,7 +46,7 @@ Date, time spent, status (open / decided)
 
 A decided research note becomes an ADR in `docs/architecture/adr/` when it changes the architecture.
 
-**Total research budget.** About 33 days across 26 weeks (27 research items). That is more than one day a week, so each phase in section 4 names the research to do first; the rest is optional and can follow launch.
+**Total research budget.** About 37 days across 26 weeks (29 research items). That is more than one day a week, so each phase in section 4 names the research to do first; the rest is optional and can follow launch.
 
 ---
 
@@ -74,7 +74,7 @@ The tracks (sections 7 to 17) say **what** to build. The phases say **in which o
 1. **Depth before breadth.** The pages and flows marketing will point at (the marketing surface) become complete and clean first. Breadth across all 3,868 places and 17,619 trails comes after.
 2. **Quality before traffic.** No campaign links to a page that fails the marketing surface gate. Google judges a site partly by its weakest pages, so pages below the bar stay `noindex,follow` until they pass.
 3. **Marketing starts now and scales with the gates.** Low-risk work first (SEO plumbing, waitlist, building in public, research), deep links and campaigns only after the gate.
-4. **The business chain runs in parallel from day one.** Company, payments and data licensing have long outside waiting times.
+4. **The business is registered as late as sensible, and run without an accountant or lawyer.** Everything before registration is free to use and runs payments in Stripe test mode. You register as a sole trader in P4 (about week 13), a few weeks before money first flows. Legal and admin work is done by you, from official sources and templates, with deliberately simple choices that stay out of the hard legal areas (I1, I-R4, I-R5). Data licensing still starts now, because it can change the price engine.
 5. **Documentation, security and UI stay first-class.** They apply to the marketing surface first, then widen.
 
 | Phase | Weeks | Goal | Exit gate |
@@ -90,8 +90,8 @@ The tracks (sections 7 to 17) say **what** to build. The phases say **in which o
 
 **P0 Fix and start (W45 to W46)**
 - Build: N1 to N8, H1 (CI), A1 (layout), C2 (secrets, MFA, token rotation).
-- Owner: I1 starts (company form, accountant), the I3 terms reads start, decision I-a.
-- Marketing: K1 (positioning, launch market), K3 (waitlist with referral on Home), K4 (build in public, weekly), K12 (Search Console, cookieless channel counts). Affiliates: apply to Travelpayouts and Omio (I4).
+- Owner: the I3 terms reads start. No company yet.
+- Marketing: K1 (positioning, launch market), K3 (waitlist with referral on Home), K4 (build in public, weekly), K12 (Search Console, cookieless channel counts). Affiliates: open Travelpayouts and Omio accounts and get approved (I4); partner IDs go live only after registration in P4.
 - Your research: G-R1, G-R2 (design benchmark and principles), K-R1 (audience interviews, which also serve as G-R3).
 - Gate: N1 to N8 done, CI green, `status.json` returns 200.
 
@@ -114,9 +114,11 @@ The tracks (sections 7 to 17) say **what** to build. The phases say **in which o
 - Build: I2, I4 (Viator, GetYourGuide), I6, I8, I10, I14, I15, H3, H5, H6, H7, H10, H11, D1, D2, D4, E1, E3, F1, F6, B4, B5, B7.
 - Security: C6, C7, C8, C9.
 - Marketing: K7 (100 EUR a day map, cheapest-week calendar, trip receipt sharing), K8 (open dataset plus Show HN), K9 (closed beta of 50 from the waitlist), K10 (press kit).
-- Gate: real purchase and refund on a phone, 4 of 5 beta testers plan unaided, zero S1 bugs.
+- Your research: I-R4 (registering late and running the admin yourself), I-R5 (do-it-yourself legal), both finished before P4.
+- Gate: test-mode purchase and refund on a phone, 4 of 5 beta testers plan unaided, zero S1 bugs. The closed beta is free.
 
 **P4 Breadth, hardening, open beta (W11 to W16)**
+- Owner, early in P4 (week 13, about 29 March): register as a sole trader (I1), then switch Stripe to live and make one real purchase and refund (I2), and put the affiliate partner IDs live (I4). Allow about 2 weeks for the business number, VAT status and Stripe verification, so the latest safe week is 14.
 - Build: D3, D6, D9 (breadth), G9, G10 (full audit), G11, E2, E4, E5, B6, B8, A2, H4, H8, H14, F8, I4 (Booking.com and Hostelworld on the public preview), I7 (PWA polish), J1, J2.
 - Security: C10 (ASVS L2 walk and ZAP in CI), C11 (external check and retest).
 - Marketing: K9 open beta in March for summer planners, scale the channels that converted, K11 preparation.
@@ -156,7 +158,7 @@ The tracks (sections 7 to 17) say **what** to build. The phases say **in which o
 | Intelligence: F1, F6, F8 | |
 | UI: G1 to G4, G8, G10 to G13 | UI: G5 full, G6 and G7 beyond the surface, G9 |
 | Ops: H1 to H3, H5 to H7, H9 to H13 | Ops: H4, H8, H14 |
-| Business: I1 to I6, I8, I9, I11, I12, I14, I15 | Business: I7 store app (stay a PWA), I10 beyond the accountant, I13 |
+| Business: I1 to I6, I8, I9, I11, I12, I14, I15 | Business: I7 store app (stay a PWA), I10 beyond simple self-kept books, I13 |
 | Marketing: K1 to K12 | |
 | Launch: J1 to J5 | |
 
@@ -195,7 +197,7 @@ Sized at about 140 to 200 sessions for the must list, which fits 26 weeks at abo
 | **F** Carta Intelligence | The AI product engineering skill set as real Carta features | P3 to After | 8 | 2 |
 | **G** UI and UX | Researched direction, tested with travellers, consistent and measured | P1 to P4 | 13 | 5 |
 | **H** Production hardening | CI, monitoring, limits, backups, scheduling, performance, code health | P0 to P4 | 14 | 1 |
-| **I** Product and business | Everything a full-time product needs around the features: legal, money, onboarding, accounts, retention, mobile, support, analytics, growth, content ops, affiliates | P0 to P4 | 15 | 3 |
+| **I** Product and business | Everything a full-time product needs around the features: legal, money, onboarding, accounts, retention, mobile, support, analytics, growth, content ops, affiliates | P0 to P4 | 15 | 5 |
 | **J** Launch | Beta, freeze, go live | P3 to P5 | 5 | 0 |
 | **K** Marketing | People who would love Carta find it without paid ads; every campaign points at pages that pass the gate | P0 onwards | 13 | 3 |
 
@@ -901,10 +903,10 @@ docs/
 
 ## 15. Track I: product and business
 
-**Goal.** Everything a full-time consumer product needs around the features: a company that can sell, money that flows, onboarding that gets people to value, accounts that keep their work, reasons to come back, a phone app, support, numbers to steer by, growth, and a way to edit content without a developer. The audit's verdict: the product is far more complete than the business behind it.
+**Goal.** Everything a full-time consumer product needs around the features: a business that can sell (registered as late as sensible, run without an accountant or lawyer), money that flows, onboarding that gets people to value, accounts that keep their work, reasons to come back, a phone app, support, numbers to steer by, growth, and a way to edit content without a developer. The audit's verdict: the product is far more complete than the business behind it.
 
 **Exit criteria.**
-- A registered company with VAT settled and every legal review closed.
+- Registered as a sole trader with the VAT status settled, before the first paid sale or affiliate payout; terms, privacy and disclosures written from official sources and checked by you against a written checklist.
 - A real purchase and a real refund done end to end; affiliate links earning.
 - Every data source used commercially has terms that allow it.
 - Guest work survives sign-up; lifecycle email live.
@@ -919,13 +921,15 @@ docs/
 | I-R1 | How do the best travel apps onboard and bring people back? | Teardown of first run and the first 30 days of email in Wanderlog, Hopper, Komoot, Airbnb; "Hooked" (Nir Eyal) and Reforge retention notes as frameworks | 2 days | Onboarding and lifecycle plan for G12 and I6 |
 | I-R2 | Which business model mix fits Carta: Pass, yearly plan, affiliate, or a blend? | Competitor pricing pages, affiliate programme terms (Booking/Awin, GetYourGuide, Viator, Omio), Belgian VAT and OSS rules for digital content | 1 day | Pricing and revenue decision for I2 and I4 |
 | I-R3 | Which route to the phone: stay a PWA, wrap with Capacitor, or go native? | Capacitor docs, Apple App Store guidelines (sign-in with Apple rule 4.8, payments rule 3.1), Google Play policies, PWA install and push support on iOS | 1 day | Mobile decision for I7 |
+| I-R4 | How do I register late and run the admin myself? When does building, a free beta or affiliate sign-up turn into economic activity that must be registered; sole trader as main or side job (hoofdberoep or bijberoep); social contributions; the VAT small-enterprise exemption and how EU sales of digital content are taxed (OSS); simplified bookkeeping a sole trader may keep alone | Official pages of FOD Economie (ondernemingsloket, KBO), FOD Financien (VAT, small-enterprise exemption, OSS), your social insurance fund, the EU "Your Europe" business pages, Stripe Tax docs | 2 days | A written plan for I1 and I10: the registration week, the VAT regime, the bookkeeping method, and the yearly obligations with their dates |
+| I-R5 | How do I do the legal parts myself, safely? Terms for a one-off digital pass, the right of withdrawal for digital content and its waiver, privacy policy and records under GDPR, the Imprint, affiliate disclosure, accessibility statement, trademark check | EU Consumer Rights Directive guidance (digital content, withdrawal), FOD Economie consumer pages, the Belgian data protection authority (APD/GBA) guides and templates, EU accessibility statement model, EUIPO TMview (free search), the existing `docs/tos/` and `docs/ARTICLE30.md` | 2 days | A legal checklist in `docs/legal/` with each rule, its official source and where Carta meets it; the simplifications in I1 |
 
 ### Items
 
 | ID | Item | Done when | Size | Phase | Status |
 |---|---|---|---|---|---|
-| I1 | Company, VAT and legal | Company registered, accountant's VAT and OSS answer, Imprint and KBO published; Article 16(m), yearly renewal law, privacy and terms, commission contradiction and trademark search reviewed (P-01, P-05) | M | P0 to P1 | todo |
-| I2 | Payments live | Stripe Prices (tax inclusive), secrets, Terms URL, webhook deployed, real purchase and refund on a phone; `REFUND_SOP.md` corrected (P-02, P-50) | M | P3 | todo |
+| I1 | Late registration and do-it-yourself legal | From I-R4 and I-R5: registered as a sole trader in week 13 (14 at the latest), VAT status chosen, Imprint with the business number published; terms, privacy, withdrawal waiver, disclosure and accessibility statement written from official templates and checked against the `docs/legal/` checklist; trademark searched in TMview; the simplifications below applied (P-01, P-05) | M | P3 (prepare), P4 (register) | todo |
+| I2 | Payments live | P3: everything built and tested in Stripe test mode (Prices tax inclusive, webhook, Terms URL, refund path). P4, after registration: live keys, one real purchase and refund on a phone; `REFUND_SOP.md` corrected (P-02, P-50) | M | P3 (test), P4 (live) | todo |
 | I3 | Data source licensing | Terms checked for Booking, Hostelworld, Google Flights, Xotelo, Ferryhopper, OpenSky; each source cleared, replaced by an affiliate or licensed feed, or dropped (P-03) | M | P1 | todo |
 | I4 | Affiliate programmes | Travelpayouts (Kiwi, Tiqets, Airalo, DiscoverCars, Aviasales data) and Omio now; Viator and GetYourGuide in P3; Booking.com (CJ) and Hostelworld (Partnerize) on the public preview in P4; SafetyWing or Airalo after launch; IDs set; revenue in admin (P-04) | S | P0 to P4 | todo |
 | I5 | Accounts that keep your work | Device trips, kept trips and day plans move to the account on sign-in ("3 trips moved"); Apple sign-in and magic link (P-47) | M | P1 | todo |
@@ -933,16 +937,27 @@ docs/
 | I7 | Mobile app | Checkout and offline trip checked on real iOS and Android; route from I-R3 built (Capacitor wrap with push, or a polished PWA); store listings live (P-49) | L | P4 (PWA), store After | todo |
 | I8 | Six complete languages | 525 missing keys filled per locale; key-parity test in CI; browser language on first visit; place intros translated; display currency choice (P-40) | M | P3 | todo |
 | I9 | Support and trust | support@ mailbox with SPF, DKIM and DMARC; contact switched from the personal Gmail; About page; accessibility statement (EU Accessibility Act); feedback loop approved and running (P-51) | S | P1 | todo |
-| I10 | Business operations | `infra_ledger` live, monthly books, cost per active user in admin, Hetzner backups on (P-06, P-55) | S | P3 | todo |
+| I10 | Business operations, kept yourself | `infra_ledger` live; simple self-kept books (income from Stripe and affiliate reports, costs from invoices) in one sheet with a monthly 30-minute routine; a calendar of yearly tax and social dates from I-R4; cost per active user in admin; Hetzner backups on (P-06, P-55) | S | P3 (prepare), P4 (start) | todo |
 | I11 | Product analytics | Consent-free weekly cohorts (returning accounts, trips saved, plans priced), funnel from first visit to saved trip, a server-side experiment flag in `site_config` (P-52) | M | P2 | todo |
 | I12 | Growth | Language in the URL (`/nl/...`) with prerender per language; per-page share images for places and trips; newsletter; referral link (P-53) | M | P2 | todo |
 | I13 | Content operations | An admin editor for place facts, photos and text that writes overrides the pipeline respects; audit trail per edit (P-54) | M | After | todo |
 | I14 | Where the paywall meets the journey | One designed moment and copy for the Pass (what is free, when the offer shows, what it unlocks), tested in the closed beta; no dead ends | S | P3 | todo |
-| I15 | Affiliate links done right | `rel="sponsored noopener"` on every partner link; a small "partner link" mark and a disclosure page; links only after Carta's own figure, one door per cost line, never sorted by commission; cookieless click counting; no partner scripts (so no cookie banner); PRODUCT.md wording decided (I-e); lawyer check before May | S | P3 | todo |
+| I15 | Affiliate links done right | `rel="sponsored noopener"` on every partner link; a small "partner link" mark and a disclosure page; links only after Carta's own figure, one door per cost line, never sorted by commission; cookieless click counting; no partner scripts (so no cookie banner); PRODUCT.md wording decided (I-e); checked against the I-R5 legal checklist | S | P3 | todo |
 
 ### Item details
 
-**I1.** All owner work. The ordered owner procedure lives once in `Execution/P15/_OPEN-business-launch.md` (created under A3), built from the 10 launch blockers the register analysis listed.
+**I1.** All owner work, without an accountant or lawyer, by your choice. The procedure lives once in `Execution/P15/_OPEN-business-launch.md` (created under A3).
+
+- **Why week 13.** Building, a free beta, the waitlist and opening affiliate accounts need no registration. Taking money does: a paid Pass, or affiliate commission paid out to you. Registering in week 13 leaves about two weeks for the business number, VAT status and Stripe's verification, and two weeks of buffer before the 4 May launch. Confirm in I-R4 exactly where Belgian rules draw the line.
+- **Simplifications that keep you out of the hard legal areas.** Each one replaces a question the register had parked for a lawyer:
+  - Sell only one-off passes. Make the yearly plan a 12-month pass that does not renew automatically. This removes the subscription renewal rules entirely (T460-b, T461-e).
+  - Use the EU's standard model wording for the digital-content withdrawal waiver at checkout (T032-e).
+  - Write the privacy policy and processing records from the APD/GBA templates. `docs/ARTICLE30.md` already exists.
+  - Use links-only affiliates with clear disclosure and no tracking scripts, so no cookie banner is needed (I15).
+  - Resolve the commission contradiction with the I-e wording (T461-d).
+  - Run the trademark check yourself in TMview. Register the mark later, if ever.
+- **What you accept.** Without a professional review, a mistake is yours to find and fix. Every legal text lists its official sources, and section 19 records the decision, so the choice is visible. If revenue grows, a one-off review later stays an option.
+- **Register rows this retires.** T015 and T033-g (the accountant's VAT answer) are replaced by I-R4. The lawyer-review rows are replaced by I-R5 and the checklist. Close them in A3 with this reason.
 
 **I2.** Follows `Execution/P2/_OPEN-stripe-launch.md` and `Execution/P11/_OPEN-pass-subscription.md`. Test from the installed app on a real phone (T246-c).
 
@@ -964,7 +979,7 @@ docs/
 
 **I13.** Today only a developer can add or fix a place. Admin overrides (migrations 018, 043) are the base.
 
-**Depends on.** I1 before I2 and I4; I3 before relying on scraped data commercially; I5 pairs with N5; G12 uses I-R1.
+**Depends on.** I-R4 and I-R5 before I1; I1 (registration) before I2 goes live and before affiliate IDs go live (I4); I3 before relying on scraped data commercially; I5 pairs with N5; G12 uses I-R1.
 
 ---
 
@@ -978,7 +993,7 @@ docs/
 
 | ID | Item | Done when | Size | Phase | Status |
 |---|---|---|---|---|---|
-| J1 | Launch sign-off | I1 to I3 closed, terms and privacy final, AI page live (F8), Article 30 current (C9) | S | P4 | todo |
+| J1 | Launch sign-off | Registered (I1), payments live (I2), sources cleared (I3); terms and privacy final against the `docs/legal/` checklist; AI page live (F8); Article 30 current (C9) | S | P4 | todo |
 | J2 | Performance and SEO | Prerendered place pages within G11 budgets, sitemap, structured data | S | P4 | todo |
 | J3 | Beta fixes | Closed and open beta run in K9 (50, then open); plan completion, Ask withdrawal rate and taste acceptance measured, two fix weeks | M | P3 to P5 | todo |
 | J4 | Launch metrics and outreach | `LAUNCH-METRICS.md` live, outreach from `LAUNCH-OUTREACH-DRAFTS.md` | S | P5 | todo |
@@ -1081,7 +1096,7 @@ docs/
 - [ ] Every target in the Track D completeness table met
 
 **Product and business**
-- [ ] Company and VAT in place, legal reviews closed, every data source cleared for commercial use
+- [ ] Registered as a sole trader with VAT status settled before the first paid sale; legal texts checked against the `docs/legal/` checklist; every data source cleared for commercial use
 - [ ] Real purchase and refund done; affiliate links earning
 - [ ] Guest work survives sign-up; lifecycle email live; support mailbox live
 - [ ] Six complete languages with language in the URL; weekly cohorts in admin
@@ -1098,7 +1113,7 @@ docs/
 - [ ] Sentry, SLO panel, durable rate limits, load test at 10x passed
 - [ ] Nightly backups, timed restore drill
 - [ ] Every pipeline task scheduled off the laptop; entry chunk under 150 KB gzip
-- [ ] Every owner gate closed, legal reviewed
+- [ ] Every owner gate closed; legal checklist complete
 - [ ] Register under 250 open rows, each mapped to an item or procedure
 
 ---
@@ -1114,7 +1129,8 @@ docs/
 | C-a | Who does the external security check in C11 | A security-minded peer or a structured self-pentest |
 | A-a | `Trips/carta-unified/`: fold into `pipeline/trips/` or archive with its two workflows | Fold what runs, archive the rest |
 | B-a | Docs site private or public | Private first, public after the C10 checks |
-| I-a | Company form and accountant (I1) | Decide this month; it gates payments and affiliates |
+| I-a | Business set-up (I1) | Decided by you on 2026-11-04: sole trader, registered as late as sensible (week 13, 14 at the latest), no accountant, no lawyer; legal and admin done yourself from official sources (I-R4, I-R5) |
+| I-f | Yearly plan as a non-renewing 12-month pass | Yes: it avoids the auto-renewal rules that would otherwise need legal review |
 | I-b | For each scraped source, keep, replace with an affiliate or licensed feed, or drop (I3) | Decide per source after the terms check |
 | I-c | Local transport fare source (D10, T714-b) | A curated table you approve, not a paid API |
 | I-d | Mobile route (I7, after I-R3) | Decide in February |

@@ -1603,3 +1603,4 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1046-e | T1046 | Clear account-tied carta.* localStorage on sign-out; bookings and companions stay on shared devices today (ROADMAP N5) | next task | open | 2 |
 | T1046-f | T1046 | Fix the missing collectKpins dependency at continent-app/src/browse/ExploreMap.jsx:911, the one lint error (ROADMAP N7) | next task | open | 3 |
 | T1047-a | T1047 | Answer the new owner decisions in ROADMAP.md section 19: F-b (Carta Intelligence beyond F1, F6, F8 after launch), I-e (PRODUCT.md affiliate wording, T461-d), J-a (open beta in March), K-a (launch market), K-b (waitlist reward) | user | open | 2 |
+| T1048-a | T1048 | Do research I-R4 (registering late, admin and VAT yourself) and I-R5 (do-it-yourself legal) before P4, decide I-f (yearly plan as a non-renewing 12-month pass), and retire T015, T033-g and the lawyer-review rows in the A3 triage (ROADMAP I1) | user | open | 2 |
