@@ -25,6 +25,11 @@
  * removed from the list would stay for ever. After the syncs it lists the
  * top level of r2:<bucket>/<prefix>/ and deletes each name that is not in
  * R2_TIER (a directory with `rclone purge`, a file with `rclone deletefile`).
+ * T1042: except OTHER_WRITERS, prefixes under the same data/ that the app
+ * build never writes. On 2026-11-03 this step purged data/flights/, the
+ * flight-sweep Worker's fares and the route list it and the Hetzner box read
+ * (_routes.json, written by pipeline/flights/build_routes.py), and both
+ * stopped searching.
  * With --rclone-dry-run the listing is real, a read, and the deletes carry
  * --dry-run. Without credentials the plan prints that this step exists and
  * lists nothing. It refuses to delete anything from an empty listing.
@@ -119,11 +124,20 @@ function uploadPlan() {
 }
 
 /**
+ * Top-level names under data/ that other writers own (T1042), never pruned:
+ *   flights   the flight-sweep Worker (workers/flight-sweep) and
+ *             pipeline/flights/build_routes.py --upload
+ * A new writer under data/ adds its prefix here, or the next deploy deletes it.
+ */
+export const OTHER_WRITERS = Object.freeze(['flights']);
+
+/**
  * The top-level names in an `rclone lsf` listing (directories end in "/")
- * that no R2_TIER entry owns. Exported for the test, which feeds it a listing.
+ * that no R2_TIER entry and no OTHER_WRITERS entry owns. Exported for the
+ * test, which feeds it a listing.
  */
 export function staleEntries(listing, tier = R2_TIER) {
-  const keep = new Set(tier);
+  const keep = new Set([...tier, ...OTHER_WRITERS]);
   const out = [];
   for (const line of String(listing).split(/\r?\n/)) {
     const raw = line.trim();
