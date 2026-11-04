@@ -82,14 +82,38 @@ The tracks (sections 7 to 17) say **what** to build. The phases say **in which o
 | **P0 Fix and start** | 2026 W45 to W46 | Stop what is broken; start the slow owner chain and the marketing groundwork | N1 to N8 done, CI green, `status.json` 200 |
 | **P1 Surface data and flow** | 2026 W47 to W51 | The data and journey behind the marketing surface are right | Surface data rows of the gate pass; I3 decision written |
 | **P2 Clean look** | 2026 W52 to 2027 W3 | The marketing surface looks finished and loads fast (by about 18 Jan) | The full marketing surface gate passes |
-| **P3 Business and closed beta** | 2027 W4 to W10 | Carta can sell; 50 real travellers use it | Real purchase and refund on a phone; 4 of 5 beta testers plan unaided; zero S1 |
-| **P4 Breadth, hardening, open beta** | 2027 W11 to W16 | Quality across the whole catalogue; security tested; open beta for summer planners | Production-ready checklist (section 18), must list |
+| **P3 Business and closed beta** | 2027 W4 to W10 | Carta is ready to sell; 50 real travellers use it | Test-mode purchase and refund on a phone; 4 of 5 beta testers plan unaided; zero S1 |
+| **P4 Breadth, hardening, open beta** | 2027 W11 to W16 | Registered and selling; quality across the whole catalogue; security tested; open beta for summer planners | Production-ready checklist (section 18), must list |
 | **P5 Launch** | 2027 W17 to W19 | Fix weeks, freeze, launch campaign | Launch on Tue 4 May |
+
+### Fast track: using your full Claude allowance every week
+
+The plan above assumes about 6 to 8 sessions a week. If you use your full weekly allowance, about 30 to 40 sessions a week (3 to 4 in parallel, two rounds a day), the build work before launch (102 items, about 190 to 380 sessions plus about 30% rework) fits in 8 to 12 weeks. The fast track uses that speed to open to the public in March, in time for summer planning, and keeps 4 May as the date of the big campaign.
+
+| Phase | Normal weeks | Fast-track weeks | What changes |
+|---|---|---|---|
+| P0 Fix and start | W45 to W46 | W45 to W46 | A4 (Claude context) and A1 (cleanup) first, so every later session starts lean |
+| P1 Surface data and flow | W47 to W51 | W47 to W49 | Data runs (trail photos, summaries, sea temperature) start in week 1, because they take wall-clock time |
+| P2 Clean look | W52 to W3 | W50 to W52 | The marketing surface looks finished by Christmas; Sunshine Saturday release on Sat 2 Jan stays |
+| P3 Business and closed beta | W4 to W10 | W1 to W6 | Closed beta in January to early February |
+| Register as a sole trader | W13 | W8 (about 22 February) | About two weeks before the first paid sale, as in I1 |
+| Public opening (soft launch) | not in plan | W10 (about 8 March) | Open to everyone, paid Pass live; quiet: waitlist, communities, data stories |
+| P4 Breadth and hardening | W11 to W16 | W6 to W14, alongside the public site | Breadth, the full security walk (C10, C11) and the external check run while real users arrive |
+| P5 Campaign launch | W17 to W19 | W17 to W19 | Product Hunt, press, mid-May beach ranking, with real users and testimonials behind it |
+
+**Conditions for the fast track.**
+- **Your Claude allowance.** Check it after the first full week. Heavy sessions that build, test and check in the browser use a lot, so 30 to 40 a week may hit your plan's weekly cap. If it does, the fast track stretches toward the normal plan, and nothing breaks.
+- **Your time.** At this pace you review and merge 5 to 8 results a day. With phone checks and owner steps, that is about 2 to 4 hours a day. It is the real speed limit.
+- **Research cut to the essentials** (about 10 to 12 days instead of 37): G-R1, G-R3 with K-R1 (the interviews), I-R4, I-R5, C-R2, E-R1. The rest is optional or can follow launch.
+- **Gates unchanged.** The marketing surface gate and the P4 checklist still have to pass before the public opening. If they do not pass, the opening moves; quality does not.
+- **What speed does not shorten.** Search traffic still takes 6 to 12 months, so indexing starts in November in both plans. The beta needs 3 to 4 weeks with real people. Registration and Stripe verification take about 2 weeks. Scrapers must stay slow to avoid blocks.
+
+Choose one with decision J-b in section 19.
 
 ### What happens in each phase
 
 **P0 Fix and start (W45 to W46)**
-- Build: N1 to N8, H1 (CI), A1 (layout), C2 (secrets, MFA, token rotation).
+- Build: A4 (Claude context, first), N1 to N8, H1 (CI), A1 (layout and redundant files removed), C2 (secrets, MFA, token rotation).
 - Owner: the I3 terms reads start. No company yet.
 - Marketing: K1 (positioning, launch market), K3 (waitlist with referral on Home), K4 (build in public, weekly), K12 (Search Console, cookieless channel counts). Affiliates: open Travelpayouts and Omio accounts and get approved (I4); partner IDs go live only after registration in P4.
 - Your research: G-R1, G-R2 (design benchmark and principles), K-R1 (audience interviews, which also serve as G-R3).
@@ -151,7 +175,7 @@ The tracks (sections 7 to 17) say **what** to build. The phases say **in which o
 | Must for launch | Can follow launch |
 |---|---|
 | Fix now: N1 to N8 | Carta Intelligence beyond F1, F6, F8: F2 to F5, F7 (decision F-b) |
-| Repo and docs: A1, A2, A3, B1 to B7 | Docs: B8 (ask the docs) |
+| Repo and docs: A1 to A4, B1 to B7 | Docs: B8 (ask the docs) |
 | Security: C1 to C11 | Data: D3 full field provenance beyond the surface |
 | Data: D1, D2, D4, D5, D7, D8, D9 (surface depth), D10 to D14 | Data: D9 breadth beyond 85% |
 | AI: E1, E3, E6 | AI: E2, E4, E5 (do as soon as traffic gives data) |
@@ -189,7 +213,7 @@ Sized at about 140 to 200 sessions for the must list, which fits 26 weeks at abo
 
 | Track | Goal | Phases | Build | Research |
 |---|---|---|---|---|
-| **A** Repo cleanup | One clean layout and a register a human can work | P0 to P4 | 3 | 1 |
+| **A** Repo cleanup | One clean layout, a register a human can work, and Claude entry points that send every session straight to the right file | P0 to P4 | 4 | 1 |
 | **B** Documentation | Every feature and every piece of logic written down, generated where possible, checked in CI | P0 to P4 | 8 | 4 |
 | **C** Security | Threat-modelled, tested against OWASP ASVS and the LLM Top 10, documented | P0 to P4 | 11 | 4 |
 | **D** Data quality and completeness | Prove every place is complete, valid, fresh and accurate, and fill the gaps the audit found | P1 to P4 | 14 | 2 |
@@ -240,6 +264,7 @@ The order of work is the phase plan in section 4. Every item's **Phase** column 
 | A1 | Top-level layout | Root and `continent-app/` root clean, MAP updated, tests and dry run pass | M | P0 | todo |
 | A2 | Pipeline structure | `run_pipeline.py` split by domain, flat files grouped, ruff on touched files | L | P4 | todo |
 | A3 | Register triage | Under 250 open rows, owner rows in one procedure per system | M | P1 | todo |
+| A4 | Claude context, lean and exact | Memory index under 5 KB with stale memories merged or removed; CLAUDE.md and MAP.md corrected and only pointing at files that exist; one entry path (CLAUDE.md, then MAP.md, then the handbook section, then the file); skills folder trimmed; a check that fails when MAP or CLAUDE names a missing path | S | P0 | todo |
 
 ### Item details
 
@@ -279,7 +304,23 @@ archive/            retired code and plans
 3. Owner rows (539) become one ordered procedure per system (Stripe, Supabase migrations, Dashboard, legal) in `Execution/_OPEN-<slug>.md`.
 4. Rows are moved, never deleted.
 
-**Depends on.** Nothing. A runs first.
+**A4. Claude context, lean and exact**
+
+Every Claude session reads the same entry files before it does anything. When they are long, stale or wrong, each session spends tokens and time looking around, and can follow a dead pointer. Measured on 2026-11-04:
+
+| Entry file | Today | Problem | Target |
+|---|---|---|---|
+| Memory index (`MEMORY.md` in the Claude project memory) | 15 KB, about 200 lines, pointing at 303 memory files | Loaded into every session; many entries describe things since rebuilt (Vercel hosting, old planner versions, retired fare sources) | Under 5 KB; stale memories merged or deleted with the `consolidate-memory` skill |
+| `CLAUDE.md` | 10 KB | Names `pipeline/schema.py` (does not exist); says tests are not in CI (11 workflows run) | Corrected; points at ROADMAP.md, the handbook and the audit |
+| `MAP.md` | 8 KB | Wrong files for the rating sheet and the trip page (T1045-b); lists docs to distrust that A1 will archive | Every path exists; "docs to distrust" list gone once archived |
+| `.claude/skills/` | carta-design, impeccable, repo-cleanup (75 tracked files) | A copy of impeccable is also installed globally | Only project skills that are used, plus the new `carta-docs` skill (B7) |
+| Stale nested repo `continent-app/.git` | still on disk | `git status` there shows hundreds of false changes and has misled sessions | Removed (owner step, T1040-d) |
+
+**How it stays lean.** A small script (`scripts/docs/check_entry_points.py`, run in CI with B7) fails when CLAUDE.md or MAP.md names a path that does not exist. Every task report already names its files, so MAP rows can be checked against the reports.
+
+**What A1 removes, so sessions stop finding it.** These are the stray folders and files listed in A1: `Claude outputs/`, `additional docs/`, the old `Roadmap/`, the September plans, the 21 one-off scripts, scratch reports, about 80 MB of logs and caches, and the 12 distrusted docs. Everything is moved to `archive/` or deleted locally, as A1's table says.
+
+**Depends on.** Nothing. A runs first, with A4 before everything else.
 
 ---
 
@@ -1137,6 +1178,7 @@ docs/
 | F-b | Carta Intelligence: only F1, F6, F8 before launch, the rest after | Yes: F1 gives travellers better filters and "why" chips; F2 to F5 and F7 are skill-building that can follow |
 | I-e | PRODUCT.md "takes no commission" wording (T461-d) | "Carta never sells you a ticket or a bed and never ranks by what it earns. Some links pay Carta a small fee at no cost to you." |
 | J-a | Open beta in March for summer planners | Yes |
+| J-b | Normal plan or fast track (section 4) | Fast track if your first full week shows the Claude allowance and your review time can carry 30 to 40 sessions a week; otherwise the normal plan |
 | K-a | Launch market and language first (K1) | Belgium and the Netherlands in Dutch and English, then the UK |
 | K-b | Waitlist reward | Free Trip Pass at 3 referrals, founding yearly price at 10 |
 | N-a | Pause the hourly stays tasks and rotate the R2 token this week (N1, N3) | Yes, now |
