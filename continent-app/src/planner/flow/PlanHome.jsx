@@ -73,14 +73,16 @@ function TripCollection({ fan, onOpen }) {
 
 /**
  * Carta's own trips as a door (T988, after Explore's folder, T964): the
- * umber band with three trip-style photographs fanned out of it, the name
- * and an arrow. The deck opens a little further on hover.
+ * umber band, the name, then three trip-style photographs fanned at its
+ * end (T1044: the same order at every width, no arrow; the deck is the
+ * sign). The deck opens a little further on hover.
  */
 function CartaDoor({ fan, onOpen }) {
   const { t } = useI18n();
   const deck = (fan || []).slice(0, 3);
   return (
     <a className="pfh-door" href={tabHref('places')} onClick={door(onOpen)}>
+      <span className="pfh-door-name">{t('pf.home.browse')}</span>
       <span className="pfh-door-deck" aria-hidden="true">
         {[0, 1, 2].map((i) => (
           <span key={i} className="pfh-door-photo" style={{ '--i': i }}>
@@ -88,8 +90,6 @@ function CartaDoor({ fan, onOpen }) {
           </span>
         ))}
       </span>
-      <span className="pfh-door-name">{t('pf.home.browse')}</span>
-      <span className="pfh-door-go" aria-hidden="true"><ArrowRightIcon size={18} /></span>
     </a>
   );
 }
@@ -212,6 +212,11 @@ function UpNext({ trip, onOpen }) {
   const { t } = useI18n();
   const bcp47 = useBcp47();
   const cd = trip.start ? countdownText(t, trip.start, trip.end) : '';
+  // T1044: the dates and, when the trip has them, its nights.
+  const facts = [
+    whenLine(t, trip, bcp47),
+    trip.nights > 0 ? t(trip.nights === 1 ? 'saved.nights1' : 'saved.nightsN', { n: trip.nights }) : '',
+  ].filter(Boolean).join(', ');
   return (
     <a className={`pfh-next${trip.cover ? '' : ' is-blank'}`} href={tabHref('trip')} onClick={door(onOpen)} aria-labelledby={`pfh-next-${trip.id}`}>
       <span className="pfh-next-media" aria-hidden="true">
@@ -219,11 +224,11 @@ function UpNext({ trip, onOpen }) {
           ? <HeroImage url={trip.cover} city={trip.name} className="pfh-next-img" maxWidth={1280} ratio={[16, 9]} sizes="(min-width: 1240px) 1200px, 100vw" />
           : <TripArt seed={trip.id} className="pfh-next-img" />}
       </span>
-      {cd && <span className="pfh-next-cd">{cd}</span>}
+      {cd && <span className="pfh-next-cd"><CalendarIcon size={14} />{cd}</span>}
       <span className="pfh-next-body">
         <span className="pfh-next-txt">
           <span className="pfh-next-name" id={`pfh-next-${trip.id}`}>{trip.name}</span>
-          <span className="pfh-next-facts">{whenLine(t, trip, bcp47)}</span>
+          <span className="pfh-next-facts">{facts}</span>
         </span>
         <span className="pfh-next-go" aria-hidden="true"><ArrowRightIcon size={20} /></span>
       </span>

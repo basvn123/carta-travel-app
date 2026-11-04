@@ -1586,3 +1586,4 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1041-c | T1041 | `.destp-v3 .destp-grid` (64-v6-destination.css) still caps at 1180 px but nothing renders destp-v3; confirm dead and remove | next task | open | |
 | T1043-a | T1043 | Run scratchpad deploy-t1043.sh: deploy the flight-sweep Worker with half speed from 22:00 to 05:00 UTC (Execution/P15/T1043-sweep-night-half.md) | user | open | 1 |
 | T1043-b | T1043 | After three nights, count the Worker's refusals by hour; nights should be clean, and a day refusal means the 17% higher day share is too much | next task | open | 2 |
+| T1044-a | T1044 | The Plan home draws the Up next trip twice, as the hero and as the first Upcoming card; decide whether Upcoming leaves it out | user | open | |

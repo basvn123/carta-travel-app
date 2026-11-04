@@ -68,10 +68,12 @@
 /* T999, T1001 (owner): New trip is as wide as its plus and its words at
    every width. On a phone the door takes the rest of the row; from 560 px
    (T1002, owner: a full-width bar was far too wide) the door is as wide as
-   its deck, its name and its arrow, beside New trip. */
+   its name and its deck, beside New trip (T1044: no arrow; the deck sits
+   at the end at every width, so phone and desktop read the same). */
 @media (min-width: 560px) {
-  .pfh .pfh-door-name { flex: none; padding-right: var(--space-4); white-space: nowrap; }
+  .pfh .pfh-door-name { flex: none; padding-right: var(--space-5); white-space: nowrap; }
 }
+.pfh .pfh-door-go { display: none; }
 
 /* New trip: no tile of its own (T1001, owner), the plus on a brown disc and
    the words, straight on the page ground (the kit Button, its quiet look
@@ -83,39 +85,44 @@
   .pfh .pfh-new.btn:hover .pfh-new-plus { transform: rotate(90deg); }
 }
 
-/* On a phone the door is the rest of the row: the name first, the deck
-   after it, every photograph whole inside the tile (T1002, owner), no arrow. */
+/* On a phone the door is the rest of the row, as tall as New trip, every
+   photograph whole inside the tile (T1002, owner). */
 @media (max-width: 559px) {
-  .pfh .pfh-door-name { order: 1; font-size: var(--text-body); line-height: var(--leading-tight); }
-  .pfh .pfh-door-deck { order: 2; width: 62px; height: 56px; }
-  .pfh .pfh-door-photo { width: 34px; height: 46px; top: 5px; left: calc(var(--i) * 12px); z-index: calc(1 + var(--i)); }
-  .pfh .pfh-door-go { display: none; }
+  .pfh .pfh-door-name { font-size: var(--text-body); line-height: var(--leading-tight); }
+  .pfh .pfh-door-deck { width: 62px; height: 48px; }
+  .pfh .pfh-door-photo { width: 32px; height: 42px; top: 3px; left: calc(var(--i) * 14px); }
 }
 
-/* The door: the Ask door's and Explore's umber, a sun glow, three photographs
-   fanned out of its left edge. */
+/* The door: the Ask door's and Explore's umber, a soft sheen from its top
+   end, three photographs fanned at its end. */
 .pfh-door:active { transform: scale(0.985); }
 .pfh-door-photo:nth-child(2) { top: 0; }
 @keyframes pfh-deal { from { opacity: 0; transform: translateX(calc(var(--i) * -24px)) rotate(0deg); } }
 @media (hover: hover) {
-  .pfh-door:hover { box-shadow: var(--elev-3); }
-  .pfh-door:hover .pfh-door-photo { transform: translateX(calc((var(--i) - 1) * 6px)) translateY(-2px) rotate(calc((var(--i) - 1) * 11deg)); }
-  .pfh-door:hover .pfh-door-go { transform: translateX(3px); }
+  .pfh-door:hover { transform: translateY(-1px); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 4px 8px rgba(90, 55, 22, 0.16), 0 16px 32px rgba(90, 55, 22, 0.24); }
+  .pfh-door:hover .pfh-door-photo { transform: translateX(calc((var(--i) - 1) * 5px)) translateY(-2px) rotate(calc((var(--i) - 1) * 11deg)); }
 }
 
 /* Up next: the cover is the card. A slow drift on the photograph is the one
-   moving thing; the words sit on a dark fall at the bottom. */
+   moving thing; the words sit on an eased dark fall at the bottom (T1044:
+   more stops, so the tint has no visible edge), with a hairline inside the
+   corners so a pale sky still has a frame. */
 .pfh .pfh-next:active { transform: scale(0.99); }
+.pfh .pfh-next-media { transition: transform var(--dur-4) var(--ease-out); }
 .pfh .pfh-next-media::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(20, 14, 8, 0.78) 0%, rgba(20, 14, 8, 0.34) 38%, transparent 64%);
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(20, 14, 8, 0.08);
+  background: linear-gradient(to top,
+    rgba(20, 14, 8, 0.74) 0%, rgba(20, 14, 8, 0.6) 14%, rgba(20, 14, 8, 0.4) 30%,
+    rgba(20, 14, 8, 0.2) 46%, rgba(20, 14, 8, 0.07) 60%, transparent 72%);
 }
-@keyframes pfh-drift { from { transform: scale(1.02); } to { transform: scale(1.1) translate(-1.5%, 1%); } }
+@keyframes pfh-drift { from { transform: scale(1.02); } to { transform: scale(1.07) translate(-1%, 0.6%); } }
 @media (hover: hover) {
-  .pfh .pfh-next:hover { box-shadow: var(--elev-3, var(--elev-2)); transform: translateY(-2px); }
-  .pfh .pfh-next:hover .pfh-next-go { transform: translateX(3px); background: var(--umber-50); }
+  .pfh .pfh-next:hover .pfh-next-media { transform: scale(1.025); }
+  .pfh .pfh-next:hover .pfh-next-go { transform: translateX(3px); background: var(--action); color: var(--surface); }
 }
 
 /* A trip with no photo yet: TripArt (T990) fills the photo's place. */
