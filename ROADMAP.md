@@ -123,7 +123,7 @@ Choose one with decision J-b in section 19.
 - Build: D7 (top-band trails first), D8, D10, D11, D12, D13, D14, D5, E6, G12, G13, H9, H12, H13, I5, I9, B2, A3.
 - Security: C1 (threat model; surface first), C3 (auth and admin access).
 - Design: G1 (direction, from G-R1 to G-R3).
-- Owner: I3 decision by W50 (keep, replace with an affiliate or licensed feed, or drop each source), so prices have a plan B before any campaign says "honest prices".
+- Owner: I3 decision by W50 (keep, replace with an affiliate or licensed feed, or drop each source), so prices have a plan B before any campaign says "honest prices". Beds are already decided (I-g: keep scraping, flagged); the open question is flights and the smaller sources. I16 sets the data access ladder.
 - Marketing: K2 (SEO plumbing and page quality gate: thin pages `noindex`, segmented sitemaps, hubs indexed), K3 newsletter issue 1.
 - Gate: the data rows of the marketing surface gate pass.
 
@@ -182,7 +182,7 @@ Choose one with decision J-b in section 19.
 | Intelligence: F1, F6, F8 | |
 | UI: G1 to G4, G8, G10 to G13 | UI: G5 full, G6 and G7 beyond the surface, G9 |
 | Ops: H1 to H3, H5 to H7, H9 to H13 | Ops: H4, H8, H14 |
-| Business: I1 to I6, I8, I9, I11, I12, I14, I15 | Business: I7 store app (stay a PWA), I10 beyond simple self-kept books, I13 |
+| Business: I1 to I6, I8, I9, I11, I12, I14 to I16 | Business: I7 store app (stay a PWA), I10 beyond simple self-kept books, I13 |
 | Marketing: K1 to K12 | |
 | Launch: J1 to J5 | |
 
@@ -221,7 +221,7 @@ Sized at about 140 to 200 sessions for the must list, which fits 26 weeks at abo
 | **F** Carta Intelligence | The AI product engineering skill set as real Carta features | P3 to After | 8 | 2 |
 | **G** UI and UX | Researched direction, tested with travellers, consistent and measured | P1 to P4 | 13 | 5 |
 | **H** Production hardening | CI, monitoring, limits, backups, scheduling, performance, code health | P0 to P4 | 14 | 1 |
-| **I** Product and business | Everything a full-time product needs around the features: legal, money, onboarding, accounts, retention, mobile, support, analytics, growth, content ops, affiliates | P0 to P4 | 15 | 5 |
+| **I** Product and business | Everything a full-time product needs around the features: legal, money, onboarding, accounts, retention, mobile, support, analytics, growth, content ops, affiliates, licensed data | P0 to P4 | 16 | 5 |
 | **J** Launch | Beta, freeze, go live | P3 to P5 | 5 | 0 |
 | **K** Marketing | People who would love Carta find it without paid ads; every campaign points at pages that pass the gate | P0 onwards | 13 | 3 |
 
@@ -984,6 +984,7 @@ docs/
 | I13 | Content operations | An admin editor for place facts, photos and text that writes overrides the pipeline respects; audit trail per edit (P-54) | M | After | todo |
 | I14 | Where the paywall meets the journey | One designed moment and copy for the Pass (what is free, when the offer shows, what it unlocks), tested in the closed beta; no dead ends | S | P3 | todo |
 | I15 | Affiliate links done right | `rel="sponsored noopener"` on every partner link; a small "partner link" mark and a disclosure page; links only after Carta's own figure, one door per cost line, never sorted by commission; cookieless click counting; no partner scripts (so no cookie banner); PRODUCT.md wording decided (I-e); checked against the I-R5 legal checklist | S | P3 | todo |
+| I16 | Data access ladder | Each commercial data source has a written legal route, the milestone that unlocks the next step (users or bookings), and a date; Google Flights scraping stopped before the first paid sale; the bed decision (I-g) reviewed before the Booking.com affiliate application; milestones tracked in admin (K12) | M | P1 to P4, then ongoing | todo |
 
 ### Item details
 
@@ -1009,6 +1010,25 @@ docs/
 **I14.** The roadmap review found no item that designs the paid moment; this is it.
 
 **I15.** Plain decorated links set no cookie on Carta's domain; partner widgets would force a consent banner. EU guidance requires the disclosure before the user clicks.
+
+**I16. Data access ladder.** The best legal data is earned with traffic: partners open their feeds to sites that already send them customers. So Carta climbs in steps. Terms change, so each step is re-checked when it is reached (sources: research file, section 4).
+
+| Data | Today | Legal route | Unlocks when | Step |
+|---|---|---|---|---|
+| Flight fares | Scraped from Google Flights (no API since 2018, so no legal route) | Aviasales Data API via Travelpayouts: cached fares from real searches, meant for static pages | Free signup, now | **P1**: measure coverage on the 10,094 routes; switch where coverage is good. **Before the first paid sale** (P4 week 13, or week 8 on the fast track): stop scraping Google Flights |
+| Live flight search | Not available | Travelpayouts Flight Search API | About 50,000 monthly users (a note in `continent-app/src/lib/affiliate.js`) | Apply at the milestone |
+| Bed prices | Scraped from Booking.com and Hostelworld | Booking.com Demand API, for Managed Affiliate Partners only (contract plus an account manager) | Steady bookings sent through Booking affiliate links; the threshold is not published, so ask once there is a track record | **Decision I-g: keep scraping, flagged as a known risk, until the Demand API.** Review before applying to Booking's affiliate programme (P4), because its terms are likely to forbid scraping and a breach could cost the account the ladder depends on |
+| Hostel prices | Scraped from Hostelworld | No public API; a direct partnership | Volume through Hostelworld affiliate links (Partnerize) | Approach with numbers after launch |
+| Activity prices | None | Viator (Basic tier instant), Tiqets (self-service API), GetYourGuide (through a partner manager) | Little or nothing | **P3**, with I4 |
+
+**Living with decision I-g (scraping beds until the Demand API).**
+- **Keep the footprint small.** Slow, polite scraping only. Never republish raw listings: Carta shows its own derived figures (a per-night price for a place and tier), never a copy of a listing.
+- **Be ready to switch.** Each bed price links to Booking or Hostelworld for the real price. The `LIVE_STAYS` kill switch and a fallback to price bands (option B) stay built, so stopping is a one-line change.
+- **Watch the scrapers.** D5's yield and block alerts show early if a source pushes back.
+- **Write it down.** The risk and the reasons go in the I-R5 legal checklist and an ADR.
+- **Review dates.** (1) Before the Booking.com affiliate application in P4: keep A, or move to option C (scraped data only calibrates bands, never shown as a live price) so the affiliate account is safe. (2) As soon as the Demand API opens: switch and stop scraping.
+
+**Milestones in admin.** K12 adds the unlock numbers to the weekly marketing view: monthly users, affiliate clicks and bookings per partner. Each step of the ladder has a trigger you can see coming.
 
 **I5.** Today the device trip only shows in `SavedTripsPanel.jsx` and kept trips stay on the device. On `SIGNED_IN`, upload and merge, then clear the device copy (pairs with N5).
 
@@ -1080,7 +1100,7 @@ docs/
 | K9 | Beta programme | Closed beta of 50 from the waitlist (P3), open beta in March for summer planners (P4); feedback loop into the register; testimonials collected with consent | M | P3 to P4 | todo |
 | K10 | Press kit and list | A press page (facts, screenshots, methodology, contact); a list of about 40 BE, NL and UK travel and data journalists and newsletters | S | P2 to P3 | todo |
 | K11 | Launch campaign | Product Hunt on 4 May, waitlist email, courtesy notes to the credited bodies (`archive/docs-2026-11/LAUNCH-OUTREACH-DRAFTS.md`), community posts, mid-May beach ranking; a two-week plan with owners per thread | M | P5 | todo |
-| K12 | Marketing measurement | Cookieless channel counts (UTM to the existing counters), Search Console per page type, waitlist and referral funnel, one weekly marketing number in admin | S | P0 to P1 | todo |
+| K12 | Marketing measurement | Cookieless channel counts (UTM to the existing counters), Search Console per page type, waitlist and referral funnel, one weekly marketing number in admin; the I16 unlock numbers (monthly users, affiliate clicks and bookings per partner) | S | P0 to P1 | todo |
 | K13 | The creative slot | One experiment every two weeks from P2, picked from K-R3's shortlist; each written up in one paragraph (idea, what it took, what it did) | S each | P2 onwards | todo |
 
 ### Item details
@@ -1172,6 +1192,7 @@ docs/
 | B-a | Docs site private or public | Private first, public after the C10 checks |
 | I-a | Business set-up (I1) | Decided by you on 2026-11-04: sole trader, registered as late as sensible (week 13, 14 at the latest), no accountant, no lawyer; legal and admin done yourself from official sources (I-R4, I-R5) |
 | I-f | Yearly plan as a non-renewing 12-month pass | Yes: it avoids the auto-renewal rules that would otherwise need legal review |
+| I-g | Bed prices until the Booking.com Demand API (I16) | Decided by you on 2026-11-04: option A, keep scraping Booking.com and Hostelworld, flagged as a known risk, with the safeguards in I16. Review before the Booking affiliate application in P4 (A or C) |
 | I-b | For each scraped source, keep, replace with an affiliate or licensed feed, or drop (I3) | Decide per source after the terms check |
 | I-c | Local transport fare source (D10, T714-b) | A curated table you approve, not a paid API |
 | I-d | Mobile route (I7, after I-R3) | Decide in February |
