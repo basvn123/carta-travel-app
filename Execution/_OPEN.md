@@ -1596,3 +1596,9 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1045-g | T1045 | No test checks that the six language files share their keys; the five non-English files are about 600 lines shorter than English | next task | open | |
 | T1045-h | T1045 | Own AVIF and WebP image copies are built but not live; production still links photos from Wikimedia | next task | open | |
 | T1045-i | T1045 | Answer the owner decisions in ROADMAP.md section 15 (approve the plan and archive Roadmap/, research rhythm, Bedrock, Sentry and Langfuse, security check, Trips/carta-unified, docs site visibility) | user | open | 1 |
+| T1046-a | T1046 | Pause the hourly CartaStaysBooking and CartaStaysHostelworld tasks (0 prices every hour since Oct 30), remove CartaFlightsAll and CartaFlightsNow, drop VITE_E2E_SEAMS=1 from continent-app/.env (ROADMAP N1) | user | open | 1 |
+| T1046-b | T1046 | Rotate the leaked R2 admin token from T291-b and check R2 access logs (ROADMAP N3) | user | open | 1 |
+| T1046-c | T1046 | Publish status.json (404 on every page view) and add status.json, .keep, _test to the prune keep list in scripts/r2/push-data.mjs; prune lists and asks (ROADMAP N2) | next task | open | 1 |
+| T1046-d | T1046 | Bump dompurify; plan jspdf 4 and maplibre-gl 5 or 6 upgrades for the three critical npm audit advisories (ROADMAP N4, C6) | next task | open | 2 |
+| T1046-e | T1046 | Clear account-tied carta.* localStorage on sign-out; bookings and companions stay on shared devices today (ROADMAP N5) | next task | open | 2 |
+| T1046-f | T1046 | Fix the missing collectKpins dependency at continent-app/src/browse/ExploreMap.jsx:911, the one lint error (ROADMAP N7) | next task | open | 3 |
