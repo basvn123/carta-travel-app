@@ -18,3 +18,4 @@ How it runs:
 | 05 | T1089 | session_0156MmZ5VRsioL6jYDKbHUSW | p15-s05-verify-harness-refresh | running | | |
 | 06 | T1090 | session_0156MmZ675FBGFYLWfxY8p45 | p15-s06-csp-no-inline-style | running | | |
 | 07 | T1091 | session_0156MmZ6GNqyadqQA6n59dSe | p15-s07-attribution-ledger | running | | |
+| 08 | T1092 | session_0156MmZ2rL9aioyUBz7HyAUN | p15-s08-trail-names | running | | |
