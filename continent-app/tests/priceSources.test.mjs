@@ -22,7 +22,6 @@ const CALL = new RegExp(`(?<![\\w.]function\\s|function\\s)\\b(${KERNEL.join("|"
 // as quoteTrip, quoteComposed and quoteNights).
 const KERNEL_FILES = {
   "src/lib/costIndex.js": "kernel (computeCosts, costRow)",
-  "src/lib/stayPrice.js": "kernel (bedPrice)",
   "src/lib/runtime_pricing.js": "kernel (accommodationPerPerson wraps bedPrice)",
   "src/lib/price/priceDay.js": "the engine",
 };

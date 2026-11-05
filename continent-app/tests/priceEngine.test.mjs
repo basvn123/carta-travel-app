@@ -1,6 +1,6 @@
 // T662 (F2): the price engine, lib/price/. Invariants V3, V6 (bed) and V7
 // of plan "Carta prijslogica Explore" section 8; V1 and V2 live in
-// priceGolden.test.mjs and priceSources.test.mjs, V8 in liveStays.test.mjs.
+// priceGolden.test.mjs and priceSources.test.mjs, V8 was in liveStays.test.mjs (removed, T1074).
 // Run: npm test (continent-app/)
 import test from "node:test";
 import assert from "node:assert/strict";
