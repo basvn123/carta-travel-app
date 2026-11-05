@@ -484,7 +484,7 @@ docs/
 |---|---|---|---|---|---|
 | C1 | Threat model | Every surface modelled with STRIDE (or C-R1's method), threats ranked, each mapped to a control and test | M | P1 | done (T1069) |
 | C2 | Secrets and accounts | Inventory of every secret (where, who, rotation), rotation done for old ones, MFA on every owner account, recovery codes stored | S | P0 | in progress: inventory done (T1059), owner rotation open |
-| C3 | Auth and access | Supabase auth settings per C-R3, admin behind MFA and role checks, session lifetimes set, admin actions audit-logged | M | P1 | in progress (T1071: code half; Dashboard is T1071-a) |
+| C3 | Auth and access | Supabase auth settings per C-R3, admin behind MFA and role checks, session lifetimes set, admin actions audit-logged | M | P1 | in progress (T1071: code half; T1084: Dashboard done; open T1071-c, T1071-d, T1084-a, T1084-b) |
 | C4 | Data access and RLS | RLS on every table proven by tests (exist, extended), service-role key never in the browser, storage and R2 access reviewed | S | P2 | in progress (T1078: all 34 tables fixtured, signed-out reads fixed, bundle key check; 063 is T1078-a) |
 | C5 | Web and API hardening | Strict CSP and security headers, CORS allow-list, input validation on every endpoint, durable rate limits (with H3), Stripe webhook signature check verified | M | P2 | in progress (T1079: headers, function guards, Edge CORS and body caps; deploy and WAF are T1079-a, T1079-b) |
 | C6 | Supply chain | Lockfiles enforced, `npm audit`, `pip-audit`, OSV in CI, Renovate or Dependabot, GitHub Actions pinned to SHAs, SBOM per release | S | P3 | done (T1080; pip-audit and OSV become gates after T1080-b) |
