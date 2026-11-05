@@ -629,7 +629,6 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T429-h | T429 | Data seen on the page: a gallery credit reads "0, CC BY 3.0" (Valbona, the author field holds 0), and the Lifestyle panel's trade-off line names the record, "Rome (Fiumicino)", not the town | next task | open |  |
 | T446-c | T446 | Day-trip drive times from the trip model are straight-line (Valbona to Theth 23 min by car); now marked est. on the page, but the pipeline should route them or drop the minutes | next task | open |  |
 | T446-d | T446 | The destination page shows the same landmarks in the gallery, Things to do and Highlights, and the map labels only some numbered pins; one numbered track tied to the map would remove the repetition | next task | open |  |
-| T446-f | T446 | impeccable run inside continent-app (its own git repo) cannot find PRODUCT.md and DESIGN.md at the outer root; sessions read them directly | next task | open |  |
 | T446-g | T446 | The shared Lifestyle panel opened from the price card keeps method lines, Fine tune the counts and ten tiles at once | next task | open |  |
 | T448-b | T448 | profile.carRequired and profile.familyFriendly are unset on 153 of 253 trips, so no-car and good-with-children trip filters cannot ship; backfill from each trip's own text (extends T376-c) | next task | open |  |
 | T448-c | T448 | None of the 52 city and small-town trips names a hostel or dorm bed, so the beds filter only returns mountain trips; add one budget bed line to each accommodation list | next task | open |  |
@@ -809,13 +808,11 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T507-g | T507 | A guest's parked chat answers are not cleared on sign-out, only at their two-hour expiry | next task | open |  |
 | T507-h | T507 | A reload of a day whose plan was deleted falls back to Start without a word; the restored day also opens only when the day planner tab mounts | next task | open |  |
 | T508-a | T508 | Ryanair, Wizz and "stored fare" comments and the data key no_ryanair_route remain in runtime_pricing.js, origins.js, useAppData.js, useDestinationSearch.js, useTripPlanner.js, GuidedTripWizard.jsx, wizardTransit.js, TermsOfService.jsx, bootIndex.js and cityResearch.js; a comment and rename cleanup | next task | open |  |
-| T508-b | T508 | runtime_pricing.js still has fare-window and fare-weekday code (bestFareWindow, countBookableRoundTrips) kept because useAppData imports it; decide whether the fare snapshot code can go | next task | open |  |
 | T508-c | T508 | The Aviasales affiliate hand-off link (Travelpayouts marker, shown as a provider in the trip links) is still live; keep or remove it (procedure: Execution/P15/_OPEN-product-decisions.md, step 70) | user | open | |
 | T508-d | T508 | Dead CSS .fare-badge.* (with .ryanair), the unused key trip.tipCatFlights, and the baggage_key choices and meta.baggage_options in the contract | next task | open |  |
 | T508-e | T508 | Pipeline and root not inspected: scripts/sync-data.mjs reads the Ryanair, Wizz, Vueling and Volotea caches; harvest scripts, SCHEMA.md and baggage_options are Ryanair-era; a pipeline audit | next task | open |  |
 | T508-f | T508 | Test fixtures use Ryanair as sample data (ai/test_import_logic.mjs, verify_magic_import.mjs); harmless, change with T508-a | next task | open |  |
 | T508-g | T508 | The origin tooltip still starts "Where are you flying from?" in all six languages, which hints at flights although Carta prices none | next task | open |  |
-| T509-a | T509 | Owner chose to merge each of the six overlapping roadmap row pairs (T477-a): 1.12 and 1.19, 2.16 and 3.11, 4.15 and 4.23, 4.19 and 2.23, 4.16 and 4.18 with 4.24, 5.12 and 5.13; rewrite the roadmap rows | next task | open |  |
 | T509-b | T509 | The trip planner and the day cost bar print cents ("about 1,328.25 euros for 2 people") against the whole-euros rule 1.8 (DIRECTION.md section 11); older than this batch | next task | open |  |
 | T509-c | T509 | Trip planner card labels show the English country name in Dutch ("Beste tijd, Italy"); older than this batch | next task | open |  |
 | T510-a | T510 | The logo north needle is rust #e05a47 again (owner 2026-10-21) but carta-design and DESIGN.md still describe the brown-needle mark; record the owner choice there | next task | open |  |
@@ -947,7 +944,6 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T622-c | T622 | carta-design Explore v6 to v8 rules (hero band on phone, near-me door, By country track, phone settings sentence, Map after Search) are outdated by T622; rewrite them | next task | open |  |
 | T622-d | T622 | Places' focused view tool row still scrolls sideways on a phone | next task | open |  |
 | T622-e | T622 | i18n key where.placeholder is unused after T622; remove it in all six files | next task | open |  |
-| T623-a | T623 | src/browse/ExploreMap.jsx:901 fails lint (react-hooks/exhaustive-deps: collectKpins missing from a useCallback), from T600; fix it in a task that may touch ExploreMap | next task | open |  |
 | T624-b | T624 | Hostelworld parse_card returned the same figure for dorm and private on a live Munich card (15.53/15.53), so private-room medians may be dorm prices; check live card text and fix hostelworld/page.py | next task | open |  |
 | T630-a | T630 | Run pipeline/trails/way_tags.py --refresh then export_wire.py (trailslab DB) to fill row sac_scale, detail technique, exposure and sac_segments; SAC cards, filter and profile stay placeholders until then | next task | open | 1 |
 | T630-c | T630 | Run the enrich_peaks context pass for every country, then export_peaks, to fill huts, slopeDeg and rangeRank | next task | open |  |
