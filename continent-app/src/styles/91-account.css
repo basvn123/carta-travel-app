@@ -234,6 +234,13 @@ a.ac-row:focus-visible, .ac-row.btn:focus-visible { outline: 2px solid var(--foc
 }
 
 .ac-signout.btn { justify-self: start; }
+/* Sign-out asks whether this device's trips go too (T1054). No box: the
+   question sits where the button was. */
+.ac-out-ask { display: grid; gap: var(--space-2); max-width: 36rem; }
+.ac-out-ask h3 { margin: 0; font-size: var(--text-headline); }
+.ac-out-ask h3:focus { outline: none; }
+.ac-out-ask p { margin: 0; color: var(--text-2); font-size: var(--text-body); }
+.ac-out-ask-btns { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-1); }
 .ac-foot { display: flex; flex-wrap: wrap; gap: 0 var(--space-2); margin-left: calc(var(--space-3) * -1); }
 .ac-foot .btn { color: var(--text-3); font-weight: 500; }
 

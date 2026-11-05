@@ -987,7 +987,7 @@ here yet.
 | `no_ryanair_route` | destination | every | app_data.json block |
 | `anchor_airport` | destination | every | app_data.json block |
 | `costs` | destination | every | app_data.json block |
-| `accommodation` | destination | every | app_data.json block; Schema v18 |
+| `accommodation` | destination | some | app_data.json block; Schema v18. `some` until ROADMAP D10 fills bed prices for the 515 places that lack them (T1057); then back to `every` |
 | `local_transport` | destination | every | app_data.json block |
 | `beauty` | destination | every | app_data.json block |
 | `image` | destination | every | app_data.json block (`hires` stripped on the wire) |

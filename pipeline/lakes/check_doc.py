@@ -65,6 +65,12 @@ for raw in sorted(paths):
         parent = Path(raw).parent
         check(raw, parent.exists(), "" if parent.exists() else f"{parent} missing")
         continue
+    if raw.startswith("cache/") and not (ROOT / raw).exists():
+        # cache/ is per machine (the build box holds the full set), so a
+        # missing cache folder is reported, not failed. Code and doc paths
+        # still fail (T1057, T1051-c).
+        print(f"  not on this machine: {raw} (local cache)")
+        continue
     check(raw, (ROOT / raw).exists(), "" if (ROOT / raw).exists() else "MISSING")
 
 # 2. Python symbols the doc names as living in a module.
