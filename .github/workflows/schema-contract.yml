@@ -116,6 +116,7 @@ jobs:
             /continent-app/scripts/ci/
             /continent-app/public/fares/
             /continent-app/public/app_data.json
+            /continent-app/public/country_insights.json
             /continent-app/public/trails/[A-Z][A-Z].json
             /continent-app/public/beaches/[A-Z][A-Z].json
             /continent-app/public/lakes/[A-Z][A-Z].json
