@@ -221,7 +221,7 @@ Nothing.
 None. Only comments and an unused config file changed in the app.
 
 ### What is still open
-- T293-a (owner, existing): delete the Vercel project and uninstall its GitHub app, then drop the Vercel row from `docs/legal/ARTICLE30.md`.
+- Nothing. The owner deleted the Vercel project and uninstalled its GitHub app on 2026-11-05, and `carta-travel-app.vercel.app` now answers DEPLOYMENT_NOT_FOUND. The Vercel row is out of `docs/legal/ARTICLE30.md`, T293-a is closed and runbook B14 is ticked.
 
 ### Rollback procedure
 `git revert` the T1067 commit.

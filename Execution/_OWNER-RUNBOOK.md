@@ -304,7 +304,7 @@ None of these blocks a wave. Do B4 before 1 November.
 - [ ] **B13. FAT32 guard check (T311-g).** With D: attached:
   `python pipeline/archive/pack.py --dry-run --out D:/carta-archive-out`. It must
   report FAT32 and refuse lakes-cache.
-- [ ] **B14. Delete the Vercel project after 2026-10-09 (T293-a).** Once a week
+- [x] **B14. Delete the Vercel project after 2026-10-09 (T293-a).** Done 2026-11-05. Once a week
   on Pages has passed with no rollback, delete `carta-travel-app` in Vercel (or
   at least detach both domains). After that, rollback is the previous Pages
   deployment.
