@@ -440,8 +440,9 @@ in the layer would be the ones with no season at all.
 
 `docs/tos/data_licenses.md` carries the CHELSA row and records the WorldClim
 risk item as closed. Nothing shipped is derived from WorldClim any more;
-`pipeline/harvest_climate_worldclim.py` and `cache/worldclim` are retained
-only so a pre-2026-08-30 build can be reproduced.
+The old harvester was archived by T028 to `archive/harvest_climate_worldclim.py`,
+and its `cache/worldclim` rasters are no longer kept on the laptop; both are
+only needed to reproduce a pre-2026-08-30 build (T1057).
 
 ## Rebuilding it
 

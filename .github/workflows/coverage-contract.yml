@@ -12,8 +12,9 @@ name: coverage-contract
 #      misses its floor without a reason code.
 #   3. With reports/coverage_gate_baseline.json present, a cell that was ok
 #      may not stop being ok. That is the regression block.
-# Until the contract is committed the gate prints a warning and passes; once
-# it is committed, add --require to step 2 so a deleted contract fails too.
+# Step 2 runs with --require (T1057): a missing contract fails instead of
+# passing with a warning. It stays red until the contract is generated on the
+# build box (cache/regions lives there) and committed, open item T1057-b.
 on:
   push:
     branches: [main]
@@ -53,3 +54,4 @@ jobs:
           python pipeline/regions/coverage_gate.py
           --check reports/coverage_contract.json
           --baseline reports/coverage_gate_baseline.json
+          --require
