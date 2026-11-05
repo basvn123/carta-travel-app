@@ -10,7 +10,7 @@ Screens: Wizard stays step, stays on the trip page.
 
 ## How it works
 
-A scrape (pipeline/stays/box_stays.py and the scheduled task scripts/stays_scrape_task.ps1) writes the stays wire; the app reads it through liveStays.js and staysData.js, and the Pages Function app/functions/api/stays.js serves live prices.
+A scrape (pipeline/stays/box_stays.py and the scheduled task scripts/stays_scrape_task.ps1) writes the stays wire; the app reads it through staysData.js. There are no live prices: the Xotelo path was removed in T1074.
 
 Full rules, formulas and thresholds (read these, do not copy them):
 
@@ -19,7 +19,7 @@ Full rules, formulas and thresholds (read these, do not copy them):
 
 ## Files
 
-App: continent-app/src/lib/liveStays.js, continent-app/src/lib/staysData.js, continent-app/functions/api/stays.js, continent-app/src/planner/wizard/StepStays.jsx
+App: continent-app/src/lib/staysData.js, continent-app/src/planner/wizard/StepStays.jsx
 
 Pipeline and backend: pipeline/stays/box_stays.py, pipeline/stays/scrape_booking.py, pipeline/stays/scrape_hostelworld.py
 
@@ -35,7 +35,7 @@ None yet. Rule IDs and `docs/logic/` arrive with ROADMAP item B3.
 
 ## Quality checks
 
-App tests matched by file name: `continent-app/tests/importStays.test.mjs`, `continent-app/tests/liveStays.test.mjs`, `continent-app/tests/stayPerStop.test.mjs`, `continent-app/tests/stayPrice.test.mjs`, `continent-app/tests/stayTypes.test.mjs`.
+App tests matched by file name: `continent-app/tests/importStays.test.mjs`, `continent-app/tests/stayPerStop.test.mjs`, `continent-app/tests/stayPrice.test.mjs`, `continent-app/tests/stayTypes.test.mjs`.
 
 DOM checks: `continent-app/scripts/verify_stay_picks.mjs`, `continent-app/scripts/verify_stay_tiers.mjs`.
 
