@@ -9,7 +9,8 @@
  *   node scripts/r2/push-data.mjs                      print the plan, touch nothing
  *   node scripts/r2/push-data.mjs --rclone-dry-run     ask rclone what it would do
  *   node scripts/r2/push-data.mjs --live               upload (phase 1)
- *   node scripts/r2/push-data.mjs --live --prune       delete stale objects (phase 2)
+ *   node scripts/r2/push-data.mjs --live --prune       delete stale objects (phase 2), after a typed "delete"
+ *   node scripts/r2/push-data.mjs --live --prune --yes the same, for a scripted run that checked the list
  *   node scripts/r2/push-data.mjs --cors [--live]      set the bucket's CORS rules
  *
  * Two phases, because the app host and the data host cannot change in the
@@ -132,12 +133,22 @@ function uploadPlan() {
 export const OTHER_WRITERS = Object.freeze(['flights']);
 
 /**
+ * Top-level files under data/ the owner or a check puts there by hand, never
+ * pruned (T1056, audit P-14):
+ *   status.json  the outage line (src/lib/statusFile.js, scripts/status_notice.mjs);
+ *                the app asks for it on every boot, so pruning it was a 404
+ *                in every visitor's console
+ *   .keep, _test markers and probes left by setup and access checks
+ */
+export const OWNER_FILES = Object.freeze(['status.json', '.keep', '_test']);
+
+/**
  * The top-level names in an `rclone lsf` listing (directories end in "/")
- * that no R2_TIER entry and no OTHER_WRITERS entry owns. Exported for the
+ * that no R2_TIER, OTHER_WRITERS or OWNER_FILES entry owns. Exported for the
  * test, which feeds it a listing.
  */
 export function staleEntries(listing, tier = R2_TIER) {
-  const keep = new Set([...tier, ...OTHER_WRITERS]);
+  const keep = new Set([...tier, ...OTHER_WRITERS, ...OWNER_FILES]);
   const out = [];
   for (const line of String(listing).split(/\r?\n/)) {
     const raw = line.trim();
@@ -169,7 +180,33 @@ function stalePlan() {
   ]);
 }
 
-function main() {
+/**
+ * Whether a live prune may delete the listed names (T1056). It always prints
+ * them first. --yes answers for a scripted run; otherwise a terminal is asked
+ * to type "delete", and without a terminal (a pipe, a scheduler) the answer
+ * is no. A dry run and an empty list need no answer. Exported for the test,
+ * which passes its own ask.
+ */
+export async function confirmDeletes(names, {
+  dry = RCLONE_DRY, yes = has('--yes'), tty = Boolean(process.stdin.isTTY), ask, log = console.log,
+} = {}) {
+  if (!names.length) { log('Nothing to delete at the top level.'); return true; }
+  log(`${dry ? 'Would delete' : 'About to delete'} ${names.length} top-level name(s):`);
+  for (const n of names) log(`  - ${n}`);
+  if (dry) return true;
+  if (yes) return true;
+  if (!tty) { log('Not deleting: no terminal to confirm at. Re-run with --yes once the list is right.'); return false; }
+  const reply = ask ? await ask() : await askLine('Type "delete" to remove them, anything else to stop: ');
+  return String(reply).trim() === 'delete';
+}
+
+async function askLine(q) {
+  const { createInterface } = await import('node:readline/promises');
+  const rl = createInterface({ input: process.stdin, output: process.stdout });
+  try { return await rl.question(q); } finally { rl.close(); }
+}
+
+async function main() {
   const execute = LIVE || RCLONE_DRY;
   if (execute) {
     const missing = RCLONE_ENV.filter((k) => !process.env[k]);
@@ -195,9 +232,17 @@ function main() {
     if (execute) {
       const stale = stalePlan();
       console.log(`${stale.length} top-level name(s) in ${remoteName}:${bucket}/${prefix}/ are not in R2_TIER`);
-      for (const c of stale) run(c);
+      const names = stale.map((c) => `${c[2]}${c[1] === 'purge' ? '/' : ''}`);
+      if (await confirmDeletes(names)) {
+        for (const c of stale) run(c);
+      } else {
+        console.log('Stopped before the top-level deletes; nothing at the top level was removed.');
+        process.exitCode = 1;
+      }
     } else {
-      console.log(`  then: list ${remoteName}:${bucket}/${prefix}/ and delete each top-level name not in R2_TIER`);
+      console.log(`  then: list ${remoteName}:${bucket}/${prefix}/, print each top-level name no tier entry, `
+        + `other writer or owner file owns, and delete them after a typed "delete" (or --yes)`);
+      console.log(`  kept at the top level: ${[...OTHER_WRITERS, ...OWNER_FILES].join(', ')}`);
     }
   }
   if (!execute) {
@@ -205,4 +250,4 @@ function main() {
   }
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main();
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) await main();
