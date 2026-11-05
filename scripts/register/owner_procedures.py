@@ -26,7 +26,7 @@ SYSTEMS = [
      r"native (review|read|speaker)|machine translation|own translations|translations? (written|wanted)"),
     ("stripe", "Stripe",
      "Everything that needs the Stripe Dashboard or a Stripe-backed purchase. Test mode first; live mode only at launch (ROADMAP I2).",
-     r"stripe|checkout|webhook|refund|trip pass|yearly plan|customer portal|tax_behavior|pass_grants|receipt email|tacit|renewal"),
+     r"stripe|checkout function|webhook|refund|trip pass|yearly plan|customer portal|tax_behavior|pass_grants|receipt email|tacit|renewal"),
     ("legal", "Legal, tax and brand",
      "Reviews, registrations and wording only you or a qualified person can sign off. ROADMAP I1 (sole trader, late registration) and I-R4, I-R5 decide the route.",
      r"legal|terms of service|\bterms\b|privacy|imprint|\bVAT\b|accountant|trademark|EUIPO|KBO|licen[cs]|DPA|GDPR|waiver|article 1|commercial terms|courtesy note|attribution|disclosure"),
@@ -57,7 +57,35 @@ SYSTEMS = [
 ]
 
 
-def classify(item):
+EXISTING = {
+    "T291-b": "Execution/P15/_OPEN-secrets-rotation.md, step 1",
+    "T1046-b": "Execution/P15/_OPEN-secrets-rotation.md, step 1",
+    "T296-a": "Execution/P15/_OPEN-secrets-rotation.md, step 1.4",
+}
+
+OVERRIDES = {
+    "T382-h": "owner-checks", "T384-a": "owner-checks", "T551-a": "data-and-pipeline-runs",
+    "T565-b": "cloudflare", "T218-d": "accounts-and-signups", "T220-c": "product-decisions",
+    "T220-d": "product-decisions", "T319-a": "legal", "T503-g": "product-decisions",
+    "T1048-a": "legal", "T461-a": "cloudflare", "T216-a": "accounts-and-signups",
+    "T213-e": "accounts-and-signups", "T227-b": "cloudflare", "T322-a": "data-and-pipeline-runs",
+    "T557-e": "product-decisions", "T051-a": "cloudflare", "T040-b": "data-and-pipeline-runs",
+    "T144-a": "data-and-pipeline-runs", "T145-b": "data-and-pipeline-runs",
+    "T150-a": "data-and-pipeline-runs", "T152-a": "data-and-pipeline-runs",
+    "T153-a": "data-and-pipeline-runs", "T153-b": "data-and-pipeline-runs",
+    "T839-a": "product-decisions", "T866-b": "product-decisions", "T873-a": "product-decisions",
+    "T1052-a": "legal", "T1047-a": "product-decisions", "T043-b": "owner-checks",
+    "T043-c": "owner-checks", "T072-a": "data-and-pipeline-runs", "T083-c": "owner-checks",
+    "T323-b": "data-and-pipeline-runs", "T332-c": "data-and-pipeline-runs",
+    "T093-a": "data-and-pipeline-runs", "T571-g": "product-decisions",
+    "T808-a": "product-decisions", "T365-f": "product-decisions", "T235-a": "owner-checks",
+    "T235-e": "owner-checks", "T062-a": "owner-checks", "T508-c": "product-decisions",
+}
+
+
+def classify(item, rid=None):
+    if rid in OVERRIDES:
+        return OVERRIDES[rid]
     for slug, _, _, pat in SYSTEMS:
         if re.search(pat, item, re.I):
             return slug
@@ -73,13 +101,19 @@ def sort_key(r):
 def main():
     dry = "--dry-run" in sys.argv
     lines, rows = triage.parse(triage.OPEN)
-    owners = [r for r in rows if r["owner"] == "user" and r["id"] not in SKIP_IDS
+    for r in rows:
+        if r["id"] in EXISTING and "procedure: Execution/" not in r["item"]:
+            ptr = f" (procedure: {EXISTING[r['id']]})"
+            cells = [r["id"], r["raised"], r["item"] + ptr, r["owner"], r["status"], r["order"]]
+            lines[r["idx"]] = triage.fmt_row(cells)
+    owners = [r for r in rows if r["owner"] == "user" and r["id"] not in SKIP_IDS and r["id"] not in EXISTING
+              and not re.search(r"_OPEN-[\w-]+\.md", r["item"])
               and not r["id"].startswith("T714-") and not SKIP_RE.search(r["item"])
               and "procedure: Execution/" not in r["item"]]
     by = {s[0]: [] for s in SYSTEMS}
     for r in owners:
-        by[classify(r["item"])].append(r)
-    new_lines = list(lines)
+        by[classify(r["item"], r["id"])].append(r)
+    new_lines = list(lines)  # lines already carries the EXISTING pointers
     for slug, title, intro, _ in SYSTEMS:
         rs = sorted(by[slug], key=sort_key)
         if not rs:
