@@ -130,4 +130,4 @@ def test_confidence_notes_is_required_by_the_schema_and_the_queue(example):
 
 def test_notes_report_counts_the_catalogue_backlog(tmp_path):
     r = R.notes_report(str(tmp_path / "none"))
-    assert r["catalogue"]["trips"] == 253 and r["catalogue"]["missing"] == 130
+    assert r["catalogue"]["trips"] == 258 and r["catalogue"]["missing"] == 130

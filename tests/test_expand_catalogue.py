@@ -65,7 +65,7 @@ def real_without_plans(tmp_path):
 
 def test_slots_match_the_gap_matrix(tmp_path):
     s = X.slots_summary(real_without_plans(tmp_path))
-    assert s["trips"] == 253
+    assert s["trips"] == 258
     assert s["fill"] == 139                      # the gap matrix's fillable gaps
     assert sum(r["blocked"] for r in s["regions"].values()) == 20
     assert s["planned"] == 0

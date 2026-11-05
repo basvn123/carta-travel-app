@@ -453,8 +453,10 @@ def test_photo_sources_follows_the_exports():
     for key in re.findall(r'"(\w+)"', after):
         assert key in tasks, key
     assert '"--upload", "auto"' in body and '"--allow-missing"' in body
-    # Last in the table, after every export it reads.
-    assert list(tasks)[-1] == "photo_sources"
+    # Last in the table, after every export it reads. T647 (2026-10-24) then
+    # appended the trailslab worker, a build-box job that reads no export, so
+    # it is the one task allowed to follow.
+    assert list(tasks)[-2:] == ["photo_sources", "trailslab_worker"]
 
 
 def test_sources_upload_mode(monkeypatch):

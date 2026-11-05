@@ -49,6 +49,14 @@ def _with_text(body, frag):
     return out
 
 
+# T431 (2026-10-15) added four optional trip fields that no model pass asks
+# for yet: photos (credited Commons files, from the image pipeline), visits
+# (derived from dayPlaces or the day titles), sample (a flag on the five
+# hand-written samples) and highlights and dayPlaces (written by hand on the
+# samples). Whether the passes should write the last two is open (T1068-a).
+T431_OPTIONAL = ("photos", "visits", "sample", "highlights", "dayPlaces")
+
+
 def test_three_slices_cover_the_contract_once():
     covered = []
     for n in (1, 2, 3):
@@ -57,6 +65,8 @@ def test_three_slices_cover_the_contract_once():
     assert len(covered) == len(set(covered)), "a field is asked of two passes"
     for key in G.model_schema()["properties"]:
         if key in ("id", "countryCode", "tripTypeSlug"):
+            continue
+        if key in T431_OPTIONAL:
             continue
         assert any(p == key or p.startswith(key + ".") or p.startswith(key + "[]") for p in covered), key
 

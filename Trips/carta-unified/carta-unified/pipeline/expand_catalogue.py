@@ -338,6 +338,10 @@ def slot_table(trips, planned=None):
     table = {k: {"fill": [], "deepen": [], "blocked": [], "full": []} for k in REGION_KEYS}
     for r in rows:
         slug = SLUG_OF[r["tripTypeId"]]
+        if slug not in TYPE_IDEA:
+            # T431 added five styles with one sample trip each and no brief
+            # idea line: they are not expansion targets (T1068).
+            continue
         cell = {"countryCode": r["countryCode"], "country": r["country"], "tripTypeSlug": slug,
                 "regionKey": r["regionKey"], "viability": r["viability"], "reason": r["viabilityReason"],
                 "tripsInCell": r["tripCount"], "tripIds": list(r["tripIds"]),

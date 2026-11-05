@@ -161,7 +161,7 @@ def test_every_published_trip_yields_a_complete_prompt():
     if not folder.is_dir():
         pytest.skip("data/trips is not checked out")
     trips = B.load_trips(str(folder))
-    assert len(trips) == 253
+    assert len(trips) == 258
     for rec in trips.values():
         p = B.build_prompt(rec)
         assert "{{" not in p and rec["title"] in p

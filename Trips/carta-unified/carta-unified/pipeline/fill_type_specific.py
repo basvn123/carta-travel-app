@@ -387,14 +387,22 @@ def is_generated(t):
     return (t.get("provenance") or {}).get("sourceFormat") == "generated"
 
 
+def is_sample(t):
+    """A T431 sample trip (one per new style) is written by hand in
+    pipeline/journeys/sample_trips.py with its numerics set there. It has no
+    snapshot text for the reader below to parse, so it is never re-derived
+    (T1068)."""
+    return (t.get("provenance") or {}).get("batch") == "t431-samples"
+
+
 def curated(master):
-    return [t for t in master["trips"] if not is_generated(t)]
+    return [t for t in master["trips"] if not is_generated(t) and not is_sample(t)]
 
 
 def build(master):
     basis, rows = {}, {}
     for t in master["trips"]:
-        if is_generated(t):
+        if is_generated(t) or is_sample(t):
             continue
         d = derive(t)
         rows[t["id"]] = d
