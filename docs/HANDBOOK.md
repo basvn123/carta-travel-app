@@ -990,6 +990,7 @@ Worked example at the catalogue's frozen median prices (`bands.ref_prices`: dinn
 7. Sanity bounds per person per night (`stay.bounds_pp_night`): dorm EUR 6 to 150, hotel5 EUR 6 to 900, every other tier EUR 6 to 500.
 8. A scraped bed outside its bounds borrows the median of its country's places for the same tier, party and dates (`stay.repair`). A place the scrape never reached has no bed price ("Not available yet"), never a borrowed one (T1021).
 9. Without dates the bed is the month (Explore month filter) or the annual figure.
+10. Thin tiers (T1075): a tier whose `src[tier].n` is `stay.thin_obs` = 2 or fewer is flagged `thin` on the bed line (with `basis.observations`); 2,684 of 12,696 priced tiers are thin today, and 5 places are thin in every tier. `python scripts/missing_beds.py` writes the re-scrape target list (the 515 places with no bed price grouped by country, FR 94, IT 77, GB 56, GR 40, and the thin places) to `cache/stays/missing_beds.json`. Local transport fares wait on the owner's source choice (T714-b); the table is not built.
 
 Worked example: an entire place for two, annual price EUR 90 a night, 7 nights, no measured month curve.
 - lodging = 7 x 90 = 630.00; weekly discount 8% gives 579.60
@@ -1084,6 +1085,7 @@ Worked example: Easygoing, entire place, bed 50.86 + food 53.58 = day EUR 104.44
 4. The flight comes from `flightLegs` on the request's date mode (see Flights) and `flightQuote` with the party and the bag.
 5. Dates and travellers are the app's own state, so a change here moves every card and pin.
 6. Returns nothing when the bed or food figure is missing.
+7. Honest gaps (T1075): a part with no figure yet gets its own row, "Not yet measured" (`price.notMeasured`), under the lines and above the total, never a zero and never padded into the total. Today that is local transport, until a place has a fare (`unmeasuredParts` in `lib/price/display.js`). A bed priced from `stay.thin_obs` = 2 scraped properties or fewer shows "Few listings measured" (`price.bedThin`) under its figure; the figure itself is unchanged (`bedIsThin`). The count is the wire's `src[tier].n`. Other price screens (trip page, Ask) do not show the flags yet (T1075-c).
 
 Worked example: bed 50.86, food 53.58, 7 nights, 2 people, a swept return of EUR 276 for both (two legs at 49 + cabin bag 20 per seat, see Flights):
 - flight 276.00
@@ -1230,27 +1232,19 @@ Worked example: core 1,738, buffer 10% = 174, total 1,912. Budget 1,800: core fi
 
 **Where it lives.** `pipeline/stays/scrape_booking.py`, `pipeline/stays/scrape_hostelworld.py`, `pipeline/stays/build_stays.py`, `pipeline/stays/box_stays.py`, `pipeline/stays/apply_stays.py`, `continent-app/src/lib/staysData.js`, `continent-app/src/planner/wizard/StepStays.jsx`. Owner steps: `Execution/P15/_OPEN-stays-box.md`. Latest report: `Execution/P15/T1021-stays-scrape-only.md`.
 
+**Scraper health (T1074).** `python scripts/stays_health.py` reads the `session:` lines of `logs/stays_<source>.log` and the scrape journal and writes `cache/stays/stays_health.json`: a yield alert when the latest run's prices per page fall below 70% of the median of the previous 7 runs (no verdict with fewer than 2 earlier runs), and a drift alert when a place's median price per bed kind moves more than 25% from the run before (at least 3 observations in each). Exit 0 clean, 1 alerts, 2 nothing readable. The Hostelworld "677 pages, 0 prices" sessions were villages with no Hostelworld list, not a parser fault; the session line now also counts `pages with no cards`. Booking has been paused since 30 October (blocked); it is left paused, with no evasion. Box steps: `Execution/P15/_OPEN-scraper-health.md`.
+
 **Limits.** The monthly box build is not switched on yet (T1021-a, owner). The licence ledger and attribution still credit Inside Airbnb, Xotelo and Eurostat for stays (T1021-e). The Hostelworld per person verdict rests on one signal (T643-a). 591 places carried a dorm rate over EUR 150 in an older wire (T692-b).
 
 ---
 
 ### Live stays (Xotelo, tonight's hotel prices)
 
-**What it does.** For a dated stay, Carta was built to check tonight's hotel prices in the town and nudge the bed price up or down for festival weeks or quiet weeks. Today it is inert.
+**What it does.** Removed in T1074. Carta was built to check tonight's hotel prices in the town through Xotelo and nudge a stay's bed price for festival or quiet weeks. The scrape only build (T1021) stopped writing the keys it needed, so it had been inert; the function, the app module, the `stay.live` rule and the test are deleted.
 
-**How it works.**
-1. A place's stays record could carry `xk`: up to six Xotelo properties (four hotels, the most reviewed in each price quartile, and two guesthouses), each with its typical night.
-2. The app samples two nights of the stay (the first and the middle) and calls `/api/stays?k=...&n=...&a=1|2`.
-3. The function asks Xotelo per property and night (check out next day, one room), keeps rates from EUR 10 to 5,000, and answers the median per property. Limits: 6 keys, 3 nights, 330 days ahead, 6 calls at a time.
-4. Cache: 12 hours per cell, 6 hours for an empty night, 10 minutes for a failed call; browser 10 minutes. All calls failed gives 502. `LIVE_STAYS=off` in the Pages settings gives 503 and the model price.
-5. The tier factor is tonight / typical, median over matching properties (hotels with that star class, else the matching quartile, else all hotels; guesthouses for `room`). At least half the sampled nights must be priced.
-6. Only hotel2 to hotel5 and room can go live. ratio = live factor / the model's season for those nights. If ratio is within `stay.live` 0.4 to 3, lodging x ratio ^ 0.6 (`damp`). So a real 2x week shows as about 1.5x.
+**What stays.** The bed price is the model from the scrape: `bedPrice` in `continent-app/src/lib/stayPrice.js`. A country's stays arriving still reprices screens, through `useStaysVersion`.
 
-**Data behind it.** Xotelo (free API run by one developer), via `pipeline/stays/live_keys.py` for the keys.
-
-**Where it lives.** `continent-app/functions/api/stays.js`, `continent-app/src/lib/liveStays.js`, `continent-app/src/lib/stayPrice.js` (`bedPrice`, `liveStayRatio`).
-
-**Limits.** The scrape only build (T1021) no longer writes `xk`, so no request is sent and the model price always shows. Register row T1021-b asks to remove it under the single source rule. Whether Xotelo rates include taxes was never settled (T643-b).
+**Leftovers, harmless.** The `stay.live` strings in the six catalogues, `stayLive` in `costIndex.js` and the `live` bed quality in `priceDay.js` are never set now (the same `live` quality is used by flights). The `xk` field is still described in `docs/SCHEMA.md`. Register rows T1074-b to T1074-c.
 
 ---
 
@@ -1453,6 +1447,7 @@ Planning is everything that turns "I want to go somewhere" into a dated, priced 
 **How it works.**
 1. `pipeline/journeys/build_wire.py` reads the unified dataset (`Trips/carta-unified`, schema v2.0: one 7-day itinerary per record, all editorial) and writes three artifacts: an index of styles, one card file per style, one full file per trip.
 2. The dataset has no photos, so the script takes one hero per trip and per style from the Wikipedia API (lead images that are Commons files), only from places the record names. A trip pinned to a gateway or capital never takes that pin's photo. Results are cached in `cache/journey_images.json`.
+   Every hero clears `HERO_FLOOR = 1600` px on its long edge (the validator's `HERO_MIN_W`, spec B3) and ships at `HERO_W = 1920` (T1077). The script reads each photo's original size from the Commons API (cached in `cache/journey_image_sizes.json`). A photo whose original is too small is swapped for the trip's next unused candidate that clears the floor, then for a photo from one of its own places' articles whose file name carries the place's name (`cache/journey_gallery.json`); `HERO_FILE_PINS` holds the hand-picked ones. A photo between 1600 and 1919 px ships as the original file. The journey page gallery gets a srcset up to 1920 (`tripPhoto` in `lib/journeys.js`), so a phone loads 500 or 960.
 3. Every shipped string goes through the house text rules: em and en dashes become a hyphen or a comma, `[VERIFY: ...]` markers are lifted.
 4. `pipeline/journeys/sample_trips.py` adds five sample trips for the five newer styles (hostel, beach week, rail, pilgrim, island hopping). They carry `sample: true`, which keeps them out of the sitemap and prerender until the owner audits them.
 5. In the app, `CartaTrips.jsx` lists the cards: in season this month first, then cheapest a person a day. Pages of `PAGE = 24` cards, an in-season band of `FEATURED = 8` when no filter is on. Filters: month, cost band, tags, style, country.
@@ -2439,21 +2434,44 @@ This section covers the parts of Carta that sit around the travel content: the A
 **How it works.**
 - **Access:** membership is in `public.admin_users`, which has RLS on and no policies, so only a hand-run INSERT in the SQL editor makes an admin (014). Every admin function re-checks `is_admin()`. The client hook `useIsAdmin` is a hint only.
 - **Rate guard:** `admin_guard` (015, 051) caps overall admin calls at 60 a minute, a `live` tier at 20 config, override or feedback saves in 60 seconds, and destructive actions at 10.
-- **MFA:** deleting or banning a user requires an `aal2` session, meaning a verified TOTP factor (032).
-- **Audit log:** every action is logged with no foreign keys so the trail survives deletions; rollback support in 033.
+- **MFA:** every admin RPC requires an `aal2` session, meaning a verified TOTP factor: `admin_guard` checks membership, then `auth.jwt() ->> 'aal'` (a missing claim counts as not `aal2`), then the rate budget, and answers `mfa_required` (062, T1071; before 062 only delete, ban and set tier asked, 032, 045, 051). A non-admin still hears `forbidden`. The admin page shows the step-up box (`MfaStepUp`, `useMfa`) right after the password lock and loads nothing until the session is `aal2`. The admin read policy on the upload bucket needs `aal2` too.
+- **Audit log:** `admin_audit_log` is who (`actor`), `action`, `target` (`user:<id>`, `config:<key>`, `override:<layer>/<item>`, `plan:<id>`, `report:<id>`, `statement:<id>`, `upload:<id>`, `feedback:<id>`, `infra:<month>/<item>`), `reason` and at (`created_at`), plus `target_user`, `detail`, `ip`, `agent`; no foreign keys, so the trail survives deletions; rollback support in 033. A trigger (`audit_log_fill`, 062) fills target and reason from the detail. Every state-changing (VOLATILE) admin RPC writes a row (`admin_set_infra_cost` since 062); reads write none, because the rate budget counts audit rows. A refusal at the guard writes no row either.
 - **Moderation (DSA):** anyone can report a public guide (`report_guide`, 037). A takedown writes a statement of reasons (039). The owner sees it in Saved trips and may contest once per statement within six months, free (`contest_moderation_decision`, `src/auth/moderation.js`).
 - **Launch counters (048):** `src/lib/launchEvents.js` sends three ticks only: `trip_priced`, `affiliate_click`, `ai_call`. Per-day counts, no device id, session id, page path or time of day, so no consent banner. Repeats within `DEDUPE_MS` = 1500 ms count once. Fire and forget.
 - **Edge error logging (040):** `log_edge_error` records failures of `plan-day`, `suggest-city` and `parse-booking` with a closed list of codes (`ai_timeout`, `ai_bad_output`, `url_unreachable`, `ai_error`), origin `edge` or `client`, and HTTP status. No model output or free text. Caps: 100 a day per account, 50,000 a day overall. Chosen over Sentry to keep data first party.
 - **Other telemetry:** paywall events (022), model fallback events (028), cache hit instrumentation (029), AI usage rollup (030), margin dashboard (031), pipeline health (041), parse failures (042).
 
-**Data behind it.** Migrations 014 to 018, 022, 028 to 043, 045, 048, 051. Tables include `admin_users`, `admin_audit_log`, `site_config`, `content_overrides`, `content_reports`, `moderation_statements`, `launch_counts`, `edge_errors`, `edge_error_daily_total`, `ai_model_events`, `ai_cap_events`.
+**Data behind it.** Migrations 014 to 018, 022, 028 to 043, 045, 048, 051, 062. Tables include `admin_users`, `admin_audit_log`, `site_config`, `content_overrides`, `content_reports`, `moderation_statements`, `launch_counts`, `edge_errors`, `edge_error_daily_total`, `ai_model_events`, `ai_cap_events`.
 
 **Where it lives.** `continent-app/src/admin/AdminPage.jsx`, `continent-app/src/components/admin/` (Overview, UsersList, UserDetail, ConfigManager, AuditLog, ContentReports, ModerationComplaints, FeedbackInbox, AiUsage, AiModelFallbacks, CacheHitRate, Margin, LaunchMetrics, EdgeErrors, PipelineHealth, PaywallFunnel, PriceProvenance), `continent-app/src/auth/admin.js`, `continent-app/src/auth/moderation.js`, `continent-app/src/lib/launchEvents.js`, `continent-app/src/planner/edgeFailure.js`, `continent-app/src/hooks/useIsAdmin.js`. Docs: `archive/docs-2026-11/LAUNCH-METRICS.md`, `archive/docs-2026-11/INCIDENT_RUNBOOK.md`.
 
 **Limits.**
 - Several admin migrations are recorded as unapplied: 022, 027, 029, 031 and others (T034-a, T039-d, T043-a, T077-b); their cards show nothing until pasted. Whether 041 is live is unconfirmed (T235-h).
 - `prune_paywall_events` (180 days) is called by nothing (T319-b).
+- 062 (MFA on every admin RPC, audit target and reason) is not applied live until the owner enrols a TOTP factor and pastes it (`Execution/P15/_OPEN-auth-settings.md`). Ban, delete and set tier take no reason argument, so their rows carry none (T1071-b).
 - Ask Carta failures are not written to `edge_errors` (the table only accepts the three Supabase functions).
+
+### Photo and track uploads
+
+**What it does.** A signed-in walker shares a photo or a GPX track of a trail from the trail page ("Add a photo or track"), under a licence they pick (Carta only, CC BY 4.0, CC BY-SA 4.0), with a credit and, for a track, an OpenStreetMap yes or no. Nothing is public until a person publishes it.
+
+**How it works.**
+- **On the device (T333):** `lib/stripImageMeta.js` drops a photo's EXIF, XMP, IPTC and trailers and the form re-encodes it at most 2,560 px; `lib/gpxPrivacy.js` keeps a track's geometry only and hides every point within `PRIVACY_RADIUS_M` (500 m) plus up to `PRIVACY_JITTER_M` (250 m) of its start and end.
+- **Send (`community/uploads.js` `submitUpload`):** `begin_upload` checks the target, licence, credit (2 to 80 characters), the Terms version (`UPLOAD_TERMS_VERSION`, `v_terms` in 061), the OSM tick version and the size (photo 25 MB, track 10 MB), holds 20 reservations a day per account (2,000 overall) under an advisory lock, writes a `reserved` row and answers `{ id, path }` with path `{uid}/{id}.jpg|.gpx`. The file goes into the private bucket `user-uploads` at that path; `finish_upload` checks the file exists with an allowed type and size and sets the row `pending`.
+- **Storage policies (061):** insert only into your own folder and only at one of your own reserved paths; read for the owner and an admin, and for anyone once the row is `published`; no update or delete from a client.
+- **Server privacy pass:** the `upload-scan` Edge Function (every 15 minutes through pg_cron) re-runs both modules on each pending upload (copies in `supabase/functions/_shared`, kept byte-identical by `tests/uploadScan.test.mjs`). A photo with metadata left is stripped and rewritten, a track is trimmed again and rewritten, an unreadable file is removed. `admin_decide_upload` will not publish an upload the pass has not cleared.
+- **Review:** `admin_list_uploads` is the queue; `admin_decide_upload(id, action, ground, statement)` publishes, declines or removes behind `admin_guard('live')`. A decline or removal needs a ground (`illegal` or `terms`) and a statement of reasons (10 to 2,000 characters), sets a six-month contest date, answers open notices on the upload and writes one audit row.
+- **Notices:** `report_content('upload', id, ...)` takes a notice on a published upload with `report_guide`'s validation and shared rate limits; `content_reports` carries `target_kind` and `target_id`. Guide reports still go through `report_guide`; the admin Reports tab lists guide reports only.
+- **Removal:** `remove_my_upload` withdraws an upload on request. Deleting an account queues its `{uid}/` folder; reserved rows without a finish are swept after a day; declined and removed files go after their contest date. The queue (`upload_purge_queue`) is emptied through the Storage API by `upload-scan`.
+
+**Data behind it.** Migration 061: `user_uploads`, `upload_purge_queue`, bucket `user-uploads`, columns `target_kind`, `target_id` on `content_reports`.
+
+**Where it lives.** `continent-app/src/community/uploads.js`, `continent-app/src/community/UploadForm.jsx`, `continent-app/src/lib/stripImageMeta.js`, `continent-app/src/lib/gpxPrivacy.js`, `supabase/migrations/061_user_uploads.sql`, `supabase/functions/upload-scan/`. Latest report: `Execution/P15/T1070-upload-migration.md`.
+
+**Limits.**
+- 061 and `upload-scan` are not applied or deployed until the owner does it (`Execution/P15/_OPEN-uploads.md`); until then a send answers "did not send, nothing was stored".
+- Published uploads are not shown on pages yet and the admin page has no review list (T333-c); `list_published_uploads` and `admin_list_uploads` are ready for it.
+- Only the trail page has the door (T333-d). The legal wording waits on the J4 review (T333-b).
 
 ### The data wire (pipeline to app)
 
@@ -2486,6 +2504,8 @@ This section covers the parts of Carta that sit around the travel content: the A
 - Bindings in `continent-app/wrangler.toml`: R2 `PRERENDER` (bucket `carta-prerender`), Workers AI `AI`, KV `ASK`. Compatibility date 2026-09-23.
 - **Prerender:** `scripts/prerender/build.mjs` reads the wire and writes one HTML page per indexable path (country, section, dest, cost, days, trail, cycle, tour, beach, lake, mountain, region, trip, journey, receipt) into R2, with a manifest, canonicals and an optional share card. The one Pages Function `functions/[[path]].js` serves them for routes in `public/_routes.json`, keeps the shell's CSP and security headers, refuses to serve without a CSP, and falls through to the static app on any miss.
 - **SEO:** titles, descriptions, JSON-LD, canonicals, hreflang across six languages and sitemaps are set out in `archive/docs-2026-11/SEO.md`.
+- **Indexable and the quality bar (T1076, K2):** every prerendered page carries a canonical. A page is indexable only when it clears two gates. The page floor (`prerender/floor.mjs`: title, coordinates, a licensed image, three facts) and the quality bar (`prerender/quality.mjs`, from the research file's "Page quality gate"). The bar for a **place**: a licensed photo, an intro of at least 120 words (`PLACE_MIN_WORDS`), a bed price and a food price, twelve months of climate, a rating, and at least five internal links (`PLACE_MIN_LINKS`). The bar for a **trail**: a licensed photo, at least 60 words of prose (`TRAIL_MIN_WORDS`), length, climb, difficulty, a bounding box for the map, a destination page that links to it, and a season. A page below either gate is still written, with `<meta name="robots" content="noindex,follow">` (and the Pages Function adds `x-robots-tag: noindex, follow`), and stays out of the sitemap. Beach, lake, mountain and cycling pages keep the floor alone. There is no wire key: `indexable` and the per-test `bar` result live in `_manifest.json`, so a page promotes itself on the next prerender when its data clears the bar. Today no trail passes because the wire image has no licence field; `bar_headroom.trail.okIfPhotoLicensed` in the manifest says how many would pass with one.
+- **Sitemaps:** `/sitemap.xml` is an index over one file per page type (site, countries and other hubs, destinations, costs, trails, cycling, beaches, lakes, mountains, trips, journeys), so Search Console reports indexation per type. Only indexable, self-canonical pages are listed; `_sitemap.json` counts what was left out and why (`below the page floor`, `below the quality bar`, `noindex`). Hubs (countries, section lists, NUTS2 regions, trip-length pages) are always indexed. Weekly Search Console review and the 30 percent pause rule: `Execution/P15/_OPEN-search-console.md`.
 
 **Data behind it.** `dist/` (app shell), `dist-data/` (R2 data), `dist-prerender/` (about 32,000 files, deleted after upload).
 
@@ -2561,7 +2581,7 @@ Reading every feature against its code turned up places where the docs, the comm
 | `rating_layer.py`'s docstring describes rating v4 weights; v5 is what runs | Scores, Place rating | T1045-c |
 | Comments that contradict the code: beauty v2 "NOT LIVE", vibe text "top fifth" (code uses the top tenth), CrowdCalendar "no monthly data", sea temperature metadata years and radius | Scores | T1045-c |
 | The 10% budget buffer exists only in Ask's budget search, not in the planner total or the place card | Prices, Ask budget buffer | T1045-d |
-| Live stays (Xotelo) are inert since T1021; no place has a local transport fare yet | Prices | T1045-d |
+| No place has a local transport fare yet | Prices | T1045-d |
 | The toll layer has no `run_pipeline.py` task; `search_index_layer.py` and `guided_search_layer.py` are run by hand, not from the registry | Prices, Discover | T1045-e |
 | plan-day keeps only the first 28 candidates on the server, so the trim limit of 30 never applies; no prompt version beyond `CACHE_KEY_VERSION = 6` | Planning, plan-day | T1045-f |
 | No test checks that the six language files have the same keys; the five non-English files are about 600 lines shorter than English | Platform, Languages | T1045-g |

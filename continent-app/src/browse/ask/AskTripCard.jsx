@@ -6,7 +6,6 @@ import { cheapestReturn, roundTripNear, legCost } from '../../lib/flights/flight
 import { destAnchor } from '../../lib/origins.js';
 import { fetchDestPois } from '../../lib/appData.js';
 import { RouteArrow } from './marks.jsx';
-import { loadLiveStay, useLiveStaysVersion } from '../../lib/liveStays.js';
 import { loadStays, useStaysVersion } from '../../lib/staysData.js';
 import { quoteStay, tripRequest } from '../../lib/price/index.js';
 
@@ -82,18 +81,14 @@ export function AskTripCard({ t, lang, pick, month = null, trip, primary, onOpen
     ? Math.max(1, Math.round((Date.parse(stayTo) - Date.parse(stayFrom)) / 86400000)) : 0;
   const party = trip.party || 2;
   const staysVersion = useStaysVersion();
-  const liveVersion = useLiveStaysVersion();
   React.useEffect(() => { if (full?.iso2) loadStays(full.iso2); }, [full?.iso2]);
-  React.useEffect(() => {
-    if (stayFrom && stayNights) loadLiveStay(id, stayFrom, stayNights, party);
-  }, [id, stayFrom, stayNights, party, staysVersion]);
   // T702 (plan F6): the bed is the engine's, at the trip's party and dates.
   const bed = React.useMemo(
     () => (full && stayNights
       ? quoteStay(full, stayNights, stayFrom, tripRequest({ groupSize: party, stayTier: trip.stayTier }), trip.destinations)
       : null),
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- the versions say a stay or a live answer landed
-    [full, trip.stayTier, party, stayNights, stayFrom, trip.destinations, staysVersion, liveVersion],
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- the version says a stay landed
+    [full, trip.stayTier, party, stayNights, stayFrom, trip.destinations, staysVersion],
   );
   const bedLine = bed?.day?.lines?.find((l) => l.key === 'bed');
   const liveBed = bedLine?.quality === 'live' && bedLine.eur > 0 ? bedLine.eur : null;

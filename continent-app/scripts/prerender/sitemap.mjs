@@ -71,6 +71,7 @@ export function select(pages) {
   };
   for (const p of pages) {
     if (p.floor && !p.floor.ok) { skip(p.kind, 'below the page floor'); continue; }
+    if (p.bar && !p.bar.ok) { skip(p.kind, 'below the quality bar'); continue; }
     if (!p.indexable) { skip(p.kind, 'noindex'); continue; }
     if ((p.canonical || p.path) !== p.path) { skip(p.kind, 'canonical is another page'); continue; }
     const g = GROUP_OF[p.kind];
@@ -145,6 +146,15 @@ export function writeSitemaps(manifest, buildDir, { coverageDate = null } = {}) 
     if (p.floor.ok) k.ok += 1;
     if (!p.floor.image && p.floor.title && p.floor.coords && p.floor.facts) k.imageOnlyMiss += 1;
   }
+  // The quality bar (quality.mjs, T1076), counted per kind and per test.
+  const barred = {};
+  for (const p of manifest.pages) {
+    if (!p.bar) continue;
+    const k = (barred[p.kind] ||= { pages: 0, ok: 0, failing: {} });
+    k.pages += 1;
+    if (p.bar.ok) k.ok += 1;
+    for (const [test, pass] of Object.entries(p.bar)) if (test !== 'ok' && !pass) k.failing[test] = (k.failing[test] || 0) + 1;
+  }
   const listed = manifest.floor_listed || null;
   const unpaged = listed ? sumOf(listed.rows, 'total') + (listed.regions?.total || 0) : null;
   const unpagedOk = listed ? sumOf(listed.rows, 'ok') : null;
@@ -154,10 +164,11 @@ export function writeSitemaps(manifest, buildDir, { coverageDate = null } = {}) 
   const floorLine = `Page floor ${day(manifest.generated_at)}: ${n(sumOf(catalogue, 'ok'))} of ${n(sumOf(catalogue, 'pages'))} catalogue pages meet it and are in the sitemap`
     + (listed ? `; ${n(unpaged)} listed-only rows and coast or range regions have no page, of which ${n(unpagedOk)} would clear it` : '')
     + (costFloor ? `; ${n(costFloor.ok)} of ${n(costFloor.pages)} week cost pages have a figure measured in or near the town and are in the sitemap` : '')
+    + (barred.dest || barred.trail ? `; quality bar: ${n(barred.dest?.ok || 0)} of ${n(barred.dest?.pages || 0)} places and ${n(barred.trail?.ok || 0)} of ${n(barred.trail?.pages || 0)} trails are indexable` : '')
     + `; ${n(summary.listed)} URLs in all.`;
   const report = {
     generated_at: manifest.generated_at, floor_line: floorLine, urls: summary.listed, files, floored,
-    excluded: summary.excluded, listed_rows: listed,
+    excluded: summary.excluded, listed_rows: listed, bar: barred, bar_headroom: manifest.bar_headroom || null,
   };
   fs.writeFileSync(path.join(buildDir, '_sitemap.json'), `${JSON.stringify(report, null, 2)}\n`, 'utf8');
   return report;

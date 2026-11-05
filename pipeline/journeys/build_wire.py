@@ -60,6 +60,17 @@ API = "https://en.wikipedia.org/w/api.php"
 UA = "CartaTravelApp/1.0 (https://carta-europetravel.com; hero image harvest)"
 THUMB_W = 1280          # a width upload.wikimedia.org actually renders
 MIN_W = 640             # a hero narrower than this reads as a thumbnail
+# T1077 (T230-a): the shipped hero must be at least HERO_FLOOR on its long
+# edge (spec B3, validate.py HERO_MIN_W). Heroes are served at HERO_W, the
+# largest width upload.wikimedia.org renders (the app's thumbAt snaps to the
+# same ladder and picks smaller widths through srcset, so cards stay light).
+# A photo whose original is narrower than HERO_W but still clears the floor
+# ships as the original file. Original sizes come from the Commons API and are
+# cached in SIZES_PATH so re-runs stay offline.
+HERO_FLOOR = 1600
+HERO_W = 1920
+SIZES_PATH = ROOT / "cache" / "journey_image_sizes.json"
+COMMONS_API = "https://commons.wikimedia.org/w/api.php"
 FETCH_PAUSE = 0.15      # polite gap between API calls
 
 # The ten canonical types, in schema id order, with the articles whose lead
@@ -494,6 +505,239 @@ def photo_key(img):
     uses the same rule)."""
     name = urllib.parse.unquote(str(img["url"]).split("?")[0].rsplit("/", 1)[-1])
     return re.sub(r"^\d+px-", "", name).lower()
+
+
+def commons_file(img):
+    """The exact Commons file name behind a hero URL (thumb or original)."""
+    path = urllib.parse.urlparse(str(img["url"])).path
+    parts = path.split("/")
+    if "thumb" in parts:
+        i = parts.index("thumb")
+        return urllib.parse.unquote(parts[i + 3]) if len(parts) > i + 3 else None
+    return urllib.parse.unquote(parts[-1]) if parts[-1] else None
+
+
+def load_sizes():
+    try:
+        return json.loads(SIZES_PATH.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+
+
+def fetch_original_sizes(imgs, sizes, allow_fetch):
+    """photo_key -> [width, height] of the Commons original, batched 50 a
+    call. A file Commons does not know is stored as None."""
+    want = {}
+    for img in imgs:
+        if img and img.get("url") and "upload.wikimedia.org" in img["url"]:
+            key = photo_key(img)
+            name = commons_file(img)
+            if name and key not in sizes:
+                want[name] = key
+    names = list(want)
+    for i in range(0, len(names) if allow_fetch else 0, 50):
+        batch = names[i:i + 50]
+        q = urllib.parse.urlencode({
+            "action": "query", "format": "json", "formatversion": "2",
+            "prop": "imageinfo", "iiprop": "size",
+            "titles": "|".join("File:" + n for n in batch)})
+        try:
+            req = urllib.request.Request(f"{COMMONS_API}?{q}", headers={"User-Agent": UA})
+            with urllib.request.urlopen(req, timeout=60) as r:
+                data = json.load(r)
+        except Exception as e:  # noqa: BLE001 - a failed batch stays unknown
+            print(f"  ! commons size batch failed: {e}", file=sys.stderr)
+            continue
+        q_ = data.get("query", {})
+        back = {x["to"]: x["from"] for x in q_.get("normalized", [])}
+        for page in q_.get("pages", []):
+            asked = back.get(page.get("title"), page.get("title"))[len("File:"):]
+            key = want.get(asked) or want.get(asked.replace(" ", "_"))
+            if not key:
+                continue
+            ii = (page.get("imageinfo") or [{}])[0]
+            sizes[key] = [ii["width"], ii["height"]] if ii.get("width") else None
+        for n in batch:
+            sizes.setdefault(want[n], None)
+        time.sleep(FETCH_PAUSE)
+    return sizes
+
+
+def clears_floor(img, sizes):
+    s = sizes.get(photo_key(img)) if img and img.get("url") else None
+    return bool(s) and max(s) >= HERO_FLOOR
+
+
+def upsize(img, sizes):
+    """The hero at HERO_W when the original is that wide, else the original
+    file when it still clears HERO_FLOOR, else unchanged (validate.py then
+    reports it)."""
+    if not img or not img.get("url"):
+        return img
+    s = sizes.get(photo_key(img))
+    if not s:
+        return img
+    ow, oh = s
+    url = img["url"]
+    if ow >= HERO_W and re.search(r"/\d+px-", url):
+        return {**img, "url": re.sub(r"/\d+px-", f"/{HERO_W}px-", url),
+                "w": HERO_W, "h": round(oh * HERO_W / ow)}
+    if max(ow, oh) >= HERO_FLOOR and "/thumb/" in url:
+        parts = urllib.parse.urlparse(url).path.split("/")
+        i = parts.index("thumb")
+        orig = "/".join(parts[:i] + parts[i + 1:i + 4])
+        return {**img, "url": f"https://upload.wikimedia.org{orig}", "w": ow, "h": oh}
+    return img
+
+
+def replace_small_heroes(trips, heroes, per_trip, images, sizes, pinned):
+    """A trip whose hero original is under HERO_FLOOR walks its own
+    candidates, then the itinerary's named towns, and takes the first usable
+    photograph that clears the floor and no other trip holds. Pinned heroes
+    (a person's choice) are never moved. Returns the ids left below the floor."""
+    taken = {photo_key(h): tid for tid, h in heroes.items() if h}
+    left = []
+    for t in sorted(trips, key=lambda x: x["id"]):
+        tid = t["id"]
+        h = heroes.get(tid)
+        if h and clears_floor(h, sizes):
+            continue
+        if tid in pinned:
+            left.append(tid)
+            continue
+        names = list(per_trip.get(tid, []))
+        names += [n for n in itinerary_place_candidates(t) if n not in names]
+        pick = None
+        for landscape in (True, False):
+            for name in names:
+                img = images.get(name)
+                if (usable(img, landscape=landscape) and clears_floor(img, sizes)
+                        and photo_key(img) not in taken):
+                    pick = strip_utm(img)
+                    break
+            if pick:
+                break
+        if pick:
+            if h:
+                taken.pop(photo_key(h), None)
+            heroes[tid] = pick
+            taken[photo_key(pick)] = tid
+        else:
+            left.append(tid)
+    return left
+
+
+GALLERY_PATH = ROOT / "cache" / "journey_gallery.json"
+
+# T1077: heroes chosen by hand, by file name, for trips whose candidates hold
+# no photograph that clears HERO_FLOOR or only a poor one (a government group
+# photo, a university building). Each is a Commons original of at least 1920px
+# showing a place the trip itself names. These win over the audit patch: the
+# four audit picks they replace (Walkers Haute Route, Jerez, Parenzana, West
+# Cork) were under the floor.
+HERO_FILE_PINS = {
+    "be-cycling-flemish-ardennes-bergs": ("Oudenaarde stadhuis 25-9-2016 09-52-11.JPG", "Oudenaarde"),
+    "ch-cozy-towns-appenzell": ("Appenzell Landsgemeindeplatz 20210528.jpg", "Appenzell"),
+    "it-road-trip-sicily-circuit": ("Teatro Massimo (Palermo)-msu-0462.jpg", "Palermo"),
+    "es-cozy-towns-pueblos-blancos": ("Grazalema (Spain).jpg", "Grazalema"),
+    "sk-winter-sports-jasna-tatras": ("Štrbské pleso - panorama.jpg", "Štrbské Pleso"),
+    "gr-hiking-mount-olympus-refuges": ("Olympmassiv-litochoro.JPG", "Mount Olympus"),
+    "de-nature-escape-bayerischer-wald": ("Bayerischer Wald Rachelsee.jpg", "Rachelsee"),
+    "dk-cozy-towns-south-funen-archipelago-aeroe-faaborg-svendborg": ("Ærøskøbing Hafen vom Wasser 02.jpg", "Ærøskøbing"),
+    "ch-hiking-walkers-haute-route-valais": ("Arolla as seen from Aiguille de la Tsa.jpg", "Arolla"),
+    "es-culinary-jerez-sherry-cadiz": ("Bodega Gonzalez- Byas Jerez de la Frontera.JPG", "Jerez de la Frontera"),
+    "hr-cycling-istria-parenzana": ("Groznjan Istria.jpg", "Grožnjan"),
+    "ie-culinary-west-cork-larder-ballymaloe-skibbereen": ("Kinsale Harbour - geograph.org.uk - 2356352.jpg", "Kinsale"),
+}
+
+
+def commons_img(name, title):
+    """A hero record for a Commons file, served at THUMB_W until upsize()."""
+    import hashlib
+    under = name.replace(" ", "_")
+    h = hashlib.md5(under.encode("utf-8")).hexdigest()
+    q = urllib.parse.quote(under)
+    return {"url": f"https://upload.wikimedia.org/wikipedia/commons/thumb/{h[0]}/{h[:2]}/{q}/{THUMB_W}px-{q}",
+            "w": THUMB_W, "h": None, "credit": title,
+            "page": f"https://commons.wikimedia.org/wiki/File:{q}"}
+
+
+def _fold(s):
+    import unicodedata
+    s = unicodedata.normalize("NFKD", str(s)).encode("ascii", "ignore").decode()
+    return re.sub(r"[^a-z0-9]+", " ", s.lower()).strip()
+
+
+def gallery_files(titles, gallery, allow_fetch):
+    """title -> the file names an English Wikipedia article shows (prop=images),
+    cached in GALLERY_PATH."""
+    for t in titles:
+        if t in gallery or not allow_fetch:
+            continue
+        try:
+            data = api_call({"action": "query", "redirects": "1", "prop": "images",
+                             "imlimit": "100", "titles": t})
+            files = []
+            for page in data.get("query", {}).get("pages", []):
+                files += [i["title"][len("File:"):] for i in page.get("images", [])]
+            gallery[t] = files
+        except Exception as e:  # noqa: BLE001
+            print(f"  ! gallery lookup failed for {t}: {e}", file=sys.stderr)
+        time.sleep(FETCH_PAUSE)
+    return gallery
+
+
+def gallery_heroes(trips, heroes, per_trip, sizes, pinned, allow_fetch):
+    """Last resort for a trip still under HERO_FLOOR (T1077): a photograph
+    from the article of one of its own places, never a search hit. A file
+    qualifies only when its name carries the place's name, it is a JPEG, it
+    is landscape, it clears HERO_FLOOR and no other trip holds it, so the
+    picture is of the place the trip names."""
+    gallery = {}
+    try:
+        gallery = json.loads(GALLERY_PATH.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        pass
+    taken = {photo_key(h): tid for tid, h in heroes.items() if h}
+    todo = [t for t in sorted(trips, key=lambda x: x["id"])
+            if t["id"] not in pinned and not clears_floor(heroes.get(t["id"]), sizes)]
+    titles = []
+    for t in todo:
+        titles += [n for n in per_trip.get(t["id"], []) if n not in titles]
+    gallery_files(titles, gallery, allow_fetch)
+    if allow_fetch:
+        GALLERY_PATH.write_text(json.dumps(gallery, ensure_ascii=False, indent=0, sort_keys=True),
+                                encoding="utf-8")
+
+    def as_img(name, title):
+        return {**commons_img(name, title),
+                "page": f"https://en.wikipedia.org/wiki/{urllib.parse.quote(title.replace(' ', '_'))}"}
+
+    cands = {}
+    for t in todo:
+        for title in per_trip.get(t["id"], []):
+            words = [w for w in _fold(title).split() if len(w) > 3]
+            for name in gallery.get(title, []):
+                if not re.search(r"\.jpe?g$", name, re.IGNORECASE) or NOT_A_PHOTO_RE.search(name):
+                    continue
+                if words and not any(w in _fold(name) for w in words):
+                    continue
+                cands.setdefault(t["id"], []).append(as_img(name, title))
+    fetch_original_sizes([i for v in cands.values() for i in v], sizes, allow_fetch)
+    moved = []
+    for t in todo:
+        for img in cands.get(t["id"], []):
+            s = sizes.get(photo_key(img))
+            if not s or s[0] < s[1] or max(s) < HERO_FLOOR or photo_key(img) in taken:
+                continue
+            old = heroes.get(t["id"])
+            if old:
+                taken.pop(photo_key(old), None)
+            heroes[t["id"]] = {**img, "w": THUMB_W, "h": round(s[1] * THUMB_W / s[0])}
+            taken[photo_key(img)] = t["id"]
+            moved.append((t["id"], commons_file(img)))
+            break
+    return moved
 
 
 # Day titles are prose headings, so most of what they hold is not a place:
@@ -942,6 +1186,47 @@ def main():
     n_img = sum(1 for h in heroes.values() if h)
     print(f"{n_img}/{len(trips)} trips have a hero photograph")
 
+    # T1077: every hero at least HERO_FLOOR on its long edge. The itinerary
+    # towns of every trip are looked up so a small hero has somewhere to go.
+    extra = []
+    for t in trips:
+        for n in itinerary_place_candidates(t):
+            if n not in images and n not in extra:
+                extra.append(n)
+    if extra:
+        images.update(fetch_lead_images(extra, cache, allow))
+        if allow:
+            save_cache(cache)
+    sizes = load_sizes()
+    fetch_original_sizes(list(heroes.values()) + list(images.values()), sizes, allow)
+    if allow:
+        SIZES_PATH.write_text(json.dumps(sizes, ensure_ascii=False, indent=0, sort_keys=True),
+                              encoding="utf-8")
+    small_before = sum(1 for h in heroes.values() if h and not clears_floor(h, sizes))
+    still_small = replace_small_heroes(trips, heroes, per_trip, images, sizes,
+                                       pinned=set(overrides))
+    pins = {tid: commons_img(*v) for tid, v in HERO_FILE_PINS.items() if tid in heroes}
+    fetch_original_sizes(list(pins.values()), sizes, allow)
+    for tid, img in pins.items():
+        if clears_floor(img, sizes):
+            heroes[tid] = img
+        else:
+            print(f"  ! HERO_FILE_PINS {tid}: {img['url']} is unknown to Commons or under the floor",
+                  file=sys.stderr)
+    pinned_all = set(overrides) | set(pins)
+    still_small = [t for t in still_small if not clears_floor(heroes.get(t), sizes)]
+    if still_small:
+        moved = gallery_heroes(trips, heroes, per_trip, sizes, pinned_all, allow)
+        for tid, name in moved:
+            print(f"  gallery hero for {tid}: {name}")
+        still_small = [t for t in still_small if not clears_floor(heroes.get(t), sizes)]
+        if allow:
+            SIZES_PATH.write_text(json.dumps(sizes, ensure_ascii=False, indent=0, sort_keys=True),
+                                  encoding="utf-8")
+    heroes = {tid: upsize(h, sizes) for tid, h in heroes.items()}
+    print(f"{small_before} hero(es) under {HERO_FLOOR}px before, "
+          f"{len(still_small)} after" + (": " + ", ".join(still_small) if still_small else ""))
+
     # Style heroes: wide landscape leads only; a style card must not open on
     # a portrait crop.
     type_heroes = {}
@@ -958,6 +1243,11 @@ def main():
         type_heroes[slug] = pick or pick_hero(names, images)
         if not type_heroes[slug]:
             print(f"  ! no hero for style {slug}", file=sys.stderr)
+    fetch_original_sizes(list(type_heroes.values()), sizes, allow)
+    if allow:
+        SIZES_PATH.write_text(json.dumps(sizes, ensure_ascii=False, indent=0, sort_keys=True),
+                              encoding="utf-8")
+    type_heroes = {slug: upsize(h, sizes) for slug, h in type_heroes.items()}
 
     by_type = {slug: [] for slug in TYPE_ORDER}
     for t in trips:

@@ -139,6 +139,28 @@ begin
 end
 $do$;
 grant usage on schema auth to authenticated, anon, service_role;
+-- Supabase Storage as 061 (T1070) sees it: the two tables and foldername().
+create schema if not exists storage;
+create table if not exists storage.buckets (
+  id text primary key, name text not null, owner uuid, public boolean default false,
+  file_size_limit bigint, allowed_mime_types text[],
+  created_at timestamptz default now(), updated_at timestamptz default now()
+);
+create table if not exists storage.objects (
+  id uuid primary key default gen_random_uuid(), bucket_id text references storage.buckets (id),
+  name text, owner uuid, metadata jsonb,
+  created_at timestamptz default now(), updated_at timestamptz default now(), unique (bucket_id, name)
+);
+alter table storage.objects enable row level security;
+create or replace function storage.foldername(name text) returns text[] language plpgsql immutable as $fn$
+declare _parts text[];
+begin
+  select string_to_array(name, '/') into _parts;
+  return _parts[1:array_length(_parts, 1) - 1];
+end
+$fn$;
+grant usage on schema storage to anon, authenticated, service_role;
+grant all on storage.objects, storage.buckets to anon, authenticated, service_role;
 grant usage on schema public to authenticated, anon, service_role;
 alter default privileges in schema public grant all on tables to authenticated, anon, service_role;
 alter default privileges in schema public grant all on sequences to authenticated, anon, service_role;
@@ -677,10 +699,9 @@ if (db.skipped) {
   // here is reported, not failed; a listed gap that no longer occurs fails, so
   // the entry is removed the day the migration lands and the list can only
   // shrink. Never add a gap without its row.
-  const KNOWN_DB_GAPS = {
-    'calls rpc "begin_upload", which no migration creates': 'T333-a (upload migration not written)',
-    'calls rpc "finish_upload", which no migration creates': 'T333-a (upload migration not written)',
-  };
+  // Empty since T1070: 061_user_uploads.sql creates begin_upload and
+  // finish_upload, the two gaps T333-a left. A new entry needs a register row.
+  const KNOWN_DB_GAPS = {};
   const all = validateDbContract(world);
   const known = seed ? [] : Object.keys(KNOWN_DB_GAPS);
   const problems = all.filter((p) => !known.some((k) => p.includes(k)));

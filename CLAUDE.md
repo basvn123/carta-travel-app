@@ -20,7 +20,7 @@ Carta is a Europe trip planner: a Python data pipeline in this repo and a Vite +
 | `Execution/P{n}/_DIGEST.md` | One file per finished phase: what each task changed and what broke. Search it, do not read it whole. |
 | `Execution/P15/` | The active phase, full reports. |
 | `Execution/_TEMPLATE.md` | The report template. |
-| `docs/` | Started over on 2026-11-04 (T1050). Today: `HANDBOOK.md`, `AUDIT-2026-11.md`, `research/`, `legal/ARTICLE30.md`, and four files code reads, which must stay where they are: `SCHEMA.md`, `tos/data_licenses.md` (generated), `REGIONS.md`, `LAKES.md`. New docs follow the tree in ROADMAP item B2. |
+| `docs/` | Index in `docs/README.md` (what to read for what). Tree: `HANDBOOK.md`, `areas/` (one doc per MAP row), `architecture/`, `data/`, `runbooks/`, `glossary.md`, stubs `logic/`, `ai/`, `reference/`, `security/` (Track C), plus `AUDIT-2026-11.md`, `research/`, `legal/ARTICLE30.md`. Four files code reads must stay where they are: `SCHEMA.md`, `tos/data_licenses.md` (generated), `REGIONS.md`, `LAKES.md`. New docs follow the tree in ROADMAP item B2. |
 | `archive/` | Retired code, finished plans and the old docs (`archive/docs-2026-11/`, `archive/roadmap-2026-10/`). Nothing there runs or binds; do not read it to find your way. |
 | `scripts/vite.fast.mjs` | The fast build (see Checks). |
 

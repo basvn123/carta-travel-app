@@ -5,6 +5,7 @@ import { readOwnFare, writeOwnFare, markFirstResultSeen } from '../lib/firstRun.
 import { tripDaysBetween } from '../lib/runtime_pricing.js';
 import { addDays, fmtDate } from '../lib/dates.js';
 import { quoteNights } from '../lib/price/nights.js';
+import { unmeasuredParts } from '../lib/price/display.js';
 import { useSettledFigure } from '../lib/figureChange.js';
 import { Button, Money, Segmented } from '../components/ui/index.js';
 import { formatMoney } from '../lib/money.js';
@@ -32,7 +33,6 @@ import { stopsText } from '../lib/flights/flightText.js';
 import { useAirlines } from '../lib/flights/useAirlines.js';
 import { homeFlightSetup, withEnds } from './cartaFlight.js';
 import { useStaysVersion } from '../lib/staysData.js';
-import { loadLiveStay } from '../lib/liveStays.js';
 import { rule } from '../lib/price/config.js';
 import { useDayView } from '../hooks/useDayView.js';
 import { PriceItems } from '../components/PriceItems.jsx';
@@ -158,16 +158,8 @@ export function DestPriceCard({
         pickedWay && mode !== 'plane' ? { mode, total: pickedWay.perPerson * people } : null)),
     [costRow, nights, people, fare, carta, flightOff, chosenActs, mode, pickedWay],
   );
-  // T540: with the traveller's own dates, ask for tonight's hotel prices on
-  // those nights; the cost index reprices the bed from them when they land.
-  const staysVersion = useStaysVersion();
-  const ownFrom = ctx?.departDate || null;
-  const ownTo = ctx?.returnDate || null;
-  React.useEffect(() => {
-    if (ownFrom && ownTo && ownTo > ownFrom) {
-      loadLiveStay(dest.id, ownFrom, Math.max(1, tripDaysBetween(ownFrom, ownTo)), people);
-    }
-  }, [dest.id, ownFrom, ownTo, people, staysVersion]);
+  // Re-render when a country's stays arrive (T1074: the live Xotelo ask is gone).
+  useStaysVersion();
 
   const dayRef = React.useRef(null);
   useSettledFigure(dayRef, price ? `${dest.id}:${Math.round(price.dayEur)}` : '');
@@ -430,7 +422,18 @@ export function DestPriceCard({
                     </button>
                   ) : lineLabel(l)}
                 </dt>
-                <dd><Money value={l.eur} /></dd>
+                <dd>
+                  <Money value={l.eur} />
+                  {l.thin && <small className="tcard-thin">{t('price.bedThin')}</small>}
+                </dd>
+              </div>
+            ))}
+            {/* T1075 (D10): a part with no figure yet says so in words; the
+                total under it does not include it, and is never padded. */}
+            {unmeasuredParts(costRow).map((key) => (
+              <div key={key} className="tcard-line is-unmeasured">
+                <dt>{t(`price.item.${key}`)}</dt>
+                <dd><span className="money is-missing tcard-unmeasured">{t('price.notMeasured')}</span></dd>
               </div>
             ))}
             <div className="tcard-line is-total">

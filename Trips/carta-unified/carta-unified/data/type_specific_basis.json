@@ -732,13 +732,6 @@
         "text": " 2,000 m of cumulative stair climb"
       }
     },
-    "mc-city-riviera-week": {
-      "distanceKm": {
-        "value": 55,
-        "basis": "stated",
-        "text": "55–70 km on foot"
-      }
-    },
     "nl-city-amsterdam-canal-belt": {
       "distanceKm": {
         "value": 55,
@@ -828,6 +821,13 @@
         "value": 55,
         "basis": "stated",
         "text": "55–65 km walked"
+      }
+    },
+    "mc-city-riviera-week": {
+      "distanceKm": {
+        "value": 55,
+        "basis": "stated",
+        "text": "55–70 km on foot"
       }
     },
     "nl-cozy-towns-hanseatic-ijssel": {
@@ -1190,6 +1190,18 @@
         "value": 2000,
         "basis": "stated",
         "text": " 2,000–2,600 m cumulative ascent"
+      }
+    },
+    "cz-nature-escape-jeseniky-cabin": {
+      "distanceKm": {
+        "value": 75,
+        "basis": "stated",
+        "text": "75–95 km"
+      },
+      "verticalM": {
+        "value": 3000,
+        "basis": "stated",
+        "text": " 3,000–3,600 m cumulative ascent"
       }
     },
     "de-hiking-allgaeu-heilbronner-weg": {
@@ -1653,18 +1665,6 @@
         "value": 3000,
         "basis": "stated",
         "text": " 3,000–3,400 m cumulative ascent"
-      }
-    },
-    "cz-nature-escape-jeseniky-cabin": {
-      "distanceKm": {
-        "value": 75,
-        "basis": "stated",
-        "text": "75–95 km walking"
-      },
-      "verticalM": {
-        "value": 3000,
-        "basis": "stated",
-        "text": " 3,000–3,600 m cumulative ascent"
       }
     },
     "cz-nature-escape-sumava-wilderness": {

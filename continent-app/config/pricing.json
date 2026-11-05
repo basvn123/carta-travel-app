@@ -48,6 +48,15 @@
       "review": "2027-04-24",
       "test": "tests/priceEngine.test.mjs"
     },
+    "stay.thin_obs": {
+      "value": 2,
+      "unit": "observations",
+      "kind": "estimate",
+      "source": "Carta rule: a bed tier priced from this many scraped properties or fewer is shown as thinly measured (ROADMAP D10, T1075)",
+      "date": "2026-11-05",
+      "review": "2027-05-05",
+      "test": "tests/priceThin.test.mjs"
+    },
     "stay.weekend_nights": {
       "value": [
         5,
@@ -81,19 +90,6 @@
       "date": "2026-10-21",
       "review": "2027-04-24",
       "test": "tests/stayPrice.test.mjs"
-    },
-    "stay.live": {
-      "value": {
-        "damp": 0.6,
-        "ratio_min": 0.4,
-        "ratio_max": 3
-      },
-      "unit": "exponent / ratio",
-      "kind": "estimate",
-      "source": "Carta estimate: six hotels are a small sample, so live moves the model by its ratio ^ 0.6 (T540)",
-      "date": "2026-10-22",
-      "review": "2027-04-24",
-      "test": "tests/liveStays.test.mjs"
     },
     "stay.bounds_pp_night": {
       "value": {

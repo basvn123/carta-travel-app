@@ -6,7 +6,6 @@ import { reorderSavings } from '../lib/tripCostOptimizer.js';
 import { planBedOf, localToday } from '../lib/myTrips.js';
 import { addDays } from '../lib/dates.js';
 import { useLiveFlights } from '../lib/flights/useLiveFlights.js';
-import { loadLiveStay, useLiveStaysVersion } from '../lib/liveStays.js';
 import { useStaysVersion } from '../lib/staysData.js';
 import {
   fetchTripPlanWithStops, createTripPlan, renameTripPlan, saveTripPlanStops,
@@ -450,25 +449,13 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
   }), [flightPrefs, flightPicks, stops, tripStart, tripEnd, groupSize, children, babies, transportPref, legModes, ownLegs,
     ownStays, transferMode, baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, stayTier,
     lifestyle, flightHours, flightRank]);
-  // T559: each dated stop asks for tonight's prices on its own nights; a live
-  // answer bumps liveVersion and reprices the beds (bedPrice reads it).
-  const liveVersion = useLiveStaysVersion();
+  // T1074: the live Xotelo ask per stop is gone; a country's stays arriving
+  // still reprices the trip, through the version below.
   const staysVersion = useStaysVersion();
   const pricedSwept = useMemo(
-    () => (liveVersion >= 0 ? quoteTrip(tripState, { data, countryInsights }) : null),
-    [tripState, data, countryInsights, liveVersion],
+    () => (staysVersion >= 0 ? quoteTrip(tripState, { data, countryInsights }) : null),
+    [tripState, data, countryInsights, staysVersion],
   );
-  const liveAsks = (pricedSwept?.stopDetails || [])
-    .filter((s) => s.dest && s.arriveDate && s.nights > 0)
-    .map((s) => `${s.dest.id}|${s.arriveDate}|${s.nights}`).join(',');
-  useEffect(() => {
-    if (!liveAsks) return;
-    const people = Math.max(1, (tripState.groupSize || 1) + (tripState.children || 0));
-    for (const ask of liveAsks.split(',')) {
-      const [id, date, nights] = ask.split('|');
-      loadLiveStay(id, date, Number(nights), people);
-    }
-  }, [liveAsks, tripState.groupSize, tripState.children, staysVersion]);
   const liveAnswers = useLiveFlights(pricedSwept.cartaFlight?.queries);
   const liveFlights = useMemo(() => {
     const picks = pickedLive(flightPicks);

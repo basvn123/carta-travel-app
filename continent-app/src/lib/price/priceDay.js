@@ -31,9 +31,14 @@ import { carHire } from './car.js';
 import { rule } from './config.js';
 
 const RIDES = rule('transport.rides_per_day');
+const THIN = rule('stay.thin_obs');
 
 const cents = (v) => Math.round(v * 100) / 100;
 const num = (v) => (v != null && Number.isFinite(v) ? cents(v) : null);
+
+// T1075 (D10): a bed tier priced from THIN observations or fewer is thin. The
+// count is the wire's own src[tier].n; unknown is not thin (no guess).
+export const isThin = (n) => n != null && Number.isFinite(n) && n <= THIN;
 
 function bedQuality(row) {
   if (row.stayEur == null) return 'missing';
@@ -98,8 +103,9 @@ function linesOf(row, req, iso2, dest = null) {
   return [
     {
       key: 'bed', status: st('bed', 'included'), eur: num(row.stayEur), quality: bedQuality(row),
+      thin: isThin(row.stayN),
       basis: { tier: row.stayTier, tierFallback: !!row.tierFallback, nights: req.nights, seats: seatsOf(req),
-        when: req.when.kind, ...(row.stayUnits || {}) },
+        when: req.when.kind, observations: row.stayN ?? null, ...(row.stayUnits || {}) },
       provenance: { level: row.stayLevel, source: row.stayBasis, from: row.source, km: row.stayKm,
         captured: row.captured, repaired: !!row.stayRepaired, scaled: !!row.stayScaled, live: row.stayLive },
     },

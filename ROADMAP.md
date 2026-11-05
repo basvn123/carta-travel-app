@@ -263,7 +263,7 @@ The order of work is the phase plan in section 4. Every item's **Phase** column 
 |---|---|---|---|---|---|
 | A1 | Top-level layout | Root and `continent-app/` root clean, MAP updated, tests and dry run pass (T1050: docs and stray folders archived; live code folders moved to A2; `Trips/` waits on A-a) | M | P0 | done |
 | A2 | Pipeline structure | `run_pipeline.py` split by domain, flat files grouped, ruff on touched files | L | P4 | todo |
-| A3 | Register triage | Under 250 open rows, owner rows in one procedure per system | M | P1 | todo |
+| A3 | Register triage | Under 250 open rows, owner rows in one procedure per system | M | P1 | in progress (T1072: 1,603 to 1,423 rows; T1072-a) |
 | A4 | Claude context, lean and exact | Memory index under 5 KB with stale memories merged or removed; CLAUDE.md and MAP.md corrected and only pointing at files that exist; one entry path (CLAUDE.md, then MAP.md, then the handbook section, then the file); skills folder trimmed; a check that fails when MAP or CLAUDE names a missing path (T1051: memory index 15 KB to 3.7 KB, CLAUDE and MAP corrected, `scripts/docs/check_entry_points.py` plus the `entry-points` workflow; skills kept, since the project impeccable skill is the one in use; `continent-app/.git` removal stays an owner step, T1040-d) | S | P0 | done |
 
 ### Item details
@@ -366,7 +366,7 @@ Plus: runbooks (how to operate), a glossary (every Carta term), and research not
 | ID | Item | Done when | Size | Phase | Status |
 |---|---|---|---|---|---|
 | B1 | Carta Handbook | `docs/HANDBOOK.md` explains every feature from the code (T1045: 93 features) | M | P0 | done |
-| B2 | Docs tree and area docs | New `docs/` tree, 12 distrusted docs archived, stale core rewritten, 9 missing area docs written, CLAUDE.md corrected | M | P1 | todo |
+| B2 | Docs tree and area docs | New `docs/` tree, 12 distrusted docs archived, stale core rewritten, 9 missing area docs written, CLAUDE.md corrected | M | P1 | in progress (T1073: tree and area docs; T1073-a) |
 | B3 | Logic catalogue | Every rule tagged with an ID in code, one catalogue entry per ID, two-way CI check | L | P2 to P3 | todo |
 | B4 | Config reference | `_doc` on every key of `rating.json`, `pricing.json` and quality rules; tables generated | S | P3 | todo |
 | B5 | Data lineage and diagrams | Per field: source, task, file; Mermaid diagrams of the pipeline and the request paths, generated | M | P3 | todo |
@@ -482,9 +482,9 @@ docs/
 
 | ID | Item | Done when | Size | Phase | Status |
 |---|---|---|---|---|---|
-| C1 | Threat model | Every surface modelled with STRIDE (or C-R1's method), threats ranked, each mapped to a control and test | M | P1 | todo |
+| C1 | Threat model | Every surface modelled with STRIDE (or C-R1's method), threats ranked, each mapped to a control and test | M | P1 | done (T1069) |
 | C2 | Secrets and accounts | Inventory of every secret (where, who, rotation), rotation done for old ones, MFA on every owner account, recovery codes stored | S | P0 | in progress: inventory done (T1059), owner rotation open |
-| C3 | Auth and access | Supabase auth settings per C-R3, admin behind MFA and role checks, session lifetimes set, admin actions audit-logged | M | P1 | todo |
+| C3 | Auth and access | Supabase auth settings per C-R3, admin behind MFA and role checks, session lifetimes set, admin actions audit-logged | M | P1 | in progress (T1071: code half; Dashboard is T1071-a) |
 | C4 | Data access and RLS | RLS on every table proven by tests (exist, extended), service-role key never in the browser, storage and R2 access reviewed | S | P2 | todo |
 | C5 | Web and API hardening | Strict CSP and security headers, CORS allow-list, input validation on every endpoint, durable rate limits (with H3), Stripe webhook signature check verified | M | P2 | todo |
 | C6 | Supply chain | Lockfiles enforced, `npm audit`, `pip-audit`, OSV in CI, Renovate or Dependabot, GitHub Actions pinned to SHAs, SBOM per release | S | P3 | todo |
@@ -593,12 +593,12 @@ docs/
 | D2 | Quality engine and scorecard | One engine, scorecard and 90-day trend per run, admin Data health panel | M | P3 | todo |
 | D3 | Provenance and freshness per field | Every key block carries `_src` and `_asof`; sources registry generated | M | P4 | todo |
 | D4 | Truth set | 150 items verified by hand, scored per release | M | P3 | todo |
-| D5 | Scraper and source health | Yield, drift and staleness alerts reach admin and email | S | P1 | todo |
+| D5 | Scraper and source health | Yield, drift and staleness alerts reach admin and email | S | P1 | in progress (T1074: box steps T1074-c) |
 | D6 | Coverage fairness | Parity table per country, region and language in `docs/data/` | S | P4 | todo |
 | D7 | Trails and outdoor fill | Trail targets in the table met; display names cleaned; difficulty weighs climb and terrain, not length; mountains and lakes filled (P-21, P-30, P-36) | L | P1 | todo |
 | D8 | Sea temperature | `sea_temp` run, beaches re-exported, `climate.water_c` filled, beach strip draws (P-22) | S | P1 | todo |
 | D9 | Place text and photos | Intros, guide text and galleries to target, French, Italian and UK first; POI descriptions; intros in six languages (P-23, P-24) | L | P2 (top 300), P4 | todo |
-| D10 | Prices completed | Local transport fare table for 741 places; bed prices for the 515 missing places; "not yet measured" shown honestly (P-25, P-26) | M | P1 | todo |
+| D10 | Prices completed | Local transport fare table for 741 places; bed prices for the 515 missing places; "not yet measured" shown honestly (P-25, P-26) | M | P1 | in progress (T1075; fares wait on T714-b) |
 | D11 | UK crowds by month | ONS or VisitBritain regional visitor nights for GB, plus BA, FO, MD, XK (P-27) | S | P1 | todo |
 | D12 | Freshness and stamps | Every wire inside its limit; `generated_at` correct in `app_data.json` and all wires (P-29) | S | P1 | todo |
 | D13 | Getting there mode choice | Mode picked by door-to-door time and cost; flights preferred above a distance; checked on 50 origin and destination pairs (P-31) | M | P1 | todo |
@@ -1090,7 +1090,7 @@ docs/
 | ID | Item | Done when | Size | Phase | Status |
 |---|---|---|---|---|---|
 | K1 | Positioning and brand basics | One-page positioning (from K-R1), launch market and language, name check (EUIPO), social handles, a press-ready logo and screenshots | S | P0 | in progress: draft done (T1060), owner decisions open |
-| K2 | SEO plumbing and the page quality gate | Prerender and canonical live; `indexable` field from the pipeline; pages below the bar `noindex,follow` and out of the sitemap; sitemaps split by page type; hubs indexed; structured data; weekly Search Console review | M | P1 | todo |
+| K2 | SEO plumbing and the page quality gate | Prerender and canonical live; `indexable` field from the pipeline; pages below the bar `noindex,follow` and out of the sitemap; sitemaps split by page type; hubs indexed; structured data; weekly Search Console review | M | P1 | in progress (T1076: bar decision T1076-b) |
 | K3 | Waitlist and newsletter | Waitlist on Home with double opt-in and a referral jump (3 referrals = a free Trip Pass, 10 = a founding yearly price); a monthly "best-value places" newsletter | S | P0 to P1 | todo |
 | K4 | Build in public | A weekly post (pipeline, data, design, AI engineering) on LinkedIn and one other channel; a public changelog page | S, ongoing | P0 onwards | todo |
 | K5 | Data stories | Europe Cost Index 2027 with a methodology page and a local angle per country; Sunshine Saturday release on Sat 2 Jan 2027; a June "quiet clean beaches" ranking | M | P2, P4 | todo |
