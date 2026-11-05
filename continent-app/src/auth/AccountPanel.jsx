@@ -265,6 +265,9 @@ export function AccountPanel({
   // T936: the password form opens in place under its row.
   const [pwOpen, setPwOpen] = useState(false);
   const [signOutBusy, setSignOutBusy] = useState(false);
+  const [outAsk, setOutAsk] = useState(false);
+  const outAskRef = useRef(null);
+  useEffect(() => { if (outAsk) outAskRef.current?.focus(); }, [outAsk]);
   const [signOutErr, setSignOutErr] = useState('');
   const [deleteArmed, setDeleteArmed] = useState(false);
   const [deletePassword, setDeletePassword] = useState('');
@@ -729,8 +732,16 @@ export function AccountPanel({
     portal: () => Promise.resolve({ ok: true, mock: true }),
   } : { cancel: cancelYearly, resume: resumeYearly, portal: openBillingPortal };
 
-  // Signing out keeps Account open on its signed-out Overview.
-  const doSignOut = () => { setView('home'); signOut(); };
+  // Signing out keeps Account open on its signed-out Overview. It first asks
+  // whether this device's copy of the traveller's trips goes too (T1054, P-09):
+  // right on a shared phone, a loss on their own, so it is their call.
+  const doSignOut = () => { setView('home'); setOutAsk(true); };
+  const finishSignOut = async (clearDevice) => {
+    setOutAsk(false);
+    await signOut({ clearDevice });
+    // A reload drops the copies already held in memory by open screens.
+    if (clearDevice && typeof window !== 'undefined') window.location.reload();
+  };
   // Every device, this one too (Supabase's global scope).
   const signOutEverywhere = async () => {
     setSignOutErr('');
@@ -892,9 +903,19 @@ export function AccountPanel({
         </Group>
       )}
       <Group id="ac-g-help" title={t('side.help')}>{helpRows}</Group>
-      {signedIn && (
+      {signedIn && (outAsk ? (
+        <div className="ac-out-ask" role="group" aria-labelledby="ac-out-ask-h">
+          <h3 id="ac-out-ask-h" ref={outAskRef} tabIndex={-1}>{t('account.outAsk')}</h3>
+          <p>{t('account.outAskP')}</p>
+          <div className="ac-out-ask-btns">
+            <Button variant="primary" iconStart={<SignOutIcon size={20} />} onClick={() => finishSignOut(true)}>{t('account.outClear')}</Button>
+            <Button onClick={() => finishSignOut(false)}>{t('account.outKeep')}</Button>
+            <Button variant="quiet" onClick={() => setOutAsk(false)}>{t('auth.cancel')}</Button>
+          </div>
+        </div>
+      ) : (
         <Button className="ac-signout" iconStart={<SignOutIcon size={20} />} onClick={doSignOut}>{t('account.signOut')}</Button>
-      )}
+      ))}
       {legal}
     </>
   );

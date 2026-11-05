@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { getSupabase, authConfigured, mayHaveSession } from '../lib/supabaseClient.js';
+import { clearDeviceThings } from '../lib/deviceData.js';
 
 const AuthContext = createContext(null);
 
@@ -161,9 +162,13 @@ export function AuthProvider({ children }) {
     await supabase.auth.refreshSession();
   }, []);
 
-  const signOut = useCallback(async () => {
+  // With clearDevice, this device's copy of the traveller's own things goes
+  // too (trips, plans, bookings, crew, chats; lib/deviceData.js). Sign-out asks
+  // first, because device trips are not all in the account (T1054, P-09).
+  const signOut = useCallback(async ({ clearDevice = false } = {}) => {
     const supabase = await getSupabase();
     await supabase.auth.signOut();
+    if (clearDevice) clearDeviceThings();
   }, []);
 
   /**
