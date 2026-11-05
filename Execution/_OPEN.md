@@ -1311,7 +1311,6 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1022-c | T1022 | The climate comfort index rates Rome's August (33 C) Good while the verdict says Hot and busy; decide whether comfort weighs heat harder (Execution/P15/T1022-when-stay.md) (procedure: Execution/P15/_OPEN-product-decisions.md, step 140) | user | open | |
 | T1034-b | T1034 | Git history still holds the old screenshots and reports (packs 1.42 GB); reclaiming it needs a history rewrite and force push: decide (procedure: Execution/P15/_OPEN-product-decisions.md, step 144) | user | open | |
 | T1034-c | T1034 | Slim continent-app the same way: three September CARTA_*.md prompt files, bash.exe.stackdump, review its 93 tracked images | next task | open | |
-| T1034-d | T1034 | Triage the 1,534 open register rows; many are likely done or stale | next task | open | |
 | T1034-e | T1034 | Fold P15 into a digest with scripts/execution_digest.py when the phase closes | next task | open | |
 | T1034-f | T1034 | Branches p0-next-steps-docs (root 4 commits) and p11-flights-to-august (root 2, app 1) are unmerged: merge or delete (procedure: Execution/P15/_OPEN-owner-checks.md, step 79) | user | open | |
 | T1024-a | T1024 | The place page intro's lead sentence is split in the client; build_dossier.py should write lead and rest, and the intro should exist in all six languages (Execution/P15/T1024-place-head.md) | next task | open |  |
