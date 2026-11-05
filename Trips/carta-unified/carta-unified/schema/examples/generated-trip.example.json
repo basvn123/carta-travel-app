@@ -37,7 +37,7 @@
  "gatewayAirport": "Vienna (VIE)",
  "gatewayAirportCode": "VIE",
  "coordinates": null,
- "tripType": "Cycling Trips",
+ "tripType": "Cycling",
  "tripTypeId": 1,
  "tripTypeSlug": "cycling",
  "durationDays": 7,
