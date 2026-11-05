@@ -77,7 +77,7 @@ def task_num(rid):
 
 
 def area_of(row):
-    text = row["item"]
+    text = re.sub(r" \(procedure: [^)]*\)", "", row["item"])  # ignore the pointer T1072 appends
     for name, pat in AREAS:
         if re.search(pat, text, re.I):
             return name
