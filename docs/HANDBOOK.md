@@ -1230,27 +1230,19 @@ Worked example: core 1,738, buffer 10% = 174, total 1,912. Budget 1,800: core fi
 
 **Where it lives.** `pipeline/stays/scrape_booking.py`, `pipeline/stays/scrape_hostelworld.py`, `pipeline/stays/build_stays.py`, `pipeline/stays/box_stays.py`, `pipeline/stays/apply_stays.py`, `continent-app/src/lib/staysData.js`, `continent-app/src/planner/wizard/StepStays.jsx`. Owner steps: `Execution/P15/_OPEN-stays-box.md`. Latest report: `Execution/P15/T1021-stays-scrape-only.md`.
 
+**Scraper health (T1074).** `python scripts/stays_health.py` reads the `session:` lines of `logs/stays_<source>.log` and the scrape journal and writes `cache/stays/stays_health.json`: a yield alert when the latest run's prices per page fall below 70% of the median of the previous 7 runs (no verdict with fewer than 2 earlier runs), and a drift alert when a place's median price per bed kind moves more than 25% from the run before (at least 3 observations in each). Exit 0 clean, 1 alerts, 2 nothing readable. The Hostelworld "677 pages, 0 prices" sessions were villages with no Hostelworld list, not a parser fault; the session line now also counts `pages with no cards`. Booking has been paused since 30 October (blocked); it is left paused, with no evasion. Box steps: `Execution/P15/_OPEN-scraper-health.md`.
+
 **Limits.** The monthly box build is not switched on yet (T1021-a, owner). The licence ledger and attribution still credit Inside Airbnb, Xotelo and Eurostat for stays (T1021-e). The Hostelworld per person verdict rests on one signal (T643-a). 591 places carried a dorm rate over EUR 150 in an older wire (T692-b).
 
 ---
 
 ### Live stays (Xotelo, tonight's hotel prices)
 
-**What it does.** For a dated stay, Carta was built to check tonight's hotel prices in the town and nudge the bed price up or down for festival weeks or quiet weeks. Today it is inert.
+**What it does.** Removed in T1074. Carta was built to check tonight's hotel prices in the town through Xotelo and nudge a stay's bed price for festival or quiet weeks. The scrape only build (T1021) stopped writing the keys it needed, so it had been inert; the function, the app module, the `stay.live` rule and the test are deleted.
 
-**How it works.**
-1. A place's stays record could carry `xk`: up to six Xotelo properties (four hotels, the most reviewed in each price quartile, and two guesthouses), each with its typical night.
-2. The app samples two nights of the stay (the first and the middle) and calls `/api/stays?k=...&n=...&a=1|2`.
-3. The function asks Xotelo per property and night (check out next day, one room), keeps rates from EUR 10 to 5,000, and answers the median per property. Limits: 6 keys, 3 nights, 330 days ahead, 6 calls at a time.
-4. Cache: 12 hours per cell, 6 hours for an empty night, 10 minutes for a failed call; browser 10 minutes. All calls failed gives 502. `LIVE_STAYS=off` in the Pages settings gives 503 and the model price.
-5. The tier factor is tonight / typical, median over matching properties (hotels with that star class, else the matching quartile, else all hotels; guesthouses for `room`). At least half the sampled nights must be priced.
-6. Only hotel2 to hotel5 and room can go live. ratio = live factor / the model's season for those nights. If ratio is within `stay.live` 0.4 to 3, lodging x ratio ^ 0.6 (`damp`). So a real 2x week shows as about 1.5x.
+**What stays.** The bed price is the model from the scrape: `bedPrice` in `continent-app/src/lib/stayPrice.js`. A country's stays arriving still reprices screens, through `useStaysVersion`.
 
-**Data behind it.** Xotelo (free API run by one developer), via `pipeline/stays/live_keys.py` for the keys.
-
-**Where it lives.** `continent-app/functions/api/stays.js`, `continent-app/src/lib/liveStays.js`, `continent-app/src/lib/stayPrice.js` (`bedPrice`, `liveStayRatio`).
-
-**Limits.** The scrape only build (T1021) no longer writes `xk`, so no request is sent and the model price always shows. Register row T1021-b asks to remove it under the single source rule. Whether Xotelo rates include taxes was never settled (T643-b).
+**Leftovers, harmless.** The `stay.live` strings in the six catalogues, `stayLive` in `costIndex.js` and the `live` bed quality in `priceDay.js` are never set now (the same `live` quality is used by flights). The `xk` field is still described in `docs/SCHEMA.md`. Register rows T1074-b to T1074-c.
 
 ---
 
@@ -2561,7 +2553,7 @@ Reading every feature against its code turned up places where the docs, the comm
 | `rating_layer.py`'s docstring describes rating v4 weights; v5 is what runs | Scores, Place rating | T1045-c |
 | Comments that contradict the code: beauty v2 "NOT LIVE", vibe text "top fifth" (code uses the top tenth), CrowdCalendar "no monthly data", sea temperature metadata years and radius | Scores | T1045-c |
 | The 10% budget buffer exists only in Ask's budget search, not in the planner total or the place card | Prices, Ask budget buffer | T1045-d |
-| Live stays (Xotelo) are inert since T1021; no place has a local transport fare yet | Prices | T1045-d |
+| No place has a local transport fare yet | Prices | T1045-d |
 | The toll layer has no `run_pipeline.py` task; `search_index_layer.py` and `guided_search_layer.py` are run by hand, not from the registry | Prices, Discover | T1045-e |
 | plan-day keeps only the first 28 candidates on the server, so the trim limit of 30 never applies; no prompt version beyond `CACHE_KEY_VERSION = 6` | Planning, plan-day | T1045-f |
 | No test checks that the six language files have the same keys; the five non-English files are about 600 lines shorter than English | Platform, Languages | T1045-g |
