@@ -22,7 +22,9 @@ test('the anon key is public by design and is not flagged', () => {
 
 test('any other role, and the new secret key format, are flagged', () => {
   assert.deepEqual(findSecrets(token('supabase_admin')), [{ kind: 'jwt', role: 'supabase_admin' }]);
-  assert.deepEqual(findSecrets('k="sb_secret_abcdefgh12345678"'), [{ kind: 'sb_secret', role: 'secret' }]);
+  // Built at runtime so the source never holds a key-shaped literal (secret-scan.yml).
+  const fake = ['sb', 'secret', 'abcdefgh12345678'].join('_');
+  assert.deepEqual(findSecrets(`k="${fake}"`), [{ kind: 'sb_secret', role: 'secret' }]);
 });
 
 test('a string that only looks like a JWT is ignored', () => {

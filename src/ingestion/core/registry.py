@@ -166,23 +166,19 @@ RUNS: dict[str, Run] = {
     "pipeline/harvest_pois_overture.py": Run("backfill", "overture", "hard"),
     "pipeline/harvest_pois_wikidata_images.py": Run("backfill", "poi_images_wikidata", "hard"),
     "pipeline/harvest_protected_areas_osm.py": Run("backfill", "nature", "hard"),
-    "pipeline/harvest_tourism_density.py": Run("quarterly", "crowding", "hard"),
+    "pipeline/harvest_tourism_density.py": Run("quarterly", "crowding", "soft"),
+    "pipeline/harvest_emergency.py": Run("quarterly", "dest_overlays", "soft"),
+    "pipeline/harvest_swim_bans.py": Run("quarterly", "dest_overlays", "soft"),
+    "pipeline/harvest_poi_fees.py": Run("quarterly", "poi_fees", "soft"),
+    "pipeline/harvest_sea_temp.py": Run("quarterly", "sea_temp", "soft"),
     "pipeline/harvest_unesco_whc.py": Run("quarterly", "unesco", "soft"),
     "pipeline/harvest_urban_fabric.py": Run("manual", "", "manual"),
     "pipeline/harvest_wikivoyage.py": Run("backfill", "guide", "hard"),
     "pipeline/harvest_wikivoyage_listings.py": Run("monthly", "poi_significance", "soft"),
-    # pipeline/stays/: the stay-price layer (T530-T536). The monthly half also
-    # runs on GitHub Actions (.github/workflows/stays-refresh.yml); the scrape
-    # half is the owner's twice-yearly laptop run, so it is manual here.
-    "pipeline/stays/harvest_eurostat.py": Run("monthly", "stays", "soft"),
-    "pipeline/stays/harvest_iab.py": Run("monthly", "stays", "soft",
-                                         "Inside Airbnb publishes quarterly; a run "
-                                         "without a new snapshot reuses the download"),
-    "pipeline/stays/price_xotelo.py": Run("monthly", "stays", "soft"),
-    "pipeline/stays/calibrate_serpapi.py": Run("monthly", "stays", "soft",
-                                               "SKIPs without SERPAPI_KEY"),
-    "pipeline/stays/discover_xotelo.py": Run("quarterly", "stays_discover", "soft"),
-    "pipeline/stays/harvest_supply.py": Run("quarterly", "stays_discover", "soft"),
+    # pipeline/stays/: the stay-price layer. Only the owner's twice-yearly
+    # laptop scrape remains (T1021 retired the monthly Eurostat, Inside Airbnb,
+    # Xotelo, SerpApi and Overpass-supply scripts; their ledger rows are kept
+    # as retired history).
     "pipeline/stays/scrape_booking.py": Run("manual", "", "manual",
                                             "owner, March and September, laptop only"),
     "pipeline/stays/scrape_hostelworld.py": Run("manual", "", "manual",
@@ -1331,6 +1327,7 @@ SOURCES = (
     # Stay-price layer (T530-T536): only medians per destination are published.
     Source(
         key="xotelo_tripadvisor_rates",
+        retired=True,
         section="content_layers",
         scripts=('pipeline/stays/discover_xotelo.py', 'pipeline/stays/price_xotelo.py'),
         name="Xotelo, TripAdvisor-based hotel prices (`pipeline/stays/price_xotelo.py`)",
@@ -1364,6 +1361,7 @@ SOURCES = (
     ),
     Source(
         key="openstreetmap_overpass_stays",
+        retired=True,
         section="content_layers",
         scripts=('pipeline/stays/harvest_supply.py',),
         name="OpenStreetMap via Overpass, stays (`pipeline/stays/harvest_supply.py`)",
@@ -1375,6 +1373,7 @@ SOURCES = (
     ),
     Source(
         key="eurostat_hicp_ppp_nights",
+        retired=True,
         section="content_layers",
         scripts=('pipeline/stays/harvest_eurostat.py',),
         name="Eurostat HICP CP112, price levels, nights (`pipeline/stays/harvest_eurostat.py`)",
@@ -1386,6 +1385,7 @@ SOURCES = (
     ),
     Source(
         key="ecb_euro_reference_rates",
+        retired=True,
         section="content_layers",
         scripts=('pipeline/stays/harvest_iab.py',),
         name="ECB euro foreign exchange reference rates (`pipeline/stays/harvest_iab.py`)",
@@ -1397,6 +1397,7 @@ SOURCES = (
     ),
     Source(
         key="serpapi_google_hotels_calibration",
+        retired=True,
         section="content_layers",
         scripts=('pipeline/stays/calibrate_serpapi.py',),
         name="SerpApi Google Hotels, free tier (`pipeline/stays/calibrate_serpapi.py`)",
@@ -1408,6 +1409,7 @@ SOURCES = (
     ),
     Source(
         key="inside_airbnb",
+        retired=True,
         section="content_layers",
         scripts=('pipeline/stays/harvest_iab.py',),
         name="Inside Airbnb (`pipeline/stays/harvest_iab.py`)",
@@ -1538,6 +1540,50 @@ SOURCES = (
         attribution="Yes: © OpenStreetMap contributors",
         share_alike="Yes: derived databases carry ODbL obligations",
         attributed="Map tiles credit OSM via the attribution control; the nature and POI layers shipped inside app_data.json are credited in the Account panel's Data sources screen. Share-alike review still needed for the OSM-derived slice of app_data.json",
+    ),
+    Source(
+        key="wikidata_emergency_numbers",
+        section="content_layers",
+        scripts=('pipeline/harvest_emergency.py',),
+        name="Wikidata P2852 emergency phone numbers, and OpenStreetMap hospitals via Overpass (`pipeline/harvest_emergency.py`)",
+        takes="Emergency numbers per country and the nearest hospital per destination (dossier practical facts)",
+        licence="CC0 1.0 (Wikidata); ODbL 1.0 (OpenStreetMap)",
+        attribution="Wikidata: no; OpenStreetMap: Yes, © OpenStreetMap contributors",
+        share_alike="OpenStreetMap part: Yes, derived databases carry ODbL obligations",
+        attributed="OpenStreetMap is credited in the Data sources screen (src/data/attribution.js); Wikidata needs no credit",
+    ),
+    Source(
+        key="openstreetmap_swimming_no",
+        section="content_layers",
+        scripts=('pipeline/harvest_swim_bans.py',),
+        name="OpenStreetMap `swimming=no` via Overpass (`pipeline/harvest_swim_bans.py`)",
+        takes="Swim ban flags near destinations (dossier practical facts)",
+        licence="ODbL 1.0",
+        attribution="Yes: © OpenStreetMap contributors",
+        share_alike="Yes: derived databases carry ODbL obligations",
+        attributed="OpenStreetMap is credited in the Data sources screen (src/data/attribution.js)",
+    ),
+    Source(
+        key="openstreetmap_charge_tag",
+        section="content_layers",
+        scripts=('pipeline/harvest_poi_fees.py',),
+        name="OpenStreetMap `charge` and `fee` tags via Overpass (`pipeline/harvest_poi_fees.py`)",
+        takes="POI entry fee flags and charge records, read by the dossier build; no price is shown",
+        licence="ODbL 1.0",
+        attribution="Yes: © OpenStreetMap contributors",
+        share_alike="Yes: derived databases carry ODbL obligations",
+        attributed="OpenStreetMap is credited in the Data sources screen (src/data/attribution.js)",
+    ),
+    Source(
+        key="nasa_jpl_mur_sst",
+        section="content_layers",
+        scripts=('pipeline/harvest_sea_temp.py',),
+        name="NASA JPL MUR SST v4.1 monthly means via NOAA CoastWatch ERDDAP, dataset jplMURSST41mday (`pipeline/harvest_sea_temp.py`)",
+        takes="Monthly sea surface temperature per beach and coastal destination",
+        licence="Public domain (NASA PO.DAAC data policy: no restrictions on use or redistribution)",
+        attribution="Requested, not required: credit NASA JPL MUR SST",
+        share_alike="No",
+        attributed="Not yet credited in the app; add a line to the Data sources screen (register row T1084-a)",
     ),
     Source(
         key="openstreetmap_via_overpass_harvest_parking",
@@ -2698,6 +2744,10 @@ STORABLE_VOCAB = (
     "Yes, per file, with credit", "No", "Verify", "n/a", "Per row above",
 )
 STORABLE: dict[str, str] = {
+    'wikidata_emergency_numbers': 'Yes, with credit and share-alike',
+    'openstreetmap_swimming_no': 'Yes, with credit and share-alike',
+    'openstreetmap_charge_tag': 'Yes, with credit and share-alike',
+    'nasa_jpl_mur_sst': 'Yes',
     'exchangerate_api_open_endpoint': 'Verify',
     'hostelworld_partner_api': 'Verify',
     'liteapi_nuitee': 'Verify',
