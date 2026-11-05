@@ -37,12 +37,15 @@
  *   person, on the moderation surface of T067 to T070. A published upload is
  *   reportable through report_content, designed in the T333 report.
  *
- * THE SERVER HALF DOES NOT EXIST YET. Storing an upload needs a table, a
- * private storage bucket and three functions (begin_upload, finish_upload,
- * report_content), which is a migration, and this task was allowed none. The
- * T333 report designs them and row T333-a carries the work. Until it lands,
- * a send on a real project answers "did not send, nothing was stored", the
- * same honest failure the guide report gave before 037 was pasted.
+ * THE SERVER HALF is supabase/migrations/061_user_uploads.sql (T1070): the
+ * table, the private bucket user-uploads and its policies, begin_upload,
+ * finish_upload and report_content, plus the upload-scan Edge Function that
+ * re-runs the privacy pass on the server. Until the owner applies it, a send
+ * on a real project answers "did not send, nothing was stored", the same
+ * honest failure the guide report gave before 037 was pasted. When
+ * UPLOAD_TERMS_VERSION or OSM_TICK_VERSION below changes, begin_upload's
+ * v_terms and v_osm change in a new migration, or every send answers
+ * no_grant.
  */
 import { getSupabase } from '../lib/supabaseClient.js';
 import { E2E_SEAMS } from '../lib/e2eSeams.js';

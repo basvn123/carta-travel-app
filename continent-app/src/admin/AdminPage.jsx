@@ -6,6 +6,8 @@ import { useI18n } from '../i18n/index.jsx';
 import { LockIcon, CloseIcon } from '../components/Icons.jsx';
 import { ContentSection } from '../components/admin/ContentSection.jsx';
 import { AdminLock } from '../components/admin/AdminLock.jsx';
+import { MfaStepUp } from '../components/admin/MfaStepUp.jsx';
+import { useMfa } from '../components/admin/useMfa.js';
 import { MissingTables } from '../components/admin/MissingTables.jsx';
 import { Overview } from '../components/admin/Overview.jsx';
 import { UsersList } from '../components/admin/UsersList.jsx';
@@ -93,21 +95,28 @@ export function AdminPage({ onClose }) {
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
 
-  const marginDash = useMargin(unlocked);
-  const overview = useOverview(unlocked);
-  const { audit, auditBusy, loadAudit } = useAuditLog(unlocked);
-  const queue = useFeedbackInbox(unlocked, overview.refreshAnalytics, errText);
-  const content = useContentOverrides(unlocked);
-  const config = useConfigManager(unlocked, errText, loadAudit);
-  const list = useUsersList(unlocked, errText);
+  // Migration 062 (T1071) makes every admin RPC refuse a session below aal2,
+  // so nothing loads until the session has verified a second factor: the
+  // page shows the step-up box after the lock, and `open` gates every hook
+  // that would otherwise fire RPCs into a wall of mfa_required.
+  const mfa = useMfa();
+  const open = unlocked && mfa.stepped;
+
+  const marginDash = useMargin(open);
+  const overview = useOverview(open);
+  const { audit, auditBusy, loadAudit } = useAuditLog(open);
+  const queue = useFeedbackInbox(open, overview.refreshAnalytics, errText);
+  const content = useContentOverrides(open);
+  const config = useConfigManager(open, errText, loadAudit);
+  const list = useUsersList(open, errText);
   const account = useUserDetail({
     errText, reloadList: list.reloadList, refreshStats: overview.refreshStats, loadAudit,
   });
   const { detail, setDetail } = account;
-  const guidesIndex = usePublicGuides(unlocked && section === 'guides', errText);
-  const reports = useContentReports(unlocked && section === 'reports', errText);
+  const guidesIndex = usePublicGuides(open && section === 'guides', errText);
+  const reports = useContentReports(open && section === 'reports', errText);
   const unpublishHook = useUnpublishGuide({ errText, guidesIndex, reports, loadAudit });
-  const complaints = useModerationComplaints(unlocked && section === 'reports', errText);
+  const complaints = useModerationComplaints(open && section === 'reports', errText);
   const decisionHook = useModerationDecision({ errText, reports, complaints, loadAudit });
   const unpublish = { ...unpublishHook, arm: (k) => { decisionHook.cancel(); unpublishHook.arm(k); } };
   const decision = { ...decisionHook, arm: (k) => { unpublishHook.cancel(); decisionHook.arm(k); } };
@@ -124,6 +133,25 @@ export function AdminPage({ onClose }) {
   // ---- the lock -----------------------------------------------------------
   if (!unlocked) {
     return <AdminLock onUnlock={() => setUnlocked(true)} onClose={onClose} />;
+  }
+
+  // ---- the second factor (062) ----------------------------------------------
+  if (!mfa.stepped) {
+    return (
+      <div className="adminpage adminpage-locked">
+        <div className="adminpage-lock">
+          <span className="adminpage-lock-icon" aria-hidden="true"><LockIcon size={22} /></span>
+          <h1 className="adminpage-lock-title">{t('admin.title')}</h1>
+          <p className="adminpage-lock-hint">{t('admin.mfaPageHint')}</p>
+          <MfaStepUp mfa={mfa} idPrefix="admin-page" />
+          <div className="adminpage-lock-actions">
+            <button type="button" className="adminpage-btn" onClick={onClose}>
+              {t('admin.lockCancel')}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (

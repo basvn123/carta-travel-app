@@ -2439,21 +2439,44 @@ This section covers the parts of Carta that sit around the travel content: the A
 **How it works.**
 - **Access:** membership is in `public.admin_users`, which has RLS on and no policies, so only a hand-run INSERT in the SQL editor makes an admin (014). Every admin function re-checks `is_admin()`. The client hook `useIsAdmin` is a hint only.
 - **Rate guard:** `admin_guard` (015, 051) caps overall admin calls at 60 a minute, a `live` tier at 20 config, override or feedback saves in 60 seconds, and destructive actions at 10.
-- **MFA:** deleting or banning a user requires an `aal2` session, meaning a verified TOTP factor (032).
-- **Audit log:** every action is logged with no foreign keys so the trail survives deletions; rollback support in 033.
+- **MFA:** every admin RPC requires an `aal2` session, meaning a verified TOTP factor: `admin_guard` checks membership, then `auth.jwt() ->> 'aal'` (a missing claim counts as not `aal2`), then the rate budget, and answers `mfa_required` (062, T1071; before 062 only delete, ban and set tier asked, 032, 045, 051). A non-admin still hears `forbidden`. The admin page shows the step-up box (`MfaStepUp`, `useMfa`) right after the password lock and loads nothing until the session is `aal2`. The admin read policy on the upload bucket needs `aal2` too.
+- **Audit log:** `admin_audit_log` is who (`actor`), `action`, `target` (`user:<id>`, `config:<key>`, `override:<layer>/<item>`, `plan:<id>`, `report:<id>`, `statement:<id>`, `upload:<id>`, `feedback:<id>`, `infra:<month>/<item>`), `reason` and at (`created_at`), plus `target_user`, `detail`, `ip`, `agent`; no foreign keys, so the trail survives deletions; rollback support in 033. A trigger (`audit_log_fill`, 062) fills target and reason from the detail. Every state-changing (VOLATILE) admin RPC writes a row (`admin_set_infra_cost` since 062); reads write none, because the rate budget counts audit rows. A refusal at the guard writes no row either.
 - **Moderation (DSA):** anyone can report a public guide (`report_guide`, 037). A takedown writes a statement of reasons (039). The owner sees it in Saved trips and may contest once per statement within six months, free (`contest_moderation_decision`, `src/auth/moderation.js`).
 - **Launch counters (048):** `src/lib/launchEvents.js` sends three ticks only: `trip_priced`, `affiliate_click`, `ai_call`. Per-day counts, no device id, session id, page path or time of day, so no consent banner. Repeats within `DEDUPE_MS` = 1500 ms count once. Fire and forget.
 - **Edge error logging (040):** `log_edge_error` records failures of `plan-day`, `suggest-city` and `parse-booking` with a closed list of codes (`ai_timeout`, `ai_bad_output`, `url_unreachable`, `ai_error`), origin `edge` or `client`, and HTTP status. No model output or free text. Caps: 100 a day per account, 50,000 a day overall. Chosen over Sentry to keep data first party.
 - **Other telemetry:** paywall events (022), model fallback events (028), cache hit instrumentation (029), AI usage rollup (030), margin dashboard (031), pipeline health (041), parse failures (042).
 
-**Data behind it.** Migrations 014 to 018, 022, 028 to 043, 045, 048, 051. Tables include `admin_users`, `admin_audit_log`, `site_config`, `content_overrides`, `content_reports`, `moderation_statements`, `launch_counts`, `edge_errors`, `edge_error_daily_total`, `ai_model_events`, `ai_cap_events`.
+**Data behind it.** Migrations 014 to 018, 022, 028 to 043, 045, 048, 051, 062. Tables include `admin_users`, `admin_audit_log`, `site_config`, `content_overrides`, `content_reports`, `moderation_statements`, `launch_counts`, `edge_errors`, `edge_error_daily_total`, `ai_model_events`, `ai_cap_events`.
 
 **Where it lives.** `continent-app/src/admin/AdminPage.jsx`, `continent-app/src/components/admin/` (Overview, UsersList, UserDetail, ConfigManager, AuditLog, ContentReports, ModerationComplaints, FeedbackInbox, AiUsage, AiModelFallbacks, CacheHitRate, Margin, LaunchMetrics, EdgeErrors, PipelineHealth, PaywallFunnel, PriceProvenance), `continent-app/src/auth/admin.js`, `continent-app/src/auth/moderation.js`, `continent-app/src/lib/launchEvents.js`, `continent-app/src/planner/edgeFailure.js`, `continent-app/src/hooks/useIsAdmin.js`. Docs: `archive/docs-2026-11/LAUNCH-METRICS.md`, `archive/docs-2026-11/INCIDENT_RUNBOOK.md`.
 
 **Limits.**
 - Several admin migrations are recorded as unapplied: 022, 027, 029, 031 and others (T034-a, T039-d, T043-a, T077-b); their cards show nothing until pasted. Whether 041 is live is unconfirmed (T235-h).
 - `prune_paywall_events` (180 days) is called by nothing (T319-b).
+- 062 (MFA on every admin RPC, audit target and reason) is not applied live until the owner enrols a TOTP factor and pastes it (`Execution/P15/_OPEN-auth-settings.md`). Ban, delete and set tier take no reason argument, so their rows carry none (T1071-b).
 - Ask Carta failures are not written to `edge_errors` (the table only accepts the three Supabase functions).
+
+### Photo and track uploads
+
+**What it does.** A signed-in walker shares a photo or a GPX track of a trail from the trail page ("Add a photo or track"), under a licence they pick (Carta only, CC BY 4.0, CC BY-SA 4.0), with a credit and, for a track, an OpenStreetMap yes or no. Nothing is public until a person publishes it.
+
+**How it works.**
+- **On the device (T333):** `lib/stripImageMeta.js` drops a photo's EXIF, XMP, IPTC and trailers and the form re-encodes it at most 2,560 px; `lib/gpxPrivacy.js` keeps a track's geometry only and hides every point within `PRIVACY_RADIUS_M` (500 m) plus up to `PRIVACY_JITTER_M` (250 m) of its start and end.
+- **Send (`community/uploads.js` `submitUpload`):** `begin_upload` checks the target, licence, credit (2 to 80 characters), the Terms version (`UPLOAD_TERMS_VERSION`, `v_terms` in 061), the OSM tick version and the size (photo 25 MB, track 10 MB), holds 20 reservations a day per account (2,000 overall) under an advisory lock, writes a `reserved` row and answers `{ id, path }` with path `{uid}/{id}.jpg|.gpx`. The file goes into the private bucket `user-uploads` at that path; `finish_upload` checks the file exists with an allowed type and size and sets the row `pending`.
+- **Storage policies (061):** insert only into your own folder and only at one of your own reserved paths; read for the owner and an admin, and for anyone once the row is `published`; no update or delete from a client.
+- **Server privacy pass:** the `upload-scan` Edge Function (every 15 minutes through pg_cron) re-runs both modules on each pending upload (copies in `supabase/functions/_shared`, kept byte-identical by `tests/uploadScan.test.mjs`). A photo with metadata left is stripped and rewritten, a track is trimmed again and rewritten, an unreadable file is removed. `admin_decide_upload` will not publish an upload the pass has not cleared.
+- **Review:** `admin_list_uploads` is the queue; `admin_decide_upload(id, action, ground, statement)` publishes, declines or removes behind `admin_guard('live')`. A decline or removal needs a ground (`illegal` or `terms`) and a statement of reasons (10 to 2,000 characters), sets a six-month contest date, answers open notices on the upload and writes one audit row.
+- **Notices:** `report_content('upload', id, ...)` takes a notice on a published upload with `report_guide`'s validation and shared rate limits; `content_reports` carries `target_kind` and `target_id`. Guide reports still go through `report_guide`; the admin Reports tab lists guide reports only.
+- **Removal:** `remove_my_upload` withdraws an upload on request. Deleting an account queues its `{uid}/` folder; reserved rows without a finish are swept after a day; declined and removed files go after their contest date. The queue (`upload_purge_queue`) is emptied through the Storage API by `upload-scan`.
+
+**Data behind it.** Migration 061: `user_uploads`, `upload_purge_queue`, bucket `user-uploads`, columns `target_kind`, `target_id` on `content_reports`.
+
+**Where it lives.** `continent-app/src/community/uploads.js`, `continent-app/src/community/UploadForm.jsx`, `continent-app/src/lib/stripImageMeta.js`, `continent-app/src/lib/gpxPrivacy.js`, `supabase/migrations/061_user_uploads.sql`, `supabase/functions/upload-scan/`. Latest report: `Execution/P15/T1070-upload-migration.md`.
+
+**Limits.**
+- 061 and `upload-scan` are not applied or deployed until the owner does it (`Execution/P15/_OPEN-uploads.md`); until then a send answers "did not send, nothing was stored".
+- Published uploads are not shown on pages yet and the admin page has no review list (T333-c); `list_published_uploads` and `admin_list_uploads` are ready for it.
+- Only the trail page has the door (T333-d). The legal wording waits on the J4 review (T333-b).
 
 ### The data wire (pipeline to app)
 
