@@ -102,13 +102,25 @@ jobs:
       # with public/fares without pulling the 48k generated layer files.
       - uses: actions/checkout@v4
         with:
+          # Pattern mode (T1061): the nature folders hold about 17,000 files each,
+          # and the gate reads only their country files.
+          sparse-checkout-cone-mode: false
           sparse-checkout: |
-            docs
-            supabase
-            continent-app/src
-            continent-app/config
-            continent-app/scripts/ci
-            continent-app/public/fares
+            /*
+            !/*/
+            /docs/
+            /supabase/
+            /continent-app/package.json
+            /continent-app/src/
+            /continent-app/config/
+            /continent-app/scripts/ci/
+            /continent-app/public/fares/
+            /continent-app/public/app_data.json
+            /continent-app/public/trails/[A-Z][A-Z].json
+            /continent-app/public/beaches/[A-Z][A-Z].json
+            /continent-app/public/lakes/[A-Z][A-Z].json
+            /continent-app/public/mountains/[A-Z][A-Z].json
+            /continent-app/public/cycling/[A-Z][A-Z].json
 
       - uses: actions/setup-node@v4
         with:

@@ -617,7 +617,10 @@ function loadCatalogue() {
 
   const DB = 'carta_t082_contract';
   const files = fs.existsSync(MIGRATIONS)
-    ? fs.readdirSync(MIGRATIONS).filter((f) => /^\d{3}_.*\.sql$/.test(f)).sort((a, b) => Number(a.slice(0, 3)) - Number(b.slice(0, 3)))
+    // Down migrations (055_group_trips_down.sql) undo their own number; applying
+    // them in order dropped group_trips before 058 needed it (T1061).
+    ? fs.readdirSync(MIGRATIONS).filter((f) => /^\d{3}_.*\.sql$/.test(f) && !/_down\.sql$/.test(f))
+      .sort((a, b) => Number(a.slice(0, 3)) - Number(b.slice(0, 3)))
     : [];
   if (!files.length) return { error: `no migrations found in ${MIGRATIONS}` };
   const work = fs.mkdtempSync(path.join(os.tmpdir(), 'carta-t082-'));
