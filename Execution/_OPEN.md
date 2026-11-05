@@ -1412,3 +1412,4 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1076-d | T1076 | 17,019 of 17,619 trails have under 60 words of page prose and 6,798 are not linked from any place page; both keep trails under the bar | next task | open |  |
 | T1076-e | T1076 | Beach, lake, mountain, cycling and trip pages keep the page floor only; add the research bar (monthly data, parent place) and the near-duplicate trip canonical | next task | open |  |
 | T1076-f | T1076 | After the next prerender upload confirm a thin place and a trail send noindex,follow in the head and the x-robots-tag header, and that sitemap-destinations holds the expected count | user | open | after T1076-b |
+| T1083-a | T1083 | A3 not met after the second pass: 1,408 open rows against under 250; the families left need a per-row code check or an owner decision, see What is still open in the T1083 report; T1072-a stays open with it | next task | open | |
