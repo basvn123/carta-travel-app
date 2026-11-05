@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import '../styles/admin.css';
 import { useI18n } from '../i18n/index.jsx';
 import { LockIcon, CloseIcon } from '../components/Icons.jsx';
+import { Button } from '../components/ui/Button.jsx';
 import { ContentSection } from '../components/admin/ContentSection.jsx';
 import { AdminLock } from '../components/admin/AdminLock.jsx';
 import { MfaStepUp } from '../components/admin/MfaStepUp.jsx';
@@ -145,9 +146,9 @@ export function AdminPage({ onClose }) {
           <p className="adminpage-lock-hint">{t('admin.mfaPageHint')}</p>
           <MfaStepUp mfa={mfa} idPrefix="admin-page" />
           <div className="adminpage-lock-actions">
-            <button type="button" className="adminpage-btn" onClick={onClose}>
+            <Button variant="secondary" onClick={onClose}>
               {t('admin.lockCancel')}
-            </button>
+            </Button>
           </div>
         </div>
       </div>
