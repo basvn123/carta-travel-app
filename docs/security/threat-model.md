@@ -44,7 +44,7 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 | T | A malicious or compromised dependency ships in the bundle and reads the session from `localStorage` | M | H | `package-lock.json`, `npm ci` in CI; weekly and per-PR `npm audit --omit=dev` failing on critical, OSV-Scanner and Dependabot (T1080) | closed for audit; critical advisories stay a human fix (C6) |
 | T | Someone with the Cloudflare token deploys a changed bundle | L | H | Token only on the owner's machine and the box (`SECRETS.md`) | none yet |
 | I | XSS through injected markup, exfiltrating the session | L | H | CSP in `public/_headers` (`script-src 'self' 'wasm-unsafe-eval'`, `object-src 'none'`, `frame-ancestors 'none'`); React escaping | `continent-app/scripts/verify_csp.mjs` (manual run, not in CI) |
-| I | A service key leaks into the bundle | L | H | Only `VITE_SUPABASE_ANON_KEY` is read by the app | `.github/workflows/secret-scan.yml` scans the built bundle |
+| I | A service key leaks into the bundle | L | H | Only `VITE_SUPABASE_ANON_KEY` is read by the app | `.github/workflows/secret-scan.yml` scans the built bundle; since T1078 `continent-app/scripts/ci/check-bundle-secrets.mjs` decodes every JWT-shaped string in the build (in `ci.yml` after the fast build, and in `secret-scan.yml`) and fails on any role but `anon`, which the plain grep could not see |
 | T | Clickjacking of account actions | L | M | `X-Frame-Options: DENY`, `frame-ancestors 'none'` | `verify_csp.mjs` (manual) |
 | S | Downgrade to HTTP | L | M | HSTS two years with preload, `upgrade-insecure-requests` | `continent-app/tests/securityHeaders.test.mjs` (T1079) |
 
@@ -114,7 +114,7 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 
 | STRIDE | Threat | L | I | Current control | Test |
 |---|---|---|---|---|---|
-| I | A second traveller reads another traveller's rows | M | H | RLS on every table, owner predicates | `.github/workflows/rls-policies.yml` (`continent-app/scripts/admin/test_rls_policies.mjs`) |
+| I | A second traveller reads another traveller's rows | M | H | RLS on every table, owner predicates | `.github/workflows/rls-policies.yml` (`continent-app/scripts/admin/test_rls_policies.mjs`): since T1078 every one of the 34 tables with policies has an isolation fixture, and a signed-out read of every table `anon` may select from returns zero rows without an error |
 | T | A traveller forges a row in another's name, or grants themself a pass | M | H | No client write policy on `entitlements`, `pass_grants`; insert checks `auth.uid() = user_id` | same workflow, the `forge` probes |
 | E | A definer function with an unpinned `search_path` is hijacked | L | H | Every admin function pins it | `.github/workflows/admin-rpc-security.yml` asserts it for `admin_*`; other definer functions not checked |
 | I | A policy calls a function the caller cannot execute (fails open or 42501) | M | L | `KNOWN_UNCALLABLE` tripwire in the RLS test | same workflow |
@@ -122,7 +122,9 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 
 **Verified state on 2026-11-05 (local Postgres 18, this task).** Both security workflows were red before this batch for a reason unrelated to policies: their loaders applied every `NNN_*.sql`, so from 055 on each `_down.sql` ran straight after its migration, and 056 then failed on `user_settings`, which only `supabase/schema.sql` creates. With the loaders corrected (skip `_down`, apply `schema.sql` first; the fix is committed by T1070), the admin surface passes 211 of 211 and the row policy suite passes 413 of 415. The two failures are real coverage debt: 19 tables from `schema.sql` and 052 to 060 have no isolation fixture (`ask_chats`, `email_log`, `email_prefs`, `friend_visibility`, seven `group_trip_*`, `pay_links`, `saved_trips`, four `shared_list*`, `trip_join_requests`, `user_settings`), and 28 policies on the group and shared-list tables call `group_role`, `group_all_joined` or `shared_list_role`, which `anon` cannot execute, so a signed-out read answers 42501 instead of an empty set. Neither is a leak (the refusals are refusals); both are unproven isolation.
 
-**Gap.** Isolation is unproven for 17 of the 19 tables above (C4; T1070 wrote fixtures for `saved_trips` and `user_settings` and lists the other 17 as known entries, T1070-c), and the 28 uncallable policies are T1070-d. Definer functions outside `admin_*` are not checked for a pinned `search_path` by any test (C4). The upload tables and bucket (061, T1070) are covered by the row policy suite, Storage policies included.
+**Closed by T1078 (2026-11-05).** The 17 remaining tables have fixtures (T1070-c), so all 34 tables with policies are proven: a second signed-in user and a signed-out visitor cannot read, change, delete or forge the victim's rows, and the friend, co-member and requester admissions are asserted. Migration 063 lets `anon` execute `group_role`, `shared_list_role` and `group_all_joined` (the first two answer null without a caller; the third now checks the caller's own role in the group first, which also closes a membership oracle any signed-in account had), so the 28 helper calls in 26 policies on 11 tables no longer fault and signed-out reads return nothing (T1070-d). 063 is written, not applied (owner step 9 in `Execution/P15/_OPEN-supabase-migrations.md`).
+
+**Gap.** Definer functions outside `admin_*` are not checked for a pinned `search_path` by any test (C4). The upload tables and bucket (061, T1070) are covered by the row policy suite, Storage policies included.
 
 ## 6. Supabase Edge Functions (`supabase/functions/`)
 
@@ -229,11 +231,11 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 |---|---|---|---|---|---|
 | E | A normal account calls an admin RPC | M | H | `admin_guard()` first in every function; `anon` has no grant | `admin-rpc-security.yml`, discovered from `pg_proc`, 211 assertions |
 | S | A stolen `aal1` admin session reads every account and changes config | L | H | `aal2` required by `admin_guard` for every tier (062); the admin storage read needs `aal2` too | `admin-rpc-security.yml` section 13 |
-| R | An admin action with no reason on record | M | M | `admin_audit_log` has `target` and `reason` (062), filled from the detail by a trigger; every VOLATILE admin RPC writes a row (`admin_set_infra_cost` since 062). Ban, delete and set tier take no reason argument (T1071-b) | `admin-rpc-security.yml` section 13 (static and dynamic) |
+| R | An admin action with no reason on record | M | M | `admin_audit_log` has `target` and `reason` (062), filled from the detail by a trigger; every VOLATILE admin RPC writes a row (`admin_set_infra_cost` since 062). Ban, delete and set tier require a reason of 3 to 500 characters and log it (064, T1081; closes T1071-b) | `admin-rpc-security.yml` section 13 (static and dynamic) and section 14 (the three refuse a missing reason and log a given one) |
 | D | A scripted admin floods writes | L | M | Rate budget in `admin_guard` (60 a minute, 10 destructive, 20 live) | `admin-rpc-security.yml` section 7 |
 | E | SQL pasted in the Dashboard with a typo or the wrong file | M | H | Self-check blocks in each migration; owner procedures | none |
 
-**Gap.** 062 is written, not applied (T1071-a; the owner enrols TOTP first). A refusal at the guard leaves no audit row (the guard is STABLE); admin reads are not logged by design (the rate budget counts rows). Ban, delete and set tier record no reason (T1071-b). The Supabase Dashboard account itself is the stronger admin surface and needs MFA (C2 owner step).
+**Gap.** 062 is written, not applied (T1071-a; the owner enrols TOTP first). A refusal at the guard leaves no audit row (the guard is STABLE); admin reads are not logged by design (the rate budget counts rows). Ban, delete and set tier record a reason once 064 is pasted (written and tested by T1081, owner step T1081-a). The Supabase Dashboard account itself is the stronger admin surface and needs MFA (C2 owner step).
 
 ## Top gaps, ranked
 
@@ -244,14 +246,14 @@ Ranked by likelihood times impact, then by how cheaply the next step closes it.
 | 1 | Leaked `carta-r2-admin` token not rolled | R2, Pages | M | H | C2 | Owner rolls it (`_OPEN-secrets-rotation.md`) |
 | 2 | Auth Dashboard settings unverified (confirmation, password rules, leaked-password check, rate limits, owner MFA) | Supabase Auth | M | H | C3 | Owner steps in `_OPEN-auth-settings.md` (T1071) |
 | 3 | Admin reads and live writes accept an `aal1` session | Admin | L | H | C3 | 062 written and tested (T1071); owner enrols TOTP and applies (T1071-a) |
-| 4 | 19 tables without an isolation fixture; 28 policies uncallable by `anon` | Database | M | H | C4 | Fixtures per table; grant or role-scope the helper functions |
+| 4 | ~~19 tables without an isolation fixture; 28 policies uncallable by `anon`~~ Closed by T1078 (fixtures for all 34 tables; 063 written, owner applies) | Database | M | H | C4 | Done in code; owner pastes 063 |
 | 5 | Upload path server half written but not applied (061, `upload-scan`) | Uploads | H once live | H | T333-a (C4) | Owner applies (`_OPEN-uploads.md`, T1070-a) |
 | 6 | Dependency audit, SHA-pinned actions, Dependabot | CI, app | M | H | C6 | Done in T1080: `supply-chain.yml`, pins, `.github/dependabot.yml`; pip-audit and OSV are report-only until the baseline is cleared |
 | 7 | Stripe webhook signature check has no test | Stripe | M | H | C5 | Static order test done (T1079); a live wrong-signature probe goes to C10 |
 | 8 | Uptime job holds the service role key | GitHub | M | H | C2 | Switch to the anon key if the probe allows |
 | 9 | No durable rate limit on `/api/*` and Edge Functions; CORS `*` | Pages Functions, Edge | M | M | C5, H3 | Origin allow-list and body caps done (T1079); the shared limiter needs the `RATE_LIMIT` binding (owner), durable Edge Function limits are H3 |
 | 10 | No prompt-injection set or guardrail module | Edge AI | M | M | C8, E3 | Injection set in CI |
-| 11 | Ban, delete and set tier record no reason; guard refusals are not logged | Admin | M | L | C3 | A reason argument on the three RPCs and the app (T1071-b) |
+| 11 | ~~Ban, delete and set tier record no reason~~ closed by T1081 (064 written, owner applies); guard refusals are not logged (accepted) | Admin | M | L | C3 | Owner pastes 064 (T1081-a) |
 | 12 | No CSP or security-header test in CI; `style-src 'unsafe-inline'` | Pages | L | H | C5 | Header test in `npm test` done (T1079); `verify_csp.mjs` still manual |
 | 13 | No SAST | CI | L | M | C7 | Semgrep or CodeQL |
 | 14 | Critical secrets concentrated on the Hetzner box | Build box | L | H | C2 | Rotation record; narrower keys per job |

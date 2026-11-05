@@ -947,12 +947,15 @@ try {
   await page.locator('#admin-days').fill('90');
   const applyBtn = page.locator('.adminpage-btn', { hasText: 'Apply pass change' });
   if (await page.locator('.adminpage-mfa').count()) fail('the pass control asks for MFA again on an aal2 session');
-  if (!(await applyBtn.isEnabled())) fail('Apply pass change is disabled on an aal2 session');
+  // T1081 (064): no reason, no pass change.
+  if (await applyBtn.isEnabled()) fail('Apply pass change is live with no reason');
+  await page.locator('#admin-tier-reason').fill('Refund issued, pass restored by hand');
+  if (!(await applyBtn.isEnabled())) fail('Apply pass change is disabled on an aal2 session with a reason');
   await applyBtn.click();
   await page.waitForTimeout(800);
   const tc = state.tierCalls[0];
-  if (!tc || tc.p_tier !== 'year' || tc.p_days !== 90) {
-    fail(`admin_set_tier got ${JSON.stringify(tc)}, expected year for 90 days`);
+  if (!tc || tc.p_tier !== 'year' || tc.p_days !== 90 || tc.p_reason !== 'Refund issued, pass restored by hand') {
+    fail(`admin_set_tier got ${JSON.stringify(tc)}, expected year for 90 days with the reason`);
   }
   if (!(await page.locator('.adminpage-ok').count())) fail('a completed pass change confirms nothing');
   ok('on aal2 the pass change lands as admin_set_tier(year, 90)');
@@ -988,15 +991,19 @@ try {
 
   // ---- 7b. Ban on the aal2 session (T254; the step-up itself is 1b now).
   console.log('7b. ban on the aal2 session');
-  const suspendBtn = page.locator('.adminpage-btn', { hasText: /^Suspend$/ });
+  const suspendBtn = page.getByRole('button', { name: 'Suspend', exact: true });
   await suspendBtn.waitFor({ timeout: 5000 });
   if (await page.locator('.adminpage-armed .adminpage-mfa').count()) fail('ban asks for MFA again on an aal2 session');
-  if (!(await suspendBtn.isEnabled())) fail('Suspend is disabled on an aal2 session');
+  if (await suspendBtn.isEnabled()) fail('Suspend is live with no reason (064)');
+  await page.locator('#admin-ban-reason').fill('Spam links in three shared trips');
+  if (!(await suspendBtn.isEnabled())) fail('Suspend is disabled on an aal2 session with a reason');
   ok('ban asks for nothing more on the aal2 session');
   await page.locator('#admin-ban-days').fill('7');
-  await page.locator('.adminpage-btn', { hasText: /^Suspend$/ }).click();
+  await page.getByRole('button', { name: 'Suspend', exact: true }).click();
   await page.waitForTimeout(900);
-  if (state.banCalls[0]?.p_days !== 7) fail(`admin_ban_user got ${JSON.stringify(state.banCalls[0])}`);
+  if (state.banCalls[0]?.p_days !== 7 || state.banCalls[0]?.p_reason !== 'Spam links in three shared trips') {
+    fail(`admin_ban_user got ${JSON.stringify(state.banCalls[0])}`);
+  }
   if (state.mfa.refused.length) fail(`the ban RPC saw a token below aal2: ${state.mfa.refused.join(', ')}`);
   if (!(await page.locator('.adminpage-detail-chips .adminpage-chip.banned').count())) {
     fail('a suspended account carries no chip');
@@ -1029,6 +1036,7 @@ try {
   const delBtn = page.locator('.adminpage-btn', { hasText: 'Delete forever' });
   if (await page.locator('.adminpage-mfa').count()) fail('delete asks for MFA again on an aal2 session');
   if (await delBtn.isEnabled()) fail('deletion is live with an empty confirmation');
+  await page.locator('#admin-del-reason').fill('Asked for erasure by email');
   await confirmField.fill('wrong@example.com');
   await delBtn.click();
   await page.waitForTimeout(800);
@@ -1041,6 +1049,9 @@ try {
   // proves the row is gone rather than merely filtered out.
   await page.locator('.adminpage-search input').waitFor({ timeout: WAIT });
   if (!state.deleted.has(USERS[0].id)) fail('the right confirmation never deleted');
+  if (!state.deleteCalls.some((c) => c.p_reason === 'Asked for erasure by email')) {
+    fail('admin_delete_user was called without the reason (064)');
+  }
   if (state.mfa.refused.length) fail(`an RPC saw a token below aal2: ${state.mfa.refused.join(', ')}`);
   // T410: the list refreshes after the delete returns, so wait for the empty
   // line instead of counting it the instant the search box is back; on a slow

@@ -5,6 +5,30 @@ import { ArrowLeftIcon } from '../Icons.jsx';
 import { fmtDate, fmtDateTime, initial, rowName } from './format.js';
 import { MfaStepUp } from './MfaStepUp.jsx';
 import { useMfa } from './useMfa.js';
+import { Button } from '../ui/Button.jsx';
+
+// Since 064 (T1081) ban, delete and set tier need a short reason, which the
+// server writes into the admin log. The same 3 character floor as the server,
+// so the button stays off until the reason would be accepted.
+const reasonOk = (r) => r.trim().length >= 3;
+
+function ReasonField({ id, value, onChange, placeholder }) {
+  const { t } = useI18n();
+  return (
+    <>
+      <label className="adminpage-lock-label" htmlFor={id}>{t('admin.reasonLabel')}</label>
+      <input
+        id={id}
+        className="adminpage-lock-input"
+        value={value}
+        maxLength={500}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        autoComplete="off"
+      />
+    </>
+  );
+}
 
 // One account in full: facts, history, pass, support actions, notes, and
 // deletion. A render over useUserDetail, plus the MFA step-up that ban and
@@ -20,6 +44,7 @@ export function UserDetail({ account }) {
   const {
     detail, setDetail, detailBusy,
     tierPick, setTierPick, tierDays, setTierDays, tierBusy, applyTier,
+    tierReason, setTierReason, banReason, setBanReason, deleteReason, setDeleteReason,
     actionNotice, actionErr,
     quotaArmed, quotaBusy, resetQuota, resetBusy, sendReset,
     banArmed, setBanArmed, banDays, setBanDays, banBusy, doBan, doUnban,
@@ -129,11 +154,13 @@ export function UserDetail({ account }) {
               />
             </div>
           )}
+          <ReasonField id="admin-tier-reason" value={tierReason} onChange={setTierReason}
+            placeholder={t('admin.reasonTierPlaceholder')} />
           <MfaStepUp mfa={mfa} idPrefix="admin-tier" />
           <button
             type="button"
             className="adminpage-btn primary wide"
-            disabled={tierBusy || detailBusy || !mfa.stepped}
+            disabled={tierBusy || detailBusy || !mfa.stepped || !reasonOk(tierReason)}
             onClick={applyTier}
           >
             {tierBusy ? t('account.pleaseWait') : t('admin.passApply')}
@@ -166,14 +193,16 @@ export function UserDetail({ account }) {
                       onChange={(e) => setBanDays(e.target.value.replace(/[^0-9]/g, ''))}
                     />
                   </div>
+                  <ReasonField id="admin-ban-reason" value={banReason} onChange={setBanReason}
+                    placeholder={t('admin.reasonBanPlaceholder')} />
                   <MfaStepUp mfa={mfa} idPrefix="admin-ban" />
                   <div className="adminpage-row">
-                    <button type="button" className="adminpage-btn" onClick={() => { setBanArmed(false); setBanDays(''); }}>
+                    <Button variant="secondary" onClick={() => { setBanArmed(false); setBanDays(''); setBanReason(''); }}>
                       {t('admin.banCancel')}
-                    </button>
-                    <button type="button" className="adminpage-btn danger" disabled={banBusy || !mfa.stepped} onClick={doBan}>
-                      {banBusy ? t('account.pleaseWait') : t('admin.banGo')}
-                    </button>
+                    </Button>
+                    <Button variant="danger" loading={banBusy} disabled={!mfa.stepped || !reasonOk(banReason)} onClick={doBan}>
+                      {t('admin.banGo')}
+                    </Button>
                   </div>
                 </div>
               )
@@ -221,19 +250,21 @@ export function UserDetail({ account }) {
                 placeholder={detail.email || detail.handle || ''}
                 autoComplete="off"
               />
+              <ReasonField id="admin-del-reason" value={deleteReason} onChange={setDeleteReason}
+                placeholder={t('admin.reasonDeletePlaceholder')} />
               <MfaStepUp mfa={mfa} idPrefix="admin-del" />
               <div className="adminpage-row">
                 <button
                   type="button"
                   className="adminpage-btn"
-                  onClick={() => { setDeleteArmed(false); setDeleteConfirm(''); }}
+                  onClick={() => { setDeleteArmed(false); setDeleteConfirm(''); setDeleteReason(''); }}
                 >
                   {t('admin.deleteCancel')}
                 </button>
                 <button
                   type="button"
                   className="adminpage-btn danger solid"
-                  disabled={deleteBusy || !deleteConfirm.trim() || !mfa.stepped}
+                  disabled={deleteBusy || !deleteConfirm.trim() || !mfa.stepped || !reasonOk(deleteReason)}
                   onClick={doDelete}
                 >
                   {deleteBusy ? t('account.pleaseWait') : t('admin.deleteGo')}
