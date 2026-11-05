@@ -21,7 +21,7 @@ Full rules, formulas and thresholds (read these, do not copy them):
 
 App: continent-app/src/browse/RegionPage.jsx, continent-app/src/browse/CountryPage.jsx, continent-app/src/lib/regions.js
 
-Pipeline and backend: pipeline/regions/, pipeline/intake/ (coverage.py writes the coverage contract the CI gate reads; see T1051-b)
+Pipeline and backend: pipeline/regions/ (coverage.py writes the coverage contract, coverage_gate.py is the CI gate; see T1051-b), pipeline/intake/
 
 MAP.md handbook column: Discover; docs/REGIONS.md (read by app/scripts/verify_regions.mjs). Latest tasks: T450, T456.
 
