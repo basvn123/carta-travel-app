@@ -26,17 +26,11 @@
  * on Friday and Saturday, and a peak factor in the Christmas, Easter and
  * mid-August weeks. A stay of 28 July to 4 August pays July and August prices.
  *
- * Live (T540): for a dated stay whose prices /api/stays has fetched
- * (liveStays.js), the hotel tiers and the private room follow tonight's
- * factor (the town's hotels against their own typical night), marked q:
- * 'live'. The stay moves by (live factor / the model's season for those
- * nights) ^ LIVE_DAMP: six hotels are a small sample, so a real x2 festival
- * week shows as about x1.5 and an ordinary week stays near the model. A ratio
- * outside 0.4 to 3 is a broken answer, not a festival, and is ignored.
+ * Live (T540) was removed in T1074: the Xotelo keys it needed left the build
+ * in T1021, so no stay is ever priced from tonight's hotel rates.
  */
 
 import { stayRecord } from './staysData.js';
-import { liveStay } from './liveStays.js';
 import { rule } from './price/config.js';
 
 export const STAY_TIERS = ['dorm', 'private', 'room', 'home', 'hotel2', 'hotel3', 'hotel4', 'hotel5'];
@@ -53,7 +47,6 @@ const WIRE = { dorm: 'dorm', private: 'private', room: 'bnb_room', home: 'bnb_ho
 export const DEFAULT_FEES = rule('stay.fees');
 
 const HOME_CAPS = rule('stay.home_caps');
-const LIVE = rule('stay.live');
 const PEAKS = rule('stay.peaks');
 const PEOPLE_PER_ROOM = rule('stay.people_per_room');
 const DORM_CHILD = rule('stay.dorm_child_weight');
@@ -197,12 +190,12 @@ function nightFor(dest, rec, tier, people, ms, month) {
  * Returns null when the destination has no bed price at all, else
  *   { total, perPerson, perNight, nightlyPp, rate, unit, units, tier,
  *     tierRequested, fallback, season, cleaning, service, weeklyDiscount,
- *     q, from, km, captured, basis }
+ *     q, from, km, n, captured, basis }
  * total is what the party pays for every night including Airbnb fees;
  * basis is 'dated' | 'month' | 'annual'.
  */
 export function bedPrice({ dest, tier, adults = 2, children = 0, nights = 1, start = null,
-  month = null, fees = null, live: allowLive = true } = {}) {
+  month = null, fees = null } = {}) {
   if (!dest?.accommodation?.beds) return null;
   const want = normaliseTier(tier);
   const offered = tiersAt(dest);
@@ -228,17 +221,7 @@ export function bedPrice({ dest, tier, adults = 2, children = 0, nights = 1, sta
     if (i < n) lodging += one.night;
     seasonSum += one.season;
   }
-  let avgNight = n > 0 ? lodging / n : first.night;
-
-  const live = allowLive && startMs != null && n > 0
-    ? liveStay(dest.id, t, new Date(startMs).toISOString().slice(0, 10), n, people) : null;
-  const seasonAvg = seasonSum / count;
-  const ratio = live && seasonAvg > 0 ? live.factor / seasonAvg : null;
-  const useLive = ratio != null && ratio >= LIVE.ratio_min && ratio <= LIVE.ratio_max;
-  if (useLive) {
-    lodging *= ratio ** LIVE.damp;
-    avgNight = lodging / n;
-  }
+  const avgNight = n > 0 ? lodging / n : first.night;
 
   let cleaning = 0, service = 0, weekly = 1;
   if (t === 'home' && n > 0) {
@@ -264,25 +247,14 @@ export function bedPrice({ dest, tier, adults = 2, children = 0, nights = 1, sta
     cleaning: round2(cleaning),
     service: round2(service),
     weeklyDiscount: weekly < 1,
-    q: useLive ? 'live' : src.q || dest.accommodation.q || null,
-    from: useLive ? null : src.from || null,
-    km: useLive ? null : src.km ?? null,
-    scaled: !useLive && !!src.scaled,
-    captured: useLive ? live.checked : dest.accommodation.captured || null,
-    basis: useLive ? 'live' : basis,
+    q: src.q || dest.accommodation.q || null,
+    from: src.from || null,
+    km: src.km ?? null,
+    n: src.n ?? null,
+    scaled: !!src.scaled,
+    captured: dest.accommodation.captured || null,
+    basis,
   };
-}
-
-/** How far tonight's prices move a dated stay from the model (T559): the
- *  live total over the modelled total, or null when the stay is not live. For
- *  screens that price beds from something other than bedPrice() (a journey's
- *  written budget), so they can scale their bed line by the same amount. */
-export function liveStayRatio({ dest, tier, adults = 2, children = 0, nights = 1, start = null } = {}) {
-  const live = bedPrice({ dest, tier, adults, children, nights, start });
-  if (live?.q !== 'live') return null;
-  const model = bedPrice({ dest, tier, adults, children, nights, start, live: false });
-  if (!(model?.total > 0)) return null;
-  return { ratio: live.total / model.total, checked: live.captured };
 }
 
 /** The cheapest bed for one person of two, per night (annual), across the

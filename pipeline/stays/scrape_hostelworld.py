@@ -74,7 +74,7 @@ async def run(a):
         dests = [d for d in dests if d["id"] in only]
     start = date.fromisoformat(a.run + "-01")
     t0 = time.monotonic()
-    pages = stored = 0
+    pages = stored = empty = 0
     trouble = Trouble(SOURCE)
     async with async_playwright() as p:
         browser = page = None
@@ -123,6 +123,7 @@ async def run(a):
                         await decline_cookies(page)
                         await close_overlays(page)
                         cards = [parse_card(c) for c in await page.evaluate(CARDS_JS)]
+                        empty += not cards
                         for c in cards:
                             for bed in ("dorm", "private"):
                                 price, cur = c[bed], c[f"{bed}_currency"]
@@ -168,8 +169,11 @@ async def run(a):
         finally:
             with contextlib.suppress(Exception):
                 await browser.close()
+    # T1074: pages with no cards (a village Hostelworld has no list for) are
+    # counted apart, so a "0 prices" session reads as nothing to find, not a
+    # broken parser; scripts/stays_health.py reads this line.
     print(f"session: {pages} pages, {stored} prices, {trouble.total} pages failed, "
-          f"rejected {dict(rejects)}")
+          f"{empty} pages with no cards, rejected {dict(rejects)}")
 
 
 def main():

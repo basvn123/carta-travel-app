@@ -361,6 +361,7 @@ export function costRow(d, ctx) {
     captured: repaired ? null : (a.captured ?? null),
     source: repaired ? null : (at.bed?.from ?? null),
     stayKm: repaired ? null : (at.bed?.km ?? null),
+    stayN: repaired ? null : (at.bed?.n ?? null),
     stayScaled: !!at.bed?.scaled,
     stayLive: at.bed?.q === 'live' ? at.bed.captured : null,
     // T662: what the engine (lib/price/) reports as each line's basis.

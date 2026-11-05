@@ -81,7 +81,6 @@ function TabFallback() {
 import { tripDaysBetween, DEFAULT_LIFESTYLE } from './lib/runtime_pricing.js';
 import { priceDays, priceRequest } from './lib/price/index.js';
 import { loadStaysFor, setLiveBase, useStaysVersion } from './lib/staysData.js';
-import { useLiveStaysVersion } from './lib/liveStays.js';
 import { FirstRunContext } from './lib/firstRunContext.js';
 import { normalizeTaste } from './lib/taste.js';
 import {
@@ -1562,8 +1561,6 @@ function TravelApp() {
   // price request (lib/price/), so Carta's suggested week reads as any time,
   // a month as that month, and the Explore month filter wins (B5, B7, V7).
   const staysVersion = useStaysVersion();
-  // T540: a live answer for the open destination's dates reprices its bed.
-  const liveVersion = useLiveStaysVersion();
   useEffect(() => {
     if (!data) return;
     setLiveBase(data.meta?.stays?.url, data.meta?.stays?.built);
@@ -1576,8 +1573,8 @@ function TravelApp() {
     [choices, departDate, returnDate, dateFlex, ownDates, exploreMonth],
   );
   const exploreIndices = useMemo(
-    () => (data && staysVersion >= 0 && liveVersion >= 0 ? priceDays(data.destinations, request) : null),
-    [data, request, staysVersion, liveVersion],
+    () => (data && staysVersion >= 0 ? priceDays(data.destinations, request) : null),
+    [data, request, staysVersion],
   );
   dayPricesRef.current = exploreIndices;
   // T944: a saved place whose day price fell clearly since it was saved is

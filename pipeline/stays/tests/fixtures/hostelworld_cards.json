@@ -1,0 +1,21 @@
+{
+ "_note": "Synthetic card texts in the shape CARDS_JS returns, built from the journal's price_text values (T1074). No page was saved by the scraper; replace with a real capture from the box when one exists (Execution/P15/_OPEN-scraper-health.md).",
+ "cards": [
+  {
+   "href": "/hostels/p/287532/example-hostel/",
+   "text": "Example Hostel\nHostel\n9.1 Superb\nDorms From\n€84.44\nPrivates From\n€120.00"
+  },
+  {
+   "href": "/hostels/p/55177/example-guesthouse/",
+   "text": "Example Guesthouse\nGuesthouse\n8.4 Fabulous\nPrivates From €22.96"
+  },
+  {
+   "href": "/pwa/hosteldetails.php/10234",
+   "text": "Example Dorms\nHostel\nDorms From €19,50\nPrivates From\n€1.234,00"
+  },
+  {
+   "href": "/hostels/p/777/no-price/",
+   "text": "No Price Hostel\nHostel\nSold out"
+  }
+ ]
+}

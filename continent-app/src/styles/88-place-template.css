@@ -746,6 +746,8 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 .tcard-line dd { margin: 0; color: var(--ccard-ink); font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .tcard-line-btn { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--space-2); padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
 .tcard-line-btn small { display: inline-flex; align-items: center; gap: 4px; font-size: var(--text-caption); color: var(--ccard-ink-2); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--ccard-line); }
+.tcard-thin { display: block; font-size: var(--text-caption); font-weight: 500; color: var(--ccard-ink-2); text-align: right; }
+.tcard-line.is-unmeasured dd { font-weight: 500; color: var(--ccard-ink-2); }
 .tcard-line.is-total { margin-top: var(--space-1); padding-top: var(--space-2); border-top: 1px solid var(--ccard-line); }
 .tcard-line.is-total dt { color: var(--ccard-ink); font-weight: 700; }
 .tcard-line.is-total dd { font-size: var(--text-lead); font-weight: 800; }
