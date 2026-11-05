@@ -6183,7 +6183,7 @@ export const de = {
   "dest.keyCarYes": "Nötig",
   "dest.keyCarNo": "Nicht nötig",
   "dest.keyAround": "Unterwegs vor Ort",
-  "dest.around.good": "Leicht ohne Auto",
+  "dest.around.good": "Gut ohne Auto",
   "dest.around.ok": "Ohne Auto möglich",
   "dest.around.hard": "Schwierig ohne Auto",
   "dest.aroundModes": "Mit {modes}.",
