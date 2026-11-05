@@ -90,14 +90,14 @@ Decisions 1 and 2 were answered on 2026-11-05 (see the handover, section 3), so 
 | 37 | T1121 | G2 | Shared parts that exist once (cards, sheets, price lines) | Opus | None |
 | 38 | T1122 | G3 | The umber cost card as signature | Opus | Design direction (S27) |
 | 39 | T1123 | G4 | Core flow fixes from the research | Opus | None |
-| 40 | T1124 | G5 | Motion system (tokens, reduced motion) | Sonnet | Design direction (S27) |
+| 40 | T1124 | G14 | **Home page** (added 2026-11-06): one clear promise, the waitlist, a live example priced from real data, links into Explore and a sample trip, fast first load; checked on a real phone. **Run it right after S27 is approved**, before the other wave 4 items | Opus | Design direction (S27) |
 | 41 | T1125 | G6 | Type and radius debt against the design-lint baseline | Sonnet | None |
 | 42 | T1126 | G7 | Breakpoints and CSS consolidation, dead CSS out (26 folded rows) | Sonnet | None |
 | 43 | T1127 | G8 | Imagery gaps on the screens with placeholders | Sonnet | None |
 | 44 | T1128 | G10 | Accessibility audit of the surfaces (29 folded rows) | Opus | None |
 | 45 | T1129 | I11 | Product analytics, cookieless | Sonnet | None |
 | 46 | T1130 | K5 | Data stories (the yearly basket per country, Belgian angle first) | Opus | Market (decision 6) |
-| 47 | T1131 | K10 | Press kit page and the journalist list | Sonnet | Name (decision 5) |
+| 47 | T1131 | K14 | **Automated data blog, part 1** (added 2026-11-06): the `blog_drafts` generator, the check script (numbers match the data, copy rules, licensed images, original data), the post pages, RSS, sitemap and structured data, three launch posts for December. Part 2 (the monthly routine) goes to round 2 | Opus | Owner reviews each post before merge |
 
 ## Wave 5: P3 foundations
 
@@ -108,6 +108,9 @@ Decisions 1 and 2 were answered on 2026-11-05 (see the handover, section 3), so 
 | 50 | T1134 | B7, D2 | Drift checks that keep the docs true, and a first quality scorecard | Opus |
 
 ## After the 50
+
+Added to the roadmap on 2026-11-06 and planned for round 2: D15 catalogue gaps (after D6), the blog's monthly routine (K14 part 2), G5 motion and K10 press kit (moved out of wave 4 for the home page and the blog). Eight proposed items wait on the owner: D16 to D22 and I17 (ROADMAP track D and I tables, status "proposed").
+
 
 What remains: the rest of P3 and P4 (C10, C11, D2 to D6, E1 to E5, F1 to F8, H3 to H11, H14, I1 to I16, J1 to J5, K items).
 - The launch dates are fixed by ROADMAP: open beta in March, Product Hunt on 4 May.
