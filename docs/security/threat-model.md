@@ -41,14 +41,14 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 
 | STRIDE | Threat | L | I | Current control | Test |
 |---|---|---|---|---|---|
-| T | A malicious or compromised dependency ships in the bundle and reads the session from `localStorage` | M | H | `package-lock.json`; no automated audit | none yet (C6) |
+| T | A malicious or compromised dependency ships in the bundle and reads the session from `localStorage` | M | H | `package-lock.json`, `npm ci` in CI; weekly and per-PR `npm audit --omit=dev` failing on critical, OSV-Scanner and Dependabot (T1080) | closed for audit; critical advisories stay a human fix (C6) |
 | T | Someone with the Cloudflare token deploys a changed bundle | L | H | Token only on the owner's machine and the box (`SECRETS.md`) | none yet |
 | I | XSS through injected markup, exfiltrating the session | L | H | CSP in `public/_headers` (`script-src 'self' 'wasm-unsafe-eval'`, `object-src 'none'`, `frame-ancestors 'none'`); React escaping | `continent-app/scripts/verify_csp.mjs` (manual run, not in CI) |
 | I | A service key leaks into the bundle | L | H | Only `VITE_SUPABASE_ANON_KEY` is read by the app | `.github/workflows/secret-scan.yml` scans the built bundle |
 | T | Clickjacking of account actions | L | M | `X-Frame-Options: DENY`, `frame-ancestors 'none'` | `verify_csp.mjs` (manual) |
 | S | Downgrade to HTTP | L | M | HSTS two years with preload, `upgrade-insecure-requests` | none yet (C5 header test) |
 
-**Gap.** `style-src 'unsafe-inline'` stays in the CSP; there is no header test in CI (C5); no dependency audit (C6).
+**Gap.** `style-src 'unsafe-inline'` stays in the CSP; there is no header test in CI (C5); the dependency audit is in place (`supply-chain.yml`, T1080, C6).
 
 ## 2. Pages Functions (`continent-app/functions/`)
 
@@ -209,13 +209,13 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 
 | STRIDE | Threat | L | I | Current control | Test |
 |---|---|---|---|---|---|
-| T | A tag-pinned action (`actions/checkout@v4` in 13 places, `setup-node@v4` in 5, `setup-python@v5` in 7, `upload-artifact@v4` in 2) is moved to malicious code | L | H | Four uses are SHA-pinned; the other 27 are tags | none yet (C6) |
+| T | A tag-pinned action (`actions/checkout@v4` in 13 places, `setup-node@v4` in 5, `setup-python@v5` in 7, `upload-artifact@v4` in 2) is moved to malicious code | L | H | All 31 uses are SHA-pinned with the tag in a comment (T1080); Dependabot proposes the bumps | closed (T1080, C6) |
 | I | A workflow prints a secret | L | H | GitHub masks secrets; `uptime.yml` says "never printed" | `secret-scan.yml` on the tree |
 | E | The uptime job holds the service role key when the anon key may do | M | H | none | none yet (C2 row) |
 | T | A pull request from a fork reads secrets | L | H | `pull_request` (not `pull_request_target`) everywhere; only three workflows set `permissions` | not verified for repo settings |
 | T | Branch protection on `main` | n/a | H | not verified (GitHub settings) | n/a |
 
-**Gap.** Actions not pinned to SHAs, no Dependabot or Renovate (C6); no SAST (C7); default token permissions on ten workflows.
+**Gap.** No SAST (C7). Actions are SHA-pinned, Dependabot is configured and all 13 workflows declare `permissions: contents: read` (T1080, C6); the repository default token setting and enabling Dependabot alerts are owner steps.
 
 ## 11. Admin surfaces
 
@@ -246,7 +246,7 @@ Ranked by likelihood times impact, then by how cheaply the next step closes it.
 | 3 | Admin reads and live writes accept an `aal1` session | Admin | L | H | C3 | 062 written and tested (T1071); owner enrols TOTP and applies (T1071-a) |
 | 4 | 19 tables without an isolation fixture; 28 policies uncallable by `anon` | Database | M | H | C4 | Fixtures per table; grant or role-scope the helper functions |
 | 5 | Upload path server half written but not applied (061, `upload-scan`) | Uploads | H once live | H | T333-a (C4) | Owner applies (`_OPEN-uploads.md`, T1070-a) |
-| 6 | Dependency audit, SHA-pinned actions, Dependabot | CI, app | M | H | C6 | Add `npm audit`, `pip-audit`, OSV and pins |
+| 6 | Dependency audit, SHA-pinned actions, Dependabot | CI, app | M | H | C6 | Done in T1080: `supply-chain.yml`, pins, `.github/dependabot.yml`; pip-audit and OSV are report-only until the baseline is cleared |
 | 7 | Stripe webhook signature check has no test | Stripe | M | H | C5 | A unit test with a wrong signature expecting 400 |
 | 8 | Uptime job holds the service role key | GitHub | M | H | C2 | Switch to the anon key if the probe allows |
 | 9 | No durable rate limit on `/api/*` and Edge Functions; CORS `*` | Pages Functions, Edge | M | M | C5, H3 | KV or Durable Object limiter; origin allow-list |
