@@ -1346,6 +1346,60 @@ function runTests(bin) {
     const sealed = countAs('plain', 'trip_plans', `id = '${PLAN}'`);
     check('and with it dropped again, does not', sealed.ok && sealed.out === '0', describe(sealed));
 
+    // ---------------------------------------------------------------------
+    // 6. Every SECURITY DEFINER function pins its search_path (T1087,
+    //    register row T1078-b, threat model section 5). A definer function
+    //    runs with its owner's rights; with the caller's search_path it can
+    //    be pointed at a schema the caller controls and read their object
+    //    instead of public's. admin-rpc-security checks this for admin_*
+    //    only; this checks every definer function in every non-system
+    //    schema, discovered from pg_proc, so a new one is covered with no
+    //    edit. Asserted per function: a search_path entry in proconfig, no
+    //    "$user" in it, and no listed schema a client role may CREATE in.
+    // ---------------------------------------------------------------------
+    console.log('');
+    console.log('  Every SECURITY DEFINER function pins a safe search_path (T1087):');
+    const definerSql = `
+      select coalesce(json_agg(json_build_object(
+        'fn', p.oid::regprocedure::text,
+        'path', (select substr(c, length('search_path=') + 1) from unnest(coalesce(p.proconfig, '{}')) c
+                  where c like 'search_path=%' limit 1)
+      ) order by p.oid::regprocedure::text), '[]')
+        from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+       where p.prosecdef
+         and n.nspname not in ('pg_catalog', 'information_schema')
+         and n.nspname not like 'pg_toast%'`;
+    const definers = JSON.parse(scalar(bin, TEST_DB, definerSql));
+    check('the catalogue holds SECURITY DEFINER functions to check (at least 50)', definers.length >= 50,
+      `found ${definers.length}`);
+    const writableBy = (schema) => scalar(bin, TEST_DB,
+      `select coalesce((select has_schema_privilege('anon', n.oid, 'CREATE') or has_schema_privilege('authenticated', n.oid, 'CREATE')
+         from pg_namespace n where n.nspname = '${schema.replace(/'/g, "''")}'), false)`) === 't';
+    const pathVerdict = (path) => {
+      if (path == null) return 'no search_path in proconfig';
+      const parts = path.split(',').map((x) => x.trim().replace(/^"(.*)"$/, '$1')).filter(Boolean);
+      if (parts.includes('$user')) return `"$user" in search_path=${path}`;
+      const open = parts.filter((x) => x !== 'pg_temp' && writableBy(x));
+      if (open.length) return `client-writable schema ${open.join(',')} in search_path=${path}`;
+      return '';
+    };
+    const unpinned = definers.map((d) => ({ ...d, why: pathVerdict(d.path) })).filter((d) => d.why);
+    check(`all ${definers.length} SECURITY DEFINER functions pin a safe search_path`, unpinned.length === 0,
+      unpinned.map((d) => `${d.fn}: ${d.why}`).join('; '));
+    // The control: an unpinned definer function must be caught, or the
+    // check above proved nothing.
+    psql(bin, TEST_DB, ['-c', `create function public.t1087_unpinned() returns int language sql security definer as 'select 1'`]);
+    const caught = JSON.parse(scalar(bin, TEST_DB, definerSql))
+      .filter((d) => d.fn === 't1087_unpinned()' && pathVerdict(d.path));
+    psql(bin, TEST_DB, ['-c', 'drop function public.t1087_unpinned()']);
+    check('an unpinned SECURITY DEFINER function added for the control is caught', caught.length === 1);
+    psql(bin, TEST_DB, ['-c', `create schema t1087_open; grant create on schema t1087_open to authenticated;
+      create function public.t1087_open_path() returns int language sql security definer set search_path = t1087_open, public as 'select 1'`]);
+    const caughtOpen = JSON.parse(scalar(bin, TEST_DB, definerSql))
+      .filter((d) => d.fn === 't1087_open_path()' && pathVerdict(d.path));
+    psql(bin, TEST_DB, ['-c', 'drop function public.t1087_open_path(); drop schema t1087_open']);
+    check('and so is one whose search_path names a schema a client may create in', caughtOpen.length === 1);
+
     console.log('');
     console.log(`  note  ${covered} tables covered by an isolation fixture, ${closed.length} closed tables probed, ${policies.length} policies in force`);
   } finally {

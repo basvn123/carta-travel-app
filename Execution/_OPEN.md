@@ -1423,3 +1423,6 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1081-a | T1081 | Paste migration 064 after 061 to 063 and deploy the app in the same sitting (until both are live, admin ban, delete and set tier do nothing), per step 12 of Execution/P15/_OPEN-supabase-migrations.md | user | open |  |
 | T1082-a | T1082 | Update the stale assertions in test_moderation_decisions.mjs (2 fail), test_admin_followups.mjs (20 fail) and test_admin_mfa.mjs to the behaviour of migrations 052 onward (062 to 064), then add them to CI | next task | open |  |
 | T1084-a | T1084 | Credit NASA JPL MUR SST (sea temperatures) in the Data sources screen, src/data/attribution.js; its data policy requests credit | next task | open |  |
+| T1087-a | T1087 | Watch the first GitHub run of admin-harnesses.yml (Postgres 18 there, 16 locally) and the extended rls-policies.yml, and fix any version difference it shows | next task | open |  |
+| T1087-b | T1087 | Make admin-harnesses, admin-rpc-security and rls-policies required status checks on main, so a red harness blocks a merge (GitHub settings, owner only) | user | open |  |
+| T1087-c | T1087 | Run the SECURITY DEFINER search_path query from Execution/P15/T1087-admin-harness-ci.md in the live SQL editor once 064 is pasted, to confirm live matches the harness (120 pinned, 0 unsafe) | user | open |  |

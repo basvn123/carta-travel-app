@@ -1,0 +1,98 @@
+name: admin-harnesses
+
+# Every per-migration database harness in continent-app/scripts/admin, run
+# against a real PostgreSQL (T1087, ROADMAP C4, register rows T1082-a and
+# T1078-b).
+#
+# admin-rpc-security and rls-policies each run one whole-surface suite. The
+# other fourteen harnesses (audit rollback, guard tiers, MFA, public guides,
+# takedowns, content reports, edge errors, moderation decisions, override
+# review, parse failures, pipeline health, site_config visibility,
+# statement of reasons, admin follow-ups) prove one migration's behaviour
+# each. They ran only on a developer laptop, so they went stale when 062 to
+# 064 changed the guard and the account-action signatures, and nobody saw it
+# until T1082. This job runs them on every pull request that can change what
+# they test, so the next stale assertion fails a build instead.
+#
+# run_harnesses.mjs runs them in sequence on one server (each makes and drops
+# its own database) and fails a harness that exits non-zero OR prints
+# SKIPPED: a skip is not a pass.
+#
+# Paths: migrations and schema.sql (the database under test), the harness
+# directory, and the three app modules test_edge_errors.mjs imports (it drives
+# the client error path end to end).
+on:
+  push:
+    branches: [main]
+    paths:
+      - "supabase/migrations/**"
+      - "supabase/schema.sql"
+      - "continent-app/scripts/admin/**"
+      - "continent-app/src/planner/**"
+      - "continent-app/src/lib/supabaseClient.js"
+      - ".github/workflows/admin-harnesses.yml"
+  pull_request:
+    paths:
+      - "supabase/migrations/**"
+      - "supabase/schema.sql"
+      - "continent-app/scripts/admin/**"
+      - "continent-app/src/planner/**"
+      - "continent-app/src/lib/supabaseClient.js"
+      - ".github/workflows/admin-harnesses.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  harnesses:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    # PostgreSQL 18, as in admin-rpc-security and rls-policies. trust auth,
+    # so the scripts connect with no password, exactly as against a local
+    # throwaway cluster.
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_USER: postgres
+        ports:
+          - 55437:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: continent-app/package-lock.json
+
+      # test_edge_errors.mjs imports app modules (src/planner), which import
+      # react and the rest of the app's dependencies.
+      - name: Install the app dependencies
+        working-directory: continent-app
+        run: npm ci --no-audit --no-fund
+
+      # The service container ships the server but not the client. The
+      # scripts shell out to psql, so the client package has to be present.
+      - name: Install the PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Prove the database is reachable before trusting the result
+        env:
+          PGPASSWORD: ""
+        run: psql -h 127.0.0.1 -p 55437 -U postgres -d postgres -w -At -c 'select version()'
+
+      - name: Every admin harness is green (a skip counts as a failure)
+        env:
+          PGHOST: 127.0.0.1
+          PGPORT: "55437"
+          PGUSER: postgres
+        run: node continent-app/scripts/admin/run_harnesses.mjs --except test_admin_rpc_security,test_rls_policies
