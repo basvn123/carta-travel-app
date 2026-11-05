@@ -4762,7 +4762,6 @@ export const de = {
   "dest.tierDorm": "Schlafsaal {eur}",
   "dest.tierPrivate": "Privatzimmer {eur}",
   "dest.tierHotel": "3-Sterne-Hotel {eur}",
-  "stay.live": "An aktuelle Preise für deine Nächte angepasst",
   "dest.cheapestMonth": "Am günstigsten im {month}",
   "dest.gettingTitle": "Anreise und Fortbewegung",
   "dest.flyTo": "Flug nach {iata}",

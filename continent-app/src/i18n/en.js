@@ -5674,7 +5674,6 @@ export const en = {
   "dest.tierDorm": "dorm bed {eur}",
   "dest.tierPrivate": "private room {eur}",
   "dest.tierHotel": "3-star hotel {eur}",
-  "stay.live": "Adjusted to live prices for your nights",
   "dest.cheapestMonth": "Cheapest stays in {month}",
   "dest.gettingTitle": "Getting there and around",
   "dest.flyTo": "Fly to {iata}",

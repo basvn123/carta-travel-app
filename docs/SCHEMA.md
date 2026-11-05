@@ -1034,11 +1034,8 @@ old scripts are in `pipeline/archive/`.
   unit, measured per month), `weekend` (Friday and Saturday factor), `peak`
   (`xmas`, `easter`, `aug15` factors), `single.hotel` (1-adult room ratio),
   `season_q` (one letter per month: `m` measured, `f` filled), `src[bed]`
-  (`q`, `from`, `km`, `n`, `scaled`), and optional `xk` (T540): up to six Xotelo
-  properties for the live price, each `[key, kind, stars, band, typ]` (`kind`
-  `h` hotel or `g` guesthouse, `stars` 0 when unknown, `band` the hotel price
-  quartile 0 to 3 or -1, `typ` the typical night in EUR; written by
-  `pipeline/stays/live_keys.py`). The app keeps the newer of the baked copy
+  (`q`, `from`, `km`, `n`, `scaled`). The old optional `xk` (Xotelo property keys for a live price)
+  was removed in T1082: nothing writes or reads it. The app keeps the newer of the baked copy
   (`public/stays/v1/`) and the monthly refresh (`meta.stays.url`).
 - **Observation contract (T643):** every journal row says `currency`, `unit`
   (`bed`, `person`, `room` or `place`), `tax_included`, `from_or_discount`, and
