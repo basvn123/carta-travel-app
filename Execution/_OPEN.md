@@ -1386,12 +1386,7 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1068-a | T1068 | The generation passes do not ask for the optional T431 fields highlights and dayPlaces (and nothing writes photos, visits); decide whether they should, then drop them from T431_OPTIONAL in tests/test_generate_trip.py | next task | open |  |
 | T1068-b | T1068 | Licence registry needs rows for harvest_emergency, harvest_poi_fees, harvest_sea_temp and harvest_swim_bans, retired=True on the stale pipeline/stays/* rows and the crowding failure mismatch fixed, so the last 3 test_data_licences tests leave tests/quarantine.txt (extends T617-a) | next task | open |  |
 | T1070-a | T1070 | Apply migration 061, deploy the upload-scan Edge Function with its secret and schedule it, per Execution/P15/_OPEN-uploads.md, after T333-b and T333-f | user | open | 1 |
-| T1070-b | T1070 | docs/security/SECRETS.md lacks UPLOADS_SCAN_SECRET and the vault secrets uploads_scan_url and uploads_scan_secret | next task | open |  |
-| T1070-c | T1070 | 17 tables with policies (migrations 052 to 060) have no isolation fixture in the RLS test; each is a listed known entry that must leave the list when fixed | next task | open |  |
-| T1070-d | T1070 | 28 policies in 055, 058 and 059 call helpers anon cannot execute, so a signed-out read errors instead of returning nothing | next task | open |  |
-| T1070-e | T1070 | The admin test scripts outside CI still abort at 056, and 060_email_prefs_down.sql fails where pg_cron is off | next task | open |  |
 | T1071-a | T1071 | Enable TOTP in the Supabase Dashboard and enrol the owner factor BEFORE the app with the new admin MFA gate ships, then paste 062 and set the Auth values per Execution/P15/_OPEN-auth-settings.md | user | open | 1 |
-| T1071-b | T1071 | Admin ban, delete and set tier take no reason, so their audit rows carry none | next task | open |  |
 | T1071-c | T1071 | No CAPTCHA (Turnstile) on sign-up and password reset | next task | open |  |
 | T1071-d | T1071 | The admin MFA gate and the trail page upload door were not seen in the browser (both need a signed-in account); look at them at 375 and 1440 and run scripts/verify_admin_panel.mjs after T1071-a | user | open | after T1071-a |
 | T1073-a | T1073 | Rewrite REGIONS.md and LAKES.md in place (code reads them) and rewrite PIPELINE, COVERAGE, JOINS, TRAILS, BEACHES, MOUNTAINS, PHOTOS, BACKUP and trips_layer docs from the code (B2 remainder) | next task | open |  |
@@ -1400,7 +1395,6 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1073-e | T1073 | Confirm whether the Hetzner boxes run in production today, then correct docs/runbooks/build-box.md and docs/areas/build-box.md | user | open |  |
 | T1073-f | T1073 | Carry sections 4 and 5 (R2 and Cloudflare, Supabase incidents) of the archived incident runbook into docs/runbooks/incident.md after re-verifying them | next task | open |  |
 | T1074-a | T1074 | Replace the synthetic Hostelworld card fixture with a real capture from the box (Execution/P15/_OPEN-scraper-health.md) | user | open |  |
-| T1074-b | T1074 | Remove the dead leftovers of live stays: catalogue strings, stayLive, the live bed quality, liveBed, xk in SCHEMA.md, live_keys.py | next task | open |  |
 | T1074-c | T1074 | Wire scripts/stays_health.py and its email on a non-zero exit on the laptop and the box, and switch on the monthly stays build (T1021-a), per Execution/P15/_OPEN-scraper-health.md | user | open |  |
 | T1075-a | T1075 | Re-scrape the 515 places with no bed price (python scripts/missing_beds.py; FR 94, IT 77, GB 56, GR 40) on the box after T1074-c; check their Booking search terms first (T1021-d) | next task | open | after T1074-c |
 | T1075-b | T1075 | Local transport fare table for 741 places: choose the fare source (T714-b), then write the layer; D10 fare half not built | user | open |  |
@@ -1413,3 +1407,19 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1076-e | T1076 | Beach, lake, mountain, cycling and trip pages keep the page floor only; add the research bar (monthly data, parent place) and the near-duplicate trip canonical | next task | open |  |
 | T1076-f | T1076 | After the next prerender upload confirm a thin place and a trail send noindex,follow in the head and the x-robots-tag header, and that sitemap-destinations holds the expected count | user | open | after T1076-b |
 | T1083-a | T1083 | A3 not met after the second pass: 1,408 open rows against under 250; the families left need a per-row code check or an owner decision, see What is still open in the T1083 report; T1072-a stays open with it | next task | open | |
+| T1078-a | T1078 | Paste migration 063 after 061 and 062, per step 11 of Execution/P15/_OPEN-supabase-migrations.md | user | open |  |
+| T1078-b | T1078 | No test checks that SECURITY DEFINER functions outside admin_* pin search_path | next task | open |  |
+| T1078-c | T1078 | check-bundle-secrets ran locally on a build without the anon key; confirm on the first CI run that the inlined anon key passes as role anon | next task | open |  |
+| T1079-a | T1079 | Add the RATE_LIMIT binding or a Cloudflare WAF rate rule on /api/* so the per-address limit holds across the edge (Execution/P15/_OPEN-web-hardening.md) | user | open | 3 |
+| T1079-b | T1079 | Deploy the headers, Pages Functions and six Edge Functions, run the smoke tests, and confirm the print view popup opens under the new COOP header (Execution/P15/_OPEN-web-hardening.md) | user | open | 1 |
+| T1079-c | T1079 | Remove style-src 'unsafe-inline' from the CSP (needs hashes or a nonce for React style attributes and MapLibre) | next task | open |  |
+| T1079-d | T1079 | Edge Functions have no per-address limit, only per-user ai_consume caps; a durable limiter belongs with H3 | next task | open |  |
+| T1079-e | T1079 | Run scripts/verify_csp.mjs in CI | next task | open |  |
+| T1079-f | T1079 | A live wrong-signature probe of a preview stripe-webhook, in the C10 pass | next task | open |  |
+| T1079-g | T1079 | /api/ask and /api/ask/answer were not exercised end to end (the ask index is not built in a worktree); run askRetrieve with the index and check the new guards | next task | open |  |
+| T1080-a | T1080 | Enable Dependabot alerts and security updates, and set the Actions default token to read-only, in GitHub repository settings | user | open |  |
+| T1080-b | T1080 | Bump the 12 Python pins in constraints.txt that pip-audit flags (requests, urllib3, lxml, certifi and others) and clear the dev-tree npm highs, then make pip-audit and OSV-Scanner fail the build | next task | open |  |
+| T1080-c | T1080 | Watch the first run of supply-chain.yml on GitHub and fix the OSV-Scanner lockfile arguments or the SBOM step if they fail there | next task | open |  |
+| T1080-d | T1080 | tools/trailslab/review pins maplibre-gl with a critical XSS advisory (GHSA-jrc7-96c5-q579); bump it to 6.16.0 as the app did in T1066 | next task | open |  |
+| T1081-a | T1081 | Paste migration 064 after 061 to 063 and deploy the app in the same sitting (until both are live, admin ban, delete and set tier do nothing), per step 12 of Execution/P15/_OPEN-supabase-migrations.md | user | open |  |
+| T1082-a | T1082 | Update the stale assertions in test_moderation_decisions.mjs (2 fail), test_admin_followups.mjs (20 fail) and test_admin_mfa.mjs to the behaviour of migrations 052 onward (062 to 064), then add them to CI | next task | open |  |
