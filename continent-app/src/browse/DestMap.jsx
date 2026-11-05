@@ -153,7 +153,10 @@ const DestMap = React.forwardRef(function DestMap({
         }
       } else {
         const color = LAYER_COLOR[row.layer] || LAYER_COLOR.nearby;
-        el = makeEl(`dmap-pin is-nature is-${row.layer || 'nearby'}`, `<span class="dmap-pin-in"><span class="dmap-pin-dot" style="background:${color}"></span><span class="dmap-pin-name">${esc(row.name)}</span></span>`);
+        el = makeEl(`dmap-pin is-nature is-${row.layer || 'nearby'}`, `<span class="dmap-pin-in"><span class="dmap-pin-dot"></span><span class="dmap-pin-name">${esc(row.name)}</span></span>`);
+        // Through the CSSOM, not a style="" in the HTML string: the CSP allows
+        // no inline style attribute (T1090).
+        el.querySelector('.dmap-pin-dot').style.background = color;
         if (hasFeature && row.layer) {
           el.style.cursor = 'pointer';
           el.addEventListener('click', (e) => { e.stopPropagation(); picks.current.onPickFeature?.(row.layer, row); });

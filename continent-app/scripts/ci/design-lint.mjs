@@ -111,17 +111,22 @@ function scanFile(abs, rel) {
   let depth = 0;
   let rootDepth = -1; // brace depth at which a :root block opened, or -1
   let block = null; // current declaration block for the outline check
+  // Inside @font-face, font-family is the descriptor that names the face
+  // being declared (src/styles/00-fonts.css, T1090), not a use of a typeface.
+  let inFontFace = false;
   for (let i = 0; i < lines.length; i++) {
     const l = lines[i];
+    if (isCss && /@font-face\s*\{/.test(l)) inFontFace = true;
     if (l.includes('—')) add('em-dash', i);
     if (l.includes('·')) add('middot', i);
     if (isEnStrings && bannedRe.test(l.replace(/^\s*[\w$]+\s*:\s*/, ''))) add('banned-word', i, l.match(bannedRe)[1]);
     if (/\b(marquee|parallax)\b/i.test(l)) add('motion-effect', i);
     const ff = l.match(/\bfont-?[fF]amily\s*:\s*([^;}\n]*)/);
-    if (ff) {
+    if (ff && !inFontFace) {
       const value = ff[1].trim().replace(/\s*!important\s*$/, '').replace(/,\s*$/, '').replace(/^(['"`])(.*)\1$/, '$2').trim();
       if (!FONT_TOKENS.test(value)) add('font-literal', i, value.slice(0, 60));
     }
+    if (inFontFace && l.includes('}')) inFontFace = false;
     if (!isCss) {
       const code = l.replace(/^\s*(\/\/|\*|\/\*).*$/, '');
       if (!/(^|\/)i18n\//.test(rel) && !JS_HEX_EXEMPT.has(rel) && JS_HEX.test(code)) add('js-hex-literal', i);
