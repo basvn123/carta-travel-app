@@ -2327,6 +2327,7 @@ This section covers the parts of Carta that sit around the travel content: the A
 - Changing sensitive details re-checks the current password with `signInWithPassword`.
 - Preferences (filters, lifestyle, favourites, visited countries, saved lists, taste) sync through `hooks/useAccountSync.js`: pulled once after login, pushed back debounced, stored in `user_settings.settings`.
 - Data export calls the `export_user_data` RPC; deletion calls `delete_user`, which cascades through what the account owns.
+- Sign out asks first whether this device's copy of the traveller's things goes too (T1054, audit P-09): "Sign out and remove", "Sign out, keep them here" or Cancel. Remove clears every key the cookies page lists under "your things" (trips, drafts, day plans, bookings, lists, crew, Ask chats) from local and session storage, deletes the `carta-files` database and reloads; settings and one-off notes stay. The list is `DEVICE_THING_KEYS` in `lib/deviceData.js`, tied to the cookies page by `tests/deviceData.test.mjs`. It asks rather than always clearing because device trips (`carta.trips.v1`) are not all in the account.
 - Opt-in emails (trip reminders, price drops on saved places) are off by default and stored in `email_prefs`; the `notify` Edge Function sends them through Resend.
 
 **Data behind it.** Supabase `auth.users`, `saved_trips` and `user_settings` (`supabase/schema.sql`), `trip_plans`, `trip_plan_stops`, `day_plans` (migrations 002 to 004), `profiles` (010), `user_achievements` (013), export RPC (024, widened in 048), `email_prefs` (060).
@@ -2517,6 +2518,7 @@ This section covers the parts of Carta that sit around the travel content: the A
 **How it works.**
 - `npm run ci` (continent-app/package.json): `lint`, `test` (node unit tests, 168 files in `tests/`), `verify` (affiliate, Omio, paywall checks), `ci:routes`, `ci:contract`, `build`, `ci:css-routes`, `ci:smoke`, `build:pages`. Also `test:browser` and `test:quota` (plan tiers, global cap, AI quota, passes).
 - GitHub workflows in `.github/workflows/`:
+  - `ci.yml` (T1057, every push and pull request): app `npm ci`, `npm run lint` (errors fail, warnings do not), `npm test`, the fast build; Python ruff on the error rules `E9,F63,F7,F82` (the whole repo passes), pytest with the IDs in `tests/quarantine.txt` deselected (58 on 2026-11-05; the list may only shrink, T1057-a), and the entry-point check. Actions are pinned to commit SHAs. mypy is not run: no config yet.
   - `schema-contract.yml`: `check-contract.mjs` plus database checks.
   - `rls-policies.yml` and `admin-rpc-security.yml`: row level security and admin RPCs against a throwaway Postgres.
   - `secret-scan.yml`: secret scan, `npm ci`, lint and build.
@@ -2528,7 +2530,21 @@ This section covers the parts of Carta that sit around the travel content: the A
 
 **Where it lives.** `.github/workflows/`, `continent-app/package.json`, `continent-app/scripts/ci/`, `continent-app/tests/`, `tests/test_*.py`.
 
-**Limits.** No workflow runs `npm test`; CLAUDE.md says tests are not wired to CI and are run by hand in `continent-app/`.
+**Limits.** `npm run ci` (verify, routes, smoke, `build:pages`) still runs only by hand. 58 Python tests are quarantined because they fail on today's data (T1057-a). `coverage-contract.yml` is red until `reports/coverage_contract.json` is generated on the build box and committed (T1057-b). Branch protection on `main` is an owner setting (T1057-c).
+
+---
+
+### Secrets and owner accounts
+
+**What it does.** Lists every secret Carta depends on and every owner account that can reach production, with where each lives, what reads it and what a leak would cost. Names only, never values.
+
+**How it works.** `docs/security/SECRETS.md` is the inventory (T1059, ROADMAP C2), built from the workflows, the Edge Functions, the Workers, the `wrangler.toml` files and the example env files, plus a search of all git history for secret-shaped strings (none found). `secret-scan.yml` guards the tree and the built bundle. The owner's rotation and MFA order is `Execution/P15/_OPEN-secrets-rotation.md`.
+
+**Data behind it.** None; it is a document. Secrets live in Supabase secrets, Cloudflare (Pages env, Worker secrets), GitHub secrets, the Hetzner box `.env` and the laptop `.env` files, which git ignores.
+
+**Where it lives.** `docs/security/SECRETS.md`, `.github/workflows/secret-scan.yml`, `src/ingestion/CREDENTIALS.md` (how to get each data source key).
+
+**Limits.** Rotation dates are mostly not recorded yet. The leaked R2 admin token (T291-b) is not rolled. Cloudflare, R2 and Resend keys have no fixed shape, so the scan cannot catch them.
 
 ---
 
