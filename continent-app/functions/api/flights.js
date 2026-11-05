@@ -18,31 +18,30 @@
  * Needs the nodejs_compat flag (wrangler.toml) and Workers Paid for CPU.
  */
 import { searchDay } from '../../workers/shared/flightSearch.mjs';
+import { fail, methodNotAllowed, createLimiter, overLimit, rateRefusal, parseFlightQuery } from '../_lib/guard.js';
 
 const EDGE_HOLD = 3600;
 const BROWSER_HOLD = 600;
-const IATA = /^[A-Z]{3}$/;
-const DATE = /^\d{4}-\d{2}-\d{2}$/;
-const MAX_AHEAD_DAYS = 330;
+// A live search is the one call here that spends paid CPU, so a miss in the
+// edge cache is limited per address (T1079); a hit is free and never counted.
+const limiter = createLimiter({ max: 20 });
 
-export async function onRequestGet({ request, waitUntil }) {
-  const q = new URL(request.url).searchParams;
-  const o = q.get('o') || '';
-  const d = q.get('d') || '';
-  const date = q.get('date') || '';
-  const today = new Date().toISOString().slice(0, 10);
-  const last = new Date(Date.now() + MAX_AHEAD_DAYS * 86400000).toISOString().slice(0, 10);
-  if (!IATA.test(o) || !IATA.test(d) || o === d || !DATE.test(date) || date < today || date > last) {
-    return new Response(null, { status: 400 });
-  }
+export const onRequest = () => methodNotAllowed('GET');
+
+export async function onRequestGet({ request, env, waitUntil }) {
+  const parsed = parseFlightQuery(new URL(request.url).searchParams);
+  if (!parsed) return fail(400, 'bad_request');
+  const { o, d, date } = parsed;
 
   const key = new Request(`https://flights.carta.internal/${o}/${d}/${date}`);
   const cache = caches.default;
   const hit = await cache.match(key);
   if (hit) return hit;
 
-  const r = await searchDay({ from: o, to: d, date });
-  if (!r.ok) return new Response(null, { status: 502, headers: { 'cache-control': 'no-store' } });
+  if (await overLimit(env, request, limiter, 'flights')) return rateRefusal();
+  let r;
+  try { r = await searchDay({ from: o, to: d, date }); } catch { r = { ok: false }; }
+  if (!r.ok) return fail(502, 'upstream');
   const res = new Response(JSON.stringify({
     checked: new Date().toISOString().replace(/\.\d+Z$/, 'Z'),
     link: r.link,

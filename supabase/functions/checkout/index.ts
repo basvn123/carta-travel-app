@@ -65,8 +65,13 @@ import Stripe from 'npm:stripe@17';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { PAID_TIERS, stripePriceFor, checkoutModeFor, waiverText } from '../_shared/passes.mjs';
 
+import { withCors, readJson, bodyProblem } from '../_shared/http.mjs';
+
+// The largest body this function reads (T1079): refused with 413 beyond it.
+const MAX_BODY = 8192;
+
+// Allow-Origin is set per request by withCors (an allow-list, not `*`; T1079).
 const CORS = {
-  'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
@@ -76,8 +81,7 @@ const json = (status: number, body: unknown) => new Response(
   { status, headers: { ...CORS, 'Content-Type': 'application/json' } },
 );
 
-Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS });
+Deno.serve(withCors(async (req) => {
   if (req.method !== 'POST') return json(405, { code: 'method' });
 
   const env = (k: string) => Deno.env.get(k) || '';
@@ -94,7 +98,7 @@ Deno.serve(async (req) => {
   if (!user) return json(401, { code: 'auth' });
 
   let body: Record<string, unknown>;
-  try { body = await req.json(); } catch { return json(400, { code: 'bad_json' }); }
+  try { body = await readJson(req, MAX_BODY); } catch (e) { const p = bodyProblem(e); return json(p.status, { code: p.code }); }
 
   const tier = String(body.tier || '');
   if (!PAID_TIERS.includes(tier)) return json(400, { code: 'bad_tier' });
@@ -111,7 +115,7 @@ Deno.serve(async (req) => {
   const { data: can, error: canErr } = await service.rpc('pass_can_buy', {
     p_user: user.id, p_tier: tier,
   });
-  if (canErr) return json(503, { code: 'quota_check', message: canErr.message });
+  if (canErr) return json(503, { code: 'quota_check' });
   if (can && can.reason === 'bad_tier') return json(400, { code: 'bad_tier' });
   // A live yearly plan renews by itself: a second one would charge twice.
   if (can && can.reason === 'subscribed') return json(409, { code: 'subscribed', renewsAt: can.renewsAt || null });
@@ -167,6 +171,6 @@ Deno.serve(async (req) => {
     });
     return json(200, { url: session.url, id: session.id });
   } catch (err) {
-    return json(502, { code: 'stripe_error', message: (err as Error).message });
+    return json(502, { code: 'stripe_error' });
   }
-});
+}, { methods: 'POST, OPTIONS', extraOrigins: () => Deno.env.get('ALLOWED_ORIGINS') || '' }));
