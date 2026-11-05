@@ -17,6 +17,7 @@
 import { dataUrl } from './dataHost.js';
 import { formatRange } from './format.js';
 import { formatMoney } from './money.js';
+import { srcSetFor, thumbAt } from './heroImage.js';
 
 const SLUG_RE = /^[a-z-]{3,30}$/;
 const ID_RE = /^[a-z]{2}-[a-z0-9-]{3,90}$/;
@@ -668,8 +669,10 @@ export function tripHighlights(trip, max = 5) {
 /** A trip photograph in the gallery's shape, or null. */
 export function tripPhoto(img) {
   if (!img?.url) return null;
+  // T1077: heroes ship at 1920px; the srcset lets a phone take 500 or 960
+  // and the 1280 fallback keeps a browser without srcset at the old weight.
   return {
-    url: img.url, w: img.w || null, h: img.h || null,
+    url: thumbAt(img.url, 1280), srcSet: srcSetFor(img.url, 1920), w: img.w || null, h: img.h || null,
     caption: img.caption || img.credit || '', author: img.author || null, licence: img.licence || null,
     page: img.page || null,
   };

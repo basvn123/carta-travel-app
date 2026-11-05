@@ -1,124 +1,76 @@
 # Carta master dataset validation report
 
-Dataset: **253 trips**, schema v2.0, generated 2026-09-02
+Dataset: **258 trips**, schema v2.0, generated 2026-09-02
 
-**464 errors, 624 warnings, 30 notices**
+**0 errors, 725 warnings, 30 notices**
 
 ## Issue counts by check
 
 | Check | Level | Count |
 |---|---|---|
-| `hero-below-floor` | ERROR | 253 |
-| `comma-range-wire` | ERROR | 209 |
+| `word-cap` | WARNING | 236 |
 | `no-sleep-lines` | WARNING | 183 |
 | `missing-connectivity` | WARNING | 115 |
-| `missing-booking-windows` | WARNING | 67 |
-| `approximate-coordinates` | WARNING | 61 |
-| `gateway-coordinates` | WARNING | 54 |
 | `missing-type-detail` | WARNING | 44 |
-| `missing-evening` | WARNING | 30 |
+| `missing-evening` | WARNING | 35 |
 | `missing-gateway` | WARNING | 30 |
 | `generated-summary` | INFO | 30 |
 | `missing-difficulty` | WARNING | 21 |
-| `place-outside-country` | WARNING | 19 |
-| `accommodation-not-slept` | ERROR | 2 |
+| `missing-booking-windows` | WARNING | 20 |
+| `coordinate-far-from-itinerary` | WARNING | 18 |
+| `place-outside-country` | WARNING | 18 |
+| `thin-pro-tips` | WARNING | 4 |
+| `thin-accommodation` | WARNING | 1 |
 
-## Errors by check
+## Errors
 
-### `hero-below-floor`: 253 record(s)
-
-- `at-cycling-donauradweg-wachau`: hero long edge is 1280px, floor is 1600px
-- `be-cycling-flemish-ardennes-bergs`: hero long edge is 1000px, floor is 1600px
-- `be-cycling-vennbahn-ardennes`: hero long edge is 1280px, floor is 1600px
-- `bg-cycling-danube-eurovelo6`: hero long edge is 1280px, floor is 1600px
-- `cz-cycling-south-bohemia-ponds`: hero long edge is 1280px, floor is 1600px
-- `de-cycling-bodensee-radweg`: hero long edge is 1280px, floor is 1600px
-- `dk-cycling-bornholm-round-granite-coast-smokehouse-loop`: hero long edge is 1280px, floor is 1600px
-- `ee-cycling-saaremaa-muhu-juniper-island-loop`: hero long edge is 1280px, floor is 1600px
-- `es-cycling-girona-costa-brava`: hero long edge is 1280px, floor is 1600px
-- `fr-cycling-alsace-vineyard-route`: hero long edge is 1280px, floor is 1600px
-- `fr-cycling-loire-a-velo`: hero long edge is 1280px, floor is 1600px
-- `gr-cycling-peloponnese-arcadia`: hero long edge is 1280px, floor is 1600px
-- `hr-cycling-istria-parenzana`: hero long edge is 1280px, floor is 1600px
-- `hu-cycling-balaton-ring`: hero long edge is 1280px, floor is 1600px
-- `it-cycling-puglia-valle-itria`: hero long edge is 1280px, floor is 1600px
-- `lu-cycling-pc-network-moselle-mullerthal`: hero long edge is 1280px, floor is 1600px
-- `md-cycling-country`: hero long edge is 1280px, floor is 1600px
-- `me-cycling-kotor-lovcen`: hero long edge is 1280px, floor is 1600px
-- `nl-cycling-green-heart-waterline`: hero long edge is 1280px, floor is 1600px
-- `nl-cycling-wadden-frisian-dikes`: hero long edge is 1280px, floor is 1600px
-- `pl-cycling-green-velo-podlasie`: hero long edge is 1280px, floor is 1600px
-- `pt-cycling-alentejo-costa-vicentina`: hero long edge is 1280px, floor is 1600px
-- `ro-cycling-via-transilvanica`: hero long edge is 1280px, floor is 1600px
-- `se-cycling-kattegattleden-gothenburg-helsingborg`: hero long edge is 1280px, floor is 1600px
-- `si-cycling-soca-brda`: hero long edge is 1280px, floor is 1600px
-- `sk-cycling-vah-danube`: hero long edge is 1280px, floor is 1600px
-- `at-trail-running-innsbruck-nordkette`: hero long edge is 1280px, floor is 1600px
-- `be-trail-running-hautes-fagnes`: hero long edge is 1280px, floor is 1600px
-- `bg-trail-running-rila-pirin`: hero long edge is 1280px, floor is 1600px
-- `ch-trail-running-engadin-ridges`: hero long edge is 1280px, floor is 1600px
-- `cz-trail-running-krkonose-ridge`: hero long edge is 1280px, floor is 1600px
-- `de-trail-running-berchtesgaden`: hero long edge is 800px, floor is 1600px
-- `es-trail-running-sierra-nevada-alpujarras`: hero long edge is 1280px, floor is 1600px
-- `fo-trail-running-faroese-ridgelines-streymoy-vagar`: hero long edge is 1280px, floor is 1600px
-- `fr-trail-running-chamonix-balcons`: hero long edge is 1280px, floor is 1600px
-- `fr-trail-running-mercantour-vesubie`: hero long edge is 1280px, floor is 1600px
-- `gr-trail-running-zagori-vikos`: hero long edge is 1280px, floor is 1600px
-- `hr-trail-running-velebit-premuzic`: hero carries no size, floor is 1600px
-- `hu-trail-running-bukk-matra`: hero carries no size, floor is 1600px
-- `ie-trail-running-wicklow-granite-dublin-mountains-lugnaquilla`: hero long edge is 1280px, floor is 1600px
-- …and 213 more (full list in validation-issues.json)
-
-### `comma-range-wire`: 209 record(s)
-
-- `bg-cycling-danube-eurovelo6`: 12 comma range(s) in the shipped copy, e.g. '785}, "totalNote": "€430, €785", "breakdow'
-- `de-cycling-bodensee-radweg`: 5 comma range(s) in the shipped copy, e.g. 'Tier": "€€ (approx. €880, €1,310 per person,'
-- `es-cycling-girona-costa-brava`: 12 comma range(s) in the shipped copy, e.g. '400}, "totalNote": "€1,500, €2,400 per person,'
-- `fr-cycling-alsace-vineyard-route`: 5 comma range(s) in the shipped copy, e.g. 'Tier": "€€ (approx. €950, €1,400 per person,'
-- `gr-cycling-peloponnese-arcadia`: 15 comma range(s) in the shipped copy, e.g. '900}, "totalNote": "€1,200, €1,900 per person,'
-- `hr-cycling-istria-parenzana`: 15 comma range(s) in the shipped copy, e.g. '850}, "totalNote": "€1,200, €1,850 per person,'
-- `hu-cycling-balaton-ring`: 10 comma range(s) in the shipped copy, e.g. '130}, "totalNote": "€695, €1,130", "breakdow'
-- `it-cycling-puglia-valle-itria`: 15 comma range(s) in the shipped copy, e.g. '100}, "totalNote": "€1,250, €2,100 per person,'
-- `lu-cycling-pc-network-moselle-mullerthal`: 5 comma range(s) in the shipped copy, e.g. 'Tier": "€€ (approx. €820, €1,200 per person,'
-- `md-cycling-country`: 8 comma range(s) in the shipped copy, e.g. '870}, "totalNote": "€480, €870", "breakdow'
-- `me-cycling-kotor-lovcen`: 14 comma range(s) in the shipped copy, e.g. '650}, "totalNote": "€1,050, €1,650 per person,'
-- `nl-cycling-green-heart-waterline`: 5 comma range(s) in the shipped copy, e.g. 'Tier": "€€ (approx. €980, €1,470 per person,'
-- `nl-cycling-wadden-frisian-dikes`: 4 comma range(s) in the shipped copy, e.g. 'Tier": "€€ (approx. €850, €1,260 per person,'
-- `pl-cycling-green-velo-podlasie`: 11 comma range(s) in the shipped copy, e.g. '950}, "totalNote": "€560, €950", "breakdow'
-- `pt-cycling-alentejo-costa-vicentina`: 11 comma range(s) in the shipped copy, e.g. '850}, "totalNote": "€1,150, €1,850 per person,'
-- `ro-cycling-via-transilvanica`: 9 comma range(s) in the shipped copy, e.g. '060}, "totalNote": "€610, €1,060", "breakdow'
-- `si-cycling-soca-brda`: 13 comma range(s) in the shipped copy, e.g. '950}, "totalNote": "€1,350, €1,950 per person,'
-- `sk-cycling-vah-danube`: 10 comma range(s) in the shipped copy, e.g. '950}, "totalNote": "€575, €950", "breakdow'
-- `at-trail-running-innsbruck-nordkette`: 4 comma range(s) in the shipped copy, e.g. 'st.", "priceNote": "€45, €75 per night"}'
-- `be-trail-running-hautes-fagnes`: 3 comma range(s) in the shipped copy, e.g. 'ds.", "priceNote": "€90, €140 per night"}'
-- `bg-trail-running-rila-pirin`: 7 comma range(s) in the shipped copy, e.g. '870}, "totalNote": "€410, €870", "breakdow'
-- `ch-trail-running-engadin-ridges`: 3 comma range(s) in the shipped copy, e.g. 'HF 250-420 (approx. €260, €440) per night '
-- `cz-trail-running-krkonose-ridge`: 3 comma range(s) in the shipped copy, e.g. 'ds.", "priceNote": "€45, €80 per night w'
-- `de-trail-running-berchtesgaden`: 3 comma range(s) in the shipped copy, e.g. 'es.", "priceNote": "€130, €190 per night f'
-- `es-trail-running-sierra-nevada-alpujarras`: 6 comma range(s) in the shipped copy, e.g. '520}, "totalNote": "€980, €1,550 per person,'
-- `fr-trail-running-chamonix-balcons`: 6 comma range(s) in the shipped copy, e.g. 'st.", "priceNote": "€40, €70 per night"}'
-- `fr-trail-running-mercantour-vesubie`: 4 comma range(s) in the shipped copy, e.g. 'st.", "priceNote": "€75, €130 per night"}'
-- `gr-trail-running-zagori-vikos`: 8 comma range(s) in the shipped copy, e.g. '530}, "totalNote": "€930, €1,530 per person,'
-- `hr-trail-running-velebit-premuzic`: 9 comma range(s) in the shipped copy, e.g. '250}, "totalNote": "€780, €1,250 per person,'
-- `hu-trail-running-bukk-matra`: 9 comma range(s) in the shipped copy, e.g. '550}, "totalNote": "€305, €550", "breakdow'
-- `it-trail-running-dolomites-cortina`: 10 comma range(s) in the shipped copy, e.g. '660}, "totalNote": "€1,650, €2,600 per person,'
-- `li-trail-running-fuerstensteig-drei-schwestern`: 2 comma range(s) in the shipped copy, e.g. 'HF 160-230 (approx. €165, €240) per night '
-- `lu-trail-running-mullerthal`: 2 comma range(s) in the shipped copy, e.g. 'ut.", "priceNote": "€150, €230 per night f'
-- `mc-trail-running-tete-de-chien-agel`: 2 comma range(s) in the shipped copy, e.g. 'ly.", "priceNote": "€110, €180 per night f'
-- `me-trail-running-durmitor`: 10 comma range(s) in the shipped copy, e.g. '320}, "totalNote": "€780, €1,250 per person,'
-- `pl-trail-running-karkonosze-stolowe`: 7 comma range(s) in the shipped copy, e.g. '830}, "totalNote": "€495, €830", "breakdow'
-- `pt-trail-running-madeira`: 11 comma range(s) in the shipped copy, e.g. '740}, "totalNote": "€1,050, €1,700 per person,'
-- `ro-trail-running-piatra-craiului-bucegi`: 9 comma range(s) in the shipped copy, e.g. '960}, "totalNote": "€560, €960", "breakdow'
-- `si-trail-running-julian-alps-bohinj`: 9 comma range(s) in the shipped copy, e.g. '650}, "totalNote": "€1,050, €1,650 per person,'
-- `sk-trail-running-mala-fatra-low-tatras`: 9 comma range(s) in the shipped copy, e.g. '000}, "totalNote": "€595, €1,000", "breakdow'
-- …and 169 more (full list in validation-issues.json)
-
-### `accommodation-not-slept`: 2 record(s)
-
-- `ba-nature-escape-una-national-park`: 'Camp Lučica' is in accommodationStrategy but no day sleeps there
-- `ba-nature-escape-una-national-park`: 'Rafting-operator wooden bungalows' is in accommodationStrategy but no day sleeps there
+None. Every record satisfies the hard schema contract.
 
 ## Warnings by check
+
+### `word-cap`: 236 record(s)
+
+- `at-cycling-donauradweg-wachau`: 0 summary, 5 day blocks and 0 pro tips over their caps (120, 45 and 35 words); longest 53; first: word-cap: itinerary[0].morning: 50 words, cap 45
+- `be-cycling-flemish-ardennes-bergs`: 0 summary, 3 day blocks and 0 pro tips over their caps (120, 45 and 35 words); longest 67; first: word-cap: itinerary[0].morning: 67 words, cap 45
+- `be-cycling-vennbahn-ardennes`: 0 summary, 2 day blocks and 2 pro tips over their caps (120, 45 and 35 words); longest 51; first: word-cap: itinerary[1].morning: 47 words, cap 45
+- `bg-cycling-danube-eurovelo6`: 0 summary, 3 day blocks and 1 pro tips over their caps (120, 45 and 35 words); longest 70; first: word-cap: itinerary[1].afternoon: 49 words, cap 45
+- `cz-cycling-south-bohemia-ponds`: 0 summary, 0 day blocks and 1 pro tips over their caps (120, 45 and 35 words); longest 37; first: word-cap: proTips[0]: 37 words, cap 35
+- `de-cycling-bodensee-radweg`: 0 summary, 2 day blocks and 1 pro tips over their caps (120, 45 and 35 words); longest 49; first: word-cap: itinerary[0].morning: 46 words, cap 45
+- `dk-cycling-bornholm-round-granite-coast-smokehouse-loop`: 0 summary, 1 day blocks and 1 pro tips over their caps (120, 45 and 35 words); longest 49; first: word-cap: itinerary[0].morning: 49 words, cap 45
+- `ee-cycling-saaremaa-muhu-juniper-island-loop`: 0 summary, 2 day blocks and 0 pro tips over their caps (120, 45 and 35 words); longest 47; first: word-cap: itinerary[1].afternoon: 47 words, cap 45
+- `es-cycling-girona-costa-brava`: 1 summary, 1 day blocks and 0 pro tips over their caps (120, 45 and 35 words); longest 132; first: word-cap: summary: 132 words, cap 120
+- `fr-cycling-alsace-vineyard-route`: 0 summary, 5 day blocks and 1 pro tips over their caps (120, 45 and 35 words); longest 82; first: word-cap: itinerary[0].morning: 82 words, cap 45
+- `fr-cycling-loire-a-velo`: 0 summary, 2 day blocks and 0 pro tips over their caps (120, 45 and 35 words); longest 50; first: word-cap: itinerary[0].afternoon: 50 words, cap 45
+- `gr-cycling-peloponnese-arcadia`: 0 summary, 0 day blocks and 1 pro tips over their caps (120, 45 and 35 words); longest 39; first: word-cap: proTips[7]: 39 words, cap 35
+- `hr-cycling-istria-parenzana`: 0 summary, 1 day blocks and 0 pro tips over their caps (120, 45 and 35 words); longest 51; first: word-cap: itinerary[4].morning: 51 words, cap 45
+- `hu-cycling-balaton-ring`: 0 summary, 1 day blocks and 0 pro tips over their caps (120, 45 and 35 words); longest 73; first: word-cap: itinerary[5].afternoon: 73 words, cap 45
+- `lu-cycling-pc-network-moselle-mullerthal`: 0 summary, 6 day blocks and 0 pro tips over their caps (120, 45 and 35 words); longest 57; first: word-cap: itinerary[0].morning: 55 words, cap 45
+- `md-cycling-country`: 0 summary, 2 day blocks and 5 pro tips over their caps (120, 45 and 35 words); longest 83; first: word-cap: itinerary[2].morning: 51 words, cap 45
+- `me-cycling-kotor-lovcen`: 1 summary, 3 day blocks and 5 pro tips over their caps (120, 45 and 35 words); longest 124; first: word-cap: summary: 124 words, cap 120
+- `nl-cycling-green-heart-waterline`: 0 summary, 1 day blocks and 1 pro tips over their caps (120, 45 and 35 words); longest 64; first: word-cap: itinerary[0].morning: 64 words, cap 45
+- `nl-cycling-wadden-frisian-dikes`: 0 summary, 3 day blocks and 0 pro tips over their caps (120, 45 and 35 words); longest 48; first: word-cap: itinerary[0].morning: 46 words, cap 45
+- `pl-cycling-green-velo-podlasie`: 0 summary, 11 day blocks and 2 pro tips over their caps (120, 45 and 35 words); longest 142; first: word-cap: itinerary[1].morning: 47 words, cap 45
+- `pt-cycling-alentejo-costa-vicentina`: 0 summary, 1 day blocks and 0 pro tips over their caps (120, 45 and 35 words); longest 61; first: word-cap: itinerary[4].afternoon: 61 words, cap 45
+- `se-cycling-kattegattleden-gothenburg-helsingborg`: 0 summary, 1 day blocks and 0 pro tips over their caps (120, 45 and 35 words); longest 48; first: word-cap: itinerary[2].afternoon: 48 words, cap 45
+- `sk-cycling-vah-danube`: 0 summary, 3 day blocks and 3 pro tips over their caps (120, 45 and 35 words); longest 53; first: word-cap: itinerary[1].morning: 53 words, cap 45
+- `at-trail-running-innsbruck-nordkette`: 0 summary, 2 day blocks and 0 pro tips over their caps (120, 45 and 35 words); longest 52; first: word-cap: itinerary[1].morning: 50 words, cap 45
+- `be-trail-running-hautes-fagnes`: 0 summary, 2 day blocks and 0 pro tips over their caps (120, 45 and 35 words); longest 61; first: word-cap: itinerary[0].afternoon: 61 words, cap 45
+- `bg-trail-running-rila-pirin`: 0 summary, 1 day blocks and 0 pro tips over their caps (120, 45 and 35 words); longest 55; first: word-cap: itinerary[3].morning: 55 words, cap 45
+- `ch-trail-running-engadin-ridges`: 0 summary, 4 day blocks and 0 pro tips over their caps (120, 45 and 35 words); longest 55; first: word-cap: itinerary[0].afternoon: 55 words, cap 45
+- `cz-trail-running-krkonose-ridge`: 0 summary, 5 day blocks and 4 pro tips over their caps (120, 45 and 35 words); longest 64; first: word-cap: itinerary[1].afternoon: 64 words, cap 45
+- `de-trail-running-berchtesgaden`: 0 summary, 4 day blocks and 1 pro tips over their caps (120, 45 and 35 words); longest 65; first: word-cap: itinerary[0].afternoon: 55 words, cap 45
+- `es-trail-running-sierra-nevada-alpujarras`: 1 summary, 2 day blocks and 3 pro tips over their caps (120, 45 and 35 words); longest 136; first: word-cap: summary: 136 words, cap 120
+- `fo-trail-running-faroese-ridgelines-streymoy-vagar`: 0 summary, 0 day blocks and 2 pro tips over their caps (120, 45 and 35 words); longest 41; first: word-cap: proTips[0]: 37 words, cap 35
+- `fr-trail-running-chamonix-balcons`: 0 summary, 7 day blocks and 2 pro tips over their caps (120, 45 and 35 words); longest 73; first: word-cap: itinerary[0].afternoon: 62 words, cap 45
+- `fr-trail-running-mercantour-vesubie`: 0 summary, 4 day blocks and 3 pro tips over their caps (120, 45 and 35 words); longest 66; first: word-cap: itinerary[1].morning: 54 words, cap 45
+- `gr-trail-running-zagori-vikos`: 0 summary, 1 day blocks and 1 pro tips over their caps (120, 45 and 35 words); longest 48; first: word-cap: itinerary[2].morning: 46 words, cap 45
+- `hr-trail-running-velebit-premuzic`: 1 summary, 1 day blocks and 3 pro tips over their caps (120, 45 and 35 words); longest 146; first: word-cap: summary: 146 words, cap 120
+- `hu-trail-running-bukk-matra`: 0 summary, 4 day blocks and 3 pro tips over their caps (120, 45 and 35 words); longest 52; first: word-cap: itinerary[2].morning: 52 words, cap 45
+- `ie-trail-running-wicklow-granite-dublin-mountains-lugnaquilla`: 0 summary, 3 day blocks and 2 pro tips over their caps (120, 45 and 35 words); longest 69; first: word-cap: itinerary[3].morning: 50 words, cap 45
+- `it-trail-running-dolomites-cortina`: 1 summary, 4 day blocks and 4 pro tips over their caps (120, 45 and 35 words); longest 125; first: word-cap: summary: 125 words, cap 120
+- `li-trail-running-fuerstensteig-drei-schwestern`: 0 summary, 6 day blocks and 1 pro tips over their caps (120, 45 and 35 words); longest 61; first: word-cap: itinerary[2].morning: 60 words, cap 45
+- `lu-trail-running-mullerthal`: 0 summary, 2 day blocks and 0 pro tips over their caps (120, 45 and 35 words); longest 54; first: word-cap: itinerary[1].morning: 46 words, cap 45
+- …and 196 more
 
 ### `no-sleep-lines`: 183 record(s)
 
@@ -195,7 +147,6 @@ Dataset: **253 trips**, schema v2.0, generated 2026-09-02
 - `fr-city-paris-arrondissement-blocks`: logistics.connectivity is empty
 - `lu-city-ville-fortress`: logistics.connectivity is empty
 - `lv-city-riga-art-nouveau-market-halls-daugava`: logistics.connectivity is empty
-- `mc-city-riviera-week`: logistics.connectivity is empty
 - `nl-city-amsterdam-canal-belt`: logistics.connectivity is empty
 - `at-cozy-towns-salzkammergut`: logistics.connectivity is empty
 - `be-cozy-towns-bruges-damme-veurne`: logistics.connectivity is empty
@@ -206,139 +157,8 @@ Dataset: **253 trips**, schema v2.0, generated 2026-09-02
 - `dk-cozy-towns-south-funen-archipelago-aeroe-faaborg-svendborg`: logistics.connectivity is empty
 - `fr-cozy-towns-alsace-villages`: logistics.connectivity is empty
 - `fr-cozy-towns-dordogne-perigord`: logistics.connectivity is empty
+- `lu-cozy-towns-little-switzerland`: logistics.connectivity is empty
 - …and 75 more
-
-### `missing-booking-windows`: 67 record(s)
-
-- `at-cycling-donauradweg-wachau`: logistics.bookingWindows is empty
-- `be-cycling-flemish-ardennes-bergs`: logistics.bookingWindows is empty
-- `be-cycling-vennbahn-ardennes`: logistics.bookingWindows is empty
-- `cz-cycling-south-bohemia-ponds`: logistics.bookingWindows is empty
-- `de-cycling-bodensee-radweg`: logistics.bookingWindows is empty
-- `fr-cycling-alsace-vineyard-route`: logistics.bookingWindows is empty
-- `lu-cycling-pc-network-moselle-mullerthal`: logistics.bookingWindows is empty
-- `nl-cycling-green-heart-waterline`: logistics.bookingWindows is empty
-- `nl-cycling-wadden-frisian-dikes`: logistics.bookingWindows is empty
-- `at-trail-running-innsbruck-nordkette`: logistics.bookingWindows is empty
-- `be-trail-running-hautes-fagnes`: logistics.bookingWindows is empty
-- `ch-trail-running-engadin-ridges`: logistics.bookingWindows is empty
-- `cz-trail-running-krkonose-ridge`: logistics.bookingWindows is empty
-- `de-trail-running-berchtesgaden`: logistics.bookingWindows is empty
-- `fr-trail-running-mercantour-vesubie`: logistics.bookingWindows is empty
-- `li-trail-running-fuerstensteig-drei-schwestern`: logistics.bookingWindows is empty
-- `lu-trail-running-mullerthal`: logistics.bookingWindows is empty
-- `mc-trail-running-tete-de-chien-agel`: logistics.bookingWindows is empty
-- `de-city-berlin-neighbourhoods`: logistics.bookingWindows is empty
-- `lu-city-ville-fortress`: logistics.bookingWindows is empty
-- `mc-city-riviera-week`: logistics.bookingWindows is empty
-- `nl-city-amsterdam-canal-belt`: logistics.bookingWindows is empty
-- `at-cozy-towns-salzkammergut`: logistics.bookingWindows is empty
-- `be-cozy-towns-bruges-damme-veurne`: logistics.bookingWindows is empty
-- `ch-cozy-towns-appenzell`: logistics.bookingWindows is empty
-- `cz-cozy-towns-south-bohemia-telc`: logistics.bookingWindows is empty
-- `de-cozy-towns-mosel-villages`: logistics.bookingWindows is empty
-- `fr-cozy-towns-alsace-villages`: logistics.bookingWindows is empty
-- `fr-cozy-towns-dordogne-perigord`: logistics.bookingWindows is empty
-- `lu-cozy-towns-little-switzerland`: logistics.bookingWindows is empty
-- `nl-cozy-towns-hanseatic-ijssel`: logistics.bookingWindows is empty
-- `at-road-trip-grossglockner-tyrol`: logistics.bookingWindows is empty
-- `ch-road-trip-bernina-gotthard-ticino`: logistics.bookingWindows is empty
-- `ch-road-trip-passes-furka`: logistics.bookingWindows is empty
-- `cz-road-trip-bohemia-castles-spas`: logistics.bookingWindows is empty
-- `de-road-trip-black-forest-b500`: logistics.bookingWindows is empty
-- `fr-road-trip-route-des-grandes-alpes`: logistics.bookingWindows is empty
-- `li-road-trip-rhine-triangle`: logistics.bookingWindows is empty
-- `lu-road-trip-ardennes-moselle-loop`: logistics.bookingWindows is empty
-- `mc-road-trip-three-corniches-turini`: logistics.bookingWindows is empty
-- …and 27 more
-
-### `approximate-coordinates`: 61 record(s)
-
-- `gr-cycling-peloponnese-arcadia`: pin falls back to the Greece capital, no basecamp town resolved
-- `hr-cycling-istria-parenzana`: pin falls back to the Croatia capital, no basecamp town resolved
-- `it-cycling-puglia-valle-itria`: pin falls back to the Italy capital, no basecamp town resolved
-- `me-cycling-kotor-lovcen`: pin falls back to the Montenegro capital, no basecamp town resolved
-- `pt-cycling-alentejo-costa-vicentina`: pin falls back to the Portugal capital, no basecamp town resolved
-- `si-cycling-soca-brda`: pin falls back to the Slovenia capital, no basecamp town resolved
-- `de-trail-running-berchtesgaden`: pin falls back to the Germany capital, no basecamp town resolved
-- `es-trail-running-sierra-nevada-alpujarras`: pin falls back to the Spain capital, no basecamp town resolved
-- `fr-trail-running-chamonix-balcons`: pin falls back to the France capital, no basecamp town resolved
-- `fr-trail-running-mercantour-vesubie`: pin falls back to the France capital, no basecamp town resolved
-- `gr-trail-running-zagori-vikos`: pin falls back to the Greece capital, no basecamp town resolved
-- `me-trail-running-durmitor`: pin falls back to the Montenegro capital, no basecamp town resolved
-- `pt-trail-running-madeira`: pin falls back to the Portugal capital, no basecamp town resolved
-- `si-trail-running-julian-alps-bohinj`: pin falls back to the Slovenia capital, no basecamp town resolved
-- `ba-cozy-towns-slowly-mostar-blagaj-pocitelj-trebinje`: pin falls back to the Bosnia and Herzegovina capital, no basecamp town resolved
-- `fr-cozy-towns-alsace-villages`: pin falls back to the France capital, no basecamp town resolved
-- `fr-cozy-towns-dordogne-perigord`: pin falls back to the France capital, no basecamp town resolved
-- `it-cozy-towns-umbria`: pin falls back to the Italy capital, no basecamp town resolved
-- `mk-cozy-towns-ohrid-bitola`: pin falls back to the North Macedonia capital, no basecamp town resolved
-- `pt-cozy-towns-alentejo-villages`: pin falls back to the Portugal capital, no basecamp town resolved
-- `gr-road-trip-peloponnese-loop`: pin falls back to the Greece capital, no basecamp town resolved
-- `me-road-trip-tara`: pin falls back to the Montenegro capital, no basecamp town resolved
-- `si-road-trip-julian-alps-passes`: pin falls back to the Slovenia capital, no basecamp town resolved
-- `sk-road-trip-orava-spis`: pin falls back to the Slovakia capital, no basecamp town resolved
-- `ad-hiking-coma-pedrosa-madriu`: pin falls back to the Andorra capital, no basecamp town resolved
-- `gr-hiking-mount-olympus-refuges`: pin falls back to the Greece capital, no basecamp town resolved
-- `it-hiking-alta-via-1-dolomites`: pin falls back to the Italy capital, no basecamp town resolved
-- `li-hiking-panorama`: pin falls back to the Liechtenstein capital, no basecamp town resolved
-- `si-hiking-triglav-hut-to-hut`: pin falls back to the Slovenia capital, no basecamp town resolved
-- `sk-hiking-high-tatras-hut-to-hut`: pin falls back to the Slovakia capital, no basecamp town resolved
-- `xk-hiking-peaks-of-the-balkans`: pin falls back to the Kosovo capital, no basecamp town resolved
-- `de-culinary-mosel-riesling`: pin falls back to the Germany capital, no basecamp town resolved
-- `it-culinary-tuscany-chianti-montalcino`: pin falls back to the Italy capital, no basecamp town resolved
-- `pt-culinary-douro-valley`: pin falls back to the Portugal capital, no basecamp town resolved
-- `si-culinary-vipava-karst`: pin falls back to the Slovenia capital, no basecamp town resolved
-- `ad-winter-sports-grandvalira`: pin falls back to the Andorra capital, no basecamp town resolved
-- `ba-winter-sports-jahorina-bjelasnica`: pin falls back to the Bosnia and Herzegovina capital, no basecamp town resolved
-- `fr-winter-sports-chamonix-freeride`: pin falls back to the France capital, no basecamp town resolved
-- `gr-winter-sports-parnassos-arachova`: pin falls back to the Greece capital, no basecamp town resolved
-- `it-winter-sports-dolomiti-superski`: pin falls back to the Italy capital, no basecamp town resolved
-- …and 21 more
-
-### `gateway-coordinates`: 54 record(s)
-
-- `be-cycling-vennbahn-ardennes`: pin sits on the gateway city (Brussels), not on the trip's basecamp
-- `lu-cycling-pc-network-moselle-mullerthal`: pin sits on the gateway city (Luxembourg), not on the trip's basecamp
-- `be-trail-running-hautes-fagnes`: pin sits on the gateway city (Brussels), not on the trip's basecamp
-- `bg-trail-running-rila-pirin`: pin sits on the gateway city (Sofia), not on the trip's basecamp
-- `ch-trail-running-engadin-ridges`: pin sits on the gateway city (Zürich), not on the trip's basecamp
-- `cz-trail-running-krkonose-ridge`: pin sits on the gateway city (Prague), not on the trip's basecamp
-- `hr-trail-running-velebit-premuzic`: pin sits on the gateway city (Zadar), not on the trip's basecamp
-- `lu-trail-running-mullerthal`: pin sits on the gateway city (Luxembourg), not on the trip's basecamp
-- `pl-trail-running-karkonosze-stolowe`: pin sits on the gateway city (Wrocław), not on the trip's basecamp
-- `at-cozy-towns-salzkammergut`: pin sits on the gateway city (Salzburg), not on the trip's basecamp
-- `bg-cozy-towns-revival`: pin sits on the gateway city (Sofia), not on the trip's basecamp
-- `ch-cozy-towns-appenzell`: pin sits on the gateway city (Zürich), not on the trip's basecamp
-- `cz-cozy-towns-south-bohemia-telc`: pin sits on the gateway city (Prague), not on the trip's basecamp
-- `de-cozy-towns-mosel-villages`: pin sits on the gateway city (Frankfurt am Main), not on the trip's basecamp
-- `de-cozy-towns-romantic`: pin sits on the gateway city (Nuremberg), not on the trip's basecamp
-- `gr-cozy-towns-pelion`: pin sits on the gateway city (Thessaloníki), not on the trip's basecamp
-- `at-road-trip-grossglockner-tyrol`: pin sits on the gateway city (Innsbruck), not on the trip's basecamp
-- `ch-road-trip-passes-furka`: pin sits on the gateway city (Zürich), not on the trip's basecamp
-- `pt-road-trip-n2-serra-estrela`: pin sits on the gateway city (Porto), not on the trip's basecamp
-- `at-hiking-berliner-hoehenweg`: pin sits on the gateway city (Innsbruck), not on the trip's basecamp
-- `at-hiking-stubai-hoehenweg`: pin sits on the gateway city (Innsbruck), not on the trip's basecamp
-- `ba-hiking-sutjeska-via-dinarica`: pin sits on the gateway city (Sarajevo), not on the trip's basecamp
-- `be-hiking-ardennes-gr57-ourthe`: pin sits on the gateway city (Brussels), not on the trip's basecamp
-- `bg-hiking-pirin-hut-to-hut`: pin sits on the gateway city (Sofia), not on the trip's basecamp
-- `ch-hiking-berner-oberland-huts`: pin sits on the gateway city (Zürich), not on the trip's basecamp
-- `ch-hiking-walkers-haute-route-valais`: pin sits on the gateway city (Geneva), not on the trip's basecamp
-- `cz-hiking-bohemian-switzerland`: pin sits on the gateway city (Prague), not on the trip's basecamp
-- `de-hiking-allgaeu-heilbronner-weg`: pin sits on the gateway city (Memmingen), not on the trip's basecamp
-- `es-hiking-ordesa-pyrenees-gr11`: pin sits on the gateway city (Zaragoza), not on the trip's basecamp
-- `fr-hiking-gr54-ecrins`: pin sits on the gateway city (Grenoble), not on the trip's basecamp
-- `lu-hiking-escapardenne-eislek`: pin sits on the gateway city (Luxembourg), not on the trip's basecamp
-- `at-culinary-wachau-gruner-veltliner`: pin sits on the gateway city (Vienna), not on the trip's basecamp
-- `hr-culinary-istria-truffles`: pin sits on the gateway city (Pula), not on the trip's basecamp
-- `lu-culinary-moselle-cremant`: pin sits on the gateway city (Luxembourg), not on the trip's basecamp
-- `at-winter-sports-arlberg-st-anton`: pin sits on the gateway city (Innsbruck), not on the trip's basecamp
-- `at-winter-sports-kitzbuehel-kitzski`: pin sits on the gateway city (Innsbruck), not on the trip's basecamp
-- `be-winter-sports-hautes-fagnes-nordic`: pin sits on the gateway city (Liège), not on the trip's basecamp
-- `bg-winter-sports-bansko-pirin`: pin sits on the gateway city (Sofia), not on the trip's basecamp
-- `ch-winter-sports-engelberg-titlis-freeride`: pin sits on the gateway city (Zürich), not on the trip's basecamp
-- `ch-winter-sports-verbier-4-vallees`: pin sits on the gateway city (Geneva), not on the trip's basecamp
-- …and 14 more
 
 ### `missing-type-detail`: 44 record(s)
 
@@ -363,7 +183,6 @@ Dataset: **253 trips**, schema v2.0, generated 2026-09-02
 - `fr-city-paris-arrondissement-blocks`: no transit pass detail captured for this trip type
 - `it-city-rome`: no transit pass detail captured for this trip type
 - `lu-city-ville-fortress`: no transit pass detail captured for this trip type
-- `mc-city-riviera-week`: no transit pass detail captured for this trip type
 - `nl-city-amsterdam-canal-belt`: no transit pass detail captured for this trip type
 - `at-hiking-berliner-hoehenweg`: no hut booking path captured for this trip type
 - `at-hiking-stubai-hoehenweg`: no hut booking path captured for this trip type
@@ -371,6 +190,7 @@ Dataset: **253 trips**, schema v2.0, generated 2026-09-02
 - `ch-hiking-berner-oberland-huts`: no hut booking path captured for this trip type
 - `ch-hiking-walkers-haute-route-valais`: no hut booking path captured for this trip type
 - `cz-hiking-bohemian-switzerland`: no hut booking path captured for this trip type
+- `cz-nature-escape-jeseniky-cabin`: no hut booking path captured for this trip type
 - `de-hiking-allgaeu-heilbronner-weg`: no hut booking path captured for this trip type
 - `fr-hiking-gr54-ecrins`: no hut booking path captured for this trip type
 - `li-hiking-panorama`: no hut booking path captured for this trip type
@@ -384,7 +204,7 @@ Dataset: **253 trips**, schema v2.0, generated 2026-09-02
 - `de-winter-sports-garmisch-zugspitze`: no lift network / pass detail captured for this trip type
 - …and 4 more
 
-### `missing-evening`: 30 record(s)
+### `missing-evening`: 35 record(s)
 
 - `dk-cycling-bornholm-round-granite-coast-smokehouse-loop`: day 7 has no evening block
 - `ee-cycling-saaremaa-muhu-juniper-island-loop`: day 7 has no evening block
@@ -416,6 +236,11 @@ Dataset: **253 trips**, schema v2.0, generated 2026-09-02
 - `dk-water-sports-cold-hawaii-klitmoller-vorupor-thy`: day 7 has no evening block
 - `ee-water-sports-west-estonian-coast-parnu-ristna-sorve`: day 7 has no evening block
 - `lt-water-sports-curonian-lagoon-svencele-nida-kite-week`: day 7 has no evening block
+- `ba-hostel-sarajevo-mostar-kotor`: day 7 has no evening block
+- `hr-beach-week-makarska-riviera`: day 7 has no evening block
+- `cz-rail-prague-vienna-budapest`: day 7 has no evening block
+- `es-pilgrim-camino-sarria-santiago`: day 7 has no evening block
+- `gr-island-hopping-paros-antiparos-naxos`: day 7 has no evening block
 
 ### `missing-gateway`: 30 record(s)
 
@@ -474,20 +299,63 @@ Dataset: **253 trips**, schema v2.0, generated 2026-09-02
 - `ee-water-sports-west-estonian-coast-parnu-ristna-sorve`: no difficulty rating in the source record
 - `lt-water-sports-curonian-lagoon-svencele-nida-kite-week`: no difficulty rating in the source record
 
-### `place-outside-country`: 19 record(s)
+### `missing-booking-windows`: 20 record(s)
+
+- `be-cycling-flemish-ardennes-bergs`: logistics.bookingWindows is empty
+- `lu-cycling-pc-network-moselle-mullerthal`: logistics.bookingWindows is empty
+- `at-trail-running-innsbruck-nordkette`: logistics.bookingWindows is empty
+- `be-trail-running-hautes-fagnes`: logistics.bookingWindows is empty
+- `cz-trail-running-krkonose-ridge`: logistics.bookingWindows is empty
+- `lu-trail-running-mullerthal`: logistics.bookingWindows is empty
+- `mc-trail-running-tete-de-chien-agel`: logistics.bookingWindows is empty
+- `mc-city-riviera-week`: logistics.bookingWindows is empty
+- `nl-cozy-towns-hanseatic-ijssel`: logistics.bookingWindows is empty
+- `li-road-trip-rhine-triangle`: logistics.bookingWindows is empty
+- `lu-road-trip-ardennes-moselle-loop`: logistics.bookingWindows is empty
+- `mc-road-trip-three-corniches-turini`: logistics.bookingWindows is empty
+- `be-hiking-ardennes-gr57-ourthe`: logistics.bookingWindows is empty
+- `cz-nature-escape-jeseniky-cabin`: logistics.bookingWindows is empty
+- `se-hiking-kungsleden-north-abisko-nikkaluokta`: logistics.bookingWindows is empty
+- `at-nature-escape-gesaeuse-almhuette`: logistics.bookingWindows is empty
+- `fr-nature-escape-vosges-cabane`: logistics.bookingWindows is empty
+- `be-water-sports-ostend-knokke-sail`: logistics.bookingWindows is empty
+- `de-water-sports-ruegen-baltic-wind`: logistics.bookingWindows is empty
+- `mc-water-sports-freedive-kayak`: logistics.bookingWindows is empty
+
+### `coordinate-far-from-itinerary`: 18 record(s)
+
+- `at-cycling-donauradweg-wachau`: pin is 60 km from the nearest place the itinerary names (Krems); check it is not a homonym
+- `sk-cycling-vah-danube`: pin is 62 km from the nearest place the itinerary names (Trenčín); check it is not a homonym
+- `bg-city-sofia-plovdiv`: pin is 132 km from the nearest place the itinerary names (Plovdiv); check it is not a homonym
+- `es-city-seville`: pin is 438 km from the nearest place the itinerary names (Santa Cruz); check it is not a homonym
+- `md-city-chisinau-tiraspol-comrat`: pin is 61 km from the nearest place the itinerary names (Tiraspol); check it is not a homonym
+- `nl-city-amsterdam-canal-belt`: pin is 184 km from the nearest place the itinerary names (Oost); check it is not a homonym
+- `pl-road-trip-eagles-nests`: pin is 69 km from the nearest place the itinerary names (Katowice); check it is not a homonym
+- `cz-nature-escape-jeseniky-cabin`: pin is 159 km from the nearest place the itinerary names (Hrubý Jeseník); check it is not a homonym
+- `no-hiking-jotunheimen-hut-to-hut-besseggen-fannaraken`: pin is 220 km from the nearest place the itinerary names (Oslo); check it is not a homonym
+- `se-hiking-kungsleden-north-abisko-nikkaluokta`: pin is 81 km from the nearest place the itinerary names (Kiruna); check it is not a homonym
+- `cz-culinary-moravia-and-beer`: pin is 181 km from the nearest place the itinerary names (Znojmo); check it is not a homonym
+- `md-culinary-codru-stefan-voda`: pin is 54 km from the nearest place the itinerary names (Cimișlia); check it is not a homonym
+- `pl-culinary-malopolska`: pin is 85 km from the nearest place the itinerary names (Zakopane); check it is not a homonym
+- `ro-culinary-dealu-mare-dragasani`: pin is 109 km from the nearest place the itinerary names (Dealu Mare); check it is not a homonym
+- `es-winter-sports-baqueira-beret`: pin is 122 km from the nearest place the itinerary names (Vielha); check it is not a homonym
+- `ee-water-sports-west-estonian-coast-parnu-ristna-sorve`: pin is 76 km from the nearest place the itinerary names (Kuressaare); check it is not a homonym
+- `ba-hostel-sarajevo-mostar-kotor`: pin is 71 km from the nearest place the itinerary names (Mostar); check it is not a homonym
+- `cz-rail-prague-vienna-budapest`: pin is 253 km from the nearest place the itinerary names (Vienna); check it is not a homonym
+
+### `place-outside-country`: 18 record(s)
 
 - `md-cycling-country`: 'Lozova' is a town in UA and nothing in GB/MD/RO/RU carries the name
 - `si-cycling-soca-brda`: 'Brda' is a town in NL and nothing in HR/IT/SI carries the name
-- `de-trail-running-berchtesgaden`: 'Salt' is a town in ES and nothing in AT/DE carries the name
+- `de-trail-running-berchtesgaden`: 'Salt' is a town in ES/JO and nothing in AT/DE carries the name
 - `it-city-rome`: 'Pantheon' is a town in FR and nothing in ES/IT carries the name
-- `at-cozy-towns-salzkammergut`: 'Salt' is a town in ES and nothing in AT/DE carries the name
+- `at-cozy-towns-salzkammergut`: 'Salt' is a town in ES/JO and nothing in AT/DE carries the name
 - `it-road-trip-sicily-circuit`: 'Segesta' is a town in HR and nothing in GB/GR/IT carries the name
 - `sk-road-trip-orava-spis`: 'Karst' is a town in DE and nothing in AL/AT/BY/CZ/GB/HU/MD/PL/RS/SK/UA carries the name
 - `si-hiking-triglav-hut-to-hut`: 'Vrata' is a town in BG and nothing in SI carries the name
 - `xk-hiking-peaks-of-the-balkans`: 'Albania' is a town in FR and nothing in AL/ME/RS/XK carries the name
-- `bg-culinary-thracian-valley-melnik`: 'Melnik' is a town in CZ and nothing in BG/GB/GR/TR carries the name
 - `mk-culinary-tikves`: 'Senigallia' is a town in IT and nothing in BG/GB/GR/MK/TR carries the name
-- `pl-culinary-malopolska`: 'Salt' is a town in ES and nothing in FR/IT/PL/SK carries the name
+- `pl-culinary-malopolska`: 'Salt' is a town in ES/JO and nothing in FR/IT/PL/SK carries the name
 - `si-culinary-vipava-karst`: 'Karst' is a town in DE and nothing in GB/IT/SI carries the name
 - `hr-nature-escape-velebit-lika`: 'Bura' is a town in IT and nothing in BA/HR/NO/SI carries the name
 - `md-nature-escape-orheiul-vechi-padurea-domneasca`: 'Lozova' is a town in UA and nothing in GB/MD/RO/RU carries the name
@@ -495,6 +363,17 @@ Dataset: **253 trips**, schema v2.0, generated 2026-09-02
 - `ee-water-sports-west-estonian-coast-parnu-ristna-sorve`: 'Kalana' is a town in DE and nothing in EE/GB/RU carries the name
 - `es-water-sports-tarifa-costa-luz`: 'Bolonia' is a town in IT and nothing in ES/GI/PT carries the name
 - `es-water-sports-tarifa-costa-luz`: 'Tangier' is a town in MA and nothing in ES/GI/PT carries the name
+
+### `thin-pro-tips`: 4 record(s)
+
+- `hr-beach-week-makarska-riviera`: 2 pro-tips
+- `cz-rail-prague-vienna-budapest`: 2 pro-tips
+- `es-pilgrim-camino-sarria-santiago`: 2 pro-tips
+- `gr-island-hopping-paros-antiparos-naxos`: 2 pro-tips
+
+### `thin-accommodation`: 1 record(s)
+
+- `hr-beach-week-makarska-riviera`: 1 lodging options
 
 ## Notices
 
@@ -504,48 +383,53 @@ Dataset: **253 trips**, schema v2.0, generated 2026-09-02
 
 | Region | Trips |
 |---|---|
-| Western & Central Europe | 100 |
-| Southern & Mediterranean Europe | 70 |
+| Western & Central Europe | 101 |
+| Southern & Mediterranean Europe | 74 |
 | Eastern & Southeastern Europe | 53 |
 | Northern Europe & Baltics | 30 |
 
 | Trip type | Trips |
 |---|---|
-| Cycling Trips | 26 |
-| Trail Running | 25 |
-| City Trips | 26 |
-| Cozy Towns Trips | 26 |
-| Road Trips & Scenic Drives | 26 |
-| Hiking & Alpine Trekking | 24 |
-| Culinary & Wine Tours | 26 |
-| Winter Sports & Skiing | 24 |
-| Nature Escapes & Cabin Stays | 26 |
-| Water Sports & Coastal Trips | 24 |
+| Cycling | 26 |
+| Trail running | 25 |
+| Cities | 25 |
+| Small towns | 27 |
+| Road trips | 26 |
+| Hiking | 25 |
+| Food and drink | 26 |
+| Ski and snow | 24 |
+| Nature stays | 25 |
+| On the water | 24 |
+| Hostel weeks | 1 |
+| Beach weeks | 1 |
+| Rail journeys | 1 |
+| Pilgrim routes | 1 |
+| Island hopping | 1 |
 
 | Country | Trips |
 |---|---|
 | France | 16 |
 | Germany | 13 |
 | Austria | 12 |
+| Czechia | 12 |
 | Belgium | 11 |
-| Czechia | 11 |
 | Italy | 11 |
+| Spain | 11 |
 | Bulgaria | 10 |
+| Greece | 10 |
 | Netherlands | 10 |
 | Poland | 10 |
 | Romania | 10 |
-| Spain | 10 |
 | Switzerland | 10 |
-| Greece | 9 |
 | Slovakia | 9 |
 | Hungary | 8 |
 | Luxembourg | 8 |
 | Portugal | 8 |
+| Croatia | 6 |
 | Moldova | 6 |
 | Slovenia | 6 |
-| Croatia | 5 |
+| Bosnia and Herzegovina | 5 |
 | Monaco | 5 |
-| Bosnia and Herzegovina | 4 |
 | Denmark | 4 |
 | Liechtenstein | 4 |
 | Montenegro | 4 |
