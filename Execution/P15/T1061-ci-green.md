@@ -57,6 +57,7 @@ The GitHub results are in the PR's checks. See "What is still open" for the stat
 | What | Cause | Fix |
 |---|---|---|
 | Local runs passed while CI failed | Untracked files (`boot.json`, the master), LFS pointers and sparse checkouts differ from the laptop | A sparse mirror worktree with LFS skipped reproduced CI exactly. Use it before trusting a local pass |
+| The PR run still failed python and contract | `test_rating_stability` also reads `app_data/curated_appeal.json` (LFS; the mirror had it pulled already). The contract's catalogue builder applied `_down.sql` files in order, so `055_group_trips_down.sql` dropped `group_trips` before 058 used it. The nature check found no rows because the sparse checkout skipped `public/` | CI pulls the three small `app_data` LFS files too; the builder skips `_down` migrations; schema-contract checks out the nature country files and the wire in pattern mode |
 | rating-tests' distribution gate now idles in CI | It needs the master, which CI cannot have | It still runs where the master exists. Running it on the box after each pipeline run is T1061-d |
 
 ## Screens checked
