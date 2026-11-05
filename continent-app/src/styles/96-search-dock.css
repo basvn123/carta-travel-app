@@ -331,7 +331,8 @@ html.sdock-locked body { overflow: hidden; }
   background: var(--surface);
   transition: border-color var(--dur-1) var(--ease-out), box-shadow var(--dur-1) var(--ease-out);
 }
-.sdock-field:focus-within { border-color: var(--action); box-shadow: 0 0 0 3px color-mix(in srgb, var(--action) 18%, transparent); }
+/* The input draws no outline of its own; the field draws the ring (T1064). */
+.sdock-field:focus-within { border-color: var(--action); outline: 2px solid var(--focus); outline-offset: 2px; }
 .sdock-field-icon { flex: none; color: var(--text-2); }
 .sdock-input {
   flex: 1 1 auto;
