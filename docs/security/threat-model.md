@@ -97,12 +97,12 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 |---|---|---|---|---|---|
 | S | Credential stuffing or weak passwords | M | M | Dashboard settings: not verified. The local `supabase/config.toml` holds the defaults: `minimum_password_length = 6`, `password_requirements = ""`, `enable_confirmations = false` | none yet |
 | S | Sign-up with someone else's email (no confirmation) | M | L | not verified on live | none yet |
-| S | A stolen admin session acts as the admin | L | H | `aal2` required by delete, ban and set tier only (032, 045, 051); every other admin RPC accepts `aal1` | `test_admin_rpc_security.mjs` runs the admin control at `aal2` only |
+| S | A stolen admin session acts as the admin | L | H | `admin_guard` requires `aal2` for every admin RPC (062, T1071; before it, delete, ban and set tier only) | `admin-rpc-security.yml` section 13: every callable admin function refuses an `aal1` admin and a token with no `aal` claim |
 | R | No record of sign-ins | L | M | Supabase auth logs (Dashboard, retention per plan): not verified | n/a |
 | D | Brute force of sign-in or OTP | M | M | Supabase auth rate limits; live values not verified (local defaults: 30 sign-ins per 5 minutes per IP) | none yet |
 | E | Refresh token replay | L | M | Rotation on with a 10 second reuse window in `config.toml`; live value not verified | none yet |
 
-**Gap.** Every auth setting that matters lives in the Dashboard and none was verifiable here: email confirmation, password length and classes, leaked-password check, rate limits, JWT expiry, refresh rotation, MFA enrolment for the owner. This is ROADMAP C3; T1071 lists the owner steps in `Execution/P15/_OPEN-auth-settings.md`. Admin reads (the user list with emails, the audit log) need only `aal1` today.
+**Gap.** Every auth setting that matters lives in the Dashboard and none was verifiable here: email confirmation, password length and classes, leaked-password check, rate limits, JWT expiry, refresh rotation, MFA enrolment for the owner. This is ROADMAP C3; T1071 lists the owner steps with values in `Execution/P15/_OPEN-auth-settings.md` (T1071-a). No CAPTCHA on sign-up (T1071-c).
 
 ## 5. Supabase database and row level security
 
@@ -219,7 +219,7 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 
 ## 11. Admin surfaces
 
-**Data flow.** `continent-app/src/admin/AdminPage.jsx` behind a re-auth lock (`AdminLock.jsx`, a second pair of eyes, not a gate); every action is an `admin_*` RPC that calls `public.admin_guard()` (membership in `admin_users` plus a rate budget counted on `admin_audit_log`, 015, 051) and writes `admin_audit_log` through `public.admin_log()` when it changes something. The owner also pastes SQL in the Supabase SQL editor.
+**Data flow.** `continent-app/src/admin/AdminPage.jsx` behind a re-auth lock (`AdminLock.jsx`, a second pair of eyes, not a gate) and, since T1071, a TOTP step-up (`MfaStepUp`) before anything loads; every action is an `admin_*` RPC that calls `public.admin_guard()` (membership in `admin_users`, then `aal2` since 062, then a rate budget counted on `admin_audit_log`, 015, 051) and writes `admin_audit_log` through `public.admin_log()` when it changes something. The owner also pastes SQL in the Supabase SQL editor.
 
 **Assets.** Every account (ban, delete, tier), the site's live config, the moderation decisions, every email address.
 
@@ -228,12 +228,12 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 | STRIDE | Threat | L | I | Current control | Test |
 |---|---|---|---|---|---|
 | E | A normal account calls an admin RPC | M | H | `admin_guard()` first in every function; `anon` has no grant | `admin-rpc-security.yml`, discovered from `pg_proc`, 211 assertions |
-| S | A stolen `aal1` admin session reads every account and changes config | L | H | `aal2` only on delete, ban and set tier | the test runs its control at `aal2`; nothing asserts `aal1` is refused elsewhere |
-| R | An admin action with no reason on record | M | M | `admin_audit_log` has `detail` jsonb; no `reason` column; `admin_set_infra_cost` writes no row at all | `admin-rpc-security.yml` checks rows for some actions |
+| S | A stolen `aal1` admin session reads every account and changes config | L | H | `aal2` required by `admin_guard` for every tier (062); the admin storage read needs `aal2` too | `admin-rpc-security.yml` section 13 |
+| R | An admin action with no reason on record | M | M | `admin_audit_log` has `target` and `reason` (062), filled from the detail by a trigger; every VOLATILE admin RPC writes a row (`admin_set_infra_cost` since 062). Ban, delete and set tier take no reason argument (T1071-b) | `admin-rpc-security.yml` section 13 (static and dynamic) |
 | D | A scripted admin floods writes | L | M | Rate budget in `admin_guard` (60 a minute, 10 destructive, 20 live) | `admin-rpc-security.yml` section 7 |
 | E | SQL pasted in the Dashboard with a typo or the wrong file | M | H | Self-check blocks in each migration; owner procedures | none |
 
-**Gap.** MFA for every admin RPC, a reason column, and an audit row from every state-changing admin RPC (C3; T1071). The Supabase Dashboard account itself is the stronger admin surface and needs MFA (C2 owner step).
+**Gap.** 062 is written, not applied (T1071-a; the owner enrols TOTP first). A refusal at the guard leaves no audit row (the guard is STABLE); admin reads are not logged by design (the rate budget counts rows). Ban, delete and set tier record no reason (T1071-b). The Supabase Dashboard account itself is the stronger admin surface and needs MFA (C2 owner step).
 
 ## Top gaps, ranked
 
@@ -243,7 +243,7 @@ Ranked by likelihood times impact, then by how cheaply the next step closes it.
 |---|---|---|---|---|---|---|
 | 1 | Leaked `carta-r2-admin` token not rolled | R2, Pages | M | H | C2 | Owner rolls it (`_OPEN-secrets-rotation.md`) |
 | 2 | Auth Dashboard settings unverified (confirmation, password rules, leaked-password check, rate limits, owner MFA) | Supabase Auth | M | H | C3 | Owner steps in `_OPEN-auth-settings.md` (T1071) |
-| 3 | Admin reads and live writes accept an `aal1` session | Admin | L | H | C3 | 062 requires `aal2` in `admin_guard` (T1071) |
+| 3 | Admin reads and live writes accept an `aal1` session | Admin | L | H | C3 | 062 written and tested (T1071); owner enrols TOTP and applies (T1071-a) |
 | 4 | 19 tables without an isolation fixture; 28 policies uncallable by `anon` | Database | M | H | C4 | Fixtures per table; grant or role-scope the helper functions |
 | 5 | Upload path server half written but not applied (061, `upload-scan`) | Uploads | H once live | H | T333-a (C4) | Owner applies (`_OPEN-uploads.md`, T1070-a) |
 | 6 | Dependency audit, SHA-pinned actions, Dependabot | CI, app | M | H | C6 | Add `npm audit`, `pip-audit`, OSV and pins |
@@ -251,7 +251,7 @@ Ranked by likelihood times impact, then by how cheaply the next step closes it.
 | 8 | Uptime job holds the service role key | GitHub | M | H | C2 | Switch to the anon key if the probe allows |
 | 9 | No durable rate limit on `/api/*` and Edge Functions; CORS `*` | Pages Functions, Edge | M | M | C5, H3 | KV or Durable Object limiter; origin allow-list |
 | 10 | No prompt-injection set or guardrail module | Edge AI | M | M | C8, E3 | Injection set in CI |
-| 11 | Audit has no reason column; one admin write logs nothing | Admin | M | M | C3 | 062 (T1071) |
+| 11 | Ban, delete and set tier record no reason; guard refusals are not logged | Admin | M | L | C3 | A reason argument on the three RPCs and the app (T1071-b) |
 | 12 | No CSP or security-header test in CI; `style-src 'unsafe-inline'` | Pages | L | H | C5 | Run `verify_csp.mjs` in CI |
 | 13 | No SAST | CI | L | M | C7 | Semgrep or CodeQL |
 | 14 | Critical secrets concentrated on the Hetzner box | Build box | L | H | C2 | Rotation record; narrower keys per job |

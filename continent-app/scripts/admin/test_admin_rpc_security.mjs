@@ -410,6 +410,7 @@ function runTests(bin) {
             from unnest(p.proargtypes) with ordinality as u(t, ord)
           ), '[]'::json),
           'secdef', p.prosecdef,
+          'volatile', p.provolatile = 'v',
           'config', coalesce(array_to_string(p.proconfig, ','), ''),
           'body', pg_get_functiondef(p.oid),
           'authenticated', has_function_privilege('authenticated', p.oid, 'execute'),
@@ -917,6 +918,68 @@ function runTests(bin) {
     const again = decide(`'publish', null, null`);
     check('a declined upload cannot then be published (not_pending)', again.error === 'not_pending', JSON.stringify(again));
     psql(bin, TEST_DB, ['-c', `delete from public.content_reports where target_kind = 'upload'; delete from public.user_uploads where id = '${UP}'; delete from public.admin_audit_log`]);
+
+    // ---------------------------------------------------------------------
+    // 13. MFA on every admin RPC and an audit row with a target and a
+    //     reason (062, T1071, ROADMAP C3). Discovered, like sections 1 to 5,
+    //     so a function added later is covered with no edit here.
+    // ---------------------------------------------------------------------
+    console.log('');
+    console.log('  Every admin RPC needs aal2, and every write leaves who, what, target and reason (062):');
+    const aal1Admin = { sub: ADMIN, role: 'authenticated', aal: 'aal1' };
+    const noAalAdmin = { sub: ADMIN, role: 'authenticated' };
+    check("admin_guard answers mfa_required to an admin on an aal1 session", guardAs(aal1Admin, 'read') === 'mfa_required',
+      guardAs(aal1Admin, 'read'));
+    check('and to an admin token with no aal claim at all (fails closed)', guardAs(noAalAdmin, 'read') === 'mfa_required',
+      guardAs(noAalAdmin, 'read'));
+    check('on every tier', ['live', 'destructive', 'write'].every((k) => guardAs(aal1Admin, k) === 'mfa_required'));
+    check('while a non-admin still hears forbidden, so nothing about MFA leaks to them',
+      guardAs(plainClaims, 'read') === 'forbidden' && guardAs({ sub: PLAIN, role: 'authenticated', aal: 'aal2' }, 'read') === 'forbidden');
+
+    psql(bin, TEST_DB, ['-c', 'delete from public.admin_audit_log']);
+    const notMfa = [];
+    const noClaimPassed = [];
+    for (const f of callable) {
+      if (!refused(callAs('authenticated', aal1Admin, f), 'mfa_required')) notMfa.push(f.name);
+      if (!refused(callAs('authenticated', noAalAdmin, f), 'mfa_required')) noClaimPassed.push(f.name);
+    }
+    check(`every one of the ${callable.length} callable admin_* functions answers mfa_required to an aal1 admin`,
+      notMfa.length === 0, notMfa.join(', '));
+    check('and to an admin token with no aal claim', noClaimPassed.length === 0, noClaimPassed.join(', '));
+    check('the MFA refusals changed nothing and wrote no audit row',
+      scalar(bin, TEST_DB, 'select count(*) from public.admin_audit_log') === '0');
+
+    const writers = callable.filter((f) => f.volatile);
+    const silent = writers.filter((f) => !/admin_log\(|admin_audit_log/.test(f.body)).map((f) => f.name);
+    check(`every one of the ${writers.length} state-changing (VOLATILE) admin RPCs writes an audit row`,
+      writers.length >= 15 && silent.length === 0, silent.length ? `no audit write: ${silent.join(', ')}` : `only ${writers.length} found`);
+    check('admin_audit_log carries who, action, target, reason and at', scalar(bin, TEST_DB,
+      `select string_agg(column_name, ',' order by column_name) from information_schema.columns
+        where table_schema = 'public' and table_name = 'admin_audit_log'
+          and column_name in ('actor', 'action', 'target', 'reason', 'created_at')`) === 'action,actor,created_at,reason,target');
+
+    // The one write that logged nothing before 062.
+    const infra = adminCall(`select public.admin_set_infra_cost('2026-11-17'::date, 'hosting', 1200, 'actual', 'Hetzner invoice for November.')`);
+    check('admin_set_infra_cost saves for an aal2 admin', infra.ok === true, JSON.stringify(infra));
+    const infraRow = scalar(bin, TEST_DB, `select actor || '|' || action || '|' || coalesce(target, '') || '|' || coalesce(reason, '')
+      from public.admin_audit_log where action = 'set_infra_cost'`);
+    check('and now writes its audit row: who, action, target infra:<month>/<item>, the note as the reason',
+      infraRow === `${ADMIN}|set_infra_cost|infra:2026-11-01/hosting|Hetzner invoice for November.`, infraRow);
+
+    // The trigger fills target and reason from what the functions already write.
+    adminCall(`select public.admin_add_note('${VICTIM}'::uuid, 'Called about a double charge.')`);
+    const noteRow = scalar(bin, TEST_DB, `select coalesce(target, '') || '|' || coalesce(reason, '') from public.admin_audit_log where action = 'note'`);
+    check('a note is filed against user:<id> with its text as the reason',
+      noteRow === `user:${VICTIM}|Called about a double charge.`, noteRow);
+    adminCall(`select public.admin_set_config('announcement', '{"enabled": false, "text": "", "tone": "info"}'::jsonb)`);
+    const cfgRow = scalar(bin, TEST_DB, `select coalesce(target, '') from public.admin_audit_log where action = 'set_config'`);
+    check('a config save is filed against config:<key>', cfgRow === 'config:announcement', cfgRow);
+    psql(bin, TEST_DB, ['-c', `insert into public.admin_audit_log (actor, action, target_user, detail)
+      values ('${ADMIN}', 'dismiss_report', '${VICTIM}', '{"reportId": 7, "reason": "Duplicate of an earlier notice."}')`]);
+    const direct = scalar(bin, TEST_DB, `select target || '|' || reason from public.admin_audit_log where action = 'dismiss_report'`);
+    check('a row inserted without them gets them from its detail (report:<id>, the reason)',
+      direct === 'report:7|Duplicate of an earlier notice.', direct);
+    psql(bin, TEST_DB, ['-c', 'delete from public.admin_audit_log; delete from public.infra_ledger where item = \'hosting\'']);
   } finally {
     psqlRun(bin, 'postgres', ['-c', `drop database if exists ${TEST_DB} with (force)`]);
     if (work) {

@@ -22,10 +22,13 @@
 //   7. Support: the reset mail rides the public recover endpoint AND lands
 //      in the trail via admin_mark; suspension arms, takes days, shows the
 //      chip, lifts again; a note saves and appears in the history.
-//   7b. MFA (T254): ban and delete stay disabled on an aal1 session; the
+//   7b. MFA (T254, moved by T1071): since migration 062 every admin RPC
+//      needs aal2, so the step-up sits in front of the whole page, right
+//      after the lock (step 1): nothing loads on an aal1 session; the
 //      step-up enrols a TOTP factor, refuses a wrong code, and the aal2
 //      token it gets is the one the ban and delete RPCs see (their stubs
-//      refuse anything below aal2, the way migration 032 does).
+//      refuse anything below aal2). On that session ban, delete and the
+//      pass change ask for nothing more.
 //   8. Deletion is armed, retype-gated, refuses a wrong confirmation with
 //      the server's own error, and goes through with the right one.
 //   8d. Content: the layer loads from the real wire file, an http image is
@@ -709,12 +712,28 @@ async function openPanel(page) {
   await page.locator('.account-panel').waitFor({ timeout: 15000 });
 }
 
+// The page-wide step-up after the lock (062, T1071): enrol when the account
+// has no verified factor yet, then the good code. A no-op on an aal2 session.
+async function passMfaGate(page) {
+  const gate = page.locator('.adminpage-locked .adminpage-mfa');
+  await page.locator('.adminpage-tiles, .adminpage-err, .adminpage-locked .adminpage-mfa').first().waitFor({ timeout: 15000 });
+  if (!(await gate.count())) return;
+  const enrol = gate.locator('.adminpage-btn', { hasText: 'Set up an authenticator app' });
+  if (await enrol.count()) {
+    await enrol.click();
+    await gate.locator('.adminpage-mfa-qr').waitFor({ timeout: 5000 });
+  }
+  await page.locator('#admin-page-mfa-code').fill(GOOD_CODE);
+  await gate.locator('.adminpage-btn', { hasText: 'Verify code' }).click();
+}
+
 async function openAdmin(page, { unlock = true } = {}) {
   await page.locator('.account-nav:visible', { hasText: 'Admin' }).click();
   await page.locator('.adminpage-lock').waitFor({ timeout: 15000 });
   if (!unlock) return;
   await page.locator('#admin-lock-input').fill(RIGHT_PASSWORD);
   await page.locator('button', { hasText: 'Open admin tools' }).click();
+  await passMfaGate(page);
   await page.locator('.adminpage-tiles, .adminpage-err').first().waitFor({ timeout: 15000 });
 }
 
@@ -804,8 +823,38 @@ try {
   await page.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-lock.png` });
   await page.locator('#admin-lock-input').fill(RIGHT_PASSWORD);
   await page.locator('button', { hasText: 'Open admin tools' }).click();
+
+  // ---- 1b (was 7b). The second factor in front of the whole page (062).
+  console.log('1b. MFA step-up before anything loads');
+  const gateMfa = page.locator('.adminpage-locked .adminpage-mfa');
+  const enrolBtn = gateMfa.locator('.adminpage-btn', { hasText: 'Set up an authenticator app' });
+  await enrolBtn.waitFor({ timeout: 15000 });
+  if (await page.locator('.adminpage-tiles').count()) fail('the page loaded on an aal1 session');
+  if (!/second factor|authenticator/i.test(await page.locator('.adminpage-lock-hint').innerText())) {
+    fail('the gate does not say why it asks for a code');
+  }
+  await enrolBtn.click();
+  const qr = gateMfa.locator('.adminpage-mfa-qr');
+  await qr.waitFor({ timeout: 5000 });
+  if (state.mfa.enrolCalls.length !== 1) fail(`expected one enrol call, got ${state.mfa.enrolCalls.length}`);
+  if (!(await qr.evaluate((img) => img.complete && img.naturalWidth > 0))) fail('the QR code image does not decode');
+  if (!/JBSWY3DPEHPK3PXP/.test(await gateMfa.locator('.adminpage-mfa-secret').innerText())) {
+    fail('the TOTP secret is not shown for manual entry');
+  }
+  const codeField = page.locator('#admin-page-mfa-code');
+  await codeField.fill('12a3');
+  if ((await codeField.inputValue()) !== '123') fail('the code field kept a non-digit');
+  await codeField.fill('000000');
+  await gateMfa.locator('.adminpage-btn', { hasText: 'Verify code' }).click();
+  await gateMfa.locator('.adminpage-err', { hasText: 'That code did not work' }).waitFor({ timeout: 5000 });
+  if (await page.locator('.adminpage-tiles').count()) fail('a wrong code opened the page');
+  await page.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-mfa-enrol.png` });
+  await codeField.fill(GOOD_CODE);
+  await gateMfa.locator('.adminpage-btn', { hasText: 'Verify code' }).click();
   await page.locator('.adminpage-tiles').first().waitFor({ timeout: 15000 });
-  ok('the lock refuses a wrong password by re-auth, and opens the page on the right one');
+  if (await page.locator('.adminpage-mfa').count()) fail('a step-up box stayed on an aal2 session');
+  if (!state.mfa.factors.some((f) => f.status === 'verified')) fail('the factor was never verified');
+  ok('the lock refuses a wrong password by re-auth; the page then waits for MFA: enrol, a wrong code refused, a right code opens it');
 
   // ---- 2. Overview, including what the database is missing.
   console.log('2. overview');
@@ -891,16 +940,22 @@ try {
   if ((await page.locator('.adminpage-facts > div').count()) < 8) fail('the detail states fewer than 8 facts');
   ok('an account opens in full');
 
-  // ---- 5. A pass change waits for the second factor (migration 051, T063-e).
-  // The change itself is made after 7b has stepped the session up.
-  console.log('5. pass change needs MFA');
+  // ---- 5. A pass change (migration 051, T063-e). The session stepped up to
+  // aal2 at the page gate (1b), so it asks for nothing more and goes through.
+  console.log('5. pass change on the aal2 session');
   await page.locator('.adminpage-seg', { hasText: 'Year' }).click();
   await page.locator('#admin-days').fill('90');
   const applyBtn = page.locator('.adminpage-btn', { hasText: 'Apply pass change' });
-  if (await applyBtn.isEnabled()) fail('Apply pass change is live on an aal1 session');
-  if (!(await page.locator('.adminpage-mfa').count())) fail('the pass control shows no step-up on an aal1 session');
-  if (state.tierCalls.length) fail('a pass change went out on an aal1 session');
-  ok('a pass change waits for MFA on an aal1 session');
+  if (await page.locator('.adminpage-mfa').count()) fail('the pass control asks for MFA again on an aal2 session');
+  if (!(await applyBtn.isEnabled())) fail('Apply pass change is disabled on an aal2 session');
+  await applyBtn.click();
+  await page.waitForTimeout(800);
+  const tc = state.tierCalls[0];
+  if (!tc || tc.p_tier !== 'year' || tc.p_days !== 90) {
+    fail(`admin_set_tier got ${JSON.stringify(tc)}, expected year for 90 days`);
+  }
+  if (!(await page.locator('.adminpage-ok').count())) fail('a completed pass change confirms nothing');
+  ok('on aal2 the pass change lands as admin_set_tier(year, 90)');
 
   // ---- 6. Quota reset arms first.
   console.log('6. quota reset');
@@ -931,46 +986,13 @@ try {
   await page.locator('.adminpage-btn', { hasText: 'Suspend sign-in' }).click();
   if (state.banCalls.length) fail('suspension fired without the confirm step');
 
-  // ---- 7b. The MFA step-up in front of ban (T254).
-  console.log('7b. MFA step-up');
+  // ---- 7b. Ban on the aal2 session (T254; the step-up itself is 1b now).
+  console.log('7b. ban on the aal2 session');
   const suspendBtn = page.locator('.adminpage-btn', { hasText: /^Suspend$/ });
-  const banMfa = page.locator('.adminpage-armed .adminpage-mfa');
-  const enrolBtn = banMfa.locator('.adminpage-btn', { hasText: 'Set up an authenticator app' });
-  await enrolBtn.waitFor({ timeout: 5000 });
-  if (await suspendBtn.isEnabled()) fail('Suspend is live on an aal1 session');
-  await enrolBtn.click();
-  const qr = banMfa.locator('.adminpage-mfa-qr');
-  await qr.waitFor({ timeout: 5000 });
-  if (state.mfa.enrolCalls.length !== 1) fail(`expected one enrol call, got ${state.mfa.enrolCalls.length}`);
-  if (!(await qr.evaluate((img) => img.complete && img.naturalWidth > 0))) fail('the QR code image does not decode');
-  if (!/JBSWY3DPEHPK3PXP/.test(await banMfa.locator('.adminpage-mfa-secret').innerText())) {
-    fail('the TOTP secret is not shown for manual entry');
-  }
-  const codeField = page.locator('#admin-ban-mfa-code');
-  await codeField.fill('12a3');
-  if ((await codeField.inputValue()) !== '123') fail('the code field kept a non-digit');
-  await codeField.fill('000000');
-  await banMfa.locator('.adminpage-btn', { hasText: 'Verify code' }).click();
-  await banMfa.locator('.adminpage-err', { hasText: 'That code did not work' }).waitFor({ timeout: 5000 });
-  if (await suspendBtn.isEnabled()) fail('a wrong code enabled Suspend');
-  await page.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-mfa-enrol.png` });
-  await codeField.fill(GOOD_CODE);
-  await banMfa.locator('.adminpage-btn', { hasText: 'Verify code' }).click();
-  await banMfa.waitFor({ state: 'detached', timeout: 5000 });
-  if (await page.locator('.adminpage-mfa').count()) fail('a step-up box stayed on an aal2 session');
-  if (!(await suspendBtn.isEnabled())) fail('Suspend stayed disabled after a good code');
-  if (!state.mfa.factors.some((f) => f.status === 'verified')) fail('the factor was never verified');
-  ok('ban waits for MFA: enrol, a wrong code refused, a right code steps the session up');
-  // 5, continued: on the aal2 session the pass change goes through.
-  if (!(await applyBtn.isEnabled())) fail('Apply pass change stayed disabled on an aal2 session');
-  await applyBtn.click();
-  await page.waitForTimeout(800);
-  const tc = state.tierCalls[0];
-  if (!tc || tc.p_tier !== 'year' || tc.p_days !== 90) {
-    fail(`admin_set_tier got ${JSON.stringify(tc)}, expected year for 90 days`);
-  }
-  if (!(await page.locator('.adminpage-ok').count())) fail('a completed pass change confirms nothing');
-  ok('on aal2 the pass change lands as admin_set_tier(year, 90)');
+  await suspendBtn.waitFor({ timeout: 5000 });
+  if (await page.locator('.adminpage-armed .adminpage-mfa').count()) fail('ban asks for MFA again on an aal2 session');
+  if (!(await suspendBtn.isEnabled())) fail('Suspend is disabled on an aal2 session');
+  ok('ban asks for nothing more on the aal2 session');
   await page.locator('#admin-ban-days').fill('7');
   await page.locator('.adminpage-btn', { hasText: /^Suspend$/ }).click();
   await page.waitForTimeout(900);
