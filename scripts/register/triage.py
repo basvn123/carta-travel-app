@@ -65,6 +65,12 @@ def parse(path=OPEN):
     return lines, rows
 
 
+def fmt_row(cells):
+    """Format a row the way the register does: an empty Order cell ends '| |'."""
+    order = cells[5] if len(cells) > 5 else ""
+    return "| " + " | ".join(cells[:5]) + " | " + (order + " |" if order else "|")
+
+
 def task_num(rid):
     m = re.match(r"T(\d+)", rid)
     return int(m.group(1)) if m else 0

@@ -32,7 +32,7 @@ def main():
             continue
         cells = [r["id"], r["raised"], r["item"], r["owner"],
                  "closed by T1072 (" + d["close_text"] + ")", r["order"]]
-        moved.append((r["idx"], "| " + " | ".join(cells) + " |"))
+        moved.append((r["idx"], triage.fmt_row(cells)))
     print(f"closing {len(moved)} rows (decisions: {len(dec)})")
     if dry or not moved:
         return
