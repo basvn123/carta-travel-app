@@ -908,7 +908,7 @@ export function ExploreMap({
     // old ones stayed up for three to six seconds, until 'idle').
     map.once('render', () => setKpins(collectKpins(map)));
     map.triggerRepaint();
-  }, [keepIds, pins]);
+  }, [keepIds, pins, collectKpins]);
 
   applyFilterRef.current = applyFilter;
   useEffect(() => { applyFilter(); }, [applyFilter]);
