@@ -49,6 +49,7 @@ import * as P from './pages.mjs';
 import { pageFloor, listedFloor, newTally, addToTally, daysPlan } from './floor.mjs';
 import { haversineKm } from '../../src/lib/runtime_pricing.js';
 import { writeSitemaps } from './sitemap.mjs';
+import { pageBar } from './quality.mjs';
 
 const APP = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const argv = process.argv.slice(2);
@@ -140,12 +141,14 @@ setStayRecords(mergeStayFiles(list('stays/v1').filter((f) => f.endsWith('.json')
 // shows before the traveller picks anything.
 const costs = priceDays(destRows, DEFAULT_PRICE_REQUEST);
 const dossierFiles = list('dossier').filter((f) => f.endsWith('.json'));
+const trailLinkedFrom = new Set(); // `${cc}/${id}` of every trail a destination page links to (the bar's linked place)
 const dests = new Map(); // id -> { id, slug, name, cc, score, dayEur, measured, lat, lon, built, week, perDay }
 const destByCity = new Map();
 for (const f of dossierFiles) {
   const d = readJson(`dossier/${f}`);
   if (!d?.slug || !d.place?.iso2 || !COUNTRY_SLUGS[d.place.iso2]) continue;
   const cost = costs.get(d.id);
+  for (const x of d.around?.trails || []) trailLinkedFrom.add(`${x.cc}/${x.id}`);
   // The week receipt (T224) is the figure the cost and trip-length pages use,
   // so a town's week and its four days come from the same printed lines.
   const week = P.weekReceipt(cost, destRows[d.id]);
@@ -348,6 +351,8 @@ function emit(page, card) {
   write(page, key);
 }
 
+const barHeadroom = {};
+const dosByPath = new Map(); // dest page path -> dossier, for the quality bar
 const wireRow = (page) => {
   const p = parsePath(page.path);
   if (page.kind === 'trail') return trailIdx.get(`${p.cc}/${p.id}`);
@@ -361,6 +366,17 @@ function write(page, key) {
   // stays out of the sitemap.
   const floor = pageFloor(page, wireRow(page));
   if (floor && !floor.ok) page.noindex = true;
+  // The quality bar (T1076, K2): a page that exists but is thin ships
+  // noindex,follow and stays out of the sitemap until its data clears it.
+  const bar = pageBar(page, { dos: dosByPath.get(page.path), row: wireRow(page), cc: parsePath(page.path)?.cc, linkedFrom: trailLinkedFrom });
+  if (bar && !bar.ok) page.noindex = true;
+  if (page.kind === 'trail' && bar) {
+    const h = (barHeadroom.trail ||= { total: 0, ok: 0, okIfPhotoLicensed: 0 });
+    h.total += 1;
+    if (bar.ok) h.ok += 1;
+    // The headroom the pipeline's photo licence work would unlock: every other test passes.
+    if (Object.entries(bar).every(([k, v]) => k === 'photo' || k === 'ok' || v)) h.okIfPhotoLicensed += 1;
+  }
   const file = path.join(OUT, key);
   fs.mkdirSync(path.dirname(file), { recursive: true });
   fs.writeFileSync(file, renderPage(page));
@@ -368,6 +384,7 @@ function write(page, key) {
     path: page.path, canonical: page.canonical || page.path, key, kind: page.kind,
     lastmod: page.lastmod || null, indexable: !page.noindex,
     ...(floor ? { floor } : {}),
+    ...(bar ? { bar } : {}),
   });
 }
 
@@ -395,7 +412,9 @@ for (const d of dests.values()) {
   if (ONLY && !ONLY.has('dest') && !ONLY.has('cost')) break;
   if (SAMPLE && (counts.dest || 0) >= SAMPLE && (counts.cost || 0) >= SAMPLE) break;
   const dos = readJson(`dossier/${d.file}`);
-  emit(P.destPage(dos, ctx), { type: 'destination', key: d.id });
+  const dpage = P.destPage(dos, ctx);
+  if (dpage) dosByPath.set(dpage.path, dos);
+  emit(dpage, { type: 'destination', key: d.id });
   emit(P.costPage(dos, ctx));
 }
 for (const j of journeys) if (!arg('--country', '') || COUNTRIES.includes(j.countryCode)) emit(P.journeyPage(j, ctx));
@@ -411,7 +430,7 @@ manifest.sort((a, b) => a.key.localeCompare(b.key));
 const coverageDate = readJson('coverage.json')?.generated_at || null;
 const manifestDoc = {
   generated_at: new Date().toISOString(), data: DATA, coverage_date: coverageDate, counts, unreadable,
-  floor_listed: { rows: LISTED, regions: floorRegions }, pages: manifest,
+  floor_listed: { rows: LISTED, regions: floorRegions }, bar_headroom: barHeadroom, pages: manifest,
 };
 fs.writeFileSync(path.join(OUT, '_manifest.json'), JSON.stringify(manifestDoc, null, 0));
 const smap = writeSitemaps(manifestDoc, OUT, { coverageDate });

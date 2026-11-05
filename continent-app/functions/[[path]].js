@@ -109,6 +109,6 @@ export async function onRequest(context) {
   // The document embeds this deploy's asset names, so it must not outlive it.
   headers.set('cache-control', 'public, max-age=0, must-revalidate');
   headers.set('x-carta-prerender', key);
-  if (pageIsNoindex(page)) headers.set('x-robots-tag', 'noindex');
+  if (pageIsNoindex(page)) headers.set('x-robots-tag', 'noindex, follow');
   return new Response(request.method === 'HEAD' ? null : html, { status: 200, headers });
 }
