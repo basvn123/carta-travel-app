@@ -3,6 +3,7 @@
 Where each part of Carta lives. Find the area, open the files named, stop.
 
 - **How a feature works** (rules, formulas, thresholds): its part of [docs/HANDBOOK.md](docs/HANDBOOK.md), named in the Handbook column. Grep the handbook for the feature; never read it whole.
+- **One area on a page** (files, tests, limits, open rows): [docs/areas/](docs/areas/README.md), one file per row below. **Everything else in docs/**: [docs/README.md](docs/README.md).
 - **What is planned**: [ROADMAP.md](ROADMAP.md). **What hurts today**: [docs/AUDIT-2026-11.md](docs/AUDIT-2026-11.md).
 - App paths start with `app/`, meaning `continent-app/` (tracked in this repo).
 - "Latest" are the newest task reports on the area: grep `Execution/P15/` and `Execution/P*/_DIGEST.md` for the ID.
@@ -30,7 +31,7 @@ Where each part of Carta lives. Find the area, open the files named, stop.
 | Trails, cycling, routes | app/src/browse/TrailPage.jsx, app/src/browse/CyclePage.jsx, app/src/lib/trails.js, app/src/lib/cycling.js | pipeline/trails/, pipeline/cycling/, tools/trailslab/ | Outdoors (rating in Scores) | T918-T922 |
 | Beaches, lakes, mountains, nature | app/src/browse/BeachPage.jsx, app/src/browse/LakePage.jsx, app/src/browse/MountainPage.jsx, app/src/browse/OutdoorParts.jsx | pipeline/beaches/, pipeline/lakes/, pipeline/mountains/, pipeline/outdoor/derive_outdoor_pages.py | Outdoors; docs/LAKES.md (read by pipeline/lakes/check_doc.py) | T1031-T1033, T918-T922 |
 | Climate, crowds, seasons | app/src/browse/ClimateStrip.jsx, app/src/browse/CrowdCalendar.jsx, app/src/lib/crowdMonth.js, app/src/lib/when.js | pipeline/apply_climate.py, pipeline/harvest_tourism_density.py, pipeline/harvest_sea_temp.py | Scores | T1022, T667 |
-| Regions, countries, coverage | app/src/browse/RegionPage.jsx, app/src/browse/CountryPage.jsx, app/src/lib/regions.js | pipeline/regions/, pipeline/intake/ (coverage.py writes the coverage contract the CI gate reads; see T1051-b) | Discover; docs/REGIONS.md (read by app/scripts/verify_regions.mjs) | T450, T456 |
+| Regions, countries, coverage | app/src/browse/RegionPage.jsx, app/src/browse/CountryPage.jsx, app/src/lib/regions.js | pipeline/regions/ (coverage.py writes the coverage contract, coverage_gate.py is the CI gate; see T1051-b), pipeline/intake/ | Discover; docs/REGIONS.md (read by app/scripts/verify_regions.mjs) | T450, T456 |
 | Images and photos | app/src/components/HeroImage.jsx, app/src/lib/imageLadder.js, app/src/browse/PhotoGallery.jsx | pipeline/photos/, pipeline/images/ | Outdoors | T620-T623 |
 | Languages (6) | app/src/i18n/index.jsx and en, de, fr, es, it, nl .js (grep, never read whole), app/scripts/i18n/ | | Platform | T158 |
 | Admin, moderation, telemetry | app/src/admin/AdminPage.jsx, app/src/components/admin/, app/src/auth/moderation.js, app/src/lib/launchEvents.js | supabase/migrations/ | Platform | T365, T315 |
