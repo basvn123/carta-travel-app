@@ -22,11 +22,13 @@ on:
     branches: [main]
     paths:
       - "supabase/migrations/**"
+      - "supabase/schema.sql"
       - "continent-app/scripts/admin/test_admin_rpc_security.mjs"
       - ".github/workflows/admin-rpc-security.yml"
   pull_request:
     paths:
       - "supabase/migrations/**"
+      - "supabase/schema.sql"
       - "continent-app/scripts/admin/test_admin_rpc_security.mjs"
       - ".github/workflows/admin-rpc-security.yml"
 

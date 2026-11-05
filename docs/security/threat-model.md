@@ -122,7 +122,7 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 
 **Verified state on 2026-11-05 (local Postgres 18, this task).** Both security workflows were red before this batch for a reason unrelated to policies: their loaders applied every `NNN_*.sql`, so from 055 on each `_down.sql` ran straight after its migration, and 056 then failed on `user_settings`, which only `supabase/schema.sql` creates. With the loaders corrected (skip `_down`, apply `schema.sql` first; the fix is committed by T1070), the admin surface passes 211 of 211 and the row policy suite passes 413 of 415. The two failures are real coverage debt: 19 tables from `schema.sql` and 052 to 060 have no isolation fixture (`ask_chats`, `email_log`, `email_prefs`, `friend_visibility`, seven `group_trip_*`, `pay_links`, `saved_trips`, four `shared_list*`, `trip_join_requests`, `user_settings`), and 28 policies on the group and shared-list tables call `group_role`, `group_all_joined` or `shared_list_role`, which `anon` cannot execute, so a signed-out read answers 42501 instead of an empty set. Neither is a leak (the refusals are refusals); both are unproven isolation.
 
-**Gap.** Isolation is unproven for the 19 tables above (C4). Definer functions outside `admin_*` are not checked for a pinned `search_path` by any test (C4). No upload storage at all until T1070.
+**Gap.** Isolation is unproven for 17 of the 19 tables above (C4; T1070 wrote fixtures for `saved_trips` and `user_settings` and lists the other 17 as known entries, T1070-c), and the 28 uncallable policies are T1070-d. Definer functions outside `admin_*` are not checked for a pinned `search_path` by any test (C4). The upload tables and bucket (061, T1070) are covered by the row policy suite, Storage policies included.
 
 ## 6. Supabase Edge Functions (`supabase/functions/`)
 
@@ -161,24 +161,25 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 
 **Gap.** No test sends an unsigned or wrongly signed body to the webhook and expects 400 (C5).
 
-## 8. The upload path (T333)
+## 8. The upload path (T333, server half T1070)
 
-**Data flow, as designed by T333.** The trail page form (`continent-app/src/community/UploadForm.jsx`) strips a photo's metadata or trims a track's ends on the device (`src/lib/stripImageMeta.js`, `src/lib/gpxPrivacy.js`), then `submitUpload` in `src/community/uploads.js` calls `begin_upload`, uploads into the private bucket `user-uploads` at the path it was given, and calls `finish_upload`. None of the server half exists: no table, no bucket, no RPC, so a send answers "did not send, nothing was stored". `continent-app/scripts/ci/check-contract.mjs` carries the two missing RPCs as `KNOWN_DB_GAPS`.
+**Data flow.** The trail page form (`continent-app/src/community/UploadForm.jsx`) strips a photo's metadata or trims a track's ends on the device (`src/lib/stripImageMeta.js`, `src/lib/gpxPrivacy.js`), then `submitUpload` in `src/community/uploads.js` calls `begin_upload`, uploads into the private bucket `user-uploads` at the path it was given, and calls `finish_upload`. Every 15 minutes `supabase/functions/upload-scan` sweeps, deletes queued files through the Storage API and re-runs the privacy pass on pending uploads. An admin publishes, declines or removes with `admin_decide_upload`. All of it is in `supabase/migrations/061_user_uploads.sql`, written by T1070 and not yet applied live (`Execution/P15/_OPEN-uploads.md`).
 
 **Assets.** The uploader's location and identity (home address at a track's ends, EXIF GPS); third parties in a photo; Carta's liability for what it publishes; storage cost.
 
-**Trust boundaries.** Browser to Storage API (anyone with a session can call it directly, so the device pass is advisory); bucket to the public (only published uploads should ever be readable).
+**Trust boundaries.** Browser to Storage API (anyone with a session can call it directly, so the device pass is advisory); bucket to the public (only published uploads are readable, through signed URLs); the Edge Function as service role.
 
-| STRIDE | Threat | L | I | Current control | Test |
+| STRIDE | Threat | L | I | Current control (061 unless named) | Test |
 |---|---|---|---|---|---|
-| I | A caller skips the device pass and stores a photo with GPS, or a full track | H once live | H | none on the server (the design asks for an Edge Function re-running both modules) | `continent-app/tests/uploadPrivacy.test.mjs` covers the device modules only |
-| T | A caller writes into another account's folder or overwrites a file | M | M | none (no bucket) | none yet |
-| I | A pending or declined upload is read by a stranger | M | M | none (no bucket) | none yet |
-| D | Storage filled by one account | M | L | none | none yet |
-| R | A takedown with no reasons | L | M | none (the design asks for a statement of reasons as T070 does for guides) | none yet |
-| I | Files outlive the account | M | M | none (`delete_user()` in 005 knows nothing of storage) | none yet |
+| I | A caller skips the device pass and stores a photo with GPS, or a full track | H once live | H | `upload-scan` re-runs both modules on every pending upload (copies in `supabase/functions/_shared`); `admin_decide_upload` answers `not_scanned` for an upload the pass has not cleared | `continent-app/tests/uploadScan.test.mjs`; `test_admin_rpc_security.mjs` section 12 |
+| T | A caller writes into another account's folder or overwrites a file | M | M | Storage insert policy: own folder only, only at the path of one of their own reserved rows; no update or delete policy | `test_rls_policies.mjs` section 4e |
+| I | A pending or declined upload is read by a stranger | M | M | Bucket private; read for the owner and an admin, and for anyone only when the row is published (`upload_is_published`) | `test_rls_policies.mjs` section 4e |
+| D | Storage filled by one account | M | L | 20 reservations a day per account and 2,000 overall under an advisory lock; 25 MB bucket limit, 10 MB for a track; reserved rows without a file swept after a day | `test_rls_policies.mjs` section 4e |
+| R | A takedown with no reasons | L | M | A decline or removal needs a ground and a statement of reasons; contest date six months; one audit row per decision | `test_admin_rpc_security.mjs` section 12 |
+| I | Files outlive the account | M | M | A trigger on `auth.users` queues the `{uid}/` folder; the row trigger queues each file; `upload-scan` deletes them through the Storage API | `test_rls_policies.mjs` section 4e |
+| S | A forged cron call to `upload-scan` | L | L | `x-uploads-secret` compared in constant time (`secretOk` in `upload-scan/logic.mjs`); the function only sweeps and scans, it publishes nothing | `uploadScan.test.mjs` |
 
-**Gap.** The whole server half: table, private bucket and policies, the two RPCs, the server privacy pass, reports on uploads, the admin decision with reasons, folder removal on account deletion, the reserved-row sweep. Register row T333-a; built by T1070.
+**Gap.** Applying 061 and deploying `upload-scan` are owner steps (T1070-a). The Storage stubs the tests use mirror only the columns the policies read; the policies have not run against the real Storage API (not verified). The app half (published uploads on the page, the review list) is T333-c; the legal wording is T333-b.
 
 ## 9. Hetzner build box and its scrapers
 
@@ -244,7 +245,7 @@ Ranked by likelihood times impact, then by how cheaply the next step closes it.
 | 2 | Auth Dashboard settings unverified (confirmation, password rules, leaked-password check, rate limits, owner MFA) | Supabase Auth | M | H | C3 | Owner steps in `_OPEN-auth-settings.md` (T1071) |
 | 3 | Admin reads and live writes accept an `aal1` session | Admin | L | H | C3 | 062 requires `aal2` in `admin_guard` (T1071) |
 | 4 | 19 tables without an isolation fixture; 28 policies uncallable by `anon` | Database | M | H | C4 | Fixtures per table; grant or role-scope the helper functions |
-| 5 | Upload path server half missing (no storage, no server privacy pass) | Uploads | H once live | H | T333-a (C4) | Migration 061 and a server privacy pass (T1070); the owner applies |
+| 5 | Upload path server half written but not applied (061, `upload-scan`) | Uploads | H once live | H | T333-a (C4) | Owner applies (`_OPEN-uploads.md`, T1070-a) |
 | 6 | Dependency audit, SHA-pinned actions, Dependabot | CI, app | M | H | C6 | Add `npm audit`, `pip-audit`, OSV and pins |
 | 7 | Stripe webhook signature check has no test | Stripe | M | H | C5 | A unit test with a wrong signature expecting 400 |
 | 8 | Uptime job holds the service role key | GitHub | M | H | C2 | Switch to the anon key if the probe allows |

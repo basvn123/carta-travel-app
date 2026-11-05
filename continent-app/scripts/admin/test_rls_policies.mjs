@@ -81,7 +81,10 @@
  *
  * MIGRATIONS. Every file in supabase/migrations is applied in numeric
  * order; there is no list to keep current. Every file is applied as
- * committed, 018 included (its regex bound is {5,} since T253).
+ * committed, 018 included (its regex bound is {5,} since T253). Since T1070
+ * supabase/schema.sql (the base, before 002) is applied first and the
+ * NNN_name_down.sql files are skipped; before that the run aborted at 056.
+ * The stubs include Supabase Storage (buckets, objects, foldername) for 061.
  *
  * NEEDS a PostgreSQL server that accepts a password-less connection (trust
  * auth or PGPASSWORD). Set PGHOST, PGPORT, PGUSER as needed; defaults are
@@ -151,7 +154,34 @@ const MIN_POLICIES = 34;
  *   calling are_friends(a, b) (register row T083-a), was repaired by
  *   migration 046, which calls a one-armed is_friend_me(other) instead.
  */
-const KNOWN_UNCALLABLE = [];
+const KNOWN_UNCALLABLE = [
+  // T1070-d. 055, 058 and 059 scope their policies to every role (no TO
+  // clause) but grant the helper functions to `authenticated` only, so a
+  // signed-out read of a group or shared-list table answers 42501 instead of
+  // an empty set. Not a leak (it is a refusal), but the fault class above.
+  // An entry with no `policy` matches every policy that calls `fn` for
+  // `role`; it is asserted to still occur somewhere.
+  { fn: 'group_role', role: 'anon', row: 'T1070-d' },
+  { fn: 'group_all_joined', role: 'anon', row: 'T1070-d' },
+  { fn: 'shared_list_role', role: 'anon', row: 'T1070-d' },
+];
+
+/**
+ * Tables with policies that have no isolation fixture yet (T1070-c). The
+ * tripwire below would fail on each; listing them keeps the gate meaningful
+ * for every other table (a NEW table without a fixture still fails), and
+ * each entry is asserted to still lack one, so the list cannot outlive the
+ * work: write the fixture, delete the entry. They arrived with 052 to 060,
+ * while this suite could not run (it applied the _down files, see the
+ * loader below).
+ */
+const KNOWN_UNFIXTURED = [
+  'ask_chats', 'email_log', 'email_prefs', 'friend_visibility',
+  'group_trip_budgets', 'group_trip_expenses', 'group_trip_members', 'group_trip_options',
+  'group_trip_settlements', 'group_trip_votes', 'group_trips', 'pay_links',
+  'shared_list_items', 'shared_list_members', 'shared_list_votes', 'shared_lists',
+  'trip_join_requests',
+];
 
 function findPsql() {
   for (const cand of PSQL_CANDIDATES) {
@@ -256,6 +286,45 @@ $do$;
 
 grant usage on schema auth to authenticated, anon, service_role;
 
+-- Supabase Storage, as far as a policy or a definer function sees it (T1070):
+-- the two tables, foldername(), RLS on objects and the API roles' grants.
+create schema if not exists storage;
+create table if not exists storage.buckets (
+  id                 text primary key,
+  name               text not null,
+  owner              uuid,
+  public             boolean default false,
+  file_size_limit    bigint,
+  allowed_mime_types text[],
+  created_at         timestamptz default now(),
+  updated_at         timestamptz default now()
+);
+create table if not exists storage.objects (
+  id         uuid primary key default gen_random_uuid(),
+  bucket_id  text references storage.buckets (id),
+  name       text,
+  owner      uuid,
+  metadata   jsonb,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now(),
+  unique (bucket_id, name)
+);
+alter table storage.objects enable row level security;
+create or replace function storage.foldername(name text)
+returns text[]
+language plpgsql
+immutable
+as $fn$
+declare
+  _parts text[];
+begin
+  select string_to_array(name, '/') into _parts;
+  return _parts[1:array_length(_parts, 1) - 1];
+end
+$fn$;
+grant usage on schema storage to anon, authenticated, service_role;
+grant all on storage.objects, storage.buckets to anon, authenticated, service_role;
+
 grant usage on schema public to authenticated, anon, service_role;
 alter default privileges in schema public
   grant all on tables to authenticated, anon, service_role;
@@ -293,7 +362,42 @@ const SHARE = '00000000-0000-0000-0000-0000000000b1';  // the victim's share tok
  *             own row through the client (false where the table is written
  *             by functions only).
  */
+const UPLOADER = '00000000-0000-0000-0000-00000000c004'; // an account deleted in the upload section
+const TERMS = '2026-10-07'; // uploads.js UPLOAD_TERMS_VERSION, begin_upload's v_terms
+
 const FIXTURES = [
+  {
+    // supabase/schema.sql, the base before 002 (T1070 applies it first). No
+    // update policy, so the owner cannot update either.
+    table: 'saved_trips',
+    seed: [{ as: 'victim', sql: `insert into public.saved_trips (user_id, destination_id, city) values ('${VICTIM}', 'd:lisbon', 'Lisbon')` }],
+    mine: `user_id = '${VICTIM}'`,
+    mutate: `label = 'tampered'`,
+    forge: `insert into public.saved_trips (user_id, destination_id, city) values ('${VICTIM}', 'd:porto', 'forged')`,
+    reads: 'private',
+    ownerWrites: false,
+  },
+  {
+    table: 'user_settings',
+    seed: [{ as: 'victim', sql: `insert into public.user_settings (user_id, settings) values ('${VICTIM}', '{"favorites": ["d:lisbon"]}')` }],
+    mine: `user_id = '${VICTIM}'`,
+    mutate: `settings = '{"tampered": true}'`,
+    forge: `insert into public.user_settings (user_id, settings) values ('${VICTIM}', '{}') on conflict (user_id) do update set settings = '{"forged": true}'`,
+    reads: 'private',
+    ownerWrites: true,
+  },
+  {
+    // 061 (T1070). Seeded through begin_upload, so the RPC is the positive
+    // control; the owner reads, nobody writes from a client, the owner
+    // included. The storage half is section 4e.
+    table: 'user_uploads',
+    seed: [{ as: 'victim', sql: `select public.begin_upload('photo', 'trail', 't1070-fixture', 'cc-by-4.0', 'Victim V', null, null, '${TERMS}', 1000)` }],
+    mine: `owner = '${VICTIM}'`,
+    mutate: `status = 'published'`,
+    forge: `insert into public.user_uploads (owner, kind, layer, item_id, storage_path, declared_bytes, licence, credit, terms_version) values ('${VICTIM}', 'photo', 'trail', 'x', '${VICTIM}/forged.jpg', 1, 'platform', 'Forged', '${TERMS}')`,
+    reads: 'private',
+    ownerWrites: false,
+  },
   {
     table: 'trip_plans',
     seed: [{ as: 'victim', sql: `insert into public.trip_plans (id, user_id, label) values ('${PLAN}', '${VICTIM}', 'victim trip')` }],
@@ -462,6 +566,10 @@ function runTests(bin) {
     const stubFile = join(work, 'stubs.sql');
     writeFileSync(stubFile, STUBS, 'utf8');
     psql(bin, TEST_DB, ['-f', stubFile]);
+    // supabase/schema.sql is the base the live project was created from
+    // (saved_trips, user_settings); there is no 001. 056 joins user_settings,
+    // so the stack does not apply without it (T1070).
+    psql(bin, TEST_DB, ['-f', resolve(migrations, '../schema.sql')]);
 
     const applyFile = (label, file) => {
       const r = psqlRun(bin, TEST_DB, ['-f', file]);
@@ -471,8 +579,11 @@ function runTests(bin) {
     };
 
     // Every migration in the directory, in numeric order. No list to keep.
+    // The NNN_name_down.sql files (055 on) undo their migration and are
+    // skipped (T1070): applied in the stack they would drop the very tables
+    // this run must probe.
     const files = readdirSync(migrations)
-      .filter((f) => /^\d{3}_.*\.sql$/.test(f))
+      .filter((f) => /^\d{3}_.*\.sql$/.test(f) && !/_down\.sql$/.test(f))
       .sort((a, b) => Number(a.slice(0, 3)) - Number(b.slice(0, 3)));
     check('the migrations directory was found and is not empty', files.length > 0, migrations);
     if (files.length === 0) throw new Error(`no migrations in ${migrations}`);
@@ -594,20 +705,29 @@ function runTests(bin) {
         }
       }
     }
-    const isKnown = (u) => KNOWN_UNCALLABLE.some((k) => k.policy === u.policy && k.fn === u.fn);
+    const isKnown = (u) => KNOWN_UNCALLABLE.some((k) => (k.policy
+      ? k.policy === u.policy && k.fn === u.fn
+      : k.fn === u.fn && k.role === u.role));
     const fresh = uncallable.filter((u) => !isKnown(u)).map((u) => `${u.policy} calls ${u.fn}, which ${u.role} cannot execute`);
     check('every function a policy calls is executable by the roles the policy applies to (beyond the known entries)',
       fresh.length === 0, fresh.join('; '));
     for (const k of KNOWN_UNCALLABLE) {
-      const still = uncallable.some((u) => u.policy === k.policy && u.fn === k.fn);
-      check(`known: ${k.policy} still calls ${k.fn} without a grant (${k.row}); delete the entry once repaired`, still,
-        `${k.policy} no longer calls ${k.fn} uncallably: remove it from KNOWN_UNCALLABLE and seed its fixture as the owner again`);
+      const still = uncallable.some((u) => (k.policy
+        ? u.policy === k.policy && u.fn === k.fn
+        : u.fn === k.fn && u.role === k.role));
+      const who = k.policy || `a policy calling ${k.fn} for ${k.role}`;
+      check(`known: ${who} still lacks a grant (${k.row}); delete the entry once repaired`, still,
+        `${who} is no longer uncallable: remove it from KNOWN_UNCALLABLE`);
     }
 
     const fixtureOf = new Map(FIXTURES.map((f) => [f.table, f]));
     const unfixtured = withPolicies.filter((t) => !fixtureOf.has(t.name)).map((t) => t.name);
-    check('every table with policies has an isolation fixture in this script',
-      unfixtured.length === 0, `add a fixture for: ${unfixtured.join(', ')}`);
+    const freshUnfixtured = unfixtured.filter((n) => !KNOWN_UNFIXTURED.includes(n));
+    check('every table with policies has an isolation fixture in this script (beyond the known entries)',
+      freshUnfixtured.length === 0, `add a fixture for: ${freshUnfixtured.join(', ')}`);
+    const staleKnown = KNOWN_UNFIXTURED.filter((n) => !unfixtured.includes(n));
+    check(`the ${KNOWN_UNFIXTURED.length} known unfixtured tables (T1070-c) still exist and still lack a fixture`,
+      staleKnown.length === 0, `remove from KNOWN_UNFIXTURED: ${staleKnown.join(', ')}`);
     const stale = FIXTURES.filter((f) => !tables.some((t) => t.name === f.table)).map((f) => f.table);
     check('every fixture names a table that exists', stale.length === 0, stale.join(', '));
     const fixturedButClosed = FIXTURES.filter((f) => closed.some((t) => t.name === f.table)).map((f) => f.table);
@@ -783,6 +903,137 @@ function runTests(bin) {
       const forge = runAs(who, `insert into public.launch_counts (event, target, surface, n) values ('affiliate_click', 'omio', 'leg', 1000000)`);
       check(`launch_counts: ${who} cannot write a count directly`, !forge.ok, describe(forge));
     }
+
+    // ---------------------------------------------------------------------
+    // 4e. The upload path (061, T1070): the storage policies, the RPCs, the
+    //     account folder and the sweep, end to end against the stubbed
+    //     Storage tables. A file is "uploaded" by inserting its
+    //     storage.objects row as the caller, which is what the Storage API
+    //     does with the caller's JWT.
+    // ---------------------------------------------------------------------
+    console.log('');
+    console.log('  The upload path keeps files in their owner\'s slot (061):');
+    const json = (r) => { try { return JSON.parse(r.out); } catch { return {}; } };
+    const begin = (who, kind = 'photo', extra = {}) => json(runAs(who,
+      `select public.begin_upload('${kind}', 'trail', 't1070', '${extra.licence || 'cc-by-4.0'}', '${extra.credit || 'A Walker'}', `
+      + `${kind === 'track' ? 'false' : 'null'}, null, '${extra.terms || TERMS}', ${extra.bytes || 2000})::text`));
+    const putObject = (who, path) => runAs(who,
+      `insert into storage.objects (bucket_id, name, owner, metadata) values ('user-uploads', '${path}', auth.uid(), '{"size": 2000, "mimetype": "image/jpeg"}')`);
+    const objCount = (who, path) => runAs(who,
+      `select count(*) from storage.objects where bucket_id = 'user-uploads' and name = '${path}'`);
+
+    const slot = begin('victim');
+    check('begin_upload answers an id and a path in the caller\'s folder',
+      Boolean(slot.id) && slot.path === `${VICTIM}/${slot.id}.jpg`, JSON.stringify(slot));
+    for (const [what, args, word] of [
+      ['a stale Terms version', { terms: '2026-01-01' }, 'no_grant'],
+      ['a one-letter credit', { credit: 'A' }, 'bad_credit'],
+      ['an unknown licence', { licence: 'cc0' }, 'bad_licence'],
+      ['a photo over 25 MB', { bytes: 26214401 }, 'too_big'],
+    ]) {
+      const r = begin('victim', 'photo', args);
+      check(`begin_upload refuses ${what} with ${word}`, r.error === word, JSON.stringify(r));
+    }
+    const noOsm = json(runAs('victim',
+      `select public.begin_upload('track', 'trail', 't1070', 'platform', 'A Walker', null, null, '${TERMS}', 2000)::text`));
+    check('a track without an OpenStreetMap answer is refused with bad_osm', noOsm.error === 'bad_osm', JSON.stringify(noOsm));
+    const anonBegin = runAs('anon',
+      `select public.begin_upload('photo', 'trail', 't1070', 'platform', 'A Walker', null, null, '${TERMS}', 2000)`);
+    check('a visitor cannot call begin_upload at all', denied(anonBegin), describe(anonBegin));
+
+    const put = putObject('victim', slot.path);
+    check('the owner puts the file at the reserved path', put.ok, describe(put));
+    const stray = putObject('victim', `${VICTIM}/never-reserved.jpg`);
+    check('but not at a path with no reserved row', denied(stray), describe(stray));
+    const plainSlot = begin('plain');
+    const intoVictim = putObject('plain', slot.path);
+    check('a second user cannot write at the victim\'s path', !intoVictim.ok, describe(intoVictim));
+    const crossFolder = putObject('plain', `${VICTIM}/${plainSlot.id}.jpg`);
+    check('nor put their own reserved file into the victim\'s folder', denied(crossFolder), describe(crossFolder));
+    const anonPut = putObject('anon', slot.path);
+    check('a visitor cannot write into the bucket', !anonPut.ok, describe(anonPut));
+    const overwrite = affectedAs('victim',
+      `update storage.objects set metadata = '{"size": 1}' where bucket_id = 'user-uploads' and name = '${slot.path}'`);
+    check('nobody overwrites a file, the owner included (no update policy)', nothing(overwrite), describe(overwrite));
+    const unlink = affectedAs('victim', `delete from storage.objects where bucket_id = 'user-uploads' and name = '${slot.path}'`);
+    check('nor deletes it from a client (no delete policy)', nothing(unlink), describe(unlink));
+
+    const plainFinish = json(runAs('plain', `select public.finish_upload('${slot.id}')::text`));
+    check('a second user cannot finish the victim\'s upload (not_found)', plainFinish.error === 'not_found', JSON.stringify(plainFinish));
+    const done = json(runAs('victim', `select public.finish_upload('${slot.id}')::text`));
+    check('the owner finishes it', done.ok === true, JSON.stringify(done));
+    check('and the row is pending with the stored size and type', scalar(bin, TEST_DB,
+      `select status || '/' || stored_bytes || '/' || mime from public.user_uploads where id = '${slot.id}'`) === 'pending/2000/image/jpeg');
+    const noFile = json(runAs('plain', `select public.finish_upload('${plainSlot.id}')::text`));
+    check('finishing with no file answers no_object', noFile.error === 'no_object', JSON.stringify(noFile));
+
+    for (const who of ['plain', 'anon']) {
+      const r = objCount(who, slot.path);
+      check(`a pending file is invisible to ${who}`, r.ok && r.out === '0', describe(r));
+    }
+    const ownSees = objCount('victim', slot.path);
+    check('the owner sees their pending file', ownSees.ok && ownSees.out === '1', describe(ownSees));
+
+    // Published by the database owner here; admin_decide_upload, its guard
+    // and its audit row are asserted by test_admin_rpc_security.mjs.
+    psql(bin, TEST_DB, ['-c', `update public.user_uploads set scanned_at = now(), scan_result = 'clean',
+      status = 'published', decided_at = now() where id = '${slot.id}'`]);
+    for (const who of ['plain', 'anon']) {
+      const r = objCount(who, slot.path);
+      check(`once published, ${who} can read the file (for a signed URL)`, r.ok && r.out === '1', describe(r));
+    }
+    const shown = runAs('anon', `select public.list_published_uploads('trail', 't1070')::text`);
+    const shownRows = json(shown);
+    check('list_published_uploads gives a visitor the one published upload with credit and licence',
+      Array.isArray(shownRows) && shownRows.length === 1 && shownRows[0].credit === 'A Walker'
+      && shownRows[0].licence === 'cc-by-4.0', describe(shown));
+    check('and no owner id or statement field', !/"owner|statement|ground/.test(shown.out), shown.out.slice(0, 160));
+    const rowStill = countAs('plain', 'user_uploads', `id = '${slot.id}'`);
+    check('the published row itself stays private to its owner', rowStill.ok && rowStill.out === '0', describe(rowStill));
+
+    const notice = json(runAs('anon',
+      `select public.report_content('upload', '${slot.id}', 'This photo shows a person who did not agree.', null, null, true)::text`));
+    check('a visitor reports a published upload through report_content', notice.ok === true, JSON.stringify(notice));
+    check('stored as an upload report with no plan', scalar(bin, TEST_DB,
+      `select count(*) from public.content_reports where target_kind = 'upload' and target_id = '${slot.id}' and plan_id is null`) === '1');
+    const pendingReport = json(runAs('anon',
+      `select public.report_content('upload', '${plainSlot.id}', 'Reporting something that is not public.', null, null, true)::text`));
+    check('an unpublished upload cannot be reported (not_public)', pendingReport.error === 'not_public', JSON.stringify(pendingReport));
+    const badKind = json(runAs('anon',
+      `select public.report_content('byline', 'x', 'A byline report, not built yet.', null, null, true)::text`));
+    check('a byline report answers bad_target until T068-h builds it', badKind.error === 'bad_target', JSON.stringify(badKind));
+
+    for (const fn of ['public.uploads_sweep()', `public.upload_mark_scanned('${slot.id}', 'clean', null)`]) {
+      const r = runAs('victim', `select ${fn}`);
+      check(`${fn.split('(')[0]} is service role only`, denied(r), describe(r));
+    }
+
+    const removed = json(runAs('victim', `select public.remove_my_upload('${slot.id}')::text`));
+    check('the owner withdraws the upload', removed.ok === true && scalar(bin, TEST_DB,
+      `select status from public.user_uploads where id = '${slot.id}'`) === 'removed', JSON.stringify(removed));
+    check('and its file is queued for deletion', scalar(bin, TEST_DB,
+      `select count(*) from public.upload_purge_queue where path = '${slot.path}' and reason = 'owner'`) === '1');
+
+    // The sweep: the second user's reserved slot is two days old.
+    psql(bin, TEST_DB, ['-c', `update public.user_uploads set created_at = now() - interval '2 days' where id = '${plainSlot.id}'`]);
+    const sweep = runAs('db', 'select public.uploads_sweep()::text');
+    check('the sweep deletes a reserved row older than a day', sweep.ok && json(sweep).reserved >= 1
+      && scalar(bin, TEST_DB, `select count(*) from public.user_uploads where id = '${plainSlot.id}'`) === '0', describe(sweep));
+    check('and queues whatever file sat at its path', scalar(bin, TEST_DB,
+      `select count(*) from public.upload_purge_queue where path = '${plainSlot.path}' and reason = 'row_deleted'`) === '1');
+
+    // Account deletion: the folder and every row's file are queued.
+    psql(bin, TEST_DB, ['-c', `insert into auth.users (id, email) values ('${UPLOADER}', 'uploader@example.test')`]);
+    WHO.uploader = { role: 'authenticated', claims: { sub: UPLOADER, role: 'authenticated', aal: 'aal1' } };
+    const gone = begin('uploader');
+    check('a fourth account reserves an upload', Boolean(gone.path), JSON.stringify(gone));
+    psql(bin, TEST_DB, ['-c', `delete from auth.users where id = '${UPLOADER}'`]);
+    check('deleting an account deletes its upload rows', scalar(bin, TEST_DB,
+      `select count(*) from public.user_uploads where owner = '${UPLOADER}'`) === '0');
+    check('and queues its {uid}/ folder and each file for the Storage API', scalar(bin, TEST_DB,
+      `select count(*) from public.upload_purge_queue
+        where (path = '${UPLOADER}/' and is_prefix and reason = 'account_deleted')
+           or (path = '${gone.path}' and reason = 'row_deleted')`) === '2');
 
     // ---------------------------------------------------------------------
     // 4d. The export (024, 045, 048 schema 3; T300-i). By now the victim

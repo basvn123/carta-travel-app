@@ -2455,6 +2455,28 @@ This section covers the parts of Carta that sit around the travel content: the A
 - `prune_paywall_events` (180 days) is called by nothing (T319-b).
 - Ask Carta failures are not written to `edge_errors` (the table only accepts the three Supabase functions).
 
+### Photo and track uploads
+
+**What it does.** A signed-in walker shares a photo or a GPX track of a trail from the trail page ("Add a photo or track"), under a licence they pick (Carta only, CC BY 4.0, CC BY-SA 4.0), with a credit and, for a track, an OpenStreetMap yes or no. Nothing is public until a person publishes it.
+
+**How it works.**
+- **On the device (T333):** `lib/stripImageMeta.js` drops a photo's EXIF, XMP, IPTC and trailers and the form re-encodes it at most 2,560 px; `lib/gpxPrivacy.js` keeps a track's geometry only and hides every point within `PRIVACY_RADIUS_M` (500 m) plus up to `PRIVACY_JITTER_M` (250 m) of its start and end.
+- **Send (`community/uploads.js` `submitUpload`):** `begin_upload` checks the target, licence, credit (2 to 80 characters), the Terms version (`UPLOAD_TERMS_VERSION`, `v_terms` in 061), the OSM tick version and the size (photo 25 MB, track 10 MB), holds 20 reservations a day per account (2,000 overall) under an advisory lock, writes a `reserved` row and answers `{ id, path }` with path `{uid}/{id}.jpg|.gpx`. The file goes into the private bucket `user-uploads` at that path; `finish_upload` checks the file exists with an allowed type and size and sets the row `pending`.
+- **Storage policies (061):** insert only into your own folder and only at one of your own reserved paths; read for the owner and an admin, and for anyone once the row is `published`; no update or delete from a client.
+- **Server privacy pass:** the `upload-scan` Edge Function (every 15 minutes through pg_cron) re-runs both modules on each pending upload (copies in `supabase/functions/_shared`, kept byte-identical by `tests/uploadScan.test.mjs`). A photo with metadata left is stripped and rewritten, a track is trimmed again and rewritten, an unreadable file is removed. `admin_decide_upload` will not publish an upload the pass has not cleared.
+- **Review:** `admin_list_uploads` is the queue; `admin_decide_upload(id, action, ground, statement)` publishes, declines or removes behind `admin_guard('live')`. A decline or removal needs a ground (`illegal` or `terms`) and a statement of reasons (10 to 2,000 characters), sets a six-month contest date, answers open notices on the upload and writes one audit row.
+- **Notices:** `report_content('upload', id, ...)` takes a notice on a published upload with `report_guide`'s validation and shared rate limits; `content_reports` carries `target_kind` and `target_id`. Guide reports still go through `report_guide`; the admin Reports tab lists guide reports only.
+- **Removal:** `remove_my_upload` withdraws an upload on request. Deleting an account queues its `{uid}/` folder; reserved rows without a finish are swept after a day; declined and removed files go after their contest date. The queue (`upload_purge_queue`) is emptied through the Storage API by `upload-scan`.
+
+**Data behind it.** Migration 061: `user_uploads`, `upload_purge_queue`, bucket `user-uploads`, columns `target_kind`, `target_id` on `content_reports`.
+
+**Where it lives.** `continent-app/src/community/uploads.js`, `continent-app/src/community/UploadForm.jsx`, `continent-app/src/lib/stripImageMeta.js`, `continent-app/src/lib/gpxPrivacy.js`, `supabase/migrations/061_user_uploads.sql`, `supabase/functions/upload-scan/`. Latest report: `Execution/P15/T1070-upload-migration.md`.
+
+**Limits.**
+- 061 and `upload-scan` are not applied or deployed until the owner does it (`Execution/P15/_OPEN-uploads.md`); until then a send answers "did not send, nothing was stored".
+- Published uploads are not shown on pages yet and the admin page has no review list (T333-c); `list_published_uploads` and `admin_list_uploads` are ready for it.
+- Only the trail page has the door (T333-d). The legal wording waits on the J4 review (T333-b).
+
 ### The data wire (pipeline to app)
 
 **What it does.** The Python pipeline writes one master dataset. The wire step splits it into small files the app loads fast: a boot index first, then one file per country, then heavy details only when a screen needs them. A contract check stops a build if the data shape drifts.

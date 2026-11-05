@@ -155,12 +155,13 @@ const TEST_DB = process.env.CARTA_TEST_DB || 'carta_t077_test';
  * The floor on how many admin_* functions the discovery must find. It is a
  * floor, not an equality: adding a guarded function must not fail the build,
  * but a discovery that silently returns nothing or a handful (the vacuous
- * gate) must. 41 is what the whole directory defines as of 048 (T315 added
+ * gate) must. 43 is what the whole directory defines as of 061 (T1070 added
+ * admin_list_uploads and admin_decide_upload); 41 as of 048 (T315 added
  * admin_launch_metrics); it was 40 as of 047 (T284 added admin_adjust_expiry),
  * 39 as of 045 (T268) and 37 when the list of
  * migrations was still written by hand.
  */
-const MIN_FUNCTIONS = 41;
+const MIN_FUNCTIONS = 43;
 
 function findPsql() {
   for (const cand of PSQL_CANDIDATES) {
@@ -256,6 +257,45 @@ $do$;
 
 grant usage on schema auth to authenticated, anon, service_role;
 
+-- Supabase Storage, as far as a policy or a definer function sees it (T1070):
+-- the two tables, foldername(), RLS on objects and the API roles' grants.
+create schema if not exists storage;
+create table if not exists storage.buckets (
+  id                 text primary key,
+  name               text not null,
+  owner              uuid,
+  public             boolean default false,
+  file_size_limit    bigint,
+  allowed_mime_types text[],
+  created_at         timestamptz default now(),
+  updated_at         timestamptz default now()
+);
+create table if not exists storage.objects (
+  id         uuid primary key default gen_random_uuid(),
+  bucket_id  text references storage.buckets (id),
+  name       text,
+  owner      uuid,
+  metadata   jsonb,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now(),
+  unique (bucket_id, name)
+);
+alter table storage.objects enable row level security;
+create or replace function storage.foldername(name text)
+returns text[]
+language plpgsql
+immutable
+as $fn$
+declare
+  _parts text[];
+begin
+  select string_to_array(name, '/') into _parts;
+  return _parts[1:array_length(_parts, 1) - 1];
+end
+$fn$;
+grant usage on schema storage to anon, authenticated, service_role;
+grant all on storage.objects, storage.buckets to anon, authenticated, service_role;
+
 grant usage on schema public to anon, authenticated, service_role;
 alter default privileges in schema public grant all on tables to anon, authenticated, service_role;
 alter default privileges in schema public grant all on sequences to anon, authenticated, service_role;
@@ -272,7 +312,11 @@ const VICTIM = '00000000-0000-0000-0000-00000000c002'; // a target for the write
  * below catches a directory that silently came back short.
  */
 const MIGRATIONS = readdirSync(migrations)
-  .filter((f) => /^\d{3}_.+\.sql$/.test(f))
+  // From 055 on each migration has a NNN_name_down.sql beside it (T1070).
+  // A down file undoes its migration, so applying it in the stack would test
+  // a database with the feature removed; it is skipped, and it is not a
+  // second use of the number either.
+  .filter((f) => /^\d{3}_.+\.sql$/.test(f) && !/_down\.sql$/.test(f))
   .sort();
 const MIN_MIGRATIONS = 47; // 002 to 048 as of T315 (the directory has no 001)
 
@@ -317,6 +361,10 @@ function runTests(bin) {
     const stubFile = join(work, 'stubs.sql');
     writeFileSync(stubFile, STUBS, 'utf8');
     psql(bin, TEST_DB, ['-f', stubFile]);
+    // supabase/schema.sql is the base the live project was created from
+    // (saved_trips, user_settings); there is no 001. 056 joins user_settings,
+    // so the stack does not apply without it (T1070).
+    psql(bin, TEST_DB, ['-f', resolve(migrations, '../schema.sql')]);
 
     const applyFile = (label, file) => {
       const r = psqlRun(bin, TEST_DB, ['-f', file]);
@@ -822,6 +870,53 @@ function runTests(bin) {
     check('a normal signed-in user gets forbidden from the reader', refused({ ok: plainLm.ok, out: plainLm.out.trim() }),
       plainLm.out.trim() || plainLm.err.trim());
     psql(bin, TEST_DB, ['-c', 'delete from public.launch_counts; delete from public.launch_daily_total; delete from public.edge_errors; delete from public.admin_audit_log']);
+
+    // ---------------------------------------------------------------------
+    // 12. The upload decision (061, T1070): publishing needs the server
+    //     privacy pass, a decline needs a ground and a statement of reasons,
+    //     every decision writes one audit row, and open notices on the
+    //     upload are answered by it.
+    // ---------------------------------------------------------------------
+    console.log('');
+    console.log('  admin_decide_upload (061):');
+    const UP = '00000000-0000-0000-0000-0000000000f1';
+    psql(bin, TEST_DB, ['-c', `insert into public.user_uploads (id, owner, kind, layer, item_id, storage_path, declared_bytes,
+        licence, credit, terms_version, status, stored_bytes, mime, finished_at)
+      values ('${UP}', '${VICTIM}', 'photo', 'trail', 't1070', '${VICTIM}/${UP}.jpg', 2000,
+        'cc-by-4.0', 'Victim V', '2026-10-07', 'pending', 2000, 'image/jpeg', now())`]);
+    const decide = (args) => adminCall(`select public.admin_decide_upload('${UP}'::uuid, ${args})`);
+    const unscanned = decide(`'publish', null, null`);
+    check('an upload the privacy pass has not cleared cannot be published (not_scanned)',
+      unscanned.error === 'not_scanned', JSON.stringify(unscanned));
+    psql(bin, TEST_DB, ['-c', `update public.user_uploads set scanned_at = now(), scan_result = 'cleaned' where id = '${UP}'`]);
+    const noReason = decide(`'decline', 'terms', 'short'`);
+    check('a decline without a statement of reasons is refused (bad_reason)', noReason.error === 'bad_reason', JSON.stringify(noReason));
+    const noGround = decide(`'decline', 'taste', 'The photo shows a different trail than this page.'`);
+    check('a decline without a known ground is refused (bad_ground)', noGround.error === 'bad_ground', JSON.stringify(noGround));
+    const plainDecide = psqlRun(bin, TEST_DB, ['-At', '-c', 'set role authenticated', '-c', claimsSql(plainClaims),
+      '-c', `select public.admin_decide_upload('${UP}'::uuid, 'publish', null, null)::text`]);
+    check('a normal signed-in user gets forbidden', refused({ ok: plainDecide.ok, out: plainDecide.out.trim() }),
+      plainDecide.out.trim() || plainDecide.err.trim());
+    check('none of the refusals wrote an audit row or moved the upload', scalar(bin, TEST_DB,
+      `select (select count(*) from public.admin_audit_log)::text || '/' || (select status from public.user_uploads where id = '${UP}')`) === '0/pending');
+    psql(bin, TEST_DB, ['-c', `insert into public.content_reports (plan_id, target_kind, target_id, plan_owner, reason,
+        source_hash, source_header, good_faith) values (null, 'upload', '${UP}', '${VICTIM}',
+        'A notice about this upload, long enough.', 'h', 'none', true)`]);
+    const declined = decide(`'decline', 'terms', 'The photo shows a different trail than this page.'`);
+    check('an admin declines it with a ground and a statement', declined.ok === true && declined.status === 'declined', JSON.stringify(declined));
+    const row = scalar(bin, TEST_DB, `select status || '|' || ground || '|' || (decided_by = '${ADMIN}') || '|' || (contest_until > now())
+      from public.user_uploads where id = '${UP}'`);
+    check('the row carries the ground, the decider and a contest date', row === 'declined|terms|true|true', row);
+    const upAudit = JSON.parse(scalar(bin, TEST_DB, `select coalesce(json_agg(json_build_object('action', action,
+        'target', target_user, 'detail', detail)), '[]'::json) from public.admin_audit_log`) || '[]');
+    check('one upload_decline audit row against the uploader, carrying the reason', upAudit.length === 1
+      && upAudit[0].action === 'upload_decline' && upAudit[0].target === VICTIM
+      && upAudit[0].detail.reason === 'The photo shows a different trail than this page.', JSON.stringify(upAudit));
+    check('the open notice on the upload is marked actioned', scalar(bin, TEST_DB,
+      `select status from public.content_reports where target_kind = 'upload' and target_id = '${UP}'`) === 'actioned');
+    const again = decide(`'publish', null, null`);
+    check('a declined upload cannot then be published (not_pending)', again.error === 'not_pending', JSON.stringify(again));
+    psql(bin, TEST_DB, ['-c', `delete from public.content_reports where target_kind = 'upload'; delete from public.user_uploads where id = '${UP}'; delete from public.admin_audit_log`]);
   } finally {
     psqlRun(bin, 'postgres', ['-c', `drop database if exists ${TEST_DB} with (force)`]);
     if (work) {
