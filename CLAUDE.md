@@ -17,6 +17,7 @@ Carta is a Europe trip planner: a Python data pipeline in this repo and a Vite +
 | `continent-app/` | The app, tracked by this repo. Its old nested `.git` (stuck at T915, no remote) is stale: never commit there. `public/` is shipped data and images: never delete it. |
 | `cache/`, `tools/trailslab/`, `tools/brouter/` | Pipeline inputs and routing tools. Hours to rebuild: never delete them for space. |
 | `Execution/_OPEN.md` | The register of open items. |
+| `Execution/P15/_HANDOVER-2026-11-05.md`, `Execution/P15/_NEXT-50-SESSIONS.md` | The current handover and the session plan: each session takes its reserved task number from the plan. |
 | `Execution/P{n}/_DIGEST.md` | One file per finished phase: what each task changed and what broke. Search it, do not read it whole. |
 | `Execution/P15/` | The active phase, full reports. |
 | `Execution/_TEMPLATE.md` | The report template. |
