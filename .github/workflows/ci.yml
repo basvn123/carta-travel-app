@@ -57,6 +57,8 @@ jobs:
           python-version: "3.11"
           cache: pip
           cache-dependency-path: requirements.txt
+      - name: Pull the small LFS files the rating tests read (about 4 MB)
+        run: git lfs pull --include="cache/unesco_whc.json,cache/urban_fabric.json,cache/dest_pageviews.json,app_data/curated_appeal.json,app_data/curated_why_i18n.json,app_data/rubric_appeal.json"
       - run: pip install -r requirements.txt pytest ruff==0.14.3
       - name: Ruff (syntax errors and undefined names)
         run: ruff check --select E9,F63,F7,F82 --output-format github pipeline src scripts run_pipeline.py tests

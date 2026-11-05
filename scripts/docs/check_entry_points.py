@@ -32,7 +32,11 @@ PREFIXES = ("app/", "continent-app/", "pipeline/", "supabase/", "infra/", "scrip
 ROOT_FILES = {"CLAUDE.md", "MAP.md", "ROADMAP.md", "PRODUCT.md", "DESIGN.md", "README.md",
               "run_pipeline.py", "run_pipeline.bat", "requirements.txt", "requirements-ml.txt"}
 # Throwaway build output and per-session folders: allowed to be missing.
-MAY_BE_ABSENT = {"dist/", "dist-data/", ".fastbuild/", "../.fastbuild", "node_modules/"}
+# Also paths that live only on the owner's laptop, never in git, so a fresh
+# checkout (CI) lacks them: the stale nested repo and the scheduler's logs
+# folder (T1061).
+MAY_BE_ABSENT = {"dist/", "dist-data/", ".fastbuild/", "../.fastbuild", "node_modules/",
+                 "continent-app/.git", "logs/", "logs/pipeline_state.json"}
 # Named on purpose to say they do not exist, or names that are git tags, not paths.
 INTENTIONALLY_ABSENT = {"pipeline/schema.py", "archive/execution-full-2026-11-03"}
 
