@@ -57,13 +57,13 @@ The audit found things that are broken in production, exposed, or burning effort
 | ID | Fix | Why now | Done when | Owner | Pain point | Status |
 |---|---|---|---|---|---|---|
 | N1 | Pause the hourly `CartaStaysBooking` and `CartaStaysHostelworld` tasks; remove the dead `CartaFlightsAll` and `CartaFlightsNow` tasks; drop `VITE_E2E_SEAMS=1` from `continent-app/.env` | Booking returns 0 prices for 3,437 towns every hour since Oct 30 (block risk, 43.7 MB log); Hostelworld parses 0 prices from 677 pages | Tasks disabled, log rotated, Hostelworld parser bug filed (fixed in D5) | you (Task Scheduler) | P-13, P-20 | todo |
-| N2 | Publish `status.json` and add `status.json`, `.keep`, `_test` to the prune keep list in `scripts/r2/push-data.mjs`; make `--prune` list what it would delete and ask | 404 on every page view; the Nov 3 prune deleted `data/flights/` | `status.json` returns 200; a dry prune shows its list | next task | P-14 | todo |
+| N2 | Publish `status.json` and add `status.json`, `.keep`, `_test` to the prune keep list in `scripts/r2/push-data.mjs`; make `--prune` list what it would delete and ask | 404 on every page view; the Nov 3 prune deleted `data/flights/` | `status.json` returns 200; a dry prune shows its list | next task | P-14 | done (T1056; owner publishes status.json, T1056-a) |
 | N3 | Rotate the leaked R2 admin token (T291-b) and check R2 access logs | Anyone holding it can change or delete shipped data | Old token revoked, new one only in secrets | you | P-07 | todo |
-| N4 | Bump `dompurify` (non-breaking); file jspdf 4 and maplibre 5/6 as C6 tasks | Three critical advisories in production dependencies | `npm audit --omit=dev` shows no critical that a minor bump fixes | next task | P-08 | todo |
-| N5 | Clear account-tied `carta.*` stores on sign-out (or ask "remove this device's copy") | Bookings and companions stay visible on a shared device | Sign-out test passes on a real phone | next task | P-09 | todo |
+| N4 | Bump `dompurify` (non-breaking); file jspdf 4 and maplibre 5/6 as C6 tasks | Three critical advisories in production dependencies | `npm audit --omit=dev` shows no critical that a minor bump fixes | next task | P-08 | done (T1053) |
+| N5 | Clear account-tied `carta.*` stores on sign-out (or ask "remove this device's copy") | Bookings and companions stay visible on a shared device | Sign-out test passes on a real phone | next task | P-09 | done (T1054; real-phone check T1054-a) |
 | N6 | Commit the flight-sweep deploy script under `scripts/`, deploy the half-speed night fix (T1043-a), check refusals by hour (T1043-b) | Google refuses the sweep 3 of 3 nights | Three clean nights | you (deploy) | P-16 | todo |
-| N7 | Fix the lint error at `ExploreMap.jsx:911` (missing `collectKpins` dependency) | A real stale-closure bug on the main screen | `npm run lint` shows 0 errors | next task | P-45 | todo |
-| N8 | Move the 6 closed rows out of `_OPEN.md`; close the migration rows T985 proved live (T034-a, T043-a, T265-a, T270-b, T281-b) | The register misleads every session | Rows moved with reasons | next task | P-56, P-58 | todo |
+| N7 | Fix the lint error at `ExploreMap.jsx:911` (missing `collectKpins` dependency) | A real stale-closure bug on the main screen | `npm run lint` shows 0 errors | next task | P-45 | done (T1055) |
+| N8 | Move the 6 closed rows out of `_OPEN.md`; close the migration rows T985 proved live (T034-a, T043-a, T265-a, T270-b, T281-b) | The register misleads every session | Rows moved with reasons | next task | P-56, P-58 | done (T1058) |
 
 ---
 
@@ -483,7 +483,7 @@ docs/
 | ID | Item | Done when | Size | Phase | Status |
 |---|---|---|---|---|---|
 | C1 | Threat model | Every surface modelled with STRIDE (or C-R1's method), threats ranked, each mapped to a control and test | M | P1 | todo |
-| C2 | Secrets and accounts | Inventory of every secret (where, who, rotation), rotation done for old ones, MFA on every owner account, recovery codes stored | S | P0 | todo |
+| C2 | Secrets and accounts | Inventory of every secret (where, who, rotation), rotation done for old ones, MFA on every owner account, recovery codes stored | S | P0 | in progress: inventory done (T1059), owner rotation open |
 | C3 | Auth and access | Supabase auth settings per C-R3, admin behind MFA and role checks, session lifetimes set, admin actions audit-logged | M | P1 | todo |
 | C4 | Data access and RLS | RLS on every table proven by tests (exist, extended), service-role key never in the browser, storage and R2 access reviewed | S | P2 | todo |
 | C5 | Web and API hardening | Strict CSP and security headers, CORS allow-list, input validation on every endpoint, durable rate limits (with H3), Stripe webhook signature check verified | M | P2 | todo |
@@ -893,7 +893,7 @@ docs/
 
 | ID | Item | Done when | Size | Phase | Status |
 |---|---|---|---|---|---|
-| H1 | CI that runs everything | `npm run ci`, `npm test`, ruff, mypy, pytest on every push and PR; branch protection on `main` | S | P0 | todo |
+| H1 | CI that runs everything | `npm run ci`, `npm test`, ruff, mypy, pytest on every push and PR; branch protection on `main` | S | P0 | done (T1057; branch protection T1057-c) |
 | H2 | Error tracking | Sentry (EU) for app, Pages functions, Edge Functions, pipeline; release tags, PII scrubbing | S | P2 | todo |
 | H3 | Durable rate limiting | Limits for ask, flights, stays hold across isolates | S | P3 | todo |
 | H4 | Load tests | k6 at 10x launch traffic, p95 under budget, report in docs | M | P4 | todo |
@@ -1089,7 +1089,7 @@ docs/
 
 | ID | Item | Done when | Size | Phase | Status |
 |---|---|---|---|---|---|
-| K1 | Positioning and brand basics | One-page positioning (from K-R1), launch market and language, name check (EUIPO), social handles, a press-ready logo and screenshots | S | P0 | todo |
+| K1 | Positioning and brand basics | One-page positioning (from K-R1), launch market and language, name check (EUIPO), social handles, a press-ready logo and screenshots | S | P0 | in progress: draft done (T1060), owner decisions open |
 | K2 | SEO plumbing and the page quality gate | Prerender and canonical live; `indexable` field from the pipeline; pages below the bar `noindex,follow` and out of the sitemap; sitemaps split by page type; hubs indexed; structured data; weekly Search Console review | M | P1 | todo |
 | K3 | Waitlist and newsletter | Waitlist on Home with double opt-in and a referral jump (3 referrals = a free Trip Pass, 10 = a founding yearly price); a monthly "best-value places" newsletter | S | P0 to P1 | todo |
 | K4 | Build in public | A weekly post (pipeline, data, design, AI engineering) on LinkedIn and one other channel; a public changelog page | S, ongoing | P0 onwards | todo |
