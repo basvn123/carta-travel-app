@@ -190,7 +190,7 @@ function nightFor(dest, rec, tier, people, ms, month) {
  * Returns null when the destination has no bed price at all, else
  *   { total, perPerson, perNight, nightlyPp, rate, unit, units, tier,
  *     tierRequested, fallback, season, cleaning, service, weeklyDiscount,
- *     q, from, km, captured, basis }
+ *     q, from, km, n, captured, basis }
  * total is what the party pays for every night including Airbnb fees;
  * basis is 'dated' | 'month' | 'annual'.
  */
@@ -250,6 +250,7 @@ export function bedPrice({ dest, tier, adults = 2, children = 0, nights = 1, sta
     q: src.q || dest.accommodation.q || null,
     from: src.from || null,
     km: src.km ?? null,
+    n: src.n ?? null,
     scaled: !!src.scaled,
     captured: dest.accommodation.captured || null,
     basis,

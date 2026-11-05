@@ -50,6 +50,23 @@ export function dayUnit(t, req) {
   });
 }
 
+/**
+ * Honest gaps (T1075, D10, owner rule: never a made-up number). The parts of a
+ * place's price that have no figure yet, from the engine's own lines: today
+ * local transport, which waits on a fare source (T714-b). A part the traveller
+ * switched off is not a gap. Returns line keys, in line order.
+ */
+export function unmeasuredParts(row) {
+  return (row?.lines || [])
+    .filter((l) => l.key === 'transport' && l.quality === 'missing' && l.status !== 'excluded')
+    .map((l) => l.key);
+}
+
+/** True when the bed price rests on few scraped properties (stay.thin_obs or fewer). */
+export function bedIsThin(row) {
+  return !!(row?.lines || []).find((l) => l.key === 'bed')?.thin;
+}
+
 // The day lines that name a part of the day sentence (lib/dayIncludes.js).
 const DAY_PART_OF = { bed: 'bed', food: 'food', transport: 'transport' };
 

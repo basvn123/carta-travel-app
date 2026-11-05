@@ -48,6 +48,15 @@
       "review": "2027-04-24",
       "test": "tests/priceEngine.test.mjs"
     },
+    "stay.thin_obs": {
+      "value": 2,
+      "unit": "observations",
+      "kind": "estimate",
+      "source": "Carta rule: a bed tier priced from this many scraped properties or fewer is shown as thinly measured (ROADMAP D10, T1075)",
+      "date": "2026-11-05",
+      "review": "2027-05-05",
+      "test": "tests/priceThin.test.mjs"
+    },
     "stay.weekend_nights": {
       "value": [
         5,

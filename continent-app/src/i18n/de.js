@@ -7791,6 +7791,8 @@ export const de = {
   "price.actEach": "{price} pro Person",
   "price.item.activities": "Aktivitäten und Tickets",
   "price.item.events": "Veranstaltungen",
+  "price.notMeasured": "Noch nicht gemessen",
+  "price.bedThin": "Wenige Angebote gemessen",
   "price.item.flight": "Flug hin und zurück",
   "price.item.way": "{mode} hin und zurück",
   "item.baseStay": "Übernachten in {city}, {price} {unit}",

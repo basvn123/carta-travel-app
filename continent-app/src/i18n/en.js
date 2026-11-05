@@ -8400,6 +8400,8 @@ export const en = {
   "price.actEach": "{price} a person",
   "price.item.activities": "Activities and tickets",
   "price.item.events": "Events",
+  "price.notMeasured": "Not yet measured",
+  "price.bedThin": "Few listings measured",
   "price.item.flight": "Flight there and back",
   "price.item.way": "{mode} there and back",
   "item.baseStay": "Stay in {city}, {price} {unit}",

@@ -990,6 +990,7 @@ Worked example at the catalogue's frozen median prices (`bands.ref_prices`: dinn
 7. Sanity bounds per person per night (`stay.bounds_pp_night`): dorm EUR 6 to 150, hotel5 EUR 6 to 900, every other tier EUR 6 to 500.
 8. A scraped bed outside its bounds borrows the median of its country's places for the same tier, party and dates (`stay.repair`). A place the scrape never reached has no bed price ("Not available yet"), never a borrowed one (T1021).
 9. Without dates the bed is the month (Explore month filter) or the annual figure.
+10. Thin tiers (T1075): a tier whose `src[tier].n` is `stay.thin_obs` = 2 or fewer is flagged `thin` on the bed line (with `basis.observations`); 2,684 of 12,696 priced tiers are thin today, and 5 places are thin in every tier. `python scripts/missing_beds.py` writes the re-scrape target list (the 515 places with no bed price grouped by country, FR 94, IT 77, GB 56, GR 40, and the thin places) to `cache/stays/missing_beds.json`. Local transport fares wait on the owner's source choice (T714-b); the table is not built.
 
 Worked example: an entire place for two, annual price EUR 90 a night, 7 nights, no measured month curve.
 - lodging = 7 x 90 = 630.00; weekly discount 8% gives 579.60
@@ -1084,6 +1085,7 @@ Worked example: Easygoing, entire place, bed 50.86 + food 53.58 = day EUR 104.44
 4. The flight comes from `flightLegs` on the request's date mode (see Flights) and `flightQuote` with the party and the bag.
 5. Dates and travellers are the app's own state, so a change here moves every card and pin.
 6. Returns nothing when the bed or food figure is missing.
+7. Honest gaps (T1075): a part with no figure yet gets its own row, "Not yet measured" (`price.notMeasured`), under the lines and above the total, never a zero and never padded into the total. Today that is local transport, until a place has a fare (`unmeasuredParts` in `lib/price/display.js`). A bed priced from `stay.thin_obs` = 2 scraped properties or fewer shows "Few listings measured" (`price.bedThin`) under its figure; the figure itself is unchanged (`bedIsThin`). The count is the wire's `src[tier].n`. Other price screens (trip page, Ask) do not show the flags yet (T1075-c).
 
 Worked example: bed 50.86, food 53.58, 7 nights, 2 people, a swept return of EUR 276 for both (two legs at 49 + cabin bag 20 per seat, see Flights):
 - flight 276.00

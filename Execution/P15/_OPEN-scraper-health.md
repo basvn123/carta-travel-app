@@ -26,6 +26,6 @@ The scripts exist in the repo; these steps need the box or the laptop. Do them i
 
 6. **Stop the empty hourly Hostelworld task.** The `CartaStaysHostelworld` task has had nothing left to read since the run finished (T1046-a): pause it. This is the owner step already on the register.
 
-7. **Bed re-scrape of the missing places (T1075).** After step 2, run `python scripts/missing_beds.py --out cache/stays/missing_beds.json`, and give `cache/stays/missing_beds.json` to the next laptop scrape (`--only` takes the ids from its `ids` list; each place also lists its Booking search terms from the destination record). Check the Booking search terms of the places first (T1021-d).
+7. **Bed re-scrape of the missing places (T1075).** After step 2, run `python scripts/missing_beds.py --out cache/stays/missing_beds.json`, and give `cache/stays/missing_beds.json` to the next laptop scrape (`--only` takes ids: use `missing.ids`, comma separated). Check the places' Booking search terms first (T1021-d).
 
 8. **Local transport fares (T714-b).** Waits on the owner's choice of fare source. Not built.

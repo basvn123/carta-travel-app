@@ -42,6 +42,8 @@ const round2 = (v) => Math.round(v * 100) / 100;
  * total is the trip by that way; without it the flight (typed or Carta's) is
  * the way there, as before.
  */
+const bedOf = (row) => (row?.lines || []).find((l) => l.key === 'bed');
+
 export function quoteNights(costRow, nights, people, fare = null, carta = null, activities = [], way = null) {
   if (costRow?.stayEur == null || costRow?.foodEur == null) return null;
   const stay = Number(costRow.stayEur);
@@ -62,7 +64,7 @@ export function quoteNights(costRow, nights, people, fare = null, carta = null, 
   } else if (carta?.total > 0) {
     lines.push({ key: 'flight', eur: round2(carta.total), est: false, carta });
   }
-  if (!off.has('bed')) lines.push({ key: 'stay', eur: round2(stay * n * p), est: costRow.stayLevel !== 'city' });
+  if (!off.has('bed')) lines.push({ key: 'stay', eur: round2(stay * n * p), est: costRow.stayLevel !== 'city', ...(bedOf(costRow)?.thin ? { thin: true } : {}) });
   if (!off.has('food')) lines.push({ key: 'ground', eur: round2(food * n * p), est: costRow.foodLevel !== 'city' });
   const car = (costRow.lines || []).find((l) => l.key === 'car' && l.status === 'included' && l.eur != null);
   if (car) lines.push({ key: 'car', eur: round2(car.eur * n * p), est: true });
