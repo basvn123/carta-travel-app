@@ -28,7 +28,7 @@ for (let i = 0; i < args.length; i++) {
 
 // The real header, read from public/_headers (read only). Production is on
 // Cloudflare Pages since T293, and the "/*" stanza of that file is what it
-// sends. vercel.json is the rollback host only and is not consulted. Reading
+// sends. Reading
 // the file means this harness can never drift from the shipped policy, which
 // is what the three hard-coded copies it used to carry did (T276-a).
 async function readRealCsp() {

@@ -15,7 +15,7 @@ import { Fold } from './Fold.jsx';
  * Roundshot are left out on purpose: neither publishes terms or an embed
  * address for a third party, and both send X-Frame-Options headers on the
  * hosts the old code assumed. Adding either needs written permission first,
- * then its host in frame-src (public/_headers and vercel.json).
+ * then its host in frame-src (public/_headers).
  *
  * Embed address, from https://www.foto-webcam.eu/webcam/iframe/?wc=ewa :
  *   https://www.foto-webcam.eu/webcam/{id}/?frame=1

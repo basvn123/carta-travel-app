@@ -24,7 +24,7 @@
  * stays on Wikimedia.
  *
  * Before turning a layer on in production, the CDN host must be in the
- * CSP's img-src (vercel.json); see the T052 report.
+ * CSP's img-src (public/_headers); see the T052 report.
  */
 
 const ENV = (import.meta && import.meta.env) || {};

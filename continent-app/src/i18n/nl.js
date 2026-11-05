@@ -6183,7 +6183,7 @@ export const nl = {
   "dest.keyCarYes": "Nodig",
   "dest.keyCarNo": "Niet nodig",
   "dest.keyAround": "Je verplaatsen",
-  "dest.around.good": "Makkelijk zonder auto",
+  "dest.around.good": "Goed zonder auto",
   "dest.around.ok": "Mogelijk zonder auto",
   "dest.around.hard": "Moeilijk zonder auto",
   "dest.aroundModes": "Met {modes}.",

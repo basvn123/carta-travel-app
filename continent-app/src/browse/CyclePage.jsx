@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import '../styles/items.css';
 import { ReportProblem } from '../components/ReportProblem.jsx';
-import maplibregl from 'maplibre-gl';
+import maplibregl from '../map/maplibre.js';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useI18n } from '../i18n/index.jsx';
 import { tokenColour as token } from '../map/tokenColors.js';

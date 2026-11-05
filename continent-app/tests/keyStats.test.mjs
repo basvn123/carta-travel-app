@@ -81,13 +81,13 @@ test('mobility: the stat and the no car flag read mobility.car_free', () => {
   assert.equal(noCarOk(island), false);
   assert.equal(mobilityOf({ local_transport: { mobility: { car_free: 'maybe' } } }), null);
   const s = mobilityStat(como, t);
-  assert.equal(s.value, 'Easy without a car');
+  assert.equal(s.value, 'Good without a car');
   assert.equal(s.note, 'By train and bus. A car helps for trailheads and lake villages.');
 });
 
 test('mobility: empty modes read well; absent mobility is the placeholder and the old flag rule', () => {
   const s = mobilityStat(city, t);
-  assert.equal(s.value, 'Easy without a car');
+  assert.equal(s.value, 'Good without a car');
   assert.equal(s.note, null);
   assert.equal(mobilityStat({ local_transport: { car_needed: false } }, t), null);
   assert.equal(noCarOk({ local_transport: { car_needed: false, transit_quality: 'good' } }), true);
@@ -142,7 +142,7 @@ test('when: the Explore month filter in the URL wins over the dates (destination
 
 test('getting there: car and transit rows read the mobility stat, never "a car is needed"', () => {
   const r = gettingAroundRows(como, { car_needed: true, rental_eur_day: 52 }, t, 'en', (n) => `~${n}`);
-  assert.equal(r.transit, 'Easy without a car. By train and bus. A car helps for trailheads and lake villages.');
+  assert.equal(r.transit, 'Good without a car. By train and bus. A car helps for trailheads and lake villages.');
   assert.equal(r.tone, 'good');
   assert.equal(r.rental, 'Rental ~52 a day.');
   assert.equal(gettingAroundRows(como, { car_needed: false }, t).rental, null);

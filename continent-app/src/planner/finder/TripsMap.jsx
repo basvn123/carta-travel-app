@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import maplibregl from 'maplibre-gl';
+import maplibregl from '../../map/maplibre.js';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useI18n } from '../../i18n/index.jsx';
 import { formatMoney } from '../../lib/money.js';

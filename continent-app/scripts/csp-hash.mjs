@@ -1,5 +1,5 @@
 // Prints the CSP source-expression hash for every inline <script> in
-// index.html, so `script-src` in vercel.json can allow them individually
+// index.html, so `script-src` in public/_headers can allow them individually
 // instead of falling back to 'unsafe-inline'.
 //
 //   node scripts/csp-hash.mjs [file]      (default index.html)

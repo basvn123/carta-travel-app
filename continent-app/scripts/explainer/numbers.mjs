@@ -16,7 +16,7 @@
  *
  * It needs no sign-in and no script. It is English only on purpose (credit
  * lines are licence notices and the page has no hreflang siblings yet).
- * Served at /about/numbers: Cloudflare Pages and Vercel both serve
+ * Served at /about/numbers: Cloudflare Pages serves
  * about/numbers.html at that clean path.
  */
 import { readFileSync, existsSync } from 'node:fs';

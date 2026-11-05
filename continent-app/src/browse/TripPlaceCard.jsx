@@ -34,7 +34,7 @@ const DIFF_TONE = { 1: 'is-easy', 2: 'is-easy', 3: 'is-mid', 4: 'is-hard', 5: 'i
  * Under it, on the page ground, what decides a week:
  *
  *   what      the rest of the title ("Mansions, plane trees and…"), or the
- *             trip's highlights ("Sarajevo · Mostar · Kotor"), in full
+ *             trip's highlights ("Sarajevo, Mostar, Kotor"), in full
  *   facts     how hard it is (the journey's own scale word, in its tone)
  *             and how many days
  *   price     one price a person a day, the cheapest flight beside it
@@ -46,7 +46,7 @@ export function TripPlaceCard({ card, length, month, saved = false, onToggleSave
   const codes = (card.countries || []).length ? card.countries : [card.cc];
   const where = codes.filter(Boolean).map((cc) => localCountryName(cc, cc === card.cc ? card.country : null, lang)).join(', ');
   const [name, rest] = splitTitle(card.title);
-  const what = rest || (card.visits || []).slice(0, 4).join(' · ');
+  const what = rest || (card.visits || []).slice(0, 4).join(', ');
   const level = diffWord(t, card.diff);
   const inSeason = (card.months || []).includes(month);
   const photo = (card.photos || [])[0] || card.hero?.url || '';

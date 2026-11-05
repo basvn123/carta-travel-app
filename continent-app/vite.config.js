@@ -20,7 +20,7 @@ const CSS_TARGETS = browserslistToTargets(
 
 // T318: the explainer page at /about/numbers, a static file built from the
 // catalogue files (scripts/explainer/numbers.mjs). Emitted as about/numbers.html
-// so Pages and Vercel serve it at the clean path; the dev server answers the
+// so Pages serves it at the clean path; the dev server answers the
 // same path from memory.
 const APP_ROOT = fileURLToPath(new URL('.', import.meta.url));
 function numbersPage() {
