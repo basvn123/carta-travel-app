@@ -19,34 +19,39 @@
  */
 import { MET_URL, MET_USER_AGENT, cell, metDaily, altitudeStep } from '../../src/lib/metForecast.js';
 
-const HOLD = 1800;
+import { fail, methodNotAllowed, createLimiter, overLimit, rateRefusal, parseForecastQuery } from '../_lib/guard.js';
 
-export async function onRequestGet({ request }) {
+const HOLD = 1800;
+// MET asks every client to stay polite; the edge caches by cell, so a normal
+// traveller sends a handful of distinct cells a minute (T1079).
+const limiter = createLimiter({ max: 60 });
+
+export const onRequest = () => methodNotAllowed('GET');
+
+export async function onRequestGet({ request, env }) {
   const q = new URL(request.url).searchParams;
-  const lat = Number(q.get('lat'));
-  const lon = Number(q.get('lon'));
-  if (!q.get('lat') || !q.get('lon') || !Number.isFinite(lat) || !Number.isFinite(lon)
-    || Math.abs(lat) > 90 || Math.abs(lon) > 180) {
-    return new Response(null, { status: 400 });
-  }
+  const pos = parseForecastQuery(q);
+  if (!pos) return fail(400, 'bad_request');
+  const { lat, lon } = pos;
   const [clat, clon] = cell(lat, lon);
   // T630: an optional altitude in metres for a summit forecast. Validated,
   // clamped and stepped (altitudeStep), so it cannot widen the cache key
   // beyond one entry per 50 m band.
   const alt = altitudeStep(q.get('altitude'));
-  if (alt === undefined) return new Response(null, { status: 400 });
+  if (alt === undefined) return fail(400, 'bad_request');
+  if (await overLimit(env, request, limiter, 'forecast')) return rateRefusal();
   let body;
   try {
     const res = await fetch(`${MET_URL}?lat=${clat}&lon=${clon}${alt != null ? `&altitude=${alt}` : ''}`, {
       headers: { 'user-agent': MET_USER_AGENT, accept: 'application/json' },
       cf: { cacheTtl: HOLD, cacheEverything: true },
     });
-    if (!res.ok) return new Response(null, { status: 502 });
+    if (!res.ok) return fail(502, 'upstream');
     body = metDaily(await res.json());
   } catch {
-    return new Response(null, { status: 502 });
+    return fail(502, 'upstream');
   }
-  if (!body || !body.days.length) return new Response(null, { status: 502 });
+  if (!body || !body.days.length) return fail(502, 'upstream');
   return new Response(JSON.stringify(body), {
     status: 200,
     headers: {
