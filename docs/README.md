@@ -29,7 +29,7 @@ What to read for what. Built by T1073 (ROADMAP B2). Every session reads CLAUDE.m
 | `areas/` | Real: 26 area docs (B2) |
 | `architecture/` | Real: overview and one diagram (B2); request path diagrams come with B5 |
 | `data/` | Real: an index, nothing moved (B2) |
-| `runbooks/` | Deploy, build box, incident (B2); backup and refund not written yet |
+| `runbooks/` | Deploy, build box, backup, incident (B2); refund not written yet |
 | `glossary.md` | Real (B2) |
 | `logic/` | Stub, filled by B3 |
 | `ai/` | Stub, filled by B3 and Track E |

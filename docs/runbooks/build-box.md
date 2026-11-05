@@ -2,7 +2,7 @@
 
 Source: `infra/hetzner/README.md`, the files in `infra/hetzner/`, and the handbook section [The build box](../HANDBOOK.md#the-build-box-hetzner-scheduled-runs). Owner steps to bring the boxes up: `Execution/P3/_OPEN-hetzner.md`.
 
-Status: whether the boxes run in production today is not verified by T1073. `infra/hetzner/README.md` says both existed as code only when written.
+Status: the Hetzner build boxes DO run in production (owner decision 7, 2026-11-05, `Execution/P15/_HANDOVER-2026-11-05.md`). That is the owner's statement; nothing in the repository proves it, and `infra/hetzner/README.md` still says both existed as code only when written. The register row T1073-e covers the correction.
 
 ## What there is
 
@@ -24,11 +24,11 @@ Status: whether the boxes run in production today is not verified by T1073. `inf
 
 `carta-weekly.timer` starts `weekly.sh`, which runs `run_pipeline.sh` only when `CARTA_PIPELINE_ENABLED=1`: venv re-sync, pull of the master from R2, `run_pipeline.py` up to the `CARTA_MAX_CADENCE` ceiling, encrypted dumps, pushes, upload to R2. With `CARTA_DEPLOY=1` it deploys `dist/` to Pages after a data publish (handbook; T992 to T996).
 
-Check it: `tail -n 20 ~/logs/weekly.log` on the box. Exit codes: 1 a task failed, 2 the run refused (a guard or the lock), 3 the archive or R2 publish failed, 75 a run was already going (from the archived incident runbook, T218, not re-checked against `weekly.sh`).
+Check it: `tail -n 20 ~/logs/weekly.log` on the box. Exit codes, from `infra/hetzner/cax11/weekly.sh` and `infra/hetzner/cax11/run_pipeline.sh`: 1 a task failed, 2 the run refused (a guard, or a bad argument or `CARTA_MAX_CADENCE`), 3 the pipeline was fine but an archive, publish or deploy step failed, 4 the venv could not sync, 5 no venv, no repo or `npm ci` failed, 75 a run was already going (the `flock` lock). On any non-zero exit `weekly.sh` pings `CARTA_HEARTBEAT_URL/fail` when that variable is set.
 
 ## Rerun by hand
 
-`CARTA_PIPELINE_ENABLED=1 bash ~/carta/infra/hetzner/cax11/weekly.sh`. Do not edit code on the box: fixes go through a task branch and the box pulls `main`.
+`CARTA_PIPELINE_ENABLED=1 bash ~/carta/infra/hetzner/cax11/weekly.sh`. Do not edit code on the box: fixes go through a task branch and the box pulls `main` itself (`weekly.sh` runs `git fetch` and `git reset --hard` to `origin/main` before each run unless `CARTA_AUTO_UPDATE=0`). The service has `TimeoutStartSec=48h` (`infra/hetzner/cron/carta-weekly.service`).
 
 ## Heavy jobs
 
@@ -36,4 +36,4 @@ Check it: `tail -n 20 ~/logs/weekly.log` on the box. Exit codes: 1 a task failed
 
 ## Undo
 
-A bad data push: see [incident.md](incident.md). Remove a box with `hcloud server delete` (owner); the data lives in R2 and the repository, not on the box.
+A bad data push: see [incident.md](incident.md). Remove a box with `hcloud server delete` (owner); the data lives in R2 and the repository, not on the box. Hetzner server backups are off (`infra/hetzner/README.md`); what is backed up from the box is in [backup.md](backup.md).

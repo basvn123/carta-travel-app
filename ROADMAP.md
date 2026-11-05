@@ -366,7 +366,7 @@ Plus: runbooks (how to operate), a glossary (every Carta term), and research not
 | ID | Item | Done when | Size | Phase | Status |
 |---|---|---|---|---|---|
 | B1 | Carta Handbook | `docs/HANDBOOK.md` explains every feature from the code (T1045: 93 features) | M | P0 | done |
-| B2 | Docs tree and area docs | New `docs/` tree, 12 distrusted docs archived, stale core rewritten, 9 missing area docs written, CLAUDE.md corrected | M | P1 | in progress (T1073: tree and area docs; T1073-a) |
+| B2 | Docs tree and area docs | New `docs/` tree, 12 distrusted docs archived, stale core rewritten, 9 missing area docs written, CLAUDE.md corrected | M | P1 | in progress (T1073: tree and area docs; T1085: REGIONS, LAKES, layer, backup docs rewritten from code) |
 | B3 | Logic catalogue | Every rule tagged with an ID in code, one catalogue entry per ID, two-way CI check | L | P2 to P3 | todo |
 | B4 | Config reference | `_doc` on every key of `rating.json`, `pricing.json` and quality rules; tables generated | S | P3 | todo |
 | B5 | Data lineage and diagrams | Per field: source, task, file; Mermaid diagrams of the pipeline and the request paths, generated | M | P3 | todo |
