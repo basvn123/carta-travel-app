@@ -37,6 +37,9 @@ Keep it true: a task that adds, renames or moves a secret updates its row in the
 | `HTTPS_PROXY` / `HTTP_PROXY` | Proxy provider | Worker and box env | flight sweep | High if the URL holds a password | Not recorded |
 | `GEMINI_API_KEY` | Google AI | Supabase secret; GitHub secret; Hetzner box; laptop `.env`; `supabase/.env.local` | `plan-day`, `parse-booking`, `suggest-city`, golden-set workflow, pipeline | High: billed usage. In five places, the widest spread | Not recorded |
 | `RESEND_API_KEY`, `NOTIFY_SECRET` | Resend email | Supabase secret | `notify` (price-drop email) | High: mail sent as Carta | Not set yet (T944-b) |
+| `UPLOADS_SCAN_SECRET` | Carta (a long random string the owner makes) | Supabase Edge Function secret | `upload-scan` checks it against the `x-uploads-secret` header of every call | High: whoever holds it can trigger scan and purge runs (the function only scans pending uploads and deletes queued files; it publishes nothing) | Not set yet (061 not applied, T1070-a) |
+| Vault `uploads_scan_secret` | Carta (the same value as `UPLOADS_SCAN_SECRET`) | Supabase Vault (`vault.secrets`) | 061's pg_cron job `carta_uploads_scan`, which sends it as `x-uploads-secret` every 15 minutes | High: as above | Not set yet (T1070-a) |
+| Vault `uploads_scan_url` | Carta | Supabase Vault | the same cron job: the `upload-scan` function URL it posts to | Low: an address, not a credential (kept in the vault so the SQL carries no project URL) | Not set yet (T1070-a) |
 | `ALERT_WEBHOOK_URL` | Alerting | GitHub secret | the uptime workflow | Low: someone could post fake alerts | Not recorded |
 | `CARTA_HEARTBEAT_URL` | Uptime ping | Hetzner box `.env` | the box | Low | Not recorded |
 | `HCLOUD_TOKEN` | Hetzner Cloud | Hetzner box `.env` | box scripts | Critical: can delete or rebuild the server | Not recorded |
@@ -44,6 +47,8 @@ Keep it true: a task that adds, renames or moves a secret updates its row in the
 | `CARTA_SEARCH_KEY` (+ `CARTA_SEARCH_CX`) | Web search provider | Hetzner box `.env` | pipeline research tasks | High: billed | Not recorded |
 | `SUPABASE_ANON_KEY`, `VITE_SUPABASE_ANON_KEY`, `VITE_SUPABASE_URL` | Supabase | Pages build env; GitHub secret; app `.env` | the browser app | Public by design (row policies guard the data) | n/a |
 | `VITE_TP_MARKER`, `VITE_OMIO_TRACKING_LINK`, `VITE_VIATOR_PID`, `VITE_GYG_PARTNER_ID`, `VITE_SKYSCANNER_PARTNER_ID` | Affiliates | Pages build env | the browser app | Public affiliate ids | n/a |
+
+**Rotating the upload scan secret (T1081).** `UPLOADS_SCAN_SECRET` and the vault secret `uploads_scan_secret` hold one value and must change together, or every scheduled run is refused with 401 and uploads wait in pending. Make a new long random string, then in one sitting: set it as the Edge Function secret (Dashboard, Edge Functions, Secrets, or `supabase secrets set`), then update the vault row (`select vault.update_secret(id, '<new>') from vault.secrets where name = 'uploads_scan_secret'` in the SQL editor), then confirm the next quarter-hour run answers 200 in the function logs. A run that falls between the two steps fails once and is retried by the next. Rotate on any suspected exposure and at least yearly; `uploads_scan_url` changes only if the project or the function name does. The setup order is `Execution/P15/_OPEN-uploads.md`.
 
 ## Data source keys (pipeline)
 

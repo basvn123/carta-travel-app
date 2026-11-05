@@ -231,11 +231,11 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 |---|---|---|---|---|---|
 | E | A normal account calls an admin RPC | M | H | `admin_guard()` first in every function; `anon` has no grant | `admin-rpc-security.yml`, discovered from `pg_proc`, 211 assertions |
 | S | A stolen `aal1` admin session reads every account and changes config | L | H | `aal2` required by `admin_guard` for every tier (062); the admin storage read needs `aal2` too | `admin-rpc-security.yml` section 13 |
-| R | An admin action with no reason on record | M | M | `admin_audit_log` has `target` and `reason` (062), filled from the detail by a trigger; every VOLATILE admin RPC writes a row (`admin_set_infra_cost` since 062). Ban, delete and set tier take no reason argument (T1071-b) | `admin-rpc-security.yml` section 13 (static and dynamic) |
+| R | An admin action with no reason on record | M | M | `admin_audit_log` has `target` and `reason` (062), filled from the detail by a trigger; every VOLATILE admin RPC writes a row (`admin_set_infra_cost` since 062). Ban, delete and set tier require a reason of 3 to 500 characters and log it (064, T1081; closes T1071-b) | `admin-rpc-security.yml` section 13 (static and dynamic) and section 14 (the three refuse a missing reason and log a given one) |
 | D | A scripted admin floods writes | L | M | Rate budget in `admin_guard` (60 a minute, 10 destructive, 20 live) | `admin-rpc-security.yml` section 7 |
 | E | SQL pasted in the Dashboard with a typo or the wrong file | M | H | Self-check blocks in each migration; owner procedures | none |
 
-**Gap.** 062 is written, not applied (T1071-a; the owner enrols TOTP first). A refusal at the guard leaves no audit row (the guard is STABLE); admin reads are not logged by design (the rate budget counts rows). Ban, delete and set tier record no reason (T1071-b). The Supabase Dashboard account itself is the stronger admin surface and needs MFA (C2 owner step).
+**Gap.** 062 is written, not applied (T1071-a; the owner enrols TOTP first). A refusal at the guard leaves no audit row (the guard is STABLE); admin reads are not logged by design (the rate budget counts rows). Ban, delete and set tier record a reason once 064 is pasted (written and tested by T1081, owner step T1081-a). The Supabase Dashboard account itself is the stronger admin surface and needs MFA (C2 owner step).
 
 ## Top gaps, ranked
 
@@ -253,7 +253,7 @@ Ranked by likelihood times impact, then by how cheaply the next step closes it.
 | 8 | Uptime job holds the service role key | GitHub | M | H | C2 | Switch to the anon key if the probe allows |
 | 9 | No durable rate limit on `/api/*` and Edge Functions; CORS `*` | Pages Functions, Edge | M | M | C5, H3 | KV or Durable Object limiter; origin allow-list |
 | 10 | No prompt-injection set or guardrail module | Edge AI | M | M | C8, E3 | Injection set in CI |
-| 11 | Ban, delete and set tier record no reason; guard refusals are not logged | Admin | M | L | C3 | A reason argument on the three RPCs and the app (T1071-b) |
+| 11 | ~~Ban, delete and set tier record no reason~~ closed by T1081 (064 written, owner applies); guard refusals are not logged (accepted) | Admin | M | L | C3 | Owner pastes 064 (T1081-a) |
 | 12 | No CSP or security-header test in CI; `style-src 'unsafe-inline'` | Pages | L | H | C5 | Run `verify_csp.mjs` in CI |
 | 13 | No SAST | CI | L | M | C7 | Semgrep or CodeQL |
 | 14 | Critical secrets concentrated on the Hetzner box | Build box | L | H | C2 | Rotation record; narrower keys per job |
