@@ -198,7 +198,7 @@ export function renderPage(pg) {
     `<title>${esc(pg.title)}</title>`,
     `<meta name="description" content="${esc(pg.description)}">`,
     `<link rel="canonical" href="${attr(url)}">`,
-    pg.noindex ? '<meta name="robots" content="noindex">' : '',
+    pg.noindex ? '<meta name="robots" content="noindex,follow">' : '',
     '<meta property="og:type" content="website">',
     `<meta property="og:url" content="${attr(url)}">`,
     `<meta property="og:title" content="${esc(pg.title)}">`,
