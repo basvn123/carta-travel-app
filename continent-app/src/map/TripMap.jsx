@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import maplibregl from 'maplibre-gl';
+import maplibregl from './maplibre.js';
 import { keyablePin, nameMarker, revealOnFocus } from './pinKeys.js';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { hasLngLat, declutterPins } from './coords.js';

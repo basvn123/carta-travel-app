@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import maplibregl from 'maplibre-gl';
+import maplibregl from './maplibre.js';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { keepFitted } from './coords.js';
 import { tokenColour as token } from './tokenColors.js';

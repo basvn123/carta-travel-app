@@ -1,6 +1,6 @@
 import { safeUrl } from '../lib/format.js';
 import React from 'react';
-import maplibregl from 'maplibre-gl';
+import maplibregl from '../map/maplibre.js';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { isNum, declutterPins } from '../map/coords.js';
 import { keyablePin, nameMarker } from '../map/pinKeys.js';

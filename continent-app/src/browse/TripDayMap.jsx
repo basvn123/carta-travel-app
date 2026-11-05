@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef } from 'react';
-import maplibregl from 'maplibre-gl';
+import maplibregl from '../map/maplibre.js';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { installMapGestures } from '../lib/mapGestures.js';
 import { tokenColour as token } from '../map/tokenColors.js';

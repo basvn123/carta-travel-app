@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
-import maplibregl from 'maplibre-gl';
+import maplibregl from './maplibre.js';
 import { keyablePin, clearKeyablePin, nameMarker, revealOnFocus } from './pinKeys.js';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { hasLngLat, finitePts, declutterPins } from './coords.js';

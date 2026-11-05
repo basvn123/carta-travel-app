@@ -1,7 +1,7 @@
 import { bandOf, inkStep, inkStepFromRank, isGateway } from '../lib/rating.js';
 import { MatchLine } from './WhyItMatches.jsx';
 import React, { useEffect, useRef } from 'react';
-import maplibregl from 'maplibre-gl';
+import maplibregl from '../map/maplibre.js';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { kindOf } from '../lib/taxonomy.js';
 import { thumbAt } from '../lib/heroImage.js';
