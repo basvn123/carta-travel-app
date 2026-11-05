@@ -1,0 +1,9 @@
+# Tests that judge app_data/app_data.json, the master kept outside git (T1061).
+# Skipped only when the master is absent (CI); they run wherever it exists.
+# Why: tests/conftest.py. Add a test here only if it fails on the wire copy
+# because of sync-data's deliberate reshaping, never to hide a real failure.
+tests/test_place_taste_profile.py::test_every_rated_place_has_twelve_values_with_facts
+tests/test_place_taste_profile.py::test_rerun_gives_identical_values
+tests/test_rating_distribution.py::test_rating_distribution
+tests/test_rating_inputs.py::test_water_is_measured_per_place
+tests/test_rating_inputs.py::test_depth_does_not_saturate_the_top

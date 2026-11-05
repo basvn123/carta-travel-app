@@ -106,6 +106,7 @@ jobs:
             docs
             supabase
             continent-app/src
+            continent-app/config
             continent-app/scripts/ci
             continent-app/public/fares
 
