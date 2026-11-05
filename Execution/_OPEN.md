@@ -1607,3 +1607,7 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1060-a | T1060 | Run the TMview, EUIPO and BOIP searches for carta in classes 9, 39 and 42 (queries in docs/brand/POSITIONING.md) and decide: keep Carta (class 39, word plus logo) or switch before any brand spend | user | open |  |
 | T1060-b | T1060 | Decide K-a, the launch market and language (draft recommends Belgium and the Netherlands in Dutch and English, English pages indexed from day one) | user | open |  |
 | T1060-c | T1060 | Claim the social handles (@cartatravel looks free on X and TikTok; Instagram needs a check signed in) once the name is decided | user | open |  |
+| T1061-a | T1061 | TripPlaceCard.jsx joins trip highlights with a middot in shipped copy, which PRODUCT.md bans; use a comma | next task | open |  |
+| T1061-b | T1061 | The banned word Easy ships in two strings (dest.around.good, pf.dh.pace.slow); reword in all six languages | next task | open |  |
+| T1061-c | T1061 | Seven outline: none focus rules were added since the design-lint baseline (home Ask, home ruler, Ask title, spot hit, search dock kind and input, trip top card name); check each has a visible replacement | next task | open |  |
+| T1061-d | T1061 | The master-only tests in tests/needs_master.txt and the rating distribution gate run only where app_data/app_data.json exists; run pytest on the build box after each pipeline run so they gate something | next task | open |  |
