@@ -23,7 +23,8 @@ sys.path.insert(0, str(DATASET / "pipeline"))
 
 import accuracy as A  # noqa: E402
 import generation_gate as G  # noqa: E402
-import validate as V  # noqa: E402
+from conftest import trips_validate  # noqa: E402
+V = trips_validate()
 
 TODAY = "2026-10-07"
 
@@ -107,7 +108,7 @@ def test_the_published_catalogue_agrees_with_itself():
         master = json.load(fh)
     bad = {t["id"]: A.inconsistencies(t) for t in master["trips"] if A.inconsistencies(t)}
     assert bad == {}
-    assert len(master["trips"]) == 253
+    assert len(master["trips"]) == 258
 
 
 def test_validate_reports_the_contradiction_as_an_error(example):

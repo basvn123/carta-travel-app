@@ -9,7 +9,8 @@ PIPE = os.path.join(os.path.dirname(HERE), "Trips", "carta-unified", "carta-unif
 sys.path.insert(0, PIPE)
 
 import generation_gate as G  # noqa: E402
-import validate as V  # noqa: E402
+from conftest import trips_validate  # noqa: E402
+V = trips_validate()
 
 
 def _example():
