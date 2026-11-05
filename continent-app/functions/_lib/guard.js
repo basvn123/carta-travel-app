@@ -123,7 +123,6 @@ const ASK_SOURCES = /^[a-z]{2,10}$/;
 // Filters only ever test set membership, so the shape check is about length
 // and charset, not about which id exists (that is not this layer's business).
 const ASK_TOKEN = /^[\p{L}\p{N}._ '-]{1,60}$/u;
-// eslint-disable-next-line no-control-regex
 const CONTROL = /[\u0000-\u001f\u007f]/;
 
 /**
