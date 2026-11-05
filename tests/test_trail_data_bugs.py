@@ -60,9 +60,11 @@ def test_an_uphill_or_closed_route_keeps_its_direction():
 
 
 def test_korab_9_grade_and_suitability_read_the_climb():
-    # Before: graded on the stored 7 m, an easy effort and a beginner chip.
+    # Before: graded on the stored 7 m. Since T1092 the effort counts DIN
+    # hours, descent included, so the stored reading is a moderate day
+    # rather than an easy one, and still below the uphill reading.
     stored_grade, _src, stored_parts = attributes.grade_of(KORAB_9)
-    assert stored_parts["effort"] == "easy"
+    assert stored_parts["effort"] == "moderate"
     assert "beginner" in attributes.suitability_of(
         KORAB_9, stored_grade, None)["derived"]
     # After: the 1,423 m a walker climbs from the village.
