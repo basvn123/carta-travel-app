@@ -1244,7 +1244,7 @@ Worked example: core 1,738, buffer 10% = 174, total 1,912. Budget 1,800: core fi
 
 **What stays.** The bed price is the model from the scrape: `bedPrice` in `continent-app/src/lib/stayPrice.js`. A country's stays arriving still reprices screens, through `useStaysVersion`.
 
-**Leftovers, harmless.** The `stay.live` strings in the six catalogues, `stayLive` in `costIndex.js` and the `live` bed quality in `priceDay.js` are never set now (the same `live` quality is used by flights). The `xk` field is still described in `docs/SCHEMA.md`. Register rows T1074-b to T1074-c.
+**Leftovers.** Removed in T1082: the `stay.live` strings in the six catalogues, `stayLive` in `costIndex.js`, the `live` bed quality in `priceDay.js`, `liveBed` (and the bed quote it alone read) in `AskTripCard.jsx`, and `xk` in `docs/SCHEMA.md`. The `live` quality stays for flights.
 
 ---
 

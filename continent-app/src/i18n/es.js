@@ -4762,7 +4762,6 @@ export const es = {
   "dest.tierDorm": "litera {eur}",
   "dest.tierPrivate": "habitación privada {eur}",
   "dest.tierHotel": "hotel de 3 estrellas {eur}",
-  "stay.live": "Ajustado a los precios en directo de tus noches",
   "dest.cheapestMonth": "Más barato en {month}",
   "dest.gettingTitle": "Cómo llegar y moverse",
   "dest.flyTo": "Vuela a {iata}",
