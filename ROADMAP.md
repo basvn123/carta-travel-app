@@ -290,7 +290,7 @@ archive/            retired code and plans
 | Fold, then archive (waits on decision A-a) | `Trips/carta-unified/` (308 files): move what runs into `pipeline/trips/`, repoint `golden-set.yml` and `trip-validator.yml` |
 | Untracked and ignored (done, T1050) | the 28 dated `reports/coverage_backlog_*.csv`. The rest of `reports/` stays tracked: `rating_reference_v5.json` is the frozen rating calibration. `continent-app/reports/` stays: it holds the performance baselines reports cite |
 | Deleted locally (done, T1050) | `impeccable/` (17 MB copy), `.fastbuild/`, `dev/`, `.vercel/`, `bash.exe.stackdump`, empty `continent-app/screenshots/`, root `*.log` (3.3 MB), all `__pycache__/`. `logs/` stays: Task Scheduler runs `logs/run_*.cmd` and `logs/pipeline_state.json` is pipeline state |
-| Review | 622 tracked files in `cache/` (git or R2?); `vercel.json` plus `csp-hash.mjs` (retire both or document) |
+| Review | 622 tracked files in `cache/` (git or R2?); `vercel.json` retired (T1067); `csp-hash.mjs` kept for the `_headers` script-src |
 
 **A2. Pipeline structure**
 - Split `run_pipeline.py` (74 tasks in one list) into `pipeline/tasks/<domain>.py`. `run_pipeline.py` keeps the CLI and imports the registry.

@@ -12,8 +12,8 @@
  *
  * On in `vite dev`, and in any build run with VITE_E2E_SEAMS=1 (that is what
  * `.env` sets locally, so `npm run build && npm run preview` still satisfies
- * scripts/verify_*.mjs). Off in the Vercel production build, where the
- * variable is simply not set — Vite then folds this to `false` and the whole
+ * scripts/verify_*.mjs). Off in the production build, where the
+ * variable is not set: Vite then folds this to `false` and the whole
  * mock branch is tree-shaken out of the bundle.
  *
  * The server still enforces every metered surface regardless; this only

@@ -26,7 +26,7 @@
  *   - the built bundle must contain the data base. If Vite built without it
  *     (a different mode, a missing .env) the bundle would ask Pages for
  *     files this script just removed.
- *   - the data host's origin must be in connect-src in both vercel.json and
+ *   - the data host's origin must be in connect-src in
  *     public/_headers, or the browser blocks every shard. Register row T053-b
  *     keeps that host out of the CSP until the domain resolves, so this is
  *     what makes the order machine-checked. CARTA_SKIP_CSP_CHECK=1 bypasses
@@ -113,10 +113,6 @@ function connectSrc(csp) {
 
 function cspProblems(origin) {
   const problems = [];
-  const vercel = JSON.parse(readFileSync(resolve(appRoot, 'vercel.json'), 'utf-8'));
-  const vCsp = (vercel.headers || []).flatMap((h) => h.headers || [])
-    .find((h) => h.key === 'Content-Security-Policy')?.value;
-  if (!connectSrc(vCsp).includes(origin)) problems.push(`vercel.json connect-src lacks ${origin}`);
   const headers = readFileSync(resolve(appRoot, 'public', '_headers'), 'utf-8');
   const hCsp = /Content-Security-Policy:\s*(.*)/.exec(headers)?.[1];
   if (!connectSrc(hCsp).includes(origin)) problems.push(`public/_headers connect-src lacks ${origin}`);

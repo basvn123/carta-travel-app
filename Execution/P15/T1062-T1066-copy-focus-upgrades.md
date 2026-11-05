@@ -185,3 +185,43 @@ Screenshots are in `Execution/P15/T1062-shots/` (gitignored).
 
 ### Rollback procedure
 `git revert` the T1066 commit, then `npm ci`.
+
+---
+
+## T1067: Vercel removed from the live code (owner request, during PR #8)
+
+### What changed
+The app is on Cloudflare Pages (since T293), with R2 for data and the Hetzner box for pipeline runs. Vercel was kept as a rollback host, and the owner asked for it to be gone.
+- `continent-app/vercel.json` is deleted. It was the rollback host's headers, and nothing in the build or CI read it.
+- `scripts/r2/stage-data.mjs` no longer requires the data host in `vercel.json`'s connect-src. It checks only `public/_headers`, the policy Pages actually sends.
+- Comments that named Vercel or `vercel.json` now name Cloudflare Pages or `public/_headers`. The files are `_headers`, `verify_csp.mjs`, `csp-hash.mjs`, `numbers.mjs`, `WebcamEmbed.jsx`, `affiliate.js`, `cityResearch.js`, `e2eSeams.js` (its em dash removed too), `pictureFlag.js`, `explore.spec.mjs`, `vite.config.js`, `.env.example` and `docs/REGIONS.md`.
+- The `.vercel/` line is gone from `.gitignore`, and the ROADMAP review row is marked done.
+
+Left on purpose:
+- `archive/`, the phase digests, the closed register and old reports, which record history.
+- `docs/legal/ARTICLE30.md`'s Vercel row: it stays a true processing record while the old Vercel deployment still answers on its own URL. Remove it once T293-a is done.
+- The comment in migration 031, because migrations are not edited.
+
+### Why the Vercel bot still comments
+Vercel's GitHub App is still connected to the repository, and the project `carta-travel-app` still exists in Vercel. No repository change stops that. The owner step is the existing row T293-a (runbook B14):
+- delete the Vercel project;
+- uninstall the Vercel app under GitHub, Settings, Applications.
+
+### Files touched
+- Deleted: `continent-app/vercel.json`.
+- Modified: the files listed above, plus `ROADMAP.md`.
+
+### Before/after measurements
+Vercel mentions in live code and the bound docs went from 26 to 0. History, legal and migrations are excluded, as listed above. `npm test`: 1,236 of 1,236. Design lint: 0 new.
+
+### What broke and how it was fixed
+Nothing.
+
+### Screens checked
+None. Only comments and an unused config file changed in the app.
+
+### What is still open
+- T293-a (owner, existing): delete the Vercel project and uninstall its GitHub app, then drop the Vercel row from `docs/legal/ARTICLE30.md`.
+
+### Rollback procedure
+`git revert` the T1067 commit.

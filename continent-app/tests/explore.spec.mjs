@@ -10,9 +10,9 @@
 // deliberate theme (no prefers-color-scheme block exists), so there is one
 // baseline per state, not two.
 //
-// Deploys land as Vercel previews needing manual promotion: run this against
-// the preview URL and read the result BEFORE promoting -
-//   node tests/explore.spec.mjs https://<preview>.vercel.app
+// Deploys land on the Cloudflare Pages preview branch first: run this against
+// the preview URL and read the result BEFORE deploying to main:
+//   node tests/explore.spec.mjs https://preview.carta-app.pages.dev
 // A structural failure here is a red light on promotion. The committed
 // baselines are the reference for reviewing what changed; the structural
 // assertions are the gate.

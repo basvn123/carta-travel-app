@@ -1,23 +1,16 @@
-# Cloudflare Pages header rules. Translated from vercel.json, rule for rule.
+# Cloudflare Pages header rules: the only place the app's response headers
+# (security headers, CSP, cache policy) are set. Cloudflare Pages serves the
+# app on the same edge as R2 and the images.
 #
-# Why this file exists: Carta carries Travelpayouts and Omio affiliate links,
-# which is commercial use, and Vercel's Hobby plan does not permit commercial
-# use. Cloudflare Pages allows it, costs nothing, and puts the app on the same
-# edge as R2 and the images. See CARTA_CLOUD_ARCHITECTURE.md section 5.5 and
-# Execution/P1/T024-cloudflare-pages-migration.md.
+# Two things about the syntax matter:
 #
-# Two things about the syntax differ from vercel.json and both matter:
-#
-# 1. Pages matches a path with a trailing :splat wildcard, not a regex. So
-#    vercel's "/poi/(.*)" becomes "/poi/*". There is no alternation, which is
-#    why the two grouped vercel rules (the six root JSON files, and the ten
-#    layer directories) are expanded into one stanza per path below. The
-#    expansion is mechanical and the resulting cache policy is identical.
+# 1. Pages matches a path with a trailing :splat wildcard, not a regex, so
+#    "/poi/*". There is no alternation, which is why the six root JSON files
+#    and the ten layer directories each get one stanza per path below.
 #
 # 2. Pages applies EVERY matching rule cumulatively, and where two matching
 #    rules set the SAME header name the two values are joined with a comma
-#    rather than the more specific one winning. Vercel, by contrast, applied
-#    the first matching rule per header. That difference is a live trap, and
+#    rather than the more specific one winning. That is a live trap, and
 #    the layout below is built to avoid it rather than to rely on it: the "/*"
 #    stanza sets only the six security headers and deliberately sets NO
 #    Cache-Control, so it can never collide with the per-path Cache-Control
@@ -60,8 +53,7 @@
 /stays-live/*
   Cache-Control: public, max-age=3600, stale-while-revalidate=86400
 
-# The six root JSON documents the map boots from. One vercel alternation rule,
-# expanded.
+# The six root JSON documents the map boots from, one stanza each.
 /search_index.json
   Cache-Control: public, max-age=3600, stale-while-revalidate=86400
 
@@ -92,8 +84,7 @@
   Cache-Control: public, max-age=3600, stale-while-revalidate=86400
 
 # The ten layer directories. Content changes on a weekly pipeline run at most,
-# so these carry a week of stale-while-revalidate. One vercel alternation rule,
-# expanded.
+# so these carry a week of stale-while-revalidate. One stanza each.
 /dossier/*
   Cache-Control: public, max-age=3600, stale-while-revalidate=604800
 

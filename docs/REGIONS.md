@@ -546,8 +546,8 @@ consequence shows up, as a deficit that will never close.
   reports cap-shaped counts as WARN, not FAIL, until then.
 - **`#region=<id>`, not a `/region/<slug>` path.** The app has no router:
   tabs are state in App.jsx and every layer's deep link is a hash read once
-  at boot and then stripped. A real path would need SPA rewrites that
-  `vercel.json` does not carry (it has headers only) and a path-to-state
+  at boot and then stripped. A real path would need SPA rewrites the
+  host does not carry today and a path-to-state
   reader that `urlState.js` does not have, and it would break the same way
   every harness navigates today. The SEO landing-page surface the brief
   wants from region pages is worth revisiting with a router, as its own

@@ -12,8 +12,8 @@
  * The marker is public by design (it travels in the query string of every link
  * a visitor follows), but it is read from the environment rather than hardcoded
  * so dev, preview and production can be attributed separately and the value
- * never lands in the diff. Set VITE_TP_MARKER in .env and in the Vercel project
- * env vars; with it unset every builder returns null and callers fall back to
+ * never lands in the diff. Set VITE_TP_MARKER in .env and in the Cloudflare Pages
+ * project env vars; with it unset every builder returns null and callers fall back to
  * the plain unmarked Skyscanner link, so local builds keep working untouched.
  */
 

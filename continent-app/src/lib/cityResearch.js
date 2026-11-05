@@ -32,7 +32,7 @@
  */
 
 const NOMINATIM = 'https://nominatim.openstreetmap.org/search';
-// Tried in order. Any host added here also belongs in vercel.json's
+// Tried in order. Any host added here also belongs in public/_headers'
 // connect-src, or the browser blocks the call before it is sent.
 const OVERPASS_ENDPOINTS = [
   'https://overpass-api.de/api/interpreter',
