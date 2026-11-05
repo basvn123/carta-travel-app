@@ -1583,7 +1583,7 @@ SOURCES = (
         licence="Public domain (NASA PO.DAAC data policy: no restrictions on use or redistribution)",
         attribution="Requested, not required: credit NASA JPL MUR SST",
         share_alike="No",
-        attributed="Not yet credited in the app; add a line to the Data sources screen (register row T1084-a)",
+        attributed="Account > Data sources and Imprint > Data credits (NASA JPL MUR SST entry, T1091)",
     ),
     Source(
         key="openstreetmap_via_overpass_harvest_parking",
@@ -1862,6 +1862,7 @@ SOURCES = (
     ),
     Source(
         key="open_meteo_forecast_api",
+        retired=True,
         section="content_layers",
         scripts=('continent-app/src/lib/weather.js',),
         name="Open-Meteo forecast API (live, `continent-app/src/lib/weather.js`)",
@@ -1869,7 +1870,29 @@ SOURCES = (
         licence="Free tier for non-commercial use, data CC BY 4.0; commercial use needs the paid API, verify Carta's affiliate status against their definition",
         attribution="Yes, link to Open-Meteo",
         share_alike="No",
-        attributed="Explore panel's weather section prints \"Live forecast by Open-Meteo.com\"; add to Data sources screen. RISK: commercial scope. This is now the LAST non-commercial source on a shipped surface, the WorldClim pair having been replaced on 2026-08-30; resolve with an API subscription if Carta monetises",
+        attributed="RETIRED: the forecast moved to MET Norway (T483, row below); the app no longer calls Open-Meteo, so no credit is owed (audit T1091)",
+    ),
+    Source(
+        key="met_norway_locationforecast",
+        section="content_layers",
+        scripts=('continent-app/src/lib/metForecast.js',),
+        name="MET Norway Locationforecast 2.0 (live via the forecast proxy, `continent-app/src/lib/metForecast.js`)",
+        takes="Up to 10-day forecast per destination cell, reduced to daily rows",
+        licence="CC BY 4.0 and NLOD; User-Agent with a contact required (api.met.no terms)",
+        attribution="Yes, credit MET Norway (Norwegian Meteorological Institute)",
+        share_alike="No",
+        attributed="Account > Data sources and Imprint > Data credits (MET Norway entry); audit T1091 added the row",
+    ),
+    Source(
+        key="mapterhorn_terrain_tiles",
+        section="content_layers",
+        scripts=('continent-app/src/lib/terrainSource.js',),
+        name="Mapterhorn terrain tiles (client-side, `continent-app/src/lib/terrainSource.js`)",
+        takes="Elevation tiles for the 3D terrain and relief shading",
+        licence="Open elevation sources, credited at mapterhorn.com/attribution",
+        attribution="Yes, credit Mapterhorn and its elevation sources",
+        share_alike="No",
+        attributed="Account > Data sources and Imprint > Data credits (Mapterhorn entry); audit T1091 added the row",
     ),
     Source(
         key="eurostat_tour_occ_nin3",
@@ -2826,6 +2849,8 @@ STORABLE: dict[str, str] = {
     'wikipedia_mountain_articles': 'Yes, with credit and share-alike',
     'wikidata_recurring_events': 'Yes',
     'open_meteo_forecast_api': 'No',
+    'met_norway_locationforecast': 'No',
+    'mapterhorn_terrain_tiles': 'No',
     'eurostat_tour_occ_nin3': 'Yes, with credit',
     'eurostat_avia_par': 'Yes, with credit',
     'ourairports': 'Yes',
@@ -2956,8 +2981,11 @@ APP_CREDITS: dict[str, tuple] = {
     "Digitraffic": ("traficom_finap_plus_digitraffic",),
     "opentransportdata.swiss": ("opentransportdata_swiss",),
     "transport.data.gouv.fr": ("transport_data_gouv_fr",),
-    "Open-Meteo": ("open_meteo_forecast_api",),
+    "MET Norway": ("met_norway_locationforecast",),
     "Exchange Rate API": ("exchangerate_api_open_endpoint",),
+    "Mapterhorn": ("mapterhorn_terrain_tiles",),
+    "Xotelo": ("xotelo_tripadvisor_rates",),
+    "NASA JPL MUR SST": ("nasa_jpl_mur_sst",),
 }
 
 WIRE_REVIEW = (
@@ -3016,3 +3044,125 @@ WIRE_REVIEW = (
         travels="obligations ended with publication (section 8)",
     ),
 )
+
+
+# Credit audit (T1091). A ledger row whose `attribution` column asks for a
+# credit must be credited in the app. APP_CREDITS names the rows that have an
+# entry of their own; the two tables below account for every other such row,
+# so none can be silently uncredited:
+#   CREDIT_COVERED_BY  row key -> the attribution.js entry whose wording covers it
+#   CREDIT_NOT_SHOWN   row key -> why no traveller sees this data yet (raw ETL,
+#                      staging, a validation signal, a credit given inline)
+# `uncredited_rows()` is the rule; tests/test_data_licences.py enforces it.
+CREDIT_COVERED_BY: dict[str, str] = {
+    "nordic_ferry_feeds_via": "Entur",
+    "eurostat_tourist_nights_per": "Eurostat",
+    "eurostat_gisco_lau_2024": "EuroGeographics",
+    "eurostat_food_price_tables": "Eurostat",
+    "unesco_world_heritage_list": "UNESCO World Heritage Centre",
+    "copernicus_glo_30_dem_terrain": "Copernicus GLO-30",
+    "copernicus_glo_30_dem_elevation": "Copernicus GLO-30",
+    "wikipedia_lead_images_via": "Wikipedia",
+    "wikimedia_commons_photographs": "Wikimedia Commons",
+    "wikimedia_commons_per_file": "Wikimedia Commons",
+    "wikimedia_commons_beach_photographs": "Wikimedia Commons",
+    "wikimedia_commons_lake_photographs": "Wikimedia Commons",
+    "wikimedia_commons_mountain_photographs": "Wikimedia Commons",
+    "wikimedia_commons_trail_photographs": "Wikimedia Commons",
+    "wikimedia_commons_and_geograph": "Wikimedia Commons",
+    "wikivoyage_listings": "Wikivoyage",
+    "wikivoyage_go_next_graph": "Wikivoyage",
+    "wikivoyage_itinerary_articles": "Wikivoyage",
+    "wikivoyage_get_in_sections": "Wikivoyage",
+    "wikivoyage_article_status": "Wikivoyage",
+    "eea_wise_bathing_water_enrich_beaches": "European Environment Agency",
+    "eea_wise_bathing_water_eea_spine": "European Environment Agency",
+    "eea_wise_bathing_water_enrich_lakes": "European Environment Agency",
+    "eea_wise_bathing_water_harvest_bathing_water": "European Environment Agency",
+    "eea_coastline_for_analysis": "European Environment Agency",
+    "eea_coastline_for_analysis_regions": "European Environment Agency",
+    "eea_coastline_for_analysis_cycling": "European Environment Agency",
+    "eea_biogeographical_regions": "European Environment Agency",
+    "eea_wise_wfd_river": "European Environment Agency",
+    "natura_2000_and_the": "European Environment Agency, protected sites",
+    "eea_emerald_network": "European Environment Agency, protected sites",
+    "osm_protected_areas": "OpenStreetMap",
+    "openstreetmap_via_overpass": "OpenStreetMap",
+    "wikidata_emergency_numbers": "OpenStreetMap",
+    "openstreetmap_swimming_no": "OpenStreetMap",
+    "openstreetmap_charge_tag": "OpenStreetMap",
+    "openstreetmap_via_overpass_harvest_parking": "OpenStreetMap",
+    "openstreetmap_via_geofabrik_country_enrich_beaches": "OpenStreetMap",
+    "openstreetmap_named_water_bodies": "OpenStreetMap",
+    "openstreetmap_via_overpass_enrich_lakes": "OpenStreetMap",
+    "openstreetmap_via_overpass_enrich_peaks": "OpenStreetMap",
+    "openstreetmap_named_landforms_via": "OpenStreetMap",
+    "openstreetmap_route_relations_via": "OpenStreetMap",
+    "openstreetmap_scenic_features_via": "OpenStreetMap",
+    "openstreetmap_via_the_existing": "OpenStreetMap",
+    "openstreetmap_relations_via_geofabrik": "OpenStreetMap",
+    "openstreetmap_node_network": "OpenStreetMap",
+    "openstreetmap_services": "OpenStreetMap",
+    "openstreetmap_land_cover": "OpenStreetMap",
+    "self_hosted_valhalla_over": "OpenStreetMap",
+    "osrm_on_fossgis": "OpenStreetMap",
+    "nominatim": "OpenStreetMap",
+    "overpass_api": "OpenStreetMap",
+    "waymarked_trails_route_list": "OpenStreetMap",
+}
+
+CREDIT_NOT_SHOWN: dict[str, str] = {
+    "sncf_gtfs_rt_plus": "raw ETL; no traveller surface reads it. Credit it the day one does",
+    "french_nap_cross_border": "raw ETL; no traveller surface reads it",
+    "era_registers": "raw ETL; no traveller surface reads it",
+    "opensky_network": "raw ETL; no traveller surface reads it (commercial-use question open)",
+    "eurocontrol_statfor": "raw ETL; no traveller surface reads it",
+    "open_food_facts_open_prices": "no Open Food Facts figure is in the app today (checked 2026-11-05); credit it before one ships (register row T536)",
+    "bayerische_vermessungsverwaltung_wanderwege": "validation signal only; no BVV geometry or figure is published",
+    "environment_agency_and_natural": "nothing from it ships yet (SEPA and DAERA are not wired)",
+    "google_flights_fli": "credited inline on every flight price (\"Google Flights, checked\"), not a dataset credit",
+    "eurostat_urban_audit_plus": "staging only; not shown to travellers",
+    "statistics_norway_statbank_table": "staging only; not shown to travellers",
+    "statistik_austria_ogd": "staging only; not shown to travellers",
+    "wikimedia_commons_stop_images": "staging only; per-file credit ships with any published citytrip surface",
+    "base_nationale_des_amenagements": "excluded from the agreement measurement; nothing from it is shown",
+    "toerisme_vlaanderen_cycling_node": "excluded from the agreement measurement; nothing from it is shown",
+}
+
+
+def credit_required(row: "Source") -> bool:
+    """True when the row's attribution column asks for a credit and the row
+    is live. Retired rows are history; their credit is owed only while the
+    data still ships, which APP_CREDITS covers when it does."""
+    if row.retired:
+        return False
+    return row.attribution.strip().lower().startswith(("yes", "requested", "credit", "osm credit"))
+
+
+def uncredited_rows() -> list[str]:
+    """Problems with the credit audit (T1091). Empty means every live
+    credit-required row has an app entry, is covered by one, or is
+    recorded as not shown."""
+    problems = []
+    direct = {k for keys in APP_CREDITS.values() for k in keys}
+    by_key = {s.key: s for s in SOURCES}
+    for key in direct:
+        if key not in by_key:
+            problems.append(f"APP_CREDITS names {key!r}, which is not a ledger row")
+    for key, entry in CREDIT_COVERED_BY.items():
+        if key not in by_key:
+            problems.append(f"CREDIT_COVERED_BY names {key!r}, which is not a ledger row")
+        if entry not in APP_CREDITS:
+            problems.append(f"CREDIT_COVERED_BY maps {key!r} to {entry!r}, which is not an app entry")
+    for key in CREDIT_NOT_SHOWN:
+        if key not in by_key:
+            problems.append(f"CREDIT_NOT_SHOWN names {key!r}, which is not a ledger row")
+    for s in SOURCES:
+        if not credit_required(s):
+            continue
+        places = [s.key in direct, s.key in CREDIT_COVERED_BY, s.key in CREDIT_NOT_SHOWN]
+        if sum(places) == 0:
+            problems.append(f"{s.key!r} requires a credit but has no app entry, no covering entry and no not-shown reason")
+        if sum(places) > 1:
+            problems.append(f"{s.key!r} is accounted for in more than one credit table")
+    return problems

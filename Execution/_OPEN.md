@@ -1423,3 +1423,5 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1081-a | T1081 | Paste migration 064 after 061 to 063 and deploy the app in the same sitting (until both are live, admin ban, delete and set tier do nothing), per step 12 of Execution/P15/_OPEN-supabase-migrations.md | user | open |  |
 | T1082-a | T1082 | Update the stale assertions in test_moderation_decisions.mjs (2 fail), test_admin_followups.mjs (20 fail) and test_admin_mfa.mjs to the behaviour of migrations 052 onward (062 to 064), then add them to CI | next task | open |  |
 | T1084-a | T1084 | Credit NASA JPL MUR SST (sea temperatures) in the Data sources screen, src/data/attribution.js; its data policy requests credit | next task | open |  |
+| T1091-a | T1091 | Open Food Facts has no app credit because no OFF figure ships yet (CREDIT_NOT_SHOWN in registry.py); add the credit before the prices layer shows one (row T536) | next task | open |  |
+| T1091-b | T1091 | Close T1084-a: the NASA JPL MUR SST credit shipped in T1091 (moving the row to _OPEN-CLOSED.md was left to the orchestrator) | next task | open |  |

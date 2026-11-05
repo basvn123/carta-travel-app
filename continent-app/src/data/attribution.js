@@ -153,6 +153,12 @@ export const ATTRIBUTIONS = [
     credit: 'World Heritage designations from the UNESCO World Heritage List',
   },
   {
+    source: 'NASA JPL MUR SST',
+    license: 'Public domain (NASA PO.DAAC data policy; credit requested)',
+    credit: 'Monthly sea temperatures on the beach pages from NASA JPL MUR '
+      + 'SST v4.1 (PO.DAAC), via NOAA CoastWatch',
+  },
+  {
     source: 'CHELSA',
     license: 'CC BY 4.0',
     credit: 'The estimated lake swimming season is modelled from CHELSA V2.1 '
