@@ -4,7 +4,7 @@ Pastes in the SQL editor, Edge Function deploys and secrets for project ntssxkta
 
 Steps are the open register rows with Owner `user` that belong to this system, in register order: the Order column first, then task number. A row's own wording says what it waits on ("after", "before"); that is repeated beside the step. Nothing here is new: each step is a row, and the task report named in the row has the detail. When you finish a step, tell a session the row id; it moves the row to `Execution/_OPEN-CLOSED.md`.
 
-Rows: 10. Register rows point back here.
+Rows: 11. Register rows point back here.
 
 ## Steps
 
@@ -18,3 +18,4 @@ Rows: 10. Register rows point back here.
 8. **T823-a**: Walk "Let Carta plan them" once with a real signed-in account on the live plan-day function (only the ?aiplanmock seam was walked); a 7-day trip now spends up to 7 AI plans
 9. **T946-a**: Turn on manual identity linking in Supabase so Connect Google works (Execution/P15/T937-T947-owner-decisions.md)
 10. **T985-a** (register order: before T944-b): Confirm 060 scheduled its cron job: if its paste printed the pg_cron, pg_net or Vault notice, enable pg_cron and pg_net, add Vault secrets notify_url and notify_secret, and paste 060 again; until then no Together email is queued (Execution/P15/T985-migrations-052-060-live.md)
+11. **T1078-a** (register order: after 061 and 062, T1070-a and T1071-a): Paste supabase/migrations/063_signed_out_policy_helpers.sql in the SQL editor and look for "signed-out policy helpers self-check passed"; pasting twice is safe, and the way back is 063_signed_out_policy_helpers_down.sql. It must follow 061 and 062 (Execution/P15/T1078-rls-coverage.md)

@@ -2369,8 +2369,9 @@ This section covers the parts of Carta that sit around the travel content: the A
 - **Shared saved lists (059):** owner shares a list with accepted friends; members add items, write notes and vote once per item.
 - **Public guides (019):** an author can publish a trip as a public guide under their handle. Nobody can list accounts or browse people.
 - Planning together and a second share link are free (usePaywall.jsx comment, T488-b).
+- **Who sees what is tested:** every table above has an isolation fixture in `continent-app/scripts/admin/test_rls_policies.mjs` (`rls-policies.yml`): a stranger and a signed-out visitor read, change, delete and forge nothing, an accepted friend reads the sharing switches, a joined co-member reads the group's options, votes and ledger but never another member's maximum, and a list member reads the list (T1078). The group and list policies ask one helper each, `group_role` and `shared_list_role`; since 063 `anon` may execute both (they answer null without a signed-in caller), so a signed-out read returns no rows instead of a permission error, and `group_all_joined` answers false unless the caller is the owner or a joined member of that group.
 
-**Data behind it.** Migrations 009, 010, 011, 012, 019, 020, 023, 046, 052, 055 to 059 (055 to 059 have down migrations). 052 to 060 were applied live by T985.
+**Data behind it.** Migrations 009, 010, 011, 012, 019, 020, 023, 046, 052, 055 to 059 and 063 (055 to 059 and 063 have down migrations). 052 to 060 were applied live by T985; 063 is written, not applied (T1078-a).
 
 **Where it lives.** `continent-app/src/together/` (TogetherPage.jsx, useTogether.js, GroupTrips.jsx, SettleUp.jsx, AskJoin.jsx, Privacy.jsx, settle.js, overlaps.js), `continent-app/src/auth/` (friends.js, coplanners.js, groupTrips.js, joinRequests.js, groupExpenses.js, sharedLists.js, tripShares.js, friendVisibility.js, profiles.js, SharedTripView.jsx, TripSharePanel.jsx), `continent-app/src/lib/shareLink.js`.
 
