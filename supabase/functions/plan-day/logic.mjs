@@ -493,12 +493,13 @@ export function scheduleDay(stops, {
 // what the lite models do as well as the thinking ones, at a fraction of the
 // price and with the larger free budget, so they lead now and the thinking
 // model is the fallback.
-export const DEFAULT_MODEL_CHAIN = [
-  'gemini-flash-lite-latest', // the current Flash-Lite, the cheapest that answers in the schema
-  'gemini-3.5-flash-lite',    // the same class pinned, its own daily budget
-  'gemini-flash-latest',      // the thinking Flash, when both lite budgets are spent
-  'gemini-3.1-flash-lite',    // last resort
-];
+// T1137 (E3): the chain, the fall-over rule and the time budget moved to the
+// one model-access module, supabase/functions/_shared/aiModels.mjs. They are
+// re-exported here so existing imports and tests keep working.
+export {
+  GEMINI_CHAIN as DEFAULT_MODEL_CHAIN, modelChain, shouldFallOver,
+} from '../_shared/aiModels.mjs';
+import { AI_FEATURES, attemptTimeoutMs as gatewayAttemptMs } from '../_shared/aiModels.mjs';
 
 /* ---- free refines (T433) ----
  *
@@ -555,34 +556,7 @@ export async function verifyRefineToken(token, secret, user, now = Date.now()) {
   }
 }
 
-/**
- * Resolve the ordered list of models to try.
- *
- * GEMINI_MODELS (comma separated) replaces the chain outright. Otherwise
- * GEMINI_MODEL, if set, is promoted to the front of the default chain and
- * de-duplicated, so pinning a model still leaves the fallbacks behind it
- * rather than silently giving up the extra capacity.
- */
-export function modelChain(primary, list) {
-  const parse = (s) => String(s || '').split(',').map((m) => m.trim()).filter(Boolean);
-  const listed = parse(list);
-  if (listed.length) return [...new Set(listed)].slice(0, 6);
-  const pinned = parse(primary);
-  return [...new Set([...pinned, ...DEFAULT_MODEL_CHAIN])].slice(0, 6);
-}
 
-/**
- * Should the chain advance to the next model after this HTTP status?
- *
- * 429 is the whole point (the daily or per-minute budget for THIS model is
- * spent). 404 covers a model retired out from under a pinned config, and 5xx
- * covers the "experiencing high demand" 503 that Google returns on popular
- * models. Anything else is our own bad request and would fail identically on
- * every model, so it stops the chain instead of burning the rest.
- */
-export function shouldFallOver(status) {
-  return status === 429 || status === 404 || status >= 500;
-}
 
 /**
  * How long one model in the chain may take, in milliseconds, or 0 when the
@@ -597,16 +571,15 @@ export function shouldFallOver(status) {
  * model to finish. Supabase allows an Edge Function 150 s of wall clock, so
  * 80 s keeps well inside it with the cache, quota and logging work around it.
  */
-export const AI_TIME_BUDGET_MS = 80_000;
-export const AI_FIRST_ATTEMPT_MS = 40_000;
-export const AI_LATER_ATTEMPT_MS = 25_000;
-export const AI_MIN_ATTEMPT_MS = 8_000;
+const PLAN = AI_FEATURES['plan-day'];
+export const AI_TIME_BUDGET_MS = PLAN.budgetMs;
+export const AI_FIRST_ATTEMPT_MS = PLAN.firstMs;
+export const AI_LATER_ATTEMPT_MS = PLAN.laterMs;
+export const AI_MIN_ATTEMPT_MS = PLAN.minMs;
 
+/** plan-day's attempt timeout; the rule itself is aiModels.attemptTimeoutMs. */
 export function attemptTimeoutMs(index, elapsedMs, budgetMs = AI_TIME_BUDGET_MS) {
-  const left = budgetMs - Math.max(0, elapsedMs || 0);
-  if (left < AI_MIN_ATTEMPT_MS) return 0;
-  const cap = index === 0 ? AI_FIRST_ATTEMPT_MS : AI_LATER_ATTEMPT_MS;
-  return Math.min(cap, left);
+  return gatewayAttemptMs(index, elapsedMs, { ...PLAN, budgetMs });
 }
 
 /**

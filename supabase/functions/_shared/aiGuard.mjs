@@ -1,7 +1,7 @@
 /**
  * aiGuard: the one AI security guard for Carta's model calls (T1117, ROADMAP
- * C8 with E3). Used by the Gemini-backed Edge Functions plan-day and
- * parse-booking, and (as a byte-identical copy in
+ * C8 with E3). Used by the Gemini-backed Edge Functions plan-day,
+ * suggest-city (since T1137) and parse-booking, and (as a byte-identical copy in
  * continent-app/functions/_lib/aiGuard.js, kept equal by
  * continent-app/tests/aiGuard.test.mjs) by Ask's /api/ask/answer on Workers AI.
  *
@@ -26,6 +26,9 @@
  *
  * What it does not do: decide whether a fact is true (verify.js and agree.js
  * on Ask, the catalogue match in plan-day, sanitizeParsed in parse-booking).
+ * Which provider and model answer, and how long each may take, is the model
+ * access module's job (aiModels.mjs, T1137); the pipeline's twin of both is
+ * pipeline/ai_gateway.py.
  */
 
 export const GUARD_VERSION = 1;
@@ -38,6 +41,7 @@ export const LIMITS = {
   askOutputChars: 2400,
   planFreeText: 280,
   planPromptChars: 60000,
+  cityPromptChars: 60000,
   bookingPromptChars: 80000,
   modelOutputChars: 65536,
   heldChars: 600,
@@ -504,4 +508,70 @@ export function guardBookingPayload(payload) {
   const { repaired, ...out } = guardBookingOutput({ ...payload, summary: typeof payload.summary === 'string' ? payload.summary : '' });
   void repaired;
   return out;
+}
+
+/* ---- suggest-city (T1137) ---- */
+
+/**
+ * suggest-city's wish and the client-sent candidate deck, scrubbed before the
+ * cache key and the prompt, as plan-day's are. A candidate whose name,
+ * country or a tag is an injection is dropped.
+ * @template {{ name: string, country?: string, tags?: string[] }} C
+ * @param {{ freeText?: string, candidates?: C[] }} p
+ * @returns {{ freeText: string, candidates: C[], flags: string[] }}
+ */
+export function guardCityInput({ freeText = '', candidates = [] }) {
+  const flags = [];
+  const r = scrubData(freeText, LIMITS.planFreeText);
+  if (r.hit) flags.push('freeText');
+  const kept = candidates.filter((c) => {
+    const h = [c.name, c.country, ...(c.tags || [])].some((t) => scanInjection(t).hit);
+    if (h) flags.push('candidate');
+    return !h;
+  });
+  return { freeText: r.text, candidates: kept, flags: [...new Set(flags)] };
+}
+
+/**
+ * The model's suggest-city JSON, before sanitizeSuggestions reads it.
+ * Rejected when it is not { suggestions[] }; a suggestion that is not an
+ * object is dropped; name, country and why are repaired (a discovery whose
+ * name fails is dropped: its name is model text the traveller reads as a
+ * place). Returns { value, reason, dropped, repaired }.
+ */
+export function guardCityOutput(parsed, { systemText = '' } = {}) {
+  if (!isObj(parsed)) return { value: null, reason: 'wrong_shape', dropped: 0, repaired: 0 };
+  if (!Array.isArray(parsed.suggestions)) return { value: null, reason: 'missing_key', dropped: 0, repaired: 0 };
+  const shingles = promptShingles(systemText);
+  let dropped = 0;
+  let repaired = 0;
+  const fix = (t, max) => {
+    if (typeof t !== 'string') return '';
+    const r = repairText(t, { max, shingles });
+    if (r.issues.length) repaired += 1;
+    return r.text;
+  };
+  const suggestions = [];
+  for (const s of parsed.suggestions.slice(0, 12)) {
+    if (!isObj(s)) { dropped += 1; continue; }
+    const name = fix(s.name, 90);
+    if (!name && s.inCatalog === false) { dropped += 1; continue; }
+    suggestions.push({ ...s, name, country: fix(s.country, 60), why: fix(s.why, 200) });
+  }
+  return { value: { suggestions }, reason: null, dropped, repaired };
+}
+
+/** A suggest-city payload, fresh or from ai_plan_cache: re-checked before it is served; null is a miss. */
+export function guardCityPayload(payload) {
+  if (!isObj(payload) || !Array.isArray(payload.suggestions)) return null;
+  if (payload.suggestions.some((s) => !isObj(s) || typeof s.name !== 'string')) return null;
+  const suggestions = payload.suggestions
+    .map((s) => ({
+      ...s,
+      name: repairText(s.name, { max: 90 }).text,
+      country: typeof s.country === 'string' ? repairText(s.country, { max: 60 }).text : '',
+      why: typeof s.why === 'string' ? repairText(s.why, { max: 200 }).text : '',
+    }))
+    .filter((s) => s.name);
+  return { ...payload, suggestions };
 }

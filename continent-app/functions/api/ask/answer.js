@@ -30,6 +30,11 @@
  * model ends the stream. The browser's verify.js and agree.js still check
  * every sentence that reaches it.
  *
+ * Model access (T1137, E3): the model is called through aiModels.callModel,
+ * the module the Edge Functions use. The provider and the chain are config
+ * (AI_ASK_PROVIDER, AI_ASK_MODELS; default Workers AI through the AI binding),
+ * with the same time budget, retry and fall-over rules as every AI call.
+ *
  * Pages does not apply public/_headers to a Function's response, so the
  * headers are set here.
  */
@@ -40,17 +45,15 @@ import {
   GUARD_VERSION, guardAskInput, askUserPrompt, systemRules, makeNonce, makeStreamGuard,
 } from '../../_lib/aiGuard.js';
 import { createLimiter, overLimit, methodNotAllowed } from '../../_lib/guard.js';
+import { AI_FEATURES, modelAccess, callModel, neuronPrice } from '../../_lib/aiModels.js';
 
 /** The free allowance is 10,000 Neurons a day (00:00 UTC); stop well short. */
 export const CAP = 9000;
 const CACHE_TTL = 7 * 24 * 3600;
 const RATE = 8;
 const MAX_BODY = 8192;
-// Neurons per million tokens, Workers AI pricing (2026-10); in, out.
-export const MODELS = [
-  { id: '@cf/qwen/qwen3-30b-a3b-fp8', in: 4625, out: 30475 },
-  { id: '@cf/meta/llama-3.2-3b-instruct', in: 4625, out: 30475 },
-];
+// The default chain with its Neurons per million tokens (aiModels.NEURON_PRICES); in, out.
+export const MODELS = AI_FEATURES.ask.models.map((id) => ({ id, ...neuronPrice(id) }));
 
 // Per-isolate window, plus the RATE_LIMIT binding when the account has one (T1079).
 const limiter = createLimiter({ max: RATE });
@@ -85,7 +88,8 @@ export function pieceOf(line) {
 export const onRequest = () => methodNotAllowed('POST');
 
 export async function onRequestPost({ request, env, waitUntil }) {
-  if (!env.AI) return fail(503, 'off');
+  const access = modelAccess('ask', env, env.AI);
+  if (access.refusal) return fail(503, 'off');
   if (!env.ASK) return fail(503, 'nocap');
   const len = Number(request.headers.get('content-length') || 0);
   if (len > MAX_BODY) return fail(413, 'size');
@@ -118,26 +122,19 @@ export async function onRequestPost({ request, env, waitUntil }) {
   const tin = tokensOf(system) + tokensOf(user);
   const counter = `n:${day()}`;
   const used = Number(await env.ASK.get(counter)) || 0;
-  const worst = neurons(MODELS[0], tin, MAX_ANSWER_TOKENS);
+  const worst = neurons(neuronPrice(access.cfg.models[0]), tin, MAX_ANSWER_TOKENS);
   if (used + worst > CAP) return fail(429, 'cap');
   // Book the worst case first, so two answers at once cannot both pass the cap.
   await env.ASK.put(counter, String(used + worst), { expirationTtl: 2 * 86400 });
 
-  let stream = null;
-  let model = null;
-  for (const m of MODELS) {
-    try {
-      stream = await env.AI.run(m.id, {
-        messages: [{ role: 'system', content: system }, { role: 'user', content: user }],
-        max_tokens: MAX_ANSWER_TOKENS,
-        temperature: 0.2,
-        stream: true,
-      });
-      model = m;
-      break;
-    } catch { stream = null; }
-  }
-  if (!stream) return fail(502, 'model');
+  const ai = await callModel({
+    feature: 'ask', env, binding: env.AI, system, user,
+    stream: true, temperature: 0.2, maxOutputTokens: MAX_ANSWER_TOKENS,
+  });
+  // Every model's budget spent reads as the cap (the app keeps its facts answer).
+  if (!ai.ok) return fail(ai.status, ai.code === 'global_cap' ? 'cap' : ai.code === 'no_ai' || ai.code === 'config' ? 'off' : 'model');
+  const stream = ai.stream;
+  const model = { id: ai.model, ...neuronPrice(ai.model) };
 
   const enc = new TextEncoder();
   const dec = new TextDecoder();

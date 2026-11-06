@@ -33,7 +33,10 @@
  * GEMINI_MODEL / GEMINI_MODELS, AI_GLOBAL_DAILY_CAP (200).
  */
 import { createClient } from 'npm:@supabase/supabase-js@2';
-import { cleanText, modelChain, shouldFallOver } from '../plan-day/logic.mjs';
+import { cleanText } from '../plan-day/logic.mjs';
+// Model access (T1137, E3): provider, chain, time budget, retries and the
+// refusal shape. A switch is an AI_PARSE_BOOKING_* value, not a code change.
+import { modelAccess, callModel, chainKey, parseModelJson, refusalBody } from '../_shared/aiModels.mjs';
 import {
   sanitizeFiles, sanitizeTripContext, sanitizeParsed, cacheKeyInput,
   safeFetchUrl, htmlToText,
@@ -156,13 +159,13 @@ function decodeTextFile(b64: string): string {
 Deno.serve(withCors(async (req) => {
   if (req.method !== 'POST') return json(405, { code: 'method' });
 
-  const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY') || '';
-  const CHAIN = modelChain(Deno.env.get('GEMINI_MODEL'), Deno.env.get('GEMINI_MODELS'));
+  const envGet = (k: string) => Deno.env.get(k);
+  const access = modelAccess('parse-booking', envGet);
   const GLOBAL_CAP = Number(Deno.env.get('AI_GLOBAL_DAILY_CAP')) || 200;
   const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || '';
   const ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY') || '';
   const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
-  if (!GEMINI_API_KEY) return json(503, { code: 'no_ai' });
+  if (access.refusal) return json(access.refusal.status, refusalBody(access.refusal));
 
   // Personal documents spend personal quota: a real signed-in user only.
   const authHeader = req.headers.get('Authorization') || '';
@@ -271,7 +274,7 @@ Deno.serve(withCors(async (req) => {
   const combinedText = [pastedText, urlText].filter(Boolean).join('\n\n').slice(0, 40000);
   const fileHashes = await Promise.all(files.map((f) => sha256Hex(f.data)));
   const hash = await sha256Hex(cacheKeyInput({
-    model: CHAIN.join(','), fileHashes, text: combinedText, context, lang,
+    model: chainKey(access.cfg), fileHashes, text: combinedText, context, lang,
   }));
   const { data: cached } = await service
     .from('ai_plan_cache')
@@ -301,59 +304,31 @@ Deno.serve(withCors(async (req) => {
   const security = systemRules(nonce);
   const prompt = buildPrompt({ context, lang, hasFiles: docFiles.length > 0, text: sourceText, nonce });
   if (prompt.length > LIMITS.bookingPromptChars) return await failed(400, { code: 'too_big' });
-  const parts: Record<string, unknown>[] = [{ text: prompt }];
-  for (const f of docFiles) parts.push({ inline_data: { mime_type: f.mime, data: f.data } });
+  const parts: { text?: string; inline?: { mime: string; data: string } }[] = [{ text: prompt }];
+  for (const f of docFiles) parts.push({ inline: { mime: f.mime, data: f.data } });
 
-  let aiText = '';
-  let usedModel = '';
-  let lastStatus = 0;
-  for (const model of CHAIN) {
-    let resp: Response;
-    try {
-      resp = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_API_KEY },
-          body: JSON.stringify({
-            systemInstruction: { parts: [{ text: security }] },
-            contents: [{ role: 'user', parts }],
-            generationConfig: {
-              temperature: 0.1, // extraction wants fidelity, not flair
-              // gemini-flash-latest is a thinking model and its thoughts spend
-              // this budget (see plan-day); headroom itself costs nothing.
-              maxOutputTokens: 8192,
-              responseMimeType: 'application/json',
-              responseSchema: RESPONSE_SCHEMA,
-            },
-          }),
-          signal: AbortSignal.timeout(60_000),
-        },
-      );
-    } catch {
-      return await failed(504, { code: 'ai_timeout' });
-    }
-    if (!resp.ok) {
-      lastStatus = resp.status;
-      if (shouldFallOver(resp.status)) continue;
-      return await failed(502, { code: 'ai_error', status: resp.status });
-    }
-    const data = await resp.json();
-    aiText = (data?.candidates?.[0]?.content?.parts || [])
-      .map((p: { text?: string }) => p.text || '')
-      .join('');
-    usedModel = model;
-    break;
-  }
-  if (!usedModel) {
-    return lastStatus === 429
-      ? await failed(429, { code: 'global_cap' })
-      : await failed(502, { code: 'ai_error', status: lastStatus });
-  }
+  // Through aiModels: the same budget, retry and fall-over rules as plan-day
+  // (before T1137 a timeout here ended the import; now it falls over while
+  // the budget lasts).
+  const ai = await callModel({
+    feature: 'parse-booking',
+    env: envGet,
+    system: security,
+    parts,
+    json: true,
+    schema: RESPONSE_SCHEMA,
+    temperature: 0.1, // extraction wants fidelity, not flair
+    // gemini-flash-latest is a thinking model and its thoughts spend this
+    // budget (see plan-day); headroom itself costs nothing.
+    maxOutputTokens: 8192,
+  });
+  if (!ai.ok) return await failed(ai.status, refusalBody(ai));
+  const aiText: string = ai.text;
+  const usedModel: string = ai.model;
 
   if (aiText.length > LIMITS.modelOutputChars) return await failed(502, { code: 'ai_bad_output', reason: 'too_long' });
-  let parsed: unknown;
-  try { parsed = JSON.parse(aiText); } catch { return await failed(502, { code: 'ai_bad_output', reason: 'json_parse' }); }
+  const parsed: unknown = parseModelJson(aiText);
+  if (parsed === undefined) return await failed(502, { code: 'ai_bad_output', reason: 'json_parse' });
 
   // ---- server-side truth pass ----
   const shaped = sanitizeParsed(parsed, { totalDays: context.totalDays || 60 });
@@ -375,7 +350,7 @@ Deno.serve(withCors(async (req) => {
     ...safe,
     meta: {
       model: usedModel,
-      fellBack: usedModel !== CHAIN[0],
+      fellBack: ai.fellBack,
       files: files.length,
       cached: false,
       guard: { input: inGuard.flags, repaired },

@@ -48,7 +48,10 @@ record is written. Nothing is repaired on the way.
 Every call's token counts and search counts go to a ledger (ledger.jsonl in the
 output folder), priced from the table below, so the cost per trip is recorded
 rather than estimated. Runtime and pipeline AI is Gemini only (CLAUDE.md); the
-Claude API is never called.
+Claude API is never called. Every model call goes through the repository's
+model gateway, pipeline/ai_gateway.py (T1137, feature "trips"): its chain,
+rate floor, retries, input screen and output check; AI_TRIPS_PROVIDER and
+AI_TRIPS_MODELS switch the provider or the chain.
 """
 from __future__ import annotations
 
@@ -61,9 +64,7 @@ import os
 import re
 import sys
 import time
-import urllib.error
 import urllib.parse
-import urllib.request
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import common as C  # noqa: E402
@@ -72,8 +73,8 @@ import generation_gate as G  # noqa: E402
 ROOT = G.ROOT
 PROMPT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "prompts")
 DEFAULT_OUT = os.path.join(ROOT, "data", "generated")
-API = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 # The chain pipeline/dossier/rewrite_intros.py uses; each model has its own quota.
+# The gateway (pipeline/ai_gateway.py) runs it; golden_set.py hashes it.
 MODEL_CHAIN = ["gemini-flash-latest", "gemini-3.5-flash", "gemini-3.5-flash-lite"]
 
 # Word caps from carta-trips-enhancement-spec.md D4: summary under 120 words,
@@ -741,56 +742,63 @@ def apply_critique(fields, rows, critique, chunks):
 
 # ── clients ──────────────────────────────────────────────────────────────────
 
+def _gateway():
+    """pipeline/ai_gateway.py from the repository root, imported when a live client is made.
+
+    Lazy, so the stub runs and the golden-set check (a sparse checkout of
+    this folder alone) need nothing outside it.
+    """
+    repo = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", ".."))
+    gw_dir = os.path.join(repo, "pipeline")
+    if gw_dir not in sys.path:
+        sys.path.insert(0, gw_dir)
+    import ai_gateway  # noqa: E402
+    return ai_gateway
+
+
 class GeminiClient:
-    """The AI Studio REST API, as pipeline/dossier/rewrite_intros.py and the
-    plan-day Edge Function call it. One method, no SDK, no dependency."""
+    """The live model client, through pipeline/ai_gateway.py (T1137). The name
+    stays: golden_set.py, backfill_modules.py and expand_catalogue.py make it.
+    One method, no SDK, no dependency. generate() returns a Gemini-shaped
+    response body whatever provider the gateway is set to, so the ledger and
+    the passes read one shape."""
 
     def __init__(self, models=None, key=None, pause=6.5):
-        self.key = key or os.environ.get("GEMINI_API_KEY")
-        if not self.key:
-            raise SystemExit("GEMINI_API_KEY is not set (repo-root .env or the environment)")
-        self.models = list(models or MODEL_CHAIN)
+        gw = _gateway()
+        env = dict(os.environ, GEMINI_API_KEY=key) if key else None
+        try:
+            # No --model: the gateway's chain for "trips" (MODEL_CHAIN, or
+            # AI_TRIPS_MODELS when that is set).
+            pinned = list(models) if isinstance(models, (list, tuple)) else ([models] if models else None)
+            self.gw = gw.Gateway("trips", models=pinned, env=env, min_interval_s=pause)
+        except gw.AIRefusal as exc:
+            raise SystemExit(f"generate_trip: {exc} (repo-root .env or the environment)") from None
+        self.models = self.gw.models
         self.pause = pause
-        self._last = 0.0
 
     def generate(self, label, user, *, response_schema=None, grounding=False,
                  temperature=0.3, max_tokens=16384):
-        body = {
-            "contents": [{"role": "user", "parts": [{"text": user}]}],
-            "generationConfig": {"temperature": temperature, "maxOutputTokens": max_tokens},
-        }
-        if response_schema is not None:
-            body["generationConfig"]["responseMimeType"] = "application/json"
-            body["generationConfig"]["responseSchema"] = response_schema
-        if grounding:
-            # Search grounding and a response schema are not combined here:
-            # the JSON shape of pass three is checked locally instead.
-            body["tools"] = [{"google_search": {}}]
-        last = None
-        for model in self.models:
-            for attempt in (1, 2):
-                wait = self._last + self.pause - time.monotonic()
-                if wait > 0:
-                    time.sleep(wait)
-                self._last = time.monotonic()
-                req = urllib.request.Request(
-                    API.format(model=model), data=json.dumps(body).encode("utf-8"),
-                    headers={"Content-Type": "application/json", "x-goog-api-key": self.key},
-                    method="POST")
-                t0 = time.monotonic()
-                try:
-                    with urllib.request.urlopen(req, timeout=300) as r:
-                        data = json.loads(r.read().decode("utf-8"))
-                    data["_requested"] = model
-                    data["_elapsedS"] = round(time.monotonic() - t0, 1)
-                    return data
-                except urllib.error.HTTPError as exc:
-                    last = exc.code
-                    if exc.code == 429 and attempt == 1:
-                        time.sleep(30)
-                        continue
-                    break
-        raise RuntimeError(f"every Gemini model failed on {label} (last status {last})")
+        # Search grounding and a response schema are not combined: the gateway
+        # sends the schema only without search, and the JSON shape of pass
+        # three is checked locally instead.
+        gw = _gateway()
+        try:
+            res = self.gw.call(user, json=response_schema is not None, schema=response_schema,
+                               search=grounding, temperature=temperature, max_tokens=max_tokens)
+        except gw.AIRefusal as exc:
+            raise RuntimeError(f"every model failed on {label} ({exc})") from None
+        if res.provider == "gemini" and res.raw:
+            data = dict(res.raw)
+        else:
+            data = {
+                "candidates": [{"content": {"parts": [{"text": res.text}]},
+                                "groundingMetadata": {"groundingChunks": [{"web": {"uri": u}} for u in res.sources]}}],
+                "usageMetadata": {"promptTokenCount": res.usage.get("in", 0), "candidatesTokenCount": res.usage.get("out", 0)},
+                "modelVersion": res.model,
+            }
+        data["_requested"] = res.model
+        data["_elapsedS"] = res.attempts[-1].get("s", 0) if res.attempts else 0
+        return data
 
 
 class StubClient:
