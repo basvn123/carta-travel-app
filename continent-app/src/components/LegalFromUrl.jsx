@@ -5,6 +5,7 @@ import { Imprint } from './Imprint.jsx';
 import { CookiesPage } from './CookiesPage.jsx';
 import { SupportPage } from './SupportPage.jsx';
 import { PressKitPage } from './PressKitPage.jsx';
+import { AiPage } from './AiPage.jsx';
 
 /**
  * Gives the three legal texts a URL without giving the app a router.
@@ -15,6 +16,7 @@ import { PressKitPage } from './PressKitPage.jsx';
  *   /?legal=cookies   Cookies and storage (T945)
  *   /?legal=support   Help and contact: mail, status, questions (T1108)
  *   /?legal=press     Press kit: facts, images, contact (T1131)
+ *   /?legal=ai        How Carta uses AI (T1156)
  *
  * Carta is a single page with query-string state, so a legal text that only
  * opens from a button inside the Account panel has no address. Stripe
@@ -28,7 +30,7 @@ import { PressKitPage } from './PressKitPage.jsx';
  * map). Closing drops the parameter with replaceState so a reload does not
  * bring it back, and leaves every other parameter alone.
  */
-const PAGES = { terms: TermsOfService, privacy: PrivacyPolicy, imprint: Imprint, cookies: CookiesPage, support: SupportPage, press: PressKitPage };
+const PAGES = { terms: TermsOfService, privacy: PrivacyPolicy, imprint: Imprint, cookies: CookiesPage, support: SupportPage, press: PressKitPage, ai: AiPage };
 
 function readLegalParam() {
   if (typeof window === 'undefined') return '';
