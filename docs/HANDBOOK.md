@@ -117,6 +117,7 @@ Written 2026-11-04 (T1045) from the code, config and migrations on `main` at com
    - [Admin panel, moderation and telemetry](#admin-panel-moderation-and-telemetry)
    - [The data wire (pipeline to app)](#the-data-wire-pipeline-to-app)
    - [Data quality scorecard and gate](#data-quality-scorecard-and-gate)
+   - [Hand corrections (pipeline overrides)](#hand-corrections-pipeline-overrides)
    - [Evals (one runner, one results format)](#evals-one-runner-one-results-format)
    - [Deploy (Cloudflare Pages, R2, prerender, SEO)](#deploy-cloudflare-pages-r2-prerender-seo)
    - [The build box (Hetzner scheduled runs)](#the-build-box-hetzner-scheduled-runs)
@@ -2629,6 +2630,25 @@ This section covers the parts of Carta that sit around the travel content: the A
 **Where it lives.** `scripts/quality/scorecard.py`, `scripts/quality/engine.py`, `scripts/quality/rules.yaml`, `run_pipeline.py` (the hook), `continent-app/src/components/admin/DataHealth.jsx`, `continent-app/src/admin/dataHealth.json`. Tests: `tests/test_quality_scorecard.py`, `tests/test_quality_engine.py`, `continent-app/tests/dataHealth.test.mjs`, step 9h of `continent-app/scripts/verify_admin_panel.mjs`. Runbook: `docs/runbooks/drift-and-scorecard.md`.
 
 **Limits.** Rules read completeness only; validity, freshness and accuracy are on the card but no rule gates them yet. The panel's snapshot reaches the app at the next build, not the next data push; on the box the reset puts the committed snapshot back before each build, so until the panel fetches the card at run time (T1142-d) it shows the last committed card. The audit scripts the ROADMAP names for D2 (`audit_quality.py`, `audit_gaps.py`, `dossier/audit.py`, image audits) are not folded in. Register rows `T1142-a` and on.
+
+### Hand corrections (pipeline overrides)
+
+**What it does.** A person corrects one field of a place, beach, lake or mountain, with who, when, why and source, and the correction holds through every pipeline run. The owner sees every correction in the admin page's Overrides tab and drafts new ones there (ROADMAP I13, T1173).
+
+**How it works.**
+1. The files: `data/overrides/{layer}.json` for `dest`, `beach`, `lake`, `mountain`, in git. Each holds `layer`, `version` (1), `about` and `overrides`, a list of entries `{id, patch, who, when, why, source, review_by?}`. `patch` maps dotted field paths to values (`place.visit_h`); a parent must already exist.
+2. The rules (`entry_problems` in `pipeline/apply_overrides.py`): all six keys present, no other key but `review_by`; `who` 1 to 80 characters, `source` 1 to 500, `why` `WHY_MIN` to `WHY_MAX` (10 to 500, the same bounds as migration 043's reason); `when` and `review_by` real `YYYY-MM-DD` dates; no path that changes `id`; no path into a computed field (`COMPUTED`: `costs`, `accommodation`, `rating`, `score`, `v5`, `comp`, `tier`), because prices and scores are fixed at their source; no en or em dash in any string; at most one entry per item and field. A file that breaks any rule is refused whole and nothing is written.
+3. The step: `run_pipeline.py` runs `pipeline/apply_overrides.py --snapshot` after the task loop, only when a task ran and none failed, and before the ship. `dest` entries are written into the master `app_data/app_data.json` (the ship's `sync-data.mjs` then carries them to `public/app_data.json`, `public/dest/` and the boot index); `beach`, `lake` and `mountain` entries into the country file `continent-app/public/{beaches,lakes,mountains}/<CC>.json`, and into the summary copies in `index.json` and `top.json` for the fields those copies already carry. Served files are rewritten compact, byte-identical apart from the patch. Because the step runs after the tasks in every run, a task that rewrites a field from its source has it corrected again before the ship: the override survives the rerun. A non-zero exit (2, invalid file) adds `overrides` to the failed tasks and stops the ship.
+4. Each entry's outcome: `applied`, `unchanged` (the output already held the value), `orphan` (id not in the output), `bad_path` (parent missing), `no_output` (the layer's output is not on this machine). Only an invalid file fails the run; an orphan or bad path is reported and listed in the tab.
+5. The snapshot: `--snapshot` writes `continent-app/src/admin/pipelineOverrides.json` (every entry with its layer and last outcome, the counts, the files' `about`, and the run time). The tab imports it at build time.
+6. The tab (`continent-app/src/components/admin/PipelineOverrides.jsx`, section `overrides` in `src/admin/AdminPage.jsx`, nav key `admin.nav.overrides`): counts per layer and "Need a look" (orphan, bad path, no output), a layer filter, the list (item, change, why and source, who and when, last run), and the draft form. The form checks a draft with `draftProblems` in `pipelineOverrides.js`, which mirrors the Python rules, and then offers the whole layer file with the entry appended, the same change as an RFC 6902 JSON Patch (`add /overrides/-`), and the pull request text. It writes no database row and fetches nothing. English only, like the other owner panels.
+7. Relation to the live path: `content_overrides` (migrations 018, 043; Content tab) patches name, image, blurb, hidden and featured in the app at load, without a deploy. The pipeline file uses the same layer names and wire ids, so a live patch is promoted by copying it into the file and clearing the live row. Trails are a live layer only (their curation is `pipeline/trails/curate.py`).
+
+**Data behind it.** `data/overrides/*.json` (empty on 2026-11-06), `app_data/app_data.json`, `continent-app/public/{beaches,lakes,mountains}/`.
+
+**Where it lives.** `pipeline/apply_overrides.py`, `run_pipeline.py` (the hook), `data/overrides/`, `continent-app/src/components/admin/PipelineOverrides.jsx`, `continent-app/src/components/admin/pipelineOverrides.js`, `continent-app/src/admin/pipelineOverrides.json`. Tests: `tests/test_apply_overrides.py`, `continent-app/tests/pipelineOverrides.test.mjs`. Runbook: `docs/runbooks/content-ops.md` (who updates which content, how often, from which source, and a correction step by step).
+
+**Limits.** Outputs built from the master earlier in the same run (dossier, search and Ask indexes) carry a new correction from the following run. Trails and cycle routes have no pipeline override file. The snapshot reaches the tab at the next build. The draft form takes one field per entry; a second field on the same item is a second entry. Register rows `T1173-a` and on.
 
 ### Evals (one runner, one results format)
 

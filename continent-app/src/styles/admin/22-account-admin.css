@@ -506,4 +506,21 @@
 .adminpage-reviewset legend { float: left; width: 100%; padding: 0; }
 .adminpage-reviewset .adminpage-segment { clear: both; margin-bottom: 6px; }
 .adminpage-reviewset .adminpage-textarea { margin-bottom: 0; }
-.adminpage-reviewset { min-width: 0; }
+.adminpage-reviewset { min-width: 0; }/* Overrides tab (T1173): the draft form and its output. */
+.adminpage-ovform { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 4px 16px; align-items: start; }
+.adminpage-ovform .adminpage-editoractions { grid-column: 1 / -1; justify-content: flex-start; margin-top: 6px; }
+.adminpage-ovfield { display: flex; flex-direction: column; gap: 2px; min-width: 0; margin-bottom: 10px; }
+.adminpage-ovfield .adminpage-lock-input { width: 100%; margin-bottom: 0; min-height: 44px; box-sizing: border-box; }
+.adminpage-ovout { margin-top: 18px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.adminpage-ovpre {
+  margin: 0;
+  padding: 12px 14px;
+  background: var(--surface-sunken);
+  border-radius: var(--radius-control);
+  font-size: var(--text-caption);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 320px;
+  overflow: auto;
+}

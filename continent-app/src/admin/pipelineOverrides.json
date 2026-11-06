@@ -1,0 +1,22 @@
+{
+ "generated_at": null,
+ "files": {
+  "dest": "data/overrides/dest.json",
+  "beach": "data/overrides/beach.json",
+  "lake": "data/overrides/lake.json",
+  "mountain": "data/overrides/mountain.json"
+ },
+ "about": {
+  "dest": "Hand corrections to the dest layer, applied last in every pipeline run by pipeline/apply_overrides.py. Every entry carries id, patch, who, when, why and source. How to write one: docs/runbooks/content-ops.md.",
+  "beach": "Hand corrections to the beach layer, applied last in every pipeline run by pipeline/apply_overrides.py. Every entry carries id, patch, who, when, why and source. How to write one: docs/runbooks/content-ops.md.",
+  "lake": "Hand corrections to the lake layer, applied last in every pipeline run by pipeline/apply_overrides.py. Every entry carries id, patch, who, when, why and source. How to write one: docs/runbooks/content-ops.md.",
+  "mountain": "Hand corrections to the mountain layer, applied last in every pipeline run by pipeline/apply_overrides.py. Every entry carries id, patch, who, when, why and source. How to write one: docs/runbooks/content-ops.md."
+ },
+ "counts": {
+  "dest": 0,
+  "beach": 0,
+  "lake": 0,
+  "mountain": 0
+ },
+ "overrides": []
+}

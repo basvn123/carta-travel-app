@@ -3224,6 +3224,13 @@ def main():
             except OSError:
                 pass
 
+    # Hand corrections (I13, T1173): data/overrides/{layer}.json, written over
+    # whatever the tasks above just rewrote, so a correction survives every
+    # rerun. An invalid overrides file fails the run before the ship.
+    if ran and not failed and run_cmd(
+            [sys.executable, str(ROOT / "pipeline" / "apply_overrides.py"), "--snapshot"]) != 0:
+        failed.append("overrides")
+
     # Ship, only if a writer ran and none failed. A wire writer counts: it puts
     # new files in public/ that only the build copies into dist.
     if ran and not failed and any(TASK_BY_KEY[k].get("writes_app_data")

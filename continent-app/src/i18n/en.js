@@ -2838,6 +2838,7 @@ export const en = {
   'admin.nav.audit': 'Audit',
   'admin.nav.prices': 'Prices',
   'admin.nav.health': 'Data health',
+  'admin.nav.overrides': 'Overrides',
   'admin.pricesHint': 'Where each price comes from, for the current choices in the app: every line of the price engine with its status, quality, basis and source, and every rule of config/pricing.json with its review date. Travellers see only the amount.',
   'admin.pricesFind': 'Place name or id',
   'admin.pricesRequest': 'The price request',
