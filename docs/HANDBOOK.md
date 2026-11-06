@@ -2643,6 +2643,10 @@ This section covers the parts of Carta that sit around the travel content: the A
 
 ---
 
+### Waitlist and newsletter (double opt-in)
+
+Built in T1110 (ROADMAP K3). A short form (`src/components/WaitlistForm.jsx`, shown on the Home page after the closing question) posts one e-mail address to the `waitlist` Edge Function (`supabase/functions/waitlist`). The address is stored lower-cased and unconfirmed in `waitlist_signups` (migration 066, RLS on, no policy, no grant to the API roles) and a confirmation mail goes out through Resend. The mail holds a confirm link and an unsubscribe link, each an HMAC of action, address and expiry with `WAITLIST_SECRET` (`logic.mjs` `linkToken`). A confirm link lasts 7 days (`CONFIRM_TTL_MS`); an unsubscribe link never expires, and is also sent as `List-Unsubscribe` with the one-click POST. Clicking confirm sets `confirmed_at`; clicking unsubscribe sets `unsubscribed_at` (the row is kept so a later import cannot mail an address that opted out). The only way to read the list for use is `waitlist_audience()`: confirmed and not unsubscribed. A repeat sign-up within 10 minutes sends nothing; an already confirmed address gets the same "check your mail" answer as a new one, so the form cannot probe who is on the list. Signing up again after an unsubscribe starts over, unconfirmed. `waitlist_purge(days)` (minimum 7) deletes addresses never confirmed; nothing schedules it yet. The form copy is in English and Dutch (the other languages fall back to English). Without the three secrets the function stores and sends nothing and the form says it cannot sign up right now.
+
 ## Appendix: what writing this handbook found
 
 Reading every feature against its code turned up places where the docs, the comments or the map no longer match what runs. None of these were changed by T1045; each is a register row (`T1045-a` onwards) for a later task.

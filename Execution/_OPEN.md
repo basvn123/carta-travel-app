@@ -1506,3 +1506,8 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1108-c | T1108 | I9 rest: About page and accessibility statement (EU Accessibility Act) are not built; the page has no status history, only the live line from status.json (needs T1056-a published) | next task | open |  |
 | T1109-a | T1109 | Number and paste `supabase/migrations/PENDING_channel_counts.sql` (rename it and add a `_down` file); until then channel ticks fail silently and the admin card is hidden | user | open |  |
 | T1109-b | T1109 | K12 remainder: Search Console per page type, waitlist/referral funnel and the I16 unlock numbers in the weekly view | next task | open |  |
+| T1110-a | T1110 | Paste `supabase/migrations/066_waitlist.sql` in the Supabase SQL editor after 065 and look for "waitlist self-check passed" | user | open | 1 |
+| T1110-b | T1110 | Set the secrets `RESEND_API_KEY`, `WAITLIST_FROM`, `WAITLIST_SECRET`, verify the sending domain in Resend, deploy `waitlist` with `--no-verify-jwt` | user | open | 2 |
+| T1110-c | T1110 | Sign up with a real address on a preview, confirm from the mail, unsubscribe from the mail, and look at the form on a phone and a desktop | user | open | 3 |
+| T1110-d | T1110 | The privacy policy and docs/legal/ARTICLE30.md must name the waitlist (purpose, legal basis consent, retention, processor Resend) before the form goes live; owner/legal call | user | open | |
+| T1110-e | T1110 | Schedule `waitlist_purge(30)` (pg_cron) and decide the newsletter send path (a sender job that reads `waitlist_audience()` and puts the unsubscribe link in each mail); K3 referral jump and issue 1 stay open | next task | open | |

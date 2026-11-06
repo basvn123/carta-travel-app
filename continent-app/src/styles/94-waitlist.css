@@ -1,0 +1,15 @@
+/* The waitlist form on the Home page (T1110). Tokens only. */
+.wl { max-width: 760px; }
+.wl-title { max-width: 20ch; }
+.wl-lead { margin: 0 0 var(--space-4); color: var(--text-2); line-height: var(--leading-body); max-width: 52ch; }
+.wl-form { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: flex-start; }
+.wl-input {
+  flex: 1 1 240px; min-height: 44px; padding: 0 var(--space-3);
+  border: 1px solid var(--border); border-radius: var(--radius-control);
+  background: var(--surface); color: var(--text); font: inherit;
+}
+.wl-input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.wl-input[aria-invalid="true"] { border-color: var(--danger, currentColor); }
+.wl-msg { flex-basis: 100%; margin: 0; color: var(--text); font-size: var(--text-label); }
+.wl-done { margin: 0; font-weight: 600; color: var(--text); }
+.wl-fine { margin: var(--space-3) 0 0; color: var(--text-2); font-size: var(--text-label); line-height: var(--leading-body); max-width: 56ch; }
