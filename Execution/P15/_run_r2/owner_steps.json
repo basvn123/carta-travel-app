@@ -229,5 +229,83 @@
    "Then python pipeline/trails/coverage_report.py --all",
    "Rerun python scripts/validation/trails_external.py and commit its results"
   ]
+ },
+ {
+  "id": "T1155-d",
+  "title": "Try the MCP server in a real client",
+  "why": "The tests use the library client; a real client proves the setup text works.",
+  "where": "services/mcp/README.md",
+  "how": [
+   "In `continent-app` run `npm ci`",
+   "In `services/mcp` run `npm ci`",
+   "Add the `mcpServers` entry from the README to your client and ask it to price a trip"
+  ]
+ },
+ {
+  "id": "T1167-a",
+  "title": "Create the private carta-docs site",
+  "why": "The docs site only exists as a CI artifact until it is hosted behind a login.",
+  "where": "Execution/P15/T1167-docs-site.md",
+  "how": [
+   "In Cloudflare Pages create project `carta-docs`",
+   "Put Cloudflare Access (owner email only) in front of it",
+   "Download the `carta-docs-site` artifact from a docs-site run (or build with `pip install -r requirements-docs.txt && mkdocs build -d .docs-site`) and run `npx wrangler pages deploy .docs-site --project-name carta-docs`"
+  ]
+ },
+ {
+  "id": "T1187-h",
+  "title": "Run the first trails validation on the box",
+  "why": "The committed result was made on the cloud copy of the wire of 2026-09-13; the box holds the newer lab state, and the D2 gate reads the latest result.",
+  "where": "`scripts/validation/runner.py`, `docs/HANDBOOK.md` (External validation runner and scorecard)",
+  "how": [
+   "After the next trails export run `python -I scripts/validation/runner.py trails --write --check`",
+   "If coverage or top band moved on purpose, rerun with `--write-baseline` and say why in a report",
+   "Commit `data/reports/validation/`"
+  ]
+ },
+ {
+  "id": "T1156-a",
+  "title": "Legal read of the AI page",
+  "why": "The page and cards state a view of the EU AI Act (Article 50 duty, not high-risk, provider versus deployer); a wrong reading published is a liability.",
+  "where": "continent-app/src/i18n/en.js (aiPage.actP), docs/ai/",
+  "how": [
+   "Open `/?legal=ai` on the preview and `docs/ai/model-card-ask.md`, `model-card-plan-day.md`",
+   "Send to the lawyer",
+   "Change the `aiPage.actP` text and the cards' \"EU AI Act reading\" sections to what they confirm"
+  ]
+ },
+ {
+  "id": "T1156-b",
+  "title": "Native check and translation of the AI page",
+  "why": "Travellers in five languages see it in English; a machine pass could misstate what a model does.",
+  "where": "continent-app/src/i18n/*.js",
+  "how": [
+   "Export the 39 `aiPage.*` keys from en.js",
+   "Translate",
+   "Have a native speaker read each",
+   "Append them to nl, de, fr, es, it"
+  ]
+ },
+ {
+  "id": "T1156-f",
+  "title": "Name Ask's AI processing in the privacy policy",
+  "why": "The policy names Google but not Cloudflare Workers AI, which sees the Ask question and notes.",
+  "where": "continent-app/src/components/PrivacyPolicy.jsx, docs/legal/ARTICLE30.md",
+  "how": [
+   "Confirm with Cloudflare whether Workers AI keeps requests in the EU on the current plan (T1135-a)",
+   "Add a paragraph to the privacy policy and a row to `docs/legal/ARTICLE30.md`"
+  ]
+ },
+ {
+  "id": "T1155-a",
+  "title": "Decide whether the MCP server may read saved trips",
+  "why": "Saved traveller trips need a per-user auth design (token, scopes, RLS) and a threat model review before any MCP tool can offer them.",
+  "where": "Execution/P15/T1155-mcp-server.md"
+ },
+ {
+  "id": "T1155-b",
+  "title": "Decide how the MCP server ships",
+  "why": "It runs only from a repo checkout today; packaging it or a remote HTTP mode is a choice, and a remote mode needs auth and rate limits first.",
+  "where": "services/mcp/README.md"
  }
 ]
