@@ -2,7 +2,7 @@
 
 Source: `infra/hetzner/README.md`, the files in `infra/hetzner/`, and the handbook section [The build box](../HANDBOOK.md#the-build-box-hetzner-scheduled-runs). Owner steps to bring the boxes up: `Execution/P3/_OPEN-hetzner.md`.
 
-Status: whether the boxes run in production today is not verified by T1073. `infra/hetzner/README.md` says both existed as code only when written.
+Status: the Hetzner boxes run in production (owner decision, 2026-11-05, T1086; closes the question in register row T1073-e). `infra/hetzner/README.md` was written when both existed as code only and may read older than this.
 
 ## What there is
 

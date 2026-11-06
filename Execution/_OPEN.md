@@ -1389,10 +1389,8 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1071-c | T1071 | No CAPTCHA (Turnstile) on sign-up and password reset | next task | open |  |
 | T1071-d | T1071 | The admin MFA gate and the trail page upload door were not seen in the browser (both need a signed-in account); look at them at 375 and 1440 and run scripts/verify_admin_panel.mjs after T1071-a | user | open | after T1071-a |
 | T1073-a | T1073 | Rewrite REGIONS.md and LAKES.md in place (code reads them) and rewrite PIPELINE, COVERAGE, JOINS, TRAILS, BEACHES, MOUNTAINS, PHOTOS, BACKUP and trips_layer docs from the code (B2 remainder) | next task | open |  |
-| T1073-b | T1073 | Write the backup and restore and the refund runbooks in docs/runbooks/ | next task | open |  |
 | T1073-c | T1073 | Fill the Metrics, Logic IDs and Data read and written sections of docs/areas/ once B3, B5 and measured figures exist, and give the name-matched quality checks a human pass | next task | open |  |
 | T1073-e | T1073 | Confirm whether the Hetzner boxes run in production today, then correct docs/runbooks/build-box.md and docs/areas/build-box.md | user | open |  |
-| T1073-f | T1073 | Carry sections 4 and 5 (R2 and Cloudflare, Supabase incidents) of the archived incident runbook into docs/runbooks/incident.md after re-verifying them | next task | open |  |
 | T1074-a | T1074 | Replace the synthetic Hostelworld card fixture with a real capture from the box (Execution/P15/_OPEN-scraper-health.md) | user | open |  |
 | T1074-c | T1074 | Wire scripts/stays_health.py and its email on a non-zero exit on the laptop and the box, and switch on the monthly stays build (T1021-a), per Execution/P15/_OPEN-scraper-health.md | user | open |  |
 | T1075-a | T1075 | Re-scrape the 515 places with no bed price (python scripts/missing_beds.py; FR 94, IT 77, GB 56, GR 40) on the box after T1074-c; check their Booking search terms first (T1021-d) | next task | open | after T1074-c |
@@ -1423,3 +1421,6 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1081-a | T1081 | Paste migration 064 after 061 to 063 and deploy the app in the same sitting (until both are live, admin ban, delete and set tier do nothing), per step 12 of Execution/P15/_OPEN-supabase-migrations.md | user | open |  |
 | T1082-a | T1082 | Update the stale assertions in test_moderation_decisions.mjs (2 fail), test_admin_followups.mjs (20 fail) and test_admin_mfa.mjs to the behaviour of migrations 052 onward (062 to 064), then add them to CI | next task | open |  |
 | T1084-a | T1084 | Credit NASA JPL MUR SST (sea temperatures) in the Data sources screen, src/data/attribution.js; its data policy requests credit | next task | open |  |
+| T1086-a | T1086 | Dry-run the backup and restore runbook on the owner's laptop: take one hand dump, restore it with ops/restore_supabase.sh, and stream-check the newest supabase dump in R2; nothing in it has been run against a live service | user | open |  |
+| T1086-b | T1086 | Confirm on the box that SUPABASE_DB_URL and CARTA_BACKUP_KEY are set and the public key is imported, so the weekly Supabase dump is not silently skipped (look for "dump supabase skipped" in ~/logs/weekly.log) | user | open |  |
+| T1086-c | T1086 | Re-verify the Stripe, Supabase Admin and Cloudflare dashboard steps in docs/runbooks/refund.md and incident.md sections 4 and 5 (only repo objects were checked); also settle whether year-plan renewals need their own refund rows and a refund column on pass_grants | user | open |  |
