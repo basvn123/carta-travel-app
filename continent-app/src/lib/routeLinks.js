@@ -19,3 +19,23 @@ export function routePageUrlHere(activity, row) {
   if (typeof window === 'undefined') return routePageUrl(activity, row);
   return routePageUrl(activity, row, `${window.location.origin}${window.location.pathname}`);
 }
+
+/**
+ * The address of an open trail page (G13): "#trail=63478&tc=AL", or the
+ * address with any trail hash taken off when `tr` is null. Only our own two
+ * params change; whatever else the hash carries (a Supabase auth return)
+ * stays. Pure, so the tab can write it and a test can hold it.
+ */
+export function trailHash(hash, tr) {
+  const raw = String(hash || '').replace(/^#/, '');
+  const params = new URLSearchParams(raw);
+  params.delete('trail');
+  params.delete('tc');
+  if (tr && Number.isInteger(Number(tr.id)) && Number(tr.id) > 0) {
+    const cc = String(tr.country || tr.cc || '').toUpperCase();
+    params.set('trail', String(Number(tr.id)));
+    if (CC_RE.test(cc)) params.set('tc', cc);
+  }
+  const out = params.toString();
+  return out ? `#${out}` : '';
+}

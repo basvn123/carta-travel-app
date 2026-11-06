@@ -178,6 +178,20 @@ const DIFF_KEY = {
 };
 
 /**
+ * The three figures a walk is chosen by, as one line for a rail tile (G13):
+ * length, walking time, climb uphill, each left out when the wire has none.
+ * The list card shows the same three as badges (trailFilling).
+ */
+export function trailFigures(tr) {
+  const climb = num(trailClimbUp(tr));
+  return [
+    kmText(tr.distance_m),
+    num(tr.duration_min) != null ? clock(tr.duration_min) : null,
+    climb != null ? `+${count(climb)} m` : null,
+  ].filter(Boolean);
+}
+
+/**
  * card is DestinationsTab's trip card { tr, assoc, kindKey }. The hook is the
  * kind, the grade and up to two highlights: the same words the chips carried,
  * now read as one line. The values are length, the climb read uphill and the

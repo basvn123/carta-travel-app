@@ -1466,3 +1466,5 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1101-b | T1101 | After the next deploy, ask five questions on a phone and desktop width and check the written line names only places on the first three cards | user | open |  |
 | T1101-c | T1101 | A sentence naming a place on a "more places" card (4th to 6th) is dropped until the traveller opens it; decide if the text should instead grow with the cards | next task | open |  |
 | T1085-x | orchestrator (2026-11-06 merge) | docs/runbooks has two overlapping backup docs after the overnight merge: backup.md (T1085, short) and backup-restore.md (T1086, full procedure); fold backup.md into backup-restore.md and keep one. | next task | open | |
+| T1102-a | T1102 | A walk's address is written on open, but a hash typed into an app already running (paste, not reload) does not open it; a hashchange reader is needed | next task | open |  |
+| T1102-b | T1102 | Look at the rail tile and the trail page on a real phone with photographs loaded (this container had no network, so images were blank) | user | open |  |

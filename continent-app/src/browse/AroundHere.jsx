@@ -3,6 +3,7 @@ import { ScoreChip } from '../components/RatingBadge.jsx';
 import { natureRating } from '../lib/rating.js';
 import { tileUrl } from '../lib/mapTile.js';
 import { trailClimbUp, gradeLabelKey } from '../lib/trailStory.js';
+import { featureHref, linkOpener } from '../lib/featureHref.js';
 import { notYet } from '../components/NotYet.jsx';
 import { sacLabel, clock } from '../lib/routeEffort.js';
 import {
@@ -87,6 +88,15 @@ export function summaryOf(around, t) {
     .join(', ');
 }
 
+/** One row of the list. A real link to the feature's own page (#trail=ID&tc=CC
+ *  and its siblings, G13) so it opens in a new tab or is copied; a plain click
+ *  still opens it in place. Without a handler it is an inert block. */
+function Row({ href, onOpen, children }) {
+  if (!onOpen) return <button type="button" className="dar-row" disabled>{children}</button>;
+  if (!href) return <button type="button" className="dar-row" onClick={onOpen}>{children}</button>;
+  return <a className="dar-row" href={href} onClick={linkOpener(onOpen)}>{children}</a>;
+}
+
 export function AroundHere({ city, nearby, around, t, onOpenFeature, onShowMap }) {
   const picks = React.useMemo(() => LAYER_ORDER
     .flatMap((layer) => ((nearby || {})[layer] || []).slice(0, 3).map((f) => ({ ...f, layer })))
@@ -152,12 +162,8 @@ export function AroundHere({ city, nearby, around, t, onOpenFeature, onShowMap }
           const meta = rowMeta(row, row.layer, t);
           return (
             <li key={`${row.layer}|${row.id}`}>
-              <button
-                type="button"
-                className="dar-row"
-                onClick={() => onOpenFeature?.(row.layer, row)}
-                disabled={!onOpenFeature}
-              >
+              <Row href={onOpenFeature ? featureHref(row.layer, row) : null}
+                onOpen={onOpenFeature ? () => onOpenFeature(row.layer, row) : null}>
                 <FeaturePhoto src={row.thumb} lat={row.lat} lon={row.lon} className="dar-photo" />
                 <span className="dar-main">
                   <span className="dar-name">{row.name}</span>
@@ -171,7 +177,7 @@ export function AroundHere({ city, nearby, around, t, onOpenFeature, onShowMap }
                   <ScoreChip rating={rating} size="sm" />
                   <span className="dar-km mono">{fmtKm(row.km)} {row.bearing || ''}</span>
                 </span>
-              </button>
+              </Row>
             </li>
           );
         })}

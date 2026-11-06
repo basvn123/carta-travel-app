@@ -2110,6 +2110,8 @@
   text-align: left;
   border-bottom: 1px solid var(--rule-soft);
   cursor: pointer;
+  color: inherit;
+  text-decoration: none;
 }
 .dar-list li:last-child .dar-row { border-bottom: none; }
 .dar-row:disabled { cursor: default; }
