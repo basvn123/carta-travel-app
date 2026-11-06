@@ -26,57 +26,9 @@
   box-shadow: var(--elev-3);
   overflow: hidden;
 }
-.guide-steps { display: flex; gap: 6px; flex-wrap: wrap; padding-right: 32px; }
-.guide-step-dot {
-  display: flex; align-items: center; gap: 5px;
-  font-size: var(--text-caption);
-  font-family: var(--ui);
-  font-weight: 600;
-  color: var(--ink-soft);
-}
-.guide-step-dot span {
-  display: flex; align-items: center; justify-content: center;
-  width: 18px; height: 18px;
-  border-radius: 50%;
-  background: var(--paper-dim);
-  color: var(--ink-mute);
-  font-size: 10px;
-}
-.guide-step-dot.active { color: var(--ink); }
-.guide-step-dot.active span { background: var(--accent); color: var(--on-fill); }
-.guide-step-dot.done span { background: var(--green); color: var(--on-fill); }
 .guide-title { font-family: var(--display); font-size: var(--text-title); color: var(--ink); font-weight: 600; }
 
 /* Step 1 - countries */
-.guide-country-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 10px;
-}
-.guide-country {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
-  padding: 12px;
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  background: var(--paper);
-  text-align: left;
-  transition: border-color .15s, background .15s;
-}
-@media (hover: hover) {
-  .guide-country:hover { border-color: var(--ink-soft); }
-}
-.guide-country.on { border-color: var(--select-border); outline: 1px solid var(--select-border); outline-offset: -2px; background: var(--bg-card); }
-.guide-flag { font-size: 22px; line-height: 1; }
-.guide-flag-img {
-  width: 30px; height: 22px;
-  object-fit: cover;
-  border-radius: 3px;
-  box-shadow: 0 0 0 1px rgba(26, 26, 26, 0.10);
-  display: block;
-}
 .guide-flag-img-sm {
   width: 22px; height: 16px;
   object-fit: cover;
@@ -85,17 +37,8 @@
 }
 
 /* Clickable country map (step 1) */
-.guide-country-name { font-family: var(--display); font-size: 14.5px; color: var(--ink); }
-.guide-country-n { font-family: var(--mono); font-size: 10px; color: var(--ink-mute); }
 
 /* Step 2/3 - per-country blocks */
-.guide-visit-count, .guide-city-gems {
-  margin-left: auto;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  color: var(--ink-soft);
-  display: inline-flex; align-items: center; gap: 3px;
-}
 .guide-city {
   display: flex;
   align-items: center;
@@ -140,42 +83,15 @@
    content too, otherwise the pill background runs on as dead space to the
    right of "One home base". */
 .guide-staystyle-toggle button { flex: none; white-space: nowrap; }
-.guide-when-dates {
-  display: flex;
-  align-items: flex-end;
-  gap: 10px;
-  flex-wrap: wrap;
-}
 /* Let the date triggers grow to fit their placeholder ("Departure date")
    on a single line instead of wrapping inside the fixed 130px width. */
-.guide-when-dates .date-field-trigger {
-  width: auto;
-  min-width: 130px;
-  white-space: nowrap;
-}
 .guide-months { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 6px; }
 
 /* Getting-there: fly/car switch + the car option's reach notes. */
-.guide-origin-row {
-  display: flex; align-items: center; gap: 10px;
-  margin: 0 0 14px;
-}
-.guide-origin-label {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-size: var(--text-caption); color: var(--ink-mute); flex: none;
-}
-.guide-origin-label > svg { color: var(--ink-soft); }
-.guide-origin-row .origin-picker { position: relative; }
-.guide-origin-row .origin-btn-from { display: inline; }
-.guide-noflight { padding: 4px 0 8px; }
-.guide-noflight-back { margin-top: 10px; }
 
 /* Own flight (another airline): airline + total-fare inputs shown on the
    "I fly with another airline" branch of the wizard's arrival step. Reuses
    .guide-when-dates so the two fields sit side by side and wrap on phones. */
-.guide-ownflight { margin-top: 10px; }
-.guide-ownflight .trip-field { flex: 1 1 140px; min-width: 0; }
-.guide-ownflight-lead { display: flex; align-items: baseline; gap: 6px; }
 
 /* Stay step: Carta-designs-it CTA, map/list switch, tier chips + legend. */
 .guide-design-btn small { font-weight: 400; font-size: var(--text-micro); opacity: 0.85; }
@@ -239,7 +155,6 @@
 }
 
 /* Step 3 - activity chips */
-.guide-chips { display: flex; flex-wrap: wrap; gap: 7px; }
 .guide-chip {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 7px 12px;
@@ -250,63 +165,10 @@
   color: var(--ink);
   transition: border-color .15s, background .15s;
 }
-.guide-chip-kind { font-family: var(--ui); font-size: var(--text-micro); color: var(--ink-mute); font-weight: 600; }
 /* An empty state is the content of its box, so it is not metadata grey and
    not italic (docs/ONBOARDING_AND_EMPTY_STATES.md, the rules). */
 
 /* Step 4 - arrange */
-.guide-arrange { display: flex; flex-direction: column; gap: 8px; }
-.guide-arrange-item {
-  display: flex; align-items: center; gap: 12px;
-  padding: 11px 12px;
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  background: var(--paper);
-  transition: opacity .15s;
-}
-.guide-arrange-idx {
-  display: flex; align-items: center; justify-content: center;
-  width: 26px; height: 26px;
-  border-radius: 50%;
-  background: var(--paper-dim);
-  color: var(--ink);
-  font-family: var(--mono);
-  font-size: var(--text-caption); font-weight: 600;
-  flex-shrink: 0;
-  cursor: grab;
-}
-.guide-arrange-idx:active { cursor: grabbing; }
-.guide-arrange-main { flex: 1; min-width: 0; }
-.guide-arrange-city { font-family: var(--display); font-size: 15px; color: var(--ink); }
-.guide-arrange-sub { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); margin-top: 1px; }
-.guide-arrange-tools { display: flex; flex-direction: column; gap: 2px; }
-.guide-arrange-tools button { width: 22px; height: 18px; color: var(--ink-mute); font-size: var(--text-caption); }
-@media (hover: hover) {
-  .guide-arrange-tools button:hover:not(:disabled) { color: var(--ink); }
-}
-.guide-arrange-tools button:disabled { opacity: 0.25; cursor: default; }
-.guide-start {
-  display: flex; align-items: flex-end; justify-content: space-between; gap: 14px;
-  margin-top: 18px; padding-top: 16px;
-  border-top: 1px solid var(--rule);
-}
-.guide-people {
-  display: flex; align-items: center; gap: 10px;
-  border: 1px solid var(--rule);
-  border-radius: var(--radius-pill);
-  padding: 4px 6px;
-  background: var(--paper);
-}
-.guide-people span { font-family: var(--mono); font-size: var(--text-label); min-width: 12px; text-align: center; }
-.guide-people button {
-  width: 24px; height: 24px;
-  border-radius: 50%;
-  font-size: var(--text-lead); line-height: 1;
-  color: var(--ink);
-  display: flex; align-items: center; justify-content: center;
-}
-.guide-people button:disabled { opacity: 0.3; cursor: default; }
-.guide-start-summary { font-family: var(--mono); font-size: var(--text-micro); color: var(--ink-soft); padding-bottom: 8px; margin-left: auto; }
 
 /* Wizard footer */
 .guide-foot {
@@ -321,121 +183,17 @@
    total is a section of the wizard rather than a chip in the corner. Every
    answer that moves the price bumps the figure and floats a delta chip, and
    the band opens into a line-by-line breakdown in place. ── */
-.guide-estimate-band {
-  position: relative;
-  flex-shrink: 0;
-  border-bottom: 1px solid var(--rule);
-  background: var(--paper-dim);
-  overflow: hidden;
-}
-.guide-estimate-main {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  width: 100%;
-  padding: 11px 18px;
-  text-align: left;
-  cursor: pointer;
-  background: none;
-  border: none;
-}
-.guide-estimate-heading {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  flex: none;
-  font-size: var(--text-caption);
-  font-weight: 600;
-  color: var(--ink-soft);
-}
-.guide-estimate-heading small {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.03em;
-  text-transform: none;
-  color: var(--ink-mute);
-}
-.guide-estimate-figure { display: flex; align-items: baseline; gap: 8px; flex: none; }
 /* The figure updates in place (T398, rule "Figure in place"): tabular
    numerals in a box that keeps its width, one opacity dip run from the
    component through settleFigure(); no bump, no sweep, no count-up. */
-.guide-estimate-figure b {
-  display: inline-block;
-  font-family: var(--mono);
-  font-size: 22px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-}
 /* What the last answer did, in words beside the figure for three seconds:
    ink when it went up, green (good news in data) when it went down. */
-.guide-estimate-delta {
-  font-family: var(--mono);
-  font-size: var(--text-caption);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-}
-.guide-estimate-delta.down { color: var(--green); }
 /* The line items read straight off the band on a wide screen; on phones the
    figure and the Details toggle carry it. */
-.guide-estimate-chips {
-  display: none;
-  flex: 1;
-  min-width: 0;
-  gap: 6px;
-  flex-wrap: wrap;
-  overflow: hidden;
-}
-.guide-estimate-chip {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 6px;
-  padding: 3px 10px;
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--rule);
-  background: var(--paper);
-  font-size: var(--text-micro);
-  color: var(--ink-soft);
-  white-space: nowrap;
-}
-.guide-estimate-chip b { font-family: var(--mono); font-size: var(--text-micro); color: var(--ink); }
-.guide-estimate-toggle {
-  flex: none;
-  margin-left: auto;
-  font-family: var(--ui);
-  font-size: var(--text-caption);
-  color: var(--ink-soft);
-  border-bottom: 1px solid var(--rule);
-}
-@media (hover: hover) {
-  .guide-estimate-main:hover .guide-estimate-toggle { color: var(--ink); border-color: var(--ink-soft); }
-}
-.guide-estimate-detail {
-  padding: 4px 18px 14px;
-  animation: guide-est-open var(--dur-2) var(--ease-out);
-}
 @keyframes guide-est-open {
   from { opacity: 0; transform: translateY(-4px); }
   to { opacity: 1; transform: none; }
 }
-@media (prefers-reduced-motion: reduce) {
-  .guide-estimate-detail { animation: none; }
-}
-.guide-estimate-line {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 4px 0;
-  font-size: var(--text-caption);
-  color: var(--ink);
-}
-.guide-estimate-line b { font-family: var(--mono); font-size: var(--text-caption); white-space: nowrap; }
-.guide-estimate-label { display: flex; flex-direction: column; gap: 1px; }
-.guide-estimate-label small { font-size: var(--text-caption); color: var(--ink-soft); font-family: var(--ui); }
-.guide-estimate-total { border-top: 1px solid var(--rule); margin-top: 4px; padding-top: 8px; }
-.guide-estimate-total b { color: var(--ink); }
 /* The wizard footer's Back and Next are the shared Button (T193) and take
    their face from .btn; these rules still dress the other .guide-back and
    .guide-next controls inside the steps. */
@@ -527,30 +285,6 @@
 .itin { padding-top: 4px; }
 /* Two views as a segmented control (T398): Overview and Day by day, the one
    on in the selected state; the day switcher follows when a day is open. */
-.itin-tab {
-  flex: 1 1 0;
-  min-width: 0;
-  min-height: var(--tap);
-  padding: 0 14px;
-  border: 1px solid var(--rule);
-  border-radius: var(--radius-sm);
-  background: var(--bg-card);
-  font-size: var(--text-label);
-  font-weight: 600;
-  color: var(--ink-soft);
-  white-space: nowrap;
-  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
-}
-@media (hover: hover) {
-  .itin-tab:hover { color: var(--ink); }
-}
-.itin-tab.active { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); }
-@media (pointer: fine) {
-  .itin-tab { min-height: 32px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .itin-tab { transition: none; }
-}
 .itin-stop {
   display: flex; align-items: center; gap: 12px;
   width: 100%; text-align: left;
@@ -567,13 +301,6 @@
    the map are the live route and stay there. */
 /* The receipt's head (T398, row T388-j): the label in --ui, the party and
    the sums in --mono; the heading face never carries a number. */
-.itin-overview-total {
-  display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
-  margin-top: 8px; padding-top: 14px;
-  border-top: 1px solid var(--rule);
-  font-family: var(--ui); font-size: var(--text-body); font-weight: 600; color: var(--ink);
-}
-.itin-overview-total small { display: block; font-family: var(--mono); font-size: var(--text-micro); font-weight: 400; color: var(--ink-soft); }
 
 
 /* ── Overview: stay-to-stay leg connectors in the route view ──
@@ -625,66 +352,19 @@
 }
 
 /* ── Day tab: overflow note + Day-planner handoff ── */
-.itin-day-planner-btn {
-  display: flex; align-items: center; justify-content: center; gap: 7px;
-  width: 100%;
-  margin-top: 12px;
-  min-height: var(--tap);
-  padding: 0 14px;
-  border: 1px solid var(--rule);
-  border-radius: var(--radius-sm);
-  background: var(--bg-card);
-  color: var(--ink);
-  font-size: var(--text-label);
-  font-weight: 600;
-  cursor: pointer;
-}
 /* A secondary (T398): the planned view's one primary is Plan your days in
    the footer. */
-.itin-day-of { font-family: var(--mono); font-size: var(--text-micro); color: var(--ink-soft); }
 
 /* ───────── Guided wizard: imagery + interests ───────── */
 
 /* Shared lettered fallback for any city thumbnail without a photo. */
-.guide-visit-hero-fallback { font-family: var(--display); color: var(--ink-mute); }
 
 /* Step 2 - city photo thumbnail on each city row */
 
 /* Tile grid shared by the vacation-type quiz (VIBES) tiles */
-.guide-interest-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.guide-interest {
-  position: relative;
-  display: flex; flex-direction: column; align-items: center; gap: 6px;
-  padding: 16px 8px;
-  border: 1px solid var(--rule);
-  border-radius: 14px;
-  background: var(--paper);
-  transition: border-color .15s, background .15s;
-}
-@media (hover: hover) {
-  .guide-interest:hover { border-color: var(--ink-soft); }
-}
-.guide-interest.on { border-color: var(--select-border); outline: 1px solid var(--select-border); outline-offset: -2px; background: var(--bg-card); }
-.guide-interest-check {
-  position: absolute; top: 7px; right: 7px;
-  width: 16px; height: 16px;
-  border-radius: 50%;
-  background: var(--ink-fill); color: var(--on-fill);
-  font-size: 10px; line-height: 1;
-  display: flex; align-items: center; justify-content: center;
-}
-.guide-interest-icon { font-size: 24px; line-height: 1; }
-.guide-interest-label { font-size: 11.5px; color: var(--ink); text-align: center; line-height: 1.2; }
 
 
 /* Step 5 - arrange thumbnail */
-.guide-arrange-thumb {
-  flex-shrink: 0;
-  width: 44px; height: 44px;
-  border-radius: 9px;
-  background: var(--paper-dim) center/cover no-repeat;
-  display: flex; align-items: center; justify-content: center;
-}
 
 /* Carta-plan prompt: a strip of the trip's city photos */
 .trip-plan-prompt-strip { display: flex; gap: 6px; justify-content: center; margin-bottom: 16px; }
@@ -703,6 +383,5 @@
 @media (max-width: 768px) {
   .guide-overlay { padding: 0; align-items: flex-end; }
   .guide-modal { max-height: 92vh; border-radius: 18px 18px 0 0; width: 100%; }
-  .guide-country-grid { grid-template-columns: repeat(2, 1fr); }
 }
 

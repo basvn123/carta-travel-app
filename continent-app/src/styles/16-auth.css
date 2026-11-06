@@ -196,7 +196,6 @@
 /* Privacy policy modal + entry-gate link. */
 .auth-gate-privacy { display: block; margin: 14px auto 0; font-size: var(--text-micro); color: var(--ink-mute); }
 .privacy-modal { max-height: 84dvh; overflow-y: auto; }
-.privacy-updated { font-size: var(--text-micro); color: var(--ink-mute); margin: -6px 0 12px; }
 .privacy-body { font-size: 12.5px; line-height: 1.6; color: var(--ink-soft); text-align: left; }
 .privacy-body h3 { font-size: var(--text-caption); color: var(--ink); margin: 14px 0 4px; }
 .privacy-body p { margin: 0 0 8px; }
@@ -207,36 +206,6 @@
 .privacy-table td { border-bottom: 1px solid var(--stroke-soft); }
 
 /* ── "Travel cheaper" tailored tips ── */
-.cheap-tip-group { margin-bottom: 10px; }
-.cheap-tip-group-title {
-  font-size: 10.5px;
-  font-weight: 700;
-  color: var(--ink-soft);
-  margin: 8px 0 6px;
-}
-.cheap-tip-generic-toggle { display: inline-flex; align-items: center; gap: 5px; cursor: pointer; background: none; border: 0; padding: 0; }
-.cheap-tip {
-  border: 1px solid var(--rule);
-  border-radius: 8px;
-  background: var(--paper);
-  padding: 8px 10px;
-  margin-bottom: 6px;
-}
-.cheap-tip-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
-.cheap-tip-head b { font-size: var(--text-caption); color: var(--ink); }
-.cheap-tip-save {
-  flex: none;
-  font-size: 10px;
-  font-weight: 700;
-  font-family: var(--mono);
-  color: var(--good-ink);
-  background: color-mix(in srgb, var(--good-ink) 9%, var(--paper));
-  border-radius: var(--radius-pill);
-  padding: 2px 8px;
-  white-space: nowrap;
-}
-.cheap-tip small { display: block; font-size: 11.5px; line-height: 1.5; color: var(--ink-soft); margin-top: 3px; }
-.cheap-tip-cat { display: inline-block; font-size: var(--text-micro); color: var(--ink-mute); margin-top: 5px; }
 
 /* Account deletion (danger zone). */
 .account-delete-actions { display: flex; gap: 8px; margin-top: 12px; }
@@ -302,10 +271,6 @@
   margin-bottom: 26px;
 }
 .auth-gate-title { text-align: center; }
-.auth-gate-sub {
-  text-align: center;
-  margin-bottom: 28px;
-}
 .auth-gate-actions {
   display: flex;
   flex-direction: column;

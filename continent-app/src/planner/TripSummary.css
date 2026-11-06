@@ -218,32 +218,7 @@ button.ct-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: 2
 .ct-tile.is-empty .ct-label svg { opacity: 0.6; }
 
 /* ---- The route: one grammar for every row ---- */
-.ts-route {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
 /* The line through the markers, under the centre of a 40 px marker. */
-.ts-route::before {
-  content: '';
-  position: absolute;
-  left: 19.25px;
-  top: 20px;
-  bottom: 20px;
-  border-left: 1.5px solid var(--border);
-}
-.ts-node {
-  position: relative;
-  display: grid;
-  grid-template-columns: 40px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: var(--space-3);
-  min-width: 0;
-}
 .ts-mark {
   display: grid;
   place-items: center;
@@ -256,10 +231,7 @@ button.ct-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: 2
   overflow: hidden;
 }
 .ts-mark.is-photo { background: var(--surface-sunken); }
-.ts-mark-img,
 .ts-mark .hero-blank { display: block; width: 100%; height: 100%; object-fit: cover; }
-.ts-node-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.ts-node-label { font-size: var(--text-caption); color: var(--text-3); }
 .ts-node-title {
   display: inline-flex;
   align-items: center;
@@ -269,11 +241,7 @@ button.ct-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: 2
   color: var(--text);
   overflow-wrap: anywhere;
 }
-.ts-node.is-stop .ts-node-title { font-size: var(--text-lead); }
 .ts-node-sub { font-size: var(--text-label); color: var(--text-2); }
-.ts-node-facts { display: flex; flex-wrap: wrap; gap: 2px var(--space-3); }
-.ts-node-facts > span { display: inline-flex; align-items: center; gap: var(--space-1); white-space: nowrap; }
-.ts-node-facts svg { flex: none; color: var(--text-3); }
 .ts-node-fig { font-size: var(--text-body); font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; white-space: nowrap; }
 
 /* ---- The map card and the tools ---- */
@@ -357,7 +325,6 @@ body:has(.tpg-dock) .bottom-nav { border-top-color: transparent; box-shadow: non
    the name's line. An editor is a column of its controls with the one
    primary under the last; the balance rows sit under a short question. */
 /* A chip's editor opens with the chip near the top, so it has room under it. */
-.tpg-chip { scroll-margin-top: calc(var(--space-8) + var(--space-5)); }
 .tpg-name-row { display: flex; align-items: center; gap: var(--space-1); min-width: 0; }
 .tpg-name-row .tpg-name { min-width: 0; }
 .tpg-rename { flex: none; }
@@ -398,25 +365,6 @@ body:has(.tpg-dock) .bottom-nav { border-top-color: transparent; box-shadow: non
 }
 .itin-nights { display: inline-flex; align-items: center; gap: var(--space-2); flex: none; }
 .itin-nights-lbl { font-size: var(--text-label); color: var(--text-2); }
-.itin-ios {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-2);
-  padding: 0 var(--space-4) var(--space-3);
-}
-.itin-io {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  min-width: 0;
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-control);
-  background: var(--surface-sunken);
-}
-.itin-io-day { display: flex; flex-direction: column; align-items: center; line-height: 1.1; font-size: var(--text-micro); color: var(--text-2); }
-.itin-io-day b { font-size: var(--text-lead); color: var(--text); font-variant-numeric: tabular-nums; }
-.itin-io-text { display: flex; flex-direction: column; min-width: 0; font-size: var(--text-caption); color: var(--text-2); }
-.itin-io-text b { font-size: var(--text-label); font-weight: 600; color: var(--text); }
 .itin-balance {
   display: flex;
   flex-direction: column;
@@ -677,7 +625,6 @@ body:has(.tpg-dock) .bottom-nav { border-top-color: transparent; box-shadow: non
 .itin-air-text { min-width: 0; }
 
 /* T866: a part the traveller booked carries the word under its line. */
-.ts-node-main .ts-booked { align-self: flex-start; margin-top: var(--space-1); }
 
 /* ---- T873: Ready to book ----
    The trip's bookable parts as the route's own rows (a 40 px marker, the
@@ -701,15 +648,10 @@ body:has(.tpg-dock) .bottom-nav { border-top-color: transparent; box-shadow: non
 .tpg-book-acts { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); margin: var(--space-1) 0 0 calc(-1 * var(--space-2)); }
 .tpg-book-acts .plan-paid { margin-left: var(--space-2); }
 .tpg-book-row .ts-node-fig { padding-top: 10px; }
-.ts-node.is-car .ts-node-title { font-weight: 500; }
 
 /* ---- T887: the route carries its bookings; what is still to book ---- */
-.ts-node-book { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); margin-top: var(--space-1); }
-.ts-node-book .ts-booked { margin: 0; }
-.ts-book-link.btn { margin-left: calc(-1 * var(--space-1)); }
 .ts-node-fig { display: grid; justify-items: end; align-content: start; }
 .ts-node-fig small { font-size: var(--text-caption); font-weight: 500; color: var(--text-3); }
-.ts-node.is-hop .ts-mark { background: var(--surface-sunken); }
 /* ---- Still to book as passes (T1003) ----
    One pass per part not yet booked, swiped side by side. A boarding pass's
    anatomy: the carrier and the date, the two ends large, the way between
@@ -854,7 +796,6 @@ span.tbp-seg { cursor: default; }
 
 /* ---- The Notes tab (T889): the trip extras inline ---- */
 .itin-extras { display: grid; gap: var(--space-3); }
-.itin-extras-lead { margin: 0; max-width: var(--measure); font-size: var(--text-body); color: var(--text-2); }
 
 /* ---- The trip on the map (T1005) ----
    A titled card: Europe drawn quietly (white land on a pale lagoon sea, the
@@ -992,7 +933,6 @@ span.tbp-seg { cursor: default; }
 .jr-stay { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
 .jr-photo { flex: none; width: 40px; height: 40px; overflow: hidden; border-radius: var(--radius-control); background: var(--surface-sunken); }
 .jr-photo-img, .jr-photo .hero-blank { display: block; width: 100%; height: 100%; object-fit: cover; }
-.jr-stay-main { display: grid; gap: 2px; min-width: 0; }
 .jr-city { font-size: var(--text-lead); font-weight: 800; letter-spacing: -0.02em; line-height: var(--leading-tight); }
 .jr-none { margin: 0; color: var(--text-3); }
 .jr-foot {
@@ -1004,13 +944,8 @@ span.tbp-seg { cursor: default; }
   border-top: 1px solid var(--border-soft);
 }
 .jr-status { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); min-width: 0; }
-.jr-link { font-size: var(--text-label); font-weight: 600; color: var(--action); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--action) 35%, transparent); text-underline-offset: 3px; }
-@media (hover: hover) { .jr-link:hover { color: var(--action-hover); text-decoration-color: currentColor; } }
-.jr-link:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
 .jr-fig { font-size: var(--text-lead); font-weight: 800; letter-spacing: -0.01em; text-align: right; font-variant-numeric: tabular-nums; }
 .jr-fig small { margin-left: var(--space-1); font-size: var(--text-caption); font-weight: 500; color: var(--text-3); letter-spacing: 0; }
-.jr-paid { grid-column: 1 / -1; }
-.jr-paid .plan-paid-add, .jr-paid .btn { margin-left: calc(-1 * var(--space-2)); }
 .jr-home { display: flex; align-items: center; gap: var(--space-2); min-height: 48px; margin-top: var(--space-1); }
 .jr-home-mark { display: grid; flex: none; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--text); color: var(--surface); }
 .jr-home-name { font-size: var(--text-lead); font-weight: 700; }
@@ -1046,9 +981,6 @@ span.tbp-seg { cursor: default; }
    card says those once. Its groups carry the card's four colours. */
 .itin-end-head .jr-brand { min-width: 0; }
 .itin-flight.is-pass { display: grid; gap: var(--space-2); margin-top: var(--space-2); }
-.itin-pass-facts { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-4); font-size: var(--text-caption); color: var(--text-2); }
-.itin-pass-facts .money { font-weight: 700; color: var(--text); }
-.itin-pass-fare:empty { display: none; }
 .itin-flight.is-pass .jr-status { font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
 .tpg-costs { display: flex; flex-direction: column; gap: var(--space-5); min-width: 0; }
 .tpg.is-costs .plan-total-head,
@@ -1131,7 +1063,6 @@ span.tbp-seg { cursor: default; }
 .tpg .itin-stay .field-label { margin: 0; font-size: var(--text-caption); color: var(--text-2); white-space: nowrap; }
 .tpg .itin-stay .field-control select { min-height: 36px; padding-block: 0; font-size: var(--text-label); }
 .tpg .itin-bed { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); margin: 0 var(--space-4); padding: var(--space-2) 0; border-top: 1px solid var(--border-soft); }
-.tpg .itin-bed-cost { margin: 0; }
 .tpg .itin-bed-acts { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
 .tpg .itin-bed-acts .itin-find.btn { min-height: 32px; border: 1px solid var(--border); border-radius: var(--radius-control); }
 .tpg .itin-stop-acts { gap: 0; padding: var(--space-1) var(--space-2); }
@@ -1142,8 +1073,6 @@ span.tbp-seg { cursor: default; }
    the providers by name; a hop is a slim row. */
 .tpg .itin-stopcard .itin-stop-thumb { width: 44px; height: 44px; flex: none; border-radius: var(--radius-control); }
 .tpg .itin-stay { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); padding: 0 var(--space-4) var(--space-2); }
-.tpg .itin-stay-pick { display: flex; flex: 1 1 160px; align-items: center; gap: var(--space-2); min-width: 0; color: var(--text-2); }
-.tpg .itin-stay-pick .field { display: block; flex: 1; min-width: 0; }
 .tpg .itin-stay .itin-nights { margin-left: auto; }
 .tpg .itin-stay .itin-balance { flex-basis: 100%; }
 .tpg .itin-pass-acts .plan-paid-add .btn-icon,
@@ -1153,8 +1082,7 @@ span.tbp-seg { cursor: default; }
 .tpg .itin-pass-foot { flex-wrap: nowrap; }
 .tpg .itin-find.btn { gap: 5px; min-height: 32px; padding-inline: 10px; border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--surface); color: var(--text); font-size: var(--text-label); }
 .tpg .itin-find.btn svg { opacity: 0.6; }
-.tpg .itin-bed-cost .costrow { min-height: 0; padding: 0; }
-.tpg .itin-stopcard .itin-daytrips, .tpg .itin-stopcard .itin-trips { padding-block: var(--space-1); }
+.tpg .itin-stopcard .itin-daytrips { padding-block: var(--space-1); }
 .tpg .itin-stop-acts { border-top: 0; }
 .tpg .itin-hop { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); padding: var(--space-1) var(--space-4) var(--space-1) var(--space-6); }
 .tpg .itin-hop > .itin-leg { flex: 1 1 100%; }
@@ -1163,7 +1091,6 @@ span.tbp-seg { cursor: default; }
 /* The day trips and the stop's tools close the card in one tight band. */
 .tpg .itin-stopcard .itin-daytrips { gap: var(--space-1); padding: var(--space-1) var(--space-4) 0; }
 .tpg .itin-stopcard .itin-stop-acts { padding: 0 var(--space-2) var(--space-1); }
-.tpg .itin-bed-cost dt svg, .tpg .itin-bed-cost .costrow-icon { display: none; }
 
 /* T1009: Own fare is as big as Book, and every small action on the
    Itinerary is one size: 40 px, the touch target on a phone. */
@@ -1203,10 +1130,7 @@ span.tbp-seg { cursor: default; }
   border-radius: var(--radius-control);
   background: var(--surface-sunken);
 }
-.tpg .itin-lodging-pick .field-label { margin: 0 0 4px; font-size: var(--text-caption); font-weight: 600; color: var(--text-3); }
-.tpg .itin-lodging-pick select { width: 100%; min-height: 40px; background-color: var(--surface); font-size: var(--text-label); }
 .tpg .itin-lodging .itin-bed { margin: 0; padding: 0; border-top: 0; }
-.tpg .itin-lodging .itin-bed-cost .costrow { font-weight: 600; }
 .tpg .itin-lodging .itin-find.btn,
 .tpg .itin-lodging .plan-paid-add.btn { min-height: 36px; height: 36px; }
 
@@ -1423,15 +1347,11 @@ span.tbp-seg { cursor: default; }
   color: var(--umber-50);
 }
 .tpg .itin-export-h { margin: 0; font-size: var(--text-title); font-weight: 800; letter-spacing: -0.02em; color: var(--umber-50); }
-.tpg .itin-export-main { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-2); }
-.tpg .itin-export-main .btn { min-height: 44px; border: 0; border-radius: var(--radius-control); font-weight: 700; }
 .tpg .itin-export-share.btn { background: var(--umber-50); color: var(--umber-800); }
-.tpg .itin-export-pdf.btn { padding-inline: var(--space-4); background: color-mix(in srgb, var(--umber-50) 16%, transparent); color: var(--umber-50); }
 @media (hover: hover) {
   .tpg .itin-export-share.btn:hover { background: var(--surface); }
-  .tpg .itin-export-pdf.btn:hover { background: color-mix(in srgb, var(--umber-50) 24%, transparent); }
 }
-.tpg .itin-export-main .btn:focus-visible, .tpg .itin-export-chip:focus-visible { outline: 2px solid var(--umber-50); outline-offset: 2px; }
+.tpg .itin-export-chip:focus-visible { outline: 2px solid var(--umber-50); outline-offset: 2px; }
 .tpg .itin-export-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .tpg .itin-export-chip {
   display: inline-flex;
@@ -1522,13 +1442,11 @@ span.tbp-seg { cursor: default; }
 .tpg .itin-export-card { background: var(--surface); box-shadow: var(--elev-1); color: var(--text); }
 .tpg .itin-export-h { font-size: var(--text-lead); font-weight: 700; letter-spacing: -0.01em; color: var(--text); }
 .tpg .itin-export-share.btn { background: var(--action); color: var(--action-text); }
-.tpg .itin-export-pdf.btn { border: 1px solid var(--border); background: var(--surface); color: var(--text); }
 @media (hover: hover) {
   .tpg .itin-export-share.btn:hover { background: var(--action-hover); }
-  .tpg .itin-export-pdf.btn:hover { background: var(--surface-hover); }
   .tpg .itin-export-chip:hover { background: var(--surface-hover); }
 }
-.tpg .itin-export-main .btn:focus-visible, .tpg .itin-export-chip:focus-visible { outline-color: var(--focus); }
+.tpg .itin-export-chip:focus-visible { outline-color: var(--focus); }
 .tpg .itin-export-chip { background: var(--surface-sunken); color: var(--text); }
 .tpg .itin-export-chip-ic { width: 26px; height: 26px; }
 

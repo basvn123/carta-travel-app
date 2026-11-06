@@ -3,72 +3,7 @@
    of the two, so edit it where it is. This sheet loads with the route's
    chunk, after the main sheet, and holds only rules nothing later in the
    cascade could override; scripts/css-routes.mjs --check proves it on a build. */
-.trip-planner-screen {
-  position: absolute;
-  top: var(--filter-h);
-  left: 0; right: 0; bottom: var(--bottom-nav-h);
-  overflow: hidden;
-}
 /* T675: the trip settings gear, top right of the trip's name. */
-.trip-block:first-child { margin-top: 6px; }
-.trip-block-title {
-  font-family: var(--display);
-  font-size: 15px;
-  color: var(--ink);
-  margin-bottom: 10px;
-}
-.trip-field-label {
-  font-family: var(--ui);
-  font-size: 12px;
-  color: var(--ink-soft);
-}
-.trip-dates-arrow {
-  color: var(--ink-mute);
-  padding-bottom: 8px;
-  font-size: 15px;
-}
-.trip-suggest-row {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-  scrollbar-width: thin;
-}
-@media (hover: hover) {
-  .trip-suggest-card:hover { border-color: var(--accent); transform: translateY(-2px); }
-}
-.trip-suggest-thumb {
-  position: relative;
-  height: 78px;
-  background: var(--paper-dim) center/cover no-repeat;
-  display: flex; align-items: center; justify-content: center;
-}
-.trip-suggest-fallback { font-family: var(--display); font-size: 26px; color: var(--ink-mute); }
-.trip-suggest-chip {
-  position: absolute;
-  left: 6px; bottom: 6px;
-  background: rgba(26,26,26,0.72);
-  color: var(--on-fill);
-  font-family: var(--ui);
-  font-weight: 600;
-  font-size: 11px;
-  padding: 2px 6px;
-  border-radius: 999px;
-}
-.trip-suggest-meta { padding: 7px 9px 9px; }
-.trip-suggest-city {
-  display: block;
-  font-family: var(--display);
-  font-size: 13.5px;
-  color: var(--ink);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.trip-add-row { display: flex; gap: 10px; align-items: stretch; }
-.trip-add-row .dropdown.trip-add-country { flex: 0 0 34%; }
-@media (max-width: 768px) {
-  .trip-add-row { display: grid; grid-template-columns: 1fr 1fr; }
-}
-.trip-ownflight-input:focus { outline: none; border-color: var(--accent); }
 .daytrip-hint { color: var(--good-ink-soft); }
 .daytrip-hint.warn { color: var(--warn-ink); }
 .daytrip-here { display: flex; gap: 6px; align-items: baseline; }
@@ -77,18 +12,5 @@
 }
 .daytrip-mode-btn span svg:last-child:not(:first-child) { color: var(--accent); }
 .daytrip-pick-note { font-family: var(--mono); font-size: var(--text-micro); color: var(--ink-mute); }
-.trip-block { margin-top: 18px; }
-.trip-suggest-sub {
-  display: flex; align-items: center; gap: 3px;
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--ink-mute);
-  margin-top: 2px;
-}
-@media (max-width: 768px) {
-  .trip-add-row .dropdown.trip-add-country,
-  .trip-add-row .dropdown.trip-add-city { width: 100%; min-width: 0; }
-}
-.trip-note { font-size: 12px; color: var(--ink-soft); line-height: 1.55; margin-top: 8px; }
 .daytrip-reco-icon { color: var(--accent); margin-top: 2px; }
 .daytrip-modes { margin-top: 10px; }

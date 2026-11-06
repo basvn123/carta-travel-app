@@ -117,13 +117,6 @@
 
 .ipage .ipage-acts { align-items: stretch; }
 
-.ipage .mpage-way-word { font-weight: 600; font-size: var(--text-body); }
-
-.ipage .mpage-way-name,
-.ipage .mpage-way-src,
-.ipage .mpage-way-note,
-.ipage .mpage-way-ways { font-size: var(--text-caption); color: var(--text-3); }
-
 .ipage .lpage-swim-word::before {
   content: '';
   width: 8px;
@@ -132,19 +125,9 @@
   background: var(--text-3);
 }
 
-.ipage .lpage-swim-ok .lpage-swim-word::before { background: var(--status-success); }
-
-.ipage .lpage-swim-stop .lpage-swim-word::before { background: var(--danger); }
-
 .ipage .lpage-swim-season { font-size: var(--text-body); color: var(--text-2); }
 
 .ipage .lpage-swim-warn .lpage-swim-word::before { background: var(--amber-ink); }
-
-.ipage.jpage .ipage-grid.has-side > .ipage-side.jpage-side { overflow: visible; max-height: none; }
-
-@media (min-width: 1024px) {
-  .ipage.jpage .ipage-grid.has-side > .ipage-side.jpage-side { max-height: calc(100dvh - 52px - 2 * var(--space-4)); overflow-y: auto; }
-}
 
 .tdiff { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--text-label); color: var(--text); }
 
@@ -184,27 +167,17 @@
 
 .tgo-town { justify-self: start; }
 
-.tprep .itrack-title { font-size: var(--text-title); }
-
-.gocard.is-risk .gocard-icon { color: var(--amber-ink); }
-
 .tskel { display: grid; gap: var(--space-3); padding: var(--space-4) var(--gutter); }
 
 .tskel-line.is-title { height: 28px; width: 80%; }
 
 @media (min-width: 1024px) {
   .ipage .ipage-grid.has-side > .ipage-side { top: calc(44px + var(--space-4)); }
-  .ipage.jpage .ipage-grid.has-side > .ipage-side.jpage-side { max-height: calc(100dvh - 52px - 44px - 2 * var(--space-4)); }
 }
 
 .tprice .iinc-row { padding-block: var(--space-1); font-size: var(--text-body); }
 
 .itrack-pos { white-space: nowrap; }
-
-@media (max-width: 480px) {
-  .tprep .itrack-title { font-size: var(--text-lead); }
-  .tprep .itrack-pos { display: none; }
-}
 
 .ipage .ipage-head h1:focus { outline-color: transparent; }
 

@@ -27,7 +27,6 @@
    The h1 carries the page title and, under it, the count of what the view
    holds in --mono. On a phone the title is read but not drawn and the count
    is the visible line, sharing its row with the sort. */
-.explore-shell .xbar-title-text { display: block; }
 @media (max-width: 768px) {
   .explore-shell .xbar {
     flex-wrap: nowrap;
@@ -44,15 +43,6 @@
     overflow: visible;
     clip-path: none;
     white-space: normal;
-  }
-  .explore-shell .xbar-title-text {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
   }
   .explore-shell .xbar-tools { margin-left: auto; flex-wrap: nowrap; }
 }
@@ -73,20 +63,6 @@
 /* The Lifestyle door, in the row: secondary chrome like the rest of it. */
 
 /* --- 4. The phone's top row: search and Filters side by side ------------ */
-@media (max-width: 768px) {
-  .explore-shell .explore-filterbar.xtop {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    margin: 0 0 var(--space-2);
-  }
-  .explore-shell .xtop .places-filter-btn {
-    flex: none;
-    width: auto;
-    height: var(--tap);
-    padding: 0 var(--space-3);
-  }
-}
 /* The search clear is the house close control: CloseIcon in a --tap box. */
 
 /* --- 5 and 8. The price on the card, with its pedigree word -------------
@@ -101,10 +77,6 @@
 
 /* On a phone "See all N" holds the title's row instead of taking a row of
    its own, so the first priced card sits higher (brief V3-4). */
-@media (max-width: 768px) {
-  .explore-shell .xrails-head { flex-wrap: nowrap; align-items: flex-start; }
-  .explore-shell .xrails-head .xrails-all { align-self: flex-start; }
-}
 
 /* Rail cards carry the day cost too. */
 
@@ -122,8 +94,6 @@
   gap: var(--space-3);
   margin: var(--space-4) 0;
 }
-.explore-shell .xempty-line { margin: 0; font-size: var(--text-body); line-height: 1.45; color: var(--ink); }
-.explore-shell .xempty-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
 
 /* --- 12. "Score key", a word instead of a bare "?" ----------------------- */
 
@@ -158,12 +128,6 @@
 /* The type scale (DIRECTION part 5): a card name is the heading face at 19 px, a
    section (a rail) 22 px on a phone and 26 px from 769 px, the page title
    40 px on desktop (the phone draws the count, not the title). */
-.explore-shell .railcard-name { font-size: 19px; line-height: 1.2; letter-spacing: 0; }
-.explore-shell .xrails-title { font-size: 22px; line-height: 1.2; letter-spacing: 0; }
-@media (min-width: 769px) {
-  .explore-shell .xrails-title { font-size: 26px; }
-  .explore-shell .xbar-title-text { font-size: var(--text-display); line-height: 1.1; letter-spacing: 0; }
-}
 
 /* --- 2. The preview as a popover (explore N6, "Dialog family") ----------
    Beside the card (right, else left) or under it, placed in ExploreTab.jsx
@@ -287,8 +251,7 @@
 /* The tap floor on touch, as on Destinations (T474): the 32 px above beat
    the phone's .xchip { min-height: var(--tap) } and left the chips at 32. */
 @media (pointer: coarse) {
-  .explore-shell .xchip,
-  .explore-shell .xchips-lead .xgrid-sort { min-height: var(--tap); }
+  .explore-shell .xchip { min-height: var(--tap); }
 }
 @keyframes xchip-in {
   from { opacity: 0; transform: scale(0.9); }
@@ -296,10 +259,8 @@
 }
 /* "See all" and the side "Clear all" are ink links, not accent. The
    Destinations rails' "See all" is the same link (T457). */
-.explore-shell .xrails-all,
 .places-shell .dtab-all,
-.explore-shell .dtab-all,
-.explore-shell .side-clear {
+.explore-shell .dtab-all {
   color: var(--ink);
   font-weight: 500;
   text-decoration: underline;
@@ -307,23 +268,13 @@
   text-underline-offset: 3px;
 }
 @media (hover: hover) {
-  .explore-shell .xrails-all:hover,
   .places-shell .dtab-all:hover,
-  .explore-shell .dtab-all:hover,
-  .explore-shell .side-clear:hover { color: var(--ink-soft); text-decoration: underline; }
+  .explore-shell .dtab-all:hover { color: var(--ink-soft); text-decoration: underline; }
 }
 /* The gauge in ink, the cheapest band green as good news in data; the
    accent never marks a price band (explore N7). */
-.explore-shell .cost-seg.on { background: var(--ink-soft); }
 
 /* Counts beside a label are the house count chip. */
-.explore-shell .places-filter-btn .filter-tray-badge {
-  background: var(--paper-dim);
-  color: var(--ink);
-  font-family: var(--mono);
-  font-size: var(--text-micro);
-  font-variant-numeric: tabular-nums;
-}
 /* The info control while its popover is open is the selected state. */
 
 /* --- 4. State that answers at once, and nothing decorative moving ------- */
@@ -347,19 +298,10 @@
 @media (hover: hover) {
   .explore-shell .railcard:hover { border-color: var(--ink-mute); }
 }
-.explore-shell .railcard-img { aspect-ratio: 3 / 2; }
 
 /* --- 8. The compact receipt's "Change" reaches the tap floor on touch ----
    (CostSummary is this surface's; the destination page draws it, row
    T385-h). */
-@media (pointer: coarse) {
-  .cost-assumes-edit {
-    display: inline-flex;
-    align-items: center;
-    min-height: var(--tap);
-    padding: 0 var(--space-2);
-  }
-}
 
 @media (prefers-reduced-motion: reduce) {
   .explore-shell .railcard,
@@ -381,33 +323,12 @@
    used to be a 27 px disc with an invisible ring around it. "See all" gets
    a real --tap box too, pulled back with negative margin so the rail head
    keeps its height. A mouse keeps 32 px (the owner's fine-pointer floor). */
-@media (pointer: coarse) {
-  .explore-shell .xrails-all {
-    display: inline-flex;
-    align-items: center;
-    min-height: var(--tap);
-    padding: 0 var(--space-2);
-    margin-block: calc((22px - var(--tap)) / 2);
-    margin-inline-end: calc(-1 * var(--space-2));
-  }
-  .explore-shell .xrails-all::before { content: none; }
-}
 
 /* --- 4. Names are whole ---------------------------------------------------
    A name wraps to a second line before it ends in an ellipsis; the clamp at
    two lines keeps a card's height bounded. The country gives up its
    ellipsis the same way, and on a two-up phone card it shares the place
    line with the swim badge instead of leaving it to the flag. */
-.explore-shell .railcard-name {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  white-space: normal;
-  overflow: hidden;
-  text-overflow: clip;
-  overflow-wrap: anywhere;
-}
-.explore-shell .railcard-head { align-items: flex-start; }
 
 /* T411: the cut chips reach the tap floor on touch wherever they are drawn
    (the quality floor measured 34 px), and the country page's facts stand
@@ -455,7 +376,6 @@
 @media (max-width: 768px) {
   /* On a phone the switch floats above the bottom nav (T441 redraws it),
      and the title is read but not drawn: the search leads the screen. */
-  .explore-shell .xview-seg { display: none; }
   .explore-shell .xbar-title {
     position: absolute;
     width: 1px;
@@ -469,7 +389,6 @@
   /* One refine row (carta-design "Filters", T474, row T435-h): with active
      filters the sort leads the chip row and the bar's twin steps aside, and
      the row scrolls sideways rather than wrapping into three. */
-  .explore-shell .xbar:has(+ .xchips) .xgrid-sort { display: none; }
   .explore-shell .xbar:has(+ .xchips) { margin-bottom: 0; }
   .explore-shell .xchips {
     flex-wrap: nowrap;
@@ -485,38 +404,7 @@
   .explore-shell .xchips-lead { display: flex; }
   /* The sort as a dropdown chip: the removable chips' height, edge and
      corners, its name in secondary ink, the choice beside it, one chevron. */
-  .explore-shell .xchips-lead .xgrid-sort {
-    position: relative;
-    gap: var(--space-1);
-    height: 32px;
-    margin: 0;
-    padding-left: var(--space-3);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-pill);
-    background: var(--surface);
-    font-size: var(--text-label);
-    color: var(--text-2);
-  }
-  .explore-shell .xchips-lead .xgrid-sort-field { position: relative; display: inline-flex; align-items: center; height: 100%; }
-  .explore-shell .xchips-lead .xgrid-sort select {
-    appearance: none;
-    /* Over the chip's edge too, so the control is as tall as the chip: 44 px
-       on touch, never the 42 inside its border. */
-    height: calc(100% + 2px);
-    margin-block: -1px;
-    padding: 0 calc(var(--space-3) + 14px) 0 0;
-    border: 0;
-    border-radius: var(--radius-pill);
-    background: transparent;
-    font: inherit;
-    font-weight: 600;
-    color: var(--text);
-    cursor: pointer;
-  }
   /* The ring is drawn on the chip; a transparent one stays for forced colours. */
-  .explore-shell .xchips-lead .xgrid-sort select:focus-visible { outline: 2px solid transparent; }
-  .explore-shell .xchips-lead .xgrid-sort:has(select:focus-visible) { outline: 2px solid var(--focus); outline-offset: 2px; }
-  .explore-shell .xchips-lead .xgrid-sort-chev { position: absolute; right: var(--space-3); color: var(--text-2); pointer-events: none; }
 }
 .xchips-lead { display: none; }
 
@@ -529,55 +417,8 @@
   margin: var(--space-2) 0 var(--space-7);
 }
 .explore-shell .xrails-rail { min-width: 0; }
-.explore-shell .xrails-head {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  margin: 0 0 var(--space-3);
-}
-.explore-shell .xrails-title {
-  flex: 1 1 auto;
-  min-width: 0;
-  margin: 0;
-  font-size: var(--text-title);
-  font-weight: 600;
-  line-height: var(--leading-tight);
-  color: var(--text);
-}
-.explore-shell .xrails-nav { display: none; gap: var(--space-2); }
-@media (hover: hover) and (pointer: fine) {
-  .explore-shell .xrails-nav { display: inline-flex; }
-}
-.explore-shell .xrails-arrow--prev svg { transform: scaleX(-1); }
 /* Tiles size from the section's own width: about 1.3 on a phone, so the
    next one shows, and five and a bit on a wide desktop. */
-.explore-shell .xrails-strip {
-  --tile-gap: var(--space-4);
-  --tile-w: 78%;
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: var(--tile-w);
-  gap: var(--tile-gap);
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory;
-  scroll-padding-inline: 0;
-  padding-bottom: var(--space-1);
-  scrollbar-width: none;
-}
-.explore-shell .xrails-strip::-webkit-scrollbar { display: none; }
-@container (min-width: 560px) {
-  .explore-shell .xrails-strip { --tile-w: calc((100% - 2 * var(--tile-gap)) / 2.4); }
-}
-@container (min-width: 860px) {
-  .explore-shell .xrails-strip { --tile-w: calc((100% - 3 * var(--tile-gap)) / 3.4); }
-}
-@container (min-width: 1080px) {
-  .explore-shell .xrails-strip { --tile-w: calc((100% - 4 * var(--tile-gap)) / 4.4); }
-}
-@container (min-width: 1320px) {
-  .explore-shell .xrails-strip { --tile-w: calc((100% - 5 * var(--tile-gap)) / 5.4); }
-}
 .explore-shell .xtile { scroll-snap-align: start; min-width: 0; }
 .explore-shell .xtile .card-title { font-size: var(--text-lead); }
 .explore-shell .xtile-meta {
@@ -594,13 +435,6 @@
 }
 
 /* --- The list: compact rows -------------------------------------------- */
-.explore-shell .xlist-title {
-  margin: 0 0 var(--space-3);
-  font-size: var(--text-title);
-  font-weight: 600;
-  line-height: var(--leading-tight);
-  color: var(--text);
-}
 .explore-shell .xrows {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 400px), 1fr));
@@ -681,7 +515,6 @@
 /* The price line: the figure in the one family, tabular, then its unit. */
 .explore-shell .xprice { font-size: var(--text-body); color: var(--text); }
 .explore-shell .xprice .money { font-weight: 600; }
-.explore-shell .xprice-unit { color: var(--text-2); }
 /* Selected is the brown edge; a card the map is pointing at rings in ink
    (house rule "Map and list in sync"). */
 .explore-shell .xrow.is-selected { outline: 2px solid var(--select-border); outline-offset: -2px; background: var(--surface); }
@@ -755,10 +588,6 @@
    a hairline under them there so the category's own filters read as its. */
 /* 16 px under the search row on both sides of Explore (T498). */
 .xcats-bar { margin: var(--space-2) 0 var(--space-4); }
-.side-panel .xcats-sec {
-  padding-bottom: var(--space-5);
-  border-bottom: 1px solid var(--border-soft);
-}
 /* "Budget a day" with the day-price dot after it, outside the label. */
 .xrail-budget { display: flex; flex-direction: column; min-width: 0; }
 .xrail-label-row { display: inline-flex; align-items: center; }
@@ -842,7 +671,6 @@
   .xrail-fold-chev { transition: none; }
 }
 /* The phone's Filters door and the country page link. */
-.explore-shell .xfilters-btn { flex: none; }
 .explore-shell .xfilters-n { margin-left: var(--space-1); }
 .explore-shell .xcountry-link { margin: 0 0 var(--space-3); }
 
@@ -1227,10 +1055,6 @@
 .gsearch-clear { position: absolute; top: 50%; right: 0; transform: translateY(-50%); }
 .header-search-slot .gsearch { flex: 1 1 auto; }
 .header-search-slot .btn.gsearch-trigger { min-height: 40px; }
-@media (max-width: 768px) {
-  .explore-shell .xtop .gsearch { flex: 1 1 auto; }
-  .explore-shell .xtop .btn.gsearch-trigger { font-size: var(--text-lead); }
-}
 
 /* --- The panel: white, full height on a phone --------------------------- */
 .fsheet.gsearch-sheet { background: var(--surface); }
@@ -1481,7 +1305,6 @@
   .explore-shell.is-map .xcontent-map { position: relative; overflow: hidden; }
   .explore-shell.is-map .xview-fab { display: none; }
   .explore-shell .xdrawer .map-drawer-strip-slot { padding-left: var(--space-4); }
-  .explore-shell .xdrawer-rows { display: block; padding: 0 var(--space-2) var(--space-4); }
 }
 
 @media (prefers-reduced-motion: reduce) {

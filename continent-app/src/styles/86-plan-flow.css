@@ -152,89 +152,8 @@
    dates, nights and stops with their icons, the status pill, a chevron and
    the More menu); from 1024 px a grid of photo cards under the whole
    opening. The page scrolls once it holds trips. */
-.pf-open.has-trips { height: auto; }
-.pf-open.has-trips .pf-open-text { flex: none; }
-
-.pf-trips { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
-
-.pf-trips-title {
-  margin: 0;
-  font-size: var(--text-title);
-  font-weight: 600;
-  line-height: var(--leading-tight);
-  color: var(--text);
-}
-
-.pf-trips-list { display: flex; flex-direction: column; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
-
-.pf-trip {
-  position: relative;
-  display: flex;
-  align-items: center;
-  border-radius: var(--radius-card);
-  background: var(--surface);
-  box-shadow: var(--elev-1);
-  transition: box-shadow var(--dur-2) var(--ease-out);
-}
-
-.pf-trip-link {
-  display: flex;
-  flex: 1;
-  align-items: center;
-  gap: var(--space-3);
-  min-width: 0;
-  min-height: var(--tap-main);
-  padding: var(--space-2);
-  border-radius: var(--radius-card);
-  color: var(--text);
-  text-decoration: none;
-}
-
-.pf-trip-link:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-
-.pf-trip-media {
-  flex: none;
-  width: 64px;
-  height: 64px;
-  overflow: hidden;
-  border-radius: var(--radius-card);
-  background: var(--surface-sunken);
-}
-
-.pf-trip-img { display: block; width: 100%; height: 100%; object-fit: cover; }
-
-.pf-trip-blank { display: grid; place-items: center; width: 100%; height: 100%; color: var(--text-3); }
-
-.pf-trip-body { display: flex; flex: 1; flex-direction: column; gap: 2px; min-width: 0; }
 
 .pf-trip-name { display: flex; align-items: center; gap: var(--space-1); min-width: 0; }
-
-.pf-trip-name-text {
-  overflow: hidden;
-  font-size: var(--text-lead);
-  font-weight: 600;
-  line-height: var(--leading-tight);
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.pf-trip-cloud { display: inline-flex; flex: none; color: var(--text-2); }
-
-.pf-trip-when { overflow: hidden; font-size: var(--text-label); color: var(--text-2); white-space: nowrap; text-overflow: ellipsis; }
-
-.pf-trip-facts {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-1) var(--space-3);
-  margin-top: 2px;
-  font-size: var(--text-caption);
-  color: var(--text-2);
-}
-
-.pf-trip-fact { display: inline-flex; align-items: center; gap: var(--space-1); white-space: nowrap; }
-
-.pf-trip-go { display: inline-flex; flex: none; color: var(--text-3); }
 
 .pf-trip-more { position: relative; flex: none; margin-right: var(--space-1); }
 
@@ -277,8 +196,6 @@
 .pf-trip-ask-row { display: flex; justify-content: flex-end; gap: var(--space-2); }
 
 @media (hover: hover) {
-  .pf-trip:hover { box-shadow: var(--elev-2); }
-  .pf-trip:hover .pf-trip-go { color: var(--text-2); }
   .pf-trip-item:hover { background: var(--surface-hover); }
 }
 
@@ -341,8 +258,6 @@
 }
 
 .pf-coll-foot { display: flex; align-items: center; gap: var(--space-3); }
-
-.pf-coll-mark { flex: none; }
 
 .pf-coll-title {
   flex: 1;
@@ -407,16 +322,8 @@
   .pf-open-stage { justify-content: center; }
   /* T809: the opening keeps its two columns; Your trips runs under both as
      a grid of photo cards, three or four across. */
-  .pf-open.has-trips { min-height: 0; }
   .pf-open-text { grid-column: 1; grid-row: 1; }
   .pf-open-stage { grid-column: 2; grid-row: 1; }
-  .pf-trips { grid-column: 1 / -1; grid-row: 2; gap: var(--space-4); }
-  .pf-trips-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--space-4); }
-  .pf-trip { flex-direction: column; align-items: stretch; }
-  .pf-trip-link { flex-direction: column; align-items: stretch; gap: 0; padding: 0; }
-  .pf-trip-media { width: 100%; height: auto; aspect-ratio: 3 / 2; border-radius: var(--radius-card) var(--radius-card) 0 0; }
-  .pf-trip-body { gap: var(--space-1); padding: var(--space-3) var(--space-8) var(--space-4) var(--space-4); }
-  .pf-trip-go { position: absolute; right: var(--space-3); bottom: var(--space-4); }
   .pf-trip-more { position: absolute; top: var(--space-2); right: var(--space-2); margin: 0; }
   .pf-trip-more .icon-btn-photo { box-shadow: var(--elev-1); }
   .pf-coll { --pw: 21%; --step: 74%; padding: var(--space-6) var(--space-5) var(--space-4); }
@@ -425,7 +332,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .pf-open-start .btn-icon,
-  .pf-trip,
   .pf-coll-photo,
   .pf-coll-go svg { transition: none; }
   .pf-coll-photo { animation: none; }
@@ -461,11 +367,7 @@
 
 .pf-ls-tiles.is-spend { --tile-cols: 2 !important; }
 
-.pf-ls-kind { margin-top: var(--space-1); }
-
 .pf-ls-note { margin: 0; font-size: var(--text-caption); color: var(--text-3); }
-
-.pf-ls-way { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 
 /* Fine tune sits at the right end of the spend heading (owner, plan flow walk). */
 .pf-ls-hrow { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
@@ -579,11 +481,6 @@
   padding: var(--space-2) var(--page-gutter) var(--space-8);
 }
 
-.pf-carta-top { display: flex; min-height: var(--tap); align-items: center; }
-.pf-carta-top .pf-carta-back.btn { margin-left: calc(-1 * var(--space-2)); }
-
-.pf-carta-hero { display: flex; flex-direction: column; gap: var(--space-2); max-width: 46rem; }
-
 .pf-carta-title {
   margin: 0;
   font-size: var(--text-plan-hero);
@@ -593,8 +490,6 @@
   color: var(--text);
   text-wrap: balance;
 }
-
-.pf-carta-lede { margin: 0; font-size: var(--text-body); line-height: 1.5; color: var(--text-2); max-width: 60ch; }
 
 .pf-carta-bar {
   display: flex;
@@ -608,7 +503,6 @@
 .pf-carta-bar .xchips-lead { display: flex; flex: none; }
 .pf-carta-bar .pf-carta-filters.btn { border-radius: var(--radius-pill); min-height: var(--tap); }
 .pf-carta-bar .pf-carta-filters .xfilters-n { margin-left: var(--space-1); }
-.pf-carta-count { flex: none; font-size: var(--text-label); color: var(--text-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
 
 .pf-carta-h { margin: 0 0 var(--space-3); font-size: var(--text-title); font-weight: 700; color: var(--text); }
 
@@ -626,7 +520,6 @@
   scrollbar-width: none;
 }
 .pf-carta-rail::-webkit-scrollbar { display: none; }
-.pf-carta-rail > .tpc { scroll-snap-align: start; }
 
 .pf-carta-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-3); }
 .pf-carta-ghost { height: 104px; border-radius: var(--radius-card); background: var(--surface-sunken); }
@@ -647,61 +540,6 @@
    The same measures as .xov--card (79-place-card.css): 3:2 photo in the
    card radius, one solid pill on it top left, the bookmark top right, the
    words straight on the ground, lifted 4 px on hover. */
-.tpc { position: relative; min-width: 0; border-radius: var(--radius-card); transition: transform var(--dur-2) var(--ease-out); content-visibility: auto; contain-intrinsic-size: auto 320px; }
-.tpc-hit {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  color: inherit;
-  text-decoration: none;
-  border-radius: var(--radius-card);
-}
-.tpc-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: var(--space-1); }
-.tpc-media {
-  position: relative;
-  display: block;
-  aspect-ratio: 3 / 2;
-  overflow: hidden;
-  border-radius: var(--radius-card);
-  background: var(--surface-sunken);
-}
-.tpc-img,
-.tpc-media .hero-blank { display: block; width: 100%; height: 100%; object-fit: cover; aspect-ratio: auto; }
-.tpc-badge {
-  position: absolute;
-  top: var(--space-2);
-  left: var(--space-2);
-  display: inline-flex;
-  align-items: center;
-  min-height: 24px;
-  padding: 0 var(--space-2);
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  box-shadow: var(--elev-1);
-  font-size: var(--text-caption);
-  font-weight: 600;
-  color: var(--text);
-}
-.tpc-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.tpc-name { font-size: var(--text-lead); font-weight: 600; line-height: var(--leading-tight); color: var(--text); overflow-wrap: anywhere; }
-.tpc-where { display: flex; align-items: center; gap: var(--space-1); margin-top: 2px; font-size: var(--text-label); color: var(--text-2); min-width: 0; }
-.tpc-where-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.tpc-flag { flex: none; }
-.tpc-facts { font-size: var(--text-label); color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.tpc-price { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); margin-top: var(--space-1); font-size: var(--text-label); color: var(--text); }
-.tpc-price .jcap-fig { font-weight: 600; }
-.tpc-save { position: absolute; top: var(--space-2); right: var(--space-2); z-index: 1; margin: 0; }
-@media (hover: hover) { .tpc:hover { transform: translateY(-4px); } }
-@media (prefers-reduced-motion: reduce) { .tpc { transition: none; } .tpc:hover { transform: none; } }
-
-@media (max-width: 768px) {
-  .pf-carta-grid .tpc-hit { flex-direction: row; gap: var(--space-3); min-height: 104px; }
-  .pf-carta-grid .tpc-media { flex: none; width: 112px; aspect-ratio: auto; align-self: stretch; }
-  .pf-carta-grid .tpc-badge { top: var(--space-1); left: var(--space-1); min-height: 20px; padding: 0 6px; font-size: var(--text-micro, 11px); }
-  .pf-carta-grid .tpc-body { justify-content: center; padding: var(--space-1) 0; }
-  .pf-carta-grid .tpc-name { padding-right: var(--tap); }
-  .pf-carta-grid .tpc-save { top: var(--space-1); right: 0; background: transparent; box-shadow: none; }
-}
 
 /* ---- The budget (T753): one figure for the whole trip ----
    A large figure in a white field, the euro sign before it, tabular so it
@@ -840,7 +678,6 @@
 .pf-set-row .btn-label { flex: 1; min-width: 0; }
 
 /* ---- The trip's page before a route (T656, after the Polarsteps trip view) ---- */
-.pf-home-cover { border-radius: var(--radius-card); overflow: hidden; }
 /* No stops yet (T751): one dashed slot under the start, joined to it by a
    dashed line, so the empty route reads as a place to fill, not as rows
    still loading. */
@@ -1062,7 +899,6 @@
 /* HeroImage leaves its box to the caller (T660 end check: unsized it drew
    1 by 1). Square tiles, a 16:9 cover. */
 .pf-like-img, .pf-cover-img { display: block; width: 100%; height: auto; aspect-ratio: 1 / 1; object-fit: cover; }
-.pf-home-cover { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
 
 /* ---- The planning steps inside the flow (T667): the wizard as the engine
    takes the flow's look. A sheet head with a round back, the step's name and
@@ -1169,7 +1005,6 @@
 @media (hover: hover) {
   .ui-chip.pf-read-chip.is-missing:hover { color: var(--text); }
 }
-.pf-read-left { margin: 0; font-size: var(--text-label); color: var(--text-2); }
 @keyframes pf-read-in {
   from { opacity: 0; transform: translateY(2px); }
   to { opacity: 1; transform: none; }
@@ -1235,30 +1070,6 @@
 /* ---- T863: how much Carta plans, four doors (TripFlow). Kit Tiles made
    large: the line icon over one title, left aligned, the tick in the corner
    (the one selected state). Two across on every width. ---- */
-.pf-doors { gap: var(--space-3); }
-.ui-tile.pf-door {
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-4);
-  min-height: 128px;
-  padding: var(--space-4);
-  border-radius: var(--radius-card);
-  text-align: left;
-}
-.pf-door .ui-tile-icon svg { width: 24px; height: 24px; }
-.pf-door .ui-tile-label {
-  font-size: var(--text-lead);
-  font-weight: 600;
-  line-height: var(--leading-tight);
-  text-align: left;
-  overflow-wrap: normal;
-  hyphens: auto;
-}
-.pf-door .ui-tile-tick { top: var(--space-3); right: var(--space-3); }
-@media (max-width: 420px) {
-  .ui-tile.pf-door { min-height: 112px; padding: var(--space-3); }
-  .pf-door .ui-tile-label { font-size: var(--text-body); }
-}
 
 /* ---- T865, T866: a town or country search (KnowDoor PlaceSearch). ---- */
 .pf-place-search { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
@@ -1334,8 +1145,6 @@
 .pf-booked-town { display: flex; flex-direction: column; gap: var(--space-1); }
 .pf-booked-town-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
 .pf-booked-form-foot { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-
-.pf-doors-carta { align-self: center; }
 
 /* ---- The studio (T893, the owner's plan flow studio board 2026-10-30) ----
    From 1100 px a question stands in the middle of three columns: the step

@@ -7,7 +7,6 @@
    ──────────────────────────────────────────────────────────────────────────── */
 .cintel-row p { font-size: 12.5px; line-height: 1.55; color: var(--ink-soft); margin: 0 0 4px; }
 .cintel-row p:last-child { margin-bottom: 0; }
-.cintel-warn { color: var(--ink); }
 
 /* Icon-led lines (getting around / by car) */
 .cintel-ico {
@@ -19,7 +18,6 @@
 }
 .cintel-line-warn { color: var(--ink); }
 .cintel-insights li { font-size: 12.5px; line-height: 1.5; color: var(--ink-soft); margin-bottom: 4px; }
-.panel-cintel { padding: 0 20px 16px; }
 
 /* Trip planner: transport preference + per-leg mode picker */
 .trip-transport-seg { display: flex; gap: 6px; }
@@ -59,27 +57,6 @@
 .trip-leg-mode small { font-family: var(--mono); font-size: 10px; color: var(--ink-mute); }
 
 /* Bag check: the chosen tier as each airline's real allowance + gate fee. */
-.bag-check {
-  margin: 10px 0 4px;
-  padding: 10px 12px;
-  background: var(--bg-card);
-  border: 1px solid var(--rule);
-  border-radius: var(--radius-control);
-}
-.bag-check-title {
-  display: flex; align-items: center; gap: 5px;
-  font-size: var(--text-micro); font-weight: 700; color: var(--ink);
-  margin-bottom: 5px;
-}
-.bag-check-line {
-  display: flex; align-items: flex-start; gap: 6px;
-  margin: 4px 0 0;
-  font-size: 11.5px; line-height: 1.5; color: var(--ink-soft);
-}
-.bag-check-line svg { flex: none; margin-top: 3px; }
-.bag-check-ok { color: var(--status-success); }
-.bag-check-warn { color: var(--ink-soft); }
-.bag-check-warn svg { color: var(--accent); }
 
 /* Curated secondary-hub shuttle note under a flight row. */
 .itin-groundlink {
@@ -124,27 +101,6 @@
 }
 
 /* Guided wizard: travel step (car advice + transport/pace tiles) */
-.guide-subtitle { font-family: var(--display); font-size: 17px; margin: 18px 0 10px; color: var(--ink); }
-.guide-car-advice p { font-size: 12.5px; color: var(--ink-soft); line-height: 1.5; margin: 3px 0; }
-.guide-transport-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.guide-transport {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 3px;
-  padding: 12px;
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  background: var(--bg-card);
-  cursor: pointer;
-  font-family: var(--ui);
-  text-align: left;
-}
-.guide-transport.on { border-color: var(--accent); background: var(--accent-bg); box-shadow: 0 0 0 2px var(--accent-bg); }
-.guide-transport-icon { font-size: var(--text-title); }
-.guide-transport-label { font-weight: 700; font-size: var(--text-label); color: var(--ink); }
-.guide-transport-sub { font-size: var(--text-micro); color: var(--ink-mute); line-height: 1.4; }
-@media (max-width: 599px) { .guide-transport-grid { grid-template-columns: 1fr; } }
 
 /* Day planner: start-time chips, picker map, Google Maps link */
 .day-start-row { margin-top: 8px; }.day-build-map .trip-map, .day-build-map > div { position: absolute !important; inset: 0; }
@@ -172,51 +128,15 @@
   gap: 7px;
 }
 .section-title-iconed svg { flex: none; color: var(--accent); }
-.tab-iconed.active svg { color: var(--accent); }
 
 /* ─── Detail panel: grouped cost breakdown ───
    Three clearly separated buckets (getting there / your stay / on the
    ground), each an icon-led card in the same visual language as the
    lifestyle panel's preview table. */
-.cost-group {
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  background: var(--paper);
-  margin-bottom: 12px;
-  overflow: hidden;
-}
 /* One cost line, as a row you could read off a receipt: a tinted glyph tile,
    what it is and what it assumes, then the figure with the single fact that
-   says what the figure is for. */
-.cost-group-head {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 12px 12px 14px;
-  background: var(--paper);
-  cursor: pointer;
-}
-.cost-group-head:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }/* Prose, so it is set in the UI face: the mono is reserved for the figures
+   says what the figure is for. *//* Prose, so it is set in the UI face: the mono is reserved for the figures
    in the column to its right. */
-
-.cost-group-val {
-  font-family: var(--mono);
-  font-size: 15px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-  white-space: nowrap;
-}
-.cost-group-head[aria-expanded="true"] .cost-group-caret { transform: rotate(180deg); }
-.cost-group-body { padding: 4px 14px 12px; border-top: 1px solid var(--rule); }
-.cost-group-body .total-row:first-child { border-top: none; }
-.cost-group-links {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-  margin-top: 12px;
-}
 
 /* ─── Stay tier chips: how expensive to sleep ───
    Dorm bed through 4-5 star hotel; the active tier prices the stay and every
@@ -260,70 +180,7 @@
 /* ─── Cost-group actions: verify this price, or change what drives it ───
    Every figure in the panel is an estimate; these are the only ways out of
    one, so they read as buttons rather than the underlined footnotes they
-   used to be. */
-.cost-action {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  border-radius: var(--radius-pill);
-  border: 1px solid transparent;
-  font: inherit;
-  font-size: 12.5px;
-  line-height: 1;
-  text-decoration: none;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: background .15s, border-color .15s, color .15s, transform .12s;
-}
-.cost-action:active { transform: translateY(1px); }
-.cost-action svg { flex: none; }
-
-.cost-action.is-primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--paper);
-}
-@media (hover: hover) {
-  .cost-action.is-primary:hover { background: var(--accent-press); border-color: var(--accent-press); }
-}
-
-.cost-action.is-secondary {
-  background: none;
-  border-color: var(--rule);
-  color: var(--ink-soft);
-}
-@media (hover: hover) {
-  .cost-action.is-secondary:hover { border-color: var(--accent); color: var(--accent); }
-}
-
-.cost-action.is-action {
-  background: var(--paper-dim);
-  border-color: var(--rule);
-  color: var(--ink);
-}
-@media (hover: hover) {
-  .cost-action.is-action:hover { border-color: var(--ink); background: var(--paper); }
-}
-
-.cost-local-rates-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-top: 8px;
-}
-.cost-local-rates-label {
-  font-size: var(--text-micro);
-  color: var(--ink-mute);
-}
-.cost-local-rates {
-  margin: 8px 0 0;
-  font-family: var(--mono);
-  font-size: 10px;
-  line-height: 1.7;
-  color: var(--ink-mute);
-}/* The grand total pins to the foot of the panel while the groups above are
+   used to be. *//* The grand total pins to the foot of the panel while the groups above are
    being read, so the figure the whole breakdown is explaining is never
    scrolled off. It settles into place naturally at the end of the section.
    The wrapper (not the card) is what sticks: its paper background is the
@@ -340,11 +197,6 @@
    foot of the panel, so the number never scrolls away. */
 
 /* ─── Lifestyle: filter-bar entry point + unit rates ─── */
-.lifestyle-pill {
-  gap: 6px;
-  padding: 6px 12px;
-}
-.lifestyle-pill svg { flex: none; }
 .line .lbl small {
   display: block;
   font-family: var(--mono);
@@ -354,9 +206,6 @@
 }
 
 /* ─── Bigger Home shortcut on mobile (overrides the 19px rule above) ─── */
-@media (max-width: 768px) {
-  .header-home-icon { width: 22px; height: 22px; }
-}
 
 /* ─── Day planner: landing "Days" stepper sits inline in its city row ───
    It shares a flex row with the city name (flex:1) and the × remove button,
@@ -523,10 +372,6 @@
 @media (hover: hover) {
   .day-timeline-row:hover .day-assigned-row { border-color: var(--ink-soft); }
 }
-.day-timeline-row.map-focus .day-assigned-row {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-bg);
-}
 
 /* Multi-city chips: city + its own remove control. */
 .day-city-chip {
@@ -617,302 +462,17 @@
 }
 
 /* ─── Shape-your-day: style cards ─── */
-.shape-style-list {
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-}
-.shape-style {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  text-align: left;
-  padding: 12px 14px;
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  background: var(--paper);
-  transition: border-color .15s, background .15s, transform .15s;
-}
-@media (hover: hover) {
-  .shape-style:hover { border-color: var(--accent); transform: translateY(-1px); }
-}
-.shape-style.on { border-color: var(--accent); background: var(--accent-bg); }
-.shape-style-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px; height: 36px;
-  flex-shrink: 0;
-  border-radius: var(--radius-control);
-  background: var(--accent-bg);
-  color: var(--accent);
-}
-.shape-style-text { flex: 1; min-width: 0; }
-.shape-style-text b {
-  display: block;
-  font-family: var(--display);
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--ink);
-}
-.shape-style-text small {
-  display: block;
-  font-size: 11.5px;
-  color: var(--ink-soft);
-  line-height: 1.4;
-  margin-top: 1px;
-}
-.shape-style-arrow { color: var(--ink-mute); font-size: 18px; flex-shrink: 0; }
 
 /* ─── Shape-your-day: swipe deck ─── */
-.shape-deck-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 10px;
-  font-family: var(--ui);
-  font-weight: 600;
-  font-size: var(--text-caption);
-  color: var(--ink-soft);
-}
-.shape-deck-added { color: var(--accent); font-weight: 700; }
-.shape-card {
-  border: 1px solid var(--rule);
-  border-radius: var(--radius-card);
-  overflow: hidden;
-  background: var(--paper);
-  box-shadow: var(--shadow-2);
-  touch-action: pan-y;
-  user-select: none;
-  -webkit-user-select: none;
-  cursor: grab;
-}
-.shape-card:active { cursor: grabbing; }
-.shape-card-photo {
-  position: relative;
-  height: 190px;
-  background: var(--paper-dim) center/cover no-repeat;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.shape-card-fallback { font-family: var(--display); font-size: 44px; color: var(--ink-mute); }
-.shape-card-must {
-  position: absolute;
-  top: 10px; left: 10px;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 4px 10px;
-  border-radius: var(--radius-pill);
-  background: var(--accent);
-  color: var(--on-fill);
-  font-family: var(--ui);
-  font-size: var(--text-micro);
-  font-weight: 700;
-}
-.shape-card-stamp {
-  position: absolute;
-  top: 14px;
-  padding: 6px 16px;
-  border-radius: 8px;
-  font-family: var(--ui);
-  font-size: 15px;
-  font-weight: 700;
-  transform: rotate(-8deg);
-  border: 2.5px solid currentColor;
-  background: rgba(246, 245, 242, 0.85);
-}
-.shape-card-stamp.add { right: 14px; color: var(--leaf-ink); }
-.shape-card-stamp.skip { left: 14px; color: var(--warn-ink); transform: rotate(8deg); }
-.shape-card-body { padding: 14px 16px 16px; }
-.shape-card-name {
-  font-family: var(--display);
-  font-size: 19px;
-  font-weight: 600;
-  color: var(--ink);
-  line-height: 1.15;
-}
-.shape-card-kind {
-  font-family: var(--ui);
-  font-weight: 600;
-  font-size: var(--text-micro);
-  color: var(--ink-mute);
-  margin-top: 3px;
-}
-.shape-card-desc {
-  margin: 8px 0 0;
-  font-size: 12.5px;
-  line-height: 1.5;
-  color: var(--ink-soft);
-}
-.shape-card-pair {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-  margin: 10px 0 0;
-  padding: 8px 10px;
-  border-radius: 8px;
-  background: var(--accent-bg);
-  font-size: var(--text-caption);
-  line-height: 1.45;
-  color: var(--ink-soft);
-}
-.shape-card-pair svg { flex: none; color: var(--accent); transform: translateY(1px); }
-.shape-card-pair b { color: var(--ink); }
-.shape-deck-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 14px;
-}
-.shape-deck-btn {
-  flex: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  padding: 12px;
-  border-radius: 12px;
-  font-size: var(--text-body);
-  font-weight: 700;
-  transition: opacity .15s, background .15s;
-}
-.shape-deck-btn.skip {
-  border: 1px solid var(--rule);
-  background: var(--paper);
-  color: var(--ink-soft);
-}
-@media (hover: hover) {
-  .shape-deck-btn.skip:hover { border-color: var(--warn-ink); color: var(--warn-ink); }
-}
-.shape-deck-btn.add {
-  border: 1px solid var(--accent);
-  background: var(--accent);
-  color: var(--on-fill);
-}
-@media (hover: hover) {
-  .shape-deck-btn.add:hover { opacity: 0.92; }
-}
-.shape-deck-hint {
-  margin: 10px 0 0;
-  text-align: center;
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--ink-mute);
-}
 
 /* ─── Shape-your-day: pick overview + live map ───
    Step 5 widens the modal and splits it: a tappable overview list on the left,
    a live map on the right. Adding a place lights up its pin, so the traveller
    watches the day take shape in real time. */
-.shape-modal.shape-modal-wide { max-width: 940px; }
-.shape-pick { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 16px; }
-.shape-pick-list { max-height: 460px; overflow-y: auto; padding-right: 4px; }
-.shape-pick-list-head {
-  display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
-  margin: 0 2px 10px; font-size: var(--text-caption); color: var(--ink-soft);
-}
-.shape-pick-list-head .shape-deck-added { color: var(--accent); font-weight: 700; white-space: nowrap; }
 
 /* Category filter chips: pick a kind of place (all / sights / nature / …). */
-.shape-cat-filter {
-  display: flex; flex-wrap: wrap; gap: 6px; margin: 0 2px 8px;
-}
-.shape-cat-chip {
-  display: inline-flex; align-items: center; gap: 5px;
-  padding: 5px 9px; border-radius: var(--radius-pill);
-  border: 1px solid var(--rule); background: var(--paper);
-  font-size: 11.5px; font-weight: 600; color: var(--ink-soft);
-  cursor: pointer; transition: border-color .14s, background .14s, color .14s;
-}
-.shape-cat-chip svg { color: var(--ink-mute); flex: none; }
-@media (hover: hover) {
-  .shape-cat-chip:hover { border-color: var(--accent); color: var(--ink); }
-}
-.shape-cat-chip.on { background: var(--accent); border-color: var(--accent); color: var(--on-fill); }
-.shape-cat-chip.on svg { color: var(--on-fill); }
-.shape-cat-count {
-  font-family: var(--mono); font-size: 10px; opacity: .8;
-  padding-left: 2px;
-}
 
 /* Legend: teaches the star + the 0-10 number + the info affordance in one line. */
-.shape-pick-legend {
-  display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 0 2px 10px;
-  font-size: 10.5px; color: var(--ink-mute);
-}
-.shape-pick-legend > span { display: inline-flex; align-items: center; gap: 4px; }
-.shape-pick-legend-must svg { color: var(--accent); }
-
-.shape-pick-item { margin-bottom: 7px; }
-.shape-pick-row {
-  display: flex; align-items: stretch; gap: 6px; width: 100%;
-  padding: 6px 8px; border: 1px solid var(--rule); border-radius: 12px;
-  background: var(--paper);
-  transition: border-color .14s, background .14s, transform .1s;
-}
-@media (hover: hover) {
-  .shape-pick-row:hover { border-color: var(--accent); transform: translateY(-1px); }
-}
-.shape-pick-row.on { border-color: var(--accent); background: var(--accent-bg); }
-.shape-pick-item.open .shape-pick-row { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
-.shape-pick-body {
-  display: flex; align-items: center; gap: 11px; flex: 1; min-width: 0;
-  padding: 2px; background: none; border: none; text-align: left; cursor: pointer;
-}
-.shape-pick-thumb {
-  flex: none; width: 46px; height: 46px; border-radius: 9px;
-  background: var(--paper-dim) center/cover no-repeat;
-  display: flex; align-items: center; justify-content: center; color: var(--ink-mute);
-}
-.shape-pick-text { flex: 1; min-width: 0; }
-.shape-pick-text b {
-  display: block;
-  font-family: var(--display); font-size: var(--text-body); font-weight: 600; color: var(--ink);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.shape-pick-meta {
-  display: flex; align-items: center; gap: 6px; margin-top: 3px; min-width: 0;
-}
-.shape-pick-tag {
-  display: inline-flex; align-items: center; gap: 3px; flex: none;
-  font-size: 10.5px; font-weight: 600; color: var(--ink-soft);
-}
-.shape-pick-tag.must { color: var(--accent); }
-.shape-pick-tag.must svg { color: var(--accent); }
-.shape-pick-meta small {
-  font-size: var(--text-micro); color: var(--ink-soft);
-  text-transform: capitalize; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.shape-pick-info, .shape-pick-toggle {
-  flex: none; align-self: center; width: 30px; height: 30px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  border: 1px solid var(--rule); background: var(--paper); color: var(--ink-mute);
-  cursor: pointer; transition: border-color .14s, background .14s, color .14s;
-}
-.shape-pick-info.on { border-color: var(--accent); color: var(--accent); }
-@media (hover: hover) {
-  .shape-pick-info:hover { border-color: var(--accent); color: var(--accent); }
-}
-.shape-pick-info.on { background: var(--accent-bg); }
-.shape-pick-toggle { font-size: 17px; line-height: 1; }
-@media (hover: hover) {
-  .shape-pick-row:hover .shape-pick-toggle { border-color: var(--accent); color: var(--accent); }
-}
-.shape-pick-toggle.on { background: var(--accent); border-color: var(--accent); color: var(--on-fill); }
-.shape-pick-desc {
-  padding: 9px 12px 11px; border: 1px solid var(--rule); border-top: none;
-  border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;
-  background: var(--paper-dim);
-}
-.shape-pick-desc p { margin: 0; font-size: var(--text-caption); line-height: 1.5; color: var(--ink-soft); }
-.shape-pick-desc-why { margin-top: 6px !important; font-size: var(--text-micro) !important; color: var(--ink-mute) !important; }
-.shape-pick-desc-why b { color: var(--ink-soft); font-weight: 700; }
-.shape-pick-map {
-  height: 460px; border-radius: 12px; overflow: hidden; border: 1px solid var(--rule);
-}
-.shape-pick-map .dem-map, .shape-pick-map .cpm { height: 100%; }
 
 /* Mobile: lift the wizard clear of the bottom edge (home-indicator space)
    and keep rounded corners since it now floats. */
@@ -928,10 +488,6 @@
   /* T8.2: 10px of padding around 13.5px type is a 39px button, and the whole
      way forward through a seven-step form runs through it. */
   /* Step 5 on phones: map on top, the tappable list under it, each stacked. */
-  .shape-modal.shape-modal-wide { max-width: 100%; }
-  .shape-pick { grid-template-columns: 1fr; gap: 12px; }
-  .shape-pick-map { order: -1; height: 40vh; min-height: 240px; }
-  .shape-pick-list { max-height: 42vh; }
 }
 
 /* The 2-column inline drawer that used to live here (a grid of the desktop
@@ -968,14 +524,6 @@
 
 /* Lifestyle panel: one merged Eating & drinking section with the cadence
    toggle in its header row; consistent section rhythm. */
-.lifestyle-section-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 4px;
-}
-.lifestyle-section-head .section-title { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
 .lifestyle-cadence { margin: 0; }
 .accom-panel .panel-section { padding: 18px 26px; }
 
@@ -1136,9 +684,6 @@
 .day-tier-worth .day-tier-badge { color: var(--accent); }
 
 /* Shape-day wizard: feasibility step groups */
-.shape-feas-group { margin-bottom: 14px; }
-.shape-feas-group .trip-field-label { display: block; margin-bottom: 7px; }
-.shape-feas-group .shape-style { padding: 10px 14px; }
 
 /* Sight search inside "Add to your trip" + distance notes on far sights */
 .day-poi-search { margin-bottom: 10px; }
@@ -1258,12 +803,4 @@
   padding: 26px 24px; box-shadow: var(--shadow-2);
 }
 .crash-title { font-family: var(--display); font-size: 22px; color: var(--ink); margin: 0 0 8px; }
-.crash-lead { font-size: var(--text-body); color: var(--ink-soft); margin: 0 0 14px; line-height: 1.5; }
-.crash-detail {
-  font-family: var(--mono); font-size: var(--text-caption); color: var(--accent);
-  background: rgba(11, 116, 128, 0.08); border-radius: 8px;
-  padding: 10px 12px; margin: 0 0 18px;
-  white-space: pre-wrap; word-break: break-word; max-height: 160px; overflow: auto;
-}
-.crash-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 

@@ -24,246 +24,35 @@
    -------------------------------------------------------------------------- */
 
 /* White surfaces on the warm light grey (carta-design "Own world"). */
-.destp-v3 { background: var(--surface-page); }
 
 /* The grid. One column on a phone in reading order: head, key facts, the
    price card, the sections. From 1024 px the card is a sticky side column
    beside every other row (carta-design: a receipt page may run one), inside
    the 1180 px reading cap. The card spans all rows, so its height never
    stretches a row of the left column. */
-.destp-v3 .destp-grid {
-  display: block;
-  width: 100%;
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 0 var(--space-4) var(--space-8);
-}
 @media (min-width: 1024px) {
-  .destp-v3 .destp-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 340px;
-    column-gap: var(--space-7);
-    align-items: start;
-    padding: 0 var(--space-6) var(--space-8);
-  }
-  .destp-v3 .destp-grid > * { grid-column: 1; min-width: 0; }
   /* Sticky under the section rail. Never taller than the view: with the
      calendar open the card scrolls inside its column instead of losing its
      top edge above the screen. */
-  .destp-v3 .destp-grid > .destp-side {
-    grid-column: 2;
-    grid-row: 1 / span 40;
-    position: sticky;
-    top: calc(var(--tap) + var(--space-4));
-    max-height: calc(100dvh - 52px - var(--tap) - var(--space-4) - env(safe-area-inset-top, 0px));
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    scrollbar-width: thin;
-    padding-top: var(--space-5);
-  }
-}
-@media (min-width: 1280px) {
-  .destp-v3 .destp-grid { grid-template-columns: minmax(0, 1fr) 360px; }
 }
 
 /* The head: the place, then one row of what it is (Score, gem, country,
    UNESCO), then the short intro at reading measure. */
-.destp-v3 .destp-head {
-  display: block;
-  max-width: none;
-  margin: 0;
-  padding: var(--space-5) 0 var(--space-4);
-}
-.destp-v3 .destp-city {
-  font-family: var(--font);
-  font-size: var(--text-headline);
-  font-weight: 700;
-  line-height: var(--leading-tight);
-  letter-spacing: -0.02em;
-  color: var(--text);
-}
-@media (min-width: 769px) {
-  .destp-v3 .destp-city { font-size: var(--text-display); }
-}
 /* A pointer open moves focus to the heading (tabindex -1); a heading is not
    a control, so it draws no ring. The bar's controls keep theirs. */
-.destp-v3 .destp-city:focus { outline-color: transparent; }
-.destp-meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-2) var(--space-4);
-  margin-top: var(--space-2);
-}
-.destp-v3 .destp-country {
-  display: inline-flex;
-  align-items: baseline;
-  gap: var(--space-2);
-  margin: 0;
-  font-size: var(--text-body);
-  color: var(--text-2);
-}
-.destp-v3 .destp-rank { font-size: var(--text-label); font-weight: 600; color: var(--text); }
-.destp-v3 .destp-score {
-  display: inline-flex;
-  align-items: center;
-  min-height: 32px;
-  padding: 0 var(--space-2) 0 0;
-  border: 0;
-  border-radius: var(--radius-control);
-  background: none;
-  color: inherit;
-  text-decoration: none;
-  cursor: pointer;
-}
-@media (hover: hover) {
-  .destp-v3 .destp-score:hover { background: var(--surface-hover); }
-}
-.destp-v3 .destp-score:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-.destp-v3 .destp-short {
-  max-width: min(var(--measure), 58ch);
-  margin: var(--space-3) 0 0;
-  font-size: var(--text-lead);
-  font-weight: 400;
-  line-height: var(--leading-body);
-  color: var(--text);
-}
-.destp-v3 .destp-short-src {
-  display: inline;
-  margin: 0;
-  font-size: var(--text-body);
-  color: var(--action);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
 /* In the sources line under the tabs the guide link takes the caption size. */
-.destp-v3 .destp-sources .destp-short-src { font-size: inherit; }
-@media (hover: hover) {
-  .destp-v3 .destp-short-src:hover { color: var(--action-hover); }
-}
 
 /* The key facts (carta-design "Detail page grammar"): label over value, a
    hairline above and below the band, no card and no colour. */
-.destp-keys {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-3) var(--space-5);
-  margin: 0;
-  padding: var(--space-4) 0;
-  border-top: 1px solid var(--border-soft);
-  border-bottom: 1px solid var(--border-soft);
-}
-@media (min-width: 600px) {
-  .destp-keys { grid-template-columns: repeat(auto-fill, minmax(116px, 1fr)); }
-}
-.destp-key { min-width: 0; }
-.destp-key dt {
-  font-size: var(--text-caption);
-  font-weight: 500;
-  color: var(--text-2);
-}
-.destp-key dd.destp-key-note {
-  font-size: var(--text-caption);
-  font-weight: 400;
-  color: var(--text-2);
-}
-.destp-key dd {
-  margin: 2px 0 0;
-  font-size: var(--text-body);
-  font-weight: 600;
-  color: var(--text);
-  font-variant-numeric: tabular-nums;
-  overflow-wrap: break-word;
-}
 
 /* The price card: the page's one bordered object. On a phone it sits in the
    flow after the facts; from 1024 px in the sticky side column. Inputs and
    the one primary first, the receipt after them (a booking card's order), so
    the primary is in view at 1280 x 720. */
-.destp-v3 .destp-side { padding-top: var(--space-5); }
-.dprice-title {
-  margin: 0;
-  font-size: var(--text-label);
-  font-weight: 500;
-  color: var(--text-2);
-}
-.dprice-day {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: var(--space-1) var(--space-2);
-  margin: var(--space-1) 0 0;
-}
-.dprice-day .money {
-  font-size: var(--text-headline);
-  font-weight: 700;
-  line-height: var(--leading-tight);
-  color: var(--text);
-}
-.dprice-day .money-est { font-size: var(--text-label); font-weight: 500; color: var(--text-3); }
-.dprice-day-unit { font-size: var(--text-body); color: var(--text-2); }
-
-.dprice-inputs {
-  border: 1px solid var(--border);
-  border-radius: var(--radius-control);
-}
-.dprice-row { display: flex; align-items: center; min-height: var(--tap); }
-.dprice-row + .dprice-row { border-top: 1px solid var(--border-soft); }
-.dprice-row.is-open { flex-direction: column; align-items: stretch; }
-.dprice-input {
-  flex: 1 1 auto;
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  min-width: 0;
-  min-height: var(--tap);
-  padding: var(--space-2) var(--space-3);
-  border: 0;
-  border-radius: var(--radius-control);
-  background: none;
-  color: var(--text);
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-.dprice-input.is-static { cursor: default; }
 /* The Dates and Stay rows are kit quiet Buttons (T429), laid out as a
    label-and-value row: the label left in --text-2, the value right in
    --text, the chevron at the end. Their hover is the neutral surface, not
    the brown tint: the row holds a value, the brown is for the primary. */
-.btn.dprice-input {
-  justify-content: flex-start;
-  padding: var(--space-2) var(--space-3);
-  border: 0;
-  font-weight: 400;
-  color: var(--text);
-}
-.btn.dprice-input .btn-label {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  flex: 1 1 auto;
-  min-width: 0;
-}
-@media (hover: hover) {
-  .btn.dprice-input:hover { background: var(--surface-hover); }
-}
-.dprice-input-label { flex: none; font-size: var(--text-label); color: var(--text-2); }
-.dprice-input-value {
-  margin-left: auto;
-  min-width: 0;
-  font-size: var(--text-body);
-  font-weight: 600;
-  text-align: right;
-  overflow-wrap: anywhere;
-}
-.dprice-chev { flex: none; color: var(--text-3); transition: transform var(--dur-2) var(--ease-out); }
-.dprice-row.is-open .dprice-chev { transform: rotate(180deg); }
-@media (hover: hover) {
-  .dprice-input:not(.is-static):hover { background: var(--surface-hover); }
-}
-.dprice-input:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
-.dprice-row .fstepper { margin-right: var(--space-1); }
 .dprice-dates {
   display: flex;
   flex-direction: column;
@@ -273,83 +62,12 @@
 }
 .dprice-end { display: inline-flex; flex-direction: column; line-height: 1.2; }
 .dprice-end-label { font-size: var(--text-caption); color: var(--text-2); }
-@media (prefers-reduced-motion: reduce) {
-  .dprice-chev { transition: none; }
-}
-
-.dprice-actions { display: flex; flex-direction: column; gap: var(--space-2); }
 
 /* The split of the total: bed and food on the ink ramp, 8 px, the figures
    in the lines under it (carta-design "Data drawings", the thin bar). */
-.dprice-bar {
-  display: flex;
-  gap: 1px;
-  height: 8px;
-  margin-top: var(--space-2);
-  border-radius: var(--radius-pill);
-  overflow: hidden;
-  background: var(--surface);
-}
-.dprice-bar-stay { background: var(--text); }
-.dprice-bar-food { background: var(--kind-village); }
-
-
-.dprice-foot {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-1) var(--space-3);
-}
-.dprice-excludes { margin: 0; font-size: var(--text-caption); line-height: var(--leading-ui); color: var(--text-2); }
 
 /* The open sections: a heading and its body under generous space, no box
    and no toggle. Photography is their colour (owner, T429). */
-.dsec2 { padding-top: var(--space-7); scroll-margin-top: var(--tap); }
-.dsec2-title,
-.destp-exits-title {
-  margin: 0 0 var(--space-4);
-  font-family: var(--font);
-  font-size: var(--text-title);
-  font-weight: 700;
-  line-height: var(--leading-tight);
-  letter-spacing: -0.01em;
-  color: var(--text);
-}
-.dsec2-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2) var(--space-4);
-  margin-bottom: var(--space-4);
-}
-.dsec2-head .dsec2-title { margin: 0; }
-.destp-v3 .destp-subhead {
-  margin: var(--space-5) 0 var(--space-2);
-  font-family: var(--font);
-  font-size: var(--text-lead);
-  font-weight: 600;
-  color: var(--text);
-}
-
-.dtile-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 var(--space-2);
-  font-size: var(--text-label);
-  color: var(--text-2);
-  font-variant-numeric: tabular-nums;
-}
-.ddo2-glyph {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  color: var(--text-3);
-  background: var(--surface-sunken);
-}
 
 /* The map (carta-design "Map and list in sync"): a still block holds its
    place until it comes near the view, then the map takes the same box. A
@@ -357,67 +75,12 @@
    is; the committed one carries the one brown mark, its number. */
 /* 320 px: the height DestinationPage hands DestMap, held by the placeholder
    too, so the map arriving moves nothing. */
-.dmap-slot .dmap,
-.dmap-slot .place-map-wait {
-  height: 320px;
-  border-radius: var(--radius-card);
-  overflow: hidden;
-  background: var(--surface-sunken);
-}
-.destp-v3 .destp-layers { margin: 0; }
-.dhl2-n {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 22px;
-  height: 22px;
-  margin-right: var(--space-2);
-  padding: 0 var(--space-1);
-  border-radius: var(--radius-pill);
-  background: var(--text);
-  color: var(--surface);
-  font-size: var(--text-caption);
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  vertical-align: 1px;
-}
-.dhl2.is-focus .dhl2-n { background: var(--action); }
-.dhl2.is-hover { border-color: var(--text); outline: 1px solid var(--text); outline-offset: -2px; }
 
 /* Links out: one shape for every hand-over (Google Maps, the booking
    sites, the parking search). A link, not a button: it only navigates. */
-.destp-exit {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: var(--tap);
-  padding: 0 var(--space-4);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  color: var(--text);
-  font-size: var(--text-label);
-  font-weight: 600;
-  text-decoration: none;
-  transition: border-color var(--dur-1) var(--ease-out);
-}
-.destp-exit svg { color: var(--text-2); }
-@media (hover: hover) {
-  .destp-exit:hover { border-color: var(--neutral-300); }
-}
-.destp-exit:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-@media (prefers-reduced-motion: reduce) {
-  .destp-exit { transition: none; }
-}
-.destp-maps-link,
-.dpark-search { margin-top: var(--space-4); }
-.destp-exits { padding-top: var(--space-7); }
-.destp-exit-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.destp-exits-note { margin: var(--space-3) 0 0; font-size: var(--text-caption); color: var(--text-2); }
 
 /* The folded rows: under the open sections, one hairline list. */
 .destp-folds { margin-top: var(--space-7); border-bottom: 1px solid var(--border-soft); }
-.destp-v3 .destp-members .destp-subhead { margin-top: var(--space-6); }
 
 /* The forecast holds its height while it loads, so nothing under it moves. */
 .destp-week.is-waiting { min-height: 132px; }
@@ -427,7 +90,6 @@
 .destp .xp-wday-name,
 .destp .xp-wday-lo,
 .destp .xp-wday-rain,
-.destp .xp-source,
 .destp .destp-crowd-year {
   font-family: var(--font);
   font-size: var(--text-caption);
@@ -435,13 +97,6 @@
   color: var(--text-2);
 }
 .destp .xp-wday-hi { font-size: var(--text-label); font-variant-numeric: tabular-nums; }
-.destp-v3 .destp-wait {
-  width: 100%;
-  max-width: none;
-  margin: var(--space-4) 0 0;
-  border-radius: var(--radius-card);
-  background: var(--surface-sunken);
-}
 
 /* The Lifestyle dialog opens over the page. A destination or trip page is a
    full-screen layer at z 240 (24-destination-workspace.css, 23-places-pages.css)
@@ -465,104 +120,11 @@ body:has(.destp, .tpage) .accom-panel.lifestyle-panel { z-index: calc(var(--z-pa
    "Caption band"). The place's whole name on up to two lines (three if it
    must), the credit on a small second line. Every band holds the same
    height, so the photographs line up along the strip. */
-.destp-v3 .destp-gallery {
-  --destp-photo-h: clamp(200px, 30dvh, 300px);
-  height: auto;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border-soft);
-}
-@media (min-width: 769px) {
-  .destp-v3 .destp-gallery { --destp-photo-h: clamp(220px, 32dvh, 420px); }
-}
-@media (orientation: landscape) and (max-height: 520px) {
-  .destp-v3 .destp-gallery { --destp-photo-h: 40dvh; }
-}
-.destp-v3 .destp-gallery-track { height: auto; align-items: stretch; }
-.destp-v3 .destp-slide {
-  display: flex;
-  flex-direction: column;
-  height: auto;
-  min-width: 220px;
-}
-.destp-v3 .destp-slide img {
-  height: var(--destp-photo-h);
-  min-width: 100%;
-  flex: none;
-}
-.destp-v3 .destp-gallery.is-blank { height: var(--destp-photo-h); }
-.destp-v3 .destp-slide-band {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  gap: 2px;
-  width: 0;
-  min-width: 100%;
-  height: auto;
-  min-height: 60px;
-  padding: var(--space-2) var(--space-3);
-  box-sizing: border-box;
-  background: var(--surface);
-  font-family: var(--font);
-}
-.destp-v3 .destp-slide-cap {
-  position: static;
-  max-width: 100%;
-  padding: 0;
-  border-radius: 0;
-  background: none;
-  color: var(--text);
-  font-size: var(--text-label);
-  font-weight: 600;
-  line-height: 1.3;
-  white-space: normal;
-  overflow: visible;
-  overflow-wrap: break-word;
-}
-.destp-v3 .destp-slide-credit {
-  display: block;
-  max-width: 100%;
-  width: auto;
-  height: auto;
-  margin: 0;
-  /* A real target on touch without a taller band: the hit area grows into
-     the band's padding, the text keeps its line. */
-  padding-block: var(--space-2);
-  margin-block: calc(-1 * var(--space-2));
-  color: var(--text-3);
-  font-size: var(--text-caption);
-  line-height: 1.3;
-  text-decoration: none;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-@media (hover: hover) {
-  .destp-v3 .destp-slide-credit:hover { color: var(--text); text-decoration: underline; text-underline-offset: 2px; }
-}
-.destp-v3 .destp-gallery-arrow {
-  position: absolute;
-  top: calc(var(--destp-photo-h) / 2);
-  transform: translateY(-50%);
-  z-index: 2;
-}
-.destp-v3 .destp-gallery-arrow.is-prev { left: var(--space-3); }
-.destp-v3 .destp-gallery-arrow.is-next { right: var(--space-3); }
-.destp-v3 .destp-gallery-arrow.is-prev .icon-btn-glyph { transform: rotate(180deg); }
-.destp-v3 .destp-gallery-arrow:disabled { opacity: 0; pointer-events: none; }
 /* On a phone the next photograph shows at the edge, so the strip reads as
    one to swipe, and the arrows stay: a swipe is never the only way
    (carta-design "Tracks"). */
-@media (max-width: 700px) {
-  .destp-v3 .destp-slide { width: 86%; }
-  .destp-v3 .destp-slide img { width: 100%; max-width: none; }
-  .destp-v3 .destp-gallery-arrow.is-prev { left: var(--space-2); }
-  .destp-v3 .destp-gallery-arrow.is-next { right: var(--space-2); }
-}
 .destp-gallery-track:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
 /* One photograph takes the whole band instead of leaving most of it empty. */
-.destp-v3 .destp-gallery.is-final .destp-slide:only-child { width: 100%; }
-.destp-v3 .destp-gallery.is-final .destp-slide:only-child img { width: 100%; max-width: none; }
 /* The track's focus ring is drawn over the photographs, inside the gallery:
    an outline on the scroller itself sits under the images (T405). */
 .destp-gallery:has(> .destp-gallery-track:focus-visible)::after {
@@ -635,11 +197,6 @@ body:has(.destp, .tpage) .accom-panel.lifestyle-panel { z-index: calc(var(--z-pa
 /* Safe areas. index.html sets viewport-fit=cover, so the full-screen page
    keeps its content out from under the rounded corners in landscape; the
    shared page bar keeps itself out from under the notch (70-item-pages.css). */
-.destp-v2 .destp-scroll {
-  padding-left: env(safe-area-inset-left, 0px);
-  padding-right: env(safe-area-inset-right, 0px);
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-}
 
 /* Folds are rows under a hairline, never boxes (carta-design "Detail page
    grammar"): no border box, no radius, no shadow, icons in --text-2. A long
@@ -708,22 +265,6 @@ body:has(.destp, .tpage) .accom-panel.lifestyle-panel { z-index: calc(var(--z-pa
 
 /* A caution is amber; the city's own parking word is ink with a status dot,
    never a green container (carta-design "Status, not green"). */
-.destp .destp-bookahead { background: var(--amber-bg); color: var(--text); }
-.destp-bookahead-icon { flex: none; color: var(--amber-ink); transform: translateY(2px); }
-.destp .dpark-web { background: var(--surface); border: 1px solid var(--border-soft); }
-.destp .dpark-web-head { color: var(--text); font-weight: 600; font-size: var(--text-caption); }
-.destp .dpark-web-head svg { display: none; }
-.destp .dpark-web-head::before {
-  content: '';
-  flex: none;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--status-success);
-}
-.destp .dpark-web-link,
-.destp .dpark-ok { color: var(--text); }
-.destp .dpark-web-line.is-warn { color: var(--amber-ink); }
 
 /* The status line for a failed PDF or a blocked clipboard: one line under
    the bar, the link itself selectable. */
@@ -746,18 +287,11 @@ body:has(.destp, .tpage) .accom-panel.lifestyle-panel { z-index: calc(var(--z-pa
 .destp-notice-x { margin-left: auto; }
 
 /* Long names and long languages wrap; they never push a row sideways. */
-.destp-city { overflow-wrap: anywhere; hyphens: auto; }
 
 /* Tap targets. On a touch screen every control on this page is --tap tall
    and wide; a link inside a sentence keeps its line and grows its hit area
    with padding, not its type. */
 @media (pointer: coarse) {
-  .destp-v3 .destp-score { min-height: var(--tap); }
-  .destp-park-nav a,
-  .destp .dpark-web-link { min-height: var(--tap); }
-  .destp-park-nav a { display: inline-flex; align-items: center; padding: 0 var(--space-3); }
-  .destp .dpark-web-link { display: inline-flex; align-items: center; gap: var(--space-1); }
-  .destp .destp-fest-name a { display: inline-flex; align-items: center; min-height: var(--tap); }
   .destp .maplibregl-ctrl-attrib-button { width: var(--tap); height: var(--tap); }
   .destp .destp-member-link { display: inline-flex; align-items: center; min-height: var(--tap); }
 }
@@ -768,65 +302,13 @@ body:has(.destp, .tpage) .accom-panel.lifestyle-panel { z-index: calc(var(--z-pa
 
 /* The day line under the name, phone and tablet only: what a day here costs
    is on the first screen. From 1024 px the sticky card carries it. */
-.destp-dayline {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: var(--space-1) var(--space-2);
-  margin: var(--space-2) 0 0;
-}
-.destp-dayline .money { font-size: var(--text-title); font-weight: 700; color: var(--text); }
-.destp-dayline .money-est { font-size: var(--text-label); font-weight: 500; color: var(--text-3); }
-.destp-dayline-unit { font-size: var(--text-body); color: var(--text-2); }
-@media (min-width: 1024px) { .destp-dayline { display: none; } }
 
 /* Things to do without a photograph: one hairline list, name over kind,
    two columns where the column is wide enough. */
-.ddo-list {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  column-gap: var(--space-6);
-  margin: var(--space-4) 0 0;
-  padding: 0;
-  list-style: none;
-}
-@media (min-width: 700px) { .ddo-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-.ddo-list > li { border-top: 1px solid var(--border-soft); }
-.ddo-list-row,
-.btn.ddo-list-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  gap: var(--space-3);
-  width: 100%;
-  min-height: var(--tap);
-  padding: var(--space-3) 0;
-  border: 0;
-  border-radius: 0;
-  background: none;
-  color: var(--text);
-  font-weight: 400;
-  text-align: left;
-  text-decoration: none;
-}
-.btn.ddo-list-row .btn-label { display: flex; align-items: flex-start; gap: var(--space-3); min-width: 0; }
-.ddo-list-icon { flex: none; margin-top: 2px; color: var(--text-2); }
-.ddo-list-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.ddo-list-name { font-size: var(--text-body); font-weight: 600; line-height: var(--leading-ui); overflow-wrap: break-word; }
-.ddo-list-meta { display: flex; flex-wrap: wrap; gap: 0 var(--space-2); font-size: var(--text-label); color: var(--text-2); }
-@media (hover: hover) {
-  a.ddo-list-row:hover .ddo-list-name,
-  .btn.ddo-list-row:hover .ddo-list-name { text-decoration: underline; text-underline-offset: 3px; }
-  .btn.ddo-list-row:hover { background: none; }
-}
-a.ddo-list-row:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 
 /* The routes that pass the town, brief: the name, then one line of facts. */
-.destp-v3 .drh-facts { display: flex; flex-wrap: wrap; gap: 0 var(--space-3); color: var(--text-2); font-size: var(--text-label); }
 
 /* The sources the page owes, one caption before the utility row. */
-.destp-sources { margin-top: var(--space-7); color: var(--text-2); font-size: var(--text-caption); line-height: var(--leading-ui); }
-.destp-sources p { margin: 0 0 var(--space-1); max-width: var(--measure); }
 
 /* No functional text under 11 px, no figure under 12: the crowd badge
    (19-guide-ratings.css draws its large size at 10 px) and the month
@@ -835,7 +317,6 @@ a.ddo-list-row:focus-visible { outline: 2px solid var(--focus); outline-offset: 
 .destp .climate-chart.has-figures .climate-name { font-size: var(--text-caption); }
 
 /* The country's rank in the rating fold is a fact in ink, not brown. */
-.destp .rb-country { color: var(--text); }
 
 /* The map credit's button on touch: one centred glyph, not a tiled one. */
 @media (pointer: coarse) {
@@ -846,10 +327,6 @@ a.ddo-list-row:focus-visible { outline: 2px solid var(--focus); outline-offset: 
 /* A control that takes keyboard focus is scrolled into view below the
    sticky section rail, never under it (T446: track cards were covered at
    1280 px). Sections keep their own margin for the rail's jumps. */
-.destp-v3 .card-open,
-.destp-v3 .ddo-list-row,
-.destp-v3 .drh-row,
-.destp-v3 .dsec-toggle { scroll-margin-top: calc(var(--tap) + var(--space-3)); }
 
 /* --------------------------------------------------------------------------
    T446, second round: the re-critique
@@ -864,36 +341,22 @@ a.ddo-list-row:focus-visible { outline: 2px solid var(--focus); outline-offset: 
 .destp .crowd-badge { --cr-ink: var(--text-2); background: var(--surface-sunken); border-color: var(--border); color: var(--text); }
 
 /* The day figure and its dot are one unit; the unit follows them. */
-.dprice-fig { display: inline-flex; align-items: baseline; gap: 2px; }
 
 /* The Stay value keeps one line; a long German label ends in an ellipsis
    before the chevron instead of pushing it off the row. */
-.btn.dprice-input .dprice-input-value { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; overflow-wrap: normal; }
 
 /* "What to bring" is a list, not chips that look tappable. */
-.destp .xp-packs { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: var(--space-2) var(--space-4); }
-.destp .xp-pack { padding: 0; border: 0; border-radius: 0; background: none; color: var(--text); font-size: var(--text-body); gap: var(--space-2); }
-.destp .xp-pack svg { color: var(--text-2); }
 
 /* The village list spans the column under its heading. */
-.destp-villages .destp-subhead { margin-bottom: var(--space-1); }
 
 
 
 /* MapLibre's controls: no blue glow on a pointer press (its own default),
    the house ring on keyboard focus; and on touch the enlarged credit
    button shows no white square behind its glyph. */
-.destp-v3 .maplibregl-ctrl button:focus:not(:focus-visible),
-.destp-v3 .maplibregl-ctrl-attrib-button:focus:not(:focus-visible) { box-shadow: none; outline: none; }
-.destp-v3 .maplibregl-ctrl button:focus-visible,
-.destp-v3 .maplibregl-ctrl-attrib-button:focus-visible { box-shadow: none; outline: 2px solid var(--focus); outline-offset: 2px; }
-@media (pointer: coarse) {
-  .destp-v3 .maplibregl-ctrl-attrib-button { background-color: transparent; }
-}
 
 /* The unit under the figure: the estimate dot ends the figure's line and
    never sits between the figure and its unit like a separator. */
-.dprice-day-unit { flex-basis: 100%; }
 
 /* --------------------------------------------------------------------------
    T499: four tabs and the Overview (roadmap 1.4, owner answers T491-a to i)
@@ -901,116 +364,29 @@ a.ddo-list-row:focus-visible { outline: 2px solid var(--focus); outline-offset: 
 
 /* What the day figure includes, under it, on the first screen. From 1024 px
    the card carries the figure and this sentence, and the head drops both. */
-.destp-v4 .destp-dayline-incl {
-  margin: var(--space-1) 0 0;
-  font-size: var(--text-caption);
-  line-height: var(--leading-ui);
-  color: var(--text-2);
-}
-@media (min-width: 1024px) {
-  .destp-v4 .destp-day { display: none; }
-}
-.dprice-incl { display: none; }
-@media (min-width: 1024px) {
-  .dprice-incl {
-    display: block;
-    margin: var(--space-1) 0 0;
-    font-size: var(--text-caption);
-    line-height: var(--leading-ui);
-    color: var(--text-2);
-  }
-}
 
 /* The tab bar follows the sticky-rail rule (owner answer T491-c): one band
    per page, --surface, a --border bottom edge, no shadow. It is the first
    child of the body, so it sticks for the whole panel. On a phone it runs
    to the screen's edges and scrolls sideways when a language's labels do
    not fit (German at 360 px); tabs are 48 px high on touch (T472-f). */
-.destp-v4 .destp-tabs {
-  position: sticky;
-  top: 0;
-  z-index: var(--z-sticky);
-  margin: var(--space-2) calc(-1 * var(--space-4)) 0;
-  padding: 0 var(--space-4);
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-}
-.destp-v4 .destp-tabs .ui-tabs {
-  gap: var(--space-5);
-  border-bottom: 0;
-  scroll-padding-inline: var(--space-4);
-}
-.destp-v4 .destp-tabs .ui-tab { flex: none; white-space: nowrap; }
-@media (pointer: coarse) {
-  .destp-v4 .destp-tabs .ui-tab { min-height: var(--tap-main, 48px); }
-}
-@media (min-width: 1024px) {
-  .destp-v4 .destp-tabs { margin-inline: 0; padding-inline: 0; }
-  .destp-v4 .destp-tabs .ui-tabs { gap: var(--space-6); }
-}
 /* Without the section rail the side card sticks at the top of the view. */
-@media (min-width: 1024px) {
-  .destp-v4 .destp-grid > .destp-side {
-    top: 0;
-    max-height: calc(100dvh - 52px - env(safe-area-inset-top, 0px));
-  }
-}
 
 /* A jump (a See all, the Score) lands its heading under the stuck bar. */
-.destp-v4 .destp-panel [id^="sec-"],
-.destp-v4 .destp-panel .dsec2 { scroll-margin-top: calc(var(--tap) + var(--space-5)); }
 
 /* The panel opens close under the bar; the facts need no top rule there. */
-.destp-v4 .destp-panel > .destp-keys:first-child { border-top: 0; }
-.destp-v4 .destp-panel > .dsec2:first-child { padding-top: var(--space-5); }
 
 /* Around {city}: the choice chips under the heading. On a phone one row
    that scrolls sideways to the screen's edge, so the track below keeps its
    place; on a wide column they wrap. */
-.dov-chips {
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  scrollbar-width: none;
-  margin: 0 calc(-1 * var(--space-4)) var(--space-4);
-  padding: 2px var(--space-4);
-}
-.dov-chips::-webkit-scrollbar { display: none; }
-.dov-chips .ui-chip { flex: none; }
-@media (min-width: 769px) {
-  .dov-chips { flex-wrap: wrap; overflow: visible; margin-inline: 0; padding-inline: 0; }
-}
 /* The one sentence for the empty kinds sits under the track. */
-.dov-around .sec-none { margin-top: var(--space-4); max-width: var(--measure); }
-.dov-around .sec-none p { color: var(--text-2); }
-.dov-around .sec-none .sec-none-link { color: var(--text); }
 
 /* "See all" under a list (a track carries its own in its head). */
-.dov-all { margin-top: var(--space-2); }
-.dov-all.btn { padding-inline: 0; }
 
 /* The year and this week: the strip, then the seven days; side by side
    where the column is wide enough for both. */
-.dov-year-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-5); }
-@media (min-width: 700px) and (max-width: 1023px), (min-width: 1280px) {
-  .dov-year-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
-  .dov-year-grid .destp-week { margin-top: 0; }
-  .dov-year-grid .destp-week .destp-subhead { margin-top: 0; }
-}
-.dov-months .climate-best {
-  margin: 0 0 var(--space-3);
-  font-size: var(--text-body);
-  color: var(--text);
-}
 .climate-chart.has-figures.is-compact { height: 112px; }
 
 /* On a phone the price card follows the year (owner answer T491-g). */
-.dov-price { padding-top: var(--space-7); }
 
 /* Take {city} with you: one sentence and the secondary button. */
-.dov-take-lead {
-  max-width: var(--measure);
-  margin: 0 0 var(--space-4);
-  font-size: var(--text-body);
-  line-height: var(--leading-body);
-  color: var(--text-2);
-}

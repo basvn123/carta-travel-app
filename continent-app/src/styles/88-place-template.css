@@ -392,7 +392,6 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 .pt-step-gap { display: inline-flex; align-items: center; gap: 2px; font-size: var(--text-caption); color: var(--text-3); font-variant-numeric: tabular-nums; }
 
 /* Around */
-.pt-count-n { margin-left: var(--space-1); font-weight: 700; font-variant-numeric: tabular-nums; }
 
 /* When to go */
 .pt-cells { display: grid; gap: var(--space-2); }
@@ -603,8 +602,6 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 .pt-split li { display: grid; grid-template-columns: 18px 1fr auto; gap: 2px var(--space-2); align-items: center; }
 .pt-split-icon { color: var(--text-3); }
 .pt-split b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
-.pt-split-bar { grid-column: 2 / -1; height: 4px; border-radius: var(--radius-pill); background: var(--surface-sunken); overflow: hidden; }
-.pt-split-bar i { display: block; height: 100%; background: var(--umber-200); border-radius: var(--radius-pill); }
 .pt-tot { margin: 0; display: grid; gap: var(--space-2); padding-top: var(--space-3); border-top: 1px solid var(--border-soft); font-size: var(--text-body); color: var(--text-2); }
 .pt-tot > div { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-3); }
 .pt-tot dt { min-width: 0; }
@@ -614,7 +611,6 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 .pt-card .destp-plan-btn { width: 100%; }
 .pt-alts { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 var(--space-2); margin-top: calc(-1 * var(--space-2)); }
 .pt-card .dprice-dates { display: grid; gap: var(--space-3); }
-.pt-ranges-total { display: flex; justify-content: space-between; gap: var(--space-3); }
 .pt-card-row { display: flex; gap: var(--space-2); }
 .pt-card-row > .btn { flex: 1; }
 
@@ -775,7 +771,7 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 /* Below 1024 px the foot bar holds the page's one primary, so the card's
    own primary hides (one primary at a time, carta-design). */
 @media (max-width: 1023px) {
-  .pt-inlinecost .destp-plan-btn, .pt-inlinecost .jpage-plan { display: none; }
+  .pt-inlinecost .destp-plan-btn { display: none; }
 }
 
 /* ── The foot bar below 1024 px: the price, the inputs, the primary. ── */

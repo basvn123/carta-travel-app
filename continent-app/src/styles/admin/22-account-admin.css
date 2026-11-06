@@ -3,7 +3,6 @@
    of the two, so edit it where it is. This sheet loads with the route's
    chunk, after the main sheet, and holds only rules nothing later in the
    cascade could override; scripts/css-routes.mjs --check proves it on a build. */
-.admin-chip.staff { border-color: var(--ink-soft); color: var(--ink-soft); }
 .admin-days {
   display: flex;
   align-items: center;

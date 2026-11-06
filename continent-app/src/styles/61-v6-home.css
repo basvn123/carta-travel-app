@@ -55,14 +55,6 @@
   letter-spacing: -0.03em;
   text-wrap: balance;
 }
-.hv-lead {
-  margin: 0 0 var(--space-5);
-  max-width: 46ch;
-  font-size: var(--text-title);
-  font-weight: 400;
-  line-height: 1.45;
-  color: var(--text-2);
-}
 .hv-page a.btn { text-decoration: none; }
 
 /* ── The hero ─────────────────────────────────────────────────────────── */

@@ -47,7 +47,6 @@
    Explore's category row, quick filters, then rows of two cards on a phone
    (whole cards inside the gutter, the next pair a swipe away) and four
    from 769 px, then the grid: two on a phone, three, then four. */
-.pf-carta-crumbs .btn.dayc-link { margin-left: calc(-1 * var(--space-1)); }
 .pf-carta-styles {
   display: flex;
   gap: var(--space-1);
@@ -73,7 +72,6 @@
 @media (min-width: 600px) {
   .pfh .pfh-door-name { flex: none; padding-right: var(--space-5); white-space: nowrap; }
 }
-.pfh .pfh-door-go { display: none; }
 
 /* New trip: no tile of its own (T1001, owner), the plus on a brown disc and
    the words, straight on the page ground (the kit Button, its quiet look
@@ -108,7 +106,6 @@
    more stops, so the tint has no visible edge), with a hairline inside the
    corners so a pale sky still has a frame. */
 .pfh .pfh-next:active { transform: scale(0.99); }
-.pfh .pfh-next-media { transition: transform var(--dur-4) var(--ease-out); }
 .pfh .pfh-next-media::after {
   content: "";
   position: absolute;

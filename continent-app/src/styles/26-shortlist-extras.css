@@ -263,26 +263,6 @@
 /* ---- Hand-offs into the planners (I1) ------------------------------------
    Two doors on a destination page (trip wizard, day flow), one on a trail,
    beach, lake or mountain page, and the way back from a day to its trip. */
-.feat-dayplan {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 10px;
-  height: 38px;
-  padding: 0 14px;
-  border: 1px solid var(--rule);
-  border-radius: 8px;
-  background: var(--bg-card);
-  color: var(--ink);
-  font-size: var(--text-label);
-  font-weight: 600;
-  cursor: pointer;
-  transition: background .15s, color .15s, border-color .15s;
-}
-@media (hover: hover) {
-  .feat-dayplan:hover { border-color: var(--ink-soft); background: var(--paper-dim); }
-}
-.feat-dayplan:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .day-topcard-trip {
   display: inline-flex;
   align-items: center;
@@ -308,7 +288,6 @@
   /* trip wizard */
   .wiz-mini { min-height: var(--tap); padding: 5px 0 6px; margin-top: 2px; }
   .guide-startover { display: inline-flex; align-items: center; min-height: var(--tap); }
-  .guide-people-lg button { width: var(--tap); height: var(--tap); }
   .guide-recap-inner { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
   .guide-recap-inner::-webkit-scrollbar { display: none; }
   .guide-recap-chip, .guide-recap-label { flex: none; white-space: nowrap; }
@@ -343,17 +322,15 @@
   .guide-chip { min-width: var(--tap); }
   .guide-datemode button { min-height: var(--tap); }
   .wtrip-len { min-height: var(--tap); min-width: var(--tap); }
-  .wready-link, .tday-more, .tleg-link {
+  .wready-link, .tday-more {
     display: inline-flex; align-items: center; min-height: var(--tap);
   }
   /* "Edit" is one short word, so the pill also needs the width (T193). */
   .tpage-back { min-height: var(--tap); }
   .tpage-bar-act { width: var(--tap); height: var(--tap); }
-  .guide-people button,
-.guide-summary-party .guide-people button { width: var(--tap); height: var(--tap); }
   .tprac-row.is-link > a { min-height: var(--tap); align-items: center; }
   .itin-drive-row { min-height: var(--tap); }
-  .itin-tab, .itin-overview-total, .itin-export-toggle, .extras-add-btn { min-height: var(--tap); }
+  .extras-add-btn { min-height: var(--tap); }
   /* MapLibre's own stylesheet loads after this one; the extra class wins. */
   .dem-map .maplibregl-ctrl-group button.maplibregl-ctrl-zoom-in,
   .dem-map .maplibregl-ctrl-group button.maplibregl-ctrl-zoom-out { width: var(--tap); height: var(--tap); }
@@ -376,26 +353,13 @@
    the tap box instead, as the planner pins and "See all" already do. */
 @media (max-width: 768px) {
   .places-search input,
-.places-country,
-.feat-dayplan,
-.bpage-where,
-.bpage-scorebtn,
-.bpage-scorehint,
 .credit-fold > summary,
-.destp-score,
-.destp-layer,
-.destp-subnav button,
-.destp-subnav-all,
 .dsec-more,
-.bpage-sources a,
 .account-invite-btn { min-height: var(--tap); }
-  .bpage-sources li { padding: 0; }
   .credit-fold > summary { display: flex; align-items: center; }
   .places-locate,
   .auth-close { min-width: var(--tap); min-height: var(--tap); }
   .mstrip-info { width: var(--tap); height: var(--tap); }
-  .destp-short-src,
-  .dhl-link,
   .destp-slide-credit { display: inline-flex; align-items: center; min-height: var(--tap); min-width: var(--tap); }
   /* MapLibre's stylesheet loads after this one, so the map class adds the
      specificity the zoom buttons need on every map, not only Explore's. */
@@ -405,10 +369,6 @@
   .dmap-pin[role="button"]::before { content: ''; position: absolute; inset: -16px; }
   /* Credit and source links sit in a line of type; the tap box grows
      around them without moving a letter. */
-  .bpage-credit a, .lpage-credit-line a { position: relative; }
-  .bpage-credit a::before, .lpage-credit-line a::before {
-    content: ''; position: absolute; inset: -16px -6px;
-  }
 }
 
 /* The mono rule on two fact rows (T186): the figures stay mono, the words

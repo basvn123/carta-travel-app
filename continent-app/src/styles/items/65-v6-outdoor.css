@@ -15,7 +15,6 @@
   .dsk-page .dsk-primary { max-width: 420px; }
 }
 @media (hover: hover) {
-  .dsk-page .dsk-primary.tpage-primary:hover,
   .dsk-page .dsk-primary.cycle-gpx:hover {
     filter: none;
     background: var(--accent-hover);
@@ -23,10 +22,6 @@
   }
 }
 .dsk-page .dsk-handoff .dsk-sec { margin: 0; }
-.dsk-page .dsk-getting .tpage-act-wide { margin-top: 0; }
-.dsk-page .dsk-getting .tpage-start { margin: var(--space-2) 0 0; }
-.dsk-page .dsk-getting .tpage-start-coords { font-size: 12px; color: var(--ink-mute); }
-.dsk-page .dsk-getting .bpage-where { margin-bottom: 0; }
 .dsk-page .dsk-station-km {
   flex: none;
   font-family: var(--mono);
@@ -40,8 +35,7 @@
   margin: 0;
   border-radius: 6px;
 }
-.dsk-page .dsk-getting .tpage-act,
-.dsk-page .dsk-getting .bpage-where { min-height: var(--tap); border-radius: 6px; }
+.dsk-page .dsk-getting .tpage-act { min-height: var(--tap); border-radius: 6px; }
 .dsk-page .jpage-lrow-sum {
   display: -webkit-box;
   white-space: normal;
@@ -51,12 +45,9 @@
   line-height: 1.35;
 }
 .dsk-page .jpage-lrow-body > :first-child > .dsk-sub:first-child { margin-top: 0; }
-.dsk-page .dsk-part + .dsk-part,
-.dsk-page .tpage-part + .tpage-part { margin-top: var(--space-2); }
+.dsk-page .dsk-part + .dsk-part { margin-top: var(--space-2); }
 .dsk-page .rstage.is-static { cursor: default; color: var(--ink); }
 .dsk-page .sig-sq.is-on { border-color: var(--select-border); background: var(--ink); }
-.dsk-page .dsk-head .tpage-title,
-.dsk-page .dsk-head .bpage-name,
 .dsk-page .dsk-head .cycle-title h1 {
   font-family: var(--display);
   font-size: 28px;
@@ -66,8 +57,6 @@
   color: var(--ink);
 }
 @media (min-width: 769px) {
-  .dsk-page .dsk-head .tpage-title,
-  .dsk-page .dsk-head .bpage-name,
   .dsk-page .dsk-head .cycle-title h1 { font-size: 40px; line-height: 1.1; }
   .dsk-page .dsk-grid section h2 { font-size: 26px; }
 }
@@ -112,7 +101,6 @@
   font-variant-numeric: tabular-nums;
   color: var(--ink);
 }
-.dsk-page .dsk-ptrack-credit .bpage-credit { margin: 0; }
 .dsk-page .dsk-kf-note { line-height: 16px; }
 .dsk-page .jpage-lrow.is-open .jpage-lrow-body:not([hidden]) {
   animation: dsk-row-in var(--dur-2) var(--ease-out);
@@ -134,7 +122,6 @@
     text-underline-offset: 3px;
   }
 }
-.dsk-page .dsk-primary.tpage-primary:active,
 .dsk-page .dsk-primary.cycle-gpx:active {
   background: var(--accent-press);
   border-color: var(--accent-press);
@@ -146,23 +133,9 @@
   .dsk-page .jpage-exit,
   .dsk-page .dsk-take .tpage-act,
   .dsk-page .dsk-getting .tpage-act,
-  .dsk-page .dsk-primary.tpage-primary:active,
   .dsk-page .dsk-primary.cycle-gpx:active { transition: none; }
 }
-.dsk-page .lpage-swim-ok .lpage-swim-word::before,
-.dsk-page .mpage-way-ride .mpage-way-word::before {
-  content: "";
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  margin-right: var(--space-2);
-  border-radius: 999px;
-  background: var(--status-success);
-  vertical-align: middle;
-}
 .dsk-page .sig-plain-area { fill: var(--rule); stroke: none; }
-.dsk-page .dsk-head .tpage-title,
-.dsk-page .dsk-head .bpage-name,
 .dsk-page .dsk-head .cycle-title h1 {
   overflow-wrap: anywhere;
   hyphens: auto;

@@ -33,8 +33,7 @@
 .map-shell.is-expanded .map-shell-frame > *,
 .map-shell.is-expanded .dsk-map-frame,
 .map-shell.is-expanded .tpage-hero,
-.map-shell.is-expanded .cycle-map,
-.map-shell.is-expanded .destp-map-frame {
+.map-shell.is-expanded .cycle-map {
   height: 100% !important;
   max-height: none !important;
   min-height: 0 !important;
@@ -161,8 +160,6 @@
   z-index: 3;
 }
 /* On the destination page the gallery keeps its own height and band. */
-.destp-v3 .pgal { --pgal-h: var(--destp-photo-h); }
-.destp-v3 .pgal .destp-slide-band { min-height: 60px; }
 
 /* ══ The item page (DetailSkeleton.jsx DetailPage, T430) ══════════════════
    Scoped to .ipage so the older .dsk-page and .tpage rules of 23, 28 and 65
@@ -385,9 +382,6 @@
 .ipage .ipage-acts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 
 /* ── Getting there ── */
-.igo-list { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
-.igo-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 auto; }
-.igo-row a { color: var(--action); }
 
 /* ── Not quite right? ── */
 .ialt-img { display: block; width: 100%; height: 100%; object-fit: cover; }
@@ -443,18 +437,6 @@
 .ipage .ipage-acts > .btn { min-height: var(--tap); }
 
 /* The way up on a summit page, set as a getting-there row, not a box. */
-.ipage .mpage-way {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  margin: var(--space-3) 0 0;
-  padding: var(--space-3) 0 0;
-  border: 0;
-  border-radius: 0;
-  background: none;
-  font-size: var(--text-body);
-  color: var(--text);
-}
 
 /* The lake's swim verdict: a status line, a dot and the words (carta-design
    "Status, not green"), never a tinted box. */
@@ -557,17 +539,6 @@
 .tlib-length { flex: none; }
 
 .tlib-beds { display: inline-flex; align-items: center; gap: 0; }
-.tlib-count {
-  min-width: 20px;
-  padding: 0 var(--space-1);
-  border-radius: var(--radius-pill);
-  background: var(--select-bg);
-  color: var(--select-ink);
-  font-size: var(--text-micro);
-  font-weight: 600;
-  line-height: 20px;
-  text-align: center;
-}
 
 /* The tile: a kit Card. The legacy caption-band look (66-v6-trips) and the
    phone rule that spread a trip card over the row (25-feature-pages) stay
@@ -629,7 +600,6 @@
    reads roles and scales only. */
 
 /* Head: the style and the difficulty ride after where. */
-.tstyle-chip { flex: none; }
 .tdiff .infodot { margin-left: calc(-1 * var(--space-2)); }
 .tdiff-list { margin: var(--space-2) 0 0; padding-left: var(--space-4); font-size: var(--text-body); line-height: var(--leading-body); color: var(--text-2); }
 
@@ -643,30 +613,11 @@
   border-radius: var(--radius-card);
   background: var(--surface);
 }
-.tprice-title { margin: 0; font-size: var(--text-title); font-weight: 600; color: var(--text); }
-.tprice-fig { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--space-1); margin: 0; }
 .tprice-none { margin: 0; color: var(--text-2); }
 .tprice-row.is-split { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
 /* The one Lifestyle control (carta-design "Lifestyle control", T474): a row
    that names the traveller's Lifestyle, label over value like a settings
    part, and opens the panel; under it, one sentence with the trip's range. */
-.tprice-ls-btn.btn {
-  justify-content: space-between;
-  gap: var(--space-3);
-  padding: var(--space-2) var(--space-3);
-  text-align: left;
-  white-space: normal;
-}
-.tprice-ls-btn .btn-label { display: grid; gap: 2px; flex: 1 1 auto; min-width: 0; }
-.tprice-ls-say {
-  margin: 0;
-  font-size: var(--text-caption);
-  line-height: var(--leading-body);
-  color: var(--text-2);
-}
-.tprice-ls-say .money { color: var(--text); font-weight: 600; }
-.tprice-sum, .tprice-lines { display: grid; gap: 0; margin: 0; }
-.tprice-toggle { justify-self: start; margin-left: calc(-1 * var(--space-2)); }
 .tprice .iinc { margin: 0; }
 .tday-chev { transition: transform var(--dur-2) var(--ease-out); }
 .tday-chev.is-open { transform: rotate(180deg); }
@@ -675,7 +626,6 @@
 /* Is this week for you. */
 
 /* The week: the climb chart, the map, the day cards. */
-.tweek > h2 { margin: 0; }
 .wclimb { margin: 0; }
 .btn.wclimb-col {
   display: block;
@@ -743,29 +693,10 @@
 /* Getting there. */
 
 /* Before you go: the cards swipe; the risks first. */
-.tprep > h2 { margin: 0; }
-.gocard {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-4);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  background: var(--surface);
-}
-.gocard-title { margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); }
-.gocard-text.is-clamped .tprose {
-  display: -webkit-box;
-  -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.gocard-more { align-self: flex-start; margin: auto 0 0 calc(-1 * var(--space-2)); }
 .tprep-pack .itrack-title { margin-bottom: var(--space-3); }
 
 /* Loading. */
 /* The sticky column clears the section rail (T431; the item maps too). */
-.tprice-fig-n .money-est { font-size: var(--text-body); font-weight: 400; color: var(--text-2); }
 /* The back control keeps its whole label (T431: "Beach weeks" was cut to
    "Beach w"); the bar title gives way instead. */
 .ipage-bar .ipage-back { flex: none; max-width: 60%; }

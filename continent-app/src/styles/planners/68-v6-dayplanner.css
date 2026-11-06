@@ -46,7 +46,6 @@
 @media (hover: hover) {
   .dayws-stay-clear:hover { color: var(--danger); }
 }
-.dayws-stay-panel .daytrip-transport { margin-top: 12px; }
 .dayws-tips-body { overflow-y: auto; padding: 4px 14px 14px; }
 .dayws-tips-sec { padding-top: 12px; }
 .dayws-tips-sec + .dayws-tips-sec { margin-top: 12px; border-top: 1px solid var(--rule-soft); }
@@ -479,15 +478,10 @@
 .dayws-tip-name,
 .dayws-tip-note { overflow-wrap: anywhere; hyphens: auto; }
 .day-wizard .dayw-step { display: flex; flex-direction: column; gap: var(--space-5); }
-.day-wizard .wiz-main { max-width: var(--wiz-max); }
-.day-wizard.wiz-form { --wiz-max: 880px; }
-.day-wizard.wiz-mid { --wiz-max: 1080px; }
-.day-wizard.wiz-wide { --wiz-max: 1600px; }
 /* T1041: with its summary beside it a step is one question, not a map: the
    detail width (about 840 px of step and the 360 px card), not 1600 px.
    Set on the wizard so the step bar, the recap band and the foot bar keep
    the step's edges. */
-.day-wizard.wiz-wide:has(.wiz-main.has-rail) { --wiz-max: var(--w-detail); }
 .day-wizard .dayw-search {
   position: relative;
   display: flex;
@@ -655,8 +649,6 @@
 @media (hover: hover) { .dayw-fork-card.is-interactive:hover { border-color: var(--text-3); } }
 .dayw-fork-photo { position: relative; display: block; aspect-ratio: 16 / 10; background: var(--surface-sunken); overflow: hidden; }
 .dayw-fork-mosaic.n1 { grid-template-columns: 1fr; grid-template-rows: 1fr; }
-.dayw-fork-mosaic.n2 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr; }
-.dayw-fork-mosaic.n3 .dayw-fork-tile:first-child { grid-row: 1 / span 2; }
 .dayw-fork-sub { font-size: var(--text-body); color: var(--text-2); }
 @media (max-width: 599px) {
   .dayw-fork-photo { aspect-ratio: 3 / 1; }
@@ -696,7 +688,6 @@
 }
 @media (max-width: 768px) {
   .day-wizard .wiz-recap-inbody .guide-recap-inner::-webkit-scrollbar { display: none; }
-  .day-wizard .wiz-recap-inbody .guide-recap-chip,
   .day-wizard .wiz-recap-inbody .guide-recap-label { flex: none; white-space: nowrap; }
   .dayw-manual .dayex { gap: var(--space-4); }
 }
@@ -928,7 +919,6 @@
   overflow: hidden;
 }
 /* T487: the day's Google Maps link(s), under the summary. */
-.day-wizard .guide-foot-summary { flex: 1 1 auto; min-width: 0; }
 .dayw-rail-btn.btn { max-width: 100%; min-width: 0; overflow: hidden; }
 
 /* ── T501: the planned day (roadmap 1.3d with 1.17) ───────────────────────
@@ -955,8 +945,6 @@
 /* Phone and tablet: the page bar, then the map under the drawer. */
 .day-ws.is-drawer { display: flex; flex-direction: column; background: var(--surface-page); }
 .day-ws.is-drawer .dayws-map.is-under { position: absolute; inset: 0; }
-.day-ws.is-drawer .dayx-gmaps .btn,
-.day-ws.is-drawer .dayp-tools .btn { min-height: var(--tap-main); }
 .day-ws.is-drawer .day-sw-btn { width: var(--tap-main); height: var(--tap-main); }
 
 /* The head: the day's name and its save state on one line. */
