@@ -24,24 +24,21 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 import { JUDGE_SCHEMA, JUDGMENTS_DIR, SAMPLE_PATH, judgePrompt, rubricSha } from './plan-day-lib.mjs';
+import { callModel } from '../../../../supabase/functions/_shared/aiModels.mjs';
 
 const argv = process.argv.slice(2);
 const arg = (n, d = null) => { const i = argv.indexOf(n); return i >= 0 && argv[i + 1] ? argv[i + 1] : d; };
 
-export async function geminiJudge(prompt, { model, key, fetchImpl = fetch }) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
-  const res = await fetchImpl(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
-    body: JSON.stringify({
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      generationConfig: { temperature: 0, responseMimeType: 'application/json', responseSchema: JUDGE_SCHEMA },
-    }),
-  });
-  if (!res.ok) throw new Error(`gemini ${res.status}`);
-  const body = await res.json();
-  const text = body?.candidates?.[0]?.content?.parts?.map((p) => p.text || '').join('') || '';
-  return JSON.parse(text);
+/**
+ * One verdict from a model judge, through the model gateway (T1137, E3):
+ * feature eval-judge, provider and chain from config (AI_EVAL_JUDGE_PROVIDER,
+ * AI_EVAL_JUDGE_MODELS), temperature 0, JSON against the judge schema.
+ */
+export async function geminiJudge(prompt, { model, key, fetchImpl } = {}) {
+  const env = { ...process.env, ...(key ? { GEMINI_API_KEY: key } : {}), ...(model ? { AI_EVAL_JUDGE_MODELS: model } : {}) };
+  const r = await callModel({ feature: 'eval-judge', env, user: prompt, json: true, schema: JUDGE_SCHEMA, temperature: 0, ...(fetchImpl ? { fetchImpl } : {}) });
+  if (!r.ok) throw new Error(`judge ${r.code} ${r.upstream || r.status || ''}`.trim());
+  return JSON.parse(r.text);
 }
 
 async function main() {

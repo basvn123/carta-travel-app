@@ -120,6 +120,12 @@ export const AI_FEATURES = {
     budgetMs: 90_000, firstMs: 60_000, laterMs: 25_000, minMs: 8_000, retry429Ms: 0,
     maxPromptChars: 80_000, maxOutputChars: 65_536,
   },
+  // The offline plan-day judge (T1148, F6): an eval script, never a traveller's call.
+  'eval-judge': {
+    provider: 'gemini', models: GEMINI_CHAIN,
+    budgetMs: 90_000, firstMs: 60_000, laterMs: 25_000, minMs: 8_000, retry429Ms: 0,
+    maxPromptChars: 60_000, maxOutputChars: 65_536,
+  },
 };
 
 const DEFAULT_MODELS = { gemini: GEMINI_CHAIN, 'workers-ai': WORKERS_AI_CHAIN, openai: [] };
