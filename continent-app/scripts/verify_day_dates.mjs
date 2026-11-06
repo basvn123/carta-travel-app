@@ -1,3 +1,4 @@
+// T1089 needs: account (section 3 only; skipped when Supabase is not configured)
 // Headless check of the day planner's date step (prompt D3): the day being
 // planned is a day that has not happened yet.
 //
@@ -19,6 +20,7 @@
 import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
+import { supabaseConfigured } from './lib/verify_env.mjs';
 
 // CARTA_PORT (T389): a parallel session may hold the default port with its own
 // preview, so a run can name its own server instead of testing someone else's.
@@ -109,7 +111,7 @@ const seed = async (page, { plans = [], signedIn = false } = {}) => {
 
 const openStep1 = async (page) => {
   await page.goto(`${BASE}/?tab=day&o=CRL`);
-  await page.locator('.day-flow-search input').waitFor({ timeout: 120000 });
+  await page.locator('.day-stay-input').waitFor({ timeout: 120000 });
   await page.waitForTimeout(900);
 };
 
@@ -121,16 +123,16 @@ const openDateStepViaSearch = async (page) => {
   await page.locator('.day-stay-input').press('Enter');
   await page.locator('.day-stay-result').first().waitFor({ timeout: 30000 });
   await page.locator('.day-stay-result').first().click();
-  await page.locator('.day-flow-chosen').waitFor({ timeout: 30000 });
-  await page.locator('.day-flow-next').click();
-  await page.locator('.day-flow-date').waitFor({ timeout: 30000 });
+  await page.locator('.dayw-chosen').waitFor({ timeout: 30000 });
+  await page.locator('.guide-next').click();
+  await page.locator('.dayw-when').waitFor({ timeout: 30000 });
   await page.waitForTimeout(400);
 };
 
 // Every day cell the calendar is showing, with the two things that decide
 // whether it can be chosen.
 const readCal = (page) => page.evaluate(() => {
-  const days = [...document.querySelectorAll('.day-flow-date .cal-day')].map((b) => ({
+  const days = [...document.querySelectorAll('.dayw-when .cal-day')].map((b) => ({
     iso: b.dataset.iso,
     outside: b.classList.contains('outside'),
     disabled: b.classList.contains('disabled') || b.getAttribute('aria-disabled') === 'true',
@@ -141,11 +143,11 @@ const readCal = (page) => page.evaluate(() => {
   }));
   return {
     days,
-    chips: [...document.querySelectorAll('.day-flow-chips-center .day-flow-chip')].map((c) => ({
+    chips: [...document.querySelectorAll('.dayw-chips .ui-chip')].map((c) => ({
       text: c.innerText.replace(/\s+/g, ' ').trim(),
       on: c.classList.contains('on'),
     })),
-    prevDisabled: !!document.querySelector('.day-flow-date .cal-nav[aria-label="Previous month"]')?.disabled,
+    prevDisabled: !!document.querySelector('.dayw-when .cal-nav[aria-label="Previous month"]')?.disabled,
   };
 });
 
@@ -197,22 +199,19 @@ try {
     // weekend" on a Saturday or a Sunday means today, not the Saturday gone.
     if (!c.chips.length) fail('the date step offers no quick chips');
     else {
-      // The chip stamp is "Thu 17 Sep": weekday and no year, so the year is
-      // inferred as this one, or next when the month has already gone by.
-      const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      const dated = c.chips.map((ch) => {
-        const m = ch.text.match(/(\d{2}) ([A-Z][a-z]{2})\b/);
-        const mi = m ? MON.indexOf(m[2]) : -1;
-        if (mi < 0) return { text: ch.text, iso: null };
-        const thisYear = Number(TODAY.slice(0, 4));
-        const mm = String(mi + 1).padStart(2, '0');
-        const guess = `${thisYear}-${mm}-${m[1]}`;
-        // A chip never points more than a week out, so a stamp that reads as
-        // months behind today is really next January, not this one.
-        return { text: ch.text, iso: guess < TODAY && mi < 2 ? `${thisYear + 1}-${mm}-${m[1]}` : guess };
-      });
+      // T1089: the chips are worded (Today, Tomorrow, This weekend) and no
+      // longer print a date, so each is clicked and the calendar's selected
+      // day read back as the date it stands for.
+      const n = c.chips.length;
+      const dated = [];
+      for (let i = 0; i < n; i += 1) {
+        await page.locator('.dayw-chips .ui-chip').nth(i).click();
+        await page.waitForTimeout(150);
+        const sel = await page.evaluate(() => document.querySelector('.dayw-when .cal-day.selected')?.dataset?.iso || null);
+        dated.push({ text: c.chips[i].text, iso: sel });
+      }
       const unread = dated.filter((d) => !d.iso);
-      if (unread.length) fail(`a chip prints no readable date: ${unread.map((d) => d.text).join(' | ')}`);
+      if (unread.length) fail(`a chip selects no calendar day: ${unread.map((d) => d.text).join(' | ')}`);
       const past = dated.filter((d) => d.iso && d.iso < TODAY);
       if (past.length) fail(`a quick chip resolves to a past day: ${past.map((d) => `${d.text} -> ${d.iso}`).join(' | ')}`);
       else ok(`quick chips all land today or later: ${dated.map((d) => d.iso).join(', ')}`);
@@ -234,7 +233,7 @@ try {
     // Page forward past the horizon; the arrow must run out.
     let pages = 0;
     for (; pages < 20; pages += 1) {
-      const next = page.locator('.day-flow-date .cal-nav[aria-label="Next month"]');
+      const next = page.locator('.dayw-when .cal-nav[aria-label="Next month"]');
       if (await next.isDisabled()) break;
       await next.click();
       await page.waitForTimeout(80);
@@ -246,15 +245,17 @@ try {
   }
 
   // ---- 3. A start point from a saved trip: the trip owns the calendar -----
-  {
+  if (!supabaseConfigured()) {
+    console.log('  SKIP (needs account): section 3, a saved trip start, needs Supabase credentials (VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY) so a signed-in session exists');
+  } else {
     const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 } });
     const page = await ctx.newPage();
     await seed(page, { signedIn: true });
     await openStep1(page);
-    await page.locator('.day-flow-quickchip', { hasText: /barcelona/i }).first().click();
-    await page.locator('.day-flow-chosen').waitFor({ timeout: 30000 });
-    await page.locator('.day-flow-next').click();
-    await page.locator('.day-flow-date').waitFor({ timeout: 30000 });
+    await page.locator('.dayw-quick-row', { hasText: /barcelona/i }).first().click();
+    await page.locator('.dayw-chosen').waitFor({ timeout: 30000 });
+    await page.locator('.guide-next').click();
+    await page.locator('.dayw-when').waitFor({ timeout: 30000 });
     await page.waitForTimeout(400);
     const c = await readCal(page);
     const own = c.days.filter((d) => !d.outside);
@@ -289,7 +290,7 @@ try {
     // Reach into the step the way a stale restore does: pick the earliest
     // choosable day, then confirm nothing earlier can be reached at all.
     const earliest = await page.evaluate(() => {
-      const d = [...document.querySelectorAll('.day-flow-date .cal-day:not(.outside)')]
+      const d = [...document.querySelectorAll('.dayw-when .cal-day:not(.outside)')]
         .find((b) => b.getAttribute('aria-disabled') !== 'true');
       return d?.dataset?.iso || null;
     });
@@ -297,18 +298,18 @@ try {
     else ok('the earliest choosable day is today');
 
     // Clicking a struck-through day must change nothing.
-    const past = page.locator('.day-flow-date .cal-day[aria-disabled="true"]').first();
+    const past = page.locator('.dayw-when .cal-day[aria-disabled="true"]').first();
     if (await past.count()) {
       const pastISO = await past.getAttribute('data-iso');
       await past.click({ force: true });
       await page.waitForTimeout(200);
-      const nowSel = await page.evaluate(() => document.querySelector('.day-flow-date .cal-day.selected')?.dataset?.iso || null);
+      const nowSel = await page.evaluate(() => document.querySelector('.dayw-when .cal-day.selected')?.dataset?.iso || null);
       if (nowSel === pastISO) fail(`clicking the refused day ${pastISO} selected it anyway`);
       else ok(`clicking a refused day (${pastISO}) changed nothing`);
     }
     // The arrows skip refused days rather than landing on them.
     await page.evaluate(() => {
-      document.querySelector('.day-flow-date .cal-day[tabindex="0"]')?.focus();
+      document.querySelector('.dayw-when .cal-day[tabindex="0"]')?.focus();
     });
     await page.keyboard.press('ArrowLeft');
     await page.waitForTimeout(200);
@@ -340,7 +341,7 @@ try {
     const page = await ctx.newPage();
     await seed(page);
     await page.goto(`${BASE}/?tab=day&o=CRL`);
-    await page.locator('.day-flow-search input').waitFor({ timeout: 120000 });
+    await page.locator('.day-stay-input').waitFor({ timeout: 120000 });
     // The dialog lives behind a built plan, so rather than drive the whole
     // flow to reach it, the check is on the markup the build emits: the one
     // native date input in the planner must ship a min.
@@ -348,6 +349,12 @@ try {
       const mods = [...document.querySelectorAll('script[type="module"], link[rel="modulepreload"]')]
         .map((n) => n.src || n.href).filter(Boolean);
       const hits = [];
+      // T1089: a dev server serves the modal as its own module; a preview
+      // build holds it in a chunk reached through the entry's preloads.
+      try {
+        const dev = await fetch('/src/planner/AiDayPlanModal.jsx');
+        if (dev.ok) { const t = await dev.text(); if (t.includes('ai-plan-date')) hits.push(t); }
+      } catch { /* not a dev server */ }
       for (const u of mods) {
         const txt = await (await fetch(u)).text();
         if (txt.includes('ai-plan-date')) hits.push(txt);

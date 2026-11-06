@@ -1,7 +1,7 @@
 // verify_item_pdf.mjs (T430, T431): the Download PDF of an item page and of a
 // trip page produce a real file in Carta's own face, with the page's words.
 //
-//   CARTA_PORT=5298 node scripts/verify_item_pdf.mjs
+//   CARTA_PORT=5298 node scripts/verify_item_pdf.mjs [url]
 //
 // For each page it presses "Download PDF", saves the download, and reads the
 // file with python's pypdf (pip install pypdf): the embedded fonts are
@@ -13,7 +13,7 @@ import { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-const BASE = `http://localhost:${process.env.CARTA_PORT || 4173}/`;
+const BASE = process.argv[2] ? process.argv[2].replace(/\/?$/, '/') : `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 const OUT = mkdtempSync(join(tmpdir(), 'carta-pdf-'));
 const PAGES = [
   { name: 'mountain', hash: '#mtn=mk-mount-korab-Q912579&mc=MK', cat: 'mountains', title: /Korab/, minPages: 1 },
@@ -59,13 +59,17 @@ for (const pg of PAGES) {
       ['continent.mapGuideDismissed.v1', '1'], ['carta.welcomeSeen.v1', '1'],
       ['carta.places.v1', JSON.stringify({ cat, country: '', near: null })]]) localStorage.setItem(k, v);
   }, pg.cat);
-  await page.goto(`${BASE}?tab=places${pg.hash}`, { waitUntil: 'domcontentloaded', timeout: 60000 });
+  await page.goto(`${BASE}?tab=places&paymock${pg.hash}`, { waitUntil: 'domcontentloaded', timeout: 60000 });
   const ok = await page.waitForSelector('.tpage h1', { timeout: 60000 }).then(() => true, () => false);
   check(`${pg.name}: the page opens`, ok);
   if (!ok) { await page.close(); continue; }
   await page.waitForTimeout(2500);
-  const btn = page.locator('.ipage-pdf').first();
-  check(`${pg.name}: one Download PDF door`, await page.locator('.ipage-pdf').count() === 1);
+  // T1089: the door is .ipage-pdf on a trip page and the bar's "Download PDF guide"
+  // icon on a trail or mountain page; ?paymock stands in for an entitled traveller
+  // (a guest is sent to the Trip Pass instead of getting a file).
+  const door = page.locator('.ipage-pdf, .tpage-bar button[aria-label*="PDF"]');
+  const btn = door.first();
+  check(`${pg.name}: one Download PDF door`, await door.count() === 1);
   try {
     await btn.scrollIntoViewIfNeeded();
     const [dl] = await Promise.all([page.waitForEvent('download', { timeout: 90000 }), btn.click()]);

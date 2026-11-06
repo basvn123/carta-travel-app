@@ -1,3 +1,4 @@
+// Retired T1089: it drives the old trip wizard (booked, From, When, Where quiz via .guide-booked-none) and the day-flow chat (?tab=day .day-flow-search); both entries are gone, ?tab=day now lands on Plan's day mode.
 // Headless check of the fixes made after the three traveller-type walks
 // (prompt I2): the Where quiz's spend answer sets the stay tier, the trip
 // calendar reaches next May, a trail runner's cards quote peaks as well as

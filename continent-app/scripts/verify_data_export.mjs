@@ -1,3 +1,6 @@
+// T1089 needs: account (a signed-in session needs VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY).
+// T1089 note: it reaches the export through the old hub's .account-profile-card, which the account
+// rail has replaced (see verify_account_panel.mjs); that step needs re-pointing from a run that can sign in.
 // Headless check for the GDPR Article 20 data export (T021).
 //
 // The export sits in the profile spoke, directly above the danger zone: the
@@ -26,8 +29,14 @@
 import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
 import { mkdirSync, readFileSync } from 'node:fs';
+import { supabaseConfigured } from './lib/verify_env.mjs';
 
-const PORT = Number(process.env.PORT || 4191);
+if (!supabaseConfigured()) {
+  console.log('SKIP (needs account): Supabase is not configured here, so there is no signed-in state to export from');
+  process.exit(0);
+}
+
+const PORT = Number(process.env.CARTA_PORT || process.env.PORT || 4191);
 const BASE = `http://127.0.0.1:${PORT}`;
 const SHOTS = 'scripts/shots';
 mkdirSync(SHOTS, { recursive: true });

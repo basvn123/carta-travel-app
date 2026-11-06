@@ -74,8 +74,9 @@ guard: true,
     return route.continue();
   });
 
-  await page.goto(APP_URL, { waitUntil: 'networkidle' });
-  await page.locator(`button:visible:has-text("${tab}")`).first().click();
+  // T1089: the category tiles are not on the home page any more; each layer
+  // is entered by its own address.
+  await page.goto(`${APP_URL.split('?')[0].split('#')[0].replace(/\/$/, '')}/?tab=explore&cat=${layer === 'cycling' ? 'cycling' : layer}`, { waitUntil: 'networkidle' });
   await page.waitForTimeout(2000);
 
   const err = page.locator('.places-loaderr:visible');
@@ -135,8 +136,7 @@ guard: true,
   await page.route('**/trips/**', (route) => (
     blocking ? route.abort('connectionfailed') : route.continue()
   ));
-  await page.goto(APP_URL, { waitUntil: 'networkidle' });
-  await page.locator('button:visible:has-text("Trips")').first().click();
+  await page.goto(`${APP_URL.split('?')[0].split('#')[0].replace(/\/$/, '')}/?tab=explore&cat=trips`, { waitUntil: 'networkidle' });
   await page.waitForTimeout(1500);
   const door = page.locator('.jcomposed-card:visible').first();
   if (await door.count()) {

@@ -1,3 +1,4 @@
+// T1089 needs: network (Wikimedia pictures; the broken-image check skips remote ones offline)
 // Headless verify for the folded trip page (browse/TripPage.jsx) and the two
 // blocks P2 added to it: the practical section (browse/TripPractical.jsx) and
 // the per-day photo strip (browse/TripDayPhotos.jsx).
@@ -39,7 +40,7 @@ import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 
-const PORT = 4209;
+const PORT = Number(process.env.CARTA_PORT) || 4209; // T1089: CARTA_PORT = a server already running
 const BASE = `http://127.0.0.1:${PORT}/`;
 mkdirSync('shots', { recursive: true });
 
@@ -60,7 +61,7 @@ const browser = await chromium.launch();
 const checks = [];
 const check = (label, ok, note = '') => checks.push({ label, ok, note });
 const errors = [];
-const NOISE = /ERR_FAILED|config is not valid|content_overrides|net::|favicon/;
+const NOISE = /ERR_FAILED|config is not valid|content_overrides|net::|favicon|Failed to load resource|AJAXError/;
 
 const seed = (page) => page.addInitScript(() => {
   try {
@@ -210,8 +211,11 @@ for (const [label, sel] of [
 // Google Flights' fare to the cent and are not estimates, so they are left
 // out of the estimate check and out of the no-flight check.
 const receiptFigs = await page.locator('#sec-cost .itin-cost li:not(:has(.flt-mark)) b').allInnerTexts();
-const unmarked = receiptFigs.filter((tx) => !/^~ .+ est\.$/.test(tx.trim()));
-check('every receipt figure carries the tilde and "est."', receiptFigs.length > 0 && unmarked.length === 0,
+// T1089: costFig (TripPage.jsx) prints "~ eur est." for an estimate and the bare
+// exact figure when the line is measured, so either shape is well formed; a
+// bare figure must be a plain euro amount.
+const unmarked = receiptFigs.filter((tx) => !/^~ .+ est\.$/.test(tx.trim()) && !/^\u20ac[\d.,\s\u00a0]+$/.test(tx.trim()));
+check('every receipt figure is a tilde and "est." estimate or an exact euro figure', receiptFigs.length > 0 && unmarked.length === 0,
   unmarked.slice(0, 3).join(' | ') || `${receiptFigs.length} figures`);
 const receiptText = (await page.locator('#sec-cost .itin-cost li:not(:has(.flt-mark))').allInnerTexts().catch(() => [])).join('\n');
 check('no flight in the receipt', receiptText !== '' && !/flight|fly|plane/i.test(receiptText));
@@ -219,8 +223,9 @@ check('the receipt has a total over a 2px rule',
   await page.locator('#sec-cost .itin-cost-sum').count() === 1);
 const dayLine = (await page.locator('#sec-cost .itin-cost-day b').innerText().catch(() => '')).trim();
 const factDay = await page.evaluate(() => {
+  // T1089: the day fact is the one carrying a euro figure ("~ ... est." only for estimates).
   const vals = Array.from(document.querySelectorAll('.itin-facts .tpage-fact-val'));
-  const hit = vals.find((el) => /~/.test(el.textContent));
+  const hit = vals.find((el) => /\u20ac/.test(el.textContent));
   return hit ? hit.textContent.trim() : '';
 });
 check('the fact row reads the day line of the receipt', dayLine !== '' && dayLine === factDay,
@@ -230,7 +235,13 @@ await page.waitForTimeout(2000);
 const broken = await page.evaluate(() => Array.from(document.querySelectorAll('.tpage img'))
   .filter((im) => im.complete && im.naturalWidth === 0 && !im.hidden)
   .map((im) => im.src.slice(0, 90)));
-check('no broken images', broken.length === 0, broken.slice(0, 3).join(' '));
+// T1089 needs: network (the gallery and day photos are Wikimedia hosted). With
+// no route to Wikimedia a remote picture cannot load, so only own-origin
+// pictures are held to the check then.
+const online = await page.evaluate(() => fetch('https://upload.wikimedia.org/', { mode: 'no-cors' }).then(() => true, () => false));
+const own = broken.filter((u) => u.startsWith(BASE.slice(0, -1)) || u.startsWith('/') || u.startsWith('data:'));
+if (!online && own.length === 0 && broken.length) console.log(`SKIP (needs network): ${broken.length} remote pictures could not load offline`);
+check('no broken images', (online ? broken : own).length === 0, (online ? broken : own).slice(0, 3).join(' '));
 
 // House rule: no em dashes, no en dashes, no middot or bullet separators.
 // The four characters are written as escapes (T387) so this file holds none
@@ -266,52 +277,29 @@ await phone.screenshot({ path: 'shots/trip-phone-days.png', fullPage: false });
 const jp = await browser.newPage({ viewport: { width: 1440, height: 950 } });
 wire(jp);
 await seed(jp);
-await jp.goto(BASE, { waitUntil: 'domcontentloaded', timeout: 45000 });
-await jp.waitForTimeout(5000);
-
-// Journeys have no deep link, so drive the Trips tab: a style card, then the
-// first journey in it.
-const style = jp.locator('.jstyle-card').first();
-if (await style.count()) {
-  await style.click();
-  await jp.waitForTimeout(2000);
-  const card = jp.locator('.jcard').first();
-  if (await card.count()) {
-    await card.click();
-    await jp.waitForTimeout(4000);
-
-    check('journey page opens', await jp.locator('.jpage').isVisible());
-    // T431 (owner, 2026-10-15): the trip page is rebuilt on the item pages'
-    // system. The folds and the data sheet are gone; the order is gallery,
-    // head, fact band, why, the price card in the side column, fit, the
-    // alternatives, the week, getting there and before you go.
-    check('the trip page opens on its gallery and head',
-      await jp.locator('.jpage .ipage-gallery').count() === 1 && await jp.locator('.jpage .ipage-head h1').count() === 1);
-    check('the price card sits in the sticky side column',
-      await jp.locator('.jpage .ipage-side #sec-budget').count() === 1);
-    check('no suitability strip and no data sheet',
-      await jp.locator('.jpage .dsk-strip, .jpage #sec-spec, .jpage .dsheet-row').count() === 0);
-    check('the risks are never folded',
-      await jp.locator('.jpage .dsec').count() === 0);
-
-    const jdays = await jp.locator('.jpage .tday').count();
-    check('journey days render', jdays > 0, `${jdays} days`);
-    check('day prose is folded', await jp.locator('.jpage .tday-prose').count() === 0);
-    const jmore = jp.locator('.jpage .tday-more').first();
-    if (await jmore.count()) {
-      const before = await jp.locator('.jpage .tday-text').count();
-      await jmore.click();
-      await jp.waitForTimeout(400);
-      const after = await jp.locator('.jpage .tday-text').count();
-      check('opening a day restores its authored prose', after > before, `${before} -> ${after}`);
-    }
-    await jp.screenshot({ path: 'shots/journey-desktop.png' });
-  } else {
-    check('a journey card was reachable', false, 'no .jcard found');
-  }
-} else {
-  check('a journey style card was reachable', false, 'no .jstyle-card found');
+// T1089: a journey has a deep link (#journey=<id>) and its page moved onto the
+// item-page system (.pt-*): head with title, subtitle and badges, a jump nav,
+// then group sections. The old gallery/side-column/fold checks went with it.
+const JOURNEY = process.env.JOURNEY_ID || 'ad-hiking-coma-pedrosa-madriu';
+await jp.goto(`${BASE}#journey=${JOURNEY}`, { waitUntil: 'domcontentloaded', timeout: 45000 });
+await jp.locator('.jpage').waitFor({ timeout: 30000 }).catch(() => {});
+await jp.waitForTimeout(3000);
+check('journey page opens', await jp.locator('.jpage').isVisible().catch(() => false));
+check('journey head: one h1 with a subtitle',
+  await jp.locator('.jpage .pt-head h1.pt-title').count() === 1 && await jp.locator('.jpage .pt-subtitle').count() === 1);
+const jumps = await jp.locator('.jpage .pt-jump-link').allInnerTexts();
+check('the jump nav lists the week', jumps.some((x) => /day by day/i.test(x)), jumps.join(', '));
+check('the risks are never folded', await jp.locator('.jpage .dsec').count() === 0);
+// T1089: days are an accordion (.pt-day, button .pt-day-btn); the first is open.
+const jdays = await jp.locator('.jpage .pt-day').count();
+check('journey days render', jdays > 0, `${jdays} days`);
+check('only the first day is open on arrival', await jp.locator('.jpage .pt-day.is-open').count() === 1);
+if (jdays > 1) {
+  await jp.locator('.jpage .pt-day-btn').nth(1).click();
+  await jp.waitForTimeout(400);
+  check('opening a day opens it', await jp.locator('.jpage .pt-day').nth(1).evaluate((el) => el.classList.contains('is-open')));
 }
+await jp.screenshot({ path: 'shots/journey-desktop.png' });
 
 await browser.close();
 if (server) server.kill();

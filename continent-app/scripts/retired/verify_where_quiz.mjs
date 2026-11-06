@@ -1,3 +1,4 @@
+// Retired T1089: the Where quiz (WhereQuiz.jsx) is no longer mounted anywhere; the one-question Plan flow replaced the wizard it lived in.
 // Headless verify for the rebuilt Where step (prompt T2): the two tabs, the
 // quiz, the recommendations it produces, the hand picker and the polygon map.
 //

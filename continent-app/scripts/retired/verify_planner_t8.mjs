@@ -1,3 +1,4 @@
+// Retired T1089: the Trip basics wizard start (step 1 of N rail, footer, estimate band, recap chips) was replaced by the one-question plan flow (?tab=plan&mode=trip); the selectors .wiz-mini start rail and Trip basics are gone.
 // Headless verify for prompt T8: the trip planner's flow polish, favourites
 // and hand-offs.
 //

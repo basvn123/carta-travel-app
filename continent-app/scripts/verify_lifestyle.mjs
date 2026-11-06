@@ -1,3 +1,4 @@
+// T1089 needs: account (the account-hub row only; skipped for a guest)
 // Headless check for the lifestyle pass: the panel (four sleep tiles with the
 // hotel grades behind the hotel tile, six habit tiles, the counts closed until
 // asked for) and the one door that opens it, drawn the same on Explore, on
@@ -11,7 +12,7 @@ import { mkdirSync, readFileSync } from 'node:fs';
 import { offeredStayTiers } from '../src/lib/runtime_pricing.js';
 import { SLEEP_GROUPS, sleepGroupOf } from '../src/lib/sleepGroups.js';
 
-const PORT = 4192; // 4190 is on the fetch spec's blocked-port list
+const PORT = Number(process.env.CARTA_PORT || 4192); // 4190 is on the fetch spec's blocked-port list
 const BASE = `http://127.0.0.1:${PORT}`;
 const SHOTS = 'scripts/shots';
 mkdirSync(SHOTS, { recursive: true });
@@ -100,19 +101,23 @@ try {
   const tiles = page.locator('.lifestyle-panel .panel-section').first().locator('.ls-tile');
   const nSleep = await tiles.count();
   console.log('sleep tiles:', nSleep, await tiles.allInnerTexts());
-  if (nSleep !== 4) fail(`expected 4 sleep tiles, got ${nSleep}`);
+  // T1089: the sleep question is three tiles now (Hostel, Home, Hotel); the
+  // door still names the default "Entire place".
+  if (nSleep !== 3) fail(`expected 3 sleep tiles, got ${nSleep}`);
   const onSleep = await page.locator('.lifestyle-panel .ls-tile.on').first().innerText();
-  if (!/Entire place/i.test(onSleep)) fail(`sleep tile on is "${onSleep}", expected Entire place`);
+  if (!/^Home$/i.test(onSleep.trim())) fail(`sleep tile on is "${onSleep}", expected Home`);
 
   // Hotel grades are hidden until a hotel is the answer.
-  if (await page.locator('.ls-grades').count()) fail('hotel grades show before the hotel tile is picked');
+  // T1089: the grades are a "Which hotel" segmented row (.ls-kind .seg-item).
+  const gradeTiles = () => page.locator('.lifestyle-panel .ls-kind .seg-item');
+  if (await gradeTiles().count()) fail('hotel grades show before the hotel tile is picked');
   await tiles.filter({ hasText: 'Hotel' }).first().click();
   await page.waitForTimeout(600);
-  const grades = page.locator('.ls-grade');
+  const grades = gradeTiles();
   const nGrades = await grades.count();
   console.log('hotel grades:', nGrades, await grades.allInnerTexts());
-  if (nGrades !== 3) fail(`expected 3 hotel grades, got ${nGrades}`);
-  const onGrade = await page.locator('.ls-grade.on').innerText();
+  if (nGrades !== 4) fail(`expected 4 hotel grades, got ${nGrades}`);
+  const onGrade = await page.locator('.lifestyle-panel .ls-kind .seg-item.is-selected').first().innerText();
   if (!/3 star/i.test(onGrade)) fail(`hotel opened on "${onGrade}", expected 3 star`);
   if (!/[?&]st=hotel3/.test(page.url())) fail(`picking the hotel tile did not reach the URL: ${page.url()}`);
   await page.screenshot({ path: `${SHOTS}/lifestyle-hotel-grades.png` });
@@ -123,13 +128,13 @@ try {
   if (!/[?&]st=hotel5/.test(page.url())) fail(`grade not in the URL: ${page.url()}`);
 
   // Habits: six tiles, one on, and picking one moves the door's label.
-  const habits = page.locator('.ls-tiles-3 .ls-tile');
+  const habits = page.locator('.lifestyle-panel .ls-tiles-3:not(.ls-tiles-stay) .ls-tile');
   const nHabits = await habits.count();
   console.log('habit tiles:', nHabits);
   if (nHabits !== 6) fail(`expected 6 habit tiles, got ${nHabits}`);
   await habits.filter({ hasText: 'Foodie' }).first().click();
   await page.waitForTimeout(900);
-  const onHabit = await page.locator('.ls-tiles-3 .ls-tile.on').innerText();
+  const onHabit = await page.locator('.lifestyle-panel .ls-tiles-3:not(.ls-tiles-stay) .ls-tile.on').innerText();
   if (!/Foodie/i.test(onHabit)) fail(`habit tile on is "${onHabit}", expected Foodie`);
 
   // The counts open closed. That is what took the panel from a form back to
@@ -139,7 +144,8 @@ try {
   await page.waitForTimeout(400);
   const steppers = await page.locator('.ls-tune .stepper').count();
   console.log('steppers behind Fine tune:', steppers);
-  if (steppers !== 6) fail(`expected 6 steppers, got ${steppers}`);
+  // T1089: seven counts now (club nights joined the six).
+  if (steppers !== 7) fail(`expected 7 steppers, got ${steppers}`);
   // No per-row cadence hint any more: the segmented toggle says it once.
   if (await page.locator('.ls-tune .stepper-hint').count()) fail('per-row cadence hints came back');
   await page.screenshot({ path: `${SHOTS}/lifestyle-fine-tune.png` });
@@ -147,7 +153,7 @@ try {
   // Editing a count by hand un-picks the preset and says so.
   await page.locator('.ls-tune .stepper').first().locator('button').last().click();
   await page.waitForTimeout(700);
-  if (await page.locator('.ls-tiles-3 .ls-tile.on').count()) fail('a hand-tuned lifestyle still shows a preset as on');
+  if (await page.locator('.lifestyle-panel .ls-tiles-3:not(.ls-tiles-stay) .ls-tile.on').count()) fail('a hand-tuned lifestyle still shows a preset as on');
   const custom = await page.locator('.lifestyle-panel .ls-note').last().innerText();
   console.log('custom note:', JSON.stringify(custom));
 
@@ -161,7 +167,9 @@ try {
   // ---- The same door on Destinations ----
   // The section doors are links since T381 (the navigation rule), so the
   // door is found by its link role; it used to be a button.
-  await page.getByRole('link', { name: 'Destinations', exact: true }).first().click();
+  // T1089: Destinations is the Explore tab's category tiles; the Places tile
+  // is the other surface the door has to follow the choice onto.
+  await page.getByRole('tab', { name: 'Places', exact: true }).first().click();
   await page.waitForTimeout(1600);
   // Since T381 the settings line under the header carries the Lifestyle door
   // on every Destinations category, priced or not (brief V3-4); the side
@@ -177,17 +185,24 @@ try {
   await page.screenshot({ path: `${SHOTS}/lifestyle-door-destinations.png` });
 
   // ---- And in the account hub ----
-  await page.locator('.account-door').click();
+  await page.getByRole('link', { name: 'Account & preferences' }).first().click();
   await page.waitForTimeout(900);
+  // T1089 needs: account (a signed-in Supabase user). In guest mode the
+  // account door lands on ?tab=account but the hub does not render, so the
+  // row is only checked when the hub is there.
   const row = page.getByRole('button', { name: /Lifestyle/i }).first();
-  if (!(await row.count())) fail('account hub has no lifestyle row');
-  const rowText = (await row.innerText()).replace(/\s+/g, ' ');
-  console.log('account row reads:', JSON.stringify(rowText));
-  if (!/5-star hotel/i.test(rowText)) fail('account row does not state the current tier');
-  await page.screenshot({ path: `${SHOTS}/lifestyle-door-account.png` });
-  await row.click();
-  await page.waitForTimeout(900);
-  if (!(await page.locator('.lifestyle-panel').count())) fail('the account row does not open the panel');
+  if (!(await row.count()) && !(await page.locator('[class*="account-hub"]:visible, .account-panel:visible').count())) {
+    console.log('SKIP (needs account): the account hub does not render for a guest');
+  } else {
+    if (!(await row.count())) fail('account hub has no lifestyle row');
+    const rowText = (await row.innerText()).replace(/\s+/g, ' ');
+    console.log('account row reads:', JSON.stringify(rowText));
+    if (!/5-star hotel/i.test(rowText)) fail('account row does not state the current tier');
+    await page.screenshot({ path: `${SHOTS}/lifestyle-door-account.png` });
+    await row.click();
+    await page.waitForTimeout(900);
+    if (!(await page.locator('.lifestyle-panel').count())) fail('the account row does not open the panel');
+  }
 
   // ---- Phone ----
   const phone = await browser.newPage({ viewport: { width: 390, height: 844 } });

@@ -1,3 +1,7 @@
+// T1089 needs: account (signed-in trip cards need VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY).
+// T1089 note: the day planner landing is now the wizard (DayWizardShell, .dayw-*) and the card
+// markup moved to DayTripCards (.dtrow / .card-open); the .dtcard-stop, .dtcard-img and
+// .day-flow-lead / .day-flow-search selectors below are stale and need re-pointing from a run that can sign in.
 // Headless check of "Continue a trip" (prompt D2): the saved-trip list under
 // the day planner's first question, rebuilt as photo cards.
 //
@@ -21,8 +25,14 @@
 import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
+import { supabaseConfigured } from './lib/verify_env.mjs';
 
-const PORT = 4193;
+if (!supabaseConfigured()) {
+  console.log('SKIP (needs account): Supabase is not configured here, so there is no signed-in state to show saved trips');
+  process.exit(0);
+}
+
+const PORT = Number(process.env.CARTA_PORT) || 4193;
 const BASE = `http://127.0.0.1:${PORT}`;
 const SHOTS = 'scripts/shots';
 const PROJECT_REF = 'ntssxktaduxzpsmejwyv';

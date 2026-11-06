@@ -28,8 +28,8 @@ import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
 import { mkdirSync, readFileSync, readdirSync, existsSync } from 'node:fs';
 
-const PORT = 4209;
-const BASE = `http://127.0.0.1:${PORT}/`;
+const PORT = Number(process.env.CARTA_PORT) || 4209;
+const BASE = `http://localhost:${PORT}/`;
 mkdirSync('shots', { recursive: true });
 
 const isUp = async () => {
@@ -47,7 +47,7 @@ const check = (label, ok, note = '') => checks.push({ label, ok, note });
 const errors = [];
 // content_overrides is a Supabase table the live project does not have; the
 // app asks for it and carries on. Every other harness filters it too.
-const NOISE = /ERR_FAILED|config is not valid|content_overrides|net::|favicon|Failed to load resource/;
+const NOISE = /ERR_FAILED|config is not valid|content_overrides|net::|favicon|Failed to load resource|AJAXError/;
 
 // Pick real subjects out of the wire, so the harness tests what shipped.
 const pick = () => {
@@ -61,7 +61,9 @@ const pick = () => {
     for (const r of doc.trips || []) {
       const cc = fn.slice(0, 2);
       const km = (r.distance_m || 0) / 1000;
-      if (!out.surf && r.sf && (r.sf.unknown || 0) > 0.02) out.surf = { ...r, cc };
+      // T1089: the page draws the bar only where at least half of the line is
+      // mapped (TrailPage sfKnown >= 0.5), so the subject must be one that is.
+      if (!out.surf && r.sf && (r.sf.unknown || 0) > 0.02 && (r.sf.unknown || 0) <= 0.5) out.surf = { ...r, cc };
       if (!out.long && km > 100) out.long = { ...r, cc };
       if (!out.loop && r.is_loop && km > 3 && km < 12) out.loop = { ...r, cc };
       if (!out.parent && r.h?.cls === 'parent') out.parent = { ...r, cc };

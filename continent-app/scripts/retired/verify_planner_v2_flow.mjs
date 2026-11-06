@@ -1,3 +1,4 @@
+// Retired T1089: the .plan-start-tile trip door and the ready-made/build-your-own fork steps are gone; Start planning now runs the Help me choose flow.
 // Headless verify for the trip planner v2 flow: the country step reads as a
 // country (no fare, no drive time, a brief you can open), the third step is
 // the ready-made/build-your-own fork, ready-made splits multi-country from

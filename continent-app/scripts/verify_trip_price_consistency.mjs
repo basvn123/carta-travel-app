@@ -1,3 +1,4 @@
+// T1089 UNRESOLVED: stale selectors (.guide-next, .party-row, .wlife, .guide-wtabs, .wtrip-*, .tleg) left with the wizard; needs a rewrite around the one-question Plan flow, the trip finder and the trip page.
 // T432: the trip's price is one figure from the first priced step to the
 // planned trip. Walks the planner with several budget shapes and reads the
 // price card on Getting there, after a typed fare, on Review, and on the

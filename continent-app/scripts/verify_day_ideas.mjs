@@ -1,3 +1,6 @@
+// T1089 needs: real data (POI shards under public/poi for the colosseum checks; the town 'Rome' is used when they are absent)
+// T1089: refreshed for the five-step flow (Start, Days, Ideas, How, Plan): no yes/no
+// choice any more (the search is the step, Skip is the footer), ideas carry a time-of-day select.
 // Headless check of the day flow's new third question (prompt D4):
 // "Anything you already want to do?"
 //
@@ -18,7 +21,7 @@
 // Run from inside continent-app/:  node scripts/verify_day_ideas.mjs
 import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
-import { mkdirSync } from 'node:fs';
+import { mkdirSync, existsSync } from 'node:fs';
 
 // CARTA_PORT (T389): a parallel session may hold the default port with its own
 // preview, so a run can name its own server instead of testing someone else's.
@@ -40,6 +43,12 @@ const waitForServer = async () => {
   }
   throw new Error('vite preview never came up');
 };
+
+// The POI shards are R2-only data; a container without them cannot find a sight
+// by name, only a town. The checks then search for the town and say so.
+const HAS_POI = existsSync('public/poi');
+const IDEA_Q = HAS_POI ? 'colosseum' : 'rome';
+if (!HAS_POI) console.log('  note (needs real data): public/poi absent, ideas are searched as the town "rome", not the colosseum');
 
 const fail = (msg) => { console.error('FAIL:', msg); process.exitCode = 1; };
 const ok = (msg) => console.log('  ok:', msg);
@@ -90,17 +99,17 @@ const seed = async (page) => {
 // Walk the flow to the ideas step: pick a stay, take the date as it opens.
 const openIdeasStep = async (page) => {
   await page.goto(`${BASE}/?tab=day&o=CRL`);
-  await page.locator('.day-flow-search input').waitFor({ timeout: 120000 });
+  await page.locator('.day-stay-input').waitFor({ timeout: 120000 });
   await page.waitForTimeout(900);
   await page.locator('.day-stay-input').fill('Hotel Artemide Rome');
   await page.locator('.day-stay-input').press('Enter');
   await page.locator('.day-stay-result').first().waitFor({ timeout: 30000 });
   await page.locator('.day-stay-result').first().click();
-  await page.locator('.day-flow-chosen').waitFor({ timeout: 30000 });
-  await page.locator('.day-flow-next').click();
-  await page.locator('.day-flow-date').waitFor({ timeout: 30000 });
-  await page.locator('.day-flow-next').click();
-  await page.locator('.day-ideas-choice').waitFor({ timeout: 30000 });
+  await page.locator('.dayw-chosen').waitFor({ timeout: 30000 });
+  await page.locator('.guide-next').click();
+  await page.locator('.dayw-when').waitFor({ timeout: 30000 });
+  await page.locator('.guide-next').click();
+  await page.locator('.day-ideas-input').waitFor({ timeout: 30000 });
   await page.waitForTimeout(300);
 };
 
@@ -115,45 +124,47 @@ try {
   await waitForServer();
   const browser = await chromium.launch();
 
-  // ---- 1. The flow is four steps and the rail names the new one ----------
+  // ---- 1. The flow is five steps and the rail names the ideas step -------
   {
     const ctx = await browser.newContext({ viewport: { width: 1400, height: 950 } });
     const page = await ctx.newPage();
     await seed(page);
     await openIdeasStep(page);
     const rail = await readRail(page);
-    if (rail.steps.length !== 4) fail(`the rail shows ${rail.steps.length} steps, expected 4: ${rail.steps.join(' | ')}`);
+    if (rail.steps.length !== 5) fail(`the rail shows ${rail.steps.length} steps, expected 5: ${rail.steps.join(' | ')}`);
     else ok(`rail: ${rail.steps.join(' > ')}`);
-    if (!/3 of 4/.test(rail.counter)) fail(`the counter reads "${rail.counter}", expected "step 3 of 4"`);
+    if (!/3 of 5/.test(rail.counter)) fail(`the counter reads "${rail.counter}", expected "step 3 of 5"`);
     else ok(`counter reads "${rail.counter}"`);
     if (!/idea/i.test(rail.now)) fail(`the current step is "${rail.now}", not the ideas step`);
 
-    // The question and its sub-line, as the prompt words them.
-    const q = (await page.locator('.day-flow-q').innerText()).trim();
-    const sub = (await page.locator('.day-flow-qsub').innerText()).trim();
+    const q = (await page.locator('.guide-title').innerText()).trim();
     if (!/already want to do/i.test(q)) fail(`the question reads "${q}"`);
     else ok(`question: "${q}"`);
-    if (!/skip/i.test(sub)) fail(`the sub-line does not offer to skip: "${sub}"`);
+    // Nothing taken: the footer offers Skip rather than a dead Next.
+    const skip = (await page.locator('.guide-next').innerText()).trim();
+    if (!/skip/i.test(skip)) fail(`the footer reads "${skip}", expected it to offer Skip`);
+    else ok('with nothing taken the footer offers Skip');
 
-    // No search field before the choice is answered.
-    if (await page.locator('.day-ideas-input').count()) fail('the search field is on screen before "yes" is chosen');
-    else ok('the step opens as a choice, not a search box');
+    // The search is the step itself now: no yes/no choice in front of it.
+    if (!(await page.locator('.day-ideas-input').isVisible())) fail('the search field is not on screen');
+    else ok('the step opens on the search field');
+    if (await page.locator('.day-ideas-choice').count()) fail('the old yes/no choice is still on screen');
 
     await page.screenshot({ path: `${SHOTS}/day-ideas-choice.png` });
     await ctx.close();
   }
 
-  // ---- 2. "No, surprise me" is a complete answer -------------------------
+  // ---- 2. Skip is a complete answer --------------------------------------
   {
     const ctx = await browser.newContext({ viewport: { width: 1400, height: 950 } });
     const page = await ctx.newPage();
     await seed(page);
     await openIdeasStep(page);
-    await page.getByRole('button', { name: /surprise me/i }).click();
-    await page.locator('.day-flow-cards').waitFor({ timeout: 30000 });
+    await page.locator('.guide-next').click();
+    await page.locator('.dayw-fork').waitFor({ timeout: 30000 });
     const rail = await readRail(page);
-    if (!/4 of 4/.test(rail.counter)) fail(`"no" landed on "${rail.counter}", expected step 4 of 4`);
-    else ok('"No, surprise me" goes straight to How');
+    if (!/4 of 5/.test(rail.counter)) fail(`Skip landed on "${rail.counter}", expected step 4 of 5`);
+    else ok('Skip goes straight to How');
     await ctx.close();
   }
 
@@ -163,20 +174,16 @@ try {
     const page = await ctx.newPage();
     await seed(page);
     await openIdeasStep(page);
-    await page.getByRole('button', { name: /something in mind/i }).click();
     await page.locator('.day-ideas-input').waitFor({ timeout: 30000 });
-    const focused = await page.evaluate(() => document.activeElement?.classList?.contains('day-ideas-input'));
-    if (!focused) fail('the search field did not take focus when revealed');
-    else ok('the search field is revealed and focused');
 
     // A name the Rome catalogue definitely holds. The geocoder pool is
     // debounced at 450ms and the catalogue pools are synchronous, so the read
     // waits for BOTH: a snapshot taken between them would report a real pool
     // as missing.
-    await page.locator('.day-ideas-input').fill('colosseum');
+    await page.locator('.day-ideas-input').fill(IDEA_Q);
     await page.waitForTimeout(1800);
     const readGroups = () => page.evaluate(() => [...document.querySelectorAll('.day-ideas-group')].map((g) => ({
-      label: (g.querySelector('.day-flow-suggest-label')?.textContent || '').trim(),
+      label: (g.querySelector('.day-ideas-h')?.textContent || '').trim(),
       rows: [...g.querySelectorAll('.day-ideas-row')].map((r) => r.innerText.replace(/\s+/g, ' ').trim()),
     })));
     const groups = await readGroups();
@@ -186,7 +193,7 @@ try {
     // The catalogue pool is the one that matters most: it is the only one
     // whose hits carry an index the manual tray can pre-add.
     const near = groups.find((g) => /near your start/i.test(g.label));
-    if (!near) fail(`the catalogue pool answered nothing for a sight beside the stay: ${groups.map((g) => g.label).join(' | ')}`);
+    if (!near) fail(`the catalogue pool answered nothing for ${IDEA_Q} beside the stay: ${groups.map((g) => g.label).join(' | ')}`);
     else {
       ok(`the catalogue pool answered: ${near.rows.join(' | ')}`);
       // "Rome (Fiumicino)" is how the fares name a city; a day out is to Rome.
@@ -207,7 +214,7 @@ try {
     await page.waitForTimeout(1600);
     const any = await page.evaluate(() => {
       const g = [...document.querySelectorAll('.day-ideas-group')]
-        .find((x) => /anywhere/i.test(x.querySelector('.day-flow-suggest-label')?.textContent || ''));
+        .find((x) => /anywhere/i.test(x.querySelector('.day-ideas-h')?.textContent || ''));
       return g ? [...g.querySelectorAll('.day-ideas-row')].map((r) => r.innerText.replace(/\s+/g, ' ').trim()) : [];
     });
     if (!any.length) fail('the geocoder pool returned nothing for a place off the catalogue');
@@ -224,8 +231,8 @@ try {
       return {
         name: (c.querySelector('.day-ideas-chip-text b')?.textContent || '').trim(),
         reach: (c.querySelector('.day-ideas-chip-text small')?.textContent || '').trim(),
-        whens: [...c.querySelectorAll('.day-ideas-when-btn')].map((b) => ({
-          label: b.innerText.trim(), on: b.classList.contains('on'),
+        whens: [...c.querySelectorAll('.day-ideas-when-select option')].map((o) => ({
+          label: o.textContent.trim(), on: o.selected,
         })),
         hasRemove: !!c.querySelector('.day-ideas-chip-x'),
       };
@@ -246,17 +253,15 @@ try {
     else ok('the box clears after a pick');
 
     // ---- The CTA counts what has been taken ----------------------------
-    const cta = (await page.locator('.day-ideas-body .day-flow-next').innerText()).trim();
-    if (!/1 idea\b/i.test(cta)) fail(`the CTA reads "${cta}", expected it to count one idea`);
-    else ok(`CTA: "${cta}"`);
+    const cta = (await page.locator('.guide-next').innerText()).trim();
+    const counted = (await page.locator('.dayw-foot-days').innerText()).trim();
+    if (!/1 idea\b/i.test(counted)) fail(`the footer reads "${counted}", expected it to count one idea`);
+    else ok(`footer count: "${counted}", CTA: "${cta}"`);
 
     // Choosing a time of day sticks.
-    await page.locator('.day-ideas-when-btn', { hasText: /morning/i }).first().click();
+    await page.locator('.day-ideas-when-select').first().selectOption('morning');
     await page.waitForTimeout(150);
-    const morningOn = await page.evaluate(() => {
-      const b = [...document.querySelectorAll('.day-ideas-when-btn')].find((x) => /morning/i.test(x.innerText));
-      return b?.classList.contains('on');
-    });
+    const morningOn = await page.evaluate(() => document.querySelector('.day-ideas-when-select')?.value === 'morning');
     if (!morningOn) fail('picking a time of day did not take');
     else ok('a time of day can be set on a chip');
 
@@ -265,9 +270,9 @@ try {
     await page.waitForTimeout(200);
     if (await page.locator('.day-ideas-chip').count()) fail('removing the chip left it on screen');
     else ok('an idea can be removed');
-    const ctaEmpty = page.locator('.day-ideas-body .day-flow-next');
-    if (!(await ctaEmpty.isDisabled())) fail('the CTA is still live with no ideas taken');
-    else ok('with nothing taken the CTA is disabled');
+    const ctaEmpty = (await page.locator('.guide-next').innerText()).trim();
+    if (!/skip/i.test(ctaEmpty)) fail(`the footer reads "${ctaEmpty}" with no ideas taken, expected Skip`);
+    else ok('with nothing taken the footer offers Skip again');
 
     await page.screenshot({ path: `${SHOTS}/day-ideas-search.png` });
     await ctx.close();
@@ -279,12 +284,11 @@ try {
     const page = await ctx.newPage();
     await seed(page);
     await openIdeasStep(page);
-    await page.getByRole('button', { name: /something in mind/i }).click();
     await page.locator('.day-ideas-input').waitFor({ timeout: 30000 });
-    await page.locator('.day-ideas-input').fill('colosseum');
+    await page.locator('.day-ideas-input').fill(IDEA_Q);
     await page.waitForTimeout(1500);
     if (!(await page.locator('.day-ideas-row').count())) {
-      await page.locator('.day-ideas-input').fill('colosseo');
+      await page.locator('.day-ideas-input').fill(HAS_POI ? 'colosseo' : 'roma');
       await page.waitForTimeout(1500);
     }
     const rowCount = await page.locator('.day-ideas-row').count();
@@ -294,9 +298,9 @@ try {
       const name = (await page.locator('.day-ideas-row-text b').first().innerText()).trim();
       await page.locator('.day-ideas-row').first().click();
       await page.locator('.day-ideas-chip').waitFor({ timeout: 30000 });
-      await page.locator('.day-ideas-body .day-flow-next').click();
-      await page.locator('.day-flow-cards').waitFor({ timeout: 30000 });
-      await page.getByRole('button', { name: /plan it myself|build it myself/i }).click();
+      await page.locator('.guide-next').click();
+      await page.locator('.dayw-fork').waitFor({ timeout: 30000 });
+      await page.getByText(/plan it myself|build it myself/i).first().click();
       await page.locator('.dayex').waitFor({ timeout: 60000 });
       await page.waitForTimeout(1500);
       // The tray is the proof: the idea has to be a pick already made, not a
@@ -328,33 +332,31 @@ try {
     // naming a place never makes the conversation LONGER, and the town
     // question is not asked once the town is settled either way.
     await openIdeasStep(page);
-    await page.getByRole('button', { name: /surprise me/i }).click();
-    await page.locator('.day-flow-cards').waitFor({ timeout: 30000 });
-    await page.getByRole('button', { name: /let carta plan it|ask the carta bot|use the chatbot/i }).click();
-    await page.locator('.chat-flow').waitFor({ timeout: 30000 });
+    await page.locator('.guide-next').click();
+    await page.locator('.dayw-fork').waitFor({ timeout: 30000 });
+    await page.getByText(/let carta plan it|ask the carta bot|use the chatbot/i).first().click();
+    await page.locator('.daychat-progress').waitFor({ timeout: 30000 });
     await page.waitForTimeout(600);
     const noIdeas = await page.evaluate(() => ({
-      total: Number(((document.querySelector('.chat-progress')?.textContent || '').match(/\d+/g) || [0, 0]).pop()),
-      hasTownPicker: !!document.querySelector('.town-picker, .chat-town'),
+      total: Number(((document.querySelector('.daychat-progress')?.textContent || '').match(/\d+/g) || [0, 0]).pop()),
     }));
 
     // Now the same flow WITH one idea taken.
     await openIdeasStep(page);
-    await page.getByRole('button', { name: /something in mind/i }).click();
     await page.locator('.day-ideas-input').waitFor({ timeout: 30000 });
-    await page.locator('.day-ideas-input').fill('colosseum');
+    await page.locator('.day-ideas-input').fill(IDEA_Q);
     await page.waitForTimeout(1800);
     if (!(await page.locator('.day-ideas-row').count())) {
       fail('no catalogue suggestion to settle the town with');
     } else {
       await page.locator('.day-ideas-row').first().click();
       await page.locator('.day-ideas-chip').waitFor({ timeout: 30000 });
-      await page.locator('.day-ideas-body .day-flow-next').click();
-      await page.locator('.day-flow-cards').waitFor({ timeout: 30000 });
-      await page.getByRole('button', { name: /let carta plan it|ask the carta bot|use the chatbot/i }).click();
-      await page.locator('.chat-flow').waitFor({ timeout: 30000 });
+      await page.locator('.guide-next').click();
+      await page.locator('.dayw-fork').waitFor({ timeout: 30000 });
+      await page.getByText(/let carta plan it|ask the carta bot|use the chatbot/i).first().click();
+      await page.locator('.daychat-progress').waitFor({ timeout: 30000 });
       await page.waitForTimeout(600);
-      const withIdeas = Number((((await page.locator('.chat-progress').innerText()).match(/\d+/g)) || [0, 0]).pop());
+      const withIdeas = Number((((await page.locator('.daychat-progress').innerText()).match(/\d+/g)) || [0, 0]).pop());
       const townAsked = await page.getByText(/where do you want to spend the day\?/i).count();
       if (!noIdeas.total || !withIdeas) fail('could not read the chat question count');
       else if (withIdeas > noIdeas.total) {
@@ -369,31 +371,20 @@ try {
     await ctx.close();
   }
 
-  // ---- 6. Phone: the two choices are full width and thumb-sized ----------
+  // ---- 6. Phone: the step fits, the field and the footer are thumb-sized --
   {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     const page = await ctx.newPage();
     await seed(page);
     await openIdeasStep(page);
-    const btns = await page.evaluate(() => [...document.querySelectorAll('.day-ideas-choice-btn')].map((b) => {
-      const r = b.getBoundingClientRect();
-      return {
-        w: Math.round(r.width),
-        h: Math.round(r.height),
-        hasIcon: !!b.querySelector('.day-ideas-choice-ico svg'),
-        hasHelper: !!b.querySelector('small')?.textContent?.trim(),
-      };
-    }));
-    if (btns.length !== 2) fail(`${btns.length} choice buttons on a phone, expected 2`);
-    else {
-      const narrow = btns.filter((b) => b.w < 300);
-      if (narrow.length) fail(`a choice button is only ${narrow[0].w}px wide, not full width`);
-      const short = btns.filter((b) => b.h < 72);
-      if (short.length) fail(`a choice button is ${short[0].h}px tall, under the 72px minimum`);
-      if (btns.some((b) => !b.hasIcon)) fail('a choice button has no icon');
-      if (btns.some((b) => !b.hasHelper)) fail('a choice button has no helper line');
-      if (!narrow.length && !short.length) ok(`phone: two buttons at ${btns[0].w}x${btns[0].h} and ${btns[1].w}x${btns[1].h}, icon + label + helper`);
-    }
+    const m = await page.evaluate(() => {
+      const r = (sel) => { const e = document.querySelector(sel); const b = e?.getBoundingClientRect(); return b ? { w: Math.round(b.width), h: Math.round(b.height) } : null; };
+      return { input: r('.day-ideas-input'), next: r('.guide-next') };
+    });
+    if (!m.input || m.input.w < 250) fail(`the search field is ${m.input?.w ?? 'missing'}px wide on a phone`);
+    else ok(`phone: search field ${m.input.w}x${m.input.h}`);
+    if (!m.next || m.next.h < 44) fail(`the footer button is ${m.next?.h ?? 'missing'}px tall on a phone, under 44`);
+    else ok(`phone: footer button ${m.next.w}x${m.next.h}`);
     const sideways = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);
     if (sideways) fail('the ideas step scrolls sideways on a phone');
     else ok('no sideways scroll on a phone');

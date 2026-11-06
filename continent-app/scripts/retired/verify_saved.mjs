@@ -1,3 +1,4 @@
+// Retired T1089: My trips was rebuilt as Trips / Saved / Your Europe tabs; the side tiles (.saved-side), focal .mt-hero card, figures band (.mt-band), year-filter chips and country flags it asserts are gone.
 // Headless check of My trips (rebuilt in T434: Trips, Shortlist, Visited on
 // the kit). What it walks:
 //   1. Fresh device, desktop: three section tiles in the side panel wired to

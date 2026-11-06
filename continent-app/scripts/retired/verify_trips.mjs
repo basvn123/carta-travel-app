@@ -1,3 +1,4 @@
+// Retired T1089: the Trips category as a list of composed itineraries (.places-icard cards, day slider, pace and size facets) became Trip styles and journey weeks (T879-T884, T1030); the #itin= page it also opened is covered by verify_trip_page.mjs.
 // Headless verify for the composed itineraries in the Destinations tab's
 // Trips category (the published trip layer, pipeline/trips).
 //

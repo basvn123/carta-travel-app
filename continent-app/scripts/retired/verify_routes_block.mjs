@@ -1,3 +1,4 @@
+// Retired T1089: the "Routes from here" block (#sec-routes, .drh-row) no longer renders on the destination page; RoutesFromHere.jsx has no importer left, only the routes credit line remains.
 // Headless verify for "Routes from here" (ROUTES.md R6): the block that
 // replaced the trail entries in the destination page's nature join.
 //

@@ -1,3 +1,4 @@
+// Retired T1089: it drives the old wizard's .wbook-tile and Stays step (.wstays-add), which the plan flow (pf-*) replaced as the way into a trip; the chain needs a new harness against BookedDoor.
 // Headless check of the trip a traveller types in themselves: they say their
 // beds are booked, list the cities they hold, and Carta plans the days around
 // them. It guards the whole chain rather than the widget:
