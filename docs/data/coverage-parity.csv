@@ -1,0 +1,101 @@
+id,rank,kind,item,cc,scope,actual,expected,places,note
+D6-001,1,country places,D15,DE,Germany,248,443.8,196,248 places against a fair 444 (0.56 of expectation); robust: a gap under every blend tested
+D6-002,2,country places,D15,PL,Poland,82,173.9,92,82 places against a fair 174 (0.47 of expectation); not robust: some blends tested do not call it a gap
+D6-003,3,country places,D15,FI,Finland,28,89.5,62,28 places against a fair 90 (0.31 of expectation); not robust: some blends tested do not call it a gap
+D6-004,4,country places,D15,AT,Austria,53,101.1,48,53 places against a fair 101 (0.52 of expectation); robust: a gap under every blend tested
+D6-005,5,country places,D15,SE,Sweden,90,137.9,48,90 places against a fair 138 (0.65 of expectation); not robust: some blends tested do not call it a gap
+D6-006,6,country places,D15,NO,Norway,55,97.2,42,55 places against a fair 97 (0.57 of expectation); not robust: some blends tested do not call it a gap
+D6-007,7,country places,D15,RO,Romania,61,93.9,33,61 places against a fair 94 (0.65 of expectation); not robust: some blends tested do not call it a gap
+D6-008,8,country places,D15,BA,Bosnia and Herzegovina,17,30.7,14,17 places against a fair 31 (0.55 of expectation); robust: a gap under every blend tested
+D6-009,9,country places,D15,MD,Moldova,8,21.4,13,8 places against a fair 21 (0.37 of expectation); robust: a gap under every blend tested
+D6-010,10,country places,D15,LT,Lithuania,14,21.9,8,14 places against a fair 22 (0.64 of expectation); not robust: some blends tested do not call it a gap
+D6-011,11,region places,D15,FR,FR10 Ile-de-France,16,63.7,48,16 places against 63.7; basis area and nights within the country
+D6-012,12,region places,D15,IT,ITH3 Veneto,30,64.3,34,30 places against 64.3; basis area and nights within the country
+D6-013,13,region places,D15,ES,ES70 Canarias,10,31.7,22,10 places against 31.7; basis area and nights within the country
+D6-014,14,region places,D15,IT,ITH1 Provincia Autonoma di Bolzano/Bozen,13,31.3,18,13 places against 31.3; basis area and nights within the country
+D6-015,15,region places,D15,SE,SE33 Övre Norrland,5,19.8,15,5 places against 19.8; basis area and nights within the country
+D6-016,16,region places,D15,ES,ES42 Castilla-La Mancha,11,25.3,14,11 places against 25.3; basis area and nights within the country
+D6-017,17,region places,D15,DE,DE40 Brandenburg,5,13.8,9,5 places against 13.8; basis area and nights within the country
+D6-018,18,region places,D15,HR,HR02 Panonska Hrvatska,4,12.5,9,4 places against 12.5; basis area and nights within the country
+D6-019,19,region places,D15,DE,DE80 Mecklenburg-Vorpommern,8,16.4,8,8 places against 16.4; basis area and nights within the country
+D6-020,20,region places,D15,DE,DEF0 Schleswig-Holstein,7,15.2,8,7 places against 15.2; basis area and nights within the country
+D6-021,21,region places,D15,IE,IE06 Eastern and Midland,4,12.0,8,4 places against 12.0; basis area and nights within the country
+D6-022,22,region places,D15,GR,EL64 Sterea Elláda,4,10.6,7,4 places against 10.6; basis area and nights within the country
+D6-023,23,region places,D15,AT,AT22 Steiermark,3,7.6,5,3 places against 7.6; basis area and nights within the country
+D6-024,24,region places,D15,DE,DE93 Lüneburg,3,8.1,5,3 places against 8.1; basis area and nights within the country
+D6-025,25,region places,D15,NO,NO0B Svalbard og Jan Mayen,0,4.5,5,0 places against 4.5; basis area and nights within the country
+D6-026,26,region places,D15,AL,AL02 Qender,2,6.3,4,2 places against 6.3; basis area and nights within the country
+D6-027,27,region places,D15,DE,DE23 Oberpfalz,1,4.8,4,1 places against 4.8; basis area and nights within the country
+D6-028,28,region places,D15,HU,HU32 Észak-Alföld,3,7.1,4,3 places against 7.1; basis area and nights within the country
+D6-029,29,region places,D15,NL,NL23 Flevoland,2,6.1,4,2 places against 6.1; basis area and nights within the country
+D6-030,30,region places,D15,PL,PL92 Mazowiecki regionalny,1,4.5,4,1 places against 4.5; basis area and nights within the country
+D6-031,31,region places,D15,DE,DE22 Niederbayern,3,6.2,3,3 places against 6.2; basis area and nights within the country
+D6-032,32,region places,D15,DE,DE73 Kassel,2,4.7,3,2 places against 4.7; basis area and nights within the country
+D6-033,33,region places,D15,NO,NO06 Trøndelag/Trööndelage,2,5.1,3,2 places against 5.1; basis area and nights within the country
+D6-034,34,region places,D15,RS,RS11 City of Belgrade,2,4.7,3,2 places against 4.7; basis area and nights within the country
+D6-035,35,region places,D15,PL,PL43 Lubuskie,0,2.5,2,0 places against 2.5; basis area and nights within the country
+D6-036,36,region places,D15,SK,SK01 Bratislavský kraj,1,3.1,2,1 places against 3.1; basis area and nights within the country
+D6-037,37,field,D11,GB,United Kingdom: Crowds by month,0.4,85.0,446,0% against the catalogue's 85%; 524 places lack it
+D6-038,38,field,D10,GB,United Kingdom: Food prices at city or region level,31.7,85.3,282,32% against the catalogue's 85%; 359 places lack it
+D6-039,39,field,D9,GB,United Kingdom: Gallery of 4 or more photos,36.9,65.2,149,37% against the catalogue's 65%; 332 places lack it
+D6-040,40,field,D9,FR,France: Sourced intro (Wikipedia or Wikivoyage),26.6,47.4,124,27% against the catalogue's 47%; 434 places lack it
+D6-041,41,field,D9,FR,France: Gallery of 4 or more photos,44.5,65.2,123,45% against the catalogue's 65%; 328 places lack it
+D6-042,42,field,D9,IT,Italy: Sourced intro (Wikipedia or Wikivoyage),31.0,47.4,107,31% against the catalogue's 47%; 449 places lack it
+D6-043,43,field,D10,CH,Switzerland: Food prices at city or region level,54.7,85.3,17,55% against the catalogue's 85%; 24 places lack it
+D6-044,44,field,D9,RO,Romania: Gallery of 4 or more photos,41.0,65.2,15,41% against the catalogue's 65%; 36 places lack it
+D6-045,45,field,D11,BA,Bosnia and Herzegovina: Crowds by month,5.9,85.0,14,6% against the catalogue's 85%; 16 places lack it
+D6-046,46,field,D10,IE,Ireland: Measured bed prices,59.5,86.7,12,60% against the catalogue's 87%; 17 places lack it
+D6-047,47,field,D10,IS,Iceland: Measured bed prices,39.1,86.7,11,39% against the catalogue's 87%; 14 places lack it
+D6-048,48,field,D10,IS,Iceland: Food prices at city or region level,43.5,85.3,10,43% against the catalogue's 85%; 13 places lack it
+D6-049,49,field,D10,BA,Bosnia and Herzegovina: Food prices at city or region level,35.3,85.3,9,35% against the catalogue's 85%; 11 places lack it
+D6-050,50,field,D10,CY,Cyprus: Food prices at city or region level,45.0,85.3,9,45% against the catalogue's 85%; 11 places lack it
+D6-051,51,field,D10,LV,Latvia: Food prices at city or region level,47.8,85.3,9,48% against the catalogue's 85%; 12 places lack it
+D6-052,52,field,D11,FO,Faroe Islands: Crowds by month,0.0,85.0,8,0% against the catalogue's 85%; 9 places lack it
+D6-053,53,field,D10,FO,Faroe Islands: Food prices at city or region level,0.0,85.3,8,0% against the catalogue's 85%; 9 places lack it
+D6-054,54,field,D11,MD,Moldova: Crowds by month,0.0,85.0,7,0% against the catalogue's 85%; 8 places lack it
+D6-055,55,field,D9,RS,Serbia: Sourced intro (Wikipedia or Wikivoyage),28.6,47.4,6,29% against the catalogue's 47%; 20 places lack it
+D6-056,56,field,D11,XK,Kosovo: Crowds by month,12.5,85.0,6,12% against the catalogue's 85%; 7 places lack it
+D6-057,57,field,D10,MD,Moldova: Food prices at city or region level,37.5,85.3,4,38% against the catalogue's 85%; 5 places lack it
+D6-058,58,field,D10,XK,Kosovo: Food prices at city or region level,37.5,85.3,4,38% against the catalogue's 85%; 5 places lack it
+D6-059,59,field,D9,MD,Moldova: Gallery of 4 or more photos,37.5,65.2,3,38% against the catalogue's 65%; 5 places lack it
+D6-060,60,field,D10,MD,Moldova: Measured bed prices,50.0,86.7,3,50% against the catalogue's 87%; 4 places lack it
+D6-061,61,outdoor regions,D7,DE,Germany: beach,84.0,52.5,93,247 of 294 coverage units have no beach at all (84% against 52% across the catalogue)
+D6-062,62,outdoor regions,D7,GR,Greece: cycling,86.5,20.7,35,45 of 52 coverage units have no cycling at all (87% against 21% across the catalogue)
+D6-063,63,outdoor regions,D7,MD,Moldova: cycling,100.0,20.7,30,37 of 37 coverage units have no cycling at all (100% against 21% across the catalogue)
+D6-064,64,outdoor regions,D7,DE,Germany: mountain,53.6,27.9,29,60 of 112 coverage units have no mountain at all (54% against 28% across the catalogue)
+D6-065,65,outdoor regions,D7,MD,Moldova: trail,67.6,7.2,23,25 of 37 coverage units have no trail at all (68% against 7% across the catalogue)
+D6-066,66,outdoor regions,D7,RO,Romania: cycling,66.7,20.7,20,28 of 42 coverage units have no cycling at all (67% against 21% across the catalogue)
+D6-067,67,outdoor regions,D7,BG,Bulgaria: cycling,82.1,20.7,18,23 of 28 coverage units have no cycling at all (82% against 21% across the catalogue)
+D6-068,68,outdoor regions,D7,IT,Italy: mountain,46.8,27.9,18,44 of 94 coverage units have no mountain at all (47% against 28% across the catalogue)
+D6-069,69,outdoor regions,D7,RO,Romania: beach,83.3,52.5,13,35 of 42 coverage units have no beach at all (83% against 52% across the catalogue)
+D6-070,70,outdoor regions,D7,FR,France: mountain,51.0,27.9,12,25 of 49 coverage units have no mountain at all (51% against 28% across the catalogue)
+D6-071,71,outdoor regions,D7,MD,Moldova: beach,88.5,52.5,10,23 of 26 coverage units have no beach at all (88% against 52% across the catalogue)
+D6-072,72,outdoor regions,D7,AL,Albania: cycling,91.7,20.7,9,11 of 12 coverage units have no cycling at all (92% against 21% across the catalogue)
+D6-073,73,outdoor regions,D7,RS,Serbia: cycling,56.0,20.7,9,14 of 25 coverage units have no cycling at all (56% against 21% across the catalogue)
+D6-074,74,outdoor regions,D7,BG,Bulgaria: beach,78.6,52.5,8,22 of 28 coverage units have no beach at all (79% against 52% across the catalogue)
+D6-075,75,outdoor regions,D7,RO,Romania: trail,26.2,7.2,8,11 of 42 coverage units have no trail at all (26% against 7% across the catalogue)
+D6-076,76,outdoor regions,D7,SM,San Marino: cycling,100.0,20.7,8,9 of 9 coverage units have no cycling at all (100% against 21% across the catalogue)
+D6-077,77,outdoor regions,D7,MK,North Macedonia: cycling,87.5,20.7,6,7 of 8 coverage units have no cycling at all (88% against 21% across the catalogue)
+D6-078,78,outdoor regions,D7,XK,Kosovo: cycling,85.7,20.7,5,6 of 7 coverage units have no cycling at all (86% against 21% across the catalogue)
+D6-079,79,outdoor regions,D7,SM,San Marino: trail,33.3,7.2,3,3 of 9 coverage units have no trail at all (33% against 7% across the catalogue)
+D6-080,80,outdoor regions,D7,AD,Andorra: trail,28.6,7.2,2,2 of 7 coverage units have no trail at all (29% against 7% across the catalogue)
+D6-081,81,outdoor regions,D7,LT,Lithuania: cycling,40.0,20.7,2,4 of 10 coverage units have no cycling at all (40% against 21% across the catalogue)
+D6-082,82,outdoor regions,D7,XK,Kosovo: beach,100.0,52.5,2,4 of 4 coverage units have no beach at all (100% against 52% across the catalogue)
+D6-083,83,outdoor photos,D7,DE,Germany: trail photos,4.3,25.0,979,203 of 4725 rated trails have a photo
+D6-084,84,outdoor photos,D7,GB,United Kingdom: trail photos,11.8,25.0,252,226 of 1910 rated trails have a photo
+D6-085,85,outdoor photos,D7,IT,Italy: trail photos,9.9,25.0,193,127 of 1280 rated trails have a photo
+D6-086,86,outdoor photos,D7,FR,France: trail photos,16.1,25.0,86,155 of 962 rated trails have a photo
+D6-087,87,outdoor photos,D7,PL,Poland: trail photos,15.7,25.0,83,140 of 892 rated trails have a photo
+D6-088,88,outdoor photos,D7,BE,Belgium: trail photos,18.6,25.0,42,121 of 652 rated trails have a photo
+D6-089,89,outdoor photos,D7,NL,Netherlands: trail photos,18.4,25.0,41,113 of 614 rated trails have a photo
+D6-090,90,outdoor photos,D7,GR,Greece: trail photos,18.0,25.0,39,100 of 555 rated trails have a photo
+D6-091,91,outdoor photos,D7,ES,Spain: trail photos,18.4,25.0,36,99 of 538 rated trails have a photo
+D6-092,92,outdoor photos,D7,AL,Albania: trail photos,9.5,25.0,26,16 of 168 rated trails have a photo
+D6-093,93,outdoor photos,D7,XK,Kosovo: trail photos,4.2,25.0,20,4 of 96 rated trails have a photo
+D6-094,94,outdoor photos,D7,AT,Austria: trail photos,22.7,25.0,13,127 of 559 rated trails have a photo
+D6-095,95,outdoor photos,D7,MK,North Macedonia: trail photos,9.4,25.0,10,6 of 64 rated trails have a photo
+D6-096,96,language,I8,,de: place intro,0,1835,1835,intro shows in English only; translate the sourced intros
+D6-097,97,language,I8,,es: place intro,0,1835,1835,intro shows in English only; translate the sourced intros
+D6-098,98,language,I8,,fr: place intro,0,1835,1835,intro shows in English only; translate the sourced intros
+D6-099,99,language,I8,,it: place intro,0,1835,1835,intro shows in English only; translate the sourced intros
+D6-100,100,language,I8,,nl: place intro,0,1835,1835,intro shows in English only; translate the sourced intros

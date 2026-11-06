@@ -594,7 +594,7 @@ docs/
 | D3 | Provenance and freshness per field | Every key block carries `_src` and `_asof`; sources registry generated | M | P4 | todo |
 | D4 | Truth set | 150 items verified by hand, scored per release | M | P3 | todo |
 | D5 | Scraper and source health | Yield, drift and staleness alerts reach admin and email | S | P1 | in progress (T1074: box steps T1074-c) |
-| D6 | Coverage fairness | Parity table per country, region and language in `docs/data/` | S | P4 | todo |
+| D6 | Coverage fairness | Parity table per country, region and language in `docs/data/` | S | P4 | done (T1145; Ask recall per language T1145-c, blend review T1145-e) |
 | D7 | Trails and outdoor fill | Trail targets in the table met; display names cleaned; difficulty weighs climb and terrain, not length; mountains and lakes filled (P-21, P-30, P-36) | L | P1 | in progress (T1092: display names and per-day difficulty in code; rebuild is T1092-a; T1093: photo licence gate and paced harvest in code, the box run is T1093-a; T1094: walk recovery rules (article pairs, lone famous way, main line, reorder splice) and the Northern Ireland country fix in code, the box rebuild is T1094-a) |
 | D9 | Place text and photos | Intros, guide text and galleries to target, French, Italian and UK first; POI descriptions; intros in six languages (P-23, P-24) | L | P2 (top 300), P4 | in progress (T1095: intro harvest built; T1096: gallery pass and POI description harvest built; runs are owner steps) |
 | D8 | Sea temperature | `sea_temp` run, beaches re-exported, `climate.water_c` filled, beach strip draws (P-22) | S | P1 | code ready (T1097); box run T1097-a |
