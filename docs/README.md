@@ -37,6 +37,7 @@ What to read for what. Built by T1073 (ROADMAP B2). Every session reads CLAUDE.m
 | `security/` | Track C (another task); not written by B2 |
 | `design/` | The design direction (G1, `direction.md`, draft for owner approval); G10's a11y audit lands here |
 | `research/`, `legal/`, `brand/` | Notes, kept where they are |
+| `brand/data-stories/` | K5 press drafts (Dutch, English), method note and the generated basket data (T1130) |
 
 ## Files code reads (never move or rename)
 
