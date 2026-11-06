@@ -114,3 +114,8 @@ jobs:
       # entry points again. Known drift is in scripts/docs/drift_baseline.json.
       - name: Docs drift (logic catalogue, wire table, entry points)
         run: python -I scripts/docs/drift.py
+      # B4 (T1165): docs/reference/config.md lists every key of continent-app/config/
+      # and scripts/quality/rules.yaml. Fails when a key is added or removed without
+      # regenerating it (python -I scripts/docs/config_reference.py).
+      - name: Config reference lists every config key
+        run: python -I scripts/docs/config_reference.py --check
