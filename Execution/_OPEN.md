@@ -1862,3 +1862,8 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1155-c | T1155 | `price_trip` prices stays only; add flights and legs between stops through `quoteTrip` (lib/price/trip.js) and add an eval of the figures | next task | open |  |
 | T1155-d | T1155 | Owner step: try the server in a real MCP client (see the report's owner steps) | user | open |  |
 | T1155-e | T1155 | MAP.md, docs/README.md and the docs site do not mention `services/mcp/`; outside this task's files | next task | open |  |
+| T1167-a | T1167 | Create the private Cloudflare Pages project `carta-docs` behind Cloudflare Access and deploy the built site (`.docs-site`) to it; the decision on site visibility is T1045-i | user | open | |
+| T1167-b | T1167 | OpenAPI reference for the Intelligence API is not generated: it waits for F5 (add a generator to scripts/docs/build_reference.py and a docs/reference/openapi.md row) | next task | open | |
+| T1167-c | T1167 | python.md and app-lib.md are checked only with `--check --strict`, not in ci.yml, because they move with every code edit; decide whether to ratchet (regenerate in a merge-time job that commits) or keep docs-site.yml regenerating them | next task | open | |
+| T1167-d | T1167 | MkDocs Material is in maintenance mode and mkdocs 2.0 is incompatible; before the pinned 9.8.0 stops getting fixes, try Zensical on the same mkdocs.yml, or move to Starlight | next task | open | |
+| T1167-e | T1167 | The app library reference is a text extractor, not TypeDoc; many `src/lib` exports have no comment above them (count is in the first line of app-lib.md): comment them and, when the figure is high enough, re-test TypeDoc with allowJs | next task | open | |

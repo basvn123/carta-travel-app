@@ -35,7 +35,7 @@ What to read for what. Built by T1073 (ROADMAP B2). Every session reads CLAUDE.m
 | `glossary.md` | Real (B2) |
 | `logic/` | Logic catalogue (B3), one file per domain: rule, constant, test; index in `logic/README.md` |
 | `ai/` | Stub, filled by B3 and Track E |
-| `reference/` | Generated, never edited by hand: `config.md`, every config key with its readers (B4, T1165); the rest comes with B6 |
+| `reference/` | Generated, never edited by hand: `config.md`, every config key with its readers (B4, T1165); `python.md`, `app-lib.md`, `tasks.md`, `supabase.md` (B6, T1167); site config `mkdocs.yml` |
 | `security/` | Track C (another task); not written by B2 |
 | `design/` | The design direction (G1, `direction.md`, draft for owner approval); G10's a11y audit lands here |
 | `research/`, `legal/`, `brand/` | Notes, kept where they are |
