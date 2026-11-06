@@ -1497,3 +1497,5 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1106-a | T1106 | Run the seeded-error browser spec and look at `?seedError=explore` in `npm run dev` with real app data (the cloud container has none) | user | open |  |
 | T1106-b | T1106 | Wrap individual cards (explore, price) with `SectionBoundary compact`; trail cards, beach strip, plan flow and auth were off limits tonight | next task | open |  |
 | T1106-c | T1106 | The 107 silent catches named in H13 were not reviewed; T1106 covers render errors only | next task | open |  |
+| T1112-a | T1112 | Run the Aviasales coverage probe with the owner token and the sweep export; steps in the report (D14) | user | open |  |
+| T1112-b | T1112 | Decide switch, hybrid or stay from the coverage table once T1112-a has run | next task | open |  |
