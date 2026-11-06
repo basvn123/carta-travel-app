@@ -18,7 +18,7 @@ each component is a claim a reader could check:
                 castles and huts scenic.py found along the line, weighted by
                 kind and measured PER KILOMETRE, so a 4 km walk past three
                 waterfalls beats a 40 km one past four.
-  relief        ascent per kilometre, how high it gets and how much the
+  relief        climb per kilometre read uphill, how high it gets and how much the
                 profile actually moves, from the Copernicus DEM. A flat
                 towpath and an alpine traverse are not the same walk.
   prominence    whether anybody wrote about the route: the wikidata/wikipedia
@@ -246,10 +246,16 @@ def scenery_raw(row):
 
 
 def relief_raw(row):
-    """How much the ground moves: climb rate, top height and profile spread."""
+    """How much the ground moves: climb rate, top height and profile spread.
+
+    The climb is read uphill (climb_of, attributes.uphill), the same rule the
+    reasons, the grade and the app's climb use (T1180, T286-c). Until T1180
+    this read the stored ascent, so the 488 routes drawn summit to valley
+    scored a 7 m climb where the walker faces 1,423 m (Mount Korab 9) and
+    sat well below their uphill twins. Top height and spread do not depend
+    on the direction, so a route and its reverse now score the same relief."""
     km = max(0.5, (row.get("distance_m") or 0) / 1000.0)
-    ascent = float(row.get("ascent_m") or 0)
-    per_km = ascent / km
+    per_km = climb_of(row) / km
     elev = row.get("elevation") or {}
     top = float(elev.get("ele_max_m") or 0)
     low = float(elev.get("ele_min_m") or 0)

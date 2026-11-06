@@ -685,7 +685,7 @@ Every rating number lives in one file, `continent-app/config/rating.json` (versi
    | Part | Weight | Raw measure |
    | --- | --- | --- |
    | scenery | 0.22 | Weighted scenic features (summits, viewpoints, waterfalls, lakes, castles, huts) / (km + 1) |
-   | relief | 0.16 | `1.6 x ln(1 + ascent per km) + 0.5 x ln(1 + top height) + 0.6 x ln(1 + height spread)` |
+   | relief | 0.16 | `1.6 x ln(1 + climb per km) + 0.5 x ln(1 + top height) + 0.6 x ln(1 + height spread)`, the climb read uphill (rule below) |
    | shape | 0.15 | Loop or figure eight 1.0, point to point 0.55, out and back 0.40 |
    | prominence | 0.14 | `0.6 x (has wikidata/wikipedia) + 0.4 x popularity / 100` |
    | designation | 0.13 | Network: iwn 1.0, nwn 0.85, rwn 0.6, lwn 0.35, lcn 0.3, else 0.2 |
@@ -694,6 +694,8 @@ Every rating number lives in one file, `continent-app/config/rating.json` (versi
    | surface | 0.03 | Surface quality minus road share (0.5 when unknown) |
 
    Length is deliberately not a quality term.
+
+   Relief reads the climb in the direction a walker faces it, by the same uphill rule as the reasons, the grade and the app's climb (`attributes.uphill`, `rate.climb_of`): a route whose stored descent is at least `DOWNHILL_MIN_M = 300` m more than its ascent and at least `DOWNHILL_RATIO = 2` times it is read from the bottom, so its climb is the stored descent. Top height and spread do not depend on direction, so a route and its reverse score the same relief. Until T1180 relief read the stored ascent, and the routes drawn summit to valley (488 in the lab at T286, 503 on the 2026-09-13 wire) scored as nearly flat. Below the rule's thresholds the stored ascent stands, the same as everywhere else that reads a climb.
 2. Score the app shows (v5, see "Nature ratings"): each raw part is placed on a frozen Europe-wide percentile, blended with the weights above, then read onto the place ladder. The app reads `row.v5` through `trailRating` = `natureRating`.
 3. Older published `rating` (still written): each part is a percentile within the walk's NUTS 3 region if it has at least 20 rows (`REGION_MIN_ROWS`), else within the country. The weighted composite is stretched per country: `rating = 4.0 + 5.8 x (0.12 + 0.88 x (c - min) / (max - min))` (`FLOOR` 4.0, `CEILING` 9.8, `PAD` 0.12). The wire order is this rating order.
 4. Reasons are codes, not prose, with thresholds such as 3 summits (`MANY_SUMMITS`), 800 m climb (`BIG_CLIMB_M`), 45 m per km steep, 1,800 m high, 4 photos, 1.2 scenic weight per km, 3 kinds for variety, 20% road share warning; "good day out" needs climb at most 800 m and at most 360 minutes.
@@ -704,7 +706,7 @@ Every rating number lives in one file, `continent-app/config/rating.json` (versi
 
 **Where it lives.** `pipeline/trails/rate.py`, `pipeline/trails/export_wire.py`, `pipeline/nature_tiers.py`, `continent-app/src/lib/trailCards.js`, `continent-app/src/browse/TrailPage.jsx`. Docs: `archive/docs-2026-11/TRAILS.md`, `archive/docs-2026-11/TRAILS_DATA_QUALITY.md`.
 
-**Limits.** Relief reads stored ascent per km, so 488 routes drawn downhill under-score (T286-c). The lab still runs on the laptop (T784-a). The worker does not rerun rate.py after way tag refreshes (T647-e).
+**Limits.** The relief fix of T1180 is in code; the published scores move only when the owner re-rates on the box (T1180-a), the 503 walks drawn downhill until then still carry their old score. The lab still runs on the laptop (T784-a). The worker does not rerun rate.py after way tag refreshes (T647-e).
 
 ---
 
