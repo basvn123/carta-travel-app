@@ -1146,6 +1146,28 @@ def validate_listed(rows):
     return bad
 
 
+# T1094 (D7): the one cross-border case that is a mistake of the extract, not
+# a judgement about a long walk. Geofabrik cuts Northern Ireland into the
+# "ireland-and-northern-ireland" extract, so every walk there is staged as IE
+# (ingest_osm_routes.COUNTRIES). T456's rule refiles a walk whose midpoint
+# lies in another country only under 30 km, because a long cross-border path
+# belongs where its owner decided; but the Mourne Wall Challenge (31 km), the
+# Antrim Hills Way and the Newcastle Way are not cross-border at all, they
+# are wholly in the UK, and stayed under Ireland. A row filed by its extract
+# under one of these countries whose owning region (rg.n2, the midpoint) lies
+# in the named other country is refiled there, whatever its length.
+EXTRACT_QUIRKS = {("IE", "GB")}
+
+
+def extract_quirk_country(rg, filed, known):
+    """The country a row belongs to when its extract filed it wrongly."""
+    import place_truth
+    there = place_truth.nuts_country((rg or {}).get("n2"))
+    if (filed, there) in EXTRACT_QUIRKS and there in known:
+        return there
+    return filed
+
+
 def country_file(country, rated, listed, generated_at, tolerance):
     items = rated + listed
     counts = Counter(i["category"] for i in rated)
@@ -1385,6 +1407,7 @@ def main():
     known = {t["country"] for t in trips}
     for t in trips:
         t["country"] = place_truth.trail_country(t.get("rg"), t["country"], t.get("distance_m"), known)
+        t["country"] = extract_quirk_country(t.get("rg"), t["country"], known)
     by_country = defaultdict(list)
     for t in trips:
         by_country[t["country"]].append(t)
