@@ -857,7 +857,9 @@ Every rating number lives in one file, `continent-app/config/rating.json` (versi
 1. Source: NASA JPL MUR SST v4.1 monthly means via NOAA CoastWatch ERDDAP (`jplMURSST41mday`), one call per 1 degree tile, sampled every 0.03 degrees (about 3 km).
 2. Climatology: per cell, the calendar-month mean over `YEAR_FROM` to `YEAR_TO` = 2017 to 2022. A cell counts only if all twelve months are valid.
 3. A point takes the nearest valid cell within 6 km for a beach (`BEACH_MAX_KM`) or 20 km for a destination (`DEST_MAX_KM`). Lakes are in the product too, so a lake beach gets the lake surface temperature.
-4. `apply_climate.py` writes it as `climate.water_c` (twelve values); the climate extras block shows it as "Water temperature".
+4. `apply_climate.py` writes it as `climate.water_c` (twelve values); the climate extras block shows it as "Water temperature". It reads the rows of `cache/sea_temp_dest.json` (the overlay file wraps them as `{_meta, rows}`; before T1097 it read the wrapper and found nothing).
+5. The beach export writes the beach's twelve figures as the wire key `sea_temp` (T1097; it was `sst`, which no screen read). `BeachPage.jsx` draws them through `seaByMonth` in `waterFacts.js`: twelve finite numbers or no strip, the three warmest months highlighted.
+6. Pace and resume (T1097): one ERDDAP call at most every `DEFAULT_DELAY_S` = 1.5 s (`--delay`), each tile cached atomically in `cache/sea_temp/`, `--fixture DIR` reads recorded CSV (`<lat>_<lon>.csv`) instead of the network for a dry run. Tests: `tests/test_sea_temp_fixture.py`, `continent-app/tests/seaTemp.test.mjs`.
 
 **Data behind it.** `cache/sea_temp/` tiles, `cache/sea_temp_beaches.json` (read by the beach export), `cache/sea_temp_dest.json` (read by `apply_climate.py`). `python run_pipeline.py --only sea_temp`, quarterly, with a 6 hour budget; unfinished tiles resume next run (exit code 3).
 
@@ -2025,7 +2027,7 @@ Carta shows walks, bike routes, beaches, lakes and peaks on their own pages. Eac
 **Where it lives.** `pipeline/beaches/`, `pipeline/harvest_bathing_water.py`, `pipeline/harvest_sea_temp.py`, `pipeline/harvest_swim_bans.py`, `continent-app/src/browse/BeachPage.jsx`, `archive/docs-2026-11/BEACHES.md`.
 
 **Limits.**
-- Sea temperature reaches no beach yet: `sea_temp` is filled on 0 rows. The first run stopped after 12.7 hours on an ERDDAP HTTP 503 and now resumes in 6-hour slices (T918-b).
+- Sea temperature reaches no beach yet: `sea_temp` is filled on 0 rows (the chain is fixed and tested on a recorded ERDDAP fixture in T1097; the real box run is T1097-a). The first run stopped after 12.7 hours on an ERDDAP HTTP 503 and now resumes in 6-hour slices (T918-b).
 - Defra England and Wales returns HTTP 403, so GB beaches have no water class. Scotland (SEPA) and Northern Ireland (DAERA) are not connected, and Northern Ireland beaches are dropped.
 - No Blue Flag data.
 - Shade, sunbeds, lifeguard season and waves are placeholders (T918-d); step-free is known for 33 beaches, parking for 522.

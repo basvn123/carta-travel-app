@@ -1,0 +1,48 @@
+{
+ "_note": "T1097: built by pipeline/harvest_sea_temp.py from tests/fixtures/erddap (recorded ERDDAP format); beach rows as the export writes them",
+ "beaches": [
+  {
+   "id": "it-test-bay-Q1",
+   "lat": 40.63,
+   "lon": 14.48,
+   "sea_temp": [
+    13.2,
+    12.6,
+    13.0,
+    14.5,
+    17.6,
+    21.4,
+    24.6,
+    25.6,
+    23.8,
+    20.6,
+    17.4,
+    14.8
+   ]
+  },
+  {
+   "id": "it-ancona-Q2",
+   "lat": 43.6,
+   "lon": 13.56,
+   "sea_temp": [
+    12.4,
+    11.8,
+    12.2,
+    13.7,
+    16.8,
+    20.6,
+    23.8,
+    24.8,
+    23.0,
+    19.8,
+    16.6,
+    14.0
+   ]
+  },
+  {
+   "id": "fr-inland-Q3",
+   "lat": 48.0,
+   "lon": 2.0
+  }
+ ]
+}

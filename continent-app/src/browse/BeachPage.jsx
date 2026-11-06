@@ -26,6 +26,7 @@ import {
   TreeIcon, SunIcon, BeachIcon, RouteIcon, CheckIcon,
 } from '../components/Icons.jsx';
 import { beachFacing } from '../lib/derivedModules.js';
+import { seaByMonth } from '../lib/waterFacts.js';
 import { CompassRosette } from './Signature.jsx';
 import { compassPoint } from '../lib/signature.js';
 
@@ -129,10 +130,10 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
   const hasLifeguard = Boolean(beach.lifeguard || lgSeason);
 
   // The sea by month (sea_temp, twelve figures): the three warmest stand out.
-  const sea = Array.isArray(beach.sea_temp) && beach.sea_temp.length === 12
-    && beach.sea_temp.every((v) => Number.isFinite(Number(v))) ? beach.sea_temp.map(Number) : null;
-  const warmest = sea ? [...sea.keys()].sort((a, b) => sea[b] - sea[a]).slice(0, 3) : [];
-  const peakI = sea ? warmest[0] : null;
+  const seaFact = seaByMonth(beach);
+  const sea = seaFact?.sea || null;
+  const warmest = seaFact?.warmest || [];
+  const peakI = seaFact ? seaFact.peakI : null;
 
   // The facts that decide (the spec): water, underfoot, lifeguard, length,
   // which way it faces, and the way in where it is mapped.

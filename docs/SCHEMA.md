@@ -892,7 +892,7 @@ when the source says nothing; absence means unknown, never "no".
 | `pool` | `true` | context bucket `swimming_pool` (leisure=swimming_pool added to the existing leisure clause, plus water_park) |
 | `kidsPool` | `true` | context bucket `kids_pool`: a swimming pool whose `pool=` value or name says children |
 | `rentals` | `true` | context bucket `sunbed_rental`: a new Overpass clause, `rental` matching umbrella, sunbed, sun_lounger, deckchair or beach |
-| `sst` | 12 numbers | forwarded by `v2_fields` when a beach carries it; no source today (stub) |
+| `sst` | 12 numbers | input key on an enriched beach; `v2_fields` forwards it to the wire as `sea_temp` (T1097) |
 
 The context buckets only exist after `enrich_beaches.py` re-runs its Overpass
 context pass (two extra lookups per batch), then `export_beaches.py`.
@@ -1128,7 +1128,7 @@ row for the id they write.
 | lakes | `lifeguards` | `{n, sites: [{n?, lat, lon}]}` | OSM `lifeguard=yes/seasonal`, `emergency=lifeguard*`, `leisure=swimming_area` + `supervised=yes` | measured | same |
 | lakes | `swim.ban` | `{n, sites: [...], src: "osm"}` | OSM `swimming=no`, `bathing=no` | measured | same |
 | lakes | `wind.profile` | `{ms: [12], src, m: "modelled"}` mean 10 m wind in m/s | NASA POWER WS10M climatology 2001 to 2020 at the lake centre (open). Thermal winds are not in any open source | modelled | same |
-| beaches | `sst` | 12 numbers, C | NASA JPL MUR SST, nearest valid cell within 6 km | measured | `harvest_sea_temp.py --beaches`, `export_beaches.v2_fields` |
+| beaches | `sea_temp` (T1097: was written as `sst`, which no screen read) | 12 numbers, C | NASA JPL MUR SST, nearest valid cell within 6 km | measured | `harvest_sea_temp.py --beaches`, `export_beaches.v2_fields` |
 | beaches | `walkFrom` | `{centre?: {km, min, town, m}, pier?: {km, min, name?, m}}`, `m` = `modelled` | base town and beach positions, OSM ferry terminals within 4 km; straight line x 1.3 at 4.5 km/h, not a routed path | modelled | `beaches/harvest_beach_walks.py` |
 | mountains | `lift.hours` (string), `lift.fare` (price record, not shown) | OSM `opening_hours` string kept unparsed; `charge` when it parses to one amount | OSM aerialway and funicular within 2.5 km of the peak | measured | `mountains/harvest_lift_hours.py`, `export_peaks.py` |
 | trails | `transit` `{rail?, bus?, ferry?}` | each true only when found within 500 m of the start of the line; the key is absent when none was found | OSM stations, coach stations, bus stops (`highway=bus_stop`, `public_transport=platform` + `bus=yes`) and ferry terminals in `transit_stops` | measured | `trails/transit_stops.py` (new kinds `ferry`, `bus_stop`), `trails/export_wire.py` |
@@ -1347,7 +1347,7 @@ a derived parking row this way). Read `typeof access === "object"`.
 | | `dogs` | `"yes"\|"leash"\|"no"` | `cache/outdoor/trails.json` | placeholder (0) |
 | | `permit` | short plain English sentence | `cache/outdoor/trails.json` | placeholder (0) |
 | | `huts[].season`, `huts[].booking` | `[fromMonth, toMonth]`, `true\|false`, merged into the existing `huts[]` by folded hut name | `cache/outdoor/trails.json` `huts: {name: {...}}` | placeholder (0) |
-| beaches, `beaches/{CC}.json` rows (`beaches` and `listed`) | `sea_temp` | 12 numbers, monthly mean sea surface temperature, C | the row's `sst`, else `cache/sea_temp_beaches.json` (T641 NASA MUR harvest, `pipeline/harvest_sea_temp.py`, not on disk in this checkout), else placeholder | 0 until the harvest lands |
+| beaches, `beaches/{CC}.json` rows (`beaches` and `listed`) | `sea_temp` | 12 numbers, monthly mean sea surface temperature, C | the row's `sst`, else `cache/sea_temp_beaches.json` (T641 NASA MUR harvest, `pipeline/harvest_sea_temp.py`, not on disk in this checkout), else placeholder; written by `export_beaches.v2_fields` (T1097) | 0 until the box harvest runs (T1097-a) |
 | | `access` | shared shape, parking within 500 m of the beach point | parking derived, transit placeholder | 522 |
 | | `step_free` | `true\|false` | OSM `wheelchair=yes` (row `wheelchair`) is true, `access: "steps"` is false; placeholder wins | derived, 33 |
 | | `shade` | `true\|false` (trees or cover within 50 m) | placeholder (no offline tree layer) | 0 |
