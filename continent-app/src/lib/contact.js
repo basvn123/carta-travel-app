@@ -6,3 +6,11 @@
  * Mail to it is forwarded by Cloudflare Email Routing (owner step, T461-a).
  */
 export const CONTACT = 'hello@carta-europetravel.com';
+
+/**
+ * SUPPORT_EMAIL (T1108, I9): the address the Help and contact page shows and
+ * opens in the mail app. PLACEHOLDER: it is the general address above until
+ * the owner gives a dedicated support address (register T1108-a). Change this
+ * one line and the page, its mail link and the tests follow.
+ */
+export const SUPPORT_EMAIL = CONTACT;

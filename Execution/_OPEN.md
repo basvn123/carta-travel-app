@@ -1497,3 +1497,6 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1106-a | T1106 | Run the seeded-error browser spec and look at `?seedError=explore` in `npm run dev` with real app data (the cloud container has none) | user | open |  |
 | T1106-b | T1106 | Wrap individual cards (explore, price) with `SectionBoundary compact`; trail cards, beach strip, plan flow and auth were off limits tonight | next task | open |  |
 | T1106-c | T1106 | The 107 silent catches named in H13 were not reviewed; T1106 covers render errors only | next task | open |  |
+| T1108-a | T1108 | Give the dedicated support address (and set up the mailbox with SPF, DKIM, DMARC): `SUPPORT_EMAIL` in `continent-app/src/lib/contact.js` is a placeholder equal to the general address | user | open |  |
+| T1108-b | T1108 | Review the Dutch support strings (`support.*`, `footer.support` in nl.js); the Dutch is a draft, and de, es, fr, it fall back to English | user | open |  |
+| T1108-c | T1108 | I9 rest: About page and accessibility statement (EU Accessibility Act) are not built; the page has no status history, only the live line from status.json (needs T1056-a published) | next task | open |  |
