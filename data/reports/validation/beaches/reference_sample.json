@@ -1,0 +1,3226 @@
+{
+"source": "EEA WISE bathing water register, status per site (rows copied unchanged; EEA content, attribute the European Environment Agency)",
+"sample": "2% of sea sites per country, minimum 3, by sha256",
+"sites": [
+{
+"bwid": "AL502",
+"name": "DURRES",
+"iso2": "AL",
+"type": "Coastal",
+"lat": 41.3189,
+"lon": 19.4319,
+"q": "Good",
+"q1": "Good"
+},
+{
+"bwid": "AL106",
+"name": "VELIPOJA",
+"iso2": "AL",
+"type": "Coastal",
+"lat": 41.8594,
+"lon": 19.438,
+"q": "Sufficient",
+"q1": "Good"
+},
+{
+"bwid": "AL547",
+"name": "GJIRI I LALZIT",
+"iso2": "AL",
+"type": "Coastal",
+"lat": 41.50578,
+"lon": 19.51267,
+"q": "Good",
+"q1": "Good"
+},
+{
+"bwid": "BG3310610135003009",
+"name": "СВ.СВ. КОНСТАНТИН И ЕЛЕНА-СЕНТ ЕЛИАС",
+"iso2": "BG",
+"type": "Coastal",
+"lat": 43.2242,
+"lon": 28.0092,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "BG3310507598003020",
+"name": "БЯЛА-СЕВЕРЕН ПЛАЖ",
+"iso2": "BG",
+"type": "Coastal",
+"lat": 42.875,
+"lon": 27.8978,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "BG3320302508008016",
+"name": "БАЛЧИК-ДВОРЕЦА",
+"iso2": "BG",
+"type": "Coastal",
+"lat": 43.4028,
+"lon": 28.1464,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "BEVL_BW_OOS06",
+"name": "OOSTENDE KONINGINNENLAAN",
+"iso2": "BE",
+"type": "Coastal",
+"lat": 51.22896,
+"lon": 2.90233,
+"q": "Good",
+"q1": "Good"
+},
+{
+"bwid": "CY0004104000000031",
+"name": "ELLINAS",
+"iso2": "CY",
+"type": "Coastal",
+"lat": 34.97802,
+"lon": 33.69982,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "BEVL_BW_MDK02",
+"name": "MIDDELKERKE SINT-LAUREINS - WESTENDE",
+"iso2": "BE",
+"type": "Coastal",
+"lat": 51.1672,
+"lon": 2.75959,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "BEVL_BW_NPT02",
+"name": "NIEUWPOORT LEOPOLDPLEIN",
+"iso2": "BE",
+"type": "Coastal",
+"lat": 51.14851,
+"lon": 2.70809,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "CY0006000000000135",
+"name": "ANAOULIONTAS",
+"iso2": "CY",
+"type": "Coastal",
+"lat": 34.7719,
+"lon": 32.4045,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DEMV_PR_1_0200",
+"name": "OSTSEE PROHNER WIEK KLAUSDORF",
+"iso2": "DE",
+"type": "Coastal",
+"lat": 54.4101,
+"lon": 13.0219,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DEMV_PR_1_0783",
+"name": "OSTSEE GOEHREN SUEDSTRAND",
+"iso2": "DE",
+"type": "Coastal",
+"lat": 54.3333,
+"lon": 13.7369,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DEMV_PR_1_0724",
+"name": "OSTSEE AHLBECK SPORTFERIENPARK",
+"iso2": "DE",
+"type": "Coastal",
+"lat": 53.9292,
+"lon": 14.2239,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DESH_PR_0248",
+"name": "SCHLEI WESEBY ZELTLAGER",
+"iso2": "DE",
+"type": "Coastal",
+"lat": 54.4971,
+"lon": 9.7129,
+"q": "Excellent",
+"q1": "Good"
+},
+{
+"bwid": "CY0003100000000017",
+"name": "LANDA",
+"iso2": "CY",
+"type": "Coastal",
+"lat": 34.9871,
+"lon": 33.9589,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DESH_PR_0185",
+"name": "OSTS DAMP HAUPTSTRAND",
+"iso2": "DE",
+"type": "Coastal",
+"lat": 54.5857,
+"lon": 10.0261,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DKBW1",
+"name": "VEMMETOFTE STRAND",
+"iso2": "DK",
+"type": "Coastal",
+"lat": 55.2357,
+"lon": 12.23799,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DKBW1200",
+"name": "HØNSINGE LYNG",
+"iso2": "DK",
+"type": "Coastal",
+"lat": 55.86896,
+"lon": 11.51753,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DKBW1348",
+"name": "HUMMINGEN STRAND",
+"iso2": "DK",
+"type": "Coastal",
+"lat": 54.71229,
+"lon": 11.2163,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DKBW289",
+"name": "HELLIGSØ DRAG",
+"iso2": "DK",
+"type": "Coastal",
+"lat": 56.67149,
+"lon": 8.39507,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DESH_PR_0179",
+"name": "SCHLEI WESEBY",
+"iso2": "DE",
+"type": "Coastal",
+"lat": 54.5042,
+"lon": 9.7102,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "EE00402012PARAL",
+"name": "PARALEPA RAND",
+"iso2": "EE",
+"type": "Coastal",
+"lat": 58.9431,
+"lon": 23.5167,
+"q": "Good",
+"q1": "Good"
+},
+{
+"bwid": "DESH_PR_0290",
+"name": "OSTS FLENSBURGER AUSSENFOERDE",
+"iso2": "DE",
+"type": "Coastal",
+"lat": 54.7411,
+"lon": 9.9797,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW069208007101",
+"name": "PERDIKA",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 37.6903,
+"lon": 23.4542,
+"q": "Good",
+"q1": "Good"
+},
+{
+"bwid": "ELBW019141035101",
+"name": "EPITALIO",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 37.6065,
+"lon": 21.4625,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW029116049101",
+"name": "ALYKES",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 37.8422,
+"lon": 20.7694,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW079104010101",
+"name": "LOUTROS",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 39.0329,
+"lon": 22.9622,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DKBW1653",
+"name": "NORDRE BÅDELAUG, KRAGHAVE",
+"iso2": "DK",
+"type": "Coastal",
+"lat": 54.78245,
+"lon": 11.84843,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DKBW1117",
+"name": "SØNDERSTRAND SYD",
+"iso2": "DK",
+"type": "Coastal",
+"lat": 55.03011,
+"lon": 9.42325,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DKBW142",
+"name": "HERSLEV STRAND",
+"iso2": "DK",
+"type": "Coastal",
+"lat": 55.67832,
+"lon": 11.98687,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DKBW1551",
+"name": "EGHOLM KYST",
+"iso2": "DK",
+"type": "Coastal",
+"lat": 57.06154,
+"lon": 9.87392,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DKBW255",
+"name": "LOVNS BREDNING, ULBJERG STRAND",
+"iso2": "DK",
+"type": "Coastal",
+"lat": 56.6234,
+"lon": 9.31358,
+"q": "Sufficient",
+"q1": "Good"
+},
+{
+"bwid": "DKBW358",
+"name": "BODERNE",
+"iso2": "DK",
+"type": "Coastal",
+"lat": 55.0218,
+"lon": 14.91069,
+"q": "Good",
+"q1": "Excellent"
+},
+{
+"bwid": "DKBW56",
+"name": "BJØRNEBÆK - UNDERSTATION DKBW1124 KRISTIANSHOLM PLANTAGE STRAND",
+"iso2": "DK",
+"type": "Coastal",
+"lat": 55.19443,
+"lon": 11.53533,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW019248060101",
+"name": "MARMARI",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 36.4261,
+"lon": 22.4758,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW059090077101",
+"name": "KYANI AKTI 1",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 38.9472,
+"lon": 20.7509,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW039248016101",
+"name": "SELINITSA",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 36.7763,
+"lon": 22.5665,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW149282406101",
+"name": "SPATHI",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 37.6466,
+"lon": 24.4017,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW049129058101",
+"name": "ASPROGIALI",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 38.5368,
+"lon": 21.0146,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW149294196101",
+"name": "PAROIKIA",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 37.0821,
+"lon": 25.1455,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW089106035101",
+"name": "NTAMOUCHARI",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 39.4036,
+"lon": 23.1818,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES130M085568",
+"name": "PLAYA DE LA CONCHA PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 43.4356,
+"lon": -4.0414,
+"q": "Good",
+"q1": "Excellent"
+},
+{
+"bwid": "DKBW723",
+"name": "LYNGSBÆK-FEMMØLLER STRAND",
+"iso2": "DK",
+"type": "Coastal",
+"lat": 56.22762,
+"lon": 10.60551,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW069219038101",
+"name": "LEGRAINA ANATOLIKA",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 37.6616,
+"lon": 23.9972,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES521M0412645",
+"name": "PLAYA CALA DE L'ADVOCAT PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 38.6727,
+"lon": 0.0986,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DKBW764",
+"name": "KNUD STRAND",
+"iso2": "DK",
+"type": "Coastal",
+"lat": 55.32204,
+"lon": 9.64322,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "EE00101026PIRIT",
+"name": "PIRITA RAND",
+"iso2": "EE",
+"type": "Coastal",
+"lat": 59.4717,
+"lon": 24.83,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "EE00401005KARDLA",
+"name": "KÄRDLA",
+"iso2": "EE",
+"type": "Coastal",
+"lat": 59.0081,
+"lon": 22.7467,
+"q": "Excellent",
+"q1": "Good"
+},
+{
+"bwid": "DKBW859",
+"name": "HALK CAMPING",
+"iso2": "DK",
+"type": "Coastal",
+"lat": 55.18361,
+"lon": 9.65806,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW079152069101",
+"name": "SOUTSINI",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 38.6391,
+"lon": 24.1321,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DKBW938",
+"name": "RYGÅRDE STRAND",
+"iso2": "DK",
+"type": "Coastal",
+"lat": 56.51295,
+"lon": 10.50997,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW109058056101",
+"name": "FLOGITA",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 40.2558,
+"lon": 23.2205,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DKBW243",
+"name": "KARBY",
+"iso2": "DK",
+"type": "Coastal",
+"lat": 56.75572,
+"lon": 8.55645,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DKBW407",
+"name": "BADEBRO UD FOR STRANDVEJEN 220",
+"iso2": "DK",
+"type": "Coastal",
+"lat": 56.00771,
+"lon": 12.58605,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DKBW792",
+"name": "POLDEREV PLANTAGE",
+"iso2": "DK",
+"type": "Coastal",
+"lat": 56.38352,
+"lon": 10.91561,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW059077007101",
+"name": "ARILLAS",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 39.355,
+"lon": 20.2881,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW059118103101",
+"name": "PANAGIA SOTIRIOTISSA",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 39.6456,
+"lon": 19.862,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES512M199775",
+"name": "PLAYA DE L'ESTARTIT PM3",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 42.0399,
+"lon": 3.196,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW069224077101",
+"name": "PLAZ RAFINAS",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 38.0187,
+"lon": 24.0126,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW149292184101",
+"name": "TSIGKOURI",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 36.865,
+"lon": 25.5166,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW039240090101",
+"name": "TIGANIA",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 37.2546,
+"lon": 22.8548,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW019255023101",
+"name": "AGIOS ANDREAS",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 36.8628,
+"lon": 21.923,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES532M0421190",
+"name": "PLAYA D'ALBERCUIX( PORT DE POLLEN?A) PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 39.9096,
+"lon": 3.0949,
+"q": "Good",
+"q1": "Good"
+},
+{
+"bwid": "ELBW039209057101",
+"name": "FYRI AMMOS POTAMOU",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 36.3186,
+"lon": 22.99,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW069225108101",
+"name": "PALAIA FOKAIA",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 37.7152,
+"lon": 23.9457,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES708M0291807",
+"name": "PLAYA RIA DE LA SANTA (LA) (SANTA SPORT) PM2",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 29.12,
+"lon": -13.652,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FI116060001",
+"name": "GUMNAS",
+"iso2": "FI",
+"type": "Coastal",
+"lat": 60.0893,
+"lon": 23.5344,
+"q": "Good",
+"q1": "Good"
+},
+{
+"bwid": "ELBW109059063101",
+"name": "VATOPEDI",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 40.2338,
+"lon": 23.5625,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW119014014101",
+"name": "KARIANI - TOUZLA",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 40.7592,
+"lon": 23.9072,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FI121529003",
+"name": "NUNNALAHTI",
+"iso2": "FI",
+"type": "Coastal",
+"lat": 60.4726,
+"lon": 22.0148,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES213M049611",
+"name": "PLAYA DE OGELLA PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 43.3734,
+"lon": -2.5452,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW069244046101",
+"name": "LOUTRAKI",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 37.9765,
+"lon": 22.9764,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES111M052109",
+"name": "PLAYA A CRUZ PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 43.1017,
+"lon": -9.2124,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRD1250165M050400",
+"name": "L'ERMITAGE",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 48.85228,
+"lon": -1.58273,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW079155162101",
+"name": "SOUVALA",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 38.4683,
+"lon": 23.5956,
+"q": "Good",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW089097007101",
+"name": "STOMIO",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 39.8712,
+"lon": 22.735,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW149284096101",
+"name": "PEFKOKEFALI 1",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 36.8742,
+"lon": 27.3517,
+"q": "Good",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW149288305101",
+"name": "GANEMA",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 37.1371,
+"lon": 24.4626,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW089106043101",
+"name": "AGIOS IOANNIS 2",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 39.4159,
+"lon": 23.1633,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRH0122224M022495",
+"name": "BAIE DE LA VIERGE - PONT ROUX",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 48.72841,
+"lon": -3.53603,
+"q": "Poor",
+"q1": "Sufficient"
+},
+{
+"bwid": "ES120M014461",
+"name": "PLAYA CARRANQUES PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 43.5784,
+"lon": -5.7439,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW149296228101",
+"name": "STEGNA",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 36.2053,
+"lon": 28.1399,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES111M0142572",
+"name": "PLAYA REBORDELO PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 43.2255,
+"lon": -8.9675,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES111M048108",
+"name": "PLAYA A RIBEIRA - MI?O PEQUENA PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 43.3496,
+"lon": -8.2108,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES111M071192",
+"name": "PLAYA O DIQUE PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 42.6852,
+"lon": -9.0289,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES112M902277",
+"name": "PLAYA O CANTI?O PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 43.643,
+"lon": -7.344,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES522M0772180",
+"name": "PLAYA DE PEDRA ROJA PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 39.8068,
+"lon": -0.125,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRH0229135M029793",
+"name": "KERVILZIC",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 47.82025,
+"lon": -4.16274,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES511M2352492",
+"name": "PLAYA DE LES ROQUES BLANQUES PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 41.5907,
+"lon": 2.5956,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES114M0412347",
+"name": "PLAYA AREA DA BARCA-COVELO PM3",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 42.417,
+"lon": -8.7308,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES521M099926",
+"name": "PLAYA DE LA CALETA PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 37.9137,
+"lon": -0.7287,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES523M2501070",
+"name": "PLAYA DEL SALER PM2",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 39.3737,
+"lon": -0.3211,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES614M1731449",
+"name": "PLAYA LA CHARCA PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 36.7251,
+"lon": -3.5814,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES704M0032287",
+"name": "PLAYA MUELLITO (EL) PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 28.3656,
+"lon": -13.8719,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES112M005238",
+"name": "PLAYA AS PASADAS PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 43.5615,
+"lon": -7.1829,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES612M0391419",
+"name": "PLAYA EL PALMAR PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 36.2236,
+"lon": -6.0671,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES114M008316",
+"name": "PLAYA MELIDE PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 42.2509,
+"lon": -8.867,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES120M0702496",
+"name": "PLAYA ANGUILEIRO PM3",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 43.5686,
+"lon": -6.9491,
+"q": "Good",
+"q1": "Good"
+},
+{
+"bwid": "ES514M013791",
+"name": "PLAYA DE L'ALGUER PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 40.8846,
+"lon": 0.8057,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES521M0412530",
+"name": "PLAYA DE ELS PINETS PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 38.6662,
+"lon": 0.0902,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES532M0221129",
+"name": "PLAYA CALA MAR?AL PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 39.4097,
+"lon": 3.259,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES532M0221130",
+"name": "PLAYA CALA FERRERA PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 39.3794,
+"lon": 3.2396,
+"q": "Good",
+"q1": "Good"
+},
+{
+"bwid": "ES521M018876",
+"name": "PLAYA DEL MASCARAT PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 38.6305,
+"lon": 0.0021,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES532M0031080",
+"name": "PLAYA AUCANADA PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 39.8377,
+"lon": 3.1577,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES611M0641315",
+"name": "PLAYA DEL LANCE NUEVO PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 37.1124,
+"lon": -1.8419,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRI3217230M017205",
+"name": "PLAGE DE SUZAC",
+"iso2": "FR",
+"type": "Transitional",
+"lat": 45.57471,
+"lon": -0.98543,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRJ1111266M011060",
+"name": "PLAGE DE LA VIEILLE NOUVELLE",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 43.01982,
+"lon": 3.06462,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES615M0442731",
+"name": "PLAYA LA ANTILLA LEVANTE PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 37.20541,
+"lon": -7.19841,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES620M0031597",
+"name": "PLAYA LA CAROLINA PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 37.3765,
+"lon": -1.6281,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FI143905002",
+"name": "HIETASAARI",
+"iso2": "FI",
+"type": "Coastal",
+"lat": 63.094,
+"lon": 21.5974,
+"q": "Sufficient",
+"q1": "Poor"
+},
+{
+"bwid": "FRD1250142M050115",
+"name": "NEVILLE SUR MER Face à la RD 514",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 49.70123,
+"lon": -1.33045,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRH0229006M029816",
+"name": "TREZ",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 47.87078,
+"lon": -4.10466,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES521M063901",
+"name": "PLAYA DE LES BOVETES PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 38.8616,
+"lon": 0.059,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRH0456162M056055",
+"name": "KERPAPE",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 47.70211,
+"lon": -3.41182,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES620M0031592",
+"name": "PLAYA EL HORNILLO PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 37.411,
+"lon": -1.56,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRL0583009M083028",
+"name": "PLAGE DU BARRY",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 43.13491,
+"lon": 5.74234,
+"q": "Good",
+"q1": "Not classified"
+},
+{
+"bwid": "FRI3217190M017009",
+"name": "LA PLAGE",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 46.19143,
+"lon": -1.20164,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRL0583069M083281",
+"name": "RENEE SABRAN",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 43.03534,
+"lon": 6.13648,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRL0583069M083310",
+"name": "PORT POTHUAU LES SALINS",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 43.11562,
+"lon": 6.20338,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES709M0381884",
+"name": "PLAYA TERESITAS (LAS) PM4",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 28.5094,
+"lon": -16.1798,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRL0306088M006470",
+"name": "SPORTING",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 43.69452,
+"lon": 7.26205,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRL0583069M083287",
+"name": "PLAGE LA BERGERIE",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 43.04797,
+"lon": 6.15004,
+"q": "Good",
+"q1": "Good"
+},
+{
+"bwid": "FRL0583069M083315",
+"name": "PORQUEROLLES-GRANDE PLAGE (COURTADE)",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 43.00233,
+"lon": 6.20857,
+"q": "Good",
+"q1": "Good"
+},
+{
+"bwid": "FRY1097106M971015",
+"name": "PETITE ANSE",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 16.09602,
+"lon": -61.77079,
+"q": "Good",
+"q1": "Excellent"
+},
+{
+"bwid": "FRY2097217M972112",
+"name": "POINTE BORGNESE : FACE CABANES",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 14.45345,
+"lon": -60.90251,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "HRBWC-COAST-HR3-7076",
+"name": "Debeli rt - Plaža",
+"iso2": "HR",
+"type": "Coastal",
+"lat": 45.19842,
+"lon": 13.57942,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "HRBWC-COAST-HR4-2167",
+"name": "Bluesun Jadran",
+"iso2": "HR",
+"type": "Coastal",
+"lat": 43.27323,
+"lon": 17.04391,
+"q": "Not classified",
+"q1": null
+},
+{
+"bwid": "HRBWC-COAST-HR4-2189",
+"name": "Uvala Kašjuni",
+"iso2": "HR",
+"type": "Coastal",
+"lat": 43.50535,
+"lon": 16.40024,
+"q": "Not classified",
+"q1": null
+},
+{
+"bwid": "FRJ1334301M034112",
+"name": "PLAGE DES TROIS DIGUES",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 43.36808,
+"lon": 3.62015,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "HRBWC-COAST-HR4-1089",
+"name": "Trsteno",
+"iso2": "HR",
+"type": "Coastal",
+"lat": 42.71055,
+"lon": 17.97541,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "HRBWC-COAST-HR4-1104",
+"name": "Lovište",
+"iso2": "HR",
+"type": "Coastal",
+"lat": 43.02486,
+"lon": 17.03416,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "HRBWC-COAST-HR4-1109",
+"name": "Ispod zidina",
+"iso2": "HR",
+"type": "Coastal",
+"lat": 42.96192,
+"lon": 17.13748,
+"q": "Excellent",
+"q1": "Good"
+},
+{
+"bwid": "FRE1262025M062130",
+"name": "AMBLETEUSE CENTRE PLAGE",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 50.80639,
+"lon": 1.60013,
+"q": "Good",
+"q1": "Good"
+},
+{
+"bwid": "HRBWC-COAST-HR4-2050",
+"name": "Bačvice - ulaz",
+"iso2": "HR",
+"type": "Coastal",
+"lat": 43.50224,
+"lon": 16.44769,
+"q": "Good",
+"q1": "Excellent"
+},
+{
+"bwid": "FRE2380826M080375",
+"name": "PLAGE SURVEILLEE DE WOIGNARUE",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 50.11086,
+"lon": 1.45497,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IESHBWC070_0000_0330",
+"name": "QUILTY",
+"iso2": "IE",
+"type": "Coastal",
+"lat": 52.81884,
+"lon": -9.45529,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRL0306004M006205",
+"name": "PONT DULYS",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 43.57053,
+"lon": 7.10366,
+"q": "Good",
+"q1": "Good"
+},
+{
+"bwid": "FRL0306088M006410",
+"name": "AUBRY LECOMTE",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 43.68279,
+"lon": 7.23388,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRL0306123M006391",
+"name": "BEACH CLUB",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 43.65761,
+"lon": 7.18725,
+"q": "Poor",
+"q1": "Poor"
+},
+{
+"bwid": "FRG0585234M085142",
+"name": "LE GOLF",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 46.79067,
+"lon": -2.09157,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRH0122054M022097",
+"name": "LES MONTIERS",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 48.64473,
+"lon": -2.42058,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRM022B034M02B275",
+"name": "VVF LOZARI",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 42.64272,
+"lon": 9.01826,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRH0229019M029504",
+"name": "SAINTE-ANNE-DU-PORTZIC",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 48.36097,
+"lon": -4.55366,
+"q": "Good",
+"q1": "Good"
+},
+{
+"bwid": "FRY3097304M973160",
+"name": "PLAGE DES ROCHES",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 5.16002,
+"lon": -52.62676,
+"q": "Poor",
+"q1": "Poor"
+},
+{
+"bwid": "HRBW1-COAST-HR4-4154",
+"name": "Uvala Božavčica",
+"iso2": "HR",
+"type": "Coastal",
+"lat": 44.13789,
+"lon": 14.908,
+"q": "Not classified",
+"q1": null
+},
+{
+"bwid": "HRBWC-COAST-HR3-6061",
+"name": "Bivio - Skalete",
+"iso2": "HR",
+"type": "Coastal",
+"lat": 45.34498,
+"lon": 14.35261,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRL0413028M013675",
+"name": "SAINT JEAN ROCHES PLATES",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 43.18685,
+"lon": 5.63166,
+"q": "Poor",
+"q1": "Sufficient"
+},
+{
+"bwid": "IT008039014011",
+"name": "CASALBORSETTI - CAMPING",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 44.5379,
+"lon": 12.281,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "HRBWC-COAST-HR4-1157",
+"name": "Veliki Zaton - Špilja Buškova",
+"iso2": "HR",
+"type": "Coastal",
+"lat": 42.68641,
+"lon": 18.03872,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT006032003002",
+"name": "BAGNO G.M.T",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 45.6074,
+"lon": 13.759,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRM012A004M02A180",
+"name": "PLAGE DU LAZARET",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 41.92842,
+"lon": 8.75743,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "HRBWC-COAST-HR4-2047",
+"name": "Bačvice - istok",
+"iso2": "HR",
+"type": "Coastal",
+"lat": 43.50081,
+"lon": 16.44925,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "HRBWC-COAST-HR4-2063",
+"name": "Hotel Palace",
+"iso2": "HR",
+"type": "Coastal",
+"lat": 43.55066,
+"lon": 16.35452,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "HRBWC-COAST-HR4-1004",
+"name": "Ht. Albatros",
+"iso2": "HR",
+"type": "Coastal",
+"lat": 42.58528,
+"lon": 18.22455,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "HRBWC-COAST-HR3-6011",
+"name": "Uvala Slana",
+"iso2": "HR",
+"type": "Coastal",
+"lat": 45.15113,
+"lon": 14.72121,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT011042002008",
+"name": "PIETRALACROCE (CASA VERDE)",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 43.6089,
+"lon": 13.5435,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT012056050018",
+"name": "S. GIORGIO",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 42.1913,
+"lon": 11.7202,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT007010043001",
+"name": "ZONA CHIAPPA",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 44.3755,
+"lon": 9.0794,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "HRBWC-COAST-HR4-2042",
+"name": "Stobreč, ušće",
+"iso2": "HR",
+"type": "Coastal",
+"lat": 43.50264,
+"lon": 16.52686,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT012059025013",
+"name": "ALFONSO AL FARO - FARO P.CERVIA -",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 41.2214,
+"lon": 13.069,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT007011001005",
+"name": "PUNTA SANITA'",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 44.043,
+"lon": 9.9857,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "HRBWC-COAST-HR4-2087",
+"name": "Rogač",
+"iso2": "HR",
+"type": "Coastal",
+"lat": 43.39339,
+"lon": 16.30126,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IEWEBWC160_0000_0100",
+"name": "TRAUGHT, KINVARA",
+"iso2": "IE",
+"type": "Coastal",
+"lat": 53.17105,
+"lon": -8.98813,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT005027034002",
+"name": "BIBIONE VIA DEL SAGITTARIO",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 45.6293,
+"lon": 13.0475,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT015065039009",
+"name": "LE SALINE",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 40.0587,
+"lon": 15.2793,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IENBBWC040_0000_0100",
+"name": "SHELLING HILL/TEMPLETOWN",
+"iso2": "IE",
+"type": "Coastal",
+"lat": 53.98108,
+"lon": -6.1473,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRL0413078M013050",
+"name": "NAPOLEON",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 43.35074,
+"lon": 4.88171,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT012059008005",
+"name": "PORTO ROMANO",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 41.2476,
+"lon": 13.6745,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRL0583129M083085",
+"name": "PLAGE DE LA COUDOULIERE",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 43.0952,
+"lon": 5.81216,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT016071008021",
+"name": "2 - DA FOCE CAPOIALE VERSO FOCE VARANO",
+"iso2": "IT",
+"type": "Transitional",
+"lat": 41.9063,
+"lon": 15.7296,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT016071029034",
+"name": "SCARICO FARO 30 MT SN",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 41.6297,
+"lon": 15.9244,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT018078029003",
+"name": "CAMPING MARINA DI SIBARI",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 39.7483,
+"lon": 16.4946,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRJ1111202M011010",
+"name": "PORT-LEUCATE NATURISTE (ULYSSE)",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 42.88173,
+"lon": 3.05192,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT009049016002",
+"name": "LOC. NISPORTINO",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 42.8333,
+"lon": 10.3853,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT018078108018",
+"name": "CLUB SOL-AREVAL",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 39.6381,
+"lon": 16.5755,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT018078125003",
+"name": "CANALE GRANDE",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 39.8531,
+"lon": 15.79,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRJ1334192M034175",
+"name": "RIVE DROITE - SAINT PIERRE",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 43.52458,
+"lon": 3.9273,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT018080045002",
+"name": "HOTEL MIRAMARE",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 38.2962,
+"lon": 16.3288,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT006032001002",
+"name": "DUINO - DAMA BIANCA",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 45.7737,
+"lon": 13.5986,
+"q": "Excellent",
+"q1": "Good"
+},
+{
+"bwid": "FRL0583019M083345",
+"name": "CABASSON",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 43.09906,
+"lon": 6.32483,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRM012A004M02A185",
+"name": "TAHITI PLAGE",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 41.92731,
+"lon": 8.77158,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT019081009008",
+"name": "MARE FARAGI",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 37.9335,
+"lon": 12.3212,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT012056035003",
+"name": "BAR GABBIANO",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 42.3221,
+"lon": 11.5838,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRM022B093M02B300",
+"name": "BODRI",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 42.62981,
+"lon": 8.91311,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "HRBWC-COAST-HR3-7259",
+"name": "Barban - Blaz",
+"iso2": "HR",
+"type": "Coastal",
+"lat": 45.00672,
+"lon": 14.04154,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT007010025003",
+"name": "CAMPEGGIO TORTUGA",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 44.4161,
+"lon": 8.719,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT012058120002",
+"name": "1200 MT DX FOSSO DELLE CADUTE",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 41.908,
+"lon": 12.149,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT007008017005",
+"name": "CAMPING MIRAMARE",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 43.9228,
+"lon": 8.1114,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT007010059006",
+"name": "FOCE TORRENTE PETRONIO",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 44.2587,
+"lon": 9.4216,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRY4097405M974085",
+"name": "PLAGE GRANDE ANSE",
+"iso2": "FR",
+"type": "Coastal",
+"lat": -21.37031,
+"lon": 55.54869,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT017077003007",
+"name": "FOCE BASENTO - 2000 MT. - MARGINE NORD",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 40.3478,
+"lon": 16.8283,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT019083101005",
+"name": "FOCE TORRENTE PALI'",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 38.0126,
+"lon": 14.2181,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "HRBWC-COAST-HR3-6004",
+"name": "Klenovica plaža",
+"iso2": "HR",
+"type": "Coastal",
+"lat": 45.09916,
+"lon": 14.84132,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT015065041002",
+"name": "CONTRADA FUENTI",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 40.6536,
+"lon": 14.708,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT009053006002",
+"name": "PIAN D'ALMA",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 42.8335,
+"lon": 10.7732,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT011042002009",
+"name": "PIETRALACROCE (CASA DIROCCATA)",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 43.6071,
+"lon": 13.5467,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT011109034007",
+"name": "500 M SUD FOCE FIUME CHIENTI",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 43.2921,
+"lon": 13.7446,
+"q": "Good",
+"q1": "Good"
+},
+{
+"bwid": "IT015065116013",
+"name": "SPIAGGIA A SUD DEL PORTO ARECHI",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 40.6392,
+"lon": 14.8241,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT012056035009",
+"name": "FOSSO DEL TAFONE",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 42.3585,
+"lon": 11.5063,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT016071027030",
+"name": "FOCE DE PILLA 30 MT DX",
+"iso2": "IT",
+"type": "Transitional",
+"lat": 41.8695,
+"lon": 15.4415,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT015065044002",
+"name": "MARINA DI CONCA",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 40.6171,
+"lon": 14.5765,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT016071027035",
+"name": "FOCE CANIGLIA DI SOTTO - 100 M. SN FOCE",
+"iso2": "IT",
+"type": "Transitional",
+"lat": 41.8748,
+"lon": 15.4175,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "HRBWC-COAST-HR3-7147",
+"name": "Gortanova uvala - Sredina uvale",
+"iso2": "HR",
+"type": "Coastal",
+"lat": 44.85303,
+"lon": 13.82865,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT016073010003",
+"name": "STABILIMENTO CANNETO BEACH-PORTOSAURO",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 40.3733,
+"lon": 17.3027,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT016071033002",
+"name": "ISTITUTO PADRE PIO",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 41.6411,
+"lon": 15.9447,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT016074012012",
+"name": "COSTA MERLATA STRADA CON CASA ROSSA",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 40.7746,
+"lon": 17.6533,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT014070078014",
+"name": "RISTORANTE MODENESE",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 42.0079,
+"lon": 14.9745,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT018078040005",
+"name": "100 MT DX TORRENTE FIUMICELLO",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 39.4951,
+"lon": 15.9496,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT018078060001",
+"name": "LIDO MAIORCA",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 39.7313,
+"lon": 15.8073,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT007009001003",
+"name": "FOCE RIO CONGHE CAUDI",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 44.0004,
+"lon": 8.1686,
+"q": "Good",
+"q1": "Excellent"
+},
+{
+"bwid": "IT020090003015",
+"name": "HOTEL EL FARO",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 40.5929,
+"lon": 8.2043,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT020104002009",
+"name": "CALA PISCHINA",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 41.1565,
+"lon": 9.1526,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT020092009011",
+"name": "SS 195 KM 5",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 39.1925,
+"lon": 9.061,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT017077023003",
+"name": "FOCE SINNI - 800 MT. MARGINE SUD",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 40.143,
+"lon": 16.6815,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT009049001004",
+"name": "FORTE DI BIBBONA",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 43.2385,
+"lon": 10.526,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "PL4221301132000204",
+"name": "Darłówko Wschodnie - kąpielisko nr 2",
+"iso2": "PL",
+"type": "Coastal",
+"lat": 54.44247,
+"lon": 16.38668,
+"q": "Sufficient",
+"q1": "Poor"
+},
+{
+"bwid": "IT015065100002",
+"name": "SPIAGGIA GRANDE",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 40.6272,
+"lon": 14.4872,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT018078108007",
+"name": "MOMENA",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 39.6218,
+"lon": 16.6209,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "LT0032300101010",
+"name": "JUODKRANTES PAPLUDIMIO",
+"iso2": "LT",
+"type": "Coastal",
+"lat": 55.5397,
+"lon": 21.0981,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT018101010018",
+"name": "500 MT NORD CAPO COLONNA",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 39.0313,
+"lon": 17.1817,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "PTCU9V",
+"name": "VILA CHÃ",
+"iso2": "PT",
+"type": "Coastal",
+"lat": 41.29,
+"lon": -8.73306,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT018101013021",
+"name": "CLUB LE CASTELLA 1",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 38.9181,
+"lon": 17.005,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT018102047003",
+"name": "LIDO LA MARINELLA",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 38.7128,
+"lon": 16.1053,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT019083085001",
+"name": "ELI HOTEL",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 37.9172,
+"lon": 15.3458,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT019084033008",
+"name": "RISERVA FOCE F. PLATANI",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 37.4096,
+"lon": 13.2634,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT019089013024",
+"name": "STRADA IV-COSTA REITANI",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 36.7664,
+"lon": 15.1006,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT019089017004",
+"name": "PLEMMIRIO - COSTA BIANCA",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 37.0103,
+"lon": 15.3068,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT020090003009",
+"name": "CALA BURANTINU",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 40.5074,
+"lon": 8.3391,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT020090058004",
+"name": "100 MT AD EST FOCE FIUME SANTO",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 40.8442,
+"lon": 8.3163,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "LT0032500101011",
+"name": "PALANGOS MOTERU PAPLUDIMIO",
+"iso2": "LT",
+"type": "Coastal",
+"lat": 55.9332,
+"lon": 21.0573,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT007010025002",
+"name": "VESIMA",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 44.4158,
+"lon": 8.7153,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT019083041020",
+"name": "VULCANO SPIAGGIA DELLE ACQUE TERMALI",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 38.4178,
+"lon": 14.9596,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT016075097014",
+"name": "TORRE CHIANCA ALLA FOCE DEL CANALE",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 40.2703,
+"lon": 17.8714,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "PL6336101122000029",
+"name": "GDAŃSK ORLE",
+"iso2": "PL",
+"type": "Transitional",
+"lat": 54.34862,
+"lon": 18.87486,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT019084020005",
+"name": "LINOSA - CALA MANNARAZZA",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 35.8759,
+"lon": 12.8617,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT009053024005",
+"name": "NORD EMISSARIO",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 42.8954,
+"lon": 10.7837,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT011043013004",
+"name": "IN DIREZIONE TORRENTE ASOLA",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 43.3487,
+"lon": 13.7043,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT011044066008",
+"name": "300 M NORD FOCE TRONTO",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 42.8963,
+"lon": 13.9157,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "PTCJ2K",
+"name": "CASTELEJO",
+"iso2": "PT",
+"type": "Coastal",
+"lat": 37.10015,
+"lon": -8.94575,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT019083059003",
+"name": "FOCE TORRENTE CANNIZZA",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 38.0077,
+"lon": 14.2845,
+"q": "Excellent",
+"q1": "Good"
+},
+{
+"bwid": "IT019084001005",
+"name": "EX LIDO ASTER",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 37.26,
+"lon": 13.5886,
+"q": "Excellent",
+"q1": "Good"
+},
+{
+"bwid": "IT019085007009",
+"name": "LIDO CONCHIGLIA",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 37.0616,
+"lon": 14.2494,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT018101010015",
+"name": "CASA ROSSA",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 39.0398,
+"lon": 17.161,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "PL4210701532000031",
+"name": "KĄPIELISKO MORSKIE DZIWNÓWEK",
+"iso2": "PL",
+"type": "Coastal",
+"lat": 54.0375,
+"lon": 14.80361,
+"q": "Sufficient",
+"q1": "Sufficient"
+},
+{
+"bwid": "PTCQ2V",
+"name": "ALMARGEM",
+"iso2": "PT",
+"type": "Coastal",
+"lat": 37.05838,
+"lon": -8.08353,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "PTCQ8W",
+"name": "LOULÉ VELHO",
+"iso2": "PT",
+"type": "Coastal",
+"lat": 37.05554,
+"lon": -8.07816,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "SE0A11380000000368",
+"name": "HAVERDAL",
+"iso2": "SE",
+"type": "Coastal",
+"lat": 56.7186,
+"lon": 12.6673,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT019083108002",
+"name": "FOCE TORRENTE FAVARA",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 38.0945,
+"lon": 14.6714,
+"q": "Sufficient",
+"q1": "Good"
+},
+{
+"bwid": "IT020095079005",
+"name": "SPIAGGIA LIDO LOTTI",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 40.2859,
+"lon": 8.4817,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT015063083004",
+"name": "NORD FOCE SARNO",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 40.7382,
+"lon": 14.4624,
+"q": "Poor",
+"q1": "Poor"
+},
+{
+"bwid": "IT020104023020",
+"name": "COSTA CADDU",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 40.7591,
+"lon": 9.6985,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT020090003014",
+"name": "PORTO AGRA",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 40.5721,
+"lon": 8.2386,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT020095018006",
+"name": "PUNTA MAIMONI-VILLAGGIO PESCATORI",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 39.91,
+"lon": 8.3954,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT020104023018",
+"name": "PUNTA MOLARA",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 40.8612,
+"lon": 9.6785,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "LT0032500101012",
+"name": "BENDROJO PLIAZO",
+"iso2": "LT",
+"type": "Coastal",
+"lat": 55.92,
+"lon": 21.049,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "MT0150155500000C25",
+"name": "IL-BAJJA TA BOGNOR",
+"iso2": "MT",
+"type": "Coastal",
+"lat": 35.95252,
+"lon": 14.40903,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "LV00713000011",
+"name": "LIELUPE",
+"iso2": "LV",
+"type": "Transitional",
+"lat": 56.9978,
+"lon": 23.8986,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "MT0130131500000A15",
+"name": "IL-BAJJA S-SABIEHA JETTY ON RIGHT HAND SIDE",
+"iso2": "MT",
+"type": "Coastal",
+"lat": 35.82419,
+"lon": 14.5295,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "PTCF2P",
+"name": "LABRUGE",
+"iso2": "PT",
+"type": "Coastal",
+"lat": 41.27444,
+"lon": -8.72861,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT020104011014",
+"name": "TRA I E II SPIAGGIA",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 41.0024,
+"lon": 9.6169,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT020104020020",
+"name": "LOC.TA' M. PARISEDDU",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 41.1994,
+"lon": 9.3374,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT020104020022",
+"name": "ANTISTANTE FIUME LISCIA",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 41.1907,
+"lon": 9.308,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "NLBW89_PERKPDBSD",
+"name": "PERKPOLDER BADSTRAND",
+"iso2": "NL",
+"type": "Transitional",
+"lat": 51.40129,
+"lon": 4.01754,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "LV00713000007",
+"name": "DUBULTI",
+"iso2": "LV",
+"type": "Transitional",
+"lat": 56.9723,
+"lon": 23.7709,
+"q": "Excellent",
+"q1": "Good"
+},
+{
+"bwid": "NLBW89_NEELTJBSD",
+"name": "NEELTJE JANS BADSTRAND",
+"iso2": "NL",
+"type": "Coastal",
+"lat": 51.63435,
+"lon": 3.69306,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "PL6321001122000147",
+"name": "KRYNICA MORSKA - BULWAR SŁONECZNY 1",
+"iso2": "PL",
+"type": "Coastal",
+"lat": 54.3863,
+"lon": 19.43634,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "PTMJ9X",
+"name": "MADALENA DO MAR",
+"iso2": "PT",
+"type": "Coastal",
+"lat": 32.7028,
+"lon": -17.1378,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "RO2230009057500006",
+"name": "PLAJA NAVODARI IV ZONA 2 CAMPING PESCARESC",
+"iso2": "RO",
+"type": "Coastal",
+"lat": 44.27423,
+"lon": 28.62285,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "SE0930840000000015",
+"name": "SAXNÄS",
+"iso2": "SE",
+"type": "Coastal",
+"lat": 56.688,
+"lon": 16.4763,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "SE0930883000001646",
+"name": "TÄTTÖ",
+"iso2": "SE",
+"type": "Coastal",
+"lat": 57.8894,
+"lon": 16.7029,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "PTML2C",
+"name": "TABUA",
+"iso2": "PT",
+"type": "Coastal",
+"lat": 32.67713,
+"lon": -17.07982,
+"q": "Not classified",
+"q1": "Not classified"
+},
+{
+"bwid": "SE0712280000003742",
+"name": "Härnön, Smitingens badplats",
+"iso2": "SE",
+"type": "Coastal",
+"lat": 62.59915,
+"lon": 18.03248,
+"q": "Excellent",
+"q1": "Not classified"
+},
+{
+"bwid": "PTMJ9M",
+"name": "PORTO SANTO-FONTINHA",
+"iso2": "PT",
+"type": "Coastal",
+"lat": 33.0556,
+"lon": -16.3375,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "RO2230009000010010",
+"name": "PLAJA MAMAIA I ZONA 1 TABARA TURIST",
+"iso2": "RO",
+"type": "Coastal",
+"lat": 44.26748,
+"lon": 28.623,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "RO2230009055030002",
+"name": "OLIMP II ZONA 2 ZONA PROTOCOL",
+"iso2": "RO",
+"type": "Coastal",
+"lat": 43.87724,
+"lon": 28.60644,
+"q": "Good",
+"q1": "Good"
+},
+{
+"bwid": "IT020091063003",
+"name": "SPIAGGIA HOTEL TIRRENO",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 40.4331,
+"lon": 9.7791,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "SI00C4009000K61010A",
+"name": "PLAŽA PORTOROŽ",
+"iso2": "SI",
+"type": "Coastal",
+"lat": 45.51239,
+"lon": 13.59309,
+"q": "Excellent",
+"q1": null
+},
+{
+"bwid": "IT020104011006",
+"name": "LUCCARONI",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 41.0042,
+"lon": 9.5779,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT020105018008",
+"name": "200 MT A SUD CANALE SAN GEMILIANO",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 39.9195,
+"lon": 9.7007,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "SI00C4009000K59010",
+"name": "PLAŽA MEDUZA LIFECLASS",
+"iso2": "SI",
+"type": "Coastal",
+"lat": 45.51271,
+"lon": 13.58812,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "SE0A21427000000034",
+"name": "BOVALLSTRAND, BADHOLMARNA",
+"iso2": "SE",
+"type": "Coastal",
+"lat": 58.4759,
+"lon": 11.3149,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "LV00713000013",
+"name": "LIELUPES PELDVIETA PRIEDAINE",
+"iso2": "LV",
+"type": "Coastal",
+"lat": 56.9797,
+"lon": 23.89476,
+"q": "Excellent",
+"q1": "Not classified"
+},
+{
+"bwid": "PTCF7K",
+"name": "QUARTEIRA",
+"iso2": "PT",
+"type": "Coastal",
+"lat": 37.06535,
+"lon": -8.09999,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "PTCX7E",
+"name": "MARINHAS-CEPÃES",
+"iso2": "PT",
+"type": "Coastal",
+"lat": 41.55417,
+"lon": -8.79389,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "SE0441262000000321",
+"name": "HAMNHUSEN, T-BRYGGAN",
+"iso2": "SE",
+"type": "Coastal",
+"lat": 55.6725,
+"lon": 13.0595,
+"q": "Good",
+"q1": "Poor"
+},
+{
+"bwid": "SI00C4009000K56023",
+"name": "KOPALNO OBMOČJE POD TURISTICO",
+"iso2": "SI",
+"type": "Coastal",
+"lat": 45.51558,
+"lon": 13.57853,
+"q": "Excellent",
+"q1": null
+},
+{
+"bwid": "DEMV_PR_1_0244",
+"name": "OSTSEE KUEHLUNGSBORN HAUPTSTRAND OST",
+"iso2": "DE",
+"type": "Coastal",
+"lat": 54.1544,
+"lon": 11.7538,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DKBW690",
+"name": "KANDESTEDERNE",
+"iso2": "DK",
+"type": "Coastal",
+"lat": 57.6621,
+"lon": 10.3783,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW069207014101",
+"name": "APONISOS",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 37.6843,
+"lon": 23.323,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW069216140101",
+"name": "MEGALO KAVOURI NOTIA",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 37.8181,
+"lon": 23.7676,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW129011026101",
+"name": "PEFKARI 2",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 40.6145,
+"lon": 24.6005,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW149286396101",
+"name": "PSATHI",
+"iso2": "EL",
+"type": "Coastal",
+"lat": 36.7858,
+"lon": 24.5781,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES114M022326",
+"name": "PLAYA A BARROSA PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 42.4529,
+"lon": -8.9243,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES532M0331162",
+"name": "PLAYA S'ESTANY D'EN MAS (CALA ROM?NTICA) PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 39.5165,
+"lon": 3.3113,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES532M0551242",
+"name": "PLAYA SON SERRA PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 39.7325,
+"lon": 3.2369,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES708M0241785",
+"name": "PLAYA JABLILLO PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 28.9931,
+"lon": -13.4897,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES709M0282088",
+"name": "PLAYA JARDIN PM4",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 28.4111,
+"lon": -16.5631,
+"q": "Sufficient",
+"q1": "Sufficient"
+},
+{
+"bwid": "ES709M0431890",
+"name": "PLAYA PRIS (EL) PM1",
+"iso2": "ES",
+"type": "Coastal",
+"lat": 28.5104,
+"lon": -16.4211,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRD1250236M050290",
+"name": "SURVILLE Face à la RD 526",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 49.27684,
+"lon": -1.67548,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRE1159107M059001",
+"name": "LE PERROQUET - BRAY-DUNES",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 51.08896,
+"lon": 2.54398,
+"q": "Good",
+"q1": "Good"
+},
+{
+"bwid": "FRG0585113M085050",
+"name": "KER CHALON GAUCHE",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 46.72006,
+"lon": -2.33899,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRI1233199M033099",
+"name": "CANAL",
+"iso2": "FR",
+"type": "Coastal",
+"lat": 44.64597,
+"lon": -1.0652,
+"q": "Good",
+"q1": "Sufficient"
+},
+{
+"bwid": "HRBWC-COAST-HR3-7083",
+"name": "TN Funtana - Uvala Frnažine",
+"iso2": "HR",
+"type": "Coastal",
+"lat": 45.17216,
+"lon": 13.59595,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT007008065005",
+"name": "CALANDRE",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 43.7915,
+"lon": 7.591,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT007009029007",
+"name": "COLONIA LANCIA",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 44.1709,
+"lon": 8.3566,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT007010037007",
+"name": "FINE PENULTIMA GALLERIA",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 44.2193,
+"lon": 9.5075,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT009049006005",
+"name": "FORTE DI CASTAGNETO",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 43.1763,
+"lon": 10.5373,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT009053011012",
+"name": "LOC. CANOVA II",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 42.7412,
+"lon": 10.9426,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT012056035012",
+"name": "IL TOMBOLO",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 42.3054,
+"lon": 11.6136,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT015061052001",
+"name": "LE VAGNOLE",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 41.1381,
+"lon": 13.8536,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT016071008002",
+"name": "FOCE CAPOIALE (30 MT A DESTRA)",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 41.9208,
+"lon": 15.6695,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT016072022008",
+"name": "RISTORANTE TORUCCIO E C.A. 7",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 41.182,
+"lon": 16.6823,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT016075043009",
+"name": "SANT'ANDREA-VICINO AL FARO",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 40.2556,
+"lon": 18.4464,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT016075057021",
+"name": "SERRA DEGLI ALIMINI A NORD SCARICO",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 40.2133,
+"lon": 18.4604,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT019082073003",
+"name": "ANTI SVINCOLO AUTOSTRADA",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 38.0082,
+"lon": 13.6357,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT019084041008",
+"name": "STAZIONE S. MARCO",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 37.5085,
+"lon": 13.0141,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT020090023005",
+"name": "LA VIGNACCIA",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 40.9133,
+"lon": 8.7286,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT020095079008",
+"name": "NURAGHE FURRU",
+"iso2": "IT",
+"type": "Coastal",
+"lat": 40.2764,
+"lon": 8.4831,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "MT0150155500000C17",
+"name": "IL-BAJJA TAL-MISTRA LH SIDE OF BAY",
+"iso2": "MT",
+"type": "Coastal",
+"lat": 35.95801,
+"lon": 14.38977,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "NLBW95_PETTBSD",
+"name": "PETTEN",
+"iso2": "NL",
+"type": "Coastal",
+"lat": 52.77378,
+"lon": 4.65815,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "PTCH2C",
+"name": "ALBARQUEL",
+"iso2": "PT",
+"type": "Transitional",
+"lat": 38.50879,
+"lon": -8.91364,
+"q": "Excellent",
+"q1": "Excellent"
+}
+]
+}

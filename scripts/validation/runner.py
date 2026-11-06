@@ -64,7 +64,8 @@ VALID_DIR = Path(os.environ.get("CARTA_VALIDATION_DIR") or ROOT / "data" / "repo
 SNAPSHOT = ROOT / "continent-app" / "src" / "components" / "admin" / "validationScorecard.json"
 SCHEMA = "carta-validation/2"
 CARD_SCHEMA = "carta-validation-scorecard/1"
-LAYERS = {"trails": "layer_trails"}
+LAYERS = {"trails": "layer_trails", "beaches": "layer_beaches",
+          "beaches_blueflag": "layer_beaches_blueflag"}
 Z95 = 1.96
 TREND_POINTS = 24
 

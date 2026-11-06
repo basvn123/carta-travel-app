@@ -3,6 +3,168 @@
  "generated_at": "2026-11-06T12:00:00Z",
  "layers": [
   {
+   "layer": "beaches",
+   "latest": "2026-11-06",
+   "generated_at": "2026-11-06T12:00:00Z",
+   "reference_n": 14861,
+   "sample": {
+    "sampled": false,
+    "share": 1.0,
+    "min_per_country": 5,
+    "salt": "d23",
+    "n": 14861,
+    "population": 14861,
+    "countries": 23
+   },
+   "baseline_at": "2026-11-06",
+   "gate": {
+    "ok": true,
+    "failures": [],
+    "warnings": [],
+    "checks": [
+     {
+      "metric": "coverage",
+      "kind": "hard",
+      "now": 0.2363,
+      "baseline": 0.2363,
+      "tolerance_points": 0,
+      "status": "pass"
+     },
+     {
+      "metric": "fact.class",
+      "kind": "hard",
+      "now": 0.978,
+      "baseline": 0.978,
+      "tolerance_points": 0,
+      "status": "pass"
+     },
+     {
+      "metric": "fact.poor",
+      "kind": "soft",
+      "now": 0.7778,
+      "baseline": 0.7778,
+      "tolerance_points": 5,
+      "status": "pass"
+     },
+     {
+      "metric": "fact.water",
+      "kind": "soft",
+      "now": 1.0,
+      "baseline": 1.0,
+      "tolerance_points": 5,
+      "status": "pass"
+     },
+     {
+      "metric": "agreement_tau",
+      "kind": "soft",
+      "now": 0.0498,
+      "baseline": 0.0498,
+      "tolerance_points": 5,
+      "status": "pass"
+     },
+     {
+      "metric": "error_mae",
+      "kind": "soft",
+      "now": 0.023,
+      "baseline": 0.023,
+      "tolerance_points": 5,
+      "status": "pass"
+     }
+    ]
+   },
+   "metrics": {
+    "in_rated": {
+     "value": 0.5979,
+     "k": 2100,
+     "n": 3512,
+     "low": 0.5816,
+     "high": 0.6141
+    },
+    "near": {
+     "value": 0.5016,
+     "k": 7454,
+     "n": 14861,
+     "low": 0.4935,
+     "high": 0.5096
+    },
+    "open": {
+     "value": 0.1549,
+     "k": 544,
+     "n": 3512,
+     "low": 0.1433,
+     "high": 0.1672
+    },
+    "coverage": {
+     "value": 0.2363,
+     "k": 3512,
+     "n": 14861,
+     "low": 0.2296,
+     "high": 0.2432
+    },
+    "fact.class": {
+     "value": 0.978,
+     "k": 3385,
+     "n": 3461,
+     "low": 0.9726,
+     "high": 0.9824
+    },
+    "fact.poor": {
+     "value": 0.7778,
+     "k": 7,
+     "n": 9,
+     "low": 0.4526,
+     "high": 0.9368
+    },
+    "fact.water": {
+     "value": 1.0,
+     "k": 3512,
+     "n": 3512,
+     "low": 0.9989,
+     "high": 1.0
+    },
+    "fact_share": {
+     "value": 0.9888,
+     "k": 6904,
+     "n": 6982,
+     "low": 0.9861,
+     "high": 0.991
+    },
+    "agreement_tau": {
+     "value": 0.0498,
+     "n": 2078
+    },
+    "agreement_rho": {
+     "value": 0.0593,
+     "n": 2078
+    },
+    "error_mae": {
+     "value": 0.023,
+     "n": 3461
+    },
+    "error_mdape": {
+     "value": 0.0,
+     "n": 3461
+    }
+   },
+   "gaps": 30,
+   "trend": [
+    {
+     "date": "2026-11-06",
+     "gate_ok": true,
+     "metrics": {
+      "agreement_tau": 0.0498,
+      "coverage": 0.2363,
+      "error_mae": 0.023,
+      "error_mdape": 0.0,
+      "fact.class": 0.978,
+      "fact.poor": 0.7778,
+      "fact.water": 1.0,
+      "fact_share": 0.9888
+     }
+    }
+   ]
+  },
+  {
    "layer": "trails",
    "latest": "2026-11-06",
    "generated_at": "2026-11-06T12:00:00Z",

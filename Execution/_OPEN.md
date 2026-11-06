@@ -1928,3 +1928,13 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1183-d | T1183 | Relations with parts out of order AND a real break are refused as gap_too_long since route_bridge keeps relation order; a reorder-then-route pass needs an owner rule on what keeping the order allows | user | open |  |
 | T1183-e | T1183 | Stock hiking-mountain has hiking_routes_preference 0.2; a house tools/brouter/profiles/carta-hiking.brf near 0.5 would keep bridges on waymarked ways | next task | open |  |
 | T1183-f | T1183 | docs/data/pipeline.md and docs/architecture/lineage.md list the trails tasks by hand and do not name trails_route_bridge | next task | open |  |
+| T1189-a | T1189 | Beaches validation is not run by the release; add `runner.py beaches --write --check` after the beaches export (run_pipeline.py is outside T1189's files) | next task | open |  |
+| T1189-b | T1189 | Lake and river bathing sites (7,428 in the register) are not validated; they belong to the lakes layer on the runner (D23 Lakes row), reuse `layer_beaches.register_refs(inland=True)` | next task | open |  |
+| T1189-c | T1189 | 7,407 of 14,861 EEA sea sites have no Carta beach within 3 km; export_beaches does not log why a register site was dropped (name test, 150 m dedupe, stretch quota, PUBLISH_MAX); log it per site, then decide the cap | next task | open |  |
+| T1189-d | T1189 | 76 matched beaches print a class that differs from the register because several register sites lie on one beach; decide whether the page shows the worst reading or each site | user | open |  |
+| T1189-e | T1189 | England freshness check (EA API, OGL v3) and a France cross-check (data.gouv.fr, Licence Ouverte 2.0) are not built; GB has no EEA rows | next task | open |  |
+| T1189-f | T1189 | Albania Kavaje is Poor in the register and prints Sufficient (the swim flag check, 7 of 9 Poor sites correct); check the site pairing and year in harvest_bathing_water for AL | next task | open |  |
+| T1189-g | T1189 | The BG registry names in Cyrillic fall at the beach name test (Shkorpilovtsi); use the transliterated or Wikidata name. Also the dated result file is 4.3 MB because it keeps every item; add a runner option to drop items beyond the gaps | next task | open |  |
+| T1189-h | T1189 | Owner step: refresh the EEA register on the box and rerun beaches (`Execution/P15/T1189-beaches-validation.md`) | user | open |  |
+| T1189-i | T1189 | Owner step: export the Wikidata Blue Flag list to CSV and run beaches_blueflag (FEE's own list must not be scraped) | user | open |  |
+| T1189-j | T1189 | Owner step: confirm the EEA licence text and download URL (hosts were unreachable in the research) | user | open |  |

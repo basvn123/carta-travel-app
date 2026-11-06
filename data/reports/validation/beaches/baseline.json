@@ -1,0 +1,32 @@
+{
+ "layer": "beaches",
+ "date": "2026-11-06",
+ "reference": {
+  "path": "cache/eea_bathing_water.json",
+  "source": "EEA WISE bathing water register",
+  "n": 14861
+ },
+ "sample": {
+  "sampled": false,
+  "share": 1.0,
+  "min_per_country": 5,
+  "salt": "d23",
+  "n": 14861,
+  "population": 14861,
+  "countries": 23
+ },
+ "metrics": {
+  "in_rated": 0.5979,
+  "near": 0.5016,
+  "open": 0.1549,
+  "coverage": 0.2363,
+  "fact.class": 0.978,
+  "fact.poor": 0.7778,
+  "fact.water": 1.0,
+  "fact_share": 0.9888,
+  "agreement_tau": 0.0498,
+  "agreement_rho": 0.0593,
+  "error_mae": 0.023,
+  "error_mdape": 0.0
+ }
+}
