@@ -64,7 +64,7 @@
 .guide-section-sub {
   margin-top: calc(-1 * var(--space-2));
   margin-bottom: var(--space-3);
-  font-size: 13px;
+  font-size: var(--text-label);
   color: var(--ink-mute);
 }
 
@@ -117,7 +117,7 @@
 /* One selected state (T398, rule "Selected state"): ink fill, never the
    accent tint. */
 .wq-chip-text b { font-size: 13.5px; font-weight: 600; }
-.wq-chip-text small { font-size: 12px; color: var(--ink-soft); }
+.wq-chip-text small { font-size: var(--text-caption); color: var(--ink-soft); }
 .wq-chip.on .wq-chip-text small { color: var(--on-fill); }
 
 /* An answered question, collapsed to its answer. It stays a button, so
@@ -133,13 +133,13 @@
   text-align: left;
   background: none;
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   cursor: pointer;
   color: var(--ink);
 }
 .wq-done-text small {
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
 }
 .wq-done-text b { font-size: 13.5px; font-weight: 550; }
@@ -151,7 +151,7 @@
   background: var(--accent);
   color: var(--on-fill);
   border: none;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   font-size: 13.5px;
   font-weight: 600;
   cursor: pointer;
@@ -183,8 +183,8 @@
   gap: 5px;
   min-height: var(--tap);
   padding: 0 14px;
-  border-radius: 999px;
-  font-size: 13px;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-label);
   font-weight: 600;
   cursor: pointer;
 }
@@ -218,10 +218,10 @@
   display: flex;
   gap: 12px;
   padding: 6px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: rgba(255, 255, 255, .92);
   border: 1px solid var(--rule);
-  font-size: 11px;
+  font-size: var(--text-micro);
   color: var(--ink-soft);
   pointer-events: none;
 }
@@ -274,7 +274,7 @@
   border-radius: 8px;
   background: var(--bg-card);
   color: var(--ink);
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 600;
   cursor: pointer;
   transition: background .15s, color .15s, border-color .15s;
@@ -292,7 +292,7 @@
   border: 0;
   background: none;
   color: var(--ink);
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
   cursor: pointer;
 }
@@ -364,7 +364,7 @@
 }
 
 /* Licence names behind a credit line, collapsed (T313). */
-.credit-fold { margin: 6px 0 0; font-size: 12px; color: var(--ink-mute); }
+.credit-fold { margin: 6px 0 0; font-size: var(--text-caption); color: var(--ink-mute); }
 .credit-fold > summary { cursor: pointer; min-height: 24px; }
 .credit-fold > p { margin: 4px 0 0; }
 

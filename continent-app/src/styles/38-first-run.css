@@ -30,7 +30,7 @@
 /* The only part of the screen that exists because the viewer is new. Prose. */
 .frr-orient {
   margin: 0 0 var(--space-3);
-  font-size: 14px;
+  font-size: var(--text-body);
   line-height: 1.45;
   color: var(--ink);
 }
@@ -41,7 +41,7 @@
   grid-template-columns: 0.9fr 1.2fr 1fr 1fr;
   margin: 0 0 var(--space-3);
   border: 1px solid var(--rule);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: var(--bg-card);
 }
 .frr-cell {
@@ -57,7 +57,7 @@
    (T382; the mono rule). */
 .frr-cell-label {
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   line-height: 1.3;
   color: var(--ink-soft);
 }
@@ -134,14 +134,14 @@
   align-items: center;
   gap: var(--space-2) var(--space-3);
   margin: var(--space-3) 0 0;
-  font-size: 13px;
+  font-size: var(--text-label);
   line-height: 1.45;
   color: var(--ink-soft);
 }
 .frr-flight > span { flex: 1 1 220px; }
 .frr-notin {
   margin: var(--space-2) 0 0;
-  font-size: 13px;
+  font-size: var(--text-label);
   line-height: 1.45;
   color: var(--ink-soft);
 }
@@ -183,7 +183,7 @@
 .frr-sheet-head h2 {
   margin: 0;
   font-family: var(--display);
-  font-size: 20px;
+  font-size: var(--text-title);
   font-weight: 600;
 }
 .frr-sheet-body {
@@ -193,12 +193,12 @@
   padding: var(--space-4);
 }
 .frr-field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.frr-field-label { font-size: 13px; font-weight: 600; color: var(--ink); }
+.frr-field-label { font-size: var(--text-label); font-weight: 600; color: var(--ink); }
 .frr-field input {
   min-height: var(--tap);
   padding: 0 var(--space-3);
   border: 1px solid var(--rule);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: var(--bg-card);
   color: var(--ink);
   font-family: var(--ui);

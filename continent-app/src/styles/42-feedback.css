@@ -8,7 +8,7 @@
   border: 0;
   background: none;
   font: inherit;
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 600;
   color: var(--ink-soft);
   text-decoration: underline;
@@ -19,12 +19,12 @@
   .report-link:hover { color: var(--ink); }
 }
 .report-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.report-link.is-price { font-weight: 400; font-size: 12px; }
+.report-link.is-price { font-weight: 400; font-size: var(--text-caption); }
 @media (pointer: fine) { .report-link { min-height: 32px; } }
 
 .report-form { display: flex; flex-direction: column; gap: var(--space-2); }
-.report-about { margin: 0; font-size: 14px; color: var(--ink); font-weight: 600; }
-.report-label { font-size: 13px; color: var(--ink-soft); }
+.report-about { margin: 0; font-size: var(--text-body); color: var(--ink); font-weight: 600; }
+.report-label { font-size: var(--text-label); color: var(--ink-soft); }
 .report-whats { display: flex; flex-direction: column; gap: 0; }
 .report-what {
   display: flex;
@@ -32,7 +32,7 @@
   gap: var(--space-2);
   min-height: var(--tap);
   border-bottom: 1px solid var(--rule-soft);
-  font-size: 14px;
+  font-size: var(--text-body);
   color: var(--ink);
   cursor: pointer;
 }
@@ -44,24 +44,24 @@
   box-sizing: border-box;
   padding: var(--space-2);
   border: 1px solid var(--rule);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: var(--bg-card);
   font: inherit;
-  font-size: 14px;
+  font-size: var(--text-body);
   color: var(--ink);
 }
 .report-mail { min-height: var(--tap); }
 .report-input::placeholder { color: var(--ink-mute); }
 .report-input:focus { outline: none; border-color: var(--accent); }
-.report-note { margin: 0; font-size: 12px; color: var(--ink-mute); }
-.report-err { margin: 0; font-size: 13px; color: var(--ink); border-left: 2px solid var(--accent); padding-left: var(--space-2); }
+.report-note { margin: 0; font-size: var(--text-caption); color: var(--ink-mute); }
+.report-err { margin: 0; font-size: var(--text-label); color: var(--ink); border-left: 2px solid var(--accent); padding-left: var(--space-2); }
 /* Send is the kit's primary (T468); the sheet's one action. */
 .report-send { margin-top: var(--space-1); }
-.report-done { display: flex; align-items: center; gap: var(--space-2); min-height: var(--tap); font-size: 14px; color: var(--ink); }
+.report-done { display: flex; align-items: center; gap: var(--space-2); min-height: var(--tap); font-size: var(--text-body); color: var(--ink); }
 .report-done p { margin: 0; }
 
 /* The admin inbox: the report line. */
-.adminpage-fbreport { margin: 0; font-size: 13px; font-weight: 600; }
+.adminpage-fbreport { margin: 0; font-size: var(--text-label); font-weight: 600; }
 
 /* The sheet opens over a full page (z 240), so its scrim sits above it. */
 .fsheet-scrim:has(> .report-sheet) { z-index: calc(var(--z-page) + 130); }

@@ -92,8 +92,14 @@ export function summaryOf(around, t) {
  *  and its siblings, G13) so it opens in a new tab or is copied; a plain click
  *  still opens it in place. Without a handler it is an inert block. */
 function Row({ href, onOpen, children }) {
-  if (!onOpen) return <button type="button" className="dar-row" disabled>{children}</button>;
-  if (!href) return <button type="button" className="dar-row" onClick={onOpen}>{children}</button>;
+  if (!onOpen || !href) {
+    return (
+      <button
+        type="button" className="dar-row" disabled={!onOpen} onClick={onOpen || undefined}>
+        {children}
+      </button>
+    );
+  }
   return <a className="dar-row" href={href} onClick={linkOpener(onOpen)}>{children}</a>;
 }
 

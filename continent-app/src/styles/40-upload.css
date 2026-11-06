@@ -11,10 +11,10 @@
   margin-top: var(--space-3);
   padding: 0 var(--space-4);
   border: 1px solid var(--rule);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: transparent;
   font-family: var(--ui);
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 500;
   color: var(--ink-soft);
   cursor: pointer;
@@ -36,7 +36,7 @@
   margin: 0;
   padding-top: var(--space-2);
   font-family: var(--display);
-  font-size: 20px;
+  font-size: var(--text-title);
   font-weight: 600;
   line-height: 1.25;
 }
@@ -48,7 +48,7 @@
   width: var(--tap);
   height: var(--tap);
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: transparent;
   color: var(--ink-soft);
   cursor: pointer;
@@ -56,7 +56,7 @@
 
 .upl-lede {
   margin: 0 0 var(--space-4);
-  font-size: 14px;
+  font-size: var(--text-body);
   line-height: 1.45;
   color: var(--ink-soft);
 }
@@ -79,7 +79,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   border: 1px solid var(--rule);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
 }
 .upl-kind input {
@@ -98,13 +98,13 @@
   max-width: 100%;
   padding: var(--space-2) var(--space-3);
   border: 1px solid var(--rule);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: var(--paper);
   font-family: var(--ui);
-  font-size: 14px;
+  font-size: var(--text-body);
   color: var(--ink);
 }
-.upl-file { font-size: 13px; }
+.upl-file { font-size: var(--text-label); }
 
 .upl-hint {
   margin: var(--space-2) 0 0;
@@ -114,7 +114,7 @@
 }
 .upl-status {
   margin: var(--space-2) 0 0;
-  font-size: 13px;
+  font-size: var(--text-label);
   line-height: 1.45;
   color: var(--ink);
 }
@@ -125,7 +125,7 @@
   margin-top: var(--space-2);
   object-fit: cover;
   border: 1px solid var(--rule-soft);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
 }
 
 /* The three licences are related choices, so hairlines, not cards. */
@@ -145,10 +145,10 @@
 .upl-error {
   margin: 0;
   padding: var(--space-2) var(--space-3);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: var(--accent-bg);
   color: var(--ink);
-  font-size: 13px;
+  font-size: var(--text-label);
   line-height: 1.4;
 }
 
@@ -164,9 +164,9 @@
   justify-content: center;
   min-height: var(--tap);
   padding: 0 var(--space-5);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-family: var(--ui);
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 500;
   cursor: pointer;
 }

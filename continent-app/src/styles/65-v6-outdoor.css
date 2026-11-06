@@ -36,13 +36,13 @@
 .dsk-page .dsk-kf-label {
   margin: 0;
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
 }
 .dsk-page .dsk-kf-value {
   margin: 2px 0 0;
   font-family: var(--ui);
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   color: var(--ink);
   overflow-wrap: anywhere;
@@ -54,7 +54,7 @@
   font-variant-numeric: tabular-nums;
 }
 .dsk-page .dsk-kf.is-missing .dsk-kf-value {
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 400;
   color: var(--ink-mute);
 }
@@ -62,7 +62,7 @@
   display: block;
   margin-top: 2px;
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 400;
   color: var(--ink-mute);
 }
@@ -84,7 +84,7 @@
   width: 100%;
   min-height: var(--tap);
   margin: 0;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
 }
 .dsk-page .dsk-primary.tpage-primary,
 .dsk-page .dsk-primary.cycle-gpx {
@@ -112,11 +112,11 @@
 /* Getting there names a town before any coordinate. */
 .dsk-page .dsk-get-town {
   margin: 0 0 var(--space-2);
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   color: var(--ink);
 }
-.dsk-page .dsk-get-stop { margin-top: var(--space-2); font-size: 13px; }
+.dsk-page .dsk-get-stop { margin-top: var(--space-2); font-size: var(--text-label); }
 .dsk-page .dsk-get-stations { margin-top: var(--space-3); }
 .dsk-page .dsk-stations { margin: var(--space-1) 0 0; padding: 0; list-style: none; }
 .dsk-page .dsk-stations li {
@@ -125,7 +125,7 @@
   gap: var(--space-3);
   padding: var(--space-1) 0;
   border-top: 1px solid var(--rule-soft);
-  font-size: 13px;
+  font-size: var(--text-label);
   color: var(--ink);
 }
 
@@ -137,7 +137,7 @@
   height: auto;
   min-height: var(--tap);
   margin: 0;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
 }
 .dsk-page .dsk-take .tpage-primary {
   display: inline-flex;
@@ -151,7 +151,7 @@
 .dsk-page .dsk-sub {
   margin: var(--space-4) 0 var(--space-2);
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
   color: var(--ink-soft);
 }
@@ -209,7 +209,7 @@
   margin: 0;
   scroll-snap-align: start;
   border: 1px solid var(--rule-soft);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   overflow: hidden;
   background: var(--bg-card);
 }
@@ -231,7 +231,7 @@
   gap: var(--space-1) var(--space-3);
   padding: var(--space-2) var(--space-3);
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-mute);
 }
 @media (prefers-reduced-motion: reduce) {
@@ -288,7 +288,7 @@
 .dsk-page .dsk-kf-foot {
   margin: var(--space-2) 0 0;
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   line-height: 16px;
   color: var(--ink-mute);
 }

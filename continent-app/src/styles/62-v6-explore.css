@@ -122,7 +122,7 @@
   gap: var(--space-3);
   margin: var(--space-4) 0;
 }
-.explore-shell .xempty-line { margin: 0; font-size: 14px; line-height: 1.45; color: var(--ink); }
+.explore-shell .xempty-line { margin: 0; font-size: var(--text-body); line-height: 1.45; color: var(--ink); }
 .explore-shell .xempty-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
 
 /* --- 12. "Score key", a word instead of a bare "?" ----------------------- */
@@ -162,7 +162,7 @@
 .explore-shell .xrails-title { font-size: 22px; line-height: 1.2; letter-spacing: 0; }
 @media (min-width: 769px) {
   .explore-shell .xrails-title { font-size: 26px; }
-  .explore-shell .xbar-title-text { font-size: 40px; line-height: 1.1; letter-spacing: 0; }
+  .explore-shell .xbar-title-text { font-size: var(--text-display); line-height: 1.1; letter-spacing: 0; }
 }
 
 /* --- 2. The preview as a popover (explore N6, "Dialog family") ----------
@@ -184,7 +184,7 @@
   padding: var(--space-3) var(--space-4) var(--space-4);
   overflow: visible;
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--bg-card);
   box-shadow: var(--shadow-2);
   color: var(--ink);
@@ -208,14 +208,14 @@
   flex-wrap: wrap;
   align-items: baseline;
   gap: var(--space-2);
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
   color: var(--ink-soft);
 }
 .explore-shell .xpop-role { padding-left: var(--space-2); border-left: 1px solid var(--rule); font-weight: 400; }
 .explore-shell .xpop-rank .xpop-role:first-child { padding-left: 0; border-left: 0; }
 .explore-shell .xpop-lead {
-  font-size: 13px;
+  font-size: var(--text-label);
   line-height: 1.45;
   color: var(--ink);
   display: -webkit-box;
@@ -227,7 +227,7 @@
   display: flex;
   align-items: flex-start;
   gap: var(--space-2);
-  font-size: 12px;
+  font-size: var(--text-caption);
   line-height: 1.4;
   color: var(--ink-soft);
 }
@@ -236,7 +236,7 @@
    best months filled --ink, the chosen month outlined 2 px --ink. */
 .explore-shell .xpop-months { display: flex; flex-direction: column; gap: var(--space-1); }
 .explore-shell .xpop-strip .mstrip-cells { max-width: none; gap: 2px; }
-.explore-shell .xpop-strip .mstrip-cell { height: 20px; font-size: 11px; color: var(--ink-mute); background: var(--paper-dim); }
+.explore-shell .xpop-strip .mstrip-cell { height: 20px; font-size: var(--text-micro); color: var(--ink-mute); background: var(--paper-dim); }
 .explore-shell .xpop-strip .mstrip-cell.is-good { background: var(--ink); color: var(--on-fill); font-weight: 600; }
 .explore-shell .xpop-m1 .mstrip-cell:nth-child(1),
 .explore-shell .xpop-m2 .mstrip-cell:nth-child(2),
@@ -321,7 +321,7 @@
   background: var(--paper-dim);
   color: var(--ink);
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--text-micro);
   font-variant-numeric: tabular-nums;
 }
 /* The info control while its popover is open is the selected state. */

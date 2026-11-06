@@ -23,7 +23,7 @@
    and the ready-made trip cards. */
 .wiz-cost-line .mono {
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: var(--text-label);
   font-variant-numeric: tabular-nums;
   font-weight: 600;
   color: var(--ink);
@@ -46,12 +46,12 @@
    figure in --ui, and the figure a person beside the party's. */
 .wiz-est-mark {
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
 }
 .wiz-est-pp {
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-variant-numeric: tabular-nums;
   color: var(--ink-soft);
 }
@@ -64,7 +64,7 @@
   justify-content: space-between;
   gap: var(--space-3);
 }
-.wiz-party-label { font-family: var(--ui); font-size: 14px; color: var(--ink); }
+.wiz-party-label { font-family: var(--ui); font-size: var(--text-body); color: var(--ink); }
 .wiz-party-stepper { flex: none; }
 /* "Add children" is a secondary button in words (--ui), not a mono accent
    link: mono is for measured facts, the accent for the step's one primary. */
@@ -73,19 +73,19 @@
   min-height: var(--tap);
   padding: 0 var(--space-3);
   border: 1px solid var(--rule);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: var(--bg-card);
   color: var(--ink);
   font-family: var(--ui);
-  font-size: 14px;
+  font-size: var(--text-body);
 }
 @media (pointer: fine) {
   .wiz-party .guide-kids-add { min-height: 32px; }
 }
 
 /* The answered quiz as one line (brief item 8). */
-.wq-summary-text small { font-size: 12px; color: var(--ink-soft); }
-.wq-summary-text b { font-size: 14px; font-weight: 600; color: var(--ink); line-height: 1.4; }
+.wq-summary-text small { font-size: var(--text-caption); color: var(--ink-soft); }
+.wq-summary-text b { font-size: var(--text-body); font-weight: 600; color: var(--ink); line-height: 1.4; }
 
 /* The planned view's footer is one row (brief item 7): Plan your days, Save
    trip and More. More opens a menu with menu semantics; Start over in it is
@@ -112,7 +112,7 @@
 .cheap-tip-sub-title {
   margin: 0 0 var(--space-2);
   font-family: var(--ui);
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   color: var(--ink);
 }
@@ -185,7 +185,7 @@
    on a photograph; the name, the length, the star and the tick sit in a
    paper band flush under it. On a phone the photograph is at most a third of
    a choice card. */
-.wtrip-days b { font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+.wtrip-days b { font-family: var(--mono); font-size: var(--text-label); font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
 
 /* The country grid card: the photograph keeps its ratio inside the pick
    button and the caption band follows it in the flow. */
@@ -267,7 +267,7 @@
 /* What a leg's figure buys, in words under its mono facts (brief V4-6). */
 .itin-leg-text small.itin-leg-incl {
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
 }
 

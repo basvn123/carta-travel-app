@@ -12,7 +12,7 @@
   background: none;
   border: 0;
   font: inherit;
-  font-size: 13px;
+  font-size: var(--text-label);
   color: var(--ink-soft);
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -41,8 +41,8 @@
 }
 .flash-icon { flex: none; color: var(--ink-soft); line-height: 0; padding-top: 1px; }
 .flash-text { min-width: 0; }
-.flash-label { margin: 0 0 var(--space-1); font-size: 13px; font-weight: 600; color: var(--ink); }
-.flash-body { margin: 0; font-size: 14px; line-height: 1.45; color: var(--ink); }
+.flash-label { margin: 0 0 var(--space-1); font-size: var(--text-label); font-weight: 600; color: var(--ink); }
+.flash-body { margin: 0; font-size: var(--text-body); line-height: 1.45; color: var(--ink); }
 
 .flash-bar {
   display: flex;
@@ -58,15 +58,15 @@
   padding: 0 var(--space-3);
   background: transparent;
   border: 1px solid var(--rule);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font: inherit;
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 500;
   color: var(--ink);
   cursor: pointer;
 }
 .flash-btn:disabled { color: var(--ink-mute); cursor: default; }
-.flash-pos { font-family: var(--mono); font-size: 13px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.flash-pos { font-family: var(--mono); font-size: var(--text-label); color: var(--ink-soft); font-variant-numeric: tabular-nums; }
 
 /* The plain list: Show all, and print. */
 .flash-list { display: none; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--rule-soft); }

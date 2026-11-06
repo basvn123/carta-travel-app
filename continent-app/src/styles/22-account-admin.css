@@ -17,10 +17,10 @@
   min-height: 30px;
   margin: -6px 0 0 -4px;
   padding: 4px 8px 4px 4px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-family: var(--ui);
   font-weight: 600;
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
   transition: color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
 }
@@ -72,7 +72,7 @@
   gap: 14px;
   padding: 14px 16px;
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--bg-card);
   text-align: left;
   transition: border-color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
@@ -111,7 +111,7 @@
   gap: 10px;
   padding: 16px;
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--bg-card);
 }
 .account-signin-card .account-section-hint { margin-bottom: 2px; }
@@ -120,19 +120,19 @@
    one thing here that is an invitation rather than plumbing. */
 .account-invite {
   border: 1px solid color-mix(in srgb, var(--accent) 32%, var(--paper));
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: color-mix(in srgb, var(--accent) 7%, var(--paper));
   padding: 16px;
 }
 .account-invite-title {
   display: block;
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   color: var(--ink);
   margin-bottom: 4px;
 }
 .account-invite-body {
-  font-size: 13px;
+  font-size: var(--text-label);
   line-height: 1.55;
   color: var(--ink-soft);
   margin-bottom: 12px;
@@ -144,7 +144,7 @@
   min-height: 40px;
   padding: 0 14px;
   border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--paper));
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: var(--paper);
   font-size: 13.5px;
   font-weight: 500;
@@ -160,7 +160,7 @@
    52px button. The chevron is the only hint needed that these go somewhere. */
 .account-menu {
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--bg-card);
   overflow: hidden;
 }
@@ -183,7 +183,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   .account-menu-row:hover { background: var(--paper-dim); }
 }
 .account-menu-icon { flex: none; display: flex; color: var(--ink-soft); }
-.account-menu-label { flex: 1; font-size: 14px; font-weight: 500; color: var(--ink); }
+.account-menu-label { flex: 1; font-size: var(--text-body); font-weight: 500; color: var(--ink); }
 
 /* FAQ accordion: a hairline list, one answer open at a time. The question is
    a full-width button so the whole row is the target, not just the chevron.
@@ -192,7 +192,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
 .account-faq-group + .account-faq-group { margin-top: 22px; }
 .account-faq-grouplabel {
   margin: 0 0 6px;
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
   color: var(--ink-soft);
 }
@@ -206,7 +206,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   gap: 12px;
   padding: 14px 2px;
   text-align: left;
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   line-height: 1.4;
   color: var(--ink);
@@ -250,10 +250,10 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   resize: vertical;
   padding: 10px 12px;
   border: 1px solid var(--rule);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: var(--paper);
   font-family: var(--ui);
-  font-size: 14px;
+  font-size: var(--text-body);
   line-height: 1.5;
   color: var(--ink);
   transition: border-color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
@@ -286,7 +286,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
 }
 .admin-stat {
   border: 1px solid var(--rule-soft);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--bg-card);
   padding: 10px 12px;
 }
@@ -298,14 +298,14 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   color: var(--ink);
   font-variant-numeric: tabular-nums;
 }
-.admin-stat span { font-size: 11px; color: var(--ink-soft); }
+.admin-stat span { font-size: var(--text-micro); color: var(--ink-soft); }
 
 .admin-toggle {
   display: flex;
   align-items: center;
   gap: 10px;
   min-height: 44px;
-  font-size: 14px;
+  font-size: var(--text-body);
   color: var(--ink);
   cursor: pointer;
 }
@@ -317,10 +317,10 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   min-height: 36px;
   padding: 6px 14px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: none;
   font-family: var(--ui);
-  font-size: 13px;
+  font-size: var(--text-label);
   color: var(--ink-soft);
   cursor: pointer;
   transition: border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
@@ -354,7 +354,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   border: none;
   background: none;
   font-family: var(--ui);
-  font-size: 14px;
+  font-size: var(--text-body);
   color: var(--ink);
   outline: none;
   padding: 10px 0;
@@ -383,19 +383,19 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   flex: none;
   width: 34px;
   height: 34px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--paper-dim);
   border: 1px solid var(--rule-soft);
-  font-size: 16px;
+  font-size: var(--text-lead);
   color: var(--ink-soft);
 }
-.admin-user-ava-lg { width: 44px; height: 44px; font-size: 20px; }
+.admin-user-ava-lg { width: 44px; height: 44px; font-size: var(--text-title); }
 .admin-user-meta { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
 .admin-user-meta b {
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   color: var(--ink);
   overflow: hidden;
@@ -403,7 +403,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   white-space: nowrap;
 }
 .admin-user-meta > span {
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-mute);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -413,7 +413,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   flex: none;
   font-family: var(--ui);
   font-weight: 600;
-  font-size: 11px;
+  font-size: var(--text-micro);
   padding: 2px 7px;
   border-radius: 4px;
   border: 1px solid var(--rule);
@@ -439,7 +439,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   border-radius: 8px;
   background: none;
   font-family: var(--ui);
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 500;
   color: var(--ink-soft);
   cursor: pointer;
@@ -467,7 +467,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   padding: 7px 0;
   border-top: 1px solid var(--rule-soft);
 }
-.admin-facts dt { font-size: 13px; color: var(--ink-soft); }
+.admin-facts dt { font-size: var(--text-label); color: var(--ink-soft); }
 .admin-facts dd {
   margin: 0;
   font-family: var(--mono);
@@ -486,14 +486,14 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   border-radius: 8px;
   background: var(--paper);
   font-family: var(--mono);
-  font-size: 14px;
+  font-size: var(--text-body);
   color: var(--ink);
   font-variant-numeric: tabular-nums;
 }
 .admin-days input:focus { outline: none; border-color: var(--accent); }
 
-.admin-error { margin: 8px 0; font-size: 13px; color: var(--danger); }
-.admin-notice-ok { margin: 8px 0; font-size: 13px; color: var(--green); }
+.admin-error { margin: 8px 0; font-size: var(--text-label); color: var(--danger); }
+.admin-notice-ok { margin: 8px 0; font-size: var(--text-label); color: var(--green); }
 
 .admin-tools { margin-top: 10px; }
 .admin-danger {
@@ -533,7 +533,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   color: var(--ink-mute);
   font-variant-numeric: tabular-nums;
 }
-.admin-audit-what { font-size: 13px; color: var(--ink); overflow-wrap: anywhere; }
+.admin-audit-what { font-size: var(--text-label); color: var(--ink); overflow-wrap: anywhere; }
 .admin-audit-what b { font-weight: 600; }
 
 /* The re-auth lock in front of the spoke. One quiet card, not a warning:
@@ -551,7 +551,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   justify-content: center;
   width: 40px;
   height: 40px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   border: 1px solid var(--rule-soft);
   background: var(--paper-dim);
   color: var(--ink-soft);
@@ -571,10 +571,10 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   min-height: 32px;
   padding: 4px 10px;
   border: 1px solid var(--rule);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: none;
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 500;
   color: var(--ink-soft);
   cursor: pointer;
@@ -609,11 +609,11 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   min-height: 32px;
   padding: 4px 12px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: none;
   font-family: var(--ui);
   font-weight: 600;
-  font-size: 11px;
+  font-size: var(--text-micro);
   color: var(--ink-mute);
   cursor: pointer;
   transition: border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
@@ -628,10 +628,10 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   width: 32px;
   height: 32px;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: none;
   font-family: var(--ui);
-  font-size: 14px;
+  font-size: var(--text-body);
   color: var(--ink-mute);
   cursor: pointer;
 }
@@ -652,7 +652,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   border-radius: 8px;
   background: var(--paper);
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: var(--text-label);
   color: var(--ink);
 }
 .admin-flag-add input:focus { outline: none; border-color: var(--accent); }
@@ -667,7 +667,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   margin-top: 10px;
   padding: 12px;
   border: 1px solid var(--rule-soft);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
 }
 .admin-ban-go { color: var(--danger); border-color: var(--danger); }
 @media (hover: hover) {
@@ -695,7 +695,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   border-radius: 8px;
   background: none;
   font-family: var(--ui);
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 500;
   color: var(--ink-soft);
   cursor: pointer;
@@ -706,7 +706,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   width: 44px;
   height: 44px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: none;
   font-family: var(--ui);
   font-size: 15px;
@@ -734,7 +734,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   padding: 0 14px;
   margin: 16px 0 14px;
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--bg-card);
   color: var(--ink-mute);
   transition: border-color var(--dur-1) var(--ease-out);
@@ -755,7 +755,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   padding: 11px 14px;
   border-bottom: 1px solid var(--rule);
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
   font-weight: 400;
   white-space: nowrap;
@@ -769,7 +769,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
 }
 .adminpage-table .mono {
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
   font-variant-numeric: tabular-nums;
 }
@@ -787,14 +787,14 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
 .adminpage-monthpick .mono {
   font-family: var(--mono);
   font-variant-numeric: tabular-nums;
-  font-size: 14px;
+  font-size: var(--text-body);
 }
 /* Audit rows with a previous and a new state (T064-b): the two sides
    whole, side by side, stacked under 640px. */
 .adminpage-auditpair > div {
   min-width: 0;
   border: 1px solid var(--rule-soft);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   padding: 6px 8px;
 }
 /* Site tab: one row per key with its visibility switch. */
@@ -807,25 +807,25 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   border-top: 1px solid var(--rule-soft);
 }
 .adminpage-keylist li:first-child { border-top: none; }
-.adminpage-keylist code { font-family: var(--mono); font-size: 13px; }
+.adminpage-keylist code { font-family: var(--mono); font-size: var(--text-label); }
 .adminpage-keymeta { flex: 1; min-width: 0; margin: 0; font-size: 12.5px; }
 /* Nav count: a number in mono beside the tab name, so a waiting notice is
    seen without opening the tab. */
 /* Overview: what is waiting for a person. A tile that is a button. */
 .adminpage-nametext b { font-size: 13.5px; font-weight: 600; color: var(--ink); }
-.adminpage-nametext span { font-family: var(--mono); font-size: 11px; color: var(--ink-mute); }
+.adminpage-nametext span { font-family: var(--mono); font-size: var(--text-micro); color: var(--ink-mute); }
 
 .adminpage-ava {
   flex: none;
   width: 30px;
   height: 30px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--paper-dim);
   border: 1px solid var(--rule-soft);
-  font-size: 14px;
+  font-size: var(--text-body);
   color: var(--ink-soft);
 }
 
@@ -840,7 +840,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   border-radius: 8px;
   background: var(--bg-card);
   font-family: var(--ui);
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 500;
   color: var(--ink-soft);
   cursor: pointer;
@@ -863,7 +863,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   padding: 7px 0;
   border-top: 1px solid var(--rule-soft);
 }
-.adminpage-facts dt { font-size: 13px; color: var(--ink-soft); }
+.adminpage-facts dt { font-size: var(--text-label); color: var(--ink-soft); }
 .adminpage-facts dd {
   margin: 0;
   font-family: var(--mono);
@@ -884,7 +884,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   min-height: 38px;
   padding: 7px 16px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: none;
   font-family: var(--ui);
   font-size: 13.5px;
@@ -900,7 +900,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   border-radius: 8px;
   background: var(--paper);
   font-family: var(--mono);
-  font-size: 14px;
+  font-size: var(--text-body);
   color: var(--ink);
   font-variant-numeric: tabular-nums;
 }
@@ -908,7 +908,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
 .adminpage-row .adminpage-lock-input { flex: 1; min-width: 140px; }
 /* The MFA step-up inside an armed ban or delete (T254). A hairline, not a
    second card: it is one step of the action it sits in. */
-.adminpage-mfa-secret { display: block; font-family: var(--mono); font-size: 13px; color: var(--ink); word-break: break-all; user-select: all; }
+.adminpage-mfa-secret { display: block; font-family: var(--mono); font-size: var(--text-label); color: var(--ink); word-break: break-all; user-select: all; }
 .adminpage-check input { width: 17px; height: 17px; accent-color: var(--accent); }
 .adminpage-flag code {
   flex: 1;
@@ -925,11 +925,11 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   min-height: 32px;
   padding: 4px 12px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: none;
   font-family: var(--ui);
   font-weight: 600;
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
   cursor: pointer;
   transition: border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
@@ -939,16 +939,16 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   width: 32px;
   height: 32px;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: none;
   font-family: var(--ui);
-  font-size: 14px;
+  font-size: var(--text-body);
   color: var(--ink-mute);
   cursor: pointer;
 }
 
 /* The lock, before anything else renders. */
-.adminpage-lock-input.mono { font-family: var(--mono); font-size: 13px; }
+.adminpage-lock-input.mono { font-family: var(--mono); font-size: var(--text-label); }
 
 /* Four weeks of signups. Bars only, no axis: the total is written out
    underneath, so the chart adds shape rather than carrying the number. */
@@ -1000,7 +1000,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   gap: 7px;
   padding: 0 0 12px;
   border: 1px solid var(--rule-soft);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--bg-card);
   font-family: var(--ui);
   text-align: left;
@@ -1009,7 +1009,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   transition: border-color var(--dur-1) var(--ease-out);
 }
 .adminpage-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.adminpage-cardmeta b { color: var(--rate); font-size: 12px; font-variant-numeric: tabular-nums; }
+.adminpage-cardmeta b { color: var(--rate); font-size: var(--text-caption); font-variant-numeric: tabular-nums; }
 .adminpage-cardmeta code { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* The editor, as a modal over the grid: correcting one entry is a task you
@@ -1027,7 +1027,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   margin-bottom: 5px;
   font-family: var(--ui);
   font-weight: 600;
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
 }
 .adminpage-editorpreview img {
@@ -1063,7 +1063,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   width: 100%;
   aspect-ratio: 3 / 2;
   object-fit: cover;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--rule-soft);
 }
 .diffcell-image code {
@@ -1100,10 +1100,10 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   color: var(--ink);
   cursor: pointer;
 }
-.adminpage-reviewwhat b { font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
+.adminpage-reviewwhat b { font-size: var(--text-body); font-weight: 600; overflow-wrap: anywhere; }
 .adminpage-reviewfacts code {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--text-micro);
   color: var(--ink-mute);
   overflow-wrap: anywhere;
 }
@@ -1180,7 +1180,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   padding: 12px 14px;
   background: var(--bg-card);
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   box-shadow: var(--shadow-1);
   font-size: 13.5px;
   color: var(--ink);
@@ -1198,7 +1198,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   height: 30px;
   margin: -4px -6px -4px 0;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: none;
   color: var(--ink-mute);
   cursor: pointer;
@@ -1219,7 +1219,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
    nothing boxed: a run of related facts, not a card deck. */
 .trails-nearby-title {
   display: flex; align-items: center; gap: 6px;
-  font-size: 13px; font-weight: 600; color: var(--ink-soft);
+  font-size: var(--text-label); font-weight: 600; color: var(--ink-soft);
   margin-bottom: 6px;
 }
 .trails-nearby-row {
@@ -1231,17 +1231,17 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
 }
 .trails-nearby-name { font-size: 13.5px; font-weight: 600; color: var(--ink); }
 .trails-nearby-kind {
-  flex: none; font-size: 11px; color: var(--ink-mute);
+  flex: none; font-size: var(--text-micro); color: var(--ink-mute);
   border: 1px solid var(--rule-soft); border-radius: 4px; padding: 1px 6px;
 }
 .trails-nearby-kind.city { color: var(--accent); border-color: var(--accent-soft); }
 .trails-nearby-facts {
   display: flex; gap: 12px; margin-top: 2px;
-  font-family: var(--mono); font-size: 12px; color: var(--ink-soft);
+  font-family: var(--mono); font-size: var(--text-caption); color: var(--ink-soft);
   font-variant-numeric: tabular-nums;
 }
 .trails-nearby-credit {
-  margin: 8px 0 0; font-size: 11px; color: var(--ink-mute);
+  margin: 8px 0 0; font-size: var(--text-micro); color: var(--ink-mute);
 }
 
 /* The ready-made day button sits under the AI hero as the quiet second

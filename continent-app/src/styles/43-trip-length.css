@@ -10,11 +10,11 @@
   min-height: var(--tap);
   padding: 0 var(--space-4);
   border: 1px solid var(--rule);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: transparent;
   color: var(--ink);
   font: inherit;
-  font-size: 14px;
+  font-size: var(--text-body);
   cursor: pointer;
 }
 @media (hover: hover) {
@@ -31,7 +31,7 @@
 }
 .tl-note {
   margin: var(--space-2) 0 0;
-  font-size: 13px;
+  font-size: var(--text-label);
   line-height: 1.45;
   color: var(--ink-soft);
   max-width: 62ch;

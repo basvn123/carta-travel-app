@@ -56,7 +56,7 @@
   gap: 4px;
   font-family: var(--ui);
   font-weight: 600;
-  font-size: 11px;
+  font-size: var(--text-micro);
   border-radius: 3px;
   padding: 1px 5px 1px 4px;
   white-space: nowrap;
@@ -81,7 +81,7 @@
   gap: 4px;
   font-family: var(--ui);
   font-weight: 600;
-  font-size: 11px;
+  font-size: var(--text-micro);
   border-radius: 3px;
   padding: 1px 5px 1px 4px;
   white-space: nowrap;
@@ -143,7 +143,7 @@
 .guide-path-duo { display: inline-flex; align-items: center; gap: 2px; }
 .guide-path-duo svg:last-child { opacity: 0.7; }
 .guide-path-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.guide-path-text b { font-size: 14px; }
+.guide-path-text b { font-size: var(--text-body); }
 .guide-path-text small { font-size: 11.5px; color: var(--ink-mute); line-height: 1.45; }
 .guide-path .guide-arrow { margin-left: auto; color: var(--ink-mute); }
 
@@ -162,7 +162,7 @@
   align-items: center;
   gap: 4px;
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
 }
 .guide-recap-chip {
@@ -174,7 +174,7 @@
   color: var(--ink-soft);
   background: var(--paper);
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 3px 8px;
   white-space: nowrap;
   max-width: 100%;
@@ -201,8 +201,8 @@
 }
 .guide-country-suggest.on { border-color: var(--accent); background: var(--accent-bg); }
 .guide-country-suggest-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-.guide-country-suggest-text b { font-size: 13px; }
-.guide-country-suggest-text small { font-size: 11px; color: var(--ink-mute); }
+.guide-country-suggest-text b { font-size: var(--text-label); }
+.guide-country-suggest-text small { font-size: var(--text-micro); color: var(--ink-mute); }
 .guide-country-suggest > svg { margin-left: auto; color: var(--accent); flex: none; }
 
 /* -- Plus-minus-2-days chip -- */
@@ -230,23 +230,23 @@
   gap: 8px;
   color: var(--ink-mute);
   text-align: center;
-  font-size: 12px;
+  font-size: var(--text-caption);
   line-height: 1.5;
   padding: 12px;
 }
 .guide-flight-side-head { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; }
 .guide-flight-side-title { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.guide-flight-side-title b { font-size: 14px; display: inline-flex; align-items: center; gap: 6px; }
-.guide-flight-side-title small { font-size: 11px; color: var(--ink-mute); display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.guide-flight-side-title b { font-size: var(--text-body); display: inline-flex; align-items: center; gap: 6px; }
+.guide-flight-side-title small { font-size: var(--text-micro); color: var(--ink-mute); display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap; }
 .guide-flight-side-breakdown { font-family: var(--mono); font-size: 10.5px; opacity: 0.8; }
 /* The concrete date a flexible fare falls on, so "I'm flexible" travellers still
    see exactly when the flight they picked departs/returns. */
-.guide-flight-side-date { font-size: 11px; font-weight: 600; color: var(--accent); display: inline-flex; align-items: center; gap: 4px; }
+.guide-flight-side-date { font-size: var(--text-micro); font-weight: 600; color: var(--accent); display: inline-flex; align-items: center; gap: 4px; }
 .guide-flight-side-rating { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--ink-soft); margin: 6px 0; flex-wrap: wrap; }
 /* The in-depth "what is this place / region" copy: given room to breathe so the
    character of where you land actually reads. */
 .guide-flight-side-desc {
-  font-size: 13px;
+  font-size: var(--text-label);
   line-height: 1.55;
   color: var(--ink);
   margin: 6px 0 4px;
@@ -291,7 +291,7 @@
 }
 .guide-nearby-info { min-width: 0; }
 .guide-nearby-name { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 600; flex-wrap: wrap; }
-.guide-nearby-sub { font-size: 11px; color: var(--ink-mute); line-height: 1.45; }
+.guide-nearby-sub { font-size: var(--text-micro); color: var(--ink-mute); line-height: 1.45; }
 
 /* Flight map pins */
 .fpm-pin {
@@ -299,7 +299,7 @@
   align-items: center;
   gap: 4px;
   border: 1.5px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--paper);
   color: var(--ink);
   font-family: var(--mono);
@@ -419,10 +419,10 @@
   align-items: center;
   gap: 5px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--paper);
   color: var(--ink);
-  font-size: 11px;
+  font-size: var(--text-micro);
   font-weight: 600;
   letter-spacing: 0.1px;
   padding: 2px 9px 2px 2px;
@@ -438,7 +438,7 @@
   justify-content: center;
   width: 19px;
   height: 19px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--cat);
   color: var(--on-fill);
 }
@@ -547,7 +547,7 @@
   display: inline-block;
   margin-left: 5px;
   padding: 0 5px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: rgba(0, 0, 0, 0.08);
   font-family: var(--mono);
   font-size: var(--text-micro);
@@ -577,7 +577,7 @@
 .shape-progress-dot {
   height: 4px;
   flex: 1;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--paper-dim);
   transition: background .25s;
 }
@@ -607,7 +607,7 @@
   background: var(--accent);
   color: var(--on-fill);
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 700;
   line-height: 1;
   letter-spacing: 0;
@@ -667,13 +667,13 @@
 .day-collapse-count {
   min-width: 20px;
   padding: 1px 7px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   /* The count chip (T398, rule "Count chip"): mono ink on paper-dim, never
      the accent. */
   background: var(--paper-dim);
   color: var(--ink);
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--text-micro);
   font-weight: 600;
   text-align: center;
 }
@@ -684,7 +684,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--paper-dim);
   color: var(--ink-soft);
   font-size: 17px;
@@ -729,7 +729,7 @@
   gap: 6px;
   padding: 5px 11px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--paper);
   color: var(--ink-soft);
   font-size: 11.5px;
@@ -744,7 +744,7 @@
 .day-route-info-btn svg { flex: none; }
 .day-route-info-note {
   margin: -2px 0 12px;
-  font-size: 12px;
+  font-size: var(--text-caption);
   line-height: 1.55;
   color: var(--ink-soft);
 }
@@ -772,7 +772,7 @@
 .day-tier-count {
   margin-left: 2px;
   padding: 1px 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--paper-dim);
   color: var(--ink-soft);
 }
@@ -788,7 +788,7 @@
 @media (hover: hover) {
   .day-activity-row:hover { box-shadow: 0 2px 10px rgba(26, 26, 26, 0.08); }
 }
-.day-assigned-name { font-size: 14px; }
+.day-assigned-name { font-size: var(--text-body); }
 
 /* Today's plan timeline: stops joined by a hairline so the day reads as one
    route, not a stack of cards. */
@@ -875,7 +875,7 @@
 .guide-card-head small {
   font-family: var(--ui);
   font-weight: 600;
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
   margin-left: auto;
 }
@@ -898,7 +898,7 @@
 /* Tactile confirmation on tap: the whole card is the target, so pressing it
    dips it, the way a physical button gives under a finger. */
 .trip-wizard-modal .guide-path-icon svg { width: 22px; height: 22px; }
-.trip-wizard-modal .guide-path-text b { font-size: 16px; line-height: 1.25; }
+.trip-wizard-modal .guide-path-text b { font-size: var(--text-lead); line-height: 1.25; }
 /* Reading contrast, not hint contrast: --ink-mute failed AA on paper. */
 .trip-wizard-modal .guide-path-text small { font-size: 12.5px; line-height: 1.45; color: var(--ink-soft); }
 .trip-wizard-modal .guide-path-chev {
@@ -1058,11 +1058,11 @@
   gap: 6px;
   padding: 5px 11px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--paper);
-  font-size: 12px;
+  font-size: var(--text-caption);
 }
-.guide-airport-chip b { font-family: var(--mono); font-size: 11px; }
+.guide-airport-chip b { font-family: var(--mono); font-size: var(--text-micro); }
 .guide-airport-chip small { font-family: var(--mono); font-size: 10px; color: var(--ink-mute); }
 
 /* "Not sure where to go yet?": the hand-off to Google Flights Explore, on the
@@ -1078,13 +1078,13 @@
   padding: 10px 12px;
   min-height: var(--tap);
   border: 1px solid var(--rule-soft);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--paper);
   color: inherit;
   text-decoration: none;
 }
-.guide-explore-text b { font-size: 13px; font-weight: 600; }
-.guide-explore-text small { font-size: 12px; color: var(--ink-soft); }
+.guide-explore-text b { font-size: var(--text-label); font-weight: 600; }
+.guide-explore-text small { font-size: var(--text-caption); color: var(--ink-soft); }
 /* The outbound arrow, wherever a link leaves Carta. */
 
 .guide-style-head {
@@ -1102,9 +1102,9 @@
   gap: 6px;
   padding: 5px 12px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--paper);
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
   transition: border-color .14s, color .14s;
 }
@@ -1138,7 +1138,7 @@
   .guide-style-card:hover { border-color: var(--accent-soft); }
 }
 .guide-style-card.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
-.guide-style-card b { font-size: 14px; }
+.guide-style-card b { font-size: var(--text-body); }
 .guide-style-card small { font-size: 11.5px; color: var(--ink-soft); line-height: 1.4; }
 .guide-style-card .guide-mode-check { position: absolute; top: 8px; right: 8px; }
 
@@ -1201,7 +1201,7 @@
 /* A stepper stretched across a wide card puts - and + a mouse-drag apart. */
 .guide-people-lg { width: 100%; max-width: 260px; justify-content: space-between; gap: 16px; padding: 8px 14px; }
 .guide-people-lg button { width: 36px; height: 36px; font-size: 19px; }
-.guide-people-lg span { font-size: 16px; min-width: 28px; }
+.guide-people-lg span { font-size: var(--text-lead); min-width: 28px; }
 
 /* ── The booked path: one route, the stays and the hops between them ─────
    Trip-wide answers (first night, party size) sit in a header bar above the
@@ -1220,7 +1220,7 @@
   margin-left: auto;
   padding-bottom: 9px;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--text-micro);
   color: var(--ink-soft);
 }
 .guide-trip-meta .trip-field-label { display: flex; align-items: center; gap: 5px; }
@@ -1258,7 +1258,7 @@
   background: var(--ink);
   color: var(--paper);
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--text-micro);
   display: flex; align-items: center; justify-content: center;
 }
 .booked-stop-thumb {
@@ -1278,8 +1278,8 @@
   line-height: 1.3;
   color: var(--ink);
 }
-.booked-stop-sub { display: flex; align-items: center; gap: 9px; font-size: 12px; color: var(--ink-soft); }
-.booked-stop-date { font-family: var(--mono); font-size: 11px; color: var(--ink-mute); white-space: nowrap; }
+.booked-stop-sub { display: flex; align-items: center; gap: 9px; font-size: var(--text-caption); color: var(--ink-soft); }
+.booked-stop-date { font-family: var(--mono); font-size: var(--text-micro); color: var(--ink-mute); white-space: nowrap; }
 
 /* The connector. Its glyph column is twice the rail offset, so the icon lands
    dead on the line the stop numbers sit on, and the glyph's own fill covers
@@ -1314,23 +1314,23 @@
   color: var(--ink);
 }
 .booked-hop-est small { font-size: 10.5px; color: var(--ink-mute); }
-.booked-hop-none { font-size: 11px; color: var(--ink-mute); }
+.booked-hop-none { font-size: var(--text-micro); color: var(--ink-mute); }
 .booked-hop-cost {
   flex: 0 0 132px;
   display: flex; align-items: center; gap: 5px;
   height: 38px;
   padding: 0 10px;
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--paper);
   transition: border-color .15s;
 }
 .booked-hop-cost:focus-within { border-color: var(--accent); }
-.booked-hop-cost-cur { font-family: var(--mono); font-size: 12px; color: var(--ink-mute); }
+.booked-hop-cost-cur { font-family: var(--mono); font-size: var(--text-caption); color: var(--ink-mute); }
 .booked-hop-cost input {
   width: 100%; min-width: 0;
   border: none; background: none; outline: none;
-  font-family: var(--mono); font-size: 13px; color: var(--ink);
+  font-family: var(--mono); font-size: var(--text-label); color: var(--ink);
 }
 
 /* Adding a stop extends the route in place, so it keeps the rail. The 8px
@@ -1355,7 +1355,7 @@
   padding: 12px 14px;
   border: 1px dashed var(--rule);
   border-radius: 12px;
-  font-size: 13px;
+  font-size: var(--text-label);
   color: var(--ink-soft);
   transition: border-color .15s, color .15s;
 }
@@ -1370,8 +1370,8 @@
   width: 100%;
   max-width: none;
   height: 38px;
-  border-radius: 10px;
-  font-size: 13px;
+  border-radius: var(--radius-control);
+  font-size: var(--text-label);
 }
 
 /* Phones: both the stop and its hop become two rows under one continuous
@@ -1497,10 +1497,10 @@
   cursor: pointer;
   transition: border-color .14s, background .14s;
 }
-.guide-side-idle-text b { font-size: 13px; color: var(--ink); display: flex; align-items: center; gap: 6px; }
+.guide-side-idle-text b { font-size: var(--text-label); color: var(--ink); display: flex; align-items: center; gap: 6px; }
 .guide-side-idle-flag { width: 16px; height: 12px; flex: none; }
 .guide-side-idle-text small {
-  font-size: 11px;
+  font-size: var(--text-micro);
   color: var(--ink-mute);
   line-height: 1.4;
   display: -webkit-box;
@@ -1508,7 +1508,7 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.guide-side-idle-fare { font-family: var(--mono); font-size: 13px; color: var(--accent); flex: none; }
+.guide-side-idle-fare { font-family: var(--mono); font-size: var(--text-label); color: var(--accent); flex: none; }
 
 /* One control bar above a map step: search, narrowing filters, view switch. */
 
@@ -1517,7 +1517,7 @@
    the commit button right underneath, where the reading flow ends. */
 .guide-summary {
   border: 1px solid var(--rule);
-  border-radius: 16px;
+  border-radius: var(--radius-card);
   background: var(--paper);
   box-shadow: 0 6px 18px rgba(26, 26, 26, 0.07);
   overflow: hidden;
@@ -1556,7 +1556,7 @@
   align-items: center;
   gap: 5px;
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
 }
 .guide-summary-fact-label svg { color: var(--accent); flex: none; }
@@ -1572,11 +1572,11 @@
   display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
 }
 .guide-kids-add {
-  font-family: var(--mono); font-size: 11px; color: var(--accent);
+  font-family: var(--mono); font-size: var(--text-micro); color: var(--accent);
   min-height: var(--tap); padding: 0 2px; text-align: left;
   align-self: flex-start;
 }
-.guide-kids-note { font-size: 11px; line-height: 1.45; margin: 2px 0 0; }
+.guide-kids-note { font-size: var(--text-micro); line-height: 1.45; margin: 2px 0 0; }
 .guide-summary-stops { padding: 12px 0 4px; }
 .guide-summary-stops .guide-final-stop span { margin-left: auto; font-family: var(--mono); font-size: 11.5px; }
 .guide-summary-cost { border-top: 1px solid var(--rule); margin-top: 8px; padding-top: 12px; }
@@ -1606,7 +1606,7 @@
 .guide-summary-leg svg { color: var(--accent); flex: none; }
 .guide-summary-leg-label { color: var(--ink); min-width: 0; }
 .guide-summary-leg small { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); }
-.guide-summary-leg b { margin-left: auto; font-family: var(--mono); font-size: 12px; color: var(--ink); }
+.guide-summary-leg b { margin-left: auto; font-family: var(--mono); font-size: var(--text-caption); color: var(--ink); }
 
 /* ── Named step rail ─────────────────────────────────────────────────────
    Thin anonymous segments say how far along you are but never what is still
@@ -1692,7 +1692,7 @@
   display: flex; align-items: center; gap: 6px;
   min-height: 24px;
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
 }
 .wiz-mini-line svg { flex: none; color: var(--ink-mute); }
@@ -1725,7 +1725,7 @@
   background: none;
   text-align: left;
   cursor: default;
-  font-size: 14px;
+  font-size: var(--text-body);
   color: var(--ink-mute);
 }
 .wiz-sheet-step.done > button { cursor: pointer; color: var(--ink-soft); }
@@ -1771,10 +1771,10 @@
   min-height: var(--tap);
   margin-top: 12px;
   border: 1px solid var(--accent);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--accent);
   color: var(--on-fill);
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   cursor: pointer;
 }
@@ -1817,7 +1817,7 @@
    picker used to leave blank. */
 .guide-origin-facts { display: inline-flex; align-items: center; gap: 14px; margin-left: auto; flex-wrap: wrap; }
 .guide-origin-fact { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); white-space: nowrap; }
-.guide-origin-fact b { color: var(--accent); font-size: 12px; }
+.guide-origin-fact b { color: var(--accent); font-size: var(--text-caption); }
 
 /* Carta's suggested length vs the nights actually booked: two answers to one
    question, so they can never again share a label. */
@@ -1898,7 +1898,7 @@
   pointer-events: auto;
   width: 22px;
   height: 22px;
-  font-size: 16px;
+  font-size: var(--text-lead);
 }
 .cal-inline:not(.cal-panes-1) .cal-pane-title { min-height: 22px; }
 .cal-panes { display: grid; grid-template-columns: 1fr; gap: 22px; }
@@ -1915,12 +1915,12 @@
 }
 .cal-pane-title {
   font-family: var(--display);
-  font-size: 13px;
+  font-size: var(--text-label);
   color: var(--ink);
   text-align: center;
   margin-bottom: 4px;
 }
-.cal-inline .cal-day { font-size: 13px; border-radius: 8px; }
+.cal-inline .cal-day { font-size: var(--text-label); border-radius: 8px; }
 .cal-inline .cal-weekday { padding-bottom: 3px; }
 /* Range: caps at the ends, a connected band between. */
 /* The nights between two --ink-fill ends: the paper-dim ground, so
@@ -1942,11 +1942,11 @@
   gap: 2px;
   padding: 5px 12px;
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--paper);
   min-width: 126px;
 }
-.guide-range-end b { font-family: var(--mono); font-size: 13px; color: var(--ink); }
+.guide-range-end b { font-family: var(--mono); font-size: var(--text-label); color: var(--ink); }
 .guide-range-end.empty b { color: var(--ink-mute); font-weight: 400; }
 /* "Next" marks which end the next tap sets, so it needs to read as active,
    not as a warning: a quiet accent border and faint tint, not a glowing 2px
@@ -2004,5 +2004,5 @@
   margin-bottom: 18px;
   font-size: 15px;
 }
-.guide-design-btn-lg small { font-size: 12px; margin-top: 3px; }
+.guide-design-btn-lg small { font-size: var(--text-caption); margin-top: 3px; }
 

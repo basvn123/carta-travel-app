@@ -57,7 +57,7 @@
   margin: var(--space-3) var(--space-4) 0;
   padding: var(--space-3);
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--bg-card);
 }
 .install-hint-text { margin: 0; font-size: 13.5px; color: var(--ink); min-width: 0; }

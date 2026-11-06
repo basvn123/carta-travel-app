@@ -10,17 +10,17 @@
    accent is its base-town button.
    ══════════════════════════════════════════════════════════════════════════ */
 
-.dmod { font-size: 14px; line-height: 1.45; color: var(--ink); }
+.dmod { font-size: var(--text-body); line-height: 1.45; color: var(--ink); }
 .dmod p { margin: 0 0 var(--space-2); }
 .dmod p:last-child { margin-bottom: 0; }
 .dmod .mono {
   font-family: var(--mono);
   font-variant-numeric: tabular-nums;
-  font-size: 13px;
+  font-size: var(--text-label);
   color: var(--ink-soft);
 }
 .dmod-lead { font-weight: 600; }
-.dmod-src { font-size: 12px; color: var(--ink-mute); }
+.dmod-src { font-size: var(--text-caption); color: var(--ink-mute); }
 .dmod-empty p { color: var(--ink-soft); }
 
 /* ── Beach orientation: the rose beside the sentences ── */

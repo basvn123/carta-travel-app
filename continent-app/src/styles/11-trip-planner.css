@@ -52,7 +52,7 @@
   transform: rotate(-45deg);
   color: var(--on-fill);
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 700;
 }
 /* A place that is marked, not sequenced (the travel record): a pushpin, head
@@ -107,11 +107,11 @@
 .trip-pin-label {
   top: calc(100% + 3px);
   padding: 2px 7px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   border: 1px solid var(--rule-soft);
   background: var(--paper);
   font-family: var(--ui);
-  font-size: 11px;
+  font-size: var(--text-micro);
   font-weight: 600;
   line-height: 1.35;
   color: var(--ink);
@@ -151,11 +151,11 @@
 
 /* Travel window row */
 .trip-field-people { min-width: 0; margin-left: auto; }
-.trip-people span { font-family: var(--mono); font-size: 13px; min-width: 12px; text-align: center; }
+.trip-people span { font-family: var(--mono); font-size: var(--text-label); min-width: 12px; text-align: center; }
 .trip-people button {
   width: 24px; height: 24px;
   border-radius: 50%;
-  font-size: 16px;
+  font-size: var(--text-lead);
   line-height: 1;
   color: var(--ink);
   display: flex; align-items: center; justify-content: center;
@@ -183,7 +183,7 @@
   border-radius: 50%;
   border: 1px solid var(--rule);
   color: var(--ink);
-  font-size: 16px; line-height: 1;
+  font-size: var(--text-lead); line-height: 1;
   display: flex; align-items: center; justify-content: center;
   transition: border-color .15s, color .15s;
 }
@@ -196,11 +196,11 @@
 .trip-stop-move, .trip-stop-remove {
   width: 26px; height: 24px;
   color: var(--ink-mute);
-  font-size: 12px; line-height: 1;
+  font-size: var(--text-caption); line-height: 1;
   display: flex; align-items: center; justify-content: center;
   transition: color .15s;
 }
-.trip-stop-remove { font-size: 16px; }
+.trip-stop-remove { font-size: var(--text-lead); }
 /* Reorder and remove are the day view's most-used controls and they sat in a
    20x18px box. A finger is not a mouse pointer, so on touch they get a real
    target; the pointer-fine layout stays compact. */
@@ -233,11 +233,11 @@
 .dropdown-trigger.disabled { opacity: 0.45; cursor: default; }
 .trip-add-btn {
   padding: 0 20px;
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   border: 1px solid var(--ink);
   background: var(--action);
   color: var(--paper);
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 500;
   transition: background .15s, opacity .15s;
 }
@@ -259,14 +259,14 @@
   border-radius: 9px;
   background: var(--paper);
   color: var(--ink);
-  font-size: 13px;
+  font-size: var(--text-label);
   font-family: inherit;
 }
 .trip-ownflight-cost { flex: 0 0 108px; font-family: var(--mono); }
 .trip-save-btn {
   flex: 1;
   padding: 11px;
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   border: 1px solid var(--accent);
   background: var(--accent);
   color: var(--on-fill);
@@ -287,7 +287,7 @@
   align-items: stretch;
   min-height: 48px;
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   overflow: hidden;
   background: var(--bg-card);
   transition: border-color .15s, box-shadow .15s;
@@ -343,7 +343,7 @@
 
 /* Day planner: base-city + day-trip transport recommendation. */
 .daytrip-base .trip-block-title svg { color: var(--accent); }
-.daytrip-reco-main b { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; color: var(--ink); }
+.daytrip-reco-main b { display: inline-flex; align-items: center; gap: 5px; font-size: var(--text-label); color: var(--ink); }
 .daytrip-reco-main small { font-size: 11.5px; color: var(--ink-soft); line-height: 1.45; }
 /* "You're already in the city" note - icon aligned to the first line. */
 .daytrip-here svg { flex: none; color: var(--accent); position: relative; top: 1px; }
@@ -381,14 +381,14 @@
 
 /* "Open this shared trip?" dialog (a trip arriving via a share link). */
 .share-trip-modal { max-width: 420px; padding: 26px 26px 22px; }
-.share-trip-name { font-size: 14px; color: var(--ink-soft); margin: 10px 0 0; }
+.share-trip-name { font-size: var(--text-body); color: var(--ink-soft); margin: 10px 0 0; }
 .share-trip-name b { color: var(--ink); }
 .share-trip-warn { color: var(--accent); }
 .share-trip-actions { display: flex; gap: 10px; margin-top: 18px; }
 .share-trip-actions .guide-next { flex: 1; }
 .share-trip-dismiss {
   padding: 10px 18px;
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   border: 1px solid var(--rule);
   background: transparent;
   color: var(--ink-soft);
@@ -401,18 +401,18 @@
 
 /* Planned-trip actions pinned at the bottom of the sheet (both layouts). */
 .trip-origin-row .origin-picker { position: relative; }
-.trip-footer-error .state-err-msg { font-size: 13px; }
+.trip-footer-error .state-err-msg { font-size: var(--text-label); }
 .trip-planned-error {
   position: absolute;
   top: 58px; right: 14px;
   z-index: 6;
   max-width: 300px;
   padding: 8px 12px;
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: rgba(246, 245, 242,0.97);
   border: 1px solid var(--warn-ink);
   color: var(--warn-ink);
-  font-size: 12px;
+  font-size: var(--text-caption);
   box-shadow: var(--shadow-1);
 }
 
