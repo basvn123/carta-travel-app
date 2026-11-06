@@ -13,6 +13,7 @@ import { Flag, CityThumb } from '../GuidedTripWizardParts.jsx';
 import { useI18n } from '../../i18n/index.jsx';
 import { isGateway } from '../../lib/rating.js';
 import { sortForYou } from '../../lib/match.js';
+import { scrollBehavior } from '../../lib/motion.js';
 
 /**
  * Your stays: the beds are booked, so the traveller types the towns they hold
@@ -43,7 +44,7 @@ export function StepStays({
   useEffect(() => {
     if (!pickedStopId || !listRef.current) return;
     const row = listRef.current.querySelector('.wstay.is-picked');
-    if (row && row.scrollIntoView) row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    if (row && row.scrollIntoView) row.scrollIntoView({ block: 'nearest', behavior: scrollBehavior() });
   }, [pickedStopId]);
 
   return (

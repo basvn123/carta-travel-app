@@ -35,7 +35,7 @@
   stroke-linecap: round;
   stroke-dasharray: 0.018 0.022;
   vector-effect: non-scaling-stroke;
-  animation: trip-art-walk 24s linear infinite;
+  animation: trip-art-walk var(--dur-drift) linear infinite;
 }
 .trip-art.is-compact .trip-art-route { stroke-width: 2.5; stroke-dasharray: 0.06 0.05; animation: none; }
 .trip-art-from { fill: none; stroke: var(--art-line); stroke-opacity: 0.8; stroke-width: 2; vector-effect: non-scaling-stroke; }

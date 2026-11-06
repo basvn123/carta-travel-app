@@ -1715,3 +1715,6 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1126-c | T1126 | Dead-CSS leftovers the scan kept: .money-est, .trip-leg*, .savedmap, and classes built from data in public/ JSON | next task | open |  |
 | T1126-d | T1126 | Look at signed-in screens (saved trip page, day planner steps, admin, account) at 390 and 1440 after the dead-CSS removal | user | open |  |
 | T1126-e | T1126 | Wire npm run ci:breakpoints into the design-lint workflow | next task | open |  |
+| T1124-a | T1124 | Cost card ring still has a 900 ms literal in 92-cost-card.css (one motion-literal in the lint baseline); move it to a token when the cost card task is done | next task | open |  |
+| T1124-b | T1124 | G5 richer motion (springs, shared-element photo move, INP before and after) stays gated on the owner approving the T1111 direction | user | open |  |
+| T1124-c | T1124 | Look at the app with system reduced motion on, on a real phone (sheets, tabs, map camera, home film) | user | open |  |

@@ -60,7 +60,7 @@
 .adminpage-search:focus-within { border-color: var(--accent); }
 .adminpage-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
 .adminpage-table tbody tr:last-child td { border-bottom: none; }
-.adminpage-table tbody tr { cursor: pointer; transition: background .12s; }
+.adminpage-table tbody tr { cursor: pointer; transition: background var(--dur-1); }
 @media (hover: hover) {
   .adminpage-table tbody tr:hover { background: var(--paper-dim); }
 }

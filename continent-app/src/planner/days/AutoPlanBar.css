@@ -33,7 +33,7 @@
   background: var(--surface-sunken);
   overflow: hidden;
 }
-.autoplan-meter > span { display: block; height: 100%; background: var(--action); transition: width 0.4s var(--ease-out, ease-out); }
+.autoplan-meter > span { display: block; height: 100%; background: var(--action); transition: width var(--dur-3) var(--ease-out, ease-out); }
 .autoplan-close {
   display: grid;
   place-items: center;

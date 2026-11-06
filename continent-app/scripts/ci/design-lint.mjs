@@ -41,6 +41,14 @@
  *                    layers are the --z-* ladder in 01-tokens.css (a step inside
  *                    a band is calc(var(--z-band) + n)); 1 to 9 is stacking
  *                    inside one component and stays a number
+ *   motion-literal   (T1124) a duration or an easing written as a literal in a
+ *                    transition or animation declaration outside :root: a
+ *                    number of s or ms, ease, ease-in, ease-out, ease-in-out
+ *                    or cubic-bezier(). Read --dur-1 to --dur-4, the ambient
+ *                    --dur-spin/-blink/-dots/-breathe/-pulse/-loop/-drift and
+ *                    --ease-out / --ease-in-out. 0s, 0ms, 0.01ms (the
+ *                    reduced-motion floor), linear and any *-delay stay
+ *                    literal (a stagger is arithmetic, not a duration).
  *   raw-button       (T425) a <button> element outside src/components/ui; the
  *                    migration moves them onto the kit, the baseline is its meter
  *
@@ -87,6 +95,8 @@ const TOKENS_FILE = 'src/styles/01-tokens.css';
 // A :root custom property that names a typeface: a quoted family or a generic family keyword.
 const FACE_VALUE = /\b(serif|sans-serif|monospace|cursive|fantasy|system-ui)\b|['"][^'"]+['"]\s*,/;
 
+const rootDepthOpen = (d) => d >= 0;
+
 function walk(dir, out = []) {
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
     const p = path.join(dir, e.name);
@@ -114,6 +124,7 @@ function scanFile(abs, rel) {
   // Inside @font-face, font-family is the descriptor that names the face
   // being declared (src/styles/00-fonts.css, T1090), not a use of a typeface.
   let inFontFace = false;
+  let motionDecl = false; // inside a transition/animation declaration (T1124)
   for (let i = 0; i < lines.length; i++) {
     const l = lines[i];
     if (isCss && /@font-face\s*\{/.test(l)) inFontFace = true;
@@ -149,6 +160,18 @@ function scanFile(abs, rel) {
       if (rel !== TOKENS_FILE && LEGACY_TOKEN.test(l)) add('legacy-token', i, l.match(LEGACY_TOKEN)[1]);
       const zi = l.match(/(?:^|[{;\s])z-index\s*:\s*(-?\d+)\s*(?:!important\s*)?(?:[;}]|$)/);
       if (zi && Math.abs(Number(zi[1])) >= 10) add('z-index-literal', i, zi[1]);
+    }
+    if (!rootDepthOpen(rootDepth)) {
+      const mStart = l.match(/(?:^|[{;\s])(transition|animation)(-duration|-timing-function)?\s*:(.*)$/);
+      let seg = null;
+      if (mStart) { motionDecl = true; seg = mStart[3]; } else if (motionDecl) seg = l;
+      if (seg != null) {
+        const end = seg.search(/[;}]/);
+        const body = (end >= 0 ? seg.slice(0, end) : seg).replace(/var\((?:[^()]|\([^()]*\))*\)/g, ' ');
+        if (end >= 0) motionDecl = false;
+        const lit = body.match(/cubic-bezier\(|(?<![\w.-])(?!0(?:ms|s)\b|0?\.0*1ms\b)\d*\.?\d+m?s\b|(?<![\w-])(?:ease-in-out|ease-in|ease-out|ease)(?![\w-])/);
+        if (lit) add('motion-literal', i, lit[0]);
+      }
     }
     const sh = l.match(/(?:box|text)-shadow\s*:\s*([^;}]*)/);
     if (sh && !/^\s*(none|inherit|initial|unset)\b/.test(sh[1]) && !/var\(\s*--shadow/.test(sh[1]) && !/^\s*var\(/.test(sh[1])) add('shadow-literal', i);
@@ -225,7 +248,7 @@ function selfTest() {
   const empty = path.join(fx, 'empty-baseline.json');
   const bad = check(path.join(fx, 'bad'), empty);
   const rules = new Set(bad.fresh.map((v) => v.rule));
-  const want = ['hex-literal', 'gradient', 'shadow-literal', 'outline-none', 'em-dash', 'middot', 'banned-word', 'motion-effect', 'font-literal', 'js-hex-literal', 'token-mirror-drift', 'font-size-literal', 'radius-literal', 'legacy-token', 'money-literal', 'raw-button', 'z-index-literal'];
+  const want = ['hex-literal', 'gradient', 'shadow-literal', 'outline-none', 'em-dash', 'middot', 'banned-word', 'motion-effect', 'font-literal', 'js-hex-literal', 'token-mirror-drift', 'font-size-literal', 'radius-literal', 'legacy-token', 'money-literal', 'raw-button', 'z-index-literal', 'motion-literal'];
   const missing = want.filter((r) => !rules.has(r));
   const good = check(path.join(fx, 'good'), empty);
   let ok = true;

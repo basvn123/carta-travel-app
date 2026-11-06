@@ -27,7 +27,7 @@
   display: block;
   line-height: 0;
   transform-origin: bottom center;
-  transition: transform 0.12s ease;
+  transition: transform var(--dur-1) var(--ease-in-out);
   filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.32));
 }
 .dem-stay-pulse {
@@ -40,7 +40,7 @@
   border-radius: 50%;
   background: var(--accent);
   opacity: 0.25;
-  animation: dem-pulse 1.8s ease-out infinite;
+  animation: dem-pulse var(--dur-breathe) var(--ease-out) infinite;
   z-index: -1;
 }
 .dem-stay-name {

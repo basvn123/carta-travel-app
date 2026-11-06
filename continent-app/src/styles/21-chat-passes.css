@@ -26,7 +26,7 @@
 .chat-typing span {
   width: 7px; height: 7px; border-radius: 50%;
   background: var(--ink-mute);
-  animation: chat-blink 1.2s infinite ease-in-out;
+  animation: chat-blink var(--dur-dots) infinite var(--ease-in-out);
 }
 @keyframes chat-blink { 0%, 80%, 100% { opacity: 0.25; } 40% { opacity: 1; } }
 
@@ -60,7 +60,7 @@
 .rbs-line-row.now .rbs-line-ico {
   background: var(--accent);
   color: var(--on-fill);
-  animation: rbs-pulse 1.5s ease-in-out infinite;
+  animation: rbs-pulse var(--dur-breathe) var(--ease-in-out) infinite;
 }
 @keyframes rbs-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
 /* Numbers inside the log are measured facts, so they are set like every other
@@ -166,7 +166,7 @@
 
 /* ───────── Passes: the pricing modal and the account pass row ───────── */
 
-.pass-overlay { animation: pass-overlay-in .25s ease backwards; }
+.pass-overlay { animation: pass-overlay-in var(--dur-2) var(--ease-in-out) backwards; }
 
 @keyframes pass-overlay-in { from { opacity: 0; } }
 @keyframes pass-card-in { from { opacity: 0; transform: translateY(14px) scale(.985); } }
@@ -291,7 +291,7 @@
   font-size: var(--text-caption);
   color: var(--ink-soft);
   cursor: pointer;
-  transition: border-color .15s, color .15s, background .15s;
+  transition: border-color var(--dur-1), color var(--dur-1), background var(--dur-1);
 }
 .account-avatar-picker {
   display: flex;
@@ -313,7 +313,7 @@
   font-size: 19px;
   line-height: 1;
   cursor: pointer;
-  transition: border-color .15s, background .15s;
+  transition: border-color var(--dur-1), background var(--dur-1);
 }
 .account-avatar-opt.on { border-color: var(--accent); background: var(--accent-bg); }
 
@@ -340,7 +340,7 @@
   justify-content: center;
   border-radius: var(--radius-sm);
   color: var(--ink-soft);
-  transition: color .15s, background .15s;
+  transition: color var(--dur-1), background var(--dur-1);
 }
 
 .pw-gauge { display: flex; flex-direction: column; gap: 8px; margin-top: -4px; }
@@ -351,7 +351,7 @@
   height: 3px;
   border-radius: 2px;
   background: var(--rule-soft);
-  transition: background .15s;
+  transition: background var(--dur-1);
 }
 .pw-strength.weak .pw-strength-seg.on { background: var(--danger); }
 .pw-strength.fair .pw-strength-seg.on { background: var(--rate); }
@@ -466,7 +466,7 @@
   background: transparent;
   color: var(--green);
   cursor: pointer;
-  transition: background .15s;
+  transition: background var(--dur-1);
 }
 
 /* Forgot your password, as a step rather than a trapdoor. Pressing the link

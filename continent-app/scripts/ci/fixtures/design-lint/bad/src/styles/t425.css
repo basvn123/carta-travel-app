@@ -1,2 +1,4 @@
 .seeded { font-size: 9px; border-radius: 7px; color: var(--ink); }
 .seeded-layer { position: fixed; z-index: 240; }
+.seeded-motion { transition: opacity 0.2s ease-out; }
+.seeded-motion-2 { animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }

@@ -16,6 +16,7 @@ import { StoryCard, StoryRail } from './StoryRail.jsx';
 import { NearPage } from './NearPage.jsx';
 import { PSection, PBlock } from './PageTemplate.jsx';
 import { DO_TYPE_KEYS, cleanName, fmtKm, thumb500 } from './destParts.js';
+import { scrollBehavior } from '../lib/motion.js';
 import { isResizable, thumbAt } from '../lib/heroImage.js';
 
 const DestMap = React.lazy(() => import('./DestMap.jsx'));
@@ -111,7 +112,7 @@ export function DestSee({ p }) {
     setFocus(i);
     if (i >= SPOTS_FIRST) setAllSights(true);
     // The card comes into view in its row (a swipe row on a phone).
-    requestAnimationFrame(() => cardRefs.current[i]?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' }));
+    requestAnimationFrame(() => cardRefs.current[i]?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: scrollBehavior() }));
   };
   return (
     <PSection id="pt-see" title={t('destx.jump.see')}>

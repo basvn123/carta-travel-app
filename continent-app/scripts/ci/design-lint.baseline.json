@@ -1,6 +1,6 @@
 {
  "note": "Counts of known design-lint violations by rule|file|line text. Regenerate with --update-baseline after fixing some; never to admit new ones.",
- "total": 4613,
+ "total": 4614,
  "byRule": {
   "raw-button": 423,
   "em-dash": 8,
@@ -15,7 +15,8 @@
   "radius-literal": 294,
   "hex-literal": 10,
   "font-size-literal": 635,
-  "outline-none": 11
+  "outline-none": 11,
+  "motion-literal": 1
  },
  "counts": {
   "raw-button|src/App.jsx|<button type=\"button\" className=\"shell-close\" onClick={shareExit.close} aria-label={t('a11y.close')}>": 1,
@@ -1128,7 +1129,7 @@
   "legacy-token|src/styles/22-account-admin.css|.account-faq { border-top: 1px solid var(--rule); }": 1,
   "legacy-token|src/styles/22-account-admin.css|.account-faq-item { border-bottom: 1px solid var(--rule); }": 1,
   "legacy-token|src/styles/22-account-admin.css|.account-faq-q:hover { color: var(--accent); }": 1,
-  "legacy-token|src/styles/22-account-admin.css|.account-faq-chev { flex: none; color: var(--ink-mute); transition: transform .15s; }": 1,
+  "legacy-token|src/styles/22-account-admin.css|.account-faq-chev { flex: none; color: var(--ink-mute); transition: transform var(--dur-1); }": 1,
   "legacy-token|src/styles/22-account-admin.css|border-top: 1px solid var(--rule-soft);": 6,
   "legacy-token|src/styles/22-account-admin.css|border-bottom: 1px solid var(--rule-soft);": 2,
   "legacy-token|src/styles/22-account-admin.css|.account-feedback-input:hover { border-color: var(--ink-soft); }": 1,
@@ -1455,7 +1456,7 @@
   "legacy-token|src/styles/25-feature-pages.css|.cycle-town-name { flex: 1; min-width: 0; color: var(--ink); }": 1,
   "legacy-token|src/styles/25-feature-pages.css|.nbx-list li { border-top: 1px solid var(--rule-soft); }": 1,
   "legacy-token|src/styles/25-feature-pages.css|.jpage-lrow-icon { flex: none; color: var(--ink-soft); }": 1,
-  "legacy-token|src/styles/25-feature-pages.css|.jpage-lrow-chev { flex: none; margin-left: auto; color: var(--ink-mute); transition: transform .18s ease; }": 1,
+  "legacy-token|src/styles/25-feature-pages.css|.jpage-lrow-chev { flex: none; margin-left: auto; color: var(--ink-mute); transition: transform var(--dur-2) var(--ease-in-out); }": 1,
   "font-size-literal|src/styles/25-feature-pages.css|.jstyle-card .jstyle-name { font-size: 15.5px; }": 1,
   "legacy-token|src/styles/25-feature-pages.css|.xchip-clear { background: transparent; border-color: var(--rule-soft); color: var(--ink-mute); }": 1,
   "radius-literal|src/styles/25-feature-pages.css|border-radius: 8px;": 3,
@@ -1932,6 +1933,7 @@
   "gradient|src/styles/92-cost-card.css|linear-gradient(165deg, var(--umber-700), var(--umber-800) 70%);": 1,
   "shadow-literal|src/styles/92-cost-card.css|box-shadow: 0 10px 28px -12px color-mix(in srgb, var(--umber-800) 55%, transparent), var(--elev-1);": 1,
   "shadow-literal|src/styles/92-cost-card.css|.ccard .ccard-per .seg-item.is-selected { background: var(--umber-50); color: var(--umber-800); box-shadow: 0 2px 6px -2px rgba(0, 0, 0, 0.35); }": 1,
+  "motion-literal|src/styles/92-cost-card.css|transition: stroke-dasharray 900ms var(--ease-out), stroke-dashoffset 900ms var(--ease-out);": 1,
   "font-size-literal|src/styles/92-cost-card.css|.ccard-n { font-size: 30px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; color: var(--ccard-ink); font-variant-numeric: tabular-nums; }": 1,
   "shadow-literal|src/styles/92-cost-card.css|.ccard .ccard-ico.is-marks .flt-mark { display: grid; place-items: center; width: 32px; height: 32px; padding: 0; overflow: hidden; border: 0; border-radius: 50%; background: var(--surface); box-shado": 1,
   "font-size-literal|src/styles/93-flight-pass.css|.jr-code { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; color: var(--text); }": 1,
