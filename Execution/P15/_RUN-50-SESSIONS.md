@@ -15,7 +15,7 @@ How it runs:
 | 02 | T1086 | session_0156MmZ4Muup4v7t4uhhm3bi | p15-s02-runbooks | done | yes | 3 |
 | 03 | T1087 | session_0156MmZ7EaiBuWGxYvPNo4L9 | p15-s03-admin-harness-ci | done | yes | 2 |
 | 04 | T1088 | session_0156MmZ3SPm4Y2EnZTdqua3E | p15-s04-supply-chain-gates | done | yes | 2 |
-| 05 | T1089 | session_0156MmZ5VRsioL6jYDKbHUSW | p15-s05-verify-harness-refresh | running | | |
+| 05 | T1089 | session_0156MmZ5VRsioL6jYDKbHUSW | p15-s05-verify-harness-refresh | done | yes |  |
 | 06 | T1090 | session_0156MmZ675FBGFYLWfxY8p45 | p15-s06-csp-no-inline-style | done | yes | 1 |
 | 07 | T1091 | session_0156MmZ6GNqyadqQA6n59dSe | p15-s07-attribution-ledger | done | yes | 0 |
 | 08 | T1092 | session_0156MmZ2rL9aioyUBz7HyAUN | p15-s08-trail-names | done | yes | 2 |
@@ -31,16 +31,24 @@ How it runs:
 | 19 | T1103 | session_0156MmZ6ZBdDcczVBqNPYaQU | p15-s19-plan-flow-short | done | yes |  |
 | 20 | T1104 | session_0156MmZ6ef2wiQHb1UCRzFwf | p15-s20-account-sync | done | yes |  |
 | 22 | T1106 | session_0156MmZ7DisRZv2LJoFwK5up | p15-s22-error-boundaries | done | yes |  |
-| 15 | T1099 | session_0156MmZ4VQcUwbCiHkdcSgN7 | p15-s15-freshness | running | | |
+| 15 | T1099 | session_0156MmZ4VQcUwbCiHkdcSgN7 | p15-s15-freshness | done | yes |  |
 | 21 | T1105 | session_0156MmZ4MAme8kf8EefwKiYi | p15-s21-first-load | running | | |
-| 24 | T1108 | session_0156MmZ6jvXwmdbY6YVrkwbn | p15-s24-support-pages | running | | |
-| 25 | T1109 | session_0156MmZ35whMvqZkgorw7nEs | p15-s25-channel-counts | running | | |
-| 26 | T1110 | session_0156MmZ2nA8QKLasV6QWgJ4f | p15-s26-waitlist | running | | |
-| 27 | T1111 | session_0156MmZ547NMN6yW71L7vmvq | p15-s27-design-direction | running | | |
-| 28 | T1112 | session_0156MmZ48qMB7xQnSQHwCTUZ | p15-s28-aviasales-probe | running | | |
+| 24 | T1108 | session_0156MmZ6jvXwmdbY6YVrkwbn | p15-s24-support-pages | done | yes |  |
+| 25 | T1109 | session_0156MmZ35whMvqZkgorw7nEs | p15-s25-channel-counts | done | yes |  |
+| 26 | T1110 | session_0156MmZ2nA8QKLasV6QWgJ4f | p15-s26-waitlist | done | yes |  |
+| 27 | T1111 | session_0156MmZ547NMN6yW71L7vmvq | p15-s27-design-direction | done | yes |  |
+| 28 | T1112 | session_0156MmZ48qMB7xQnSQHwCTUZ | p15-s28-aviasales-probe | done | yes |  |
+| 23 | T1107 | session_0156MmZ2fmPnzbsSXeQ2RTAo | p15-s23-box-schedule | running | | |
+| 29 | T1113 | session_0156MmZ4ZG2oAzXvGVyDdeL1 | p15-s29-seo-bar | running | | |
+| 30 | T1114 | session_0156MmZ5QKZ1Frtsi7BNAnsa | p15-s30-not-yet-notes | running | | |
+| 33 | T1117 | session_0156MmZ7FkQnKnjXPjJPFFcQ | p15-s33-ai-security | running | | |
+| 34 | T1118 | session_0156MmZ2phvMcuvdm55wY1xR | p15-s34-privacy-gdpr | running | | |
+| 35 | T1119 | session_0156MmZ5EGodCo9t2t4cADQX | p15-s35-static-analysis | running | | |
+| 36 | T1120 | session_0156MmZ3KjB6LcKqDG2euFXy | p15-s36-error-tracking | running | | |
 
 Merge notes:
 - 00:05 S02, S03, S06, S07, S08 merged. ROADMAP C4 and C5 rows came out doubled by the merge and were fixed by hand; npm test 1294 pass, trail and licence pytest 47 pass, entry points OK. 8 owner steps on the checklist.
 - S01 and S04: GitHub refused the push (commit_refs); asked to retry, then push commit by commit.
 - 00:45 S01, S04, S09, S11, S14, S16, S17 merged. Fixes at merge: S01 and S02 both edited docs/runbooks README and build-box (kept S02, added S01 backup.md row; row T1085-x to fold the two backup docs); ROADMAP B2, C4, C5, C6 rows doubled and were fixed; the T1098 harvester was missing from the licence registry (added, ledger regenerated). npm test 1328 pass; pytest 359 pass, 2 fail that also fail on the base commit (rating tests needing data this container lacks). 23 owner steps on the checklist.
 - 01:19 S10, S12, S13, S18, S19, S20, S22 merged (only register and ROADMAP conflicts; D7, D8, D9, G12, G13 rows deduplicated by hand). npm test 1358 pass; pytest 399 pass with the same 2 base failures; fast build OK. 36 owner steps on the checklist. Migration 065 is T1104 (account sync); 066 is reserved for T1110 (waitlist); S33 and S34 take 067 and up. S05 asked to wrap up after two hours.
+- 01:58 S05, S15, S24, S25, S26, S27, S28 merged. T1109 left its migration unnumbered on purpose; it became 067 with a down file. RLS suite 817 of 817 and all 16 admin harnesses green on a local Postgres with 065 to 067. Two rows closed by T1087 (T1078-b, T1082-a) had come back into _OPEN.md in the first merge round and were removed again; check_closed.py now runs after every merge. npm test 1375, pytest 411 pass (2 base failures), fast build OK. 50 owner steps on the checklist. Migration numbers: 068 is T1117, 069 is T1118. S32 (register rule) is held to run last and alone, because it rewrites the register every session appends to.
