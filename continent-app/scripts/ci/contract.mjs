@@ -254,6 +254,72 @@ export function validateTrailImages(rows) {
 }
 
 /**
+ * Multi-stage treks (T1184, ROADMAP D24, docs/SCHEMA.md "Multi-stage treks").
+ * `files` maps a country code to its parsed trails file. Each `treks[]`
+ * record needs an id unique across the wire, a name, the country it is
+ * filed under, two or more stages with distinct ids and strictly rising
+ * numbers, a `km` total that is the sum of its stages, and the T1143
+ * provenance pair (`_src`, `_asof`). Every stage row's `trek {id, cc, i}`
+ * must name a trek in that country's file that lists the row under that
+ * number, and every listed stage must point back. A wire with no treks yet
+ * passes and says so (the export has not run since T1184).
+ */
+const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
+export function validateTrailTreks(files) {
+  const problems = [];
+  const treks = new Map();
+  for (const [cc, doc] of Object.entries(files || {})) {
+    for (const t of (doc && doc.treks) || []) {
+      const where = `trails/${cc}.treks/${t && t.id}`;
+      if (!t || !t.id) { problems.push(`trails/${cc}.treks has a record with no id`); continue; }
+      if (treks.has(t.id)) problems.push(`${where} is filed twice`);
+      treks.set(t.id, { cc, t });
+      if (!String(t.name || '').trim()) problems.push(`${where} has no name`);
+      if (t.cc !== cc) problems.push(`${where} says cc ${t.cc} but is filed in ${cc}`);
+      const st = Array.isArray(t.stages) ? t.stages : [];
+      if (st.length < 2) problems.push(`${where} has ${st.length} stage(s)`);
+      if (new Set(st.map((x) => String(x.id))).size !== st.length) problems.push(`${where} lists a stage twice`);
+      for (let k = 1; k < st.length; k += 1) {
+        if (!(st[k].i > st[k - 1].i)) { problems.push(`${where} stage numbers do not rise at ${st[k].id}`); break; }
+      }
+      const sum = st.reduce((a, x) => a + (Number.isFinite(x.km) ? x.km : 0), 0);
+      if (!Number.isFinite(t.km) || Math.abs(sum - t.km) > 0.05 * st.length + 0.1) {
+        problems.push(`${where} km ${t.km} is not the sum of its stages (${sum.toFixed(1)})`);
+      }
+      if (t.n !== st.length) problems.push(`${where} n ${t.n} but ${st.length} stages`);
+      if (!String(t._src || '').trim() || !ISO_DAY.test(String(t._asof || ''))) {
+        problems.push(`${where} misses _src or _asof`);
+      }
+    }
+  }
+  let rowsWithTrek = 0;
+  const pointed = new Set();
+  for (const [cc, doc] of Object.entries(files || {})) {
+    for (const r of [...((doc && doc.trips) || []), ...((doc && doc.listed) || [])]) {
+      if (!r || !r.trek) continue;
+      rowsWithTrek += 1;
+      const where = `trails/${cc}/${r.id}.trek`;
+      const hit = treks.get(r.trek.id);
+      if (!hit) { problems.push(`${where} points at ${r.trek.id}, which no file holds`); continue; }
+      if (hit.cc !== r.trek.cc) problems.push(`${where} says cc ${r.trek.cc}, the trek is in ${hit.cc}`);
+      const stage = hit.t.stages.find((x) => String(x.id) === String(r.id));
+      if (!stage) problems.push(`${where} is not a stage of ${r.trek.id}`);
+      else if (stage.i !== r.trek.i) problems.push(`${where} says stage ${r.trek.i}, the trek says ${stage.i}`);
+      pointed.add(`${r.trek.id}|${r.id}`);
+    }
+  }
+  const loaded = new Set(Object.values(files || {}).flatMap((d) => [...((d && d.trips) || []), ...((d && d.listed) || [])].map((r) => String(r.id))));
+  for (const [id, { t }] of treks) {
+    for (const x of t.stages || []) {
+      if (loaded.has(String(x.id)) && !pointed.has(`${id}|${x.id}`)) {
+        problems.push(`trails/${t.cc}.treks/${id} lists ${x.id}, whose row does not point back`);
+      }
+    }
+  }
+  return { problems, n: treks.size, rows: rowsWithTrek };
+}
+
+/**
  * Validate the split wires that sit beside app_data.json (T267, closing the
  * gap T029 recorded): the boot index, the per-country destination files it
  * names, the per-destination POI shards and the country insights (the

@@ -1,0 +1,1180 @@
+{
+ "country": "DE",
+ "generated_at": "2026-11-06T00:00:00+00:00",
+ "simplify_m": 25,
+ "n_trips": 21,
+ "n_listed": 0,
+ "counts": {
+  "hike": 21
+ },
+ "attribution": [
+  "(c) OpenStreetMap contributors, ODbL"
+ ],
+ "trips": [
+  {
+   "id": 101,
+   "name": "Werdenfelser Weg Etappe 3: Ort 3 - Ort 4",
+   "category": "hike",
+   "country": "DE",
+   "distance_m": 8000,
+   "ascent_m": 400,
+   "descent_m": 350,
+   "duration_min": 180,
+   "difficulty": "moderate",
+   "bbox": [
+    11.2,
+    47.5,
+    11.3,
+    47.5
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      11.2,
+      47.5
+     ],
+     [
+      11.225,
+      47.5
+     ],
+     [
+      11.25,
+      47.5
+     ],
+     [
+      11.275,
+      47.5
+     ],
+     [
+      11.3,
+      47.5
+     ]
+    ]
+   },
+   "source": "osm",
+   "license": "ODbL-1.0",
+   "attribution_text": "(c) OpenStreetMap contributors, ODbL",
+   "detail": "/trails/trip/101.json",
+   "t": "r",
+   "rating": 7.2,
+   "is_loop": false,
+   "h": {
+    "cls": "stage",
+    "of": "Werdenfelser Weg",
+    "top": "Werdenfelser Weg",
+    "i": 3,
+    "n": null
+   }
+  },
+  {
+   "id": 102,
+   "name": "Werdenfelser Weg Etappe 1: Ort 1 - Ort 2",
+   "category": "hike",
+   "country": "DE",
+   "distance_m": 8000,
+   "ascent_m": 400,
+   "descent_m": 350,
+   "duration_min": 180,
+   "difficulty": "moderate",
+   "bbox": [
+    11.0,
+    47.5,
+    11.1,
+    47.5
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      11.0,
+      47.5
+     ],
+     [
+      11.025,
+      47.5
+     ],
+     [
+      11.05,
+      47.5
+     ],
+     [
+      11.075,
+      47.5
+     ],
+     [
+      11.1,
+      47.5
+     ]
+    ]
+   },
+   "source": "osm",
+   "license": "ODbL-1.0",
+   "attribution_text": "(c) OpenStreetMap contributors, ODbL",
+   "detail": "/trails/trip/102.json",
+   "t": "r",
+   "rating": 7.2,
+   "is_loop": false,
+   "h": {
+    "cls": "stage",
+    "of": "Werdenfelser Weg",
+    "top": "Werdenfelser Weg",
+    "i": 1,
+    "n": null
+   }
+  },
+  {
+   "id": 103,
+   "name": "Werdenfelser Weg Etappe 4: Ort 4 - Ort 5",
+   "category": "hike",
+   "country": "DE",
+   "distance_m": 8000,
+   "ascent_m": 400,
+   "descent_m": 350,
+   "duration_min": 180,
+   "difficulty": "moderate",
+   "bbox": [
+    11.3,
+    47.5,
+    11.4,
+    47.5
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      11.3,
+      47.5
+     ],
+     [
+      11.325,
+      47.5
+     ],
+     [
+      11.35,
+      47.5
+     ],
+     [
+      11.375,
+      47.5
+     ],
+     [
+      11.4,
+      47.5
+     ]
+    ]
+   },
+   "source": "osm",
+   "license": "ODbL-1.0",
+   "attribution_text": "(c) OpenStreetMap contributors, ODbL",
+   "detail": "/trails/trip/103.json",
+   "t": "r",
+   "rating": 7.2,
+   "is_loop": false,
+   "h": {
+    "cls": "stage",
+    "of": "Werdenfelser Weg",
+    "top": "Werdenfelser Weg",
+    "i": 4,
+    "n": null
+   }
+  },
+  {
+   "id": 104,
+   "name": "Werdenfelser Weg Etappe 2: Ort 2 - Ort 3",
+   "category": "hike",
+   "country": "DE",
+   "distance_m": 8000,
+   "ascent_m": 400,
+   "descent_m": 350,
+   "duration_min": 180,
+   "difficulty": "moderate",
+   "bbox": [
+    11.1,
+    47.5,
+    11.2,
+    47.5
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      11.1,
+      47.5
+     ],
+     [
+      11.125,
+      47.5
+     ],
+     [
+      11.15,
+      47.5
+     ],
+     [
+      11.175,
+      47.5
+     ],
+     [
+      11.2,
+      47.5
+     ]
+    ]
+   },
+   "source": "osm",
+   "license": "ODbL-1.0",
+   "attribution_text": "(c) OpenStreetMap contributors, ODbL",
+   "detail": "/trails/trip/104.json",
+   "t": "r",
+   "rating": 7.2,
+   "is_loop": false,
+   "h": {
+    "cls": "stage",
+    "of": "Werdenfelser Weg",
+    "top": "Werdenfelser Weg",
+    "i": 2,
+    "n": null
+   }
+  },
+  {
+   "id": 105,
+   "name": "Werdenfelser Weg Etappe 6: Ort 6 - Ort 7",
+   "category": "hike",
+   "country": "DE",
+   "distance_m": 8000,
+   "ascent_m": 400,
+   "descent_m": 350,
+   "duration_min": 180,
+   "difficulty": "moderate",
+   "bbox": [
+    11.5,
+    47.5,
+    11.6,
+    47.5
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      11.5,
+      47.5
+     ],
+     [
+      11.525,
+      47.5
+     ],
+     [
+      11.55,
+      47.5
+     ],
+     [
+      11.575,
+      47.5
+     ],
+     [
+      11.6,
+      47.5
+     ]
+    ]
+   },
+   "source": "osm",
+   "license": "ODbL-1.0",
+   "attribution_text": "(c) OpenStreetMap contributors, ODbL",
+   "detail": "/trails/trip/105.json",
+   "t": "r",
+   "rating": 7.2,
+   "is_loop": false,
+   "h": {
+    "cls": "standalone",
+    "of": null,
+    "top": null,
+    "i": null,
+    "n": null
+   }
+  },
+  {
+   "id": 106,
+   "name": "Werdenfelser Weg Variante Hoehenweg",
+   "category": "hike",
+   "country": "DE",
+   "distance_m": 8000,
+   "ascent_m": 400,
+   "descent_m": 350,
+   "duration_min": 180,
+   "difficulty": "moderate",
+   "bbox": [
+    11.1,
+    47.51,
+    11.2,
+    47.51
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      11.1,
+      47.51
+     ],
+     [
+      11.125,
+      47.51
+     ],
+     [
+      11.15,
+      47.51
+     ],
+     [
+      11.175,
+      47.51
+     ],
+     [
+      11.2,
+      47.51
+     ]
+    ]
+   },
+   "source": "osm",
+   "license": "ODbL-1.0",
+   "attribution_text": "(c) OpenStreetMap contributors, ODbL",
+   "detail": "/trails/trip/106.json",
+   "t": "r",
+   "rating": 7.2,
+   "is_loop": false,
+   "h": {
+    "cls": "variant",
+    "of": "Werdenfelser Weg",
+    "top": "Werdenfelser Weg",
+    "i": null,
+    "n": null
+   }
+  },
+  {
+   "id": 200,
+   "name": "Isarsteig",
+   "category": "hike",
+   "country": "DE",
+   "distance_m": 20000,
+   "ascent_m": 400,
+   "descent_m": 350,
+   "duration_min": 180,
+   "difficulty": "moderate",
+   "bbox": [
+    11.0,
+    47.7,
+    11.2,
+    47.7
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      11.0,
+      47.7
+     ],
+     [
+      11.05,
+      47.7
+     ],
+     [
+      11.1,
+      47.7
+     ],
+     [
+      11.15,
+      47.7
+     ],
+     [
+      11.2,
+      47.7
+     ]
+    ]
+   },
+   "source": "osm",
+   "license": "ODbL-1.0",
+   "attribution_text": "(c) OpenStreetMap contributors, ODbL",
+   "detail": "/trails/trip/200.json",
+   "t": "r",
+   "rating": 7.2,
+   "is_loop": false,
+   "h": {
+    "cls": "parent",
+    "of": null,
+    "top": null,
+    "i": null,
+    "n": null
+   },
+   "osm": 4242
+  },
+  {
+   "id": 201,
+   "name": "Isarsteig 1: Wallgau - Vorderriss",
+   "category": "hike",
+   "country": "DE",
+   "distance_m": 8000,
+   "ascent_m": 400,
+   "descent_m": 350,
+   "duration_min": 180,
+   "difficulty": "moderate",
+   "bbox": [
+    11.0,
+    47.7,
+    11.1,
+    47.7
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      11.0,
+      47.7
+     ],
+     [
+      11.025,
+      47.7
+     ],
+     [
+      11.05,
+      47.7
+     ],
+     [
+      11.075,
+      47.7
+     ],
+     [
+      11.1,
+      47.7
+     ]
+    ]
+   },
+   "source": "osm",
+   "license": "ODbL-1.0",
+   "attribution_text": "(c) OpenStreetMap contributors, ODbL",
+   "detail": "/trails/trip/201.json",
+   "t": "r",
+   "rating": 7.2,
+   "is_loop": false,
+   "h": {
+    "cls": "stage",
+    "of": 200,
+    "top": 200,
+    "i": 1,
+    "n": null
+   }
+  },
+  {
+   "id": 202,
+   "name": "Isarsteig 2: Vorderriss - Fall",
+   "category": "hike",
+   "country": "DE",
+   "distance_m": 8000,
+   "ascent_m": 400,
+   "descent_m": 350,
+   "duration_min": 180,
+   "difficulty": "moderate",
+   "bbox": [
+    11.1,
+    47.7,
+    11.2,
+    47.7
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      11.1,
+      47.7
+     ],
+     [
+      11.125,
+      47.7
+     ],
+     [
+      11.15,
+      47.7
+     ],
+     [
+      11.175,
+      47.7
+     ],
+     [
+      11.2,
+      47.7
+     ]
+    ]
+   },
+   "source": "osm",
+   "license": "ODbL-1.0",
+   "attribution_text": "(c) OpenStreetMap contributors, ODbL",
+   "detail": "/trails/trip/202.json",
+   "t": "r",
+   "rating": 7.2,
+   "is_loop": false,
+   "h": {
+    "cls": "stage",
+    "of": 200,
+    "top": 200,
+    "i": 2,
+    "n": null
+   }
+  },
+  {
+   "id": 301,
+   "name": "Kammweg (Section 1)",
+   "category": "hike",
+   "country": "DE",
+   "distance_m": 8000,
+   "ascent_m": 400,
+   "descent_m": 350,
+   "duration_min": 180,
+   "difficulty": "moderate",
+   "bbox": [
+    10.6,
+    47.9,
+    10.7,
+    47.9
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      10.6,
+      47.9
+     ],
+     [
+      10.625,
+      47.9
+     ],
+     [
+      10.65,
+      47.9
+     ],
+     [
+      10.675,
+      47.9
+     ],
+     [
+      10.7,
+      47.9
+     ]
+    ]
+   },
+   "source": "osm",
+   "license": "ODbL-1.0",
+   "attribution_text": "(c) OpenStreetMap contributors, ODbL",
+   "detail": "/trails/trip/301.json",
+   "t": "r",
+   "rating": 7.2,
+   "is_loop": false,
+   "h": {
+    "cls": "standalone",
+    "of": null,
+    "top": null,
+    "i": null,
+    "n": null
+   }
+  },
+  {
+   "id": 302,
+   "name": "Kammweg (Section 2)",
+   "category": "hike",
+   "country": "DE",
+   "distance_m": 8000,
+   "ascent_m": 400,
+   "descent_m": 350,
+   "duration_min": 180,
+   "difficulty": "moderate",
+   "bbox": [
+    10.7,
+    47.9,
+    10.8,
+    47.9
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      10.7,
+      47.9
+     ],
+     [
+      10.725,
+      47.9
+     ],
+     [
+      10.75,
+      47.9
+     ],
+     [
+      10.775,
+      47.9
+     ],
+     [
+      10.8,
+      47.9
+     ]
+    ]
+   },
+   "source": "osm",
+   "license": "ODbL-1.0",
+   "attribution_text": "(c) OpenStreetMap contributors, ODbL",
+   "detail": "/trails/trip/302.json",
+   "t": "r",
+   "rating": 7.2,
+   "is_loop": false,
+   "h": {
+    "cls": "standalone",
+    "of": null,
+    "top": null,
+    "i": null,
+    "n": null
+   }
+  },
+  {
+   "id": 303,
+   "name": "Kammweg (Section 3)",
+   "category": "hike",
+   "country": "DE",
+   "distance_m": 8000,
+   "ascent_m": 400,
+   "descent_m": 350,
+   "duration_min": 180,
+   "difficulty": "moderate",
+   "bbox": [
+    10.8,
+    47.9,
+    10.9,
+    47.9
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      10.8,
+      47.9
+     ],
+     [
+      10.825,
+      47.9
+     ],
+     [
+      10.85,
+      47.9
+     ],
+     [
+      10.875,
+      47.9
+     ],
+     [
+      10.9,
+      47.9
+     ]
+    ]
+   },
+   "source": "osm",
+   "license": "ODbL-1.0",
+   "attribution_text": "(c) OpenStreetMap contributors, ODbL",
+   "detail": "/trails/trip/303.json",
+   "t": "r",
+   "rating": 7.2,
+   "is_loop": false,
+   "h": {
+    "cls": "standalone",
+    "of": null,
+    "top": null,
+    "i": null,
+    "n": null
+   }
+  },
+  {
+   "id": 401,
+   "name": "Einsamer Weg Etappe 2",
+   "category": "hike",
+   "country": "DE",
+   "distance_m": 8000,
+   "ascent_m": 400,
+   "descent_m": 350,
+   "duration_min": 180,
+   "difficulty": "moderate",
+   "bbox": [
+    10.0,
+    48.0,
+    10.1,
+    48.0
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      10.0,
+      48.0
+     ],
+     [
+      10.025,
+      48.0
+     ],
+     [
+      10.05,
+      48.0
+     ],
+     [
+      10.075,
+      48.0
+     ],
+     [
+      10.1,
+      48.0
+     ]
+    ]
+   },
+   "source": "osm",
+   "license": "ODbL-1.0",
+   "attribution_text": "(c) OpenStreetMap contributors, ODbL",
+   "detail": "/trails/trip/401.json",
+   "t": "r",
+   "rating": 7.2,
+   "is_loop": false,
+   "h": {
+    "cls": "stage",
+    "of": "Einsamer Weg",
+    "top": "Einsamer Weg",
+    "i": 2,
+    "n": null
+   }
+  },
+  {
+   "id": 402,
+   "name": "Doppelweg Nord",
+   "category": "hike",
+   "country": "DE",
+   "distance_m": 8000,
+   "ascent_m": 400,
+   "descent_m": 350,
+   "duration_min": 180,
+   "difficulty": "moderate",
+   "bbox": [
+    10.0,
+    48.1,
+    10.1,
+    48.1
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      10.0,
+      48.1
+     ],
+     [
+      10.025,
+      48.1
+     ],
+     [
+      10.05,
+      48.1
+     ],
+     [
+      10.075,
+      48.1
+     ],
+     [
+      10.1,
+      48.1
+     ]
+    ]
+   },
+   "source": "osm",
+   "license": "ODbL-1.0",
+   "attribution_text": "(c) OpenStreetMap contributors, ODbL",
+   "detail": "/trails/trip/402.json",
+   "t": "r",
+   "rating": 7.2,
+   "is_loop": false,
+   "h": {
+    "cls": "stage",
+    "of": "Doppelweg",
+    "top": "Doppelweg",
+    "i": 1,
+    "n": null
+   }
+  },
+  {
+   "id": 403,
+   "name": "Doppelweg Sued",
+   "category": "hike",
+   "country": "DE",
+   "distance_m": 8000,
+   "ascent_m": 400,
+   "descent_m": 350,
+   "duration_min": 180,
+   "difficulty": "moderate",
+   "bbox": [
+    10.1,
+    48.1,
+    10.2,
+    48.1
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      10.1,
+      48.1
+     ],
+     [
+      10.125,
+      48.1
+     ],
+     [
+      10.15,
+      48.1
+     ],
+     [
+      10.175,
+      48.1
+     ],
+     [
+      10.2,
+      48.1
+     ]
+    ]
+   },
+   "source": "osm",
+   "license": "ODbL-1.0",
+   "attribution_text": "(c) OpenStreetMap contributors, ODbL",
+   "detail": "/trails/trip/403.json",
+   "t": "r",
+   "rating": 7.2,
+   "is_loop": false,
+   "h": {
+    "cls": "stage",
+    "of": "Doppelweg",
+    "top": "Doppelweg",
+    "i": 1,
+    "n": null
+   }
+  },
+  {
+   "id": 411,
+   "name": "Rundwanderweg Dorfen 1: Runde 1",
+   "category": "hike",
+   "country": "DE",
+   "distance_m": 8000,
+   "ascent_m": 400,
+   "descent_m": 350,
+   "duration_min": 180,
+   "difficulty": "moderate",
+   "bbox": [
+    10.31,
+    48.190000000000005,
+    10.34,
+    48.21
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      10.31,
+      48.2
+     ],
+     [
+      10.33,
+      48.21
+     ],
+     [
+      10.34,
+      48.190000000000005
+     ],
+     [
+      10.31,
+      48.2
+     ]
+    ]
+   },
+   "source": "osm",
+   "license": "ODbL-1.0",
+   "attribution_text": "(c) OpenStreetMap contributors, ODbL",
+   "detail": "/trails/trip/411.json",
+   "t": "r",
+   "rating": 7.2,
+   "is_loop": true,
+   "h": {
+    "cls": "standalone",
+    "of": null,
+    "top": null,
+    "i": null,
+    "n": null
+   }
+  },
+  {
+   "id": 412,
+   "name": "Rundwanderweg Dorfen 2: Runde 2",
+   "category": "hike",
+   "country": "DE",
+   "distance_m": 8000,
+   "ascent_m": 400,
+   "descent_m": 350,
+   "duration_min": 180,
+   "difficulty": "moderate",
+   "bbox": [
+    10.32,
+    48.190000000000005,
+    10.35,
+    48.21
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      10.32,
+      48.2
+     ],
+     [
+      10.34,
+      48.21
+     ],
+     [
+      10.35,
+      48.190000000000005
+     ],
+     [
+      10.32,
+      48.2
+     ]
+    ]
+   },
+   "source": "osm",
+   "license": "ODbL-1.0",
+   "attribution_text": "(c) OpenStreetMap contributors, ODbL",
+   "detail": "/trails/trip/412.json",
+   "t": "r",
+   "rating": 7.2,
+   "is_loop": true,
+   "h": {
+    "cls": "standalone",
+    "of": null,
+    "top": null,
+    "i": null,
+    "n": null
+   }
+  },
+  {
+   "id": 413,
+   "name": "Rundwanderweg Dorfen 3: Runde 3",
+   "category": "hike",
+   "country": "DE",
+   "distance_m": 8000,
+   "ascent_m": 400,
+   "descent_m": 350,
+   "duration_min": 180,
+   "difficulty": "moderate",
+   "bbox": [
+    10.33,
+    48.190000000000005,
+    10.36,
+    48.21
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      10.33,
+      48.2
+     ],
+     [
+      10.35,
+      48.21
+     ],
+     [
+      10.36,
+      48.190000000000005
+     ],
+     [
+      10.33,
+      48.2
+     ]
+    ]
+   },
+   "source": "osm",
+   "license": "ODbL-1.0",
+   "attribution_text": "(c) OpenStreetMap contributors, ODbL",
+   "detail": "/trails/trip/413.json",
+   "t": "r",
+   "rating": 7.2,
+   "is_loop": true,
+   "h": {
+    "cls": "standalone",
+    "of": null,
+    "top": null,
+    "i": null,
+    "n": null
+   }
+  },
+  {
+   "id": 421,
+   "name": "Weitweg Etappe 1",
+   "category": "hike",
+   "country": "DE",
+   "distance_m": 8000,
+   "ascent_m": 400,
+   "descent_m": 350,
+   "duration_min": 180,
+   "difficulty": "moderate",
+   "bbox": [
+    9.0,
+    48.3,
+    9.1,
+    48.3
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      9.0,
+      48.3
+     ],
+     [
+      9.025,
+      48.3
+     ],
+     [
+      9.05,
+      48.3
+     ],
+     [
+      9.075,
+      48.3
+     ],
+     [
+      9.1,
+      48.3
+     ]
+    ]
+   },
+   "source": "osm",
+   "license": "ODbL-1.0",
+   "attribution_text": "(c) OpenStreetMap contributors, ODbL",
+   "detail": "/trails/trip/421.json",
+   "t": "r",
+   "rating": 7.2,
+   "is_loop": false,
+   "h": {
+    "cls": "stage",
+    "of": "Weitweg",
+    "top": "Weitweg",
+    "i": 1,
+    "n": null
+   }
+  },
+  {
+   "id": 422,
+   "name": "Weitweg Etappe 2",
+   "category": "hike",
+   "country": "DE",
+   "distance_m": 8000,
+   "ascent_m": 400,
+   "descent_m": 350,
+   "duration_min": 180,
+   "difficulty": "moderate",
+   "bbox": [
+    13.0,
+    48.3,
+    13.1,
+    48.3
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      13.0,
+      48.3
+     ],
+     [
+      13.025,
+      48.3
+     ],
+     [
+      13.05,
+      48.3
+     ],
+     [
+      13.075,
+      48.3
+     ],
+     [
+      13.1,
+      48.3
+     ]
+    ]
+   },
+   "source": "osm",
+   "license": "ODbL-1.0",
+   "attribution_text": "(c) OpenStreetMap contributors, ODbL",
+   "detail": "/trails/trip/422.json",
+   "t": "r",
+   "rating": 7.2,
+   "is_loop": false,
+   "h": {
+    "cls": "stage",
+    "of": "Weitweg",
+    "top": "Weitweg",
+    "i": 2,
+    "n": null
+   }
+  },
+  {
+   "id": 501,
+   "name": "Grenzsteig Etappe 1",
+   "category": "hike",
+   "country": "DE",
+   "distance_m": 8000,
+   "ascent_m": 400,
+   "descent_m": 350,
+   "duration_min": 180,
+   "difficulty": "moderate",
+   "bbox": [
+    11.2,
+    47.4,
+    11.3,
+    47.4
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      11.2,
+      47.4
+     ],
+     [
+      11.225,
+      47.4
+     ],
+     [
+      11.25,
+      47.4
+     ],
+     [
+      11.275,
+      47.4
+     ],
+     [
+      11.3,
+      47.4
+     ]
+    ]
+   },
+   "source": "osm",
+   "license": "ODbL-1.0",
+   "attribution_text": "(c) OpenStreetMap contributors, ODbL",
+   "detail": "/trails/trip/501.json",
+   "t": "r",
+   "rating": 7.2,
+   "is_loop": false,
+   "h": {
+    "cls": "stage",
+    "of": "Grenzsteig",
+    "top": "Grenzsteig",
+    "i": 1,
+    "n": null
+   }
+  }
+ ]
+}

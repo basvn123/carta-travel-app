@@ -64,6 +64,7 @@ from db import connect  # noqa: E402  (also puts pipeline/ on sys.path)
 from validate import PILOT_COUNTRIES  # noqa: E402
 import route_schema  # noqa: E402  (ROUTES.md R1: the route-layer keys)
 import names  # noqa: E402  (T1092: display names on the wire)
+import treks  # noqa: E402  (T1184: multi-stage treks, D24)
 
 # The lake layer's card-shape helpers, loaded by path as the beach, peak and
 # trip layers load them. The frame here is the 9/4 .places-tcard strip.
@@ -1168,7 +1169,18 @@ def extract_quirk_country(rg, filed, known):
     return filed
 
 
-def country_file(country, rated, listed, generated_at, tolerance):
+def parent_osm_of(trips):
+    """{row id: parent relation id} for the trek grouping (T1184): the
+    parent the classify step chose, else the first parent the graph knows."""
+    out = {}
+    for t in trips:
+        parent = t.get("stage_of") or next(iter(t.get("parent_refs") or []), None)
+        if parent is not None:
+            out[t["id"]] = int(parent)
+    return out
+
+
+def country_file(country, rated, listed, generated_at, tolerance, trek_list=None):
     items = rated + listed
     counts = Counter(i["category"] for i in rated)
     credits = {i["attribution_text"] for i in items if i["attribution_text"]}
@@ -1221,6 +1233,9 @@ def country_file(country, rated, listed, generated_at, tolerance):
     # carries something keeps the files honest about which countries needed it.
     if listed:
         doc["listed"] = listed
+    # T1184: the treks whose first stage is filed here, absent when none.
+    if trek_list:
+        doc["treks"] = trek_list
     return doc
 
 
@@ -1417,11 +1432,34 @@ def main():
     wanted = sorted(set(countries) | set(by_country)) if countries \
         else sorted(by_country)
 
+    # T1184 (D24): every row of the run first, so a trek whose stages are
+    # filed under two countries is grouped once, then the files.
+    items_of = {country: [wire_item(t, len(stops.get(t["id"], [])), hier)
+                          for t in by_country.get(country, [])]
+                for country in wanted}
+    trek_list, trek_refs, trek_report = treks.build(
+        [i for items in items_of.values() for i in items],
+        parent_osm=parent_osm_of(trips),
+        registry=treks.Registry.load(),
+        asof=generated_at[:10])
+    treks.apply({c: {"trips": items} for c, items in items_of.items()},
+                trek_list, trek_refs)
+    treks_by_cc = defaultdict(list)
+    for trek in trek_list:
+        treks_by_cc[trek["cc"]].append(trek)
+    trek_report["countries"] = sorted(wanted)
+    treks.REPORT.parent.mkdir(parents=True, exist_ok=True)
+    treks.REPORT.write_text(json.dumps(trek_report, indent=1, ensure_ascii=False),
+                            encoding="utf-8")
+    print(f"  treks: {trek_report['treks']} built from "
+          f"{trek_report['stages_in_treks']} stage(s); refused "
+          + ", ".join(f"{k} {v}" for k, v in trek_report["refused"].items()))
+
     total_bytes, index_countries, credits = 0, [], set()
     listed_total = 0
     for country in wanted:
         rows = by_country.get(country, [])
-        items = [wire_item(t, len(stops.get(t["id"], [])), hier) for t in rows]
+        items = items_of[country]
         rated = [i for i in items if i.get("t") != "l"]
         listed = [i for i in items if i.get("t") == "l"]
         bad = validate_listed(listed)
@@ -1436,7 +1474,7 @@ def main():
             continue
         listed_total += len(listed)
         payload = country_file(country, rated, listed, generated_at,
-                               args.tolerance)
+                               args.tolerance, treks_by_cc.get(country))
         size = write_json(out_dir / f"{country}.json", payload)
         total_bytes += size
         credits.update(payload["attribution"])
