@@ -12,6 +12,7 @@ import { PlacesFilterSheet } from './PlacesFilterSheet.jsx';
 import { FilterChips } from './FilterChips.jsx';
 import { HeroPreload } from '../components/LayerPhoto.jsx';
 import { loadTrails, loadListedTrails, loadTrailsIndex, loadTopTrails } from '../lib/trails.js';
+import { trailHash } from '../lib/routeLinks.js';
 import {
   loadBeachIndex, loadBeaches, loadListedBeaches, loadTopBeaches,
 } from '../lib/beaches.js';
@@ -73,7 +74,7 @@ import { CardStrip } from './CardStrip.jsx';
 import {
   PlaceCard, PlaceCardPhoto, PlaceCardNoPhoto, PlaceCardSkeletons,
 } from './PlaceCard.jsx';
-import { GRADE_KEY, placeLine, displayName } from '../lib/cardFillings.js';
+import { GRADE_KEY, placeLine, displayName, trailFigures } from '../lib/cardFillings.js';
 import { SectionOpening, SectionHead, Strip } from './SectionOpening.jsx';
 import { CountryGalleryCard } from './CountryGallery.jsx';
 import { countryKnownKey, countryPhotos } from '../lib/countryGallery.js';
@@ -1165,6 +1166,20 @@ export function DestinationsTab({
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
   }, []);
+  // An open walk keeps its own address (G13): #trail=ID&tc=CC on the history
+  // entry the layer pushed above, so it can be shared, bookmarked and reached
+  // with Back. A city day has no trail page of its own, so it writes none.
+  const openTrailRow = pageCard && pageCard.tr?.category !== 'citytrip' ? pageCard.tr : null;
+  useEffect(() => {
+    if (!isActive) return;
+    try {
+      if (!openTrailRow && !window.location.hash.includes('trail=')) return;
+      const next = trailHash(window.location.hash, openTrailRow);
+      if (next === window.location.hash) return;
+      window.history.replaceState(window.history.state, '',
+        window.location.pathname + window.location.search + next);
+    } catch { /* sandboxed: the page still opens */ }
+  }, [openTrailRow, isActive]);
   useEffect(() => {
     setStubsAll(false);
     if (cat !== 'trails' || !trailsCountry) { setStubs([]); return undefined; }
@@ -2541,8 +2556,9 @@ export function DestinationsTab({
         // within one country, the grade.
         where: opening?.europe ? countryName(row.country)
           : (grade && GRADE_KEY[grade] ? t(GRADE_KEY[grade]) : null),
-        fact: row.distance_m != null ? km(row.distance_m / 1000, 1) : null,
-        factLabel: t('card.vLength'),
+        // G13: length, walking time and climb, the three a walk is chosen by.
+        fact: trailFigures(row).join(', ') || null,
+        factLabel: null,
         rating: trailRating(row),
       };
     }

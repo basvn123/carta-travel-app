@@ -1479,3 +1479,5 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1096-f | T1096 | POI descriptions cover the labelled must_see and recommended in GB, RO, FR and IT only; extend `--countries` after the first run is read, and do worth_a_look only if the owner wants it | next task | open | |
 | T1097-a | T1097 | Run the sea_temp harvest on the box (about 6 h of ERDDAP calls), then the climate and beach exports, so beaches carry `sea_temp` and destinations `water_c` (command and checks in Execution/P15/T1097-sea-temp.md, Owner steps) | user | open | |
 | T1097-b | T1097 | Check one real beach page on a phone after the box run and deploy: the strip shows and the warmest months are plausible for the sea | user | open | |
+| T1102-a | T1102 | A walk's address is written on open, but a hash typed into an app already running (paste, not reload) does not open it; a hashchange reader is needed | next task | open |  |
+| T1102-b | T1102 | Look at the rail tile and the trail page on a real phone with photographs loaded (this container had no network, so images were blank) | user | open |  |

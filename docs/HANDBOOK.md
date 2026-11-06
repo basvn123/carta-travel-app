@@ -1938,6 +1938,8 @@ Carta shows walks, bike routes, beaches, lakes and peaks on their own pages. Eac
 - Tagged suitability is thin: 6 routes for wheelchairs, 83 for dogs.
 - Outdoor page data is not yet pushed to R2 (T954-a).
 
+**Trail address and cards (T1102, G13).** An open walk writes `#trail=ID&tc=CC` on the history entry its layer pushed (`trailHash` in `src/lib/routeLinks.js`, effect in `DestinationsTab.jsx`), so it can be shared, bookmarked and reached with Back; closing it takes only those two params off. A city day has no trail page and writes none. The top-band rail tile ("Top-rated walks in ...") shows length, walking time and climb in one line (`trailFigures` in `src/lib/cardFillings.js`); the list card shows the same three as badges. A place page's "Around here" rows are real links to the feature's own address (`featureHref`), and the trail page's "Stay nearby" line links back to the town.
+
 ### Cycling routes and the cycle page
 
 **What it does.** Carta lists bike routes and multi-day tours with surface, traffic, stages and ride time. A traveller can see how much is paved and traffic-free, and where each stage ends with beds.

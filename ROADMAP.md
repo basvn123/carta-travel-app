@@ -840,7 +840,7 @@ docs/
 | G10 | Accessibility audit | WCAG 2.2 AA audit with screen readers, every failure fixed | M | P2 (surface), P4 | todo |
 | G11 | Quality gates and usability retest | axe-core, Lighthouse CI, bundle budget, visual baselines for 10 screens at 390 and 1440; 5-person retest of core flows; one real-phone pass per release replaces the 49 per-task phone rows | M | P4 | todo |
 | G12 | Onboarding and a shorter plan flow | First plan in 5 screens or fewer (12 today); a priced draft after 3 answers; Explore's start dialog inline and dismissible; sample trip on an empty Plan home (P-33, P-34, P-46) | M | P1 | todo |
-| G13 | Trail cards and trail links | Cards show time and climb next to length; trail pages get their own URL like places; display names from D7 (P-36, P-37) | S | P1 | todo |
+| G13 | Trail cards and trail links | Cards show time and climb next to length; trail pages get their own URL like places; display names from D7 (P-36, P-37) | S | P1 | done T1102 (open items in the register) |
 
 ### Item details
 
