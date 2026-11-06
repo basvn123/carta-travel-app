@@ -956,5 +956,59 @@
    "Then `cd continent-app && npm run data`",
    "If either stops with `WireContractError`, the message names the field path: fix the value or add the key to `docs/wire.schema.json` and run `node continent-app/scripts/ci/wire-table.mjs --write`"
   ]
+ },
+ {
+  "id": "T1123-b",
+  "title": "Run the G-R3 usability research",
+  "why": "G4 should fix what real travellers trip over, and tonight's list came from the audit and a code walk.",
+  "where": "ROADMAP.md (G-R3, G4)",
+  "how": [
+   "Do 5 short interviews and one unmoderated test of Explore, a place page, Plan and the trip page",
+   "Rank the top 10 problems",
+   "Hand them to the next G4 task"
+  ]
+ },
+ {
+  "id": "T1123-d",
+  "title": "Check the reload fixes on a real phone",
+  "why": "Only a real phone shows the reload and swipe behaviour as travellers meet it.",
+  "where": "Execution/P15/T1123-core-flow-fixes.md",
+  "how": [
+   "On a phone, Plan, Start planning, answer to From, pull to reload (still From)",
+   "Finish, reload on the priced trips (still the trips)",
+   "Tap Back, then \"See your priced trips\""
+  ]
+ },
+ {
+  "id": "T1126-d",
+  "title": "Look at signed-in screens after the dead-CSS removal",
+  "why": "The saved trip page, day planner, admin and account need an account and were not seen.",
+  "where": "continent-app/src/styles",
+  "how": [
+   "Open each at 390 and 1440 on a preview build and compare with production",
+   "Run `node scripts/verify_admin_panel.mjs`"
+  ]
+ },
+ {
+  "id": "T1134-b",
+  "title": "Scorecard on the box after a real run",
+  "why": "The card in the report is from the shipped wires in the cloud checkout, not a fresh pipeline run.",
+  "where": "scripts/quality/scorecard.py",
+  "how": [
+   "On the box pull the branch",
+   "After the next full run and `cd continent-app && npm run data`, run `python -I scripts/quality/scorecard.py --write`",
+   "Commit `data/reports/quality/` or push it with the data next to `freshness_wires.json`"
+  ]
+ },
+ {
+  "id": "T1134-g",
+  "title": "Decide which fields count per quality layer",
+  "why": "Completeness for core, flights and place is set by fields that may be optional by design (tags 2%, wikidata 1%, transfer 3%).",
+  "where": "scripts/quality/scorecard.py",
+  "how": [
+   "Read `APP_LAYERS` and `SHARD_LAYERS` at the top of the script",
+   "Strike or keep each field",
+   "A session then edits the lists"
+  ]
  }
 ]
