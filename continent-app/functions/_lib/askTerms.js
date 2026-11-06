@@ -25,7 +25,10 @@ export const ASK_BM25_BOOST = Object.freeze({ name: 3, tags: 2, text: 1 });
 export const ASK_BM25_OPTIONS = Object.freeze({
   idField: 'id',
   fields: ASK_BM25_FIELDS,
-  storeFields: [],
+  // T1141: the country code rides along (a few KB) so the browser can keep
+  // the hits of the country a question names, the way /api/ask filters
+  // the dense half. An index built before T1141 has none and is not filtered.
+  storeFields: ['cc'],
   processTerm: (term) => foldTerm(term) || null,
 });
 
@@ -34,5 +37,5 @@ export function bm25Doc(row) {
   const [pid, , text, payload] = row;
   const p = payload || {};
   const tags = Array.isArray(p.tags) ? p.tags.map((t) => String(t).replace(/[-_]/g, ' ')).join(' ') : '';
-  return { id: pid, name: p.name || p.value || '', tags, text: text || '' };
+  return { id: pid, name: p.name || p.value || '', tags, text: text || '', cc: p.cc || '' };
 }

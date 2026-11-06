@@ -22,6 +22,8 @@
  *   }
  */
 import { dataUrl } from '../dataHost.js';
+import { bm25Query } from './query.js';
+import { ASK_BM25_BOOST, ASK_BM25_OPTIONS } from '../../../functions/_lib/askTerms.js';
 
 /** The rank constant of reciprocal rank fusion (Cormack et al. use 60). */
 export const RRF_K = 60;
@@ -39,8 +41,7 @@ export function loadBm25() {
     bm25Promise = Promise.all([
       fetch(dataUrl('/search/ask/bm25.json')).then((r) => (r.ok ? r.text() : null)),
       import('minisearch'),
-      import('../../../functions/_lib/askTerms.js'),
-    ]).then(([text, { default: MiniSearch }, terms]) => (text ? MiniSearch.loadJSON(text, terms.ASK_BM25_OPTIONS) : null))
+    ]).then(([text, { default: MiniSearch }]) => (text ? MiniSearch.loadJSON(text, ASK_BM25_OPTIONS) : null))
       .catch(() => null);
   }
   return bm25Promise;
@@ -77,7 +78,9 @@ export function makeRetriever({ endpoint = '/api/ask', timeoutMs = DENSE_TIMEOUT
     const q = String(text || '').trim().slice(0, 200);
     if (!q) return null;
     const ids = [...(intent.places || []), ...(intent.compare || [])];
+    const sq = bm25Query(intent, q);
     const params = new URLSearchParams({ q, src: SOURCES[intent.type] || 'dest,highlight' });
+    if (sq) params.set('b', sq.slice(0, 200));
     if (intent.facets.country) params.set('cc', intent.facets.country);
     if (ids.length) params.set('d', ids.slice(0, 12).join(','));
     if (intent.unknown?.length) params.set('u', intent.unknown.slice(0, 5).join('|'));
@@ -90,8 +93,13 @@ export function makeRetriever({ endpoint = '/api/ask', timeoutMs = DENSE_TIMEOUT
 
     const lists = [];
     if (index) {
-      const hits = index.search(q, { prefix: (term) => term.length > 3, fuzzy: (term) => (term.length > 5 ? 0.2 : 0), combineWith: 'OR' });
-      lists.push(uniq(hits.filter((h) => h.id.startsWith('dest:')).map((h) => h.id.slice(5))).slice(0, 60));
+      // T1141: English search words (query.js) and the field boosts the
+      // index was built for (name x3, tags x2, text x1).
+      const hits = index.search(sq || q, { boost: ASK_BM25_BOOST, prefix: (term) => term.length > 3, fuzzy: (term) => (term.length > 5 ? 0.2 : 0), combineWith: 'OR' });
+      // The country a question names, as the dense half filters it (cc).
+      const cc = intent.facets.country;
+      const inCountry = (h) => !cc || !h.cc || h.cc === cc;
+      lists.push(uniq(hits.filter((h) => h.id.startsWith('dest:') && inCountry(h)).map((h) => h.id.slice(5))).slice(0, 60));
     }
     const passages = [];
     if (dense?.hits) {
@@ -99,6 +107,14 @@ export function makeRetriever({ endpoint = '/api/ask', timeoutMs = DENSE_TIMEOUT
         if (src === 'dest') { lists.push(uniq(rows.map((r) => r[1]))); continue; }
         lists.push(uniq(rows.map((r) => r[1])));
         for (const [pid, destId, , ptext, name] of rows) passages.push({ pid, destId, text: ptext, source: src, name });
+      }
+    }
+    // T1141: BM25 over the server sources (beaches, lakes, peaks), as lists
+    // and passages beside the dense ones.
+    for (const [src, rows] of Object.entries(dense?.sparse || {})) {
+      lists.push(uniq(rows.map((r) => r[1])));
+      for (const [pid, destId, , ptext, name] of rows) {
+        if (!passages.some((p) => p.pid === pid)) passages.push({ pid, destId, text: ptext, source: src, name });
       }
     }
     const order = rrf(lists);

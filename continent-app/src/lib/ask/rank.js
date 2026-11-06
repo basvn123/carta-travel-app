@@ -38,6 +38,23 @@ export const PICKS = 6;
  *  (T554 sweep), since the vibe scores already carry facet questions; the
  *  dense half earns its place on free text and in the written answer. */
 export const W = { rel: 0.1, vibe: 0.25, month: 0.1, rating: 0.15, fit: 0.15 };
+/** How a find answer uses the retrieved order (T1141, ROADMAP E2).
+ *  mode 'rrf': the rules order (rankScore without relevance) and the
+ *  retrieved order are fused by reciprocal rank, 1/(k+rules rank) +
+ *  w/(k+retrieved rank), the retrieved rank counted among the places that
+ *  pass the question's filters (a place 40th in Europe can be the best
+ *  lake in Italy). Chosen on the E1 set (k 5 to 20 and w 0.3 to 0.7 all
+ *  beat the rules; k 10, w 0.5 in the middle): bm25 recall@10 0.569 to
+ *  0.576, MRR 0.802 to 0.838, nDCG@10 0.596 to 0.611, both halves of the
+ *  set up. mode 'score' is the T554 way, W.rel times 1 / (1 + rank / scale),
+ *  which with the English BM25 query fell under the rules at every weight. */
+export const REL = { scale: 10, local: true, mode: 'rrf', k: 10, w: 0.5 };
+
+/** The rank of each retrieved place among the candidates, best first. */
+export function localRanks(cands, retrieved) {
+  const seen = cands.filter((p) => retrieved.has(p.id)).sort((a, b) => retrieved.get(a.id).rank - retrieved.get(b.id).rank);
+  return new Map(seen.map((p, i) => [p.id, i]));
+}
 // T766: fame left the ranking (rating v5 folds recognition into the score);
 // its weight is the traveller's fit (lib/match.js), which counts only when
 // the traveller has a taste, so Ask and Explore order places alike.
@@ -103,7 +120,8 @@ const RELAX_WARM = ['quiet', 'budget', 'month', 'warm', 'nb', 'nocar', 'vibe'];
 function rankScore(p, intent, ctx, months) {
   const f = intent.facets;
   const hit = ctx.retrieved?.get(p.id);
-  const rel = hit ? 1 / (1 + hit.rank / 10) : 0;
+  const r = hit ? (REL.local && ctx.localRank ? ctx.localRank.get(p.id) : hit.rank) : null;
+  const rel = r != null ? 1 / (1 + r / REL.scale) : 0;
   const vibe = f.vibe ? vibeScore(ctx.guided, p.id, f.vibe) / 100 : 0;
   const ms = months.length ? months.map((m) => monthRow(p, m)?.score ?? 0) : [];
   const month = ms.length ? Math.max(...ms) / 100 : 0;
@@ -186,7 +204,17 @@ export function findFacts(intent, ctx, n = PICKS) {
     pred = predicateOf(intent, ctx, skip);
     hits = ctx.rows.filter(pred);
   }
-  const scored = hits.map((p) => [p, rankScore(p, intent, ctx, months)]).sort((a, b) => b[1] - a[1]);
+  let scored;
+  if (ctx.retrieved && REL.mode === 'rrf') {
+    // The rules order and the retrieved order, fused by reciprocal rank.
+    const rules = hits.map((p) => [p, rankScore(p, intent, { ...ctx, retrieved: null }, months)]).sort((a, b) => b[1] - a[1]);
+    const local = localRanks(hits, ctx.retrieved);
+    scored = rules.map(([p], i) => [p, 1 / (REL.k + i + 1) + (local.has(p.id) ? REL.w / (REL.k + local.get(p.id) + 1) : 0)])
+      .sort((a, b) => b[1] - a[1]);
+  } else {
+    const rctx = ctx.retrieved ? { ...ctx, localRank: localRanks(hits, ctx.retrieved) } : ctx;
+    scored = hits.map((p) => [p, rankScore(p, intent, rctx, months)]).sort((a, b) => b[1] - a[1]);
+  }
   const picks = [];
   for (const [p, s] of scored) {
     if (picks.length >= n) break;
