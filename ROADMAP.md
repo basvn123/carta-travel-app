@@ -825,7 +825,7 @@ docs/
 
 | ID | Item | Done when | Size | Phase | Status |
 |---|---|---|---|---|---|
-| G1 | Design direction | G-R1 to G-R3 turned into a direction doc and carta-design skill update, approved by you | S | P1 | todo |
+| G1 | Design direction | G-R1 to G-R3 turned into a direction doc and carta-design skill update, approved by you | S | P1 | in progress (T1111: `docs/design/direction.md` drafted, waiting on owner sign-off T1111-a; skill update T1111-b after it) |
 | G2 | Shared parts that exist once | `PlaceHead`, `PhotoCarousel`, `Chip` tones, `Button href` used everywhere; T1024-b/c, T1027-c, T1039-b closed | M | P2 | todo |
 | G3 | Umber cost card as signature | One component in Explore card, place page, plan tab, receipt; T1026-c closed | M | P2 | todo |
 | G4 | Core flow fixes from research | The top problems from G-R3 fixed in Explore, place page, plan flow and trip page | M | P2 | todo |
