@@ -1,0 +1,118 @@
+name: ask-eval
+
+# ROADMAP E1 (T1136): the Ask eval gate. 200 labelled questions in six
+# languages (continent-app/scripts/eval/ask-set.json) run through the real
+# Ask code on the shipped catalogue, once per retriever. The job fails when
+# a gated number (recall@5 and @10, MRR, nDCG@10 of the cards and of the
+# retriever's own list, grounding, abstention) falls more than 2 points
+# (TOLERANCE in scripts/eval/ask-eval-lib.mjs) under the blessed baseline
+# (scripts/eval/ask-baseline.json).
+#
+# No secret, no model, no network beyond the checkout and npm: the rules
+# path and a BM25 index rebuilt from the shipped data. The dense half
+# (/api/ask) needs the built index, which is not in git, so dense and
+# hybrid are skipped here and run where the index is built (see the Ask
+# section of docs/HANDBOOK.md). The model-judged part is
+# scripts/ask-eval-live.mjs: paid, manual, never in CI.
+#
+# A change that moves a score on purpose re-blesses in the same change:
+#   cd continent-app && node scripts/eval/ask-eval.mjs --bless
+# Every run's score is uploaded as the ask-eval artifact and summed up on
+# the run page. The self-test step plants a known regression (--seed-drop)
+# and must fail; if it passes, the gate is broken and the job fails.
+on:
+  push:
+    paths:
+      - "continent-app/src/lib/ask/**"
+      - "continent-app/src/browse/ask/**"
+      - "continent-app/src/browse/useAsk.js"
+      - "continent-app/src/lib/guidedSearch.js"
+      - "continent-app/src/lib/budgetSearch.js"
+      - "continent-app/src/lib/costIndex.js"
+      - "continent-app/src/lib/match.js"
+      - "continent-app/src/i18n/**"
+      - "continent-app/functions/api/ask.js"
+      - "continent-app/functions/api/ask/**"
+      - "continent-app/functions/_lib/ask*"
+      - "continent-app/scripts/eval/**"
+      - "continent-app/scripts/build-ask-bm25.mjs"
+      - "continent-app/tests/askEval.test.mjs"
+      - "continent-app/public/app_data.json"
+      - "continent-app/public/search/**"
+      - "pipeline/ask_index_layer.py"
+      - ".github/workflows/ask-eval.yml"
+  pull_request:
+    paths:
+      - "continent-app/src/lib/ask/**"
+      - "continent-app/src/browse/ask/**"
+      - "continent-app/src/browse/useAsk.js"
+      - "continent-app/src/lib/guidedSearch.js"
+      - "continent-app/src/lib/budgetSearch.js"
+      - "continent-app/src/lib/costIndex.js"
+      - "continent-app/src/lib/match.js"
+      - "continent-app/src/i18n/**"
+      - "continent-app/functions/api/ask.js"
+      - "continent-app/functions/api/ask/**"
+      - "continent-app/functions/_lib/ask*"
+      - "continent-app/scripts/eval/**"
+      - "continent-app/scripts/build-ask-bm25.mjs"
+      - "continent-app/tests/askEval.test.mjs"
+      - "continent-app/public/app_data.json"
+      - "continent-app/public/search/**"
+      - "pipeline/ask_index_layer.py"
+      - ".github/workflows/ask-eval.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ask-eval-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: continent-app
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 1
+          # Cone mode also brings the files directly in continent-app/ and
+          # continent-app/public/ (package.json, app_data.json, search_index.json).
+          sparse-checkout: |
+            continent-app/src
+            continent-app/config
+            continent-app/functions
+            continent-app/scripts/eval
+            continent-app/tests
+            continent-app/public/search
+            continent-app/public/dossier
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: continent-app/package-lock.json
+      - run: npm ci
+      - name: Unit checks (set shape, metrics, gate)
+        run: node --test tests/askEval.test.mjs
+      - name: Self-test (a seeded drop must fail the gate)
+        run: |
+          set +e
+          node scripts/eval/ask-eval.mjs --seed-drop --check --out "$RUNNER_TEMP/ask-eval/seeded.json" | tee "$RUNNER_TEMP/seeded.log"
+          code=${PIPESTATUS[0]}
+          # The gate must say FAIL and exit 1; anything else (a pass, a crash) is a broken gate.
+          if [ "$code" != "1" ] || ! grep -q "^ask eval gate: FAIL" "$RUNNER_TEMP/seeded.log"; then
+            echo "::error::the seeded drop did not fail the gate (exit $code)"
+            exit 1
+          fi
+      - name: Score and gate
+        run: node scripts/eval/ask-eval.mjs --check --verbose --out "$RUNNER_TEMP/ask-eval/run.json"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: ask-eval
+          path: ${{ runner.temp }}/ask-eval/
