@@ -1515,3 +1515,5 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1111-b | T1111 | After approval, fold the direction's decisions into `.claude/skills/carta-design/SKILL.md` and DESIGN.md (Motion "no count-up" scope, cost card, radii), as roadmap G1 asks; not done before sign-off so the skill never carries an unapproved rule (Execution/P15/T1111-design-direction.md) | next task | open | 2 |
 | T1111-c | T1111 | Run G-R1 to G-R3 (benchmark, premium feel, user struggles); the direction was written without them and is revised where they disagree (Execution/P15/T1111-design-direction.md) | user | open |  |
 | T1111-d | T1111 | The plan tab's arc cost card was not screenshotted (needs a saved trip, no fixture in the container); G3 should capture it before replacing it (Execution/P15/T1111-design-direction.md) | next task | open |  |
+| T1112-a | T1112 | Run the Aviasales coverage probe with the owner token and the sweep export; steps in the report (D14) | user | open |  |
+| T1112-b | T1112 | Decide switch, hybrid or stay from the coverage table once T1112-a has run | next task | open |  |

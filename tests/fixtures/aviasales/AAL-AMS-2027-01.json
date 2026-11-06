@@ -1,0 +1,1 @@
+{"success":true,"currency":"eur","data":[{"origin":"AAL","destination":"AMS","price":120,"airline":"KL","transfers":0,"found_at":"2026-11-05T08:00:00Z"},{"origin":"AAL","destination":"AMS","price":95,"airline":"KL","transfers":1,"found_at":"2026-11-02T08:00:00Z"}]}
