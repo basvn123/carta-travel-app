@@ -1,0 +1,5046 @@
+{
+ "schema": "carta-validation/2",
+ "layer": "trails",
+ "generated_at": "2026-11-06T12:00:00Z",
+ "date": "2026-11-06",
+ "reference": {
+  "path": "data/reports/validation/trails_reference.json",
+  "sha": "08dd8590d3af",
+  "sources": 15,
+  "n": 282
+ },
+ "carta": {
+  "wire_generated_at": "2026-09-13T19:17:15+00:00",
+  "rows": 17455
+ },
+ "sample": {
+  "sampled": false,
+  "share": 1.0,
+  "min_per_country": 5,
+  "salt": "d23",
+  "n": 282,
+  "population": 282,
+  "countries": 35
+ },
+ "metrics": {
+  "in_top": {
+   "value": 0.3298,
+   "k": 93,
+   "n": 282,
+   "low": 0.2775,
+   "high": 0.3866
+  },
+  "coverage": {
+   "value": 0.5284,
+   "k": 149,
+   "n": 282,
+   "low": 0.4701,
+   "high": 0.5859
+  },
+  "fact.length": {
+   "value": 0.6429,
+   "k": 9,
+   "n": 14,
+   "low": 0.3876,
+   "high": 0.8366
+  },
+  "fact_share": {
+   "value": 0.6429,
+   "k": 9,
+   "n": 14,
+   "low": 0.3876,
+   "high": 0.8366
+  },
+  "agreement_tau": {
+   "value": 0.0084,
+   "n": 149
+  },
+  "agreement_rho": {
+   "value": 0.0109,
+   "n": 149
+  },
+  "error_mae": {
+   "value": 4.486,
+   "n": 14
+  },
+  "error_mdape": {
+   "value": 0.1446,
+   "n": 14
+  }
+ },
+ "by_country": {
+  "AL": {
+   "population": 2,
+   "sampled": 2,
+   "matched": 0,
+   "coverage": 0.0
+  },
+  "AT": {
+   "population": 6,
+   "sampled": 6,
+   "matched": 5,
+   "coverage": 0.8333
+  },
+  "BE": {
+   "population": 1,
+   "sampled": 1,
+   "matched": 0,
+   "coverage": 0.0
+  },
+  "BG": {
+   "population": 4,
+   "sampled": 4,
+   "matched": 1,
+   "coverage": 0.25
+  },
+  "CH": {
+   "population": 17,
+   "sampled": 17,
+   "matched": 11,
+   "coverage": 0.6471
+  },
+  "CY": {
+   "population": 2,
+   "sampled": 2,
+   "matched": 2,
+   "coverage": 1.0
+  },
+  "CZ": {
+   "population": 3,
+   "sampled": 3,
+   "matched": 0,
+   "coverage": 0.0
+  },
+  "DE": {
+   "population": 24,
+   "sampled": 24,
+   "matched": 12,
+   "coverage": 0.5
+  },
+  "DK": {
+   "population": 2,
+   "sampled": 2,
+   "matched": 2,
+   "coverage": 1.0
+  },
+  "EE": {
+   "population": 1,
+   "sampled": 1,
+   "matched": 0,
+   "coverage": 0.0
+  },
+  "ES": {
+   "population": 17,
+   "sampled": 17,
+   "matched": 12,
+   "coverage": 0.7059
+  },
+  "FI": {
+   "population": 5,
+   "sampled": 5,
+   "matched": 4,
+   "coverage": 0.8
+  },
+  "FO": {
+   "population": 2,
+   "sampled": 2,
+   "matched": 0,
+   "coverage": 0.0
+  },
+  "FR": {
+   "population": 19,
+   "sampled": 19,
+   "matched": 12,
+   "coverage": 0.6316
+  },
+  "GB": {
+   "population": 73,
+   "sampled": 73,
+   "matched": 32,
+   "coverage": 0.4384
+  },
+  "GR": {
+   "population": 7,
+   "sampled": 7,
+   "matched": 5,
+   "coverage": 0.7143
+  },
+  "HR": {
+   "population": 2,
+   "sampled": 2,
+   "matched": 1,
+   "coverage": 0.5
+  },
+  "HU": {
+   "population": 1,
+   "sampled": 1,
+   "matched": 1,
+   "coverage": 1.0
+  },
+  "IE": {
+   "population": 23,
+   "sampled": 23,
+   "matched": 8,
+   "coverage": 0.3478
+  },
+  "IS": {
+   "population": 4,
+   "sampled": 4,
+   "matched": 2,
+   "coverage": 0.5
+  },
+  "IT": {
+   "population": 15,
+   "sampled": 15,
+   "matched": 8,
+   "coverage": 0.5333
+  },
+  "LT": {
+   "population": 1,
+   "sampled": 1,
+   "matched": 0,
+   "coverage": 0.0
+  },
+  "LU": {
+   "population": 3,
+   "sampled": 3,
+   "matched": 3,
+   "coverage": 1.0
+  },
+  "ME": {
+   "population": 1,
+   "sampled": 1,
+   "matched": 1,
+   "coverage": 1.0
+  },
+  "MK": {
+   "population": 1,
+   "sampled": 1,
+   "matched": 0,
+   "coverage": 0.0
+  },
+  "MT": {
+   "population": 1,
+   "sampled": 1,
+   "matched": 1,
+   "coverage": 1.0
+  },
+  "NL": {
+   "population": 3,
+   "sampled": 3,
+   "matched": 3,
+   "coverage": 1.0
+  },
+  "NO": {
+   "population": 9,
+   "sampled": 9,
+   "matched": 7,
+   "coverage": 0.7778
+  },
+  "PL": {
+   "population": 6,
+   "sampled": 6,
+   "matched": 1,
+   "coverage": 0.1667
+  },
+  "PT": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 6,
+   "coverage": 0.5455
+  },
+  "RO": {
+   "population": 2,
+   "sampled": 2,
+   "matched": 1,
+   "coverage": 0.5
+  },
+  "SE": {
+   "population": 5,
+   "sampled": 5,
+   "matched": 4,
+   "coverage": 0.8
+  },
+  "SI": {
+   "population": 5,
+   "sampled": 5,
+   "matched": 3,
+   "coverage": 0.6
+  },
+  "SK": {
+   "population": 3,
+   "sampled": 3,
+   "matched": 1,
+   "coverage": 0.3333
+  },
+  "TR": {
+   "population": 1,
+   "sampled": 1,
+   "matched": 0,
+   "coverage": 0.0
+  }
+ },
+ "checks": [
+  {
+   "metric": "coverage",
+   "kind": "hard",
+   "direction": "higher",
+   "tolerance_points": 0
+  },
+  {
+   "metric": "in_top",
+   "kind": "hard",
+   "direction": "higher",
+   "tolerance_points": 0
+  },
+  {
+   "metric": "agreement_tau",
+   "kind": "soft",
+   "direction": "higher",
+   "tolerance_points": 5,
+   "min_n": 30
+  },
+  {
+   "metric": "fact.length",
+   "kind": "soft",
+   "direction": "higher",
+   "tolerance_points": 5,
+   "min_n": 10
+  },
+  {
+   "metric": "error_mdape",
+   "kind": "soft",
+   "direction": "lower",
+   "tolerance_points": 5,
+   "min_n": 10
+  }
+ ],
+ "gate": {
+  "ok": true,
+  "failures": [],
+  "warnings": [],
+  "checks": [
+   {
+    "metric": "coverage",
+    "kind": "hard",
+    "now": 0.5284,
+    "baseline": 0.5284,
+    "tolerance_points": 0,
+    "status": "pass"
+   },
+   {
+    "metric": "in_top",
+    "kind": "hard",
+    "now": 0.3298,
+    "baseline": 0.3298,
+    "tolerance_points": 0,
+    "status": "pass"
+   },
+   {
+    "metric": "agreement_tau",
+    "kind": "soft",
+    "now": 0.0084,
+    "baseline": 0.0084,
+    "tolerance_points": 5,
+    "status": "pass"
+   },
+   {
+    "metric": "fact.length",
+    "kind": "soft",
+    "now": 0.6429,
+    "baseline": 0.6429,
+    "tolerance_points": 5,
+    "status": "pass"
+   },
+   {
+    "metric": "error_mdape",
+    "kind": "soft",
+    "now": 0.1446,
+    "baseline": 0.1446,
+    "tolerance_points": 5,
+    "status": "pass"
+   }
+  ]
+ },
+ "gaps": [
+  {
+   "id": "moselsteig",
+   "name": "Moselsteig",
+   "status": "missing",
+   "gap": 5.69,
+   "best": null,
+   "cause_code": "failed_continuity"
+  },
+  {
+   "id": "offas-dyke-path",
+   "name": "Offa's Dyke Path",
+   "status": "missing",
+   "gap": 5.07,
+   "best": null,
+   "cause_code": "failed_continuity"
+  },
+  {
+   "id": "st-cuthberts-way",
+   "name": "St Cuthbert's Way",
+   "status": "missing",
+   "gap": 4.93,
+   "best": null,
+   "cause_code": "unplaced"
+  },
+  {
+   "id": "fife-coastal-path",
+   "name": "Fife Coastal Path",
+   "status": "missing",
+   "gap": 4.87,
+   "best": null,
+   "cause_code": "failed_continuity"
+  },
+  {
+   "id": "kerry-way",
+   "name": "Kerry Way",
+   "status": "missing",
+   "gap": 4.87,
+   "best": null,
+   "cause_code": "failed_continuity"
+  },
+  {
+   "id": "rob-roy-way",
+   "name": "Rob Roy Way",
+   "status": "missing",
+   "gap": 4.87,
+   "best": null,
+   "cause_code": "failed_continuity"
+  },
+  {
+   "id": "speyside-way",
+   "name": "Speyside Way",
+   "status": "missing",
+   "gap": 4.72,
+   "best": null,
+   "cause_code": "failed_continuity"
+  },
+  {
+   "id": "glyndwrs-way",
+   "name": "Glyndŵr's Way",
+   "status": "missing",
+   "gap": 4.67,
+   "best": null,
+   "cause_code": "failed_continuity"
+  },
+  {
+   "id": "beara-way",
+   "name": "Beara Way",
+   "status": "missing",
+   "gap": 4.6,
+   "best": null,
+   "cause_code": "failed_continuity"
+  },
+  {
+   "id": "burren-way",
+   "name": "Burren Way",
+   "status": "missing",
+   "gap": 4.52,
+   "best": null,
+   "cause_code": "failed_continuity"
+  },
+  {
+   "id": "barrow-way",
+   "name": "Barrow Way",
+   "status": "missing",
+   "gap": 4.4,
+   "best": null,
+   "cause_code": "failed_continuity"
+  },
+  {
+   "id": "south-leinster-way",
+   "name": "South Leinster Way",
+   "status": "missing",
+   "gap": 4.32,
+   "best": null,
+   "cause_code": "failed_continuity"
+  },
+  {
+   "id": "ballyhoura-way",
+   "name": "Ballyhoura Way",
+   "status": "missing",
+   "gap": 4.2,
+   "best": null,
+   "cause_code": "failed_continuity"
+  },
+  {
+   "id": "east-munster-way",
+   "name": "East Munster Way",
+   "status": "missing",
+   "gap": 4.2,
+   "best": null,
+   "cause_code": "failed_continuity"
+  },
+  {
+   "id": "lago-di-braies-loop",
+   "name": "Lago di Braies loop",
+   "status": "missing",
+   "gap": 4.09,
+   "best": null,
+   "cause_code": "no_osm_data"
+  },
+  {
+   "id": "giewont",
+   "name": "Giewont",
+   "status": "missing",
+   "gap": 4.03,
+   "best": null,
+   "cause_code": "no_osm_data"
+  },
+  {
+   "id": "orla-perc",
+   "name": "Orla Perć",
+   "status": "missing",
+   "gap": 4.01,
+   "best": null,
+   "cause_code": "way_only_not_derived"
+  },
+  {
+   "id": "cleveland-way",
+   "name": "Cleveland Way",
+   "status": "missing",
+   "gap": 4.0,
+   "best": null,
+   "cause_code": "unplaced"
+  },
+  {
+   "id": "grand-canal-way",
+   "name": "Grand Canal Way",
+   "status": "missing",
+   "gap": 4.0,
+   "best": null,
+   "cause_code": "failed_continuity"
+  },
+  {
+   "id": "pennine-bridleway",
+   "name": "Pennine Bridleway",
+   "status": "missing",
+   "gap": 4.0,
+   "best": null,
+   "cause_code": "not_in_registry"
+  },
+  {
+   "id": "peddars-way-norfolk-coast-path",
+   "name": "Peddars Way and Norfolk Coast Path",
+   "status": "matched",
+   "gap": 2.619,
+   "best": 185779,
+   "cause_code": "rated_low"
+  },
+  {
+   "id": "fairy-pools-skye",
+   "name": "Fairy Pools, Glen Brittle",
+   "status": "matched",
+   "gap": 2.25,
+   "best": 188353,
+   "cause_code": "rated_low"
+  },
+  {
+   "id": "old-man-of-storr",
+   "name": "Old Man of Storr",
+   "status": "matched",
+   "gap": 2.25,
+   "best": 188352,
+   "cause_code": "rated_low"
+  },
+  {
+   "id": "quiraing",
+   "name": "Quiraing loop",
+   "status": "matched",
+   "gap": 2.25,
+   "best": 188351,
+   "cause_code": "rated_low"
+  },
+  {
+   "id": "snowdon-rhyd-ddu-path",
+   "name": "Snowdon by the Rhyd Ddu Path",
+   "status": "matched",
+   "gap": 2.25,
+   "best": 186736,
+   "cause_code": "rated_low"
+  },
+  {
+   "id": "lechweg",
+   "name": "Lechweg",
+   "status": "matched",
+   "gap": 2.053,
+   "best": 13540,
+   "cause_code": "rated_low"
+  },
+  {
+   "id": "sentiero-azzurro",
+   "name": "Sentiero Azzurro, Cinque Terre",
+   "status": "matched",
+   "gap": 1.667,
+   "best": 202217,
+   "cause_code": "rated_low"
+  },
+  {
+   "id": "imbros-gorge",
+   "name": "Imbros Gorge",
+   "status": "matched",
+   "gap": 1.583,
+   "best": 74068,
+   "cause_code": "rated_low"
+  },
+  {
+   "id": "thames-path",
+   "name": "Thames Path",
+   "status": "matched",
+   "gap": 1.53,
+   "best": 185706,
+   "cause_code": "rated_low"
+  },
+  {
+   "id": "mull-of-galloway-trail",
+   "name": "Mull of Galloway Trail",
+   "status": "matched",
+   "gap": 1.36,
+   "best": 186571,
+   "cause_code": "rated_low"
+  }
+ ],
+ "results": [
+  {
+   "id": "peaks-of-the-balkans",
+   "country": "AL",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "valbona-theth-pass",
+   "country": "AL",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "alpe-adria-trail",
+   "country": "AT",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.0,
+    9.4
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "adlerweg",
+   "country": "AT",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.0,
+    9.6
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "stubai-hoehenweg",
+   "country": "AT",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.97,
+    9.5
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "krimml-waterfalls",
+   "country": "AT",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "no_osm_data"
+  },
+  {
+   "id": "lechweg",
+   "country": "AT",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    5.6,
+    7.5
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "berliner-hoehenweg",
+   "country": "AT",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.0,
+    6.5
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "np-trail-hoge-kempen",
+   "country": "BE",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "kom-emine",
+   "country": "BG",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "too_long"
+  },
+  {
+   "id": "seven-rila-lakes",
+   "country": "BG",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "unresolved_seed"
+  },
+  {
+   "id": "vihren",
+   "country": "BG",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "unresolved_seed"
+  },
+  {
+   "id": "musala",
+   "country": "BG",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.5,
+    8.2
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "ch-1-via-alpina",
+   "country": "CH",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    4.01,
+    9.6
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "oeschinensee",
+   "country": "CH",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "hardergrat",
+   "country": "CH",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "no_osm_data"
+  },
+  {
+   "id": "ch-5-jura-hoehenweg",
+   "country": "CH",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    3.0,
+    9.3
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "aletsch-panoramaweg",
+   "country": "CH",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": false
+   },
+   "rank": [
+    2.5,
+    9.6
+   ],
+   "error": [
+    10.0,
+    30.2
+   ],
+   "note": null
+  },
+  {
+   "id": "eiger-trail",
+   "country": "CH",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": true
+   },
+   "rank": [
+    2.5,
+    7.8
+   ],
+   "error": [
+    6.0,
+    5.9
+   ],
+   "note": "rated_low"
+  },
+  {
+   "id": "ch-3-alpenpanorama-weg",
+   "country": "CH",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    3.0,
+    9.4
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "ch-7-viagottardo",
+   "country": "CH",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    3.0,
+    8.4
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "creux-du-van",
+   "country": "CH",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "no_osm_data"
+  },
+  {
+   "id": "five-lakes-walk-zermatt",
+   "country": "CH",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "lavaux-vineyard-terraces",
+   "country": "CH",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.5,
+    7.6
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "bachalpsee-first",
+   "country": "CH",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "tour-of-monte-rosa",
+   "country": "CH",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.0,
+    8.9
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "ch-2-trans-swiss-trail",
+   "country": "CH",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    3.0,
+    9.1
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "ch-6-alpenpaesse-weg",
+   "country": "CH",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    3.56,
+    9.6
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "ch-4-viajacobi",
+   "country": "CH",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    3.0,
+    8.6
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "aescher-ebenalp",
+   "country": "CH",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "artemis-trail",
+   "country": "CY",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": true
+   },
+   "rank": [
+    2.5,
+    8.3
+   ],
+   "error": [
+    7.0,
+    7.2
+   ],
+   "note": null
+  },
+  {
+   "id": "aphrodite-trail",
+   "country": "CY",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": true
+   },
+   "rank": [
+    2.5,
+    9.6
+   ],
+   "error": [
+    8.0,
+    6.6
+   ],
+   "note": null
+  },
+  {
+   "id": "pravcicka-brana",
+   "country": "CZ",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "no_osm_data"
+  },
+  {
+   "id": "hrebenovka-ceske-svycarsko",
+   "country": "CZ",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "adrspach-rocks",
+   "country": "CZ",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "hermannsweg",
+   "country": "DE",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.88,
+    8.0
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "saar-hunsrueck-steig",
+   "country": "DE",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.67,
+    8.7
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "rothaarsteig",
+   "country": "DE",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "unplaced"
+  },
+  {
+   "id": "malerweg",
+   "country": "DE",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    3.05,
+    9.6
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "partnachklamm",
+   "country": "DE",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "unresolved_seed"
+  },
+  {
+   "id": "breitachklamm",
+   "country": "DE",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "hochrhoener",
+   "country": "DE",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.67,
+    8.6
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "westweg",
+   "country": "DE",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    3.14,
+    9.5
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "schluchtensteig",
+   "country": "DE",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "unplaced"
+  },
+  {
+   "id": "bastei",
+   "country": "DE",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "goldsteig",
+   "country": "DE",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.0,
+    9.4
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "e5-oberstdorf-meran",
+   "country": "DE",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "rheinsteig",
+   "country": "DE",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    3.05,
+    9.5
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "moselsteig",
+   "country": "DE",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "wutachschlucht",
+   "country": "DE",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "koenigssee-obersee",
+   "country": "DE",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "rennsteig",
+   "country": "DE",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    3.58,
+    9.4
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "hoellentalklamm",
+   "country": "DE",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "no_osm_data"
+  },
+  {
+   "id": "eifelsteig",
+   "country": "DE",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "harzer-hexenstieg",
+   "country": "DE",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.85,
+    8.7
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "albsteig",
+   "country": "DE",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.69,
+    7.7
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "westerwald-steig",
+   "country": "DE",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "eibsee-loop",
+   "country": "DE",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.5,
+    8.0
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "kammweg-erzgebirge-vogtland",
+   "country": "DE",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.67,
+    9.0
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "haervejen",
+   "country": "DK",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.0,
+    7.8
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "gendarmstien",
+   "country": "DK",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.6,
+    7.4
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "viru-bog-boardwalk",
+   "country": "EE",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "e-path-e12",
+   "country": "ES",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.64,
+    7.9
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "camino-primitivo",
+   "country": "ES",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.0,
+    8.1
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "ordesa-cola-de-caballo",
+   "country": "ES",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "masca-gorge",
+   "country": "ES",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "e-path-e4",
+   "country": "ES",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.11,
+    9.7
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "ruta-del-cares",
+   "country": "ES",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "way_only_not_derived"
+  },
+  {
+   "id": "montserrat",
+   "country": "ES",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "carros-de-foc",
+   "country": "ES",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.56,
+    9.8
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "lagos-de-covadonga",
+   "country": "ES",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.5,
+    9.6
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "gr92",
+   "country": "ES",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.4,
+    6.1
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "camino-del-norte",
+   "country": "ES",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.0,
+    7.8
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "cami-de-cavalls",
+   "country": "ES",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.47,
+    8.9
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "caminito-del-rey",
+   "country": "ES",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": false
+   },
+   "rank": [
+    3.81,
+    8.6
+   ],
+   "error": [
+    8.0,
+    3.4
+   ],
+   "note": null
+  },
+  {
+   "id": "gr221-ruta-pedra-en-sec",
+   "country": "ES",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.64,
+    9.5
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "gr11-senda-pirenaica",
+   "country": "ES",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.89,
+    9.5
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "gr7-spain",
+   "country": "ES",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.2,
+    9.6
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "roque-nublo",
+   "country": "ES",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "no_osm_data"
+  },
+  {
+   "id": "e-path-e10",
+   "country": "FI",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.6,
+    9.3
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "karhunkierros",
+   "country": "FI",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.88,
+    6.7
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "hetta-pallas",
+   "country": "FI",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.0,
+    8.5
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "saana",
+   "country": "FI",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "e-path-e6",
+   "country": "FI",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.87,
+    8.8
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "traelanipan",
+   "country": "FO",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "kallur-lighthouse",
+   "country": "FO",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "walkers-haute-route",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.0,
+    8.7
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "sentier-blanc-martel",
+   "country": "FR",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "gr70-stevenson",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.56,
+    8.9
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "etretat-cliffs",
+   "country": "FR",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "gr58-tour-du-queyras",
+   "country": "FR",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "camino-frances",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.13,
+    8.5
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "lac-blanc-chamonix",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.7,
+    8.1
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "tour-du-mont-blanc",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.8,
+    8.6
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "calanques-en-vau",
+   "country": "FR",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "gr20",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.32,
+    9.4
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "gr10",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.94,
+    9.5
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "sentier-des-ocres",
+   "country": "FR",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "sentier-des-roches",
+   "country": "FR",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "cirque-de-gavarnie",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.5,
+    8.1
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "gr54-tour-de-l-oisans",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.0,
+    8.5
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "gr65-via-podiensis",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.0,
+    8.0
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "gr34",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.0,
+    6.2
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "e-path-e5",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.74,
+    8.5
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "tour-de-la-vanoise",
+   "country": "FR",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "clyde-walkway",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "yorkshire-three-peaks",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "arran-coastal-way",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    3.4,
+    8.6
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "rob-roy-way",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "peddars-way-norfolk-coast-path",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    4.91,
+    7.0
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "aonach-eagach",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "deeside-way",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "arthurs-seat",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "west-highland-way",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    5.39,
+    8.8
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "malham-cove",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "fairy-pools-skye",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.5,
+    5.2
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "thames-path",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    5.1,
+    7.7
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "durdle-door-lulworth",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "cateran-trail",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    3.6,
+    9.1
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "cleveland-way",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "unplaced"
+  },
+  {
+   "id": "coast-to-coast-walk",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "fife-coastal-path",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "great-glen-way",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    5.1,
+    8.2
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "snowdon-pyg-track",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": false
+   },
+   "rank": [
+    2.5,
+    7.5
+   ],
+   "error": [
+    11.0,
+    4.8
+   ],
+   "note": "rated_low"
+  },
+  {
+   "id": "dava-way",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    3.4,
+    7.6
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "moray-coast-trail",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "fife-pilgrim-way",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "hadrians-wall-path",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    5.23,
+    8.2
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "annandale-way",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "south-west-coast-path",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "too_long"
+  },
+  {
+   "id": "seven-sisters-cliffs",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "formartine-buchan-way",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "pembrokeshire-coast-path",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    4.0,
+    8.3
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "cumbria-way",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "pennine-bridleway",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "north-downs-way",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    4.94,
+    8.2
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "ben-nevis-mountain-track",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.5,
+    7.7
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "great-trossachs-path",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "scafell-pike-wasdale",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "loch-lomond-cowal-way",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "snowdon-rhyd-ddu-path",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.5,
+    5.0
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "cotswold-way",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    5.19,
+    8.9
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "offas-dyke-path",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "causeway-coast-way",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "slieve-donard",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.5,
+    7.5
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "hebridean-way",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "john-muir-way",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    4.92,
+    8.5
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "three-lochs-way",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "mam-tor-great-ridge",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "pennine-way",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    5.36,
+    8.7
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "yorkshire-wolds-way",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    4.74,
+    7.8
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "catbells",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "st-magnus-way",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "speyside-way",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "mull-of-galloway-trail",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    3.4,
+    7.4
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "ulster-way",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.0,
+    7.2
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "the-ridgeway",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    5.46,
+    8.7
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "wales-coast-path",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.0,
+    8.9
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "via-francigena",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.16,
+    8.2
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "dales-way",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "giants-causeway-cliff-path",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.5,
+    8.2
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "berwickshire-coastal-path",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "old-man-of-storr",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": true
+   },
+   "rank": [
+    2.5,
+    4.9
+   ],
+   "error": [
+    4.0,
+    4.8
+   ],
+   "note": "rated_low"
+  },
+  {
+   "id": "southern-upland-way",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    4.84,
+    7.9
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "east-highland-way",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "matched"
+  },
+  {
+   "id": "pen-y-fan",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "glyndwrs-way",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "ayrshire-coastal-path",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "borders-abbeys-way",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    3.67,
+    9.3
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "south-downs-way",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    5.1,
+    8.0
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "kintyre-way",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "quiraing",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": true
+   },
+   "rank": [
+    2.5,
+    5.4
+   ],
+   "error": [
+    7.0,
+    6.2
+   ],
+   "note": "rated_low"
+  },
+  {
+   "id": "e-path-e2",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.0,
+    9.2
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "st-cuthberts-way",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "unplaced"
+  },
+  {
+   "id": "cuilcagh-boardwalk",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "river-ayr-way",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "king-charles-iii-england-coast-path",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    5.32,
+    8.9
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "helvellyn-striding-edge",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "mount-olympus-prionia",
+   "country": "GR",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "menalon-trail",
+   "country": "GR",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    3.0,
+    8.0
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "corfu-trail",
+   "country": "GR",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.0,
+    7.9
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "vikos-gorge",
+   "country": "GR",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.5,
+    8.5
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "e4-crete",
+   "country": "GR",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "too_long"
+  },
+  {
+   "id": "samaria-gorge",
+   "country": "GR",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": true
+   },
+   "rank": [
+    2.5,
+    7.8
+   ],
+   "error": [
+    16.0,
+    14.5
+   ],
+   "note": "rated_low"
+  },
+  {
+   "id": "imbros-gorge",
+   "country": "GR",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.5,
+    6.7
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "premuzic-trail",
+   "country": "HR",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.8,
+    9.1
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "plitvice-lakes",
+   "country": "HR",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "orszagos-kektura",
+   "country": "HU",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.2,
+    7.9
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "burren-way",
+   "country": "IE",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "wicklow-way",
+   "country": "IE",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    4.98,
+    8.9
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "dublin-mountains-way",
+   "country": "IE",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    4.6,
+    8.9
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "east-munster-way",
+   "country": "IE",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "ballyhoura-way",
+   "country": "IE",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "sheeps-head-way",
+   "country": "IE",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "croagh-patrick",
+   "country": "IE",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "barrow-way",
+   "country": "IE",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "western-way",
+   "country": "IE",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    4.52,
+    7.8
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "slieve-league",
+   "country": "IE",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "carrauntoohil",
+   "country": "IE",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "e-path-e8",
+   "country": "IE",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.0,
+    9.3
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "diamond-hill-connemara",
+   "country": "IE",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "no_osm_data"
+  },
+  {
+   "id": "slieve-bloom-way",
+   "country": "IE",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    4.0,
+    8.9
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "royal-canal-way",
+   "country": "IE",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "glendalough-spinc",
+   "country": "IE",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.5,
+    9.5
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "beara-way",
+   "country": "IE",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "cliffs-of-moher-coastal-walk",
+   "country": "IE",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "unresolved_seed"
+  },
+  {
+   "id": "south-leinster-way",
+   "country": "IE",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "kerry-way",
+   "country": "IE",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "tain-way",
+   "country": "IE",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    4.4,
+    9.4
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "grand-canal-way",
+   "country": "IE",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "dingle-way",
+   "country": "IE",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    4.72,
+    8.8
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "glymur",
+   "country": "IS",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": true
+   },
+   "rank": [
+    2.9,
+    8.8
+   ],
+   "error": [
+    7.0,
+    6.3
+   ],
+   "note": null
+  },
+  {
+   "id": "reykjadalur",
+   "country": "IS",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "laugavegur",
+   "country": "IS",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "failed_continuity"
+  },
+  {
+   "id": "fimmvorduhals",
+   "country": "IS",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": true
+   },
+   "rank": [
+    2.82,
+    9.0
+   ],
+   "error": [
+    25.0,
+    23.5
+   ],
+   "note": null
+  },
+  {
+   "id": "sentiero-italia",
+   "country": "IT",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.88,
+    9.2
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "alta-via-dei-monti-liguri",
+   "country": "IT",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.2,
+    7.9
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "seceda-ridge",
+   "country": "IT",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "sentiero-degli-dei",
+   "country": "IT",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.5,
+    8.9
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "alta-via-1-dolomites",
+   "country": "IT",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.0,
+    9.6
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "via-alpina",
+   "country": "IT",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.01,
+    9.7
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "alta-via-2-dolomites",
+   "country": "IT",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "sentiero-del-viandante",
+   "country": "IT",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.09,
+    8.8
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "adolf-munkel-weg",
+   "country": "IT",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "lago-di-sorapis",
+   "country": "IT",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "tre-cime-di-lavaredo-loop",
+   "country": "IT",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "selvaggio-blu",
+   "country": "IT",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.0,
+    6.1
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "sentiero-azzurro",
+   "country": "IT",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": false
+   },
+   "rank": [
+    2.5,
+    6.6
+   ],
+   "error": [
+    12.0,
+    3.7
+   ],
+   "note": "rated_low"
+  },
+  {
+   "id": "via-degli-dei",
+   "country": "IT",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "lago-di-braies-loop",
+   "country": "IT",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "no_osm_data"
+  },
+  {
+   "id": "hill-of-witches",
+   "country": "LT",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "mullerthal-trail",
+   "country": "LU",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    5.0,
+    9.1
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "escapardenne-lee-trail",
+   "country": "LU",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    3.0,
+    8.9
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "escapardenne-eislek-trail",
+   "country": "LU",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    3.0,
+    8.9
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "bobotov-kuk",
+   "country": "ME",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.5,
+    9.6
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "matka-canyon",
+   "country": "MK",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "unresolved_seed"
+  },
+  {
+   "id": "dingli-cliffs",
+   "country": "MT",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.5,
+    8.0
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "gr5",
+   "country": "NL",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.52,
+    9.2
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "e-path-e11",
+   "country": "NL",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.69,
+    8.3
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "pieterpad",
+   "country": "NL",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.32,
+    8.3
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "galdhopiggen",
+   "country": "NO",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "kjeragbolten",
+   "country": "NO",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    3.26,
+    8.8
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "besseggen",
+   "country": "NO",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.5,
+    7.6
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "trolltunga",
+   "country": "NO",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": false
+   },
+   "rank": [
+    2.5,
+    8.8
+   ],
+   "error": [
+    27.0,
+    11.1
+   ],
+   "note": null
+  },
+  {
+   "id": "reinebringen",
+   "country": "NO",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "no_osm_data"
+  },
+  {
+   "id": "e-path-e1",
+   "country": "NO",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.05,
+    8.9
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "romsdalseggen",
+   "country": "NO",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": true
+   },
+   "rank": [
+    2.97,
+    9.3
+   ],
+   "error": [
+    10.0,
+    10.6
+   ],
+   "note": null
+  },
+  {
+   "id": "preikestolen",
+   "country": "NO",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.5,
+    9.6
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "nordkalottleden",
+   "country": "NO",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.2,
+    8.8
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "main-beskid-trail",
+   "country": "PL",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "too_long"
+  },
+  {
+   "id": "rysy",
+   "country": "PL",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "giewont",
+   "country": "PL",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "no_osm_data"
+  },
+  {
+   "id": "morskie-oko",
+   "country": "PL",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "no_osm_data"
+  },
+  {
+   "id": "orla-perc",
+   "country": "PL",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "way_only_not_derived"
+  },
+  {
+   "id": "sniezka",
+   "country": "PL",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    4.24,
+    9.4
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "camino-portugues",
+   "country": "PT",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.0,
+    7.9
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "levada-25-fontes",
+   "country": "PT",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "no_osm_data"
+  },
+  {
+   "id": "rota-vicentina-historical-way",
+   "country": "PT",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    4.0,
+    7.7
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "pico-arieiro-pico-ruivo",
+   "country": "PT",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "e-path-e3",
+   "country": "PT",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.85,
+    9.2
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "ponta-de-sao-lourenco",
+   "country": "PT",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "no_osm_data"
+  },
+  {
+   "id": "rota-vicentina-fishermens-trail",
+   "country": "PT",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.0,
+    8.0
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "e-path-e7",
+   "country": "PT",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.56,
+    9.6
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "levada-caldeirao-verde",
+   "country": "PT",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "no_osm_data"
+  },
+  {
+   "id": "e-path-e9",
+   "country": "PT",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.89,
+    9.1
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "gr22-aldeias-historicas",
+   "country": "PT",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "too_long"
+  },
+  {
+   "id": "fagaras-ridge",
+   "country": "RO",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "via-transilvanica",
+   "country": "RO",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.05,
+    7.4
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "hoga-kustenleden",
+   "country": "SE",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.47,
+    8.2
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "kullaleden",
+   "country": "SE",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "kungsleden",
+   "country": "SE",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    2.32,
+    8.3
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "skaneleden",
+   "country": "SE",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.0,
+    8.7
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "padjelantaleden",
+   "country": "SE",
+   "flags": {
+    "matched": true,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.4,
+    8.1
+   ],
+   "error": null,
+   "note": "rated_low"
+  },
+  {
+   "id": "juliana-trail",
+   "country": "SI",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    0.0,
+    8.8
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "vintgar-gorge",
+   "country": "SI",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "unresolved_seed"
+  },
+  {
+   "id": "via-dinarica",
+   "country": "SI",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.0,
+    8.5
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "triglav",
+   "country": "SI",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    3.55,
+    8.3
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "slovene-mountain-trail",
+   "country": "SI",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "too_long"
+  },
+  {
+   "id": "tatranska-magistrala",
+   "country": "SK",
+   "flags": {
+    "matched": true,
+    "in_top": true
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": [
+    1.76,
+    9.6
+   ],
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "cesta-hrdinov-snp",
+   "country": "SK",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "too_long"
+  },
+  {
+   "id": "sucha-bela",
+   "country": "SK",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_registry"
+  },
+  {
+   "id": "lycian-way",
+   "country": "TR",
+   "flags": {
+    "matched": false,
+    "in_top": false
+   },
+   "facts": {
+    "length": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "too_long"
+  }
+ ]
+}

@@ -1,5 +1,6 @@
 import React from 'react';
 import snapshot from '../../admin/dataHealth.json';
+import { Validation } from './Validation.jsx';
 
 // Data health (ROADMAP D2, T1142): the quality scorecard of the shipped data
 // and its 90-day trend. scripts/quality/engine.py writes the snapshot at the
@@ -30,7 +31,7 @@ function Trend({ series, label }) {
   );
 }
 
-export function DataHealth({ data = snapshot }) {
+export function DataHealth({ data = snapshot, validation }) {
   if (!data?.layers?.length) {
     return (
       <section data-health="empty">
@@ -39,6 +40,7 @@ export function DataHealth({ data = snapshot }) {
           No scorecard yet. run_pipeline.py writes one at the end of every run
           (scripts/quality/engine.py --write); the next build shows it here.
         </p>
+        <Validation data={validation} />
       </section>
     );
   }
@@ -134,6 +136,9 @@ export function DataHealth({ data = snapshot }) {
           </tbody>
         </table>
       </div>
+
+      {/* D23 (T1187): the external validation scorecard, beside the D2 card. */}
+      <Validation data={validation} />
     </section>
   );
 }
