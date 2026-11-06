@@ -50,10 +50,13 @@ How it runs:
 | 45 | T1129 | session_0156MmZ6yoTqK9Y5LFkAgjZh | p15-s45-product-analytics | done | yes |  |
 | 46 | T1130 | session_0156MmZ3d8Rghv4zZpw8JskF | p15-s46-data-stories | done | yes |  |
 | 47 | T1131 | session_0156MmZ64CMZFCasJfsb7dye | p15-s47-press-kit | done | yes |  |
-| 48 | T1132 | session_0156MmZ34vgRmZ5cd1uZABN1 | p15-s48-logic-catalogue | continue asked (partial push) |  |  |
-| 49 | T1133 | session_0156MmZ564CQE4NgVYTniJAC | p15-s49-data-contract | continue asked (stopped overnight) |  |  |
-| 43 | T1127 | session_0156MmZ6DJnm6jstpJgd2gt1 | p15-s43-imagery-gaps | running | | |
-| 41 | T1125 | session_0156MmZ47nbZsBgrNoG2x14S | p15-s41-type-radius | running | | |
+| 48 | T1132 | session_0156MmZ34vgRmZ5cd1uZABN1 | p15-s48-logic-catalogue | done | yes |  |
+| 49 | T1133 | session_0156MmZ564CQE4NgVYTniJAC | p15-s49-data-contract | done | yes |  |
+| 43 | T1127 | session_0156MmZ6DJnm6jstpJgd2gt1 | p15-s43-imagery-gaps | done | yes |  |
+| 41 | T1125 | session_0156MmZ47nbZsBgrNoG2x14S | p15-s41-type-radius | done | yes |  |
+| 42 | T1126 | session_0156MmZ371hGbeoa5s3ToCg7 | p15-s42-css-consolidation | running | | |
+| 50 | T1134 | session_0156MmZ5gHVZAjwixa2soZ5Z | p15-s50-drift-scorecard | running | | |
+| 39 | T1123 | session_0156MmZ6YxjUWnXqfKceVDgj | p15-s39-core-flow-fixes | running | | |
 
 Merge notes:
 - 00:05 S02, S03, S06, S07, S08 merged. ROADMAP C4 and C5 rows came out doubled by the merge and were fixed by hand; npm test 1294 pass, trail and licence pytest 47 pass, entry points OK. 8 owner steps on the checklist.
@@ -64,3 +67,4 @@ Merge notes:
 - 02:36 S21, S23, S29, S30, S33, S34, S35, S36 merged (S33 needed no migration, so 068 is unused; 069 is T1118, 070 reserved for T1129). ROADMAP C7, C8, C9 deduplicated. 17 of 17 admin harnesses green with 065 to 069; npm test 1469; pytest 435 pass (2 base failures); fast build OK. 68 owner steps on the checklist. The design items G2 to G10 run one at a time from S37 on, because they share CSS and components.
 - 10:15 The run paused from about 03:00 to 10:11 (the 03:07 check-in was delivered seven hours late, most likely a usage limit). S37 and S49 had stopped with an error and S48 had pushed only one domain file; all three were asked to continue. S31, S45, S46, S47 merged (070 is T1129). 17 of 17 harnesses with 065 to 070; npm test 1478; pytest 435 pass (2 base failures); fast build OK. 79 owner steps on the checklist. S43 started, scoped away from src/components while S37 folds them.
 - 10:30 S37 (G2) merged after it resumed: npm test 1483 pass, eslint clean, fast build OK. S41 (G6) started.
+- 10:52 S41 (design-lint 7,697 to 6,479), S43, S48 (all eight logic domains, 129 register rows for missing tests), S49 merged. The contract gate found two non-literal RPC names from T1109 and T1110 and was fixed; it passes against a local Postgres. npm test 1540, pytest 483 pass (2 base failures), design-lint 0 new, token contrast OK. 83 owner steps on the checklist; the owner answered the admin MFA warning ("Understood") at 10:50. S42, S50 and S39 started (S39 without CSS edits while S42 runs).
