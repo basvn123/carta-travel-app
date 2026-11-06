@@ -39,12 +39,14 @@
  *
  * Secrets (set via `supabase secrets set`): GEMINI_API_KEY, and optionally
  * GEMINI_MODEL (default gemini-flash-latest), AI_GLOBAL_DAILY_CAP (200).
+ * Provider and model chain (T1137): AI_PLAN_DAY_PROVIDER, AI_PLAN_DAY_MODELS
+ * and the other keys in supabase/functions/_shared/aiModels.mjs.
  * Per-user caps now come from public.plan_tiers, not from env.
  */
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import {
   cleanText, sanitizeCandidates, selectCandidates, dayCentroid, sanitizeAiStops,
-  scheduleDay, cacheKeyInput, modelChain, shouldFallOver, attemptTimeoutMs, CACHE_KEY_VERSION,
+  scheduleDay, cacheKeyInput, CACHE_KEY_VERSION,
   signRefineToken, verifyRefineToken, REFINES_FREE,
 } from './logic.mjs';
 import { consume, logCapRejection, logModelEvent, refund } from '../_shared/passes.mjs';
@@ -56,6 +58,11 @@ import { withCors, readJson, bodyProblem } from '../_shared/http.mjs';
 import {
   LIMITS, guardPlanInput, guardPlanOutput, guardPlanPayload, dataBlock, makeNonce, systemRules,
 } from '../_shared/aiGuard.mjs';
+// Model access (T1137, E3): the provider, the chain, the time budget, retries
+// and the refusal shape. A provider or model switch is an AI_PLAN_DAY_* value.
+import {
+  modelAccess, callModel, chainKey, supportsSearch, parseModelJson, refusalBody,
+} from '../_shared/aiModels.mjs';
 
 // The largest body this function reads (T1079): refused with 413 beyond it.
 const MAX_BODY = 400000;
@@ -226,15 +233,16 @@ async function sha256Hex(s: string): Promise<string> {
 Deno.serve(withCors(async (req) => {
   if (req.method !== 'POST') return json(405, { code: 'method' });
 
-  const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY') || '';
-  // Ordered models to try. Each has its own free daily budget, so exhausting
-  // the first is a reason to step down a rung, not to fail the request.
-  const CHAIN = modelChain(Deno.env.get('GEMINI_MODEL'), Deno.env.get('GEMINI_MODELS'));
+  // Provider and ordered models from config (aiModels). Each Gemini model has
+  // its own free daily budget, so exhausting the first is a reason to step
+  // down a rung, not to fail the request.
+  const envGet = (k: string) => Deno.env.get(k);
+  const access = modelAccess('plan-day', envGet);
   const GLOBAL_CAP = Number(Deno.env.get('AI_GLOBAL_DAILY_CAP')) || 200;
   const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || '';
   const ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY') || '';
   const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
-  if (!GEMINI_API_KEY) return json(503, { code: 'no_ai' });
+  if (access.refusal) return json(access.refusal.status, refusalBody(access.refusal));
 
   // Only signed-in travellers may spend AI quota: the JWT in the Authorization
   // header must resolve to a real user.
@@ -440,7 +448,7 @@ Deno.serve(withCors(async (req) => {
   // a distinction may leave the key only when nothing downstream can see it,
   // and nothing downstream of this point ever sees the untrimmed deck again.
   const hash = await sha256Hex(cacheKeyInput({
-    model: CHAIN.join(','), destId, month, dateISO, groupSize, pace, vibe, avoidHills,
+    model: chainKey(access.cfg), destId, month, dateISO, groupSize, pace, vibe, avoidHills,
     freeText, lang, candidates: promptCandidates, refine, prevStopIds: prevStops, wantEvents,
     profile, mustInclude, days,
   }));
@@ -514,7 +522,10 @@ Deno.serve(withCors(async (req) => {
   // traveller still gets their day, just built without live listings, and
   // meta.groundingSkipped tells the client which upsell to show. Refusing
   // outright would punish a free user for ticking a box they were shown.
-  const groundingEnabled = (Deno.env.get('AI_ENABLE_GROUNDING') || '').toLowerCase() !== 'false';
+  // Live search needs a provider that has it (only Gemini today): another
+  // provider is the same as grounding switched off.
+  const groundingEnabled = (Deno.env.get('AI_ENABLE_GROUNDING') || '').toLowerCase() !== 'false'
+    && supportsSearch(access.cfg);
   let groundingSkipped: string | null = null;
   let useGrounding = false;
   if (wantEvents) {
@@ -535,74 +546,31 @@ Deno.serve(withCors(async (req) => {
       }
     }
   }
-  let aiText = '';
-  let usedModel = '';
-  let lastStatus = 0;
-  let timedOut = false;
-  const aiStart = Date.now();
-  for (const [i, model] of CHAIN.entries()) {
-    // One time budget for the whole chain (T415): a slow first model falls
-    // over to a faster one instead of ending the request.
-    const attemptMs = attemptTimeoutMs(i, Date.now() - aiStart);
-    if (!attemptMs) break;
-    let resp: Response;
-    try {
-      resp = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_API_KEY },
-          body: JSON.stringify({
-            systemInstruction: { parts: [{ text: security }] },
-            contents: [{ role: 'user', parts: [{ text: prompt }] }],
-            ...(useGrounding ? { tools: [{ google_search: {} }] } : {}),
-            generationConfig: {
-              temperature: refine ? 0.45 : 0.25, // a revision must actually differ
-              // See suggest-city: gemini-flash-latest is a thinking model now
-              // and its thoughts spend this budget, so a full day of stops can
-              // truncate at 4096 and come back as ai_bad_output. Headroom costs
-              // nothing, only generated tokens are billed.
-              maxOutputTokens: 8192,
-              responseMimeType: 'application/json',
-              responseSchema: RESPONSE_SCHEMA,
-            },
-          }),
-          signal: AbortSignal.timeout(attemptMs),
-        },
-      );
-    } catch {
-      // A timeout or a dropped connection on this model. The next model gets
-      // what is left of the budget; attemptTimeoutMs stops the chain once too
-      // little is left, so the traveller is never held for minutes.
-      timedOut = true;
-      continue;
-    }
-    if (!resp.ok) {
-      lastStatus = resp.status;
-      if (shouldFallOver(resp.status)) continue;
-      return await failed(502, { code: 'ai_error', status: resp.status });
-    }
-    const data = await resp.json();
-    aiText = (data?.candidates?.[0]?.content?.parts || [])
-      .map((p: { text?: string }) => p.text || '')
-      .join('');
-    usedModel = model;
-    break;
-  }
-  // Chain exhausted. A trailing 429 means every model's budget is spent, which
-  // for the traveller is exactly the "come back tomorrow" case the quota copy
-  // already describes, so say that rather than "hiccup".
-  if (!usedModel) {
-    // Out of time with no model answering: the same ai_timeout as before.
-    if (timedOut && lastStatus !== 429) return await failed(504, { code: 'ai_timeout' });
-    return lastStatus === 429
-      ? await failed(429, { code: 'global_cap' })
-      : await failed(502, { code: 'ai_error', status: lastStatus });
-  }
+  // The one AI call, through aiModels: one time budget for the whole chain
+  // (T415), a 429 or 404 steps down a rung, a 5xx is retried once, a timeout
+  // falls over while budget is left. A trailing 429 everywhere is global_cap
+  // (the "come back tomorrow" copy), no answer in time is ai_timeout.
+  const ai = await callModel({
+    feature: 'plan-day',
+    env: envGet,
+    system: security,
+    user: prompt,
+    json: true,
+    schema: RESPONSE_SCHEMA,
+    search: useGrounding,
+    temperature: refine ? 0.45 : 0.25, // a revision must actually differ
+    // gemini-flash-latest is a thinking model and its thoughts spend this
+    // budget, so a full day of stops can truncate at 4096. Headroom costs
+    // nothing, only generated tokens are billed.
+    maxOutputTokens: 8192,
+  });
+  if (!ai.ok) return await failed(ai.status, refusalBody(ai));
+  const aiText: string = ai.text;
+  const usedModel: string = ai.model;
 
   if (aiText.length > LIMITS.modelOutputChars) return await failed(502, { code: 'ai_bad_output' });
-  let raw: unknown;
-  try { raw = JSON.parse(aiText); } catch { return await failed(502, { code: 'ai_bad_output' }); }
+  const raw: unknown = parseModelJson(aiText);
+  if (raw === undefined) return await failed(502, { code: 'ai_bad_output' });
   // ---- AI security: the shape and text check, before anything reads the answer ----
   const outGuard = guardPlanOutput(raw, { systemText: `${security}\n${prompt}` });
   if (!outGuard.value) return await failed(502, { code: 'ai_bad_output' });
@@ -667,7 +635,7 @@ Deno.serve(withCors(async (req) => {
       // True when the primary was unavailable and a lower rung answered.
       // Worth surfacing in logs: a day of this means the free budget on the
       // good model is consistently gone before travellers get to it.
-      fellBack: usedModel !== CHAIN[0],
+      fellBack: ai.fellBack,
       optimized: sched.optimized,
       dropped,
       // Stops the model chose that were past the day's walking budget. A
@@ -701,7 +669,7 @@ Deno.serve(withCors(async (req) => {
   // admin panel to show the model distribution per day and compute the
   // fallback rate as (fallbacks / total) per day.
   const kindUsed = useGrounding ? 'ground' : 'plan';
-  const fellBack = usedModel !== CHAIN[0];
+  const fellBack = ai.fellBack;
   // Not awaited (T300-r): the response must not wait on telemetry. The helper
   // hands the promise to EdgeRuntime.waitUntil so the insert still completes.
   const edge = (globalThis as { EdgeRuntime?: { waitUntil?: (p: Promise<unknown>) => void } }).EdgeRuntime;

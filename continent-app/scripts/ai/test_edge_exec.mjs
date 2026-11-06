@@ -136,7 +136,8 @@ globalThis.fetch = async (url, init) => {
   world.fetchCalls.push({ url: u, body, model: u.match(/models\/([^:]+):/)?.[1] });
   const next = world.gemini.shift();
   if (!next) throw new Error('no stub Gemini reply left');
-  if (next.throws) throw new Error('network');
+  // What AbortSignal.timeout throws (T1137: aiModels tells a timeout from a dropped connection).
+  if (next.throws) throw new DOMException('The operation timed out.', 'TimeoutError');
   return new Response(JSON.stringify(next.json ?? {}), { status: next.status ?? 200 });
 };
 globalThis.EdgeRuntime = { waitUntil: (p) => { world.waited.push(p); } };
@@ -295,11 +296,12 @@ async function sharedContract(spec) {
   check(`${name}: an exhausted chain answers 429 global_cap`, r.status === 429 && shapeOf(r) === 'global_cap');
   check(`${name}: an exhausted chain refunds the unit`, refunded().join() === 'plan');
 
-  // 11 timeout
-  base({ gemini: [{ throws: true }] });
+  // 11 timeout. Since T1137 a timeout falls over to the next model in every
+  // function (aiModels), so both models of the m1,m2 chain time out here.
+  base({ gemini: [{ throws: true }, { throws: true }] });
   r = await call(name, spec.body());
   check(`${name}: a Gemini timeout answers 504 and refunds`,
-    r.status === 504 && refunded().join() === 'plan' && world.fetchCalls.length === 1);
+    r.status === 504 && refunded().join() === 'plan' && world.fetchCalls.length === 2);
 
   // 12 garbage output
   base({ gemini: [{ json: { candidates: [{ content: { parts: [{ text: 'not json at all' }] } }] } }] });

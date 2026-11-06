@@ -293,16 +293,19 @@ test('the stream guard cuts a flood at the output cap', () => {
 
 /* ---- every path, statically ---- */
 
-test('plan-day and parse-booking guard input, the system slot, the fresh answer and the cached one', () => {
-  for (const [f, fns] of [
-    ['../../supabase/functions/plan-day/index.ts', ['guardPlanInput(', 'guardPlanOutput(', 'guardPlanPayload(cached.payload)', 'guardPlanPayload(built)']],
-    ['../../supabase/functions/parse-booking/index.ts', ['guardBookingInput(', 'guardBookingOutput(', 'guardBookingPayload(cached.payload)']],
+test('plan-day, suggest-city and parse-booking guard input, the system slot, the fresh answer and the cached one', () => {
+  for (const [f, fns, fenced] of [
+    ['../../supabase/functions/plan-day/index.ts', ['guardPlanInput(', 'guardPlanOutput(', 'guardPlanPayload(cached.payload)', 'guardPlanPayload(built)'], true],
+    ['../../supabase/functions/parse-booking/index.ts', ['guardBookingInput(', 'guardBookingOutput(', 'guardBookingPayload(cached.payload)'], true],
+    // T1137: suggest-city's prompt text is unchanged until E5, so its wish is scrubbed but not fenced yet (T1137-c).
+    ['../../supabase/functions/suggest-city/index.ts', ['guardCityInput(', 'guardCityOutput(', 'guardCityPayload(cached.payload)'], false],
   ]) {
     const src = read(f);
     for (const fn of fns) assert.ok(src.includes(fn), `${f} lacks ${fn}`);
-    assert.ok(src.includes('systemInstruction: { parts: [{ text: security }] }'), `${f}: no systemInstruction`);
+    // The security rules ride in the system slot, through aiModels (T1137).
+    assert.ok(/callModel\(\{[\s\S]{0,120}system: security,/.test(src), `${f}: the rules are not in the system slot`);
     assert.ok(src.includes('LIMITS.modelOutputChars'), `${f}: no output cap`);
-    assert.ok(/dataBlock\('/.test(src), `${f}: no data block`);
+    if (fenced) assert.ok(/dataBlock\('/.test(src), `${f}: no data block`);
     // Nothing returns the cached row unchecked.
     assert.ok(!/\.\.\.cached\.payload,/.test(src), `${f} spreads an unchecked cached payload`);
     assert.ok(!/anthropic/i.test(src), `${f}: never the Claude API`);

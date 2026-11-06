@@ -764,7 +764,7 @@ docs/
 |---|---|---|---|---|---|
 | E1 | Ask eval gate | 200 labelled queries, metrics per retriever, gate in CI | M | P3 | done (T1136; dense and hybrid baseline open, T1136-a) |
 | E2 | Retrieval upgrades | BM25 everywhere, reranker kept only if it wins, index built on the box | M | P4 | todo |
-| E3 | One guardrail module | Same input, output and failure rules in every LLM function; injection set in CI | M | P3 | todo |
+| E3 | One guardrail module | Same input, output and failure rules in every LLM function; injection set in CI | M | P3 | in progress (T1137: every model call goes through `aiModels` (Edge Functions and Ask) or `pipeline/ai_gateway.py` (batch jobs), provider and chain are config, one failure rule and refusal shape, suggest-city guarded, 75-attack set in the `ai-guard` workflow, a grep test fails on any direct provider call. Open: PII scrub, number tracing, banned terms, the rule-based or cached fallback, T1137-a to T1137-h) |
 | E4 | LLM observability | Every call in `ai_model_events`; admin cost and latency panel; Ask query logs | S | P4 | todo |
 | E5 | Prompt registry | Prompts versioned in files; a bump runs its eval | S | P4 | todo |
 | E6 | Answer and cards agree | The places Ask's text names are exactly the cards it shows, enforced in the verifier; the failing live query is in the golden set (P-35) | S | P1 | done (T1101) |

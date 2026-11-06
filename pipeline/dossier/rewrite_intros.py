@@ -23,10 +23,13 @@ Output: cache/dossier/intros_llm.json, {id: {text, model, at, src}}, written
 atomically after every batch so a stopped run keeps what it had.
 build_dossier.py reads it and prefers it over the composed fallback.
 
-Provider: Gemini through the AI Studio REST API, GEMINI_API_KEY (repo-root
-.env or env), ten destinations per call, with the model chain and rate floor
-pipeline/trails/describe.py uses (--model to pin one). The Claude provider
-was removed in T264: CLAUDE.md forbids the Claude API in this project.
+Provider: through pipeline/ai_gateway.py (T1137, feature "intros"): Gemini
+by default, GEMINI_API_KEY (repo-root .env or env), ten destinations per
+call, with the gateway's model chain, rate floor, retries and output check
+(--model to pin one; AI_INTROS_PROVIDER and AI_INTROS_MODELS switch it). A
+Wikivoyage extract that carries instruction-shaped text is dropped from the
+prompt before the call. The Claude provider was removed in T264: CLAUDE.md
+forbids the Claude API in this project.
 
 Usage, from the repo root:
     python pipeline/dossier/rewrite_intros.py --dry-run --limit 5
@@ -45,8 +48,6 @@ import os
 import re
 import sys
 import time
-import urllib.error
-import urllib.request
 
 sys.path.insert(0, os.path.dirname(__file__))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
@@ -54,6 +55,7 @@ from common import (  # noqa: E402
     CACHE, DCACHE, PUB, atomic_write_json, dossier_file_base, load_json, norm_name,
 )
 from env_local import load_env  # noqa: E402
+from ai_gateway import AIRefusal, Gateway, scan_injection  # noqa: E402
 
 OUT = os.path.join(DCACHE, "intros_llm.json")
 BATCH = 10
@@ -172,55 +174,31 @@ def guard(text, dest, dossier, extract):
     return out, None
 
 
-class Gemini:
-    name = "gemini"
-    API = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
-    CHAIN = ["gemini-flash-latest", "gemini-3.5-flash", "gemini-3.5-flash-lite"]
+class Client:
+    """The intros job's model access, through pipeline/ai_gateway.py (T1137)."""
 
     def __init__(self, model):
-        self.key = os.environ.get("GEMINI_API_KEY")
-        if not self.key:
-            raise SystemExit("GEMINI_API_KEY is not set")
-        self.chain = [model] if model else list(self.CHAIN)
-        self.model = self.chain[0]
-        self.tokens_in = self.tokens_out = 0
-        self._last = 0.0
+        try:
+            self.gw = Gateway("intros", models=[model] if model else None)
+        except AIRefusal as exc:
+            raise SystemExit(f"rewrite_intros: {exc}") from None
+        self.name = self.gw.provider
 
-    def complete(self, user):
-        body = {
-            "systemInstruction": {"parts": [{"text": SYSTEM}]},
-            "contents": [{"role": "user", "parts": [{"text": user}]}],
-            "generationConfig": {"maxOutputTokens": 8192, "temperature": 0.2,
-                                 "responseMimeType": "application/json"},
-        }
-        last = None
-        for model in self.chain:
-            for attempt in (1, 2):
-                wait = self._last + 6.5 - time.monotonic()
-                if wait > 0:
-                    time.sleep(wait)
-                self._last = time.monotonic()
-                req = urllib.request.Request(
-                    self.API.format(model=model), data=json.dumps(body).encode("utf-8"),
-                    headers={"Content-Type": "application/json", "x-goog-api-key": self.key},
-                    method="POST")
-                try:
-                    with urllib.request.urlopen(req, timeout=120) as r:
-                        data = json.loads(r.read().decode("utf-8"))
-                    self.model = model
-                    usage = data.get("usageMetadata") or {}
-                    self.tokens_in += usage.get("promptTokenCount", 0)
-                    self.tokens_out += usage.get("candidatesTokenCount", 0)
-                    return data["candidates"][0]["content"]["parts"][-1]["text"]
-                except urllib.error.HTTPError as exc:
-                    last = exc.code
-                    if exc.code == 429 and attempt == 1:
-                        print(f"  note: {model} rate limited, waiting 30s")
-                        time.sleep(30)
-                        continue
-                    break
-            print(f"  note: {model} returned {last}, trying the next model")
-        raise RuntimeError(f"every Gemini model failed (last {last})")
+    @property
+    def model(self):
+        return self.gw.model
+
+    @property
+    def tokens_in(self):
+        return self.gw.tokens_in
+
+    @property
+    def tokens_out(self):
+        return self.gw.tokens_out
+
+    def complete(self, user, screen):
+        return self.gw.call(user, system=SYSTEM, json=True, temperature=0.2, max_tokens=8192,
+                            screen=screen).text
 
 
 def parse(text):
@@ -237,8 +215,8 @@ def parse(text):
 def main():
     load_env()
     ap = argparse.ArgumentParser()
-    # Gemini is the only provider: CLAUDE.md forbids the Claude API (T264).
-    # The flag stays so existing `--provider gemini` commands keep working.
+    # The provider is the gateway's config (AI_INTROS_PROVIDER); never the
+    # Claude API (T264). The flag stays so `--provider gemini` commands work.
     ap.add_argument("--provider", choices=("gemini",), default="gemini")
     ap.add_argument("--model")
     ap.add_argument("--tier", type=int, help="rating tier at or above")
@@ -275,6 +253,11 @@ def main():
         extract = rec.get("extract") if isinstance(rec, dict) else ""
         if extract and re.search(r"\bairport\b", extract[:200], re.I):
             extract = ""
+        # Harvested text is data: an extract with instruction-shaped text in
+        # its first 900 characters (what the prompt shows) is left out (T1137).
+        if extract and scan_injection(extract[:900])["hit"]:
+            print(f"  {did}: extract left out, it reads as an instruction")
+            extract = ""
         todo.append((d, dossier, extract or ""))
     if args.limit:
         todo = todo[: args.limit]
@@ -287,14 +270,14 @@ def main():
         print(user_block(todo[:2]))
         return
 
-    client = Gemini(args.model)
+    client = Client(args.model)
     print(f"provider {client.name}, model {client.model}")
 
     stats = {"ok": 0, "guard": 0, "missing": 0}
     for i in range(0, len(todo), BATCH):
         batch = todo[i:i + BATCH]
         try:
-            raw = client.complete(user_block(batch))
+            raw = client.complete(user_block(batch), screen=[e[:900] for _, _, e in batch])
             answers = parse(raw)
         except Exception as exc:  # noqa: BLE001
             print(f"  batch {i // BATCH + 1} failed: {str(exc)[:160]}")
