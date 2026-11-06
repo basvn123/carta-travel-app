@@ -29,7 +29,20 @@ Where Carta's data contract, sources and licences are documented. Nothing moved:
 | [../SCHEMA.md](../SCHEMA.md) | `continent-app/scripts/ci/check-contract.mjs` |
 | [../tos/data_licenses.md](../tos/data_licenses.md) | the ledger check (generated, do not edit) |
 
-Do not move or rename these. `REGIONS.md` and `LAKES.md` were written before many later changes and are not re-verified by T1073; rewriting them is an open item in the T1073 report.
+Do not move or rename these. `REGIONS.md` and `LAKES.md` were rewritten from the code by T1085 (2026-11-05).
+
+## Pipeline and layer docs (T1085)
+
+| Doc | Covers |
+|---|---|
+| [pipeline.md](pipeline.md) | `run_pipeline.py` tasks, cadence, state, build boxes |
+| [coverage.md](coverage.md) | coverage audit, contract and gate |
+| [joins.md](joins.md) | the nearby joins (`nb`) |
+| [trips-layer.md](trips-layer.md) | composed trips |
+| [trails.md](trails.md), [beaches.md](beaches.md), [mountains.md](mountains.md) | the outdoor layers |
+| [photos.md](photos.md) | photo sourcing, licences, credits |
+| [../runbooks/backup.md](../runbooks/backup.md) | what is backed up and how to restore |
+| [../REGIONS.md](../REGIONS.md), [../LAKES.md](../LAKES.md) | regions and lakes |
 
 ## Configuration that shapes numbers
 

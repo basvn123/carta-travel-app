@@ -9,5 +9,6 @@ Step by step procedures for the operator (the owner). Built by T1073 (ROADMAP B2
 | [backup-restore.md](backup-restore.md) | Taking, proving or restoring a Supabase or archive dump; before any pasted migration |
 | [refund.md](refund.md) | A traveller asks for money back |
 | [incident.md](incident.md) | Something is broken for travellers: the outage line, where to look first, five worked incidents |
+| [backup.md](backup.md) | What is backed up and where, in short (T1085); the full procedure is backup-restore.md |
 
 Rules for every runbook: names and places only, never a secret value (see [../security/SECRETS.md](../security/SECRETS.md)); say what the traveller sees; say how to undo.
