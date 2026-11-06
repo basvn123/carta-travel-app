@@ -59,6 +59,7 @@ import { sharedKeys } from '../lib/sharedListModel.js';
 import { useSavedLists, loadSavedLists, noteSaved, createList, setNote } from '../lib/savedLists.js';
 import { scrollBehavior } from '../lib/motion.js';
 import { TodayCard } from './mytrips/TodayCard.jsx';
+import { TasteChips } from './mytrips/TasteChips.jsx';
 
 /**
  * My trips (T434, rebuilt as Concept A by T923 to T927). One header with
@@ -1098,6 +1099,14 @@ export function SavedTripsPanel({
     })),
   }));
   const tripsCount = datedPlans.length + upcomingDayPlans.length;
+  // T1152: what the taste profile reads (the traveller's own saves and trips).
+  const keptAll = useKept();
+  const tasteSaves = useMemo(() => shortRows.map((r) => ({ key: r.key, kind: r.kind, id: r.id, name: r.name })), [shortRows]);
+  const tasteTrips = useMemo(() => [
+    ...tripPlans.map((p) => ({ id: p.id, name: p.label || '', at: p.updated_at || p.created_at || p.start_date, destIds: p.destination_ids || [] })),
+    ...(devicePlan ? [{ id: `device:${devicePlan.id || 'trip'}`, name: devicePlan.label || '', at: devicePlan.updated_at || devicePlan.start_date, destIds: devicePlan.destination_ids || [] }] : []),
+    ...keptAll.map((r) => ({ id: `kept:${r.id}`, name: r.name || '', at: r.keptAt, destIds: r.plan?.order || [] })),
+  ], [tripPlans, devicePlan, keptAll]);
 
   // Land on Trips once a trip ahead is known, unless a tab was picked this visit.
   useEffect(() => {
@@ -1214,6 +1223,10 @@ export function SavedTripsPanel({
               error={tripPlansError}
               fmtMonth={fmtMonth}
             />
+          )}
+          {/* T1152 (F3): the taste profile with its evidence, yes and no per chip. */}
+          {tab === 'europe' && !(recapOpen && recap) && (
+            <TasteChips saves={tasteSaves} trips={tasteTrips} destinations={destinations} userId={user?.id || null} />
           )}
         </div>
 

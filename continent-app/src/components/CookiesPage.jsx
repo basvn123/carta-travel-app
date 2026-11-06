@@ -24,6 +24,7 @@ import { useI18n } from '../i18n/index.jsx';
  *                 carta.discovered.v1, carta.ask.chats.v1, carta.mytrips.*,
  *                 carta.tripSkips.v1, carta.together.*, carta.friends.lastSeen,
  *                 carta.accountSync.v1 (T1104: the account last synced, what was in sync)
+ *                 carta.taste.v1 (T1152: yes and no on the taste chips)
  *     one-off notes  dismissed hints and banners, the paywall snooze, a
  *                 pending pass or co-planner invite across a sign-in, the
  *                 chunk reload guard, a route cache (carta.route.*), the
