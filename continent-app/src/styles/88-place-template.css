@@ -708,6 +708,8 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 .tcard-badge { display: inline-flex; align-items: center; min-height: 20px; padding: 0 var(--space-2); border-radius: var(--radius-pill); background: color-mix(in srgb, var(--umber-50) 16%, transparent); font-size: 11px; font-weight: 700; letter-spacing: 0.01em; }
 .tcard-badge.is-cheap { background: var(--sun-400); color: var(--umber-800); }
 .tcard-way.is-on .tcard-badge:not(.is-cheap) { background: var(--umber-100); }
+/* T1100: why the card opened on a dearer way than the cheapest, in hours. */
+.tcard-note { margin: 0; font-size: var(--text-caption); color: var(--ccard-ink-2); }
 
 .tcard-acts { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-2); }
 .ccard .tcard-acts .btn, .ccard .tcard-acts .btn:is(:hover, :focus, :active, [aria-expanded="true"]) { background: transparent; color: var(--ccard-ink); }

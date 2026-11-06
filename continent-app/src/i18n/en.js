@@ -6992,6 +6992,7 @@ export const en = {
   "destx.flightTimes": "{dep} to {arr}",
   "destx.aboutTime": "About {time}",
   "destx.cheapest": "Cheapest",
+  "destx.wayPickWhy": "Opened on the quicker way: about {time} door to door, against {other} for the cheapest.",
   "destx.qf.language": "Language",
   "destx.qf.money": "Money",
   "destx.qf.tipping": "Tipping",

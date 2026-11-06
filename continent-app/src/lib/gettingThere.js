@@ -14,13 +14,16 @@
  * costs a tap, and no guess costs five.
  */
 import { haversineKm } from './nearby.js';
+import { rule } from './price/config.js';
 
 /** Where a train is not an answer, because there is no railway. Mirrors
  *  NO_RAIL in transportLinks.js, which owns the same list for its links. */
 const NO_RAIL = new Set(['IS', 'MT', 'CY', 'AD', 'LI', 'MC', 'SM', 'FO']);
 
-/** Past this, nobody is taking the train to the start of a holiday. */
-export const FLY_KM = 700;
+/** Past this, nobody is taking the train to the start of a holiday. One
+ *  number with the way-there pick (T1100, D13): config/pricing.json
+ *  way.choice.fly_km, which lib/wayChoice.js reads too. */
+export const FLY_KM = rule('way.choice').fly_km;
 
 /**
  * How to travel one leg, before anybody has said.

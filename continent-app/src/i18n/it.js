@@ -6285,6 +6285,7 @@ export const it = {
   "destx.flightTimes": "dalle {dep} alle {arr}",
   "destx.aboutTime": "Circa {time}",
   "destx.cheapest": "Più economico",
+  "destx.wayPickWhy": "Scelta l'opzione più veloce: circa {time} porta a porta, contro {other} per la più economica.",
   "destx.qf.language": "Lingua",
   "destx.qf.money": "Valuta",
   "destx.qf.tipping": "Mancia",
