@@ -96,6 +96,26 @@ export function AuthProvider({ children }) {
     };
   }, []);
 
+  // T1104 (ROADMAP I5): kept trips, bookmarked Carta trips, trips in
+  // progress and the device trip follow the signed-in account
+  // (auth/accountSync.js, migration 065). Loaded only once somebody is
+  // signed in, so a guest's first paint carries none of it.
+  const syncUserId = session?.user?.id || null;
+  useEffect(() => {
+    if (!syncUserId) return undefined;
+    let live = true;
+    let unbind = null;
+    Promise.all([import('./accountSync.js'), import('./accountThingsCloud.js')])
+      .then(([sync, cloudMod]) => {
+        if (live) unbind = sync.bindAccountSync(syncUserId, cloudMod.accountThingsCloud);
+      })
+      .catch(() => { /* the chunk failed to load: the things stay on the device */ });
+    return () => {
+      live = false;
+      if (unbind) unbind();
+    };
+  }, [syncUserId]);
+
   const signUp = useCallback(async (email, password, fullName) => {
     const supabase = await getSupabase();
     const { data, error } = await supabase.auth.signUp({
@@ -296,9 +316,21 @@ export function AuthProvider({ children }) {
         chatId: r.chat_id, title: r.title, turns: r.turns, updatedAt: r.updated_at, deletedAt: r.deleted_at,
       }));
     }
+    // T1104: the synced things (065), read the same way. Tombstones are
+    // left out: they hold nothing but the id and the time.
+    let accountThings = [];
+    if (u?.id) {
+      const { data: rows, error: thingsError } = await supabase
+        .from('account_things').select('kind, item_id, body, updated_at, deleted_at').eq('user_id', u.id);
+      if (thingsError && !['PGRST205', '42P01'].includes(thingsError.code)) throw thingsError;
+      accountThings = (rows || []).filter((r) => !r.deleted_at).map((r) => ({
+        kind: r.kind, id: r.item_id, thing: r.body, updatedAt: r.updated_at,
+      }));
+    }
     return {
       ...data,
       askChats,
+      accountThings,
       account: {
         email: u?.email || null,
         name: u?.user_metadata?.full_name || null,

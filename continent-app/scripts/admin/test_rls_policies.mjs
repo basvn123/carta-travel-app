@@ -576,6 +576,16 @@ const FIXTURES = [
     ownerWrites: true,
   },
   {
+    // 065 (T1104): the owner's synced things only; anon has no grant at all.
+    table: 'account_things',
+    seed: [{ as: 'victim', sql: `insert into public.account_things (user_id, kind, item_id, body) values ('${VICTIM}', 'kept', 't1104kept', '{"id": "t1104kept", "name": "Porto"}')` }],
+    mine: `user_id = '${VICTIM}'`,
+    mutate: `body = '{"name": "tampered"}'`,
+    forge: `insert into public.account_things (user_id, kind, item_id, body) values ('${VICTIM}', 'journey', 't1104forged', '{}')`,
+    reads: 'private',
+    ownerWrites: true,
+  },
+  {
     // 060: the owner reads and writes their switches; no delete policy.
     table: 'email_prefs',
     seed: [{ as: 'victim', sql: `insert into public.email_prefs (user_id, trip_reminders, lang) values ('${VICTIM}', true, 'nl')` }],
@@ -1087,6 +1097,38 @@ function runTests(bin) {
       const r = runAs('anon', `select coalesce(public.${fn}, 'null')`);
       check(`a visitor may call ${fn.split('(')[0]} and learns nothing from it (063)`, r.ok && r.out === 'null', describe(r));
     }
+
+    // 065 (T1104): the synced things. The owner's sync writes a tombstone
+    // with an upsert, a second user's upsert on the same key cannot take the
+    // row over, the shape checks refuse a bad kind and a non-object body,
+    // and the per-account cap refuses the 1001st row.
+    console.log('');
+    console.log('  The synced things keep one account out of another (065):');
+    const tomb = affectedAs('victim', `insert into public.account_things (user_id, kind, item_id, body, updated_at, deleted_at)
+      values ('${VICTIM}', 'kept', 't1104kept', '{}', now(), now())
+      on conflict (user_id, kind, item_id) do update set body = excluded.body, updated_at = excluded.updated_at, deleted_at = excluded.deleted_at`);
+    check('the owner writes a tombstone over their own row with an upsert', tomb.ok && tomb.out === '1', describe(tomb));
+    const steal = affectedAs('plain', `insert into public.account_things (user_id, kind, item_id, body)
+      values ('${VICTIM}', 'kept', 't1104kept', '{"name": "stolen"}')
+      on conflict (user_id, kind, item_id) do update set body = excluded.body`);
+    check('a second user cannot upsert over the owner\'s row', !steal.ok, describe(steal));
+    const own = affectedAs('plain', `insert into public.account_things (user_id, kind, item_id, body) values ('${PLAIN}', 'kept', 't1104kept', '{}')`);
+    check('the same kind and id under the second user\'s own account is their own row', own.ok && own.out === '1', describe(own));
+    const seenByPlain = countAs('plain', 'account_things', `item_id = 't1104kept'`);
+    check('and they read only that one', seenByPlain.ok && seenByPlain.out === '1', describe(seenByPlain));
+    const thingKind = affectedAs('victim', `insert into public.account_things (user_id, kind, item_id) values ('${VICTIM}', 'secrets', 'x1')`);
+    check('a kind outside the four is refused', !thingKind.ok, describe(thingKind));
+    const thingBody = affectedAs('victim', `insert into public.account_things (user_id, kind, item_id, body) values ('${VICTIM}', 'kept', 'x2', '[1]')`);
+    check('a body that is not an object is refused', !thingBody.ok, describe(thingBody));
+    const thingId = affectedAs('victim', `insert into public.account_things (user_id, kind, item_id) values ('${VICTIM}', 'kept', E'a\\nb')`);
+    check('an id with a control character is refused', !thingId.ok, describe(thingId));
+    psql(bin, TEST_DB, ['-c', `insert into public.account_things (user_id, kind, item_id)
+      select '${VICTIM}', 'journey', 'cap' || g from generate_series(1, 1000 - (select count(*) from public.account_things where user_id = '${VICTIM}')) g`]);
+    const capped = affectedAs('victim', `insert into public.account_things (user_id, kind, item_id) values ('${VICTIM}', 'journey', 'one-too-many')`);
+    check('the 1001st row of one account is refused by the cap', !capped.ok && /at most 1000/.test(capped.err || ''), describe(capped));
+    const capUpdate = affectedAs('victim', `update public.account_things set updated_at = now() where user_id = '${VICTIM}' and item_id = 'cap1'`);
+    check('while an update at the cap still goes through', capUpdate.ok && capUpdate.out === '1', describe(capUpdate));
+    psql(bin, TEST_DB, ['-c', `delete from public.account_things where item_id like 'cap%' or (user_id = '${PLAIN}')`]);
 
     // ---------------------------------------------------------------------
     // 4b. The two closed tables 047 widened (T284). The closed-table probe
