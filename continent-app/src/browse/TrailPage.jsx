@@ -10,7 +10,7 @@ import {
   tripGrade, gradeIsDerived, tripHighlights, ROUTE_TYPES, tripRouteType,
   trailWaymarked, trailSeason,
 } from '../lib/trailCards.js';
-import { trailStory, trailReasons, trailPlace } from '../lib/trailStory.js';
+import { trailStory, trailReasons, trailPlace, isLongWalk, trailDays } from '../lib/trailStory.js';
 import {
   routePoints, routeLength, nearestOnRoute, sliceRoute, remainingRelief,
   hikeTimeMin, isLoopRoute, basesAlong,
@@ -572,7 +572,14 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
   const sacTag = SAC_STEP[src.sac_scale] || SAC_STEP[tr.sac_scale] || 0;
   const gradeStep = isCityDay ? 0 : (sacTag || GRADE_STEP[grade] || 0);
   const gradeEst = !sacTag && (derivedGrade || !grade);
-  const gradeWord = gradeStep ? t('ox.gradeShort', { n: gradeStep, word: t(`ox.grade.t${gradeStep}`) }) : '';
+  // T1092 (D7): a multi-day walk on easy ground reads "Long, 14 days"
+  // where Carta's own grade would stand. A mapper's SAC tag still wins.
+  const longDays = !isCityDay && !sacTag && (isLongWalk(src) || isLongWalk(tr))
+    ? (trailDays(src) || trailDays(tr)) : null;
+  const gradeWord = longDays ? t('trails.gradeLongDays', { n: longDays })
+    : gradeStep ? t('ox.gradeShort', { n: gradeStep, word: t(`ox.grade.t${gradeStep}`) }) : '';
+  // T1092: the name as the source wrote it, when it differs from the title.
+  const srcName = detail?.src_name || tr.src_name || '';
 
   // One way, a loop or there and back: the wire's shape, else the loop test.
   const rt = tripRouteType(src) || tripRouteType(tr);
@@ -889,6 +896,7 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
       photoFallback={{ city: named.name, iso2: tr.country || tr.cc }}
       head={{
         title: named.name,
+        sub: srcName ? t('trails.alsoCalled', { name: srcName }) : '',
         iso2: tr.country || tr.cc,
         where: place ? [place.country, place.city].filter(Boolean).join(', ') : '',
         rating: isCityDay ? (assoc.dest?.rating || null) : (rating || null),

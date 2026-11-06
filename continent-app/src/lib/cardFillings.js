@@ -36,7 +36,7 @@ import { whyLines, routeTitle, paceLine } from './cycleStory.js';
 import {
   HIGHLIGHTS, tripHighlights, tripGrade, gradeIsDerived,
 } from './trailCards.js';
-import { trailClimbUp, trailPlace } from './trailStory.js';
+import { trailClimbUp, trailPlace, isLongWalk } from './trailStory.js';
 import { compassPoint } from './signature.js';
 import { count, stripDashes } from './format.js';
 import { activeLocale } from './localeState.js';
@@ -187,7 +187,9 @@ export function trailFilling(card, { t, countryName = () => null }) {
   const { tr, assoc = {}, kindKey } = card;
   const isCityDay = tr.category === 'citytrip';
   const grade = tripGrade(tr);
-  const gradeKey = grade ? GRADE_KEY[grade] : DIFF_KEY[tr.difficulty] || null;
+  // T1092: a multi-day walk on easy ground reads "Long", not its grade.
+  const gradeKey = isLongWalk(tr) ? 'trails.gradeLong'
+    : grade ? GRADE_KEY[grade] : DIFF_KEY[tr.difficulty] || null;
   const highlights = isCityDay ? [] : tripHighlights(tr);
   const hook = [{ text: t(kindKey), cls: `places-card-kind${isCityDay ? ' city' : ''}` }];
   if (!isCityDay && gradeKey) {

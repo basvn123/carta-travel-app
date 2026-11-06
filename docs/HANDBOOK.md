@@ -1807,22 +1807,39 @@ Carta shows walks, bike routes, beaches, lakes and peaks on their own pages. Eac
    - hard 22 / 120;
    - moderate 14 / 70;
    - otherwise easy.
-   A derived alpine grade needs a high point of at least `DERIVED_ALPINE_MIN_TOP_M = 1500`, or it drops to very_hard.
-4. **Effort** (`EFFORT_LADDER`, distance or ascent):
-   - very_hard over 40 km or 2,200 m;
-   - hard over 25 km or 1,400 m;
-   - moderate over 15 km or 800 m;
-   - easy only at 8 km or less and 350 m or less; anything between is moderate.
+   A derived alpine grade needs a high point of at least `DERIVED_ALPINE_MIN_TOP_M = 1500`, or it drops to very_hard. A derived grade above moderate needs at least `DERIVED_HARD_MIN_RELIEF_M = 200` m between the lowest and highest point, or it drops to moderate (`relief_capped` in `grade_parts`): one steep 90 m span on a route whose top is a 112 m dune is not hard ground (T1092).
+4. **Effort, per day of walking** (`pipeline/trails/difficulty.py`, T1092, ROADMAP D7). Length sets how many days a walk takes; the grade reads one of those days.
+   - Hours by DIN 33466, the same rule as the walking time: `FLAT_KMH = 4`, `UP_MH = 300`, `DOWN_MH = 500`, the slower of flat and vertical time in full plus half the faster, on the route read uphill.
+   - Days: up to `DAY_MAX_H = 10` hours is one day; longer walks are split into stages of `STAGE_H = 6` hours, `days = ceil(hours / 6)`.
+   - One day's hours and climb against `DAY_LADDER` (hours over, or climb over): very_hard 8 h / 1,500 m; hard 6 h / 1,000 m; moderate 3.5 h / 500 m; otherwise easy.
+   - Worked example: the Veluwe Zwerfpad (NL, 285,992 m, 2,888 m up) is 79.2 h, so 14 days of 5.7 h and 206 m of climb: moderate. It used to ship very_hard (the old rule made anything over 40 km very hard).
+   - A walk of `LONG_MIN_DAYS = 2` or more days ships its days as `f.d` on the country row and the detail file (`export_wire.days_of_trip`).
 5. **Final grade** = the harder of terrain and effort (`grade_of`).
 6. Routes drawn downhill are read uphill (`DOWNHILL_MIN_M = 300`, `DOWNHILL_RATIO = 2`).
 7. **Page step.** The page shows the SAC tag as T1 to T6 when present. Otherwise it uses `GRADE_STEP[grade]`, marked estimated (`TrailPage.jsx`, `GradeCard` in `OutdoorParts.jsx`).
+   **Long.** When `f.d` is 2 or more and the grade is moderate or easier, the card, the nearby rows and the PDF say "Long" (`trails.gradeLong`) instead of the grade, and the page's grade fact says "Long, 14 days" (`trails.gradeLongDays`), unless the route carries a SAC tag (`isLongWalk`, `trailDays` in `continent-app/src/lib/trailStory.js`). A long walk on hard, very hard or alpine ground keeps its grade. The filter chips still filter on `f.g`.
 8. **Publish gate.** `difficulty_gate.py` fails the export if any row's `difficulty` differs from `f.g`, or if row count or ids differ from the previous wire. Exit 1 means the previous wire is kept. `validate.py` also flags tag versus terrain contradictions.
 
 **Data behind it.** OSM `sac_scale`, `trail_visibility` and via ferrata tags. Copernicus GLO-30 DEM. Task `trails_attributes`.
 
-**Where it lives.** `pipeline/trails/attributes.py`, `pipeline/trails/way_tags.py`, `pipeline/trails/difficulty_gate.py`, `pipeline/trails/validate.py`, `continent-app/src/browse/TrailPage.jsx`, `continent-app/src/browse/OutdoorParts.jsx`.
+**Where it lives.** `pipeline/trails/attributes.py`, `pipeline/trails/difficulty.py`, `pipeline/trails/way_tags.py`, `pipeline/trails/difficulty_gate.py`, `pipeline/trails/validate.py`, `continent-app/src/browse/TrailPage.jsx`, `continent-app/src/browse/OutdoorParts.jsx`, `continent-app/src/lib/trailStory.js`. Tests: `tests/test_trail_difficulty_names.py`, `continent-app/tests/trailLong.test.mjs`.
 
-**Limits.** Grades on untagged routes are estimates from the terrain model. Not found in code: a check against official national grades.
+**Limits.** Grades on untagged routes are estimates from the terrain model. Not found in code: a check against official national grades. The stage length is one number for every walk; a route's own published stages are not read yet.
+
+### Trail names
+
+**What it does.** A trail is called by a name a traveller can read and say, not by its route code or a script they cannot match to a signpost. The name the source used is kept beside it.
+
+**How it works.** `pipeline/trails/names.py`:
+1. **Title ladder** (`title_ladder`, run by `attributes.py`): Wikidata label, then the relation's name (`name:en`, a Latin `name`, the local language per `LOCAL_LANGS`, `int_name`, any Latin `name:*`), then from and to, then the best landmark passed, then shape and place. A code in the name moves to the ref chip (`split_code`).
+2. **Network prefixes** (`strip_network`, T1092): "European long distance path E7, Andorra" becomes "E7, Andorra"; the E-path phrase in English, German, Dutch, French, Polish, Czech, Hungarian, Slovak, Spanish, Italian, Portuguese, Danish and Norwegian folds to its code, "Sentier de Grande Randonnee 10" to "GR 10", and "- part Poland" to ", Poland".
+3. **Transliteration** (`transliterate`, T1092), only when no Latin name exists in the tags: Serbian Latin for RS, ME, BA and XK; the same caron letters for MK (with gj, kj, dz); the Bulgarian streamlined system (sht, a for the hard sign); the Ukrainian national system (h for ge); a BGN-style base table otherwise; Greek by ELOT 743 without its rarer rules.
+4. **Shorten** (`cap_title`): at most `TITLE_MAX = 42` characters, cut between segments or words, never mid bracket, no ellipsis.
+5. **On the wire** (`export_wire.py`): `name` is `wire_name(title, country)` (steps 2 to 4 again, idempotent, so a wire built before the ladder re-ran still reads clean). `src_name` (country row and detail file) is the relation's own `name` tag, at most `ORIGINAL_MAX = 64` characters, present only when it differs from `name`. The page prints it under the title as "Also called ..." (`trails.alsoCalled`).
+
+**Where it lives.** `pipeline/trails/names.py`, `pipeline/trails/attributes.py` (`title_of`), `pipeline/trails/export_wire.py`, `continent-app/src/browse/TrailPage.jsx`. Tests: `tests/test_trail_titles.py`, `tests/test_trail_difficulty_names.py`.
+
+**Limits.** On the wire of 2026-09-13, 643 of 17,619 rated rows are titled in Cyrillic or Greek, 37 carry an E-path phrase and 1,925 are over 42 characters; `wire_name` brings these to 1, 0 and 0 (2,523 names change), but only once the owner reruns `trails_attributes` and the export (T1092-a). Transliteration is by letter, so a name follows the national system, not always the spelling on the local signpost.
 
 ### Trail distance, climb and walking time
 

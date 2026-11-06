@@ -63,6 +63,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from db import connect  # noqa: E402  (also puts pipeline/ on sys.path)
 from validate import PILOT_COUNTRIES  # noqa: E402
 import route_schema  # noqa: E402  (ROUTES.md R1: the route-layer keys)
+import names  # noqa: E402  (T1092: display names on the wire)
 
 # The lake layer's card-shape helpers, loaded by path as the beach, peak and
 # trip layers load them. The frame here is the 9/4 .places-tcard strip.
@@ -638,8 +639,11 @@ def wire_difficulty(t):
     # grade the row carries (the same two floors attributes.py applies).
     import attributes  # noqa: E402  (psycopg, db: already imported above)
     old = t.get("difficulty")
+    # T1092: the effort floor reads one day of the walk, uphill, so a flat
+    # multi-day path is not floored at very_hard by its length.
     floors = [old if old in attributes.GRADE_RANK else None,
-              attributes.effort_grade(t) if t.get("distance_m") else None,
+              attributes.effort_grade(attributes.oriented(t))
+              if t.get("distance_m") else None,
               attributes.SAC_GRADE.get(sac_scale_of(t))]
     return attributes._max_grade(*floors) or old
 
@@ -734,7 +738,24 @@ def filters_of(t):
     surface = t.get("surface") or {}
     if surface.get("road_share"):
         out["road"] = surface["road_share"]
+    # T1092: the days the walk takes (difficulty.py, DIN 33466 hours in
+    # 6 h stages), only when it is a multi-day walk and only beside a grade.
+    # The app reads it to print "Long" where the grade would otherwise make
+    # a flat 286 km path read "very hard".
+    days = days_of_trip(t)
+    if out and days:
+        out["d"] = days
     return out or None
+
+
+def days_of_trip(t):
+    """The days a trip takes when that is two or more, else None."""
+    if not t.get("distance_m"):
+        return None
+    import attributes
+    import difficulty
+    days = difficulty.day_effort(attributes.oriented(t))["days"]
+    return days if difficulty.is_long(days) else None
 
 
 def facet_counts(items):
@@ -807,7 +828,9 @@ def filter_model():
             "sources": ["tagged", "derived"],
             "from": "worst member way sac_scale / trail_visibility / "
                     "via_ferrata_scale, else DEM sustained gradient and "
-                    "ascent per km; raised by distance and ascent",
+                    "ascent per km; raised by the hours and climb of one "
+                    "day (DIN 33466, multi-day walks in 6 h stages)",
+            "days_key": "f.d",
         },
         "distance": {
             "key": "distance_m",
@@ -893,7 +916,7 @@ def wire_item(t, n_stops, hier=None):
     draw it and credit it, and a pointer to the rest."""
     item = {
         "id": t["id"],
-        "name": t["title"],
+        "name": names.wire_name(t["title"], t["country"]),
         "category": t["category"],
         "country": t["country"],
         "summary": summary_of(t["description"]),
@@ -912,6 +935,11 @@ def wire_item(t, n_stops, hier=None):
     rg = rg_of(t)
     if rg:
         item["rg"] = rg
+    # T1092: the source name, when it differs from the display name, so a
+    # search for "European long distance path E7" still finds "E7, Andorra".
+    src_name = names.source_label(t.get("raw_tags"), t["title"], item["name"])
+    if src_name:
+        item["src_name"] = src_name
     # The tier, on every row, and the rating ONLY on a rated one. Absent, not
     # null: the app tests for the key, and a null would render as a number
     # nobody earned the moment somebody wrote `row.rating ?? 0`.
@@ -974,9 +1002,10 @@ def detail_item(t, stops, generated_at, hier=None):
     """One trip in full: the on-demand half. Full-resolution 3D geometry lives
     here and only here, one file per trip, so nothing serves the lab's
     geometry in bulk."""
+    shown = names.wire_name(t["title"], t["country"])
     out = {
         "id": t["id"],
-        "name": t["title"],
+        "name": shown,
         "category": t["category"],
         "country": t["country"],
         "generated_at": generated_at,
@@ -1033,6 +1062,12 @@ def detail_item(t, stops, generated_at, hier=None):
         out["publisher"] = t["publisher"]
     if t.get("waymark_ref"):
         out["waymark_ref"] = t["waymark_ref"]
+    # T1092: the name as the source wrote it, in its own field, only when it
+    # differs from `name` ("European long distance path E7, Andorra" beside
+    # "E7, Andorra"; the Cyrillic original beside its transliteration).
+    src_name = names.source_label(t.get("raw_tags"), t["title"], shown)
+    if src_name:
+        out["src_name"] = src_name
     if t.get("family_key"):
         out["family"] = {"k": t["family_key"], "n": t.get("family_name"),
                          "size": t.get("family_size") or 1}

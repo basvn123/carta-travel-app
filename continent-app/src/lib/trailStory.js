@@ -126,7 +126,32 @@ export const GRADE_LABEL_KEY = {
   alpine: 'trails.gradeAlpine',
 };
 export function gradeLabelKey(src) {
+  if (isLongWalk(src)) return 'trails.gradeLong';
   return GRADE_LABEL_KEY[trailGrade(src)] || null;
+}
+
+/**
+ * T1092 (ROADMAP D7): the days a walk takes, from the wire's `f.d`
+ * (pipeline/trails/difficulty.py: DIN 33466 hours, walked in 6 h stages
+ * once a walk passes 10 h). Absent on a one-day walk, so null there.
+ */
+export function trailDays(src) {
+  const d = Number(src?.f?.d);
+  return Number.isFinite(d) && d >= LONG_MIN_DAYS ? Math.round(d) : null;
+}
+export const LONG_MIN_DAYS = 2;
+const GRADE_RANK = { easy: 0, moderate: 1, hard: 2, very_hard: 3, alpine: 4 };
+
+/**
+ * A multi-day walk whose grade (already the harder of the ground and ONE
+ * day's effort) is moderate or less reads "Long", not by its grade: a flat
+ * 286 km path is long, not very hard. A multi-day walk on hard ground keeps
+ * its grade, because that is the thing to know first.
+ */
+export function isLongWalk(src) {
+  if (!trailDays(src)) return false;
+  const g = trailGrade(src);
+  return g == null || (GRADE_RANK[g] ?? 9) <= GRADE_RANK.moderate;
 }
 
 /**

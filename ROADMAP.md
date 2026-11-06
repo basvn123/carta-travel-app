@@ -597,7 +597,7 @@ docs/
 | D4 | Truth set | 150 items verified by hand, scored per release | M | P3 | todo |
 | D5 | Scraper and source health | Yield, drift and staleness alerts reach admin and email | S | P1 | in progress (T1074: box steps T1074-c) |
 | D6 | Coverage fairness | Parity table per country, region and language in `docs/data/` | S | P4 | todo |
-| D7 | Trails and outdoor fill | Trail targets in the table met; display names cleaned; difficulty weighs climb and terrain, not length; mountains and lakes filled (P-21, P-30, P-36) | L | P1 | todo |
+| D7 | Trails and outdoor fill | Trail targets in the table met; display names cleaned; difficulty weighs climb and terrain, not length; mountains and lakes filled (P-21, P-30, P-36) | L | P1 | in progress (T1092: display names and per-day difficulty in code; rebuild is T1092-a) |
 | D8 | Sea temperature | `sea_temp` run, beaches re-exported, `climate.water_c` filled, beach strip draws (P-22) | S | P1 | todo |
 | D9 | Place text and photos | Intros, guide text and galleries to target, French, Italian and UK first; POI descriptions; intros in six languages (P-23, P-24) | L | P2 (top 300), P4 | todo |
 | D10 | Prices completed | Local transport fare table for 741 places; bed prices for the 515 missing places; "not yet measured" shown honestly (P-25, P-26) | M | P1 | in progress (T1075; fares wait on T714-b) |
