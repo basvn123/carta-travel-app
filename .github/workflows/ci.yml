@@ -119,3 +119,6 @@ jobs:
       # regenerating it (python -I scripts/docs/config_reference.py).
       - name: Config reference lists every config key
         run: python -I scripts/docs/config_reference.py --check
+      # B6 (T1167): the task catalogue and the Supabase schema reference match their sources.
+      - name: Reference (tasks, Supabase) is fresh
+        run: python -I scripts/docs/build_reference.py --check
