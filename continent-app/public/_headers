@@ -144,6 +144,10 @@
 #     files come from data.carta-europetravel.com/ask/model/, already in
 #     connect-src; worker-src 'self' blob: was already enough.
 #
+#   - T1120 (H2): the error tracker's ingest host is NOT listed yet, on purpose: it
+#     is the exact host in the owner's DSN (o<id>.ingest.de.sentry.io, no wildcard),
+#     added to connect-src with the DSN (register row T1120-a). Until then the
+#     reporter is a no-op and the CSP would refuse it anyway.
 #   - wss://*.supabase.co removed from connect-src (T1079, C5): no code opens a
 #     Supabase realtime channel (grep for .channel( and realtime in src/ is
 #     empty), so the socket host allowed nothing. Add it back with the first

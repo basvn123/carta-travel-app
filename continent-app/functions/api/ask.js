@@ -22,6 +22,7 @@
 import { createEmbedder } from '../_lib/askEmbed.js';
 import { search } from '../_lib/askScore.js';
 import { fail, methodNotAllowed, createLimiter, overLimit, rateRefusal, parseAskQuery } from '../_lib/guard.js';
+import { withTracking } from '../_lib/track.js';
 
 const BASE = '/search/ask/';
 const HOLD = 3600;
@@ -70,7 +71,7 @@ async function source(s, name, env, request) {
   return s.sources.get(name);
 }
 
-export async function onRequestGet({ request, env }) {
+async function handleGet({ request, env }) {
   const url = new URL(request.url);
   const parsed = parseAskQuery(url.searchParams);
   if (!parsed) return fail(400, 'bad_request');
@@ -123,3 +124,5 @@ export async function onRequestGet({ request, env }) {
     },
   });
 }
+
+export const onRequestGet = withTracking('api/ask', handleGet);

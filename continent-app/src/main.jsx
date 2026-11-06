@@ -7,6 +7,7 @@ import { ErrorBoundary } from './components/ErrorBoundary.jsx';
 import { installAffiliateClickCounter } from './lib/launchEvents.js';
 import { trackChannelVisit } from './lib/channelCounts.js';
 import { installTouchFeedback } from './lib/touchFeedback.js';
+import { installErrorReporting } from './lib/errorReporter.js';
 import './styles.css';
 
 // One document listener counts clicks on decorated partner links, by the
@@ -15,6 +16,8 @@ import './styles.css';
 installAffiliateClickCounter();
 trackChannelVisit();
 installTouchFeedback();
+// Error tracking (T1120): a no-op until VITE_ERROR_DSN is set.
+installErrorReporting();
 
 // T1000: a tab left open across a deploy asks for chunks the new deploy no
 // longer serves. Vite fires vite:preloadError when a JS or CSS chunk will not

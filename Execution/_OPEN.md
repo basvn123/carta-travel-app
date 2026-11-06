@@ -1531,3 +1531,9 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1119-a | T1119 | Rewrite the 8 baselined f-string SQL calls in pipeline (landcover, harvest_pois_overture, stays, crosscheck_portals) to bound parameters or an identifier allow-list, then shrink `.semgrep/baseline.json`; none is exploitable today (build-box DuckDB/SQLite, own identifiers) | next task | open | |
 | T1119-b | T1119 | Make the `static-analysis / semgrep` check required on `main` in GitHub branch protection so a red gate blocks merging | user | open | |
 | T1119-c | T1119 | Semgrep skips `supabase/functions/parse-booking/logic.mjs` (parser syntax error on a regex literal at line 208), so that Edge Function is unscanned; split the regex or report upstream, and write research item C-R4 up properly (registry packs vs local rules, CodeQL later) | next task | open | |
+| T1120-a | T1120 | Create the Sentry EU (or GlitchTip) project, turn on "Prevent storing of IP addresses", sign the DPA, copy the DSN (Execution/P15/T1120-error-tracking.md) | user | open | |
+| T1120-b | T1120 | Add the exact ingest host to connect-src in public/_headers, set VITE_ERROR_DSN and the SENTRY_DSN Pages secret, redeploy | user | open | |
+| T1120-c | T1120 | Throw one probe error on the preview, confirm one scrubbed event, then test the VITE_ERROR_TRACKING=off kill switch | user | open | |
+| T1120-d | T1120 | Wire the Supabase Edge Functions and the pipeline to the tracker (Deno wrapper over src/lib/errorEvent.js, SENTRY_DSN secret) | next task | open | |
+| T1120-e | T1120 | Upload source maps on deploy in scripts/build-pages.mjs so frames are readable | next task | open | |
+| T1120-f | T1120 | Privacy session: add the processor row from T1120-error-tracking.md to docs/legal/ARTICLE30.md and the privacy policy | next task | open | |
