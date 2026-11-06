@@ -108,6 +108,8 @@ function useTurn(turn, vocab, ctx) {
     const shown = [];
     writeAnswer(pack, {
       knownPlaces,
+      cards: facts.picks.slice(0, SHOWN_PLACES).map((p) => ({ id: p.id, city: p.dest.city })),
+      type: facts.type,
       signal: ctl.signal,
       onSentence: (s) => { shown.push(s); setWritten({ state: 'writing', sentences: [...shown], backend: null }); },
     }).then((r) => {
