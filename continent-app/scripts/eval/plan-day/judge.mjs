@@ -10,7 +10,7 @@
  *            JSON schema of plan-day-lib JUDGE_SCHEMA. Pin the model; judge
  *            with a different model than the one that wrote the plans
  *            (self-preference, Panickssery et al. 2024).
- *   session  a Claude Code or Cowork session reads sample.json and rubric.md
+ *   session  a Claude Code or Cowork session reads sample.json and the rubric (prompts/eval-judge)
  *            (never sample-key.json) and writes the verdicts file by hand,
  *            in the shape below. No API call of any kind.
  * The Claude API is never used here (CLAUDE.md).

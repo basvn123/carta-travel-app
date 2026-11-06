@@ -178,9 +178,9 @@ def previous_block(rec):
     old = {k: [_text(x) for x in rec.get(k) or [] if isinstance(x, str)] for k in FIELDS}
     if not any(old.values()):
         return ""
-    return ("This trip already has older notes, written as plain sentences. Keep what is true and specific "
-            "to this trip, put it into the fields, and drop any price or distance. Do not copy the wording.\n\n"
-            + json.dumps(old, ensure_ascii=False, indent=1))
+    # The lead-in is the registry's trips-shared prompt (prompts/trips-shared, T1140).
+    return T._prompt_registry().prompt("trips-shared").text(
+        "previousNotes", notes=json.dumps(old, ensure_ascii=False, indent=1))
 
 
 def build_prompt(rec):
@@ -332,8 +332,7 @@ def backfill_one(rec, client, out_dir, *, df=None, reuse=True, today=None):
             errs = [perr] if perr else module_errors(frag, rec, df)
             if not errs:
                 break
-            prompt = (user + "\n\nYour previous answer failed these checks. Answer again, fixing every one:\n"
-                      + "\n".join(f"- {e}" for e in errs[:30]) + "\n")
+            prompt = T.retry_prompt(user, errs)
         else:
             rej = os.path.join(out_dir, "rejected")
             os.makedirs(rej, exist_ok=True)

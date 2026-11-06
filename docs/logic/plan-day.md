@@ -91,13 +91,13 @@ The allowance itself (tiers, `ai_consume`, the shared daily ceiling, refunds in 
 ### PLANDAY-012 Generation settings
 - Decides: how varied and how long a plan can be.
 - Rule: structured JSON output (`RESPONSE_SCHEMA`: summary, stops with id, name, arrive, dwellMin, why, inCatalog, isEvent); temperature 0.25, 0.45 for a refine so it differs; 8192 output tokens; a prompt over the guard's limit is 400 `too_big`.
-- Constant: `RESPONSE_SCHEMA` in `supabase/functions/plan-day/index.ts:81`; `index.ts:560` and `:565`; `LIMITS.planPromptChars` in `supabase/functions/_shared/aiGuard.mjs:40` = 60000
+- Constant: `RESPONSE_SCHEMA` in `supabase/functions/plan-day/prompt.mjs` (the `schema` fragment of `prompts/plan-day/v1.md`, T1140); `index.ts:560` and `:565`; `LIMITS.planPromptChars` in `supabase/functions/_shared/aiGuard.mjs:40` = 60000
 - Test: no test
 
 ### PLANDAY-013 What the prompt asks for
 - Decides: the shape of the day the model proposes.
 - Rule: catalogue ids only; relaxed 3 or 4 stops, balanced 5 or 6, packed 7 or 8 (several days: about 4, 5 or 7 a day, strongest first); start at the traveller's start time or 09:30 and finish by 18:00; June to August puts indoor stops 13:00 to 16:00; a group of 5 or more gets the large-group note; named places must all appear; a profile line only for each answer given; output in the traveller's language with no em or en dashes.
-- Constant: `PACE_STOPS` in `supabase/functions/plan-day/index.ts:113`; `buildPrompt` `index.ts:129` to `:222`
+- Constant: `buildPrompt` in `supabase/functions/plan-day/prompt.mjs`; the text is the registry prompt `prompts/plan-day/v1.md` (fragments `pace.relaxed`, `pace.balanced`, `pace.packed`, `oneDay`, `multiDay`; T1140)
 - Test: no test
 
 ### PLANDAY-014 Events beside the day

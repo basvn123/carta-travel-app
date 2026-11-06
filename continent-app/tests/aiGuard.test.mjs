@@ -300,7 +300,8 @@ test('plan-day, suggest-city and parse-booking guard input, the system slot, the
     // T1137: suggest-city's prompt text is unchanged until E5, so its wish is scrubbed but not fenced yet (T1137-c).
     ['../../supabase/functions/suggest-city/index.ts', ['guardCityInput(', 'guardCityOutput(', 'guardCityPayload(cached.payload)'], false],
   ]) {
-    const src = read(f);
+    // T1140: the prompt (and its data blocks) moved to prompt.mjs beside index.ts.
+    const src = `${read(f)}\n${read(f.replace('index.ts', 'prompt.mjs'))}`;
     for (const fn of fns) assert.ok(src.includes(fn), `${f} lacks ${fn}`);
     // The security rules ride in the system slot, through aiModels (T1137).
     assert.ok(/callModel\(\{[\s\S]{0,120}system: security,/.test(src), `${f}: the rules are not in the system slot`);

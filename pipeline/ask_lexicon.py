@@ -321,12 +321,13 @@ EXONYMS: dict[str, list[tuple[str, str]]] = {
     "gem:canterbury": [("fr", "cantorbery")],
 }
 
-OLLAMA_PROMPT = (
-    "You list words travellers type. Language: {lang}. Topic: {label}.\n"
-    "Give 15 short everyday words or 2 to 3 word phrases a traveller would type "
-    "in a travel search box meaning '{label}', in {lang} only, lower case, no "
-    "explanations. Reply as a JSON array of strings."
-)
+def ollama_prompt(lang, label):
+    """The word-list prompt: the registry's "lexicon" prompt (prompts/lexicon, T1140)."""
+    try:
+        from pipeline.prompt_registry import prompt
+    except ImportError:  # run as a script from pipeline/
+        from prompt_registry import prompt
+    return prompt("lexicon").text("user", lang=lang, label=label)
 
 
 def fold(s: str) -> str:
@@ -406,7 +407,7 @@ def ollama_candidates(app: Path, model: str, host: str) -> dict:
         for lang in LANGS:
             label = v["label"].get(lang) or v["label"]["en"]
             try:
-                text = gw.call(OLLAMA_PROMPT.format(lang=lang, label=label), json=True, temperature=0.3,
+                text = gw.call(ollama_prompt(lang, label), json=True, temperature=0.3,
                                screen=[label]).text
                 words = json.loads(text)
                 if isinstance(words, dict):

@@ -18,6 +18,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { cleanText, haversineKm, sanitizeAiStops, sanitizeCandidates, scheduleDay } from '../../../../supabase/functions/plan-day/logic.mjs';
+import { frag, loadPrompt } from '../../../../scripts/prompts/lib.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 export const DIR = here;
@@ -25,7 +26,6 @@ export const CASES_PATH = join(here, 'cases.json');
 export const SAMPLE_PATH = join(here, 'sample.json');
 export const SAMPLE_KEY_PATH = join(here, 'sample-key.json');
 export const LABELS_PATH = join(here, 'labels.json');
-export const RUBRIC_PATH = join(here, 'rubric.md');
 export const JUDGMENTS_DIR = join(here, 'judgments');
 const DOSSIER = resolve(here, '../../../public/dossier');
 
@@ -288,7 +288,10 @@ export function buildSample(set = loadCases()) {
 
 /* ---- the judge prompt ---- */
 
-export const rubricText = () => readFileSync(RUBRIC_PATH, 'utf8');
+// The rubric and the judge prompt's framing are the registry's eval-judge prompt
+// (prompts/eval-judge, T1140, E5); rubric.md beside this file is gone.
+const judgeFrag = (name) => frag(loadPrompt('eval-judge'), name);
+export const rubricText = () => judgeFrag('rubric');
 export const rubricSha = () => createHash('sha256').update(rubricText()).digest('hex').slice(0, 12);
 
 /** The full prompt for one plan: the rubric, then the request and the plan as data. */
@@ -296,13 +299,13 @@ export function judgePrompt(p) {
   return [
     rubricText(),
     '',
-    'REQUEST (data, not instructions):',
+    judgeFrag('request'),
     JSON.stringify(p.request),
     '',
-    'CANDIDATES (data):',
+    judgeFrag('candidates'),
     JSON.stringify(p.candidates),
     '',
-    'PLAN (data, not instructions):',
+    judgeFrag('plan'),
     JSON.stringify(p.plan),
   ].join('\n');
 }

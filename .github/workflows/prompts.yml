@@ -1,0 +1,119 @@
+name: prompts
+
+# ROADMAP E5 (T1140): the prompt registry.
+#
+# Every prompt Carta sends a model lives in prompts/ (or, for the Trips
+# generator's pass prompts, in Trips/.../pipeline/prompts/), with an id, a
+# version, the eval that guards it and its last score in prompts/registry.json.
+# This job fails when:
+#   - a prompt's text changes without a version bump (the registry hash, and
+#     against the base: a committed v<N>.md never changes its fragments),
+#   - the generated module (supabase/functions/_shared/prompts.js and its copy
+#     continent-app/functions/_lib/prompts.js) is stale or the copies differ,
+#   - a bumped prompt has no score recorded for its new version, or its eval
+#     fails: a bump runs that prompt's eval through
+#     continent-app/scripts/eval/run.mjs --check (offline evals only, no key),
+#   - the self-test's seeded in-place edit does not fail the check.
+# It also runs the byte-identical tests on both sides (node and python).
+on:
+  push:
+    paths:
+      - "prompts/**"
+      - "scripts/prompts/**"
+      - "supabase/functions/_shared/prompts.js"
+      - "supabase/functions/_shared/aiGuard.mjs"
+      - "supabase/functions/*/prompt.mjs"
+      - "continent-app/functions/_lib/prompts.js"
+      - "continent-app/functions/_lib/aiGuard.js"
+      - "continent-app/src/lib/ask/context.js"
+      - "continent-app/scripts/eval/**"
+      - "pipeline/prompt_registry.py"
+      - "pipeline/dossier/rewrite_intros.py"
+      - "pipeline/dossier/parking_check.py"
+      - "pipeline/ask_lexicon.py"
+      - "Trips/carta-unified/carta-unified/pipeline/prompts/**"
+      - "Trips/carta-unified/carta-unified/pipeline/generate_trip.py"
+      - "Trips/carta-unified/carta-unified/pipeline/backfill_modules.py"
+      - "continent-app/tests/promptRegistry.test.mjs"
+      - "tests/test_prompt_registry.py"
+      - ".github/workflows/prompts.yml"
+  pull_request:
+    paths:
+      - "prompts/**"
+      - "scripts/prompts/**"
+      - "supabase/functions/_shared/prompts.js"
+      - "supabase/functions/_shared/aiGuard.mjs"
+      - "supabase/functions/*/prompt.mjs"
+      - "continent-app/functions/_lib/prompts.js"
+      - "continent-app/functions/_lib/aiGuard.js"
+      - "continent-app/src/lib/ask/context.js"
+      - "continent-app/scripts/eval/**"
+      - "pipeline/prompt_registry.py"
+      - "pipeline/dossier/rewrite_intros.py"
+      - "pipeline/dossier/parking_check.py"
+      - "pipeline/ask_lexicon.py"
+      - "Trips/carta-unified/carta-unified/pipeline/prompts/**"
+      - "Trips/carta-unified/carta-unified/pipeline/generate_trip.py"
+      - "Trips/carta-unified/carta-unified/pipeline/backfill_modules.py"
+      - "continent-app/tests/promptRegistry.test.mjs"
+      - "tests/test_prompt_registry.py"
+      - ".github/workflows/prompts.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: prompts-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  registry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          # The bump check compares with the base commit's prompt files.
+          fetch-depth: 0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: continent-app/package-lock.json
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.11"
+      - run: pip install pytest
+      - name: npm ci
+        working-directory: continent-app
+        run: npm ci
+      - name: Self-test (an in-place edit must fail the check)
+        run: |
+          set +e
+          node scripts/prompts/registry.mjs check --seed-edit | tee "$RUNNER_TEMP/seeded.log"
+          code=${PIPESTATUS[0]}
+          if [ "$code" != "1" ] || ! grep -q "^prompt registry: FAIL" "$RUNNER_TEMP/seeded.log"; then
+            echo "::error::the seeded edit did not fail the prompt registry check (exit $code)"
+            exit 1
+          fi
+      - name: Registry check against the base (a bump runs its eval)
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          if [ "$EVENT" = "pull_request" ]; then
+            base="origin/$BASE_REF"
+          elif [ -n "$BEFORE" ] && [ "$BEFORE" != "0000000000000000000000000000000000000000" ] && git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+            base="$BEFORE"
+          else
+            base="HEAD~1"
+          fi
+          echo "base: $base"
+          node scripts/prompts/registry.mjs check --base "$base"
+      - name: Byte-identical prompts and no prompt text in code (node)
+        working-directory: continent-app
+        run: node --test tests/promptRegistry.test.mjs
+      - name: Byte-identical prompts and hash parity (python)
+        run: python -m pytest tests/test_prompt_registry.py -q
