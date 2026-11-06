@@ -6,7 +6,10 @@ import { Button, ChoiceRows, IconButton } from '../../components/ui/index.js';
 import { ClockIcon, SettingsIcon } from '../../components/Icons.jsx';
 import { PlanStage, SheetHead } from './PlanStage.jsx';
 import { QUESTIONS } from './questions.js';
-import { setupScreens, continueTo, prevScreen, progressOf } from './flowGraph.js';
+import { firstSetup, tripUnderWay, continueTo, prevScreen, progressOf } from './flowGraph.js';
+import { normalizeSettings } from './tripSettings.js';
+import { markQuickStart } from './quickStart.js';
+import { todayISO } from '../../lib/dates.js';
 import { QuestionBody } from './QuestionScreen.jsx';
 import { useBcp47, useMonths, useTripSettings, whenText } from './flowHooks.js';
 import { FlowRail } from './FlowRail.jsx';
@@ -55,6 +58,8 @@ export function PlanFlow({
     setScreen('carta');
   }, [openAt?.n]); // eslint-disable-line react-hooks/exhaustive-deps -- one open per door tap
   const [kind, setKind] = useState('new');
+  // T1103: the trip-kind sheet is asked only while a trip is under way.
+  const [kindAsked, setKindAsked] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const gearRef = useRef(null);
   const sheetRef = useRef(null);
@@ -79,15 +84,28 @@ export function PlanFlow({
     sheetRef.current?.scrollIntoView?.({ block: 'start' });
   }, [screen]);
 
-  const list = useMemo(() => [...setupScreens(settings), 'create'], [settings]);
+  // T1103 (G12): a new trip asks Tell, who, when and from, then is made
+  // and opens on its priced trips; the rest refines them from there.
+  const list = useMemo(() => [...firstSetup(settings), 'create'], [settings]);
   const go = (id) => setScreen(id);
+  /** The trip made with its defaults (no name, cover or buddies yet; the
+   *  trip settings hold them), the planner told to open on the trips. */
+  const quickCreate = (s) => {
+    save(normalizeSettings({ ...s, trip: { ...s.trip, name: (s.trip.name || '').trim(), created: s.trip.created || Date.now() } }));
+    markQuickStart();
+    if (onCreated) onCreated();
+  };
   const next = (id, s) => {
-    const l = [...setupScreens(s), 'create'];
+    const l = [...firstSetup(s), 'create'];
     // Skip only what the Tell sentence answered; a question answered on its
     // own screen is the next stop again (continueTo).
-    go(continueTo(l, id, s, 'create') || 'create');
+    const k = continueTo(l, id, s, 'create') || 'create';
+    // A trip under way keeps its Create screen (it names a trip already
+    // travelled); a new trip goes straight to its priced trips.
+    if (k === 'create' && s.kind !== 'now') { quickCreate(s); return; }
+    go(k);
   };
-  const back = () => go(prevScreen(list, screen) || 'kind');
+  const back = () => go(prevScreen(list, screen) || (kindAsked ? 'kind' : 'home'));
 
   const draft = loadTripDraft();
   const hasTrip = Boolean(settings.trip.created || draft?.stops?.length || draft?.planId);
@@ -111,7 +129,11 @@ export function PlanFlow({
             // no trip made yet) never hands its old answers to the new plan.
             tripsStore.startNew();
             setKind('new');
-            go('kind');
+            // T1103 (G12, P-33): the choice between a new trip and the one
+            // under way is asked only when a trip is under way today.
+            const ask = tripUnderWay(trips, todayISO());
+            setKindAsked(ask);
+            go(ask ? 'kind' : 'tell');
           }}
           onOpenTrip={(trip) => {
             if (trip.device) tripsStore.open(trip.id);
@@ -139,7 +161,8 @@ export function PlanFlow({
           key={cartaStart?.n || 'carta'}
           initialStyle={cartaStart?.style || null}
           initialCountry={cartaStart?.cc || null}
-          titleTag={Title}
+          titleTag={Title}
+
           onOpenJourney={(id) => (onOpenJourney ? onOpenJourney(id) : onNavigate('trips'))}
         />
       </div>
@@ -216,8 +239,8 @@ export function PlanFlow({
         <SheetHead
           onBack={back}
           backLabel={t('pf.back')}
-          position={t('pf.position', { x: pos.index + 1, n: list.length })}
-          marks={list.map((id) => ({ key: id, now: id === screen, done: settings.answered.includes(id) }))}
+          position={t('pf.position', { x: pos.index + 1, n: steps.length })}
+          marks={steps.map((id) => ({ key: id, now: id === screen, done: settings.answered.includes(id) }))}
         />
         <h2 className="pf-title" tabIndex={-1}>{q ? t(q.titleKey) : ''}</h2>
         <QuestionBody

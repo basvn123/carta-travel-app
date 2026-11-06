@@ -1565,25 +1565,26 @@ Planning is everything that turns "I want to go somewhere" into a dated, priced 
 
 ### Plan home and the plan flow
 
-**What it does.** Plan's first page shows "New trip", a door to Carta's own trips, the next upcoming trip ("Up next" with a countdown and nights), and the traveller's trips grouped as upcoming, planning and past. Starting a trip opens one-question screens: a free "Tell Carta" sentence, what is booked, who goes, where to sleep, priority, when, from where, the way there, and which airports are in reach. Then the traveller picks how much Carta plans.
+**What it does.** Plan's first page shows "New trip", a door to Carta's own trips, the next upcoming trip ("Up next" with a countdown and nights), and the traveller's trips grouped as upcoming, planning and past. Starting a trip (T1103, G12) opens four one-question screens: a free "Tell Carta" sentence, who goes, when and from where. The trip is then made and opens straight on its priced trips; everything else (what is booked, where to sleep, priority, the way there, the airports, and the help-me-choose questions) refines those trips from there.
 
 **How it works.**
 1. Home (`PlanHome.jsx`): a trip is "past" when its end is before today, "upcoming" when it has a start date, else "planning" (`tripState`). Drafts with nothing in them can be cleared in one step. The Carta's own trips door shows a fan of style photos with the month's style in the middle (`SEASON` map, for example July and August water sports). Kept trips with a price drop link to My trips.
 2. Tell Carta (`lib/plan/parseTrip.js`): the sentence is read on the device with no model and no network. It reads places from the catalogue, month or dates, nights, adults, children and babies, likes, origin, budget (a person or the group, the trip or a day), what is booked, stay type and way of travel, in 6 languages. Each answer keeps `from: 'words'`; a screen answer always wins over the words (`tellChips.js`). Files dropped here go to parse-booking.
-3. Setup order (`flowGraph.js` `SETUP`): tell, booked, who, sleep, priority, when, from, way, airports. When drops out when bookings fix the dates; from and way drop out when flights are booked; airports is asked only when the way there may fly. A trip already under way uses `NOW_SETUP` (where now, until when).
-4. Continue always goes to the next screen; it only skips a screen the words answered and the traveller has not seen.
-5. Create, then four doors (`TRIP_DOORS`): guide (Help me choose, the trip finder), flight (find my flight first), know (I know where), booked. With stays booked the flow goes straight to the stays.
-6. Planning steps (`wizard/wizardSteps.js`), prefixed `p:`: plain path Where, then Stay or Trips, then Getting there, then Finish. Travel booked adds From; beds booked puts Your stays in place of Where; travel and beds booked drops Getting there.
-7. Where: pick countries and places, or a link to Google Flights Explore from the departure airport.
-8. Stay step (`StepStay.jsx`): the traveller picks cities and `lib/cartaRoute.js` orders them (nearest neighbour, then 2-opt and Or-opt) and shares out the nights by a decaying value per extra night, so a city with more to do keeps more nights. Distances are straight lines x `ROAD_FACTOR = 1.25`. It offers one base or changing stays, and curated route shapes fitted to the trip's nights.
-9. Your stays step (`StepStays.jsx`): with beds booked, one card per stay with its nights, dates, a search for the town and the price paid.
-10. When step: exact dates on a two-month calendar or nights in a month, up to `MAX_TRIP_NIGHTS = 60`.
-11. Getting there: one card per leg (out, between stops, home), priced on the flight Carta found or by the traveller.
-12. Finish / Ready to book: the route as a timeline and the receipt lines from `lib/tripTotal.js`.
+3. First run (T1103, `flowGraph.js` `FIRST_SETUP`, `firstSetup`): a new trip asks tell, who, when, from. Start planning goes straight to Tell; the "what do you want to plan" sheet shows only while a device trip is under way today (`tripUnderWay`). After From the trip is made with its defaults (no name, cover or buddies; all in the trip settings gear) and `quickStart.js` marks it, so `TripFlow` opens on the priced trips with no Create screen, no trip home and no questions. The trips show a refine card (`RefineCard.jsx`): "Where you sleep" (the sleep screen, back to the trips) and "Fit these to me" (the help-me-choose questions; back on the first returns to the trips). With "What are you up for" never asked the finder ranks by `BROAD_TYPES` (city, culture, food) in `lib/recommend/candidates.js` `broadWhenUnasked`; no like is written or shown. Measured with `scripts/verify_plan_short.mjs`: 23 screens and 31 taps to the first priced trip before, 5 and 6 after.
+4. Full setup order (`flowGraph.js` `SETUP`, still the trip settings' list and a trip under way's run): tell, booked, who, sleep, priority, when, from, way, airports. When drops out when bookings fix the dates; from and way drop out when flights are booked; airports is asked only when the way there may fly. A trip already under way uses `NOW_SETUP` (where now, until when) and keeps its Create screen.
+5. Continue always goes to the next screen; it only skips a screen the words answered and the traveller has not seen.
+6. Create (a trip under way, or the trip settings), then four doors (`TRIP_DOORS`): guide (Help me choose, the trip finder), flight (find my flight first), know (I know where), booked. With stays booked the flow goes straight to the stays.
+7. Planning steps (`wizard/wizardSteps.js`), prefixed `p:`: plain path Where, then Stay or Trips, then Getting there, then Finish. Travel booked adds From; beds booked puts Your stays in place of Where; travel and beds booked drops Getting there.
+8. Where: pick countries and places, or a link to Google Flights Explore from the departure airport.
+9. Stay step (`StepStay.jsx`): the traveller picks cities and `lib/cartaRoute.js` orders them (nearest neighbour, then 2-opt and Or-opt) and shares out the nights by a decaying value per extra night, so a city with more to do keeps more nights. Distances are straight lines x `ROAD_FACTOR = 1.25`. It offers one base or changing stays, and curated route shapes fitted to the trip's nights.
+10. Your stays step (`StepStays.jsx`): with beds booked, one card per stay with its nights, dates, a search for the town and the price paid.
+11. When step: exact dates on a two-month calendar or nights in a month, up to `MAX_TRIP_NIGHTS = 60`.
+12. Getting there: one card per leg (out, between stops, home), priced on the flight Carta found or by the traveller.
+13. Finish / Ready to book: the route as a timeline and the receipt lines from `lib/tripTotal.js`.
 
 **Data behind it.** Device trips in `carta.trips.v1` (`tripsStore.js`), one trip planned at a time in the planner draft keys; signed-in trips in Supabase `trip_plans` and `trip_plan_stops` (migration 002). Prices from the price engine and the flight sweep.
 
-**Where it lives.** App: `continent-app/src/planner/flow/` (`PlanFlow.jsx`, `PlanHome.jsx`, `QuestionScreen.jsx`, `setupScreens.jsx`, `questions.js`, `flowGraph.js`, `tellChips.js`, `tripSettings.js`), `continent-app/src/planner/GuidedTripWizard.jsx`, `continent-app/src/planner/wizard/`, `continent-app/src/lib/plan/parseTrip.js`, `continent-app/src/lib/cartaRoute.js`, `continent-app/src/planner/tripsStore.js`. Latest: `Execution/P15/T1044-plan-home-head.md`, `T1002-door-fit.md`.
+**Where it lives.** App: `continent-app/src/planner/flow/` (`PlanFlow.jsx`, `PlanHome.jsx`, `QuestionScreen.jsx`, `setupScreens.jsx`, `questions.js`, `flowGraph.js`, `tellChips.js`, `tripSettings.js`), `continent-app/src/planner/GuidedTripWizard.jsx`, `continent-app/src/planner/wizard/`, `continent-app/src/lib/plan/parseTrip.js`, `continent-app/src/lib/cartaRoute.js`, `continent-app/src/planner/tripsStore.js`. Latest: `Execution/P15/T1103-plan-flow-short.md`, `T1044-plan-home-head.md`, `T1002-door-fit.md`.
 
 **Limits.**
 - The wizard clamps a stop's nights to 21 while a trip may have 60 (row T812-b).
@@ -1591,6 +1592,8 @@ Planning is everything that turns "I want to go somewhere" into a dated, priced 
 - An account trip opened from Plan home while signed out opens empty (row T809-b).
 - Saving without an account keeps one trip while the home lists many (row T809-c).
 - The wizard's header comment still describes a Ryanair fare map; the live fare source is the flight sweep.
+- "Add a past trip" now sits only in My trips for most travellers (it lived on the trip-kind sheet, now shown only while a trip is under way) (row T1103-c).
+- The help-me-choose walk that refines the trips is still ten questions (row T1103-d).
 
 ### The traveller's trip page
 

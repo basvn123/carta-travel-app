@@ -1481,3 +1481,11 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1097-b | T1097 | Check one real beach page on a phone after the box run and deploy: the strip shows and the warmest months are plausible for the sea | user | open | |
 | T1102-a | T1102 | A walk's address is written on open, but a hash typed into an app already running (paste, not reload) does not open it; a hashchange reader is needed | next task | open |  |
 | T1102-b | T1102 | Look at the rail tile and the trail page on a real phone with photographs loaded (this container had no network, so images were blank) | user | open |  |
+| T1103-a | T1103 | Explore's "What matters most" start dialog should become an inline, dismissible prompt with its seen-flag tied to the account (G12, P-34); outside T1103's files and the account flag touches src/auth/ | next task | open |  |
+| T1103-b | T1103 | A sample trip on an empty Plan home (G12, P-46): the Carta trips door is there, a worked sample trip is not | next task | open |  |
+| T1103-c | T1103 | The trip-kind sheet now shows only while a trip is under way, so "I'm on a trip now" and "Add a past trip" are mostly reached from My trips; owner decides whether Plan home needs a quiet link (Execution/P15/T1103-plan-flow-short.md) | user | open |  |
+| T1103-d | T1103 | The help-me-choose walk that refines the trips is still ten questions; fold them into fewer screens | next task | open |  |
+| T1103-e | T1103 | Real-person usability test of the 5-screen plan flow with one first-time traveller on a phone (Execution/P15/T1103-plan-flow-short.md) | user | open |  |
+| T1103-f | T1103 | Confirm BROAD_TYPES (city, culture, food), the ranking the finder uses while "What are you up for" is unasked (lib/recommend/candidates.js) | user | open |  |
+| T1103-g | T1103 | scripts/verify_plan_mocks.mjs still walks the old plan flow (kind sheet, Create, doors); bring it to the short flow | next task | open |  |
+| T1103-h | T1103 | When opens on "On set dates" with none picked, so Continue waits on a first visit; consider a ready default (months or not sure yet) | next task | open |  |

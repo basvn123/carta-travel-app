@@ -149,6 +149,7 @@ function useVisit(store, settings, fallback) {
  *   markedId       the trip the traveller planned last (back from the planner)
  *   onOpen(trip, el)  open the trip; `el` gets focus back on close
  *   onReopen(id)   reopen one question
+ *   refine         T1103: a node under the answers (the refine card after the short setup)
  *   onPlan(trip)   "Plan this trip" from the compare table (T801's hand-off)
  *   keeper         the heart (useKeepTrip), shared with the searching screen
  *   ui             the app parts TripFlow hands down (see FindingTrips)
@@ -157,7 +158,7 @@ function useVisit(store, settings, fallback) {
  * (keptStore), Skip in its menu hides it for these answers; the hidden ones
  * are counted under the list with "Show them again".
  */
-export function TripsForYou({ settings, trips: found, destinations, originName, home = null, markedId = null, onBack, onOpen, onReopen, onPlan, cardRefs, keeper, ui, headEnd = null }) {
+export function TripsForYou({ settings, trips: found, destinations, originName, home = null, markedId = null, onBack, onOpen, onReopen, onPlan, cardRefs, keeper, ui, headEnd = null, refine = null }) {
   const { t, lang } = useI18n();
   const [skips, setSkips] = useSkips(settings);
   const [sort, setSortState] = useVisit(VIEW, settings, { sort: 'match', map: false, side: true, quick: [] });
@@ -272,6 +273,9 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
           ))}
         </ul>
       )}
+
+      {/* T1103: after the short setup, the way to fit the trips closer. */}
+      {refine}
 
       <div className="tff-toolbar" role="toolbar" aria-label={t('tf.quick.label')}>
         <SortMenu label={t('tf.sort.label')} value={sort.sort} onChange={setSort}
