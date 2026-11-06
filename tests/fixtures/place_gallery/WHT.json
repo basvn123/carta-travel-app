@@ -1,0 +1,297 @@
+{
+ "query": {
+  "pages": [
+   {
+    "title": "File:Whitby Abbey at dusk.jpg",
+    "imageinfo": [
+     {
+      "thumburl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Whitby_Abbey_at_dusk.jpg/960px-Whitby_Abbey_at_dusk.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Whitby_Abbey_at_dusk.jpg",
+      "descriptionurl": "https://commons.wikimedia.org/wiki/File:Whitby_Abbey_at_dusk.jpg",
+      "width": 4000,
+      "height": 3000,
+      "mime": "image/jpeg",
+      "extmetadata": {
+       "LicenseShortName": {
+        "value": "CC BY-SA 4.0"
+       },
+       "LicenseUrl": {
+        "value": "https://creativecommons.org/licenses/by-sa/4.0"
+       },
+       "Artist": {
+        "value": "<a href=\"//commons.wikimedia.org/wiki/User:Ann\">Ann Smith</a>"
+       }
+      }
+     }
+    ]
+   },
+   {
+    "title": "File:Whitby harbour.jpg",
+    "imageinfo": [
+     {
+      "thumburl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Whitby_harbour.jpg/960px-Whitby_harbour.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Whitby_harbour.jpg",
+      "descriptionurl": "https://commons.wikimedia.org/wiki/File:Whitby_harbour.jpg",
+      "width": 3000,
+      "height": 2000,
+      "mime": "image/jpeg",
+      "extmetadata": {
+       "LicenseShortName": {
+        "value": "CC BY 2.0"
+       },
+       "LicenseUrl": {
+        "value": "https://creativecommons.org/licenses/by-sa/4.0"
+       },
+       "Artist": {
+        "value": "Bob Jones"
+       }
+      }
+     }
+    ]
+   },
+   {
+    "title": "File:Whitby harbour 2.jpg",
+    "imageinfo": [
+     {
+      "thumburl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Whitby_harbour_2.jpg/960px-Whitby_harbour_2.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Whitby_harbour_2.jpg",
+      "descriptionurl": "https://commons.wikimedia.org/wiki/File:Whitby_harbour_2.jpg",
+      "width": 3000,
+      "height": 2000,
+      "mime": "image/jpeg",
+      "extmetadata": {
+       "LicenseShortName": {
+        "value": "CC BY 2.0"
+       },
+       "LicenseUrl": {
+        "value": "https://creativecommons.org/licenses/by-sa/4.0"
+       },
+       "Artist": {
+        "value": "Bob Jones"
+       }
+      }
+     }
+    ]
+   },
+   {
+    "title": "File:Whitby harbour 3.jpg",
+    "imageinfo": [
+     {
+      "thumburl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Whitby_harbour_3.jpg/960px-Whitby_harbour_3.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Whitby_harbour_3.jpg",
+      "descriptionurl": "https://commons.wikimedia.org/wiki/File:Whitby_harbour_3.jpg",
+      "width": 3000,
+      "height": 2000,
+      "mime": "image/jpeg",
+      "extmetadata": {
+       "LicenseShortName": {
+        "value": "CC BY 2.0"
+       },
+       "LicenseUrl": {
+        "value": "https://creativecommons.org/licenses/by-sa/4.0"
+       },
+       "Artist": {
+        "value": "Bob Jones"
+       }
+      }
+     }
+    ]
+   },
+   {
+    "title": "File:East cliff steps.jpg",
+    "imageinfo": [
+     {
+      "thumburl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/East_cliff_steps.jpg/960px-East_cliff_steps.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/a/ab/East_cliff_steps.jpg",
+      "descriptionurl": "https://commons.wikimedia.org/wiki/File:East_cliff_steps.jpg",
+      "width": 2400,
+      "height": 1600,
+      "mime": "image/jpeg",
+      "extmetadata": {
+       "LicenseShortName": {
+        "value": "Public domain"
+       },
+       "LicenseUrl": {
+        "value": "https://creativecommons.org/licenses/by-sa/4.0"
+       },
+       "Artist": {
+        "value": ""
+       },
+       "AttributionRequired": {
+        "value": "false"
+       }
+      }
+     }
+    ]
+   },
+   {
+    "title": "File:Fish and chips.jpg",
+    "imageinfo": [
+     {
+      "thumburl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Fish_and_chips.jpg/960px-Fish_and_chips.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Fish_and_chips.jpg",
+      "descriptionurl": "https://commons.wikimedia.org/wiki/File:Fish_and_chips.jpg",
+      "width": 2000,
+      "height": 1500,
+      "mime": "image/jpeg",
+      "extmetadata": {
+       "LicenseShortName": {
+        "value": "CC BY-NC 2.0"
+       },
+       "LicenseUrl": {
+        "value": "https://creativecommons.org/licenses/by-sa/4.0"
+       },
+       "Artist": {
+        "value": "Cy"
+       }
+      }
+     }
+    ]
+   },
+   {
+    "title": "File:Pier unsigned.jpg",
+    "imageinfo": [
+     {
+      "thumburl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Pier_unsigned.jpg/960px-Pier_unsigned.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Pier_unsigned.jpg",
+      "descriptionurl": "https://commons.wikimedia.org/wiki/File:Pier_unsigned.jpg",
+      "width": 2000,
+      "height": 1500,
+      "mime": "image/jpeg",
+      "extmetadata": {
+       "LicenseShortName": {
+        "value": "CC BY-SA 3.0"
+       },
+       "LicenseUrl": {
+        "value": "https://creativecommons.org/licenses/by-sa/4.0"
+       },
+       "Artist": {
+        "value": ""
+       }
+      }
+     }
+    ]
+   },
+   {
+    "title": "File:Whitby map.jpg",
+    "imageinfo": [
+     {
+      "thumburl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Whitby_map.jpg/960px-Whitby_map.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Whitby_map.jpg",
+      "descriptionurl": "https://commons.wikimedia.org/wiki/File:Whitby_map.jpg",
+      "width": 2000,
+      "height": 1500,
+      "mime": "image/jpeg",
+      "extmetadata": {
+       "LicenseShortName": {
+        "value": "CC BY-SA 3.0"
+       },
+       "LicenseUrl": {
+        "value": "https://creativecommons.org/licenses/by-sa/4.0"
+       },
+       "Artist": {
+        "value": "Dee"
+       }
+      }
+     }
+    ]
+   },
+   {
+    "title": "File:Whitby locator.svg",
+    "imageinfo": [
+     {
+      "thumburl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Whitby_locator.svg/960px-Whitby_locator.svg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Whitby_locator.svg",
+      "descriptionurl": "https://commons.wikimedia.org/wiki/File:Whitby_locator.svg",
+      "width": 2000,
+      "height": 1500,
+      "mime": "image/svg+xml",
+      "extmetadata": {
+       "LicenseShortName": {
+        "value": "CC BY-SA 3.0"
+       },
+       "LicenseUrl": {
+        "value": "https://creativecommons.org/licenses/by-sa/4.0"
+       },
+       "Artist": {
+        "value": "Dee"
+       }
+      }
+     }
+    ]
+   },
+   {
+    "title": "File:Tiny whitby.jpg",
+    "imageinfo": [
+     {
+      "thumburl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Tiny_whitby.jpg/960px-Tiny_whitby.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Tiny_whitby.jpg",
+      "descriptionurl": "https://commons.wikimedia.org/wiki/File:Tiny_whitby.jpg",
+      "width": 300,
+      "height": 200,
+      "mime": "image/jpeg",
+      "extmetadata": {
+       "LicenseShortName": {
+        "value": "CC BY-SA 3.0"
+       },
+       "LicenseUrl": {
+        "value": "https://creativecommons.org/licenses/by-sa/4.0"
+       },
+       "Artist": {
+        "value": "Eve"
+       }
+      }
+     }
+    ]
+   },
+   {
+    "title": "File:Already in gallery.jpg",
+    "imageinfo": [
+     {
+      "thumburl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Already_in_gallery.jpg/960px-Already_in_gallery.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Already_in_gallery.jpg",
+      "descriptionurl": "https://commons.wikimedia.org/wiki/File:Already_in_gallery.jpg",
+      "width": 3000,
+      "height": 2000,
+      "mime": "image/jpeg",
+      "extmetadata": {
+       "LicenseShortName": {
+        "value": "CC BY-SA 3.0"
+       },
+       "LicenseUrl": {
+        "value": "https://creativecommons.org/licenses/by-sa/4.0"
+       },
+       "Artist": {
+        "value": "Fay"
+       }
+      }
+     }
+    ]
+   },
+   {
+    "title": "File:Swing bridge.jpg",
+    "imageinfo": [
+     {
+      "thumburl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Swing_bridge.jpg/960px-Swing_bridge.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Swing_bridge.jpg",
+      "descriptionurl": "https://commons.wikimedia.org/wiki/File:Swing_bridge.jpg",
+      "width": 3000,
+      "height": 2000,
+      "mime": "image/jpeg",
+      "extmetadata": {
+       "LicenseShortName": {
+        "value": "GFDL"
+       },
+       "LicenseUrl": {
+        "value": "https://creativecommons.org/licenses/by-sa/4.0"
+       },
+       "Artist": {
+        "value": "Gus"
+       }
+      }
+     }
+    ]
+   }
+  ]
+ }
+}
