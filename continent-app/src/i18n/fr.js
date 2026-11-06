@@ -7796,6 +7796,8 @@ export const fr = {
   "price.item.events": "Événements",
   "price.notMeasured": "Pas encore mesuré",
   "price.bedThin": "Peu d'offres relevées",
+  "price.noteBed": "Prix du lit : peu d'offres relevées",
+  "price.noteMissing": "{part} : pas encore mesuré",
   "price.item.flight": "Vol aller-retour",
   "price.item.way": "{mode} aller-retour",
   "item.baseStay": "Séjourner à {city}, {price} {unit}",

@@ -2,6 +2,7 @@ import React, { useId } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { Button, Money, Segmented } from '../../components/ui/index.js';
 import NotYet from '../../components/NotYet.jsx';
+import { PriceNotes } from '../../components/PriceNotes.jsx';
 import { BedIcon, CarIcon, ChevronRightIcon, DiningIcon, PencilIcon, RouteIcon } from '../../components/Icons.jsx';
 import { PlaneIcon } from '../../components/TransportIcons.jsx';
 import { AirlineMark } from '../../components/flights/Flights.jsx';
@@ -123,6 +124,7 @@ export function CostCard({
       {budget && <div className="ccard-budget">{budget}</div>}
 
       <ul className="ccard-rows">{tiles.map(rowOf)}</ul>
+      <PriceNotes row={(priced?.stayCosts || []).map((s) => s?.day)} className="ccard-notes" />
 
       {(onAll || onAddPaid) && (
         <div className="ccard-foot">

@@ -3,6 +3,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { Button, Money } from '../components/ui/index.js';
 import { SheetShell } from '../browse/SheetShell.jsx';
 import { ReceiptCard } from '../components/ReceiptCard.jsx';
+import { PriceNotes } from '../components/PriceNotes.jsx';
 import { ChevronRightIcon } from '../components/Icons.jsx';
 import { useSettledFigure } from '../lib/figureChange.js';
 import { formatMoney } from '../lib/money.js';
@@ -189,6 +190,7 @@ export function DayReceiptSheet({
           bar
           t={t}
         />
+        <PriceNotes row={dayCost.row} className="day-receipt-notes" />
         {tripTotal != null && (
           <div className="day-receipt-trip">
             <span className="day-receipt-trip-text">

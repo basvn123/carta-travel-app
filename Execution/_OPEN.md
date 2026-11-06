@@ -1516,3 +1516,4 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1113-b | T1113 | Trail and cycling photo licence on the wire still blocks all trails and cycling routes; 10,397 trails and 188 routes would pass with it | next task | open | |
 | T1113-c | T1113 | 6,798 trails are linked from no place page; widen dossier around.trails to lift them | next task | open | |
 | T1113-d | T1113 | After the upload confirm trip canonicals and thin-page noindex,follow in Search Console and view source (follows T1076-f) | user | open | after T1113-a |
+| T1114-a | T1114 | Look at the price notes (Explore card grid and rail, Ask card, trip page cost card, day receipt) at 375 and 1440 wide and in Dutch; the container could not load app data | user | open |  |

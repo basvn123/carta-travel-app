@@ -7807,6 +7807,8 @@ export const nl = {
   "price.item.events": "Evenementen",
   "price.notMeasured": "Nog niet gemeten",
   "price.bedThin": "Weinig aanbod gemeten",
+  "price.noteBed": "Bedprijs: weinig aanbod gemeten",
+  "price.noteMissing": "{part}: nog niet gemeten",
   "price.item.flight": "Vlucht heen en terug",
   "price.item.way": "{mode} heen en terug",
   "item.baseStay": "Verblijf in {city}, {price} {unit}",
