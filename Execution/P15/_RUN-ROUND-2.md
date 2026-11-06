@@ -36,6 +36,11 @@ How it runs:
 | 60 | T1144 | D4 | p15-s60-truth-set | done | yes | 4 |
 | 62 | T1146 | D15 | p15-s62-catalogue-gaps-1 | done | yes | 2 |
 | 99 | T1183 | D24 | p15-s99-trail-continuity | done | yes | 1 |
+| 66 | T1150 | F1 | p15-s66-taxonomy-2 | started | | |
+| 68 | T1152 | F3 | p15-s68-taste-profile | started | | |
+| 69 | T1153 | F4 | p15-s69-place-linking | started | | |
+| 100 | T1184 | D24 | p15-s100-multi-stage-treks | started | | |
+| 105 | T1189 | D23 | p15-s105-beaches-validation | started | | |
 
 The batch schedule for the rest of round 2 is in "Batch schedule" below.
 
@@ -79,3 +84,4 @@ Merge notes:
 - 18:45 S59 merged (schema 20: `_src` and `_asof` on the 18 object-valued destination keys, 49,328 of 49,328 key blocks on the shipped `app_data.json`, up from 0; `pipeline/config/sources.yaml` with 24 sources and the generated `docs/data/sources.md`; no Supabase migration, so 071 is still free). The contract gate passes with `CARTA_CONTRACT_DERIVE_SPLIT=1` as in CI (locally `public/boot.json` is absent); wire contract pytest 54 and node 57 pass; npm test 1674: 1662 pass, 0 fail; full pytest 655 pass; all other checks OK. Fix at merge: generated reference regenerated. The box master still has no stamps until T1143-a. Batch 4 done; 33 round 2 owner steps on the checklist.
 - 18:27 Batch 5 started from 6fd60348c5, each session reading its brief in `Execution/P15/_run_r2/briefs/`: S54 (session_0156MmZ6mDgJsSCiPg8UGFfD), S55 (session_0156MmZ6YwVvz5fPetWdjviy, migration 071 if it needs one), S60 (session_0156MmZ6fYrtPNhmsy1JqW6V), S62 (session_0156MmZ2oH5stDmA6moRB6MR), S99 (session_0156MmZ5E2fwjsqfkk9a3afP). S63, S67 and S93 stay held.
 - 19:05 Batch 5 merged: S54 (cost per 1,000 calls and quality for 32 options across 8 AI features in `continent-app/config/ai_models.json`, switch triggers, batch jobs selectable for the box CPU; no live feature moved, T1138-h), S55 (one privacy safe `ai_model_events` row per gateway call, migration 071 with a down file, admin weekly AI view), S60 (truth set: 150 sampled items, a 762-row hand sheet, the truth eval and a text judge harness), S62 (90,393 candidates scored, 37 per-country add, merge and remove sheets in `docs/data/catalogue-gaps/`; review is T1146-a, which unblocks S63), S99 (`route_bridge.py`: routed repair of broken trails on BRouter within strict limits, behind a flag; the run is T1183-a). Fixes at merge: generated reference (config, Supabase tables, python) regenerated after S54 and S55; S99's python.md conflict resolved by regenerating (the merge helper now does that for every generated file). Local Postgres 16 with 065 to 071: RLS suite 847 of 847, admin harnesses 17 of 17. npm test 1692: 1680 pass, 0 fail; full pytest 752 pass; every other check OK. 46 round 2 owner steps on the checklist. Held: S63 waits on T1146-a, S67 on T1149-a and b, S93 on T1111-a.
+- 19:10 Linux CI green on fa12693c73 (batch 5 merged; ci run 203). Batch 6 started from fa12693c73: S66 (session_0156MmZ3jqkX97uL7YcYju8n), S68 (session_0156MmZ61m1DWd1ezzMFDUs9), S69 (session_0156MmZ6bsMoPMHEpfa2KpuQ), S100 (session_0156MmZ2v67zv6bva8sjobJf), S105 (session_0156MmZ5j8t4VZE5ymQLkKmZ). The RLS and admin harness workflows only run on main and pull requests, so the orchestrator runs them on a local Postgres 16 whenever a batch adds a migration.
