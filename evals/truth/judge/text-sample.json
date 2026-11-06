@@ -1,0 +1,1149 @@
+{
+ "version": "truth-text-sample/1",
+ "seed": "carta-truth-2026-11",
+ "n": 50,
+ "items": [
+  {
+   "text_id": "t01",
+   "ref": "place:gem:ios",
+   "kind": "place_blurb",
+   "subject": "Ios, Greece",
+   "text": "A Cyclades party island by night, arc of golden Mylopotas beach by day",
+   "source": {
+    "cited": "https://en.wikivoyage.org/wiki/Ios",
+    "text": "Ios is a small island of the Cyclades group. It is a part of the Cyclades Islands in the south of Greece. Ios is a short ferry ride from Santorini, making an extended holiday or even a day trip a viable option."
+   }
+  },
+  {
+   "text_id": "t02",
+   "ref": "trail:98370",
+   "kind": "trail_summary",
+   "subject": "GR 5A Wandelronde van Vlaanderen (Antwerpen)",
+   "text": "The waymarked hiking route GR 5A Wandelronde van Vlaanderen (Antwerpen) is located in BE. It covers a distance of 13.2 km with 41 m of ascent and 38 m of descent.",
+   "source": {
+    "cited": "https://www.openstreetmap.org/relation/14001842",
+    "facts": {
+     "name": "GR 5A Wandelronde van Vlaanderen (Antwerpen)",
+     "country": "BE",
+     "distance_km": 13.2,
+     "ascent_m": 41,
+     "descent_m": 38,
+     "is_loop": false,
+     "difficulty": "moderate",
+     "sac_scale": null,
+     "network": "nwn",
+     "waymark_ref": "GR 5A",
+     "osm_relation": 14001842,
+     "osm_tags": {
+      "name": "GR 5A Wandelronde van Vlaanderen (Antwerpen)",
+      "ref": "GR 5A",
+      "from": "Antwerpen",
+      "to": "Kruibeke",
+      "operator": "Grote Routepaden VZW",
+      "network": "nwn",
+      "osmc:symbol": "red:white:red_lower:5A:black",
+      "website": "https://www.groteroutepaden.be/nl/route/47/gr-5a-wandelronde-van-vlaanderen.html"
+     },
+     "named_along_the_way": [
+      "Kortbroek",
+      "Kasteel Altena"
+     ]
+    }
+   }
+  },
+  {
+   "text_id": "t03",
+   "ref": "trail:63282",
+   "kind": "trail_summary",
+   "subject": "Via Sancti Martini HW-40-02 Junglinster - Luxembourg",
+   "text": "The Via Sancti Martini HW-40-02 Junglinster - Luxembourg is a waymarked hiking route in LU. This hard international network route spans 42.1 km with 391 m of ascent and 477 m of descent.",
+   "source": {
+    "cited": "https://www.openstreetmap.org/relation/11184454",
+    "facts": {
+     "name": "Via Sancti Martini HW-40-02 Junglinster - Luxembourg",
+     "country": "LU",
+     "distance_km": 23.1,
+     "ascent_m": 391,
+     "descent_m": 477,
+     "is_loop": false,
+     "difficulty": "hard",
+     "sac_scale": null,
+     "network": "iwn",
+     "waymark_ref": "VSM",
+     "osm_relation": 11184454,
+     "osm_tags": {
+      "name": "Via Sancti Martini HW-40-02 Junglinster - Luxembourg",
+      "ref": "VSM",
+      "network": "iwn",
+      "osmc:symbol": "red:red:yellow_cross"
+     },
+     "named_along_the_way": [
+      "Château de Bourglinster"
+     ]
+    }
+   }
+  },
+  {
+   "text_id": "t04",
+   "ref": "place:gem:sremski-karlovci",
+   "kind": "place_blurb",
+   "subject": "Sremski Karlovci, Serbia",
+   "text": "Crete's prettiest old town: Venetian harbour, Ottoman minarets, a hilltop fortezza and a long city beach.",
+   "source": {
+    "cited": "https://en.wikivoyage.org/wiki/Sremski_Karlovci",
+    "text": "Sremski Karlovci is in Syrmia (Serbian: Srem), Vojvodina. The town is located next to the Danube river, 12 km south of regional capital Novi Sad."
+   }
+  },
+  {
+   "text_id": "t05",
+   "ref": "place:gem:christiansfeld",
+   "kind": "place_blurb",
+   "subject": "Christiansfeld, Denmark",
+   "text": "UNESCO Moravian planned town of 1773, honey-cake bakeries and serene uniform yellow-brick streets.",
+   "source": {
+    "cited": "https://en.wikivoyage.org/wiki/Kolding",
+    "text": "Kolding is a city of 62,000 people (2020) in eastern South Jutland. Visitors come to Kolding to see the 13th century royal castle of Koldinghus, the stone Church of Saint Nicholas, the Trapholt art museum and the gardens Geografisk Have."
+   }
+  },
+  {
+   "text_id": "t06",
+   "ref": "trail:39748",
+   "kind": "trail_summary",
+   "subject": "Boucle des Châteaux",
+   "text": "Boucle des Châteaux is a waymarked hiking route in France that covers 13.7 km. The path features 314 m of ascent and 314 m of descent, resulting in a moderate difficulty rating.",
+   "source": {
+    "cited": "https://www.openstreetmap.org/relation/18567858",
+    "facts": {
+     "name": "Boucle des Châteaux",
+     "country": "FR",
+     "distance_km": 13.7,
+     "ascent_m": 314,
+     "descent_m": 314,
+     "is_loop": true,
+     "difficulty": "moderate",
+     "sac_scale": null,
+     "network": "lwn",
+     "waymark_ref": null,
+     "osm_relation": 18567858,
+     "osm_tags": {
+      "name": "Boucle des Châteaux",
+      "roundtrip": "yes",
+      "distance": "15.2",
+      "ascent": "447",
+      "operator": "Conseil Général de la Dordogne",
+      "network": "lwn",
+      "osmc:symbol": "yellow:white:yellow_bar",
+      "description": "None",
+      "website": "https://pleinenature.dordogne.fr/randonnees.html"
+     },
+     "named_along_the_way": [
+      "Château de Sauveboeuf"
+     ]
+    }
+   }
+  },
+  {
+   "text_id": "t07",
+   "ref": "place:gem:reims",
+   "kind": "place_blurb",
+   "subject": "Reims, France",
+   "text": "Coronation cathedral of French kings above miles of champagne cellars",
+   "source": {
+    "cited": "https://en.wikivoyage.org/wiki/Reims",
+    "text": "Reims (sometimes spelled Rheims in English), a city in Champagne-Ardenne, France, is perhaps best known for its world heritage listed cathedral, where generations of French kings were crowned."
+   }
+  },
+  {
+   "text_id": "t08",
+   "ref": "place:gem:risor",
+   "kind": "place_blurb",
+   "subject": "Risør, Norway",
+   "text": "The White Town by the Skagerrak: immaculate wooden houses around a yacht-filled harbour",
+   "source": {
+    "cited": "https://en.wikivoyage.org/wiki/Ris%C3%B8r",
+    "text": "Risør is a very well preserved coastal town between Kristiansand and Oslo, with an old history of sailing ships and lumber export in the golden days in the late 18 century. Nowadays known for art and handicraft."
+   }
+  },
+  {
+   "text_id": "t09",
+   "ref": "place:gem:saint-tropez",
+   "kind": "place_blurb",
+   "subject": "Saint-Tropez, France",
+   "text": "Triangular thatched palheiro cottages in flower gardens, gateway to the laurel forest and Caldeirao Verde",
+   "source": {
+    "cited": "https://en.wikivoyage.org/wiki/Saint-Tropez",
+    "text": "Saint-Tropez is a town in the French Riviera."
+   }
+  },
+  {
+   "text_id": "t10",
+   "ref": "place:gem:gjakova",
+   "kind": "place_blurb",
+   "subject": "Gjakova, Kosovo",
+   "text": "Elegant UNESCO spa town of pastel colonnades, singing fountain and forested promenades",
+   "source": {
+    "cited": "https://en.wikivoyage.org/wiki/Gjakova",
+    "text": "Gjakova/Gjakovë (Albanian) Đakovica (Serbian) is a city in western Kosovo with about 79,000 inhabitants (2024). Set among mountains with hiking trails, Gjakova is a center of culture and learning, and famous for its Grand Bazaar with many kinds of traditional handicrafts for sale."
+   }
+  },
+  {
+   "text_id": "t11",
+   "ref": "place:gem:guimaraes",
+   "kind": "place_blurb",
+   "subject": "Guimaraes, Portugal",
+   "text": "Cradle of Portugal with a hilltop castle and a perfectly kept medieval core",
+   "source": {
+    "cited": "https://en.wikivoyage.org/wiki/Guimar%C3%A3es",
+    "text": "Guimarães is a city in Minho, northern Portugal. One of the country's most historical cities, it's known as the \"Cradle of Portugal\" since it was from there the \"Condado Portucalense\" grew into today's Portugal. The historical centre has a medieval castle and a royal palace open to visitors."
+   }
+  },
+  {
+   "text_id": "t12",
+   "ref": "trail:3369",
+   "kind": "trail_summary",
+   "subject": "St. Peter - Triesen Post",
+   "text": "The St. Peter to Triesen Post route is a waymarked hiking route located in LI. This easy path covers a distance of 8.9 km with 17 m of ascent and 6 m of descent.",
+   "source": {
+    "cited": "https://www.openstreetmap.org/relation/3992773",
+    "facts": {
+     "name": "St. Peter - Triesen Post",
+     "country": "LI",
+     "distance_km": 8.9,
+     "ascent_m": 17,
+     "descent_m": 6,
+     "is_loop": false,
+     "difficulty": "easy",
+     "sac_scale": null,
+     "network": "lwn",
+     "waymark_ref": null,
+     "osm_relation": 3992773,
+     "osm_tags": {
+      "name": "St. Peter - Triesen Post",
+      "from": "St. Peter",
+      "to": "Triesen Post",
+      "distance": "8.94",
+      "network": "lwn",
+      "osmc:symbol": "yellow:yellow"
+     },
+     "named_along_the_way": []
+    }
+   }
+  },
+  {
+   "text_id": "t13",
+   "ref": "trail:188814",
+   "kind": "trail_summary",
+   "subject": "Green Link Walk (Section 4)",
+   "text": "The Green Link Walk Section 4 is a walking route in GB. This easy path covers 15.2 km with 25 m of ascent and 33 m of descent.",
+   "source": {
+    "cited": "https://www.openstreetmap.org/relation/17295021",
+    "facts": {
+     "name": "Green Link Walk (Section 4)",
+     "country": "GB",
+     "distance_km": 7.2,
+     "ascent_m": 25,
+     "descent_m": 33,
+     "is_loop": false,
+     "difficulty": "easy",
+     "sac_scale": null,
+     "network": "rwn",
+     "waymark_ref": null,
+     "osm_relation": 17295021,
+     "osm_tags": {
+      "name": "Green Link Walk (Section 4)",
+      "from": "Blackfriars",
+      "to": "Peckham",
+      "operator": "TfL",
+      "network": "rwn",
+      "website": "https://tfl.gov.uk/modes/walking/green-link-walk"
+     },
+     "named_along_the_way": [
+      "Wall Fountain"
+     ]
+    }
+   }
+  },
+  {
+   "text_id": "t14",
+   "ref": "trail:63215",
+   "kind": "trail_summary",
+   "subject": "Escapardenne Eisleck Trail - Etape 2",
+   "text": "The Escapardenne Eisleck Trail - Etape 2 is a 35.3 km waymarked hiking route in LU. This hard trail requires about 6.5 hours on the DIN 33466 hiking time rule and features 674 m of ascent and 654 m of descent.",
+   "source": {
+    "cited": "https://www.openstreetmap.org/relation/7356826",
+    "facts": {
+     "name": "Escapardenne Eisleck Trail - Etape 2",
+     "country": "LU",
+     "distance_km": 19.0,
+     "ascent_m": 674,
+     "descent_m": 654,
+     "is_loop": false,
+     "difficulty": "hard",
+     "sac_scale": null,
+     "network": "nwn",
+     "waymark_ref": "ESCE",
+     "osm_relation": 7356826,
+     "osm_tags": {
+      "name": "Escapardenne Eisleck Trail - Etape 2",
+      "ref": "ESCE",
+      "network": "nwn",
+      "osmc:symbol": "green:blue:white_bar"
+     },
+     "named_along_the_way": [
+      "Villa Berlaymont"
+     ]
+    }
+   }
+  },
+  {
+   "text_id": "t15",
+   "ref": "trail:13",
+   "kind": "trail_summary",
+   "subject": "Westweg (Westliche Variante)",
+   "text": "The Westweg (Westliche Variante) is a waymarked hiking route in Germany spanning 90.2 km. It features 2879 m of ascent and 3476 m of descent.",
+   "source": {
+    "cited": "https://www.openstreetmap.org/relation/62897",
+    "facts": {
+     "name": "Westweg (Westliche Variante)",
+     "country": "DE",
+     "distance_km": 90.2,
+     "ascent_m": 2879,
+     "descent_m": 3476,
+     "is_loop": false,
+     "difficulty": "easy",
+     "sac_scale": null,
+     "network": "nwn",
+     "waymark_ref": null,
+     "osm_relation": 62897,
+     "osm_tags": {
+      "name": "Westweg (Westliche Variante)",
+      "operator": "Schwarzwaldverein e.V.",
+      "network": "nwn",
+      "osmc:symbol": "red:white:red_diamond",
+      "description": "Titisee - Feldberg - Belchen - Hochblauen - Kandern - Basel"
+     },
+     "named_along_the_way": [
+      "Stübenwasen"
+     ]
+    }
+   }
+  },
+  {
+   "text_id": "t16",
+   "ref": "place:gem:vadstena",
+   "kind": "place_blurb",
+   "subject": "Vadstena, Sweden",
+   "text": "Iconic island church, alpine lake",
+   "source": {
+    "cited": "https://en.wikivoyage.org/wiki/Vadstena_and_%C3%96desh%C3%B6g",
+    "text": "Vadstena (pronounced \"Vasstena\" by the locals) is a village in Sweden. It is in the northern part of the Götaland region in the Östergötland county. It has about 5,700 inhabitants in 2020. Vadstena is a small town, but has many historic buildings from its impressive history."
+   }
+  },
+  {
+   "text_id": "t17",
+   "ref": "trail:62392",
+   "kind": "trail_summary",
+   "subject": "Mdina Walk",
+   "text": "The Mdina Walk is a waymarked hiking route in MT spanning a distance of 19.3 km. It features 168 m of ascent and 122 m of descent, requiring about 2.8 hours on the DIN 33466 hiking time rule.",
+   "source": {
+    "cited": "https://www.openstreetmap.org/relation/15955071",
+    "facts": {
+     "name": "Mdina Walk",
+     "country": "MT",
+     "distance_km": 9.6,
+     "ascent_m": 168,
+     "descent_m": 122,
+     "is_loop": false,
+     "difficulty": "easy",
+     "sac_scale": "hiking",
+     "network": "lwn",
+     "waymark_ref": null,
+     "osm_relation": 15955071,
+     "osm_tags": {
+      "name": "Mdina Walk",
+      "from": "Midna",
+      "to": "Dingli Cliffs",
+      "roundtrip": "no",
+      "distance": "9.6",
+      "ascent": "160",
+      "descent": "130",
+      "network": "lwn",
+      "osmc:symbol": "blue:orange:white_lower",
+      "description": "Mdina, set into pleasant countryside, is ideal for walks. This route is interesting, as it goes through the medieval heart of Mdina, followed by the outskirts of Rabat, Siggiewi and ends on the Dingli Cliffs. This route can be made on foot or on bike.",
+      "website": "https://www.visitmalta.com/en/a/walks/",
+      "sac_scale": "hiking"
+     },
+     "named_along_the_way": [
+      "Ta’ Dmejrek",
+      "Kunvent tal-Karmelitani"
+     ]
+    }
+   }
+  },
+  {
+   "text_id": "t18",
+   "ref": "place:gem:st-davids",
+   "kind": "place_blurb",
+   "subject": "St Davids, United Kingdom",
+   "text": "Britain's smallest city, a purple stone cathedral by wild coast path cliffs",
+   "source": {
+    "cited": "https://en.wikivoyage.org/wiki/St_Davids",
+    "text": "St Davids (Welsh: Tyddewi or \"house of David\") is Britain's smallest city and home to Wales' most important cathedral. The city is in the Pembrokeshire Coast National Park, and is part of a cultural history area in Wales."
+   }
+  },
+  {
+   "text_id": "t19",
+   "ref": "trail:201993",
+   "kind": "trail_summary",
+   "subject": "Dolomites World Heritage Geotrail 13",
+   "text": "Dolomites World Heritage Geotrail 13 is a waymarked hiking route located in Italy. The path covers a distance of 17.0 km with a moderate difficulty rating.",
+   "source": {
+    "cited": "https://www.openstreetmap.org/relation/16206573",
+    "facts": {
+     "name": "Dolomites World Heritage Geotrail 13",
+     "country": "IT",
+     "distance_km": 17.0,
+     "ascent_m": 685,
+     "descent_m": 765,
+     "is_loop": false,
+     "difficulty": "moderate",
+     "sac_scale": null,
+     "network": "nwn",
+     "waymark_ref": null,
+     "osm_relation": 16206573,
+     "osm_tags": {
+      "name": "Dolomites World Heritage Geotrail 13",
+      "from": "Armentarola",
+      "to": "Pederü",
+      "operator": "Fondazione Dolomiti Dolomiten Dolomites Dolomitis UNESCO",
+      "network": "nwn",
+      "website": "https://dolomitesgeotrail.com/"
+     },
+     "named_along_the_way": [
+      "Col de Locia",
+      "Cascata",
+      "Lé de Limo"
+     ]
+    }
+   }
+  },
+  {
+   "text_id": "t20",
+   "ref": "place:gem:antequera",
+   "kind": "place_blurb",
+   "subject": "Antequera, Spain",
+   "text": "Baroque spires, Europe's oldest megalithic dolmens and the karst dreamscape of El Torcal.",
+   "source": {
+    "cited": "https://en.wikivoyage.org/wiki/Antequera",
+    "text": "Antequera is a city in Malaga province in Spain. Roughly midway between Malaga and Granada it can be done as a daytrip from either, or as a stopover in between."
+   }
+  },
+  {
+   "text_id": "t21",
+   "ref": "trail:11163",
+   "kind": "trail_summary",
+   "subject": "Lanser-Kopf-Lauf",
+   "text": "Lanser-Kopf-Lauf is an easy waymarked hiking route located in Austria. This loop covers a distance of 10.3 km with 369 m of ascent and 370 m of descent.",
+   "source": {
+    "cited": "https://www.openstreetmap.org/relation/1619508",
+    "facts": {
+     "name": "Lanser-Kopf-Lauf",
+     "country": "AT",
+     "distance_km": 10.3,
+     "ascent_m": 369,
+     "descent_m": 370,
+     "is_loop": true,
+     "difficulty": "easy",
+     "sac_scale": null,
+     "network": "lwn",
+     "waymark_ref": null,
+     "osm_relation": 1619508,
+     "osm_tags": {
+      "name": "Lanser-Kopf-Lauf",
+      "roundtrip": "yes",
+      "distance": "10.27",
+      "network": "lwn",
+      "osmc:symbol": "blue:blue:white_pointer",
+      "website": "https://www.innsbruck.info/sport/sommer/laufen-und-walken/laufstrecken/touren/lanser-kopf-lauf-27.html"
+     },
+     "named_along_the_way": [
+      "Lanser Kopf",
+      "Seerosenweiher",
+      "Goarmbichl-Siedlung"
+     ]
+    }
+   }
+  },
+  {
+   "text_id": "t22",
+   "ref": "trail:18084",
+   "kind": "trail_summary",
+   "subject": "Alpe Adria Trail E01",
+   "text": "The Alpe Adria Trail E01 is a waymarked hiking route located in Austria. Rated as moderate based on its distance and ascent, it covers 13.5 km with 168 m of ascent and 1229 m of descent.",
+   "source": {
+    "cited": "https://www.openstreetmap.org/relation/13864036",
+    "facts": {
+     "name": "Alpe Adria Trail E01",
+     "country": "AT",
+     "distance_km": 13.5,
+     "ascent_m": 168,
+     "descent_m": 1229,
+     "is_loop": false,
+     "difficulty": "moderate",
+     "sac_scale": null,
+     "network": "iwn",
+     "waymark_ref": "AATE01",
+     "osm_relation": 13864036,
+     "osm_tags": {
+      "name": "Alpe Adria Trail E01",
+      "ref": "AATE01",
+      "from": "Kaiser-Franz-Josefs-Höhe",
+      "to": "Heiligenblut",
+      "network": "iwn",
+      "website": "https://www.alpe-adria-trail.com"
+     },
+     "named_along_the_way": [
+      "Elisabethfelsen",
+      "Leiterfall"
+     ]
+    }
+   }
+  },
+  {
+   "text_id": "t23",
+   "ref": "place:gem:terschelling",
+   "kind": "place_blurb",
+   "subject": "Terschelling, Netherlands",
+   "text": "Wadden island with 30 km of wide beaches, dunes and cranberry woods, home of the Oerol theatre festival.",
+   "source": {
+    "cited": "https://en.wikivoyage.org/wiki/Terschelling",
+    "text": "Terschelling is one of the West Frisian Islands in the north of the Netherlands. Like most of the West Frisian Islands, Terschelling thrives on domestic tourism who usually stay several days to enjoy the quiet, rural island atmosphere, spend time on the beaches and take bike trips to see the nature."
+   }
+  },
+  {
+   "text_id": "t24",
+   "ref": "trail:63484",
+   "kind": "trail_summary",
+   "subject": "Hiking trail Nivica-Bolena",
+   "text": "The hiking trail Nivica-Bolena is a hard, waymarked hiking route in AL spanning 35.8 km. It features 937 m of ascent and 1177 m of descent, requiring about 7.9 hours on the DIN 33466 hiking time rule.",
+   "source": {
+    "cited": "https://www.openstreetmap.org/relation/14925666",
+    "facts": {
+     "name": "Hiking trail Nivica-Bolena",
+     "country": "AL",
+     "distance_km": 19.5,
+     "ascent_m": 937,
+     "descent_m": 1177,
+     "is_loop": false,
+     "difficulty": "hard",
+     "sac_scale": null,
+     "network": "rwn",
+     "waymark_ref": null,
+     "osm_relation": 14925666,
+     "osm_tags": {
+      "name": "Hiking trail Nivica-Bolena",
+      "from": "Nivica",
+      "to": "Bolena",
+      "network": "rwn",
+      "osmc:symbol": "red:white:red_bar"
+     },
+     "named_along_the_way": []
+    }
+   }
+  },
+  {
+   "text_id": "t25",
+   "ref": "place:gem:sinaia",
+   "kind": "place_blurb",
+   "subject": "Sinaia, Romania",
+   "text": "Tiny island where women still wear striped skirts daily; a UNESCO-listed living culture.",
+   "source": {
+    "cited": "https://en.wikivoyage.org/wiki/Sinaia",
+    "text": "Sinaia is one of Romania's finest holiday resorts, deep into the Carpathian Mountains. In the late 19th century, King Charles I of Romania chose Sinaia as his summer residence and built the fabulous Peles Castle, which is today the city's best known landmark."
+   }
+  },
+  {
+   "text_id": "t26",
+   "ref": "place:gem:plzen",
+   "kind": "place_blurb",
+   "subject": "Pilsen, Czechia",
+   "text": "Byzantine lakeside town on a peninsula, with 50 medieval churches, mansions and a misty lakeshore walk.",
+   "source": {
+    "cited": "https://en.wikivoyage.org/wiki/Pilsen",
+    "text": "Pilsen (Czech: Plzeň) is in Bohemia, in the Czech Republic in Central Europe. It is the home and birthplace of the Pilsener (or pilsner) beer variety which is derived from the city's name."
+   }
+  },
+  {
+   "text_id": "t27",
+   "ref": "place:gem:rijeka-crnojevica",
+   "kind": "place_blurb",
+   "subject": "Rijeka Crnojevića, Montenegro",
+   "text": "Medieval pilgrim city gathered around England's mother cathedral",
+   "source": {
+    "cited": "https://en.wikivoyage.org/wiki/Rijeka_Crnojevica",
+    "text": "Rijeka Crnojevica is a small historical town in Central Montenegro on the ancient trading route through Montenegro. The city is very near the most beautiful part of Lake Skadar. It is worth visiting for both the lake and the old architecture left over from the trader days."
+   }
+  },
+  {
+   "text_id": "t28",
+   "ref": "place:gem:ericeira",
+   "kind": "place_blurb",
+   "subject": "Ericeira, Portugal",
+   "text": "Wind-bent trees and driftwood line the wild Weststrand, Germany's most beautiful untamed Baltic beach",
+   "source": {
+    "cited": "https://en.wikivoyage.org/wiki/Ericeira",
+    "text": "Ericeira is an adorable seaside resort and fishing town in Greater Lisbon, Estremadura, Portugal. Full of stories and traditions, \"Vila Velha\" is made up of narrow streets and typical houses, unique monuments and splendid Atlantic landscapes."
+   }
+  },
+  {
+   "text_id": "t29",
+   "ref": "trail:62909",
+   "kind": "trail_summary",
+   "subject": "Eyjaleið",
+   "text": "Eyjaleið is a walking route located in IS. This easy path covers 6.1 km with 58 m of ascent and 49 m of descent.",
+   "source": {
+    "cited": "https://www.openstreetmap.org/relation/10631190",
+    "facts": {
+     "name": "Eyjaleið",
+     "country": "IS",
+     "distance_km": 6.1,
+     "ascent_m": 58,
+     "descent_m": 49,
+     "is_loop": false,
+     "difficulty": "easy",
+     "sac_scale": null,
+     "network": "lwn",
+     "waymark_ref": null,
+     "osm_relation": 10631190,
+     "osm_tags": {
+      "name": "Eyjaleið",
+      "network": "lwn"
+     },
+     "named_along_the_way": [
+      "Króarfoss",
+      "Vaðtjörn"
+     ]
+    }
+   }
+  },
+  {
+   "text_id": "t30",
+   "ref": "trail:64206",
+   "kind": "trail_summary",
+   "subject": "Svētā Jēkaba ceļš (Valka-Rīga) 7 etaps: Līgatne – Sigulda",
+   "text": "This waymarked hiking route runs for 47.7 km across the national waymarked hiking network. The journey requires about 7.9 hours on the DIN 33466 hiking time rule and is classified as hard.",
+   "source": {
+    "cited": "https://www.openstreetmap.org/relation/12303250",
+    "facts": {
+     "name": "Svētā Jēkaba ceļš (Valka-Rīga) 7 etaps: Līgatne – Sigulda",
+     "country": "LV",
+     "distance_km": 26.5,
+     "ascent_m": 479,
+     "descent_m": 532,
+     "is_loop": false,
+     "difficulty": "hard",
+     "sac_scale": null,
+     "network": "nwn",
+     "waymark_ref": null,
+     "osm_relation": 12303250,
+     "osm_tags": {
+      "name": "Svētā Jēkaba ceļš (Valka-Rīga) 7 etaps: Līgatne – Sigulda",
+      "distance": "27",
+      "network": "nwn",
+      "osmc:symbol": "blue:blue:shell_modern"
+     },
+     "named_along_the_way": [
+      "Siguldas viduslaiku pils"
+     ]
+    }
+   }
+  },
+  {
+   "text_id": "t31",
+   "ref": "place:gem:zahara-de-la-sierra",
+   "kind": "place_blurb",
+   "subject": "Zahara de la Sierra, Spain",
+   "text": "UNESCO garden landscape linking neo-Gothic Lednice and baroque Valtice chateaux with follies and vineyards",
+   "source": {
+    "cited": "https://en.wikivoyage.org/wiki/Zahara_de_la_Sierra",
+    "text": "Zahara de la Sierra is in Cádiz Province in Andalucia. It is a small white village of 1,400 people (2018) that sits picturesquely on a mountain cone on the northern edge of the Sierra del Jaral. A reservoir, the Embalse de Zahara, spreads out at its feet."
+   }
+  },
+  {
+   "text_id": "t32",
+   "ref": "place:gem:romo",
+   "kind": "place_blurb",
+   "subject": "Romo, Denmark",
+   "text": "Causeway island with Denmark's widest beach, so vast you drive onto the sand among kite buggies.",
+   "source": {
+    "cited": "https://en.wikivoyage.org/wiki/R%C3%B8m%C3%B8",
+    "text": "Rømø is an island in the Wadden Sea National Park at the west coast of South Jutland, Denmark. The attraction of Rømø is the spectacular nature: the heather, the enormous beaches, the Wadden Sea."
+   }
+  },
+  {
+   "text_id": "t33",
+   "ref": "place:gem:bled",
+   "kind": "place_blurb",
+   "subject": "Lake Bled, Slovenia",
+   "text": "Iconic island church, alpine lake",
+   "source": {
+    "cited": "https://en.wikivoyage.org/wiki/Bled",
+    "text": "Bled is a town in Slovenia, on the east side of Lake Bled."
+   }
+  },
+  {
+   "text_id": "t34",
+   "ref": "place:gem:novi-sad",
+   "kind": "place_blurb",
+   "subject": "Novi Sad, Serbia",
+   "text": "Petrovaradin fortress (home of EXIT festival), Danube beaches and Fruška Gora wineries",
+   "source": {
+    "cited": "https://en.wikivoyage.org/wiki/Novi_Sad",
+    "text": "Novi Sad (Serbian: Нови Сад/Novi Sad) is the capital of Vojvodina, the northern Autonomous Province of Serbia, and the second largest city in Serbia. Situated on the Danube River between Budapest and Belgrade, it is a treasured regional and cultural centre."
+   }
+  },
+  {
+   "text_id": "t35",
+   "ref": "place:gem:valbona",
+   "kind": "place_blurb",
+   "subject": "Valbona Valley, Albania",
+   "text": "Red shore-houses, cobbled old town, easy day-trip from Helsinki",
+   "source": {
+    "cited": "https://en.wikivoyage.org/wiki/Valbona_Valley_National_Park",
+    "text": "Valbona National Park, also called the Albanian miracle of Alps, is a part of the Bjeshkët e Nemuna. It lies between high and craggy peaks bordering Thethi National Park, Gashi River, Plava and Gucia (Montenegro), all strictly protected natural areas."
+   }
+  },
+  {
+   "text_id": "t36",
+   "ref": "place:gem:vestmannaeyjar",
+   "kind": "place_blurb",
+   "subject": "Vestmannaeyjar, Iceland",
+   "text": "Volcanic archipelago of puffin cliffs and the 1973 eruption town of Heimaey",
+   "source": {
+    "cited": "https://en.wikivoyage.org/wiki/Vestmannaeyjar",
+    "text": "Vestmannaeyjar (Westman Islands) is a town on the island of Heimaey. Heimaey is the largest of 15-18 islands in the Westman Islands archipelago, just off the south-west coast of Iceland's mainland. Vestmannaeyjar has a population of around 4,200."
+   }
+  },
+  {
+   "text_id": "t37",
+   "ref": "trail:63931",
+   "kind": "trail_summary",
+   "subject": "Banjalučka transverzala",
+   "text": "Banjalučka transverzala is a waymarked hiking route covering a distance of 27.6 km. The path involves 648 m of ascent and 461 m of descent, with a walking time of about 5.2 hours on the DIN 33466 hiking time rule.",
+   "source": {
+    "cited": "https://www.openstreetmap.org/relation/2148504",
+    "facts": {
+     "name": "Banjalučka transverzala",
+     "country": "BA",
+     "distance_km": 14.7,
+     "ascent_m": 648,
+     "descent_m": 461,
+     "is_loop": false,
+     "difficulty": "moderate",
+     "sac_scale": null,
+     "network": "lwn",
+     "waymark_ref": "lwn",
+     "osm_relation": 2148504,
+     "osm_tags": {
+      "name": "Banjalučka transverzala",
+      "ref": "lwn",
+      "roundtrip": "no",
+      "distance": "15 km",
+      "operator": "Planinarsko društvo Kozara, Banja Luka",
+      "network": "lwn",
+      "description": "Pješačka ruta: tvornica obuće Bema, Trešnjik, Banj Brdo, kanjon Sutirlije, brdo Šibovi. Istoimena je i akcija PD Kozare povodom Dana grada."
+     },
+     "named_along_the_way": [
+      "Banj brdo"
+     ]
+    }
+   }
+  },
+  {
+   "text_id": "t38",
+   "ref": "trail:74210",
+   "kind": "trail_summary",
+   "subject": "Κλασικός Μαραθώνιος Αθηνών",
+   "text": "Κλασικός Μαραθώνιος Αθηνών is a walking route in GR that covers 42.2 km. This hard route is part of the national waymarked hiking network and takes about 11 hours on the DIN 33466 hiking time rule.",
+   "source": {
+    "cited": "https://www.openstreetmap.org/relation/9705303",
+    "facts": {
+     "name": "Κλασικός Μαραθώνιος Αθηνών",
+     "country": "GR",
+     "distance_km": 42.2,
+     "ascent_m": 311,
+     "descent_m": 258,
+     "is_loop": false,
+     "difficulty": "hard",
+     "sac_scale": null,
+     "network": "nwn",
+     "waymark_ref": null,
+     "osm_relation": 9705303,
+     "osm_tags": {
+      "name": "Κλασικός Μαραθώνιος Αθηνών",
+      "from": "Μαραθώνα",
+      "to": "Παναθηναϊκό Στάδιο",
+      "network": "nwn",
+      "wikidata": "Q285099"
+     },
+     "named_along_the_way": [
+      "Αρδηττός",
+      "Υστερορωμαϊκό κτίσμα"
+     ]
+    }
+   }
+  },
+  {
+   "text_id": "t39",
+   "ref": "trail:63504",
+   "kind": "trail_summary",
+   "subject": "Liqeni i Lepurit Circuit",
+   "text": "The Liqeni i Lepurit Circuit is a waymarked hiking route located in Albania. This circuit starts and finishes at the same place, covering a distance of 10.4 km.",
+   "source": {
+    "cited": "https://www.openstreetmap.org/relation/21053446",
+    "facts": {
+     "name": "Liqeni i Lepurit Circuit",
+     "country": "AL",
+     "distance_km": 10.4,
+     "ascent_m": 674,
+     "descent_m": 668,
+     "is_loop": true,
+     "difficulty": "easy",
+     "sac_scale": "mountain_hiking",
+     "network": "rwn",
+     "waymark_ref": null,
+     "osm_relation": 21053446,
+     "osm_tags": {
+      "name": "Liqeni i Lepurit Circuit",
+      "roundtrip": "yes",
+      "network": "rwn",
+      "sac_scale": "mountain_hiking"
+     },
+     "named_along_the_way": [
+      "Maja e Skrepit",
+      "Liqeni i Lepurit"
+     ]
+    }
+   }
+  },
+  {
+   "text_id": "t40",
+   "ref": "trail:13512",
+   "kind": "trail_summary",
+   "subject": "Via Mariae M05 - The Central-European Pilgrimway",
+   "text": "Via Mariae M05 - The Central-European Pilgrimway is a waymarked hiking route in RO signposted as M05. It belongs to an international waymarked hiking network and is classified as easy due to the distance and ascent. It passes a famous glacier halfway.",
+   "source": {
+    "cited": "https://www.openstreetmap.org/relation/4646510",
+    "facts": {
+     "name": "Via Mariae M05 - The Central-European Pilgrimway",
+     "country": "RO",
+     "distance_km": 394.6,
+     "ascent_m": 8485,
+     "descent_m": 8037,
+     "is_loop": false,
+     "difficulty": "easy",
+     "sac_scale": null,
+     "network": "iwn",
+     "waymark_ref": "M05",
+     "osm_relation": 4646510,
+     "osm_tags": {
+      "name": "Via Mariae M05 - The Central-European Pilgrimway",
+      "name:en": "St. Mary's Trail M05",
+      "ref": "M05",
+      "roundtrip": "no",
+      "network": "iwn",
+      "osmc:symbol": "red:red:::M05:white",
+      "website": "http://mariaut.hu"
+     },
+     "named_along_the_way": [
+      "Gordon",
+      "Tofalău"
+     ]
+    }
+   }
+  },
+  {
+   "text_id": "t41",
+   "ref": "place:gem:trebinje",
+   "kind": "place_blurb",
+   "subject": "Trebinje, Bosnia and Herzegovina",
+   "text": "Plane shaded squares, Ottoman bridges and wine cellars just over the hill from Dubrovnik",
+   "source": {
+    "cited": "https://en.wikivoyage.org/wiki/Trebinje",
+    "text": "Trebinje is a town in the Herzegovina region."
+   }
+  },
+  {
+   "text_id": "t42",
+   "ref": "trail:96033",
+   "kind": "trail_summary",
+   "subject": "GR 128 Variant Gent-Destelbergen",
+   "text": "The GR 128 Variant Gent-Destelbergen is a waymarked hiking route in BE. It covers a distance of 9.6 km and takes about 2.5 hours on the DIN 33466 hiking time rule.",
+   "source": {
+    "cited": "https://www.openstreetmap.org/relation/11558750",
+    "facts": {
+     "name": "GR 128 Variant Gent-Destelbergen",
+     "country": "BE",
+     "distance_km": 9.6,
+     "ascent_m": 20,
+     "descent_m": 24,
+     "is_loop": false,
+     "difficulty": "easy",
+     "sac_scale": null,
+     "network": "nwn",
+     "waymark_ref": "GR 128",
+     "osm_relation": 11558750,
+     "osm_tags": {
+      "name": "GR 128 Variant Gent-Destelbergen",
+      "ref": "GR 128",
+      "distance": "9.55",
+      "operator": "Grote Routepaden VZW",
+      "network": "nwn",
+      "osmc:symbol": "red:white:red_lower:128:black"
+     },
+     "named_along_the_way": [
+      "Plotersgracht",
+      "Gravensteen"
+     ]
+    }
+   }
+  },
+  {
+   "text_id": "t43",
+   "ref": "trail:80257",
+   "kind": "trail_summary",
+   "subject": "Dublin Mountains Way",
+   "text": "The Dublin Mountains Way is a waymarked hiking route in IE that covers 72.9 km. This trail is part of the national waymarked hiking network and is signposted as DMW.",
+   "source": {
+    "cited": "https://www.openstreetmap.org/relation/286707",
+    "facts": {
+     "name": "Dublin Mountains Way",
+     "country": "IE",
+     "distance_km": 41.1,
+     "ascent_m": 954,
+     "descent_m": 1018,
+     "is_loop": false,
+     "difficulty": "hard",
+     "sac_scale": null,
+     "network": "nwn",
+     "waymark_ref": "DMW",
+     "osm_relation": 286707,
+     "osm_tags": {
+      "name": "Dublin Mountains Way",
+      "ref": "DMW",
+      "from": "Tallaght",
+      "to": "Shankill",
+      "distance": "43 km",
+      "network": "nwn",
+      "osmc:symbol": "red:black:yellow_hiker",
+      "website": "https://www.dublinmountains.ie/dublin_mountains_way/dublin_mountains_way/",
+      "wikidata": "Q3040526"
+     },
+     "named_along_the_way": [
+      "Two Rock Mountain",
+      "Bohernabreena Reservoir Lower",
+      "Saint Ann's Graveyard"
+     ]
+    }
+   }
+  },
+  {
+   "text_id": "t44",
+   "ref": "trail:62406",
+   "kind": "trail_summary",
+   "subject": "Ramla Walk",
+   "text": "The Ramla Walk is a 7.8 km waymarked hiking route located in MT. It features 144 m of ascent and 143 m of descent, requiring about 2.3 hours on the DIN 33466 hiking time rule. This easy route is derived from distance and ascent as part of a local waymarked hiking network.",
+   "source": {
+    "cited": "https://www.openstreetmap.org/relation/20599334",
+    "facts": {
+     "name": "Ramla Walk",
+     "country": "MT",
+     "distance_km": 7.8,
+     "ascent_m": 144,
+     "descent_m": 143,
+     "is_loop": false,
+     "difficulty": "easy",
+     "sac_scale": null,
+     "network": "lwn",
+     "waymark_ref": null,
+     "osm_relation": 20599334,
+     "osm_tags": {
+      "name": "Ramla Walk",
+      "from": "Marsalforn",
+      "to": "Ir-Ramla l-Ħamra",
+      "roundtrip": "no",
+      "distance": "7",
+      "operator": "VisitGozo",
+      "network": "lwn",
+      "website": "https://www.visitmalta.com/en/info/ramla-walk-malta/"
+     },
+     "named_along_the_way": []
+    }
+   }
+  },
+  {
+   "text_id": "t45",
+   "ref": "trail:3341",
+   "kind": "trail_summary",
+   "subject": "Balzers - Ruettena - Triesen Post",
+   "text": "The Balzers to Triesen Post route is a waymarked hiking route in LI. This easy path covers 6.2 km and is signposted as 1.",
+   "source": {
+    "cited": "https://www.openstreetmap.org/relation/3968916",
+    "facts": {
+     "name": "Balzers - Ruettena - Triesen Post",
+     "country": "LI",
+     "distance_km": 6.3,
+     "ascent_m": 8,
+     "descent_m": 16,
+     "is_loop": false,
+     "difficulty": "easy",
+     "sac_scale": null,
+     "network": "lwn",
+     "waymark_ref": "1",
+     "osm_relation": 3968916,
+     "osm_tags": {
+      "name": "Balzers - Ruettena - Triesen Post",
+      "ref": "1",
+      "distance": "6.21",
+      "network": "lwn"
+     },
+     "named_along_the_way": [
+      "Burg Gutenberg"
+     ]
+    }
+   }
+  },
+  {
+   "text_id": "t46",
+   "ref": "trail:5488",
+   "kind": "trail_summary",
+   "subject": "Tour Monte Rosa tappa 1",
+   "text": "Tour Monte Rosa tappa 1 is a waymarked hiking route in Switzerland spanning 12.3 km. The path involves 1707 m of ascent and 36 m of descent.",
+   "source": {
+    "cited": "https://www.openstreetmap.org/relation/9237283",
+    "facts": {
+     "name": "Tour Monte Rosa tappa 1",
+     "country": "CH",
+     "distance_km": 12.3,
+     "ascent_m": 1707,
+     "descent_m": 36,
+     "is_loop": false,
+     "difficulty": "hard",
+     "sac_scale": null,
+     "network": "nwn",
+     "waymark_ref": "TMR",
+     "osm_relation": 9237283,
+     "osm_tags": {
+      "name": "Tour Monte Rosa tappa 1",
+      "name:en": "Monte Rosa tour stage 1",
+      "ref": "TMR",
+      "from": "Zermatt",
+      "to": "Rifugio del Teodulo",
+      "roundtrip": "no",
+      "distance": "13.4",
+      "ascent": "1728",
+      "descent": "16",
+      "network": "nwn",
+      "osmc:symbol": "yellow:white:yellow_diamond:TMR:black",
+      "description": "around the Monte Rosa group"
+     },
+     "named_along_the_way": [
+      "Bielti"
+     ]
+    }
+   }
+  },
+  {
+   "text_id": "t47",
+   "ref": "place:gem:lillehammer",
+   "kind": "place_blurb",
+   "subject": "Lillehammer, Norway",
+   "text": "1994 Olympic town with the huge Maihaugen open-air museum and classic Norwegian ski slopes",
+   "source": {
+    "cited": "https://en.wikivoyage.org/wiki/Lillehammer",
+    "text": "Lillehammer is a small town in the county of Oppland in south-central Norway. Lillehammer is best remembered as the site of the 1994 Winter Olympics, but it's also worth a visit in the summer for its beautifully preserved late 19th-century wooden houses."
+   }
+  },
+  {
+   "text_id": "t48",
+   "ref": "trail:62878",
+   "kind": "trail_summary",
+   "subject": "Látrabjarg",
+   "text": "The waymarked hiking route RW_ISL41 is located in IS. This regional network trail covers a distance of 15.4 km.",
+   "source": {
+    "cited": "https://www.openstreetmap.org/relation/6224393",
+    "facts": {
+     "name": "Látrabjarg",
+     "country": "IS",
+     "distance_km": 7.3,
+     "ascent_m": 860,
+     "descent_m": 470,
+     "is_loop": false,
+     "difficulty": "easy",
+     "sac_scale": null,
+     "network": "rwn",
+     "waymark_ref": "RW_ISL41",
+     "osm_relation": 6224393,
+     "osm_tags": {
+      "name": "Látrabjarg",
+      "ref": "RW_ISL41",
+      "ascent": "400",
+      "descent": "400",
+      "network": "rwn",
+      "osmc:symbol": "yellow:yellow:: RW41 :black",
+      "description": "path nr.41 from Rother Wanderführer, Island"
+     },
+     "named_along_the_way": [
+      "Bjargtangaviti"
+     ]
+    }
+   }
+  },
+  {
+   "text_id": "t49",
+   "ref": "place:gem:suduroy",
+   "kind": "place_blurb",
+   "subject": "Suðuroy, Faroe Islands",
+   "text": "The Faroes' forgotten south: vertiginous west-coast cliffs and villages beyond the ferry",
+   "source": {
+    "cited": "https://en.wikivoyage.org/wiki/Su%C3%B0uroy",
+    "text": "Suðuroy (Suduroy means South Island) is the southernmost of the islands in the Faroe Islands."
+   }
+  },
+  {
+   "text_id": "t50",
+   "ref": "trail:77921",
+   "kind": "trail_summary",
+   "subject": "Amarminoen",
+   "text": "Amarminoen is a waymarked hiking route in DK with a distance of 26.6 km. The trail features 97 m of ascent and 97 m of descent.",
+   "source": {
+    "cited": "https://www.openstreetmap.org/relation/11741012",
+    "facts": {
+     "name": "Amarminoen",
+     "country": "DK",
+     "distance_km": 26.6,
+     "ascent_m": 97,
+     "descent_m": 97,
+     "is_loop": false,
+     "difficulty": "hard",
+     "sac_scale": null,
+     "network": "rwn",
+     "waymark_ref": null,
+     "osm_relation": 11741012,
+     "osm_tags": {
+      "name": "Amarminoen",
+      "from": "DR Byen",
+      "to": "Dragør",
+      "roundtrip": "no",
+      "network": "rwn",
+      "osmc:symbol": "blue:blue:white_hiker"
+     },
+     "named_along_the_way": [
+      "Affaldsbjerget",
+      "Grønjordssøen"
+     ]
+    }
+   }
+  }
+ ]
+}

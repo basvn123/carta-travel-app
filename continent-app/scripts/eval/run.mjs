@@ -3,7 +3,7 @@
  * The one eval runner (T1148, ROADMAP F6). Every Carta eval runs through it
  * and writes the shared results format (scripts/eval/lib/results.mjs).
  *
- *   node scripts/eval/run.mjs [ask] [trail-summaries] [data-quality] [plan-day] [taxonomy] [trails-external] [all]
+ *   node scripts/eval/run.mjs [ask] [trail-summaries] [data-quality] [plan-day] [taxonomy] [trails-external] [truth] [all]
  *        [--check] [--write] [--dashboard] [--json]
  *        [--seed-drop]             (ask: a known regression, the gate must fail)
  *        [--plans <file>]          (plan-day: score recorded plans, not the reference planner)
@@ -24,6 +24,7 @@
  *   plan-day         plan-day rule checks and the judge calibration (kappa)
  *   taxonomy         taxonomy tagging, P@5 and F1 on hand labels (T1149, ROADMAP F1)
  *   trails-external  trails against outside references, coverage and top band (T1181), Python
+ *   truth            the truth set: shipped data against hand-verified answers (T1144, ROADMAP D4), Python
  * No eval calls a model. The plan-day judge is its own optional step
  * (scripts/eval/plan-day/judge.mjs). The Claude API is never used.
  * S52's own entry point, scripts/eval/ask-eval.mjs, keeps working as before.
@@ -33,7 +34,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { RESULTS_DIR, REPO, readHistory, validateResult, writeResult } from './lib/results.mjs';
 
-export const EVALS = ['ask', 'trail-summaries', 'data-quality', 'plan-day', 'taxonomy', 'trails-external'];
+export const EVALS = ['ask', 'trail-summaries', 'data-quality', 'plan-day', 'taxonomy', 'trails-external', 'truth'];
 export const DASHBOARD_PATH = join(REPO, 'docs', 'reference', 'evals.md');
 
 const argv = process.argv.slice(2);
@@ -48,7 +49,7 @@ export async function runOne(name, opts = {}) {
     r = await mod.run(opts);
   } catch (e) {
     r = {
-      schema: 'carta-eval/1', eval: name, title: mod.title || name, kind: { ask: 'retrieval', 'trail-summaries': 'text-check', 'data-quality': 'data', 'plan-day': 'llm-plan', taxonomy: 'classification', 'trails-external': 'data' }[name],
+      schema: 'carta-eval/1', eval: name, title: mod.title || name, kind: { ask: 'retrieval', 'trail-summaries': 'text-check', 'data-quality': 'data', 'plan-day': 'llm-plan', taxonomy: 'classification', 'trails-external': 'data', truth: 'data' }[name],
       at: new Date().toISOString(), git: null, status: 'error', gated: true,
       headline: { key: 'error', value: null, label: 'the eval did not run', higher_is_better: true },
       metrics: {}, gate: { ok: false, rule: 'the eval must run', tolerance: null, baseline: null, failures: [{ key: 'error', was: null, now: null, why: String(e.message || e).slice(0, 400) }] },
