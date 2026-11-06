@@ -33,9 +33,9 @@ function seeded(c) {
   return data;
 }
 
-test('the gate reads docs/wire.schema.json, version 19', () => {
+test('the gate reads docs/wire.schema.json, version 20', () => {
   assert.equal(path.resolve(WIRE_SCHEMA_PATH), path.resolve(REPO, 'docs', 'wire.schema.json'));
-  assert.equal(EXPECTED_SCHEMA_VERSION, 19);
+  assert.equal(EXPECTED_SCHEMA_VERSION, 20);
   assert.deepEqual(checkWireSchema(WIRE_SCHEMA), []);
 });
 

@@ -1,0 +1,264 @@
+# Sources registry for field provenance (T1143, ROADMAP D3).
+#
+# Every key block on the wire (an object-valued destination key in
+# docs/wire.schema.json) carries two keys:
+#   _src   the id of one source below: where the block's values come from
+#   _asof  the ISO 8601 date (YYYY-MM-DD) the block was last built by its layer
+# pipeline/provenance.py stamps them; docs/data/sources.md is generated from
+# this file by scripts/docs/gen_sources.py (CI runs it with --check).
+#
+# Fields per source:
+#   title     what it is, in plain words
+#   kind      primary (an outside dataset) or derived (Carta computes it from
+#             the inputs listed)
+#   inputs    for derived sources: the source ids it is computed from
+#   ledger    the matching row keys in src/ingestion/core/registry.py SOURCES,
+#             which holds the full licence text and attribution rules
+#   licence   an SPDX id; LicenseRef-<name> for terms SPDX has no id for;
+#             LicenseRef-carta-derived for derived sources (their inputs'
+#             licences bind)
+#   cadence   EU Publications Office frequency code: WEEKLY, MONTHLY,
+#             QUARTERLY, ANNUAL, IRREG (backfill or by hand)
+#   tasks     the run_pipeline.py task keys that rebuild it ([] when by hand)
+#   owner     who runs it: box (scheduled on the build box) or owner (by hand)
+#
+# Under `blocks`: which source stamps each key block, and the layer writers
+# that build it (from docs/architecture/lineage-fields.json).
+
+sources:
+  carta_beauty:
+    title: Carta beauty score from designations, protected areas, coast and relief
+    kind: derived
+    inputs: [unesco, wikidata, osm_protected, eea_bathing]
+    ledger: []
+    licence: LicenseRef-carta-derived
+    cadence: MONTHLY
+    tasks: [fame]
+    owner: box
+  carta_food:
+    title: Carta food and drink prices (Open Prices, Eurostat price levels and HICP, Numbeo anchors, tourist premium)
+    kind: derived
+    inputs: [open_prices, eurostat_prices, numbeo, eurostat_nights]
+    ledger: [open_food_facts_open_prices, eurostat_food_price_tables, numbeo_point_anchors]
+    licence: LicenseRef-carta-derived
+    cadence: MONTHLY
+    tasks: [food, tourist_premium]
+    owner: box
+  carta_place:
+    title: Carta place class and visit hours from GeoNames population and the POI mix
+    kind: derived
+    inputs: [geonames, poi_mix]
+    ledger: []
+    licence: LicenseRef-carta-derived
+    cadence: MONTHLY
+    tasks: [fame]
+    owner: box
+  carta_rating:
+    title: Carta traveller rating from fame (pageviews), designations, beauty, place class and POI rates
+    kind: derived
+    inputs: [wikipedia, wikidata, carta_beauty, carta_place, poi_mix]
+    ledger: [wikidata_place_registers_pageviews, wikipedia]
+    licence: LicenseRef-carta-derived
+    cadence: MONTHLY
+    tasks: [fame, poi_significance]
+    owner: box
+  carta_taste:
+    title: Carta place taste profile from the rating, nature tiers and guided-search areas
+    kind: derived
+    inputs: [carta_rating, climate, eurostat_nights]
+    ledger: []
+    licence: LicenseRef-carta-derived
+    cadence: WEEKLY
+    tasks: [rating_v5_profile]
+    owner: box
+  carta_transfer:
+    title: Carta transfer from the anchor airport, road distance at about 0.15 EUR per km
+    kind: derived
+    inputs: [osm, ourairports]
+    ledger: [ourairports]
+    licence: LicenseRef-carta-derived
+    cadence: QUARTERLY
+    tasks: [airports]
+    owner: box
+  climate:
+    title: Monthly climate normals (NASA POWER), daily detail (Open-Meteo) and sea temperature (NASA JPL MUR SST)
+    kind: primary
+    inputs: []
+    ledger: [nasa_power_climatology_api, open_meteo_forecast_api, nasa_jpl_mur_sst]
+    licence: LicenseRef-us-gov-public-domain
+    cadence: QUARTERLY
+    tasks: [climate, climate_daily]
+    owner: box
+  commons:
+    title: Wikipedia and Wikimedia Commons lead images
+    kind: primary
+    inputs: []
+    ledger: [wikipedia, wikimedia_commons]
+    licence: LicenseRef-per-file
+    cadence: MONTHLY
+    tasks: [images, hero_audit]
+    owner: box
+  eea_bathing:
+    title: EEA WISE bathing water quality (Bathing Water Directive results)
+    kind: primary
+    inputs: []
+    ledger: [eea_wise_bathing_water]
+    licence: CC-BY-4.0
+    cadence: QUARTERLY
+    tasks: [bathing_water]
+    owner: box
+  eurostat_nights:
+    title: Eurostat nights spent per NUTS 2 and NUTS 3, ONS and VisitBritain for the UK
+    kind: primary
+    inputs: []
+    ledger: [eurostat_tour_occ_nin3, uk_crowds_ons]
+    licence: CC-BY-4.0
+    cadence: QUARTERLY
+    tasks: [crowding, crowding_uk]
+    owner: box
+  eurostat_prices:
+    title: Eurostat price levels, HICP and exchange rates
+    kind: primary
+    inputs: []
+    ledger: [eurostat_food_price_tables]
+    licence: CC-BY-4.0
+    cadence: MONTHLY
+    tasks: [food]
+    owner: box
+  geonames:
+    title: GeoNames cities500 dump (population, settlement class)
+    kind: primary
+    inputs: []
+    ledger: [geonames_cities500]
+    licence: CC-BY-4.0
+    cadence: IRREG
+    tasks: [geonames]
+    owner: box
+  numbeo:
+    title: Numbeo point anchors, a small hand-typed sample
+    kind: primary
+    inputs: []
+    ledger: [numbeo_point_anchors]
+    licence: LicenseRef-numbeo-terms
+    cadence: IRREG
+    tasks: []
+    owner: owner
+  open_prices:
+    title: Open Food Facts Open Prices daily dump
+    kind: primary
+    inputs: []
+    ledger: [open_food_facts_open_prices]
+    licence: ODbL-1.0
+    cadence: MONTHLY
+    tasks: [food]
+    owner: box
+  osm:
+    title: OpenStreetMap via Overpass and Geofabrik (roads, transit lines, ferries, parking)
+    kind: primary
+    inputs: []
+    ledger: [openstreetmap_via_overpass, openstreetmap_via_overpass_harvest_parking, openstreetmap_via_geofabrik_country]
+    licence: ODbL-1.0
+    cadence: MONTHLY
+    tasks: [transit_lines]
+    owner: box
+  osm_protected:
+    title: OpenStreetMap protected areas, national parks and nature reserves (Overpass)
+    kind: primary
+    inputs: []
+    ledger: [openstreetmap_via_overpass]
+    licence: ODbL-1.0
+    cadence: IRREG
+    tasks: [nature]
+    owner: box
+  ourairports:
+    title: OurAirports airport list
+    kind: primary
+    inputs: []
+    ledger: [ourairports]
+    licence: LicenseRef-public-domain
+    cadence: QUARTERLY
+    tasks: [airports]
+    owner: box
+  poi_mix:
+    title: Things to do from OpenTripMap, OpenStreetMap, Overture Places, Wikidata and Wikivoyage listings
+    kind: derived
+    inputs: [osm, wikidata, wikivoyage]
+    ledger: [opentripmap, overture_maps_places, wikidata_sitelink_counts_live, wikivoyage]
+    licence: LicenseRef-carta-derived
+    cadence: MONTHLY
+    tasks: [activities, overture, poi_significance]
+    owner: box
+  stays_scrape:
+    title: Booking.com and Hostelworld search lists, owner-run sample (stays journal, T1021)
+    kind: primary
+    inputs: []
+    ledger: [booking_com_search_lists, hostelworld_city_lists]
+    licence: LicenseRef-site-terms
+    cadence: MONTHLY
+    tasks: []
+    owner: owner
+  toll_tables:
+    title: Per-country toll and vignette tables kept in pipeline/toll_layer.py
+    kind: derived
+    inputs: []
+    ledger: []
+    licence: LicenseRef-carta-derived
+    cadence: IRREG
+    tasks: []
+    owner: owner
+  unesco:
+    title: UNESCO World Heritage List
+    kind: primary
+    inputs: []
+    ledger: [unesco_world_heritage_centre]
+    licence: LicenseRef-unesco-whc-terms
+    cadence: ANNUAL
+    tasks: []
+    owner: owner
+  wikidata:
+    title: Wikidata (Special:EntityData and the query service)
+    kind: primary
+    inputs: []
+    ledger: [wikidata_sitelink_counts_live]
+    licence: CC0-1.0
+    cadence: IRREG
+    tasks: []
+    owner: owner
+  wikipedia:
+    title: Wikipedia pageviews and lead text
+    kind: primary
+    inputs: []
+    ledger: [wikipedia]
+    licence: CC-BY-SA-4.0
+    cadence: MONTHLY
+    tasks: [fame]
+    owner: box
+  wikivoyage:
+    title: Wikivoyage lead and link
+    kind: primary
+    inputs: []
+    ledger: [wikivoyage]
+    licence: CC-BY-SA-4.0
+    cadence: IRREG
+    tasks: [guide]
+    owner: box
+
+blocks:
+  costs:           {src: carta_food,     writers: [pipeline/apply_food_prices.py, pipeline/apply_tourist_premium.py]}
+  accommodation:   {src: stays_scrape,   writers: [pipeline/stays/apply_stays.py]}
+  local_transport: {src: osm,            writers: [pipeline/apply_car_layer.py, pipeline/apply_airport_anchors.py]}
+  beauty:          {src: carta_beauty,   writers: [pipeline/apply_beauty_layer.py]}
+  image:           {src: commons,        writers: [pipeline/harvest_images.py, pipeline/audit_hero_images.py]}
+  activities:      {src: poi_mix,        writers: [pipeline/harvest_activities.py, pipeline/harvest_pois_overture.py, pipeline/score_significance.py]}
+  rating:          {src: carta_rating,   writers: [pipeline/apply_rating_layer.py]}
+  taste:           {src: carta_taste,    writers: [pipeline/place_taste_profile.py]}
+  transfer:        {src: carta_transfer, writers: [pipeline/apply_airport_anchors.py]}
+  climate:         {src: climate,        writers: [pipeline/apply_climate.py]}
+  place:           {src: carta_place,    writers: [pipeline/apply_place_layer.py]}
+  driving_toll:    {src: toll_tables,    writers: [pipeline/apply_toll_layer.py]}
+  bathing_water:   {src: eea_bathing,    writers: [pipeline/harvest_bathing_water.py]}
+  crowding:        {src: eurostat_nights, writers: [pipeline/harvest_tourism_density.py, pipeline/harvest_uk_crowds.py]}
+  geonames:        {src: geonames,       writers: [pipeline/harvest_geonames.py]}
+  nature:          {src: osm_protected,  writers: [pipeline/harvest_protected_areas_osm.py]}
+  guide:           {src: wikivoyage,     writers: [pipeline/apply_wikivoyage.py]}
+  wikidata:        {src: wikidata,       writers: []}

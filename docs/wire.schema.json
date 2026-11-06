@@ -3,7 +3,7 @@
   "$id": "https://carta.travel/schema/wire.schema.json",
   "title": "Carta wire contract: continent-app/public/app_data.json",
   "description": "The one machine-readable data contract (T1133, ROADMAP D1). Read by the pipeline writers (pipeline/wire_contract.py, called from pipeline_io.atomic_write_json before every write of the wire), by the app sync (continent-app/scripts/sync-data.mjs) and by the CI contract gate (continent-app/scripts/ci/contract.mjs, check-contract.mjs). The table \"Wire contract\" in docs/SCHEMA.md is generated from this file (node continent-app/scripts/ci/wire-table.mjs --write). Keywords used: a JSON Schema 2020-12 subset (type, enum, const, pattern, minLength, minimum, maximum, items, prefixItems, minItems, maxItems, properties, required, additionalProperties, minProperties, $ref) plus x-presence (required, every, some), which is checked only on a full catalogue.",
-  "x-schema-version": 19,
+  "x-schema-version": 20,
   "type": "object",
   "required": [
     "meta",
@@ -25,7 +25,7 @@
       "properties": {
         "schema_version": {
           "type": "integer",
-          "const": 19,
+          "const": 20,
           "x-presence": "required",
           "description": "header line; read on boot"
         },
@@ -326,7 +326,19 @@
             "null"
           ],
           "x-presence": "every",
-          "description": "app_data.json block"
+          "description": "app_data.json block",
+          "properties": {
+            "_src": {
+              "$ref": "#/$defs/src"
+            },
+            "_asof": {
+              "$ref": "#/$defs/asof"
+            }
+          },
+          "required": [
+            "_src",
+            "_asof"
+          ]
         },
         "accommodation": {
           "type": [
@@ -334,7 +346,19 @@
             "null"
           ],
           "x-presence": "some",
-          "description": "app_data.json block; Schema v18. `some` until ROADMAP D10 fills bed prices for the 515 places that lack them (T1057); then back to `every`"
+          "description": "app_data.json block; Schema v18. `some` until ROADMAP D10 fills bed prices for the 515 places that lack them (T1057); then back to `every`",
+          "properties": {
+            "_src": {
+              "$ref": "#/$defs/src"
+            },
+            "_asof": {
+              "$ref": "#/$defs/asof"
+            }
+          },
+          "required": [
+            "_src",
+            "_asof"
+          ]
         },
         "local_transport": {
           "type": [
@@ -342,7 +366,19 @@
             "null"
           ],
           "x-presence": "every",
-          "description": "app_data.json block"
+          "description": "app_data.json block",
+          "properties": {
+            "_src": {
+              "$ref": "#/$defs/src"
+            },
+            "_asof": {
+              "$ref": "#/$defs/asof"
+            }
+          },
+          "required": [
+            "_src",
+            "_asof"
+          ]
         },
         "beauty": {
           "type": [
@@ -350,7 +386,19 @@
             "null"
           ],
           "x-presence": "every",
-          "description": "app_data.json block"
+          "description": "app_data.json block",
+          "properties": {
+            "_src": {
+              "$ref": "#/$defs/src"
+            },
+            "_asof": {
+              "$ref": "#/$defs/asof"
+            }
+          },
+          "required": [
+            "_src",
+            "_asof"
+          ]
         },
         "image": {
           "type": [
@@ -358,7 +406,19 @@
             "null"
           ],
           "x-presence": "every",
-          "description": "app_data.json block (`hires` stripped on the wire)"
+          "description": "app_data.json block (`hires` stripped on the wire)",
+          "properties": {
+            "_src": {
+              "$ref": "#/$defs/src"
+            },
+            "_asof": {
+              "$ref": "#/$defs/asof"
+            }
+          },
+          "required": [
+            "_src",
+            "_asof"
+          ]
         },
         "activities": {
           "type": [
@@ -366,7 +426,19 @@
             "null"
           ],
           "x-presence": "every",
-          "description": "app_data.json block (`items_full` moved to `poi/`)"
+          "description": "app_data.json block (`items_full` moved to `poi/`)",
+          "properties": {
+            "_src": {
+              "$ref": "#/$defs/src"
+            },
+            "_asof": {
+              "$ref": "#/$defs/asof"
+            }
+          },
+          "required": [
+            "_src",
+            "_asof"
+          ]
         },
         "rating": {
           "$ref": "#/$defs/rating",
@@ -400,7 +472,19 @@
             "null"
           ],
           "x-presence": "every",
-          "description": "not yet described (minutes and euros one way from the anchor airport)"
+          "description": "not yet described (minutes and euros one way from the anchor airport)",
+          "properties": {
+            "_src": {
+              "$ref": "#/$defs/src"
+            },
+            "_asof": {
+              "$ref": "#/$defs/asof"
+            }
+          },
+          "required": [
+            "_src",
+            "_asof"
+          ]
         },
         "climate": {
           "type": [
@@ -408,7 +492,19 @@
             "null"
           ],
           "x-presence": "every",
-          "description": "not yet described (twelve monthly rows and the best months)"
+          "description": "not yet described (twelve monthly rows and the best months)",
+          "properties": {
+            "_src": {
+              "$ref": "#/$defs/src"
+            },
+            "_asof": {
+              "$ref": "#/$defs/asof"
+            }
+          },
+          "required": [
+            "_src",
+            "_asof"
+          ]
         },
         "place": {
           "type": [
@@ -416,7 +512,19 @@
             "null"
           ],
           "x-presence": "every",
-          "description": "not yet described (place class and visit hours, `apply_place_layer.py`)"
+          "description": "not yet described (place class and visit hours, `apply_place_layer.py`)",
+          "properties": {
+            "_src": {
+              "$ref": "#/$defs/src"
+            },
+            "_asof": {
+              "$ref": "#/$defs/asof"
+            }
+          },
+          "required": [
+            "_src",
+            "_asof"
+          ]
         },
         "country_rank": {
           "type": [
@@ -495,7 +603,19 @@
             "null"
           ],
           "x-presence": "some",
-          "description": "Schema v14 section 2"
+          "description": "Schema v14 section 2",
+          "properties": {
+            "_src": {
+              "$ref": "#/$defs/src"
+            },
+            "_asof": {
+              "$ref": "#/$defs/asof"
+            }
+          },
+          "required": [
+            "_src",
+            "_asof"
+          ]
         },
         "bathing_water": {
           "type": [
@@ -503,7 +623,19 @@
             "null"
           ],
           "x-presence": "some",
-          "description": "Schema v16"
+          "description": "Schema v16",
+          "properties": {
+            "_src": {
+              "$ref": "#/$defs/src"
+            },
+            "_asof": {
+              "$ref": "#/$defs/asof"
+            }
+          },
+          "required": [
+            "_src",
+            "_asof"
+          ]
         },
         "crowding": {
           "type": [
@@ -511,7 +643,19 @@
             "null"
           ],
           "x-presence": "some",
-          "description": "Schema v17"
+          "description": "Schema v17",
+          "properties": {
+            "_src": {
+              "$ref": "#/$defs/src"
+            },
+            "_asof": {
+              "$ref": "#/$defs/asof"
+            }
+          },
+          "required": [
+            "_src",
+            "_asof"
+          ]
         },
         "geonames": {
           "type": [
@@ -519,7 +663,19 @@
             "null"
           ],
           "x-presence": "some",
-          "description": "Schema v14 section 4b (`geonames.population`)"
+          "description": "Schema v14 section 4b (`geonames.population`)",
+          "properties": {
+            "_src": {
+              "$ref": "#/$defs/src"
+            },
+            "_asof": {
+              "$ref": "#/$defs/asof"
+            }
+          },
+          "required": [
+            "_src",
+            "_asof"
+          ]
         },
         "designations": {
           "type": [
@@ -535,7 +691,19 @@
             "null"
           ],
           "x-presence": "some",
-          "description": "not yet described (nearest protected area, `harvest_protected_areas_osm.py`)"
+          "description": "not yet described (nearest protected area, `harvest_protected_areas_osm.py`)",
+          "properties": {
+            "_src": {
+              "$ref": "#/$defs/src"
+            },
+            "_asof": {
+              "$ref": "#/$defs/asof"
+            }
+          },
+          "required": [
+            "_src",
+            "_asof"
+          ]
         },
         "guide": {
           "type": [
@@ -543,7 +711,19 @@
             "null"
           ],
           "x-presence": "some",
-          "description": "not yet described (Wikivoyage lead and link, `apply_wikivoyage.py`)"
+          "description": "not yet described (Wikivoyage lead and link, `apply_wikivoyage.py`)",
+          "properties": {
+            "_src": {
+              "$ref": "#/$defs/src"
+            },
+            "_asof": {
+              "$ref": "#/$defs/asof"
+            }
+          },
+          "required": [
+            "_src",
+            "_asof"
+          ]
         },
         "members": {
           "type": [
@@ -559,7 +739,19 @@
             "null"
           ],
           "x-presence": "some",
-          "description": "Schema v15 section 2"
+          "description": "Schema v15 section 2",
+          "properties": {
+            "_src": {
+              "$ref": "#/$defs/src"
+            },
+            "_asof": {
+              "$ref": "#/$defs/asof"
+            }
+          },
+          "required": [
+            "_src",
+            "_asof"
+          ]
         },
         "anchor_estimated": {
           "type": [
@@ -635,8 +827,18 @@
               "const": "europe"
             }
           }
+        },
+        "_src": {
+          "$ref": "#/$defs/src"
+        },
+        "_asof": {
+          "$ref": "#/$defs/asof"
         }
-      }
+      },
+      "required": [
+        "_src",
+        "_asof"
+      ]
     },
     "taste": {
       "type": "object",
@@ -645,7 +847,9 @@
         "size",
         "crowd_by_month",
         "car_need",
-        "cost_level"
+        "cost_level",
+        "_src",
+        "_asof"
       ],
       "properties": {
         "likes": {
@@ -753,6 +957,12 @@
             "number",
             "null"
           ]
+        },
+        "_src": {
+          "$ref": "#/$defs/src"
+        },
+        "_asof": {
+          "$ref": "#/$defs/asof"
         }
       }
     },
@@ -788,6 +998,42 @@
           "type": "object"
         }
       ]
+    },
+    "src": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$",
+      "description": "T1143 (D3): the id of the block's source in pipeline/config/sources.yaml",
+      "enum": [
+        "carta_beauty",
+        "carta_food",
+        "carta_place",
+        "carta_rating",
+        "carta_taste",
+        "carta_transfer",
+        "climate",
+        "commons",
+        "eea_bathing",
+        "eurostat_nights",
+        "eurostat_prices",
+        "geonames",
+        "numbeo",
+        "open_prices",
+        "osm",
+        "osm_protected",
+        "ourairports",
+        "poi_mix",
+        "stays_scrape",
+        "toll_tables",
+        "unesco",
+        "wikidata",
+        "wikipedia",
+        "wikivoyage"
+      ]
+    },
+    "asof": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "T1143 (D3): the date (YYYY-MM-DD) the block's layer last built it"
     }
   }
 }

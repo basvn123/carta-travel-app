@@ -1,5 +1,5 @@
 {
- "description": "T1133 (D1): seeded bad values for docs/wire.schema.json. Each case changes one value of continent-app/scripts/ci/fixtures/contract-min.json (set `value`, or `delete` the key at `path`); the validator must then report exactly `expect`, the field path first. tests/test_wire_contract.py (pipeline) and continent-app/tests/wire-contract.test.mjs (app) run the same cases, so a break fails both with the same message.",
+ "description": "T1133 (D1): seeded bad values for docs/wire.schema.json. Each case changes one value of continent-app/scripts/ci/fixtures/contract-min.json (set `value`, or `delete` the key at `path`); the validator must then report exactly `expect`, the field path first. tests/test_wire_contract.py (pipeline) and continent-app/tests/wire-contract.test.mjs (app) run the same cases, so a break fails both with the same message. T1143 (D3): a case marked `pipeline_fills` is a missing provenance stamp, which atomic_write_json fills (provenance.stamp_payload) instead of refusing; the validators and the CI gate still reject it.",
  "fixture": "continent-app/scripts/ci/fixtures/contract-min.json",
  "cases": [
   {
@@ -97,8 +97,8 @@
     "meta",
     "schema_version"
    ],
-   "value": 20,
-   "expect": "meta.schema_version is 20, expected 19"
+   "value": 21,
+   "expect": "meta.schema_version is 21, expected 20"
   },
   {
    "name": "currency changed",
@@ -141,7 +141,9 @@
      "class": "city",
      "pct": 140,
      "scope": "europe"
-    }
+    },
+    "_src": "carta_rating",
+    "_asof": "2026-06-07"
    },
    "expect": "destinations.BRU.rating.class_rank.pct is 140, above the maximum 100"
   },
@@ -159,7 +161,9 @@
      "class": "city",
      "pct": 50,
      "scope": "europe"
-    }
+    },
+    "_src": "carta_rating",
+    "_asof": "2026-06-07"
    },
    "expect": "destinations.BRU.rating.band is \"superb\", expected one of [\"exceptional\",\"excellent\",\"very_good\",\"good\",\"pleasant\",null]"
   },
@@ -235,7 +239,9 @@
      1
     ],
     "car_need": false,
-    "cost_level": 2.0
+    "cost_level": 2.0,
+    "_src": "carta_taste",
+    "_asof": "2026-06-07"
    },
    "expect": "destinations.BRU.taste.likes.beach[0] is 1.5, above the maximum 1"
   },
@@ -310,7 +316,9 @@
      1
     ],
     "car_need": false,
-    "cost_level": 2.0
+    "cost_level": 2.0,
+    "_src": "carta_taste",
+    "_asof": "2026-06-07"
    },
    "expect": "destinations.BRU.taste.likes.hiking[0] is null, expected number"
   },
@@ -385,7 +393,9 @@
      1
     ],
     "car_need": false,
-    "cost_level": 2.0
+    "cost_level": 2.0,
+    "_src": "carta_taste",
+    "_asof": "2026-06-07"
    },
    "expect": "destinations.BRU.taste.crowd_by_month has 11 items, expected at least 12"
   },
@@ -406,6 +416,86 @@
    ],
    "value": {},
    "expect": "destinations has 0 entries, expected at least 2"
+  },
+  {
+   "name": "block without its source",
+   "path": [
+    "destinations",
+    "BRU",
+    "rating"
+   ],
+   "value": {
+    "band": "good",
+    "confidence": "rubric",
+    "class_rank": {
+     "class": "city",
+     "pct": 50,
+     "scope": "europe"
+    },
+    "_asof": "2026-06-07"
+   },
+   "expect": "destinations.BRU.rating._src is missing",
+   "pipeline_fills": true
+  },
+  {
+   "name": "block without its date",
+   "path": [
+    "destinations",
+    "BRU",
+    "rating"
+   ],
+   "value": {
+    "band": "good",
+    "confidence": "rubric",
+    "class_rank": {
+     "class": "city",
+     "pct": 50,
+     "scope": "europe"
+    },
+    "_src": "carta_rating"
+   },
+   "expect": "destinations.BRU.rating._asof is missing",
+   "pipeline_fills": true
+  },
+  {
+   "name": "block date not ISO",
+   "path": [
+    "destinations",
+    "BRU",
+    "rating"
+   ],
+   "value": {
+    "band": "good",
+    "confidence": "rubric",
+    "class_rank": {
+     "class": "city",
+     "pct": 50,
+     "scope": "europe"
+    },
+    "_src": "carta_rating",
+    "_asof": "7 June 2026"
+   },
+   "expect": "destinations.BRU.rating._asof is \"7 June 2026\", does not match ^\\d{4}-\\d{2}-\\d{2}$"
+  },
+  {
+   "name": "block source not in the registry",
+   "path": [
+    "destinations",
+    "BRU",
+    "rating"
+   ],
+   "value": {
+    "band": "good",
+    "confidence": "rubric",
+    "class_rank": {
+     "class": "city",
+     "pct": 50,
+     "scope": "europe"
+    },
+    "_src": "carta_ratings",
+    "_asof": "2026-06-07"
+   },
+   "expect": "destinations.BRU.rating._src is \"carta_ratings\", expected one of [\"carta_beauty\",\"carta_food\",\"carta_place\",\"carta_rating\",\"carta_taste\",\"cart..."
   }
  ]
 }
