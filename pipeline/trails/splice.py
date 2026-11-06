@@ -418,7 +418,8 @@ SYNC_SQL = """
       FROM trip_repairs r
      WHERE r.trip_id = t.id
        AND r.repaired
-       AND r.repair_info->>'method' IN ('straight-splice', 'ordered-splice')
+       AND r.repair_info->>'method' IN ('straight-splice', 'ordered-splice',
+                                        'routed-bridge')
        AND r.repair_info->>'source_geom_md5'
            = md5(ST_AsBinary(ST_Force2D(t.geom)))
        AND t.distance_m IS DISTINCT FROM r.repaired_len_m
