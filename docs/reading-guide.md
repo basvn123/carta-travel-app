@@ -258,6 +258,7 @@ The procedure files, one per system, in register order:
 | Read | For |
 |---|---|
 | [../Execution/P15/_NEXT-50-SESSIONS.md](../Execution/P15/_NEXT-50-SESSIONS.md) | The next 50 sessions in five waves. Each has a reserved task number (T1085 to T1134), roadmap item, scope, files, model, owner gate and done condition, plus the rules for running many sessions at once and a prompt template. |
+| [../Execution/P15/_SESSIONS-ROUND-2.md](../Execution/P15/_SESSIONS-ROUND-2.md) | The 50 sessions after S44 (S45 to S94, task numbers T1135 to T1178 for the new ones): AI evaluation and model strategy, data quality and catalogue gaps, the intelligence track, operations and security testing, docs, product breadth and the blog routine. |
 | [../ROADMAP.md](../ROADMAP.md) | Everything after that. On 2026-11-06: 120 items, 11 done, 10 in progress. |
 
 ## 12. The reading route
@@ -328,7 +329,7 @@ Some of the most exact documentation lives in code and config:
 ## Appendix A: every Markdown file in the repository
 
 <!-- INDEX:START -->
-Generated on 2026-11-06 from `git ls-files`: 421 files outside the archive, grouped by folder, each with its first heading. Task reports are named `T<number>-<slug>.md`; phase digests `_DIGEST.md`; owner procedures `_OPEN-<system>.md`. Regenerate with `python -I scripts/docs/build_reading_guide_index.py` when files move; it also checks that every link resolves.
+Generated on 2026-11-06 from `git ls-files`: 422 files outside the archive, grouped by folder, each with its first heading. Task reports are named `T<number>-<slug>.md`; phase digests `_DIGEST.md`; owner procedures `_OPEN-<system>.md`. Regenerate with `python -I scripts/docs/build_reading_guide_index.py` when files move; it also checks that every link resolves.
 
 **(repository root)** (6)
 
@@ -452,7 +453,7 @@ Generated on 2026-11-06 from `git ls-files`: 421 files outside the archive, grou
 |---|---|
 | [Execution/P13/_DIGEST.md](../Execution/P13/_DIGEST.md) | P13 digest |
 
-**Execution/P15/** (195)
+**Execution/P15/** (196)
 
 | File | Title |
 |---|---|
@@ -481,6 +482,7 @@ Generated on 2026-11-06 from `git ls-files`: 421 files outside the archive, grou
 | [Execution/P15/_PLAN-plan-flow-v3.md](../Execution/P15/_PLAN-plan-flow-v3.md) | Plan flow v3: build plan |
 | [Execution/P15/_PLAN-trip-page-v4.md](../Execution/P15/_PLAN-trip-page-v4.md) | Trip page v4: one page you change in place |
 | [Execution/P15/_RUN-plan-flow-v3.md](../Execution/P15/_RUN-plan-flow-v3.md) | Plan flow v3: overnight run log |
+| [Execution/P15/_SESSIONS-ROUND-2.md](../Execution/P15/_SESSIONS-ROUND-2.md) | Round 2: the 50 sessions after S44 |
 | [Execution/P15/T1000-stale-tab-reload.md](../Execution/P15/T1000-stale-tab-reload.md) | T1000: a tab open across a deploy reloads instead of crashing |
 | [Execution/P15/T1001-new-trip-trip-bar.md](../Execution/P15/T1001-new-trip-trip-bar.md) | T1001: New trip without a tile, and a trip bar that never cuts a value |
 | [Execution/P15/T1002-door-fit.md](../Execution/P15/T1002-door-fit.md) | T1002: Carta's own trips door, whole photographs and its own width |

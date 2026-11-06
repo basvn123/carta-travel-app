@@ -110,6 +110,8 @@ Decisions 1 and 2 were answered on 2026-11-05 (see the handover, section 3), so 
 
 ## After the 50
 
+**The next 50 sessions after S44 are planned in [_SESSIONS-ROUND-2.md](_SESSIONS-ROUND-2.md)** (S45 to S94; task numbers T1135 to T1178 reserved for S51 to S94).
+
 Added to the roadmap on 2026-11-06 and planned for round 2: D15 catalogue gaps (after D6), the blog's monthly routine (K14 part 2), G5 motion and K10 press kit (moved out of wave 4 for the home page and the blog). E7 model strategy (open models, CPU on the box for batch jobs, a GPU switch point) was added on 2026-11-06: its research E-R3 can run as one session any time, and E7 itself after E1 (the eval gate) in round 2. Eight proposed items wait on the owner: D16 to D22 and I17 (ROADMAP track D and I tables, status "proposed").
 
 
