@@ -3,13 +3,14 @@
  * The one eval runner (T1148, ROADMAP F6). Every Carta eval runs through it
  * and writes the shared results format (scripts/eval/lib/results.mjs).
  *
- *   node scripts/eval/run.mjs [ask] [trail-summaries] [data-quality] [plan-day] [all]
+ *   node scripts/eval/run.mjs [ask] [trail-summaries] [data-quality] [plan-day] [taxonomy] [all]
  *        [--check] [--write] [--dashboard] [--json]
  *        [--seed-drop]             (ask: a known regression, the gate must fail)
  *        [--plans <file>]          (plan-day: score recorded plans, not the reference planner)
  *        [--judgments <file>]      (plan-day: this verdicts file, not the newest in judgments/)
+ *        [--predictions <file>]    (taxonomy: score this tagger output, not the today's-tags baseline)
  *
- *   no eval named  all four
+ *   no eval named  all five
  *   --check        exit 1 when a gated eval fails, 2 when one errors
  *   --write        write each result to the results folder (data/reports/evals/
  *                  or CARTA_EVAL_OUT): latest/<eval>.json and a history.jsonl line
@@ -21,6 +22,7 @@
  *   trail-summaries  the trail summaries fact check (T1179), Python
  *   data-quality     the data quality gate (T1142) as a data eval, Python
  *   plan-day         plan-day rule checks and the judge calibration (kappa)
+ *   taxonomy         taxonomy tagging, P@5 and F1 on hand labels (T1149, ROADMAP F1)
  * No eval calls a model. The plan-day judge is its own optional step
  * (scripts/eval/plan-day/judge.mjs). The Claude API is never used.
  * S52's own entry point, scripts/eval/ask-eval.mjs, keeps working as before.
@@ -30,7 +32,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { RESULTS_DIR, REPO, readHistory, validateResult, writeResult } from './lib/results.mjs';
 
-export const EVALS = ['ask', 'trail-summaries', 'data-quality', 'plan-day'];
+export const EVALS = ['ask', 'trail-summaries', 'data-quality', 'plan-day', 'taxonomy'];
 export const DASHBOARD_PATH = join(REPO, 'docs', 'reference', 'evals.md');
 
 const argv = process.argv.slice(2);
@@ -45,7 +47,7 @@ export async function runOne(name, opts = {}) {
     r = await mod.run(opts);
   } catch (e) {
     r = {
-      schema: 'carta-eval/1', eval: name, title: mod.title || name, kind: { ask: 'retrieval', 'trail-summaries': 'text-check', 'data-quality': 'data', 'plan-day': 'llm-plan' }[name],
+      schema: 'carta-eval/1', eval: name, title: mod.title || name, kind: { ask: 'retrieval', 'trail-summaries': 'text-check', 'data-quality': 'data', 'plan-day': 'llm-plan', taxonomy: 'classification' }[name],
       at: new Date().toISOString(), git: null, status: 'error', gated: true,
       headline: { key: 'error', value: null, label: 'the eval did not run', higher_is_better: true },
       metrics: {}, gate: { ok: false, rule: 'the eval must run', tolerance: null, baseline: null, failures: [{ key: 'error', was: null, now: null, why: String(e.message || e).slice(0, 400) }] },
@@ -140,11 +142,11 @@ export function dashboard(dir = RESULTS_DIR) {
 /* ---- main ---- */
 
 async function main() {
-  const named = argv.filter((a, i) => !a.startsWith('--') && !(i > 0 && ['--plans', '--judgments'].includes(argv[i - 1])));
+  const named = argv.filter((a, i) => !a.startsWith('--') && !(i > 0 && ['--plans', '--judgments', '--predictions'].includes(argv[i - 1])));
   const which = !named.length || named.includes('all') ? EVALS : named;
   const unknown = which.filter((e) => !EVALS.includes(e));
   if (unknown.length) { console.error(`unknown eval: ${unknown.join(', ')} (known: ${EVALS.join(', ')})`); process.exit(2); }
-  const opts = { seedDrop: flag('--seed-drop'), plans: arg('--plans'), judgments: arg('--judgments') };
+  const opts = { seedDrop: flag('--seed-drop'), plans: arg('--plans'), judgments: arg('--judgments'), predictions: arg('--predictions') };
   const results = [];
   for (const e of which) results.push(await runOne(e, opts));
   for (const r of results) {
