@@ -1755,3 +1755,11 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1142-f | T1142 | On the box set CARTA_QUALITY_OUT=logs/status/quality and seed it from data/reports/quality/, so the quality history and drop baseline survive weekly.sh's git reset | user | open |  |
 | T1142-g | T1142 | MAP.md does not name scripts/quality/engine.py, rules.yaml or the admin Data health tab (adds to T1134-f) | next task | open |  |
 | T1142-h | T1142 | docs/runbooks/drift-and-scorecard.md still calls the scorecard not a gate and has no section on the quality gate or a failed quality task | next task | open |  |
+| T1145-a | T1145 | D15 (S62) works the 36 place gaps D6-001 to D6-036 in docs/data/coverage-parity.csv and reruns scripts/coverage/coverage_parity.py after its adds | next task | open | 1 |
+| T1145-b | T1145 | No Eurostat tourist nights for GB, BA, XK, MD, FO, AD, MC, SM, so their expectation uses two terms and their regions are not tested; fetch ONS or VisitBritain regional nights (D11) and a national source for the rest (source hosts blocked in the cloud) | next task | open |  |
+| T1145-c | T1145 | Ask recall per language (named in D6) is not measured; it needs the E1 question set with questions in each of the six languages | next task | open |  |
+| T1145-d | T1145 | The 64 fill lines D6-037 to D6-100 in docs/data/coverage-parity.csv belong to D7, D8 to D11 and I8; those tasks cite the IDs and rerun the script | next task | open |  |
+| T1145-e | T1145 | Review the D6 expectation blend (population 0.25, area 0.25, nights 0.5) and gap thresholds before D15 adds places on them; six country gaps are not robust to the blend | user | open | 0 |
+| T1145-f | T1145 | No CI runs coverage_parity.py --check; add a path-triggered workflow on its inputs so the parity table stays current | next task | open |  |
+| T1145-g | T1145 | Population and area in the parity expectation are the approximate constants in coverage_report.py; replace with Eurostat demo_pjan and reg_area3 with year and licence once the hosts are reachable | next task | open |  |
+| T1145-h | T1145 | harvest_tourism_density.py gives microstate places (AD, MC, SM, LI) a neighbouring country's NUTS 3 code and crowding tier; check it is intended and labelled | next task | open |  |
