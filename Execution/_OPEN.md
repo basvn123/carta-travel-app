@@ -1387,7 +1387,6 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1079-a | T1079 | Add the RATE_LIMIT binding or a Cloudflare WAF rate rule on /api/* so the per-address limit holds across the edge (Execution/P15/_OPEN-web-hardening.md) | user | open | 3 |
 | T1079-b | T1079 | Deploy the headers, Pages Functions and six Edge Functions, run the smoke tests, and confirm the print view popup opens under the new COOP header (Execution/P15/_OPEN-web-hardening.md) | user | open | 1 |
 | T1079-c | T1079 | Remove style-src 'unsafe-inline' from the CSP (needs hashes or a nonce for React style attributes and MapLibre) | next task | open |  |
-| T1079-d | T1079 | Edge Functions have no per-address limit, only per-user ai_consume caps; a durable limiter belongs with H3 | next task | open |  |
 | T1079-e | T1079 | Run scripts/verify_csp.mjs in CI | next task | open |  |
 | T1079-f | T1079 | A live wrong-signature probe of a preview stripe-webhook, in the C10 pass | next task | open |  |
 | T1079-g | T1079 | /api/ask and /api/ask/answer were not exercised end to end (the ask index is not built in a worktree); run askRetrieve with the index and check the new guards | next task | open |  |
@@ -1967,3 +1966,6 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1153-f | T1153 | No CI workflow runs the linking eval (scripts/eval/run.mjs linking --check); add it, with a sparse cone holding public/app_data.json, search_index.json and search/ask/lexicon.json | next task | open |  |
 | T1153-g | T1153 | Two linking misses: "Fårö" links Faro (a part alias with matching accents does not beat a name) and "pafos" ranks Paros over Paphos (no sound-alike for Greek spellings) | next task | open |  |
 | T1153-h | T1153 | src/hooks/useDestinationSearch.js still matches by plain substring; move it to the shared linker like Explore | next task | open |  |
+| T1157-a | T1157 | Create the rate limit namespaces in Cloudflare (RL_ASK, RL_FLIGHTS, RL_STAYS, RL_FORECAST in wrangler.toml), confirm Pages accepts `[[ratelimits]]` on the first preview deploy, else add one WAF rate rule | user | open |  |
+| T1157-b | T1157 | /api/stays has no Pages Function yet; wire `overLimit(env, request, limiter, 'stays')` into it when it lands (RL_STAYS is declared) | next task | open |  |
+| T1157-c | T1157 | Edge Functions have per-user ai_consume caps in the database (durable) but no per-address limit; Supabase has no Cloudflare binding, so it needs a database counter or the WAF in front, an owner decision | user | open |  |
