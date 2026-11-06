@@ -756,7 +756,7 @@ docs/
 |---|---|---|---|---|
 | E-R1 | How do strong teams evaluate RAG end to end? | RAGAS, DeepEval, promptfoo docs; BEIR benchmark paper; recall@k, MRR, nDCG definitions | 1 day | Metric set and thresholds for E1 |
 | E-R2 | Does a reranker pay off at Carta's scale and latency budget? | Workers AI reranker models, cross-encoder basics (Sentence-Transformers docs), MTEB reranking leaderboard | 1 day | Go or no-go and model for E2 |
-| E-R3 | Which models, hosted where, answer Carta's questions best per euro, today and at 1,000, 10,000 and 100,000 monthly users? | Open-weight models (Qwen, Llama, Mistral, Gemma families) on Cloudflare Workers AI, llama.cpp and vLLM docs, Hetzner CPU and GPU server specs and prices, EU-hosted inference providers, the Gemini and Workers AI price pages, the E1 eval set | 2 days | Cost and quality table per option and a switch point for each AI feature (E7) |
+| E-R3 | Which models, hosted where, answer Carta's questions best per euro, today and at 1,000, 10,000 and 100,000 monthly users? | Open-weight models (Qwen, Llama, Mistral, Gemma families) on Cloudflare Workers AI, llama.cpp and vLLM docs, Hetzner CPU and GPU server specs and prices, EU-hosted inference providers, the Gemini and Workers AI price pages, the E1 eval set | 2 days | Cost and quality table per option and a switch point for each AI feature (E7). **Done** by T1135 (2026-11-06): `docs/research/E-R3-models-and-hosting.md`; prices to verify (T1135-a), quality to measure on E1 (T1135-b) |
 
 ### Items
 
