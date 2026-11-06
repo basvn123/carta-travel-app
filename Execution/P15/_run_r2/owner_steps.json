@@ -307,5 +307,32 @@
   "title": "Decide how the MCP server ships",
   "why": "It runs only from a repo checkout today; packaging it or a remote HTTP mode is a choice, and a remote mode needs auth and rate limits first.",
   "where": "services/mcp/README.md"
+ },
+ {
+  "id": "T1143-a",
+  "title": "Migrate the master to schema 20",
+  "why": "The box's `app_data/app_data.json` has no stamps, so the next `npm run data` stops at the sync guard and no layer run can ship.",
+  "where": "`pipeline/provenance.py`, `docs/HANDBOOK.md` (data wire, Provenance per field)",
+  "how": [
+   "On the box pull the branch",
+   "Copy `app_data/app_data.json` to `app_data/app_data.v19.json` (the rollback)",
+   "`python pipeline/provenance.py --count app_data/app_data.json` (expect 0 stamped)",
+   "`python pipeline/provenance.py --backfill app_data/app_data.json`",
+   "Run `--count` again (expect every block stamped)",
+   "`cd continent-app && npm run data` and check it passes the guard",
+   "Then the next scheduled layer runs date their blocks today"
+  ]
+ },
+ {
+  "id": "T1143-g",
+  "title": "Confirm the custom licence ids",
+  "why": "Sources.yaml names UNESCO, Numbeo, the stays scrape, Commons and US Government data with `LicenseRef` ids, and the ledger marks some as verify.",
+  "where": "`pipeline/config/sources.yaml`",
+  "how": [
+   "Open `docs/data/sources.md`",
+   "For each `LicenseRef` row read its ledger row in `docs/tos/data_licenses.md`",
+   "Correct the id or the ledger in `pipeline/config/sources.yaml` or `src/ingestion/core/registry.py`",
+   "Run `python -I pipeline/provenance_sources.py`"
+  ]
  }
 ]

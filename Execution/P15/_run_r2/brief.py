@@ -26,5 +26,5 @@ Report: `Execution/P15/{r['task']}-{r['slug']}.md` from `Execution/_TEMPLATE.md`
 `- [{r['task']}-x] Short title | why it matters | step one; step two; step three | file or doc where it lives`
 Commit task work with messages starting `{r['task']}:`, push to `{r['branch']}`, and stop. Your last message: one line with what was done, the report path, and the owner steps count.
 """
-    open(os.path.join(out, f"S{r['s']}.txt"), 'w').write(t)
+    open(os.path.join(out, f"S{r['s']}.md"), 'w').write(t)
     print(f"S{r['s']}", len(t))
