@@ -13,6 +13,7 @@ import { FilterChips } from './FilterChips.jsx';
 import { HeroPreload } from '../components/LayerPhoto.jsx';
 import { loadTrails, loadListedTrails, loadTrailsIndex, loadTopTrails } from '../lib/trails.js';
 import { trailHash } from '../lib/routeLinks.js';
+import { useTrailPhotoPool } from '../lib/trailPhotoPool.js';
 import {
   loadBeachIndex, loadBeaches, loadListedBeaches, loadTopBeaches,
 } from '../lib/beaches.js';
@@ -812,6 +813,8 @@ export function DestinationsTab({
   const isComposedTrips = cat === 'trips' && journeyView === 'composed';
   const isTripCat = cat === 'trails' || isComposedTrips;
   const trailsCountry = nearPlace ? nearPlace.iso2 : country;
+  // Licensed lake, summit and coast photographs for walks with no photo of their own (G8).
+  const trailPhotoPool = useTrailPhotoPool(trailsCountry, isTripCat);
   useEffect(() => {
     if (!isTripCat || !trailsCountry) { setCountryTrips(null); return undefined; }
     if (layerError.trails) return undefined;
@@ -984,7 +987,7 @@ export function DestinationsTab({
   const tripCards = useMemo(() => {
     if (!isTripCat || !countryTrips) return null;
     return countryTrips.map((tr) => {
-      const assoc = associateTrip(tr, data.destinations, destIndex);
+      const assoc = associateTrip(tr, data.destinations, destIndex, trailPhotoPool);
       return {
         tr,
         assoc,
@@ -993,7 +996,7 @@ export function DestinationsTab({
         price: assoc.destId ? priceById.get(assoc.destId) || null : null,
       };
     });
-  }, [isTripCat, countryTrips, data, destIndex, priceById]);
+  }, [isTripCat, countryTrips, data, destIndex, priceById, trailPhotoPool]);
 
   // A neighbour card on any layer page opens that layer's own page (brief
   // 08's cross-layer blocks). One page at a time: opening a neighbour closes
@@ -1197,7 +1200,7 @@ export function DestinationsTab({
     else if (layer === 'cycle') {
       setPageCycle({ routeId: row.id, country: row.cc || country });
     } else if (layer === 'trail') {
-      const assoc = associateTrip(row, data.destinations, destIndex);
+      const assoc = associateTrip(row, data.destinations, destIndex, trailPhotoPool);
       setPageCard({
         tr: row,
         assoc,

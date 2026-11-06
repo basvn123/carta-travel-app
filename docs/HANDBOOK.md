@@ -2327,14 +2327,20 @@ It also found 200 cross-layer duplicates. The hero audit of 2026-08-25 found ima
   - Lakes and mountains show "No photograph we can publish yet, so here is the map" (`photo.mapCard`).
   - Beaches show "No photograph yet" (`beach.mapCard`).
 - **Places.** `HeroImage` with no URL shows `hero-blank`: two initials and the country flag. Place cards use `PlaceCardNoPhoto`, a plain sunken ground. Route cards get a route icon.
-- **Trails.** A trail without a photo uses the nearest destination's photo, labelled as a photo nearby.
+- **Trails** (`lib/trailPhoto.js` `pickTrailPhoto`, G8 T1127). The picture is chosen in this order:
+  1. the walk's own photograph;
+  2. a licensed lake, summit or coast photograph within `FEATURE_KM = 5` of the walk's centre, when the walk's highlights (`f.hl`: lake, summit, coast) name that kind of feature;
+  3. the nearest place's hero within `TOWN_KM = 25`, captioned with the town (`detail.photoNear`);
+  4. any licensed beach, lake or mountain photograph within `NEAR_KM = 10`, captioned with its name;
+  5. the drawn route glyph. Never a photograph from further away.
+  The licensed pool is built per country from the beach, lake and mountain wires (`lib/trailPhotoPool.js`, only images with a licence and not on the veto list). `scripts/verify_trail_photos.mjs` prints the placeholder count per screen from the shipped data.
 - Not found in code: a static map tile image used in place of a photo.
 
 **Data behind it.** The image lists in each wire. An empty list triggers the fallback.
 
 **Where it lives.** `continent-app/src/components/HeroImage.jsx`, `continent-app/src/browse/PlaceCard.jsx`, `continent-app/src/browse/PhotoGallery.jsx`, `continent-app/src/browse/TrailPage.jsx`, `continent-app/src/browse/OutdoorParts.jsx`.
 
-**Limits.** Trails rely on this fallback most: 1,631 of 5,243 trail entries had no image at the 2026-08-26 audit.
+**Limits.** Trails rely on this fallback most. On the 2026-11-06 wire 14,065 of 17,958 walks have no photo of their own; 2,886 of them still show the route glyph (T1127). 27 gem destinations have no hero and show `hero-blank`.
 
 ---
 

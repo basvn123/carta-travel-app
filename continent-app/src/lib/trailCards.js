@@ -18,6 +18,7 @@
  */
 import { natureRating } from './rating.js';
 import { matchesAnyKind } from './trip_kinds.js';
+import { pickTrailPhoto } from './trailPhoto.js';
 import { sacBand, durationBands, transitModes } from './routeEffort.js';
 
 export function haversineKm(lat1, lon1, lat2, lon2) {
@@ -57,8 +58,6 @@ export function nearestDest(destIndex, lat, lon, maxKm = ASSOC_MAX_KM) {
 
 /** The trail's own photograph, taken on the route. Null for a trail the photo
  *  pass found nothing usable for, which is not the same as "use a town". */
-// How far a borrowed photograph may travel to stand in for a walk.
-const NEAR_PHOTO_KM = 25;
 
 export function tripPhoto(tr) {
   return tr?.img?.u || null;
@@ -83,7 +82,7 @@ export function trailRating(tr) {
  * photoUrl is the trail's own Commons photograph for a hike, and the anchor
  * city's hero for a city day. It is never a nearby town's hero on a hike.
  */
-export function associateTrip(tr, destinations, destIndex) {
+export function associateTrip(tr, destinations, destIndex, pool = []) {
   const own = tripPhoto(tr);
   if (tr.category === 'citytrip' && tr.anchor?.dest && destinations[tr.anchor.dest]) {
     const dest = destinations[tr.anchor.dest];
@@ -95,21 +94,25 @@ export function associateTrip(tr, destinations, destIndex) {
   }
   const c = tripCentre(tr);
   const near = c ? nearestDest(destIndex, c.lat, c.lon) : null;
-  if (!near) return { dest: null, destId: null, km: null, photoUrl: own, photoOf: null };
-  const full = destinations[near.dest.id] || near.dest;
-  // A third of the walks in the wire have no photograph of their own, and a
-  // grey placeholder in a list of photographs reads as a broken card. The
-  // nearest place's hero fills the gap, and `photoOf` is what stops it being
-  // a lie: the card says which place the picture is of, so nobody reads it as
-  // a photograph of the path. Only from close by, because "the nearest town"
-  // 60 km across a range is not the same landscape.
-  const borrow = !own && near.km <= NEAR_PHOTO_KM ? (full.image?.url || null) : null;
+  const full = near ? (destinations[near.dest.id] || near.dest) : null;
+  // The picture comes from lib/trailPhoto.js (G8): own photo, a licensed
+  // lake, summit or coast photo the walk really passes, the nearest town's
+  // hero within 25 km (captioned with the town), any licensed feature photo
+  // within 10 km, else the drawn route.
+  const pick = pickTrailPhoto({
+    own, centre: c, highlights: tr.f?.hl || [], pool,
+    town: full?.image?.url ? { url: full.image.url, city: full.city, km: near.km } : null,
+  });
   return {
     dest: full,
-    destId: near.dest.id,
-    km: near.km,
-    photoUrl: own || borrow,
-    photoOf: borrow ? full.city : null,
+    destId: near ? near.dest.id : null,
+    km: near ? near.km : null,
+    photoUrl: pick.url,
+    photoOf: pick.of,
+    photoSource: pick.source,
+    photoBy: pick.by || null,
+    photoLic: pick.lic || null,
+    photoPage: pick.page || null,
   };
 }
 
