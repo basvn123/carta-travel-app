@@ -122,6 +122,7 @@ Written 2026-11-04 (T1045) from the code, config and migrations on `main` at com
    - [Catalogue gaps: add and prune places (D15)](#catalogue-gaps-add-and-prune-places-d15)
    - [Hand corrections (pipeline overrides)](#hand-corrections-pipeline-overrides)
    - [Evals (one runner, one results format)](#evals-one-runner-one-results-format)
+   - [Truth set (hand-verified answers, scored per release)](#truth-set-hand-verified-answers-scored-per-release)
    - [Deploy (Cloudflare Pages, R2, prerender, SEO)](#deploy-cloudflare-pages-r2-prerender-seo)
    - [The build box (Hetzner scheduled runs)](#the-build-box-hetzner-scheduled-runs)
    - [CI and checks](#ci-and-checks)
@@ -2759,6 +2760,23 @@ This section covers the parts of Carta that sit around the travel content: the A
 **Where it lives.** `continent-app/scripts/eval/run.mjs`, `lib/results.mjs`, `lib/kappa.mjs`, `adapters/`, `plan-day/` (`plan-day-lib.mjs`, `judge.mjs`, `cases.json`, `sample.json`, `sample-key.json`, `labels.json`, `judgments/`; the rubric is `prompts/eval-judge/v1.md`), `langfuse/`; the page `docs/reference/evals.md`. Tests: `continent-app/tests/evalPlatform.test.mjs`, `continent-app/tests/askEval.test.mjs`.
 
 **Limits.** The hand labels are not in yet, so the judge has no kappa against a human (T1148-a); the session judge on rubric 2 agrees with the rule checks at kappa 0.898, which says the rubric and the rules read plans alike, not that either is right. The plan-day cases score the reference planner; scoring the live model needs recorded plans, and generating them offline needs plan-day's prompt exported from `index.ts` (T1148-c). CI runs Ask through its own workflow; no workflow runs the runner yet (T1148-d). Register rows `T1148-a` and on.
+
+### Truth set (hand-verified answers, scored per release)
+
+**What it does.** Measures how often the shipped data is right on facts a traveller relies on, against answers checked by hand: 150 items (100 places, 25 trails, 13 beaches, 12 lakes), 762 field rows, and a text check of blurbs and trail summaries against the source they cite (ROADMAP D4, T1144).
+
+**How it works.**
+1. **Sample.** `evals/truth/build_sample.py` draws a stratified sample from `continent-app/public` with the fixed seed `SEED = "carta-truth-2026-11"`: places by five European regions times three fame bands (v5 band exceptional, excellent or very_good; good or pleasant; unrated), proportional with at least 3 per stratum; rated walks by grade group times length band (under 10, 10 to 20, over 20 km), at least 2 per stratum; rated beaches and lakes by region, at least 1. At most 2 trails, beaches or lakes per country. Inside a stratum items are ordered by sha256(seed and id), so the draw is reproducible and stable. Each item keeps its stratum weight (stratum size over items drawn).
+2. **Fields.** `evals/truth/fields.json`: place country, coords (2 km), population (15 percent), image_depicts, blurb; trail distance_km (10 percent or 0.5 km), ascent_m (15 percent or 60 m), loop, difficulty, trailhead (300 m), summary; beach coords (500 m), name, water_quality, surface; lake coords (1 km), name, water_quality, swim, area_km2 (10 percent).
+3. **Sheet.** `evals/truth/sheet.csv`, one row per item and field. Status `verified` (owner), `seeded` (filled in the repo from a cited source field: the OSM relation's `distance`, `ascent` and `roundtrip` tags, or the point and 5 km around it inside one shipped country shape), `unverified`, `unverifiable` or `skip`. Only verified and seeded rows are scored. Text rows hold a verdict (supported, unsupported, contradicted) and the sha of the text judged; a changed text makes the row stale. The owner's guide is `evals/truth/GUIDE.md`.
+4. **Score.** `evals/run_truth.py` reads each item's current value from the wire and compares it with the answer (`compare()`). Headline: the share of scored rows right, with a 95 percent Wilson interval; also per kind, per field and per status, and a stratum-weighted share per kind. Gate: accuracy at or above the lower Wilson bound of `evals/truth/baseline.json`; it gates only once 80 percent of the sheet is verified, advisory before. `--seed-wrong` (in the runner, `--seed-drop`) plants one wrong value in memory and the score falls. The eval runner runs it as `truth` (`continent-app/scripts/eval/adapters/truth.mjs`).
+5. **Text check.** `evals/truth/judge/`: 50 texts (25 place blurbs against their cited Wikivoyage text, 25 trail summaries against their OSM facts), 20 with a planted fault listed in `text-sample-key.json`. The judge splits a text into claims and marks each against the source only (`rubric.md`); the whole text is contradicted if any claim is, unsupported if a relied-on claim is, else supported. Backends: a session that reads the prompts from `judge.mjs --prompts <dir>` and writes a verdicts file by hand, or Gemini through the model gateway (`aiModels.mjs`, feature `eval-judge`, temperature 0). Calibration: Cohen's kappa of judge against the owner's `labels.json` (supported against not supported), with the share of planted faults each rater catches; the judge may gate at kappa 0.61, advisory from 0.41. The Claude API is never used.
+
+**Data behind it.** The shipped wire in `continent-app/public` (`app_data.json`, `trails/`, `trails/trip/`, `beaches/`, `lakes/`, `country_shapes.json`).
+
+**Where it lives.** `evals/run_truth.py`, `evals/truth/` (`build_sample.py`, `fields.json`, `sample.json`, `sheet.csv`, `baseline.json`, `GUIDE.md`, `judge/`). Tests: `tests/test_truth_set.py`, `continent-app/tests/truthEval.test.mjs`.
+
+**Limits.** No row is verified by hand yet: the first score (86 of 90 seeded rows) rests on seeds, which share the data's own sources (T1144-a). The first blind session judge caught all 20 planted faults but found none of 15 shipped place blurbs supported by the Wikivoyage intro they cite and 10 of 15 trail summaries supported, so the judge has no kappa against a human yet (T1144-b). Register rows `T1144-a` and on.
 
 ### Deploy (Cloudflare Pages, R2, prerender, SEO)
 

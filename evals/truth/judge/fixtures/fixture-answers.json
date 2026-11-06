@@ -1,0 +1,10 @@
+{
+ "note": "T1144: the answer a model is recorded to give for each fixture text, and the verdict the harness must end with. f04's answer says supported while a claim is contradicted: normaliseVerdict raises it.",
+ "answers": {
+  "f01": {"subject": "Fixture Loop A", "answer": {"verdict": "supported", "claims": [{"claim": "12.4 km", "verdict": "supported", "evidence": "distance_km: 12.4"}, {"claim": "loop", "verdict": "supported", "evidence": "roundtrip: yes"}], "reason": "every claim is in the facts"}},
+  "f02": {"subject": "Fixture Line B", "answer": {"verdict": "contradicted", "claims": [{"claim": "30.0 km", "verdict": "contradicted", "evidence": "distance_km: 18.0"}], "reason": "the distance is 18 km"}},
+  "f03": {"subject": "Fixtureville, Nowhere", "answer": {"verdict": "unsupported", "claims": [{"claim": "cheese market", "verdict": "supported", "evidence": "known for its weekly cheese market"}, {"claim": "Gothic cathedral", "verdict": "unsupported", "evidence": ""}], "reason": "the cathedral is not in the source"}},
+  "f04": {"subject": "Fixtureburg, Nowhere", "answer": {"verdict": "supported", "claims": [{"claim": "above the river", "verdict": "contradicted", "evidence": "far from any river"}], "reason": "inconsistent on purpose"}}
+ },
+ "expected": {"f01": "supported", "f02": "contradicted", "f03": "unsupported", "f04": "contradicted"}
+}
