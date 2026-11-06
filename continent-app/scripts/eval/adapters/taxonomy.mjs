@@ -31,7 +31,7 @@ export async function run({ predictions = null } = {}) {
   const d = runPython(`
 import json, sys
 sys.path.insert(0, 'pipeline/taxonomy')
-import taxonomy as t, sources as s, build_label_template as b
+import taxonomy as t, tag_sources as s, build_label_template as b
 from pathlib import Path
 problems = t.validate() + t.mapping_problems(s.collect())
 gold_rows = [r for r in b.read() if (r.get('labels') or '').strip()]

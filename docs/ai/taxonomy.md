@@ -6,7 +6,7 @@ ROADMAP F1, part 1 (T1149). The taxonomy, its mapping from today's tags, the han
 |---|---|
 | The taxonomy (version 1.0.0, 268 nodes) | `pipeline/taxonomy/carta_taxonomy.yaml` |
 | Mapping from every tag in use today | `pipeline/taxonomy/mapping.yaml` |
-| The live list of today's vocabularies | `pipeline/taxonomy/sources.py` |
+| The live list of today's vocabularies | `pipeline/taxonomy/tag_sources.py` |
 | Loader, checks, the today's-tags baseline | `pipeline/taxonomy/taxonomy.py` |
 | The 400-item hand-label template | `continent-app/scripts/eval/taxonomy/gold.csv`, built by `pipeline/taxonomy/build_label_template.py` |
 | The 15-item seed gold set | `continent-app/scripts/eval/taxonomy/seed-gold.csv` |
@@ -42,7 +42,7 @@ Labels: 103 nodes carry all six languages, taken from the app's own strings (`co
 
 ## What the mapping covers
 
-`sources.py` reads 32 vocabularies live (540 distinct values) and `tests/test_taxonomy.py` fails when one value has no row in `mapping.yaml`:
+`tag_sources.py` reads 32 vocabularies live (540 distinct values) and `tests/test_taxonomy.py` fails when one value has no row in `mapping.yaml`:
 
 - places: the 86 categories, 74 free tags, 5 place classes, 8 designation kinds, 41 activity kinds, 39 dossier highlight kinds
 - the 20 guided search vibes, 12 taste likes, 9 Explore trip kinds, 9 trip themes, 19 help-me-choose trip types, 15 journey types, 10 personas, 8 POI categories

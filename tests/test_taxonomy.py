@@ -1,7 +1,7 @@
 """The Carta travel taxonomy and its mapping from today's tags (T1149, ROADMAP F1).
 
 The mapping test: every value of every tag vocabulary in use today (read live
-by pipeline/taxonomy/sources.py from the code and the shipped data) has a row
+by pipeline/taxonomy/tag_sources.py from the code and the shipped data) has a row
 in pipeline/taxonomy/mapping.yaml that names real taxonomy nodes, or is
 declared not a concept with a reason. A new tag anywhere fails this test
 until it is mapped.
@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "pipeline" / "taxonomy"))
 
 import build_label_template as tmpl
-import sources
+import tag_sources as sources
 import taxonomy as tax
 
 COLLECTED = sources.collect()

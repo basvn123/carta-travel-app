@@ -1,6 +1,6 @@
 # Mapping from every tag Carta uses today to the Carta travel taxonomy (T1149, ROADMAP F1).
 #
-# One block per source vocabulary. `pipeline/taxonomy/sources.py` reads each
+# One block per source vocabulary. `pipeline/taxonomy/tag_sources.py` reads each
 # source live from the code or the shipped data, and tests/test_taxonomy.py
 # fails when a value has no row here, or a row names a node that does not
 # exist. A row is either:
