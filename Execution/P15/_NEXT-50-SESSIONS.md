@@ -109,7 +109,7 @@ Decisions 1 and 2 were answered on 2026-11-05 (see the handover, section 3), so 
 
 ## After the 50
 
-Added to the roadmap on 2026-11-06 and planned for round 2: D15 catalogue gaps (after D6), the blog's monthly routine (K14 part 2), G5 motion and K10 press kit (moved out of wave 4 for the home page and the blog). Eight proposed items wait on the owner: D16 to D22 and I17 (ROADMAP track D and I tables, status "proposed").
+Added to the roadmap on 2026-11-06 and planned for round 2: D15 catalogue gaps (after D6), the blog's monthly routine (K14 part 2), G5 motion and K10 press kit (moved out of wave 4 for the home page and the blog). E7 model strategy (open models, CPU on the box for batch jobs, a GPU switch point) was added on 2026-11-06: its research E-R3 can run as one session any time, and E7 itself after E1 (the eval gate) in round 2. Eight proposed items wait on the owner: D16 to D22 and I17 (ROADMAP track D and I tables, status "proposed").
 
 
 What remains: the rest of P3 and P4 (C10, C11, D2 to D6, E1 to E5, F1 to F8, H3 to H11, H14, I1 to I16, J1 to J5, K items).

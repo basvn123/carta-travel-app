@@ -707,6 +707,7 @@ docs/
 |---|---|---|---|---|
 | E-R1 | How do strong teams evaluate RAG end to end? | RAGAS, DeepEval, promptfoo docs; BEIR benchmark paper; recall@k, MRR, nDCG definitions | 1 day | Metric set and thresholds for E1 |
 | E-R2 | Does a reranker pay off at Carta's scale and latency budget? | Workers AI reranker models, cross-encoder basics (Sentence-Transformers docs), MTEB reranking leaderboard | 1 day | Go or no-go and model for E2 |
+| E-R3 | Which models, hosted where, answer Carta's questions best per euro, today and at 1,000, 10,000 and 100,000 monthly users? | Open-weight models (Qwen, Llama, Mistral, Gemma families) on Cloudflare Workers AI, llama.cpp and vLLM docs, Hetzner CPU and GPU server specs and prices, EU-hosted inference providers, the Gemini and Workers AI price pages, the E1 eval set | 2 days | Cost and quality table per option and a switch point for each AI feature (E7) |
 
 ### Items
 
@@ -718,6 +719,7 @@ docs/
 | E4 | LLM observability | Every call in `ai_model_events`; admin cost and latency panel; Ask query logs | S | P4 | todo |
 | E5 | Prompt registry | Prompts versioned in files; a bump runs its eval | S | P4 | todo |
 | E6 | Answer and cards agree | The places Ask's text names are exactly the cards it shows, enforced in the verifier; the failing live query is in the golden set (P-35) | S | P1 | todo |
+| E7 | Model strategy: open models, hosting and when to switch | Every AI feature (Ask, plan-day, suggest-city, parse-booking, pipeline jobs such as tagging, summaries and blog drafts) has a measured cost per 1,000 calls and a quality score on the E1 eval for at least three options; all model calls go through one module so a provider is a config change; batch jobs that pass the eval run on the box's CPU; written switch triggers for moving live traffic to a self-hosted GPU, reviewed monthly against real usage | M | P3 (decide), P4 onwards (review monthly) | todo (added 2026-11-06 at the owner's request) |
 
 ### Item details
 
@@ -750,6 +752,40 @@ docs/
 
 **E6. Answer and cards agree**
 - Live example: "quiet lake with good walks in June under 120 a day" named Castel di Tora in the text and showed Esztergom as a card. The verifier rejects an answer whose named places differ from its cards.
+
+**E7. Model strategy: open models, hosting and when to switch** (added 2026-11-06)
+
+*Today* (from the handbook):
+- **Ask Carta** answers on Cloudflare Workers AI (`@cf/qwen/qwen3-30b-a3b-fp8`, falling back to `@cf/meta/llama-3.2-3b-instruct`) inside the free 10,000 Neurons a day (cap 9,000). A traveller with a capable device can opt in to an on-device model (Qwen 2.5 1.5B through WebLLM).
+- **plan-day, suggest-city and parse-booking** run on Gemini through Supabase Edge Functions, under per-user and global daily caps.
+- **The build box** is a small ARM server (CAX11), with a larger CAX41 for heavy jobs. Neither has a GPU.
+- **The Claude API is never used** (CLAUDE.md), and that stays.
+
+*The question.* Which model, hosted where, gives the best answers per euro for each feature, now while traffic is near zero and later as users arrive, and at what point does it pay to move live traffic to hardware Carta runs itself.
+
+*Options to compare, per feature:*
+1. **Managed APIs as today** (Workers AI, Gemini): pay per use, free tiers now, no operations work.
+2. **Open-weight models through a pay-per-token provider:** Workers AI already serves open models; EU-hosted providers keep data in the EU.
+3. **Self-hosted on CPU** (llama.cpp with a quantized 3B to 8B model on a larger Hetzner ARM or x86 server):
+   - too slow for live answers at any real volume;
+   - a fit for batch pipeline work that can take hours, such as tagging (F1, F2), summaries (D7, D9) and blog drafts (K14).
+4. **Self-hosted on a GPU** (a rented dedicated GPU server or hourly GPU cloud, vLLM or llama.cpp): a fixed monthly cost that only beats pay-per-token above a certain steady volume.
+5. **On device** (WebLLM) as a free path for capable phones and laptops, kept as an opt-in.
+
+*How to decide:*
+- **Measure each feature:** tokens per call, latency, and quality on the E1 eval (and F6 for the intelligence features).
+- **Price each option:** cost per 1,000 calls at 1,000, 10,000 and 100,000 monthly users, using real call rates from E4 observability and K12 once users exist.
+- **Find the break-even:** the volume where a GPU server's fixed cost plus operations time drops below the API bill.
+- **Keep data in the EU** where personal data is involved (C9, ARTICLE30).
+- **Keep a fallback chain:** a self-hosted model always falls back to a managed one.
+
+*What to build now:*
+- **One model-access module** (with E3's guardrails), so changing a provider or model is a config change with an eval run, not a rewrite.
+- **Move batch jobs to CPU** on the box where they pass the eval: they cost nothing per call and need no live latency.
+
+*Switch triggers* (to be set from E-R3's numbers; examples of the form): move a live feature to a self-hosted GPU when its API spend has been above about 1.5 times the GPU server's monthly cost for two months, and the self-hosted model scores within the eval tolerance. Move back if quality drops or the volume falls.
+
+*Rule change.* CLAUDE.md says runtime AI stays on the Gemini-backed Edge Functions. Moving a live feature to another provider is an owner decision, and CLAUDE.md is updated in the same change.
 
 **Depends on.** H1, B2, C1 (threat model informs E3).
 
