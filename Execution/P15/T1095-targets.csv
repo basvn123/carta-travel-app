@@ -1,0 +1,301 @@
+id,name,iso2,score,body_words_now,intro_words_now,group
+FCO,Rome,IT,10,92,137,A_passes_now
+gem:como,Lake Como,IT,9.7,50,91,C_short_wv_lead
+gem:taormina,Taormina,IT,9.6,17,53,C_short_wv_lead
+gem:amalfi-coast,Amalfi Coast,IT,9.5,32,70,C_short_wv_lead
+gem:cinque-terre,Cinque Terre,IT,9.5,84,128,A_passes_now
+gem:portovenere,Portovenere,IT,9.5,0,36,D_no_wv_body
+VCE,Venice,IT,9.4,116,158,A_passes_now
+gem:moustiers-sainte-marie,Moustiers-Sainte-Marie,FR,9.4,34,76,C_short_wv_lead
+gem:orta-san-giulio,Orta San Giulio,IT,9.4,0,44,D_no_wv_body
+gem:pompeii,Pompeii,IT,9.4,87,126,A_passes_now
+gem:riomaggiore,Riomaggiore,IT,9.4,11,51,C_short_wv_lead
+gem:annecy,Annecy,FR,9.3,56,95,C_short_wv_lead
+CCF,Carcassonne,FR,9.2,49,89,C_short_wv_lead
+gem:cefalu,Cefalù,IT,9.2,57,101,C_short_wv_lead
+gem:pienza,Pienza,IT,9.2,34,73,C_short_wv_lead
+gem:puy-de-dome,Puy de Dôme,FR,9.2,94,140,A_passes_now
+gem:sixt-fer-a-cheval,Sixt-Fer-à-Cheval,FR,9.2,97,139,A_passes_now
+VRN,Verona,IT,9.1,41,84,C_short_wv_lead
+gem:agrigento-valle-dei-templi,Agrigento,IT,9.1,0,40,D_no_wv_body
+gem:dolomites,Dolomites,IT,9.1,0,35,D_no_wv_body
+gem:eguisheim,Eguisheim,FR,9.1,17,59,C_short_wv_lead
+gem:fontainebleau,Fontainebleau,FR,9.1,51,93,C_short_wv_lead
+gem:lago-maggiore,Lago Maggiore,IT,9.1,0,39,D_no_wv_body
+gem:les-baux-de-provence,Les Baux-de-Provence,FR,9.1,17,54,C_short_wv_lead
+gem:lovere,Lovere,IT,9.1,0,44,D_no_wv_body
+gem:malcesine,Malcesine,IT,9.1,45,77,C_short_wv_lead
+gem:mount-etna,Mount Etna,IT,9.1,112,150,A_passes_now
+gem:ortisei,Ortisei,IT,9.1,0,43,D_no_wv_body
+gem:ossuccio,Ossuccio,IT,9.1,0,39,D_no_wv_body
+gem:portoferraio,Portoferraio,IT,9.1,0,45,D_no_wv_body
+gem:san-gimignano,San Gimignano,IT,9.1,65,106,C_short_wv_lead
+gem:tivoli,Tivoli,IT,9.1,33,67,C_short_wv_lead
+gem:tuscany-siena,Siena & Val d'Orcia,IT,9.1,0,41,D_no_wv_body
+gem:assisi,Assisi,IT,9,43,82,C_short_wv_lead
+gem:castel-gandolfo,Castel Gandolfo,IT,9,101,147,A_passes_now
+gem:chamonix,Chamonix,FR,9,33,77,C_short_wv_lead
+gem:erice,Erice,IT,9,80,121,A_passes_now
+gem:lerici,Lerici,IT,9,59,96,C_short_wv_lead
+gem:menton,Menton,FR,9,99,144,A_passes_now
+gem:pont-du-gard,Pont du Gard,FR,9,17,59,C_short_wv_lead
+gem:riquewihr,Riquewihr,FR,9,87,127,A_passes_now
+gem:saint-paul-de-vence,Saint-Paul-de-Vence,FR,9,38,74,C_short_wv_lead
+gem:sorrento,Sorrento,IT,9,18,62,C_short_wv_lead
+gem:strasbourg,Strasbourg,FR,9,59,105,C_short_wv_lead
+gem:alpe-di-siusi,Alpe di Siusi,IT,8.9,0,44,D_no_wv_body
+gem:arles,Arles,FR,8.9,44,84,C_short_wv_lead
+gem:cerveteri,Cerveteri,IT,8.9,24,60,C_short_wv_lead
+gem:civita-di-bagnoregio,Civita di Bagnoregio,IT,8.9,22,62,C_short_wv_lead
+gem:dinan,Dinan,FR,8.9,0,39,D_no_wv_body
+gem:syracuse,Syracuse,IT,8.9,0,37,D_no_wv_body
+gem:verbania,Verbania,IT,8.9,0,38,D_no_wv_body
+gem:yvoire,Yvoire,FR,8.9,0,40,D_no_wv_body
+gem:aquileia,Aquileia,IT,8.8,40,78,C_short_wv_lead
+gem:bayonne,Bayonne,FR,8.8,8,50,C_short_wv_lead
+gem:bonneval-sur-arc,Bonneval-sur-Arc,FR,8.8,0,36,D_no_wv_body
+gem:capri,Capri,IT,8.8,39,78,C_short_wv_lead
+gem:moret-sur-loing,Moret-sur-Loing,FR,8.8,0,39,D_no_wv_body
+gem:opi,Opi,IT,8.8,0,35,D_no_wv_body
+gem:pitigliano,Pitigliano,IT,8.8,27,69,C_short_wv_lead
+gem:santo-stefano-di-sessanio,Santo Stefano di Sessanio,IT,8.8,17,57,C_short_wv_lead
+gem:scanno,Scanno,IT,8.8,0,43,D_no_wv_body
+CDG,Paris,FR,8.7,101,145,A_passes_now
+NCE,Nice,FR,8.7,74,112,C_short_wv_lead
+gem:ainhoa,Ainhoa,FR,8.7,0,38,D_no_wv_body
+gem:balazuc,Balazuc,FR,8.7,0,40,D_no_wv_body
+gem:capo-di-ponte,Capo di Ponte,IT,8.7,81,123,A_passes_now
+gem:conques,Conques,FR,8.7,0,38,D_no_wv_body
+gem:mantua,Mantua,IT,8.7,68,106,C_short_wv_lead
+gem:orange-vaucluse,Orange,FR,8.7,7,49,C_short_wv_lead
+gem:orvieto,Orvieto,IT,8.7,30,73,C_short_wv_lead
+gem:paestum,Paestum,IT,8.7,57,96,C_short_wv_lead
+gem:porto-ercole,Porto Ercole,IT,8.7,40,83,C_short_wv_lead
+gem:provence-luberon,Luberon,FR,8.7,0,44,D_no_wv_body
+gem:salins-les-bains,Salins-les-Bains,FR,8.7,0,36,D_no_wv_body
+gem:san-giovanni-di-fassa,San Giovanni di Fassa,IT,8.7,0,34,D_no_wv_body
+gem:tenno,Tenno,IT,8.7,0,45,D_no_wv_body
+gem:vigo-di-fassa,Vigo di Fassa,IT,8.7,0,34,D_no_wv_body
+BIQ,Biarritz,FR,8.6,45,92,C_short_wv_lead
+NAP,Naples,IT,8.6,41,78,C_short_wv_lead
+gem:bonifacio,Bonifacio,FR,8.6,120,163,A_passes_now
+gem:cala-gonone,Cala Gonone,IT,8.6,0,40,D_no_wv_body
+gem:collonges-la-rouge,Collonges-la-Rouge,FR,8.6,0,41,D_no_wv_body
+gem:courmayeur,Courmayeur,IT,8.6,36,81,C_short_wv_lead
+gem:lipari-aeolian,Lipari,IT,8.6,0,40,D_no_wv_body
+gem:mont-saint-michel,Mont-Saint-Michel,FR,8.6,73,114,C_short_wv_lead
+gem:montignac-lascaux,Montignac,FR,8.6,0,46,D_no_wv_body
+gem:ronciglione,Ronciglione,IT,8.6,0,46,D_no_wv_body
+gem:sarlat-la-caneda,Sarlat-la-Canéda,FR,8.6,55,97,C_short_wv_lead
+gem:tre-cime-di-lavaredo,Tre Cime di Lavaredo,IT,8.6,0,42,D_no_wv_body
+gem:trento,Trento,IT,8.6,66,112,C_short_wv_lead
+gem:avignon,Avignon,FR,8.5,65,106,C_short_wv_lead
+gem:bard,Bard,IT,8.5,0,36,D_no_wv_body
+gem:camogli,Camogli,IT,8.5,0,40,D_no_wv_body
+gem:garda,Lake Garda,IT,8.5,20,63,C_short_wv_lead
+gem:glorenza,Glorenza,IT,8.5,0,38,D_no_wv_body
+gem:pic-du-midi,Pic du Midi de Bigorre,FR,8.5,0,47,D_no_wv_body
+gem:reggia-di-caserta,Caserta,IT,8.5,0,42,D_no_wv_body
+gem:reims,Reims,FR,8.5,56,97,C_short_wv_lead
+gem:tropea,Tropea,IT,8.5,32,75,C_short_wv_lead
+gem:vezelay,Vézelay,FR,8.5,20,62,C_short_wv_lead
+gem:villalago,Villalago,IT,8.5,0,41,D_no_wv_body
+BOD,Bordeaux,FR,8.4,62,104,C_short_wv_lead
+gem:bergamo-alta,Bergamo,IT,8.4,0,38,D_no_wv_body
+gem:calanques-de-piana,Calanques de Piana,FR,8.4,0,42,D_no_wv_body
+gem:corvara-alta-badia,Corvara,IT,8.4,0,39,D_no_wv_body
+gem:gaeta,Gaeta,IT,8.4,61,105,C_short_wv_lead
+gem:la-maddalena,La Maddalena,IT,8.4,74,116,C_short_wv_lead
+gem:matera,Matera,IT,8.4,35,71,C_short_wv_lead
+gem:norcia,Norcia,IT,8.4,0,45,D_no_wv_body
+gem:riva-del-garda,Riva del Garda,IT,8.4,0,40,D_no_wv_body
+gem:saint-cirq-lapopie,Saint-Cirq-Lapopie,FR,8.4,0,41,D_no_wv_body
+gem:saint-remy-de-provence,Saint-Rémy-de-Provence,FR,8.4,33,73,C_short_wv_lead
+gem:anversa-degli-abruzzi,Anversa degli Abruzzi,IT,8.3,0,41,D_no_wv_body
+gem:cassis,Cassis,FR,8.3,88,130,A_passes_now
+gem:cividale-del-friuli,Cividale del Friuli,IT,8.3,9,50,C_short_wv_lead
+gem:gorges-du-verdon,Gorges du Verdon,FR,8.3,0,42,D_no_wv_body
+gem:klausen,Klausen,IT,8.3,0,38,D_no_wv_body
+gem:lago-di-braies,Lago di Braies,IT,8.3,0,41,D_no_wv_body
+gem:lagrasse,Lagrasse,FR,8.3,0,37,D_no_wv_body
+gem:merano,Merano,IT,8.3,108,148,A_passes_now
+gem:piombino,Piombino,IT,8.3,0,36,D_no_wv_body
+gem:ragusa,Ragusa,IT,8.3,30,69,C_short_wv_lead
+gem:urbino,Urbino,IT,8.3,44,88,C_short_wv_lead
+gem:versailles,Versailles,FR,8.3,65,106,C_short_wv_lead
+FLR,Florence,IT,8.2,101,140,A_passes_now
+PMO,Palermo,IT,8.2,55,98,C_short_wv_lead
+gem:castell-arquato,Castell'Arquato,IT,8.2,0,40,D_no_wv_body
+gem:castiglione-del-lago,Castiglione del Lago,IT,8.2,39,79,C_short_wv_lead
+gem:collioure,Collioure,FR,8.2,32,71,C_short_wv_lead
+gem:gardone-riviera,Gardone Riviera,IT,8.2,0,42,D_no_wv_body
+gem:monte-isola,Monte Isola,IT,8.2,0,42,D_no_wv_body
+gem:nice-villefranche,Villefranche-sur-Mer,FR,8.2,93,132,A_passes_now
+gem:saint-jean-pied-de-port,Saint-Jean-Pied-de-Port,FR,8.2,43,83,C_short_wv_lead
+gem:sperlonga,Sperlonga,IT,8.2,54,93,C_short_wv_lead
+gem:sutri,Sutri,IT,8.2,74,109,C_short_wv_lead
+gem:val-di-funes,Val di Funes,IT,8.2,0,39,D_no_wv_body
+gem:aosta,Aosta,IT,8.1,30,71,C_short_wv_lead
+gem:arqua-petrarca,Arquà Petrarca,IT,8.1,0,45,D_no_wv_body
+gem:baume-les-messieurs,Baume-les-Messieurs,FR,8.1,0,46,D_no_wv_body
+gem:cambo-les-bains,Cambo-les-Bains,FR,8.1,0,34,D_no_wv_body
+gem:castelluccio-di-norcia,Castelluccio,IT,8.1,0,44,D_no_wv_body
+gem:cetona,Cetona,IT,8.1,0,42,D_no_wv_body
+gem:elba-portoferraio,Elba,IT,8.1,0,42,D_no_wv_body
+gem:eze,Èze,FR,8.1,11,50,C_short_wv_lead
+gem:fiumaretta-di-ameglia,Fiumaretta di Ameglia,IT,8.1,0,41,D_no_wv_body
+gem:le-bar-sur-loup,Le Bar-sur-Loup,FR,8.1,0,38,D_no_wv_body
+gem:lucca,Lucca,IT,8.1,89,131,A_passes_now
+gem:montagnana,Montagnana,IT,8.1,0,36,D_no_wv_body
+gem:nancy,Nancy,FR,8.1,80,122,A_passes_now
+gem:noli,Noli,IT,8.1,0,42,D_no_wv_body
+gem:noto,Noto,IT,8.1,22,62,C_short_wv_lead
+gem:obernai,Obernai,FR,8.1,0,43,D_no_wv_body
+gem:olargues,Olargues,FR,8.1,0,31,D_no_wv_body
+gem:pezenas,Pézenas,FR,8.1,7,55,C_short_wv_lead
+gem:portofino,Portofino,IT,8.1,22,64,C_short_wv_lead
+gem:saint-guilhem-le-desert,Saint-Guilhem-le-Désert,FR,8.1,46,90,C_short_wv_lead
+gem:subiaco,Subiaco,IT,8.1,24,66,C_short_wv_lead
+gem:tourtour,Tourtour,FR,8.1,0,42,D_no_wv_body
+gem:varallo-sesia,Varallo Sesia,IT,8.1,0,45,D_no_wv_body
+gem:villefranche-de-conflent,Villefranche-de-Conflent,FR,8.1,0,40,D_no_wv_body
+NIM,Nîmes,FR,8,48,85,C_short_wv_lead
+gem:apricale,Apricale,IT,8,0,46,D_no_wv_body
+gem:bevagna,Bevagna,IT,8,0,42,D_no_wv_body
+gem:bolzano,Bolzano,IT,8,72,114,C_short_wv_lead
+gem:castel-san-pietro-romano,Castel San Pietro Romano,IT,8,0,44,D_no_wv_body
+gem:chateauneuf,Châteauneuf,FR,8,0,43,D_no_wv_body
+gem:civitella-del-tronto,Civitella del Tronto,IT,8,26,60,C_short_wv_lead
+gem:colmar,Colmar,FR,8,26,67,C_short_wv_lead
+gem:lille,Lille,FR,8,82,128,A_passes_now
+gem:limone-sul-garda,Limone sul Garda,IT,8,0,48,D_no_wv_body
+gem:loire-valley,Loire Valley,FR,8,0,40,D_no_wv_body
+gem:lourmarin,Lourmarin,FR,8,17,59,C_short_wv_lead
+gem:megeve,Megève,FR,8,0,37,D_no_wv_body
+gem:moneglia,Moneglia,IT,8,0,38,D_no_wv_body
+gem:perouges,Pérouges,FR,8,0,47,D_no_wv_body
+gem:pescocostanzo,Pescocostanzo,IT,8,0,44,D_no_wv_body
+gem:porto-vecchio-palombaggia,Porto-Vecchio,FR,8,0,39,D_no_wv_body
+gem:roussillon,Roussillon,FR,8,0,41,D_no_wv_body
+gem:sacra-di-san-michele,Sacra di San Michele,IT,8,0,38,D_no_wv_body
+gem:saint-die-des-vosges,Saint-Dié-des-Vosges,FR,8,10,48,C_short_wv_lead
+gem:sare,Sare,FR,8,61,100,C_short_wv_lead
+gem:scicli,Scicli,IT,8,41,83,C_short_wv_lead
+gem:sestri-levante,Sestri Levante,IT,8,52,95,C_short_wv_lead
+gem:trevi,Trevi,IT,8,0,41,D_no_wv_body
+gem:vicenza,Vicenza,IT,8,50,91,C_short_wv_lead
+gem:volterra,Volterra,IT,8,73,117,C_short_wv_lead
+LYS,Lyon,FR,7.9,96,140,A_passes_now
+gem:alassio,Alassio,IT,7.9,0,40,D_no_wv_body
+gem:barga,Barga,IT,7.9,0,41,D_no_wv_body
+gem:bayeux,Bayeux,FR,7.9,40,83,C_short_wv_lead
+gem:castelmezzano,Castelmezzano,IT,7.9,0,36,D_no_wv_body
+gem:cervo,Cervo,IT,7.9,0,39,D_no_wv_body
+gem:chartres,Chartres,FR,7.9,109,151,A_passes_now
+gem:cirque-de-gavarnie,Cirque de Gavarnie,FR,7.9,0,38,D_no_wv_body
+gem:conegliano,Conegliano,IT,7.9,0,34,D_no_wv_body
+gem:fabriano,Fabriano,IT,7.9,0,39,D_no_wv_body
+gem:genzano-di-roma,Genzano di Roma,IT,7.9,0,45,D_no_wv_body
+gem:ischia,Ischia,IT,7.9,110,155,A_passes_now
+gem:la-grave,La Grave,FR,7.9,0,46,D_no_wv_body
+gem:la-roque-gageac,La Roque-Gageac,FR,7.9,0,38,D_no_wv_body
+gem:les-eyzies-de-tayac-sireuil,Les Eyzies-de-Tayac-Sireuil,FR,7.9,0,39,D_no_wv_body
+gem:menerbes,Ménerbes,FR,7.9,0,32,D_no_wv_body
+gem:neumarkt,Neumarkt,IT,7.9,0,40,D_no_wv_body
+gem:padua,Padua,IT,7.9,58,100,C_short_wv_lead
+gem:palazzolo-acreide,Palazzolo Acreide,IT,7.9,75,115,C_short_wv_lead
+gem:ravenna,Ravenna,IT,7.9,10,49,C_short_wv_lead
+gem:rocca-pietore,Rocca Pietore,IT,7.9,0,41,D_no_wv_body
+gem:rochefort-en-terre,Rochefort-en-Terre,FR,7.9,0,41,D_no_wv_body
+gem:santa-margherita-ligure,Santa Margherita Ligure,IT,7.9,18,59,C_short_wv_lead
+gem:vallon-pont-d-arc,Vallon-Pont-d'Arc,FR,7.9,63,104,C_short_wv_lead
+gem:vietri-sul-mare,Vietri sul Mare,IT,7.9,0,40,D_no_wv_body
+gem:beynac-et-cazenac,Beynac-et-Cazenac,FR,7.8,6,47,C_short_wv_lead
+gem:biot,Biot,FR,7.8,0,43,D_no_wv_body
+gem:bobbio,Bobbio,IT,7.8,0,42,D_no_wv_body
+gem:bondone,Bondone,IT,7.8,0,40,D_no_wv_body
+gem:brisighella,Brisighella,IT,7.8,0,42,D_no_wv_body
+gem:campo-imperatore,Campo Imperatore,IT,7.8,0,43,D_no_wv_body
+gem:carloforte,Carloforte,IT,7.8,44,88,C_short_wv_lead
+gem:castellabate,Castellabate,IT,7.8,84,130,A_passes_now
+gem:crespi-d-adda,Crespi d'Adda,IT,7.8,0,40,D_no_wv_body
+gem:le-puy-en-velay,Le Puy-en-Velay,FR,7.8,43,84,C_short_wv_lead
+gem:locronan,Locronan,FR,7.8,0,42,D_no_wv_body
+gem:plouharnel,Plouharnel,FR,7.8,0,40,D_no_wv_body
+gem:aiguilles-de-bavella,Aiguilles de Bavella,FR,7.7,0,46,D_no_wv_body
+gem:domme,Domme,FR,7.7,0,40,D_no_wv_body
+gem:rocamadour,Rocamadour,FR,7.7,8,47,C_short_wv_lead
+gem:saint-suliac,Saint-Suliac,FR,7.7,0,42,D_no_wv_body
+gem:sainte-enimie,Sainte-Enimie,FR,7.7,0,47,D_no_wv_body
+gem:seguret,Séguret,FR,7.7,0,41,D_no_wv_body
+gem:sete,Sète,FR,7.7,17,60,C_short_wv_lead
+gem:studenica,Studenica Monastery,RS,7.7,0,38,D_no_wv_body
+gem:autoire,Autoire,FR,7.6,0,31,D_no_wv_body
+gem:biarritz-coast,Saint-Jean-de-Luz,FR,7.6,74,118,C_short_wv_lead
+gem:briancon,Briançon,FR,7.6,18,60,C_short_wv_lead
+gem:bruniquel,Bruniquel,FR,7.6,0,42,D_no_wv_body
+gem:carnac,Carnac,FR,7.6,33,78,C_short_wv_lead
+gem:compiegne,Compiègne,FR,7.6,101,143,A_passes_now
+gem:crozon,Crozon Peninsula,FR,7.6,0,46,D_no_wv_body
+gem:dijon,Dijon,FR,7.6,67,113,C_short_wv_lead
+gem:flavigny-sur-ozerain,Flavigny-sur-Ozerain,FR,7.6,0,39,D_no_wv_body
+gem:honfleur,Honfleur,FR,7.6,40,88,C_short_wv_lead
+gem:la-roche-guyon,La Roche-Guyon,FR,7.6,0,42,D_no_wv_body
+gem:saint-malo,Saint-Malo,FR,7.6,36,78,C_short_wv_lead
+gem:saint-veran,Saint-Véran,FR,7.6,0,40,D_no_wv_body
+gem:saintes-maries-de-la-mer,Saintes-Maries-de-la-Mer,FR,7.6,0,41,D_no_wv_body
+gem:salers,Salers,FR,7.6,0,40,D_no_wv_body
+gem:vogue,Vogüé,FR,7.6,0,41,D_no_wv_body
+gem:ansouis,Ansouis,FR,7.5,0,39,D_no_wv_body
+gem:beaune,Beaune,FR,7.5,34,78,C_short_wv_lead
+gem:castelnou,Castelnou,FR,7.5,0,42,D_no_wv_body
+gem:chanaz,Chanaz,FR,7.5,0,41,D_no_wv_body
+gem:eu,Eu,FR,7.5,0,37,D_no_wv_body
+gem:minerve-herault,Minerve,FR,7.5,49,91,C_short_wv_lead
+gem:mittelbergheim,Mittelbergheim,FR,7.5,0,31,D_no_wv_body
+gem:mont-ventoux,Mont Ventoux,FR,7.5,9,52,C_short_wv_lead
+gem:ornans,Ornans,FR,7.5,0,46,D_no_wv_body
+gem:peyrepertuse,Château de Peyrepertuse,FR,7.5,0,46,D_no_wv_body
+gem:rochecorbon,Rochecorbon,FR,7.5,0,41,D_no_wv_body
+gem:saint-leon-sur-vezere,Saint-Léon-sur-Vézère,FR,7.5,0,45,D_no_wv_body
+gem:albi,Albi,FR,7.4,21,60,C_short_wv_lead
+gem:camargue,Camargue,FR,7.4,30,69,C_short_wv_lead
+gem:carennac,Carennac,FR,7.4,0,43,D_no_wv_body
+gem:cauterets,Cauterets,FR,7.4,0,45,D_no_wv_body
+gem:chinon,Chinon,FR,7.4,13,58,C_short_wv_lead
+gem:giverny,Giverny,FR,7.4,52,91,C_short_wv_lead
+gem:ile-aux-moines,Île-aux-Moines,FR,7.4,0,35,D_no_wv_body
+gem:la-bastide-clairence,La Bastide-Clairence,FR,7.4,0,29,D_no_wv_body
+gem:la-ciotat,La Ciotat,FR,7.4,0,47,D_no_wv_body
+gem:le-croisic,Le Croisic,FR,7.4,0,40,D_no_wv_body
+gem:monpazier,Monpazier,FR,7.4,77,120,A_passes_now
+gem:montpeyroux,Montpeyroux,FR,7.4,0,41,D_no_wv_body
+gem:najac,Najac,FR,7.4,0,46,D_no_wv_body
+gem:saint-amand-de-coly,Saint-Amand-de-Coly,FR,7.4,0,42,D_no_wv_body
+gem:mokra-gora,Mokra Gora & Tara,RS,7.2,0,40,D_no_wv_body
+gem:kopaonik,Kopaonik,RS,7.1,0,44,D_no_wv_body
+gem:djavolja-varos,Đavolja Varoš,RS,7,0,33,D_no_wv_body
+gem:gamzigrad,Gamzigrad,RS,7,0,41,D_no_wv_body
+gem:novi-sad,Novi Sad,RS,6.8,41,84,C_short_wv_lead
+gem:manasija,Manasija Monastery,RS,6.5,0,38,D_no_wv_body
+gem:zlatibor,Zlatibor,RS,6.5,46,77,C_short_wv_lead
+gem:golubac,Golubac,RS,6.4,0,41,D_no_wv_body
+gem:lepenski-vir,Lepenski Vir,RS,6.3,0,39,D_no_wv_body
+gem:sremski-karlovci,Sremski Karlovci,RS,6.3,25,64,C_short_wv_lead
+gem:uvac,Uvac Canyon,RS,6.2,0,42,D_no_wv_body
+BEG,Belgrade,RS,6.1,73,115,C_short_wv_lead
+gem:soko-banja,Soko Banja,RS,6.1,20,64,C_short_wv_lead
+gem:subotica,Subotica,RS,5.9,86,123,A_passes_now
+gem:vrnjacka-banja,Vrnjačka Banja,RS,5.6,0,36,D_no_wv_body
+gem:pirot-centralni-trg,Pirot Centralni Trg,RS,5.5,0,39,D_no_wv_body
+INI,Nis,RS,5.3,36,78,C_short_wv_lead
+gem:aleksinac,Aleksinac,RS,4.8,0,42,D_no_wv_body
+gem:kragujevac,Kragujevac,RS,4.8,50,85,C_short_wv_lead
+gem:mladenovac,Mladenovac,RS,4.8,0,38,D_no_wv_body
+gem:smederevo,Smederevo,RS,4.8,0,40,D_no_wv_body
+gem:vranje,Vranje,RS,4.8,0,40,D_no_wv_body
+gem:arandelovac,Aranđelovac,RS,4.7,0,42,D_no_wv_body
+gem:valjevo,Valjevo,RS,4.5,0,36,D_no_wv_body
+gem:jagodina,Jagodina,RS,3.8,0,40,D_no_wv_body
+gem:svilajnac,Svilajnac,RS,3.8,0,32,D_no_wv_body
+gem:sid,Šid,RS,3.7,0,36,D_no_wv_body
