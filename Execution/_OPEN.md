@@ -1522,3 +1522,9 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1117-c | T1117 | suggest-city calls Gemini without the AI guard (out of T1117's scope): add guardPlanInput-style scrubbing, systemInstruction, fencing and an output text check | next task | open | |
 | T1117-d | T1117 | On-device Ask (WebGPU) gets no server-side stream guard, only verify.js and agree.js: run makeStreamGuard in src/lib/ask/generate.js on both back ends | next task | open | |
 | T1117-e | T1117 | The app has no copy for the new refusals: Ask `400 unsafe` and `guard: withdrawn`, plan-day and parse-booking `400 too_big`; they fall to the generic error (UI was out of scope; the Ask card UI was another session's tonight) | next task | open | |
+| T1118-a | T1118 | Legal review of docs/legal/ARTICLE30.md as brought current (section 2a retention lines, rows 20 to 24, Resend) and of the six-language "What we keep" and delete strings; the day counts in 069 are drafts | user | open | |
+| T1118-b | T1118 | Decide how long the anonymised pass_grants VAT and waiver record is kept, then add that line to privacy_retention_sweep (069) and section 2a | user | open | |
+| T1118-c | T1118 | Paste 069 (after 067 and 068) in the Supabase SQL editor, enable pg_cron so carta_privacy_retention runs daily, then run a real export and a throwaway-account delete on production | user | open | 1 |
+| T1118-d | T1118 | Read and accept Resend's DPA, record its version and transfer basis in ARTICLE30.md section 3 | user | open | |
+| T1118-e | T1118 | Light DPIA for the AI features (the remaining part of ROADMAP C9), not in this task's prompt | next task | open | |
+| T1118-f | T1118 | Look at the Account panel "What we keep" row and the longer delete hint at 390 and 1440 px signed in (not checked in the cloud container: the panel needs an account) | next task | open | |

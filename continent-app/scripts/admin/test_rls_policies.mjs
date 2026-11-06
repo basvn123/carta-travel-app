@@ -1389,7 +1389,7 @@ function runTests(bin) {
     };
     const victimHandle = scalar(bin, TEST_DB, `select handle from public.profiles where user_id = '${VICTIM}'`);
     const mineExp = exportOf('victim');
-    check('the victim\'s export parses and is schema 3', mineExp && mineExp.schema === 3, JSON.stringify(mineExp || {}).slice(0, 120));
+    check('the victim\'s export parses and is schema 3 or later (4 since 069)', mineExp && mineExp.schema >= 3, JSON.stringify(mineExp || {}).slice(0, 120));
     if (mineExp) {
       for (const key of ['tripPlans', 'tripPlanStops', 'dayPlans', 'tripShares', 'coplanners', 'friends',
         'passGrants', 'achievements', 'moderationStatements', 'edgeErrors', 'feedback']) {
@@ -1408,7 +1408,8 @@ function runTests(bin) {
         && c.otherHandle === thirdHandle), JSON.stringify(mineExp.coplanners));
       const text = JSON.stringify(mineExp);
       check('export: no other traveller\'s user id is anywhere in the file',
-        !text.includes(THIRD) && !text.includes(PLAIN), 'a friend or co-planner id leaked');
+        !text.includes(THIRD) && !text.includes(PLAIN),
+        `a friend or co-planner id leaked in ${Object.keys(mineExp).filter((k) => /c00[23]/.test(JSON.stringify(mineExp[k]))).join(', ')}`);
     }
     const plainExp = exportOf('plain');
     check('a second traveller\'s export parses', Boolean(plainExp));

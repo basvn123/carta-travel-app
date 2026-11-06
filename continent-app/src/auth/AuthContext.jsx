@@ -304,6 +304,16 @@ export function AuthProvider({ children }) {
     if (error) throw error;
     if (data?.error) throw new Error(data.error);
     const u = session?.user || null;
+    const account = {
+      email: u?.email || null,
+      name: u?.user_metadata?.full_name || null,
+      createdAt: u?.created_at || null,
+      signInMethods: (u?.identities || []).map((i) => i.provider),
+    };
+    // T1118: schema 4 (069) already carries askChats, accountThings and every
+    // other table with the traveller's rows, so the two reads below are only
+    // for a project that has not pasted 069 yet.
+    if ((Number(data?.schema) || 0) >= 4) return { ...data, account };
     // T575: Ask Carta's chats in the account, read under their own RLS (054).
     // A project without the table has none to give; any other failure stops
     // the export rather than hand over a file that leaves something out.
@@ -331,12 +341,7 @@ export function AuthProvider({ children }) {
       ...data,
       askChats,
       accountThings,
-      account: {
-        email: u?.email || null,
-        name: u?.user_metadata?.full_name || null,
-        createdAt: u?.created_at || null,
-        signInMethods: (u?.identities || []).map((i) => i.provider),
-      },
+      account,
     };
   }, [session]);
 
