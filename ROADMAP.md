@@ -863,7 +863,7 @@ docs/
 
 | ID | Item | Parallel at TechWolf | Skill | Done when | Size | Phase | Status |
 |---|---|---|---|---|---|---|---|
-| F1 | Travel taxonomy and tagging | ESCO, extreme multi-label skill extraction | Retrieval, classification, calibration | Every place tagged, P@5 and F1 reported on 400 labelled items | L | P3 | in progress (T1149: taxonomy v1 with 268 nodes, mapping of every tag in use, 400-item label template, P@5 and F1 eval; hand labels are an owner step, tagging is T1150) |
+| F1 | Travel taxonomy and tagging | ESCO, extreme multi-label skill extraction | Retrieval, classification, calibration | Every place tagged, P@5 and F1 reported on 400 labelled items | L | P3 | in progress (T1149: taxonomy v1 with 268 nodes, mapping of every tag in use, 400-item label template, P@5 and F1 eval. T1150: batch tagger with evidence per tag and a threshold per use, all 26,588 items tagged in about 30 s, beats today's tags on the seed set (R-precision at 5 0.477 vs 0.433); hand labels, the verifier run and wiring into the app are still open) |
 | F2 | Distilled tagger | ConTeXT-match, JobBERT V2 | PyTorch, HF Transformers, Sentence-Transformers, contrastive learning, ONNX | Student within 3 F1 points of teacher at under 1% of the cost; on the HF Hub | L | After | todo |
 | F3 | Taste profile with validation | Employee skill validation, acceptance rate | Human in the loop, explainability | Chips with evidence on My trips, acceptance rate tracked | M | After | todo |
 | F4 | Place linking | Job-title normalisation | Entity linking | MRR and accuracy@1 on 300 messy mentions | M | After | todo |

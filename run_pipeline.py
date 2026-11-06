@@ -2706,6 +2706,21 @@ TASKS = [
         "note": "T641's list of the fields still stubbed; report only, writes no wire.",
     },
     {
+        "key": "taxonomy_tags",
+        "title": "Taxonomy tags: every place, trail, beach, lake and peak on taxonomy v1 -> cache/taxonomy/tags.json",
+        "cadence": "after",
+        "after": ["dossier", "beaches", "lakes", "mountains", "trails_rate"],
+        "writes_app_data": False,
+        "writes_wire": False,
+        "soft": True,
+        "cmds": [[PY, "pipeline/taxonomy/tagger.py", "--all"]],
+        "note": ("T1150 (F1). Phrase, mapped-tag and BM25 candidates fused by "
+                 "rank, a noisy-OR score with evidence per tag and a threshold "
+                 "per use. Reads only the shipped wires; no model call by "
+                 "default (the verifier is --verify, the bi-encoder --dense, "
+                 "both owner runs). Not the wire: wiring is a later task."),
+    },
+    {
         "key": "ask_index",
         "title": "Ask Carta index: passages, vectors, pruned model, BM25 -> public/search/ask",
         "cadence": "after",
