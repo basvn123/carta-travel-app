@@ -1,3 +1,4 @@
+// T1089 UNRESOLVED: the page is now .tpage-v2 with .pt-* markup (Download GPX is .ox-gpx, no KML door), and the Trails list is Explore cat=trails with story rails; see verify_trail_free_gpx.mjs for the new selectors.
 // Headless verify for the trail page (.tpage): the full page a trail card now
 // opens, the composed explanation, the GPX/KML/link exports, live following,
 // and the price chrome that Trails no longer shows.
