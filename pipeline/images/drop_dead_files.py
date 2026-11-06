@@ -39,6 +39,9 @@ sys.path.insert(0, str(HERE))
 
 from checks import file_title  # noqa: E402
 
+sys.path.insert(0, str(HERE.parent))
+from wire_contract import check_wire  # noqa: E402
+
 REPORT = ROOT / "data" / "reports" / "image_audit.json"
 API = "https://commons.wikimedia.org/w/api.php"
 UA = "CartaImageAudit/1.0 (dead file sweep; run from the Carta pipeline)"
@@ -163,6 +166,7 @@ def main():
         data = json.loads(text)
         n = scrub(data, dead)
         if n:
+            check_wire(path, data)
             tmp = path.with_suffix(".tmp")
             with open(tmp, "w", encoding="utf-8") as fh:
                 json.dump(data, fh, ensure_ascii=False, separators=(",", ":"))

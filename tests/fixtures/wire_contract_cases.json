@@ -1,0 +1,411 @@
+{
+ "description": "T1133 (D1): seeded bad values for docs/wire.schema.json. Each case changes one value of continent-app/scripts/ci/fixtures/contract-min.json (set `value`, or `delete` the key at `path`); the validator must then report exactly `expect`, the field path first. tests/test_wire_contract.py (pipeline) and continent-app/tests/wire-contract.test.mjs (app) run the same cases, so a break fails both with the same message.",
+ "fixture": "continent-app/scripts/ci/fixtures/contract-min.json",
+ "cases": [
+  {
+   "name": "coordinates as a string",
+   "path": [
+    "destinations",
+    "BRU",
+    "lat"
+   ],
+   "value": "50.9",
+   "expect": "destinations.BRU.lat is \"50.9\", expected number"
+  },
+  {
+   "name": "longitude out of range",
+   "path": [
+    "destinations",
+    "BRU",
+    "lon"
+   ],
+   "value": 200,
+   "expect": "destinations.BRU.lon is 200, above the maximum 180"
+  },
+  {
+   "name": "unknown tier",
+   "path": [
+    "destinations",
+    "BRU",
+    "tier"
+   ],
+   "value": "city",
+   "expect": "destinations.BRU.tier is \"city\", expected one of [\"airport\",\"gem\"]"
+  },
+  {
+   "name": "lower-case iso2",
+   "path": [
+    "destinations",
+    "gem:bruges",
+    "iso2"
+   ],
+   "value": "be",
+   "expect": "destinations.gem:bruges.iso2 is \"be\", does not match ^[A-Z]{2}$"
+  },
+  {
+   "name": "two-letter iata",
+   "path": [
+    "destinations",
+    "BRU",
+    "iata"
+   ],
+   "value": "BR",
+   "expect": "destinations.BRU.iata is \"BR\", does not match ^[A-Z0-9]{3}$"
+  },
+  {
+   "name": "empty city",
+   "path": [
+    "destinations",
+    "BRU",
+    "city"
+   ],
+   "value": "",
+   "expect": "destinations.BRU.city is \"\", shorter than 1"
+  },
+  {
+   "name": "field renamed",
+   "path": [
+    "destinations",
+    "BRU",
+    "centre_lat"
+   ],
+   "value": 50.85,
+   "expect": "destinations.BRU.centre_lat is not in the wire contract; add it to docs/wire.schema.json or put the old name back"
+  },
+  {
+   "name": "boot meta key dropped",
+   "path": [
+    "meta",
+    "baggage_options"
+   ],
+   "delete": true,
+   "expect": "meta.baggage_options is missing"
+  },
+  {
+   "name": "required destination key dropped",
+   "path": [
+    "destinations",
+    "BRU",
+    "country"
+   ],
+   "delete": true,
+   "expect": "destinations.BRU.country is missing"
+  },
+  {
+   "name": "schema version bumped",
+   "path": [
+    "meta",
+    "schema_version"
+   ],
+   "value": 20,
+   "expect": "meta.schema_version is 20, expected 19"
+  },
+  {
+   "name": "currency changed",
+   "path": [
+    "meta",
+    "currency"
+   ],
+   "value": "GBP",
+   "expect": "meta.currency is \"GBP\", expected \"EUR\""
+  },
+  {
+   "name": "date not ISO",
+   "path": [
+    "meta",
+    "start_date"
+   ],
+   "value": "22/07/2026",
+   "expect": "meta.start_date is \"22/07/2026\", does not match ^\\d{4}-\\d{2}-\\d{2}$"
+  },
+  {
+   "name": "boolean as a string",
+   "path": [
+    "meta",
+    "is_mock"
+   ],
+   "value": "false",
+   "expect": "meta.is_mock is \"false\", expected boolean"
+  },
+  {
+   "name": "class rank above 100",
+   "path": [
+    "destinations",
+    "BRU",
+    "rating"
+   ],
+   "value": {
+    "band": "good",
+    "confidence": "rubric",
+    "class_rank": {
+     "class": "city",
+     "pct": 140,
+     "scope": "europe"
+    }
+   },
+   "expect": "destinations.BRU.rating.class_rank.pct is 140, above the maximum 100"
+  },
+  {
+   "name": "rating band unknown",
+   "path": [
+    "destinations",
+    "BRU",
+    "rating"
+   ],
+   "value": {
+    "band": "superb",
+    "confidence": "rubric",
+    "class_rank": {
+     "class": "city",
+     "pct": 50,
+     "scope": "europe"
+    }
+   },
+   "expect": "destinations.BRU.rating.band is \"superb\", expected one of [\"exceptional\",\"excellent\",\"very_good\",\"good\",\"pleasant\",null]"
+  },
+  {
+   "name": "taste like above 1",
+   "path": [
+    "destinations",
+    "BRU",
+    "taste"
+   ],
+   "value": {
+    "likes": {
+     "beach": [
+      1.5,
+      {}
+     ],
+     "hiking": [
+      0.5,
+      {}
+     ],
+     "lakes": [
+      0.5,
+      {}
+     ],
+     "culture": [
+      0.5,
+      {}
+     ],
+     "city": [
+      0.5,
+      {}
+     ],
+     "hidden": [
+      0.5,
+      {}
+     ],
+     "cycling": [
+      0.5,
+      {}
+     ],
+     "ski": [
+      0.5,
+      {}
+     ],
+     "wellness": [
+      0.5,
+      {}
+     ],
+     "islands": [
+      0.5,
+      {}
+     ],
+     "food": [
+      null
+     ],
+     "nightlife": [
+      null
+     ]
+    },
+    "size": "city",
+    "crowd_by_month": [
+     1,
+     1,
+     1,
+     1,
+     1,
+     1,
+     1,
+     1,
+     1,
+     1,
+     1,
+     1
+    ],
+    "car_need": false,
+    "cost_level": 2.0
+   },
+   "expect": "destinations.BRU.taste.likes.beach[0] is 1.5, above the maximum 1"
+  },
+  {
+   "name": "taste like null where it is measured",
+   "path": [
+    "destinations",
+    "BRU",
+    "taste"
+   ],
+   "value": {
+    "likes": {
+     "beach": [
+      0.5,
+      {}
+     ],
+     "hiking": [
+      null
+     ],
+     "lakes": [
+      0.5,
+      {}
+     ],
+     "culture": [
+      0.5,
+      {}
+     ],
+     "city": [
+      0.5,
+      {}
+     ],
+     "hidden": [
+      0.5,
+      {}
+     ],
+     "cycling": [
+      0.5,
+      {}
+     ],
+     "ski": [
+      0.5,
+      {}
+     ],
+     "wellness": [
+      0.5,
+      {}
+     ],
+     "islands": [
+      0.5,
+      {}
+     ],
+     "food": [
+      null
+     ],
+     "nightlife": [
+      null
+     ]
+    },
+    "size": "city",
+    "crowd_by_month": [
+     1,
+     1,
+     1,
+     1,
+     1,
+     1,
+     1,
+     1,
+     1,
+     1,
+     1,
+     1
+    ],
+    "car_need": false,
+    "cost_level": 2.0
+   },
+   "expect": "destinations.BRU.taste.likes.hiking[0] is null, expected number"
+  },
+  {
+   "name": "crowd months short",
+   "path": [
+    "destinations",
+    "BRU",
+    "taste"
+   ],
+   "value": {
+    "likes": {
+     "beach": [
+      0.5,
+      {}
+     ],
+     "hiking": [
+      0.5,
+      {}
+     ],
+     "lakes": [
+      0.5,
+      {}
+     ],
+     "culture": [
+      0.5,
+      {}
+     ],
+     "city": [
+      0.5,
+      {}
+     ],
+     "hidden": [
+      0.5,
+      {}
+     ],
+     "cycling": [
+      0.5,
+      {}
+     ],
+     "ski": [
+      0.5,
+      {}
+     ],
+     "wellness": [
+      0.5,
+      {}
+     ],
+     "islands": [
+      0.5,
+      {}
+     ],
+     "food": [
+      null
+     ],
+     "nightlife": [
+      null
+     ]
+    },
+    "size": "city",
+    "crowd_by_month": [
+     1,
+     1,
+     1,
+     1,
+     1,
+     1,
+     1,
+     1,
+     1,
+     1,
+     1
+    ],
+    "car_need": false,
+    "cost_level": 2.0
+   },
+   "expect": "destinations.BRU.taste.crowd_by_month has 11 items, expected at least 12"
+  },
+  {
+   "name": "gateways empty",
+   "path": [
+    "destinations",
+    "BRU",
+    "gateways"
+   ],
+   "value": [],
+   "expect": "destinations.BRU.gateways has 0 items, expected at least 1"
+  },
+  {
+   "name": "destinations emptied",
+   "path": [
+    "destinations"
+   ],
+   "value": {},
+   "expect": "destinations has 0 entries, expected at least 2"
+  }
+ ]
+}

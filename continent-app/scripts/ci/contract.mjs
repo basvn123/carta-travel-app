@@ -1,172 +1,137 @@
 /**
  * contract.mjs, the app_data.json contract, written down as code.
  *
- * WHY THIS FILE EXISTS AT ALL
+ * ONE CONTRACT, THREE READERS (T1133, ROADMAP D1)
  *
- * There is no runtime validator in the app. src/lib/appData.js fetches
- * /app_data.json and hands the parsed object straight to useAppData, which
- * reads meta.defaults, meta.baggage_options, meta.stays and
- * meta.car_model with optional chaining and falls back on every one of them.
- * withOriginRoutes then walks destinations and rebuilds routes. Nothing
- * throws. A payload missing half its keys renders an app with no prices and
- * no error, which is exactly the failure that reaches a user rather than a
- * build log.
+ * docs/wire.schema.json is the machine-readable contract of
+ * public/app_data.json: every meta key and every destination key, the type,
+ * range or enum of each, and its presence (required, every, some). It is
+ * read by the pipeline writers (pipeline/wire_contract.py, before each write
+ * of the wire), by the app sync (scripts/sync-data.mjs, before it writes
+ * public/) and here, by the CI gate. The interpreter is
+ * src/lib/wireSchema.js, pure so it can also run at hydration time; its
+ * Python twin words every problem the same way, starting with the field
+ * path. The "Wire contract" table in docs/SCHEMA.md is generated from the
+ * schema (node scripts/ci/wire-table.mjs --write) and the gate fails when
+ * the two drift.
  *
- * So the checks below are written from docs/SCHEMA.md's required fields and
- * from what the app actually dereferences, not imported from a validator that
- * does not exist. When somebody writes a real hydration-time validator, this
- * file should import it instead and keep only the checks the validator does
- * not cover.
+ * What stays in this file: the relations a per-value schema cannot say (a
+ * record's id matches its key, a city's gateways point back at it, every
+ * rated record carries a taste profile), the split wires, the nature, POI
+ * and trail wires, and the database half.
  *
  * WHAT COUNTS AS REQUIRED
  *
- * Deliberately narrow. A field is required here only when the app is visibly
- * broken without it, not merely thinner. meta.schema_version, the currency,
- * the date window, the defaults block and the baggage options are all read on
- * the boot path. Per destination: an id, a tier, a city, a country, an iso2
- * and finite coordinates. Everything else (climate, crowding, guide, beauty,
- * dossier joins) is a layer the app degrades through on purpose, and asserting
- * on those would make this gate fail for reasons that are not contract breaks.
+ * Deliberately narrow, and written in the schema's `required` lists: a field
+ * is required on every payload only when the app is visibly broken without
+ * it. meta.schema_version, the currency, the date window, the defaults block
+ * and the baggage options are read on the boot path; per destination an id,
+ * a tier, a city, a country, an iso2 and finite coordinates. Everything else
+ * is a layer the app degrades through on purpose, so its presence is checked
+ * only on a full catalogue (`catalogue: true`, x-presence in the schema).
  *
- * The version is pinned to what the SHIPPED payload carries, not to what the
- * documentation claims. As of T029 public/app_data.json has
- * meta.schema_version 17 while docs/SCHEMA.md's header still says 15; the
- * document's own later sections go up to "Schema v17", so 15 is stale prose
- * and 17 was the contract; T534 (stay prices, 2026-10-21) moved it to 18. Pinning to the file rather than the doc is the
- * whole point of the gate: a pipeline change that bumps the version has to
- * come here and to SCHEMA.md in the same task, and a tripwire nobody has to
- * touch is a tripwire that is not attached to anything.
+ * The version is pinned to what the SHIPPED payload carries: the schema's
+ * x-schema-version, which must equal its own meta.schema_version const and
+ * the "`meta.schema_version` = N" header line of docs/SCHEMA.md.
  */
 
-export const EXPECTED_SCHEMA_VERSION = 19;
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { validateWire, schemaKeySet, SCHEMA_NAME } from '../../src/lib/wireSchema.js';
 
-// Top-level keys the boot path reads before it can render a price.
-const REQUIRED_META = [
-  'schema_version', 'currency', 'start_date', 'end_date',
-  'defaults', 'baggage_options',
-];
+const HERE = path.dirname(fileURLToPath(import.meta.url));
+export const WIRE_SCHEMA_PATH = process.env.CARTA_WIRE_SCHEMA
+  || path.join(process.env.CARTA_REPO_ROOT || path.join(HERE, '..', '..', '..'), 'docs', 'wire.schema.json');
 
-// Per destination, the fields with no fallback anywhere in the app.
-const REQUIRED_DEST = ['id', 'tier', 'city', 'country', 'iso2'];
+/** Parse docs/wire.schema.json (or the file at `file`). */
+export function loadWireSchema(file = WIRE_SCHEMA_PATH) {
+  return JSON.parse(fs.readFileSync(file, 'utf8'));
+}
+
+export const WIRE_SCHEMA = loadWireSchema();
+export const EXPECTED_SCHEMA_VERSION = WIRE_SCHEMA['x-schema-version'];
+
+// Top-level keys the boot path reads before it can render a price, and the
+// per-destination fields with no fallback anywhere in the app.
+const REQUIRED_META = WIRE_SCHEMA.properties.meta.required;
+const REQUIRED_DEST = WIRE_SCHEMA.$defs.destination.required;
 
 const isFiniteNum = (v) => typeof v === 'number' && Number.isFinite(v);
 
-/**
- * Validate a parsed app_data payload. Returns an array of problem strings;
- * empty means it passes.
- *
- * `contract` is the key set parsed from docs/SCHEMA.md by
- * parseSchemaContract(). When given, a meta key or a destination key that
- * the document does not list is a problem (a renamed or new field has to be
- * written into SCHEMA.md in the same change). `catalogue: true` adds the
- * presence half, which only makes sense on a real catalogue and not on the
- * trimmed fixture: every listed meta key is there, every "every" key is on
- * every destination, and every "some" key is on at least one.
- */
-export function validateAppData(data, { contract = null, catalogue = false } = {}) {
+/** The schema's own consistency: version pins agree, required keys are listed. */
+export function checkWireSchema(schema = WIRE_SCHEMA) {
   const problems = [];
-  const bad = (m) => problems.push(m);
-
-  if (data === null || typeof data !== 'object' || Array.isArray(data)) {
-    return ['payload is not an object'];
+  const v = schema['x-schema-version'];
+  const metaProps = schema?.properties?.meta?.properties || {};
+  const destProps = schema?.$defs?.destination?.properties || {};
+  if (!Number.isInteger(v)) problems.push(`${SCHEMA_NAME} has no integer x-schema-version`);
+  if (metaProps.schema_version?.const !== v) {
+    problems.push(`${SCHEMA_NAME}: meta.schema_version const is ${JSON.stringify(metaProps.schema_version?.const)}, x-schema-version is ${v}`);
   }
-
-  const meta = data.meta;
-  if (meta === null || typeof meta !== 'object' || Array.isArray(meta)) {
-    bad('meta is missing or not an object');
-  } else {
-    for (const k of REQUIRED_META) {
-      if (!(k in meta)) bad(`meta.${k} is missing`);
-    }
-    if ('schema_version' in meta && meta.schema_version !== EXPECTED_SCHEMA_VERSION) {
-      bad(`meta.schema_version is ${JSON.stringify(meta.schema_version)}, `
-        + `expected ${EXPECTED_SCHEMA_VERSION} (see docs/SCHEMA.md)`);
-    }
-    if ('currency' in meta && meta.currency !== 'EUR') {
-      bad(`meta.currency is ${JSON.stringify(meta.currency)}, expected "EUR"`);
-    }
-    for (const k of ['start_date', 'end_date']) {
-      const v = meta[k];
-      if (k in meta && !(typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v))) {
-        bad(`meta.${k} is not an ISO date: ${JSON.stringify(v)}`);
-      }
-    }
-    if (meta.defaults !== undefined
-        && (meta.defaults === null || typeof meta.defaults !== 'object')) {
-      bad('meta.defaults is not an object');
-    }
-    if (meta.baggage_options !== undefined
-        && (meta.baggage_options === null || typeof meta.baggage_options !== 'object')) {
-      bad('meta.baggage_options is not an object');
-    }
+  for (const k of schema?.properties?.meta?.required || []) if (!(k in metaProps)) problems.push(`${SCHEMA_NAME}: required meta key "${k}" has no property`);
+  for (const k of schema?.$defs?.destination?.required || []) if (!(k in destProps)) problems.push(`${SCHEMA_NAME}: required destination key "${k}" has no property`);
+  for (const [k, p] of Object.entries(metaProps)) if (p['x-presence'] !== 'required') problems.push(`${SCHEMA_NAME}: meta key "${k}" must have x-presence "required"`);
+  for (const [k, p] of Object.entries(destProps)) {
+    if (!['every', 'some'].includes(p['x-presence'])) problems.push(`${SCHEMA_NAME}: destination key "${k}" must have x-presence "every" or "some"`);
+    if (typeof p.description !== 'string' || !p.description) problems.push(`${SCHEMA_NAME}: destination key "${k}" has no description`);
   }
-
-  const dests = data.destinations;
-  if (dests === null || typeof dests !== 'object' || Array.isArray(dests)) {
-    bad('destinations is missing or not an object');
-    return problems;
+  // A vacuous gate on an emptied schema is the failure to rule out.
+  if (Object.keys(metaProps).length < 10 || Object.keys(destProps).length < 20) {
+    problems.push(`${SCHEMA_NAME} lists ${Object.keys(metaProps).length} meta and ${Object.keys(destProps).length} destination keys; expected at least 10 and 20`);
   }
-
-  // Pair the "every destination satisfies P" walk below with a minimum count.
-  // Without it an empty destinations map passes every per-destination check
-  // vacuously, which is the exact shape of gate this repo has been burned by
-  // before. One destination is not a real catalogue either, so the floor is
-  // set where a fixture is still allowed but an empty or truncated ship is not.
-  const ids = Object.keys(dests);
-  if (ids.length < 2) {
-    bad(`destinations holds ${ids.length} entries; a valid payload has at least 2`);
-  }
-
-  for (const key of ids) {
-    const d = dests[key];
-    const where = `destinations.${key}`;
-    if (d === null || typeof d !== 'object' || Array.isArray(d)) {
-      bad(`${where} is not an object`);
-      continue;
-    }
-    for (const f of REQUIRED_DEST) {
-      if (d[f] === undefined || d[f] === null || d[f] === '') {
-        bad(`${where}.${f} is missing`);
-      }
-    }
-    if (d.id !== undefined && d.id !== key) {
-      bad(`${where}.id is ${JSON.stringify(d.id)}, does not match its key`);
-    }
-    if (d.tier !== undefined && d.tier !== 'airport' && d.tier !== 'gem') {
-      bad(`${where}.tier is ${JSON.stringify(d.tier)}, expected "airport" or "gem"`);
-    }
-    // Coordinates are the field most likely to arrive as a string from a
-    // hand-edited or CSV-round-tripped payload, and a string latitude puts a
-    // marker at NaN, which is the MapLibre crash this repo already has a
-    // memory about. Type is asserted, not coerced.
-    for (const f of ['lat', 'lon']) {
-      if (!isFiniteNum(d[f])) {
-        bad(`${where}.${f} is not a finite number: ${JSON.stringify(d[f])}`);
-      }
-    }
-    if (isFiniteNum(d.lat) && (d.lat < -90 || d.lat > 90)) {
-      bad(`${where}.lat out of range: ${d.lat}`);
-    }
-    if (isFiniteNum(d.lon) && (d.lon < -180 || d.lon > 180)) {
-      bad(`${where}.lon out of range: ${d.lon}`);
-    }
-  }
-
-  problems.push(...checkV19(dests, { catalogue }));
-  if (contract) problems.push(...checkKeySet(data, contract, { catalogue }));
-
   return problems;
 }
 
+/**
+ * Validate a parsed app_data payload. Returns an array of problem strings,
+ * each starting with the field path; empty means it passes.
+ *
+ * The per-value rules come from docs/wire.schema.json (validateWire): a key
+ * the schema does not list fails, so a renamed or new field has to be
+ * written into the schema in the same change. `catalogue: true` adds the
+ * presence half, which only makes sense on a real catalogue and not on the
+ * trimmed fixture: every meta key is there, every "every" key is on every
+ * destination, every "some" key is on at least one, and the relations below
+ * hold across records.
+ */
+export function validateAppData(data, { catalogue = false, schema = WIRE_SCHEMA } = {}) {
+  if (data === null || typeof data !== 'object' || Array.isArray(data)) {
+    return ['payload is not an object'];
+  }
+  const problems = validateWire(data, schema, { catalogue });
+  const dests = data.destinations;
+  if (dests && typeof dests === 'object' && !Array.isArray(dests)) {
+    problems.push(...checkRelations(dests, { catalogue }));
+  }
+  return problems;
+}
+
+export class WireContractError extends Error {
+  constructor(label, problems) {
+    const head = problems.slice(0, 12).join('\n  ');
+    const more = problems.length > 12 ? `\n  ... ${problems.length - 12} more` : '';
+    super(`refusing to write ${label}: the payload breaks ${SCHEMA_NAME}\n  ${head}${more}`);
+    this.name = 'WireContractError';
+    this.problems = problems;
+  }
+}
+
+/**
+ * The write guard, the JS twin of pipeline/wire_contract.py's check_wire:
+ * throws WireContractError, naming each field path, when `data` breaks the
+ * schema. Shape only (no presence), as on the pipeline side.
+ */
+export function assertWire(data, label = 'public/app_data.json', { schema = WIRE_SCHEMA } = {}) {
+  const problems = validateAppData(data, { schema });
+  if (problems.length) throw new WireContractError(label, problems);
+}
+
 // ======================================================================
-// Schema v19 keys, pinned to the second level (T762, gate 8, T082-d)
+// Schema v19 enums (T762), still used by the nature and POI wires below.
+// The destination-level v19 rules (rating.band, class_rank, confidence,
+// taste.likes and the rest) live in docs/wire.schema.json since T1133.
 // ======================================================================
-//
-// v19 is additive (rating v5, batch R3): every v18 key keeps its value and
-// these arrive beside them. The top-level key set above only notices that a
-// `taste` exists; these checks hold what is inside it, and what is inside the
-// new rating keys, so a layer that ships the right key with the wrong shape
-// fails here rather than on a screen in R4.
 
 export const V19_BANDS = ['exceptional', 'excellent', 'very_good', 'good', 'pleasant'];
 export const V19_CONFIDENCE = ['curated', 'rubric', 'estimated'];
@@ -180,9 +145,9 @@ export const V19_NATURE_CONFIDENCE = ['measured', 'partial', 'unscored'];
 export const V19_UNMEASURED = ['food', 'nightlife'];
 
 const isObj = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
-const in01 = (v) => isFiniteNum(v) && v >= 0 && v <= 1;
 
-function checkV19(dests, { catalogue }) {
+// The relations across records that a per-value schema cannot say.
+function checkRelations(dests, { catalogue }) {
   const problems = [];
   const bad = (m) => problems.push(m);
   let rated = 0;
@@ -190,81 +155,23 @@ function checkV19(dests, { catalogue }) {
   for (const [key, d] of Object.entries(dests)) {
     if (!isObj(d)) continue;
     const where = `destinations.${key}`;
-    const r = d.rating;
-    if (isObj(r)) {
-      rated += 1;
-      if (catalogue || 'band' in r) {
-        if (!('band' in r)) bad(`${where}.rating.band is missing`);
-        else if (r.band !== null && !V19_BANDS.includes(r.band)) {
-          bad(`${where}.rating.band is ${JSON.stringify(r.band)}`);
-        }
-      }
-      // T789: the English reason left the wire for why_i18n/en.json; where a
-      // record still carries one it is a string.
-      if ('why' in r) {
-        if (r.why !== null && typeof r.why !== 'string') bad(`${where}.rating.why is not a string`);
-      }
-      if (catalogue || 'class_rank' in r) {
-        const c = r.class_rank;
-        if (!isObj(c)) bad(`${where}.rating.class_rank is not an object`);
-        else if (!V19_CLASSES.includes(c.class) || !isFiniteNum(c.pct)
-          || c.pct < 0 || c.pct > 100 || c.scope !== 'europe') {
-          bad(`${where}.rating.class_rank is ${JSON.stringify(c)}`);
-        }
-      }
-      if (catalogue && !V19_CONFIDENCE.includes(r.confidence)) {
-        bad(`${where}.rating.confidence is ${JSON.stringify(r.confidence)}`);
-      }
+    if (d.id !== undefined && d.id !== key) {
+      bad(`${where}.id is ${JSON.stringify(d.id)}, does not match its key`);
     }
-    if ('gateways' in d) {
-      if (!Array.isArray(d.gateways) || !d.gateways.length) {
-        bad(`${where}.gateways is not a non-empty array`);
-      } else {
-        for (const g of d.gateways) {
-          if (typeof g !== 'string' || (catalogue && dests[g]?.gateway_of !== key)) {
-            bad(`${where}.gateways lists ${JSON.stringify(g)}, whose gateway_of is not ${key}`);
-          }
+    if (isObj(d.rating)) rated += 1;
+    if ('taste' in d) withTaste += 1;
+    if (catalogue && Array.isArray(d.gateways)) {
+      for (const g of d.gateways) {
+        if (dests[g]?.gateway_of !== key) {
+          bad(`${where}.gateways lists ${JSON.stringify(g)}, whose gateway_of is not ${key}`);
         }
       }
-    }
-    if ('gateway_of' in d && typeof d.gateway_of !== 'string') {
-      bad(`${where}.gateway_of is not a string`);
-    }
-    if ('taste' in d) {
-      withTaste += 1;
-      const t = d.taste;
-      if (!isObj(t) || !isObj(t.likes)) {
-        bad(`${where}.taste.likes is not an object`);
-        continue;
-      }
-      // T785/T786/T789: [value, fact], or [value] on the wire where the like
-      // scored 0 or was not measured; the value is null only for a like
-      // nothing measures (food, nightlife).
-      for (const like of V19_LIKES) {
-        const v = t.likes[like];
-        const okValue = Array.isArray(v) && (in01(v[0]) || (v[0] === null && V19_UNMEASURED.includes(like)));
-        const okFact = Array.isArray(v) && (v.length === 2 ? isObj(v[1]) : v.length === 1);
-        if (!okValue || !okFact) {
-          bad(`${where}.taste.likes.${like} is not [value 0..1 or null, fact]: ${JSON.stringify(v)}`);
-        }
-      }
-      if (t.tmax_by_month != null && !(Array.isArray(t.tmax_by_month) && t.tmax_by_month.length === 12
-        && t.tmax_by_month.every((x) => x === null || isFiniteNum(x)))) {
-        bad(`${where}.taste.tmax_by_month is not 12 numbers or null`);
-      }
-      if (t.size !== null && !V19_CLASSES.includes(t.size)) bad(`${where}.taste.size is ${JSON.stringify(t.size)}`);
-      if (t.crowd_by_month !== null && !(Array.isArray(t.crowd_by_month)
-        && t.crowd_by_month.length === 12 && t.crowd_by_month.every(Number.isInteger))) {
-        bad(`${where}.taste.crowd_by_month is not 12 integers or null`);
-      }
-      if (t.car_need !== null && typeof t.car_need !== 'boolean') bad(`${where}.taste.car_need is not a boolean or null`);
-      if (t.cost_level !== null && !isFiniteNum(t.cost_level)) bad(`${where}.taste.cost_level is not a number or null`);
     }
   }
   // Pair the walk with a count: a catalogue with no rated or no profiled
   // destination would pass every check above vacuously.
   if (catalogue && rated && withTaste < rated) {
-    bad(`taste is on ${withTaste} of ${rated} rated destinations; every rated one carries it`);
+    bad(`destinations.*.taste is on ${withTaste} of ${rated} rated destinations; every rated one carries it`);
   }
   return problems;
 }
@@ -446,19 +353,40 @@ export function validateSplitWires({ boot, chunkNames = null, chunks = {}, poiSh
 }
 
 // ======================================================================
-// The documented key set (T082)
+// The documented key set (T082, generated from the schema since T1133)
 // ======================================================================
 //
-// The checks above are deliberately narrow: they hold the handful of fields
-// the boot path cannot do without. They do not notice a field being renamed,
-// because a renamed layer (climate arriving as weather, say) leaves every
-// required field in place and the app simply stops showing it. So the full
-// top-level key set of meta and of a destination is pinned as well, and it is
-// pinned in docs/SCHEMA.md, in the "Wire contract" table, not in this file.
-// The document is the contract; this code only reads it. A field that is
-// renamed, added or dropped without the table changing fails the gate, which
-// is what keeps the document and the wire from drifting apart again (the
-// header said version 15 for months while 17 shipped).
+// The full key set of meta and of a destination is pinned in
+// docs/wire.schema.json. docs/SCHEMA.md keeps the human table ("Wire
+// contract"), generated from the schema between two marker comments by
+// scripts/ci/wire-table.mjs. The gate parses the table back and fails when
+// it and the schema disagree on any key, block or presence, or when the
+// header's version is not the schema's, so the document cannot drift from
+// the wire again (the header said version 15 for months while 17 shipped).
+
+export const TABLE_START = '<!-- wire-table:start, generated from docs/wire.schema.json by continent-app/scripts/ci/wire-table.mjs; do not edit by hand -->';
+export const TABLE_END = '<!-- wire-table:end -->';
+
+/** The "Wire contract" table rows, rendered from the schema. */
+export function renderWireTable(schema = WIRE_SCHEMA) {
+  const cell = (s) => String(s || '').replace(/\|/g, '\\|').replace(/\s+/g, ' ').trim();
+  const lines = ['| Key | Block | Presence | Described |', '|---|---|---|---|'];
+  for (const [k, p] of Object.entries(schema.properties.meta.properties)) {
+    lines.push(`| \`${k}\` | meta | ${p['x-presence']} | ${cell(p.description)} |`);
+  }
+  for (const [k, p] of Object.entries(schema.$defs.destination.properties)) {
+    lines.push(`| \`${k}\` | destination | ${p['x-presence']} | ${cell(p.description)} |`);
+  }
+  return lines.join('\n');
+}
+
+/** Replace the generated table in docs/SCHEMA.md's text; returns the new text. */
+export function writeWireTable(markdown, schema = WIRE_SCHEMA) {
+  const a = markdown.indexOf(TABLE_START);
+  const b = markdown.indexOf(TABLE_END);
+  if (a < 0 || b < a) throw new Error('docs/SCHEMA.md has no wire-table markers');
+  return `${markdown.slice(0, a + TABLE_START.length)}\n${renderWireTable(schema)}\n${markdown.slice(b)}`;
+}
 
 /**
  * Parse docs/SCHEMA.md. Returns { version, meta, every, some, problems }:
@@ -510,41 +438,30 @@ export function parseSchemaContract(markdown) {
   return { version, meta, every, some, problems };
 }
 
-function checkKeySet(data, contract, { catalogue }) {
-  const problems = [];
-  const meta = data && data.meta && typeof data.meta === 'object' ? data.meta : {};
-  const dests = data && data.destinations && typeof data.destinations === 'object' ? data.destinations : {};
-  const HINT = 'add it to the "Wire contract" table in docs/SCHEMA.md, or put the old name back';
-
-  for (const k of Object.keys(meta)) {
-    if (!contract.meta.has(k)) problems.push(`meta.${k} is not in docs/SCHEMA.md's wire contract; ${HINT}`);
+/**
+ * docs/SCHEMA.md against the schema: the table lists the same keys, in the
+ * same blocks, with the same presence, the generated rows are current, and
+ * the header line carries the schema's version. Returns problem strings.
+ */
+export function checkSchemaTable(markdown, schema = WIRE_SCHEMA) {
+  const doc = parseSchemaContract(markdown);
+  const problems = [...doc.problems];
+  const want = schemaKeySet(schema);
+  if (doc.version !== want.version) {
+    problems.push(`docs/SCHEMA.md says meta.schema_version ${doc.version}, ${SCHEMA_NAME} says ${want.version}; change both in the same commit`);
   }
-  const known = new Set([...contract.every, ...contract.some]);
-  const unknown = new Map();
-  const have = new Map();
-  const records = Object.values(dests).filter((d) => d && typeof d === 'object');
-  for (const d of records) {
-    for (const k of Object.keys(d)) {
-      have.set(k, (have.get(k) || 0) + 1);
-      if (!known.has(k)) unknown.set(k, (unknown.get(k) || 0) + 1);
-    }
-  }
-  for (const [k, n] of unknown) {
-    problems.push(`destination key "${k}" (on ${n} records) is not in docs/SCHEMA.md's wire contract; ${HINT}`);
-  }
-  if (!catalogue) return problems;
-
-  for (const k of contract.meta) {
-    if (!(k in meta)) problems.push(`meta.${k} is listed in docs/SCHEMA.md but the payload has none (renamed or dropped?)`);
-  }
-  for (const k of contract.every) {
-    const n = have.get(k) || 0;
-    if (n < records.length) {
-      problems.push(`destination key "${k}" is "every" in docs/SCHEMA.md but ${records.length - n} of ${records.length} records lack it`);
-    }
-  }
-  for (const k of contract.some) {
-    if (!have.get(k)) problems.push(`destination key "${k}" is listed in docs/SCHEMA.md but no record carries it (renamed or dropped?)`);
+  const diff = (label, a, b) => {
+    for (const k of b) if (!a.has(k)) problems.push(`docs/SCHEMA.md's wire contract lacks ${label} key "${k}" that ${SCHEMA_NAME} lists`);
+    for (const k of a) if (!b.has(k)) problems.push(`docs/SCHEMA.md's wire contract lists ${label} key "${k}" that ${SCHEMA_NAME} does not`);
+  };
+  diff('meta', doc.meta, want.meta);
+  diff('destination "every"', doc.every, want.every);
+  diff('destination "some"', doc.some, want.some);
+  const a = markdown.indexOf(TABLE_START);
+  const b = markdown.indexOf(TABLE_END);
+  if (a < 0 || b < a) problems.push('docs/SCHEMA.md has no wire-table markers around the table');
+  else if (markdown.slice(a + TABLE_START.length, b).trim() !== renderWireTable(schema)) {
+    problems.push('docs/SCHEMA.md\'s wire table is not the one the schema renders; run node continent-app/scripts/ci/wire-table.mjs --write');
   }
   return problems;
 }

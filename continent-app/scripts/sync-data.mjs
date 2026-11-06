@@ -40,6 +40,7 @@ import { shardName } from '../src/lib/poiShard.js';
 import {
   splitCatalogue, mergeCatalogue, buildRankTier, decodeRankTier, RANK_PATH, RANK_FIELDS,
 } from '../src/lib/bootIndex.js';
+import { assertWire } from './ci/contract.mjs';
 import { createHash } from 'node:crypto';
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));   // continent-app/scripts
@@ -307,6 +308,10 @@ const WHY_EN = {};
 sanitizeDeep(data);
 sanitizeDeep(activitiesFull);
 
+// T1133: the payload must satisfy docs/wire.schema.json before it ships;
+// a break stops the sync here, naming each field path, and public/ keeps
+// the last good wire.
+assertWire(data, 'public/app_data.json');
 const core = JSON.stringify(data);
 writeFileSync(resolve(publicDir, 'app_data.json'), core);
 
@@ -361,7 +366,9 @@ console.log(`[sync-data] core dataset -> public/app_data.json (${n} destinations
 // public/app_data.json already on disk, for a checkout without the master
 // dataset (a worktree).
 function writeSplit(core) {
-  const n = Object.keys(JSON.parse(core).destinations || {}).length;
+  const parsed = JSON.parse(core);
+  assertWire(parsed, 'the split wires (boot.json, dest/)');   // T1133
+  const n = Object.keys(parsed.destinations || {}).length;
   const destDir = resolve(publicDir, 'dest');
   rmSync(destDir, { recursive: true, force: true });
   mkdirSync(destDir, { recursive: true });

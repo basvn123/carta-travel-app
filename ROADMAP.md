@@ -589,7 +589,7 @@ docs/
 
 | ID | Item | Done when | Size | Phase | Status |
 |---|---|---|---|---|---|
-| D1 | One machine-readable contract | A seeded bad value fails both pipeline write and app sync, with the field path | M | P3 | todo |
+| D1 | One machine-readable contract | A seeded bad value fails both pipeline write and app sync, with the field path | M | P3 | done (T1133: docs/wire.schema.json, read by the pipeline write guard, the sync and CI) |
 | D2 | Quality engine and scorecard | One engine, scorecard and 90-day trend per run, admin Data health panel | M | P3 | todo |
 | D3 | Provenance and freshness per field | Every key block carries `_src` and `_asof`; sources registry generated | M | P4 | todo |
 | D4 | Truth set | 150 items verified by hand, scored per release | M | P3 | todo |

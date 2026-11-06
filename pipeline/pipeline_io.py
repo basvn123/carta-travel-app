@@ -25,6 +25,11 @@ import json
 import time
 import os
 
+try:                                   # flat import, as the pipeline scripts do
+    from wire_contract import check_wire
+except ImportError:                    # imported as pipeline.pipeline_io
+    from .wire_contract import check_wire
+
 
 def atomic_write_json(path, data, *, indent=1, ensure_ascii=False,
                       separators=None):
@@ -33,8 +38,14 @@ def atomic_write_json(path, data, *, indent=1, ensure_ascii=False,
     ``path`` may be a str or pathlib.Path. The temp file lives beside the target
     so os.replace stays on one filesystem and is truly atomic. Pass ``indent=
     None, separators=(",", ":")`` for the compact form served files use.
+
+    A write of the served wire (continent-app/public/app_data.json) is checked
+    against docs/wire.schema.json first (T1133): a payload that breaks the
+    contract raises WireContractError, naming each field path, and the file
+    on disk is left as it was.
     """
     path = os.fspath(path)
+    check_wire(path, data)
     tmp = path + ".tmp"
     with open(tmp, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=indent, ensure_ascii=ensure_ascii,

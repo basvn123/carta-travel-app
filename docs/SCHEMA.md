@@ -918,22 +918,46 @@ names, water sport zones, lake lifeguards, swimming bans, currents, lido prices,
 surface at the water entry, walk from pier and centre, luxury audience, gorge
 flag). `python pipeline/field_stubs/report.py` lists them.
 
-## Wire contract, checked in CI (T082)
+## Wire contract, checked in CI (T082, machine-readable since T1133)
 
-This table is the contract for the top level of `public/app_data.json`, and
-`continent-app/scripts/ci/check-contract.mjs` parses it on every run (locally
-in `npm run ci`, and in `.github/workflows/schema-contract.yml`). The payload
-must match it both ways. A key the payload carries and this table does not
-list fails, so a renamed field cannot ship under its new name unnoticed. A
-listed key the payload lacks fails too: a `meta` key must be present, a
-`destination` key marked `every` must be on every record (its value may be
-null), and one marked `some` must be on at least one record. To change the
-wire, change this table in the same commit, and if `meta.schema_version` moves,
-change the header line above and `EXPECTED_SCHEMA_VERSION` in
-`continent-app/scripts/ci/contract.mjs` with it.
+The contract for `public/app_data.json` is `docs/wire.schema.json`, one
+machine-readable file (JSON Schema 2020-12 subset). It lists every top-level
+`meta` and `destination` key with its type, range or enum and its presence,
+and it goes deeper where a wrong shape has broken a screen before (`rating`,
+`rating.class_rank`, `taste` and its twelve likes). It sits here beside this
+file because three readers share it and none of them owns it:
 
-Only the top level is pinned; the keys inside a block (`rating.score`,
-`costs.meal_mid_eur`) are described in the sections above and not yet checked.
+- the pipeline writers: `pipeline/wire_contract.py` is called from
+  `pipeline_io.atomic_write_json` (and from the three image fixers that write
+  the wire directly) before every write of `continent-app/public/app_data.json`.
+  A payload that breaks the schema raises `WireContractError`, naming each
+  field path, and the file on disk is left as it was. The pipeline checks
+  shape only: no unknown key, no wrong type.
+- the app sync: `continent-app/scripts/sync-data.mjs` checks the core payload
+  the same way before it writes `public/`, and stops with the field path.
+- the CI gate: `continent-app/scripts/ci/contract.mjs` (`validateAppData`) and
+  `check-contract.mjs`, in `npm run ci` and `.github/workflows/schema-contract.yml`,
+  add the presence half on the real catalogue: a `meta` key must be present, a
+  `destination` key marked `every` must be on every record (its value may be
+  null where the schema allows it), and one marked `some` must be on at least
+  one record. They also hold the relations a schema cannot say (an id matches
+  its key, a city's `gateways` point back at it, every rated record has a
+  `taste`).
+
+Both interpreters, `pipeline/wire_contract.py` and
+`continent-app/src/lib/wireSchema.js`, word each problem the same way, so a
+seeded bad value fails `pytest tests/test_wire_contract.py` and `npm test`
+(`tests/wire-contract.test.mjs`) with the same message, for example
+`destinations.BRU.lat is "50.9", expected number`. The shared cases are in
+`tests/fixtures/wire_contract_cases.json`.
+
+To change the wire, change `docs/wire.schema.json` in the same commit, then
+run `node continent-app/scripts/ci/wire-table.mjs --write` to regenerate the
+table below; the gate fails when the table is stale. If `meta.schema_version`
+moves, change `x-schema-version` and the `meta.schema_version` const in the
+schema and the header line above, and follow CLAUDE.md for a contract change
+end to end.
+
 `routes`, described in the first block, is not on the wire. Since T511 there
 are no fare slices; flights come from the sweep files ("Flight prices" above).
 
@@ -941,6 +965,7 @@ The column after the presence says where this file describes the field.
 "Not yet described" marks a field that ships and is read but has no section
 here yet.
 
+<!-- wire-table:start, generated from docs/wire.schema.json by continent-app/scripts/ci/wire-table.mjs; do not edit by hand -->
 | Key | Block | Presence | Described |
 |---|---|---|---|
 | `schema_version` | meta | required | header line; read on boot |
@@ -1019,6 +1044,7 @@ here yet.
 | `members` | destination | some | not yet described (towns grouped under this one, `member_layer.py`) |
 | `wikidata` | destination | some | Schema v15 section 2 |
 | `anchor_estimated` | destination | some | Flight data provenance (auto-anchored destinations) |
+<!-- wire-table:end -->
 
 ## Schema v18 (added 2026-10-21, T530-T536): bed prices for every bed type and month
 
