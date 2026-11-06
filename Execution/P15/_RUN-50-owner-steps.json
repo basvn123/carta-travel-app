@@ -789,5 +789,124 @@
    "See one scrubbed event with no IP",
    "Set VITE_ERROR_TRACKING=off and confirm nothing arrives"
   ]
+ },
+ {
+  "id": "T1115-a",
+  "title": "Decide the local transport fare source",
+  "why": "The fare layer (D10, 0 of 3,868 places today) cannot start without it and decision 4 is \"Not now\".",
+  "where": "reports/local_fares_source_options.md",
+  "how": [
+   "Read reports/local_fares_source_options.md",
+   "Choose curated operator pages (recommended in the note) or a licensed dataset",
+   "Tell the next session, which then builds the layer for the 127 metros in the CSV"
+  ]
+ },
+ {
+  "id": "T1129-a",
+  "title": "Paste funnel counts migration",
+  "why": "The server half of I11 is only a file.",
+  "where": "supabase/migrations/070_funnel_counts.sql",
+  "how": [
+   "Open the SQL editor",
+   "Paste `supabase/migrations/070_funnel_counts.sql`",
+   "Run it"
+  ]
+ },
+ {
+  "id": "T1129-b",
+  "title": "Check the admin Funnel card",
+  "why": "Confirm real ticks reach the admin reader.",
+  "where": "continent-app/src/components/admin/FunnelCounts.jsx",
+  "how": [
+   "After the paste open Explore, a place, Plan, save and share a trip once each",
+   "Reload admin Overview",
+   "Check the Funnel (weekly) card shows each step"
+  ]
+ },
+ {
+  "id": "T1130-c",
+  "title": "Check source terms before publishing",
+  "why": "The story quotes aggregates of Carta's own Booking.com scrape and the licence ledger is not settled (T1021-e).",
+  "where": "docs/brand/data-stories/method.md",
+  "how": [
+   "Read the Booking.com terms on derived aggregates",
+   "Decide whether a press story may cite \"Carta's own measurements on Booking.com\"",
+   "Note the answer in the register"
+  ]
+ },
+ {
+  "id": "T1130-a",
+  "title": "Review and place the K5 drafts",
+  "why": "Publishing to press or the blog is the owner's call.",
+  "where": "docs/brand/data-stories/europe-week-2027.nl.md",
+  "how": [
+   "Read both drafts and method.md",
+   "Pick the headline",
+   "Add a quote, the Carta link and the release date",
+   "Choose outlets from the K10 press list or the blog"
+  ]
+ },
+ {
+  "id": "T1130-d",
+  "title": "Decide on a French version",
+  "why": "ROADMAP K5 pitches Walloon press while decision 6 sets Dutch and English.",
+  "where": "ROADMAP.md",
+  "how": [
+   "Decide yes or no",
+   "If yes, a next task translates the Dutch draft with the same figures"
+  ]
+ },
+ {
+  "id": "T1130-b",
+  "title": "Export the flight sweep for the basket",
+  "why": "The way there is not in the shipped data and the R2 sweep needs an owner key.",
+  "where": "scripts/stories/basket_per_country.mjs",
+  "how": [
+   "On the box, copy the flight sweep fares for origins BRU and AMS from R2 to a local JSON",
+   "Hand the path to a next task that adds a getting-there column to the script"
+  ]
+ },
+ {
+  "id": "T1130-f",
+  "title": "Rerun the numbers before release",
+  "why": "Bed and food layers move with each build.",
+  "where": "docs/brand/data-stories/data/basket_2027.json",
+  "how": [
+   "After the next stays build run `node scripts/stories/basket_per_country.mjs`",
+   "Then `--check`",
+   "Update every figure in both drafts from the new JSON before sending on 2 Jan 2027"
+  ]
+ },
+ {
+  "id": "T1131-a",
+  "title": "Write the founder line",
+  "why": "The press kit shows a placeholder until then.",
+  "where": "continent-app/src/lib/press.js",
+  "how": [
+   "Edit `PRESS_FOUNDER_LINE`",
+   "Check `/?legal=press`"
+  ]
+ },
+ {
+  "id": "T1131-b",
+  "title": "Fill the journalist list",
+  "why": "Names and addresses are personal data only the owner collects.",
+  "where": "docs/marketing/journalist-list-template.csv",
+  "how": [
+   "Open the template",
+   "Add names and public editorial addresses by hand",
+   "Grow to about 40 rows",
+   "Keep the filled copy private"
+  ]
+ },
+ {
+  "id": "T1131-c",
+  "title": "Review Dutch copy and swap the screenshot",
+  "why": "The Dutch is a draft and the image is the site OG card.",
+  "where": "continent-app/src/lib/press.js",
+  "how": [
+   "Read `press.*` in nl.js",
+   "Put a real screenshot in public and point `PRESS_SCREENSHOT` at it"
+  ]
  }
 ]
