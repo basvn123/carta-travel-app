@@ -123,10 +123,10 @@ function ItinFlight({ dir, leg, waiting, query, baggage, hours, onHours, fareFie
           <span className="itin-pass-acts">
             {fareField}
             {href && (
-              <a className="btn btn-secondary btn-sm jr-book" href={href} target="_blank" rel="noreferrer noopener" aria-label={t('plan.findOn', { provider: 'Google Flights' })}>
-                <span className="btn-label">{t('tp.book')}</span>
-                <ExternalIcon size={13} />
-              </a>
+              <Button href={href} external size="sm" className="jr-book" aria-label={t('plan.findOn', { provider: 'Google Flights' })}
+                iconAfter={<ExternalIcon size={13} />}>
+                {t('tp.book')}
+              </Button>
             )}
           </span>
         </div>
@@ -1010,17 +1010,18 @@ export function TripItinerary({
                               tier: s.stayTier || tripStayTier, city: s.dest.city, country: s.dest.country, checkin: s.arriveDate, checkout: s.departDate,
                               adults: party?.adults || groupSize, children: party?.children || 0,
                             }).map((l, _k, all) => (
-                              <a
+                              <Button
                                 key={l.provider}
-                                className="btn btn-quiet btn-sm itin-find"
                                 href={l.href}
-                                target="_blank"
-                                rel="noreferrer noopener"
+                                external
+                                variant="quiet"
+                                size="sm"
+                                className="itin-find"
                                 aria-label={all.length > 1 || /^(dorm|private|room)$/.test(s.stayTier || tripStayTier) ? t('plan.findOn', { provider: l.provider }) : t('plan.findStay')}
+                                iconAfter={<ExternalIcon size={12} />}
                               >
-                                <span className="btn-label">{l.provider}</span>
-                                <ExternalIcon size={12} />
-                              </a>
+                                {l.provider}
+                              </Button>
                             ))}
                             {onOwnStay && (
                               <PaidField
@@ -1076,11 +1077,10 @@ export function TripItinerary({
                               mode: leg.mode, date: next?.arriveDate || '',
                             })[0];
                             return link ? (
-                              <a className="btn btn-quiet btn-sm itin-find" href={link.url} target="_blank" rel="noreferrer noopener"
-                                aria-label={t('plan.findTicketsOn', { site: link.label })}>
-                                <span className="btn-label">{link.label}</span>
-                                <ExternalIcon size={12} />
-                              </a>
+                              <Button href={link.url} external variant="quiet" size="sm" className="itin-find"
+                                aria-label={t('plan.findTicketsOn', { site: link.label })} iconAfter={<ExternalIcon size={12} />}>
+                                {link.label}
+                              </Button>
                             ) : null;
                           })()}
                           {onOwnLeg && leg.mode && !leg.no_road && (

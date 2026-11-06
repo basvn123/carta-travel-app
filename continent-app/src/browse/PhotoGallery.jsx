@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
-import { Button, IconButton } from '../components/ui/index.js';
-import { CameraIcon, ChevronRightIcon, CloseIcon } from '../components/Icons.jsx';
+import { Button, CarouselArrows, IconButton } from '../components/ui/index.js';
+import { CameraIcon, CloseIcon } from '../components/Icons.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { HeroImage, LadderImg } from '../components/HeroImage.jsx';
 import { claimShared } from '../lib/sharedElement.js';
@@ -37,7 +37,6 @@ export function PhotoGallery({
 }
 
 function PhotoStrip({ photos, label, claimKey, final, fallback, sizes, className }) {
-  const { t } = useI18n();
   const scroller = useRef(null);
   const [idx, setIdx] = useState(0);
   const [failed, setFailed] = useState(() => new Set());
@@ -117,16 +116,7 @@ function PhotoStrip({ photos, label, claimKey, final, fallback, sizes, className
         })}
       </div>
       {many && (
-        <>
-          <IconButton tone="photo" className="destp-gallery-arrow is-prev" onClick={() => nudge(-1)}
-            label={t('dest.photoPrev')} disabled={idx === 0}>
-            <ChevronRightIcon size={16} />
-          </IconButton>
-          <IconButton tone="photo" className="destp-gallery-arrow is-next" onClick={() => nudge(1)}
-            label={t('dest.photoNext')} disabled={idx >= imgs.length - 1}>
-            <ChevronRightIcon size={16} />
-          </IconButton>
-        </>
+        <CarouselArrows className="destp-gallery-arrow" index={idx} count={imgs.length} onStep={nudge} />
       )}
     </div>
   );
@@ -264,14 +254,7 @@ function PhotoMosaic({ photos, label, claimKey, fallback, className }) {
       </div>
       {n > 1 && (
         <>
-          <IconButton tone="photo" className="pmos-arrow is-prev" onClick={() => nudge(-1)}
-            label={t('dest.photoPrev')} disabled={idx === 0}>
-            <ChevronRightIcon size={18} />
-          </IconButton>
-          <IconButton tone="photo" className="pmos-arrow is-next" onClick={() => nudge(1)}
-            label={t('dest.photoNext')} disabled={idx >= n - 1}>
-            <ChevronRightIcon size={18} />
-          </IconButton>
+          <CarouselArrows className="pmos-arrow" index={idx} count={n} onStep={nudge} size={18} />
           <button type="button" className="pmos-count" onClick={() => setAll(true)}>
             <CameraIcon size={14} />
             <span>{t('destx.photosN', { n })}</span>
@@ -313,7 +296,6 @@ function PhotoMosaic({ photos, label, claimKey, fallback, className }) {
  * page's gallery holds every photograph.
  */
 export function TilePhotos({ urls = [], city = '', iso2, onOpen, sizes, maxWidth = 960, ratio = [4, 3] }) {
-  const { t } = useI18n();
   const [all, setAll] = useState(false);
   const [idx, setIdx] = useState(0);
   const track = useRef(null);
@@ -347,14 +329,7 @@ export function TilePhotos({ urls = [], city = '', iso2, onOpen, sizes, maxWidth
           </div>
         ))}
       </div>
-      <IconButton tone="photo" className="tphotos-arrow is-prev" label={t('dest.photoPrev')} tabIndex={-1}
-        aria-hidden="true" onClick={(e) => nudge(-1, e)} disabled={idx === 0}>
-        <ChevronRightIcon size={16} />
-      </IconButton>
-      <IconButton tone="photo" className="tphotos-arrow is-next" label={t('dest.photoNext')} tabIndex={-1}
-        aria-hidden="true" onClick={(e) => nudge(1, e)} disabled={idx >= list.length - 1}>
-        <ChevronRightIcon size={16} />
-      </IconButton>
+      <CarouselArrows className="tphotos-arrow" index={idx} count={list.length} onStep={nudge} pointerOnly />
       <span className="tphotos-dots" aria-hidden="true">
         {list.map((u, i) => <span key={u} className={i === idx ? 'is-on' : ''} />)}
       </span>

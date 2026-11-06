@@ -1,6 +1,6 @@
 import React from 'react';
 import { useI18n } from '../../i18n/index.jsx';
-import { Chip, Money } from '../../components/ui/index.js';
+import { Button, Chip, Money } from '../../components/ui/index.js';
 import { BedIcon, BusIcon, FerryIcon, TrainIcon } from '../../components/Icons.jsx';
 import { PlaneIcon } from '../../components/TransportIcons.jsx';
 import { AirlineMark } from '../../components/flights/Flights.jsx';
@@ -160,9 +160,9 @@ export function ReadyToBook(props) {
               {r.booked && bookedMark}
               <span className="tpg-book-acts">
                 {r.link && (
-                  <a className="btn btn-quiet btn-sm tpg-book-link" href={r.link.href} target="_blank" rel="noreferrer noopener">
-                    <span className="btn-label">{r.link.label}</span>
-                  </a>
+                  <Button href={r.link.href} external variant="quiet" size="sm" className="tpg-book-link">
+                    {r.link.label}
+                  </Button>
                 )}
                 {r.paid}
               </span>

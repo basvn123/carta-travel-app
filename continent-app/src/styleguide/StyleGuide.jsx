@@ -15,7 +15,12 @@
  */
 import React, { useEffect, useMemo, useState } from 'react';
 import { useI18n, LANGUAGES } from '../i18n/index.jsx';
-import { Button, IconButton, Chip, ChipGroup, Segmented, Tabs, Card, Field, Icon, Money, Switch, Tile, TileGroup } from '../components/ui/index.js';
+import {
+  Button, IconButton, Chip, ChipGroup, Segmented, Tabs, Card, Field, Icon, Money, MoneyUnit, Switch, Tile, TileGroup,
+  PlaceHead, PlaceTag, CarouselArrows, SlotText,
+} from '../components/ui/index.js';
+import { SLOT } from '../lib/slot.js';
+import '../styles/88-place-template.css';
 import * as Icons from '../components/Icons.jsx';
 import { RatingBadge, ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { formatMoney } from '../lib/money.js';
@@ -26,7 +31,7 @@ const SECTIONS = [
   ['colour', 'Colour'], ['type', 'Type'], ['space', 'Space and shape'], ['buttons', 'Buttons'],
   ['chips', 'Chips and filters'], ['toggles', 'Switches and tiles'], ['switches', 'Segmented and tabs'],
   ['score', 'Score'], ['cards', 'Cards'],
-  ['fields', 'Fields'], ['icons', 'Icons'], ['money', 'Prices'], ['rules', 'Rules'],
+  ['fields', 'Fields'], ['icons', 'Icons'], ['money', 'Prices'], ['parts', 'Page parts'], ['rules', 'Rules'],
 ];
 
 const ROLES = [
@@ -244,6 +249,11 @@ export default function StyleGuide() {
               <IconButton label="Filters" tone="surface"><Icons.FilterIcon size={18} /></IconButton>
               <IconButton label="Save" tone="photo" pressed={saved} onClick={() => setSaved((s) => !s)}><Icons.BookmarkIcon size={18} /></IconButton>
             </div>
+            <div className="sg-demo">
+              <Button href="https://www.google.com/travel/flights" external size="sm" iconAfter={<Icons.ExternalIcon size={13} />}>Book</Button>
+              <Button href="?tab=explore" variant="primary">See places</Button>
+            </div>
+            <Use yes="Button href (T1121): a link that looks like a button, for a step that leaves the page or opens a booking site. external opens a new tab." no="A hand-written <a className=&quot;btn&quot;>; a button that only navigates inside a sentence (use a plain link)." />
             <Use yes="IconButton: a control whose icon is universally read (close, filters, save). Always a 44 px box and a label." no="An action whose meaning needs a word; use a Button with an icon." />
           </Section>
 
@@ -385,6 +395,28 @@ export default function StyleGuide() {
               </tbody>
             </table>
             <Use yes="<Money> in JSX, formatMoney() in a string; i18n templates take a formatted {price}." no="A euro sign in a template; toFixed on a price; a rounded figure on a receipt." />
+          </Section>
+
+          <Section id="parts" title="Page parts" lead="Parts every place-like page shares, built once (T1121). Each keeps its page's class names, so a page looks as it did; change the part, and every page follows.">
+            <div className="sg-demo" style={{ display: 'block' }}>
+              <PlaceHead title="Rome" where="Italy" iso2="IT"
+                score={<span className="pt-score"><ScoreChip rating={{ score: 8.6, tier: 2 }} size="lg" band /></span>}
+                tags={[<PlaceTag key="r">Top of Italy</PlaceTag>, <PlaceTag key="u" tone="unesco">UNESCO</PlaceTag>]} />
+            </div>
+            <Use yes="PlaceHead: the head of the place page, the outdoor pages and the journey page (name, where, Score, standing tags). PlaceTag: a rank or UNESCO tag in it." no="Writing the pt-head markup on a new page." />
+            <div className="sg-demo">
+              <span>
+                <MoneyUnit value={87} unit={t('money.perPerson')} unitClassName="sg-unit" />
+              </span>
+              <span><SlotText text={t('rail.factFrom', { price: SLOT })}><Money value={42} est /></SlotText></span>
+            </div>
+            <Use yes="MoneyUnit: a figure and its unit. SlotText: a translated sentence with a Money in its slot, so the figure stays a figure in every language." no="Splitting a catalogue string by hand around a price." />
+            <div className="sg-demo">
+              <span style={{ position: 'relative', display: 'inline-flex', gap: 8 }}>
+                <CarouselArrows className="sg-arrow" index={0} count={3} onStep={() => {}} />
+              </span>
+            </div>
+            <Use yes="CarouselArrows: the previous and next pair of every carousel and rail, with the carousel's own class for placement. DialogSheet: the short centred sheet (your flight, why it rates). PriceDock: the fixed price bar under 1024 px." no="A swipe as the only way through; an arrow without a label." />
           </Section>
 
           <Section id="rules" title="Rules">

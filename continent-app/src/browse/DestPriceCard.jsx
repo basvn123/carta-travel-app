@@ -394,12 +394,11 @@ export function DestPriceCard({
                   <FlightPass dir="out" leg={withEnds(carta.out, home, airport)} paying={people} bagKey={bagKey} airlines={airlines} />
                   <FlightPass dir="back" leg={withEnds(carta.back, airport, home)} paying={people} bagKey={bagKey} airlines={airlines} />
                   <p className="dpc-flt-note">
-                    <a className="btn btn-secondary btn-sm jr-book" target="_blank" rel="noopener noreferrer"
-                      href={googleFlightsLink(home, airport, carta.out?.date, { back: carta.back?.date, lang })}
-                      aria-label={t('plan.findOn', { provider: 'Google Flights' })}>
-                      <span className="btn-label">{t('tp.book')}</span>
-                      <ExternalIcon size={13} />
-                    </a>
+                    <Button href={googleFlightsLink(home, airport, carta.out?.date, { back: carta.back?.date, lang })}
+                      external size="sm" className="jr-book" aria-label={t('plan.findOn', { provider: 'Google Flights' })}
+                      iconAfter={<ExternalIcon size={13} />}>
+                      {t('tp.book')}
+                    </Button>
                   </p>
                 </div>
               )}

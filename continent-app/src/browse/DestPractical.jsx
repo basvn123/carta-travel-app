@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from '../components/ui/index.js';
 import { safeUrl } from '../lib/format.js';
 import { formatMoney } from '../lib/money.js';
 import { minutesText } from '../lib/journeys.js';
@@ -15,7 +16,7 @@ import { BunkIcon, HomeIcon, HotelIcon } from '../components/Icons.jsx';
 import { practicalSlotRows } from './DestPracticalSlots.jsx';
 import { BeforeYouGo } from './DestBefore.jsx';
 import { parkingTruth } from '../lib/parkingTruth.js';
-import { PSection } from './PageTemplate.jsx';
+import { PSection, WayFig } from './PageTemplate.jsx';
 import '../styles/94-when-stay.css';
 import {
   SunIcon, RainIcon, SnowIcon, ShoeIcon, SwimIcon, BootIcon, PlugIcon, BottleIcon, JacketIcon, BackpackIcon, SparkIcon, BusIcon, TrainIcon, CarIcon, ExternalIcon, ClockIcon, TicketIcon,
@@ -87,11 +88,11 @@ export function DestStay({ p }) {
               <b className="stay-what">{t(`stay.kind.${k}`)}</b>
               <span className="stay-go">
                 {links.map((l) => (
-                  <a key={l.provider} className="btn btn-secondary btn-sm stay-btn" href={l.href} target="_blank" rel="noreferrer noopener"
-                    aria-label={t('stay.searchOn', { kind: t(`stay.kind.${k}`), provider: l.provider })}>
-                    <span className="btn-label">{l.provider}</span>
-                    <ExternalIcon size={13} />
-                  </a>
+                  <Button key={l.provider} href={l.href} external size="sm" className="stay-btn"
+                    aria-label={t('stay.searchOn', { kind: t(`stay.kind.${k}`), provider: l.provider })}
+                    iconAfter={<ExternalIcon size={13} />}>
+                    {l.provider}
+                  </Button>
                 ))}
               </span>
             </li>
@@ -136,10 +137,7 @@ export function DestGetting({ p }) {
                 </span>
                 {sub(w) && <small>{sub(w)}</small>}
               </span>
-              <span className="pt-way-fig">
-                <b>{formatMoney(view.way(w.perPerson), { precision: 'whole' })}</b>
-                <small>{unit}</small>
-              </span>
+              <WayFig amount={formatMoney(view.way(w.perPerson), { precision: 'whole' })} unit={unit} />
             </li>
           );
         })}

@@ -27,7 +27,7 @@ import { PageBar } from './PageBar.jsx';
 import { RatingSheet } from './RatingSheet.jsx';
 import { KeyFacts } from './KeyFacts.jsx';
 import { usePageArrival } from '../hooks/usePageArrival.js';
-import { Button, Money } from '../components/ui/index.js';
+import { Button, Money, MoneyUnit, PlaceHead, PlaceTag } from '../components/ui/index.js';
 import { sentences } from '../lib/journeys.js';
 import { BedIcon, CompassIcon, RouteIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
@@ -175,8 +175,7 @@ function Similar({ rows, data, indices, t, view, onSelect }) {
               </span>
               {Number.isFinite(cost?.dayEur) && (
                 <span className="pt-sim-price">
-                  <Money value={view.day(cost.dayEur)} />
-                  <span className="pt-sim-unit"> {view.unit}</span>
+                  <MoneyUnit value={view.day(cost.dayEur)} unit={view.unit} unitClassName="pt-sim-unit" />
                 </span>
               )}
               {why.length > 0 && <span className="pt-sim-why">{why.join(', ')}</span>}
@@ -536,17 +535,17 @@ export function DestinationPage({
   // The standing as small tags (T1024): the strongest first.
   const tags = [
     verdict?.hidden_gem && <li key="gem"><HiddenGemTag /></li>,
-    verdictClassRank && <li key="class" className="pt-tag is-rank">{verdictClassRank}</li>,
+    verdictClassRank && <PlaceTag key="class">{verdictClassRank}</PlaceTag>,
     verdict?.country_rank === 1
-      ? <li key="country" className="pt-tag is-rank">{t('card.topOf', { country: countryLabel })}</li>
+      ? <PlaceTag key="country">{t('card.topOf', { country: countryLabel })}</PlaceTag>
       : verdict?.country_badge
-        ? <li key="country" className="pt-tag is-rank">{t('card.rankIn', { n: verdict.country_rank, country: countryLabel })}</li>
+        ? <PlaceTag key="country">{t('card.rankIn', { n: verdict.country_rank, country: countryLabel })}</PlaceTag>
         : null,
     isUnesco && (
-      <li key="unesco" className="pt-tag is-unesco"
+      <PlaceTag key="unesco" tone="unesco"
         title={(destination.designations || []).find((g) => g.kind === 'unesco_whc')?.name || ''}>
         {t('dest.unesco')}
-      </li>
+      </PlaceTag>
     ),
   ].filter(Boolean);
 
@@ -644,26 +643,18 @@ export function DestinationPage({
               {/* T1024 (owner 2026-11-03: compact, clean, no travel style here):
                   the name, then one line of where it is and how it rates, then
                   the standing as small tags, then the intro, answer first. */}
-              <header className="pt-head">
-                <h1 className="pt-title" ref={titleRef} tabIndex={-1}>{city}</h1>
-                <div className="pt-meta">
-                  <span className="pt-where">
-                    <CountryFlag country={destination.iso2} size={15} />
-                    <span>{countryLabel}</span>
-                  </span>
-                  {verdict?.score != null && (
-                    // T1029: the Score opens why it rates what it rates.
-                    <button type="button" className="pt-score" aria-haspopup="dialog"
-                      onClick={() => setRatingOpen(true)}
-                      aria-label={t('dest.ratingTitle', { score: fmtScore(verdict.score) })}>
-                      <ScoreChip rating={verdict} size="lg" band />
-                    </button>
-                  )}
-                </div>
-                {tags.length > 0 && <ul className="pt-tags">{tags}</ul>}
+              <PlaceHead title={city} titleRef={titleRef} where={countryLabel} iso2={destination.iso2} tags={tags}
+                score={verdict?.score != null && (
+                  // T1029: the Score opens why it rates what it rates.
+                  <button type="button" className="pt-score" aria-haspopup="dialog"
+                    onClick={() => setRatingOpen(true)}
+                    aria-label={t('dest.ratingTitle', { score: fmtScore(verdict.score) })}>
+                    <ScoreChip rating={verdict} size="lg" band />
+                  </button>
+                )}>
                 {/* T765: the match after the rank lines, never merged into the Score. */}
                 <MatchLine place={destination} month={tripMonth} />
-              </header>
+              </PlaceHead>
 
               {!settled && (
                 <div className="destp-wait" aria-busy="true">

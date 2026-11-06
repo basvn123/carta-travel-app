@@ -129,6 +129,19 @@ export function JumpBar({ items, scrollRef, ready, label }) {
 
 /** A section of the long page: the template's heading, an optional quiet
  *  note on its right, then the body. `id` is the full element id. */
+/**
+ * A way's figure on the right of a "getting there" row (T1121, G2): the
+ * amount in bold, its unit small under it. `amount` is already formatted.
+ */
+export function WayFig({ amount, unit }) {
+  return (
+    <span className="pt-way-fig">
+      <b>{amount}</b>
+      <small>{unit}</small>
+    </span>
+  );
+}
+
 export function PSection({ id, title, note = null, children, className = '', headId = null }) {
   const hid = headId || `${id}-h`;
   return (
@@ -164,9 +177,12 @@ export function PBlock({ title, children, className = '', aside = null }) {
  * where the bottom nav stands while the page is open (the page covers the
  * app, the nav included).
  */
-export function PriceDock({ price, unit, inputs, onInputs, inputsLabel, primary }) {
+/* T1121 (G2): the item pages' dock (OutdoorParts) is this one too: it adds
+   `className` (ox-dock) and, when its second line opens nothing, `note`
+   in place of the inputs button. */
+export function PriceDock({ price, unit, inputs, onInputs, inputsLabel, primary, note = null, className = '' }) {
   return (
-    <div className="pt-dock">
+    <div className={`pt-dock ${className}`.trim()}>
       <div className="pt-dock-text">
         {price != null && (
           <p className="pt-dock-price">
@@ -180,6 +196,7 @@ export function PriceDock({ price, unit, inputs, onInputs, inputsLabel, primary 
             {inputs}
           </Button>
         )}
+        {note}
       </div>
       {primary}
     </div>
