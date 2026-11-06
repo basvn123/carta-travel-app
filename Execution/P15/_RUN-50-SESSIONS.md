@@ -58,8 +58,8 @@ How it runs:
 | 50 | T1134 | session_0156MmZ5gHVZAjwixa2soZ5Z | p15-s50-drift-scorecard | done | yes |  |
 | 39 | T1123 | session_0156MmZ6YxjUWnXqfKceVDgj | p15-s39-core-flow-fixes | done | yes |  |
 | 44 | T1128 | session_0156MmZ2wZAr8cDNhxbYejCV | p15-s44-accessibility | running | | |
-| 38 | T1122 | session_0156MmZ4HtK752CmGsWyfZcJ | p15-s38-cost-card | running (flagged, gate T1111-a) | | |
-| 40 | T1124 | session_0156MmZ6c8ERyuGHxJ6Y8yqX | p15-s40-motion-tokens | running (ungated half) | | |
+| 38 | T1122 | session_0156MmZ4HtK752CmGsWyfZcJ | p15-s38-cost-card | done (flag off) | yes |  |
+| 40 | T1124 | session_0156MmZ6c8ERyuGHxJ6Y8yqX | p15-s40-motion-tokens | done | yes |  |
 
 Merge notes:
 - 00:05 S02, S03, S06, S07, S08 merged. ROADMAP C4 and C5 rows came out doubled by the merge and were fixed by hand; npm test 1294 pass, trail and licence pytest 47 pass, entry points OK. 8 owner steps on the checklist.
@@ -72,3 +72,4 @@ Merge notes:
 - 10:30 S37 (G2) merged after it resumed: npm test 1483 pass, eslint clean, fast build OK. S41 (G6) started.
 - 10:52 S41 (design-lint 7,697 to 6,479), S43, S48 (all eight logic domains, 129 register rows for missing tests), S49 merged. The contract gate found two non-literal RPC names from T1109 and T1110 and was fixed; it passes against a local Postgres. npm test 1540, pytest 483 pass (2 base failures), design-lint 0 new, token contrast OK. 83 owner steps on the checklist; the owner answered the admin MFA warning ("Understood") at 10:50. S42, S50 and S39 started (S39 without CSS edits while S42 runs).
 - 11:22 S39, S42 (CSS 1.53 MB to 1.25 MB, 2,983 dead rules out; every class S39 added still has a rule), S50 (drift check 0 drift, 12-layer scorecard) merged. npm test 1545, design-lint 4,613 with 0 new, contract gate and css-routes check pass, pytest 502 (2 base failures). 88 owner steps on the checklist. S44, S38 (flag off until T1111-a) and S40 (tokens and reduced motion only) started with separate files. S32 follows when these merge.
+- 11:58 S40 (motion literals 243 to 1, tokens in :root, one reduced-motion path) and S38 (umber cost card behind ?cc=umber, flag off) merged. Together they failed three checks that passed on each branch: S38 had baselined its new design-lint literals and S40 regenerated the baseline, so the motion-literal test, design-lint and css-routes went red. Fixed on the integration branch: the card now uses --dur-1, --radius-sm and card-scoped shadow variables, and the drawn-bar rule is scoped to .ccard.is-umber. npm test 1556, design-lint 0 new, css-routes OK, pytest 502 (2 base failures). S44 still running.

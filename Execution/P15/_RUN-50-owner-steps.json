@@ -1010,5 +1010,49 @@
    "Strike or keep each field",
    "A session then edits the lists"
   ]
+ },
+ {
+  "id": "T1122-a",
+  "title": "Approve the design direction, then switch on the umber cost card",
+  "why": "G3's card is built and waits only on the T1111 sign-off.",
+  "where": "continent-app/src/planner/trip/costCardVariant.js",
+  "how": [
+   "Read docs/design/direction.md and answer row T1111-a",
+   "Compare a trip page with ?cc=arc and ?cc=umber at phone and desktop width",
+   "If approved, set COST_CARD_UMBER = true in continent-app/src/planner/trip/costCardVariant.js (or ask a session to)"
+  ]
+ },
+ {
+  "id": "T1122-c",
+  "title": "Look at the umber card on a real phone",
+  "why": "The container has no real device, dark system setting or Safari.",
+  "where": "Execution/P15/T1122-cost-card.md",
+  "how": [
+   "On iOS Safari and Android Chrome open a trip page with ?cc=umber",
+   "Turn on dark mode and reduce motion in the phone settings and reload",
+   "Check the bar, the total and the Costs button"
+  ]
+ },
+ {
+  "id": "T1124-b",
+  "title": "Approve the T1111 design direction",
+  "why": "G5 richer motion (springs, shared photo move) cannot start without it.",
+  "where": "Execution/P15/T1124-motion-tokens.md",
+  "how": [
+   "Read the T1111 direction",
+   "Decide",
+   "Tell the next session"
+  ]
+ },
+ {
+  "id": "T1124-c",
+  "title": "Check reduced motion on a real phone",
+  "why": "Emulation passed but a device is the real test.",
+  "where": "Execution/P15/T1124-motion-tokens.md",
+  "how": [
+   "Turn on Reduce Motion in system settings",
+   "Open Explore, Plan, a place page",
+   "Sheets and tabs should snap, the home film should stand still"
+  ]
  }
 ]
