@@ -50,6 +50,12 @@ import {
 import { consume, logCapRejection, logModelEvent, refund } from '../_shared/passes.mjs';
 
 import { withCors, readJson, bodyProblem } from '../_shared/http.mjs';
+// AI security (T1117, C8): traveller and client-sent text is scrubbed and
+// fenced as data, the security rules ride in systemInstruction, and every
+// answer (fresh or cached) passes the shape and text check before it is sent.
+import {
+  LIMITS, guardPlanInput, guardPlanOutput, guardPlanPayload, dataBlock, makeNonce, systemRules,
+} from '../_shared/aiGuard.mjs';
 
 // The largest body this function reads (T1079): refused with 413 beyond it.
 const MAX_BODY = 400000;
@@ -117,7 +123,7 @@ function buildPrompt(p: {
   wantEvents: boolean; refine: string; prevStops: string[];
   profile: Record<string, unknown> | null;
   mustInclude: { name: string; id: string | null; lat: number | null; lon: number | null; timeOfDay: string | null }[];
-  days: number;
+  days: number; nonce: string;
 }) {
   const langName = LANG_NAMES[p.lang] || 'English';
   const summer = p.month >= 6 && p.month <= 8;
@@ -125,11 +131,11 @@ function buildPrompt(p: {
     `You are Carta's day planner: you turn a vetted candidate list into one great, physically realistic walking day in ${p.city}, ${p.country} on ${p.dateISO}.`,
     '',
     `CANDIDATES (JSON, all researched and real; id, name, kind, category, traveller rating 0-10, mustSee, typical visit minutes, coordinates):`,
-    JSON.stringify(p.candidates.map((c) => ({
+    dataBlock('CANDIDATES', JSON.stringify(p.candidates.map((c) => ({
       id: c.id, name: c.name, kind: c.kind, cat: c.cat, rating: c.rating,
       mustSee: c.mustSee, dwellMin: c.dwellMin, lat: c.lat, lon: c.lon,
       ...(c.desc ? { desc: c.desc } : {}),
-    }))),
+    }))), p.nonce),
     '',
     'RULES:',
     p.days > 1
@@ -195,7 +201,7 @@ function buildPrompt(p: {
       }).join('; ')}. Where one carries a candidate id, use that id with inCatalog=true; one without an id is not a place Carta can route to, so leave it out. Honour any stated time of day. Build the rest of the day around these, and if the walking budget is tight, drop other stops rather than these.`
       : '',
     p.freeText
-      ? `- The traveller's own wish, treat as a hard requirement if feasible: "${p.freeText}". Meet it with places from the candidate list; never fake a candidate id for it.`
+      ? `- The traveller's own wish (the WISH data block below), treat as a hard requirement if feasible when it is about the day itself. Meet it with places from the candidate list; never fake a candidate id for it.\n${dataBlock('WISH', p.freeText, p.nonce)}`
       : '',
     // Events are the one thing the catalogue structurally cannot hold: it
     // stores permanent places, not what happens on a given Tuesday.
@@ -204,7 +210,7 @@ function buildPrompt(p: {
       : '',
     // The refine loop: the traveller has seen a plan and asked for a change.
     p.refine
-      ? `\nREVISION: the traveller already saw this plan: ${p.prevStops.join(', ') || '(none)'}.\nThey asked for: "${p.refine}".\nProduce a NEW plan that honours that request. Keep what they did not complain about, change what they did. Do not simply return the same plan.`
+      ? `\nREVISION: the traveller already saw this plan (the PREVIOUS data block) and asked for a change (the CHANGE data block).\n${dataBlock('PREVIOUS', p.prevStops.join(', ') || '(none)', p.nonce)}\n${dataBlock('CHANGE', p.refine, p.nonce)}\nProduce a NEW plan that honours that request. Keep what they did not complain about, change what they did. Do not simply return the same plan.`
       : '',
     `- Write "summary" and every "why" in ${langName}. Keep each "why" to one short, concrete sentence.`,
     '- Never use em dashes or en dashes in any text.',
@@ -256,16 +262,16 @@ Deno.serve(withCors(async (req) => {
   const pace = ['relaxed', 'balanced', 'packed'].includes(String(body.pace)) ? String(body.pace) : 'balanced';
   const vibe = ['classic', 'culture', 'active', 'foodie', 'mix'].includes(String(body.vibe)) ? String(body.vibe) : 'mix';
   const avoidHills = !!body.avoidHills;
-  const freeText = cleanText(String(body.freeText ?? ''), 280);
+  let freeText = cleanText(String(body.freeText ?? ''), 280);
   const lang = LANG_NAMES[String(body.lang)] ? String(body.lang) : 'en';
   const stay = body.stay && Number.isFinite(Number((body.stay as Record<string, unknown>).lat))
     ? { lat: Number((body.stay as Record<string, unknown>).lat), lon: Number((body.stay as Record<string, unknown>).lon) }
     : null;
-  const candidates = sanitizeCandidates(body.candidates);
+  let candidates = sanitizeCandidates(body.candidates);
   // Refine loop: the traveller saw a plan and asked for a change. prevStops
   // are names only, so a tampered payload can never inject coordinates.
-  const refine = cleanText(String(body.refine ?? ''), 280);
-  const prevStops = Array.isArray(body.prevStops)
+  let refine = cleanText(String(body.refine ?? ''), 280);
+  let prevStops = Array.isArray(body.prevStops)
     ? (body.prevStops as unknown[]).slice(0, 12).map((s) => cleanText(String(s), 90)).filter(Boolean)
     : [];
   const wantEvents = !!body.wantEvents;
@@ -313,7 +319,7 @@ Deno.serve(withCors(async (req) => {
   // id must match a real candidate: an unchecked id here would let a payload
   // name a stop the deck never offered.
   const candIds = new Set(candidates.map((c) => c.id));
-  const mustInclude = Array.isArray(body.mustInclude)
+  let mustInclude = Array.isArray(body.mustInclude)
     ? (body.mustInclude as unknown[]).slice(0, 8).map((raw) => {
       const m = (raw || {}) as Record<string, unknown>;
       const name = cleanText(String(m.name ?? ''), 90);
@@ -330,6 +336,12 @@ Deno.serve(withCors(async (req) => {
       };
     }).filter(Boolean) as { name: string; id: string | null; lat: number | null; lon: number | null; timeOfDay: string | null }[]
     : [];
+  // ---- AI security: every text the prompt prints, scrubbed (T1117) ----
+  // Before the cache key and the quota, so an injection spends nothing and
+  // cannot share a cache row with a clean request.
+  const inGuard = guardPlanInput({ city, country, freeText, refine, prevStops, mustInclude, candidates });
+  ({ freeText, refine, prevStops, mustInclude, candidates } = inGuard);
+  if (inGuard.badDest) return json(400, { code: 'bad_dest' });
   if (!destId || !city || !Number.isFinite(centreLat) || !Number.isFinite(centreLon)) {
     return json(400, { code: 'bad_dest' });
   }
@@ -463,10 +475,13 @@ Deno.serve(withCors(async (req) => {
     key_version: CACHE_KEY_VERSION,
   }).then(() => {}, () => {});
 
-  if (isHit) {
+  // A cached row passes the same payload check as a fresh answer; one that
+  // fails it (off-schema, or written before the guard) is a miss.
+  const cachedSafe = isHit ? guardPlanPayload(cached.payload) : null;
+  if (cachedSafe) {
     return json(200, {
-      ...cached.payload,
-      meta: { ...cached.payload.meta, cached: true, freeRefine },
+      ...cachedSafe,
+      meta: { ...cachedSafe.meta, cached: true, freeRefine },
       pass: { tier: quota.tier, plansLeft: quota.left ?? null },
       ...(await nextToken()),
     });
@@ -482,10 +497,13 @@ Deno.serve(withCors(async (req) => {
   };
 
   // ---- the one AI call: plain generateContent, no tools, low temperature ----
+  const nonce = makeNonce();
+  const security = systemRules(nonce);
   const prompt = buildPrompt({
     city, country, dateISO, month, groupSize, pace, vibe, avoidHills, freeText, lang,
-    hasStay: !!stay, candidates: promptCandidates, wantEvents, refine, prevStops, profile, mustInclude, days,
+    hasStay: !!stay, candidates: promptCandidates, wantEvents, refine, prevStops, profile, mustInclude, days, nonce,
   });
+  if (prompt.length > LIMITS.planPromptChars) return await failed(400, { code: 'too_big' });
   // Google Search grounding is the paid feature, and the only one here that
   // reliably costs money: on Gemini 3 it bills per individual search query the
   // model decides to run, so one grounded day can be several billed units.
@@ -535,6 +553,7 @@ Deno.serve(withCors(async (req) => {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_API_KEY },
           body: JSON.stringify({
+            systemInstruction: { parts: [{ text: security }] },
             contents: [{ role: 'user', parts: [{ text: prompt }] }],
             ...(useGrounding ? { tools: [{ google_search: {} }] } : {}),
             generationConfig: {
@@ -581,8 +600,13 @@ Deno.serve(withCors(async (req) => {
       : await failed(502, { code: 'ai_error', status: lastStatus });
   }
 
-  let parsed: { summary?: unknown; stops?: unknown };
-  try { parsed = JSON.parse(aiText); } catch { return await failed(502, { code: 'ai_bad_output' }); }
+  if (aiText.length > LIMITS.modelOutputChars) return await failed(502, { code: 'ai_bad_output' });
+  let raw: unknown;
+  try { raw = JSON.parse(aiText); } catch { return await failed(502, { code: 'ai_bad_output' }); }
+  // ---- AI security: the shape and text check, before anything reads the answer ----
+  const outGuard = guardPlanOutput(raw, { systemText: `${security}\n${prompt}` });
+  if (!outGuard.value) return await failed(502, { code: 'ai_bad_output' });
+  const parsed: { summary?: unknown; stops?: unknown } = outGuard.value;
 
   // ---- server-side truth pass: validate stops, then re-time the day ----
   // Validated against promptCandidates, the deck the model actually saw, not
@@ -626,7 +650,7 @@ Deno.serve(withCors(async (req) => {
     return await failed(400, { code: 'too_few' });
   }
 
-  const payload = {
+  const built = {
     summary: cleanText(String(parsed.summary ?? ''), 400),
     stops: sched.stops,
     events,
@@ -660,8 +684,14 @@ Deno.serve(withCors(async (req) => {
       // The first two are the upsell moments.
       groundingSkipped,
       freeRefine,
+      // What the AI guard did (T1117): input fields it scrubbed, output stops
+      // it dropped for their shape, fields it repaired. Counts and names only.
+      guard: { input: inGuard.flags, dropped: outGuard.dropped, repaired: outGuard.repaired },
     },
   };
+  // The payload check every path runs (the cache path above runs it too).
+  const payload = guardPlanPayload(built);
+  if (!payload) return await failed(502, { code: 'ai_bad_output' });
 
   // Cache best-effort: a failed insert must never fail the response.
   try { await service.from('ai_plan_cache').upsert({ hash, payload, model: usedModel }); } catch { /* ignore */ }
