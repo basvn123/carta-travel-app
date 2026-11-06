@@ -832,7 +832,7 @@ docs/
 | G5 | Motion system | Shared springs for sheets, tabs, figures, card-to-place photo move; reduced motion shows the end state | M | P2 | todo |
 | G6 | Type and radius debt | Literal font sizes and radii on the scale, legacy aliases removed | M | P2 | todo |
 | G7 | Breakpoints and CSS consolidation | 4 width tokens, v6 override layer folded in, big files split, dead-selector check, `!important` halved | M | P2 | todo |
-| G8 | Imagery gaps | Photo share on walks above 60%, styled map thumbnails instead of grey tiles | M | P2 | todo |
+| G8 | Imagery gaps | Photo share on walks above 60%, styled map thumbnails instead of grey tiles | M | P2 | partly done (T1127: licensed feature photos for walks, placeholder count per screen measured; harvest and map thumbnails open) |
 | G9 | Trust made visible | "Why this place" chips (F1), "checked on" dates (D3), confidence in words | M | P4 | todo |
 | G10 | Accessibility audit | WCAG 2.2 AA audit with screen readers, every failure fixed | M | P2 (surface), P4 | todo |
 | G11 | Quality gates and usability retest | axe-core, Lighthouse CI, bundle budget, visual baselines for 10 screens at 390 and 1440; 5-person retest of core flows; one real-phone pass per release replaces the 49 per-task phone rows | M | P4 | todo |
