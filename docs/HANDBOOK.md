@@ -122,6 +122,7 @@ Written 2026-11-04 (T1045) from the code, config and migrations on `main` at com
    - [Catalogue gaps: add and prune places (D15)](#catalogue-gaps-add-and-prune-places-d15)
    - [Hand corrections (pipeline overrides)](#hand-corrections-pipeline-overrides)
    - [Evals (one runner, one results format)](#evals-one-runner-one-results-format)
+   - [Travel taxonomy and tagging](#travel-taxonomy-and-tagging)
    - [Truth set (hand-verified answers, scored per release)](#truth-set-hand-verified-answers-scored-per-release)
    - [Deploy (Cloudflare Pages, R2, prerender, SEO)](#deploy-cloudflare-pages-r2-prerender-seo)
    - [The build box (Hetzner scheduled runs)](#the-build-box-hetzner-scheduled-runs)
@@ -2761,6 +2762,26 @@ This section covers the parts of Carta that sit around the travel content: the A
 **Where it lives.** `continent-app/scripts/eval/run.mjs`, `lib/results.mjs`, `lib/kappa.mjs`, `adapters/`, `plan-day/` (`plan-day-lib.mjs`, `judge.mjs`, `cases.json`, `sample.json`, `sample-key.json`, `labels.json`, `judgments/`; the rubric is `prompts/eval-judge/v1.md`), `langfuse/`; the page `docs/reference/evals.md`. Tests: `continent-app/tests/evalPlatform.test.mjs`, `continent-app/tests/askEval.test.mjs`.
 
 **Limits.** The hand labels are not in yet, so the judge has no kappa against a human (T1148-a); the session judge on rubric 2 agrees with the rule checks at kappa 0.898, which says the rubric and the rules read plans alike, not that either is right. The plan-day cases score the reference planner; scoring the live model needs recorded plans, and generating them offline needs plan-day's prompt exported from `index.ts` (T1148-c). CI runs Ask through its own workflow; no workflow runs the runner yet (T1148-d). Register rows `T1148-a` and on.
+
+### Travel taxonomy and tagging
+
+**What it does.** One versioned travel vocabulary for what a place or trail offers (taxonomy v1, 268 nodes in five facets: activity, setting, vibe, traveller, practical; ROADMAP F1, T1149) and a batch tagger that tags every place, trail, beach, lake and mountain on it, with the passage that supports each tag (T1150). The tags are not in the wire or the app yet.
+
+**How it works.**
+1. The taxonomy: `pipeline/taxonomy/carta_taxonomy.yaml` (ids, six-language labels where the app has them, definition, English synonyms, `not_to_be_confused_with`, `applies_to`, `source` text, data or both); `mapping.yaml` maps every tag value Carta uses today to nodes; `taxonomy.py check` validates both.
+2. Passages (`tagger.py`, `Corpus.passages`): the item's English sentences from the shipped wires, by field. Places: the lead (blurb, dossier intro lead), the body (Wikivoyage guide, the first 6 sentences of the dossier intro body, things to do), lists (dossier highlights and sights with their kind). Trails: name and summary (lead), highlight kinds and reason codes (list). Beaches, lakes, mountains: name (lead), kind, surface, range, why codes and best-for (list).
+3. Candidates: at most 25 (`CANDIDATES`) per item, fused by reciprocal rank (k 60) from phrase hits of a node's English label and synonyms (stemmed, `NOT_EVIDENCE` words such as "see" and "bad" never count, `WEAK` words such as "city" count half), today's tags mapped, BM25 of the item text against each node's label (x3), synonyms (x2) and definition, and with `--dense` a bi-encoder (bge-small-en-v1.5 through fastembed, a box run). Only nodes whose `applies_to` names the item's layer.
+4. Score: a noisy-OR over the evidence. A phrase hit adds its field weight (`FIELD_WEIGHT`: lead 0.72, body 0.5, list 0.22), up to 3 hits per field; a mapped tag adds 0.62 (`MAPPED_WEIGHT`, two at most); a top 5 BM25 or dense rank adds 0.12 (`LIST_WEIGHT`), so a node with no quote never reaches a threshold. Nodes with `source: data` (trail grade, route shape, Blue Flag) come only from the mapped data fields, at score 1, `by: ["rule"]`.
+5. Verifier (`--verify`): for tags scored 0.3 to 0.75 (`VERIFY_BAND`), at most 12 per item, one call per item through `pipeline/ai_gateway.py` feature `tagging` (Gemini by default; the box CPU by config once it passes, E7; never the Claude API). It answers yes or no per candidate and must quote the passage; a yes with a quote found in the passages sets the score to 0.88 (`VERIFY_YES`), a no multiplies it by 0.4, an unquoted yes changes nothing. Passages go to the gateway as `screen`, so injected text refuses the call.
+6. Thresholds per use (`USES`): filter 0.75 (Explore filters and chips), profile 0.6 (taste profile and My trips chips, F3), search 0.45 (Ask and search boosts). Each tag carries its `uses`; ancestors of a selected node carry `implied: true`, since labels name the most specific node only.
+7. The batch task `taxonomy_tags` in `run_pipeline.py` (cadence after the dossier, beaches, lakes, mountains and trail rating; soft) runs `tagger.py --all` without the verifier or the bi-encoder: 26,588 items in about 30 s on the cloud container, no network.
+8. The eval: `tagger.py --items seed|gold --eval-out <file>` writes a predictions file (selected tags without implied ancestors, threshold 0.6) for `node continent-app/scripts/eval/run.mjs taxonomy --predictions <file>`, which reports P@5, R-precision at 5, recall at 10, MRR, micro and macro F1, F1 per facet, lenient tree F1 and calibration error (see "Evals").
+
+**Data behind it.** `continent-app/public/app_data.json`, `dossier/`, `trails/`, `beaches/`, `lakes/`, `mountains/`, `search/guided.json` (vibes for the mapped tags).
+
+**Where it lives.** `pipeline/taxonomy/` (`carta_taxonomy.yaml`, `mapping.yaml`, `taxonomy.py`, `tag_sources.py`, `build_label_template.py`, `tagger.py`); output `cache/taxonomy/tags.json` (full run, not committed), `cache/taxonomy/tags-sample.json` (40 per layer) and `cache/taxonomy/seed-predictions.json`; the eval in `continent-app/scripts/eval/adapters/taxonomy.mjs` and `taxonomy/`; docs `docs/ai/taxonomy.md`, `docs/ai/taxonomy-labelling-guide.md`. Tests: `tests/test_taxonomy.py`, `tests/test_taxonomy_tagger.py`, `continent-app/tests/taxonomyEval.test.mjs`. Latest reports: T1149, T1150.
+
+**Limits.** Scored only on the 15-item seed set labelled by a session (R-precision at 5 0.477 against 0.433 for today's tags, micro F1 0.438 against 0.431); the weights are hand-set priors, and the list weight was lowered after looking at these same 15 items, so the numbers are optimistic until the owner's 400 labels exist (T1149-b). Text only, without today's tags, the tagger scores R-precision at 5 0.297: much of the signal is still the old tags. English passages only; the verifier and the bi-encoder have not run (owner steps). No journeys yet (T1149-e).
 
 ### Truth set (hand-verified answers, scored per release)
 

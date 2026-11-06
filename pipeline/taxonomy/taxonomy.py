@@ -145,6 +145,7 @@ def map_value(source: str, value) -> list[str]:
 
 # ---- the baseline: today's tags, mapped ----
 
+@lru_cache(maxsize=256)
 def _country_rows(folder: str, key: str, cc: str) -> list[dict]:
     p = ROOT / "continent-app" / "public" / folder / f"{cc}.json"
     if not p.exists():
