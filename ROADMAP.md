@@ -870,7 +870,7 @@ docs/
 | F5 | Intelligence API | API-first data layer | FastAPI, Pydantic, OpenAPI, Docker, tests | Service on the box, pipeline calls it in batch | M | After | todo |
 | F6 | Eval and LLMOps platform | Eval-driven development | Golden sets, LLM-as-judge, tracing | One runner for all evals; plan-day judge with kappa reported; Langfuse traces | M | P3 | in progress (T1148: runner, format, dashboard, plan-day judge; hand labels and Langfuse install are owner steps) |
 | F7 | Carta MCP server | MCP, agents and workflows | Tool design | Read-only tools usable from an MCP client | S | After | todo |
-| F8 | Responsible AI | Fair, transparent AI, EU AI Act | Fairness, documentation | Public AI page, model cards, parity table | S | P4 | todo |
+| F8 | Responsible AI | Fair, transparent AI, EU AI Act | Fairness, documentation | Public AI page, model cards, parity table | S | P4 | done (T1156: page at /?legal=ai, cards for Ask and plan-day, tagger stub; legal read, translations, AI labels and report button are open rows T1156-a to T1156-f) |
 
 ### Item details
 

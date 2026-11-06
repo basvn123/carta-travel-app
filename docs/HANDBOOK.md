@@ -87,6 +87,7 @@ Written 2026-11-04 (T1045) from the code, config and migrations on `main` at com
    - [AI day plan (plan-day)](#ai-day-plan-plan-day)
    - [AI town suggestions (suggest-city)](#ai-town-suggestions-suggest-city)
    - [Magic import (parse-booking)](#magic-import-parse-booking)
+   - [How Carta uses AI (public page)](#how-carta-uses-ai-public-page)
    - [Past trips](#past-trips)
    - [Together and shared trips](#together-and-shared-trips)
 5. [Outdoors and imagery](#outdoors-and-imagery)
@@ -1733,6 +1734,24 @@ Planning is everything that turns "I want to go somewhere" into a dated, priced 
 **Limits.**
 - Cache rows holding booking codes are read for 24 hours but never deleted (row T319-c).
 - Request cost of an AI session against Supabase limits is unmeasured (row T231-e).
+
+### How Carta uses AI (public page)
+
+**What it does.** A public reading page, "How Carta uses AI", that says for each of the four AI features (Ask Carta, day plans, town suggestions, booking import) which model and provider it uses, what it can and cannot do, how it is checked and how to report a wrong answer, plus what is not AI, what is sent where, the EU AI Act transparency points and the coverage parity (fairness) summary. It links the model cards by path.
+
+**How it works.**
+1. `continent-app/src/components/AiPage.jsx` renders it in `LegalDoc`, opened at `/?legal=ai` by `LegalFromUrl.jsx`; the footer's Legal column links to it (`aiPage.footer`).
+2. All text is in the `aiPage.*` keys of `src/i18n/en.js` (English only; other languages fall back to English until a native check, row T1156-b). Figures in the text are copied from task reports: Ask from T1136 and T1141 (200 questions, hit@10 0.930, recall@10 0.568, grounding 0.996 of 689 checks, 25 of 30 refusals), plan-day from T1148 (20 test towns, judge kappa 0.898 against the rules, not yet against humans), parity from T1145 (43 countries, 310 regions, 100 gaps).
+3. "Report a wrong answer" is a `mailto:` to `SUPPORT_EMAIL` with a subject. There is no in-app report button yet (row T1156-d).
+4. The model cards are `docs/ai/model-card-ask.md`, `model-card-plan-day.md` and `model-card-tagger.md` (a stub until the F2 tagger exists). A figure changed in a card is changed in the `aiPage.*` text in the same commit.
+5. Check: `node scripts/verify_ai_page.mjs` from `continent-app/` (a harness page, no catalogue needed): phone and desktop width, sections, figures, mailto, no dashes, no overflow, footer link, Escape.
+
+**Where it lives.** App: `continent-app/src/components/AiPage.jsx`, `continent-app/src/components/LegalFromUrl.jsx`, `continent-app/src/components/SiteFooter.jsx`, `continent-app/scripts/verify_ai_page.mjs`, `continent-app/scripts/ai_page_harness/`. Docs: `docs/ai/`.
+
+**Limits.**
+- English only (T1156-b); the EU AI Act reading is the team's, not a lawyer's (T1156-a).
+- No visible "written by AI" label on answers yet (T1156-c).
+- The privacy policy does not yet name Ask Carta's processing by Cloudflare Workers AI (T1156-f).
 
 ### Past trips
 

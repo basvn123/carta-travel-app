@@ -106,6 +106,7 @@ export function SiteFooter() {
             <FooterLink href={() => '?legal=privacy'}>{t('footer.privacy')}</FooterLink>,
             <FooterLink href={() => '?legal=imprint'}>{t('footer.imprint')}</FooterLink>,
             <FooterLink href={() => '?legal=cookies'}>{t('ac2.cookies')}</FooterLink>,
+            <FooterLink href={() => '?legal=ai'}>{t('aiPage.footer')}</FooterLink>,
           ])}
         </nav>
         <div className="site-footer-base">
