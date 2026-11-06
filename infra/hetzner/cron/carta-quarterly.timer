@@ -1,0 +1,15 @@
+# third Saturday of January, April, July and October, 03:00 Europe/Brussels (T1107, ROADMAP H9).
+# Persistent=true: a slot missed while the box was off runs once at the next
+# boot. The time zone is written out so a change of the box's zone cannot move
+# the slot. Must match TIERS in infra/hetzner/cron/schedule.py.
+[Unit]
+Description=Carta quarterly pipeline timer (third Saturday of January, April, July and October, 03:00 Europe/Brussels)
+
+[Timer]
+OnCalendar=Sat *-01,04,07,10-15..21 03:00:00 Europe/Brussels
+Persistent=true
+AccuracySec=1min
+Unit=carta-quarterly.service
+
+[Install]
+WantedBy=timers.target

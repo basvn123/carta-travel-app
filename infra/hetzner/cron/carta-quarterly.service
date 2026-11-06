@@ -1,0 +1,29 @@
+# Carta quarterly pipeline run on the orchestrator (T1107, ROADMAP H9).
+# Same job as carta-weekly.service at the quarterly ceiling: weekly.sh, then
+# run_pipeline.sh with --max-cadence quarterly, which runs every task of this tier
+# and the faster ones that are due. infra/hetzner/cron/schedule.py is the table;
+# tests/test_box_schedule.py keeps this file in step with it.
+# Task report: Execution/P15/T1107-box-schedule.md.
+[Unit]
+Description=Carta quarterly pipeline run (run_pipeline.py --max-cadence quarterly, T1107)
+Documentation=file:///home/carta/carta/docs/runbooks/build-box.md
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=carta
+Group=carta
+WorkingDirectory=/home/carta/carta
+Environment=CARTA_PIPELINE_ENABLED=1
+Environment=LANG=C.UTF-8
+Environment=CARTA_TIER=quarterly
+# Waits up to 36 h for a run that still holds the lock.
+Environment=CARTA_LOCK_WAIT=129600
+ExecStart=/bin/bash /home/carta/carta/infra/hetzner/cax11/weekly.sh
+# The lock wait counts inside this timeout. 36 h wait plus up to 84 h of a full run: the trails and cycling chains, the nature layers, sea temperature (6 h cap) and the explore fill.
+TimeoutStartSec=120h
+TimeoutStopSec=5min
+Nice=5
+IOSchedulingClass=best-effort
+IOSchedulingPriority=6

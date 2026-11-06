@@ -58,9 +58,11 @@
 #                                                            anything after -- goes to run_pipeline.py
 #
 # Environment (all optional; the secrets file may set them):
-#   CARTA_MAX_CADENCE  weekly (default), monthly, quarterly, or all. The box runs
-#                      the weekly tier only until the monthly and quarterly
-#                      tasks are verified on arm64 (register row T048-h).
+#   CARTA_TIER         weekly, monthly or quarterly: set by the unit that started
+#                      the run (T1107; infra/hetzner/cron/schedule.py) and passed
+#                      as --max-cadence. Wins over CARTA_MAX_CADENCE.
+#   CARTA_MAX_CADENCE  weekly (default), monthly, quarterly, or all, for a hand
+#                      run without CARTA_TIER.
 #   CARTA_VENV         default /home/carta/venv ($HOME/venv)
 #   CARTA_ARCHIVE_OUT  pack.py's tarball and dump directory, default $HOME/archive-out
 #   CARTA_SHIP         build (default), data or none; passed as --ship
@@ -121,10 +123,16 @@ done
 cd "$REPO" || exit 5
 mkdir -p "$LOG_DIR"
 
-exec 9>"$LOG_DIR/carta-run.lock"
-if ! flock -n 9; then
-  echo "run_pipeline.sh: another run holds $LOG_DIR/carta-run.lock (timer, hand run or verify_tasks.sh); not starting" >&2
-  exit 75
+# T1107: weekly.sh takes the lock itself (before its code update) and says so
+# with CARTA_RUN_LOCKED=1, passing the locked descriptor on as fd 9.
+if [ "${CARTA_RUN_LOCKED:-0}" = "1" ] && { true >&9; } 2>/dev/null; then
+  :
+else
+  exec 9>"$LOG_DIR/carta-run.lock"
+  if ! flock -n 9; then
+    echo "run_pipeline.sh: another run holds $LOG_DIR/carta-run.lock (timer, hand run or verify_tasks.sh); not starting" >&2
+    exit 75
+  fi
 fi
 
 # Everything below goes to the journal (stdout) and to logs/pipeline_run.log,
@@ -177,6 +185,24 @@ if [ -n "$EXTRA_TASKS" ]; then
   add_class PACK_CLASSES explore-overlays
   add_class PUSH_CLASSES explore-overlays
 fi
+# --- T1107 (H9): the tier this run is, and the caches its tasks need --------
+# CARTA_TIER is set by the unit that started the run (carta-weekly, -monthly,
+# -quarterly) and wins over CARTA_MAX_CADENCE from the secrets file. A
+# quarterly run runs the explore fill and the nature context tasks
+# (beach_context, peak_context, lake_detail, sea_temp, climate_daily,
+# dest_overlays), so it pulls and pushes the classes the T640 block above names
+# for them. A monthly run builds the dossiers, which read the overlays.
+TIER="${CARTA_TIER:-}"
+case "$TIER" in
+  ""|weekly) ;;
+  monthly) add_class PULL_CLASSES explore-overlays ;;
+  quarterly)
+    for c in beaches-cache mountains-cache explore-overlays; do
+      add_class PULL_CLASSES "$c"; add_class PACK_CLASSES "$c"; add_class PUSH_CLASSES "$c"
+    done
+    add_class PULL_CLASSES regions-cache; add_class PULL_CLASSES lakes-json ;;
+  *) say "CARTA_TIER=$TIER is not weekly, monthly or quarterly"; exit 2 ;;
+esac
 MAX_HOURS="${CARTA_MAX_HOURS:-}"
 if [ -z "$MAX_HOURS" ] && [ -n "$EXTRA_TASKS" ]; then MAX_HOURS=16; fi
 
@@ -333,7 +359,7 @@ if [ $PULL_ONLY -eq 1 ]; then
 fi
 
 # --- the pipeline ----------------------------------------------------------------
-CADENCE="${CARTA_MAX_CADENCE:-weekly}"
+CADENCE="${TIER:-${CARTA_MAX_CADENCE:-weekly}}"
 ARGS=(--ship "$SHIP")
 case "$CADENCE" in
   weekly|monthly|quarterly) ARGS+=(--max-cadence "$CADENCE") ;;
@@ -536,6 +562,22 @@ else
       fi
     fi
   fi
+fi
+
+# --- status to R2 after every run (T1107, ROADMAP H9) ---------------------------
+# Whatever the exit: the state file, the freshness reports and a last_run
+# record go to status/ in the archive bucket. That prefix is read by people and
+# the admin panel and never pulled by a box, so a failed run can report itself
+# without R2's archive/state claiming work the R2 master does not hold.
+if r2_configured || [ $DRY_RUN -eq 1 ]; then
+  STATUS_RC=$rc
+  if [ $rc -eq 0 ] && { [ $ARCHIVE_FAILED -ne 0 ] || [ $PUBLISH_FAILED -ne 0 ] || [ $DEPLOY_FAILED -ne 0 ]; }; then
+    STATUS_RC=3
+  fi
+  "$PY" infra/hetzner/cax11/push_status.py --tier "$CADENCE" --rc "$STATUS_RC" --started "$t0" "${ARCHIVE_DRY[@]}" \
+    || archive_fail "push status"
+else
+  say "status push skipped: R2 not configured (the freshness report stays in data/derived)"
 fi
 
 if [ $ARCHIVE -eq 1 ] && [ "$PULL_ONLY" -eq 0 ]; then
