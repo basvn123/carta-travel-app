@@ -1528,3 +1528,6 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1118-d | T1118 | Read and accept Resend's DPA, record its version and transfer basis in ARTICLE30.md section 3 | user | open | |
 | T1118-e | T1118 | Light DPIA for the AI features (the remaining part of ROADMAP C9), not in this task's prompt | next task | open | |
 | T1118-f | T1118 | Look at the Account panel "What we keep" row and the longer delete hint at 390 and 1440 px signed in (not checked in the cloud container: the panel needs an account) | next task | open | |
+| T1119-a | T1119 | Rewrite the 8 baselined f-string SQL calls in pipeline (landcover, harvest_pois_overture, stays, crosscheck_portals) to bound parameters or an identifier allow-list, then shrink `.semgrep/baseline.json`; none is exploitable today (build-box DuckDB/SQLite, own identifiers) | next task | open | |
+| T1119-b | T1119 | Make the `static-analysis / semgrep` check required on `main` in GitHub branch protection so a red gate blocks merging | user | open | |
+| T1119-c | T1119 | Semgrep skips `supabase/functions/parse-booking/logic.mjs` (parser syntax error on a regex literal at line 208), so that Edge Function is unscanned; split the regex or report upstream, and write research item C-R4 up properly (registry packs vs local rules, CodeQL later) | next task | open | |
