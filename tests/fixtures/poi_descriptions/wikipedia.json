@@ -1,0 +1,44 @@
+{
+ "Whitby Abbey": {
+  "extract": "Whitby Abbey is a ruined Benedictine abbey overlooking the North Sea on the East Cliff above Whitby in North Yorkshire, England. The abbey church was a centre of Anglo-Saxon Christianity and was later rebuilt in the Gothic style. It was dissolved in 1539 and the ruins were damaged by German naval shelling in 1914. The ruins are a Grade I listed building and are owned by English Heritage.",
+  "coords": [
+   54.4881,
+   -0.6077
+  ],
+  "revid": 1234,
+  "disambiguation": false
+ },
+ "Mercury": {
+  "extract": "Mercury may refer to: the planet, the element, the Roman god and many other things named in English.",
+  "coords": null,
+  "revid": 1,
+  "disambiguation": true
+ },
+ "Castle Hill": {
+  "extract": "Castle Hill is a hill in a place far away from the point of interest, and it is described in several sentences of English text for the test.",
+  "coords": [
+   40.0,
+   10.0
+  ],
+  "revid": 2,
+  "disambiguation": false
+ },
+ "Khaju Bridge": {
+  "extract": "The bridge is in the town and it is old.",
+  "coords": [
+   54.48,
+   -0.61
+  ],
+  "revid": 3,
+  "disambiguation": false
+ },
+ "List of bridges in Whitby": {
+  "extract": "This is the list of bridges in the town of Whitby which is in the north of England and it is long enough to pass.",
+  "coords": [
+   54.48,
+   -0.61
+  ],
+  "revid": 4,
+  "disambiguation": false
+ }
+}
