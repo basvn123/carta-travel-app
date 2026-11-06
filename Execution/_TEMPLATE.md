@@ -10,6 +10,10 @@ YYYY-MM-DD when the work shipped.
 
 One paragraph: the outcome, not the task description. What is different about the system or data now, with before and after figures if the task implies one. This paragraph is what the phase digest keeps, so make it stand alone.
 
+## Research
+
+The options compared for any tool, library, model, service, data source or method this task chose, with links and the reason for the choice (CLAUDE.md, How to run a task, step 3). "None chosen" when the task picked nothing.
+
 ## Files touched
 
 Modified, created and deleted paths, relative to the repo root (prefix `continent-app/` for the app repo). Group them when there are many.
