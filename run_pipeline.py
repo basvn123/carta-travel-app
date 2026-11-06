@@ -1563,6 +1563,19 @@ TASKS = [
                  "T642 adds dest.crowding.monthly from tour_occ_nin2m."),
     },
     {
+        "key": "crowding_uk",
+        "title": "Monthly crowds for GB, BA, FO, MD, XK (ONS / VisitBritain, national offices; D11)",
+        "cadence": "quarterly",
+        "writes_app_data": True,
+        "soft": True,
+        "rev": "T1098",
+        "est_h": 0.1,
+        "cmds": [[PY, PUBLISH, "--layer", "master", *MASTER_KEEP, "--",
+                  PY, "pipeline/harvest_uk_crowds.py"]],
+        "note": ("Reads cache/uk_crowds_nights.csv (owner prepares it, no download here); "
+                 "does nothing while the file is absent. Runs after crowding, never overwrites it."),
+    },
+    {
         "key": "flight_routes",
         "title": "Flight route list (Eurostat airport pairs) -> R2 data/flights/_routes.json",
         "cadence": "monthly",

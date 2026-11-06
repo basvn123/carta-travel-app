@@ -1436,3 +1436,7 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1092-b | T1092 | After T1092-a, look at the Trails card and trail page on a phone and at desktop width (Veluwe Zwerfpad reads Long, an E-path stage shows Also called); the cloud container could not load app data | user | open |  |
 | T1092-c | T1092 | Dossier around and nearby rows and region cards carry no f, so they cannot read Long; build_dossier.load_layer_index should copy f.d | next task | open |  |
 | T1092-d | T1092 | The DERIVED_HARD_MIN_RELIEF_M = 200 cap moves 3,211 derived terrain grades (DE 1,495); spot-check 20 capped rows on the map after the rebuild and tune the constant if real ravine walks were caught | next task | open |  |
+| T1098-a | T1098 | Prepare cache/uk_crowds_nights.csv (geo,name,year,month,nights) from the ONS / VisitBritain regional monthly nights tables (ITL1) and the national offices for BA, FO, MD, XK; none can be downloaded from the cloud box | user | open | 1 |
+| T1098-b | T1098 | Download ONS ITL1 boundaries (Open Geography Portal, OGL v3) to cache/uk_itl1_boundaries.geojson | user | open | 2 |
+| T1098-c | T1098 | Run `python run_pipeline.py --only crowding_uk` after `crowding`, then count GB places with crowding.monthly (before: about 2 of 526) and check 5 places in the app | user | open | 3 |
+| T1098-d | T1098 | Confirm a GB monthly series at ITL1 level exists at all (VisitBritain GBTS is quarterly in places); if not, the loader accepts any region split that ships an ITL1 code | next task | open |  |
