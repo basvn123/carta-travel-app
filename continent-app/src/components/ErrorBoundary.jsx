@@ -3,6 +3,7 @@ import { Button } from './Button.jsx';
 import { ErrorBlock } from './StateBlocks.jsx';
 import { tOutsideProvider as tr } from '../i18n/index.jsx';
 import { reportClientCrash } from '../planner/edgeFailure.js';
+import { maybeThrowSeeded } from '../lib/seedError.js';
 
 // Signatures browsers use when a dynamically-imported chunk can't be fetched, // almost always a stale bundle after a redeploy. Safari: "Importing a module
 // script failed."; Chrome: "Failed to fetch dynamically imported module";
@@ -89,4 +90,63 @@ export class ErrorBoundary extends React.Component {
       </div>
     );
   }
+}
+
+/**
+ * A local crash guard (T1106, H13). Wraps one screen, section or card so a
+ * render error in it stays in it: the rest of the app keeps working and the
+ * traveller sees one short sentence and, where it helps, "Try again" in the
+ * spot where the content was. Same reporting as the top-level guard; the raw
+ * error goes to the console only.
+ *
+ * - `name`: which part it guards. Names the console line and lets the seeded
+ *   error helper (lib/seedError.js) target it in tests and `npm run dev`.
+ * - `resetKey`: when it changes the boundary clears itself (a new route, a new
+ *   trip), so one bad trip does not keep a screen broken for the next.
+ * - `compact`: a card-sized message instead of a section-sized one.
+ * - A stale-chunk failure is re-thrown on purpose, so the top-level guard
+ *   reloads the fresh build once, as before.
+ */
+export class SectionBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { error: null };
+    this.retry = () => this.setState({ error: null });
+  }
+
+  static getDerivedStateFromError(error) {
+    return { error };
+  }
+
+  componentDidCatch(error, info) {
+    console.error(`Section crashed (${this.props.name || 'unnamed'}):`, error, info?.componentStack);
+    if (!isChunkLoadError(error)) reportClientCrash();
+  }
+
+  componentDidUpdate(prev) {
+    if (this.state.error && prev.resetKey !== this.props.resetKey) this.setState({ error: null });
+  }
+
+  render() {
+    const { error } = this.state;
+    const { name, compact, children } = this.props;
+    if (!error) {
+      return <>{name ? <SeededThrow name={name} /> : null}{children}</>;
+    }
+    if (isChunkLoadError(error)) throw error;
+    return (
+      <div className={`section-crash${compact ? ' is-compact' : ''}`} data-crash-section={name || undefined}>
+        <ErrorBlock
+          message={tr(compact ? 'crash.card' : 'crash.section')}
+          onRetry={this.retry}
+          retryLabel={tr('crash.retry')}
+        />
+      </div>
+    );
+  }
+}
+
+function SeededThrow({ name }) {
+  maybeThrowSeeded(name);
+  return null;
 }

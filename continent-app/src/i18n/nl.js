@@ -5583,6 +5583,8 @@ export const nl = {
   "trip.inclCar": "brandstof en tol voor de auto",
   "trip.oneMoreNight": "Een nacht extra in {city}:",
   // T401: shell hardening (crash screen, dates, dropdown, glyph labels)
+  'crash.section': 'Dit onderdeel kon niet laden. De rest van Carta werkt gewoon.',
+  'crash.card': 'Deze kaart kon niet laden.',
   'crash.title': 'Deze pagina werkt niet meer',
   'crash.message': 'Carta liep tegen een probleem aan dat het niet kon oplossen. Je reizen staan op dit apparaat, dus laad opnieuw om verder te gaan.',
   'crash.reload': 'App opnieuw laden',

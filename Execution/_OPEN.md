@@ -1466,3 +1466,6 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1101-b | T1101 | After the next deploy, ask five questions on a phone and desktop width and check the written line names only places on the first three cards | user | open |  |
 | T1101-c | T1101 | A sentence naming a place on a "more places" card (4th to 6th) is dropped until the traveller opens it; decide if the text should instead grow with the cards | next task | open |  |
 | T1085-x | orchestrator (2026-11-06 merge) | docs/runbooks has two overlapping backup docs after the overnight merge: backup.md (T1085, short) and backup-restore.md (T1086, full procedure); fold backup.md into backup-restore.md and keep one. | next task | open | |
+| T1106-a | T1106 | Run the seeded-error browser spec and look at `?seedError=explore` in `npm run dev` with real app data (the cloud container has none) | user | open |  |
+| T1106-b | T1106 | Wrap individual cards (explore, price) with `SectionBoundary compact`; trail cards, beach strip, plan flow and auth were off limits tonight | next task | open |  |
+| T1106-c | T1106 | The 107 silent catches named in H13 were not reviewed; T1106 covers render errors only | next task | open |  |
