@@ -70,10 +70,10 @@ export function select(pages) {
     out.excluded[kind][why] = (out.excluded[kind][why] || 0) + 1;
   };
   for (const p of pages) {
+    if ((p.canonical || p.path) !== p.path) { skip(p.kind, 'canonical is another page'); continue; }
     if (p.floor && !p.floor.ok) { skip(p.kind, 'below the page floor'); continue; }
     if (p.bar && !p.bar.ok) { skip(p.kind, 'below the quality bar'); continue; }
     if (!p.indexable) { skip(p.kind, 'noindex'); continue; }
-    if ((p.canonical || p.path) !== p.path) { skip(p.kind, 'canonical is another page'); continue; }
     const g = GROUP_OF[p.kind];
     if (!g) { skip(p.kind, 'no sitemap group'); continue; }
     if (!groups.has(g)) groups.set(g, []);
@@ -164,7 +164,7 @@ export function writeSitemaps(manifest, buildDir, { coverageDate = null } = {}) 
   const floorLine = `Page floor ${day(manifest.generated_at)}: ${n(sumOf(catalogue, 'ok'))} of ${n(sumOf(catalogue, 'pages'))} catalogue pages meet it and are in the sitemap`
     + (listed ? `; ${n(unpaged)} listed-only rows and coast or range regions have no page, of which ${n(unpagedOk)} would clear it` : '')
     + (costFloor ? `; ${n(costFloor.ok)} of ${n(costFloor.pages)} week cost pages have a figure measured in or near the town and are in the sitemap` : '')
-    + (barred.dest || barred.trail ? `; quality bar: ${n(barred.dest?.ok || 0)} of ${n(barred.dest?.pages || 0)} places and ${n(barred.trail?.ok || 0)} of ${n(barred.trail?.pages || 0)} trails are indexable` : '')
+    + (Object.keys(barred).length ? `; quality bar: ${['dest:places', 'trail:trails', 'beach:beaches', 'lake:lakes', 'mountain:mountains', 'cycle:cycling routes', 'trip:trips'].filter((x) => barred[x.split(':')[0]]).map((x) => { const [k, label] = x.split(':'); return `${n(barred[k].ok)} of ${n(barred[k].pages)} ${label}`; }).join(', ')} are indexable` : '')
     + `; ${n(summary.listed)} URLs in all.`;
   const report = {
     generated_at: manifest.generated_at, floor_line: floorLine, urls: summary.listed, files, floored,

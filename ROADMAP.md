@@ -1090,7 +1090,7 @@ docs/
 | ID | Item | Done when | Size | Phase | Status |
 |---|---|---|---|---|---|
 | K1 | Positioning and brand basics | One-page positioning (from K-R1), launch market and language, name check (EUIPO), social handles, a press-ready logo and screenshots | S | P0 | in progress: draft done (T1060), owner decisions open |
-| K2 | SEO plumbing and the page quality gate | Prerender and canonical live; `indexable` field from the pipeline; pages below the bar `noindex,follow` and out of the sitemap; sitemaps split by page type; hubs indexed; structured data; weekly Search Console review | M | P1 | in progress (T1076: bar decision T1076-b) |
+| K2 | SEO plumbing and the page quality gate | Prerender and canonical live; `indexable` field from the pipeline; pages below the bar `noindex,follow` and out of the sitemap; sitemaps split by page type; hubs indexed; structured data; weekly Search Console review | M | P1 | in progress (T1076 bar, T1113 bars for every kind; owner decision 1 kept 337 places; upload is an owner step, T1113-a) |
 | K3 | Waitlist and newsletter | Waitlist on Home with double opt-in and a referral jump (3 referrals = a free Trip Pass, 10 = a founding yearly price); a monthly "best-value places" newsletter | S | P0 to P1 | partly (T1110: double opt-in capture built; referral jump and newsletter issue 1 open) |
 | K4 | Build in public | A weekly post (pipeline, data, design, AI engineering) on LinkedIn and one other channel; a public changelog page | S, ongoing | P0 onwards | todo |
 | K5 | Data stories | Europe Cost Index 2027 with a methodology page and a local angle per country; Sunshine Saturday release on Sat 2 Jan 2027; a June "quiet clean beaches" ranking | M | P2, P4 | todo |
