@@ -266,3 +266,26 @@ def test_trip_client_returns_a_gemini_shaped_body_for_any_provider(monkeypatch):
     assert body["candidates"][0]["content"]["parts"][0]["text"] == '{"a":1}'
     assert body["usageMetadata"] == {"promptTokenCount": 4, "candidatesTokenCount": 2}
     assert body["_requested"] == "qwen" and body["_elapsedS"] == 1.5
+
+
+# ---- T1139 (E4): one privacy safe event per call ----
+
+def test_every_call_leaves_one_event_without_text(tmp_path):
+    out = tmp_path / "ev.jsonl"
+    g, _, _ = gw(replies=[gem("SECRET-ANSWER"), 400], env={**ENV, "AI_EVENTS_JSONL": str(out)})
+    g.call("SECRET-PROMPT", system="sys")
+    with pytest.raises(G.AIRefusal):
+        g.call("SECRET-PROMPT")
+    assert [e["outcome"] for e in g.events] == ["ok", "failed"]
+    assert g.events[0]["tokens_in"] == 7 and g.events[0]["tokens_out"] == 3
+    assert g.events[1]["code"] == "ai_error"
+    raw = out.read_text(encoding="utf-8")
+    assert len(raw.strip().splitlines()) == 2
+    assert "SECRET" not in raw and "SECRET" not in json.dumps(g.events)
+
+
+def test_a_refused_call_still_leaves_an_event():
+    g, _, _ = gw(replies=[])
+    with pytest.raises(G.AIRefusal):
+        g.call("x" * 300_000)
+    assert g.events[0]["outcome"] == "refused" and g.events[0]["code"] == "too_big"

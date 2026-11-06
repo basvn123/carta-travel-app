@@ -10255,4 +10255,16 @@ export const en = {
   "aiPage.dataH": "What is sent where",
   "aiPage.dataP": "Ask Carta sends your question (200 characters at most) and a few catalogue notes to Cloudflare, unless you use the on-device model. Day plans and town suggestions send your answers, the free text you typed and a deck of catalogue places to Google, tied to your signed-in account for quota. Booking import sends the documents you add. The privacy policy has the retention periods.",
   "aiPage.updated": "Numbers taken from Carta's own test reports of 6 November 2026.",
+  // LLM observability panel (T1139, E4). English only: staff see it.
+  'admin.aiCalls.title': 'Model calls (weekly)',
+  'admin.aiCalls.note': 'One event per model call through the gateway: names and counts only, no prompt or answer text. Cost is an estimate at paid-tier prices; events are kept 30 days.',
+  'admin.aiCalls.empty': 'No model calls recorded in this window.',
+  'admin.aiCalls.week': 'Week of {week}',
+  'admin.aiCalls.feature': 'Feature',
+  'admin.aiCalls.calls': 'Calls',
+  'admin.aiCalls.failRate': 'Failed',
+  'admin.aiCalls.p50': 'p50',
+  'admin.aiCalls.p95': 'p95',
+  'admin.aiCalls.cost': 'Est. cost',
+  'admin.aiCalls.costByDay': 'Estimated cost per day',
 };

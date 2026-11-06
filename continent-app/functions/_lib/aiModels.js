@@ -43,6 +43,8 @@
  * is one of AI_CODES and status the HTTP status the caller answers with.
  */
 
+import { buildAiEvent, writeEvent } from './aiEvents.mjs';
+
 export const AI_MODELS_VERSION = 1;
 
 export const PROVIDERS = ['gemini', 'workers-ai', 'openai'];
@@ -372,6 +374,9 @@ export function chainKey(cfg) {
  * @property {function} [fetchImpl]  fetch, for tests
  * @property {function} [now]        Date.now, for tests
  * @property {function} [wait]       sleep, for tests
+ * @property {string} [queryHash]    hashQuery of the Ask question, for the event (never the text)
+ * @property {function} [waitUntil]  run the event write after the response (Pages Functions)
+ * @property {function} [eventSink]  replaces the event write, for tests
  */
 
 /**
@@ -402,6 +407,26 @@ export function chainKey(cfg) {
  * @returns {Promise<AiResult>}
  */
 export async function callModel(req) {
+  const t0 = (req.now || Date.now)();
+  const result = await callModelInner(req);
+  // One event per call, answered or refused (T1139, E4). Never throws, never
+  // holds prompt or answer text.
+  try {
+    const cfg = resolveModelConfig(req.feature, req.env);
+    const promptChars = String(req.system || '').length
+      + (req.parts ? req.parts.reduce((n, p) => n + String(p.text || '').length, 0) : String(req.user || '').length);
+    const model = result.model || cfg.models?.[0];
+    const ev = buildAiEvent({
+      feature: req.feature, cfg, result, promptChars, queryHash: req.queryHash,
+      latencyMs: result.ms ?? (req.now || Date.now)() - t0,
+      neurons: cfg.provider === 'workers-ai' && model ? neuronPrice(model) : null,
+    });
+    await writeEvent(req.env, ev, { fetchImpl: req.fetchImpl, waitUntil: req.waitUntil, sink: req.eventSink });
+  } catch { /* telemetry never breaks a call */ }
+  return result;
+}
+
+async function callModelInner(req) {
   const get = reader(req.env);
   const fetchImpl = req.fetchImpl || ((...a) => fetch(...a));
   const now = req.now || Date.now;
