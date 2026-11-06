@@ -1374,3 +1374,27 @@ Gate: `pipeline/field_stubs/gate.py` ranges `sea_temp` 0 to 32, `alt_m` -450 to
 beaches +37 KB (+0.28%), lakes +16 KB (+0.21%), mountains +53 KB (+0.87%),
 cycling detail +1.26 MB (+0.28%); the trails and cycling country files are
 unchanged.
+
+## Planned: local transport fare per place (T1115, 2026-11-06)
+
+Not in the wire, not produced by any script. The owner's decision 4 (2026-11-05) on the fare source is "Not now"; this section fixes the shape so a later session can build the layer without redesigning it. It refines the one-line row `dest.local_transport.fare` in the T642 table above (same key, same engine reading).
+
+`dest.local_transport.fare`, optional and additive, one object per place; absent means "Not yet measured" and the day price stays bed and food, never a zero.
+
+| Key | Type | Rule |
+|---|---|---|
+| `ride_eur` | number, 0 to 20 | single ticket, adult, full price, zone 1 or the central fare, in euro |
+| `day_pass_eur` | number or null, 0 to 60 | 24 hour pass for the same zone; null when the operator sells none |
+| `currency` | ISO 4217 string | the currency the operator publishes in (`PLN`, `GBP`, `CHF`...) |
+| `ride_local` | number | the same single ticket as published, in `currency` |
+| `day_pass_local` | number or null | the same day pass as published, in `currency` |
+| `source` | string | operator name plus the page URL, or the dataset name and version |
+| `date` | `YYYY-MM-DD` | the as-of date: the day the fare was read from the source, not the day it is valid from |
+| `quality` | `"measured"` or `"modelled"` | `measured` only for a fare read from the source for this city; `modelled` for a country or tier prior |
+
+Rules for the layer when it is built:
+- Euro values are converted from the local value with `cache/fx_rates_eur.json` and a stated rate date; the local value is kept so a rate move never rewrites history.
+- `ride_eur <= day_pass_eur` is not required (a day pass can be cheaper than two rides); `day_pass_eur` must be at least `ride_eur` when present.
+- A fare older than 18 months is flagged stale in the report, not dropped.
+- The first scope is the 127 metros in `reports/local_fares_metros_127.csv`, then the 614 cities (roadmap D10). The engine is `lib/price/priceDay.js`, with `transport.rides_per_day` in `config/pricing.json`; no engine change is needed when the field appears.
+- Add the keys to the "Wire contract" table and `scripts/ci/contract.mjs` only in the task that produces data, with the schema version note.

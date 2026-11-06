@@ -1,0 +1,128 @@
+id,city,country,iso2,lat,lon,population,transit_quality,car_needed,rating_score
+STN,London (Stansted),United Kingdom,GB,51.50772,-0.1274,8961989,excellent,False,
+LTN,London (Luton),United Kingdom,GB,51.50772,-0.1274,8961989,excellent,False,
+LGW,London (Gatwick),United Kingdom,GB,51.50772,-0.1274,8961989,excellent,False,
+LHR,London (Heathrow),United Kingdom,GB,51.50772,-0.1274,8961989,excellent,False,7.8
+BER,Berlin,Germany,DE,52.51939,13.40384,3426354,excellent,False,8.2
+MAD,Madrid,Spain,ES,40.4165,-3.70256,3255944,excellent,False,8
+FCO,Rome (Fiumicino),Italy,IT,41.89309,12.48357,2318895,excellent,False,10
+CIA,Rome (Ciampino),Italy,IT,41.89309,12.48357,2318895,excellent,False,
+CDG,Paris (CDG),France,FR,48.85799,2.35196,2138551,excellent,False,8.7
+ORY,Paris (Orly),France,FR,48.85799,2.35196,2138551,excellent,False,
+BVA,Paris (Beauvais),France,FR,48.85799,2.35196,2138551,excellent,False,
+HAM,Hamburg,Germany,DE,53.54985,9.99979,1973896,excellent,False,8.5
+OTP,Bucharest (Otopeni),Romania,RO,44.43266,26.10204,1877155,excellent,False,5.5
+BUD,Budapest,Hungary,HU,47.49222,19.05081,1741041,excellent,False,8.5
+WAW,Warsaw (Chopin),Poland,PL,52.22905,21.01083,1702139,excellent,False,7.2
+WMI,Warsaw (Modlin),Poland,PL,52.22905,21.01083,1702139,excellent,False,
+VIE,Vienna,Austria,AT,48.20849,16.37208,1691468,excellent,False,8.3
+BCN,Barcelona,Spain,ES,41.38343,2.18263,1686208,excellent,False,9
+ARN,Stockholm (Arlanda),Sweden,SE,59.32902,18.06867,1515017,excellent,False,8.1
+NYO,Stockholm (Skavsta),Sweden,SE,59.32902,18.06867,1515017,excellent,False,
+BMA,Stockholm (Bromma),Sweden,SE,59.32902,18.06867,1515017,excellent,False,
+MUC,Munich,Germany,DE,48.13734,11.57502,1505005,excellent,False,7
+MXP,Milan (Malpensa),Italy,IT,45.46716,9.19028,1371498,excellent,False,7.6
+BGY,Milan (Bergamo),Italy,IT,45.46716,9.19028,1371498,excellent,False,
+LIN,Milan (Linate),Italy,IT,45.46716,9.19028,1371498,excellent,False,
+BEG,Belgrade,Serbia,RS,44.80401,20.46513,1273651,excellent,False,6.1
+PRG,Prague,Czechia,CZ,50.08737,14.42132,1165581,excellent,False,8.9
+BHX,Birmingham,United Kingdom,GB,52.48142,-1.89983,1157603,excellent,False,5.5
+CPH,Copenhagen,Denmark,DK,55.67563,12.569,1153615,excellent,False,8.5
+SOF,Sofia,Bulgaria,BG,42.69089,23.34677,1152556,excellent,False,7.2
+OSL,Oslo (Gardermoen),Norway,NO,59.91329,10.73975,1082575,excellent,False,7.5
+TRF,Oslo (Torp),Norway,NO,59.91329,10.73975,1082575,excellent,False,
+gem:koln,Köln,Germany,DE,50.93333,6.95,1024621,good,False,7.7
+DUB,Dublin,Ireland,IE,53.34854,-6.26025,1024027,excellent,False,7.5
+BRU,Brussels,Belgium,BE,50.84664,4.35262,1019022,excellent,False,7.2
+NAP,Naples,Italy,IT,40.85906,14.26217,909048,excellent,False,8.6
+MRS,Marseille,France,FR,43.35982,5.33421,877215,excellent,False,6.9
+gem:rotterdam,Rotterdam,Netherlands,NL,51.9244,4.4777,868135,good,False,7.4
+TRN,Turin,Italy,IT,45.07049,7.68682,847287,excellent,False,6.9
+VLC,Valencia,Spain,ES,39.47391,-0.37966,824340,excellent,False,7.4
+KRK,Krakow,Poland,PL,50.06102,19.93637,816614,excellent,False,8.8
+RIX,Riga,Latvia,LV,56.94945,24.1074,742572,excellent,False,8.3
+AMS,Amsterdam,Netherlands,NL,52.37271,4.89292,741636,excellent,False,9
+SJJ,Sarajevo,Bosnia and Herzegovina,BA,43.84864,18.35644,696731,excellent,False,7.4
+ZAZ,Zaragoza,Spain,ES,41.65093,-0.88273,686986,excellent,False,6.5
+SVQ,Seville,Spain,ES,37.39633,-5.98362,686741,excellent,False,7.9
+WRO,Wroclaw,Poland,PL,51.10999,17.03268,672545,excellent,False,7.7
+ATH,Athens,Greece,GR,37.9805,23.73118,664046,excellent,False,8.4
+ZAG,Zagreb,Croatia,HR,45.81444,15.97798,663592,excellent,False,6.7
+HEL,Helsinki,Finland,FI,60.17068,24.93911,658864,excellent,False,8.1
+FRA,Frankfurt,Germany,DE,50.11069,8.68233,650000,excellent,False,5.5
+PMO,Palermo,Italy,IT,38.11422,13.35484,648260,limited,True,8.2
+LCJ,Lodz,Poland,PL,51.7762,19.45484,639890,excellent,False,4.9
+KIV,Chișinău,Moldova,MD,47.00902,28.85938,635994,excellent,False,4.3
+GLA,Glasgow,United Kingdom,GB,55.86515,-4.25763,626410,excellent,False,6.5
+DUS,Düsseldorf,Germany,DE,51.22319,6.77927,618685,excellent,False,6.2
+STR,Stuttgart,Germany,DE,48.77748,9.17998,612663,excellent,False,6
+GOT,Gothenburg,Sweden,SE,57.70635,11.96704,608462,excellent,False,6.7
+gem:essen,Essen,Germany,DE,51.45657,7.01228,593085,good,False,7
+AGP,Malaga,Spain,ES,36.72016,-4.42034,592346,excellent,False,7.3
+gem:dortmund,Dortmund,Germany,DE,51.51494,7.466,588462,good,False,6
+GOA,Genoa,Italy,IT,44.40478,8.94439,580097,excellent,False,7.6
+MAN,Manchester,United Kingdom,GB,53.47873,-2.24994,568996,excellent,False,7
+DRS,Dresden,Germany,DE,51.0501,13.73979,564904,excellent,False,7
+gem:sheffield,Sheffield,United Kingdom,GB,53.38297,-1.4659,556500,good,False,5.9
+PRN,Pristina,Kosovo,XK,42.67272,21.16688,550000,excellent,False,4
+BRE,Bremen,Germany,DE,53.06233,8.80217,546501,excellent,False,6.3
+VNO,Vilnius,Lithuania,LT,54.68616,25.28524,542366,excellent,False,8.1
+LBA,Leeds Bradford,United Kingdom,GB,53.79648,-1.54785,536280,excellent,False,5.4
+POZ,Poznan,Poland,PL,52.4083,16.93403,536151,excellent,False,6
+gem:antwerp,Antwerp,Belgium,BE,51.2194,4.4025,529247,good,False,7.9
+LYS,Lyon,France,FR,45.74906,4.84789,520774,excellent,False,7.9
+LIS,Lisbon,Portugal,PT,38.72236,-9.1487,517802,excellent,False,8.7
+NUE,Nuremberg,Germany,DE,49.45411,11.07728,515543,excellent,False,6.7
+EDI,Edinburgh,United Kingdom,GB,55.95328,-3.18998,514990,excellent,False,8.8
+TLS,Toulouse,France,FR,43.61092,1.41651,511684,excellent,False,6.6
+LEJ,Leipzig,Germany,DE,51.34005,12.37504,504971,excellent,False,6.5
+LPL,Liverpool,United Kingdom,GB,53.40646,-2.99175,496770,excellent,False,6.8
+GDN,Gdansk,Poland,PL,54.34893,18.64742,487371,excellent,False,8
+BRS,Bristol,United Kingdom,GB,51.45346,-2.59802,479024,excellent,False,7.2
+SKP,Skopje,North Macedonia,MK,41.998,21.43334,474889,excellent,False,5.1
+gem:the-hague,The Hague,Netherlands,NL,52.08,4.31,474292,good,False,7.2
+MJV,Murcia,Spain,ES,37.98625,-1.13034,471982,excellent,False,5.7
+PMI,Palma de Mallorca,Spain,ES,39.56939,2.65024,438234,limited,True,7.7
+BTS,Bratislava,Slovakia,SK,48.15556,17.14184,423737,excellent,False,6.4
+TIA,Tirana,Albania,AL,41.32725,19.81926,418495,excellent,False,5.4
+ZRH,Zurich,Switzerland,CH,47.36667,8.55,415367,excellent,False,7.5
+SZZ,Szczecin,Poland,PL,53.42981,14.5497,395513,excellent,False,5
+BLQ,Bologna,Italy,IT,44.50242,11.31349,394843,excellent,False,7.2
+TLL,Tallinn,Estonia,EE,59.43767,24.74529,394024,excellent,False,8
+gem:bochum,Bochum,Germany,DE,51.48165,7.21648,385729,good,False,6.5
+BRQ,Brno,Czechia,CZ,49.19522,16.60796,379466,excellent,False,7.2
+IAS,Iasi,Romania,RO,47.16499,27.58782,378954,excellent,False,5.2
+gem:utrecht,Utrecht,Netherlands,NL,52.0907,5.1214,376435,good,False,8.4
+CWL,Cardiff,United Kingdom,GB,51.48079,-3.17884,372089,excellent,False,6.3
+gem:leicester,Leicester,United Kingdom,GB,52.6386,-1.13169,368600,good,False,4.8
+FLR,Florence,Italy,IT,43.77081,11.25464,367150,excellent,False,8.2
+gem:bradford,Bradford,United Kingdom,GB,53.794,-1.751,366187,good,False,5.2
+MMX,Malmö,Sweden,SE,55.60551,13.00622,362133,excellent,False,5.9
+gem:wuppertal,Wuppertal,Germany,DE,51.25627,7.14816,360797,good,False,5.8
+ALC,Alicante,Spain,ES,38.34549,-0.48215,348901,excellent,False,6.5
+BFS,Belfast,United Kingdom,GB,54.5974,-5.92926,348005,excellent,False,6.1
+BIO,Bilbao,Spain,ES,43.26934,-2.92782,347342,excellent,False,7.7
+gem:coventry,Coventry,United Kingdom,GB,52.40656,-1.51217,345324,good,False,5.2
+NCE,Nice,France,FR,43.69807,7.26886,342669,excellent,False,8.7
+LUZ,Lublin,Poland,PL,51.25058,22.57009,336339,excellent,False,5.6
+gem:bielefeld,Bielefeld,Germany,DE,52.03333,8.53333,331906,good,False,4.7
+gem:bonn,Bonn,Germany,DE,50.73438,7.09549,330579,good,False,6.7
+BZG,Bydgoszcz,Poland,PL,53.12092,17.99767,330038,excellent,False,4.4
+PDV,Plovdiv,Bulgaria,BG,42.15387,24.75001,329489,excellent,False,6.7
+gem:cordoba,Córdoba,Spain,ES,37.8847,-4.7791,325708,good,False,7.3
+NTE,Nantes,France,FR,47.21725,-1.55336,325070,excellent,False,6.3
+gem:nottingham,Nottingham,United Kingdom,GB,52.9536,-1.15047,323632,good,False,5.8
+gem:beeston,Beeston,United Kingdom,GB,52.9267,-1.2156,323632,good,False,4.5
+VAR,Varna,Bulgaria,BG,43.20403,27.91336,318737,excellent,False,5.6
+gem:reading,Reading,United Kingdom,GB,51.45625,-0.97113,318014,good,False,5.3
+CND,Constanta,Romania,RO,44.17474,28.65496,317832,excellent,False,4.5
+SKG,Thessaloniki,Greece,GR,40.63741,22.94292,317778,excellent,False,7.2
+BRI,Bari,Italy,IT,41.12066,16.86982,316491,excellent,False,6.2
+gem:kingston-upon-hull,Kingston upon Hull,United Kingdom,GB,53.7446,-0.33525,314018,good,False,5.6
+CTA,Catania,Italy,IT,37.50193,15.0845,311584,limited,True,7.3
+gem:munster,Münster,Germany,DE,51.96236,7.62571,308258,good,False,6.1
+gem:mannheim,Mannheim,Germany,DE,49.4891,8.46694,307960,good,False,6.6
+GRZ,Graz,Austria,AT,47.07107,15.43831,303270,excellent,False,7.9
+gem:augsburg,Augsburg,Germany,DE,48.37154,10.89851,301105,good,False,6.9
+VLL,Valladolid,Spain,ES,41.65541,-4.72353,300618,excellent,False,5.4
+NCL,Newcastle,United Kingdom,GB,54.97328,-1.61396,300125,excellent,False,6.3
