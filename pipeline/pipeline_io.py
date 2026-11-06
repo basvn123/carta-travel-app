@@ -26,8 +26,10 @@ import time
 import os
 
 try:                                   # flat import, as the pipeline scripts do
+    import provenance
     from wire_contract import check_wire
 except ImportError:                    # imported as pipeline.pipeline_io
+    from . import provenance
     from .wire_contract import check_wire
 
 
@@ -43,8 +45,14 @@ def atomic_write_json(path, data, *, indent=1, ensure_ascii=False,
     against docs/wire.schema.json first (T1133): a payload that breaks the
     contract raises WireContractError, naming each field path, and the file
     on disk is left as it was.
+
+    A write of the master or the served wire first stamps every key block
+    that has no ``_src``/``_asof`` yet with its source and today's date
+    (T1143, ``provenance.stamp_payload``) and lifts the schema to 20.
     """
     path = os.fspath(path)
+    if provenance.is_stamped_path(path):
+        provenance.stamp_payload(data)
     check_wire(path, data)
     tmp = path + ".tmp"
     with open(tmp, "w", encoding="utf-8") as f:

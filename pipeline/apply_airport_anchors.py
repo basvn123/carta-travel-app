@@ -61,6 +61,7 @@ from pathlib import Path
 import airport_access  # airports[] + transfer mode per option (T642)
 import car_layer  # for the drivable() check (home, detour, max_drive_km)
 from pipeline_io import atomic_write_json
+from provenance import touch  # T1143: transfer is edited in place
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_TARGETS = [
@@ -113,6 +114,7 @@ def write_airports(ds: dict) -> None:
         if tr and tr.get("transfer_minutes_one_way") is not None:
             tr["transfer_mode"] = "car"  # the transfer minutes are the road estimate
             tr["transfer_mode_source"] = "road_estimate"
+            touch(tr)
     print(f"  airports[]: {n_lists} dests, {n_multi} with 2+ airports, {n_pt} with a GTFS public transport option")
 
 

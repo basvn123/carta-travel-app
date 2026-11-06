@@ -242,6 +242,11 @@ const CATALOGUE_BREAKS = {
     for (const r of Object.values(d.destinations)) if (r.taste) delete r.taste.likes.ski;
     return d;
   },
+  // T1143 (D3): a layer that rebuilt its block without the provenance stamp.
+  'v20-block-date-dropped': (d) => {
+    for (const r of Object.values(d.destinations)) if (r.climate) delete r.climate._asof;
+    return d;
+  },
   'v19-gateway-points-nowhere': (d) => {
     const city = Object.values(d.destinations).find((r) => r.rating);
     if (city) city.gateways = ['NOT-A-GATEWAY'];

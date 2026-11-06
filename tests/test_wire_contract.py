@@ -58,7 +58,10 @@ def test_seeded_bad_value_is_rejected_with_its_field_path(case):
     assert wc.validate(seeded(case)) == [case["expect"]]
 
 
-@pytest.mark.parametrize("case", CASES["cases"], ids=[c["name"] for c in CASES["cases"]])
+REFUSED = [c for c in CASES["cases"] if not c.get("pipeline_fills")]
+
+
+@pytest.mark.parametrize("case", REFUSED, ids=[c["name"] for c in REFUSED])
 def test_pipeline_write_refuses_a_seeded_bad_value(case, tmp_path):
     """The hook in atomic_write_json: the write raises, names the field path,
     and the wire already on disk is left as it was."""
@@ -89,10 +92,10 @@ def test_is_wire_path():
     assert not wc.is_wire_path("x/continent-app/public/boot.json")
 
 
-def test_schema_version_is_19_and_agrees_with_itself():
+def test_schema_version_is_20_and_agrees_with_itself():
     s = wc.load_schema()
-    assert s["x-schema-version"] == 19
-    assert s["properties"]["meta"]["properties"]["schema_version"]["const"] == 19
+    assert s["x-schema-version"] == 20
+    assert s["properties"]["meta"]["properties"]["schema_version"]["const"] == 20
 
 
 def test_bool_is_not_a_number_or_an_integer():
