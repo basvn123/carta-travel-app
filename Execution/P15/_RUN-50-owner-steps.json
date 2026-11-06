@@ -418,5 +418,160 @@
    "In continent-app run `node tests/section-boundary.spec.mjs` (set CHROMIUM_PATH if needed)",
    "Open `npm run dev` at `/?tab=map&seedError=explore` at phone and desktop width and confirm one short message with Try again, header and nav still working"
   ]
+ },
+ {
+  "id": "T1089-f",
+  "title": "Run the SKIPped harnesses for real",
+  "why": "They skip here for lack of an account, a build, network or the full dataset.",
+  "where": "Execution/P15/T1089-verify-harness-refresh.md",
+  "how": [
+   "On the owner's box with Supabase configured and the 140 MB master present run `node scripts/sync-data.mjs`",
+   "Build with the fast build",
+   "Run verify_account_panel, continue_trip, data_export, status_banner, viewport_catalogue, omio_ui, joins, google_flights, day_routes and plan_mocks against `npm run dev`",
+   "Report any failure"
+  ]
+ },
+ {
+  "id": "T1099-a",
+  "title": "Refresh the stale wires",
+  "why": "Seven wires are 50 to 150 days old and the pipeline inputs live on the box.",
+  "where": "scripts/freshness_report.py",
+  "how": [
+   "On the box run the destinfo, trips, region, trails, coverage, joins and reach builds, then the rating applier (stamps app_data)",
+   "Rerun the report"
+  ]
+ },
+ {
+  "id": "T1099-b",
+  "title": "Push the freshness report with the data",
+  "why": "The box should publish per wire age next to the data.",
+  "where": "scripts/freshness_report.py",
+  "how": [
+   "After each run: `python -I scripts/freshness_report.py --out dist-data/freshness_wires.json`",
+   "Push with `node scripts/r2/push-data.mjs --live` (H9 owns the schedule)"
+  ]
+ },
+ {
+  "id": "T1099-d",
+  "title": "Set the cadence per wire",
+  "why": "The 35/45/90 day limits are placeholders.",
+  "where": "scripts/freshness_report.py",
+  "how": [
+   "Edit `WIRES` in the script",
+   "Use `--strict` as the gate"
+  ]
+ },
+ {
+  "id": "T1108-a",
+  "title": "Give the support email address",
+  "why": "The page shows a placeholder (the general address) until a dedicated one exists.",
+  "where": "continent-app/src/lib/contact.js",
+  "how": [
+   "Decide the address",
+   "Create the mailbox with SPF, DKIM, DMARC",
+   "Change `SUPPORT_EMAIL` in contact.js"
+  ]
+ },
+ {
+  "id": "T1108-b",
+  "title": "Review the Dutch support texts",
+  "why": "The Dutch is a draft written without a native check.",
+  "where": "continent-app/src/i18n/nl.js",
+  "how": [
+   "Read the `support.*` and `footer.support` keys in nl.js",
+   "Correct wording"
+  ]
+ },
+ {
+  "id": "T1109-a",
+  "title": "Apply channel counts migration",
+  "why": "The server half of K12 is only a file.",
+  "where": "supabase/migrations/067_channel_counts.sql",
+  "how": [
+   "Rename `067_channel_counts.sql` to the next free number and add a `_down` file",
+   "Paste it in the Supabase SQL editor",
+   "Open `/?utm_source=test` once and check the admin Overview card"
+  ]
+ },
+ {
+  "id": "T1110-a",
+  "title": "Apply migration 066",
+  "why": "Creates the closed waitlist table and its five service-role functions.",
+  "where": "supabase/migrations/066_waitlist.sql",
+  "how": [
+   "Open the Supabase SQL editor",
+   "Paste `supabase/migrations/066_waitlist.sql` after 065",
+   "Look for \"waitlist self-check passed\""
+  ]
+ },
+ {
+  "id": "T1110-b",
+  "title": "Resend secrets and deploy",
+  "why": "No mail is stored or sent until the sender and signing secret exist.",
+  "where": "supabase/functions/waitlist/README.md",
+  "how": [
+   "Verify the sending domain in Resend",
+   "`supabase secrets set RESEND_API_KEY=... WAITLIST_FROM=\"Carta <hello@carta-europetravel.com>\" WAITLIST_SECRET=<long random>`",
+   "`supabase functions deploy waitlist --no-verify-jwt`"
+  ]
+ },
+ {
+  "id": "T1110-c",
+  "title": "Round trip and phone look",
+  "why": "Proves the real mail, both links and the layout.",
+  "where": "continent-app/src/components/WaitlistForm.jsx",
+  "how": [
+   "On a preview sign up with a real address",
+   "Confirm from the mail",
+   "Sign up again and unsubscribe from the mail",
+   "View Home on a phone"
+  ]
+ },
+ {
+  "id": "T1110-d",
+  "title": "Privacy text and Article 30",
+  "why": "An address is personal data collected on consent.",
+  "where": "docs/legal/ARTICLE30.md",
+  "how": [
+   "Add the waitlist (purpose, consent, retention until unsubscribe or 30 days unconfirmed, Resend as processor) to the privacy policy and docs/legal/ARTICLE30.md before launch"
+  ]
+ },
+ {
+  "id": "T1111-a",
+  "title": "Approve the design direction",
+  "why": "G3 (umber cost card) and G5 (motion) are waiting on it, and it sets the look for G2, G6 and G8.",
+  "where": "docs/design/direction.md",
+  "how": [
+   "Open docs/design/direction.md",
+   "Read sections 1 to 5 (one page)",
+   "Answer the three decisions in section 7 (plan tab follows the place trip card, count-up only on home, 28 px radius on the app cost card)",
+   "Reply \"approved\" or list the changes to Claude"
+  ]
+ },
+ {
+  "id": "T1111-c",
+  "title": "Run the design research G-R1 to G-R3",
+  "why": "The direction was written without the benchmark, the premium-feel note and user testing, and they may change it.",
+  "where": "ROADMAP.md (Track G research)",
+  "how": [
+   "Run the 6-product teardown (G-R1) and the principles note (G-R2)",
+   "Run 5 short interviews and one unmoderated test on the live app (G-R3)",
+   "Hand the findings to a session to revise the direction"
+  ]
+ },
+ {
+  "id": "T1112-a",
+  "title": "Run the Aviasales coverage probe",
+  "why": "The cloud container cannot reach the API and has no token, so the real coverage is unmeasured.",
+  "where": "scripts/aviasales_probe.py",
+  "how": [
+   "Export the sweep fares (`SELECT origin AS o, dest AS d, date, price FROM fares`) to `cache/flights/sweep_export.csv`",
+   "`export AVIASALES_TOKEN=<your Travelpayouts token>`",
+   "Smoke test `python scripts/aviasales_probe.py --months 2027-01,2027-02 --limit 20 --out cache/flights/aviasales_probe`",
+   "Then the full run `python scripts/aviasales_probe.py --months 2027-01,2027-02 --sweep cache/flights/sweep_export.csv --out cache/flights/aviasales_probe` (about 20,200 requests at 2 per second, roughly 2.8 hours",
+   "Rerun the same command to resume",
+   "Raise `--rps` only if the Travelpayouts limit allows)",
+   "Send back `cache/flights/aviasales_probe/coverage.md`"
+  ]
  }
 ]
