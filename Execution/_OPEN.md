@@ -1501,3 +1501,6 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1099-b | T1099 | Run `scripts/freshness_report.py --out` after each box run and push `freshness_wires.json` to R2 next to the data (H9 schedule) | user | open |  |
 | T1099-c | T1099 | Only `apply_rating_layer.py` stamps `app_data` meta; other appliers (place, stays, climate) do not | next task | open |  |
 | T1099-d | T1099 | Decide the cadence per wire; 35/45/90 days in `WIRES` are placeholders | user | open |  |
+| T1108-a | T1108 | Give the dedicated support address (and set up the mailbox with SPF, DKIM, DMARC): `SUPPORT_EMAIL` in `continent-app/src/lib/contact.js` is a placeholder equal to the general address | user | open |  |
+| T1108-b | T1108 | Review the Dutch support strings (`support.*`, `footer.support` in nl.js); the Dutch is a draft, and de, es, fr, it fall back to English | user | open |  |
+| T1108-c | T1108 | I9 rest: About page and accessibility statement (EU Accessibility Act) are not built; the page has no status history, only the live line from status.json (needs T1056-a published) | next task | open |  |
