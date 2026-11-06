@@ -276,6 +276,31 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 
 **Gap.** The attack set's "recorded" outputs are stubbed worst cases written by T1117, not real model answers; `continent-app/scripts/ai/redteam_live.mjs` replays the set against a preview and the deployed functions with a test account (owner step T1117-a). `suggest-city` is not yet behind the guard (T1117-b). On-device Ask relies on the browser verifier alone (T1117-c).
 
+## 13. Carta MCP server (T1155, F7)
+
+**Data flow.** `services/mcp/` is a local stdio server a traveller or developer starts on their own machine and connects to their own MCP client. It reads the shipped wire files (`app_data.json`, `journeys/`) from disk and answers four tools: `search_places`, `place_facts`, `price_trip`, `list_trips`. It is not deployed to Cloudflare, Supabase or the box, listens on no port, and makes no network call.
+
+**Assets.** Nothing private: the same data the public app and R2 already serve. No account, trip, booking or user data is reachable, and `list_trips` means the public library trips, not a traveller's saved trips.
+
+**Trust boundaries.** Client model to tool arguments (untrusted); wire text back to the client model (scraped and curated text a model will read).
+
+**Controls.**
+
+| Risk | Control | Test |
+|---|---|---|
+| Write or side effect | No write tool, no resource, no prompt; every tool carries `readOnlyHint: true`, `openWorldHint: false`; the source has no file write, network, child process or env secret access | `smoke.test.mjs` (annotations, static grep) |
+| Secrets | None needed or read; the only env variable is `CARTA_DATA_DIR` | static grep |
+| Claude API | None; no Anthropic SDK (the MCP SDK is the protocol library only) | static grep |
+| Tool argument abuse | Strict zod schemas: string lengths, integer ranges, enums, at most 10 stops, 25 results; unknown ids give an error result, not a crash | `smoke.test.mjs` |
+| Indirect prompt injection (OWASP LLM01) through wire text | Every free-text field passes `safeText`, which runs the app's `scrubData` (the aiGuard scanner), drops instruction-shaped sentences and caps length; tool descriptions tell the client to treat text as data | `tools.test.mjs` |
+| Wrong money | `price_trip` and `place_facts` call the app's own `priceDay`, so a figure equals Explore's; the result states what is excluded (flights, legs) | `tools.test.mjs` parity test |
+| Dependency supply chain | One protocol library pinned exactly (`@modelcontextprotocol/sdk` 1.32.2) plus zod; lockfile committed; `npm audit` in CI (`mcp.yml`) | CI |
+| Unbounded consumption | Local process, results capped, catalogue read once | none needed |
+
+**Left open.** The scrubber is pattern based (same limit as section 12). A future remote (HTTP) mode would need auth, rate limits and its own review before it ships; none exists. Traveller trips are deliberately out of scope until a per-user auth design exists.
+
+---
+
 ## Top gaps, ranked
 
 Ranked by likelihood times impact, then by how cheaply the next step closes it.

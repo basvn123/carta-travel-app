@@ -1857,3 +1857,8 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1140-d | T1140 | A bump of eval-judge runs the plan-day eval, whose judge kappa reads verdicts made on the old rubric (flagged by hash, not failed); record should refuse a judge score whose verdicts carry another rubric_sha | next task | open |  |
 | T1140-e | T1140 | MAP.md (the AI rows) and docs/README.md do not point to prompts/ and the HANDBOOK "Prompt registry" bullet, and the index.ts line numbers in docs/logic/plan-day.md (PLANDAY-001 to PLANDAY-032) are about 140 lines off since the prompt moved to prompt.mjs; all outside this task's files | next task | open |  |
 | T1140-f | T1140 | T1148-c is done by T1140 (plan-day's buildPrompt and RESPONSE_SCHEMA are importable from supabase/functions/plan-day/prompt.mjs); move it to _OPEN-CLOSED.md | next task | open |  |
+| T1155-a | T1155 | Saved traveller trips are not reachable from the MCP server; offering them needs a per-user auth design (token, scopes, RLS) and a threat model review | user | open |  |
+| T1155-b | T1155 | The server runs only from a repo checkout with `continent-app` installed (it imports the price engine); packaging it or a remote HTTP mode is a decision, and a remote mode needs auth and rate limits first | user | open |  |
+| T1155-c | T1155 | `price_trip` prices stays only; add flights and legs between stops through `quoteTrip` (lib/price/trip.js) and add an eval of the figures | next task | open |  |
+| T1155-d | T1155 | Owner step: try the server in a real MCP client (see the report's owner steps) | user | open |  |
+| T1155-e | T1155 | MAP.md, docs/README.md and the docs site do not mention `services/mcp/`; outside this task's files | next task | open |  |
