@@ -1,0 +1,651 @@
+{
+ "version": 1,
+ "generated_at": "2026-11-06T14:24:59Z",
+ "public": "continent-app/public",
+ "gate": {
+  "ok": true,
+  "rules": 75,
+  "baseline_at": "2026-11-06T12:00:00Z",
+  "failures": [],
+  "warnings": []
+ },
+ "layers": [
+  {
+   "layer": "core",
+   "wire": "app_data",
+   "records": 3855,
+   "completeness": 0.8841,
+   "validity": 1.0,
+   "freshness": 0.2303,
+   "age_days": 152.0,
+   "accuracy": null,
+   "score": 0.7048
+  },
+  {
+   "layer": "flights",
+   "wire": "app_data",
+   "records": 3855,
+   "completeness": 0.4986,
+   "validity": 1.0,
+   "freshness": 0.2303,
+   "age_days": 152.0,
+   "accuracy": null,
+   "score": 0.5763
+  },
+  {
+   "layer": "prices",
+   "wire": "app_data",
+   "records": 3855,
+   "completeness": 0.9555,
+   "validity": 1.0,
+   "freshness": 0.2303,
+   "age_days": 152.0,
+   "accuracy": null,
+   "score": 0.7286
+  },
+  {
+   "layer": "rating",
+   "wire": "app_data",
+   "records": 3855,
+   "completeness": 1.0,
+   "validity": 1.0,
+   "freshness": 0.2303,
+   "age_days": 152.0,
+   "accuracy": 0.9849,
+   "score": 0.8038
+  },
+  {
+   "layer": "climate",
+   "wire": "app_data",
+   "records": 3855,
+   "completeness": 0.6938,
+   "validity": 1.0,
+   "freshness": 0.2303,
+   "age_days": 152.0,
+   "accuracy": null,
+   "score": 0.6414
+  },
+  {
+   "layer": "place",
+   "wire": "app_data",
+   "records": 3855,
+   "completeness": 0.5189,
+   "validity": 1.0,
+   "freshness": 0.2303,
+   "age_days": 152.0,
+   "accuracy": null,
+   "score": 0.5831
+  },
+  {
+   "layer": "imagery",
+   "wire": "app_data",
+   "records": 3855,
+   "completeness": 0.9965,
+   "validity": 1.0,
+   "freshness": 0.2303,
+   "age_days": 152.0,
+   "accuracy": null,
+   "score": 0.7423
+  },
+  {
+   "layer": "trails",
+   "wire": "trails",
+   "records": 17958,
+   "completeness": 0.7986,
+   "validity": 0.9937,
+   "freshness": 0.6506,
+   "age_days": 53.8,
+   "accuracy": null,
+   "score": 0.8143
+  },
+  {
+   "layer": "beaches",
+   "wire": "beaches",
+   "records": 2984,
+   "completeness": 0.9051,
+   "validity": 1.0,
+   "freshness": 1.0,
+   "age_days": 9.2,
+   "accuracy": null,
+   "score": 0.9684
+  },
+  {
+   "layer": "lakes",
+   "wire": "lakes",
+   "records": 1815,
+   "completeness": 0.9679,
+   "validity": 1.0,
+   "freshness": 1.0,
+   "age_days": 9.2,
+   "accuracy": null,
+   "score": 0.9893
+  },
+  {
+   "layer": "mountains",
+   "wire": "mountains",
+   "records": 932,
+   "completeness": 0.9998,
+   "validity": 1.0,
+   "freshness": 1.0,
+   "age_days": 9.2,
+   "accuracy": null,
+   "score": 0.9999
+  },
+  {
+   "layer": "cycling",
+   "wire": "cycling",
+   "records": 713,
+   "completeness": 0.9904,
+   "validity": 0.9243,
+   "freshness": 1.0,
+   "age_days": 13.9,
+   "accuracy": null,
+   "score": 0.9716
+  }
+ ],
+ "must_see": [
+  {
+   "id": "core.tier",
+   "layer": "core",
+   "field": "tier",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "core.city",
+   "layer": "core",
+   "field": "city",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "core.country",
+   "layer": "core",
+   "field": "country",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "core.lat",
+   "layer": "core",
+   "field": "lat",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "core.lon",
+   "layer": "core",
+   "field": "lon",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "core.categories",
+   "layer": "core",
+   "field": "categories",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "core.blurb",
+   "layer": "core",
+   "field": "blurb",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.91,
+   "value": 0.9359,
+   "previous": 0.9359,
+   "delta_points": 0.0
+  },
+  {
+   "id": "flights.anchor_airport",
+   "layer": "flights",
+   "field": "anchor_airport",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.94,
+   "value": 0.9645,
+   "previous": 0.9645,
+   "delta_points": 0.0
+  },
+  {
+   "id": "prices.costs",
+   "layer": "prices",
+   "field": "costs",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "prices.accommodation",
+   "layer": "prices",
+   "field": "accommodation",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.84,
+   "value": 0.8664,
+   "previous": 0.8664,
+   "delta_points": 0.0
+  },
+  {
+   "id": "rating.rating",
+   "layer": "rating",
+   "field": "rating",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "climate.climate",
+   "layer": "climate",
+   "field": "climate",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "place.place",
+   "layer": "place",
+   "field": "place",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "imagery.image",
+   "layer": "imagery",
+   "field": "image",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.97,
+   "value": 0.993,
+   "previous": 0.993,
+   "delta_points": 0.0
+  },
+  {
+   "id": "trails.name",
+   "layer": "trails",
+   "field": "name",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.97,
+   "value": 0.9937,
+   "previous": 0.9937,
+   "delta_points": 0.0
+  },
+  {
+   "id": "trails.distance_m",
+   "layer": "trails",
+   "field": "distance_m",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "trails.duration_min",
+   "layer": "trails",
+   "field": "duration_min",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "trails.difficulty",
+   "layer": "trails",
+   "field": "difficulty",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.95,
+   "value": 0.9719,
+   "previous": 0.9719,
+   "delta_points": 0.0
+  },
+  {
+   "id": "trails.rating",
+   "layer": "trails",
+   "field": "rating",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.96,
+   "value": 0.988,
+   "previous": 0.988,
+   "delta_points": 0.0
+  },
+  {
+   "id": "beaches.name",
+   "layer": "beaches",
+   "field": "name",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "beaches.lat",
+   "layer": "beaches",
+   "field": "lat",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "beaches.lon",
+   "layer": "beaches",
+   "field": "lon",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "beaches.score",
+   "layer": "beaches",
+   "field": "score",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "beaches.why",
+   "layer": "beaches",
+   "field": "why",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "beaches.images",
+   "layer": "beaches",
+   "field": "images",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "lakes.name",
+   "layer": "lakes",
+   "field": "name",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "lakes.lat",
+   "layer": "lakes",
+   "field": "lat",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "lakes.lon",
+   "layer": "lakes",
+   "field": "lon",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "lakes.score",
+   "layer": "lakes",
+   "field": "score",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "lakes.why",
+   "layer": "lakes",
+   "field": "why",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "lakes.images",
+   "layer": "lakes",
+   "field": "images",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "mountains.name",
+   "layer": "mountains",
+   "field": "name",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "mountains.lat",
+   "layer": "mountains",
+   "field": "lat",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "mountains.lon",
+   "layer": "mountains",
+   "field": "lon",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "mountains.score",
+   "layer": "mountains",
+   "field": "score",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "mountains.why",
+   "layer": "mountains",
+   "field": "why",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "mountains.images",
+   "layer": "mountains",
+   "field": "images",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "cycling.name",
+   "layer": "cycling",
+   "field": "name",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.9,
+   "value": 0.9243,
+   "previous": 0.9243,
+   "delta_points": 0.0
+  },
+  {
+   "id": "cycling.km",
+   "layer": "cycling",
+   "field": "km",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "cycling.score",
+   "layer": "cycling",
+   "field": "score",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "cycling.why",
+   "layer": "cycling",
+   "field": "why",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  },
+  {
+   "id": "cycling.img",
+   "layer": "cycling",
+   "field": "img",
+   "level": "must_see",
+   "kind": "hard",
+   "min": 0.98,
+   "value": 1.0,
+   "previous": 1.0,
+   "delta_points": 0.0
+  }
+ ],
+ "trend": {
+  "days": 90,
+  "points": [
+   {
+    "at": "2026-11-06T12:00:00Z",
+    "gate_ok": null,
+    "scores": {
+     "core": 0.7048,
+     "flights": 0.5763,
+     "prices": 0.7286,
+     "rating": 0.8038,
+     "climate": 0.6414,
+     "place": 0.5831,
+     "imagery": 0.7423,
+     "trails": 0.8147,
+     "beaches": 0.9684,
+     "lakes": 0.9893,
+     "mountains": 0.9999,
+     "cycling": 0.9716
+    }
+   },
+   {
+    "at": "2026-11-06T14:24:59Z",
+    "gate_ok": true,
+    "scores": {
+     "core": 0.7048,
+     "flights": 0.5763,
+     "prices": 0.7286,
+     "rating": 0.8038,
+     "climate": 0.6414,
+     "place": 0.5831,
+     "imagery": 0.7423,
+     "trails": 0.8143,
+     "beaches": 0.9684,
+     "lakes": 0.9893,
+     "mountains": 0.9999,
+     "cycling": 0.9716
+    }
+   }
+  ]
+ }
+}

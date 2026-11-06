@@ -15,8 +15,8 @@ For each layer of the shipped data, four numbers between 0 and 1:
                 Every other layer reads null until the D4 truth set exists.
 
 `score` is the mean of the numbers a layer has. It is a summary for the trend,
-not a gate: no threshold fails a run yet (the D2 hard and soft rules are open,
-T1134 register rows).
+not a gate. The gate is scripts/quality/engine.py (T1142): it reads
+scripts/quality/rules.yaml, builds this card, and fails the run on a hard rule.
 
     python -I scripts/quality/scorecard.py                    # print the table
     python -I scripts/quality/scorecard.py --write            # data/reports/quality/<date>.json and .md,
@@ -258,18 +258,26 @@ def main(argv=None) -> int:
     md = markdown(card)
     print(json.dumps(card, indent=1) if a.json else md, end="")
     if a.write:
-        out = Path(a.out)
-        out.mkdir(parents=True, exist_ok=True)
-        day = card["generated_at"][:10]
-        (out / f"{day}.json").write_text(json.dumps(card, indent=1) + "\n", encoding="utf-8")
-        (out / f"{day}.md").write_text(md, encoding="utf-8")
-        hist = {"generated_at": card["generated_at"],
-                "layers": {r["layer"]: {k: r[k] for k in ("completeness", "validity", "freshness", "accuracy", "score")}
-                           for r in card["layers"]}}
-        with (out / "quality_history.jsonl").open("a", encoding="utf-8") as fh:
-            fh.write(json.dumps(hist) + "\n")
-        print(f"written {out / (day + '.json')}", file=sys.stderr)
+        write_card(card, Path(a.out), md)
     return 0
+
+
+def write_card(card: dict, out: Path, md: str | None = None, extra: dict | None = None) -> None:
+    """<date>.json and .md, plus one line in quality_history.jsonl. The line
+    carries each field's completeness (T1142) so the next run's gate can
+    compare field by field; `extra` adds keys to the line (the gate result)."""
+    out.mkdir(parents=True, exist_ok=True)
+    day = card["generated_at"][:10]
+    (out / f"{day}.json").write_text(json.dumps(card, indent=1) + "\n", encoding="utf-8")
+    (out / f"{day}.md").write_text(md if md is not None else markdown(card), encoding="utf-8")
+    hist = {"generated_at": card["generated_at"],
+            "layers": {r["layer"]: {**{k: r[k] for k in ("completeness", "validity", "freshness", "accuracy", "score")},
+                                    "fields": r.get("fields", {})}
+                       for r in card["layers"]},
+            **(extra or {})}
+    with (out / "quality_history.jsonl").open("a", encoding="utf-8") as fh:
+        fh.write(json.dumps(hist) + "\n")
+    print(f"written {out / (day + '.json')}", file=sys.stderr)
 
 
 if __name__ == "__main__":

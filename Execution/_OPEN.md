@@ -1731,3 +1731,11 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1128-f | T1128 | verify_axe.mjs takes about 45 min for 30 runs on a dev server, too slow for ci.yml; add a nightly or path-triggered workflow on a preview build with a short screen list | next task | open |  |
 | T1128-g | T1128 | AskTurn.jsx gives its place rows hitProps aria-label askChat.pickAria, the pattern T1128 removed from the map panel (WCAG 2.5.3); Ask was not in the audit | next task | open |  |
 | T1128-h | T1128 | Look at the home header on the real film at 1280 px: its labels now carry a hairline ink shadow so they hold 4.5:1 without the film (the container could not load the film or photos) | user | open |  |
+| T1142-a | T1142 | The audit scripts ROADMAP D2 names (audit_quality.py, audit_gaps.py, dossier/audit.py, image audits, trails freshness) are not folded into scripts/quality/rules.yaml | next task | open |  |
+| T1142-b | T1142 | Quality rules gate completeness only; validity, freshness and rating accuracy are on the card but no rule reads them (a hard freshness rule would fail every run today, app_data 152 days old) | next task | open |  |
+| T1142-c | T1142 | Confirm the must_see and must_have split and the floors in scripts/quality/rules.yaml (carries T1134-g: tags, wikidata, transfer must_have at floor 0) | user | open |  |
+| T1142-d | T1142 | The Data health panel imports its snapshot at build time and the box's reset restores the committed one; decide a run-time path for panel.json (R2 status/ or a box commit) and fetch it | user | open |  |
+| T1142-e | T1142 | verify_admin_panel.mjs step 9h (Data health) has not run end to end: the cloud container cannot reach data.carta-europetravel.com, so the app stops before the account door | next task | open |  |
+| T1142-f | T1142 | On the box set CARTA_QUALITY_OUT=logs/status/quality and seed it from data/reports/quality/, so the quality history and drop baseline survive weekly.sh's git reset | user | open |  |
+| T1142-g | T1142 | MAP.md does not name scripts/quality/engine.py, rules.yaml or the admin Data health tab (adds to T1134-f) | next task | open |  |
+| T1142-h | T1142 | docs/runbooks/drift-and-scorecard.md still calls the scorecard not a gate and has no section on the quality gate or a failed quality task | next task | open |  |
