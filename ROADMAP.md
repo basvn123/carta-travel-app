@@ -611,6 +611,8 @@ docs/
 | D20 | Heat and fire risk by month | Months with extreme heat or wildfire risk marked per place from open climate data, so "best months" never sends a family into 42 degrees | S | P3 | proposed (owner decides; added 2026-11-06) |
 | D21 | Accessibility facts | Step-free access and accessible toilets at key places and stations, from OpenStreetMap tags where present, shown only when known | S | P4 | proposed (owner decides; added 2026-11-06) |
 | D22 | Trip footprint | An honest CO2 estimate per trip and per transport mode from published emission factors, shown beside the price | S | P4 | proposed (owner decides; added 2026-11-06) |
+| D23 | External validation of every layer | Every layer and every generated text has a validation run per release: a comparison with outside references whose terms allow it, a calibrated LLM judge where facts are textual, the 30 largest gaps reviewed with a verdict, corrections made at the cause, and a gate that fails the run when a must-pass check drops; results in one scorecard per layer | L | P3 (method and first runs), P4 (every layer, every release) | todo (added 2026-11-06 at the owner's request) |
+| D24 | Trail quality pack | Trail summaries for the top band; the downhill relief fix (T286-c); the trails external check with a trail validation gate; the trails lab on the box (T784-a); the 3,518 broken routes repaired where they become continuous; multi-stage treks as one record with stages; the way back for one-way walks; mountains and lakes filled | L | P1 to P2 | todo (added 2026-11-06 at the owner's request) |
 
 ### Item details
 
@@ -686,6 +688,53 @@ docs/
 - D20 heat and fire risk: summer heat waves and wildfire seasons change which months are really good; open climate data (the sources already in the climate layer) can flag them.
 - D21 accessibility facts: OpenStreetMap carries `wheelchair` and toilet tags for many places and stations; show them only where they exist, never as a guarantee.
 - D22 trip footprint: travellers increasingly ask; an estimate from published emission factors per mode fits Carta's honest-numbers promise. Label it as an estimate.
+
+**D23. External validation of every layer** (added 2026-11-06)
+
+*Why.* A number or a sentence Carta shows should agree with the best outside evidence, or Carta should know why it differs. T760 did this once for place ratings (top 200 against Tripadvisor, Lonely Planet, UNESCO and Wikivoyage; 30 gaps reviewed, 9 corrected). D23 makes it the rule for everything, every release.
+
+*The method, the same for every layer:*
+1. **References.** A research subagent (CLAUDE.md step 3) picks the outside sources for the layer. They must be official, open or published sources whose terms allow the use; sites that forbid scraping (Komoot, AllTrails, Booking, Google) are never scraped.
+2. **Measure.** Coverage (does Carta have what the references name), agreement (rank correlation or error), and the share of facts that match.
+3. **LLM judge for text and facts.** Intros, summaries, trip text, Ask answers and translations are checked against their cited sources by a model judge. Where it runs:
+   - in a Claude Code session, offline;
+   - or through the pipeline's Gemini key;
+   - never through the Claude API.
+   The judge is calibrated against human judgments (D4, Cohen's kappa) before its verdicts count.
+4. **Review.** The 30 largest gaps both ways are reviewed with a verdict and a reason, as in T760.
+5. **Correct at the cause.** Fix or fetch the data, fix the bug, or re-tune a weight once against a frozen reference with part of it held out. Scores are never hand-edited to match a list.
+6. **Gate.** Must-pass checks join the D2 quality engine, so a regression fails the run.
+7. **Scorecard.** One file per layer per release in `data/reports/validation/`, with a trend line in admin (D2).
+
+*Per layer: references to try* (the research step confirms each one and its terms):
+
+| Layer | References to try | What is checked |
+|---|---|---|
+| Place ratings | Repeat T760; Wikivoyage, UNESCO, national tourism boards' lists, published best-of lists | Rank agreement, the 30 gaps |
+| Trails | Famous registry, certified quality trails (Leading Quality Trails, Premiumwege), national portals, Wikipedia trail lists (D24) | Coverage of famous walks, rank agreement, distance and climb error |
+| Beaches | EEA bathing water quality, Blue Flag lists, national beach lists | Water class, swim flags, coverage |
+| Lakes | EEA and national water bodies, swimming lists | Water class, swim flags |
+| Mountains | Wikidata and OSM heights, prominence lists, national summit lists | Height, prominence, route up |
+| Cycling | EuroVelo official routes, national cycle networks | Route coverage and geometry |
+| Prices | Eurostat price levels, a hand-checked sample of live listings, published fare examples | Error against the reference |
+| Climate and sea temperature | National met office normals, Copernicus | Error per month |
+| Crowds | Eurostat and national visitor statistics | Month shape agreement |
+| Trips | Official timetables and operator sites for each leg; the trip validator and critic | Feasible legs, honest times |
+| Texts and translations | The cited sources; back-translation and native review (I8) | Grounding, no invented facts |
+| Ask answers | E1 eval set | Grounding and recall |
+| Photos | D17 | The photo shows the named place |
+
+*Order.* Trails first (D24), then beaches and prices (the most visible numbers), then the rest. Each run is sized as a sample per layer, stratified by country, so the cost stays small and the result holds for the whole layer.
+
+**D24. Trail quality pack** (added 2026-11-06): the trail work D7's current sessions leave out, run early in round 2 right after D7's S10:
+- summaries for the 2,348 top-band trails, grounded in the trail's own facts;
+- the downhill relief fix (488 routes, T286-c);
+- the trails external check, D23's method applied to trails, with a trail validation gate like the places' one;
+- the trails lab moved to the box (T784-a);
+- the 3,518 `failed_continuity` routes repaired with the routing engine within strict limits, publishing only what becomes continuous;
+- multi-stage treks as one parent record with ordered stages (540 of 594 stage groups have none), shown as one walk and as a multi-day trip;
+- the way back to the start for one-way walks, linked to the trip planner;
+- mountains (route up, 14.8% today) and lakes (water class 55.8%, 258 unknown swim flags) filled.
 
 **Depends on.** H1, B2. D7 to D12 also need H9 (scheduling) and D5 (scraper health).
 

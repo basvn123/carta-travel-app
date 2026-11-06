@@ -3,6 +3,7 @@
 The next 50 sessions once S44 of `_NEXT-50-SESSIONS.md` is done:
 - **S45 to S50** finish the first plan (task numbers T1129 to T1134, unchanged).
 - **S51 to S94** are new, with task numbers **T1135 to T1178** reserved in order.
+- **S95 to S112** (wave 10: trail quality and external validation) were added the same day, with task numbers **T1179 to T1196** reserved in order.
 
 The same rules apply as in `_NEXT-50-SESSIONS.md` ("Rules for running many sessions"), including rule 8: a session that picks a tool, library, model, service, data source or method runs a research subagent first (CLAUDE.md step 3).
 
@@ -91,6 +92,36 @@ Written 2026-11-06 from ROADMAP.md as it stood that day. Before starting, check 
 | 92 | T1176 | K8 | Open dataset: a CC-BY subset with licences checked, and the write-up | Sonnet | None |
 | 93 | T1177 | G5 | Motion system | Sonnet | Design direction (S27) |
 | 94 | T1178 | K10 | Press kit page and the journalist list | Sonnet | None (name decided: Carta) |
+
+## Wave 10: trail quality and external validation (S95 to S112)
+
+Added 2026-11-06 at the owner's request (ROADMAP D23 and D24). Task numbers **T1179 to T1196** are reserved in order.
+- **Run order:** the trail pack (S95 to S102) is best run early, right after S10 of the first plan, not after S94. Its numbers stay as listed here.
+- **Research first:** every validation session starts with a research subagent that picks the references and checks their terms.
+- **LLM judge:** text checks use a calibrated judge, offline in a session or on the pipeline's Gemini key, never the Claude API.
+
+| S | Task | Item | Scope | Model | Gate |
+|---|---|---|---|---|---|
+| 95 | T1179 | D24 | Trail summaries for the 2,348 top-band trails, grounded in each trail's own facts, checked by the D2 rules | Sonnet | None |
+| 96 | T1180 | D24 | The downhill relief fix (488 routes, T286-c), and a re-rate | Sonnet | None |
+| 97 | T1181 | D24, D23 | Trails external check: the famous registry, certified quality trails, national portals and Wikipedia lists against Carta's coverage and ranking; the 30 largest gaps reviewed; corrections at the cause; a trail validation gate | Opus | None |
+| 98 | T1182 | D24 | The trails lab on the box (T784-a), so trail runs no longer need the laptop | Opus | Box access (owner) |
+| 99 | T1183 | D24 | Repair the 3,518 `failed_continuity` routes with the routing engine within strict limits; publish only what becomes continuous | Opus | Box or laptop run |
+| 100 | T1184 | D24 | Multi-stage treks as one parent record with ordered stages, shown as one walk and as a multi-day trip | Opus | None |
+| 101 | T1185 | D24 | The way back to the start for one-way walks, linked to the trip planner | Sonnet | None |
+| 102 | T1186 | D24, D7 | Mountains (route up) and lakes (water class, swim flags) filled | Sonnet | Network run |
+| 103 | T1187 | D23 | The validation method and scorecard: shared runner, sampling per country, `data/reports/validation/`, the admin trend, gate wiring into D2 | Opus | After S50 and S58 |
+| 104 | T1188 | D23, D4 | The LLM judge: prompts, calibration against the D4 human sample (Cohen's kappa), the threshold for its verdicts to count | Opus | D4 hand sample (owner) |
+| 105 | T1189 | D23 | Beaches: EEA bathing water, Blue Flag and national lists against water class, swim flags and coverage | Sonnet | None |
+| 106 | T1190 | D23 | Prices: beds, food and fares against Eurostat price levels and a hand-checked sample of live listings | Opus | None |
+| 107 | T1191 | D23 | Place ratings: repeat T760 on the current ratings with more references; the 30 gaps | Opus | None |
+| 108 | T1192 | D23 | Lakes and mountains: heights, prominence, water class against Wikidata, OSM and national lists | Sonnet | None |
+| 109 | T1193 | D23 | Cycling: EuroVelo and national networks against coverage and geometry | Sonnet | None |
+| 110 | T1194 | D23 | Climate, sea temperature and crowds against national met office normals, Copernicus and Eurostat | Sonnet | None |
+| 111 | T1195 | D23 | Trips: every leg against official timetables and operator sites; honest times | Opus | None |
+| 112 | T1196 | D23 | Texts and translations: intros, summaries and trip text against their cited sources with the calibrated judge; back-translation check before the native review (I8) | Opus | After S104 |
+
+After the first full pass, each validation reruns every release as part of the D2 run. Only the review of new gaps needs a session.
 
 ## If the owner accepts the proposed items
 
