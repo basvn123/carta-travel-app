@@ -488,7 +488,7 @@ docs/
 | C4 | Data access and RLS | RLS on every table proven by tests (exist, extended), service-role key never in the browser, storage and R2 access reviewed | S | P2 | in progress (T1078: all 34 tables fixtured, signed-out reads fixed, bundle key check; 063 is T1078-a. T1087: all 16 admin harnesses green to 064 and in CI, definer search_path test) |
 | C5 | Web and API hardening | Strict CSP and security headers, CORS allow-list, input validation on every endpoint, durable rate limits (with H3), Stripe webhook signature check verified | M | P2 | in progress (T1079: headers, function guards, Edge CORS and body caps; T1090: no style-src 'unsafe-inline', CSP gate in CI; deploy and WAF are T1079-a, T1079-b) |
 | C6 | Supply chain | Lockfiles enforced, `npm audit`, `pip-audit`, OSV in CI, Renovate or Dependabot, GitHub Actions pinned to SHAs, SBOM per release | S | P3 | done (T1080; gates on since T1088, first CI run unverified: T1080-c) |
-| C7 | Static analysis | Semgrep or CodeQL on every PR, findings triaged to zero high | S | P3 | todo |
+| C7 | Static analysis | Semgrep or CodeQL on every PR, findings triaged to zero high | S | P3 | done (T1119) |
 | C8 | AI security | OWASP LLM Top 10 mapped to Carta; guardrail module (E3) covers injection, output handling, excessive agency, data leakage; injection set in CI | M | P3 | todo |
 | C9 | Privacy and GDPR | Data map (what personal data, where, how long), retention jobs, export and delete tested end to end, Article 30 current, a light DPIA for AI features | M | P3 | todo |
 | C10 | Security testing | ZAP baseline scan in CI against preview deploys; full ASVS L2 checklist walked and recorded | M | P4 | todo |

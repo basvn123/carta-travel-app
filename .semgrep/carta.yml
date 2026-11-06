@@ -1,0 +1,195 @@
+# Carta static-analysis rules (T1119, ROADMAP C7).
+# Local rules only: the Semgrep registry is not needed, so the scan is
+# reproducible offline and a rule change is a reviewed diff.
+# Add a rule here, run `python scripts/ci/semgrep_gate.py --update-baseline`
+# only for findings you have triaged (see docs/security/static-analysis.md).
+rules:
+  - id: carta-no-service-role-in-client
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: The service_role key must never be named in client or Edge code paths that ship to a browser.
+    pattern-regex: service_role
+    paths:
+      include: ["/continent-app/src/**"]
+
+  - id: carta-no-claude-api-js
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: Never use the Claude API (CLAUDE.md). Runtime AI stays on the Gemini-backed Edge Functions.
+    pattern-regex: (?:from\s+|require\(\s*|import\(\s*)["']@anthropic-ai/|api\.anthropic\.com
+
+  - id: carta-no-claude-api-py
+    languages: [python]
+    severity: ERROR
+    message: Never use the Claude API (CLAUDE.md).
+    pattern-regex: (?m)^\s*(?:import\s+anthropic\b|from\s+anthropic\b)|api\.anthropic\.com
+
+  - id: carta-react-dangerous-html
+    languages: [javascript, typescript]
+    severity: WARNING
+    message: dangerouslySetInnerHTML with a non-literal value is an XSS risk. Sanitise or render as text.
+    patterns:
+      - pattern: '<$EL dangerouslySetInnerHTML={{__html: $X}} />'
+      - pattern-not: '<$EL dangerouslySetInnerHTML={{__html: "..."}} />'
+
+  - id: carta-dom-inner-html
+    languages: [javascript, typescript]
+    severity: WARNING
+    message: Assigning to innerHTML/outerHTML or insertAdjacentHTML with a non-literal is an XSS risk.
+    patterns:
+      - pattern-either:
+          - pattern: $E.innerHTML = $X
+          - pattern: $E.outerHTML = $X
+          - pattern: $E.insertAdjacentHTML($P, $X)
+          - pattern: document.write($X)
+      - pattern-not: $E.innerHTML = "..."
+
+  - id: carta-js-eval
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: eval and new Function run arbitrary code.
+    pattern-either:
+      - pattern: eval(...)
+      - pattern: new Function(...)
+
+  - id: carta-js-timer-string
+    languages: [javascript, typescript]
+    severity: WARNING
+    message: setTimeout/setInterval with a string argument is eval.
+    pattern-either:
+      - pattern: setTimeout("...", ...)
+      - pattern: setInterval("...", ...)
+
+  - id: carta-js-exec-shell
+    languages: [javascript, typescript]
+    severity: WARNING
+    message: child_process exec/execSync run a shell; use execFile/spawn with an argument array.
+    patterns:
+      - pattern-either:
+          - pattern: exec(...)
+          - pattern: execSync(...)
+          - pattern: child_process.exec(...)
+          - pattern: child_process.execSync(...)
+          - pattern: cp.exec(...)
+          - pattern: cp.execSync(...)
+      - pattern-not: exec("...", ...)
+      - pattern-not: execSync("...", ...)
+    paths:
+      exclude: ["**/node_modules/**"]
+
+  - id: carta-js-insecure-tls
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: Disabling TLS verification.
+    pattern-either:
+      - pattern: "{..., rejectUnauthorized: false, ...}"
+      - pattern-regex: NODE_TLS_REJECT_UNAUTHORIZED\s*=\s*['"]?0
+
+  - id: carta-js-sql-concat
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: SQL built from a template string or concatenation. Use parameters or an RPC.
+    pattern-either:
+      - pattern: $C.query(`...${$X}...`)
+      - pattern: $C.unsafe(`...${$X}...`)
+      - pattern: $C.query("..." + $X)
+
+  - id: carta-js-postmessage-star
+    languages: [javascript, typescript]
+    severity: WARNING
+    message: postMessage with target origin "*" leaks data to any embedding page.
+    pattern: $W.postMessage($M, "*")
+
+  - id: carta-py-shell-true
+    languages: [python]
+    severity: ERROR
+    message: subprocess with shell=True invites command injection.
+    pattern-either:
+      - pattern: subprocess.$F(..., shell=True, ...)
+      - pattern: os.system(...)
+      - pattern: os.popen(...)
+
+  - id: carta-py-eval-exec
+    languages: [python]
+    severity: ERROR
+    message: eval/exec run arbitrary code.
+    pattern-either:
+      - pattern: eval(...)
+      - pattern: exec(...)
+
+  - id: carta-py-unsafe-deserialise
+    languages: [python]
+    severity: ERROR
+    message: pickle, marshal and yaml.load without SafeLoader can execute code.
+    pattern-either:
+      - pattern: pickle.load(...)
+      - pattern: pickle.loads(...)
+      - pattern: marshal.load(...)
+      - pattern: marshal.loads(...)
+      - pattern: yaml.load(...)
+      - pattern: yaml.unsafe_load(...)
+    pattern-not: yaml.load(..., Loader=yaml.SafeLoader)
+
+  - id: carta-py-requests-no-verify
+    languages: [python]
+    severity: ERROR
+    message: TLS verification disabled.
+    pattern-either:
+      - pattern: requests.$F(..., verify=False, ...)
+      - pattern: $S.get(..., verify=False, ...)
+      - pattern: ssl._create_unverified_context(...)
+
+  - id: carta-py-sql-fstring
+    languages: [python]
+    severity: ERROR
+    message: SQL built with an f-string, format or % from variables. Use bound parameters.
+    pattern-either:
+      - pattern: $C.execute(f"...{$X}...")
+      - pattern: $C.execute("..." % $X)
+      - pattern: $C.execute("...".format(...))
+      - pattern: $C.execute("..." + $X)
+      - pattern: $C.executescript(f"...{$X}...")
+
+  - id: carta-py-requests-no-timeout
+    languages: [python]
+    severity: INFO
+    message: requests call without a timeout can hang the pipeline forever.
+    patterns:
+      - pattern-either:
+          - pattern: requests.get(...)
+          - pattern: requests.post(...)
+      - pattern-not: requests.$F(..., timeout=$T, ...)
+
+  - id: carta-py-weak-hash
+    languages: [python]
+    severity: INFO
+    message: md5/sha1 are fine for cache keys but never for security. Pass usedforsecurity=False or switch to sha256.
+    patterns:
+      - pattern-either:
+          - pattern: hashlib.md5(...)
+          - pattern: hashlib.sha1(...)
+      - pattern-not: hashlib.$F(..., usedforsecurity=False)
+
+  - id: carta-sql-definer-search-path
+    languages: [generic]
+    severity: ERROR
+    message: SECURITY DEFINER function without a pinned search_path (privilege escalation through schema shadowing).
+    pattern-regex: (?is)create\s+(?:or\s+replace\s+)?function\s[^$;]*?security\s+definer(?:(?!set\s+search_path)[^$;])*?\bas\s+\$
+    paths:
+      include: ["/supabase/**/*.sql"]
+
+  - id: carta-sql-dynamic-execute
+    languages: [generic]
+    severity: WARNING
+    message: EXECUTE of a concatenated string inside SQL; use format with %I/%L or USING.
+    pattern-regex: (?i)\bexecute\s+[^;]*\|\|
+    paths:
+      include: ["/supabase/**/*.sql"]
+
+  - id: carta-sql-grant-anon-all
+    languages: [generic]
+    severity: ERROR
+    message: Granting write or all privileges to anon/public.
+    pattern-regex: (?i)grant\s+(?:all|insert|update|delete)\b[^;]*\bto\s+(?:anon|public)\b
+    paths:
+      include: ["/supabase/**/*.sql"]
