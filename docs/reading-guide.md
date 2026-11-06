@@ -329,7 +329,7 @@ Some of the most exact documentation lives in code and config:
 ## Appendix A: every Markdown file in the repository
 
 <!-- INDEX:START -->
-Generated on 2026-11-06 from `git ls-files`: 422 files outside the archive, grouped by folder, each with its first heading. Task reports are named `T<number>-<slug>.md`; phase digests `_DIGEST.md`; owner procedures `_OPEN-<system>.md`. Regenerate with `python -I scripts/docs/build_reading_guide_index.py` when files move; it also checks that every link resolves.
+Generated on 2026-11-06 from `git ls-files`: 508 files outside the archive, grouped by folder, each with its first heading. Task reports are named `T<number>-<slug>.md`; phase digests `_DIGEST.md`; owner procedures `_OPEN-<system>.md`. Regenerate with `python -I scripts/docs/build_reading_guide_index.py` when files move; it also checks that every link resolves.
 
 **(repository root)** (6)
 
@@ -453,12 +453,13 @@ Generated on 2026-11-06 from `git ls-files`: 422 files outside the archive, grou
 |---|---|
 | [Execution/P13/_DIGEST.md](../Execution/P13/_DIGEST.md) | P13 digest |
 
-**Execution/P15/** (196)
+**Execution/P15/** (249)
 
 | File | Title |
 |---|---|
 | [Execution/P15/_BRIEF-plan-flow-v3.md](../Execution/P15/_BRIEF-plan-flow-v3.md) | Plan flow v3: shared brief for every batch agent |
 | [Execution/P15/_HANDOVER-2026-11-05.md](../Execution/P15/_HANDOVER-2026-11-05.md) | Handover, 2026-11-05: read this first |
+| [Execution/P15/_MORNING-2026-11-06.md](../Execution/P15/_MORNING-2026-11-06.md) | Morning summary, 2026-11-06: the 50 sessions (all 50 merged) |
 | [Execution/P15/_NEXT-50-SESSIONS.md](../Execution/P15/_NEXT-50-SESSIONS.md) | The next 50 sessions (from 2026-11-06) |
 | [Execution/P15/_OPEN-accounts-and-signups.md](../Execution/P15/_OPEN-accounts-and-signups.md) | Owner procedure: Accounts, mailboxes and programme sign-ups (T1072, ROADMAP A3) |
 | [Execution/P15/_OPEN-auth-settings.md](../Execution/P15/_OPEN-auth-settings.md) | Owner procedure: Supabase Auth settings and admin MFA (T1071, ROADMAP C3, row T1071-a) |
@@ -481,6 +482,8 @@ Generated on 2026-11-06 from `git ls-files`: 422 files outside the archive, grou
 | [Execution/P15/_OPEN-web-hardening.md](../Execution/P15/_OPEN-web-hardening.md) | Owner procedure: web and API hardening (T1079, C5) |
 | [Execution/P15/_PLAN-plan-flow-v3.md](../Execution/P15/_PLAN-plan-flow-v3.md) | Plan flow v3: build plan |
 | [Execution/P15/_PLAN-trip-page-v4.md](../Execution/P15/_PLAN-trip-page-v4.md) | Trip page v4: one page you change in place |
+| [Execution/P15/_RUN-50-common-brief.md](../Execution/P15/_RUN-50-common-brief.md) |  |
+| [Execution/P15/_RUN-50-SESSIONS.md](../Execution/P15/_RUN-50-SESSIONS.md) | Run log: the 50 sessions (started 2026-11-05 23:14 UTC) |
 | [Execution/P15/_RUN-plan-flow-v3.md](../Execution/P15/_RUN-plan-flow-v3.md) | Plan flow v3: overnight run log |
 | [Execution/P15/_SESSIONS-ROUND-2.md](../Execution/P15/_SESSIONS-ROUND-2.md) | Round 2: the 50 sessions after S44 |
 | [Execution/P15/T1000-stale-tab-reload.md](../Execution/P15/T1000-stale-tab-reload.md) | T1000: a tab open across a deploy reloads instead of crashing |
@@ -554,6 +557,56 @@ Generated on 2026-11-06 from `git ls-files`: 422 files outside the archive, grou
 | [Execution/P15/T1082-cleanup.md](../Execution/P15/T1082-cleanup.md) | T1082: Live-stays leftovers and admin test scripts |
 | [Execution/P15/T1083-register-triage.md](../Execution/P15/T1083-register-triage.md) | T1083: register triage, second pass (ROADMAP A3, row T1072-a) |
 | [Execution/P15/T1084-licence-registry.md](../Execution/P15/T1084-licence-registry.md) | T1084: licence registry current, two CI failures on PR #10 |
+| [Execution/P15/T1085-docs-truth.md](../Execution/P15/T1085-docs-truth.md) | T1085: Docs truth (ROADMAP B2, row T1073-a) |
+| [Execution/P15/T1086-runbooks.md](../Execution/P15/T1086-runbooks.md) | T1086: backup, refund and incident runbooks |
+| [Execution/P15/T1087-admin-harness-ci.md](../Execution/P15/T1087-admin-harness-ci.md) | T1087: Admin harnesses to migration 064, in CI, and a definer search_path test |
+| [Execution/P15/T1088-supply-chain-gates.md](../Execution/P15/T1088-supply-chain-gates.md) | T1088: Supply chain gates (ROADMAP C6) |
+| [Execution/P15/T1089-verify-harness-refresh.md](../Execution/P15/T1089-verify-harness-refresh.md) | T1089: Verify harness refresh (A3, row T1083-a) |
+| [Execution/P15/T1090-csp-no-inline-style.md](../Execution/P15/T1090-csp-no-inline-style.md) | T1090: CSP without style-src 'unsafe-inline', and the CSP gate in CI |
+| [Execution/P15/T1091-attribution-ledger.md](../Execution/P15/T1091-attribution-ledger.md) | T1091: Attribution ledger audit (I3, row T1084-a) |
+| [Execution/P15/T1092-trail-names.md](../Execution/P15/T1092-trail-names.md) | T1092: Trail display names and per-day difficulty |
+| [Execution/P15/T1093-trail-photos.md](../Execution/P15/T1093-trail-photos.md) | T1093: Trail photos with a licence on every image (D7, K2, row T1076-c) |
+| [Execution/P15/T1094-recover-walks.md](../Execution/P15/T1094-recover-walks.md) | T1094: recover the walks lost in the trail build (D7) |
+| [Execution/P15/T1095-place-intros.md](../Execution/P15/T1095-place-intros.md) | T1095: Grounded place intros for FR, RS and IT (D9) |
+| [Execution/P15/T1096-galleries-poi.md](../Execution/P15/T1096-galleries-poi.md) | T1096: Gallery pass and POI descriptions for GB, RO, FR and IT (D9) |
+| [Execution/P15/T1097-sea-temp.md](../Execution/P15/T1097-sea-temp.md) | T1097: Sea temperature chain ready (D8) |
+| [Execution/P15/T1098-uk-crowds.md](../Execution/P15/T1098-uk-crowds.md) | T1098: UK crowds by month (D11) |
+| [Execution/P15/T1099-freshness.md](../Execution/P15/T1099-freshness.md) | T1099: Wire freshness and stamps (D12, S15) |
+| [Execution/P15/T1100-getting-there.md](../Execution/P15/T1100-getting-there.md) | T1100: Getting there mode choice (ROADMAP D13, audit P-31) |
+| [Execution/P15/T1101-ask-cards-agree.md](../Execution/P15/T1101-ask-cards-agree.md) | T1101: Ask answers and cards agree (E6, S17) |
+| [Execution/P15/T1102-trail-cards.md](../Execution/P15/T1102-trail-cards.md) | T1102: Trail cards and trail links (G13) |
+| [Execution/P15/T1103-plan-flow-short.md](../Execution/P15/T1103-plan-flow-short.md) | T1103: A shorter plan flow (ROADMAP G12, session S19) |
+| [Execution/P15/T1104-account-sync.md](../Execution/P15/T1104-account-sync.md) | T1104: Accounts that keep your work (account sync) |
+| [Execution/P15/T1105-first-load.md](../Execution/P15/T1105-first-load.md) | T1105: First paint prefers the self-hosted image copies |
+| [Execution/P15/T1106-error-boundaries.md](../Execution/P15/T1106-error-boundaries.md) | T1106: Errors that stay local (S22, ROADMAP H13) |
+| [Execution/P15/T1107-box-schedule.md](../Execution/P15/T1107-box-schedule.md) | T1107: every pipeline task on a box schedule |
+| [Execution/P15/T1108-support-pages.md](../Execution/P15/T1108-support-pages.md) | T1108: Support and trust pages (ROADMAP I9) |
+| [Execution/P15/T1109-channel-counts.md](../Execution/P15/T1109-channel-counts.md) | T1109: Cookieless channel counts (K12) |
+| [Execution/P15/T1110-waitlist.md](../Execution/P15/T1110-waitlist.md) | T1110: Waitlist and newsletter capture with double opt-in (S26, ROADMAP K3) |
+| [Execution/P15/T1111-design-direction.md](../Execution/P15/T1111-design-direction.md) | T1111: design direction for owner approval |
+| [Execution/P15/T1112-aviasales-probe.md](../Execution/P15/T1112-aviasales-probe.md) | T1112: Aviasales Data API coverage probe |
+| [Execution/P15/T1113-seo-bar.md](../Execution/P15/T1113-seo-bar.md) | T1113: SEO quality bar for every page kind, trip canonicals, trail prose (K2, session S29) |
+| [Execution/P15/T1114-not-yet-notes.md](../Execution/P15/T1114-not-yet-notes.md) | T1114: The thin-bed and not-yet notes on every price screen (ROADMAP D10, row T1075-c) |
+| [Execution/P15/T1115-local-fares-prep.md](../Execution/P15/T1115-local-fares-prep.md) | T1115: Local transport fares, ungated preparation (D10, row T1075-b) |
+| [Execution/P15/T1116-register-rule.md](../Execution/P15/T1116-register-rule.md) | T1116: register rule, four dry runs (ROADMAP A3, row T1083-a) |
+| [Execution/P15/T1117-ai-security.md](../Execution/P15/T1117-ai-security.md) | T1117: AI security for Ask, plan-day and parse-booking (ROADMAP C8, with E3) |
+| [Execution/P15/T1118-privacy-gdpr.md](../Execution/P15/T1118-privacy-gdpr.md) | T1118: Privacy and GDPR: Article 30 current, retention sweep, export and delete end to end |
+| [Execution/P15/T1119-static-analysis.md](../Execution/P15/T1119-static-analysis.md) | T1119: Static analysis in CI (C7) |
+| [Execution/P15/T1120-error-tracking.md](../Execution/P15/T1120-error-tracking.md) | T1120: Error tracking with a privacy-safe setup (S36, ROADMAP H2) |
+| [Execution/P15/T1121-shared-parts.md](../Execution/P15/T1121-shared-parts.md) | T1121: shared parts that exist once |
+| [Execution/P15/T1122-cost-card.md](../Execution/P15/T1122-cost-card.md) | T1122: The umber cost card as signature (flagged variant) |
+| [Execution/P15/T1123-core-flow-fixes.md](../Execution/P15/T1123-core-flow-fixes.md) | T1123: Core flow fixes (ROADMAP G4, session S39) |
+| [Execution/P15/T1124-motion-tokens.md](../Execution/P15/T1124-motion-tokens.md) | T1124: Motion tokens and one reduced-motion path (G5, ungated half) |
+| [Execution/P15/T1125-type-radius.md](../Execution/P15/T1125-type-radius.md) | T1125: Type and radius debt (G6) |
+| [Execution/P15/T1126-css-consolidation.md](../Execution/P15/T1126-css-consolidation.md) | T1126: Breakpoints and CSS consolidation (G7, S42) |
+| [Execution/P15/T1127-imagery-gaps.md](../Execution/P15/T1127-imagery-gaps.md) | T1127: Imagery gaps (G8, session 43) |
+| [Execution/P15/T1128-accessibility.md](../Execution/P15/T1128-accessibility.md) | T1128: Accessibility audit of the surfaces (ROADMAP G10, session S44) |
+| [Execution/P15/T1129-product-analytics.md](../Execution/P15/T1129-product-analytics.md) | T1129: Product analytics without cookies or identifiers (I11) |
+| [Execution/P15/T1130-data-stories.md](../Execution/P15/T1130-data-stories.md) | T1130: Data stories, the yearly basket per country (K5, S46) |
+| [Execution/P15/T1131-press-kit.md](../Execution/P15/T1131-press-kit.md) | T1131: Press kit page and journalist list (K10) |
+| [Execution/P15/T1132-logic-catalogue.md](../Execution/P15/T1132-logic-catalogue.md) | T1132: Logic catalogue, first pass over eight domains (ROADMAP B3, session S48) |
+| [Execution/P15/T1133-data-contract.md](../Execution/P15/T1133-data-contract.md) | T1133: one machine-readable data contract (ROADMAP D1, session S49) |
+| [Execution/P15/T1134-drift-scorecard.md](../Execution/P15/T1134-drift-scorecard.md) | T1134: Docs drift check and the first data quality scorecard (ROADMAP B7, D2, session S50) |
 | [Execution/P15/T246-mobile-strategy-decision.md](../Execution/P15/T246-mobile-strategy-decision.md) | T246 Mobile strategy: stay a PWA, do not wrap |
 | [Execution/P15/T605-home-research.md](../Execution/P15/T605-home-research.md) | T605: Home page research, references measured and today's page critiqued |
 | [Execution/P15/T606-T610-home-v2.md](../Execution/P15/T606-T610-home-v2.md) | T606 to T610: the home page, rebuilt from scratch |
@@ -750,7 +803,7 @@ Generated on 2026-11-06 from `git ls-files`: 422 files outside the archive, grou
 | [data/curation/research/_sources_trails.md](../data/curation/research/_sources_trails.md) | Sources research: trails (walk, hike, trail run) |
 | [data/curation/research/_sources_trips.md](../data/curation/research/_sources_trips.md) | Sources research: trips (best day trips and city days per country) |
 
-**data/reports/** (45)
+**data/reports/** (47)
 
 | File | Title |
 |---|---|
@@ -798,7 +851,9 @@ Generated on 2026-11-06 from `git ls-files`: 422 files outside the archive, grou
 | [data/reports/coverage/XX.md](../data/reports/coverage/XX.md) | XX: missing destinations |
 | [data/reports/field_stubs.md](../data/reports/field_stubs.md) | Field stubs |
 | [data/reports/llm_runs_report.md](../data/reports/llm_runs_report.md) | Model-written intros and parking web check: final report |
+| [data/reports/quality/2026-11-06.md](../data/reports/quality/2026-11-06.md) |  |
 | [data/reports/trails_coverage.md](../data/reports/trails_coverage.md) | Trails coverage: the famous-trail registry versus the wire |
+| [data/reports/trails_recovery.md](../data/reports/trails_recovery.md) | Trails recovery sizing (T1094, D7) |
 
 **docs/** (8)
 
@@ -857,17 +912,36 @@ Generated on 2026-11-06 from `git ls-files`: 422 files outside the archive, grou
 | [docs/areas/trip-library.md](areas/trip-library.md) | Trip library, journeys, trip finder |
 | [docs/areas/trip-page.md](areas/trip-page.md) | Trip page (the traveller's planned trip) |
 
-**docs/brand/** (1)
+**docs/brand/** (5)
 
 | File | Title |
 |---|---|
+| [docs/brand/data-stories/europe-week-2027.en.md](brand/data-stories/europe-week-2027.en.md) | Draft: A week in Europe costs less than a week at home in Belgium |
+| [docs/brand/data-stories/europe-week-2027.nl.md](brand/data-stories/europe-week-2027.nl.md) | Concept: Een week Europa kost minder dan een week thuis in België |
+| [docs/brand/data-stories/method.md](brand/data-stories/method.md) | Method note: the Carta week basket (Europe Cost Index 2027) |
+| [docs/brand/data-stories/README.md](brand/data-stories/README.md) | Data stories (ROADMAP K5) |
 | [docs/brand/POSITIONING.md](brand/POSITIONING.md) | Carta positioning, one page (draft) |
 
-**docs/data/** (1)
+**docs/data/** (9)
 
 | File | Title |
 |---|---|
+| [docs/data/beaches.md](data/beaches.md) | Beaches data layer |
+| [docs/data/coverage.md](data/coverage.md) | Coverage: the audit, the country contract and the CI gate |
+| [docs/data/joins.md](data/joins.md) | Cross-layer joins (`nb`) |
+| [docs/data/mountains.md](data/mountains.md) | Mountains data layer |
+| [docs/data/photos.md](data/photos.md) | Photos: sourcing, licences, heroes, dimensions, credits |
+| [docs/data/pipeline.md](data/pipeline.md) | The data pipeline |
 | [docs/data/README.md](data/README.md) | Data index |
+| [docs/data/trails.md](data/trails.md) | Trails and cycling data layer |
+| [docs/data/trips-layer.md](data/trips-layer.md) | The trips layer (composed itineraries) |
+
+**docs/design/** (2)
+
+| File | Title |
+|---|---|
+| [docs/design/a11y-audit.md](design/a11y-audit.md) | Accessibility audit (ROADMAP G10) |
+| [docs/design/direction.md](design/direction.md) | Carta design direction |
 
 **docs/legal/** (1)
 
@@ -875,11 +949,25 @@ Generated on 2026-11-06 from `git ls-files`: 422 files outside the archive, grou
 |---|---|
 | [docs/legal/ARTICLE30.md](legal/ARTICLE30.md) | Record of processing activities (GDPR Article 30) |
 
-**docs/logic/** (1)
+**docs/logic/** (9)
 
 | File | Title |
 |---|---|
+| [docs/logic/ask.md](logic/ask.md) | Ask Carta logic (ASK) |
+| [docs/logic/plan-day.md](logic/plan-day.md) | AI day plan logic (PLANDAY) |
+| [docs/logic/price.md](logic/price.md) | Price logic (PRICE) |
+| [docs/logic/quotas-paywall.md](logic/quotas-paywall.md) | Quotas, Pass and paywall logic (QUOTA) |
+| [docs/logic/rating.md](logic/rating.md) | Place rating logic (RATING) |
 | [docs/logic/README.md](logic/README.md) | Logic catalogue |
+| [docs/logic/recommendation.md](logic/recommendation.md) | Recommendation logic (REC) |
+| [docs/logic/seasons-crowds.md](logic/seasons-crowds.md) | Seasons and crowds logic (SEASON) |
+| [docs/logic/trails.md](logic/trails.md) | Trails and cycling logic (TRAIL) |
+
+**docs/marketing/** (1)
+
+| File | Title |
+|---|---|
+| [docs/marketing/journalist-list.md](marketing/journalist-list.md) | Journalist list (K10, T1131) |
 
 **docs/reference/** (1)
 
@@ -893,20 +981,25 @@ Generated on 2026-11-06 from `git ls-files`: 422 files outside the archive, grou
 |---|---|
 | [docs/research/2026-11-launch-plan-research.md](research/2026-11-launch-plan-research.md) | Launch plan research, November 2026 |
 
-**docs/runbooks/** (4)
+**docs/runbooks/** (8)
 
 | File | Title |
 |---|---|
+| [docs/runbooks/backup-restore.md](runbooks/backup-restore.md) | Runbook: backup and restore |
+| [docs/runbooks/backup.md](runbooks/backup.md) | Runbook: backup and restore |
 | [docs/runbooks/build-box.md](runbooks/build-box.md) | Runbook: the build box |
 | [docs/runbooks/deploy.md](runbooks/deploy.md) | Runbook: deploy |
+| [docs/runbooks/drift-and-scorecard.md](runbooks/drift-and-scorecard.md) | Docs drift check and data quality scorecard |
 | [docs/runbooks/incident.md](runbooks/incident.md) | Runbook: incident |
 | [docs/runbooks/README.md](runbooks/README.md) | Runbooks |
+| [docs/runbooks/refund.md](runbooks/refund.md) | Runbook: refund |
 
-**docs/security/** (2)
+**docs/security/** (3)
 
 | File | Title |
 |---|---|
 | [docs/security/SECRETS.md](security/SECRETS.md) | Secrets and owner accounts |
+| [docs/security/static-analysis.md](security/static-analysis.md) | Static analysis (ROADMAP C7, T1119) |
 | [docs/security/threat-model.md](security/threat-model.md) | Carta threat model |
 
 **docs/tos/** (1)
@@ -914,6 +1007,12 @@ Generated on 2026-11-06 from `git ls-files`: 422 files outside the archive, grou
 | File | Title |
 |---|---|
 | [docs/tos/data_licenses.md](tos/data_licenses.md) | Carta data license ledger |
+
+**evals/** (1)
+
+| File | Title |
+|---|---|
+| [evals/injection/README.md](../evals/injection/README.md) | Injection set (T1117, ROADMAP C8 and E3) |
 
 **infra/** (1)
 
@@ -928,10 +1027,11 @@ Generated on 2026-11-06 from `git ls-files`: 422 files outside the archive, grou
 | [pipeline/intake/README.md](../pipeline/intake/README.md) | pipeline/intake/ - finding what the catalogue is missing |
 | [pipeline/README.md](../pipeline/README.md) | pipeline/ - script tiers |
 
-**reports/** (2)
+**reports/** (3)
 
 | File | Title |
 |---|---|
+| [reports/local_fares_source_options.md](../reports/local_fares_source_options.md) | Local transport fare: choosing the source (D10, T714-b) |
 | [reports/rating_external_check_v5.md](../reports/rating_external_check_v5.md) | External check of the v5 ratings (T760) |
 | [reports/rubric_spotcheck_v5.md](../reports/rubric_spotcheck_v5.md) | Rubric spot check, rating v5 (T758) |
 
@@ -942,7 +1042,7 @@ Generated on 2026-11-06 from `git ls-files`: 422 files outside the archive, grou
 | [src/ingestion/CREDENTIALS.md](../src/ingestion/CREDENTIALS.md) | Credential setup, source by source |
 | [src/ingestion/README.md](../src/ingestion/README.md) | Carta raw data ingestion |
 
-**supabase/functions/** (6)
+**supabase/functions/** (7)
 
 | File | Title |
 |---|---|
@@ -952,6 +1052,7 @@ Generated on 2026-11-06 from `git ls-files`: 422 files outside the archive, grou
 | [supabase/functions/plan-day/README.md](../supabase/functions/plan-day/README.md) | plan-day, the AI day-planner function |
 | [supabase/functions/suggest-city/README.md](../supabase/functions/suggest-city/README.md) | suggest-city, the Carta bot's "ask AI" town search |
 | [supabase/functions/upload-scan/README.md](../supabase/functions/upload-scan/README.md) | upload-scan |
+| [supabase/functions/waitlist/README.md](../supabase/functions/waitlist/README.md) | waitlist |
 
 **tools/benchmark/** (2)
 
