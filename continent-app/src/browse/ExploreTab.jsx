@@ -13,6 +13,8 @@ import { EmptyResult } from './EmptyResult.jsx';
 import { FilterChips } from './FilterChips.jsx';
 import { kindOf, roleOf, buildNearbyIndex } from '../lib/taxonomy.js';
 import { loadSearchIndex, querySearchIndex } from '../lib/searchIndex.js';
+import { placeLinkingOn } from '../lib/linking/flag.js';
+import { loadAskLexicon } from '../lib/ask/data.js';
 import { useI18n } from '../i18n/index.jsx';
 import { GuidesStrip } from '../community/GuidesStrip.jsx';
 import { FULL_RATING_RANGE, bandAtLeast, bandWord } from '../lib/rating.js';
@@ -483,15 +485,28 @@ export function ExploreTab({
   }, []);
   // B2: the fold-and-alias index answers the search box. Loaded on the
   // first real query, then cached for the session.
+  // T1153 (F4): behind the place linking flag, the linker answers instead
+  // (typos, exonyms, booking words), in the same shape.
   const [searchHits, setSearchHits] = React.useState(null);
+  const linkOn = React.useMemo(() => placeLinkingOn(), []);
+  const linkCountry = !countryNot && countryFilter.length === 1 ? countryFilter[0] : null;
+  const linkDest = linkOn ? data?.destinations || null : null;
   React.useEffect(() => {
     let live = true;
     if (!locationQuery || locationQuery.length < 3) { setSearchHits(null); return undefined; }
-    loadSearchIndex().then((ix) => {
-      if (live) setSearchHits(querySearchIndex(ix, locationQuery));
-    });
+    if (linkOn) {
+      // Loaded on demand, so the flag off costs the main bundle nothing.
+      Promise.all([loadSearchIndex(), loadAskLexicon().catch(() => null), import('../lib/linking/search.js')]).then(([ix, lex, linking]) => {
+        if (!live) return;
+        setSearchHits(ix ? linking.linkSearchHits(linking.linkerFor(ix, linkDest, lex), ix, locationQuery, { country: linkCountry }) : querySearchIndex(ix, locationQuery));
+      });
+    } else {
+      loadSearchIndex().then((ix) => {
+        if (live) setSearchHits(querySearchIndex(ix, locationQuery));
+      });
+    }
     return () => { live = false; };
-  }, [locationQuery]);
+  }, [locationQuery, linkOn, linkDest, linkCountry]);
 
   // D7: opening a parent found VIA a member search carries ?dm=<member> in
   // the URL, so the destination page can put that member in focus - and a
