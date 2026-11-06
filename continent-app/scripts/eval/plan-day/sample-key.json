@@ -1,0 +1,165 @@
+{
+ "note": "Which plan is which. The judge and the labeller must not read this file.",
+ "key": {
+  "p01": {
+   "caseId": "pd17",
+   "variant": "reference"
+  },
+  "p02": {
+   "caseId": "pd07",
+   "variant": "subtle"
+  },
+  "p03": {
+   "caseId": "pd02",
+   "variant": "reference"
+  },
+  "p04": {
+   "caseId": "pd10",
+   "variant": "reference"
+  },
+  "p05": {
+   "caseId": "pd03",
+   "variant": "overpacked"
+  },
+  "p06": {
+   "caseId": "pd20",
+   "variant": "too-far"
+  },
+  "p07": {
+   "caseId": "pd12",
+   "variant": "sloppy-text"
+  },
+  "p08": {
+   "caseId": "pd19",
+   "variant": "sloppy-text"
+  },
+  "p09": {
+   "caseId": "pd13",
+   "variant": "reference"
+  },
+  "p10": {
+   "caseId": "pd19",
+   "variant": "reference"
+  },
+  "p11": {
+   "caseId": "pd06",
+   "variant": "too-far"
+  },
+  "p12": {
+   "caseId": "pd01",
+   "variant": "fake-id"
+  },
+  "p13": {
+   "caseId": "pd09",
+   "variant": "fake-id"
+  },
+  "p14": {
+   "caseId": "pd01",
+   "variant": "reference"
+  },
+  "p15": {
+   "caseId": "pd03",
+   "variant": "reference"
+  },
+  "p16": {
+   "caseId": "pd18",
+   "variant": "off-vibe"
+  },
+  "p17": {
+   "caseId": "pd16",
+   "variant": "fake-id"
+  },
+  "p18": {
+   "caseId": "pd05",
+   "variant": "sloppy-text"
+  },
+  "p19": {
+   "caseId": "pd20",
+   "variant": "reference"
+  },
+  "p20": {
+   "caseId": "pd11",
+   "variant": "sloppy-text"
+  },
+  "p21": {
+   "caseId": "pd15",
+   "variant": "fake-id"
+  },
+  "p22": {
+   "caseId": "pd17",
+   "variant": "overpacked"
+  },
+  "p23": {
+   "caseId": "pd05",
+   "variant": "reference"
+  },
+  "p24": {
+   "caseId": "pd06",
+   "variant": "reference"
+  },
+  "p25": {
+   "caseId": "pd04",
+   "variant": "reference"
+  },
+  "p26": {
+   "caseId": "pd11",
+   "variant": "reference"
+  },
+  "p27": {
+   "caseId": "pd08",
+   "variant": "drop-named"
+  },
+  "p28": {
+   "caseId": "pd04",
+   "variant": "sloppy-text"
+  },
+  "p29": {
+   "caseId": "pd10",
+   "variant": "overpacked"
+  },
+  "p30": {
+   "caseId": "pd18",
+   "variant": "reference"
+  },
+  "p31": {
+   "caseId": "pd08",
+   "variant": "reference"
+  },
+  "p32": {
+   "caseId": "pd02",
+   "variant": "fake-id"
+  },
+  "p33": {
+   "caseId": "pd14",
+   "variant": "reference"
+  },
+  "p34": {
+   "caseId": "pd12",
+   "variant": "reference"
+  },
+  "p35": {
+   "caseId": "pd15",
+   "variant": "reference"
+  },
+  "p36": {
+   "caseId": "pd16",
+   "variant": "reference"
+  },
+  "p37": {
+   "caseId": "pd14",
+   "variant": "subtle"
+  },
+  "p38": {
+   "caseId": "pd13",
+   "variant": "too-far"
+  },
+  "p39": {
+   "caseId": "pd07",
+   "variant": "reference"
+  },
+  "p40": {
+   "caseId": "pd09",
+   "variant": "reference"
+  }
+ }
+}

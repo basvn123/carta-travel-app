@@ -1,0 +1,78 @@
+{
+ "schema": "carta-eval/1",
+ "eval": "ask",
+ "title": "Ask retrieval and grounding",
+ "kind": "retrieval",
+ "at": "2026-11-06T16:01:23.714Z",
+ "git": "6d5a0ebd7",
+ "status": "pass",
+ "gated": true,
+ "headline": {
+  "key": "rules.ndcg@10",
+  "value": 0.6003,
+  "label": "nDCG@10, rules path",
+  "higher_is_better": true
+ },
+ "metrics": {
+  "n": 200,
+  "retrievers.rules.cases": 142,
+  "retrievers.rules.recall@5": 0.5789,
+  "retrievers.rules.hit@5": 0.9155,
+  "retrievers.rules.recall@10": 0.5682,
+  "retrievers.rules.hit@10": 0.9296,
+  "retrievers.rules.mrr": 0.8282,
+  "retrievers.rules.ndcg@10": 0.6003,
+  "retrievers.rules.list": null,
+  "retrievers.rules.grounding": 0.9956,
+  "retrievers.rules.checks": 689,
+  "retrievers.bm25.cases": 142,
+  "retrievers.bm25.recall@5": 0.5694,
+  "retrievers.bm25.hit@5": 0.8873,
+  "retrievers.bm25.recall@10": 0.5686,
+  "retrievers.bm25.hit@10": 0.9085,
+  "retrievers.bm25.mrr": 0.8017,
+  "retrievers.bm25.ndcg@10": 0.596,
+  "retrievers.bm25.list.recall@5": 0.3074,
+  "retrievers.bm25.list.hit@5": 0.4859,
+  "retrievers.bm25.list.recall@10": 0.3233,
+  "retrievers.bm25.list.hit@10": 0.5775,
+  "retrievers.bm25.list.mrr": 0.3603,
+  "retrievers.bm25.list.ndcg@10": 0.3026,
+  "retrievers.bm25.grounding": 0.9956,
+  "retrievers.bm25.checks": 689,
+  "abstain.cases": 30,
+  "abstain.caught": 25,
+  "abstain.falseAlarm": 2,
+  "abstain.correct": 0.965,
+  "abstain.recall": 0.8333,
+  "grounding": 0.9956
+ },
+ "gate": {
+  "ok": true,
+  "rule": "every gated number within the tolerance of scripts/eval/ask-baseline.json",
+  "tolerance": 0.02,
+  "baseline": "continent-app/scripts/eval/ask-baseline.json (blessed 2026-11-06)",
+  "failures": [],
+  "gains": [],
+  "skipped": []
+ },
+ "cases": {
+  "n": 200,
+  "passed": 193
+ },
+ "judge": null,
+ "inputs": {
+  "set": 1,
+  "questions": 200,
+  "bm25": "rebuilt",
+  "skipped_retrievers": [
+   "dense",
+   "hybrid"
+  ],
+  "seed_drop": false,
+  "seconds": 5.3
+ },
+ "notes": [
+  "not built here: dense, hybrid"
+ ]
+}

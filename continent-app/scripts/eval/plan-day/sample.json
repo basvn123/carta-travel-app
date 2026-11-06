@@ -1,0 +1,7885 @@
+{
+ "version": 1,
+ "n": 40,
+ "plans": [
+  {
+   "planId": "p01",
+   "request": {
+    "city": "Ljubljana",
+    "country": "Slovenia",
+    "date": "2027-11-21",
+    "pace": "relaxed",
+    "vibe": "active",
+    "groupSize": 1,
+    "maxWalkKm": 15,
+    "named": [],
+    "startsFromStay": false
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Ljubljana Castle",
+     "kind": "Castle",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 90,
+     "lat": 46.04871,
+     "lon": 14.50863
+    },
+    {
+     "id": "h1",
+     "name": "Ljubljana Cathedral",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 35,
+     "lat": 46.05071,
+     "lon": 14.50824
+    },
+    {
+     "id": "h2",
+     "name": "Dragon Bridge",
+     "kind": "Bridge",
+     "cat": "active",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 46.05194,
+     "lon": 14.51028
+    },
+    {
+     "id": "h3",
+     "name": "Triple Bridge",
+     "kind": "Bridge",
+     "cat": "active",
+     "rating": 9.57,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 46.05108,
+     "lon": 14.5062
+    },
+    {
+     "id": "h4",
+     "name": "National Gallery of Slovenia",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.5,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 46.05396,
+     "lon": 14.50025
+    },
+    {
+     "id": "h5",
+     "name": "Ljubljana Zoo",
+     "kind": "Zoo",
+     "cat": "active",
+     "rating": 9.36,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 46.055,
+     "lon": 14.47167
+    },
+    {
+     "id": "h6",
+     "name": "Franciscan Church of the Annunciation",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 9.36,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 46.05186,
+     "lon": 14.50606
+    },
+    {
+     "id": "h7",
+     "name": "National Museum of Slovenia",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.36,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 46.05222,
+     "lon": 14.49944
+    },
+    {
+     "id": "h8",
+     "name": "National and University Library of Slovenia",
+     "kind": "Landmark",
+     "cat": "culture",
+     "rating": 9.34,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 46.04694,
+     "lon": 14.50389
+    },
+    {
+     "id": "h9",
+     "name": "Nebotičnik",
+     "kind": "Tower",
+     "cat": "culture",
+     "rating": 9.02,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 46.05319,
+     "lon": 14.50361
+    },
+    {
+     "id": "h10",
+     "name": "Congress Square",
+     "kind": "Square",
+     "cat": "sight",
+     "rating": 8.83,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 46.05007,
+     "lon": 14.50369
+    },
+    {
+     "id": "h11",
+     "name": "Opera Ljubljana",
+     "kind": "Theatre",
+     "cat": "culture",
+     "rating": 8.72,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 46.05259,
+     "lon": 14.50065
+    }
+   ],
+   "plan": {
+    "summary": "A relaxed day in Ljubljana built around its best-rated places, kept within 15 km of walking.",
+    "stops": [
+     {
+      "id": "h2",
+      "name": "Dragon Bridge",
+      "dwellMin": 25,
+      "inCatalog": true,
+      "why": "Dragon Bridge is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h3",
+      "name": "Triple Bridge",
+      "dwellMin": 25,
+      "inCatalog": true,
+      "why": "Triple Bridge is one of the best-rated places nearby, rated 9.6 by travellers."
+     },
+     {
+      "id": "h5",
+      "name": "Ljubljana Zoo",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Ljubljana Zoo is one of the best-rated places nearby, rated 9.4 by travellers."
+     },
+     {
+      "id": "h1",
+      "name": "Ljubljana Cathedral",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Ljubljana Cathedral is one of the best-rated places nearby, rated 10.0 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p02",
+   "request": {
+    "city": "Florence",
+    "country": "Italy",
+    "date": "2027-10-11",
+    "pace": "relaxed",
+    "vibe": "active",
+    "groupSize": 2,
+    "maxWalkKm": 10,
+    "named": [],
+    "startsFromStay": true
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Palazzo Pitti",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 90,
+     "lat": 43.76515,
+     "lon": 11.25001
+    },
+    {
+     "id": "h1",
+     "name": "Ponte Vecchio",
+     "kind": "Bridge",
+     "cat": "active",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 25,
+     "lat": 43.76799,
+     "lon": 11.25319
+    },
+    {
+     "id": "h2",
+     "name": "Palazzo Vecchio",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 43.76944,
+     "lon": 11.25611
+    },
+    {
+     "id": "h3",
+     "name": "Basilica of Santa Croce",
+     "kind": "Basilica",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 43.76845,
+     "lon": 11.26274
+    },
+    {
+     "id": "h4",
+     "name": "Florence Baptistery",
+     "kind": "Basilica",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 43.77306,
+     "lon": 11.255
+    },
+    {
+     "id": "h5",
+     "name": "Bargello National Museum",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 43.7704,
+     "lon": 11.25801
+    },
+    {
+     "id": "h6",
+     "name": "Basilica of Santa Maria Novella",
+     "kind": "Basilica",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 43.7743,
+     "lon": 11.24937
+    },
+    {
+     "id": "h7",
+     "name": "Basilica of San Lorenzo",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 43.775,
+     "lon": 11.25389
+    },
+    {
+     "id": "h8",
+     "name": "piazza della Signoria",
+     "kind": "Square",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 43.76972,
+     "lon": 11.25556
+    },
+    {
+     "id": "h9",
+     "name": "Boboli Gardens",
+     "kind": "Museum",
+     "cat": "active",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 43.76528,
+     "lon": 11.24861
+    },
+    {
+     "id": "h10",
+     "name": "Florence Cathedral",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 43.77306,
+     "lon": 11.25694
+    },
+    {
+     "id": "h11",
+     "name": "Orsanmichele",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 43.77071,
+     "lon": 11.25505
+    }
+   ],
+   "plan": {
+    "summary": "A relaxed day in Florence built around its best-rated places, kept within 10 km of walking.",
+    "stops": [
+     {
+      "id": "h10",
+      "name": "Florence Cathedral",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Florence Cathedral is worth a stop, rated 10.0 by travellers."
+     },
+     {
+      "id": "h9",
+      "name": "Boboli Gardens",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Boboli Gardens is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h0",
+      "name": "Palazzo Pitti",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Palazzo Pitti is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h11",
+      "name": "Orsanmichele",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Orsanmichele is one of the best-rated places nearby, rated 10.0 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p03",
+   "request": {
+    "city": "Amsterdam",
+    "country": "Netherlands",
+    "date": "2027-05-06",
+    "pace": "relaxed",
+    "vibe": "culture",
+    "groupSize": 2,
+    "maxWalkKm": 8,
+    "named": [
+     {
+      "id": "h5",
+      "name": "Stedelijk Museum Amsterdam"
+     }
+    ],
+    "startsFromStay": false
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Rijksmuseum",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 90,
+     "lat": 52.36,
+     "lon": 4.88528
+    },
+    {
+     "id": "h1",
+     "name": "Van Gogh Museum",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 90,
+     "lat": 52.35833,
+     "lon": 4.88111
+    },
+    {
+     "id": "h2",
+     "name": "Johan Cruyff Arena",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 52.31417,
+     "lon": 4.94194
+    },
+    {
+     "id": "h3",
+     "name": "Defence Line of Amsterdam",
+     "kind": "Castle",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 52.37444,
+     "lon": 4.89306
+    },
+    {
+     "id": "h4",
+     "name": "Concertgebouw",
+     "kind": "Theatre",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 52.35631,
+     "lon": 4.87908
+    },
+    {
+     "id": "h5",
+     "name": "Stedelijk Museum Amsterdam",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 52.35801,
+     "lon": 4.87976
+    },
+    {
+     "id": "h6",
+     "name": "Anne Frank House",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 52.37515,
+     "lon": 4.88404
+    },
+    {
+     "id": "h7",
+     "name": "Olympic Stadium",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 9.97,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 52.34342,
+     "lon": 4.85419
+    },
+    {
+     "id": "h8",
+     "name": "De Wallen",
+     "kind": "Old town",
+     "cat": "sight",
+     "rating": 9.93,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 52.37342,
+     "lon": 4.89806
+    },
+    {
+     "id": "h9",
+     "name": "Dam Square",
+     "kind": "Square",
+     "cat": "sight",
+     "rating": 9.79,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 52.37306,
+     "lon": 4.89278
+    },
+    {
+     "id": "h10",
+     "name": "Westerkerk",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 9.52,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 52.3745,
+     "lon": 4.8839
+    },
+    {
+     "id": "h11",
+     "name": "Nieuwe Kerk",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 9.4,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 52.37389,
+     "lon": 4.89194
+    }
+   ],
+   "plan": {
+    "summary": "A relaxed day in Amsterdam built around its best-rated places, kept within 8 km of walking.",
+    "stops": [
+     {
+      "id": "h5",
+      "name": "Stedelijk Museum Amsterdam",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "You asked for Stedelijk Museum Amsterdam, so the day is built around it."
+     },
+     {
+      "id": "h0",
+      "name": "Rijksmuseum",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Rijksmuseum is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h1",
+      "name": "Van Gogh Museum",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Van Gogh Museum is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h4",
+      "name": "Concertgebouw",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Concertgebouw is one of the best-rated places nearby, rated 10.0 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p04",
+   "request": {
+    "city": "Munich",
+    "country": "Germany",
+    "date": "2027-04-14",
+    "pace": "relaxed",
+    "vibe": "active",
+    "groupSize": 6,
+    "maxWalkKm": 7,
+    "named": [
+     {
+      "id": "h5",
+      "name": "Glyptothek"
+     }
+    ],
+    "startsFromStay": true
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Munich Olympic Stadium",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 40,
+     "lat": 48.17306,
+     "lon": 11.54667
+    },
+    {
+     "id": "h1",
+     "name": "Deutsches Museum",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 90,
+     "lat": 48.13,
+     "lon": 11.58333
+    },
+    {
+     "id": "h2",
+     "name": "Nymphenburg Palace",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 48.15806,
+     "lon": 11.50361
+    },
+    {
+     "id": "h3",
+     "name": "Alte Pinakothek",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 48.14829,
+     "lon": 11.56999
+    },
+    {
+     "id": "h4",
+     "name": "Frauenkirche",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 48.13858,
+     "lon": 11.57362
+    },
+    {
+     "id": "h5",
+     "name": "Glyptothek",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 48.14657,
+     "lon": 11.56582
+    },
+    {
+     "id": "h6",
+     "name": "Marienplatz",
+     "kind": "Square",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 48.13722,
+     "lon": 11.57528
+    },
+    {
+     "id": "h7",
+     "name": "Bavarian State Library",
+     "kind": "Landmark",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 48.14739,
+     "lon": 11.58061
+    },
+    {
+     "id": "h8",
+     "name": "Munich Residence",
+     "kind": "Palace",
+     "cat": "culture",
+     "rating": 9.63,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 48.14105,
+     "lon": 11.57871
+    },
+    {
+     "id": "h9",
+     "name": "Theatine Church",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 9.4,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 48.14194,
+     "lon": 11.57639
+    },
+    {
+     "id": "h10",
+     "name": "Theresienwiese",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 9.34,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 48.1333,
+     "lon": 11.55
+    },
+    {
+     "id": "h11",
+     "name": "Bavaria",
+     "kind": "Monument",
+     "cat": "culture",
+     "rating": 8.07,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 48.13069,
+     "lon": 11.54579
+    }
+   ],
+   "plan": {
+    "summary": "A relaxed day in Munich built around its best-rated places, kept within 7 km of walking.",
+    "stops": [
+     {
+      "id": "h5",
+      "name": "Glyptothek",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "You asked for Glyptothek, so the day is built around it."
+     },
+     {
+      "id": "h1",
+      "name": "Deutsches Museum",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Deutsches Museum is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h6",
+      "name": "Marienplatz",
+      "dwellMin": 25,
+      "inCatalog": true,
+      "why": "Marienplatz is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h4",
+      "name": "Frauenkirche",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Frauenkirche is one of the best-rated places nearby, rated 10.0 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p05",
+   "request": {
+    "city": "Prague",
+    "country": "Czechia",
+    "date": "2027-06-07",
+    "pace": "packed",
+    "vibe": "active",
+    "groupSize": 4,
+    "maxWalkKm": 12,
+    "named": [],
+    "startsFromStay": false
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Prague Castle",
+     "kind": "Castle",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 90,
+     "lat": 50.09,
+     "lon": 14.4
+    },
+    {
+     "id": "h1",
+     "name": "Charles Bridge",
+     "kind": "Bridge",
+     "cat": "active",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 25,
+     "lat": 50.08639,
+     "lon": 14.41194
+    },
+    {
+     "id": "h2",
+     "name": "St. Vitus Cathedral",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 50.09083,
+     "lon": 14.40056
+    },
+    {
+     "id": "h3",
+     "name": "National Library of the Czech Republic",
+     "kind": "Landmark",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 50.08667,
+     "lon": 14.41583
+    },
+    {
+     "id": "h4",
+     "name": "Prague Astronomical Clock",
+     "kind": "Tower",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 50.08699,
+     "lon": 14.4207
+    },
+    {
+     "id": "h5",
+     "name": "National Museum in Prague",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 50.07984,
+     "lon": 14.43042
+    },
+    {
+     "id": "h6",
+     "name": "Wenceslas Square",
+     "kind": "Square",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 50.08231,
+     "lon": 14.42614
+    },
+    {
+     "id": "h7",
+     "name": "Vyšehrad",
+     "kind": "Castle",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 50.06443,
+     "lon": 14.41764
+    },
+    {
+     "id": "h8",
+     "name": "Church of Our Lady before Týn",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 50.08771,
+     "lon": 14.4227
+    },
+    {
+     "id": "h9",
+     "name": "Old Town Square",
+     "kind": "Old town",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 50.0875,
+     "lon": 14.42139
+    },
+    {
+     "id": "h10",
+     "name": "Old New Synagogue",
+     "kind": "Synagogue",
+     "cat": "culture",
+     "rating": 9.79,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 50.09,
+     "lon": 14.41861
+    },
+    {
+     "id": "h11",
+     "name": "Strahov Monastery",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 9.79,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 50.08596,
+     "lon": 14.38928
+    }
+   ],
+   "plan": {
+    "summary": "A packed day in Prague built around its best-rated places, kept within 12 km of walking.",
+    "stops": [
+     {
+      "id": "h0",
+      "name": "Prague Castle",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Prague Castle is worth a stop, rated 10.0 by travellers."
+     },
+     {
+      "id": "h1",
+      "name": "Charles Bridge",
+      "dwellMin": 25,
+      "inCatalog": true,
+      "why": "Charles Bridge is worth a stop, rated 10.0 by travellers."
+     },
+     {
+      "id": "h2",
+      "name": "St. Vitus Cathedral",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "St. Vitus Cathedral is worth a stop, rated 10.0 by travellers."
+     },
+     {
+      "id": "h3",
+      "name": "National Library of the Czech Republic",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "National Library of the Czech Republic is worth a stop, rated 10.0 by travellers."
+     },
+     {
+      "id": "h4",
+      "name": "Prague Astronomical Clock",
+      "dwellMin": 25,
+      "inCatalog": true,
+      "why": "Prague Astronomical Clock is worth a stop, rated 10.0 by travellers."
+     },
+     {
+      "id": "h5",
+      "name": "National Museum in Prague",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "National Museum in Prague is worth a stop, rated 10.0 by travellers."
+     },
+     {
+      "id": "h6",
+      "name": "Wenceslas Square",
+      "dwellMin": 25,
+      "inCatalog": true,
+      "why": "Wenceslas Square is worth a stop, rated 10.0 by travellers."
+     },
+     {
+      "id": "h7",
+      "name": "Vyšehrad",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Vyšehrad is worth a stop, rated 10.0 by travellers."
+     },
+     {
+      "id": "h8",
+      "name": "Church of Our Lady before Týn",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Church of Our Lady before Týn is worth a stop, rated 10.0 by travellers."
+     },
+     {
+      "id": "h9",
+      "name": "Old Town Square",
+      "dwellMin": 25,
+      "inCatalog": true,
+      "why": "Old Town Square is worth a stop, rated 10.0 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p06",
+   "request": {
+    "city": "Porto",
+    "country": "Portugal",
+    "date": "2027-05-24",
+    "pace": "relaxed",
+    "vibe": "mix",
+    "groupSize": 2,
+    "maxWalkKm": 8,
+    "named": [
+     {
+      "id": "h5",
+      "name": "National Museum Soares dos Reis"
+     }
+    ],
+    "startsFromStay": false
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Casa da Música",
+     "kind": "Theatre",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 40,
+     "lat": 41.15889,
+     "lon": -8.63071
+    },
+    {
+     "id": "h1",
+     "name": "Estádio do Dragão",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 40,
+     "lat": 41.16176,
+     "lon": -8.58393
+    },
+    {
+     "id": "h2",
+     "name": "Luiz I Bridge",
+     "kind": "Bridge",
+     "cat": "active",
+     "rating": 9.58,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 41.13972,
+     "lon": -8.60944
+    },
+    {
+     "id": "h3",
+     "name": "Estádio do Bessa",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 9.46,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 41.16222,
+     "lon": -8.64278
+    },
+    {
+     "id": "h4",
+     "name": "Palácio da Bolsa",
+     "kind": "Palace",
+     "cat": "culture",
+     "rating": 9.36,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 41.14137,
+     "lon": -8.61569
+    },
+    {
+     "id": "h5",
+     "name": "National Museum Soares dos Reis",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 8.35,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 41.14778,
+     "lon": -8.62167
+    },
+    {
+     "id": "h6",
+     "name": "Porto Cathedral",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 8,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 41.14282,
+     "lon": -8.6112
+    },
+    {
+     "id": "h7",
+     "name": "Ponte de D. Maria Pia",
+     "kind": "Bridge",
+     "cat": "active",
+     "rating": 7.93,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 41.13982,
+     "lon": -8.59702
+    },
+    {
+     "id": "h8",
+     "name": "Church of Saint Ildefonso",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 7.7,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 41.14629,
+     "lon": -8.60648
+    },
+    {
+     "id": "h9",
+     "name": "Church of São Francisco",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 7.7,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 41.141,
+     "lon": -8.616
+    },
+    {
+     "id": "h10",
+     "name": "Clérigos Church",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 7.52,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 41.14587,
+     "lon": -8.61401
+    },
+    {
+     "id": "h11",
+     "name": "Arrábida Bridge",
+     "kind": "Bridge",
+     "cat": "active",
+     "rating": 7.1,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 41.14747,
+     "lon": -8.64034
+    }
+   ],
+   "plan": {
+    "summary": "A relaxed day in Porto built around its best-rated places, kept within 8 km of walking.",
+    "stops": [
+     {
+      "id": "h5",
+      "name": "National Museum Soares dos Reis",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "You asked for National Museum Soares dos Reis, so the day is built around it."
+     },
+     {
+      "id": "h1",
+      "name": "Estádio do Dragão",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Estádio do Dragão is worth a stop, rated 10.0 by travellers."
+     },
+     {
+      "id": "h10",
+      "name": "Clérigos Church",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Clérigos Church is worth a stop, rated 7.5 by travellers."
+     },
+     {
+      "id": "h3",
+      "name": "Estádio do Bessa",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Estádio do Bessa is worth a stop, rated 9.5 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p07",
+   "request": {
+    "city": "Krakow",
+    "country": "Poland",
+    "date": "2027-06-16",
+    "pace": "relaxed",
+    "vibe": "culture",
+    "groupSize": 3,
+    "maxWalkKm": 9,
+    "named": [
+     {
+      "id": "h5",
+      "name": "Czartoryski Museum"
+     }
+    ],
+    "startsFromStay": false
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Wawel Cathedral",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 35,
+     "lat": 50.05464,
+     "lon": 19.93542
+    },
+    {
+     "id": "h1",
+     "name": "St. Mary's Basilica in Kraków",
+     "kind": "Basilica",
+     "cat": "culture",
+     "rating": 9.97,
+     "mustSee": true,
+     "dwellMin": 35,
+     "lat": 50.06167,
+     "lon": 19.93917
+    },
+    {
+     "id": "h2",
+     "name": "National Museum in Kraków",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.68,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 50.06028,
+     "lon": 19.92389
+    },
+    {
+     "id": "h3",
+     "name": "Kraków Old Town",
+     "kind": "Old town",
+     "cat": "sight",
+     "rating": 9.68,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 50.06209,
+     "lon": 19.93688
+    },
+    {
+     "id": "h4",
+     "name": "Nowa Huta",
+     "kind": "Old town",
+     "cat": "sight",
+     "rating": 9.63,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 50.07222,
+     "lon": 20.0375
+    },
+    {
+     "id": "h5",
+     "name": "Czartoryski Museum",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.63,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 50.06464,
+     "lon": 19.93997
+    },
+    {
+     "id": "h6",
+     "name": "Old town Market Square in Krakow",
+     "kind": "Old town",
+     "cat": "sight",
+     "rating": 9.63,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 50.06167,
+     "lon": 19.93722
+    },
+    {
+     "id": "h7",
+     "name": "Kraków-Płaszów concentration camp",
+     "kind": "Monument",
+     "cat": "culture",
+     "rating": 9.52,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 50.0327,
+     "lon": 19.9618
+    },
+    {
+     "id": "h8",
+     "name": "Sukiennice",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.34,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 50.06168,
+     "lon": 19.93738
+    },
+    {
+     "id": "h9",
+     "name": "Polish Aviation Museum",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 8.07,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 50.07767,
+     "lon": 19.99242
+    },
+    {
+     "id": "h10",
+     "name": "Krakus Mound",
+     "kind": "Monument",
+     "cat": "culture",
+     "rating": 8,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 50.03805,
+     "lon": 19.95844
+    },
+    {
+     "id": "h11",
+     "name": "Kraków Barbican",
+     "kind": "Monument",
+     "cat": "culture",
+     "rating": 7.93,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 50.06553,
+     "lon": 19.94166
+    }
+   ],
+   "plan": {
+    "summary": "Your day in Krakow — enjoy!",
+    "stops": [
+     {
+      "id": "h5",
+      "name": "Czartoryski Museum",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "You asked for Czartoryski Museum, so the day is built around it."
+     },
+     {
+      "id": "h1",
+      "name": "St. Mary's Basilica in Kraków",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Nice."
+     },
+     {
+      "id": "h0",
+      "name": "Wawel Cathedral",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Wawel Cathedral is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h2",
+      "name": "National Museum in Kraków",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Nice."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p08",
+   "request": {
+    "city": "Tallinn",
+    "country": "Estonia",
+    "date": "2027-04-23",
+    "pace": "balanced",
+    "vibe": "culture",
+    "groupSize": 2,
+    "maxWalkKm": 10,
+    "named": [],
+    "startsFromStay": true
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Toompea Castle",
+     "kind": "Castle",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 90,
+     "lat": 59.43556,
+     "lon": 24.73722
+    },
+    {
+     "id": "h1",
+     "name": "Alexander Nevsky Cathedral",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 35,
+     "lat": 59.43583,
+     "lon": 24.73944
+    },
+    {
+     "id": "h2",
+     "name": "St. Nicholas' Church",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 59.43592,
+     "lon": 24.74276
+    },
+    {
+     "id": "h3",
+     "name": "St. Olaf's Church",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 59.44139,
+     "lon": 24.74778
+    },
+    {
+     "id": "h4",
+     "name": "Tallinn Old Town",
+     "kind": "Old town",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 59.43722,
+     "lon": 24.74528
+    },
+    {
+     "id": "h5",
+     "name": "Kadriorg Palace",
+     "kind": "Palace",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 59.43852,
+     "lon": 24.791
+    },
+    {
+     "id": "h6",
+     "name": "St. Mary's Cathedral",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 59.43702,
+     "lon": 24.73887
+    },
+    {
+     "id": "h7",
+     "name": "Freedom Square",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 59.43376,
+     "lon": 24.74413
+    },
+    {
+     "id": "h8",
+     "name": "Kumu",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 59.43639,
+     "lon": 24.79639
+    },
+    {
+     "id": "h9",
+     "name": "Tallinn TV Tower",
+     "kind": "Tower",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 59.47111,
+     "lon": 24.8875
+    },
+    {
+     "id": "h10",
+     "name": "Kiek in de Kök",
+     "kind": "Tower",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 59.43475,
+     "lon": 24.74125
+    },
+    {
+     "id": "h11",
+     "name": "Linnahall",
+     "kind": "Theatre",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 59.44667,
+     "lon": 24.75278
+    }
+   ],
+   "plan": {
+    "summary": "Your day in Tallinn — enjoy!",
+    "stops": [
+     {
+      "id": "h1",
+      "name": "Alexander Nevsky Cathedral",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Alexander Nevsky Cathedral is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h0",
+      "name": "Toompea Castle",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Nice."
+     },
+     {
+      "id": "h2",
+      "name": "St. Nicholas' Church",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "St. Nicholas' Church is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h6",
+      "name": "St. Mary's Cathedral",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Nice."
+     },
+     {
+      "id": "h10",
+      "name": "Kiek in de Kök",
+      "dwellMin": 25,
+      "inCatalog": true,
+      "why": "Kiek in de Kök is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h3",
+      "name": "St. Olaf's Church",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Nice."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p09",
+   "request": {
+    "city": "Copenhagen",
+    "country": "Denmark",
+    "date": "2027-07-17",
+    "pace": "packed",
+    "vibe": "mix",
+    "groupSize": 2,
+    "maxWalkKm": 10,
+    "named": [],
+    "startsFromStay": true
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Parken Stadium",
+     "kind": "Landmark",
+     "cat": "active",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 50,
+     "lat": 55.70247,
+     "lon": 12.5722
+    },
+    {
+     "id": "h1",
+     "name": "Freetown Christiania",
+     "kind": "Old town",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 40,
+     "lat": 55.67359,
+     "lon": 12.59971
+    },
+    {
+     "id": "h2",
+     "name": "Frederiksberg",
+     "kind": "Old town",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 55.6779,
+     "lon": 12.5327
+    },
+    {
+     "id": "h3",
+     "name": "Amager",
+     "kind": "Island",
+     "cat": "active",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 55.61667,
+     "lon": 12.61667
+    },
+    {
+     "id": "h4",
+     "name": "Amalienborg",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 55.68403,
+     "lon": 12.59333
+    },
+    {
+     "id": "h5",
+     "name": "Royal Danish Library",
+     "kind": "Landmark",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 55.67383,
+     "lon": 12.58221
+    },
+    {
+     "id": "h6",
+     "name": "Christiansborg Palace",
+     "kind": "Palace",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 55.67583,
+     "lon": 12.57889
+    },
+    {
+     "id": "h7",
+     "name": "Tivoli Gardens",
+     "kind": "Park",
+     "cat": "active",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 50,
+     "lat": 55.67361,
+     "lon": 12.56833
+    },
+    {
+     "id": "h8",
+     "name": "Rosenborg Castle",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 55.68566,
+     "lon": 12.57748
+    },
+    {
+     "id": "h9",
+     "name": "National Museum of Denmark",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.83,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 55.67472,
+     "lon": 12.57472
+    },
+    {
+     "id": "h10",
+     "name": "Grundtvig's Church",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 9.63,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 55.71658,
+     "lon": 12.53361
+    },
+    {
+     "id": "h11",
+     "name": "Copenhagen Opera House",
+     "kind": "Theatre",
+     "cat": "culture",
+     "rating": 9.63,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 55.68194,
+     "lon": 12.60056
+    }
+   ],
+   "plan": {
+    "summary": "A packed day in Copenhagen built around its best-rated places, kept within 10 km of walking.",
+    "stops": [
+     {
+      "id": "h1",
+      "name": "Freetown Christiania",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Freetown Christiania is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h0",
+      "name": "Parken Stadium",
+      "dwellMin": 45,
+      "inCatalog": true,
+      "why": "Parken Stadium is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h7",
+      "name": "Tivoli Gardens",
+      "dwellMin": 45,
+      "inCatalog": true,
+      "why": "Tivoli Gardens is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h6",
+      "name": "Christiansborg Palace",
+      "dwellMin": 45,
+      "inCatalog": true,
+      "why": "Christiansborg Palace is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h5",
+      "name": "Royal Danish Library",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Royal Danish Library is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h9",
+      "name": "National Museum of Denmark",
+      "dwellMin": 45,
+      "inCatalog": true,
+      "why": "National Museum of Denmark is one of the best-rated places nearby, rated 9.8 by travellers."
+     },
+     {
+      "id": "h8",
+      "name": "Rosenborg Castle",
+      "dwellMin": 45,
+      "inCatalog": true,
+      "why": "Rosenborg Castle is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h11",
+      "name": "Copenhagen Opera House",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Copenhagen Opera House is one of the best-rated places nearby, rated 9.6 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p10",
+   "request": {
+    "city": "Tallinn",
+    "country": "Estonia",
+    "date": "2027-04-23",
+    "pace": "balanced",
+    "vibe": "culture",
+    "groupSize": 2,
+    "maxWalkKm": 10,
+    "named": [],
+    "startsFromStay": true
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Toompea Castle",
+     "kind": "Castle",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 90,
+     "lat": 59.43556,
+     "lon": 24.73722
+    },
+    {
+     "id": "h1",
+     "name": "Alexander Nevsky Cathedral",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 35,
+     "lat": 59.43583,
+     "lon": 24.73944
+    },
+    {
+     "id": "h2",
+     "name": "St. Nicholas' Church",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 59.43592,
+     "lon": 24.74276
+    },
+    {
+     "id": "h3",
+     "name": "St. Olaf's Church",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 59.44139,
+     "lon": 24.74778
+    },
+    {
+     "id": "h4",
+     "name": "Tallinn Old Town",
+     "kind": "Old town",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 59.43722,
+     "lon": 24.74528
+    },
+    {
+     "id": "h5",
+     "name": "Kadriorg Palace",
+     "kind": "Palace",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 59.43852,
+     "lon": 24.791
+    },
+    {
+     "id": "h6",
+     "name": "St. Mary's Cathedral",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 59.43702,
+     "lon": 24.73887
+    },
+    {
+     "id": "h7",
+     "name": "Freedom Square",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 59.43376,
+     "lon": 24.74413
+    },
+    {
+     "id": "h8",
+     "name": "Kumu",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 59.43639,
+     "lon": 24.79639
+    },
+    {
+     "id": "h9",
+     "name": "Tallinn TV Tower",
+     "kind": "Tower",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 59.47111,
+     "lon": 24.8875
+    },
+    {
+     "id": "h10",
+     "name": "Kiek in de Kök",
+     "kind": "Tower",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 59.43475,
+     "lon": 24.74125
+    },
+    {
+     "id": "h11",
+     "name": "Linnahall",
+     "kind": "Theatre",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 59.44667,
+     "lon": 24.75278
+    }
+   ],
+   "plan": {
+    "summary": "A balanced day in Tallinn built around its best-rated places, kept within 10 km of walking.",
+    "stops": [
+     {
+      "id": "h1",
+      "name": "Alexander Nevsky Cathedral",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Alexander Nevsky Cathedral is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h0",
+      "name": "Toompea Castle",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Toompea Castle is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h2",
+      "name": "St. Nicholas' Church",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "St. Nicholas' Church is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h6",
+      "name": "St. Mary's Cathedral",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "St. Mary's Cathedral is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h10",
+      "name": "Kiek in de Kök",
+      "dwellMin": 25,
+      "inCatalog": true,
+      "why": "Kiek in de Kök is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h3",
+      "name": "St. Olaf's Church",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "St. Olaf's Church is one of the best-rated places nearby, rated 10.0 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p11",
+   "request": {
+    "city": "Berlin",
+    "country": "Germany",
+    "date": "2027-09-10",
+    "pace": "balanced",
+    "vibe": "mix",
+    "groupSize": 3,
+    "maxWalkKm": 9,
+    "named": [
+     {
+      "id": "h5",
+      "name": "Berlin Cathedral"
+     }
+    ],
+    "startsFromStay": false
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Brandenburg Gate",
+     "kind": "Monument",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 25,
+     "lat": 52.51627,
+     "lon": 13.37772
+    },
+    {
+     "id": "h1",
+     "name": "Pergamon Museum",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 90,
+     "lat": 52.521,
+     "lon": 13.396
+    },
+    {
+     "id": "h2",
+     "name": "congress of Berlin",
+     "kind": "Peak",
+     "cat": "active",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 52.51167,
+     "lon": 13.38194
+    },
+    {
+     "id": "h3",
+     "name": "Museum Island",
+     "kind": "Old town",
+     "cat": "active",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 52.52139,
+     "lon": 13.39556
+    },
+    {
+     "id": "h4",
+     "name": "Fernsehturm Berlin",
+     "kind": "Tower",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 52.52083,
+     "lon": 13.40944
+    },
+    {
+     "id": "h5",
+     "name": "Berlin Cathedral",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 52.51917,
+     "lon": 13.40111
+    },
+    {
+     "id": "h6",
+     "name": "Unter den Linden",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 52.51658,
+     "lon": 13.381
+    },
+    {
+     "id": "h7",
+     "name": "Potsdamer Platz",
+     "kind": "Square",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 52.50894,
+     "lon": 13.37633
+    },
+    {
+     "id": "h8",
+     "name": "Charlottenburg Palace",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 52.52111,
+     "lon": 13.29583
+    },
+    {
+     "id": "h9",
+     "name": "Alexanderplatz",
+     "kind": "Square",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 52.52167,
+     "lon": 13.41361
+    },
+    {
+     "id": "h10",
+     "name": "Neues Museum",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 52.5202,
+     "lon": 13.3976
+    },
+    {
+     "id": "h11",
+     "name": "Berlin Palace",
+     "kind": "Palace",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 52.5175,
+     "lon": 13.40278
+    }
+   ],
+   "plan": {
+    "summary": "A balanced day in Berlin built around its best-rated places, kept within 9 km of walking.",
+    "stops": [
+     {
+      "id": "h5",
+      "name": "Berlin Cathedral",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "You asked for Berlin Cathedral, so the day is built around it."
+     },
+     {
+      "id": "h8",
+      "name": "Charlottenburg Palace",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Charlottenburg Palace is worth a stop, rated 10.0 by travellers."
+     },
+     {
+      "id": "h6",
+      "name": "Unter den Linden",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Unter den Linden is worth a stop, rated 10.0 by travellers."
+     },
+     {
+      "id": "h9",
+      "name": "Alexanderplatz",
+      "dwellMin": 25,
+      "inCatalog": true,
+      "why": "Alexanderplatz is worth a stop, rated 10.0 by travellers."
+     },
+     {
+      "id": "h0",
+      "name": "Brandenburg Gate",
+      "dwellMin": 25,
+      "inCatalog": true,
+      "why": "Brandenburg Gate is worth a stop, rated 10.0 by travellers."
+     },
+     {
+      "id": "h4",
+      "name": "Fernsehturm Berlin",
+      "dwellMin": 25,
+      "inCatalog": true,
+      "why": "Fernsehturm Berlin is worth a stop, rated 10.0 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p12",
+   "request": {
+    "city": "Barcelona",
+    "country": "Spain",
+    "date": "2027-04-05",
+    "pace": "balanced",
+    "vibe": "mix",
+    "groupSize": 2,
+    "maxWalkKm": 10,
+    "named": [],
+    "startsFromStay": true
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Basilica and Expiatory Church of the Holy Family",
+     "kind": "Basilica",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 35,
+     "lat": 41.40369,
+     "lon": 2.17433
+    },
+    {
+     "id": "h1",
+     "name": "Tibidabo",
+     "kind": "Peak",
+     "cat": "active",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 40,
+     "lat": 41.4225,
+     "lon": 2.11861
+    },
+    {
+     "id": "h2",
+     "name": "Park Güell",
+     "kind": "Park",
+     "cat": "active",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 50,
+     "lat": 41.41361,
+     "lon": 2.15278
+    },
+    {
+     "id": "h3",
+     "name": "Cathedral of the Holy Cross and Saint Eulalia",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 41.38389,
+     "lon": 2.17639
+    },
+    {
+     "id": "h4",
+     "name": "Palau de la Música Catalana",
+     "kind": "Theatre",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 41.38767,
+     "lon": 2.17528
+    },
+    {
+     "id": "h5",
+     "name": "Ciutat Vella",
+     "kind": "Old town",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 41.38083,
+     "lon": 2.17306
+    },
+    {
+     "id": "h6",
+     "name": "Plaça de Catalunya",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 9.97,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 41.38703,
+     "lon": 2.17008
+    },
+    {
+     "id": "h7",
+     "name": "Palau Güell",
+     "kind": "Palace",
+     "cat": "culture",
+     "rating": 9.79,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 41.37882,
+     "lon": 2.17439
+    },
+    {
+     "id": "h8",
+     "name": "Casa Vicens",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.79,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 41.40349,
+     "lon": 2.15064
+    },
+    {
+     "id": "h9",
+     "name": "Museu Nacional d'Art de Catalunya",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.68,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 41.36833,
+     "lon": 2.15331
+    },
+    {
+     "id": "h10",
+     "name": "Montjuïc",
+     "kind": "Old town",
+     "cat": "sight",
+     "rating": 9.63,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 41.36417,
+     "lon": 2.15806
+    },
+    {
+     "id": "h11",
+     "name": "Fundació Joan Miró",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.63,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 41.36861,
+     "lon": 2.16
+    }
+   ],
+   "plan": {
+    "summary": "A balanced day in Barcelona built around its best-rated places, kept within 10 km of walking.",
+    "stops": [
+     {
+      "id": "h0",
+      "name": "Basilica and Expiatory Church of the Holy Family",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Basilica and Expiatory Church of the Holy Family is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h99",
+      "name": "Barcelona Old Market Hall",
+      "dwellMin": 45,
+      "inCatalog": true,
+      "why": "A lively covered market with local food stalls."
+     },
+     {
+      "id": "h3",
+      "name": "Cathedral of the Holy Cross and Saint Eulalia",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Cathedral of the Holy Cross and Saint Eulalia is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h4",
+      "name": "Palau de la Música Catalana",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Palau de la Música Catalana is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h5",
+      "name": "Ciutat Vella",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Ciutat Vella is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h6",
+      "name": "Plaça de Catalunya",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Plaça de Catalunya is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h7",
+      "name": "Palau Güell",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Palau Güell is one of the best-rated places nearby, rated 9.8 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p13",
+   "request": {
+    "city": "Brussels",
+    "country": "Belgium",
+    "date": "2027-12-13",
+    "pace": "balanced",
+    "vibe": "culture",
+    "groupSize": 4,
+    "maxWalkKm": 12,
+    "named": [],
+    "startsFromStay": false
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "King Baudouin Stadium",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 40,
+     "lat": 50.89571,
+     "lon": 4.33408
+    },
+    {
+     "id": "h1",
+     "name": "Heysel Stadium disaster",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 9.99,
+     "mustSee": true,
+     "dwellMin": 40,
+     "lat": 50.895,
+     "lon": 4.33389
+    },
+    {
+     "id": "h2",
+     "name": "Lotto Park",
+     "kind": "Landmark",
+     "cat": "active",
+     "rating": 9.97,
+     "mustSee": false,
+     "dwellMin": 50,
+     "lat": 50.83417,
+     "lon": 4.29833
+    },
+    {
+     "id": "h3",
+     "name": "Cathedral of St. Michael and St. Gudula",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 9.88,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 50.84778,
+     "lon": 4.36028
+    },
+    {
+     "id": "h4",
+     "name": "National Basilica of the Sacred Heart",
+     "kind": "Basilica",
+     "cat": "culture",
+     "rating": 9.74,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 50.86667,
+     "lon": 4.31722
+    },
+    {
+     "id": "h5",
+     "name": "Royal Museums of Fine Arts of Belgium",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.74,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 50.84168,
+     "lon": 4.35824
+    },
+    {
+     "id": "h6",
+     "name": "Royal Palace of Brussels",
+     "kind": "Palace",
+     "cat": "culture",
+     "rating": 9.63,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 50.84167,
+     "lon": 4.36222
+    },
+    {
+     "id": "h7",
+     "name": "Berlaymont building",
+     "kind": "Tower",
+     "cat": "culture",
+     "rating": 9.52,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 50.84361,
+     "lon": 4.38278
+    },
+    {
+     "id": "h8",
+     "name": "Royal Library of Belgium",
+     "kind": "Landmark",
+     "cat": "culture",
+     "rating": 9.4,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 50.84333,
+     "lon": 4.35639
+    },
+    {
+     "id": "h9",
+     "name": "Horta Museum",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.34,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 50.82417,
+     "lon": 4.35556
+    },
+    {
+     "id": "h10",
+     "name": "Cinquantenaire Park",
+     "kind": "Park",
+     "cat": "active",
+     "rating": 8,
+     "mustSee": false,
+     "dwellMin": 50,
+     "lat": 50.84056,
+     "lon": 4.39278
+    },
+    {
+     "id": "h11",
+     "name": "Royal Theatre of La Monnaie",
+     "kind": "Theatre",
+     "cat": "culture",
+     "rating": 7.93,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 50.84959,
+     "lon": 4.35425
+    }
+   ],
+   "plan": {
+    "summary": "A balanced day in Brussels built around its best-rated places, kept within 12 km of walking.",
+    "stops": [
+     {
+      "id": "h3",
+      "name": "Cathedral of St. Michael and St. Gudula",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Cathedral of St. Michael and St. Gudula is one of the best-rated places nearby, rated 9.9 by travellers."
+     },
+     {
+      "id": "h99",
+      "name": "Brussels Old Market Hall",
+      "dwellMin": 45,
+      "inCatalog": true,
+      "why": "A lively covered market with local food stalls."
+     },
+     {
+      "id": "h5",
+      "name": "Royal Museums of Fine Arts of Belgium",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Royal Museums of Fine Arts of Belgium is one of the best-rated places nearby, rated 9.7 by travellers."
+     },
+     {
+      "id": "h6",
+      "name": "Royal Palace of Brussels",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Royal Palace of Brussels is one of the best-rated places nearby, rated 9.6 by travellers."
+     },
+     {
+      "id": "h8",
+      "name": "Royal Library of Belgium",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Royal Library of Belgium is one of the best-rated places nearby, rated 9.4 by travellers."
+     },
+     {
+      "id": "h4",
+      "name": "National Basilica of the Sacred Heart",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "National Basilica of the Sacred Heart is one of the best-rated places nearby, rated 9.7 by travellers."
+     },
+     {
+      "id": "h7",
+      "name": "Berlaymont building",
+      "dwellMin": 25,
+      "inCatalog": true,
+      "why": "Berlaymont building is one of the best-rated places nearby, rated 9.5 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p14",
+   "request": {
+    "city": "Barcelona",
+    "country": "Spain",
+    "date": "2027-04-05",
+    "pace": "balanced",
+    "vibe": "mix",
+    "groupSize": 2,
+    "maxWalkKm": 10,
+    "named": [],
+    "startsFromStay": true
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Basilica and Expiatory Church of the Holy Family",
+     "kind": "Basilica",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 35,
+     "lat": 41.40369,
+     "lon": 2.17433
+    },
+    {
+     "id": "h1",
+     "name": "Tibidabo",
+     "kind": "Peak",
+     "cat": "active",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 40,
+     "lat": 41.4225,
+     "lon": 2.11861
+    },
+    {
+     "id": "h2",
+     "name": "Park Güell",
+     "kind": "Park",
+     "cat": "active",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 50,
+     "lat": 41.41361,
+     "lon": 2.15278
+    },
+    {
+     "id": "h3",
+     "name": "Cathedral of the Holy Cross and Saint Eulalia",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 41.38389,
+     "lon": 2.17639
+    },
+    {
+     "id": "h4",
+     "name": "Palau de la Música Catalana",
+     "kind": "Theatre",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 41.38767,
+     "lon": 2.17528
+    },
+    {
+     "id": "h5",
+     "name": "Ciutat Vella",
+     "kind": "Old town",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 41.38083,
+     "lon": 2.17306
+    },
+    {
+     "id": "h6",
+     "name": "Plaça de Catalunya",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 9.97,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 41.38703,
+     "lon": 2.17008
+    },
+    {
+     "id": "h7",
+     "name": "Palau Güell",
+     "kind": "Palace",
+     "cat": "culture",
+     "rating": 9.79,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 41.37882,
+     "lon": 2.17439
+    },
+    {
+     "id": "h8",
+     "name": "Casa Vicens",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.79,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 41.40349,
+     "lon": 2.15064
+    },
+    {
+     "id": "h9",
+     "name": "Museu Nacional d'Art de Catalunya",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.68,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 41.36833,
+     "lon": 2.15331
+    },
+    {
+     "id": "h10",
+     "name": "Montjuïc",
+     "kind": "Old town",
+     "cat": "sight",
+     "rating": 9.63,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 41.36417,
+     "lon": 2.15806
+    },
+    {
+     "id": "h11",
+     "name": "Fundació Joan Miró",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.63,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 41.36861,
+     "lon": 2.16
+    }
+   ],
+   "plan": {
+    "summary": "A balanced day in Barcelona built around its best-rated places, kept within 10 km of walking.",
+    "stops": [
+     {
+      "id": "h0",
+      "name": "Basilica and Expiatory Church of the Holy Family",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Basilica and Expiatory Church of the Holy Family is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h3",
+      "name": "Cathedral of the Holy Cross and Saint Eulalia",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Cathedral of the Holy Cross and Saint Eulalia is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h4",
+      "name": "Palau de la Música Catalana",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Palau de la Música Catalana is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h5",
+      "name": "Ciutat Vella",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Ciutat Vella is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h6",
+      "name": "Plaça de Catalunya",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Plaça de Catalunya is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h7",
+      "name": "Palau Güell",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Palau Güell is one of the best-rated places nearby, rated 9.8 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p15",
+   "request": {
+    "city": "Prague",
+    "country": "Czechia",
+    "date": "2027-06-07",
+    "pace": "packed",
+    "vibe": "active",
+    "groupSize": 4,
+    "maxWalkKm": 12,
+    "named": [],
+    "startsFromStay": false
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Prague Castle",
+     "kind": "Castle",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 90,
+     "lat": 50.09,
+     "lon": 14.4
+    },
+    {
+     "id": "h1",
+     "name": "Charles Bridge",
+     "kind": "Bridge",
+     "cat": "active",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 25,
+     "lat": 50.08639,
+     "lon": 14.41194
+    },
+    {
+     "id": "h2",
+     "name": "St. Vitus Cathedral",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 50.09083,
+     "lon": 14.40056
+    },
+    {
+     "id": "h3",
+     "name": "National Library of the Czech Republic",
+     "kind": "Landmark",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 50.08667,
+     "lon": 14.41583
+    },
+    {
+     "id": "h4",
+     "name": "Prague Astronomical Clock",
+     "kind": "Tower",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 50.08699,
+     "lon": 14.4207
+    },
+    {
+     "id": "h5",
+     "name": "National Museum in Prague",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 50.07984,
+     "lon": 14.43042
+    },
+    {
+     "id": "h6",
+     "name": "Wenceslas Square",
+     "kind": "Square",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 50.08231,
+     "lon": 14.42614
+    },
+    {
+     "id": "h7",
+     "name": "Vyšehrad",
+     "kind": "Castle",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 50.06443,
+     "lon": 14.41764
+    },
+    {
+     "id": "h8",
+     "name": "Church of Our Lady before Týn",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 50.08771,
+     "lon": 14.4227
+    },
+    {
+     "id": "h9",
+     "name": "Old Town Square",
+     "kind": "Old town",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 50.0875,
+     "lon": 14.42139
+    },
+    {
+     "id": "h10",
+     "name": "Old New Synagogue",
+     "kind": "Synagogue",
+     "cat": "culture",
+     "rating": 9.79,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 50.09,
+     "lon": 14.41861
+    },
+    {
+     "id": "h11",
+     "name": "Strahov Monastery",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 9.79,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 50.08596,
+     "lon": 14.38928
+    }
+   ],
+   "plan": {
+    "summary": "A packed day in Prague built around its best-rated places, kept within 12 km of walking.",
+    "stops": [
+     {
+      "id": "h1",
+      "name": "Charles Bridge",
+      "dwellMin": 25,
+      "inCatalog": true,
+      "why": "Charles Bridge is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h0",
+      "name": "Prague Castle",
+      "dwellMin": 45,
+      "inCatalog": true,
+      "why": "Prague Castle is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h3",
+      "name": "National Library of the Czech Republic",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "National Library of the Czech Republic is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h4",
+      "name": "Prague Astronomical Clock",
+      "dwellMin": 25,
+      "inCatalog": true,
+      "why": "Prague Astronomical Clock is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h9",
+      "name": "Old Town Square",
+      "dwellMin": 25,
+      "inCatalog": true,
+      "why": "Old Town Square is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h8",
+      "name": "Church of Our Lady before Týn",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Church of Our Lady before Týn is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h6",
+      "name": "Wenceslas Square",
+      "dwellMin": 25,
+      "inCatalog": true,
+      "why": "Wenceslas Square is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h2",
+      "name": "St. Vitus Cathedral",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "St. Vitus Cathedral is one of the best-rated places nearby, rated 10.0 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p16",
+   "request": {
+    "city": "Salzburg",
+    "country": "Austria",
+    "date": "2027-12-22",
+    "pace": "packed",
+    "vibe": "classic",
+    "groupSize": 3,
+    "maxWalkKm": 9,
+    "named": [
+     {
+      "id": "h5",
+      "name": "Salzburg Zoo"
+     }
+    ],
+    "startsFromStay": false
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Hohensalzburg Fortress",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 90,
+     "lat": 47.795,
+     "lon": 13.0473
+    },
+    {
+     "id": "h1",
+     "name": "Salzburg Cathedral",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 35,
+     "lat": 47.79778,
+     "lon": 13.04694
+    },
+    {
+     "id": "h2",
+     "name": "Salzburg Museum",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.2,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 47.79861,
+     "lon": 13.04778
+    },
+    {
+     "id": "h3",
+     "name": "Kapuzinerberg",
+     "kind": "Peak",
+     "cat": "active",
+     "rating": 8.35,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 47.80508,
+     "lon": 13.05801
+    },
+    {
+     "id": "h4",
+     "name": "Nonnberg Abbey",
+     "kind": "Monastery",
+     "cat": "culture",
+     "rating": 8.35,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 47.79611,
+     "lon": 13.05167
+    },
+    {
+     "id": "h5",
+     "name": "Salzburg Zoo",
+     "kind": "Zoo",
+     "cat": "active",
+     "rating": 8.2,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 47.75682,
+     "lon": 13.06408
+    },
+    {
+     "id": "h6",
+     "name": "Historic Centre of the City of Salzburg",
+     "kind": "Old town",
+     "cat": "culture",
+     "rating": 7.78,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 47.7997,
+     "lon": 13.0486
+    },
+    {
+     "id": "h7",
+     "name": "St Peter's Archabbey Salzburg",
+     "kind": "Monastery",
+     "cat": "culture",
+     "rating": 7.61,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 47.7969,
+     "lon": 13.0458
+    },
+    {
+     "id": "h8",
+     "name": "Mozart's birthplace",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 7.33,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 47.8,
+     "lon": 13.04333
+    },
+    {
+     "id": "h9",
+     "name": "Gaisberg",
+     "kind": "Peak",
+     "cat": "active",
+     "rating": 7.1,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 47.80508,
+     "lon": 13.11275
+    },
+    {
+     "id": "h10",
+     "name": "Church of the Holy Trinity, Salzburg",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 7.1,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 47.8031,
+     "lon": 13.0447
+    },
+    {
+     "id": "h11",
+     "name": "Franciscan Church, Salzburg",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 7.1,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 47.7982,
+     "lon": 13.0441
+    }
+   ],
+   "plan": {
+    "summary": "A packed day in Salzburg built around its best-rated places, kept within 9 km of walking.",
+    "stops": [
+     {
+      "id": "h5",
+      "name": "Salzburg Zoo",
+      "dwellMin": 45,
+      "inCatalog": true,
+      "why": "You asked for Salzburg Zoo, so the day is built around it."
+     },
+     {
+      "id": "h6",
+      "name": "Historic Centre of the City of Salzburg",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Historic Centre of the City of Salzburg is worth a stop, rated 7.8 by travellers."
+     },
+     {
+      "id": "h7",
+      "name": "St Peter's Archabbey Salzburg",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "St Peter's Archabbey Salzburg is worth a stop, rated 7.6 by travellers."
+     },
+     {
+      "id": "h8",
+      "name": "Mozart's birthplace",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Mozart's birthplace is worth a stop, rated 7.3 by travellers."
+     },
+     {
+      "id": "h9",
+      "name": "Gaisberg",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Gaisberg is worth a stop, rated 7.1 by travellers."
+     },
+     {
+      "id": "h10",
+      "name": "Church of the Holy Trinity, Salzburg",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Church of the Holy Trinity, Salzburg is worth a stop, rated 7.1 by travellers."
+     },
+     {
+      "id": "h11",
+      "name": "Franciscan Church, Salzburg",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Franciscan Church, Salzburg is worth a stop, rated 7.1 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p17",
+   "request": {
+    "city": "Athens",
+    "country": "Greece",
+    "date": "2027-10-20",
+    "pace": "balanced",
+    "vibe": "culture",
+    "groupSize": 6,
+    "maxWalkKm": 7,
+    "named": [
+     {
+      "id": "h5",
+      "name": "Acropolis Museum"
+     }
+    ],
+    "startsFromStay": true
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Parthenon",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 35,
+     "lat": 37.97153,
+     "lon": 23.7266
+    },
+    {
+     "id": "h1",
+     "name": "Acropolis of Athens",
+     "kind": "Ruins",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 40,
+     "lat": 37.97167,
+     "lon": 23.72611
+    },
+    {
+     "id": "h2",
+     "name": "National Archaeological Museum of Athens",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 37.98917,
+     "lon": 23.73222
+    },
+    {
+     "id": "h3",
+     "name": "Temple of Hephaestus",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 37.97562,
+     "lon": 23.72139
+    },
+    {
+     "id": "h4",
+     "name": "Temple of Olympian Zeus",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 37.96937,
+     "lon": 23.73308
+    },
+    {
+     "id": "h5",
+     "name": "Acropolis Museum",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 37.96842,
+     "lon": 23.72847
+    },
+    {
+     "id": "h6",
+     "name": "Syntagma Square",
+     "kind": "Square",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 37.97556,
+     "lon": 23.73472
+    },
+    {
+     "id": "h7",
+     "name": "Ancient Agora of Athens",
+     "kind": "Ruins",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 37.975,
+     "lon": 23.7225
+    },
+    {
+     "id": "h8",
+     "name": "Theatre of Dionysus",
+     "kind": "Theatre",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 37.9704,
+     "lon": 23.72778
+    },
+    {
+     "id": "h9",
+     "name": "Odeon of Herodes Atticus",
+     "kind": "Ruins",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 37.97084,
+     "lon": 23.72452
+    },
+    {
+     "id": "h10",
+     "name": "Kerameikos",
+     "kind": "Old town",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 37.97833,
+     "lon": 23.71861
+    },
+    {
+     "id": "h11",
+     "name": "Pnyx",
+     "kind": "Ruins",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 37.97167,
+     "lon": 23.71944
+    }
+   ],
+   "plan": {
+    "summary": "A balanced day in Athens built around its best-rated places, kept within 7 km of walking.",
+    "stops": [
+     {
+      "id": "h5",
+      "name": "Acropolis Museum",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "You asked for Acropolis Museum, so the day is built around it."
+     },
+     {
+      "id": "h99",
+      "name": "Athens Old Market Hall",
+      "dwellMin": 45,
+      "inCatalog": true,
+      "why": "A lively covered market with local food stalls."
+     },
+     {
+      "id": "h0",
+      "name": "Parthenon",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Parthenon is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h1",
+      "name": "Acropolis of Athens",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Acropolis of Athens is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h2",
+      "name": "National Archaeological Museum of Athens",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "National Archaeological Museum of Athens is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h7",
+      "name": "Ancient Agora of Athens",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Ancient Agora of Athens is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h3",
+      "name": "Temple of Hephaestus",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Temple of Hephaestus is one of the best-rated places nearby, rated 10.0 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p18",
+   "request": {
+    "city": "Lisbon",
+    "country": "Portugal",
+    "date": "2027-08-09",
+    "pace": "relaxed",
+    "vibe": "culture",
+    "groupSize": 1,
+    "maxWalkKm": 15,
+    "named": [],
+    "startsFromStay": false
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Belém Tower",
+     "kind": "Tower",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 25,
+     "lat": 38.69139,
+     "lon": -9.21583
+    },
+    {
+     "id": "h1",
+     "name": "Jerónimos Monastery",
+     "kind": "Monastery",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 35,
+     "lat": 38.69785,
+     "lon": -9.2056
+    },
+    {
+     "id": "h2",
+     "name": "Estádio da Luz",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 38.75278,
+     "lon": -9.18472
+    },
+    {
+     "id": "h3",
+     "name": "Estádio José Alvalade",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 38.76119,
+     "lon": -9.16078
+    },
+    {
+     "id": "h4",
+     "name": "25 de Abril Bridge",
+     "kind": "Bridge",
+     "cat": "active",
+     "rating": 9.79,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 38.69418,
+     "lon": -9.17815
+    },
+    {
+     "id": "h5",
+     "name": "Lisbon Cathedral",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 9.74,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 38.70985,
+     "lon": -9.13298
+    },
+    {
+     "id": "h6",
+     "name": "Praça do Comércio",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 9.74,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 38.7075,
+     "lon": -9.13639
+    },
+    {
+     "id": "h7",
+     "name": "Padrão dos Descobrimentos",
+     "kind": "Monument",
+     "cat": "culture",
+     "rating": 9.74,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 38.69368,
+     "lon": -9.20569
+    },
+    {
+     "id": "h8",
+     "name": "Castle of Saint George",
+     "kind": "Castle",
+     "cat": "culture",
+     "rating": 9.68,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 38.71389,
+     "lon": -9.13333
+    },
+    {
+     "id": "h9",
+     "name": "National Library of Portugal",
+     "kind": "Landmark",
+     "cat": "culture",
+     "rating": 9.46,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 38.75108,
+     "lon": -9.15257
+    },
+    {
+     "id": "h10",
+     "name": "Calouste Gulbenkian Museum",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.4,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 38.73667,
+     "lon": -9.15417
+    },
+    {
+     "id": "h11",
+     "name": "National Museum of Ancient Art",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.4,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 38.7053,
+     "lon": -9.16072
+    }
+   ],
+   "plan": {
+    "summary": "Your day in Lisbon — enjoy!",
+    "stops": [
+     {
+      "id": "h1",
+      "name": "Jerónimos Monastery",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Jerónimos Monastery is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h0",
+      "name": "Belém Tower",
+      "dwellMin": 25,
+      "inCatalog": true,
+      "why": "Nice."
+     },
+     {
+      "id": "h11",
+      "name": "National Museum of Ancient Art",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "National Museum of Ancient Art is one of the best-rated places nearby, rated 9.4 by travellers."
+     },
+     {
+      "id": "h5",
+      "name": "Lisbon Cathedral",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Nice."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p19",
+   "request": {
+    "city": "Porto",
+    "country": "Portugal",
+    "date": "2027-05-24",
+    "pace": "relaxed",
+    "vibe": "mix",
+    "groupSize": 2,
+    "maxWalkKm": 8,
+    "named": [
+     {
+      "id": "h5",
+      "name": "National Museum Soares dos Reis"
+     }
+    ],
+    "startsFromStay": false
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Casa da Música",
+     "kind": "Theatre",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 40,
+     "lat": 41.15889,
+     "lon": -8.63071
+    },
+    {
+     "id": "h1",
+     "name": "Estádio do Dragão",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 40,
+     "lat": 41.16176,
+     "lon": -8.58393
+    },
+    {
+     "id": "h2",
+     "name": "Luiz I Bridge",
+     "kind": "Bridge",
+     "cat": "active",
+     "rating": 9.58,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 41.13972,
+     "lon": -8.60944
+    },
+    {
+     "id": "h3",
+     "name": "Estádio do Bessa",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 9.46,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 41.16222,
+     "lon": -8.64278
+    },
+    {
+     "id": "h4",
+     "name": "Palácio da Bolsa",
+     "kind": "Palace",
+     "cat": "culture",
+     "rating": 9.36,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 41.14137,
+     "lon": -8.61569
+    },
+    {
+     "id": "h5",
+     "name": "National Museum Soares dos Reis",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 8.35,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 41.14778,
+     "lon": -8.62167
+    },
+    {
+     "id": "h6",
+     "name": "Porto Cathedral",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 8,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 41.14282,
+     "lon": -8.6112
+    },
+    {
+     "id": "h7",
+     "name": "Ponte de D. Maria Pia",
+     "kind": "Bridge",
+     "cat": "active",
+     "rating": 7.93,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 41.13982,
+     "lon": -8.59702
+    },
+    {
+     "id": "h8",
+     "name": "Church of Saint Ildefonso",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 7.7,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 41.14629,
+     "lon": -8.60648
+    },
+    {
+     "id": "h9",
+     "name": "Church of São Francisco",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 7.7,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 41.141,
+     "lon": -8.616
+    },
+    {
+     "id": "h10",
+     "name": "Clérigos Church",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 7.52,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 41.14587,
+     "lon": -8.61401
+    },
+    {
+     "id": "h11",
+     "name": "Arrábida Bridge",
+     "kind": "Bridge",
+     "cat": "active",
+     "rating": 7.1,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 41.14747,
+     "lon": -8.64034
+    }
+   ],
+   "plan": {
+    "summary": "A relaxed day in Porto built around its best-rated places, kept within 8 km of walking.",
+    "stops": [
+     {
+      "id": "h5",
+      "name": "National Museum Soares dos Reis",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "You asked for National Museum Soares dos Reis, so the day is built around it."
+     },
+     {
+      "id": "h0",
+      "name": "Casa da Música",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Casa da Música is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h1",
+      "name": "Estádio do Dragão",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Estádio do Dragão is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h2",
+      "name": "Luiz I Bridge",
+      "dwellMin": 25,
+      "inCatalog": true,
+      "why": "Luiz I Bridge is one of the best-rated places nearby, rated 9.6 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p20",
+   "request": {
+    "city": "Budapest",
+    "country": "Hungary",
+    "date": "2027-05-15",
+    "pace": "balanced",
+    "vibe": "classic",
+    "groupSize": 1,
+    "maxWalkKm": 15,
+    "named": [],
+    "startsFromStay": false
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Buda Castle",
+     "kind": "Castle",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 90,
+     "lat": 47.49611,
+     "lon": 19.03972
+    },
+    {
+     "id": "h1",
+     "name": "Heroes' Square",
+     "kind": "Square",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 25,
+     "lat": 47.51528,
+     "lon": 19.07806
+    },
+    {
+     "id": "h2",
+     "name": "Széchenyi Chain Bridge",
+     "kind": "Bridge",
+     "cat": "active",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 47.49889,
+     "lon": 19.04361
+    },
+    {
+     "id": "h3",
+     "name": "Aquincum",
+     "kind": "Ruins",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 47.56414,
+     "lon": 19.04947
+    },
+    {
+     "id": "h4",
+     "name": "St. Stephen's Basilica",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 47.50083,
+     "lon": 19.05389
+    },
+    {
+     "id": "h5",
+     "name": "Óbuda",
+     "kind": "Old town",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 47.55,
+     "lon": 19.03333
+    },
+    {
+     "id": "h6",
+     "name": "Hungarian State Opera House",
+     "kind": "Theatre",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 47.50278,
+     "lon": 19.05833
+    },
+    {
+     "id": "h7",
+     "name": "Matthias Church",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 47.50194,
+     "lon": 19.03417
+    },
+    {
+     "id": "h8",
+     "name": "Margaret Island",
+     "kind": "Island",
+     "cat": "active",
+     "rating": 9.97,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 47.5275,
+     "lon": 19.0475
+    },
+    {
+     "id": "h9",
+     "name": "Museum of Fine Arts, Budapest",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.97,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 47.51587,
+     "lon": 19.07678
+    },
+    {
+     "id": "h10",
+     "name": "Dohány Street Synagogue",
+     "kind": "Synagogue",
+     "cat": "culture",
+     "rating": 9.93,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 47.4959,
+     "lon": 19.0607
+    },
+    {
+     "id": "h11",
+     "name": "National Széchényi Library",
+     "kind": "Landmark",
+     "cat": "culture",
+     "rating": 9.83,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 47.49521,
+     "lon": 19.03935
+    }
+   ],
+   "plan": {
+    "summary": "Your day in Budapest — enjoy!",
+    "stops": [
+     {
+      "id": "h1",
+      "name": "Heroes' Square",
+      "dwellMin": 25,
+      "inCatalog": true,
+      "why": "Heroes' Square is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h0",
+      "name": "Buda Castle",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Nice."
+     },
+     {
+      "id": "h6",
+      "name": "Hungarian State Opera House",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Hungarian State Opera House is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h4",
+      "name": "St. Stephen's Basilica",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Nice."
+     },
+     {
+      "id": "h8",
+      "name": "Margaret Island",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Margaret Island is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h2",
+      "name": "Széchenyi Chain Bridge",
+      "dwellMin": 25,
+      "inCatalog": true,
+      "why": "Nice."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p21",
+   "request": {
+    "city": "Naples",
+    "country": "Italy",
+    "date": "2027-09-19",
+    "pace": "relaxed",
+    "vibe": "mix",
+    "groupSize": 4,
+    "maxWalkKm": 12,
+    "named": [],
+    "startsFromStay": false
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Teatro di San Carlo",
+     "kind": "Theatre",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 40,
+     "lat": 40.83739,
+     "lon": 14.24969
+    },
+    {
+     "id": "h1",
+     "name": "Castel Nuovo",
+     "kind": "Castle",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 90,
+     "lat": 40.83838,
+     "lon": 14.25381
+    },
+    {
+     "id": "h2",
+     "name": "Naples Cathedral",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 40.85261,
+     "lon": 14.25953
+    },
+    {
+     "id": "h3",
+     "name": "Royal Palace of Naples",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 40.83614,
+     "lon": 14.24928
+    },
+    {
+     "id": "h4",
+     "name": "Castel dell'Ovo",
+     "kind": "Castle",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 40.82832,
+     "lon": 14.24766
+    },
+    {
+     "id": "h5",
+     "name": "Stadio Diego Armando Maradona",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 40.82797,
+     "lon": 14.19301
+    },
+    {
+     "id": "h6",
+     "name": "Naples National Archaeological Museum",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 40.85361,
+     "lon": 14.25056
+    },
+    {
+     "id": "h7",
+     "name": "Museo di Capodimonte",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.88,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 40.86699,
+     "lon": 14.25035
+    },
+    {
+     "id": "h8",
+     "name": "Castel Sant'Elmo",
+     "kind": "Castle",
+     "cat": "culture",
+     "rating": 9.5,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 40.84362,
+     "lon": 14.23933
+    },
+    {
+     "id": "h9",
+     "name": "Certosa di San Martino",
+     "kind": "Monastery",
+     "cat": "culture",
+     "rating": 9.5,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 40.84341,
+     "lon": 14.24113
+    },
+    {
+     "id": "h10",
+     "name": "San Francesco di Paola",
+     "kind": "Basilica",
+     "cat": "culture",
+     "rating": 9.36,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 40.8353,
+     "lon": 14.2475
+    },
+    {
+     "id": "h11",
+     "name": "Cappella Sansevero",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 9.28,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 40.84919,
+     "lon": 14.25488
+    }
+   ],
+   "plan": {
+    "summary": "A relaxed day in Naples built around its best-rated places, kept within 12 km of walking.",
+    "stops": [
+     {
+      "id": "h0",
+      "name": "Teatro di San Carlo",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Teatro di San Carlo is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h99",
+      "name": "Naples Old Market Hall",
+      "dwellMin": 45,
+      "inCatalog": true,
+      "why": "A lively covered market with local food stalls."
+     },
+     {
+      "id": "h1",
+      "name": "Castel Nuovo",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Castel Nuovo is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h3",
+      "name": "Royal Palace of Naples",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Royal Palace of Naples is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h6",
+      "name": "Naples National Archaeological Museum",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Naples National Archaeological Museum is one of the best-rated places nearby, rated 10.0 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p22",
+   "request": {
+    "city": "Ljubljana",
+    "country": "Slovenia",
+    "date": "2027-11-21",
+    "pace": "relaxed",
+    "vibe": "active",
+    "groupSize": 1,
+    "maxWalkKm": 15,
+    "named": [],
+    "startsFromStay": false
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Ljubljana Castle",
+     "kind": "Castle",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 90,
+     "lat": 46.04871,
+     "lon": 14.50863
+    },
+    {
+     "id": "h1",
+     "name": "Ljubljana Cathedral",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 35,
+     "lat": 46.05071,
+     "lon": 14.50824
+    },
+    {
+     "id": "h2",
+     "name": "Dragon Bridge",
+     "kind": "Bridge",
+     "cat": "active",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 46.05194,
+     "lon": 14.51028
+    },
+    {
+     "id": "h3",
+     "name": "Triple Bridge",
+     "kind": "Bridge",
+     "cat": "active",
+     "rating": 9.57,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 46.05108,
+     "lon": 14.5062
+    },
+    {
+     "id": "h4",
+     "name": "National Gallery of Slovenia",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.5,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 46.05396,
+     "lon": 14.50025
+    },
+    {
+     "id": "h5",
+     "name": "Ljubljana Zoo",
+     "kind": "Zoo",
+     "cat": "active",
+     "rating": 9.36,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 46.055,
+     "lon": 14.47167
+    },
+    {
+     "id": "h6",
+     "name": "Franciscan Church of the Annunciation",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 9.36,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 46.05186,
+     "lon": 14.50606
+    },
+    {
+     "id": "h7",
+     "name": "National Museum of Slovenia",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.36,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 46.05222,
+     "lon": 14.49944
+    },
+    {
+     "id": "h8",
+     "name": "National and University Library of Slovenia",
+     "kind": "Landmark",
+     "cat": "culture",
+     "rating": 9.34,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 46.04694,
+     "lon": 14.50389
+    },
+    {
+     "id": "h9",
+     "name": "Nebotičnik",
+     "kind": "Tower",
+     "cat": "culture",
+     "rating": 9.02,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 46.05319,
+     "lon": 14.50361
+    },
+    {
+     "id": "h10",
+     "name": "Congress Square",
+     "kind": "Square",
+     "cat": "sight",
+     "rating": 8.83,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 46.05007,
+     "lon": 14.50369
+    },
+    {
+     "id": "h11",
+     "name": "Opera Ljubljana",
+     "kind": "Theatre",
+     "cat": "culture",
+     "rating": 8.72,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 46.05259,
+     "lon": 14.50065
+    }
+   ],
+   "plan": {
+    "summary": "A relaxed day in Ljubljana built around its best-rated places, kept within 15 km of walking.",
+    "stops": [
+     {
+      "id": "h0",
+      "name": "Ljubljana Castle",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Ljubljana Castle is worth a stop, rated 10.0 by travellers."
+     },
+     {
+      "id": "h1",
+      "name": "Ljubljana Cathedral",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Ljubljana Cathedral is worth a stop, rated 10.0 by travellers."
+     },
+     {
+      "id": "h2",
+      "name": "Dragon Bridge",
+      "dwellMin": 25,
+      "inCatalog": true,
+      "why": "Dragon Bridge is worth a stop, rated 10.0 by travellers."
+     },
+     {
+      "id": "h3",
+      "name": "Triple Bridge",
+      "dwellMin": 25,
+      "inCatalog": true,
+      "why": "Triple Bridge is worth a stop, rated 9.6 by travellers."
+     },
+     {
+      "id": "h4",
+      "name": "National Gallery of Slovenia",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "National Gallery of Slovenia is worth a stop, rated 9.5 by travellers."
+     },
+     {
+      "id": "h5",
+      "name": "Ljubljana Zoo",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Ljubljana Zoo is worth a stop, rated 9.4 by travellers."
+     },
+     {
+      "id": "h6",
+      "name": "Franciscan Church of the Annunciation",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Franciscan Church of the Annunciation is worth a stop, rated 9.4 by travellers."
+     },
+     {
+      "id": "h7",
+      "name": "National Museum of Slovenia",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "National Museum of Slovenia is worth a stop, rated 9.4 by travellers."
+     },
+     {
+      "id": "h8",
+      "name": "National and University Library of Slovenia",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "National and University Library of Slovenia is worth a stop, rated 9.3 by travellers."
+     },
+     {
+      "id": "h9",
+      "name": "Nebotičnik",
+      "dwellMin": 25,
+      "inCatalog": true,
+      "why": "Nebotičnik is worth a stop, rated 9.0 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p23",
+   "request": {
+    "city": "Lisbon",
+    "country": "Portugal",
+    "date": "2027-08-09",
+    "pace": "relaxed",
+    "vibe": "culture",
+    "groupSize": 1,
+    "maxWalkKm": 15,
+    "named": [],
+    "startsFromStay": false
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Belém Tower",
+     "kind": "Tower",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 25,
+     "lat": 38.69139,
+     "lon": -9.21583
+    },
+    {
+     "id": "h1",
+     "name": "Jerónimos Monastery",
+     "kind": "Monastery",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 35,
+     "lat": 38.69785,
+     "lon": -9.2056
+    },
+    {
+     "id": "h2",
+     "name": "Estádio da Luz",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 38.75278,
+     "lon": -9.18472
+    },
+    {
+     "id": "h3",
+     "name": "Estádio José Alvalade",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 38.76119,
+     "lon": -9.16078
+    },
+    {
+     "id": "h4",
+     "name": "25 de Abril Bridge",
+     "kind": "Bridge",
+     "cat": "active",
+     "rating": 9.79,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 38.69418,
+     "lon": -9.17815
+    },
+    {
+     "id": "h5",
+     "name": "Lisbon Cathedral",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 9.74,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 38.70985,
+     "lon": -9.13298
+    },
+    {
+     "id": "h6",
+     "name": "Praça do Comércio",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 9.74,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 38.7075,
+     "lon": -9.13639
+    },
+    {
+     "id": "h7",
+     "name": "Padrão dos Descobrimentos",
+     "kind": "Monument",
+     "cat": "culture",
+     "rating": 9.74,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 38.69368,
+     "lon": -9.20569
+    },
+    {
+     "id": "h8",
+     "name": "Castle of Saint George",
+     "kind": "Castle",
+     "cat": "culture",
+     "rating": 9.68,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 38.71389,
+     "lon": -9.13333
+    },
+    {
+     "id": "h9",
+     "name": "National Library of Portugal",
+     "kind": "Landmark",
+     "cat": "culture",
+     "rating": 9.46,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 38.75108,
+     "lon": -9.15257
+    },
+    {
+     "id": "h10",
+     "name": "Calouste Gulbenkian Museum",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.4,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 38.73667,
+     "lon": -9.15417
+    },
+    {
+     "id": "h11",
+     "name": "National Museum of Ancient Art",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.4,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 38.7053,
+     "lon": -9.16072
+    }
+   ],
+   "plan": {
+    "summary": "A relaxed day in Lisbon built around its best-rated places, kept within 15 km of walking.",
+    "stops": [
+     {
+      "id": "h1",
+      "name": "Jerónimos Monastery",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Jerónimos Monastery is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h0",
+      "name": "Belém Tower",
+      "dwellMin": 25,
+      "inCatalog": true,
+      "why": "Belém Tower is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h11",
+      "name": "National Museum of Ancient Art",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "National Museum of Ancient Art is one of the best-rated places nearby, rated 9.4 by travellers."
+     },
+     {
+      "id": "h5",
+      "name": "Lisbon Cathedral",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Lisbon Cathedral is one of the best-rated places nearby, rated 9.7 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p24",
+   "request": {
+    "city": "Berlin",
+    "country": "Germany",
+    "date": "2027-09-10",
+    "pace": "balanced",
+    "vibe": "mix",
+    "groupSize": 3,
+    "maxWalkKm": 9,
+    "named": [
+     {
+      "id": "h5",
+      "name": "Berlin Cathedral"
+     }
+    ],
+    "startsFromStay": false
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Brandenburg Gate",
+     "kind": "Monument",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 25,
+     "lat": 52.51627,
+     "lon": 13.37772
+    },
+    {
+     "id": "h1",
+     "name": "Pergamon Museum",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 90,
+     "lat": 52.521,
+     "lon": 13.396
+    },
+    {
+     "id": "h2",
+     "name": "congress of Berlin",
+     "kind": "Peak",
+     "cat": "active",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 52.51167,
+     "lon": 13.38194
+    },
+    {
+     "id": "h3",
+     "name": "Museum Island",
+     "kind": "Old town",
+     "cat": "active",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 52.52139,
+     "lon": 13.39556
+    },
+    {
+     "id": "h4",
+     "name": "Fernsehturm Berlin",
+     "kind": "Tower",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 52.52083,
+     "lon": 13.40944
+    },
+    {
+     "id": "h5",
+     "name": "Berlin Cathedral",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 52.51917,
+     "lon": 13.40111
+    },
+    {
+     "id": "h6",
+     "name": "Unter den Linden",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 52.51658,
+     "lon": 13.381
+    },
+    {
+     "id": "h7",
+     "name": "Potsdamer Platz",
+     "kind": "Square",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 52.50894,
+     "lon": 13.37633
+    },
+    {
+     "id": "h8",
+     "name": "Charlottenburg Palace",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 52.52111,
+     "lon": 13.29583
+    },
+    {
+     "id": "h9",
+     "name": "Alexanderplatz",
+     "kind": "Square",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 52.52167,
+     "lon": 13.41361
+    },
+    {
+     "id": "h10",
+     "name": "Neues Museum",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 52.5202,
+     "lon": 13.3976
+    },
+    {
+     "id": "h11",
+     "name": "Berlin Palace",
+     "kind": "Palace",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 52.5175,
+     "lon": 13.40278
+    }
+   ],
+   "plan": {
+    "summary": "A balanced day in Berlin built around its best-rated places, kept within 9 km of walking.",
+    "stops": [
+     {
+      "id": "h5",
+      "name": "Berlin Cathedral",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "You asked for Berlin Cathedral, so the day is built around it."
+     },
+     {
+      "id": "h0",
+      "name": "Brandenburg Gate",
+      "dwellMin": 25,
+      "inCatalog": true,
+      "why": "Brandenburg Gate is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h1",
+      "name": "Pergamon Museum",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Pergamon Museum is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h6",
+      "name": "Unter den Linden",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Unter den Linden is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h2",
+      "name": "congress of Berlin",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "congress of Berlin is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h3",
+      "name": "Museum Island",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Museum Island is one of the best-rated places nearby, rated 10.0 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p25",
+   "request": {
+    "city": "Vienna",
+    "country": "Austria",
+    "date": "2027-07-08",
+    "pace": "balanced",
+    "vibe": "classic",
+    "groupSize": 6,
+    "maxWalkKm": 7,
+    "named": [
+     {
+      "id": "h5",
+      "name": "Ernst-Happel-Stadion"
+     }
+    ],
+    "startsFromStay": true
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Belvedere",
+     "kind": "Palace",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 90,
+     "lat": 48.1934,
+     "lon": 16.38052
+    },
+    {
+     "id": "h1",
+     "name": "St. Stephen's Cathedral",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 35,
+     "lat": 48.20843,
+     "lon": 16.37326
+    },
+    {
+     "id": "h2",
+     "name": "Hofburg Palace",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 48.20639,
+     "lon": 16.36528
+    },
+    {
+     "id": "h3",
+     "name": "Vienna State Opera house",
+     "kind": "Theatre",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 48.20333,
+     "lon": 16.36917
+    },
+    {
+     "id": "h4",
+     "name": "Kunsthistorisches Museum",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 48.20388,
+     "lon": 16.3616
+    },
+    {
+     "id": "h5",
+     "name": "Ernst-Happel-Stadion",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 48.20722,
+     "lon": 16.42083
+    },
+    {
+     "id": "h6",
+     "name": "Albertina",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 48.20472,
+     "lon": 16.36833
+    },
+    {
+     "id": "h7",
+     "name": "Austrian National Library",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 48.20614,
+     "lon": 16.36627
+    },
+    {
+     "id": "h8",
+     "name": "Burgtheater",
+     "kind": "Theatre",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 48.21028,
+     "lon": 16.36139
+    },
+    {
+     "id": "h9",
+     "name": "Karlskirche",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 48.19828,
+     "lon": 16.37188
+    },
+    {
+     "id": "h10",
+     "name": "Schönbrunn Zoo",
+     "kind": "Zoo",
+     "cat": "active",
+     "rating": 9.97,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 48.18222,
+     "lon": 16.3025
+    },
+    {
+     "id": "h11",
+     "name": "Vienna Central Cemetery",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 9.88,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 48.15072,
+     "lon": 16.43808
+    }
+   ],
+   "plan": {
+    "summary": "A balanced day in Vienna built around its best-rated places, kept within 7 km of walking.",
+    "stops": [
+     {
+      "id": "h5",
+      "name": "Ernst-Happel-Stadion",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "You asked for Ernst-Happel-Stadion, so the day is built around it."
+     },
+     {
+      "id": "h0",
+      "name": "Belvedere",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Belvedere is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h6",
+      "name": "Albertina",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Albertina is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h7",
+      "name": "Austrian National Library",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Austrian National Library is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h9",
+      "name": "Karlskirche",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Karlskirche is one of the best-rated places nearby, rated 10.0 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p26",
+   "request": {
+    "city": "Budapest",
+    "country": "Hungary",
+    "date": "2027-05-15",
+    "pace": "balanced",
+    "vibe": "classic",
+    "groupSize": 1,
+    "maxWalkKm": 15,
+    "named": [],
+    "startsFromStay": false
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Buda Castle",
+     "kind": "Castle",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 90,
+     "lat": 47.49611,
+     "lon": 19.03972
+    },
+    {
+     "id": "h1",
+     "name": "Heroes' Square",
+     "kind": "Square",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 25,
+     "lat": 47.51528,
+     "lon": 19.07806
+    },
+    {
+     "id": "h2",
+     "name": "Széchenyi Chain Bridge",
+     "kind": "Bridge",
+     "cat": "active",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 47.49889,
+     "lon": 19.04361
+    },
+    {
+     "id": "h3",
+     "name": "Aquincum",
+     "kind": "Ruins",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 47.56414,
+     "lon": 19.04947
+    },
+    {
+     "id": "h4",
+     "name": "St. Stephen's Basilica",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 47.50083,
+     "lon": 19.05389
+    },
+    {
+     "id": "h5",
+     "name": "Óbuda",
+     "kind": "Old town",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 47.55,
+     "lon": 19.03333
+    },
+    {
+     "id": "h6",
+     "name": "Hungarian State Opera House",
+     "kind": "Theatre",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 47.50278,
+     "lon": 19.05833
+    },
+    {
+     "id": "h7",
+     "name": "Matthias Church",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 47.50194,
+     "lon": 19.03417
+    },
+    {
+     "id": "h8",
+     "name": "Margaret Island",
+     "kind": "Island",
+     "cat": "active",
+     "rating": 9.97,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 47.5275,
+     "lon": 19.0475
+    },
+    {
+     "id": "h9",
+     "name": "Museum of Fine Arts, Budapest",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.97,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 47.51587,
+     "lon": 19.07678
+    },
+    {
+     "id": "h10",
+     "name": "Dohány Street Synagogue",
+     "kind": "Synagogue",
+     "cat": "culture",
+     "rating": 9.93,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 47.4959,
+     "lon": 19.0607
+    },
+    {
+     "id": "h11",
+     "name": "National Széchényi Library",
+     "kind": "Landmark",
+     "cat": "culture",
+     "rating": 9.83,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 47.49521,
+     "lon": 19.03935
+    }
+   ],
+   "plan": {
+    "summary": "A balanced day in Budapest built around its best-rated places, kept within 15 km of walking.",
+    "stops": [
+     {
+      "id": "h1",
+      "name": "Heroes' Square",
+      "dwellMin": 25,
+      "inCatalog": true,
+      "why": "Heroes' Square is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h0",
+      "name": "Buda Castle",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Buda Castle is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h6",
+      "name": "Hungarian State Opera House",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Hungarian State Opera House is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h4",
+      "name": "St. Stephen's Basilica",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "St. Stephen's Basilica is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h8",
+      "name": "Margaret Island",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Margaret Island is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h2",
+      "name": "Széchenyi Chain Bridge",
+      "dwellMin": 25,
+      "inCatalog": true,
+      "why": "Széchenyi Chain Bridge is one of the best-rated places nearby, rated 10.0 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p27",
+   "request": {
+    "city": "Edinburgh",
+    "country": "United Kingdom",
+    "date": "2027-11-12",
+    "pace": "packed",
+    "vibe": "mix",
+    "groupSize": 2,
+    "maxWalkKm": 8,
+    "named": [
+     {
+      "id": "h5",
+      "name": "New Town"
+     }
+    ],
+    "startsFromStay": false
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Edinburgh Castle",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 90,
+     "lat": 55.9487,
+     "lon": -3.20073
+    },
+    {
+     "id": "h1",
+     "name": "National Museum of Scotland",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.74,
+     "mustSee": true,
+     "dwellMin": 90,
+     "lat": 55.94694,
+     "lon": -3.19
+    },
+    {
+     "id": "h2",
+     "name": "St Giles' Cathedral",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 9.63,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 55.94944,
+     "lon": -3.19083
+    },
+    {
+     "id": "h3",
+     "name": "Arthur's Seat",
+     "kind": "Peak",
+     "cat": "active",
+     "rating": 9.63,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 55.94417,
+     "lon": -3.16194
+    },
+    {
+     "id": "h4",
+     "name": "Murrayfield Stadium",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 9.63,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 55.94223,
+     "lon": -3.24092
+    },
+    {
+     "id": "h5",
+     "name": "New Town",
+     "kind": "Old town",
+     "cat": "sight",
+     "rating": 9.58,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 55.95625,
+     "lon": -3.19893
+    },
+    {
+     "id": "h6",
+     "name": "Old Town",
+     "kind": "Old town",
+     "cat": "sight",
+     "rating": 9.58,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 55.94757,
+     "lon": -3.19163
+    },
+    {
+     "id": "h7",
+     "name": "Holyrood Abbey",
+     "kind": "Monastery",
+     "cat": "culture",
+     "rating": 9.34,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 55.95316,
+     "lon": -3.17157
+    },
+    {
+     "id": "h8",
+     "name": "Edinburgh International Festival",
+     "kind": "Theatre",
+     "cat": "culture",
+     "rating": 9.28,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 55.9533,
+     "lon": -3.1892
+    },
+    {
+     "id": "h9",
+     "name": "Calton Hill",
+     "kind": "Peak",
+     "cat": "active",
+     "rating": 8.07,
+     "mustSee": false,
+     "dwellMin": 50,
+     "lat": 55.95528,
+     "lon": -3.18222
+    },
+    {
+     "id": "h10",
+     "name": "HMY Britannia",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 8,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 55.98213,
+     "lon": -3.1773
+    },
+    {
+     "id": "h11",
+     "name": "Edinburgh Zoo",
+     "kind": "Zoo",
+     "cat": "active",
+     "rating": 7.7,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 55.9425,
+     "lon": -3.27
+    }
+   ],
+   "plan": {
+    "summary": "A packed day in Edinburgh built around its best-rated places, kept within 8 km of walking.",
+    "stops": [
+     {
+      "id": "h0",
+      "name": "Edinburgh Castle",
+      "dwellMin": 45,
+      "inCatalog": true,
+      "why": "Edinburgh Castle is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h1",
+      "name": "National Museum of Scotland",
+      "dwellMin": 45,
+      "inCatalog": true,
+      "why": "National Museum of Scotland is one of the best-rated places nearby, rated 9.7 by travellers."
+     },
+     {
+      "id": "h2",
+      "name": "St Giles' Cathedral",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "St Giles' Cathedral is one of the best-rated places nearby, rated 9.6 by travellers."
+     },
+     {
+      "id": "h6",
+      "name": "Old Town",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Old Town is one of the best-rated places nearby, rated 9.6 by travellers."
+     },
+     {
+      "id": "h8",
+      "name": "Edinburgh International Festival",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Edinburgh International Festival is one of the best-rated places nearby, rated 9.3 by travellers."
+     },
+     {
+      "id": "h3",
+      "name": "Arthur's Seat",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Arthur's Seat is one of the best-rated places nearby, rated 9.6 by travellers."
+     },
+     {
+      "id": "h7",
+      "name": "Holyrood Abbey",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Holyrood Abbey is one of the best-rated places nearby, rated 9.3 by travellers."
+     },
+     {
+      "id": "h4",
+      "name": "Murrayfield Stadium",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Murrayfield Stadium is worth a stop, rated 9.6 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p28",
+   "request": {
+    "city": "Vienna",
+    "country": "Austria",
+    "date": "2027-07-08",
+    "pace": "balanced",
+    "vibe": "classic",
+    "groupSize": 6,
+    "maxWalkKm": 7,
+    "named": [
+     {
+      "id": "h5",
+      "name": "Ernst-Happel-Stadion"
+     }
+    ],
+    "startsFromStay": true
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Belvedere",
+     "kind": "Palace",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 90,
+     "lat": 48.1934,
+     "lon": 16.38052
+    },
+    {
+     "id": "h1",
+     "name": "St. Stephen's Cathedral",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 35,
+     "lat": 48.20843,
+     "lon": 16.37326
+    },
+    {
+     "id": "h2",
+     "name": "Hofburg Palace",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 48.20639,
+     "lon": 16.36528
+    },
+    {
+     "id": "h3",
+     "name": "Vienna State Opera house",
+     "kind": "Theatre",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 48.20333,
+     "lon": 16.36917
+    },
+    {
+     "id": "h4",
+     "name": "Kunsthistorisches Museum",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 48.20388,
+     "lon": 16.3616
+    },
+    {
+     "id": "h5",
+     "name": "Ernst-Happel-Stadion",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 48.20722,
+     "lon": 16.42083
+    },
+    {
+     "id": "h6",
+     "name": "Albertina",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 48.20472,
+     "lon": 16.36833
+    },
+    {
+     "id": "h7",
+     "name": "Austrian National Library",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 48.20614,
+     "lon": 16.36627
+    },
+    {
+     "id": "h8",
+     "name": "Burgtheater",
+     "kind": "Theatre",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 48.21028,
+     "lon": 16.36139
+    },
+    {
+     "id": "h9",
+     "name": "Karlskirche",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 48.19828,
+     "lon": 16.37188
+    },
+    {
+     "id": "h10",
+     "name": "Schönbrunn Zoo",
+     "kind": "Zoo",
+     "cat": "active",
+     "rating": 9.97,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 48.18222,
+     "lon": 16.3025
+    },
+    {
+     "id": "h11",
+     "name": "Vienna Central Cemetery",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 9.88,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 48.15072,
+     "lon": 16.43808
+    }
+   ],
+   "plan": {
+    "summary": "Your day in Vienna — enjoy!",
+    "stops": [
+     {
+      "id": "h5",
+      "name": "Ernst-Happel-Stadion",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "You asked for Ernst-Happel-Stadion, so the day is built around it."
+     },
+     {
+      "id": "h0",
+      "name": "Belvedere",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Nice."
+     },
+     {
+      "id": "h6",
+      "name": "Albertina",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Albertina is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h7",
+      "name": "Austrian National Library",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Nice."
+     },
+     {
+      "id": "h9",
+      "name": "Karlskirche",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Karlskirche is one of the best-rated places nearby, rated 10.0 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p29",
+   "request": {
+    "city": "Munich",
+    "country": "Germany",
+    "date": "2027-04-14",
+    "pace": "relaxed",
+    "vibe": "active",
+    "groupSize": 6,
+    "maxWalkKm": 7,
+    "named": [
+     {
+      "id": "h5",
+      "name": "Glyptothek"
+     }
+    ],
+    "startsFromStay": true
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Munich Olympic Stadium",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 40,
+     "lat": 48.17306,
+     "lon": 11.54667
+    },
+    {
+     "id": "h1",
+     "name": "Deutsches Museum",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 90,
+     "lat": 48.13,
+     "lon": 11.58333
+    },
+    {
+     "id": "h2",
+     "name": "Nymphenburg Palace",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 48.15806,
+     "lon": 11.50361
+    },
+    {
+     "id": "h3",
+     "name": "Alte Pinakothek",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 48.14829,
+     "lon": 11.56999
+    },
+    {
+     "id": "h4",
+     "name": "Frauenkirche",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 48.13858,
+     "lon": 11.57362
+    },
+    {
+     "id": "h5",
+     "name": "Glyptothek",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 48.14657,
+     "lon": 11.56582
+    },
+    {
+     "id": "h6",
+     "name": "Marienplatz",
+     "kind": "Square",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 48.13722,
+     "lon": 11.57528
+    },
+    {
+     "id": "h7",
+     "name": "Bavarian State Library",
+     "kind": "Landmark",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 48.14739,
+     "lon": 11.58061
+    },
+    {
+     "id": "h8",
+     "name": "Munich Residence",
+     "kind": "Palace",
+     "cat": "culture",
+     "rating": 9.63,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 48.14105,
+     "lon": 11.57871
+    },
+    {
+     "id": "h9",
+     "name": "Theatine Church",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 9.4,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 48.14194,
+     "lon": 11.57639
+    },
+    {
+     "id": "h10",
+     "name": "Theresienwiese",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 9.34,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 48.1333,
+     "lon": 11.55
+    },
+    {
+     "id": "h11",
+     "name": "Bavaria",
+     "kind": "Monument",
+     "cat": "culture",
+     "rating": 8.07,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 48.13069,
+     "lon": 11.54579
+    }
+   ],
+   "plan": {
+    "summary": "A relaxed day in Munich built around its best-rated places, kept within 7 km of walking.",
+    "stops": [
+     {
+      "id": "h0",
+      "name": "Munich Olympic Stadium",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Munich Olympic Stadium is worth a stop, rated 10.0 by travellers."
+     },
+     {
+      "id": "h1",
+      "name": "Deutsches Museum",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Deutsches Museum is worth a stop, rated 10.0 by travellers."
+     },
+     {
+      "id": "h2",
+      "name": "Nymphenburg Palace",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Nymphenburg Palace is worth a stop, rated 10.0 by travellers."
+     },
+     {
+      "id": "h3",
+      "name": "Alte Pinakothek",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Alte Pinakothek is worth a stop, rated 10.0 by travellers."
+     },
+     {
+      "id": "h4",
+      "name": "Frauenkirche",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Frauenkirche is worth a stop, rated 10.0 by travellers."
+     },
+     {
+      "id": "h5",
+      "name": "Glyptothek",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Glyptothek is worth a stop, rated 10.0 by travellers."
+     },
+     {
+      "id": "h6",
+      "name": "Marienplatz",
+      "dwellMin": 25,
+      "inCatalog": true,
+      "why": "Marienplatz is worth a stop, rated 10.0 by travellers."
+     },
+     {
+      "id": "h7",
+      "name": "Bavarian State Library",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Bavarian State Library is worth a stop, rated 10.0 by travellers."
+     },
+     {
+      "id": "h8",
+      "name": "Munich Residence",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Munich Residence is worth a stop, rated 9.6 by travellers."
+     },
+     {
+      "id": "h9",
+      "name": "Theatine Church",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Theatine Church is worth a stop, rated 9.4 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p30",
+   "request": {
+    "city": "Salzburg",
+    "country": "Austria",
+    "date": "2027-12-22",
+    "pace": "packed",
+    "vibe": "classic",
+    "groupSize": 3,
+    "maxWalkKm": 9,
+    "named": [
+     {
+      "id": "h5",
+      "name": "Salzburg Zoo"
+     }
+    ],
+    "startsFromStay": false
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Hohensalzburg Fortress",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 90,
+     "lat": 47.795,
+     "lon": 13.0473
+    },
+    {
+     "id": "h1",
+     "name": "Salzburg Cathedral",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 35,
+     "lat": 47.79778,
+     "lon": 13.04694
+    },
+    {
+     "id": "h2",
+     "name": "Salzburg Museum",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.2,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 47.79861,
+     "lon": 13.04778
+    },
+    {
+     "id": "h3",
+     "name": "Kapuzinerberg",
+     "kind": "Peak",
+     "cat": "active",
+     "rating": 8.35,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 47.80508,
+     "lon": 13.05801
+    },
+    {
+     "id": "h4",
+     "name": "Nonnberg Abbey",
+     "kind": "Monastery",
+     "cat": "culture",
+     "rating": 8.35,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 47.79611,
+     "lon": 13.05167
+    },
+    {
+     "id": "h5",
+     "name": "Salzburg Zoo",
+     "kind": "Zoo",
+     "cat": "active",
+     "rating": 8.2,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 47.75682,
+     "lon": 13.06408
+    },
+    {
+     "id": "h6",
+     "name": "Historic Centre of the City of Salzburg",
+     "kind": "Old town",
+     "cat": "culture",
+     "rating": 7.78,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 47.7997,
+     "lon": 13.0486
+    },
+    {
+     "id": "h7",
+     "name": "St Peter's Archabbey Salzburg",
+     "kind": "Monastery",
+     "cat": "culture",
+     "rating": 7.61,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 47.7969,
+     "lon": 13.0458
+    },
+    {
+     "id": "h8",
+     "name": "Mozart's birthplace",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 7.33,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 47.8,
+     "lon": 13.04333
+    },
+    {
+     "id": "h9",
+     "name": "Gaisberg",
+     "kind": "Peak",
+     "cat": "active",
+     "rating": 7.1,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 47.80508,
+     "lon": 13.11275
+    },
+    {
+     "id": "h10",
+     "name": "Church of the Holy Trinity, Salzburg",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 7.1,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 47.8031,
+     "lon": 13.0447
+    },
+    {
+     "id": "h11",
+     "name": "Franciscan Church, Salzburg",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 7.1,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 47.7982,
+     "lon": 13.0441
+    }
+   ],
+   "plan": {
+    "summary": "A packed day in Salzburg built around its best-rated places, kept within 9 km of walking.",
+    "stops": [
+     {
+      "id": "h5",
+      "name": "Salzburg Zoo",
+      "dwellMin": 45,
+      "inCatalog": true,
+      "why": "You asked for Salzburg Zoo, so the day is built around it."
+     },
+     {
+      "id": "h0",
+      "name": "Hohensalzburg Fortress",
+      "dwellMin": 45,
+      "inCatalog": true,
+      "why": "Hohensalzburg Fortress is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h1",
+      "name": "Salzburg Cathedral",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Salzburg Cathedral is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h2",
+      "name": "Salzburg Museum",
+      "dwellMin": 45,
+      "inCatalog": true,
+      "why": "Salzburg Museum is one of the best-rated places nearby, rated 9.2 by travellers."
+     },
+     {
+      "id": "h4",
+      "name": "Nonnberg Abbey",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Nonnberg Abbey is one of the best-rated places nearby, rated 8.3 by travellers."
+     },
+     {
+      "id": "h3",
+      "name": "Kapuzinerberg",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Kapuzinerberg is one of the best-rated places nearby, rated 8.3 by travellers."
+     },
+     {
+      "id": "h6",
+      "name": "Historic Centre of the City of Salzburg",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Historic Centre of the City of Salzburg is one of the best-rated places nearby, rated 7.8 by travellers."
+     },
+     {
+      "id": "h7",
+      "name": "St Peter's Archabbey Salzburg",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "St Peter's Archabbey Salzburg is one of the best-rated places nearby, rated 7.6 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p31",
+   "request": {
+    "city": "Edinburgh",
+    "country": "United Kingdom",
+    "date": "2027-11-12",
+    "pace": "packed",
+    "vibe": "mix",
+    "groupSize": 2,
+    "maxWalkKm": 8,
+    "named": [
+     {
+      "id": "h5",
+      "name": "New Town"
+     }
+    ],
+    "startsFromStay": false
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Edinburgh Castle",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 90,
+     "lat": 55.9487,
+     "lon": -3.20073
+    },
+    {
+     "id": "h1",
+     "name": "National Museum of Scotland",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.74,
+     "mustSee": true,
+     "dwellMin": 90,
+     "lat": 55.94694,
+     "lon": -3.19
+    },
+    {
+     "id": "h2",
+     "name": "St Giles' Cathedral",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 9.63,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 55.94944,
+     "lon": -3.19083
+    },
+    {
+     "id": "h3",
+     "name": "Arthur's Seat",
+     "kind": "Peak",
+     "cat": "active",
+     "rating": 9.63,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 55.94417,
+     "lon": -3.16194
+    },
+    {
+     "id": "h4",
+     "name": "Murrayfield Stadium",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 9.63,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 55.94223,
+     "lon": -3.24092
+    },
+    {
+     "id": "h5",
+     "name": "New Town",
+     "kind": "Old town",
+     "cat": "sight",
+     "rating": 9.58,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 55.95625,
+     "lon": -3.19893
+    },
+    {
+     "id": "h6",
+     "name": "Old Town",
+     "kind": "Old town",
+     "cat": "sight",
+     "rating": 9.58,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 55.94757,
+     "lon": -3.19163
+    },
+    {
+     "id": "h7",
+     "name": "Holyrood Abbey",
+     "kind": "Monastery",
+     "cat": "culture",
+     "rating": 9.34,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 55.95316,
+     "lon": -3.17157
+    },
+    {
+     "id": "h8",
+     "name": "Edinburgh International Festival",
+     "kind": "Theatre",
+     "cat": "culture",
+     "rating": 9.28,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 55.9533,
+     "lon": -3.1892
+    },
+    {
+     "id": "h9",
+     "name": "Calton Hill",
+     "kind": "Peak",
+     "cat": "active",
+     "rating": 8.07,
+     "mustSee": false,
+     "dwellMin": 50,
+     "lat": 55.95528,
+     "lon": -3.18222
+    },
+    {
+     "id": "h10",
+     "name": "HMY Britannia",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 8,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 55.98213,
+     "lon": -3.1773
+    },
+    {
+     "id": "h11",
+     "name": "Edinburgh Zoo",
+     "kind": "Zoo",
+     "cat": "active",
+     "rating": 7.7,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 55.9425,
+     "lon": -3.27
+    }
+   ],
+   "plan": {
+    "summary": "A packed day in Edinburgh built around its best-rated places, kept within 8 km of walking.",
+    "stops": [
+     {
+      "id": "h5",
+      "name": "New Town",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "You asked for New Town, so the day is built around it."
+     },
+     {
+      "id": "h0",
+      "name": "Edinburgh Castle",
+      "dwellMin": 45,
+      "inCatalog": true,
+      "why": "Edinburgh Castle is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h1",
+      "name": "National Museum of Scotland",
+      "dwellMin": 45,
+      "inCatalog": true,
+      "why": "National Museum of Scotland is one of the best-rated places nearby, rated 9.7 by travellers."
+     },
+     {
+      "id": "h2",
+      "name": "St Giles' Cathedral",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "St Giles' Cathedral is one of the best-rated places nearby, rated 9.6 by travellers."
+     },
+     {
+      "id": "h6",
+      "name": "Old Town",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Old Town is one of the best-rated places nearby, rated 9.6 by travellers."
+     },
+     {
+      "id": "h8",
+      "name": "Edinburgh International Festival",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Edinburgh International Festival is one of the best-rated places nearby, rated 9.3 by travellers."
+     },
+     {
+      "id": "h3",
+      "name": "Arthur's Seat",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Arthur's Seat is one of the best-rated places nearby, rated 9.6 by travellers."
+     },
+     {
+      "id": "h7",
+      "name": "Holyrood Abbey",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Holyrood Abbey is one of the best-rated places nearby, rated 9.3 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p32",
+   "request": {
+    "city": "Amsterdam",
+    "country": "Netherlands",
+    "date": "2027-05-06",
+    "pace": "relaxed",
+    "vibe": "culture",
+    "groupSize": 2,
+    "maxWalkKm": 8,
+    "named": [
+     {
+      "id": "h5",
+      "name": "Stedelijk Museum Amsterdam"
+     }
+    ],
+    "startsFromStay": false
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Rijksmuseum",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 90,
+     "lat": 52.36,
+     "lon": 4.88528
+    },
+    {
+     "id": "h1",
+     "name": "Van Gogh Museum",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 90,
+     "lat": 52.35833,
+     "lon": 4.88111
+    },
+    {
+     "id": "h2",
+     "name": "Johan Cruyff Arena",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 52.31417,
+     "lon": 4.94194
+    },
+    {
+     "id": "h3",
+     "name": "Defence Line of Amsterdam",
+     "kind": "Castle",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 52.37444,
+     "lon": 4.89306
+    },
+    {
+     "id": "h4",
+     "name": "Concertgebouw",
+     "kind": "Theatre",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 52.35631,
+     "lon": 4.87908
+    },
+    {
+     "id": "h5",
+     "name": "Stedelijk Museum Amsterdam",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 52.35801,
+     "lon": 4.87976
+    },
+    {
+     "id": "h6",
+     "name": "Anne Frank House",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 52.37515,
+     "lon": 4.88404
+    },
+    {
+     "id": "h7",
+     "name": "Olympic Stadium",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 9.97,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 52.34342,
+     "lon": 4.85419
+    },
+    {
+     "id": "h8",
+     "name": "De Wallen",
+     "kind": "Old town",
+     "cat": "sight",
+     "rating": 9.93,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 52.37342,
+     "lon": 4.89806
+    },
+    {
+     "id": "h9",
+     "name": "Dam Square",
+     "kind": "Square",
+     "cat": "sight",
+     "rating": 9.79,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 52.37306,
+     "lon": 4.89278
+    },
+    {
+     "id": "h10",
+     "name": "Westerkerk",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 9.52,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 52.3745,
+     "lon": 4.8839
+    },
+    {
+     "id": "h11",
+     "name": "Nieuwe Kerk",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 9.4,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 52.37389,
+     "lon": 4.89194
+    }
+   ],
+   "plan": {
+    "summary": "A relaxed day in Amsterdam built around its best-rated places, kept within 8 km of walking.",
+    "stops": [
+     {
+      "id": "h5",
+      "name": "Stedelijk Museum Amsterdam",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "You asked for Stedelijk Museum Amsterdam, so the day is built around it."
+     },
+     {
+      "id": "h99",
+      "name": "Amsterdam Old Market Hall",
+      "dwellMin": 45,
+      "inCatalog": true,
+      "why": "A lively covered market with local food stalls."
+     },
+     {
+      "id": "h0",
+      "name": "Rijksmuseum",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Rijksmuseum is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h1",
+      "name": "Van Gogh Museum",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Van Gogh Museum is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h4",
+      "name": "Concertgebouw",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Concertgebouw is one of the best-rated places nearby, rated 10.0 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p33",
+   "request": {
+    "city": "Dublin",
+    "country": "Ireland",
+    "date": "2027-08-18",
+    "pace": "balanced",
+    "vibe": "active",
+    "groupSize": 2,
+    "maxWalkKm": 8,
+    "named": [
+     {
+      "id": "h5",
+      "name": "Library of Trinity College Dublin"
+     }
+    ],
+    "startsFromStay": false
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Dublin Castle",
+     "kind": "Castle",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 90,
+     "lat": 53.34311,
+     "lon": -6.26739
+    },
+    {
+     "id": "h1",
+     "name": "Croke Park",
+     "kind": "Landmark",
+     "cat": "active",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 50,
+     "lat": 53.36083,
+     "lon": -6.25111
+    },
+    {
+     "id": "h2",
+     "name": "Leinster House",
+     "kind": "Palace",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 53.34055,
+     "lon": -6.25402
+    },
+    {
+     "id": "h3",
+     "name": "National Gallery of Ireland",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 53.34091,
+     "lon": -6.25255
+    },
+    {
+     "id": "h4",
+     "name": "Christ Church Cathedral, Dublin",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 53.34306,
+     "lon": -6.27139
+    },
+    {
+     "id": "h5",
+     "name": "Library of Trinity College Dublin",
+     "kind": "Landmark",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 53.34381,
+     "lon": -6.25464
+    },
+    {
+     "id": "h6",
+     "name": "Chester Beatty Library",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 53.342,
+     "lon": -6.267
+    },
+    {
+     "id": "h7",
+     "name": "National Museum of Ireland",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 53.34028,
+     "lon": -6.25472
+    },
+    {
+     "id": "h8",
+     "name": "National Library of Ireland",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.79,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 53.34111,
+     "lon": -6.25444
+    },
+    {
+     "id": "h9",
+     "name": "Spire of Dublin",
+     "kind": "Monument",
+     "cat": "culture",
+     "rating": 9.74,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 53.34972,
+     "lon": -6.26028
+    },
+    {
+     "id": "h10",
+     "name": "Saint Stephen's Green",
+     "kind": "Park",
+     "cat": "active",
+     "rating": 9.46,
+     "mustSee": false,
+     "dwellMin": 50,
+     "lat": 53.33806,
+     "lon": -6.25917
+    },
+    {
+     "id": "h11",
+     "name": "Glasnevin Cemetery",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 9.36,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 53.37222,
+     "lon": -6.27778
+    }
+   ],
+   "plan": {
+    "summary": "A balanced day in Dublin built around its best-rated places, kept within 8 km of walking.",
+    "stops": [
+     {
+      "id": "h5",
+      "name": "Library of Trinity College Dublin",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "You asked for Library of Trinity College Dublin, so the day is built around it."
+     },
+     {
+      "id": "h1",
+      "name": "Croke Park",
+      "dwellMin": 50,
+      "inCatalog": true,
+      "why": "Croke Park is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h10",
+      "name": "Saint Stephen's Green",
+      "dwellMin": 50,
+      "inCatalog": true,
+      "why": "Saint Stephen's Green is one of the best-rated places nearby, rated 9.5 by travellers."
+     },
+     {
+      "id": "h0",
+      "name": "Dublin Castle",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Dublin Castle is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h6",
+      "name": "Chester Beatty Library",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Chester Beatty Library is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h4",
+      "name": "Christ Church Cathedral, Dublin",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Christ Church Cathedral, Dublin is one of the best-rated places nearby, rated 10.0 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p34",
+   "request": {
+    "city": "Krakow",
+    "country": "Poland",
+    "date": "2027-06-16",
+    "pace": "relaxed",
+    "vibe": "culture",
+    "groupSize": 3,
+    "maxWalkKm": 9,
+    "named": [
+     {
+      "id": "h5",
+      "name": "Czartoryski Museum"
+     }
+    ],
+    "startsFromStay": false
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Wawel Cathedral",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 35,
+     "lat": 50.05464,
+     "lon": 19.93542
+    },
+    {
+     "id": "h1",
+     "name": "St. Mary's Basilica in Kraków",
+     "kind": "Basilica",
+     "cat": "culture",
+     "rating": 9.97,
+     "mustSee": true,
+     "dwellMin": 35,
+     "lat": 50.06167,
+     "lon": 19.93917
+    },
+    {
+     "id": "h2",
+     "name": "National Museum in Kraków",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.68,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 50.06028,
+     "lon": 19.92389
+    },
+    {
+     "id": "h3",
+     "name": "Kraków Old Town",
+     "kind": "Old town",
+     "cat": "sight",
+     "rating": 9.68,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 50.06209,
+     "lon": 19.93688
+    },
+    {
+     "id": "h4",
+     "name": "Nowa Huta",
+     "kind": "Old town",
+     "cat": "sight",
+     "rating": 9.63,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 50.07222,
+     "lon": 20.0375
+    },
+    {
+     "id": "h5",
+     "name": "Czartoryski Museum",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.63,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 50.06464,
+     "lon": 19.93997
+    },
+    {
+     "id": "h6",
+     "name": "Old town Market Square in Krakow",
+     "kind": "Old town",
+     "cat": "sight",
+     "rating": 9.63,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 50.06167,
+     "lon": 19.93722
+    },
+    {
+     "id": "h7",
+     "name": "Kraków-Płaszów concentration camp",
+     "kind": "Monument",
+     "cat": "culture",
+     "rating": 9.52,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 50.0327,
+     "lon": 19.9618
+    },
+    {
+     "id": "h8",
+     "name": "Sukiennice",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.34,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 50.06168,
+     "lon": 19.93738
+    },
+    {
+     "id": "h9",
+     "name": "Polish Aviation Museum",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 8.07,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 50.07767,
+     "lon": 19.99242
+    },
+    {
+     "id": "h10",
+     "name": "Krakus Mound",
+     "kind": "Monument",
+     "cat": "culture",
+     "rating": 8,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 50.03805,
+     "lon": 19.95844
+    },
+    {
+     "id": "h11",
+     "name": "Kraków Barbican",
+     "kind": "Monument",
+     "cat": "culture",
+     "rating": 7.93,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 50.06553,
+     "lon": 19.94166
+    }
+   ],
+   "plan": {
+    "summary": "A relaxed day in Krakow built around its best-rated places, kept within 9 km of walking.",
+    "stops": [
+     {
+      "id": "h5",
+      "name": "Czartoryski Museum",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "You asked for Czartoryski Museum, so the day is built around it."
+     },
+     {
+      "id": "h1",
+      "name": "St. Mary's Basilica in Kraków",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "St. Mary's Basilica in Kraków is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h0",
+      "name": "Wawel Cathedral",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Wawel Cathedral is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h2",
+      "name": "National Museum in Kraków",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "National Museum in Kraków is one of the best-rated places nearby, rated 9.7 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p35",
+   "request": {
+    "city": "Naples",
+    "country": "Italy",
+    "date": "2027-09-19",
+    "pace": "relaxed",
+    "vibe": "mix",
+    "groupSize": 4,
+    "maxWalkKm": 12,
+    "named": [],
+    "startsFromStay": false
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Teatro di San Carlo",
+     "kind": "Theatre",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 40,
+     "lat": 40.83739,
+     "lon": 14.24969
+    },
+    {
+     "id": "h1",
+     "name": "Castel Nuovo",
+     "kind": "Castle",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 90,
+     "lat": 40.83838,
+     "lon": 14.25381
+    },
+    {
+     "id": "h2",
+     "name": "Naples Cathedral",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 40.85261,
+     "lon": 14.25953
+    },
+    {
+     "id": "h3",
+     "name": "Royal Palace of Naples",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 40.83614,
+     "lon": 14.24928
+    },
+    {
+     "id": "h4",
+     "name": "Castel dell'Ovo",
+     "kind": "Castle",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 40.82832,
+     "lon": 14.24766
+    },
+    {
+     "id": "h5",
+     "name": "Stadio Diego Armando Maradona",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 40.82797,
+     "lon": 14.19301
+    },
+    {
+     "id": "h6",
+     "name": "Naples National Archaeological Museum",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 40.85361,
+     "lon": 14.25056
+    },
+    {
+     "id": "h7",
+     "name": "Museo di Capodimonte",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.88,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 40.86699,
+     "lon": 14.25035
+    },
+    {
+     "id": "h8",
+     "name": "Castel Sant'Elmo",
+     "kind": "Castle",
+     "cat": "culture",
+     "rating": 9.5,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 40.84362,
+     "lon": 14.23933
+    },
+    {
+     "id": "h9",
+     "name": "Certosa di San Martino",
+     "kind": "Monastery",
+     "cat": "culture",
+     "rating": 9.5,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 40.84341,
+     "lon": 14.24113
+    },
+    {
+     "id": "h10",
+     "name": "San Francesco di Paola",
+     "kind": "Basilica",
+     "cat": "culture",
+     "rating": 9.36,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 40.8353,
+     "lon": 14.2475
+    },
+    {
+     "id": "h11",
+     "name": "Cappella Sansevero",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 9.28,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 40.84919,
+     "lon": 14.25488
+    }
+   ],
+   "plan": {
+    "summary": "A relaxed day in Naples built around its best-rated places, kept within 12 km of walking.",
+    "stops": [
+     {
+      "id": "h0",
+      "name": "Teatro di San Carlo",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Teatro di San Carlo is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h1",
+      "name": "Castel Nuovo",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Castel Nuovo is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h3",
+      "name": "Royal Palace of Naples",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Royal Palace of Naples is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h6",
+      "name": "Naples National Archaeological Museum",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Naples National Archaeological Museum is one of the best-rated places nearby, rated 10.0 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p36",
+   "request": {
+    "city": "Athens",
+    "country": "Greece",
+    "date": "2027-10-20",
+    "pace": "balanced",
+    "vibe": "culture",
+    "groupSize": 6,
+    "maxWalkKm": 7,
+    "named": [
+     {
+      "id": "h5",
+      "name": "Acropolis Museum"
+     }
+    ],
+    "startsFromStay": true
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Parthenon",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 35,
+     "lat": 37.97153,
+     "lon": 23.7266
+    },
+    {
+     "id": "h1",
+     "name": "Acropolis of Athens",
+     "kind": "Ruins",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 40,
+     "lat": 37.97167,
+     "lon": 23.72611
+    },
+    {
+     "id": "h2",
+     "name": "National Archaeological Museum of Athens",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 37.98917,
+     "lon": 23.73222
+    },
+    {
+     "id": "h3",
+     "name": "Temple of Hephaestus",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 37.97562,
+     "lon": 23.72139
+    },
+    {
+     "id": "h4",
+     "name": "Temple of Olympian Zeus",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 37.96937,
+     "lon": 23.73308
+    },
+    {
+     "id": "h5",
+     "name": "Acropolis Museum",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 37.96842,
+     "lon": 23.72847
+    },
+    {
+     "id": "h6",
+     "name": "Syntagma Square",
+     "kind": "Square",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 37.97556,
+     "lon": 23.73472
+    },
+    {
+     "id": "h7",
+     "name": "Ancient Agora of Athens",
+     "kind": "Ruins",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 37.975,
+     "lon": 23.7225
+    },
+    {
+     "id": "h8",
+     "name": "Theatre of Dionysus",
+     "kind": "Theatre",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 37.9704,
+     "lon": 23.72778
+    },
+    {
+     "id": "h9",
+     "name": "Odeon of Herodes Atticus",
+     "kind": "Ruins",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 37.97084,
+     "lon": 23.72452
+    },
+    {
+     "id": "h10",
+     "name": "Kerameikos",
+     "kind": "Old town",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 37.97833,
+     "lon": 23.71861
+    },
+    {
+     "id": "h11",
+     "name": "Pnyx",
+     "kind": "Ruins",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 37.97167,
+     "lon": 23.71944
+    }
+   ],
+   "plan": {
+    "summary": "A balanced day in Athens built around its best-rated places, kept within 7 km of walking.",
+    "stops": [
+     {
+      "id": "h5",
+      "name": "Acropolis Museum",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "You asked for Acropolis Museum, so the day is built around it."
+     },
+     {
+      "id": "h0",
+      "name": "Parthenon",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Parthenon is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h1",
+      "name": "Acropolis of Athens",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Acropolis of Athens is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h2",
+      "name": "National Archaeological Museum of Athens",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "National Archaeological Museum of Athens is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h7",
+      "name": "Ancient Agora of Athens",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Ancient Agora of Athens is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h3",
+      "name": "Temple of Hephaestus",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Temple of Hephaestus is one of the best-rated places nearby, rated 10.0 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p37",
+   "request": {
+    "city": "Dublin",
+    "country": "Ireland",
+    "date": "2027-08-18",
+    "pace": "balanced",
+    "vibe": "active",
+    "groupSize": 2,
+    "maxWalkKm": 8,
+    "named": [
+     {
+      "id": "h5",
+      "name": "Library of Trinity College Dublin"
+     }
+    ],
+    "startsFromStay": false
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Dublin Castle",
+     "kind": "Castle",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 90,
+     "lat": 53.34311,
+     "lon": -6.26739
+    },
+    {
+     "id": "h1",
+     "name": "Croke Park",
+     "kind": "Landmark",
+     "cat": "active",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 50,
+     "lat": 53.36083,
+     "lon": -6.25111
+    },
+    {
+     "id": "h2",
+     "name": "Leinster House",
+     "kind": "Palace",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 53.34055,
+     "lon": -6.25402
+    },
+    {
+     "id": "h3",
+     "name": "National Gallery of Ireland",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 53.34091,
+     "lon": -6.25255
+    },
+    {
+     "id": "h4",
+     "name": "Christ Church Cathedral, Dublin",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 53.34306,
+     "lon": -6.27139
+    },
+    {
+     "id": "h5",
+     "name": "Library of Trinity College Dublin",
+     "kind": "Landmark",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 53.34381,
+     "lon": -6.25464
+    },
+    {
+     "id": "h6",
+     "name": "Chester Beatty Library",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 53.342,
+     "lon": -6.267
+    },
+    {
+     "id": "h7",
+     "name": "National Museum of Ireland",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 53.34028,
+     "lon": -6.25472
+    },
+    {
+     "id": "h8",
+     "name": "National Library of Ireland",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.79,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 53.34111,
+     "lon": -6.25444
+    },
+    {
+     "id": "h9",
+     "name": "Spire of Dublin",
+     "kind": "Monument",
+     "cat": "culture",
+     "rating": 9.74,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 53.34972,
+     "lon": -6.26028
+    },
+    {
+     "id": "h10",
+     "name": "Saint Stephen's Green",
+     "kind": "Park",
+     "cat": "active",
+     "rating": 9.46,
+     "mustSee": false,
+     "dwellMin": 50,
+     "lat": 53.33806,
+     "lon": -6.25917
+    },
+    {
+     "id": "h11",
+     "name": "Glasnevin Cemetery",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 9.36,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 53.37222,
+     "lon": -6.27778
+    }
+   ],
+   "plan": {
+    "summary": "A balanced day in Dublin built around its best-rated places, kept within 8 km of walking.",
+    "stops": [
+     {
+      "id": "h5",
+      "name": "Library of Trinity College Dublin",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "You asked for Library of Trinity College Dublin, so the day is built around it."
+     },
+     {
+      "id": "h7",
+      "name": "National Museum of Ireland",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "National Museum of Ireland is worth a stop, rated 10.0 by travellers."
+     },
+     {
+      "id": "h10",
+      "name": "Saint Stephen's Green",
+      "dwellMin": 50,
+      "inCatalog": true,
+      "why": "Saint Stephen's Green is one of the best-rated places nearby, rated 9.5 by travellers."
+     },
+     {
+      "id": "h0",
+      "name": "Dublin Castle",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Dublin Castle is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h6",
+      "name": "Chester Beatty Library",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Chester Beatty Library is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h4",
+      "name": "Christ Church Cathedral, Dublin",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Christ Church Cathedral, Dublin is one of the best-rated places nearby, rated 10.0 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p38",
+   "request": {
+    "city": "Copenhagen",
+    "country": "Denmark",
+    "date": "2027-07-17",
+    "pace": "packed",
+    "vibe": "mix",
+    "groupSize": 2,
+    "maxWalkKm": 10,
+    "named": [],
+    "startsFromStay": true
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Parken Stadium",
+     "kind": "Landmark",
+     "cat": "active",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 50,
+     "lat": 55.70247,
+     "lon": 12.5722
+    },
+    {
+     "id": "h1",
+     "name": "Freetown Christiania",
+     "kind": "Old town",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 40,
+     "lat": 55.67359,
+     "lon": 12.59971
+    },
+    {
+     "id": "h2",
+     "name": "Frederiksberg",
+     "kind": "Old town",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 55.6779,
+     "lon": 12.5327
+    },
+    {
+     "id": "h3",
+     "name": "Amager",
+     "kind": "Island",
+     "cat": "active",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 55.61667,
+     "lon": 12.61667
+    },
+    {
+     "id": "h4",
+     "name": "Amalienborg",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 55.68403,
+     "lon": 12.59333
+    },
+    {
+     "id": "h5",
+     "name": "Royal Danish Library",
+     "kind": "Landmark",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 55.67383,
+     "lon": 12.58221
+    },
+    {
+     "id": "h6",
+     "name": "Christiansborg Palace",
+     "kind": "Palace",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 55.67583,
+     "lon": 12.57889
+    },
+    {
+     "id": "h7",
+     "name": "Tivoli Gardens",
+     "kind": "Park",
+     "cat": "active",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 50,
+     "lat": 55.67361,
+     "lon": 12.56833
+    },
+    {
+     "id": "h8",
+     "name": "Rosenborg Castle",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 55.68566,
+     "lon": 12.57748
+    },
+    {
+     "id": "h9",
+     "name": "National Museum of Denmark",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.83,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 55.67472,
+     "lon": 12.57472
+    },
+    {
+     "id": "h10",
+     "name": "Grundtvig's Church",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 9.63,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 55.71658,
+     "lon": 12.53361
+    },
+    {
+     "id": "h11",
+     "name": "Copenhagen Opera House",
+     "kind": "Theatre",
+     "cat": "culture",
+     "rating": 9.63,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 55.68194,
+     "lon": 12.60056
+    }
+   ],
+   "plan": {
+    "summary": "A packed day in Copenhagen built around its best-rated places, kept within 10 km of walking.",
+    "stops": [
+     {
+      "id": "h3",
+      "name": "Amager",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Amager is worth a stop, rated 10.0 by travellers."
+     },
+     {
+      "id": "h7",
+      "name": "Tivoli Gardens",
+      "dwellMin": 50,
+      "inCatalog": true,
+      "why": "Tivoli Gardens is worth a stop, rated 10.0 by travellers."
+     },
+     {
+      "id": "h10",
+      "name": "Grundtvig's Church",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Grundtvig's Church is worth a stop, rated 9.6 by travellers."
+     },
+     {
+      "id": "h9",
+      "name": "National Museum of Denmark",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "National Museum of Denmark is worth a stop, rated 9.8 by travellers."
+     },
+     {
+      "id": "h0",
+      "name": "Parken Stadium",
+      "dwellMin": 50,
+      "inCatalog": true,
+      "why": "Parken Stadium is worth a stop, rated 10.0 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p39",
+   "request": {
+    "city": "Florence",
+    "country": "Italy",
+    "date": "2027-10-11",
+    "pace": "relaxed",
+    "vibe": "active",
+    "groupSize": 2,
+    "maxWalkKm": 10,
+    "named": [],
+    "startsFromStay": true
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "Palazzo Pitti",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 90,
+     "lat": 43.76515,
+     "lon": 11.25001
+    },
+    {
+     "id": "h1",
+     "name": "Ponte Vecchio",
+     "kind": "Bridge",
+     "cat": "active",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 25,
+     "lat": 43.76799,
+     "lon": 11.25319
+    },
+    {
+     "id": "h2",
+     "name": "Palazzo Vecchio",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 43.76944,
+     "lon": 11.25611
+    },
+    {
+     "id": "h3",
+     "name": "Basilica of Santa Croce",
+     "kind": "Basilica",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 43.76845,
+     "lon": 11.26274
+    },
+    {
+     "id": "h4",
+     "name": "Florence Baptistery",
+     "kind": "Basilica",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 43.77306,
+     "lon": 11.255
+    },
+    {
+     "id": "h5",
+     "name": "Bargello National Museum",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 43.7704,
+     "lon": 11.25801
+    },
+    {
+     "id": "h6",
+     "name": "Basilica of Santa Maria Novella",
+     "kind": "Basilica",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 43.7743,
+     "lon": 11.24937
+    },
+    {
+     "id": "h7",
+     "name": "Basilica of San Lorenzo",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 43.775,
+     "lon": 11.25389
+    },
+    {
+     "id": "h8",
+     "name": "piazza della Signoria",
+     "kind": "Square",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 43.76972,
+     "lon": 11.25556
+    },
+    {
+     "id": "h9",
+     "name": "Boboli Gardens",
+     "kind": "Museum",
+     "cat": "active",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 43.76528,
+     "lon": 11.24861
+    },
+    {
+     "id": "h10",
+     "name": "Florence Cathedral",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 43.77306,
+     "lon": 11.25694
+    },
+    {
+     "id": "h11",
+     "name": "Orsanmichele",
+     "kind": "Church",
+     "cat": "culture",
+     "rating": 10,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 43.77071,
+     "lon": 11.25505
+    }
+   ],
+   "plan": {
+    "summary": "A relaxed day in Florence built around its best-rated places, kept within 10 km of walking.",
+    "stops": [
+     {
+      "id": "h1",
+      "name": "Ponte Vecchio",
+      "dwellMin": 25,
+      "inCatalog": true,
+      "why": "Ponte Vecchio is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h9",
+      "name": "Boboli Gardens",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Boboli Gardens is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h0",
+      "name": "Palazzo Pitti",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Palazzo Pitti is one of the best-rated places nearby, rated 10.0 by travellers."
+     },
+     {
+      "id": "h11",
+      "name": "Orsanmichele",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Orsanmichele is one of the best-rated places nearby, rated 10.0 by travellers."
+     }
+    ]
+   }
+  },
+  {
+   "planId": "p40",
+   "request": {
+    "city": "Brussels",
+    "country": "Belgium",
+    "date": "2027-12-13",
+    "pace": "balanced",
+    "vibe": "culture",
+    "groupSize": 4,
+    "maxWalkKm": 12,
+    "named": [],
+    "startsFromStay": false
+   },
+   "candidates": [
+    {
+     "id": "h0",
+     "name": "King Baudouin Stadium",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 10,
+     "mustSee": true,
+     "dwellMin": 40,
+     "lat": 50.89571,
+     "lon": 4.33408
+    },
+    {
+     "id": "h1",
+     "name": "Heysel Stadium disaster",
+     "kind": "Landmark",
+     "cat": "sight",
+     "rating": 9.99,
+     "mustSee": true,
+     "dwellMin": 40,
+     "lat": 50.895,
+     "lon": 4.33389
+    },
+    {
+     "id": "h2",
+     "name": "Lotto Park",
+     "kind": "Landmark",
+     "cat": "active",
+     "rating": 9.97,
+     "mustSee": false,
+     "dwellMin": 50,
+     "lat": 50.83417,
+     "lon": 4.29833
+    },
+    {
+     "id": "h3",
+     "name": "Cathedral of St. Michael and St. Gudula",
+     "kind": "Cathedral",
+     "cat": "culture",
+     "rating": 9.88,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 50.84778,
+     "lon": 4.36028
+    },
+    {
+     "id": "h4",
+     "name": "National Basilica of the Sacred Heart",
+     "kind": "Basilica",
+     "cat": "culture",
+     "rating": 9.74,
+     "mustSee": false,
+     "dwellMin": 35,
+     "lat": 50.86667,
+     "lon": 4.31722
+    },
+    {
+     "id": "h5",
+     "name": "Royal Museums of Fine Arts of Belgium",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.74,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 50.84168,
+     "lon": 4.35824
+    },
+    {
+     "id": "h6",
+     "name": "Royal Palace of Brussels",
+     "kind": "Palace",
+     "cat": "culture",
+     "rating": 9.63,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 50.84167,
+     "lon": 4.36222
+    },
+    {
+     "id": "h7",
+     "name": "Berlaymont building",
+     "kind": "Tower",
+     "cat": "culture",
+     "rating": 9.52,
+     "mustSee": false,
+     "dwellMin": 25,
+     "lat": 50.84361,
+     "lon": 4.38278
+    },
+    {
+     "id": "h8",
+     "name": "Royal Library of Belgium",
+     "kind": "Landmark",
+     "cat": "culture",
+     "rating": 9.4,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 50.84333,
+     "lon": 4.35639
+    },
+    {
+     "id": "h9",
+     "name": "Horta Museum",
+     "kind": "Museum",
+     "cat": "culture",
+     "rating": 9.34,
+     "mustSee": false,
+     "dwellMin": 90,
+     "lat": 50.82417,
+     "lon": 4.35556
+    },
+    {
+     "id": "h10",
+     "name": "Cinquantenaire Park",
+     "kind": "Park",
+     "cat": "active",
+     "rating": 8,
+     "mustSee": false,
+     "dwellMin": 50,
+     "lat": 50.84056,
+     "lon": 4.39278
+    },
+    {
+     "id": "h11",
+     "name": "Royal Theatre of La Monnaie",
+     "kind": "Theatre",
+     "cat": "culture",
+     "rating": 7.93,
+     "mustSee": false,
+     "dwellMin": 40,
+     "lat": 50.84959,
+     "lon": 4.35425
+    }
+   ],
+   "plan": {
+    "summary": "A balanced day in Brussels built around its best-rated places, kept within 12 km of walking.",
+    "stops": [
+     {
+      "id": "h3",
+      "name": "Cathedral of St. Michael and St. Gudula",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "Cathedral of St. Michael and St. Gudula is one of the best-rated places nearby, rated 9.9 by travellers."
+     },
+     {
+      "id": "h5",
+      "name": "Royal Museums of Fine Arts of Belgium",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Royal Museums of Fine Arts of Belgium is one of the best-rated places nearby, rated 9.7 by travellers."
+     },
+     {
+      "id": "h6",
+      "name": "Royal Palace of Brussels",
+      "dwellMin": 90,
+      "inCatalog": true,
+      "why": "Royal Palace of Brussels is one of the best-rated places nearby, rated 9.6 by travellers."
+     },
+     {
+      "id": "h8",
+      "name": "Royal Library of Belgium",
+      "dwellMin": 40,
+      "inCatalog": true,
+      "why": "Royal Library of Belgium is one of the best-rated places nearby, rated 9.4 by travellers."
+     },
+     {
+      "id": "h4",
+      "name": "National Basilica of the Sacred Heart",
+      "dwellMin": 35,
+      "inCatalog": true,
+      "why": "National Basilica of the Sacred Heart is one of the best-rated places nearby, rated 9.7 by travellers."
+     },
+     {
+      "id": "h7",
+      "name": "Berlaymont building",
+      "dwellMin": 25,
+      "inCatalog": true,
+      "why": "Berlaymont building is one of the best-rated places nearby, rated 9.5 by travellers."
+     }
+    ]
+   }
+  }
+ ]
+}
