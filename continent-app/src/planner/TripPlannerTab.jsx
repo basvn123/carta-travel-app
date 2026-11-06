@@ -61,6 +61,7 @@ import { cityLabel } from '../lib/placeName.js';
 import { scrollBehavior } from '../lib/motion.js';
 import { originLabel } from '../lib/origins.js';
 import { isGateway } from '../lib/rating.js';
+import { trackFunnel } from '../lib/funnelCounts.js';
 
 // The trip page's map card and its full-size view (T819): room above each
 // pin, which is drawn about 38 px over its point (tripmap-embed gotchas).
@@ -859,6 +860,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     setDeviceTrip(loadDeviceTrip());
     setDeviceError(false);
     notify(t('trip.savedDeviceNotice'));
+    trackFunnel('trip_saved');
   };
 
   const handleSave = async () => {
@@ -877,6 +879,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     }
     try {
       await tp.savePlan(user.id);
+      trackFunnel('trip_saved');
       notify(wasUpdate ? t('trip.updatedNotice') : t('trip.savedNotice'));
       if (fromEdit && wasUpdate) {
         // Done editing an existing trip: hand the traveller back to the Trip

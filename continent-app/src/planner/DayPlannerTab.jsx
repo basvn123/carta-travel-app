@@ -84,6 +84,7 @@ import {
 } from './DayWorkspaceChrome.jsx';
 import { DaySummary, DayKit, DayExports, DayGmaps, KIT_ICONS } from './DayOverview.jsx';
 import { buildDayShareUrl, decodeDayShare } from '../lib/shareLink.js';
+import { trackFunnel } from '../lib/funnelCounts.js';
 import {
   loadStandalonePlans, persistStandalonePlans, deleteStandalonePlan,
   loadAssignments, persistAssignments, loadPrefs, persistPrefs,
@@ -2305,6 +2306,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
       a,
     });
     if (!url) return;
+    trackFunnel('shared');
     try {
       if (navigator.share && isNarrow) { await navigator.share({ title: plan.label || t('day.myDay'), url }); return; }
     } catch { /* cancelled: fall through to the clipboard */ }

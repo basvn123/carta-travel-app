@@ -121,6 +121,13 @@ export const adminChannelWeekly = (weeks = 8) =>
   call('admin_channel_weekly', { p_weeks: weeks });
 
 /**
+ * The product funnel per week (I11, T1129; pending migration 070,
+ * funnel_counts). Per-day step counts with no identifier.
+ */
+export const adminFunnelWeekly = (weeks = 8) =>
+  call('admin_funnel_weekly', { p_weeks: weeks });
+
+/**
  * The ai_plan_cache hit rate (migration 029). One row per plan-day lookup,
  * hit or miss, so the rate is a division rather than a guess.
  *

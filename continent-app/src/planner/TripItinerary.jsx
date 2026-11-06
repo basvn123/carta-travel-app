@@ -11,6 +11,7 @@ import { shareTrip, downloadTripPdf } from '../lib/tripExport.js';
 import { tripKml, downloadKml } from '../lib/kmlExport.js';
 import { tripIcs, downloadIcs } from '../lib/icsExport.js';
 import { buildTripShareUrl } from '../lib/shareLink.js';
+import { trackFunnel } from '../lib/funnelCounts.js';
 import { groundLinkFor } from '../lib/groundLinks.js';
 import { useI18n } from '../i18n/index.jsx';
 import { Button, Money, CostRow, Field, IconButton } from '../components/ui/index.js';
@@ -681,6 +682,7 @@ export function TripItinerary({
   const handleCopyLink = async () => {
     const url = await buildTripShareUrl(sharePayload);
     if (!url) return;
+    trackFunnel('shared');
     if (typeof navigator !== 'undefined' && navigator.share) {
       try {
         await navigator.share({ title: label || t('itin.myTrip'), url });

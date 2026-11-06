@@ -1545,3 +1545,5 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1105-f | T1105 | Join `ih` and `d` into the wire (T052-d) so the bundle never needs the `missing` list; `hero_ladder.py` refuses to go live above 2,500 missing photographs | next task | open |  |
 | T1115-a | T1115 | Decide the local transport fare source (curated operator pages vs licensed dataset); comparison in reports/local_fares_source_options.md, decision 4 is "Not now" | user | open |  |
 | T1115-b | T1115 | Once the source is chosen, build the fare layer for the 127 metros (115 city centres) per the planned field in docs/SCHEMA.md; add wire-contract rows and contract.mjs then | next task | open |  |
+| T1129-a | T1129 | Paste `supabase/migrations/070_funnel_counts.sql` in the SQL editor; until then funnel ticks fail silently and the admin Funnel card is hidden | user | open |  |
+| T1129-b | T1129 | Look at the admin Overview Funnel card on a real project after the paste, and hit each step once | user | open |  |

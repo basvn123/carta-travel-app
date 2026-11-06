@@ -7,6 +7,7 @@ import { plannerStore, usePlannerStore } from './plannerStore.js';
 import { fromDraft, flightRanking, normalizeSettings, withEngineEdits } from './flow/tripSettings.js';
 import { staysFromImports, nearestStop, arrivalFromImports } from './flow/importStays.js';
 import { trackLaunch } from '../lib/launchEvents.js';
+import { trackFunnel } from '../lib/funnelCounts.js';
 import { ReadyTripsStep } from './ReadyTripsStep.jsx';
 // The trip's own page, the one the Destinations tab opens. Lazy because it
 // pulls a map with it, and nobody reaching the Trips step has asked for one
@@ -1093,6 +1094,7 @@ export function GuidedTripWizard({
     });
     // The launch metric "priced-trip completions" (migration 048, T215-b).
     trackLaunch('trip_priced', '', readyTrip ? 'ready' : 'built');
+    trackFunnel('priced_draft');
   };
 
   // The wizard's price request (T702, plan F6): its party, the stay tier and

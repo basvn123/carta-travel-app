@@ -11,6 +11,7 @@ import { ParseFailures } from './ParseFailures.jsx';
 import { OssThreshold } from './OssThreshold.jsx';
 import { LaunchMetrics } from './LaunchMetrics.jsx';
 import { ChannelCounts } from './ChannelCounts.jsx';
+import { FunnelCounts } from './FunnelCounts.jsx';
 import { RecentAudit } from './AuditLog.jsx';
 
 // The Overview tab: how is it going. Pure render. Every figure here was
@@ -20,7 +21,7 @@ export function Overview({ overview, marginDash, audit, attention, goTo }) {
   const { t } = useI18n();
   const {
     stats, analytics, funnel, modelReport, cacheReport, aiUsage,
-    pipelineHealth, edgeErrors, parseFailures, oss, launch, channels,
+    pipelineHealth, edgeErrors, parseFailures, oss, launch, channels, funnelWeekly,
   } = overview;
   const { margin, marginBack, setMarginBack } = marginDash;
   return (
@@ -146,6 +147,8 @@ export function Overview({ overview, marginDash, audit, attention, goTo }) {
       {launch && !launch.error && <LaunchMetrics report={launch} />}
 
       {channels && !channels.error && <ChannelCounts report={channels} />}
+
+      {funnelWeekly && !funnelWeekly.error && <FunnelCounts report={funnelWeekly} />}
 
       {funnel && !funnel.error && <PaywallFunnel funnel={funnel} t={t} />}
 
