@@ -1,0 +1,133 @@
+[
+ {
+  "id": "T1135-d",
+  "title": "Decide EU residency for booking documents",
+  "why": "parse-booking reads travellers' booking files; whether they may leave the EU sets which model hosts are allowed, not volume.",
+  "where": "docs/research/E-R3-models-and-hosting.md",
+  "how": [
+   "Read the parse-booking row of the research doc",
+   "Choose: EU-hosted only, or any host with a data processing agreement",
+   "Tell the next session (E7, S54)"
+  ]
+ },
+ {
+  "id": "T1180-a",
+  "title": "Re-rate the trails with the downhill relief fix",
+  "why": "The fix is in code; about 265 downhill walks move up a band and 37 enter the top band only once the box re-rates.",
+  "where": "Execution/P15/T1180-downhill-relief.md",
+  "how": [
+   "On the box with the trails lab up: python run_pipeline.py --only trails_rate",
+   "python run_pipeline.py --only rating_v5_profile",
+   "python pipeline/nature_tiers.py --check must print wire matches frozen: True (do not run --recalibrate)",
+   "Rerun python pipeline/trails/summaries.py and pytest tests/test_trail_summaries.py",
+   "Commit data/trails/summaries.json and data/reports/trails_summaries.json with the new wire"
+  ]
+ },
+ {
+  "id": "T1136-a",
+  "title": "Bless the dense and hybrid baseline",
+  "why": "The Ask index (`public/search/ask/`, about 50 MB) is not in git or in the cloud container.",
+  "where": "continent-app/scripts/eval/ask-baseline.json",
+  "how": [
+   "In the main checkout, with `python run_pipeline.py ask_index` already run, `cd continent-app && node scripts/eval/ask-eval.mjs --bless`, then commit `scripts/eval/ask-baseline.json`. Note that the BM25 numbers then come from the shipped index, and CI skips them against a rebuilt run"
+  ]
+ },
+ {
+  "id": "T1136-g",
+  "title": "Read the place labels",
+  "why": "The labels were written by one session from general knowledge.",
+  "where": "continent-app/scripts/eval/ask-set.json",
+  "how": [
+   "Open `continent-app/scripts/eval/ask-set.json` and check that the places listed for each question are the ones a traveller would expect",
+   "Change or add ids, then run `--bless`"
+  ]
+ },
+ {
+  "id": "T1142-f",
+  "title": "Keep the quality history on the box",
+  "why": "`weekly.sh` resets the checkout before each run, which would put the tracked history back and lose the drop baseline.",
+  "where": "scripts/quality/engine.py",
+  "how": [
+   "On the box add `CARTA_QUALITY_OUT=logs/status/quality` to the environment the timers use, then once `mkdir -p logs/status/quality && cp data/reports/quality/* logs/status/quality/`"
+  ]
+ },
+ {
+  "id": "T1142-c",
+  "title": "Confirm the rules",
+  "why": "Which fields are must_see (hard, gated on a 2 point drop) and the floors are my call from what each card and page shows.",
+  "where": "scripts/quality/rules.yaml",
+  "how": [
+   "Read `scripts/quality/rules.yaml` (the comment on each line is the share the floor was set from)",
+   "Change `level`, `kind` or `min`, or ask a session to"
+  ]
+ },
+ {
+  "id": "T1142-d",
+  "title": "Decide where the live panel reads from",
+  "why": "The panel shows the snapshot the build carried; a run-time read needs a published path for `panel.json`.",
+  "where": "continent-app/src/components/admin/DataHealth.jsx",
+  "how": [
+   "Choose: R2 `status/` made readable to the admin page, or the box commits the snapshot after each run"
+  ]
+ },
+ {
+  "id": "T1179-a",
+  "title": "Choose how trail summaries reach travellers",
+  "why": "2,089 checked summaries exist in data/trails/summaries.json but are not on the wire; the app prints `summary` as English prose in every language.",
+  "where": "Execution/P15/T1179-trail-summaries.md",
+  "how": [
+   "Pick one: (1) ship the English text as `summary` (fast, English only), or (2) a next task renders `parts` through t() in en, nl, de, fr, es and it (six languages, more work)",
+   "Tell the next session which"
+  ]
+ },
+ {
+  "id": "T1179-e",
+  "title": "Rerun the summaries after the trails rebuild",
+  "why": "The top band, names and grades move when T1092-a and T1094-a run, and the committed file then goes stale.",
+  "where": "Execution/P15/T1179-trail-summaries.md",
+  "how": [
+   "On the box after `trails_rate` and the v5 pass: `python pipeline/trails/summaries.py`, then `python -m pytest tests/test_trail_summaries.py -q`, then commit data/trails/summaries.json and data/reports/trails_summaries.json"
+  ]
+ },
+ {
+  "id": "T1137-a",
+  "title": "Deploy the model gateway",
+  "why": "Plan-day, suggest-city, parse-booking and Ask call models through aiModels only once deployed; suggest-city's guard too.",
+  "where": "`supabase/functions/_shared/aiModels.mjs`, `continent-app/functions/api/ask/answer.js`",
+  "how": [
+   "After T1117-a or together with it: `supabase functions deploy plan-day`, `supabase functions deploy suggest-city`, `supabase functions deploy parse-booking`",
+   "The Pages build per CLAUDE.md Deploy (preview first)",
+   "On the preview run one plan-day day, one town suggestion and one magic import and check each answer's `meta.model` and `meta.guard`, and ask one Ask question"
+  ]
+ },
+ {
+  "id": "T1148-a",
+  "title": "Label the plan-day calibration sample",
+  "why": "The LLM judge needs a kappa against a human before it may gate.",
+  "where": "continent-app/scripts/eval/plan-day/labels.json",
+  "how": [
+   "Open `continent-app/scripts/eval/plan-day/sample.json` and `rubric.md`, and for each of the 40 plans write \"pass\" or \"fail\" in `labels.json` (would a careful local friend hand this plan over as it is?)",
+   "Do not open `sample-key.json`",
+   "Fill `by` and `at`",
+   "Then `cd continent-app && node scripts/eval/run.mjs plan-day --write --dashboard` and commit `labels.json`, `data/reports/evals/` and `docs/reference/evals.md`"
+  ]
+ },
+ {
+  "id": "T1148-b",
+  "title": "Install Langfuse on the build box",
+  "why": "Tracing for E4 and a home for eval runs.",
+  "where": "continent-app/scripts/eval/langfuse/README.md",
+  "how": [
+   "Follow `continent-app/scripts/eval/langfuse/README.md`: compare the compose file with the official one, pin digests, fill `.env` from `.env.example`, `docker compose up -d`, open over an SSH tunnel"
+  ]
+ },
+ {
+  "id": "T1148-e",
+  "title": "Run the Gemini judge once",
+  "why": "A second judge to compare with the session judge.",
+  "where": "continent-app/scripts/eval/plan-day/judge.mjs",
+  "how": [
+   "On a machine with the pipeline's `GEMINI_API_KEY`: `cd continent-app && CARTA_JUDGE_MODEL=<a model outside plan-day's chain> node scripts/eval/plan-day/judge.mjs --backend gemini`, then `node scripts/eval/run.mjs plan-day --write --dashboard`, commit `judgments/` and the results"
+  ]
+ }
+]

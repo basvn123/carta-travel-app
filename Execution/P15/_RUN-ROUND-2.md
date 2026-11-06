@@ -27,7 +27,37 @@ How it runs:
 | 64 | T1148 | F6 | p15-s64-eval-platform | done | yes | 3 |
 | 96 | T1180 | D24 | p15-s96-downhill-relief | done | yes | 1 |
 
-Next after batch 3: S59 (D3 migration, alone), S58 follow-ups, S66 (F1 part 2, box), S98 (trails lab on the box, owner), S61-based S62 (D15 part 1, owner review), S73 to S80 (ops).
+The batch schedule for the rest of round 2 is in "Batch schedule" below.
+
+## Batch schedule (from batch 4 on)
+
+Written 2026-11-06 at the owner's request: batches run one after another without waiting for the owner, and each finished batch is merged into `p15-round2` before the next starts. A cloud orchestrator session runs this from batch 3's merge on.
+
+Rules for the orchestrator:
+- A batch starts when every session of the previous batch has pushed its report (or has been stopped as failed, noted here) and that batch is merged, checked and pushed.
+- Gate check at each batch start: a row whose gate is an owner decision that blocks the work itself is skipped and listed under "Held" with the owner row it waits on; a row whose gate is only a box run, a deploy or a live paste does the code half and leaves the run as an owner step. Never stall the chain on the owner.
+- Merge: `Execution/_OPEN.md` and `ROADMAP.md` conflicts by row union (`Execution/P15/_run50/union.py` on the round 1 branch, or the same logic); then compare every ROADMAP row a branch changed against the merged file and restore the branch's row where the union kept the old one (batch 2 lost B5 that way). Other conflicts are resolved by reading both sides.
+- Checks after each merge: `npm test`, `node scripts/ci/design-lint.mjs` (0 new), eslint 0 errors, the fast build and `node scripts/css-routes.mjs --check`, `node scripts/eval/run.mjs`, pytest for touched Python, `python -I scripts/docs/check_entry_points.py`, `scripts/docs/drift.py`, `scripts/docs/config_reference.py --check`, `scripts/docs/build_lineage.py --check`; then push and confirm GitHub CI on the pushed commit. A red check is fixed on `p15-round2` and noted here as a merge fix.
+- Owner steps: run `python -I Execution/P15/_run_r2/p8.py <checklist.html> <reports>` on the merged reports (it keeps `owner_steps.json`), add any step a report wrote in another format by hand to `owner_steps.json`, and publish the result to the owner checklist https://claude.ai/artifact/UZ1QJRDYdowJZEi6y5JCvF (phase 8).
+- Migrations: only S59 writes one in this schedule; it takes the next free number at its start (065 to 070 are used).
+- The trail pack runs one at a time: S97, S99, S100, S101, S102, S98.
+
+| Batch | Sessions | Why together |
+|---|---|---|
+| 4 | S59 (D3, migration), S103 (D23 method), S71 (F7), S72 (F8), S83 (B6) | S59 changes every layer writer, so the others stay out of writers |
+| 5 | S54 (E7), S55 (E4), S60 (D4), S62 (D15 part 1), S99 (trail continuity) | E7 and E4 need E1, E3 and F6 (merged) |
+| 6 | S66 (F1 part 2), S68 (F3), S69 (F4), S100 (multi-stage treks), S105 (beaches) | F after F6 and F1 part 1; S105 after S103 |
+| 7 | S70 (F5), S73 (H3), S74 (H4), S75 (H5), S101 (way back) | |
+| 8 | S76 (H8), S77 (H10), S78 (H11), S80 (C10), S102 (mountains and lakes) | |
+| 9 | S79 (H14 code health, the only code writer), S84 (B8), S104 (LLM judge), S106 (prices validation) | S79 splits large files, so no other app writer runs beside it |
+| 10 | S85 (I7), S86 (I8), S87 (I14), S88 (I15), S98 (trails lab on the box) | |
+| 11 | S94 slot: K14 blog part 1 (T1178), S91 (K7), S92 (K8), S107 (ratings validation), S108 (lakes and mountains) | round 1's S47 built the press kit (K10), so K10 is done and blog part 1 takes S94's number |
+| 12 | S90 (K14 part 2, after the S94 slot), S109, S110, S111 (validations), S112 (texts, after S104) | |
+
+Held (skipped until the owner unblocks them; the orchestrator adds a held row to the next batch once its owner row closes):
+- S63 (D15 part 2): needs the owner's review of S62's add, merge and remove list.
+- S67 (F2 distilled tagger): needs F1 labels from S66's box run and the owner's 400 hand labels (T1149).
+- S93 (G5 motion system): needs the design direction approved (T1111-a).
 
 Merge notes:
 - Start: integration branch built from round 1's final commit 3ec160f027 plus PR #10's T1084 commits; ROADMAP conflict resolved by keeping round 1's statuses and adding D15 to D24, E7 and G14 (no doubled rows). Entry points OK, drift 0, reading guide index regenerated (922 links, 0 broken).
