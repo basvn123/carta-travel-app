@@ -1425,6 +1425,41 @@ the v20 contract until it is migrated (`python pipeline/provenance.py
 the blocks into a side table (`continent-app/src/lib/provenance.js`) and a
 v19 shard has none to lift. Every v19 key keeps its name and value.
 
+## Multi-stage treks on the trails wire (T1184, ROADMAP D24, 2026-11-06)
+
+Additive, no schema version change. Written by `pipeline/trails/export_wire.py`
+through `pipeline/trails/treks.py`; checked by `validateTrailTreks` in
+`continent-app/scripts/ci/contract.mjs` (run by `check-contract.mjs`, with
+seeded breaks); read by `continent-app/src/lib/trails.js` `loadTreks` and
+`src/lib/treks.js`. Status: code and fixtures, awaiting the export run.
+
+Country file `trails/{CC}.json`, key `treks` (absent when none is filed there):
+
+| Key | Type | Means |
+|---|---|---|
+| `id` | string | `trek-r{osm}` when the parent relation is known, else `trek-{cc}-{slug}`; unique across the wire |
+| `name` | string | the registry name when the registry knows the trek, else the parent relation's, through `names.wire_name` |
+| `cc` | ISO code | the country file it is filed in: the country of its first stage |
+| `countries` | ISO codes | every country a stage is filed under |
+| `how` | strings | evidence used: `superroute`, `name`, `registry` |
+| `order` | `position` or `name` | what set the order: the superroute member position, else the numbers in the names (the first that passes the line check) |
+| `n` | integer, 2 or more | published stages |
+| `km`, `up`, `down`, `min` | numbers | sums over the published stages (km, metres up, metres down, minutes) |
+| `days` | integer | one per stage, or the stage's own `f.d` when it is a multi-day walk |
+| `stages` | `[{id, i, name, cc, km, up, min}]` | the published stages in walking order; `i` is the stage number shown (the name's own, else the position) |
+| `row` | integer, optional | the trek's own published row (a parent relation that is itself on the wire) |
+| `osm` | integer, optional | the parent relation id |
+| `wd` | string, optional | Wikidata id from the registry |
+| `missing` | integers, optional | stage numbers between the first and last that are not published (at most 40) |
+| `_src`, `_asof` | `osm`, `YYYY-MM-DD` | provenance as in schema v20 (T1143): the source id and the export date |
+
+Stage row (`trips[]` and `listed[]`), key `trek` (absent when the row is not a
+stage of a built trek): `{id, cc, i, n}`, the trek id, the country file that
+holds it, this stage's number and the published count. The contract requires
+each pointer to name a trek that lists the row under that number, and each
+listed stage that is loaded to point back. Size on the 2026-09-13 wire: the 45
+country files grow by about 105 KB (0.32%); detail files are unchanged.
+
 ## Planned: local transport fare per place (T1115, 2026-11-06)
 
 Not in the wire, not produced by any script. The owner's decision 4 (2026-11-05) on the fare source is "Not now"; this section fixes the shape so a later session can build the layer without redesigning it. It refines the one-line row `dest.local_transport.fare` in the T642 table above (same key, same engine reading).

@@ -4,7 +4,8 @@ import { ReportProblem } from '../components/ReportProblem.jsx';
 import maplibregl from '../map/maplibre.js';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { RouteRainWarning } from './RouteRainWarning.jsx';
-import { loadTrail, loadTrails } from '../lib/trails.js';
+import { loadTrail, loadTrails, loadTreks } from '../lib/trails.js';
+import { trekCountry, trekOfRow } from '../lib/treks.js';
 import {
   haversineKm, stopNameFromRef, trailRating,
   tripGrade, gradeIsDerived, tripHighlights, ROUTE_TYPES, tripRouteType,
@@ -16,6 +17,7 @@ import {
   hikeTimeMin, isLoopRoute, basesAlong,
 } from '../lib/trailGeo.js';
 import { SurfaceBar, Stages, Bases } from './RouteParts.jsx';
+import { TrekStages } from './TrekStages.jsx';
 import { pointAlong } from '../lib/signature.js';
 import {
   trailGpx, trailFileBase, trailShareUrl, trailheadDirectionsUrl,
@@ -257,6 +259,42 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
     () => new Map((stageRows || []).map((r) => [String(r.id), r])),
     [stageRows],
   );
+
+  // T1184 (D24): the multi-stage trek this walk is a stage of, or whose
+  // published parent row it is. The record sits in the country file of the
+  // trek's first stage (row.trek.cc), already cached when that is this
+  // walk's own country; its stages can sit in other countries' files, which
+  // are read only to make each stage a link.
+  const [trek, setTrek] = useState(null);
+  const [trekRows, setTrekRows] = useState(() => new Map());
+  const trekCc = trekCountry(tr);
+  const mayHaveTrek = !isCityDay && Boolean(tr.trek?.id || tr.h?.cls === 'parent');
+  useEffect(() => {
+    let live = true;
+    setTrek(null);
+    if (!mayHaveTrek) return undefined;
+    loadTreks(trekCc).then((list) => { if (live) setTrek(trekOfRow(list, tr)); })
+      .catch(() => { if (live) setTrek(null); });
+    return () => { live = false; };
+  }, [mayHaveTrek, trekCc, tr]);
+  useEffect(() => {
+    let live = true;
+    if (!trek) return undefined;
+    const ccs = [...new Set([trek.cc, ...trek.stages.map((s) => s.cc)].filter(Boolean))];
+    Promise.all(ccs.map((cc) => loadTrails(cc).catch(() => null))).then((lists) => {
+      if (!live) return;
+      const m = new Map();
+      for (const rows of lists) for (const r of rows || []) m.set(String(r.id), r);
+      setTrekRows(m);
+    });
+    return () => { live = false; };
+  }, [trek]);
+  const openTrekRow = (id) => {
+    const row = trekRows.get(String(id));
+    if (row && onOpenNeighbour) onOpenNeighbour('trail', row);
+  };
+  const trekParentOpens = Boolean(trek && trek.row != null && String(trek.row) !== String(tr.id)
+    && trekRows.has(String(trek.row)) && onOpenNeighbour);
 
   const src = detail || tr;
   const pts = useMemo(() => routePoints(src.geometry), [src]);
@@ -873,7 +911,7 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
     { key: 'near', id: 'ox-near', label: t('ox.jump.nearby') },
   ];
 
-  const hasAlong = sights.length > 0 || hasStages || bases.length > 0 || hasStops || hasFamily;
+  const hasAlong = sights.length > 0 || hasStages || Boolean(trek) || bases.length > 0 || hasStops || hasFamily;
   const climbLine = isNum(ascent) ? t('ox.climbM', { m: nf(ascent) }) : '';
 
   return (
@@ -976,7 +1014,18 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
       {hasAlong && (
         <PSection id="ox-along" title={t('ox.jump.along')}>
           <AlongCards items={sights} />
-          {hasStages && (
+          {trek && (
+            <TrekStages
+              trek={trek}
+              currentId={tr.id}
+              t={t}
+              lang={lang}
+              canOpen={(st) => Boolean(onOpenNeighbour) && trekRows.has(String(st.id))}
+              onOpenStage={onOpenNeighbour ? (st) => openTrekRow(st.id) : null}
+              onOpenWhole={trekParentOpens ? () => openTrekRow(trek.row) : null}
+            />
+          )}
+          {hasStages && !trek && (
             <div className="pt-block">
               <h3 className="pt-block-title">{t('route.stagesTitle')}</h3>
               <Stages
@@ -1013,7 +1062,7 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
               </ol>
             </div>
           )}
-          {hasFamily && (
+          {hasFamily && !trek && (
             <p className="pt-muted">
               {t('trails.familyPart', { name: family.n || family.k })}
               {', '}

@@ -79,7 +79,7 @@ import {
   validateAppData, validateSplitWires, EXPECTED_SCHEMA_VERSION,
   WIRE_SCHEMA, WIRE_SCHEMA_PATH, checkWireSchema, checkSchemaTable,
   extractSupabaseCalls, validateDbContract,
-  normaliseCatalogue, CATALOGUE_SQL, validateV19Pois, validateNatureWires, validateTrailImages,
+  normaliseCatalogue, CATALOGUE_SQL, validateV19Pois, validateNatureWires, validateTrailImages, validateTrailTreks,
 } from './contract.mjs';
 import { schemaKeySet } from '../../src/lib/wireSchema.js';
 import { splitCatalogue, mergeCatalogue } from '../../src/lib/bootIndex.js';
@@ -513,6 +513,35 @@ if (seed && seed in PAYLOAD_SEEDS) {
     }
     if (validateTrailImages([{ id: 1, img: { u: 'x', lic: 'Public domain' } }, { id: 2, img: { u: 'y', lic: 'CC BY 4.0', by: 'B' } }]).problems.length) {
       fail('trail photo rule rejects a good wire');
+    }
+  }
+  {
+    // T1184: the multi-stage trek records and the stage rows that point at them.
+    const dir = path.join(PUB, 'trails');
+    const files = {};
+    if (fs.existsSync(dir)) {
+      for (const f of fs.readdirSync(dir).filter((x) => /^[A-Z]{2}\.json$/.test(x))) {
+        files[f.slice(0, 2)] = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'));
+      }
+    }
+    const got = validateTrailTreks(files);
+    if (got.problems.length) fail(`trail treks break the contract:\n          ${got.problems.slice(0, 8).join('\n          ')}`);
+    else pass(got.n ? `${got.n} treks and ${got.rows} stage rows agree` : 'no trek records yet (awaiting the T1184 export run)');
+    const trek = (over = {}) => ({ id: 'trek-x', name: 'X', cc: 'DE', n: 2, km: 16, _src: 'osm', _asof: '2026-11-06',
+      stages: [{ id: 1, i: 1, km: 8 }, { id: 2, i: 2, km: 8 }], ...over });
+    const rows = [{ id: 1, trek: { id: 'trek-x', cc: 'DE', i: 1 } }, { id: 2, trek: { id: 'trek-x', cc: 'DE', i: 2 } }];
+    const good = { DE: { treks: [trek()], trips: rows } };
+    if (validateTrailTreks(good).problems.length) fail('trail trek rule rejects a good wire');
+    const seeds = {
+      'trek-one-stage': { DE: { treks: [trek({ n: 1, km: 8, stages: [{ id: 1, i: 1, km: 8 }] })], trips: [rows[0]] } },
+      'trek-order': { DE: { treks: [trek({ stages: [{ id: 1, i: 2, km: 8 }, { id: 2, i: 1, km: 8 }] })], trips: [] } },
+      'trek-total': { DE: { treks: [trek({ km: 30 })], trips: rows } },
+      'trek-no-asof': { DE: { treks: [trek({ _asof: undefined })], trips: rows } },
+      'trek-dangling-row': { DE: { treks: [], trips: rows } },
+      'trek-no-backlink': { DE: { treks: [trek()], trips: [{ id: 1 }, rows[1]] } },
+    };
+    for (const [name, wire] of Object.entries(seeds)) {
+      if (!validateTrailTreks(wire).problems.length) fail(`trail trek break ${name} was ACCEPTED`);
     }
   }
   const one = Object.keys(byKind)[0];
