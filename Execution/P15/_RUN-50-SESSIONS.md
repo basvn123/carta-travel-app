@@ -19,3 +19,12 @@ How it runs:
 | 06 | T1090 | session_0156MmZ675FBGFYLWfxY8p45 | p15-s06-csp-no-inline-style | running | | |
 | 07 | T1091 | session_0156MmZ6GNqyadqQA6n59dSe | p15-s07-attribution-ledger | running | | |
 | 08 | T1092 | session_0156MmZ2rL9aioyUBz7HyAUN | p15-s08-trail-names | running | | |
+| 09 | T1093 | session_0156MmZ2XaXpz3fPcyv1z5q5 | p15-s09-trail-photos | running | | |
+| 11 | T1095 | session_0156MmZ6PwzecPhXbvrLigr2 | p15-s11-place-intros | running | | |
+| 14 | T1098 | session_0156MmZ5CEX2gM2DENuNzhjF | p15-s14-uk-crowds | running | | |
+| 16 | T1100 | session_0156MmZ4kGZkoB8jKCfuWwoq | p15-s16-getting-there | running | | |
+| 17 | T1101 | session_0156MmZ6w6WEXK9HnWKK5sac | p15-s17-ask-cards-agree | running | | |
+
+Merge notes:
+- 00:05 S02, S03, S06, S07, S08 merged. ROADMAP C4 and C5 rows came out doubled by the merge and were fixed by hand; npm test 1294 pass, trail and licence pytest 47 pass, entry points OK. 8 owner steps on the checklist.
+- S01 and S04: GitHub refused the push (commit_refs); asked to retry, then push commit by commit.

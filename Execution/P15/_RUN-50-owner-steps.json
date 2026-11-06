@@ -1,0 +1,96 @@
+[
+ {
+  "id": "T1086-a",
+  "title": "Dry run the backup and restore runbook",
+  "why": "Nothing in it was executed against a live service.",
+  "where": "gpg --decrypt",
+  "how": [
+   "Take a hand dump with ops/backup_supabase.sh",
+   "Restore it with ops/restore_supabase.sh",
+   "Run the rclone cat"
+  ]
+ },
+ {
+  "id": "T1086-b",
+  "title": "Confirm the weekly Supabase dump runs on the box",
+  "why": "A missing SUPABASE_DB_URL or key makes it skip with only a log line.",
+  "where": "docs/runbooks/backup-restore.md",
+  "how": [
+   "Grep dump ~/logs/weekly.log on the box",
+   "Check CARTA_BACKUP_KEY and SUPABASE_DB_URL in ~/.config/carta/env",
+   "Gpg --import carta-backups.pub.asc if the key is missing"
+  ]
+ },
+ {
+  "id": "T1086-c",
+  "title": "Re-verify dashboard steps and the refund gap",
+  "why": "Only repo objects were checked, not Stripe, Supabase or Cloudflare screens.",
+  "where": "docs/runbooks/refund.md",
+  "how": [
+   "Walk refund.md steps 3 to 5 once on a test sale",
+   "Check the alert and rollback lines in incident.md sections 4 and 5",
+   "Decide on a refund column for pass_grants"
+  ]
+ },
+ {
+  "id": "T1087-b",
+  "title": "Make the database checks required on main",
+  "why": "A red admin harness, RLS or RPC run should block a merge, and today none of them does.",
+  "where": ".github/workflows/admin-harnesses.yml",
+  "how": [
+   "GitHub, repo Settings",
+   "Branches (or Rules)",
+   "Edit the rule for main",
+   "Require status checks",
+   "Add `harnesses` (admin-harnesses), `rpc-security` (admin-rpc-security) and `rls-policies` (rls-policies)",
+   "Save"
+  ]
+ },
+ {
+  "id": "T1087-c",
+  "title": "Confirm live definer functions pin search_path",
+  "why": "The harness proves the migrations, not hand edits on the live project.",
+  "where": "Execution/P15/T1087-admin-harness-ci.md",
+  "how": [
+   "Supabase Dashboard",
+   "SQL editor",
+   "Paste the read-only query from the Commands run section",
+   "Check no `public` row has a null path, `$user` or a client-writable schema",
+   "Note the count next to the harness's 120"
+  ]
+ },
+ {
+  "id": "T1090-a",
+  "title": "Check the strict style-src on the preview deploy",
+  "why": "The CSP without 'unsafe-inline' only proves itself on the real Pages host and real Safari.",
+  "where": "grep -i content-security-policy` and confirm style-src reads `'self'` plus two sha256 hashes and no 'unsafe-inline'; open the preview in Chrome with DevTools Console open, walk the map, a destination, a trail and the trip planner, and confirm no \"Refused to apply inline style\" line; open a prerendered page (any /spain/trails/... link from the sitemap) and confirm the reading column is styled and the console is clean, and if it is not, re-run the prerender upload (`node scripts/prerender/build.mjs` then `push.mjs`) so the pages carry the current STYLE; print a saved trip and confirm the print view is styled; repeat the trail and print checks on an iPhone in Safari",
+  "how": [
+   "After the next deploy to the preview branch, run `curl -sI https://preview.carta-app.pages.dev/"
+  ]
+ },
+ {
+  "id": "T1092-a",
+  "title": "Rebuild the trails wire with the new names and per-day difficulty",
+  "why": "The code is merged, but the shipped wire still has 2,865 very-hard rows (Veluwe Zwerfpad among them) and 643 Cyrillic or Greek names until the lab reruns.",
+  "where": "Execution/P15/T1092-trail-names.md",
+  "how": [
+   "On the box with trailslab up (cd tools/trailslab && docker compose up -d)",
+   "Python run_pipeline.py trails_attributes",
+   "Python run_pipeline.py trails_rate (exports continent-app/public/trails/)",
+   "Python pipeline/trails/difficulty_gate.py must pass",
+   "Check NL.json id 114362 has f.g moderate and f.d 14",
+   "Push data with the next deploy (node scripts/r2/push-data.mjs --live)"
+  ]
+ },
+ {
+  "id": "T1092-b",
+  "title": "Look at the trail card and trail page on a real phone after the rebuild",
+  "why": "The browser check could not run in the cloud container (data host blocked).",
+  "where": "Execution/P15/T1092-trail-names.md",
+  "how": [
+   "Open Explore, Trails, Netherlands, find Veluwe Zwerfpad: the card says Long, the page grade fact says Long, 14 days",
+   "Open an E-path stage in Andorra or Poland: the title reads E7, Andorra (or E3, Poland (west)) with Also called and the full name under it",
+   "Repeat at desktop width"
+  ]
+ }
+]
