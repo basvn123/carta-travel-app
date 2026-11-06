@@ -167,6 +167,7 @@ RUNS: dict[str, Run] = {
     "pipeline/harvest_pois_wikidata_images.py": Run("backfill", "poi_images_wikidata", "hard"),
     "pipeline/harvest_protected_areas_osm.py": Run("backfill", "nature", "hard"),
     "pipeline/harvest_tourism_density.py": Run("quarterly", "crowding", "soft"),
+    "pipeline/harvest_uk_crowds.py": Run("quarterly", "crowding_uk", "soft"),
     "pipeline/harvest_emergency.py": Run("quarterly", "dest_overlays", "soft"),
     "pipeline/harvest_swim_bans.py": Run("quarterly", "dest_overlays", "soft"),
     "pipeline/harvest_poi_fees.py": Run("quarterly", "poi_fees", "soft"),
@@ -1906,6 +1907,17 @@ SOURCES = (
         attributed="Crowding tooltip cites Eurostat with year; the EuroGeographics boundary notice is in the Account panel's Data sources screen",
     ),
     Source(
+        key="uk_crowds_ons",
+        section="content_layers",
+        scripts=('pipeline/harvest_uk_crowds.py',),
+        name="ONS / VisitBritain monthly nights by ITL 1 region plus ONS ITL 1 boundaries (`pipeline/harvest_uk_crowds.py`, T1098)",
+        takes="Monthly crowding shape for GB places (and BA, FO, MD, XK from national offices where open)",
+        licence="Open Government Licence v3.0 (ONS, VisitBritain); ONS boundaries carry the OS and ONS copyright notice",
+        attribution="Yes, both",
+        share_alike="No",
+        attributed="Not yet: nothing ships until the owner's first run (T1098 owner step); the crowding tooltip credit is added with that run",
+    ),
+    Source(
         key="eurostat_avia_par",
         section="content_layers",
         scripts=('pipeline/flights/build_routes.py',),
@@ -2852,6 +2864,7 @@ STORABLE: dict[str, str] = {
     'met_norway_locationforecast': 'No',
     'mapterhorn_terrain_tiles': 'No',
     'eurostat_tour_occ_nin3': 'Yes, with credit',
+    'uk_crowds_ons': 'Yes, with credit',
     'eurostat_avia_par': 'Yes, with credit',
     'ourairports': 'Yes',
     'google_flights_fli': 'Verify',
@@ -3112,6 +3125,7 @@ CREDIT_COVERED_BY: dict[str, str] = {
 }
 
 CREDIT_NOT_SHOWN: dict[str, str] = {
+    "uk_crowds_ons": "nothing ships until the owner's first T1098 run; credit it in the crowding tooltip with that run (register row T1098)",
     "sncf_gtfs_rt_plus": "raw ETL; no traveller surface reads it. Credit it the day one does",
     "french_nap_cross_border": "raw ETL; no traveller surface reads it",
     "era_registers": "raw ETL; no traveller surface reads it",

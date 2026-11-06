@@ -80,7 +80,7 @@ sees it). A row key links to the source tables that follow.
 | `holidays` | events | Nager.Date public holidays, catalogue countries, current + next year | monthly | `demand_events` | soft | `nager_date` | also part of the weekly ingestion sweep |
 | `school_holidays` | events | OpenHolidays school holidays for the countries it covers | monthly | `demand_events` | soft | `openholidays_api` | also part of the weekly ingestion sweep |
 
-### Harvesters (26)
+### Harvesters (27)
 
 | Script | Cadence | Task | Failure | Ledger rows | Note |
 |---|---|---|---|---|---|
@@ -104,6 +104,7 @@ sees it). A row key links to the source tables that follow.
 | `pipeline/harvest_sea_temp.py` | quarterly | `sea_temp` | soft | `nasa_jpl_mur_sst` |  |
 | `pipeline/harvest_swim_bans.py` | quarterly | `dest_overlays` | soft | `openstreetmap_swimming_no` |  |
 | `pipeline/harvest_tourism_density.py` | quarterly | `crowding` | soft | `eurostat_tour_occ_nin3` |  |
+| `pipeline/harvest_uk_crowds.py` | quarterly | `crowding_uk` | soft | `uk_crowds_ons` |  |
 | `pipeline/harvest_unesco_whc.py` | quarterly | `unesco` | soft | `unesco_world_heritage_centre` |  |
 | `pipeline/harvest_urban_fabric.py` | manual | none | manual | `openstreetmap_via_geofabrik_country` |  |
 | `pipeline/harvest_wikivoyage.py` | backfill | `guide` | hard | `wikivoyage` |  |
@@ -208,6 +209,7 @@ the app once those surfaces render from this data.
 | MET Norway Locationforecast 2.0 (live via the forecast proxy, `continent-app/src/lib/metForecast.js`) | Up to 10-day forecast per destination cell, reduced to daily rows | CC BY 4.0 and NLOD; User-Agent with a contact required (api.met.no terms) | Yes, credit MET Norway (Norwegian Meteorological Institute) | No | Account > Data sources and Imprint > Data credits (MET Norway entry); audit T1091 added the row | No |
 | Mapterhorn terrain tiles (client-side, `continent-app/src/lib/terrainSource.js`) | Elevation tiles for the 3D terrain and relief shading | Open elevation sources, credited at mapterhorn.com/attribution | Yes, credit Mapterhorn and its elevation sources | No | Account > Data sources and Imprint > Data credits (Mapterhorn entry); audit T1091 added the row | No |
 | Eurostat tour_occ_nin3 plus GISCO NUTS 3 boundaries (`pipeline/harvest_tourism_density.py`) | Regional tourism density (crowding tiers) | Eurostat reuse: CC BY 4.0. GISCO boundaries carry the EuroGeographics notice | Yes, both | No | Crowding tooltip cites Eurostat with year; the EuroGeographics boundary notice is in the Account panel's Data sources screen | Yes, with credit |
+| ONS / VisitBritain monthly nights by ITL 1 region plus ONS ITL 1 boundaries (`pipeline/harvest_uk_crowds.py`, T1098) | Monthly crowding shape for GB places (and BA, FO, MD, XK from national offices where open) | Open Government Licence v3.0 (ONS, VisitBritain); ONS boundaries carry the OS and ONS copyright notice | Yes, both | No | Not yet: nothing ships until the owner's first run (T1098 owner step); the crowding tooltip credit is added with that run | Yes, with credit |
 | Eurostat avia_par_{cc} airport-pair tables (`pipeline/flights/build_routes.py`, T512) | Monthly commercial passenger departures per airport pair: which European routes exist and in which months, the flight sweep's route list (data/flights/_routes.json) | Eurostat reuse: CC BY 4.0 | Yes | No | Account panel's Data sources screen under Eurostat; the route list itself is not shown, the prices it leads to are Google Flights' | Yes, with credit |
 | OurAirports airports and countries (`pipeline/flights/build_routes.py`, T512) | ICAO to IATA codes, airport names, cities, countries and positions for the route list and the origin picker (data/flights/_airports.json) | Public domain | No (courtesy) | No | Not required | Yes |
 | Numbeo point anchors (`pipeline/gen_mock_data.py` country tables, oneoff calibrations) | Hand-read meal, drink and grocery price anchors used to seed lifestyle costs | Proprietary site, no open license; small hand-typed factual excerpts, not a bulk harvest | n/a | No | In-data source tags only. RISK: verify acceptable use, plan replacement with an open source over time | No |
