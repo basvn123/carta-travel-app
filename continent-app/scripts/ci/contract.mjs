@@ -315,6 +315,38 @@ export function validateNatureWires(byKind) {
 }
 
 /**
+ * Trail card photographs (T1093, D7 and K2). Every trail row's `img` that
+ * carries a licence must carry one that allows reuse with credit (CC0, CC BY,
+ * CC BY-SA, public domain: the same rule as pipeline/trails/photo_licence.py),
+ * and a licence that is not CC0 or public domain must name the photographer.
+ * Once any row carries `lic` the wire has been rebuilt, so every `img` must:
+ * a half-credited wire is the break this exists for. Before the first rebuilt
+ * wire (no row has `lic`) rows are only counted, and the result says so.
+ */
+const TRAIL_LIC_OK = /^(public domain|pd\b|pd-|cc0|cc-0|cc zero|no restrictions|cc[ -]by(?:[ -]sa)?(?:[ -]\d(?:\.\d)?)?(?:[ -][a-z]{2,3})?$)/i;
+const TRAIL_LIC_NO_NAME = /^(public domain|pd\b|pd-|cc0|cc-0|cc zero|no restrictions)/i;
+export function validateTrailImages(rows) {
+  const problems = [];
+  const withImg = rows.filter((r) => r && r.img);
+  const rebuilt = withImg.some((r) => r.img.lic);
+  for (const r of withImg) {
+    const { img } = r;
+    const where = `trails/${r.id}.img`;
+    if (!img.lic) {
+      if (rebuilt) problems.push(`${where} has no licence in a rebuilt wire`);
+      continue;
+    }
+    const lic = String(img.lic).replace(/_/g, ' ').trim();
+    if (/(^|[^a-z])(nc|nd)([^a-z]|$)|non-?commercial|no-?deriv/i.test(lic) || !TRAIL_LIC_OK.test(lic)) {
+      problems.push(`${where} carries licence ${JSON.stringify(img.lic)}, which does not allow reuse with credit`);
+    } else if (!TRAIL_LIC_NO_NAME.test(lic) && !String(img.by || '').trim()) {
+      problems.push(`${where} is ${lic} and names no photographer`);
+    }
+  }
+  return { problems, n: withImg.length, rebuilt };
+}
+
+/**
  * Validate the split wires that sit beside app_data.json (T267, closing the
  * gap T029 recorded): the boot index, the per-country destination files it
  * names, the per-destination POI shards and the country insights (the
