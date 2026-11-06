@@ -43,7 +43,7 @@ for l in cur:
 open('ROADMAP.md','w').write('\n'.join(out)+'\n')
 print('roadmap rows changed by branch:', sorted(changed), 'restored/deduped:', fixed)
 PY
-# any ROADMAP row id now doubled: keep the copy that differs from HEAD^1 (the pre-merge integration branch)
+# any ROADMAP row id now doubled: keep HEAD^1's copy (rows the branch changed were already restored above)
 python3 - <<'PY'
 import subprocess, re, collections
 pat=re.compile(r'^\| ([A-Z]{1,2}-?[A-Z]?\d+[a-z]?) \|')
@@ -59,7 +59,7 @@ for l,i in zip(lines,ids):
     if i in dup:
         if i in done: continue
         cands=[x for x,j in zip(lines,ids) if j==i]
-        pick=next((x for x in cands if x!=prev.get(i)), cands[0])
+        pick=next((x for x in cands if x==prev.get(i)), cands[0])
         out.append(pick); done.add(i); continue
     out.append(l)
 if dup: open('ROADMAP.md','w').write('\n'.join(out)+'\n')
