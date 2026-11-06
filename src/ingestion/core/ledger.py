@@ -17,7 +17,7 @@ from pathlib import Path
 
 import re
 
-from .registry import (APP_CREDITS, HEADER, ROOT, RUNS, SECTIONS, SOURCES, STORABLE,
+from .registry import (APP_CREDITS, uncredited_rows, HEADER, ROOT, RUNS, SECTIONS, SOURCES, STORABLE,
                        WIRE_REVIEW, harvester_scripts, load_all, sources_for, validate)
 
 STORABLE_COLUMN = "Storable copy"
@@ -145,6 +145,7 @@ def check_app(path: Path) -> list[str]:
     for name in APP_CREDITS:
         if name not in entries:
             problems.append(f"APP_CREDITS names {name!r}, which attribution.js does not have")
+    problems.extend(uncredited_rows())
     dupes = sorted({n for n in entries if entries.count(n) > 1})
     for name in dupes:
         problems.append(f"attribution.js lists {name!r} more than once")

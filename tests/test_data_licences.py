@@ -135,3 +135,24 @@ def test_app_credits_match_attribution_js(tmp_path):
     assert any("Invented Source" in p for p in ledger.check_app(f))
     f.write_text(good.replace("source: 'CARTO'", "source: 'CARTA'"), encoding="utf-8")
     assert any("CARTO" in p for p in ledger.check_app(f))
+
+
+# T1091: the credit audit. A row that asks for a credit must be credited.
+def test_every_credit_required_row_is_credited_or_accounted_for():
+    assert registry.uncredited_rows() == []
+    assert sum(registry.credit_required(s) for s in registry.SOURCES) > 50
+
+
+def test_a_credit_required_row_without_an_entry_fails(monkeypatch):
+    row = registry.Source(key="invented_credit_row", section="content_layers",
+                          name="Invented", takes="x", licence="CC BY 4.0",
+                          attribution="Yes", share_alike="No", attributed="n/a")
+    monkeypatch.setattr(registry, "SOURCES", registry.SOURCES + (row,))
+    assert any("invented_credit_row" in p for p in registry.uncredited_rows())
+
+
+def test_mur_sst_is_credited_in_the_app():
+    assert registry.APP_CREDITS["NASA JPL MUR SST"] == ("nasa_jpl_mur_sst",)
+    js = (ROOT / "continent-app/src/data/attribution.js").read_text(encoding="utf-8")
+    assert "source: 'NASA JPL MUR SST'" in js
+    assert ledger.check_app(ROOT / "continent-app/src/data/attribution.js") == []
