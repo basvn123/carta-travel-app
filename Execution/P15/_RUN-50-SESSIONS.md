@@ -57,7 +57,7 @@ How it runs:
 | 42 | T1126 | session_0156MmZ371hGbeoa5s3ToCg7 | p15-s42-css-consolidation | done | yes |  |
 | 50 | T1134 | session_0156MmZ5gHVZAjwixa2soZ5Z | p15-s50-drift-scorecard | done | yes |  |
 | 39 | T1123 | session_0156MmZ6YxjUWnXqfKceVDgj | p15-s39-core-flow-fixes | done | yes |  |
-| 44 | T1128 | session_0156MmZ2wZAr8cDNhxbYejCV | p15-s44-accessibility | running | | |
+| 44 | T1128 | session_0156MmZ2wZAr8cDNhxbYejCV | p15-s44-accessibility | done | yes | 4 |
 | 38 | T1122 | session_0156MmZ4HtK752CmGsWyfZcJ | p15-s38-cost-card | done (flag off) | yes |  |
 | 40 | T1124 | session_0156MmZ6c8ERyuGHxJ6Y8yqX | p15-s40-motion-tokens | done | yes |  |
 | 32 | T1116 | session_0156MmZ6P6QW3MyvyCtLPAdf | p15-s32-register-rule | done | yes | 1 |
@@ -76,3 +76,4 @@ Merge notes:
 - 11:58 S40 (motion literals 243 to 1, tokens in :root, one reduced-motion path) and S38 (umber cost card behind ?cc=umber, flag off) merged. Together they failed three checks that passed on each branch: S38 had baselined its new design-lint literals and S40 regenerated the baseline, so the motion-literal test, design-lint and css-routes went red. Fixed on the integration branch: the card now uses --dur-1, --radius-sm and card-scoped shadow variables, and the drawn-bar rule is scoped to .ccard.is-umber. npm test 1556, design-lint 0 new, css-routes OK, pytest 502 (2 base failures). S44 still running.
 - 12:23 S44 still running (axe baseline). S32 started alongside it: it only adds scripts/register/ and its own rows, so it shares no files with S44.
 - 12:47 S32 merged: register at 1,717 open rows; options a 1,157, b 1,437, c 877, d 1,717, none under 250 (owner step T1116-a). S44 still running.
+- 13:40 S44 merged (axe serious nodes 94 to 0). Its literal text shadow and outline: none were fixed at merge. All 50 sessions merged: npm test 1559, pytest 507 (2 base failures), design-lint 4,612 with 0 new, contract gate, css-routes, drift and entry points pass. 97 owner steps on the checklist. Morning summary: Execution/P15/_MORNING-2026-11-06.md. Scheduling stopped.

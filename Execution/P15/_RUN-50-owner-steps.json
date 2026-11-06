@@ -1065,5 +1065,45 @@
    "Run `python -I scripts/register/dry_run.py --option all` to see the first rows",
    "Answer a, b, c, d or c plus e in chat, and say whether the 250 target stays or moves"
   ]
+ },
+ {
+  "id": "T1128-a",
+  "title": "Screen-reader pass on a real phone",
+  "why": "Axe checks markup, not what a person hears, and G10 asks for screen readers.",
+  "where": "Execution/P15/T1128-accessibility.md",
+  "how": [
+   "Turn on VoiceOver (iPhone: Settings, Accessibility) and TalkBack (Android)",
+   "On each of Home, Explore list and map, a place, trail and beach page, the Plan wizard, the trip page and Account, swipe through every control and note anything read wrong, twice or not at all",
+   "Send the notes to the next session"
+  ]
+ },
+ {
+  "id": "T1128-b",
+  "title": "Decide the pause for the home film and tour",
+  "why": "WCAG 2.2.2 (Level A) needs a way to pause motion that runs longer than 5 seconds, so the home page is not AA without it.",
+  "where": "Execution/_OPEN.md (T1128-b)",
+  "how": [
+   "Choose one: a small pause control on the film and tour, or both stop after 5 seconds, or keep as is and accept the gap",
+   "Reply in chat"
+  ]
+ },
+ {
+  "id": "T1128-d",
+  "title": "Decide the wizard country map's keyboard layer",
+  "why": "The map is pointer only; the card grid beside it is the keyboard path.",
+  "where": "Execution/_OPEN.md (T1128-d)",
+  "how": [
+   "Choose: keep the grid as the keyboard path, or ask for a keyboard layer like Explore's map"
+  ]
+ },
+ {
+  "id": "T1128-h",
+  "title": "Look at the home header on the real film",
+  "why": "The white labels now carry a hairline ink shadow and the container could not load the film.",
+  "where": "continent-app/src/styles/61-v6-home.css",
+  "how": [
+   "Open the home page at desktop width on the deployed preview",
+   "Check the header labels read well on every clip and the shadow does not look heavy"
+  ]
  }
 ]
