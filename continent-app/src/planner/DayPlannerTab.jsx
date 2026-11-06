@@ -3952,6 +3952,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
       est: costRow.stayLevel !== 'city' || costRow.foodLevel !== 'city',
       stayEur: costRow.stayEur,
       foodEur: costRow.foodEur,
+      row: costRow,
       tickets: dayTickets,
       party: tripParty || prefs?.aiGroupSize || groupSize || 1,
     }

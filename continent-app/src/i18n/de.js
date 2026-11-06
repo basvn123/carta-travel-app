@@ -7796,6 +7796,8 @@ export const de = {
   "price.item.events": "Veranstaltungen",
   "price.notMeasured": "Noch nicht gemessen",
   "price.bedThin": "Wenige Angebote gemessen",
+  "price.noteBed": "Bettpreis: wenige Angebote gemessen",
+  "price.noteMissing": "{part}: noch nicht gemessen",
   "price.item.flight": "Flug hin und zurück",
   "price.item.way": "{mode} hin und zurück",
   "item.baseStay": "Übernachten in {city}, {price} {unit}",

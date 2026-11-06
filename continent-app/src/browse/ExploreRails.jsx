@@ -9,6 +9,7 @@ import { openShared } from '../lib/sharedElement.js';
 import { countryName } from '../lib/countryName.js';
 import { useI18n } from '../i18n/index.jsx';
 import { DayPrice, SaveButton } from './ExploreCards.jsx';
+import { PriceNotes } from '../components/PriceNotes.jsx';
 import { FriendCardLine } from '../together/signals.jsx';
 import { StoryRail, StoryCard, STORY_MAX, STORY_SIZES } from './StoryRail.jsx';
 
@@ -145,7 +146,7 @@ function PlaceStoryCard({ p, railKey, month, monthShort, onSelect, fav, onToggle
           <span>{countryName(p.iso2, p.country)}</span>
         </span>
       )}
-      price={<><DayPrice cost={p.cost} t={t} /><FriendCardLine destId={p.id} /></>}
+      price={<><DayPrice cost={p.cost} t={t} /><PriceNotes row={p.cost} className="xprice-notes" /><FriendCardLine destId={p.id} /></>}
     />
   );
 }

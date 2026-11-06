@@ -5,7 +5,8 @@ import { readOwnFare, writeOwnFare, markFirstResultSeen } from '../lib/firstRun.
 import { tripDaysBetween } from '../lib/runtime_pricing.js';
 import { addDays, fmtDate } from '../lib/dates.js';
 import { quoteNights } from '../lib/price/nights.js';
-import { unmeasuredParts } from '../lib/price/display.js';
+import { priceNotes } from '../lib/price/notes.js';
+import { NotMeasuredValue, ThinBedNote } from '../components/PriceNotes.jsx';
 import { useSettledFigure } from '../lib/figureChange.js';
 import { Button, Money, Segmented } from '../components/ui/index.js';
 import { formatMoney } from '../lib/money.js';
@@ -437,16 +438,16 @@ export function DestPriceCard({
                 </dt>
                 <dd>
                   <Money value={l.eur} />
-                  {l.thin && <small className="tcard-thin">{t('price.bedThin')}</small>}
+                  {l.thin && <ThinBedNote />}
                 </dd>
               </div>
             ))}
             {/* T1075 (D10): a part with no figure yet says so in words; the
                 total under it does not include it, and is never padded. */}
-            {unmeasuredParts(costRow).map((key) => (
+            {priceNotes(costRow).unmeasured.map((key) => (
               <div key={key} className="tcard-line is-unmeasured">
                 <dt>{t(`price.item.${key}`)}</dt>
-                <dd><span className="money is-missing tcard-unmeasured">{t('price.notMeasured')}</span></dd>
+                <dd><NotMeasuredValue /></dd>
               </div>
             ))}
             <div className="tcard-line is-total">

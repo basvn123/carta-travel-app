@@ -8423,6 +8423,8 @@ export const en = {
   "price.item.events": "Events",
   "price.notMeasured": "Not yet measured",
   "price.bedThin": "Few listings measured",
+  "price.noteBed": "Bed price: few listings measured",
+  "price.noteMissing": "{part}: not yet measured",
   "price.item.flight": "Flight there and back",
   "price.item.way": "{mode} there and back",
   "item.baseStay": "Stay in {city}, {price} {unit}",

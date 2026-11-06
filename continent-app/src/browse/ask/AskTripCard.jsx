@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button, Money } from '../../components/ui/index.js';
+import { PriceNotes } from '../../components/PriceNotes.jsx';
 import { AirlineMark, FlightRow, FlightLink } from '../../components/flights/Flights.jsx';
 import { BedIcon, ChevronDownIcon, MapPinIcon, SuitcaseIcon } from '../../components/Icons.jsx';
 import { cheapestReturn, roundTripNear, legCost } from '../../lib/flights/flights.js';
@@ -113,6 +114,7 @@ export function AskTripCard({ t, lang, pick, month = null, trip, primary, onOpen
               : t('askChat.trip.stayNone')}
             {cost.foodEur != null && <>, {t('askChat.trip.food')} <Money value={cost.foodEur} est /> {t('askChat.trip.aDay')}</>}
           </span>
+          <PriceNotes row={cost} className="ac-trip-notes" />
         </div>
       </div>
 
