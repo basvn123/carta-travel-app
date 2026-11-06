@@ -407,9 +407,33 @@ sys.path.insert(0, str(ROOT / "pipeline" / "photos"))
 from credit import owes_credit  # noqa: E402
 
 
+from photo_licence import reusable  # noqa: E402
+
+
 def credited(rows):
-    """The photographs of one trip that we can lawfully credit, in order."""
-    return [r for r in rows if not owes_credit(r)]
+    """The photographs of one trip that we can lawfully credit, in order.
+
+    Two gates, both must pass: the licence allows reuse with credit (CC0, CC BY,
+    CC BY-SA, public domain: photo_licence.reusable, T1093) and a licence that
+    owes a name has one (credit.owes_credit, T280)."""
+    return [r for r in rows if reusable(r.get("license")) and not owes_credit(r)]
+
+
+def card_img(hero):
+    """The card's one picture, with the credit it owes riding along (T1093).
+
+    Short keys like the beach and lake rows: by (photographer, absent on a
+    public domain file), lic (the licence), licUrl, page (the Commons file
+    page). The detail file keeps the long names; the app maps both."""
+    out = {"u": hero["u"], "w": hero["w"], "h": hero["h"],
+           "lic": hero.get("license")}
+    if hero.get("author"):
+        out["by"] = hero["author"]
+    if hero.get("license_url"):
+        out["licUrl"] = hero["license_url"]
+    if hero.get("page"):
+        out["page"] = hero["page"]
+    return out
 
 
 def fetch_stops(conn, ids):
@@ -983,7 +1007,7 @@ def wire_item(t, n_stops, hier=None):
     # the gallery keeps every picture, and the reader is not shown a sliver.
     hero = (card_images(t) or [None])[0]
     if hero:
-        item["img"] = {"u": hero["u"], "w": hero["w"], "h": hero["h"]}
+        item["img"] = card_img(hero)
     if n_stops:
         item["n_stops"] = n_stops
     anchor = anchor_of(t["raw_tags"])

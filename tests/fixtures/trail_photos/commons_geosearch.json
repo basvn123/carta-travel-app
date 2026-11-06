@@ -1,0 +1,6 @@
+{"query": {"pages": [
+ {"title": "File:Trail in autumn.jpg", "imageinfo": [{"url": "https://upload.wikimedia.org/a.jpg", "thumburl": "https://upload.wikimedia.org/thumb/a.jpg/1280px-a.jpg", "thumbwidth": 1280, "thumbheight": 853, "width": 4000, "height": 2666, "extmetadata": {"LicenseShortName": {"value": "CC BY-SA 4.0"}, "LicenseUrl": {"value": "https://creativecommons.org/licenses/by-sa/4.0"}, "Artist": {"value": "<a href=\"//commons.wikimedia.org/wiki/User:Ann\">Ann Beck</a>"}, "GPSLatitude": {"value": "47.87"}, "GPSLongitude": {"value": "8.0"}}}]},
+ {"title": "File:Hut in snow.jpg", "imageinfo": [{"url": "https://upload.wikimedia.org/b.jpg", "width": 3000, "height": 2000, "extmetadata": {"LicenseShortName": {"value": "CC BY-NC 2.0"}, "Artist": {"value": "Bob"}}}]},
+ {"title": "File:Feldberg.jpg", "imageinfo": [{"url": "https://upload.wikimedia.org/c.jpg", "width": 3000, "height": 2000, "extmetadata": {"LicenseShortName": {"value": "GFDL 1.2"}, "Artist": {"value": "Cy"}}}]},
+ {"title": "File:Old map.jpg", "imageinfo": [{"url": "https://upload.wikimedia.org/d.jpg", "width": 3000, "height": 2000, "extmetadata": {"LicenseShortName": {"value": "Public domain"}}}]}
+]}}

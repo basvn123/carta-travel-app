@@ -77,7 +77,7 @@ import { fileURLToPath } from 'node:url';
 import {
   validateAppData, validateSplitWires, EXPECTED_SCHEMA_VERSION,
   parseSchemaContract, extractSupabaseCalls, validateDbContract,
-  normaliseCatalogue, CATALOGUE_SQL, validateV19Pois, validateNatureWires,
+  normaliseCatalogue, CATALOGUE_SQL, validateV19Pois, validateNatureWires, validateTrailImages,
 } from './contract.mjs';
 import { splitCatalogue, mergeCatalogue } from '../../src/lib/bootIndex.js';
 
@@ -487,6 +487,23 @@ if (seed && seed in PAYLOAD_SEEDS) {
   const problems = validateNatureWires(byKind);
   if (problems.length) fail(`nature rows miss v19 keys:\n          ${problems.slice(0, 8).join('\n          ')}`);
   else pass(`${Object.values(byKind).reduce((a, r) => a + r.length, 0)} rated nature rows carry v5`);
+  {
+    const got = validateTrailImages(byKind.trails || []);
+    if (got.problems.length) fail(`trail photographs break the credit rule:\n          ${got.problems.slice(0, 8).join('\n          ')}`);
+    else pass(`${got.n} trail card photographs ${got.rebuilt ? 'carry an allowed licence and a name' : 'counted; the wire has no licence fields yet (awaiting the T1093 run)'}`);
+    const seeds = {
+      'trail-photo-nc': [{ id: 1, img: { u: 'x', lic: 'CC BY-NC 2.0', by: 'A' } }],
+      'trail-photo-gfdl': [{ id: 1, img: { u: 'x', lic: 'GFDL 1.2', by: 'A' } }],
+      'trail-photo-no-name': [{ id: 1, img: { u: 'x', lic: 'CC BY-SA 4.0' } }],
+      'trail-photo-half-rebuilt': [{ id: 1, img: { u: 'x', lic: 'CC0' } }, { id: 2, img: { u: 'y' } }],
+    };
+    for (const [name, rows] of Object.entries(seeds)) {
+      if (!validateTrailImages(rows).problems.length) fail(`trail photo break ${name} was ACCEPTED`);
+    }
+    if (validateTrailImages([{ id: 1, img: { u: 'x', lic: 'Public domain' } }, { id: 2, img: { u: 'y', lic: 'CC BY 4.0', by: 'B' } }]).problems.length) {
+      fail('trail photo rule rejects a good wire');
+    }
+  }
   const one = Object.keys(byKind)[0];
   if (one && !validateNatureWires({ [one]: [{ id: 'seeded', v5: { score: 11, band: 'best', confidence: 'sure', facts: null, rank: null } }] }).length) {
     fail('v19 nature break was ACCEPTED');

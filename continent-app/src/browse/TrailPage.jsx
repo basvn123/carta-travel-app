@@ -638,7 +638,7 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
     photo: nearestShot(h.along_m),
   }));
   const galleryPhotos = shots.length ? shots
-    : (tr.img?.u ? toPhotos([{ u: tr.img.u, w: tr.img.w, h: tr.img.h }], { fallbackCaption: named.name })
+    : (tr.img?.u ? toPhotos([tr.img], { fallbackCaption: named.name })
       : (assoc.photoUrl ? toPhotos([assoc.photoUrl], { caption: assoc.photoOf ? t('detail.photoNear', { place: assoc.photoOf }) : named.name }) : []));
   const before = beforeGoItems({
     lines: notForLines('trail', tr, { reasons: detail?.reasons || tr.reasons, grade, ascent, totalM }),
