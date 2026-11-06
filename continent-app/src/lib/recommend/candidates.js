@@ -300,7 +300,7 @@ export function tasteFor(settings, saved = null) {
 export function buildCandidates(input) {
   const { data, countryInsights = null, layerIndexes = {}, settings, taste = null, origin = null, flights = null, getting = null, today } = input;
   const destinations = data?.destinations || {};
-  const answers = quizAnswers(settings, spendFor(settings));
+  const answers = broadWhenUnasked(quizAnswers(settings, spendFor(settings)), settings);
   const fixedMonth = setupMonth(settings, today);
   const matched = matchCountries({
     destinations,
@@ -394,6 +394,22 @@ export function buildCandidates(input) {
     if (c.topPlaces.length > 1) push(build(c, 'one', c.topPlaces.slice(1)));
   }
   return out;
+}
+
+/**
+ * T1103 (G12): the trip types a match ranks by when "What are you up for"
+ * was never asked (the short plan flow prices trips before it). The country
+ * match ranks by trip types and finds nothing without one, so an unasked
+ * question takes the answer that narrows least (quizAnswers' own rule):
+ * the three types most of the catalogue is tagged for. Only the ranking
+ * reads them; no like is written to the settings or shown as an answer, and
+ * the trips' reasons come from the traveller's own likes (rank.js).
+ */
+export const BROAD_TYPES = Object.freeze(['city', 'culture', 'food']);
+
+export function broadWhenUnasked(answers, settings) {
+  if (answers.types.length || settings?.answered?.includes('g:likes')) return answers;
+  return { ...answers, types: [...BROAD_TYPES] };
 }
 
 /**

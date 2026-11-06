@@ -1506,3 +1506,46 @@
 .pf-fold-body .pf-side-in { position: static; max-height: none; padding: 0; overflow: visible; }
 @media (min-width: 1100px) { .pf-fold { display: none; } }
 @media (prefers-reduced-motion: reduce) { .pf-fit-place { animation: none; } }
+
+/* T1103 (G12): the refine card on the trips after the short setup. One
+   band on mist (the Carta card's foot strip), the sentence on the left,
+   the two doors on the right; stacked on a phone. */
+.pf-refine {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-2) var(--space-3);
+  align-items: start;
+  margin: var(--space-3) 0;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-card);
+  background: color-mix(in srgb, var(--home-ground-mist) 55%, var(--surface));
+}
+
+.pf-refine-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-pill);
+  background: var(--action-tint);
+  color: var(--select-ink);
+}
+
+.pf-refine-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+
+.pf-refine-title { margin: 0; font-size: var(--text-lead); font-weight: 700; color: var(--text); text-wrap: balance; }
+
+.pf-refine-sub { margin: 0; font-size: var(--text-body); line-height: var(--leading-body); color: var(--text-2); }
+
+.pf-refine-acts {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+@media (min-width: 769px) {
+  .pf-refine { grid-template-columns: auto 1fr auto; align-items: center; }
+  .pf-refine-acts { grid-column: auto; flex-wrap: nowrap; }
+}

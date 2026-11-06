@@ -18,6 +18,8 @@ import { useBcp47, useMonths, useTripSettings, whenText } from './flowHooks.js';
 import { TRIPS_SCREEN, continueTo, engineScreens, guideQuestions, guideScreens, hasDoors, prevScreen, progressOf } from './flowGraph.js';
 import { normalizeSettings, quizAnswers, spendFor } from './tripSettings.js';
 import { takePlan } from '../../lib/recommend/keptStore.js';
+import { clearQuickStart, peekQuickStart } from './quickStart.js';
+import { RefineCard } from './RefineCard.jsx';
 import NotYet from '../../components/NotYet.jsx';
 import { AirlineMark } from '../../components/flights/Flights.jsx';
 import { useAirlines, airlineName } from '../../lib/flights/useAirlines.js';
@@ -60,7 +62,12 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
   // with that trip's page open (the hash is read here, not imported from the
   // finder's lazy chunk).
   const arriveTrip = useRef(readTripHash());
-  const [phase, setPhase] = useState(() => (arriveTrip.current ? TRIPS_SCREEN : 'home')); // home | g:* | ff | engine
+  // T1103 (G12): a trip made by the Plan opening's short setup opens on its
+  // priced trips; the help-me-choose questions then refine them.
+  const quick = useRef(peekQuickStart());
+  useEffect(() => { clearQuickStart(); }, []);
+  const [walked, setWalked] = useState(!quick.current);
+  const [phase, setPhase] = useState(() => (arriveTrip.current || quick.current ? TRIPS_SCREEN : 'home')); // home | g:* | ff | engine
   const [door, setDoor] = useState(() => settings.door || 'guide');
   const [settingsOpen, setSettingsOpen] = useState(false);
   // A question reopened from the trips' answers bar (T798) comes straight
@@ -203,7 +210,7 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
   // opening already asked, so Start planning goes straight into the
   // help-me-choose questions; the last of them (g:how) asks whole trip or
   // flights first.
-  const start = () => { setDoor('guide'); setPhase(guide[0]); };
+  const start = () => { setDoor('guide'); setWalked(true); setReturnTo(null); setPhase(guide[0]); };
 
   if (phase === 'engine') {
     const d = hasDoors(settings) ? door : 'know';
@@ -249,7 +256,10 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
           ui={FINDER_UI}
           settings={settings}
           guide={questions}
-          onBack={() => setPhase(questions[questions.length - 1])}
+          // T1103: straight from the short setup there is no question
+          // behind the trips yet; back is the trip's own page.
+          onBack={() => setPhase(walked ? questions[questions.length - 1] : 'home')}
+          refine={walked ? null : <RefineCard onFit={start} onSleep={() => reopen('sleep')} />}
           headEnd={bar}
           onWiden={reopen}
           edits={finderEdits}
@@ -265,7 +275,8 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
   } else {
     const q = QUESTIONS[phase];
     const pos = progressOf(questions, phase);
-    const back = returnTo || prevScreen(guide, phase) || 'home';
+    // T1103: the refine walk began on the trips, so its first question goes back there.
+    const back = returnTo || prevScreen(guide, phase) || (quick.current ? TRIPS_SCREEN : 'home');
     body = (
       <div className="pf-step">
         <SheetHead
