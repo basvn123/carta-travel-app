@@ -21,12 +21,24 @@
  *     question costs nothing after the first time.
  *   - At most RATE answers a minute per address, per isolate (best effort).
  *
+ * AI security (T1117, C8): the question and the notes are fenced as data
+ * (aiGuard.askUserPrompt) under the guard's system rules; a question that is
+ * itself an injection is refused (400 unsafe) before any Neurons are booked,
+ * and a note that carries one is withheld. Every answer, fresh or cached,
+ * streams through aiGuard.makeStreamGuard: a sentence with a link, markup,
+ * an e-mail or a phone number is dropped, and a prompt leak or a turned
+ * model ends the stream. The browser's verify.js and agree.js still check
+ * every sentence that reaches it.
+ *
  * Pages does not apply public/_headers to a Function's response, so the
  * headers are set here.
  */
 import {
-  readWirePack, packKey, systemPrompt, userPrompt, MAX_ANSWER_TOKENS,
+  readWirePack, packKey, systemPrompt, MAX_ANSWER_TOKENS,
 } from '../../../src/lib/ask/context.js';
+import {
+  GUARD_VERSION, guardAskInput, askUserPrompt, systemRules, makeNonce, makeStreamGuard,
+} from '../../_lib/aiGuard.js';
 import { createLimiter, overLimit, methodNotAllowed } from '../../_lib/guard.js';
 
 /** The free allowance is 10,000 Neurons a day (00:00 UTC); stop well short. */
@@ -85,15 +97,24 @@ export async function onRequestPost({ request, env, waitUntil }) {
   try { wire = readWirePack(JSON.parse(raw)); } catch { wire = null; }
   if (!wire) return fail(400, 'pack');
   if (await overLimit(env, request, limiter, 'answer')) return fail(429, 'rate');
+  const input = guardAskInput(wire);
+  if (!input.ok) return fail(400, 'unsafe');
 
-  const key = `a:${await packKey(wire)}`;
+  const nonce = makeNonce();
+  const system = `${systemPrompt(wire.lang)}\n${systemRules(nonce)}`;
+  // The guard version is in the key: an answer cached before a guard change is not served.
+  const key = `a:g${GUARD_VERSION}:${await packKey(wire)}`;
   const hit = await env.ASK.get(key);
   if (hit) {
-    return new Response(`data: ${JSON.stringify({ t: hit })}\n\nevent: done\ndata: {"cached":true}\n\n`, { headers: HEADERS });
+    // A cached answer passes the same output guard as a fresh one.
+    const g = makeStreamGuard({ systemText: system });
+    const safe = g.push(hit) + g.end();
+    const body = (safe ? `data: ${JSON.stringify({ t: safe })}\n\n` : '')
+      + `event: done\ndata: ${JSON.stringify({ cached: true, ...(g.state.withdrawn ? { guard: 'withdrawn' } : {}) })}\n\n`;
+    return new Response(body, { headers: HEADERS });
   }
 
-  const system = systemPrompt(wire.lang);
-  const user = userPrompt(wire);
+  const user = askUserPrompt(input, nonce);
   const tin = tokensOf(system) + tokensOf(user);
   const counter = `n:${day()}`;
   const used = Number(await env.ASK.get(counter)) || 0;
@@ -121,7 +142,14 @@ export async function onRequestPost({ request, env, waitUntil }) {
   const enc = new TextEncoder();
   const dec = new TextDecoder();
   let text = '';
+  let shown = '';
   let buf = '';
+  const guard = makeStreamGuard({ systemText: system });
+  const send = (ctl, safe) => {
+    if (!safe) return;
+    shown += safe;
+    ctl.enqueue(enc.encode(`data: ${JSON.stringify({ t: safe })}\n\n`));
+  };
   const out = new TransformStream({
     transform(chunk, ctl) {
       buf += dec.decode(chunk, { stream: true });
@@ -131,19 +159,24 @@ export async function onRequestPost({ request, env, waitUntil }) {
         const p = pieceOf(line.trim());
         if (p == null) continue;
         text += p;
-        ctl.enqueue(enc.encode(`data: ${JSON.stringify({ t: p })}\n\n`));
+        send(ctl, guard.push(p));
       }
     },
     flush(ctl) {
       const p = pieceOf(buf.trim());
-      if (p != null) { text += p; ctl.enqueue(enc.encode(`data: ${JSON.stringify({ t: p })}\n\n`)); }
-      ctl.enqueue(enc.encode(`event: done\ndata: ${JSON.stringify({ cached: false, model: model.id })}\n\n`));
-      // Settle the booking at what the answer really took, and keep the answer.
+      if (p != null) { text += p; send(ctl, guard.push(p)); }
+      send(ctl, guard.end());
+      const { withdrawn, dropped } = guard.state;
+      ctl.enqueue(enc.encode(`event: done\ndata: ${JSON.stringify({
+        cached: false, model: model.id, ...(withdrawn || dropped ? { guard: withdrawn ? 'withdrawn' : 'dropped' } : {}),
+      })}\n\n`));
+      // Settle the booking at what the answer really took (all of it, shown
+      // or not), and keep only what the guard let out.
       const real = neurons(model, tin, tokensOf(text));
       waitUntil((async () => {
         const now = Number(await env.ASK.get(counter)) || 0;
         await env.ASK.put(counter, String(Math.max(0, now - worst + real)), { expirationTtl: 2 * 86400 });
-        if (text.trim()) await env.ASK.put(key, text, { expirationTtl: CACHE_TTL });
+        if (shown.trim() && !withdrawn) await env.ASK.put(key, shown, { expirationTtl: CACHE_TTL });
       })());
     },
   });

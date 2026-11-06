@@ -138,13 +138,13 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 |---|---|---|---|---|---|
 | S | An unauthenticated caller spends AI quota | M | M | `auth.getUser()` before any spend in `plan-day/index.ts`, `suggest-city/index.ts`, `parse-booking/index.ts` | none in CI against a deployed function |
 | D | A signed-in account burns the Gemini budget | M | M | Per-tier quota in Postgres (`plan_tiers`, `ai_consume`, 007, 044) | quota RPCs exercised by `test_admin_rpc_security.mjs` indirectly; no function test |
-| E | Prompt injection makes the model output something the app trusts | M | M | JSON response schema in `plan-day`; output sanitising in `suggest-city/logic.mjs` | unit tests of `logic.mjs` in `continent-app/tests/`; no injection set (C8) |
+| E | Prompt injection makes the model output something the app trusts | M | M | Since T1117 the AI guard (`_shared/aiGuard.mjs`, section 12) on `plan-day` and `parse-booking`: input scrubbed and fenced, rules in `systemInstruction`, shape and text check on fresh and cached answers. `suggest-city` still has only its own sanitising (T1117-b) | `continent-app/tests/aiGuard.test.mjs` with `evals/injection/attacks.json` (stubbed outputs); live pass is T1117-a |
 | I | SSRF through `parse-booking` fetching an internal URL | L | M | `safeFetchUrl()` in `parse-booking/logic.mjs` refuses private and loopback hosts by name; a public name that resolves to a private address (DNS rebinding) is not checked | unit tests in `continent-app/tests/` |
 | S | A forged cron call to `notify` | L | M | `x-notify-secret` compared in constant time with `secretMatches` (T1079) | `continent-app/tests/notify.test.mjs` (unsubscribe token only) |
 | I | Error bodies leak internals | L | L | Functions answer coded errors (`{ code }`); T1079 removed the Stripe and database messages that two functions echoed, and `withCors` turns an escaped exception into a fixed 500 | `continent-app/tests/edgeHttp.test.mjs` (static contract over every function) |
 | T | CORS `Access-Control-Allow-Origin: *` on every function | L | L | Auth is a bearer header, not a cookie, so a cross-site page cannot ride the session; T1079 answers only the app origins (production, Pages previews, localhost) through `withCors` | `edgeHttp.test.mjs` |
 
-**Gap.** No end-to-end test of any deployed function's refusal paths; no injection set (C8). Closed by T1079: the CORS allow-list, the notify secret compare, the 413 body caps (4 KB to 9 MB per function) and generic error bodies. The upload path needs a server-side privacy pass (T1070).
+**Gap.** No end-to-end test of any deployed function's refusal paths; the injection set (C8, T1117) runs on stubbed model outputs, the live pass is an owner step (T1117-a). Closed by T1079: the CORS allow-list, the notify secret compare, the 413 body caps (4 KB to 9 MB per function) and generic error bodies. The upload path needs a server-side privacy pass (T1070).
 
 ## 7. Stripe
 
@@ -237,6 +237,45 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 
 **Gap.** 062 is written, not applied (T1071-a; the owner enrols TOTP first). A refusal at the guard leaves no audit row (the guard is STABLE); admin reads are not logged by design (the rate budget counts rows). Ban, delete and set tier record a reason once 064 is pasted (written and tested by T1081, owner step T1081-a). The Supabase Dashboard account itself is the stronger admin surface and needs MFA (C2 owner step).
 
+## 12. AI: Ask, plan-day and parse-booking (T1117, C8)
+
+**Data flow.** Three model calls, none with tools and none with write access. Ask: the browser builds a pack of numbered notes (code-written fact rows plus passages harvested into the ask index from guides and dossiers) and posts it to `functions/api/ask/answer.js`, which streams an open model's answer from Workers AI; the browser shows a sentence only after `src/lib/ask/verify.js` and `agree.js` pass it. On-device Ask runs the same pack in the traveller's own browser. plan-day: the client sends the destination, a candidate deck (names and descriptions from the catalogue, but client-sent), a free-text wish, a refine request and the names of the previous stops; Gemini returns JSON stops. parse-booking: the traveller pastes text, uploads PDFs or images, or gives a URL the function fetches; Gemini returns JSON bookings and activities.
+
+**Assets.** What the traveller reads as Carta's word (a link, a phone number, "your booking was cancelled"); the system rules; the Gemini and Neurons budget; the shared caches (`ai_plan_cache`, the Ask KV), where one poisoned answer would reach the next traveller.
+
+**Trust boundaries.** Traveller text and harvested text (passages, fetched pages, documents, the client-sent deck) into the prompt; model text back to the traveller; cached rows back out of the cache.
+
+**The control: one guard module.** `supabase/functions/_shared/aiGuard.mjs`, copied byte for byte to `continent-app/functions/_lib/aiGuard.js` for the Pages Function (the test fails when the two differ).
+
+| Stage | What it does | Where it runs |
+|---|---|---|
+| Input scan | `scanInjection`: 16 rule families (override in 6 languages, new rules, from now on, role change, jailbreak, reveal the prompt, chat-template tokens, exfiltration, social engineering such as "mark as cancelled", tool calls, output control), on text folded for accents, look-alike letters, invisible characters, leetspeak and spaced letters | every traveller and harvested field below |
+| Input repair | Ask: an injected question is refused (400 `unsafe`) before any Neurons are booked, an injected note is replaced by "(note withheld)". plan-day: wish, refine, previous stops and named places lose the injected sentences, a candidate with an injected name is dropped and one with an injected description loses it, an injected city or country is `400 bad_dest`; all before the cache key and the quota. parse-booking: injected sentences leave the pasted, fetched and text-file input, an injected trip stop is dropped | `guardAskInput`, `guardPlanInput`, `guardBookingInput` |
+| Fencing | Data goes between `<<<DATA nonce LABEL>>>` and `<<<END nonce>>>`, with a fresh 12-hex nonce per call and marker look-alikes, chat-template tokens and code fences taken out of the data, so a document cannot close its own fence | `dataBlock` in all three prompts |
+| System rules | `systemRules(nonce)`: the data is never an instruction, the rules cannot be changed, never reveal them, no URL, HTML or Markdown in free text; carries the canary `cg-k7q2-ward`. Sent as Gemini `systemInstruction` and as the Workers AI system message, never in the user turn | plan-day, parse-booking, Ask |
+| Output shape | plan-day: not `{summary, stops[]}` is `502 ai_bad_output`; a stop that is not an object with a text name, or with a mistyped `id`, `lat`, `lon`, `isEvent` or `inCatalog`, is dropped; soft fields are repaired to defaults. parse-booking: `sanitizeParsed` (existing) | `guardPlanOutput`, `sanitizeParsed` |
+| Output text | URLs (scheme, `www.`, `host.tld/path`, `javascript:`, `data:`), Markdown links and images, HTML and script blocks, e-mail addresses and international phone numbers are stripped; a prompt leak (any six-word run of the system text), the canary, chat-template tokens, hijack phrases or an echoed injection empty the field. parse-booking with text-only input also clears a link or a booking code that is not in that text | `repairText`, `guardPlanPayload`, `guardBookingOutput` |
+| Ask stream | `makeStreamGuard`: the answer is released sentence by sentence; a sentence with a strippable issue is dropped, a severe one ends the stream (`event: done` carries `guard: withdrawn`); one sentence is held back so a leak split across a sentence boundary is still caught; the stream is cut at 2,400 characters. Only what was shown is cached | `answer.js` |
+| Cached answers | A row from `ai_plan_cache` or the Ask KV passes the same payload check before it is served; an off-schema row is a miss and regenerates. The Ask cache key carries the guard version | `guardPlanPayload(cached.payload)`, `guardBookingPayload(cached.payload)`, Ask cache branch |
+| Limits | Ask: question 200 characters, 14 notes of 300, body 8 KB, 380 output tokens, 2,400 characters shown, 8 a minute per address, daily Neurons cap. plan-day: wish and refine 280 each, prompt 60,000 characters, model output 64 KB. parse-booking: prompt 80,000 characters, model output 64 KB, files and URL caps as before | `LIMITS`, plus the existing caps |
+
+**OWASP Top 10 for LLM applications (2025), mapped.**
+
+| Risk | Carta exposure | Control | Test | Left open |
+|---|---|---|---|---|
+| LLM01 Prompt injection | Direct: Ask question, plan-day wish and refine. Indirect: Ask passages, fetched pages, booking documents, the client-sent deck | Input scan and repair, fencing, rules in the system slot, output check (above) | `aiGuard.test.mjs`: 50 attacks, 22 Ask, 15 plan-day, 13 parse-booking | Rules are patterns: a novel phrasing gets past the input scan and is then only caught by the output check; PDFs and images are read by Gemini, not by the scan; on-device Ask has the browser verifier only (T1117-c) |
+| LLM02 Sensitive information disclosure | Booking documents hold names, e-mails, phones; the prompt holds the trip | Output strips e-mails and phones; the model is told to leave out names and addresses; no account data in any prompt beyond the trip | same | Names and street addresses are not detectable by pattern; a domestic phone number without `+` or `00` is not stripped |
+| LLM03 Supply chain | Gemini models by name in `GEMINI_MODELS`, Workers AI model ids in `answer.js` | Model ids pinned in code or env; no downloaded weights on the server | none | Model updates behind a stable alias change behaviour silently (E1 eval gate) |
+| LLM04 Data and model poisoning | Harvested passages in the Ask index; shared caches | Indirect injection handled as LLM01; cached rows re-checked on the way out | the cache tests in `aiGuard.test.mjs` | Poisoned facts (not instructions) in a source are a data-quality question (Track D) |
+| LLM05 Improper output handling | Model text rendered in React (escaped), links in parse-booking | No HTML is ever rendered from model text; links only through `safeLink` (http and https), text fields stripped of URLs and markup | same | none known |
+| LLM06 Excessive agency | None of the three calls has a tool, a write or a fetch the model can trigger; plan-day grounding is Google Search on Google's side | No tools by design; the static test fails if a guarded function drops `systemInstruction` | static test | Grounded plan-day calls cannot use a response schema with search (suggest-city has the same limit) |
+| LLM07 System prompt leakage | The rules and the prompts are in this public repository anyway; the canary detects a model reciting them | Leak and canary detection end the Ask stream and empty the field elsewhere | ask-15, ask-16, plan-02, book-07 | Nothing secret is in a prompt, by rule |
+| LLM08 Vector and embedding weaknesses | Ask retrieval (`/api/ask`) returns passages only; no write path to the index | The index is built offline by the pipeline; filters are validated (`guard.js` `parseAskQuery`) | `functionGuards.test.mjs` | none known |
+| LLM09 Misinformation | Wrong facts in an answer | Ask verifier and card agreement (T556, T1101); plan-day only routes catalogue places; parse-booking traces links and codes to text input | `askGenerate`, `askAgree` tests | Gemini's reading of a PDF is not traceable |
+| LLM10 Unbounded consumption | Gemini bill, Neurons | Per-tier quota, global daily cap, Neurons cap, rate limits, per-call input and output caps (`LIMITS`) | `askGenerate`, quota scripts | Durable rate limit needs the `RATE_LIMIT` binding (T1079) |
+
+**Gap.** The attack set's "recorded" outputs are stubbed worst cases written by T1117, not real model answers; `continent-app/scripts/ai/redteam_live.mjs` replays the set against a preview and the deployed functions with a test account (owner step T1117-a). `suggest-city` is not yet behind the guard (T1117-b). On-device Ask relies on the browser verifier alone (T1117-c).
+
 ## Top gaps, ranked
 
 Ranked by likelihood times impact, then by how cheaply the next step closes it.
@@ -252,7 +291,7 @@ Ranked by likelihood times impact, then by how cheaply the next step closes it.
 | 7 | Stripe webhook signature check has no test | Stripe | M | H | C5 | Static order test done (T1079); a live wrong-signature probe goes to C10 |
 | 8 | Uptime job holds the service role key | GitHub | M | H | C2 | Switch to the anon key if the probe allows |
 | 9 | No durable rate limit on `/api/*` and Edge Functions; CORS `*` | Pages Functions, Edge | M | M | C5, H3 | Origin allow-list and body caps done (T1079); the shared limiter needs the `RATE_LIMIT` binding (owner), durable Edge Function limits are H3 |
-| 10 | No prompt-injection set or guardrail module | Edge AI | M | M | C8, E3 | Injection set in CI |
+| 10 | ~~No prompt-injection set or guardrail module~~ Guard and 50-attack set in `npm test` (T1117); not yet run against the real models; suggest-city unguarded | Edge AI, Ask | M | M | C8, E3 | Owner runs `redteam_live.mjs` (T1117-a); guard suggest-city (T1117-b) |
 | 11 | ~~Ban, delete and set tier record no reason~~ closed by T1081 (064 written, owner applies); guard refusals are not logged (accepted) | Admin | M | L | C3 | Owner pastes 064 (T1081-a) |
 | 12 | No CSP or security-header test in CI; `style-src 'unsafe-inline'` | Pages | L | H | C5 | Header test in `npm test` done (T1079); `verify_csp.mjs` still manual |
 | 13 | No SAST | CI | L | M | C7 | Semgrep or CodeQL |

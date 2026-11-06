@@ -1517,3 +1517,8 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1113-c | T1113 | 6,798 trails are linked from no place page; widen dossier around.trails to lift them | next task | open | |
 | T1113-d | T1113 | After the upload confirm trip canonicals and thin-page noindex,follow in Search Console and view source (follows T1076-f) | user | open | after T1113-a |
 | T1114-a | T1114 | Look at the price notes (Explore card grid and rail, Ask card, trip page cost card, day receipt) at 375 and 1440 wide and in Dutch; the container could not load app data | user | open |  |
+| T1117-a | T1117 | The AI guard (plan-day, parse-booking, /api/ask/answer) is code only: deploy both Edge Functions and the Pages build so travellers get it | user | open | 1 |
+| T1117-b | T1117 | The 50-attack set runs on stubbed model outputs; run `continent-app/scripts/ai/redteam_live.mjs` against a preview with a test account to record real Gemini and Workers AI outputs, and add any attack that got through | user | open | 2 |
+| T1117-c | T1117 | suggest-city calls Gemini without the AI guard (out of T1117's scope): add guardPlanInput-style scrubbing, systemInstruction, fencing and an output text check | next task | open | |
+| T1117-d | T1117 | On-device Ask (WebGPU) gets no server-side stream guard, only verify.js and agree.js: run makeStreamGuard in src/lib/ask/generate.js on both back ends | next task | open | |
+| T1117-e | T1117 | The app has no copy for the new refusals: Ask `400 unsafe` and `guard: withdrawn`, plan-day and parse-booking `400 too_big`; they fall to the generic error (UI was out of scope; the Ask card UI was another session's tonight) | next task | open | |
