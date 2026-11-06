@@ -596,11 +596,8 @@ docs/
 | D5 | Scraper and source health | Yield, drift and staleness alerts reach admin and email | S | P1 | in progress (T1074: box steps T1074-c) |
 | D6 | Coverage fairness | Parity table per country, region and language in `docs/data/` | S | P4 | todo |
 | D7 | Trails and outdoor fill | Trail targets in the table met; display names cleaned; difficulty weighs climb and terrain, not length; mountains and lakes filled (P-21, P-30, P-36) | L | P1 | in progress (T1092: display names and per-day difficulty in code; rebuild is T1092-a; T1093: photo licence gate and paced harvest in code, the box run is T1093-a; T1094: walk recovery rules (article pairs, lone famous way, main line, reorder splice) and the Northern Ireland country fix in code, the box rebuild is T1094-a) |
-| D8 | Sea temperature | `sea_temp` run, beaches re-exported, `climate.water_c` filled, beach strip draws (P-22) | S | P1 | todo |
 | D9 | Place text and photos | Intros, guide text and galleries to target, French, Italian and UK first; POI descriptions; intros in six languages (P-23, P-24) | L | P2 (top 300), P4 | in progress (T1095: intro harvest built; T1096: gallery pass and POI description harvest built; runs are owner steps) |
-| D7 | Trails and outdoor fill | Trail targets in the table met; display names cleaned; difficulty weighs climb and terrain, not length; mountains and lakes filled (P-21, P-30, P-36) | L | P1 | in progress (T1092: display names and per-day difficulty in code; rebuild is T1092-a; T1093: photo licence gate and paced harvest in code, the box run is T1093-a) |
 | D8 | Sea temperature | `sea_temp` run, beaches re-exported, `climate.water_c` filled, beach strip draws (P-22) | S | P1 | code ready (T1097); box run T1097-a |
-| D9 | Place text and photos | Intros, guide text and galleries to target, French, Italian and UK first; POI descriptions; intros in six languages (P-23, P-24) | L | P2 (top 300), P4 | in progress (T1095: harvest built, run is an owner step) |
 | D10 | Prices completed | Local transport fare table for 741 places; bed prices for the 515 missing places; "not yet measured" shown honestly (P-25, P-26) | M | P1 | in progress (T1075; fares wait on T714-b) |
 | D11 | UK crowds by month | ONS or VisitBritain regional visitor nights for GB, plus BA, FO, MD, XK (P-27) | S | P1 | doing (T1098: loader and task built; owner run pending) |
 | D12 | Freshness and stamps | Every wire inside its limit; `generated_at` correct in `app_data.json` and all wires (P-29) | S | P1 | todo |
@@ -839,10 +836,8 @@ docs/
 | G9 | Trust made visible | "Why this place" chips (F1), "checked on" dates (D3), confidence in words | M | P4 | todo |
 | G10 | Accessibility audit | WCAG 2.2 AA audit with screen readers, every failure fixed | M | P2 (surface), P4 | todo |
 | G11 | Quality gates and usability retest | axe-core, Lighthouse CI, bundle budget, visual baselines for 10 screens at 390 and 1440; 5-person retest of core flows; one real-phone pass per release replaces the 49 per-task phone rows | M | P4 | todo |
-| G12 | Onboarding and a shorter plan flow | First plan in 5 screens or fewer (12 today); a priced draft after 3 answers; Explore's start dialog inline and dismissible; sample trip on an empty Plan home (P-33, P-34, P-46) | M | P1 | todo |
 | G13 | Trail cards and trail links | Cards show time and climb next to length; trail pages get their own URL like places; display names from D7 (P-36, P-37) | S | P1 | done T1102 (open items in the register) |
 | G12 | Onboarding and a shorter plan flow | First plan in 5 screens or fewer (12 today); a priced draft after 3 answers; Explore's start dialog inline and dismissible; sample trip on an empty Plan home (P-33, P-34, P-46) | M | P1 | in progress (T1103: shorter plan flow done; Explore start dialog and sample trip open, rows T1103-a, T1103-b) |
-| G13 | Trail cards and trail links | Cards show time and climb next to length; trail pages get their own URL like places; display names from D7 (P-36, P-37) | S | P1 | todo |
 
 ### Item details
 
