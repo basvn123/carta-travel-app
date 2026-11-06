@@ -69,6 +69,8 @@ Deno.serve(async (req) => {
 
   const sig = req.headers.get('stripe-signature');
   if (!sig) return new Response('no signature', { status: 400 });
+  // A Stripe event is a few KB; refuse a declared giant before reading it (T1079).
+  if (Number(req.headers.get('content-length') || 0) > 1_000_000) return new Response('too large', { status: 413 });
 
   const stripe = new Stripe(SECRET, { apiVersion: '2025-10-29.clover' });
 
@@ -79,7 +81,8 @@ Deno.serve(async (req) => {
   try {
     event = await stripe.webhooks.constructEventAsync(raw, sig, WEBHOOK_SECRET);
   } catch (err) {
-    return new Response(`bad signature: ${(err as Error).message}`, { status: 400 });
+    console.error('stripe-webhook: signature check failed', (err as Error).message);
+    return new Response('bad signature', { status: 400 });
   }
 
   const service = createClient(env('SUPABASE_URL'), env('SUPABASE_SERVICE_ROLE_KEY'));
@@ -94,7 +97,10 @@ Deno.serve(async (req) => {
     const args = stateFromSubscription(event.data.object);
     if (!args.p_user) return ok({ received: true, ignored: 'no user on the subscription' });
     const { error } = await service.rpc('set_subscription_state', args);
-    if (error) return new Response(`state failed: ${error.message}`, { status: 500 });
+    if (error) {
+      console.error('stripe-webhook: state failed', error.message);
+      return new Response('state failed', { status: 500 });
+    }
     return ok({ received: true, state: args.p_status, cancelAtPeriodEnd: args.p_cancel_at_period_end });
   }
 
@@ -105,7 +111,8 @@ Deno.serve(async (req) => {
     if (!subId) return ok({ received: true, ignored: 'not a subscription invoice' });
     let sub: Stripe.Subscription;
     try { sub = await stripe.subscriptions.retrieve(subId); } catch (err) {
-      return new Response(`subscription read failed: ${(err as Error).message}`, { status: 500 });
+      console.error('stripe-webhook: subscription read failed', (err as Error).message);
+      return new Response('subscription read failed', { status: 500 });
     }
     const g = grantFromInvoice(invoice, sub);
     if (!g.grant) return ok({ received: true, ignored: g.why });
@@ -129,7 +136,10 @@ Deno.serve(async (req) => {
       p_consent_terms_url: consentTos ? (env('CHECKOUT_TERMS_URL') || null) : null,
     });
     // 500 so Stripe retries: the customer paid and holds no year yet.
-    if (error) return new Response(`grant failed: ${error.message}`, { status: 500 });
+    if (error) {
+      console.error('stripe-webhook: grant failed', error.message);
+      return new Response('grant failed', { status: 500 });
+    }
     await service.rpc('set_subscription_state', stateFromSubscription(sub));
     return ok({ received: true, granted: data });
   }
@@ -282,7 +292,8 @@ Deno.serve(async (req) => {
   if (error) {
     // 500 so Stripe RETRIES: the customer has paid and holds no pass, which is
     // the one failure here that must not be swallowed.
-    return new Response(`grant failed: ${error.message}`, { status: 500 });
+    console.error('stripe-webhook: grant failed', error.message);
+    return new Response('grant failed', { status: 500 });
   }
 
   return new Response(JSON.stringify({ received: true, granted: data }), {

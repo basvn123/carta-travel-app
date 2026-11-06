@@ -24,8 +24,13 @@ import Stripe from 'npm:stripe@17';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { stateFromSubscription } from '../_shared/passes.mjs';
 
+import { withCors, readJson, bodyProblem } from '../_shared/http.mjs';
+
+// The largest body this function reads (T1079): refused with 413 beyond it.
+const MAX_BODY = 4096;
+
+// Allow-Origin is set per request by withCors (an allow-list, not `*`; T1079).
 const CORS = {
-  'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
@@ -34,8 +39,7 @@ const json = (status: number, body: unknown) => new Response(
   { status, headers: { ...CORS, 'Content-Type': 'application/json' } },
 );
 
-Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS });
+Deno.serve(withCors(async (req) => {
   if (req.method !== 'POST') return json(405, { code: 'method' });
 
   const env = (k: string) => Deno.env.get(k) || '';
@@ -50,7 +54,7 @@ Deno.serve(async (req) => {
   if (!user) return json(401, { code: 'auth' });
 
   let body: Record<string, unknown>;
-  try { body = await req.json(); } catch { return json(400, { code: 'bad_json' }); }
+  try { body = await readJson(req, MAX_BODY); } catch (e) { const p = bodyProblem(e); return json(p.status, { code: p.code }); }
   const action = String(body.action || '');
   if (!['portal', 'cancel', 'resume'].includes(action)) return json(400, { code: 'bad_action' });
 
@@ -60,7 +64,7 @@ Deno.serve(async (req) => {
     .select('stripe_customer_id, subscription_id')
     .eq('user_id', user.id)
     .maybeSingle();
-  if (entErr) return json(503, { code: 'state_read', message: entErr.message });
+  if (entErr) return json(503, { code: 'state_read' });
 
   const stripe = new Stripe(SECRET, { apiVersion: '2025-10-29.clover' });
 
@@ -90,6 +94,6 @@ Deno.serve(async (req) => {
       renewsAt: args.p_current_period_end,
     });
   } catch (err) {
-    return json(502, { code: 'stripe_error', message: (err as Error).message });
+    return json(502, { code: 'stripe_error' });
   }
-});
+}, { methods: 'POST, OPTIONS', extraOrigins: () => Deno.env.get('ALLOWED_ORIGINS') || '' }));

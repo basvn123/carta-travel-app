@@ -6,6 +6,7 @@ What to read for what. Built by T1073 (ROADMAP B2). Every session reads CLAUDE.m
 
 | I need to... | Read |
 |---|---|
+| Understand Carta step by step, with a link to every document (start here if you are new) | [reading-guide.md](reading-guide.md) |
 | Find the files of a feature | [../MAP.md](../MAP.md) |
 | Understand how a feature works (rules, formulas, thresholds) | [HANDBOOK.md](HANDBOOK.md): grep for the feature, never read it whole |
 | See one product area on a page (files, tests, limits, open items) | [areas/](areas/README.md), one file per MAP row |

@@ -41,14 +41,14 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 
 | STRIDE | Threat | L | I | Current control | Test |
 |---|---|---|---|---|---|
-| T | A malicious or compromised dependency ships in the bundle and reads the session from `localStorage` | M | H | `package-lock.json`; no automated audit | none yet (C6) |
+| T | A malicious or compromised dependency ships in the bundle and reads the session from `localStorage` | M | H | `package-lock.json`, `npm ci` in CI; weekly and per-PR `npm audit --omit=dev` failing on critical, OSV-Scanner and Dependabot (T1080) | closed for audit; critical advisories stay a human fix (C6) |
 | T | Someone with the Cloudflare token deploys a changed bundle | L | H | Token only on the owner's machine and the box (`SECRETS.md`) | none yet |
 | I | XSS through injected markup, exfiltrating the session | L | H | CSP in `public/_headers` (`script-src 'self' 'wasm-unsafe-eval'`, `object-src 'none'`, `frame-ancestors 'none'`); React escaping | `continent-app/scripts/verify_csp.mjs` (manual run, not in CI) |
-| I | A service key leaks into the bundle | L | H | Only `VITE_SUPABASE_ANON_KEY` is read by the app | `.github/workflows/secret-scan.yml` scans the built bundle |
+| I | A service key leaks into the bundle | L | H | Only `VITE_SUPABASE_ANON_KEY` is read by the app | `.github/workflows/secret-scan.yml` scans the built bundle; since T1078 `continent-app/scripts/ci/check-bundle-secrets.mjs` decodes every JWT-shaped string in the build (in `ci.yml` after the fast build, and in `secret-scan.yml`) and fails on any role but `anon`, which the plain grep could not see |
 | T | Clickjacking of account actions | L | M | `X-Frame-Options: DENY`, `frame-ancestors 'none'` | `verify_csp.mjs` (manual) |
-| S | Downgrade to HTTP | L | M | HSTS two years with preload, `upgrade-insecure-requests` | none yet (C5 header test) |
+| S | Downgrade to HTTP | L | M | HSTS two years with preload, `upgrade-insecure-requests` | `continent-app/tests/securityHeaders.test.mjs` (T1079) |
 
-**Gap.** `style-src 'unsafe-inline'` stays in the CSP; there is no header test in CI (C5); no dependency audit (C6).
+**Gap.** `style-src 'unsafe-inline'` stays in the CSP (React style attributes and MapLibre need it). The dependency audit is in place (`supply-chain.yml`, T1080, C6). Closed by T1079: the header test now runs in `npm test` and pins the headers, the script-src, the HSTS length and every wildcard host; `wss://*.supabase.co` left connect-src (nothing opens a socket); Permissions-Policy denies every unused feature; COOP is `same-origin-allow-popups`. Still open: the Wikimedia and Geograph image hosts (row T052-f), `verify_csp.mjs` is still a manual run.
 
 ## 2. Pages Functions (`continent-app/functions/`)
 
@@ -60,13 +60,13 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 
 | STRIDE | Threat | L | I | Current control | Test |
 |---|---|---|---|---|---|
-| D | A script floods `/api/ask/answer` and spends the Workers AI allowance | M | M | Daily Neurons cap in KV (`CAP`, 429 `cap`) and a per-IP rate limit (`limited()` in `functions/api/ask/answer.js`) | `continent-app/tests/` unit tests of the pure parts; no load test |
-| D | The per-IP limit is per isolate (an in-memory `Map`), so it does not hold across Cloudflare's edge | H | L | The daily KV cap is the real ceiling | none yet (C5, H3 durable limits) |
-| D | `/api/flights` and `/api/stays` used as a free proxy, getting the edge IPs blocked upstream | M | M | Edge cache (`caches.default`) on each answer | none yet |
+| D | A script floods `/api/ask/answer` and spends the Workers AI allowance | M | M | Daily Neurons cap in KV (`CAP`, 429 `cap`) and a per-IP rate limit (`createLimiter` and `overLimit` in `functions/_lib/guard.js`, T1079) | `continent-app/tests/functionGuards.test.mjs`; no load test |
+| D | The per-IP limit is per isolate (an in-memory window), so it does not hold across Cloudflare's edge | H | L | The daily KV cap is the real ceiling; T1079 added a guarded path to a Workers Rate Limiting binding `RATE_LIMIT` that is shared across the location (owner step) | `functionGuards.test.mjs` tests the binding path with a stub; the binding itself is not live |
+| D | `/api/flights` and `/api/stays` used as a free proxy, getting the edge IPs blocked upstream | M | M | Edge cache (`caches.default`) on each answer; T1079: 20 live searches a minute per address on a cache miss, strict IATA and real-date checks | `functionGuards.test.mjs` |
 | T | Path traversal into the prerender bucket | L | L | Keys are built by `prerenderKey()` in `src/lib/prerenderShell.js`; the bucket has no public domain | not verified by a test |
 | I | A prerendered page served without the CSP | L | M | `[[path]].js` refuses to serve a shell without a `Content-Security-Policy` | not verified by a test |
 
-**Gap.** No input schema on the `/api/*` query strings beyond the hand checks in each file; no durable rate limit (C5 with H3); no test of the CSP refusal.
+**Gap.** Closed by T1079: every `/api/*` query string goes through a strict validator in `functions/_lib/guard.js` (lat and lon as plain decimals, real calendar dates, bounded Ask lists), every route answers 405 to other methods, every refusal is `{"error": code}`. Still open: the durable limit needs the `RATE_LIMIT` binding (`Execution/P15/_OPEN-web-hardening.md`); no test of the CSP refusal in `[[path]].js`.
 
 ## 3. R2 data host
 
@@ -114,7 +114,7 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 
 | STRIDE | Threat | L | I | Current control | Test |
 |---|---|---|---|---|---|
-| I | A second traveller reads another traveller's rows | M | H | RLS on every table, owner predicates | `.github/workflows/rls-policies.yml` (`continent-app/scripts/admin/test_rls_policies.mjs`) |
+| I | A second traveller reads another traveller's rows | M | H | RLS on every table, owner predicates | `.github/workflows/rls-policies.yml` (`continent-app/scripts/admin/test_rls_policies.mjs`): since T1078 every one of the 34 tables with policies has an isolation fixture, and a signed-out read of every table `anon` may select from returns zero rows without an error |
 | T | A traveller forges a row in another's name, or grants themself a pass | M | H | No client write policy on `entitlements`, `pass_grants`; insert checks `auth.uid() = user_id` | same workflow, the `forge` probes |
 | E | A definer function with an unpinned `search_path` is hijacked | L | H | Every admin function pins it | `.github/workflows/admin-rpc-security.yml` asserts it for `admin_*`; other definer functions not checked |
 | I | A policy calls a function the caller cannot execute (fails open or 42501) | M | L | `KNOWN_UNCALLABLE` tripwire in the RLS test | same workflow |
@@ -122,7 +122,9 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 
 **Verified state on 2026-11-05 (local Postgres 18, this task).** Both security workflows were red before this batch for a reason unrelated to policies: their loaders applied every `NNN_*.sql`, so from 055 on each `_down.sql` ran straight after its migration, and 056 then failed on `user_settings`, which only `supabase/schema.sql` creates. With the loaders corrected (skip `_down`, apply `schema.sql` first; the fix is committed by T1070), the admin surface passes 211 of 211 and the row policy suite passes 413 of 415. The two failures are real coverage debt: 19 tables from `schema.sql` and 052 to 060 have no isolation fixture (`ask_chats`, `email_log`, `email_prefs`, `friend_visibility`, seven `group_trip_*`, `pay_links`, `saved_trips`, four `shared_list*`, `trip_join_requests`, `user_settings`), and 28 policies on the group and shared-list tables call `group_role`, `group_all_joined` or `shared_list_role`, which `anon` cannot execute, so a signed-out read answers 42501 instead of an empty set. Neither is a leak (the refusals are refusals); both are unproven isolation.
 
-**Gap.** Isolation is unproven for 17 of the 19 tables above (C4; T1070 wrote fixtures for `saved_trips` and `user_settings` and lists the other 17 as known entries, T1070-c), and the 28 uncallable policies are T1070-d. Definer functions outside `admin_*` are not checked for a pinned `search_path` by any test (C4). The upload tables and bucket (061, T1070) are covered by the row policy suite, Storage policies included.
+**Closed by T1078 (2026-11-05).** The 17 remaining tables have fixtures (T1070-c), so all 34 tables with policies are proven: a second signed-in user and a signed-out visitor cannot read, change, delete or forge the victim's rows, and the friend, co-member and requester admissions are asserted. Migration 063 lets `anon` execute `group_role`, `shared_list_role` and `group_all_joined` (the first two answer null without a caller; the third now checks the caller's own role in the group first, which also closes a membership oracle any signed-in account had), so the 28 helper calls in 26 policies on 11 tables no longer fault and signed-out reads return nothing (T1070-d). 063 is written, not applied (owner step 9 in `Execution/P15/_OPEN-supabase-migrations.md`).
+
+**Gap.** Definer functions outside `admin_*` are not checked for a pinned `search_path` by any test (C4). The upload tables and bucket (061, T1070) are covered by the row policy suite, Storage policies included.
 
 ## 6. Supabase Edge Functions (`supabase/functions/`)
 
@@ -138,11 +140,11 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 | D | A signed-in account burns the Gemini budget | M | M | Per-tier quota in Postgres (`plan_tiers`, `ai_consume`, 007, 044) | quota RPCs exercised by `test_admin_rpc_security.mjs` indirectly; no function test |
 | E | Prompt injection makes the model output something the app trusts | M | M | JSON response schema in `plan-day`; output sanitising in `suggest-city/logic.mjs` | unit tests of `logic.mjs` in `continent-app/tests/`; no injection set (C8) |
 | I | SSRF through `parse-booking` fetching an internal URL | L | M | `safeFetchUrl()` in `parse-booking/logic.mjs` refuses private and loopback hosts by name; a public name that resolves to a private address (DNS rebinding) is not checked | unit tests in `continent-app/tests/` |
-| S | A forged cron call to `notify` | L | M | `x-notify-secret` compared with `!==` (not constant time) in `notify/index.ts` | `continent-app/tests/notify.test.mjs` (unsubscribe token only) |
-| I | Error bodies leak internals | L | L | Functions answer coded errors (`{ code }`) | not verified by a test |
-| T | CORS `Access-Control-Allow-Origin: *` on every function | L | L | Auth is a bearer header, not a cookie, so a cross-site page cannot ride the session | n/a |
+| S | A forged cron call to `notify` | L | M | `x-notify-secret` compared in constant time with `secretMatches` (T1079) | `continent-app/tests/notify.test.mjs` (unsubscribe token only) |
+| I | Error bodies leak internals | L | L | Functions answer coded errors (`{ code }`); T1079 removed the Stripe and database messages that two functions echoed, and `withCors` turns an escaped exception into a fixed 500 | `continent-app/tests/edgeHttp.test.mjs` (static contract over every function) |
+| T | CORS `Access-Control-Allow-Origin: *` on every function | L | L | Auth is a bearer header, not a cookie, so a cross-site page cannot ride the session; T1079 answers only the app origins (production, Pages previews, localhost) through `withCors` | `edgeHttp.test.mjs` |
 
-**Gap.** No end-to-end test of any deployed function's refusal paths; CORS is `*` (C5 allow-list); the notify secret compare is not constant time (C5); no injection set (C8). The upload path needs a server-side privacy pass (T1070).
+**Gap.** No end-to-end test of any deployed function's refusal paths; no injection set (C8). Closed by T1079: the CORS allow-list, the notify secret compare, the 413 body caps (4 KB to 9 MB per function) and generic error bodies. The upload path needs a server-side privacy pass (T1070).
 
 ## 7. Stripe
 
@@ -154,12 +156,12 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 
 | STRIDE | Threat | L | I | Current control | Test |
 |---|---|---|---|---|---|
-| S | A forged webhook grants a pass | M | H | Signature check before any parse (`stripe-webhook/index.ts` line 80) | none yet (C5: "Stripe webhook signature check verified") |
-| T | A replayed event grants twice | L | M | Grants are idempotent on the session id and the invoice id | not verified by a test |
+| S | A forged webhook grants a pass | M | H | Signature check before any parse (`stripe-webhook/index.ts`, `constructEventAsync` on the raw body); T1079 verified it and made the failure bodies generic | `edgeHttp.test.mjs` pins the order (raw body, signature, then any database call) |
+| T | A replayed event grants twice | L | M | Grants are idempotent on the session id and the invoice id (the session ledger of migration 007) | `edgeHttp.test.mjs` pins the `p_session_id` key; the replay itself is a database behaviour (RLS fixtures, C4) |
 | R | A disputed payment with no trail | L | M | Stripe holds the record; `pass_grants` keeps the session id | n/a |
 | I | Live keys leak | L | H | Test mode today; `secret-scan.yml` blocks the key shapes | `secret-scan.yml` |
 
-**Gap.** No test sends an unsigned or wrongly signed body to the webhook and expects 400 (C5).
+**Gap.** T1079 checked the code path statically; no test sends a wrongly signed body to a running webhook (needs Deno and the Stripe library, so it belongs in the C10 pass against a preview).
 
 ## 8. The upload path (T333, server half T1070)
 
@@ -209,13 +211,13 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 
 | STRIDE | Threat | L | I | Current control | Test |
 |---|---|---|---|---|---|
-| T | A tag-pinned action (`actions/checkout@v4` in 13 places, `setup-node@v4` in 5, `setup-python@v5` in 7, `upload-artifact@v4` in 2) is moved to malicious code | L | H | Four uses are SHA-pinned; the other 27 are tags | none yet (C6) |
+| T | A tag-pinned action (`actions/checkout@v4` in 13 places, `setup-node@v4` in 5, `setup-python@v5` in 7, `upload-artifact@v4` in 2) is moved to malicious code | L | H | All 31 uses are SHA-pinned with the tag in a comment (T1080); Dependabot proposes the bumps | closed (T1080, C6) |
 | I | A workflow prints a secret | L | H | GitHub masks secrets; `uptime.yml` says "never printed" | `secret-scan.yml` on the tree |
 | E | The uptime job holds the service role key when the anon key may do | M | H | none | none yet (C2 row) |
 | T | A pull request from a fork reads secrets | L | H | `pull_request` (not `pull_request_target`) everywhere; only three workflows set `permissions` | not verified for repo settings |
 | T | Branch protection on `main` | n/a | H | not verified (GitHub settings) | n/a |
 
-**Gap.** Actions not pinned to SHAs, no Dependabot or Renovate (C6); no SAST (C7); default token permissions on ten workflows.
+**Gap.** No SAST (C7). Actions are SHA-pinned, Dependabot is configured and all 13 workflows declare `permissions: contents: read` (T1080, C6); the repository default token setting and enabling Dependabot alerts are owner steps.
 
 ## 11. Admin surfaces
 
@@ -229,11 +231,11 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 |---|---|---|---|---|---|
 | E | A normal account calls an admin RPC | M | H | `admin_guard()` first in every function; `anon` has no grant | `admin-rpc-security.yml`, discovered from `pg_proc`, 211 assertions |
 | S | A stolen `aal1` admin session reads every account and changes config | L | H | `aal2` required by `admin_guard` for every tier (062); the admin storage read needs `aal2` too | `admin-rpc-security.yml` section 13 |
-| R | An admin action with no reason on record | M | M | `admin_audit_log` has `target` and `reason` (062), filled from the detail by a trigger; every VOLATILE admin RPC writes a row (`admin_set_infra_cost` since 062). Ban, delete and set tier take no reason argument (T1071-b) | `admin-rpc-security.yml` section 13 (static and dynamic) |
+| R | An admin action with no reason on record | M | M | `admin_audit_log` has `target` and `reason` (062), filled from the detail by a trigger; every VOLATILE admin RPC writes a row (`admin_set_infra_cost` since 062). Ban, delete and set tier require a reason of 3 to 500 characters and log it (064, T1081; closes T1071-b) | `admin-rpc-security.yml` section 13 (static and dynamic) and section 14 (the three refuse a missing reason and log a given one) |
 | D | A scripted admin floods writes | L | M | Rate budget in `admin_guard` (60 a minute, 10 destructive, 20 live) | `admin-rpc-security.yml` section 7 |
 | E | SQL pasted in the Dashboard with a typo or the wrong file | M | H | Self-check blocks in each migration; owner procedures | none |
 
-**Gap.** 062 is written, not applied (T1071-a; the owner enrols TOTP first). A refusal at the guard leaves no audit row (the guard is STABLE); admin reads are not logged by design (the rate budget counts rows). Ban, delete and set tier record no reason (T1071-b). The Supabase Dashboard account itself is the stronger admin surface and needs MFA (C2 owner step).
+**Gap.** 062 is written, not applied (T1071-a; the owner enrols TOTP first). A refusal at the guard leaves no audit row (the guard is STABLE); admin reads are not logged by design (the rate budget counts rows). Ban, delete and set tier record a reason once 064 is pasted (written and tested by T1081, owner step T1081-a). The Supabase Dashboard account itself is the stronger admin surface and needs MFA (C2 owner step).
 
 ## Top gaps, ranked
 
@@ -244,15 +246,15 @@ Ranked by likelihood times impact, then by how cheaply the next step closes it.
 | 1 | Leaked `carta-r2-admin` token not rolled | R2, Pages | M | H | C2 | Owner rolls it (`_OPEN-secrets-rotation.md`) |
 | 2 | Auth Dashboard settings unverified (confirmation, password rules, leaked-password check, rate limits, owner MFA) | Supabase Auth | M | H | C3 | Owner steps in `_OPEN-auth-settings.md` (T1071) |
 | 3 | Admin reads and live writes accept an `aal1` session | Admin | L | H | C3 | 062 written and tested (T1071); owner enrols TOTP and applies (T1071-a) |
-| 4 | 19 tables without an isolation fixture; 28 policies uncallable by `anon` | Database | M | H | C4 | Fixtures per table; grant or role-scope the helper functions |
+| 4 | ~~19 tables without an isolation fixture; 28 policies uncallable by `anon`~~ Closed by T1078 (fixtures for all 34 tables; 063 written, owner applies) | Database | M | H | C4 | Done in code; owner pastes 063 |
 | 5 | Upload path server half written but not applied (061, `upload-scan`) | Uploads | H once live | H | T333-a (C4) | Owner applies (`_OPEN-uploads.md`, T1070-a) |
-| 6 | Dependency audit, SHA-pinned actions, Dependabot | CI, app | M | H | C6 | Add `npm audit`, `pip-audit`, OSV and pins |
-| 7 | Stripe webhook signature check has no test | Stripe | M | H | C5 | A unit test with a wrong signature expecting 400 |
+| 6 | Dependency audit, SHA-pinned actions, Dependabot | CI, app | M | H | C6 | Done in T1080: `supply-chain.yml`, pins, `.github/dependabot.yml`; pip-audit and OSV are report-only until the baseline is cleared |
+| 7 | Stripe webhook signature check has no test | Stripe | M | H | C5 | Static order test done (T1079); a live wrong-signature probe goes to C10 |
 | 8 | Uptime job holds the service role key | GitHub | M | H | C2 | Switch to the anon key if the probe allows |
-| 9 | No durable rate limit on `/api/*` and Edge Functions; CORS `*` | Pages Functions, Edge | M | M | C5, H3 | KV or Durable Object limiter; origin allow-list |
+| 9 | No durable rate limit on `/api/*` and Edge Functions; CORS `*` | Pages Functions, Edge | M | M | C5, H3 | Origin allow-list and body caps done (T1079); the shared limiter needs the `RATE_LIMIT` binding (owner), durable Edge Function limits are H3 |
 | 10 | No prompt-injection set or guardrail module | Edge AI | M | M | C8, E3 | Injection set in CI |
-| 11 | Ban, delete and set tier record no reason; guard refusals are not logged | Admin | M | L | C3 | A reason argument on the three RPCs and the app (T1071-b) |
-| 12 | No CSP or security-header test in CI; `style-src 'unsafe-inline'` | Pages | L | H | C5 | Run `verify_csp.mjs` in CI |
+| 11 | ~~Ban, delete and set tier record no reason~~ closed by T1081 (064 written, owner applies); guard refusals are not logged (accepted) | Admin | M | L | C3 | Owner pastes 064 (T1081-a) |
+| 12 | No CSP or security-header test in CI; `style-src 'unsafe-inline'` | Pages | L | H | C5 | Header test in `npm test` done (T1079); `verify_csp.mjs` still manual |
 | 13 | No SAST | CI | L | M | C7 | Semgrep or CodeQL |
 | 14 | Critical secrets concentrated on the Hetzner box | Build box | L | H | C2 | Rotation record; narrower keys per job |
 | 15 | No ZAP baseline, no ASVS walk | All | L | M | C10 | After C5 |

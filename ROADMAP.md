@@ -485,9 +485,9 @@ docs/
 | C1 | Threat model | Every surface modelled with STRIDE (or C-R1's method), threats ranked, each mapped to a control and test | M | P1 | done (T1069) |
 | C2 | Secrets and accounts | Inventory of every secret (where, who, rotation), rotation done for old ones, MFA on every owner account, recovery codes stored | S | P0 | in progress: inventory done (T1059), owner rotation open |
 | C3 | Auth and access | Supabase auth settings per C-R3, admin behind MFA and role checks, session lifetimes set, admin actions audit-logged | M | P1 | in progress (T1071: code half; Dashboard is T1071-a) |
-| C4 | Data access and RLS | RLS on every table proven by tests (exist, extended), service-role key never in the browser, storage and R2 access reviewed | S | P2 | todo |
-| C5 | Web and API hardening | Strict CSP and security headers, CORS allow-list, input validation on every endpoint, durable rate limits (with H3), Stripe webhook signature check verified | M | P2 | todo |
-| C6 | Supply chain | Lockfiles enforced, `npm audit`, `pip-audit`, OSV in CI, Renovate or Dependabot, GitHub Actions pinned to SHAs, SBOM per release | S | P3 | todo |
+| C4 | Data access and RLS | RLS on every table proven by tests (exist, extended), service-role key never in the browser, storage and R2 access reviewed | S | P2 | in progress (T1078: all 34 tables fixtured, signed-out reads fixed, bundle key check; 063 is T1078-a) |
+| C5 | Web and API hardening | Strict CSP and security headers, CORS allow-list, input validation on every endpoint, durable rate limits (with H3), Stripe webhook signature check verified | M | P2 | in progress (T1079: headers, function guards, Edge CORS and body caps; deploy and WAF are T1079-a, T1079-b) |
+| C6 | Supply chain | Lockfiles enforced, `npm audit`, `pip-audit`, OSV in CI, Renovate or Dependabot, GitHub Actions pinned to SHAs, SBOM per release | S | P3 | done (T1080; pip-audit and OSV become gates after T1080-b) |
 | C7 | Static analysis | Semgrep or CodeQL on every PR, findings triaged to zero high | S | P3 | todo |
 | C8 | AI security | OWASP LLM Top 10 mapped to Carta; guardrail module (E3) covers injection, output handling, excessive agency, data leakage; injection set in CI | M | P3 | todo |
 | C9 | Privacy and GDPR | Data map (what personal data, where, how long), retention jobs, export and delete tested end to end, Article 30 current, a light DPIA for AI features | M | P3 | todo |
@@ -603,6 +603,16 @@ docs/
 | D12 | Freshness and stamps | Every wire inside its limit; `generated_at` correct in `app_data.json` and all wires (P-29) | S | P1 | todo |
 | D13 | Getting there mode choice | Mode picked by door-to-door time and cost; flights preferred above a distance; checked on 50 origin and destination pairs (P-31) | M | P1 | todo |
 | D14 | Licensed data sources | Aviasales Data API (Travelpayouts) supplies "from" fares where its coverage is good; Viator and Tiqets APIs supply activity prices; each source's licence recorded; scraped beds flagged as a risk until the Booking Demand API is reachable | M | P1 | todo |
+| D15 | Catalogue gaps: add and prune places | D6's gap list worked through: missing places added per country and region under the same rules and checks as today's 3,868; duplicates merged and places failing D2 removed or fixed, each change logged | M | P4 | todo (added 2026-11-06 at the owner's request) |
+| D16 | Link and page health | Every outbound link (official sites, booking, affiliate, sources) and every image URL checked weekly; broken ones listed in admin and fixed or dropped | S | P2 | proposed (owner decides; added 2026-11-06) |
+| D17 | Photo correctness | A sample of hero photos per run checked against the place they front (wrong town, map, logo, interior); flagged ones replaced; rate tracked in D2 | M | P3 | proposed (owner decides; added 2026-11-06) |
+| D18 | Seasons and closures | Places, huts, lifts and ferries that close part of the year carry their open months; the month strip and the plan flow stop suggesting a closed place | M | P3 | proposed (owner decides; added 2026-11-06) |
+| D19 | Entry rules and official advice | Entry requirements per traveller nationality (EU Entry/Exit System, ETIAS, visas) and official travel advice per country, from government sources whose licence allows reuse, with the date checked | M | P3 | proposed (owner decides; added 2026-11-06) |
+| D20 | Heat and fire risk by month | Months with extreme heat or wildfire risk marked per place from open climate data, so "best months" never sends a family into 42 degrees | S | P3 | proposed (owner decides; added 2026-11-06) |
+| D21 | Accessibility facts | Step-free access and accessible toilets at key places and stations, from OpenStreetMap tags where present, shown only when known | S | P4 | proposed (owner decides; added 2026-11-06) |
+| D22 | Trip footprint | An honest CO2 estimate per trip and per transport mode from published emission factors, shown beside the price | S | P4 | proposed (owner decides; added 2026-11-06) |
+| D23 | External validation of every layer | Every layer and every generated text has a validation run per release: a comparison with outside references whose terms allow it, a calibrated LLM judge where facts are textual, the 30 largest gaps reviewed with a verdict, corrections made at the cause, and a gate that fails the run when a must-pass check drops; results in one scorecard per layer | L | P3 (method and first runs), P4 (every layer, every release) | todo (added 2026-11-06 at the owner's request) |
+| D24 | Trail quality pack | Trail summaries for the top band; the downhill relief fix (T286-c); the trails external check with a trail validation gate; the trails lab on the box (T784-a); the 3,518 broken routes repaired where they become continuous; multi-stage treks as one record with stages; the way back for one-way walks; mountains and lakes filled | L | P1 to P2 | todo (added 2026-11-06 at the owner's request) |
 
 ### Item details
 
@@ -664,6 +674,68 @@ docs/
 **D13. Getting there mode choice**
 - Today the card can show a car to Bergen or a 512 euro train to Taormina while flights exist. Compare modes on door-to-door time and cost; set a distance above which flight is the default when a fare exists.
 
+**D15. Catalogue gaps: add and prune places** (added 2026-11-06)
+- Input: D6's parity table (places per region and per 1,000 km2, completeness and rating spread per country). A region far below its neighbours, or a country behind the rest, is a gap.
+- Add: candidate places from the same sources the catalogue already uses (Wikidata, Wikivoyage, OpenStreetMap, the regions layer). Each candidate passes the same selection rules and D2 checks as the existing places, and gets prices, climate and photos through the normal pipeline. No place is added by hand without a source.
+- Prune: duplicates (the same town under two spellings, for example Rhodes and Rodos) merged; places that fail D2 on must-have fields fixed or removed. Every add, merge and removal is logged with its reason, and the wire contract and the coverage gate stay green.
+- 2 to 3 sessions after D6. Owner reviews the add list per country before the wire changes.
+
+**D16 to D22. Proposed additions** (2026-11-06, the owner decides which to accept)
+- D16 link and page health: dead links and missing images quietly erode trust and SEO; a weekly check is cheap.
+- D17 photo correctness: T1077 found hero photos that were a government group photo or a university building. A sampled visual check (a pipeline model call or a human pass) catches wrong photos before travellers do.
+- D18 seasons and closures: mountain huts, lifts, island ferries and some beach towns close for months. Without this, the plan flow can suggest a place that is shut.
+- D19 entry rules and official advice: the first question for a UK or non-EU traveller. Use only official sources whose reuse terms allow it, show the date checked, and link to the source rather than paraphrasing legal rules.
+- D20 heat and fire risk: summer heat waves and wildfire seasons change which months are really good; open climate data (the sources already in the climate layer) can flag them.
+- D21 accessibility facts: OpenStreetMap carries `wheelchair` and toilet tags for many places and stations; show them only where they exist, never as a guarantee.
+- D22 trip footprint: travellers increasingly ask; an estimate from published emission factors per mode fits Carta's honest-numbers promise. Label it as an estimate.
+
+**D23. External validation of every layer** (added 2026-11-06)
+
+*Why.* A number or a sentence Carta shows should agree with the best outside evidence, or Carta should know why it differs. T760 did this once for place ratings (top 200 against Tripadvisor, Lonely Planet, UNESCO and Wikivoyage; 30 gaps reviewed, 9 corrected). D23 makes it the rule for everything, every release.
+
+*The method, the same for every layer:*
+1. **References.** A research subagent (CLAUDE.md step 3) picks the outside sources for the layer. They must be official, open or published sources whose terms allow the use; sites that forbid scraping (Komoot, AllTrails, Booking, Google) are never scraped.
+2. **Measure.** Coverage (does Carta have what the references name), agreement (rank correlation or error), and the share of facts that match.
+3. **LLM judge for text and facts.** Intros, summaries, trip text, Ask answers and translations are checked against their cited sources by a model judge. Where it runs:
+   - in a Claude Code session, offline;
+   - or through the pipeline's Gemini key;
+   - never through the Claude API.
+   The judge is calibrated against human judgments (D4, Cohen's kappa) before its verdicts count.
+4. **Review.** The 30 largest gaps both ways are reviewed with a verdict and a reason, as in T760.
+5. **Correct at the cause.** Fix or fetch the data, fix the bug, or re-tune a weight once against a frozen reference with part of it held out. Scores are never hand-edited to match a list.
+6. **Gate.** Must-pass checks join the D2 quality engine, so a regression fails the run.
+7. **Scorecard.** One file per layer per release in `data/reports/validation/`, with a trend line in admin (D2).
+
+*Per layer: references to try* (the research step confirms each one and its terms):
+
+| Layer | References to try | What is checked |
+|---|---|---|
+| Place ratings | Repeat T760; Wikivoyage, UNESCO, national tourism boards' lists, published best-of lists | Rank agreement, the 30 gaps |
+| Trails | Famous registry, certified quality trails (Leading Quality Trails, Premiumwege), national portals, Wikipedia trail lists (D24) | Coverage of famous walks, rank agreement, distance and climb error |
+| Beaches | EEA bathing water quality, Blue Flag lists, national beach lists | Water class, swim flags, coverage |
+| Lakes | EEA and national water bodies, swimming lists | Water class, swim flags |
+| Mountains | Wikidata and OSM heights, prominence lists, national summit lists | Height, prominence, route up |
+| Cycling | EuroVelo official routes, national cycle networks | Route coverage and geometry |
+| Prices | Eurostat price levels, a hand-checked sample of live listings, published fare examples | Error against the reference |
+| Climate and sea temperature | National met office normals, Copernicus | Error per month |
+| Crowds | Eurostat and national visitor statistics | Month shape agreement |
+| Trips | Official timetables and operator sites for each leg; the trip validator and critic | Feasible legs, honest times |
+| Texts and translations | The cited sources; back-translation and native review (I8) | Grounding, no invented facts |
+| Ask answers | E1 eval set | Grounding and recall |
+| Photos | D17 | The photo shows the named place |
+
+*Order.* Trails first (D24), then beaches and prices (the most visible numbers), then the rest. Each run is sized as a sample per layer, stratified by country, so the cost stays small and the result holds for the whole layer.
+
+**D24. Trail quality pack** (added 2026-11-06): the trail work D7's current sessions leave out, run early in round 2 right after D7's S10:
+- summaries for the 2,348 top-band trails, grounded in the trail's own facts;
+- the downhill relief fix (488 routes, T286-c);
+- the trails external check, D23's method applied to trails, with a trail validation gate like the places' one;
+- the trails lab moved to the box (T784-a);
+- the 3,518 `failed_continuity` routes repaired with the routing engine within strict limits, publishing only what becomes continuous;
+- multi-stage treks as one parent record with ordered stages (540 of 594 stage groups have none), shown as one walk and as a multi-day trip;
+- the way back to the start for one-way walks, linked to the trip planner;
+- mountains (route up, 14.8% today) and lakes (water class 55.8%, 258 unknown swim flags) filled.
+
 **Depends on.** H1, B2. D7 to D12 also need H9 (scheduling) and D5 (scraper health).
 
 ---
@@ -684,6 +756,7 @@ docs/
 |---|---|---|---|---|
 | E-R1 | How do strong teams evaluate RAG end to end? | RAGAS, DeepEval, promptfoo docs; BEIR benchmark paper; recall@k, MRR, nDCG definitions | 1 day | Metric set and thresholds for E1 |
 | E-R2 | Does a reranker pay off at Carta's scale and latency budget? | Workers AI reranker models, cross-encoder basics (Sentence-Transformers docs), MTEB reranking leaderboard | 1 day | Go or no-go and model for E2 |
+| E-R3 | Which models, hosted where, answer Carta's questions best per euro, today and at 1,000, 10,000 and 100,000 monthly users? | Open-weight models (Qwen, Llama, Mistral, Gemma families) on Cloudflare Workers AI, llama.cpp and vLLM docs, Hetzner CPU and GPU server specs and prices, EU-hosted inference providers, the Gemini and Workers AI price pages, the E1 eval set | 2 days | Cost and quality table per option and a switch point for each AI feature (E7) |
 
 ### Items
 
@@ -695,6 +768,7 @@ docs/
 | E4 | LLM observability | Every call in `ai_model_events`; admin cost and latency panel; Ask query logs | S | P4 | todo |
 | E5 | Prompt registry | Prompts versioned in files; a bump runs its eval | S | P4 | todo |
 | E6 | Answer and cards agree | The places Ask's text names are exactly the cards it shows, enforced in the verifier; the failing live query is in the golden set (P-35) | S | P1 | todo |
+| E7 | Model strategy: open models, hosting and when to switch | Every AI feature (Ask, plan-day, suggest-city, parse-booking, pipeline jobs such as tagging, summaries and blog drafts) has a measured cost per 1,000 calls and a quality score on the E1 eval for at least three options; all model calls go through one module so a provider is a config change; batch jobs that pass the eval run on the box's CPU; written switch triggers for moving live traffic to a self-hosted GPU, reviewed monthly against real usage | M | P3 (decide), P4 onwards (review monthly) | todo (added 2026-11-06 at the owner's request) |
 
 ### Item details
 
@@ -727,6 +801,40 @@ docs/
 
 **E6. Answer and cards agree**
 - Live example: "quiet lake with good walks in June under 120 a day" named Castel di Tora in the text and showed Esztergom as a card. The verifier rejects an answer whose named places differ from its cards.
+
+**E7. Model strategy: open models, hosting and when to switch** (added 2026-11-06)
+
+*Today* (from the handbook):
+- **Ask Carta** answers on Cloudflare Workers AI (`@cf/qwen/qwen3-30b-a3b-fp8`, falling back to `@cf/meta/llama-3.2-3b-instruct`) inside the free 10,000 Neurons a day (cap 9,000). A traveller with a capable device can opt in to an on-device model (Qwen 2.5 1.5B through WebLLM).
+- **plan-day, suggest-city and parse-booking** run on Gemini through Supabase Edge Functions, under per-user and global daily caps.
+- **The build box** is a small ARM server (CAX11), with a larger CAX41 for heavy jobs. Neither has a GPU.
+- **The Claude API is never used** (CLAUDE.md), and that stays.
+
+*The question.* Which model, hosted where, gives the best answers per euro for each feature, now while traffic is near zero and later as users arrive, and at what point does it pay to move live traffic to hardware Carta runs itself.
+
+*Options to compare, per feature:*
+1. **Managed APIs as today** (Workers AI, Gemini): pay per use, free tiers now, no operations work.
+2. **Open-weight models through a pay-per-token provider:** Workers AI already serves open models; EU-hosted providers keep data in the EU.
+3. **Self-hosted on CPU** (llama.cpp with a quantized 3B to 8B model on a larger Hetzner ARM or x86 server):
+   - too slow for live answers at any real volume;
+   - a fit for batch pipeline work that can take hours, such as tagging (F1, F2), summaries (D7, D9) and blog drafts (K14).
+4. **Self-hosted on a GPU** (a rented dedicated GPU server or hourly GPU cloud, vLLM or llama.cpp): a fixed monthly cost that only beats pay-per-token above a certain steady volume.
+5. **On device** (WebLLM) as a free path for capable phones and laptops, kept as an opt-in.
+
+*How to decide:*
+- **Measure each feature:** tokens per call, latency, and quality on the E1 eval (and F6 for the intelligence features).
+- **Price each option:** cost per 1,000 calls at 1,000, 10,000 and 100,000 monthly users, using real call rates from E4 observability and K12 once users exist.
+- **Find the break-even:** the volume where a GPU server's fixed cost plus operations time drops below the API bill.
+- **Keep data in the EU** where personal data is involved (C9, ARTICLE30).
+- **Keep a fallback chain:** a self-hosted model always falls back to a managed one.
+
+*What to build now:*
+- **One model-access module** (with E3's guardrails), so changing a provider or model is a config change with an eval run, not a rewrite.
+- **Move batch jobs to CPU** on the box where they pass the eval: they cost nothing per call and need no live latency.
+
+*Switch triggers* (to be set from E-R3's numbers; examples of the form): move a live feature to a self-hosted GPU when its API spend has been above about 1.5 times the GPU server's monthly cost for two months, and the self-hosted model scores within the eval tolerance. Move back if quality drops or the volume falls.
+
+*Rule change.* CLAUDE.md says runtime AI stays on the Gemini-backed Edge Functions. Moving a live feature to another provider is an owner decision, and CLAUDE.md is updated in the same change.
 
 **Depends on.** H1, B2, C1 (threat model informs E3).
 
@@ -838,6 +946,7 @@ docs/
 | G11 | Quality gates and usability retest | axe-core, Lighthouse CI, bundle budget, visual baselines for 10 screens at 390 and 1440; 5-person retest of core flows; one real-phone pass per release replaces the 49 per-task phone rows | M | P4 | todo |
 | G12 | Onboarding and a shorter plan flow | First plan in 5 screens or fewer (12 today); a priced draft after 3 answers; Explore's start dialog inline and dismissible; sample trip on an empty Plan home (P-33, P-34, P-46) | M | P1 | todo |
 | G13 | Trail cards and trail links | Cards show time and climb next to length; trail pages get their own URL like places; display names from D7 (P-36, P-37) | S | P1 | todo |
+| G14 | Home page | Home passes the marketing surface gate on its own: one clear promise from PRODUCT.md, the waitlist (K3), a live example priced from real data, links into Explore and a sample trip, fast first load (H12) and checked on a real phone | M | P2 | todo (added 2026-11-06 at the owner's request) |
 
 ### Item details
 
@@ -868,6 +977,12 @@ docs/
 **G13.** Trail tiles today show only difficulty and length. Add walking time and climb. Opening a trail sets `#trail=<id>` so it can be shared, bookmarked and reached with Back.
 
 **Process.** `impeccable` critique and the `taste-skill` look-and-fix loop per screen; the seven carta-design questions before shipping.
+
+**G14. Home page** (added 2026-11-06)
+- Home is the first page of the marketing surface and the page every campaign lands on, so it gets its own item instead of being covered piecemeal by G2 to G8.
+- Inputs: the design direction (G1), the mission and short form in PRODUCT.md, K3 (waitlist with referral), H12 (first load), K12 (channel counts).
+- Done when: the promise reads in one line; one live example shows a real per-day total for a real place this month; the waitlist works; Explore and a sample trip are one tap away; LCP and INP meet H12's targets; checked at phone and desktop width and on a real phone.
+- Runs right after G1 is approved, before the other G items, so the most visited page is finished first (by the P2 gate, about 18 January).
 
 **Depends on.** G-R1 to G-R3 before G1; G1 before G2 to G9; F1 and D3 for G9; H1 for G11.
 
@@ -985,6 +1100,7 @@ docs/
 | I14 | Where the paywall meets the journey | One designed moment and copy for the Pass (what is free, when the offer shows, what it unlocks), tested in the closed beta; no dead ends | S | P3 | todo |
 | I15 | Affiliate links done right | `rel="sponsored noopener"` on every partner link; a small "partner link" mark and a disclosure page; links only after Carta's own figure, one door per cost line, never sorted by commission; cookieless click counting; no partner scripts (so no cookie banner); PRODUCT.md wording decided (I-e); checked against the I-R5 legal checklist | S | P3 | todo |
 | I16 | Data access ladder | Each commercial data source has a written legal route, the milestone that unlocks the next step (users or bookings), and a date; Google Flights scraping stopped before the first paid sale; the bed decision (I-g) reviewed before the Booking.com affiliate application; milestones tracked in admin (K12) | M | P1 to P4, then ongoing | todo |
+| I17 | Price alerts | A traveller can save a place or trip and get one email when its total drops by a set share; built on the stays and flights data already refreshed, through the email route of I6 | M | P3 | proposed (owner decides; added 2026-11-06) |
 
 ### Item details
 
@@ -1039,6 +1155,8 @@ docs/
 **I11.** Keep the current no-identifier, no-consent approach: counters per week, not per person.
 
 **I13.** Today only a developer can add or fix a place. Admin overrides (migrations 018, 043) are the base.
+
+**I17. Price alerts** (proposed 2026-11-06): the most asked-for retention feature in travel; it reuses data Carta already refreshes and gives the newsletter (K3) and retention email (I6) a reason to exist. Consent and unsubscribe per GDPR (C9).
 
 **Depends on.** I-R4 and I-R5 before I1; I1 (registration) before I2 goes live and before affiliate IDs go live (I4); I3 before relying on scraped data commercially; I5 pairs with N5; G12 uses I-R1.
 
@@ -1102,6 +1220,7 @@ docs/
 | K11 | Launch campaign | Product Hunt on 4 May, waitlist email, courtesy notes to the credited bodies (`archive/docs-2026-11/LAUNCH-OUTREACH-DRAFTS.md`), community posts, mid-May beach ranking; a two-week plan with owners per thread | M | P5 | todo |
 | K12 | Marketing measurement | Cookieless channel counts (UTM to the existing counters), Search Console per page type, waitlist and referral funnel, one weekly marketing number in admin; the I16 unlock numbers (monthly users, affiliate clicks and bookings per partner) | S | P0 to P1 | todo |
 | K13 | The creative slot | One experiment every two weeks from P2, picked from K-R3's shortlist; each written up in one paragraph (idea, what it took, what it did) | S each | P2 onwards | todo |
+| K14 | Automated data blog | A blog at `/blog/` whose posts are drafted automatically each month from Carta's own data, checked by script for honest numbers and copy rules, approved by the owner, and published with the deploy; RSS, sitemap and structured data | M | P2 to P3 | todo (added 2026-11-06 at the owner's request) |
 
 ### Item details
 
@@ -1112,6 +1231,35 @@ docs/
 **K5.** Post Office's yearly holiday barometer and the Backpacker Index earn press every year with the same simple basket and a local angle per country. Carta's basket is bed, food and getting there, per place, per month. Pitch the Belgian angle to Flemish and Walloon press first.
 
 **K13.** Room for creativity, on purpose. Candidates from the research: the quiz, Shorts ("what 50 EUR buys in X vs Y"), an embeddable cost widget, tourism board data swaps, a "five apps vs Carta" video, map art from trail data, a monthly hidden-trail list. A rule protects it: an experiment whose landing page fails a phone check is postponed, not shipped.
+
+**K14. Automated data blog** (added 2026-11-06)
+
+*Why.* Search traffic and links come from pages that answer a seasonal question with numbers nobody else has ("Where in Europe is warm and under 80 euros a day in March?"). Carta has those numbers every month. A blog turns them into posts with almost no writing per post, and feeds the newsletter (K3) and the community posts (K6).
+
+*The risk to design around.* Google treats large volumes of generated pages with little original value as spam (scaled content abuse), and site-wide quality signals mean thin posts pull good pages down (K2). So: few posts, each built on data that is Carta's own, each reviewed by the owner, never auto-published.
+
+*Post types* (all from data the pipeline already refreshes):
+- Monthly "Where to go in <month>": best-value places that are in season, with weather, sea temperature and crowds.
+- Cheapest week: for Easter, May, summer and autumn breaks, per departure airport in the launch market.
+- What changed: the biggest moves in bed and flight prices since last month (from D5's drift report).
+- New on Carta: places and trails added by D15 and D7.
+- Seasonal rankings: quiet clean beaches in June, ski weeks, autumn walks; the K5 data stories (Cost Index, Sunshine Saturday) are published here too.
+- How we measure: method notes for prices, ratings and sources (they earn links and trust).
+
+*How it runs:*
+1. A monthly pipeline task `blog_drafts` (on the box, H9) writes structured drafts: the numbers, tables and chart data as JSON from the current wire, plus Markdown text from templates. Prose beyond the templates comes from a Claude Code session or the pipeline's Gemini key (never the Claude API, per CLAUDE.md).
+2. A check script refuses any draft where a number does not match the data snapshot it cites, a copy rule fails (banned words, dashes, superlatives), an image is not licensed or credited, the post adds no original data, or another post already targets the same question.
+3. Drafts land as a pull request (a scheduled Claude Code routine can open it each month). The owner reads and edits, then merges.
+4. The next deploy prerenders the posts at `/blog/<slug>` (and `/nl/blog/` once Dutch is ready, I8): canonical, `BlogPosting` structured data with author and dates, hreflang, links into the place pages that pass K2's bar, an RSS feed and a blog sitemap in the index.
+5. The newsletter (K3) sends the monthly post; K12 counts visits per post; the K2 pause rule applies (stop new posts if "discovered, not indexed" passes 30%).
+
+*Cadence.* Two to four posts a month. Quality over volume.
+
+*Phasing.*
+- P2: generator, check script, page template, feed and sitemap; three launch posts in December ("Where to go in January", the Sunshine Saturday story, one method note).
+- P3: the monthly routine on the box.
+- P4: Dutch posts.
+- About 3 sessions: generator and checks; pages, feed and structured data; the first posts and the routine.
 
 **Calendar at a glance.**
 

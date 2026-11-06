@@ -58,6 +58,9 @@
  *     Where the design admits a second user on purpose (an accepted
  *     co-planner on a trip, a public site_config row) that admission is
  *     asserted too, so the test cannot pass by denying everything.
+ *     Where anon holds SELECT on the table, the signed-out read must
+ *     succeed with zero rows: an error there means a policy calls a
+ *     function anon cannot execute (T1070-d, repaired by 063 in T1078).
  *
  * WHY THE FIXTURES ARE HAND-WRITTEN. The discovery of tables and policies
  * is automatic; the seeding is not, because every table has its own
@@ -152,36 +155,30 @@ const MIN_POLICIES = 34;
  *
  *   The list is empty. Its one entry, trip_collaborators.coplan_insert_owner
  *   calling are_friends(a, b) (register row T083-a), was repaired by
- *   migration 046, which calls a one-armed is_friend_me(other) instead.
+ *   migration 046, which calls a one-armed is_friend_me(other) instead. The
+ *   three function-level entries T1070 added (group_role, group_all_joined
+ *   and shared_list_role, which 28 policies in 055, 058 and 059 call for
+ *   every role while only `authenticated` could execute them; register row
+ *   T1070-d) were repaired by migration 063 (T1078), which lets anon execute
+ *   them once each tells a signed-out caller nothing.
+ *
+ *   An entry is { policy: 'table.name', fn, row } for one policy, or
+ *   { fn, role, row } for every policy that calls `fn` for `role`; either is
+ *   asserted to still occur.
  */
-const KNOWN_UNCALLABLE = [
-  // T1070-d. 055, 058 and 059 scope their policies to every role (no TO
-  // clause) but grant the helper functions to `authenticated` only, so a
-  // signed-out read of a group or shared-list table answers 42501 instead of
-  // an empty set. Not a leak (it is a refusal), but the fault class above.
-  // An entry with no `policy` matches every policy that calls `fn` for
-  // `role`; it is asserted to still occur somewhere.
-  { fn: 'group_role', role: 'anon', row: 'T1070-d' },
-  { fn: 'group_all_joined', role: 'anon', row: 'T1070-d' },
-  { fn: 'shared_list_role', role: 'anon', row: 'T1070-d' },
-];
+const KNOWN_UNCALLABLE = [];
 
 /**
- * Tables with policies that have no isolation fixture yet (T1070-c). The
- * tripwire below would fail on each; listing them keeps the gate meaningful
- * for every other table (a NEW table without a fixture still fails), and
- * each entry is asserted to still lack one, so the list cannot outlive the
- * work: write the fixture, delete the entry. They arrived with 052 to 060,
- * while this suite could not run (it applied the _down files, see the
- * loader below).
+ * Tables with policies that have no isolation fixture yet. The tripwire
+ * below would fail on each; listing one keeps the gate meaningful for every
+ * other table (a NEW table without a fixture still fails), and each entry is
+ * asserted to still lack one, so the list cannot outlive the work: write the
+ * fixture, delete the entry.
+ *
+ *   The list is empty. The 17 tables of 052 to 060 that T1070 listed here
+ *   (register row T1070-c) got their fixtures in T1078.
  */
-const KNOWN_UNFIXTURED = [
-  'ask_chats', 'email_log', 'email_prefs', 'friend_visibility',
-  'group_trip_budgets', 'group_trip_expenses', 'group_trip_members', 'group_trip_options',
-  'group_trip_settlements', 'group_trip_votes', 'group_trips', 'pay_links',
-  'shared_list_items', 'shared_list_members', 'shared_list_votes', 'shared_lists',
-  'trip_join_requests',
-];
+const KNOWN_UNFIXTURED = [];
 
 function findPsql() {
   for (const cand of PSQL_CANDIDATES) {
@@ -364,6 +361,14 @@ const SHARE = '00000000-0000-0000-0000-0000000000b1';  // the victim's share tok
  */
 const UPLOADER = '00000000-0000-0000-0000-00000000c004'; // an account deleted in the upload section
 const TERMS = '2026-10-07'; // uploads.js UPLOAD_TERMS_VERSION, begin_upload's v_terms
+// The 052 to 060 fixtures (T1078). THIRD is the victim's accepted friend (the
+// friendships fixture), so THIRD can be invited into the group and the list.
+const PLAN2 = '00000000-0000-0000-0000-0000000000a2';     // the victim's friends-visible trip, for join requests
+const GROUP = '00000000-0000-0000-0000-0000000000d1';     // the victim's group trip
+const OPT_WHEN = '00000000-0000-0000-0000-0000000000d2';  // its date option
+const OPT_WHERE = '00000000-0000-0000-0000-0000000000d3'; // its place option
+const LIST = '00000000-0000-0000-0000-0000000000e1';      // the victim's shared list
+const ITEM = '00000000-0000-0000-0000-0000000000e2';      // an item on it
 
 const FIXTURES = [
   {
@@ -553,6 +558,189 @@ const FIXTURES = [
     forge: `insert into public.content_overrides (layer, item_id, patch, status, review_by, author_note) values ('dest', 't083_forged', '{}', 'temporary', now(), 'Forged by the row policy test.')`,
     reads: 'public',
     ownerWrites: false,
+  },
+
+  // -------------------------------------------------------------------------
+  // 052 to 060 (T1078, register row T1070-c). Seeded after the friendships
+  // and co-planner fixtures above, which make THIRD the victim's accepted
+  // friend: inviting into a group or a list needs that.
+  // -------------------------------------------------------------------------
+  {
+    // 054: the owner's chats only; anon has no grant at all.
+    table: 'ask_chats',
+    seed: [{ as: 'victim', sql: `insert into public.ask_chats (user_id, chat_id, title, turns) values ('${VICTIM}', 't1078chat', 'Lisbon in May', '[{"q": "Where to eat?"}]')` }],
+    mine: `user_id = '${VICTIM}'`,
+    mutate: `title = 'tampered'`,
+    forge: `insert into public.ask_chats (user_id, chat_id, title) values ('${VICTIM}', 't1078forged', 'forged')`,
+    reads: 'private',
+    ownerWrites: true,
+  },
+  {
+    // 060: the owner reads and writes their switches; no delete policy.
+    table: 'email_prefs',
+    seed: [{ as: 'victim', sql: `insert into public.email_prefs (user_id, trip_reminders, lang) values ('${VICTIM}', true, 'nl')` }],
+    mine: `user_id = '${VICTIM}'`,
+    mutate: `price_drops = true`,
+    forge: `insert into public.email_prefs (user_id, trip_reminders) values ('${VICTIM}', false) on conflict (user_id) do update set trip_reminders = false`,
+    reads: 'private',
+    ownerWrites: true,
+  },
+  {
+    // 060: written by the notify function (service role) only; the owner reads.
+    table: 'email_log',
+    seed: [{ as: 'db', sql: `insert into public.email_log (user_id, kind, ref) values ('${VICTIM}', 'trip_reminder', '${PLAN}')` }],
+    mine: `user_id = '${VICTIM}'`,
+    mutate: `ref = 'tampered'`,
+    forge: `insert into public.email_log (user_id, kind, ref) values ('${VICTIM}', 'price_drop', 'forged')`,
+    reads: 'private',
+    ownerWrites: false,
+  },
+  {
+    // 056: the owner, or an accepted friend (asserted in section 4), reads it.
+    table: 'friend_visibility',
+    seed: [{ as: 'victim', sql: `insert into public.friend_visibility (user_id, show_saves) values ('${VICTIM}', true)` }],
+    mine: `user_id = '${VICTIM}'`,
+    mutate: `show_countries = false`,
+    forge: `insert into public.friend_visibility (user_id, show_saves) values ('${VICTIM}', false) on conflict (user_id) do update set show_saves = false`,
+    reads: 'private',
+    ownerWrites: true,
+  },
+  {
+    // 058: the owner's payment link; co-members get it through group_pay_links.
+    table: 'pay_links',
+    seed: [{ as: 'victim', sql: `insert into public.pay_links (user_id, url) values ('${VICTIM}', 'https://pay.example.test/victim')` }],
+    mine: `user_id = '${VICTIM}'`,
+    mutate: `url = 'https://attacker.example.test/'`,
+    forge: `insert into public.pay_links (user_id, url) values ('${VICTIM}', 'https://attacker.example.test/') on conflict (user_id) do update set url = 'https://attacker.example.test/'`,
+    reads: 'private',
+    ownerWrites: true,
+  },
+  {
+    // 057: written through ask_to_join and answer_join_request only, read by
+    // the two people a request names. THIRD asks to join the victim's
+    // friends-visible trip, so the RPC is the positive control.
+    table: 'trip_join_requests',
+    seed: [
+      { as: 'victim', sql: `insert into public.trip_plans (id, user_id, label, visibility) values ('${PLAN2}', '${VICTIM}', 'victim friends trip', 'friends')` },
+      { as: 'third', sql: `select public.ask_to_join('${PLAN2}')` },
+    ],
+    mine: `owner_id = '${VICTIM}'`,
+    mutate: `created_at = now()`,
+    forge: `insert into public.trip_join_requests (trip_plan_id, requester_id, owner_id) values ('${PLAN2}', '${PLAIN}', '${VICTIM}')`,
+    reads: 'private',
+    ownerWrites: false,
+  },
+  {
+    // 055: the owner, joined and invited members read; the owner edits.
+    table: 'group_trips',
+    seed: [{ as: 'victim', sql: `insert into public.group_trips (id, title) values ('${GROUP}', 'Porto weekend')` }],
+    mine: `owner_id = '${VICTIM}'`,
+    mutate: `title = 'tampered'`,
+    forge: `insert into public.group_trips (owner_id, title) values ('${VICTIM}', 'forged')`,
+    reads: 'private',
+    ownerWrites: true,
+  },
+  {
+    // 055: the owner invites an accepted friend, the invitee says yes. The
+    // owner's own joined row comes from the insert trigger.
+    table: 'group_trip_members',
+    seed: [
+      { as: 'victim', sql: `insert into public.group_trip_members (group_id, user_id, invited_by, status) values ('${GROUP}', '${THIRD}', '${VICTIM}', 'invited')` },
+      { as: 'third', sql: `update public.group_trip_members set status = 'joined', responded_at = now() where group_id = '${GROUP}' and user_id = '${THIRD}'` },
+    ],
+    mine: `group_id = '${GROUP}'`,
+    mutate: `status = 'joined'`,
+    forge: `insert into public.group_trip_members (group_id, user_id, invited_by, status) values ('${GROUP}', '${PLAIN}', '${VICTIM}', 'invited')`,
+    reads: 'private',
+    ownerWrites: false, // only the invitee answers
+  },
+  {
+    table: 'group_trip_options',
+    seed: [
+      { as: 'victim', sql: `insert into public.group_trip_options (id, group_id, kind, start_date, end_date) values ('${OPT_WHEN}', '${GROUP}', 'when', '2027-05-01', '2027-05-04')` },
+      { as: 'victim', sql: `insert into public.group_trip_options (id, group_id, kind, destination_id) values ('${OPT_WHERE}', '${GROUP}', 'where', 'd:porto')` },
+    ],
+    mine: `group_id = '${GROUP}'`,
+    mutate: `created_at = now()`,
+    forge: `insert into public.group_trip_options (group_id, kind, destination_id, created_by) values ('${GROUP}', 'where', 'd:forged', '${VICTIM}')`,
+    reads: 'private',
+    ownerWrites: false, // no update policy: options are added and removed
+  },
+  {
+    table: 'group_trip_votes',
+    seed: [{ as: 'victim', sql: `insert into public.group_trip_votes (group_id, kind, user_id, option_id) values ('${GROUP}', 'when', '${VICTIM}', '${OPT_WHEN}')` }],
+    mine: `group_id = '${GROUP}'`,
+    mutate: `created_at = now()`,
+    forge: `insert into public.group_trip_votes (group_id, kind, user_id, option_id) values ('${GROUP}', 'where', '${VICTIM}', '${OPT_WHERE}')`,
+    reads: 'private',
+    ownerWrites: true,
+  },
+  {
+    // 055: your own maximum and nobody else's, a joined co-member included
+    // (asserted in section 4).
+    table: 'group_trip_budgets',
+    seed: [{ as: 'victim', sql: `insert into public.group_trip_budgets (group_id, user_id, max_trip) values ('${GROUP}', '${VICTIM}', 900)` }],
+    mine: `group_id = '${GROUP}' and user_id = '${VICTIM}'`,
+    mutate: `max_trip = 1`,
+    forge: `insert into public.group_trip_budgets (group_id, user_id, max_trip) values ('${GROUP}', '${VICTIM}', 5) on conflict (group_id, user_id) do update set max_trip = 5`,
+    reads: 'private',
+    ownerWrites: true,
+  },
+  {
+    // 058: split among joined members only; nobody edits a logged expense.
+    table: 'group_trip_expenses',
+    seed: [{ as: 'victim', sql: `insert into public.group_trip_expenses (group_id, paid_by, amount_cents, description, split_among) values ('${GROUP}', '${VICTIM}', 12000, 'Apartment deposit', array['${VICTIM}', '${THIRD}']::uuid[])` }],
+    mine: `group_id = '${GROUP}'`,
+    mutate: `amount_cents = 1`,
+    forge: `insert into public.group_trip_expenses (group_id, paid_by, amount_cents, split_among, created_by) values ('${GROUP}', '${VICTIM}', 1, array['${VICTIM}']::uuid[], '${VICTIM}')`,
+    reads: 'private',
+    ownerWrites: false,
+  },
+  {
+    table: 'group_trip_settlements',
+    seed: [{ as: 'victim', sql: `insert into public.group_trip_settlements (group_id, from_user, to_user, amount_cents) values ('${GROUP}', '${VICTIM}', '${THIRD}', 6000)` }],
+    mine: `group_id = '${GROUP}'`,
+    mutate: `amount_cents = 1`,
+    forge: `insert into public.group_trip_settlements (group_id, from_user, to_user, amount_cents, created_by) values ('${GROUP}', '${VICTIM}', '${THIRD}', 1, '${VICTIM}')`,
+    reads: 'private',
+    ownerWrites: false,
+  },
+  {
+    // 059: the owner and the members read; the owner renames.
+    table: 'shared_lists',
+    seed: [{ as: 'victim', sql: `insert into public.shared_lists (id, name) values ('${LIST}', 'Summer ideas')` }],
+    mine: `owner_id = '${VICTIM}'`,
+    mutate: `name = 'tampered'`,
+    forge: `insert into public.shared_lists (owner_id, name) values ('${VICTIM}', 'forged')`,
+    reads: 'private',
+    ownerWrites: true,
+  },
+  {
+    table: 'shared_list_members',
+    seed: [{ as: 'victim', sql: `insert into public.shared_list_members (list_id, user_id, added_by) values ('${LIST}', '${THIRD}', '${VICTIM}')` }],
+    mine: `list_id = '${LIST}'`,
+    mutate: `created_at = now()`,
+    forge: `insert into public.shared_list_members (list_id, user_id, added_by) values ('${LIST}', '${PLAIN}', '${VICTIM}')`,
+    reads: 'private',
+    ownerWrites: false, // update is revoked: members are added and removed
+  },
+  {
+    table: 'shared_list_items',
+    seed: [{ as: 'victim', sql: `insert into public.shared_list_items (id, list_id, item_key, name) values ('${ITEM}', '${LIST}', 'dest:lisbon', 'Lisbon')` }],
+    mine: `list_id = '${LIST}'`,
+    mutate: `note = 'tampered'`,
+    forge: `insert into public.shared_list_items (list_id, item_key, name, added_by) values ('${LIST}', 'dest:forged', 'forged', '${VICTIM}')`,
+    reads: 'private',
+    ownerWrites: true,
+  },
+  {
+    table: 'shared_list_votes',
+    seed: [{ as: 'victim', sql: `insert into public.shared_list_votes (item_id, list_id, user_id) values ('${ITEM}', '${LIST}', '${VICTIM}')` }],
+    mine: `list_id = '${LIST}'`,
+    mutate: `created_at = now()`,
+    forge: `insert into public.shared_list_votes (item_id, list_id, user_id) values ('${ITEM}', '${LIST}', '${PLAIN}')`,
+    reads: 'private',
+    ownerWrites: false, // update is revoked: a vote is cast or withdrawn
   },
 ];
 
@@ -778,6 +966,18 @@ function runTests(bin) {
     console.log('');
     console.log('  A second signed-in user and a visitor get nothing from the victim\'s rows:');
     let covered = 0;
+    // Tables anon holds SELECT on. For those, a signed-out read reaches the
+    // policies, so it must SUCCEED with no rows: a 42501 there is the 011
+    // fault (a policy calling a function anon cannot execute), which is what
+    // 063 repaired for the group and shared list tables (T1070-d). Where the
+    // grant itself is revoked (013, 039, 054), the refusal is the grant's and
+    // is the right answer.
+    const anonSelects = new Set(JSON.parse(scalar(bin, TEST_DB, `
+      select coalesce(json_agg(c.relname), '[]'::json)
+        from pg_class c join pg_namespace n on n.oid = c.relnamespace
+       where n.nspname = 'public' and c.relkind in ('r', 'p')
+         and has_table_privilege('anon', c.oid, 'select')`) || '[]'));
+    let anonClean = 0;
     for (const f of FIXTURES) {
       const before = snapshot(f.table, f.mine);
       check(`${f.table}: the fixture left rows to protect`, !before.startsWith('0:'), before);
@@ -789,6 +989,11 @@ function runTests(bin) {
           const vis = countAs(who, f.table, f.visible);
           check(`${f.table}: ${who} sees only the public row`,
             read.ok && read.out === '1' && vis.ok && vis.out === '1', `${describe(read)} / ${describe(vis)}`);
+        } else if (who === 'anon' && anonSelects.has(f.table)) {
+          // anon holds the grant, so the policies decide: zero rows, no error.
+          check(`${f.table}: ${who} reads zero rows without an error (the policies answer, not a 42501)`,
+            read.ok && read.out === '0', describe(read));
+          if (read.ok && read.out === '0') anonClean += 1;
         } else if (who === 'anon') {
           // A visitor may be stopped by a revoked grant before any policy
           // runs (013, 039 revoke select from anon). Either answer is
@@ -811,6 +1016,16 @@ function runTests(bin) {
       check(`${f.table}: the victim's rows are unchanged afterwards`, after === before, `${before} -> ${after}`);
       covered += 1;
     }
+    // Not vacuous: the eleven tables whose policies call group_role,
+    // group_all_joined or shared_list_role (055, 058, 059) are among the
+    // clean signed-out reads, so the 063 repair is what this measured.
+    const helperTables = ['group_trips', 'group_trip_members', 'group_trip_options', 'group_trip_votes',
+      'group_trip_budgets', 'group_trip_expenses', 'group_trip_settlements',
+      'shared_lists', 'shared_list_members', 'shared_list_items', 'shared_list_votes'];
+    const notClean = helperTables.filter((t) => !anonSelects.has(t));
+    check(`a signed-out read of each of the ${helperTables.length} group trip and shared list tables reached the policies (anon holds SELECT)`,
+      notClean.length === 0, notClean.join(', '));
+    console.log(`  note  ${anonClean} fixture tables answer a signed-out read with zero rows and no error`);
 
     // ---------------------------------------------------------------------
     // 4. Admissions the design makes on purpose. Without these the suite
@@ -840,6 +1055,38 @@ function runTests(bin) {
     const strangerInvite = runAs('victim', `insert into public.trip_collaborators (trip_plan_id, user_id, invited_by) values ('${PLAN}', '${PLAIN}', '${VICTIM}')`);
     check('the owner cannot invite somebody who is not a friend (020, 046)',
       !strangerInvite.ok && /row-level security/i.test(strangerInvite.err), describe(strangerInvite));
+
+    // 052 to 060 (T1078): what a friend, a co-member and a requester may see.
+    const friendVis = countAs('third', 'friend_visibility', `user_id = '${VICTIM}'`);
+    check('an accepted friend reads the victim\'s sharing switches (056)', friendVis.ok && friendVis.out === '1', describe(friendVis));
+    const requesterSees = countAs('third', 'trip_join_requests', `owner_id = '${VICTIM}' and requester_id = '${THIRD}'`);
+    check('the requester sees their own join request (057)', requesterSees.ok && requesterSees.out === '1', describe(requesterSees));
+    for (const [table, n] of [['group_trips', 1], ['group_trip_members', 2], ['group_trip_options', 2],
+      ['group_trip_votes', 1], ['group_trip_expenses', 1], ['group_trip_settlements', 1]]) {
+      const r = countAs('third', table, table === 'group_trips' ? `id = '${GROUP}'` : `group_id = '${GROUP}'`);
+      check(`a joined co-member reads the group's ${table} (055, 058)`, r.ok && r.out === String(n), describe(r));
+    }
+    const coBudget = countAs('third', 'group_trip_budgets', `group_id = '${GROUP}' and user_id = '${VICTIM}'`);
+    check('but never the victim\'s budget, even as a joined co-member (055)', coBudget.ok && coBudget.out === '0', describe(coBudget));
+    const band = runAs('third', `select coalesce(band_top::text, 'null') || '/' || members_set || '/' || members from public.group_trip_band('${GROUP}')`);
+    check('and the band hides one member\'s number while fewer than three have set one', band.ok && band.out === 'null/1/2', describe(band));
+    const coVote = affectedAs('third', `update public.group_trip_votes set created_at = now() where group_id = '${GROUP}' and user_id = '${VICTIM}'`);
+    check('a co-member cannot change the victim\'s vote', nothing(coVote), describe(coVote));
+    const plainOracle = runAs('plain', `select public.group_all_joined('${GROUP}', array['${VICTIM}']::uuid[])`);
+    check('a stranger learns nothing from group_all_joined about who is in the group (063)',
+      plainOracle.ok && plainOracle.out === 'f', describe(plainOracle));
+    const memberOracle = runAs('third', `select public.group_all_joined('${GROUP}', array['${VICTIM}', '${THIRD}']::uuid[])`);
+    check('while a joined member, who reads the roster anyway, gets the answer', memberOracle.ok && memberOracle.out === 't', describe(memberOracle));
+    for (const [table, n] of [['shared_lists', 1], ['shared_list_members', 2], ['shared_list_items', 1], ['shared_list_votes', 1]]) {
+      const r = countAs('third', table, table === 'shared_lists' ? `id = '${LIST}'` : `list_id = '${LIST}'`);
+      check(`a list member reads the list's ${table} (059)`, r.ok && r.out === String(n), describe(r));
+    }
+    const memberNote = affectedAs('third', `update public.shared_list_items set note = 'Go in May' where id = '${ITEM}'`);
+    check('and may write the note on an item (059)', memberNote.ok && memberNote.out === '1', describe(memberNote));
+    for (const fn of [`group_role('${GROUP}')`, `shared_list_role('${LIST}')`]) {
+      const r = runAs('anon', `select coalesce(public.${fn}, 'null')`);
+      check(`a visitor may call ${fn.split('(')[0]} and learns nothing from it (063)`, r.ok && r.out === 'null', describe(r));
+    }
 
     // ---------------------------------------------------------------------
     // 4b. The two closed tables 047 widened (T284). The closed-table probe
@@ -1092,11 +1339,11 @@ function runTests(bin) {
     console.log('');
     console.log('  The probe sees a deliberate leak (otherwise none of the above was evidence):');
     psql(bin, TEST_DB, ['-c', `create policy t083_leak on public.trip_plans for select using (true)`]);
-    const leaked = countAs('plain', 'trip_plans', `user_id = '${VICTIM}'`);
+    const leaked = countAs('plain', 'trip_plans', `id = '${PLAN}'`);
     psql(bin, TEST_DB, ['-c', `drop policy t083_leak on public.trip_plans`]);
     check('with an unconditional read policy added, the second user sees the victim\'s trip',
       leaked.ok && leaked.out === '1', describe(leaked));
-    const sealed = countAs('plain', 'trip_plans', `user_id = '${VICTIM}'`);
+    const sealed = countAs('plain', 'trip_plans', `id = '${PLAN}'`);
     check('and with it dropped again, does not', sealed.ok && sealed.out === '0', describe(sealed));
 
     console.log('');

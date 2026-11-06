@@ -7,9 +7,10 @@
 
 do $$
 begin
-  if exists (select 1 from pg_extension where extname = 'pg_cron')
-     and exists (select 1 from cron.job where jobname = 'carta_notify_reminders') then
-    perform cron.unschedule('carta_notify_reminders');
+  -- Dynamic, so the file also runs where pg_cron (and so cron.job) is
+  -- absent: a static reference to cron.job fails at parse time there.
+  if to_regclass('cron.job') is not null then
+    execute $q$select cron.unschedule(jobname) from cron.job where jobname = 'carta_notify_reminders'$q$;
   end if;
 end;
 $$;

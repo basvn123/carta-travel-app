@@ -30,12 +30,18 @@ export function useUserDetail({ errText, reloadList, refreshStats, loadAudit }) 
   const [deleteArmed, setDeleteArmed] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState('');
   const [deleteBusy, setDeleteBusy] = useState(false);
+  // Since 064 (T1081) ban, delete and set tier carry a reason into the admin
+  // log; the server refuses fewer than 3 characters (reason_required).
+  const [tierReason, setTierReason] = useState('');
+  const [banReason, setBanReason] = useState('');
+  const [deleteReason, setDeleteReason] = useState('');
 
   const openUser = async (id) => {
     setDetailBusy(true);
     setActionErr(''); setActionNotice('');
     setQuotaArmed(false); setBanArmed(false); setBanDays('');
     setDeleteArmed(false); setDeleteConfirm(''); setNoteText('');
+    setTierReason(''); setBanReason(''); setDeleteReason('');
     try {
       const d = await adminGetUser(id);
       setDetail(d);
@@ -56,7 +62,8 @@ export function useUserDetail({ errText, reloadList, refreshStats, loadAudit }) 
     setTierBusy(true); setActionErr(''); setActionNotice('');
     try {
       const days = tierDays.trim() ? parseInt(tierDays, 10) : NaN;
-      await adminSetTier(detail.id, tierPick, Number.isFinite(days) && days > 0 ? days : null);
+      await adminSetTier(detail.id, tierPick, Number.isFinite(days) && days > 0 ? days : null, tierReason.trim());
+      setTierReason('');
       await refreshDetail(detail.id);
       setActionNotice(t('admin.passApplied'));
       refreshStats();
@@ -96,7 +103,8 @@ export function useUserDetail({ errText, reloadList, refreshStats, loadAudit }) 
     setBanBusy(true); setActionErr(''); setActionNotice('');
     try {
       const days = banDays.trim() ? parseInt(banDays, 10) : 36500;
-      await adminBanUser(detail.id, Number.isFinite(days) && days > 0 ? days : 36500);
+      await adminBanUser(detail.id, Number.isFinite(days) && days > 0 ? days : 36500, banReason.trim());
+      setBanReason('');
       await refreshDetail(detail.id);
       setActionNotice(t('admin.banDone'));
       setBanArmed(false); reloadList(); loadAudit(25);
@@ -133,7 +141,7 @@ export function useUserDetail({ errText, reloadList, refreshStats, loadAudit }) 
     if (!detail) return;
     setDeleteBusy(true); setActionErr('');
     try {
-      await adminDeleteUser(detail.id, deleteConfirm.trim());
+      await adminDeleteUser(detail.id, deleteConfirm.trim(), deleteReason.trim());
       setDetail(null);
       refreshStats();
       reloadList(); loadAudit(25);
@@ -144,6 +152,7 @@ export function useUserDetail({ errText, reloadList, refreshStats, loadAudit }) 
   return {
     detail, setDetail, detailBusy, openUser,
     tierPick, setTierPick, tierDays, setTierDays, tierBusy, applyTier,
+    tierReason, setTierReason, banReason, setBanReason, deleteReason, setDeleteReason,
     actionNotice, actionErr,
     quotaArmed, quotaBusy, resetQuota, resetBusy, sendReset,
     banArmed, setBanArmed, banDays, setBanDays, banBusy, doBan, doUnban,

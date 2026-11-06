@@ -980,6 +980,58 @@ function runTests(bin) {
     check('a row inserted without them gets them from its detail (report:<id>, the reason)',
       direct === 'report:7|Duplicate of an earlier notice.', direct);
     psql(bin, TEST_DB, ['-c', 'delete from public.admin_audit_log; delete from public.infra_ledger where item = \'hosting\'']);
+
+    // ---------------------------------------------------------------------
+    // 14. Ban, delete and set tier need a reason, and it lands in the audit
+    //     log (064, T1081, register row T1071-b). A missing, blank or too
+    //     short reason is refused before the account is read or touched,
+    //     with no row.
+    // ---------------------------------------------------------------------
+    console.log('');
+    console.log('  Ban, delete and set tier need a reason, and it lands in admin_audit_log.reason (064):');
+    const TARGET = '00000000-0000-0000-0000-00000000c0a1';
+    psql(bin, TEST_DB, ['-c', `insert into auth.users (id, email) values ('${TARGET}', 'target@example.test')`]);
+    const sigs = scalar(bin, TEST_DB, `select string_agg(p.oid::regprocedure::text, '; ' order by p.proname)
+      from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+      where n.nspname = 'public' and p.proname in ('admin_ban_user', 'admin_delete_user', 'admin_set_tier')`);
+    check('each of the three has exactly one signature, the one with p_reason',
+      sigs === 'admin_ban_user(uuid,text,integer); admin_delete_user(uuid,text,text); admin_set_tier(uuid,text,text,integer)', sigs);
+    const reasonCalls = {
+      ban: (reason) => `select public.admin_ban_user('${TARGET}'::uuid, p_reason => ${reason}, p_days => 7)`,
+      tier: (reason) => `select public.admin_set_tier('${TARGET}'::uuid, 'trip', p_reason => ${reason}, p_days => 30)`,
+      delete: (reason) => `select public.admin_delete_user('${TARGET}'::uuid, 'target@example.test', p_reason => ${reason})`,
+    };
+    psql(bin, TEST_DB, ['-c', 'delete from public.admin_audit_log']);
+    for (const [name, sql] of Object.entries(reasonCalls)) {
+      for (const [what, arg] of [['no reason', 'null'], ['a blank reason', `'   '`], ['a two-letter reason', `'ok'`]]) {
+        const r = adminCall(sql(arg));
+        check(`${name} with ${what} answers reason_required`, r.error === 'reason_required', JSON.stringify(r));
+      }
+    }
+    check('the refusals left the account, its pass and the audit log untouched', scalar(bin, TEST_DB,
+      `select (select count(*) from public.admin_audit_log)::text || '|' || (select (banned_until is null)::text from auth.users where id = '${TARGET}')
+        || '|' || (select count(*) from public.entitlements where user_id = '${TARGET}')::text`) === '0|true|0');
+    const plainBan = psqlRun(bin, TEST_DB, ['-At', '-c', 'set role authenticated', '-c', claimsSql(plainClaims),
+      '-c', `select public.admin_ban_user('${TARGET}'::uuid, p_reason => 'A good reason.', p_days => 7)::text`]);
+    check('a non-admin with a reason still hears forbidden first', refused({ ok: plainBan.ok, out: plainBan.out.trim() }),
+      plainBan.out.trim() || plainBan.err.trim());
+    const reasonFor = (action) => scalar(bin, TEST_DB,
+      `select coalesce(target, '') || '|' || coalesce(reason, '') from public.admin_audit_log where action = '${action}' order by created_at desc limit 1`);
+    const tierOk = adminCall(reasonCalls.tier(`'Refund issued, pass restored by hand.'`));
+    check('set tier with a reason changes the pass', tierOk.ok === true && tierOk.tier === 'trip', JSON.stringify(tierOk));
+    check('and its audit row carries the target and the reason',
+      reasonFor('set_tier') === `user:${TARGET}|Refund issued, pass restored by hand.`, reasonFor('set_tier'));
+    const banOk = adminCall(reasonCalls.ban(`'  Spam links in three shared trips.  '`));
+    check('ban with a reason suspends the account', banOk.ok === true && scalar(bin, TEST_DB,
+      `select (banned_until > now())::text from auth.users where id = '${TARGET}'`) === 'true', JSON.stringify(banOk));
+    check('and its audit row carries the reason, trimmed',
+      reasonFor('ban_user') === `user:${TARGET}|Spam links in three shared trips.`, reasonFor('ban_user'));
+    const delOk = adminCall(reasonCalls.delete(`'Owner asked for erasure by email on 5 November.'`));
+    check('delete with a reason deletes the account', delOk.ok === true && scalar(bin, TEST_DB,
+      `select count(*) from auth.users where id = '${TARGET}'`) === '0', JSON.stringify(delOk));
+    check('and its audit row outlives the account and carries the reason',
+      reasonFor('delete_user') === `user:${TARGET}|Owner asked for erasure by email on 5 November.`, reasonFor('delete_user'));
+    psql(bin, TEST_DB, ['-c', 'delete from public.admin_audit_log']);
   } finally {
     psqlRun(bin, 'postgres', ['-c', `drop database if exists ${TEST_DB} with (force)`]);
     if (work) {

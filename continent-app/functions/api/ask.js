@@ -21,6 +21,7 @@
  */
 import { createEmbedder } from '../_lib/askEmbed.js';
 import { search } from '../_lib/askScore.js';
+import { fail, methodNotAllowed, createLimiter, overLimit, rateRefusal, parseAskQuery } from '../_lib/guard.js';
 
 const BASE = '/search/ask/';
 const HOLD = 3600;
@@ -29,6 +30,10 @@ const PER_SOURCE = { dest: 50, highlight: 24, sight: 16, trail: 12, journey: 8, 
 export const LEX_MIN = 0.62;
 
 let state = null;
+// The retrieval is CPU on the Function, free but not unlimited (T1079).
+const limiter = createLimiter({ max: 60 });
+
+export const onRequest = () => methodNotAllowed('GET');
 
 async function asset(env, request, path, kind) {
   const url = new URL(BASE + path, request.url);
@@ -65,18 +70,17 @@ async function source(s, name, env, request) {
   return s.sources.get(name);
 }
 
-const list = (v, max) => String(v || '').split(',').map((x) => x.trim()).filter(Boolean).slice(0, max);
-
 export async function onRequestGet({ request, env }) {
   const url = new URL(request.url);
-  const q = (url.searchParams.get('q') || '').trim();
-  if (!q || q.length > 200) return new Response(null, { status: 400 });
+  const parsed = parseAskQuery(url.searchParams);
+  if (!parsed) return fail(400, 'bad_request');
+  const { q, words } = { q: parsed.q, words: parsed.u };
+  if (await overLimit(env, request, limiter, 'ask')) return rateRefusal();
   let s;
-  try { s = await load(env, request); } catch { return new Response(null, { status: 503 }); }
-  const asked = list(url.searchParams.get('src') || 'dest,highlight', 9).filter((x) => s.manifest.sources[x] && x !== 'lexicon');
-  const cc = new Set(list(url.searchParams.get('cc'), 12).map((x) => x.toUpperCase()));
-  const d = new Set(list(url.searchParams.get('d'), 12));
-  const words = (url.searchParams.get('u') || '').split('|').map((w) => w.trim()).filter((w) => w.length > 2).slice(0, 5);
+  try { s = await load(env, request); } catch { return fail(503, 'unavailable'); }
+  const asked = (parsed.src.length ? parsed.src : ['dest', 'highlight']).filter((x) => s.manifest.sources[x] && x !== 'lexicon');
+  const cc = new Set(parsed.cc.map((x) => x.toUpperCase()));
+  const d = new Set(parsed.d);
 
   const qvec = s.embedder.embed(q);
   const hits = {};
@@ -97,7 +101,7 @@ export async function onRequestGet({ request, env }) {
         });
     }
   } catch {
-    return new Response(null, { status: 503 });
+    return fail(503, 'unavailable');
   }
   const lex = [];
   if (words.length && s.manifest.sources.lexicon) {
