@@ -1466,3 +1466,11 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1101-b | T1101 | After the next deploy, ask five questions on a phone and desktop width and check the written line names only places on the first three cards | user | open |  |
 | T1101-c | T1101 | A sentence naming a place on a "more places" card (4th to 6th) is dropped until the traveller opens it; decide if the text should instead grow with the cards | next task | open |  |
 | T1085-x | orchestrator (2026-11-06 merge) | docs/runbooks has two overlapping backup docs after the overnight merge: backup.md (T1085, short) and backup-restore.md (T1086, full procedure); fold backup.md into backup-restore.md and keep one. | next task | open | |
+| T1103-a | T1103 | Explore's "What matters most" start dialog should become an inline, dismissible prompt with its seen-flag tied to the account (G12, P-34); outside T1103's files and the account flag touches src/auth/ | next task | open |  |
+| T1103-b | T1103 | A sample trip on an empty Plan home (G12, P-46): the Carta trips door is there, a worked sample trip is not | next task | open |  |
+| T1103-c | T1103 | The trip-kind sheet now shows only while a trip is under way, so "I'm on a trip now" and "Add a past trip" are mostly reached from My trips; owner decides whether Plan home needs a quiet link (Execution/P15/T1103-plan-flow-short.md) | user | open |  |
+| T1103-d | T1103 | The help-me-choose walk that refines the trips is still ten questions; fold them into fewer screens | next task | open |  |
+| T1103-e | T1103 | Real-person usability test of the 5-screen plan flow with one first-time traveller on a phone (Execution/P15/T1103-plan-flow-short.md) | user | open |  |
+| T1103-f | T1103 | Confirm BROAD_TYPES (city, culture, food), the ranking the finder uses while "What are you up for" is unasked (lib/recommend/candidates.js) | user | open |  |
+| T1103-g | T1103 | scripts/verify_plan_mocks.mjs still walks the old plan flow (kind sheet, Create, doors); bring it to the short flow | next task | open |  |
+| T1103-h | T1103 | When opens on "On set dates" with none picked, so Continue waits on a first visit; consider a ready default (months or not sure yet) | next task | open |  |
