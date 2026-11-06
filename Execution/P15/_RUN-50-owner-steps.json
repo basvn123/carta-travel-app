@@ -1054,5 +1054,16 @@
    "Open Explore, Plan, a place page",
    "Sheets and tabs should snap, the home film should stand still"
   ]
+ },
+ {
+  "id": "T1116-a",
+  "title": "Pick the register option",
+  "why": "The register is at 1,717 rows and no option gets under 250 (a 1,157, b 1,437, c 877, d 1,717), so the target or the rule must change.",
+  "where": "Execution/P15/T1116-register-rule.md",
+  "how": [
+   "Read the comparison in Execution/P15/T1116-register-rule.md section 2",
+   "Run `python -I scripts/register/dry_run.py --option all` to see the first rows",
+   "Answer a, b, c, d or c plus e in chat, and say whether the 250 target stays or moves"
+  ]
  }
 ]
