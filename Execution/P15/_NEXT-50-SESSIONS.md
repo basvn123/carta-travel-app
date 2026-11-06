@@ -16,7 +16,8 @@ Fifty Claude Code sessions, in the order to run them. Each row is one task. Its 
 5. **Batches.** Running a wave as one batch (one branch, subagents in worktrees, one end check, one PR) is cheaper than separate sessions. That is how T1068 to T1084 ran.
 6. **Worktrees.** Each full worktree is about 1.5 GB, and the disk had 38 GB free. Keep at most six at once, and remove each when its branch is merged. Unlink the `node_modules` junction with `cmd /c rmdir` before you remove a worktree.
 7. **Never** use the Claude API, write em dashes, deploy without the owner asking, apply a migration live, or touch `cache/`, `continent-app/public/` (except generated data a task owns) or `tools/` destructively.
-8. **Done means** a report from `_TEMPLATE.md`, register rows, the HANDBOOK section if behaviour changed, the ROADMAP status set, green checks, and the end check on the screens touched.
+8. **Research before choosing.** A session that picks a tool, library, model, service, data source or method runs a research subagent first (CLAUDE.md step 3) and records the comparison in its report. Sessions likely to need it: S04, S06, S09, S16, S21, S26, S28, S33, S35, S36, S45, S47, S49, S50.
+9. **Done means** a report from `_TEMPLATE.md`, register rows, the HANDBOOK section if behaviour changed, the ROADMAP status set, green checks, and the end check on the screens touched.
 
 ## Prompt template for one session
 

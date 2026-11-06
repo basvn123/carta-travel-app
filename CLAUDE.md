@@ -35,11 +35,12 @@ Tasks are numbered `T001`, `T002`, and so on, and filed under phase folders `P0`
 
 1. Read the prompt completely: the files it names and its done condition.
 2. Grep `Execution/_OPEN.md` for `| next task | open` together with the feature's words (do not read the file whole) and take the rows the prompt covers. For history, grep `Execution/P*/_DIGEST.md` and `Execution/P15/` for the latest task IDs `MAP.md` names, and read only that report.
-3. Make a branch `p{n}-{slug}` (for example `p15-explore-cards`) in this repo; it carries app changes too.
-4. Do the work. Touch only the files the prompt names. A bug or refactor outside that scope becomes a line in "What is still open", not an edit. Schema and data migrations are the one exception, and the prompt marks them.
-5. Check it (see Checks).
-6. Write the report `Execution/P{n}/T{n:03d}-{slug}.md` from `_TEMPLATE.md`, and add one register row per open item. If the task changed how a feature works, update that feature's section in `docs/HANDBOOK.md` in the same commit, and set the item's Status in `ROADMAP.md`.
-7. Commit the report and the register together, then merge or hand the branch back. Never merge before the report exists.
+3. **Research before choosing (owner rule, 2026-11-06).** When the task picks a tool, library, model, service, data source or method, first run a research subagent that compares the current best options for this exact task (web sources, versions, licences, cost, fit with this stack and its rules) and returns a short recommendation with links. If the ROADMAP item has a research row (`C-R1`, `E-R3`), that row is the research. Record the options and the choice under "Research" in the report. Skip it for plain fixes where nothing is chosen.
+4. Make a branch `p{n}-{slug}` (for example `p15-explore-cards`) in this repo; it carries app changes too.
+5. Do the work. Touch only the files the prompt names. A bug or refactor outside that scope becomes a line in "What is still open", not an edit. Schema and data migrations are the one exception, and the prompt marks them.
+6. Check it (see Checks).
+7. Write the report `Execution/P{n}/T{n:03d}-{slug}.md` from `_TEMPLATE.md`, and add one register row per open item. If the task changed how a feature works, update that feature's section in `docs/HANDBOOK.md` in the same commit, and set the item's Status in `ROADMAP.md`.
+8. Commit the report and the register together, then merge or hand the branch back. Never merge before the report exists.
 
 A task with no code changes commits only its report.
 
