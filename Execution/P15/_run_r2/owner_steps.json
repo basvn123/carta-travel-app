@@ -129,5 +129,105 @@
   "how": [
    "On a machine with the pipeline's `GEMINI_API_KEY`: `cd continent-app && CARTA_JUDGE_MODEL=<a model outside plan-day's chain> node scripts/eval/plan-day/judge.mjs --backend gemini`, then `node scripts/eval/run.mjs plan-day --write --dashboard`, commit `judgments/` and the results"
   ]
+ },
+ {
+  "id": "T1140-a",
+  "title": "Deploy the prompt registry",
+  "why": "The Edge Functions and Ask load their prompts from the bundled registry module only once deployed; the prompts are unchanged.",
+  "where": "`supabase/functions/_shared/prompts.js`, `continent-app/functions/_lib/prompts.js`",
+  "how": [
+   "With T1137-a: `supabase functions deploy plan-day`, `supabase functions deploy suggest-city`, `supabase functions deploy parse-booking`, then the Pages build per CLAUDE.md Deploy (preview first)",
+   "On the preview run one plan-day day, one town suggestion, one magic import and one Ask question and check each answers as before"
+  ]
+ },
+ {
+  "id": "T1141-a",
+  "title": "Reranker live check (E-R2)",
+  "why": "Workers AI is not reachable from the cloud container.",
+  "where": "Execution/P15/T1141-retrieval.md",
+  "how": [
+   "For 20 E1 questions per language, take the top 30 passages of the current path, then run `curl -s -o out.json -w '%{time_total}\\n' https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/ai/run/@cf/baai/bge-reranker-base -H \"Authorization: Bearer $CF_API_TOKEN\" -H \"Content-Type: application/json\" -d '{\"query\":\"quiet lake village\",\"contexts\":[{\"text\":\"<passage 1>\"},{\"text\":\"<passage 2>\"}],\"top_k\":10}'` (check the response wrapper on the first call), re-order, score nDCG@10 and recall@5 with `scripts/eval/ask-eval-lib.mjs`",
+   "Time p50 and p95 over 200 calls from a deployed Worker with `env.AI.run`, since curl adds your own link. Go only on +0.03 nDCG@10 for free-text questions, no drop on facet questions, added p95 at most 300 ms"
+  ]
+ },
+ {
+  "id": "T1141-b",
+  "title": "Rebuild and bless the full index",
+  "why": "The index is not in git or the container.",
+  "where": "continent-app/public/search/ask/, continent-app/scripts/eval/ask-baseline.json",
+  "how": [
+   "In the main checkout `python run_pipeline.py ask_index` (it runs `build-ask-bm25.mjs`), confirm the log line for `bm25.json` stays under 400 KB gzip and lists `bm25-beach.json`, `bm25-lake.json`, `bm25-peak.json`, then `cd continent-app && node scripts/eval/ask-eval.mjs --check` (expect sparse, dense and hybrid to run) and `--bless`, and commit `scripts/eval/ask-baseline.json`"
+  ]
+ },
+ {
+  "id": "T1149-a",
+  "title": "Review the taxonomy before labelling",
+  "why": "The labels and the S66 tagger both use this vocabulary, so changes are cheapest now.",
+  "where": "pipeline/taxonomy/carta_taxonomy.yaml",
+  "how": [
+   "Read the node tables at the end of `docs/ai/taxonomy-labelling-guide.md` and the `not_a_concept` blocks in `pipeline/taxonomy/mapping.yaml`",
+   "Add, merge or rename nodes in `pipeline/taxonomy/carta_taxonomy.yaml` (keep ids stable, bump `version`), then `python -I pipeline/taxonomy/taxonomy.py check` and `python -m pytest tests/test_taxonomy.py -q`"
+  ]
+ },
+ {
+  "id": "T1149-b",
+  "title": "Label the 400 items",
+  "why": "P@5 and F1 on 400 labelled items is the F1 done condition.",
+  "where": "continent-app/scripts/eval/taxonomy/gold.csv",
+  "how": [
+   "Open `continent-app/scripts/eval/taxonomy/gold.csv` in a spreadsheet, follow `docs/ai/taxonomy-labelling-guide.md` (every true tag, most specific node, skip the data-rule nodes",
+   "About 40 hours at ten items an hour), save as UTF-8 CSV with the same columns, then `cd continent-app && node scripts/eval/run.mjs taxonomy --write --dashboard` and commit `gold.csv`, `data/reports/evals/` and `docs/reference/evals.md`"
+  ]
+ },
+ {
+  "id": "T1173-f",
+  "title": "Promote lasting live corrections",
+  "why": "Live `content_overrides` rows hold fixes that vanish if the table is reset and are not in git.",
+  "where": "docs/runbooks/content-ops.md section 2",
+  "how": [
+   "In the admin Content tab, list the rows",
+   "For each that should hold for good, draft it in the Overrides tab, merge the pull request, run the pipeline and push the data, then clear the live row"
+  ]
+ },
+ {
+  "id": "T1173-i",
+  "title": "Decide how an admin edit should be written",
+  "why": "ROADMAP I13 asks for an editor that writes, this task drafts only.",
+  "where": "ROADMAP.md I13",
+  "how": [
+   "Choose: a pull request opened from the admin page (needs a GitHub token on an Edge Function), or a staging table the pipeline reads at run time (needs a migration)"
+  ]
+ },
+ {
+  "id": "T1181-a",
+  "title": "Verify and complete the trails reference list",
+  "why": "The 282-trail list was written from search snippets; Wikidata, Wikipedia, the ERA site and national portals were unreachable from the cloud.",
+  "where": "data/reports/validation/trails_reference.json",
+  "how": [
+   "Where those hosts are reachable, check each start against Wikidata P625 and each relation id (P402)",
+   "Complete the Leading Quality Trails (11 of about 24) and Irish trails (16 of about 40)",
+   "Rerun python scripts/validation/trails_external.py and commit the reference and results"
+  ]
+ },
+ {
+  "id": "T1181-e",
+  "title": "Decide on the shape term for long certified trails",
+  "why": "The v5 shape term (0 for one-way) and per-km scenery hold long certified trails below the top band (Lechweg 7.5, Peddars Way 7.0, Thames Path 7.7).",
+  "where": "Execution/P15/T1181-trails-external.md",
+  "how": [
+   "Read the 30 gap reviews in the report",
+   "Choose: keep the rule, or ask a session to lift certified long trails"
+  ]
+ },
+ {
+  "id": "T1181-i",
+  "title": "Resolve the 34 new trail seeds on the box",
+  "why": "The SEEDS_T1181 rows in the famous registry only resolve once the registry and coverage run on the box.",
+  "where": "pipeline/trails/famous_registry.py",
+  "how": [
+   "On the box run python run_pipeline.py trails_registry",
+   "Then python pipeline/trails/coverage_report.py --all",
+   "Rerun python scripts/validation/trails_external.py and commit its results"
+  ]
  }
 ]
