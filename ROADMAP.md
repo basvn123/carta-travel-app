@@ -371,7 +371,7 @@ Plus: runbooks (how to operate), a glossary (every Carta term), and research not
 | B4 | Config reference | `_doc` on every key of `rating.json`, `pricing.json` and quality rules; tables generated | S | P3 | todo |
 | B5 | Data lineage and diagrams | Per field: source, task, file; Mermaid diagrams of the pipeline and the request paths, generated | M | P3 | todo |
 | B6 | Generated reference and docs site | pdoc, TypeDoc, task catalogue, OpenAPI, SQL tables; MkDocs site with search on private Cloudflare Pages | M | P4 | todo |
-| B7 | Keep it true: drift checks and the task loop | Drift check per area, executable examples, link check, docstring floor, `carta-docs` skill and Stop hook, CLAUDE.md step | M | P3 | todo |
+| B7 | Keep it true: drift checks and the task loop | Drift check per area, executable examples, link check, docstring floor, `carta-docs` skill and Stop hook, CLAUDE.md step | M | P3 | in progress (T1134: scripts/docs/drift.py in CI checks logic constants, values and tests, the SCHEMA.md table and entry points; per-area History check, examples, links, docstrings, skill and hook still to do) |
 | B8 | Ask the docs | Search box on the docs site answers from the docs with citations (if B-R4 says go) | M | After | todo |
 
 ### Item details
@@ -590,7 +590,7 @@ docs/
 | ID | Item | Done when | Size | Phase | Status |
 |---|---|---|---|---|---|
 | D1 | One machine-readable contract | A seeded bad value fails both pipeline write and app sync, with the field path | M | P3 | done (T1133: docs/wire.schema.json, read by the pipeline write guard, the sync and CI) |
-| D2 | Quality engine and scorecard | One engine, scorecard and 90-day trend per run, admin Data health panel | M | P3 | todo |
+| D2 | Quality engine and scorecard | One engine, scorecard and 90-day trend per run, admin Data health panel | M | P3 | in progress (T1134: scripts/quality/scorecard.py, per layer completeness, validity, freshness, accuracy; first card in data/reports/quality/; rules.yaml, run hook, trend panel still to do) |
 | D3 | Provenance and freshness per field | Every key block carries `_src` and `_asof`; sources registry generated | M | P4 | todo |
 | D4 | Truth set | 150 items verified by hand, scored per release | M | P3 | todo |
 | D5 | Scraper and source health | Yield, drift and staleness alerts reach admin and email | S | P1 | in progress (T1074: box steps T1074-c) |

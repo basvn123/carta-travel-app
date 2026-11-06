@@ -1,0 +1,4 @@
+{
+ "_about": "Known doc drift (T1134). scripts/docs/drift.py fails on drift not listed here and on entries that no longer drift. Fix the doc or code, then run `python -I scripts/docs/drift.py --update-baseline`. This list only shrinks.",
+ "known": []
+}

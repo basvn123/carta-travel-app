@@ -97,6 +97,10 @@ jobs:
       - name: Pull the small LFS files the rating tests read (about 4 MB)
         run: git lfs pull --include="cache/unesco_whc.json,cache/urban_fabric.json,cache/dest_pageviews.json,app_data/curated_appeal.json,app_data/curated_why_i18n.json,app_data/rubric_appeal.json"
       - run: pip install -r requirements.txt pytest ruff==0.14.3
+      # node for the docs drift check's wire-table half (and its pytest).
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
       - name: Ruff (syntax errors and undefined names)
         run: ruff check --select E9,F63,F7,F82 --output-format github pipeline src scripts run_pipeline.py tests
       - name: Pytest (quarantined tests deselected)
@@ -105,3 +109,8 @@ jobs:
           python -m pytest tests -q -rs $args
       - name: Entry points in CLAUDE.md and MAP.md exist
         run: python -I scripts/docs/check_entry_points.py
+      # B7 (T1134): the docs still say what the code does. Constants and tests
+      # named in docs/logic/, SCHEMA.md against docs/wire.schema.json, and the
+      # entry points again. Known drift is in scripts/docs/drift_baseline.json.
+      - name: Docs drift (logic catalogue, wire table, entry points)
+        run: python -I scripts/docs/drift.py

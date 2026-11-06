@@ -1,0 +1,355 @@
+{
+ "version": 1,
+ "generated_at": "2026-11-06T12:00:00Z",
+ "public": "continent-app/public",
+ "layers": [
+  {
+   "layer": "core",
+   "wire": "app_data",
+   "records": 3855,
+   "completeness": 0.8841,
+   "validity": 1.0,
+   "validity_source": "docs/wire.schema.json",
+   "freshness": 0.2304,
+   "age_days": 151.9,
+   "accuracy": null,
+   "fields": {
+    "tier": 1.0,
+    "city": 1.0,
+    "country": 1.0,
+    "iso2": 1.0,
+    "lat": 1.0,
+    "lon": 1.0,
+    "categories": 1.0,
+    "tags": 0.0213,
+    "blurb": 0.9359
+   },
+   "wire_contract_problems": 0,
+   "score": 0.7048
+  },
+  {
+   "layer": "flights",
+   "wire": "app_data",
+   "records": 3855,
+   "completeness": 0.4986,
+   "validity": 1.0,
+   "validity_source": "docs/wire.schema.json",
+   "freshness": 0.2304,
+   "age_days": 151.9,
+   "accuracy": null,
+   "fields": {
+    "anchor_airport": 0.9645,
+    "transfer": 0.0327
+   },
+   "score": 0.5763
+  },
+  {
+   "layer": "prices",
+   "wire": "app_data",
+   "records": 3855,
+   "completeness": 0.9555,
+   "validity": 1.0,
+   "validity_source": "docs/wire.schema.json",
+   "freshness": 0.2304,
+   "age_days": 151.9,
+   "accuracy": null,
+   "fields": {
+    "costs": 1.0,
+    "accommodation": 0.8664,
+    "local_transport": 1.0
+   },
+   "score": 0.7286
+  },
+  {
+   "layer": "rating",
+   "wire": "app_data",
+   "records": 3855,
+   "completeness": 1.0,
+   "validity": 1.0,
+   "validity_source": "docs/wire.schema.json",
+   "freshness": 0.2304,
+   "age_days": 151.9,
+   "accuracy": 0.9849,
+   "fields": {
+    "rating": 1.0,
+    "taste": 1.0,
+    "beauty": 1.0,
+    "country_rank": 1.0,
+    "country_percentile": 1.0,
+    "class_percentile": 1.0
+   },
+   "accuracy_source": {
+    "eval_set": "tests/golden_ratings.json",
+    "pairs": 200,
+    "pairs_scored": 199,
+    "pairs_right": 196
+   },
+   "score": 0.8038
+  },
+  {
+   "layer": "climate",
+   "wire": "app_data",
+   "records": 3855,
+   "completeness": 0.6938,
+   "validity": 1.0,
+   "validity_source": "docs/wire.schema.json",
+   "freshness": 0.2304,
+   "age_days": 151.9,
+   "accuracy": null,
+   "fields": {
+    "climate": 1.0,
+    "bathing_water": 0.2309,
+    "crowding": 0.8506
+   },
+   "score": 0.6414
+  },
+  {
+   "layer": "place",
+   "wire": "app_data",
+   "records": 3855,
+   "completeness": 0.5189,
+   "validity": 1.0,
+   "validity_source": "docs/wire.schema.json",
+   "freshness": 0.2304,
+   "age_days": 151.9,
+   "accuracy": null,
+   "fields": {
+    "place": 1.0,
+    "geonames": 0.978,
+    "wikidata": 0.0112,
+    "designations": 0.4786,
+    "nature": 0.38,
+    "guide": 0.2656
+   },
+   "score": 0.5831
+  },
+  {
+   "layer": "imagery",
+   "wire": "app_data",
+   "records": 3855,
+   "completeness": 0.9965,
+   "validity": 1.0,
+   "validity_source": "docs/wire.schema.json",
+   "freshness": 0.2304,
+   "age_days": 151.9,
+   "accuracy": null,
+   "fields": {
+    "image": 0.993,
+    "activities": 1.0
+   },
+   "score": 0.7423
+  },
+  {
+   "layer": "trails",
+   "wire": "trails",
+   "records": 17958,
+   "completeness": 0.7986,
+   "validity": 0.9937,
+   "validity_source": "basic checks (id, name, coordinates in Europe, score 0-10); no contract yet (T1133-d)",
+   "freshness": 0.6518,
+   "age_days": 53.7,
+   "accuracy": null,
+   "fields": {
+    "name": 0.9937,
+    "summary": 0.0286,
+    "distance_m": 1.0,
+    "ascent_m": 0.988,
+    "duration_min": 1.0,
+    "difficulty": 0.9719,
+    "rating": 0.988,
+    "img": 0.2168,
+    "rg": 1.0
+   },
+   "score": 0.8147
+  },
+  {
+   "layer": "beaches",
+   "wire": "beaches",
+   "records": 2984,
+   "completeness": 0.9051,
+   "validity": 1.0,
+   "validity_source": "basic checks (id, name, coordinates in Europe, score 0-10); no contract yet (T1133-d)",
+   "freshness": 1.0,
+   "age_days": 9.1,
+   "accuracy": null,
+   "fields": {
+    "name": 1.0,
+    "lat": 1.0,
+    "lon": 1.0,
+    "score": 1.0,
+    "tier": 1.0,
+    "why": 1.0,
+    "images": 1.0,
+    "region": 0.9021,
+    "wiki": 0.2436
+   },
+   "score": 0.9684
+  },
+  {
+   "layer": "lakes",
+   "wire": "lakes",
+   "records": 1815,
+   "completeness": 0.9679,
+   "validity": 1.0,
+   "validity_source": "basic checks (id, name, coordinates in Europe, score 0-10); no contract yet (T1133-d)",
+   "freshness": 1.0,
+   "age_days": 9.1,
+   "accuracy": null,
+   "fields": {
+    "name": 1.0,
+    "lat": 1.0,
+    "lon": 1.0,
+    "score": 1.0,
+    "tier": 1.0,
+    "why": 1.0,
+    "images": 1.0,
+    "region": 0.9273,
+    "wiki": 0.784
+   },
+   "score": 0.9893
+  },
+  {
+   "layer": "mountains",
+   "wire": "mountains",
+   "records": 932,
+   "completeness": 0.9998,
+   "validity": 1.0,
+   "validity_source": "basic checks (id, name, coordinates in Europe, score 0-10); no contract yet (T1133-d)",
+   "freshness": 1.0,
+   "age_days": 9.1,
+   "accuracy": null,
+   "fields": {
+    "name": 1.0,
+    "lat": 1.0,
+    "lon": 1.0,
+    "score": 1.0,
+    "tier": 1.0,
+    "why": 1.0,
+    "images": 1.0,
+    "ele": 1.0,
+    "wd": 0.9979
+   },
+   "score": 0.9999
+  },
+  {
+   "layer": "cycling",
+   "wire": "cycling",
+   "records": 713,
+   "completeness": 0.9904,
+   "validity": 0.9243,
+   "validity_source": "basic checks (id, name, coordinates in Europe, score 0-10); no contract yet (T1133-d)",
+   "freshness": 1.0,
+   "age_days": 13.8,
+   "accuracy": null,
+   "fields": {
+    "name": 0.9243,
+    "km": 1.0,
+    "score": 1.0,
+    "why": 1.0,
+    "img": 1.0,
+    "paved": 0.9986,
+    "safe": 1.0,
+    "rg": 1.0
+   },
+   "score": 0.9716
+  }
+ ],
+ "freshness": {
+  "app_data": {
+   "built_at": "2026-06-07T13:21:17.357184+00:00",
+   "age_days": 151.9,
+   "cadence_days": 35,
+   "status": "ok"
+  },
+  "destinfo": {
+   "built_at": "2026-08-26T15:33:08Z",
+   "age_days": 71.9,
+   "cadence_days": 35,
+   "status": "ok"
+  },
+  "trips": {
+   "built_at": "2026-09-15T08:33:11Z",
+   "age_days": 52.1,
+   "cadence_days": 35,
+   "status": "ok"
+  },
+  "journeys": {
+   "built_at": "2026-11-05T16:39:59Z",
+   "age_days": 0.8,
+   "cadence_days": 35,
+   "status": "ok"
+  },
+  "region": {
+   "built_at": "2026-09-16T17:05:38Z",
+   "age_days": 50.8,
+   "cadence_days": 35,
+   "status": "ok"
+  },
+  "trails": {
+   "built_at": "2026-09-13T19:17:15+00:00",
+   "age_days": 53.7,
+   "cadence_days": 35,
+   "status": "ok"
+  },
+  "beaches": {
+   "built_at": "2026-10-28T09:21:48+00:00",
+   "age_days": 9.1,
+   "cadence_days": 45,
+   "status": "ok"
+  },
+  "lakes": {
+   "built_at": "2026-10-28T09:22:57+00:00",
+   "age_days": 9.1,
+   "cadence_days": 45,
+   "status": "ok"
+  },
+  "mountains": {
+   "built_at": "2026-10-28T09:24:50+00:00",
+   "age_days": 9.1,
+   "cadence_days": 45,
+   "status": "ok"
+  },
+  "cycling": {
+   "built_at": "2026-10-23T17:45:33+00:00",
+   "age_days": 13.8,
+   "cadence_days": 45,
+   "status": "ok"
+  },
+  "dossier": {
+   "built_at": "2026-10-30T21:37:12Z",
+   "age_days": 6.6,
+   "cadence_days": 45,
+   "status": "ok"
+  },
+  "guided": {
+   "built_at": "2026-10-13T19:30:33Z",
+   "age_days": 23.7,
+   "cadence_days": 45,
+   "status": "ok"
+  },
+  "coverage": {
+   "built_at": "2026-09-04T00:08:22Z",
+   "age_days": 63.5,
+   "cadence_days": 35,
+   "status": "ok"
+  },
+  "joins": {
+   "built_at": "2026-09-13T10:27:03+00:00",
+   "age_days": 54.1,
+   "cadence_days": 35,
+   "status": "ok"
+  },
+  "reach": {
+   "built_at": "2026-08-06T09:42:12Z",
+   "age_days": 92.1,
+   "cadence_days": 90,
+   "status": "ok"
+  },
+  "ask": {
+   "built_at": null,
+   "age_days": null,
+   "cadence_days": 45,
+   "status": "missing_file"
+  }
+ }
+}
