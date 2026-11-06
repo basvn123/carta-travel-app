@@ -1,0 +1,44 @@
+{
+ "Annecy": {
+  "extract": "Annecy is a city in the French Alps, in the Haute-Savoie department, on the shore of Lake Annecy. The old town is crossed by canals and is often called the Venice of the Alps. It is a popular base for swimming, cycling and hiking in summer and for skiing in winter. The city is small enough to explore on foot, with pastel houses along the Thiou river and a castle above the old quarter.",
+  "coords": [
+   45.9,
+   6.1167
+  ],
+  "revid": 1111,
+  "disambiguation": false
+ },
+ "Mercy": {
+  "extract": "Mercy may refer to several places.",
+  "coords": null,
+  "revid": 2,
+  "disambiguation": true
+ },
+ "Nice": {
+  "extract": "Nice is a city on the French Riviera with a long seafront promenade and a busy old town full of markets and restaurants to explore on foot.",
+  "coords": [
+   43.7,
+   7.25
+  ],
+  "revid": 3,
+  "disambiguation": false
+ },
+ "Brive": {
+  "extract": "Brive est une ville du Limousin, connue pour son marche et sa gastronomie, avec un centre historique et des rives agreables pour la promenade.",
+  "coords": [
+   45.16,
+   1.53
+  ],
+  "revid": 4,
+  "disambiguation": false
+ },
+ "Tiny": {
+  "extract": "Tiny is a village.",
+  "coords": [
+   44.0,
+   5.0
+  ],
+  "revid": 5,
+  "disambiguation": false
+ }
+}

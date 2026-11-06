@@ -647,7 +647,8 @@ def compose_short(dest, extract, facts, llm_intros=None):
     return " ".join(x for x in sents if x), "composed"
 
 
-def compose_intro(dest, wv, city_intros=None, facts=None, llm_intros=None):
+def compose_intro(dest, wv, city_intros=None, facts=None, llm_intros=None,
+                  place_intros=None):
     """What this PLACE is, never what its airport is.
 
     A gateway record carries the airport's article, so CDG opened with the
@@ -672,6 +673,15 @@ def compose_intro(dest, wv, city_intros=None, facts=None, llm_intros=None):
                 "title": rec.get("title"), "url": rec.get("url"),
                 "licence": "CC BY-SA 4.0",
             })
+    # T1095 (D9): a grounded, checked Wikivoyage + Wikipedia intro from
+    # harvest_place_intros.py replaces the body when it is longer. It is whole
+    # source sentences, so it is not trimmed to 700 characters.
+    pi = (place_intros or {}).get(dest["id"])
+    if (isinstance(pi, dict) and pi.get("status") == "ok" and pi.get("body")
+            and pi.get("grounding")
+            and len(pi["body"].split()) > len(body.split())):
+        body = pi["body"]
+        grounding = [dict(g) for g in pi["grounding"]]
     if not lead or (TEMPLATE_BLURB_RE.search(lead) and body):
         lead = ""
     intro = {}
@@ -1487,6 +1497,7 @@ def load_context():
     wv = load_json(os.path.join(CACHE, "wikivoyage.json"), {})
     city_intros = load_json(os.path.join(DCACHE, "city_intros.json"), {}) or {}
     llm_intros = load_json(os.path.join(DCACHE, "intros_llm.json"), {}) or {}
+    place_intros = load_json(os.path.join(DCACHE, "place_intros.json"), {}) or {}
     landmarks = load_json(os.path.join(DCACHE, "landmarks.json"), {}) or {}
     listings = load_json(os.path.join(CACHE, "wikivoyage_listings.json"), {})
     poi_wd = load_json(os.path.join(CACHE, "poi_wikidata.json"), {})
@@ -1523,7 +1534,7 @@ def load_context():
 
     return {
         "dests": dests, "acts": acts, "wv": wv, "city_intros": city_intros,
-        "llm_intros": llm_intros,
+        "llm_intros": llm_intros, "place_intros": place_intros,
         "landmarks": landmarks, "listings": listings,
         "poi_wd": poi_wd, "parking": parking, "gonext": gonext,
         "destinfo": destinfo, "trips_by_cc": trips_by_cc,
@@ -1617,7 +1628,7 @@ def build_one(dest, ctx, refusal_log):
                       for g in dest.get("designations") or []),
     }
     intro = compose_intro(dest, ctx["wv"], ctx["city_intros"], intro_facts,
-                          ctx.get("llm_intros"))
+                          ctx.get("llm_intros"), ctx.get("place_intros"))
     events = (ctx["destinfo"].get(dest.get("iso2"), {}).get(did) or {}).get(
         "events") or []
     research = load_json(os.path.join(
