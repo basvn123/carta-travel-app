@@ -1,0 +1,48 @@
+{
+ "rev": "55a09c9c01",
+ "note": "Inputs and exact outputs of the pipeline prompt code at commit rev, before the prompt registry (T1140). Written by scripts/prompts/capture_golden.py; read by tests/test_prompt_registry.py.",
+ "intros.system": "You write the opening paragraph of a destination page for Carta, a\nEuropean travel guide. You are a rewriter, not a researcher: use ONLY the\nfacts you are given for each place. Never add a fact, a date, a number or a\nname that is not in the FACTS block. The CONTEXT text is background to help\nyou phrase things; do not quote or closely paraphrase it.\n\nFor each place return two or three short sentences, 260 characters at most in\ntotal, plain English, present tense, third person. First sentence: what the\nplace is (kind of place, where, what it is known for). Then the one or two\nthings a visitor most needs: the sights that lead, how long to plan, when to\ncome. Specific beats general. No exclamation marks, no marketing adjectives,\nno second person, no em dashes, no bullet points, no headings.\n\nReturn JSON only: {\"intros\": [{\"id\": \"...\", \"text\": \"...\"}, ...]}, one entry\nper place, in the order given.",
+ "intros.user": [
+  {
+   "input": "items",
+   "output": "### id: LIS\nFACTS:\nname: Lisbon\ncountry: Portugal\nkind: city\ncategories: culture, food\ndesignations: Belem Tower, unesco\ntop sights, best first: Belem Tower, Alfama\nhours of sights: 15\nbest months: April, May, September, October\nrating: 8.6 of 10, Excellent\npopulation: 545000\nnearest nature: Sintra-Cascais, 18 km\nbeaches close by: Carcavelos, Costa\npublic transport: Metro red line\nCONTEXT (do not copy): Lisbon is the capital of Portugal. Lisbon is the capital of Portugal. Lisbon is the capital of Portugal. Lisbon is the capital of Portugal. Lisbon is the capital of Portugal. Lisbon is the capital of Portugal. Lisbon is the capital of Portugal. Lisbon is the capital of Portugal. Lisbon is the capital of Portugal. Lisbon is the capital of Portugal. Lisbon is the capital of Portugal. Lisbon is the capital of Portugal. Lisbon is the capital of Portugal. Lisbon is the capital of Portugal. Lisbon is the capital of Portugal. Lisbon is the capital of Portugal. Lisbon is the capital of Portugal. Lisbon is the capital of Portugal. Lisbon is the capital of Portugal. Lisbon is the capital of Portugal. Lisbon is the capital of Portugal. Lisbon is the capital of Portugal. Lisbon is the capital of Portugal. Lisbon is the capital of Portugal. Lisbon is the capital of Portugal. Lisbon is the capital of \n\n### id: BLED\nFACTS:\nname: Bled\ncountry: None\nkind: None\ncategories: \nCONTEXT (do not copy): (none)\n"
+  },
+  {
+   "input": "items[1:]",
+   "output": "### id: BLED\nFACTS:\nname: Bled\ncountry: None\nkind: None\ncategories: \nCONTEXT (do not copy): (none)\n"
+  }
+ ],
+ "parking.system": "You verify parking facts for a European travel guide. Use web search\nto find what the city or the car park operator itself publishes about parking\nnear the centre of the place given. Prefer municipal sites, operator sites\nand the official tourist office; ignore forums and aggregators.\n\nAnswer with JSON only, no prose around it:\n{\n  \"official_url\": \"https://... or null\",\n  \"restricted\": true or false,\n  \"restricted_note\": \"one short sentence, or null\",\n  \"car_parks\": [{\"name\": \"...\", \"note\": \"fee or hours or status, short, or null\"}],\n  \"park_ride_names\": [\"...\"],\n  \"advice\": \"one sentence a driver needs, or null\",\n  \"confidence\": \"high\" | \"medium\" | \"low\"\n}\nRules: at most six car parks, named as the source names them. Only include a\nfact you found in a source. If you found nothing reliable, return the JSON\nwith nulls and empty lists and confidence \"low\". No em dashes.",
+ "parking.user": [
+  {
+   "input": "LIS",
+   "output": "Place: Lisbon, Portugal. Coordinates 38.7223, -9.1393. Find official parking information for visitors arriving by car."
+  },
+  {
+   "input": "BLED",
+   "output": "Place: Bled, Slovenia. Coordinates 46.3683, 14.1146. Find official parking information for visitors arriving by car."
+  }
+ ],
+ "lexicon": [
+  {
+   "input": [
+    "Dutch",
+    "beach"
+   ],
+   "output": "You list words travellers type. Language: Dutch. Topic: beach.\nGive 15 short everyday words or 2 to 3 word phrases a traveller would type in a travel search box meaning 'beach', in Dutch only, lower case, no explanations. Reply as a JSON array of strings."
+  },
+  {
+   "input": [
+    "Polish",
+    "old town"
+   ],
+   "output": "You list words travellers type. Language: Polish. Topic: old town.\nGive 15 short everyday words or 2 to 3 word phrases a traveller would type in a travel search box meaning 'old town', in Polish only, lower case, no explanations. Reply as a JSON array of strings."
+  }
+ ],
+ "trips.retry": "THE USER PROMPT\n\nYour previous answer failed these checks. Answer again, fixing every one:\n- days[2].places: too few\n- summary: too long\n",
+ "trips.retry.backfill": "THE USER PROMPT\n\nYour previous answer failed these checks. Answer again, fixing every one:\n- days[2].places: too few\n- summary: too long\n",
+ "trips.previous": [
+  "This trip already has older notes, written as plain sentences. Keep what is true and specific to this trip, put it into the fields, and drop any price or distance. Do not copy the wording.\n\n{\n \"packingNotes\": [\n  \"Bring sun cream\"\n ],\n \"whatCouldGoWrong\": [\n  \"Ferries strike in August\"\n ]\n}",
+  ""
+ ]
+}

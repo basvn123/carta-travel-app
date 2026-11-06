@@ -47,6 +47,8 @@ import {
   modelAccess, callModel, chainKey, supportsSearch, parseModelJson, refusalBody,
 } from '../_shared/aiModels.mjs';
 import { sanitizeTownCandidates, sanitizeSuggestions, cacheKeyInput } from './logic.mjs';
+// The prompt and the response schema, from the prompt registry (T1140, E5).
+import { LANG_NAMES, RESPONSE_SCHEMA, buildPrompt } from './prompt.mjs';
 import { consume, logCapRejection, refund, resolveTier } from '../_shared/passes.mjs';
 
 import { withCors, readJson, bodyProblem } from '../_shared/http.mjs';
@@ -65,75 +67,8 @@ const json = (status: number, body: unknown) => new Response(
   { status, headers: { ...CORS, 'Content-Type': 'application/json' } },
 );
 
-const LANG_NAMES: Record<string, string> = {
-  en: 'English', nl: 'Dutch', fr: 'French', de: 'German', es: 'Spanish', it: 'Italian',
-};
-
 const FOCUS_VALUES = ['city', 'nature', 'mix'];
 const INTEREST_VALUES = ['landmarks', 'museums', 'food', 'nature', 'beach', 'active', 'photo', 'local'];
-
-// Gemini's API rejects combining the google_search tool with
-// responseSchema/responseMimeType in one call (grounding and controlled
-// generation are mutually exclusive server-side, as of this writing). Since
-// grounding is the entire point of this endpoint and stays on by default,
-// the schema below is only actually SENT when grounding is off; when
-// grounding is on, the same shape is spelled out in the prompt instead and
-// the reply is parsed defensively (aiModels.parseModelJson, loose).
-const RESPONSE_SCHEMA = {
-  type: 'OBJECT',
-  properties: {
-    suggestions: {
-      type: 'ARRAY',
-      items: {
-        type: 'OBJECT',
-        properties: {
-          id: { type: 'STRING', description: 'Candidate id, required when inCatalog is true.' },
-          name: { type: 'STRING' },
-          country: { type: 'STRING' },
-          why: { type: 'STRING', description: 'One short, concrete sentence: why this place fits the ask.' },
-          inCatalog: { type: 'BOOLEAN' },
-          lat: { type: 'NUMBER', description: 'Only for inCatalog=false discoveries.' },
-          lon: { type: 'NUMBER', description: 'Only for inCatalog=false discoveries.' },
-        },
-        required: ['name', 'why', 'inCatalog'],
-      },
-    },
-  },
-  required: ['suggestions'],
-};
-
-function buildPrompt(p: {
-  stayLabel: string; focus: string | null; interests: string[]; freeText: string; lang: string;
-  candidates: ReturnType<typeof sanitizeTownCandidates>; groundedFormat: boolean;
-}) {
-  const langName = LANG_NAMES[p.lang] || 'English';
-  const lines = [
-    `You are Carta's destination scout: given what a traveller wants, suggest up to 5 great towns or cities for a day trip from ${p.stayLabel}.`,
-    '',
-    'CANDIDATES (JSON, real destinations Carta already has day-planning data for; id, name, country, distance in km from the stay, traveller rating 0-10 when known, descriptive tags):',
-    JSON.stringify(p.candidates),
-    '',
-    'RULES:',
-    '- Prefer a candidate from the list above (id present, inCatalog=true) whenever one genuinely fits: Carta already has rich day-planning data for it.',
-    '- If the traveller is clearly asking for something none of the candidates cover, you may suggest a REAL place beyond the list with inCatalog=false, its own name, country and approximate coordinates. Never invent a candidate id for a place that is not actually one of the candidates.',
-    '- Return 3 to 5 suggestions, best fit first. Do not pad with weak fits just to reach 5.',
-    p.focus === 'nature' ? '- They lean toward nature: parks, water, viewpoints, green space over indoor city sights.' : '',
-    p.focus === 'city' ? '- They lean toward the built city: streets, squares, architecture, museums.' : '',
-    p.interests.length ? `- What they care about most: ${p.interests.join(', ')}.` : '',
-    p.freeText
-      ? `- Their own wish, treat as the main brief: "${p.freeText}".`
-      : '- No specific wish given beyond the mood above: pick well-rounded, strong fits.',
-    `- Write "why" and "country" in ${langName}. Keep "why" to one short, concrete sentence.`,
-    '- Never use em dashes or en dashes in any text.',
-    p.groundedFormat ? [
-      '',
-      'OUTPUT FORMAT: reply with ONLY a single JSON object, no markdown code fences, no commentary before or after it, exactly this shape:',
-      '{"suggestions":[{"id":"candidate id string, ONLY when inCatalog is true","name":"string","country":"string","why":"one short sentence","inCatalog":true,"lat":0,"lon":0}]}',
-      '("lat"/"lon" only when inCatalog is false; omit "id" when inCatalog is false.)',
-    ].join('\n') : '',
-  ];
-  return lines.filter(Boolean).join('\n');
-}
 
 async function sha256Hex(s: string): Promise<string> {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));

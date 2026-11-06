@@ -59,35 +59,20 @@ from common import (  # noqa: E402
 )
 from env_local import load_env  # noqa: E402
 from ai_gateway import AIRefusal, Gateway  # noqa: E402
+from prompt_registry import prompt  # noqa: E402
 
 OUT = os.path.join(DCACHE, "parking_web.json")
 
-SYSTEM = """You verify parking facts for a European travel guide. Use web search
-to find what the city or the car park operator itself publishes about parking
-near the centre of the place given. Prefer municipal sites, operator sites
-and the official tourist office; ignore forums and aggregators.
-
-Answer with JSON only, no prose around it:
-{
-  "official_url": "https://... or null",
-  "restricted": true or false,
-  "restricted_note": "one short sentence, or null",
-  "car_parks": [{"name": "...", "note": "fee or hours or status, short, or null"}],
-  "park_ride_names": ["..."],
-  "advice": "one sentence a driver needs, or null",
-  "confidence": "high" | "medium" | "low"
-}
-Rules: at most six car parks, named as the source names them. Only include a
-fact you found in a source. If you found nothing reliable, return the JSON
-with nulls and empty lists and confidence "low". No em dashes."""
+# The prompt text is the registry's "parking" prompt (prompts/parking, T1140).
+PROMPT = prompt("parking")
+SYSTEM = PROMPT.text("system")
 
 
 def prompt_for(dest):
     city = re.sub(r"\s*\([^)]*\)\s*$", "", dest.get("city") or "")
-    return (f"Place: {city}, {dest.get('country')}. Coordinates "
-            f"{dest.get('city_lat', dest.get('lat')):.4f}, "
-            f"{dest.get('city_lon', dest.get('lon')):.4f}. "
-            f"Find official parking information for visitors arriving by car.")
+    return PROMPT.text("user", city=city, country=dest.get("country"),
+                       lat=f"{dest.get('city_lat', dest.get('lat')):.4f}",
+                       lon=f"{dest.get('city_lon', dest.get('lon')):.4f}")
 
 
 class Client:

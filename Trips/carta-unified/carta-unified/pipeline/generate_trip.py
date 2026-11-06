@@ -742,6 +742,24 @@ def apply_critique(fields, rows, critique, chunks):
 
 # ── clients ──────────────────────────────────────────────────────────────────
 
+def _prompt_registry():
+    """pipeline/prompt_registry.py from the repository root (T1140, ROADMAP E5): the
+    registry's trips-shared prompt. The golden-set check's sparse checkout carries
+    it with prompts/registry.json and prompts/trips-shared/."""
+    repo = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", ".."))
+    pr_dir = os.path.join(repo, "pipeline")
+    if pr_dir not in sys.path:
+        sys.path.insert(0, pr_dir)
+    import prompt_registry  # noqa: E402
+    return prompt_registry
+
+
+def retry_prompt(user, errs):
+    """The one retry: the first prompt, the registry's retry line, then the failed checks."""
+    head = _prompt_registry().prompt("trips-shared").text("retry")
+    return user + head + "\n".join(f"- {e}" for e in errs[:30]) + "\n"
+
+
 def _gateway():
     """pipeline/ai_gateway.py from the repository root, imported when a live client is made.
 
@@ -979,8 +997,7 @@ def run_pass(n, user, *, client, key, out_dir, ledger, trip_label, reuse=True,
             G._write_atomic(cpath, json.dumps({"pass": n, "promptVersion": meta["version"], "promptSha1": digest,
                                         "attempt": attempt, "response": body}, ensure_ascii=False, indent=1) + "\n")
             return frag, body
-        prompt = (user + "\n\nYour previous answer failed these checks. Answer again, fixing every one:\n"
-                  + "\n".join(f"- {e}" for e in errs[:30]) + "\n")
+        prompt = retry_prompt(user, errs)
     raise PassFailed(n, errs, raw_text)
 
 

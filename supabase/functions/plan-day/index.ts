@@ -56,13 +56,15 @@ import { withCors, readJson, bodyProblem } from '../_shared/http.mjs';
 // fenced as data, the security rules ride in systemInstruction, and every
 // answer (fresh or cached) passes the shape and text check before it is sent.
 import {
-  LIMITS, guardPlanInput, guardPlanOutput, guardPlanPayload, dataBlock, makeNonce, systemRules,
+  LIMITS, guardPlanInput, guardPlanOutput, guardPlanPayload, makeNonce, systemRules,
 } from '../_shared/aiGuard.mjs';
 // Model access (T1137, E3): the provider, the chain, the time budget, retries
 // and the refusal shape. A provider or model switch is an AI_PLAN_DAY_* value.
 import {
   modelAccess, callModel, chainKey, supportsSearch, parseModelJson, refusalBody,
 } from '../_shared/aiModels.mjs';
+// The prompt and the response schema, from the prompt registry (T1140, E5).
+import { LANG_NAMES, RESPONSE_SCHEMA, buildPrompt } from './prompt.mjs';
 
 // The largest body this function reads (T1079): refused with 413 beyond it.
 const MAX_BODY = 400000;
@@ -78,151 +80,10 @@ const json = (status: number, body: unknown) => new Response(
   { status, headers: { ...CORS, 'Content-Type': 'application/json' } },
 );
 
-const LANG_NAMES: Record<string, string> = {
-  en: 'English', nl: 'Dutch', fr: 'French', de: 'German', es: 'Spanish', it: 'Italian',
-};
-
-// Gemini structured output: the schema makes malformed JSON impossible and
-// hallucinated keys unrepresentable. inCatalog=true stops carry an id from
-// the candidate list; discoveries carry their own coordinates instead.
-const RESPONSE_SCHEMA = {
-  type: 'OBJECT',
-  properties: {
-    summary: { type: 'STRING', description: 'One or two sentences on how the day flows and why it fits the group.' },
-    stops: {
-      type: 'ARRAY',
-      items: {
-        type: 'OBJECT',
-        properties: {
-          id: { type: 'STRING', description: 'Candidate id, required when inCatalog is true.' },
-          name: { type: 'STRING' },
-          arrive: { type: 'STRING', description: '24h HH:MM arrival estimate.' },
-          dwellMin: { type: 'INTEGER' },
-          why: { type: 'STRING', description: 'One short sentence: why this stop, in this slot.' },
-          inCatalog: { type: 'BOOLEAN' },
-          isEvent: { type: 'BOOLEAN', description: 'True for a festival, market or dated event rather than a permanent place.' },
-          lat: { type: 'NUMBER', description: 'Only for inCatalog=false discoveries.' },
-          lon: { type: 'NUMBER', description: 'Only for inCatalog=false discoveries.' },
-        },
-        required: ['name', 'arrive', 'dwellMin', 'why', 'inCatalog'],
-      },
-    },
-  },
-  required: ['summary', 'stops'],
-};
-
 /** "08:00" to minutes past midnight, or null when there was no answer. */
 function startMinFrom(hhmm: unknown): number | null {
   const m = /^([01]\d|2[0-3]):([0-5]\d)$/.exec(String(hhmm ?? ''));
   return m ? Number(m[1]) * 60 + Number(m[2]) : null;
-}
-
-const PACE_STOPS: Record<string, string> = {
-  relaxed: '3 or 4 stops with generous time at each',
-  balanced: '5 or 6 stops at a comfortable rhythm',
-  packed: '7 or 8 stops, quick visits, see a lot',
-};
-
-function buildPrompt(p: {
-  city: string; country: string; dateISO: string; month: number; groupSize: number;
-  pace: string; vibe: string; avoidHills: boolean; freeText: string; lang: string;
-  hasStay: boolean; candidates: ReturnType<typeof sanitizeCandidates>;
-  wantEvents: boolean; refine: string; prevStops: string[];
-  profile: Record<string, unknown> | null;
-  mustInclude: { name: string; id: string | null; lat: number | null; lon: number | null; timeOfDay: string | null }[];
-  days: number; nonce: string;
-}) {
-  const langName = LANG_NAMES[p.lang] || 'English';
-  const summer = p.month >= 6 && p.month <= 8;
-  const lines = [
-    `You are Carta's day planner: you turn a vetted candidate list into one great, physically realistic walking day in ${p.city}, ${p.country} on ${p.dateISO}.`,
-    '',
-    `CANDIDATES (JSON, all researched and real; id, name, kind, category, traveller rating 0-10, mustSee, typical visit minutes, coordinates):`,
-    dataBlock('CANDIDATES', JSON.stringify(p.candidates.map((c) => ({
-      id: c.id, name: c.name, kind: c.kind, cat: c.cat, rating: c.rating,
-      mustSee: c.mustSee, dwellMin: c.dwellMin, lat: c.lat, lon: c.lon,
-      ...(c.desc ? { desc: c.desc } : {}),
-    }))), p.nonce),
-    '',
-    'RULES:',
-    p.days > 1
-      // T433: several days. The app cuts them by neighbourhood and orders and
-      // times each one on routed footpaths, so the model only chooses.
-      ? `- Choose the places for ${p.days} days, ${PACE_STOPS[p.pace] || PACE_STOPS.balanced} EACH day, so about ${p.days * (p.pace === 'relaxed' ? 4 : p.pace === 'packed' ? 7 : 5)} stops in all. List them strongest first; Carta splits them into days by neighbourhood and orders each day itself, so do not worry about the order or the arrival times beyond a rough guess.`
-      : `- Build ${PACE_STOPS[p.pace] || PACE_STOPS.balanced}. Start at ${(p.profile?.startTime as string) || '09:30'}, be finished by 18:00.`,
-    // The named stops are exempt, or two rules would contradict each other:
-    // a traveller who named three places we do not hold would otherwise be
-    // asking for a day the 80 percent rule forbids.
-    // T433: catalogue places only. A place Carta has not checked has no
-    // position it can route to safely, so the app never puts one on a walk.
-    '- EVERY stop MUST come from the candidate list, referenced by its exact id with inCatalog=true. Never invent an id, and never add a place that is not in the list.',
-    '- Sequence to minimise backtracking: neighbouring stops belong next to each other. Alternate heavy visits (museums, castles) with light ones (squares, views).',
-    `- Group of ${p.groupSize}. ${p.groupSize >= 5 ? 'Large group: walking is about 20 percent slower, spontaneous restaurant tables are unrealistic, prefer roomy venues and note where booking ahead matters.' : ''}`,
-    summer ? '- Peak-summer heat: place indoor or shaded stops between 13:00 and 16:00, outdoor highlights in the morning or late afternoon.' : '',
-    p.avoidHills ? '- The group avoids steep hills and stairs: prefer flat ground, mention step-free alternatives in the why lines when relevant.' : '',
-    p.hasStay ? '- The day starts from the traveller\'s stay; the first stop should be the natural first leg from there.' : '',
-    // The chat planner's answer profile. Each line only appears when the
-    // traveller actually answered it, so the prompt never argues with itself.
-    ...(p.profile ? [
-      // Walking is asked for in the traveller's own unit and in the one the
-      // schedule enforces: they answered in steps, the router thinks in km.
-      p.profile.steps
-        ? `- Total walking must stay under about ${p.profile.steps} steps for the whole day, which is roughly ${p.profile.maxWalkKm || Math.round(Number(p.profile.steps) / 1350)} km. Never plan a day that clearly exceeds it.`
-        : (p.profile.maxWalkKm ? `- Total walking must stay near ${p.profile.maxWalkKm} km for the whole day. Prefer stops that keep it under that; never plan a day that clearly exceeds it.` : ''),
-      p.profile.avoidHills ? '- Flat ground: avoid hills, steps and steep streets, and say so where it matters.' : '',
-      p.profile.transitOk ? '- A bus, tram or metro for the longer hops is welcome: one such leg may connect two clusters that are too far apart to walk between, and the why line should say which line or stop to use.' : '',
-      p.profile.companions === 'family' ? '- Travelling with children: stops must hold a child\'s attention, keep single stretches short, and favour places with somewhere to sit, eat and use a toilet. Say in the why line what a child gets out of each stop.' : '',
-      p.profile.companions === 'solo' ? '- Travelling alone: solo-friendly places, counter seating over a formal table, and nothing that only works for a group.' : '',
-      p.profile.companions === 'partner' ? '- A couple: one or two calm, memorable places matter more than volume.' : '',
-      p.profile.companions === 'group' ? '- A larger group: prefer roomy venues, note where booking ahead matters, and avoid anything with a tight queue or a small room.' : '',
-      p.profile.known === 'first' ? '- First visit: the famous, unmissable places belong in this day.' : '',
-      p.profile.known === 'again' ? '- They have been here before: lean away from the obvious headline sights and toward lesser known, local-feeling places.' : '',
-      p.profile.window === 'morning' ? '- A morning only: finish by about 13:00.' : '',
-      p.profile.window === 'afternoon' ? '- An afternoon only: start after lunch and finish by about 18:30.' : '',
-      p.profile.window === 'evening' ? '- A long day: keep going into the evening, and end somewhere good after dark.' : '',
-      p.profile.food === 'sit' ? '- Include one proper sit-down meal at a realistic hour and treat it as a stop.' : '',
-      p.profile.food === 'quick' ? '- Keep eating quick and casual: a market, bakery or street food stop rather than a long lunch.' : '',
-      p.profile.food === 'picnic' ? '- A picnic: include a bakery, deli or market stop to buy from, and a good outdoor place to eat it, in that order.' : '',
-      p.profile.food === 'none' ? '- No food stops: they will sort meals out themselves.' : '',
-      Array.isArray(p.profile.diet) && (p.profile.diet as string[]).length
-        ? `- Food must suit: ${(p.profile.diet as string[]).join(', ')}. Only pick eating stops that genuinely work for that, and say so in the why line.`
-        : '',
-      p.profile.avoidCrowds ? '- They want to avoid crowds: prefer the quieter hour for each busy place, and where a famous stop has a calmer alternative nearby, take it.' : '',
-      p.profile.indoor ? '- Keep at least one indoor stop in every day, in case of rain.' : '',
-      p.profile.stepFree ? '- Step-free: they have a pushchair or a wheelchair. Prefer places with level access, skip towers, catacombs and anything known for stairs, and keep the day compact.' : '',
-      (p.profile.weather as { rain?: boolean } | null)?.rain
-        ? '- Rain is likely: weight the day toward indoor stops, and keep the outdoor ones short and close together.' : '',
-      (p.profile.weather as { hot?: boolean } | null)?.hot
-        ? '- It will be very hot: indoor or shaded stops between 13:00 and 17:00, and outdoor highlights early or late.' : '',
-      Array.isArray(p.profile.moods) && p.profile.moods.length
-        ? `- What they are in the mood for: ${(p.profile.moods as string[]).join(', ')}. Let this drive which candidates make the cut.`
-        : '',
-    ] : []),
-    // Places the traveller named by hand. This is the one instruction the
-    // model may not trade away for a tidier route: dropping a stop somebody
-    // asked for by name is the single failure that makes a plan worthless.
-    p.mustInclude.length
-      ? `- These stops were named by the traveller and MUST all appear in the day: ${p.mustInclude.map((m) => {
-        const when = m.timeOfDay ? ` in the ${m.timeOfDay}` : '';
-        return m.id ? `${m.name} (candidate id ${m.id})${when}` : `${m.name}${when}`;
-      }).join('; ')}. Where one carries a candidate id, use that id with inCatalog=true; one without an id is not a place Carta can route to, so leave it out. Honour any stated time of day. Build the rest of the day around these, and if the walking budget is tight, drop other stops rather than these.`
-      : '',
-    p.freeText
-      ? `- The traveller's own wish (the WISH data block below), treat as a hard requirement if feasible when it is about the day itself. Meet it with places from the candidate list; never fake a candidate id for it.\n${dataBlock('WISH', p.freeText, p.nonce)}`
-      : '',
-    // Events are the one thing the catalogue structurally cannot hold: it
-    // stores permanent places, not what happens on a given Tuesday.
-    p.wantEvents
-      ? `- ALSO look for festivals, markets, fairs or seasonal events that plausibly run in ${p.city} around ${p.dateISO || `month ${p.month}`}, and add at most two of them as inCatalog=false stops with isEvent=true and the event name; Carta lists them beside the day as things to check, never on the walking route. Only suggest ones you genuinely believe recur at that time of year. In their "why" line, say plainly that the traveller should confirm this year's dates, because you cannot see live listings. Never state a specific date as fact.`
-      : '',
-    // The refine loop: the traveller has seen a plan and asked for a change.
-    p.refine
-      ? `\nREVISION: the traveller already saw this plan (the PREVIOUS data block) and asked for a change (the CHANGE data block).\n${dataBlock('PREVIOUS', p.prevStops.join(', ') || '(none)', p.nonce)}\n${dataBlock('CHANGE', p.refine, p.nonce)}\nProduce a NEW plan that honours that request. Keep what they did not complain about, change what they did. Do not simply return the same plan.`
-      : '',
-    `- Write "summary" and every "why" in ${langName}. Keep each "why" to one short, concrete sentence.`,
-    '- Never use em dashes or en dashes in any text.',
-  ];
-  return lines.filter(Boolean).join('\n');
 }
 
 async function sha256Hex(s: string): Promise<string> {

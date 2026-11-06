@@ -56,6 +56,7 @@ from common import (  # noqa: E402
 )
 from env_local import load_env  # noqa: E402
 from ai_gateway import AIRefusal, Gateway, scan_injection  # noqa: E402
+from prompt_registry import prompt  # noqa: E402
 
 OUT = os.path.join(DCACHE, "intros_llm.json")
 BATCH = 10
@@ -65,21 +66,9 @@ BANNED = re.compile(r"\b(seamless|unlock|effortless|elevate|leverage|empower|"
                     r"curated|simply|nestled|hidden gem|must-see|breathtaking|"
                     r"stunning|vibrant|boasts?|you will love|you'll love)\b", re.I)
 
-SYSTEM = """You write the opening paragraph of a destination page for Carta, a
-European travel guide. You are a rewriter, not a researcher: use ONLY the
-facts you are given for each place. Never add a fact, a date, a number or a
-name that is not in the FACTS block. The CONTEXT text is background to help
-you phrase things; do not quote or closely paraphrase it.
-
-For each place return two or three short sentences, 260 characters at most in
-total, plain English, present tense, third person. First sentence: what the
-place is (kind of place, where, what it is known for). Then the one or two
-things a visitor most needs: the sights that lead, how long to plan, when to
-come. Specific beats general. No exclamation marks, no marketing adjectives,
-no second person, no em dashes, no bullet points, no headings.
-
-Return JSON only: {"intros": [{"id": "...", "text": "..."}, ...]}, one entry
-per place, in the order given."""
+# The prompt text is the registry's "intros" prompt (prompts/intros, T1140).
+PROMPT = prompt("intros")
+SYSTEM = PROMPT.text("system")
 
 
 def facts_block(dest, dossier):
@@ -130,8 +119,8 @@ def facts_block(dest, dossier):
 def user_block(items):
     parts = []
     for dest, dossier, extract in items:
-        parts.append(f"### id: {dest['id']}\nFACTS:\n{facts_block(dest, dossier)}\n"
-                     f"CONTEXT (do not copy): {extract[:900] if extract else '(none)'}\n")
+        parts.append(PROMPT.text("user.entry", id=dest["id"], facts=facts_block(dest, dossier),
+                                 context=extract[:900] if extract else PROMPT.text("user.noContext")))
     return "\n".join(parts)
 
 
