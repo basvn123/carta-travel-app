@@ -1,0 +1,4988 @@
+{
+"version": 1,
+"about": "T1136 (ROADMAP E1): the Ask eval set. 140 questions from tests/fixtures/ask-golden.json, 30 written from the multilingual MULTI set of pipeline/ask_index_layer.py, 30 that Carta must answer with \"Carta does not know\". places: groups of catalogue ids a knowledgeable traveller expects in the top ten (a group is one place, any id counts). facts: what the answer must carry (type, cc of every card, month read, budget kept, named places present, notes: words the notes the model gets must hold). The held-out set (tests/fixtures/ask-heldout.json) stays out on purpose. Grow it by appending cases with new ids, then bless (scripts/eval/ask-eval.mjs --bless).",
+"now": "2026-10-22",
+"cases": [
+{
+"id": "g001",
+"q": "hiking base in the alps in july",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:chamonix"
+],
+[
+"gem:zermatt"
+],
+[
+"gem:interlaken"
+],
+[
+"INN"
+],
+[
+"gem:grindelwald"
+],
+[
+"gem:lauterbrunnen"
+],
+[
+"gem:garmisch"
+],
+[
+"gem:kranjska-gora"
+],
+[
+"gem:ortisei"
+],
+[
+"gem:canazei"
+],
+[
+"gem:dolomites"
+],
+[
+"gem:berchtesgaden"
+],
+[
+"gem:oberstdorf"
+]
+],
+"facts": {
+"type": "find",
+"month": 7
+}
+},
+{
+"id": "g002",
+"q": "Hiking in the Alps in July under 80 euro a day",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:kranjska-gora"
+],
+[
+"gem:bled"
+],
+[
+"gem:bohinj"
+],
+[
+"gem:soca-valley"
+],
+[
+"INN"
+],
+[
+"gem:berchtesgaden"
+],
+[
+"gem:garmisch"
+],
+[
+"gem:hallstatt"
+],
+[
+"gem:mittenwald"
+]
+],
+"facts": {
+"type": "find",
+"month": 7
+}
+},
+{
+"id": "g003",
+"q": "old town, no car needed",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:bruges"
+],
+[
+"DBV"
+],
+[
+"TLL"
+],
+[
+"PRG"
+],
+[
+"KRK"
+],
+[
+"gem:cesky-krumlov"
+],
+[
+"gem:ghent"
+],
+[
+"gem:rothenburg"
+],
+[
+"gem:toledo"
+],
+[
+"gem:kotor"
+],
+[
+"RIX"
+],
+[
+"VNO"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "g004",
+"q": "lakeside in italy in june",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:como"
+],
+[
+"gem:garda"
+],
+[
+"gem:riva-del-garda"
+],
+[
+"gem:lago-maggiore"
+],
+[
+"gem:malcesine"
+],
+[
+"gem:limone-sul-garda"
+],
+[
+"gem:orta-san-giulio"
+]
+],
+"facts": {
+"type": "find",
+"cc": "IT",
+"month": 6
+}
+},
+{
+"id": "g005",
+"q": "food and wine in tuscany",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"FLR"
+],
+[
+"gem:lucca"
+],
+[
+"gem:tuscany-siena"
+],
+[
+"gem:montepulciano"
+],
+[
+"gem:greve-in-chianti"
+],
+[
+"gem:san-gimignano"
+],
+[
+"gem:montalcino"
+],
+[
+"gem:pienza"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "g006",
+"q": "island in greece in september",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:naxos"
+],
+[
+"JTR"
+],
+[
+"gem:paros"
+],
+[
+"gem:milos"
+],
+[
+"JMK"
+],
+[
+"CFU"
+],
+[
+"HER"
+],
+[
+"CHQ"
+],
+[
+"EFL"
+],
+[
+"ZTH"
+],
+[
+"RHO"
+]
+],
+"facts": {
+"type": "find",
+"cc": "GR",
+"month": 9
+}
+},
+{
+"id": "g007",
+"q": "castles in germany",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:fussen"
+],
+[
+"gem:neuschwanstein"
+],
+[
+"gem:heidelberg"
+],
+[
+"gem:cochem"
+],
+[
+"gem:burg-eltz"
+],
+[
+"gem:rothenburg"
+],
+[
+"gem:wernigerode"
+]
+],
+"facts": {
+"type": "find",
+"cc": "DE"
+}
+},
+{
+"id": "g008",
+"q": "cheap beach in portugal",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:lagos-pt"
+],
+[
+"gem:tavira"
+],
+[
+"gem:albufeira"
+],
+[
+"gem:carvoeiro"
+],
+[
+"gem:nazare"
+],
+[
+"gem:peniche"
+],
+[
+"gem:ericeira"
+],
+[
+"gem:sagres"
+],
+[
+"gem:aljezur"
+],
+[
+"gem:comporta"
+],
+[
+"gem:portimao"
+]
+],
+"facts": {
+"type": "find",
+"cc": "PT"
+}
+},
+{
+"id": "g009",
+"q": "quiet village in the dolomites",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:ortisei"
+],
+[
+"gem:canazei"
+],
+[
+"gem:corvara-alta-badia"
+],
+[
+"gem:val-di-funes"
+],
+[
+"gem:dolomites"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "g010",
+"q": "romantic city break in october",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"CDG",
+"ORY",
+"BVA"
+],
+[
+"VCE",
+"TSF"
+],
+[
+"PRG"
+],
+[
+"gem:bruges"
+],
+[
+"VIE"
+],
+[
+"FCO",
+"CIA"
+],
+[
+"FLR"
+],
+[
+"LIS"
+],
+[
+"SVQ"
+],
+[
+"BUD"
+],
+[
+"VRN"
+]
+],
+"facts": {
+"type": "find",
+"month": 10
+}
+},
+{
+"id": "g011",
+"q": "spa town under 100 a day",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"BUD"
+],
+[
+"gem:karlovy-vary"
+],
+[
+"gem:heviz"
+],
+[
+"gem:bad-ischl"
+],
+[
+"gem:vichy"
+],
+[
+"gem:montecatini-terme"
+],
+[
+"gem:saturnia"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "g012",
+"q": "family friendly lake with trails nearby",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:bled"
+],
+[
+"gem:bohinj"
+],
+[
+"gem:hallstatt"
+],
+[
+"gem:garda"
+],
+[
+"gem:annecy"
+],
+[
+"gem:zell-am-see"
+],
+[
+"gem:achensee"
+],
+[
+"gem:lake-district"
+],
+[
+"gem:plitvice"
+],
+[
+"gem:titisee"
+],
+[
+"gem:como"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "g013",
+"q": "somewhere warm and quiet in late october",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"TFS",
+"TFN"
+],
+[
+"LPA"
+],
+[
+"ACE"
+],
+[
+"FUE"
+],
+[
+"FNC"
+],
+[
+"PFO"
+],
+[
+"MLA"
+],
+[
+"gem:gozo"
+],
+[
+"HER"
+],
+[
+"CHQ"
+],
+[
+"AGP"
+],
+[
+"gem:tavira"
+]
+],
+"facts": {
+"type": "find",
+"month": 10
+}
+},
+{
+"id": "g014",
+"q": "where is it still warm in november",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"TFS",
+"TFN"
+],
+[
+"LPA"
+],
+[
+"ACE"
+],
+[
+"FUE"
+],
+[
+"FNC"
+],
+[
+"PFO"
+],
+[
+"MLA"
+],
+[
+"gem:gozo"
+],
+[
+"HER"
+],
+[
+"CHQ"
+],
+[
+"AGP"
+],
+[
+"gem:tavira"
+]
+],
+"facts": {
+"type": "find",
+"month": 11
+}
+},
+{
+"id": "g015",
+"q": "laid-back seaside town with no crowds",
+"lang": "en",
+"src": "golden",
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "g016",
+"q": "chill mountain village for a foodie",
+"lang": "en",
+"src": "golden",
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "g017",
+"q": "medieval towns in alsace",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:colmar"
+],
+[
+"gem:riquewihr"
+],
+[
+"gem:kaysersberg"
+],
+[
+"gem:eguisheim"
+],
+[
+"gem:obernai"
+],
+[
+"gem:strasbourg"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "g018",
+"q": "art and museums in spain in march",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"MAD"
+],
+[
+"BCN"
+],
+[
+"BIO"
+],
+[
+"AGP"
+],
+[
+"VLC"
+],
+[
+"SVQ"
+],
+[
+"gem:figueres"
+]
+],
+"facts": {
+"type": "find",
+"cc": "ES",
+"month": 3
+}
+},
+{
+"id": "g019",
+"q": "nightlife on the costa brava",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:lloret-de-mar"
+],
+[
+"gem:tossa-de-mar"
+],
+[
+"gem:cadaques"
+],
+[
+"gem:roses"
+],
+[
+"GRO"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "g020",
+"q": "unesco old towns without a car",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"DBV"
+],
+[
+"gem:cesky-krumlov"
+],
+[
+"gem:bruges"
+],
+[
+"TLL"
+],
+[
+"KRK"
+],
+[
+"gem:toledo"
+],
+[
+"gem:kotor"
+],
+[
+"MLA"
+],
+[
+"RIX"
+],
+[
+"VNO"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "g021",
+"q": "scenic views in the julian alps",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:bled"
+],
+[
+"gem:bohinj"
+],
+[
+"gem:soca-valley"
+],
+[
+"gem:kranjska-gora"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "g022",
+"q": "adventure and kayaking in the pyrenees in august",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:ainsa"
+],
+[
+"gem:cauterets"
+],
+[
+"gem:cirque-de-gavarnie"
+],
+[
+"gem:jaca"
+],
+[
+"gem:alquezar"
+]
+],
+"facts": {
+"type": "find",
+"month": 8
+}
+},
+{
+"id": "g023",
+"q": "beach town in the algarve in may",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:lagos-pt"
+],
+[
+"gem:tavira"
+],
+[
+"gem:albufeira"
+],
+[
+"gem:carvoeiro"
+],
+[
+"gem:sagres"
+],
+[
+"FAO"
+],
+[
+"gem:portimao"
+],
+[
+"gem:aljezur"
+]
+],
+"facts": {
+"type": "find",
+"month": 5
+}
+},
+{
+"id": "g024",
+"q": "hiking next month",
+"lang": "en",
+"src": "golden",
+"facts": {
+"type": "find",
+"month": 11
+}
+},
+{
+"id": "g025",
+"q": "city trip this winter",
+"lang": "en",
+"src": "golden",
+"facts": {
+"type": "find",
+"month": 12
+}
+},
+{
+"id": "g026",
+"q": "mountains in summer, not crowded",
+"lang": "en",
+"src": "golden",
+"facts": {
+"type": "find",
+"month": 6
+}
+},
+{
+"id": "g027",
+"q": "cheapest places in croatia",
+"lang": "en",
+"src": "golden",
+"facts": {
+"type": "find",
+"cc": "HR"
+}
+},
+{
+"id": "g028",
+"q": "nature and wildlife in norway",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:lofoten"
+],
+[
+"TOS"
+],
+[
+"gem:flam"
+],
+[
+"gem:geiranger"
+],
+[
+"AES"
+],
+[
+"BGO"
+],
+[
+"gem:senja"
+]
+],
+"facts": {
+"type": "find",
+"cc": "NO"
+}
+},
+{
+"id": "g029",
+"q": "small villages in provence in june",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:provence-luberon"
+],
+[
+"gem:roussillon"
+],
+[
+"gem:lourmarin"
+],
+[
+"gem:moustiers-sainte-marie"
+],
+[
+"gem:bonnieux"
+],
+[
+"gem:saint-remy-de-provence"
+],
+[
+"gem:les-baux-de-provence"
+]
+],
+"facts": {
+"type": "find",
+"month": 6
+}
+},
+{
+"id": "g030",
+"q": "great wine and no crowds",
+"lang": "en",
+"src": "golden",
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "g031",
+"q": "easy walks with kids by a lake",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:bled"
+],
+[
+"gem:bohinj"
+],
+[
+"gem:hallstatt"
+],
+[
+"gem:garda"
+],
+[
+"gem:annecy"
+],
+[
+"gem:zell-am-see"
+],
+[
+"gem:achensee"
+],
+[
+"gem:lake-district"
+],
+[
+"gem:plitvice"
+],
+[
+"gem:titisee"
+],
+[
+"gem:como"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "g032",
+"q": "places with thermal baths",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"BUD"
+],
+[
+"gem:baden-baden"
+],
+[
+"gem:karlovy-vary"
+],
+[
+"gem:bath"
+],
+[
+"gem:vichy"
+],
+[
+"gem:bad-ischl"
+],
+[
+"gem:montecatini-terme"
+],
+[
+"gem:saturnia"
+],
+[
+"gem:heviz"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "g033",
+"q": "hidden gem in the apennines",
+"lang": "en",
+"src": "golden",
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "g034",
+"q": "historic centre in poland",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"KRK"
+],
+[
+"GDN"
+],
+[
+"gem:torun"
+],
+[
+"gem:zamosc"
+],
+[
+"WRO"
+],
+[
+"WAW",
+"WMI"
+],
+[
+"POZ"
+]
+],
+"facts": {
+"type": "find",
+"cc": "PL"
+}
+},
+{
+"id": "g035",
+"q": "1500 euro for two, 5 days in november, by train from biarritz",
+"lang": "en",
+"src": "golden",
+"facts": {
+"type": "budget",
+"month": 11,
+"budget": 1500
+}
+},
+{
+"id": "g036",
+"q": "I have 1200 euros for a week in may",
+"lang": "en",
+"src": "golden",
+"facts": {
+"type": "budget",
+"month": 5,
+"budget": 1200
+}
+},
+{
+"id": "g037",
+"q": "budget of 2000 for a family of four, 6 days in july",
+"lang": "en",
+"src": "golden",
+"facts": {
+"type": "budget",
+"month": 7,
+"budget": 2000
+}
+},
+{
+"id": "g038",
+"q": "800 total, long weekend, couple",
+"lang": "en",
+"src": "golden",
+"facts": {
+"type": "budget",
+"budget": 800
+}
+},
+{
+"id": "g039",
+"q": "what can 2 people do with 1000 euros for 4 days",
+"lang": "en",
+"src": "golden",
+"facts": {
+"type": "budget",
+"budget": 1000
+}
+},
+{
+"id": "g040",
+"q": "3000 for 2 adults and 1 child, 10 days, flying",
+"lang": "en",
+"src": "golden",
+"facts": {
+"type": "budget",
+"budget": 3000
+}
+},
+{
+"id": "g041",
+"q": "600 euro solo trip for 5 days in march",
+"lang": "en",
+"src": "golden",
+"facts": {
+"type": "budget",
+"month": 3,
+"budget": 600
+}
+},
+{
+"id": "g042",
+"q": "1500 for two, 5 days, beach and food, driving",
+"lang": "en",
+"src": "golden",
+"facts": {
+"type": "budget",
+"budget": 1500
+}
+},
+{
+"id": "g043",
+"q": "where can we go for 900 euros, 2 people, a week",
+"lang": "en",
+"src": "golden",
+"facts": {
+"type": "budget",
+"budget": 900
+}
+},
+{
+"id": "g044",
+"q": "hiking trip for 1000 euro total in september",
+"lang": "en",
+"src": "golden",
+"facts": {
+"type": "budget",
+"month": 9,
+"budget": 1000
+}
+},
+{
+"id": "g045",
+"q": "best time to visit porto",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"OPO"
+]
+],
+"facts": {
+"type": "when",
+"named": [
+"OPO"
+],
+"notes": [
+[
+"June, July, August"
+]
+]
+}
+},
+{
+"id": "g046",
+"q": "when should I go to hallstatt",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:hallstatt"
+]
+],
+"facts": {
+"type": "when",
+"named": [
+"gem:hallstatt"
+],
+"notes": [
+[
+"May, June, July, August, September"
+]
+]
+}
+},
+{
+"id": "g047",
+"q": "when is hallstatt least crowded",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:hallstatt"
+]
+],
+"facts": {
+"type": "when",
+"named": [
+"gem:hallstatt"
+],
+"notes": [
+[
+"least crowded"
+]
+]
+}
+},
+{
+"id": "g048",
+"q": "when is the cheapest time for dubrovnik",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"DBV"
+]
+],
+"facts": {
+"type": "when",
+"named": [
+"DBV"
+],
+"notes": [
+[
+"cheapest",
+"cheaper"
+]
+]
+}
+},
+{
+"id": "g049",
+"q": "best month for seville",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"SVQ"
+]
+],
+"facts": {
+"type": "when",
+"named": [
+"SVQ"
+],
+"notes": [
+[
+"March, April, May, October"
+]
+]
+}
+},
+{
+"id": "g050",
+"q": "when to go to bergen",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"BGO"
+]
+],
+"facts": {
+"type": "when",
+"named": [
+"BGO"
+],
+"notes": [
+[
+"June, July, August"
+]
+]
+}
+},
+{
+"id": "g051",
+"q": "what is ghent like in december",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:ghent"
+]
+],
+"facts": {
+"type": "about",
+"month": 12,
+"named": [
+"gem:ghent"
+],
+"notes": [
+[
+"December"
+]
+]
+}
+},
+{
+"id": "g052",
+"q": "tell me about kotor",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:kotor"
+]
+],
+"facts": {
+"type": "about",
+"named": [
+"gem:kotor"
+],
+"notes": [
+[
+"UNESCO"
+]
+]
+}
+},
+{
+"id": "g053",
+"q": "is zermatt worth it in june",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:zermatt"
+]
+],
+"facts": {
+"type": "about",
+"month": 6,
+"named": [
+"gem:zermatt"
+],
+"notes": [
+[
+"Car-free"
+],
+[
+"June"
+]
+]
+}
+},
+{
+"id": "g054",
+"q": "annecy in august",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:annecy"
+]
+],
+"facts": {
+"type": "about",
+"month": 8,
+"named": [
+"gem:annecy"
+],
+"notes": [
+[
+"August"
+]
+]
+}
+},
+{
+"id": "g055",
+"q": "how expensive is bruges",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:bruges"
+]
+],
+"facts": {
+"type": "about",
+"named": [
+"gem:bruges"
+],
+"notes": [
+[
+"a person a day"
+]
+]
+}
+},
+{
+"id": "g056",
+"q": "do I need a car in interlaken",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:interlaken"
+]
+],
+"facts": {
+"type": "about",
+"named": [
+"gem:interlaken"
+],
+"notes": [
+[
+"car"
+]
+]
+}
+},
+{
+"id": "g057",
+"q": "what to do in ljubljana",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"LJU"
+]
+],
+"facts": {
+"type": "about",
+"named": [
+"LJU"
+]
+}
+},
+{
+"id": "g058",
+"q": "porto or lisbon for a long weekend in may",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"OPO"
+],
+[
+"LIS"
+]
+],
+"facts": {
+"type": "compare",
+"month": 5,
+"named": [
+"OPO",
+"LIS"
+],
+"notes": [
+[
+"May"
+],
+[
+"costs less"
+]
+]
+}
+},
+{
+"id": "g059",
+"q": "split vs dubrovnik",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"SPU"
+],
+[
+"DBV"
+]
+],
+"facts": {
+"type": "compare",
+"named": [
+"SPU",
+"DBV"
+],
+"notes": [
+[
+"costs less"
+]
+]
+}
+},
+{
+"id": "g060",
+"q": "salzburg or innsbruck in winter",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"SZG"
+],
+[
+"INN"
+]
+],
+"facts": {
+"type": "compare",
+"month": 12,
+"named": [
+"SZG",
+"INN"
+],
+"notes": [
+[
+"December",
+"January",
+"February"
+]
+]
+}
+},
+{
+"id": "g061",
+"q": "bruges versus ghent",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:bruges"
+],
+[
+"gem:ghent"
+]
+],
+"facts": {
+"type": "compare",
+"named": [
+"gem:bruges",
+"gem:ghent"
+],
+"notes": [
+[
+"costs less"
+]
+]
+}
+},
+{
+"id": "g062",
+"q": "florence or lucca for food",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"FLR"
+],
+[
+"gem:lucca"
+]
+],
+"facts": {
+"type": "compare",
+"named": [
+"FLR",
+"gem:lucca"
+]
+}
+},
+{
+"id": "g063",
+"q": "chamonix, zermatt or interlaken for hiking",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:chamonix"
+],
+[
+"gem:zermatt"
+],
+[
+"gem:interlaken"
+]
+],
+"facts": {
+"type": "compare",
+"named": [
+"gem:chamonix",
+"gem:zermatt",
+"gem:interlaken"
+],
+"notes": [
+[
+"Strong for Hiking"
+]
+]
+}
+},
+{
+"id": "g064",
+"q": "beaches near split",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:omis"
+],
+[
+"gem:makarska"
+],
+[
+"gem:trogir"
+],
+[
+"gem:bol-brac"
+],
+[
+"gem:primosten"
+]
+],
+"facts": {
+"type": "near"
+}
+},
+{
+"id": "g065",
+"q": "villages near florence",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:greve-in-chianti"
+],
+[
+"gem:san-gimignano"
+],
+[
+"gem:lucca"
+],
+[
+"gem:tuscany-siena"
+],
+[
+"PSA"
+]
+],
+"facts": {
+"type": "near"
+}
+},
+{
+"id": "g066",
+"q": "old town near porto with no car needed",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:guimaraes"
+],
+[
+"gem:braga"
+],
+[
+"gem:amarante"
+],
+[
+"gem:aveiro"
+]
+],
+"facts": {
+"type": "near"
+}
+},
+{
+"id": "g067",
+"q": "day trips around nice",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:eze"
+],
+[
+"gem:nice-villefranche"
+],
+[
+"gem:antibes"
+],
+[
+"gem:monaco-mc"
+],
+[
+"gem:menton"
+],
+[
+"gem:saint-paul-de-vence"
+],
+[
+"gem:cannes"
+]
+],
+"facts": {
+"type": "near"
+}
+},
+{
+"id": "g068",
+"q": "lakes close to innsbruck",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:achensee"
+],
+[
+"gem:walchensee"
+],
+[
+"gem:zell-am-see"
+],
+[
+"gem:kitzbuhel"
+]
+],
+"facts": {
+"type": "near"
+}
+},
+{
+"id": "g069",
+"q": "nice beaches",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:nice-villefranche"
+],
+[
+"gem:antibes"
+],
+[
+"gem:menton"
+],
+[
+"gem:cannes"
+],
+[
+"gem:eze"
+]
+],
+"facts": {
+"type": "near"
+}
+},
+{
+"id": "g070",
+"q": "plan 7 days in tuscany for food and wine",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"FLR"
+],
+[
+"gem:lucca"
+],
+[
+"gem:tuscany-siena"
+],
+[
+"gem:montepulciano"
+],
+[
+"gem:greve-in-chianti"
+],
+[
+"gem:san-gimignano"
+],
+[
+"gem:montalcino"
+],
+[
+"gem:pienza"
+]
+],
+"facts": {
+"type": "plan"
+}
+},
+{
+"id": "g071",
+"q": "plan a road trip through andalusia in april",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"SVQ"
+],
+[
+"gem:granada"
+],
+[
+"gem:cordoba"
+],
+[
+"gem:ronda"
+],
+[
+"AGP"
+],
+[
+"gem:cadiz"
+],
+[
+"gem:nerja"
+]
+],
+"facts": {
+"type": "plan",
+"month": 4
+}
+},
+{
+"id": "g072",
+"q": "itinerary for 10 days in the alps by train",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"gem:interlaken"
+],
+[
+"gem:zermatt"
+],
+[
+"INN"
+],
+[
+"gem:lucerne"
+],
+[
+"gem:chamonix"
+],
+[
+"gem:grindelwald"
+],
+[
+"SZG"
+],
+[
+"gem:lauterbrunnen"
+]
+],
+"facts": {
+"type": "plan"
+}
+},
+{
+"id": "g073",
+"q": "make me a 5 day route in croatia",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"SPU"
+],
+[
+"DBV"
+],
+[
+"ZAD"
+],
+[
+"gem:plitvice"
+],
+[
+"gem:hvar"
+],
+[
+"gem:rovinj"
+],
+[
+"gem:trogir"
+],
+[
+"gem:korcula"
+]
+],
+"facts": {
+"type": "plan",
+"cc": "HR"
+}
+},
+{
+"id": "g074",
+"q": "plan a week in portugal for two",
+"lang": "en",
+"src": "golden",
+"places": [
+[
+"LIS"
+],
+[
+"OPO"
+],
+[
+"gem:sintra"
+],
+[
+"gem:lagos-pt"
+],
+[
+"gem:evora"
+],
+[
+"gem:obidos"
+]
+],
+"facts": {
+"type": "plan",
+"cc": "PT"
+}
+},
+{
+"id": "g075",
+"q": "wandelen in de alpen in juli",
+"lang": "nl",
+"src": "golden",
+"places": [
+[
+"gem:chamonix"
+],
+[
+"gem:zermatt"
+],
+[
+"gem:interlaken"
+],
+[
+"INN"
+],
+[
+"gem:grindelwald"
+],
+[
+"gem:lauterbrunnen"
+],
+[
+"gem:garmisch"
+],
+[
+"gem:kranjska-gora"
+],
+[
+"gem:ortisei"
+],
+[
+"gem:canazei"
+],
+[
+"gem:dolomites"
+],
+[
+"gem:berchtesgaden"
+],
+[
+"gem:oberstdorf"
+]
+],
+"facts": {
+"type": "find",
+"month": 7
+}
+},
+{
+"id": "g076",
+"q": "rustig dorp aan een meer",
+"lang": "nl",
+"src": "golden",
+"places": [
+[
+"gem:hallstatt"
+],
+[
+"gem:bled"
+],
+[
+"gem:bohinj"
+],
+[
+"gem:st-wolfgang"
+],
+[
+"gem:orta-san-giulio"
+],
+[
+"gem:annecy"
+],
+[
+"gem:achensee"
+],
+[
+"gem:como"
+],
+[
+"gem:lago-maggiore"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "g077",
+"q": "goedkoop strand in spanje",
+"lang": "nl",
+"src": "golden",
+"facts": {
+"type": "find",
+"cc": "ES"
+}
+},
+{
+"id": "g078",
+"q": "oude stad zonder auto",
+"lang": "nl",
+"src": "golden",
+"places": [
+[
+"gem:bruges"
+],
+[
+"DBV"
+],
+[
+"TLL"
+],
+[
+"PRG"
+],
+[
+"KRK"
+],
+[
+"gem:cesky-krumlov"
+],
+[
+"gem:ghent"
+],
+[
+"gem:rothenburg"
+],
+[
+"gem:toledo"
+],
+[
+"gem:kotor"
+],
+[
+"RIX"
+],
+[
+"VNO"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "g079",
+"q": "kastelen in duitsland",
+"lang": "nl",
+"src": "golden",
+"places": [
+[
+"gem:fussen"
+],
+[
+"gem:neuschwanstein"
+],
+[
+"gem:heidelberg"
+],
+[
+"gem:cochem"
+],
+[
+"gem:burg-eltz"
+],
+[
+"gem:rothenburg"
+],
+[
+"gem:wernigerode"
+]
+],
+"facts": {
+"type": "find",
+"cc": "DE"
+}
+},
+{
+"id": "g080",
+"q": "eiland in griekenland in september",
+"lang": "nl",
+"src": "golden",
+"places": [
+[
+"gem:naxos"
+],
+[
+"JTR"
+],
+[
+"gem:paros"
+],
+[
+"gem:milos"
+],
+[
+"JMK"
+],
+[
+"CFU"
+],
+[
+"HER"
+],
+[
+"CHQ"
+],
+[
+"EFL"
+],
+[
+"ZTH"
+],
+[
+"RHO"
+]
+],
+"facts": {
+"type": "find",
+"cc": "GR",
+"month": 9
+}
+},
+{
+"id": "g081",
+"q": "1500 euro voor twee, 5 dagen in november",
+"lang": "nl",
+"src": "golden",
+"facts": {
+"type": "budget",
+"month": 11,
+"budget": 1500
+}
+},
+{
+"id": "g082",
+"q": "1000 euro met het gezin, een week in juli, met de trein",
+"lang": "nl",
+"src": "golden",
+"facts": {
+"type": "budget",
+"month": 7,
+"budget": 1000
+}
+},
+{
+"id": "g083",
+"q": "wanneer is de beste tijd voor porto",
+"lang": "nl",
+"src": "golden",
+"places": [
+[
+"OPO"
+]
+],
+"facts": {
+"type": "when",
+"named": [
+"OPO"
+]
+}
+},
+{
+"id": "g084",
+"q": "hoe is gent in december",
+"lang": "nl",
+"src": "golden",
+"places": [
+[
+"gem:ghent"
+]
+],
+"facts": {
+"type": "about",
+"month": 12,
+"named": [
+"gem:ghent"
+],
+"notes": [
+[
+"december"
+]
+]
+}
+},
+{
+"id": "g085",
+"q": "porto of lissabon in mei",
+"lang": "nl",
+"src": "golden",
+"places": [
+[
+"OPO"
+],
+[
+"LIS"
+]
+],
+"facts": {
+"type": "compare",
+"month": 5,
+"named": [
+"OPO",
+"LIS"
+]
+}
+},
+{
+"id": "g086",
+"q": "stranden bij split",
+"lang": "nl",
+"src": "golden",
+"places": [
+[
+"gem:omis"
+],
+[
+"gem:makarska"
+],
+[
+"gem:trogir"
+],
+[
+"gem:bol-brac"
+],
+[
+"gem:primosten"
+]
+],
+"facts": {
+"type": "near"
+}
+},
+{
+"id": "g087",
+"q": "plan 7 dagen in toscane",
+"lang": "nl",
+"src": "golden",
+"places": [
+[
+"FLR"
+],
+[
+"gem:lucca"
+],
+[
+"gem:tuscany-siena"
+],
+[
+"gem:montepulciano"
+],
+[
+"gem:greve-in-chianti"
+],
+[
+"gem:san-gimignano"
+],
+[
+"gem:montalcino"
+],
+[
+"gem:pienza"
+]
+],
+"facts": {
+"type": "plan"
+}
+},
+{
+"id": "g088",
+"q": "eten en wijn in de provence",
+"lang": "nl",
+"src": "golden",
+"places": [
+[
+"gem:provence-luberon"
+],
+[
+"gem:roussillon"
+],
+[
+"gem:lourmarin"
+],
+[
+"gem:moustiers-sainte-marie"
+],
+[
+"gem:bonnieux"
+],
+[
+"gem:saint-remy-de-provence"
+],
+[
+"gem:les-baux-de-provence"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "g089",
+"q": "warm in oktober en niet druk",
+"lang": "nl",
+"src": "golden",
+"places": [
+[
+"TFS",
+"TFN"
+],
+[
+"LPA"
+],
+[
+"ACE"
+],
+[
+"FUE"
+],
+[
+"FNC"
+],
+[
+"PFO"
+],
+[
+"MLA"
+],
+[
+"gem:gozo"
+],
+[
+"HER"
+],
+[
+"CHQ"
+],
+[
+"AGP"
+],
+[
+"gem:tavira"
+]
+],
+"facts": {
+"type": "find",
+"month": 10
+}
+},
+{
+"id": "g090",
+"q": "wandern in den alpen im juli",
+"lang": "de",
+"src": "golden",
+"places": [
+[
+"gem:chamonix"
+],
+[
+"gem:zermatt"
+],
+[
+"gem:interlaken"
+],
+[
+"INN"
+],
+[
+"gem:grindelwald"
+],
+[
+"gem:lauterbrunnen"
+],
+[
+"gem:garmisch"
+],
+[
+"gem:kranjska-gora"
+],
+[
+"gem:ortisei"
+],
+[
+"gem:canazei"
+],
+[
+"gem:dolomites"
+],
+[
+"gem:berchtesgaden"
+],
+[
+"gem:oberstdorf"
+]
+],
+"facts": {
+"type": "find",
+"month": 7
+}
+},
+{
+"id": "g091",
+"q": "ruhiges dorf am see",
+"lang": "de",
+"src": "golden",
+"places": [
+[
+"gem:hallstatt"
+],
+[
+"gem:bled"
+],
+[
+"gem:bohinj"
+],
+[
+"gem:st-wolfgang"
+],
+[
+"gem:orta-san-giulio"
+],
+[
+"gem:annecy"
+],
+[
+"gem:achensee"
+],
+[
+"gem:como"
+],
+[
+"gem:lago-maggiore"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "g092",
+"q": "altstadt ohne auto",
+"lang": "de",
+"src": "golden",
+"places": [
+[
+"gem:bruges"
+],
+[
+"DBV"
+],
+[
+"TLL"
+],
+[
+"PRG"
+],
+[
+"KRK"
+],
+[
+"gem:cesky-krumlov"
+],
+[
+"gem:ghent"
+],
+[
+"gem:rothenburg"
+],
+[
+"gem:toledo"
+],
+[
+"gem:kotor"
+],
+[
+"RIX"
+],
+[
+"VNO"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "g093",
+"q": "burgen in deutschland",
+"lang": "de",
+"src": "golden",
+"places": [
+[
+"gem:fussen"
+],
+[
+"gem:neuschwanstein"
+],
+[
+"gem:heidelberg"
+],
+[
+"gem:cochem"
+],
+[
+"gem:burg-eltz"
+],
+[
+"gem:rothenburg"
+],
+[
+"gem:wernigerode"
+]
+],
+"facts": {
+"type": "find",
+"cc": "DE"
+}
+},
+{
+"id": "g094",
+"q": "gunstiger strand in kroatien",
+"lang": "de",
+"src": "golden",
+"facts": {
+"type": "find",
+"cc": "HR"
+}
+},
+{
+"id": "g095",
+"q": "insel in griechenland im september",
+"lang": "de",
+"src": "golden",
+"places": [
+[
+"gem:naxos"
+],
+[
+"JTR"
+],
+[
+"gem:paros"
+],
+[
+"gem:milos"
+],
+[
+"JMK"
+],
+[
+"CFU"
+],
+[
+"HER"
+],
+[
+"CHQ"
+],
+[
+"EFL"
+],
+[
+"ZTH"
+],
+[
+"RHO"
+]
+],
+"facts": {
+"type": "find",
+"cc": "GR",
+"month": 9
+}
+},
+{
+"id": "g096",
+"q": "1500 euro fur zwei personen, 5 tage im november",
+"lang": "de",
+"src": "golden",
+"facts": {
+"type": "budget",
+"month": 11,
+"budget": 1500
+}
+},
+{
+"id": "g097",
+"q": "wann ist die beste reisezeit fur salzburg",
+"lang": "de",
+"src": "golden",
+"places": [
+[
+"SZG"
+]
+],
+"facts": {
+"type": "when",
+"named": [
+"SZG"
+]
+}
+},
+{
+"id": "g098",
+"q": "wie ist hallstatt im dezember",
+"lang": "de",
+"src": "golden",
+"places": [
+[
+"gem:hallstatt"
+]
+],
+"facts": {
+"type": "about",
+"month": 12,
+"named": [
+"gem:hallstatt"
+],
+"notes": [
+[
+"Dezember"
+]
+]
+}
+},
+{
+"id": "g099",
+"q": "salzburg oder innsbruck im winter",
+"lang": "de",
+"src": "golden",
+"places": [
+[
+"SZG"
+],
+[
+"INN"
+]
+],
+"facts": {
+"type": "compare",
+"month": 12,
+"named": [
+"SZG",
+"INN"
+]
+}
+},
+{
+"id": "g100",
+"q": "seen in der nahe von innsbruck",
+"lang": "de",
+"src": "golden",
+"places": [
+[
+"gem:achensee"
+],
+[
+"gem:walchensee"
+],
+[
+"gem:zell-am-see"
+],
+[
+"gem:kitzbuhel"
+]
+],
+"facts": {
+"type": "near"
+}
+},
+{
+"id": "g101",
+"q": "plane 10 tage in bayern",
+"lang": "de",
+"src": "golden",
+"places": [
+[
+"gem:fussen"
+],
+[
+"gem:neuschwanstein"
+],
+[
+"gem:berchtesgaden"
+],
+[
+"gem:garmisch"
+],
+[
+"gem:rothenburg"
+],
+[
+"gem:bamberg"
+],
+[
+"MUC"
+],
+[
+"NUE"
+],
+[
+"gem:mittenwald"
+]
+],
+"facts": {
+"type": "plan"
+}
+},
+{
+"id": "g102",
+"q": "therme unter 100 euro am tag",
+"lang": "de",
+"src": "golden",
+"places": [
+[
+"BUD"
+],
+[
+"gem:karlovy-vary"
+],
+[
+"gem:heviz"
+],
+[
+"gem:bad-ischl"
+],
+[
+"gem:vichy"
+],
+[
+"gem:montecatini-terme"
+],
+[
+"gem:saturnia"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "g103",
+"q": "essen und wein in der toskana",
+"lang": "de",
+"src": "golden",
+"places": [
+[
+"FLR"
+],
+[
+"gem:lucca"
+],
+[
+"gem:tuscany-siena"
+],
+[
+"gem:montepulciano"
+],
+[
+"gem:greve-in-chianti"
+],
+[
+"gem:san-gimignano"
+],
+[
+"gem:montalcino"
+],
+[
+"gem:pienza"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "g104",
+"q": "randonnee dans les alpes en juillet",
+"lang": "fr",
+"src": "golden",
+"places": [
+[
+"gem:chamonix"
+],
+[
+"gem:zermatt"
+],
+[
+"gem:interlaken"
+],
+[
+"INN"
+],
+[
+"gem:grindelwald"
+],
+[
+"gem:lauterbrunnen"
+],
+[
+"gem:garmisch"
+],
+[
+"gem:kranjska-gora"
+],
+[
+"gem:ortisei"
+],
+[
+"gem:canazei"
+],
+[
+"gem:dolomites"
+],
+[
+"gem:berchtesgaden"
+],
+[
+"gem:oberstdorf"
+]
+],
+"facts": {
+"type": "find",
+"month": 7
+}
+},
+{
+"id": "g105",
+"q": "village calme au bord d'un lac",
+"lang": "fr",
+"src": "golden",
+"places": [
+[
+"gem:hallstatt"
+],
+[
+"gem:bled"
+],
+[
+"gem:bohinj"
+],
+[
+"gem:st-wolfgang"
+],
+[
+"gem:orta-san-giulio"
+],
+[
+"gem:annecy"
+],
+[
+"gem:achensee"
+],
+[
+"gem:como"
+],
+[
+"gem:lago-maggiore"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "g106",
+"q": "vieille ville sans voiture",
+"lang": "fr",
+"src": "golden",
+"places": [
+[
+"gem:bruges"
+],
+[
+"DBV"
+],
+[
+"TLL"
+],
+[
+"PRG"
+],
+[
+"KRK"
+],
+[
+"gem:cesky-krumlov"
+],
+[
+"gem:ghent"
+],
+[
+"gem:rothenburg"
+],
+[
+"gem:toledo"
+],
+[
+"gem:kotor"
+],
+[
+"RIX"
+],
+[
+"VNO"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "g107",
+"q": "chateaux en allemagne",
+"lang": "fr",
+"src": "golden",
+"places": [
+[
+"gem:fussen"
+],
+[
+"gem:neuschwanstein"
+],
+[
+"gem:heidelberg"
+],
+[
+"gem:cochem"
+],
+[
+"gem:burg-eltz"
+],
+[
+"gem:rothenburg"
+],
+[
+"gem:wernigerode"
+]
+],
+"facts": {
+"type": "find",
+"cc": "DE"
+}
+},
+{
+"id": "g108",
+"q": "plage pas cher au portugal",
+"lang": "fr",
+"src": "golden",
+"places": [
+[
+"gem:lagos-pt"
+],
+[
+"gem:tavira"
+],
+[
+"gem:albufeira"
+],
+[
+"gem:carvoeiro"
+],
+[
+"gem:nazare"
+],
+[
+"gem:peniche"
+],
+[
+"gem:ericeira"
+],
+[
+"gem:sagres"
+],
+[
+"gem:aljezur"
+],
+[
+"gem:comporta"
+],
+[
+"gem:portimao"
+]
+],
+"facts": {
+"type": "find",
+"cc": "PT"
+}
+},
+{
+"id": "g109",
+"q": "ile en grece en septembre",
+"lang": "fr",
+"src": "golden",
+"places": [
+[
+"gem:naxos"
+],
+[
+"JTR"
+],
+[
+"gem:paros"
+],
+[
+"gem:milos"
+],
+[
+"JMK"
+],
+[
+"CFU"
+],
+[
+"HER"
+],
+[
+"CHQ"
+],
+[
+"EFL"
+],
+[
+"ZTH"
+],
+[
+"RHO"
+]
+],
+"facts": {
+"type": "find",
+"cc": "GR",
+"month": 9
+}
+},
+{
+"id": "g110",
+"q": "1500 euros pour deux, 5 jours en novembre, en train depuis biarritz",
+"lang": "fr",
+"src": "golden",
+"facts": {
+"type": "budget",
+"month": 11,
+"budget": 1500
+}
+},
+{
+"id": "g111",
+"q": "quand partir a seville",
+"lang": "fr",
+"src": "golden",
+"places": [
+[
+"SVQ"
+]
+],
+"facts": {
+"type": "when",
+"named": [
+"SVQ"
+]
+}
+},
+{
+"id": "g112",
+"q": "comment est annecy en aout",
+"lang": "fr",
+"src": "golden",
+"places": [
+[
+"gem:annecy"
+]
+],
+"facts": {
+"type": "about",
+"month": 8,
+"named": [
+"gem:annecy"
+],
+"notes": [
+[
+"août",
+"aout"
+]
+]
+}
+},
+{
+"id": "g113",
+"q": "split ou dubrovnik",
+"lang": "fr",
+"src": "golden",
+"places": [
+[
+"SPU"
+],
+[
+"DBV"
+]
+],
+"facts": {
+"type": "compare",
+"named": [
+"SPU",
+"DBV"
+]
+}
+},
+{
+"id": "g114",
+"q": "plages pres de nice",
+"lang": "fr",
+"src": "golden",
+"places": [
+[
+"gem:nice-villefranche"
+],
+[
+"gem:antibes"
+],
+[
+"gem:menton"
+],
+[
+"gem:cannes"
+],
+[
+"gem:eze"
+]
+],
+"facts": {
+"type": "near"
+}
+},
+{
+"id": "g115",
+"q": "planifie une semaine en provence",
+"lang": "fr",
+"src": "golden",
+"places": [
+[
+"gem:provence-luberon"
+],
+[
+"gem:roussillon"
+],
+[
+"gem:lourmarin"
+],
+[
+"gem:moustiers-sainte-marie"
+],
+[
+"gem:bonnieux"
+],
+[
+"gem:saint-remy-de-provence"
+],
+[
+"gem:les-baux-de-provence"
+]
+],
+"facts": {
+"type": "plan"
+}
+},
+{
+"id": "g116",
+"q": "gastronomie et vin en alsace",
+"lang": "fr",
+"src": "golden",
+"places": [
+[
+"gem:colmar"
+],
+[
+"gem:riquewihr"
+],
+[
+"gem:kaysersberg"
+],
+[
+"gem:eguisheim"
+],
+[
+"gem:obernai"
+],
+[
+"gem:strasbourg"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "g117",
+"q": "senderismo en los pirineos en agosto",
+"lang": "es",
+"src": "golden",
+"places": [
+[
+"gem:ainsa"
+],
+[
+"gem:cauterets"
+],
+[
+"gem:cirque-de-gavarnie"
+],
+[
+"gem:jaca"
+],
+[
+"gem:alquezar"
+]
+],
+"facts": {
+"type": "find",
+"month": 8
+}
+},
+{
+"id": "g118",
+"q": "pueblo tranquilo junto a un lago",
+"lang": "es",
+"src": "golden",
+"places": [
+[
+"gem:hallstatt"
+],
+[
+"gem:bled"
+],
+[
+"gem:bohinj"
+],
+[
+"gem:st-wolfgang"
+],
+[
+"gem:orta-san-giulio"
+],
+[
+"gem:annecy"
+],
+[
+"gem:achensee"
+],
+[
+"gem:como"
+],
+[
+"gem:lago-maggiore"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "g119",
+"q": "casco antiguo sin coche",
+"lang": "es",
+"src": "golden",
+"places": [
+[
+"gem:bruges"
+],
+[
+"DBV"
+],
+[
+"TLL"
+],
+[
+"PRG"
+],
+[
+"KRK"
+],
+[
+"gem:cesky-krumlov"
+],
+[
+"gem:ghent"
+],
+[
+"gem:rothenburg"
+],
+[
+"gem:toledo"
+],
+[
+"gem:kotor"
+],
+[
+"RIX"
+],
+[
+"VNO"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "g120",
+"q": "playa barata en grecia",
+"lang": "es",
+"src": "golden",
+"facts": {
+"type": "find",
+"cc": "GR"
+}
+},
+{
+"id": "g121",
+"q": "castillos en alemania",
+"lang": "es",
+"src": "golden",
+"places": [
+[
+"gem:fussen"
+],
+[
+"gem:neuschwanstein"
+],
+[
+"gem:heidelberg"
+],
+[
+"gem:cochem"
+],
+[
+"gem:burg-eltz"
+],
+[
+"gem:rothenburg"
+],
+[
+"gem:wernigerode"
+]
+],
+"facts": {
+"type": "find",
+"cc": "DE"
+}
+},
+{
+"id": "g122",
+"q": "1500 euros para dos, 5 dias en noviembre",
+"lang": "es",
+"src": "golden",
+"facts": {
+"type": "budget",
+"month": 11,
+"budget": 1500
+}
+},
+{
+"id": "g123",
+"q": "cuando es la mejor epoca para granada",
+"lang": "es",
+"src": "golden",
+"places": [
+[
+"gem:granada"
+]
+],
+"facts": {
+"type": "when",
+"named": [
+"gem:granada"
+]
+}
+},
+{
+"id": "g124",
+"q": "como es cracovia en diciembre",
+"lang": "es",
+"src": "golden",
+"places": [
+[
+"KRK"
+]
+],
+"facts": {
+"type": "about",
+"month": 12,
+"named": [
+"KRK"
+],
+"notes": [
+[
+"Diciembre"
+]
+]
+}
+},
+{
+"id": "g125",
+"q": "oporto o lisboa en mayo",
+"lang": "es",
+"src": "golden",
+"places": [
+[
+"OPO"
+],
+[
+"LIS"
+]
+],
+"facts": {
+"type": "compare",
+"month": 5,
+"named": [
+"OPO",
+"LIS"
+]
+}
+},
+{
+"id": "g126",
+"q": "playas cerca de split",
+"lang": "es",
+"src": "golden",
+"places": [
+[
+"gem:omis"
+],
+[
+"gem:makarska"
+],
+[
+"gem:trogir"
+],
+[
+"gem:bol-brac"
+],
+[
+"gem:primosten"
+]
+],
+"facts": {
+"type": "near"
+}
+},
+{
+"id": "g127",
+"q": "planea 7 dias en andalucia",
+"lang": "es",
+"src": "golden",
+"places": [
+[
+"SVQ"
+],
+[
+"gem:granada"
+],
+[
+"gem:cordoba"
+],
+[
+"gem:ronda"
+],
+[
+"AGP"
+],
+[
+"gem:cadiz"
+],
+[
+"gem:nerja"
+]
+],
+"facts": {
+"type": "plan"
+}
+},
+{
+"id": "g128",
+"q": "comida y vino en la toscana",
+"lang": "es",
+"src": "golden",
+"places": [
+[
+"FLR"
+],
+[
+"gem:lucca"
+],
+[
+"gem:tuscany-siena"
+],
+[
+"gem:montepulciano"
+],
+[
+"gem:greve-in-chianti"
+],
+[
+"gem:san-gimignano"
+],
+[
+"gem:montalcino"
+],
+[
+"gem:pienza"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "g129",
+"q": "escursioni nelle dolomiti a luglio",
+"lang": "it",
+"src": "golden",
+"places": [
+[
+"gem:ortisei"
+],
+[
+"gem:canazei"
+],
+[
+"gem:corvara-alta-badia"
+],
+[
+"gem:dolomites"
+],
+[
+"gem:val-di-funes"
+],
+[
+"gem:bolzano"
+]
+],
+"facts": {
+"type": "find",
+"month": 7
+}
+},
+{
+"id": "g130",
+"q": "borgo tranquillo sul lago",
+"lang": "it",
+"src": "golden",
+"places": [
+[
+"gem:hallstatt"
+],
+[
+"gem:bled"
+],
+[
+"gem:bohinj"
+],
+[
+"gem:st-wolfgang"
+],
+[
+"gem:orta-san-giulio"
+],
+[
+"gem:annecy"
+],
+[
+"gem:achensee"
+],
+[
+"gem:como"
+],
+[
+"gem:lago-maggiore"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "g131",
+"q": "centro storico senza auto",
+"lang": "it",
+"src": "golden",
+"places": [
+[
+"gem:bruges"
+],
+[
+"DBV"
+],
+[
+"TLL"
+],
+[
+"PRG"
+],
+[
+"KRK"
+],
+[
+"gem:cesky-krumlov"
+],
+[
+"gem:ghent"
+],
+[
+"gem:rothenburg"
+],
+[
+"gem:toledo"
+],
+[
+"gem:kotor"
+],
+[
+"RIX"
+],
+[
+"VNO"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "g132",
+"q": "spiaggia economica in croazia",
+"lang": "it",
+"src": "golden",
+"facts": {
+"type": "find",
+"cc": "HR"
+}
+},
+{
+"id": "g133",
+"q": "castelli in germania",
+"lang": "it",
+"src": "golden",
+"places": [
+[
+"gem:fussen"
+],
+[
+"gem:neuschwanstein"
+],
+[
+"gem:heidelberg"
+],
+[
+"gem:cochem"
+],
+[
+"gem:burg-eltz"
+],
+[
+"gem:rothenburg"
+],
+[
+"gem:wernigerode"
+]
+],
+"facts": {
+"type": "find",
+"cc": "DE"
+}
+},
+{
+"id": "g134",
+"q": "1500 euro per due, 5 giorni a novembre",
+"lang": "it",
+"src": "golden",
+"facts": {
+"type": "budget",
+"month": 11,
+"budget": 1500
+}
+},
+{
+"id": "g135",
+"q": "quando andare a dubrovnik",
+"lang": "it",
+"src": "golden",
+"places": [
+[
+"DBV"
+]
+],
+"facts": {
+"type": "when",
+"named": [
+"DBV"
+]
+}
+},
+{
+"id": "g136",
+"q": "com'e salisburgo a dicembre",
+"lang": "it",
+"src": "golden",
+"places": [
+[
+"SZG"
+]
+],
+"facts": {
+"type": "about",
+"month": 12,
+"named": [
+"SZG"
+],
+"notes": [
+[
+"dicembre"
+]
+]
+}
+},
+{
+"id": "g137",
+"q": "firenze o lucca per mangiare",
+"lang": "it",
+"src": "golden",
+"places": [
+[
+"FLR"
+],
+[
+"gem:lucca"
+]
+],
+"facts": {
+"type": "compare",
+"named": [
+"FLR",
+"gem:lucca"
+]
+}
+},
+{
+"id": "g138",
+"q": "spiagge vicino a nizza",
+"lang": "it",
+"src": "golden",
+"places": [
+[
+"gem:nice-villefranche"
+],
+[
+"gem:antibes"
+],
+[
+"gem:menton"
+],
+[
+"gem:cannes"
+],
+[
+"gem:eze"
+]
+],
+"facts": {
+"type": "near"
+}
+},
+{
+"id": "g139",
+"q": "pianifica 7 giorni in toscana",
+"lang": "it",
+"src": "golden",
+"places": [
+[
+"FLR"
+],
+[
+"gem:lucca"
+],
+[
+"gem:tuscany-siena"
+],
+[
+"gem:montepulciano"
+],
+[
+"gem:greve-in-chianti"
+],
+[
+"gem:san-gimignano"
+],
+[
+"gem:montalcino"
+],
+[
+"gem:pienza"
+]
+],
+"facts": {
+"type": "plan"
+}
+},
+{
+"id": "g140",
+"q": "terme sotto 100 euro al giorno",
+"lang": "it",
+"src": "golden",
+"places": [
+[
+"BUD"
+],
+[
+"gem:karlovy-vary"
+],
+[
+"gem:heviz"
+],
+[
+"gem:bad-ischl"
+],
+[
+"gem:vichy"
+],
+[
+"gem:montecatini-terme"
+],
+[
+"gem:saturnia"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "m001",
+"q": "rustig dorp aan een meer in Oostenrijk",
+"lang": "nl",
+"src": "multi",
+"places": [
+[
+"gem:hallstatt"
+],
+[
+"gem:st-wolfgang"
+],
+[
+"gem:zell-am-see"
+],
+[
+"gem:bregenz"
+],
+[
+"gem:achensee"
+],
+[
+"gem:gmunden"
+]
+],
+"facts": {
+"type": "find",
+"cc": "AT"
+}
+},
+{
+"id": "m002",
+"q": "eilanden met mooie stranden in Griekenland",
+"lang": "nl",
+"src": "multi",
+"places": [
+[
+"JTR"
+],
+[
+"gem:naxos"
+],
+[
+"gem:paros"
+],
+[
+"JMK"
+],
+[
+"gem:milos"
+],
+[
+"ZTH"
+],
+[
+"EFL"
+]
+],
+"facts": {
+"type": "find",
+"cc": "GR"
+}
+},
+{
+"id": "m003",
+"q": "middeleeuwse oude binnenstad in Tsjechië",
+"lang": "nl",
+"src": "multi",
+"places": [
+[
+"gem:cesky-krumlov"
+],
+[
+"PRG"
+],
+[
+"gem:telc"
+],
+[
+"gem:kutna-hora"
+]
+],
+"facts": {
+"type": "find",
+"cc": "CZ"
+}
+},
+{
+"id": "m004",
+"q": "wijn en goed eten in Toscane",
+"lang": "nl",
+"src": "multi",
+"places": [
+[
+"FLR"
+],
+[
+"gem:lucca"
+],
+[
+"gem:tuscany-siena"
+],
+[
+"gem:montepulciano"
+],
+[
+"gem:greve-in-chianti"
+],
+[
+"gem:san-gimignano"
+],
+[
+"gem:montalcino"
+],
+[
+"gem:pienza"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "m005",
+"q": "kuuroord met thermale baden",
+"lang": "nl",
+"src": "multi",
+"places": [
+[
+"BUD"
+],
+[
+"gem:baden-baden"
+],
+[
+"gem:karlovy-vary"
+],
+[
+"gem:bath"
+],
+[
+"gem:vichy"
+],
+[
+"gem:bad-ischl"
+],
+[
+"gem:montecatini-terme"
+],
+[
+"gem:saturnia"
+],
+[
+"gem:heviz"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "m006",
+"q": "Bergdorf mit Seilbahnen und hohen Gipfeln in der Schweiz",
+"lang": "de",
+"src": "multi",
+"places": [
+[
+"gem:zermatt"
+],
+[
+"gem:grindelwald"
+],
+[
+"gem:lauterbrunnen"
+],
+[
+"gem:st-moritz"
+],
+[
+"gem:interlaken"
+]
+],
+"facts": {
+"type": "find",
+"cc": "CH"
+}
+},
+{
+"id": "m007",
+"q": "Burgen und Schlösser in Deutschland",
+"lang": "de",
+"src": "multi",
+"places": [
+[
+"gem:fussen"
+],
+[
+"gem:neuschwanstein"
+],
+[
+"gem:heidelberg"
+],
+[
+"gem:cochem"
+],
+[
+"gem:burg-eltz"
+],
+[
+"gem:rothenburg"
+],
+[
+"gem:wernigerode"
+]
+],
+"facts": {
+"type": "find",
+"cc": "DE"
+}
+},
+{
+"id": "m008",
+"q": "Strandurlaub am Meer in Portugal",
+"lang": "de",
+"src": "multi",
+"places": [
+[
+"gem:lagos-pt"
+],
+[
+"gem:tavira"
+],
+[
+"gem:albufeira"
+],
+[
+"gem:carvoeiro"
+],
+[
+"gem:nazare"
+],
+[
+"gem:peniche"
+],
+[
+"gem:ericeira"
+],
+[
+"gem:sagres"
+],
+[
+"gem:aljezur"
+],
+[
+"gem:comporta"
+],
+[
+"gem:portimao"
+]
+],
+"facts": {
+"type": "find",
+"cc": "PT"
+}
+},
+{
+"id": "m009",
+"q": "Wandern in den Bergen der Dolomiten",
+"lang": "de",
+"src": "multi",
+"places": [
+[
+"gem:dolomites"
+],
+[
+"gem:ortisei"
+],
+[
+"gem:canazei"
+],
+[
+"gem:corvara-alta-badia"
+],
+[
+"gem:val-di-funes"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "m010",
+"q": "Altstadt am Meer mit Stadtmauern in Kroatien",
+"lang": "de",
+"src": "multi",
+"places": [
+[
+"DBV"
+],
+[
+"SPU"
+],
+[
+"gem:rovinj"
+],
+[
+"gem:trogir"
+],
+[
+"gem:korcula"
+],
+[
+"ZAD"
+],
+[
+"gem:sibenik"
+]
+],
+"facts": {
+"type": "find",
+"cc": "HR"
+}
+},
+{
+"id": "m011",
+"q": "village au bord d'un lac en Italie",
+"lang": "fr",
+"src": "multi",
+"places": [
+[
+"gem:como"
+],
+[
+"gem:garda"
+],
+[
+"gem:riva-del-garda"
+],
+[
+"gem:lago-maggiore"
+],
+[
+"gem:malcesine"
+],
+[
+"gem:limone-sul-garda"
+],
+[
+"gem:orta-san-giulio"
+]
+],
+"facts": {
+"type": "find",
+"cc": "IT"
+}
+},
+{
+"id": "m012",
+"q": "vie nocturne et fête en Espagne",
+"lang": "fr",
+"src": "multi",
+"places": [
+[
+"IBZ"
+],
+[
+"BCN"
+],
+[
+"MAD"
+],
+[
+"VLC"
+],
+[
+"gem:lloret-de-mar"
+],
+[
+"gem:sitges"
+],
+[
+"gem:benidorm"
+]
+],
+"facts": {
+"type": "find",
+"cc": "ES"
+}
+},
+{
+"id": "m013",
+"q": "musées et galeries d'art aux Pays-Bas",
+"lang": "fr",
+"src": "multi",
+"places": [
+[
+"AMS"
+],
+[
+"gem:the-hague"
+],
+[
+"gem:rotterdam"
+],
+[
+"gem:utrecht"
+],
+[
+"gem:leiden"
+]
+],
+"facts": {
+"type": "find",
+"cc": "NL"
+}
+},
+{
+"id": "m014",
+"q": "ville romantique pour un week-end en amoureux en France",
+"lang": "fr",
+"src": "multi",
+"places": [
+[
+"gem:annecy"
+],
+[
+"gem:colmar"
+],
+[
+"CDG",
+"ORY",
+"BVA"
+],
+[
+"gem:saint-paul-de-vence"
+],
+[
+"gem:strasbourg"
+]
+],
+"facts": {
+"type": "find",
+"cc": "FR"
+}
+},
+{
+"id": "m015",
+"q": "fjords et paysages spectaculaires en Norvège",
+"lang": "fr",
+"src": "multi",
+"places": [
+[
+"gem:flam"
+],
+[
+"gem:geiranger"
+],
+[
+"BGO"
+],
+[
+"AES"
+],
+[
+"gem:lofoten"
+],
+[
+"TOS"
+]
+],
+"facts": {
+"type": "find",
+"cc": "NO"
+}
+},
+{
+"id": "m016",
+"q": "pueblo de montaña para hacer senderismo en los Pirineos",
+"lang": "es",
+"src": "multi",
+"places": [
+[
+"gem:ainsa"
+],
+[
+"gem:cauterets"
+],
+[
+"gem:cirque-de-gavarnie"
+],
+[
+"gem:jaca"
+],
+[
+"gem:alquezar"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "m017",
+"q": "comida y vino en Italia",
+"lang": "es",
+"src": "multi",
+"places": [
+[
+"BLQ"
+],
+[
+"gem:parma"
+],
+[
+"gem:modena"
+],
+[
+"FLR"
+],
+[
+"NAP"
+],
+[
+"gem:tuscany-siena"
+]
+],
+"facts": {
+"type": "find",
+"cc": "IT"
+}
+},
+{
+"id": "m018",
+"q": "islas con calas y ferris en Croacia",
+"lang": "es",
+"src": "multi",
+"places": [
+[
+"gem:hvar"
+],
+[
+"gem:korcula"
+],
+[
+"gem:vis"
+],
+[
+"gem:bol-brac"
+]
+],
+"facts": {
+"type": "find",
+"cc": "HR"
+}
+},
+{
+"id": "m019",
+"q": "playas de arena en Cerdeña",
+"lang": "es",
+"src": "multi",
+"places": [
+[
+"AHO"
+],
+[
+"gem:villasimius"
+],
+[
+"gem:cala-gonone"
+],
+[
+"OLB"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "m020",
+"q": "senderismo en las montañas de Escocia",
+"lang": "es",
+"src": "multi",
+"places": [
+[
+"gem:fort-william"
+],
+[
+"EDI"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "m021",
+"q": "paese tranquillo sul lago in Italia",
+"lang": "it",
+"src": "multi",
+"places": [
+[
+"gem:como"
+],
+[
+"gem:garda"
+],
+[
+"gem:riva-del-garda"
+],
+[
+"gem:lago-maggiore"
+],
+[
+"gem:malcesine"
+],
+[
+"gem:limone-sul-garda"
+],
+[
+"gem:orta-san-giulio"
+]
+],
+"facts": {
+"type": "find",
+"cc": "IT"
+}
+},
+{
+"id": "m022",
+"q": "centro storico medievale in Croazia",
+"lang": "it",
+"src": "multi",
+"places": [
+[
+"DBV"
+],
+[
+"SPU"
+],
+[
+"gem:rovinj"
+],
+[
+"gem:trogir"
+],
+[
+"gem:korcula"
+]
+],
+"facts": {
+"type": "find",
+"cc": "HR"
+}
+},
+{
+"id": "m023",
+"q": "terme e benessere",
+"lang": "it",
+"src": "multi",
+"places": [
+[
+"BUD"
+],
+[
+"gem:baden-baden"
+],
+[
+"gem:karlovy-vary"
+],
+[
+"gem:bath"
+],
+[
+"gem:vichy"
+],
+[
+"gem:bad-ischl"
+],
+[
+"gem:montecatini-terme"
+],
+[
+"gem:saturnia"
+],
+[
+"gem:heviz"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "m024",
+"q": "isole con spiagge in Grecia",
+"lang": "it",
+"src": "multi",
+"places": [
+[
+"gem:naxos"
+],
+[
+"JTR"
+],
+[
+"gem:paros"
+],
+[
+"gem:milos"
+],
+[
+"JMK"
+],
+[
+"CFU"
+],
+[
+"HER"
+],
+[
+"CHQ"
+],
+[
+"EFL"
+],
+[
+"ZTH"
+],
+[
+"RHO"
+]
+],
+"facts": {
+"type": "find",
+"cc": "GR"
+}
+},
+{
+"id": "m025",
+"q": "paese di montagna con funivie in Svizzera",
+"lang": "it",
+"src": "multi",
+"places": [
+[
+"gem:zermatt"
+],
+[
+"gem:grindelwald"
+],
+[
+"gem:lauterbrunnen"
+],
+[
+"gem:st-moritz"
+],
+[
+"gem:interlaken"
+]
+],
+"facts": {
+"type": "find",
+"cc": "CH"
+}
+},
+{
+"id": "m026",
+"q": "where can I swim in a mountain lake in Austria",
+"lang": "en",
+"src": "multi",
+"places": [
+[
+"gem:hallstatt"
+],
+[
+"gem:zell-am-see"
+],
+[
+"gem:st-wolfgang"
+],
+[
+"gem:achensee"
+],
+[
+"gem:bregenz"
+],
+[
+"gem:gmunden"
+]
+],
+"facts": {
+"type": "find",
+"cc": "AT"
+}
+},
+{
+"id": "m027",
+"q": "cobbled streets and a castle on the hill in the Czech Republic",
+"lang": "en",
+"src": "multi",
+"places": [
+[
+"gem:cesky-krumlov"
+],
+[
+"PRG"
+],
+[
+"gem:telc"
+],
+[
+"gem:kutna-hora"
+]
+],
+"facts": {
+"type": "find",
+"cc": "CZ"
+}
+},
+{
+"id": "m028",
+"q": "surf and sunshine on the Atlantic in Portugal",
+"lang": "en",
+"src": "multi",
+"places": [
+[
+"gem:lagos-pt"
+],
+[
+"gem:ericeira"
+],
+[
+"gem:peniche"
+],
+[
+"gem:nazare"
+],
+[
+"gem:aljezur"
+],
+[
+"gem:sagres"
+]
+],
+"facts": {
+"type": "find",
+"cc": "PT"
+}
+},
+{
+"id": "m029",
+"q": "fairytale castle in Bavaria",
+"lang": "en",
+"src": "multi",
+"places": [
+[
+"gem:fussen"
+],
+[
+"gem:neuschwanstein"
+],
+[
+"gem:bamberg"
+],
+[
+"gem:rothenburg"
+]
+],
+"facts": {
+"type": "find"
+}
+},
+{
+"id": "m030",
+"q": "canals and museums in the Netherlands",
+"lang": "en",
+"src": "multi",
+"places": [
+[
+"AMS"
+],
+[
+"gem:utrecht"
+],
+[
+"gem:leiden"
+],
+[
+"gem:delft"
+]
+],
+"facts": {
+"type": "find",
+"cc": "NL"
+}
+},
+{
+"id": "x001",
+"q": "a trip to Dubai in November",
+"lang": "en",
+"src": "abstain",
+"abstain": true
+},
+{
+"id": "x002",
+"q": "beaches in Bali",
+"lang": "en",
+"src": "abstain",
+"abstain": true
+},
+{
+"id": "x003",
+"q": "a week in New York in December",
+"lang": "en",
+"src": "abstain",
+"abstain": true
+},
+{
+"id": "x004",
+"q": "hiking in Patagonia",
+"lang": "en",
+"src": "abstain",
+"abstain": true
+},
+{
+"id": "x005",
+"q": "safari in Kenya",
+"lang": "en",
+"src": "abstain",
+"abstain": true
+},
+{
+"id": "x006",
+"q": "best time to go to Tokyo",
+"lang": "en",
+"src": "abstain",
+"abstain": true
+},
+{
+"id": "x007",
+"q": "cheap holiday to Thailand",
+"lang": "en",
+"src": "abstain",
+"abstain": true
+},
+{
+"id": "x008",
+"q": "road trip to California",
+"lang": "en",
+"src": "abstain",
+"abstain": true
+},
+{
+"id": "x009",
+"q": "a weekend in Marrakech",
+"lang": "en",
+"src": "abstain",
+"abstain": true
+},
+{
+"id": "x010",
+"q": "diving in the Maldives",
+"lang": "en",
+"src": "abstain",
+"abstain": true
+},
+{
+"id": "x011",
+"q": "ski trip to Colorado",
+"lang": "en",
+"src": "abstain",
+"abstain": true
+},
+{
+"id": "x012",
+"q": "flights to Cancun",
+"lang": "en",
+"src": "abstain",
+"abstain": true
+},
+{
+"id": "x013",
+"q": "what is the capital of australia",
+"lang": "en",
+"src": "abstain",
+"abstain": true
+},
+{
+"id": "x014",
+"q": "how do I renew my passport",
+"lang": "en",
+"src": "abstain",
+"abstain": true
+},
+{
+"id": "x015",
+"q": "asdf qwerty zxcv",
+"lang": "en",
+"src": "abstain",
+"abstain": true
+},
+{
+"id": "x016",
+"q": "een reis naar Bali in juli",
+"lang": "nl",
+"src": "abstain",
+"abstain": true
+},
+{
+"id": "x017",
+"q": "weekendje naar New York",
+"lang": "nl",
+"src": "abstain",
+"abstain": true
+},
+{
+"id": "x018",
+"q": "vakantie naar Thailand",
+"lang": "nl",
+"src": "abstain",
+"abstain": true
+},
+{
+"id": "x019",
+"q": "Urlaub nach Mexiko",
+"lang": "de",
+"src": "abstain",
+"abstain": true
+},
+{
+"id": "x020",
+"q": "eine Reise nach Japan im April",
+"lang": "de",
+"src": "abstain",
+"abstain": true
+},
+{
+"id": "x021",
+"q": "eine Woche in Kanada",
+"lang": "de",
+"src": "abstain",
+"abstain": true
+},
+{
+"id": "x022",
+"q": "un voyage à Tokyo",
+"lang": "fr",
+"src": "abstain",
+"abstain": true
+},
+{
+"id": "x023",
+"q": "une semaine à Bali",
+"lang": "fr",
+"src": "abstain",
+"abstain": true
+},
+{
+"id": "x024",
+"q": "vacances au Brésil",
+"lang": "fr",
+"src": "abstain",
+"abstain": true
+},
+{
+"id": "x025",
+"q": "viaje a Cancún",
+"lang": "es",
+"src": "abstain",
+"abstain": true
+},
+{
+"id": "x026",
+"q": "una semana en Tailandia",
+"lang": "es",
+"src": "abstain",
+"abstain": true
+},
+{
+"id": "x027",
+"q": "vacaciones en Perú",
+"lang": "es",
+"src": "abstain",
+"abstain": true
+},
+{
+"id": "x028",
+"q": "viaggio a Tokyo",
+"lang": "it",
+"src": "abstain",
+"abstain": true
+},
+{
+"id": "x029",
+"q": "una settimana in Thailandia",
+"lang": "it",
+"src": "abstain",
+"abstain": true
+},
+{
+"id": "x030",
+"q": "vacanza a New York",
+"lang": "it",
+"src": "abstain",
+"abstain": true
+}
+]
+}

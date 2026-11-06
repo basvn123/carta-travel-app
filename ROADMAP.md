@@ -762,7 +762,7 @@ docs/
 
 | ID | Item | Done when | Size | Phase | Status |
 |---|---|---|---|---|---|
-| E1 | Ask eval gate | 200 labelled queries, metrics per retriever, gate in CI | M | P3 | todo |
+| E1 | Ask eval gate | 200 labelled queries, metrics per retriever, gate in CI | M | P3 | done (T1136; dense and hybrid baseline open, T1136-a) |
 | E2 | Retrieval upgrades | BM25 everywhere, reranker kept only if it wins, index built on the box | M | P4 | todo |
 | E3 | One guardrail module | Same input, output and failure rules in every LLM function; injection set in CI | M | P3 | todo |
 | E4 | LLM observability | Every call in `ai_model_events`; admin cost and latency panel; Ask query logs | S | P4 | todo |
