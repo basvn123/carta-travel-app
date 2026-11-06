@@ -145,10 +145,11 @@ export function DestPriceCard({
   const [actsOn, setActsOn] = React.useState(() => new Set());
   const chosenActs = React.useMemo(() => pricedDo.filter((a) => actsOn.has(a.key)), [pricedDo, actsOn]);
   // T1026: the way there the traveller picked among the page's ways (plane,
-  // train, bus, car); a typed fare keeps the plane, else the cheapest way.
+  // train, bus, car); a typed fare keeps the plane, else the way the rule
+  // picks by door-to-door time and cost (T1100, D13, lib/wayChoice.js).
   const rows = ways?.rows || [];
   const mode = rows.some((w) => w.mode === modePick) ? modePick
-    : fare || !rows.length ? 'plane' : (ways.cheapest || rows[0].mode);
+    : fare || !rows.length ? 'plane' : (ways.pick || ways.cheapest || rows[0].mode);
   const pickedWay = rows.find((w) => w.mode === mode) || null;
   const price = React.useMemo(
     // T695: a flight switched off in the opened price leaves the receipt.
@@ -231,9 +232,20 @@ export function DestPriceCard({
   const datesText = from && to ? t('settings.datesRange', { start: shortDate(from), end: shortDate(to) }) : '';
   const pill = (open) => `dpc-pill${open ? ' is-open' : ''}`;
   const money = (v) => formatMoney(v, { precision: 'whole', locale: lang });
-  const minutesOf = (w) => (w.minutes ?? (Number.isFinite(w.hours) ? w.hours * 60 : null));
-  const timed = rows.filter((w) => minutesOf(w) != null);
-  const fastest = timed.length > 1 ? timed.reduce((a, b) => (minutesOf(b) < minutesOf(a) ? b : a)).mode : null;
+  // T1100: fastest door to door (the airport and the transfer count), so a
+  // flight is not "Fastest" on its air time alone.
+  const fastest = ways?.fastest || null;
+  // T1100: when the card opens on a dearer way than the cheapest, it says
+  // why in numbers: the door-to-door hours of the pick against the cheapest.
+  const pickRow = !modePick && !fare && ways?.pick && ways.pick !== ways.cheapest
+    ? rows.find((w) => w.mode === ways.pick) : null;
+  const cheapRow = pickRow ? rows.find((w) => w.mode === ways.cheapest) : null;
+  const pickNote = pickRow && cheapRow && pickRow.doorHours != null && cheapRow.doorHours != null
+    && cheapRow.doorHours > pickRow.doorHours
+    ? t('destx.wayPickWhy', {
+      time: minutesText(Math.round(pickRow.doorHours * 60)),
+      other: minutesText(Math.round(cheapRow.doorHours * 60)),
+    }) : '';
   const wayName = (w) => (w.mode === 'plane' ? (w.iata ? t('destx.flyToIata', { iata: w.iata }) : t('way.plane')) : t(`way.${w.mode}`));
   const waySub = (w) => (w.mode === 'plane' && w.dep && w.arr
     ? [t('destx.flightTimes', { dep: w.dep, arr: w.arr }), w.minutes ? minutesText(w.minutes) : ''].filter(Boolean)
@@ -362,6 +374,7 @@ export function DestPriceCard({
                   );
                 })}
               </div>
+              {pickNote && <p className="tcard-note">{pickNote}</p>}
               {mode === 'plane' && (
                 <div className="tcard-acts">
                   {cartaLine && (

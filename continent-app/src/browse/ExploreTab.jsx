@@ -578,10 +578,11 @@ export function ExploreTab({
       const flight = r ? {
         perSeat: legCost(r.out, { paying: 1, bagKey }).perSeat + legCost(r.back, { paying: 1, bagKey }).perSeat,
         airline: r.out.airline,
+        minutes: legMinutes(r.out), // T1100: the air time in the door-to-door weighing
       } : null;
       const way = wayFor(d || p, wayMode, { home, party, flight });
       // T589: the outbound flight's length, for the "Flight up to" filter.
-      const fmin = r ? legMinutes(r.out) : null;
+      const fmin = flight ? flight.minutes : null;
       m.set(p.id, way ? { ...p, cost: { ...p.cost, way }, fmin } : (wayMode === 'plane' ? p : null));
     }
     return m;

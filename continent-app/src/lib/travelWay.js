@@ -22,6 +22,7 @@
  */
 import { legTransportOptions } from './transport.js';
 import { partyOf, flightPerSeat, CHILD_TICKET_SHARE } from './party.js';
+import { chooseWay, wayKm, transferMinutesOf } from './wayChoice.js';
 
 export { partyOf, foodShare, ticketShare, flightPerSeat, BABY_LAP_FEE_LEG } from './party.js';
 
@@ -104,14 +105,19 @@ export function groundReturn(dest, home, mode, party) {
 
 /**
  * The way a card shows for one place under the chosen mode.
- *   flight  the cheapest return flight a seat from the sweep ({ perSeat, airline }) or null
+ *   flight  the cheapest return flight a seat from the sweep ({ perSeat, airline, minutes? }) or null
  * Returns { mode, perPerson, airline? } or null (the mode does not reach it).
- * 'any' is the cheapest of every way that reaches the place.
+ * 'any' weighs every way that reaches the place on door-to-door time and
+ * cost, and flies above a distance when a fare exists (T1100, D13,
+ * lib/wayChoice.js); it used to be the cheapest, which put a car to Bergen.
  */
 export function wayFor(dest, mode, { home, party, flight = null } = {}) {
   const ways = [];
   if ((mode === 'plane' || mode === 'any') && flight?.perSeat > 0) {
-    ways.push({ mode: 'plane', perPerson: flightPerSeat(flight.perSeat, party), airline: flight.airline || null });
+    ways.push({
+      mode: 'plane', perPerson: flightPerSeat(flight.perSeat, party), airline: flight.airline || null,
+      ...(Number.isFinite(flight.minutes) ? { minutes: flight.minutes } : {}),
+    });
   }
   for (const g of GROUND_MODES) {
     if (mode !== g && mode !== 'any') continue;
@@ -119,5 +125,7 @@ export function wayFor(dest, mode, { home, party, flight = null } = {}) {
     if (r) ways.push({ mode: g, perPerson: r.perPerson, hours: r.hours });
   }
   if (!ways.length) return null;
-  return ways.reduce((a, b) => (b.perPerson < a.perPerson ? b : a));
+  const choice = chooseWay(ways, { km: wayKm(home, dest), transferMinutes: transferMinutesOf(dest) });
+  const pick = choice && ways.find((w) => w.mode === choice.pick);
+  return pick || ways.reduce((a, b) => (b.perPerson < a.perPerson ? b : a));
 }

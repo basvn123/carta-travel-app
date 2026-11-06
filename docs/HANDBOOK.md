@@ -1326,6 +1326,28 @@ Worked example: an airport 100 road km away, 2 adults, 7 nights. Car: 0.1397 per
 
 ---
 
+### The way there: which mode a card opens on (D13)
+
+**What it does.** Where Carta prices several ways to reach a place (the place page's trip card, an Explore card under "any way", the Places list under "any way"), it opens on one. It used to open on the cheapest, which showed a car to Bergen or a 512 euro train to Taormina while flights existed (audit P-31). It now opens on the way that is sensible door to door; every way stays listed with its own price and the cheapest keeps its "Cheapest" mark.
+
+**How it works.** `lib/wayChoice.js` `chooseWay`, numbers in `way.choice`:
+1. Door-to-door hours, one way. A train, coach or car: the leg estimator's own hours (they already count stations, ferries and the town ends). A flight: the air time from the leg's clock times (or straight km / `plane_kmh` 750 + `plane_taxi_hours` 0.5), plus `plane_overhead_hours` 3 (to the home airport, check-in and security, out at the other end), plus the transfer from the landing airport (0 for a place with its own airport, the stored transfer for a gem, else `unknown_transfer_hours` 1).
+2. Far means fly: when the straight line from the traveller's start to the place is at least `fly_km` 700 and a flight has a fare, the flight is the pick (reason `distance`), unless a ground way is both faster door to door and no dearer (reason `beats_flight`).
+3. Near means time and money: otherwise the way with the lowest return price a person + `eur_per_hour` 15 x 2 x door-to-door hours wins (reason `time_cost`).
+4. A flight without a fare is never a candidate. In the Places list (`price/compose.js`, any way) a route with no swept fare is priced only when nothing else reaches, as before (T511); it no longer wins as "cheapest" by leaving the flight out.
+5. "Fastest" on the trip card is door to door too. When the card opens on a dearer way than the cheapest, one caption says why in hours (`destx.wayPickWhy`); it hides once the traveller picks a way.
+6. A mode the traveller chose (the settings line) is always honoured. `fly_km` is also the planner prefill's distance (`gettingThere.js FLY_KM`).
+
+Worked example: Brussels to Annecy (566 km), no fare. Train EUR 180 return, 7.0 h; coach EUR 93, 10.6 h; car EUR 103, 8.1 h. Scores: train 180 + 30 x 7.0 = 390; coach 93 + 30 x 10.6 = 411; car 103 + 30 x 8.1 = 346. The card opens on the car; the coach keeps "Cheapest".
+
+**Data behind it.** The flight sweep (`data/flights/{IATA}.json`), the leg estimator (`lib/transport.js`), `transfer.transfer_minutes_one_way` on gems, `way.choice`.
+
+**Where it lives.** `continent-app/src/lib/wayChoice.js`, `src/lib/travelWay.js` (`wayFor`), `src/browse/placeWays.js` (`waysThere`), `src/lib/price/compose.js`, `src/browse/DestPriceCard.jsx`; check `scripts/way_choice_pairs.mjs`, tests `tests/wayChoice.test.mjs`.
+
+**Limits.** The 50-pair check (5 homes x 10 places) ran on fixture fares, a distance stand-in; the run on the real sweep is an owner step (T1100-a). The values in `way.choice` are estimates, not measured (T1100-b). Local clock times make a flight across a time zone read an hour off.
+
+---
+
 ### Airport transfer per mode (airport to the place)
 
 **What it does.** Tells you which airports serve a place, how long the transfer takes by car or public transport, and what the transfer costs your party, so a place without its own airport can still be flown to.

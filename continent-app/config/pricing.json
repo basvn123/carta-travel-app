@@ -1336,6 +1336,22 @@
       "date": "2026-10-23",
       "review": "2027-04-24",
       "test": "tests/flightSweep.test.mjs"
+    },
+    "way.choice": {
+      "value": {
+        "fly_km": 700,
+        "eur_per_hour": 15,
+        "plane_overhead_hours": 3,
+        "plane_kmh": 750,
+        "plane_taxi_hours": 0.5,
+        "unknown_transfer_hours": 1
+      },
+      "unit": "km straight line, EUR a person an hour of door-to-door travel, hours, km/h",
+      "kind": "estimate",
+      "source": "T1100 (D13) estimate, not measured: above fly_km straight line a flight with a fare is the default way there; below it the way with the lowest return price plus eur_per_hour times the door-to-door hours both ways wins. A flight door to door is its air time (or the distance at plane_kmh plus plane_taxi_hours) plus plane_overhead_hours (to the home airport, check-in and security, out at the other end) plus the transfer from the landing airport (unknown_transfer_hours when a place has none stored). fly_km matches the planner prefill (gettingThere.js FLY_KM)",
+      "date": "2026-11-06",
+      "review": "2027-05-06",
+      "test": "tests/wayChoice.test.mjs"
     }
   }
 }

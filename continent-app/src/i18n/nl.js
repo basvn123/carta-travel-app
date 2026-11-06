@@ -6285,6 +6285,7 @@ export const nl = {
   "destx.flightTimes": "{dep} tot {arr}",
   "destx.aboutTime": "Ongeveer {time}",
   "destx.cheapest": "Goedkoopst",
+  "destx.wayPickWhy": "Geopend op de snellere manier: ongeveer {time} van deur tot deur, tegen {other} voor de goedkoopste.",
   "destx.qf.language": "Taal",
   "destx.qf.money": "Geld",
   "destx.qf.tipping": "Fooi",
