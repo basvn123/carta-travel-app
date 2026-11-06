@@ -306,6 +306,26 @@
         "value": null,
         "at": "2026-11-06T17:24:05.921Z"
       }
+    },
+    "tag-verify": {
+      "version": 1,
+      "file": "prompts/tag-verify/v1.md",
+      "format": "registry",
+      "sha256": "049ae6a9b3dc2485bff8287f30b8af8604f9d4c609c0946fd0bec2ab34299fae",
+      "runtime": "python",
+      "eval": "taxonomy",
+      "guard": null,
+      "callers": [
+        "pipeline/taxonomy/tagger.py"
+      ],
+      "lastScore": {
+        "version": 1,
+        "eval": "taxonomy",
+        "status": "pass",
+        "key": "rp_at_5",
+        "value": 0.4333,
+        "at": "2026-11-06T19:48:29.348Z"
+      }
     }
   }
 }
