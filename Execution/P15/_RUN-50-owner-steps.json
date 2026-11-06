@@ -92,5 +92,331 @@
    "Open an E-path stage in Andorra or Poland: the title reads E7, Andorra (or E3, Poland (west)) with Also called and the full name under it",
    "Repeat at desktop width"
   ]
+ },
+ {
+  "id": "T1085-c",
+  "title": "Confirm backups on the live build box",
+  "why": "The code cannot show that the box has the keys and that dumps reach R2.",
+  "where": "Execution/_OPEN.md",
+  "how": [
+   "Run `rclone lsf r2:carta/archive/db/supabase/` on the box",
+   "Check `CARTA_BACKUP_KEY` and pg_dump 17+ exist",
+   "Check R2 lifecycle rules and Supabase's own backup setting"
+  ]
+ },
+ {
+  "id": "T1088-a",
+  "title": "Watch the first supply-chain.yml run",
+  "why": "The gates are unverified on GitHub and OSV was unreachable from the cloud container.",
+  "where": ".github/workflows/supply-chain.yml",
+  "how": [
+   "Push or open a PR touching a lockfile",
+   "Open the Actions run",
+   "Fix any failing step"
+  ]
+ },
+ {
+  "id": "T1088-d",
+  "title": "Re-sync venvs and run the pipeline on the new pins",
+  "why": "Lxml 6, geopandas 1.1 and others were only unit-tested.",
+  "where": "constraints.txt",
+  "how": [
+   "On the box and laptop run `pip install --only-binary=:all: -r requirements.txt -c constraints.txt`",
+   "Run one weekly pipeline",
+   "Compare output"
+  ]
+ },
+ {
+  "id": "T1093-a",
+  "title": "Harvest trail photos and rebuild the trails wire",
+  "why": "The container cannot reach Commons or the trails lab, and the wire only gets the licence fields at the next export.",
+  "where": "pipeline/trails/trail_images.py",
+  "how": [
+   "Start the lab (`cd tools/trailslab && docker compose up -d`)",
+   "After T1092-a run `python pipeline/trails/trail_images.py --countries DE,IT,GB,FR --worst-first --pace 0.8 --max-minutes 240` and repeat the same command until it prints no \"routes left for the next run\" (about 8,200 routes without a photo, about 7 requests each, so roughly 12 hours in total at 0.8 s",
+   "`--pace 0.5` cuts it to about 8 hours",
+   "This is an estimate from the route counts, not a measurement)",
+   "Then `python run_pipeline.py --only trails_rate` to export the wire",
+   "Commit the changed `continent-app/public/trails/` files"
+  ]
+ },
+ {
+  "id": "T1093-b",
+  "title": "Check the rebuilt wire and one credited page",
+  "why": "Proves the after number and the credit line.",
+  "where": "Execution/P15/T1093-trail-photos.md",
+  "how": [
+   "Per country count rows with `img` in `continent-app/public/trails/{DE,IT,GB,FR}.json` and note the percentage",
+   "Run `cd continent-app && node scripts/ci/check-contract.mjs`",
+   "Open a trail page that has a photo on a phone and read the credit under it"
+  ]
+ },
+ {
+  "id": "T1095-a",
+  "title": "Run the intro harvest",
+  "why": "The Wikipedia and Wikivoyage APIs are not reachable from the cloud box.",
+  "where": "pipeline/dossier/harvest_place_intros.py",
+  "how": [
+   "From the repo root run `python pipeline/dossier/harvest_place_intros.py` (about 300 places, 2 sources, 0.4 s pace, resumable, about 10 minutes)",
+   "Run `python pipeline/dossier/harvest_place_intros.py --report`",
+   "Open `cache/dossier/place_intros.json` and read 10 rejected rows"
+  ]
+ },
+ {
+  "id": "T1095-b",
+  "title": "Rebuild dossiers and count the bar",
+  "why": "The merge happens in the dossier build.",
+  "where": "pipeline/dossier/build_dossier.py",
+  "how": [
+   "Run `python pipeline/dossier/build_dossier.py --all` (or `python run_pipeline.py dossier`)",
+   "Run the prerender",
+   "Compare `bar.intro` passes against the 28 before",
+   "Look at one FR, one RS and one IT place page at phone and desktop width"
+  ]
+ },
+ {
+  "id": "T1098-a",
+  "title": "Prepare the nights CSV",
+  "why": "The cloud box cannot reach ONS, VisitBritain or the national offices.",
+  "where": "cache/uk_crowds_nights.csv",
+  "how": [
+   "Find the ONS / VisitBritain regional monthly nights table (ITL1), and the monthly overnight stays for BA, FO, MD, XK",
+   "Write one long CSV with columns geo,name,year,month,nights (geo = ITL1 code such as TLK, or BA/FO/MD/XK",
+   "12 months per year, 2 to 3 recent years)"
+  ]
+ },
+ {
+  "id": "T1098-b",
+  "title": "Download ITL1 boundaries",
+  "why": "Point-in-polygon needs the region shapes.",
+  "where": "cache/uk_itl1_boundaries.geojson",
+  "how": [
+   "Download the ITL1 boundaries GeoJSON (BUC or BGC) from the ONS Open Geography Portal (OGL v3)",
+   "Save as cache/uk_itl1_boundaries.geojson"
+  ]
+ },
+ {
+  "id": "T1098-c",
+  "title": "Run and count",
+  "why": "The after figure comes from the real master.",
+  "where": "run_pipeline.py",
+  "how": [
+   "Run `python run_pipeline.py --only crowding` if the Eurostat layer is stale, then `python run_pipeline.py --only crowding_uk`",
+   "Count GB places with crowding.monthly",
+   "Open 5 UK place pages and check When to go"
+  ]
+ },
+ {
+  "id": "T1100-a",
+  "title": "Run the D13 50-pair check on the real flight sweep",
+  "why": "The container only had fixture fares, and D13 is done when the pairs are checked on real fares.",
+  "where": "continent-app/scripts/way_choice_pairs.mjs",
+  "how": [
+   "Copy the sweep files BRU.json, AMS.json, CDG.json, MUC.json, MAD.json from data/flights/ into one folder",
+   "Cd continent-app",
+   "Node scripts/way_choice_pairs.mjs --flights-dir <that folder>",
+   "Check that no pair of 700 km or more with a flight opens on a ground way and that short hops do not fly",
+   "Paste the summary lines into a short follow-up note or the next report"
+  ]
+ },
+ {
+  "id": "T1100-b",
+  "title": "Confirm the way.choice values",
+  "why": "They decide which way every card opens on and are estimates, not measured.",
+  "where": "continent-app/config/pricing.json",
+  "how": [
+   "Open continent-app/config/pricing.json rule way.choice",
+   "Confirm or change fly_km 700, eur_per_hour 15, plane_overhead_hours 3",
+   "Rerun npm test"
+  ]
+ },
+ {
+  "id": "T1100-c",
+  "title": "Look at the place page trip card on a real phone",
+  "why": "The cloud check had no flight sweep, so the plane row was never on screen.",
+  "where": "continent-app/src/browse/DestPriceCard.jsx",
+  "how": [
+   "Open Bergen and Taormina with From Brussels: the card opens on the plane, the car or train keeps its price and the Cheapest mark",
+   "Open Annecy: the why caption reads well"
+  ]
+ },
+ {
+  "id": "T1101-a",
+  "title": "Add the live failing query to the Ask golden set",
+  "why": "The Workers AI model is not reachable from the cloud container.",
+  "where": "continent-app/scripts/ask-eval-live.mjs",
+  "how": [
+   "Run `node continent-app/scripts/ask-eval-live.mjs` against the deployed site with the question \"quiet lake with good walks in June under 120 a day\"",
+   "Confirm the named places equal the first three cards"
+  ]
+ },
+ {
+  "id": "T1101-b",
+  "title": "Look at Ask on a phone and desktop",
+  "why": "The app data and a browser were not available to this session.",
+  "where": "Execution/P15/T1101-ask-cards-agree.md",
+  "how": [
+   "After the next deploy ask five questions",
+   "Check the sentence names only places on the first three cards, in their order"
+  ]
+ },
+ {
+  "id": "T1094-a",
+  "title": "Rebuild the trails with the T1094 recovery rules on the box",
+  "why": "The rules are in code and tested on fixtures, but the extracts, the lab and the Wikidata harvest are only on the box, so no walk is recovered until this runs.",
+  "where": "`Execution/P15/T1094-recover-walks.md`",
+  "how": [
+   "`cd tools/trailslab && docker compose up -d && cd ../..`",
+   "`python pipeline/trails/derive_routes.py --dry-run` and keep the per-country lines plus each \"T1094 rules\" line (expect Orla Perc, Sentier des Roches and Ruta del Cares in PL, FR and ES)",
+   "`python pipeline/trails/splice.py --dry-run` and keep the \"T1094 reorder pass\" line and its refusal reasons",
+   "`python run_pipeline.py trails_registry` (re-harvests the registry with the Phase 2 classifier, about an hour, needs Wikidata)",
+   "`python run_pipeline.py trails_derive_routes` (all countries, several hours)",
+   "Then `trails_elevation`, `trails_splice`, `trails_regionize`, `trails_hierarchy`, `trails_curate` and the rest of the chain to `trails_rate`, which exports the wire",
+   "`python pipeline/trails/coverage_report.py --all`",
+   "`python pipeline/trails/recover_walks.py`",
+   "`python -c \"import sys",
+   "Sys.path.insert(0,'pipeline/trails')",
+   "Import smoke_test",
+   "Smoke_test.famous_check()\"`",
+   "Plan one overnight run in total",
+   "Expect `way_only_not_derived` to fall from 8,891 to a few hundred, at most 190 of them newly published, famous routes 15 to 18 or 19 of 30, and the Mourne Wall Challenge, Antrim Hills Way and Newcastle Way to move from IE.json to GB.json",
+   "Send the printed numbers to the next session for the report"
+  ]
+ },
+ {
+  "id": "T1096-a",
+  "title": "Run the gallery pass",
+  "why": "Commons is not reachable from the cloud box.",
+  "where": "pipeline/photos/place_gallery.py",
+  "how": [
+   "From the repo root run `python pipeline/photos/place_gallery.py --report`",
+   "Run `python pipeline/photos/place_gallery.py` (about 1,130 places, 1 s pace, about 20 to 25 minutes, resumable, `--max-minutes 30` to cap)",
+   "Run `--report` again and compare with the table above",
+   "Open `cache/dossier/place_gallery.json` and read 10 places"
+  ]
+ },
+ {
+  "id": "T1096-b",
+  "title": "Run the POI description harvest",
+  "why": "Wikipedia is not reachable from the cloud box and the master is an LFS file.",
+  "where": "pipeline/poi_descriptions.py",
+  "how": [
+   "`git lfs pull` for `app_data/app_data.json`",
+   "`cp app_data/app_data.json app_data/app_data.pre-T1096.json`",
+   "`python pipeline/poi_descriptions.py --report`",
+   "`python pipeline/poi_descriptions.py` (about 0.4 s a POI, resumable, expect 1 to 2 hours for a few thousand POIs)",
+   "`--report` again",
+   "Read 10 rejected rows in `cache/poi_descriptions.json`",
+   "Then `python pipeline/poi_descriptions.py apply`"
+  ]
+ },
+ {
+  "id": "T1096-c",
+  "title": "Rebuild dossiers and look at the galleries",
+  "why": "The merge happens in the dossier build.",
+  "where": "pipeline/dossier/build_dossier.py",
+  "how": [
+   "`python pipeline/dossier/build_dossier.py --all`",
+   "Run `place_gallery.py --report`",
+   "Look at one GB, RO, FR and IT place gallery at phone and desktop width and check each photo shows author and licence"
+  ]
+ },
+ {
+  "id": "T1097-a",
+  "title": "Run the sea temperature harvest and exports on the box",
+  "why": "ERDDAP is not reachable from the cloud container and the harvest takes about 6 hours.",
+  "where": "wc -l` (expect most coastal country files) and that the publish gate did not roll the beaches back; then ship as usual",
+  "how": [
+   "On the box in the repo root: `git pull`",
+   "`python run_pipeline.py --only sea_temp,climate_daily,beach_context --ship none`",
+   "If the harvest prints \"incomplete\" and exits 3, run the same command again (it resumes from `cache/sea_temp/`, repeat until it ends clean)",
+   "Check `grep -l '\"sea_temp\"' continent-app/public/beaches/*.json"
+  ]
+ },
+ {
+  "id": "T1097-b",
+  "title": "Look at one real beach page after the deploy",
+  "why": "The strip is only proven on fixture data.",
+  "where": "continent-app/src/browse/BeachPage.jsx",
+  "how": [
+   "Open a Mediterranean beach on a phone",
+   "Check the sea strip and its warmest months"
+  ]
+ },
+ {
+  "id": "T1102-b",
+  "title": "Look at trail tiles on a real phone",
+  "why": "The container had no photographs, so the look was judged on text and layout only.",
+  "where": "continent-app/src/browse/SectionOpening.jsx",
+  "how": [
+   "Open Explore, Trails, pick a country, check the rail tile and a walk's page",
+   "Open a walk and press Back"
+  ]
+ },
+ {
+  "id": "T1103-c",
+  "title": "Decide where \"I'm on a trip now\" and \"Add a past trip\" live",
+  "why": "The trip-kind sheet that held them now shows only while a trip is under way.",
+  "where": "Execution/P15/T1103-plan-flow-short.md",
+  "how": [
+   "Open Plan on a phone with no trip under way",
+   "Tap Start planning and note the sheet is gone",
+   "Decide: keep (My trips has Add a past trip) or ask for a quiet link on Plan home"
+  ]
+ },
+ {
+  "id": "T1103-e",
+  "title": "Usability test of the short plan flow with one first-time traveller",
+  "why": "Only a real person shows where the 5-screen path still confuses.",
+  "where": "Execution/P15/T1103-plan-flow-short.md",
+  "how": [
+   "On a phone, ask someone new to Carta to \"find a priced week away\"",
+   "Watch without helping",
+   "Note where they pause (When with no dates, the refine card, Back from the trips)"
+  ]
+ },
+ {
+  "id": "T1103-f",
+  "title": "Confirm the broad ranking for an unasked \"What are you up for\"",
+  "why": "The first trips rank by city, culture and food until the traveller says what they like.",
+  "where": "continent-app/src/lib/recommend/candidates.js",
+  "how": [
+   "Look at the first trips after Tell, Who, When, From",
+   "Keep the default or name three other types for `BROAD_TYPES`"
+  ]
+ },
+ {
+  "id": "T1104-a",
+  "title": "Paste migration 065 (account sync table)",
+  "why": "Kept trips, bookmarks, trips in progress and the device trip only follow the account once the table exists.",
+  "where": "supabase/migrations/065_account_things.sql",
+  "how": [
+   "In the Supabase SQL editor paste supabase/migrations/065_account_things.sql after 064",
+   "Look for \"account things self-check passed\"",
+   "From continent-app/ run node scripts/verify_live_policies.mjs"
+  ]
+ },
+ {
+  "id": "T1104-b",
+  "title": "Check signed-in work on two devices",
+  "why": "The sync is proven only against a stubbed account here, never against the live project.",
+  "where": "Execution/P15/T1104-account-sync.md",
+  "how": [
+   "After T1104-a and a deploy, signed out on a phone keep a trip from the trip finder and bookmark a Carta trip",
+   "Sign in",
+   "On a laptop sign in to the same account and open My trips: both should be there within a few seconds",
+   "Remove the bookmark on the laptop and reopen the phone: it should be gone",
+   "Sign in on the phone as a second test account: the first account's things should leave the phone and not appear in the second account"
+  ]
+ },
+ {
+  "id": "T1106-a",
+  "title": "Check seeded errors stay in their screen",
+  "why": "The container has no app data, so the browser check could not run.",
+  "where": "Execution/P15/T1106-error-boundaries.md",
+  "how": [
+   "In continent-app run `node tests/section-boundary.spec.mjs` (set CHROMIUM_PATH if needed)",
+   "Open `npm run dev` at `/?tab=map&seedError=explore` at phone and desktop width and confirm one short message with Try again, header and nav still working"
+  ]
  }
 ]
