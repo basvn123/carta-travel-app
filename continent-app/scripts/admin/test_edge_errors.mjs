@@ -442,6 +442,18 @@ async function runTests(bin) {
     return { shortCircuit: true, url: 'data:text/javascript,export const getSupabase = async () => globalThis.__fakeSupabase; export const whenSupabase = () => {}; export const authConfigured = true;' };
   }
   return next(spec, ctx);
+}
+// App modules read import.meta.env, which only Vite defines; under plain node
+// it is undefined and the import throws (T1087). Give them an empty env.
+export async function load(url, ctx, next) {
+  const out = await next(url, ctx);
+  if (url.startsWith('file:') && url.includes('/src/') && out.source) {
+    const text = String(out.source);
+    if (text.includes('import.meta.env')) {
+      return { ...out, source: text.split('import.meta.env').join('({ DEV: false, PROD: true, MODE: "test" })') };
+    }
+  }
+  return out;
 }`;
     register(`data:text/javascript,${encodeURIComponent(hook)}`);
     const src = resolve(here, '../../src/planner');

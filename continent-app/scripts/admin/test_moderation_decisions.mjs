@@ -11,8 +11,10 @@
  *           in a minute refuse the 21st with slow_down, ten bans do not
  *           block a config save, and twenty config saves do not block a
  *           pass change.
- *   T063-e  admin_set_tier refuses an aal1 session with mfa_required, writes
- *           one mfa_refused row and leaves the pass alone; aal2 goes through.
+ *   T063-e  admin_set_tier refuses an aal1 session with mfa_required and
+ *           leaves the pass alone; aal2 goes through with 064's reason.
+ *           Since 062 the refusal is the guard's and writes no row, and
+ *           reset_quota needs aal2 as well.
  *   T074-c  an overdue temporary override stops reaching travellers 14 days
  *           after its review date; verified and stale ones keep applying;
  *           the admin list still shows every row.
@@ -248,12 +250,12 @@ function runTests(bin) {
     check('20 config saves in the minute: the 21st answers slow_down', cfg().error === 'slow_down');
     check('the feedback triage shares that budget', rpc(ADMIN, `public.admin_set_feedback_status(1, 'done')`, 'aal2').error === 'slow_down');
     check('20 config saves do not block a pass change (destructive list)',
-      rpc(ADMIN, `public.admin_set_tier('${BUYER}', 'trip', 5)`, 'aal2').ok === true);
+      rpc(ADMIN, `public.admin_set_tier('${BUYER}', 'trip', 'test pass reason', 5)`, 'aal2').ok === true);
     clearAudit();
     audit(10, 'ban_user');
     check('10 bans in the minute do not block a config save', cfg().ok === true);
     check('10 bans in the minute still block an 11th destructive action',
-      rpc(ADMIN, `public.admin_set_tier('${BUYER}', 'free', null)`, 'aal2').error === 'slow_down');
+      rpc(ADMIN, `public.admin_set_tier('${BUYER}', 'free', 'test pass reason', null)`, 'aal2').error === 'slow_down');
     clearAudit();
     audit(60, 'view_user');
     check('the overall cap of 60 still applies to live saves', cfg().error === 'slow_down');
@@ -262,15 +264,24 @@ function runTests(bin) {
     // ---- T063-e: aal2 for set_tier --------------------------------------
     console.log('\n  T063-e, a pass change needs the second factor:');
     const tierBefore = db(`select tier from public.entitlements where user_id = '${BUYER}'`);
-    const r1 = rpc(ADMIN, `public.admin_set_tier('${BUYER}', 'year', 365)`, 'aal1');
+    const r1 = rpc(ADMIN, `public.admin_set_tier('${BUYER}', 'year', 'test pass reason', 365)`, 'aal1');
     check('aal1: admin_set_tier answers mfa_required', r1.error === 'mfa_required', JSON.stringify(r1));
     check('aal1: the pass is unchanged', db(`select tier from public.entitlements where user_id = '${BUYER}'`) === tierBefore);
-    check('aal1: one mfa_refused audit row naming set_tier',
-      db(`select count(*) from public.admin_audit_log where action = 'mfa_refused' and detail ->> 'fn' = 'set_tier' and target_user = '${BUYER}'`) === '1');
+    // 062 moved the aal2 check into admin_guard, which is STABLE and writes
+    // nothing, so the refusal leaves no row (before 062 it left one
+    // mfa_refused row). T1087 updated this to 062.
+    check('aal1: the guard refusal writes no audit row (062)',
+      db(`select count(*) from public.admin_audit_log where actor = '${ADMIN}'`) === '0');
     check('a token with no aal claim is refused too',
-      rpc(ADMIN, `public.admin_set_tier('${BUYER}', 'year', 365)`, null).error === 'mfa_required');
-    check('aal2: admin_set_tier goes through', rpc(ADMIN, `public.admin_set_tier('${BUYER}', 'year', 365)`, 'aal2').ok === true);
-    check('aal1: reset_quota is still allowed (owner: no)', rpc(ADMIN, `public.admin_reset_quota('${BUYER}')`, 'aal1').ok === true);
+      rpc(ADMIN, `public.admin_set_tier('${BUYER}', 'year', 'test pass reason', 365)`, null).error === 'mfa_required');
+    check('aal2: admin_set_tier goes through', rpc(ADMIN, `public.admin_set_tier('${BUYER}', 'year', 'test pass reason', 365)`, 'aal2').ok === true);
+    // 062: every admin RPC needs aal2, reset_quota included (the 2026-10-07
+    // "owner: no" decision was superseded by 062, T1071).
+    check('aal1: reset_quota now answers mfa_required too (062)',
+      rpc(ADMIN, `public.admin_reset_quota('${BUYER}')`, 'aal1').error === 'mfa_required');
+    check('aal2: reset_quota goes through', rpc(ADMIN, `public.admin_reset_quota('${BUYER}')`, 'aal2').ok === true);
+    check('the aal2 pass change row carries the reason (064)',
+      db(`select reason from public.admin_audit_log where action = 'set_tier' and target_user = '${BUYER}' order by id desc limit 1`) === 'test pass reason');
     clearAudit();
 
     // ---- T074-c: overrides stop after 14 days ---------------------------

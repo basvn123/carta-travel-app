@@ -6,8 +6,10 @@
  * WHAT IT PROVES, one block per register row 045 closes:
  *
  *   T063-d  An aal1 (or claimless) admin's delete and ban are refused with
- *           {error: mfa_required}, nothing happens to the target, and one
- *           'mfa_refused' audit row is written. At aal2 both still work.
+ *           {error: mfa_required} and nothing happens to the target. Since
+ *           062 the refusal comes from admin_guard, which is STABLE and
+ *           writes no row (before 062 one 'mfa_refused' row was written).
+ *           At aal2 both still work, with 064's required reason.
  *   T065-c  admin_set_config refuses a malformed maintenance value again.
  *   T064-c  Two admins creating the same NEW config key, or the same new
  *           override, at the same moment: the second waits for the first
@@ -251,30 +253,31 @@ async function runTests(bin) {
     const clearAudit = () => sql('delete from public.admin_audit_log');
 
     // ------------------------------------------------------------------ T063-d
-    console.log('\n  T063-d: a refused aal1 delete or ban leaves an audit row');
+    // 062 moved the aal2 check into admin_guard for every tier, so a refusal
+    // below aal2 now happens in the STABLE guard, which cannot write: no
+    // mfa_refused row any more (062's header). 064 gave ban and delete a
+    // required reason (T1087 updated these assertions to 062 and 064).
+    console.log('\n  T063-d: an aal1 delete or ban is refused by the guard (062) and changes nothing');
     clearAudit();
     for (const [label, claims] of [['aal1', adminAal1], ['no aal claim', { sub: ADMIN, role: 'authenticated' }]]) {
-      const ban = asJson('authenticated', claims, `select public.admin_ban_user('${VICTIM}'::uuid, 7)`);
+      const ban = asJson('authenticated', claims, `select public.admin_ban_user('${VICTIM}'::uuid, 'test ban reason', 7)`);
       check(`${label} ban: returns {error: mfa_required}`, ban.error === 'mfa_required', JSON.stringify(ban));
-      const del = asJson('authenticated', claims, `select public.admin_delete_user('${VICTIM}'::uuid, 'victim@example.test')`);
+      const del = asJson('authenticated', claims, `select public.admin_delete_user('${VICTIM}'::uuid, 'victim@example.test', 'test delete reason')`);
       check(`${label} delete: returns {error: mfa_required}`, del.error === 'mfa_required', JSON.stringify(del));
     }
     check('the victim still exists and is not banned',
       sql(`select count(*) from auth.users where id = '${VICTIM}' and banned_until is null`) === '1');
-    check('four mfa_refused audit rows, targeting the victim, actor the admin',
-      sql(`select count(*) from public.admin_audit_log where action = 'mfa_refused' and target_user = '${VICTIM}' and actor = '${ADMIN}'`) === '4');
-    check('the rows say which function and which aal',
-      sql(`select string_agg(detail->>'fn' || '/' || coalesce(detail->>'aal','none'), ',' order by id) from public.admin_audit_log where action = 'mfa_refused'`)
-        === 'ban_user/aal1,delete_user/aal1,ban_user/none,delete_user/none');
-    check('no ban_user or delete_user row was written',
-      sql(`select count(*) from public.admin_audit_log where action in ('ban_user','delete_user')`) === '0');
-    const nonAdmin = asJson('authenticated', plainClaims, `select public.admin_ban_user('${VICTIM}'::uuid, 7)`);
+    check('the guard refusal writes no audit row at all (062: a STABLE guard cannot insert)',
+      sql(`select count(*) from public.admin_audit_log`) === '0');
+    const nonAdmin = asJson('authenticated', plainClaims, `select public.admin_ban_user('${VICTIM}'::uuid, 'test ban reason', 7)`);
     check('a non-admin still hears forbidden first, and writes nothing',
       nonAdmin.error === 'forbidden' && sql(`select count(*) from public.admin_audit_log where actor = '${PLAIN}'`) === '0');
-    const ban2 = asJson('authenticated', adminAal2, `select public.admin_ban_user('${VICTIM}'::uuid, 7)`);
+    const ban2 = asJson('authenticated', adminAal2, `select public.admin_ban_user('${VICTIM}'::uuid, 'test ban reason', 7)`);
     check('aal2 ban still works', ban2.ok === true, JSON.stringify(ban2));
+    check('the aal2 ban row carries the reason (064)',
+      sql(`select reason from public.admin_audit_log where action = 'ban_user' and target_user = '${VICTIM}' order by id desc limit 1`) === 'test ban reason');
     check('aal2 own_account refusal intact',
-      asJson('authenticated', adminAal2, `select public.admin_delete_user('${ADMIN}'::uuid, 'x')`).error === 'own_account');
+      asJson('authenticated', adminAal2, `select public.admin_delete_user('${ADMIN}'::uuid, 'x', 'test delete reason')`).error === 'own_account');
 
     // ------------------------------------------------------------------ T065-c
     console.log('\n  T065-c: the maintenance shape check is back');
@@ -338,25 +341,25 @@ async function runTests(bin) {
       setCfg(adminAal2, 'secret_knob', { on: true }).ok === true
       && sql(`select public from public.site_config where key = 'secret_knob'`) === 'f');
     check('the client cannot read it', as('anon', null, `select count(*) from public.site_config where key = 'secret_knob'`).out === '0');
-    const list = asJson('authenticated', adminAal1, 'select public.admin_list_config()');
+    const list = asJson('authenticated', adminAal2, 'select public.admin_list_config()');
     const knob = (list.rows || []).find((r) => r.key === 'secret_knob');
     check('admin_list_config shows the private key with its value and flag',
       knob && knob.public === false && knob.value?.on === true && knob.required === false, JSON.stringify(knob));
     check('admin_list_config marks the three app keys required',
       ['announcement', 'maintenance', 'features'].every((k) => (list.rows || []).find((r) => r.key === k)?.required === true));
-    const flip = asJson('authenticated', adminAal1, `select public.admin_set_config_public('secret_knob', true)`);
+    const flip = asJson('authenticated', adminAal2, `select public.admin_set_config_public('secret_knob', true)`);
     check('flipping it public answers ok, changed', flip.ok === true && flip.changed === true, JSON.stringify(flip));
     check('the client can now read it', as('anon', null, `select count(*) from public.site_config where key = 'secret_knob'`).out === '1');
     const vis = sql(`select (detail->'previous'->>'public') || '>' || (detail->'new'->>'public') from public.admin_audit_log where action = 'config_visibility'`);
     check('one config_visibility audit row with previous false, new true', vis === 'false>true', vis);
-    const same = asJson('authenticated', adminAal1, `select public.admin_set_config_public('secret_knob', true)`);
+    const same = asJson('authenticated', adminAal2, `select public.admin_set_config_public('secret_knob', true)`);
     check('a no-change flip answers changed false and writes no row',
       same.changed === false && sql(`select count(*) from public.admin_audit_log where action = 'config_visibility'`) === '1');
     check('the three app keys cannot be made private',
       ['announcement', 'maintenance', 'features'].every((k) =>
-        asJson('authenticated', adminAal1, `select public.admin_set_config_public('${k}', false)`).error === 'required_public'));
-    check('a missing key is not_found', asJson('authenticated', adminAal1, `select public.admin_set_config_public('no_such_key', true)`).error === 'not_found');
-    check('a bad key is bad_key', asJson('authenticated', adminAal1, `select public.admin_set_config_public('Bad Key', true)`).error === 'bad_key');
+        asJson('authenticated', adminAal2, `select public.admin_set_config_public('${k}', false)`).error === 'required_public'));
+    check('a missing key is not_found', asJson('authenticated', adminAal2, `select public.admin_set_config_public('no_such_key', true)`).error === 'not_found');
+    check('a bad key is bad_key', asJson('authenticated', adminAal2, `select public.admin_set_config_public('Bad Key', true)`).error === 'bad_key');
     check('a non-admin is refused on both',
       asJson('authenticated', plainClaims, 'select public.admin_list_config()').error === 'forbidden'
       && asJson('authenticated', plainClaims, `select public.admin_set_config_public('secret_knob', false)`).error === 'forbidden');
@@ -409,16 +412,16 @@ async function runTests(bin) {
     sql(`alter table public.trip_plans disable trigger trip_plans_stamp_published`);
     sql(`update public.trip_plans set published_at = case id when '${P1}' then now() - interval '1 day' when '${P2}' then now() - interval '2 days' else now() - interval '3 days' end where visibility = 'public'`);
     sql(`alter table public.trip_plans enable trigger trip_plans_stamp_published`);
-    const all = asJson('authenticated', adminAal1, 'select public.admin_list_public_guides()');
+    const all = asJson('authenticated', adminAal2, 'select public.admin_list_public_guides()');
     check('a call with no arguments works (not ambiguous)', Array.isArray(all.rows), JSON.stringify(all).slice(0, 200));
     check('viewsCounted is true and views are real',
       all.viewsCounted === true && all.rows?.find((r) => r.id === P1)?.views === 4 && all.rows?.find((r) => r.id === P3)?.views === 1);
     check('default page is 100, total counts every public guide', all.limit === 100 && all.offset === 0 && all.total === 3 && all.rows.length === 3);
-    const pg1 = asJson('authenticated', adminAal1, 'select public.admin_list_public_guides(2, 0)');
-    const pg2 = asJson('authenticated', adminAal1, 'select public.admin_list_public_guides(2, 2)');
+    const pg1 = asJson('authenticated', adminAal2, 'select public.admin_list_public_guides(2, 0)');
+    const pg2 = asJson('authenticated', adminAal2, 'select public.admin_list_public_guides(2, 2)');
     check('limit 2 gives the two newest', pg1.rows?.map((r) => r.id).join() === [P1, P2].join() && pg1.total === 3);
     check('offset 2 gives the rest', pg2.rows?.map((r) => r.id).join() === P3);
-    check('limit is capped at 500', asJson('authenticated', adminAal1, 'select public.admin_list_public_guides(100000, 0)').limit === 500);
+    check('limit is capped at 500', asJson('authenticated', adminAal2, 'select public.admin_list_public_guides(100000, 0)').limit === 500);
     check('exactly one admin_list_public_guides exists',
       sql(`select count(*) from pg_proc where proname = 'admin_list_public_guides'`) === '1');
     check('a non-admin is refused', asJson('authenticated', plainClaims, 'select public.admin_list_public_guides(5, 0)').error === 'forbidden');
@@ -437,7 +440,7 @@ async function runTests(bin) {
     const six = asJson('authenticated', adminAal2,
       `select public.admin_set_override(p_layer => 'lake', p_item => 'lago-1', p_patch => '{"name": "Lago"}'::jsonb, p_note => 'Name was the dam, not the lake', p_status => 'verified', p_review_by => now() + interval '60 days')`);
     check('the six named arguments a pre-045 admin page sends still resolve', six.ok === true, JSON.stringify(six));
-    const ovList = asJson('authenticated', adminAal1, 'select public.admin_list_overrides(null)');
+    const ovList = asJson('authenticated', adminAal2, 'select public.admin_list_overrides(null)');
     const pl = (ovList.rows || []).find((r) => r.itemId === 'playa-1');
     check('admin_list_overrides returns country and no note', pl && pl.country === 'ES' && !('note' in pl), JSON.stringify(pl));
     const setLog = sql(`select detail->'new'->>'country' from public.admin_audit_log where action = 'override_set' and detail->>'item' = 'playa-1' order by id desc limit 1`);
@@ -470,11 +473,11 @@ async function runTests(bin) {
     // ------------------------------------------------------------------ T077-c
     console.log('\n  T077-c: admin_get_audit sits on admin_guard');
     clearAudit();
-    check('an admin reads the trail', Array.isArray(asJson('authenticated', adminAal1, 'select public.admin_get_audit(10, 0)').rows));
+    check('an admin reads the trail', Array.isArray(asJson('authenticated', adminAal2, 'select public.admin_get_audit(10, 0)').rows));
     check('a non-admin is forbidden', asJson('authenticated', plainClaims, 'select public.admin_get_audit(10, 0)').error === 'forbidden');
     sql(`insert into public.admin_audit_log (actor, action) select '${ADMIN}', 'get_user' from generate_series(1, 60)`);
     check('an admin over the read budget now gets slow_down (is_admin had no budget)',
-      asJson('authenticated', adminAal1, 'select public.admin_get_audit(10, 0)').error === 'slow_down');
+      asJson('authenticated', adminAal2, 'select public.admin_get_audit(10, 0)').error === 'slow_down');
     check('the body no longer mentions is_admin',
       sql(`select position('is_admin' in pg_get_functiondef('public.admin_get_audit(int,int)'::regprocedure))`) === '0');
     clearAudit();

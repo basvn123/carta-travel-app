@@ -2543,7 +2543,8 @@ This section covers the parts of Carta that sit around the travel content: the A
 - GitHub workflows in `.github/workflows/`:
   - `ci.yml` (T1057, every push and pull request): app `npm ci`, `npm run lint` (errors fail, warnings do not), `npm test`, the fast build; Python ruff on the error rules `E9,F63,F7,F82` (the whole repo passes), pytest with the IDs in `tests/quarantine.txt` deselected (58 on 2026-11-05; the list may only shrink, T1057-a), and the entry-point check. Actions are pinned to commit SHAs. mypy is not run: no config yet.
   - `schema-contract.yml`: `check-contract.mjs` plus database checks.
-  - `rls-policies.yml` and `admin-rpc-security.yml`: row level security and admin RPCs against a throwaway Postgres.
+  - `rls-policies.yml` and `admin-rpc-security.yml`: row level security and admin RPCs against a throwaway Postgres. Since T1087 `test_rls_policies.mjs` also asserts that every SECURITY DEFINER function in every non-system schema (120 on 2026-11-05, discovered from `pg_proc`) pins a `search_path` with no `$user` and no schema `anon` or `authenticated` may create in, with two planted controls that must be caught.
+  - `admin-harnesses.yml` (T1087, C4; migrations, `schema.sql`, `continent-app/scripts/admin/`, `src/planner/`): the other 14 per-migration harnesses in `continent-app/scripts/admin/` through `run_harnesses.mjs`, on one Postgres 18 service container, in sequence. A harness that exits non-zero or prints `SKIPPED` fails the job. Run all 16 locally with `PGPORT=<port> node continent-app/scripts/admin/run_harnesses.mjs`.
   - `secret-scan.yml`: secret scan, `npm ci`, lint and build.
   - `design-lint.yml`: `scripts/ci/design-lint.mjs`.
   - `golden-set.yml`, `rating-tests.yml`, `coverage-contract.yml`, `trip-validator.yml`, `data-licences.yml`: pipeline data checks.
