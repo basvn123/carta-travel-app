@@ -93,6 +93,7 @@ Written 2026-11-04 (T1045) from the code, config and migrations on `main` at com
    - [Trails: finding and choosing walks](#trails-finding-and-choosing-walks)
    - [Trail routing and repair tools (trailslab, brouter)](#trail-routing-and-repair-tools-trailslab-brouter)
    - [Trail difficulty](#trail-difficulty)
+   - [Trail summaries](#trail-summaries)
    - [Trail distance, climb and walking time](#trail-distance-climb-and-walking-time)
    - [Trail page](#trail-page)
    - [Cycling routes and the cycle page](#cycling-routes-and-the-cycle-page)
@@ -1885,6 +1886,22 @@ Carta shows walks, bike routes, beaches, lakes and peaks on their own pages. Eac
 **Where it lives.** `pipeline/trails/names.py`, `pipeline/trails/attributes.py` (`title_of`), `pipeline/trails/export_wire.py`, `continent-app/src/browse/TrailPage.jsx`. Tests: `tests/test_trail_titles.py`, `tests/test_trail_difficulty_names.py`.
 
 **Limits.** On the wire of 2026-09-13, 643 of 17,619 rated rows are titled in Cyrillic or Greek, 37 carry an E-path phrase and 1,925 are over 42 characters; `wire_name` brings these to 1, 0 and 0 (2,523 names change), but only once the owner reruns `trails_attributes` and the export (T1092-a). Transliteration is by letter, so a name follows the national system, not always the spelling on the local signpost.
+
+### Trail summaries
+
+**What it does.** A walk gets two to five short sentences that say what it is like to walk it: length, climb, walking time (and days for a long one), the shape, where it starts and ends, the stage it belongs to, the highest point and the ground, the named sights on the way, the places it goes close to, and the snow-free season. Every word is backed by a field the walk's own wire row or detail file holds (T1179, ROADMAP D24).
+
+**How it works.** `pipeline/trails/summaries.py`, offline, no lab and no network:
+1. **Scope:** the top band, v5 band `exceptional` or `excellent` (`TOP_BANDS`); `--all` runs every rated walk. City days are skipped.
+2. **Facts** (`facts_of`): climb read uphill by the app's rule (`trailClimb`, `DOWNHILL_MIN_M = 300`); days from `difficulty.day_effort` when 2 or more; "loop" only when the row is a loop and its two ends sit within `LOOP_END_TOLERANCE_M = 100` of each other (the OSM roundtrip tag says loop on lines that end 260 m lower), "out and back" the same way; start and end from the OSM `from` and `to` tags, one-way walks only; the stage from `h`; ground "mostly on footpaths, tracks or paved roads" when one surface share is at least `MOSTLY = 0.5`, "steep mountain paths in places" when the worst SAC grade is demanding mountain hiking or above on at least 5% of the line; up to `MAX_SIGHTS = 3` named sights by kind weight (`SIGHT_KINDS`), told in walking order, a peak more than `PEAK_ON_ROUTE_M = 30` above the route's top told as "passes below"; up to 2 places within `PASSES_MAX_M = 500`. Names go through `names.readable`, at most 40 characters, and a sight name with a digit is refused (navigation lights).
+3. **Sentences** (`compose`, `render`): fixed English templates. Over `MAX_CHARS = 320` the least needed clause goes first: passes, season, ground, stage, sights. Each summary also carries `parts`, the clause codes and values, so the app can render the same sentences through `t()` in six languages.
+4. **Check** (`check`), before anything is written: a closed vocabulary (every word is a template word, a month, a unit, a number the facts hold or a name the facts hold), consistency (loop, out and back, days, season, footpaths, paved, mountain paths only when the facts say so; months exactly the season's), and the house rules (no em or en dash, no spaced hyphen, no middle dot, PRODUCT.md's banned words plus superlatives, a full stop, 40 to 320 characters). A failing row is not written; the report counts the reasons.
+
+**Data behind it.** Reads `continent-app/public/trails/{CC}.json` and `trip/{id}.json`. Writes `data/trails/summaries.json` (`items[id] = {cc, text, parts}`) and `data/reports/trails_summaries.json` (counts, failures, clauses, lengths). `python pipeline/trails/summaries.py`; it is not a `run_pipeline.py` task yet.
+
+**Where it lives.** `pipeline/trails/summaries.py`. Tests: `tests/test_trail_summaries.py`, whose last test rebuilds every committed summary from the wire and checks it again.
+
+**Limits.** The summaries are a sidecar and are not on the wire: the app prints a row's `summary` as English prose on the trail page and in the planner, so shipping them needs the i18n choice in T1179-a. A sight's kind is the OSM tag's, so a fountain tagged as water reads "the lake" (T1179-c). On the wire of 2026-09-13 the top band is 2,089 rows, not the 2,348 in ROADMAP D24.
 
 ### Trail distance, climb and walking time
 
