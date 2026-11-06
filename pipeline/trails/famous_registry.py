@@ -349,7 +349,7 @@ SEEDS = {
            "Dubrovnik city walls"],
     "HU": ["Orszagos Kektura", "Bukk Szalajka", "Matra Kekes",
            "Csobanc", "Tihany"],
-    "IE": ["Wicklow Way", "Kerry Way", "Dingle Way", "Causeway Coast Way",
+    "IE": ["Wicklow Way", "Kerry Way", "Dingle Way",
            "Cliffs of Moher Coastal Walk", "Diamond Hill",
            "Carrauntoohil Devil's Ladder", "Glendalough Spinc"],
     "IS": ["Laugavegur", "Fimmvorduhals", "Reykjadalur", "Glymur",
@@ -401,6 +401,30 @@ SEEDS = {
     "XK": ["Rugova Canyon", "Peaks of the Balkans", "Gjeravica",
            "Mirusha waterfalls"],
 }
+
+# T1181 (ROADMAP D23, D24): the misses of the trails external check
+# (scripts/validation/trails_external.py) that no seed named. Certified and
+# national trails first, then the famous day walks. The Causeway Coast Way
+# moved here from IE: it runs along the Antrim coast, in Northern Ireland.
+SEEDS_T1181 = {
+    "BE": ["Hoge Kempen National Park Trail"],
+    "CH": ["Zermatt 5-Seenweg", "Bachalpsee", "Aescher Ebenalp"],
+    "CZ": ["Hrebenovka Ceske Svycarsko"],
+    "DE": ["Westerwald-Steig", "Bastei", "Breitachklamm", "Wutachschlucht"],
+    "ES": ["Montserrat Sant Jeroni"],
+    "FI": ["Saana"],
+    "FR": ["Tour de la Vanoise", "Etretat", "Sentier des Ocres"],
+    "GB": ["Causeway Coast Way", "Peddars Way", "Pennine Bridleway",
+           "Deeside Way", "Hebridean Way", "St Magnus Way", "Aonach Eagach",
+           "Catbells", "Arthur's Seat", "Mam Tor", "Yorkshire Three Peaks",
+           "Cuilcagh Boardwalk", "Durdle Door"],
+    "IE": ["Royal Canal Way", "Croagh Patrick", "Slieve League"],
+    "IT": ["Via degli Dei", "Lago di Sorapis", "Adolf-Munkel-Weg"],
+    "LT": ["Hill of Witches"],
+    "SE": ["Kullaleden"],
+}
+for _cc, _names in SEEDS_T1181.items():
+    SEEDS.setdefault(_cc, []).extend(n for n in _names if n not in SEEDS.get(_cc, []))
 
 
 # Names that the wide class net drags in and that no traveller means by "a

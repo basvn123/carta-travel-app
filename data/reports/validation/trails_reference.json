@@ -1,0 +1,6305 @@
+{
+ "schema": "carta-validation-ref/1",
+ "layer": "trails",
+ "generated_at": "2026-11-06",
+ "task": "T1181",
+ "provenance": "Compiled by the T1181 research subagent in a cloud session where no reference host could be fetched (Wikipedia, Wikidata, the ERA site and the national portals were refused by the egress proxy; only web search snippets were read). Label membership was cross-checked by search where possible; start points (2 decimals) are start towns or trailheads, not fetched, and 75 are null; source links were written, not opened. Facts only (name, aliases, countries, approximate start, length, kind, label); no descriptive text is copied. Verification against Wikidata and the portals is owner step T1181-a.",
+ "labels": {
+  "lqt": "ERA Leading Quality Trails, Best of Europe (partial: 11 of about 24)",
+  "national_trail": "official national trail status in its country (England and Wales National Trails, Scotland's Great Trails, Ireland National Waymarked Trails, SchweizMobil national routes and similar)",
+  "quality_label": "another national quality label (Top Trails of Germany, DWV Qualitaetsweg, DWI Premiumweg)",
+  "wikipedia_list": "on a Wikipedia list of long-distance or national trails, or an E-path",
+  "famous_day": "a well-known day walk with its own Wikipedia article (the walk or its landmark)"
+ },
+ "sources": [
+  {
+   "id": "era-lqt",
+   "name": "Leading Quality Trails, Best of Europe",
+   "url": "https://www.era-ewv-ferp.org/lqt/",
+   "publisher": "European Ramblers Association (ERA/EWV/FERP); audits run by Deutscher Wanderverband Service GmbH",
+   "lists": "Certified LQT long-distance trails (about 24 to 25) with country, length, certification end year",
+   "terms": "No open licence found (site not reachable to read its terms). A list of trail names, countries and label status is factual and not copyrightable; store facts only with a citation.",
+   "may_store_names_and_starts": "yes, facts only, with citation",
+   "webfetch_reached": false,
+   "notes": "Hosts www.era-ewv-ferp.org and era-ewv-ferp.org refused. Partial list confirmed only through WebSearch snippets; full list is an owner step."
+  },
+  {
+   "id": "top-trails-germany",
+   "name": "Top Trails of Germany",
+   "url": "https://www.eifelsteig.de/en/top-trails-of-germany",
+   "publisher": "Top Trails of Germany marketing association (member trails' tourism boards)",
+   "lists": "About 15 flagship German long-distance trails, each certified Qualitätsweg (DWV) or Premiumweg (DWI)",
+   "terms": "Site terms not read (unreachable). Membership list is factual.",
+   "may_store_names_and_starts": "yes, facts only, with citation",
+   "webfetch_reached": false,
+   "notes": "Membership reconstructed from knowledge plus search; which certificate each trail holds was not verified."
+  },
+  {
+   "id": "dwv-qualitaetswege",
+   "name": "Qualitätswege Wanderbares Deutschland",
+   "url": "https://www.wanderbares-deutschland.de/",
+   "publisher": "Deutscher Wanderverband (DWV)",
+   "lists": "Several hundred certified quality trails (long-distance and day loops)",
+   "terms": "Site terms not read. Facts only.",
+   "may_store_names_and_starts": "yes, facts only, with citation",
+   "webfetch_reached": false,
+   "notes": "Only long-distance flagships taken; full list is an owner step if wanted."
+  },
+  {
+   "id": "dwi-premiumwege",
+   "name": "Deutsches Wanderinstitut Premiumwege",
+   "url": "https://www.wanderinstitut.de/",
+   "publisher": "Deutsches Wanderinstitut e.V.",
+   "lists": "Several hundred certified premium trails",
+   "terms": "Site terms not read.",
+   "may_store_names_and_starts": "yes, facts only, with citation",
+   "webfetch_reached": false,
+   "notes": "Not used beyond Top Trails membership (too many, mostly short loops)."
+  },
+  {
+   "id": "schweizmobil-wanderland",
+   "name": "SchweizMobil Wanderland Schweiz national routes 1 to 7",
+   "url": "https://www.schweizmobil.ch/en/hiking-in-switzerland",
+   "publisher": "Stiftung SchweizMobil",
+   "lists": "7 national, about 65 regional and about 290 local hiking routes",
+   "terms": "Route geometry is published on opendata.swiss (dataset langsamverkehr-wanderland-schweiz) under its stated terms; check the dataset licence before storing geometry. Names and numbers are factual.",
+   "may_store_names_and_starts": "yes",
+   "webfetch_reached": false,
+   "notes": "Route numbers 1 and 7 confirmed by search (OSM wiki status page); 2 to 6 from knowledge. OSM relations for each route listed on wiki.openstreetmap.org/wiki/Switzerland/HikingNetwork/Status (CC BY-SA 2.0)."
+  },
+  {
+   "id": "national-trails-ew",
+   "name": "National Trails (England and Wales)",
+   "url": "https://www.nationaltrail.co.uk/",
+   "publisher": "National Trails (Natural England and Natural Resources Wales)",
+   "lists": "16 National Trails",
+   "terms": "Site terms not read (unreachable). UK public-sector content is usually under the Open Government Licence; facts only stored.",
+   "may_store_names_and_starts": "yes",
+   "webfetch_reached": false,
+   "notes": "List of 16 from knowledge; matches Wikipedia National Trails article as recalled."
+  },
+  {
+   "id": "scotlands-great-trails",
+   "name": "Scotland's Great Trails",
+   "url": "https://www.nature.scot/scotlands-great-trails",
+   "publisher": "NatureScot",
+   "lists": "29 official long-distance routes (one is a canoe trail)",
+   "terms": "NatureScot content is generally under the Open Government Licence; not verified (unreachable).",
+   "may_store_names_and_starts": "yes",
+   "webfetch_reached": false,
+   "notes": "28 walking routes recorded from knowledge; current official list not fetched. Count of 29 confirmed by search."
+  },
+  {
+   "id": "ireland-nwt",
+   "name": "National Waymarked Trails (Ireland)",
+   "url": "https://www.sportireland.ie/outdoors/walking/trails",
+   "publisher": "Sport Ireland, National Trails Office",
+   "lists": "About 40 National Waymarked Trails",
+   "terms": "Site terms not read.",
+   "may_store_names_and_starts": "yes, facts only",
+   "webfetch_reached": false,
+   "notes": "16 well-known trails recorded; full register is an owner step."
+  },
+  {
+   "id": "wikipedia-ldp",
+   "name": "Wikipedia: List of long-distance footpaths",
+   "url": "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths",
+   "publisher": "Wikipedia contributors",
+   "lists": "Long-distance footpaths by country",
+   "terms": "Text CC BY-SA 4.0; facts (name, country, start) are not copyrightable. Do not copy prose. Coordinates on Wikipedia come mostly from Wikidata (CC0).",
+   "may_store_names_and_starts": "yes, with citation",
+   "webfetch_reached": false,
+   "notes": "en.wikipedia.org refused by WebFetch and curl."
+  },
+  {
+   "id": "wikipedia-epaths",
+   "name": "Wikipedia: European long-distance paths",
+   "url": "https://en.wikipedia.org/wiki/European_long-distance_paths",
+   "publisher": "Wikipedia contributors",
+   "lists": "E1 to E12 and their countries",
+   "terms": "CC BY-SA 4.0 text; facts free.",
+   "may_store_names_and_starts": "yes",
+   "webfetch_reached": false,
+   "notes": "Country lists per E-path are from knowledge and approximate."
+  },
+  {
+   "id": "wikipedia-national-lists",
+   "name": "Wikipedia national trail lists (National Trails, Scotland's Great Trails, Long-distance trails in the Republic of Ireland, GR footpath)",
+   "url": "https://en.wikipedia.org/wiki/National_Trails",
+   "publisher": "Wikipedia contributors",
+   "lists": "National trail lists per country",
+   "terms": "CC BY-SA 4.0 text; facts free.",
+   "may_store_names_and_starts": "yes",
+   "webfetch_reached": false,
+   "notes": ""
+  },
+  {
+   "id": "wikipedia-articles",
+   "name": "Wikipedia articles per trail or day walk (famous_day citations)",
+   "url": "https://en.wikipedia.org/",
+   "publisher": "Wikipedia contributors",
+   "lists": "One article per famous walk or its landmark",
+   "terms": "CC BY-SA 4.0 text; facts free.",
+   "may_store_names_and_starts": "yes",
+   "webfetch_reached": false,
+   "notes": "Article URLs were written from knowledge and not opened; some may redirect or 404 and must be checked."
+  },
+  {
+   "id": "wikidata",
+   "name": "Wikidata",
+   "url": "https://www.wikidata.org/",
+   "publisher": "Wikimedia Foundation",
+   "lists": "Items for trails and landmarks with coordinates (P625), length (P2043), country (P17), OSM relation ID (P402)",
+   "terms": "CC0 1.0: free to store and reuse without attribution.",
+   "may_store_names_and_starts": "yes",
+   "webfetch_reached": false,
+   "notes": "Best route to verify coordinates and to match OSM relations exactly via P402; query.wikidata.org refused. Recommended owner step: allow query.wikidata.org."
+  },
+  {
+   "id": "osm-wiki-ch",
+   "name": "OpenStreetMap wiki: Switzerland HikingNetwork status",
+   "url": "https://wiki.openstreetmap.org/wiki/Switzerland/HikingNetwork/Status",
+   "publisher": "OpenStreetMap wiki contributors",
+   "lists": "Swiss national and regional routes with OSM relation IDs",
+   "terms": "CC BY-SA 2.0",
+   "may_store_names_and_starts": "yes",
+   "webfetch_reached": false,
+   "notes": "Seen only as a search result."
+  },
+  {
+   "id": "trail-own-sites",
+   "name": "Individual trail and tourism sites cited for LQT status",
+   "url": "https://mullerthal-trail.lu/en/service/leading-quality-trails",
+   "publisher": "Various (ORT Mullerthal, Menalon Trail, Algarve Daily News, Brussels Times, Czech Leaders, Biosphere Tourism, Julian Alps)",
+   "lists": "Single trail facts (label award, length)",
+   "terms": "Site terms vary; only the fact of the award is used.",
+   "may_store_names_and_starts": "yes, facts only",
+   "webfetch_reached": false,
+   "notes": "Seen through WebSearch snippets only."
+  }
+ ],
+ "trails": [
+  {
+   "id": "lechweg",
+   "name": "Lechweg",
+   "aliases": [],
+   "countries": [
+    "AT",
+    "DE"
+   ],
+   "length_km": 125,
+   "kind": "multi-day",
+   "labels": [
+    "lqt",
+    "quality_label"
+   ],
+   "sources": [
+    "https://www.era-ewv-ferp.org/lqt/",
+    "https://en.wikipedia.org/wiki/Lechweg"
+   ],
+   "start": {
+    "lat": 47.21,
+    "lon": 10.1
+   }
+  },
+  {
+   "id": "moselsteig",
+   "name": "Moselsteig",
+   "aliases": [],
+   "countries": [
+    "DE"
+   ],
+   "length_km": 365,
+   "kind": "multi-day",
+   "labels": [
+    "lqt",
+    "quality_label"
+   ],
+   "sources": [
+    "https://www.era-ewv-ferp.org/lqt/",
+    "https://www.eifelsteig.de/en/top-trails-of-germany",
+    "https://en.wikipedia.org/wiki/Moselsteig"
+   ],
+   "start": {
+    "lat": 49.47,
+    "lon": 6.39
+   }
+  },
+  {
+   "id": "mullerthal-trail",
+   "name": "Mullerthal Trail",
+   "aliases": [
+    "Mëllerdall Trail"
+   ],
+   "countries": [
+    "LU"
+   ],
+   "length_km": 112,
+   "kind": "multi-day",
+   "labels": [
+    "lqt",
+    "quality_label"
+   ],
+   "sources": [
+    "https://www.era-ewv-ferp.org/lqt/",
+    "https://mullerthal-trail.lu/en/service/leading-quality-trails"
+   ],
+   "start": {
+    "lat": 49.81,
+    "lon": 6.42
+   }
+  },
+  {
+   "id": "escapardenne-eislek-trail",
+   "name": "Escapardenne Eislek Trail",
+   "aliases": [
+    "Escapardenne"
+   ],
+   "countries": [
+    "LU",
+    "BE"
+   ],
+   "length_km": 106,
+   "kind": "multi-day",
+   "labels": [
+    "lqt"
+   ],
+   "sources": [
+    "https://www.era-ewv-ferp.org/lqt/"
+   ],
+   "start": {
+    "lat": 49.85,
+    "lon": 6.1
+   }
+  },
+  {
+   "id": "escapardenne-lee-trail",
+   "name": "Escapardenne Lee Trail",
+   "aliases": [],
+   "countries": [
+    "LU",
+    "BE"
+   ],
+   "length_km": 53,
+   "kind": "multi-day",
+   "labels": [
+    "lqt"
+   ],
+   "sources": [
+    "https://www.era-ewv-ferp.org/lqt/"
+   ],
+   "start": {
+    "lat": 49.95,
+    "lon": 6.02
+   }
+  },
+  {
+   "id": "np-trail-hoge-kempen",
+   "name": "National Park Trail Hoge Kempen",
+   "aliases": [
+    "Nationaal Park Trail Hoge Kempen"
+   ],
+   "countries": [
+    "BE"
+   ],
+   "length_km": 110,
+   "kind": "multi-day",
+   "labels": [
+    "lqt"
+   ],
+   "sources": [
+    "https://www.era-ewv-ferp.org/lqt/",
+    "https://brusselstimes.com/334943/first-for-flanders-national-park-trail-in-limburg-awarded-european-quality-certificate"
+   ],
+   "start": null
+  },
+  {
+   "id": "hrebenovka-ceske-svycarsko",
+   "name": "Bohemian Switzerland Ridge Trail",
+   "aliases": [
+    "Hřebenovka Českým Švýcarskem"
+   ],
+   "countries": [
+    "CZ"
+   ],
+   "length_km": 100,
+   "kind": "multi-day",
+   "labels": [
+    "lqt"
+   ],
+   "sources": [
+    "https://www.era-ewv-ferp.org/lqt/",
+    "https://www.czechleaders.com/?p=56253"
+   ],
+   "start": null
+  },
+  {
+   "id": "kullaleden",
+   "name": "Kullaleden",
+   "aliases": [],
+   "countries": [
+    "SE"
+   ],
+   "length_km": 70,
+   "kind": "multi-day",
+   "labels": [
+    "lqt"
+   ],
+   "sources": [
+    "https://www.era-ewv-ferp.org/lqt/"
+   ],
+   "start": null
+  },
+  {
+   "id": "rota-vicentina-historical-way",
+   "name": "Rota Vicentina Historical Way",
+   "aliases": [
+    "Caminho Histórico"
+   ],
+   "countries": [
+    "PT"
+   ],
+   "length_km": 263,
+   "kind": "multi-day",
+   "labels": [
+    "lqt",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.era-ewv-ferp.org/lqt/",
+    "https://algarvedailynews.com/news/8245-south-west-rota-vicentina-walking-route-joins-best-of-europe-category",
+    "https://en.wikipedia.org/wiki/Rota_Vicentina"
+   ],
+   "start": {
+    "lat": 38.02,
+    "lon": -8.69
+   }
+  },
+  {
+   "id": "gr22-aldeias-historicas",
+   "name": "Grande Rota das Aldeias Históricas",
+   "aliases": [
+    "GR 22",
+    "Grand Route of the Historical Villages"
+   ],
+   "countries": [
+    "PT"
+   ],
+   "length_km": 600,
+   "kind": "multi-day",
+   "labels": [
+    "lqt"
+   ],
+   "sources": [
+    "https://www.era-ewv-ferp.org/lqt/",
+    "https://www.biospheretourism.com/en/blog/grand-route-of-the-historical-villages-of-portugal-becomes-the-largest-european-route-with-the-leading-quality-trails-seal/199"
+   ],
+   "start": null
+  },
+  {
+   "id": "menalon-trail",
+   "name": "Menalon Trail",
+   "aliases": [
+    "Μαίναλον"
+   ],
+   "countries": [
+    "GR"
+   ],
+   "length_km": 75,
+   "kind": "multi-day",
+   "labels": [
+    "lqt"
+   ],
+   "sources": [
+    "https://www.era-ewv-ferp.org/lqt/",
+    "https://menalontrail.eu/en/activities/l-q-trails/"
+   ],
+   "start": {
+    "lat": 37.56,
+    "lon": 22.13
+   }
+  },
+  {
+   "id": "albsteig",
+   "name": "Albsteig",
+   "aliases": [
+    "HW1",
+    "Schwäbische-Alb-Nordrand-Weg"
+   ],
+   "countries": [
+    "DE"
+   ],
+   "length_km": 365,
+   "kind": "multi-day",
+   "labels": [
+    "quality_label"
+   ],
+   "sources": [
+    "https://www.eifelsteig.de/en/top-trails-of-germany",
+    "https://en.wikipedia.org/wiki/Albsteig"
+   ],
+   "start": {
+    "lat": 48.72,
+    "lon": 10.78
+   }
+  },
+  {
+   "id": "eifelsteig",
+   "name": "Eifelsteig",
+   "aliases": [],
+   "countries": [
+    "DE"
+   ],
+   "length_km": 313,
+   "kind": "multi-day",
+   "labels": [
+    "quality_label"
+   ],
+   "sources": [
+    "https://www.eifelsteig.de/en/top-trails-of-germany",
+    "https://en.wikipedia.org/wiki/Eifelsteig"
+   ],
+   "start": {
+    "lat": 50.73,
+    "lon": 6.18
+   }
+  },
+  {
+   "id": "goldsteig",
+   "name": "Goldsteig",
+   "aliases": [],
+   "countries": [
+    "DE"
+   ],
+   "length_km": 660,
+   "kind": "multi-day",
+   "labels": [
+    "quality_label"
+   ],
+   "sources": [
+    "https://www.eifelsteig.de/en/top-trails-of-germany",
+    "https://en.wikipedia.org/wiki/Goldsteig"
+   ],
+   "start": {
+    "lat": 50.0,
+    "lon": 12.08
+   }
+  },
+  {
+   "id": "hermannsweg",
+   "name": "Hermannsweg",
+   "aliases": [],
+   "countries": [
+    "DE"
+   ],
+   "length_km": 156,
+   "kind": "multi-day",
+   "labels": [
+    "quality_label"
+   ],
+   "sources": [
+    "https://www.eifelsteig.de/en/top-trails-of-germany",
+    "https://en.wikipedia.org/wiki/Hermannsweg"
+   ],
+   "start": {
+    "lat": 52.28,
+    "lon": 7.44
+   }
+  },
+  {
+   "id": "hochrhoener",
+   "name": "Der Hochrhöner",
+   "aliases": [
+    "Hochrhöner"
+   ],
+   "countries": [
+    "DE"
+   ],
+   "length_km": 175,
+   "kind": "multi-day",
+   "labels": [
+    "quality_label"
+   ],
+   "sources": [
+    "https://www.eifelsteig.de/en/top-trails-of-germany",
+    "https://de.wikipedia.org/wiki/Hochrh%C3%B6ner"
+   ],
+   "start": {
+    "lat": 50.2,
+    "lon": 10.08
+   }
+  },
+  {
+   "id": "malerweg",
+   "name": "Malerweg",
+   "aliases": [
+    "Painters' Way"
+   ],
+   "countries": [
+    "DE"
+   ],
+   "length_km": 116,
+   "kind": "multi-day",
+   "labels": [
+    "quality_label"
+   ],
+   "sources": [
+    "https://www.eifelsteig.de/en/top-trails-of-germany",
+    "https://en.wikipedia.org/wiki/Malerweg"
+   ],
+   "start": {
+    "lat": 50.98,
+    "lon": 13.92
+   }
+  },
+  {
+   "id": "rennsteig",
+   "name": "Rennsteig",
+   "aliases": [],
+   "countries": [
+    "DE"
+   ],
+   "length_km": 170,
+   "kind": "multi-day",
+   "labels": [
+    "quality_label"
+   ],
+   "sources": [
+    "https://www.eifelsteig.de/en/top-trails-of-germany",
+    "https://en.wikipedia.org/wiki/Rennsteig"
+   ],
+   "start": {
+    "lat": 50.99,
+    "lon": 10.17
+   }
+  },
+  {
+   "id": "rheinsteig",
+   "name": "Rheinsteig",
+   "aliases": [],
+   "countries": [
+    "DE"
+   ],
+   "length_km": 320,
+   "kind": "multi-day",
+   "labels": [
+    "quality_label"
+   ],
+   "sources": [
+    "https://www.eifelsteig.de/en/top-trails-of-germany",
+    "https://en.wikipedia.org/wiki/Rheinsteig"
+   ],
+   "start": {
+    "lat": 50.73,
+    "lon": 7.1
+   }
+  },
+  {
+   "id": "rothaarsteig",
+   "name": "Rothaarsteig",
+   "aliases": [],
+   "countries": [
+    "DE"
+   ],
+   "length_km": 154,
+   "kind": "multi-day",
+   "labels": [
+    "quality_label"
+   ],
+   "sources": [
+    "https://www.eifelsteig.de/en/top-trails-of-germany",
+    "https://en.wikipedia.org/wiki/Rothaarsteig"
+   ],
+   "start": {
+    "lat": 51.4,
+    "lon": 8.57
+   }
+  },
+  {
+   "id": "saar-hunsrueck-steig",
+   "name": "Saar-Hunsrück-Steig",
+   "aliases": [],
+   "countries": [
+    "DE"
+   ],
+   "length_km": 410,
+   "kind": "multi-day",
+   "labels": [
+    "quality_label"
+   ],
+   "sources": [
+    "https://www.eifelsteig.de/en/top-trails-of-germany",
+    "https://en.wikipedia.org/wiki/Saar-Hunsr%C3%BCck-Steig"
+   ],
+   "start": {
+    "lat": 49.47,
+    "lon": 6.39
+   }
+  },
+  {
+   "id": "westweg",
+   "name": "Westweg",
+   "aliases": [],
+   "countries": [
+    "DE"
+   ],
+   "length_km": 285,
+   "kind": "multi-day",
+   "labels": [
+    "quality_label"
+   ],
+   "sources": [
+    "https://www.eifelsteig.de/en/top-trails-of-germany",
+    "https://en.wikipedia.org/wiki/Westweg"
+   ],
+   "start": {
+    "lat": 48.89,
+    "lon": 8.7
+   }
+  },
+  {
+   "id": "harzer-hexenstieg",
+   "name": "Harzer Hexenstieg",
+   "aliases": [
+    "Witches' Trail"
+   ],
+   "countries": [
+    "DE"
+   ],
+   "length_km": 94,
+   "kind": "multi-day",
+   "labels": [
+    "quality_label"
+   ],
+   "sources": [
+    "https://www.eifelsteig.de/en/top-trails-of-germany",
+    "https://de.wikipedia.org/wiki/Harzer_Hexenstieg"
+   ],
+   "start": {
+    "lat": 51.73,
+    "lon": 10.25
+   }
+  },
+  {
+   "id": "schluchtensteig",
+   "name": "Schluchtensteig",
+   "aliases": [],
+   "countries": [
+    "DE"
+   ],
+   "length_km": 119,
+   "kind": "multi-day",
+   "labels": [
+    "quality_label"
+   ],
+   "sources": [
+    "https://www.eifelsteig.de/en/top-trails-of-germany",
+    "https://de.wikipedia.org/wiki/Schluchtensteig"
+   ],
+   "start": {
+    "lat": 47.75,
+    "lon": 8.45
+   }
+  },
+  {
+   "id": "westerwald-steig",
+   "name": "Westerwald-Steig",
+   "aliases": [],
+   "countries": [
+    "DE"
+   ],
+   "length_km": 235,
+   "kind": "multi-day",
+   "labels": [
+    "quality_label"
+   ],
+   "sources": [
+    "https://www.eifelsteig.de/en/top-trails-of-germany",
+    "https://de.wikipedia.org/wiki/Westerwald-Steig"
+   ],
+   "start": {
+    "lat": 50.68,
+    "lon": 8.31
+   }
+  },
+  {
+   "id": "kammweg-erzgebirge-vogtland",
+   "name": "Kammweg Erzgebirge-Vogtland",
+   "aliases": [
+    "Kammweg"
+   ],
+   "countries": [
+    "DE"
+   ],
+   "length_km": 285,
+   "kind": "multi-day",
+   "labels": [
+    "quality_label"
+   ],
+   "sources": [
+    "https://www.wanderbares-deutschland.de/",
+    "https://de.wikipedia.org/wiki/Kammweg_Erzgebirge%E2%80%93Vogtland"
+   ],
+   "start": {
+    "lat": 50.76,
+    "lon": 13.79
+   }
+  },
+  {
+   "id": "ch-1-via-alpina",
+   "name": "Via Alpina (Swiss national route 1)",
+   "aliases": [
+    "Route 1",
+    "Via Alpina"
+   ],
+   "countries": [
+    "CH"
+   ],
+   "length_km": 390,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail"
+   ],
+   "sources": [
+    "https://www.schweizmobil.ch/en/hiking-in-switzerland",
+    "https://wiki.openstreetmap.org/wiki/Switzerland/HikingNetwork/Status"
+   ],
+   "start": {
+    "lat": 47.05,
+    "lon": 9.44
+   }
+  },
+  {
+   "id": "ch-2-trans-swiss-trail",
+   "name": "Trans Swiss Trail",
+   "aliases": [
+    "Route 2"
+   ],
+   "countries": [
+    "CH"
+   ],
+   "length_km": 490,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail"
+   ],
+   "sources": [
+    "https://www.schweizmobil.ch/en/hiking-in-switzerland",
+    "https://wiki.openstreetmap.org/wiki/Switzerland/HikingNetwork/Status"
+   ],
+   "start": {
+    "lat": 47.42,
+    "lon": 7.08
+   }
+  },
+  {
+   "id": "ch-3-alpenpanorama-weg",
+   "name": "Alpine Panorama Trail",
+   "aliases": [
+    "Alpenpanorama-Weg",
+    "Route 3"
+   ],
+   "countries": [
+    "CH"
+   ],
+   "length_km": 510,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail"
+   ],
+   "sources": [
+    "https://www.schweizmobil.ch/en/hiking-in-switzerland",
+    "https://wiki.openstreetmap.org/wiki/Switzerland/HikingNetwork/Status"
+   ],
+   "start": {
+    "lat": 47.48,
+    "lon": 9.49
+   }
+  },
+  {
+   "id": "ch-4-viajacobi",
+   "name": "ViaJacobi",
+   "aliases": [
+    "Swiss Way of St James",
+    "Route 4"
+   ],
+   "countries": [
+    "CH"
+   ],
+   "length_km": 580,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail"
+   ],
+   "sources": [
+    "https://www.schweizmobil.ch/en/hiking-in-switzerland",
+    "https://wiki.openstreetmap.org/wiki/Switzerland/HikingNetwork/Status"
+   ],
+   "start": null
+  },
+  {
+   "id": "ch-5-jura-hoehenweg",
+   "name": "Jura Crest Trail",
+   "aliases": [
+    "Jura-Höhenweg",
+    "Chemin des Crêtes du Jura",
+    "Route 5"
+   ],
+   "countries": [
+    "CH"
+   ],
+   "length_km": 310,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail"
+   ],
+   "sources": [
+    "https://www.schweizmobil.ch/en/hiking-in-switzerland",
+    "https://wiki.openstreetmap.org/wiki/Switzerland/HikingNetwork/Status"
+   ],
+   "start": {
+    "lat": 47.48,
+    "lon": 8.46
+   }
+  },
+  {
+   "id": "ch-6-alpenpaesse-weg",
+   "name": "Alpine Passes Trail",
+   "aliases": [
+    "Alpenpässe-Weg",
+    "Route 6"
+   ],
+   "countries": [
+    "CH"
+   ],
+   "length_km": 600,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail"
+   ],
+   "sources": [
+    "https://www.schweizmobil.ch/en/hiking-in-switzerland",
+    "https://wiki.openstreetmap.org/wiki/Switzerland/HikingNetwork/Status"
+   ],
+   "start": {
+    "lat": 46.85,
+    "lon": 9.53
+   }
+  },
+  {
+   "id": "ch-7-viagottardo",
+   "name": "ViaGottardo",
+   "aliases": [
+    "Route 7"
+   ],
+   "countries": [
+    "CH"
+   ],
+   "length_km": 320,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail"
+   ],
+   "sources": [
+    "https://www.schweizmobil.ch/en/hiking-in-switzerland",
+    "https://wiki.openstreetmap.org/wiki/Switzerland/HikingNetwork/Status"
+   ],
+   "start": {
+    "lat": 47.56,
+    "lon": 7.59
+   }
+  },
+  {
+   "id": "cleveland-way",
+   "name": "Cleveland Way",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 175,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.nationaltrail.co.uk/",
+    "https://en.wikipedia.org/wiki/Cleveland_Way",
+    "https://en.wikipedia.org/wiki/National_Trails"
+   ],
+   "start": {
+    "lat": 54.25,
+    "lon": -1.06
+   }
+  },
+  {
+   "id": "cotswold-way",
+   "name": "Cotswold Way",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 164,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.nationaltrail.co.uk/",
+    "https://en.wikipedia.org/wiki/Cotswold_Way",
+    "https://en.wikipedia.org/wiki/National_Trails"
+   ],
+   "start": {
+    "lat": 52.05,
+    "lon": -1.78
+   }
+  },
+  {
+   "id": "glyndwrs-way",
+   "name": "Glyndŵr's Way",
+   "aliases": [
+    "Llwybr Glyndŵr"
+   ],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 217,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.nationaltrail.co.uk/",
+    "https://en.wikipedia.org/wiki/Glynd%C5%B5r%27s_Way",
+    "https://en.wikipedia.org/wiki/National_Trails"
+   ],
+   "start": {
+    "lat": 52.34,
+    "lon": -3.05
+   }
+  },
+  {
+   "id": "hadrians-wall-path",
+   "name": "Hadrian's Wall Path",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 135,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.nationaltrail.co.uk/",
+    "https://en.wikipedia.org/wiki/Hadrian%27s_Wall_Path",
+    "https://en.wikipedia.org/wiki/National_Trails"
+   ],
+   "start": {
+    "lat": 54.99,
+    "lon": -1.53
+   }
+  },
+  {
+   "id": "north-downs-way",
+   "name": "North Downs Way",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 246,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.nationaltrail.co.uk/",
+    "https://en.wikipedia.org/wiki/North_Downs_Way",
+    "https://en.wikipedia.org/wiki/National_Trails"
+   ],
+   "start": {
+    "lat": 51.21,
+    "lon": -0.8
+   }
+  },
+  {
+   "id": "offas-dyke-path",
+   "name": "Offa's Dyke Path",
+   "aliases": [
+    "Llwybr Clawdd Offa"
+   ],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 285,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.nationaltrail.co.uk/",
+    "https://en.wikipedia.org/wiki/Offa%27s_Dyke_Path",
+    "https://en.wikipedia.org/wiki/National_Trails"
+   ],
+   "start": {
+    "lat": 51.63,
+    "lon": -2.65
+   }
+  },
+  {
+   "id": "peddars-way-norfolk-coast-path",
+   "name": "Peddars Way and Norfolk Coast Path",
+   "aliases": [
+    "Peddars Way",
+    "Norfolk Coast Path"
+   ],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 210,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.nationaltrail.co.uk/",
+    "https://en.wikipedia.org/wiki/Peddars_Way",
+    "https://en.wikipedia.org/wiki/National_Trails"
+   ],
+   "start": {
+    "lat": 52.39,
+    "lon": 0.89
+   }
+  },
+  {
+   "id": "pembrokeshire-coast-path",
+   "name": "Pembrokeshire Coast Path",
+   "aliases": [
+    "Llwybr Arfordir Sir Benfro"
+   ],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 299,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.nationaltrail.co.uk/",
+    "https://en.wikipedia.org/wiki/Pembrokeshire_Coast_Path",
+    "https://en.wikipedia.org/wiki/National_Trails"
+   ],
+   "start": {
+    "lat": 51.73,
+    "lon": -4.65
+   }
+  },
+  {
+   "id": "pennine-bridleway",
+   "name": "Pennine Bridleway",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 330,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.nationaltrail.co.uk/",
+    "https://en.wikipedia.org/wiki/Pennine_Bridleway",
+    "https://en.wikipedia.org/wiki/National_Trails"
+   ],
+   "start": {
+    "lat": 53.07,
+    "lon": -1.59
+   }
+  },
+  {
+   "id": "pennine-way",
+   "name": "Pennine Way",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 431,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.nationaltrail.co.uk/",
+    "https://en.wikipedia.org/wiki/Pennine_Way",
+    "https://en.wikipedia.org/wiki/National_Trails"
+   ],
+   "start": {
+    "lat": 53.37,
+    "lon": -1.82
+   }
+  },
+  {
+   "id": "the-ridgeway",
+   "name": "The Ridgeway",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 139,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.nationaltrail.co.uk/",
+    "https://en.wikipedia.org/wiki/The_Ridgeway",
+    "https://en.wikipedia.org/wiki/National_Trails"
+   ],
+   "start": {
+    "lat": 51.41,
+    "lon": -1.83
+   }
+  },
+  {
+   "id": "south-downs-way",
+   "name": "South Downs Way",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 160,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.nationaltrail.co.uk/",
+    "https://en.wikipedia.org/wiki/South_Downs_Way",
+    "https://en.wikipedia.org/wiki/National_Trails"
+   ],
+   "start": {
+    "lat": 51.06,
+    "lon": -1.31
+   }
+  },
+  {
+   "id": "south-west-coast-path",
+   "name": "South West Coast Path",
+   "aliases": [
+    "SWCP"
+   ],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 1014,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.nationaltrail.co.uk/",
+    "https://en.wikipedia.org/wiki/South_West_Coast_Path",
+    "https://en.wikipedia.org/wiki/National_Trails"
+   ],
+   "start": {
+    "lat": 51.21,
+    "lon": -3.47
+   }
+  },
+  {
+   "id": "thames-path",
+   "name": "Thames Path",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 296,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.nationaltrail.co.uk/",
+    "https://en.wikipedia.org/wiki/Thames_Path",
+    "https://en.wikipedia.org/wiki/National_Trails"
+   ],
+   "start": {
+    "lat": 51.69,
+    "lon": -2.03
+   }
+  },
+  {
+   "id": "yorkshire-wolds-way",
+   "name": "Yorkshire Wolds Way",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 127,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.nationaltrail.co.uk/",
+    "https://en.wikipedia.org/wiki/Yorkshire_Wolds_Way",
+    "https://en.wikipedia.org/wiki/National_Trails"
+   ],
+   "start": {
+    "lat": 53.72,
+    "lon": -0.43
+   }
+  },
+  {
+   "id": "king-charles-iii-england-coast-path",
+   "name": "King Charles III England Coast Path",
+   "aliases": [
+    "England Coast Path"
+   ],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 4500,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.nationaltrail.co.uk/",
+    "https://en.wikipedia.org/wiki/England_Coast_Path",
+    "https://en.wikipedia.org/wiki/National_Trails"
+   ],
+   "start": null
+  },
+  {
+   "id": "west-highland-way",
+   "name": "West Highland Way",
+   "aliases": [
+    "WHW"
+   ],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 154,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.nature.scot/scotlands-great-trails",
+    "https://en.wikipedia.org/wiki/West_Highland_Way",
+    "https://en.wikipedia.org/wiki/Scotland%27s_Great_Trails"
+   ],
+   "start": {
+    "lat": 55.94,
+    "lon": -4.32
+   }
+  },
+  {
+   "id": "great-glen-way",
+   "name": "Great Glen Way",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 125,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.nature.scot/scotlands-great-trails",
+    "https://en.wikipedia.org/wiki/Great_Glen_Way",
+    "https://en.wikipedia.org/wiki/Scotland%27s_Great_Trails"
+   ],
+   "start": {
+    "lat": 56.82,
+    "lon": -5.11
+   }
+  },
+  {
+   "id": "southern-upland-way",
+   "name": "Southern Upland Way",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 344,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.nature.scot/scotlands-great-trails",
+    "https://en.wikipedia.org/wiki/Southern_Upland_Way",
+    "https://en.wikipedia.org/wiki/Scotland%27s_Great_Trails"
+   ],
+   "start": {
+    "lat": 54.84,
+    "lon": -5.12
+   }
+  },
+  {
+   "id": "speyside-way",
+   "name": "Speyside Way",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 137,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.nature.scot/scotlands-great-trails",
+    "https://en.wikipedia.org/wiki/Speyside_Way",
+    "https://en.wikipedia.org/wiki/Scotland%27s_Great_Trails"
+   ],
+   "start": {
+    "lat": 57.68,
+    "lon": -2.96
+   }
+  },
+  {
+   "id": "rob-roy-way",
+   "name": "Rob Roy Way",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 127,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.nature.scot/scotlands-great-trails",
+    "https://en.wikipedia.org/wiki/Rob_Roy_Way",
+    "https://en.wikipedia.org/wiki/Scotland%27s_Great_Trails"
+   ],
+   "start": {
+    "lat": 56.06,
+    "lon": -4.45
+   }
+  },
+  {
+   "id": "john-muir-way",
+   "name": "John Muir Way",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 215,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.nature.scot/scotlands-great-trails",
+    "https://en.wikipedia.org/wiki/John_Muir_Way",
+    "https://en.wikipedia.org/wiki/Scotland%27s_Great_Trails"
+   ],
+   "start": {
+    "lat": 56.0,
+    "lon": -4.73
+   }
+  },
+  {
+   "id": "fife-coastal-path",
+   "name": "Fife Coastal Path",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 187,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.nature.scot/scotlands-great-trails",
+    "https://en.wikipedia.org/wiki/Fife_Coastal_Path",
+    "https://en.wikipedia.org/wiki/Scotland%27s_Great_Trails"
+   ],
+   "start": {
+    "lat": 56.07,
+    "lon": -3.72
+   }
+  },
+  {
+   "id": "cateran-trail",
+   "name": "Cateran Trail",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 103,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail"
+   ],
+   "sources": [
+    "https://www.nature.scot/scotlands-great-trails",
+    "https://en.wikipedia.org/wiki/Cateran_Trail",
+    "https://en.wikipedia.org/wiki/Scotland%27s_Great_Trails"
+   ],
+   "start": {
+    "lat": 56.59,
+    "lon": -3.34
+   }
+  },
+  {
+   "id": "st-cuthberts-way",
+   "name": "St Cuthbert's Way",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 100,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.nature.scot/scotlands-great-trails",
+    "https://en.wikipedia.org/wiki/St_Cuthbert%27s_Way",
+    "https://en.wikipedia.org/wiki/Scotland%27s_Great_Trails"
+   ],
+   "start": {
+    "lat": 55.6,
+    "lon": -2.72
+   }
+  },
+  {
+   "id": "borders-abbeys-way",
+   "name": "Borders Abbeys Way",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 109,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail"
+   ],
+   "sources": [
+    "https://www.nature.scot/scotlands-great-trails",
+    "https://en.wikipedia.org/wiki/Borders_Abbeys_Way",
+    "https://en.wikipedia.org/wiki/Scotland%27s_Great_Trails"
+   ],
+   "start": null
+  },
+  {
+   "id": "berwickshire-coastal-path",
+   "name": "Berwickshire Coastal Path",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 48,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail"
+   ],
+   "sources": [
+    "https://www.nature.scot/scotlands-great-trails",
+    "https://en.wikipedia.org/wiki/Berwickshire_Coastal_Path",
+    "https://en.wikipedia.org/wiki/Scotland%27s_Great_Trails"
+   ],
+   "start": {
+    "lat": 55.93,
+    "lon": -2.36
+   }
+  },
+  {
+   "id": "ayrshire-coastal-path",
+   "name": "Ayrshire Coastal Path",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 161,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail"
+   ],
+   "sources": [
+    "https://www.nature.scot/scotlands-great-trails",
+    "https://en.wikipedia.org/wiki/Ayrshire_Coastal_Path",
+    "https://en.wikipedia.org/wiki/Scotland%27s_Great_Trails"
+   ],
+   "start": null
+  },
+  {
+   "id": "annandale-way",
+   "name": "Annandale Way",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 90,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail"
+   ],
+   "sources": [
+    "https://www.nature.scot/scotlands-great-trails",
+    "https://en.wikipedia.org/wiki/Annandale_Way",
+    "https://en.wikipedia.org/wiki/Scotland%27s_Great_Trails"
+   ],
+   "start": null
+  },
+  {
+   "id": "arran-coastal-way",
+   "name": "Arran Coastal Way",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 107,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail"
+   ],
+   "sources": [
+    "https://www.nature.scot/scotlands-great-trails",
+    "https://en.wikipedia.org/wiki/Arran_Coastal_Way",
+    "https://en.wikipedia.org/wiki/Scotland%27s_Great_Trails"
+   ],
+   "start": {
+    "lat": 55.58,
+    "lon": -5.15
+   }
+  },
+  {
+   "id": "clyde-walkway",
+   "name": "Clyde Walkway",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 65,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail"
+   ],
+   "sources": [
+    "https://www.nature.scot/scotlands-great-trails",
+    "https://en.wikipedia.org/wiki/Clyde_Walkway",
+    "https://en.wikipedia.org/wiki/Scotland%27s_Great_Trails"
+   ],
+   "start": {
+    "lat": 55.86,
+    "lon": -4.25
+   }
+  },
+  {
+   "id": "loch-lomond-cowal-way",
+   "name": "Loch Lomond and Cowal Way",
+   "aliases": [
+    "Cowal Way"
+   ],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 92,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail"
+   ],
+   "sources": [
+    "https://www.nature.scot/scotlands-great-trails",
+    "https://en.wikipedia.org/wiki/Cowal_Way",
+    "https://en.wikipedia.org/wiki/Scotland%27s_Great_Trails"
+   ],
+   "start": {
+    "lat": 55.88,
+    "lon": -5.32
+   }
+  },
+  {
+   "id": "formartine-buchan-way",
+   "name": "Formartine and Buchan Way",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 85,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail"
+   ],
+   "sources": [
+    "https://www.nature.scot/scotlands-great-trails",
+    "https://en.wikipedia.org/wiki/Formartine_and_Buchan_Way",
+    "https://en.wikipedia.org/wiki/Scotland%27s_Great_Trails"
+   ],
+   "start": {
+    "lat": 57.2,
+    "lon": -2.18
+   }
+  },
+  {
+   "id": "great-trossachs-path",
+   "name": "Great Trossachs Path",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 48,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail"
+   ],
+   "sources": [
+    "https://www.nature.scot/scotlands-great-trails",
+    "https://en.wikipedia.org/wiki/Great_Trossachs_Path",
+    "https://en.wikipedia.org/wiki/Scotland%27s_Great_Trails"
+   ],
+   "start": {
+    "lat": 56.24,
+    "lon": -4.21
+   }
+  },
+  {
+   "id": "dava-way",
+   "name": "Dava Way",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 38,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail"
+   ],
+   "sources": [
+    "https://www.nature.scot/scotlands-great-trails",
+    "https://en.wikipedia.org/wiki/Dava_Way",
+    "https://en.wikipedia.org/wiki/Scotland%27s_Great_Trails"
+   ],
+   "start": {
+    "lat": 57.33,
+    "lon": -3.61
+   }
+  },
+  {
+   "id": "moray-coast-trail",
+   "name": "Moray Coast Trail",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 72,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail"
+   ],
+   "sources": [
+    "https://www.nature.scot/scotlands-great-trails",
+    "https://en.wikipedia.org/wiki/Moray_Coast_Trail",
+    "https://en.wikipedia.org/wiki/Scotland%27s_Great_Trails"
+   ],
+   "start": {
+    "lat": 57.61,
+    "lon": -3.61
+   }
+  },
+  {
+   "id": "mull-of-galloway-trail",
+   "name": "Mull of Galloway Trail",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 59,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail"
+   ],
+   "sources": [
+    "https://www.nature.scot/scotlands-great-trails",
+    "https://en.wikipedia.org/wiki/Mull_of_Galloway_Trail",
+    "https://en.wikipedia.org/wiki/Scotland%27s_Great_Trails"
+   ],
+   "start": {
+    "lat": 54.64,
+    "lon": -4.86
+   }
+  },
+  {
+   "id": "kintyre-way",
+   "name": "Kintyre Way",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 161,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail"
+   ],
+   "sources": [
+    "https://www.nature.scot/scotlands-great-trails",
+    "https://en.wikipedia.org/wiki/Kintyre_Way",
+    "https://en.wikipedia.org/wiki/Scotland%27s_Great_Trails"
+   ],
+   "start": {
+    "lat": 55.86,
+    "lon": -5.41
+   }
+  },
+  {
+   "id": "three-lochs-way",
+   "name": "Three Lochs Way",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 55,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail"
+   ],
+   "sources": [
+    "https://www.nature.scot/scotlands-great-trails",
+    "https://en.wikipedia.org/wiki/Three_Lochs_Way",
+    "https://en.wikipedia.org/wiki/Scotland%27s_Great_Trails"
+   ],
+   "start": {
+    "lat": 56.0,
+    "lon": -4.58
+   }
+  },
+  {
+   "id": "river-ayr-way",
+   "name": "River Ayr Way",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 66,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail"
+   ],
+   "sources": [
+    "https://www.nature.scot/scotlands-great-trails",
+    "https://en.wikipedia.org/wiki/River_Ayr_Way",
+    "https://en.wikipedia.org/wiki/Scotland%27s_Great_Trails"
+   ],
+   "start": null
+  },
+  {
+   "id": "deeside-way",
+   "name": "Deeside Way",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 66,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail"
+   ],
+   "sources": [
+    "https://www.nature.scot/scotlands-great-trails",
+    "https://en.wikipedia.org/wiki/Deeside_Way",
+    "https://en.wikipedia.org/wiki/Scotland%27s_Great_Trails"
+   ],
+   "start": {
+    "lat": 57.14,
+    "lon": -2.1
+   }
+  },
+  {
+   "id": "east-highland-way",
+   "name": "East Highland Way",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 132,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail"
+   ],
+   "sources": [
+    "https://www.nature.scot/scotlands-great-trails",
+    "https://en.wikipedia.org/wiki/East_Highland_Way",
+    "https://en.wikipedia.org/wiki/Scotland%27s_Great_Trails"
+   ],
+   "start": {
+    "lat": 56.82,
+    "lon": -5.11
+   }
+  },
+  {
+   "id": "hebridean-way",
+   "name": "Hebridean Way",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 252,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail"
+   ],
+   "sources": [
+    "https://www.nature.scot/scotlands-great-trails",
+    "https://en.wikipedia.org/wiki/Hebridean_Way",
+    "https://en.wikipedia.org/wiki/Scotland%27s_Great_Trails"
+   ],
+   "start": {
+    "lat": 56.93,
+    "lon": -7.54
+   }
+  },
+  {
+   "id": "fife-pilgrim-way",
+   "name": "Fife Pilgrim Way",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 104,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail"
+   ],
+   "sources": [
+    "https://www.nature.scot/scotlands-great-trails",
+    "https://en.wikipedia.org/wiki/Fife_Pilgrim_Way",
+    "https://en.wikipedia.org/wiki/Scotland%27s_Great_Trails"
+   ],
+   "start": {
+    "lat": 56.06,
+    "lon": -3.63
+   }
+  },
+  {
+   "id": "st-magnus-way",
+   "name": "St Magnus Way",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 89,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail"
+   ],
+   "sources": [
+    "https://www.nature.scot/scotlands-great-trails",
+    "https://en.wikipedia.org/wiki/St_Magnus_Way",
+    "https://en.wikipedia.org/wiki/Scotland%27s_Great_Trails"
+   ],
+   "start": null
+  },
+  {
+   "id": "coast-to-coast-walk",
+   "name": "Coast to Coast Walk",
+   "aliases": [
+    "Wainwright's Coast to Coast"
+   ],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 309,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Coast_to_Coast_Walk",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 54.49,
+    "lon": -3.6
+   }
+  },
+  {
+   "id": "dales-way",
+   "name": "Dales Way",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 127,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Dales_Way",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 53.93,
+    "lon": -1.82
+   }
+  },
+  {
+   "id": "cumbria-way",
+   "name": "Cumbria Way",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 112,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Cumbria_Way",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 54.2,
+    "lon": -3.09
+   }
+  },
+  {
+   "id": "wales-coast-path",
+   "name": "Wales Coast Path",
+   "aliases": [
+    "Llwybr Arfordir Cymru"
+   ],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 1400,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Wales_Coast_Path",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": null
+  },
+  {
+   "id": "causeway-coast-way",
+   "name": "Causeway Coast Way",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 53,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Causeway_Coast_Way"
+   ],
+   "start": {
+    "lat": 55.18,
+    "lon": -6.72
+   }
+  },
+  {
+   "id": "ulster-way",
+   "name": "Ulster Way",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 1000,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Ulster_Way",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": null
+  },
+  {
+   "id": "wicklow-way",
+   "name": "Wicklow Way",
+   "aliases": [
+    "Slí Cualann"
+   ],
+   "countries": [
+    "IE"
+   ],
+   "length_km": 131,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.sportireland.ie/outdoors/walking/trails",
+    "https://en.wikipedia.org/wiki/Wicklow_Way",
+    "https://en.wikipedia.org/wiki/Long-distance_trails_in_the_Republic_of_Ireland"
+   ],
+   "start": {
+    "lat": 53.27,
+    "lon": -6.27
+   }
+  },
+  {
+   "id": "kerry-way",
+   "name": "Kerry Way",
+   "aliases": [
+    "Slí Uíbh Ráthaigh"
+   ],
+   "countries": [
+    "IE"
+   ],
+   "length_km": 200,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.sportireland.ie/outdoors/walking/trails",
+    "https://en.wikipedia.org/wiki/Kerry_Way",
+    "https://en.wikipedia.org/wiki/Long-distance_trails_in_the_Republic_of_Ireland"
+   ],
+   "start": {
+    "lat": 52.06,
+    "lon": -9.51
+   }
+  },
+  {
+   "id": "dingle-way",
+   "name": "Dingle Way",
+   "aliases": [
+    "Slí Chorca Dhuibhne"
+   ],
+   "countries": [
+    "IE"
+   ],
+   "length_km": 162,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.sportireland.ie/outdoors/walking/trails",
+    "https://en.wikipedia.org/wiki/Dingle_Way",
+    "https://en.wikipedia.org/wiki/Long-distance_trails_in_the_Republic_of_Ireland"
+   ],
+   "start": {
+    "lat": 52.27,
+    "lon": -9.7
+   }
+  },
+  {
+   "id": "beara-way",
+   "name": "Beara Way",
+   "aliases": [],
+   "countries": [
+    "IE"
+   ],
+   "length_km": 206,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.sportireland.ie/outdoors/walking/trails",
+    "https://en.wikipedia.org/wiki/Beara_Way",
+    "https://en.wikipedia.org/wiki/Long-distance_trails_in_the_Republic_of_Ireland"
+   ],
+   "start": {
+    "lat": 51.75,
+    "lon": -9.55
+   }
+  },
+  {
+   "id": "sheeps-head-way",
+   "name": "Sheep's Head Way",
+   "aliases": [],
+   "countries": [
+    "IE"
+   ],
+   "length_km": 93,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.sportireland.ie/outdoors/walking/trails",
+    "https://en.wikipedia.org/wiki/Sheep%27s_Head_Way",
+    "https://en.wikipedia.org/wiki/Long-distance_trails_in_the_Republic_of_Ireland"
+   ],
+   "start": {
+    "lat": 51.68,
+    "lon": -9.45
+   }
+  },
+  {
+   "id": "burren-way",
+   "name": "Burren Way",
+   "aliases": [],
+   "countries": [
+    "IE"
+   ],
+   "length_km": 114,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.sportireland.ie/outdoors/walking/trails",
+    "https://en.wikipedia.org/wiki/Burren_Way",
+    "https://en.wikipedia.org/wiki/Long-distance_trails_in_the_Republic_of_Ireland"
+   ],
+   "start": {
+    "lat": 52.93,
+    "lon": -9.35
+   }
+  },
+  {
+   "id": "western-way",
+   "name": "Western Way",
+   "aliases": [],
+   "countries": [
+    "IE"
+   ],
+   "length_km": null,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.sportireland.ie/outdoors/walking/trails",
+    "https://en.wikipedia.org/wiki/Western_Way",
+    "https://en.wikipedia.org/wiki/Long-distance_trails_in_the_Republic_of_Ireland"
+   ],
+   "start": {
+    "lat": 53.43,
+    "lon": -9.32
+   }
+  },
+  {
+   "id": "barrow-way",
+   "name": "Barrow Way",
+   "aliases": [],
+   "countries": [
+    "IE"
+   ],
+   "length_km": 114,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.sportireland.ie/outdoors/walking/trails",
+    "https://en.wikipedia.org/wiki/Barrow_Way",
+    "https://en.wikipedia.org/wiki/Long-distance_trails_in_the_Republic_of_Ireland"
+   ],
+   "start": null
+  },
+  {
+   "id": "tain-way",
+   "name": "Táin Way",
+   "aliases": [],
+   "countries": [
+    "IE"
+   ],
+   "length_km": 40,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.sportireland.ie/outdoors/walking/trails",
+    "https://en.wikipedia.org/wiki/T%C3%A1in_Way",
+    "https://en.wikipedia.org/wiki/Long-distance_trails_in_the_Republic_of_Ireland"
+   ],
+   "start": {
+    "lat": 54.04,
+    "lon": -6.19
+   }
+  },
+  {
+   "id": "east-munster-way",
+   "name": "East Munster Way",
+   "aliases": [],
+   "countries": [
+    "IE"
+   ],
+   "length_km": 70,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.sportireland.ie/outdoors/walking/trails",
+    "https://en.wikipedia.org/wiki/East_Munster_Way",
+    "https://en.wikipedia.org/wiki/Long-distance_trails_in_the_Republic_of_Ireland"
+   ],
+   "start": {
+    "lat": 52.35,
+    "lon": -7.41
+   }
+  },
+  {
+   "id": "south-leinster-way",
+   "name": "South Leinster Way",
+   "aliases": [],
+   "countries": [
+    "IE"
+   ],
+   "length_km": 102,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.sportireland.ie/outdoors/walking/trails",
+    "https://en.wikipedia.org/wiki/South_Leinster_Way",
+    "https://en.wikipedia.org/wiki/Long-distance_trails_in_the_Republic_of_Ireland"
+   ],
+   "start": {
+    "lat": 52.68,
+    "lon": -6.69
+   }
+  },
+  {
+   "id": "slieve-bloom-way",
+   "name": "Slieve Bloom Way",
+   "aliases": [],
+   "countries": [
+    "IE"
+   ],
+   "length_km": 70,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.sportireland.ie/outdoors/walking/trails",
+    "https://en.wikipedia.org/wiki/Slieve_Bloom_Way",
+    "https://en.wikipedia.org/wiki/Long-distance_trails_in_the_Republic_of_Ireland"
+   ],
+   "start": null
+  },
+  {
+   "id": "royal-canal-way",
+   "name": "Royal Canal Way",
+   "aliases": [],
+   "countries": [
+    "IE"
+   ],
+   "length_km": 144,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.sportireland.ie/outdoors/walking/trails",
+    "https://en.wikipedia.org/wiki/Royal_Canal_Way",
+    "https://en.wikipedia.org/wiki/Long-distance_trails_in_the_Republic_of_Ireland"
+   ],
+   "start": {
+    "lat": 53.35,
+    "lon": -6.25
+   }
+  },
+  {
+   "id": "grand-canal-way",
+   "name": "Grand Canal Way",
+   "aliases": [],
+   "countries": [
+    "IE"
+   ],
+   "length_km": 117,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.sportireland.ie/outdoors/walking/trails",
+    "https://en.wikipedia.org/wiki/Grand_Canal_Way",
+    "https://en.wikipedia.org/wiki/Long-distance_trails_in_the_Republic_of_Ireland"
+   ],
+   "start": {
+    "lat": 53.33,
+    "lon": -6.25
+   }
+  },
+  {
+   "id": "ballyhoura-way",
+   "name": "Ballyhoura Way",
+   "aliases": [],
+   "countries": [
+    "IE"
+   ],
+   "length_km": 90,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.sportireland.ie/outdoors/walking/trails",
+    "https://en.wikipedia.org/wiki/Ballyhoura_Way",
+    "https://en.wikipedia.org/wiki/Long-distance_trails_in_the_Republic_of_Ireland"
+   ],
+   "start": null
+  },
+  {
+   "id": "dublin-mountains-way",
+   "name": "Dublin Mountains Way",
+   "aliases": [],
+   "countries": [
+    "IE"
+   ],
+   "length_km": 42,
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://www.sportireland.ie/outdoors/walking/trails",
+    "https://en.wikipedia.org/wiki/Dublin_Mountains_Way",
+    "https://en.wikipedia.org/wiki/Long-distance_trails_in_the_Republic_of_Ireland"
+   ],
+   "start": null
+  },
+  {
+   "id": "e-path-e1",
+   "name": "European long-distance path E1",
+   "aliases": [
+    "E1"
+   ],
+   "countries": [
+    "NO",
+    "SE",
+    "DK",
+    "DE",
+    "CH",
+    "IT"
+   ],
+   "length_km": null,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/European_long-distance_paths",
+    "https://www.era-ewv-ferp.org/"
+   ],
+   "start": null
+  },
+  {
+   "id": "e-path-e2",
+   "name": "European long-distance path E2",
+   "aliases": [
+    "E2"
+   ],
+   "countries": [
+    "GB",
+    "NL",
+    "BE",
+    "LU",
+    "FR"
+   ],
+   "length_km": null,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/European_long-distance_paths",
+    "https://www.era-ewv-ferp.org/"
+   ],
+   "start": null
+  },
+  {
+   "id": "e-path-e3",
+   "name": "European long-distance path E3",
+   "aliases": [
+    "E3"
+   ],
+   "countries": [
+    "PT",
+    "ES",
+    "FR",
+    "BE",
+    "LU",
+    "DE",
+    "CZ",
+    "PL",
+    "SK",
+    "HU",
+    "RO",
+    "BG",
+    "TR"
+   ],
+   "length_km": null,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/European_long-distance_paths",
+    "https://www.era-ewv-ferp.org/"
+   ],
+   "start": null
+  },
+  {
+   "id": "e-path-e4",
+   "name": "European long-distance path E4",
+   "aliases": [
+    "E4"
+   ],
+   "countries": [
+    "ES",
+    "FR",
+    "CH",
+    "DE",
+    "AT",
+    "HU",
+    "RS",
+    "BG",
+    "GR",
+    "CY"
+   ],
+   "length_km": null,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/European_long-distance_paths",
+    "https://www.era-ewv-ferp.org/"
+   ],
+   "start": null
+  },
+  {
+   "id": "e-path-e5",
+   "name": "European long-distance path E5",
+   "aliases": [
+    "E5"
+   ],
+   "countries": [
+    "FR",
+    "CH",
+    "DE",
+    "AT",
+    "IT"
+   ],
+   "length_km": null,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/European_long-distance_paths",
+    "https://www.era-ewv-ferp.org/"
+   ],
+   "start": null
+  },
+  {
+   "id": "e-path-e6",
+   "name": "European long-distance path E6",
+   "aliases": [
+    "E6"
+   ],
+   "countries": [
+    "FI",
+    "SE",
+    "DK",
+    "DE",
+    "AT",
+    "SI",
+    "GR",
+    "TR"
+   ],
+   "length_km": null,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/European_long-distance_paths",
+    "https://www.era-ewv-ferp.org/"
+   ],
+   "start": null
+  },
+  {
+   "id": "e-path-e7",
+   "name": "European long-distance path E7",
+   "aliases": [
+    "E7"
+   ],
+   "countries": [
+    "PT",
+    "ES",
+    "AD",
+    "FR",
+    "IT",
+    "SI",
+    "HU",
+    "RS"
+   ],
+   "length_km": null,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/European_long-distance_paths",
+    "https://www.era-ewv-ferp.org/"
+   ],
+   "start": null
+  },
+  {
+   "id": "e-path-e8",
+   "name": "European long-distance path E8",
+   "aliases": [
+    "E8"
+   ],
+   "countries": [
+    "IE",
+    "GB",
+    "NL",
+    "DE",
+    "AT",
+    "SK",
+    "PL",
+    "UA",
+    "RO",
+    "BG",
+    "TR"
+   ],
+   "length_km": null,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/European_long-distance_paths",
+    "https://www.era-ewv-ferp.org/"
+   ],
+   "start": null
+  },
+  {
+   "id": "e-path-e9",
+   "name": "European long-distance path E9",
+   "aliases": [
+    "E9"
+   ],
+   "countries": [
+    "PT",
+    "ES",
+    "FR",
+    "GB",
+    "BE",
+    "NL",
+    "DE",
+    "PL",
+    "LT",
+    "LV",
+    "EE"
+   ],
+   "length_km": null,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/European_long-distance_paths",
+    "https://www.era-ewv-ferp.org/"
+   ],
+   "start": null
+  },
+  {
+   "id": "e-path-e10",
+   "name": "European long-distance path E10",
+   "aliases": [
+    "E10"
+   ],
+   "countries": [
+    "FI",
+    "DE",
+    "CZ",
+    "AT",
+    "IT",
+    "FR",
+    "ES"
+   ],
+   "length_km": null,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/European_long-distance_paths",
+    "https://www.era-ewv-ferp.org/"
+   ],
+   "start": null
+  },
+  {
+   "id": "e-path-e11",
+   "name": "European long-distance path E11",
+   "aliases": [
+    "E11"
+   ],
+   "countries": [
+    "NL",
+    "DE",
+    "PL",
+    "LT",
+    "EE"
+   ],
+   "length_km": null,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/European_long-distance_paths",
+    "https://www.era-ewv-ferp.org/"
+   ],
+   "start": null
+  },
+  {
+   "id": "e-path-e12",
+   "name": "European long-distance path E12",
+   "aliases": [
+    "E12"
+   ],
+   "countries": [
+    "ES",
+    "FR",
+    "IT",
+    "SI",
+    "HR"
+   ],
+   "length_km": null,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/European_long-distance_paths",
+    "https://www.era-ewv-ferp.org/"
+   ],
+   "start": null
+  },
+  {
+   "id": "e5-oberstdorf-meran",
+   "name": "E5 Alpine crossing Oberstdorf to Meran",
+   "aliases": [
+    "E5 Alpenüberquerung"
+   ],
+   "countries": [
+    "DE",
+    "AT",
+    "IT"
+   ],
+   "length_km": 160,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/E5_European_long_distance_path"
+   ],
+   "start": {
+    "lat": 47.41,
+    "lon": 10.28
+   }
+  },
+  {
+   "id": "gr20",
+   "name": "GR 20",
+   "aliases": [
+    "GR20",
+    "Fra li monti"
+   ],
+   "countries": [
+    "FR"
+   ],
+   "length_km": 180,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/GR_20",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 42.51,
+    "lon": 8.86
+   }
+  },
+  {
+   "id": "gr10",
+   "name": "GR 10",
+   "aliases": [
+    "GR10",
+    "Sentier de grande randonnée 10"
+   ],
+   "countries": [
+    "FR"
+   ],
+   "length_km": 866,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/GR_10",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 43.36,
+    "lon": -1.77
+   }
+  },
+  {
+   "id": "gr5",
+   "name": "GR 5",
+   "aliases": [
+    "GR5",
+    "E2"
+   ],
+   "countries": [
+    "NL",
+    "BE",
+    "LU",
+    "FR"
+   ],
+   "length_km": 2600,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/GR_5",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 51.98,
+    "lon": 4.13
+   }
+  },
+  {
+   "id": "gr34",
+   "name": "GR 34",
+   "aliases": [
+    "GR34",
+    "Sentier des douaniers"
+   ],
+   "countries": [
+    "FR"
+   ],
+   "length_km": 2000,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/GR_34",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 48.64,
+    "lon": -1.51
+   }
+  },
+  {
+   "id": "tour-du-mont-blanc",
+   "name": "Tour du Mont Blanc",
+   "aliases": [
+    "TMB"
+   ],
+   "countries": [
+    "FR",
+    "IT",
+    "CH"
+   ],
+   "length_km": 170,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Tour_du_Mont_Blanc",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 45.89,
+    "lon": 6.8
+   }
+  },
+  {
+   "id": "gr65-via-podiensis",
+   "name": "Via Podiensis",
+   "aliases": [
+    "GR 65",
+    "Chemin du Puy"
+   ],
+   "countries": [
+    "FR"
+   ],
+   "length_km": 750,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Via_Podiensis",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 45.04,
+    "lon": 3.88
+   }
+  },
+  {
+   "id": "gr54-tour-de-l-oisans",
+   "name": "Tour de l'Oisans et des Écrins",
+   "aliases": [
+    "GR 54"
+   ],
+   "countries": [
+    "FR"
+   ],
+   "length_km": 176,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/GR_54",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 45.06,
+    "lon": 6.03
+   }
+  },
+  {
+   "id": "gr70-stevenson",
+   "name": "Chemin de Stevenson",
+   "aliases": [
+    "GR 70",
+    "Robert Louis Stevenson Trail"
+   ],
+   "countries": [
+    "FR"
+   ],
+   "length_km": 272,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/GR_70",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 44.94,
+    "lon": 3.99
+   }
+  },
+  {
+   "id": "gr58-tour-du-queyras",
+   "name": "Tour du Queyras",
+   "aliases": [
+    "GR 58"
+   ],
+   "countries": [
+    "FR"
+   ],
+   "length_km": 120,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/GR_58",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": null
+  },
+  {
+   "id": "tour-de-la-vanoise",
+   "name": "Tour de la Vanoise",
+   "aliases": [
+    "GR 55"
+   ],
+   "countries": [
+    "FR"
+   ],
+   "length_km": 120,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Vanoise_National_Park",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": null
+  },
+  {
+   "id": "walkers-haute-route",
+   "name": "Walker's Haute Route",
+   "aliases": [
+    "Chamonix to Zermatt"
+   ],
+   "countries": [
+    "FR",
+    "CH"
+   ],
+   "length_km": 200,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Haute_Route",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 45.92,
+    "lon": 6.87
+   }
+  },
+  {
+   "id": "via-francigena",
+   "name": "Via Francigena",
+   "aliases": [],
+   "countries": [
+    "GB",
+    "FR",
+    "CH",
+    "IT"
+   ],
+   "length_km": 1900,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Via_Francigena",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 51.28,
+    "lon": 1.08
+   }
+  },
+  {
+   "id": "via-alpina",
+   "name": "Via Alpina",
+   "aliases": [
+    "Red trail"
+   ],
+   "countries": [
+    "IT",
+    "SI",
+    "AT",
+    "DE",
+    "LI",
+    "CH",
+    "FR",
+    "MC"
+   ],
+   "length_km": 2600,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Via_Alpina",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": null
+  },
+  {
+   "id": "tour-of-monte-rosa",
+   "name": "Tour of Monte Rosa",
+   "aliases": [
+    "Tour du Mont Rose"
+   ],
+   "countries": [
+    "CH",
+    "IT"
+   ],
+   "length_km": 160,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Monte_Rosa",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 46.02,
+    "lon": 7.75
+   }
+  },
+  {
+   "id": "camino-frances",
+   "name": "Camino Francés",
+   "aliases": [
+    "French Way",
+    "Way of St James"
+   ],
+   "countries": [
+    "FR",
+    "ES"
+   ],
+   "length_km": 780,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/French_Way",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 43.16,
+    "lon": -1.24
+   }
+  },
+  {
+   "id": "camino-portugues",
+   "name": "Camino Portugués",
+   "aliases": [
+    "Portuguese Way"
+   ],
+   "countries": [
+    "PT",
+    "ES"
+   ],
+   "length_km": 240,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Portuguese_Way",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 41.15,
+    "lon": -8.61
+   }
+  },
+  {
+   "id": "camino-del-norte",
+   "name": "Camino del Norte",
+   "aliases": [
+    "Northern Way"
+   ],
+   "countries": [
+    "ES"
+   ],
+   "length_km": 825,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Camino_del_Norte",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 43.34,
+    "lon": -1.79
+   }
+  },
+  {
+   "id": "camino-primitivo",
+   "name": "Camino Primitivo",
+   "aliases": [
+    "Original Way"
+   ],
+   "countries": [
+    "ES"
+   ],
+   "length_km": 320,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Camino_Primitivo",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 43.36,
+    "lon": -5.85
+   }
+  },
+  {
+   "id": "gr11-senda-pirenaica",
+   "name": "GR 11 Senda Pirenaica",
+   "aliases": [
+    "GR11",
+    "GR 11"
+   ],
+   "countries": [
+    "ES",
+    "AD"
+   ],
+   "length_km": 840,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/GR_11",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 43.39,
+    "lon": -1.79
+   }
+  },
+  {
+   "id": "gr7-spain",
+   "name": "GR 7",
+   "aliases": [
+    "E4"
+   ],
+   "countries": [
+    "ES",
+    "AD"
+   ],
+   "length_km": null,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/GR_7",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 36.01,
+    "lon": -5.6
+   }
+  },
+  {
+   "id": "gr92",
+   "name": "GR 92 Camino del Mediterráneo",
+   "aliases": [
+    "GR92"
+   ],
+   "countries": [
+    "ES"
+   ],
+   "length_km": 583,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/GR_92",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 42.43,
+    "lon": 3.16
+   }
+  },
+  {
+   "id": "cami-de-cavalls",
+   "name": "Camí de Cavalls",
+   "aliases": [
+    "GR 223"
+   ],
+   "countries": [
+    "ES"
+   ],
+   "length_km": 185,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Cam%C3%AD_de_Cavalls",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 39.89,
+    "lon": 4.27
+   }
+  },
+  {
+   "id": "gr221-ruta-pedra-en-sec",
+   "name": "GR 221 Ruta de Pedra en Sec",
+   "aliases": [
+    "Dry Stone Route",
+    "GR221"
+   ],
+   "countries": [
+    "ES"
+   ],
+   "length_km": 140,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/GR_221",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 39.54,
+    "lon": 2.39
+   }
+  },
+  {
+   "id": "carros-de-foc",
+   "name": "Carros de Foc",
+   "aliases": [],
+   "countries": [
+    "ES"
+   ],
+   "length_km": 55,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Carros_de_Foc",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": null
+  },
+  {
+   "id": "rota-vicentina-fishermens-trail",
+   "name": "Rota Vicentina Fishermen's Trail",
+   "aliases": [
+    "Trilho dos Pescadores"
+   ],
+   "countries": [
+    "PT"
+   ],
+   "length_km": 226,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Rota_Vicentina",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 37.85,
+    "lon": -8.79
+   }
+  },
+  {
+   "id": "alta-via-1-dolomites",
+   "name": "Alta Via 1 (Dolomites)",
+   "aliases": [
+    "AV1",
+    "Alta Via delle Dolomiti n. 1"
+   ],
+   "countries": [
+    "IT"
+   ],
+   "length_km": 120,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Alta_Via_1",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 46.69,
+    "lon": 12.08
+   }
+  },
+  {
+   "id": "alta-via-2-dolomites",
+   "name": "Alta Via 2 (Dolomites)",
+   "aliases": [
+    "Alta Via 2 delle Dolomiti",
+    "Dolomiten-Hoehenweg 2"
+   ],
+   "countries": [
+    "IT"
+   ],
+   "length_km": 160,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Alta_Via_2",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 46.72,
+    "lon": 11.66
+   }
+  },
+  {
+   "id": "via-degli-dei",
+   "name": "Via degli Dei",
+   "aliases": [
+    "Path of the Gods (Bologna to Florence)"
+   ],
+   "countries": [
+    "IT"
+   ],
+   "length_km": 130,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Via_degli_Dei",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 44.49,
+    "lon": 11.34
+   }
+  },
+  {
+   "id": "sentiero-italia",
+   "name": "Sentiero Italia",
+   "aliases": [
+    "SI"
+   ],
+   "countries": [
+    "IT"
+   ],
+   "length_km": 7000,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Sentiero_Italia",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": null
+  },
+  {
+   "id": "alta-via-dei-monti-liguri",
+   "name": "Alta Via dei Monti Liguri",
+   "aliases": [
+    "AVML"
+   ],
+   "countries": [
+    "IT"
+   ],
+   "length_km": 440,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Alta_Via_dei_Monti_Liguri",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 43.79,
+    "lon": 7.61
+   }
+  },
+  {
+   "id": "sentiero-del-viandante",
+   "name": "Sentiero del Viandante",
+   "aliases": [
+    "Wayfarer's Path"
+   ],
+   "countries": [
+    "IT"
+   ],
+   "length_km": 45,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Sentiero_del_Viandante",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 45.9,
+    "lon": 9.33
+   }
+  },
+  {
+   "id": "selvaggio-blu",
+   "name": "Selvaggio Blu",
+   "aliases": [],
+   "countries": [
+    "IT"
+   ],
+   "length_km": 45,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Selvaggio_Blu",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": null
+  },
+  {
+   "id": "adlerweg",
+   "name": "Eagle Walk",
+   "aliases": [
+    "Adlerweg"
+   ],
+   "countries": [
+    "AT"
+   ],
+   "length_km": 413,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Adlerweg",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 47.52,
+    "lon": 12.42
+   }
+  },
+  {
+   "id": "alpe-adria-trail",
+   "name": "Alpe-Adria-Trail",
+   "aliases": [],
+   "countries": [
+    "AT",
+    "SI",
+    "IT"
+   ],
+   "length_km": 750,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Alpe-Adria-Trail",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 47.07,
+    "lon": 12.75
+   }
+  },
+  {
+   "id": "stubai-hoehenweg",
+   "name": "Stubai High Trail",
+   "aliases": [
+    "Stubaier Höhenweg"
+   ],
+   "countries": [
+    "AT"
+   ],
+   "length_km": 80,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Stubai_Alps",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": null
+  },
+  {
+   "id": "berliner-hoehenweg",
+   "name": "Berliner Höhenweg",
+   "aliases": [
+    "Berlin High Path"
+   ],
+   "countries": [
+    "AT"
+   ],
+   "length_km": 70,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Berliner_H%C3%B6henweg",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": null
+  },
+  {
+   "id": "kungsleden",
+   "name": "Kungsleden",
+   "aliases": [
+    "King's Trail"
+   ],
+   "countries": [
+    "SE"
+   ],
+   "length_km": 440,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Kungsleden",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 68.36,
+    "lon": 18.79
+   }
+  },
+  {
+   "id": "padjelantaleden",
+   "name": "Padjelantaleden",
+   "aliases": [],
+   "countries": [
+    "SE"
+   ],
+   "length_km": 140,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Padjelantaleden",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 66.95,
+    "lon": 17.72
+   }
+  },
+  {
+   "id": "hoga-kustenleden",
+   "name": "Höga Kustenleden",
+   "aliases": [
+    "High Coast Trail"
+   ],
+   "countries": [
+    "SE"
+   ],
+   "length_km": 130,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/High_Coast_Trail",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 62.79,
+    "lon": 17.93
+   }
+  },
+  {
+   "id": "skaneleden",
+   "name": "Skåneleden",
+   "aliases": [
+    "Skåne Trail"
+   ],
+   "countries": [
+    "SE"
+   ],
+   "length_km": 1300,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Sk%C3%A5neleden",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": null
+  },
+  {
+   "id": "nordkalottleden",
+   "name": "Nordkalottleden",
+   "aliases": [
+    "Arctic Trail",
+    "Nordkalottruta"
+   ],
+   "countries": [
+    "NO",
+    "SE",
+    "FI"
+   ],
+   "length_km": 800,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Nordkalottleden",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": null
+  },
+  {
+   "id": "karhunkierros",
+   "name": "Karhunkierros",
+   "aliases": [
+    "Bear's Ring"
+   ],
+   "countries": [
+    "FI"
+   ],
+   "length_km": 82,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Karhunkierros",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": null
+  },
+  {
+   "id": "hetta-pallas",
+   "name": "Hetta to Pallas Trail",
+   "aliases": [
+    "Hetta-Pallas"
+   ],
+   "countries": [
+    "FI"
+   ],
+   "length_km": 55,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Pallas-Yll%C3%A4stunturi_National_Park",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 68.38,
+    "lon": 23.63
+   }
+  },
+  {
+   "id": "laugavegur",
+   "name": "Laugavegur",
+   "aliases": [
+    "Laugavegurinn"
+   ],
+   "countries": [
+    "IS"
+   ],
+   "length_km": 55,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Laugavegur_(hiking_trail)",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 63.99,
+    "lon": -19.06
+   }
+  },
+  {
+   "id": "haervejen",
+   "name": "Hærvejen",
+   "aliases": [
+    "Army Road",
+    "Ox Road"
+   ],
+   "countries": [
+    "DK"
+   ],
+   "length_km": 500,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/H%C3%A6rvejen",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": null
+  },
+  {
+   "id": "gendarmstien",
+   "name": "Gendarmstien",
+   "aliases": [
+    "Gendarm Path"
+   ],
+   "countries": [
+    "DK"
+   ],
+   "length_km": 74,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Gendarmstien",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 54.83,
+    "lon": 9.36
+   }
+  },
+  {
+   "id": "main-beskid-trail",
+   "name": "Main Beskid Trail",
+   "aliases": [
+    "Główny Szlak Beskidzki",
+    "GSB"
+   ],
+   "countries": [
+    "PL"
+   ],
+   "length_km": 500,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Main_Beskid_Trail",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 49.72,
+    "lon": 18.81
+   }
+  },
+  {
+   "id": "cesta-hrdinov-snp",
+   "name": "Path of the Heroes of the Slovak National Uprising",
+   "aliases": [
+    "Cesta hrdinov SNP"
+   ],
+   "countries": [
+    "SK"
+   ],
+   "length_km": 760,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Cesta_hrdinov_SNP",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 48.17,
+    "lon": 16.98
+   }
+  },
+  {
+   "id": "tatranska-magistrala",
+   "name": "Tatranská magistrála",
+   "aliases": [
+    "Tatra Magistrale"
+   ],
+   "countries": [
+    "SK"
+   ],
+   "length_km": 42,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Tatransk%C3%A1_magistr%C3%A1la",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": null
+  },
+  {
+   "id": "orszagos-kektura",
+   "name": "National Blue Trail",
+   "aliases": [
+    "Országos Kéktúra",
+    "OKT"
+   ],
+   "countries": [
+    "HU"
+   ],
+   "length_km": 1170,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/National_Blue_Trail",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 47.35,
+    "lon": 16.43
+   }
+  },
+  {
+   "id": "via-transilvanica",
+   "name": "Via Transilvanica",
+   "aliases": [],
+   "countries": [
+    "RO"
+   ],
+   "length_km": 1400,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Via_Transilvanica",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 47.87,
+    "lon": 25.62
+   }
+  },
+  {
+   "id": "fagaras-ridge",
+   "name": "Făgăraș Ridge Traverse",
+   "aliases": [
+    "Creasta Făgărașului"
+   ],
+   "countries": [
+    "RO"
+   ],
+   "length_km": 70,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/F%C4%83g%C4%83ra%C8%99_Mountains",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": null
+  },
+  {
+   "id": "kom-emine",
+   "name": "Kom-Emine",
+   "aliases": [
+    "E3 Bulgaria"
+   ],
+   "countries": [
+    "BG"
+   ],
+   "length_km": 650,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Kom%E2%80%93Emine",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": null
+  },
+  {
+   "id": "juliana-trail",
+   "name": "Juliana Trail",
+   "aliases": [],
+   "countries": [
+    "SI"
+   ],
+   "length_km": 270,
+   "kind": "multi-day",
+   "labels": [],
+   "sources": [
+    "https://www.julian-alps.com/en/juliana-trail",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 46.48,
+    "lon": 13.78
+   }
+  },
+  {
+   "id": "slovene-mountain-trail",
+   "name": "Slovene Mountain Trail",
+   "aliases": [
+    "Slovenska planinska pot",
+    "Transversala"
+   ],
+   "countries": [
+    "SI"
+   ],
+   "length_km": 600,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Slovene_Mountain_Trail",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 46.56,
+    "lon": 15.65
+   }
+  },
+  {
+   "id": "premuzic-trail",
+   "name": "Premužić Trail",
+   "aliases": [
+    "Premužićeva staza"
+   ],
+   "countries": [
+    "HR"
+   ],
+   "length_km": 57,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Premu%C5%BEi%C4%87_Trail",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": null
+  },
+  {
+   "id": "peaks-of-the-balkans",
+   "name": "Peaks of the Balkans",
+   "aliases": [],
+   "countries": [
+    "AL",
+    "XK",
+    "ME"
+   ],
+   "length_km": 192,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Peaks_of_the_Balkans",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": null
+  },
+  {
+   "id": "via-dinarica",
+   "name": "Via Dinarica",
+   "aliases": [
+    "White Trail"
+   ],
+   "countries": [
+    "SI",
+    "HR",
+    "BA",
+    "ME",
+    "AL",
+    "RS",
+    "XK",
+    "MK"
+   ],
+   "length_km": 1260,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Via_Dinarica",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": null
+  },
+  {
+   "id": "e4-crete",
+   "name": "E4 across Crete",
+   "aliases": [
+    "E4 Crete"
+   ],
+   "countries": [
+    "GR"
+   ],
+   "length_km": 500,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/E4_European_long_distance_path",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": null
+  },
+  {
+   "id": "corfu-trail",
+   "name": "Corfu Trail",
+   "aliases": [],
+   "countries": [
+    "GR"
+   ],
+   "length_km": 220,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Corfu",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": null
+  },
+  {
+   "id": "mount-olympus-prionia",
+   "name": "Mount Olympus summit trail from Prionia",
+   "aliases": [
+    "E4 Olympus"
+   ],
+   "countries": [
+    "GR"
+   ],
+   "length_km": null,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Mount_Olympus",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": null
+  },
+  {
+   "id": "pieterpad",
+   "name": "Pieterpad",
+   "aliases": [
+    "LAW 9"
+   ],
+   "countries": [
+    "NL"
+   ],
+   "length_km": 498,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Pieterpad",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 53.4,
+    "lon": 6.45
+   }
+  },
+  {
+   "id": "lycian-way",
+   "name": "Lycian Way",
+   "aliases": [
+    "Likya Yolu"
+   ],
+   "countries": [
+    "TR"
+   ],
+   "length_km": 540,
+   "kind": "multi-day",
+   "labels": [
+    "wikipedia_list"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Lycian_Way",
+    "https://en.wikipedia.org/wiki/List_of_long-distance_footpaths"
+   ],
+   "start": {
+    "lat": 36.56,
+    "lon": 29.15
+   }
+  },
+  {
+   "id": "snowdon-pyg-track",
+   "name": "Snowdon by the Pyg Track",
+   "aliases": [
+    "Yr Wyddfa",
+    "Pyg Track"
+   ],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 11,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Snowdon"
+   ],
+   "start": {
+    "lat": 53.08,
+    "lon": -4.02
+   }
+  },
+  {
+   "id": "snowdon-rhyd-ddu-path",
+   "name": "Snowdon by the Rhyd Ddu Path",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 12,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Snowdon"
+   ],
+   "start": {
+    "lat": 53.05,
+    "lon": -4.13
+   }
+  },
+  {
+   "id": "ben-nevis-mountain-track",
+   "name": "Ben Nevis Mountain Track",
+   "aliases": [
+    "Pony Track",
+    "Tourist Path"
+   ],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 17,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Ben_Nevis"
+   ],
+   "start": {
+    "lat": 56.8,
+    "lon": -5.07
+   }
+  },
+  {
+   "id": "scafell-pike-wasdale",
+   "name": "Scafell Pike from Wasdale Head",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 9,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Scafell_Pike"
+   ],
+   "start": {
+    "lat": 54.45,
+    "lon": -3.28
+   }
+  },
+  {
+   "id": "helvellyn-striding-edge",
+   "name": "Helvellyn via Striding Edge",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 13,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Striding_Edge"
+   ],
+   "start": {
+    "lat": 54.54,
+    "lon": -2.95
+   }
+  },
+  {
+   "id": "old-man-of-storr",
+   "name": "Old Man of Storr",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 4,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/The_Storr"
+   ],
+   "start": {
+    "lat": 57.51,
+    "lon": -6.18
+   }
+  },
+  {
+   "id": "quiraing",
+   "name": "Quiraing loop",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 7,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Quiraing"
+   ],
+   "start": {
+    "lat": 57.63,
+    "lon": -6.29
+   }
+  },
+  {
+   "id": "aonach-eagach",
+   "name": "Aonach Eagach ridge",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 9,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Aonach_Eagach"
+   ],
+   "start": null
+  },
+  {
+   "id": "giants-causeway-cliff-path",
+   "name": "Giant's Causeway and cliff path",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Giant%27s_Causeway"
+   ],
+   "start": {
+    "lat": 55.24,
+    "lon": -6.51
+   }
+  },
+  {
+   "id": "mam-tor-great-ridge",
+   "name": "Mam Tor and the Great Ridge",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 10,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Mam_Tor"
+   ],
+   "start": {
+    "lat": 53.34,
+    "lon": -1.78
+   }
+  },
+  {
+   "id": "pen-y-fan",
+   "name": "Pen y Fan from Pont ar Daf",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 6,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Pen_y_Fan"
+   ],
+   "start": {
+    "lat": 51.88,
+    "lon": -3.43
+   }
+  },
+  {
+   "id": "catbells",
+   "name": "Catbells",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 6,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Catbells"
+   ],
+   "start": {
+    "lat": 54.58,
+    "lon": -3.17
+   }
+  },
+  {
+   "id": "fairy-pools-skye",
+   "name": "Fairy Pools, Glen Brittle",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 4,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Fairy_Pools"
+   ],
+   "start": {
+    "lat": 57.25,
+    "lon": -6.27
+   }
+  },
+  {
+   "id": "arthurs-seat",
+   "name": "Arthur's Seat",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 4,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Arthur%27s_Seat"
+   ],
+   "start": {
+    "lat": 55.95,
+    "lon": -3.16
+   }
+  },
+  {
+   "id": "seven-sisters-cliffs",
+   "name": "Seven Sisters cliffs walk",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Seven_Sisters,_Sussex"
+   ],
+   "start": {
+    "lat": 50.74,
+    "lon": 0.2
+   }
+  },
+  {
+   "id": "durdle-door-lulworth",
+   "name": "Lulworth Cove to Durdle Door",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 3,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Durdle_Door"
+   ],
+   "start": {
+    "lat": 50.62,
+    "lon": -2.25
+   }
+  },
+  {
+   "id": "malham-cove",
+   "name": "Malham Cove and Gordale Scar",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 12,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Malham_Cove"
+   ],
+   "start": {
+    "lat": 54.07,
+    "lon": -2.15
+   }
+  },
+  {
+   "id": "yorkshire-three-peaks",
+   "name": "Yorkshire Three Peaks",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 39,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Yorkshire_Three_Peaks"
+   ],
+   "start": {
+    "lat": 54.15,
+    "lon": -2.29
+   }
+  },
+  {
+   "id": "slieve-donard",
+   "name": "Slieve Donard",
+   "aliases": [],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 9,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Slieve_Donard"
+   ],
+   "start": {
+    "lat": 54.21,
+    "lon": -5.89
+   }
+  },
+  {
+   "id": "cuilcagh-boardwalk",
+   "name": "Cuilcagh Boardwalk",
+   "aliases": [
+    "Stairway to Heaven"
+   ],
+   "countries": [
+    "GB"
+   ],
+   "length_km": 15,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Cuilcagh"
+   ],
+   "start": null
+  },
+  {
+   "id": "croagh-patrick",
+   "name": "Croagh Patrick",
+   "aliases": [
+    "The Reek"
+   ],
+   "countries": [
+    "IE"
+   ],
+   "length_km": 7,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Croagh_Patrick"
+   ],
+   "start": {
+    "lat": 53.78,
+    "lon": -9.64
+   }
+  },
+  {
+   "id": "cliffs-of-moher-coastal-walk",
+   "name": "Cliffs of Moher Coastal Walk",
+   "aliases": [],
+   "countries": [
+    "IE"
+   ],
+   "length_km": 18,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Cliffs_of_Moher"
+   ],
+   "start": {
+    "lat": 53.01,
+    "lon": -9.38
+   }
+  },
+  {
+   "id": "carrauntoohil",
+   "name": "Carrauntoohil",
+   "aliases": [
+    "Corrán Tuathail"
+   ],
+   "countries": [
+    "IE"
+   ],
+   "length_km": 12,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Carrauntoohil"
+   ],
+   "start": null
+  },
+  {
+   "id": "glendalough-spinc",
+   "name": "Glendalough Spinc loop",
+   "aliases": [],
+   "countries": [
+    "IE"
+   ],
+   "length_km": 9,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Glendalough"
+   ],
+   "start": {
+    "lat": 53.01,
+    "lon": -6.33
+   }
+  },
+  {
+   "id": "slieve-league",
+   "name": "Slieve League cliffs",
+   "aliases": [
+    "Sliabh Liag"
+   ],
+   "countries": [
+    "IE"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Slieve_League"
+   ],
+   "start": null
+  },
+  {
+   "id": "diamond-hill-connemara",
+   "name": "Diamond Hill",
+   "aliases": [],
+   "countries": [
+    "IE"
+   ],
+   "length_km": 7,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Connemara_National_Park"
+   ],
+   "start": {
+    "lat": 53.55,
+    "lon": -9.94
+   }
+  },
+  {
+   "id": "preikestolen",
+   "name": "Preikestolen",
+   "aliases": [
+    "Preacher's Pulpit",
+    "Pulpit Rock"
+   ],
+   "countries": [
+    "NO"
+   ],
+   "length_km": 8,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Preikestolen"
+   ],
+   "start": {
+    "lat": 58.99,
+    "lon": 6.14
+   }
+  },
+  {
+   "id": "trolltunga",
+   "name": "Trolltunga",
+   "aliases": [],
+   "countries": [
+    "NO"
+   ],
+   "length_km": 27,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Trolltunga"
+   ],
+   "start": {
+    "lat": 60.12,
+    "lon": 6.75
+   }
+  },
+  {
+   "id": "kjeragbolten",
+   "name": "Kjerag and Kjeragbolten",
+   "aliases": [
+    "Kjeragbolten",
+    "Kjerag"
+   ],
+   "countries": [
+    "NO"
+   ],
+   "length_km": 11,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Kjeragbolten"
+   ],
+   "start": null
+  },
+  {
+   "id": "besseggen",
+   "name": "Besseggen ridge",
+   "aliases": [],
+   "countries": [
+    "NO"
+   ],
+   "length_km": 14,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Besseggen"
+   ],
+   "start": {
+    "lat": 61.49,
+    "lon": 8.81
+   }
+  },
+  {
+   "id": "romsdalseggen",
+   "name": "Romsdalseggen ridge",
+   "aliases": [
+    "Romsdalseggen"
+   ],
+   "countries": [
+    "NO"
+   ],
+   "length_km": 10,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Romsdalseggen"
+   ],
+   "start": null
+  },
+  {
+   "id": "reinebringen",
+   "name": "Reinebringen",
+   "aliases": [],
+   "countries": [
+    "NO"
+   ],
+   "length_km": 4,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Reinebringen"
+   ],
+   "start": {
+    "lat": 67.93,
+    "lon": 13.09
+   }
+  },
+  {
+   "id": "galdhopiggen",
+   "name": "Galdhøpiggen from Juvasshytta",
+   "aliases": [],
+   "countries": [
+    "NO"
+   ],
+   "length_km": 11,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Galdh%C3%B8piggen"
+   ],
+   "start": {
+    "lat": 61.68,
+    "lon": 8.37
+   }
+  },
+  {
+   "id": "saana",
+   "name": "Saana fell",
+   "aliases": [
+    "Saanatunturi"
+   ],
+   "countries": [
+    "FI"
+   ],
+   "length_km": 8,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Saana"
+   ],
+   "start": {
+    "lat": 69.05,
+    "lon": 20.8
+   }
+  },
+  {
+   "id": "fimmvorduhals",
+   "name": "Fimmvörðuháls",
+   "aliases": [],
+   "countries": [
+    "IS"
+   ],
+   "length_km": 25,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Fimmv%C3%B6r%C3%B0uh%C3%A1ls"
+   ],
+   "start": {
+    "lat": 63.53,
+    "lon": -19.51
+   }
+  },
+  {
+   "id": "reykjadalur",
+   "name": "Reykjadalur hot river",
+   "aliases": [],
+   "countries": [
+    "IS"
+   ],
+   "length_km": 7,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Hverager%C3%B0i"
+   ],
+   "start": {
+    "lat": 64.02,
+    "lon": -21.21
+   }
+  },
+  {
+   "id": "glymur",
+   "name": "Glymur waterfall trail",
+   "aliases": [
+    "Glymur"
+   ],
+   "countries": [
+    "IS"
+   ],
+   "length_km": 7,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Glymur"
+   ],
+   "start": null
+  },
+  {
+   "id": "traelanipan",
+   "name": "Trælanípan and Bøsdalafossur",
+   "aliases": [],
+   "countries": [
+    "FO"
+   ],
+   "length_km": 6,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/S%C3%B8rv%C3%A1gsvatn"
+   ],
+   "start": {
+    "lat": 62.05,
+    "lon": -7.19
+   }
+  },
+  {
+   "id": "kallur-lighthouse",
+   "name": "Kallur lighthouse, Kalsoy",
+   "aliases": [],
+   "countries": [
+    "FO"
+   ],
+   "length_km": 4,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Kalsoy"
+   ],
+   "start": null
+  },
+  {
+   "id": "viru-bog-boardwalk",
+   "name": "Viru Bog boardwalk",
+   "aliases": [
+    "Viru raba"
+   ],
+   "countries": [
+    "EE"
+   ],
+   "length_km": 6,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Lahemaa_National_Park"
+   ],
+   "start": null
+  },
+  {
+   "id": "hill-of-witches",
+   "name": "Hill of Witches",
+   "aliases": [
+    "Raganų kalnas"
+   ],
+   "countries": [
+    "LT"
+   ],
+   "length_km": 2,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Hill_of_Witches"
+   ],
+   "start": {
+    "lat": 55.54,
+    "lon": 21.12
+   }
+  },
+  {
+   "id": "oeschinensee",
+   "name": "Oeschinensee",
+   "aliases": [],
+   "countries": [
+    "CH"
+   ],
+   "length_km": 8,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Oeschinen_Lake"
+   ],
+   "start": {
+    "lat": 46.5,
+    "lon": 7.67
+   }
+  },
+  {
+   "id": "eiger-trail",
+   "name": "Eiger Trail",
+   "aliases": [],
+   "countries": [
+    "CH"
+   ],
+   "length_km": 6,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Eiger"
+   ],
+   "start": {
+    "lat": 46.57,
+    "lon": 7.98
+   }
+  },
+  {
+   "id": "hardergrat",
+   "name": "Hardergrat",
+   "aliases": [],
+   "countries": [
+    "CH"
+   ],
+   "length_km": 25,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Harder_Kulm"
+   ],
+   "start": {
+    "lat": 46.69,
+    "lon": 7.86
+   }
+  },
+  {
+   "id": "bachalpsee-first",
+   "name": "Bachalpsee from First",
+   "aliases": [],
+   "countries": [
+    "CH"
+   ],
+   "length_km": 6,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Bachalpsee"
+   ],
+   "start": {
+    "lat": 46.66,
+    "lon": 8.05
+   }
+  },
+  {
+   "id": "five-lakes-walk-zermatt",
+   "name": "Five Lakes Walk",
+   "aliases": [
+    "5-Seenweg"
+   ],
+   "countries": [
+    "CH"
+   ],
+   "length_km": 10,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Zermatt"
+   ],
+   "start": null
+  },
+  {
+   "id": "aletsch-panoramaweg",
+   "name": "Aletsch Panorama Trail",
+   "aliases": [
+    "Aletsch Panoramaweg"
+   ],
+   "countries": [
+    "CH"
+   ],
+   "length_km": 10,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Aletsch_Glacier"
+   ],
+   "start": null
+  },
+  {
+   "id": "aescher-ebenalp",
+   "name": "Ebenalp and Aescher cliff",
+   "aliases": [],
+   "countries": [
+    "CH"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Ebenalp"
+   ],
+   "start": {
+    "lat": 47.29,
+    "lon": 9.43
+   }
+  },
+  {
+   "id": "creux-du-van",
+   "name": "Creux du Van",
+   "aliases": [],
+   "countries": [
+    "CH"
+   ],
+   "length_km": 12,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Creux_du_Van"
+   ],
+   "start": {
+    "lat": 46.96,
+    "lon": 6.73
+   }
+  },
+  {
+   "id": "lavaux-vineyard-terraces",
+   "name": "Lavaux vineyard terraces walk",
+   "aliases": [
+    "Terrasses de Lavaux",
+    "Lavaux"
+   ],
+   "countries": [
+    "CH"
+   ],
+   "length_km": 11,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Lavaux"
+   ],
+   "start": {
+    "lat": 46.5,
+    "lon": 6.68
+   }
+  },
+  {
+   "id": "partnachklamm",
+   "name": "Partnachklamm",
+   "aliases": [
+    "Partnach Gorge"
+   ],
+   "countries": [
+    "DE"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Partnach_Gorge"
+   ],
+   "start": {
+    "lat": 47.47,
+    "lon": 11.12
+   }
+  },
+  {
+   "id": "hoellentalklamm",
+   "name": "Höllentalklamm",
+   "aliases": [],
+   "countries": [
+    "DE"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/H%C3%B6llentalklamm"
+   ],
+   "start": {
+    "lat": 47.47,
+    "lon": 11.06
+   }
+  },
+  {
+   "id": "eibsee-loop",
+   "name": "Eibsee loop",
+   "aliases": [],
+   "countries": [
+    "DE"
+   ],
+   "length_km": 7,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Eibsee"
+   ],
+   "start": {
+    "lat": 47.46,
+    "lon": 10.98
+   }
+  },
+  {
+   "id": "koenigssee-obersee",
+   "name": "Königssee to Obersee and Röthbach waterfall",
+   "aliases": [],
+   "countries": [
+    "DE"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/K%C3%B6nigssee"
+   ],
+   "start": null
+  },
+  {
+   "id": "bastei",
+   "name": "Bastei and Basteibrücke",
+   "aliases": [],
+   "countries": [
+    "DE"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Bastei"
+   ],
+   "start": {
+    "lat": 50.96,
+    "lon": 14.08
+   }
+  },
+  {
+   "id": "breitachklamm",
+   "name": "Breitachklamm",
+   "aliases": [],
+   "countries": [
+    "DE"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Breitach"
+   ],
+   "start": {
+    "lat": 47.39,
+    "lon": 10.25
+   }
+  },
+  {
+   "id": "wutachschlucht",
+   "name": "Wutach Gorge",
+   "aliases": [
+    "Wutachschlucht"
+   ],
+   "countries": [
+    "DE"
+   ],
+   "length_km": 13,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Wutach"
+   ],
+   "start": null
+  },
+  {
+   "id": "krimml-waterfalls",
+   "name": "Krimml Waterfalls trail",
+   "aliases": [
+    "Krimmler Wasserfälle"
+   ],
+   "countries": [
+    "AT"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Krimml_Waterfalls"
+   ],
+   "start": {
+    "lat": 47.22,
+    "lon": 12.17
+   }
+  },
+  {
+   "id": "sentiero-degli-dei",
+   "name": "Path of the Gods (Amalfi Coast)",
+   "aliases": [
+    "Sentiero degli Dei"
+   ],
+   "countries": [
+    "IT"
+   ],
+   "length_km": 8,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Path_of_the_Gods"
+   ],
+   "start": {
+    "lat": 40.63,
+    "lon": 14.55
+   }
+  },
+  {
+   "id": "sentiero-azzurro",
+   "name": "Sentiero Azzurro, Cinque Terre",
+   "aliases": [
+    "Sentiero Azzurro",
+    "Sentiero Verde Azzurro",
+    "Blue Path"
+   ],
+   "countries": [
+    "IT"
+   ],
+   "length_km": 12,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Cinque_Terre"
+   ],
+   "start": {
+    "lat": 44.1,
+    "lon": 9.74
+   }
+  },
+  {
+   "id": "tre-cime-di-lavaredo-loop",
+   "name": "Tre Cime di Lavaredo circuit",
+   "aliases": [
+    "Giro delle Tre Cime",
+    "Drei-Zinnen-Rundweg"
+   ],
+   "countries": [
+    "IT"
+   ],
+   "length_km": 10,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Tre_Cime_di_Lavaredo"
+   ],
+   "start": {
+    "lat": 46.61,
+    "lon": 12.3
+   }
+  },
+  {
+   "id": "lago-di-braies-loop",
+   "name": "Lago di Braies loop",
+   "aliases": [
+    "Pragser Wildsee"
+   ],
+   "countries": [
+    "IT"
+   ],
+   "length_km": 4,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Lago_di_Braies"
+   ],
+   "start": {
+    "lat": 46.69,
+    "lon": 12.08
+   }
+  },
+  {
+   "id": "seceda-ridge",
+   "name": "Seceda ridge",
+   "aliases": [],
+   "countries": [
+    "IT"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Seceda"
+   ],
+   "start": {
+    "lat": 46.6,
+    "lon": 11.72
+   }
+  },
+  {
+   "id": "lago-di-sorapis",
+   "name": "Lago di Sorapis",
+   "aliases": [],
+   "countries": [
+    "IT"
+   ],
+   "length_km": 12,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Lago_di_Sorapis"
+   ],
+   "start": {
+    "lat": 46.56,
+    "lon": 12.2
+   }
+  },
+  {
+   "id": "adolf-munkel-weg",
+   "name": "Adolf Munkel Trail, Val di Funes",
+   "aliases": [
+    "Adolf-Munkel-Weg"
+   ],
+   "countries": [
+    "IT"
+   ],
+   "length_km": 9,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Villn%C3%B6%C3%9F"
+   ],
+   "start": {
+    "lat": 46.62,
+    "lon": 11.73
+   }
+  },
+  {
+   "id": "lac-blanc-chamonix",
+   "name": "Lac Blanc",
+   "aliases": [],
+   "countries": [
+    "FR"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Lac_Blanc_(Aiguilles_Rouges)"
+   ],
+   "start": null
+  },
+  {
+   "id": "sentier-blanc-martel",
+   "name": "Sentier Blanc-Martel, Gorges du Verdon",
+   "aliases": [],
+   "countries": [
+    "FR"
+   ],
+   "length_km": 14,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Verdon_Gorge"
+   ],
+   "start": null
+  },
+  {
+   "id": "calanques-en-vau",
+   "name": "Calanque d'En-Vau from Cassis",
+   "aliases": [],
+   "countries": [
+    "FR"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Calanques_National_Park"
+   ],
+   "start": {
+    "lat": 43.21,
+    "lon": 5.54
+   }
+  },
+  {
+   "id": "etretat-cliffs",
+   "name": "Étretat cliffs",
+   "aliases": [],
+   "countries": [
+    "FR"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/%C3%89tretat"
+   ],
+   "start": {
+    "lat": 49.71,
+    "lon": 0.2
+   }
+  },
+  {
+   "id": "cirque-de-gavarnie",
+   "name": "Cirque de Gavarnie",
+   "aliases": [],
+   "countries": [
+    "FR"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Cirque_de_Gavarnie"
+   ],
+   "start": {
+    "lat": 42.73,
+    "lon": -0.01
+   }
+  },
+  {
+   "id": "sentier-des-ocres",
+   "name": "Sentier des Ocres, Roussillon",
+   "aliases": [],
+   "countries": [
+    "FR"
+   ],
+   "length_km": 1,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Roussillon,_Vaucluse"
+   ],
+   "start": {
+    "lat": 43.9,
+    "lon": 5.29
+   }
+  },
+  {
+   "id": "sentier-des-roches",
+   "name": "Sentier des Roches, Vosges",
+   "aliases": [],
+   "countries": [
+    "FR"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Col_de_la_Schlucht"
+   ],
+   "start": {
+    "lat": 48.06,
+    "lon": 7.02
+   }
+  },
+  {
+   "id": "ruta-del-cares",
+   "name": "Ruta del Cares",
+   "aliases": [
+    "Cares Trail",
+    "PR-PNPE 3"
+   ],
+   "countries": [
+    "ES"
+   ],
+   "length_km": 12,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Cares_Trail"
+   ],
+   "start": {
+    "lat": 43.25,
+    "lon": -4.82
+   }
+  },
+  {
+   "id": "caminito-del-rey",
+   "name": "Caminito del Rey",
+   "aliases": [
+    "King's Little Path"
+   ],
+   "countries": [
+    "ES"
+   ],
+   "length_km": 8,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Caminito_del_Rey"
+   ],
+   "start": {
+    "lat": 36.92,
+    "lon": -4.76
+   }
+  },
+  {
+   "id": "ordesa-cola-de-caballo",
+   "name": "Ordesa Valley to Cola de Caballo",
+   "aliases": [],
+   "countries": [
+    "ES"
+   ],
+   "length_km": 17,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Ordesa_y_Monte_Perdido_National_Park"
+   ],
+   "start": {
+    "lat": 42.65,
+    "lon": -0.06
+   }
+  },
+  {
+   "id": "masca-gorge",
+   "name": "Masca Gorge",
+   "aliases": [
+    "Barranco de Masca",
+    "Masca"
+   ],
+   "countries": [
+    "ES"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Masca"
+   ],
+   "start": {
+    "lat": 28.3,
+    "lon": -16.84
+   }
+  },
+  {
+   "id": "roque-nublo",
+   "name": "Roque Nublo",
+   "aliases": [],
+   "countries": [
+    "ES"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Roque_Nublo"
+   ],
+   "start": null
+  },
+  {
+   "id": "montserrat",
+   "name": "Montserrat to Sant Jeroni",
+   "aliases": [],
+   "countries": [
+    "ES"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Montserrat_(mountain)"
+   ],
+   "start": {
+    "lat": 41.59,
+    "lon": 1.84
+   }
+  },
+  {
+   "id": "lagos-de-covadonga",
+   "name": "Lakes of Covadonga loop",
+   "aliases": [
+    "Lagos de Covadonga"
+   ],
+   "countries": [
+    "ES"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Lakes_of_Covadonga"
+   ],
+   "start": {
+    "lat": 43.27,
+    "lon": -4.98
+   }
+  },
+  {
+   "id": "pico-arieiro-pico-ruivo",
+   "name": "Pico do Arieiro to Pico Ruivo",
+   "aliases": [
+    "PR1 Vereda do Areeiro"
+   ],
+   "countries": [
+    "PT"
+   ],
+   "length_km": 7,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Pico_do_Arieiro"
+   ],
+   "start": {
+    "lat": 32.74,
+    "lon": -16.93
+   }
+  },
+  {
+   "id": "ponta-de-sao-lourenco",
+   "name": "Ponta de São Lourenço",
+   "aliases": [],
+   "countries": [
+    "PT"
+   ],
+   "length_km": 4,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Ponta_de_S%C3%A3o_Louren%C3%A7o"
+   ],
+   "start": null
+  },
+  {
+   "id": "levada-25-fontes",
+   "name": "Levada das 25 Fontes",
+   "aliases": [],
+   "countries": [
+    "PT"
+   ],
+   "length_km": 9,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Levada"
+   ],
+   "start": null
+  },
+  {
+   "id": "levada-caldeirao-verde",
+   "name": "Levada do Caldeirão Verde",
+   "aliases": [],
+   "countries": [
+    "PT"
+   ],
+   "length_km": 13,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Levada"
+   ],
+   "start": null
+  },
+  {
+   "id": "orla-perc",
+   "name": "Orla Perć",
+   "aliases": [
+    "Eagle's Path"
+   ],
+   "countries": [
+    "PL"
+   ],
+   "length_km": 4,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Orla_Per%C4%87"
+   ],
+   "start": null
+  },
+  {
+   "id": "morskie-oko",
+   "name": "Morskie Oko",
+   "aliases": [],
+   "countries": [
+    "PL"
+   ],
+   "length_km": 18,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Morskie_Oko"
+   ],
+   "start": {
+    "lat": 49.25,
+    "lon": 20.1
+   }
+  },
+  {
+   "id": "rysy",
+   "name": "Rysy",
+   "aliases": [],
+   "countries": [
+    "PL",
+    "SK"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Rysy"
+   ],
+   "start": null
+  },
+  {
+   "id": "giewont",
+   "name": "Giewont",
+   "aliases": [],
+   "countries": [
+    "PL"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Giewont"
+   ],
+   "start": {
+    "lat": 49.27,
+    "lon": 19.98
+   }
+  },
+  {
+   "id": "sniezka",
+   "name": "Śnieżka",
+   "aliases": [
+    "Sněžka"
+   ],
+   "countries": [
+    "PL",
+    "CZ"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/%C5%9Anie%C5%BEka"
+   ],
+   "start": {
+    "lat": 50.78,
+    "lon": 15.75
+   }
+  },
+  {
+   "id": "sucha-bela",
+   "name": "Suchá Belá gorge",
+   "aliases": [],
+   "countries": [
+    "SK"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Slovak_Paradise_National_Park"
+   ],
+   "start": {
+    "lat": 48.95,
+    "lon": 20.38
+   }
+  },
+  {
+   "id": "pravcicka-brana",
+   "name": "Pravčická brána",
+   "aliases": [
+    "Prebischtor"
+   ],
+   "countries": [
+    "CZ"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Pravčická_brána"
+   ],
+   "start": {
+    "lat": 50.87,
+    "lon": 14.23
+   }
+  },
+  {
+   "id": "adrspach-rocks",
+   "name": "Adršpach rocks",
+   "aliases": [
+    "Adršpach-Teplice Rocks"
+   ],
+   "countries": [
+    "CZ"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Adr%C5%A1pach-Teplice_Rocks"
+   ],
+   "start": {
+    "lat": 50.62,
+    "lon": 16.12
+   }
+  },
+  {
+   "id": "seven-rila-lakes",
+   "name": "Seven Rila Lakes",
+   "aliases": [],
+   "countries": [
+    "BG"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Seven_Rila_Lakes"
+   ],
+   "start": null
+  },
+  {
+   "id": "musala",
+   "name": "Musala",
+   "aliases": [],
+   "countries": [
+    "BG"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Musala"
+   ],
+   "start": {
+    "lat": 42.27,
+    "lon": 23.6
+   }
+  },
+  {
+   "id": "vihren",
+   "name": "Vihren",
+   "aliases": [],
+   "countries": [
+    "BG"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Vihren"
+   ],
+   "start": {
+    "lat": 41.77,
+    "lon": 23.4
+   }
+  },
+  {
+   "id": "plitvice-lakes",
+   "name": "Plitvice Lakes",
+   "aliases": [],
+   "countries": [
+    "HR"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Plitvice_Lakes_National_Park"
+   ],
+   "start": {
+    "lat": 44.9,
+    "lon": 15.61
+   }
+  },
+  {
+   "id": "vintgar-gorge",
+   "name": "Vintgar Gorge",
+   "aliases": [
+    "Blejski Vintgar"
+   ],
+   "countries": [
+    "SI"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Vintgar_Gorge"
+   ],
+   "start": {
+    "lat": 46.39,
+    "lon": 14.09
+   }
+  },
+  {
+   "id": "triglav",
+   "name": "Triglav ascent",
+   "aliases": [
+    "Triglav"
+   ],
+   "countries": [
+    "SI"
+   ],
+   "length_km": null,
+   "kind": "multi-day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Triglav"
+   ],
+   "start": null
+  },
+  {
+   "id": "valbona-theth-pass",
+   "name": "Valbona to Theth pass",
+   "aliases": [
+    "Qafa e Valbonës"
+   ],
+   "countries": [
+    "AL"
+   ],
+   "length_km": 17,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Valbona_Valley_National_Park"
+   ],
+   "start": {
+    "lat": 42.45,
+    "lon": 19.89
+   }
+  },
+  {
+   "id": "bobotov-kuk",
+   "name": "Bobotov Kuk",
+   "aliases": [],
+   "countries": [
+    "ME"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Bobotov_Kuk"
+   ],
+   "start": null
+  },
+  {
+   "id": "matka-canyon",
+   "name": "Matka Canyon",
+   "aliases": [],
+   "countries": [
+    "MK"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Matka_Canyon"
+   ],
+   "start": {
+    "lat": 41.95,
+    "lon": 21.3
+   }
+  },
+  {
+   "id": "samaria-gorge",
+   "name": "Samaria Gorge",
+   "aliases": [],
+   "countries": [
+    "GR"
+   ],
+   "length_km": 16,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Samari%C3%A1_Gorge"
+   ],
+   "start": {
+    "lat": 35.31,
+    "lon": 23.92
+   }
+  },
+  {
+   "id": "imbros-gorge",
+   "name": "Imbros Gorge",
+   "aliases": [],
+   "countries": [
+    "GR"
+   ],
+   "length_km": 8,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Imbros_Gorge"
+   ],
+   "start": {
+    "lat": 35.24,
+    "lon": 24.17
+   }
+  },
+  {
+   "id": "vikos-gorge",
+   "name": "Vikos Gorge",
+   "aliases": [],
+   "countries": [
+    "GR"
+   ],
+   "length_km": 13,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Vikos_Gorge"
+   ],
+   "start": {
+    "lat": 39.89,
+    "lon": 20.75
+   }
+  },
+  {
+   "id": "aphrodite-trail",
+   "name": "Aphrodite Nature Trail",
+   "aliases": [],
+   "countries": [
+    "CY"
+   ],
+   "length_km": 8,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Baths_of_Aphrodite"
+   ],
+   "start": {
+    "lat": 35.06,
+    "lon": 32.34
+   }
+  },
+  {
+   "id": "artemis-trail",
+   "name": "Artemis Trail, Troodos",
+   "aliases": [
+    "Artemis Trail"
+   ],
+   "countries": [
+    "CY"
+   ],
+   "length_km": 7,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Mount_Olympus_(Cyprus)"
+   ],
+   "start": null
+  },
+  {
+   "id": "dingli-cliffs",
+   "name": "Dingli Cliffs walk",
+   "aliases": [],
+   "countries": [
+    "MT"
+   ],
+   "length_km": null,
+   "kind": "day",
+   "labels": [
+    "famous_day"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Dingli_Cliffs"
+   ],
+   "start": {
+    "lat": 35.86,
+    "lon": 14.38
+   }
+  }
+ ],
+ "curation_note": "Edited after the first match run (T1181): generic codes removed as aliases because they name many trails (GR 5 on the Tour de la Vanoise, Madeira PR numbers, AV2) and the Tre Cime loop alias 'Drei Zinnen' replaced by the loop's names, since a hut named after the peaks is not the walk. Aliases added for two walks OSM names differently: 'Sentiero Verde Azzurro' (the Cinque Terre coastal path no. 2) and 'Terrasses de Lavaux' / 'Lavaux'. Proper names added as aliases where the reference had only a descriptive title (the walk's or the landmark's own name, never a generic word): Peddars Way, Norfolk Coast Path, Romsdalseggen, Glymur, Artemis Trail, Kjeragbolten, Kjerag, Triglav, Pyg Track, Via Alpina (Swiss route 1), Masca."
+}
