@@ -264,6 +264,8 @@ export function WhenScreen({ settings, commit, doneLabel }) {
           />
         </div>
       )}
+      {/* T1123 (G4, row T1103-h): a grey Continue says why it waits. */}
+      {!ready && <p className="pf-note" role="status">{t('pf.when.needDates')}</p>}
       <Foot onContinue={go} disabled={!ready} label={doneLabel} />
     </>
   );

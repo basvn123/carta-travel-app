@@ -9,6 +9,7 @@ import { QUESTIONS } from './questions.js';
 import { firstSetup, tripUnderWay, continueTo, prevScreen, progressOf } from './flowGraph.js';
 import { normalizeSettings } from './tripSettings.js';
 import { markQuickStart } from './quickStart.js';
+import { recallPlace, rememberPlace } from './flowMemory.js';
 import { todayISO } from '../../lib/dates.js';
 import { QuestionBody } from './QuestionScreen.jsx';
 import { useBcp47, useMonths, useTripSettings, whenText } from './flowHooks.js';
@@ -48,7 +49,12 @@ export function PlanFlow({
   const bcp47 = useBcp47();
   const [trips, removePlan] = useHomeTrips(destinations);
   const [settings, save] = useTripSettings();
-  const [screen, setScreen] = useState('home');
+  // T1123 (G4): a reload in the middle of the setup comes back to the same
+  // question (the answers were never lost, only the screen), not to the
+  // opening, whose Start planning would begin another trip.
+  const [kept] = useState(() => (settings.trip.created ? null
+    : recallPlace('opening', tripsStore.getActiveId(), [...firstSetup(settings), 'create', 'kind', 'now'])));
+  const [screen, setScreen] = useState(kept?.screen || 'home');
   // T1030: Explore's doors and a closed trip page open Carta's own trips
   // here (openAt: { screen: 'carta', style, cc, n }), the one trip library.
   const [cartaStart, setCartaStart] = useState(null);
@@ -59,7 +65,11 @@ export function PlanFlow({
   }, [openAt?.n]); // eslint-disable-line react-hooks/exhaustive-deps -- one open per door tap
   const [kind, setKind] = useState('new');
   // T1103: the trip-kind sheet is asked only while a trip is under way.
-  const [kindAsked, setKindAsked] = useState(false);
+  const [kindAsked, setKindAsked] = useState(Boolean(kept?.kindAsked));
+  useEffect(() => {
+    const keep = screen !== 'home' && screen !== 'carta';
+    rememberPlace('opening', tripsStore.getActiveId(), keep ? { screen, kindAsked } : null);
+  }, [screen, kindAsked]);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const gearRef = useRef(null);
   const sheetRef = useRef(null);
@@ -93,6 +103,7 @@ export function PlanFlow({
   const quickCreate = (s) => {
     save(normalizeSettings({ ...s, trip: { ...s.trip, name: (s.trip.name || '').trim(), created: s.trip.created || Date.now() } }));
     markQuickStart();
+    rememberPlace('opening', tripsStore.getActiveId(), null);
     if (onCreated) onCreated();
   };
   const next = (id, s) => {
@@ -204,7 +215,7 @@ export function PlanFlow({
         save={save}
         onBack={back}
         onEditWhen={() => go('when')}
-        onDone={() => onCreated && onCreated()}
+        onDone={() => { rememberPlace('opening', tripsStore.getActiveId(), null); if (onCreated) onCreated(); }}
       />
     );
   } else {

@@ -1710,3 +1710,7 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1134-f | T1134 | MAP.md does not name `scripts/docs/drift.py`, `scripts/quality/scorecard.py` or `data/reports/quality/` | next task | open |  |
 | T1134-g | T1134 | Decide which fields count per quality layer (`APP_LAYERS`, `SHARD_LAYERS`); tags 2%, wikidata 1% and transfer 3% may be optional by design (Execution/P15/T1134-drift-scorecard.md) | user | open |  |
 | T1134-h | T1134 | 114 trails with an empty name and 54 cycling routes with no name, found by the scorecard's basic checks | next task | open |  |
+| T1123-a | T1123 | A phone's Back gesture inside the plan setup questions leaves Plan, because the questions are not history steps; adding them must fit App.jsx's popstate rule (Execution/P15/T1123-core-flow-fixes.md) | next task | open |  |
+| T1123-b | T1123 | G4's scope should come from the G-R3 interviews and unmoderated test, which have not run; T1123 worked from the audit and the T1103 usability note (Execution/P15/T1123-core-flow-fixes.md) | user | open |  |
+| T1123-c | T1123 | The When reason line sits under the calendar, below the fold on a 390 phone; moving it near the dates needs a style rule, left while S42 consolidates the stylesheets | next task | open |  |
+| T1123-d | T1123 | Look on a real phone at the reload fixes: reload on a setup question and on the priced trips, then Back to the trip home and "See your priced trips" (Execution/P15/T1123-core-flow-fixes.md) | user | open |  |
