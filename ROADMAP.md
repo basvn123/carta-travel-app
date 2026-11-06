@@ -602,7 +602,7 @@ docs/
 | D8 | Sea temperature | `sea_temp` run, beaches re-exported, `climate.water_c` filled, beach strip draws (P-22) | S | P1 | todo |
 | D9 | Place text and photos | Intros, guide text and galleries to target, French, Italian and UK first; POI descriptions; intros in six languages (P-23, P-24) | L | P2 (top 300), P4 | in progress (T1095: harvest built, run is an owner step) |
 | D10 | Prices completed | Local transport fare table for 741 places; bed prices for the 515 missing places; "not yet measured" shown honestly (P-25, P-26) | M | P1 | in progress (T1075; fares wait on T714-b) |
-| D11 | UK crowds by month | ONS or VisitBritain regional visitor nights for GB, plus BA, FO, MD, XK (P-27) | S | P1 | todo |
+| D11 | UK crowds by month | ONS or VisitBritain regional visitor nights for GB, plus BA, FO, MD, XK (P-27) | S | P1 | doing (T1098: loader and task built; owner run pending) |
 | D12 | Freshness and stamps | Every wire inside its limit; `generated_at` correct in `app_data.json` and all wires (P-29) | S | P1 | todo |
 | D13 | Getting there mode choice | Mode picked by door-to-door time and cost; flights preferred above a distance; checked on 50 origin and destination pairs (P-31) | M | P1 | todo |
 | D14 | Licensed data sources | Aviasales Data API (Travelpayouts) supplies "from" fares where its coverage is good; Viator and Tiqets APIs supply activity prices; each source's licence recorded; scraped beds flagged as a risk until the Booking Demand API is reachable | M | P1 | todo |

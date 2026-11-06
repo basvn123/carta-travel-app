@@ -1454,3 +1454,7 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1095-c | T1095 | Breadth: the grounded intro covers only the top 300 of FR, RS and IT; run with a larger `--top` and the other countries once T1095-a shows the reject rate (D9 breadth) | next task | open | 3 |
 | T1095-d | T1095 | The page and PDF credit only `intro.grounding[0]`; CC BY-SA wants each source credited, so show both when the body has two (DestinationPage.jsx, destinationPdf.js) | next task | open |  |
 | T1095-e | T1095 | Places whose Wikipedia and Wikivoyage leads are both short (mostly villages) stay under 120 words; they need guide text, a local-language Wikipedia lead or a POI paragraph, not padding | next task | open |  |
+| T1098-a | T1098 | Prepare cache/uk_crowds_nights.csv (geo,name,year,month,nights) from the ONS / VisitBritain regional monthly nights tables (ITL1) and the national offices for BA, FO, MD, XK; none can be downloaded from the cloud box | user | open | 1 |
+| T1098-b | T1098 | Download ONS ITL1 boundaries (Open Geography Portal, OGL v3) to cache/uk_itl1_boundaries.geojson | user | open | 2 |
+| T1098-c | T1098 | Run `python run_pipeline.py --only crowding_uk` after `crowding`, then count GB places with crowding.monthly (before: about 2 of 526) and check 5 places in the app | user | open | 3 |
+| T1098-d | T1098 | Confirm a GB monthly series at ITL1 level exists at all (VisitBritain GBTS is quarterly in places); if not, the loader accepts any region split that ships an ITL1 code | next task | open |  |
