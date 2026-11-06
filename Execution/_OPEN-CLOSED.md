@@ -1324,3 +1324,6 @@ Rows from `_OPEN.md` whose item is done, with the task that closed it. Moved her
 | T648-b | T648 | continent-app/scripts/verify_booked_route.mjs expects six wizard steps, the wizard has five | next task | closed by T1089 |  |
 | T912-d | T912 | scripts/verify_destination_page.mjs still expects the old tabs (Execution/P15/T911-T914-place-pages.md) | next task | closed by T1089 |  |
 | T1019-c | T1019 | scripts/verify_destination_page.mjs reads .dprice/.dprice-lines/.dprice-day, removed by T912 and T1019; point it at .dpc (Execution/P15/T1019-dest-price-card.md) | next task | closed by T1089 |  |
+| T1024-c | T1024 | Four photo carousels style their own arrows (destp-gallery-arrow, tphotos-arrow, pmos-arrow, .destp-v3); make one (Execution/P15/T1024-place-head.md) | next task | closed by T1121 |  |
+| T1027-c | T1027 | An external link styled as a button is hand-written in DestPractical, DestPriceCard and DayTripTransport; add an href mode to Button (Execution/P15/T1027-practical-cards.md) | next task | closed by T1121 |  |
+| T1039-b | T1039 | The place head markup lives in DestinationPage, OutdoorPage and (older) JourneyPage; make one PlaceHead component (Execution/P15/T1038-T1039-explore-tabs-outdoor-pages.md) | next task | closed by T1121 |  |
