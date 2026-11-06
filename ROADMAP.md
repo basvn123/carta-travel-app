@@ -871,7 +871,6 @@ docs/
 | F6 | Eval and LLMOps platform | Eval-driven development | Golden sets, LLM-as-judge, tracing | One runner for all evals; plan-day judge with kappa reported; Langfuse traces | M | P3 | in progress (T1148: runner, format, dashboard, plan-day judge; hand labels and Langfuse install are owner steps) |
 | F7 | Carta MCP server | MCP, agents and workflows | Tool design | Read-only tools usable from an MCP client | S | After | in progress (T1155: services/mcp with four read-only tools, tested with an MCP client, threat model section 13; wiring a real client to the checkout and a docs mention are owner or later steps) |
 | F8 | Responsible AI | Fair, transparent AI, EU AI Act | Fairness, documentation | Public AI page, model cards, parity table | S | P4 | done (T1156: page at /?legal=ai, cards for Ask and plan-day, tagger stub; legal read, translations, AI labels and report button are open rows T1156-a to T1156-f) |
-| F7 | Carta MCP server | MCP, agents and workflows | Tool design | Read-only tools usable from an MCP client | S | After | todo |
 
 ### Item details
 
