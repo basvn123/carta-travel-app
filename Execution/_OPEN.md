@@ -1390,7 +1390,6 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1076-f | T1076 | After the next prerender upload confirm a thin place and a trail send noindex,follow in the head and the x-robots-tag header, and that sitemap-destinations holds the expected count | user | open | after T1076-b |
 | T1083-a | T1083 | A3 not met after the second pass: 1,408 open rows against under 250; the families left need a per-row code check or an owner decision, see What is still open in the T1083 report; T1072-a stays open with it | next task | open | |
 | T1078-a | T1078 | Paste migration 063 after 061 and 062, per step 11 of Execution/P15/_OPEN-supabase-migrations.md | user | open |  |
-| T1078-b | T1078 | No test checks that SECURITY DEFINER functions outside admin_* pin search_path | next task | open |  |
 | T1078-c | T1078 | check-bundle-secrets ran locally on a build without the anon key; confirm on the first CI run that the inlined anon key passes as role anon | next task | open |  |
 | T1079-a | T1079 | Add the RATE_LIMIT binding or a Cloudflare WAF rate rule on /api/* so the per-address limit holds across the edge (Execution/P15/_OPEN-web-hardening.md) | user | open | 3 |
 | T1079-b | T1079 | Deploy the headers, Pages Functions and six Edge Functions, run the smoke tests, and confirm the print view popup opens under the new COOP header (Execution/P15/_OPEN-web-hardening.md) | user | open | 1 |
@@ -1404,7 +1403,6 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1080-c | T1080 | Watch the first run of supply-chain.yml on GitHub and fix the OSV-Scanner lockfile arguments or the SBOM step if they fail there | next task | open |  |
 | T1080-d | T1080 | tools/trailslab/review pins maplibre-gl with a critical XSS advisory (GHSA-jrc7-96c5-q579); bump it to 6.16.0 as the app did in T1066 | next task | open |  |
 | T1081-a | T1081 | Paste migration 064 after 061 to 063 and deploy the app in the same sitting (until both are live, admin ban, delete and set tier do nothing), per step 12 of Execution/P15/_OPEN-supabase-migrations.md | user | open |  |
-| T1082-a | T1082 | Update the stale assertions in test_moderation_decisions.mjs (2 fail), test_admin_followups.mjs (20 fail) and test_admin_mfa.mjs to the behaviour of migrations 052 onward (062 to 064), then add them to CI | next task | open |  |
 | T1084-a | T1084 | Credit NASA JPL MUR SST (sea temperatures) in the Data sources screen, src/data/attribution.js; its data policy requests credit | next task | open |  |
 | T1086-a | T1086 | Dry-run the backup and restore runbook on the owner's laptop: take one hand dump, restore it with ops/restore_supabase.sh, and stream-check the newest supabase dump in R2; nothing in it has been run against a live service | user | open |  |
 | T1086-b | T1086 | Confirm on the box that SUPABASE_DB_URL and CARTA_BACKUP_KEY are set and the public key is imported, so the weekly Supabase dump is not silently skipped (look for "dump supabase skipped" in ~/logs/weekly.log) | user | open |  |
