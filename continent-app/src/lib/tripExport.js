@@ -101,10 +101,41 @@ export async function shareTrip(trip) {
   }
 }
 
+/** The print document's stylesheet, one constant so its sha256 can sit in
+ *  the style-src of public/_headers (T1090): the popup inherits the app's
+ *  CSP, which allows no inline style without that hash. Change a byte here
+ *  and run `node scripts/csp-hashes.mjs --write`; npm test fails until you do. */
+export const PRINT_CSS = `
+  body { font-family: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', sans-serif; color: #1d1a16; margin: 40px auto; max-width: 640px; }
+  h1 { font-size: 26px; margin: 0 0 4px; }
+  .dates { color: #6b6257; margin: 0 0 24px; font-size: 14px; }
+  h2 { font-size: 15px; text-transform: uppercase; letter-spacing: 0.08em; border-bottom: 1px solid #d8d2c8; padding-bottom: 5px; margin: 26px 0 10px; }
+  .stop { margin: 8px 0; font-size: 14.5px; }
+  .stop b { font-size: 15px; }
+  .stop .when { color: #6b6257; font-size: 12.5px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  td { padding: 5px 0; border-bottom: 1px solid #eee7db; }
+  td:last-child { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  tr.total td { font-weight: bold; border-top: 2px solid #1d1a16; border-bottom: none; font-size: 15px; }
+  td.note { text-align: left; color: #6b6257; font-style: italic; white-space: normal; }
+  .day { margin: 10px 0; font-size: 13.5px; }
+  .day-head { margin-bottom: 3px; }
+  .day ol { margin: 2px 0 0 18px; padding: 0; }
+  .free { color: #6b6257; font-style: italic; margin: 2px 0; }
+  .trip-notes { font-size: 13.5px; line-height: 1.6; }
+  .pack { list-style: none; margin: 0; padding: 0; columns: 2; column-gap: 32px; font-size: 13.5px; }
+  .pack li { padding: 3px 0; break-inside: avoid; }
+  .pack li.done { color: #a29786; }
+  .pack .box { display: inline-block; width: 13px; height: 13px; border: 1.4px solid #1d1a16; border-radius: 3px; margin-right: 9px; text-align: center; line-height: 11px; font-size: 11px; vertical-align: -2px; }
+  .pack li.done .box { border-color: #a29786; }
+  .foot { margin-top: 32px; color: #a29786; font-size: 11.5px; }
+  @media print { body { margin: 10mm auto; } }
+`;
+
 /** Printable HTML for the trip, opened in a new window for print-to-PDF.
  *  The cost table reads chronologically: getting there, each stop (with the
  *  leg to the next one), getting home, then the round-trip items. */
-function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, flightTransfer = null, legs = [], anchorLegs = null, driveLegs = null, stayCosts = [], carRental, vignettes = null, tripHasCar = false, grandTotal, groupSize, extras = null, bookingRows = [], cartaFlight = null, airlines = null }) {
+export function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, flightTransfer = null, legs = [], anchorLegs = null, driveLegs = null, stayCosts = [], carRental, vignettes = null, tripHasCar = false, grandTotal, groupSize, extras = null, bookingRows = [], cartaFlight = null, airlines = null }) {
   const first = stopDetails[0];
   const last = stopDetails[stopDetails.length - 1];
   const rows = [];
@@ -205,32 +236,7 @@ function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, flightTransfe
 
   return `<!doctype html>
 <html><head><meta charset="utf-8"><title>${esc(label || 'My trip')}</title>
-<style>
-  body { font-family: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', sans-serif; color: #1d1a16; margin: 40px auto; max-width: 640px; }
-  h1 { font-size: 26px; margin: 0 0 4px; }
-  .dates { color: #6b6257; margin: 0 0 24px; font-size: 14px; }
-  h2 { font-size: 15px; text-transform: uppercase; letter-spacing: 0.08em; border-bottom: 1px solid #d8d2c8; padding-bottom: 5px; margin: 26px 0 10px; }
-  .stop { margin: 8px 0; font-size: 14.5px; }
-  .stop b { font-size: 15px; }
-  .stop .when { color: #6b6257; font-size: 12.5px; }
-  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
-  td { padding: 5px 0; border-bottom: 1px solid #eee7db; }
-  td:last-child { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-  tr.total td { font-weight: bold; border-top: 2px solid #1d1a16; border-bottom: none; font-size: 15px; }
-  td.note { text-align: left; color: #6b6257; font-style: italic; white-space: normal; }
-  .day { margin: 10px 0; font-size: 13.5px; }
-  .day-head { margin-bottom: 3px; }
-  .day ol { margin: 2px 0 0 18px; padding: 0; }
-  .free { color: #6b6257; font-style: italic; margin: 2px 0; }
-  .trip-notes { font-size: 13.5px; line-height: 1.6; }
-  .pack { list-style: none; margin: 0; padding: 0; columns: 2; column-gap: 32px; font-size: 13.5px; }
-  .pack li { padding: 3px 0; break-inside: avoid; }
-  .pack li.done { color: #a29786; }
-  .pack .box { display: inline-block; width: 13px; height: 13px; border: 1.4px solid #1d1a16; border-radius: 3px; margin-right: 9px; text-align: center; line-height: 11px; font-size: 11px; vertical-align: -2px; }
-  .pack li.done .box { border-color: #a29786; }
-  .foot { margin-top: 32px; color: #a29786; font-size: 11.5px; }
-  @media print { body { margin: 10mm auto; } }
-</style></head><body>
+<style>${PRINT_CSS}</style></head><body>
   <h1>${esc(label || 'My trip')}</h1>
   <p class="dates">${esc(fmtLong(first?.arriveDate))} &rarr; ${esc(fmtLong(last?.departDate))}, ${groupSize} ${groupSize === 1 ? 'person' : 'people'}</p>
 

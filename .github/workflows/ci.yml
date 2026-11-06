@@ -50,6 +50,38 @@ jobs:
       - name: No service key in the browser bundle
         run: node scripts/ci/check-bundle-secrets.mjs ../.fastbuild
 
+  # ROADMAP C5 (T1090, row T1079-e): the fast build served under the real CSP
+  # from public/_headers, every screen at phone and desktop width plus the
+  # print popup and a prerendered page, in Chromium. Fails on any CSP refusal
+  # (style-src has no 'unsafe-inline' since T1090) or a screen that never
+  # paints. Hermetic: remote requests are stubbed or aborted. About 5 minutes.
+  csp:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: continent-app
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: continent-app/package-lock.json
+      - run: npm ci
+      - name: Chromium for the lockfile's Playwright
+        run: npx playwright install --with-deps chromium
+      - name: style-src hashes match the two inline stylesheets
+        run: node scripts/csp-hashes.mjs --check
+      - name: Fast build (publicDir off; the gate serves public/ beside it)
+        env:
+          FAST_OUT: ../.fastbuild
+        run: node node_modules/vite/bin/vite.js build --config ../scripts/vite.fast.mjs
+      - name: No CSP violation on any screen
+        run: node scripts/verify_csp.mjs --dist ../.fastbuild
+
   python:
     runs-on: ubuntu-latest
     timeout-minutes: 20

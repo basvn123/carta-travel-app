@@ -84,7 +84,7 @@ export function fitDescription(texts) {
   return out;
 }
 
-const STYLE = `.pr{box-sizing:border-box;max-width:760px;margin:0 auto;padding:var(--space-6) var(--space-4) var(--space-8);font-family:var(--ui);font-size:16px;line-height:1.5;color:var(--ink);background:var(--paper)}
+export const STYLE = `.pr{box-sizing:border-box;max-width:760px;margin:0 auto;padding:var(--space-6) var(--space-4) var(--space-8);font-family:var(--ui);font-size:16px;line-height:1.5;color:var(--ink);background:var(--paper)}
 .pr *{box-sizing:border-box}
 .pr a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:3px}
 .pr a:hover{text-decoration-color:var(--accent)}
