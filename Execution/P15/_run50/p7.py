@@ -11,7 +11,8 @@ for rp in sys.argv[2:]:
     for line in m.group(1).splitlines():
         mm = re.match(r'- \[([^\]]+)\]\s*(.*)', line.strip())
         if not mm: continue
-        iid = mm.group(1).strip(); parts = [p.strip() for p in mm.group(2).split(' | ')]
+        iid = mm.group(1).strip(); raw = [p.strip() for p in mm.group(2).split(' | ')]
+        parts = raw if len(raw) <= 4 else raw[:2] + [' | '.join(raw[2:-1]), raw[-1]]
         if iid in seen: continue
         title, why = parts[0], (parts[1] if len(parts) > 1 else '')
         how = [s.strip() for s in parts[2].split(';') if s.strip()] if len(parts) > 2 else []

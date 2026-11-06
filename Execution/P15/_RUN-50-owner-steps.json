@@ -3,11 +3,11 @@
   "id": "T1086-a",
   "title": "Dry run the backup and restore runbook",
   "why": "Nothing in it was executed against a live service.",
-  "where": "gpg --decrypt",
+  "where": "docs/runbooks/backup-restore.md",
   "how": [
    "Take a hand dump with ops/backup_supabase.sh",
    "Restore it with ops/restore_supabase.sh",
-   "Run the rclone cat"
+   "On the newest Supabase dump run: rclone cat (the dump) piped to gpg --decrypt piped to pg_restore --list, and check it lists the tables"
   ]
  },
  {
@@ -63,9 +63,13 @@
   "id": "T1090-a",
   "title": "Check the strict style-src on the preview deploy",
   "why": "The CSP without 'unsafe-inline' only proves itself on the real Pages host and real Safari.",
-  "where": "grep -i content-security-policy` and confirm style-src reads `'self'` plus two sha256 hashes and no 'unsafe-inline'; open the preview in Chrome with DevTools Console open, walk the map, a destination, a trail and the trip planner, and confirm no \"Refused to apply inline style\" line; open a prerendered page (any /spain/trails/... link from the sitemap) and confirm the reading column is styled and the console is clean, and if it is not, re-run the prerender upload (`node scripts/prerender/build.mjs` then `push.mjs`) so the pages carry the current STYLE; print a saved trip and confirm the print view is styled; repeat the trail and print checks on an iPhone in Safari",
+  "where": "Execution/P15/T1090-csp-no-inline-style.md",
   "how": [
-   "After the next deploy to the preview branch, run `curl -sI https://preview.carta-app.pages.dev/"
+   "After the next deploy to the preview branch, run curl -sI https://preview.carta-app.pages.dev/ and look at the content-security-policy line: style-src is self plus two sha256 hashes, no unsafe-inline",
+   "Open the preview in Chrome with the DevTools console open; walk the map, a destination, a trail and the trip planner; no \"Refused to apply inline style\" line",
+   "Open a prerendered page (any /spain/trails/... link from the sitemap): the reading column is styled and the console is clean; if not, re-run the prerender upload (node scripts/prerender/build.mjs, then push.mjs)",
+   "Print a saved trip: the print view is styled",
+   "Repeat the trail and print checks on an iPhone in Safari"
   ]
  },
  {
@@ -325,12 +329,13 @@
   "id": "T1097-a",
   "title": "Run the sea temperature harvest and exports on the box",
   "why": "ERDDAP is not reachable from the cloud container and the harvest takes about 6 hours.",
-  "where": "wc -l` (expect most coastal country files) and that the publish gate did not roll the beaches back; then ship as usual",
+  "where": "Execution/P15/T1097-sea-temp.md",
   "how": [
-   "On the box in the repo root: `git pull`",
-   "`python run_pipeline.py --only sea_temp,climate_daily,beach_context --ship none`",
-   "If the harvest prints \"incomplete\" and exits 3, run the same command again (it resumes from `cache/sea_temp/`, repeat until it ends clean)",
-   "Check `grep -l '\"sea_temp\"' continent-app/public/beaches/*.json"
+   "On the box in the repo root: git pull",
+   "python run_pipeline.py --only sea_temp,climate_daily,beach_context --ship none",
+   "If the harvest prints \"incomplete\" and exits 3, run the same command again (it resumes from cache/sea_temp/) until it ends clean",
+   "Check that most coastal country files in continent-app/public/beaches/ contain \"sea_temp\" and that the publish gate did not roll the beaches back",
+   "Then ship as usual"
   ]
  },
  {
@@ -488,9 +493,8 @@
   "why": "The server half of K12 is only a file.",
   "where": "supabase/migrations/067_channel_counts.sql",
   "how": [
-   "Rename `067_channel_counts.sql` to the next free number and add a `_down` file",
-   "Paste it in the Supabase SQL editor",
-   "Open `/?utm_source=test` once and check the admin Overview card"
+   "Paste supabase/migrations/067_channel_counts.sql in the Supabase SQL editor (after 066; the down file is 067_channel_counts_down.sql)",
+   "Open /?utm_source=test once and check the admin Overview card"
   ]
  },
  {
@@ -907,6 +911,50 @@
   "how": [
    "Read `press.*` in nl.js",
    "Put a real screenshot in public and point `PRESS_SCREENSHOT` at it"
+  ]
+ },
+ {
+  "id": "T1125-a",
+  "title": "Look at the type and radius change with data",
+  "why": "No screen could render in the cloud container.",
+  "where": "Execution/P15/T1125-type-radius.md",
+  "how": [
+   "Run npm run dev with data",
+   "Open Explore, Plan, Help, press kit",
+   "Check phone 390 and desktop 1366"
+  ]
+ },
+ {
+  "id": "T1127-a",
+  "title": "Trail photo harvest",
+  "why": "2,886 walks still have no licensed photo.",
+  "where": "pipeline/trails/trail_images.py",
+  "how": [
+   "Run `python pipeline/trails/trail_images.py` on the box with Commons access with a wider radius",
+   "Re-export the trails wire",
+   "Re-run `node scripts/verify_trail_photos.mjs`"
+  ]
+ },
+ {
+  "id": "T1127-b",
+  "title": "Heroes for 27 gem destinations",
+  "why": "No licensed hero exists for them.",
+  "where": "pipeline/audit_hero_images.py",
+  "how": [
+   "Run the Commons geosearch hero pass (`pipeline/audit_hero_images.py`) for the gem tier",
+   "Re-run `pipeline/photos/hero_ladder.py`"
+  ]
+ },
+ {
+  "id": "T1133-a",
+  "title": "Prove the wire guard on the real master",
+  "why": "The cloud checkout had only the shipped wire, so the owner's full pipeline output has not been through the guard.",
+  "where": "`docs/wire.schema.json`, `pipeline/wire_contract.py`",
+  "how": [
+   "On the build box pull the branch",
+   "Run one layer that writes the wire, for example `python pipeline/country_context_layer.py`",
+   "Then `cd continent-app && npm run data`",
+   "If either stops with `WireContractError`, the message names the field path: fix the value or add the key to `docs/wire.schema.json` and run `node continent-app/scripts/ci/wire-table.mjs --write`"
   ]
  }
 ]
