@@ -870,11 +870,11 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { .pt-day-chev { transition: none; } }
 .pt-day-body { display: grid; gap: var(--space-3); padding: 0 var(--space-4) var(--space-4) calc(var(--space-4) + 52px + var(--space-3)); }
 .pt-day-body[hidden] { display: none; }
-@media (max-width: 699px) { .pt-day-body { padding-left: var(--space-4); } }
+@media (max-width: 700px) { .pt-day-body { padding-left: var(--space-4); } }
 .pt-part { display: grid; grid-template-columns: 96px 1fr; gap: var(--space-3); font-size: var(--text-body); color: var(--text-2); line-height: var(--leading-body); }
 .pt-part small { font-size: var(--text-caption); font-weight: 600; color: var(--text-3); line-height: var(--leading-body); }
 .pt-part-text { margin: 0; }
-@media (max-width: 499px) { .pt-part { grid-template-columns: 1fr; gap: 2px; } }
+@media (max-width: 480px) { .pt-part { grid-template-columns: 1fr; gap: 2px; } }
 .pt-daychips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-1); }
 .pt-daychips li { padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); background: var(--surface-sunken); font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
 
@@ -885,7 +885,7 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 .pt-rg-track { position: relative; height: 8px; border-radius: var(--radius-pill); background: var(--surface-sunken); }
 .pt-rg-track i { position: absolute; top: 0; bottom: 0; border-radius: var(--radius-pill); background: var(--umber-300); }
 .pt-rg-fig { font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; text-align: right; }
-@media (max-width: 499px) {
+@media (max-width: 480px) {
   .pt-rg { grid-template-columns: 1fr auto; }
   .pt-rg-track { grid-column: 1 / -1; grid-row: 2; }
 }
@@ -1132,7 +1132,7 @@ ul.pt-cells { list-style: none; margin: 0; padding: 0; }
 .near-tools { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); margin: var(--space-5) 0 var(--space-5); }
 .near-tools .ar-radius { flex: 1 1 auto; min-width: 0; }
 .storyr.near-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: var(--space-6) var(--space-4); }
-@media (max-width: 559px) { .storyr.near-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5) var(--space-3); } }
+@media (max-width: 599px) { .storyr.near-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5) var(--space-3); } }
 
 /* ── Day trips (T1036): the Explore rail; the facts, then the line it is
    known for, under each photograph. ── */

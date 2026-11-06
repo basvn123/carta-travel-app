@@ -285,7 +285,7 @@
 
 .pf-set .pf-set-groupnote { margin: 0 0 var(--space-2); }
 
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .fsheet.cmp-sheet { max-width: 880px; }
 }
 

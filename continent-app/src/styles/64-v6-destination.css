@@ -553,7 +553,7 @@ body:has(.destp, .tpage) .accom-panel.lifestyle-panel { z-index: calc(var(--z-pa
 /* On a phone the next photograph shows at the edge, so the strip reads as
    one to swipe, and the arrows stay: a swipe is never the only way
    (carta-design "Tracks"). */
-@media (max-width: 720px) {
+@media (max-width: 700px) {
   .destp-v3 .destp-slide { width: 86%; }
   .destp-v3 .destp-slide img { width: 100%; max-width: none; }
   .destp-v3 .destp-gallery-arrow.is-prev { left: var(--space-2); }
@@ -674,7 +674,7 @@ body:has(.destp, .tpage) .accom-panel.lifestyle-panel { z-index: calc(var(--z-pa
     text-underline-offset: 4px;
   }
 }
-@media (max-width: 720px) {
+@media (max-width: 700px) {
   .destp .dsec-aside { padding: 0 0 var(--space-2); }
 }
 /* A fold that opens answers at once: the chevron turns and the body fades
@@ -790,7 +790,7 @@ body:has(.destp, .tpage) .accom-panel.lifestyle-panel { z-index: calc(var(--z-pa
   padding: 0;
   list-style: none;
 }
-@media (min-width: 680px) { .ddo-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 700px) { .ddo-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .ddo-list > li { border-top: 1px solid var(--border-soft); }
 .ddo-list-row,
 .btn.ddo-list-row {
@@ -991,7 +991,7 @@ a.ddo-list-row:focus-visible { outline: 2px solid var(--focus); outline-offset: 
 /* The year and this week: the strip, then the seven days; side by side
    where the column is wide enough for both. */
 .dov-year-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-5); }
-@media (min-width: 680px) and (max-width: 1023px), (min-width: 1280px) {
+@media (min-width: 700px) and (max-width: 1023px), (min-width: 1280px) {
   .dov-year-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
   .dov-year-grid .destp-week { margin-top: 0; }
   .dov-year-grid .destp-week .destp-subhead { margin-top: 0; }

@@ -527,7 +527,7 @@
   margin: 1px 0;
 }
 
-@media (max-width: 880px) {
+@media (max-width: 1023px) {
   .map-legend { bottom: 8px; left: 8px; width: 216px; }
   .legend-text em { font-size: 10px; }
 }
@@ -846,7 +846,7 @@
   color: var(--ink-mute);
 }
 
-@media (max-width: 880px) {
+@media (max-width: 1023px) {
   .results-list { display: none; }
 }
 

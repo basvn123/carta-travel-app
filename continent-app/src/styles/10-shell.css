@@ -129,11 +129,11 @@
    1. Tighten first: the tabs lose padding and the wordmark loses its
       strapline, which buys about 90px without losing a single word.
    2. Then drop the words: icon-only pills, titles still on hover. */
-@media (min-width: 769px) and (max-width: 1180px) {
+@media (min-width: 769px) and (max-width: 1200px) {
   .app-header { gap: 14px; padding: 9px 20px; }
   .header-nav-item { padding: 8px 10px; }
 }
-@media (min-width: 769px) and (max-width: 1060px) {
+@media (min-width: 769px) and (max-width: 1100px) {
   .header-nav-label { display: none; }
   .header-nav-item { padding: 9px; }
 }
@@ -256,10 +256,10 @@
    that matters. */
 /* Under a laptop, nine columns would put "Mountains" under an ellipsis, so
    the rail steps down to five and takes a second row. */
-@media (max-width: 900px) {
+@media (max-width: 1023px) {
   .kind-rail-scroll { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 }
-@media (max-width: 560px) {
+@media (max-width: 599px) {
   .kind-rail-scroll { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }
   .kind-rail-chip { padding: 6px 4px; font-size: var(--text-micro); }
 }
@@ -608,7 +608,7 @@
   .drive-ask-alt:hover { color: var(--text); }
 }
 
-@media (max-width: 880px) {
+@media (max-width: 1023px) {
   /* The destinations gutter is gone below 880px, so the strip follows the map
      to the viewport edge. */
   .map-toolrow { left: 12px; }

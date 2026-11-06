@@ -70,7 +70,7 @@
    (T1002, owner: a full-width bar was far too wide) the door is as wide as
    its name and its deck, beside New trip (T1044: no arrow; the deck sits
    at the end at every width, so phone and desktop read the same). */
-@media (min-width: 560px) {
+@media (min-width: 600px) {
   .pfh .pfh-door-name { flex: none; padding-right: var(--space-5); white-space: nowrap; }
 }
 .pfh .pfh-door-go { display: none; }
@@ -87,7 +87,7 @@
 
 /* On a phone the door is the rest of the row, as tall as New trip, every
    photograph whole inside the tile (T1002, owner). */
-@media (max-width: 559px) {
+@media (max-width: 599px) {
   .pfh .pfh-door-name { font-size: var(--text-body); line-height: var(--leading-tight); }
   .pfh .pfh-door-deck { width: 62px; height: 48px; }
   .pfh .pfh-door-photo { width: 32px; height: 42px; top: 3px; left: calc(var(--i) * 14px); }
@@ -134,7 +134,7 @@
 .pfh-row-name { display: flex; align-items: center; gap: var(--space-1); overflow: hidden; font-size: var(--text-body); font-weight: 600; white-space: nowrap; text-overflow: ellipsis; }
 .pfh-row-meta { overflow: hidden; font-size: var(--text-caption); color: var(--text-3); white-space: nowrap; text-overflow: ellipsis; }
 .pfh-row-edited { font-size: var(--text-caption); color: var(--text-3); white-space: nowrap; }
-@media (max-width: 479px) { .pfh-row-edited { display: none; } }
+@media (max-width: 480px) { .pfh-row-edited { display: none; } }
 
 /* Dated trips as Explore's rail cards (80-story-rail.css): the photograph
    with its corners (square on a phone, 4:5 wider), one solid chip on it,

@@ -517,14 +517,14 @@
 .dayw-section.is-lead { margin-top: 0; }
 .dayw-section-h { margin: 0; font-size: var(--text-title); font-weight: 600; color: var(--text); }
 .dtrows { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); }
-@media (min-width: 900px) { .dtrows { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1024px) { .dtrows { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .dtrow .card-meta { display: flex; flex-wrap: wrap; column-gap: var(--space-3); }
 .dtrows-more { align-self: flex-start; }
 .dtsignin-text { margin: 0; font-size: var(--text-body); color: var(--text-2); }
 .dtrow .dtmenu { position: relative; }
 .dtrow .dtmenu-btn { width: var(--tap); height: var(--tap); }
 .dayw-when { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-5); align-items: start; }
-@media (min-width: 900px) { .dayw-when { grid-template-columns: minmax(0, 420px) minmax(0, 1fr); } }
+@media (min-width: 1024px) { .dayw-when { grid-template-columns: minmax(0, 420px) minmax(0, 1fr); } }
 .dayw-count {
   display: flex;
   align-items: center;
@@ -570,7 +570,7 @@
 .daychat-progress { display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
 .daychat-dots { display: inline-flex; gap: 4px; margin-left: var(--space-2); }
 .daychat-tiles { --tile-gap: var(--space-2); }
-@media (max-width: 560px) { .daychat-tiles { --tile-cols: 2 !important; } }
+@media (max-width: 599px) { .daychat-tiles { --tile-cols: 2 !important; } }
 .daychat-hint { margin: 0; font-size: var(--text-label); color: var(--text-2); }
 .daychat-credit { align-self: flex-start; }
 @media (max-width: 768px) { .dayw-chat .guide-foot-summary .credit-chip { display: none; } }
@@ -649,7 +649,7 @@
 .dayr-day-foot { margin: 0; font-size: var(--text-label); color: var(--text-2); }
 .wiz-rail .dayr { max-height: calc(100dvh - 300px - var(--tap) - var(--space-6) - var(--space-6)); overflow-y: auto; }
 .dayw-fork { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); align-items: stretch; }
-@media (min-width: 640px) { .dayw-fork { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 600px) { .dayw-fork { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .dayw-fork-card.card-tile .card-media { aspect-ratio: auto; }
 .dayw-fork-card .card-body { padding: var(--space-4) var(--space-5) var(--space-5); gap: var(--space-2); }
 @media (hover: hover) { .dayw-fork-card.is-interactive:hover { border-color: var(--text-3); } }
@@ -658,7 +658,7 @@
 .dayw-fork-mosaic.n2 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr; }
 .dayw-fork-mosaic.n3 .dayw-fork-tile:first-child { grid-row: 1 / span 2; }
 .dayw-fork-sub { font-size: var(--text-body); color: var(--text-2); }
-@media (max-width: 639px) {
+@media (max-width: 599px) {
   .dayw-fork-photo { aspect-ratio: 3 / 1; }
   .dayw-fork-card .card-body { padding: var(--space-3) var(--space-4) var(--space-4); }
 }
@@ -680,7 +680,7 @@
 .day-wizard .dayw-when-cal,
 .day-wizard .dayw-count { border: none; border-radius: 0; background: none; }
 .day-wizard .dayw-count { border-top: 1px solid var(--border-soft); }
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .day-wizard .dayw-when { grid-template-columns: minmax(0, 420px) minmax(0, 1fr); }
   .day-wizard .dayw-count { align-self: stretch; align-items: flex-start; border-top: none; border-left: 1px solid var(--border-soft); padding: var(--space-5); }
 }
@@ -910,7 +910,7 @@
   overflow: hidden;
   isolation: isolate;
 }
-@media (min-width: 640px) {
+@media (min-width: 600px) {
   .dayw-manual .dayex-cards {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));

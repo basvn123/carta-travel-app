@@ -6,7 +6,7 @@
 .guide-stay-wrap { display: flex; gap: 12px; align-items: stretch; }
 .guide-city-side-insight { font-size: 12px; color: var(--ink-soft); line-height: 1.55; margin: 4px 0 8px; }
 .citypick-pin.focused { box-shadow: 0 0 0 3px var(--accent-bg), 0 1px 6px rgba(0, 0, 0, 0.18); border-color: var(--accent); }
-@media (max-width: 999px) {
+@media (max-width: 1023px) {
   .trip-wizard-modal .guide-stay-wrap .guide-city-side {
     max-height: none;
     overflow: visible;
@@ -55,7 +55,7 @@
   margin-inline: auto;
 }
 .guide-foot-inner { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .trip-wizard-modal .guide-head,
   .trip-wizard-modal .guide-foot,
   .trip-wizard-modal .guide-estimate-main,
@@ -90,7 +90,7 @@
 @media (hover: hover) {
   .trip-wizard-modal .guide-path:hover .guide-path-chev { color: var(--accent); transform: translateX(2px); }
 }
-@media (min-width: 720px) {
+@media (min-width: 700px) {
   .trip-wizard-modal .guide-path:hover { transform: translateY(-2px); }
   .trip-wizard-modal .guide-path:active { transform: translateY(-1px) scale(0.99); }
 }
@@ -119,7 +119,7 @@
 @media (hover: hover) {
   .trip-wizard-modal.wiz-inline .guide-path:hover .guide-path-icon { transform: translateY(-1px); }
 }
-@media (min-width: 720px) {
+@media (min-width: 700px) {
   .trip-wizard-modal.wiz-inline .guide-path-text small { max-width: 34ch; }
   .trip-wizard-modal.wiz-inline .guide-path-chev { margin: auto 0 0 auto; }
 }
@@ -143,7 +143,7 @@
 .guide-card .guide-arrival-when { margin-top: 0; }
 .guide-card .guide-note { margin-top: 10px; }
 .trip-wizard-modal .guide-carfrom { max-width: 620px; }
-@media (min-width: 1000px) {
+@media (min-width: 1024px) {
   .trip-wizard-modal .guide-flight-wrap .fpm-map,
   .trip-wizard-modal .guide-flight-side {
     height: clamp(340px, calc(100dvh - 570px), 640px);
@@ -207,7 +207,7 @@
 }
 .guide-when-card .guide-card-row { margin-top: 12px; padding-top: 12px; }
 .guide-when-card .guide-flexpad { margin-top: 0; }
-@media (min-width: 900px) and (min-height: 860px) {
+@media (min-width: 1024px) and (min-height: 860px) {
   .trip-wizard-modal.wiz-inline.wiz-when.wiz-form { --wiz-max: 920px; }
   .wiz-inline .guide-canvas > .guide-sub { font-size: 15px; margin-bottom: 20px; }
   .wiz-inline .guide-when-card { padding: 26px 30px 24px; }
@@ -246,7 +246,7 @@
 }
 .trip-wizard-modal .guide-datemode { max-width: 520px; }
 .guide-city-side-add { width: 100%; margin-top: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
-@media (max-width: 999px) {
+@media (max-width: 1023px) {
   .trip-wizard-modal .guide-stay-wrap .guide-city-side-add {
     position: sticky;
     bottom: 8px;
@@ -312,7 +312,7 @@
   }
 }
 .trip-wizard-modal .guide-path-icon { width: 46px; height: 46px; border-radius: 14px; flex: none; }
-@media (min-width: 720px) {
+@media (min-width: 700px) {
   .trip-wizard-modal .guide-path-icon { width: 48px; height: 48px; border-radius: 15px; }
 }
 .trip-wizard-modal.wiz-inline .guide-path {
@@ -344,7 +344,7 @@
 }
 .guide-card .guide-when-dates { margin-bottom: 0; }
 .guide-card .guide-datemode { margin-bottom: 0; }
-@media (min-width: 1000px) {
+@media (min-width: 1024px) {
   .trip-wizard-modal .guide-city-side {
     height: clamp(340px, calc(100dvh - 545px), 640px);
     max-height: none;

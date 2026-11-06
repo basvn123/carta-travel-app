@@ -24,7 +24,7 @@
 
 /* The rail: desktop only. */
 .ac-rail { display: none; }
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .ac-page {
     grid-template-columns: 240px minmax(0, 1fr);
     gap: var(--space-7);
@@ -91,7 +91,7 @@
 }
 .ac-back:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .ac-back-desk { display: none; }
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .ac-back-phone { display: none; }
   .ac-back-desk { display: inline-flex; }
   .ac-phone-only { display: none !important; }

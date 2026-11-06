@@ -5,7 +5,7 @@
    cascade could override; scripts/css-routes.mjs --check proves it on a build. */
 .tpage.following .map-tools { display: none; }
 
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .dsk-map .tpage-hero,
   .dsk-map .cycle-map {
     height: calc(100dvh - 52px - 2 * var(--space-4) - var(--tap) - var(--space-2));

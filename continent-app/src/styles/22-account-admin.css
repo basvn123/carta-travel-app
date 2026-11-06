@@ -1209,7 +1209,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
 /* The expiry banner's one action: a ghost Button, quiet by design because it
    reaches somebody who has already paid. Layout only; the look is .btn-ghost. */
 .site-banner-action { flex: none; }
-@media (max-width: 760px) {
+@media (max-width: 768px) {
   .site-banner { bottom: calc(var(--bottom-nav-h) + 12px); }
 }
 

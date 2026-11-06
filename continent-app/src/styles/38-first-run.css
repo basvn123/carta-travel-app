@@ -168,7 +168,7 @@
   font-family: var(--ui);
   color: var(--ink);
 }
-@media (min-width: 720px) {
+@media (min-width: 700px) {
   .frr-scrim { align-items: center; }
   .frr-sheet { border-radius: 12px; }
 }

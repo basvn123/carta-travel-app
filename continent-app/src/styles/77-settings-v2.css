@@ -224,7 +224,7 @@
   .settings-line-parts > .settings-slot-dates { flex: 1.8 1 0; }
   .settings-line-parts > .settings-slot-party { flex: 0.9 1 0; }
 }
-@media (min-width: 769px) and (max-width: 1180px) {
+@media (min-width: 769px) and (max-width: 1200px) {
   .settings-line .settings-vibe { display: none; }
 }
 

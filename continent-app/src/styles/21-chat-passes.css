@@ -552,7 +552,7 @@
 }
 .account-delete-actions .book-btn { flex: 1; justify-content: center; min-height: 44px; }
 
-@media (max-width: 520px) {
+@media (max-width: 480px) {
   .account-pass-status { text-align: left; }
   .account-delete-actions { flex-direction: column; }
 }

@@ -93,7 +93,7 @@
    second row. Every row still spans the card exactly. The rest of the phone
    toolbar rules live in the two width blocks further down this sheet, which
    already own those widths and would otherwise override anything set here. */
-@media (max-width: 560px) {
+@media (max-width: 599px) {
   .places-cats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @media (hover: hover) {
@@ -514,12 +514,12 @@
   gap: 12px;
   margin-top: 12px;
 }
-@media (min-width: 640px) {
+@media (min-width: 600px) {
   .places-list { grid-template-columns: 1fr 1fr; }
 }
 /* Three across once the column is wide enough to keep a card above ~370px,
    which is where the 2.6:1 photo strip still reads as a photograph. */
-@media (min-width: 1040px) {
+@media (min-width: 1024px) {
   .places-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 .places-list > .places-empty,
@@ -1816,7 +1816,7 @@
   background: var(--paper);
   box-shadow: var(--shadow-2);
 }
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .tpage-hud-card { left: auto; right: 16px; width: 340px; }
   .tpage-recentre { left: auto; right: 186px; transform: none; }
 }

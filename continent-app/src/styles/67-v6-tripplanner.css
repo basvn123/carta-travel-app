@@ -309,7 +309,7 @@
   overflow-wrap: anywhere;
   hyphens: auto;
 }
-@media (max-width: 400px) {
+@media (max-width: 420px) {
   .guide-recap { flex-wrap: wrap; max-width: 100%; }
 }
 
@@ -443,7 +443,7 @@
   .booked-stop .guide-nights button { min-width: var(--tap); min-height: var(--tap); }
 }
 /* The booked-beds rows take the same price field. */
-@media (max-width: 640px) {
+@media (max-width: 599px) {
   .booked-stop { flex-wrap: wrap; }
 }
 
@@ -533,12 +533,12 @@
 /* The phone's price sheet: the card on the sheet's own ground. */
 
 /* Price fields: Carta's figure as help, a folded offer, the review row. */
-@media (max-width: 640px) {
+@media (max-width: 599px) {
   .wrev-stop .plan-paid-add { grid-column: 1 / -1; justify-self: start; }
 }
 
 /* Before you go: each card its own height; nothing scrolls inside a card. */
-@media (max-width: 640px) {
+@media (max-width: 599px) {
   .itin-end > .plan-paid-add { grid-column: 2; justify-self: start; }
 }
 

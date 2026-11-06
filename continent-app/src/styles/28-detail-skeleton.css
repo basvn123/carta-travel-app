@@ -26,7 +26,7 @@
   overflow: hidden;
   background: var(--paper-dim);
 }
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .dsk-hero-media { height: 56dvh; }
 }
 .dsk-hero-media picture { display: block; height: 100%; }
@@ -168,7 +168,7 @@
 .dsk-sources .tpage-credit { margin: var(--space-2) 0 0; }
 
 /* ── Desktop: 60/40, the map sticky in the right column ── */
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .dsk-grid {
     display: grid;
     grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);

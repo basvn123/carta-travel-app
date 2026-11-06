@@ -9,7 +9,7 @@
   overflow: hidden;
   background: var(--paper-dim);
 }
-@media (max-width: 720px) {
+@media (max-width: 700px) {
   .itin-photohero { height: 240px; }
 }
 .itin-photohero-img {
@@ -48,7 +48,7 @@
 }
 .itin-around-km { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); }
 .itin-leg-home { color: var(--ink-mute); }
-@media (min-width: 620px) {
+@media (min-width: 600px) {
   .itin-outs { grid-template-columns: 1fr 1fr; }
 }
 .itin-out-name { font-size: 14px; font-weight: 600; color: var(--ink); }

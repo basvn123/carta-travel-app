@@ -139,7 +139,7 @@
 
 /* Narrow desktop windows: the rail is worth less than the content beside it,
    so it gives up width first, in the same two steps the header takes. */
-@media (min-width: 769px) and (max-width: 1120px) {
+@media (min-width: 769px) and (max-width: 1100px) {
   .saved-side, .account-side { flex-basis: 216px; width: 216px; padding-left: 16px; }
 }
 
@@ -1073,10 +1073,10 @@
   cursor: pointer;
 }
 
-@media (max-width: 560px) {
+@media (max-width: 599px) {
   .cycle-map { height: 240px; }
 }
-@media (max-width: 560px) {
+@media (max-width: 599px) {
   .cycle-gallery { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -2050,7 +2050,7 @@
 @media (hover: hover) {
   .dsec-more:hover { color: var(--ink); border-color: var(--ink-soft); }
 }
-@media (max-width: 720px) {
+@media (max-width: 700px) {
   .dsec-toggle { padding: 11px 12px; gap: 8px; }
   .dsec-title { font-size: 15px; }
   .dsec-body { padding: 0 12px 12px; }
@@ -2062,7 +2062,7 @@
 
 /* ── Around here: tabs, rows, pictures for every row ── */
 .dar-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
-@media (max-width: 720px) {
+@media (max-width: 700px) {
   .dar-tabs { flex-wrap: nowrap; overflow-x: auto; margin: 0 -12px; padding: 0 12px 2px; scrollbar-width: none; }
   .dar-tabs::-webkit-scrollbar { display: none; }
   .dar-tab { flex: none; }
@@ -2262,7 +2262,7 @@
   .webcam-frame-wrap { padding-bottom: calc(56.25% + 145px); }
 }
 /* The player needs about 320 px; on a 380 px phone the card is 311 px, so the frame bleeds 8 px each side (9 px more height at 9/16). */
-@media (max-width: 400px) {
+@media (max-width: 420px) {
   .webcam-frame-wrap {
     width: auto;
     margin-inline: calc(-1 * var(--space-2));
@@ -2824,7 +2824,7 @@
 }
 .jends .bpage-fact dt { width: 104px; }
 .jends .bpage-fact dd .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; font-weight: 500; }
-@media (min-width: 760px) {
+@media (min-width: 769px) {
   .jends { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 

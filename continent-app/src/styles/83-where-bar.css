@@ -100,7 +100,7 @@
 /* The tab's suggestion list hangs under the box, as wide as it. */
 .wbar-box .places-sugg { top: calc(100% + var(--space-1)); }
 
-@media (min-width: 640px) {
+@media (min-width: 600px) {
   .wbar,
   .wbar.has-view {
     grid-template-columns: minmax(160px, 240px) minmax(0, 1fr) auto auto;

@@ -556,7 +556,7 @@
 
 /* Below the wide-desktop breakpoint the landing column is narrow (480px),
    so the map and its side rail stack instead of splitting the row. */
-@media (max-width: 999px) {  /* Column layout turns the map's `flex: 1` into a vertical grow whose
+@media (max-width: 1023px) {  /* Column layout turns the map's `flex: 1` into a vertical grow whose
      `flex-basis: 0%` overrides the height and collapses the map to nothing;
      `flex: none` restores its own height (same fix as the wizard maps). */
   .day-explore-wrap .dem-map {
@@ -858,7 +858,7 @@
 
 /* Wide screens: the canvas max-width does the holding-off-the-edge work, so
    the shell itself only needs comfortable gutters. */
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   /* Wide enough to read the estimate line by line without opening anything. */
   .trip-wizard-modal .guide-estimate-total { grid-column: 1 / -1; }
 }
@@ -911,7 +911,7 @@
 }
 /* Only when the deck can lay out as a real multi-column grid does the roomy
    vertical card earn its space. */
-@media (min-width: 720px) {
+@media (min-width: 700px) {
   .trip-wizard-modal .guide-path-text b { font-size: 17px; }
 }
 /* The one-question intro reads as a headline, so it centres over its deck. */
@@ -965,7 +965,7 @@
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: none; }
 }
-@media (max-width: 719px) {
+@media (max-width: 700px) {
   .guide-lede .guide-title::after { margin-top: 14px; }
 }
 
@@ -1028,7 +1028,7 @@
 /* Two columns on a phone, not "as many as fit": three 120px cards in a row
    render a country's photograph at postage-stamp size, and the point of the
    card is the photograph. */
-@media (max-width: 719px) {
+@media (max-width: 700px) {
   .guide-where-map .cpm { height: 56vh; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -1119,7 +1119,7 @@
   margin-top: 8px;
 }
 /* Below the width that fits three, an even stack beats a 2 + 1 orphan. */
-@media (max-width: 620px) {
+@media (max-width: 599px) {
   .guide-style-cards { grid-template-columns: 1fr; }
 }
 .guide-style-card {
@@ -1173,7 +1173,7 @@
   height: clamp(420px, calc(100dvh - 300px), 760px);
   margin-bottom: 0;
 }
-@media (max-width: 1000px) {
+@media (max-width: 1023px) {
   /* Stacked: the map goes FIRST, otherwise it sits below a 43-row country
      grid and nobody scrolls far enough to find it. */
   .guide-split { grid-template-columns: 1fr; }
@@ -1966,7 +1966,7 @@
    of the canvas as a postage stamp: bigger question, bigger card, day cells
    you can hit without aiming. The tightening passes below (short windows)
    still win, they are more specific about height. */
-@media (min-width: 900px) and (min-height: 860px) {
+@media (min-width: 1024px) and (min-height: 860px) {
   .wiz-inline .guide-canvas > .guide-title { font-size: 27px; letter-spacing: -0.018em; }
   .wiz-inline .guide-when-card .guide-datemode button { font-size: 14.5px; padding: 12px 14px; }
   .wiz-inline .guide-when-card .guide-range-end b { font-size: 15px; }

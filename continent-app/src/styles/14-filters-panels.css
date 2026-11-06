@@ -116,7 +116,7 @@
 
 /* Narrow desktop windows: one column, so a quadrant never squeezes a slider
    down to a stub. The hairlines become simple row rules. */
-@media (min-width: 769px) and (max-width: 1120px) {
+@media (min-width: 769px) and (max-width: 1100px) {
   .filter-tray .group-quality { border-left: none; padding-left: 0; }
   .filter-tray .group-quality,
   .filter-tray .group-place {
@@ -703,7 +703,7 @@
    popover covers the same two fields instead. */
 .row-date-fields { display: flex; }
 
-@media (max-width: 880px) {
+@media (max-width: 1023px) {
   .filter-bar { flex-wrap: wrap; padding: 12px 16px; height: auto; gap: 12px; }
   .filters { gap: 14px; }
   .panel { width: 100%; }

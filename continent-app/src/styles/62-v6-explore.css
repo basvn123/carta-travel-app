@@ -1351,7 +1351,7 @@
 .gs-tabs .ui-tab:not(.is-selected) .gs-slot-v { color: var(--text-2); }
 /* On a phone the five slots wrap to two rows instead of scrolling out of
    sight (T444: Budget and Extras were cut off). */
-@media (max-width: 560px) {
+@media (max-width: 599px) {
   .gs-tabs.ui-tabs { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: var(--space-1); }
   .gs-tabs .ui-tab + .ui-tab { border-left: 0; }
 }
@@ -1359,7 +1359,7 @@
 /* A slot's choices. */
 .gs-panel { padding: var(--space-1) 0 var(--space-4); }
 .gs-vibes .ui-tile { min-height: 84px; }
-@media (max-width: 560px) {
+@media (max-width: 599px) {
   .gs-vibes.ui-tile-group { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 .gs-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }

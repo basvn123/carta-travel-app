@@ -253,7 +253,7 @@
 @media print {
   .jpage .tday-panel { grid-template-rows: 1fr; }
 }
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .dsk-map .dsk-map-frame {
     height: calc(100dvh - 52px - 2 * var(--space-4) - var(--tap) - var(--space-2));
   }

@@ -218,7 +218,7 @@
 /* The rows are the kit CostRow (T538); the booked mark keeps its tick. */
 .wrev-fact .guide-answered-edit { padding: 0; min-height: 32px; font-weight: 500; }
 @media (pointer: coarse) { .wrev-fact .guide-answered-edit { min-height: var(--tap); } }
-@media (max-width: 640px) {
+@media (max-width: 599px) {
   .booked-stop .plan-paid { order: 5; width: 100%; }
 }
 @media (min-width: 769px) {
@@ -277,7 +277,7 @@
   gap: var(--space-2);
 }
 .itin-export-link { text-decoration: none; }
-@media (max-width: 560px) {
+@media (max-width: 599px) {
   .itin-export-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 .bgo-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
@@ -324,7 +324,7 @@
 .bgo-track { align-items: start; }
 .itin-hop .itin-leg-main { min-height: var(--tap); }
 .trip-planner-screen.is-page .trip-sheet-footer { z-index: var(--z-sticky); }
-@media (max-width: 640px) {
+@media (max-width: 599px) {
   .itin-end { grid-template-columns: auto minmax(0, 1fr); }
 }
 .trip-wizard-modal.wiz-form,
@@ -332,7 +332,7 @@
 .trip-wizard-modal.wiz-wide,
 .trip-wizard-modal.wiz-inline.wiz-when.wiz-form { --wiz-max: var(--w-browse); }  /* T1041 */
 .itin-hop .itin-leg-text { font-size: var(--text-caption); }
-@media (max-width: 400px) {
+@media (max-width: 420px) {
   .plan-total-btn-lbl { display: none; }
 }
 .trip-wizard-modal .guide-datemode {
@@ -347,7 +347,7 @@
 .plan-input .fstepper { gap: var(--space-3); }
 .plan-input .plan-input-btn.btn { text-align: right; white-space: normal; }
 .wwho-party { display: block; }
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .wwho-party .party { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); }
 }
 .worigin-h { margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); }
@@ -357,7 +357,7 @@
 .worigin-air-lbl { font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
 .wrev-find.btn, .itin-find.btn { text-decoration: none; }
 .itin-tool-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); }
-@media (min-width: 560px) { .itin-tool-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (min-width: 600px) { .itin-tool-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 .itin-tool-icon { color: var(--text-2); }
 .itin-tool-name { font-size: var(--text-body); font-weight: 600; color: var(--text); }
 .itin-tool-state { font-size: var(--text-caption); font-weight: 400; color: var(--text-2); }
@@ -408,7 +408,7 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
 }
-@media (min-width: 560px) {
+@media (min-width: 600px) {
   .wstay { grid-template-areas: 'idx thumb info remove' 'idx thumb nights acts'; grid-template-columns: 28px 56px auto minmax(0, 1fr); row-gap: var(--space-2); }
   .wstay-acts { justify-content: flex-end; }
 }
@@ -521,7 +521,7 @@
 .plan-total-more { border-top: 1px solid var(--border-soft); }
 .plan-paid.is-set .plan-paid-input { border-color: var(--select-border); background: var(--select-bg); }
 .plan-paid-input::placeholder { color: var(--text-3); }
-@media (max-width: 640px) {
+@media (max-width: 599px) {
   .wrev-stop .plan-paid { grid-column: 1 / -1; }
 }
 .booked-stop .plan-paid { flex: none; }
@@ -532,14 +532,14 @@
 .bgo-track::-webkit-scrollbar { display: none; }
 .bgo-card.bgo-intel { max-height: 420px; overflow-y: auto; }
 .trip-wizard-modal .guide-foot-summary { overflow: visible; height: auto; min-height: var(--tap); }
-@media (max-width: 640px) {
+@media (max-width: 599px) {
   .wrev-stop .plan-paid { grid-column: 1 / -1; justify-self: start; }
 }
 .bgo-card.bgo-intel { max-height: none; overflow: visible; min-height: 0; }
-@media (max-width: 640px) {
+@media (max-width: 599px) {
   .itin-end > .plan-paid { grid-column: 2; justify-self: start; }
 }
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .wwho-party .party-rule { grid-column: 1 / -1; }
 }
 .bgo-track .bgo-text {
@@ -549,7 +549,7 @@
   overflow: hidden;
 }
 .trip-planner-screen .trip-pin-plain.has-tag { min-width: var(--tap); }
-@media (min-width: 560px) {
+@media (min-width: 600px) {
   .wstay .wstay-info { grid-column: 3 / 5; grid-row: 1; padding-right: var(--tap); }
 }
 @media (min-width: 1100px) {
@@ -622,7 +622,7 @@
 /* A device trip meets an account trip (T490-f): two equal cards. */
 .trip-keep-lead { margin: 0 0 var(--space-4); font-size: var(--text-body); line-height: var(--leading-body); color: var(--text-2); }
 .trip-keep-list { display: grid; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
-@media (min-width: 560px) { .trip-keep-list { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 600px) { .trip-keep-list { grid-template-columns: 1fr 1fr; } }
 .trip-keep-where { font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
 .trip-keep-name { font-size: var(--text-lead); font-weight: 600; color: var(--text); overflow-wrap: anywhere; }
 .trip-keep-line { font-size: var(--text-label); color: var(--text-2); }

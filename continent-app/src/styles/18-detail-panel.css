@@ -144,7 +144,7 @@
 .guide-transport-icon { font-size: var(--text-title); }
 .guide-transport-label { font-weight: 700; font-size: var(--text-label); color: var(--ink); }
 .guide-transport-sub { font-size: var(--text-micro); color: var(--ink-mute); line-height: 1.4; }
-@media (max-width: 560px) { .guide-transport-grid { grid-template-columns: 1fr; } }
+@media (max-width: 599px) { .guide-transport-grid { grid-template-columns: 1fr; } }
 
 /* Day planner: start-time chips, picker map, Google Maps link */
 .day-start-row { margin-top: 8px; }.day-build-map .trip-map, .day-build-map > div { position: absolute !important; inset: 0; }

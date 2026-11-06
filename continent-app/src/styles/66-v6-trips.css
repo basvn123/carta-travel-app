@@ -104,7 +104,7 @@
 .jcap-count { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 /* Two abreast on a phone (DIRECTION part 3): 3:2 leaves the half-width
    card too short to read, so the phone grid takes 16:10. */
-@media (max-width: 639px) {
+@media (max-width: 599px) {
   .places-list.jsec { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-2); }
 }
 @media (max-width: 768px) {
@@ -484,7 +484,7 @@
   color: var(--ink-mute);
   overflow-wrap: anywhere;
 }
-@media (max-width: 720px) {
+@media (max-width: 700px) {
   .itin-capband-in { padding: var(--space-3) var(--space-4); }
 }
 

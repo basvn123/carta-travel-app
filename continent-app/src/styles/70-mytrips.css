@@ -1052,7 +1052,7 @@
   .mt-next-actions .btn { flex: 1 1 auto; }
   .mt-next-actions .btn-primary { flex-basis: 100%; }
 }
-@media (max-width: 400px) {
+@media (max-width: 420px) {
   .mt-steps { grid-template-columns: minmax(0, 1fr); }
 }
 

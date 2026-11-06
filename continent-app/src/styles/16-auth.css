@@ -28,7 +28,7 @@
   .account-signin-btn:hover { background: var(--accent); border-color: var(--accent); }
 }
 
-@media (max-width: 880px) {
+@media (max-width: 1023px) {
   .account-slot { width: 100%; justify-content: flex-end; margin: 2px 0 0; }
 }
 /* Below 768px the desktop account slot is replaced by .mobile-account-btn in

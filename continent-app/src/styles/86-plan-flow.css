@@ -1255,7 +1255,7 @@
   hyphens: auto;
 }
 .pf-door .ui-tile-tick { top: var(--space-3); right: var(--space-3); }
-@media (max-width: 400px) {
+@media (max-width: 420px) {
   .ui-tile.pf-door { min-height: 112px; padding: var(--space-3); }
   .pf-door .ui-tile-label { font-size: var(--text-body); }
 }

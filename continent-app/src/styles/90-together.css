@@ -608,4 +608,4 @@
 .tg-out-body .tg-h1 { margin: 0; }
 .tg-out-line { margin: 0; font-size: var(--text-body); line-height: var(--leading-body); color: var(--text-2); }
 .tg-out-go.btn { margin-top: var(--space-2); }
-@media (min-width: 560px) { .tg-out-go.btn { align-self: flex-start; } }
+@media (min-width: 600px) { .tg-out-go.btn { align-self: flex-start; } }
