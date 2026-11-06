@@ -14,12 +14,16 @@
  * offline) the facts answer simply stays; the reason is returned so the
  * panel can say it in one line.
  *
- *   writeAnswer(pack, { knownPlaces, onSentence, signal, onDevice })
+ *   writeAnswer(pack, { knownPlaces, cards, type, onSentence, signal, onDevice })
+ *   cards (T1101, E6): the cards on screen, [{id, city}] in order. A sentence
+ *   naming a place without a card, or a figure from another place's note, is
+ *   dropped; a text that reorders a ranking is withdrawn (agree.js).
  *     -> { state: 'done'|'withdrawn'|'cap'|'off'|'error'|'aborted',
  *          sentences, backend, cached }
  */
 import { systemPrompt, userPrompt, wirePack } from './context.js';
-import { splitSentences, makeChecker, verifyAnswer } from './verify.js';
+import { splitSentences, makeChecker, verifyAnswer, WITHDRAW } from './verify.js';
+import { makeAgreement } from './agree.js';
 
 const ENDPOINT = '/api/ask/answer';
 /** Waiting longer than this for the first piece gives up on the server. */
@@ -80,8 +84,15 @@ async function* serverStream(pack, signal) {
 }
 
 /** Write, check and stream one answer. Never throws. */
-export async function writeAnswer(pack, { knownPlaces = [], onSentence = () => {}, signal, onDevice = null } = {}) {
-  const check = makeChecker(pack, knownPlaces);
+export async function writeAnswer(pack, { knownPlaces = [], onSentence = () => {}, signal, onDevice = null, cards = null, type = null } = {}) {
+  const check0 = makeChecker(pack, knownPlaces);
+  const agree = cards ? makeAgreement(pack, cards, knownPlaces) : null;
+  const check = (sent) => {
+    const r = check0(sent);
+    if (!r.ok || !agree) return r;
+    const a = agree.sentence(sent);
+    return a.ok ? r : { ...r, ok: false, why: a.why };
+  };
   let text = '';
   let shown = 0;
   const sentences = [];
@@ -113,6 +124,12 @@ export async function writeAnswer(pack, { knownPlaces = [], onSentence = () => {
   // The last sentence may end without a mark; close it and check it too.
   feed(/[.!?]\s*(\[\d+\]\s*)*$/.test(text.trim()) ? '' : '.', true);
   const all = verifyAnswer(text, pack, knownPlaces);
-  if (all.withdrawn) return { state: 'withdrawn', sentences: [], backend, cached, failed: all.failed };
+  // verifyAnswer counts only verify.js; the agreement drops count too.
+  if (agree) {
+    const kept = sentences.length;
+    if (!kept || (all.total - kept) / Math.max(1, all.total) > WITHDRAW) all.withdrawn = true;
+  }
+  const reordered = agree && !agree.order(sentences, type);
+  if (all.withdrawn || reordered) return { state: 'withdrawn', sentences: [], backend, cached, failed: all.failed, reordered: !!reordered };
   return { state: 'done', sentences, backend, cached };
 }

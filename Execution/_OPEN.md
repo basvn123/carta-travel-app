@@ -1436,3 +1436,6 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1092-b | T1092 | After T1092-a, look at the Trails card and trail page on a phone and at desktop width (Veluwe Zwerfpad reads Long, an E-path stage shows Also called); the cloud container could not load app data | user | open |  |
 | T1092-c | T1092 | Dossier around and nearby rows and region cards carry no f, so they cannot read Long; build_dossier.load_layer_index should copy f.d | next task | open |  |
 | T1092-d | T1092 | The DERIVED_HARD_MIN_RELIEF_M = 200 cap moves 3,211 derived terrain grades (DE 1,495); spot-check 20 capped rows on the map after the rebuild and tune the constant if real ravine walks were caught | next task | open |  |
+| T1101-a | T1101 | Add the live failing query ("quiet lake with good walks in June under 120 a day") to the Ask live golden set and run `scripts/ask-eval-live.mjs` against the deployed Function; the container has no Workers AI | user | open |  |
+| T1101-b | T1101 | After the next deploy, ask five questions on a phone and desktop width and check the written line names only places on the first three cards | user | open |  |
+| T1101-c | T1101 | A sentence naming a place on a "more places" card (4th to 6th) is dropped until the traveller opens it; decide if the text should instead grow with the cards | next task | open |  |

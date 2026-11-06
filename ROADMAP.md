@@ -694,7 +694,7 @@ docs/
 | E3 | One guardrail module | Same input, output and failure rules in every LLM function; injection set in CI | M | P3 | todo |
 | E4 | LLM observability | Every call in `ai_model_events`; admin cost and latency panel; Ask query logs | S | P4 | todo |
 | E5 | Prompt registry | Prompts versioned in files; a bump runs its eval | S | P4 | todo |
-| E6 | Answer and cards agree | The places Ask's text names are exactly the cards it shows, enforced in the verifier; the failing live query is in the golden set (P-35) | S | P1 | todo |
+| E6 | Answer and cards agree | The places Ask's text names are exactly the cards it shows, enforced in the verifier; the failing live query is in the golden set (P-35) | S | P1 | done (T1101) |
 
 ### Item details
 
