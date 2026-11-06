@@ -19,6 +19,11 @@
  *           index (public/search/ask/manifest.json); skipped where it is
  *           not built, which includes CI (the index is not in git)
  *   hybrid  both halves, as the app runs them; skipped with dense
+ *   sparse  the browser's BM25 plus the server BM25 of /api/ask (T1141,
+ *           functions/_lib/askSparse.js) over the bm25-<src>.json files
+ *           scripts/build-ask-bm25.mjs writes; skipped where they are not
+ *           built. --ask-dir <dir> reads them (and their passages) from
+ *           another folder than public/search/ask
  * The live model part (a real written answer through /api/ask/answer,
  * checked by verify.js) is scripts/ask-eval-live.mjs: optional, paid, never
  * in CI.
@@ -49,6 +54,7 @@ import { outsidePlace } from '../../src/lib/ask/outside.js';
 import { makeLabels } from '../../src/lib/guidedSearch.js';
 import { priceDays, DEFAULT_PRICE_REQUEST } from '../../src/lib/price/index.js';
 import { ASK_BM25_OPTIONS, bm25Doc } from '../../functions/_lib/askTerms.js';
+import { SPARSE_PER_SOURCE, loadSparse, sparseSearch } from '../../functions/_lib/askSparse.js';
 import { scoreList, groundingChecks, summarise, gate, TOLERANCE } from './ask-eval-lib.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -102,7 +108,7 @@ export function destPassages(rows) {
     const lead = d.blurb || intro.short || '';
     const known = cats.length ? `Known for ${niceList(cats.slice(0, 6).map((c) => CAT_WORDS[c] || c.replace(/-/g, ' ')))}.` : '';
     const text = [`${city}, ${d.country || ''}.`, lead, known, d.guide?.text || ''].filter(Boolean).join(' ').slice(0, 300);
-    return [`dest:${d.id}`, d.id, text, { tags: cats, name: city }];
+    return [`dest:${d.id}`, d.id, text, { cc: d.iso2, tags: cats, name: city }];
   });
 }
 
@@ -123,6 +129,26 @@ async function denseFetch() {
     return existsSync(file) ? new Response(readFileSync(file)) : new Response(null, { status: 404 });
   } } };
   return (url) => onRequestGet({ request: new Request(`https://carta.test${url}`), env });
+}
+
+/** The server BM25 half of /api/ask alone, as a fetch (T1141); null where not built. */
+export function serverSparse(dir = pub('search/ask')) {
+  const mp = join(dir, 'manifest.json');
+  if (!existsSync(mp)) return null;
+  const m = J(mp);
+  const server = m.bm25?.server || {};
+  const srcs = Object.keys(server).filter((x) => m.sources?.[x] && existsSync(join(dir, server[x])));
+  if (!srcs.length) return null;
+  const loaded = srcs.map((x) => ({ name: x, index: loadSparse(readFileSync(join(dir, server[x]), 'utf8')), rows: J(join(dir, m.sources[x].passages)).rows }));
+  return async (url) => {
+    const u = new URL(url, 'https://carta.test');
+    const cc = new Set((u.searchParams.get('cc') || '').split(',').filter(Boolean));
+    const d = new Set((u.searchParams.get('d') || '').split(',').filter(Boolean));
+    const words = u.searchParams.get('b') || '';
+    const sparse = {};
+    for (const s of loaded) sparse[s.name] = sparseSearch(s.index, s.rows, words, { k: SPARSE_PER_SOURCE[s.name] || 10, cc, d });
+    return new Response(JSON.stringify({ hits: {}, sparse, lex: [] }));
+  };
 }
 
 const NONE = async () => new Response(null, { status: 404 });
@@ -182,7 +208,7 @@ async function runCase(c, retriever, env) {
 
 // ---- The run ----------------------------------------------------------------
 
-export async function runEval({ only = null, seedDrop = false, dump = null, set = J(SET_PATH) } = {}) {
+export async function runEval({ only = null, seedDrop = false, dump = null, set = J(SET_PATH), askDir = null } = {}) {
   const cat = loadCatalogue();
   const cats = await catalogs();
   const today = new Date(`${set.now}T12:00:00`);
@@ -198,11 +224,13 @@ export async function runEval({ only = null, seedDrop = false, dump = null, set 
   const byId = new Map(rows.map((p) => [p.id, p]));
   const sparse = sparseIndex(cat.rows);
   const dense = await denseFetch();
+  const server = serverSparse(askDir || undefined);
   const all = {
     rules: null,
     bm25: makeRetriever({ bm25: () => sparse.index, fetchImpl: NONE }),
     dense: dense && makeRetriever({ bm25: () => null, fetchImpl: dense, timeoutMs: 60000 }),
     hybrid: dense && makeRetriever({ bm25: () => sparse.index, fetchImpl: dense, timeoutMs: 60000 }),
+    sparse: server && makeRetriever({ bm25: () => sparse.index, fetchImpl: server, timeoutMs: 60000 }),
   };
   const retrievers = Object.keys(all).filter((r) => (r === 'rules' || all[r]) && (!only || only.includes(r)));
   const results = [];
@@ -228,7 +256,7 @@ export async function runEval({ only = null, seedDrop = false, dump = null, set 
 
 function printSummary(s) {
   const pct = (x) => (x == null ? '  -  ' : `${(x * 100).toFixed(1).padStart(5)}`);
-  console.log(`ask eval: ${s.n} questions (set v${s.set.version}), bm25 ${s.bm25}${s.skipped.length ? `, skipped ${s.skipped.join(', ')} (no dense index here)` : ''}${s.seedDrop ? ', SEEDED DROP' : ''}`);
+  console.log(`ask eval: ${s.n} questions (set v${s.set.version}), bm25 ${s.bm25}${s.skipped.length ? `, skipped ${s.skipped.join(', ')} (not built here)` : ''}${s.seedDrop ? ', SEEDED DROP' : ''}`);
   console.log('retriever  cases  r@5    r@10   hit@10 MRR    nDCG10 | list r@10 MRR  | grounding (checks)');
   for (const [r, v] of Object.entries(s.retrievers)) {
     console.log(`${r.padEnd(10)} ${String(v.cases).padStart(5)} ${pct(v['recall@5'])}  ${pct(v['recall@10'])}  ${pct(v['hit@10'])}  ${pct(v.mrr)}  ${pct(v['ndcg@10'])}  | ${pct(v.list?.['recall@10'])}  ${pct(v.list?.mrr)} | ${pct(v.grounding)} (${v.checks})`);
@@ -240,7 +268,7 @@ function printSummary(s) {
 async function main() {
   const only = arg('--only') ? arg('--only').split(',') : null;
   const dump = arg('--dump') ? arg('--dump').split(',') : null;
-  const { summary, results } = await runEval({ only, seedDrop: flag('--seed-drop'), dump });
+  const { summary, results } = await runEval({ only, seedDrop: flag('--seed-drop'), dump, askDir: arg('--ask-dir') ? resolve(arg('--ask-dir')) : null });
   printSummary(summary);
   for (const r of results) for (const [k, v] of Object.entries(r.by)) if (v.notes) console.log(`${k} ${r.id} "${r.q}"\n  ${v.notes.join('\n  ')}`);
   if (flag('--verbose')) {

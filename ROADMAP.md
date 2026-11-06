@@ -755,7 +755,7 @@ docs/
 | ID | Question | Starting points | Timebox | Output |
 |---|---|---|---|---|
 | E-R1 | How do strong teams evaluate RAG end to end? | RAGAS, DeepEval, promptfoo docs; BEIR benchmark paper; recall@k, MRR, nDCG definitions | 1 day | Metric set and thresholds for E1 |
-| E-R2 | Does a reranker pay off at Carta's scale and latency budget? | Workers AI reranker models, cross-encoder basics (Sentence-Transformers docs), MTEB reranking leaderboard | 1 day | Go or no-go and model for E2 |
+| E-R2 | Does a reranker pay off at Carta's scale and latency budget? | Workers AI reranker models, cross-encoder basics (Sentence-Transformers docs), MTEB reranking leaderboard | 1 day | Go or no-go and model for E2. **Answered** by T1141 (2026-11-06): no-go for now (the one Workers AI reranker is English and Chinese only; the weak questions turn on facts a text reranker cannot see); live check is owner step T1141-a |
 | E-R3 | Which models, hosted where, answer Carta's questions best per euro, today and at 1,000, 10,000 and 100,000 monthly users? | Open-weight models (Qwen, Llama, Mistral, Gemma families) on Cloudflare Workers AI, llama.cpp and vLLM docs, Hetzner CPU and GPU server specs and prices, EU-hosted inference providers, the Gemini and Workers AI price pages, the E1 eval set | 2 days | Cost and quality table per option and a switch point for each AI feature (E7). **Done** by T1135 (2026-11-06): `docs/research/E-R3-models-and-hosting.md`; prices to verify (T1135-a), quality to measure on E1 (T1135-b) |
 
 ### Items
@@ -763,7 +763,7 @@ docs/
 | ID | Item | Done when | Size | Phase | Status |
 |---|---|---|---|---|---|
 | E1 | Ask eval gate | 200 labelled queries, metrics per retriever, gate in CI | M | P3 | done (T1136; dense and hybrid baseline open, T1136-a) |
-| E2 | Retrieval upgrades | BM25 everywhere, reranker kept only if it wins, index built on the box | M | P4 | todo |
+| E2 | Retrieval upgrades | BM25 everywhere, reranker kept only if it wins, index built on the box | M | P4 | in progress (T1141: English BM25 query in six languages, server BM25 over beaches, lakes and peaks, rules and BM25 fused by reciprocal rank; E1 bm25 recall@10 0.569 to 0.576, MRR 0.802 to 0.838, own list recall@10 0.323 to 0.413; reranker no-go (E-R2) pending the owner's live check T1141-a; contextual passages and the staleness check open, T1141-c and T1141-d) |
 | E3 | One guardrail module | Same input, output and failure rules in every LLM function; injection set in CI | M | P3 | in progress (T1137: every model call goes through `aiModels` (Edge Functions and Ask) or `pipeline/ai_gateway.py` (batch jobs), provider and chain are config, one failure rule and refusal shape, suggest-city guarded, 75-attack set in the `ai-guard` workflow, a grep test fails on any direct provider call. Open: PII scrub, number tracing, banned terms, the rule-based or cached fallback, T1137-a to T1137-h) |
 | E4 | LLM observability | Every call in `ai_model_events`; admin cost and latency panel; Ask query logs | S | P4 | todo |
 | E5 | Prompt registry | Prompts versioned in files; a bump runs its eval | S | P4 | todo |
