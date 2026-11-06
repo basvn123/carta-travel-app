@@ -46,6 +46,7 @@ import {
 } from '../../_lib/aiGuard.js';
 import { createLimiter, overLimit, methodNotAllowed } from '../../_lib/guard.js';
 import { AI_FEATURES, modelAccess, callModel, neuronPrice } from '../../_lib/aiModels.js';
+import { hashQuery } from '../../_lib/aiEvents.mjs';
 
 /** The free allowance is 10,000 Neurons a day (00:00 UTC); stop well short. */
 export const CAP = 9000;
@@ -129,6 +130,8 @@ export async function onRequestPost({ request, env, waitUntil }) {
 
   const ai = await callModel({
     feature: 'ask', env, binding: env.AI, system, user,
+    // The event keeps a salted hash of the question, never its text (T1139, E4).
+    queryHash: await hashQuery(input.question, env.AI_EVENTS_SALT || 'carta-ask'), waitUntil,
     stream: true, temperature: 0.2, maxOutputTokens: MAX_ANSWER_TOKENS,
   });
   // Every model's budget spent reads as the cap (the app keeps its facts answer).

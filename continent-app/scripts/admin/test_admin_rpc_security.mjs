@@ -911,6 +911,27 @@ function runTests(bin) {
       fplain.out.trim() || fplain.err.trim());
     psql(bin, TEST_DB, ['-c', 'delete from public.funnel_counts; delete from public.funnel_daily_total']);
 
+    // 11c. The model-call weekly view (071, T1139): p50, p95, failure counts and cost
+    //      per feature, admin only, and the 028 fallback report ignores call rows.
+    console.log('');
+    console.log('  admin_ai_calls_weekly (071):');
+    psql(bin, TEST_DB, ['-c', `delete from public.ai_model_events where kind = 'call';
+      insert into public.ai_model_events (kind, feature, provider, model, latency_ms, outcome, tokens_in, tokens_out, cost_usd)
+      select 'call', 'plan-day', 'gemini', 'm', g * 1000, case when g = 10 then 'failed' else 'ok' end, 100, 50, 0.01
+        from generate_series(1, 10) g`]);
+    const aw = adminCall('select public.admin_ai_calls_weekly(2)');
+    const awf = aw.weeks?.[0]?.features?.find((f) => f.feature === 'plan-day') || {};
+    check('the weekly view counts calls and failures per feature', awf.calls === 10 && awf.failed === 1, JSON.stringify(aw));
+    check('the weekly view computes p50 (5,500 ms) and p95 (9,550 ms)', Number(awf.p50) === 5500 && Number(awf.p95) === 9550, JSON.stringify(awf));
+    check('the weekly view sums the cost estimate', Math.abs(Number(awf.costUsd) - 0.1) < 1e-9, JSON.stringify(awf));
+    const awplain = psqlRun(bin, TEST_DB, ['-At', '-c', 'set role authenticated', '-c', claimsSql(plainClaims),
+      '-c', 'select public.admin_ai_calls_weekly(2)::text']);
+    check('a normal signed-in user gets forbidden from the weekly view', refused({ ok: awplain.ok, out: awplain.out.trim() }),
+      awplain.out.trim() || awplain.err.trim());
+    const fb = adminCall('select public.admin_ai_model_report(30)');
+    check('the fallback report (028) does not count call rows', Number(fb.totalFallbacks) === 0 && !fb.byModel?.m, JSON.stringify(fb));
+    psql(bin, TEST_DB, ['-c', `delete from public.ai_model_events where kind = 'call'`]);
+
     // ---------------------------------------------------------------------
     // 12. The upload decision (061, T1070): publishing needs the server
     //     privacy pass, a decline needs a ground and a statement of reasons,

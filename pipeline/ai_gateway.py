@@ -370,7 +370,10 @@ class Gateway:
     res = gw.call(user, system=SYSTEM, json=True, screen=[extract, ...])
     """
 
-    def __init__(self, feature, models=None, env=None, opener=None, clock=None, sleep=None, min_interval_s=None):
+    def __init__(self, feature, models=None, env=None, opener=None, clock=None, sleep=None, min_interval_s=None,
+                 event_sink=None):
+        self.events = []
+        self._event_sink = event_sink
         self.env = os.environ if env is None else env
         self.cfg = resolve_config(feature, self.env, models)
         if self.cfg["error"]:
@@ -395,9 +398,50 @@ class Gateway:
                 self._sleep(wait)
         self._last = self._clock()
 
-    def call(self, user, *, system="", json=False, schema=None, search=False, temperature=0.2,
-             max_tokens=8192, screen=None):
-        """One call under the rules in the module docstring. Returns AIResult or raises AIRefusal."""
+    def call(self, user, **kw):
+        """One call under the rules in the module docstring. Returns AIResult or raises AIRefusal.
+        Every call, answered or refused, leaves one privacy safe event in self.events (T1139, E4):
+        names and counts only, never prompt or answer text. AI_EVENTS_JSONL=<path> appends it to a file."""
+        t0 = self._clock()
+        chars = len(kw.get("system") or "") + len(user or "")
+        try:
+            res = self._call(user, **kw)
+        except AIRefusal as exc:
+            self._emit(None, chars, t0, exc)
+            raise
+        self._emit(res, chars, t0, None)
+        return res
+
+    def _emit(self, res, chars, t0, exc):
+        usage = (res.usage if res else None) or {}
+        refused = exc is not None and exc.code in ("config", "no_ai", "too_big", "unsafe")
+        ev = {
+            "feature": self.feature, "provider": self.provider,
+            "model": res.model if res else self.models[0],
+            "prompt_id": None, "prompt_version": None,
+            "tokens_in": usage.get("in") if usage else -(-chars // 4),
+            "tokens_out": usage.get("out") if usage else None,
+            "tokens_estimated": not usage,
+            "latency_ms": max(0, round((self._clock() - t0) * 1000)),
+            "outcome": ("fallback" if res.fell_back else "ok") if res else ("refused" if refused else "failed"),
+            "code": exc.code if exc else None,
+            "attempts": len(res.attempts if res else getattr(exc, "attempts", None) or []),
+            "fell_back": bool(res and res.fell_back), "query_hash": None,
+        }
+        self.events.append(ev)
+        path = self._event_sink or self.env.get("AI_EVENTS_JSONL")
+        try:
+            if callable(path):
+                path(ev)
+            elif path:
+                import json as _json
+                with open(path, "a", encoding="utf-8") as fh:
+                    fh.write(_json.dumps(ev) + "\n")
+        except (OSError, TypeError, ValueError):
+            pass
+
+    def _call(self, user, *, system="", json=False, schema=None, search=False, temperature=0.2,
+              max_tokens=8192, screen=None):
         cfg = self.cfg
         if search and self.provider != "gemini":
             raise AIRefusal("ai_error", "search_unsupported")

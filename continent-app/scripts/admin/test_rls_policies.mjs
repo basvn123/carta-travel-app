@@ -1256,6 +1256,29 @@ function runTests(bin) {
       check(`funnel_counts: ${who} cannot write a count directly`, !forge.ok, describe(forge));
     }
 
+    // 4d2. Call events of 071 (T1139, E4): the table the gateway writes, only the
+    //      service role writes it, and nobody else reads a row.
+    console.log('');
+    console.log('  ai_model_events call rows stay closed (071):');
+    // Supabase's service_role has BYPASSRLS; the stub role does not. Give it the real posture for this block.
+    runAs('db', 'alter role service_role bypassrls');
+    check('the service role writes a call row', runAs('service', `insert into public.ai_model_events (kind, feature, provider, model, latency_ms, outcome) values ('call', 'ask', 'workers-ai', 'm', 120, 'ok')`).ok);
+    for (const who of ['victim', 'plain', 'anon']) {
+      const read = runAs(who, 'select count(*) from public.ai_model_events');
+      check(`ai_model_events: ${who} reads none of the rows`, (read.ok && read.out === '0') || denied(read), describe(read));
+      const forge = runAs(who, `insert into public.ai_model_events (kind, feature, provider, model, latency_ms, outcome) values ('call', 'ask', 'x', 'm', 1, 'ok')`);
+      check(`ai_model_events: ${who} cannot write a row`, !forge.ok, describe(forge));
+    }
+    check('a call row cannot carry a user id', !runAs('service', `insert into public.ai_model_events (kind, feature, provider, model, latency_ms, outcome, user_id) values ('call', 'ask', 'p', 'm', 1, 'ok', gen_random_uuid())`).ok);
+    check('a query hash must be 64 hex characters', !runAs('service', `insert into public.ai_model_events (kind, feature, provider, model, latency_ms, outcome, query_hash) values ('call', 'ask', 'p', 'm', 1, 'ok', 'what is the best lake')`).ok);
+    check('ai_events_prune is not callable by a traveller', !runAs('victim', 'select public.ai_events_prune()').ok);
+    check('ai_events_prune deletes call rows older than 30 days and keeps newer ones', (() => {
+      runAs('db', `insert into public.ai_model_events (kind, feature, provider, model, latency_ms, outcome, created_at) values ('call', 'ask', 'p', 'old', 1, 'ok', now() - interval '31 days'), ('call', 'ask', 'p', 'new', 1, 'ok', now() - interval '29 days')`);
+      runAs('service', 'select public.ai_events_prune()');
+      return runAs('db', `select string_agg(model, ',') from public.ai_model_events where model in ('old', 'new')`).out === 'new';
+    })());
+    runAs('db', 'alter role service_role nobypassrls');
+
     // ---------------------------------------------------------------------
     // 4e. The upload path (061, T1070): the storage policies, the RPCs, the
     //     account folder and the sweep, end to end against the stubbed
