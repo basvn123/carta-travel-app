@@ -378,3 +378,6 @@ a.ac-row:focus-visible, .ac-row.btn:focus-visible { outline: 2px solid var(--foc
 @media (prefers-reduced-motion: reduce) {
   .ac-rail-a, .ac-row-chev { transition: none; }
 }
+
+/* T1118: what Carta keeps, and for how long (the plain Article 30 lines). */
+.ac-keep-list { margin: 0; padding-left: 1.1em; display: grid; gap: var(--space-1); }

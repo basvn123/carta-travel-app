@@ -490,7 +490,7 @@ docs/
 | C6 | Supply chain | Lockfiles enforced, `npm audit`, `pip-audit`, OSV in CI, Renovate or Dependabot, GitHub Actions pinned to SHAs, SBOM per release | S | P3 | done (T1080; gates on since T1088, first CI run unverified: T1080-c) |
 | C7 | Static analysis | Semgrep or CodeQL on every PR, findings triaged to zero high | S | P3 | todo |
 | C8 | AI security | OWASP LLM Top 10 mapped to Carta; guardrail module (E3) covers injection, output handling, excessive agency, data leakage; injection set in CI | M | P3 | todo |
-| C9 | Privacy and GDPR | Data map (what personal data, where, how long), retention jobs, export and delete tested end to end, Article 30 current, a light DPIA for AI features | M | P3 | todo |
+| C9 | Privacy and GDPR | Data map (what personal data, where, how long), retention jobs, export and delete tested end to end, Article 30 current, a light DPIA for AI features | M | P3 | partly done (T1118: Article 30 current with a retention line per table, 069 retention sweep, export schema 4 and erase trigger tested end to end; legal review, paste and the AI DPIA open) |
 | C10 | Security testing | ZAP baseline scan in CI against preview deploys; full ASVS L2 checklist walked and recorded | M | P4 | todo |
 | C11 | External check and disclosure | `SECURITY.md`, `security.txt`, incident response for security events; an outside review or a structured self-pentest, then retest | M | P4 | todo |
 
