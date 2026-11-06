@@ -32,6 +32,7 @@
 import {
   prerenderKey, cardKey, sitemapKey, spliceShell, pageIsNoindex,
 } from '../src/lib/prerenderShell.js';
+import { withTracking } from './_lib/track.js';
 
 const HTML = 'text/html; charset=utf-8';
 
@@ -70,7 +71,7 @@ async function serveSitemap(env, key, method, next) {
   });
 }
 
-export async function onRequest(context) {
+async function handle(context) {
   const { request, env, next } = context;
   if (request.method !== 'GET' && request.method !== 'HEAD') return next();
   const url = new URL(request.url);
@@ -112,3 +113,5 @@ export async function onRequest(context) {
   if (pageIsNoindex(page)) headers.set('x-robots-tag', 'noindex, follow');
   return new Response(request.method === 'HEAD' ? null : html, { status: 200, headers });
 }
+
+export const onRequest = withTracking('prerender', handle, { fallback: (c) => c.next() });

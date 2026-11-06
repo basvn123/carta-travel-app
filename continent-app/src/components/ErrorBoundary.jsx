@@ -4,6 +4,7 @@ import { ErrorBlock } from './StateBlocks.jsx';
 import { tOutsideProvider as tr } from '../i18n/index.jsx';
 import { reportClientCrash } from '../planner/edgeFailure.js';
 import { maybeThrowSeeded } from '../lib/seedError.js';
+import { captureError } from '../lib/errorReporter.js';
 
 // Signatures browsers use when a dynamically-imported chunk can't be fetched, // almost always a stale bundle after a redeploy. Safari: "Importing a module
 // script failed."; Chrome: "Failed to fetch dynamically imported module";
@@ -61,6 +62,7 @@ export class ErrorBoundary extends React.Component {
     // traveller sees it, the way the AI wrappers record a failed call (T071).
     // Fire and forget, never throws; nothing about the error itself is sent.
     reportClientCrash();
+    captureError(error, { source: 'boundary', name: 'app' });
   }
 
   render() {
@@ -120,7 +122,10 @@ export class SectionBoundary extends React.Component {
 
   componentDidCatch(error, info) {
     console.error(`Section crashed (${this.props.name || 'unnamed'}):`, error, info?.componentStack);
-    if (!isChunkLoadError(error)) reportClientCrash();
+    if (!isChunkLoadError(error)) {
+      reportClientCrash();
+      captureError(error, { source: 'boundary', name: this.props.name || 'unnamed' });
+    }
   }
 
   componentDidUpdate(prev) {

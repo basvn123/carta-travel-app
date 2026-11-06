@@ -19,6 +19,7 @@
  */
 import { searchDay } from '../../workers/shared/flightSearch.mjs';
 import { fail, methodNotAllowed, createLimiter, overLimit, rateRefusal, parseFlightQuery } from '../_lib/guard.js';
+import { withTracking } from '../_lib/track.js';
 
 const EDGE_HOLD = 3600;
 const BROWSER_HOLD = 600;
@@ -28,7 +29,7 @@ const limiter = createLimiter({ max: 20 });
 
 export const onRequest = () => methodNotAllowed('GET');
 
-export async function onRequestGet({ request, env, waitUntil }) {
+async function handleGet({ request, env, waitUntil }) {
   const parsed = parseFlightQuery(new URL(request.url).searchParams);
   if (!parsed) return fail(400, 'bad_request');
   const { o, d, date } = parsed;
@@ -57,3 +58,5 @@ export async function onRequestGet({ request, env, waitUntil }) {
   waitUntil(cache.put(key, res.clone()));
   return res;
 }
+
+export const onRequestGet = withTracking('api/flights', handleGet);
