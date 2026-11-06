@@ -93,7 +93,7 @@ test('?cc=umber renders the variant in its bands, every figure still in the rows
   assert.equal((html.match(/data-tile="/g) || []).length, 4);
   assert.match(html, /ccu-per/, 'the per person line under a group total');
   assert.equal((html.match(/btn-primary/g) || []).length, 1, 'one primary action in the foot strip');
-  assert.doesNotMatch(html, /[–—]/, 'no em or en dashes');
+  assert.doesNotMatch(html, /[\u2013\u2014]/, 'no em or en dashes');
 });
 
 // Contrast from the tokens themselves (as scripts/ci/token-contrast.mjs does).
