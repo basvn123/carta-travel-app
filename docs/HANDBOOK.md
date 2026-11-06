@@ -2509,6 +2509,24 @@ This section covers the parts of Carta that sit around the travel content: the A
 
 **Limits.** Signed out, trips kept from the trip finder stay on the device only; signed in they sync once migration 065 is live (T1104). The paywall's device gates can be bypassed with devtools by design (usePaywall.jsx comment). Not found in code: any server-side cap on the number of account trips.
 
+### Taste profile with validation
+
+**What it does.** On My trips, Your Europe tab, a "Your taste" card shows the interests Carta reads from the traveller's own saves, trips and filters, as chips on the Carta travel taxonomy (T1149, five facets). Each chip says what it rests on ("2 trips, 1 saved place", then up to three names) and has a Yes and a Not me. Yes keeps the chip first and shown while any evidence remains; Not me hides it under "Hidden (n)", where Show again takes it back, and turns it into a negative. Start over clears every verdict. ROADMAP F3, T1152.
+
+**How it works.**
+- Evidence items (`lib/taste/profile.js` `evidenceItems`): a saved place (its app_data `categories` and `tags`), a saved trail, beach, lake, mountain or cycle route (one node by kind), a trip (account trips, the device trip, trips kept from the trip finder: the nodes of all its places), and a filter (the taste likes and Explore trip kinds stored in `continent.state.v1`). Tags reach nodes through `lib/taste/taxonomyMap.js`, generated from `pipeline/taxonomy/carta_taxonomy.yaml` and `mapping.yaml` by `continent-app/scripts/taste/build_taxonomy_map.py` (tests fail when it is stale).
+- Score per node: weight `WEIGHT` trip 3, save 1, filter 0.5, decayed with half life `HALF_LIFE_DAYS` 180 days (30 for filters); then the lift against the share of catalogue places with the node, smoothed with `ALPHA` 3: `((E_t + 3 p_t) / (E + 3)) / p_t`.
+- A chip shows when lift is at least `MIN_LIFT` 1.5, evidence at least `MIN_EVIDENCE` 2, on at least `MIN_ITEMS` 3 items (`MIN_ITEMS_WITH_TRIP` 2 when one is a trip). At most `SHOWN` 6, `PER_FACET` 2 per facet first, "n more" opens up to `SHOWN_MAX` 12. A node is dropped when a narrower node is shown on as many items.
+- A rejected node's children need twice the bar. `tasteWeights()` gives a ranker +1 per accepted and `REJECT_WEIGHT` -3 per rejected node; no ranker reads it yet (T1152-c).
+- Verdicts live in `carta.taste.v1` (`lib/taste/store.js`, one of the traveller's things in `lib/deviceData.js`). Signed in, `lib/taste/sync.js` keeps them in `account_things` under kind `taste` (one row per node, a tombstone when taken back, newest wins) plus a `_profile` row with the shown chips and their evidence counts (no place names), 1.5 s after a change and when the card opens. A device that last synced another account drops that account's verdicts first. Without migration 072 the upsert fails with 23514 and the taste sync turns off for the page load; the other kinds keep syncing.
+- Acceptance rate without cookies or ids (`lib/taste/counts.js`): RPC `taste_tick(event, facet, pos)` into `taste_counts`, one integer per day per event (shown, accept, reject), facet and position bucket (1 to 3, 4 to 6, 7 on); `shown` once per chip per page load. `admin_taste_weekly(weeks)` reads it; `tasteWeeksView` gives acceptance (accept / decisions) and decision rate (decisions / shown). No admin card yet (T1152-d).
+
+**Data behind it.** `account_things` kind `taste` (065, widened by 072), `taste_counts` and `taste_daily_total` (072). In the GDPR export as `accountThings`; deleted with the account (cascade). docs/legal/ARTICLE30.md rows 13d and 20.
+
+**Where it lives.** `continent-app/src/lib/taste/` (profile.js, store.js, sync.js, counts.js, taxonomyMap.js), `continent-app/src/auth/mytrips/TasteChips.jsx`, `continent-app/src/styles/71-taste.css`, `supabase/migrations/072_taste_profile.sql`, `continent-app/tests/tasteProfile.test.mjs`, `continent-app/scripts/verify_taste_profile.mjs`.
+
+**Limits.** 94 of the 138 nodes it uses have English labels only, so other languages show those in English (T1149-c). The evidence is today's tags mapped to nodes, not the S66 tagger's. Weights and thresholds are starting values to tune once acceptance data exists.
+
 ### Together, sharing and collaborative trips
 
 **What it does.** Travellers can share a trip by link, invite friends to plan a trip with them, see what friends choose to show, ask to join a friend's trip, decide a group trip by voting on dates and places, share saved lists, and split costs. The Together page gathers all of this and counts only what waits on you.
