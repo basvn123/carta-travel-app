@@ -11,10 +11,19 @@ repository and fails on any direct call.
 Config. Each job is a feature in FEATURES. The environment overrides it, so a
 switch of provider or model is a config change:
 
-    AI_<FEATURE>_PROVIDER   gemini | workers-ai | openai | ollama
+    AI_<FEATURE>_PROVIDER   gemini | workers-ai | openai | ollama | box
     AI_<FEATURE>_MODELS     comma-separated chain, first model first
     AI_<FEATURE>_BASE_URL   openai and ollama: the server (llama.cpp on the
                             build box, Scaleway, OVHcloud, Mistral, Ollama)
+
+The box (T1138, ROADMAP E7): provider "box" is the llama.cpp server on the
+build box's CPU (OpenAI-compatible, AI_BOX_BASE_URL, default
+http://localhost:8080/v1, model BOX_MODEL). Only a batch job listed in
+BOX_PASSED may select it: that table records the job's eval score on the box
+model. AI_BOX_EVAL_RUN=1 lifts the rule for the eval run itself. The live
+traveller features are not in this module, so this cannot move them; their
+strategy and switch triggers are continent-app/config/ai_models.json and
+docs/ai/model-strategy.md.
 
 Keys: GEMINI_API_KEY; CF_ACCOUNT_ID and CF_AI_TOKEN for Workers AI;
 AI_OPENAI_API_KEY for an OpenAI-compatible server that needs one. A job's
@@ -51,7 +60,7 @@ from dataclasses import dataclass, field
 
 AI_GATEWAY_VERSION = 1
 
-PROVIDERS = ("gemini", "workers-ai", "openai", "ollama")
+PROVIDERS = ("gemini", "workers-ai", "openai", "ollama", "box")
 
 AI_CODES = {
     "no_ai": 503, "config": 503, "unsafe": 400, "too_big": 400,
@@ -75,13 +84,48 @@ FEATURES = {
                     min_s=10, retry_429_s=0, min_interval_s=0,
                     max_prompt_chars=4_000, max_output_chars=20_000,
                     base_url="http://localhost:11434"),
+    # Planned batch jobs (E7, from E-R3): no caller yet. When F1 tagging,
+    # the D7 and D9 summaries or K14 blog drafts call a model, they call
+    # Gateway("tagging"), Gateway("summaries") or Gateway("blog").
+    "tagging": dict(provider="gemini", models=GEMINI_CHAIN, budget_s=600, first_s=120, later_s=120,
+                    min_s=10, retry_429_s=30, min_interval_s=6.5,
+                    max_prompt_chars=20_000, max_output_chars=20_000),
+    "summaries": dict(provider="gemini", models=GEMINI_CHAIN, budget_s=600, first_s=120, later_s=120,
+                      min_s=10, retry_429_s=30, min_interval_s=6.5,
+                      max_prompt_chars=40_000, max_output_chars=40_000),
+    "blog": dict(provider="gemini", models=GEMINI_CHAIN, budget_s=900, first_s=300, later_s=300,
+                 min_s=20, retry_429_s=30, min_interval_s=6.5,
+                 max_prompt_chars=100_000, max_output_chars=100_000),
 }
+
+# The box (T1138, E7): llama.cpp's llama-server on the build box, CPU only.
+# E-R3 picked Qwen3-30B-A3B in 4-bit (about 18 GB, fits the CAX41's 32 GB);
+# its speed there is still to be measured (T1135-f).
+BOX_MODEL = "qwen3-30b-a3b-q4_k_m"
+BOX_BASE_URL = "http://localhost:8080/v1"
+# Batch jobs that passed their eval on the box model, and may select it.
+# One entry per job: the eval, its score, the threshold it passed, the model
+# and the date, copied from the owner's run (docs/ai/model-strategy.md,
+# "Moving a batch job to the box"). Empty until the first box run.
+# continent-app/config/ai_models.json mirrors it; tests/test_ai_model_strategy.py
+# fails when the two disagree.
+BOX_PASSED = {}
+# On the CPU an answer takes minutes, not seconds, and there is no quota:
+# longer waits, no 429 wait and no rate floor.
+def BOX_TIMING(base):
+    return {"budget_s": max(base["budget_s"], 3600), "first_s": max(base["first_s"], 1200),
+            "later_s": max(base["later_s"], 1200), "retry_429_s": 0, "min_interval_s": 0}
+
+
+# Jobs that can never run on the box: they need Google Search grounding.
+BOX_NEVER = {"parking": "needs Google Search grounding (search=True)"}
 
 DEFAULT_MODELS = {
     "gemini": GEMINI_CHAIN,
     "workers-ai": ["@cf/qwen/qwen3-30b-a3b-fp8"],
     "openai": [],
     "ollama": ["qwen3:4b"],
+    "box": [BOX_MODEL],
 }
 MAX_CHAIN = 6
 FORBIDDEN = re.compile(r"anthropic|claude", re.I)
@@ -139,17 +183,26 @@ def resolve_config(feature, env=None, models=None):
         chain = list(base["models"])
     else:
         chain = list(DEFAULT_MODELS.get(provider, []))
-    base_url = str(env.get(f"{pre}_BASE_URL") or (base.get("base_url") if provider == base["provider"] else "")
-                   or env.get("AI_OPENAI_BASE_URL") or "").strip().rstrip("/")
+    if provider == "box":
+        base_url = str(env.get(f"{pre}_BASE_URL") or env.get("AI_BOX_BASE_URL") or BOX_BASE_URL).strip().rstrip("/")
+    else:
+        base_url = str(env.get(f"{pre}_BASE_URL") or (base.get("base_url") if provider == base["provider"] else "")
+                       or env.get("AI_OPENAI_BASE_URL") or "").strip().rstrip("/")
     cfg = {**base, "feature": feature, "provider": provider, "models": chain, "base_url": base_url, "error": None}
+    if provider == "box":
+        cfg.update(BOX_TIMING(base))
     if provider not in PROVIDERS:
         cfg["error"] = "unknown_provider"
     elif not chain:
         cfg["error"] = "no_models"
-    elif provider in ("openai", "ollama") and not re.match(r"^https?://[^/\s]+", base_url):
+    elif provider in ("openai", "ollama", "box") and not re.match(r"^https?://[^/\s]+", base_url):
         cfg["error"] = "no_base_url"
-    elif provider == "openai" and base_url.startswith("http://") and not re.match(r"^http://(localhost|127\.0\.0\.1)[:/]", base_url):
+    elif provider in ("openai", "box") and base_url.startswith("http://") and not re.match(r"^http://(localhost|127\.0\.0\.1)[:/]", base_url):
         cfg["error"] = "no_base_url"  # plain http only to a server on this machine
+    elif provider == "box" and feature in BOX_NEVER:
+        cfg["error"] = "box_unsupported"
+    elif provider == "box" and feature not in BOX_PASSED and str(env.get("AI_BOX_EVAL_RUN") or "") != "1":
+        cfg["error"] = "box_not_passed"  # the job has not passed its eval on the box model
     if FORBIDDEN.search(provider) or any(FORBIDDEN.search(m) for m in chain) or FORBIDDEN.search(base_url):
         cfg["error"] = "claude_api_forbidden"
     return cfg
@@ -354,12 +407,13 @@ def _ollama(cfg, env, req, model, timeout_s, opener):
     return str(data.get("response") or ""), [], {"in": data.get("prompt_eval_count", 0), "out": data.get("eval_count", 0)}, data
 
 
-ADAPTERS = {"gemini": _gemini, "workers-ai": _workers, "openai": _openai, "ollama": _ollama}
+ADAPTERS = {"gemini": _gemini, "workers-ai": _workers, "openai": _openai, "ollama": _ollama, "box": _openai}
 READY = {
     "gemini": lambda env: bool(env.get("GEMINI_API_KEY")),
     "workers-ai": lambda env: bool(env.get("CF_ACCOUNT_ID") and env.get("CF_AI_TOKEN")),
     "openai": lambda env: True,  # a local llama.cpp server needs no key
     "ollama": lambda env: True,
+    "box": lambda env: True,  # llama-server on the box needs no key
 }
 
 
