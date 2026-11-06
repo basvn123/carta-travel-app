@@ -72,7 +72,7 @@
 .tday-panel.is-open {
   grid-template-rows: 1fr;
   visibility: visible;
-  transition: grid-template-rows .22s ease, visibility 0s;
+  transition: grid-template-rows var(--dur-2) var(--ease-in-out), visibility 0s;
 }
 @media (prefers-reduced-motion: reduce) {
   .tday-panel.is-open { transition: none; }

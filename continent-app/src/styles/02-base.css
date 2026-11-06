@@ -61,7 +61,7 @@ input, select {
     input[type="radio"]):active:not(:disabled):not([aria-disabled="true"]) {
   opacity: 0.78;
   scale: 0.98;
-  transition-duration: 0.06s;
+  transition-duration: var(--dur-1);
 }
 @media (prefers-reduced-motion: reduce) {
   :is(button, a[href], summary, label, [role="button"], [role="tab"], [role="switch"],

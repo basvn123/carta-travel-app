@@ -215,7 +215,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
 @media (hover: hover) {
   .account-faq-q:hover { color: var(--accent); }
 }
-.account-faq-chev { flex: none; color: var(--ink-mute); transition: transform .15s; }
+.account-faq-chev { flex: none; color: var(--ink-mute); transition: transform var(--dur-1); }
 .account-faq-item.open .account-faq-chev { transform: rotate(180deg); }
 .account-faq-a {
   padding: 0 2px 16px;

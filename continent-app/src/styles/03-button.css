@@ -76,7 +76,7 @@
   border-radius: var(--radius-pill);
   border: 2px solid currentColor;
   border-right-color: transparent;
-  animation: btn-spin 800ms linear infinite;
+  animation: btn-spin var(--dur-spin) linear infinite;
 }
 @keyframes btn-spin { to { transform: rotate(360deg); } }
 

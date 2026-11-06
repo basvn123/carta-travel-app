@@ -124,7 +124,7 @@
 
 .flt-row.is-loading .flt-meta,
 .flt-row.is-none .flt-meta { white-space: normal; }
-.flt-row.is-loading .flt-mark-empty { animation: flt-breathe var(--dur-3, 400ms) ease-out infinite alternate; }
+.flt-row.is-loading .flt-mark-empty { animation: flt-breathe var(--dur-3, 400ms) var(--ease-out) infinite alternate; }
 @keyframes flt-breathe { from { opacity: 0.55; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) {
   .flt-row.is-loading .flt-mark-empty { animation: none; }

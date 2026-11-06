@@ -226,7 +226,7 @@
 /* Doubled class: the global rule's :is() list carries input[type=checkbox],
    one element more specific than a plain class chain. */
 .card.is-interactive .card-open.card-open:active { scale: none; opacity: 1; }
-.card.is-interactive:has(.card-open:active) { scale: 0.99; transition-duration: 0.06s; }
+.card.is-interactive:has(.card-open:active) { scale: 0.99; transition-duration: var(--dur-1); }
 @media (prefers-reduced-motion: reduce) {
   .card.is-interactive:has(.card-open:active) { scale: none; }
 }

@@ -18,6 +18,7 @@ import { byVotes, canRemoveItem, friendsToAdd } from '../../lib/sharedListModel.
 import { planFromSaves, cheapestStopDay } from '../../lib/savedPlan.js';
 import { CardMenu, Faces } from './parts.jsx';
 import { Empty } from './MyTripsTabs.jsx';
+import { scrollBehavior } from '../../lib/motion.js';
 import { SharedItem, PeoplePicker, facesOf } from './SharedList.jsx';
 
 const TripMap = lazy(() => import('../../map/TripMap.jsx').then((m) => ({ default: m.TripMap })));
@@ -283,7 +284,7 @@ export function SavedTab({
       if (!k) return;
       setActive(k);
       setView('list');
-      requestAnimationFrame(() => itemRefs.current.get(k)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }));
+      requestAnimationFrame(() => itemRefs.current.get(k)?.scrollIntoView({ block: 'nearest', behavior: scrollBehavior() }));
     },
   }), [points, mapLocale]);
 

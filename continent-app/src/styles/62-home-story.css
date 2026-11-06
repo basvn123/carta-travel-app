@@ -139,7 +139,7 @@
   pointer-events: none;
   opacity: 0;
 }
-.hm-compare.is-in .hm-row.is-carta .hm-row-track::after { animation: hm-sheen 1.4s var(--ease-out) 1.25s 1 both; }
+.hm-compare.is-in .hm-row.is-carta .hm-row-track::after { animation: hm-sheen var(--dur-breathe) var(--ease-out) 1 both; animation-delay: 1.25s; }
 @keyframes hm-sheen { 0% { opacity: 1; background-position: 120% 0; } 100% { opacity: 1; background-position: -60% 0; } }
 /* T1007 (row T1003-a): the bar's three parts only; unscoped, .is-food
    turned every element of that name on every page lagoon. */

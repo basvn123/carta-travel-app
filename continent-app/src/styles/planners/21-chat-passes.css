@@ -65,7 +65,7 @@
   stroke-linecap: round;
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
-  animation: rbs-draw 2800ms linear infinite;
+  animation: rbs-draw var(--dur-loop) linear infinite;
 }
 .rbs-line-text { min-width: 0; font-variant-numeric: tabular-nums; }
 @media (prefers-reduced-motion: reduce) {

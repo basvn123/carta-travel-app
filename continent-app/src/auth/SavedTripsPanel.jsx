@@ -57,6 +57,7 @@ import { SavedTab } from './mytrips/SavedTab.jsx';
 import { useSharedLists, MOCK_FRIENDS } from './sharedLists.js';
 import { sharedKeys } from '../lib/sharedListModel.js';
 import { useSavedLists, loadSavedLists, noteSaved, createList, setNote } from '../lib/savedLists.js';
+import { scrollBehavior } from '../lib/motion.js';
 import { TodayCard } from './mytrips/TodayCard.jsx';
 
 /**
@@ -553,7 +554,7 @@ export function SavedTripsPanel({
     if (opening) {
       requestAnimationFrame(() => requestAnimationFrame(() => {
         const el = document.getElementById(`tshare-${planId}`);
-        el?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        el?.scrollIntoView({ block: 'nearest', behavior: scrollBehavior() });
         el?.focus({ preventScroll: true });
       }));
     }

@@ -162,7 +162,7 @@
   line-height: 1;
   color: var(--ink);
   cursor: pointer;
-  transition: border-color .15s, background .15s;
+  transition: border-color var(--dur-1), background var(--dur-1);
 }
 @media (hover: hover) {
   .stay-tier-chip:hover { border-color: var(--ink-soft); }
@@ -246,7 +246,7 @@
   color: var(--accent);
   font-size: 11.5px;
   font-weight: 600;
-  transition: background .15s, color .15s;
+  transition: background var(--dur-1), color var(--dur-1);
 }
 @media (hover: hover) {
   .day-route-optimize:hover { background: var(--accent-bg); }
@@ -297,7 +297,7 @@
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
-  transition: border-color .15s, background .15s, color .15s;
+  transition: border-color var(--dur-1), background var(--dur-1), color var(--dur-1);
 }
 @media (hover: hover) {
   .day-action-btn:hover { border-color: var(--ink-soft); }
@@ -345,7 +345,7 @@
   font-weight: 600;
   text-align: left;
   cursor: pointer;
-  transition: background .12s;
+  transition: background var(--dur-1);
 }
 @media (hover: hover) {
   .day-export-item:hover { background: var(--paper-dim); }
@@ -368,7 +368,7 @@
 
 /* Timeline row <-> map pin sync: hovering a card lifts its pin on the map;
    tapping a pin scrolls to its card and rings it once. */
-.day-timeline-row .day-assigned-row { transition: border-color .15s, box-shadow .15s; }
+.day-timeline-row .day-assigned-row { transition: border-color var(--dur-1), box-shadow var(--dur-1); }
 @media (hover: hover) {
   .day-timeline-row:hover .day-assigned-row { border-color: var(--ink-soft); }
 }
@@ -559,7 +559,7 @@
   border-radius: var(--radius-control);
   background: var(--paper);
   overflow: hidden;
-  transition: border-color .15s, box-shadow .15s;
+  transition: border-color var(--dur-1), box-shadow var(--dur-1);
 }
 .day-stay-input {
   flex: 1;
@@ -632,7 +632,7 @@
   font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
-  transition: border-color .15s, color .15s;
+  transition: border-color var(--dur-1), color var(--dur-1);
 }
 @media (hover: hover) {
   .day-changeplaces-btn:hover { border-color: var(--accent); color: var(--accent); }
@@ -669,7 +669,7 @@
   font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
-  transition: opacity .15s;
+  transition: opacity var(--dur-1);
 }
 @media (hover: hover) {
   .day-carta-btn:hover { opacity: 0.85; }
@@ -701,7 +701,7 @@
   font-size: 12.5px;
   color: var(--accent);
   text-align: center;
-  transition: border-color .15s, background .15s;
+  transition: border-color var(--dur-1), background var(--dur-1);
 }
 @media (hover: hover) {
   .day-custom-add:hover:not(:disabled) { border-color: var(--accent); background: var(--accent-bg); }
@@ -720,7 +720,7 @@
   font-size: 11.5px;
   color: var(--accent);
   white-space: nowrap;
-  transition: background .15s, border-color .15s;
+  transition: background var(--dur-1), border-color var(--dur-1);
 }
 @media (hover: hover) {
   .day-idea-add:hover:not(:disabled) { background: var(--accent-bg); border-color: var(--accent); }

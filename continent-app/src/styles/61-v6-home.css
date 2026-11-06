@@ -168,7 +168,7 @@
 /* The slogan's words lift out of their own line once (T949), 40 ms apart;
    the accent ("cheap trip") is sun yellow, large type on the tinted film. */
 .hv-word { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.08em; margin-bottom: -0.08em; }
-.hv-word > span { display: inline-block; animation: hv-lift var(--dur-reveal) var(--ease-out) calc(var(--i, 0) * 40ms) both; }
+.hv-word > span { display: inline-block; animation: hv-lift var(--dur-reveal) var(--ease-out) calc(var(--i, 0) * var(--dur-1)) both; }
 .hv-em { color: var(--sun-400); }
 @keyframes hv-lift { from { transform: translateY(110%); } to { transform: none; } }
 .hv-sub {
@@ -177,7 +177,7 @@
   font-size: var(--text-lead);
   line-height: 1.5;
   text-wrap: pretty;
-  animation: hv-rise var(--dur-reveal) var(--ease-out) 80ms both;
+  animation: hv-rise var(--dur-reveal) var(--ease-out) var(--dur-1) both;
 }
 
 .hv-ask {
@@ -251,7 +251,7 @@
   width: 100%;
   max-width: 560px;
   margin-top: var(--space-2);
-  animation: hv-rise var(--dur-reveal) var(--ease-out) 160ms both;
+  animation: hv-rise var(--dur-reveal) var(--ease-out) var(--dur-1) both;
 }
 
 /* The boarding pass (T949): the one price every flight site shows. Two
@@ -267,7 +267,7 @@
   box-shadow: var(--elev-3);
   text-shadow: none;
   text-align: left;
-  animation: hv-rise var(--dur-reveal) var(--ease-out) 240ms both;
+  animation: hv-rise var(--dur-reveal) var(--ease-out) var(--dur-2) both;
 }
 .hv-pass-main { display: grid; gap: var(--space-1); min-width: 0; padding: var(--space-3) var(--space-4); }
 .hv-pass-route { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--space-3); font-size: var(--text-title); font-weight: 800; letter-spacing: 0.01em; }

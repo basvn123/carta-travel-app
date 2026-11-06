@@ -24,6 +24,7 @@ import { Journey } from './trip/Journey.jsx';
 import { TripTrace } from './trip/TripTrace.jsx';
 import { useSettings } from '../components/SettingsLine.jsx';
 import { useLifestyleParts } from './planHooks.js';
+import { scrollBehavior } from '../lib/motion.js';
 import { bookedCount, countdownText, shownTripName } from './trip/tripHead.js';
 
 
@@ -245,7 +246,7 @@ export function TripSummary({
     onTab?.(id);
     window.requestAnimationFrame(() => {
       const el = anchor ? document.getElementById(anchor) : document.getElementById(`${uid}-tabs`);
-      el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      el?.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
     });
   };
 

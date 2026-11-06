@@ -674,7 +674,7 @@
   background: var(--paper);
   overflow: hidden;
 }
-.rbs-node { opacity: 0; animation-duration: 2800ms; animation-timing-function: linear; animation-iteration-count: infinite; }
+.rbs-node { opacity: 0; animation-duration: var(--dur-loop); animation-timing-function: linear; animation-iteration-count: infinite; }
 @media (prefers-reduced-motion: reduce) {
   .rbs-node { opacity: 1; }
 }
@@ -3329,7 +3329,7 @@ color: var(--ink-soft);
 .dbot-card-f { display: flex; flex-wrap: wrap; gap: var(--space-2); padding: var(--space-2) var(--space-3); border-top: 1px solid var(--border-soft); }
 .dbot-nudges { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .dbot-acts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.dbot-dots i { width: 6px; height: 6px; border-radius: var(--radius-pill); background: var(--text-3); animation: dbot-blink 1s infinite; }
+.dbot-dots i { width: 6px; height: 6px; border-radius: var(--radius-pill); background: var(--text-3); animation: dbot-blink var(--dur-blink) infinite; }
 @media (prefers-reduced-motion: reduce) { .dbot-dots i { animation: none; opacity: 0.6; } }
 .dbot-form { display: flex; align-items: flex-end; gap: var(--space-2); padding: var(--space-1) var(--space-1) var(--space-1) var(--space-3); border: 1px solid var(--border); border-radius: var(--radius-card); background: var(--surface); }
 .dbot-form:focus-within { border-color: var(--select-border); outline: 1px solid var(--select-border); }
@@ -3679,7 +3679,7 @@ color: var(--ink-soft);
   box-shadow: var(--elev-2);
   transform: rotate(calc((var(--i) - 1) * 7deg));
   transition: transform var(--dur-3) var(--ease-out);
-  animation: pfh-deal var(--dur-4) var(--ease-out) calc(var(--i) * 70ms) backwards;
+  animation: pfh-deal var(--dur-4) var(--ease-out) calc(var(--i) * var(--dur-1)) backwards;
 }
 .pfh-door-img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .pfh-door-name { flex: 1; min-width: 0; font-size: var(--text-lead); font-weight: 700; letter-spacing: -0.015em; color: var(--surface); }
@@ -3704,7 +3704,7 @@ color: var(--ink-soft);
   height: 100%;
   object-fit: cover;
   transform-origin: 60% 40%;
-  animation: pfh-drift 24s ease-in-out infinite alternate;
+  animation: pfh-drift var(--dur-drift) var(--ease-in-out) infinite alternate;
 }
 .pfh .pfh-next-cd {
   position: absolute;
@@ -4353,7 +4353,7 @@ color: var(--ink-soft);
   .guide-when-card .guide-datemode button { padding-top: 6px; padding-bottom: 6px; }
   .guide-when-card .cal-inline .cal-weekday { padding-bottom: 2px; }
 }
-.trip-wizard-modal .guide-canvas { animation: wiz-in-fwd .3s cubic-bezier(0.25, 1, 0.5, 1); }
+.trip-wizard-modal .guide-canvas { animation: wiz-in-fwd var(--dur-3) var(--ease-out); }
 @media (prefers-reduced-motion: reduce) {
   .trip-wizard-modal .guide-canvas { animation: none; }
   .trip-wizard-modal .guide-canvas { transition: none; }

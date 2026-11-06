@@ -367,6 +367,15 @@
   --dur-4:        480ms;
   --ease-out:     cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out:  cubic-bezier(0.65, 0, 0.35, 1);
+  /* Ambient loops (T1124): spinners, breathing skeletons, pulses. Never an
+     entrance or a state change; a loop plays once under reduced motion. */
+  --dur-spin:     800ms;
+  --dur-blink:    1000ms;
+  --dur-dots:     1200ms;
+  --dur-breathe:  1600ms;
+  --dur-pulse:    2000ms;
+  --dur-loop:     2800ms;
+  --dur-drift:    24000ms;
 
   /* The home page (T606, owner decisions D4 to D6 of 2026-10-23, DESIGN.md
      "Home page exception v2"). Read only by src/styles/61-v6-home.css; no

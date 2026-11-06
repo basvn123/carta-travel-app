@@ -1035,7 +1035,7 @@ ul.pt-cells { list-style: none; margin: 0; padding: 0; }
    its ::after to the title, and a press begun on the photograph would miss
    it (the kit card's T428 fix, 04-ui.css). The card answers the press. */
 .spot .spot-hit.spot-hit:active { scale: none; opacity: 1; }
-.spot:has(.spot-hit:active) { scale: 0.99; transition-duration: 0.06s; }
+.spot:has(.spot-hit:active) { scale: 0.99; transition-duration: var(--dur-1); }
 .spot:has(.spot-hit:focus-visible) { box-shadow: 0 0 0 2px var(--focus); }
 .spot-meta { margin: 0; font-size: var(--text-caption); color: var(--text-2); }
 .spot-text {
