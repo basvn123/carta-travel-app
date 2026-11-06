@@ -1,0 +1,3519 @@
+# Carta travel taxonomy (T1149, ROADMAP F1 part 1). Hand-edited from here on.
+#
+# What it is: the one vocabulary for what a place, trail, beach, lake or
+# mountain offers, in five facets (activity, setting, vibe, traveller,
+# practical) and three levels below the facet root. It replaces, after S66
+# (T1150) tags the catalogue, the hand-built gem categories, the 20 vibe
+# scores and the 12 taste keys; pipeline/taxonomy/mapping.yaml translates
+# every tag in use today.
+#
+# Node fields (modelled on ESCO and SKOS, see docs/ai/taxonomy.md):
+#   id                    stable code `<facet prefix>.<slug>`; never reused, never renamed (deprecate instead)
+#   facet, level          facet root id; 0 for a root, 1 a group, 2 a tag, 3 a narrower tag
+#   parent, children      the broader node and the narrower nodes (children are kept in step by the test)
+#   label                 the preferred label in en, de, fr, es, it, nl; null where the app has no label yet
+#   label_source          where the six labels come from (an app i18n key, guided.json, or authored English)
+#   definition            one sentence: what the tag means (the labeller and the tagger read this)
+#   synonyms              alternative labels, English for now (ESCO altLabel)
+#   not_to_be_confused_with  sibling or near nodes a labeller mixes up with this one (scope note)
+#   applies_to            which items can carry it: place, trail, beach, lake, mountain
+#   source                text: inferred from passages by the tagger; data: set from a data field
+#                         by rule, never by the model; both: a data rule where the field exists, text elsewhere
+#   deprecated            optional; true keeps the id resolvable for old data
+
+schema: carta-taxonomy/1
+version: 1.0.0
+released: '2026-11-06'
+task: T1149
+languages: [en, de, fr, es, it, nl]
+facets:
+- {id: activity, prefix: act}
+- {id: setting, prefix: set}
+- {id: vibe, prefix: vibe}
+- {id: traveller, prefix: trav}
+- {id: practical, prefix: prac}
+nodes:
+- id: activity
+  facet: activity
+  level: 0
+  parent: null
+  children: [act.sightseeing, act.hiking, act.cycling, act.water, act.winter, act.adventure, act.food, act.wellness, act.nightlife, act.shopping, act.family-fun, act.nature-watching, act.touring]
+  label: {en: Activity, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: What a traveller does there.
+  synonyms:
+    en: []
+  not_to_be_confused_with: []
+  applies_to: [place, trail, beach, lake, mountain]
+  source: text
+- id: setting
+  facet: setting
+  level: 0
+  parent: null
+  children: [set.coast, set.island, set.mountains, set.freshwater, set.green, set.urban, set.heritage]
+  label: {en: Setting, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: The landscape, water, built fabric and heritage a traveller is in.
+  synonyms:
+    en: []
+  not_to_be_confused_with: []
+  applies_to: [place, trail, beach, lake, mountain]
+  source: text
+- id: vibe
+  facet: vibe
+  level: 0
+  parent: null
+  children: [vibe.atmosphere, vibe.scenery, vibe.pace, vibe.fame]
+  label: {en: Vibe, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: How the place or walk feels.
+  synonyms:
+    en: []
+  not_to_be_confused_with: []
+  applies_to: [place, trail, beach, lake, mountain]
+  source: text
+- id: traveller
+  facet: traveller
+  level: 0
+  parent: null
+  children: [trav.who, trav.style]
+  label: {en: Traveller, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Who it suits and in what style of travel.
+  synonyms:
+    en: []
+  not_to_be_confused_with: []
+  applies_to: [place, trail, beach, lake, mountain]
+  source: text
+- id: practical
+  facet: practical
+  level: 0
+  parent: null
+  children: [prac.access, prac.accessibility, prac.season, prac.cost, prac.difficulty, prac.route-shape, prac.facilities]
+  label: {en: Practical, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Access, season, cost, difficulty and facilities.
+  synonyms:
+    en: []
+  not_to_be_confused_with: []
+  applies_to: [place, trail, beach, lake, mountain]
+  source: both
+- id: act.sightseeing
+  facet: activity
+  level: 1
+  parent: activity
+  children: [act.museums, act.art, act.architecture, act.performing-arts, act.festivals, act.literary, act.pilgrimage, act.viewpoints]
+  label: {en: Sightseeing and culture, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Looking at buildings, collections, art and performances made by people.
+  synonyms:
+    en: [culture, sights]
+  not_to_be_confused_with: [set.heritage]
+  applies_to: [place]
+  source: text
+- id: act.museums
+  facet: activity
+  level: 2
+  parent: act.sightseeing
+  children: []
+  label: {en: Museums, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: One or more museums worth planning time for.
+  synonyms:
+    en: [museum, collections]
+  not_to_be_confused_with: [act.art]
+  applies_to: [place]
+  source: text
+- id: act.art
+  facet: activity
+  level: 2
+  parent: act.sightseeing
+  children: [act.street-art]
+  label: {en: Art, de: Kunst, fr: Art, es: Arte, it: Arte, nl: Kunst}
+  label_source: continent-app/src/i18n trip.themeArt
+  definition: 'Known for art: galleries, painters who lived there, an art scene.'
+  synonyms:
+    en: [art city, galleries, painters]
+  not_to_be_confused_with: [act.museums]
+  applies_to: [place]
+  source: text
+- id: act.street-art
+  facet: activity
+  level: 3
+  parent: act.art
+  children: []
+  label: {en: Street art, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Murals and street art worth walking for.
+  synonyms:
+    en: [murals, graffiti]
+  not_to_be_confused_with: []
+  applies_to: [place]
+  source: text
+- id: act.architecture
+  facet: activity
+  level: 2
+  parent: act.sightseeing
+  children: []
+  label: {en: Architecture, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Buildings a visitor comes for as architecture, old or new.
+  synonyms:
+    en: [design, buildings]
+  not_to_be_confused_with: [set.modern-architecture]
+  applies_to: [place]
+  source: text
+- id: act.performing-arts
+  facet: activity
+  level: 2
+  parent: act.sightseeing
+  children: []
+  label: {en: 'Theatre, opera and concerts', de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: 'Performances: theatre, opera, classical music, ballet.'
+  synonyms:
+    en: [opera, theatre, concerts, music]
+  not_to_be_confused_with: [act.live-music]
+  applies_to: [place]
+  source: text
+- id: act.festivals
+  facet: activity
+  level: 2
+  parent: act.sightseeing
+  children: []
+  label: {en: Festivals, de: Festivals, fr: Festivals, es: Festivales, it: Festival, nl: Festivals}
+  label_source: continent-app/src/i18n quiz.type.festivals
+  definition: A festival, carnival or event people travel for.
+  synonyms:
+    en: [carnival, events, fiesta]
+  not_to_be_confused_with: [act.performing-arts]
+  applies_to: [place]
+  source: text
+- id: act.literary
+  facet: activity
+  level: 2
+  parent: act.sightseeing
+  children: []
+  label: {en: Literary and film places, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Places tied to writers, books or films.
+  synonyms:
+    en: [literature, writers, film locations]
+  not_to_be_confused_with: []
+  applies_to: [place]
+  source: text
+- id: act.pilgrimage
+  facet: activity
+  level: 2
+  parent: act.sightseeing
+  children: []
+  label: {en: Pilgrim routes, de: Pilgerwege, fr: Chemins de pèlerinage, es: Rutas de peregrinación, it: Cammini, nl: Pelgrimsroutes}
+  label_source: continent-app/src/i18n journey.typePilgrim
+  definition: A pilgrimage destination or a pilgrim route.
+  synonyms:
+    en: [camino, pilgrim route, holy site]
+  not_to_be_confused_with: [set.religious]
+  applies_to: [place, trail]
+  source: text
+- id: act.viewpoints
+  facet: activity
+  level: 2
+  parent: act.sightseeing
+  children: []
+  label: {en: Viewpoint, de: Aussichtspunkt, fr: Point de vue, es: Mirador, it: Punto panoramico, nl: Uitzichtpunt}
+  label_source: continent-app/src/i18n dest.doKind.viewpoint
+  definition: A place to stand and look at a view, built or natural.
+  synonyms:
+    en: [lookout, panorama, belvedere]
+  not_to_be_confused_with: [vibe.views]
+  applies_to: [place, trail, lake, mountain]
+  source: text
+- id: act.hiking
+  facet: activity
+  level: 1
+  parent: activity
+  children: [act.easy-walk, act.day-hike, act.summit-hike, act.coastal-walk, act.long-distance-walk, act.trail-running, act.via-ferrata, act.mountaineering]
+  label: {en: Hiking, de: Wandern, fr: Randonnée, es: Senderismo, it: Escursionismo, nl: Wandelen}
+  label_source: continent-app/src/i18n quiz.type.hiking
+  definition: Walking on paths through landscape, from strolls to treks.
+  synonyms:
+    en: [walking, trekking, rambling]
+  not_to_be_confused_with: [act.trail-running]
+  applies_to: [place, trail, lake, mountain]
+  source: text
+- id: act.easy-walk
+  facet: activity
+  level: 2
+  parent: act.hiking
+  children: []
+  label: {en: Easy walks, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Short, gentle walks anyone can do.
+  synonyms:
+    en: [stroll, promenade, gentle walk]
+  not_to_be_confused_with: [act.day-hike]
+  applies_to: [place, trail, beach, lake]
+  source: text
+- id: act.day-hike
+  facet: activity
+  level: 2
+  parent: act.hiking
+  children: []
+  label: {en: Day hikes, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A walk of a few hours to a day on marked paths.
+  synonyms:
+    en: [day walk]
+  not_to_be_confused_with: [act.easy-walk]
+  applies_to: [place, trail]
+  source: text
+- id: act.summit-hike
+  facet: activity
+  level: 2
+  parent: act.hiking
+  children: []
+  label: {en: Summit hikes, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A walk whose goal is a summit.
+  synonyms:
+    en: [peak bagging, summit walk]
+  not_to_be_confused_with: [act.mountaineering]
+  applies_to: [trail, mountain]
+  source: text
+- id: act.coastal-walk
+  facet: activity
+  level: 2
+  parent: act.hiking
+  children: []
+  label: {en: Coastal walks, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A walk along the sea, on cliffs or beaches.
+  synonyms:
+    en: [coast path, cliff walk]
+  not_to_be_confused_with: [set.cliffs]
+  applies_to: [place, trail, beach]
+  source: text
+- id: act.long-distance-walk
+  facet: activity
+  level: 2
+  parent: act.hiking
+  children: [act.hut-to-hut]
+  label: {en: Long distance trails, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A trail walked over several days, stage by stage.
+  synonyms:
+    en: [thru-hike, long-distance path, GR route]
+  not_to_be_confused_with: [act.hut-to-hut]
+  applies_to: [place, trail]
+  source: text
+- id: act.hut-to-hut
+  facet: activity
+  level: 3
+  parent: act.long-distance-walk
+  children: []
+  label: {en: Hut to hut trekking, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Several days in the mountains, sleeping in huts.
+  synonyms:
+    en: [haute route, refuge trek]
+  not_to_be_confused_with: [set.mountain-hut]
+  applies_to: [place, trail, mountain]
+  source: text
+- id: act.trail-running
+  facet: activity
+  level: 2
+  parent: act.hiking
+  children: []
+  label: {en: Trail running, de: Trailrunning, fr: Trail, es: Trail running, it: Trail running, nl: Trailrunnen}
+  label_source: continent-app/src/i18n quiz.type.trailrun
+  definition: Running on mountain and forest paths.
+  synonyms:
+    en: [skyrunning, mountain running]
+  not_to_be_confused_with: [act.day-hike]
+  applies_to: [place, trail]
+  source: text
+- id: act.via-ferrata
+  facet: activity
+  level: 2
+  parent: act.hiking
+  children: []
+  label: {en: Via ferrata, de: Klettersteig, fr: Via ferrata, es: Vía ferrata, it: Via ferrata, nl: Via ferrata}
+  label_source: continent-app/src/i18n mtn.tagViaFerrata
+  definition: A protected climbing route with fixed cables and ladders.
+  synonyms:
+    en: [klettersteig]
+  not_to_be_confused_with: [act.climbing]
+  applies_to: [trail, mountain]
+  source: text
+- id: act.mountaineering
+  facet: activity
+  level: 2
+  parent: act.hiking
+  children: []
+  label: {en: Mountaineering, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Alpine climbing on rock, snow or glacier with gear.
+  synonyms:
+    en: [alpinism, alpine climbing]
+  not_to_be_confused_with: [act.summit-hike]
+  applies_to: [trail, mountain]
+  source: text
+- id: act.cycling
+  facet: activity
+  level: 1
+  parent: activity
+  children: [act.bike-touring, act.gravel, act.mtb]
+  label: {en: Cycling, de: Radfahren, fr: Vélo, es: Ciclismo, it: Ciclismo, nl: Fietsen}
+  label_source: continent-app/src/i18n quiz.type.cycling
+  definition: Riding a bike for the ride itself.
+  synonyms:
+    en: [biking, bike touring]
+  not_to_be_confused_with: []
+  applies_to: [place, trail]
+  source: text
+- id: act.bike-touring
+  facet: activity
+  level: 2
+  parent: act.cycling
+  children: [act.long-distance-cycling]
+  label: {en: Bike touring, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Riding paved or easy routes, often between towns.
+  synonyms:
+    en: [road cycling, cycle touring]
+  not_to_be_confused_with: [act.gravel]
+  applies_to: [place, trail]
+  source: text
+- id: act.long-distance-cycling
+  facet: activity
+  level: 3
+  parent: act.bike-touring
+  children: []
+  label: {en: Long distance cycle routes, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A long route such as a EuroVelo ridden over days.
+  synonyms:
+    en: [eurovelo, cycle path]
+  not_to_be_confused_with: []
+  applies_to: [place, trail]
+  source: text
+- id: act.gravel
+  facet: activity
+  level: 2
+  parent: act.cycling
+  children: []
+  label: {en: Gravel riding, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Riding unpaved roads and tracks on a gravel bike.
+  synonyms:
+    en: [gravel bike]
+  not_to_be_confused_with: [act.mtb]
+  applies_to: [place, trail]
+  source: text
+- id: act.mtb
+  facet: activity
+  level: 2
+  parent: act.cycling
+  children: []
+  label: {en: Mountain biking, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Riding rough trails on a mountain bike.
+  synonyms:
+    en: [MTB, bike park, enduro]
+  not_to_be_confused_with: [act.gravel]
+  applies_to: [place, trail]
+  source: text
+- id: act.water
+  facet: activity
+  level: 1
+  parent: activity
+  children: [act.sea-swimming, act.lake-swimming, act.wild-swimming, act.surfing, act.diving, act.sailing, act.paddling, act.rafting, act.boat-trips, act.fishing, act.water-park]
+  label: {en: Water sports, de: Wassersport, fr: Sports nautiques, es: Deportes acuáticos, it: Sport acquatici, nl: Watersport}
+  label_source: continent-app/src/i18n quiz.type.water
+  definition: Swimming, paddling, sailing and other time on water.
+  synonyms:
+    en: [water sports]
+  not_to_be_confused_with: []
+  applies_to: [place, beach, lake]
+  source: text
+- id: act.sea-swimming
+  facet: activity
+  level: 2
+  parent: act.water
+  children: []
+  label: {en: Sea swimming, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Swimming in the sea.
+  synonyms:
+    en: [bathing, swim in the sea]
+  not_to_be_confused_with: [act.lake-swimming]
+  applies_to: [place, beach]
+  source: text
+- id: act.lake-swimming
+  facet: activity
+  level: 2
+  parent: act.water
+  children: []
+  label: {en: Lake swimming, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Swimming in a lake.
+  synonyms:
+    en: [lido, bathing lake]
+  not_to_be_confused_with: [act.sea-swimming]
+  applies_to: [place, lake]
+  source: text
+- id: act.wild-swimming
+  facet: activity
+  level: 2
+  parent: act.water
+  children: []
+  label: {en: River and wild swimming, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Swimming in rivers, pools and unguarded water.
+  synonyms:
+    en: [wild swim, river swim]
+  not_to_be_confused_with: [act.lake-swimming]
+  applies_to: [place, lake]
+  source: text
+- id: act.surfing
+  facet: activity
+  level: 2
+  parent: act.water
+  children: [act.kitesurfing]
+  label: {en: Surfing, de: Surfen, fr: Surf, es: Surf, it: Surf, nl: Surfen}
+  label_source: continent-app/src/i18n dest.doKind.surfing
+  definition: Riding waves on a board.
+  synonyms:
+    en: [surf, bodyboard]
+  not_to_be_confused_with: [act.kitesurfing]
+  applies_to: [place, beach]
+  source: text
+- id: act.kitesurfing
+  facet: activity
+  level: 3
+  parent: act.surfing
+  children: []
+  label: {en: Kitesurfing and windsurfing, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: 'Wind sports on a board: kite or sail.'
+  synonyms:
+    en: [windsurf, kite]
+  not_to_be_confused_with: [act.sailing]
+  applies_to: [place, beach, lake]
+  source: text
+- id: act.diving
+  facet: activity
+  level: 2
+  parent: act.water
+  children: [act.snorkelling]
+  label: {en: Diving, de: Tauchen, fr: Plongée, es: Buceo, it: Immersioni, nl: Duiken}
+  label_source: continent-app/src/i18n dest.doKind.diving
+  definition: Scuba diving.
+  synonyms:
+    en: [scuba]
+  not_to_be_confused_with: [act.snorkelling]
+  applies_to: [place, beach, lake]
+  source: text
+- id: act.snorkelling
+  facet: activity
+  level: 3
+  parent: act.diving
+  children: []
+  label: {en: Snorkelling, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Swimming with a mask over clear water.
+  synonyms:
+    en: [snorkel]
+  not_to_be_confused_with: [act.diving]
+  applies_to: [place, beach, lake]
+  source: text
+- id: act.sailing
+  facet: activity
+  level: 2
+  parent: act.water
+  children: []
+  label: {en: Sailing, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Sailing yachts or dinghies.
+  synonyms:
+    en: [yachting, regatta]
+  not_to_be_confused_with: [act.boat-trips]
+  applies_to: [place, lake]
+  source: text
+- id: act.paddling
+  facet: activity
+  level: 2
+  parent: act.water
+  children: []
+  label: {en: Kayaking and paddling, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Kayak, canoe or paddleboard.
+  synonyms:
+    en: [canoe, SUP, kayak]
+  not_to_be_confused_with: [act.rafting]
+  applies_to: [place, beach, lake]
+  source: text
+- id: act.rafting
+  facet: activity
+  level: 2
+  parent: act.water
+  children: []
+  label: {en: Rafting and canyoning, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Descending wild rivers or canyons.
+  synonyms:
+    en: [white water, canyoning]
+  not_to_be_confused_with: [act.paddling]
+  applies_to: [place]
+  source: text
+- id: act.boat-trips
+  facet: activity
+  level: 2
+  parent: act.water
+  children: []
+  label: {en: Boat trips, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Excursions and ferries on sea, lake or river.
+  synonyms:
+    en: [ferry, cruise, boat tour]
+  not_to_be_confused_with: [act.sailing]
+  applies_to: [place, beach, lake]
+  source: text
+- id: act.fishing
+  facet: activity
+  level: 2
+  parent: act.water
+  children: []
+  label: {en: Fishing, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Angling or a fishing tradition visitors see.
+  synonyms:
+    en: [angling]
+  not_to_be_confused_with: []
+  applies_to: [place, lake]
+  source: text
+- id: act.water-park
+  facet: activity
+  level: 2
+  parent: act.water
+  children: []
+  label: {en: Water park, de: Wasserpark, fr: Parc aquatique, es: Parque acuático, it: Parco acquatico, nl: Waterpark}
+  label_source: continent-app/src/i18n dest.doKind.water_park
+  definition: A park of pools and slides.
+  synonyms:
+    en: [aquapark]
+  not_to_be_confused_with: [act.theme-park]
+  applies_to: [place]
+  source: text
+- id: act.winter
+  facet: activity
+  level: 1
+  parent: activity
+  children: [act.skiing, act.ski-touring, act.snowshoeing, act.northern-lights]
+  label: {en: Ski & snow, de: Ski & Schnee, fr: Ski & neige, es: Esquí y nieve, it: Sci e neve, nl: Ski & sneeuw}
+  label_source: continent-app/src/i18n quiz.type.ski
+  definition: Activities on snow and ice.
+  synonyms:
+    en: [winter sports]
+  not_to_be_confused_with: [prac.good-in-winter]
+  applies_to: [place, mountain]
+  source: text
+- id: act.skiing
+  facet: activity
+  level: 2
+  parent: act.winter
+  children: []
+  label: {en: Skiing, de: Skifahren, fr: Ski, es: Esquí, it: Sci, nl: Skiën}
+  label_source: continent-app/src/i18n dest.doKind.skiing
+  definition: Lifts and pistes for skiing or snowboarding.
+  synonyms:
+    en: [ski, snowboard, pistes]
+  not_to_be_confused_with: [act.ski-touring]
+  applies_to: [place, mountain]
+  source: text
+- id: act.ski-touring
+  facet: activity
+  level: 2
+  parent: act.winter
+  children: []
+  label: {en: Ski touring and cross-country, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: 'Skiing off the lifts: touring, cross-country, Nordic.'
+  synonyms:
+    en: [langlauf, nordic skiing, skinning]
+  not_to_be_confused_with: [act.skiing]
+  applies_to: [place, mountain]
+  source: text
+- id: act.snowshoeing
+  facet: activity
+  level: 2
+  parent: act.winter
+  children: []
+  label: {en: Snowshoeing and winter walks, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Walking on snow.
+  synonyms:
+    en: [snowshoe]
+  not_to_be_confused_with: [act.ski-touring]
+  applies_to: [place, trail]
+  source: text
+- id: act.northern-lights
+  facet: activity
+  level: 2
+  parent: act.winter
+  children: []
+  label: {en: Northern lights, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A good place to see the aurora.
+  synonyms:
+    en: [aurora borealis]
+  not_to_be_confused_with: [act.stargazing]
+  applies_to: [place]
+  source: text
+- id: act.adventure
+  facet: activity
+  level: 1
+  parent: activity
+  children: [act.climbing, act.caving, act.paragliding, act.horse-riding, act.golf]
+  label: {en: Adventure sports, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Sports with some thrill or technique.
+  synonyms:
+    en: [adrenaline, outdoor sports]
+  not_to_be_confused_with: [vibe.adventurous]
+  applies_to: [place, trail, mountain]
+  source: text
+- id: act.climbing
+  facet: activity
+  level: 2
+  parent: act.adventure
+  children: []
+  label: {en: Climbing, de: Klettern, fr: Escalade, es: Escalada, it: Arrampicata, nl: Klimmen}
+  label_source: continent-app/src/i18n dest.doKind.climbing
+  definition: Rock climbing and bouldering.
+  synonyms:
+    en: [bouldering, crag]
+  not_to_be_confused_with: [act.via-ferrata]
+  applies_to: [place, mountain]
+  source: text
+- id: act.caving
+  facet: activity
+  level: 2
+  parent: act.adventure
+  children: []
+  label: {en: Caves and caving, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Visiting or exploring caves.
+  synonyms:
+    en: [grotto, speleology, show cave]
+  not_to_be_confused_with: [set.sea-cave]
+  applies_to: [place, trail, mountain]
+  source: text
+- id: act.paragliding
+  facet: activity
+  level: 2
+  parent: act.adventure
+  children: []
+  label: {en: Paragliding, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Flying from a hill under a canopy.
+  synonyms:
+    en: [hang gliding]
+  not_to_be_confused_with: []
+  applies_to: [place, mountain]
+  source: text
+- id: act.horse-riding
+  facet: activity
+  level: 2
+  parent: act.adventure
+  children: []
+  label: {en: Horse riding, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Riding horses.
+  synonyms:
+    en: [equestrian, pony trekking]
+  not_to_be_confused_with: []
+  applies_to: [place]
+  source: text
+- id: act.golf
+  facet: activity
+  level: 2
+  parent: act.adventure
+  children: []
+  label: {en: Golf, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Golf courses people travel for.
+  synonyms:
+    en: [golf course]
+  not_to_be_confused_with: []
+  applies_to: [place]
+  source: text
+- id: act.food
+  facet: activity
+  level: 1
+  parent: activity
+  children: [act.local-cuisine, act.wine, act.beer, act.markets, act.fine-dining, act.cafes, act.foraging]
+  label: {en: Food and wine, de: Essen und Wein, fr: Cuisine et vin, es: Comida y vino, it: Cibo e vino, nl: Eten en wijn}
+  label_source: continent-app/src/i18n trip.themeFood
+  definition: Eating and drinking as a reason to come.
+  synonyms:
+    en: [gastronomy, culinary, foodie]
+  not_to_be_confused_with: []
+  applies_to: [place]
+  source: text
+- id: act.local-cuisine
+  facet: activity
+  level: 2
+  parent: act.food
+  children: []
+  label: {en: Local cuisine, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Dishes and cooking of the region.
+  synonyms:
+    en: [regional food, traditional dishes]
+  not_to_be_confused_with: [act.fine-dining]
+  applies_to: [place]
+  source: text
+- id: act.wine
+  facet: activity
+  level: 2
+  parent: act.food
+  children: []
+  label: {en: Wine and vineyards, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Wine tasting, cellars and vineyards.
+  synonyms:
+    en: [wine tasting, winery, cellar door]
+  not_to_be_confused_with: [set.vineyards]
+  applies_to: [place]
+  source: text
+- id: act.beer
+  facet: activity
+  level: 2
+  parent: act.food
+  children: []
+  label: {en: Beer and breweries, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Breweries, beer halls and a beer culture.
+  synonyms:
+    en: [brewery, beer hall]
+  not_to_be_confused_with: [act.bars]
+  applies_to: [place]
+  source: text
+- id: act.markets
+  facet: activity
+  level: 2
+  parent: act.food
+  children: []
+  label: {en: Market, de: Markt, fr: Marché, es: Mercado, it: Mercato, nl: Markt}
+  label_source: continent-app/src/i18n dest.doKind.market
+  definition: Food or general markets worth a visit.
+  synonyms:
+    en: [market hall, farmers market]
+  not_to_be_confused_with: [act.shopping]
+  applies_to: [place]
+  source: text
+- id: act.fine-dining
+  facet: activity
+  level: 2
+  parent: act.food
+  children: []
+  label: {en: Fine dining, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Starred or notable restaurants.
+  synonyms:
+    en: [michelin, gourmet]
+  not_to_be_confused_with: [act.local-cuisine]
+  applies_to: [place]
+  source: text
+- id: act.cafes
+  facet: activity
+  level: 2
+  parent: act.food
+  children: []
+  label: {en: Cafes and coffee, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A cafe or coffee culture.
+  synonyms:
+    en: [coffee houses, pastry]
+  not_to_be_confused_with: [act.bars]
+  applies_to: [place]
+  source: text
+- id: act.foraging
+  facet: activity
+  level: 2
+  parent: act.food
+  children: []
+  label: {en: Foraging, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Gathering wild food.
+  synonyms:
+    en: [mushrooms, wild food]
+  not_to_be_confused_with: []
+  applies_to: [place, trail]
+  source: text
+- id: act.wellness
+  facet: activity
+  level: 1
+  parent: activity
+  children: [act.thermal-baths, act.sauna]
+  label: {en: Wellness & spa, de: Wellness & Spa, fr: Bien-être & spa, es: Bienestar y spa, it: Benessere e spa, nl: Wellness & spa}
+  label_source: continent-app/src/i18n quiz.type.wellness
+  definition: Rest and care of the body.
+  synonyms:
+    en: [spa, relaxation]
+  not_to_be_confused_with: [vibe.slow]
+  applies_to: [place, lake]
+  source: text
+- id: act.thermal-baths
+  facet: activity
+  level: 2
+  parent: act.wellness
+  children: []
+  label: {en: Spa and thermal baths, de: Thermalbad, fr: Thermes, es: Balneario, it: Terme, nl: Kuuroord}
+  label_source: continent-app/public/search/guided.json vibes.spa
+  definition: Hot springs, thermal baths and spas.
+  synonyms:
+    en: [spa town, therme, hammam]
+  not_to_be_confused_with: [set.hot-spring]
+  applies_to: [place, lake]
+  source: text
+- id: act.sauna
+  facet: activity
+  level: 2
+  parent: act.wellness
+  children: []
+  label: {en: Sauna, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Sauna culture.
+  synonyms:
+    en: [sauna]
+  not_to_be_confused_with: [act.thermal-baths]
+  applies_to: [place, lake]
+  source: text
+- id: act.nightlife
+  facet: activity
+  level: 1
+  parent: activity
+  children: [act.bars, act.clubbing, act.live-music, act.casino]
+  label: {en: Nightlife, de: Nachtleben, fr: Vie nocturne, es: Vida nocturna, it: Vita notturna, nl: Nachtleven}
+  label_source: continent-app/src/i18n kind.party
+  definition: Going out after dark.
+  synonyms:
+    en: [nights out, going out]
+  not_to_be_confused_with: [vibe.lively]
+  applies_to: [place]
+  source: text
+- id: act.bars
+  facet: activity
+  level: 2
+  parent: act.nightlife
+  children: []
+  label: {en: Bars and pubs, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Bars, pubs and wine bars.
+  synonyms:
+    en: [pub, tapas bar, aperitivo]
+  not_to_be_confused_with: [act.beer]
+  applies_to: [place]
+  source: text
+- id: act.clubbing
+  facet: activity
+  level: 2
+  parent: act.nightlife
+  children: []
+  label: {en: Clubs and parties, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Dancing, clubs and party scenes.
+  synonyms:
+    en: [party, club, rave]
+  not_to_be_confused_with: [act.live-music]
+  applies_to: [place]
+  source: text
+- id: act.live-music
+  facet: activity
+  level: 2
+  parent: act.nightlife
+  children: []
+  label: {en: Live music, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Bands, folk music and music venues.
+  synonyms:
+    en: [gigs, folk music, jazz]
+  not_to_be_confused_with: [act.performing-arts]
+  applies_to: [place]
+  source: text
+- id: act.casino
+  facet: activity
+  level: 2
+  parent: act.nightlife
+  children: []
+  label: {en: Casino, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A casino people visit.
+  synonyms:
+    en: [gambling]
+  not_to_be_confused_with: []
+  applies_to: [place]
+  source: text
+- id: act.shopping
+  facet: activity
+  level: 1
+  parent: activity
+  children: [act.crafts, act.fashion, act.tax-free]
+  label: {en: Shopping, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Shopping as a reason to come.
+  synonyms:
+    en: [shops, boutiques]
+  not_to_be_confused_with: [act.markets]
+  applies_to: [place]
+  source: text
+- id: act.crafts
+  facet: activity
+  level: 2
+  parent: act.shopping
+  children: []
+  label: {en: Local crafts, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: 'Crafts made there: pottery, lace, glass.'
+  synonyms:
+    en: [handicraft, pottery, lace]
+  not_to_be_confused_with: []
+  applies_to: [place]
+  source: text
+- id: act.fashion
+  facet: activity
+  level: 2
+  parent: act.shopping
+  children: []
+  label: {en: Fashion and design, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Fashion and design shopping.
+  synonyms:
+    en: [boutiques, design shops]
+  not_to_be_confused_with: []
+  applies_to: [place]
+  source: text
+- id: act.tax-free
+  facet: activity
+  level: 2
+  parent: act.shopping
+  children: []
+  label: {en: Tax-free shopping, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A duty-free or low tax shopping area.
+  synonyms:
+    en: [duty-free]
+  not_to_be_confused_with: [prac.affordable]
+  applies_to: [place]
+  source: text
+- id: act.family-fun
+  facet: activity
+  level: 1
+  parent: activity
+  children: [act.theme-park, act.zoo, act.aquarium]
+  label: {en: Family attractions, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Attractions built for children.
+  synonyms:
+    en: [kids, family days out]
+  not_to_be_confused_with: [trav.families]
+  applies_to: [place]
+  source: text
+- id: act.theme-park
+  facet: activity
+  level: 2
+  parent: act.family-fun
+  children: []
+  label: {en: Theme park, de: Freizeitpark, fr: Parc d’attractions, es: Parque de atracciones, it: Parco divertimenti, nl: Pretpark}
+  label_source: continent-app/src/i18n dest.doKind.theme_park
+  definition: Rides and a themed park.
+  synonyms:
+    en: [amusement park]
+  not_to_be_confused_with: [act.water-park]
+  applies_to: [place]
+  source: text
+- id: act.zoo
+  facet: activity
+  level: 2
+  parent: act.family-fun
+  children: []
+  label: {en: Zoo, de: Zoo, fr: Zoo, es: Zoo, it: Zoo, nl: Dierentuin}
+  label_source: continent-app/src/i18n dest.doKind.zoo
+  definition: A zoo or animal park.
+  synonyms:
+    en: [animal park, safari park]
+  not_to_be_confused_with: [act.wildlife]
+  applies_to: [place]
+  source: text
+- id: act.aquarium
+  facet: activity
+  level: 2
+  parent: act.family-fun
+  children: []
+  label: {en: Aquarium, de: Aquarium, fr: Aquarium, es: Acuario, it: Acquario, nl: Aquarium}
+  label_source: continent-app/src/i18n dest.doKind.aquarium
+  definition: An aquarium.
+  synonyms:
+    en: [sea life]
+  not_to_be_confused_with: []
+  applies_to: [place]
+  source: text
+- id: act.nature-watching
+  facet: activity
+  level: 1
+  parent: activity
+  children: [act.wildlife, act.stargazing, act.photography]
+  label: {en: Wildlife and sky, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Watching animals, birds and the night sky.
+  synonyms:
+    en: [nature watching]
+  not_to_be_confused_with: []
+  applies_to: [place, trail, beach, lake, mountain]
+  source: text
+- id: act.wildlife
+  facet: activity
+  level: 2
+  parent: act.nature-watching
+  children: [act.birdwatching]
+  label: {en: Wildlife, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Seeing wild animals in the wild.
+  synonyms:
+    en: [whales, turtles, deer]
+  not_to_be_confused_with: [act.zoo]
+  applies_to: [place, trail, beach, lake, mountain]
+  source: text
+- id: act.birdwatching
+  facet: activity
+  level: 3
+  parent: act.wildlife
+  children: []
+  label: {en: Birdwatching, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Watching birds.
+  synonyms:
+    en: [birding]
+  not_to_be_confused_with: []
+  applies_to: [place, trail, lake]
+  source: text
+- id: act.stargazing
+  facet: activity
+  level: 2
+  parent: act.nature-watching
+  children: []
+  label: {en: Stargazing and dark skies, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Dark skies and observatories.
+  synonyms:
+    en: [dark sky, observatory, astronomy]
+  not_to_be_confused_with: [act.northern-lights]
+  applies_to: [place, mountain]
+  source: text
+- id: act.photography
+  facet: activity
+  level: 2
+  parent: act.nature-watching
+  children: []
+  label: {en: Photography, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A place photographers come for.
+  synonyms:
+    en: [photo spot]
+  not_to_be_confused_with: [vibe.photogenic]
+  applies_to: [place, trail, beach, lake, mountain]
+  source: text
+- id: act.touring
+  facet: activity
+  level: 1
+  parent: activity
+  children: [act.road-trip, act.rail-journey, act.island-hopping, act.lift-rides]
+  label: {en: Touring, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Travel itself as the activity.
+  synonyms:
+    en: [journey]
+  not_to_be_confused_with: []
+  applies_to: [place, trail]
+  source: text
+- id: act.road-trip
+  facet: activity
+  level: 2
+  parent: act.touring
+  children: [act.scenic-drive]
+  label: {en: Road trip, de: Roadtrip, fr: Road trip, es: Viaje por carretera, it: Viaggio in auto, nl: Roadtrip}
+  label_source: continent-app/src/i18n quiz.type.roadtrip
+  definition: Driving from place to place for the drive.
+  synonyms:
+    en: [driving holiday, scenic drive]
+  not_to_be_confused_with: [act.scenic-drive]
+  applies_to: [place]
+  source: text
+- id: act.scenic-drive
+  facet: activity
+  level: 3
+  parent: act.road-trip
+  children: []
+  label: {en: Scenic drives and passes, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: 'A road worth driving: a pass, a coast road.'
+  synonyms:
+    en: [mountain pass, coast road]
+  not_to_be_confused_with: [prac.road-to-top]
+  applies_to: [place, mountain]
+  source: text
+- id: act.rail-journey
+  facet: activity
+  level: 2
+  parent: act.touring
+  children: []
+  label: {en: Rail journeys, de: Bahnreisen, fr: Voyages en train, es: Viajes en tren, it: Viaggi in treno, nl: Treinreizen}
+  label_source: continent-app/src/i18n journey.typeRail
+  definition: Travelling by train as part of the trip.
+  synonyms:
+    en: [scenic railway, train trip]
+  not_to_be_confused_with: [prac.rail-access]
+  applies_to: [place]
+  source: text
+- id: act.island-hopping
+  facet: activity
+  level: 2
+  parent: act.touring
+  children: []
+  label: {en: Island hopping, de: Inselhüpfen, fr: Saut d'île en île, es: Salto entre islas, it: Giro delle isole, nl: Eilandhoppen}
+  label_source: continent-app/src/i18n quiz.type.islands
+  definition: Moving between islands by boat.
+  synonyms:
+    en: [ferry hopping]
+  not_to_be_confused_with: [set.island]
+  applies_to: [place]
+  source: text
+- id: act.lift-rides
+  facet: activity
+  level: 2
+  parent: act.touring
+  children: []
+  label: {en: Cable car, de: Seilbahn, fr: Téléphérique, es: Teleférico, it: Funivia, nl: Kabelbaan}
+  label_source: continent-app/src/i18n mtn.tagCableCar
+  definition: A cable car, funicular or rack railway ridden for the ride.
+  synonyms:
+    en: [gondola, funicular, rack railway]
+  not_to_be_confused_with: [prac.lift-access]
+  applies_to: [place, mountain]
+  source: text
+- id: set.coast
+  facet: setting
+  level: 1
+  parent: setting
+  children: [set.beach, set.bay, set.cliffs, set.dunes, set.lagoon, set.sea-cave, set.clear-water, set.seaside-town, set.fjord, set.harbour, set.peninsula]
+  label: {en: Coast, de: Kuste, fr: Cote, es: Costa, it: Costa, nl: Kust}
+  label_source: continent-app/src/i18n trip.themeCoast
+  definition: Next to the sea.
+  synonyms:
+    en: [seaside, shore, coastline]
+  not_to_be_confused_with: [set.lake]
+  applies_to: [place, trail, beach]
+  source: text
+- id: set.beach
+  facet: setting
+  level: 2
+  parent: set.coast
+  children: [set.sandy-beach, set.pebble-beach, set.cove, set.long-strand, set.black-sand]
+  label: {en: Beach, de: Strand, fr: Plage, es: Playa, it: Spiaggia, nl: Strand}
+  label_source: continent-app/src/i18n kind.beach
+  definition: A beach on the sea.
+  synonyms:
+    en: [strand, plage, playa]
+  not_to_be_confused_with: [set.lake]
+  applies_to: [place, beach]
+  source: text
+- id: set.sandy-beach
+  facet: setting
+  level: 3
+  parent: set.beach
+  children: []
+  label: {en: Sandy beach, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A beach of sand.
+  synonyms:
+    en: [sand]
+  not_to_be_confused_with: [set.dunes]
+  applies_to: [beach]
+  source: data
+- id: set.pebble-beach
+  facet: setting
+  level: 3
+  parent: set.beach
+  children: []
+  label: {en: Pebble or rock beach, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A beach of pebbles, gravel, shingle or rock.
+  synonyms:
+    en: [shingle, stony beach]
+  not_to_be_confused_with: [set.sandy-beach]
+  applies_to: [beach]
+  source: data
+- id: set.cove
+  facet: setting
+  level: 3
+  parent: set.beach
+  children: []
+  label: {en: Pocket cove, de: Kleine Bucht, fr: Petite crique, es: Cala pequena, it: Caletta, nl: Klein baaitje}
+  label_source: continent-app/src/i18n beach.tagPocketCove
+  definition: A small beach in a bay between rocks.
+  synonyms:
+    en: [pocket beach, calanque, cala]
+  not_to_be_confused_with: [set.bay]
+  applies_to: [beach]
+  source: both
+- id: set.long-strand
+  facet: setting
+  level: 3
+  parent: set.beach
+  children: []
+  label: {en: Long strand, de: Langer Strand, fr: Longue plage, es: Playa larga, it: Spiaggia lunga, nl: Lang strand}
+  label_source: continent-app/src/i18n beach.tagLongStrand
+  definition: A long open beach.
+  synonyms:
+    en: [long beach]
+  not_to_be_confused_with: [set.cove]
+  applies_to: [beach]
+  source: both
+- id: set.black-sand
+  facet: setting
+  level: 3
+  parent: set.beach
+  children: []
+  label: {en: Black sand, de: Schwarzer Sand, fr: Sable noir, es: Arena negra, it: Sabbia nera, nl: Zwart zand}
+  label_source: continent-app/src/i18n beach.tagSandBlack
+  definition: Dark volcanic sand.
+  synonyms:
+    en: [volcanic sand]
+  not_to_be_confused_with: []
+  applies_to: [beach]
+  source: both
+- id: set.bay
+  facet: setting
+  level: 2
+  parent: set.coast
+  children: []
+  label: {en: Bay, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A sheltered bay.
+  synonyms:
+    en: [gulf, inlet]
+  not_to_be_confused_with: [set.cove]
+  applies_to: [place, beach]
+  source: text
+- id: set.cliffs
+  facet: setting
+  level: 2
+  parent: set.coast
+  children: []
+  label: {en: Cliffs, de: Klippen, fr: Falaises, es: Acantilados, it: Falesie, nl: Kliffen}
+  label_source: continent-app/src/i18n beach.tagCliffs
+  definition: High rock walls, mostly over the sea.
+  synonyms:
+    en: [sea cliffs, bluffs]
+  not_to_be_confused_with: [set.gorge]
+  applies_to: [place, trail, beach, lake, mountain]
+  source: text
+- id: set.dunes
+  facet: setting
+  level: 2
+  parent: set.coast
+  children: []
+  label: {en: Dunes, de: Dünen, fr: Dunes, es: Dunas, it: Dune, nl: Duinen}
+  label_source: continent-app/src/i18n beach.tagDunes
+  definition: Sand dunes.
+  synonyms:
+    en: [dune landscape]
+  not_to_be_confused_with: [set.sandy-beach]
+  applies_to: [place, trail, beach]
+  source: text
+- id: set.lagoon
+  facet: setting
+  level: 2
+  parent: set.coast
+  children: []
+  label: {en: Lagoon, de: Lagune, fr: Lagon, es: Laguna, it: Laguna, nl: Lagune}
+  label_source: continent-app/src/i18n beach.tagLagoon
+  definition: Shallow water cut off from the sea.
+  synonyms:
+    en: [saltmarsh, lagoon]
+  not_to_be_confused_with: [set.lake]
+  applies_to: [place, beach, lake]
+  source: text
+- id: set.sea-cave
+  facet: setting
+  level: 2
+  parent: set.coast
+  children: []
+  label: {en: Sea cave, de: Meereshöhle, fr: Grotte marine, es: Cueva marina, it: Grotta marina, nl: Zeegrot}
+  label_source: continent-app/src/i18n beach.tagCave
+  definition: Caves and rock arches at the sea.
+  synonyms:
+    en: [grotto, rock arch]
+  not_to_be_confused_with: [act.caving]
+  applies_to: [place, beach]
+  source: text
+- id: set.clear-water
+  facet: setting
+  level: 2
+  parent: set.coast
+  children: []
+  label: {en: Turquoise water, de: Türkises Wasser, fr: Eau turquoise, es: Agua turquesa, it: Acqua turchese, nl: Turquoise water}
+  label_source: continent-app/src/i18n beach.tagTurquoise
+  definition: Water you can see the bottom through.
+  synonyms:
+    en: [crystal clear, turquoise, emerald water]
+  not_to_be_confused_with: [prac.water-excellent]
+  applies_to: [place, beach, lake]
+  source: text
+- id: set.seaside-town
+  facet: setting
+  level: 2
+  parent: set.coast
+  children: []
+  label: {en: Beach town, de: Badeort, fr: Station balnéaire, es: Pueblo de playa, it: Località di mare, nl: Badplaats}
+  label_source: continent-app/public/search/guided.json vibes.beach
+  definition: A town on the sea with beaches to swim from.
+  synonyms:
+    en: [beach town, resort, harbour town]
+  not_to_be_confused_with: [set.beach]
+  applies_to: [place]
+  source: text
+- id: set.fjord
+  facet: setting
+  level: 2
+  parent: set.coast
+  children: []
+  label: {en: Fjord, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A long, deep sea inlet between steep mountains.
+  synonyms:
+    en: [fjord, sea loch]
+  not_to_be_confused_with: [set.lake]
+  applies_to: [place, trail, beach]
+  source: text
+- id: set.harbour
+  facet: setting
+  level: 2
+  parent: set.coast
+  children: []
+  label: {en: Harbour and fishing port, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A working or old harbour.
+  synonyms:
+    en: [port, marina, fishing village]
+  not_to_be_confused_with: [set.seaside-town]
+  applies_to: [place]
+  source: text
+- id: set.peninsula
+  facet: setting
+  level: 2
+  parent: set.coast
+  children: []
+  label: {en: Peninsula, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A place on a peninsula.
+  synonyms:
+    en: [headland, cape]
+  not_to_be_confused_with: [set.island]
+  applies_to: [place]
+  source: text
+- id: set.island
+  facet: setting
+  level: 1
+  parent: setting
+  children: [set.archipelago, set.tidal-island]
+  label: {en: Island, de: Insel, fr: Île, es: Isla, it: Isola, nl: Eiland}
+  label_source: continent-app/src/i18n kind.island
+  definition: On an island.
+  synonyms:
+    en: [isle]
+  not_to_be_confused_with: [set.peninsula]
+  applies_to: [place, beach, lake, mountain]
+  source: text
+- id: set.archipelago
+  facet: setting
+  level: 2
+  parent: set.island
+  children: []
+  label: {en: Archipelago, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A group of islands.
+  synonyms:
+    en: [islands]
+  not_to_be_confused_with: []
+  applies_to: [place]
+  source: text
+- id: set.tidal-island
+  facet: setting
+  level: 2
+  parent: set.island
+  children: []
+  label: {en: Tidal island, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: An island reached on foot at low tide.
+  synonyms:
+    en: [causeway]
+  not_to_be_confused_with: []
+  applies_to: [place]
+  source: text
+- id: set.mountains
+  facet: setting
+  level: 1
+  parent: setting
+  children: [set.alpine, set.peak, set.glacier, set.volcano, set.ridge, set.hills, set.mountain-hut, set.ski-resort]
+  label: {en: Mountains, de: Berge, fr: Montagnes, es: Montaña, it: Montagna, nl: Bergen}
+  label_source: continent-app/src/i18n kind.mountains
+  definition: In or under mountains.
+  synonyms:
+    en: [mountain, highlands]
+  not_to_be_confused_with: [set.hills]
+  applies_to: [place, trail, lake, mountain]
+  source: text
+- id: set.alpine
+  facet: setting
+  level: 2
+  parent: set.mountains
+  children: []
+  label: {en: High mountains, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: High mountains above the tree line.
+  synonyms:
+    en: [alps, alpine, high peaks]
+  not_to_be_confused_with: [set.hills]
+  applies_to: [place, trail, lake, mountain]
+  source: text
+- id: set.peak
+  facet: setting
+  level: 2
+  parent: set.mountains
+  children: []
+  label: {en: Summit, de: Gipfel, fr: Sommet, es: Cumbre, it: Cima, nl: Top}
+  label_source: continent-app/src/i18n trails.kind_peak
+  definition: A named summit.
+  synonyms:
+    en: [peak, top, mountain top]
+  not_to_be_confused_with: [act.summit-hike]
+  applies_to: [trail, mountain]
+  source: text
+- id: set.glacier
+  facet: setting
+  level: 2
+  parent: set.mountains
+  children: []
+  label: {en: Glacier, de: Gletscher, fr: Glacier, es: Glaciar, it: Ghiacciaio, nl: Gletsjer}
+  label_source: continent-app/src/i18n dest.doKind.glacier
+  definition: A glacier or ice field.
+  synonyms:
+    en: [ice, ice field]
+  not_to_be_confused_with: [set.mountain-lake]
+  applies_to: [place, trail, lake, mountain]
+  source: text
+- id: set.volcano
+  facet: setting
+  level: 2
+  parent: set.mountains
+  children: []
+  label: {en: Volcano, de: Vulkan, fr: Volcan, es: Volcan, it: Vulcano, nl: Vulkaan}
+  label_source: continent-app/src/i18n trails.kind_volcano
+  definition: A volcano, active or not, or volcanic land.
+  synonyms:
+    en: [volcanic, crater, lava]
+  not_to_be_confused_with: [set.crater-lake]
+  applies_to: [place, trail, mountain]
+  source: text
+- id: set.ridge
+  facet: setting
+  level: 2
+  parent: set.mountains
+  children: []
+  label: {en: Ridge and massif, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A ridge, massif or plateau.
+  synonyms:
+    en: [plateau, massif, arete]
+  not_to_be_confused_with: [set.peak]
+  applies_to: [trail, mountain]
+  source: text
+- id: set.hills
+  facet: setting
+  level: 2
+  parent: set.mountains
+  children: []
+  label: {en: Hill, de: Hügel, fr: Colline, es: Colina, it: Collina, nl: Heuvel}
+  label_source: continent-app/src/i18n mtn.tagHill
+  definition: Rolling hills, not high mountains.
+  synonyms:
+    en: [uplands, downs]
+  not_to_be_confused_with: [set.alpine]
+  applies_to: [place, trail, mountain]
+  source: text
+- id: set.mountain-hut
+  facet: setting
+  level: 2
+  parent: set.mountains
+  children: []
+  label: {en: Mountain hut, de: Huette, fr: Refuge, es: Refugio, it: Rifugio, nl: Berghut}
+  label_source: continent-app/src/i18n trails.hlHut
+  definition: A staffed or open hut.
+  synonyms:
+    en: [refuge, rifugio, bothy]
+  not_to_be_confused_with: [act.hut-to-hut]
+  applies_to: [trail, mountain]
+  source: text
+- id: set.ski-resort
+  facet: setting
+  level: 2
+  parent: set.mountains
+  children: []
+  label: {en: Ski resort, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A town built around skiing.
+  synonyms:
+    en: [ski village, ski station]
+  not_to_be_confused_with: [act.skiing]
+  applies_to: [place]
+  source: text
+- id: set.freshwater
+  facet: setting
+  level: 1
+  parent: setting
+  children: [set.lake, set.river, set.waterfall, set.gorge, set.hot-spring, set.spring]
+  label: {en: Lakes and rivers, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Next to fresh water.
+  synonyms:
+    en: [inland water]
+  not_to_be_confused_with: [set.coast]
+  applies_to: [place, trail, lake]
+  source: text
+- id: set.lake
+  facet: setting
+  level: 2
+  parent: set.freshwater
+  children: [set.mountain-lake, set.crater-lake, set.reservoir, set.lakeside-town]
+  label: {en: Lake, de: See, fr: Lac, es: Lago, it: Lago, nl: Meer}
+  label_source: continent-app/src/i18n dest.doKind.lake
+  definition: On or by a lake.
+  synonyms:
+    en: [lakeside, loch, lac, see]
+  not_to_be_confused_with: [set.lagoon]
+  applies_to: [place, trail, lake]
+  source: text
+- id: set.mountain-lake
+  facet: setting
+  level: 3
+  parent: set.lake
+  children: []
+  label: {en: Mountain tarn, de: Bergsee, fr: Lac de montagne, es: Lago de montana, it: Lago alpino, nl: Bergmeertje}
+  label_source: continent-app/src/i18n lake.tagTarn
+  definition: A lake in the mountains, often small and cold.
+  synonyms:
+    en: [tarn, alpine lake]
+  not_to_be_confused_with: [set.crater-lake]
+  applies_to: [trail, lake]
+  source: both
+- id: set.crater-lake
+  facet: setting
+  level: 3
+  parent: set.lake
+  children: []
+  label: {en: Crater lake, de: Kratersee, fr: Lac de cratere, es: Lago de crater, it: Lago craterico, nl: Kratermeer}
+  label_source: continent-app/src/i18n lake.tagCrater
+  definition: A lake in a volcanic crater.
+  synonyms:
+    en: [maar]
+  not_to_be_confused_with: [set.mountain-lake]
+  applies_to: [trail, lake]
+  source: both
+- id: set.reservoir
+  facet: setting
+  level: 3
+  parent: set.lake
+  children: []
+  label: {en: Reservoir, de: Stausee, fr: Lac de barrage, es: Embalse, it: Invaso, nl: Stuwmeer}
+  label_source: continent-app/src/i18n lake.tagReservoir
+  definition: A lake made by a dam.
+  synonyms:
+    en: [dam lake]
+  not_to_be_confused_with: []
+  applies_to: [trail, lake]
+  source: both
+- id: set.lakeside-town
+  facet: setting
+  level: 3
+  parent: set.lake
+  children: []
+  label: {en: Lakeside, de: Am See, fr: Au bord d'un lac, es: Junto a un lago, it: Sul lago, nl: Aan een meer}
+  label_source: continent-app/public/search/guided.json vibes.lake
+  definition: A town on a lake shore.
+  synonyms:
+    en: [lake town]
+  not_to_be_confused_with: [set.seaside-town]
+  applies_to: [place]
+  source: text
+- id: set.river
+  facet: setting
+  level: 2
+  parent: set.freshwater
+  children: [set.canals]
+  label: {en: River, de: Fluss, fr: Riviere, es: Rio, it: Fiume, nl: Rivier}
+  label_source: continent-app/src/i18n lake.tagRiver
+  definition: On a river worth being by.
+  synonyms:
+    en: [riverside, river valley]
+  not_to_be_confused_with: [set.canals]
+  applies_to: [place, trail, lake]
+  source: text
+- id: set.canals
+  facet: setting
+  level: 3
+  parent: set.river
+  children: []
+  label: {en: Canals, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A town of canals.
+  synonyms:
+    en: [canal, waterways]
+  not_to_be_confused_with: [set.river]
+  applies_to: [place]
+  source: text
+- id: set.waterfall
+  facet: setting
+  level: 2
+  parent: set.freshwater
+  children: []
+  label: {en: Waterfall, de: Wasserfall, fr: Cascade, es: Cascada, it: Cascata, nl: Waterval}
+  label_source: continent-app/src/i18n dest.doKind.waterfall
+  definition: A waterfall.
+  synonyms:
+    en: [falls, cascade]
+  not_to_be_confused_with: [set.gorge]
+  applies_to: [place, trail, lake, mountain]
+  source: text
+- id: set.gorge
+  facet: setting
+  level: 2
+  parent: set.freshwater
+  children: []
+  label: {en: Gorge, de: Schlucht, fr: Gorge, es: Desfiladero, it: Gola, nl: Kloof}
+  label_source: continent-app/src/i18n trails.hlGorge
+  definition: A narrow valley with steep walls.
+  synonyms:
+    en: [canyon, ravine]
+  not_to_be_confused_with: [set.valley]
+  applies_to: [place, trail, mountain]
+  source: text
+- id: set.hot-spring
+  facet: setting
+  level: 2
+  parent: set.freshwater
+  children: []
+  label: {en: Hot spring, de: Thermalquelle, fr: Source chaude, es: Fuente termal, it: Sorgente termale, nl: Warmwaterbron}
+  label_source: continent-app/src/i18n trails.kind_hot_spring
+  definition: Water that comes up warm.
+  synonyms:
+    en: [thermal spring, geyser]
+  not_to_be_confused_with: [act.thermal-baths]
+  applies_to: [place, trail, lake]
+  source: text
+- id: set.spring
+  facet: setting
+  level: 2
+  parent: set.freshwater
+  children: []
+  label: {en: Spring, de: Quelle, fr: Source, es: Manantial, it: Sorgente, nl: Bron}
+  label_source: continent-app/src/i18n trails.kind_spring
+  definition: A spring or source.
+  synonyms:
+    en: [source]
+  not_to_be_confused_with: [set.hot-spring]
+  applies_to: [trail]
+  source: text
+- id: set.green
+  facet: setting
+  level: 1
+  parent: setting
+  children: [set.forest, set.countryside, set.valley, set.wilderness, set.moor, set.arctic, set.rock-formations, set.cave, set.parks, set.protected-area]
+  label: {en: Nature, de: Natur, fr: Nature, es: Naturaleza, it: Natura, nl: Natuur}
+  label_source: continent-app/src/i18n kind.nature
+  definition: Nature and the farmed land around towns.
+  synonyms:
+    en: [nature, outdoors]
+  not_to_be_confused_with: [set.wilderness]
+  applies_to: [place, trail, beach, lake, mountain]
+  source: text
+- id: set.forest
+  facet: setting
+  level: 2
+  parent: set.green
+  children: []
+  label: {en: Forest, de: Wald, fr: Foret, es: Bosque, it: Bosco, nl: Bos}
+  label_source: continent-app/src/i18n trails.hlForest
+  definition: Woods and forest.
+  synonyms:
+    en: [woodland, woods]
+  not_to_be_confused_with: []
+  applies_to: [place, trail, lake]
+  source: text
+- id: set.countryside
+  facet: setting
+  level: 2
+  parent: set.green
+  children: [set.vineyards, set.flower-fields]
+  label: {en: Countryside, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Farmland, fields and small roads.
+  synonyms:
+    en: [rural, farmland]
+  not_to_be_confused_with: [set.wilderness]
+  applies_to: [place, trail]
+  source: text
+- id: set.vineyards
+  facet: setting
+  level: 3
+  parent: set.countryside
+  children: []
+  label: {en: Vineyards, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Vineyards in the landscape.
+  synonyms:
+    en: [wine country, terraces]
+  not_to_be_confused_with: [act.wine]
+  applies_to: [place, trail]
+  source: text
+- id: set.flower-fields
+  facet: setting
+  level: 3
+  parent: set.countryside
+  children: []
+  label: {en: Flower fields, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Lavender, tulips or other fields in bloom.
+  synonyms:
+    en: [lavender, tulips]
+  not_to_be_confused_with: []
+  applies_to: [place, trail]
+  source: text
+- id: set.valley
+  facet: setting
+  level: 2
+  parent: set.green
+  children: []
+  label: {en: Valley, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A valley.
+  synonyms:
+    en: [dale, glen]
+  not_to_be_confused_with: [set.gorge]
+  applies_to: [place, trail]
+  source: text
+- id: set.wilderness
+  facet: setting
+  level: 2
+  parent: set.green
+  children: []
+  label: {en: Wilderness, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Land with almost nothing built on it.
+  synonyms:
+    en: [wild land, backcountry]
+  not_to_be_confused_with: [vibe.remote]
+  applies_to: [place, trail, mountain]
+  source: text
+- id: set.moor
+  facet: setting
+  level: 2
+  parent: set.green
+  children: []
+  label: {en: Moor and bog, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Moorland, heath and bog.
+  synonyms:
+    en: [heath, bog, fen]
+  not_to_be_confused_with: []
+  applies_to: [place, trail]
+  source: text
+- id: set.arctic
+  facet: setting
+  level: 2
+  parent: set.green
+  children: []
+  label: {en: Arctic and tundra, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: North of the Arctic circle or on tundra.
+  synonyms:
+    en: [lapland, tundra, polar]
+  not_to_be_confused_with: [act.northern-lights]
+  applies_to: [place]
+  source: text
+- id: set.rock-formations
+  facet: setting
+  level: 2
+  parent: set.green
+  children: []
+  label: {en: Rock formation, de: Felsformation, fr: Formation rocheuse, es: Formación rocosa, it: Formazione rocciosa, nl: Rotsformatie}
+  label_source: continent-app/src/i18n mtn.tagRock
+  definition: Odd rocks, karst and stone landscapes.
+  synonyms:
+    en: [karst, sandstone, tors]
+  not_to_be_confused_with: [set.cliffs]
+  applies_to: [place, trail, mountain]
+  source: text
+- id: set.cave
+  facet: setting
+  level: 2
+  parent: set.green
+  children: []
+  label: {en: Cave, de: Höhle, fr: Grotte, es: Cueva, it: Grotta, nl: Grot}
+  label_source: continent-app/src/i18n dest.doKind.cave
+  definition: A cave.
+  synonyms:
+    en: [grotto]
+  not_to_be_confused_with: [act.caving]
+  applies_to: [place, trail, mountain]
+  source: text
+- id: set.parks
+  facet: setting
+  level: 2
+  parent: set.green
+  children: []
+  label: {en: Park, de: Park, fr: Parc, es: Parque, it: Parco, nl: Park}
+  label_source: continent-app/src/i18n dest.doKind.park
+  definition: Parks and gardens.
+  synonyms:
+    en: [garden, botanical garden]
+  not_to_be_confused_with: [set.protected-area]
+  applies_to: [place, trail]
+  source: text
+- id: set.protected-area
+  facet: setting
+  level: 2
+  parent: set.green
+  children: [set.national-park, set.nature-reserve, set.natura2000]
+  label: {en: Protected nature, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: 'A protected area: park, reserve or Natura 2000.'
+  synonyms:
+    en: [protected area, reserve]
+  not_to_be_confused_with: [set.parks]
+  applies_to: [place, trail, beach, lake, mountain]
+  source: both
+- id: set.national-park
+  facet: setting
+  level: 3
+  parent: set.protected-area
+  children: []
+  label: {en: National park, de: Nationalpark, fr: Parc national, es: Parque nacional, it: Parco nazionale, nl: Nationaal park}
+  label_source: continent-app/src/i18n dest.doKind.national_park
+  definition: Inside or next to a national park.
+  synonyms:
+    en: [nationalpark, parc national]
+  not_to_be_confused_with: []
+  applies_to: [place, trail, beach, lake, mountain]
+  source: both
+- id: set.nature-reserve
+  facet: setting
+  level: 3
+  parent: set.protected-area
+  children: []
+  label: {en: Nature reserve, de: Naturschutzgebiet, fr: Réserve naturelle, es: Reserva natural, it: Riserva naturale, nl: Natuurgebied}
+  label_source: continent-app/src/i18n dest.doKind.nature_reserve
+  definition: A nature reserve.
+  synonyms:
+    en: [reserve]
+  not_to_be_confused_with: []
+  applies_to: [place, trail, beach, lake, mountain]
+  source: both
+- id: set.natura2000
+  facet: setting
+  level: 3
+  parent: set.protected-area
+  children: []
+  label: {en: Natura 2000, de: Natura 2000, fr: Natura 2000, es: Natura 2000, it: Natura 2000, nl: Natura 2000}
+  label_source: continent-app/src/i18n beach.tagNatura2000
+  definition: A Natura 2000 or Emerald site.
+  synonyms:
+    en: [emerald network]
+  not_to_be_confused_with: []
+  applies_to: [beach, lake]
+  source: data
+- id: set.urban
+  facet: setting
+  level: 1
+  parent: setting
+  children: [set.big-city, set.small-town, set.village, set.old-town, set.university-town, set.spa-town, set.market-town, set.modern-architecture]
+  label: {en: Towns and cities, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: The built place itself.
+  synonyms:
+    en: [urban]
+  not_to_be_confused_with: []
+  applies_to: [place]
+  source: text
+- id: set.big-city
+  facet: setting
+  level: 2
+  parent: set.urban
+  children: [set.capital]
+  label: {en: City, de: Stadt, fr: Ville, es: Ciudad, it: Città, nl: Stad}
+  label_source: continent-app/src/i18n kind.city
+  definition: A city with city life.
+  synonyms:
+    en: [city break, metropolis]
+  not_to_be_confused_with: [set.capital]
+  applies_to: [place]
+  source: both
+- id: set.capital
+  facet: setting
+  level: 3
+  parent: set.big-city
+  children: []
+  label: {en: Capital city, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A national or regional capital.
+  synonyms:
+    en: [capital]
+  not_to_be_confused_with: []
+  applies_to: [place]
+  source: text
+- id: set.small-town
+  facet: setting
+  level: 2
+  parent: set.urban
+  children: []
+  label: {en: Small towns, de: Kleine Orte, fr: Petites villes, es: Pueblos, it: Piccoli borghi, nl: Kleine stadjes}
+  label_source: continent-app/src/i18n journey.typeCozyTowns
+  definition: A small town.
+  synonyms:
+    en: [town]
+  not_to_be_confused_with: [set.village]
+  applies_to: [place]
+  source: both
+- id: set.village
+  facet: setting
+  level: 2
+  parent: set.urban
+  children: []
+  label: {en: Village, de: Dorf, fr: Village, es: Pueblo, it: Borgo, nl: Dorp}
+  label_source: continent-app/src/i18n pkind.village
+  definition: A village.
+  synonyms:
+    en: [hamlet]
+  not_to_be_confused_with: [set.small-town]
+  applies_to: [place]
+  source: both
+- id: set.old-town
+  facet: setting
+  level: 2
+  parent: set.urban
+  children: [set.walled-town, set.squares]
+  label: {en: Old town, de: Altstadt, fr: Vieille ville, es: Casco antiguo, it: Centro storico, nl: Oude stad}
+  label_source: continent-app/src/i18n dest.doKind.old_town
+  definition: A historic centre with old streets and squares.
+  synonyms:
+    en: [historic centre, altstadt, centro storico]
+  not_to_be_confused_with: [set.medieval]
+  applies_to: [place]
+  source: text
+- id: set.walled-town
+  facet: setting
+  level: 3
+  parent: set.old-town
+  children: []
+  label: {en: Walled town, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A town inside its walls.
+  synonyms:
+    en: [walled city, ramparts]
+  not_to_be_confused_with: [set.fortress]
+  applies_to: [place]
+  source: text
+- id: set.squares
+  facet: setting
+  level: 3
+  parent: set.old-town
+  children: []
+  label: {en: Squares, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Squares and piazzas to sit in.
+  synonyms:
+    en: [piazza, plaza]
+  not_to_be_confused_with: []
+  applies_to: [place]
+  source: text
+- id: set.university-town
+  facet: setting
+  level: 2
+  parent: set.urban
+  children: []
+  label: {en: University town, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A town shaped by a university.
+  synonyms:
+    en: [student town]
+  not_to_be_confused_with: []
+  applies_to: [place]
+  source: text
+- id: set.spa-town
+  facet: setting
+  level: 2
+  parent: set.urban
+  children: []
+  label: {en: Spa town, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A town built around its springs and baths.
+  synonyms:
+    en: [bad, terme, kurort]
+  not_to_be_confused_with: [act.thermal-baths]
+  applies_to: [place]
+  source: both
+- id: set.market-town
+  facet: setting
+  level: 2
+  parent: set.urban
+  children: []
+  label: {en: Market town, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A town with a market tradition.
+  synonyms:
+    en: []
+  not_to_be_confused_with: [act.markets]
+  applies_to: [place]
+  source: both
+- id: set.modern-architecture
+  facet: setting
+  level: 2
+  parent: set.urban
+  children: []
+  label: {en: Modern architecture, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Modern buildings worth seeing.
+  synonyms:
+    en: [contemporary architecture]
+  not_to_be_confused_with: [act.architecture]
+  applies_to: [place]
+  source: text
+- id: set.heritage
+  facet: setting
+  level: 1
+  parent: setting
+  children: [set.unesco, set.landmarks, set.castle, set.religious, set.ancient, set.ruins, set.periods, set.bridges, set.towers, set.lighthouse, set.memorial, set.windmills, set.vernacular, set.industrial]
+  label: {en: History, de: Geschichte, fr: Histoire, es: Historia, it: Storia, nl: Geschiedenis}
+  label_source: continent-app/src/i18n trip.themeHistory
+  definition: History you can see.
+  synonyms:
+    en: [history, heritage, historic]
+  not_to_be_confused_with: [act.sightseeing]
+  applies_to: [place, trail, lake, mountain]
+  source: text
+- id: set.unesco
+  facet: setting
+  level: 2
+  parent: set.heritage
+  children: []
+  label: {en: UNESCO, de: UNESCO, fr: UNESCO, es: UNESCO, it: UNESCO, nl: UNESCO}
+  label_source: continent-app/src/i18n lake.tagUnesco
+  definition: On or in a UNESCO World Heritage site.
+  synonyms:
+    en: [world heritage]
+  not_to_be_confused_with: [vibe.iconic]
+  applies_to: [place, trail, beach, lake, mountain]
+  source: data
+- id: set.landmarks
+  facet: setting
+  level: 2
+  parent: set.heritage
+  children: []
+  label: {en: Landmarks, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A famous building or monument.
+  synonyms:
+    en: [landmark, monument]
+  not_to_be_confused_with: [vibe.iconic]
+  applies_to: [place]
+  source: text
+- id: set.castle
+  facet: setting
+  level: 2
+  parent: set.heritage
+  children: [set.fortress, set.palace]
+  label: {en: Castle, de: Burg, fr: Chateau, es: Castillo, it: Castello, nl: Kasteel}
+  label_source: continent-app/src/i18n trails.kind_castle
+  definition: A castle.
+  synonyms:
+    en: [burg, chateau, schloss]
+  not_to_be_confused_with: [set.palace]
+  applies_to: [place, trail, lake, mountain]
+  source: text
+- id: set.fortress
+  facet: setting
+  level: 3
+  parent: set.castle
+  children: []
+  label: {en: Fortress, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A fortress, citadel or city walls.
+  synonyms:
+    en: [citadel, fort, ramparts]
+  not_to_be_confused_with: [set.walled-town]
+  applies_to: [place, trail]
+  source: text
+- id: set.palace
+  facet: setting
+  level: 3
+  parent: set.castle
+  children: []
+  label: {en: Palace, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A palace or grand residence.
+  synonyms:
+    en: [residence, villa]
+  not_to_be_confused_with: [set.castle]
+  applies_to: [place]
+  source: text
+- id: set.religious
+  facet: setting
+  level: 2
+  parent: set.heritage
+  children: [set.cathedral, set.church, set.monastery, set.mosque, set.synagogue]
+  label: {en: Religious buildings, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Churches, monasteries and other houses of worship.
+  synonyms:
+    en: [sacred sites]
+  not_to_be_confused_with: [act.pilgrimage]
+  applies_to: [place, trail]
+  source: text
+- id: set.cathedral
+  facet: setting
+  level: 3
+  parent: set.religious
+  children: []
+  label: {en: Cathedral, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A cathedral or basilica.
+  synonyms:
+    en: [basilica, duomo, dom]
+  not_to_be_confused_with: [set.church]
+  applies_to: [place]
+  source: text
+- id: set.church
+  facet: setting
+  level: 3
+  parent: set.religious
+  children: []
+  label: {en: Church, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A church or chapel worth seeing.
+  synonyms:
+    en: [chapel]
+  not_to_be_confused_with: [set.cathedral]
+  applies_to: [place, trail]
+  source: text
+- id: set.monastery
+  facet: setting
+  level: 3
+  parent: set.religious
+  children: []
+  label: {en: Monastery, de: Kloster, fr: Monastère, es: Monasterio, it: Monastero, nl: Klooster}
+  label_source: continent-app/src/i18n dest.doKind.monastery
+  definition: A monastery, abbey or convent.
+  synonyms:
+    en: [abbey, convent, hermitage]
+  not_to_be_confused_with: [set.church]
+  applies_to: [place, trail]
+  source: text
+- id: set.mosque
+  facet: setting
+  level: 3
+  parent: set.religious
+  children: []
+  label: {en: Mosque, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A mosque.
+  synonyms:
+    en: []
+  not_to_be_confused_with: []
+  applies_to: [place]
+  source: text
+- id: set.synagogue
+  facet: setting
+  level: 3
+  parent: set.religious
+  children: []
+  label: {en: Synagogue, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A synagogue or Jewish quarter.
+  synonyms:
+    en: [jewish quarter]
+  not_to_be_confused_with: []
+  applies_to: [place]
+  source: text
+- id: set.ancient
+  facet: setting
+  level: 2
+  parent: set.heritage
+  children: [set.roman, set.ancient-greek, set.prehistoric]
+  label: {en: Ancient sites, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Remains from before the Middle Ages.
+  synonyms:
+    en: [antiquity, archaeology]
+  not_to_be_confused_with: [set.ruins]
+  applies_to: [place, trail]
+  source: text
+- id: set.roman
+  facet: setting
+  level: 3
+  parent: set.ancient
+  children: []
+  label: {en: Roman remains, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Roman towns, theatres, aqueducts and roads.
+  synonyms:
+    en: [amphitheatre, aqueduct]
+  not_to_be_confused_with: [set.ancient-greek]
+  applies_to: [place, trail]
+  source: text
+- id: set.ancient-greek
+  facet: setting
+  level: 3
+  parent: set.ancient
+  children: []
+  label: {en: Ancient Greek, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Ancient Greek temples, theatres and sites.
+  synonyms:
+    en: [oracle, temple, acropolis]
+  not_to_be_confused_with: [set.roman]
+  applies_to: [place, trail]
+  source: text
+- id: set.prehistoric
+  facet: setting
+  level: 3
+  parent: set.ancient
+  children: []
+  label: {en: Prehistoric, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Megaliths, cave art and older remains.
+  synonyms:
+    en: [megaliths, neolithic, stone circle]
+  not_to_be_confused_with: []
+  applies_to: [place, trail]
+  source: text
+- id: set.ruins
+  facet: setting
+  level: 2
+  parent: set.heritage
+  children: []
+  label: {en: Ruins, de: Ruinen, fr: Ruines, es: Ruinas, it: Rovine, nl: Ruïne}
+  label_source: continent-app/src/i18n dest.doKind.ruins
+  definition: Ruins of any age.
+  synonyms:
+    en: [remains]
+  not_to_be_confused_with: [set.ancient]
+  applies_to: [place, trail]
+  source: text
+- id: set.periods
+  facet: setting
+  level: 2
+  parent: set.heritage
+  children: [set.medieval, set.gothic, set.renaissance, set.baroque, set.byzantine, set.ottoman, set.venetian, set.art-nouveau, set.georgian, set.viking, set.hanseatic, set.imperial]
+  label: {en: Historic styles, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: The period or style a place is known for.
+  synonyms:
+    en: [era, style]
+  not_to_be_confused_with: []
+  applies_to: [place]
+  source: text
+- id: set.medieval
+  facet: setting
+  level: 3
+  parent: set.periods
+  children: []
+  label: {en: Medieval, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Medieval streets and buildings.
+  synonyms:
+    en: [middle ages]
+  not_to_be_confused_with: [set.old-town]
+  applies_to: [place]
+  source: text
+- id: set.gothic
+  facet: setting
+  level: 3
+  parent: set.periods
+  children: []
+  label: {en: Gothic, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Gothic architecture.
+  synonyms:
+    en: []
+  not_to_be_confused_with: [set.medieval]
+  applies_to: [place]
+  source: text
+- id: set.renaissance
+  facet: setting
+  level: 3
+  parent: set.periods
+  children: []
+  label: {en: Renaissance, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Renaissance architecture and art.
+  synonyms:
+    en: []
+  not_to_be_confused_with: [set.baroque]
+  applies_to: [place]
+  source: text
+- id: set.baroque
+  facet: setting
+  level: 3
+  parent: set.periods
+  children: []
+  label: {en: Baroque, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Baroque architecture.
+  synonyms:
+    en: [rococo]
+  not_to_be_confused_with: [set.renaissance]
+  applies_to: [place]
+  source: text
+- id: set.byzantine
+  facet: setting
+  level: 3
+  parent: set.periods
+  children: []
+  label: {en: Byzantine, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Byzantine churches and mosaics.
+  synonyms:
+    en: [mosaics]
+  not_to_be_confused_with: [set.ottoman]
+  applies_to: [place]
+  source: text
+- id: set.ottoman
+  facet: setting
+  level: 3
+  parent: set.periods
+  children: []
+  label: {en: Ottoman, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Ottoman towns and buildings.
+  synonyms:
+    en: []
+  not_to_be_confused_with: [set.byzantine]
+  applies_to: [place]
+  source: text
+- id: set.venetian
+  facet: setting
+  level: 3
+  parent: set.periods
+  children: []
+  label: {en: Venetian, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Venetian rule and buildings around the Adriatic and Aegean.
+  synonyms:
+    en: []
+  not_to_be_confused_with: []
+  applies_to: [place]
+  source: text
+- id: set.art-nouveau
+  facet: setting
+  level: 3
+  parent: set.periods
+  children: []
+  label: {en: Art nouveau, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Art nouveau and Jugendstil buildings.
+  synonyms:
+    en: [jugendstil, modernisme, secession]
+  not_to_be_confused_with: [set.modern-architecture]
+  applies_to: [place]
+  source: text
+- id: set.georgian
+  facet: setting
+  level: 3
+  parent: set.periods
+  children: []
+  label: {en: Georgian and Victorian, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Georgian and Victorian British towns.
+  synonyms:
+    en: [regency, victorian]
+  not_to_be_confused_with: []
+  applies_to: [place]
+  source: text
+- id: set.viking
+  facet: setting
+  level: 3
+  parent: set.periods
+  children: []
+  label: {en: Viking and Norse, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Viking and Norse history.
+  synonyms:
+    en: [norse]
+  not_to_be_confused_with: []
+  applies_to: [place]
+  source: text
+- id: set.hanseatic
+  facet: setting
+  level: 3
+  parent: set.periods
+  children: []
+  label: {en: Hanseatic, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Hanseatic merchant towns.
+  synonyms:
+    en: [hansa]
+  not_to_be_confused_with: []
+  applies_to: [place]
+  source: text
+- id: set.imperial
+  facet: setting
+  level: 3
+  parent: set.periods
+  children: []
+  label: {en: Imperial, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Grand imperial capitals and buildings.
+  synonyms:
+    en: [habsburg, grand]
+  not_to_be_confused_with: [vibe.elegant]
+  applies_to: [place]
+  source: text
+- id: set.bridges
+  facet: setting
+  level: 2
+  parent: set.heritage
+  children: []
+  label: {en: Bridges, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A bridge worth seeing.
+  synonyms:
+    en: [bridge]
+  not_to_be_confused_with: []
+  applies_to: [place, trail]
+  source: text
+- id: set.towers
+  facet: setting
+  level: 2
+  parent: set.heritage
+  children: []
+  label: {en: Towers, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Towers and belfries.
+  synonyms:
+    en: [belfry, tower]
+  not_to_be_confused_with: []
+  applies_to: [place, trail]
+  source: text
+- id: set.lighthouse
+  facet: setting
+  level: 2
+  parent: set.heritage
+  children: []
+  label: {en: Lighthouse, de: Leuchtturm, fr: Phare, es: Faro, it: Faro, nl: Vuurtoren}
+  label_source: continent-app/src/i18n trails.kind_lighthouse
+  definition: A lighthouse.
+  synonyms:
+    en: []
+  not_to_be_confused_with: []
+  applies_to: [place, trail, beach]
+  source: text
+- id: set.memorial
+  facet: setting
+  level: 2
+  parent: set.heritage
+  children: []
+  label: {en: Memorials and war history, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Memorials and places of war history.
+  synonyms:
+    en: [war memorial, battlefield]
+  not_to_be_confused_with: []
+  applies_to: [place, trail]
+  source: text
+- id: set.windmills
+  facet: setting
+  level: 2
+  parent: set.heritage
+  children: []
+  label: {en: Windmills, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Windmills.
+  synonyms:
+    en: []
+  not_to_be_confused_with: []
+  applies_to: [place]
+  source: text
+- id: set.vernacular
+  facet: setting
+  level: 2
+  parent: set.heritage
+  children: []
+  label: {en: Traditional houses, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: 'Typical local houses: trulli, whitewashed, red cottages.'
+  synonyms:
+    en: [whitewashed houses, trulli, stone houses]
+  not_to_be_confused_with: [vibe.authentic]
+  applies_to: [place]
+  source: text
+- id: set.industrial
+  facet: setting
+  level: 2
+  parent: set.heritage
+  children: []
+  label: {en: Industrial heritage, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Mines, factories and old industry.
+  synonyms:
+    en: [mining, industrial]
+  not_to_be_confused_with: []
+  applies_to: [place, trail]
+  source: text
+- id: vibe.atmosphere
+  facet: vibe
+  level: 1
+  parent: vibe
+  children: [vibe.quiet, vibe.lively, vibe.romantic, vibe.fairytale, vibe.authentic, vibe.elegant, vibe.bohemian, vibe.quirky]
+  label: {en: Atmosphere, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: The mood of the place.
+  synonyms:
+    en: [mood]
+  not_to_be_confused_with: []
+  applies_to: [place, trail, beach, lake, mountain]
+  source: text
+- id: vibe.quiet
+  facet: vibe
+  level: 2
+  parent: vibe.atmosphere
+  children: []
+  label: {en: Quiet and calm, de: Ruhig, fr: Calme, es: Tranquilo, it: Tranquillo, nl: Rustig}
+  label_source: continent-app/public/search/guided.json vibes.quiet
+  definition: Calm, with few people.
+  synonyms:
+    en: [peaceful, tranquil]
+  not_to_be_confused_with: [vibe.remote]
+  applies_to: [place, trail, beach, lake, mountain]
+  source: both
+- id: vibe.lively
+  facet: vibe
+  level: 2
+  parent: vibe.atmosphere
+  children: []
+  label: {en: Lively, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Busy streets, people, things going on.
+  synonyms:
+    en: [buzzing, vibrant]
+  not_to_be_confused_with: [act.nightlife]
+  applies_to: [place]
+  source: text
+- id: vibe.romantic
+  facet: vibe
+  level: 2
+  parent: vibe.atmosphere
+  children: []
+  label: {en: Romantic, de: Romantisch, fr: Romantique, es: Romántico, it: Romantico, nl: Romantisch}
+  label_source: continent-app/public/search/guided.json vibes.romantic
+  definition: Made for couples.
+  synonyms:
+    en: [for couples]
+  not_to_be_confused_with: [trav.couples]
+  applies_to: [place, beach, lake]
+  source: text
+- id: vibe.fairytale
+  facet: vibe
+  level: 2
+  parent: vibe.atmosphere
+  children: []
+  label: {en: Fairytale, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Looks like a storybook.
+  synonyms:
+    en: [picture-perfect, storybook]
+  not_to_be_confused_with: [vibe.photogenic]
+  applies_to: [place]
+  source: text
+- id: vibe.authentic
+  facet: vibe
+  level: 2
+  parent: vibe.atmosphere
+  children: []
+  label: {en: Authentic and traditional, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Local life and traditions, not built for visitors.
+  synonyms:
+    en: [traditional, unspoilt]
+  not_to_be_confused_with: [vibe.hidden-gem]
+  applies_to: [place]
+  source: text
+- id: vibe.elegant
+  facet: vibe
+  level: 2
+  parent: vibe.atmosphere
+  children: []
+  label: {en: Elegant, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Grand, refined, stylish.
+  synonyms:
+    en: [grand, refined, chic]
+  not_to_be_confused_with: [trav.luxury]
+  applies_to: [place]
+  source: text
+- id: vibe.bohemian
+  facet: vibe
+  level: 2
+  parent: vibe.atmosphere
+  children: []
+  label: {en: Creative and bohemian, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Artists, students and an alternative scene.
+  synonyms:
+    en: [artsy, alternative]
+  not_to_be_confused_with: [act.art]
+  applies_to: [place]
+  source: text
+- id: vibe.quirky
+  facet: vibe
+  level: 2
+  parent: vibe.atmosphere
+  children: []
+  label: {en: Curious and quirky, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Odd, surprising things to see.
+  synonyms:
+    en: [curiosity, odd]
+  not_to_be_confused_with: []
+  applies_to: [place]
+  source: text
+- id: vibe.scenery
+  facet: vibe
+  level: 1
+  parent: vibe
+  children: [vibe.views, vibe.dramatic, vibe.photogenic, vibe.colourful, vibe.remote]
+  label: {en: Scenery, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: How the landscape looks.
+  synonyms:
+    en: [landscape]
+  not_to_be_confused_with: []
+  applies_to: [place, trail, beach, lake, mountain]
+  source: text
+- id: vibe.views
+  facet: vibe
+  level: 2
+  parent: vibe.scenery
+  children: []
+  label: {en: Scenic views, de: Schöne Aussicht, fr: Beaux panoramas, es: Vistas, it: Panorami, nl: Mooie uitzichten}
+  label_source: continent-app/public/search/guided.json vibes.views
+  definition: Wide views over land or water.
+  synonyms:
+    en: [panorama, vistas]
+  not_to_be_confused_with: [act.viewpoints]
+  applies_to: [place, trail, lake, mountain]
+  source: text
+- id: vibe.dramatic
+  facet: vibe
+  level: 2
+  parent: vibe.scenery
+  children: []
+  label: {en: Dramatic landscape, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Steep, wild, striking landscape.
+  synonyms:
+    en: [spectacular, rugged]
+  not_to_be_confused_with: [vibe.views]
+  applies_to: [place, trail, beach, lake, mountain]
+  source: text
+- id: vibe.photogenic
+  facet: vibe
+  level: 2
+  parent: vibe.scenery
+  children: []
+  label: {en: Photogenic, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Looks good in photos.
+  synonyms:
+    en: [instagrammable, picturesque]
+  not_to_be_confused_with: [vibe.fairytale]
+  applies_to: [place, trail, beach, lake, mountain]
+  source: text
+- id: vibe.colourful
+  facet: vibe
+  level: 2
+  parent: vibe.scenery
+  children: []
+  label: {en: Colourful, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Colourful houses or landscapes.
+  synonyms:
+    en: [pastel, painted houses]
+  not_to_be_confused_with: []
+  applies_to: [place]
+  source: text
+- id: vibe.remote
+  facet: vibe
+  level: 2
+  parent: vibe.scenery
+  children: []
+  label: {en: Remote, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Far from everything.
+  synonyms:
+    en: [isolated, secluded, end of the road]
+  not_to_be_confused_with: [vibe.quiet]
+  applies_to: [place, trail, beach, lake, mountain]
+  source: both
+- id: vibe.pace
+  facet: vibe
+  level: 1
+  parent: vibe
+  children: [vibe.slow, vibe.adventurous]
+  label: {en: Pace, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: How fast the days go.
+  synonyms:
+    en: [rhythm]
+  not_to_be_confused_with: []
+  applies_to: [place, trail]
+  source: text
+- id: vibe.slow
+  facet: vibe
+  level: 2
+  parent: vibe.pace
+  children: []
+  label: {en: Slow travel, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Made for staying put and slowing down.
+  synonyms:
+    en: [relaxing, unwind]
+  not_to_be_confused_with: [act.wellness]
+  applies_to: [place, trail]
+  source: text
+- id: vibe.adventurous
+  facet: vibe
+  level: 2
+  parent: vibe.pace
+  children: []
+  label: {en: Outdoor adventure, de: Outdoor-Abenteuer, fr: Aventure en plein air, es: Aventura al aire libre, it: Avventura all'aperto, nl: Avontuur buiten}
+  label_source: continent-app/public/search/guided.json vibes.adventure
+  definition: Outdoor thrills and effort.
+  synonyms:
+    en: [adventure, thrill]
+  not_to_be_confused_with: [act.adventure]
+  applies_to: [place, trail, mountain]
+  source: text
+- id: vibe.fame
+  facet: vibe
+  level: 1
+  parent: vibe
+  children: [vibe.iconic, vibe.hidden-gem]
+  label: {en: Fame, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: How well known it is.
+  synonyms:
+    en: []
+  not_to_be_confused_with: []
+  applies_to: [place, trail, beach, lake, mountain]
+  source: both
+- id: vibe.iconic
+  facet: vibe
+  level: 2
+  parent: vibe.fame
+  children: []
+  label: {en: Iconic, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: World famous, on everyone's list.
+  synonyms:
+    en: [must-see, famous, bucket list]
+  not_to_be_confused_with: [set.landmarks]
+  applies_to: [place, trail, beach, lake, mountain]
+  source: both
+- id: vibe.hidden-gem
+  facet: vibe
+  level: 2
+  parent: vibe.fame
+  children: []
+  label: {en: Hidden gems, de: Geheimtipps, fr: Pépites cachées, es: Joyas escondidas, it: Gemme nascoste, nl: Verborgen parels}
+  label_source: continent-app/src/i18n quiz.type.hidden
+  definition: Good and not well known.
+  synonyms:
+    en: [off the beaten track, undiscovered]
+  not_to_be_confused_with: [vibe.remote]
+  applies_to: [place, trail, beach, lake, mountain]
+  source: both
+- id: trav.who
+  facet: traveller
+  level: 1
+  parent: traveller
+  children: [trav.families, trav.couples, trav.solo, trav.friends]
+  label: {en: Who it suits, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: The group it suits.
+  synonyms:
+    en: []
+  not_to_be_confused_with: []
+  applies_to: [place, trail, beach, lake, mountain]
+  source: text
+- id: trav.families
+  facet: traveller
+  level: 2
+  parent: trav.who
+  children: []
+  label: {en: Good for families, de: Für Familien, fr: En famille, es: Para familias, it: Per famiglie, nl: Voor gezinnen}
+  label_source: continent-app/public/search/guided.json vibes.family
+  definition: Easy and fun with children.
+  synonyms:
+    en: [kids, family friendly]
+  not_to_be_confused_with: [act.family-fun]
+  applies_to: [place, trail, beach, lake, mountain]
+  source: text
+- id: trav.couples
+  facet: traveller
+  level: 2
+  parent: trav.who
+  children: []
+  label: {en: Couples, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Made for two.
+  synonyms:
+    en: [honeymoon]
+  not_to_be_confused_with: [vibe.romantic]
+  applies_to: [place]
+  source: text
+- id: trav.solo
+  facet: traveller
+  level: 2
+  parent: trav.who
+  children: []
+  label: {en: Solo travellers, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Easy and social alone.
+  synonyms:
+    en: [solo]
+  not_to_be_confused_with: []
+  applies_to: [place]
+  source: text
+- id: trav.friends
+  facet: traveller
+  level: 2
+  parent: trav.who
+  children: []
+  label: {en: Groups of friends, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Fun in a group.
+  synonyms:
+    en: [group trip, stag, hen]
+  not_to_be_confused_with: [act.clubbing]
+  applies_to: [place]
+  source: text
+- id: trav.style
+  facet: traveller
+  level: 1
+  parent: traveller
+  children: [trav.backpacker, trav.luxury, trav.first-timer, trav.beginner-outdoors, trav.experienced-outdoors, trav.naturist]
+  label: {en: Travel style, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: How someone travels.
+  synonyms:
+    en: []
+  not_to_be_confused_with: []
+  applies_to: [place, trail, beach, lake, mountain]
+  source: text
+- id: trav.backpacker
+  facet: traveller
+  level: 2
+  parent: trav.style
+  children: []
+  label: {en: Budget backpacking, de: Backpacking, fr: Routard, es: Mochilero, it: Zaino in spalla, nl: Backpacken}
+  label_source: continent-app/src/i18n quiz.type.backpack
+  definition: Hostels, buses and a small budget.
+  synonyms:
+    en: [backpacker, hostel]
+  not_to_be_confused_with: [prac.affordable]
+  applies_to: [place]
+  source: text
+- id: trav.luxury
+  facet: traveller
+  level: 2
+  parent: trav.style
+  children: []
+  label: {en: Luxury, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Top hotels and a big budget.
+  synonyms:
+    en: [upscale, five star]
+  not_to_be_confused_with: [vibe.elegant]
+  applies_to: [place]
+  source: text
+- id: trav.first-timer
+  facet: traveller
+  level: 2
+  parent: trav.style
+  children: []
+  label: {en: First visit to Europe, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A classic first stop.
+  synonyms:
+    en: [classic, first trip]
+  not_to_be_confused_with: [vibe.iconic]
+  applies_to: [place]
+  source: text
+- id: trav.beginner-outdoors
+  facet: traveller
+  level: 2
+  parent: trav.style
+  children: []
+  label: {en: Beginner, de: Einsteiger, fr: Debutant, es: Principiante, it: Principianti, nl: Beginner}
+  label_source: continent-app/src/i18n trails.suitBeginner
+  definition: Fine for someone new to hiking or the water.
+  synonyms:
+    en: [novice, beginner]
+  not_to_be_confused_with: [prac.grade-easy]
+  applies_to: [trail, lake, mountain]
+  source: both
+- id: trav.experienced-outdoors
+  facet: traveller
+  level: 2
+  parent: trav.style
+  children: []
+  label: {en: Experienced outdoors, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Needs experience, fitness or gear.
+  synonyms:
+    en: [expert, seasoned]
+  not_to_be_confused_with: [prac.grade-alpine]
+  applies_to: [trail, mountain]
+  source: text
+- id: trav.naturist
+  facet: traveller
+  level: 2
+  parent: trav.style
+  children: []
+  label: {en: Naturist, de: FKK, fr: Naturiste, es: Nudista, it: Naturista, nl: Naturisme}
+  label_source: continent-app/src/i18n beach.tagNudist
+  definition: A beach where naturism is the custom.
+  synonyms:
+    en: [nudist, naturism, FKK]
+  not_to_be_confused_with: []
+  applies_to: [beach]
+  source: data
+- id: prac.access
+  facet: practical
+  level: 1
+  parent: practical
+  children: [prac.car-free, prac.car-needed, prac.rail-access, prac.boat-only, prac.walk-in, prac.lift-access, prac.road-to-top, prac.steps]
+  label: {en: Getting there and around, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: How to reach it.
+  synonyms:
+    en: [access]
+  not_to_be_confused_with: []
+  applies_to: [place, trail, beach, lake, mountain]
+  source: both
+- id: prac.car-free
+  facet: practical
+  level: 2
+  parent: prac.access
+  children: []
+  label: {en: Easy without a car, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Reached and enjoyed by public transport or on foot.
+  synonyms:
+    en: [car-free, public transport]
+  not_to_be_confused_with: [prac.car-needed]
+  applies_to: [place, trail, beach, lake, mountain]
+  source: both
+- id: prac.car-needed
+  facet: practical
+  level: 2
+  parent: prac.access
+  children: []
+  label: {en: Car needed, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Hard without a car.
+  synonyms:
+    en: []
+  not_to_be_confused_with: [prac.car-free]
+  applies_to: [place, trail, beach, lake, mountain]
+  source: both
+- id: prac.rail-access
+  facet: practical
+  level: 2
+  parent: prac.access
+  children: []
+  label: {en: On the railway, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A station in or near it.
+  synonyms:
+    en: [train station]
+  not_to_be_confused_with: [act.rail-journey]
+  applies_to: [place, trail]
+  source: data
+- id: prac.boat-only
+  facet: practical
+  level: 2
+  parent: prac.access
+  children: []
+  label: {en: Boat access only, de: Nur per Boot, fr: Accès en bateau, es: Solo en barco, it: Solo in barca, nl: Alleen per boot}
+  label_source: continent-app/src/i18n beach.tagBoatOnly
+  definition: Reached only by boat.
+  synonyms:
+    en: [by boat]
+  not_to_be_confused_with: [act.boat-trips]
+  applies_to: [place, beach]
+  source: text
+- id: prac.walk-in
+  facet: practical
+  level: 2
+  parent: prac.access
+  children: []
+  label: {en: Walk in, de: Zu Fuß, fr: À pied, es: A pie, it: A piedi, nl: Te voet}
+  label_source: continent-app/src/i18n beach.tagHikeIn
+  definition: Reached only on foot.
+  synonyms:
+    en: [hike in]
+  not_to_be_confused_with: []
+  applies_to: [beach, lake, mountain]
+  source: both
+- id: prac.lift-access
+  facet: practical
+  level: 2
+  parent: prac.access
+  children: []
+  label: {en: Lift up, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: A lift or cable car goes up.
+  synonyms:
+    en: [cable car up, gondola]
+  not_to_be_confused_with: [act.lift-rides]
+  applies_to: [place, mountain]
+  source: data
+- id: prac.road-to-top
+  facet: practical
+  level: 2
+  parent: prac.access
+  children: []
+  label: {en: Road to the top, de: Straße zum Gipfel, fr: Route au sommet, es: Carretera a la cima, it: Strada in cima, nl: Weg naar de top}
+  label_source: continent-app/src/i18n mtn.tagRoad
+  definition: A road goes to the top.
+  synonyms:
+    en: [drive up]
+  not_to_be_confused_with: [act.scenic-drive]
+  applies_to: [mountain]
+  source: data
+- id: prac.steps
+  facet: practical
+  level: 2
+  parent: prac.access
+  children: []
+  label: {en: Steps down, de: Treppe hinunter, fr: Escalier, es: Escalera, it: Scalinata, nl: Trap naar beneden}
+  label_source: continent-app/src/i18n beach.tagSteps
+  definition: Steps to get there.
+  synonyms:
+    en: [stairs]
+  not_to_be_confused_with: []
+  applies_to: [beach]
+  source: data
+- id: prac.accessibility
+  facet: practical
+  level: 1
+  parent: practical
+  children: [prac.wheelchair, prac.pushchair, prac.dogs]
+  label: {en: Accessibility, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Who can get around.
+  synonyms:
+    en: []
+  not_to_be_confused_with: []
+  applies_to: [place, trail, beach, lake, mountain]
+  source: both
+- id: prac.wheelchair
+  facet: practical
+  level: 2
+  parent: prac.accessibility
+  children: []
+  label: {en: Wheelchair, de: Rollstuhl, fr: Fauteuil roulant, es: Silla de ruedas, it: Sedia a rotelle, nl: Rolstoel}
+  label_source: continent-app/src/i18n trails.suitWheelchair
+  definition: Usable by wheelchair.
+  synonyms:
+    en: [step-free, accessible]
+  not_to_be_confused_with: [prac.pushchair]
+  applies_to: [place, trail, beach, lake]
+  source: data
+- id: prac.pushchair
+  facet: practical
+  level: 2
+  parent: prac.accessibility
+  children: []
+  label: {en: Pushchair, de: Kinderwagen, fr: Poussette, es: Carrito, it: Passeggino, nl: Kinderwagen}
+  label_source: continent-app/src/i18n trails.suitStroller
+  definition: Usable with a pushchair.
+  synonyms:
+    en: [stroller, buggy]
+  not_to_be_confused_with: [prac.wheelchair]
+  applies_to: [place, trail, beach, lake]
+  source: data
+- id: prac.dogs
+  facet: practical
+  level: 2
+  parent: prac.accessibility
+  children: []
+  label: {en: Dogs, de: Hunde, fr: Chiens, es: Perros, it: Cani, nl: Honden}
+  label_source: continent-app/src/i18n trails.suitDog
+  definition: Dogs welcome.
+  synonyms:
+    en: [dog friendly]
+  not_to_be_confused_with: []
+  applies_to: [trail, beach]
+  source: data
+- id: prac.season
+  facet: practical
+  level: 1
+  parent: practical
+  children: [prac.summer-only, prac.good-in-winter, prac.warm-winter, prac.autumn-colours]
+  label: {en: Season, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: When to go.
+  synonyms:
+    en: []
+  not_to_be_confused_with: []
+  applies_to: [place, trail, beach, lake, mountain]
+  source: both
+- id: prac.summer-only
+  facet: practical
+  level: 2
+  parent: prac.season
+  children: []
+  label: {en: Summer only, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Closed or empty outside summer.
+  synonyms:
+    en: [seasonal]
+  not_to_be_confused_with: []
+  applies_to: [place, mountain]
+  source: both
+- id: prac.good-in-winter
+  facet: practical
+  level: 2
+  parent: prac.season
+  children: []
+  label: {en: Winter, de: Winter, fr: Hiver, es: Invierno, it: Inverno, nl: Winter}
+  label_source: continent-app/src/i18n trails.suitWinter
+  definition: Worth it in winter.
+  synonyms:
+    en: [winter]
+  not_to_be_confused_with: [act.winter]
+  applies_to: [place, trail]
+  source: both
+- id: prac.warm-winter
+  facet: practical
+  level: 2
+  parent: prac.season
+  children: []
+  label: {en: Warm in winter, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Mild sunny winters.
+  synonyms:
+    en: [winter sun]
+  not_to_be_confused_with: []
+  applies_to: [place]
+  source: data
+- id: prac.autumn-colours
+  facet: practical
+  level: 2
+  parent: prac.season
+  children: []
+  label: {en: Autumn colours, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Autumn leaves worth coming for.
+  synonyms:
+    en: [fall foliage]
+  not_to_be_confused_with: []
+  applies_to: [place, trail]
+  source: text
+- id: prac.cost
+  facet: practical
+  level: 1
+  parent: practical
+  children: [prac.affordable, prac.expensive]
+  label: {en: Cost, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: What it costs. Set from the price engine, not from text.
+  synonyms:
+    en: []
+  not_to_be_confused_with: []
+  applies_to: [place]
+  source: data
+- id: prac.affordable
+  facet: practical
+  level: 2
+  parent: prac.cost
+  children: []
+  label: {en: Affordable, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Cheaper than its peers.
+  synonyms:
+    en: [cheap, budget]
+  not_to_be_confused_with: [trav.backpacker]
+  applies_to: [place]
+  source: data
+- id: prac.expensive
+  facet: practical
+  level: 2
+  parent: prac.cost
+  children: []
+  label: {en: Expensive, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Dearer than its peers.
+  synonyms:
+    en: [pricey]
+  not_to_be_confused_with: [trav.luxury]
+  applies_to: [place]
+  source: data
+- id: prac.difficulty
+  facet: practical
+  level: 1
+  parent: practical
+  children: [prac.grade-easy, prac.grade-moderate, prac.grade-hard, prac.grade-very-hard, prac.grade-alpine]
+  label: {en: How hard, de: Schwierigkeit, fr: Difficulte, es: Dificultad, it: Difficolta, nl: Hoe zwaar}
+  label_source: continent-app/src/i18n trails.gradeLabel
+  definition: How hard the walk is. Set from the trail grade, not from text.
+  synonyms:
+    en: [grade]
+  not_to_be_confused_with: []
+  applies_to: [trail, mountain]
+  source: data
+- id: prac.grade-easy
+  facet: practical
+  level: 2
+  parent: prac.difficulty
+  children: []
+  label: {en: Easy, de: Leicht, fr: Facile, es: Facil, it: Facile, nl: Makkelijk}
+  label_source: continent-app/src/i18n trails.gradeEasy
+  definition: Trail grade easy.
+  synonyms:
+    en: []
+  not_to_be_confused_with: [trav.beginner-outdoors]
+  applies_to: [trail, mountain]
+  source: data
+- id: prac.grade-moderate
+  facet: practical
+  level: 2
+  parent: prac.difficulty
+  children: []
+  label: {en: Moderate, de: Mittel, fr: Moyen, es: Media, it: Media, nl: Gemiddeld}
+  label_source: continent-app/src/i18n trails.gradeModerate
+  definition: Trail grade moderate.
+  synonyms:
+    en: []
+  not_to_be_confused_with: []
+  applies_to: [trail, mountain]
+  source: data
+- id: prac.grade-hard
+  facet: practical
+  level: 2
+  parent: prac.difficulty
+  children: []
+  label: {en: Hard, de: Schwer, fr: Difficile, es: Dificil, it: Impegnativa, nl: Zwaar}
+  label_source: continent-app/src/i18n trails.gradeHard
+  definition: Trail grade hard.
+  synonyms:
+    en: []
+  not_to_be_confused_with: []
+  applies_to: [trail, mountain]
+  source: data
+- id: prac.grade-very-hard
+  facet: practical
+  level: 2
+  parent: prac.difficulty
+  children: []
+  label: {en: Very hard, de: Sehr schwer, fr: Tres difficile, es: Muy dificil, it: Molto impegnativa, nl: Heel zwaar}
+  label_source: continent-app/src/i18n trails.gradeVeryHard
+  definition: Trail grade very hard.
+  synonyms:
+    en: []
+  not_to_be_confused_with: []
+  applies_to: [trail, mountain]
+  source: data
+- id: prac.grade-alpine
+  facet: practical
+  level: 2
+  parent: prac.difficulty
+  children: []
+  label: {en: Alpine, de: Alpin, fr: Alpin, es: Alpina, it: Alpina, nl: Alpien}
+  label_source: continent-app/src/i18n trails.gradeAlpine
+  definition: Trail grade alpine (SAC T4 or more).
+  synonyms:
+    en: []
+  not_to_be_confused_with: [act.mountaineering]
+  applies_to: [trail, mountain]
+  source: data
+- id: prac.route-shape
+  facet: practical
+  level: 1
+  parent: practical
+  children: [prac.loop, prac.point-to-point, prac.out-and-back]
+  label: {en: Route shape, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: The shape of the walk.
+  synonyms:
+    en: []
+  not_to_be_confused_with: []
+  applies_to: [trail]
+  source: data
+- id: prac.loop
+  facet: practical
+  level: 2
+  parent: prac.route-shape
+  children: []
+  label: {en: Loop, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Ends where it starts.
+  synonyms:
+    en: [circular walk, round walk]
+  not_to_be_confused_with: [prac.out-and-back]
+  applies_to: [trail]
+  source: data
+- id: prac.point-to-point
+  facet: practical
+  level: 2
+  parent: prac.route-shape
+  children: []
+  label: {en: Point to point, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Ends somewhere else.
+  synonyms:
+    en: [linear, one way]
+  not_to_be_confused_with: [prac.loop]
+  applies_to: [trail]
+  source: data
+- id: prac.out-and-back
+  facet: practical
+  level: 2
+  parent: prac.route-shape
+  children: []
+  label: {en: Out and back, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: Goes out and returns the same way.
+  synonyms:
+    en: [there and back]
+  not_to_be_confused_with: [prac.loop]
+  applies_to: [trail]
+  source: data
+- id: prac.facilities
+  facet: practical
+  level: 1
+  parent: practical
+  children: [prac.lifeguard, prac.blue-flag, prac.water-excellent, prac.lido, prac.summit-food, prac.shallow, prac.undeveloped]
+  label: {en: Facilities, de: null, fr: null, es: null, it: null, nl: null}
+  label_source: authored (English only)
+  definition: What is on site.
+  synonyms:
+    en: [services]
+  not_to_be_confused_with: []
+  applies_to: [place, beach, lake, mountain]
+  source: both
+- id: prac.lifeguard
+  facet: practical
+  level: 2
+  parent: prac.facilities
+  children: []
+  label: {en: Lifeguard, de: Rettungsschwimmer, fr: Surveillée, es: Socorrista, it: Bagnino, nl: Strandwacht}
+  label_source: continent-app/src/i18n beach.tagLifeguard
+  definition: A lifeguard in season.
+  synonyms:
+    en: []
+  not_to_be_confused_with: []
+  applies_to: [beach, lake]
+  source: data
+- id: prac.blue-flag
+  facet: practical
+  level: 2
+  parent: prac.facilities
+  children: []
+  label: {en: Blue Flag, de: Blaue Flagge, fr: Pavillon Bleu, es: Bandera Azul, it: Bandiera Blu, nl: Blauwe Vlag}
+  label_source: continent-app/src/i18n beach.tagBlueFlag
+  definition: Holds a Blue Flag.
+  synonyms:
+    en: []
+  not_to_be_confused_with: [prac.water-excellent]
+  applies_to: [beach]
+  source: data
+- id: prac.water-excellent
+  facet: practical
+  level: 2
+  parent: prac.facilities
+  children: []
+  label: {en: Excellent water, de: Ausgezeichnetes Wasser, fr: Eau excellente, es: Agua excelente, it: Acqua eccellente, nl: Uitstekend water}
+  label_source: continent-app/src/i18n beach.tagWaterExcellent
+  definition: EU bathing water rated excellent.
+  synonyms:
+    en: [clean water]
+  not_to_be_confused_with: [set.clear-water]
+  applies_to: [beach, lake]
+  source: data
+- id: prac.lido
+  facet: practical
+  level: 2
+  parent: prac.facilities
+  children: []
+  label: {en: Lido, de: Strandbad, fr: Baignade amenagee, es: Zona de bano, it: Lido, nl: Zwembad}
+  label_source: continent-app/src/i18n lake.tagLido
+  definition: A lido or official bathing place.
+  synonyms:
+    en: [bathing place, strandbad]
+  not_to_be_confused_with: [prac.water-excellent]
+  applies_to: [lake]
+  source: data
+- id: prac.summit-food
+  facet: practical
+  level: 2
+  parent: prac.facilities
+  children: []
+  label: {en: Food at the top, de: Essen am Gipfel, fr: Restauration au sommet, es: Comida en la cima, it: Si mangia in cima, nl: Eten op de top}
+  label_source: continent-app/src/i18n mtn.tagSummitFood
+  definition: Food or a hut on the summit.
+  synonyms:
+    en: [summit restaurant]
+  not_to_be_confused_with: [set.mountain-hut]
+  applies_to: [mountain]
+  source: data
+- id: prac.shallow
+  facet: practical
+  level: 2
+  parent: prac.facilities
+  children: []
+  label: {en: Shallow, de: Flach, fr: Peu profonde, es: Poco profunda, it: Bassa, nl: Ondiep}
+  label_source: continent-app/src/i18n beach.tagShallow
+  definition: Shallow water near shore.
+  synonyms:
+    en: []
+  not_to_be_confused_with: [trav.families]
+  applies_to: [beach]
+  source: data
+- id: prac.undeveloped
+  facet: practical
+  level: 2
+  parent: prac.facilities
+  children: []
+  label: {en: Nothing built on it, de: Unbebaut, fr: Rien de construit, es: Sin construir, it: Niente di costruito, nl: Onbebouwd}
+  label_source: continent-app/src/i18n beach.tagUndeveloped
+  definition: Nothing built on the shore.
+  synonyms:
+    en: [wild beach, unspoilt]
+  not_to_be_confused_with: [set.wilderness]
+  applies_to: [beach, lake]
+  source: data

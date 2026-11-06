@@ -5,9 +5,9 @@
  * and scripts/eval/run.mjs writes it. Schema "carta-eval/1":
  *
  *   schema    "carta-eval/1"
- *   eval      the eval's id ("ask", "trail-summaries", "data-quality", "plan-day")
+ *   eval      the eval's id ("ask", "trail-summaries", "data-quality", "plan-day", "taxonomy")
  *   title     a short human name
- *   kind      "retrieval" | "text-check" | "data" | "llm-plan"
+ *   kind      "retrieval" | "text-check" | "data" | "llm-plan" | "classification" (T1149)
  *   at        ISO time of the run
  *   git       short commit the run scored, or null
  *   status    "pass" | "fail" | "error" | "skipped"
@@ -34,7 +34,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 export const SCHEMA = 'carta-eval/1';
-export const KINDS = ['retrieval', 'text-check', 'data', 'llm-plan'];
+export const KINDS = ['retrieval', 'text-check', 'data', 'llm-plan', 'classification'];
 export const STATUSES = ['pass', 'fail', 'error', 'skipped'];
 
 const here = dirname(fileURLToPath(import.meta.url));
