@@ -2785,6 +2785,19 @@ This section covers the parts of Carta that sit around the travel content: the A
 
 Built in T1110 (ROADMAP K3). A short form (`src/components/WaitlistForm.jsx`, shown on the Home page after the closing question) posts one e-mail address to the `waitlist` Edge Function (`supabase/functions/waitlist`). The address is stored lower-cased and unconfirmed in `waitlist_signups` (migration 066, RLS on, no policy, no grant to the API roles) and a confirmation mail goes out through Resend. The mail holds a confirm link and an unsubscribe link, each an HMAC of action, address and expiry with `WAITLIST_SECRET` (`logic.mjs` `linkToken`). A confirm link lasts 7 days (`CONFIRM_TTL_MS`); an unsubscribe link never expires, and is also sent as `List-Unsubscribe` with the one-click POST. Clicking confirm sets `confirmed_at`; clicking unsubscribe sets `unsubscribed_at` (the row is kept so a later import cannot mail an address that opted out). The only way to read the list for use is `waitlist_audience()`: confirmed and not unsubscribed. A repeat sign-up within 10 minutes sends nothing; an already confirmed address gets the same "check your mail" answer as a new one, so the form cannot probe who is on the list. Signing up again after an unsubscribe starts over, unconfirmed. `waitlist_purge(days)` (minimum 7) deletes addresses never confirmed; nothing schedules it yet. The form copy is in English and Dutch (the other languages fall back to English). Without the three secrets the function stores and sends nothing and the form says it cannot sign up right now.
 
+### Carta MCP server
+
+Built in T1155 (ROADMAP F7). `services/mcp/` is a local stdio server for MCP clients. It is read-only by design: no write tool, no secret, no network, no Claude API. It reads `continent-app/public` (override with `CARTA_DATA_DIR`) and prices with the app's own engine (`src/lib/price/priceDay.js`), so a figure matches Explore.
+
+- `search_places`: filters `query` (city, country or blurb text, accent and case folded), `country` (ISO2 or name), `category`, `tier` (`airport` or `gem`); order is match rank (exact city, prefix, contains) then rating; `limit` default 10, at most `MAX_RESULTS` = 25 (`src/tools.js`).
+- `place_facts`: one id. Day price uses `priceRequest({})`, the app default (two adults, entire place, easygoing, year average, per person per day), plus bed prices by tier and their capture date, meal costs, best months, crowding, up to 5 designations and 8 activities.
+- `price_trip`: 1 to 10 stops of `{id, nights 1..60}`, `adults` 1..8, `children` 0..8, `stay` one of `STAY_TIERS`. Per stop: `dayEur x seats x nights`. Flights, legs between stops and activities are not included, and the result says so. An unknown id is an error result; a stop the engine cannot price is listed under `unpriced_stops`, never counted as zero.
+- `list_trips`: library trips from `journeys/journey/*.json` filtered by country code, trip type and maximum days; returns days, best months and the trip's own budget range. Saved traveller trips are not reachable.
+- Output: every free-text field goes through `safeText` (`src/text.js`, which runs aiGuard `scrubData` and caps length). Library: `@modelcontextprotocol/sdk` 1.32.2 (pinned) and zod.
+- Run `cd services/mcp && npm test`; CI is `.github/workflows/mcp.yml`. Threat model: section 13.
+
+---
+
 ## Appendix: what writing this handbook found
 
 Reading every feature against its code turned up places where the docs, the comments or the map no longer match what runs. None of these were changed by T1045; each is a register row (`T1045-a` onwards) for a later task.
