@@ -1497,3 +1497,7 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1106-a | T1106 | Run the seeded-error browser spec and look at `?seedError=explore` in `npm run dev` with real app data (the cloud container has none) | user | open |  |
 | T1106-b | T1106 | Wrap individual cards (explore, price) with `SectionBoundary compact`; trail cards, beach strip, plan flow and auth were off limits tonight | next task | open |  |
 | T1106-c | T1106 | The 107 silent catches named in H13 were not reviewed; T1106 covers render errors only | next task | open |  |
+| T1099-a | T1099 | Refresh the stale wires on the box (app_data 151 days, destinfo 71, trails 53, trips 52, region 50, coverage, joins, reach) so each is inside its cadence | user | open |  |
+| T1099-b | T1099 | Run `scripts/freshness_report.py --out` after each box run and push `freshness_wires.json` to R2 next to the data (H9 schedule) | user | open |  |
+| T1099-c | T1099 | Only `apply_rating_layer.py` stamps `app_data` meta; other appliers (place, stays, climate) do not | next task | open |  |
+| T1099-d | T1099 | Decide the cadence per wire; 35/45/90 days in `WIRES` are placeholders | user | open |  |
